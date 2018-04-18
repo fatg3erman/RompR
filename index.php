@@ -123,7 +123,7 @@ if (is_array($r) && array_key_exists('tagtype', $r)) {
         $prefs['player_backend'] = "mpd";
     }
 } else {
-    debuglog("WARNING! No output for 'tagtypes' - probably an old version of Mopidy. Rompr may not function correctly","INIT",2);
+    debuglog("WARNING! No output for 'tagtypes' - probably an old version of Mopidy. RompЯ may not function correctly","INIT",2);
     $prefs['player_backend'] = "mopidy";
     $oldmopidy = true;
 }
@@ -187,7 +187,7 @@ debuglog("******++++++======------******------======++++++******","CREATING PAGE
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<title>RompR</title>
+<title>RompЯ</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />

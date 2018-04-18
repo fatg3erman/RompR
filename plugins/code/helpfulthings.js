@@ -74,7 +74,7 @@ var helpfulThings = function() {
 			    	var html = '<div class="fixed infosection containerbox mixbox clickable infoclick plugclickable clickmixradio">';
 			    	html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
 			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_getspotify")+'</b><br/>';
-			    	html += "Use Mopidy, a Spotify Premium subscription, and start scrobbbling to Last.FM so Rompr can delight you with new music you're going to love!</div>";
+			    	html += "Use Mopidy, a Spotify Premium subscription, and start scrobbbling to Last.FM so RompЯ can delight you with new music you're going to love!</div>";
 			    	html += '</div>';
 			    }
 
@@ -82,13 +82,13 @@ var helpfulThings = function() {
 			    	html += '<div class="fixed infosection containerbox mixbox clickable infoclick plugclickable clickspotmixradio">';
 			    	html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
 			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext('label_spotify_mix')+'</b><br/>';
-			    	html += "A radio station of suggestions based on your recent listening. Powered by RompR and Spotify</div>";
+			    	html += "A radio station of suggestions based on your recent listening. Powered by RompЯ and Spotify</div>";
 			    	html += '</div>';
 
 			    	html += '<div class="fixed infosection containerbox mixbox clickable infoclick plugclickable clickspotdjradio">';
 			    	html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
 			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext('label_spotify_dj')+'</b><br/>';
-			    	html += "Scanning the vastness of Spotify. Powered by RompR and Spotify</div>";
+			    	html += "Scanning the vastness of Spotify. Powered by RompЯ and Spotify</div>";
 			    	html += '</div>';
 		        }
 
@@ -165,7 +165,7 @@ var helpfulThings = function() {
 			} else {
 				$('#helpful_spinner').remove();
 				$('#hplfoldup').append('<div class="textunderline containerbox menuitem" style="padding-left:12px;margin-top:1em"><h3 class="fixed">'
-					+'Once RompR has gathered some data, it will show recommendations here. Play some music!</h3></div>');
+					+'Once RompЯ has gathered some data, it will show recommendations here. Play some music!</h3></div>');
 			}
 
 		},

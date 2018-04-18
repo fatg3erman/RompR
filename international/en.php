@@ -24,7 +24,7 @@ $languages['en'] = array (
 
 	// Tooltips for playlist buttons
 	"button_alarm" => "Alarm Clock",
-	"button_prefs" => "RompR Preferences",
+	"button_prefs" => "RompЯ Preferences",
 	"button_clearplaylist" => "Clear Playlist",
 	"button_loadplaylist" => "Load Saved Playlist",
 	"button_saveplaylist" => "Save Playlist",
@@ -53,7 +53,7 @@ $languages['en'] = array (
 	"config_fullbio" => "Retrieve full artist biographies from Last.FM",
 	"config_lastfmlang" => "Language for Last.FM and Wikipedia",
 	"config_lastfmdefault" => "Default language (English)",
-	"config_lastfminterface" => "RompR's interface language",
+	"config_lastfminterface" => "RompЯ's interface language",
 	"config_lastfmbrowser" => "Browser's default language",
 	"config_lastfmlanguser" => "This specific language:",
 	"config_langinfo" => "Last.FM and Wikipedia will fall back to English if information can't be found in your language",
@@ -263,7 +263,7 @@ $languages['en'] = array (
 	// Intro Window
 	"intro_title" => "Information About This Version",
 	"intro_welcome" => "Welcome to RompR version",
-	"intro_viewingmobile" => "You are viewing the mobile version of RompR. To view the standard version go to",
+	"intro_viewingmobile" => "You are viewing the mobile version of RompЯ. To view the standard version go to",
 	"intro_viewmobile" => "To view the mobile version go to",
 	"intro_basicmanual" => "The Basic RompR Manual is at:",
 	"intro_forum" => "The Discussion Forum is at:",
@@ -273,7 +273,7 @@ $languages['en'] = array (
 
 	// Last.FM
 	"lastfm_loginwindow" => "Log In to Last.FM",
-	"lastfm_login1" => "Please click the button below to open the Last.FM website in a new tab. Enter your Last.FM login details if required then give RompR permission to access your account",
+	"lastfm_login1" => "Please click the button below to open the Last.FM website in a new tab. Enter your Last.FM login details if required then give RompЯ permission to access your account",
 	"lastfm_login2" => "You can close the new tab when you have finished but do not close this dialog!",
 	"lastfm_loginbutton" => "Click Here To Log In",
 	"lastfm_login3" => "Once you have logged in to Last.FM, click the OK button below to complete the process",
@@ -475,7 +475,7 @@ $languages['en'] = array (
 	"config_loveis" => "Last.FM Love Means",
 	"playlist_xstar" => "%s or More Stars",
 	"playlist_5star" => "5 Star Tracks",
-	"button_about" => "About Rompr",
+	"button_about" => "About RompЯ",
 	"label_notfound" => "Track Not Found",
 	// Eg + 3 more
 	"label_moreresults" => "+ %s more",

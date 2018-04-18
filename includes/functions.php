@@ -553,10 +553,10 @@ function sql_init_fail($message) {
 <h4 align="center">It's all gone horribly wrong</h2>
 <br>
 <?php
-print '<h3 align="center">Rompr encountered an error while checking your '.
+print '<h3 align="center">RompЯ encountered an error while checking your '.
     ucfirst($prefs['collection_type']).' database.</h3>';
 ?>
-<h3 align="center">An SQLite or MySQL database is required to run Rompr</h3>
+<h3 align="center">An SQLite or MySQL database is required to run RompЯ</h3>
 <h3 align="center">You may find it helpful to <a href="https://sourceforge.net/p/rompr/wiki/Installation/" target="_blank">Read The Wiki</a></h3>
 <h3 align="center">The error message was:</h3><br>
 <?php

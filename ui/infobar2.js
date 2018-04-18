@@ -66,7 +66,7 @@ var infobar = function() {
 
     function mungeTrackInfo(info) {
         var npinfo = {};
-        var doctitle = "RompR";
+        var doctitle = "RompЯ";
         debug.log("INFOBAR", "Doing Track Things",info);
         if (info.title != "") {
             npinfo.title = info.title;

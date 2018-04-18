@@ -164,8 +164,8 @@ var alarm = function() {
 			html += '<tr>';
 			html += '<td colspan="3"><div class="styledinputs textcentre"><input type="checkbox" class="autoset toggle" id="alarmramp"><label for="alarmramp">'+language.gettext('config_alarm_ramp')+'</label></div></td>';
 			html += '</tr>';
-			html += '<tr><td colspan="2">'+language.gettext('config_ramptime')+'</td><td><input class="saveotron prefinputUsers/bob/Sites/rompr" id="alarm_ramptime" type="text" size="2" /></td></tr>';
-			html += '<tr><td colspan="2">'+language.gettext('config_snoozetime')+'</td><td><input class="saveotron prefinputUsers/bob/Sites/rompr" id="alarm_snoozetime" type="text" size="2" /></td></tr>';
+			html += '<tr><td colspan="2">'+language.gettext('config_ramptime')+'</td><td><input class="saveotron prefinput" id="alarm_ramptime" type="text" size="2" /></td></tr>';
+			html += '<tr><td colspan="2">'+language.gettext('config_snoozetime')+'</td><td><input class="saveotron prefinput" id="alarm_snoozetime" type="text" size="2" /></td></tr>';
 			html += '<tr><td colspan="3" align="center" colspan="2"><button id="freddibnah" onclick="alarm.snooze()">Snooze...</button></td></tr>';
 			html += '</table>';
 			html += '</div></div></div>';

@@ -279,7 +279,7 @@ print '<option value="5">5 '.get_int_text('stars').'</option>
 // Collection Options
 print '<div class="textcentre ucfirst configtitle"><b>'.get_int_text('button_local_music').'</b></div>';
 
-print '<div class="tiny textcentre" style="margin-bottom:1em">These options affect everyone who uses this installation of RompR</div>';
+print '<div class="tiny textcentre" style="margin-bottom:1em">These options affect everyone who uses this installation of RompЯ</div>';
 
 // Album Sorting
 print '<div class="pref"><b>'.get_int_text('config_artistfirst').'
