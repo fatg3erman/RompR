@@ -1,9 +1,9 @@
 # RompR
 Web client for Mopidy and MPD
 
-Code is now hosted here on github but the project home is still at 
+Code is now hosted here on github but the project home is still at
 https://sourceforge.net/projects/rompr/
-- at least for the time being. Sourceforge's SVN server has gone down the toilet
+at least for the time being. Sourceforge's SVN server has gone down the toilet
 
 This program is released under an alt-SpongWare license
 The use of alt-SpongWare is entirely according to the following conditions:
