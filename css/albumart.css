@@ -1,0 +1,132 @@
+#imageeditor {
+    min-height:400px;
+    box-sizing:border-box;
+    position: relative;
+    z-index:100;
+}
+
+#origimage {
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-basis: auto;
+    max-width:40%;
+    border-left: 1px solid #fe6500;
+    margin-right:8px;
+    margin-bottom:8px;
+    padding-right: 8px;
+    padding-bottom: 8px;
+    margin-top:8px;
+}
+
+.albumcovers .infosection {
+    margin-bottom:0px;
+}
+
+.gimage {
+    float:left;
+    padding:8px;
+}
+
+.outer {
+    width:20%;
+}
+
+.closet {
+    position:relative;
+    width:160px;
+    text-align:center;
+    overflow:visible;
+}
+
+.covercontainer
+{
+    position: relative;
+    padding-left:4px;
+    padding-right:4px;
+    z-index:1;
+}
+
+.covercontainer div {
+    z-index:1;
+}
+
+.covercontainer.highlighted
+{
+    z-index:150;
+    box-sizing:border-box;
+}
+
+.rightpad {
+    padding-right:16px;
+    margin-right:16px;
+}
+
+img#browns {
+    max-width:100%;
+}
+
+#searchcontent {
+    flex-grow: 2;
+    flex-shrink: 1;
+    flex-basis: auto;
+    padding:8px;
+}
+
+.albumimg {
+    padding-top:8px;
+}
+
+.albumimg img {
+    padding:8px;
+}
+
+#brian {
+    padding-left:8px;
+    padding-right:8px;
+}
+
+#editcontrols {
+    padding-top:2px;
+    padding-bottom:4px;
+}
+
+#artistcoverslist {
+    overflow-y:auto;
+    height:100%;
+    width:20%;
+}
+
+#coverslist {
+    overflow-y:auto;
+    height:100%;
+    width:80%;
+}
+
+#progress {
+    font-size:12pt;
+}
+
+.artistrow {
+    padding-top:2px;
+    padding-bottom:2px;
+}
+
+.albumsection {
+    padding-top:4px;
+    padding-bottom:4px;
+    display:table;
+    width:100%;
+    margin-left:4px;
+}
+
+.albumsection .tleft h2 {
+    margin:8px;
+}
+
+.albumsection .tleft button {
+    margin-top:8px;
+}
+
+#morebutton {
+    text-align:center;
+}

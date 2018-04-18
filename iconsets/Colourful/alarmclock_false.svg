@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg898" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="211.28" width="212.16" version="1.0" y="0" x="0" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <metadata id="metadata3">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:title/>
+    <dc:description/>
+    <dc:subject>
+     <rdf:Bag>
+      <rdf:li>clock</rdf:li>
+      <rdf:li>modern</rdf:li>
+     </rdf:Bag>
+    </dc:subject>
+    <dc:publisher>
+     <cc:Agent rdf:about="http://www.openclipart.org">
+      <dc:title>Chris Kempson</dc:title>
+     </cc:Agent>
+    </dc:publisher>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Chris Kempson</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:rights>
+     <cc:Agent>
+      <dc:title>Chris Kempson</dc:title>
+     </cc:Agent>
+    </dc:rights>
+    <dc:date/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <cc:license rdf:resource="http://web.resource.org/cc/PublicDomain"/>
+    <dc:language>en</dc:language>
+   </cc:Work>
+   <cc:License rdf:about="http://web.resource.org/cc/PublicDomain">
+    <cc:permits rdf:resource="http://web.resource.org/cc/Reproduction"/>
+    <cc:permits rdf:resource="http://web.resource.org/cc/Distribution"/>
+    <cc:permits rdf:resource="http://web.resource.org/cc/DerivativeWorks"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+ <defs id="defs900">
+  <linearGradient id="linearGradient906" y2="0.99296" y1="0.014085" x2="0.48611" x1="0.47917">
+   <stop id="stop904" stop-color="#DDD" offset="0"/>
+   <stop id="stop905" stop-color="#f5f5f5" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient908" y2="3.1183E-8" y1="0.6831" x2="0.49306" x1="0.49306">
+   <stop id="stop910" stop-color="#FFF" stop-opacity="0.0000000" offset="0"/>
+   <stop id="stop911" stop-color="#FFF" stop-opacity="0.57254905" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient914" y2="0.0070423" y1="0.92958" x2="0.48529" x1="0.47059">
+   <stop id="stop941" stop-color="#FFF" stop-opacity="0.0000000" offset="0"/>
+   <stop id="stop943" stop-color="#FFF" stop-opacity="0.85000002" offset="1"/>
+  </linearGradient>
+  <radialGradient id="radialGradient933">
+   <stop id="stop931" stop-color="#000" offset="0"/>
+   <stop id="stop934" stop-color="#000" stop-opacity="0.76612902" offset="0.87947"/>
+   <stop id="stop932" stop-color="#000" stop-opacity="0.0000000" offset="1"/>
+  </radialGradient>
+ </defs>
+ <path id="path928" d="M348.38,364.25a103.65,103.65,0,1,0,-207.3,0,103.65,103.65,0,1,0,207.3,0z" fill-rule="evenodd" transform="translate(-136.2155,-256.6230)" stroke-width="1.0000000pt" fill="url(#radialGradient933)"/>
+ <path id="path901" d="M348.38,364.25a103.65,103.65,0,1,0,-207.3,0,103.65,103.65,0,1,0,207.3,0z" fill-rule="evenodd" transform="translate(-141.0775,-260.6010)" stroke-width="1.0000000pt"/>
+ <path id="path907" d="M348.38,364.25a103.65,103.65,0,1,0,-207.3,0,103.65,103.65,0,1,0,207.3,0z" fill-rule="evenodd" transform="matrix(0.936977,1.445173e-2,0.000000,0.969458,-124.1045,-254.3018)" stroke-width="1.2535489" fill="url(#linearGradient908)"/>
+ <path id="path944" d="M198.56,103.55a83.226,83.226,0,1,0,-166.45,0,83.226,83.226,0,1,0,166.45,0z" fill-rule="evenodd" transform="matrix(1.060913,0.000000,0.000000,1.147927,-18.74421,-6.873030)" stroke-width="1.0000000pt"/>
+ <path id="path902" d="M345.42,388.14a82.601,82.601,0,1,0,-165.2,0,82.601,82.601,0,1,0,165.2,0z" fill-rule="evenodd" transform="translate(-159.1164,-285.2300)" stroke-width="3.7500000" fill="url(#linearGradient906)"/>
+ <path id="path913" d="M178.86,945.19a72.361,75.775,0,1,0,-144.73,0,72.361,75.775,0,1,0,144.73,0z" fill-rule="evenodd" transform="matrix(0.964970,0.000000,0.000000,0.905405,0.999740,-759.1205)" stroke-width="1.0000000pt" fill="url(#linearGradient914)"/>
+ <g id="g920" fill="none" transform="translate(-1.105212,-845.0955)">
+  <path id="path915" d="M110.59,958.16l-30.719-47.79" stroke="#000" stroke-width="3.7500000"/>
+  <path id="path916" d="M98.933,958.94l36.967-67.11" stroke="#000" stroke-width="3.4538534"/>
+  <path id="path919" d="M91.476,950.65l79.874-8.2" stroke="#F00" stroke-width="1.8750000"/>
+ </g>
+ <rect id="rect924" fill-rule="evenodd" height="9.0606" width="3.7731" y="26.224" x="101.88" stroke-width="1pt"/>
+ <rect id="rect935" fill-rule="evenodd" height="9.0606" width="3.7731" y="170.2" x="101.88" stroke-width="1pt"/>
+ <rect id="rect936" fill-rule="evenodd" transform="matrix(0.000000,1.000000,-1.000000,0.000000,0.000000,0.000000)" height="9.0606" width="3.7731" y="-36.99" x="100.63" stroke-width="1pt"/>
+ <rect id="rect938" fill-rule="evenodd" transform="matrix(0.000000,1.000000,-1.000000,0.000000,0.000000,0.000000)" height="9.0606" width="3.7731" y="-179.36" x="100.63" stroke-width="1pt"/>
+</svg>

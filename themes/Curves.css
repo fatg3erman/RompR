@@ -1,0 +1,519 @@
+/*
+=====================================================================
+= Standard HTML Elements
+=====================================================================
+*/
+
+body
+{
+    background-image: linear-gradient(#999999, #eeeeee, #aaaaaa);
+    background-color:#aaaaaa;
+}
+
+body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,textarea,input
+{
+    color:#000000;
+}
+a:link
+{
+    color:#0b0080;
+}
+
+a:visited
+{
+    color:#0b0080;
+}
+
+a:hover,a:active
+{
+    text-shadow: 0 0 15px #ff4800;
+    cursor:pointer;
+}
+
+button, input[type="button"]
+{
+    background-image: linear-gradient(#999999, #cccccc, #999999);
+    color:#ee3700;
+    border:0px none;
+    border-radius:0.5em;
+}
+
+input
+{
+    color:#181818;
+    border-radius: 0.5em !important;
+}
+
+input.inbrowser, div.inbrowser
+{
+    border: 1px solid #888888;
+}
+
+select
+{
+    color:#000000;
+    border-radius:0.5em !important;
+}
+
+/*
+=====================================================================
+= Specific Elements By ID
+=====================================================================
+*/
+
+#custombackground
+{
+    display:none;
+}
+
+#notifications
+{
+    background-image: linear-gradient(#999999, #cccccc, #999999);
+    border-bottom-left-radius:1em;
+    border-bottom-right-radius:1em;
+}
+
+#wikipopup
+{
+    background-color:#000000;
+    border-radius: 1em;
+}
+
+#imagecontainer
+{
+    background-color:#ffffff;
+}
+
+#wobblebottom {
+    background-color:#aaaaaa;
+}
+
+#tagadder
+{
+    background-color:#cccccc;
+    border-radius:1em;
+}
+
+#dragger
+{
+    background-color:rgba(0,0,0,0.5);
+}
+
+/*
+=====================================================================
+= General Classes
+=====================================================================
+*/
+
+.bordered
+{
+    border-left:1px solid #9a9a9a;
+    border-bottom:1px solid #e0e0e0;
+    border-right:1px solid #e0e0e0;
+    border-top:1px solid #9a9a9a;
+    border-radius:1em;
+}
+
+.progressbar_v, .progressbar
+{
+    border-radius:1em;
+}
+
+.selectholder
+{
+    border-radius:0.5em !important;
+}
+
+div.clickable:hover, .infoclick:hover
+{
+    text-shadow: 0 0 15px #ff4800;
+    cursor:pointer;
+}
+
+div.clickable.selected:hover
+{
+    color:#000000;
+}
+
+.selected
+{
+    background-color:#ff4800;
+}
+
+.playlistcurrentitem
+{
+    font-weight:bold;
+    font-size:105%;
+    text-shadow: 0 0 15px #ff4800;
+    transition:all 0.3s;
+}
+
+.playlistitem
+{
+    transition: all 0.4s;
+}
+
+.playlistcurrenttitle
+{
+    text-shadow: 0 0 15px #ff4800;
+    font-weight:bold;
+}
+
+.inbrowser
+{
+    color:#000000;
+}
+
+.stleft
+{
+    border-right:1px solid #888888;
+}
+
+.popupwindow
+{
+    background-image: linear-gradient(#999999, #cccccc, #999999);
+    border-left:1px solid #eeeeee;
+    border-bottom:1px solid #9a9a9a;
+    border-right:1px solid #9a9a9a;
+    border-top:1px solid #eeeeee;
+    border-radius:1em;
+}
+
+.tagmenu
+{
+    border-radius:1em;
+}
+
+table.histable tr:hover {
+    font-size:105%;
+    text-shadow: 0 0 15px #ff4800;
+    transition:all 0.1s;
+}
+
+table.histable tr
+{
+    transition:all 0.2s;
+}
+
+.backhi:hover {
+    font-size:105%;
+    text-shadow: 0 0 15px #ff4800;
+    cursor:pointer;
+    transition:all 0.1s;
+}
+
+.backhi
+{
+    transition:all 0.2s;
+}
+
+tr.clickaddtrack:hover
+{
+    background-color:#e1e4ea;
+}
+
+.topimg
+{
+    opacity:0.8;
+}
+
+.topimg:not(.button-disabled):hover
+{
+    opacity:1;
+}
+
+.tagholder table tr th {
+    background-color:rgba(255,255,255,0.5);
+    border-bottom:1px solid #cccccc;
+}
+
+.bsel
+{
+    color:#ff4800;
+}
+
+.bmid
+{
+    border-left:2px solid #ff4800;
+}
+
+.currentbun
+{
+    border-bottom:1px solid #fe6500;
+    padding-bottom:2px;
+}
+
+.dropshadow
+{
+    box-shadow:         7px 7px 5px rgba(50, 50, 50, 0.6);
+}
+
+.progressbar
+{
+    border:1px solid #414141;
+}
+
+.progressbar_v
+{
+    border-left:1px solid #9a9a9a;
+    border-bottom:1px solid #e0e0e0;
+    border-right:1px solid #e0e0e0;
+    border-top:1px solid #9a9a9a;
+}
+
+.mCSB_draggerRail
+{
+    background:rgba(0,0,0,0.1) !important;
+}
+
+.mCSB_dragger_bar
+{
+    background:rgba(0,0,0,0.75) !important;
+}
+
+/*
+=====================================================================
+= Dropdown Menus
+=====================================================================
+*/
+
+div.topdropmenu
+{
+    background-image: linear-gradient(#999999, #cccccc, #999999);
+    border-left:1px solid #eeeeee;
+    border-bottom:1px solid #9a9a9a;
+    border-right:1px solid #9a9a9a;
+}
+
+div.rightmenu
+{
+    border-top-left-radius: 1em;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 1em;
+    border-bottom-right-radius: 1em;
+}
+
+div.leftmenu
+{
+    border-top-left-radius: 0;
+    border-top-right-radius: 1em;
+    border-bottom-left-radius: 1em;
+    border-bottom-right-radius: 1em;
+}
+
+.configtitle
+{
+    background-image: linear-gradient(#999999, #cccccc, #999999);
+    border-radius:0.5em;
+    color:#000000;
+}
+
+body.mobile .configtitle
+{
+    width:95%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+/*
+=====================================================================
+= Info Panel - General
+=====================================================================
+*/
+
+.infowiki
+{
+    background-image: linear-gradient(#ffffff, #aaaaaa);
+}
+
+.infosection
+{
+    background-image: linear-gradient(#999999, #eeeeee, #999999);
+    border-radius:1em;
+    padding-left:1em;
+}
+
+/*
+=====================================================================
+= Info Panel - Spotify
+=====================================================================
+*/
+
+.helpfulalbum
+{
+    background-color: #d0d0d0;
+    border-radius:1em;
+}
+
+.tagholder_wide
+{
+    background-color: #d0d0d0;
+    border-radius:1em;
+}
+
+.tagholder_wide .helpfulalbum
+{
+    background-color: #c0c0c0;
+}
+
+.tagholder_wide .helpfulalbum.tleft
+{
+    padding-top:1.5% !important;
+}
+
+/*
+=====================================================================
+= Podcasts
+=====================================================================
+*/
+
+.podcastitem
+{
+    border-top:1px solid #000000;
+}
+
+/*
+=====================================================================
+= For Album Art Manager
+=====================================================================
+*/
+
+.albumsection button, .albumcovers .infosection button
+{
+    background-image:none !important;
+    background-color:transparent !important;
+}
+
+button:hover, input[type="button"]:hover
+{
+    color:#ff4800;
+    text-shadow: 0 0 15px #ff4800;
+}
+
+.albumsection
+{
+    background-image: linear-gradient(#999999, #eeeeee, #999999);
+    border-radius:1em;
+    padding-left:1em;
+    box-sizing:border-box;
+}
+
+#albumcovers
+{
+    background-image: linear-gradient(#ffffff, #aaaaaa);
+}
+
+.highlighted {
+    border-top: 4px solid #fe6800 !important;
+    border-left: 4px solid #fe6800 !important;
+    border-right: 4px solid #fe6800 !important;
+    border-bottom: 4px solid #fe6800 !important;
+    border-radius:12px !important;
+}
+
+.covercontainer.highlighted
+{
+    border-bottom: none !important;
+    margin-bottom:-4px;
+    background-color:#aaaaaa;
+    border-radius:12px 12px 0px 0px !important;
+}
+
+#imageeditor
+{
+    border-radius:12px !important;
+    background-color:#aaaaaa;
+}
+
+#artistchooser
+{
+    border-bottom:1px solid #555555;
+    border-top:1px solid #555555;
+    color:#555555;
+}
+
+/*
+=====================================================================
+= Things that look like they might be for styling wikipedia data
+=====================================================================
+*/
+
+table.navbox th
+{
+    background-color: rgba(0,0,0,0.1);
+}
+
+div.toc
+{
+    border-radius:1em;
+}
+
+.infobox
+{
+    border-radius:1em;
+}
+
+table.infobox th
+{
+    border-radius:1em;
+}
+
+.quotebox
+{
+    border-radius:1em;
+}
+
+.infotext table
+{
+    border-radius:1em !important;
+}
+
+.navbox-abovebelow
+{
+    padding-bottom:4px;
+}
+
+.navbox-title a:link,
+.navbox-abovebelow a:link,
+.navbox-group a:link
+{
+    text-decoration:none;
+}
+
+.navbox-title a:visited,
+.navbox-abovebelow a:visited,
+.navbox-group a:visited
+{
+    text-decoration:none;
+}
+
+.navbox-title a:hover,a:active,
+.navbox-abovebelow a:hover,a:active,
+.navbox-group a:hover,a:active
+{
+    text-decoration:none;
+}
+
+table.tracklist {
+    line-height:1.5em;
+}
+
+.tracklist tbody tr th
+{
+    font-weight:bold;
+}
+
+.description
+{
+    margin-top:4px;
+}
+
+.underline
+{
+    border-bottom: 1px solid #444444;
+}
+
+.infosection h2
+{
+    border-bottom:2px solid #444444;
+}

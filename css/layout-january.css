@@ -1,0 +1,1960 @@
+/*
+=====================================================================
+= Standard HTML Elements
+=====================================================================
+*/
+
+html {
+	height:100%;
+}
+
+body {
+    font-size:8pt;
+    margin:0px;
+    overflow:hidden;
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: auto;
+    font-smooth:always;
+}
+
+body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input {
+    font-family:verdana,helvetica,arial,sans-serif;
+    -webkit-text-size-adjust: 100%;
+}
+
+h1 {
+    font-size:250%;
+    margin-top:20%;
+    margin-left:20%;
+    margin-right:20%;
+    font-weight:normal;
+}
+
+h2 {
+    font-size:170%;
+    font-weight:bold;
+    margin-top:0px;
+    margin-bottom:0px;
+}
+
+h3 {
+    padding-bottom:0px;
+    margin-bottom:8px;
+}
+
+h1,h2,h3,h4,h5,h6 {
+    background-color:transparent;
+    white-space:normal;
+}
+
+a {
+    text-decoration:none;
+}
+
+hr {
+    -webkit-margin-before:0px;
+    -webkit-margin-after:0px;
+}
+
+input {
+    font-size:100%;
+    width:100%;
+    margin-bottom:4px;
+    margin-top:4px;
+    padding-top:2px;
+    padding-bottom:2px;
+    padding-left:0px;
+    padding-right:0px;
+}
+
+input[type=checkbox], input[type=radio] {
+    width:auto;
+}
+
+input[type=text] {
+    padding: 0px 2px;
+    height: 2em;
+    border: 0px none;
+    border-radius: 0 0;
+}
+
+.desktop select {
+    width:100%;
+    background-color:transparent;
+    border:0px none;
+    margin:0px;
+    height:2em;
+    font-size:100%;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    appearance:none;
+    pointer-events:auto;
+    z-index:99;
+}
+
+select:hover {
+    cursor:pointer;
+}
+
+button {
+    font-size:100%;
+    margin-bottom:4px;
+    margin-top:4px;
+    margin-left:8px;
+    margin-right:8px;
+    padding-top:2px;
+    padding-bottom:2px;
+    padding-left:6px;
+    padding-right:6px;
+    min-height:2em;
+    cursor:pointer;
+}
+
+/*
+=====================================================================
+= Classes for custom styling of select boxes etc
+=====================================================================
+*/
+
+#pset {
+    position:absolute;
+    display:none;
+}
+
+.desktop .selectholder {
+    background:#fff url('../newimages/blobdown2.svg') right 2px center no-repeat;
+    overflow:hidden;
+    width:50%;
+    margin-top:4px;
+    margin-bottom:4px;
+    padding-left:2px;
+    pointer-events:none;
+    z-index:98;
+}
+
+.noclicks {
+    pointer-events:none;
+}
+
+.pref .selectholder {
+    margin-left: 1em;
+}
+
+.selectholder-noselect {
+    width:50%;
+    margin-top:4px;
+    margin-bottom:4px;
+    padding-left:2px;
+    margin-left:1em;
+}
+
+.desktop .selectholder:hover {
+    background:#fff url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
+}
+
+.combobox-entry:hover {
+    background:#fff url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
+}
+
+.combobox-entry {
+    background:#fff url('../newimages/blobdown2.svg') right 2px center no-repeat;
+}
+
+.clearbox {
+    background:#fff url('../newimages/edit-delete.svg') right 2px center no-repeat;
+    background-size:12px 12px;
+}
+
+.combo-button {
+    background-image: url('../newimages/blobdown2.svg');
+    background-size:contain;
+    background-position: center;
+    background-repeat:no-repeat;
+    display:block;
+    height:2em;
+    width:2em;
+    margin-left:4px;
+}
+
+.enter {
+    box-sizing: border-box;
+}
+
+.dropdown-container
+{
+    -webkit-box-align:center;
+    align-items: center;
+}
+
+.dropdown-holder
+{
+    position:relative;
+}
+
+.drop-box
+{
+    position:relative;
+    z-index:3000;
+    display:none;
+    max-height:15em;
+    overflow:auto;
+    background-color:#ffffff;
+    color:#000000;
+    line-height:1.3em;
+    padding-left:4px;
+    cursor:pointer;
+}
+
+.tagmenu
+{
+    width:100%;
+    box-sizing:border-box;
+}
+
+.tag {
+    white-space:nowrap;
+    margin-right:1em;
+}
+
+.tagmenu-contents .backhi:hover
+{
+    color:#ffffff !important;
+    background-color:#000000 !important;
+}
+
+.drop-box .mCSB_draggerRail
+{
+    background:rgba(0,0,0,0.1) !important;
+}
+
+.drop-box .mCSB_dragger_bar
+{
+    background:rgba(0,0,0,0.75) !important;
+}
+
+.drop-box .backhi
+{
+    transition: all 0s !important;
+}
+
+.drop-box .backhi:hover
+{
+    transition: all 0s !important;
+}
+
+/*
+=====================================================================
+= General Layout Control - flex, float, etc
+=====================================================================
+*/
+
+.tright {
+    float:right;
+}
+
+.tleft {
+    float:left;
+}
+
+.textcentre {
+    text-align:center;
+}
+
+.containerbox {
+    display:-webkit-box;
+    display: flex;
+}
+
+.vertical {
+    -webkit-box-orient:vertical;
+    flex-direction: column;
+}
+
+.center {
+    -webkit-box-pack:center;
+    justify-content: center;
+}
+
+.expand {
+    -webkit-box-flex:1;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+}
+
+.fixed {
+    -webkit-box-flex:0;
+    flex-grow: 0;
+    flex-shrink:0;
+}
+
+.noselection {
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+    cursor:default;
+}
+
+.bold {
+    font-weight:bold;
+}
+
+.alignmid {
+	vertical-align:middle;
+}
+
+.clickable {
+    cursor:default;
+}
+
+.clickicon {
+    cursor:pointer;
+}
+
+.infoclick {
+    cursor:pointer;
+}
+
+.invisible {
+    display:none;
+}
+
+.moveable {
+    cursor: move;
+}
+
+.notbold {
+    font-weight:normal;
+}
+
+.clearfix:after {
+   content: " ";
+   display: block;
+   height: 0;
+   clear: both;
+}
+
+.nopointer {
+    cursor: default !important;
+}
+
+.noborder {
+    margin:0px;
+    padding:0px;
+}
+
+.selfcentered {
+    align-self:center;
+}
+
+.ucfirst {
+    text-transform:capitalize;
+}
+
+/*
+=====================================================================
+= Used by masonry layouts
+=====================================================================
+*/
+
+.masochist {
+    margin-right:auto;
+    margin-left:auto;
+    display:block;
+    max-width:95%;
+    transition: opacity 0.5s ease;
+    opacity: 1;
+}
+
+.masochist2
+{
+    margin-right:auto;
+    margin-left:auto;
+    display:block;
+    width: 90%;
+    max-width:300px;
+    transition: opacity 0.5s ease;
+    opacity: 1;
+}
+
+.tagholder {
+    margin-top: 12px;
+}
+
+.tagholder2 {
+    margin-top: 12px;
+    width:20%;
+}
+
+.tagholder_wide {
+    margin-top:4px;
+    padding: 8px;
+    box-sizing:border-box;
+    margin-bottom:2em;
+}
+
+.tagholder4 {
+    margin-top: 12px;
+    width:20%;
+}
+
+.tagholder5 {
+    margin-top: 12px;
+}
+
+.minwidthed:before
+{
+    content:"";
+    width: 10em;
+    display:block;
+    overflow:hidden;
+}
+
+.tagholder table tr.datetag
+{
+    font-size: 120%;
+    border-top:4px solid rgba(0,0,0,0);
+    padding:4px;
+}
+
+.mixbox
+{
+    width:100%;
+    margin-top:4px;
+    align-items:center;
+    padding-top:0.4em;
+    padding-bottom:0.4em;
+    box-sizing: border-box;
+    border: 4px solid rgba(0,0,0,0);
+}
+
+.mixbox .fixed .topimg
+{
+    margin-top:4px;
+}
+
+.mixbox div b
+{
+    font-size:110%;
+}
+
+.mixinfo
+{
+    padding-left:12px;
+}
+
+/*
+=====================================================================
+= Specific Elements By ID
+=====================================================================
+*/
+
+#collectionsearcher {
+    padding-left:8px;
+}
+
+#playlist {
+    height:100%;
+}
+
+#pscroller {
+    overflow:auto;
+}
+
+#playlistbuttons {
+    margin-bottom:4px;
+}
+
+#playlistbuttons > table {
+    border-collapse:collapse;
+    border-spacing:2px;
+    margin-top:2px;
+    margin-bottom:2px;
+}
+
+#horse {
+    padding-top:4px;
+    padding-bottom:0px;
+    font-weight:bold;
+    font-size:90%;
+    cursor:default;
+}
+
+#horse > table {
+    border-spacing:0px;
+}
+
+#similarartists {
+    width:100%;
+    margin-top:8px;
+}
+
+#smlrtst {
+    margin-left:auto;
+    margin-right:auto;
+    float:none;
+    display:block;
+    width:auto;
+}
+
+#wikipopup {
+    position:absolute;
+    display:none;
+    z-index:1001;
+    opacity:0.75;
+}
+
+#dragger {
+    position:absolute;
+    width:300px;
+    z-index:1200;
+    padding: 4px;
+}
+
+#wobblebottom {
+    height:80%;
+}
+
+#scrobwrangler {
+    /*cursor: pointer;*/
+    font-size:6pt;
+}
+
+#tagadder {
+    z-index:1500;
+    position:absolute;
+}
+
+#tagslist {
+    line-height:150%;
+}
+
+.padleft {
+    padding-left:8px;
+}
+
+#artistchooser {
+    font-weight:bold;
+    text-align:center;
+    width:98%;
+    margin-right:auto;
+    margin-left:auto;
+    margin-top:4px;
+    margin-bottom:2px;
+    padding-bottom:4px;
+    padding-top:4px;
+}
+
+#imagecontainer {
+    position:absolute;
+    opacity:1;
+    z-index:1002;
+    display:none;
+}
+
+#status {
+    font-weight:bold;
+    overflow:hidden;
+}
+
+/*
+=====================================================================
+= General Classes
+=====================================================================
+*/
+
+.mobonly {
+    display:none;
+}
+
+.progressbar {
+    width:95%;
+    height:1em;
+    margin-right:auto;
+    margin-left:auto;
+}
+
+.progressbar_v {
+    height:100%;
+    width:12px;
+    margin-right:auto;
+    margin-left:auto;
+}
+
+.alarmnumbers {
+    font-size:300%;
+    font-weight:bold;
+    line-height:0.7em;
+    padding-bottom:0.2em;
+}
+
+.pref {
+    margin-left:8px;
+    margin-bottom:8px;
+}
+
+.configtitle {
+    padding-top:2px;
+    padding-bottom:4px;
+    margin-bottom:4px;
+    font-size:110%;
+    margin-left:4px;
+    margin-right:4px;
+}
+
+.artistbanner {
+    margin-left:4px;
+    padding-left:8px;
+    margin-top:8px;
+}
+
+.divlabel {
+    width:41%;
+    padding-right:6px;
+    font-weight:bold;
+}
+
+.topbox {
+    padding-top:4px;
+}
+
+.dropmenu {
+    display:none;
+    margin:0px;
+    padding-left:8px;
+    padding-right:0px;
+    padding-top:0px;
+    padding-bottom:4px;
+}
+
+.dropmenu.marged {
+    margin-bottom:4px;
+}
+
+.dropmenu.visible {
+    display:block;
+}
+
+.bumpad {
+  padding-bottom:4px;
+}
+
+.fullwidth {
+    width:100%;
+    padding:0px;
+    margin:0px;
+}
+
+.smallcover {
+    width:32px;
+    height:auto;
+    vertical-align:middle;
+    margin-right:8px;
+}
+
+.svg-square {
+    width:32px;
+    height:32px;
+    font-size:32px;
+    vertical-align:middle;
+    margin-right:8px;
+}
+
+.tracknumber {
+    height:1.3em;
+    width:2em;
+    font-weight:bold;
+}
+
+.smallspacer {
+    width:2px;
+}
+
+.tracknumbr {
+    width:2em;
+}
+
+.discnumber {
+    font-weight:bold;
+    font-size:110%;
+    padding-top:2px;
+    padding-bottom:2px;
+    display:block;
+}
+
+.bum {
+    font-style:italic;
+}
+
+.clicktrack {
+    margin-bottom: 2px;
+}
+
+.line {
+    padding-bottom:2px;
+}
+
+.playlistitem {
+    padding-top:0px;
+    font-size:90%;
+}
+
+.trackgroup {
+    margin-right:2px;
+}
+
+.playlisttitle {
+    padding-left:4px;
+    margin-right:2px;
+    margin-left:4px;
+    padding-top:8px;
+    padding-bottom:8px;
+    font-size:110%;
+}
+
+.playlistcurrenttitle {
+    font-size:120%;
+    box-sizing:border-box;
+}
+
+.playlistcurrentitem {
+    font-size:100%;
+    box-sizing:border-box;
+}
+
+div.item {
+    margin-right:2px;
+}
+
+.playlistrow2 {
+    font-size:88%;
+    font-style:italic;
+    font-weight:normal;
+}
+
+.tracktime {
+    margin-left:4px !important;
+}
+
+.togglebutton {
+    padding:0px;
+    height:20px;
+    width:48px;
+    font-size:18px;
+    display:table-cell !important;
+}
+
+.togglediv {
+    display:table-cell;
+    vertical-align:middle;
+    font-size:8pt;
+}
+
+.togglecontainer {
+    display:table;
+    /*width:100%;*/
+    transition: opacity 1s ease;
+}
+
+.tgtl {
+    padding-right:4px;
+    /*because firefox is dumb and ignores the align settings of the parent container.*/
+    text-align:right;
+}
+
+.tgtr {
+    padding-left:4px;
+}
+
+.holdingcell {
+    display:inline-block;
+    width:100%
+}
+
+.holdingcell li input {
+    width:90%;
+}
+
+.holdingcell li button {
+    margin-right:6px;
+}
+
+.tiny {
+    font-size:80%;
+    margin-right:4px;
+    margin-left:2px;
+}
+
+.draggable {
+    cursor:default;
+}
+
+td.fil {
+    font-weight:bold;
+}
+
+.popupwindow {
+    position:absolute;
+    display:none;
+    z-index:1001;
+    overflow:hidden;
+}
+
+.popupcontents {
+    padding:0px;
+    margin:8px;
+    overflow:auto;
+}
+
+.cheese {
+    width:98%;
+    padding-top:4px;
+    margin-right:auto;
+    margin-left:auto;
+}
+
+.dingleberry {
+    margin-left:auto;
+    margin-right:auto;
+    text-align:center;
+    width:90%;
+    display:block;
+}
+
+.bleft {
+    font-weight:bold;
+    padding-top:2px;
+    padding-bottom:2px;
+    padding-left:8px;
+    padding-right:8px;
+}
+
+.bsel {
+   	font-size:110%;
+}
+
+.spacer {
+    padding-bottom:4px;
+    padding-top:4px;
+}
+
+.modeimg {
+    height:20px;
+    width:20px;
+    margin-right:8px;
+    vertical-align:middle;
+}
+
+.modespan {
+    vertical-align:middle;
+    font-weight:bold;
+}
+
+.prefinput {
+    width: 95%;
+}
+
+.slt {
+    white-space: nowrap;
+}
+
+.clickalbummenu
+{
+    position:relative;
+}
+
+.imgfill {
+    width: 100%;
+    height: 100%;
+}
+
+/*
+=====================================================================
+= Dropdown Menus
+=====================================================================
+*/
+
+div.topdrop
+{
+    margin:0;
+    padding:0;
+    float:left;
+    position:relative;
+}
+
+div.topdropmenu
+{
+    z-index:1000;
+    overflow-y:auto;
+    overflow-x:hidden;
+    display:none;
+    position: absolute;
+    opacity:1;
+    padding:4px;
+}
+
+div.clickalbummenu div.rightmenu
+{
+    left:-240px;
+    width:240px;
+}
+
+/*
+=====================================================================
+= Info Panel - General
+=====================================================================
+*/
+
+#artistbio ul {
+    list-style-type:none;
+}
+
+.infotext {
+    margin-left:4px;
+    margin-right:4px;
+    margin-bottom:4px;
+    padding:4px;
+}
+
+.infosection {
+    padding-left:12px;
+    padding-right:12px;
+    margin-bottom:4px;
+}
+
+.infowiki h2 {
+    margin-top: 10px;
+    margin-bottom:8px;
+    border-bottom:1px solid #454545;
+    padding-bottom:0.5em;
+    overflow:hidden;
+}
+
+.infowiki h3 {
+    margin-top: 6px;
+    margin-bottom:4px;
+    padding-top:0.5em;
+}
+
+.title-menu {
+    vertical-align:middle;
+    margin-left:8px;
+    margin-right:8px;
+    font-weight:bold;
+}
+
+.info-box-list ul {
+    list-style-type: none;
+    line-height:1.5em;
+    padding-left:2px;
+    list-style:none;
+    margin:2px;
+    padding:0px;
+}
+
+.info-box-list ul li {
+    line-height:1.5em;
+}
+
+.stleft {
+    float:left;
+    width:auto;
+    max-width:30%;
+    margin-right:12px;
+}
+
+.stright {
+    float:right;
+    margin-left:12px;
+    padding-right:0px;
+}
+
+.standout {
+    margin-bottom:12px;
+    margin-top:12px;
+}
+
+.standout ul {
+    list-style:none;
+    margin:2px;
+    padding:0px;
+}
+
+.standout ul li {
+    line-height:1.5em;
+}
+
+.statsbox {
+    margin-left:0px;
+    padding:4px;
+}
+
+table.padded {
+    border-collapse: collapse;
+}
+
+table.padded tr {
+    border-bottom:1px solid #454545;
+}
+
+table.padded tr td {
+    line-height:1.6em;
+    padding-left:8px;
+    padding-right:8px;
+}
+
+table.padded tr th {
+    line-height:1.8em;
+    padding-left:8px;
+    padding-right:8px;
+    font-weight:bold;
+}
+
+table.histable {
+    border-collapse: collapse;
+    cursor: pointer;
+}
+
+table.histable tr.top {
+    border-top:1px solid #454545;
+}
+
+table.histable tr td {
+    line-height:1.6em;
+    padding-left:8px;
+    padding-right:8px;
+}
+
+table.histable tr.current {
+    font-weight:bold;
+}
+
+.stumpy {
+    padding-left: 1em;
+}
+
+.underline {
+    border-bottom: 1px solid #454545;
+    margin-top:2em;
+    margin-bottom:0.75em;
+}
+
+.textunderline {
+    margin-top:8px;
+    padding-bottom:2px;
+    margin-bottom:4px;
+    border-bottom: 1px solid #cccccc;
+    width:99%;
+    margin-right:auto;
+    margin-left:auto;
+}
+
+.mbbox {
+    margin-left:0px;
+    margin-right:6px;
+    padding:4px;
+}
+
+.foldup .indent table tbody tr td img {
+    max-width: 100%;
+}
+
+/*
+=====================================================================
+= Info Panel - File
+=====================================================================
+*/
+
+table.motherfucker tr td {
+    vertical-align:middle;
+    padding:4px;
+}
+
+/*
+=====================================================================
+= Info Panel - LastFM
+=====================================================================
+*/
+
+.simar {
+    padding-left:4px;
+    padding-right:4px;
+    padding-top:4px;
+    padding-bottom:4px;
+    display:inline-block;
+}
+
+.notloved {
+    opacity: 0.3;
+}
+
+/*
+=====================================================================
+= Info Panel - Musicbrainz
+=====================================================================
+*/
+
+.mbtag {
+    margin-left:4px;
+    margin-right:4px;
+    white-space:nowrap;
+}
+
+/*
+=====================================================================
+= Info Panel - Discogs
+=====================================================================
+*/
+
+a.infoclick.clickreleasepage
+{
+    margin:2px;
+    line-height:2em;
+    padding-left:2px;
+    padding-right:2px;
+}
+
+/*
+=====================================================================
+= Info Panel - Soundcloud
+=====================================================================
+*/
+
+#scprog {
+    position:absolute;
+    width:2px;
+    top:0px;
+    opacity:0.6;
+    background-color:black;
+    z-index:100;
+    left:0px;
+    transition-property: left;
+    transition-duration: 1s;
+    transition-timing-function: linear;
+}
+
+#gosblin {
+    width:100%;
+    height:auto;
+}
+
+/*
+=====================================================================
+= Info Panel - Spotify
+=====================================================================
+*/
+
+.spotpossimg {
+    height:48px;
+    font-size:48px;
+    vertical-align:middle;
+    margin-right:8px;
+}
+
+.spotthing {
+    vertical-align:middle;
+    border-right: 1px solid #999999;
+}
+
+.spotchoices {
+    border-bottom:1px solid #999999;
+    padding-bottom: 8px;
+    padding-top: 8px;
+}
+
+.albumthing {
+    padding:4px;
+}
+
+.albumthing .clicktrack
+{
+    text-align:left;
+}
+
+.widermiddle {
+    flex-grow: 2;
+    flex-shrink: 0.2;
+    flex-basis: auto;
+}
+
+.narrowright {
+    flex-grow: 0.4;
+    flex-shrink: 1;
+    flex-basis: auto;
+    max-width:400px;
+}
+
+.cnotshrinker {
+    max-width:100%;
+}
+
+/*
+=====================================================================
+= Info Panel - Lyrics
+=====================================================================
+*/
+
+div.lyrics {
+    width:95%;
+    margin:auto;
+}
+
+div.lyrics p {
+    text-align:center;
+    font-size:110%;
+}
+
+/*
+=====================================================================
+= Info Panel - Videos
+=====================================================================
+*/
+
+.video {
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:2em;
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+    padding-top: 25px;
+    height: 0;
+}
+
+.youtubevid {
+    border:none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/*
+=====================================================================
+= Plugins - Playlist Manager
+=====================================================================
+*/
+
+.plmantable {
+    border-collapse:collapse;
+    width:96%;
+    position:relative;
+    word-wrap:break-word;
+    word-break:break-all;
+}
+
+.plmantableback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    opacity: 0.2;
+}
+
+/*
+=====================================================================
+= Plugins - Backup Manager
+=====================================================================
+*/
+
+.backuptable {
+    border-collapse:collapse;
+    width:95%;
+    padding:4px;
+}
+
+.backuptable tr {
+    border-bottom:1px solid black;
+}
+
+.backuptable th {
+    background-color:rgba(10,10,10,0.2);
+    text-align:center;
+    border-left:1px solid #aaaaaa;
+}
+
+.backuptable td {
+    text-align:center;
+}
+
+/*
+=====================================================================
+= Podcasts
+=====================================================================
+*/
+
+.newpod {
+    font-weight:bold;
+    font-size:90%;
+    margin-left:1em;
+    padding-left:6px;
+    padding-right:6px;
+    padding-bottom:2px;
+    padding-top:1px;
+    background-color: rgba(255, 0, 0, 0.9);
+    border-radius: 1em;
+}
+
+.unlistenedpod {
+    font-weight:bold;
+    font-size:90%;
+    margin-left:1em;
+    padding-left:6px;
+    padding-right:6px;
+    padding-bottom:2px;
+    padding-top:1px;
+    background-color: rgba(255, 160, 0, 0.9);
+    border-radius: 1em;
+}
+
+.podtitle {
+    font-weight:bold;
+    padding:2px;
+    margin:2px;
+}
+
+.newpodicon {
+    height:24px;
+    width:24px;
+    font-size:24px;
+    margin-top:2px;
+}
+
+.oldpodicon {
+    height:20px;
+    width:20px;
+    font-size:20px;
+    margin-top:2px;
+}
+
+.podoptions {
+  margin-top:4px;
+}
+
+.podoptions td {
+    vertical-align:middle;
+}
+
+.podcastitem {
+    margin-bottom:2em !important;
+}
+
+/* also SomaFM */
+.whatdoicallthis {
+    padding-left:0px;
+    padding-top:2px;
+    padding-bottom:4px;
+    font-size:96%;
+    font-weight:normal;
+}
+
+.whatdoicallthis strong {
+    font-weight: normal;
+}
+
+.whatdoicallthis p {
+    -webkit-margin-before: 0.2em;
+    -webkit-margin-after: 0.2em;
+    -margin-before: 0.2em;
+    -margin-after: 0.2em;
+}
+
+.whatdoicallthis img {
+    max-width:100%;
+}
+
+/*
+=====================================================================
+= Styling of data scraped from Icecast
+=====================================================================
+*/
+
+#content {
+    padding-left:8px;
+}
+
+td.tune-in {
+    vertical-align:middle;
+    padding:8px;
+}
+
+span.name {
+    font-size:130%;
+    font-weight:bold;
+}
+
+span.listeners {
+    font-size:90%;
+}
+
+table.servers-list {
+    width:100%;
+    list-style-type:none;
+    border-collapse:collapse;
+}
+
+table.servers-list tr {
+    border-bottom:1px solid #ffffff;
+    margin-bottom:0.3em;
+}
+
+table.servers-list tr td {
+    padding-bottom:0.8em;
+}
+
+table.servers-list div.stream-tags ul {
+    display: inline;
+}
+
+table.servers-list div.stream-tags ul li {
+    display: inline;
+}
+
+.inline-tags {
+    list-style-type: none;
+    padding-left: 4px;
+    margin: 0;
+}
+
+.stream-onair {
+    font-size:90%;
+}
+
+.stream-tags {
+    font-size:90%;
+}
+
+ul.pager {
+    list-style-type:none;
+    padding-bottom:1em;
+}
+
+ul.pager li {
+    display: inline;
+}
+
+ul.pager li a.active {
+    font-weight:bold;
+}
+
+.stream-description {
+    font-style:italic;
+}
+
+a.previewbutton {
+    display:none;
+}
+
+table.mbox-small {
+    clear: right;
+    float: right;
+    margin: 4px 0 4px 1em;
+    width: 238px;
+    font-size: 88%;
+    line-height: 1.25em;
+}
+
+div.fn {
+    display:table;
+    width:100%;
+}
+
+.mediaContainer {
+    margin-top:6px;
+}
+
+
+/*
+=====================================================================
+= CSS Animations
+=====================================================================
+*/
+
+@-webkit-keyframes pulseit{
+     0%{
+          opacity:1;
+     }
+     50%{
+          opacity:0;
+     }
+     100%{
+          opacity:1;
+     }
+}
+@-moz-keyframes pulseit{
+     0%{
+          opacity:1;
+     }
+     50%{
+          opacity:0;
+     }
+     100%{
+          opacity:1;
+     }
+}
+@keyframes pulseit{
+     0%{
+          opacity:1;
+     }
+     50%{
+          opacity:0;
+     }
+     100%{
+          opacity:1;
+     }
+}
+
+.spinner {
+     animation: spin 4s linear infinite;
+}
+
+.nospin {
+      transform: rotate(0deg);
+}
+
+.oneeighty {
+    transform: rotate(180deg);
+}
+
+.ninety {
+    transform: rotate(90deg);
+}
+
+@-webkit-keyframes spin{
+     0%{
+          -webkit-transform: rotate(0deg);
+     }
+     100%{
+          -webkit-transform: rotate(359deg);
+     }
+}
+@-moz-keyframes spin{
+     0% {
+          -moz-transform: rotate(0deg);
+     }
+     50% {
+          -moz-transform: rotate(180deg);
+     }
+     100% {
+          -moz-transform: rotate(359deg);
+     }
+}
+@keyframes spin{
+     0% {
+          transform: rotate(0deg);
+     }
+     50% {
+          transform: rotate(180deg);
+     }
+     100% {
+          transform: rotate(359deg);
+     }
+}
+
+/*
+=====================================================================
+= Things that I don't know what they're for but can't be arsed to search all the code
+=====================================================================
+*/
+
+.bar h3.label {
+    padding-left:12px;
+    padding-bottom:4px;
+     animation: pulseit 4s ease infinite;
+}
+
+tr.chart td {
+    padding-right:1em;
+}
+
+.tracktime .standout ul li {
+    display: inline-block;
+    margin-left: 2em;
+}
+
+/*
+=====================================================================
+= Things that look like they might be for styling wikipedia data
+=====================================================================
+*/
+
+.mw-headline {
+    padding-top:8px;
+    padding-bottom:8px;
+    padding-left:12px;
+    padding-right:12px;
+    margin-bottom:8px;
+}
+
+.infobox {
+    float:right;
+    margin-right:0px;
+    margin-bottom:12px;
+    margin-left:12px;
+    margin-top:12px;
+    border: 1px solid #454545;
+    font-size: 92%;
+    line-height: 1.5em;
+    clear: right;
+}
+
+.infobox_v3 {
+    float:right;
+    margin-right:0px;
+    margin-bottom:12px;
+    margin-left:12px;
+    margin-top:12px;
+    border: 1px solid #454545;
+    font-size: 92%;
+    line-height: 1.5em;
+    clear: right;
+    max-width: 325px;
+    word-wrap: break-word;
+}
+
+.thumb {
+    margin-right:12px;
+    margin-bottom:12px;
+    margin-left:12px;
+    margin-top:12px;
+    text-align:center;
+}
+
+div .thumb {
+    clear: right;
+}
+
+table.navbox {
+    width: 100%;
+    margin: auto;
+    clear: both;
+}
+
+.navbox-title {
+    padding-bottom:4px;
+}
+
+.navbox-abovebelow div ul {
+    padding-left:0.5em;
+}
+
+.navbox-abovebelow ul li {
+    list-style:none;
+    float:left;
+    padding-left:1em;
+}
+
+.navbox-list {
+    padding-bottom:4px;
+    border-color:#454545;
+}
+
+.navbox-list div ul {
+    display:inline-block;
+    margin: 0.125em;
+    padding-left:0.5em;
+}
+
+.navbox-list div ul li {
+    list-style:none;
+    float:left;
+    padding-right:1.5em;
+}
+
+
+.mw-editsection {
+    display:none;
+}
+
+th.mbox-text
+{
+    padding-top: 0.25em;
+    padding-right: 0.9em;
+}
+
+#toc ul, .toc ul {
+    list-style-type: none;
+    list-style-image: none;
+    text-align: left;
+    line-height: 1.5em;
+    margin-left: -20px;
+}
+
+#toc, .toc {
+    display: inline-block;
+    zoom: 1;
+    padding: 7px;
+    border: 1px solid #454545;
+    font-size:90%;
+}
+
+#toc #toctitle, .toc #toctitle, #toc .toctitle, .toc .toctitle {
+    text-align: center;
+}
+
+.infobox td, .infobox th {
+    vertical-align: top;
+}
+
+span.item {
+    border:none;
+}
+
+table.wikitable {
+    margin: 1em 0;
+    border: 1px solid #454545;
+    border-collapse: collapse;
+}
+
+table.wikitable tr td {
+    border: 1px solid #454545;
+    padding:0.2em;
+}
+
+table.wikitable tr th {
+    border: 1px solid #454545;
+    padding:0.2em;
+}
+
+.navbox-group {
+    padding-right:1em;
+    padding-left:1em;
+    border-color:#454545;
+}
+
+th.navbox-group {
+    white-space: nowrap;
+    text-align: right;
+}
+
+.navbox-inner, .navbox-subgroup {
+    width: 100%;
+}
+
+.infowiki div.tright {
+    clear:right;
+    float:right;
+}
+
+table.ambox-content {
+    border-left: 10px solid #f28500;
+}
+
+table.ambox {
+    margin: 1em 10%;
+}
+
+.infobox caption {
+    font-size:120%;
+    font-weight:bold;
+}
+
+#choptions
+{
+    margin-top:4px;
+}
+
+#choptions label
+{
+    margin-right: 2em;
+}
+
+.helpfulalbum
+{
+    text-align:center;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+    padding-left:4px;
+    padding-right:4px;
+    padding-bottom:4px;
+    padding-top:4px;
+    box-sizing:border-box;
+}
+
+.tagholder_wide .helpfulalbum
+{
+    margin-right:1em;
+}
+
+.tagholder_wide .helpfulalbum.tleft
+{
+    padding-top:4px;
+}
+
+.wrap
+{
+    flex-wrap:wrap;
+}
+
+.brianblessed
+{
+    margin-right:1em;
+}
+
+.thin
+{
+    opacity: 0.3;
+}
+
+[id^="pluginplaylists"] .textunderline
+{
+    font-size:120%;
+}
+
+[id^="walbum"] {
+    margin-top:8px;
+}
+
+.arsecandle
+{
+    text-align:center;
+    font-weight:bold;
+    transition: opacity 0.5s ease;
+    opacity: 1;
+}
+
+.cheeseandfish
+{
+    width:95%;
+    height:auto;
+}
+
+.jalopy
+{
+    width:95%;
+    height:auto;
+    max-width:400px;
+    transition: opacity 0.5s ease;
+    opacity: 1;
+}
+
+.jalopy120
+{
+    max-width:120px;
+}
+
+.sponklick
+{
+    vertical-align: middle;
+    line-height:1.5em;
+}
+
+.notthere
+{
+    opacity:0;
+}
+
+#helpful_spinner{
+    margin-top:1em;
+    margin-bottom:1em;
+    text-align:center;
+}
+
+.pluginsection {
+    font-weight:bold;
+    font-size:150%;
+}
+
+.pluginsection .filterinfo
+{
+    font-weight:normal;
+    font-size:100%;
+}
+
+.pluginitem
+{
+    margin-bottom:1em;
+    padding:4px;
+    box-sizing:border-box;
+}
+
+.thebigholder {
+    transition: opacity 1s ease;
+}
+
+.carol span i.tagremover {
+    margin-right: 1em;
+}
+
+.ratinstr {
+    margin-top:8px;
+    margin-bottom:8px;
+}
+
+.ratsoptions {
+    padding-top:8px;
+    margin-top:8px;
+    margin-bottom:12px;
+}
+
+.rattitle {
+    margin-left:1em;
+}
+
+.filterinfo {
+    margin-left: 1em;
+}
+
+.ratsoptions {
+    border-top: 1px solid #444444;
+}
+
+.letterholder {
+    padding:8px;
+    box-sizing:border-box;
+    text-align:center;
+    font-size:200%;
+    line-height:1.1em;
+    font-weight:bold;
+    margin-bottom:0.5em;
+}
+
+.artistnamething {
+    font-size:140%;
+    line-height:1.1em;
+    word-wrap:break-word;
+}
+
+.radioplugin_normal {
+    display:flex;
+    width:33%;
+    /*min-width:120px;*/
+    margin:2px;
+}
+
+.radioplugin_wide {
+    display:flex;
+    width:100%;
+    /*min-width:120px;*/
+}
+
+.podresult {
+    margin-bottom:1em;
+}
+
+.podresult button {
+    height:2em;
+}
+
+tr.spacerboogie {
+    border-bottom: 8px solid transparent;
+}
+
+table.fileinfotable tr td:nth-child(1):not(.notbold) {
+    font-weight:bold;
+    padding-right:1em;
+}
+
+table.fileinfotable tr td:nth-child(2) {
+    width:100%;
+}
+
+.nosides
+{
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+}

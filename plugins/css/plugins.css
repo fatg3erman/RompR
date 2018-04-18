@@ -1,0 +1,11 @@
+/*This needs to be here for in case we're using the bloody icon font*/
+ [class^="bodged-icon-"], [class*=" bodged-icon-"] {
+ 	background-size:contain;
+	background-position: center;
+	background-repeat:no-repeat;
+	display:inline-block;
+}
+.bodged-icon-helpfulthings { background-image: url('../icons/discovery-icon.png') }
+.bodged-icon-charts { background-image: url('../icons/top40.png') }
+.bodged-icon-recentlyplayed { background-image: url('../icons/History-icon.png') }
+.bodged-icon-metadata { background-image: url('../icons/metadata.png') }

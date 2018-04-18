@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg2187" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="41.395" width="41.004" version="1.0" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <defs id="defs2189">
+  <linearGradient id="linearGradient3015" y2="279.29" gradientUnits="userSpaceOnUse" x2="104.9" y1="234.64" x1="103.84">
+   <stop id="stop3143" stop-color="#004191" offset="0"/>
+   <stop id="stop3145" stop-color="#000" stop-opacity="0" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient3017" y2="236.03" gradientUnits="userSpaceOnUse" x2="119.53" y1="263.73" x1="97.438">
+   <stop id="stop2164" stop-color="#000" offset="0"/>
+   <stop id="stop2166" stop-color="#000" stop-opacity="0" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient3019" y2="250.93" gradientUnits="userSpaceOnUse" x2="128.52" y1="250.93" x1="85.767">
+   <stop id="stop3157" stop-color="#FFF" offset="0"/>
+   <stop id="stop3159" stop-color="#FFF" stop-opacity="0" offset="1"/>
+  </linearGradient>
+ </defs>
+ <metadata id="metadata2193">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="translate(-4.9749553,-2.7401664)">
+  <g id="g3005" transform="matrix(0.93722446,0,0,1.0221035,2.4824415,-1.1623681)">
+   <path id="path2160" d="m128.52,250.93c0,10.905-9.5701,19.746-21.376,19.746-11.805,0-21.376-8.8406-21.376-19.746s9.5701-19.746,21.376-19.746c11.805,0,21.376,8.8406,21.376,19.746z" transform="translate(-82.621787,-226.86936)" stroke="url(#linearGradient3017)" fill="url(#linearGradient3015)"/>
+   <g id="g3194" transform="matrix(0.6759872,0,0,0.8866724,-48.091867,-194.71568)">
+    <rect id="rect3163" ry="0.88997" height="16.946" width="4.5623" y="239.76" x="91.19" fill="#000"/>
+    <path id="rect3165" fill="#000" d="m97.946,239.76,2.7824,0c0.49305,0,9.7043-4.9944,9.7043-4.5013l0.0856,25.777c0,0.49304-9.2968-4.3302-9.7899-4.3302h-2.7824c-0.49304,0-0.88997-0.39693-0.88997-0.88997v-15.166c0-0.49304,0.39693-0.88997,0.88997-0.88997z"/>
+    <path id="path3170" stroke-linejoin="miter" d="m113.63,241c3.4593,5.7748,2.4081,9.971,0,13.692" stroke="#000" stroke-linecap="butt" stroke-width="1px" fill="none"/>
+    <path id="path3172" stroke-linejoin="miter" d="m116.12,238.34c5.7182,8.3478,3.9805,14.414,0,19.793" stroke="#000" stroke-linecap="butt" stroke-width="1.54579449px" fill="none"/>
+    <path id="path3174" stroke-linejoin="miter" d="m120.01,236.36c6.5246,9.9674,4.5418,17.21,0,23.633" stroke="#000" stroke-linecap="butt" stroke-width="1.80427372px" fill="none"/>
+   </g>
+   <path id="path3149" d="m128.52,250.93c0,10.905-9.5701,19.746-21.376,19.746-11.805,0-21.376-8.8406-21.376-19.746s9.5701-19.746,21.376-19.746c11.805,0,21.376,8.8406,21.376,19.746z" transform="matrix(0.00485315,0.2663847,-0.6679411,0.00183696,191.19312,-17.3972)" fill="url(#linearGradient3019)"/>
+  </g>
+ </g>
+</svg>

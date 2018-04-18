@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg1"
+   height="94.984"
+   width="94.984"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="toggle-open.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="775"
+     inkscape:window-height="480"
+     id="namedview31"
+     showgrid="false"
+     inkscape:zoom="2.484629"
+     inkscape:cx="47.492001"
+     inkscape:cy="47.492001"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg1" />
+  <metadata
+     id="metadata3">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title />
+        <dc:description />
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>hash</rdf:li>
+            <rdf:li />
+            <rdf:li>action</rdf:li>
+            <rdf:li>computer</rdf:li>
+            <rdf:li>icons</rdf:li>
+            <rdf:li>buttons</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://www.openclipart.org">
+            <dc:title>Andy Fitzsimon</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Andy Fitzsimon</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Andy Fitzsimon</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:date />
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://web.resource.org/cc/PublicDomain" />
+        <dc:language>en</dc:language>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3">
+    <linearGradient
+       id="linearGradient896">
+      <stop
+         id="stop897"
+         stop-color="#008aff"
+         offset="0" />
+      <stop
+         id="stop898"
+         stop-color="#857c4d"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient836">
+      <stop
+         id="stop837"
+         stop-color="#FFF"
+         stop-opacity="0.00000000"
+         offset="0" />
+      <stop
+         id="stop838"
+         stop-color="#fff"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient863"
+       y2="271.88"
+       xlink:href="#linearGradient836"
+       gradientUnits="userSpaceOnUse"
+       y1="393.44"
+       gradientTransform="translate(-34.323807,-17.967893)"
+       x2="280.87"
+       x1="252.48" />
+    <radialGradient
+       id="radialGradient3894"
+       fx="101.85"
+       fy="457.1"
+       gradientUnits="userSpaceOnUse"
+       cy="480.49"
+       cx="99.33"
+       r="42.109">
+      <stop
+         id="stop842"
+         stop-color="#FFF"
+         offset="0" />
+      <stop
+         id="stop844"
+         stop-color="#dadada"
+         offset="0.5038" />
+      <stop
+         id="stop845"
+         stop-color="#bdbdbd"
+         offset="0.5138" />
+      <stop
+         id="stop846"
+         stop-color="#dedede"
+         offset="0.64667" />
+      <stop
+         id="stop843"
+         stop-color="#FFF"
+         offset="1" />
+    </radialGradient>
+    <radialGradient
+       id="radialGradient3896"
+       fx="101.49"
+       fy="495.61"
+       xlink:href="#linearGradient896"
+       gradientUnits="userSpaceOnUse"
+       cy="481.57"
+       cx="99.33"
+       r="42.109" />
+    <linearGradient
+       id="linearGradient3898"
+       y2="498.94"
+       xlink:href="#linearGradient836"
+       gradientUnits="userSpaceOnUse"
+       x2="153.84"
+       y1="521.18"
+       x1="153.84" />
+    <radialGradient
+       id="radialGradient3905"
+       xlink:href="#linearGradient896"
+       gradientUnits="userSpaceOnUse"
+       cy="-30.8"
+       cx="-37.981"
+       gradientTransform="matrix(-1,0,0,-0.97505177,9.3705211,22.789623)"
+       r="33.104" />
+    <radialGradient
+       id="radialGradient3907"
+       gradientUnits="userSpaceOnUse"
+       cy="39.233"
+       cx="46.71"
+       gradientTransform="matrix(-1,0,0,-0.97505177,94.06209,91.075825)"
+       r="33.104">
+      <stop
+         id="stop3837"
+         stop-color="#000"
+         offset="0" />
+      <stop
+         id="stop3839"
+         stop-color="#000"
+         stop-opacity="0.64885497"
+         offset="1" />
+    </radialGradient>
+  </defs>
+  <path
+     id="path862"
+     fill-rule="evenodd"
+     fill="url(#linearGradient863)"
+     d="m327.01,378.67c0,63.571-51.594,115.17-115.17,115.17-63.571,0-115.17-51.594-115.17-115.17,0-63.571,51.594-115.17,115.17-115.17,63.571,0,115.17,51.594,115.17,115.17z" />
+  <g
+     id="g3913">
+    <g
+       id="g3800"
+       fill-rule="evenodd">
+      <path
+         id="path855"
+         d="m127.4,483.73c0,15.106-12.246,27.352-27.352,27.352s-27.352-12.246-27.352-27.352,12.246-27.352,27.352-27.352,27.352,12.246,27.352,27.352z"
+         transform="matrix(1.736345,0,0,1.736345,-126.51006,-792.36339)"
+         fill="url(#radialGradient3894)" />
+      <path
+         id="path1414"
+         d="m127.4,483.73c0,15.106-12.246,27.352-27.352,27.352s-27.352-12.246-27.352-27.352,12.246-27.352,27.352-27.352,27.352,12.246,27.352,27.352z"
+         transform="matrix(1.736345,0,0,1.736345,-126.22903,-792.43569)"
+         fill="url(#radialGradient3896)" />
+      <path
+         id="path856"
+         d="m184.98,527.64c0,16.299-13.213,29.511-29.511,29.511-16.299,0-29.511-13.213-29.511-29.511,0-16.299,13.213-29.511,29.511-29.511,16.299,0,29.511,13.213,29.511,29.511z"
+         stroke-opacity="0.37190085"
+         transform="matrix(1.29167,0,0,1.524596,-152.98431,-758.12309)"
+         stroke-width="1pt"
+         fill="url(#linearGradient3898)" />
+    </g>
+  </g>
+  <path
+     id="path1440"
+     stroke-linejoin="round"
+     d="M76.936,24.772,17.768,24.063,46.087,81.58,76.936,24.772z"
+     stroke-opacity="0.71634617"
+     fill-rule="evenodd"
+     stroke="url(#radialGradient3907)"
+     stroke-linecap="round"
+     stroke-width="7.04040384"
+     fill="url(#radialGradient3905)"
+     style="fill:#000000;fill-opacity:0.60000002" />
+</svg>

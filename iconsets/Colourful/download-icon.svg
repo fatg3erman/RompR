@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="100%" width="100%" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 381 381" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <defs id="defs4">
+  <filter id="imagebot_11">
+   <feGaussianBlur id="imagebot_16" stdDeviation="5.4"/>
+  </filter>
+  <linearGradient id="linearGradient3016" y2="571.28" gradientUnits="userSpaceOnUse" x2="532.07" gradientTransform="matrix(1.0110949,0,0,0.98902682,-195.88,-385.38)" y1="571.28" x1="217.59">
+   <stop id="imagebot_22" stop-opacity=".15044" stop-color="#fff" offset="0"/>
+   <stop id="imagebot_21" stop-opacity=".29204" stop-color="#fff" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient3019" y2="716.65" gradientUnits="userSpaceOnUse" x2="512.7" gradientTransform="translate(-195.88,-385.38)" y1="439.51" x1="244.45">
+   <stop id="imagebot_20" stop-color="#fff" offset="0"/>
+   <stop id="imagebot_19" stop-color="#e4e4e4" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient3022" y2="439.5" gradientUnits="userSpaceOnUse" x2="258.58" gradientTransform="matrix(0.99998542,0,0,1.0000146,-195.88,-385.38)" y1="649.5" x1="458.58">
+   <stop id="imagebot_18" stop-color="#004ab9" offset="0"/>
+   <stop id="imagebot_17" stop-color="#002dde" offset="1"/>
+  </linearGradient>
+ </defs>
+ <g id="g3793">
+  <path id="imagebot_10" stroke-linejoin="round" d="m565.71,575.22a180,180,0,1,1,-360,0,180,180,0,1,1,360,0z" transform="matrix(1.0512,0,0,1.0512,-213.614,-412.809)" filter="url(#imagebot_11)" stroke="#FFF" stroke-width="5"/>
+  <path id="imagebot_8" fill="url(#linearGradient3022)" d="m361.26,189.84c0,94.68-76.75,171.43-171.43,171.43-94.67,0-171.42-76.75-171.42-171.43s76.75-171.43,171.42-171.43c94.68,0,171.43,76.75,171.43,171.43z"/>
+  <path id="imagebot_6" d="M189.84,0c-104.74,0-189.84,85.1-189.84,189.84,0,104.73,85.1,189.84,189.84,189.84,104.73,0,189.84-85.11,189.84-189.84,0-104.74-85.11-189.84-189.84-189.84zm0,19.68c94.09,0,170.16,76.07,170.16,170.16s-76.07,170.16-170.16,170.16-170.16-76.07-170.16-170.16,76.07-170.16,170.16-170.16zm-30.56,44.53v106.75h-48.1l78.66,75.1,78.66-75.1h-48.1v-106.75h-61.12zm-60.75,185.38v55.65h182.59v-55.65h-29.44v29.34h-123.65v-29.34h-29.5z" stroke-width="19.70000076" fill="url(#linearGradient3019)"/>
+  <path id="imagebot_4" fill="url(#linearGradient3016)" d="m189.84,24.12c-91.52,0-165.72,74.2-165.72,165.72,0,62.64,34.76,117.14,86.03,145.31,6.16-117.57,103.43-211.03,222.53-211.03,3.16,0,6.29,0.06,9.41,0.19-25.4-58.93-84.01-100.19-152.25-100.19z"/>
+ </g>
+ <metadata id="metadata25">
+  <rdf:RDF>
+   <cc:Work>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <cc:license rdf:resource="http://creativecommons.org/licenses/publicdomain/"/>
+    <dc:publisher>
+     <cc:Agent rdf:about="http://openclipart.org/">
+      <dc:title>Openclipart</dc:title>
+     </cc:Agent>
+    </dc:publisher>
+    <dc:title/>
+    <dc:date>2012-09-10T11:43:42</dc:date>
+    <dc:description>arrow, clip art, clipart, down, download,</dc:description>
+    <dc:source>http://openclipart.org/detail/172272/download-by-dako-172272</dc:source>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>DaKo</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:subject>
+     <rdf:Bag>
+      <rdf:li>arrow</rdf:li>
+      <rdf:li>clip art</rdf:li>
+      <rdf:li>clipart</rdf:li>
+      <rdf:li>down</rdf:li>
+      <rdf:li>download</rdf:li>
+     </rdf:Bag>
+    </dc:subject>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/licenses/publicdomain/">
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+</svg>

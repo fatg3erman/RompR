@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/Graphics/SVG/1.0/DTD/svg10.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="250" height="250" id="svg8846">
+  <defs id="defs8848">
+    <linearGradient id="linearGradient8409">
+      <stop style="stop-color: white; stop-opacity: 0.659341;" offset="0" id="stop8411"/>
+      <stop style="stop-color: white; stop-opacity: 0;" offset="1" id="stop8413"/>
+    </linearGradient>
+    <linearGradient x1="200.5" y1="437.36218" x2="346.5" y2="583.36218" id="linearGradient22179" xlink:href="#linearGradient8409" gradientUnits="userSpaceOnUse"/>
+  </defs>
+  <g id="layer1">
+    <path d="M 356 511.86218 A 82 80 0 1 1  192,511.86218 A 82 80 0 1 1  356 511.86218 z" transform="matrix(1.36884, 0, 0, 1.40306, -249.906, -592.96)" style="opacity: 1; fill: rgb(211, 215, 207); fill-opacity: 1; fill-rule: evenodd; stroke: rgb(30, 120, 0); stroke-width: 17.4872; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0pt; stroke-opacity: 1;" id="path19357"/>
+    <path d="M 346.5 510.36218 A 73 73 0 1 1  200.5,510.36218 A 73 73 0 1 1  346.5 510.36218 z" transform="matrix(1.7127, 0, 0, 1.7127, -343.781, -749.098)" style="opacity: 1; fill: url(#linearGradient22179) rgb(0, 0, 0); fill-opacity: 1; fill-rule: evenodd; stroke: none; stroke-width: 15; stroke-linecap: round; stroke-linejoin: round; stroke-miterlimit: 4; stroke-dasharray: none; stroke-dashoffset: 0pt; stroke-opacity: 1;" id="path19359"/>
+    <path d="M 47.351551,135.21849 C 73.63635,153.44262 101.67348,199.70388 101.67348,199.70388 L 128.30875,199.76399 C 128.30875,199.76399 142.40708,136.02304 155.62002,103.65183 C 167.97131,73.391669 181.57927,47.952953 181.57927,47.952953 C 181.57927,47.952953 167.07171,46.074634 151.02574,69.62034 C 122.05453,112.13246 109.38369,168.86304 109.38369,168.86304 C 109.38369,168.86304 102.02394,159.05004 87.654912,146.43335 C 73.285887,133.81664 48.052479,134.1671 47.351551,135.21849 z " style="fill: rgb(30, 120, 0); fill-opacity: 1; fill-rule: evenodd; stroke: none; stroke-width: 1px; stroke-linecap: butt; stroke-linejoin: miter; stroke-opacity: 1;" id="path19371"/>
+  </g>
+</svg>

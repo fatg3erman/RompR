@@ -1,0 +1,327 @@
+body
+{
+    color:#000000;
+    background-color:#171760;
+}
+
+body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input
+{
+    color:#dddddd;
+}
+
+h1,h2,h3,h4,h5,h6
+{
+    color:#eeeeee;
+}
+
+a:link
+{
+    color:#dcdcff;
+}
+
+a:visited
+{
+    color:#dcdcff;
+}
+
+a:hover,a:active
+{
+    color:#ff4800;
+}
+
+input
+{
+    color:#222222;
+}
+
+button
+{
+    color:#000000;
+    border: 1px solid #000000;
+}
+
+button:hover
+{
+    color:#ff4800;
+    border:1px solid #ff4800;
+    text-shadow: 0 0 15px #ff4800;
+}
+
+select
+{
+    color:#222222;
+}
+
+input.inbrowser, div.inbrowser
+{
+    border: 1px solid #888888;
+}
+
+#notifications
+{
+    background-color:#181850;
+}
+
+#custombackground
+{
+    display:none;
+}
+
+/*-- divs used to create infobar layout --*/
+
+.bordered
+{
+    border-left:1px solid #121240;
+    border-bottom:1px solid #1a1a90;
+    border-right:1px solid #1a1a90;
+    border-top:1px solid #121240;
+}
+
+/*-- divs and classes used in the albums list --*/
+
+.album1
+{
+    background-color:#181850;
+}
+
+.album2
+{
+    background-color:#171760;
+}
+
+a.album:visited
+{
+    color:#dcdcff;
+}
+
+a.album:hover,a.album:active
+{
+    color:#ff4800;
+}
+
+#filemenu
+{
+    border-left:1px solid #444444;
+}
+
+div.clickable:hover
+{
+    color:#ff4800;
+}
+
+div.clickable.selected:hover
+{
+    color:#dddddd;
+}
+
+.selected
+{
+    background-color:#ff4800;
+}
+
+/*-- divs and classes used in the playlist --*/
+
+.playlistcurrentitem
+{
+    color:#cc0000;
+}
+
+.playlistcurrenttitle
+{
+    color:#cc0000;
+}
+
+.item
+{
+    border-top:1px solid #0022dd;
+}
+
+/*-- For Wikipedia and Last.FM pages --*/
+
+.stleft
+{
+    border-right:1px solid #aaaaaa;
+}
+
+#wikipopup
+{
+    background-color:#000000;
+}
+
+#imagecontainer
+{
+    background-color:#ffffff;
+}
+
+.infosection
+{
+    background-color:#131330;
+}
+
+.albumsection
+{
+    background-color:#131330;
+}
+
+#imageeditor
+{
+    background-color:#131330;
+}
+
+.translucent
+{
+    opacity:0.7;
+}
+
+.infowiki
+{
+    background-color:#171760;
+}
+
+/*-- For Album Cover Art --*/
+
+.crackbaby
+{
+    background-color:#181850;
+}
+
+#albumcovers
+{
+    background-color:#171760;
+}
+
+.popupwindow
+{
+    background-color:#121230;
+    border-left:2px solid #888888;
+    border-bottom:2px solid #888888;
+    border-right:2px solid #888888;
+    border-top:2px solid #888888;
+}
+
+/*-- Styles for drop-down menus --*/
+
+div.topdropmenu
+{
+    background-color:#181850;
+    border-left:1px solid #1a1a90;
+    border-bottom:1px solid #1a1a90;
+    border-right:1px solid #1a1a90;
+    border-top:none;
+}
+
+.configtitle
+{
+    background-color:#171760;
+}
+
+/*-- Styles to make the Wikipedia nav boxes look prettier --*/
+
+table.navbox th
+{
+    background-color:#181850;
+}
+
+.navbox-title a:link,
+.navbox-abovebelow a:link,
+.navbox-group a:link
+{
+    text-decoration:none;
+}
+
+.navbox-title a:visited,
+.navbox-abovebelow a:visited,
+.navbox-group a:visited
+{
+    text-decoration:none;
+}
+
+.navbox-title a:hover,a:active,
+.navbox-abovebelow a:hover,a:active,
+.navbox-group a:hover,a:active
+{
+    text-decoration:none;
+}
+
+#tagadder
+{
+    background-color:#000055;
+}
+
+tr.clickaddtrack:hover
+{
+    background-color:#171760;
+}
+
+.highlighted {
+    border-top: 4px solid #fe6800 !important;
+    border-left: 4px solid #fe6800 !important;
+    border-right: 4px solid #fe6800 !important;
+    border-bottom: 4px solid #fe6800 !important;
+    border-radius:2px !important;
+}
+
+.covercontainer.highlighted
+{
+    border-bottom: none !important;
+    margin-bottom:-4px;
+    background-color:#171760;
+}
+
+#imageeditor
+{
+    background-color:#171760;
+}
+
+.tagholder table tr th {
+    background-color:rgba(0,0,0,0.8);
+    border-bottom:1px solid #dddddd;
+}
+
+.bsel
+{
+    color:#ff4800;
+}
+
+.bmid
+{
+    border-left:2px solid #ff4800;
+}
+
+.helpfulalbum
+{
+    background-color:#181850;
+}
+
+.tagholder_wide
+{
+    background-color:#181850;
+}
+
+#artistchooser
+{
+    border-top:1px solid #cccccc;
+    border-bottom:1px solid #cccccc;
+    color:#aaaaaa;
+}
+
+.currentbun
+{
+    border-bottom:1px solid #fe6500;
+    padding-bottom:2px;
+}
+
+.dropshadow
+{
+    box-shadow:         7px 7px 5px rgba(0, 0, 0, 0.6);
+}
+
+.podcastitem
+{
+    border-top:1px solid #cccccc;
+}
+
+#dragger
+{
+    background-color:rgba(0,0,0,0.3);
+}

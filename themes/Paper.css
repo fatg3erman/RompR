@@ -1,0 +1,364 @@
+/*
+=====================================================================
+= Standard HTML Elements
+=====================================================================
+*/
+
+body {
+    color:#000000;
+    background-image:url('Paper1.jpg');
+}
+
+h1,h2,h3,h4,h5,h6 {
+    color:#000000;
+}
+
+a:link {
+    color:#12569a;
+}
+
+a:visited {
+    color:#12569a;
+}
+
+a:hover,a:active {
+    color:#ff4800;
+}
+
+button {
+    color:#000000;
+    background-color:transparent;
+    border:none;
+    box-shadow: 3px 3px 2px rgba(50, 50, 50, 0.8);
+    font-weight:bold;
+}
+
+button:active {
+    box-shadow:none;
+}
+
+button:hover {
+    color:#ff4800;
+    background-color: rgba(255, 72, 0, 0.1);
+}
+
+input.inbrowser, div.inbrowser {
+    border: 1px solid #888888;
+}
+
+/*
+=====================================================================
+= Specific Elements By ID
+=====================================================================
+*/
+
+#custombackground {
+    display:none;
+}
+
+#buttonholder {
+    box-shadow:  7px 7px 5px rgba(50, 50, 50, 0.6);
+}
+
+#patrickmoore {
+    box-shadow:  7px 7px 5px rgba(50, 50, 50, 0.6);
+}
+
+#infopane {
+    box-sizing:border-box;
+    border-left: 2px solid black;
+    border-right: 2px solid white;
+    border-top: 2px solid black;
+}
+
+#notifications {
+    background-image:url('oldpaper.jpg');
+    box-shadow:  7px 7px 5px rgba(50, 50, 50, 0.6);
+    opacity:0.8;
+}
+
+#wikipopup {
+    background-image:url('oldpaper.jpg');
+}
+
+#tagadder {
+    background-image:url('oldpaper.jpg');
+}
+
+#dragger {
+    background-color:rgba(0,0,0,0.5);
+}
+
+/*
+=====================================================================
+= General Classes
+=====================================================================
+*/
+
+tr.draggable:not(.selected):hover {
+    background-color:rgba(150,150,150,0.3);
+}
+
+.bordered {
+    border-top:1px solid #dddddd;
+    border-left:1px solid #dddddd;
+}
+
+.album1 {
+    background-color:rgba(150,150,150,0.1);
+}
+
+.album2 {
+    background-color:rgba(150,150,150,0.2);
+}
+
+div.clickable:not(.selected):hover {
+    background-color:rgba(220,220,220,0.7);
+}
+
+div.clickable.selected:hover {
+    color:#dddddd;
+}
+
+.selected {
+    background-color:#CC5500;
+}
+
+.playlistcurrentitem {
+    color:#cc0000;
+}
+
+.playlistcurrenttitle {
+    color:#cc0000;
+}
+
+.stleft {
+    border-right:1px solid #aaaaaa;
+}
+
+.popupwindow {
+    background-image:url('vellum-seamless-repeating-white.jpg');
+    border-top:1px solid #dddddd;
+    border-left:1px solid #dddddd;
+}
+
+table.histable tr:hover {
+    background-color:#CC5500;
+}
+
+.backhi:hover {
+    background-color:#CC5500;
+    cursor:pointer;
+}
+
+tr.clickaddtrack:hover {
+    background-image:url('oldpaper.jpg');
+}
+
+.tagholder table tr th {
+    background-image:url('oldpaper.jpg');
+    border-bottom:1px solid #000000;
+}
+
+.bsel {
+    color:#ff4800;
+}
+
+.bmid {
+    border-left:2px solid #ff4800;
+}
+
+.currentbun {
+    border-bottom:1px solid #fe6500;
+    padding-bottom:2px;
+}
+
+.dropshadow {
+    box-shadow:         7px 7px 5px rgba(50, 50, 50, 0.6);
+}
+
+.progressbar {
+    border:1px solid #414141;
+}
+
+.mCSB_draggerRail {
+    background:rgba(0,0,0,0.1) !important;
+}
+
+.mCSB_dragger_bar {
+    background:rgba(0,0,0,0.75) !important;
+}
+
+.textunderline {
+    border-bottom: 1px solid #222222;
+}
+
+/*
+=====================================================================
+= Dropdown Menus
+=====================================================================
+*/
+
+div.topdropmenu {
+    background-image:url('oldpaper.jpg');
+    border-bottom:1px solid #555555;
+    border-right:1px solid #555555;
+    border-top:none;
+}
+
+.configtitle {
+    background-image:url('tanpaper.jpg');
+    box-shadow:  3px 3px 2px rgba(50, 50, 50, 0.5);
+    margin-bottom:8px;
+}
+
+/*
+=====================================================================
+= Info Panel - General
+=====================================================================
+*/
+
+.infosection {
+    background-image:url('tanpaper.jpg');
+    box-shadow:  3px 3px 2px rgba(50, 50, 50, 0.5);
+    margin-bottom:8px;
+}
+
+.albumcovers .infosection {
+    background-image:url('Paper1.jpg');
+}
+
+/*
+=====================================================================
+= Info Panel - Spotify
+=====================================================================
+*/
+
+.tagholder_wide
+{
+    background-color:rgba(0,0,0,0.2);
+}
+
+.helpfulalbum
+{
+    background-color:rgba(0,0,0,0.3);
+}
+
+.tagholder_wide .helpfulalbum.tleft
+{
+    background-color:transparent;
+}
+/*
+=====================================================================
+= Podcasts
+=====================================================================
+*/
+
+.podcastitem
+{
+    border-top:1px solid #000000;
+}
+
+/*
+=====================================================================
+= For Album Art Manager
+=====================================================================
+*/
+
+.albumsection {
+    background-image:url('oldpaper.jpg');
+    box-shadow: 7px 7px 5px rgba(50, 50, 50, 0.6);
+}
+
+.infowiki {
+    background-image:url('vellum-seamless-repeating-white.jpg');
+}
+
+.highlighted {
+    border-top: 4px solid #fe6800 !important;
+    border-left: 4px solid #fe6800 !important;
+    border-right: 4px solid #fe6800 !important;
+    border-bottom: 4px solid #fe6800 !important;
+    border-radius:2px !important;
+}
+
+.covercontainer.highlighted
+{
+    border-bottom: none !important;
+    margin-bottom:-4px;
+    background-image:url('Paper1.jpg');
+}
+
+#imageeditor {
+    background-image:url('Paper1.jpg');
+}
+
+
+
+#artistchooser {
+    border-bottom:1px solid #555555;
+    border-top:1px solid #555555;
+    color:#555555;
+}
+
+#artistcoverslist {
+    background-image:url('Paper1.jpg');
+    box-shadow:         7px 7px 5px rgba(50, 50, 50, 0.6);
+}
+
+#coverslist {
+    background-image:url('vellum-seamless-repeating-white.jpg');
+    box-sizing:border-box;
+    border-left:2px solid black;
+}
+
+/*
+=====================================================================
+= Things that look like they might be for styling wikipedia data
+=====================================================================
+*/
+
+table.navbox th
+{
+    background-color: #e5e5e5;
+}
+
+.navbox-title
+{
+    color:#000000;
+}
+
+.navbox-group
+{
+    color:#000000;
+}
+
+.navbox-abovebelow
+{
+    color:#000000;
+    padding-bottom:4px;
+}
+
+.navbox-title a:link,
+.navbox-abovebelow a:link,
+.navbox-group a:link
+{
+    color:#990000;
+    text-decoration:none;
+}
+
+.navbox-title a:visited,
+.navbox-abovebelow a:visited,
+.navbox-group a:visited
+{
+    color:#990000;
+    text-decoration:none;
+}
+
+.navbox-title a:hover,a:active,
+.navbox-abovebelow a:hover,a:active,
+.navbox-group a:hover,a:active
+{
+    color:#ff4800;
+    text-decoration:none;
+}

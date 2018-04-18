@@ -1,0 +1,412 @@
+body
+{
+    background-color:#cccccc;
+}
+
+body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input
+{
+    color:#000000;
+}
+
+h1,h2,h3,h4,h5,h6
+{
+    color:#000000;
+}
+
+a:link
+{
+    color:#0b0080;
+}
+
+a:visited
+{
+    color:#0b0080;
+}
+
+a:hover,a:active
+{
+    color:#ff4800;
+}
+
+input
+{
+    color:#181818;
+}
+
+button
+{
+    color:#000000;
+    border: 1px solid #000000;
+}
+
+button:hover
+{
+    color:#ff4800;
+    text-shadow: 0 0 15px #ff4800;
+}
+
+select
+{
+    color:#181818;
+}
+
+input.inbrowser, div.inbrowser
+{
+    border: 1px solid #888888;
+}
+
+#infobar.coloured, #thetopbit
+{
+    background-image: linear-gradient(#dfdfdf, #b9b9b9);
+}
+
+#headerbar
+{
+    background-image: linear-gradient(#b9b9b9, #b4b4b4);
+}
+
+#custombackground
+{
+    display:none;
+}
+
+#infopane
+{
+    border-top:1px solid #000000;
+}
+
+#sources
+{
+    border-top:1px solid #000000;
+}
+
+#playlist
+{
+    background-image: linear-gradient(#b4b4b4, #aeaeae);
+}
+
+/*-- divs used to create infobar layout --*/
+
+.bordered
+{
+    border-left:1px solid #9a9a9a;
+    border-bottom:1px solid #efefef;
+    border-right:1px solid #efefef;
+    border-top:1px solid #9a9a9a;
+}
+
+#notifications
+{
+    background-color:#a9a9a9;
+}
+/*-- divs and classes used in the albums list --*/
+
+.album1
+{
+    background-color:#c4c4c4;
+}
+
+.album2
+{
+    background-color:#cccccc;
+}
+
+.textunderline {
+    border-bottom: 1px solid #222222;
+}
+
+a.album:visited
+{
+    color:#220000;
+}
+
+a.album:hover,a.album:active
+{
+    color:#ff4800;
+}
+
+#filemenu
+{
+    border-left:1px solid #444444;
+}
+
+div.clickable:hover
+{
+    color:#ff4800;
+}
+
+div.clickable.selected:hover
+{
+    color:#dddddd;
+}
+
+.selected
+{
+    background-color:#CC5500;
+}
+
+/*-- divs and classes used in the playlist --*/
+
+.playlistcurrentitem
+{
+    color:#cc0000;
+}
+
+.playlistcurrenttitle
+{
+    color:#cc0000;
+}
+
+.item
+{
+    border-top:1px solid #999999;
+}
+
+.inbrowser
+{
+    color:#000000;
+}
+
+/*-- For Wikipedia and Last.FM pages --*/
+
+.stleft
+{
+    border-right:1px solid #888888;
+}
+
+#wikipopup
+{
+    background-color:#000000;
+}
+
+#imagecontainer
+{
+    background-color:#ffffff;
+}
+
+.infosection
+{
+    background-image: linear-gradient(#dfdfdf, #b9b9b9);
+}
+
+.albumsection
+{
+    background-color:#bbbbbb;
+}
+
+.translucent
+{
+    opacity:0.7;
+}
+
+.infowiki
+{
+    background-color:#eaeaea;
+}
+
+/*-- For Album Cover Art --*/
+
+.crackbaby
+{
+    background-image: linear-gradient(#dfdfdf, #b9b9b9);
+}
+
+#albumcovers
+{
+    background-color:#bbbbbb;
+}
+
+.popupwindow
+{
+    background-color:#bababa;
+    border-left:1px solid #eeeeee;
+    border-bottom:1px solid #9a9a9a;
+    border-right:1px solid #9a9a9a;
+    border-top:1px solid #eeeeee;
+}
+
+
+/*-- Styles for drop-down menus --*/
+
+div.topdropmenu
+{
+    background-image: linear-gradient(#b9b9b9, #b4b4b4);
+    border-left:1px solid #eeeeee;
+    border-bottom:1px solid #9a9a9a;
+    border-right:1px solid #9a9a9a;
+}
+
+.configtitle
+{
+    background-image: linear-gradient(#dfdfdf, #b4b4b4);
+}
+
+/*-- Styles to make the Wikipedia nav boxes look prettier --*/
+
+table.navbox th
+{
+    background-color: #dddddd;
+}
+
+.navbox-abovebelow
+{
+    padding-bottom:4px;
+}
+
+.navbox-title a:link,
+.navbox-abovebelow a:link,
+.navbox-group a:link
+{
+    text-decoration:none;
+}
+
+.navbox-title a:visited,
+.navbox-abovebelow a:visited,
+.navbox-group a:visited
+{
+    text-decoration:none;
+}
+
+.navbox-title a:hover,a:active,
+.navbox-abovebelow a:hover,a:active,
+.navbox-group a:hover,a:active
+{
+    text-decoration:none;
+}
+
+table.tracklist {
+    line-height:1.5em;
+}
+
+.tracklist tbody tr th
+{
+    font-weight:bold;
+}
+
+.description
+{
+    margin-top:4px;
+}
+
+.underline
+{
+    border-bottom: 1px solid #444444;
+}
+
+.infosection h2
+{
+    border-bottom:2px solid #444444;
+}
+
+#tagadder
+{
+    background-color:#bababa;
+}
+
+table.histable tr:hover {
+    background-color:#CC5500;
+}
+
+.backhi:hover {
+    background-color:#CC5500;
+    cursor:pointer;
+}
+
+tr.clickaddtrack:hover
+{
+    background-color:#cccccc;
+}
+
+.highlighted {
+    border-top: 4px solid #fe6800 !important;
+    border-left: 4px solid #fe6800 !important;
+    border-right: 4px solid #fe6800 !important;
+    border-bottom: 4px solid #fe6800 !important;
+    border-radius:2px !important;
+}
+
+.covercontainer.highlighted
+{
+    border-bottom: none !important;
+    margin-bottom:-4px;
+    background-color:#cccccc;
+}
+
+#imageeditor
+{
+    background-color:#cccccc;
+}
+
+.tagholder table tr th {
+    background-color:rgba(0,0,0,0.5);
+    border-bottom:1px solid #000000;
+    color:#ffffff;
+}
+
+.bsel
+{
+    color:#ff4800;
+}
+
+.bmid
+{
+    border-left:2px solid #ff4800;
+}
+
+.helpfulalbum
+{
+    background-color:#dddddd;
+}
+
+.tagholder_wide
+{
+    background-color:#cccccc;
+}
+
+.tagholder_wide .helpfulalbum.tleft
+{
+    background-color:transparent;
+}
+
+#artistchooser
+{
+    border-bottom:1px solid #777777;
+    border-top:1px solid #777777;
+    color:#555555;
+}
+
+.currentbun
+{
+    border-bottom:1px solid #fe6500;
+    padding-bottom:2px;
+}
+
+.dropshadow
+{
+    box-shadow:         7px 7px 5px rgba(50, 50, 50, 0.6);
+}
+
+.progressbar
+{
+    border:1px solid #414141;
+}
+
+.podcastitem
+{
+    border-top:1px solid #000000;
+}
+
+.mCSB_draggerRail
+{
+    background:rgba(0,0,0,0.1) !important;
+}
+
+.mCSB_dragger_bar
+{
+    background:rgba(0,0,0,0.75) !important;
+}
+
+#dragger
+{
+    background-color:rgba(0,0,0,0.3);
+}

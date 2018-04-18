@@ -1,0 +1,1250 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+	<CountryList>
+
+	<CountryEntry>
+		<CountryName>AFGHANISTAN</CountryName>
+      	<CountryCode>AF</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ÅLAND ISLANDS</CountryName>
+      	<CountryCode>AX</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ALBANIA</CountryName>
+      	<CountryCode>AL</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ALGERIA</CountryName>
+      	<CountryCode>DZ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>AMERICAN SAMOA</CountryName>
+      	<CountryCode>AS</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ANDORRA</CountryName>
+      	<CountryCode>AD</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ANGOLA</CountryName>
+      	<CountryCode>AO</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ANGUILLA</CountryName>
+      	<CountryCode>AI</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ANTARCTICA</CountryName>
+      	<CountryCode>AQ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ANTIGUA AND BARBUDA</CountryName>
+      	<CountryCode>AG</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ARGENTINA</CountryName>
+      	<CountryCode>AR</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ARMENIA</CountryName>
+      	<CountryCode>AM</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ARUBA</CountryName>
+      	<CountryCode>AW</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>AUSTRALIA</CountryName>
+      	<CountryCode>AU</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>AUSTRIA</CountryName>
+      	<CountryCode>AT</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>AZERBAIJAN</CountryName>
+      	<CountryCode>AZ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BAHAMAS</CountryName>
+      	<CountryCode>BS</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BAHRAIN</CountryName>
+      	<CountryCode>BH</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BANGLADESH</CountryName>
+      	<CountryCode>BD</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BARBADOS</CountryName>
+      	<CountryCode>BB</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BELARUS</CountryName>
+      	<CountryCode>BY</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BELGIUM</CountryName>
+      	<CountryCode>BE</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BELIZE</CountryName>
+      	<CountryCode>BZ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BENIN</CountryName>
+      	<CountryCode>BJ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BERMUDA</CountryName>
+      	<CountryCode>BM</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BHUTAN</CountryName>
+      	<CountryCode>BT</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BOLIVIA, PLURINATIONAL STATE OF</CountryName>
+      	<CountryCode>BO</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BONAIRE, SINT EUSTATIUS AND SABA</CountryName>
+      	<CountryCode>BQ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BOSNIA AND HERZEGOVINA</CountryName>
+      	<CountryCode>BA</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BOTSWANA</CountryName>
+      	<CountryCode>BW</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BOUVET ISLAND</CountryName>
+      	<CountryCode>BV</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BRAZIL</CountryName>
+      	<CountryCode>BR</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BRITISH INDIAN OCEAN TERRITORY</CountryName>
+      	<CountryCode>IO</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BRUNEI DARUSSALAM</CountryName>
+      	<CountryCode>BN</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BULGARIA</CountryName>
+      	<CountryCode>BG</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BURKINA FASO</CountryName>
+      	<CountryCode>BF</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>BURUNDI</CountryName>
+      	<CountryCode>BI</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CAMBODIA</CountryName>
+      	<CountryCode>KH</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CAMEROON</CountryName>
+      	<CountryCode>CM</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CANADA</CountryName>
+      	<CountryCode>CA</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CAPE VERDE</CountryName>
+      	<CountryCode>CV</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CAYMAN ISLANDS</CountryName>
+      	<CountryCode>KY</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CENTRAL AFRICAN REPUBLIC</CountryName>
+      	<CountryCode>CF</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CHAD</CountryName>
+      	<CountryCode>TD</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CHILE</CountryName>
+      	<CountryCode>CL</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CHINA</CountryName>
+      	<CountryCode>CN</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CHRISTMAS ISLAND</CountryName>
+      	<CountryCode>CX</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>COCOS (KEELING) ISLANDS</CountryName>
+      	<CountryCode>CC</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>COLOMBIA</CountryName>
+      	<CountryCode>CO</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>COMOROS</CountryName>
+      	<CountryCode>KM</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CONGO</CountryName>
+      	<CountryCode>CG</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CONGO, THE DEMOCRATIC REPUBLIC OF THE</CountryName>
+      	<CountryCode>CD</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>COOK ISLANDS</CountryName>
+      	<CountryCode>CK</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>COSTA RICA</CountryName>
+      	<CountryCode>CR</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CÔTE D'IVOIRE</CountryName>
+      	<CountryCode>CI</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CROATIA</CountryName>
+      	<CountryCode>HR</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CUBA</CountryName>
+      	<CountryCode>CU</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CURAÇAO</CountryName>
+      	<CountryCode>CW</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CYPRUS</CountryName>
+      	<CountryCode>CY</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>CZECH REPUBLIC</CountryName>
+      	<CountryCode>CZ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>DENMARK</CountryName>
+      	<CountryCode>DK</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>DJIBOUTI</CountryName>
+      	<CountryCode>DJ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>DOMINICA</CountryName>
+      	<CountryCode>DM</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>DOMINICAN REPUBLIC</CountryName>
+      	<CountryCode>DO</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ECUADOR</CountryName>
+      	<CountryCode>EC</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>EGYPT</CountryName>
+      	<CountryCode>EG</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>EL SALVADOR</CountryName>
+      	<CountryCode>SV</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>EQUATORIAL GUINEA</CountryName>
+      	<CountryCode>GQ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ERITREA</CountryName>
+      	<CountryCode>ER</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ESTONIA</CountryName>
+      	<CountryCode>EE</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ETHIOPIA</CountryName>
+      	<CountryCode>ET</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>FALKLAND ISLANDS (MALVINAS)</CountryName>
+      	<CountryCode>FK</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>FAROE ISLANDS</CountryName>
+      	<CountryCode>FO</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>FIJI</CountryName>
+      	<CountryCode>FJ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>FINLAND</CountryName>
+      	<CountryCode>FI</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>FRANCE</CountryName>
+      	<CountryCode>FR</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>FRENCH GUIANA</CountryName>
+      	<CountryCode>GF</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>FRENCH POLYNESIA</CountryName>
+      	<CountryCode>PF</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>FRENCH SOUTHERN TERRITORIES</CountryName>
+      	<CountryCode>TF</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>GABON</CountryName>
+      	<CountryCode>GA</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>GAMBIA</CountryName>
+      	<CountryCode>GM</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>GEORGIA</CountryName>
+      	<CountryCode>GE</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>GERMANY</CountryName>
+      	<CountryCode>DE</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>GHANA</CountryName>
+      	<CountryCode>GH</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>GIBRALTAR</CountryName>
+      	<CountryCode>GI</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>GREECE</CountryName>
+      	<CountryCode>GR</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>GREENLAND</CountryName>
+      	<CountryCode>GL</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>GRENADA</CountryName>
+      	<CountryCode>GD</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>GUADELOUPE</CountryName>
+      	<CountryCode>GP</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>GUAM</CountryName>
+      	<CountryCode>GU</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>GUATEMALA</CountryName>
+      	<CountryCode>GT</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>GUERNSEY</CountryName>
+      	<CountryCode>GG</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>GUINEA</CountryName>
+      	<CountryCode>GN</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>GUINEA-BISSAU</CountryName>
+      	<CountryCode>GW</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>GUYANA</CountryName>
+      	<CountryCode>GY</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>HAITI</CountryName>
+      	<CountryCode>HT</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>HEARD ISLAND AND MCDONALD ISLANDS</CountryName>
+      	<CountryCode>HM</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>HOLY SEE (VATICAN CITY STATE)</CountryName>
+      	<CountryCode>VA</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>HONDURAS</CountryName>
+      	<CountryCode>HN</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>HONG KONG</CountryName>
+      	<CountryCode>HK</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>HUNGARY</CountryName>
+      	<CountryCode>HU</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ICELAND</CountryName>
+      	<CountryCode>IS</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>INDIA</CountryName>
+      	<CountryCode>IN</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>INDONESIA</CountryName>
+      	<CountryCode>ID</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>IRAN, ISLAMIC REPUBLIC OF</CountryName>
+      	<CountryCode>IR</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>IRAQ</CountryName>
+      	<CountryCode>IQ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>IRELAND</CountryName>
+      	<CountryCode>IE</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ISLE OF MAN</CountryName>
+      	<CountryCode>IM</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ISRAEL</CountryName>
+      	<CountryCode>IL</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ITALY</CountryName>
+      	<CountryCode>IT</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>JAMAICA</CountryName>
+      	<CountryCode>JM</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>JAPAN</CountryName>
+      	<CountryCode>JP</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>JERSEY</CountryName>
+      	<CountryCode>JE</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>JORDAN</CountryName>
+      	<CountryCode>JO</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>KAZAKHSTAN</CountryName>
+      	<CountryCode>KZ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>KENYA</CountryName>
+      	<CountryCode>KE</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>KIRIBATI</CountryName>
+      	<CountryCode>KI</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF</CountryName>
+      	<CountryCode>KP</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>KOREA, REPUBLIC OF</CountryName>
+      	<CountryCode>KR</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>KUWAIT</CountryName>
+      	<CountryCode>KW</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>KYRGYZSTAN</CountryName>
+      	<CountryCode>KG</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>LAO PEOPLE'S DEMOCRATIC REPUBLIC</CountryName>
+      	<CountryCode>LA</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>LATVIA</CountryName>
+      	<CountryCode>LV</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>LEBANON</CountryName>
+      	<CountryCode>LB</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>LESOTHO</CountryName>
+      	<CountryCode>LS</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>LIBERIA</CountryName>
+      	<CountryCode>LR</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>LIBYA</CountryName>
+      	<CountryCode>LY</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>LIECHTENSTEIN</CountryName>
+      	<CountryCode>LI</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>LITHUANIA</CountryName>
+      	<CountryCode>LT</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>LUXEMBOURG</CountryName>
+      	<CountryCode>LU</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MACAO</CountryName>
+      	<CountryCode>MO</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF</CountryName>
+      	<CountryCode>MK</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MADAGASCAR</CountryName>
+      	<CountryCode>MG</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MALAWI</CountryName>
+      	<CountryCode>MW</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MALAYSIA</CountryName>
+      	<CountryCode>MY</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MALDIVES</CountryName>
+      	<CountryCode>MV</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MALI</CountryName>
+      	<CountryCode>ML</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MALTA</CountryName>
+      	<CountryCode>MT</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MARSHALL ISLANDS</CountryName>
+      	<CountryCode>MH</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MARTINIQUE</CountryName>
+      	<CountryCode>MQ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MAURITANIA</CountryName>
+      	<CountryCode>MR</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MAURITIUS</CountryName>
+      	<CountryCode>MU</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MAYOTTE</CountryName>
+      	<CountryCode>YT</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MEXICO</CountryName>
+      	<CountryCode>MX</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MICRONESIA, FEDERATED STATES OF</CountryName>
+      	<CountryCode>FM</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MOLDOVA, REPUBLIC OF</CountryName>
+      	<CountryCode>MD</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MONACO</CountryName>
+      	<CountryCode>MC</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MONGOLIA</CountryName>
+      	<CountryCode>MN</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MONTENEGRO</CountryName>
+      	<CountryCode>ME</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MONTSERRAT</CountryName>
+      	<CountryCode>MS</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MOROCCO</CountryName>
+      	<CountryCode>MA</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MOZAMBIQUE</CountryName>
+      	<CountryCode>MZ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>MYANMAR</CountryName>
+      	<CountryCode>MM</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>NAMIBIA</CountryName>
+      	<CountryCode>NA</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>NAURU</CountryName>
+      	<CountryCode>NR</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>NEPAL</CountryName>
+      	<CountryCode>NP</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>NETHERLANDS</CountryName>
+      	<CountryCode>NL</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>NEW CALEDONIA</CountryName>
+      	<CountryCode>NC</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>NEW ZEALAND</CountryName>
+      	<CountryCode>NZ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>NICARAGUA</CountryName>
+      	<CountryCode>NI</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>NIGER</CountryName>
+      	<CountryCode>NE</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>NIGERIA</CountryName>
+      	<CountryCode>NG</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>NIUE</CountryName>
+      	<CountryCode>NU</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>NORFOLK ISLAND</CountryName>
+      	<CountryCode>NF</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>NORTHERN MARIANA ISLANDS</CountryName>
+      	<CountryCode>MP</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>NORWAY</CountryName>
+      	<CountryCode>NO</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>OMAN</CountryName>
+      	<CountryCode>OM</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>PAKISTAN</CountryName>
+      	<CountryCode>PK</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>PALAU</CountryName>
+      	<CountryCode>PW</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>PALESTINE, STATE OF</CountryName>
+      	<CountryCode>PS</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>PANAMA</CountryName>
+      	<CountryCode>PA</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>PAPUA NEW GUINEA</CountryName>
+      	<CountryCode>PG</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>PARAGUAY</CountryName>
+      	<CountryCode>PY</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>PERU</CountryName>
+      	<CountryCode>PE</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>PHILIPPINES</CountryName>
+      	<CountryCode>PH</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>PITCAIRN</CountryName>
+      	<CountryCode>PN</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>POLAND</CountryName>
+      	<CountryCode>PL</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>PORTUGAL</CountryName>
+      	<CountryCode>PT</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>PUERTO RICO</CountryName>
+      	<CountryCode>PR</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>QATAR</CountryName>
+      	<CountryCode>QA</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>RÉUNION</CountryName>
+      	<CountryCode>RE</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ROMANIA</CountryName>
+      	<CountryCode>RO</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>RUSSIAN FEDERATION</CountryName>
+      	<CountryCode>RU</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>RWANDA</CountryName>
+      	<CountryCode>RW</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SAINT BARTHÉLEMY</CountryName>
+      	<CountryCode>BL</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SAINT HELENA, ASCENSION AND TRISTAN DA CUNHA</CountryName>
+      	<CountryCode>SH</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SAINT KITTS AND NEVIS</CountryName>
+      	<CountryCode>KN</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SAINT LUCIA</CountryName>
+      	<CountryCode>LC</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SAINT MARTIN (FRENCH PART)</CountryName>
+      	<CountryCode>MF</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SAINT PIERRE AND MIQUELON</CountryName>
+      	<CountryCode>PM</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SAINT VINCENT AND THE GRENADINES</CountryName>
+      	<CountryCode>VC</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SAMOA</CountryName>
+      	<CountryCode>WS</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SAN MARINO</CountryName>
+      	<CountryCode>SM</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SAO TOME AND PRINCIPE</CountryName>
+      	<CountryCode>ST</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SAUDI ARABIA</CountryName>
+      	<CountryCode>SA</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SENEGAL</CountryName>
+      	<CountryCode>SN</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SERBIA</CountryName>
+      	<CountryCode>RS</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SEYCHELLES</CountryName>
+      	<CountryCode>SC</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SIERRA LEONE</CountryName>
+      	<CountryCode>SL</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SINGAPORE</CountryName>
+      	<CountryCode>SG</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SINT MAARTEN (DUTCH PART)</CountryName>
+      	<CountryCode>SX</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SLOVAKIA</CountryName>
+      	<CountryCode>SK</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SLOVENIA</CountryName>
+      	<CountryCode>SI</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SOLOMON ISLANDS</CountryName>
+      	<CountryCode>SB</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SOMALIA</CountryName>
+      	<CountryCode>SO</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SOUTH AFRICA</CountryName>
+      	<CountryCode>ZA</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SOUTH GEORGIA AND THE SOUTH SANDWICH ISLANDS</CountryName>
+      	<CountryCode>GS</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SOUTH SUDAN</CountryName>
+      	<CountryCode>SS</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SPAIN</CountryName>
+      	<CountryCode>ES</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SRI LANKA</CountryName>
+      	<CountryCode>LK</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SUDAN</CountryName>
+      	<CountryCode>SD</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SURINAME</CountryName>
+      	<CountryCode>SR</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SVALBARD AND JAN MAYEN</CountryName>
+      	<CountryCode>SJ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SWAZILAND</CountryName>
+      	<CountryCode>SZ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SWEDEN</CountryName>
+      	<CountryCode>SE</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SWITZERLAND</CountryName>
+      	<CountryCode>CH</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>SYRIAN ARAB REPUBLIC</CountryName>
+      	<CountryCode>SY</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>TAIWAN, PROVINCE OF CHINA</CountryName>
+      	<CountryCode>TW</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>TAJIKISTAN</CountryName>
+      	<CountryCode>TJ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>TANZANIA, UNITED REPUBLIC OF</CountryName>
+      	<CountryCode>TZ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>THAILAND</CountryName>
+      	<CountryCode>TH</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>TIMOR-LESTE</CountryName>
+      	<CountryCode>TL</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>TOGO</CountryName>
+      	<CountryCode>TG</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>TOKELAU</CountryName>
+      	<CountryCode>TK</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>TONGA</CountryName>
+      	<CountryCode>TO</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>TRINIDAD AND TOBAGO</CountryName>
+      	<CountryCode>TT</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>TUNISIA</CountryName>
+      	<CountryCode>TN</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>TURKEY</CountryName>
+      	<CountryCode>TR</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>TURKMENISTAN</CountryName>
+      	<CountryCode>TM</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>TURKS AND CAICOS ISLANDS</CountryName>
+      	<CountryCode>TC</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>TUVALU</CountryName>
+      	<CountryCode>TV</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>UGANDA</CountryName>
+      	<CountryCode>UG</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>UKRAINE</CountryName>
+      	<CountryCode>UA</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>UNITED ARAB EMIRATES</CountryName>
+      	<CountryCode>AE</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>UNITED KINGDOM</CountryName>
+      	<CountryCode>GB</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>UNITED STATES</CountryName>
+      	<CountryCode>US</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>UNITED STATES MINOR OUTLYING ISLANDS</CountryName>
+      	<CountryCode>UM</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>URUGUAY</CountryName>
+      	<CountryCode>UY</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>UZBEKISTAN</CountryName>
+      	<CountryCode>UZ</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>VANUATU</CountryName>
+      	<CountryCode>VU</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>VENEZUELA, BOLIVARIAN REPUBLIC OF</CountryName>
+      	<CountryCode>VE</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>VIET NAM</CountryName>
+      	<CountryCode>VN</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>VIRGIN ISLANDS, BRITISH</CountryName>
+      	<CountryCode>VG</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>VIRGIN ISLANDS, U.S.</CountryName>
+      	<CountryCode>VI</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>WALLIS AND FUTUNA</CountryName>
+      	<CountryCode>WF</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>WESTERN SAHARA</CountryName>
+      	<CountryCode>EH</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>YEMEN</CountryName>
+      	<CountryCode>YE</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ZAMBIA</CountryName>
+      	<CountryCode>ZM</CountryCode>
+	</CountryEntry>
+
+	<CountryEntry>
+		<CountryName>ZIMBABWE</CountryName>
+      	<CountryCode>ZW</CountryCode>
+	</CountryEntry>
+
+	</CountryList>
+

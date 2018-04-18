@@ -1,0 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Josefin+Slab:400,400i,700,700i');body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input,button,select,option
+{
+	font-family: "Josefin Slab", serif;
+	line-height: 140%;
+}

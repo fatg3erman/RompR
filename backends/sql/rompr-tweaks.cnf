@@ -1,0 +1,15 @@
+# These are the settings that I found made a MASSIVE difference to
+# performance. Make them as high as you dare, except for
+# innodb_flush_log_at_trx_commit, which should be 0.
+# NOTE that the last setting can cause you to lose one second's worth
+# of data on a crash. If this is important, then don't enable this setting
+# put these in /etc/mysql/conf.d/rompr-tweaks.cnf
+
+[mysqld]
+query_cache_limit       = 16M
+query_cache_size        = 64M
+
+binlog_ignore_db = romprdb
+
+innodb_buffer_pool_size = 64M
+innodb_flush_log_at_trx_commit = 0

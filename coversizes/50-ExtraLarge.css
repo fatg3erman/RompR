@@ -1,0 +1,18 @@
+.smallcover
+{
+	width:82px;
+}
+
+.smallcover-svg {
+	height:82px;
+}
+
+img.notexist,img.notfound {
+	width:82px;
+	height:82px;
+}
+
+#sortable .smallcover
+{
+	width:82px;
+}

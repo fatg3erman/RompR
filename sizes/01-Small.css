@@ -1,0 +1,9 @@
+body
+{
+	font-size:8pt;
+}
+
+body.mobile
+{
+	font-size:10pt;
+}

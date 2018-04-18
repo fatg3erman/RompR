@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="255.64" width="1274.2" version="1.0" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <defs id="defs4">
+  <linearGradient id="linearGradient6239">
+   <stop id="stop6241" stop-color="#e6e04d" offset="0"/>
+   <stop id="stop6243" stop-color="#e6e04d" stop-opacity="0" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient6231">
+   <stop id="stop6233" stop-color="#000" offset="0"/>
+   <stop id="stop6235" stop-color="#000" stop-opacity="0" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient6298" y2="328.16" xlink:href="#linearGradient6231" gradientUnits="userSpaceOnUse" x2="279.36" y1="356.73" x1="331.66"/>
+  <linearGradient id="linearGradient6300" y2="356.73" xlink:href="#linearGradient6239" gradientUnits="userSpaceOnUse" x2="331.66" y1="328.16" x1="279.36"/>
+ </defs>
+ <metadata id="metadata7">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <path id="path3827" stroke-linejoin="miter" d="m710.38,241.59-73.529-48.328-74.17,47.759,23.241-84.865-68.342-55.781,87.892-4.1217,31.932-82.233,31.079,82.319,88.079,4.9578-68.684,54.996z" fill-rule="evenodd" fill-opacity="0.11504427" stroke="#e6e04d" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="4" fill="#edec24"/>
+ <path id="path3837" stroke-linejoin="miter" d="m962.16,241.59-73.529-48.328-74.17,47.759,23.241-84.865-68.342-55.781,87.892-4.1217,31.932-82.233,31.079,82.319,88.079,4.9578-68.684,54.996z" fill-rule="evenodd" fill-opacity="0.11504427" stroke="#e6e04d" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="4" fill="#edec24"/>
+ <path id="path3847" stroke-linejoin="miter" d="m1213.9,241.59-73.529-48.328-74.17,47.759,23.241-84.865-68.342-55.781,87.892-4.1217,31.932-82.233,31.079,82.319,88.079,4.9578-68.684,54.996z" fill-rule="evenodd" fill-opacity="0.11504427" stroke="#e6e04d" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="4" fill="#edec24"/>
+ <g id="g6288" stroke-linejoin="miter" fill-rule="evenodd" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="1.12794018">
+  <path id="path3817" d="m323.21,360.93-23.813-6.9686-16.062,18.995-0.73123-24.801-23.029-9.4061,23.361-8.3594,1.8294-24.808,15.169,19.635,24.16-5.9264-13.986,20.494z" transform="matrix(3.3912573,1.0370763,-1.0370763,3.3912573,-514.95367,-1317.6131)" stroke="#e6e04d" fill="#edeb24"/>
+  <path id="path6075" d="m323.21,360.93-23.813-6.9686-16.062,18.995-0.73123-24.801-23.029-9.4061,23.361-8.3594,1.8294-24.808,15.169,19.635,24.16-5.9264-13.986,20.494z" transform="matrix(3.3912573,1.0370763,-1.0370763,3.3912573,-514.95367,-1317.6131)" stroke="url(#linearGradient6300)" fill="url(#linearGradient6298)"/>
+ </g>
+ <g id="g6292" stroke-linejoin="miter" fill-rule="evenodd" transform="translate(251.78052,-5.413321e-8)" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="1.12794018">
+  <path id="path6294" d="m323.21,360.93-23.813-6.9686-16.062,18.995-0.73123-24.801-23.029-9.4061,23.361-8.3594,1.8294-24.808,15.169,19.635,24.16-5.9264-13.986,20.494z" transform="matrix(3.3912573,1.0370763,-1.0370763,3.3912573,-514.95367,-1317.6131)" stroke="#e6e04d" fill="#edeb24"/>
+  <path id="path6296" d="m323.21,360.93-23.813-6.9686-16.062,18.995-0.73123-24.801-23.029-9.4061,23.361-8.3594,1.8294-24.808,15.169,19.635,24.16-5.9264-13.986,20.494z" transform="matrix(3.3912573,1.0370763,-1.0370763,3.3912573,-514.95367,-1317.6131)" stroke="url(#linearGradient6300)" fill="url(#linearGradient6298)"/>
+ </g>
+</svg>

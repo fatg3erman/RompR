@@ -1,0 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Quicksand:400,700&subset=latin-ext,vietnamese');
+body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input,button,select,option
+{
+  font-family: "Quicksand", sans-serif;
+}

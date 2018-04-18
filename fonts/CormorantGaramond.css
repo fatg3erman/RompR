@@ -1,0 +1,6 @@
+@import url('https://fonts.googleapis.com/css?family=Cormorant+Garamond:400,400i,700,700i&subset=cyrillic,latin-ext');
+body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input,button,select,option
+{
+	font-family: "Cormorant Garamond", serif;
+	line-height: 140%;
+}

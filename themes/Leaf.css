@@ -1,0 +1,451 @@
+/*
+=====================================================================
+= Standard HTML Elements
+=====================================================================
+*/
+
+html
+{
+    background-image:url("leaf.jpg");
+    background-size:cover;
+    background-repeat:no-repeat;
+}
+
+button, input[type="button"]
+{
+    color:#dddddd;
+    background-color:transparent;
+    border:1px solid #aaaaaa;
+}
+
+button:hover, input[type="button"]:hover
+{
+    color:#ffffff;
+    border:1px solid #ffffff;
+    text-shadow: 0 0 15px #ffffff;
+}
+
+input
+{
+    color:#181818;
+}
+
+select
+{
+    color:#000000;
+}
+
+/*
+=====================================================================
+= Specific Elements By ID
+=====================================================================
+*/
+
+#sources, .mainpane, #headerbar, #infobar.coloured, #thetopbit
+{
+    background-color:rgba(0,0,0,0.2);
+}
+
+#playlist
+{
+    background-color:rgba(0,0,0,0.2);
+}
+
+body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea
+{
+    color:#eeeeee;
+}
+
+a:link
+{
+    color:yellow;
+}
+
+a:visited
+{
+    color:yellow;
+}
+
+a:hover,a:active
+{
+    text-shadow: 0 0 15px #000000;
+    cursor:pointer;
+}
+
+#notifications
+{
+    background-color:rgba(0,0,0,0.9);
+}
+
+#wikipopup
+{
+    background-color:#000000;
+}
+
+#imagecontainer
+{
+    background-color:#ffffff;
+}
+
+#tagadder
+{
+    background-color:rgba(0,0,0,0.9);
+}
+
+#dragger
+{
+    background-color:rgba(0,0,0,0.5);
+}
+
+/*
+=====================================================================
+= General Classes
+=====================================================================
+*/
+
+.controlbutton {
+    color:#dddddd !important;
+    text-shadow: 0 0 15px #ffffff !important;
+}
+
+.controlbutton-small {
+    color:#dddddd !important;
+    text-shadow: 0 0 15px #ffffff !important;
+}
+
+.controlbutton:hover {
+    color:#eeeeee !important;
+}
+
+.controlbutton-small:hover {
+    color:#eeeeee !important;
+}
+
+.controlbutton::before {
+    opacity:0.9;
+}
+
+.controlbutton-small::before {
+    opacity:0.9;
+}
+
+.controlbutton:hover::before {
+    opacity:1;
+}
+
+.controlbutton-small:hover::before {
+    opacity:1;
+}
+
+.album2
+{
+    background-color:rgba(0,0,0,0.2);
+}
+
+.item
+{
+    margin-bottom: 2px;
+}
+
+div.clickable:hover, .infoclick:hover
+{
+    text-shadow: 0 0 15px #ffffff;
+    color:#ffffff;
+    cursor:pointer;
+}
+
+div.clickable.selected:hover
+{
+    color:#ffffff;
+}
+
+.selected
+{
+    background-color:rgba(255,72,0,0.6);
+}
+
+.playlistcurrentitem
+{
+    font-weight:bold;
+    font-size:120%;
+    border-left:4px solid white;
+    color:#eeeeee;
+    transition:font-size 0.3s ease, text-shadow 0.3s ease;
+}
+
+.clicktrack.playlistcurrentitem
+{
+    padding-left:8px;
+}
+
+.playlistitem
+{
+    transition:font-size 0.3s ease, text-shadow 0.3s ease;
+}
+
+.playlistcurrenttitle
+{
+    text-shadow: 0px 0px 20px #cccccc;
+    font-weight:bold;
+    color:#eeeeee;
+    background-color:rgba(0,0,0,0.2);
+}
+
+.playlisttitle{
+    background-color:rgba(0,0,0,0.2);
+}
+
+.inbrowser
+{
+    color:#000000;
+}
+
+.stleft
+{
+    border-right:1px solid #888888;
+}
+
+.popupwindow
+{
+    background-color:rgba(0,0,0,0.8);
+}
+
+table.histable tr:hover {
+    font-size:105%;
+    text-shadow: 0 0 15px #ffffff;
+    color:#ff4800;
+    transition:all 0.1s;
+}
+
+table.histable tr
+{
+    transition:all 0.2s;
+}
+
+.backhi:hover {
+    font-size:105%;
+    text-shadow: 0 0 15px #ffffff;
+    color:#ff4800;
+    cursor:pointer;
+    transition:all 0.1s;
+}
+
+.backhi
+{
+    transition:all 0.2s;
+}
+
+tr.clickaddtrack:hover
+{
+    background-color:#e1e4ea;
+}
+
+.topimg
+{
+    opacity:0.8;
+}
+
+.topimg:not(.button-disabled):hover
+{
+    opacity:1;
+}
+
+.bsel
+{
+    color:#ffffff;
+    text-shadow:0 0 15px #ffffff;
+}
+
+.bmid
+{
+    border-left:2px solid #ff4800;
+}
+
+.tagholder table tr th {
+    background-color:rgba(0,0,0,0.5);
+    border-bottom:1px solid #000000;
+}
+
+.currentbun
+{
+    border-bottom:1px solid #fe6500;
+    padding-bottom:2px;
+}
+
+.dropshadow
+{
+    box-shadow:         7px 7px 5px rgba(0, 0, 0, 0.6);
+}
+
+.progressbar
+{
+    border:1px solid #414141;
+}
+
+.progressbar_v
+{
+    border:1px solid #414141;
+}
+
+/*
+=====================================================================
+= Dropdown Menus
+=====================================================================
+*/
+
+div.topdropmenu
+{
+    background-color:rgba(0,0,0,0.9);
+}
+
+.configtitle
+{
+    background-color:rgba(20,50,20,1);
+}
+
+body.mobile .configtitle
+{
+    width:95%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+/*
+=====================================================================
+= Info Panel - General
+=====================================================================
+*/
+
+#infopane
+{
+    background-color:rgba(0,0,0,0.6);
+}
+
+#artistbio
+{
+    padding:4px;
+}
+
+.infowiki
+{
+    color:white;
+}
+
+.infosection
+{
+    background-color:rgba(0,0,0,0.4);
+    background-size:cover;
+    background-repeat:no-repeat;
+}
+
+/*
+=====================================================================
+= Info Panel - Spotify
+=====================================================================
+*/
+
+.helpfulalbum
+{
+    background-color:rgba(0,0,0,0.4);
+}
+
+.tagholder_wide
+{
+    background-color:rgba(0,0,0,0.6);
+}
+
+.podcastitem
+{
+    border-top:1px solid #cccccc;
+}
+
+/*
+=====================================================================
+= For Album Art Manager
+=====================================================================
+*/
+
+.albumsection
+{
+    background-color:rgba(0,0,0,0.4);
+    background-size:cover;
+    background-repeat:no-repeat;
+}
+
+.albumsection button, .albumcovers .infosection button
+{
+    background-image:none !important;
+    background-color:transparent !important;
+    border:0px none !important;
+}
+
+.highlighted {
+    background-color:rgba(0,0,0,0.6);
+}
+
+#artistchooser
+{
+    background-color:rgba(0,0,0,0.4);
+    color:#555555;
+}
+
+/*
+=====================================================================
+= Things that look like they might be for styling wikipedia data
+=====================================================================
+*/
+
+table.navbox th
+{
+    background-color: rgba(0,0,0,0.2);
+}
+
+.navbox-abovebelow
+{
+    padding-bottom:4px;
+}
+
+.navbox-title a:link,
+.navbox-abovebelow a:link,
+.navbox-group a:link
+{
+    text-decoration:none;
+}
+
+.navbox-title a:visited,
+.navbox-abovebelow a:visited,
+.navbox-group a:visited
+{
+    text-decoration:none;
+}
+
+.navbox-title a:hover,a:active,
+.navbox-abovebelow a:hover,a:active,
+.navbox-group a:hover,a:active
+{
+    text-decoration:none;
+}
+
+table.tracklist {
+    line-height:1.5em;
+}
+
+.tracklist tbody tr th
+{
+    font-weight:bold;
+}
+
+.description
+{
+    margin-top:4px;
+}
+
+.underline
+{
+    border-bottom: 1px solid yellow;
+}
+
+.infosection h2
+{
+    border-bottom:2px solid white;
+}

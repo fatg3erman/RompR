@@ -1,0 +1,23 @@
+
+# (C) Fat German Productions/Mark Greenwood 2017
+
+SEE includes/license.html
+
+CREDITS
+=======
+
+This program makes use of lots of other stuff which are all released
+under their own licenses, just to make it complicated.
+
+The original inspiration came from phpMP, and the original core of this app was lifted
+directly from there. It's grown quite a lot since then.
+
+jquery (http://jquery.com) and the jquery UI framework (http://jqueryui.com)
+are probably released under the GPL or something. I dunno, their websites aren't
+very clear on that point.
+
+The md5 hashing algorithm code was taken from http://pajhome.org.uk/crypt/md5
+and is released under a BSD license
+
+The jquery form plugin comes from http://malsup.com/jquery/form/
+and also has two licenses.

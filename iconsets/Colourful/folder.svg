@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg1" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="401.93" width="399.16" version="1.0" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <metadata id="metadata3">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:title/>
+    <dc:description/>
+    <dc:subject>
+     <rdf:Bag>
+      <rdf:li>hash</rdf:li>
+      <rdf:li>icon</rdf:li>
+      <rdf:li/>
+      <rdf:li>education</rdf:li>
+     </rdf:Bag>
+    </dc:subject>
+    <dc:publisher>
+     <cc:Agent rdf:about="http://www.openclipart.org">
+      <dc:title>Seth Yastrov</dc:title>
+     </cc:Agent>
+    </dc:publisher>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Seth Yastrov</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:rights>
+     <cc:Agent>
+      <dc:title>Seth Yastrov</dc:title>
+     </cc:Agent>
+    </dc:rights>
+    <dc:date/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <cc:license rdf:resource="http://web.resource.org/cc/PublicDomain"/>
+    <dc:language>en</dc:language>
+   </cc:Work>
+   <cc:License rdf:about="http://web.resource.org/cc/PublicDomain">
+    <cc:permits rdf:resource="http://web.resource.org/cc/Reproduction"/>
+    <cc:permits rdf:resource="http://web.resource.org/cc/Distribution"/>
+    <cc:permits rdf:resource="http://web.resource.org/cc/DerivativeWorks"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+ <defs id="defs3">
+  <linearGradient id="linearGradient1699">
+   <stop id="stop1700" stop-color="#017eff" offset="0"/>
+   <stop id="stop1701" stop-color="#ecfaff" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient2993" y2="460.76" xlink:href="#linearGradient1699" gradientUnits="userSpaceOnUse" x2="50.829" gradientTransform="scale(1.319383,0.75793)" y1="908.78" x1="315.32"/>
+  <linearGradient id="linearGradient2995" y2="716.1" xlink:href="#linearGradient1699" gradientUnits="userSpaceOnUse" x2="160.94" gradientTransform="scale(1.399102,0.714744)" y1="965.31" x1="332.32"/>
+ </defs>
+ <g id="layer1" transform="translate(-83.929645,-340.42416)">
+  <g id="g2989" stroke-linejoin="miter" fill-rule="nonzero" stroke-dashoffset="1.25" transform="matrix(0.66929782,0,0,0.98174913,27.614336,14.465036)" stroke="#446c98" stroke-linecap="butt" stroke-miterlimit="4" stroke-width="6.25">
+   <path id="rect1061" d="m100.56,363.89c-9.311,2.2122-15.031,11.497-12.818,20.808l77.087,340.02c2.2122,9.311,11.466,15.038,20.778,12.826l434.19-103.17c9.311-2.2122,15.031-11.497,12.818-20.808l-54.22-263.8c-2.2122-9.311-11.497-14.311-20.808-12.818l-253.26,37.674s-23.541-41.655-32.852-39.442l-170.92,28.704z" display="block" fill="url(#linearGradient2993)"/>
+   <path id="rect1063" opacity="0.8249027" d="M657.01,396.91,230.33,467.57c-9.311,2.2122-17.252,9.9533-18.256,18.939l-46.74,239.1c1.9673,8.2802,11.047,14.438,20.358,12.225l434.18-103.16c9.311-2.2122,12.344-10.119,14.245-18.31l43.251-208.51c0.58228-15.164-11.767-11.726-20.358-10.953z" display="block" fill="url(#linearGradient2995)"/>
+  </g>
+ </g>
+</svg>

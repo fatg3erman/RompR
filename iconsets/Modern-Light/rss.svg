@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="128px"
+   height="128px"
+   id="RSSicon"
+   viewBox="0 0 256 256"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="rss.svg">
+  <metadata
+     id="metadata34">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1200"
+     inkscape:window-height="899"
+     id="namedview32"
+     showgrid="false"
+     inkscape:zoom="1.84375"
+     inkscape:cx="64"
+     inkscape:cy="64"
+     inkscape:window-x="426"
+     inkscape:window-y="156"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="RSSicon" />
+  <defs
+     id="defs3">
+    <linearGradient
+       x1="0.085"
+       y1="0.085"
+       x2="0.915"
+       y2="0.915"
+       id="RSSg">
+      <stop
+         offset="0.0"
+         stop-color="#E3702D"
+         id="stop6" />
+      <stop
+         offset="0.1071"
+         stop-color="#EA7D31"
+         id="stop8" />
+      <stop
+         offset="0.3503"
+         stop-color="#F69537"
+         id="stop10" />
+      <stop
+         offset="0.5"
+         stop-color="#FB9E3A"
+         id="stop12" />
+      <stop
+         offset="0.7016"
+         stop-color="#EA7C31"
+         id="stop14" />
+      <stop
+         offset="0.8866"
+         stop-color="#DE642B"
+         id="stop16" />
+      <stop
+         offset="1.0"
+         stop-color="#D95B29"
+         id="stop18" />
+    </linearGradient>
+    <filter
+       inkscape:label="Lightness-Contrast"
+       x="0"
+       y="0"
+       width="1"
+       height="1"
+       inkscape:menu="Color"
+       inkscape:menu-tooltip="Increase or decrease lightness and contrast"
+       color-interpolation-filters="sRGB"
+       id="filter3011">
+      <feColorMatrix
+         type="saturate"
+         values="0"
+         id="feColorMatrix3013"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix3035" />
+      <feFlood
+         id="feFlood3037"
+         result="result1"
+         flood-opacity="0"
+         flood-color="rgb(128,128,128)"
+         in="fbSourceGraphic" />
+      <feBlend
+         id="feBlend3039"
+         in2="fbSourceGraphic"
+         mode="normal"
+         result="result2" />
+      <feComposite
+         id="feComposite3041"
+         in2="fbSourceGraphic"
+         k2="1"
+         operator="arithmetic"
+         result="result3" />
+      <feComposite
+         id="feComposite3043"
+         in2="fbSourceGraphic"
+         operator="in" />
+    </filter>
+    <filter
+       inkscape:label="Lightness-Contrast"
+       x="0"
+       y="0"
+       width="1"
+       height="1"
+       inkscape:menu="Color"
+       inkscape:menu-tooltip="Increase or decrease lightness and contrast"
+       color-interpolation-filters="sRGB"
+       id="filter3015">
+      <feColorMatrix
+         type="saturate"
+         values="0"
+         id="feColorMatrix3017"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix3045" />
+      <feFlood
+         id="feFlood3047"
+         result="result1"
+         flood-opacity="0"
+         flood-color="rgb(128,128,128)"
+         in="fbSourceGraphic" />
+      <feBlend
+         id="feBlend3049"
+         in2="fbSourceGraphic"
+         mode="normal"
+         result="result2" />
+      <feComposite
+         id="feComposite3051"
+         in2="fbSourceGraphic"
+         k2="1"
+         operator="arithmetic"
+         result="result3" />
+      <feComposite
+         id="feComposite3053"
+         in2="fbSourceGraphic"
+         operator="in" />
+    </filter>
+    <filter
+       inkscape:label="Lightness-Contrast"
+       x="0"
+       y="0"
+       width="1"
+       height="1"
+       inkscape:menu="Color"
+       inkscape:menu-tooltip="Increase or decrease lightness and contrast"
+       color-interpolation-filters="sRGB"
+       id="filter3019">
+      <feColorMatrix
+         type="saturate"
+         values="0"
+         id="feColorMatrix3021"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix3055" />
+      <feFlood
+         id="feFlood3057"
+         result="result1"
+         flood-opacity="0"
+         flood-color="rgb(128,128,128)"
+         in="fbSourceGraphic" />
+      <feBlend
+         id="feBlend3059"
+         in2="fbSourceGraphic"
+         mode="normal"
+         result="result2" />
+      <feComposite
+         id="feComposite3061"
+         in2="fbSourceGraphic"
+         k2="1"
+         operator="arithmetic"
+         result="result3" />
+      <feComposite
+         id="feComposite3063"
+         in2="fbSourceGraphic"
+         operator="in" />
+    </filter>
+    <filter
+       inkscape:label="Invert"
+       x="0"
+       y="0"
+       width="1"
+       height="1"
+       inkscape:menu="Color"
+       inkscape:menu-tooltip="Invert colors"
+       color-interpolation-filters="sRGB"
+       id="filter3023">
+      <feColorMatrix
+         type="saturate"
+         values="0"
+         id="feColorMatrix3025"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix3065" />
+      <feFlood
+         id="feFlood3067"
+         result="result1"
+         flood-opacity="0"
+         flood-color="rgb(128,128,128)"
+         in="fbSourceGraphic" />
+      <feBlend
+         id="feBlend3069"
+         in2="fbSourceGraphic"
+         mode="normal"
+         result="result2" />
+      <feComposite
+         id="feComposite3071"
+         in2="fbSourceGraphic"
+         k2="1"
+         operator="arithmetic"
+         result="result3" />
+      <feComposite
+         id="feComposite3073"
+         in2="fbSourceGraphic"
+         operator="in"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix3037" />
+      <feColorMatrix
+         id="feColorMatrix3039"
+         type="saturate"
+         values="1"
+         result="fbSourceGraphic"
+         in="fbSourceGraphic" />
+      <feColorMatrix
+         id="feColorMatrix3041"
+         in="fbSourceGraphic"
+         values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0 " />
+    </filter>
+    <filter
+       inkscape:label="Lightness-Contrast"
+       x="0"
+       y="0"
+       width="1"
+       height="1"
+       inkscape:menu="Color"
+       inkscape:menu-tooltip="Increase or decrease lightness and contrast"
+       color-interpolation-filters="sRGB"
+       id="filter3027">
+      <feColorMatrix
+         type="saturate"
+         values="0"
+         id="feColorMatrix3029"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix3075" />
+      <feFlood
+         id="feFlood3077"
+         result="result1"
+         flood-opacity="0"
+         flood-color="rgb(128,128,128)"
+         in="fbSourceGraphic" />
+      <feBlend
+         id="feBlend3079"
+         in2="fbSourceGraphic"
+         mode="normal"
+         result="result2" />
+      <feComposite
+         id="feComposite3081"
+         in2="fbSourceGraphic"
+         k2="1"
+         operator="arithmetic"
+         result="result3" />
+      <feComposite
+         id="feComposite3083"
+         in2="fbSourceGraphic"
+         operator="in" />
+    </filter>
+    <filter
+       inkscape:label="Lightness-Contrast"
+       x="0"
+       y="0"
+       width="1"
+       height="1"
+       inkscape:menu="Color"
+       inkscape:menu-tooltip="Increase or decrease lightness and contrast"
+       color-interpolation-filters="sRGB"
+       id="filter3031">
+      <feColorMatrix
+         type="saturate"
+         values="0"
+         id="feColorMatrix3033"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix3085" />
+      <feFlood
+         id="feFlood3087"
+         result="result1"
+         flood-opacity="0"
+         flood-color="rgb(128,128,128)"
+         in="fbSourceGraphic" />
+      <feBlend
+         id="feBlend3089"
+         in2="fbSourceGraphic"
+         mode="normal"
+         result="result2" />
+      <feComposite
+         id="feComposite3091"
+         in2="fbSourceGraphic"
+         k2="1"
+         operator="arithmetic"
+         result="result3" />
+      <feComposite
+         id="feComposite3093"
+         in2="fbSourceGraphic"
+         operator="in" />
+    </filter>
+  </defs>
+  <rect
+     width="256"
+     height="256"
+     rx="55"
+     ry="55"
+     x="0"
+     y="0"
+     fill="#CC5D15"
+     id="rect20"
+     style="filter:url(#filter3031)" />
+  <rect
+     width="246"
+     height="246"
+     rx="50"
+     ry="50"
+     x="5"
+     y="5"
+     fill="#F49C52"
+     id="rect22"
+     style="filter:url(#filter3027)" />
+  <rect
+     width="236"
+     height="236"
+     rx="47"
+     ry="47"
+     x="10"
+     y="10"
+     fill="url(#RSSg)"
+     id="rect24"
+     style="filter:url(#filter3023)" />
+  <circle
+     cx="68"
+     cy="189"
+     r="24"
+     fill="#FFF"
+     id="circle26"
+     style="filter:url(#filter3019)" />
+  <path
+     d="M160 213h-34a82 82 0 0 0 -82 -82v-34a116 116 0 0 1 116 116z"
+     fill="#FFF"
+     id="path28"
+     style="filter:url(#filter3015)" />
+  <path
+     d="M184 213A140 140 0 0 0 44 73 V 38a175 175 0 0 1 175 175z"
+     fill="#FFF"
+     id="path30"
+     style="filter:url(#filter3011)" />
+</svg>

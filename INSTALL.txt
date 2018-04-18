@@ -1,0 +1,22 @@
+==================
+= Installing RompR
+==================
+Please read the installation instructions here:
+
+http://sourceforge.net/p/rompr/wiki/Installation/
+
+MacOS X Users
+=============
+
+Please read the instructions here:
+
+http://sourceforge.net/p/rompr/wiki/Installation%20on%20Mac%20OS%20X/
+
+Windows Users
+=============
+
+First, install a better operating system, then read this file again :)
+Actually, it may well be possible to get this to run on Windows, if mpd or mopidy can be got
+to work then there's probably a LAMP stack for Windows that will run apache and php
+OK. But I don't intend to go buy a Windows computer just to find out.
+
