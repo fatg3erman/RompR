@@ -1,4 +1,4 @@
-# RompR
+# RompЯ
 Web client for Mopidy and MPD
 
 Code is now hosted here on github but the project home is still at
