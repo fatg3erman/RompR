@@ -1107,7 +1107,7 @@ function find_justadded_artists() {
 function find_justadded_albums() {
 	$retval = array();
 	if ($result = generic_sql_query("SELECT DISTINCT Albumindex FROM Tracktable WHERE justAdded = 1")) {
-		$retval =  $result->fetchAll(PDO::FETCH_COLUMN, 'AlbumArtistindex');
+		$retval =  $result->fetchAll(PDO::FETCH_COLUMN, 'Albumindex');
 	}
 	$result = null;
 	return $retval;
