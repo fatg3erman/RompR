@@ -26,7 +26,7 @@ foreach($playlists as $file) {
     	}
     	$tracks[] = array('uri' => (string) $track->location, 'stream' => (string) $track->stream);
     }
-	if ($stmt = sql_prepare_query(
+	if (sql_prepare_query(true, null, null, null,
 		"INSERT INTO RadioStationtable
 			(IsFave, StationName, PlaylistUrl, Image)
 			VALUES
@@ -35,7 +35,7 @@ foreach($playlists as $file) {
 		$rindex = $mysqlc->lastInsertId();
 		debuglog("    Created Station With Index ".$rindex,"UPGRADE");
 		foreach ($tracks as $track) {
-			if ($stmt = sql_prepare_query(
+			if (sql_prepare_query(true, null, null, null,
 				"INSERT INTO RadioTracktable
 				(Stationindex, TrackUri, PrettyStream)
 				VALUES
@@ -60,7 +60,7 @@ if (file_exists('prefs/userstreams/radioorder.txt')) {
 	foreach ($fcontents as $f) {
 		$s = trim($f);
 		debuglog("  ".$count." - ".$s,"UPGRADE");
-		sql_prepare_query("UPDATE RadioStationtable SET Number = ? WHERE StationName = ?",$count, $s);
+		sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET Number = ? WHERE StationName = ?",$count, $s);
 		$count++;
 	}
 	unlink('prefs/userstreams/radioorder.txt');
@@ -79,13 +79,10 @@ foreach($playlists as $file) {
     	debuglog("    File has no playlist URL! Cannot upgrade this file. Sorry.","UPGRADE");
     	continue;
     }
-    if ($stmt = sql_prepare_query("SELECT Stationindex FROM RadioStationtable WHERE PlaylistUrl = ?", $playlisturl)) {
-    	$obj = $stmt->fetch(PDO::FETCH_OBJ);
-    	$index = $obj ? $obj->Stationindex : null;
-    	if ($index) {
-    		debuglog("    Station already exists","UPGRADE");
-    		continue;
-    	}
+    $index = sql_prepare_query(false, null, 'Stationindex', null, "SELECT Stationindex FROM RadioStationtable WHERE PlaylistUrl = ?", $playlisturl);
+	if ($index) {
+		debuglog("    Station already exists","UPGRADE");
+		continue;
     }
 	debuglog("    Playlist URL is ".$playlisturl,"UPGRADE");
     $tracks = array();
@@ -100,7 +97,7 @@ foreach($playlists as $file) {
     	}
     	$tracks[] = array('uri' => (string) $track->location, 'stream' => (string) $track->stream);
     }
-	if ($stmt = sql_prepare_query(
+	if (sql_prepare_query(true, null, null, null,
 		"INSERT INTO RadioStationtable
 			(IsFave, StationName, PlaylistUrl, Image)
 			VALUES
@@ -109,7 +106,7 @@ foreach($playlists as $file) {
 		$rindex = $mysqlc->lastInsertId();
 		debuglog("    Created Station With Index ".$rindex,"UPGRADE");
 		foreach ($tracks as $track) {
-			if ($stmt = sql_prepare_query(
+			if (sql_prepare_query(true, null, null, null,
 				"INSERT INTO RadioTracktable
 				(Stationindex, TrackUri, PrettyStream)
 				VALUES

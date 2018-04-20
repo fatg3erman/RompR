@@ -125,7 +125,7 @@ function doDbCollection($terms, $domains, $resultstype) {
 			        $collection->newTrack( $t );
 				} else {
 					debuglog('Updating isSearchResult for TTindex '.$obj->TTindex,"DBSEARCH",8);
-					generic_sql_query("UPDATE Tracktable SET isSearchResult = 1 WHERE TTindex = ".$obj->TTindex);
+					generic_sql_query("UPDATE Tracktable SET isSearchResult = 1 WHERE TTindex = ".$obj->TTindex, true);
 				}
 				$fcount++;
 			}

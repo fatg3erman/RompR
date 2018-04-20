@@ -19,7 +19,7 @@ function connect_to_database() {
 		}
 		$mysqlc = new PDO($dsn, $prefs['mysql_user'], $prefs['mysql_password']);
 		debuglog("Connected to MySQL","SQL_CONNECT",8);
-		generic_sql_query("SET NAMES utf8");
+		generic_sql_query("SET NAMES utf8", true);
 	} catch (Exception $e) {
 		debuglog("Database connect failure - ".$e,"SQL_CONNECT",1);
 		sql_init_fail($e->getMessage());
@@ -50,7 +50,7 @@ function check_sql_tables() {
 		"justAdded TINYINT(1) UNSIGNED DEFAULT 1, ".
 		"INDEX(Albumindex), ".
 		"INDEX(Title), ".
-		"INDEX(TrackNo)) ENGINE=InnoDB"))
+		"INDEX(TrackNo)) ENGINE=InnoDB", true))
 	{
 		debuglog("  Tracktable OK","MYSQL_CONNECT");
 	} else {
@@ -74,7 +74,7 @@ function check_sql_tables() {
 		"INDEX(Albumname), ".
 		"INDEX(AlbumArtistindex), ".
 		"INDEX(Domain), ".
-		"INDEX(ImgKey)) ENGINE=InnoDB"))
+		"INDEX(ImgKey)) ENGINE=InnoDB", true))
 	{
 		debuglog("  Albumtable OK","MYSQL_CONNECT");
 	} else {
@@ -86,7 +86,7 @@ function check_sql_tables() {
 		"Artistindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
 		"PRIMARY KEY(Artistindex), ".
 		"Artistname VARCHAR(255), ".
-		"INDEX(Artistname)) ENGINE=InnoDB"))
+		"INDEX(Artistname)) ENGINE=InnoDB", true))
 	{
 		debuglog("  Artisttable OK","MYSQL_CONNECT");
 	} else {
@@ -97,7 +97,7 @@ function check_sql_tables() {
 	if (generic_sql_query("CREATE TABLE IF NOT EXISTS Ratingtable(".
 		"TTindex INT UNSIGNED, ".
 		"PRIMARY KEY(TTindex), ".
-		"Rating TINYINT(1) UNSIGNED) ENGINE=InnoDB"))
+		"Rating TINYINT(1) UNSIGNED) ENGINE=InnoDB", true))
 	{
 		debuglog("  Ratingtable OK","MYSQL_CONNECT");
 	} else {
@@ -108,7 +108,7 @@ function check_sql_tables() {
 	if (generic_sql_query("CREATE TABLE IF NOT EXISTS Tagtable(".
 		"Tagindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
 		"PRIMARY KEY(Tagindex), ".
-		"Name VARCHAR(255)) ENGINE=InnoDB"))
+		"Name VARCHAR(255)) ENGINE=InnoDB", true))
 	{
 		debuglog("  Tagtable OK","MYSQL_CONNECT");
 	} else {
@@ -119,7 +119,7 @@ function check_sql_tables() {
 	if (generic_sql_query("CREATE TABLE IF NOT EXISTS TagListtable(".
 		"Tagindex INT UNSIGNED NOT NULL REFERENCES Tagtable(Tagindex), ".
 		"TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex), ".
-		"PRIMARY KEY (Tagindex, TTindex)) ENGINE=InnoDB"))
+		"PRIMARY KEY (Tagindex, TTindex)) ENGINE=InnoDB", true))
 	{
 		debuglog("  TagListtable OK","MYSQL_CONNECT");
 	} else {
@@ -131,7 +131,7 @@ function check_sql_tables() {
 		"TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex), ".
 		"Playcount INT UNSIGNED NOT NULL, ".
 		"LastPlayed TIMESTAMP, ".
-		"PRIMARY KEY (TTindex)) ENGINE=InnoDB"))
+		"PRIMARY KEY (TTindex)) ENGINE=InnoDB", true))
 	{
 		debuglog("  Playcounttable OK","MYSQL_CONNECT");
 	} else {
@@ -158,7 +158,7 @@ function check_sql_tables() {
 		"Version TINYINT(2), ".
 		"Subscribed TINYINT(1) NOT NULL DEFAULT 1, ".
 		"Description TEXT, ".
-		"PRIMARY KEY (PODindex)) ENGINE=InnoDB"))
+		"PRIMARY KEY (PODindex)) ENGINE=InnoDB", true))
 	{
 		debuglog("  Podcasttable OK","MYSQL_CONNECT");
 	} else {
@@ -184,7 +184,7 @@ function check_sql_tables() {
 		"New TINYINT(1) UNSIGNED DEFAULT 1, ".
 		"Deleted TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"INDEX (PODindex), ".
-		"PRIMARY KEY (PODTrackindex)) ENGINE=InnoDB"))
+		"PRIMARY KEY (PODTrackindex)) ENGINE=InnoDB", true))
 	{
 		debuglog("  PodcastTracktable OK","MYSQL_CONNECT");
 	} else {
@@ -199,7 +199,7 @@ function check_sql_tables() {
 		"StationName VARCHAR(255), ".
 		"PlaylistUrl TEXT, ".
 		"Image VARCHAR(255), ".
-		"PRIMARY KEY (Stationindex)) ENGINE=InnoDB"))
+		"PRIMARY KEY (Stationindex)) ENGINE=InnoDB", true))
 	{
 		debuglog("  RadioStationtable OK","MYSQL_CONNECT");
 	} else {
@@ -213,7 +213,7 @@ function check_sql_tables() {
 		"TrackUri TEXT, ".
 		"PrettyStream TEXT, ".
 		"PRIMARY KEY (Trackindex), ".
-		"FULLTEXT KEY TrackUri (TrackUri)) ENGINE=InnoDB"))
+		"FULLTEXT KEY TrackUri (TrackUri)) ENGINE=InnoDB", true))
 	{
 		debuglog("  RadioTracktable OK","MYSQL_CONNECT");
 	} else {
@@ -221,33 +221,24 @@ function check_sql_tables() {
 		return array(false, "Error While Checking RadioTracktable : ".$err);
 	}
 
-	if (!generic_sql_query("CREATE TABLE IF NOT EXISTS Statstable(Item CHAR(11), PRIMARY KEY(Item), Value INT UNSIGNED) ENGINE=InnoDB")) {
+	if (!generic_sql_query("CREATE TABLE IF NOT EXISTS Statstable(Item CHAR(11), PRIMARY KEY(Item), Value INT UNSIGNED) ENGINE=InnoDB", true)) {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Statstable : ".$err);
 	}
 	// Check schema version and update tables as necessary
-	$sv = 0;
-	if ($result = generic_sql_query("SELECT Value FROM Statstable WHERE Item = 'SchemaVer'")) {
-		if ($result->rowCount() == 0) {
-			debuglog("No Schema Version Found - initialising table","SQL_CONNECT");
-			generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('ListVersion', '0')");
-			generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('ArtistCount', '0')");
-			generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('AlbumCount', '0')");
-			generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('TrackCount', '0')");
-			generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('TotalTime', '0')");
-			generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('SchemaVer', '".ROMPR_SCHEMA_VERSION."')");
-			$sv = ROMPR_SCHEMA_VERSION;
-			debuglog("Statstable populated", "MYSQL_CONNECT");
-			create_update_triggers();
-			create_conditional_triggers();
-		} else {
-			while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-				$sv = $obj->Value;
-			}
-		}
-	} else {
-		$err = $mysqlc->errorInfo()[2];
-		return array(false, "Error While Checking Database Schema Version : ".$err);
+	$sv = simple_query('Value', 'Statstable', 'Item', 'SchemaVer', 0);
+	if ($sv == 0) {
+		debuglog("No Schema Version Found - initialising table","SQL_CONNECT");
+		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('ListVersion', '0')", true);
+		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('ArtistCount', '0')", true);
+		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('AlbumCount', '0')", true);
+		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('TrackCount', '0')", true);
+		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('TotalTime', '0')", true);
+		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('SchemaVer', '".ROMPR_SCHEMA_VERSION."')", true);
+		$sv = ROMPR_SCHEMA_VERSION;
+		debuglog("Statstable populated", "MYSQL_CONNECT");
+		create_update_triggers();
+		create_conditional_triggers();
 	}
 
 	if ($sv > ROMPR_SCHEMA_VERSION) {
@@ -264,42 +255,42 @@ function check_sql_tables() {
 
 			case 1:
 				debuglog("Updating FROM Schema version 1 TO Schema version 2","SQL");
-				generic_sql_query("ALTER TABLE Albumtable DROP Directory");
-				generic_sql_query("UPDATE Statstable SET Value = 2 WHERE Item = 'SchemaVer'");
+				generic_sql_query("ALTER TABLE Albumtable DROP Directory", true);
+				generic_sql_query("UPDATE Statstable SET Value = 2 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 2:
 				debuglog("Updating FROM Schema version 2 TO Schema version 3","SQL");
-				generic_sql_query("ALTER TABLE Tracktable ADD Hidden TINYINT(1) UNSIGNED DEFAULT 0");
-				generic_sql_query("UPDATE Tracktable SET Hidden = 0 WHERE Hidden IS NULL");
-				generic_sql_query("UPDATE Statstable SET Value = 3 WHERE Item = 'SchemaVer'");
+				generic_sql_query("ALTER TABLE Tracktable ADD Hidden TINYINT(1) UNSIGNED DEFAULT 0", true);
+				generic_sql_query("UPDATE Tracktable SET Hidden = 0 WHERE Hidden IS NULL", true);
+				generic_sql_query("UPDATE Statstable SET Value = 3 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 3:
 				debuglog("Updating FROM Schema version 3 TO Schema version 4","SQL");
-				generic_sql_query("UPDATE Tracktable SET Disc = 1 WHERE Disc IS NULL OR Disc = 0");
-				generic_sql_query("UPDATE Statstable SET Value = 4 WHERE Item = 'SchemaVer'");
+				generic_sql_query("UPDATE Tracktable SET Disc = 1 WHERE Disc IS NULL OR Disc = 0", true);
+				generic_sql_query("UPDATE Statstable SET Value = 4 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 4:
 				debuglog("Updating FROM Schema version 4 TO Schema version 5","SQL");
-				generic_sql_query("UPDATE Albumtable SET Searched = 0 WHERE Image NOT LIKE 'albumart%'");
-				generic_sql_query("ALTER TABLE Albumtable DROP Image");
-				generic_sql_query("UPDATE Statstable SET Value = 5 WHERE Item = 'SchemaVer'");
+				generic_sql_query("UPDATE Albumtable SET Searched = 0 WHERE Image NOT LIKE 'albumart%'", true);
+				generic_sql_query("ALTER TABLE Albumtable DROP Image", true);
+				generic_sql_query("UPDATE Statstable SET Value = 5 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 5:
 				debuglog("Updating FROM Schema version 5 TO Schema version 6","SQL");
-				generic_sql_query("DROP INDEX Disc on Tracktable");
-				generic_sql_query("UPDATE Statstable SET Value = 6 WHERE Item = 'SchemaVer'");
+				generic_sql_query("DROP INDEX Disc on Tracktable", true);
+				generic_sql_query("UPDATE Statstable SET Value = 6 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 6:
 				debuglog("Updating FROM Schema version 6 TO Schema version 7","SQL");
 				// This was going to be a nice datestamp but newer versions of mysql don't work that way
-				generic_sql_query("ALTER TABLE Tracktable ADD DateAdded TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
-				generic_sql_query("UPDATE Tracktable SET DateAdded = FROM_UNIXTIME(LastModified) WHERE LastModified IS NOT NULL AND LastModified > 0");
-				generic_sql_query("UPDATE Statstable SET Value = 7 WHERE Item = 'SchemaVer'");
+				generic_sql_query("ALTER TABLE Tracktable ADD DateAdded TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", true);
+				generic_sql_query("UPDATE Tracktable SET DateAdded = FROM_UNIXTIME(LastModified) WHERE LastModified IS NOT NULL AND LastModified > 0", true);
+				generic_sql_query("UPDATE Statstable SET Value = 7 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 7:
@@ -309,28 +300,20 @@ function check_sql_tables() {
 				// tags and rating, just modify the artist data.
 				$stmt = sql_prepare_query_later("UPDATE Artisttable SET Artistname = ? WHERE Artistindex = ?");
 				if ($stmt !== FALSE) {
-					if ($result = generic_sql_query("SELECT * FROM Artisttable")) {
-						while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-							$artist = (string) $obj->Artistname;
-							$art = explode(' & ', $artist);
-							if (count($art) > 2) {
-							    $f = array_slice($art, 0, count($art) - 1);
-							    $newname = implode($f, ", ")." & ".$art[count($art) - 1];
-							    debuglog("Updating artist name from ".$artist." to ".$newname,"UPGRADE_SCHEMA");
-							    $stmt->execute(array($newname, $obj->Artistindex));
-							}
+					$result = generic_sql_query("SELECT * FROM Artisttable", false, PDO::FETCH_OBJ);
+					foreach ($result as $obj) {
+						$artist = (string) $obj->Artistname;
+						$art = explode(' & ', $artist);
+						if (count($art) > 2) {
+						    $f = array_slice($art, 0, count($art) - 1);
+						    $newname = implode($f, ", ")." & ".$art[count($art) - 1];
+						    debuglog("Updating artist name from ".$artist." to ".$newname,"UPGRADE_SCHEMA");
+						    $stmt->execute(array($newname, $obj->Artistindex));
 						}
-						generic_sql_query("UPDATE Statstable SET Value = 8 WHERE Item = 'SchemaVer'");
-					} else {
-						$err = $mysqlc->errorInfo()[2];
-						debuglog("Error Updating to version 8 ".$err, "MYSQL_CONNECT");
-						return array(false, "There was an error while updating your database to version 8 : ".$err);
 					}
-				} else {
-					$err = $mysqlc->errorInfo()[2];
-					debuglog("Error Updating to version 8 ".$err, "MYSQL_CONNECT");
-					return array(false, "There was an error while updating your database to version 8 : ".$err);
 				}
+				generic_sql_query("UPDATE Statstable SET Value = 8 WHERE Item = 'SchemaVer'", true);
+				$stmt = null;
 				break;
 
 			case 8:
@@ -338,232 +321,222 @@ function check_sql_tables() {
 				// We removed the image column earlier, but I've decided we need it again
 				// because some mopidy backends supply images and archiving them all makes
 				// creating the collection take waaaaay too long.
-				generic_sql_query("ALTER TABLE Albumtable ADD Image VARCHAR(255)");
-				// So we now need to recreate the image database. Sadly this means that people using Beets
-				// will lose their album images.
-				if ($result = generic_sql_query("SELECT Albumindex, ImgKey FROM Albumtable")) {
-					while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-						if (file_exists('albumart/small/'.$obj->ImgKey.'.jpg')) {
-							generic_sql_query("UPDATE Albumtable SET Image = 'albumart/small/".$obj->ImgKey.".jpg', Searched = 1 WHERE Albumindex = ".$obj->Albumindex);
-						} else {
-							generic_sql_query("UPDATE Albumtable SET Image = '', Searched = 0 WHERE Albumindex = ".$obj->Albumindex);
-						}
+				generic_sql_query("ALTER TABLE Albumtable ADD Image VARCHAR(255)", true);
+				// So we now need to recreate the image database. Sadly this means that people using Beets will lose their album images.
+				$result = generic_sql_query("SELECT Albumindex, ImgKey FROM Albumtable", false, PDO::FETCH_OBJ);
+				foreach ($result as $obj) {
+					if (file_exists('albumart/small/'.$obj->ImgKey.'.jpg')) {
+						generic_sql_query("UPDATE Albumtable SET Image = 'albumart/small/".$obj->ImgKey.".jpg', Searched = 1 WHERE Albumindex = ".$obj->Albumindex, true);
+					} else {
+						generic_sql_query("UPDATE Albumtable SET Image = '', Searched = 0 WHERE Albumindex = ".$obj->Albumindex, true);
 					}
-					generic_sql_query("UPDATE Statstable SET Value = 9 WHERE Item = 'SchemaVer'");
-			    } else {
-					$err = $mysqlc->errorInfo()[2];
-					debuglog("Error Updating to version 8 ".$err, "MYSQL_CONNECT");
-					return array(false, "There was an error while updating your database to version 9 : ".$err);
-			    }
+				}
+				generic_sql_query("UPDATE Statstable SET Value = 9 WHERE Item = 'SchemaVer'", true);
 			    break;
 
 			case 9:
 				debuglog("Updating FROM Schema version 9 TO Schema version 10","SQL");
-				generic_sql_query("ALTER TABLE Albumtable DROP NumDiscs");
-				generic_sql_query("UPDATE Statstable SET Value = 10 WHERE Item = 'SchemaVer'");
+				generic_sql_query("ALTER TABLE Albumtable DROP NumDiscs", true);
+				generic_sql_query("UPDATE Statstable SET Value = 10 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 10:
 				debuglog("Updating FROM Schema version 10 TO Schema version 11","SQL");
-				generic_sql_query("ALTER TABLE Albumtable DROP IsOneFile");
-				generic_sql_query("UPDATE Statstable SET Value = 11 WHERE Item = 'SchemaVer'");
+				generic_sql_query("ALTER TABLE Albumtable DROP IsOneFile", true);
+				generic_sql_query("UPDATE Statstable SET Value = 11 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 11:
 				debuglog("Updating FROM Schema version 11 TO Scheme version 12","SQL");
-				generic_sql_query("ALTER TABLE Tracktable ADD isSearchResult TINYINT(1) UNSIGNED DEFAULT 0");
-				generic_sql_query("UPDATE Statstable SET Value = 12 WHERE Item = 'SchemaVer'");
+				generic_sql_query("ALTER TABLE Tracktable ADD isSearchResult TINYINT(1) UNSIGNED DEFAULT 0", true);
+				generic_sql_query("UPDATE Statstable SET Value = 12 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 12:
 				debuglog("Updating FROM Schema version 12 TO Scheme version 13","SQL");
-				generic_sql_query("ALTER TABLE Albumtable CHANGE Spotilink AlbumUri VARCHAR(255)");
-				generic_sql_query("UPDATE Statstable SET Value = 13 WHERE Item = 'SchemaVer'");
+				generic_sql_query("ALTER TABLE Albumtable CHANGE Spotilink AlbumUri VARCHAR(255)", true);
+				generic_sql_query("UPDATE Statstable SET Value = 13 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 13:
 				debuglog("Updating FROM Schema version 13 TO Scheme version 14","SQL");
 				// Nothing to do here, this is for SQLite only.
-				generic_sql_query("UPDATE Statstable SET Value = 14 WHERE Item = 'SchemaVer'");
+				generic_sql_query("UPDATE Statstable SET Value = 14 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 14:
 				debuglog("Updating FROM Schema version 14 TO Scheme version 15","SQL");
-				generic_sql_query("ALTER TABLE Tracktable MODIFY LastModified CHAR(32)");
-				generic_sql_query("UPDATE Statstable SET Value = 15 WHERE Item = 'SchemaVer'");
+				generic_sql_query("ALTER TABLE Tracktable MODIFY LastModified CHAR(32)", true);
+				generic_sql_query("UPDATE Statstable SET Value = 15 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 15:
 				debuglog("Updating FROM Schema version 15 TO Schema version 16","SQL");
 				albumImageBuggery();
-				generic_sql_query("UPDATE Statstable SET Value = 16 WHERE Item = 'SchemaVer'");
+				generic_sql_query("UPDATE Statstable SET Value = 16 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 16:
 				debuglog("Updating FROM Schema version 16 TO Schema version 17","SQL",6);
-				// Early MPD versions had LastModified as an integer value. They changed it to a datestamp
-				// some time ago but I didn't notice
-				if ($r = generic_sql_query("SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Tracktable' AND COLUMN_NAME = 'LastModified'")) {
-					while ($obj = $r->fetch(PDO::FETCH_ASSOC)) {
-						debuglog("Data Type of LastModified is ".$obj['DATA_TYPE'],"MYSQL_INIT",6);
-						if ($obj['DATA_TYPE'] == 'int') {
-							debuglog("Modifying Tracktable","MYSQL_INIT",6);
-							generic_sql_query("ALTER TABLE Tracktable ADD LM CHAR(32)");
-							generic_sql_query("UPDATE Tracktable SET LM = LastModified");
-							generic_sql_query("ALTER TABLE Tracktable DROP LastModified");
-							generic_sql_query("ALTER TABLE Tracktable CHANGE LM LastModified CHAR(32)");
-						}
+				// Early MPD versions had LastModified as an integer value. They changed it to a datestamp some time ago but I didn't notice
+				$r = generic_sql_query("SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Tracktable' AND COLUMN_NAME = 'LastModified'");
+				foreach ($r as $obj) {
+					debuglog("Data Type of LastModified is ".$obj['DATA_TYPE'],"MYSQL_INIT",6);
+					if ($obj['DATA_TYPE'] == 'int') {
+						debuglog("Modifying Tracktable","MYSQL_INIT",6);
+						generic_sql_query("ALTER TABLE Tracktable ADD LM CHAR(32)", true);
+						generic_sql_query("UPDATE Tracktable SET LM = LastModified", true);
+						generic_sql_query("ALTER TABLE Tracktable DROP LastModified", true);
+						generic_sql_query("ALTER TABLE Tracktable CHANGE LM LastModified CHAR(32)", true);
 					}
 				}
-				generic_sql_query("UPDATE Statstable SET Value = 17 WHERE Item = 'SchemaVer'");
+				generic_sql_query("UPDATE Statstable SET Value = 17 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 17:
 				debuglog("Updating FROM Schema version 17 TO Schema version 18","SQL",6);
 				include("utils/podcastupgrade.php");
-				generic_sql_query("UPDATE Statstable SET Value = 18 WHERE Item = 'SchemaVer'");
+				generic_sql_query("UPDATE Statstable SET Value = 18 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 18:
 				debuglog("Updating FROM Schema version 18 TO Schema version 19","SQL");
-				if ($result = generic_sql_query('SELECT Tracktable.Uri AS uri, Tracktable.TTindex, Tracktable.Title AS ttit, Albumtable.*, Trackimagetable.Image AS ti FROM Tracktable JOIN Albumtable USING (Albumindex) LEFT JOIN Trackimagetable USING (TTindex) WHERE Tracktable.Uri LIKE "soundcloud:%"')) {
-					while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-						debuglog("  Creating new Album ".$obj->ttit." Image ".$obj->ti,"SQL");
-						$ti = $obj->ti;
-						if (preg_match('/^http/', $ti)) {
-							$ti = 'getRemoteImage.php?url='.$ti;
-						}
-						if ($stmt = sql_prepare_query(
-							"INSERT INTO Albumtable
-								(Albumname, AlbumArtistindex, AlbumUri, Year, Searched, ImgKey, mbid, Domain, Image)
-							VALUES
-								(?, ?, ?, ?, ?, ?, ?, ?, ?)",
-								$obj->ttit, $obj->AlbumArtistindex, $obj->uri, $obj->Year, $obj->Searched, $obj->ImgKey, $obj->mbid, $obj->Domain, $ti
-							)) {
-								$retval = $mysqlc->lastInsertId();
-								debuglog("    .. success, Albumindex ".$retval,"SQL");
-								generic_sql_query("UPDATE Tracktable SET Albumindex = ".$retval." WHERE TTindex = ".$obj->TTindex);
-						} else {
-							debuglog("    .. ERROR!","SQL");
-						}
+				$result = generic_sql_query('SELECT Tracktable.Uri AS uri, Tracktable.TTindex, Tracktable.Title AS ttit, Albumtable.*, Trackimagetable.Image AS ti FROM Tracktable JOIN Albumtable USING (Albumindex) LEFT JOIN Trackimagetable USING (TTindex) WHERE Tracktable.Uri LIKE "soundcloud:%"', false, PDO::FETCH_OBJ);
+				foreach ($result as $obj) {
+					debuglog("  Creating new Album ".$obj->ttit." Image ".$obj->ti,"SQL");
+					$ti = $obj->ti;
+					if (preg_match('/^http/', $ti)) {
+						$ti = 'getRemoteImage.php?url='.$ti;
+					}
+					if (sql_prepare_query(true, null, null, null,
+						"INSERT INTO Albumtable
+							(Albumname, AlbumArtistindex, AlbumUri, Year, Searched, ImgKey, mbid, Domain, Image)
+						VALUES
+							(?, ?, ?, ?, ?, ?, ?, ?, ?)",
+							$obj->ttit, $obj->AlbumArtistindex, $obj->uri, $obj->Year, $obj->Searched, $obj->ImgKey, $obj->mbid, $obj->Domain, $ti
+						)) {
+							$retval = $mysqlc->lastInsertId();
+							debuglog("    .. success, Albumindex ".$retval,"SQL");
+							generic_sql_query("UPDATE Tracktable SET Albumindex = ".$retval." WHERE TTindex = ".$obj->TTindex, true);
+					} else {
+						debuglog("    .. ERROR!","SQL");
 					}
 				}
-				generic_sql_query("UPDATE Statstable SET Value = 19 WHERE Item = 'SchemaVer'");
+				generic_sql_query("UPDATE Statstable SET Value = 19 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 19:
 				debuglog("Updating FROM Schema version 19 TO Schema version 20","SQL");
-				if ($result = generic_sql_query('SELECT Tracktable.Uri AS uri, Tracktable.TTindex, Tracktable.Title AS ttit, Albumtable.*, Trackimagetable.Image AS ti FROM Tracktable JOIN Albumtable USING (Albumindex) LEFT JOIN Trackimagetable USING (TTindex) WHERE Tracktable.Uri LIKE "youtube:%"')) {
-					while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-						debuglog("  Creating new Album ".$obj->ttit." Image ".$obj->ti,"SQL");
-						$ti = $obj->ti;
-						if (preg_match('/^http/', $ti)) {
-							$ti = 'getRemoteImage.php?url='.$ti;
-						}
-						if ($stmt = sql_prepare_query(
-							"INSERT INTO Albumtable
-								(Albumname, AlbumArtistindex, AlbumUri, Year, Searched, ImgKey, mbid, Domain, Image)
-							VALUES
-								(?, ?, ?, ?, ?, ?, ?, ?, ?)",
-								$obj->ttit, $obj->AlbumArtistindex, $obj->uri, $obj->Year, $obj->Searched, $obj->ImgKey, $obj->mbid, $obj->Domain, $ti
-							)) {
-								$retval = $mysqlc->lastInsertId();
-								debuglog("    .. success, Albumindex ".$retval,"SQL");
-								generic_sql_query("UPDATE Tracktable SET Albumindex = ".$retval." WHERE TTindex = ".$obj->TTindex);
-						} else {
-							debuglog("    .. ERROR!","SQL");
-						}
+				$result = generic_sql_query('SELECT Tracktable.Uri AS uri, Tracktable.TTindex, Tracktable.Title AS ttit, Albumtable.*, Trackimagetable.Image AS ti FROM Tracktable JOIN Albumtable USING (Albumindex) LEFT JOIN Trackimagetable USING (TTindex) WHERE Tracktable.Uri LIKE "youtube:%"', false, PDO::FETCH_OBJ);
+				foreach ($result as $obj) {
+					debuglog("  Creating new Album ".$obj->ttit." Image ".$obj->ti,"SQL");
+					$ti = $obj->ti;
+					if (preg_match('/^http/', $ti)) {
+						$ti = 'getRemoteImage.php?url='.$ti;
+					}
+					if (sql_prepare_query(true, null, null, null,
+						"INSERT INTO Albumtable
+							(Albumname, AlbumArtistindex, AlbumUri, Year, Searched, ImgKey, mbid, Domain, Image)
+						VALUES
+							(?, ?, ?, ?, ?, ?, ?, ?, ?)",
+							$obj->ttit, $obj->AlbumArtistindex, $obj->uri, $obj->Year, $obj->Searched, $obj->ImgKey, $obj->mbid, $obj->Domain, $ti
+						)) {
+							$retval = $mysqlc->lastInsertId();
+							debuglog("    .. success, Albumindex ".$retval,"SQL");
+							generic_sql_query("UPDATE Tracktable SET Albumindex = ".$retval." WHERE TTindex = ".$obj->TTindex, true);
+					} else {
+						debuglog("    .. ERROR!","SQL");
 					}
 				}
-				generic_sql_query("UPDATE Statstable SET Value = 20 WHERE Item = 'SchemaVer'");
+				generic_sql_query("UPDATE Statstable SET Value = 20 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 20:
 				debuglog("Updating FROM Schema version 20 TO Schema version 21","SQL");
-				generic_sql_query("DROP TABLE Trackimagetable");
-				generic_sql_query("UPDATE Statstable SET Value = 21 WHERE Item = 'SchemaVer'");
+				generic_sql_query("DROP TABLE Trackimagetable", true);
+				generic_sql_query("UPDATE Statstable SET Value = 21 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 21:
 				debuglog("Updating FROM Schema version 21 TO Schema version 22","SQL");
-				generic_sql_query("ALTER TABLE Playcounttable ADD LastPlayed TIMESTAMP NULL");
-				generic_sql_query("UPDATE Statstable SET Value = 22 WHERE Item = 'SchemaVer'");
+				generic_sql_query("ALTER TABLE Playcounttable ADD LastPlayed TIMESTAMP NULL", true);
+				generic_sql_query("UPDATE Statstable SET Value = 22 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 22:
 				debuglog("Updating FROM Schema version 22 TO Schema version 23","SQL");
-				generic_sql_query("ALTER TABLE Podcasttable ADD Version TINYINT(2)");
-				generic_sql_query("ALTER TABLE PodcastTracktable ADD Guid VARCHAR(2000)");
-				generic_sql_query("ALTER TABLE PodcastTracktable ADD Localfilename VARCHAR(255)");
-				generic_sql_query("UPDATE Podcasttable SET Version = 1 WHERE PODindex IS NOT NULL");
-				generic_sql_query("UPDATE Statstable SET Value = 23 WHERE Item = 'SchemaVer'");
+				generic_sql_query("ALTER TABLE Podcasttable ADD Version TINYINT(2)", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable ADD Guid VARCHAR(2000)", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable ADD Localfilename VARCHAR(255)", true);
+				generic_sql_query("UPDATE Podcasttable SET Version = 1 WHERE PODindex IS NOT NULL", true);
+				generic_sql_query("UPDATE Statstable SET Value = 23 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 23:
 				debuglog("Updating FROM Schema version 23 TO Schema version 24","SQL");
-				generic_sql_query("ALTER TABLE Tracktable CHANGE DateAdded DateAdded TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
-				generic_sql_query("UPDATE Statstable SET Value = 24 WHERE Item = 'SchemaVer'");
+				generic_sql_query("ALTER TABLE Tracktable CHANGE DateAdded DateAdded TIMESTAMP DEFAULT CURRENT_TIMESTAMP", true);
+				generic_sql_query("UPDATE Statstable SET Value = 24 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 24:
 				debuglog("Updating FROM Schema version 24 TO Schema version 25","SQL");
-				generic_sql_query("ALTER DATABASE romprdb CHARACTER SET utf8 COLLATE utf8_unicode_ci");
-				generic_sql_query("UPDATE Statstable SET Value = 25 WHERE Item = 'SchemaVer'");
+				generic_sql_query("ALTER DATABASE romprdb CHARACTER SET utf8 COLLATE utf8_unicode_ci", true);
+				generic_sql_query("UPDATE Statstable SET Value = 25 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 25:
 				debuglog("Updating FROM Schema version 25 TO Schema version 26","SQL");
-				generic_sql_query("ALTER TABLE Tracktable ADD justAdded TINYINT(1) UNSIGNED DEFAULT 1");
-				generic_sql_query("UPDATE Statstable SET Value = 26 WHERE Item = 'SchemaVer'");
+				generic_sql_query("ALTER TABLE Tracktable ADD justAdded TINYINT(1) UNSIGNED DEFAULT 1", true);
+				generic_sql_query("UPDATE Statstable SET Value = 26 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 26:
 				debuglog("Updating FROM Schema version 26 TO Schema version 27","SQL");
-				generic_sql_query("ALTER TABLE Albumtable ADD justUpdated TINYINT(1) UNSIGNED DEFAULT 1");
-				generic_sql_query("UPDATE Statstable SET Value = 27 WHERE Item = 'SchemaVer'");
+				generic_sql_query("ALTER TABLE Albumtable ADD justUpdated TINYINT(1) UNSIGNED DEFAULT 1", true);
+				generic_sql_query("UPDATE Statstable SET Value = 27 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 27:
 				debuglog("Updating FROM Schema version 27 TO Schema version 28","SQL");
 				rejig_wishlist_tracks();
-				generic_sql_query("UPDATE Statstable SET Value = 28 WHERE Item = 'SchemaVer'");
+				generic_sql_query("UPDATE Statstable SET Value = 28 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 28:
 				debuglog("Updating FROM Schema version 28 TO Schema version 29","SQL");
 				create_update_triggers();
-				generic_sql_query("UPDATE Statstable SET Value = 29 WHERE Item = 'SchemaVer'");
+				generic_sql_query("UPDATE Statstable SET Value = 29 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 29:
 				debuglog("Updating FROM Schema version 29 TO Schema version 30","SQL");
 				include('utils/radioupgrade.php');
-				generic_sql_query("UPDATE Statstable SET Value = 30 WHERE Item = 'SchemaVer'");
+				generic_sql_query("UPDATE Statstable SET Value = 30 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 30:
 				debuglog("Updating FROM Schema version 30 TO Schema version 31","SQL");
-				generic_sql_query("ALTER TABLE PodcastTracktable CHANGE Description Description TEXT");
-				generic_sql_query("ALTER TABLE PodcastTracktable CHANGE Link Link TEXT");
-				generic_sql_query("ALTER TABLE PodcastTracktable CHANGE Guid Guid TEXT");
-				generic_sql_query("ALTER TABLE Podcasttable CHANGE FeedURL FeedURL TEXT");
-				generic_sql_query("ALTER TABLE Podcasttable CHANGE Description Description TEXT");
-				generic_sql_query("ALTER TABLE Tracktable CHANGE Uri Uri TEXT");
-				generic_sql_query("UPDATE Statstable SET Value = 31 WHERE Item = 'SchemaVer'");
+				generic_sql_query("ALTER TABLE PodcastTracktable CHANGE Description Description TEXT", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable CHANGE Link Link TEXT", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable CHANGE Guid Guid TEXT", true);
+				generic_sql_query("ALTER TABLE Podcasttable CHANGE FeedURL FeedURL TEXT", true);
+				generic_sql_query("ALTER TABLE Podcasttable CHANGE Description Description TEXT", true);
+				generic_sql_query("ALTER TABLE Tracktable CHANGE Uri Uri TEXT", true);
+				generic_sql_query("UPDATE Statstable SET Value = 31 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 31:
 				debuglog("Updating FROM Schema version 31 TO Schema version 32","SQL");
-				generic_sql_query("ALTER TABLE Podcasttable ADD Subscribed TINYINT(1) NOT NULL DEFAULT 1");
-				generic_sql_query("UPDATE Statstable SET Value = 32 WHERE Item = 'SchemaVer'");
+				generic_sql_query("ALTER TABLE Podcasttable ADD Subscribed TINYINT(1) NOT NULL DEFAULT 1", true);
+				generic_sql_query("UPDATE Statstable SET Value = 32 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 32:
 				debuglog("Updating FROM Schema version 32 TO Schema version 33","SQL");
-				generic_sql_query("DROP TRIGGER IF EXISTS track_insert_trigger");
-				generic_sql_query("DROP TRIGGER IF EXISTS track_update_trigger");
+				generic_sql_query("DROP TRIGGER IF EXISTS track_insert_trigger", true);
+				generic_sql_query("DROP TRIGGER IF EXISTS track_update_trigger", true);
 				create_conditional_triggers();
-				generic_sql_query("UPDATE Statstable SET Value = 33 WHERE Item = 'SchemaVer'");
+				generic_sql_query("UPDATE Statstable SET Value = 33 WHERE Item = 'SchemaVer'", true);
 				break;
 
 		}
@@ -574,20 +547,20 @@ function check_sql_tables() {
 }
 
 function delete_oldtracks() {
-	// generic_sql_query("DELETE Tracktable FROM Tracktable JOIN Playcounttable USING (TTindex) WHERE Hidden = 1 AND DATE_SUB(CURDATE(), INTERVAL 6 MONTH) > DateAdded AND Playcount < 2");
+	// generic_sql_query("DELETE Tracktable FROM Tracktable JOIN Playcounttable USING (TTindex) WHERE Hidden = 1 AND DATE_SUB(CURDATE(), INTERVAL 6 MONTH) > DateAdded AND Playcount < 2", true);
 }
 
 function delete_orphaned_artists() {
-	generic_sql_query("DROP TABLE IF EXISTS Croft");
-	generic_sql_query("DROP TABLE IF EXISTS Cruft");
-	generic_sql_query("CREATE TEMPORARY TABLE Croft(Artistindex INT UNSIGNED NOT NULL UNIQUE, PRIMARY KEY(Artistindex)) AS SELECT Artistindex FROM Tracktable UNION SELECT AlbumArtistindex FROM Albumtable");
-	generic_sql_query("CREATE TEMPORARY TABLE Cruft(Artistindex INT UNSIGNED NOT NULL UNIQUE, PRIMARY KEY(Artistindex)) AS SELECT Artistindex FROM Artisttable WHERE Artistindex NOT IN (SELECT Artistindex FROM Croft)");
-	generic_sql_query("DELETE Artisttable FROM Artisttable INNER JOIN Cruft ON Artisttable.Artistindex = Cruft.Artistindex");
+	generic_sql_query("DROP TABLE IF EXISTS Croft", true);
+	generic_sql_query("DROP TABLE IF EXISTS Cruft", true);
+	generic_sql_query("CREATE TEMPORARY TABLE Croft(Artistindex INT UNSIGNED NOT NULL UNIQUE, PRIMARY KEY(Artistindex)) AS SELECT Artistindex FROM Tracktable UNION SELECT AlbumArtistindex FROM Albumtable", true);
+	generic_sql_query("CREATE TEMPORARY TABLE Cruft(Artistindex INT UNSIGNED NOT NULL UNIQUE, PRIMARY KEY(Artistindex)) AS SELECT Artistindex FROM Artisttable WHERE Artistindex NOT IN (SELECT Artistindex FROM Croft)", true);
+	generic_sql_query("DELETE Artisttable FROM Artisttable INNER JOIN Cruft ON Artisttable.Artistindex = Cruft.Artistindex", true);
 }
 
 function hide_played_tracks() {
-	generic_sql_query("CREATE TEMPORARY TABLE Fluff(TTindex INT UNSIGNED NOT NULL UNIQUE, PRIMARY KEY(TTindex)) AS SELECT TTindex FROM Tracktable JOIN Playcounttable USING (TTindex) WHERE isSearchResult = 2");
-	generic_sql_query("UPDATE Tracktable SET Hidden = 1, isSearchResult = 0 WHERE TTindex IN (SELECT TTindex FROM Fluff)");
+	generic_sql_query("CREATE TEMPORARY TABLE Fluff(TTindex INT UNSIGNED NOT NULL UNIQUE, PRIMARY KEY(TTindex)) AS SELECT TTindex FROM Tracktable JOIN Playcounttable USING (TTindex) WHERE isSearchResult = 2", true);
+	generic_sql_query("UPDATE Tracktable SET Hidden = 1, isSearchResult = 0 WHERE TTindex IN (SELECT TTindex FROM Fluff)", true);
 }
 
 function sql_recent_tracks() {
@@ -626,7 +599,7 @@ function create_conditional_triggers() {
 							THEN
 							  UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = NEW.Albumindex;
 							END IF;
-						END;");
+						END;", true);
 
 	generic_sql_query("CREATE TRIGGER track_update_trigger AFTER UPDATE ON Tracktable
 						FOR EACH ROW
@@ -636,7 +609,7 @@ function create_conditional_triggers() {
 							UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = NEW.Albumindex;
 							UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = OLD.Albumindex;
 						END IF;
-						END;");
+						END;", true);
 
 }
 

@@ -730,34 +730,33 @@ function getWishlist() {
     }
     $qstring .= ', trackno';
 
-    if ($result = generic_sql_query($qstring)) {
-
+    $result = generic_sql_query($qstring);
+    if (count($result) > 0) {
         print '<div class="containerbox padright noselection"><button class="fixed infoclick plugclickable clickclearwishlist">Clear Wishlist</button><div class="expand"></div></div>';
+    }
+    foreach ($result as $obj) {
+        debuglog("Found Track ".$obj['title']." by ".$obj['albumartist'],"WISHLIST");
 
-        while ($obj = $result->fetch(PDO::FETCH_ASSOC)) {
-            debuglog("Found Track ".$obj['title']." by ".$obj['albumartist'],"WISHLIST");
-
-            print '<div class="containerbox vertical" id="walbum'.$obj['albumindex'].'">';
-            print '<div class="containerbox fixed">';
-            print '<div class="smallcover fixed"><img class="smallcover fixed notfound" /></div>';
-            print '<div class="expand containerbox vertical">';
-            print '<div class="fixed tracktitle"><b>'.$obj['title'].'</b></div>';
-            print '<div class="fixed playlistrow2 trackartist">'.$obj['albumartist'].'</div>';
-            if ($obj['rating'] > 0) {
-                print '<div class="fixed playlistrow2 trackrating"><i class="icon-'.$obj['rating'].'-stars rating-icon-small nopointer"></i></div>';
-            }
-            if ($obj['tags']) {
-                print '<div class="fixed playlistrow2 tracktags"><i class="icon-tags smallicon"></i>'.$obj['tags'].'</div>';
-            }
-            print '</div>';
-            print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed"></i>';
-            print '<input type="hidden" value="'.$obj['title'].'" />';
-            print '<input type="hidden" value="'.$obj['albumartist'].'" />';
-            print '<i class="icon-cancel-circled playlisticonr fixed clickicon clickremdb infoclick plugclickable"></i>';
-            print '<input type="hidden" value="'.$obj['ttid'].'" />';
-            print '</div>';
-            print '</div>';
+        print '<div class="containerbox vertical" id="walbum'.$obj['albumindex'].'">';
+        print '<div class="containerbox fixed">';
+        print '<div class="smallcover fixed"><img class="smallcover fixed notfound" /></div>';
+        print '<div class="expand containerbox vertical">';
+        print '<div class="fixed tracktitle"><b>'.$obj['title'].'</b></div>';
+        print '<div class="fixed playlistrow2 trackartist">'.$obj['albumartist'].'</div>';
+        if ($obj['rating'] > 0) {
+            print '<div class="fixed playlistrow2 trackrating"><i class="icon-'.$obj['rating'].'-stars rating-icon-small nopointer"></i></div>';
         }
+        if ($obj['tags']) {
+            print '<div class="fixed playlistrow2 tracktags"><i class="icon-tags smallicon"></i>'.$obj['tags'].'</div>';
+        }
+        print '</div>';
+        print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed"></i>';
+        print '<input type="hidden" value="'.$obj['title'].'" />';
+        print '<input type="hidden" value="'.$obj['albumartist'].'" />';
+        print '<i class="icon-cancel-circled playlisticonr fixed clickicon clickremdb infoclick plugclickable"></i>';
+        print '<input type="hidden" value="'.$obj['ttid'].'" />';
+        print '</div>';
+        print '</div>';
     }
 }
 
@@ -843,57 +842,53 @@ function make_image_key($artist,$album) {
 
 function albumImageBuggery() {
     set_time_limit(600);
-    if ($result = generic_sql_query(
-        "SELECT Albumindex, Artistname, Albumname, ImgKey, Image
-            FROM Albumtable JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex"
-    )) {
-        open_transaction();
-        while($obj = $result->fetch(PDO::FETCH_OBJ)) {
-            $oldkey = $obj->ImgKey;
-            $newkey = make_image_key($obj->Artistname, $obj->Albumname);
-            $oldimage = $obj->Image;
-            $newimage = $oldimage;
-            if (preg_match('#^albumart/#', $oldimage)) {
-                if (file_exists($oldimage)) {
-                    debuglog("Renaming albumart image ".$oldkey." to ".$newkey,"BACKEND_UPGRADE");
-                    $newimage = 'albumart/small/'.$newkey.'.jpg';
-                    exec( 'mv albumart/small/'.$oldkey.'.jpg '.$newimage);
-                    exec( 'mv albumart/asdownloaded/'.$oldkey.'.jpg albumart/asdownloaded/'.$newkey.'.jpg');
-                    sql_prepare_query("UPDATE Albumtable SET ImgKey = ?, Image = ? WHERE Albumindex = ?",$newkey,$newimage,$obj->Albumindex);
-                }
-            } else if (preg_match('#^prefs/imagecache/#', $oldimage)) {
-                if (file_exists($oldimage)) {
-                    debuglog("Renaming imagecache image ".$oldkey." to ".$newkey,"BACKEND_UPGRADE");
-                    $newimage = 'prefs/imagecache/'.$newkey.'_small.jpg';
-                    exec('mv prefs/imagecache/'.$oldkey.'_small.jpg '.$newimage);
-                    exec('mv prefs/imagecache/'.$oldkey.'_asdownloaded.jpg prefs/imagecache/'.$newkey.'_asdownloaded.jpg');
-                    sql_prepare_query("UPDATE Albumtable SET ImgKey = ?, Image = ? WHERE Albumindex = ?",$newkey,$newimage,$obj->Albumindex);
-                }
+    $result = generic_sql_query(
+        "SELECT Albumindex, Artistname, Albumname, ImgKey, Image FROM Albumtable JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex", false, PDO::FETCH_OBJ);
+    open_transaction();
+foreach ($result as $obj) {
+        $oldkey = $obj->ImgKey;
+        $newkey = make_image_key($obj->Artistname, $obj->Albumname);
+        $oldimage = $obj->Image;
+        $newimage = $oldimage;
+        if (preg_match('#^albumart/#', $oldimage)) {
+            if (file_exists($oldimage)) {
+                debuglog("Renaming albumart image ".$oldkey." to ".$newkey,"BACKEND_UPGRADE");
+                $newimage = 'albumart/small/'.$newkey.'.jpg';
+                exec( 'mv albumart/small/'.$oldkey.'.jpg '.$newimage);
+                exec( 'mv albumart/asdownloaded/'.$oldkey.'.jpg albumart/asdownloaded/'.$newkey.'.jpg');
+                sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET ImgKey = ?, Image = ? WHERE Albumindex = ?",$newkey,$newimage,$obj->Albumindex);
             }
-            check_transaction();
+        } else if (preg_match('#^prefs/imagecache/#', $oldimage)) {
+            if (file_exists($oldimage)) {
+                debuglog("Renaming imagecache image ".$oldkey." to ".$newkey,"BACKEND_UPGRADE");
+                $newimage = 'prefs/imagecache/'.$newkey.'_small.jpg';
+                exec('mv prefs/imagecache/'.$oldkey.'_small.jpg '.$newimage);
+                exec('mv prefs/imagecache/'.$oldkey.'_asdownloaded.jpg prefs/imagecache/'.$newkey.'_asdownloaded.jpg');
+                sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET ImgKey = ?, Image = ? WHERE Albumindex = ?",$newkey,$newimage,$obj->Albumindex);
+            }
         }
-        close_transaction();
+        check_transaction();
     }
+    close_transaction();
 }
 
 function rejig_wishlist_tracks() {
     global $mysqlc;
-    generic_sql_query("DELETE FROM Playcounttable WHERE TTindex IN (SELECT TTindex FROM Tracktable WHERE Hidden = 1 AND Uri IS NULL)");
-    generic_sql_query("DELETE FROM Tracktable WHERE Hidden = 1 AND Uri IS NULL");
-    if ($result = generic_sql_query("SELECT * FROM Tracktable WHERE Uri IS NULL")) {
-        while ($obj = $result->fetch(PDO::FETCH_ASSOC)) {
-            if ($stmt = sql_prepare_query(
-                "INSERT INTO
-                    Albumtable
-                    (Albumname, AlbumArtistindex, AlbumUri, Year, Searched, ImgKey, mbid, Domain, Image)
-                VALUES
-                    (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                'rompr_wishlist_'.microtime(true), $obj['Artistindex'], null, 0, 0, null, null, 'local', null)) {
-                
-                $albumindex = $mysqlc->lastInsertId();
-                debuglog("    Created Album with Albumindex ".$albumindex,"MYSQL",7);
-                generic_sql_query("UPDATE Tracktable SET Albumindex = ".$albumindex." WHERE TTindex = ".$obj['TTindex']);
-            }
+    generic_sql_query("DELETE FROM Playcounttable WHERE TTindex IN (SELECT TTindex FROM Tracktable WHERE Hidden = 1 AND Uri IS NULL)", true);
+    generic_sql_query("DELETE FROM Tracktable WHERE Hidden = 1 AND Uri IS NULL", true);
+    $result = generic_sql_query("SELECT * FROM Tracktable WHERE Uri IS NULL");
+    foreach ($result as $obj) {
+        if (sql_prepare_query(true, null, null, null,
+            "INSERT INTO
+                Albumtable
+                (Albumname, AlbumArtistindex, AlbumUri, Year, Searched, ImgKey, mbid, Domain, Image)
+            VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            'rompr_wishlist_'.microtime(true), $obj['Artistindex'], null, 0, 0, null, null, 'local', null)) {
+            
+            $albumindex = $mysqlc->lastInsertId();
+            debuglog("    Created Album with Albumindex ".$albumindex,"MYSQL",7);
+            generic_sql_query("UPDATE Tracktable SET Albumindex = ".$albumindex." WHERE TTindex = ".$obj['TTindex'], true);
         }
     }
 }
@@ -917,8 +912,8 @@ function multi_implode($array, $glue = ', ') {
 function emptyCollectionDisplay() {
     print '<div id="emptycollection" class="pref textcentre">
     <p>Your Music Collection Is Empty</p>
-    <p>You can add files to it by tagging and rating them, or you can build a collection of all your music</p>
-    </div>';
+    <p>You can add files to it by tagging and rating them, or you can build a collection of all your music</p>';
+    print '</div>';
 }
 
 function emptySearchDisplay() {

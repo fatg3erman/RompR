@@ -187,7 +187,7 @@ function getNewPodcast($url) {
         exit(0);
     }
     debuglog("Adding New Podcast ".$podcast['Title'],"PODCASTS");
-    if ($stmt = sql_prepare_query(
+    if (sql_prepare_query(true, null, null, null,
         "INSERT INTO Podcasttable
         (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, DaysLive, Description, Version)
         VALUES
@@ -202,7 +202,7 @@ function getNewPodcast($url) {
         exec('mkdir prefs/podcasts/'.$newpodid);
         download_image($podcast['Image'], $newpodid);
         foreach ($podcast['tracks'] as $track) {
-            if ($stmt = sql_prepare_query(
+            if (sql_prepare_query(true, null, null, null,
                 "INSERT INTO PodcastTracktable
                 (PODindex, Title, Artist, Duration, PubDate, FileSize, Description, Link, Guid, New)
                 VALUES
@@ -234,7 +234,7 @@ function download_image($url, $podid) {
             unlink($outfile);
         }
         exec('mv prefs/podcasts/tempimage "'.$outfile.'"');
-        sql_prepare_query('UPDATE Podcasttable SET Image = ? WHERE PODindex = ?',$outfile,$podid);
+        sql_prepare_query(true, null, null, null, 'UPDATE Podcasttable SET Image = ? WHERE PODindex = ?',$outfile,$podid);
     } else {
         debuglog("  .. failed to download image ".$aagh['status'],"PODCASTS");
     }
@@ -242,8 +242,9 @@ function download_image($url, $podid) {
 
 function refreshPodcast($podid) {
     debuglog("Refreshing podcast ".$podid,"PODCASTS");
-    if ($result = generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$podid)) {
-        $podetails = $result->fetch(PDO::FETCH_OBJ);
+    $result = generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$podid, false, PDO::FETCH_OBJ);
+    if (count($result) > 0) {
+        $podetails = $result[0];
         debuglog("  Podcast title is ".$podetails->Title,"PODCASTS");
     } else {
         debuglog("ERROR Looking up podcast ".$podid,"PODCASTS",2);
@@ -254,41 +255,36 @@ function refreshPodcast($podid) {
         upgrade_podcast($podid, $podetails, $podcast);
     }
     if ($podetails->Subscribed == 0) {
-        sql_prepare_query("UPDATE Podcasttable SET Description = ?, DaysLive = ?, RefreshOption = ?, LastUpdate = ? WHERE PODindex = ?",$podcast['Description'],$podcast['DaysLive'],$podcast['RefreshOption'],time(),$podid);
-        sql_prepare_query("UPDATE PodcastTracktable SET New=?, JustUpdated=? WHERE PODindex=?", 1, 0, $podid);
+        sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Description = ?, DaysLive = ?, RefreshOption = ?, LastUpdate = ? WHERE PODindex = ?",$podcast['Description'],$podcast['DaysLive'],$podcast['RefreshOption'],time(),$podid);
+        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET New=?, JustUpdated=? WHERE PODindex=?", 1, 0, $podid);
     } else {
-        sql_prepare_query("UPDATE PodcastTracktable SET New=?, JustUpdated=? WHERE PODindex=?", 0, 0, $podid);
-        sql_prepare_query("UPDATE Podcasttable SET Description=?, LastUpdate=?, DaysLive=? WHERE PODindex=?", $podcast['Description'], time(), $podcast['DaysLive'], $podid);
+        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET New=?, JustUpdated=? WHERE PODindex=?", 0, 0, $podid);
+        sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Description=?, LastUpdate=?, DaysLive=? WHERE PODindex=?", $podcast['Description'], time(), $podcast['DaysLive'], $podid);
     }
     download_image($podcast['Image'], $podid);
     foreach ($podcast['tracks'] as $track) {
-        $trackid = null;
-        if ($stmt = sql_prepare_query("SELECT PODTrackindex FROM PodcastTracktable WHERE Guid=? AND PODindex = ?", $track['GUID'], $podid)) {
-            while ($result = $stmt->fetch(PDO::FETCH_OBJ)) {
-                $trackid = $result->PODTrackindex;
-            }
-            if ($trackid !== null) {
-                debuglog("  Found existing track ".$track['Title'],"PODCASTS");
-                sql_prepare_query("UPDATE PodcastTracktable SET JustUpdated=?, Duration=?, Link=? WHERE PODTrackindex=?",1,$track['Duration'], $track['Link'], $trackid);
+        $trackid = sql_prepare_query(false, null, 'PODTrackindex' , null, "SELECT PODTrackindex FROM PodcastTracktable WHERE Guid=? AND PODindex = ?", $track['GUID'], $podid);
+        if ($trackid !== null) {
+            debuglog("  Found existing track ".$track['Title'],"PODCASTS");
+            sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET JustUpdated=?, Duration=?, Link=? WHERE PODTrackindex=?",1,$track['Duration'], $track['Link'], $trackid);
+        } else {
+            if (sql_prepare_query(true, null, null, null,
+                "INSERT INTO PodcastTracktable
+                (JustUpdated, PODindex, Title, Artist, Duration, PubDate, FileSize, Description, Link, Guid, New)
+                VALUES
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,? )",
+                1, $podid, $track['Title'], $track['Artist'], $track['Duration'], $track['PubDate'],
+                $track['FileSize'], $track['Description'], $track['Link'], $track['GUID'], 1))
+            {
+                debuglog("  Added Track ".$track['Title'],"PODCASTS");
             } else {
-                if ($stmt = sql_prepare_query(
-                    "INSERT INTO PodcastTracktable
-                    (JustUpdated, PODindex, Title, Artist, Duration, PubDate, FileSize, Description, Link, Guid, New)
-                    VALUES
-                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,? )",
-                    1, $podid, $track['Title'], $track['Artist'], $track['Duration'], $track['PubDate'],
-                    $track['FileSize'], $track['Description'], $track['Link'], $track['GUID'], 1))
-                {
-                    debuglog("  Added Track ".$track['Title'],"PODCASTS");
-                } else {
-                    debuglog("  FAILED Adding Track ".$track['Title'],"PODCASTS",2);
-                }
+                debuglog("  FAILED Adding Track ".$track['Title'],"PODCASTS",2);
             }
         }
     }
     // Remove tracks that are no longer in the feed and haven't been downloaded
     if ($podetails->Subscribed == 1) {
-        sql_prepare_query("DELETE FROM PodcastTracktable WHERE PODindex=? AND JustUpdated=? AND Downloaded=?",$podid, 0, 0);
+        sql_prepare_query(true, null, null, null, "DELETE FROM PodcastTracktable WHERE PODindex=? AND JustUpdated=? AND Downloaded=?",$podid, 0, 0);
 
         // Remove tracks that have been around longer than DaysToKeep - honoring KeepDownloaded
         if ($podetails->DaysToKeep > 0) {
@@ -297,43 +293,30 @@ function refreshPodcast($podid) {
             if ($podetails->KeepDownloaded == 1) {
                 $qstring .= " AND Downloaded = 0";
             }
-            generic_sql_query($qstring);
+            generic_sql_query($qstring, true);
         }
 
         // Remove tracks where there are more than NumToKeep - honoring KeepDownloaded
         if ($podetails->NumToKeep > 0) {
             $getrid = 0;
-            $toremove = array();
             $qstring = "SELECT COUNT(PODTrackindex) AS num FROM PodcastTracktable WHERE PODindex=".$podid." AND Deleted = 0";
             if ($podetails->KeepDownloaded == 1) {
                 $qstring .= " AND Downloaded = 0";
             }
-            if ($result = generic_sql_query($qstring)) {
-                $obj = $result->fetch(PDO::FETCH_OBJ);
-                if ($obj->num > $podetails->NumToKeep) {
-                    $getrid = $obj->num - $podetails->NumToKeep;
-                    debuglog("  Num To Keep is ".$podetails->NumToKeep." and there are ".$obj->num." episodes that can be pruned. Removing ".$getrid,"PODCASTS");
-                }
-            }
+            $num = generic_sql_query($qstring, false, null, 'num', 0);
+            $getrid = $num - $podetails->NumToKeep;
+            debuglog("  Num To Keep is ".$podetails->NumToKeep." and there are ".$num." episodes that can be pruned. Removing ".$getrid,"PODCASTS");
             if ($getrid > 0) {
-                $qstring = "SELECT PODTrackindex, PubDate FROM PodcastTracktable WHERE PODindex=".$podid." AND Deleted = 0";
+                $qstring = "SELECT PODTrackindex FROM PodcastTracktable WHERE PODindex=".$podid." AND Deleted = 0";
                 if ($podetails->KeepDownloaded == 1) {
                     $qstring .= " AND Downloaded=0";
                 }
-                $qstring .= " ORDER BY PubDate ASC";
-                if ($result = generic_sql_query($qstring)) {
-                    while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-                        $toremove[] = $obj->PODTrackindex;
-                        $getrid--;
-                        if ($getrid <= 0) {
-                            break;
-                        }
-                    }
+                $qstring .= " ORDER BY PubDate ASC LIMIT ".$getrid;
+                $pods = sql_get_column($qstring, 'PODTrackindex');
+                foreach ($pods as $i) {
+                    debuglog("  Removing Track ".$i,"PODCASTS");
+                    generic_sql_query("UPDATE PodcastTracktable SET Deleted=1 WHERE PODTrackindex=".$i, true);
                 }
-            }
-            foreach ($toremove as $i) {
-                debuglog("  Removing Track ".$i,"PODCASTS");
-                generic_sql_query("UPDATE PodcastTracktable SET Deleted=1 WHERE PODTrackindex=".$i);
             }
         }
     }
@@ -347,22 +330,19 @@ function upgrade_podcast($podid, $podetails, $podcast) {
             case 1:
                 debuglog("Updating Podcast ".$podetails->Title." to version ".ROMPR_PODCAST_TABLE_VERSION,"PODCASTS");
                 foreach ($podcast['tracks'] as $track) {
-                    if ($stmt = sql_prepare_query("SELECT * FROM PodcastTracktable WHERE Link=? OR OrigLink=?", $track['Link'], $track['Link'])) {
-                        while ($result = $stmt->fetch(PDO::FETCH_OBJ)) {
-                            debuglog("  Updating Track ".$result->Title,"PODCASTS");
-                            debuglog("    GUID is ".$track['GUID'],"PODCASTS");
-                            $dlfilename = null;
-                            if ($result->Downloaded == 1) {
-                                $dlfilename = basename($result->Link);
-                                debuglog("    Track has been downloaded to ".$dlfilename,"PODCASTS");
-                            }
-                            sql_prepare_query("UPDATE PodcastTracktable SET Link = ?, Guid = ?, Localfilename = ?, OrigLink = NULL WHERE PODTrackindex = ?", $track['Link'], $track['GUID'], $dlfilename, $result->PODTrackindex);
+                    $t = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, "SELECT * FROM PodcastTracktable WHERE Link=? OR OrigLink=?", $track['Link'], $track['Link']);
+                    foreach($t as $result) {
+                        debuglog("  Updating Track ".$result->Title,"PODCASTS");
+                        debuglog("    GUID is ".$track['GUID'],"PODCASTS");
+                        $dlfilename = null;
+                        if ($result->Downloaded == 1) {
+                            $dlfilename = basename($result->Link);
+                            debuglog("    Track has been downloaded to ".$dlfilename,"PODCASTS");
                         }
-                    } else {
-                        debuglog("  Failed to get tracks for that podcast","PODCASTS");
+                        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Link = ?, Guid = ?, Localfilename = ?, OrigLink = NULL WHERE PODTrackindex = ?", $track['Link'], $track['GUID'], $dlfilename, $result->PODTrackindex);
                     }
                 }
-                generic_sql_query("UPDATE Podcasttable SET Version = 2 WHERE PODindex = ".$podid);
+                generic_sql_query("UPDATE Podcasttable SET Version = 2 WHERE PODindex = ".$podid, true);
                 $v++;
                 break;
         }
@@ -374,9 +354,13 @@ function doPodcast($y) {
     if ($y->Subscribed == 0) {
         debuglog("Getting feed for unsubscribed podcast ".$y->FeedURL,"PODCASTS");
         refreshPodcast($y->PODindex);
-        $result = generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$y->PODindex);
-        $y = $result->fetch(PDO::FETCH_OBJ);
-        $result = null;
+        $a = generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$y->PODindex, false, PDO::FETCH_OBJ);
+        if (count($a) > 0) {
+            $y = $a[0];
+        } else {
+            debuglog("ERROR looking up podcast","PODCASTS");
+            return;
+        }
     }
 
     $aa = $y->Artist;
@@ -529,10 +513,9 @@ function doPodcast($y) {
         $qstring .= "DESC";
     }
     debuglog($qstring,"PODCASTS");
-    if ($result = generic_sql_query($qstring)) {
-        while ($episode = $result->fetch(PDO::FETCH_OBJ)) {
-            format_episode($y, $episode, $pm);
-        }
+    $result = generic_sql_query($qstring, false, PDO::FETCH_OBJ);
+    foreach ($result as $episode) {
+        format_episode($y, $episode, $pm);
     }
 }
 
@@ -658,31 +641,24 @@ function removePodcast($podid) {
     if (is_dir('prefs/podcasts/'.$podid)) {
         system('rm -fR prefs/podcasts/'.$podid);
     }
-    generic_sql_query("DELETE FROM Podcasttable WHERE PODindex = ".$podid);
-    generic_sql_query("DELETE FROM PodcastTracktable WHERE PODindex = ".$podid);
+    generic_sql_query("DELETE FROM Podcasttable WHERE PODindex = ".$podid, true);
+    generic_sql_query("DELETE FROM PodcastTracktable WHERE PODindex = ".$podid, true);
 }
 
 function markAsListened($url) {
     $podid = -1;
-    $pti = null;
-    if ($result = sql_prepare_query("SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR Localfilename = ?", $url, basename($url))) {
-        while ($e = $result->fetch(PDO::FETCH_OBJ)) {
-            $podid = $e->PODindex;
-            $pti = $e->PODTrackindex;
-        }
-    }
-    if ($podid > -1) {
-        debuglog("Marking ".$pti." from ".$podid." as listened","PODCASTS");
-        sql_prepare_query("UPDATE PodcastTracktable SET Listened=1, New=0 WHERE PODTrackindex=?",$pti);
-    } else {
-        debuglog("Unable to find podcast episode with url ".$url,"PODCASTS");
+    $pods = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, "SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR Localfilename = ?", $url, basename($url));
+    foreach ($pods as $pod) {
+        debuglog("Marking ".$pod->PODTrackindex." from ".$podid." as listened","PODCASTS");
+        $podid = $pod->PODindex;
+        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened=1, New=0 WHERE PODTrackindex=?",$pti);
     }
     return $podid;
 }
 
 function deleteTrack($trackid, $channel) {
     debuglog("Marking ".$trackid." from ".$channel." as deleted","PODCASTS");
-    generic_sql_query("UPDATE PodcastTracktable SET Deleted = 1 WHERE PODTrackindex = ".$trackid);
+    generic_sql_query("UPDATE PodcastTracktable SET Deleted = 1 WHERE PODTrackindex = ".$trackid, true);
     if (is_dir('prefs/podcasts/'.$channel.'/'.$trackid)) {
         system('rm -fR prefs/podcasts/'.$channel.'/'.$trackid);
     }
@@ -691,7 +667,7 @@ function deleteTrack($trackid, $channel) {
 
 function markKeyAsListened($trackid, $channel) {
     debuglog("Marking ".$trackid." from ".$channel." as listened","PODCASTS");
-    generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODTrackindex = ".$trackid);
+    generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODTrackindex = ".$trackid, true);
     return $channel;
 }
 
@@ -703,7 +679,7 @@ function changeOption($option, $val, $channel) {
     if ($val === 'false') {
         $val = 0;
     }
-    generic_sql_query("UPDATE Podcasttable SET ".$option."=".$val." WHERE PODindex=".$channel);
+    generic_sql_query("UPDATE Podcasttable SET ".$option."=".$val." WHERE PODindex=".$channel, true);
     if ($option == 'DaysToKeep' || $option == 'NumToKeep') {
         refreshPodcast($channel);
     }
@@ -711,13 +687,13 @@ function changeOption($option, $val, $channel) {
 }
 
 function markChannelAsListened($channel) {
-    sql_prepare_query("UPDATE PodcastTracktable SET Listened=1, New=0 WHERE PODindex=?",$channel);
+    generic_sql_query("UPDATE PodcastTracktable SET Listened=1, New=0 WHERE PODindex=".$channel, true);
     return $channel;
 }
 
 function undeleteFromChannel($channel) {
-    sql_prepare_query("UPDATE PodcastTracktable SET Downloaded=0 WHERE PODindex=? AND Deleted=1",$channel);
-    sql_prepare_query("UPDATE PodcastTracktable SET Deleted=0 WHERE PODindex=? AND Deleted=1",$channel);
+    generic_sql_query("UPDATE PodcastTracktable SET Downloaded=0 WHERE PODindex=".$channel." AND Deleted=1", true);
+    generic_sql_query("UPDATE PodcastTracktable SET Deleted=0 WHERE PODindex=".$channle." AND Deleted=1", true);
     return $channel;
 }
 
@@ -730,7 +706,7 @@ function removeDownloaded($channel) {
             }
         }
     }
-    sql_prepare_query("UPDATE PodcastTracktable SET Downloaded=0, Localfilename=NULL WHERE PODindex=?", $channel);
+    generic_sql_query("UPDATE PodcastTracktable SET Downloaded=0, Localfilename=NULL WHERE PODindex=".$channel, true);
     return $channel;
 }
 
@@ -738,11 +714,10 @@ function downloadTrack($key, $channel) {
     debuglog("Downloading ".$key." from ".$channel,"PODCASTS");
     $url = null;
     $filesize = 0;
-    if ($result = generic_sql_query("SELECT Link, FileSize FROM PodcastTracktable WHERE PODTrackindex = ".$key)) {
-        while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-            $url = $obj->Link;
-            $filesize = $obj->FileSize;
-        }
+    $result = generic_sql_query("SELECT Link, FileSize FROM PodcastTracktable WHERE PODTrackindex = ".$key, false, PDO::FETCH_OBJ);
+    foreach ($result as $obj) {
+        $url = $obj->Link;
+        $filesize = $obj->FileSize;
     }
     if ($url === null) {
         debuglog("  Failed to find URL for podcast","PODCASTS",3);
@@ -779,8 +754,7 @@ function downloadTrack($key, $channel) {
             system ('rm -fR prefs/podcasts/'.$channel.'/'.$key);
             return $channel;
         }
-        // $newurl = get_base_url().'/prefs/podcasts/'.$channel.'/'.$key.'/'.$filename;
-        sql_prepare_query("UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?",1,$filename,$key);
+        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?",1,$filename,$key);
     } else {
         debuglog('Failed to create directory prefs/podcasts/'.$channel.'/'.$key,"PODCASTS",2);
         return $channel;
@@ -790,34 +764,25 @@ function downloadTrack($key, $channel) {
 }
 
 function get_podcast_counts($podid) {
-    $results = array('new' => 0, 'unlistened' => 0);
     if ($podid !== null) {
         $ext = ' AND PODindex = '.$podid;
     } else {
         $ext = '';
     }
     $qstring = "SELECT COUNT(PODTrackindex) AS num FROM PodcastTracktable JOIN Podcasttable USING (PODindex) WHERE Subscribed = 1 AND New = 1 AND Listened = 0 AND Deleted = 0";
-    if ($result = generic_sql_query($qstring.$ext)) {
-        while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-            $results['new'] = $obj->num;
-        }
-    }
+    $results['new'] = generic_sql_query($qstring.$ext, false, null, 'num', 0);
+
     $qstring = "SELECT COUNT(PODTrackindex) AS num FROM PodcastTracktable JOIN Podcasttable USING (PODindex) WHERE Subscribed = 1 AND New = 0 AND Listened = 0 AND Deleted = 0";
-    if ($result = generic_sql_query($qstring.$ext)) {
-        while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-            $results['unlistened'] = $obj->num;
-        }
-    }
+    $results['unlistened'] = generic_sql_query($qstring.$ext, false, null, 'num', 0);
     return $results;
 }
 
 function get_all_counts() {
     $counts = array();
     $counts['totals'] = get_podcast_counts(null);
-    if ($result = generic_sql_query("SELECT PODindex FROM Podcasttable WHERE Subscribed = 1")) {
-        while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-            $counts[$obj->PODindex] = get_podcast_counts($obj->PODindex);
-        }
+    $result = generic_sql_query("SELECT PODindex FROM Podcasttable WHERE Subscribed = 1", false, PDO::FETCH_OBJ);
+    foreach ($result as $obj) {
+        $counts[$obj->PODindex] = get_podcast_counts($obj->PODindex);
     }
     return $counts;
 }
@@ -827,10 +792,9 @@ function check_podcast_refresh() {
     // Seconds in a month is roughly 2419200, but this value is TOO BIG
     // for Javascript's setTimeout which is 32 bit signed milliseconds.
     $nextupdate_seconds = 2119200;
-    if ($result = generic_sql_query("SELECT PODindex, LastUpdate, RefreshOption FROM Podcasttable WHERE RefreshOption > 0 AND Subscribed = 1")) {
-        while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-            $tocheck[] = array('podid' => $obj->PODindex, 'lastupdate' => $obj->LastUpdate, 'refreshoption' => $obj->RefreshOption);
-        }
+    $result = generic_sql_query("SELECT PODindex, LastUpdate, RefreshOption FROM Podcasttable WHERE RefreshOption > 0 AND Subscribed = 1", false, PDO::FETCH_OBJ);
+    foreach ($result as $obj) {
+        $tocheck[] = array('podid' => $obj->PODindex, 'lastupdate' => $obj->LastUpdate, 'refreshoption' => $obj->RefreshOption);
     }
     $updated = array('nextupdate' => $nextupdate_seconds, 'updated' => array());
     $now = time();
@@ -877,8 +841,8 @@ function check_podcast_refresh() {
 
 function search_itunes($term) {
     debuglog("Searching iTunes for podcasts '".$term."'","PODCASTS",6);
-    generic_sql_query("DELETE FROM PodcastTracktable WHERE PODindex IN (SELECT PODindex FROM Podcasttable WHERE Subscribed = 0)");
-    generic_sql_query("DELETE FROM Podcasttable WHERE Subscribed = 0");
+    generic_sql_query("DELETE FROM PodcastTracktable WHERE PODindex IN (SELECT PODindex FROM Podcasttable WHERE Subscribed = 0)", true);
+    generic_sql_query("DELETE FROM Podcasttable WHERE Subscribed = 0", true);
     $content = url_get_contents('https://itunes.apple.com/search?term='.$term.'&entity=podcast');
     if ($content['status'] == '200') {
         $pods = json_decode($content['contents'], true);
@@ -898,7 +862,7 @@ function search_itunes($term) {
                 $img = 'newimages/podcast-logo.svg';
             }
             debuglog("Search found podcast : ".$podcast['collectionName']);
-            sql_prepare_query(
+            sql_prepare_query(true, null, null, null,
                 "INSERT INTO Podcasttable
                 (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, DaysLive, Description, Version, Subscribed)
                 VALUES
@@ -915,15 +879,11 @@ function search_itunes($term) {
 
 function subscribe($index) {
     refreshPodcast($index);
-    generic_sql_query("UPDATE Podcasttable SET Subscribed = 1 WHERE PODindex = ".$index);
+    generic_sql_query("UPDATE Podcasttable SET Subscribed = 1 WHERE PODindex = ".$index, true);
 }
 
 function check_if_podcast_is_subscribed($podcast) {
-    $r = array();
-    if ($result = sql_prepare_query("SELECT Title FROM Podcasttable WHERE Subscribed = 1 AND (FeedURL = ? OR (Title = ? AND Artist = ?))", $podcast['feedUrl'], $podcast['collectionName'], $podcast['artistName'])) {
-        $r = $result->fetchAll(PDO::FETCH_ASSOC);
-    }
-    return $r;
+    return sql_prepare_query(false, PDO::FETCH_ASSOC, null, null, "SELECT Title FROM Podcasttable WHERE Subscribed = 1 AND (FeedURL = ? OR (Title = ? AND Artist = ?))", $podcast['feedUrl'], $podcast['collectionName'], $podcast['artistName']);
 }
 
 ?>

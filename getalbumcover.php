@@ -299,7 +299,7 @@ function tryLastFM() {
             if ($mbid) {
                 debuglog("      Last.FM gave us the MBID of '".$mbid."'","GETALBUMCOVER");
                 if ($mysqlc) {
-                    if (sql_prepare_query("UPDATE Albumtable SET mbid = ? WHERE ImgKey = ? AND mbid IS NULL", (string) $mbid, $imgkey)) {
+                    if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET mbid = ? WHERE ImgKey = ? AND mbid IS NULL", (string) $mbid, $imgkey)) {
                         debuglog("        Updated collection with new MBID","GETALBUMCOVER");
                     } else {
                         debuglog("        Failed trying to update collection with new MBID","GETALBUMCOVER");

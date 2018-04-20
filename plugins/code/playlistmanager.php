@@ -35,22 +35,22 @@ function print_playlists_as_json() {
                 list($flag, $link) = $track->get_checked_url();
                 $albumartist = format_sortartist($track->tags);
                 $image = $plimage;
-                if ($result = sql_prepare_query("SELECT Image FROM
+                $result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
+                        "SELECT Image FROM
                         Albumtable JOIN Artisttable ON
                         (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
-                        WHERE Albumname = ? AND Artistname = ?", $track->tags['Album'], $albumartist)) {
-                    while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-                        $image = $obj->Image;
-                    }
+                        WHERE Albumname = ? AND Artistname = ?", $track->tags['Album'], $albumartist);
+                foreach ($result as $obj) {
+                    $image = $obj->Image;
                 }
                 if ($image == $plimage) {
-                    if ($result = sql_prepare_query("SELECT Image FROM
+                    $result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
+                            "SELECT Image FROM
                             Tracktable JOIN Albumtable USING
                             (Albumindex)
                             WHERE Albumname = ? AND Title = ?", $track->tags['Album'], $track->tags['Title'])) {
-                        while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-                            $image = $obj->Image;
-                        }
+                    foreach ($result as $obj) {
+                        $image = $obj->Image;
                     }
                 }
     	        $pls[rawurlencode($name)][] = array(
