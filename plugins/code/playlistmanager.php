@@ -48,7 +48,7 @@ function print_playlists_as_json() {
                             "SELECT Image FROM
                             Tracktable JOIN Albumtable USING
                             (Albumindex)
-                            WHERE Albumname = ? AND Title = ?", $track->tags['Album'], $track->tags['Title'])) {
+                            WHERE Albumname = ? AND Title = ?", $track->tags['Album'], $track->tags['Title']);
                     foreach ($result as $obj) {
                         $image = $obj->Image;
                     }
