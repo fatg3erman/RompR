@@ -177,7 +177,9 @@ function getNewPodcast($url) {
     global $mysqlc;
     debuglog("Getting podcast ".$url,"PODCASTS");
     $podcast = parse_rss_feed($url);
-    $r = check_if_podcast_is_subscribed($podcast);
+    $r = check_if_podcast_is_subscribed(array(  'feedUrl' => $podcast['FeedURL'],
+                                                'collectionName' => $podcast['Title'],
+                                                'artistName' => $podcast['Artist']));
     if (count($r) > 0) {
         foreach ($r as $a) {
             debuglog("  Already subscribed to podcast ".$a['Title'],"PODCASTS");

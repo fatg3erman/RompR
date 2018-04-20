@@ -123,9 +123,6 @@ function simple_query($select, $from, $where, $item, $default) {
 	return $retval;
 }
 
-// Variable arguments
-// This doesn't appear to work with MySQL when one of the args has to be an integer
-// eg LIMIT ? doesn't work.
 function sql_prepare_query() {
 	// Variable arguments but at least 5 are required:
 	// 1. flag for whether to just return a boolean
@@ -136,33 +133,30 @@ function sql_prepare_query() {
 	// ... parameters for query
 	// return type of PDO::FETCH_COLUMN returns an array of the values
 	//  from the column identified by field name
+	// --**-- NO CHECKING IS DONE BY THIS FUNCTION! --**--
+	//   becasue we want to make it fast, so make sure you call it right!
+
+	// This doesn't appear to work with MySQL when one of the args has to be an integer
+	// eg LIMIT ? doesn't work.
 
 	global $mysqlc;
-	$numArgs = func_num_args();
-	$return_boolean = func_get_arg(0);
-	$return_type = func_get_arg(1);
-	$return_value = func_get_arg(2);
-	$value_default = func_get_arg(3);
-	$query = func_get_arg(4);
-
-	// debuglog('Prepared Query     :',"SQL");
-	// debuglog("    numArgs        : ".$numArgs,"SQL");
-	// debuglog("    return boolean : ".$return_boolean,"SQL");
-	// debuglog("    return type    : ".$return_type,"SQL");
-	// debuglog("    return value   : ".$return_value,"SQL");
-	// debuglog("    value default  : ".$value_default,"SQL");
-	// debuglog("    query          : ".$query,"SQL");
+	$allargs = func_get_args();
+	$return_boolean = $allargs[0];
+	$return_type = $allargs[1];
+	$return_value = $allargs[2];
+	$value_default = $allargs[3];
+	$query = $allargs[4];
+	if (is_array($allargs[5])) {
+		$args = $allargs[5];
+	} else {
+		$args = array_slice($allargs, 5);
+	}
 
 	$stmt = $mysqlc->prepare($query);
 	if ($stmt !== false) {
-		$args = array();
-		for ($i = 5; $i < $numArgs; $i++) $args[] = func_get_arg($i);
 		if ($stmt->execute($args)) {
 			if ($return_type == PDO::FETCH_COLUMN) {
 				$retval = $stmt->fetchAll(PDO::FETCH_COLUMN, $return_value);
-				if (!is_array($retval)) {
-					debuglog("retval is not array! - ".$retval, "SQL");
-				}
 			} else if ($return_value !== null) {
 				$arr = $stmt->fetch(PDO::FETCH_ASSOC);
 				$retval = ($arr) ? $arr[$return_value] : $value_default;

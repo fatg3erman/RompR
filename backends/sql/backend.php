@@ -55,7 +55,7 @@ function create_new_track(&$data) {
 	// create_new_track
 	//		Creates a new track, along with artists and album if necessary
 	//		Returns: TTindex
-	
+
 	global $mysqlc;
 
 	if ($data['albumai'] == null) {
@@ -187,7 +187,7 @@ function check_album(&$data) {
 				debuglog("  Old Uri  : ".$obj->AlbumUri,"MYSQL",7);
 				debuglog("  New Uri  : ".$uri,"MYSQL",7);
 			}
-			
+
 			if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Year=?, Image=?, AlbumUri=?, justUpdated=1 WHERE Albumindex=?",$year, $img, $uri, $index)) {
 				debuglog("   ...Success","MYSQL",9);
 			} else {
@@ -1245,11 +1245,8 @@ function playAlbumFromTrack($uri) {
 
 function check_url_against_database($url, $itags, $rating) {
 	global $mysqlc;
-	if ($mysqlc === null) {
-		connect_to_database();
-	}
-
-	$qstring = "SELECT t.TTindex FROM Tracktable AS t ";
+	if ($mysqlc === null) connect_to_database();
+	$qstring = "SELECT COUNT(t.TTindex) AS num FROM Tracktable AS t ";
 	$tags = array();
 	if ($itags !== null) {
 		$qstring .= "JOIN (SELECT DISTINCT TTindex FROM TagListtable JOIN Tagtable AS tag USING (Tagindex) WHERE";
@@ -1266,19 +1263,10 @@ function check_url_against_database($url, $itags, $rating) {
 	}
 	$tags[] = $url;
 	$qstring .= "WHERE t.Uri = ?";
-	if ($stmt = sql_prepare_query_later($qstring)) {
-		if ($stmt->execute($tags)) {
-			// rowCount() doesn't work for SELECT with SQLite
-			while($obj = $stmt->fetch(PDO::FETCH_OBJ)) {
-				return true;
-			}
-		} else {
-			show_sql_error();
-		}
-	} else {
-		show_sql_error();
+	$count = sql_prepare_query(false, null, 'num', 0, $qstring, $tags);
+	if ($count > 0) {
+		return true;
 	}
-	$stmt = null;
 	return false;
 }
 

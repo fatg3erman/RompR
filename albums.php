@@ -132,7 +132,11 @@ function checkDomains($d) {
 }
 
 function mpd_search() {
-    global $collection;
+    global $collection, $dbterms;
+    // If we're searching for tags or ratings it would seem sensible to only search the database
+    // HOWEVER - we could be searching for genre of performer or composer or something else we do not keep track of
+    // For those cases ONLY, controller.js will call into this instead of database_search, and we set $dbterms
+    // to make the collection check everything it finds against the database
     $cmd = $_REQUEST['command'];
     $domains = checkDomains($_REQUEST);
     foreach ($_REQUEST['mpdsearch'] as $key => $term) {
@@ -272,4 +276,3 @@ function update_collection() {
 }
 
 ?>
-

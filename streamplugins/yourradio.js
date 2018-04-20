@@ -57,9 +57,10 @@ var yourRadioPlugin = {
 
 	saveRadioOrder: function() {
 	    var radioOrder = Array();
-	    $("#yourradioliststations").find(".clickradioremove").each( function() {
+	    $("#yourradiostations").find(".clickradioremove").each( function() {
 	        radioOrder.push($(this).attr('name'));
 	    });
+
 	    $.ajax({
 	            type: 'POST',
 	            url: 'utils/userstreams.php',

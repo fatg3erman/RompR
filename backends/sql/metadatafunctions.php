@@ -1,7 +1,7 @@
 <?php
 
 class romprmetadata {
-	
+
 	public static function set($data) {
 		global $returninfo;
 		if ($data['artist'] === null ||
@@ -164,7 +164,7 @@ class romprmetadata {
 			print json_encode(array('error' => 'Artist or Title not set'));
 			exit(0);
 		}
-		$ttids = romprmetadata::find_item(	$data, forcedUriOnly(false, getDomain($data['uri'])));
+		$ttids = romprmetadata::find_item($data, forcedUriOnly(false, getDomain($data['uri'])));
 		if (count($ttids) > 0) {
 			$returninfo = get_all_data(array_shift($ttids));
 		} else {
@@ -178,9 +178,9 @@ class romprmetadata {
 		if (count($ttids) > 0) {
 			foreach ($ttids as $ttid) {
 				debuglog("Updating album MBID ".$data['attributes']." from TTindex ".$ttid,"BACKEND");
-				$albumindex = simple_query('Albumindex', 'Tracktable', 'TTindex', $ttid);
+				$albumindex = simple_query('Albumindex', 'Tracktable', 'TTindex', $ttid, null);
 				debuglog("   .. album index is ".$albumindex,"BACKEND");
-				sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET mbid = ? WHERE Albumindex = ? AND mbid IS NOT NULL",$data['attributes'],$albumindex);
+				sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET mbid = ? WHERE Albumindex = ? AND mbid IS NULL",$data['attributes'],$albumindex);
 			}
 		}
 		$returninfo = $nodata;
@@ -349,7 +349,7 @@ class romprmetadata {
 						$data['title'], $data['albumartist'], $data['album']);
 					$ttids = array_merge($ttids, $t);
 				}
-				
+
 				if (count($ttids) == 0 && ($data['albumartist'] == null || $data['albumartist'] == $data['artist'])) {
 					debuglog("  Trying by artist ".$data['artist']." album ".$data['album']." and title ".$data['title'],"MYSQL");
 					$t = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,

@@ -216,7 +216,7 @@ function prepare_returninfo() {
 			$returninfo['modifiedalbums'][] = $r;
 		}
 	}
-	
+
 	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex, Uri, TTindex FROM Tracktable JOIN Albumtable USING (Albumindex) WHERE justAdded = 1 AND Hidden = 0');
 	foreach ($result as $mod) {
 		debuglog("  New Track in album ".$mod['Albumindex'].' has TTindex '.$mod['TTindex'],"USERRATING");
@@ -600,13 +600,9 @@ function theBabyDumper($sqlstring, $limit, $tags, $random) {
 	debuglog("Selector is ".$sqlstring,"SMART PLAYLIST",6);
 	$rndstr = $random ? " ORDER BY ".SQL_RANDOM_SORT : " ORDER BY Albumindex, TrackNo";
 	if ($tags) {
-		$stmt = sql_prepare_query_later(
+		sql_prepare_query(true, null, null, null,
 			"INSERT INTO pltemptable(TTindex) ".$sqlstring.
-			" AND NOT Tracktable.TTindex IN (SELECT TTindex FROM pltable)".$rndstr." LIMIT ".$limit);
-		if ($stmt !== false) {
-			$stmt->execute($tags);
-		}
-		$stmt = null;
+			" AND NOT Tracktable.TTindex IN (SELECT TTindex FROM pltable)".$rndstr." LIMIT ".$limit, $tags);
 	} else {
 		generic_sql_query(
 			"INSERT INTO pltemptable(TTindex) ".$sqlstring.
