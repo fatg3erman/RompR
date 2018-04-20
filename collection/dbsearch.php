@@ -49,12 +49,12 @@ function doDbCollection($terms, $domains, $resultstype) {
 		'album' =>  'al.Albumname',
 		'track_name' => 't.Title',
 		'file' => 't.Uri',
-		'albumartist' => 'AlbumArtistName'
+		'albumartist' => 'a2.Artistname'
 	);
 
 	foreach ($searchmap as $t => $d) {
 		if (array_key_exists($t, $terms)) {
-			$qstring .= "AND (".format_for_search($terms[$t],$d, $parameters);
+			$qstring .= 'AND ('.format_for_search($terms[$t],$d, $parameters);
 			$qstring .= ') ';
 		}
 	}
@@ -97,43 +97,36 @@ function doDbCollection($terms, $domains, $resultstype) {
 	}
 	$fcount = 0;
 
-	if ($result = sql_prepare_query_later($qstring)) {
-		if ($result->execute($parameters)) {
-			while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-				$filedata = array(
-					'Artist' => array($obj->Artistname),
-					'Album' => $obj->Albumname,
-					'AlbumArtist' => array($obj->AlbumArtistName),
-					'file' => $obj->Uri,
-					'Title' => $obj->Title,
-					'Track' => $obj->TrackNo,
-					'Image' => $obj->Image,
-					'Time' => $obj->Duration,
-					'AlbumUri' => $obj->AlbumUri,
-					'Date' => $obj->Year,
-					'Last-Modified' => $obj->LastModified
-				);
-				if ($resultstype == "tree") {
-                    $tree->newItem($filedata);
-				} else if ($resultstype == "RAW") {
-					debuglog("Found : ".$obj->Title." ".$obj->Uri,"DB RAW SEARCH");
-					$fdata = $mpd_file_model;
-					foreach ($filedata as $i => $v) {
-						$fdata[$i] = $v;
-					}
-					$t = new track($fdata);
-			        $collection->newTrack( $t );
-				} else {
-					debuglog('Updating isSearchResult for TTindex '.$obj->TTindex,"DBSEARCH",8);
-					generic_sql_query("UPDATE Tracktable SET isSearchResult = 1 WHERE TTindex = ".$obj->TTindex);
-				}
-				$fcount++;
+	$result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, $qstring, $parameters);
+	foreach ($result as $obj) {
+		$filedata = array(
+			'Artist' => array($obj->Artistname),
+			'Album' => $obj->Albumname,
+			'AlbumArtist' => array($obj->AlbumArtistName),
+			'file' => $obj->Uri,
+			'Title' => $obj->Title,
+			'Track' => $obj->TrackNo,
+			'Image' => $obj->Image,
+			'Time' => $obj->Duration,
+			'AlbumUri' => $obj->AlbumUri,
+			'Date' => $obj->Year,
+			'Last-Modified' => $obj->LastModified
+		);
+		if ($resultstype == "tree") {
+            $tree->newItem($filedata);
+		} else if ($resultstype == "RAW") {
+			debuglog("Found : ".$obj->Title." ".$obj->Uri,"DB RAW SEARCH");
+			$fdata = $mpd_file_model;
+			foreach ($filedata as $i => $v) {
+				$fdata[$i] = $v;
 			}
+			$t = new track($fdata);
+	        $collection->newTrack( $t );
 		} else {
-			show_sql_error();
+			debuglog('Updating isSearchResult for TTindex '.$obj->TTindex,"DBSEARCH",8);
+			generic_sql_query("UPDATE Tracktable SET isSearchResult = 1 WHERE TTindex = ".$obj->TTindex, true);
 		}
-	} else {
-		show_sql_error();
+		$fcount++;
 	}
 
 	return $fcount;
@@ -147,7 +140,7 @@ function format_for_search($terms, $s, &$parameters) {
 		$t = trim($term);
 		$t = preg_replace('/[\(\)\/\[\]\&\*\+\'\"\,\/]/','%',$t);
 		$a[] = $s.' LIKE ?';
-		$parameters[] = '%'.$t.'%';
+		$parameters[] = '% '.$t. '%';
 	}
 	$ret = implode(' OR ',$a);
 	return $ret;

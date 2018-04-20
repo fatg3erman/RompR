@@ -64,7 +64,7 @@ foreach($pods as $pod) {
             	default:
             		debuglog("  Unknown Displaymode option".$x->displaymode,"SCHEMA_18",5);
             		$displaymode = DISPLAYMODE_ALL;
-            		break;            	
+            		break;
             }
             $daystokeep = $x->daystokeep;
             $numtokeep = $x->numtokeep;
@@ -72,8 +72,8 @@ foreach($pods as $pod) {
             $autodownload = ($x->autodownload == 'true') ? 1 : 0;
             $dayslive = $x->daysLive;
             $description = htmlspecialchars_decode($x->description);
-            if ($stmt = sql_prepare_query(
-            	"INSERT INTO Podcasttable 
+            if (sql_prepare_query(true, null, null, null,
+            	"INSERT INTO Podcasttable
             	(FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, SortMode, HideDescriptions, DisplayMode, DaysToKeep, NumToKeep, KeepDownloaded, AutoDownload, DaysLive, Description)
             	VALUES
             	(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -102,7 +102,7 @@ foreach($pods as $pod) {
             		} else {
             			$downloaded = 0;
             		}
-		            if ($stmt = sql_prepare_query(
+		            if (sql_prepare_query(true, null, null, null,
 		            	"INSERT INTO PodcastTracktable
 		            	(PODindex, Title, Artist, Duration, PubDate, FileSize, Description, Link, OrigLink, Downloaded, Listened, New, Deleted)
 		            	VALUES
@@ -117,7 +117,7 @@ foreach($pods as $pod) {
     	            		if ($origlink != "NO_ORIGINAL_LINK") {
     	            			$fname = basename($link);
     	            			$newname = get_base_url().'/prefs/podcasts/'.$newpodid.'/'.$newtrackid.'/'.$fname;
-    	            			if ($up = sql_prepare_query("UPDATE PodcastTracktable SET Link=? WHERE PODTrackindex=?",$newname,$newtrackid)) {
+    	            			if (sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Link=? WHERE PODTrackindex=?",$newname,$newtrackid)) {
     	            				debuglog("    Updated local link for ".$fname,"SCHEMA_18",6);
     	            			} else {
     	            				debuglog("ERROR updating local link for ".$fname,"SCHEMA_18",2);
@@ -135,7 +135,7 @@ foreach($pods as $pod) {
             unlink($pod.'/info.xml');
             if (preg_match('#^prefs/podcasts#', $image)) {
             	$image = 'prefs/podcasts/'.$newpodid.'/'.basename($image);
-    			if ($up = sql_prepare_query("UPDATE Podcasttable SET Image=? WHERE PODindex=?",$image,$newpodid)) {
+    			if (sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Image=? WHERE PODindex=?",$image,$newpodid)) {
     				debuglog("    Updated image link","SCHEMA_18",6);
     			} else {
     				debuglog("ERROR updating image link","SCHEMA_18",2);

@@ -74,49 +74,49 @@ function getStuffFromXSPF($filedata) {
 
     $url = $filedata['file'];
 
-    if ($result = sql_prepare_query("SELECT
+    $result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
+                                "SELECT
                                     Stationindex, PlaylistUrl, StationName, Image, PrettyStream
                                     FROM
                                     RadioStationtable JOIN RadioTracktable USING (Stationindex)
-                                    WHERE TrackUri = ?",$url))
-    {
-        while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-            debuglog("Found Radio Station ".$obj->StationName,"STREAMHANDLER");
-            // Munge munge munge to make it looks pretty
-            if ($filedata['Name'] && $filedata['Name'] != 'no name' && strpos($filedata['Name'], ' ') !== false) {
-                debuglog("  Setting Album from Name ".$filedata['Name'],"STREAMHANDLER");
-                $album = $filedata['Name'];
-            } else if ($filedata['Name'] == null && $filedata['Title'] != null && $filedata['Title'] != 'no name' &&
-                $filedata['Artist'] == null && $filedata['Album'] == null && strpos($filedata['Title'], ' ') !== false) {
-                debuglog("  Setting Album from Title ".$filedata['Title'],"STREAMHANDLER");
-                $album = $filedata['Title'];
-                $filedata['Title'] = null;
-            } else if ($obj->StationName != '') {
-                debuglog("  Setting Album name from database ".$obj->StationName,"STREAMHANDLER");
-                $album = $obj->StationName;
-            } else {
-                debuglog("  No information to set Album field","STREAMHANDLER");
-                $album = ROMPR_UNKNOWN_STREAM;
-            }
-            return array (
-                $filedata['Title'] === null ? '' : $filedata['Title'],
-                0,
-                $filedata['Artist'],
-                $album,
-                $obj->PlaylistUrl,
-                "stream",
-                ($obj->Image == '') ? $filedata['X-AlbumImage'] : $obj->Image,
-                getDummyStation($url),
-                $obj->PrettyStream,
-                $filedata['AlbumArtist'],
-                $obj->Stationindex,
-                array_key_exists('Comment', $filedata) ? $filedata['Comment'] : '',
-                get_stream_imgkey($obj->Stationindex)
-            );
+                                    WHERE TrackUri = ?",$url);
+    foreach ($result as $obj) {
+        debuglog("Found Radio Station ".$obj->StationName,"STREAMHANDLER");
+        // Munge munge munge to make it looks pretty
+        if ($filedata['Name'] && $filedata['Name'] != 'no name' && strpos($filedata['Name'], ' ') !== false) {
+            debuglog("  Setting Album from Name ".$filedata['Name'],"STREAMHANDLER");
+            $album = $filedata['Name'];
+        } else if ($filedata['Name'] == null && $filedata['Title'] != null && $filedata['Title'] != 'no name' &&
+            $filedata['Artist'] == null && $filedata['Album'] == null && strpos($filedata['Title'], ' ') !== false) {
+            debuglog("  Setting Album from Title ".$filedata['Title'],"STREAMHANDLER");
+            $album = $filedata['Title'];
+            $filedata['Title'] = null;
+        } else if ($obj->StationName != '') {
+            debuglog("  Setting Album name from database ".$obj->StationName,"STREAMHANDLER");
+            $album = $obj->StationName;
+        } else {
+            debuglog("  No information to set Album field","STREAMHANDLER");
+            $album = ROMPR_UNKNOWN_STREAM;
         }
+        return array (
+            $filedata['Title'] === null ? '' : $filedata['Title'],
+            0,
+            $filedata['Artist'],
+            $album,
+            $obj->PlaylistUrl,
+            "stream",
+            ($obj->Image == '') ? $filedata['X-AlbumImage'] : $obj->Image,
+            getDummyStation($url),
+            $obj->PrettyStream,
+            $filedata['AlbumArtist'],
+            $obj->Stationindex,
+            array_key_exists('Comment', $filedata) ? $filedata['Comment'] : '',
+            get_stream_imgkey($obj->Stationindex)
+        );
     }
 
-    if ($result = sql_prepare_query("SELECT
+    $result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
+                                "SELECT
                                     PodcastTracktable.Title AS title,
                                     PodcastTracktable.Artist AS artist,
                                     PodcastTracktable.Duration AS duration,
@@ -125,13 +125,43 @@ function getStuffFromXSPF($filedata) {
                                     Podcasttable.Artist AS albumartist,
                                     Podcasttable.Image AS image
                                     FROM PodcastTracktable JOIN Podcasttable USING (PODindex)
-                                    WHERE PodcastTracktable.Link=?",$url))
-    {
-        while($obj = $result->fetch(PDO::FETCH_OBJ)) {
+                                    WHERE PodcastTracktable.Link=?",$url);
+    foreach ($result as $obj) {
+        debuglog("Found PODCAST ".$obj->title,"STREAMHANDLER");
+        return array(
+            ($obj->title == '') ? $filedata['Title'] : $obj->title,
+            // Mopidy's estimate of the duration is frequently more accurate than that supplied in the RSS
+            (array_key_exists('Time', $filedata) && $filedata['Time'] > 0) ? $filedata['Time'] : $obj->duration,
+            ($obj->artist == '') ? $filedata['Artist'] : array($obj->artist),
+            ($obj->album == '') ? $filedata['Album'] : $obj->album,
+            md5($obj->album),
+            'podcast',
+            $obj->image,
+            null,
+            '',
+            ($obj->albumartist == '') ? $filedata['AlbumArtist'] : array($obj->albumartist),
+            null,
+            format_text($obj->comment),
+            null
+        );
+    }
+
+    if (preg_match('#prefs/podcasts/(\d+)/(\d+)/(.*)$#', $url, $matches)) {
+        $result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
+                                    "SELECT
+                                        PodcastTracktable.Title AS title,
+                                        PodcastTracktable.Artist AS artist,
+                                        PodcastTracktable.Duration AS duration,
+                                        PodcastTracktable.Description AS comment,
+                                        Podcasttable.Title AS album,
+                                        Podcasttable.Artist AS albumartist,
+                                        Podcasttable.Image AS image
+                                        FROM PodcastTracktable JOIN Podcasttable USING (PODindex)
+                                        WHERE PodcastTracktable.Localfilename=? AND PodcastTracktable.PODindex=? AND PodcastTracktable.PODTrackindex=?",$matches[3],$matches[1],$matches[2]);
+        foreach ($result as $obj) {
             debuglog("Found PODCAST ".$obj->title,"STREAMHANDLER");
             return array(
                 ($obj->title == '') ? $filedata['Title'] : $obj->title,
-                // Mopidy's estimate of the duration is frequently more accurate than that supplied in the RSS
                 (array_key_exists('Time', $filedata) && $filedata['Time'] > 0) ? $filedata['Time'] : $obj->duration,
                 ($obj->artist == '') ? $filedata['Artist'] : array($obj->artist),
                 ($obj->album == '') ? $filedata['Album'] : $obj->album,
@@ -145,39 +175,6 @@ function getStuffFromXSPF($filedata) {
                 format_text($obj->comment),
                 null
             );
-        }
-    }
-
-    if (preg_match('#prefs/podcasts/(\d+)/(\d+)/(.*)$#', $url, $matches)) {
-        if ($result = sql_prepare_query("SELECT
-                                        PodcastTracktable.Title AS title,
-                                        PodcastTracktable.Artist AS artist,
-                                        PodcastTracktable.Duration AS duration,
-                                        PodcastTracktable.Description AS comment,
-                                        Podcasttable.Title AS album,
-                                        Podcasttable.Artist AS albumartist,
-                                        Podcasttable.Image AS image
-                                        FROM PodcastTracktable JOIN Podcasttable USING (PODindex)
-                                        WHERE PodcastTracktable.Localfilename=? AND PodcastTracktable.PODindex=? AND PodcastTracktable.PODTrackindex=?",$matches[3],$matches[1],$matches[2]))
-        {
-            while($obj = $result->fetch(PDO::FETCH_OBJ)) {
-                debuglog("Found PODCAST ".$obj->title,"STREAMHANDLER");
-                return array(
-                    ($obj->title == '') ? $filedata['Title'] : $obj->title,
-                    (array_key_exists('Time', $filedata) && $filedata['Time'] > 0) ? $filedata['Time'] : $obj->duration,
-                    ($obj->artist == '') ? $filedata['Artist'] : array($obj->artist),
-                    ($obj->album == '') ? $filedata['Album'] : $obj->album,
-                    md5($obj->album),
-                    'podcast',
-                    $obj->image,
-                    null,
-                    '',
-                    ($obj->albumartist == '') ? $filedata['AlbumArtist'] : array($obj->albumartist),
-                    null,
-                    format_text($obj->comment),
-                    null
-                );
-            }
         }
     }
 

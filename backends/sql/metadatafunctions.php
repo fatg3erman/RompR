@@ -1,7 +1,7 @@
 <?php
 
 class romprmetadata {
-	
+
 	public static function set($data) {
 		global $returninfo;
 		if ($data['artist'] === null ||
@@ -164,7 +164,7 @@ class romprmetadata {
 			print json_encode(array('error' => 'Artist or Title not set'));
 			exit(0);
 		}
-		$ttids = romprmetadata::find_item(	$data, forcedUriOnly(false, getDomain($data['uri'])));
+		$ttids = romprmetadata::find_item($data, forcedUriOnly(false, getDomain($data['uri'])));
 		if (count($ttids) > 0) {
 			$returninfo = get_all_data(array_shift($ttids));
 		} else {
@@ -178,14 +178,9 @@ class romprmetadata {
 		if (count($ttids) > 0) {
 			foreach ($ttids as $ttid) {
 				debuglog("Updating album MBID ".$data['attributes']." from TTindex ".$ttid,"BACKEND");
-				if ($result = generic_sql_query("SELECT Albumindex FROM Tracktable WHERE TTindex = ".$ttid)) {
-					while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-						$albumindex = $obj->Albumindex;
-						debuglog("   .. album index is ".$albumindex,"BACKEND");
-						sql_prepare_query("UPDATE Albumtable SET mbid = ? WHERE Albumindex = ? AND mbid IS NOT NULL",$data['attributes'],$albumindex);
-					}
-				}
-				$result = null;
+				$albumindex = simple_query('Albumindex', 'Tracktable', 'TTindex', $ttid, null);
+				debuglog("   .. album index is ".$albumindex,"BACKEND");
+				sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET mbid = ? WHERE Albumindex = ? AND mbid IS NULL",$data['attributes'],$albumindex);
 			}
 		}
 		$returninfo = $nodata;
@@ -247,13 +242,8 @@ class romprmetadata {
 		$uris = getDirItems($data['uri']);
 		$ttids = array();
 		foreach ($uris as $uri) {
-			if ($r = sql_prepare_query("SELECT TTindex FROM Tracktable WHERE Uri = ?", $uri)) {
-				while ($obj = $r->fetch(PDO::FETCH_ASSOC)) {
-					debuglog(" TTindex : ".$obj['TTindex'],"SCOOBY");
-					$ttids[] = $obj['TTindex'];
-				}
-			}
-			$r = null;
+			$t = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null, "SELECT TTindex FROM Tracktable WHERE Uri = ?", $uri);
+			$ttids = array_merge($ttids, $t);
 		}
 		return $ttids;
 	}
@@ -263,14 +253,16 @@ class romprmetadata {
 		$ttids = array();
 		foreach ($uris as $uri) {
 			$uri = trim(substr($uri, strpos($uri, ' ')+1, strlen($uri)), '"');
-			if ($r = sql_prepare_query("SELECT TTindex FROM Tracktable WHERE Uri = ?", $uri)) {
-				while ($obj = $r->fetch(PDO::FETCH_ASSOC)) {
-					$ttids[] = $obj['TTindex'];
-				}
-			}
-			$r = null;
+			$r = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null, "SELECT TTindex FROM Tracktable WHERE Uri = ?", $uri);
+			$ttids = array_merge($ttids, $t);
 		}
 		return $ttids;
+	}
+
+	static function print_debug_ttids($ttids) {
+		if (count($ttids) > 0) {
+			debuglog("    Found TTindex(es) ".implode(', ', $ttids),"MYSQL");
+		}
 	}
 
 	static function find_item($data,$urionly) {
@@ -312,26 +304,22 @@ class romprmetadata {
 
 		debuglog("Looking for item ".$data['title'],"MYSQL");
 		$ttids = array();
-		$stmt = null;
 		if ($urionly && $data['uri']) {
 			debuglog("  Trying by URI ".$data['uri'],"MYSQL");
-			if ($stmt = sql_prepare_query("SELECT TTindex FROM Tracktable WHERE Uri = ?", $data['uri'])) {
-				while ($ttidobj = $stmt->fetch(PDO::FETCH_OBJ)) {
-					debuglog("    Found TTindex ".$ttidobj->TTindex,"MYSQL");
-					$ttids[] = $ttidobj->TTindex;
-				}
-			}
+			$t = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null, "SELECT TTindex FROM Tracktable WHERE Uri = ?", $data['uri']);
+			$ttids = array_merge($ttids, $t);
 		}
 
 		if ($data['artist'] == null || $data['title'] == null || ($urionly && $data['uri'])) {
+			romprmetadata::print_debug_ttids($ttids);
 			return $ttids;
 		}
 
 		if (count($ttids) == 0) {
 			if ($data['album']) {
-				if (count($ttids) == 0 && $data['albumartist'] !== null && $data['trackno'] != 0) {
+				if ($data['albumartist'] !== null && $data['trackno'] != 0) {
 					debuglog("  Trying by albumartist ".$data['albumartist']." album ".$data['album']." title ".$data['title']." track number ".$data['trackno'],"MYSQL");
-					if ($stmt = sql_prepare_query(
+					$t = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
 						"SELECT
 							TTindex
 						FROM
@@ -342,16 +330,13 @@ class romprmetadata {
 							AND LOWER(Artistname) = LOWER(?)
 							AND LOWER(Albumname) = LOWER(?)
 							AND TrackNo = ?",
-						$data['title'], $data['albumartist'], $data['album'], $data['trackno'])) {
-						while ($ttidobj = $stmt->fetch(PDO::FETCH_OBJ)) {
-							debuglog("    Found TTindex ".$ttidobj->TTindex,"MYSQL");
-							$ttids[] = $ttidobj->TTindex;
-						}
-					}
+						$data['title'], $data['albumartist'], $data['album'], $data['trackno']);
+					$ttids = array_merge($ttids, $t);
 				}
+
 				if (count($ttids) == 0 && $data['albumartist'] !== null) {
 					debuglog("  Trying by albumartist ".$data['albumartist']." album ".$data['album']." and title ".$data['title'],"MYSQL");
-					if ($stmt = sql_prepare_query(
+					$t = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
 						"SELECT
 							TTindex
 						FROM
@@ -361,17 +346,13 @@ class romprmetadata {
 							LOWER(Title) = LOWER(?)
 							AND LOWER(Artistname) = LOWER(?)
 							AND LOWER(Albumname) = LOWER(?)",
-						$data['title'], $data['albumartist'], $data['album'])) {
-						while ($ttidobj = $stmt->fetch(PDO::FETCH_OBJ)) {
-							debuglog("    Found TTindex ".$ttidobj->TTindex,"MYSQL");
-							$ttids[] = $ttidobj->TTindex;
-						}
-					}
+						$data['title'], $data['albumartist'], $data['album']);
+					$ttids = array_merge($ttids, $t);
 				}
-				
+
 				if (count($ttids) == 0 && ($data['albumartist'] == null || $data['albumartist'] == $data['artist'])) {
 					debuglog("  Trying by artist ".$data['artist']." album ".$data['album']." and title ".$data['title'],"MYSQL");
-					if ($stmt = sql_prepare_query(
+					$t = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
 						"SELECT
 							TTindex
 						FROM
@@ -380,18 +361,14 @@ class romprmetadata {
 						WHERE
 							LOWER(Title) = LOWER(?)
 							AND LOWER(Artistname) = LOWER(?)
-						    AND LOWER(Albumname) = LOWER(?)", $data['title'], $data['artist'], $data['album'])) {
-						while ($ttidobj = $stmt->fetch(PDO::FETCH_OBJ)) {
-							debuglog("    Found TTindex ".$ttidobj->TTindex,"MYSQL");
-							$ttids[] = $ttidobj->TTindex;
-						}
-					}
+						    AND LOWER(Albumname) = LOWER(?)", $data['title'], $data['artist'], $data['album']);
+					$ttids = array_merge($ttids, $t);
 				}
 
 				// Finally look for Uri NULL which will be a wishlist item added via a radio station
 				if (count($ttids) == 0) {
 					debuglog("  Trying by (wishlist) artist ".$data['artist']." and title ".$data['title'],"MYSQL");
-					if ($stmt = sql_prepare_query(
+					$t = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
 						"SELECT
 							TTindex
 						FROM
@@ -400,18 +377,14 @@ class romprmetadata {
 							LOWER(Title) = LOWER(?)
 							AND LOWER(Artistname) = LOWER(?)
 							AND Uri IS NULL",
-						$data['title'], $data['artist'])) {
-						while ($ttidobj = $stmt->fetch(PDO::FETCH_OBJ)) {
-							debuglog("    Found TTindex ".$ttidobj->TTindex,"MYSQL");
-							$ttids[] = $ttidobj->TTindex;
-						}
-					}
+						$data['title'], $data['artist']);
+					$ttids = array_merge($ttids, $t);
 				}
 			} else {
 				// No album supplied - ie this is from a radio stream. First look for a match where
 				// there is something in the album field
 				debuglog("  Trying by artist ".$data['artist']." Uri NOT NULL and title ".$data['title'],"MYSQL");
-				if ($stmt = sql_prepare_query(
+				$t = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
 					"SELECT
 						TTindex
 					FROM
@@ -419,16 +392,12 @@ class romprmetadata {
 					 WHERE
 					 	LOWER(Title) = LOWER(?)
 					 	AND LOWER(Artistname) = LOWER(?)
-					 	AND Uri IS NOT NULL", $data['title'], $data['artist'])) {
-					while ($ttidobj = $stmt->fetch(PDO::FETCH_OBJ)) {
-						debuglog("    Found TTindex ".$ttidobj->TTindex,"MYSQL");
-						$ttids[] = $ttidobj->TTindex;
-					}
-				}
+					 	AND Uri IS NOT NULL", $data['title'], $data['artist']);
+				$ttids = array_merge($ttids, $t);
 
 				if (count($ttids) == 0) {
 					debuglog("  Trying by (wishlist) artist ".$data['artist']." and title ".$data['title'],"MYSQL");
-					if ($stmt = sql_prepare_query(
+					$t = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
 						"SELECT
 							TTindex
 						FROM
@@ -436,16 +405,12 @@ class romprmetadata {
 						WHERE
 							LOWER(Title) = LOWER(?)
 							AND LOWER(Artistname) = LOWER(?)
-							AND Uri IS NULL", $data['title'], $data['artist'])) {
-						while ($ttidobj = $stmt->fetch(PDO::FETCH_OBJ)) {
-							debuglog("    Found TTindex ".$ttidobj->TTindex,"MYSQL");
-							$ttids[] = $ttidobj->TTindex;
-						}
-					}
+							AND Uri IS NULL", $data['title'], $data['artist']);
+					$ttids = array_merge($ttids, $t);
 				}
 			}
 		}
-		$stmt = null;
+		romprmetadata::print_debug_ttids($ttids);
 		return $ttids;
 	}
 
@@ -456,25 +421,22 @@ class romprmetadata {
 		// that changed because multiple rompr instances cause multiple increments
 
 		debuglog("(Increment) Setting ".$attribute." to ".$value." for TTID ".$ttid, "MYSQL",8);
-		$retval = true;
-		$stmt = null;
 		if ($lp === -1) {
-			if ($stmt = sql_prepare_query("REPLACE INTO ".$attribute."table (TTindex, ".$attribute.", LastPlayed) VALUES (?, ?, CURRENT_TIMESTAMP)", $ttid, $value)) {
+			if (sql_prepare_query(true, null, null, null, "REPLACE INTO ".$attribute."table (TTindex, ".$attribute.", LastPlayed) VALUES (?, ?, CURRENT_TIMESTAMP)", $ttid, $value)) {
 				debuglog(" .. success","MYSQL",8);
 			} else {
 				debuglog("FAILED (Increment) Setting ".$attribute." to ".$value." for TTID ".$ttid, "MYSQL",2);
-				$retval = false;
+				return false;
 			}
 		} else {
-			if ($stmt = sql_prepare_query("REPLACE INTO ".$attribute."table (TTindex, ".$attribute.", LastPlayed) VALUES (?, ?, ?)", $ttid, $value, $lp)) {
+			if (sql_prepare_query(true, null, null, null, "REPLACE INTO ".$attribute."table (TTindex, ".$attribute.", LastPlayed) VALUES (?, ?, ?)", $ttid, $value, $lp)) {
 				debuglog(" .. success","MYSQL",8);
 			} else {
 				debuglog("FAILED (Increment) Setting ".$attribute." to ".$value." for TTID ".$ttid, "MYSQL",2);
-				$retval = false;
+				return false;
 			}
 		}
-		$stmt = null;
-		return $retval;
+		return true;
 
 	}
 
@@ -482,17 +444,14 @@ class romprmetadata {
 
 		// set_attribute
 		//		Sets an attribute (Rating, Tag etc) on a TTindex.
-		$retval = true;
-		$stmt = null;
 		debuglog("Setting ".$attribute." to ".$value." on ".$ttid,"MYSQL",8);
-		if ($stmt = sql_prepare_query("REPLACE INTO ".$attribute."table (TTindex, ".$attribute.") VALUES (?, ?)", $ttid, $value)) {
+		if (sql_prepare_query(true, null, null, null, "REPLACE INTO ".$attribute."table (TTindex, ".$attribute.") VALUES (?, ?)", $ttid, $value)) {
 			debuglog("  .. success","MYSQL",8);
 		} else {
 			debuglog("FAILED Setting ".$attribute." to ".$value." on ".$ttid,"MYSQL",2);
-			$retval = false;
+			return false;
 		}
-		$stmt = null;
-		return $retval;
+		return true;
 	}
 
 	static function doTheSetting($ttids, $attributes, $uri) {
@@ -531,24 +490,20 @@ class romprmetadata {
 
 		foreach ($tags as $tag) {
 			$t = trim($tag);
+			if ($t == '') continue;
 			debuglog("Adding Tag ".$t." to ".$ttid,"MYSQL",8);
-			$tagindex = null;
-			if ($result = sql_prepare_query("SELECT Tagindex FROM Tagtable WHERE Name=?", $t)) {
-				while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-					$tagindex = $obj->Tagindex;
-				}
-				if ($tagindex == null) $tagindex = romprmetadata::create_new_tag($t);
-				if ($tagindex == null) {
-					debuglog("    Could not create tag ".$t,"MYSQL",2);
-					return false;
-				}
+			$tagindex = sql_prepare_query(false, null, 'Tagindex', null, "SELECT Tagindex FROM Tagtable WHERE Name=?", $t);
+			if ($tagindex == null) $tagindex = romprmetadata::create_new_tag($t);
+			if ($tagindex == null) {
+				debuglog("    Could not create tag ".$t,"MYSQL",2);
+				return false;
+			}
 
-				if ($result = generic_sql_query("INSERT INTO TagListtable (TTindex, Tagindex) VALUES ('".$ttid."', '".$tagindex."')")) {
-					debuglog("Success","MYSQL",8);
-				} else {
-					// Doesn't matter, we have a UNIQUE constraint on both columns to prevent us adding the same tag twice
-					debuglog("  .. Failed but that's OK if it's because of a duplicate entry or UNQIUE constraint","MYSQL",4);
-				}
+			if ($result = generic_sql_query("INSERT INTO TagListtable (TTindex, Tagindex) VALUES ('".$ttid."', '".$tagindex."')", true)) {
+				debuglog("Success","MYSQL",8);
+			} else {
+				// Doesn't matter, we have a UNIQUE constraint on both columns to prevent us adding the same tag twice
+				debuglog("  .. Failed but that's OK if it's because of a duplicate entry or UNQIUE constraint","MYSQL",4);
 			}
 		}
 		return true;
@@ -563,7 +518,7 @@ class romprmetadata {
 		global $mysqlc;
 		debuglog("Creating new tag ".$tag,"MYSQL",7);
 		$tagindex = null;
-		if ($result = sql_prepare_query("INSERT INTO Tagtable (Name) VALUES (?)", $tag)) {
+		if (sql_prepare_query(true, null, null, null, "INSERT INTO Tagtable (Name) VALUES (?)", $tag)) {
 			$tagindex = $mysqlc->lastInsertId();
 		}
 		return $tagindex;
@@ -577,12 +532,7 @@ class romprmetadata {
 		debuglog("Removing Tag ".$tag." from ".$ttid,"MYSQL",5);
 		$retval = false;
 		if ($tagindex = simple_query('Tagindex', 'Tagtable', 'Name', $tag, false)) {
-			if ($result = generic_sql_query("DELETE FROM TagListtable WHERE TTindex = '".$ttid."' AND Tagindex = '".$tagindex."'")) {
-				debuglog(" .. Success","MYSQL",8);
-				$retval = true;
-			} else {
-				debuglog("  ..  Failed to remove tag ".$tag." from ttindex ".$ttid,"MYSQL",2);
-			}
+			$retval = generic_sql_query("DELETE FROM TagListtable WHERE TTindex = '".$ttid."' AND Tagindex = '".$tagindex."'", true);
 		} else {
 			debuglog("  ..  Could not find tag ".$tag,"MYSQL",2);
 		}
@@ -591,10 +541,7 @@ class romprmetadata {
 
 	static function remove_tag_from_db($tag) {
 		debuglog("Removing Tag ".$tag." from database","MYSQL",5);
-		if ($result = sql_prepare_query("DELETE FROM Tagtable WHERE Name=?", $tag)) {
-			return true;
-		}
-		return false;
+		return sql_prepare_query(true, null, null, null, "DELETE FROM Tagtable WHERE Name=?", $tag);
 	}
 
 	static function delete_track($ttid) {
@@ -607,8 +554,9 @@ class romprmetadata {
 	static function amend_album($albumindex, $newartist, $date) {
 		debuglog("Updating Album index ".$albumindex." with new artist ".$newartist." and new date ".$date,"USERRATING",6);
 		$artistindex = ($newartist == null) ? null : check_artist($newartist);
-		if ($stmt = sql_prepare_query("SELECT * FROM Albumtable WHERE Albumindex = ?", $albumindex)) {
-			$obj = $stmt->fetch(PDO::FETCH_OBJ);
+		$result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, "SELECT * FROM Albumtable WHERE Albumindex = ?", $albumindex);
+		$obj = array_shift($result);
+		if ($obj) {
 			$params = array(
 				'album' => $obj->Albumname,
 				'albumai' => ($artistindex == null) ? $obj->AlbumArtistindex : $artistindex,
@@ -622,7 +570,7 @@ class romprmetadata {
 			$newalbumindex = check_album($params);
 			if ($albumindex != $newalbumindex) {
 				debuglog("Moving all tracks from album ".$albumindex." to album ".$newalbumindex,"USERRATING",6);
-				if ($stmt = sql_prepare_query("UPDATE Tracktable SET Albumindex = ? WHERE Albumindex = ?", $newalbumindex, $albumindex)) {
+				if (sql_prepare_query(true, null, null, null, "UPDATE Tracktable SET Albumindex = ? WHERE Albumindex = ?", $newalbumindex, $albumindex)) {
 					debuglog("...Success","USERRATING",8);
 				} else {
 					debuglog("Track move Failed!","USERRATING",2);

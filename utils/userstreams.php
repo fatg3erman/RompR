@@ -6,6 +6,8 @@ include ("includes/functions.php");
 include ("international.php");
 include ("backends/sql/backend.php");
 
+debuglog("Doing User Radio Stuff","USERSTREAMS");
+
 if (array_key_exists('populate', $_REQUEST)) {
     do_radio_list();
 } else if (array_key_exists('remove', $_REQUEST)) {

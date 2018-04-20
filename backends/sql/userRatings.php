@@ -169,66 +169,63 @@ function sanitise_data(&$data) {
 function prepare_returninfo() {
 	debuglog("Preparing Return Info","USERRATINGS",6);
 	global $returninfo, $prefs;
-	if ($result = generic_sql_query('SELECT DISTINCT AlbumArtistindex FROM Albumtable WHERE justUpdated = 1')) {
-		while ($mod = $result->fetch(PDO::FETCH_ASSOC)) {
-			if (artist_albumcount($mod['AlbumArtistindex']) == 0) {
-				$returninfo['deletedartists'][] = $mod['AlbumArtistindex'];
-				debuglog("  Artist ".$mod['AlbumArtistindex']." has no visible albums","USERRATINGS",6);
-			} else {
-				debuglog("  Artist ".$mod['AlbumArtistindex']." has modified albums","USERRATINGS",6);
-				switch ($prefs['sortcollectionby']) {
-					case 'album':
-						break;
+	$result = generic_sql_query('SELECT DISTINCT AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
+	foreach ($result as $mod) {
+		if (artist_albumcount($mod['AlbumArtistindex']) == 0) {
+			$returninfo['deletedartists'][] = $mod['AlbumArtistindex'];
+			debuglog("  Artist ".$mod['AlbumArtistindex']." has no visible albums","USERRATINGS",6);
+		} else {
+			debuglog("  Artist ".$mod['AlbumArtistindex']." has modified albums","USERRATINGS",6);
+			switch ($prefs['sortcollectionby']) {
+				case 'album':
+					break;
 
-					case 'artist':
-						debuglog("    Creating Artist Header","USERRATINGS",7);
-						$returninfo['modifiedartists'][] = do_artists_from_database('a', $prefs['sortcollectionby'], $mod['AlbumArtistindex']);
-						break;
+				case 'artist':
+					debuglog("    Creating Artist Header","USERRATINGS",7);
+					$returninfo['modifiedartists'][] = do_artists_from_database('a', $prefs['sortcollectionby'], $mod['AlbumArtistindex']);
+					break;
 
-					case 'albumbyartist':
-						debuglog("    Creating Artist Banner","USERRATINGS",7);
-						if ($prefs['showartistbanners']) {
-							$returninfo['modifiedartists'][] = do_artist_banner('a','album',$mod['AlbumArtistindex']);
-						}
-						break;
-				}
+				case 'albumbyartist':
+					debuglog("    Creating Artist Banner","USERRATINGS",7);
+					if ($prefs['showartistbanners']) {
+						$returninfo['modifiedartists'][] = do_artist_banner('a','album',$mod['AlbumArtistindex']);
+					}
+					break;
 			}
 		}
 	}
-	if ($result = generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1')) {
-		while ($mod = $result->fetch(PDO::FETCH_ASSOC)) {
-			if (album_trackcount($mod['Albumindex']) == 0) {
-				debuglog("  Album ".$mod['Albumindex']." has no visible tracks","USERRATINGS",6);
-				$returninfo['deletedalbums'][] = $mod['Albumindex'];
-			} else {
-				debuglog("  Album ".$mod['Albumindex']." was modified","USERRATINGS",6);
-				switch ($prefs['sortcollectionby']) {
-					case 'album':
-					case 'albumbyartist':
-						$r = do_albums_from_database('a', 'album', 'root', $mod['Albumindex'], false, false);
-						break;
 
-					case 'artist':
-						$r = do_albums_from_database('a', 'album', $mod['AlbumArtistindex'], $mod['Albumindex'], false, false);
-						break;
-				}
-				$r['tracklist'] = do_tracks_from_database('a', 'album', $mod['Albumindex'], true);
-				$returninfo['modifiedalbums'][] = $r;
+	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
+	foreach ($result as $mod) {
+		if (album_trackcount($mod['Albumindex']) == 0) {
+			debuglog("  Album ".$mod['Albumindex']." has no visible tracks","USERRATINGS",6);
+			$returninfo['deletedalbums'][] = $mod['Albumindex'];
+		} else {
+			debuglog("  Album ".$mod['Albumindex']." was modified","USERRATINGS",6);
+			switch ($prefs['sortcollectionby']) {
+				case 'album':
+				case 'albumbyartist':
+					$r = do_albums_from_database('a', 'album', 'root', $mod['Albumindex'], false, false);
+					break;
+
+				case 'artist':
+					$r = do_albums_from_database('a', 'album', $mod['AlbumArtistindex'], $mod['Albumindex'], false, false);
+					break;
 			}
+			$r['tracklist'] = do_tracks_from_database('a', 'album', $mod['Albumindex'], true);
+			$returninfo['modifiedalbums'][] = $r;
 		}
 	}
-	if ($result = generic_sql_query('SELECT Albumindex, AlbumArtistindex, Uri, TTindex FROM Tracktable JOIN Albumtable USING (Albumindex) WHERE justAdded = 1 AND Hidden = 0')) {
-		while ($mod = $result->fetch(PDO::FETCH_ASSOC)) {
-			debuglog("  New Track in album ".$mod['Albumindex'].' has TTindex '.$mod['TTindex'],"USERRATING");
-			$returninfo['addedtracks'][] = array('artistindex' => $mod['AlbumArtistindex'], 'albumindex' => $mod['Albumindex'], 'trackuri' => rawurlencode($mod['Uri']));
-		}
+
+	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex, Uri, TTindex FROM Tracktable JOIN Albumtable USING (Albumindex) WHERE justAdded = 1 AND Hidden = 0');
+	foreach ($result as $mod) {
+		debuglog("  New Track in album ".$mod['Albumindex'].' has TTindex '.$mod['TTindex'],"USERRATING");
+		$returninfo['addedtracks'][] = array('artistindex' => $mod['AlbumArtistindex'], 'albumindex' => $mod['Albumindex'], 'trackuri' => rawurlencode($mod['Uri']));
 	}
-	$result = null;
 }
 
 function artist_albumcount($artistindex) {
-	$retval = 0;
-	if ($result = generic_sql_query(
+	return generic_sql_query(
 		"SELECT
 			COUNT(Albumindex) AS num
 		FROM
@@ -237,19 +234,11 @@ function artist_albumcount($artistindex) {
 			AlbumArtistindex = ".$artistindex.
 			" AND Hidden = 0
 			AND isSearchResult < 2
-			AND Uri IS NOT NULL")) {
-		$obj = $result->fetch(PDO::FETCH_OBJ);
-		$retval = $obj->num;
-	} else {
-		debuglog("ERROR counting albums for Artist ".$artistindex,"USERRATINGS",2);
-	}
-	$result = null;
-	return $retval;
+			AND Uri IS NOT NULL", false, null, 'num', 0);
 }
 
 function album_trackcount($albumindex) {
-	$retval = 0;
-	if ($result = generic_sql_query(
+	return generic_sql_query(
 		"SELECT
 			COUNT(TTindex) AS num
 		FROM
@@ -258,14 +247,7 @@ function album_trackcount($albumindex) {
 			Albumindex = ".$albumindex.
 			" AND Hidden = 0
 			AND isSearchResult < 2
-			AND Uri IS NOT NULL")) {
-		$obj = $result->fetch(PDO::FETCH_OBJ);
-		$retval = $obj->num;
-	} else {
-		debuglog("ERROR counting tracks for album ".$albumindex,"USERRATINGS",2);
-	}
-	$result = null;
-	return $retval;
+			AND Uri IS NOT NULL", false, null, 'num', 0);
 }
 
 function forcedUriOnly($u,$d) {
@@ -285,8 +267,8 @@ function forcedUriOnly($u,$d) {
 }
 
 function preparePlaylist() {
-	generic_sql_query("DROP TABLE IF EXISTS pltable");
-	generic_sql_query("CREATE TABLE pltable(TTindex INT UNSIGNED NOT NULL UNIQUE)");
+	generic_sql_query("DROP TABLE IF EXISTS pltable", true);
+	generic_sql_query("CREATE TABLE pltable(TTindex INT UNSIGNED NOT NULL UNIQUE)", true);
 }
 
 function doPlaylist($playlist, $limit) {
@@ -390,32 +372,20 @@ function backup_unrecoverable_data() {
 
 	debuglog("Backing up manually added tracks","BACKEND",5);
 	$tracks = get_manually_added_tracks();
-	if ($tracks === false) {
-		debuglog(" ..well, that didn't work","BACKEND",1);
-	} else {
-		file_put_contents($dirname.'/tracks.json',json_encode($tracks));
-	}
+	file_put_contents($dirname.'/tracks.json',json_encode($tracks));
+
 	debuglog("Backing up ratings","BACKEND",5);
 	$tracks = get_ratings();
-	if ($tracks === false) {
-		debuglog(" ..well, that didn't work","BACKEND",1);
-	} else {
-		file_put_contents($dirname.'/ratings.json',json_encode($tracks));
-	}
+	file_put_contents($dirname.'/ratings.json',json_encode($tracks));
+
 	debuglog("Backing up Playcounts","BACKEND",5);
 	$tracks = get_playcounts();
-	if ($tracks === false) {
-		debuglog(" ..well, that didn't work","BACKEND",1);
-	} else {
-		file_put_contents($dirname.'/playcounts.json',json_encode($tracks));
-	}
+	file_put_contents($dirname.'/playcounts.json',json_encode($tracks));
+
 	debuglog("Backing up Tags","BACKEND",5);
 	$tracks = get_tags();
-	if ($tracks === false) {
-		debuglog(" ..well, that didn't work","BACKEND",1);
-	} else {
-		file_put_contents($dirname.'/tags.json',json_encode($tracks));
-	}
+	file_put_contents($dirname.'/tags.json',json_encode($tracks));
+
 }
 
 function analyse_backups() {
@@ -489,9 +459,9 @@ function restoreBackup($backup) {
 	// Now... we may have restored data on tracks that were previously local and now aren't there any more.
 	// If they're local tracks that have been removed, then we don't want them or care about their data
 	if ($prefs['player_backend'] == "mpd") {
-		generic_sql_query("DELETE FROM Tracktable WHERE Uri IS NOT NULL AND LastModified IS NULL AND Hidden = 0");
+		generic_sql_query("DELETE FROM Tracktable WHERE Uri IS NOT NULL AND LastModified IS NULL AND Hidden = 0", true);
 	} else {
-		generic_sql_query("DELETE FROM Tracktable WHERE Uri LIKE 'local:%' AND LastModified IS NULL AND Hidden = 0");
+		generic_sql_query("DELETE FROM Tracktable WHERE Uri LIKE 'local:%' AND LastModified IS NULL AND Hidden = 0", true);
 	}
 	remove_cruft();
 }
@@ -501,7 +471,7 @@ function get_manually_added_tracks() {
 	// get_manually_added_tracks
 	//		Creates data for backup
 
-	if ($result = generic_sql_query(
+	return generic_sql_query(
 		"SELECT
 			Tracktable.Title AS title,
 			Tracktable.TrackNo AS trackno,
@@ -518,12 +488,7 @@ function get_manually_added_tracks() {
 			JOIN Artisttable AS ta USING (Artistindex)
 			JOIN Albumtable ON Tracktable.Albumindex = Albumtable.Albumindex
 			JOIN Artisttable AS aat ON Albumtable.AlbumArtistindex = aat.Artistindex
-		WHERE Tracktable.LastModified IS NULL AND Tracktable.Hidden = 0 AND Tracktable.isSearchResult < 2 AND uri IS NOT NULL"
-		)) {
-		return $result->fetchAll(PDO::FETCH_ASSOC);
-	} else {
-		return false;
-	}
+		WHERE Tracktable.LastModified IS NULL AND Tracktable.Hidden = 0 AND Tracktable.isSearchResult < 2 AND uri IS NOT NULL");
 }
 
 function get_ratings() {
@@ -531,7 +496,7 @@ function get_ratings() {
 	// get_ratings
 	//		Creates data for backup
 
-	if ($result = generic_sql_query(
+	return generic_sql_query(
 		"SELECT
 			r.Rating AS rating,
 			tr.Title AS title,
@@ -551,12 +516,7 @@ function get_ratings() {
 			JOIN Albumtable AS al ON tr.Albumindex = al.Albumindex
 			JOIN Artisttable AS aat ON al.AlbumArtistindex = aat.Artistindex
 		WHERE rating > 0 AND tr.Hidden = 0 AND tr.isSearchResult < 2
-		ORDER BY rating, albumartist, album, trackno"
-		)) {
-		return $result->fetchAll(PDO::FETCH_ASSOC);
-	} else {
-		return false;
-	}
+		ORDER BY rating, albumartist, album, trackno");
 }
 
 function get_playcounts() {
@@ -564,7 +524,7 @@ function get_playcounts() {
 	// get_playcounts
 	//		Creates data for backup
 
-	if ($result = generic_sql_query(
+	return generic_sql_query(
 		"SELECT
 			p.Playcount AS playcount,
 			p.LastPlayed AS lastplayed,
@@ -585,12 +545,7 @@ function get_playcounts() {
 			JOIN Albumtable AS al ON tr.Albumindex = al.Albumindex
 			JOIN Artisttable AS aat ON al.AlbumArtistindex = aat.Artistindex
 		WHERE playcount > 0
-		ORDER BY playcount, albumartist, album, trackno"
-		)) {
-		return $result->fetchAll(PDO::FETCH_ASSOC);
-	} else {
-		return false;
-	}
+		ORDER BY playcount, albumartist, album, trackno");
 }
 
 function get_tags() {
@@ -598,7 +553,7 @@ function get_tags() {
 	// get_tags
 	//		Creates data for backup
 
-	if ($result = generic_sql_query(
+	return generic_sql_query(
 		"SELECT
 			".SQL_TAG_CONCAT."AS tag,
 			tr.Title AS title,
@@ -619,12 +574,7 @@ function get_tags() {
 			JOIN Albumtable AS al ON tr.Albumindex = al.Albumindex
 			JOIN Artisttable AS aat ON al.AlbumArtistindex = aat.Artistindex
 		WHERE tr.Hidden = 0 AND tr.isSearchResult < 2
-		GROUP BY tr.TTindex"
-	)) {
-		return $result->fetchAll(PDO::FETCH_ASSOC);
-	} else {
-		return false;
-	}
+		GROUP BY tr.TTindex");
 }
 
 function getAllURIs($sqlstring, $limit, $tags, $random = true) {
@@ -637,19 +587,12 @@ function getAllURIs($sqlstring, $limit, $tags, $random = true) {
 			debuglog("No URIs found. Resetting history table","SMART PLAYLIST",5);
 			preparePlaylist();
 		}
-		generic_sql_query("CREATE TEMPORARY TABLE IF NOT EXISTS pltemptable(TTindex INT UNSIGNED NOT NULL UNIQUE)");
+		generic_sql_query("CREATE TEMPORARY TABLE IF NOT EXISTS pltemptable(TTindex INT UNSIGNED NOT NULL UNIQUE)", true);
 		theBabyDumper($sqlstring, $limit, $tags, $random);
-		if ($result = generic_sql_query(
-			"SELECT Uri FROM Tracktable WHERE TTindex IN (SELECT TTindex FROM pltemptable)")) {
-			while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-				$uris[] = $obj->Uri;
-				debuglog("URI : ".$obj->Uri,"SMART PLAYLIST");
-			}
-		}
+		$uris = sql_get_column("SELECT Uri FROM Tracktable WHERE TTindex IN (SELECT TTindex FROM pltemptable)", 'Uri');
 		$tries++;
 	} while (count($uris) == 0 && $tries < 2);
-	$result = null;
-	generic_sql_query("INSERT INTO pltable (TTindex) SELECT TTindex FROM pltemptable");
+	generic_sql_query("INSERT INTO pltable (TTindex) SELECT TTindex FROM pltemptable", true);
 	return $uris;
 }
 
@@ -657,42 +600,34 @@ function theBabyDumper($sqlstring, $limit, $tags, $random) {
 	debuglog("Selector is ".$sqlstring,"SMART PLAYLIST",6);
 	$rndstr = $random ? " ORDER BY ".SQL_RANDOM_SORT : " ORDER BY Albumindex, TrackNo";
 	if ($tags) {
-		$stmt = sql_prepare_query_later(
+		sql_prepare_query(true, null, null, null,
 			"INSERT INTO pltemptable(TTindex) ".$sqlstring.
-			" AND NOT Tracktable.TTindex IN (SELECT TTindex FROM pltable)".$rndstr." LIMIT ".$limit);
-		if ($stmt !== false) {
-			$stmt->execute($tags);
-		}
-		$stmt = null;
+			" AND NOT Tracktable.TTindex IN (SELECT TTindex FROM pltable)".$rndstr." LIMIT ".$limit, $tags);
 	} else {
 		generic_sql_query(
 			"INSERT INTO pltemptable(TTindex) ".$sqlstring.
-			" AND NOT Tracktable.TTindex IN (SELECT TTindex FROM pltable)".$rndstr." LIMIT ".$limit);
+			" AND NOT Tracktable.TTindex IN (SELECT TTindex FROM pltable)".$rndstr." LIMIT ".$limit, true);
 	}
 }
 
 function get_recommendation_seeds($days, $limit, $top) {
 
 	// 1. Get a list of tracks played in the last $days days, sorted by their OVERALL popularity
-	$resultset = array();
-	if ($result = generic_sql_query(
+	$resultset = generic_sql_query(
 		"SELECT SUM(Playcount) AS playtotal, Artistname, Title, Uri
 		FROM Playcounttable JOIN Tracktable USING (TTindex)
 		JOIN Artisttable USING (Artistindex)
 		WHERE ".sql_two_weeks_include($days).
-		" AND Uri IS NOT NULL GROUP BY Artistindex ORDER BY playtotal DESC LIMIT ".$limit)) {
-		$resultset = $result->fetchAll(PDO::FETCH_ASSOC);
-	}
+		" AND Uri IS NOT NULL GROUP BY Artistindex ORDER BY playtotal DESC LIMIT ".$limit);
 
 	// 2. Get a list of recently played tracks, ignoring popularity
-	if ($result = generic_sql_query(
+	$result = generic_sql_query(
 		"SELECT 0 AS playtotal, Artistname, Title, Uri
 		FROM Playcounttable JOIN Tracktable USING (TTindex)
 		JOIN Artisttable USING (Artistindex)
 		WHERE ".sql_two_weeks_include(intval($days/2)).
-		" AND Uri IS NOT NULL GROUP BY Artistindex ORDER BY ".SQL_RANDOM_SORT." LIMIT ".intval($limit/2))) {
-		$resultset = array_merge($resultset, $result->fetchAll(PDO::FETCH_ASSOC));
-	}
+		" AND Uri IS NOT NULL GROUP BY Artistindex ORDER BY ".SQL_RANDOM_SORT." LIMIT ".intval($limit/2));
+	$resultset = array_merge($resultset, $result);
 
 	// 3. Get the top tracks overall
 	$tracks = get_track_charts(intval($limit/2));
@@ -729,20 +664,18 @@ function get_fave_artists() {
 	generic_sql_query(
 		"CREATE TEMPORARY TABLE aplaytable AS SELECT SUM(Playcount) AS playtotal, Artistindex FROM
 		(SELECT Playcount, Artistindex FROM Playcounttable JOIN Tracktable USING (TTindex) WHERE
-		Playcount > 10) AS derived GROUP BY Artistindex");
+		Playcount > 10) AS derived GROUP BY Artistindex", true);
 
 	$artists = array();
-	if ($result = generic_sql_query(
+	$result = generic_sql_query(
 		"SELECT playtot, Artistname FROM (SELECT SUM(Playcount) AS playtot, Artistindex FROM
 		(SELECT Playcount, Artistindex FROM Playcounttable JOIN Tracktable USING (TTindex)) AS
 		derived GROUP BY Artistindex) AS alias JOIN Artisttable USING (Artistindex) WHERE
-		playtot > (SELECT AVG(playtotal) FROM aplaytable) ORDER BY ".SQL_RANDOM_SORT)) {
-		while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-			debuglog("Artist : ".$obj->Artistname,"FAVEARTISTS");
-			$artists[] = array( 'name' => $obj->Artistname, 'plays' => $obj->playtot);
-		}
+		playtot > (SELECT AVG(playtotal) FROM aplaytable) ORDER BY ".SQL_RANDOM_SORT, false, PDO::FETCH_OBJ);
+	foreach ($result as $obj) {
+		debuglog("Artist : ".$obj->Artistname,"FAVEARTISTS");
+		$artists[] = array( 'name' => $obj->Artistname, 'plays' => $obj->playtot);
 	}
-	$result = null;
 	return $artists;
 }
 

@@ -47,61 +47,59 @@ if ($mysqlc) {
     // Note the final line checking that image isn't in use by another album
     // it's an edge case where we have the album local but we also somehow have a spotify or whatever
     // version with hidden tracks
-    if ($result = generic_sql_query("SELECT DISTINCT Albumindex, Albumname, Image, Domain FROM
+    $result = generic_sql_query("SELECT DISTINCT Albumindex, Albumname, Image, Domain FROM
         Tracktable JOIN Albumtable USING (Albumindex) JOIN Playcounttable USING (TTindex)
         WHERE Hidden = 1
         AND ".sql_two_weeks()."
         AND
             Albumindex NOT IN (SELECT Albumindex FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Hidden = 0)
         AND
-            Image NOT IN (SELECT Image FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Hidden = 0)")) {
-        while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-            if (preg_match('#^albumart/small/#', $obj->Image)) {
-                debuglog("Removing image for hidden album ".$obj->Albumname." ".$obj->Image,"CACHE CLEANER");
-                generic_sql_query("UPDATE Albumtable SET Image = NULL, Searched = 0 WHERE Albumindex = ".$obj->Albumindex);
-            }
+            Image NOT IN (SELECT Image FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Hidden = 0)", false, PDO::FETCH_OBJ);
+    foreach ($result as $obj) {
+        if (preg_match('#^albumart/small/#', $obj->Image)) {
+            debuglog("Removing image for hidden album ".$obj->Albumname." ".$obj->Image,"CACHE CLEANER");
+            generic_sql_query("UPDATE Albumtable SET Image = NULL, Searched = 0 WHERE Albumindex = ".$obj->Albumindex, true);
         }
     }
 
     debuglog("Checking database for missing album art","CACHE CLEANER");
-    if ($result = generic_sql_query("SELECT Albumindex, Albumname, Image, Domain, ImgKey FROM Albumtable")) {
-        while($obj = $result->fetch(PDO::FETCH_OBJ)) {
-            if ($obj->Image != '' && !file_exists($obj->Image)) {
-                if (preg_match('#^getRemoteImage\.php\?url=(.*)#', $obj->Image)) {
-                    // Don't do this, it archives all the soundcloud images for search results
-                    // and we don't want that.
-                    // debuglog($obj->Albumname." has remote image ".$obj->Image,"CACHE CLEANER");
-                    // $retval = archive_image($obj->Image, $obj->ImgKey);
-                    // $image = $retval['image'];
-                    // $searched = 1;
-                } else {
-                    debuglog($obj->Albumname." has missing image ".$obj->Image,"CACHE CLEANER");
-                    switch ($obj->Domain) {
-                        case "youtube":
-                        case "soundcloud":
-                        case "internetarchive":
-                        case "bassdrive":
-                        case "oe1":
-                        case "tunein":
-                            $image = "newimages/".$obj->Domain."-logo.svg";
-                            $searched = 1;
-                            break;
+    $result = generic_sql_query("SELECT Albumindex, Albumname, Image, Domain, ImgKey FROM Albumtable", false, PDO::FETCH_OBJ);
+    foreach ($result as $obj) {
+        if ($obj->Image != '' && !file_exists($obj->Image)) {
+            if (preg_match('#^getRemoteImage\.php\?url=(.*)#', $obj->Image)) {
+                // Don't do this, it archives all the soundcloud images for search results
+                // and we don't want that.
+                // debuglog($obj->Albumname." has remote image ".$obj->Image,"CACHE CLEANER");
+                // $retval = archive_image($obj->Image, $obj->ImgKey);
+                // $image = $retval['image'];
+                // $searched = 1;
+            } else {
+                debuglog($obj->Albumname." has missing image ".$obj->Image,"CACHE CLEANER");
+                switch ($obj->Domain) {
+                    case "youtube":
+                    case "soundcloud":
+                    case "internetarchive":
+                    case "bassdrive":
+                    case "oe1":
+                    case "tunein":
+                        $image = "newimages/".$obj->Domain."-logo.svg";
+                        $searched = 1;
+                        break;
 
-                        case "podcast":
-                        case "podcast+http":
-                        case "podcast http":
-                            $image = "newimages/podcast-logo.svg";
-                            $searched = 1;
-                            break;
+                    case "podcast":
+                    case "podcast+http":
+                    case "podcast http":
+                        $image = "newimages/podcast-logo.svg";
+                        $searched = 1;
+                        break;
 
-                        default:
-                            $image = '';
-                            $searched = 0;
-                            break;
+                    default:
+                        $image = '';
+                        $searched = 0;
+                        break;
 
-                    }
-                    sql_prepare_query("UPDATE Albumtable SET Searched = ?, Image = ? WHERE Albumindex = ?", $searched, $image, $obj->Albumindex);
                 }
+                sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Searched = ?, Image = ? WHERE Albumindex = ?", $searched, $image, $obj->Albumindex);
             }
         }
     }
@@ -112,13 +110,11 @@ if ($mysqlc) {
         foreach ($files as $image) {
             // Keep everything for 24 hours regardless, we might be using it in a playlist or something
             if (filemtime($image) < time()-86400) {
-                if ($result = sql_prepare_query("SELECT Albumindex FROM Albumtable WHERE Image = ?", $image)) {
-                    $count = ($result) ? $result->fetchAll(PDO::FETCH_ASSOC) : false;
-                    if ($count === false || count($count) < 1) {
-                        debuglog("  Removing Unused Album image ".$image,"CACHE CLEANER");
-                        exec('rm albumart/small/'.basename($image));
-                        exec('rm albumart/asdownloaded/'.basename($image));
-                    }
+                $count = sql_prepare_query(false, null, 'acount', 0, "SELECT COUNT(Albumindex) AS acount FROM Albumtable WHERE Image = ?", $image);
+                if ($count < 1) {
+                    debuglog("  Removing Unused Album image ".$image,"CACHE CLEANER");
+                    exec('rm albumart/small/'.basename($image));
+                    exec('rm albumart/asdownloaded/'.basename($image));
                 }
             }
         }
@@ -126,24 +122,20 @@ if ($mysqlc) {
         debuglog("Checking for orphaned radio station images","CACHE CLEANER");
         $files = glob('prefs/userstreams/*.*');
         foreach ($files as $image) {
-            if ($result = sql_prepare_query("SELECT Stationindex FROM RadioStationtable WHERE Image = ?",$image)) {
-                $count = ($result) ? $result->fetchAll(PDO::FETCH_ASSOC) : false;
-                if ($count === false || count($count) < 1) {
-                    debuglog("  Removing orphaned radio station image ".$image,"CACHE CLEANER");
-                    exec('rm '.$image);
-                }
+            $count = sql_prepare_query(false, null, 'acount', 0, "SELECT COUNT(Stationindex) AS acount FROM RadioStationtable WHERE Image = ?",$image);
+            if ($count < 1) {
+                debuglog("  Removing orphaned radio station image ".$image,"CACHE CLEANER");
+                exec('rm '.$image);
             }
         }
 
-        debuglog("Checking for orphaned podcast images","CACHE CLEANER");
+        debuglog("Checking for orphaned podcast data","CACHE CLEANER");
         $files = glob('prefs/podcasts/*');
-        if ($result = generic_sql_query("SELECT PODindex FROM Podcasttable")) {
-            $pods = $result->fetchAll(PDO::FETCH_COLUMN, 'PODindex');
-            foreach ($files as $file) {
-                if (!in_array(basename($file), $pods)) {
-                    debuglog("  Removing orphaned podcast directory ".$file,"CACHE CLEANER");
-                    exec('rm -fR '.$file);
-                }
+        $pods = sql_get_column("SELECT PODindex FROM Podcasttable", 'PODindex');
+        foreach ($files as $file) {
+            if (!in_array(basename($file), $pods)) {
+                debuglog("  Removing orphaned podcast directory ".$file,"CACHE CLEANER");
+                exec('rm -fR '.$file);
             }
         }
         $files = glob('prefs/podcasts/*');
@@ -162,8 +154,8 @@ if ($mysqlc) {
     // Compact the database
     if ($prefs['collection_type'] == 'sqlite') {
         debuglog("Vacuuming Database","CACHE CLEANER");
-        generic_sql_query("VACUUM");
-        generic_sql_query("PRAGMA optimize");
+        generic_sql_query("VACUUM", true);
+        generic_sql_query("PRAGMA optimize", true);
     }
 
 }

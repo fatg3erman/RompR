@@ -55,10 +55,9 @@ if (array_key_exists('populate', $_REQUEST)) {
     }
 
     if ($podid !== null) {
-        if ($result = generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$podid)) {
-            while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-                doPodcast($obj);
-            }
+        $result = generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$podid, false, PDO::FETCH_OBJ);
+        foreach ($result as $obj) {
+            doPodcast($obj);
         }
     } else {
         doPodcastList($subflag);
@@ -89,10 +88,9 @@ function doPodcastBase() {
 }
 
 function doPodcastList($subscribed) {
-    if ($result = generic_sql_query("SELECT * FROM Podcasttable WHERE Subscribed = ".$subscribed." ORDER BY Artist, Title")) {
-        while ($obj = $result->fetch(PDO::FETCH_OBJ)) {
-            doPodcastHeader($obj);
-        }
+    $result = generic_sql_query("SELECT * FROM Podcasttable WHERE Subscribed = ".$subscribed." ORDER BY Artist, Title", false, PDO::FETCH_OBJ);
+    foreach ($result as $obj) {
+        doPodcastHeader($obj);
     }
 
 }

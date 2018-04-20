@@ -4,4 +4,7 @@ prefs
 .DS_Store
 test.php
 phpinfo.php
+<<<<<<< HEAD
 test.php
+=======
+>>>>>>> sql_refactor
