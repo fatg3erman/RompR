@@ -1015,16 +1015,7 @@ function find_justadded_artists() {
 }
 
 function find_justadded_albums() {
-<<<<<<< HEAD
-	$retval = array();
-	if ($result = generic_sql_query("SELECT DISTINCT Albumindex FROM Tracktable WHERE justAdded = 1")) {
-		$retval =  $result->fetchAll(PDO::FETCH_COLUMN, 'Albumindex');
-	}
-	$result = null;
-	return $retval;
-=======
 	return sql_get_column("SELECT DISTINCT Albumindex FROM Tracktable WHERE justAdded = 1", 'Albumindex');
->>>>>>> sql_refactor
 }
 
 function get_user_radio_streams() {
