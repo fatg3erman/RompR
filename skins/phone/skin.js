@@ -265,7 +265,7 @@ var layoutProcessor = function() {
             $('.choose_albumlist').click(function(){layoutProcessor.sourceControl('albumlist')});
             $('.choose_searcher').click(function(){layoutProcessor.sourceControl('searchpane', setSearchLabelWidth)});
             $('.choose_filelist').click(function(){layoutProcessor.sourceControl('filelist')});
-            $('.choose_radiolist').click(function(){layoutProcessor.sourceControl('radiolist'})});
+            $('.choose_radiolist').click(function(){layoutProcessor.sourceControl('radiolist')});
             $('.choose_podcastslist').click(function(){layoutProcessor.sourceControl('podcastslist')});
             $('.choose_infopanel').click(function(){layoutProcessor.sourceControl('infopane')});
             $('.choose_playlistman').click(function(){layoutProcessor.sourceControl('playlistman')});
