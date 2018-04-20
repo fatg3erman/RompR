@@ -8,3 +8,13 @@ When used with Mopidy you can listen to Spotify and make use of RompЯ's incredi
 The source code is now hosted here on github but the project home is still at
 https://sourceforge.net/projects/rompr/
 at least for the time being - you should go there to download the latest release and get installation instructions. In the fullness of time I expect this to become the new project home.
+
+![](https://raw.githubusercontent.com/fatg3erman/files/master/images/rompr-1.png)
+
+[![Download The Latest Release Rompr](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/rompr/files/latest/download)
+
+[Project Homepage](https://sourceforge.net/projects/rompr/)
+
+[Linux Installation Instructions](https://sourceforge.net/p/rompr/wiki/Installation/)
+
+[macOS Installation Instructions](https://sourceforge.net/p/rompr/wiki/Installation%20on%20macOS/)

@@ -96,23 +96,6 @@ function sql_get_column($qstring, $column) {
 	return $retval;
 }
 
-// Debug function for prepared statement
-function dbg_params($string,$data) {
-	$indexed = $data==array_values($data);
-
-	foreach($data as $k=>$v) {
-		if (is_string($v)) {
-			$v = "'$v'";
-		}
-		if($indexed) {
-			$string = preg_replace('/\?/', $v, $string, 1);
-		} else {
-			$string=str_replace(":$k", $v, $string);
-        }
-    }
-    return $string;
-}
-
 function simple_query($select, $from, $where, $item, $default) {
 	$retval = $default;
 	$qstring = "SELECT ".$select." AS TheThingToFind FROM ".$from;
@@ -133,8 +116,8 @@ function sql_prepare_query() {
 	// ... parameters for query
 	// return type of PDO::FETCH_COLUMN returns an array of the values
 	//  from the column identified by field name
-	// --**-- NO CHECKING IS DONE BY THIS FUNCTION! --**--
-	//   becasue we want to make it fast, so make sure you call it right!
+	// --**-- NO PARAMETER CHECKING IS DONE BY THIS FUNCTION! --**--
+	//   because we want to make it fast, so make sure you call it right!
 
 	// This doesn't appear to work with MySQL when one of the args has to be an integer
 	// eg LIMIT ? doesn't work.
@@ -193,6 +176,23 @@ function sql_prepare_query_later($query) {
 		show_sql_error("Query Prep Error For ".$query,2);
 	}
 	return $stmt;
+}
+
+// Debug function for prepared statement
+function dbg_params($string,$data) {
+	$indexed = $data==array_values($data);
+
+	foreach($data as $k=>$v) {
+		if (is_string($v)) {
+			$v = "'$v'";
+		}
+		if($indexed) {
+			$string = preg_replace('/\?/', $v, $string, 1);
+		} else {
+			$string=str_replace(":$k", $v, $string);
+        }
+    }
+    return $string;
 }
 
 function checkCollectionStatus() {

@@ -160,7 +160,7 @@ if (array_key_exists('collection_type', $prefs)) {
     include("backends/sql/".$prefs['collection_type']."/specifics.php");
 }
 if (!$mysqlc) {
-    sql_init_fail();
+    sql_init_fail("No Database Connection Was Possible");
 }
 
 savePrefs();
