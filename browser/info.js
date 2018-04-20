@@ -434,7 +434,7 @@ var browser = function() {
                 $("#hidebrowser").prop("checked", !$("#hidebrowser").is(':checked'));
                 prefs.save({hidebrowser: $("#hidebrowser").is(':checked')}, hideBrowser);
             }
-            var displayer = $('<div>', {id: id+"information", class: "infotext invisible"}).insertBefore('#artistinformation');
+            var displayer = $('<div>', {id: id+"information", class: "infotext invisible"}).insertBefore('#artistchooser');
             displayer.html(banner({name: name}, id, false, false, true));
             panelclosed[id] = false;
             displayer.unbind('click');

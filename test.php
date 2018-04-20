@@ -1,6 +1,8 @@
 <?php
 
-$files = glob('prefs/podcasts/10/{*.jpg,*.jpeg,*.JPEG,*.JPG,*.gif,*.GIF,*.png,*.PNG}', GLOB_BRACE);
-print_r($files);
+$url = 'prefs/podcats/10/20/gumboots';
+$a = preg_match('#prefs/podcasts/(\d+)/(\d+)/(.*)$#', $url, $matches);
+print implode(', ',$matches);
+
 
 ?>
