@@ -658,7 +658,7 @@ function markAsListened($url) {
     return $podid;
 }
 
-function deleteTrack($trackid, $channel) {()
+function deleteTrack($trackid, $channel) {
     debuglog("Marking ".$trackid." from ".$channel." as deleted","PODCASTS");
     generic_sql_query("UPDATE PodcastTracktable SET Deleted = 1 WHERE PODTrackindex = ".$trackid, true);
     if (is_dir('prefs/podcasts/'.$channel.'/'.$trackid)) {
