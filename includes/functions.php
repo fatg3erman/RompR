@@ -235,7 +235,7 @@ function albumTrack($data) {
         }
         print '>'.$data['trackno'].'</div>';
     }
-    
+
     switch ($d) {
         case "soundcloud":
         case "youtube":
@@ -885,7 +885,7 @@ function rejig_wishlist_tracks() {
             VALUES
                 (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             'rompr_wishlist_'.microtime(true), $obj['Artistindex'], null, 0, 0, null, null, 'local', null)) {
-            
+
             $albumindex = $mysqlc->lastInsertId();
             debuglog("    Created Album with Albumindex ".$albumindex,"MYSQL",7);
             generic_sql_query("UPDATE Tracktable SET Albumindex = ".$albumindex." WHERE TTindex = ".$obj['TTindex'], true);
@@ -935,6 +935,14 @@ function get_stream_imgkey($i) {
 
 function stream_index_from_key($key) {
     return preg_replace('/STREAM_/','',$key);
+}
+
+function format_bytes($size, $precision = 1)
+{
+    $base = log($size, 1024);
+    $suffixes = array('', 'K', 'M', 'G', 'T');
+
+    return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
 }
 
 ?>

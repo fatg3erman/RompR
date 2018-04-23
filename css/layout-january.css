@@ -1958,3 +1958,8 @@ table.fileinfotable tr td:nth-child(2) {
     border-right: none !important;
     border-bottom: none !important;
 }
+
+.fsize {
+	font-style: italic;
+	font-size:90%;
+}

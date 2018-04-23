@@ -576,6 +576,7 @@ function format_episode(&$y, &$item, $pm) {
         $class = 'invisible whatdoicallthis';
     }
     print '<div id="poddesc_'.$item->PODTrackindex.'" class="'.$class.'">'.format_text($item->Description).'</div>';
+    print '<div class="fsize">'.format_bytes($item->FileSize).'Bytes</div>';
     if ($y->Subscribed == 1) {
         print '<div class="clearfix" name="podcontrols_'.$pm.'">';
         if ($item->Downloaded == 1) {
