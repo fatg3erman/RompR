@@ -1104,6 +1104,9 @@ function update_track_stats() {
 	update_stat('TrackCount',$ac);
 
 	$ac = generic_sql_query("SELECT SUM(Duration) AS TotalTime FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND isSearchResult < 2", false, null, 'TotalTime', 0);
+	if ($ac == '') {
+		$ac = 0;
+	}
 	update_stat('TotalTime',$ac);
 	debuglog("Track Stats Updated","MYSQL",9);
 }
