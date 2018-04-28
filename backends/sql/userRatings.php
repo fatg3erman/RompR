@@ -8,7 +8,10 @@ include ("international.php");
 debuglog("--------------------------START---------------------","USERRATING",4);
 include ("backends/sql/backend.php");
 include ("backends/sql/metadatafunctions.php");
+$start = time();
 include("player/mpd/connection.php");
+$took = time() - $start;
+debuglog("Connected to player in ".$took." seconds", "USERRATING",8);
 
 $error = 0;
 $count = 1;
@@ -23,8 +26,11 @@ if ($mysqlc == null) {
 	exit(0);
 }
 
+$start = time();
 open_transaction();
 create_foundtracks();
+$took = time() - $start;
+debuglog("Creating FoundTracks took ".$took." seconds", "USERRATING",8);
 
 $params = json_decode(file_get_contents('php://input'), true);
 
