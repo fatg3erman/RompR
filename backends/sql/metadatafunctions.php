@@ -259,9 +259,10 @@ class romprmetadata {
 		return $ttids;
 	}
 
-	static function print_debug_ttids($ttids) {
+	static function print_debug_ttids($ttids, $s) {
+		$time = time() - $s;
 		if (count($ttids) > 0) {
-			debuglog("    Found TTindex(es) ".implode(', ', $ttids),"MYSQL");
+			debuglog("    Found TTindex(es) ".implode(', ', $ttids). ' in '.$time.' seconds',"MYSQL");
 		}
 	}
 
@@ -302,6 +303,7 @@ class romprmetadata {
 		// doesn't fix this because the collection display still doesn't show the rating as that's
 		// looked up by TTindex
 
+		$start_time = time();
 		debuglog("Looking for item ".$data['title'],"MYSQL");
 		$ttids = array();
 		if ($urionly && $data['uri']) {
@@ -311,7 +313,7 @@ class romprmetadata {
 		}
 
 		if ($data['artist'] == null || $data['title'] == null || ($urionly && $data['uri'])) {
-			romprmetadata::print_debug_ttids($ttids);
+			romprmetadata::print_debug_ttids($ttids, $start_time);
 			return $ttids;
 		}
 
@@ -410,7 +412,7 @@ class romprmetadata {
 				}
 			}
 		}
-		romprmetadata::print_debug_ttids($ttids);
+		romprmetadata::print_debug_ttids($ttids, $start_time);
 		return $ttids;
 	}
 

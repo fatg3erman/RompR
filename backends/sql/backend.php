@@ -243,12 +243,16 @@ function remove_ttid($ttid) {
 	// and we might still need it in the search, so set it to a 2 instead of deleting it.
 
 	debuglog("Removing track ".$ttid,"MYSQL",5);
+	$t = time();
+	$result = false;
 	if (generic_sql_query("DELETE FROM Tracktable WHERE isSearchResult != 1 AND TTindex = '".$ttid."'",true)) {
 		if (generic_sql_query("UPDATE Tracktable SET isSearchResult = 2 WHERE isSearchResult = 1 AND TTindex = '".$ttid."'", true)) {
-			return true;
+			$result = true;;
 		}
 	}
-	return false;
+	$to = time() - $t;
+	debuglog("Removing track took ".$to." seconds","MYSQL",8);
+	return $result;
 }
 
 function list_tags() {
