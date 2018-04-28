@@ -169,6 +169,7 @@ function sanitise_data(&$data) {
 function prepare_returninfo() {
 	debuglog("Preparing Return Info","USERRATINGS",6);
 	global $returninfo, $prefs;
+	$t = time();
 	$result = generic_sql_query('SELECT DISTINCT AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
 	foreach ($result as $mod) {
 		if (artist_albumcount($mod['AlbumArtistindex']) == 0) {
@@ -195,6 +196,10 @@ function prepare_returninfo() {
 		}
 	}
 
+	$at = time() - $t;
+	debuglog("Finding removed artists took ".$at." seconds","BACKEND",8);
+
+	$t = time();
 	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
 	foreach ($result as $mod) {
 		if (album_trackcount($mod['Albumindex']) == 0) {
@@ -216,12 +221,17 @@ function prepare_returninfo() {
 			$returninfo['modifiedalbums'][] = $r;
 		}
 	}
+	$at = time() - $t;
+	debuglog("Finding removed albums took ".$at." seconds","BACKEND",8);
 
+	$t = time();
 	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex, Uri, TTindex FROM Tracktable JOIN Albumtable USING (Albumindex) WHERE justAdded = 1 AND Hidden = 0');
 	foreach ($result as $mod) {
 		debuglog("  New Track in album ".$mod['Albumindex'].' has TTindex '.$mod['TTindex'],"USERRATING");
 		$returninfo['addedtracks'][] = array('artistindex' => $mod['AlbumArtistindex'], 'albumindex' => $mod['Albumindex'], 'trackuri' => rawurlencode($mod['Uri']));
 	}
+	$at = time() - $t;
+	debuglog("Finding added tracks took ".$at." seconds","BACKEND",8);
 }
 
 function artist_albumcount($artistindex) {

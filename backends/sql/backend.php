@@ -1088,6 +1088,7 @@ function update_stream_image($stream, $image) {
 
 function update_track_stats() {
 	debuglog("Updating Track Stats","MYSQL",7);
+	$t = time();
 	$ac = generic_sql_query(
 		"SELECT COUNT(*) AS NumArtists FROM (SELECT DISTINCT AlbumArtistIndex FROM Albumtable
 		INNER JOIN Tracktable USING (Albumindex) WHERE Albumname IS NOT NULL AND Uri IS NOT NULL
@@ -1108,7 +1109,8 @@ function update_track_stats() {
 		$ac = 0;
 	}
 	update_stat('TotalTime',$ac);
-	debuglog("Track Stats Updated","MYSQL",9);
+	$at = time() - $t;
+	debuglog("Updating Track Stats took ".$at." seconds","BACKEND",8);
 }
 
 function update_stat($item, $value) {
@@ -1365,10 +1367,16 @@ function create_foundtracks() {
 function remove_cruft() {
     debuglog("Removing orphaned albums","MYSQL",6);
     // NOTE - the Albumindex IS NOT NULL is essential - if any albumindex is NULL the entire () expression returns NULL
+	$t = time();
     generic_sql_query("DELETE FROM Albumtable WHERE Albumindex NOT IN (SELECT DISTINCT Albumindex FROM Tracktable WHERE Albumindex IS NOT NULL)", true);
+	$at = time() - $t;
+	debuglog("Removing orphaned albums took ".$at." seconds","BACKEND",8);
 
     debuglog("Removing orphaned artists","MYSQL",6);
+	$t = time();
     delete_orphaned_artists();
+	$at = time() - $t;
+	debuglog("Remiving orphaned artists took ".$at." seconds","BACKEND",8);
 
     debuglog("Tidying Metadata","MYSQL",6);
     generic_sql_query("DELETE FROM Ratingtable WHERE Rating = '0'", true);
