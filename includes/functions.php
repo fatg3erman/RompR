@@ -706,7 +706,7 @@ function getWishlist() {
         FROM
         Tracktable AS tr
         LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
-        LEFT JOIN Taglisttable AS tl ON tr.TTindex = tl.TTindex
+        LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
         LEFT JOIN Tagtable AS t USING (Tagindex)
         JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
         WHERE

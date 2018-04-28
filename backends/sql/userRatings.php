@@ -393,18 +393,20 @@ function analyse_backups() {
 	$bs = glob('prefs/databackups/*');
 	rsort($bs);
 	foreach ($bs as $backup) {
-		$tracks = count(json_decode(file_get_contents($backup.'/tracks.json')));
-		$ratings = count(json_decode(file_get_contents($backup.'/ratings.json')));
-		$playcounts = count(json_decode(file_get_contents($backup.'/playcounts.json')));
-		$tags = count(json_decode(file_get_contents($backup.'/tags.json')));
+		// This is nice data to have, but it takes a very long time on a moderate computer
+		// FIXME: We should create these numbers when we create the backup and save them so we can read them in
+		// $tracks = count(json_decode(file_get_contents($backup.'/tracks.json')));
+		// $ratings = count(json_decode(file_get_contents($backup.'/ratings.json')));
+		// $playcounts = count(json_decode(file_get_contents($backup.'/playcounts.json')));
+		// $tags = count(json_decode(file_get_contents($backup.'/tags.json')));
 		$data[] = array(
 			'dir' => basename($backup),
 			'name' => strftime('%c', DateTime::createFromFormat('Y-m-d-H-i', basename($backup))->getTimestamp()),
 			'stats' => array(
-				'Manually Added Tracks' => $tracks,
-				'Playcounts' => $playcounts,
-				'Tracks With Ratings' => $ratings,
-				'Tracks With Tags' => $tags,
+				'Manually Added Tracks' => file_exists($backup.'/tracks.json') ? 'OK' : 'Missing!',
+				'Playcounts' => file_exists($backup.'/playcounts.json') ? 'OK' : 'Missing!',
+				'Tracks With Ratings' => file_exists($backup.'/ratings.json') ? 'OK' : 'Missing!',
+				'Tracks With Tags' => file_exists($backup.'/tags.json') ? 'OK' : 'Missing!',
 			)
 		);
 	}
@@ -464,6 +466,7 @@ function restoreBackup($backup) {
 		generic_sql_query("DELETE FROM Tracktable WHERE Uri LIKE 'local:%' AND LastModified IS NULL AND Hidden = 0", true);
 	}
 	remove_cruft();
+	update_track_stats();
 }
 
 function get_manually_added_tracks() {
