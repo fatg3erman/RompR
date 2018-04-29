@@ -1112,7 +1112,7 @@ function update_stream_image($stream, $image) {
 
 function update_track_stats() {
 	debuglog("Updating Track Stats","MYSQL",7);
-	$t = time();
+	$t = microtime(true);
 	$ac = generic_sql_query(
 		"SELECT COUNT(*) AS NumArtists FROM (SELECT DISTINCT AlbumArtistIndex FROM Albumtable
 		INNER JOIN Tracktable USING (Albumindex) WHERE Albumname IS NOT NULL AND Uri IS NOT NULL
@@ -1133,7 +1133,7 @@ function update_track_stats() {
 		$ac = 0;
 	}
 	update_stat('TotalTime',$ac);
-	$at = time() - $t;
+	$at = microtime(true) - $t;
 	debuglog("Updating Track Stats took ".$at." seconds","BACKEND",8);
 }
 

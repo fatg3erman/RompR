@@ -114,11 +114,13 @@ foreach($params as $p) {
 
 if (count($returninfo) == 0 || array_key_exists('metadata', $returninfo)) {
 	prepare_returninfo();
-	remove_cruft();
 	update_track_stats();
 	doCollectionHeader();
+	print json_encode($returninfo);
+	remove_cruft();
+} else {
+	print json_encode($returninfo);
 }
-print json_encode($returninfo);
 close_transaction();
 close_mpd();
 
