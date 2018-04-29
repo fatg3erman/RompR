@@ -37,7 +37,7 @@ $params = json_decode(file_get_contents('php://input'), true);
 foreach($params as $p) {
 
 	sanitise_data($p);
-	debuglog("  Action is \n".multi_implode($p,"\n"),"USERRATING",8);
+	debuglog("  Action is \n".multi_implode($p,", "),"USERRATING",8);
 
 	switch ($p['action']) {
 

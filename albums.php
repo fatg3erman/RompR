@@ -112,7 +112,7 @@ debuglog("======================================================================
 
 function logit($key) {
     if (is_array($_REQUEST[$key])) {
-        debuglog("Request is \n".$key.' : '.multi_implode($_REQUEST[$key], ", "), "COLLECTION",8);
+        debuglog("Request is : ".$key.' : '.multi_implode($_REQUEST[$key], ", "), "COLLECTION",8);
     } else {
         debuglog("Request is ".$key."=".$_REQUEST[$key],"COLLECTION",8);
     }

@@ -623,20 +623,28 @@ function albumartist_sort_query($flag) {
 	global $prefs;
 	// This query gives us album artists only. It also makes sure we only get artists for whom we
 	// have actual tracks (no album artists who appear only on the wishlist or who have only hidden tracks)
-	$sflag = ($flag == 'b') ? "AND t.isSearchResult > 0" : "AND t.isSearchResult < 2";
-	$qstring =
-		"SELECT
-			a.Artistname,
-			a.Artistindex
-		FROM
-			Artisttable AS a
-			JOIN Albumtable AS al ON a.Artistindex = al.AlbumArtistindex
-			JOIN Tracktable AS t ON al.Albumindex = t.Albumindex
-		WHERE
-			t.Uri IS NOT NULL
-			AND t.Hidden = 0 ".$sflag."
-		GROUP BY a.Artistindex
-		ORDER BY ";
+	// Using GROUP BY is faster than using SELECT DISTINCT
+	// USING IN is faster than the double JOIN
+	$sflag = ($flag == 'b') ? "AND isSearchResult > 0" : "AND isSearchResult < 2";
+	
+	$qstring = "SELECT Artistname, Artistindex FROM Artisttable WHERE Artistindex IN
+				(SELECT AlbumArtistindex FROM Albumtable JOIN Tracktable USING (Albumindex)
+					WHERE Uri IS NOT NULL AND Hidden = 0 ".$sflag." GROUP BY AlbumArtistindex)
+				ORDER BY ";
+	// $qstring =
+	// 	"SELECT
+	// 		a.Artistname,
+	// 		a.Artistindex
+	// 	FROM
+	// 		Artisttable AS a
+	// 		JOIN Albumtable AS al ON a.Artistindex = al.AlbumArtistindex
+	// 		JOIN Tracktable AS t ON al.Albumindex = t.Albumindex
+	// 	WHERE
+	// 		t.Uri IS NOT NULL
+	// 		AND t.Hidden = 0 ".$sflag."
+	// 	GROUP BY a.Artistindex
+	// 	ORDER BY ";
+	
 	foreach ($prefs['artistsatstart'] as $a) {
 		$qstring .= "CASE WHEN LOWER(Artistname) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
 	}
@@ -651,7 +659,6 @@ function albumartist_sort_query($flag) {
 	} else {
 		$qstring .= "LOWER(Artistname)";
 	}
-	return $qstring;
 	return $qstring;
 }
 
@@ -678,13 +685,15 @@ function do_artists_from_database($why, $what, $who) {
 			} else {
 				$singleheader['html'] = artistHeader($why.$what.$obj['Artistindex'], $obj['Artistname']);
 				$singleheader['id'] = $who;
-				return $singleheader;
 				$at = microtime(true) - $t;
 				debuglog(" -- Generating Artist Header took ".$at." seconds","SQL",8);
+				return $singleheader;
 			}
 		}
 		$divtype = ($divtype == "album1") ? "album2" : "album1";
 	}
+	$at = microtime(true) - $t;
+	debuglog(" -- Generating Artist List took ".$at." seconds","SQL",8);
 	return $count;
 }
 
