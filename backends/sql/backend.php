@@ -1364,8 +1364,10 @@ function tidy_database() {
 
 function create_foundtracks() {
 	// The order of these is VERY IMPORTANT!
-	generic_sql_query("UPDATE Tracktable SET justAdded = 0", true);
-	generic_sql_query("UPDATE Albumtable SET justUpdated = 0", true);
+	// Also the WHERE (thing) = 1 is important otherwise, at least with MySQL, it sets EVERY ROW to 0
+	// whether or not it's already 0. That takes a very long time
+	generic_sql_query("UPDATE Tracktable SET justAdded = 0 WHERE justAdded = 1", true);
+	generic_sql_query("UPDATE Albumtable SET justUpdated = 0 WHERE justUpdated = 1", true);
 }
 
 function remove_cruft() {
