@@ -114,13 +114,8 @@ foreach($params as $p) {
 
 if (count($returninfo) == 0 || array_key_exists('metadata', $returninfo)) {
 	prepare_returninfo();
-	update_track_stats();
-	doCollectionHeader();
-	print json_encode($returninfo);
-	remove_cruft();
-} else {
-	print json_encode($returninfo);
 }
+print json_encode($returninfo);
 close_transaction();
 close_mpd();
 
@@ -201,7 +196,7 @@ function prepare_returninfo() {
 	}
 
 	$at = microtime(true) - $t;
-	debuglog(" -- Finding removed artists took ".$at." seconds","BACKEND",8);
+	debuglog("   -- Finding removed artists took ".$at." seconds","BACKEND",8);
 
 	$t = microtime(true);
 	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');

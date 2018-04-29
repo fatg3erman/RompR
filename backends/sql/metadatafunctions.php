@@ -187,7 +187,10 @@ class romprmetadata {
 	}
 
 	public static function cleanup($data) {
-		// Does nothing, as a cleanup is standard when we call into userRatings
+		debuglog("Doing Database Cleanup And Stats Update","SQL",7);
+		remove_cruft();
+		update_track_stats();
+		doCollectionHeader();
 	}
 
 	public static function amendalbum($data) {

@@ -233,6 +233,7 @@ var dbQueue = function() {
 
 	var queue = new Array();
 	var throttle = null;
+	var cleanuptimer = null;
 
 	return {
 
@@ -253,6 +254,7 @@ var dbQueue = function() {
 		dorequest: function() {
 
 			clearTimeout(throttle);
+			clearTimeout(cleanuptimer);
 			var req = queue[0];
 
             if (req) {
@@ -286,7 +288,26 @@ var dbQueue = function() {
 			    });
 	        } else {
             	throttle = null;
+				cleanuptimer = setTimeout(dbQueue.doCleanup, 1000);
 	        }
+		},
+		
+		doCleanup: function() {
+			debug.log("DB QUEUE", "Doing backend Cleanup");
+			// We do these out-of-band to improve the responsiveness of the GUI.
+			$.ajax({
+				url: "backends/sql/userRatings.php",
+				type: "POST",
+				data: JSON.stringify([{action: 'cleanup'}]),
+				dataType: 'json',
+				success: function(data) {
+					updateCollectionDisplay(data);
+				},
+				error: function(data) {
+					debug.fail("DB QUEUE","Cleanup Failed");
+				}
+			});
+			
 		}
 	}
 }();
