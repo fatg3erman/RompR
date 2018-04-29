@@ -662,19 +662,25 @@ function do_artists_from_database($why, $what, $who) {
 	$singleheader['type'] = 'insertAfter';
 	$singleheader['where'] = 'fothergill';
 	$count = 0;
-	$result = generic_sql_query(albumartist_sort_query($why), false, PDO::FETCH_OBJ);
+	$t = microtime(true);
+	$result = generic_sql_query(albumartist_sort_query($why), false, PDO::FETCH_ASSOC);
+	$at = microtime(true) - $t;
+	debuglog(" -- Album Artist SQL query took ".$at." seconds","SQL",8);
+	$t = microtime(true);
 	foreach($result as $obj) {
 		if ($who == "root") {
-			print artistHeader($why.$what.$obj->Artistindex, $obj->Artistname);
+			print artistHeader($why.$what.$obj['Artistindex'], $obj['Artistname']);
 			$count++;
 		} else {
 			if ($obj->Artistindex != $who) {
 				$singleheader['type'] = 'insertAfter';
-				$singleheader['where'] = $why.$what.$obj->Artistindex;
+				$singleheader['where'] = $why.$what.$obj['Artistindex'];
 			} else {
-				$singleheader['html'] = artistHeader($why.$what.$obj->Artistindex, $obj->Artistname);
+				$singleheader['html'] = artistHeader($why.$what.$obj['Artistindex'], $obj['Artistname']);
 				$singleheader['id'] = $who;
 				return $singleheader;
+				$at = microtime(true) - $t;
+				debuglog(" -- Generating Artist Header took ".$at." seconds","SQL",8);
 			}
 		}
 		$divtype = ($divtype == "album1") ? "album2" : "album1";
@@ -1381,13 +1387,13 @@ function remove_cruft() {
 	$t = microtime(true);
     generic_sql_query("DELETE FROM Albumtable WHERE Albumindex NOT IN (SELECT DISTINCT Albumindex FROM Tracktable WHERE Albumindex IS NOT NULL)", true);
 	$at = microtime(true) - $t;
-	debuglog(" -- Removing orphaned albums took ".$at." milliseconds","BACKEND",8);
+	debuglog(" -- Removing orphaned albums took ".$at." seconds","BACKEND",8);
 
     debuglog("Removing orphaned artists","MYSQL",6);
 	$t = microtime(true);
     delete_orphaned_artists();
 	$at = microtime(true) - $t;
-	debuglog(" -- Removing orphaned artists took ".$at." milliseconds","BACKEND",8);
+	debuglog(" -- Removing orphaned artists took ".$at." seconds","BACKEND",8);
 
     debuglog("Tidying Metadata","MYSQL",6);
 	$t = microtime(true);
@@ -1398,7 +1404,7 @@ function remove_cruft() {
 	generic_sql_query("DELETE FROM Playcounttable WHERE Playcount = '0'", true);
 	generic_sql_query("DELETE FROM Playcounttable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
 	$at = microtime(true) - $t;
-	debuglog(" -- Tidying metadata took ".$at." milliseconds","BACKEND",8);
+	debuglog(" -- Tidying metadata took ".$at." seconds","BACKEND",8);
 }
 
 function do_track_by_track($trackobject) {

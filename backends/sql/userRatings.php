@@ -199,7 +199,7 @@ function prepare_returninfo() {
 	}
 
 	$at = microtime(true) - $t;
-	debuglog("Finding removed artists took ".$at." milliseconds","BACKEND",8);
+	debuglog(" -- Finding removed artists took ".$at." seconds","BACKEND",8);
 
 	$t = microtime(true);
 	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
@@ -224,7 +224,7 @@ function prepare_returninfo() {
 		}
 	}
 	$at = microtime(true) - $t;
-	debuglog("Finding removed albums took ".$at." milliseconds","BACKEND",8);
+	debuglog(" -- Finding removed albums took ".$at." seconds","BACKEND",8);
 
 	$t = microtime(true);
 	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex, Uri, TTindex FROM Tracktable JOIN Albumtable USING (Albumindex) WHERE justAdded = 1 AND Hidden = 0');
@@ -233,7 +233,7 @@ function prepare_returninfo() {
 		$returninfo['addedtracks'][] = array('artistindex' => $mod['AlbumArtistindex'], 'albumindex' => $mod['Albumindex'], 'trackuri' => rawurlencode($mod['Uri']));
 	}
 	$at = microtime(true) - $t;
-	debuglog("Finding added tracks took ".$at." milliseconds","BACKEND",8);
+	debuglog(" -- Finding added tracks took ".$at." seconds","BACKEND",8);
 }
 
 function artist_albumcount($artistindex) {
