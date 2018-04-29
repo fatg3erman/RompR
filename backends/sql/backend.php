@@ -672,7 +672,7 @@ function do_artists_from_database($why, $what, $who) {
 			print artistHeader($why.$what.$obj['Artistindex'], $obj['Artistname']);
 			$count++;
 		} else {
-			if ($obj->Artistindex != $who) {
+			if ($obj['Artistindex'] != $who) {
 				$singleheader['type'] = 'insertAfter';
 				$singleheader['where'] = $why.$what.$obj['Artistindex'];
 			} else {
