@@ -275,6 +275,8 @@ function list_all_rating_data($sortby) {
 	// list_all_rating_data
 	//		Used by Rating Manager to get all the info it needs
 
+	$start_time = time();
+
 	$qstring = "SELECT
 			IFNULL(r.Rating, 0) AS Rating,
 			IFNULL(".SQL_TAG_CONCAT.", 'No Tags') AS Tags,
@@ -341,7 +343,10 @@ function list_all_rating_data($sortby) {
 	if ($sortby != 'AlbumArtist') {
 		ksort($ratings, SORT_STRING);
 	}
-	$result = null;
+
+	$qtime = time() - $start;
+	debuglog("  -- Generating Ratigs Manager Data took ".$qtime." seconds"."SQL",8);
+
 	return $ratings;
 }
 
@@ -1373,24 +1378,27 @@ function create_foundtracks() {
 function remove_cruft() {
     debuglog("Removing orphaned albums","MYSQL",6);
     // NOTE - the Albumindex IS NOT NULL is essential - if any albumindex is NULL the entire () expression returns NULL
-	$t = time();
+	$t = microtime(true);
     generic_sql_query("DELETE FROM Albumtable WHERE Albumindex NOT IN (SELECT DISTINCT Albumindex FROM Tracktable WHERE Albumindex IS NOT NULL)", true);
-	$at = time() - $t;
-	debuglog("Removing orphaned albums took ".$at." seconds","BACKEND",8);
+	$at = microtime(true) - $t;
+	debuglog(" -- Removing orphaned albums took ".$at." milliseconds","BACKEND",8);
 
     debuglog("Removing orphaned artists","MYSQL",6);
-	$t = time();
+	$t = microtime(true);
     delete_orphaned_artists();
-	$at = time() - $t;
-	debuglog("Remiving orphaned artists took ".$at." seconds","BACKEND",8);
+	$at = microtime(true) - $t;
+	debuglog(" -- Removing orphaned artists took ".$at." milliseconds","BACKEND",8);
 
     debuglog("Tidying Metadata","MYSQL",6);
+	$t = microtime(true);
     generic_sql_query("DELETE FROM Ratingtable WHERE Rating = '0'", true);
 	generic_sql_query("DELETE FROM Ratingtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable WHERE Hidden = 0)", true);
 	generic_sql_query("DELETE FROM TagListtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable WHERE Hidden = 0)", true);
 	generic_sql_query("DELETE FROM Tagtable WHERE Tagindex NOT IN (SELECT Tagindex FROM TagListtable)", true);
 	generic_sql_query("DELETE FROM Playcounttable WHERE Playcount = '0'", true);
 	generic_sql_query("DELETE FROM Playcounttable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
+	$at = microtime(true) - $t;
+	debuglog(" -- Tidying metadata took ".$at." milliseconds","BACKEND",8);
 }
 
 function do_track_by_track($trackobject) {
