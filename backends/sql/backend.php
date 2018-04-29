@@ -1114,15 +1114,15 @@ function update_track_stats() {
 	debuglog("Updating Track Stats","MYSQL",7);
 	$t = microtime(true);
 	$ac = generic_sql_query(
-		"SELECT COUNT(*) AS NumArtists FROM (SELECT DISTINCT AlbumArtistIndex FROM Albumtable
-		INNER JOIN Tracktable USING (Albumindex) WHERE Albumname IS NOT NULL AND Uri IS NOT NULL
-		AND Hidden = 0 AND isSearchResult < 2) AS t", false, null, 'NumArtists', 0);
+		"SELECT COUNT(*) AS NumArtists FROM (SELECT AlbumArtistindex FROM Albumtable
+		JOIN Tracktable USING (Albumindex) WHERE Uri IS NOT NULL
+		AND Hidden = 0 AND isSearchResult < 2 GROUP BY AlbumArtistindex) AS t", false, null, 'NumArtists', 0);
 	update_stat('ArtistCount',$ac);
 
 	$ac = generic_sql_query(
-		"SELECT COUNT(*) AS NumAlbums FROM (SELECT DISTINCT Albumindex FROM Albumtable
-		INNER JOIN Tracktable USING (Albumindex) WHERE Albumname IS NOT NULL AND Uri IS NOT NULL
-		AND Hidden = 0 AND isSearchResult < 2) AS t", false, null, 'NumAlbums', 0);
+		"SELECT COUNT(*) AS NumAlbums FROM (SELECT Albumindex FROM Albumtable
+		JOIN Tracktable USING (Albumindex) WHERE Uri IS NOT NULL
+		AND Hidden = 0 AND isSearchResult < 2 GROUP BY Albumindex) AS t", false, null, 'NumAlbums', 0);
 	update_stat('AlbumCount',$ac);
 
 	$ac = generic_sql_query("SELECT COUNT(*) AS NumTracks FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND isSearchResult < 2", false, null, 'NumTracks', 0);
