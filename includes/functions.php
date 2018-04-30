@@ -768,14 +768,12 @@ function get_player_ip() {
     debuglog("Remote Address is ".$_SERVER['REMOTE_ADDR'],"INIT",7);
     debuglog("Prefs for mpd host is ".$prefs['mpd_host'],"INIT",7);
     $pip = '';
-    if ($_SERVER['SERVER_ADDR'] != $_SERVER['REMOTE_ADDR']) {
-        if ($prefs['unix_socket'] != '' || $prefs['mpd_host'] == "localhost" || $prefs['mpd_host'] == "127.0.0.1" || $prefs['mpd_host'] == '::1') {
-            $pip = $_SERVER['HTTP_HOST'];
-        } else {
-            $pip = $prefs['mpd_host'];
-        }
+    if ($prefs['unix_socket'] != '') {
+        $pip = $_SERVER['HTTP_HOST'];
+    } else if ($prefs['mpd_host'] == "localhost" || $prefs['mpd_host'] == "127.0.0.1" || $prefs['mpd_host'] == '::1') {
+        $pip = $_SERVER['HTTP_HOST'] . ':' . $prefs['mpd_port'];
     } else {
-        $pip = $prefs['mpd_host'];
+        $pip = $prefs['mpd_host'] . ':' . $prefs['mpd_port'];
     }
     debuglog("Displaying Player IP as: ".$pip,"INIT",7);
     return $pip;

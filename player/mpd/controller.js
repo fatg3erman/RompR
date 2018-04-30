@@ -107,12 +107,7 @@ function playerController() {
     this.ready = function() {
         debug.mark("MPD","Player is ready");
         var t = "Connected to "+getCookie('currenthost')+" ("+prefs.player_backend.capitalize() +
-            " at " + player_ip;
-        if (prefs.unix_socket) {
-        } else {
-            t += ":" + prefs.mpd_port;
-        }
-        t += ")";
+            " at " + player_ip + ")";
         infobar.notify(infobar.NOTIFY, t);
         self.reloadPlaylists();
     }

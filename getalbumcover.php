@@ -213,8 +213,7 @@ function tryLocal() {
             }
         }
     }
-    // If we haven't found one but there's only one, then return that
-    if (count($files) == 1) {
+    if (count($files) > 1) {
         debuglog("    Returning ".$files[0],"GETALBUMCOVER");
         return $files[0];
     }
