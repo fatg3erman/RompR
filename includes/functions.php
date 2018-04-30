@@ -769,12 +769,12 @@ function get_player_ip() {
     debuglog("Prefs for mpd host is ".$prefs['mpd_host'],"INIT",7);
     $pip = '';
     if ($prefs['unix_socket'] != "" || $prefs['mpd_host'] == "localhost" || $prefs['mpd_host'] == "127.0.0.1") {
-        $pip = $_SERVER['SERVER_ADDR'] != "::1" ? $_SERVER['SERVER_ADDR'] : $prefs['mpd_host'];
+        $pip = ($_SERVER['SERVER_ADDR'] != "::1") ? $_SERVER['SERVER_ADDR'] : $prefs['mpd_host'];
     } else {
         $pip = $prefs['mpd_host'];
     }
     debuglog("Displaying Player IP as: ".$pip,"INIT",7);
-    return $pip;
+    return gethostbyaddr($pip);
 }
 
 function getCacheData($uri, $cache, $returndata = false, $use_cache = true) {

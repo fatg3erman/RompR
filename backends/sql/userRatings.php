@@ -113,6 +113,9 @@ foreach($params as $p) {
 }
 
 if (count($returninfo) == 0 || array_key_exists('metadata', $returninfo)) {
+	// We don't do a database cleanup here. It can take a long time and this
+	// really slows the GUI down. Cleanups and stats updates are done out-of-band
+	// by the frontend DB Queue manager by calling into here with action = cleanup
 	prepare_returninfo();
 }
 print json_encode($returninfo);
