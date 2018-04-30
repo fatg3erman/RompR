@@ -768,13 +768,17 @@ function get_player_ip() {
     debuglog("Remote Address is ".$_SERVER['REMOTE_ADDR'],"INIT",7);
     debuglog("Prefs for mpd host is ".$prefs['mpd_host'],"INIT",7);
     $pip = '';
-    if ($prefs['unix_socket'] != "" || $prefs['mpd_host'] == "localhost" || $prefs['mpd_host'] == "127.0.0.1") {
-        $pip = ($_SERVER['SERVER_ADDR'] != "::1") ? $_SERVER['SERVER_ADDR'] : $prefs['mpd_host'];
+    if ($_SERVER['SERVER_ADDR'] != $_SERVER['REMOTE_ADDR']) {
+        if ($prefs['unix_socket'] != '' || $prefs['mpd_host'] == "localhost" || $prefs['mpd_host'] == "127.0.0.1" || $prefs['mpd_host'] == '::1') {
+            $pip = $_SERVER['HTTP_HOST'];
+        } else {
+            $pip = $prefs['mpd_host'];
+        }
     } else {
         $pip = $prefs['mpd_host'];
     }
     debuglog("Displaying Player IP as: ".$pip,"INIT",7);
-    return gethostbyaddr($pip);
+    return $pip;
 }
 
 function getCacheData($uri, $cache, $returndata = false, $use_cache = true) {
