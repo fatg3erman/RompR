@@ -246,11 +246,11 @@ var ratingManager = function() {
 	            $('#ratman_showletters').prop('checked', prefs.ratman_showletters ? true : false );
 	            $('#ratman_smallart').prop('checked', prefs.ratman_smallart ? true : false );
 	        	browser.goToPlugin("rmg");
-			    ratingManager.reloadRatList(true);
+			    ratingManager.reloadEntireRatList(true);
 	            $('#rmgfoldup .enter').keyup(onKeyUp);
-	            $('[name="ratman_sortby"]').on('click', ratingManager.reloadRatList );
-	            $('#ratman_showletters').on('click', ratingManager.reloadRatList );
-	            $('#ratman_smallart').on('click', ratingManager.reloadRatList );
+	            $('[name="ratman_sortby"]').on('click', ratingManager.reloadEntireRatList );
+	            $('#ratman_showletters').on('click', ratingManager.reloadEntireRatList );
+	            $('#ratman_smallart').on('click', ratingManager.reloadEntireRatList );
 	        } else {
 	        	browser.goToPlugin("rmg");
 	        }
@@ -370,16 +370,7 @@ var ratingManager = function() {
 			});
 		},
 
-		reloadRatList: function(rat) {
-			if (rat === true) {
-				$('.ratinstr').hide();
-			    sortby = $('[name="ratman_sortby"]:checked').val();
-			    prefs.save({ratman_sortby: sortby, ratman_showletters: $('#ratman_showletters').is(':checked'), ratman_smallart: $('#ratman_smallart').is(':checked')});
-			    if (sortby != lastsortby) {
-			    	$('#ratmunger').empty();
-			    }
-			    lastsortby = sortby;
-			}
+		reloadRatList: function() {
 			metaHandlers.genericAction(
 				[{action: 'ratlist', sortby: sortby}],
 				function(data) {
@@ -394,6 +385,17 @@ var ratingManager = function() {
             		rmg.slideToggle('fast');
             	}
             );
+		},
+		
+		reloadEntireRatList(function) {
+			$('.ratinstr').hide();
+		    sortby = $('[name="ratman_sortby"]:checked').val();
+		    prefs.save({ratman_sortby: sortby, ratman_showletters: $('#ratman_showletters').is(':checked'), ratman_smallart: $('#ratman_smallart').is(':checked')});
+		    if (sortby != lastsortby) {
+		    	$('#ratmunger').empty();
+		    }
+		    lastsortby = sortby;
+			ratingManager.reloadRatList();
 		},
 
 		dropped: function(event, element) {
