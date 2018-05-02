@@ -53,12 +53,18 @@ class romprmetadata {
 		}
 	}
 
-	public static function add($data) {
+	public static function add($data, $urionly = true) {
 		// This is used for adding specific tracks so we need urionly to be true
 		// We don't simply call into this using 'set' with urionly set to true
 		// because that might result in the rating being changed
+		
+		// The only time we call inot this with $urionly set to false is when we're restoring a metadata
+		// backup. In that case we might be copying data from one setup to another and we might have
+		// the track already in local, so we don't want to add duplicates. Neither way is perfect but
+		// this makes most sense I think.
+		
 		global $returninfo;
-		$ttids = romprmetadata::find_item($data, true);
+		$ttids = romprmetadata::find_item($data, $urionly);
 
 		// As we check by URI we can only have one result.
 		$ttid = null;

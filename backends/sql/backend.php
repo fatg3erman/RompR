@@ -268,50 +268,181 @@ function list_tags() {
 	return $tags;
 }
 
-function list_all_rating_data($sortby) {
+function get_rating_headers($sortby) {
+	
+	switch ($sortby) {
+		
+		case 'Rating':
+			$ratings = array('1','2','3','4','5');
+			break;
+			
+		case 'Tag':
+			$ratings = sql_get_column('SELECT Name from Tagtable ORDER BY Name', 'Name');
+			break;
+			
+		case 'AlbumArtist':
+			$ratings = sql_get_column(albumartist_sort_query('a'), 'Artistname');
+			break;
+			
+		case 'Tags':
+			// This might seem a faff but we need a TagListtable sorted by Tag name otherwise we get
+			// results like Taga,Tagb and Tagb,Taga
+			generic_sql_query("DROP TABLE IF EXISTS tagorder");
+			generic_sql_query("CREATE TEMPORARY TABLE tagorder(Tagindex INTEGER, TTindex INTEGER)");
+			generic_sql_query("INSERT INTO tagorder (Tagindex, TTindex)  SELECT Tagindex, TTindex FROM TagListtable ORDER BY Tagindex");
+			$ratings = sql_get_column("SELECT DISTINCT ".SQL_TAG_CONCAT." AS Tags FROM
+										Tagtable AS t
+										JOIN tagorder USING (Tagindex)
+										GROUP BY TTindex
+										ORDER By Tags", "Tags");
+				
+			break;
+			
+		default:
+			$ratings = array('INTERNAL ERROR!');
+			break;
+		
+	}
 
+	return $ratings;
+}
+
+function sortletter_mangler() {
+	global $prefs;
+	$qstring = '';
+	if (count($prefs['nosortprefixes']) > 0) {
+		$qstring .= "CASE ";
+		foreach($prefs['nosortprefixes'] AS $p) {
+			$phpisshitsometimes = strlen($p)+2;
+			$qstring .= "WHEN LOWER(aa.Artistname) LIKE '".strtolower($p).
+				" %' THEN UPPER(SUBSTR(aa.Artistname,".$phpisshitsometimes.",1)) ";
+		}
+		$qstring .= "ELSE UPPER(SUBSTR(aa.Artistname,1,1)) END AS SortLetter";
+	} else {
+		$qstring .= "UPPER(SUBSTR(aa.Artistname,1,1)) AS SortLetter";
+	}
+	return $qstring;
+}
+
+function get_rating_info($sortby, $value) {
+	
 	global $prefs;
 
-	// list_all_rating_data
-	//		Used by Rating Manager to get all the info it needs
+	// Tuned SQL queries for each type, for speed, otherwise it's unuseable
 
-	$start_time = time();
-
-	$qstring = "SELECT
-			IFNULL(r.Rating, 0) AS Rating,
-			IFNULL(".SQL_TAG_CONCAT.", 'No Tags') AS Tags,
-			tr.TTindex,
-			tr.TrackNo,
-			tr.Title,
-			tr.Duration,
-			tr.Uri,
-			a.Artistname,
-			aa.Artistname AS AlbumArtist,
-			al.Albumname,
-			al.Image, ";
-			if (count($prefs['nosortprefixes']) > 0) {
-				$qstring .= "CASE ";
-				foreach($prefs['nosortprefixes'] AS $p) {
-					$phpisshitsometimes = strlen($p)+2;
-					$qstring .= "WHEN LOWER(aa.Artistname) LIKE '".strtolower($p).
-						" %' THEN UPPER(SUBSTR(aa.Artistname,".$phpisshitsometimes.",1)) ";
-				}
-				$qstring .= "ELSE UPPER(SUBSTR(aa.Artistname,1,1)) END AS SortLetter";
-			} else {
-				$qstring .= "UPPER(SUBSTR(aa.Artistname,1,1)) AS SortLetter";
-			}
-
-	$qstring .= " FROM
-			Tracktable AS tr
-			LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
-			LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
-			LEFT JOIN Tagtable AS t USING (Tagindex)
-			JOIN Albumtable AS al USING (Albumindex)
-			JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
-			JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-		WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL) AND tr.Uri IS NOT NULL
-		GROUP BY tr.TTindex
-		ORDER BY ";
+	switch ($sortby) {
+		case 'Rating':
+			$qstring = "SELECT
+		 		r.Rating AS Rating,
+				IFNULL(".SQL_TAG_CONCAT.", 'No Tags') AS Tags,
+				tr.TTindex,
+				tr.TrackNo,
+				tr.Title,
+				tr.Duration,
+				tr.Uri,
+				a.Artistname,
+				aa.Artistname AS AlbumArtist,
+				al.Albumname,
+				al.Image, ";
+			$qstring .= sortletter_mangler();
+		
+			$qstring .= " FROM
+					Ratingtable AS r
+					JOIN Tracktable AS tr ON tr.TTindex = r.TTindex
+					LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
+					LEFT JOIN Tagtable AS t USING (Tagindex)
+					JOIN Albumtable AS al USING (Albumindex)
+					JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
+					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
+				WHERE r.Rating = ".$value." AND tr.Uri IS NOT NULL";
+				break;
+				
+			case 'Tag':
+				$qstring = "SELECT
+					IFNULL(r.Rating, 0) AS Rating,
+					IFNULL(".SQL_TAG_CONCAT.", 'No Tags') AS Tags,
+					tr.TTindex,
+					tr.TrackNo,
+					tr.Title,
+					tr.Duration,
+					tr.Uri,
+					a.Artistname,
+					aa.Artistname AS AlbumArtist,
+					al.Albumname,
+					al.Image, ";
+				$qstring .= sortletter_mangler();
+			
+				$qstring .= " FROM
+					Tracktable AS tr
+					LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
+					LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
+					LEFT JOIN Tagtable AS t USING (Tagindex)
+					JOIN Albumtable AS al USING (Albumindex)
+					JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
+					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
+				WHERE tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name = '".$value."')";
+				break;
+										
+			case 'AlbumArtist':
+				$qstring = "SELECT
+			 		IFNULL(r.Rating, 0) AS Rating,
+			 		IFNULL(".SQL_TAG_CONCAT.", 'No Tags') AS Tags,
+			 		tr.TTindex,
+			 		tr.TrackNo,
+			 		tr.Title,
+			 		tr.Duration,
+			 		tr.Uri,
+			 		a.Artistname,
+			 		aa.Artistname AS AlbumArtist,
+			 		al.Albumname,
+			 		al.Image ";
+			
+			 	$qstring .= " FROM
+			 		Tracktable AS tr
+			 		LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
+			 		LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
+			 		LEFT JOIN Tagtable AS t USING (Tagindex)
+			 		JOIN Albumtable AS al USING (Albumindex)
+			 		JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
+			 		JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
+			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL) AND tr.Uri IS NOT NULL AND aa.Artistname = '".$value."'";
+				break;
+				
+			case 'Tags':
+				$qstring = "SELECT
+					IFNULL(r.Rating, 0) AS Rating,
+					".SQL_TAG_CONCAT." AS Tags,
+					tr.TTindex,
+					tr.TrackNo,
+					tr.Title,
+					tr.Duration,
+					tr.Uri,
+					a.Artistname,
+					aa.Artistname AS AlbumArtist,
+					al.Albumname,
+					COUNT(tr.TTindex) AS count,
+					al.Image, ";
+				$qstring .= sortletter_mangler();
+			
+				$qstring .= " FROM
+					TagListtable AS tl
+					JOIN Tracktable AS tr USING (TTindex)
+					JOIN Tagtable AS t USING (Tagindex)
+					LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
+					JOIN Albumtable AS al USING (Albumindex)
+					JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
+					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
+					WHERE ";
+					$tags = explode(', ',$value);
+					foreach ($tags as $i => $t) {
+						$tags[$i] = "tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name='".$t."')";
+					}
+					$qstring .= implode(' AND ', $tags);
+					$qstring .= " AND tr.Uri IS NOT NULL";
+					break;
+	}
+	
+	$qstring .= " GROUP BY tr.TTindex ORDER BY ";
 
 	if (count($prefs['nosortprefixes']) > 0) {
 		$qstring .= "(CASE ";
@@ -325,29 +456,26 @@ function list_all_rating_data($sortby) {
 		$qstring .= "LOWER(AlbumArtist)";
 	}
 	$qstring .= ", al.Albumname, tr.TrackNo";
-
-	$ratings = array();
-
-	$result = generic_sql_query($qstring);
-	foreach ($result as $r) {
-		if ($sortby == 'Tag') {
-			$indices = explode(', ',$r['Tags']);
-		} else {
-			$indices = array($r[$sortby]);
+	
+	$t =  microtime(true);
+	$ratings =  generic_sql_query($qstring);
+	$took = microtime(true) - $t;
+	debuglog(" :: Getting rating data took ".$took." seconds","SQL");
+	// Our query for Tags (Tag List) will get eg if we're looking for 'tag1' it'll get tracks with 'tag1' and 'tag2'
+	// So we check how many tags there are in each result and only use the ones that match the number of tags we're looking for
+	if ($sortby == 'Tags') {
+		$temp = array();
+		$c = count($tags);
+		foreach ($ratings as $rat) {
+			if ($rat['count'] == $c) {
+				$temp[] = $rat;
+			}
 		}
-		foreach ($indices as $i) {
-			$ratings[$i][] = $r;
-		}
+		$ratings = $temp;
 	}
-
-	if ($sortby != 'AlbumArtist') {
-		ksort($ratings, SORT_STRING);
-	}
-
-	$qtime = time() - $start;
-	debuglog("  -- Generating Ratigs Manager Data took ".$qtime." seconds"."SQL",8);
 
 	return $ratings;
+	
 }
 
 function clear_wishlist() {
@@ -631,20 +759,7 @@ function albumartist_sort_query($flag) {
 				(SELECT AlbumArtistindex FROM Albumtable JOIN Tracktable USING (Albumindex)
 					WHERE Uri IS NOT NULL AND Hidden = 0 ".$sflag." GROUP BY AlbumArtistindex)
 				ORDER BY ";
-	// $qstring =
-	// 	"SELECT
-	// 		a.Artistname,
-	// 		a.Artistindex
-	// 	FROM
-	// 		Artisttable AS a
-	// 		JOIN Albumtable AS al ON a.Artistindex = al.AlbumArtistindex
-	// 		JOIN Tracktable AS t ON al.Albumindex = t.Albumindex
-	// 	WHERE
-	// 		t.Uri IS NOT NULL
-	// 		AND t.Hidden = 0 ".$sflag."
-	// 	GROUP BY a.Artistindex
-	// 	ORDER BY ";
-	
+		
 	foreach ($prefs['artistsatstart'] as $a) {
 		$qstring .= "CASE WHEN LOWER(Artistname) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
 	}
@@ -1408,7 +1523,9 @@ function remove_cruft() {
     generic_sql_query("DELETE FROM Ratingtable WHERE Rating = '0'", true);
 	generic_sql_query("DELETE FROM Ratingtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable WHERE Hidden = 0)", true);
 	generic_sql_query("DELETE FROM TagListtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable WHERE Hidden = 0)", true);
-	generic_sql_query("DELETE FROM Tagtable WHERE Tagindex NOT IN (SELECT Tagindex FROM TagListtable)", true);
+	// Temporary table needed  because we can't use an IN clause as it conflicts with a trigger
+	generic_sql_query("CREATE TEMPORARY TABLE used_tags AS SELECT DISTINCT Tagindex FROM TagListtable", true);
+	generic_sql_query("DELETE FROM Tagtable WHERE Tagindex NOT IN (SELECT Tagindex FROM used_tags)", true);
 	generic_sql_query("DELETE FROM Playcounttable WHERE Playcount = '0'", true);
 	generic_sql_query("DELETE FROM Playcounttable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
 	$at = microtime(true) - $t;

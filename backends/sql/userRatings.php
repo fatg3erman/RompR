@@ -52,7 +52,11 @@ foreach($params as $p) {
 			break;
 
 		case 'ratlist':
-			$returninfo = list_all_rating_data($p['sortby']);
+			$returninfo = get_rating_headers($p['sortby']);
+			break;
+
+		case 'ratentries':
+			$returninfo = get_rating_info($p['sortby'], $p['value']);
 			break;
 
 		case 'metabackup':
@@ -436,7 +440,7 @@ function restoreBackup($backup) {
 		$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/tracks.json'), true);
 		foreach ($tracks as $trackdata) {
 			sanitise_data($trackdata);
-			romprmetadata::add($trackdata);
+			romprmetadata::add($trackdata, false);
 		}
 	}
 	if (file_exists('prefs/databackups/'.$backup.'/ratings.json')) {

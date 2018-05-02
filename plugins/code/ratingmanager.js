@@ -1,58 +1,72 @@
 var ratingManager = function() {
 
 	var rmg = null;
-	var holders = new Array();
 	var sortby;
 	var lastsortby;
 	var loaded = false;
 	var current_album = null;
 	var current_albumholder = null;
 	var current_letter = '';
-	var alldata;
+	var to_refresh = new Array();
+	var updating_section = false;
 
 	function startNewSection(title, section, atstart) {
 		debug.log("RATMAN","Starting Section",title);
-		if (atstart) {
-			var a = $('<div>').prependTo('#ratmunger');
-			var handle = "icon-toggle-open";
-			var holder = "opened";
+		var a;
+		if (atstart === true) {
+			a = $('<div>').prependTo('#ratmunger');
 		} else {
-			var a = $('<div>').appendTo('#ratmunger');
-			var handle = "icon-toggle-closed";
-			var holder = "notthere";
+			a = $('<div>').insertAfter(atstart.parent());
 		}
 		var x = $('<div>', { class: "pluginsection textunderline containerbox" }).appendTo(a);
-		x.append('<i class="'+handle+' fixed menu infoclick plugclickable clickopensection"></i><span class="fixed rattitle">'+title+'</span><div class="expand filterinfo"></div></div>');
+		x.append('<i class="icon-toggle-closed fixed menu infoclick plugclickable clickopensection"></i><span class="fixed rattitle">'+title+'</span><div class="expand filterinfo"></div></div>');
 		if (sortby == "Tag") {
 			x.append('<i class="fixed icon-trash topimg infoclick plugclickable clickdeletetag"></i>');
 		}
-		var b = $('<div>', {class: 'thebigholder fullwidth '+holder, name: section}).appendTo(a);
+		var b = $('<div>', {class: 'thebigholder fullwidth notthere', name: encodeURIComponent(section)}).appendTo(a);
 		b.append('<div class="sizer"></div>');
 		if (sortby != 'AlbumArtist') {
 			a.acceptDroppedTracks({
 				ondrop: ratingManager.dropped
 			});
 		}
-		current_letter = '';
 	}
 
-	function putTracksInSection(section, tracks) {
+	function putTracksInSection(section) {
+		updating_section = true;
 		debug.log("RATMAN","Putting Tracks In Section",section);
 		var dropper = $('.thebigholder[name="'+section+'"]');
-		dropper.append('<div class="sizer"></div>').show();
-		if (!dropper.hasClass('opened')) {
-			dropper.addClass('opened');
+		dropper.prev().children('.clickopensection').makeSpinner();
+		if (dropper.hasClass('notthere')) {
+			
+		} else {
+			dropper.addClass('notthere');
+			dropper.masonry('destroy').empty().append('<div class="sizer"></div>');
 		}
-		for (var i in tracks) {
-			putNewAlbumTrack(dropper, tracks[i]);
-		}
-		dropper.imagesLoaded(function() {
-			debug.log("RATMAN","Images Loaded In",section);
-			browser.rePoint(dropper, { itemSelector: '.slaphead', columnWidth: '.sizer', percentPosition: true });
-			dropper.prev().children('.clickopensection').stopSpinner().toggleOpen();
-			dropper.removeClass('notthere');
-            infobar.markCurrentTrack();
-		});
+		metaHandlers.genericAction(
+			[{action: 'ratentries', sortby: sortby, value: decodeURIComponent(section)}],
+			function(tracks) {
+				debug.trace("RATMAN","Got Tracks",tracks);
+				current_letter = '';
+				current_album = '';
+				for (var i in tracks) {
+					putNewAlbumTrack(dropper, tracks[i]);
+				}
+				dropper.imagesLoaded(function() {
+					debug.log("RATMAN","Images Loaded In",section);
+					browser.rePoint(dropper, { itemSelector: '.slaphead', columnWidth: '.sizer', percentPosition: true });
+					dropper.prev().children('.clickopensection').stopSpinner().toggleOpen();
+					dropper.removeClass('notthere');
+		            infobar.markCurrentTrack();
+				});
+				updating_section = false;
+				checkSectionRefresh();
+			},
+			function() {
+				infobar.notify(infobar.ERROR, "Failed to get data!");
+				rmg.slideToggle('fast');
+			}
+		);
 	}
 
 	function putNewAlbumTrack(holder, data) {
@@ -61,7 +75,7 @@ var ratingManager = function() {
 		}
 		if (data.Albumname != current_album) {
 			current_album = data.Albumname;
-			if (sortby == 'artist') {
+			if (sortby == 'AlbumArtist') {
 				var tit = '<span class="title-menu">'+data.Albumname+'</span></div>';
 				var nl = '';
 			} else {
@@ -137,7 +151,6 @@ var ratingManager = function() {
 			[setdata],
 			function(rdata) {
 				updateCollectionDisplay(rdata);
-				ratingManager.reloadRatList();
 				callback();
 				update_rest_of_ui();
 			},
@@ -152,6 +165,22 @@ var ratingManager = function() {
     	// We need to do this if we're pre-populating the playlist using get_extra_track_info
     	// but we're not currently, because it's too slow
     	// playlist.repopulate();
+	}
+	
+	function refreshSection(section) {
+		if (to_refresh.indexOf(section) == -1 && !($('.thebigholder[name="'+section+'"]').hasClass('notthere'))) {
+			to_refresh.push(section);
+		}
+		checkSectionRefresh();
+	}
+	
+	function checkSectionRefresh() {
+		if (!updating_section) {
+			var section = to_refresh.shift();
+			if (section) {
+				putTracksInSection(section);
+			}
+		}
 	}
 
 	return {
@@ -193,14 +222,8 @@ var ratingManager = function() {
         			'<div class="expand">'+
             		'<input class="enter inbrowser clearbox" name="filterinput" type="text" />'+
         			'</div>'+
-					'<button class="fixed" onclick="ratingManager.filter()">'+language.gettext("button_search")+'</button>'+
+					'<button class="fixed" onclick="ratingManager.filter()">'+language.gettext("button_filter")+'</button>'+
     				'</div>');
-
-	        	$("#rmgfoldup").append('<div class="containerbox padright wrap">'+
-	        		'<div class="fixed"><b>Search In :&nbsp; </b></div>'+
-	        		'<div class="fixed brianblessed styledinputs"><input type="radio" class="topcheck" name="ratman_searchin" id="ratsearchall" value="all" checked><label for="ratsearchall">All Panels</label></div>'+
-	        		'<div class="fixed brianblessed styledinputs"><input type="radio" class="topcheck" name="ratman_searchin" id="ratsearchopen" value="open"><label for="ratsearchopen">Only Open Panels</label></div>'+
-	        		'</div>');
 
 	        	$("#rmgfoldup").append('<div class="containerbox padright wrap ratsoptions"></div>');
 
@@ -233,20 +256,20 @@ var ratingManager = function() {
 	        }
 		},
 
-		doMainLayout: function() {
+		doMainLayout: function(alldata) {
 			debug.log("RATINGMANAGER","Got data",alldata);
+			var secdiv = true;
 			for (var i in alldata) {
-				var section = i;
-				if ($('.thebigholder[name="'+section+'"]').length == 0 && section != 'No Tags') {
+				var section = alldata[i];
+				debug.log("RATMAN","Doing Section",section);
+				if ($('.thebigholder[name="'+encodeURIComponent(section)+'"]').length == 0 && section != 'No Tags') {
 					if (sortby == 'Rating') {
-						startNewSection('<i class="icon-'+section+'-stars rating-icon-big"></i>', section, false);
+						startNewSection('<i class="icon-'+section+'-stars rating-icon-big"></i>', section, secdiv);
 					} else {
-						startNewSection(section, section, false);
+						startNewSection(section, section, secdiv);
 					}
 				}
-				if ($('.thebigholder[name="'+section+'"]').hasClass('opened')) {
-					putTracksInSection(section, alldata[section]);
-				}
+				secdiv = $('.thebigholder[name="'+encodeURIComponent(section)+'"]');
 			}
 			if (!loaded) {
 				setDraggable('#rmgfoldup');
@@ -266,11 +289,10 @@ var ratingManager = function() {
 						fi.html("Filtered By '"+term+"'");
 					}
 					var section = dropper.attr('name');
-					element.makeSpinner();
-					putTracksInSection(section, alldata[section]);
+					putTracksInSection(section);
 				} else {
 					element.toggleClosed();
-					dropper.addClass('notthere').masonry('destroy').empty().removeClass('opened');
+					dropper.addClass('notthere').masonry('destroy').empty().append('<div class="sizer"></div>');
 				}
 			} else if (element.hasClass('clickdeletetag')) {
 				var tag = element.parent().next().attr('name');
@@ -341,32 +363,31 @@ var ratingManager = function() {
 					}
 				});
 				browser.rePoint();
+				for (var i in tagarr) {
+					refreshSection(encodeURIComponent(tagarr[i]));
+				}
+				ratingManager.reloadRatList();
 			});
 		},
 
 		reloadRatList: function(rat) {
-    		if (typeof(rat) != 'undefined') {
+			if (rat === true) {
 				$('.ratinstr').hide();
 			    sortby = $('[name="ratman_sortby"]:checked').val();
 			    prefs.save({ratman_sortby: sortby, ratman_showletters: $('#ratman_showletters').is(':checked'), ratman_smallart: $('#ratman_smallart').is(':checked')});
 			    if (sortby != lastsortby) {
 			    	$('#ratmunger').empty();
-			    } else {
-			    	$('.thebigholder.opened').addClass('notthere').masonry('destroy').empty();
-			    	$('.thebigholder.to_open').addClass('opened').removeClass('to_open');
 			    }
 			    lastsortby = sortby;
 			}
 			metaHandlers.genericAction(
 				[{action: 'ratlist', sortby: sortby}],
 				function(data) {
-            		alldata = data;
-            		if (typeof(rat) != 'undefined') {
-	            		ratingManager.doMainLayout();
-			        	if (layoutProcessor.supportsDragDrop) {
-							$('[name="ratman_drag'+sortby.substr(0,3)+'"]').fadeIn('fast');
-						}
+            		ratingManager.doMainLayout(data);
+		        	if (layoutProcessor.supportsDragDrop) {
+						$('[name="ratman_drag'+sortby.substr(0,3)+'"]').fadeIn('fast');
 					}
+					checkSectionRefresh();
             	},
             	function() {
             		infobar.notify(infobar.ERROR, "Failed to get data!");
@@ -377,7 +398,7 @@ var ratingManager = function() {
 
 		dropped: function(event, element) {
 	        event.stopImmediatePropagation();
-	        var value = element.children('.thebigholder').attr('name');
+	        var value = decodeURIComponent(element.children('.thebigholder').attr('name'));
 	        switch (sortby) {
 	        	case 'Rating':
 	        		var attributes = {attribute: 'Rating', value: value};
@@ -394,11 +415,7 @@ var ratingManager = function() {
 	        		break;
 	        }
 	        metaHandlers.fromUiElement.doMeta('set', value, [attributes], function() {
-	        	if (element.children('.thebigholder').hasClass('opened')) {
-	        		ratingManager.reloadRatList(true);
-	        	} else {
-	        		ratingManager.reloadRatList();
-	        	}
+				refreshSection(encodeURIComponent(value));
 	        	update_rest_of_ui();
 	       	});
 		},
@@ -410,11 +427,7 @@ var ratingManager = function() {
 		},
 
 		filter: function() {
-			var type = $('[name="ratman_searchin"]:checked').val();
 			var term = $('[name=filterinput]').val();
-			if (type == 'all' && term != '') {
-				$('.thebigholder:not(.opened)').addClass('to_open').prev().children('i').toggleOpen();
-			}
 			if (term == '') {
 				$('.filterinfo').html('')
 			} else {

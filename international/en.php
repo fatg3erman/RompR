@@ -614,6 +614,7 @@ $languages['en'] = array (
 	"albumart_findsmall" => "Find Small Images",
 	"label_smartsetup" => "Preparing. Please Wait A Moment....",
 	"button_sleep" => "Sleep Timer",
+	"button_filter" => "Filter"
 
 );
 
