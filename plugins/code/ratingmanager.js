@@ -387,7 +387,7 @@ var ratingManager = function() {
             );
 		},
 		
-		reloadEntireRatList(function) {
+		reloadEntireRatList: function() {
 			$('.ratinstr').hide();
 		    sortby = $('[name="ratman_sortby"]:checked').val();
 		    prefs.save({ratman_sortby: sortby, ratman_showletters: $('#ratman_showletters').is(':checked'), ratman_smallart: $('#ratman_smallart').is(':checked')});
