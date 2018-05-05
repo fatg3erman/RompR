@@ -425,8 +425,8 @@ var podcasts = function() {
 		        data: {search: encodeURIComponent(term), populate: 1 },
 		        success: function(data) {
 		            $("#podcast_search").html(data);
-		            $('#podcast_search').prepend('<div class="menuitem containerbox padright"><div class="configtitle textcentre expand"><h3>Search Results for '+term+'</h3></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch fixed"></i></div>');
-		            $('#podcast_search').append('<div class="configtitle textcentre fullwidth"><h3>Subscribed Podcasts</h3></div>');
+		            $('#podcast_search').prepend('<div class="menuitem containerbox padright"><div class="configtitle textcentre expand">Search Results for &quot;'+term+'&quot;</div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch fixed"></i></div>');
+		            $('#podcast_search').append('<div class="configtitle textcentre fullwidth">Subscribed Podcasts</div>');
 		            $("#podcast_search").find('.fridge').tipTip({edgeOffset: 8});
 					$('#spinner_cocksausage').remove();
 		        },

@@ -1140,12 +1140,6 @@ function setFunkyBoxSize() {
         h.find(".radioplugin_normal").css('width', width.toString()+'%');
     });
 
-    $('#podcast_search:visible').each(function() {
-        var h = $(this);
-        var width = calcPercentWidth(h, '.radioplugin_normal', 200, h.width());
-        h.find(".radioplugin_normal").css('width', width.toString()+'%').children('.helpfulalbum').children('.jalopy').css({'max-width': '180px', 'width': '95%'});
-    });
-
     $('#bbclist .pipl:visible').each(function() {
         var h = $(this);
         var width = calcPercentWidth(h, '.radioplugin_normal', 200, h.width());

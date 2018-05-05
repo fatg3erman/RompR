@@ -2,7 +2,6 @@ var ratingManager = function() {
 
 	var rmg = null;
 	var sortby;
-	var lastsortby;
 	var loaded = false;
 	var current_album = null;
 	var current_albumholder = null;
@@ -246,7 +245,7 @@ var ratingManager = function() {
 	            $('#ratman_showletters').prop('checked', prefs.ratman_showletters ? true : false );
 	            $('#ratman_smallart').prop('checked', prefs.ratman_smallart ? true : false );
 	        	browser.goToPlugin("rmg");
-			    ratingManager.reloadEntireRatList(true);
+			    ratingManager.reloadEntireRatList();
 	            $('#rmgfoldup .enter').keyup(onKeyUp);
 	            $('[name="ratman_sortby"]').on('click', ratingManager.reloadEntireRatList );
 	            $('#ratman_showletters').on('click', ratingManager.reloadEntireRatList );
@@ -391,10 +390,7 @@ var ratingManager = function() {
 			$('.ratinstr').hide();
 		    sortby = $('[name="ratman_sortby"]:checked').val();
 		    prefs.save({ratman_sortby: sortby, ratman_showletters: $('#ratman_showletters').is(':checked'), ratman_smallart: $('#ratman_smallart').is(':checked')});
-		    if (sortby != lastsortby) {
-		    	$('#ratmunger').empty();
-		    }
-		    lastsortby = sortby;
+	    	$('#ratmunger').empty();
 			ratingManager.reloadRatList();
 		},
 
