@@ -16,7 +16,7 @@ if (array_key_exists('populate', $_REQUEST)) {
     if ($content['status'] == "200") {
         debuglog("Loaded Soma FM channels list","SOMAFM");
         $x = simplexml_load_string($content['contents']);
-        print '<div class="containerbox noselection wrap pipl indent">';
+        $count = 0;
         foreach ($x->channel as $channel) {
             debuglog("Channel : ".$channel->title,"SOMAFM");
             if ($channel->highestpls) {
@@ -24,15 +24,23 @@ if (array_key_exists('populate', $_REQUEST)) {
             } else {
                 $pls = (string) $channel->fastpls[0];
             }
-            print '<div class="pluginitem radioplugin_normal clickable clickstream draggable" name="'.$pls.'" streamname="'.(string) $channel->title.'" streamimg="'.getimage($channel).'">';
-            print '<div class="helpfulalbum fullwidth">';
-            print '<img class="masochist" src="'.getimage($channel).'" />';
-            print '<div class="tagh albumthing sponklick title-menu artistnamething">'.utf8_encode($channel->title).'</div>';
-            print '<div class="tagh albumthing"><i>'.utf8_encode($channel->genre).'</i></div>';
+            print '<div class="albumheader clickable clickstream draggable containerbox menuitem" name="'.$pls.'" streamname="'.(string) $channel->title.'" streamimg="'.getimage($channel).'">';
+            print '<i class="icon-toggle-closed menu mh fixed" name="somafm_'.$count.'"></i>';
+            print '<div class="smallcover fixed">';
+            print '<img class="smallcover fixed" src="'.getimage($channel).'" />';
+            print '</div>';
+            print '<div class="expand">'.utf8_encode($channel->title).'<br><span class="notbold"><i>'.utf8_encode($channel->genre).'</i></span></div>';
+            print '</div>';
+            
+            print '<div id="somafm_'.$count.'" class="dropmenu">';
+            
             if ($channel->description) {
-                print '<div class="tagh albumthing playlistrow2">'.utf8_encode($channel->description).'</div>';
+                print '<div class="containerbox ninesix indent padright">'.utf8_encode($channel->description).'</div>';
             }
-            print '<div class="tagh albumthing bordered nosides">';
+            
+            print '<div class="containerbox rowspacer"></div>';
+            print '<div class="containerbox expand ninesix indent padright"><b>Listen:</b></div>';
+
             if ($channel->highestpls) {
                 format_listenlink($channel, $channel->highestpls, "HQ");
             }
@@ -42,31 +50,32 @@ if (array_key_exists('populate', $_REQUEST)) {
             foreach ($channel->slowpls as $h) {
                 format_listenlink($channel, $h, "LQ");
             }
-            print '</div>';
-            if ($channel->twitter || $channel->dj) {
-                print '<div class="tagh albumthing bordered nosides"><div class="containerbox line"><div class="expand">';
-                if ($channel->twitter) {
-                    print '<a href="http://twitter.com/@'.$channel->twitter.'" target="_blank">';
-                    print '<i class="icon-twitter-logo smallicon padright"></i>';
-                    print '</a>';
-                }
-                if ($channel->dj) {
-                    print '<b>DJ: </b>'.$channel->dj.'</i>';
-                }
-                print '</div></div></div>';
+
+            print '<div class="containerbox rowspacer"></div>';
+
+            if ($channel->twitter && $channel->dj) {
+                print '<a href="http://twitter.com/@'.$channel->twitter.'" target="_blank">';
+                print '<div class="containerbox indent padright">';
+                print '<i class="icon-twitter-logo playlisticon fixed"></i>';
+                print '<div class="expand"><b>DJ: </b>'.$channel->dj.'</div>';
+                print '</div></a>';
             }
             if ($channel->listeners) {
-                print '<div class="tagh albumthing playlistrow2">'.$channel->listeners.' '.get_int_text("lastfm_listeners").'</div>';
+                print '<div class="containerbox indent padright">';
+                print '<div class="expand">'.$channel->listeners.' '.get_int_text("lastfm_listeners").'</div>';
+                print '</div>';
             }
             if ($channel->lastPlaying) {
-                print '<div class="tagh albumthing" style="padding-bottom:0px"><b>Last Played</b></div><div class="tagh albumthing playlistrow2">'.$channel->lastPlaying.'</div>';
+                print '<div class="containerbox vertical indent padright">';
+                print '<div class="fixed"><b>Last Played</b></div>';
+                print '<div class="fixed playlistrow2">'.$channel->lastPlaying.'</div>';
+                print '</div>';
             }
+
             print '</div>';
-            print '</div>';
+            $count++;
         }
-
-        print '</div>';
-
+        
     }
 
 } else {
@@ -95,10 +104,9 @@ function getimage($c) {
 
 function format_listenlink($c, $p, $label) {
     $img = getimage($c);
-    print '<div class="clickable clickstream draggable containerbox line" name="'.(string) $p.'" streamimg="'.$img.'" streamname="'.$c->title.'">';
-    print '<div class="expand">';
-    print '<i class="'.audioClass($p[0]['format']).' smallicon"></i>';
-    print $label.'&nbsp';
+    print '<div class="clickable clickstream draggable indent containerbox padright" name="'.(string) $p.'" streamimg="'.$img.'" streamname="'.$c->title.'">';
+    print '<i class="'.audioClass($p[0]['format']).' playlisticon fixed"></i>';
+    print '<div class="expand">'.$label.'&nbsp';
     switch ($p[0]['format']) {
         case 'mp3':
             print 'MP3';

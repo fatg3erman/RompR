@@ -5,15 +5,11 @@ var somaFmPlugin = {
 	    	$('[name="somafmlist"]').makeSpinner();
 	        $("#somafmlist").load("streamplugins/01_somafm.php?populate", function( ) {
 				$('[name="somafmlist"]').stopSpinner();
-				setFunkyBoxSize();
 	        });
-	    } else {
-			setFunkyBoxSize();
 		}
 	},
 
     handleClick: function(event) {
-    	debug.log("SOMAFM","Handling Click");
         var clickedElement = findClickableElement(event);
         if (clickedElement.hasClass("menu")) {
             doMenu(event, clickedElement);

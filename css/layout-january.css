@@ -1847,6 +1847,11 @@ table.ambox {
     opacity:0;
 }
 
+.rowspacer
+{
+	height: 0.8em;
+}
+
 #helpful_spinner{
     margin-top:1em;
     margin-bottom:1em;

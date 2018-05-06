@@ -1146,12 +1146,6 @@ function setFunkyBoxSize() {
         h.find(".radioplugin_normal").css('width', width.toString()+'%').children('.helpfulalbum').children('.masochist').css({'max-width': '180px', 'width': '95%'});
     });
 
-    $('#somafmlist .pipl:visible').each(function() {
-        var h = $(this);
-        var width = calcPercentWidth(h, '.radioplugin_normal', 200, h.width());
-        h.find(".radioplugin_normal").css('width', width.toString()+'%').children('.helpfulalbum').children('.masochist').css({'max-width': '180px', 'width': '95%'});
-    });
-
 }
 
 function clearBgImage() {
