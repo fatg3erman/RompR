@@ -45,7 +45,7 @@ if (array_key_exists('populate', $_REQUEST)) {
                 $categories[$child['title']] = 'category/'.$child['id'];
             }
         }
-        print '<div class="pluginitem radioplugin_wide padright" style="margin-bottom:0px"><div class="selectholder" style="width:100%">';
+        print '<div class="fullwidth padright" style="margin-bottom:0px"><div class="selectholder" style="width:100%">';
         print '<select id="radioselector" onchange="nationalRadioPlugin.changeradiocountry()">';
         print '<option disabled>_______________COUNTRIES______________</option>';
         foreach ($countries as $name => $link) {
@@ -65,7 +65,7 @@ if (array_key_exists('populate', $_REQUEST)) {
         }
         print '</select></div></div>';
 
-        print '<div class="pluginitem radioplugin_wide" style="margin-bottom:0px"><div class="containerbox padright noselection fullwidth"><div class="expand">
+        print '<div class="fullwidth padright" style="margin-bottom:0px"><div class="containerbox padright noselection fullwidth"><div class="expand">
             <input class="enter clearbox" name="radiosearcher" type="text" ';
         if ($searchterm) {
             print 'value="'.$searchterm.'" ';
@@ -74,7 +74,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 
         print '</div>';
 
-        print '<div id="alltheradiostations" class="containerbox noselection wrap pipl indent">';
+        print '<div id="alltheradiostations">';
     }
 
     $json = array('json' => array());
@@ -85,6 +85,7 @@ if (array_key_exists('populate', $_REQUEST)) {
     }
     usort($json['json'], 'sort_by_station');
     do_page_buttons($json, false);
+    $count = 0;
     foreach ($json['json'] as $station) {
         $streams = check_streams($station['streams']);
         if (count($streams) > 0) {
@@ -98,32 +99,45 @@ if (array_key_exists('populate', $_REQUEST)) {
                 $image = "newimages/broadcast.svg";
             }
             $k = check_for_playlist($streams);
-            print '<div class="pluginitem radioplugin_normal clickable clickstream draggable" name="'.$k.'" streamname="'.$station['name'].'" streamimg="'.$image.'">';
-            print '<div class="helpfulalbum fullwidth">';
-            print '<img class="masochist" src="'.$image.'" />';
-            print '<div class="tagh albumthing sponklick title-menu artistnamething">'.$station['name'].'</div>';
-            print '<div class="tagh albumthing playlistrow2">'.get_categories($station).'</div>';
-            print '<div class="tagh albumthing bordered nosides">';
+            
+            print '<div class="albumheader clickable clickstream draggable containerbox menuitem" name="'.$k.'" streamname="'.$station['name'].'" streamimg="'.$image.'">';
+            print '<i class="icon-toggle-closed menu mh fixed" name="radio_'.$count.'"></i>';
+            print '<div class="smallcover fixed">';
+            print '<img class="smallcover fixed" src="'.$image.'" />';
+            print '</div>';
+            print '<div class="expand">'.$station['name'].'<br><span class="notbold"><i>'.get_categories($station).'</i></span></div>';
+            print '</div>';
+
+            print '<div id="radio_'.$count.'" class="dropmenu">';
+            
+            print '<div class="containerbox rowspacer"></div>';
+            print '<div class="containerbox expand ninesix indent padright"><b>Listen:</b></div>';
+
             foreach ($streams as $s) {
                 debuglog("Content type ".$s['content_type']." and uri ".$s['stream'],"DIRBLE");
-                print '<div class="clickable clickstream draggable containerbox line" name="'.trim($s['stream']).'" streamname="'.trim($station['name']).'" streamimg="'.$image.'">';
+                print '<div class="clickable clickstream draggable indent containerbox padright" name="'.trim($s['stream']).'" streamname="'.trim($station['name']).'" streamimg="'.$image.'">';
+                print '<i class="'.audioClass($s['content_type']).' playlisticon fixed"></i>';
                 print '<div class="expand">';
-                print '<i class="'.audioClass($s['content_type']).' smallicon"></i>';
                 print get_speed($s['bitrate']);
                 print '</div>';
                 print '</div>';
             }
-            print '</div>';
-            print '<div class="tagh albumthing bordered nosides"></div>';
+            
+            print '<div class="containerbox rowspacer"></div>';
+
             if (array_key_exists('website', $station) && $station['website'] != '') {
-                print '<div class="tagh albumthing">';
-                print '<a href="'.$station['website'].'" target="_blank">Station Website</a>';
+                print '<a href="'.$station['website'].'" target="_blank">';
+                print '<div class="containerbox indent padright">';
+                print '<div class="expand">Station Website</div>';
                 print '</div>';
+                print '</a>';
             }
             if (array_key_exists('facebook', $station) && $station['facebook'] != '') {
-                print '<div class="tagh albumthing"><div class="containerbox line"><div class="expand">';
-                print '<a href="'.$station['facebook'].'" target="_blank"><i class="icon-facebook-logo smallicon padright"></i>Facebook</a>';
-                print '</div></div></div>';
+                print '<a href="'.$station['facebook'].'" target="_blank">';
+                print '<div class="containerbox indent padright">';
+                print '<i class="icon-facebook-logo playlisticon fixed"></i><div class="expand">Facebook</div>';
+                print '</div>';
+                print '</a>';
             }
             if (array_key_exists('twitter', $station) && $station['twitter'] != '') {
                 $t = $station['twitter'];
@@ -134,13 +148,16 @@ if (array_key_exists('populate', $_REQUEST)) {
                 } else {
                     $t = 'http://twitter.com/@'.$t;
                 }
-                print '<div class="tagh albumthing"><div class="containerbox line"><div class="expand">';
-                print '<a href="'.$t.'" target="_blank"><i class="icon-twitter-logo smallicon padright"></i>Twitter</a>';
-                print '</div></div></div>';
+                print '<a href="'.$t.'" target="_blank">';
+                print '<div class="containerbox indent padright">';
+                print '<i class="icon-twitter-logo playlisticon fixed"></i><div class="expand">Twitter</div>';
+                print '</div>';
+                print '</a>';
             }
-            print '</div>';
+
             print '</div>';
         }
+        $count++;
     }
     do_page_buttons($json, true);
     print '</div>';
@@ -259,7 +276,7 @@ function sort_by_station($a, $b) {
 
 function do_page_buttons($json, $is_bottom) {
     if ($json['total'] > 0) {
-        print '<div class="pluginitem radioplugin_wide" style="margin-bottom:0px"><div class="containerbox padright noselection fullwidth menuitem">';
+        print '<div class="fullwidth"><div class="containerbox padright noselection menuitem">';
         $class = ($json['prevpage'] == 0) ? ' button-disabled' : ' clickable clickicon clickradioback';
         print '<i class="fixed icon-left-circled medicon'.$class.'"></i>';
         print '<div class="expand textcentre">Showing '.$json['first'].' to '.$json['num'].' of '.$json['total'].'</div>';
@@ -271,7 +288,7 @@ function do_page_buttons($json, $is_bottom) {
         print '<input type="hidden" name="prev" value="'.$json['prevpage'].'" />';
         print '</div>';
     } else if ($is_bottom && $json['spage'] > 0) {
-        print '<div class="pluginitem radioplugin_wide" style="margin-bottom:0px"><div class="containerbox padright noselection fullwidth menuitem">';
+        print '<div class="fullwidth"><div class="containerbox padright noselection fullwidth menuitem">';
         print '<div class="expand textcentre clickable clickicon clicksearchmore">Show More Results...</div>';
         print '</div>';
         print '<input type="hidden" name="spage" value="'.$json['spage'].'" />';
@@ -281,4 +298,3 @@ function do_page_buttons($json, $is_bottom) {
 }
 
 ?>
-
