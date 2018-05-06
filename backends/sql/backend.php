@@ -270,6 +270,8 @@ function list_tags() {
 
 function get_rating_headers($sortby) {
 	
+	global $prefs;
+	
 	switch ($sortby) {
 		
 		case 'Rating':
@@ -281,7 +283,31 @@ function get_rating_headers($sortby) {
 			break;
 			
 		case 'AlbumArtist':
-			$ratings = sql_get_column(albumartist_sort_query('a'), 'Artistname');
+			// It's actually Track Artist, but sod changing it now.
+			$qstring = "SELECT DISTINCT Artistname
+						FROM
+						Artisttable JOIN Tracktable AS tt USING (Artistindex)
+						LEFT JOIN Ratingtable USING (TTindex)
+						LEFT JOIN `TagListtable` USING (TTindex)
+						LEFT JOIN Tagtable AS t USING (Tagindex)
+						WHERE Uri IS NOT NULL and Hidden = 0 AND (Rating IS NOT NULL OR t.Name IS NOT NULL)
+						GROUP BY TTindex
+						ORDER BY ";
+						foreach ($prefs['artistsatstart'] as $a) {
+							$qstring .= "CASE WHEN LOWER(Artistname) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
+						}
+						if (count($prefs['nosortprefixes']) > 0) {
+							$qstring .= "(CASE ";
+							foreach($prefs['nosortprefixes'] AS $p) {
+								$phpisshitsometimes = strlen($p)+2;
+								$qstring .= "WHEN LOWER(Artistname) LIKE '".strtolower($p).
+									" %' THEN LOWER(SUBSTR(Artistname,".$phpisshitsometimes.")) ";
+							}
+							$qstring .= "ELSE LOWER(Artistname) END)";
+						} else {
+							$qstring .= "LOWER(Artistname)";
+						}
+			$ratings = sql_get_column($qstring, 'Artistname');
 			break;
 			
 		case 'Tags':
@@ -384,6 +410,7 @@ function get_rating_info($sortby, $value) {
 				break;
 										
 			case 'AlbumArtist':
+				// It's actually Track Artist, but sod changing it now.
 				$qstring = "SELECT
 			 		IFNULL(r.Rating, 0) AS Rating,
 			 		IFNULL(".SQL_TAG_CONCAT.", 'No Tags') AS Tags,
@@ -405,7 +432,7 @@ function get_rating_info($sortby, $value) {
 			 		JOIN Albumtable AS al USING (Albumindex)
 			 		JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 			 		JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL) AND tr.Uri IS NOT NULL AND aa.Artistname = '".$value."'";
+			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL) AND tr.Uri IS NOT NULL AND a.Artistname = '".$value."'";
 				break;
 				
 			case 'Tags':

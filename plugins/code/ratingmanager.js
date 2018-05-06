@@ -75,7 +75,11 @@ var ratingManager = function() {
 		if (data.Albumname != current_album) {
 			current_album = data.Albumname;
 			if (sortby == 'AlbumArtist') {
-				var tit = '<span class="title-menu">'+data.Albumname+'</span></div>';
+				var tit = '<span class="title-menu">'+data.Albumname+'</span>';
+				if (data.AlbumArtist != data.Artistname) {
+					tit += '<br><i>'+data.AlbumArtist+'</i>';
+				}
+				tit += '</div>';
 				var nl = '';
 			} else {
 				var tit = '<b class="artistnamething">'+data.AlbumArtist+'</b><br><b>'+data.Albumname+'</b>';
