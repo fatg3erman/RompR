@@ -83,7 +83,10 @@ function getStuffFromXSPF($filedata) {
     foreach ($result as $obj) {
         debuglog("Found Radio Station ".$obj->StationName,"STREAMHANDLER");
         // Munge munge munge to make it looks pretty
-        if ($filedata['Name'] && $filedata['Name'] != 'no name' && strpos($filedata['Name'], ' ') !== false) {
+        if ($obj->StationName != '') {
+            debuglog("  Setting Album name from database ".$obj->StationName,"STREAMHANDLER");
+            $album = $obj->StationName;
+        } else if ($filedata['Name'] && $filedata['Name'] != 'no name' && strpos($filedata['Name'], ' ') !== false) {
             debuglog("  Setting Album from Name ".$filedata['Name'],"STREAMHANDLER");
             $album = $filedata['Name'];
         } else if ($filedata['Name'] == null && $filedata['Title'] != null && $filedata['Title'] != 'no name' &&
@@ -91,9 +94,6 @@ function getStuffFromXSPF($filedata) {
             debuglog("  Setting Album from Title ".$filedata['Title'],"STREAMHANDLER");
             $album = $filedata['Title'];
             $filedata['Title'] = null;
-        } else if ($obj->StationName != '') {
-            debuglog("  Setting Album name from database ".$obj->StationName,"STREAMHANDLER");
-            $album = $obj->StationName;
         } else {
             debuglog("  No information to set Album field","STREAMHANDLER");
             $album = ROMPR_UNKNOWN_STREAM;
