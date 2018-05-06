@@ -269,9 +269,7 @@ function list_tags() {
 }
 
 function get_rating_headers($sortby) {
-	
-	global $prefs;
-	
+		
 	switch ($sortby) {
 		
 		case 'Rating':
@@ -286,27 +284,14 @@ function get_rating_headers($sortby) {
 			// It's actually Track Artist, but sod changing it now.
 			$qstring = "SELECT DISTINCT Artistname
 						FROM
-						Artisttable JOIN Tracktable AS tt USING (Artistindex)
+						Artisttable AS a JOIN Tracktable AS tt USING (Artistindex)
 						LEFT JOIN Ratingtable USING (TTindex)
 						LEFT JOIN `TagListtable` USING (TTindex)
 						LEFT JOIN Tagtable AS t USING (Tagindex)
 						WHERE Uri IS NOT NULL and Hidden = 0 AND (Rating IS NOT NULL OR t.Name IS NOT NULL)
 						GROUP BY TTindex
 						ORDER BY ";
-						foreach ($prefs['artistsatstart'] as $a) {
-							$qstring .= "CASE WHEN LOWER(Artistname) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
-						}
-						if (count($prefs['nosortprefixes']) > 0) {
-							$qstring .= "(CASE ";
-							foreach($prefs['nosortprefixes'] AS $p) {
-								$phpisshitsometimes = strlen($p)+2;
-								$qstring .= "WHEN LOWER(Artistname) LIKE '".strtolower($p).
-									" %' THEN LOWER(SUBSTR(Artistname,".$phpisshitsometimes.")) ";
-							}
-							$qstring .= "ELSE LOWER(Artistname) END)";
-						} else {
-							$qstring .= "LOWER(Artistname)";
-						}
+			$qstring .= sort_artists_by_name();
 			$ratings = sql_get_column($qstring, 'Artistname');
 			break;
 			
@@ -340,12 +325,12 @@ function sortletter_mangler() {
 		$qstring .= "CASE ";
 		foreach($prefs['nosortprefixes'] AS $p) {
 			$phpisshitsometimes = strlen($p)+2;
-			$qstring .= "WHEN LOWER(aa.Artistname) LIKE '".strtolower($p).
-				" %' THEN UPPER(SUBSTR(aa.Artistname,".$phpisshitsometimes.",1)) ";
+			$qstring .= "WHEN LOWER(a.Artistname) LIKE '".strtolower($p).
+				" %' THEN UPPER(SUBSTR(a.Artistname,".$phpisshitsometimes.",1)) ";
 		}
-		$qstring .= "ELSE UPPER(SUBSTR(aa.Artistname,1,1)) END AS SortLetter";
+		$qstring .= "ELSE UPPER(SUBSTR(a.Artistname,1,1)) END AS SortLetter";
 	} else {
-		$qstring .= "UPPER(SUBSTR(aa.Artistname,1,1)) AS SortLetter";
+		$qstring .= "UPPER(SUBSTR(a.Artistname,1,1)) AS SortLetter";
 	}
 	return $qstring;
 }
@@ -470,18 +455,7 @@ function get_rating_info($sortby, $value) {
 	}
 	
 	$qstring .= " GROUP BY tr.TTindex ORDER BY ";
-
-	if (count($prefs['nosortprefixes']) > 0) {
-		$qstring .= "(CASE ";
-		foreach($prefs['nosortprefixes'] AS $p) {
-			$phpisshitsometimes = strlen($p)+2;
-			$qstring .= "WHEN LOWER(AlbumArtist) LIKE '".strtolower($p).
-				" %' THEN LOWER(SUBSTR(AlbumArtist,".$phpisshitsometimes.")) ";
-		}
-		$qstring .= "ELSE LOWER(AlbumArtist) END)";
-	} else {
-		$qstring .= "LOWER(AlbumArtist)";
-	}
+	$qstring .= sort_artists_by_name();
 	$qstring .= ", al.Albumname, tr.TrackNo";
 	
 	$t =  microtime(true);
@@ -774,33 +748,38 @@ function check_for_wishlist_track(&$data) {
 	}
 }
 
-function albumartist_sort_query($flag) {
+function sort_artists_by_name() {
 	global $prefs;
+	$qstring = '';
+	foreach ($prefs['artistsatstart'] as $a) {
+		$qstring .= "CASE WHEN LOWER(a.Artistname) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
+	}
+	if (count($prefs['nosortprefixes']) > 0) {
+		$qstring .= "(CASE ";
+		foreach($prefs['nosortprefixes'] AS $p) {
+			$phpisshitsometimes = strlen($p)+2;
+			$qstring .= "WHEN LOWER(a.Artistname) LIKE '".strtolower($p).
+				" %' THEN LOWER(SUBSTR(a.Artistname,".$phpisshitsometimes.")) ";
+		}
+		$qstring .= "ELSE LOWER(a.Artistname) END)";
+	} else {
+		$qstring .= "LOWER(a.Artistname)";
+	}
+	return $qstring;
+}
+
+function albumartist_sort_query($flag) {
 	// This query gives us album artists only. It also makes sure we only get artists for whom we
 	// have actual tracks (no album artists who appear only on the wishlist or who have only hidden tracks)
 	// Using GROUP BY is faster than using SELECT DISTINCT
 	// USING IN is faster than the double JOIN
 	$sflag = ($flag == 'b') ? "AND isSearchResult > 0" : "AND isSearchResult < 2";
 	
-	$qstring = "SELECT Artistname, Artistindex FROM Artisttable WHERE Artistindex IN
+	$qstring = "SELECT Artistname, Artistindex FROM Artisttable AS a WHERE Artistindex IN
 				(SELECT AlbumArtistindex FROM Albumtable JOIN Tracktable USING (Albumindex)
 					WHERE Uri IS NOT NULL AND Hidden = 0 ".$sflag." GROUP BY AlbumArtistindex)
 				ORDER BY ";
-		
-	foreach ($prefs['artistsatstart'] as $a) {
-		$qstring .= "CASE WHEN LOWER(Artistname) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
-	}
-	if (count($prefs['nosortprefixes']) > 0) {
-		$qstring .= "(CASE ";
-		foreach($prefs['nosortprefixes'] AS $p) {
-			$phpisshitsometimes = strlen($p)+2;
-			$qstring .= "WHEN LOWER(Artistname) LIKE '".strtolower($p).
-				" %' THEN LOWER(SUBSTR(Artistname,".$phpisshitsometimes.")) ";
-		}
-		$qstring .= "ELSE LOWER(Artistname) END)";
-	} else {
-		$qstring .= "LOWER(Artistname)";
-	}
+	$qstring .= sort_artists_by_name();
 	return $qstring;
 }
 

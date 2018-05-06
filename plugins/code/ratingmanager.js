@@ -75,7 +75,7 @@ var ratingManager = function() {
 		if (data.Albumname != current_album) {
 			current_album = data.Albumname;
 			if (sortby == 'AlbumArtist') {
-				var tit = '<span class="title-menu">'+data.Albumname+'</span>';
+				var tit = '<b class="artistnamething">'+data.Albumname+'</b>';
 				if (data.AlbumArtist != data.Artistname) {
 					tit += '<br><i>'+data.AlbumArtist+'</i>';
 				}
@@ -228,7 +228,7 @@ var ratingManager = function() {
 					'<button class="fixed" onclick="ratingManager.filter()">'+language.gettext("button_filter")+'</button>'+
     				'</div>');
 
-	        	$("#rmgfoldup").append('<div class="containerbox padright wrap ratsoptions"></div>');
+	        	$("#rmgfoldup").append('<div class="containerbox padright" name="ratman_loading"><h3>Loading List....</h3></div>');
 
 			    $("#rmgfoldup").append('<div class="noselection fullwidth masonified" id="ratmunger"></div>');
 			    $('[name="filterinput"]').click(function(ev){
@@ -377,6 +377,7 @@ var ratingManager = function() {
 			metaHandlers.genericAction(
 				[{action: 'ratlist', sortby: sortby}],
 				function(data) {
+					$('[name="ratman_loading"]').hide();
             		ratingManager.doMainLayout(data);
 		        	if (layoutProcessor.supportsDragDrop) {
 						$('[name="ratman_drag'+sortby.substr(0,3)+'"]').fadeIn('fast');
@@ -392,6 +393,7 @@ var ratingManager = function() {
 		
 		reloadEntireRatList: function() {
 			$('.ratinstr').hide();
+			$('[name="ratman_loading"]').show();
 		    sortby = $('[name="ratman_sortby"]:checked').val();
 		    prefs.save({ratman_sortby: sortby, ratman_showletters: $('#ratman_showletters').is(':checked'), ratman_smallart: $('#ratman_smallart').is(':checked')});
 	    	$('#ratmunger').empty();
