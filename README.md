@@ -13,7 +13,7 @@ at least for the time being - you should go there to download the latest release
 
 [Alternative Linux Installation with Apache2](https://fatg3erman.github.io/RompR/Installation-on-Linux-Alternative-Method)
 
-![](docs/images/images/rompr-1.png)
+![](docs/images/rompr-1.png)
 
 ![](docs/images/rompr-on-a-phone.png)
 
