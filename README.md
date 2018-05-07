@@ -13,9 +13,9 @@ at least for the time being - you should go there to download the latest release
 
 [Alternative Linux Installation with Apache2](https://fatg3erman.github.io/RompR/Installation-on-Linux-Alternative-Method)
 
-![](https://raw.githubusercontent.com/fatg3erman/files/master/images/rompr-1.png)
+![](docs/images/images/rompr-1.png)
 
-![](https://raw.githubusercontent.com/fatg3erman/files/master/images/rompr-on-a-phone.png)
+![](docs/images/rompr-on-a-phone.png)
 
 [![Download The Latest Release Rompr](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/rompr/files/latest/download)
 

@@ -11,10 +11,10 @@ RompЯ is a music player with the emphasis on discovery - discovering more about
 If you want to download a stable release you should visit the project homepage which for want of more time to do something better is at https://sourceforge.net/projects/rompr/. There you will find a fuller wiki, a discussion forum, and installation instructions for macOS.
 
 ### RompЯ on a desktop browser
-![](https://raw.githubusercontent.com/fatg3erman/files/master/images/rompr-1.png)
+![](images/rompr-1.png)
 
 ### RompЯ on a phone browser
-![](https://raw.githubusercontent.com/fatg3erman/files/master/images/rompr-on-a-phone.png)
+![](images/rompr-on-a-phone.png)
 
 ### Music Discovery
 ![](images/discovery.png)
