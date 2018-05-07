@@ -1,4 +1,5 @@
 theme: jekyll-theme-minimal
-sidebar:
-  nav: docs
+title: RompЯ
+description: A beautiful, feature-rich web-based interface for Mopidy and MPD
+show_downloads: true
   
