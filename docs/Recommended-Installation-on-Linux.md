@@ -1,0 +1,181 @@
+# Installation Guide
+RompЯ is a client for mpd or mopidy - you use RompЯ in a web browser to make mpd or mopidy play music
+These are basic installation instructions for RompЯ on Linux and assume you've cloned or somehow pulled the code from here on github.
+
+_Please be aware that I generally just use the master branch and it may be very unstable._
+
+**If you want to download a stable release you should visit the project homepage which for want of more time to do something better is at https://sourceforge.net/projects/rompr/. There you will find a fuller wiki, a discussion forum, and installation instructions for macOS.**
+
+## Assumptions
+I'm going to assume you already have mpd or mopidy installed and working. This is not the place to discuss the arcane art of configuring mpd. For that you'll have to read the mpd community wiki. Sorry about that. The mopidy instructions are quite good.
+
+## Recommended Setup for Linux
+This is the way I now recommend you do it. Thanks to the anonymous forum user who put up the initial instructions for getting it to work with PHP7 when I was in the wilderness.
+
+_The following is a guide. It has been tested on Kubuntu 17.10 so Ubuntu and Debian flavours should follow this. Other distributions will be similar but package names may be different and the location of files may be different. Sorry, I can't try them all. If only they'd agree._
+
+This guide sets up RompЯ to work with the nginx web server, an sqlite database and allows you to access it using a nice url - www.myrompr.net
+
+### Install RompЯ
+To use the code directly from github, either use git to check it out - if you happen to know the correct magic invocations to release the github pixies - or you can download a zip file from the big green button that says 'Clone or Download'. When you extract the zip file you'll get a directory called RompR-master. The contents of that directory are what you want.
+
+So let's say you now have a source code tree in /var/www/rompr. If you downloaded the zip file, that's where you put the contents of the RompR-master directory you obtained from there. From now on we're going to refer to that as /PATH/TO/ROMPR, because that's what programmers do. You can put the code anywhere you like, although it won't work very well if you put it in the oven. So you'll need to look out for /PATH/TO/ROMPR in everything below and make sure you substitute something correct.
+
+### Set directory permissions
+We need to create directories to store data in.
+
+`cd /PATH/TO/ROMPR`
+
+`mkdir prefs`
+
+`mkdir albumart`
+
+`mkdir albumart/small`
+
+`mkdir albumart/asdownloaded`
+
+
+And then we need to give nginx permission to write to them. We can do this by changing the ownership of those directories to be the user that nginx runs as. This may differ depending on which distro you're running, but this is good for all Ubuntus, where nginx runs as the user www-data.
+
+`sudo chown -R www-data /PATH/TO/ROMPR/albumart`
+
+`sudo chown -R www-data /PATH/TO/ROMPR/prefs`
+
+
+### Install some packages
+`sudo apt-get install php7.1-sqlite3 nginx php7.1-curl imagemagick php7.1-json php7.1-fpm php7.1-xml php7.1-mbstring`
+
+_Note the version numbers - 7.1 is current at the time of  writing but as times change it may become 7.2,etc. On Ubuntu 16.04 I think it is 7.0. Amend the command as applicable_
+
+### Create nginx configuration
+We're going to create RompЯ as a standalone website which will be accessible through the address www.myrompr.net
+
+_Note. This sets RompЯ as the default site on your machine. For most people this will be the best configuration. If you are someone who cares about what that means and understands what that means, then you already know how to add RompЯ as the non-default site. What is described here is the easiest setup, which will work for most people_
+
+First we will remove the existing default config, since we don't want it.
+
+`sudo unlink /etc/nginx/sites-enabled/default`
+
+Then we will create the rompr config and set that to be the default
+
+`sudo nano /etc/nginx/sites-available/rompr`
+
+Paste in the following lines, remembering to change /PATH/TO/ROMPR as above, and edit the 7.1 if appropriate.
+
+    server {
+
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        root /PATH/TO/ROMPR;
+        index index.php index.html index.htm;
+
+        server_name www.myrompr.net;
+
+        # This section can be copied into an existing default setup
+        location / {
+            allow all;
+            index index.php;
+            location ~ \.php {
+                    try_files $uri index.php =404;
+                    fastcgi_pass unix:/var/run/php/php7.1-fpm.sock;
+                    fastcgi_index index.php;
+                    fastcgi_param SCRIPT_FILENAME $request_filename;
+                    include /etc/nginx/fastcgi_params;
+                    fastcgi_read_timeout 600;
+            }
+            error_page 404 = /404.php;
+            try_files $uri $uri/ =404;
+            location ~ /albumart/* {
+                    expires -1s;
+            }
+        }
+    }
+
+Save the file (Ctrl-X in nano, then answer 'Y'). Now link the configuration so it is enabled
+
+`sudo ln -s /etc/nginx/sites-available/rompr /etc/nginx/sites-enabled/rompr`
+
+### Edit the hosts file
+To make your browser capable of accessing www.myrompr.net we need to edit your hosts file so the computer knows where www.myrompr.net actually is.
+
+`sudo nano /etc/hosts`
+
+and just add the line
+
+`127.0.0.1        www.myrompr.net`
+
+You will need to make this change on every device you want to access rompr from - with an appropriate IP address. On devices where this is not possible - eg a mobile device - you can just enter the IP address of your web server into your browser to access RompЯ (because we have set RompЯ as the default site).
+
+_Those of you who want to be clever and know how to edit hostname and DNS mapping on your router can do that, you will then not need RompЯ to be default site and you will not need to remove the existing default config. Just remove default_server where it appears above and set server_name appopriately. If you didn't understand that, then ignore this paragraph._
+
+### Edit PHP configuration
+We need to edit the PHP configuration file.
+
+`sudo nano /etc/php/7.1/fpm/php.ini`
+
+Now find and modify (or add in if they're not there) the following parameters. Ctrl-W is 'find' in nano.
+
+`allow_url_fopen = On`
+
+`memory_limit = 128M`
+
+`max_execution_time = 300`
+
+### That's all the configuring. Let's get everything running
+
+`sudo systemctl restart php7.1-fpm`
+
+`sudo systemctl restart nginx`
+
+That should be it. Direct your browser to www.myrompr.net and all should be well.
+
+# Other Setup Options
+
+## Installation With Docker
+
+Docker is some kind of clever containerisation gizmo that provides self-contained packages of software. In theory it should make installing RompЯ a simple affair on any platform. I don't know anything about it but Tom Roth has created a docker image for RompЯ and MySQL here:
+
+https://github.com/rawdlite/docker-rompr
+
+# Advanced Configuration
+
+## MPD/Mopidy Addresses and Ports
+In the case where your mpd server is not running on the same PC as your apache server, or you need a password for mpd, or you'd like to use a unix-domain socket to communicate with mpd, point your browser at:
+
+http://www.myrompr.net?setup
+
+and enter the appropriate values. This page will appear automatically if RompЯ can't communicate with mpd when you load the page.
+
+## Proxy Configuration
+You can configure RompЯ to use a web proxy from the setup page, too.
+
+# Troubleshooting
+
+## Cannot Connect to MPD or Mopidy
+
+### MPD on a remote PC
+If you are running mpd on a different computer from your web server then you might need to change the bind_to_address in your mpd.conf as the defaults sometimes don't work. "localhost" will only accept connections from the local PC, and "any" seems to fail sometimes because it tries to bind to IPV6 first. Try:
+
+`bind_to_address    "127.0.0.1"`
+
+`bind_to_address    "ip.address.of.this.computer"`
+
+## Music Collection Fails To Build
+
+### MPD and Large Music Collections
+If your music collection is quite large you may need to tweak a couple of settings in mpd.
+Edit /etc/mpd.conf (or wherever your mpd conf file is) and find the line (or add the line) for max_output_buffer_size and connection_timeout
+
+`connection_timeout        "800"`
+
+`max_output_buffer_size    "32768"`
+
+### Very Large Collections
+
+You may fall foul of web server timeouts when trying to build very large music collections. You can hopefully fix this.
+
+Firstly, your php.ini needs to have a setting for max_execution_time, as above. This is in seconds, so set it to something massive. (If you're using apache you can set this as a php_admin_value in your apache config file for RompЯ, near where all the other are).
+
+Secondly you need to allow the server to wait a long time for output. With nginx, this is the fastcgi_read_timeout parameter that is in the example configuration above. For Apache you need to change the Timeout directive in your apache config file. Note this has to be globally for whole server, which is another good reason to use nginx :)
+
