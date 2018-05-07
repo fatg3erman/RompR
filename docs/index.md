@@ -15,3 +15,6 @@ If you want to download a stable release you should visit the project homepage w
 
 ### RompЯ on a phone browser
 ![](https://raw.githubusercontent.com/fatg3erman/files/master/images/rompr-on-a-phone.png)
+
+### Music Discovery
+![](images/discovery.png)
