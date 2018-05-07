@@ -1,10 +1,9 @@
-# Installation Guide
 RompЯ is a client for mpd or mopidy - you use RompЯ in a web browser to make mpd or mopidy play music
-These are basic installation instructions for RompЯ on Linux and assume you've cloned or somehow pulled the code from here on github.
+These are basic installation instructions for RompЯ on Linux, using the code you can download from here on github.
 
 _Please be aware that I generally just use the master branch and it may be very unstable._
 
-**If you want to download a stable release you should visit the project homepage which for want of more time to do something better is at https://sourceforge.net/projects/rompr/. There you will find a fuller wiki, a discussion forum, and installation instructions for macOS.**
+**If you want to download a stable release you should visit the project homepage which for want of more time to do something better is at [SourceForge](https://sourceforge.net/projects/rompr/). There you will find a fuller wiki, a discussion forum, and installation instructions for Linux and macOS.**
 
 ## Assumptions
 I'm going to assume you already have mpd or mopidy installed and working. This is not the place to discuss the arcane art of configuring mpd. For that you'll have to read the mpd community wiki. Sorry about that. The mopidy instructions are quite good.
@@ -38,7 +37,8 @@ And then we need to give nginx permission to write to them. We can do this by ch
 
 
 ### Install some packages
-`sudo apt-get install php7.1-sqlite3 nginx php7.1-curl imagemagick php7.1-json php7.1-fpm php7.1-xml php7.1-mbstring`
+
+    sudo apt-get install php7.1-sqlite3 nginx php7.1-curl imagemagick php7.1-json php7.1-fpm php7.1-xml php7.1-mbstring
 
 _Note the version numbers - 7.1 is current at the time of  writing but as times change it may become 7.2,etc. On Ubuntu 16.04 I think it is 7.0. Amend the command as applicable_
 
@@ -49,11 +49,11 @@ _Note. This sets RompЯ as the default site on your machine. For most people thi
 
 First we will remove the existing default config, since we don't want it.
 
-`sudo unlink /etc/nginx/sites-enabled/default`
+    sudo unlink /etc/nginx/sites-enabled/default
 
 Then we will create the rompr config and set that to be the default
 
-`sudo nano /etc/nginx/sites-available/rompr`
+    sudo nano /etc/nginx/sites-available/rompr
 
 Paste in the following lines, remembering to change /PATH/TO/ROMPR as above, and edit the 7.1 if appropriate.
 
@@ -89,16 +89,16 @@ Paste in the following lines, remembering to change /PATH/TO/ROMPR as above, and
 
 Save the file (Ctrl-X in nano, then answer 'Y'). Now link the configuration so it is enabled
 
-`sudo ln -s /etc/nginx/sites-available/rompr /etc/nginx/sites-enabled/rompr`
+    sudo ln -s /etc/nginx/sites-available/rompr /etc/nginx/sites-enabled/rompr
 
 ### Edit the hosts file
 To make your browser capable of accessing www.myrompr.net we need to edit your hosts file so the computer knows where www.myrompr.net actually is.
 
-`sudo nano /etc/hosts`
+    sudo nano /etc/hosts
 
 and just add the line
 
-`127.0.0.1        www.myrompr.net`
+    127.0.0.1        www.myrompr.net
 
 You will need to make this change on every device you want to access rompr from - with an appropriate IP address. On devices where this is not possible - eg a mobile device - you can just enter the IP address of your web server into your browser to access RompЯ (because we have set RompЯ as the default site).
 
@@ -107,7 +107,7 @@ _Those of you who want to be clever and know how to edit hostname and DNS mappin
 ### Edit PHP configuration
 We need to edit the PHP configuration file.
 
-`sudo nano /etc/php/7.1/fpm/php.ini`
+    sudo nano /etc/php/7.1/fpm/php.ini
 
 Now find and modify (or add in if they're not there) the following parameters. Ctrl-W is 'find' in nano.
 

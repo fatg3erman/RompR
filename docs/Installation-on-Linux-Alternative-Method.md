@@ -1,10 +1,10 @@
 # Installation Guide
 RompЯ is a client for mpd or mopidy - you use RompЯ in a web browser to make mpd or mopidy play music
-These are basic installation instructions for RompЯ on Linux and assume you've cloned or somehow pulled the code from here on github.
+These are basic installation instructions for RompЯ on Linux, using the code you can download from here on github.
 
 _Please be aware that I generally just use the master branch and it may be very unstable._
 
-**If you want to download a stable release you should visit the project homepage which for want of more time to do something better is at https://sourceforge.net/projects/rompr/. There you will find a fuller wiki, a discussion forum, and installation instructions for macOS.**
+**If you want to download a stable release you should visit the project homepage which for want of more time to do something better is at [SourceForge](https://sourceforge.net/projects/rompr/). There you will find a fuller wiki, a discussion forum, and installation instructions for Linux and macOS.**
 
 ## Assumptions
 I'm going to assume you already have mpd or mopidy installed and working. This is not the place to discuss the arcane art of configuring mpd. For that you'll have to read the mpd community wiki. Sorry about that. The mopidy instructions are quite good.
@@ -14,9 +14,9 @@ This guide works on the assumption that you're using RompЯ on a machine that ha
 ## How to install on Linux with Apache and MySQL
 This guide came about because I was installing RompЯ on a Mythbuntu 16.04 installation where I also wanted to use Mythweb. Because Mythweb brings in Apache2 I was unable to use nginx as the webserver. So I came up with this method. If you already have a mythtv install, or another system which already used Apache2 (and mysql, optionally) then this method should work for you.
 
-If you are using Mythweb, you should make sure you've installed it with the option to use it alongside other websites. If you want to check
+If you are using Mythweb, you should make sure you've installed it with the option to use it alongside other websites. If you want to check this, do
 
-`sudo dpkg-reconfigure mythweb`
+    sudo dpkg-reconfigure mythweb
 
 ### Install RompЯ
 Download a zip file from the big green button that says 'Download .zip'. When you extract the zip file you'll get a directory with a wierd name. The contents of that directory are what you want.
@@ -42,12 +42,12 @@ And then we need to give Apache permission to write to them. We can do this by c
 ### Make sure Apache can find RompЯ
 We need to make sure Apache can find the stuff you've just downloaded. To do this we create a soft link from Apache's base directory to the folder you downloaded. On Ubuntu, the default base directory for Apache is /var/www/html, so
 
-`sudo ln -s /PATH/TO/ROMPR /var/www/html/rompr`
+    sudo ln -s /PATH/TO/ROMPR /var/www/html/rompr
 
 
 ### Install some packages
 
-`sudo apt-get install php7.0-mysql nginx php7.0-curl imagemagick php7.0-json php7.0-xml php7.0-mbstring`
+    sudo apt-get install php7.0-mysql nginx php7.0-curl imagemagick php7.0-json php7.0-xml php7.0-mbstring
 
 _Note the version numbers - 7.0 is current for Ubuntu 16.04 at the time of  writing but as times change it may become 7.1, etc. Amend the command as applicable_
 
