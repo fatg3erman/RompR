@@ -2,7 +2,7 @@
 
 RompЯ is a music player with the emphasis on discovery - discovering more about the music you know, and discovering new music you don't know yet. RompЯ is an interface that runs in a web browser on any device and controls a music player which can be on any other device. I recommend using Mopidy as the music player. When used with Mopidy and a Spotify Premium subscription RompЯ is a powerful Spotify client with many music discovery features.
 
-##features
+##Features
 
 * Collectioniser sorts your music by artist and album
 * Directory browser
