@@ -2,9 +2,7 @@
 RompЯ is a client for mpd or mopidy - you use RompЯ in a web browser to make mpd or mopidy play music
 These are basic installation instructions for RompЯ on Linux, using the code you can download from here on github.
 
-_Please be aware that I generally just use the master branch and it may be very unstable._
-
-**If you want to download a stable release you should visit the project homepage which for want of more time to do something better is at [SourceForge](https://sourceforge.net/projects/rompr/). There you will find a fuller wiki, a discussion forum, and installation instructions for Linux and macOS.**
+**Currently, If you want to download a stable release you should visit the project homepage which for want of more time to do something better is at [SourceForge](https://sourceforge.net/projects/rompr/). There you will find a fuller wiki, a discussion forum, and installation instructions for Linux and macOS.**
 
 ## Assumptions
 I'm going to assume you already have mpd or mopidy installed and working. This is not the place to discuss the arcane art of configuring mpd. For that you'll have to read the mpd community wiki. Sorry about that. The mopidy instructions are quite good.
@@ -19,9 +17,9 @@ If you are using Mythweb, you should make sure you've installed it with the opti
     sudo dpkg-reconfigure mythweb
 
 ### Install RompЯ
-Download a zip file from the big green button that says 'Download .zip'. When you extract the zip file you'll get a directory with a wierd name. The contents of that directory are what you want.
+Download the latest release from (The Github Releases Page)[https://github.com/fatg3erman/RompR/releases]
 
-Let's assume you extracted the zip file into your home directory, in a fiolder called 'web'. You'll now have a folder called /home/YOU/web/fatg3rman-RompR-8e47b94, or something along those lines. The first thing to do, for the same of simplicity, is to rename it to 'rompr'. So now you have /home/YOU/web/rompr. From now on we're going to refer to that as /PATH/TO/ROMPR, because that's what programmers do and it makes the guide more general. You can put the code anywhere you like, although it won't work very well if you put it in the oven. So you'll need to look out for /PATH/TO/ROMPR in everything below and make sure you substitute the correct path.
+Let's assume you extracted the zip file into a folder called 'web' in your home directory. So now you have /home/YOU/web/rompr. From now on we're going to refer to that as /PATH/TO/ROMPR, because that's what programmers do and it makes the guide more general. You can put the code anywhere you like, although it won't work very well if you put it in the oven. So you'll need to look out for /PATH/TO/ROMPR in everything below and make sure you substitute the correct path.
 
 ### Set directory permissions
 We need to create directories to store data in.
@@ -103,7 +101,7 @@ So, create this file, note I've assumed the default apache root directory of /va
 
 Now symlink that file so that Apache can find it
 
-`sudo ln -s /PATH/TO/ROMPRCONF /etc/apache2/sites-enabled/rompr.conf`
+    sudo ln -s /PATH/TO/ROMPRCONF /etc/apache2/sites-enabled/rompr.conf
 
 ### Create mysql database
 Now we'll create the mysql database for RompЯ. You will need to know your mysql root password. If you've installed the standard mythbuntu install, this will be your login password.
