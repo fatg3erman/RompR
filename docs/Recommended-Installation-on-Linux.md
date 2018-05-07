@@ -127,13 +127,3 @@ That should be it. Direct your browser to www.myrompr.net and all should be well
 Docker is some kind of clever containerisation gizmo that provides self-contained packages of software. In theory it should make installing RompЯ a simple affair on any platform. I don't know anything about it but Tom Roth has created a docker image for RompЯ and MySQL here:
 
 https://github.com/rawdlite/docker-rompr
-
-## Pages On This website
-
-[Home](https://fatg3erman.github.io/RompR/)
-
-[Recommended Linux Installation - with Nginx](https://fatg3erman.github.io/RompR/Recommended-Installation-on-Linux)
-
-[Alternative Linux Installation - with Apache](https://fatg3erman.github.io/RompR/Installation-on-Linux-Alternative-Method)
-
-[Troubleshooting](https://fatg3erman.github.io/RompR/Troubleshooting)

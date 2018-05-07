@@ -18,14 +18,3 @@ If you want to download a stable release you should visit the project homepage w
 
 ### Music Discovery
 ![](images/discovery.png)
-
-
-## Pages On This website
-
-[Home](https://fatg3erman.github.io/RompR/)
-
-[Recommended Linux Installation - with Nginx](https://fatg3erman.github.io/RompR/Recommended-Installation-on-Linux)
-
-[Alternative Linux Installation - with Apache](https://fatg3erman.github.io/RompR/Installation-on-Linux-Alternative-Method)
-
-[Troubleshooting](https://fatg3erman.github.io/RompR/Troubleshooting)
