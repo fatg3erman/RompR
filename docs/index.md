@@ -1,14 +1,3 @@
-### Pages On This website
-
-[Home](https://fatg3erman.github.io/RompR/)
-
-[Recommended Linux Installation - with Nginx](https://fatg3erman.github.io/RompR/Recommended-Installation-on-Linux)
-
-[Alternative Linux Installation - with Apache](https://fatg3erman.github.io/RompR/Installation-on-Linux-Alternative-Method)
-
-[Troubleshooting](https://fatg3erman.github.io/RompR/Troubleshooting)
-
-
 # RompЯ
 
 RompЯ is a music player with the emphasis on discovery - discovering more about the music you know, and discovering new music you don't know yet. RompЯ is an interface that runs in a web browser on any device and controls a music player which can be on any other device. I recommend using Mopidy as the music player. When used with Mopidy and a Spotify Premium subscription RompЯ is a powerful Spotify client with many music discovery features. It also handles Podcast subscriptions, web radio, automatic playlists, and has tagging and rating features
@@ -29,3 +18,14 @@ If you want to download a stable release you should visit the project homepage w
 
 ### Music Discovery
 ![](images/discovery.png)
+
+
+## Pages On This website
+
+[Home](https://fatg3erman.github.io/RompR/)
+
+[Recommended Linux Installation - with Nginx](https://fatg3erman.github.io/RompR/Recommended-Installation-on-Linux)
+
+[Alternative Linux Installation - with Apache](https://fatg3erman.github.io/RompR/Installation-on-Linux-Alternative-Method)
+
+[Troubleshooting](https://fatg3erman.github.io/RompR/Troubleshooting)

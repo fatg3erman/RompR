@@ -1,13 +1,3 @@
-### Pages On This website
-
-[Home](https://fatg3erman.github.io/RompR/)
-
-[Recommended Linux Installation - with Nginx](https://fatg3erman.github.io/RompR/Recommended-Installation-on-Linux)
-
-[Alternative Linux Installation - with Apache](https://fatg3erman.github.io/RompR/Installation-on-Linux-Alternative-Method)
-
-[Troubleshooting](https://fatg3erman.github.io/RompR/Troubleshooting)
-
 # Troubleshooting
 
 ## Cannot Connect to MPD or Mopidy
@@ -48,3 +38,14 @@ and enter the appropriate values. This page will appear automatically if RompЯ 
 
 ## Proxy Configuration
 You can configure RompЯ to use a web proxy from the setup page, too.
+
+
+## Pages On This website
+
+[Home](https://fatg3erman.github.io/RompR/)
+
+[Recommended Linux Installation - with Nginx](https://fatg3erman.github.io/RompR/Recommended-Installation-on-Linux)
+
+[Alternative Linux Installation - with Apache](https://fatg3erman.github.io/RompR/Installation-on-Linux-Alternative-Method)
+
+[Troubleshooting](https://fatg3erman.github.io/RompR/Troubleshooting)

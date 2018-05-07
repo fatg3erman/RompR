@@ -1,14 +1,3 @@
-### Pages On This website
-
-[Home](https://fatg3erman.github.io/RompR/)
-
-[Recommended Linux Installation - with Nginx](https://fatg3erman.github.io/RompR/Recommended-Installation-on-Linux)
-
-[Alternative Linux Installation - with Apache](https://fatg3erman.github.io/RompR/Installation-on-Linux-Alternative-Method)
-
-[Troubleshooting](https://fatg3erman.github.io/RompR/Troubleshooting)
-
-
 # Installation Guide
 RompЯ is a client for mpd or mopidy - you use RompЯ in a web browser to make mpd or mopidy play music
 These are basic installation instructions for RompЯ on Linux and assume you've cloned or somehow pulled the code from here on github.
@@ -152,3 +141,13 @@ Visit your new RompЯ installation at http://ip.of.computer.with.rompr/rompr?set
 On that page, configure RompЯ to use MySQL and set usernames, passwords, ports, etc as appropriate (the defaults should work unless you've changed anything in your mysql install). Click 'OK' at the bottom.
 
 To access RompЯ normally, just use http://ip.of.computer.with.rompr/rompr
+
+## Pages On This website
+
+[Home](https://fatg3erman.github.io/RompR/)
+
+[Recommended Linux Installation - with Nginx](https://fatg3erman.github.io/RompR/Recommended-Installation-on-Linux)
+
+[Alternative Linux Installation - with Apache](https://fatg3erman.github.io/RompR/Installation-on-Linux-Alternative-Method)
+
+[Troubleshooting](https://fatg3erman.github.io/RompR/Troubleshooting)
