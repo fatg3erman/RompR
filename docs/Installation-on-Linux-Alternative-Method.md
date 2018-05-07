@@ -76,9 +76,9 @@ _If you want to use SQLite instead of mysql, substitute php7.0-sqlite3 for php7.
 ### Create Apache configuration
 We're going to create an Apache configuration file for RompЯ. I'll assume it's been placed in my home directory, eg at /home/YOU/web/rompr.conf. We'll refer to that as /PATH/TO/ROMPRCONF.
 
-So, create this file, remembing to edit /PATH/TO/ROMPR
+So, create this file, note I've assumed the default apache root directory of /var/www/html
 
-    <Directory /PATH/TO/ROMPR>
+    <Directory /var/www/html/rompr>
         Options Indexes FollowSymLinks MultiViews Includes ExecCGI
         DirectoryIndex index.php
         AllowOverride All
@@ -93,20 +93,20 @@ So, create this file, remembing to edit /PATH/TO/ROMPR
             php_flag track_vars On
             php_admin_flag allow_url_fopen On
             php_value include_path .
-            php_admin_value upload_tmp_dir /PATH/TO/ROMPR/prefs
+            php_admin_value upload_tmp_dir /var/www/html/rompr/prefs
             php_admin_value open_basedir none
             php_admin_value memory_limit 128M
         </IfModule>
 
     </Directory>
 
-    <Directory /PATH/TO/ROMPR/albumart/small>
+    <Directory /var/www/html/rompr/albumart/small>
         Header set Cache-Control "no-cache, no-store, must-revalidate"
         Header set Pragma "no-cache"
         Header set Expires 0
     </Directory>
 
-    <Directory /PATH/TO/ROMPR/albumart/asdownloaded>
+    <Directory /var/www/html/rompr/albumart/asdownloaded>
         Header set Cache-Control "no-cache, no-store, must-revalidate"
         Header set Pragma "no-cache"
         Header set Expires 0
