@@ -2,4 +2,5 @@ theme: jekyll-theme-minimal
 title: RompЯ
 description: A beautiful, feature-rich web-based interface for Mopidy and MPD
 show_downloads: true
+logo: https://raw.githubusercontent.com/fatg3erman/files/master/images/favicon-196.png
   
