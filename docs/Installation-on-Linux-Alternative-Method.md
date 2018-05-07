@@ -17,7 +17,7 @@ If you are using Mythweb, you should make sure you've installed it with the opti
     sudo dpkg-reconfigure mythweb
 
 ### Install RompЯ
-Download the latest release from (The Github Releases Page)[https://github.com/fatg3erman/RompR/releases]
+Download the latest release from [The Github Releases Page](https://github.com/fatg3erman/RompR/releases)
 
 Let's assume you extracted the zip file into a folder called 'web' in your home directory. So now you have /home/YOU/web/rompr. From now on we're going to refer to that as /PATH/TO/ROMPR, because that's what programmers do and it makes the guide more general. You can put the code anywhere you like, although it won't work very well if you put it in the oven. So you'll need to look out for /PATH/TO/ROMPR in everything below and make sure you substitute the correct path.
 
