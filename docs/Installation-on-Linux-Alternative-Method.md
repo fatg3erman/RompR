@@ -1,3 +1,14 @@
+### Pages On This website
+
+[Home](https://fatg3erman.github.io/RompR/)
+
+[Recommended Linux Installation - with Nginx](https://fatg3erman.github.io/RompR/Recommended-Installation-on-Linux)
+
+[Alternative Linux Installation - with Apache](https://fatg3erman.github.io/RompR/Installation-on-Linux-Alternative-Method)
+
+[Troubleshooting](https://fatg3erman.github.io/RompR/Troubleshooting)
+
+
 # Installation Guide
 RompЯ is a client for mpd or mopidy - you use RompЯ in a web browser to make mpd or mopidy play music
 These are basic installation instructions for RompЯ on Linux and assume you've cloned or somehow pulled the code from here on github.
@@ -63,7 +74,7 @@ _If you want to use SQLite instead of mysql, substitute php7.0-sqlite3 for php7.
 
 
 ### Create Apache configuration
-We're going to create an Apache configuration file for RompЯ. I'll assume it's been placed in my home directory, eg at /home/YOU/web/rompr.conf. We'll refer to that as /PATH/TO/ROMPRCONF. 
+We're going to create an Apache configuration file for RompЯ. I'll assume it's been placed in my home directory, eg at /home/YOU/web/rompr.conf. We'll refer to that as /PATH/TO/ROMPRCONF.
 
 So, create this file, remembing to edit /PATH/TO/ROMPR
 
