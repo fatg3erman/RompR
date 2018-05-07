@@ -8,7 +8,7 @@ RompЯ is a music player with the emphasis on discovery - discovering more about
 
 [Alternative Linux Installation with Apache2](https://fatg3erman.github.io/RompR/Installation-on-Linux-Alternative-Method)
 
-If you want to download a stable release you should visit the project homepage which for want of more time to do something better is at https://sourceforge.net/projects/rompr/. There you will find a fuller wiki, a discussion forum, and installation instructions for macOS.
+If you want to download a stable release you should visit the project homepage which for want of more time to do something better is on [Sourceforge](https://sourceforge.net/projects/rompr/). There you will find a fuller wiki, a discussion forum, and installation instructions for macOS.
 
 ### RompЯ on a desktop browser
 ![](images/rompr-1.png)

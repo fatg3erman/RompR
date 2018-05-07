@@ -6,7 +6,7 @@ It has a rich and beautiful interface which is intended to sort your music, mana
 When used with Mopidy you can listen to Spotify and make use of RompЯ's incredible music discovery features which will help to introduce you to new music.
 
 The source code is now hosted here on github but the project home is still at
-https://sourceforge.net/projects/rompr/
+[Sourceforge](https://sourceforge.net/projects/rompr/)
 at least for the time being - you should go there to download the latest release and get installation instructions. In the fullness of time I expect this to become the new project home.
 
 [Standard installation on Linux instructions](https://fatg3erman.github.io/RompR/Recommended-Installation-on-Linux)
