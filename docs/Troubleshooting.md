@@ -7,10 +7,7 @@ In the case where your mpd/mopidy server is not running on the same PC as your a
 
 http:/ip.of.your.rompr.installation/?setup
 
-and enter the appropriate values. This page will appear automatically if RompЯ can't communicate with mpd when you load the page.
-
-### Proxy Configuration
-You can configure RompЯ to use a web proxy from the setup page, too.
+and enter the appropriate values. This page will appear automatically if RompЯ can't communicate with mpd or Mopidy when you load the page.
 
 ### MPD on a remote PC
 If you are running mpd on a different computer from your web server then you might need to change the bind_to_address in your mpd.conf as the defaults sometimes don't work. "localhost" will only accept connections from the local PC, and "any" seems to fail sometimes because it tries to bind to IPV6 first. Try:
@@ -27,11 +24,14 @@ If Mopidy is not on the same computer as the webserver, you probably need to set
     
 in your mopidy.conf
 
+## Web Proxy Configuration
+You can configure RompЯ to use a web proxy from the setup page. Even if you have configured this in your browser you still need to confiugure RRompЯ to use it too.
+
 ## Music Collection Fails To Build
 
 ### Very Large Collections
 
-You may fall foul of web server timeouts when trying to build very large music collections. You can hopefully fix this.
+You may fall foul of web server timeouts when trying to build very large music collections. You can hopefully fix this.RompЯ
 
 Firstly, your php.ini needs to have a setting for max_execution_time. This is in seconds, so set it to something massive.
 
