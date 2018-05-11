@@ -28,5 +28,26 @@ a.button
 
 #logo
 {
-    display: inline;
+    display: inline-block;
+    height: 72px;
+    width: auto;
+    vertical-align: middle;
+    margin-right: 12px;
+}
+
+#header h1
+{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#header h2
+{
+    color: white;
+}
+
+#header
+{
+    background: linear-gradient(rgba(255,120,0,1), rgba(120,60,0,1));
+    border-bottom: 1px solid black;
 }

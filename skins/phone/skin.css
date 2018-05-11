@@ -160,10 +160,6 @@ select {
     padding-top:4px;
 }
 
-#extraplaycontrols {
-    text-align:center;
-}
-
 #sourcescontrols
 {
     width:100%;
@@ -524,15 +520,7 @@ div.rightmenu {
     }
 }
 
-@media screen and (min-width:720px) {
-
-    #extraplaycontrols {
-        display: block;
-    }
-
-}
-
-@media screen and (min-width:640px) and (orientation: landscape) {
+media screen and (min-width:640px) and (orientation: landscape) {
 
     .mainpane {
         width: 50%;

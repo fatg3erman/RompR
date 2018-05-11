@@ -207,11 +207,6 @@ var layoutProcessor = function() {
         },
 
         adjustLayout: function() {
-            if ((isLandscape() && prefs.chooser != 'infopane') || (!isLandscape() && prefs.chooser == 'infobar')) {
-                $('#extraplaycontrols').css('display','none');
-            } else {
-                $('#extraplaycontrols').css('display','');
-            }
             setTopIconSize(['#headerbar', '#chooserbuttons']);
             infobar.updateWindowValues();
             var ws = getWindowSize();

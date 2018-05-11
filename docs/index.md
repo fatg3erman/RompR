@@ -19,6 +19,7 @@ RompЯ is a music player with the emphasis on discovery - discovering more about
 * Automatic on-the-fly playlist generation based on tags, ratings, popularity, your listening habits, etc
 * Get biographies of artists from various sources
 * Album and artist suggestions based on your listening habits
+* UI themes
 
 **The old project homepage is at [SourceForge](https://sourceforge.net/projects/rompr/). The old discussion forum is still there and you may find answers to some questions is you have them.**
 
