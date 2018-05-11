@@ -20,6 +20,8 @@ RompЯ is a music player with the emphasis on discovery - discovering more about
 * Get biographies of artists from various sources
 * Album and artist suggestions based on your listening habits
 
+**The old project homepage is at [SourceForge](https://sourceforge.net/projects/rompr/). The old discussion forum is still there and you may find answers to some questions is you have them.**
+
 ## How to install RompЯ
 
 Please see the links to the right of this text for installation instructions.

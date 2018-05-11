@@ -1,7 +1,7 @@
 RompЯ is a client for mpd or mopidy - you use RompЯ in a web browser to make mpd or mopidy play music
 These are basic installation instructions for RompЯ on Linux, using the code you can download from here on github.
 
-**Currently, If you want to download a stable release you should visit the project homepage which for want of more time to do something better is at [SourceForge](https://sourceforge.net/projects/rompr/). There you will find a fuller wiki, a discussion forum, and installation instructions for Linux and macOS.**
+**The old project homepage is at [SourceForge](https://sourceforge.net/projects/rompr/). The old discussion forum is still there and you may find answers to some questions is you have them.**
 
 ## Assumptions
 I'm going to assume you already have mpd or mopidy installed and working. This is not the place to discuss the arcane art of configuring mpd. For that you'll have to read the mpd community wiki. Sorry about that. The mopidy instructions are quite good.
@@ -119,11 +119,3 @@ Now find and modify (or add in if they're not there) the following parameters. C
     sudo systemctl restart nginx
 
 That should be it. Direct your browser to www.myrompr.net and all should be well.
-
-# Other Setup Options
-
-## Installation With Docker
-
-Docker is some kind of clever containerisation gizmo that provides self-contained packages of software. In theory it should make installing RompЯ a simple affair on any platform. I don't know anything about it but Tom Roth has created a docker image for RompЯ and MySQL here:
-
-https://github.com/rawdlite/docker-rompr
