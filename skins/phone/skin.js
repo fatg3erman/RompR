@@ -80,14 +80,13 @@ function setTopIconSize(panels) {
     panels.forEach( function(div) {
         if ($(div).is(':visible')) {
             var jq = $(div+' .topimg:not(.noshrink):visible');
-            var imw = (parseInt(jq.first().css('margin-left')) + parseInt(jq.first().css('margin-right')));
             var imh = parseInt(jq.first().css('max-height'))
             var numicons = jq.length+1;
-            var mw = imw*numicons;
-            var iw = Math.floor(($(div).width() - mw - 8)/numicons);
-            if (iw > imh) iw = imh;
-            if (iw < 8) iw = 8;
+            var iw = Math.min(Math.floor(($(div).width())/numicons), imh);
             jq.css({width: iw+"px", height: iw+"px", "font-size": iw+"px"});
+            var cw = iw*numicons;
+            var mar = Math.floor(((($(div).width()-8) - cw)/2)/numicons);
+            jq.css({"margin-left": mar+"px", "margin-right": mar+"px"});
         }
     });
 }

@@ -164,6 +164,11 @@ select {
     text-align:center;
 }
 
+#sourcescontrols
+{
+    width:100%;
+}
+
 /*
 =====================================================================
 = General Classes
@@ -178,6 +183,12 @@ select {
     padding-bottom:1em;
     text-align:center;
     cursor:pointer;
+}
+
+.topdrop
+{
+    display: inline-block;
+    float: none !important;
 }
 
 .pref {
@@ -825,4 +836,3 @@ div.rightmenu {
         display:none;
     }
 }
-

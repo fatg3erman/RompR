@@ -11,20 +11,7 @@
         <i class="icon-podcast-circled topimg choose_podcastslist"></i>
         <i class="choose_playlistman onlywide icon-doc-text topimg"></i>
         <i class="choose_pluginplaylists icon-wifi topimg"></i>
-    </div>
-    <div class="expand">
-        <div id="extraplaycontrols" class="invisible">
-        <?php
-                        print '<i title="'.get_int_text('button_previous').'" class="icon-fast-backward clickicon topimg"></i>';
-                        print '<i title="'.get_int_text('button_play').'" class="icon-play-circled clickicon topimg"></i>';
-                        print '<i title="'.get_int_text('button_stop').'" class="icon-stop-1 clickicon topimg"></i>';
-                        print '<i title="'.get_int_text('button_stopafter').'" class="icon-to-end-1 clickicon topimg"></i>';
-                        print '<i title="'.get_int_text('button_next').'" class="icon-fast-forward clickicon topimg"></i>';
-        ?>
-        </div>
-    </div>
-    <div id="playlistcontrols" class="fixed noborder">
-        <div class="topdrop fixed"><i class="icon-volume-up topimg tleft"></i>
+        <div class="topdrop fixed"><i class="icon-volume-up topimg"></i>
             <div class="topdropmenu rightmenu widemenu dropdown">
                 <table><tr><td valign="top">
 <?php
@@ -37,7 +24,7 @@ printOutputCheckboxes();
 
             </div>
         </div>
-        <i class="icon-doc-text topimg tleft choose_playlist"></i>
+        <i class="icon-doc-text topimg choose_playlist"></i>
         <i class="onlywide icon-info-circled topimg choose_infopanel"></i>
         <i class="onlywide choose_prefs icon-cog-alt topimg"></i>
         <div class="topdrop fixed"><i class="icon-menu topimg tleft ninety"></i>
@@ -46,7 +33,7 @@ printOutputCheckboxes();
                 <div class="sptext"></div>
             </div>
         </div>
-        <div class="topdrop fixed onlynarrow"><i class="icon-menu topimg tleft"></i>
+        <div class="topdrop fixed onlynarrow"><i class="icon-menu topimg"></i>
             <div class="topdropmenu rightmenu normalmenu dropdown">
                 <i class="noshrink icon-folder-open-empty topimg choose_filelist"></i>
                 <i class="noshrink choose_playlistman icon-doc-text topimg"></i>
@@ -276,4 +263,3 @@ print get_int_text("lastfm_addtags").'</b><i class="icon-cancel-circled clickico
     </div>
     <div class="containerbox padright dropdown-container tagaddbox"></div>
 </div>
-
