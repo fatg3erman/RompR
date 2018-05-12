@@ -3,7 +3,7 @@
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
 define('ROMPR_SCHEMA_VERSION', 33);
-define('ROMPR_VERSION', 1.11);
+define('ROMPR_VERSION', 1.12);
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_PLAYLIST_KEY', 'IS_ROMPR_PLAYLIST_IMAGE');
@@ -53,8 +53,8 @@ $prefs = array(
     "player_backend" => "mpd",
     "cleanalbumimages" => true,
     // This option for plugin debugging ONLY
-    "load_plugins_at_loadtime" => false,
     "do_not_show_prefs" => false,
+    "load_plugins_at_loadtime" => false,
 
     // Things that could be set on a per-user basis but need to be known by the backend
     "mpd_host" => "localhost",
