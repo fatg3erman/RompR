@@ -51,3 +51,13 @@ header
     background: linear-gradient(rgba(255,120,0,1), rgba(120,60,0,1));
     border-bottom: 1px solid black;
 }
+
+a.button
+{
+    background: transparent url('images/button.png') 0 0 no-repeat;
+}
+
+a.button.download
+{
+    background: transparent url('images/download-button.png') 0 0 no-repeat;
+}
