@@ -4,7 +4,9 @@ The Info Panel will display information about the currently playing Artist, Albu
 ## Spotify
 
 The Spotify Info panel is another source of Music Discovery.
+
 ![](images/infopanel1.png)
+
 You'll get a display of a biography of the artist, options to enabled dynamic playlists based on this artist, and a list of albums by the artist. Each album can be opened to display a track listing. Mopidy-Spotify users can add tracks to the Playlist directly from this panel.
 
 The 'Similar Artists' option allows you to delve deeper into Spotify. You'll get a list of artists that are 'similar' to the current one. Each one can be opened up to get a biography and a list of that artists's albums. Again, tracks can be added to the Playlist directly from here.

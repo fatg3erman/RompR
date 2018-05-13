@@ -7,15 +7,18 @@ For mpd users. the Collection consists of your mpd library. For Mopidy users the
 
 ## Tagging And Rating
 Tracks in the collection can be given a rating (from 1 to 5 stars) and arbitrary text tags. The tags and ratings will be shown in the Music Collection.
+
 ![](images/taggedtrack1.png)
 
 They will also be shown in the Now Playing area. To rate a track that is playing, just click on the stars. To add a tag click on the + sign. To remove a tag, hover over the tag and click the x that appears.
+
 ![](images/taggedtrack2.png)
 
-You can search for tags or ratings using the Search panel. You can also manage them and get a sorted list by using the 'Ratings and Tags' panel. Tags and ratings can also be used to generate dynamic playlists.
+You can search for tags or ratings using the Search panel. You can also manage them and get a sorted list by using the [Ratings and Tags](/RompR/Managing-Ratings-And-Tags) panel. Tags and ratings can also be used to generate dynamic playlists.
 
 ## Collection Sources
 ![](images/buildcollectionfrom.png)
+
 For Mopidy users, the Configuration panel gives you the choice of which Mopidy backends you want to use to build your collection. To get Spotify 'Your Music' and Your Spotify Artists you must be running the Mopidy-Spotify-Web backend as well as Mopidy-Spotify. Other Mopidy backends will also appear in this list if they are enabled in Mopidy.
 
 Classical music lovers (or lovers of other genres) also have the option to sort by Composer for specific Genres. Note that this relies on tracks being tagged with Composer information, which is not always the case with some backends in Mopidy. For local files you will need to tag them yourself for this to work.

@@ -5,7 +5,7 @@ The Playlist might be better termed the 'Play Queue', but mpd uses the term Play
 
 To add a track or album (or all tracks by an artist) to the end of the Playlist, double-click it in the collection (single-click on the Phone skin). On the Desktop skins you can also drag tracks to any position in the playlist. You can re-order tracks or albums by dragging them within the playlist, and remove them by clickng the x.
 
-Mopidy users can add tracks to the Playlist from many other sources too - the Discoverator panel and the Spotify Info panel.
+Mopidy users can add tracks to the Playlist from many other sources too - the [Discoverator](/RompR/Music-Discovery) panel and the [Spotify Info](/RompR/The-Info-Panel) panel.
 
 The 'Musical Notes' icon will appear next to Spotify albums. Clicking this will add the entire album to your collection.
 
