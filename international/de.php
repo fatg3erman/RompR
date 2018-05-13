@@ -611,7 +611,7 @@ $languages['de'] = array (
         "because_liked" => "Dir gefiel %s, vielleicht gefällt Dir auch:",
         "because_listened" => "Ähnlich wie %s:",
         "albumart_findsmall" => "Finde kleine Coverbilder",
-        "label_smartsetup" => "Bereite vor. Bitte einen kleinen Moment...."
+        "label_smartsetup" => "Bereite vor. Bitte einen kleinen Moment....",
         "button_sleep" => "Einschlaf Timer",
         "button_filter" => "Filter"
 
