@@ -66,3 +66,21 @@ a.button.download
 {
     color: black;
 }
+
+#main-content h1::before
+{
+    color: #ff7800;
+    content: "-";
+}
+
+#main-content h2::before
+{
+    color: #ff7800;
+    content: "--";
+}
+
+#main-content h2::before
+{
+    color: #ff7800;
+    content: "---";
+}
