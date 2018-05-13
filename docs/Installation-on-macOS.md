@@ -1,5 +1,5 @@
 # Mac OS X (with Apache webserver)
-Getting this to work on OSX gets harder by the release, but it's not actually that much of a problem. This guide should work on macOS High Sierra.
+Getting this to work on macOS gets harder by the release, but it's not actually that much of a problem. This guide should work on macOS High Sierra.
 
 ## 1. Installing a player
 
@@ -29,12 +29,13 @@ First open Terminal. If you haven't used Terminal before, don't be scared. It's 
 Now if you've downloaded the ZIP file from here, you can copy it into the Sites folder you just created above and unzip it. Probaby you just need to double-click it to do that.
 Now go back to that terminal window and we'll set some permissions.
 
+    cd rompr
     mkdir prefs
     mkdir albumart
     mkdir albumart/small
     mkdir albumart/asdownloaded
-    chmod -R ugo+rw Sites/rompr/prefs
-    chmod -R ugo+rw Sites/rompr/albumart
+    sudo chown -R _www prefs
+    sudo chgrp -R _www albumart
 
 ## 3. Configure Apache Web Server
 This can get a little arcane but it's not all that complicated. There are, of course, a thousand ways to acheive the same thing, and googling will inevitably find differences.
@@ -60,7 +61,7 @@ There's another file we need to edit with nano
 
     sudo nano /private/etc/apache2/other/httpd_dirs.conf
 
-This will open nano again. It may bring up an empty file, or it may bring up a file with stuf in it. Just paste the following on the end (cmd-V to paste). Edit YOURNAME tso it matches your home directory
+This will open nano again. It may bring up an empty file, or it may bring up a file with stuf in it. Just paste the following on the end (cmd-V to paste). Edit YOURNAME so it matches your home directory
 
     <VirtualHost \*:80>
 	    DocumentRoot /Users/YOURNAME/Sites/rompr
