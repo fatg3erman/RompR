@@ -47,6 +47,9 @@ $languages['de'] = array (
 	"config_hidefileslist" => "Verstecke Dateiliste",
 	"config_hidelastfm" => "Verstecke Last.FM Radiosender",
 	"config_hideradio" => "Verstecke Radiosender",
+        "config_hidepodcasts" => "Verstecke Podcasts",
+        "config_hideplaylistslist" => "Verstecke gespeicherte Wiedergabelisten",
+        "config_hidepluginplaylistslist" => "Verstecke personalisierte Radiosender",
 	"config_hidebrowser" => "Verstecke Infofenster",
 	"config_fullbio" => "Hole vollständige Biographie des Künstlers / der Künstlerin von Last.FM",
 	"config_lastfmlang" => "Sprache für Last.FM und Wikipedia",
@@ -579,6 +582,38 @@ $languages['de'] = array (
         "config_country" => "LAND (für Last.FM und Spotify)",
         "setup_labeladdresses" => "Bei Verbindungsproblemen IP Addresse statt 'localhost' benutzen",
         "setup_ipaddress" => "Mopidy oder MPD Server",
+
+        "config_cdplayermode" => "CD Player Modus (Stelle Stücke nicht in die Wartechlange, starte Wiedergabe mit gewähltem Stück)",
+
+        "label_recentlyplayed" => "Kürzlich gespielte Stücke",
+        "label_simar_radio" => "Ähnliche Künstler wie",
+
+        "label_tradsearch_header" => "Irgendetwas eingeben, wonach gesucht werden soll",
+        "label_tradsearch" => "Klassische Suche mit mehreren Suchbegriffen",
+
+        "played_never" => "Dieses Stück wurde noch nie gespielt",
+        "played_once" => "Dieses Stück wurde einmal gespielt",
+        "played_twice" => "Dieses Stück wurde zweimal gespielt",
+        "played_n" => "Dieses Stück wurde %s Mal gespielt",
+        "played_last" => "Es wurde zuletzt am %s gespielt",
+        "added_on" => "Es wurde am %s zur Sammlung hinzugefügt",
+        "button_infoyou" => "Überraschungsmodus",
+        "discover_albums" => "Vorgeschlagene Alben",
+        "discover_now" => "Vorgeschlagen auf Grund von %s",
+        "config_discovembobulate" => "Überraschungsmodus beim Start ausführen",
+        "label_spotify_mix" => "Spotify Wochen Mix",
+        "label_spotify_dj" => "Spotify Swim",
+        "label_spottery_lottery" => "Spotify Zufallsauswahl!",
+        "label_dailymix" => "Dein täglicher Mix",
+        "label_luckydip" => "Your Lucky Dip",
+        "label_startshere" => "Deine Entdeckungsreise startet hier",
+        "label_getspotify" => "Installiere Spotify, um Deine Entdeckungsreise zu beginnen",
+        "because_liked" => "Dir gefiel %s, vielleicht gefällt Dir auch:",
+        "because_listened" => "Ähnlich wie %s:",
+        "albumart_findsmall" => "Finde kleine Coverbilder",
+        "label_smartsetup" => "Bereite vor. Bitte einen kleinen Moment...."
+        "button_sleep" => "Einschlaf Timer",
+        "button_filter" => "Filter"
 
 );
 
