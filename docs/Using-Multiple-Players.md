@@ -10,6 +10,8 @@ You can add new players from the configuration menu. This opens a dialog box.
 
 To select a player to use, just select it in the Configuration menu and that browser will use it whenever you open RompЯ.
 
+![](images/players2.png)
+
 Remember that 'localhost' in a player definition means 'the computer running the web server'.
 
 If you're using players that are on different computers from the web server you should also read [this guide](/RompR/Troubleshooting).
