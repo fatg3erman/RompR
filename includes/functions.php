@@ -390,9 +390,9 @@ function albumHeader($obj) {
             $h .= '<div class="icon-menu playlisticonr fixed clickable clickicon clickalbummenu '.implode(' ',$classes).'" name="'.$id.'"></div>';
         }
     }
-    if ($obj['why'] == "b" && $obj['AlbumUri'] && substr($obj['AlbumUri'],0,13) == "spotify:album") {
-        $h .= '<input type="hidden" class="expandthisalbum"/>';
-    }
+    // if ($obj['why'] == "b" && $obj['AlbumUri'] && substr($obj['AlbumUri'],0,13) == "spotify:album") {
+    //     $h .= '<input type="hidden" class="expandthisalbum"/>';
+    // }
     $h .= '</div>';
     return $h;
 }
