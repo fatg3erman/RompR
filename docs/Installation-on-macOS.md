@@ -8,13 +8,12 @@ You'll need either MPD or Mopidy
 ### Install Mopidy...
 The instructions on mopidy's website no longer work, so
 
-First install Homebrew from https://brew.sh/
+First install [Homebrew](https://brew.sh/)
 
-Then go here instead
-https://discourse.mopidy.com/t/cant-run-mopidy-on-fresh-brew-install-getting-python-framework-error/2343/2
+Then go [here](https://discourse.mopidy.com/t/cant-run-mopidy-on-fresh-brew-install-getting-python-framework-error/2343/2)
 
 ### ... or install MPD
-First install Homebrew from https://brew.sh/
+First install [Homebrew](https://brew.sh/)
 
 Then
 

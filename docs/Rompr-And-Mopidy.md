@@ -1,6 +1,6 @@
 # Using RompR with Mopidy
 
-Mopidy (http://www.mopidy.com/) is an mpd-like player that does everything mpd does and more. It plays Spotify, for one thing :)
+[Mopidy](http://www.mopidy.com/) is an mpd-like player that does everything mpd does and more. It plays Spotify, for one thing :)
 
 If you use Mopidy, please make sure you read the following to ensure you get the best out of it.
 
