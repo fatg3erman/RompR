@@ -1,9 +1,11 @@
 # SQL Server Configuration
+
 By default, RompЯ uses SQLite for its database. This option requires no setup and will work for most people.
 
 If you would like to use a MySQL server instead - perhaps because you're already running one - then you can do so.
 
 ## Create mysql database
+
 You must create the RompЯ database before you start. You will need your mysql root password.
 
     mysql -uroot -p
@@ -33,6 +35,7 @@ And now link this file so mysql can find it
 Note that the default MySQL settings I've encountered on several distributions make MySQL significantly slower than SQLite for RompЯ, unless you have an extremely large music collection (hundreds of thousands of tracks). Setting these parameters restores the balance. Somewhat.
 
 ## Configure RompЯ
+
 Point your web browser at
 
     http://your.rompr.installation/?setup

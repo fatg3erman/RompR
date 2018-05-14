@@ -1,4 +1,5 @@
-# Mac OS X (with Apache webserver)
+# macOS (with Apache webserver)
+
 Getting this to work on macOS gets harder by the release, but it's not actually that much of a problem. This guide should work on macOS High Sierra.
 
 ## 1. Installing a player
@@ -6,6 +7,7 @@ Getting this to work on macOS gets harder by the release, but it's not actually 
 You'll need either MPD or Mopidy
 
 ### Install Mopidy...
+
 The instructions on mopidy's website no longer work, so
 
 First install [Homebrew](https://brew.sh/)
@@ -13,6 +15,7 @@ First install [Homebrew](https://brew.sh/)
 Then go [here](https://discourse.mopidy.com/t/cant-run-mopidy-on-fresh-brew-install-getting-python-framework-error/2343/2)
 
 ### ... or install MPD
+
 First install [Homebrew](https://brew.sh/)
 
 Then
@@ -20,6 +23,7 @@ Then
     brew install mpd --with-opus --with-libmss
 
 ## 2. Installing Rompr
+
 First open Terminal. If you haven't used Terminal before, don't be scared. It's under 'Other' or 'Utilities'. Type commands exactly as they appear here, and enter your Mac password whenever you are asked.
 
     cd ~
@@ -37,6 +41,7 @@ Now go back to that terminal window and we'll set some permissions.
     sudo chgrp -R _www albumart
 
 ## 3. Configure Apache Web Server
+
 This can get a little arcane but it's not all that complicated. There are, of course, a thousand ways to acheive the same thing, and googling will inevitably find differences.
 
 ### 3a. httpd.conf
@@ -103,6 +108,7 @@ This will open nano again. It may bring up an empty file, or it may bring up a f
 Once again, Ctrl-X and answer Y to save the file.
 
 ### 3c. php7.conf
+
 There's one more
 
     sudo nano /private/etc/apache2/other/php7.conf
@@ -137,6 +143,7 @@ We're nearly there. So nearly.
 
 
 ## 5. Edit Hosts Definition
+
 You may have noticed we used www.myrompr.net above. We need the OS to know where that is
 
     sudo nano /etc/hosts
@@ -146,5 +153,6 @@ and add a line
     127.0.0.1	www.myrompr.net
 
 ## 6. And We're Done##
+
 Your browser can now be pointed at www.myrompr.net.
 To access rompr from another device you need to edit the hosts file there too. If you can't edit the hosts file, just use the computer's IP address.

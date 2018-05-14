@@ -1,12 +1,16 @@
+# Installation On Linux
+
 RompЯ is a client for mpd or mopidy - you use RompЯ in a web browser to make mpd or mopidy play music
 These are basic installation instructions for RompЯ on Linux, using the code you can download from here on github.
 
 **The old project homepage is at [SourceForge](https://sourceforge.net/projects/rompr/). The old discussion forum is still there and you may find answers to some questions is you have them.**
 
 ## Assumptions
+
 I'm going to assume you already have mpd or mopidy installed and working. This is not the place to discuss the arcane art of configuring mpd. For that you'll have to read the mpd community wiki. Sorry about that. The mopidy instructions are quite good.
 
 ## Recommended Setup for Linux
+
 This is the way I now recommend you do it. Thanks to the anonymous forum user who put up the initial instructions for getting it to work with PHP7 when I was in the wilderness.
 
 _The following is a guide. It has been tested on Kubuntu 17.10 so Ubuntu and Debian flavours should follow this. Other distributions will be similar but package names may be different and the location of files may be different. Sorry, I can't try them all. If only they'd agree._
@@ -14,11 +18,13 @@ _The following is a guide. It has been tested on Kubuntu 17.10 so Ubuntu and Deb
 This guide sets up RompЯ to work with the nginx web server, an sqlite database and allows you to access it using a nice url - www.myrompr.net
 
 ### Install RompЯ
+
 Download the latest release from [The Github Releases Page](https://github.com/fatg3erman/RompR/releases)
 
 Let's assume you extracted the zip file into a folder called 'web' in your home directory. So now you have /home/YOU/web/rompr. From now on we're going to refer to that as /PATH/TO/ROMPR, because that's what programmers do and it makes the guide more general. You can put the code anywhere you like, although it won't work very well if you put it in the oven. So you'll need to look out for /PATH/TO/ROMPR in everything below and make sure you substitute the correct path.
 
 ### Set directory permissions
+
 We need to create directories to store data in.
 
     cd /PATH/TO/ROMPR
@@ -41,6 +47,7 @@ And then we need to give nginx permission to write to them. We can do this by ch
 _Note the version numbers - 7.1 is current at the time of  writing but as times change it may become 7.2,etc. On Ubuntu 16.04 I think it is 7.0. Amend the command as applicable_
 
 ### Create nginx configuration
+
 We're going to create RompЯ as a standalone website which will be accessible through the address www.myrompr.net
 
 _Note. This sets RompЯ as the default site on your machine. For most people this will be the best configuration. If you are someone who cares about what that means and understands what that means, then you already know how to add RompЯ as the non-default site. What is described here is the easiest setup, which will work for most people_
@@ -90,6 +97,7 @@ Save the file (Ctrl-X in nano, then answer 'Y'). Now link the configuration so i
     sudo ln -s /etc/nginx/sites-available/rompr /etc/nginx/sites-enabled/rompr
 
 ### Edit the hosts file
+
 To make your browser capable of accessing www.myrompr.net we need to edit your hosts file so the computer knows where www.myrompr.net actually is.
 
     sudo nano /etc/hosts
@@ -103,6 +111,7 @@ You will need to make this change on every device you want to access rompr from 
 _Those of you who want to be clever and know how to edit hostname and DNS mapping on your router can do that, you will then not need RompЯ to be default site and you will not need to remove the existing default config. Just remove default_server where it appears above and set server_name appopriately. If you didn't understand that, then ignore this paragraph._
 
 ### Edit PHP configuration
+
 We need to edit the PHP configuration file.
 
     sudo nano /etc/php/7.1/fpm/php.ini

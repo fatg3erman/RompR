@@ -28,10 +28,9 @@ RompЯ is a music player with the emphasis on discovery - discovering more about
 Please see the links to the right of this text for installation instructions.
 
 ### RompЯ on a desktop browser
+
 ![](images/rompr-1.png)
 
 ### RompЯ on a phone browser
-![](images/rompr-on-a-phone.png)
 
-### Music Discovery
-![](images/discovery.png)
+![](images/rompr-on-a-phone.png)

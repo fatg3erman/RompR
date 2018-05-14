@@ -4,7 +4,7 @@ The Phone Skin is the default if you're accessing RompЯ on a smaller screen. It
  
 The phone skin adjusts its layout according to the size and orientation of your screen.
 
-For example here is how it looks on a iPad in portrait mode.
+For example here is how it looks on an iPad in portrait mode.
 
 ![](images/ipad-portrait.png)
 

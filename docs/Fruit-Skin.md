@@ -1,12 +1,10 @@
 # The Fruit Skin
 
-Why Fruit. I suck at making up names, that's why. The Fruit skin is an alternative skin aimed at desktop/laptop browsers. It gives more space to the Info panel by moving the Current Playlist to a dropdown menu.
+Why Fruit? I suck at making up names, that's why. The Fruit skin is an alternative skin aimed at desktop/laptop browsers. It gives more space to the Info panel by moving the Current Playlist to a dropdown menu.
 
 ![](images/fruitskin.png)
 
-Other than the vertical layout of some of the controls, and more space for the album art and Now Playing panel, this skin is pretty much identical to the Desktop skin.
-
-The Current Playlist can be opened from the 'hamburger' icon by the volume control, next to it there is an 'Up Next' display.
+The Current Playlist can be opened from the 'hamburger' icon by the volume control, next to which there is an 'Up Next' display.
 
 ![](images/fruitqueue.png)
 

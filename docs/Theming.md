@@ -1,10 +1,13 @@
 # Customising the Interface
 
 RompЯ allows you to customise the interface with different options:
-* Theme defines colours and background.
-* Icons can be chosen from white, black, colourful, or iconfont.
-* A range of different font styles can be used
-* The font size can be changed
+* **Theme** defines colours and background.
+* **Icons** can be chosen from white, black, colourful, or iconfont.
+* **Font Style** allows you to pick a font
+* **Font Size** allows you to change the font size
+* **Album Cover Size** changes the size of the album covers in the Music Collection and Current Playlist
+
+![](images/appearance.png)
 
 This is Numismatist, the default theme, using the 'Modern-Dark' icons
 

@@ -8,7 +8,7 @@ First thing, get the most up-to-date copy of the English translation from
 
     rompr/international/en.php
 
-Make a copy of this file. The name you give it should reflect the language you are translating into. RompЯ will use the file name to help it automatically select an appropriate language. The file name should be the two letter code for your language. There is a list of those codes here http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes under the column 639-1.
+Make a copy of this file. The name you give it should reflect the language you are translating into. RompЯ will use the file name to help it automatically select an appropriate language. The file name should be the two letter code for your language. There is a list of those codes [here] (http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) under the column 639-1.
 
 For example, if you are translating into French, call it 'fr.php'. For German, 'de.php'. For Russian, 'ru.php'
 

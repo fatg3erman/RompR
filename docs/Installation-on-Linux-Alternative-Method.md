@@ -1,15 +1,18 @@
 # Installation Guide
+
 RompЯ is a client for mpd or mopidy - you use RompЯ in a web browser to make mpd or mopidy play music
 These are basic installation instructions for RompЯ on Linux, using the code you can download from here on github.
 
 **The old project homepage is at [SourceForge](https://sourceforge.net/projects/rompr/). The old discussion forum is still there and you may find answers to some questions is you have them.**
 
 ## Assumptions
+
 I'm going to assume you already have mpd or mopidy installed and working. This is not the place to discuss the arcane art of configuring mpd. For that you'll have to read the mpd community wiki. Sorry about that. The mopidy instructions are quite good.
 
 This guide works on the assumption that you're using RompЯ on a machine that has apache2 and mysql installed and set up already. If you've installed Mythbuntu and Mythweb then this will be the csae.
 
 ## How to install on Linux with Apache and MySQL
+
 This guide came about because I was installing RompЯ on a Mythbuntu 16.04 installation where I also wanted to use Mythweb. Because Mythweb brings in Apache2 I was unable to use nginx as the webserver. So I came up with this method. If you already have a mythtv install, or another system which already used Apache2 (and mysql, optionally) then this method should work for you.
 
 If you are using Mythweb, you should make sure you've installed it with the option to use it alongside other websites. If you want to check this, do
@@ -17,11 +20,13 @@ If you are using Mythweb, you should make sure you've installed it with the opti
     sudo dpkg-reconfigure mythweb
 
 ### Install RompЯ
+
 Download the latest release from [The Github Releases Page](https://github.com/fatg3erman/RompR/releases)
 
 Let's assume you extracted the zip file into a folder called 'web' in your home directory. So now you have /home/YOU/web/rompr. From now on we're going to refer to that as /PATH/TO/ROMPR, because that's what programmers do and it makes the guide more general. You can put the code anywhere you like, although it won't work very well if you put it in the oven. So you'll need to look out for /PATH/TO/ROMPR in everything below and make sure you substitute the correct path.
 
 ### Set directory permissions
+
 We need to create directories to store data in.
 
     cd /PATH/TO/ROMPR
@@ -38,6 +43,7 @@ And then we need to give Apache permission to write to them. We can do this by c
 
 
 ### Make sure Apache can find RompЯ
+
 We need to make sure Apache can find the stuff you've just downloaded. To do this we create a soft link from Apache's base directory to the folder you downloaded. On Ubuntu, the default base directory for Apache is /var/www/html, so
 
     sudo ln -s /PATH/TO/ROMPR /var/www/html/rompr
@@ -61,6 +67,7 @@ _If you want to use SQLite instead of mysql, substitute php7.0-sqlite3 for php7.
 
 
 ### Create Apache configuration
+
 We're going to create an Apache configuration file for RompЯ. I'll assume it's been placed in my home directory, eg at /home/YOU/web/rompr.conf. We'll refer to that as /PATH/TO/ROMPRCONF.
 
 So, create this file, note I've assumed the default apache root directory of /var/www/html
@@ -104,6 +111,7 @@ Now symlink that file so that Apache can find it
     sudo ln -s /PATH/TO/ROMPRCONF /etc/apache2/sites-enabled/rompr.conf
 
 ### Create mysql database
+
 Now we'll create the mysql database for RompЯ. You will need to know your mysql root password. If you've installed the standard mythbuntu install, this will be your login password.
 
     mysql -uroot -p
@@ -129,12 +137,14 @@ And now link this file so mysql can find it
     sudo ln -s /PATH/TO/ROMPR-TWEAKS /etc/mysql/mysql.conf.d/rompr-tweaks.cnf
 
 ### Finally....
+
 Restart all the system services we've changed
 
     sudo service apache2 restart
     sudo service mysql restart
 
 ### And Tell RompЯ to use MySQL
+
 Visit your new RompЯ installation at http://ip.of.computer.with.rompr/rompr?setup
 On that page, configure RompЯ to use MySQL and set usernames, passwords, ports, etc as appropriate (the defaults should work unless you've changed anything in your mysql install). Click 'OK' at the bottom.
 

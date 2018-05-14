@@ -6,7 +6,7 @@ If you use Mopidy you will be able to create new playlists, edit local ones, and
 
 ## Viewing Your Saved Playlists
 
-The Playlists panel shows you all your saved playlists. You can open each one (as if it were an album) to view the contents. To play an entire playlist, double-click its name. You can also add individual tracks to the Current Playlist (Play Queue) in the same way.
+The Playlists panel shows you all your saved playlists. You can open each one (as if it were an album) to view the contents. To play an entire playlist, double-click its name. You can also add individual tracks to the Current Playlist in the same way.
 
 ![](images/playlists1.png)
 
@@ -18,7 +18,7 @@ The Playlist Manager can be opened from the dropdown menu above the Info panel (
 
 ![](images/playlists2.png)
 
-You can re-roder tracks in saved playlists by dragging them around. Tracks can be removed by clicking the x next to the track.
+You can re-order tracks in saved playlists by dragging them around. Tracks can be removed by clicking the x next to the track.
 
 Playlists can be renamed using the floppy disc icon next to the playlist name. Playlists can be deleted using the x next to that.
 
