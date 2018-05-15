@@ -571,6 +571,13 @@ function setSearchLabelWidth() {
     } else {
         $("#mopidysearchdomains").hide();
     }
+    if (prefs.advanced_search_open) {
+        $("#advsearchoptions").show();
+        $('[name="advsearchoptions"]').toggleOpen()();
+    } else {
+        $("#advsearchoptions").hide();
+        $('[name="advsearchoptions"]').toggleclosed()();
+    }
 }
 
 function setSpotiLabelWidth() {

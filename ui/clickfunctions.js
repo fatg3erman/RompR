@@ -326,6 +326,9 @@ function doMenu(event, element) {
     if (layoutProcessor.postAlbumMenu) {
         layoutProcessor.postAlbumMenu(element);
     }
+    if (menutoopen == 'advsearchoptions') {
+        prefs.save({advanced_search_open: element.isOpen()});
+    }
     return false;
 }
 

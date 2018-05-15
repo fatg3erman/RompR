@@ -56,7 +56,8 @@ var prefs = function() {
         "ratman_showletters",
         "ratman_smallart",
         "sleeptime",
-        "sleepon"
+        "sleepon",
+        "advanced_search_open"
     ];
 	
 	const jsonNode = document.querySelector("script[name='prefs']");

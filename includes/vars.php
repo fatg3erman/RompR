@@ -132,7 +132,8 @@ $prefs = array(
     "ratman_showletters" => false,
     "ratman_smallart" => false,
     "sleeptime" => 30,
-    "sleepon" => false
+    "sleepon" => false,
+    "advanced_search_open" => false
 );
 
 // ====================================================================
