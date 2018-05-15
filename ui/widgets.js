@@ -1192,6 +1192,9 @@ $.widget("rompr.makeDomainChooser", {
                 'podcast+https': 1,
                 'podcast+ftp': 1,
                 'podcast+file': 1,
+                'podcast+itunes': 1,
+                'podcast+gpodder.net': 1,
+                'podcast+gpodder': 1
         }
     },
 

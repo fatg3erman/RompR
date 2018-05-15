@@ -121,10 +121,12 @@ function logit($key) {
 function checkDomains($d) {
     if (array_key_exists('domains', $d)) {
         $arse = $d['domains'];
-        if (array_key_exists('podcast', $d['domains'])) {
+        if (in_array('podcast', $arse)) {
             // Mopidy's podcast backend supports FIVE different domains. Sheeee-it.
+            debuglog("We're searching for podcasts","COLLECTION");
             $arse = array_merge($arse, array("podcast http","podcast https","podcast ftp","podcast file"));
         }
+        debuglog("Search Domains Are ".implode(', ', $arse),"COLLECTION");
         return $arse;
     }
     debuglog("No search domains in use","SEARCH");

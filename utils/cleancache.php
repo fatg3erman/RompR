@@ -89,6 +89,8 @@ if ($mysqlc) {
                     case "podcast":
                     case "podcast+http":
                     case "podcast http":
+                    case "podcast+https":
+                    case "podcast https":
                         $image = "newimages/podcast-logo.svg";
                         $searched = 1;
                         break;

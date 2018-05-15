@@ -438,6 +438,8 @@ function cacheOrDefaultImage($image, $artname, $size, $domain) {
         case "podcast":
         case "podcast+http":
         case "podcast http":
+		case "podcast+https":
+        case "podcast https":
             // Some podcasts return album images, which will be $this->image
             // But not all of them do so we need a fallback.
             if ($image == "") $image = "newimages/podcast-logo.svg";
@@ -648,14 +650,14 @@ function process_file($filedata) {
         case "podcast https":
         case "podcast ftp":
         case "podcast file":
-            $filedata['folder'] = dirname($file);
+            $filedata['folder'] = dirname($filedata['file']);
             $matches = array();
-            $a = preg_match('/podcast\+http:\/\/(.*?)\//', $filedata['file'], $matches);
+            $a = preg_match('/podcast\+(.*?):\/\/(.*?)\//', $filedata['file'], $matches);
             if ($a == 1) {
-                $filedata['AlbumArtist'] = array($matches[1]);
+                $filedata['AlbumArtist'] = array($matches[2]);
                 $filedata['Album'] = $filedata['Title'];
                 $filedata['Album'] = preg_replace('/^Album\:\s*/','',$filedata['Album']);
-                $albumuri = $file;
+                $albumuri = $filedata['file'];
             } else {
                 $filedata['AlbumArtist'] = array("Podcasts");
             }
