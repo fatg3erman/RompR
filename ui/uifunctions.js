@@ -576,7 +576,7 @@ function setSearchLabelWidth() {
         $('[name="advsearchoptions"]').toggleOpen()();
     } else {
         $("#advsearchoptions").hide();
-        $('[name="advsearchoptions"]').toggleclosed()();
+        $('[name="advsearchoptions"]').toggleClosed()();
     }
 }
 
