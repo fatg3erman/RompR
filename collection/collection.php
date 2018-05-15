@@ -58,6 +58,16 @@ class musicCollection {
         $this->albums = array();
         $cp_time += microtime(true) - $cstart;
     }
+	
+	public function get_albumartist_by_folder($f) {
+		foreach ($this->albums as $album) {
+			if ($album->folder == $f) {
+				debuglog("   Found albumartist by folder ".$album->artist,"COLLECTION");
+				return $album->artist;
+			}
+		}
+		return null;
+	}
 
     public function tracks_as_array() {
         $results = array();
@@ -551,11 +561,17 @@ function process_file($filedata) {
 
     check_is_stream($filedata);
 
-    if ($filedata['type'] != 'stream') {
+    if ($filedata['type'] != 'stream' &&
+		$filedata['domain'] != 'podcast http' &&
+		$filedata['domain'] != 'podcast https' &&
+		$filedata['domain'] != 'podcast ftp' &&
+		$filedata['domain'] != 'podcast file'
+	) {
         if ($filedata['Title'] == null) $filedata['Title'] = rawurldecode(basename($filedata['file']));
         if ($filedata['Album'] == null) $filedata['Album'] = album_from_path($unmopfile);
         if ($filedata['Artist'] == null) $filedata['Artist'] = array(artist_from_path($unmopfile, $filedata['file']));
     }
+	
     if ($filedata['Track'] == null) {
         $filedata['Track'] = format_tracknum(basename(rawurldecode($filedata['file'])));
     } else {
@@ -650,17 +666,24 @@ function process_file($filedata) {
         case "podcast https":
         case "podcast ftp":
         case "podcast file":
-            $filedata['folder'] = dirname($filedata['file']);
-            $matches = array();
-            $a = preg_match('/podcast\+(.*?):\/\/(.*?)\//', $filedata['file'], $matches);
-            if ($a == 1) {
-                $filedata['AlbumArtist'] = array($matches[2]);
-                $filedata['Album'] = $filedata['Title'];
-                $filedata['Album'] = preg_replace('/^Album\:\s*/','',$filedata['Album']);
-                $albumuri = $filedata['file'];
-            } else {
-                $filedata['AlbumArtist'] = array("Podcasts");
-            }
+            $filedata['folder'] = $filedata['X-AlbumUri'];
+			if ($filedata['Artist'] !== null) {
+				$filedata['AlbumArtist'] = $filedata['Artist'];
+			} else {
+				$filedata['AlbumArtist'] = $collection->get_albumartist_by_folder($filedata['X-AlbumUri']);
+			}
+			if ($filedata['AlbumArtist'] === null) {
+	            $matches = array();
+	            $a = preg_match('/podcast\+(.*?):\/\/(.*?)\//', $filedata['file'], $matches);
+	            if ($a == 1) {
+	                $filedata['AlbumArtist'] = array($matches[2]);
+	                $filedata['Album'] = $filedata['Title'];
+	                $filedata['Album'] = preg_replace('/^Album\:\s*/','',$filedata['Album']);
+	                $albumuri = $filedata['file'];
+	            } else {
+	                $filedata['AlbumArtist'] = array("Podcasts");
+	            }
+			}
             if (is_array($filedata['Artist']) && ($filedata['Artist'][0] == "http" || $filedata['Artist'][0] == "https" ||
                 $filedata['Artist'][0] == "ftp" || $filedata['Artist'][0] == "file" ||
                 substr($filedata['Artist'][0],0,7) == "podcast")) {
