@@ -573,10 +573,10 @@ function setSearchLabelWidth() {
     }
     if (prefs.advanced_search_open) {
         $("#advsearchoptions").show();
-        $('[name="advsearchoptions"]').toggleOpen()();
+        $('[name="advsearchoptions"]').toggleOpen();
     } else {
         $("#advsearchoptions").hide();
-        $('[name="advsearchoptions"]').toggleClosed()();
+        $('[name="advsearchoptions"]').toggleClosed();
     }
 }
 
