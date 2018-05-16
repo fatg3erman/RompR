@@ -505,6 +505,15 @@ function is_albumlink($uri) {
     return preg_match('/^.+?:album:|^.+?:artist:/',$uri);
 }
 
+function unmopify_file($file) {
+	// This has been times as much faster than using a regexp
+	$cock = explode(':', $file);
+    if (count($cock) > 1) {
+        $file = array_pop($cock);
+    }
+	return $file;
+}
+
 function process_file($filedata) {
 
     global $numtracks, $totaltime, $prefs, $dbterms, $collection, $trackbytrack, $doing_search;
@@ -521,7 +530,6 @@ function process_file($filedata) {
             return false;
         }
     }
-
    if ($prefs['ignore_unplayable'] && strpos($filedata['Title'], "[unplayable]") === 0) {
         debuglog("Ignoring unplayable track ".$filedata['file'],"COLLECTION",9);
         return false;
@@ -530,34 +538,22 @@ function process_file($filedata) {
         debuglog("Ignoring unloaded track ".$filedata['file'],"COLLECTION",9);
         return false;
     }
-    // Spotify has taken to returning album links with no artist data... sigh.
-    if ($filedata['Artist'] == null && is_albumlink($filedata['file'])) {
-        debuglog("Ignoring useless album/artist link without artist name","COLLECTION",7);
-        return false;
-    }
     
     $filedata['domain'] = getDomain($filedata['file']);
-    $unmopfile  = preg_replace('/^.+?:(track|album|artist):/', '', $filedata['file']);
+	$unmopfile = unmopify_file($filedata['file']);
 
-    check_is_stream($filedata);
-
-    if ($filedata['type'] != 'stream' && $filedata['domain'] != 'podcast') {
-        if ($filedata['Title'] == null) $filedata['Title'] = rawurldecode(basename($filedata['file']));
-        if ($filedata['Album'] == null) $filedata['Album'] = album_from_path($unmopfile);
-        if ($filedata['Artist'] == null) $filedata['Artist'] = array(artist_from_path($unmopfile, $filedata['file']));
-    }
-	
-    if ($filedata['Track'] == null) {
+	if ($filedata['Track'] == null) {
         $filedata['Track'] = format_tracknum(basename(rawurldecode($filedata['file'])));
     } else {
         $filedata['Track'] = format_tracknum(ltrim($filedata['Track'], '0'));
     }
-
+	
     // cue sheet link (mpd only). We're only doing CUE sheets, not M3U
     if ($filedata['X-AlbumUri'] === null && strtolower(pathinfo($filedata['playlist'], PATHINFO_EXTENSION)) == "cue") {
         $filedata['X-AlbumUri'] = $filedata['playlist'];
         debuglog("Found CUE sheet for album ".$filedata['Album'],"COLLECTION");
     }
+	
     // Disc Number
     if ($filedata['Disc'] != null) {
         $filedata['Disc'] = format_tracknum(ltrim($filedata['Disc'], '0'));
@@ -574,16 +570,37 @@ function process_file($filedata) {
         $filedata['Disc'] = 0;
         $filedata['Track'] = 0;
     }
-
+	
     switch($filedata['domain']) {
-        // Some domain-specific fixups for mpd's soundcloud playlist plugin and various unhelpful
-        // mopidy backends. There's no consistency of behaviour in the Mopidy backends
-        // so to provide some kind of consistency of display we have to do a lot of work.
+
+		case 'http':
+		case 'https':
+		case 'mms':
+		case 'mmsh':
+		case 'mmst':
+		case 'mmsu':
+		case 'gopher':
+		case 'rtp':
+		case 'rtsp':
+		case 'rtmp':
+		case 'rtmpt':
+		case 'rtmps':
+		case 'dirble':
+		case 'tunein':
+		case 'radio-de':
+		case 'audioaddict':
+		case 'oe1':
+		case 'bassdrive':
+			check_is_stream($filedata);
+			break;
 
         case 'local':
             // mopidy-local-sqlite sets album URIs for local albums, but sometimes it gets it very wrong
             $filedata['X-AlbumUri'] = null;
             $filedata['folder'] = dirname($unmopfile);
+			if ($filedata['Title'] == null) $filedata['Title'] = rawurldecode(basename($filedata['file']));
+		    if ($filedata['Album'] == null) $filedata['Album'] = album_from_path($unmopfile);
+		    if ($filedata['Artist'] == null) $filedata['Artist'] = array(artist_from_path($unmopfile, $filedata['file']));
             break;
 
         case "soundcloud":
@@ -621,6 +638,9 @@ function process_file($filedata) {
             break;
 
         case "internetarchive":
+			if ($filedata['Title'] == null) $filedata['Title'] = rawurldecode(basename($filedata['file']));
+			if ($filedata['Album'] == null) $filedata['Album'] = album_from_path($unmopfile);
+			if ($filedata['Artist'] == null) $filedata['Artist'] = array(artist_from_path($unmopfile, $filedata['file']));
             $filedata['X-AlbumUri'] = $filedata['file'];
             $filedata['folder'] = $filedata['file'];
             $filedata['AlbumArtist'] = "Internet Archive";
@@ -642,6 +662,9 @@ function process_file($filedata) {
             break;
 
         default:
+			if ($filedata['Title'] == null) $filedata['Title'] = rawurldecode(basename($filedata['file']));
+			if ($filedata['Album'] == null) $filedata['Album'] = album_from_path($unmopfile);
+			if ($filedata['Artist'] == null) $filedata['Artist'] = array(artist_from_path($unmopfile, $filedata['file']));
             $filedata['folder'] = dirname($unmopfile);
             break;
     }

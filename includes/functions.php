@@ -526,7 +526,51 @@ function getDomain($d) {
     if ($s == "api.soundcloud.") {
         return "soundcloud";
     }
+    if ($a == 'http' || $a == 'https') {
+        if (preg_match('#/item/\d+/file$#', $d)) {
+    		return 'local';
+    	} else if (strpos($d, 'vk.me') !== false) {
+    		return 'vkontakte';
+    	} else if (strpos($d, 'oe1:archive') !== false) {
+    		return 'oe1';
+    	} else if (strpos($d, 'http://leftasrain.com') !== false) {
+    		return 'leftasrain';
+    	} else if (strpos($d, 'archives.bassdrivearchive.com') !== false ||
+                    strpos($d, 'bassdrive.com') !== false) {
+            return 'bassdrive';
+        }
+    }
     return strtok($a, ' ');
+}
+
+function getStreamFolder($url) {
+    $f = dirname($url);
+    if ($f == "." || $f == "") $f = $url;
+    return $f;
+}
+
+function getDummyStation($url) {
+    $f = getDomain($url);
+    switch ($f) {
+        case "http":
+        case "https":
+        case "mms":
+        case "mmsh":
+        case "mmst":
+        case "mmsu":
+        case "gopher":
+        case "rtp":
+        case "rtsp":
+        case "rtmp":
+        case "rtmpt":
+        case "rtmps":
+            return "Radio";
+            break;
+
+        default:
+            return ucfirst($f);
+            break;
+    }
 }
 
 function sql_init_fail($message) {
