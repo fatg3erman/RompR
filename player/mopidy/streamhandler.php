@@ -33,34 +33,26 @@ function check_is_stream(&$filedata) {
             $filedata['Album'] = substr($filedata['file'], strrpos($filedata['file'], '#')+1, strlen($filedata['file']));
         }
 
-        // Mopidy's podcast backend
-        if ($filedata['Genre'] == "Podcast") {
-            if ($filedata['X-AlbumImage'] == null) {
-                $filedata['X-AlbumImage'] = "newimages/podcast-logo.svg";
-            }
-            $filedata['type'] = "podcast";
+        // Sometimes the file domain can be http but the album domain is correct
+        // this is true eg for bassdrive
+        if ($filedata['X-AlbumUri'] !== null && getDomain($filedata['X-AlbumUri']) != getDomain($filedata['file'])) {
+            $filedata['domain'] = getDomain($filedata['X-AlbumUri']);
         }
 
-        // Pretty up the images for some mopidy stream domains
-        switch ($filedata['domain']) {
-            case "audioaddict":
-            case "oe1":
-            case "tunein":
-            case "radio-de":
-            case "dirble":
-                if ($filedata['X-AlbumImage'] == null) {
-                    $filedata['X-AlbumImage'] = "newimages/".$filedata['domain']."-logo.svg";
-                }
-                break;
+        if (strpos($filedata['file'], 'archives.bassdrivearchive.com') !== false) {
+            // Slightly annoyingly, bassdrive archive tracks come back with http uris.
+            $filedata['domain'] = "bassdrive";
+        }
 
-            case "http":
-                if (strpos($filedata['file'], 'bassdrive.com') !== false) {
-                    if ($filedata['X-AlbumImage'] == null) {
-                        $filedata['X-AlbumImage'] = "newimages/bassdrive-logo.svg";
-                    }
-                    $filedata['Album'] = "Bassdrive";
-                }
-                break;
+        if (strpos($filedata['file'], 'bassdrive.com') !== false) {
+            // Slightly annoyingly, bassdrive archive tracks come back with http uris.
+            $filedata['domain'] = "bassdrive";
+            $filedata['Album'] = 'Bassdrive';
+        }
+
+        // Mopidy's podcast backend
+        if ($filedata['Genre'] == "Podcast") {
+            $filedata['type'] = "podcast";
         }
 
         if (preg_match('/^http:/', $filedata['X-AlbumImage'])) {

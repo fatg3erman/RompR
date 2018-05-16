@@ -120,14 +120,7 @@ function logit($key) {
 
 function checkDomains($d) {
     if (array_key_exists('domains', $d)) {
-        $arse = $d['domains'];
-        if (in_array('podcast', $arse)) {
-            // Mopidy's podcast backend supports FIVE different domains. Sheeee-it.
-            debuglog("We're searching for podcasts","COLLECTION");
-            $arse = array_merge($arse, array("podcast http","podcast https","podcast ftp","podcast file"));
-        }
-        debuglog("Search Domains Are ".implode(', ', $arse),"COLLECTION");
-        return $arse;
+        return $d['domains'];
     }
     debuglog("No search domains in use","SEARCH");
     return null;
@@ -187,26 +180,34 @@ function browse_album() {
     $what = $matches[2];
     $who = $matches[3];
     $albumlink = get_albumlink($who);
-    if (preg_match('/^.+?:artist:/', $albumlink)) {
-        remove_album_from_database($who);
-    }
-    $cmd = 'find file "'.$albumlink.'"';
-    debuglog("Doing Album Browse : ".$cmd,"MPD");
-    prepareCollectionUpdate();
-    doCollection($cmd, $domains);
-    $collection->tracks_to_database(true);
-    close_transaction();
-    remove_findtracks();
-    if (preg_match('/^.+?:album:/', $albumlink)) {
-        // Just occasionally, the spotify album originally returned by search has an incorrect AlbumArtist
-        // When we browse the album the new tracks therefore get added to a new album, while the original tracks
-        // remain attached to the old one. This is where we use do_tracks_from_database with an array of albumids
-        // which joins them together into a virtual album, with the track ordering correct
-        print do_tracks_from_database($why, $what, find_justadded_albums(), true);
+    if (substr($albumlink, 0, 8) == 'podcast+') {
+        require_once('includes/podcastfunctions.php');
+        debuglog("Browsing For Podcast ".substr($albumlink, 9), "ALBUMS");
+        $podid = getNewPodcast(substr($albumlink, 8), 0);
+        debuglog("Ouputting Podcast ID ".$podid, "ALBUMS");
+        outputPodcast($podid, false);
     } else {
-        $artistarray = find_justadded_artists();
-        foreach ($artistarray as $artistid) {
-            do_albums_from_database($why, 'album', $artistid, false, false, true);
+        if (preg_match('/^.+?:artist:/', $albumlink)) {
+            remove_album_from_database($who);
+        }
+        $cmd = 'find file "'.$albumlink.'"';
+        debuglog("Doing Album Browse : ".$cmd,"MPD");
+        prepareCollectionUpdate();
+        doCollection($cmd, $domains);
+        $collection->tracks_to_database(true);
+        close_transaction();
+        remove_findtracks();
+        if (preg_match('/^.+?:album:/', $albumlink)) {
+            // Just occasionally, the spotify album originally returned by search has an incorrect AlbumArtist
+            // When we browse the album the new tracks therefore get added to a new album, while the original tracks
+            // remain attached to the old one. This is where we use do_tracks_from_database with an array of albumids
+            // which joins them together into a virtual album, with the track ordering correct
+            print do_tracks_from_database($why, $what, find_justadded_albums(), true);
+        } else {
+            $artistarray = find_justadded_artists();
+            foreach ($artistarray as $artistid) {
+                do_albums_from_database($why, 'album', $artistid, false, false, true);
+            }
         }
     }
     close_mpd();

@@ -359,7 +359,7 @@ function doAlbumMenu(event, element, inbrowser, callback) {
                     scootTheAlbums($(this));
                     if (callback) callback();
                     infobar.markCurrentTrack();
-                    if ($(this).find('input.expandalbum').length > 0 || element.parent().find('.expandthisalbum').length > 0) {
+                    if ($(this).find('input.expandalbum').length > 0 ) {
                         debug.log("CLICKFUNCTIONS", "Album has link to get all tracks");
                         element.makeSpinner();
                         $.ajax({

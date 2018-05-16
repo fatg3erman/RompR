@@ -337,14 +337,8 @@ function albumHeader($obj) {
             case "youtube":
             case "internetarchive":
             case "soundcloud":
-                $h .= '<i class="icon-'.$d.'-circled collectionicon fixed"></i>';
-                break;
-
             case "podcast":
-            case "podcast http":
-            case "podcast ftp":
-            case "podcast file":
-                $h .= '<i class="icon-podcast-circled collectionicon fixed"></i>';
+                $h .= '<i class="icon-'.$d.'-circled collectionicon fixed"></i>';
                 break;
 
             case "tunein":
@@ -390,9 +384,6 @@ function albumHeader($obj) {
             $h .= '<div class="icon-menu playlisticonr fixed clickable clickicon clickalbummenu '.implode(' ',$classes).'" name="'.$id.'"></div>';
         }
     }
-    // if ($obj['why'] == "b" && $obj['AlbumUri'] && substr($obj['AlbumUri'],0,13) == "spotify:album") {
-    //     $h .= '<input type="hidden" class="expandthisalbum"/>';
-    // }
     $h .= '</div>';
     return $h;
 }
@@ -535,7 +526,7 @@ function getDomain($d) {
     if ($s == "api.soundcloud.") {
         return "soundcloud";
     }
-    return $a;
+    return strtok($a, ' ');
 }
 
 function sql_init_fail($message) {

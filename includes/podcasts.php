@@ -55,10 +55,7 @@ if (array_key_exists('populate', $_REQUEST)) {
     }
 
     if ($podid !== null) {
-        $result = generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$podid, false, PDO::FETCH_OBJ);
-        foreach ($result as $obj) {
-            doPodcast($obj);
-        }
+        outputPodcast($podid);
     } else {
         doPodcastList($subflag);
     }

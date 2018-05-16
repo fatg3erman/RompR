@@ -152,6 +152,8 @@ function parse_rss_feed($url, $id = false) {
         $track['PubDate'] = strtotime((string) $item->pubDate);
         if ($item->enclosure && $item->enclosure->attributes()) {
             $track['FileSize'] = $item->enclosure->attributes()->length;
+        } else {
+            $track['FileSize'] = 0;
         }
 
         if ($m && $m->summary) {
@@ -173,9 +175,10 @@ function parse_rss_feed($url, $id = false) {
 
 }
 
-function getNewPodcast($url) {
+function getNewPodcast($url, $subbed = 1) {
     global $mysqlc;
     debuglog("Getting podcast ".$url,"PODCASTS");
+    $newpodid = null;
     $podcast = parse_rss_feed($url);
     $r = check_if_podcast_is_subscribed(array(  'feedUrl' => $podcast['FeedURL'],
                                                 'collectionName' => $podcast['Title'],
@@ -191,11 +194,11 @@ function getNewPodcast($url) {
     debuglog("Adding New Podcast ".$podcast['Title'],"PODCASTS");
     if (sql_prepare_query(true, null, null, null,
         "INSERT INTO Podcasttable
-        (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, DaysLive, Description, Version)
+        (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, DaysLive, Description, Version, Subscribed)
         VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         $podcast['FeedURL'], time(), $podcast['Image'], $podcast['Title'], $podcast['Artist'],
-        $podcast['RefreshOption'], $podcast['DaysLive'], $podcast['Description'], ROMPR_PODCAST_TABLE_VERSION))
+        $podcast['RefreshOption'], $podcast['DaysLive'], $podcast['Description'], ROMPR_PODCAST_TABLE_VERSION, $subbed))
     {
         $newpodid = $mysqlc->lastInsertId();
         if (is_dir('prefs/podcasts/'.$newpodid)) {
@@ -203,21 +206,24 @@ function getNewPodcast($url) {
         }
         exec('mkdir prefs/podcasts/'.$newpodid);
         download_image($podcast['Image'], $newpodid);
-        foreach ($podcast['tracks'] as $track) {
-            if (sql_prepare_query(true, null, null, null,
-                "INSERT INTO PodcastTracktable
-                (PODindex, Title, Artist, Duration, PubDate, FileSize, Description, Link, Guid, New)
-                VALUES
-                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                $newpodid, $track['Title'], $track['Artist'], $track['Duration'], $track['PubDate'],
-                $track['FileSize'], $track['Description'], $track['Link'], $track['GUID'], 1))
-            {
-                debuglog("  Added Track ".$track['Title'],"PODCASTS");
-            } else {
-                debuglog("  FAILED Adding Track ".$track['Title'],"PODCASTS",2);
+        if ($subbed == 1) {
+            foreach ($podcast['tracks'] as $track) {
+                if (sql_prepare_query(true, null, null, null,
+                    "INSERT INTO PodcastTracktable
+                    (PODindex, Title, Artist, Duration, PubDate, FileSize, Description, Link, Guid, New)
+                    VALUES
+                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    $newpodid, $track['Title'], $track['Artist'], $track['Duration'], $track['PubDate'],
+                    $track['FileSize'], $track['Description'], $track['Link'], $track['GUID'], 1))
+                {
+                    debuglog("  Added Track ".$track['Title'],"PODCASTS");
+                } else {
+                    debuglog("  FAILED Adding Track ".$track['Title'],"PODCASTS",2);
+                }
             }
         }
     }
+    return $newpodid;
 }
 
 function download_image($url, $podid) {
@@ -351,7 +357,14 @@ function upgrade_podcast($podid, $podetails, $podcast) {
     }
 }
 
-function doPodcast($y) {
+function outputPodcast($podid, $do_searchbox = true) {
+    $result = generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$podid, false, PDO::FETCH_OBJ);
+    foreach ($result as $obj) {
+        doPodcast($obj, $do_searchbox);
+    }
+}
+
+function doPodcast($y, $do_searchbox) {
 
     if ($y->Subscribed == 0) {
         debuglog("Getting feed for unsubscribed podcast ".$y->FeedURL,"PODCASTS");
@@ -389,13 +402,16 @@ function doPodcast($y) {
             'clickable clickicon tleft fridge" name="removedownloaded_'.$pm.'"></i>';
         print '</div>';
     }
-    print '<div class="containerbox noselection"><div class="expand">
-        <input class="enter clearbox" name="podsearcher_'.$y->PODindex.'" type="text" ';
-    if (array_key_exists('searchterm', $_REQUEST)) {
-        print 'value="'.urldecode($_REQUEST['searchterm']).'" ';
+    
+    if ($do_searchbox) {
+        print '<div class="containerbox noselection"><div class="expand">
+            <input class="enter clearbox" name="podsearcher_'.$y->PODindex.'" type="text" ';
+        if (array_key_exists('searchterm', $_REQUEST)) {
+            print 'value="'.urldecode($_REQUEST['searchterm']).'" ';
+        }
+        print '/></div><button class="fixed" onclick="podcasts.searchinpodcast('.$y->PODindex.')">'.get_int_text('button_search').'</button></div>';
     }
-    print '/></div><button class="fixed" onclick="podcasts.searchinpodcast('.$y->PODindex.')">'.get_int_text('button_search').'</button></div>';
-
+    
     if ($y->Subscribed == 1) {
         $class = "dropmenu marged";
         if ((array_key_exists('channel', $_REQUEST) && $_REQUEST['channel'] == $pm) &&
@@ -576,7 +592,9 @@ function format_episode(&$y, &$item, $pm) {
         $class = 'invisible whatdoicallthis';
     }
     print '<div id="poddesc_'.$item->PODTrackindex.'" class="'.$class.'">'.format_text($item->Description).'</div>';
-    print '<div class="fsize">'.format_bytes($item->FileSize).'Bytes</div>';
+    if ($item->FileSize > 0) {
+        print '<div class="fsize">'.format_bytes($item->FileSize).'Bytes</div>';
+    }
     if ($y->Subscribed == 1) {
         print '<div class="clearfix" name="podcontrols_'.$pm.'">';
         if ($item->Downloaded == 1) {

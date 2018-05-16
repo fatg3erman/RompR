@@ -432,29 +432,9 @@ function format_sortartist($tags, $return_albumartist = false) {
 
 function cacheOrDefaultImage($image, $artname, $size, $domain) {
 
-    switch ($domain) {
-
-        case "internetarchive":
-        case "bassdrive":
-        case "oe1":
-        case "soundcloud":
-        case "youtube":
-            // These are here because they're not classed as streams -
-            // domain will only be bassdrive or oe1 if this is an archive
-            // track, and those make more sense to display as albums.
-            if ($image == "") $image = "newimages/".$domain."-logo.svg";
-            break;
-
-        case "podcast":
-        case "podcast+http":
-        case "podcast http":
-		case "podcast+https":
-        case "podcast https":
-            // Some podcasts return album images, which will be $this->image
-            // But not all of them do so we need a fallback.
-            if ($image == "") $image = "newimages/podcast-logo.svg";
-            break;
-    }
+	if ($image == '' && file_exists("newimages/".$domain."-logo.svg")) {
+		$image = "newimages/".$domain."-logo.svg";
+	}
 
     if (file_exists("albumart/".$size."/".$artname.".jpg")) {
         // If there's a local image this overrides everything else because it might
@@ -561,12 +541,7 @@ function process_file($filedata) {
 
     check_is_stream($filedata);
 
-    if ($filedata['type'] != 'stream' &&
-		$filedata['domain'] != 'podcast http' &&
-		$filedata['domain'] != 'podcast https' &&
-		$filedata['domain'] != 'podcast ftp' &&
-		$filedata['domain'] != 'podcast file'
-	) {
+    if ($filedata['type'] != 'stream' && $filedata['domain'] != 'podcast') {
         if ($filedata['Title'] == null) $filedata['Title'] = rawurldecode(basename($filedata['file']));
         if ($filedata['Album'] == null) $filedata['Album'] = album_from_path($unmopfile);
         if ($filedata['Artist'] == null) $filedata['Artist'] = array(artist_from_path($unmopfile, $filedata['file']));
@@ -598,17 +573,6 @@ function process_file($filedata) {
         $filedata['X-AlbumUri'] = $filedata['file'];
         $filedata['Disc'] = 0;
         $filedata['Track'] = 0;
-    }
-
-    // Sometimes the file domain can be http but the album domain is correct
-    // this is true eg for bassdrive
-    if ($filedata['X-AlbumUri'] !== null && getDomain($filedata['X-AlbumUri']) != getDomain($filedata['file'])) {
-        $filedata['domain'] = getDomain($filedata['X-AlbumUri']);
-    }
-
-    if (strpos($filedata['file'], 'archives.bassdrivearchive.com') !== false) {
-        // Slightly annoyingly, bassdrive archive tracks come back with http uris.
-        $filedata['domain'] = "bassdrive";
     }
 
     switch($filedata['domain']) {
@@ -662,27 +626,13 @@ function process_file($filedata) {
             $filedata['AlbumArtist'] = "Internet Archive";
             break;
 
-        case "podcast http":
-        case "podcast https":
-        case "podcast ftp":
-        case "podcast file":
+        case "podcast":
             $filedata['folder'] = $filedata['X-AlbumUri'];
 			if ($filedata['Artist'] !== null) {
 				$filedata['AlbumArtist'] = $filedata['Artist'];
-			} else {
-				$filedata['AlbumArtist'] = $collection->get_albumartist_by_folder($filedata['X-AlbumUri']);
 			}
 			if ($filedata['AlbumArtist'] === null) {
-	            $matches = array();
-	            $a = preg_match('/podcast\+(.*?):\/\/(.*?)\//', $filedata['file'], $matches);
-	            if ($a == 1) {
-	                $filedata['AlbumArtist'] = array($matches[2]);
-	                $filedata['Album'] = $filedata['Title'];
-	                $filedata['Album'] = preg_replace('/^Album\:\s*/','',$filedata['Album']);
-	                $albumuri = $filedata['file'];
-	            } else {
-	                $filedata['AlbumArtist'] = array("Podcasts");
-	            }
+                $filedata['AlbumArtist'] = array("Podcasts");
 			}
             if (is_array($filedata['Artist']) && ($filedata['Artist'][0] == "http" || $filedata['Artist'][0] == "https" ||
                 $filedata['Artist'][0] == "ftp" || $filedata['Artist'][0] == "file" ||

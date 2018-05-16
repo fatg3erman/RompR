@@ -75,31 +75,12 @@ if ($mysqlc) {
                 // $searched = 1;
             } else {
                 debuglog($obj->Albumname." has missing image ".$obj->Image,"CACHE CLEANER");
-                switch ($obj->Domain) {
-                    case "youtube":
-                    case "soundcloud":
-                    case "internetarchive":
-                    case "bassdrive":
-                    case "oe1":
-                    case "tunein":
-                        $image = "newimages/".$obj->Domain."-logo.svg";
-                        $searched = 1;
-                        break;
-
-                    case "podcast":
-                    case "podcast+http":
-                    case "podcast http":
-                    case "podcast+https":
-                    case "podcast https":
-                        $image = "newimages/podcast-logo.svg";
-                        $searched = 1;
-                        break;
-
-                    default:
-                        $image = '';
-                        $searched = 0;
-                        break;
-
+                if (file_exists("newimages/".$dobj->Domain."-logo.svg")) {
+                    $image = "newimages/".$obj->Domain."-logo.svg";
+                    $searched = 1;
+                } else {
+                    $image = '';
+                    $searched = 0;
                 }
                 sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Searched = ?, Image = ? WHERE Albumindex = ?", $searched, $image, $obj->Albumindex);
             }
