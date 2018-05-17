@@ -216,6 +216,11 @@ button {
     margin-right:1em;
 }
 
+.helpfulalbum .tag
+{
+	white-space: normal;
+}
+
 .tagmenu-contents .backhi:hover
 {
     color:#ffffff !important;
