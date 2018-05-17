@@ -17,7 +17,8 @@ $root_level_dirs = array(
 	'prefs/userbackgrounds',
 	'prefs/crazyplaylists',
 	'prefs/databackups',
-	'prefs/userstreams'
+	'prefs/userstreams',
+	'prefs/temp'
 );
 foreach ($root_level_dirs as $dir) {
 	if (!is_dir($dir)) {

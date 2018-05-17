@@ -6,6 +6,7 @@ include ("utils/imagefunctions.php");
 debuglog("------- Searching For Album Art --------","GETALBUMCOVER");
 include ("backends/sql/backend.php");
 include ("includes/spotifyauth.php");
+include ("getid3/getid3.php");
 $stream = "";
 $src = "";
 $error = 0;

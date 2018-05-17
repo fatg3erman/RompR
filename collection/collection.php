@@ -200,7 +200,7 @@ class album {
         if ($this->image && $this->image !== "") {
             $image = $this->image;
         }
-        $image =  cacheOrDefaultImage($image, $artname, $size, $this->domain);
+        $image = cacheOrDefaultImage($image, $artname, $size, $this->domain);
         return $image;
     }
 
@@ -227,10 +227,8 @@ class album {
         // NB. BLOODY WELL CALL THIS FUNCTION
         // Unless you're so sure you know how all this works and you really don't need it.
         // Collection updates might be one such area but if you're not sure CALL IT ANYWAY and see what happens.
-        // Fuck yeah I'm good.
-        // Otherwise, this is here to make search a better thing.
 
-        // Mopidy-Spotify doesn't send disc numbers. If we're using the sql backend
+        // Some Mopidy backends don't send disc numbers. If we're using the sql backend
         // we don't really need to pre-sort tracks because we can do it on the fly.
         // However, when there are no disc numbers multi-disc albums don't sort properly.
         // Hence we do a little check that we have have the same number of 'Track 1's
@@ -277,7 +275,7 @@ class album {
         }
 
         if ($always == false && $this->numOfDiscs > 0 && ($this->numOfTrackOnes <= 1 || $this->numOfTrackOnes == $this->numOfDiscs)) {
-               return $this->numOfDiscs;
+            return $this->numOfDiscs;
         }
 
         $discs = array();
@@ -320,28 +318,6 @@ class album {
     }
 
     private function decideOnArtist($candidate) {
-        global $doing_search;
-        // This is here entirely and only because libspotify hasn't been updated sice the stone age
-        // and doesn't return albumartists or images when you do a search. But it does when you do a lookup.
-        // I think the new Spotify search in Mopidy, which uses the Web API is now returning Album Artists
-        // but I'll leave this here just in case
-        if ($doing_search && $this->domain == "spotify" && $this->uri && substr($this->uri,0,13) == "spotify:album") {
-            debuglog("  Querying Spotify for accurate data. Bloody spotify","COLLECTION",5);
-            $uri = "https://api.spotify.com/v1/albums/".preg_replace('/spotify:album:/','',$this->uri);
-            $albumjson = json_decode(get_spotify_data($uri));
-            $artists = array();
-            foreach($albumjson->artists as $artist) {
-                $artists[] = $artist->name;
-            }
-            $this->artist = format_artist($artists, 'Unknown Artist');
-            debuglog("    We've set the artist to ".$this->artist,"COLLECTION",5);
-            if (is_array($albumjson->images) && count($albumjson->images) > 0) {
-                if ($this->image == null) {
-                    $this->image = 'getRemoteImage.php?url='.$albumjson->images[0]->url;
-                    debuglog("   And we've set the image to ".$this->image." for good measure","COLLECTION",5);
-                }
-            }
-        }
         if ($this->artist == null) {
             debuglog("  ... Setting artist to ".$candidate,"COLLECTION",5);
             $this->artist = $candidate;
@@ -391,7 +367,6 @@ class track {
         }
     }
 }
-
 
 function format_artist($artist, $empty = null) {
     $a = concatenate_artist_names($artist);
@@ -501,10 +476,6 @@ function artist_from_path($p, $f) {
     return $a;
 }
 
-function is_albumlink($uri) {
-    return preg_match('/^.+?:album:|^.+?:artist:/',$uri);
-}
-
 function unmopify_file($file) {
 	// This has been times as much faster than using a regexp
 	$cock = explode(':', $file);
@@ -512,6 +483,12 @@ function unmopify_file($file) {
         $file = array_pop($cock);
     }
 	return $file;
+}
+
+function check_undefined_tags(&$filedata) {
+	if ($filedata['Title'] == null) $filedata['Title'] = rawurldecode(basename($filedata['file']));
+	if ($filedata['Album'] == null) $filedata['Album'] = album_from_path($unmopfile);
+	if ($filedata['Artist'] == null) $filedata['Artist'] = array(artist_from_path($unmopfile, $filedata['file']));
 }
 
 function process_file($filedata) {
@@ -560,7 +537,7 @@ function process_file($filedata) {
     }
 
     if (strpos($filedata['file'], ':artist:') !== false) {
-        debuglog("Found artist link","COLLECtION",5);
+        debuglog("Found artist URI","COLLECtION",5);
         $filedata['X-AlbumUri'] = $filedata['file'];
         $filedata['Album'] = get_int_text("label_allartist").concatenate_artist_names($filedata['Artist']);
         $filedata['Disc'] = 0;
@@ -591,37 +568,18 @@ function process_file($filedata) {
 		case 'audioaddict':
 		case 'oe1':
 		case 'bassdrive':
-			check_is_stream($filedata);
+			preprocess_stream($filedata);
 			break;
 
         case 'local':
             // mopidy-local-sqlite sets album URIs for local albums, but sometimes it gets it very wrong
             $filedata['X-AlbumUri'] = null;
             $filedata['folder'] = dirname($unmopfile);
-			if ($filedata['Title'] == null) $filedata['Title'] = rawurldecode(basename($filedata['file']));
-		    if ($filedata['Album'] == null) $filedata['Album'] = album_from_path($unmopfile);
-		    if ($filedata['Artist'] == null) $filedata['Artist'] = array(artist_from_path($unmopfile, $filedata['file']));
+			check_undefined_tags($filedata);
             break;
 
         case "soundcloud":
-            if ($prefs['player_backend'] == "mpd") {
-                if ($filedata['Name'] != null) {
-                    $filedata['Title'] = $filedata['Name'];
-                    $filedata['Album'] = "SoundCloud";
-                    $arse = explode(' - ',$filedata['Name']);
-                    $filedata['Artist'] = array($arse[0]);
-                } else {
-                    $filedata['Artist'] = array("Unknown Artist");
-                    $filedata['Title'] = "Unknown Track";
-                    $filedata['Album'] = "SoundCloud";
-                }
-            } else {
-                $filedata['folder'] = concatenate_artist_names($filedata['Artist']);
-                $filedata['AlbumArtist'] = $filedata['Artist'];
-                $filedata['X-AlbumUri'] = $filedata['file'];
-                $filedata['Album'] = $filedata['Title'];
-                $filedata['X-AlbumImage'] = 'getRemoteImage.php?url='.$filedata['X-AlbumImage'];
-            }
+			preprocess_soundcloud($filedata);
             break;
 
         case "youtube":
@@ -638,9 +596,7 @@ function process_file($filedata) {
             break;
 
         case "internetarchive":
-			if ($filedata['Title'] == null) $filedata['Title'] = rawurldecode(basename($filedata['file']));
-			if ($filedata['Album'] == null) $filedata['Album'] = album_from_path($unmopfile);
-			if ($filedata['Artist'] == null) $filedata['Artist'] = array(artist_from_path($unmopfile, $filedata['file']));
+			check_undefined_tags($filedata);
             $filedata['X-AlbumUri'] = $filedata['file'];
             $filedata['folder'] = $filedata['file'];
             $filedata['AlbumArtist'] = "Internet Archive";
@@ -662,9 +618,7 @@ function process_file($filedata) {
             break;
 
         default:
-			if ($filedata['Title'] == null) $filedata['Title'] = rawurldecode(basename($filedata['file']));
-			if ($filedata['Album'] == null) $filedata['Album'] = album_from_path($unmopfile);
-			if ($filedata['Artist'] == null) $filedata['Artist'] = array(artist_from_path($unmopfile, $filedata['file']));
+			check_undefined_tags($filedata);
             $filedata['folder'] = dirname($unmopfile);
             break;
     }
@@ -685,7 +639,6 @@ function process_file($filedata) {
     if ($filedata['Pos'] !== null) {
         // Playlist track. Swerve the collectioniser and use the database
         $tstart = microtime(true);
-        // Use this line if we're using the alternative pre-populate version of this function
         $extrainfo = get_extra_track_info($filedata);
         foreach ($extrainfo as $i => $v) {
             if ($v !== null && $v != "") {

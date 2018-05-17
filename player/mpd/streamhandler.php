@@ -1,6 +1,6 @@
 <?php
 
-function check_is_stream(&$filedata) {
+function preprocess_stream(&$filedata) {
 
     $filedata['Track'] = null;
 
@@ -16,7 +16,7 @@ function check_is_stream(&$filedata) {
             $filedata['AlbumArtist'],
             $filedata['StreamIndex'],
             $filedata['Comment'],
-            $filedata['ImgKey']) = getStuffFromXSPF($filedata);
+            $filedata['ImgKey']) = check_radio_and_podcasts($filedata);
 
     if (strrpos($filedata['file'], '#') !== false) {
         # Fave radio stations added by Cantata/MPDroid
@@ -28,8 +28,21 @@ function check_is_stream(&$filedata) {
     }
 }
 
+function preprocess_soundcloud(&$filedata) {
+    if ($filedata['Name'] != null) {
+        $filedata['Title'] = $filedata['Name'];
+        $filedata['Album'] = "SoundCloud";
+        $arse = explode(' - ',$filedata['Name']);
+        $filedata['Artist'] = array($arse[0]);
+    } else {
+        $filedata['Artist'] = array("Unknown Artist");
+        $filedata['Title'] = "Unknown Track";
+        $filedata['Album'] = "SoundCloud";
+    }
+}
 
-function getStuffFromXSPF($filedata) {
+
+function check_radio_and_podcasts($filedata) {
 
     $url = $filedata['file'];
 

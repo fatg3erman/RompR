@@ -467,6 +467,26 @@ function get_images($dir_path) {
         debuglog("        Found : ".get_base_url()."/".preg_replace('/ /', "%20", $f),"GET_IMAGES");
         array_push($funkychicken, get_base_url()."/".preg_replace('/ /', "%20", $f));
     }
+    debuglog("    Checking for embedded images","GET_IMAGES");
+    $files = glob($globpath."/*.{mp3,MP3,mp4,MP4,flac,FLAC,ogg,OGG}", GLOB_BRACE);
+    $testfile = array_shift($files);
+    if ($testfile) {
+        $getID3 = new getID3;
+        $tags = $getID3->analyze($testfile);
+    	getid3_lib::CopyTagsToComments($tags);
+        if (array_key_exists('comments', $tags) && array_key_exists('picture', $tags['comments'])) {
+            foreach ($tags['comments']['picture'] as $picture) {
+                if (array_key_exists('picturetype', $picture)) {
+                    if ($picture['picturetype'] == 'Cover (front)') {
+                        debuglog("    .. found embedded front cover image","GET_IMAGES");
+                        $filename = 'prefs/temp/'.md5($globpath);
+                        file_put_contents($filename, $picture['data']);
+                        array_unshift($funkychicken, get_base_url()."/".preg_replace('/ /', "%20", $filename));
+                    }
+                }
+            }
+        }
+    }
     return $funkychicken;
 }
 

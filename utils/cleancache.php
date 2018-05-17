@@ -39,6 +39,8 @@ clean_cache_dir('prefs/jsoncache/lyrics/', 15552000);
 clean_cache_dir('prefs/imagecache/', 1296000);
 // Clean the albumart temporary upload directory
 clean_cache_dir('albumart/', 1);
+// Clean the temp directory
+clean_cache_dir('prefs/temp/', 1);
 debuglog("Cache has been cleaned","CACHE CLEANER");
 
 if ($mysqlc) {

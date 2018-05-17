@@ -17,7 +17,7 @@ By default the image selector opens a Google Images search. You can change the s
 
 ## Using Local Images
 
-For local music files you may already have album art stored alongside those files. RompЯ can access this IF your webserver and your files are stored on the same computer.
+For local music files you may already have album art stored alongside those files or embedded in them. RompЯ can access this IF your webserver is running on the same computer as where you music files are stored.
 
 First, go to the Configuration panel and enter the full path to your music in the text box under 'Album Art'. This MUST match the Local Folders configuration setting in your mpd.conf or mopidy.conf.
 
