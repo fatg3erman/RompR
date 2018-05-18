@@ -12,6 +12,22 @@
 // the playlist will handle that when it gets stream info from mpd
 
 function load_internet_playlist($url, $image, $station) {
+	
+	$playlist = download_internet_playlist($url, $image, $station);
+	if ($playlist !== false) {
+		if (preg_match('/opml\.radiotime\.com/', $url)) {
+			debuglog("Checking actual stream from radiotime Tune API","RADIO_PLAYLIST");
+			$playlist = download_internet_playlist($playlist->get_first_track(), $image, $station);
+		}
+		if ($playlist !== false) {
+			$playlist->updateDatabase();
+			return $playlist->getTracksToAdd();
+		}
+	}
+
+}
+
+function download_internet_playlist($url, $image, $station) {
 
 	$station = ($station == 'null') ? ROMPR_UNKNOWN_STREAM : $station;
 	$image = ($image == 'null') ? 'newimages/broadcast.svg' : $image;
@@ -31,7 +47,6 @@ function load_internet_playlist($url, $image, $station) {
 
 		$content = url_get_contents($url, ROMPR_IDSTRING, false, true, true, null, null, null, 10, 10);
 		debuglog("Status Code Is ".$content['status'],"RADIO_PLAYLIST");
-		debuglog("Playlist Is ".$content['contents'],"RADIO_PLAYLIST",8);
 
 		$content_type = $content['info']['content_type'];
 		// To cope with charsets in the header...
@@ -41,18 +56,22 @@ function load_internet_playlist($url, $image, $station) {
 
 		switch ($content_type) {
 			case "video/x-ms-asf":
+				debuglog("Playlist Is ".$content['contents'],"RADIO_PLAYLIST",8);
 				$type = asfOrasx($content['contents']);
 				break;
 
 			case "audio/x-scpls":
+				debuglog("Playlist Is ".$content['contents'],"RADIO_PLAYLIST",8);
 				$type = "pls";
 				break;
 
 			case "audio/x-mpegurl":
+				debuglog("Playlist Is ".$content['contents'],"RADIO_PLAYLIST",8);
 				$type = "m3u";
 				break;
 
 			case "application/xspf+xml":
+				debuglog("Playlist Is ".$content['contents'],"RADIO_PLAYLIST",8);
 				$type = "xspf";
 				break;
 
@@ -126,11 +145,11 @@ function load_internet_playlist($url, $image, $station) {
 		}
 
 		if ($playlist) {
-			$playlist->updateDatabase();
-			return $playlist->getTracksToAdd();
+			return $playlist;
 		} else {
 			debuglog("Could not determine playlist type","RADIO_PLAYLIST");
 			header("HTTP/1.1 404 Not Found");
+			return false;
 		}
 	}
 }
@@ -143,7 +162,7 @@ function asfOrasx($s) {
 	} else if (preg_match('/^<ASX /', $s)) {
 		debuglog("Type of playlist determined as asx","RADIO_PLAYLIST");
 		$type = "asx";
-	} else if (preg_match('/^http:/', $s)) {
+	} else if (preg_match('/^http/', $s)) {
 		debuglog("Type of playlist determined as m3u-like","RADIO_PLAYLIST");
 		$type = "m3u";
 	}

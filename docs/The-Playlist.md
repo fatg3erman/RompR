@@ -20,7 +20,11 @@ The 'Musical Notes' icon will appear next to Spotify albums. Clicking this will 
 
 'Consume' will remove tracks from the Playlist as they are played. This is enabled by default when using dynamic playlists, to prevent your playlist becoming huge.
 
-MPD users also have an option to enable Crossfade (this is not supported in Mopidy) and use Replay Gain - but Replay Gain will only work if your tracks are tagged with Reply Gain information.
+### MPD users
+
+...also have an option to enable Crossfade (this is not supported in Mopidy) and use Replay Gain - but Replay Gain will only work if your tracks are tagged with Reply Gain information.
+
+![](images/playlistmpd.png)
 
 ## Non-Queueing Mode
 

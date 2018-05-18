@@ -215,6 +215,11 @@ class m3uFile {
 	public function getTracksToAdd() {
 		return array('load "'.format_for_mpd(htmlspecialchars_decode($this->url)).'"');
 	}
+	
+	public function get_first_track() {
+		debuglog("  First Track is ".$this->tracks[0]['TrackUri'],"RADIO_PLAYLIST");
+		return $this->tracks[0]['TrackUri'];
+	}
 }
 
 // [Reference]

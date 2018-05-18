@@ -405,7 +405,6 @@ var layoutProcessor = function() {
                     showPanel(source, function() {
                         if (source == 'searcher') setSearchLabelWidth();
                         if (source == 'pluginplaylistslist') setFunkyBoxSize();
-                        if (source == 'radiolist') setFunkyBoxSize();
                         if (callback) { callback(); }
                     });
                 });
@@ -584,4 +583,3 @@ var layoutProcessor = function() {
         }
     }
 }();
-

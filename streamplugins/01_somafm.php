@@ -7,7 +7,7 @@ if (array_key_exists('populate', $_REQUEST)) {
     include ("includes/functions.php");
     include ("international.php");
 
-    print '<div class="containerbox indent padright">';
+    print '<div class="containerbox padright">';
     print '<b>'.get_int_text("label_soma").'<br>';
     print '<a href="http://somafm.com" target="_blank">'.get_int_text("label_soma_beg").'</a></b>';
     print '</div>';

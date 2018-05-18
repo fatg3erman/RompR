@@ -225,6 +225,10 @@
     vertical-align:middle;
 }
 
+.dropmenu {
+    padding-left:16px;
+}
+
 .medicon {
     padding:0px;
     margin:2px;
@@ -330,7 +334,7 @@
 }
 
 .indent {
-    margin-left:24px;
+    margin-left:16px;
 }
 
 .padright {

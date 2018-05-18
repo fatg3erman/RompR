@@ -241,6 +241,10 @@ select {
     cursor:pointer;
 }
 
+.dropmenu {
+    padding-left:38px;
+}
+
 .menuspacer {
     width:1.5em;
     height:1.5em;

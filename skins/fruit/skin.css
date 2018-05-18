@@ -278,6 +278,10 @@
     max-width:300px;
 }
 
+.dropmenu {
+    padding-left:16px;
+}
+
 .npicon {
     padding:0px;
     margin-top:0px;
@@ -395,7 +399,7 @@
 }
 
 .indent {
-    margin-left:24px;
+    margin-left:16px;
 }
 
 .padright {

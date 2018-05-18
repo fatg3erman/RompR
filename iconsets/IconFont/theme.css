@@ -130,6 +130,10 @@
   background-image: url('sleep.png');
   display: inline-block;
 }
+.icon-tunein {
+    background-image: url('../../newimages/tunein-logo.svg');
+    display:inline-block;
+}
 
 .icon-flac-audio:before { content: '\e814'; }
 .icon-wma-audio:before { content: '\e857'; } /* '' */

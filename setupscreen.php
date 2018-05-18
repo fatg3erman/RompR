@@ -33,7 +33,6 @@ print $title;
 print '</h3>';
 print '<p>'.get_int_text("setup_labeladdresses").'</p>';
 print '<p class="tiny">'.get_int_text("setup_addressnote").'</p>';
-print '<p>NOTE: Mopidy is still supported, but you must now use the MPD frontend in Mopidy</p>';
 print '<form name="mpdetails" action="index.php" method="post">';
 print '<hr class="dingleberry" />';
 print '<h3>'.get_int_text("setup_mpd").'</h3>';

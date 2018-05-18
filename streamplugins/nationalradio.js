@@ -8,11 +8,8 @@ var nationalRadioPlugin = {
                 if (!$('[name="bbclist"]').hasClass('icon-toggle-open')) {
                     $('[name="bbclist"]').addClass('icon-toggle-open');
                 }
-                setFunkyBoxSize();
                 nationalRadioPlugin.setTheThing();
             });
-        } else {
-            setFunkyBoxSize();
         }
     },
 
@@ -47,7 +44,6 @@ var nationalRadioPlugin = {
         	if (!$('[name="bbclist"]').hasClass('icon-toggle-open')) {
         		$('[name="bbclist"]').addClass('icon-toggle-open');
         	}
-            setFunkyBoxSize();
         });
     },
 
@@ -66,7 +62,6 @@ var nationalRadioPlugin = {
         $.get('streamplugins/02_nationalradio.php?populate=1&country='+prefs.newradiocountry+'&page='+page+'&search='+term, function(data) {
             element.parent().parent().remove();
             $('#alltheradiostations').append(data);
-            setFunkyBoxSize();
         });
     },
 

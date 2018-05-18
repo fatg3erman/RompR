@@ -32,7 +32,7 @@ if (array_key_exists('populate', $_REQUEST)) {
     debuglog("Country Is ".$country,"RADIO");
 
     if ($_REQUEST['populate'] == 2) {
-        print '<div class="containerbox noselection wrap pipl indent">';
+        print '<div class="containerbox noselection wrap pipl">';
         $json = get_from_dirble($base_url.'/countries');
         foreach ($json['json'] as $station) {
             $countries[$station['name']] = 'countries/'.$station['country_code'];

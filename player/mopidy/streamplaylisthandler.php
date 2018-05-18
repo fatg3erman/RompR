@@ -184,7 +184,19 @@ class m3uFile {
 		$this->url = $url;
 		$this->station = $station;
 		$this->image = $image;
-	}
+		$this->tracks = array();
+
+		$parts = explode(PHP_EOL, $data);
+		foreach ($parts as $line) {
+			if (preg_match('/#EXTINF:(.*?),(.*?)$/', $line, $matches) ||
+				preg_match('/^\#/', $line) ||
+				preg_match('/^\s*$/', $line)) {
+
+			} else {
+				$this->tracks[] = array('TrackUri' => trim($line), 'PrettyStream' => '');
+			}
+		}
+}
 
 	public function updateDatabase() {
 		$stationid = check_radio_station($this->url, $this->station, $this->image);
@@ -197,6 +209,11 @@ class m3uFile {
 
 	public function getTracksToAdd() {
 		return array('add "'.format_for_mpd(htmlspecialchars_decode($this->url)).'"');
+	}
+
+	public function get_first_track() {
+		debuglog("  First Track is ".$this->tracks[0]['TrackUri'],"RADIO_PLAYLIST");
+		return $this->tracks[0]['TrackUri'];
 	}
 }
 
