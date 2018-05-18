@@ -8,8 +8,27 @@ var tuneinRadioPlugin = {
                 if (!$('[name="tuneinlist"]').hasClass('icon-toggle-open')) {
                     $('[name="tuneinlist"]').addClass('icon-toggle-open');
                 }
+                tuneinRadioPlugin.setTheThing();
             });
         }
+    },
+
+    setTheThing: function() {
+        $('[name="tuneinsearcher"]').click(function(ev){
+            ev.preventDefault();
+            ev.stopPropagation();
+            var position = getPosition(ev);
+            var elemright = $('[name="tuneinsearcher"]').width() + $('[name="tuneinsearcher"]').offset().left;
+            if (position.x > elemright - 24) {
+                $('[name="tuneinsearcher"]').val("");
+                $('#tuneinlist').empty();
+                tuneinRadioPlugin.loadBigRadio();
+            }
+        });
+        $('[name="tuneinsearcher"]').hover(makeHoverWork);
+        $('[name="tuneinsearcher"]').mousemove(makeHoverWork);
+        $('[name="tuneinsearcher"]').keyup(onKeyUp);
+        $('[name="sonicthehedgehog"]').click(tuneinRadioPlugin.search);
     },
     
     handleClick: function(event) {
@@ -24,6 +43,7 @@ var tuneinRadioPlugin = {
                 tuneinRadioPlugin.browse(url, title, menutoopen, function() {
                     clickedElement.stopSpinner();
                     doMenu(null, clickedElement);
+                    tuneinRadioPlugin.setTheThing();
                 });
             } else {
                 doMenu(null, clickedElement);
@@ -44,6 +64,19 @@ var tuneinRadioPlugin = {
     browse: function(url, title, target, callback) {
         $("#"+target).load("streamplugins/03_tuneinradio.php?populate=2&url="+url+'&title='+title, function() {
             callback();
+        });
+    },
+    
+    search: function() {
+        var term = $('[name="tuneinsearcher"]').val();
+        debug.log("TUNEIN","Searching For",term);
+        $('[name="tuneinlist"]').makeSpinner();
+        $("#tuneinlist").load("streamplugins/03_tuneinradio.php?populate=2&search="+encodeURIComponent(term), function() {
+            $('[name="tuneinlist"]').stopSpinner();
+            tuneinRadioPlugin.setTheThing();
+            if (!$('[name="tuneinlist"]').hasClass('icon-toggle-open')) {
+        		$('[name="tuneinlist"]').addClass('icon-toggle-open');
+        	}
         });
     }
 

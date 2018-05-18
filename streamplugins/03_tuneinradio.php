@@ -12,18 +12,27 @@ if (array_key_exists('populate', $_REQUEST)) {
     $title = null;
     if (array_key_exists('url', $_REQUEST)) {
         $url = $_REQUEST['url'];
+    } else {
+        print '<div class="fullwidth padright" style="margin-bottom:0px"><div class="containerbox padright noselection fullwidth"><div class="expand">
+            <input class="enter clearbox" name="tuneinsearcher" type="text" ';
+        if (array_key_exists('search', $_REQUEST)) {
+            print 'value="'.$_REQUEST['search'].'" ';
+        }
+        print '/></div><button class="fixed" name="sonicthehedgehog">'.get_int_text('button_search').'</button></div></div>';
     }
     if (array_key_exists('title', $_REQUEST)) {
         $title = $_REQUEST['title'];
     }
+    if (array_key_exists('search', $_REQUEST)) {
+        $url .= 'Search.ashx?query='.urlencode($_REQUEST['search']);
+    }
     
     debuglog("Getting URL ".$url,"TUNEIN");
-    
+
+
     $result = url_get_contents($url);
     $opml = $result['contents'];
-
     $x = simplexml_load_string($opml);
-    
     parse_tree($x->body, $title);
     
     print '<hr>';
@@ -85,6 +94,10 @@ function parse_tree($node, $title) {
                     case 'station':
                       print '<span class="notbold"> (Radio Station)</span>';
                       break;
+
+                      case 'topic':
+                        print '<span class="notbold"> (Podcast)</span>';
+                        break;
                       
                     default:
                         print '<span class="notbold"> ('.ucfirst($att['item']).')</span>';

@@ -53,7 +53,11 @@ class plsFile {
 	}
 
 	public function getTracksToAdd() {
-		return array('load "'.format_for_mpd(htmlspecialchars_decode($this->url)).'"');
+		$tracks = array();
+		foreach ($this->tracks as $r) {
+			$tracks[] = 'add "'.format_for_mpd($r['TrackUri']).'"';
+		}
+		return $tracks;
 	}
 
 }
@@ -217,8 +221,16 @@ class m3uFile {
 	}
 	
 	public function get_first_track() {
-		debuglog("  First Track is ".$this->tracks[0]['TrackUri'],"RADIO_PLAYLIST");
-		return $this->tracks[0]['TrackUri'];
+		$return = $this->tracks[0]['TrackUri'];
+		foreach ($this->tracks as $track) {
+			$ext = pathinfo($track['TrackUri'], PATHINFO_EXTENSION);
+			if ($ext == 'pls' || $ext == 'm3u' || $ext == 'xspf' || $ext == 'asx') {
+				$return = $track['TrackUri'];
+				break;
+			}
+		}
+		debuglog("  Checking ".$return,"RADIO_PLAYLIST");
+		return $return;
 	}
 }
 

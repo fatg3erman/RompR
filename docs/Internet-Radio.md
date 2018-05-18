@@ -30,6 +30,16 @@ The Search panel will search for the terms you enter *within the country or genr
 
 As with Soma FM, you can play a station just by double-clicking the station name. Opening up the station will give you more information as well as choice of streams.
 
+## TuneIn Radio Directory
+
+This is a directory of international radio stations and podcasts.
+
+![](images/tunein.png)
+
+There is a browseable list of categories and a search box.
+
+Double-click a Radio Station or Podcast in this list to listen to it.
+
 ## Icecast Radio
 
 Icecast is an open-source alternative to ShoutCast.

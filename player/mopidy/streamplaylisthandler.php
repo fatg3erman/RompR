@@ -212,8 +212,16 @@ class m3uFile {
 	}
 
 	public function get_first_track() {
-		debuglog("  First Track is ".$this->tracks[0]['TrackUri'],"RADIO_PLAYLIST");
-		return $this->tracks[0]['TrackUri'];
+		$return = $this->tracks[0]['TrackUri'];
+		foreach ($this->tracks as $track) {
+			$ext = pathinfo($track['TrackUri'], PATHINFO_EXTENSION);
+			if ($ext == 'pls' || $ext == 'm3u' || $ext == 'xspf' || $ext == 'asx') {
+				$return = $track['TrackUri'];
+				break;
+			}
+		}
+		debuglog("  Checking ".$return,"RADIO_PLAYLIST");
+		return $return;
 	}
 }
 
