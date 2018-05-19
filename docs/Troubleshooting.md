@@ -12,7 +12,7 @@ and enter the appropriate values. This page will appear automatically if RompЯ 
 
 ![](images/playersetup.png)
 
-If you have already defined [Multiple Players](/RompR/Using-MultiplePlayers) then you can choose one here and edit its values if you need to.
+If you have already defined [Multiple Players](/RompR/Using-Multiple-Players) then you can choose one here and edit its values if you need to.
 
 ### MPD on a remote PC
 
