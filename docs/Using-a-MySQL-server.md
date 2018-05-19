@@ -40,6 +40,6 @@ Point your web browser at
 
     http://your.rompr.installation/?setup
     
-and choose the MySQL server option, entering the usernames and passwords as appropriate.
+and choose the Full Database option, entering the usernames and passwords as appropriate.
 
 ![](images/collectionsetup.png)

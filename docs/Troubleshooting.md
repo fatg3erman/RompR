@@ -12,6 +12,8 @@ and enter the appropriate values. This page will appear automatically if RompЯ 
 
 ![](images/playersetup.png)
 
+If you have already defined [Multiple Players](/RompR/Using-MultiplePlayers) then you can choose one here and edit its values if you need to.
+
 ### MPD on a remote PC
 
 If you are running mpd on a different computer from your web server then you might need to change the bind_to_address in your mpd.conf as the defaults sometimes don't work. "localhost" will only accept connections from the local PC, and "any" seems to fail sometimes because it tries to bind to IPV6 first. Try:

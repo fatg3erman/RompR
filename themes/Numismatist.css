@@ -66,6 +66,16 @@ body.mobile
     background-image: linear-gradient(#ffffff, #bbbbbb);
 }
 
+.setupdiv
+{
+    background-image: linear-gradient(#ffffff, #bbbbbb);
+}
+
+body.setup
+{
+    background-color: #dddddd;
+}
+
 body.desktop #infobar
 {
     background-image: linear-gradient(#ffffff, #eeeeee);

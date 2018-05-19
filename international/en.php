@@ -615,7 +615,8 @@ $languages['en'] = array (
 	"label_smartsetup" => "Preparing. Please Wait A Moment....",
 	"button_sleep" => "Sleep Timer",
 	"button_filter" => "Filter",
-	"label_tuneinradio" => "TuneIn Radio Directory"
+	"label_tuneinradio" => "TuneIn Radio Directory",
+	"label_generalsettings" => "General Settings"
 
 );
 

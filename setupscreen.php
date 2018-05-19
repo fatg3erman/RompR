@@ -11,9 +11,9 @@ print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <link rel="stylesheet" type="text/css" href="css/layout-january.css" />
 <link rel="shortcut icon" href="newimages/favicon.ico" />
-<link rel="stylesheet" type="text/css" href="themes/Darkness.css" />
-<link rel="stylesheet" type="text/css" href="iconsets/Modern-Light/theme.css" />
-<link rel="stylesheet" type="text/css" href="iconsets/Modern-Light/adjustments.css" />
+<link rel="stylesheet" type="text/css" href="themes/Numismatist.css" />
+<link rel="stylesheet" type="text/css" href="iconsets/Modern-Dark/theme.css" />
+<link rel="stylesheet" type="text/css" href="iconsets/Modern-Dark/adjustments.css" />
 <link rel="stylesheet" type="text/css" href="sizes/02-Normal.css" />
 <script type="text/javascript" src="jquery/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="jquery/jquery-migrate-1.2.1.js"></script>
@@ -26,8 +26,8 @@ print '<script language="javascript">'."\n";
 print 'var multihosts = '.json_encode($prefs['multihosts']).";\n";
 print '</script>';
 print '</head>
-<body style="padding:8px;overflow-y:auto">
-    <div class="bordered dingleberry" style="max-width:60em">
+<body class="setup" style="padding:8px;overflow-y:scroll">
+    <div class="bordered dingleberry setupdiv" style="max-width:60em">
     <h3>';
 print $title;
 print '</h3>';
@@ -36,7 +36,7 @@ print '<p class="tiny">'.get_int_text("setup_addressnote").'</p>';
 print '<form name="mpdetails" action="index.php" method="post">';
 print '<hr class="dingleberry" />';
 print '<h3>'.get_int_text("setup_mpd").'</h3>';
-
+print '<p>Choose or edit a player</p>';
 $c = 0;
 foreach ($prefs['multihosts'] as $host => $def) {
     print '<div class="pref styledinputs">';
@@ -57,17 +57,21 @@ print '<input type="text" name="mpd_password" value="'.$prefs['mpd_password'].'"
 print '<p>'.get_int_text("setup_unixsocket").'<br>';
 print '<input type="text" name="unix_socket" value="'.$prefs['unix_socket'].'" /></p>';
 
+print '<hr class="dingleberry" />';
+print '<h3>'.get_int_text("label_generalsettings").'</h3>';
 print '<div class="pref styledinputs"><input id="cli" type="checkbox" name="cleanalbumimages" ';
 if ($prefs['cleanalbumimages']) {
     print " checked";
 }
 print '><label for="cli">Clean ununsed album art on startup</label></div>';
+print '<p class="tiny">You almost certaoinly want to kep this enabled</p>';
 
 print '<div class="pref styledinputs"><input id="dsp" type="checkbox" name="do_not_show_prefs" ';
 if ($prefs['do_not_show_prefs']) {
     print " checked";
 }
 print '><label for="dsp">Do not show preferences panel on the interface</label></div>';
+print '<p class="tiny">This will stop people messing with your configuration, but also with theirs</p>';
 
 print '<hr class="dingleberry" />';
 print '<h3>Collection Settings</h3>';
