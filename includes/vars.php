@@ -41,7 +41,6 @@ $prefs = array(
     "proxy_host" => "",
     "proxy_user" => "",
     "proxy_password" => "",
-    "ignore_unplayable" => true,
     "sortbycomposer" => false,
     "composergenre" => false,
     "composergenrename" => array("Classical"),
@@ -173,9 +172,20 @@ if (!array_key_exists('multihosts', $prefs)) {
 // Prefs can be overridden by cookies
 foreach ($_COOKIE as $a => $v) {
     if (array_key_exists($a, $prefs)) {
-        $prefs[$a] = $v;
-        if ($a == 'debug_enabled') {
-            $logger->setLevel($v);
+        switch ($a) {
+            case 'artistsatstart':
+            case 'nosortprefixes':
+                $prefs[$a] = explode(',',$v);
+                break;
+                
+            case 'debug_enabled':
+                $logger->setLevel($v);
+                // Fall through to default
+                
+            default:
+                $prefs[$a] = $v;
+                break;
+                
         }
         debuglog("Pref ".$a." overridden by Cookie  - Value : ".$v,"COOKIE",9);
     }

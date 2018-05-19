@@ -491,7 +491,6 @@ $languages['de'] = array (
 
 	//New in 0.52
 	"config_alarm_ramp" => "Einblenden",
-	"config_ignore_unplayable" => "Ignoriere unspielbare Titel",
 	"label_retrieve" => "Empfangen",
 
         // New in 0.60

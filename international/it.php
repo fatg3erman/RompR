@@ -485,7 +485,6 @@ $languages['it'] = array (
 
 	//New in 0.52
 	"config_alarm_ramp" => "Dissolvenza in Ingresso",
-	"config_ignore_unplayable" => "Ignora brani non riproducibili",
 
 	// New in 0.60
 	"spotify_error" => "Nessuna risposta da Spotify",

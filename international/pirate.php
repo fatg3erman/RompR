@@ -461,7 +461,6 @@ $languages['pirate'] = array (
 
 	//New in 0.52
 	"config_alarm_ramp" => "Slowly gets louder",
-	"config_ignore_unplayable" => "Do not recognise ye defaced shantys",
 	"label_retrieve" => "Arrrrr!",
 
 	// New in 0.60

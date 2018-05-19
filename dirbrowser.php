@@ -42,7 +42,7 @@ function doFileBrowse($path, $prefix) {
                         if (!$foundfile) {
                             $foundfile = true;
                         } else {
-                            if (!$prefs['ignore_unplayable'] || !array_key_exists('Title', $filedata) || substr($filedata['Title'], 0, 12) != "[unplayable]") {
+                            if (!array_key_exists('Title', $filedata) || substr($filedata['Title'], 0, 12) != "[unplayable]") {
                                 printFileItem(getFormatName($filedata), $filedata['file'], $filedata['Time']);
                             }
                             $filedata = array();
@@ -75,7 +75,7 @@ function doFileBrowse($path, $prefix) {
     }
 
     if (array_key_exists('file', $filedata)) {
-        if (!$prefs['ignore_unplayable'] || !array_key_exists('Title', $filedata) || substr($filedata['Title'], 0, 12) != "[unplayable]") {
+        if (!array_key_exists('Title', $filedata) || substr($filedata['Title'], 0, 12) != "[unplayable]") {
             printFileItem(getFormatName($filedata), $filedata['file'], $filedata['Time']);
         }
     }

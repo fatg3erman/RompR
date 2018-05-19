@@ -148,7 +148,7 @@ class mpdlistthing {
             $decodedpath = rawurldecode($filedata['file']);
         }
 
-        if ($prefs['ignore_unplayable'] && substr($decodedpath, 0, 12) == "[unplayable]") {
+        if (substr($decodedpath, 0, 12) == "[unplayable]") {
             return;
         }
 

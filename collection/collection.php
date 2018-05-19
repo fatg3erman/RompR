@@ -514,7 +514,7 @@ function process_file($filedata) {
             return false;
         }
     }
-   if ($prefs['ignore_unplayable'] && strpos($filedata['Title'], "[unplayable]") === 0) {
+   if (strpos($filedata['Title'], "[unplayable]") === 0) {
         debuglog("Ignoring unplayable track ".$filedata['file'],"COLLECTION",9);
         return false;
     }

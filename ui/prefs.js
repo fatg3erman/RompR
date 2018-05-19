@@ -57,7 +57,9 @@ var prefs = function() {
         "ratman_smallart",
         "sleeptime",
         "sleepon",
-        "advanced_search_open"
+        "advanced_search_open",
+        "artistsatstart",
+        "nosortprefixes"
     ];
 	
 	const jsonNode = document.querySelector("script[name='prefs']");
@@ -82,12 +84,14 @@ var prefs = function() {
 
                 case "artistsatstart":
                     if (!arraycompare(felakuti.artistsatstart, prefs.artistsatstart)) {
+                        setCookie('artistsatstart', felakuti['artistsatstart'], 3650);
                         callback = forceCollectionReload;
                     }
                     break;
 
                 case "nosortprefixes":
                     if (!arraycompare(felakuti.nosortprefixes, prefs.nosortprefixes)) {
+                        setCookie('nosortprefixes', felakuti['nosortprefixes'], 3650);
                         callback = forceCollectionReload;
                     }
                     break;
@@ -219,7 +223,6 @@ var prefs = function() {
                     callback = ferretMaster;
                     break;
 
-                case 'ignore_unplayable':
                 case 'sortbycomposer':
                 case 'composergenre':
                     $('[name="donkeykong"]').makeFlasher({flashtime: 0.5, repeats: 3});
