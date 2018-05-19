@@ -487,7 +487,7 @@ function unmopify_file($file) {
 	return $file;
 }
 
-function check_undefined_tags(&$filedata) {
+function check_undefined_tags(&$filedata, $unmopfile) {
 	if ($filedata['Title'] == null) $filedata['Title'] = rawurldecode(basename($filedata['file']));
 	if ($filedata['Album'] == null) $filedata['Album'] = album_from_path($unmopfile);
 	if ($filedata['Artist'] == null) $filedata['Artist'] = array(artist_from_path($unmopfile, $filedata['file']));
@@ -561,7 +561,7 @@ function process_file($filedata) {
             // mopidy-local-sqlite sets album URIs for local albums, but sometimes it gets it very wrong
 			// We don't need Album URIs for local tracks, since we can already add an entire album
             $filedata['X-AlbumUri'] = null;
-			check_undefined_tags($filedata);
+			check_undefined_tags($filedata, $unmopfile);
 			$filedata['folder'] = dirname($unmopfile);
             break;
 
@@ -604,7 +604,7 @@ function process_file($filedata) {
             break;
 
         case "internetarchive":
-			check_undefined_tags($filedata);
+			check_undefined_tags($filedata, $unmopfile);
             $filedata['X-AlbumUri'] = $filedata['file'];
             $filedata['folder'] = $filedata['file'];
             $filedata['AlbumArtist'] = "Internet Archive";
@@ -629,7 +629,7 @@ function process_file($filedata) {
             break;
 
         default:
-			check_undefined_tags($filedata);
+			check_undefined_tags($filedata, $unmopfile);
             $filedata['folder'] = dirname($unmopfile);
             break;
     }

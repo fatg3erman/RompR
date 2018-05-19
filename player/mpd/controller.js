@@ -765,6 +765,7 @@ function playerController() {
     }
 
     this.addTracksToPlaylist = function(playlist,tracks,moveto,playlistlength,callback) {
+        debug.log("PLAYER","Adding tracks to playlist",playlist,"then moving to",moveto,"playlist length is",playlistlength);
         var cmds = new Array();
         for (var i in tracks) {
             if (tracks[i].uri) {

@@ -20,7 +20,7 @@ var playlistManager = function() {
 		if (tracks.length == 0) {
 			// Add a blank entry so we've got something to drop onto. Also the dropping doesn't work
 			// without at least one sortable in the target.
-			html += '<tr class="sortable" name="dummy" romprpos="playmanitem_0"><td style="height:24px"></td></tr>';
+			html += '<tr class="sortable" name="dummy" romprpos="playmanitem_null"><td style="height:24px"></td></tr>';
 		} else {
 			for (var i in tracks) {
 				html += '<tr class="sortable draggable infoclick clickable clicktrack" name="'+tracks[i].Uri+'" romprpos="playmanitem_'+i+'"><td width="40px"><img class="smallcover';
@@ -123,6 +123,20 @@ var playlistManager = function() {
 				debug.log("PLAYLISTMANAGER",i);
 				holders[i] = $('<div>', {class: 'tagholder selecotron noselection'}).appendTo($("#playmunger"));
 				putTracks(holders[i], data[i], i);
+				holders[i].sortableTrackList({
+					items: '.sortable',
+					outsidedrop: playlistManager.dropped,
+					insidedrop: playlistManager.dragstopped,
+					scroll: true,
+					allowdragout: true,
+					scrollparent: '#infopane',
+					scrollspeed: 80,
+					scrollzone: 120
+				});
+				holders[i].acceptDroppedTracks({
+					scroll: true,
+					scrollparent: '#infopane'
+				});
 			}
             pmg.slideToggle('fast', function() {
 	          	cement = true;
@@ -131,20 +145,6 @@ var playlistManager = function() {
 	            infobar.markCurrentTrack();
 	            pmg.imagesLoaded(browser.rePoint);
             });
-			$('#playmunger').sortableTrackList({
-				items: '.sortable',
-				outsidedrop: playlistManager.dropped,
-				insidedrop: playlistManager.dragstopped,
-				scroll: true,
-				allowdragout: true,
-				scrollparent: '#infopane',
-				scrollspeed: 80,
-				scrollzone: 120
-			});
-			$('#playmunger').acceptDroppedTracks({
-				scroll: true,
-				scrollparent: '#infopane'
-			});
 		},
 
 		handleClick: function(element, event) {
@@ -169,7 +169,9 @@ var playlistManager = function() {
 		        });
 			} else if (element.hasClass('clickrenplaylist')) {
 		        var list = unescapeHtml(element.parent().parent().parent().parent().prev().val());
-		        player.controller.renamePlaylist(list, event);
+		        player.controller.renamePlaylist(list, event, player.controller.doRenamePlaylist);
+			} else if (element.hasClass('clickfoldupplaylist')) {
+				element.parent().parent().parent().children('tr.sortable').slideToggle('fast');
 			}
 		},
 
@@ -197,14 +199,14 @@ var playlistManager = function() {
 	        });
 	        $('.selected').removeClass('selected');
 	        var moveto = null;
-	        var playlistlength = null;
+	        var playlistlength = 0;
 	        var next = ui.next('.sortable').attr('romprpos');
-	        if (next) {
+	        if (next && next != 'playmanitem_null') {
 	        	debug.log("PLAYLISTMANAGER","Next Item Is",next);
 	        	next = next.replace(/playmanitem_/, '');
 	        	moveto = next;
 	        	playlistlength = ui.parent().children('.sortable').last().attr('romprpos');
-	        	if (playlistlength) {
+	        	if (playlistlength && playlistlength != 'playmanitem_null') {
 	        		playlistlength = parseInt(playlistlength.replace(/playmanitem_/,''));
 	        		playlistlength += 1;
 	        	}
@@ -245,6 +247,7 @@ var playlistManager = function() {
 				next = ui.prev().attr('romprpos');
 			}
 			next = next.replace(/playmanitem_/,'');
+			if (next == 'null') next = 0;
 			debug.log("PLAYLISTMANAGER","Dragged item",item,"to position",next,"within playlist",playlist);
 			// Oooh it's daft but the position we have to send is the position AFTER the track has been
 			// taken out of the list but before it's been put back in.
@@ -260,7 +263,12 @@ var playlistManager = function() {
 			// We don't need to actually create the playlist at the mpd end because
 			// mpd will create it automatically if we add a track to it. And what's the point
 			// of an empty playlist?
-			var playlist = rawurlencode($('[name=newplaylistnameinput]').val());
+			var n = $('[name=newplaylistnameinput]').val();
+			if (n == '') {
+				infobar.notify(infobar.ERROR, "You must enter a name for the playlist");
+				return false;
+			}
+			var playlist = rawurlencode(n);
 			holders[playlist] = $('<div>', {class: 'tagholder selecotron noselection'}).prependTo($("#playmunger"));
 			putTracks(holders[playlist],[],playlist);
 			holders[playlist].acceptDroppedTracks({
@@ -287,4 +295,3 @@ var playlistManager = function() {
 
 pluginManager.setAction(language.gettext("label_playlistmanager"), playlistManager.open);
 playlistManager.open();
-

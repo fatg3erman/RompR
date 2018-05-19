@@ -29,6 +29,9 @@ if ($is_connected) {
     if ($json) {
 
         foreach ($json as $cmd) {
+            
+            debuglog("RAW command : ".implode(' ', $cmd),"ALBUMS");
+            
             switch ($cmd[0]) {
                 case "addtoend":
                     require_once("backends/sql/backend.php");
@@ -64,9 +67,6 @@ if ($is_connected) {
                         system('mv "albumart/small/'.$oldimage.'.jpg" "albumart/small/'.$newimage.'.jpg"');
                         system('mv "albumart/asdownloaded/'.$oldimage.'.jpg" "albumart/asdownloaded/'.$newimage.'.jpg"');
                     }
-                    $playlist_file = format_for_disc(rawurldecode($cmd[1]));
-                    $new_file = format_for_disc(rawurldecode($cmd[2]));
-                    system('mv "prefs/'.$playlist_file.'" "prefs/'.$new_file.'"');
                     $cmds[] = join_command_string($cmd);
                     break;
 
@@ -117,8 +117,8 @@ if ($is_connected) {
     // If we added tracks to a STORED playlist, move them into the correct position
     //
 
-    while ($playlist_tracksadded > 0) {
-        $cmds[] = join_command_string(array('playlistmove', $playlist_moving_within,$playlist_movefrom, $playlist_moveto));
+    while ($playlist_tracksadded > 0 && $playlist_movefrom !== null && $playlist_moveto !== null) {
+        $cmds[] = join_command_string(array('playlistmove', $playlist_moving_within, $playlist_movefrom, $playlist_moveto));
         $playlist_moveto++;
         $playlist_movefrom++;
         $playlist_tracksadded--;
