@@ -16,7 +16,7 @@ function open_mpd_connection() {
         $is_connected = true;
         while(!feof($connection)) {
             $gt = fgets($connection, 1024);
-            if(parse_mpd_var($gt))
+            if (parse_mpd_var($gt))
                 break;
         }
     }
@@ -103,7 +103,7 @@ function do_mpd_command($command, $return_array = false, $force_array_results = 
                         // Got an OK or ACK but - no results or return_array is false
                         return true;
                     }
-                    if($var === true) {
+                    if ($var === true) {
                         break;
                     }
                     if ($var[0] == false) {
@@ -118,7 +118,6 @@ function do_mpd_command($command, $return_array = false, $force_array_results = 
                     if ($return_array == true) {
                         if(array_key_exists($var[0], $retarr)) {
                             if(is_array($retarr[($var[0])])) {
-                                // array_push($retarr[($var[0])], $var[1]);
                                 $retarr[($var[0])][] = $var[1];
                             } else {
                                 $tmp = $retarr[($var[0])];

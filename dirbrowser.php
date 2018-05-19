@@ -1,8 +1,12 @@
 <?php
+
+// These are the functions for building the dropdowns in the file browser
+
 include ("includes/vars.php");
 include ("includes/functions.php");
-include("international.php");
+include ("international.php");
 include ("player/mpd/connection.php");
+include ("player/mpd/filetree.php");
 $error = 0;
 $dbterms = array( 'tags' => null, 'rating' => null );
 

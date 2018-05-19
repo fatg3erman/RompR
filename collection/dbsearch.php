@@ -1,5 +1,7 @@
 <?php
 
+require_once('player/mpd/filetree.php');
+
 function doDbCollection($terms, $domains, $resultstype) {
 
 	// This can actually be used to search the database for title, album, artist, anything, rating, and tag
@@ -47,14 +49,16 @@ function doDbCollection($terms, $domains, $resultstype) {
 	$searchmap = array(
 		'artist' => 'a1.Artistname',
 		'album' =>  'al.Albumname',
-		'track_name' => 't.Title',
+		'title' => 't.Title',
 		'file' => 't.Uri',
 		'albumartist' => 'a2.Artistname'
 	);
 
 	foreach ($searchmap as $t => $d) {
 		if (array_key_exists($t, $terms)) {
-			$qstring .= 'AND ('.format_for_search($terms[$t],$d, $parameters);
+			$qstring .= 'AND (';
+			$qstring .= format_for_search($terms[$t],$d, $parameters);
+			$qstring .= ' OR '.format_for_search2($terms[$t],$d, $parameters);
 			$qstring .= ') ';
 		}
 	}
@@ -67,6 +71,7 @@ function doDbCollection($terms, $domains, $resultstype) {
 			foreach ($t as $tom) {
 				foreach ($searchmap AS $d) {
 					$bunga[] = format_for_search(array($tom), $d, $parameters);
+					$bunga[] = format_for_search2(array($tom), $d, $parameters);
 				}
 			}
 		}
@@ -141,6 +146,21 @@ function format_for_search($terms, $s, &$parameters) {
 		$t = preg_replace('/[\(\)\/\[\]\&\*\+\'\"\,\/]/','%',$t);
 		$a[] = $s.' LIKE ?';
 		$parameters[] = '% '.$t. '%';
+		$a[] = $s.' LIKE ?';
+		$parameters[] = '%'.$t. ' %';
+	}
+	$ret = implode(' OR ',$a);
+	return $ret;
+}
+
+function format_for_search2($terms, $s, &$parameters) {
+	// Make things a little more searchable
+	$a = array();
+	foreach ($terms as $i => $term) {
+		$t = trim($term);
+		$t = preg_replace('/[\(\)\/\[\]\&\*\+\'\"\,\/]/','%',$t);
+		$a[] = $s.' = ?';
+		$parameters[] = $t;
 	}
 	$ret = implode(' OR ',$a);
 	return $ret;

@@ -477,7 +477,9 @@ function artist_from_path($p, $f) {
 }
 
 function unmopify_file($file) {
-	// This has been times as much faster than using a regexp
+	// eg local:track:some/uri/of/a/file
+	// We want the path, not the domain or type
+	// This is much faster than using a regexp
 	$cock = explode(':', $file);
     if (count($cock) > 1) {
         $file = array_pop($cock);
@@ -500,6 +502,11 @@ function process_file($filedata) {
     // Pre-process the file data
 
     $mytime = microtime(true);
+	
+	if (trim($filedata['file']) == 'spotify:track:5V1bpfHhqyHPpmeKLFUZVl') {
+		debuglog("FOUND IT!!!!!!","COLLECTION");
+	}
+	
 
     if ($dbterms['tags'] !== null || $dbterms['rating'] !== null) {
         // If this is a search and we have tags or ratings to search for, check them here.
@@ -550,6 +557,14 @@ function process_file($filedata) {
 	
     switch($filedata['domain']) {
 
+		case 'local':
+            // mopidy-local-sqlite sets album URIs for local albums, but sometimes it gets it very wrong
+			// We don't need Album URIs for local tracks, since we can already add an entire album
+            $filedata['X-AlbumUri'] = null;
+			check_undefined_tags($filedata);
+			$filedata['folder'] = dirname($unmopfile);
+            break;
+
 		case 'http':
 		case 'https':
 		case 'mms':
@@ -570,13 +585,6 @@ function process_file($filedata) {
 		case 'bassdrive':
 			preprocess_stream($filedata);
 			break;
-
-        case 'local':
-            // mopidy-local-sqlite sets album URIs for local albums, but sometimes it gets it very wrong
-            $filedata['X-AlbumUri'] = null;
-            $filedata['folder'] = dirname($unmopfile);
-			check_undefined_tags($filedata);
-            break;
 
         case "soundcloud":
 			preprocess_soundcloud($filedata);
@@ -610,8 +618,11 @@ function process_file($filedata) {
 			if ($filedata['AlbumArtist'] === null) {
                 $filedata['AlbumArtist'] = array("Podcasts");
 			}
-            if (is_array($filedata['Artist']) && ($filedata['Artist'][0] == "http" || $filedata['Artist'][0] == "https" ||
-                $filedata['Artist'][0] == "ftp" || $filedata['Artist'][0] == "file" ||
+            if (is_array($filedata['Artist']) &&
+				($filedata['Artist'][0] == "http" ||
+				$filedata['Artist'][0] == "https" ||
+                $filedata['Artist'][0] == "ftp" ||
+				$filedata['Artist'][0] == "file" ||
                 substr($filedata['Artist'][0],0,7) == "podcast")) {
                 $filedata['Artist'] = $filedata['AlbumArtist'];
             }
@@ -626,6 +637,8 @@ function process_file($filedata) {
     $rtime += microtime(true) - $mytime;
 
     if ($doing_search) {
+		// If we're doing a search, we check to see if that track is in the database
+		// because the user might have set the AlbumArtist to something different
         $tstart = microtime(true);
         $extra = get_extra_track_info($filedata);
         if (count($extra) > 0) {
@@ -655,13 +668,15 @@ function process_file($filedata) {
         do_track_by_track( new track($filedata) );
         $db_time += microtime(true) - $tstart;
     } else  {
-        // Tracks without full info end up in the collection.
-        // During a collection update we sort the albums (probably only one) after each directory
-        // is scanned and then empty the collection, which saves enormously on memory usage.
-        // This means we don't catch the very few edge cases where someone might have an incompletely
+        // Tracks without full info end up in the collection data structures.
+        // During a collection update we sort the tracks album-by-album - i.e. after each directory is scanned.
+		// After each directory we empty the collection data structures which saves enormously on memory.
+        // This means we don't catch the very few edge cases where someone might have incompletely
         // tagged files spread across multiple directories, but that's so unlikely I doubt it'll ever happen.
-        // Note that we don't do this during a search, because those (especially if mopidy is involved) don't come in
-        // in a nice reliable order, but there will be far fewer of them. Hopefully.
+        
+		// But one place it might happen is during search, where we can't assume tracks will come in album order
+		// (especially from Spotify etc). So when doing a search we don't do album-by-album.
+
         $cstart = microtime(true);
         if ($filedata['Disc'] === null) $filedata['Disc'] = 1;
         $t = new track($filedata);
