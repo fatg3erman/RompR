@@ -46,7 +46,7 @@ You need to make sure that your browser can access your Beets server for this to
 
 Otherwise beets will not allow RompЯ to talk to it. Your configuration for beets in mopidy must also contain this IP address as Beets will only communicate via the supplied IP address.
 
-## If you use mopidy-local-sqlite
+## If you use Mopidy-Local-Sqlite
 
 There seems to be a bug in the scanner engine in mopidy's sqlite backend where sometimes it puts tracks on the wrong albums. Putting the following in your mopidy configuration seems to work around this.
 

@@ -41,19 +41,17 @@ input[type="submit"]
     color: #dddddd;
 }
 
-a:link
-{
-    color:#222222;
+a:link {
+    color:yellow;
 }
 
-a:visited
-{
-    color:#222222;
+a:visited {
+    color:yellow;
 }
 
 a:hover,a:active
 {
-    color:#777777;
+    color:red;
 }
 
 /*
