@@ -51,7 +51,7 @@ We need to make sure Apache can find the stuff you've just downloaded. To do thi
 
 ### Install some packages
 
-    sudo apt-get install php7.0-mysql nginx php7.0-curl imagemagick php7.0-json php7.0-xml php7.0-mbstring
+`sudo apt-get install php7.0-mysql nginx php7.0-curl imagemagick php7.0-json php7.0-xml php7.0-mbstring`
 
 _Note the version numbers - 7.0 is current for Ubuntu 16.04 at the time of  writing but as times change it may become 7.1, etc. Amend the command as applicable_
 
