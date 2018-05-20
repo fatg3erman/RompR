@@ -26,7 +26,7 @@ For Mopidy users, the Configuration panel gives you the choice of which Mopidy b
 
 You will only see options for backends that are enabled in Mopidy. The complete list of supported backends is:
 
-* **Local Music** []('local' backend must be enabled)](/RompR/Rompr-And-Mopidy)
+* **Local Music** [('local' backend must be enabled)](/RompR/Rompr-And-Mopidy)
 * **Beets** [('beets' backend must be enabled)](/RompR/Rompr-And-Mopidy)
 * **Beets Local** ('beetslocal' backend must be enabled)
 * **Spotify Playlists** ('spotify' backend must be enabled) *This will all all tracks from your Spotify Playlists into your collection. Your playlists will still be availabel as Playlists even if you don't select this option*
