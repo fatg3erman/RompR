@@ -7,6 +7,8 @@ RompЯ allows you to customise the interface with different options:
 * **Font Size** allows you to change the font size
 * **Album Cover Size** changes the size of the album covers in the Music Collection and Current Playlist
 
+## Themes
+
 ![](images/appearance.png)
 
 This is Numismatist, the default theme, using the 'Modern-Dark' icons
@@ -28,6 +30,14 @@ If you use a theme with a background image, you can change the image to one of y
 Use 'Browse' to select the image then click 'Upload'. To remove your image and revert to the default, click the x.
 
 Note that some of the fonts used are taken from Google Fonts and therefore require an internet connection to work. All have sensible fallbacks, just in case.
+
+## Setting The Theme At Load Time
+
+You may specify a theme in the URL in your browser. Just point your browser at
+
+    http://ip.address.of.rompr/?theme=ThemeName
+    
+where 'ThemeName' is one of the suppplied themes.
 
 ## Making Your Own Theme
 
