@@ -6,8 +6,12 @@ include("international.php");
 include ("player/mpd/connection.php");
 
 $handlers = do_mpd_command('urlhandlers', true);
-if (array_key_exists('handler', $handlers)) {
-	print json_encode($handlers['handler']);
+if (is_array($handlers)) {
+	if (array_key_exists('handler', $handlers)) {
+		print json_encode($handlers['handler']);
+	} else {
+		print json_encode(array());
+	}
 } else {
 	print json_encode(array());
 }

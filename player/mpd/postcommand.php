@@ -184,9 +184,13 @@ if ($is_connected) {
         }
     }
 
-    if ($prefs['player_backend'] != 'mopidy') {
+    if ($prefs['player_backend'] == 'mpd') {
         $arse = array();
         $arse = do_mpd_command('replay_gain_status', true, false);
+        if (array_key_exists('error', $arse)) {
+            unset($arse['error']);
+            send_command('clearerror');
+        }
         $mpd_status = array_merge($mpd_status, $arse);
     }
 

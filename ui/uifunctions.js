@@ -739,8 +739,8 @@ function doMopidyCollectionOptions() {
 function editPlayerDefs() {
     $("#configpanel").slideToggle('fast');
     var playerpu = new popup({
-        width: 600,
-        height: 600,
+        width: 900,
+        height: 800,
         title: "Players"});
     var mywin = playerpu.create();
     mywin.append('<div class="pref textcentre"><p>You can define as many players as '+
@@ -752,7 +752,7 @@ function editPlayerDefs() {
     $("#playertable").append('<tr><th>NAME</th><th>HOST</th><th>PORT</th><th>PASSWORD</th><th>UNIX SOCKET</th></tr>');
     for (var i in prefs.multihosts) {
         $("#playertable").append('<tr class="hostdef" name="'+escape(i)+'">'+
-            '<td><input type="text" size="30" name="name" value="'+i+'"/></td>'+
+            '<td><input type="text" size="30" name="name" class="notspecial" value="'+i+'"/></td>'+
             '<td><input type="text" size="30" name="host" value="'+prefs.multihosts[i]['host']+'"/></td>'+
             '<td><input type="text" size="30" name="port" value="'+prefs.multihosts[i]['port']+'"/></td>'+
             '<td><input type="text" size="30" name="password" value="'+prefs.multihosts[i]['password']+'"/></td>'+
@@ -777,6 +777,11 @@ function editPlayerDefs() {
 
     $('.clickremhost').unbind('click');
     $('.clickremhost').click(removePlayerDef);
+    
+    $(document).on('keyup', 'input.notspecial', function() {
+        debug.log("ENTER","Value Changed");
+        this.value = this.value.replace(/[\*&\+\s<>\[\]:;,\.\(\)]/g, '');
+    });
 
     playerpu.open();
 }

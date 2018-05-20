@@ -20,7 +20,7 @@ You need to make sure that your browser can access your Beets server for this to
     web:
       host: IP.address.of.beets.server
 
-Otherwise beets will not allow RompЯ to talk to it.
+Otherwise beets will not allow RompЯ to talk to it. Your configuration for beets in mopidy must also contain this IP address as Beets will only communicate via the supplied IP address.
 
 ## If you use mopidy-local-sqlite
 
