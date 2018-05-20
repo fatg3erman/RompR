@@ -95,3 +95,19 @@ aside#sidebar
 {
     border-left: 1px solid grey;
 }
+
+code {
+    margin-bottom: 20px;
+    background-color: #f8f8f8;
+    border: none;
+}
+
+pre code {
+    background-color: none;
+    color: black;
+}
+
+p < code.highlighter-rouge {
+    padding: 20px;
+    background-color: #f8f8f8;
+}
