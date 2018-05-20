@@ -83,7 +83,7 @@ The first line shows that, on my system, mopidy is running as the user 'bob' - w
 
 We need to create a simple shell script that will run mopidy local scan as the correct user.
 
-So create a file called mopidy_scan.sh with the following contents
+So create a file called **mopidy_scan.sh** (the filename MUST be mopidy_scan.sh) with the following contents
 
 **EITHER** If you're [running mopidy as a service](https://docs.mopidy.com/en/latest/service/#service) then the file needs to contain
 
@@ -97,7 +97,7 @@ So create a file called mopidy_scan.sh with the following contents
 
     mopidy local scan
 
-and save it somewhere. I put mine in /home/bob/bin/mopidy_scan.sh.
+and save it somewhere. I put mine in /home/bob/bin/mopidy_scan.sh. Where you save it doesn't matter, but the filename does.
 
 Now we need to make the script executable and use setuid to make it run as the correct user
 

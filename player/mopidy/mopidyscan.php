@@ -13,11 +13,11 @@ if (file_exists($prefs['mopidy_scan_command'])) {
         exec($prefs['mopidy_scan_command'].' > /dev/null 2>&1 &');
     } else if (array_key_exists('check', $_REQUEST)) {
         debuglog("Checking For Mopidy Scan Process","COLLECTION", 8);
-        exec ('ps aux | grep "mopidy local scan"', $result);
+        exec ('ps aux | grep "mopidy_scan.sh"', $result);
         if (count($result) > 2) {
             // There will be 3 matching process if it's running:
             // 1. The actual scan process
-            // 2. The sh -c that php uses to execute the command
+            // 2. The sh -c that php uses to execute the grep command
             // 3. The grep command
             debuglog("Scan Process is running","COLLECTION", 8);
             $output['updating_db'] = 1;
