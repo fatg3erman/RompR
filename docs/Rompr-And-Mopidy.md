@@ -81,7 +81,17 @@ The first line shows that, on my system, mopidy is running as the user 'bob' - w
 
 ### 2. Creating the Mopidy Scan Command
 
-We need to create a simple shell script that will run mopidy local scan as the correct user. So create a file called mopidy_scan.sh with the following contents
+We need to create a simple shell script that will run mopidy local scan as the correct user.
+
+So create a file called mopidy_scan.sh with the following contents
+
+**EITHER** If you're [running mopidy as a service](https://docs.mopidy.com/en/latest/service/#service) then the file needs to contain
+
+    #!/bin/bash
+
+    mopidyctl local scan
+
+**OR** If you're just running mopidy as a login program
 
     #!/bin/bash
 
@@ -102,6 +112,12 @@ Now we need to make the script executable and use setuid to make it run as the c
 
 where USER is the username you found in step 1.    
 (Change the filename and path according to wherever you saved it)
+
+**OR IF** you're [running mopidy as a service](https://docs.mopidy.com/en/latest/service/#service)
+
+    sudo chown root /home/bob/bin/mopidy_scan.sh
+    
+(In this case, as setuid root is a very big security risk, I suggest putting mopidy_scan.sh somewhere safe and not on the system PATH)
 
 ### 3. Configure RompЯ
 
