@@ -5,18 +5,24 @@
 
 h1, h2, h3, h4, h5
 {
-    font-family: 'Helvetica Neue', Helvetica, Arial, serif;
+    font-family: 'Nunito', 'Helvetica Neue', Helvetica, Arial, serif;
 }
 
 #main-content h1, #main-content h2, #main-content h3, #main-content h4, #main-content h5
 {
-    font-family: 'Helvetica Neue', Helvetica, Arial, serif;
+    font-family: 'Nunito', 'Helvetica Neue', Helvetica, Arial, serif;
     border-bottom: 1px solid #cccccc;
 }
 
 a.button
 {
-    font-family: 'Helvetica Neue', Helvetica, Arial, serif;
+    font-family: 'Nunito', 'Helvetica Neue', Helvetica, Arial, serif;
+    
+}
+
+body
+{
+    font-family: 'Nunito', 'Helvetica Neue', Helvetica, Arial, serif;
     
 }
 
@@ -105,4 +111,8 @@ code {
 pre code {
     background-color: none;
     color: black;
+}
+
+p.slogan {
+    color: white;
 }
