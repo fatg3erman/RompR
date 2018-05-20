@@ -40,7 +40,7 @@ You will only see options for backends that are enabled in Mopidy. The complete 
 
 Classical music lovers (or lovers of other genres) also have the option to sort by Composer for specific Genres. Note that this relies on tracks being tagged with Composer information, which is not always the case with some backends in Mopidy. For local files you will need to tag them yourself for this to work.
 
-**After changing any of these options you must rebuild your Music Collection**
+![](images/composersort.png)
 
 ## On-The-Fly Collection Building
 

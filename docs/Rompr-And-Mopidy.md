@@ -9,28 +9,6 @@ If you use Mopidy, please make sure you read the following to ensure you get the
 RompЯ communicates with mopidy using its MPD frontend.
 Mopidy version 1.1 or later is required.
 
-## If you use Mopidy-Beets
-
-You can create your Music Collection from your Beets Library by selecting the option in the Configuration Panel. There is also a box to enter the address of your Beets server. This is not required for building the Music Collection, but if you set this value then you will be able to retrieve additional file information and lyrics from your Beets server.
-
-![](images/mopcolbeets.png)
-
-You need to make sure that your browser can access your Beets server for this to work. If your browser runs on a different computer than your beets server, then your beets config.yaml needs to contain
-
-    web:
-      host: IP.address.of.beets.server
-
-Otherwise beets will not allow RompЯ to talk to it. Your configuration for beets in mopidy must also contain this IP address as Beets will only communicate via the supplied IP address.
-
-## If you use mopidy-local-sqlite
-
-There seems to be a bug in the scanner engine in mopidy's sqlite backend where sometimes it puts tracks on the wrong albums. Putting the following in your mopidy configuration seems to work around this.
-
-    [local-sqlite]
-    enabled = true
-    use_album_mbid_uri = false
-    use_artist_sortname = false
-
 ## Building Your Music Collection
 
 The configuration panel will allow you to choose various sources from which to build your [Music Collection](/RompR/Music-Collection).
@@ -55,5 +33,26 @@ If you don't want to build a collection this way, tracks from anywhere can be ad
 
 Tagging or rating a track that is playing on a radio station will make RompЯ search for it on Spotify (if you have Spotify) and add it to your collection if it can find it, or to your wishlist if it can't.
 
+## If you use Mopidy-Beets
+
+You can create your Music Collection from your Beets Library by selecting the option in the Configuration Panel. There is also a box to enter the address of your Beets server. This is not required for building the Music Collection, but if you set this value then you will be able to retrieve additional file information and lyrics from your Beets server.
+
+![](images/mopcolbeets.png)
+
+You need to make sure that your browser can access your Beets server for this to work. If your browser runs on a different computer than your beets server, then your beets config.yaml needs to contain
+
+    web:
+      host: IP.address.of.beets.server
+
+Otherwise beets will not allow RompЯ to talk to it. Your configuration for beets in mopidy must also contain this IP address as Beets will only communicate via the supplied IP address.
+
+## If you use mopidy-local-sqlite
+
+There seems to be a bug in the scanner engine in mopidy's sqlite backend where sometimes it puts tracks on the wrong albums. Putting the following in your mopidy configuration seems to work around this.
+
+    [local-sqlite]
+    enabled = true
+    use_album_mbid_uri = false
+    use_artist_sortname = false
 
 Note that if you use local files, RompЯ cannot get mopidy to scan them because mopidy does not support that. You will therefore have to run "mopidy local scan" yourself, then restart mopidy before you update the collection from rompr. (If you use the sqlite backend in mopidy you do not need to restart it)

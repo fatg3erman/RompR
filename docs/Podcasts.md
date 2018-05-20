@@ -72,3 +72,7 @@ To subscribe to a podcast from search results, click the RSS icon to the right.
 ## Using Mopidy-Podcasts
 
 Users of the mopidy-podcasts backend will know that it has its own search engines, these are accessed using the main RompЯ search panel. If you're playing a podcast episode via that backend, an RSS icon will appear in the now playing area. Clicking that icon will add that podcast to your list of subscribed podcasts.
+
+## Browsing Podcasts
+
+You can also browse for Podcast episodes using the [TuneIn Radio Dicrectory](/RompR/Internet-Radio), though you will not be able to subscribe to podcasts you play this way.
