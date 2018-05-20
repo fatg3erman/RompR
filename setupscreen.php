@@ -74,6 +74,12 @@ print '><label for="dsp">Do not show preferences panel on the interface</label><
 print '<p class="tiny">This will stop people messing with your configuration, but also with theirs</p>';
 
 print '<hr class="dingleberry" />';
+print '<h3>'.get_int_text("config_mopidy_scan").'</h3>';
+print '<p><a href="https://fatg3erman.github.io/RompR/Rompr-And-Mopidy">Read The Documentation</a> before using this command</p>';
+print '<p>Executable Path<br><input type="text" name="mopidy_scan_command" value="'.
+    $prefs['mopidy_scan_command'].'" /></p>'."\n";
+
+print '<hr class="dingleberry" />';
 print '<h3>Collection Settings</h3>';
 print '<div class="pref styledinputs"><input id="dblite" type="radio" name="collection_type" value="sqlite"';
 if (array_key_exists('collection_type', $prefs) && $prefs['collection_type'] == "sqlite") {

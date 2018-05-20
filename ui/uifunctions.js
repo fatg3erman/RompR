@@ -289,7 +289,11 @@ function pollAlbumList() {
         clearTimeout(update_load_timer);
         update_load_timer_running = false;
     }
-    $.getJSON("player/mpd/postcommand.php", checkPoll);
+    if (prefs.player_backend == "mopidy" && prefs.mopidy_scan_command != '') {
+        $.getJSON("player/mopidy/mopidyscan.php?check=yes", checkPoll);
+    } else {
+        $.getJSON("player/mpd/postcommand.php", checkPoll);
+    }
 }
 
 function scootTheAlbums(jq) {

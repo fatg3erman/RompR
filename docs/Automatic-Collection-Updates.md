@@ -9,7 +9,7 @@ If you're using mpd, mpd has an option in its config file to auto_update mpd whe
 
 To update RompЯ's collection just create a cron job that runs
 
-`curl -b "currenthost=Default;player_backend=mpd" http://address.of.rompr/albums.php?update=yes > /dev/null`
+`curl -b "currenthost=Default;player_backend=mpd" http://address.of.rompr/albums.php?rebuild=yes > /dev/null`
 
 where currenthost is the name of one of the Players defined in the Configuration menu
 and player_backend MUST be mpd or mopidy, depending on what your player is.

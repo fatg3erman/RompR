@@ -159,10 +159,17 @@ function playerController() {
     this.scanFiles = function(cmd) {
         prepareForLiftOff(language.gettext("label_updating"));
         prepareForLiftOff2(language.gettext("label_updating"));
-        self.do_command_list([[cmd]], function() {
-            update_load_timer = setTimeout( pollAlbumList, 2000);
-            update_load_timer_running = true;
-        });
+        if (prefs.player_backend == "mopidy" && prefs.mopidy_scan_command != '') {
+            $.getJSON("player/mopidy/mopidyscan.php?scan=yes", function() {
+                update_load_timer = setTimeout( pollAlbumList, 2000);
+                update_load_timer_running = true;
+            });
+        } else {
+            self.do_command_list([[cmd]], function() {
+                update_load_timer = setTimeout( pollAlbumList, 2000);
+                update_load_timer_running = true;
+            });
+        }
     }
 
     this.loadCollection = function(uri) {

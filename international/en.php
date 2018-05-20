@@ -616,7 +616,8 @@ $languages['en'] = array (
 	"button_filter" => "Filter",
 	"label_tuneinradio" => "TuneIn Radio Directory",
 	"label_generalsettings" => "General Settings",
-	"config_beetsserver" => "Location of Beets Server (ip.address:port)"
+	"config_beetsserver" => "Location of Beets Server (ip.address:port)",
+	"config_mopidy_scan" => "Mopidy Local Scan Command"
 
 );
 

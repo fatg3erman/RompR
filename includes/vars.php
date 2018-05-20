@@ -55,6 +55,7 @@ $prefs = array(
     "do_not_show_prefs" => false,
     "load_plugins_at_loadtime" => false,
     "beets_server_location" => "",
+    "mopidy_scan_command" => "",
 
     // Things that could be set on a per-user basis but need to be known by the backend
     "mpd_host" => "localhost",
