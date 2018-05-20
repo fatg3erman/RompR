@@ -699,9 +699,10 @@ function doMopidyCollectionOptions() {
         beets: [{dir: "Beets library/Albums by Artist", label: "Beets Library"}],
         spotify: [{dir: "Spotify Playlists", label: "Spotify Playlists"}],
         spotifyweb: [{dir: "Spotify Web Browse/Your Music/Albums", label: "Spotify 'Your Music'"},
-                     {dir: "Spotify Web Browse/Your Artists", label: "Your Spotify Artists (Slow!)"}],
+                     {dir: "Spotify Web Browse/Your Artists", label: "Spotify 'Your Artists'"}],
         gmusic: [{dir: "Google Music/Albums", label: "Google Music"}],
-        soundcloud: [{dir: "SoundCloud/Liked", label: "SoundCloud Liked"}],
+        soundcloud: [{dir: "SoundCloud/Liked", label: "SoundCloud Liked"},
+                     {dir: "SoundCloud/Sets", label: "SoundCloud Sets"}],
         vkontakte: [{dir: "VKontakte", label: "VKontakte" }]
     }
 
