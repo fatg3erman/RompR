@@ -547,9 +547,7 @@ function getDomain($d) {
         return "soundcloud";
     }
     if ($a == 'http' || $a == 'https') {
-        if (preg_match('#/item/\d+/file$#', $d)) {
-    		return 'local';
-    	} else if (strpos($d, 'vk.me') !== false) {
+        if (strpos($d, 'vk.me') !== false) {
     		return 'vkontakte';
     	} else if (strpos($d, 'oe1:archive') !== false) {
     		return 'oe1';

@@ -229,46 +229,6 @@ print '</div>';
 print '<div class="pref tright"><button onclick="editPlayerDefs()">Edit Players...</button></div>';
 print '</div>';
 
-// Collection Options
-print '<div class="textcentre ucfirst configtitle"><b>'.get_int_text('button_local_music').'</b></div>';
-
-// Album Sorting
-print '<div class="pref"><b>'.get_int_text('config_artistfirst').'
-<input class="saveotron prefinput arraypref" id="artistsatstart" type="text" size="256" />
-</b></div>';
-print '<div class="pref"><b>'.get_int_text('config_nosortprefixes').'
-<input class="saveotron prefinput arraypref" id="nosortprefixes" type="text" size="128" />
-</b></div>';
-
-print '<div class="pref styledinputs">
-    <div class="clearfix">
-        <div class="tleft">
-            <input class="autoset toggle" type="checkbox" id="updateeverytime"><label for="updateeverytime">'.get_int_text('config_updateonstart').'</label>
-        </div>';
-print '<button class="tright" name="donkeykong" onclick="checkCollection(true, false)">'.get_int_text('config_updatenow').'</button>';
-if ($prefs['player_backend'] == "mpd") {
-    print '<button class="tright" onclick="checkCollection(true, true)">'.get_int_text('config_rescan').'</button>';
-}
-print '</div></div>';
-
-print '<div class="tiny textcentre" style="margin-bottom:1em">These options affect everyone who uses this installation of RompЯ</div>';
-
-if ($prefs['player_backend'] == "mopidy") {
-    print '<div class="pref" id="mopidycollectionoptions">'.
-    '<b>'.get_int_text('config_collectionfolders').'</b></div>';
-}
-print '<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="sortbycomposer">
-<label for="sortbycomposer">'.get_int_text('config_sortbycomposer').'</label>
-</div>';
-print '<div class="pref indent styledinputs">
-<input class="autoset toggle" type="checkbox" id="composergenre">
-<label for="composergenre">'.get_int_text('config_composergenre').'</label>
-</div>';
-print '<div class="pref indent">
-<input class="saveotron prefinput arraypref" id="composergenrename" type="text" size="40" />
-</div>';
-
 // Last.FM
 print '<div class="textcentre configtitle">
 <i class="icon-lastfm-1 medicon"></i><b>'.get_int_text('label_lastfm').'</b>
@@ -311,6 +271,50 @@ print '<option value="5">5 '.get_int_text('stars').'</option>
 <option value="3">3 '.get_int_text('stars').'</option>
 <option value="2">2 '.get_int_text('stars').'</option>
 <option value="1">1 '.get_int_text('star').'</option>';
+print '</select>
+</div></div>';
+
+// Collection Options
+print '<div class="textcentre ucfirst configtitle"><b>'.get_int_text('button_local_music').'</b></div>';
+print '<div class="tiny textcentre" style="margin-bottom:1em">These options affect everyone who uses this installation of RompЯ</div>';
+
+// Album Sorting
+print '<div class="pref"><b>'.get_int_text('config_artistfirst').'
+<input class="saveotron prefinput arraypref" id="artistsatstart" type="text" size="256" />
+</b></div>';
+print '<div class="pref"><b>'.get_int_text('config_nosortprefixes').'
+<input class="saveotron prefinput arraypref" id="nosortprefixes" type="text" size="128" />
+</b></div>';
+
+print '<div class="pref styledinputs">
+    <div class="clearfix">
+        <div class="tleft">
+            <input class="autoset toggle" type="checkbox" id="updateeverytime"><label for="updateeverytime">'.get_int_text('config_updateonstart').'</label>
+        </div>';
+print '<button class="tright" name="donkeykong" onclick="checkCollection(true, false)">'.get_int_text('config_updatenow').'</button>';
+if ($prefs['player_backend'] == "mpd") {
+    print '<button class="tright" onclick="checkCollection(true, true)">'.get_int_text('config_rescan').'</button>';
+}
+print '</div></div>';
+
+if ($prefs['player_backend'] == "mopidy") {
+    print '<div class="pref" id="mopidycollectionoptions">'.
+    '<b>'.get_int_text('config_collectionfolders').'</b></div>';
+    print '<div class="pref">'.get_int_text('config_beetsserver').'
+    <input class="prefinput saveotron" id="beets_server_location" type="text" size="40" />
+    </div>';
+}
+
+print '<div class="pref styledinputs">
+<input class="autoset toggle" type="checkbox" id="sortbycomposer">
+<label for="sortbycomposer">'.get_int_text('config_sortbycomposer').'</label>
+</div>';
+print '<div class="pref indent styledinputs">
+<input class="autoset toggle" type="checkbox" id="composergenre">
+<label for="composergenre">'.get_int_text('config_composergenre').'</label>
+</div>';
+print '<div class="pref indent">
+<input class="saveotron prefinput arraypref" id="composergenrename" type="text" size="40" />
+</div>';
+
 ?>
-</select>
-</div></div>

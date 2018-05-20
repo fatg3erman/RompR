@@ -54,6 +54,7 @@ $prefs = array(
     // This option for plugin debugging ONLY
     "do_not_show_prefs" => false,
     "load_plugins_at_loadtime" => false,
+    "beets_server_location" => "",
 
     // Things that could be set on a per-user basis but need to be known by the backend
     "mpd_host" => "localhost",
@@ -175,6 +176,7 @@ foreach ($_COOKIE as $a => $v) {
         switch ($a) {
             case 'artistsatstart':
             case 'nosortprefixes':
+                // There was a version where these were set as cookies, but I decided against it
                 $prefs[$a] = explode(',',$v);
                 break;
                 

@@ -615,7 +615,8 @@ $languages['en'] = array (
 	"button_sleep" => "Sleep Timer",
 	"button_filter" => "Filter",
 	"label_tuneinradio" => "TuneIn Radio Directory",
-	"label_generalsettings" => "General Settings"
+	"label_generalsettings" => "General Settings",
+	"config_beetsserver" => "Location of Beets Server (ip.address:port)"
 
 );
 

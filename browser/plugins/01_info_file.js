@@ -100,6 +100,7 @@ var info_file = function() {
 	function createInfoFromBeetsInfo(data) {
 
         var html = "";
+		debug.log("FILE PLUGIN","Doing info from Beets server");
         var file = decodeURIComponent(player.status.file);
         var gibbons = [ 'year', 'genre', 'label', 'disctitle', 'encoder'];
         if (!file) { return "" }
@@ -170,10 +171,10 @@ var info_file = function() {
 			this.populate = function() {
                 if (trackmeta.fileinfo === undefined) {
     				var file = parent.playlistinfo.location;
-    				var m = file.match(/(^http:\/\/.*item\/\d+)\/file/)
-    		        if (m && m[1]) {
-    		        	debug.trace("FILE PLUGIN","File is from beets server",m[1]);
-                        self.updateBeetsInformation(m[1]);
+    				var m = file.match(/^beets:library:track(:|;)(\d+)/)
+    		        if (m && m[2] && prefs.beets_server_location != '') {
+    		        	debug.trace("FILE PLUGIN","File is from beets server",m[2]);
+                        self.updateBeetsInformation(m[2]);
     		        } else {
         	            setTimeout(function() {
                     		player.controller.do_command_list([], self.updateFileInformation)
@@ -186,7 +187,7 @@ var info_file = function() {
 
 		    this.updateFileInformation = function() {
                 trackmeta.fileinfo = {beets: null, player: cloneObject(player.status)};
-                debug.log("FILE PLUGIN","DOing update from",trackmeta);
+                debug.log("FILE PLUGIN","Doing update from",trackmeta);
 		    	trackmeta.lyrics = null;
                 player.controller.checkProgress();
 		    	self.doBrowserUpdate();
@@ -199,6 +200,7 @@ var info_file = function() {
                     debug.trace("FILE PLUGIN",'Got info from beets server',data);
                     trackmeta.fileinfo = {beets: data, player: null};
                     if (data.lyrics) {
+						debug.shout("FILE PLUGIN","Got lyrics from Beets Server");
                         trackmeta.lyrics = data.lyrics;
                     } else {
                         trackmeta.lyrics = null;

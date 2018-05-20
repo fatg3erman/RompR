@@ -6,7 +6,7 @@
 
 In the case where your mpd/mopidy server is not running on the same PC as your apache server, or you need a password for mpd, or you'd like to use a unix-domain socket to communicate with mpd, point your browser at:
 
-http:/ip.of.your.rompr.installation/?setup
+    http:/ip.of.your.rompr.installation/?setup
 
 and enter the appropriate values. This page will appear automatically if RompЯ can't communicate with mpd or Mopidy when you load the page.
 

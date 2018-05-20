@@ -57,9 +57,7 @@ var prefs = function() {
         "ratman_smallart",
         "sleeptime",
         "sleepon",
-        "advanced_search_open",
-        "artistsatstart",
-        "nosortprefixes"
+        "advanced_search_open"
     ];
 	
 	const jsonNode = document.querySelector("script[name='prefs']");
@@ -84,14 +82,12 @@ var prefs = function() {
 
                 case "artistsatstart":
                     if (!arraycompare(felakuti.artistsatstart, prefs.artistsatstart)) {
-                        setCookie('artistsatstart', felakuti['artistsatstart'], 3650);
                         callback = forceCollectionReload;
                     }
                     break;
 
                 case "nosortprefixes":
                     if (!arraycompare(felakuti.nosortprefixes, prefs.nosortprefixes)) {
-                        setCookie('nosortprefixes', felakuti['nosortprefixes'], 3650);
                         callback = forceCollectionReload;
                     }
                     break;

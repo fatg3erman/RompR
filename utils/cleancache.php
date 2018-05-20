@@ -77,7 +77,7 @@ if ($mysqlc) {
                 // $searched = 1;
             } else {
                 debuglog($obj->Albumname." has missing image ".$obj->Image,"CACHE CLEANER");
-                if (file_exists("newimages/".$dobj->Domain."-logo.svg")) {
+                if (file_exists("newimages/".$obj->Domain."-logo.svg")) {
                     $image = "newimages/".$obj->Domain."-logo.svg";
                     $searched = 1;
                 } else {

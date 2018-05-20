@@ -106,7 +106,15 @@ function doMpdParse($command, &$dirs, $domains) {
                         $pstart = microtime(true);
                     }
                     $filedata = $mpd_file_model;
-                    // Fall through to default
+                    $filedata[$parts[0]] = $parts[1];
+                    break;
+                    
+                case 'X-AlbumUri':
+                    // Mopidy-beets is using SEMICOLONS in its URI schemes.
+                    // Surely a typo, but we need to work around it by not splitting the string
+                    // Same applies to file.
+                    $filedata[$parts[0]] = $parts[1];
+                    break;
 
                 default:
                     if (in_array($parts[0], $array_params)) {

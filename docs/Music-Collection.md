@@ -18,11 +18,25 @@ They will also be shown in the Now Playing area. To rate a track that is playing
 
 You can search for tags or ratings using the [Search Panel](/RompR/Searching-For-Music). You can also manage them and get a sorted list by using the [Ratings and Tags](/RompR/Managing-Ratings-And-Tags) panel. Tags and ratings can also be used to generate [Personalised Radio](/RompR/Personalised-Radio).
 
-## Collection Sources
+## Collection Sources (Mopidy Only)
 
 ![](images/buildcollectionfrom.png)
 
-For Mopidy users, the Configuration panel gives you the choice of which Mopidy backends you want to use to build your collection. To get Spotify 'Your Music' and Your Spotify Artists you must be running the Mopidy-Spotify-Web backend as well as Mopidy-Spotify. Other Mopidy backends will also appear in this list if they are enabled in Mopidy.
+For Mopidy users, the Configuration panel gives you the choice of which Mopidy backends you want to use to build your collection.
+
+You will only see options for backends that are enabled in Mopidy. The complete list of supported backends is:
+
+* **Local Music** ('local' backend must be enabled)
+* **Beets** [('beets' backend must be enabled)](/RompR/Rompr-And-Mopidy)
+* **Beets Local** ('beetslocal' backend must be enabled)
+* **Spotify Playlists** ('spotify' backend must be enabled)
+* **Spotify 'Your Music'** ('spotify-web' backend must be enabled)
+* **Spotify 'Your Artists'** ('spotify-web' backend must be enabled)
+* **Google Play** ('gmusic' backend must be enabled)
+* **SoundCloud 'Liked'** ('soundcloud' backend must be enabled)
+* **VKontakte** ('vkontakte' backend must be enabled)
+
+## Composers
 
 Classical music lovers (or lovers of other genres) also have the option to sort by Composer for specific Genres. Note that this relies on tracks being tagged with Composer information, which is not always the case with some backends in Mopidy. For local files you will need to tag them yourself for this to work.
 

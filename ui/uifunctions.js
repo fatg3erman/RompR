@@ -696,6 +696,7 @@ function doMopidyCollectionOptions() {
     var domains = {
         local: [{dir: "Local media", label: "Local Media"}],
         beetslocal: [{dir: "Local (beets)", label: "Local (beets)"}],
+        beets: [{dir: "Beets library/Albums by Artist", label: "Beets Library"}],
         spotify: [{dir: "Spotify Playlists", label: "Spotify Playlists"}],
         spotifyweb: [{dir: "Spotify Web Browse/Your Music/Albums", label: "Spotify 'Your Music'"},
                      {dir: "Spotify Web Browse/Your Artists", label: "Your Spotify Artists (Slow!)"}],
@@ -717,6 +718,7 @@ function doMopidyCollectionOptions() {
                     '<label for="mopcol_'+i+j+'">'+domains[i][j].label+'</label>'+
                     '<input type="hidden" name="'+domains[i][j].dir+'" />'+
                     '</div>';
+                                        
                 $("#mopidycollectionoptions").append(fum);
             }
         }
@@ -729,6 +731,9 @@ function doMopidyCollectionOptions() {
         debug.log("MOPIDY","Collection Options Are",opts);
         prefs.save({mopidy_collection_folders: opts});
     });
+    if (!player.canPlay('beets')) {
+        $('#beets_server_location').parent().hide();
+    }
 }
 
 function editPlayerDefs() {
@@ -824,7 +829,7 @@ function updatePlayerChoices() {
     } else {
         prefs.save({multihosts: newhosts});
         replacePlayerOptions();
-        setPrefs();
+        prefs.setPrefs();
         $("#playerdefs > .savulon").click(prefs.toggleRadio);
     }
 }
