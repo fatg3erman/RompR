@@ -10,8 +10,10 @@ Enter your Last.FM username and click Login, then follow the on-screen instructi
 
 You can enable Scrobbling from here, and set the percentage of a track that has to be played before RompЯ will scrobble it. This cannot be set lower than 50%, due to Last.FM rules.
 
+Note that if you run RompЯ on a device such as a phone, where it sleeps after a short period of time, then RompЯ will not scrobble tracks while the device is asleep. In this case you are better off using [mopidy-scrobbler](https://github.com/mopidy/mopidy-scrobbler) or [mpdscribble](https://www.musicpd.org/clients/mpdscribble/) if you want to ensure all your tracks get scrobbled.
+
 You can use Last.FM to auto-correct artist names on tracks that are playing if you like. This helps ensure more consistent scrobbles.
 
 If you enter some text into 'Tag Loved Tracks With', then when you click the 'Love' button for a track that tag will automatically be added to it.
 
-The other two options are described in more detail under [The Info Panel](/RompR/The-Info-Panel)
+The other two options are described in more detail under [The Info Panel](/RompR/The-Info-Panel#lastfm)

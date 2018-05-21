@@ -29,7 +29,7 @@ if (file_exists($prefs['mopidy_scan_command'])) {
     }
     
 } else {
-    debuglog("ERROR! Mopidy scan command does not exist","COLLECTION", 1);
+    debuglog("ERROR! Mopidy scan command ".$prefs['mopidy_scan_command']." does not exist","COLLECTION", 1);
 }
 
 print json_encode($output);

@@ -26,6 +26,8 @@ If you are [logged in to Last.FM](/RompR/LastFM) ADD TAGS adds tags to the track
 
 If you want to keep your Last.FM tagging in sync with your RompЯ Collection, there is an option to 'Keep Tags In Sync With Last.FM' in the Configuration panel. When this is enabled, using either RompЯ's tags or the Last.FM panel will add (or remove) those tags to the track both on Last.FM and in RompЯ's Collection.
 
+![](images/lfmsync.png)
+
 You can also use the option 'Last.FM Love Means' to automatically add a rating to tracks in the collection when you click the 'Love' button in RompЯ, and to automatically Love the track on Last.FM if you give it that Rating in RompЯ.
 
 ## Other Info Sources
@@ -33,3 +35,19 @@ You can also use the option 'Last.FM Love Means' to automatically add a rating t
 The other panels should be self-explanatory. There are also Back, Forward, and a History menu on the Info panel so you can keep playing new tracks while reading about old ones.
 
 ![](images/infopanel5.png)
+
+The buttons above the info panel are (left to right)
+
+* Dropdown menu for choosing various plugins which display in the info panel
+* History
+* Back
+* Forward
+* File Information - displays basic information about the file being played
+* Last.FM
+* Wikipedia
+* Musicbrainz
+* Discogs
+* Lyrics
+* Soundcloud (for when Soundcloud tracks are playing)
+* Spotify
+* Youtube

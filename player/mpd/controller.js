@@ -159,12 +159,15 @@ function playerController() {
     this.scanFiles = function(cmd) {
         prepareForLiftOff(language.gettext("label_updating"));
         prepareForLiftOff2(language.gettext("label_updating"));
+        debug.log("PLAYER","Scanning Files",cmd,prefs.player_backend,prefs.mopidy_scan_command);
         if (prefs.player_backend == "mopidy" && prefs.mopidy_scan_command != '') {
+            debug.shout("PLAYER","Scanning Mopidy using external scan command");
             $.getJSON("player/mopidy/mopidyscan.php?scan=yes", function() {
                 update_load_timer = setTimeout( pollAlbumList, 2000);
                 update_load_timer_running = true;
             });
         } else {
+            debug.shout("PLAYER","Scanning using",cmd);
             self.do_command_list([[cmd]], function() {
                 update_load_timer = setTimeout( pollAlbumList, 2000);
                 update_load_timer_running = true;
@@ -214,7 +217,7 @@ function playerController() {
             url: 'utils/checkupdateprogress.php',
             dataType: 'json',
             success: function(data) {
-                debug.log("UPDATE",data);
+                debug.debug("UPDATE",data);
                 $('#updatemonitor').html(data.current);
                 if (player.updatingcollection) {
                     monitortimer = setTimeout(self.checkUpdateMonitor,monitorduration);

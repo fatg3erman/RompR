@@ -24,7 +24,7 @@ We also want to set some configuration values for mysql to increase performance.
     [mysqld]
     query_cache_limit       = 16M
     query_cache_size        = 64M
-    innodb_buffer_pool_size = 64M
+    innodb_buffer_pool_size = 256M
     innodb_flush_log_at_trx_commit = 0
 
 And now link this file so mysql can find it
