@@ -32,7 +32,7 @@ You will only see options for backends that are enabled in Mopidy. The complete 
 If you don't want to build a collection this way, tracks from anywhere can be added to the collection by tagging or rating them at any time.
 
 
-Tagging or rating a track that is playing on a radio station will make RompЯ search for it on Spotify (if you have Spotify) and add it to your collection if it can find it, or to your wishlist if it can't.
+Tagging or rating a track that is playing on a radio station will make RompЯ search for it on Spotify (if you have Spotify) and add it to your collection if it can find it, or to your [wishlist](/RompR/The-Wishlist) if it can't.
 
 ## If you use Mopidy-Beets
 

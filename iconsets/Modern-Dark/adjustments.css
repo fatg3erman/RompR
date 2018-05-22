@@ -41,7 +41,48 @@
     }
 }
 
-@media screen  and (min-height: 940px) and (max-height: 1099px) and (min-width: 650px) {
+@media screen and (min-height: 640px) and (min-width: 700px) and (orientation: landscape) {
+    .controlbutton {
+        width:84px;
+        height:84px;
+    }
+    
+    .controlbutton-small {
+        width:64px;
+        height:64px;
+    }
+    
+    .shiftleft
+    {
+        left:-12px;
+        position:relative;
+        z-index:250;
+    }
+
+    .shiftleft2
+    {
+        left:-26px;
+        position:relative;
+    }
+
+    .shiftleft3
+    {
+        position:relative;
+        left:-36px;
+        z-index:5;
+    }
+
+    .shiftleft4
+    {
+        position:relative;
+        left:-48px;
+        z-index:1;
+        margin-right:-36px;
+    }
+    
+}
+
+@media screen and (min-height: 940px) and (max-height: 1099px) and (min-width: 650px) {
     .controlbutton {
         width:84px;
         height:84px;

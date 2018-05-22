@@ -77,7 +77,7 @@ $(document).ready(function(){
     helplinks[language.gettext('label_podcasts')] = 'https://fatg3erman.github.io/RompR/Podcasts';
     helplinks[language.gettext('label_pluginplaylists')] = 'https://fatg3erman.github.io/RompR/Personalised-Radio';
     helplinks[language.gettext('label_lastfm')] = 'https://fatg3erman.github.io/RompR/LastFM';
-    helplinks['Players'] = 'https://fatg3erman.github.io/RompR/Using-Multiple-Players';
+    helplinks[language.gettext('config_players')] = 'https://fatg3erman.github.io/RompR/Using-Multiple-Players';
     for (var i in helplinks) {
         $('b:contains("'+i+'")').parent('.configtitle').append('<a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
     }

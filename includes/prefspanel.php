@@ -222,11 +222,11 @@ print '<div class="pref styledinputs">
 </div>';
 
 // Players
-print '<div class="textcentre configtitle"><b>Players</b></div>';
+print '<div class="textcentre configtitle"><b>'.get_int_text('config_players').'</b></div>';
 print '<div class="clearfix">';
 print '<div class="pref styledinputs tleft" id="playerdefs">';
 print '</div>';
-print '<div class="pref tright"><button onclick="editPlayerDefs()">Edit Players...</button></div>';
+print '<div class="pref tright"><button onclick="editPlayerDefs()">'.get_int_text('button_edit_players').'</button></div>';
 print '</div>';
 
 // Last.FM

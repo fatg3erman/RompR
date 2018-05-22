@@ -746,7 +746,7 @@ function editPlayerDefs() {
     var playerpu = new popup({
         width: 900,
         height: 800,
-        title: "Players",
+        title: language.gettext('config_players'),
         helplink: "https://fatg3erman.github.io/RompR/Using-Multiple-Players"});
     var mywin = playerpu.create();
     mywin.append('<table align="center" cellpadding="2" id="playertable" width="96%"></table>');

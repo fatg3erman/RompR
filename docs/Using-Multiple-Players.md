@@ -36,7 +36,9 @@ If you're using local music, all players must have the same music files stored i
 
 Because mpd and Mopidy have to keep their own database of local music, you'll need to update this on every player when you add new music, because it needs to be kept in sync with RompЯ's collection.
 
-With Mopidy, one solution to this is to use mopidy-local-sqlite and put the database on a network share where all the players can access it. Another is to use mopidy-beets instead, with one centralised Beets server.
+With Mopidy, one solution to this is to use mopidy-local-sqlite and put the database on a network share where all the players can access it. However this can be very slow to load when you start Mopidy.
+
+Another is to use mopidy-beets instead, with one centralised Beets server.
 
 With mpd you can try to set the auto_update flag in mpd.conf, although I haven't been able to test whether this works on network shares.
 
