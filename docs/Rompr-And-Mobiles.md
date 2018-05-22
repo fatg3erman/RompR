@@ -50,7 +50,7 @@ In the case where you're using [multiple players](/RompR/Using-Multiple-Players)
 
 ### Loading at startup
 
-To make sure romonitor gets loaded every time you boot, you can just add it as a login program, using whatever method your choice of desktop environment provides to do that.
+To make sure romonitor gets loaded every time you boot, you can just add your shell script as a login program, using whatever method your choice of desktop environment provides to do that.
 
 ### What it doesn't do
 
