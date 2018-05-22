@@ -670,8 +670,8 @@ function markAsListened($url) {
     $podid = -1;
     $pods = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, "SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR Localfilename = ?", $url, basename($url));
     foreach ($pods as $pod) {
-        debuglog("Marking ".$pod->PODTrackindex." from ".$podid." as listened","PODCASTS");
         $podid = $pod->PODindex;
+        debuglog("Marking ".$pod->PODTrackindex." from ".$podid." as listened","PODCASTS");
         sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened=1, New=0 WHERE PODTrackindex=?",$pod->PODTrackindex);
     }
     return $podid;

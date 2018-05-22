@@ -30,7 +30,7 @@ if ($is_connected) {
 
         foreach ($json as $cmd) {
             
-            debuglog("RAW command : ".implode(' ', $cmd),"ALBUMS");
+            debuglog("RAW command : ".implode(' ', $cmd),"POSTCOMMAND",9);
             
             switch ($cmd[0]) {
                 case "addtoend":

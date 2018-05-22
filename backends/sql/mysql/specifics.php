@@ -11,14 +11,14 @@ function connect_to_database() {
 	}
 	try {
 		if (is_numeric($prefs['mysql_port'])) {
-			debuglog("Connecting using hostname and port","SQL_CONNECT",5);
+			debuglog("Connecting using hostname and port","SQL_CONNECT",9);
 			$dsn = "mysql:host=".$prefs['mysql_host'].";port=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'];
 		} else {
-			debuglog("Connecting using unix socket","SQL_CONNECT",5);
+			debuglog("Connecting using unix socket","SQL_CONNECT",9);
 			$dsn = "mysql:unix_socket=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'];
 		}
 		$mysqlc = new PDO($dsn, $prefs['mysql_user'], $prefs['mysql_password']);
-		debuglog("Connected to MySQL","SQL_CONNECT",8);
+		debuglog("Connected to MySQL","SQL_CONNECT",9);
 		generic_sql_query("SET NAMES utf8", true);
 		generic_sql_query('SET SESSION sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"', true);
 	} catch (Exception $e) {

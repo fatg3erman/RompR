@@ -128,50 +128,6 @@ close_mpd();
 
 debuglog("---------------------------END----------------------","USERRATING",4);
 
-function sanitise_data(&$data) {
-
-	foreach (array( 'action',
-					'title',
-					'artist',
-					'trackno',
-					'duration',
-					'albumuri',
-					'image',
-					'album',
-					'uri',
-					'trackai',
-					'albumai',
-					'albumindex',
-					'searched',
-					'lastmodified',
-					'ambid',
-					'attributes',
-					'which',
-					'wltrack',
-					'reqid') as $key) {
-		if (!array_key_exists($key, $data)) {
-			$data[$key] = null;
-		}
-	}
-	foreach (array( 'trackno', 'duration') as $key) {
-		if ($data[$key] == null) {
-			$data[$key] = 0;
-		}
-	}
-	$data['albumartist'] = array_key_exists('albumartist', $data) ? $data['albumartist'] : $data['artist'];
-	$data['date'] = (array_key_exists('date', $data) && $data['date'] != 0) ? getYear($data['date']) : null;
-	$data['urionly'] = array_key_exists('urionly', $data) ? true : false;
-	$data['disc'] = array_key_exists('disc', $data) ? $data['disc'] : 1;
-	$data['domain'] = array_key_exists('domain', $data) ? $data['domain'] : ($data['uri'] === null ? "local" : getDomain($data['uri']));
-	$data['imagekey'] = array_key_exists('imagekey', $data) ? $data['imagekey'] : make_image_key($data['albumartist'],$data['album']);
-	$data['hidden'] = 0;
-	$data['searchflag'] = 0;
-	if (substr($data['image'],0,4) == "http") {
-		$data['image'] = "getRemoteImage.php?url=".$data['image'];
-	}
-
-}
-
 function prepare_returninfo() {
 	debuglog("Preparing Return Info","USERRATINGS",6);
 	global $returninfo, $prefs;
@@ -264,22 +220,6 @@ function album_trackcount($albumindex) {
 			" AND Hidden = 0
 			AND isSearchResult < 2
 			AND Uri IS NOT NULL", false, null, 'num', 0);
-}
-
-function forcedUriOnly($u,$d) {
-
-	// Some mopidy backends - YouTube and SoundCloud - can return the same artist/album/track info
-	// for multiple different tracks.
-	// This gives us a problem because romprmetadata::find_item will think they're the same.
-	// So for those backends we always force urionly to be true
-	debuglog("Checking domain : ".$d,"USERRATINGS",9);
-
-	if ($u || $d == "youtube" || $d == "soundcloud") {
-		return true;
-	} else {
-		return false;
-	}
-
 }
 
 function preparePlaylist() {

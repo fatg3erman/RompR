@@ -436,6 +436,7 @@ function playerController() {
 	}
 
 	this.seek = function(seekto) {
+        debug.log("PLAYER","Seeking To",seekto);
         self.do_command_list([["seek", player.status.song, parseInt(seekto.toString())]]);
 	}
 

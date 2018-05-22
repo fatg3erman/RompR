@@ -49,6 +49,27 @@ function check_radio_and_podcasts($filedata) {
 
     $url = $filedata['file'];
 
+    $result = find_podcast_track_from_url($url);
+    foreach ($result as $obj) {
+        debuglog("Found PODCAST ".$obj->title,"STREAMHANDLER");
+        return array(
+            ($obj->title == '') ? $filedata['Title'] : $obj->title,
+            // Mopidy's estimate of the duration is frequently more accurate than that supplied in the RSS
+            (array_key_exists('Time', $filedata) && $filedata['Time'] > 0) ? $filedata['Time'] : $obj->duration,
+            ($obj->artist == '') ? $filedata['Artist'] : array($obj->artist),
+            ($obj->album == '') ? $filedata['Album'] : $obj->album,
+            md5($obj->album),
+            'podcast',
+            $obj->image,
+            null,
+            '',
+            ($obj->albumartist == '') ? $filedata['AlbumArtist'] : array($obj->albumartist),
+            null,
+            format_text($obj->comment),
+            null
+        );
+    }
+
     $result = find_radio_track_from_url($url);
     foreach ($result as $obj) {
         debuglog("Found Radio Station ".$obj->StationName,"STREAMHANDLER");
@@ -82,27 +103,6 @@ function check_radio_and_podcasts($filedata) {
             $obj->Stationindex,
             array_key_exists('Comment', $filedata) ? $filedata['Comment'] : '',
             get_stream_imgkey($obj->Stationindex)
-        );
-    }
-
-    $result = find_podcast_track_from_url($url);
-    foreach ($result as $obj) {
-        debuglog("Found PODCAST ".$obj->title,"STREAMHANDLER");
-        return array(
-            ($obj->title == '') ? $filedata['Title'] : $obj->title,
-            // Mopidy's estimate of the duration is frequently more accurate than that supplied in the RSS
-            (array_key_exists('Time', $filedata) && $filedata['Time'] > 0) ? $filedata['Time'] : $obj->duration,
-            ($obj->artist == '') ? $filedata['Artist'] : array($obj->artist),
-            ($obj->album == '') ? $filedata['Album'] : $obj->album,
-            md5($obj->album),
-            'podcast',
-            $obj->image,
-            null,
-            '',
-            ($obj->albumartist == '') ? $filedata['AlbumArtist'] : array($obj->albumartist),
-            null,
-            format_text($obj->comment),
-            null
         );
     }
 

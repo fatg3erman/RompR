@@ -123,7 +123,7 @@ var info_ratings = function() {
                         false
                     );
                 } else {
-                    metaHandlers.fromPlaylistInfo.setMeta(parent.playlistinfo, action, [{attribute: type, value: value}], setSuccess, setFail);
+                	metaHandlers.fromPlaylistInfo.setMeta(parent.playlistinfo, action, [{attribute: type, value: value}], setSuccess, setFail);
                 }
             }
 
