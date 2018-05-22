@@ -10,6 +10,8 @@ You can add new players from the configuration menu. This opens a dialog box.
 
 ![](images/players.png)
 
+Click the + icon to add a new player.
+
 The Name can be anything that is meaningful to you.
 
 Remember that 'localhost' in a player definition means 'the computer running the web server'.
@@ -27,3 +29,4 @@ To select a player to use, just select it in the Configuration menu and that bro
 * All players must be the same type - i.e all MPD or all Mopidy. This is because MPD and Mopidy use different and incompatible URI schemes for files.
 * If you're using local music, all players must have the same music files stored in the same directory path. The easiest way is to put your music on a network share somewhere.
 * Do NOT try to control multiple players from multiple tabs in the same browser. I cannot stop this or detect it and it WILL result in data corruption.
+* If you're [logged in to Last.FM](/RonpR/LastFM), the same Last.FM user is used across all Players.
