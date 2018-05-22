@@ -54,7 +54,7 @@ To make sure romonitor gets loaded every time you boot, you can just add your sh
 
 ### What it doesn't do
 
-The other thing that requires the device to be awake is populating Pseronalised Radio stations. Currently the only solution to this is to wake your device up every so often. It doesn't have to be after every track; even if the Current Playlist runs out of tracks, waking your device will repopulate it.
+The other thing that requires the device to be awake is populating Personalised Radio stations. Currently the only solution to this is to wake your device up every so often. It doesn't have to be after every track; even if the Current Playlist runs out of tracks, waking your device will repopulate it.
 
 ### Troubleshooting
 

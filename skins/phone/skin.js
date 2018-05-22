@@ -288,6 +288,7 @@ function popup(opts) {
         width: 100,
         height: 100,
         title: "Popup",
+        helplink: null,
         xpos: null,
         ypos : null,
         id: null,
@@ -306,6 +307,9 @@ function popup(opts) {
         tit.html('<b>'+options.title+'</b>');
         if (options.hasclosebutton) {
             tit.append('<i class="icon-cancel-circled playlisticonr clickicon tright"></i></div>');
+        }
+        if (options.helplink !== null) {
+            tit.append('<a href="'+options.helplink+'" target="_blank"><i class="icon-info-circled playlisticonr clickicon tright"></i></a>');
         }
         titlebar.find('.icon-cancel-circled').click( function() {self.close(false)});
         contents = $('<div>',{class: 'popupcontents'}).appendTo($("#popupwindow"));

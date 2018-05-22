@@ -48,7 +48,7 @@ var helpfulThings = function() {
 		open: function() {
 
         	if (hpl == null) {
-	        	hpl = browser.registerExtraPlugin("hpl", language.gettext("button_infoyou"), helpfulThings);
+	        	hpl = browser.registerExtraPlugin("hpl", language.gettext("button_infoyou"), helpfulThings, 'https://fatg3erman.github.io/RompR/Music-Discovery');
 
 			    $('#hplfoldup').append('<div id="helpful_radio" class="containerbox wrap mixcontainer"></div>');
 
@@ -138,7 +138,6 @@ var helpfulThings = function() {
 			if (doneonce) {
 				$('.helpfulholder').each(function() {
 					debug.log(medebug,"Removing And Destroying",$(this).attr("id"));
-					$(this).spotifyAlbumThing('destroy');
 					$(this).prev().remove();
 					$(this).remove();
 				});

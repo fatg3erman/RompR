@@ -191,7 +191,7 @@ var ratingManager = function() {
 		open: function() {
 
         	if (rmg == null) {
-	        	rmg = browser.registerExtraPlugin("rmg", language.gettext("config_tagrat"), ratingManager);
+	        	rmg = browser.registerExtraPlugin("rmg", language.gettext("config_tagrat"), ratingManager, "https://fatg3erman.github.io/RompR/Managing-Ratings-And-Tags");
 
 	        	$("#rmgfoldup").append('<div class="containerbox padright ratinstr" name="ratman_dragRat">'+
 	        		'<div class="expand"><b>'+language.gettext("label_ratingmanagertop")+'</b></div>'+

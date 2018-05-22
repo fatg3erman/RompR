@@ -13,7 +13,7 @@ This guide works on the assumption that you're using RompЯ on a machine that ha
 
 ## How to install on Linux with Apache and MySQL
 
-This guide came about because I was installing RompЯ on a Mythbuntu 16.04 installation where I also wanted to use Mythweb. Because Mythweb brings in Apache2 I was unable to use nginx as the webserver. So I came up with this method. If you already have a mythtv install, or another system which already used Apache2 (and mysql, optionally) then this method should work for you.
+This guide came about because I was installing RompЯ on a Mythbuntu 16.04 installation where I also wanted to use Mythweb. Because Mythweb brings in Apache2 I was unable to use nginx as the webserver. So I came up with this method. If you already have a mythtv install, or another system which already uses Apache2 (and mysql, optionally) then this method should work for you.
 
 If you are using Mythweb, you should make sure you've installed it with the option to use it alongside other websites. If you want to check this, do
 

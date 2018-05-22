@@ -40,7 +40,7 @@ var metaBackup = function() {
 
 		open: function() {
 			if (mbb === null) {
-	        	mbb = browser.registerExtraPlugin("mbb", language.gettext("label_metabackup"), metaBackup);
+	        	mbb = browser.registerExtraPlugin("mbb", language.gettext("label_metabackup"), metaBackup, 'https://fatg3erman.github.io/RompR/Backing-Up-Your-Metadata');
     			$("#mbbfoldup").append('<div class="padright noselection" style="text-align:center">'+
 					'<button class="fixed" onclick="metaBackup.create()">'+language.gettext("button_backup")+'</button>'+
     				'</div>');

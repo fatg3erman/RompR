@@ -94,7 +94,7 @@ var playlistManager = function() {
 		open: function() {
 
         	if (pmg == null) {
-	        	pmg = browser.registerExtraPlugin("pmg", language.gettext("label_playlistmanager"), playlistManager);
+	        	pmg = browser.registerExtraPlugin("pmg", language.gettext("label_playlistmanager"), playlistManager, 'https://fatg3erman.github.io/RompR/Using-Saved-Playlists#editing-your-saved-playlists');
 
 	        	if (layoutProcessor.supportsDragDrop) {
 		        	$("#pmgfoldup").append('<div class="containerbox padright">'+

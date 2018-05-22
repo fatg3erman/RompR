@@ -172,6 +172,7 @@ var shortcuts = function() {
             var fnarkle = new popup({
               width: 400,
               height: 1024,
+              helplink: 'https://fatg3erman.github.io/RompR/Keyboard-Shortcuts',
               title: language.gettext("title_keybindings")});
             var mywin = fnarkle.create()
             mywin.append('<table align="center" cellpadding="2" id="keybindtable" width="90%"></table>');

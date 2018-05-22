@@ -734,6 +734,11 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
         if (this.options.addClassTo) {
             this.element.find('.'+this.options.addClassTo).first().addClass(this.options.handleClass)
                 .append('<i class="icon-cancel-circled playlisticonr tright clickicon closemenu"></i>');
+            var hl = this.element.find('input.helplink');
+            if (hl.length > 0) {
+                this.element.find('.'+this.options.addClassTo).first().append('<a href="'+hl.first().val()+'" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
+            }
+            
         }
         if (self.options.handleshow) {
             this._parent = this.element.parent();
@@ -1258,6 +1263,7 @@ function popup(opts) {
         width: 100,
         height: 100,
         title: "Popup",
+        helplink: null,
         xpos: null,
         ypos : null,
         id: null,
@@ -1287,7 +1293,10 @@ function popup(opts) {
         var tit = $('<div>', { class: "configtitle textcentre"}).appendTo(titlebar)
         tit.html('<b>'+options.title+'</b>');
         if (options.hasclosebutton) {
-            tit.append('<i class="icon-cancel-circled playlisticonr clickicon tright"></i></div>');
+            tit.append('<i class="icon-cancel-circled playlisticonr clickicon tright"></i>');
+        }
+        if (options.helplink !== null) {
+            tit.append('<a href="'+options.helplink+'" target="_blank"><i class="icon-info-circled playlisticonr clickicon tright"></i></a>');
         }
         contents = $('<div>',{class: 'popupcontents'}).appendTo(win);
         titlebar.find('.icon-cancel-circled').click( function() {self.close(false)});

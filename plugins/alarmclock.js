@@ -147,6 +147,7 @@ var alarm = function() {
 			}
 			html += '<div class="topdropmenu dropshadow rightmenu normalmenu stayopen" id="alarmpanel">'+
 				'<div class="textcentre configtitle"><b>'+language.gettext('button_alarm')+'</b></div>'+
+				'<input type="hidden" class="helplink" value="https://fatg3erman.github.io/RompR/Alarm-And-Sleep" />'+
 				'<div class="noselection">'+
 				'<table align="center"><tr>'+
 				'<td align="center"><i class="icon-increase smallicon clickicon" onmousedown="alarm.startInc(3600)" onmouseup="alarm.stopInc()" onmouseout="alarm.stopInc()"></i></td>'+

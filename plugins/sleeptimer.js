@@ -108,6 +108,7 @@ var sleepTimer = function() {
 			}
 			html += '<div class="topdropmenu dropshadow rightmenu normalmenu stayopen" id="sleeppanel">'+
 				'<div class="textcentre configtitle"><b>'+language.gettext('button_sleep')+'</b></div>'+
+				'<input type="hidden" class="helplink" value="https://fatg3erman.github.io/RompR/Alarm-And-Sleep#sleep-timer" />'+
 				'<div class="noselection">'+
 				'<table align="center"><tr>'+
 				'<td align="center"><i class="icon-increase smallicon clickicon" onmousedown="sleepTimer.startInc(1)" onmouseup="sleepTimer.stopInc()" onmouseout="sleepTimer.stopInc()"></i></td>'+

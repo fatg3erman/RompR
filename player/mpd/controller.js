@@ -247,6 +247,7 @@ function playerController() {
                 $("#storedplaylists").find('input[name="'+openpl+'"]').first().next().click();
                 openpl = null;
             }
+            $('b:contains("'+language.gettext('button_loadplaylist')+'")').parent('.configtitle').append('<a href="https://fatg3erman.github.io/RompR/Using-Saved-Playlists" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
         });
 	}
 

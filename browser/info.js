@@ -91,6 +91,10 @@ var browser = function() {
         html += '<div class="fixed alignmid">';
         html += '<i class="icon-menu topimg infoclick clickicon frog"></i>';
         html += '</div>';
+        if (data.help) {
+            html += '<div class="fixed alignmid"><a href="'+data.help+'" title="Help" target="_blank">'+
+                '<i class="icon-info-circled svg-square"></i></a></div>';
+        }
         if (source) {
             if (data.link === null) {
                 html += '<div class="fixed alignmid"><i class="'+sources[source].icon+' svg-square"></i></div>';
@@ -98,7 +102,8 @@ var browser = function() {
                 html += '<div class="fixed alignmid"><a href="'+data.link+'" title="'+language.gettext("info_newtab")+'" target="_blank">'+
                     '<i class="'+sources[source].icon+' svg-square"></i></a></div>';
             }
-        } else if (close) {
+        }
+        if (close) {
             html += '<div class="fixed alignmid padright"><i class="icon-cancel-circled topimg infoclick clickicon tadpole"></i></div>';
         }
         html += '</div>';
@@ -429,13 +434,17 @@ var browser = function() {
             return false;
         },
 
-        registerExtraPlugin: function(id, name, parent) {
+        registerExtraPlugin: function(id, name, parent, help) {
             if (prefs.hidebrowser) {
                 $("#hidebrowser").prop("checked", !$("#hidebrowser").is(':checked'));
                 prefs.save({hidebrowser: $("#hidebrowser").is(':checked')}, hideBrowser);
             }
             var displayer = $('<div>', {id: id+"information", class: "infotext invisible"}).insertBefore('#artistchooser');
-            displayer.html(banner({name: name}, id, false, false, true));
+            var opts = {name: name};
+            if (help) {
+                opts.help = help;
+            }
+            displayer.html(banner(opts, id, false, false, true));
             panelclosed[id] = false;
             displayer.unbind('click');
             displayer.click(onBrowserClicked);

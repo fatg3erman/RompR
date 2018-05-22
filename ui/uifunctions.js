@@ -746,13 +746,9 @@ function editPlayerDefs() {
     var playerpu = new popup({
         width: 900,
         height: 800,
-        title: "Players"});
+        title: "Players",
+        helplink: "https://fatg3erman.github.io/RompR/Using-Multiple-Players"});
     var mywin = playerpu.create();
-    mywin.append('<div class="pref textcentre"><p>You can define as many players as '+
-        'you like and switch between them or use them all simultaneously from different browsers. '+
-        'All the players will share the same Collection database.</p>'+
-        '<p><b>Do NOT access multiple players from the same browser simultaneously.</b></p></div>');
-
     mywin.append('<table align="center" cellpadding="2" id="playertable" width="96%"></table>');
     $("#playertable").append('<tr><th>NAME</th><th>HOST</th><th>PORT</th><th>PASSWORD</th><th>UNIX SOCKET</th></tr>');
     for (var i in prefs.multihosts) {

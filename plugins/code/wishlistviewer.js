@@ -127,7 +127,7 @@ var wishlistViewer = function() {
 		open: function() {
 
         	if (wlv == null) {
-	        	wlv = browser.registerExtraPlugin("wlv", language.gettext("label_wishlist"), wishlistViewer);
+	        	wlv = browser.registerExtraPlugin("wlv", language.gettext("label_wishlist"), wishlistViewer, 'https://fatg3erman.github.io/RompR/The-Wishlist');
 	            $("#wlvfoldup").append('<div id="wishlistlist"></div>');
 	            loadWishlist(true);
 	        } else {
