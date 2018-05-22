@@ -20,4 +20,4 @@ To stop the dynamic playlist generation and return to normal mode, either click 
 
 ## Mobile Devices
 
-When using a mobile device to run RompЯ, you should understand that the browser must be open for new tracks to keep being added. If the device sleeps (screen turns off) then the playlist will stop updating until you wake the device. It's worth mentioning too that Playcounts will not be updated and tracks will not be scrobbled if your device sleeps.
+When using a mobile device to run RompЯ, you should understand that the browser must be open for new tracks to keep being added. If the device sleeps (screen turns off) then the playlist will stop updating until you wake the device. It's worth mentioning too that Playcounts will not be updated and tracks will not be scrobbled if your device sleeps, and so you should read [this](/RompR/Rompr-And-Mobiles)
