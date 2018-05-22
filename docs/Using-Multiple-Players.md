@@ -27,6 +27,36 @@ To select a player to use, just select it in the Configuration menu and that bro
 ## Limitations
 
 * All players must be the same type - i.e all MPD or all Mopidy. This is because MPD and Mopidy use different and incompatible URI schemes for files.
-* If you're using local music, all players must have the same music files stored in the same directory path. The easiest way is to put your music on a network share somewhere.
 * Do NOT try to control multiple players from multiple tabs in the same browser. I cannot stop this or detect it and it WILL result in data corruption.
 * If you're [logged in to Last.FM](/RonpR/LastFM), the same Last.FM user is used across all Players.
+
+## Local Music Databases
+
+If you're using local music, all players must have the same music files stored in the same directory path. The easiest way is to put your music on a network share somewhere.
+
+Because mpd and Mopidy have to keep their own database of local music, you'll need to update this on every player when you add new music, because it needs to be kept in sync with RompЯ's collection.
+
+With Mopidy, one solution to this is to use mopidy-local-sqlite and put the database on a network share where all the players can access it. Another is to use mopidy-beets instead, with one centralised Beets server.
+
+With mpd you can try to set the auto_update flag in mpd.conf, although I haven't been able to test whether this works on network shares.
+
+If none of this works, you will have to use 'Update Music Collection Now' on all your Players if you add or remove local files.
+
+## Suggested Setup
+
+All that was rather complicated, so here's an example setup.
+
+* One computer in room 1, running Mopidy and RompЯ.
+    * Mopidy is configured to use mopidy-local-sqlite.
+    * Music is stored on an external USB drive which is mounted on /media/USBDrive.
+    * Mopidy Local Scanning is [configured](/RompR/Rompr-And-Mopidy#scanning-local-files).
+    * /media/USBDrive is shared on the network
+    * Mopidy's data directory is shared on the network
+    
+* Another computer in room 2, running Mopidy
+    * Mopidy is configured to use mopidy-local-sqlite.
+    * The shared Mopidy data directory above is mounted at, say, /media/Mopidydata
+    * Mopidy's [data_dir config item](https://docs.mopidy.com/en/latest/config/) is set to /media/Mopidydata
+    * The shared /media/USBDrive from above is mounted on /media/USBDrive
+    
+With this configuration, all your data is kept in sync. Further players can simply copy room 2. You will only need to update the collection on room 1.

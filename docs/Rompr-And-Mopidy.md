@@ -58,7 +58,7 @@ There seems to be a bug in the scanner engine in mopidy's sqlite backend where s
     
 ## Scanning Local Files
 
-Where MPD provides an 'update' command that RompЯ can use to update MPD's music database, Mopidy does not and so RompЯ can not easily make Mopidy scan local files - this has to be done with the 'mopidy local scan' command, which cannot be run directly by RompЯ . However it is reasonably straightforward to implement a solution to this problem- if (and only if) Mopidy is running on the same computer as your web server. If you're using [multiple players](/RompR/Using-Multiple-Players) this will therefore only allow you to update Mopidy's database on one computer.
+Where MPD provides an 'update' command that RompЯ can use to update MPD's music database, Mopidy does not and so RompЯ can not easily make Mopidy scan local files - this has to be done with the 'mopidy local scan' command, which cannot be run directly by RompЯ . However it is reasonably straightforward to implement a solution to this problem - if (and only if) Mopidy is running on the same computer as your web server.
 
 **NOTE** This is something of a hack, and using setuid is a potential security risk. If your web server is accessible to the internet you should make sure you understand the implications of using setuid before you do this.
 
