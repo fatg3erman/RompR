@@ -52,6 +52,10 @@ In the case where you're using [multiple players](/RompR/Using-Multiple-Players)
 
 To make sure romonitor gets loaded every time you boot, you can just add it as a login program, using whatever method your choice of desktop environment provides to do that.
 
+### What it doesn't do
+
+The other thing that requires the device to be awake is populating Pseronalised Radio stations. Currently the only solution to this is to wake your device up every so often. It doesn't have to be after every track; even if the Current Playlist runs out of tracks, waking your device will repopulate it.
+
 ### Troubleshooting
 
 If it's not working you can run the php script direct from a terminal to see the error output. To make sure you see all the output, first enable [debug logging](/RompR/Troubleshooting) to at least level 7 and make sure you are not using a custom log file. Then go to a terminal and type
