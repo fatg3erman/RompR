@@ -13,10 +13,6 @@ $nodata = array (
 	'Tags' => array()
 );
 
-// In the following, we're using a mixture of prepared statements and raw queries.
-// Raw queries are easier to handle in many cases, but prepared statements take a lot of fuss away
-// when dealing with strings, as it automatically escapes everything.
-
 // So what are Hidden tracks?
 // These are used to count plays from online sources when those tracks are not in the collection.
 // Doing this does increase the size of the database. Quite a lot. But without it the stats for charts
@@ -34,15 +30,10 @@ $nodata = array (
 // - this is how we prevent the collection update from removing them.
 
 // Search:
-// The database is now used to handle the search results as well.
 // Tracktable.isSearchResult is set to:
 //		1 on any existing track that comes up in the search
 //		2 for any track that comes up the search and has to be added - i.e it's not part of the main collection.
 //		3 for any hidden track that comes up in search so it can be re-hidden later.
-//		The reason for doing search through the database like this is that
-//		a) It means we can dump the old xml backend
-//		b) The search results will obey the same sort options as the collection
-//		c) We can include rating info in the search results just like in the collection.
 //		Note that there is arithmetical logic to the values used here, they're not arbitrary flags
 
 // Collection:

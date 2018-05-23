@@ -93,25 +93,7 @@ function doNewPlaylistFile(&$filedata) {
         "albumuri" => $filedata['X-AlbumUri'],
     );
     
-    sanitise_data($current_song);
-}
-
-function getImageForAlbum(&$filedata, $imagekey) {
-    if ($filedata['ImageForPlaylist'] !== null && $filedata['ImageForPlaylist'] !== '') {
-        return preg_replace('#/small/#', '/asdownloaded/',  $filedata['ImageForPlaylist']);
-    } else {
-        $im = cacheOrDefaultImage($filedata['X-AlbumImage'], $imagekey, 'asdownloaded', $filedata['domain']);
-        if ($im == null) $im = '';
-        return $im;
-    }
-}
-
-function getImageKey(&$filedata, $albumartist) {
-    if ($filedata['ImgKey'] !== null) {
-        return $filedata['ImgKey'];
-    } else {
-        return make_image_key($albumartist, $filedata['Album']);
-    }
+    romprmetadata::sanitise_data($current_song);
 }
 
 ?>

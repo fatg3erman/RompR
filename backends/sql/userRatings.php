@@ -36,7 +36,8 @@ $params = json_decode(file_get_contents('php://input'), true);
 
 foreach($params as $p) {
 
-	sanitise_data($p);
+	romprmetadata::sanitise_data($p);
+	
 	debuglog("  Action is \n".multi_implode($p,", "),"USERRATING",8);
 
 	switch ($p['action']) {
@@ -379,7 +380,7 @@ function restoreBackup($backup) {
 		debuglog("Restoring Manually Added Tracks",4,"BACKUPS");
 		$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/tracks.json'), true);
 		foreach ($tracks as $trackdata) {
-			sanitise_data($trackdata);
+			romprmetadata::sanitise_data($trackdata);
 			romprmetadata::add($trackdata, false);
 		}
 	}
@@ -387,7 +388,7 @@ function restoreBackup($backup) {
 		debuglog("Restoring Ratings",4,"BACKUPS");
 		$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/ratings.json'), true);
 		foreach ($tracks as $trackdata) {
-			sanitise_data($trackdata);
+			romprmetadata::sanitise_data($trackdata);
 			$trackdata['attributes'] = array(array('attribute' => 'Rating', 'value' => $trackdata['rating']));
 			romprmetadata::set($trackdata);
 		}
@@ -396,7 +397,7 @@ function restoreBackup($backup) {
 		debuglog("Restoring Tags",4,"BACKUPS");
 		$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/tags.json'), true);
 		foreach ($tracks as $trackdata) {
-			sanitise_data($trackdata);
+			romprmetadata::sanitise_data($trackdata);
 			$trackdata['attributes'] = array(array('attribute' => 'Tags', 'value' => explode(',',$trackdata['tag'])));
 			romprmetadata::set($trackdata);
 		}
@@ -405,7 +406,7 @@ function restoreBackup($backup) {
 		debuglog("Restoring Playcounts",4,"BACKUPS");
 		$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/playcounts.json'), true);
 		foreach ($tracks as $trackdata) {
-			sanitise_data($trackdata);
+			romprmetadata::sanitise_data($trackdata);
 			$trackdata['attributes'] = array(array('attribute' => 'Playcount', 'value' => $trackdata['playcount']));
 			if (!array_key_exists('lastplayed', $trackdata)) {
 				// Sanitise backups made before lastplayed was added

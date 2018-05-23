@@ -82,10 +82,10 @@ function setTopIconSize(panels) {
             var jq = $(div+' .topimg:not(.noshrink):visible');
             var imh = parseInt(jq.first().css('max-height'))
             var numicons = jq.length+1;
-            var iw = Math.min(Math.floor(($(div).width())/numicons), imh);
+            var iw = Math.min(Math.floor(($(div).width()-16)/numicons), imh);
             jq.css({width: iw+"px", height: iw+"px", "font-size": iw+"px"});
             var cw = iw*numicons;
-            var mar = Math.floor(((($(div).width()-8) - cw)/2)/numicons);
+            var mar = Math.floor(((($(div).width()-16) - cw)/2)/numicons);
             jq.css({"margin-left": mar+"px", "margin-right": mar+"px"});
         }
     });

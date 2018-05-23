@@ -241,8 +241,37 @@ select {
     cursor:pointer;
 }
 
-.dropmenu {
-    padding-left:38px;
+@media screen and (max-width: 320px) {
+
+    .dropmenu {
+        padding-left:16px;
+    }
+
+    .indent {
+        margin-left:12px;
+    }
+}
+
+@media screen and (min-width: 321px) and (max-width: 500px) {
+
+    .dropmenu {
+        padding-left:24px;
+    }
+
+    .indent {
+        margin-left:18px;
+    }
+}
+
+@media screen and (min-width: 501px) {
+
+    .dropmenu {
+        padding-left:38px;
+    }
+
+    .indent {
+        margin-left:24px;
+    }
 }
 
 .menuspacer {
@@ -438,10 +467,6 @@ div.rightmenu {
 
 .dropdown-button {
     margin-left:-20px !important;
-}
-
-.indent {
-    margin-left:24px;
 }
 
 .padright {

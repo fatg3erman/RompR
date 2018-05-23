@@ -52,24 +52,6 @@ debuglog("Peak Memory Used Was ".number_format($peakmem)." bytes  - meaning we u
 debuglog("======================================================================","TIMINGS",4);
 debuglog("Playlist Output Is Done","GETPLAYLIST");
 
-function getImageForAlbum(&$filedata, $imagekey) {
-    if ($filedata['ImageForPlaylist'] !== null && $filedata['ImageForPlaylist'] !== '') {
-        return preg_replace('#/small/#', '/asdownloaded/',  $filedata['ImageForPlaylist']);
-    } else {
-        $im = cacheOrDefaultImage($filedata['X-AlbumImage'], $imagekey, 'asdownloaded', $filedata['domain']);
-        if ($im == null) $im = '';
-        return $im;
-    }
-}
-
-function getImageKey(&$filedata, $albumartist) {
-    if ($filedata['ImgKey'] !== null) {
-        return $filedata['ImgKey'];
-    } else {
-        return make_image_key($albumartist, $filedata['Album']);
-    }
-}
-
 function doNewPlaylistFile(&$filedata) {
     global $prefs;
     global $foundartists;

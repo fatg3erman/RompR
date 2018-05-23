@@ -49,6 +49,9 @@ function check_radio_and_podcasts($filedata) {
 
     $url = $filedata['file'];
 
+    // Do podcasts first. Podcasts played fro TuneIn get added as radio stations, and then if we play that track again
+    // via podcasts we want to make sure we pick up the details.
+
     $result = find_podcast_track_from_url($url);
     foreach ($result as $obj) {
         debuglog("Found PODCAST ".$obj->title,"STREAMHANDLER");
