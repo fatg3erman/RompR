@@ -654,17 +654,17 @@ function makeAlbumMenu(e, element) {
     $('.albumbitsmenu').remove();
     var d = $('<div>', {class:'topdropmenu dropshadow rightmenu normalmenu albumbitsmenu'});
     if ($(element).hasClass('clickamendalbum')) {
-        d.append('<div class="backhi clickable clickicon noselection menuitem amendalbum" name="'+$(element).attr('name')+'">Amend Album Details</div>');
+        d.append('<div class="backhi clickable clickicon noselection menuitem amendalbum" name="'+$(element).attr('name')+'">'+language.gettext('label_amendalbum')+'</div>');
     }
     if ($(element).hasClass('clickalbumoptions')) {
-        d.append('<div class="backhi clickable clickicon noselection menuitem clicktrack fakedouble" name="'+$(element).parent().attr('name')+'">Play Whole Album</div>');
-        d.append('<div class="backhi clickable clickicon noselection menuitem clickalbum fakedouble" name="aalbum'+$(element).attr('name')+'">Play Only Tracks From Collection</div>');
+        d.append('<div class="backhi clickable clickicon noselection menuitem clicktrack fakedouble" name="'+$(element).parent().attr('name')+'">'+language.gettext('label_play_whole_album')+'</div>');
+        d.append('<div class="backhi clickable clickicon noselection menuitem clickalbum fakedouble" name="aalbum'+$(element).attr('name')+'">'+language.gettext('label_from_collection')+'</div>');
     }
     if ($(element).hasClass('clickratedtracks')) {
-        d.append('<div class="backhi clickable clickicon noselection menuitem clickalbum fakedouble" name="ralbum'+$(element).attr('name')+'">Play Only Tracks With Ratings</div>');
-        d.append('<div class="backhi clickable clickicon noselection menuitem clickalbum fakedouble" name="talbum'+$(element).attr('name')+'">Play Only Tracks With Tags</div>');
-        d.append('<div class="backhi clickable clickicon noselection menuitem clickalbum fakedouble" name="yalbum'+$(element).attr('name')+'">Play Only Tracks With Tags And Ratings</div>');
-        d.append('<div class="backhi clickable clickicon noselection menuitem clickalbum fakedouble" name="ualbum'+$(element).attr('name')+'">Play Only Tracks With Tags Or Ratings</div>');
+        d.append('<div class="backhi clickable clickicon noselection menuitem clickalbum fakedouble" name="ralbum'+$(element).attr('name')+'">'+language.gettext('label_with_ratings')+'</div>');
+        d.append('<div class="backhi clickable clickicon noselection menuitem clickalbum fakedouble" name="talbum'+$(element).attr('name')+'">'+language.gettext('label_with_tags')+'</div>');
+        d.append('<div class="backhi clickable clickicon noselection menuitem clickalbum fakedouble" name="yalbum'+$(element).attr('name')+'">'+language.gettext('label_with_tagandrat')+'</div>');
+        d.append('<div class="backhi clickable clickicon noselection menuitem clickalbum fakedouble" name="ualbum'+$(element).attr('name')+'">'+language.gettext('label_with_tagorrat')+'</div>');
     }
     d.appendTo($(element));
     d.slideToggle('fast');

@@ -76,8 +76,8 @@ if (array_key_exists('populate', $_REQUEST)) {
             }
             if ($channel->lastPlaying) {
                 print '<div class="containerbox indent padright menuitem notbold">';
-                print '<div class="fixed">'.get_int_text('label_last_played').'</div>';
-                print '<div class="expand pleft">'.$channel->lastPlaying.'</div>';
+                print '<b>'.get_int_text('label_last_played').'</b>&nbsp;';
+                print $channel->lastPlaying;
                 print '</div>';
             }
 

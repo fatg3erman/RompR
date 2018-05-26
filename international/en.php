@@ -624,8 +624,14 @@ $languages['en'] = array (
 	"label_play_all" => "Play All",
 	"label_play_options" => "Play Options",
 	"label_last_played" => "Last Played:",
-	"label_station_website" => "Station Website"
+	"label_station_website" => "Station Website",
 	
+	"label_play_whole_album" => "Play Whole Album",
+	"label_from_collection" => "Play Only Tracks From Collection",
+	"label_with_ratings" => "Play Only Tracks With Ratings",
+	"label_with_tags" => "Play Only Tracks With Tags",
+	"label_with_tagandrat" => "Play Only Tracks With Tags And Ratings",
+	"label_with_tagorrat" => "Play Only Tracks With Tags Or Ratings"
 
 );
 

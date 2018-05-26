@@ -1,31 +1,23 @@
 # The Phone Skin
 
-The Phone Skin is the default if you're accessing RompЯ on a smaller screen. It lays things out in a different way but is functionally identical to the Desktop skin except that drag-and-drop is not supported, and nor is the Album Art manager.
+The Phone Skin is the default if you're accessing RompЯ on a smaller screen. It lays things out in a different way but is functionally identical to the Desktop skin except that drag-and-drop is not supported, and nor is the Album Art manager. It also replaces the drop-down sections of the desktop skins with a more touch-oriented interface.
  
-The phone skin adjusts its layout according to the size and orientation of your screen.
+The phone skin adjusts its layout according to the size and orientation of your screen exactly like the [tablet skin](/RompR/Tablet-Skin) but it is really intended mainly for small screens.
 
-For example here is how it looks on an iPad in portrait mode.
+For example here is how it looks on an iPhone SE showing the Now Playing screen.
 
-![](images/ipad-portrait.png)
+![](images/iphone5-portrait.png)
 
-Across the top are the icons to select different Music Sources, the Info Panel, Configuration Menu, and the dropdown menu of plugins like the Ratings and Tags Manager, Playlist Manager, etc.
+Across the top are the icons to select different Music Sources, Volume, the Current Playlist and two dropdown menus - one of more icons that don't fit across the top, and one of plugins like the Ratings and Tags Manager, Playlist Manager, etc.
 
-Below that is the Now Playing area and below that is the Current Playlist.
+The default action on the Phone skin is to single-click to add items to the Current Playlist, though this can be changed from the Configuration menu.
 
-Here's how it looks if you rotate to landscape mode.
+Instead of using multiple drop-down panels, the phone skin cycles through various screens when you select items. For example, here is a screen of albums from the Music Collection for one artist.
 
-![](images/ipad-landscape.png)
+![](images/iphone5-albums.png)
 
-In this mode the Now Playing panel will always be visible unless you open the Info panel. All the other panels use the right-hand side of the screen.
+The double arrow at the top is the 'back' button, which will take you back to the main Collection screen.
 
-On smaller screens things can look a little different. Here's an iPhone 6
+And here's an album being browsed
 
-![](images/iphone6-portrait.png)
-
-The Current Playlist now doesn't display on the same screen as the Now Playing panel, and some of the top icons have been shifted into a drop-down menu on the far right.
-
-If you have a really small screen, you won't get two columns in landscape mode:
-
-![](images/iphone4-landscape.png)
-
-The default action on the Phone skin is to single-click to add items to the Current Playlist, though this can be changed from the Configuration menu. Everything else works the same as the Desktop skin.
+![](images/iphone5-album.png)

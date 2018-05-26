@@ -126,7 +126,7 @@ if (array_key_exists('populate', $_REQUEST)) {
         'why' => null,
         'ImgKey' => 'none'
     ));
-	print '<div id="icecastlist" class="dropmenu notfilled">Loading...</div>';
+	print '<div id="icecastlist" class="dropmenu notfilled"><div class="textcentre">Loading...</div></div>';
 	print '</div>';
 }
 
