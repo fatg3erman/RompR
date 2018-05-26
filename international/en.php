@@ -619,7 +619,13 @@ $languages['en'] = array (
 	"config_beetsserver" => "Location of Beets Server (ip.address:port)",
 	"config_mopidy_scan" => "Mopidy Local Scan Command",
 	"config_players" => 'Players',
-	"button_edit_players" => 'Edit Players'
+	"button_edit_players" => 'Edit Players',
+	
+	"label_play_all" => "Play All",
+	"label_play_options" => "Play Options",
+	"label_last_played" => "Last Played:",
+	"label_station_website" => "Station Website"
+	
 
 );
 

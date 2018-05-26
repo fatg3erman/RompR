@@ -1,6 +1,7 @@
 <?php
 
-include( "backends/sql/connect.php");
+include ("backends/sql/connect.php");
+require_once ("skins/".$skin."/ui_elements.php");
 connect_to_database();
 $find_track = null;
 $update_track = null;
@@ -888,11 +889,12 @@ function do_albums_from_database($why, $what, $who, $fragment = false, $use_arti
 
 	$qstring = album_sort_query($why, $what, $who);
 	debuglog("Query String Is ".$qstring,"COLLECTION",9);
-
+	
 	$count = 0;
 	$currart = "";
 	$currban = "";
 	$result = generic_sql_query($qstring);
+	print albumControlHeader($fragment, $why, $what, $who, $result[0]['Artistname']);
 	foreach ($result as $obj) {
 		$artistbanner = ($prefs['sortcollectionby'] == 'albumbyartist' && $prefs['showartistbanners']) ? $obj['Artistname'] : null;
 		$obj['Artistname'] = ($force_artistname || $prefs['sortcollectionby'] == "album") ? $obj['Artistname'] : null;
@@ -1064,6 +1066,7 @@ function do_tracks_from_database($why, $what, $whom, $fragment = false) {
 	$numtracks = count($trackarr);
 	$numdiscs = get_highest_disc($trackarr);
 	$currdisc = -1;
+	trackControlHeader($why, $what, $who[0], get_album_details($who[0]));
 	foreach ($trackarr as $arr) {
 		if ($numdiscs > 1 && $arr['disc'] != $currdisc && $arr['disc'] > 0) {
             $currdisc = $arr['disc'];
@@ -1103,6 +1106,14 @@ function get_highest_disc($tracks) {
 
 function do_fiddle($a) {
 	return 'tr.Albumindex = '.$a;
+}
+
+function get_album_details($albumindex) {
+	return generic_sql_query(
+		"SELECT Albumname, Artistname, Image, AlbumUri
+		FROM Albumtable
+		JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+		WHERE Albumindex = ".$albumindex );
 }
 
 function get_artist_charts() {
@@ -1211,6 +1222,10 @@ function add_fave_station($info) {
 function update_radio_station_name($info) {
 	debuglog("Updating Stationindex ".$info['streamid'].' with new name '.$info['name']);
 	sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET StationName = ? WHERE Stationindex = ?",$info['name'],$info['streamid']);
+}
+
+function find_stream_name_from_index($index) {
+	return simple_query('StationName', 'RadioStationtable', 'StationIndex', $index, '');
 }
 
 function update_stream_image($stream, $image) {

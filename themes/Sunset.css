@@ -1,4 +1,4 @@
-html
+html, body.phone .dropmenu
 {
     background-image:url("sunsetbirds.jpg");
     background-size:cover;

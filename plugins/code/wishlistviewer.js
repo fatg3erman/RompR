@@ -137,9 +137,7 @@ var wishlistViewer = function() {
 		},
 
 		handleClick: function(element, event) {
-			if (element.hasClass('menu')) {
-				doAlbumMenu(event, element, true);
-			} else if (element.hasClass('clickremdb')) {
+			if (element.hasClass('clickremdb')) {
 				removeTrackFromWl(element, 'deletewl');
 			} else if (element.hasClass('clicksearchtrack')) {
 				searchForTrack(element);

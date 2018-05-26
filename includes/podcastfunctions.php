@@ -383,9 +383,10 @@ function doPodcast($y, $do_searchbox) {
         $aa = $aa . ' - ';
     }
     $pm = $y->PODindex;
+    trackControlHeader('','','podcast_'. $pm,array(array('Image' => $y->Image)));
     print '<div class="whatdoicallthis">'.format_text($y->Description).'</div>';
     if ($y->Subscribed == 1) {
-        print '<div class="clearfix bumpad podhackshit">';
+        print '<div class="clearfix bumpad">';
         print '<i title="'.get_int_text("podcast_delete").'" class="icon-cancel-circled podicon '.
             'clickable clickicon podremove tright fridge" name="podremove_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_configure").'" class="icon-cog-alt podicon clickable '.
@@ -403,21 +404,14 @@ function doPodcast($y, $do_searchbox) {
         print '</div>';
     }
     
-    if ($do_searchbox) {
-        print '<div class="containerbox noselection"><div class="expand">
-            <input class="enter clearbox" name="podsearcher_'.$y->PODindex.'" type="text" ';
-        if (array_key_exists('searchterm', $_REQUEST)) {
-            print 'value="'.urldecode($_REQUEST['searchterm']).'" ';
-        }
-        print '/></div><button class="fixed" onclick="podcasts.searchinpodcast('.$y->PODindex.')">'.get_int_text('button_search').'</button></div>';
-    }
-    
     if ($y->Subscribed == 1) {
-        $class = "dropmenu marged";
+        $class = "marged whatdoicallthis toggledown";
         if ((array_key_exists('channel', $_REQUEST) && $_REQUEST['channel'] == $pm) &&
             array_key_exists('option', $_REQUEST)) {
             // Don't rehide the config panel if we're choosing something from it
-            $class .= " visible";
+            // $class .= " visible";
+        } else {
+            $class .= " invisible";
         }
         print '<div class="'.$class.'" id="podconf_'.$pm.'">';
         print '<div class="containerbox vertical podoptions">';
@@ -519,6 +513,14 @@ function doPodcast($y, $do_searchbox) {
 
         print '</div>';
     }
+    if ($do_searchbox) {
+        print '<div class="containerbox noselection"><div class="expand">
+            <input class="enter clearbox" name="podsearcher_'.$y->PODindex.'" type="text" ';
+        if (array_key_exists('searchterm', $_REQUEST)) {
+            print 'value="'.urldecode($_REQUEST['searchterm']).'" ';
+        }
+        print '/></div><button class="fixed" onclick="podcasts.searchinpodcast('.$y->PODindex.')">'.get_int_text('button_search').'</button></div>';
+    }
     if (array_key_exists('searchterm', $_REQUEST)) {
         $extrabit = ' AND (Title LIKE "%'.urldecode($_REQUEST['searchterm']).'%" OR Description LIKE "%'.urldecode($_REQUEST['searchterm']).'%")';
     } else {
@@ -573,23 +575,23 @@ function format_episode(&$y, &$item, $pm) {
     print '<div class="podtitle expand">'.htmlspecialchars(html_entity_decode($item->Title)).'</div></div>';
     $pee = date(DATE_RFC2822, $item->PubDate);
     $pee = preg_replace('/ \+\d\d\d\d$/','',$pee);
-    print '<div class="whatdoicallthis padright clearfix">';
+    print '<div class="whatdoicallthis padright containerbox menuitem notbold">';
     if ($y->HideDescriptions == 0) {
         $class = 'icon-toggle-open';
     } else {
         $class = 'icon-toggle-closed';
     }
 
-    print '<i class="'.$class.' menu mh fixed tleft" name="poddesc_'.$item->PODTrackindex.'"></i>';
-    print '<span class="tleft"><i>'.$pee.'</i></span>';
+    print '<i class="'.$class.' menu mh fixed" name="poddesc_'.$item->PODTrackindex.'"></i>';
+    print '<div class="expand"><i>'.$pee.'</i></div>';
     if ($item->Duration != 0) {
-        print '<span class="tright">'.format_time($item->Duration).'</span>';
+        print '<div class="fixed">'.format_time($item->Duration).'</div>';
     }
     print '</div>';
     if ($y->HideDescriptions == 0) {
-        $class = 'whatdoicallthis';
+        $class = 'whatdoicallthis toggledown';
     } else {
-        $class = 'invisible whatdoicallthis';
+        $class = 'invisible whatdoicallthis toggledown';
     }
     print '<div id="poddesc_'.$item->PODTrackindex.'" class="'.$class.'">'.format_text($item->Description).'</div>';
     if ($item->FileSize > 0) {
@@ -621,40 +623,52 @@ function format_episode(&$y, &$item, $pm) {
 }
 
 function doPodcastHeader($y) {
-    $aa = $y->Artist;
-    if ($aa != '') {
-        $aa = $aa . ' - ';
-    }
-    print '<div class="containerbox menuitem">';
-    print '<i class="icon-toggle-closed menu podcastmenu mh fixed" romprpod="'.$y->PODindex.'" name="podcast_'.$y->PODindex.'"></i>';
+    
     $i = getDomain($y->Image);
     if ($i == "http" || $i == "https") {
         $img = "getRemoteImage.php?url=".$y->Image;
     } else {
         $img = $y->Image;
     }
-    print '<div class="smallcover fixed"><img class="smallcover" src="'.$img.'" /></div>';
-    print '<div class="expand"><b>'.htmlspecialchars(html_entity_decode($aa.$y->Title)).'</b></div>';
-    print '<div class="fixed padright">';
+
+    $html = albumHeader(array(
+        'id' => 'podcast_'.$y->PODindex,
+        'Image' => $img,
+        'Searched' => 1,
+        'AlbumUri' => null,
+        'Year' => null,
+        'Artistname' => htmlspecialchars(html_entity_decode($y->Artist)),
+        'Albumname' => htmlspecialchars(html_entity_decode($y->Title)),
+        'why' => null,
+        'ImgKey' => 'none'
+    ));
+    
+    $extra = '<div class="fixed">';
     if ($y ->Subscribed == 1) {
         $uc = get_podcast_counts($y->PODindex);
-        print '<span id="podnumber_'.$y->PODindex.'"';
+        $extra .= '<span id="podnumber_'.$y->PODindex.'"';
         if ($uc['new'] > 0) {
-            print ' class="newpod">'.$uc['new'].'</span>';
+            $extra .= ' class="newpod">'.$uc['new'].'</span>';
         } else {
-            print '></span>';
+            $extra .= '></span>';
         }
         if ($uc['unlistened'] > 0) {
-            print '<span class="unlistenedpod">'.$uc['unlistened'].'</span>';
+            $extra .= '<span class="unlistenedpod">'.$uc['unlistened'].'</span>';
         } else {
-            print '<span></span>';
+            $extra .= '<span></span>';
         }
     } else {
-        print '<i class="clickicon clickable clickpodsubscribe icon-rss podicon fridge" title="Subscribe to this podcast"></i><input type="hidden" value="'.$y->PODindex.'" />';
+        $extra .= '<i class="clickicon clickable clickpodsubscribe icon-rss podicon fridge" title="Subscribe to this podcast"></i><input type="hidden" value="'.$y->PODindex.'" />';
     }
-    print '</div>';
-    print '</div>';
-    print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu padright"></div>';
+    $extra .= '</div>';
+    
+    // phpQuery is something like 160K of extra code. Just to do this.
+    // The fact that I'm willing to include it indicates just how crap php's DOMDocument is
+    $out = phpQuery::newDocument($html);
+    $out->find('.menuitem')->append($extra);
+    print $out->html();
+    
+    print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu padright"><div class="textcentre">Losding...</div></div>';
 }
 
 function removePodcast($podid) {

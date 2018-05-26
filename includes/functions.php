@@ -206,188 +206,6 @@ function alistheader($nart, $nalb, $ntra, $tim) {
     '</div>';
 }
 
-function albumTrack($data) {
-    global $prefs;
-    if (substr($data['title'],0,6) == "Album:") return 2;
-    if (substr($data['title'],0,7) == "Artist:") return 1;
-
-    $d = getDomain($data['uri']);
-
-    if ($prefs['player_backend'] == "mpd" && $d == "soundcloud") {
-        $class = 'clickcue';
-    } else {
-        $class = 'clicktrack';
-    }
-    $class .= $data['discclass'];
-
-    // Outer container
-    if ($data['uri'] == null) {
-        print '<div class="clickable '.$class.' ninesix draggable indent containerbox padright" name="'.$data['ttid'].'">';
-    } else {
-        print '<div class="clickable '.$class.' ninesix draggable indent containerbox padright" name="'.rawurlencode($data['uri']).'">';
-    }
-
-    // Track Number
-    if ($data['trackno'] && $data['trackno'] != "" && $data['trackno'] > 0) {
-        print '<div class="tracknumber fixed"';
-        if ($data['numtracks'] > 99 || $data['trackno'] > 99) {
-            print ' style="width:3em"';
-        }
-        print '>'.$data['trackno'].'</div>';
-    }
-
-    switch ($d) {
-        case "soundcloud":
-        case "youtube":
-        case "spotify":
-        case "gmusic":
-            print '<i class="icon-'.$d.'-circled playlisticon fixed"></i>';
-            break;
-    }
-
-    // Track Title, Artist, and Rating
-    if ((string) $data['title'] == "") $data['title'] = urldecode($data['uri']);
-    print '<div class="expand containerbox vertical">';
-    print '<div class="fixed tracktitle">'.$data['title'].'</div>';
-    if ($data['artist'] && $data['trackartistindex'] != $data['albumartistindex']) {
-        print '<div class="fixed playlistrow2 trackartist">'.$data['artist'].'</div>';
-    }
-    if ($data['rating']) {
-        print '<div class="fixed playlistrow2 trackrating">';
-        print '<i class="icon-'.trim($data['rating']).'-stars rating-icon-small"></i>';
-        print '</div>';
-    }
-    if ($data['tags']) {
-        print '<div class="fixed playlistrow2 tracktags">';
-        print '<i class="icon-tags smallicon"></i>'.$data['tags'];
-        print '</div>';
-    }
-    print '</div>';
-
-    // Track Duration
-    print '<div class="fixed playlistrow2 tracktime">';
-    if ($data['time'] > 0) {
-        print format_time($data['time']);
-    }
-    print '</div>';
-
-    // Delete Button
-    if ($data['lm'] === null) {
-        print '<i class="icon-cancel-circled playlisticonr fixed clickable clickicon clickremdb"></i>';
-    }
-
-    print '</div>';
-
-    return 0;
-}
-
-function artistHeader($id, $name) {
-    global $divtype;
-    $h = '<div class="clickable clickalbum draggable containerbox menuitem '.
-        $divtype.'" name="'.$id.'">';
-    $h .= '<i class="icon-toggle-closed menu mh fixed" name="'.$id.'"></i>';
-    $h .= '<div class="expand">'.$name.'</div>';
-    $h .= '</div>';
-    return $h;
-}
-
-function noAlbumsHeader() {
-    print '<div class="playlistrow2" style="padding-left:64px">'.
-        get_int_text("label_noalbums").'</div>';
-}
-
-function albumHeader($obj) {
-    global $prefs;
-    $h = '';
-    if ($obj['AlbumUri']) {
-        $albumuri = rawurlencode($obj['AlbumUri']);
-        if (preg_match('/spotify%3Aartist%3A/', $albumuri)) {
-            $h .= '<div class="albumheader clickable clickartist draggable containerbox menuitem" name="'.preg_replace('/'.get_int_text('label_allartist').'/', '', $obj['Albumname']).'">';
-        } else if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
-            debuglog("Cue Sheet found for album ".$obj['Albumname'],"FUNCTIONS");
-            $h .= '<div class="albumheader clickable clickcue draggable containerbox menuitem" name="'.$albumuri.'">';
-        } else {
-            $h .= '<div class="albumheader clickable clicktrack draggable containerbox menuitem" name="'.$albumuri.'">';
-        }
-    } else {
-        $h .= '<div class="albumheader clickable clickalbum draggable containerbox menuitem" name="'.$obj['id'].'">';
-    }
-    $h .= '<i class="icon-toggle-closed menu mh fixed" name="'.$obj['id'].'"></i>';
-
-    // For BLOODY FIREFOX only we have to wrap the image in a div of the same size,
-    // because firefox won't squash the image horizontally if it's in a box-flex layout.
-    // Secondly, while Firefox have now fixed this, don't fuck with this as there are places in the code
-    // where we parse the layout.......
-    $i = $obj['Image'];
-    $h .= '<div class="smallcover fixed">';
-    if (!$obj['Image'] && $obj['Searched'] != 1) {
-        $h .= '<img class="smallcover fixed notexist" name="'.$obj['ImgKey'].'" />'."\n";
-    } else  if (!$obj['Image'] && $obj['Searched'] == 1) {
-        $h .= '<img class="smallcover fixed notfound" name="'.$obj['ImgKey'].'" />'."\n";
-    } else {
-        $h .= '<img class="smallcover fixed" name="'.$obj['ImgKey'].'" src="'.$i.'" />'."\n";
-    }
-    $h .= '</div>';
-    if ($obj['AlbumUri']) {
-        $d = getDomain($obj['AlbumUri']);
-        $d = preg_replace('/\+.*/','', $d);
-        switch($d) {
-            case "spotify":
-            case "gmusic":
-            case "youtube":
-            case "internetarchive":
-            case "soundcloud":
-            case "podcast":
-                $h .= '<i class="icon-'.$d.'-circled collectionicon fixed"></i>';
-                break;
-
-            case "tunein":
-            case "radio-de":
-            case "dirble":
-            case "bassdrive":
-                $h .= '<div class="collectionicon fixed"><img class="imgfill" src="newimages/'.$d.'-logo.svg" /></div>';
-                break;
-
-        }
-        if (strtolower(pathinfo($obj['AlbumUri'], PATHINFO_EXTENSION)) == "cue") {
-            $h .= '<i class="icon-doc-text playlisticon fixed"></i>';
-        }
-    }
-
-    if ($prefs['sortcollectionby'] == 'albumbyartist' && $obj['Artistname']) {
-        $h .= '<div class="expand">'.$obj['Albumname'];
-        $h .= '<br><span class="notbold">'.$obj['Artistname'].'</span>';
-        if ($obj['Year'] && $prefs['sortbydate']) {
-            $h .= ' <span class="notbold">('.$obj['Year'].')</span>';
-        }
-    } else {
-        $h .= '<div class="expand">'.$obj['Albumname'];
-        if ($obj['Year'] && $prefs['sortbydate']) {
-            $h .= ' <span class="notbold">('.$obj['Year'].')</span>';
-        }
-        if ($obj['Artistname']) {
-            $h .= '<br><span class="notbold">'.$obj['Artistname'].'</span>';
-        }
-    }
-    $h .= '</div>';
-    if ($obj['why'] == "a") {
-        $id = preg_replace('/^.album/','',$obj['id']);
-        $classes = array();;
-        if (num_collection_tracks($id) == 0) {
-            $classes[] = 'clickamendalbum';
-        }
-        if ($obj['AlbumUri']) {
-            $classes[] = 'clickalbumoptions';
-        }
-        $classes[] = 'clickratedtracks';
-        if (count($classes) > 0) {
-            $h .= '<div class="icon-menu playlisticonr fixed clickable clickicon clickalbummenu '.implode(' ',$classes).'" name="'.$id.'"></div>';
-        }
-    }
-    $h .= '</div>';
-    return $h;
-}
-
 function get_base_url() {
 
     // I found this function on CleverLogic:
@@ -559,6 +377,29 @@ function getDomain($d) {
         }
     }
     return strtok($a, ' ');
+}
+
+function domainIcon($d, $c) {
+    $h = '';
+    switch($d) {
+        case "spotify":
+        case "gmusic":
+        case "youtube":
+        case "internetarchive":
+        case "soundcloud":
+        case "podcast":
+            $h = '<i class="icon-'.$d.'-circled '.$c.' fixed"></i>';
+            break;
+
+        case "tunein":
+        case "radio-de":
+        case "dirble":
+        case "bassdrive":
+            $h = '<div class="'.$c.' fixed"><img class="imgfill" src="newimages/'.$d.'-logo.svg" /></div>';
+            break;
+
+    }
+    return $h;
 }
 
 function getImageForAlbum(&$filedata, $imagekey) {

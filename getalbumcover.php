@@ -63,10 +63,10 @@ if ($prefs['player_backend'] == 'mopidy') {
 }
 
 if ($mbid != "") {
-    $searchfunctions = array( 'tryLocal', 'trySpotify', 'tryMusicBrainz', 'tryLastFM' );
+    $searchfunctions = array( 'tryLocal', 'trySpotify', 'tryMusicBrainz', 'tryLastFM', 'tryGoogle' );
 } else {
     // Try LastFM twice - first time just to get an MBID since coverartarchive images tend to be bigger
-    $searchfunctions = array( 'tryLocal', 'trySpotify', 'tryLastFM', 'tryMusicBrainz', 'tryLastFM' );
+    $searchfunctions = array( 'tryLocal', 'trySpotify', 'tryLastFM', 'tryMusicBrainz', 'tryLastFM', 'tryGoogle' );
 }
 
 debuglog("  KEY          : ".$imgkey,"GETALBUMCOVER");
@@ -145,16 +145,11 @@ ob_flush();
 function check_stream($imgkey) {
     global $stream;
     $retval = array(false, null, null, null, null, null, false);
-    if ($stream != "") {
-        if (file_exists($stream)) {
-            $ax = simplexml_load_file($stream);
-            $retval[1] = "Internet Radio";
-            $retval[2] = $ax->trackList->track[0]->album;
-            $retval[6] = true;
-            debuglog("Found stream file ".$stream,"GETALBUMCOVER");
-        } else {
-            debuglog(" Supplied stream file not found!","GETALBUMCOVER");
-        }
+    if ($stream != "" && $stream != ROMPR_PLAYLIST_KEY) {
+        $index = stream_index_from_key($stream);
+        $retval[2] = find_stream_name_from_index($index);
+        $retval[6] = true;
+        debuglog("Found radio station ".$retval[2],"GETALBUMCOVER");
     }
     return $retval;
 }
@@ -338,6 +333,27 @@ function tryLastFM() {
 
     return $retval;
 
+}
+
+function tryGoogle() {
+    global $artist;
+    global $album;
+    global $delaytime;
+    $retval = "";
+    $google_api_key = "AIzaSyDAErKEr1g1J3yqHA0x6Ckr5jubNIF2YX4";
+    $googleSearchURL = "https://www.googleapis.com/customsearch/v1?key=".$google_api_key."&cx=013407992060439718401:d3vpz2xaljs&searchType=image&alt=json";
+    $result = url_get_contents($googleSearchURL."&q=".urlencode(trim($artist.' '.$album)));
+    $json = json_decode($result['contents'], true);
+    if (array_key_exists('items', $json)) {
+        foreach($json['items'] as $item) {
+            $retval = $item['link'];
+            break;
+        }
+    }
+    if ($retval != '') {
+        debuglog("Found image ".$retval." from Google","GETALBUMCOVER");
+    }
+    return $retval;
 }
 
 function tryMusicBrainz() {

@@ -1,19 +1,98 @@
 jQuery.fn.menuReveal = function(callback) {
-    if (callback) {
-        this.show(0, callback);
+    if (this.hasClass('toggledown')) {
+        if (callback) {
+            this.slideToggle('fast',callback);
+        } else {
+            this.slideToggle('fast');
+        }
     } else {
-        this.show();
+        this.findParentScroller().saveScrollPos();
+        if (callback) {
+            this.show(0, callback);
+        } else {
+            this.show();
+        }
     }
     return this;
 }
 
 jQuery.fn.menuHide = function(callback) {
-    if (callback) {
-        this.hide(0, callback);
+    if (this.hasClass('toggledown')) {
+        if (callback) {
+            this.slideToggle('fast',callback);
+        } else {
+            this.slideToggle('fast');
+        }
     } else {
-        this.hide();
+        if (callback) {
+            this.hide(0, callback);
+        } else {
+            this.hide();
+        }
+        this.findParentScroller().restoreScrollPos();
     }
     return this;
+}
+
+jQuery.fn.isOpen = function() {
+    if (this.hasClass('backmenu') || this.hasClass('icon-toggle-open')) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+jQuery.fn.isClosed = function() {
+    if (this.hasClass('backmenu') || this.hasClass('icon-toggle-open')) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+jQuery.fn.toggleOpen = function() {
+    if (this.hasClass('icon-toggle-closed')) {
+        this.removeClass('icon-toggle-closed').addClass('icon-toggle-open');
+    }
+    return this;
+}
+
+jQuery.fn.toggleClosed = function() {
+    if (this.hasClass('icon-toggle-open')) {
+        this.removeClass('icon-toggle-open').addClass('icon-toggle-closed');
+    }
+    return this;
+}
+
+jQuery.fn.makeSpinner = function() {
+    this.addClass('clickflash');
+    return this;
+}
+
+jQuery.fn.stopSpinner = function() {
+    this.removeClass('clickflash');
+    return this;
+}
+
+jQuery.fn.findParentScroller = function() {
+    var parentScroller = this.parent();
+    while (!parentScroller.hasClass('scroller') && !parentScroller.hasClass('dropmenu') && !parentScroller.hasClass('phone')) {
+        parentScroller = parentScroller.parent();
+    }
+    return parentScroller;
+}
+
+jQuery.fn.saveScrollPos = function() {
+    this.prepend('<input type="hidden" name="restorescrollpos" value="'+this.scrollTop()+'" />');
+    this.scrollTo(0);
+    this.css('overflow-y', 'hidden');
+}
+
+jQuery.fn.restoreScrollPos = function() {
+    var a = this.find('input[name="restorescrollpos"]');
+    this.css('overflow-y', 'scroll');
+    this.scrollTop(a.val());
+    a.remove();
 }
 
 jQuery.fn.makeTagMenu = function(options) {
@@ -83,7 +162,7 @@ function setTopIconSize(panels) {
             var imh = parseInt(jq.first().css('max-height'))
             var numicons = jq.length+1;
             var iw = Math.min(Math.floor(($(div).width()-16)/numicons), imh);
-            jq.css({width: iw+"px", height: iw+"px", "font-size": iw+"px"});
+            jq.css({width: iw+"px", height: iw+"px"});
             var cw = iw*numicons;
             var mar = Math.floor(((($(div).width()-16) - cw)/2)/numicons);
             jq.css({"margin-left": mar+"px", "margin-right": mar+"px"});
@@ -212,7 +291,6 @@ var layoutProcessor = function() {
             var ws = getWindowSize();
             var newheight = ws.y-$("#headerbar").outerHeight(true);
             var v = newheight - 32;
-            $("#volumecontrol").css("height", v+"px");
             $("#loadsawrappers").css({height: newheight+"px"});
             if ($('#nowplaying').offset().top > 0) {
                 var t = $('#toomanywrappers').height() - $('#nowplaying').offset().top + $("#headerbar").outerHeight(true);
@@ -222,6 +300,11 @@ var layoutProcessor = function() {
             layoutProcessor.setPlaylistHeight();
             browser.rePoint();
             setFunkyBoxSize();
+            // Very very wierd thing happeneing, where this button, and only this button
+            // gets an inlive css style of display: inline set sometime after page load
+            // on a narrow screen. Non of the other onlywides do. Can't figure it out
+            // so just clear it here.
+            $('.choose_filelist').css('display','');
         },
 
         fanoogleMenus: function(jq) {
@@ -246,6 +329,21 @@ var layoutProcessor = function() {
 
         setRadioModeHeader: function(html) {
             $("#plmode").html(html);
+        },
+
+        makeCollectionDropMenu: function(element, name) {
+            var x = $('#'+name);
+            // If the dropdown doesn't exist then create it
+            if (x.length == 0) {
+                if (element.hasClass('album1')) {
+                    var c = 'dropmenu notfilled album1';
+                } else if (element.hasClass('album2')) {
+                    var c = 'dropmenu notfilled album2';
+                } else {
+                    var c = 'dropmenu notfilled';
+                }
+                var t = $('<div>', {id: name, class: c}).insertAfter(element);
+            }
         },
         
         initialise: function() {
@@ -272,6 +370,13 @@ var layoutProcessor = function() {
             $("#ratingimage").click(nowplaying.setRating);
             $("#playlistname").parent().next('button').click(player.controller.savePlaylist);
             $('.clear_playlist').click(playlist.clear);
+            $("#volume").rangechooser({
+                range: 100,
+                ends: ['max'],
+                onstop: infobar.volumeend,
+                whiledragging: infobar.volumemoved,
+                orientation: "horizontal"
+            });
         }
 
     }

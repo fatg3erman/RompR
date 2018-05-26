@@ -17,7 +17,7 @@ var ratingManager = function() {
 		} else {
 			a = $('<div>').insertAfter(atstart.parent());
 		}
-		var x = $('<div>', { class: "pluginsection textunderline containerbox" }).appendTo(a);
+		var x = $('<div>', { class: "pluginsection textunderline containerbox menuitem" }).appendTo(a);
 		x.append('<i class="icon-toggle-closed fixed menu infoclick plugclickable clickopensection"></i><span class="fixed rattitle">'+title+'</span><div class="expand filterinfo"></div></div>');
 		if (sortby == "Tag") {
 			x.append('<i class="fixed icon-trash topimg infoclick plugclickable clickdeletetag"></i>');
@@ -31,7 +31,7 @@ var ratingManager = function() {
 		}
 	}
 
-	function putTracksInSection(section) {
+	function putTracksInSection(section, element) {
 		updating_section = true;
 		debug.log("RATMAN","Putting Tracks In Section",section);
 		var dropper = $('.thebigholder[name="'+section+'"]');
@@ -60,6 +60,9 @@ var ratingManager = function() {
 				});
 				updating_section = false;
 				checkSectionRefresh();
+				if (element) {
+					element.stopSpinner();
+				}
 			},
 			function() {
 				infobar.notify(infobar.ERROR, "Failed to get data!");
@@ -181,7 +184,7 @@ var ratingManager = function() {
 		if (!updating_section) {
 			var section = to_refresh.shift();
 			if (section) {
-				putTracksInSection(section);
+				putTracksInSection(section, null);
 			}
 		}
 	}
@@ -284,6 +287,7 @@ var ratingManager = function() {
 			if (element.hasClass('clickopensection')) {
 				var dropper = element.parent().next();
 				if (element.isClosed()) {
+					element.makeSpinner();
 					var fi = element.next().next();
 					var term = $('[name=filterinput]').val();
 					if (term == '') {
@@ -292,7 +296,7 @@ var ratingManager = function() {
 						fi.html("Filtered By '"+term+"'");
 					}
 					var section = dropper.attr('name');
-					putTracksInSection(section);
+					putTracksInSection(section, element);
 				} else {
 					element.toggleClosed();
 					dropper.addClass('notthere').masonry('destroy').empty().append('<div class="sizer"></div>');

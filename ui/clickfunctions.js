@@ -117,6 +117,7 @@ function findClickableBrowserElement(event) {
 
 function onCollectionClicked(event) {
     var clickedElement = findClickableElement(event);
+    debug.log("CLICK","On",clickedElement);
     if (clickedElement.hasClass("menu")) {
         if (clickedElement.parent().hasClass('clickdir')) {
             doFileMenu(event, clickedElement);
@@ -177,19 +178,22 @@ function onFileCollectionClicked(event) {
         doFileMenu(event, clickedElement);
     } else if (clickedElement.hasClass('clickdeleteplaylist')) {
         event.stopImmediatePropagation();
-        player.controller.deletePlaylist(clickedElement.parent().children('input').first().attr('name'));
+        player.controller.deletePlaylist(clickedElement.next().val());
     } else if (clickedElement.hasClass('clickdeleteuserplaylist')) {
         event.stopImmediatePropagation();
         player.controller.deleteUserPlaylist(clickedElement.prev().prev().html());
     } else if (clickedElement.hasClass('clickrenameplaylist')) {
         event.stopImmediatePropagation();
-        player.controller.renamePlaylist(clickedElement.parent().children('input').first().attr('name'), event, player.controller.doRenamePlaylist);
+        player.controller.renamePlaylist(clickedElement.next().val(), event, player.controller.doRenamePlaylist);
     } else if (clickedElement.hasClass('clickrenameuserplaylist')) {
         event.stopImmediatePropagation();
-        player.controller.renamePlaylist(clickedElement.prev().html(), event, player.controller.doRenameUserPlaylist);
+        player.controller.renamePlaylist(clickedElement.next().val(), event, player.controller.doRenameUserPlaylist);
     } else if (clickedElement.hasClass('clickdeleteplaylisttrack')) {
         event.stopImmediatePropagation();
-        player.controller.deletePlaylistTrack(clickedElement.parent().parent().prev().children('input').first().attr('name'), clickedElement.attr('name'), false);
+        player.controller.deletePlaylistTrack(
+            clickedElement.next().val(),
+            clickedElement.attr('name'),
+            false);
     } else if (prefs.clickmode == "double") {
         if (clickedElement.hasClass("clickalbum") ||
             clickedElement.hasClass("clickloadplaylist") ||
@@ -220,13 +224,12 @@ function onFileCollectionDoubleClicked(event) {
 
 function onPodcastsClicked(event) {
     var clickedElement = findClickableElement(event);
-    if (clickedElement.hasClass("podcastmenu")) {
-        podcasts.loadPod(event, clickedElement);
-    } else if (clickedElement.hasClass("menu")) {
+    if (clickedElement.hasClass("menu")) {
         doMenu(event, clickedElement);
     } else if (clickedElement.hasClass("podconf")) {
-        event.stopImmediatePropagation();
-        $("#"+clickedElement.attr('name')).slideToggle('fast');
+        // event.stopImmediatePropagation();
+        // $("#"+clickedElement.attr('name')).slideToggle('fast');
+        doMenu(event, clickedElement);
     } else if (clickedElement.hasClass("podremove")) {
         event.stopImmediatePropagation();
         var n = clickedElement.attr('name');
@@ -315,10 +318,12 @@ function doMenu(event, element) {
     var menutoopen = element.attr("name");
     if (element.isClosed()) {
         element.toggleOpen();
-        $('#'+menutoopen).menuReveal();
         if (menuOpeners[menutoopen]) {
             menuOpeners[menutoopen]();
+        } else if (menuOpeners[getMenuType(menutoopen)]) {
+            menuOpeners[getMenuType(menutoopen)](getMenuIndex(menutoopen));
         }
+        $('#'+menutoopen).menuReveal();
     } else {
         element.toggleClosed();
         $('#'+menutoopen).menuHide();
@@ -332,6 +337,25 @@ function doMenu(event, element) {
     return false;
 }
 
+function getMenuType(m) {
+    var i = m.indexOf('_');
+    if (i !== -1) {
+        return m.substr(0, i);
+    } else {
+        return 'none';
+    }
+}
+
+function getMenuIndex(m) {
+    var i = m.indexOf('_');
+    if (i != -1) {
+        return m.substr(i+1);
+    } else {
+        debug.error("CLICKFUNCTIONS","Could not find menu index of",m);
+        return '0';
+    }
+}
+
 function doAlbumMenu(event, element, inbrowser, callback) {
 
     if (event) {
@@ -339,18 +363,7 @@ function doAlbumMenu(event, element, inbrowser, callback) {
     }
     var menutoopen = element.attr("name");
     if (element.isClosed()) {
-        var x = $('#'+menutoopen);
-        // If the dropdown doesn't exist then create it
-        if (x.length == 0) {
-            if (element.parent().hasClass('album1')) {
-                var c = 'dropmenu notfilled album1';
-            } else if (element.parent().hasClass('album2')) {
-                var c = 'dropmenu notfilled album2';
-            } else {
-                var c = 'dropmenu notfilled';
-            }
-            var t = $('<div>', {id: menutoopen, class: c}).insertAfter(element.parent());
-        }
+        layoutProcessor.makeCollectionDropMenu(element, menutoopen);
         if ($('#'+menutoopen).hasClass("notfilled")) {
             debug.log("CLICKFUNCTIONS","Opening and filling",menutoopen);
             $('#'+menutoopen).load("albums.php?item="+menutoopen, function() {
@@ -418,6 +431,12 @@ function doAlbumMenu(event, element, inbrowser, callback) {
     return false;
 }
 
+function browsePlaylist(plname, menutoopen) {
+    debug.log("MPD","Browsing playlist",plname);
+    string = "player/mpd/loadplaylists.php?playlist="+plname+'&target='+menutoopen;
+    return string;
+}
+
 function doFileMenu(event, element) {
 
     if (event) {
@@ -425,20 +444,14 @@ function doFileMenu(event, element) {
     }
     var menutoopen = element.attr("name");
     if (element.isClosed()) {
-        var x = $('#'+menutoopen);
-        // If the dropdown doesn't exist then create it
-        if (x.length == 0) {
-            var c = 'dropmenu notfilled';
-            var t = $('<div>', {id: menutoopen, class: c}).insertAfter(element.parent());
-        }
+        layoutProcessor.makeCollectionDropMenu(element, menutoopen);
         element.toggleOpen();
         if ($('#'+menutoopen).hasClass("notfilled")) {
             element.makeSpinner();
             var string;
-            var plname = element.parent().children('input').attr('name');
-            if (menutoopen.match(/^pholder\d/)) {
-                debug.log("MPD","Browsing playlist",plname);
-                string = "player/mpd/loadplaylists.php?playlist="+plname;
+            var plname = element.prev().val();
+            if (menutoopen.match(/^pholder_/)) {
+                string = browsePlaylist(plname, menutoopen);
             } else {
                 string = "dirbrowser.php?path="+plname+'&prefix='+menutoopen;
             }

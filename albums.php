@@ -127,7 +127,7 @@ function checkDomains($d) {
 }
 
 function mpd_search() {
-    global $collection, $dbterms;
+    global $collection, $dbterms, $skin;
     // If we're searching for tags or ratings it would seem sensible to only search the database
     // HOWEVER - we could be searching for genre of performer or composer or any - which will not match in the database
     // For those cases ONLY, controller.js will call into this instead of database_search, and we set $dbterms
@@ -155,6 +155,7 @@ function mpd_search() {
     debuglog("Search command : ".$cmd,"MPD SEARCH");
     if ($_REQUEST['resultstype'] == "tree") {
         include ("player/mpd/filetree.php");
+        require_once ("skins/".$skin."/ui_elements.php");
         doFileSearch($cmd, $domains);
     } else {
         cleanSearchTables();

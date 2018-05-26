@@ -56,7 +56,7 @@ function saveImage($fname, $in_collection, $stream) {
         $anglofile = "prefs/plimages/".$fname.".jpg";
     } else if ($stream != '') {
         debuglog("    Saving image to userstream folder","GETALBUMCOVER");
-        $small_file = null;
+        $small_file = "prefs/userstreams/".$stream.".jpg";
         $anglofile = "prefs/userstreams/".$stream.".jpg";
     }
     if ($small_file && file_exists($small_file)) {
@@ -67,8 +67,6 @@ function saveImage($fname, $in_collection, $stream) {
     }
     // Ohhhhhh imagemagick is just... wow.
     // This resizes the images into a square box while adding padding to preserve the apsect ratio
-    // -alpha remove removes the alpha (transparency) channel if it exists - JPEG doesn't have one of these and
-    // trying to resize PNGs with alpha channels and save them as JPEGs gives horrid results with convert
     $o = array();
     if ($small_file) {
         debuglog("Creating file ".$small_file,"SAVEIMAGE");

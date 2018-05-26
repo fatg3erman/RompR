@@ -1,14 +1,12 @@
 var tuneinRadioPlugin = {
 
     loadBigRadio: function() {
-        if ($("#tuneinlist").is(':empty')) {
-            $('[name="tuneinlist"]').makeSpinner();
+        if ($("#tuneinlist").hasClass('notfilled')) {
+            $('i[name="tuneinlist"]').makeSpinner();
             $("#tuneinlist").load("streamplugins/03_tuneinradio.php?populate=2", function() {
-                $('[name="tuneinlist"]').stopSpinner().removeClass('icon-toggle-closed');
-                if (!$('[name="tuneinlist"]').hasClass('icon-toggle-open')) {
-                    $('[name="tuneinlist"]').addClass('icon-toggle-open');
-                }
+                $('i[name="tuneinlist"]').stopSpinner();
                 tuneinRadioPlugin.setTheThing();
+                $("#tuneinlist").removeClass('notfilled');
             });
         }
     },
@@ -62,7 +60,7 @@ var tuneinRadioPlugin = {
     },
     
     browse: function(url, title, target, callback) {
-        $("#"+target).load("streamplugins/03_tuneinradio.php?populate=2&url="+url+'&title='+title, function() {
+        $("#"+target).load("streamplugins/03_tuneinradio.php?populate=2&url="+url+'&title='+title+'&target='+target, function() {
             callback();
         });
     },
@@ -70,13 +68,10 @@ var tuneinRadioPlugin = {
     search: function() {
         var term = $('[name="tuneinsearcher"]').val();
         debug.log("TUNEIN","Searching For",term);
-        $('[name="tuneinlist"]').makeSpinner();
+        $('i[name="tuneinlist"]').makeSpinner();
         $("#tuneinlist").load("streamplugins/03_tuneinradio.php?populate=2&search="+encodeURIComponent(term), function() {
-            $('[name="tuneinlist"]').stopSpinner();
+            $('i[name="tuneinlist"]').stopSpinner();
             tuneinRadioPlugin.setTheThing();
-            if (!$('[name="tuneinlist"]').hasClass('icon-toggle-open')) {
-        		$('[name="tuneinlist"]').addClass('icon-toggle-open');
-        	}
         });
     }
 

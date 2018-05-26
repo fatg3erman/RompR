@@ -1,5 +1,4 @@
-html
-{
+html, body.phone .dropmenu {
     background-image:url("nightclouds.jpg");
     background-size:cover;
     background-repeat:no-repeat;

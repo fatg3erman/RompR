@@ -4,7 +4,7 @@
 =====================================================================
 */
 
-body {
+html, body.phone .dropmenu {
     color:#000000;
     background-image:url('../newimages/silver1.jpg');
 }

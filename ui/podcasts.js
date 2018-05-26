@@ -158,38 +158,6 @@ var podcasts = function() {
 
 	}
 
-	function loadPodcast(channel) {
-		var target = $('#podcast_'+channel);
-		var uri = "includes/podcasts.php?populate=1&loadchannel="+channel;
-		var term = $('[name="podsearcher_'+channel+'"]').val();
-		if (typeof term !== 'undefined' && term != '') {
-			uri += '&searchterm='+encodeURIComponent(term);
-		}
-		$('[name="podcast_'+channel+'"]').makeSpinner();
-		target.load(uri, function() {
-			$('[name="podcast_'+channel+'"]').stopSpinner();
-			if ($('[name="podcast_'+channel+'"]').isClosed()) {
-				$('[name="podcast_'+channel+'"]').toggleOpen();
-	        	target.menuReveal();
-	        }
-            target.find('.fridge').tipTip({edgeOffset: 8});
-	        target.find('.clearbox').click(function(event){
-	            event.preventDefault();
-	            event.stopPropagation();
-	            var position = getPosition(event);
-	            var elemright = $(event.target).width() + $(event.target).offset().left;
-	            if (position.x > elemright - 24) {
-	                $(event.target).val("");
-	                var thing = $(event.target).attr('name').replace(/podsearcher_/,'');
-	                podcasts.searchinpodcast(thing);
-	            }
-	        }).hover(makeHoverWork).mousemove(makeHoverWork).keyup(onKeyUp);
-            if (target.find('.podautodown').is(':checked')) {
-	            target.find('.podnewdownload').click();
-            }
-		});
-	}
-
 	function getPodcast(url) {
 	    debug.log("PODCAST","Getting podcast",url);
 	    infobar.notify(infobar.NOTIFY, "Subscribing to Podcast....")
@@ -216,28 +184,33 @@ var podcasts = function() {
 
 	return {
 
-    	loadPod: function(event, element) {
-		    if (event) {
-		        event.stopImmediatePropagation();
-		    }
-		    var menutoopen = element.attr("name");
-		    if (element.isClosed()) {
-		    	if ($("#"+menutoopen).is(':empty')) {
-		    		debug.log("PODCASTS","Loading",menutoopen);
-		    		loadPodcast(element.attr('romprpod'));
-		    	} else {
-	            	$('#'+menutoopen).menuReveal();
-		    		element.toggleOpen();
-		    	}
-		    } else {
-		        $('#'+menutoopen).menuHide();
-		        element.toggleClosed();
-		    }
-	        if (layoutProcessor.postAlbumMenu) {
-		        layoutProcessor.postAlbumMenu(element);
-    		}
-		    return false;
-    	},
+		loadPodcast: function(channel) {
+			var target = $('#podcast_'+channel);
+			var uri = "includes/podcasts.php?populate=1&loadchannel="+channel;
+			var term = $('[name="podsearcher_'+channel+'"]').val();
+			if (typeof term !== 'undefined' && term != '') {
+				uri += '&searchterm='+encodeURIComponent(term);
+			}
+			$('i[name="podcast_'+channel+'"]').makeSpinner();
+			target.load(uri, function() {
+				$('i[name="podcast_'+channel+'"]').stopSpinner();
+	            target.find('.fridge').tipTip({edgeOffset: 8});
+		        target.find('.clearbox').click(function(event){
+		            event.preventDefault();
+		            event.stopPropagation();
+		            var position = getPosition(event);
+		            var elemright = $(event.target).width() + $(event.target).offset().left;
+		            if (position.x > elemright - 24) {
+		                $(event.target).val("");
+		                var thing = $(event.target).attr('name').replace(/podsearcher_/,'');
+		                podcasts.searchinpodcast(thing);
+		            }
+		        }).hover(makeHoverWork).mousemove(makeHoverWork).keyup(onKeyUp);
+	            if (target.find('.podautodown').is(':checked')) {
+		            target.find('.podnewdownload').click();
+	            }
+			});
+		},
 
     	searchinpodcast: function(channel) {
     		var term = $('[name="podsearcher_'+channel+'"]').val();
@@ -451,7 +424,8 @@ var podcasts = function() {
 		        contentType: "text/html; charset=utf-8",
 		        data: {subscribe: index, populate: 1 },
 		        success: function(data) {
-		        	$('[name="podcast_'+index+'"]').parent().fadeOut('fast');
+		        	$('i[name="podcast_'+index+'"]').parent().fadeOut('fast');
+					$('.menuitem[name="podcast_'+index+'"]').fadeOut('fast');
 		        	$('#podcast_'+index).remove();
 		            $("#fruitbat").html(data);
 		            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
@@ -474,4 +448,5 @@ var podcasts = function() {
 }();
 
 $('#podcastsinput').on('drop', podcasts.handleDrop)
+menuOpeners['podcast'] = podcasts.loadPodcast;
 podcasts.doInitialRefresh();

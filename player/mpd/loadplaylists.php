@@ -6,12 +6,12 @@ include ("international.php");
 include ("collection/collection.php");
 include ("player/mpd/connection.php");
 include ("backends/sql/backend.php");
-
+include ("utils/phpQuery.php");
 $used_images = array();
 
 if (array_key_exists('playlist', $_REQUEST)) {
     $pl = $_REQUEST['playlist'];
-    do_playlist_tracks($pl,'icon-music');
+    do_playlist_tracks($pl,'icon-music', $_REQUEST['target']);
 } else {
     do_playlist_header();
     $playlists = do_mpd_command("listplaylists", true, true);
@@ -20,13 +20,13 @@ if (array_key_exists('playlist', $_REQUEST)) {
         usort($playlists['playlist'], "plsort");
         foreach ($playlists['playlist'] as $pl) {
             debuglog("Adding Playlist : ".$pl,"MPD PLAYLISTS",8);
-            add_playlist(rawurlencode($pl), htmlentities($pl), 'icon-doc-text', 'clickloadplaylist', true, $c, false);
+            add_playlist(rawurlencode($pl), htmlentities($pl), 'icon-doc-text', 'clickloadplaylist', true, $c, false, null);
             $c++;
         }
     }
     $existingfiles = glob('prefs/userplaylists/*');
     foreach($existingfiles as $file) {
-        add_playlist(rawurlencode(file_get_contents($file)), htmlentities(basename($file)), 'icon-doc-text', 'clickloaduserplaylist', true, $c, true);
+        add_playlist(rawurlencode(file_get_contents($file)), htmlentities(basename($file)), 'icon-doc-text', 'clickloaduserplaylist', true, $c, true, null);
         $c++;
     }
     sort($used_images);
@@ -49,8 +49,10 @@ function plsort($a, $b) {
     return (strtolower($a) < strtolower($b)) ? -1 : 1;
 }
 
-function do_playlist_tracks($pl, $icon) {
+function do_playlist_tracks($pl, $icon, $target) {
     global $putinplaylistarray, $playlist;
+    directoryControlHeader($target, $pl);
+    playlistPlayHeader($pl);
     if ($pl == '[Radio Streams]') {
         $streams = do_mpd_command('listplaylistinfo "'.$pl.'"', true);
         if (is_array($streams) && array_key_exists('file', $streams)) {
@@ -61,7 +63,7 @@ function do_playlist_tracks($pl, $icon) {
             }
             $c = 0;
             foreach ($streams['file'] as $st) {
-                add_playlist(rawurlencode($st), htmlentities(substr($st, strrpos($st, '#')+1, strlen($st))), 'icon-radio-tower' ,'clicktrack', true, $c, false);
+                add_playlist(rawurlencode($st), htmlentities(substr($st, strrpos($st, '#')+1, strlen($st))), 'icon-radio-tower' ,'clicktrack', true, $c, false, $pl);
                 $c++;
             }
         }
@@ -86,7 +88,7 @@ function do_playlist_tracks($pl, $icon) {
                     break;
 
             }
-            add_playlist(rawurlencode($link), $track->get_artist_track_title(), $icon, $class, allow_track_deletion($pl), $c, false);
+            add_playlist(rawurlencode($link), $track->get_artist_track_title(), $icon, $class, allow_track_deletion($pl), $c, false, $pl);
             $c++;
         }
     }
@@ -104,31 +106,40 @@ function allow_track_deletion($pl) {
     return true;
 }
 
-function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user) {
+function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $pl) {
     global $prefs, $used_images;
     switch ($class) {
         case 'clickloadplaylist':
         case 'clickloaduserplaylist':
-            print '<div class="clickable '.$class.' containerbox menuitem draggable" name="pholder'.$count.'">';
-            print '<input type="hidden" name="'.$link.'" />';
-            print '<i class="icon-toggle-closed menu mh fixed" name="pholder'.$count.'"></i>';
-            $image = md5($name);
-            if (file_exists('prefs/plimages/'.$image.'.jpg')) {
-                $used_images[] = "prefs/plimages/".$image.".jpg";
-                print '<div class="smallcover fixed"><img class="smallcover fixed plimage" name="'.$image.
-                    '" src="prefs/plimages/'.$image.'.jpg" /></div>';
-            } else {
-                print '<div class="smallcover fixed"><img class="smallcover fixed plimage notfound" name="'.$image.'" /></div>';
+            $imgkey = md5($name);
+            $image = null;
+            if (file_exists('prefs/plimages/'.$imgkey.'.jpg')) {
+                $used_images[] = "prefs/plimages/".$imgkey.".jpg";
+                $image = "prefs/plimages/".$imgkey.".jpg";
             }
-            print '<div class="expand">'.$name.'</div>';
+            $html = albumHeader(array(
+                'id' => 'pholder_'.$name,
+                'Image' => $image,
+                'Searched' => 1,
+                'AlbumUri' => null,
+                'Year' => null,
+                'Artistname' => '',
+                'Albumname' => $name,
+                'why' => 'whynot',
+                'ImgKey' => $imgkey,
+                'userplaylist' => $class,
+                'plpath' => $link
+            ));
+            $out = phpQuery::newDocument($html);
             if ($delete && ($is_user || $prefs['player_backend'] == "mpd")) {
                 $add = ($is_user) ? "user" : "";
-                print '<i class="icon-floppy fixed smallicon clickable clickicon clickrename'.$add.
-                    'playlist"></i>';
-                print '<i class="icon-cancel-circled fixed smallicon clickable clickicon clickdelete'.
-                    $add.'playlist"></i>';
+                $h = '<i class="icon-floppy fixed smallicon clickable clickicon clickrename'.$add.'playlist"></i>';
+                $h .= '<input type="hidden" value="'.$name.'" />';
+                $h .= '<i class="icon-cancel-circled fixed smallicon clickable clickicon clickdelete'.$add.'playlist"></i>';
+                $h .= '<input type="hidden" value="'.$name.'" />';
+                $out->find('.menuitem')->append($h);
             }
-            print '</div>';
+            print $out->html();
             break;
 
         case "clicktrack":
@@ -136,8 +147,8 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user) {
             print '<i class="'.$icon.' fixed smallicon"></i>';
             print '<div class="expand">'.$name.'</div>';
             if ($delete) {
-                print '<i class="icon-cancel-circled fixed playlisticonr clickable clickicon '.
-                    'clickdeleteplaylisttrack" name="'.$count.'"></i>';
+                print '<i class="icon-cancel-circled fixed playlisticonr clickable clickicon clickdeleteplaylisttrack" name="'.$count.'"></i>';
+                print '<input type="hidden" value="'.$pl.'" />';
             }
             print '</div>';
             break;
@@ -159,7 +170,7 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user) {
 
 function do_playlist_header() {
     print '<div class="configtitle textcentre"><b>'.get_int_text('button_loadplaylist').'</b></div>';
-    print '<div class="containerbox spacer dropdown-container">';
+    print '<div class="containerbox dropdown-container fullwidth">';
     print '<div class="fixed padright padleft"><span class="alignmid">External URL</span></div>';
     print '<div class="expand dropdown-holder">
         <input class="enter" id="godfreybiggins" type="text" onkeyup="onKeyUp(event)" /></div>';

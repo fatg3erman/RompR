@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.0"
+   width="527.17212"
+   height="237.70274"
+   id="svg2"
+   sodipodi:docname="ratortag.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1783"
+     inkscape:window-height="1102"
+     id="namedview12"
+     showgrid="false"
+     inkscape:zoom="1"
+     inkscape:cx="360.21395"
+     inkscape:cy="78.851367"
+     inkscape:window-x="642"
+     inkscape:window-y="185"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:pagecheckerboard="true" />
+  <defs
+     id="defs4">
+    <filter
+       style="color-interpolation-filters:sRGB"
+       x="0"
+       y="0"
+       width="1"
+       height="1"
+       id="filter2986">
+      <feColorMatrix
+         type="saturate"
+         values="1"
+         result="fbSourceGraphic"
+         id="feColorMatrix2988" />
+      <feColorMatrix
+         in="fbSourceGraphic"
+         values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0 "
+         id="feColorMatrix2990" />
+    </filter>
+    <filter
+       id="filter2986-7"
+       inkscape:menu-tooltip="Invert colors"
+       inkscape:menu="Color"
+       height="1"
+       width="1"
+       y="0"
+       x="0"
+       inkscape:label="Invert"
+       style="color-interpolation-filters:sRGB">
+      <feColorMatrix
+         id="feColorMatrix2988-9"
+         result="fbSourceGraphic"
+         values="1"
+         type="saturate" />
+      <feColorMatrix
+         id="feColorMatrix2990-3"
+         values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0 "
+         in="fbSourceGraphic" />
+    </filter>
+  </defs>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none"
+     stroke-miterlimit="4"
+     d="M 198.11124,233.1627 124.5822,184.83449 50.412563,232.5939 73.653303,147.72899 5.3108819,91.947653 93.203379,87.825916 125.13513,5.5928329 156.21412,87.91158 l 88.07891,4.957816 -68.68397,54.995874 z"
+     id="path3817"
+     inkscape:connector-curvature="0" />
+  <text
+     id="text945"
+     y="206.71083"
+     x="237.80252"
+     style="font-style:normal;font-weight:normal;font-size:54.45038605px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.3612597px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     xml:space="preserve"><tspan
+       style="font-size:261.36184692px;fill:#ffffff;fill-opacity:1;stroke-width:1.3612597px"
+       y="206.71083"
+       x="237.80252"
+       id="tspan943">/</tspan></text>
+  <path
+     style="filter:url(#filter2986-7)"
+     id="path3"
+     d="m 522.61767,-9.4320141 h -144.281 c -26.453,0 -63.398,15.303 -82.102,34.0070001 L 72.739667,248.06999 c -18.704,18.704 -18.704,49.312 0,68.016 l 172.455003,172.453 c 18.704,18.705 49.311,18.705 68.015,0 l 223.495,-223.494 c 18.704,-18.705 34.007,-55.651 34.007,-82.102 V 38.661986 c 0,-26.452 -21.643,-48.0940001 -48.094,-48.0940001 z m -63.906,160.0000041 c -26.51,0 -48,-21.49 -48,-48 0,-26.510004 21.49,-48.000004 48,-48.000004 26.51,0 48,21.49 48,48.000004 0,26.51 -21.49,48 -48,48 z"
+     inkscape:connector-curvature="0"
+     transform="matrix(0.39831479,0,0,0.39831479,299.84924,20.639743)" />
+</svg>

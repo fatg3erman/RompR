@@ -28,6 +28,10 @@ select {
     height:2em;
 }
 
+div {
+    box-sizing: border-box;
+}
+
 /*
 =====================================================================
 = Specific Elements By ID
@@ -50,8 +54,12 @@ select {
     margin:0px;
 }
 
+#volume {
+    width:95%;
+}
+
 #volumecontrol {
-    width:3em;
+    height:2em;
 }
 
 #infobar {
@@ -148,7 +156,7 @@ select {
     display:none;
     font-size:8pt;
     font-weight:bold;
-    z-index:2000;
+    z-index:10010;
 }
 
 #lastfm img {
@@ -170,6 +178,20 @@ select {
 = General Classes
 =====================================================================
 */
+
+div.topdropmenu {
+    z-index:10009;
+    box-sizing:border-box;
+    width:100%;
+    position:fixed;
+    right: 0;
+}
+
+.mainpane {
+    position: relative;
+    top: 0;
+    left: 0;
+}
 
 .chooser {
     margin-left:auto;
@@ -204,6 +226,11 @@ select {
     cursor: pointer;
 }
 
+.topimg.infoclick {
+    box-sizing: border-box;
+    border: 6px solid transparent;
+}
+
 .mobonly {
     display:inline-block;
 }
@@ -235,43 +262,17 @@ select {
 }
 
 .menu {
-    width:1.5em;
-    height:1.5em;
-    vertical-align:middle;
     cursor:pointer;
 }
 
-@media screen and (max-width: 320px) {
-
-    .dropmenu {
-        padding-left:16px;
-    }
-
-    .indent {
-        margin-left:12px;
-    }
-}
-
-@media screen and (min-width: 321px) and (max-width: 500px) {
-
-    .dropmenu {
-        padding-left:24px;
-    }
-
-    .indent {
-        margin-left:18px;
-    }
-}
-
-@media screen and (min-width: 501px) {
-
-    .dropmenu {
-        padding-left:38px;
-    }
-
-    .indent {
-        margin-left:24px;
-    }
+.dropmenu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    z-index: 10000;
 }
 
 .menuspacer {
@@ -294,7 +295,7 @@ select {
 }
 
 div.normalmenu {
-    width:40px;
+    width:52px;
 }
 
 div.rightmenu {
@@ -382,19 +383,29 @@ div.rightmenu {
     vertical-align:middle;
 }
 
-.configtitle {
-    height:38px;
-}
-
 .podicon {
     margin-top:4px;
     margin-bottom:4px;
     margin-left:4px;
-    margin-right:16px;
-    height:40px;
-    width:40px;
+    margin-right:4px;
+    height:36px;
+    width:36px;
     font-size:40px;
     vertical-align:middle;
+    box-sizing:border-box;
+    border:8px solid transparent;
+}
+
+.combo-button {
+    box-sizing: border-box;
+    border: 4px solid transparent;
+}
+
+.backhi {
+    padding-left:2px;
+    padding-right:2px;
+    padding-top:6px;
+    padding-bottom:6px;
 }
 
 .playlisticon
@@ -404,7 +415,18 @@ div.rightmenu {
     margin-bottom:2px;
     margin-top:2px;
     vertical-align:middle;
+    box-sizing:border-box;
+    border:6px solid transparent;
 }
+
+[class^="icon-"].menu, [class*=" icon-"].menu {
+    width: 24px;
+    height: 24px;
+    box-sizing: border-box;
+    border: 6px solid transparent;
+    vertical-align:middle;
+}
+
 
 .collectionicon {
     padding:0px;
@@ -421,6 +443,8 @@ div.rightmenu {
     margin-top:2px;
     margin-right:2px;
     vertical-align:middle;
+    box-sizing:border-box;
+    border:6px solid transparent;
 }
 
 .npicon {
@@ -457,6 +481,11 @@ div.rightmenu {
 
 }
 
+.sptext {
+    white-space:nowrap;
+    padding-right:4px;
+}
+
 #ratingimage {
     padding-bottom:0px;
 }
@@ -471,11 +500,6 @@ div.rightmenu {
 
 .padright {
     padding-right:4px;
-}
-
-.multidrop {
-    margin-top:4px;
-    margin-bottom:4px;
 }
 
 .whatdoicallthis {
@@ -497,7 +521,7 @@ div.rightmenu {
 
 .pleft
 {
-    box-sizing:border-box;
+    include("utils/phpQuery.php");
     padding-left:8px;
 }
 .pright
@@ -505,6 +529,7 @@ div.rightmenu {
     box-sizing:border-box;
     padding-right:8px;
 }
+
 .mobmenu
 {
     position:absolute;
@@ -660,21 +685,11 @@ div.rightmenu {
         margin-bottom:1em;
         padding-bottom:0.5em;
     }
-    .sptext {
-        display:none;
-    }
 }
 
 @media screen and (min-width: 641px) {
     .cleft.narrowright {
         margin-left:1em;
-    }
-    .spicons {
-        display:none;
-    }
-    .sptext {
-        white-space:nowrap;
-        padding-right:4px;
     }
 }
 
@@ -852,4 +867,86 @@ div.rightmenu {
     .onlynarrow {
         display:none;
     }
+}
+
+.setupdiv
+{
+    width:100%;
+    box-sizing:border-box;
+}
+
+.backmenu
+{
+    box-sizing: border-box;
+    height: 1.5em;
+    border-left: 4px solid transparent;
+    padding-left: 38px;
+    padding-right: 8px;
+    width: 100%;
+    text-align:right;
+    margin-top:4px;
+    margin-bottom:4px;
+}
+
+@-webkit-keyframes clickflash {
+     0%{
+          background-color: rgba(255,255,255,0.7);
+     }
+     50%{
+         background-color: rgba(255,255,255,0.3);
+     }
+     100%{
+         background-color: rgba(255,255,255,0);
+     }
+}
+@-moz-keyframes clickflash {
+     0%{
+          background-color: rgba(255,255,255,0.7);
+     }
+     50%{
+         background-color: rgba(255,255,255,0.3);
+     }
+     100%{
+         background-color: rgba(255,255,255,0);
+     }
+}
+@keyframes clickflash {
+     0%{
+          background-color: rgba(255,255,255,0.7);
+     }
+     50%{
+         background-color: rgba(255,255,255,0.3);
+     }
+     100%{
+         background-color: rgba(255,255,255,0);
+     }
+}
+
+.clickflash {
+    animation: clickflash 0.75s linear 1;
+}
+
+.album-menu-header {
+    width:100%;
+    text-align:center;
+}
+
+.album-play-controls {
+    margin-bottom:4px;
+    margin-top:4px;
+}
+
+.album_menu_image {
+    max-width: 100%;
+    height: auto;
+    max-height: 80vh;
+}
+
+.calign {
+    align-items: center;
+}
+
+.indent {
+    padding-left: 4px;
+    box-szing:border-box;
 }

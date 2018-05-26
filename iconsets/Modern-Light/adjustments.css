@@ -41,7 +41,7 @@
     }
 }
 
-@media screen and (min-height: 640px) and (min-width: 700px) and (orientation: landscape) {
+@media screen  and (min-height: 940px) and (max-height: 1099px) and (min-width: 650px) {
     .controlbutton {
         width:84px;
         height:84px;
@@ -253,8 +253,8 @@
 
 .mobile .playlisticon
 {
-    width:30px;
-    height:30px;
+    width:24px;
+    height:24px;
 }
 
 .desktop .collectionicon
@@ -279,7 +279,6 @@
 {
     width:30px;
     height:30px;
-    margin-left:8px;
 }
 
 .desktop .smallicon

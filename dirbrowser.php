@@ -7,6 +7,7 @@ include ("includes/functions.php");
 include ("international.php");
 include ("player/mpd/connection.php");
 include ("player/mpd/filetree.php");
+include ("skins/".$skin."/ui_elements.php");
 $error = 0;
 $dbterms = array( 'tags' => null, 'rating' => null );
 
@@ -15,7 +16,9 @@ $prefix = (array_key_exists('prefix', $_REQUEST)) ? $_REQUEST['prefix'].'_' : "d
 
 if ($is_connected) {
     if ($path == "") {
-    print '<div class="configtitle textcentre expand"><b>'.get_int_text('button_file_browser').'</b></div>';
+        print '<div class="configtitle textcentre expand"><b>'.get_int_text('button_file_browser').'</b></div>';
+    } else {
+        directoryControlHeader($prefix);
     }
 	doFileBrowse($path, $prefix);
 } else {

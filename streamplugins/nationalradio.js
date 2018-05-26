@@ -1,13 +1,11 @@
 var nationalRadioPlugin = {
 
     loadBigRadio: function() {
-        if ($("#bbclist").is(':empty')) {
-            $('[name="bbclist"]').makeSpinner();
+        if ($("#bbclist").hasClass('notfilled')) {
+            $('i[name="bbclist"]').makeSpinner();
             $("#bbclist").load("streamplugins/02_nationalradio.php?populate=2&country="+prefs.newradiocountry, function() {
-                $('[name="bbclist"]').stopSpinner().removeClass('icon-toggle-closed');
-                if (!$('[name="bbclist"]').hasClass('icon-toggle-open')) {
-                    $('[name="bbclist"]').addClass('icon-toggle-open');
-                }
+                $('i[name="bbclist"]').stopSpinner();
+                $('#somafmlist').removeClass('notfilled');
                 nationalRadioPlugin.setTheThing();
             });
         }
@@ -38,12 +36,9 @@ var nationalRadioPlugin = {
 
     loadBigRadioHtml: function(qstring, callback) {
         debug.log("RADIO","Getting",qstring);
-        $('[name="bbclist"]').makeSpinner();
+        $('i[name="bbclist"]').makeSpinner();
         $("#alltheradiostations").load("streamplugins/02_nationalradio.php?"+qstring, function() {
-        	$('[name="bbclist"]').stopSpinner().removeClass('icon-toggle-closed');
-        	if (!$('[name="bbclist"]').hasClass('icon-toggle-open')) {
-        		$('[name="bbclist"]').addClass('icon-toggle-open');
-        	}
+        	$('i[name="bbclist"]').stopSpinner();
         });
     },
 

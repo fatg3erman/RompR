@@ -680,13 +680,6 @@ var infobar = function() {
                 onstop: infobar.seek,
                 startmax: 0
             });
-            $("#volume").rangechooser({
-                range: 100,
-                ends: ['max'],
-                onstop: infobar.volumeend,
-                whiledragging: infobar.volumemoved,
-                orientation: "vertical"
-            });
         },
 
         setProgress: function(progress, duration) {
@@ -714,4 +707,3 @@ var infobar = function() {
     }
 
 }();
-

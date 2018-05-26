@@ -222,6 +222,21 @@ $prefs['mpd_port'] = $prefs['multihosts']->$cockspanner->port;
 $prefs['mpd_password'] = $prefs['multihosts']->$cockspanner->password;
 $prefs['unix_socket'] = $prefs['multihosts']->$cockspanner->socket;
 
+$skin = null;
+
+if (array_key_exists('mobile', $_REQUEST)) {
+    $skin = ($_REQUEST['mobile'] == "phone") ? "phone" : "desktop";
+    debuglog("Request asked for skin: ".$skin,"INIT",9);
+} else if(array_key_exists('skin', $_REQUEST)) {
+    $skin = $_REQUEST['skin'];
+    debuglog("Request asked for skin: ".$skin,"INIT",9);
+} else if (array_key_exists('skin', $_COOKIE)) {
+    $skin = $_COOKIE['skin'];
+    debuglog("Using skin as set by Cookie: ".$skin,"INIT",9);
+}
+if ($skin !== null) {
+    $skin = trim($skin);
+}
 
 if (is_dir('albumart/original')) {
     // Re-arrange the saved album art

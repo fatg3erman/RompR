@@ -2,12 +2,9 @@ var yourRadioPlugin = {
 
 	loadStations: function() {
 		if ($('#yourradiostations').is(':empty')) {
-	        $('[name="yourradiolist"]').makeSpinner();
+	        $('i[name="yourradiolist"]').makeSpinner();
 			$('#yourradiostations').load('utils/userstreams.php?populate', function() {
-	            $('[name="yourradiolist"]').stopSpinner().removeClass('icon-toggle-closed');
-	            if (!$('[name="yourradiolist"]').hasClass('icon-toggle-open')) {
-	                $('[name="yourradiolist"]').addClass('icon-toggle-open');
-	            }
+	            $('i[name="yourradiolist"]').stopSpinner();
 			    $('[name="spikemilligan"]').click(yourRadioPlugin.loadSuppliedStation);
 		    	$("#anaconda").on("drop", yourRadioPlugin.handleDropRadio);
 	            $("#yourradiostations").sortableTrackList({

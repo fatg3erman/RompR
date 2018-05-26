@@ -5,22 +5,14 @@ include("includes/vars.php");
 //
 // Check to see if this is a mobile browser
 //
-if (array_key_exists('mobile', $_REQUEST)) {
-    $skin = ($_REQUEST['mobile'] == "phone") ? "phone" : "desktop";
-    debuglog("Request asked for skin: ".$skin,"INIT",6);
-} else if(array_key_exists('skin', $_REQUEST)) {
-    $skin = $_REQUEST['skin'];
-    debuglog("Request asked for skin: ".$skin,"INIT",6);
-} else if (array_key_exists('skin', $_COOKIE)) {
-    $skin = $_COOKIE['skin'];
-    debuglog("Using skin as set by Cookie: ".$skin,"INIT",6);
-} else {
-    debuglog("Detecting window size to decide which skin to use....","INIT",4);
-    include('checkwindowsize.php');
-    exit(0);
+if ($skin === null) {
+   debuglog("Detecting window size to decide which skin to use....","INIT",4);
+   include('checkwindowsize.php');
+   exit(0);
 }
-$skin = trim($skin);
+
 debuglog("Using skin : ".$skin,"INIT",6);
+
 if (!is_dir('skins/'.$skin)) {
     print '<h3>Skin '.$skin.' does not exist!</h3>';
     exit(0);
@@ -49,7 +41,7 @@ if ($prefs['player_backend'] == '') {
 
 include("includes/functions.php");
 include("international.php");
-
+include("skins/".$skin."/ui_elements.php");
 //
 // See if there are any POST values from the setup screen
 //

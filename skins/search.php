@@ -49,16 +49,16 @@ print '<div class="fixed searchlabel"><span class="slt"><b>'.get_int_text("label
 </div>';
 
 
-print '<div class="containerbox menuitem noselection multidrop">';
+print '<div class="containerbox menuitem noselection">';
 print '<i class="icon-toggle-closed mh menu fixed" name="advsearchoptions"></i>';
 print '<div class="expand">Advanced Options...</div>';
 print '</div>';
 
-print '<div id="advsearchoptions" class="dropmenu">';
+print '<div id="advsearchoptions" class="toggledown invisible marged">';
 
     print '<div class="styledinputs">';
     print '<div class="containerbox padright" style="margin-top:0.5em;margin-bottom:0.5em"><b>'.get_int_text('label_displayresultsas').'</b></div>';
-    print '<div class="dropmenu" style="display:block">';
+    print '<div class="marged">';
     print '<input type="radio" class="topcheck savulon" name="displayresultsas" value="collection" id="resultsascollection">
     <label for="resultsascollection">'.ucfirst(get_int_text('label_resultscollection')).'</label><br/>
     <input type="radio" class="topcheck savulon" name="displayresultsas" value="tree" id="resultsastree">
