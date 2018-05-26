@@ -10,6 +10,7 @@ print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 'minimum-scale=1.0, user-scalable=0" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <link rel="stylesheet" type="text/css" href="css/layout-january.css" />
+<link rel="stylesheet" type="text/css" href="skins/'.$skin.'/skin.css?version='.ROMPR_VERSION.'" />
 <link rel="shortcut icon" href="newimages/favicon.ico" />
 <link rel="stylesheet" type="text/css" href="themes/Numismatist.css" />
 <link rel="stylesheet" type="text/css" href="iconsets/Modern-Dark/theme.css" />
@@ -26,8 +27,8 @@ print '<script language="javascript">'."\n";
 print 'var multihosts = '.json_encode($prefs['multihosts']).";\n";
 print '</script>';
 print '</head>
-<body class="setup" style="padding:8px;overflow-y:scroll">
-    <div class="bordered dingleberry setupdiv" style="max-width:60em">
+<body class="setup" style="overflow-y:scroll">
+    <div class="bordered dingleberry setupdiv">
     <h3>';
 print $title;
 print '</h3>';
@@ -39,7 +40,7 @@ print '<h3>'.get_int_text("setup_mpd").'</h3>';
 print '<p>Choose or edit a player</p>';
 $c = 0;
 foreach ($prefs['multihosts'] as $host => $def) {
-    print '<div class="pref styledinputs">';
+    print '<div class="styledinputs">';
     print '<input id="host'.$c.'" type="radio" name="currenthost" value="'.$host.'" onclick="displaySettings(event)"';
     if ($host == $prefs['currenthost']) {
         print ' checked';
@@ -59,14 +60,14 @@ print '<input type="text" name="unix_socket" value="'.$prefs['unix_socket'].'" /
 
 print '<hr class="dingleberry" />';
 print '<h3>'.get_int_text("label_generalsettings").'</h3>';
-print '<div class="pref styledinputs"><input id="cli" type="checkbox" name="cleanalbumimages" ';
+print '<div class="styledinputs"><input id="cli" type="checkbox" name="cleanalbumimages" ';
 if ($prefs['cleanalbumimages']) {
     print " checked";
 }
 print '><label for="cli">Clean ununsed album art on startup</label></div>';
 print '<p class="tiny">You almost certaoinly want to kep this enabled</p>';
 
-print '<div class="pref styledinputs"><input id="dsp" type="checkbox" name="do_not_show_prefs" ';
+print '<div class="styledinputs"><input id="dsp" type="checkbox" name="do_not_show_prefs" ';
 if ($prefs['do_not_show_prefs']) {
     print " checked";
 }
@@ -81,13 +82,13 @@ print '<p>Executable Path<br><input type="text" name="mopidy_scan_command" value
 
 print '<hr class="dingleberry" />';
 print '<h3>Collection Settings</h3>';
-print '<div class="pref styledinputs"><input id="dblite" type="radio" name="collection_type" value="sqlite"';
+print '<div class="styledinputs"><input id="dblite" type="radio" name="collection_type" value="sqlite"';
 if (array_key_exists('collection_type', $prefs) && $prefs['collection_type'] == "sqlite") {
     print " checked";
 }
 print '><label for="dblite">Lite Database Collection</label></div>';
 print '<p class="tiny">Full featured but may be slow with a large collection</p>';
-print '<div class="pref styledinputs"><input id="dbsql" type="radio" name="collection_type" value="mysql"';
+print '<div class="styledinputs"><input id="dbsql" type="radio" name="collection_type" value="mysql"';
 if (array_key_exists('collection_type', $prefs) && $prefs['collection_type'] == "mysql") {
     print " checked";
 }
@@ -114,22 +115,60 @@ print '<p>Proxy Password<br><input type="text" name="proxy_password" value="'.
 print '<hr class="dingleberry" />';
 print '<h3>Debug Logging</h3>';
 print '<table width="100%"><tr>';
-for ($i = 0; $i<10; $i++) {
-    print '<td align="left" class="styledinputs"><input id="debug'.$i.'" type="radio" name="debug_enabled" value="'.$i.'"';
-    if ($prefs['debug_enabled'] == $i) {
-        print " checked";
-    }
-    print '>';
-    print '<label for="debug'.$i.'">';
+// for ($i = 0; $i<10; $i++) {
+//     print '<td align="left" class="styledinputs"><input id="debug'.$i.'" type="radio" name="debug_enabled" value="'.$i.'"';
+//     if ($prefs['debug_enabled'] == $i) {
+//         print " checked";
+//     }
+//     print '>';
+//     print '<label for="debug'.$i.'">';
+//     if ($i == 0) {
+//         print 'Off';
+//     } else {
+//         print 'Level '.$i;
+//     }
+//     print '</label></td>';
+//     if ($i == 4) {
+//         print '</tr><tr>';
+//     }
+// }
+
+for ($i = 0; $i<5; $i++) {
+    print '<td align="center">';
     if ($i == 0) {
         print 'Off';
     } else {
         print 'Level '.$i;
     }
-    print '</label></td>';
-    if ($i == 4) {
-        print '</tr><tr>';
+    print '</td>';
+}
+print '</tr><tr>';
+for ($i = 0; $i<5; $i++) {
+    print '<td align="center" class="styledinputs"><input id="debug'.$i.'" type="radio" name="debug_enabled" value="'.$i.'"';
+    if ($prefs['debug_enabled'] == $i) {
+        print " checked";
     }
+    print '>';
+    print '<label for="debug'.$i.'"></label>';
+}
+print '</tr><tr>';
+for ($i = 5; $i<10; $i++) {
+    print '<td align="center">';
+    if ($i == 0) {
+        print 'Off';
+    } else {
+        print 'Level '.$i;
+    }
+    print '</td>';
+}
+print '</tr><tr>';
+for ($i = 5; $i<10; $i++) {
+    print '<td align="center" class="styledinputs"><input id="debug'.$i.'" type="radio" name="debug_enabled" value="'.$i.'"';
+    if ($prefs['debug_enabled'] == $i) {
+        print " checked";
+    }
+    print '>';
+    print '<label for="debug'.$i.'"></label>';
 }
 print '</tr></table>';
 print '<p>Custom Log File</p>';

@@ -14,6 +14,55 @@ jQuery.fn.menuHide = function(callback) {
         this.slideToggle('fast');
     }
     return this;
+
+}
+
+jQuery.fn.isOpen = function() {
+    return this.hasClass('icon-toggle-open');
+}
+
+jQuery.fn.isClosed = function() {
+    return this.hasClass('icon-toggle-closed');
+}
+
+jQuery.fn.toggleOpen = function() {
+    this.removeClass('icon-toggle-closed').addClass('icon-toggle-open');
+    return this;
+}
+
+jQuery.fn.toggleClosed = function() {
+    this.removeClass('icon-toggle-open').addClass('icon-toggle-closed');
+    return this;
+}
+
+jQuery.fn.makeSpinner = function() {
+
+    return this.each(function() {
+        var originalclasses = new Array();
+        var classes = '';
+        if ($(this).attr("class")) {
+            var classes = $(this).attr("class").split(/\s/);
+        }
+        for (var i = 0, len = classes.length; i < len; i++) {
+            if (classes[i] == "invisible" || (/^icon/.test(classes[i]))) {
+                originalclasses.push(classes[i]);
+                $(this).removeClass(classes[i]);
+            }
+        }
+        $(this).attr("originalclass", originalclasses.join(" "));
+        $(this).addClass('icon-spin6 spinner');
+    });
+}
+
+jQuery.fn.stopSpinner = function() {
+
+    return this.each(function() {
+        $(this).removeClass('icon-spin6 spinner');
+        if ($(this).attr("originalclass")) {
+            $(this).addClass($(this).attr("originalclass"));
+            $(this).removeAttr("originalclass");
+        }
+    });
 }
 
 jQuery.fn.makeTagMenu = function(options) {
@@ -178,7 +227,7 @@ function setTopIconSize(panels) {
             var iw = Math.floor(($(div).width() - mw)/numicons);
             if (iw > 24) iw = 24;
             if (iw < 2) iw = 2;
-            icons.css({width: iw+"px", height: iw+"px", "font-size": (iw-2)+"px"});
+            icons.css({width: iw+"px", height: iw+"px"});
         }
     });
 }
@@ -527,6 +576,21 @@ var layoutProcessor = function() {
             }
         },
 
+        makeCollectionDropMenu: function(element, name) {
+            var x = $('#'+name);
+            // If the dropdown doesn't exist then create it
+            if (x.length == 0) {
+                if (element.parent().hasClass('album1')) {
+                    var c = 'dropmenu notfilled album1';
+                } else if (element.parent().hasClass('album2')) {
+                    var c = 'dropmenu notfilled album2';
+                } else {
+                    var c = 'dropmenu notfilled';
+                }
+                var t = $('<div>', {id: name, class: c}).insertAfter(element.parent());
+            }
+        },
+
         initialise: function() {
             if (prefs.outputsvisible) {
                 toggleAudioOutputs();
@@ -628,6 +692,13 @@ var layoutProcessor = function() {
             $("#albumcover").on('drop', infobar.albumImage.handleDrop);
             $("#tracktimess").click(layoutProcessor.toggleRemainTime);
             $('#plmode').detach().appendTo('#amontobin').addClass('tright');
+            $("#volume").rangechooser({
+                range: 100,
+                ends: ['max'],
+                onstop: infobar.volumeend,
+                whiledragging: infobar.volumemoved,
+                orientation: "vertical"
+            });
             // $("#playlistbuttons").empty();
             // $("#giblets").remove();
         }

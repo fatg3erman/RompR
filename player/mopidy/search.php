@@ -26,7 +26,7 @@ print '<div id="searchdomaincontrol" class="podoptions containerbox padright dro
 print '<input class="autoset toggle" type="checkbox" id="search_limit_limitsearch"><label for="search_limit_limitsearch">'.get_int_text("label_limitsearch").'</label>';
 print '</div>';
 
-print '<div class="dropmenu styledinputs" id="mopidysearchdomains" style="margin-top:4px">';
+print '<div class="toggledown marged styledinputs" id="mopidysearchdomains" style="margin-top:4px">';
 print '</div>';
 
 print '</div>';

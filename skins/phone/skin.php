@@ -1,4 +1,4 @@
-<body class="mobile">
+<body class="mobile phone">
 <div id="pset" class="invisible"></div>
 <div id="notifications"></div>
 <div id="headerbar" class="noborder fullwidth containerbox">
@@ -13,15 +13,14 @@
         <i class="choose_pluginplaylists icon-wifi topimg"></i>
         <div class="topdrop fixed"><i class="icon-volume-up topimg"></i>
             <div class="topdropmenu rightmenu widemenu dropdown">
-                <table><tr><td valign="top">
+                <div class="configtitle textcentre"><b>Volume</b></div>
+                <div class="pref">
 <?php
 include('player/mpd/outputs.php');
 printOutputCheckboxes();
 ?>
-                </td><td>
-                    <div id="volumecontrol"><div id="volume"></div></div>
-                </td></tr></table>
-
+                </div>
+                <div id="volumecontrol" class="fullwidth"><div id="volume"></div></div>
             </div>
         </div>
         <i class="icon-doc-text topimg choose_playlist"></i>
@@ -29,12 +28,11 @@ printOutputCheckboxes();
         <i class="onlywide choose_prefs icon-cog-alt topimg"></i>
         <div class="topdrop fixed"><i class="icon-menu topimg tleft ninety"></i>
             <div id="specialplugins" class="topdropmenu rightmenu dropdown">
-                <div class="spicons"></div>
                 <div class="sptext"></div>
             </div>
         </div>
         <div class="topdrop fixed onlynarrow"><i class="icon-menu topimg"></i>
-            <div class="topdropmenu rightmenu normalmenu dropdown">
+            <div class="topdropmenu rightmenu dropdown">
                 <i class="noshrink icon-folder-open-empty topimg choose_filelist"></i>
                 <i class="noshrink choose_playlistman icon-doc-text topimg"></i>
                 <i class="noshrink icon-info-circled topimg choose_infopanel"></i>
@@ -46,7 +44,7 @@ printOutputCheckboxes();
 
 <div id="loadsawrappers">
 
-<div id="infobar" class="mainpane invisible pleft pright">
+<div id="infobar" class="mainpane invisible">
     <div id="toomanywrappers">
         <div id="geoffreyboycott" class="fullwidth">
             <div id="albumcover"><img id="albumpicture" class="notexist" /></div>
@@ -96,7 +94,7 @@ printOutputCheckboxes();
 
 <div id="albumlist" class="scroller mainpane invisible pright">
 <?php
-    print '<div class="menuitem containerbox" style="margin-top:12px;padding-left:8px">';
+    print '<div class="menuitem containerbox">';
     print '<div class="fixed" style="padding-right:4px"><i onclick="toggleCollectionButtons()" '.
         'title="'.get_int_text('button_collectioncontrols').
         '" class="icon-menu playlisticon clickicon lettuce"></i></div>';
@@ -167,7 +165,7 @@ include("player/".$prefs['player_backend']."/search.php");
 
 <div id="radiolist" class="scroller mainpane invisible pright">
 <?php
-    print '<div class="configtitle textcentre"><b>'.get_int_text('button_internet_radio').'</b></div>';
+    print '<div class="containerbox"><div class="configtitle textcentre expand"><b>'.get_int_text('button_internet_radio').'</b></div></div>';
 ?>
 
 <?php

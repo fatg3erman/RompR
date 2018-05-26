@@ -72,7 +72,6 @@
 .icon-heart { background-image: url('lastfm-love.svg') }
 .icon-heart-broken { background-image: url('lastfm-unlove.svg') }
 .icon-refresh { background-image: url('refresh.svg') }
-.icon-somafm { background-image: url('somafm.svg') }
 .icon-dirble { background-image: url('dirble-logo.svg') }
 .icon-tunein { background-image: url('../../newimages/tunein-logo.svg') }
 .icon-icecast { background-image: url('icecast.svg') }
@@ -91,6 +90,9 @@
 .icon-3-stars { background-image: url('3stars.svg') }
 .icon-4-stars { background-image: url('4stars.svg') }
 .icon-5-stars { background-image: url('5stars.svg') }
+.icon-single-star { background-image: url('singlestar.svg') }
+.icon-ratandtag { background-image: url('ratandtag.svg') }
+.icon-ratortag { background-image: url('ratortag.svg') }
 .icon-toggle-on { background-image: url('togglebutton-new2-on.svg') }
 .icon-toggle-off { background-image: url('togglebutton-new2-off.svg') }
 
@@ -112,6 +114,7 @@
 .icon-imdb-logo { background-image: url('imdb-logo.svg') }
 .icon-facebook-logo { background-image: url('facebook-logo.svg') }
 .icon-twitter-logo { background-image: url('twitter-logo.svg') }
+.icon-www { background-image: url('world-wide-web.svg') }
 
 .styledinputs label
 {
@@ -163,4 +166,11 @@ img.notexist,img.notfound
 img.plimage.notfound
 {
     background-image: url('playlist.svg');
+}
+
+.backmenu
+{
+    background-image: url('arrow-left-double.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
 }

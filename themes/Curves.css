@@ -4,8 +4,7 @@
 =====================================================================
 */
 
-body
-{
+html, body.phone .dropmenu {
     background-image: linear-gradient(#999999, #eeeeee, #aaaaaa);
     background-color:#aaaaaa;
 }

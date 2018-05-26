@@ -4,8 +4,7 @@
 =====================================================================
 */
 
-html
-{
+html, body.phone .dropmenu {
   background: #101010 url("bg.jpg");
   background-image: -webkit-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("bg.jpg");
   background-image: -moz-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("bg.jpg");

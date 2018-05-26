@@ -1,5 +1,4 @@
-html
-{
+html, body.phone .dropmenu {
     background-image: radial-gradient(circle farthest-side at top left, yellow, orange, red);
 }
 

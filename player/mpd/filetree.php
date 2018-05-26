@@ -107,20 +107,6 @@ function printPlaylistItem($displayname, $fullpath) {
     print '</div>';
 }
 
-function printDirectoryItem($fullpath, $displayname, $prefix, $dircount, $printcontainer = false) {
-    $c = ($printcontainer) ? "searchdir" : "directory";
-    print '<div class="clickable '.$c.' clickalbum draggable containerbox menuitem clickdir" name="'.
-        $prefix.$dircount.'">';
-    print '<input type="hidden" name="'.rawurlencode($fullpath).'">';
-    print '<i class="icon-toggle-closed menu mh fixed" name="'.$prefix.$dircount.'"></i>';
-    print '<i class="icon-folder-open-empty fixed smallicon"></i>';
-    print '<div class="expand">'.htmlentities(urldecode($displayname)).'</div>';
-    print '</div>';
-    if ($printcontainer) {
-        print '<div class="dropmenu" id="'.$prefix.$dircount.'">';
-    }
-}
-
 class mpdlistthing {
 
     // Note: This is for displaying SEARCH RESULTS ONLY as a file tree.

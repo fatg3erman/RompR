@@ -4,8 +4,7 @@
 =====================================================================
 */
 
-html
-{
+html, body.phone .dropmenu {
     background-image:url("kernsary.jpg");
     background-size:cover;
     background-repeat:no-repeat;

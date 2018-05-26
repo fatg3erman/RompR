@@ -331,7 +331,7 @@ button {
 }
 
 .notbold {
-    font-weight:normal;
+    font-weight:normal !important;
 }
 
 .clearfix:after {
@@ -1343,7 +1343,7 @@ div.lyrics p {
 }
 
 .podcastitem {
-    margin-bottom:2em !important;
+    margin-bottom:0.5em !important;
 }
 
 /* also SomaFM */
@@ -1971,4 +1971,8 @@ table.fileinfotable tr td:nth-child(2) {
 .fsize {
 	font-style: italic;
 	font-size:90%;
+}
+
+.setupdiv {
+	max-width: 60em;
 }

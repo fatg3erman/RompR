@@ -4,15 +4,12 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 	chdir('..');
 
-	include("includes/vars.php");
-	include("includes/functions.php");
-	include("international.php");
-	// The HTML parser doesn't like the icecast page very much
-	// Their HTML is obviously crap :)
-	// So we need to disable error reporting for this page otherwise people using php development settings
-	// on their apache server will see a mass of crap in the icecast panel.
-	// Comment out the following line when trying to debug this script.
-	error_reporting(0);
+	include ("includes/vars.php");
+	include ("includes/functions.php");
+	include ("international.php");
+	include ("skins/".$skin."/ui_elements.php");
+	include ("utils/phpQuery.php");
+
 	$getstr = "http://dir.xiph.org/";
 	if (array_key_exists('path', $_REQUEST)) {
 		$getstr = $getstr . $_REQUEST['path'];
@@ -23,77 +20,15 @@ if (array_key_exists('populate', $_REQUEST)) {
 		debuglog("Searching For ".$_REQUEST['searchfor'],"ICESCRAPER");
 		$getstr = $getstr . "search?search=" . $_REQUEST['searchfor'];
 	}
+	debuglog("Getting ".$getstr,"ICESCRAPER");
 	$content = url_get_contents($getstr);
-
-	$DOM = new DOMDocument;
-	$DOM->loadHTML($content['contents']);
-	$stuff = $DOM->getElementById('content');
-
-	// Munge links
-	$items = $stuff->getElementsByTagName('a');
-	for ($i = 0; $i < $items->length; $i++) {
-	    $link = $items->item($i)->getAttribute('href');
-	 	$items->item($i)->removeAttribute('onclick');
-	    if (substr($link, 0, 8) == '/listen/') {
-	    	// $items->item($i)->setAttribute('href', '#');
-	    	// $items->item($i)->setAttribute('onclick', "getInternetPlaylist('http://dir.xiph.org".$link."', 'newimages/icecast.png', null, null)");
-	    } else if (substr($link, 0, 10) == '/by_genre/') {
-	    	$items->item($i)->setAttribute('href', '#');
-	    	$items->item($i)->setAttribute('onclick', "icecastPlugin.refreshMyDrink('".$link."')");
-	    } else if (substr($link, 0, 11) == '/by_format/') {
-	    	$items->item($i)->setAttribute('href', '#');
-	    	$items->item($i)->setAttribute('onclick', "icecastPlugin.refreshMyDrink('".$link."')");
-	    } else if (substr($link, 0, 7) == 'http://') {
-	    	$items->item($i)->setAttribute('target', '_blank');
-	    } else if (substr($link, 0,8) == "?search=") {
-	    	$items->item($i)->setAttribute('href', '#');
-	    	$items->item($i)->setAttribute('onclick', "icecastPlugin.refreshMyDrink('/search".$link."')");
-	    }
-	}
-
-	// Munge descriptions to permit text wrapping (replace '/' with '/ ' unless it's preceeded or followed by another /)
-	$items = $stuff->getElementsByTagName('p');
-	for ($i = 0; $i < $items->length; $i++) {
-		if ($items->item($i)->hasAttribute('class') && $items->item($i)->getAttribute('class') == 'stream-description') {
-			$monkeyjesus = preg_replace('/(?<!\/)\/(?!\/)/', '/ ', $items->item($i)->nodeValue);
-			$items->item($i)->nodeValue = htmlspecialchars($monkeyjesus);
-		}
-	}
-
-	// Munge playback links - we only want the xspf link and we can display it more prettily
-	$items = $stuff->getElementsByTagName('td');
-	$appendto = null;
-	for ($i = 0; $i < $items->length; $i++) {
-		if ($items->item($i)->hasAttribute('class') && $items->item($i)->getAttribute('class') == 'description') {
-			$appendto = $items->item($i);
-		}
-		if ($items->item($i)->hasAttribute('class') && $items->item($i)->getAttribute('class') == 'tune-in') {
-			$link = "";
-			$pls = $items->item($i)->getElementsByTagName('a');
-			for ($j = 0; $j < $pls->length; $j++) {
-			    $l = $pls->item($j)->getAttribute('href');
-			    if (substr($l, -5) == ".xspf") {
-			    	$link = $l;
-			    	break;
-			    }
-			}
-			if ($link != "") {
-				if ($appendto == null) {
-					$appendto = $items->item($i);
-				}
-				$items->item($i)->nodeValue = "";
-				$f = $DOM->createDocumentFragment();
-				$f->appendXML('<p><i class="icon-no-response-playbutton medicon clickicon clickable clickstream draggable" name="http://dir.xiph.org'.$link.'" streamimg="newimages/icecast.svg"></i></p>');
-				$appendto->appendChild($f);
-			}
-			$appendto = null;
-		}
-	}
-
-	$outdoc = new DOMDocument;
-	$outdoc->formatOutput = true;
-	$stuff = $outdoc->importNode($stuff, true);
-	$outdoc->appendChild($stuff);
+	$icecast_shitty_page = preg_replace('/<\?xml.*?\?>/', '', $content['contents']);
+	$doc = phpQuery::newDocument($icecast_shitty_page);
+	$list = $doc->find('table.servers-list')->find('tr');
+	$page_title = $doc->find('#content')->children('h2')->text();
+	debuglog("Page Title Is ".$page_title,"ICESCRAPER");
+	$count = 0;
+	directoryControlHeader('icecastlist', get_int_text('label_icecast'));
 	print '<div class="containerbox"><div class="expand"><b>'.get_int_text("label_searchfor").'</b></div></div>';
 	print '<div class="containerbox"><div class="expand"><input class="enter" name="searchfor" type="text"';
 	if (array_key_exists("searchfor", $_REQUEST)) {
@@ -101,19 +36,103 @@ if (array_key_exists('populate', $_REQUEST)) {
 	}
 	print ' /></div>';
 	print '<button class="fixed" name="cornwallis">'.get_int_text("button_search").'</button></div>';
-	print '<div class="containerbox fullwidth noselection">';
-	print '<div class="expand">';
-	print $outdoc->saveHTML();
+
+	print '<div class="configtitle textcentre">'.$page_title.'</div>';
+	foreach ($list as $server) {
+		$server_web_link = '';
+		$server_name = pq($server)->find('.stream-name')->children('.name')->children('a');
+		$server_web_link = $server_name->attr('href');
+		$server_name = $server_name->text();
+		debuglog("Server Name Is ".$server_name,"ICESCRAPER");
+		$server_description = munge_ice_text(pq($server)->find('.stream-description')->text());
+		$stream_tags = array();
+		$stream_tags_section = pq($server)->find('.stream-tags')->find('li');
+		foreach ($stream_tags_section as $tag) {
+			$stream_tags[] = pq($tag)->children('a')->text();
+		}
+		$listeners = pq($server)->find('.listeners')->text();
+		$listenlinks = pq($server)->find('.tune-in');
+		$listenlink = '';
+		$format = '';
+		$ps = $listenlinks->find('p');
+		foreach ($ps as $p) {
+			if (pq($p)->hasClass('format')) {
+				$format = pq($p)->attr('title');
+			} else {
+				foreach(pq($p)->children('a') as $a) {
+					$l = pq($a)->attr('href');
+					if (substr($l, -5) == ".xspf") {
+				    	$listenlink = 'http://dir.xiph.org'.$l;
+				    }
+				}
+			}
+		}
+		
+		if ($listenlink != '') {
+			print albumHeader(array(
+                'id' => 'icecast_'.$count,
+                'Image' => 'newimages/icecast.svg',
+                'Searched' => 1,
+                'AlbumUri' => null,
+                'Year' => null,
+                'Artistname' => implode(', ', $stream_tags),
+                'Albumname' => htmlspecialchars($server_name),
+                'why' => 'whynot',
+                'ImgKey' => 'none',
+                'streamuri' => $listenlink,
+                'streamname' => $server_name,
+                'streamimg' => 'newimages/icecast.svg'
+            ));
+			print '<div id="icecast_'.$count.'" class="dropmenu">';
+			trackControlHeader('','','icecast_'.$count, array(array('Image' => 'newimages/icecast.svg')));
+			print '<div class="containerbox rowspacer"></div>';
+			print '<div class="indent">'.$server_description.'</div>';
+			print '<div class="containerbox rowspacer"></div>';
+			print '<div class="indent">'.$listeners.'</div>';
+			print '<div class="containerbox rowspacer"></div>';
+			print '<div class="stream-description clickable clickstream draggable indent" name="'.$listenlink.'" streamname="'.$server_name.'" streamimg="newimages/icecast.svg">';
+			print '<b>Listen</b> '.$format;
+			print '</div>';
+			print '<div class="containerbox rowspacer"></div>';
+			print '<a href="'.$server_web_link.'" target="_blank">';
+			print '<div class="containerbox indent padright menuitem">';
+			print '<i class="icon-www playlisticon fixed"></i>';
+			print '<div class="expand">'.get_int_text('label_station_website').'</div>';
+			print '</div>';
+			print '</a>';
+			print '</div>';
+		}
+		$count++;
+	}
+	
+	$pager = $doc->find('ul.pager')->children('li');
+	print '<div class="containerbox wrap">';
+	foreach ($pager as $page) {
+		$link = pq($page)->children('a')->attr('href');
+		print '<div class="clickable clickicon clickicepager expand" name="/search'.$link.'">'.pq($page)->children('a')->text().'</div>';
+	}
 	print '</div>';
-	print '</div>';
+	
 } else {
 	print '<div id="icecastplugin">';
-	print '<div class="containerbox menuitem noselection multidrop">';
-	print '<i class="icon-toggle-closed menu mh fixed" name="icecastlist"></i>';
-	print '<i class="icon-icecast fixed smallcover smallcover-svg"></i>';
-	print '<div class="expand"><h3>'.get_int_text('label_icecast').'</h3></div>';
-	print '</div>';
-	print '<div id="icecastlist" class="dropmenu"></div>';
+	print albumHeader(array(
+        'id' => 'icecastlist',
+        'Image' => 'newimages/icecast.svg',
+        'Searched' => 1,
+        'AlbumUri' => null,
+        'Year' => null,
+        'Artistname' => '',
+        'Albumname' => get_int_text('label_icecast'),
+        'why' => null,
+        'ImgKey' => 'none'
+    ));
+	print '<div id="icecastlist" class="dropmenu notfilled">Loading...</div>';
 	print '</div>';
 }
+
+function munge_ice_text($text) {
+	$monkeyjesus = preg_replace('/(?<!\/)\/(?!\/)/', '/ ', $text);
+	return htmlspecialchars($monkeyjesus);
+}
+
 ?>

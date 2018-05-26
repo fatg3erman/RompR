@@ -1,7 +1,7 @@
 var icecastPlugin = {
 
     refreshMyDrink: function(path) {
-        if ($("#icecastlist").is(':empty')) {
+        if ($("#icecastlist").hasClass('notfilled')) {
     		icecastPlugin.makeabadger();
             $("#icecastlist").load("streamplugins/85_iceScraper.php?populate", icecastPlugin.spaghetti);
         } else if (path) {
@@ -11,13 +11,14 @@ var icecastPlugin = {
     },
 
     makeabadger: function() {
-        $('[name="icecastlist"]').makeSpinner();
+        $('i[name="icecastlist"]').makeSpinner();
     },
 
     spaghetti: function() {
-    	$('[name="icecastlist"]').stopSpinner();
+    	$('i[name="icecastlist"]').stopSpinner();
         $('[name="searchfor"]').keyup(onKeyUp);
         $('[name="cornwallis"]').click(icecastPlugin.iceSearch);
+        $("#icecastlist").removeClass('notfilled');
     },
 
     iceSearch: function() {
@@ -29,6 +30,8 @@ var icecastPlugin = {
         var clickedElement = findClickableElement(event);
         if (clickedElement.hasClass("menu")) {
             doMenu(event, clickedElement);
+        } else if (clickedElement.hasClass("clickicepager")) {
+            icecastPlugin.refreshMyDrink(clickedElement.attr('name'));
         } else if (prefs.clickmode == "double") {
             if (clickedElement.hasClass("clickstream")) {
                 event.stopImmediatePropagation();

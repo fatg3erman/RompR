@@ -3,13 +3,15 @@
 if (array_key_exists('populate', $_REQUEST)) {
 
     chdir('..');
-    $subflag = 1;
     include("includes/vars.php");
     include("includes/functions.php");
     include("includes/podcastfunctions.php");
     include("international.php");
     include( "backends/sql/connect.php");
+    include( "skins/".$skin."/ui_elements.php");
+    include("utils/phpQuery.php");
     connect_to_database();
+    $subflag = 1;
     $dtz = ini_get('date.timezone');
     if (!$dtz) {
         date_default_timezone_set('UTC');
@@ -62,6 +64,8 @@ if (array_key_exists('populate', $_REQUEST)) {
 } else {
 
     include("includes/podcastfunctions.php");
+    require_once("skins/".$skin."/ui_elements.php");
+    include("utils/phpQuery.php");
     doPodcastBase();
     print '<div id="fruitbat" class="noselection fullwidth">';
     doPodcastList(1);
@@ -70,7 +74,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 }
 
 function doPodcastBase() {
-    print '<div class="configtitle textcentre"><b>'.get_int_text('label_podcasts').'</b></div>';
+    print '<div class="containerbox"><div class="configtitle textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div></div>';
     print '<div id="cocksausage">';
     print '<div class="containerbox indent"><div class="expand">'.get_int_text("podcast_entrybox").'</div></div>';
     print '<div class="containerbox indent"><div class="expand"><input class="enter" id="podcastsinput" type="text" /></div>';
@@ -81,7 +85,7 @@ function doPodcastBase() {
     print '</div>';
 
     print '<div class="fullwidth noselection clearfix"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon padright" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
-    print '<div id="podcast_search" class="fullwidth noselection" style="padding:4px"></div>';
+    print '<div id="podcast_search" class="fullwidth noselection padright"></div>';
 }
 
 function doPodcastList($subscribed) {

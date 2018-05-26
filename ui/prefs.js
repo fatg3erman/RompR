@@ -133,6 +133,9 @@ var prefs = function() {
                     prefs[p] = tags[p];
                 }
             }
+            if (prefs.icontheme == 'IconFont') {
+                prefs.icontheme = 'Colourful';
+            }
         },
 
         checkSet: function(key) {

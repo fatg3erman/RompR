@@ -172,8 +172,8 @@ function do_radio_stations() {
                     print '<div class="fixed albumimg closet">';
                     print '<div class="covercontainer">';
                     $class = "";
-                    $src = "newimages/broadcast.svg";
-                    if ($file['Image']) {
+                    $src = "";
+                    if ($file['Image'] && $file['Image'] != 'newimages/icecast.svg') {
                         $src = $file['Image'];
                     } else {
                         $class = " notexist";

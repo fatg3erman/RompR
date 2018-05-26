@@ -6,6 +6,7 @@ if (array_key_exists('populate', $_REQUEST)) {
     include("includes/vars.php");
     include("includes/functions.php");
     include("international.php");
+    include("skins/".$skin."/ui_elements.php");
 
     $base_url = 'http://api.dirble.com/v2/';
     $countries = array();
@@ -32,6 +33,7 @@ if (array_key_exists('populate', $_REQUEST)) {
     debuglog("Country Is ".$country,"RADIO");
 
     if ($_REQUEST['populate'] == 2) {
+        directoryControlHeader('bbclist', get_int_text('label_streamradio'));
         print '<div class="containerbox noselection wrap pipl">';
         $json = get_from_dirble($base_url.'/countries');
         foreach ($json['json'] as $station) {
@@ -99,23 +101,32 @@ if (array_key_exists('populate', $_REQUEST)) {
                 $image = "newimages/broadcast.svg";
             }
             $k = check_for_playlist($streams);
-            
-            print '<div class="albumheader clickable clickstream draggable containerbox menuitem" name="'.$k.'" streamname="'.$station['name'].'" streamimg="'.$image.'">';
-            print '<i class="icon-toggle-closed menu mh fixed" name="radio_'.$count.'"></i>';
-            print '<div class="smallcover fixed">';
-            print '<img class="smallcover fixed" src="'.$image.'" />';
-            print '</div>';
-            print '<div class="expand">'.$station['name'].'<br><span class="notbold"><i>'.get_categories($station).'</i></span></div>';
-            print '</div>';
+
+            print albumHeader(array(
+                'id' => 'radio_'.$count,
+                'Image' => $image,
+                'Searched' => 1,
+                'AlbumUri' => null,
+                'Year' => null,
+                'Artistname' => get_categories($station),
+                'Albumname' => $station['name'],
+                'why' => 'whynot',
+                'ImgKey' => 'none',
+                'streamuri' => $k,
+                'streamname' => $station['name'],
+                'streamimg' => $image
+            ));
 
             print '<div id="radio_'.$count.'" class="dropmenu">';
+
+            trackControlHeader('','','radio_'.$count, array(array('Image' => $image)));
             
             print '<div class="containerbox rowspacer"></div>';
             print '<div class="containerbox expand ninesix indent padright"><b>Listen:</b></div>';
 
             foreach ($streams as $s) {
                 debuglog("Content type ".$s['content_type']." and uri ".$s['stream'],"DIRBLE");
-                print '<div class="clickable clickstream draggable indent containerbox padright" name="'.trim($s['stream']).'" streamname="'.trim($station['name']).'" streamimg="'.$image.'">';
+                print '<div class="clickable clickstream draggable indent containerbox padright menuitem" name="'.trim($s['stream']).'" streamname="'.trim($station['name']).'" streamimg="'.$image.'">';
                 print '<i class="'.audioClass($s['content_type']).' playlisticon fixed"></i>';
                 print '<div class="expand">';
                 print get_speed($s['bitrate']);
@@ -127,14 +138,15 @@ if (array_key_exists('populate', $_REQUEST)) {
 
             if (array_key_exists('website', $station) && $station['website'] != '') {
                 print '<a href="'.$station['website'].'" target="_blank">';
-                print '<div class="containerbox indent padright">';
-                print '<div class="expand">Station Website</div>';
+                print '<div class="containerbox indent padright menuitem">';
+                print '<i class="icon-www playlisticon fixed"></i>';
+                print '<div class="expand">'.get_int_text('label_station_website').'</div>';
                 print '</div>';
                 print '</a>';
             }
             if (array_key_exists('facebook', $station) && $station['facebook'] != '') {
                 print '<a href="'.$station['facebook'].'" target="_blank">';
-                print '<div class="containerbox indent padright">';
+                print '<div class="containerbox indent padright menuitem">';
                 print '<i class="icon-facebook-logo playlisticon fixed"></i><div class="expand">Facebook</div>';
                 print '</div>';
                 print '</a>';
@@ -149,7 +161,7 @@ if (array_key_exists('populate', $_REQUEST)) {
                     $t = 'http://twitter.com/@'.$t;
                 }
                 print '<a href="'.$t.'" target="_blank">';
-                print '<div class="containerbox indent padright">';
+                print '<div class="containerbox indent padright menuitem">';
                 print '<i class="icon-twitter-logo playlisticon fixed"></i><div class="expand">Twitter</div>';
                 print '</div>';
                 print '</a>';
@@ -167,12 +179,18 @@ if (array_key_exists('populate', $_REQUEST)) {
 } else {
 
     print '<div id="nationalradio">';
-    print '<div class="containerbox menuitem noselection multidrop">';
-    print '<i class="icon-toggle-closed mh menu fixed" name="bbclist"></i>';
-    print '<i class="icon-dirble fixed smallcover smallcover-svg"></i>';
-    print '<div class="expand"><h3>'.get_int_text('label_streamradio').'</h3></div>';
-    print '</div>';
-    print '<div id="bbclist" class="dropmenu"></div>';
+    print albumHeader(array(
+        'id' => 'bbclist',
+        'Image' => 'newimages/dirble-logo.svg',
+        'Searched' => 1,
+        'AlbumUri' => null,
+        'Year' => null,
+        'Artistname' => '',
+        'Albumname' => get_int_text('label_streamradio'),
+        'why' => null,
+        'ImgKey' => 'none'
+    ));
+    print '<div id="bbclist" class="dropmenu notfilled"><div class="textcentre">Loading...</div></div>';
     print '</div>';
 
 }

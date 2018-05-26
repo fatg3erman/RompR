@@ -2,24 +2,6 @@
 jQuery.fn.reverse = [].reverse;
 // http://www.mail-archive.com/discuss@jquery.com/msg04261.html
 
-jQuery.fn.isOpen = function() {
-    return this.hasClass('icon-toggle-open');
-}
-
-jQuery.fn.isClosed = function() {
-    return this.hasClass('icon-toggle-closed');
-}
-
-jQuery.fn.toggleOpen = function() {
-    this.removeClass('icon-toggle-closed').addClass('icon-toggle-open');
-    return this;
-}
-
-jQuery.fn.toggleClosed = function() {
-    this.removeClass('icon-toggle-open').addClass('icon-toggle-closed');
-    return this;
-}
-
 jQuery.fn.removeInlineCss = function(property) {
 
     if(property == null)
@@ -38,36 +20,6 @@ jQuery.fn.removeInlineCss = function(property) {
 
     });
 };
-
-jQuery.fn.makeSpinner = function() {
-
-    return this.each(function() {
-        var originalclasses = new Array();
-        var classes = '';
-        if ($(this).attr("class")) {
-            var classes = $(this).attr("class").split(/\s/);
-        }
-        for (var i = 0, len = classes.length; i < len; i++) {
-            if (classes[i] == "invisible" || (/^icon/.test(classes[i]))) {
-                originalclasses.push(classes[i]);
-                $(this).removeClass(classes[i]);
-            }
-        }
-        $(this).attr("originalclass", originalclasses.join(" "));
-        $(this).addClass('icon-spin6 spinner');
-    });
-}
-
-jQuery.fn.stopSpinner = function() {
-
-    return this.each(function() {
-        $(this).removeClass('icon-spin6 spinner');
-        if ($(this).attr("originalclass")) {
-            $(this).addClass($(this).attr("originalclass"));
-            $(this).removeAttr("originalclass");
-        }
-    });
-}
 
 jQuery.fn.makeFlasher = function(options) {
     var settings = $.extend({

@@ -20,7 +20,7 @@ function print_playlists_as_json() {
     $playlists = do_mpd_command("listplaylists", true, true);
     $pls = array();
     $putinplaylistarray = true;
-    if (array_key_exists('playlist', $playlists)) {
+    if (is_array($playlists) && array_key_exists('playlist', $playlists)) {
         foreach ($playlists['playlist'] as $name) {
         	$playlist = array();
         	$pls[rawurlencode($name)] = array();

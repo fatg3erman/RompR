@@ -322,10 +322,10 @@ function Playlist() {
                                 });
                 } else if ($(element).hasClass('clickloadplaylist')) {
                     tracks.push({ type: "playlist",
-                                    name: decodeURIComponent($(element).children().first().attr('name'))});
+                                    name: decodeURIComponent($(element).children('input[name="dirpath"]').val())});
                 } else if ($(element).hasClass('clickloaduserplaylist')) {
                     tracks.push({ type: (prefs.player_backend == 'mpd') ? "playlist" : 'uri',
-                                    name: decodeURIComponent($(element).children().first().attr('name'))});
+                                    name: decodeURIComponent($(element).children('input[name="dirpath"]').val())});
                 } else if ($(element).hasClass('clickalbumname')) {
                     $(element).next().children('.clicktrack').each(function() {
                         tracks.push({ type: 'uri', name: decodeURIComponent($(this).attr('name'))});

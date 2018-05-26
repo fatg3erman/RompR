@@ -2,7 +2,7 @@
 
 RompЯ allows you to customise the interface with different options:
 * **Theme** defines colours and background.
-* **Icons** can be chosen from white, black, colourful, or iconfont.
+* **Icons** can be chosen from white, black, or colourful.
 * **Font Style** allows you to pick a font
 * **Font Size** allows you to change the font size
 * **Album Cover Size** changes the size of the album covers in the Music Collection and Current Playlist

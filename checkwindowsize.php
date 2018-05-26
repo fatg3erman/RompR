@@ -10,9 +10,10 @@
 <script language="javascript">
 $(document).ready(function() {
 	var ws = getWindowSize();
-	var mw = Math.max(ws.x, ws.y);
-	if (!mw || mw <= 1024) {
+	if ((ws.x < 600 && ws.x < ws.y) || (ws.x < 800 && ws.x > ws.y)) {
 		setCookie('skin','phone',3650);
+	} else if ((ws.x < 1024 && ws.x < ws.y) || (ws.x < 600 && ws.x > ws.y)) {
+		setCookie('skin','tablet',3650);
 	} else {
 		setCookie('skin','desktop',3650);
 	}

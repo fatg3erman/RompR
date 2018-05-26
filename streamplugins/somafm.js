@@ -1,10 +1,11 @@
 var somaFmPlugin = {
 
 	loadSomaFM: function() {
-	    if ($("#somafmlist").is(':empty')) {
-	    	$('[name="somafmlist"]').makeSpinner();
+	    if ($("#somafmlist").hasClass('notfilled')) {
+	    	$('i[name="somafmlist"]').makeSpinner();
 	        $("#somafmlist").load("streamplugins/01_somafm.php?populate", function( ) {
-				$('[name="somafmlist"]').stopSpinner();
+				$('i[name="somafmlist"]').stopSpinner();
+				$('#somafmlist').removeClass('notfilled');
 	        });
 		}
 	},
