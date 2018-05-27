@@ -233,7 +233,6 @@ function doThatFunkyThang() {
     $("#infopanecontrols").css("width", widths.infopane+"%");
     $("#playlist").css("width", widths.playlist+"%");
     $("#playlistcontrols").css("width", widths.playlist+"%");
-    setFunkyBoxSize();
 }
 
 function hideBrowser() {
@@ -374,7 +373,7 @@ var layoutProcessor = function() {
                     }
                 }
                 if (!new_state && prefs.chooser == panel) {
-                    $("#"+panel).fadeIn('fast', setFunkyBoxSize);
+                    $("#"+panel).fadeIn('fast');
                 }
             }
         },
@@ -452,7 +451,6 @@ var layoutProcessor = function() {
                     prefs.save({chooser: source});
                     showPanel(source, function() {
                         if (source == 'searcher') setSearchLabelWidth();
-                        if (source == 'pluginplaylistslist') setFunkyBoxSize();
                         if (callback) { callback(); }
                     });
                 });
@@ -476,7 +474,6 @@ var layoutProcessor = function() {
             setTopIconSize(["#sourcescontrols", "#infopanecontrols", "#playlistcontrols"]);
             infobar.rejigTheText();
             browser.rePoint();
-            setFunkyBoxSize();
         },
 
         fanoogleMenus: function(jq) {

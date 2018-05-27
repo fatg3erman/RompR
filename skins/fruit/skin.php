@@ -256,7 +256,7 @@ if ($prefs['player_backend'] == "mopidy") {
     print '<div class="textcentre textunderline"><b>Music From Your Collection</b></div>';
 }
 ?>
-<div class="containerbox fullwidth wrap pipl" id="pluginplaylists"></div>
+<div class="fullwidth" id="pluginplaylists"></div>
 
 
 <?php
@@ -264,7 +264,7 @@ if ($prefs['player_backend'] == "mopidy") {
     print '<div class="textcentre textunderline"><b>Music From Spotify</b></div>';
 }
 ?>
-<div class="containerbox fullwidth wrap pipl" id="pluginplaylists_spotify"></div>
+<div class="fullwidth" id="pluginplaylists_spotify"></div>
 
 <?php
 if ($prefs['player_backend'] == "mopidy") {
@@ -272,7 +272,7 @@ if ($prefs['player_backend'] == "mopidy") {
     print '<div id="radiodomains" class="pref"><b>Play From These Sources:</b></div>';
 }
 ?>
-<div class="containerbox fullwidth wrap pipl" id="pluginplaylists_everywhere"></div>
+<div class="fullwidth" id="pluginplaylists_everywhere"></div>
 
 <div class="clearfix containerbox vertical" id="pluginplaylists_crazy">
 </div>

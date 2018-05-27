@@ -532,7 +532,7 @@ function Playlist() {
                 }
                 if (prefs.player_backend == "mopidy") {
                     $("#radiodomains").makeDomainChooser({
-                        default_domains: prefs.mopidy_search_domains,
+                        default_domains: prefs.mopidy_radio_domains,
                         sources_not_to_choose: {
                                     bassdrive: 1,
                                     dirble: 1,
@@ -541,6 +541,11 @@ function Playlist() {
                                     oe1: 1,
                                     podcast: 1,
                             }
+                    });
+                    $("#radiodomains").find('input.topcheck').each(function() {
+                        $(this).click(function() {
+                            prefs.save({mopidy_radio_domains: $("#radiodomains").makeDomainChooser("getSelection")});
+                        });
                     });
                 }
             },
@@ -649,16 +654,45 @@ function Playlist() {
             },
 
             standardBox: function(station, name, icon, label) {
-                var html = '<div class="clickicon clickable pluginitem radioplugin_normal '+station+'"';
-                if (name !== null) {
-                    html += ' name="'+name+'"';
-                }
+                var html = '<div class="menuitem containerbox clickable clickicon '+station+'"';
+                if (name !== null) html += ' name="'+name+'"';
                 html += '>';
-                html += '<div class="helpfulalbum fullwidth">'+
-                        '<i class="smallcover smallcover-svg '+icon+'" style="margin:0px"></i>'+
-                        '<div class="tagh albumthing"><b>'+label+'</b></div>'+
-                        '</div>'+
-                        '</div>';
+                html += '<div class="smallcover svg-square fixed '+icon+'"></div>';
+                html += '<div class="expand">'+label+'</div>';
+                html += '</div>';
+                return html;
+            },
+            
+            dropdownBox: function(station, name, icon, label, dropid) {
+                var html = '<div class="menuitem containerbox clickable clickicon '+station+'"';
+                if (name !== null) html += ' name="'+name+'"';
+                html += '>';
+                html += '<i class="icon-toggle-closed menu mh fixed" name="'+dropid+'"></i>';
+                html += '<div class="smallcover svg-square fixed '+icon+'"></div>';
+                html += '<div class="expand">'+label+'</div>';
+                html += '</div>';
+                html += '<div class="toggledown invisible dropmenu" id="'+dropid+'"></div>';
+                return html;
+                
+            },
+            
+            textEntry: function(icon, label, id) {
+                var html = '<div class="menuitem containerbox fullwidth">';
+                
+                html += '<div class="smallcover svg-square fixed '+icon+'"></div>';
+                
+                html += '<div class="expand containerbox vertical">';
+                html += '<div class="fixed">'+label+'</div>';
+                
+                html += '<div class="containerbox fixed">';
+                html += '<div class="expand dropdown-holder"><input class="enter" id="'+id+'" type="text" /></div>';
+                html += '<button class="fixed alignmid" name="'+id+'">'+language.gettext('button_playradio')+'</button>';
+                html += '</div>';
+                
+                html += '</div>';
+                
+                html += '</div>';
+                
                 return html;
             }
         }

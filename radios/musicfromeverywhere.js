@@ -6,13 +6,11 @@ var genreRadio = function() {
             //
             // Genre (Music from Everywhere)
             //
-            var a = $('<div>', {class: "pluginitem radioplugin_wide"}).appendTo('#pluginplaylists_everywhere');
-            var b = $('<div>', {class: "helpfulalbum fullwidth containerbox", style: "padding-top:4px"}).appendTo(a);
-            var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).appendTo(b);
-            c.append('<div class="fixed"><i class="icon-wifi svg-square"/></i></div>'+
-                    '<div class="fixed padright"><span class="alignmid">'+language.gettext('label_genre')+'</span></div>'+
-                    '<div class="expand dropdown-holder"><input class="enter" id="humphrey" type="text" onkeyup="onKeyUp(event)" /></div>'+
-                    '<button class="fixed alignmid" onclick="playlist.radioManager.load(\'genreRadio\', $(\'#humphrey\').val())">'+language.gettext('button_playradio')+'</button>');
+            $('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-wifi', language.gettext('label_genre'), 'genre_radio'));
+            $('#genre_radio').on('keyup', onKeyUp);
+            $('button[name="genre_radio"]').on('click', function() {
+                playlist.radioManager.load('genreRadio', $('#genre_radio').val());
+            });
         }
     }
 }();
@@ -45,13 +43,11 @@ var singleArtistRadio = function() {
             //
             // Tracks By Artist (Music from Everywhere)
             //
-            var a = $('<div>', {class: "pluginitem radioplugin_wide"}).appendTo('#pluginplaylists_everywhere');
-            var b = $('<div>', {class: "helpfulalbum fullwidth containerbox", style: "padding-top:4px"}).appendTo(a);
-            var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).appendTo(b);
-            c.append('<div class="fixed"><i class="icon-artist svg-square"/></i></div>'+
-                    '<div class="fixed padright"><span class="alignmid">'+language.gettext('label_singleartistradio')+'</span></div>'+
-                    '<div class="expand dropdown-holder"><input class="enter" id="franklin" type="text" onkeyup="onKeyUp(event)" /></div>'+
-                    '<button class="fixed alignmid" onclick="playlist.radioManager.load(\'singleArtistRadio\', $(\'#franklin\').val())">'+language.gettext('button_playradio')+'</button>');
+            $('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-artist', language.gettext('label_singleartistradio'), 'singart_radio'));
+            $('#singart_radio').on('keyup', onKeyUp);
+            $('button[name="singart_radio"]').on('click', function() {
+                playlist.radioManager.load('singleArtistRadio', $('#singart_radio').val());
+            });
         }
     }
 }();
@@ -66,35 +62,14 @@ var lastFMArtistRadio = function() {
                 //
                 // Last.FM Lucky Dip (Music from Everywhere)
                 //
-                var html = '<div class="pluginitem radioplugin_normal">'+
-                        '<div class="helpfulalbum fullwidth">'+
-                        '<i class="smallcover smallcover-svg icon-lastfm-1" style="margin:0px"></i>'+
-                        '<div class="tagh albumthing"><b>'+
-                        language.gettext('label_lastfm_mix')+
-                        '</b></div>'+
-                        '<div class="tagh albumthing">'+
-                        '<div class="clickicon fullwidth containerbox line clickable lfmartistradio dropdown-container" name="7day">'+
-                        '<div class="expand"><i class="svg-square icon-lastfm-1"></i><b>Weekly Dip</b></div>'+
-                        '</div>'+
-                        '</div>'+
-                        '<div class="tagh albumthing">'+
-                        '<div class="clickicon fullwidth containerbox line clickable lfmartistradio dropdown-container" name="1month">'+
-                        '<div class="expand"><i class="svg-square icon-lastfm-1"></i><b>Monthly Dip</b></div>'+
-                        '</div>'+
-                        '</div>'+
-                        '<div class="tagh albumthing">'+
-                        '<div class="clickicon fullwidth containerbox line clickable lfmartistradio dropdown-container" name="12month">'+
-                        '<div class="expand"><i class="svg-square icon-lastfm-1"></i><b>Yearly Dip</b></div>'+
-                        '</div>'+
-                        '</div>'+
-                        '<div class="tagh albumthing">'+
-                        '<div class="clickicon fullwidth containerbox line clickable lfmartistradio dropdown-container" name="overall">'+
-                        '<div class="expand"><i class="svg-square icon-lastfm-1"></i><b>All Time Dip</b></div>'+
-                        '</div>'+
-                        '</div>'+
-                        '</div>'+
-                        '</div>';
-                $("#pluginplaylists_everywhere").append(html);
+                $("#pluginplaylists_everywhere").append(playlist.radioManager.dropdownBox('lfmartistradio', '7day', 'icon-lastfm-1', language.gettext('label_lastfm_mix'), 'lastfm_mix'));
+                $('#lastfm_mix').append(playlist.radioManager.standardBox('lfmartistradio', '7day', 'icon-lastfm-1', 'Weekly Dip'));
+                $('#lastfm_mix').append(playlist.radioManager.standardBox('lfmartistradio', '7day', 'icon-lastfm-1', 'Monthly Dip'));
+                $('#lastfm_mix').append(playlist.radioManager.standardBox('lfmartistradio', '12month', 'icon-lastfm-1', 'Yearly Dip'));
+                $('#lastfm_mix').append(playlist.radioManager.standardBox('lfmartistradio', 'overall', 'icon-lastfm-1', 'All Time Dip'));
+                $('i[name="lastfm_mix"]').on('click', function(event) {
+                    doMenu(event, $('i[name="lastfm_mix"]'));
+                });
                 $('.lfmartistradio').on(clickBindType(), function(evt) {
                     evt.stopPropagation();
                     playlist.radioManager.load('lastFMArtistRadio', $(evt.delegateTarget).attr('name'));
@@ -113,35 +88,14 @@ var lastFMTrackRadio = function() {
                 //
                 // Last.FM Mix Radio (Music from Everywhere)
                 //
-                var html = '<div class="pluginitem radioplugin_normal">'+
-                        '<div class="helpfulalbum fullwidth">'+
-                        '<i class="smallcover smallcover-svg icon-lastfm-1" style="margin:0px"></i>'+
-                        '<div class="tagh albumthing"><b>'+
-                        language.gettext('label_lastfm_track')+
-                        '</b></div>'+
-                        '<div class="tagh albumthing">'+
-                        '<div class="clickicon fullwidth containerbox line clickable lfmtrackradio dropdown-container" name="7day">'+
-                        '<div class="expand"><i class="svg-square icon-lastfm-1"></i><b>Daily Mix</b></div>'+
-                        '</div>'+
-                        '</div>'+
-                        '<div class="tagh albumthing">'+
-                        '<div class="clickicon fullwidth containerbox line clickable lfmtrackradio dropdown-container" name="1month">'+
-                        '<div class="expand"><i class="svg-square icon-lastfm-1"></i><b>Monthly Mix</b></div>'+
-                        '</div>'+
-                        '</div>'+
-                        '<div class="tagh albumthing">'+
-                        '<div class="clickicon fullwidth containerbox line clickable lfmtrackradio dropdown-container" name="12month">'+
-                        '<div class="expand"><i class="svg-square icon-lastfm-1"></i><b>Yearly Mix</b></div>'+
-                        '</div>'+
-                        '</div>'+
-                        '<div class="tagh albumthing">'+
-                        '<div class="clickicon fullwidth containerbox line clickable lfmtrackradio dropdown-container" name="overall">'+
-                        '<div class="expand"><i class="svg-square icon-lastfm-1"></i><b>All Time Mix</b></div>'+
-                        '</div>'+
-                        '</div>'+
-                        '</div>'+
-                        '</div>';
-                $("#pluginplaylists_everywhere").append(html);
+                $("#pluginplaylists_everywhere").append(playlist.radioManager.dropdownBox('lfmtrackradio', '7day', 'icon-lastfm-1', language.gettext('label_lastfm_track'), 'lastfm_track'));
+                $('#lastfm_track').append(playlist.radioManager.standardBox('lfmtrackradio', '7day', 'icon-lastfm-1', 'Daily Mix'));
+                $('#lastfm_track').append(playlist.radioManager.standardBox('lfmtrackradio', '7day', 'icon-lastfm-1', 'Monthly Mix'));
+                $('#lastfm_track').append(playlist.radioManager.standardBox('lfmtrackradio', '12month', 'icon-lastfm-1', 'Yearly Mix'));
+                $('#lastfm_track').append(playlist.radioManager.standardBox('lfmtrackradio', 'overall', 'icon-lastfm-1', 'All Time Mix'));
+                $('i[name="lastfm_track"]').on('click', function(event) {
+                    doMenu(event, $('i[name="lastfm_track"]'));
+                });
                 $('.lfmtrackradio').on(clickBindType(), function(evt) {
                     evt.stopPropagation();
                     playlist.radioManager.load('lastFMTrackRadio', $(evt.delegateTarget).attr('name'));

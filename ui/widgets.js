@@ -1158,19 +1158,19 @@ $.widget("rompr.makeDomainChooser", {
     _create: function() {
         var self = this;
         this.options.holder = $('<div>', {class: 'containerbox wrap'}).appendTo(this.element);
-        var p = this.options.default_domains;
-        // p.reverse();
-        for (var i in p) {
-            if (player.canPlay(p[i])) {
-                var makeunique = $("[id^='"+p[i]+"_import_domain']").length+1;
-                var id = p[i]+'_import_domain_'+makeunique;
-                this.options.holder.append('<div class="fixed brianblessed styledinputs">'+
-                    '<input type="checkbox" class="topcheck" id="'+id+'"><label for="'+id+'">'+
-                    p[i].capitalize()+'</label></div>');
-            }
-        }
+        // var p = this.options.default_domains;
+        // // p.reverse();
+        // for (var i in p) {
+        //     if (player.canPlay(p[i])) {
+        //         var makeunique = $("[id^='"+p[i]+"_import_domain']").length+1;
+        //         var id = p[i]+'_import_domain_'+makeunique;
+        //         this.options.holder.append('<div class="fixed brianblessed styledinputs">'+
+        //             '<input type="checkbox" class="topcheck" id="'+id+'"><label for="'+id+'">'+
+        //             p[i].capitalize()+'</label></div>');
+        //     }
+        // }
         for (var i in player.urischemes) {
-            if (p.indexOf(i) == -1 && !this.options.sources_not_to_choose.hasOwnProperty(i)) {
+            if (!this.options.sources_not_to_choose.hasOwnProperty(i)) {
                 var makeunique = $("[id^='"+i+"_import_domain']").length+1;
                 var id = i+'_import_domain_'+makeunique;
                 this.options.holder.append('<div class="fixed brianblessed styledinputs">'+

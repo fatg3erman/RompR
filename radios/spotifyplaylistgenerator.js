@@ -103,7 +103,7 @@ function loadSavedCrazies() {
         for (var i in crazySettings) {
             var html = $(playlist.radioManager.standardBox('crazyradio', i, 'icon-spotify-circled', crazySettings[i].playlistname));
             html.append(
-                '<div class="tagh albumthing helpfulalbum">'+
+                '<div class="fixed">'+
                 '<i class="icon-cancel-circled smallicon clickicon clickremcrazy" name="'+i+'"></i>'+
                 '</div>'
             );
@@ -174,4 +174,3 @@ function doSpotifyTagRadio() {
 }
 
 playlist.radioManager.register("spotiCrazyRadio", spotiCrazyRadio, 'radios/code/spotiCrazyRadio.js');
-

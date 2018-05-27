@@ -210,7 +210,6 @@ function doThatFunkyThang() {
     $("#sourcescontrols").css("width", widths.sources+"%");
     $("#infopane").css("width", widths.infopane+"%");
     $("#infopanecontrols").css("width", widths.infopane+"%");
-    setFunkyBoxSize();
 }
 
 function hideBrowser() {
@@ -413,7 +412,6 @@ var layoutProcessor = function() {
                     prefs.save({chooser: source});
                     showPanel(source, function() {
                         if (source == 'searcher') setSearchLabelWidth();
-                        if (source == 'pluginplaylistslist') setFunkyBoxSize();
                         if (callback) { callback(); }
                     });
                 });
@@ -438,7 +436,6 @@ var layoutProcessor = function() {
             setTopIconSize(["#sourcescontrols", "#infopanecontrols"]);
             infobar.rejigTheText();
             browser.rePoint();
-            setFunkyBoxSize();
         },
 
         fanoogleMenus: function(jq) {

@@ -340,9 +340,9 @@ function tryGoogle() {
     global $album;
     global $delaytime;
     $retval = "";
-    $google_api_key = "AIzaSyDAErKEr1g1J3yqHA0x6Ckr5jubNIF2YX4";
-    $googleSearchURL = "https://www.googleapis.com/customsearch/v1?key=".$google_api_key."&cx=013407992060439718401:d3vpz2xaljs&searchType=image&alt=json";
-    $result = url_get_contents($googleSearchURL."&q=".urlencode(trim($artist.' '.$album)));
+    $squlookle = "AIzaSyDAErKEr1g1J3yqHA0x6Ckr5jubNIF2YX4";
+    $nureek = "https://www.googleapis.com/customsearch/v1?key=".$squlookle."&cx=013407992060439718401:d3vpz2xaljs&searchType=image&alt=json";
+    $result = url_get_contents($nureek."&q=".urlencode(trim($artist.' '.$album)));
     $json = json_decode($result['contents'], true);
     if (array_key_exists('items', $json)) {
         foreach($json['items'] as $item) {

@@ -431,7 +431,7 @@ var imageEditor = function() {
                 type: "POST",
                 dataType: "json",
                 url: 'browser/backends/google.php',
-                data: {uri: encodeURIComponent(googleSearchURL+"&q="+encodeURIComponent(searchfor)+"&start="+start)},
+                data: {uri: encodeURIComponent(nureek+"&q="+encodeURIComponent(searchfor)+"&start="+start)},
                 success: imageEditor.googleSearchComplete,
                 error: function(data) {
                     debug.log("IMAGEEDITOR","IT'S ALL GONE HORRIBLY WRONG",data);

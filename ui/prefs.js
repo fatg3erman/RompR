@@ -57,7 +57,8 @@ var prefs = function() {
         "ratman_smallart",
         "sleeptime",
         "sleepon",
-        "advanced_search_open"
+        "advanced_search_open",
+        "mopidy_radio_domains",
     ];
 	
 	const jsonNode = document.querySelector("script[name='prefs']");
@@ -436,5 +437,5 @@ if (localStorage.getItem("prefs.prefversion") == null) {
 }
 prefs.theme = prefs.theme.replace('_1080p','');
 
-var google_api_key = "AIzaSyDAErKEr1g1J3yqHA0x6Ckr5jubNIF2YX4";
-var googleSearchURL = "https://www.googleapis.com/customsearch/v1?key="+google_api_key+"&cx=013407992060439718401:d3vpz2xaljs&searchType=image&alt=json";
+var squlookle = "AIzaSyDAErKEr1g1J3yqHA0x6Ckr5jubNIF2YX4";
+var nureek = "https://www.googleapis.com/customsearch/v1?key="+squlookle+"&cx=013407992060439718401:d3vpz2xaljs&searchType=image&alt=json";

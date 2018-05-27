@@ -299,7 +299,6 @@ var layoutProcessor = function() {
             }
             layoutProcessor.setPlaylistHeight();
             browser.rePoint();
-            setFunkyBoxSize();
             // Very very wierd thing happeneing, where this button, and only this button
             // gets an inlive css style of display: inline set sometime after page load
             // on a narrow screen. Non of the other onlywides do. Can't figure it out

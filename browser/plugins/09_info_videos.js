@@ -56,7 +56,7 @@ var info_videos = function() {
 			type: "POST",
 			dataType: "json",
 			url: 'browser/backends/google.php',
-			data: {uri: encodeURIComponent("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q="+encodeURIComponent(term+' Band')+"&key="+google_api_key)},
+			data: {uri: encodeURIComponent("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q="+encodeURIComponent(term+' Band')+"&key="+squlookle)},
 			success: callback,
 			error: function(data) {
 				debug.error("VIDEOS PLUGIN","Youtube search failed",data);

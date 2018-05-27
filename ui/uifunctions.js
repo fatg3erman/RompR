@@ -1144,22 +1144,6 @@ function clickBindType() {
     return prefs.clickmode == 'double' ? 'dblclick' : 'click';
 }
 
-function setFunkyBoxSize() {
-
-    $('#pluginplaylistholder .pipl:visible').each(function() {
-        var h = $(this);
-        var width = calcPercentWidth(h, '.radioplugin_normal', 180, h.width());
-        h.find(".radioplugin_normal").css('width', width.toString()+'%');
-    });
-
-    $('#pluginplaylistslist .pipl:visible').each(function() {
-        var h = $(this);
-        var width = calcPercentWidth(h, '.radioplugin_normal', 180, h.width());
-        h.find(".radioplugin_normal").css('width', width.toString()+'%');
-    });
-
-}
-
 function clearBgImage() {
     $('html').css('background-image', '');
     $.getJSON('backimage.php?clearbackground='+prefs.theme, function(data) {

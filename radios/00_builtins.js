@@ -5,25 +5,24 @@ var starRadios = function() {
         setup: function() {
 
             //
-            // Tag
-            //
-            var a = $('<div>', {class: "pluginitem radioplugin_wide"}).appendTo('#pluginplaylists');
-            var b = $('<div>', {class: "helpfulalbum fullwidth containerbox", style: "padding-top:4px"}).appendTo(a);
-            var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
-                appendTo(b).makeTagMenu({
-                textboxname: 'cynthia',
-                labelhtml: '<i class="icon-tags svg-square"></i>',
-                populatefunction: populateTagMenu,
-                buttontext: language.gettext('button_playradio'),
-                buttonfunc: starRadios.tagPopulate
-            });
-            
-            //
             // 1 star etc
             //
             for (var i = 1; i <= 5; i++) {
                 $('#pluginplaylists').append(playlist.radioManager.standardBox('starradios', i+'stars', 'icon-'+i+'-stars', language.gettext('playlist_xstar', [i])));
             }
+			
+			//
+            // Tag
+            //
+            var a = $('<div>', {class: "menuitem containerbox fullwidth"}).appendTo('#pluginplaylists');
+            var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
+                appendTo(a).makeTagMenu({
+                textboxname: 'cynthia',
+                labelhtml: '<i class="smallcover icon-tags svg-square"></i>',
+                populatefunction: populateTagMenu,
+                buttontext: language.gettext('button_playradio'),
+                buttonfunc: starRadios.tagPopulate
+            });
 
             //
             // All Tracks at random

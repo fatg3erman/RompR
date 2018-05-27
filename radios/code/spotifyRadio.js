@@ -1,5 +1,7 @@
 function spotifyRadio() {
 
+	// Uses Spotify Web API
+
 	var self = this;
 	this.sending = 0;
 	this.artists = new Array();

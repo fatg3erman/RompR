@@ -55,13 +55,11 @@ var artistRadio = function() {
                 //
                 // Artists Similar To (Music From Spotify)
                 //
-                var a = $('<div>', {class: "pluginitem radioplugin_wide"}).appendTo('#pluginplaylists_spotify');
-                var b = $('<div>', {class: "helpfulalbum fullwidth containerbox", style: "padding-top:4px"}).appendTo(a);
-                var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).appendTo(b);
-                c.append('<div class="fixed"><i class="icon-spotify-circled svg-square"></i></div>'+
-                        '<div class="fixed padright"><span class="alignmid">'+language.gettext('label_simar_radio')+'</span></div>'+
-                        '<div class="expand dropdown-holder"><input class="enter" id="bubbles" type="text" onkeyup="onKeyUp(event)" /></div>'+
-                        '<button class="fixed alignmid" onclick="playlist.radioManager.load(\'artistRadio\', $(\'#bubbles\').val())">'+language.gettext('button_playradio')+'</button>');
+                $('#pluginplaylists_spotify').append(playlist.radioManager.textEntry('icon-spotify-circled', language.gettext('label_simar_radio'), 'simar_radio'));
+                $('#simar_radio').on('keyup', onKeyUp);
+                $('button[name="simar_radio"]').on('click', function() {
+                    playlist.radioManager.load('artistRadio', $('#simar_radio').val());
+                });
             }
         }
     }

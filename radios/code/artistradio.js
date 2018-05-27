@@ -1,5 +1,7 @@
 var artistRadio = function() {
 
+	// Uses Spotify Web API
+
 	var artistname;
 	var artistindex;
 	var tuner;

@@ -552,6 +552,10 @@ button {
     padding-top:4px;
 }
 
+#pluginplaylistslist .menuitem {
+	margin-bottom: 4px;
+}
+
 #imagecontainer {
     position:absolute;
     opacity:1;
