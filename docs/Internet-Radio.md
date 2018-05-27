@@ -45,5 +45,3 @@ Double-click a Radio Station or Podcast in this list to listen to it.
 Icecast is an open-source alternative to ShoutCast.
 
 ![](images/icecast.png)
-
-The round play button can be double-clicked to listen to the station.

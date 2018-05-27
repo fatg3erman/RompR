@@ -607,6 +607,12 @@ button {
     font-size:110%;
     margin-left:4px;
     margin-right:4px;
+	display:flex;
+	align-items:center;
+}
+
+.configtitle b {
+	flex-grow: 1;
 }
 
 .artistbanner {

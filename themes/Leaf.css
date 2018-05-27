@@ -8,6 +8,12 @@ html, body.phone .dropmenu {
     background-image:url("leaf.jpg");
     background-size:cover;
     background-repeat:no-repeat;
+    background-attachment:fixed;
+}
+
+body.phone .dropmenu>div {
+    background-color:rgba(0,0,0,0.3);
+    background-clip:border-box;
 }
 
 button, input[type="button"]
@@ -42,12 +48,12 @@ select
 
 #sources, .mainpane, #headerbar, #infobar.coloured, #thetopbit
 {
-    background-color:rgba(0,0,0,0.2);
+    background-color:rgba(0,0,0,0.3);
 }
 
 #playlist
 {
-    background-color:rgba(0,0,0,0.2);
+    background-color:rgba(0,0,0,0.3);
 }
 
 body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea
@@ -304,7 +310,7 @@ div.topdropmenu
 
 body.mobile .configtitle
 {
-    width:95%;
+    width:100%;
     margin-left:auto;
     margin-right:auto;
 }

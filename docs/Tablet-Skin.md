@@ -1,6 +1,6 @@
 # The Tablet Skin
 
-The Tablet Skin is the default if you're accessing RompЯ on a small screen that isn't as small as a phone screen screen. It lays things out in a different way but is functionally identical to the Desktop skin except that drag-and-drop is not supported, and nor is the Album Art manager.
+The Tablet Skin is the default if you're accessing RompЯ on a small screen that isn't as small as a phone screen. It lays things out in a different way but is functionally identical to the Desktop skin except that drag-and-drop is not supported, and nor is the Album Art manager.
  
 The tablet skin adjusts its layout according to the size and orientation of your screen.
 

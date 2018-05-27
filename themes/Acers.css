@@ -8,6 +8,7 @@ html, body.phone .dropmenu {
     background-image:url("acers2.jpg");
     background-size:cover;
     background-repeat:no-repeat;
+    background-attachment:fixed;
 }
 
 body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input {

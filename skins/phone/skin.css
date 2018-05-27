@@ -273,6 +273,11 @@ div.topdropmenu {
     height: 100%;
     overflow-y: scroll;
     z-index: 10000;
+    padding-bottom:0px;
+}
+
+.dropmenu .menuitem {
+    margin-top: 4px;
 }
 
 .menuspacer {
@@ -878,14 +883,12 @@ div.rightmenu {
 .backmenu
 {
     box-sizing: border-box;
-    height: 1.5em;
+    height: 2em;
     border-left: 4px solid transparent;
     padding-left: 38px;
     padding-right: 8px;
     width: 100%;
     text-align:right;
-    margin-top:4px;
-    margin-bottom:4px;
 }
 
 @-webkit-keyframes clickflash {
@@ -933,7 +936,6 @@ div.rightmenu {
 
 .album-play-controls {
     margin-bottom:4px;
-    margin-top:4px;
 }
 
 .album_menu_image {

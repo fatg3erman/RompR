@@ -2,6 +2,11 @@ html, body.phone .dropmenu {
     background-image:url("shootingstars.jpg");
     background-size:cover;
     background-repeat:no-repeat;
+    background-attachment:fixed;
+}
+
+body.phone .dropmenu>div {
+    background-clip:border-box;
 }
 
 .helpfulalbum
@@ -218,7 +223,7 @@ div.topdropmenu
 
 body.mobile .configtitle
 {
-    width:95%;
+    width:100%;
     margin-left:auto;
     margin-right:auto;
 }

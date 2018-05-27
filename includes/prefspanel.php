@@ -275,7 +275,7 @@ print '</select>
 </div></div>';
 
 // Collection Options
-print '<div class="textcentre ucfirst configtitle"><b>'.get_int_text('button_local_music').'</b></div>';
+print '<div class="textcentre ucfirst configtitle"><i class="icon-music medicon"></i><b>'.get_int_text('button_local_music').'</b></div>';
 print '<div class="tiny textcentre" style="margin-bottom:1em">These options affect everyone who uses this installation of RompЯ</div>';
 
 // Album Sorting

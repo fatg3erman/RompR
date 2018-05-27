@@ -2,6 +2,12 @@ html, body.phone .dropmenu {
     background-image:url("sunset_loch.jpg");
     background-size:cover;
     background-repeat:no-repeat;
+    background-attachment:fixed;
+}
+
+body.phone .dropmenu>div {
+    background-color:rgba(0,0,0,0.4);
+    background-clip:border-box;
 }
 
 #sources, #artistcoverslist
@@ -243,7 +249,7 @@ div.topdropmenu
 
 body.mobile .configtitle
 {
-    width:95%;
+    width:100%;
     margin-left:auto;
     margin-right:auto;
 }

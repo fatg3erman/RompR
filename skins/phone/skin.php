@@ -185,7 +185,7 @@ include("includes/podcasts.php");
 <?php
 if ($use_smartradio) {
 ?>
-<div id="pluginplaylistholder" class="containerbox vertical scroller mainpane invisible pright">
+<div id="pluginplaylistholder" class="scroller mainpane invisible pright">
 <?php
 print '<div class="configtitle textcentre"><b>'.get_int_text('label_pluginplaylists').'</b></div>';
 ?>
