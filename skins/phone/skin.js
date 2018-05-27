@@ -319,10 +319,6 @@ var layoutProcessor = function() {
             makeProgressOfString(stats);
         },
 
-        themeChange: function() {
-            $('.rangechooser').rangechooser('fill');
-        },
-
         updateInfopaneScrollbars: function() {
         },
 

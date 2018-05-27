@@ -216,8 +216,7 @@ function hideBrowser() {
 }
 
 function setTopIconSize(panels) {
-    var imw = (parseInt($('.topimg').first().css('margin-left')) +
-        parseInt($('.topimg').first().css('margin-right')));
+    var imw = (parseInt($('.topimg').first().css('margin-left'))+parseInt($('.topimg').first().css('margin-right')));
     panels.forEach( function(div) {
         if ($(div).is(':visible')) {
             var icons = $(div+" .topimg");
@@ -411,7 +410,6 @@ var layoutProcessor = function() {
                 $('#'+prefs.chooser).fadeOut('fast', function() {
                     prefs.save({chooser: source});
                     showPanel(source, function() {
-                        if (source == 'searcher') setSearchLabelWidth();
                         if (callback) { callback(); }
                     });
                 });
@@ -539,10 +537,6 @@ var layoutProcessor = function() {
         toggleRemainTime: function() {
             prefs.save({displayremainingtime: !prefs.displayremainingtime});
             layoutProcessor.setProgressTime(null);
-        },
-
-        themeChange: function() {
-            $('.rangechooser').rangechooser('fill');
         },
 
         setRadioModeHeader: function(html) {

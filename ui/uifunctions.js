@@ -38,35 +38,6 @@ function toggleAudioOutputs() {
     });
 }
 
-function changeBackgroundImage() {
-    $('[name="currbackground"]').val(prefs.theme);
-    var formElement = document.getElementById('backimageform');
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "backimage.php");
-    xhr.responseType = "json";
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            debug.log("BIMAGE", xhr.response);
-            if (xhr.response.image) {
-                setCustombackground(xhr.response.image);
-            }
-        } else {
-            debug.fail("BIMAGE", "FAILED");
-        }
-    };
-    xhr.send(new FormData(formElement));
-
-}
-
-function setCustombackground(image) {
-    debug.log("UI","Setting Custom Background To",image);
-    $('html').css('background-image', 'url("'+image+"?version="+rompr_version+'")');
-    $('html').css('background-size', 'cover');
-    $('html').css('background-repeat', 'no-repeat');
-    $('#cusbgname').html(image.split(/[\\/]/).pop())
-    $('<style id="phoneback">body.phone .dropmenu { background-image: url("'+image+"?version="+rompr_version+'") }</style>').appendTo('head');
-}
-
 var imagePopup = function() {
     var wikipopup = null;
     var imagecontainer = null;
@@ -374,6 +345,7 @@ function setChooserButtons() {
             $(".choose_"+s[i]).fadeIn('fast');
         }
     }
+    layoutProcessor.adjustLayout();
 }
 
 function getrgbs(percent,min) {
@@ -1151,12 +1123,4 @@ function spotifyTrackListing(data) {
 
 function clickBindType() {
     return prefs.clickmode == 'double' ? 'dblclick' : 'click';
-}
-
-function clearBgImage() {
-    $('html').css('background-image', '');
-    $.getJSON('backimage.php?clearbackground='+prefs.theme, function(data) {
-        $('[name=imagefile').val('');
-    });
-    $('#cusbgname').html('');
 }

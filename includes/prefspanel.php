@@ -37,8 +37,8 @@ print '<div id="custombackground" class="pref containerbox dropdown-container">
 <form id="backimageform" action="backimage.php" method="post" enctype="multipart/form-data">
 <input type="hidden" name="currbackground" value="" />
 <input type="file" name="imagefile" class="infowiki">
-<input type="button" onclick="changeBackgroundImage()" value="'.get_int_text('albumart_uploadbutton').'">
-<i class="icon-cancel-circled clickicon playlisticonr" onclick="clearBgImage()"></i>
+<input type="button" onclick="prefs.changeBackgroundImage()" value="'.get_int_text('albumart_uploadbutton').'">
+<i class="icon-cancel-circled clickicon playlisticonr" onclick="prefs.clearBgImage()"></i>
 </form>
 </div>
 </div>';

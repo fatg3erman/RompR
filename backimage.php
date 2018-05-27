@@ -21,6 +21,11 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 
 } else {
 
+	debuglog("Uploading Custom Background Image : ","BACKIMAGE");
+	foreach ($_FILES['imagefile'] as $key => $value) {
+		debuglog("  ".$key." = ".$value,"BACKIMAGE");
+	}
+
 	$file = $_FILES['imagefile']['name'];
 	$base = $_REQUEST['currbackground'];
 	$download_file = "";

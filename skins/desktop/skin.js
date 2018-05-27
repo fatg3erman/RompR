@@ -450,7 +450,6 @@ var layoutProcessor = function() {
                 $('#'+prefs.chooser).fadeOut('fast', function() {
                     prefs.save({chooser: source});
                     showPanel(source, function() {
-                        if (source == 'searcher') setSearchLabelWidth();
                         if (callback) { callback(); }
                     });
                 });
@@ -515,10 +514,6 @@ var layoutProcessor = function() {
 
         setProgressTime: function(stats) {
             makeProgressOfString(stats);
-        },
-
-        themeChange: function() {
-            $('.rangechooser').rangechooser('fill');
         },
 
         setRadioModeHeader: function(html) {

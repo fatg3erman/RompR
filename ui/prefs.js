@@ -116,6 +116,16 @@ var prefs = function() {
         prefs.save({scrobblepercent: e.max});
     }
 
+    function setCustombackground(image) {
+        debug.log("UI","Setting Custom Background To",image);
+        $('style[id="phoneback"]').remove();
+        $('html').css('background-image', 'url("'+image+"?version="+rompr_version+'")');
+        $('html').css('background-size', 'cover');
+        $('html').css('background-repeat', 'no-repeat');
+        $('#cusbgname').html(image.split(/[\\/]/).pop())
+        $('<style id="phoneback">body.phone .dropmenu { background-image: url("'+image+"?version="+rompr_version+'") }</style>').appendTo('head');
+    }
+
     return {
         loadPrefs: function() {
             for (var p in tags) {
@@ -384,30 +394,70 @@ var prefs = function() {
         },
 
         setTheme: function(theme) {
+            if (!theme) theme = prefs.theme;
+            prefs.resetCustomBackground();
+            // Use a different version every time to ensure the browser doesn't cache.
+            // Browsers are funny about CSS.
+            var t = Date.now();
+            $("#theme").attr("href", "themes/"+theme+"?version="+t);
+            $("#albumcoversize").attr("href", "coversizes/"+prefs.coversize+"?version="+t);
+            $("#fontsize").attr("href", "sizes/"+prefs.fontsize+"?version="+t);
+            $("#fontfamily").attr("href", "fonts/"+prefs.fontfamily+"?version="+t);
+            $("#icontheme-theme").attr("href", "iconsets/"+prefs.icontheme+"/theme.css"+"?version="+t);
+            $("#icontheme-adjustments").attr("href", "iconsets/"+prefs.icontheme+"/adjustments.css"+"?version="+t);
+            $.getJSON('backimage.php?getbackground='+theme, function(data) {
+                if (data.image) {
+                    debug.log("PREFS","Custom Background Image",data.image);
+                    setCustombackground(data.image);
+                }
+            });
+            prefs.rgbs = null;
+            setTimeout(prefs.postUIChange, 2000);
+        },
+        
+        postUIChange: function() {
+            $('.rangechooser').rangechooser('fill');
+            if (typeof charts !== 'undefined') {
+                charts.reloadAll();
+            }
+            layoutProcessor.adjustLayout();
+            setSearchLabelWidth();
+            setSpotiLabelWidth();
+            infobar.biggerize();
+            browser.rePoint();
+        },
+        
+        changeBackgroundImage: function() {
+            $('[name="currbackground"]').val(prefs.theme);
+            var formElement = document.getElementById('backimageform');
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "backimage.php");
+            xhr.responseType = "json";
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    debug.log("BIMAGE", xhr.response);
+                    prefs.setTheme();
+                } else {
+                    debug.fail("BIMAGE", "FAILED");
+                    infobar.notify(infobar.ERROR, "Failed To Upload Image");
+                }
+            };
+            xhr.send(new FormData(formElement));
+        },
+
+        resetCustomBackground: function() {
             $('html').css('background-image', '');
             $('html').css('background-size', '');
             $('html').css('background-repeat', '');
-            $("#theme").attr("href", "themes/"+theme+"?version="+rompr_version);
-            $.getJSON('backimage.php?getbackground='+theme, function(data) {
-                if (data.image) {
-                    setCustombackground(data.image);
-                } else {
-                    $('#cusbgname').html('');
-                    $('style[id="phoneback"]').remove();
-                }
+            $('#cusbgname').html('');
+            $('style[id="phoneback"]').remove();
+        },
+        
+        clearBgImage: function() {
+            prefs.resetCustomBackground();
+            $.getJSON('backimage.php?clearbackground='+prefs.theme, function(data) {
+                $('[name=imagefile').val('');
             });
-            $("#albumcoversize").attr("href", "coversizes/"+prefs.coversize);
-            $("#fontsize").attr("href", "sizes/"+prefs.fontsize+"?version="+rompr_version);
-            $("#fontfamily").attr("href", "fonts/"+prefs.fontfamily+"?version="+rompr_version);
-            $("#icontheme-theme").attr("href", "iconsets/"+prefs.icontheme+"/theme.css"+"?version="+rompr_version);
-            $("#icontheme-adjustments").attr("href", "iconsets/"+prefs.icontheme+"/adjustments.css"+"?version="+rompr_version);
-            prefs.rgbs = null;
-            setTimeout(function() {
-                $('.rangechooser').rangechooser('fill');
-                if (typeof charts !== 'undefined') {
-                    charts.reloadAll();
-                }
-            }, 2000);
         },
 
         rgbs: null

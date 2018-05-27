@@ -738,6 +738,7 @@ function get_user_file($src, $fname, $tmpname) {
     global $error;
     debuglog("  Uploading ".$src." ".$fname." ".$tmpname,"GETALBUMCOVER");
     $download_file = "prefs/".$fname;
+    debuglog("Checking Temp File ".$tmpname,"GETALBUMCOVER");
     if (move_uploaded_file($tmpname, $download_file)) {
         debuglog("    File ".$src." is valid, and was successfully uploaded.","GETALBUMCOVER");
     } else {

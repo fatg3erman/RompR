@@ -192,20 +192,20 @@ debuglog("******++++++======------******------======++++++******","CREATING PAGE
 <?php
 print '<script type="application/json" name="translations">'."\n".json_encode($translations)."\n</script>\n";
 print '<script type="application/json" name="prefs">'."\n".json_encode($prefs)."\n</script>\n";
-print '<link rel="stylesheet" type="text/css" href="css/layout-january.css?version='.ROMPR_VERSION.'" />'."\n";
-print '<link rel="stylesheet" type="text/css" href="skins/'.$skin.'/skin.css?version='.ROMPR_VERSION.'" />'."\n";
+print '<link rel="stylesheet" type="text/css" href="css/layout-january.css?version='.time().'" />'."\n";
+print '<link rel="stylesheet" type="text/css" href="skins/'.$skin.'/skin.css?version='.time().'" />'."\n";
 foreach ($skinrequires as $s) {
     $s = trim($s);
     $ext = strtolower(pathinfo($s, PATHINFO_EXTENSION));
     if ($ext == "css") {
         debuglog("Including Skin Requirement ".$s,"INIT",6);
-        print '<link rel="stylesheet" type="text/css" href="'.$s.'?version='.ROMPR_VERSION.'" />'."\n";
+        print '<link rel="stylesheet" type="text/css" href="'.$s.'?version='.time().'" />'."\n";
     }
 }
 $css = glob('plugins/css/*.css');
 foreach ($css as $s) {
     debuglog("Including Dynamic CSS ".$s,"INIT",6);
-    print '<link rel="stylesheet" type="text/css" href="'.$s.'?version='.ROMPR_VERSION.'" />'."\n";
+    print '<link rel="stylesheet" type="text/css" href="'.$s.'?version='.time().'" />'."\n";
 }
 ?>
 <link rel="stylesheet" id="theme" type="text/css" />

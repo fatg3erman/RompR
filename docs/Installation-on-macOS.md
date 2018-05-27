@@ -70,15 +70,15 @@ This will open nano again. It may bring up an empty file, or it may bring up a f
     <VirtualHost \*:80>
 	    DocumentRoot /Users/YOURNAME/Sites/rompr
 	    ServerName www.myrompr.net
+        ErrorDocument 404 /404.php
 
 	    <Directory /Users/YOURNAME/Sites/rompr>
-		    Options Indexes FollowSymLinks MultiViews Includes ExecCGI
-		    DirectoryIndex index.php
-		    AllowOverride All
-		    AddType image/x-icon .ico
-		    Order Allow,Deny
-		    Allow from All
-		    Require all granted
+            Options Indexes FollowSymLinks Includes ExecCGI
+           DirectoryIndex index.php
+           AllowOverride All
+           Require all granted
+           AddType image/x-icon .ico
+
 
 		    <IfModule mod_php7.c>
 			    AddType application/x-httpd-php .php
@@ -86,9 +86,11 @@ This will open nano again. It may bring up an empty file, or it may bring up a f
 			    php_flag track_vars On
 			    php_admin_flag allow_url_fopen On
 			    php_value include_path .
-			    php_admin_value upload_tmp_dir /Users/YOURNAME/Sites/rompr/prefs
+			    php_admin_value upload_tmp_dir /Users/YOURNAME/Sites/rompr/prefs/temp
 			    php_admin_value open_basedir none
     		    php_admin_value memory_limit 128M
+                php_admin_value post_max_size 32M
+                php_admin_value upload_max_filesize 32M                
 		    </IfModule>
 
 	    </Directory>

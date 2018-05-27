@@ -4,10 +4,6 @@
 =====================================================================
 */
 
-body.mobile {
-    font-size:11pt;
-}
-
 h1 {
     font-size:130%;
 }
@@ -883,7 +879,7 @@ div.rightmenu {
 .backmenu
 {
     box-sizing: border-box;
-    height: 2em;
+    height: 2.5em;
     border-left: 4px solid transparent;
     padding-left: 38px;
     padding-right: 8px;
