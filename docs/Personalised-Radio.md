@@ -2,8 +2,6 @@
 
 Your listening habits, tags, and ratings, can be used to generate dynamic playlists on-the-fly.
 
-Users of MPD and Mopidy also get a host of options to generate these playlists from your Music Collection.
-
 Mopidy users get a host of extra online Music Discovery stations, that are described [here](/RompR/Music-Discovery).
 
 ![](images/personalradio.png)
@@ -20,4 +18,4 @@ To stop the dynamic playlist generation and return to normal mode, either click 
 
 ## Mobile Devices
 
-When using a mobile device to run RompЯ, you should understand that the browser must be open for new tracks to keep being added. If the device sleeps (screen turns off) then the playlist will stop updating until you wake the device. It's worth mentioning too that Playcounts will not be updated and tracks will not be scrobbled if your device sleeps, and so you should read [this](/RompR/Rompr-And-Mobiles)
+When using a mobile device to run RompЯ, you should understand that the browser must be open for new tracks to keep being added. If the device sleeps (screen turns off) then the playlist will stop updating until you wake the device.

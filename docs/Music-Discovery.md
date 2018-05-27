@@ -51,7 +51,7 @@ First enter up to five genres, which must be chosen from the drop-down list. The
 
 What these parameters actually mean, only Spotify really knows. They have algorithms that determine what these values are for each track but they won't say how they work.
 
-The best thing with this panel is to experiment. If you find a group of settings that provide pleasing results you can Save them, they will then appear as a new option under 'Music From Spotify'.
+The best thing with this panel is to experiment. If you find a group of settings that provide pleasing results you can Save them, they will then appear as a new option under 'Music From Spotify', as you can see in the example image above - click the x to remove them.
 
 ## Listening to the Radio
 
