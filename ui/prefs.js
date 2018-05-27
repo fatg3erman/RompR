@@ -390,12 +390,10 @@ var prefs = function() {
             $("#theme").attr("href", "themes/"+theme+"?version="+rompr_version);
             $.getJSON('backimage.php?getbackground='+theme, function(data) {
                 if (data.image) {
-                    $('html').css('background-image', 'url("'+data.image+"?version="+rompr_version+'")');
-                    $('html').css('background-size', 'cover');
-                    $('html').css('background-repeat', 'no-repeat');
-                    $('#cusbgname').html(data.image.split(/[\\/]/).pop())
+                    setCustombackground(data.image);
                 } else {
                     $('#cusbgname').html('');
+                    $('style[id="phoneback"]').remove();
                 }
             });
             $("#albumcoversize").attr("href", "coversizes/"+prefs.coversize);

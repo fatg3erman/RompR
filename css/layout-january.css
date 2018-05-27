@@ -1931,6 +1931,10 @@ table.ambox {
     margin-bottom:0.5em;
 }
 
+.info-detail-layout {
+	word-break: break-all;
+}
+
 .artistnamething {
     font-size:140%;
     line-height:1.1em;

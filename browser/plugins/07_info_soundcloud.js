@@ -71,7 +71,7 @@ var info_soundcloud = function() {
     function formatSCMessyBits(bits) {
         try {
             if (bits) {
-                return bits;
+                return bits.fixDodgyLinks();
             } else {
                 return "";
             }
@@ -79,7 +79,7 @@ var info_soundcloud = function() {
             return "";
         }
     }
-
+	
 	return {
 		getRequirements: function(parent) {
 			return [];

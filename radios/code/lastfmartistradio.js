@@ -122,28 +122,30 @@ var lastFMArtistRadio = function() {
 
 		gotTopArtists: function(data) {
 			if (data.topartists.artist) {
-				currpage = parseInt(data.topartists['@attr'].page);
-				totalpages = parseInt(data.topartists['@attr'].totalPages);
-				debug.mark("LASTFM MIX RADIO","Got Page",currpage,"Of",totalpages,"Of Top Artists");
-				for (var i in data.topartists.artist) {
-					if (data.topartists.artist[i].playcount >= minplays) {
-						fartists.push(data.topartists.artist[i].name);
-					} else {
-						debug.mark("LASTFM MIX RADIO","Ignoring Artist",data.topartists.artist[i].name,"because it only has",data.topartists.artist[i].playcount,"plays");
+				if (tuner) {
+					currpage = parseInt(data.topartists['@attr'].page);
+					totalpages = parseInt(data.topartists['@attr'].totalPages);
+					debug.mark("LASTFM MIX RADIO","Got Page",currpage,"Of",totalpages,"Of Top Artists");
+					for (var i in data.topartists.artist) {
+						if (data.topartists.artist[i].playcount >= minplays) {
+							fartists.push(data.topartists.artist[i].name);
+						} else {
+							debug.mark("LASTFM MIX RADIO","Ignoring Artist",data.topartists.artist[i].name,"because it only has",data.topartists.artist[i].playcount,"plays");
+						}
 					}
-				}
-				for (var i in fartists) {
-					tuner.newArtist(fartists[i]);
-				}
-				if (populating) {
-					if (currpage < totalpages) {
-						getTopArtists(currpage+1);
+					for (var i in fartists) {
+						tuner.newArtist(fartists[i]);
 					}
-					if (!started) {
-						started = true;
-						tuner.startSending();
-						clearTimeout(simtimer);
-						simtimer = setTimeout(getNextSimilars, 1000);
+					if (populating) {
+						if (currpage < totalpages) {
+							getTopArtists(currpage+1);
+						}
+						if (!started) {
+							started = true;
+							tuner.startSending();
+							clearTimeout(simtimer);
+							simtimer = setTimeout(getNextSimilars, 1000);
+						}
 					}
 				}
 			} else {
@@ -155,15 +157,17 @@ var lastFMArtistRadio = function() {
 		},
 
 		gotASimilar: function(data) {
-			debug.mark("LASTFM MIX RADIO","Got Similar Artists For",data.similarartists['@attr'].artist);
-			if (data.similarartists.artist) {
-				for (var i in data.similarartists.artist) {
-					tuner.newArtist(data.similarartists.artist[i].name);
+			if (tuner) {
+				debug.mark("LASTFM MIX RADIO","Got Similar Artists For",data.similarartists['@attr'].artist);
+				if (data.similarartists.artist) {
+					for (var i in data.similarartists.artist) {
+						tuner.newArtist(data.similarartists.artist[i].name);
+					}
 				}
-			}
-			if (populating) {
-				clearTimeout(simtimer);
-				simtimer = setTimeout(getNextSimilars, 1000);
+				if (populating) {
+					clearTimeout(simtimer);
+					simtimer = setTimeout(getNextSimilars, 1000);
+				}
 			}
 		},
 

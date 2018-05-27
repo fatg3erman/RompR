@@ -30,6 +30,12 @@ If you want to keep your Last.FM tagging in sync with your RompЯ Collection, th
 
 You can also use the option 'Last.FM Love Means' to automatically add a rating to tracks in the collection when you click the 'Love' button in RompЯ, and to automatically Love the track on Last.FM if you give it that Rating in RompЯ.
 
+## File Information
+
+This panel displays information about the file being played. The information includes format information from the player, and information from the Music Collection.
+
+![](images/trackinfo.png)
+
 ## Other Info Sources
 
 The other panels should be self-explanatory. There are also Back, Forward, and a History menu on the Info panel so you can keep playing new tracks while reading about old ones.
@@ -42,7 +48,7 @@ The buttons above the info panel are (left to right)
 * History
 * Back
 * Forward
-* File Information - displays basic information about the file being played
+* File Information
 * Last.FM
 * Wikipedia
 * Musicbrainz

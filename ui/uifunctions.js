@@ -1,6 +1,12 @@
 // Mostly general purpose stuff, all in global scope
 // Some could be tidied up
 
+String.prototype.fixDodgyLinks = function() {
+    var regexp = /([^"])(https*:\/\/.*?)([<|\n|\r|\s|\)])/g;
+    return this.replace(regexp, '$1<a href="$2" target="_blank">$2</a>$3');
+    // return this;
+}
+
 function forceCollectionReload() {
     collection_status = 0;
     checkCollection(false, false);
@@ -48,10 +54,7 @@ function changeBackgroundImage() {
         if (xhr.status === 200) {
             debug.log("BIMAGE", xhr.response);
             if (xhr.response.image) {
-                $('html').css('background-image', 'url("'+xhr.response.image+'")');
-                $('html').css('background-size', 'cover');
-                $('html').css('background-repeat', 'no-repeat');
-                $('#cusbgname').html(xhr.response.image.split(/[\\/]/).pop());
+                setCustombackground(xhr.response.image);
             }
         } else {
             debug.fail("BIMAGE", "FAILED");
@@ -59,6 +62,15 @@ function changeBackgroundImage() {
     };
     xhr.send(new FormData(formElement));
 
+}
+
+function setCustombackground(image) {
+    debug.log("UI","Setting Custom Background To",image);
+    $('html').css('background-image', 'url("'+image+"?version="+rompr_version+'")');
+    $('html').css('background-size', 'cover');
+    $('html').css('background-repeat', 'no-repeat');
+    $('#cusbgname').html(image.split(/[\\/]/).pop())
+    $('<style id="phoneback">body.phone .dropmenu { background-image: url("'+image+"?version="+rompr_version+'") }</style>').appendTo('head');
 }
 
 var imagePopup = function() {

@@ -141,7 +141,7 @@ function LastFM(user) {
             bio = bio.replace(/(<a .*?href="https:\/\/.*?")/g, '$1 target="_blank"');
             bio = bio.replace(/(<a .*?href=")(\/.*?")/g, '$1https://www.last.fm$2 target="_blank"');
             bio = bio.replace(/\[url=(.*?) .*?\](.*?)\[\/url\]/g, '<a href="$1" target="_blank">$2</a>');
-            return bio;
+            return bio.fixDodgyLinks();
         } else {
             return "";
         }

@@ -1,6 +1,6 @@
 # The Music Collection
 
-The Music Collection is the reason RompЯ exists. It was designed to sort your music by artist and album, even if they're scattered all over different folders, or even different Mopidy backends.
+The Music Collection is the reason RompЯ exists. It was designed to sort your music by artist and album, even if they're not correctly tagged.
 
 ![](images/collection.png)
 
@@ -13,6 +13,8 @@ Tracks in the collection can be given a rating (from 1 to 5 stars) and arbitrary
 ![](images/taggedtrack1.png)
 
 They will also be shown in the Now Playing area. To rate a track that is playing, just click on the stars. To add a tag click on the + sign. To remove a tag, hover over the tag and click the x that appears.
+
+You can also add tags and ratings from the File [information panel](/RompR/The-Info-Panel). For people on touchscreen devices, this provides an easier way to remove tags,
 
 ![](images/taggedtrack2.png)
 
