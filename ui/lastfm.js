@@ -59,6 +59,12 @@ function LastFM(user) {
     this.username = function() {
         return username;
     }
+    
+    this.startlogin = function() {
+        var user = $("#configpanel").find('input[name|="user"]').val();
+        self.login(user);
+        $("#configpanel").fadeOut(1000);
+    }
 
     this.login = function (user, pass) {
 

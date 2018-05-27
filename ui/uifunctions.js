@@ -27,12 +27,6 @@ function toggleCollectionButtons() {
     return false;
 }
 
-function lastfmlogin() {
-    var user = $("#configpanel").find('input[name|="user"]').val();
-    lastfm.login(user);
-    $("#configpanel").fadeOut(1000);
-}
-
 function outputswitch(id) {
     player.controller.doOutput(id, !$('#outputbutton_'+id).is(':checked'));
 }
@@ -996,11 +990,14 @@ function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
 function findPosition(key) {
     // The key is the id of a dropdown div.  But that div won't exist if the dropdown hasn't been
     // opened. So we see if it does, and if it doesn't then we use the name attribute of the
-    // toggle arrow button to locate the position.
+    // toggle arrow button to locate the position and if that doesn't work then we must be in the phone
+    // skin so return the menuitem div
     if ($("#"+key).length > 0) {
         return $("#"+key);
+    } else if ($('i[name="'+key+'"]').length > 0) {
+        return $('i[name="'+key+'"]').parent();
     } else {
-        return $('i[name="'+key+'"]').parent()
+        return $('.menuitem[name="'+key+'"]');
     }
 }
  

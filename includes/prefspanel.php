@@ -233,7 +233,7 @@ print '<div class="textcentre configtitle">
 </div><div class="pref">'.get_int_text('config_lastfmusername');
 print '<br/><div class="containerbox"><div class="expand">'.
     '<input class="enter" name="user" type="text" size="30" value="'.$prefs['lastfm_user'].'"/>'.
-    '</div><button class="fixed" onclick="lastfmlogin()">'.get_int_text('config_loginbutton').
+    '</div><button class="fixed" onclick="lastfm.startlogin()">'.get_int_text('config_loginbutton').
     '</button></div>';
 print '</div>';
 print '<div class="pref styledinputs">
