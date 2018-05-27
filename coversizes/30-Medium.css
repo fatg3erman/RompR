@@ -16,3 +16,13 @@ img.notexist,img.notfound {
 {
 	width: 64px;
 }
+
+body.desktop .smallcover.svg-square.noindent
+{
+	width:32px;
+}
+
+body.mobile .smallcover.svg-square.noindent
+{
+	width:32px;
+}

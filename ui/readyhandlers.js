@@ -54,9 +54,9 @@ $(document).ready(function(){
     pluginManager.setupPlugins();
     ferretMaster();
     layoutProcessor.sourceControl(prefs.chooser, function() {
-        setSearchLabelWidth();
-        setSpotiLabelWidth()
         layoutProcessor.adjustLayout();
+        setTimeout(setSearchLabelWidth, 2000);
+        setTimeout(setSpotiLabelWidth, 2000);
     });
     if (prefs.auto_discovembobulate) {
         setTimeout(function() {

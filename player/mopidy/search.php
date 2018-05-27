@@ -13,10 +13,10 @@ $sterms = array(
 );
 include("skins/search.php");
 print '<div class="styledinputs" style="padding-top:4px">';
-
 print '<input class="autoset toggle" type="checkbox" id="tradsearch">
 <label for="tradsearch">'.get_int_text("label_tradsearch").'</label>';
 
+print '</div><div class="styledinputs" style="padding-top:4px">';
 print '<input class="autoset toggle" type="checkbox" id="searchcollectiononly">
 <label for="searchcollectiononly">'.get_int_text("label_searchcollectiononly").'</label>';
 

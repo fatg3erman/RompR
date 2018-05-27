@@ -668,10 +668,10 @@ function Playlist() {
                 if (name !== null) html += ' name="'+name+'"';
                 html += '>';
                 html += '<i class="icon-toggle-closed menu mh fixed" name="'+dropid+'"></i>';
-                html += '<div class="smallcover svg-square fixed '+icon+'"></div>';
+                html += '<div class="smallcover svg-square noindent fixed '+icon+'"></div>';
                 html += '<div class="expand">'+label+'</div>';
                 html += '</div>';
-                html += '<div class="toggledown invisible dropmenu" id="'+dropid+'"></div>';
+                html += '<div class="toggledown invisible" id="'+dropid+'"></div>';
                 return html;
                 
             },

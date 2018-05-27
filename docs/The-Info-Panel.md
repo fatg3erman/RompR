@@ -36,6 +36,14 @@ This panel displays information about the file being played. The information inc
 
 ![](images/trackinfo.png)
 
+## Lyrics
+
+Lyrics for songs will be displayed if they can be found. Either they can be extracted if they are embedded in your local files and you have set the Path To Local Music correctly as explained for [Album Art](/RompR/Album-Art-Manager#using-local-images), or if you use [Mopidy-Beets](/RompR/Rompr-And-Mopidy) along with the Lyrics plugin for Beets, they can be retrieved from your Beets server.
+
+In some cases, RompЯ may be able to find Lyrics on the internet.
+
+![](images/lyrics.png)
+
 ## Other Info Sources
 
 The other panels should be self-explanatory. There are also Back, Forward, and a History menu on the Info panel so you can keep playing new tracks while reading about old ones.
