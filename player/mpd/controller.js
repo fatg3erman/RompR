@@ -11,8 +11,6 @@ function playerController() {
     var oldplname;
     var thenowplayinghack = false;
     var lastsearchcmd = "search";
-    var monitortimer = null;
-    var monitorduration = 1000;
     var moving = false;
 
     function updateStreamInfo() {
@@ -94,7 +92,7 @@ function playerController() {
                 self.do_command_list([],self.ready);
                 if (!player.collectionLoaded) {
                     debug.log("MPD", "Checking Collection");
-                    checkCollection(false, false);
+                    collectionHelper.checkCollection(false, false);
                 }
             },
             error: function(data) {
@@ -155,86 +153,6 @@ function playerController() {
             }
         });
 	}
-
-    this.scanFiles = function(cmd) {
-        prepareForLiftOff(language.gettext("label_updating"));
-        prepareForLiftOff2(language.gettext("label_updating"));
-        debug.log("PLAYER","Scanning Files",cmd,prefs.player_backend,prefs.mopidy_scan_command);
-        if (prefs.player_backend == "mopidy" && prefs.mopidy_scan_command != '') {
-            debug.shout("PLAYER","Scanning Mopidy using external scan command");
-            $.getJSON("player/mopidy/mopidyscan.php?scan=yes", function() {
-                update_load_timer = setTimeout( pollAlbumList, 2000);
-                update_load_timer_running = true;
-            });
-        } else {
-            debug.shout("PLAYER","Scanning using",cmd);
-            self.do_command_list([[cmd]], function() {
-                update_load_timer = setTimeout( pollAlbumList, 2000);
-                update_load_timer_running = true;
-            });
-        }
-    }
-
-    this.loadCollection = function(uri) {
-        $.ajax({
-            type: "GET",
-            url: uri,
-            timeout: 800000,
-            dataType: "html",
-            success: function(data) {
-                clearTimeout(monitortimer);
-                $("#collection").html(data);
-                if ($('#emptycollection').length > 0) {
-                    if (!$('#collectionbuttons').is(':visible')) {
-                        toggleCollectionButtons();
-                    }
-                    $('[name="donkeykong"]').makeFlasher({flashtime: 0.5, repeats: 3});
-                }
-                data = null;
-                player.collectionLoaded = true;
-                player.updatingcollection = false;
-                if (uri.match(/rebuild/)) {
-                    infobar.notify(infobar.NOTIFY,"Music Collection Updated");
-                    scootTheAlbums($("#collection"));
-                }
-            },
-            error: function(data) {
-                clearTimeout(monitortimer);
-                $("#collection").html(
-                    '<p align="center"><b><font color="red">Failed To Generate Collection :</font>'+
-                    '</b><br>'+data.responseText+"<br>"+data.statusText+"</p>");
-                debug.error("PLAYER","Failed to generate albums list",data);
-                infobar.notify(infobar.ERROR,"Music Collection Update Failed");
-                player.updatingcollection = false;
-            }
-        });
-        monitortimer = setTimeout(self.checkUpdateMonitor,monitorduration);
-    }
-
-    this.checkUpdateMonitor = function() {
-        $.ajax({
-            type: "GET",
-            url: 'utils/checkupdateprogress.php',
-            dataType: 'json',
-            success: function(data) {
-                debug.debug("UPDATE",data);
-                $('#updatemonitor').html(data.current);
-                if (player.updatingcollection) {
-                    monitortimer = setTimeout(self.checkUpdateMonitor,monitorduration);
-                }
-            },
-            error: function(data) {
-                debug.log("UPDATE","ERROR",data);
-                if (player.updatingcollection) {
-                    monitortimer = setTimeout(self.checkUpdateMonitor,monitorduration);
-                }
-            }
-        })
-    }
-
-    this.reloadFilesList = function(uri) {
-        $("#filecollection").load(uri);
-    }
 
     this.isConnected = function() {
         return true;
@@ -581,11 +499,12 @@ function playerController() {
 		self.do_command_list([["single",0]]);
 	}
 
-    this.doOutput = function(id, state) {
+    this.doOutput = function(id) {
+        state = $('#outputbutton_'+id).is(':checked');
         if (state) {
-            self.do_command_list([["enableoutput",id]]);
-        } else {
             self.do_command_list([["disableoutput",id]]);
+        } else {
+            self.do_command_list([["enableoutput",id]]);
         }
     }
 
@@ -639,7 +558,7 @@ function playerController() {
                 command: command,
                 resultstype: prefs.displayresultsas,
                 domains: domains,
-                dump: collectionKey('b')
+                dump: collectionHelper.collectionKey('b')
             };
             debug.log("PLAYER","Doing Search:",terms,st);
             if ((termcount == 1 && (terms.tag || terms.rating)) ||
@@ -658,7 +577,7 @@ function playerController() {
                     data: st,
                     success: function(data) {
                         $("#searchresultholder").html(data);
-                        scootTheAlbums($("#searchresultholder"));
+                        collectionHelper.scootTheAlbums($("#searchresultholder"));
                         data = null;
                     }
             });

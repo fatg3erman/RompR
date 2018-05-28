@@ -227,6 +227,7 @@ $scripts = array(
     "jquery/masonry.pkgd.min.js",
     "includes/globals.js",
     "player/mpd/controller.js",
+    "ui/collectionhelper.js",
     "player/player.js",
     "ui/playlist.js",
     "ui/readyhandlers.js",

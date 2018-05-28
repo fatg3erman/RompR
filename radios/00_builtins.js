@@ -19,7 +19,7 @@ var starRadios = function() {
                 appendTo(a).makeTagMenu({
                 textboxname: 'cynthia',
                 labelhtml: '<i class="smallcover icon-tags svg-square"></i>',
-                populatefunction: populateTagMenu,
+                populatefunction: tagAdder.populateTagMenu,
                 buttontext: language.gettext('button_playradio'),
                 buttonfunc: starRadios.tagPopulate
             });
@@ -39,7 +39,7 @@ var starRadios = function() {
             //
             $('#pluginplaylists').append(playlist.radioManager.standardBox('starradios', 'recentlyplayed', 'icon-recentlyplayed', language.gettext('label_recentlyplayed')));
 
-            $('.starradios').on(clickBindType(), function(evt) {
+            $('.starradios').on(prefs.clickBindType(), function(evt) {
                 evt.stopPropagation();
                 playlist.radioManager.load('starRadios', $(evt.delegateTarget).attr('name'));
             });
@@ -63,7 +63,7 @@ var recentlyaddedtracks = function() {
             $('#pluginplaylists').append(playlist.radioManager.standardBox('recentlyaddedradio', 'random', 'icon-recentlyplayed', language.gettext('label_recentlyadded_random')));
             $('#pluginplaylists').append(playlist.radioManager.standardBox('recentlyaddedradio', 'byalbum', 'icon-recentlyplayed', language.gettext('label_recentlyadded_byalbum')));
 
-            $('.recentlyaddedradio').on(clickBindType(), function(evt) {
+            $('.recentlyaddedradio').on(prefs.clickBindType(), function(evt) {
                 evt.stopPropagation();
                 playlist.radioManager.load('recentlyaddedtracks', $(evt.delegateTarget).attr('name'));
             });
@@ -81,7 +81,7 @@ var mostPlayed = function() {
             // Favourite Tracks
             //
             $('#pluginplaylists').append(playlist.radioManager.standardBox('mostplayedradio', null, 'icon-music', language.gettext('label_mostplayed')));
-            $('.mostplayedradio').on(clickBindType(), function(evt) {
+            $('.mostplayedradio').on(prefs.clickBindType(), function(evt) {
                 evt.stopPropagation();
                 playlist.radioManager.load('mostPlayed', null);
             });
@@ -99,7 +99,7 @@ var faveAlbums = function() {
             // Favourite Albums
             //
             $('#pluginplaylists').append(playlist.radioManager.standardBox('favealbumradio', null, 'icon-music', language.gettext('label_favealbums')));
-            $('.favealbumradio').on(clickBindType(), function(evt) {
+            $('.favealbumradio').on(prefs.clickBindType(), function(evt) {
                 evt.stopPropagation();
                 playlist.radioManager.load('faveAlbums', null);
             });

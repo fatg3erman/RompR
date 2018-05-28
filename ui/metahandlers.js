@@ -3,7 +3,7 @@ var metaHandlers = function() {
 	function addedATrack(rdata,d2,d3) {
 	    debug.log("ADD ALBUM","Success",rdata);
 	    if (rdata) {
-	        updateCollectionDisplay(rdata);
+	        collectionHelper.updateCollectionDisplay(rdata);
 	    }
 	}
 
@@ -123,7 +123,7 @@ var metaHandlers = function() {
 			    });
 				dbQueue.request(tracks,
 					function(rdata) {
-			            updateCollectionDisplay(rdata);
+			            collectionHelper.updateCollectionDisplay(rdata);
 			            fn(name);
 			        },
 			        function(data) {
@@ -143,7 +143,7 @@ var metaHandlers = function() {
 			    trackDiv.fadeOut('fast');
 			    dbQueue.request(
 			        [{action: 'delete', uri: decodeURIComponent(trackToGo)}],
-			        updateCollectionDisplay,
+			        collectionHelper.updateCollectionDisplay,
 			        function() {
 			            infobar.notify(infobar.ERROR, "Failed to remove track!");
 			        }
@@ -301,13 +301,17 @@ var dbQueue = function() {
 				data: JSON.stringify([{action: 'cleanup'}]),
 				dataType: 'json',
 				success: function(data) {
-					updateCollectionDisplay(data);
+					collectionHelper.updateCollectionDisplay(data);
 				},
 				error: function(data) {
 					debug.fail("DB QUEUE","Cleanup Failed");
 				}
 			});
 			
+		},
+		
+		outstandingRequests: function() {
+			return queue.length;
 		}
 	}
 }();

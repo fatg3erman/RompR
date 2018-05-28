@@ -518,7 +518,7 @@ var infobar = function() {
         updateWindowValues: function() {
             $("#volume").rangechooser("setProgress", player.status.volume);
             infobar.playbutton.setState(player.status.state);
-            setPlaylistButtons();
+            playlist.setButtons();
             if (player.status.single == 0 && singling) {
                 $('.icon-to-end-1').stopFlasher();
                 singling = false;

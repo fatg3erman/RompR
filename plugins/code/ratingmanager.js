@@ -156,7 +156,7 @@ var ratingManager = function() {
 		metaHandlers.genericAction(
 			[setdata],
 			function(rdata) {
-				updateCollectionDisplay(rdata);
+				collectionHelper.updateCollectionDisplay(rdata);
 				callback();
 				update_rest_of_ui();
 			},

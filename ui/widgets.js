@@ -494,15 +494,15 @@ $.widget("rompr.resizeHandle", $.ui.mouse, {
                     prefs.sourceswidthpercent = 100 - prefs.playlistwidthpercent;
                 }
             }
-            doThatFunkyThang();
-            setTopIconSize(this.options.adjusticons);
+            this.options.donefunc();
+            layoutProcessor.setTopIconSize(this.options.adjusticons);
         }
         return true;
     },
 
     _mouseStop: function(event) {
         this.dragging = false;
-        setTopIconSize(["#sourcescontrols", "#infopanecontrols", "#playlistcontrols"]);
+        layoutProcessor.setTopIconSize(["#sourcescontrols", "#infopanecontrols", "#playlistcontrols"]);
         browser.rePoint();
         prefs.save({sourceswidthpercent: prefs.sourceswidthpercent});
         prefs.save({playlistwidthpercent: prefs.playlistwidthpercent});
@@ -764,7 +764,7 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
                 }
             });
             this.element.slideToggle('fast', function() {
-                layoutProcessor.fanoogleMenus($(this));
+                $(this).fanoogleMenus();
             });
         }
     }
@@ -1298,7 +1298,7 @@ function popup(opts) {
             var y = Math.max((winsize.y - win.outerHeight(true))/2, 0);
         }
         win.css({top: y+'px'});
-        addCustomScrollBar(contents);
+        layoutProcessor.addCustomScrollBar(contents);
     }
 
     this.close = function(callback) {

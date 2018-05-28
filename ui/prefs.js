@@ -83,13 +83,13 @@ var prefs = function() {
 
                 case "artistsatstart":
                     if (!arraycompare(felakuti.artistsatstart, prefs.artistsatstart)) {
-                        callback = forceCollectionReload;
+                        callback = collectionHelper.forceCollectionReload;
                     }
                     break;
 
                 case "nosortprefixes":
                     if (!arraycompare(felakuti.nosortprefixes, prefs.nosortprefixes)) {
-                        callback = forceCollectionReload;
+                        callback = collectionHelper.forceCollectionReload;
                     }
                     break;
 
@@ -222,7 +222,7 @@ var prefs = function() {
                     break;
 
                 case 'hidebrowser':
-                    callback = hideBrowser;
+                    callback = layoutProcessor.hideBrowser;
                     break;
 
                 case 'search_limit_limitsearch':
@@ -246,7 +246,7 @@ var prefs = function() {
                 case "sortbydate":
                 case "notvabydate":
                 case "showartistbanners":
-                    callback = forceCollectionReload;
+                    callback = collectionHelper.forceCollectionReload;
                     break;
 
                 case "alarmon":
@@ -276,7 +276,7 @@ var prefs = function() {
                     break;
 
                 case 'sortcollectionby':
-                    callback = forceCollectionReload;
+                    callback = collectionHelper.forceCollectionReload;
                     break;
 
                 case 'displayresultsas':
@@ -458,6 +458,10 @@ var prefs = function() {
             $.getJSON('backimage.php?clearbackground='+prefs.theme, function(data) {
                 $('[name=imagefile').val('');
             });
+        },
+        
+        clickBindType: function() {
+            return prefs.clickmode == 'double' ? 'dblclick' : 'click';
         },
 
         rgbs: null

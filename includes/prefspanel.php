@@ -224,7 +224,7 @@ print '<div class="textcentre configtitle"><b>'.get_int_text('config_players').'
 print '<div class="clearfix">';
 print '<div class="pref styledinputs tleft" id="playerdefs">';
 print '</div>';
-print '<div class="pref tright"><button onclick="editPlayerDefs()">'.get_int_text('button_edit_players').'</button></div>';
+print '<div class="pref tright"><button onclick="player.defs.edit()">'.get_int_text('button_edit_players').'</button></div>';
 print '</div>';
 
 // Last.FM
@@ -289,9 +289,9 @@ print '<div class="pref styledinputs">
         <div class="tleft">
             <input class="autoset toggle" type="checkbox" id="updateeverytime"><label for="updateeverytime">'.get_int_text('config_updateonstart').'</label>
         </div>';
-print '<button class="tright" name="donkeykong" onclick="checkCollection(true, false)">'.get_int_text('config_updatenow').'</button>';
+print '<button class="tright" name="donkeykong" onclick="collectionHelper.checkCollection(true, false)">'.get_int_text('config_updatenow').'</button>';
 if ($prefs['player_backend'] == "mpd") {
-    print '<button class="tright" onclick="checkCollection(true, true)">'.get_int_text('config_rescan').'</button>';
+    print '<button class="tright" onclick="collectionHelper.checkCollection(true, true)">'.get_int_text('config_rescan').'</button>';
 }
 print '</div></div>';
 

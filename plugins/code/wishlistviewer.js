@@ -9,7 +9,7 @@ var wishlistViewer = function() {
 	    debug.log("DB_TRACKS","Remove track from database",element.next().val());
 	    metaHandlers.genericAction(
 			[{action: command, wltrack: element.next().val()}],
-	       	updateCollectionDisplay,
+	       	collectionHelper.updateCollectionDisplay,
 	        function() {
 	            debug.log("DB TRACKS", "Failed to remove track");
 	            infobar.notify(infobar.ERROR, "Failed to remove track!");
@@ -104,7 +104,7 @@ var wishlistViewer = function() {
 	function doSqlStuff(parentdata, data, callback) {
 		data.action = 'add';
 		data.attributes = parentdata.attributes;
-		dbQueue.request([data], updateCollectionDisplay,
+		dbQueue.request([data], collectionHelper.updateCollectionDisplay,
             function(rdata) {
 	            infobar.notify(infobar.ERROR,"Track Import Failed");
 	            debug.warn("WISHLIST","Failure");

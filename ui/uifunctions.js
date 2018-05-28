@@ -1,42 +1,135 @@
-// Mostly general purpose stuff, all in global scope
-// Some could be tidied up
+var tagAdder = function() {
 
-String.prototype.fixDodgyLinks = function() {
-    var regexp = /([^"])(https*:\/\/.*?)([<|\n|\r|\s|\)])/g;
-    return this.replace(regexp, '$1<a href="$2" target="_blank">$2</a>$3');
-    // return this;
-}
+    var index = null;
+    var lastelement = null;
+    var callback = null;
 
-function forceCollectionReload() {
-    collection_status = 0;
-    checkCollection(false, false);
-}
+    return {
+        show: function(evt, idx, cb) {
+            callback = cb;
+            if (evt.target == lastelement) {
+                tagAdder.close();
+            }  else {
+                index = idx;
+                var position = getPosition(evt);
+                layoutProcessor.setTagAdderPosition(position);
+                $("#tagadder").slideDown('fast');
+                lastelement = evt.target;
+            }
+        },
 
-function togglePlaylistButtons() {
-    layoutProcessor.preHorse();
-    $("#playlistbuttons").slideToggle('fast', layoutProcessor.setPlaylistHeight);
-    var p = !prefs.playlistcontrolsvisible;
-    prefs.save({ playlistcontrolsvisible: p });
-    return false;
-}
+        close: function() {
+            $("#tagadder").slideUp('fast');
+            lastelement = null;
+            callback = null;
+        },
 
-function toggleCollectionButtons() {
-    $("#collectionbuttons").slideToggle('fast');
-    var p = !prefs.collectioncontrolsvisible;
-    prefs.save({ collectioncontrolsvisible: p });
-    return false;
-}
+        add: function(toadd) {
+            debug.log("TAGADDER","New Tags :",toadd);
+            if (index !== null) {
+                nowplaying.addTags(index, toadd);
+            } else if (callback !== null) {
+                callback($(lastelement), toadd);
+            }
+            tagAdder.close();
+        },
+        
+        populateTagMenu: function(callback) {
+            metaHandlers.genericAction(
+                'gettags',
+                callback,
+                function() {
+                    debug.error("DB TRACKS", "Failed to get tags");
+                }
+            );
+        }
+    }
+}();
 
-function outputswitch(id) {
-    player.controller.doOutput(id, !$('#outputbutton_'+id).is(':checked'));
-}
+var pluginManager = function() {
 
-function toggleAudioOutputs() {
-    prefs.save({outputsvisible: !$('#outputbox').is(':visible')});
-    $("#outputbox").animate({width: 'toggle'},'fast',function() {
-        infobar.biggerize();
-    });
-}
+    // Plugins (from the plugins directory) shoud call pluginManager.addPlugin at load time.
+    // They must supply a label and either an action function, a setup function, or both.
+    // The setup function will be called as soon as all the page scripts have loaded,
+    // before the layout is initialised. If a plugin wishes to add icons to the layout,
+    // or hotkeys, it should do it here.
+    
+    // If an action function is provided the plugin's label will be added to the dropdown list
+    // above the info panel and the action function will be called when the label is clicked.
+
+    // Alternatively, a script name can be provided. This script will be dynamically loaded
+    // the first time the plugin is clicked on. The script MUST call setAction to set the
+    // action function (for the next time it's clicked on), and call its own action function.
+
+    var plugins = new Array();
+
+    function openPlugin(index) {
+        if (typeof plugins[index].action == 'function') {
+            plugins[index].action();
+        } else {
+            debug.log("PLUGINS","Loading script",plugins[index].script,"for",plugins[index].label);
+            $.getScript(plugins[index].script).fail(function(data, settings, exception) {
+                debug.error("PLUGINS","Failed Loading Script",exception);
+            });
+        }
+    }
+
+    return {
+        addPlugin: function(label, action, setup, script, icon) {
+            debug.log("PLUGINS","Adding Plugin",label,icon);
+            plugins.push({label: label, action: action, setup: setup, script: script, icon: icon});
+        },
+
+        doEarlyInit: function() {
+            for (var i in plugins) {
+                if (plugins[i].setup) {
+                    if (!only_plugins_with_icons || plugins[i].icon) {
+                        debug.log("PLUGINS","Setting up Plugin",plugins[i].label);
+                        plugins[i].setup();
+                    }
+                }
+            }
+        },
+
+        setupPlugins: function() {
+            for (var i in plugins) {
+                if (plugins[i].action || plugins[i].script) {
+                    debug.log("PLUGINS","Setting up Plugin",plugins[i].label);
+                    if (only_plugins_with_icons) {
+                        if (plugins[i].icon !== null) {
+                            $("#specialplugins .spicons").append('<i class="noshrink clickable clickicon topimg '+plugins[i].icon+'" name="'+i+'"></i>');
+                            $("#specialplugins .sptext").append('<div class="backhi clickable clickicon noselection menuitem" name="'+i+'">'+plugins[i].label+'</div>');
+                        }
+                    } else {
+                        $("#specialplugins").append('<div class="backhi clickable clickicon noselection menuitem" name="'+i+'">'+plugins[i].label+'</div>');
+                    }
+                }
+            }
+            $("#specialplugins").find(".clickicon").click(function() {
+                var index = parseInt($(this).attr('name'));
+                openPlugin(index);
+            });
+        },
+
+        setAction: function(label, action) {
+            for (var i in plugins) {
+                if (plugins[i].label == label) {
+                    debug.log("PLUGINS","Setting Action for",label);
+                    plugins[i].action = action;
+                }
+            }
+        },
+
+        autoOpen: function(label) {
+            for (var i in plugins) {
+                if (plugins[i].label == label) {
+                    openPlugin(i);
+                    return true;
+                }
+            }
+        }
+    }
+}();
 
 var imagePopup = function() {
     var wikipopup = null;
@@ -162,123 +255,19 @@ var imagePopup = function() {
     }
 }();
 
-function setPlaylistButtons() {
-    c = (player.status.xfade === undefined || player.status.xfade === null || player.status.xfade == 0) ? "off" : "on";
-    $("#crossfade").switchToggle(c);
-    $.each(['random', 'repeat', 'consume'], function(i,v) {
-        $("#"+v).switchToggle(player.status[v]);
-    });
-    if (player.status.replay_gain_mode) {
-        $.each(["off","track","album","auto"], function(i,v) {
-            if (player.status.replay_gain_mode == v) {
-                $("#replaygain_"+v).switchToggle("on");
-            } else {
-                $("#replaygain_"+v).switchToggle("off");
-            }
-        });
-    }
-    if (player.status.xfade !== undefined && player.status.xfade !== null &&
-        player.status.xfade > 0 && player.status.xfade != prefs.crossfade_duration) {
-        prefs.save({crossfade_duration: player.status.xfade});
-        $("#crossfade_duration").val(player.status.xfade);
-    }
+function togglePlaylistButtons() {
+    layoutProcessor.preHorse();
+    $("#playlistbuttons").slideToggle('fast', layoutProcessor.setPlaylistHeight);
+    var p = !prefs.playlistcontrolsvisible;
+    prefs.save({ playlistcontrolsvisible: p });
+    return false;
 }
 
-function prepareForLiftOff(text) {
-    infobar.notify(infobar.PERMNOTIFY,text);
-    $("#collection").empty();
-    doSomethingUseful('collection', text);
-    var x = $('<div>',{ id: 'updatemonitor', class: 'tiny', style: 'padding-left:1em;margin-right:1em'}).insertAfter($('#spinner_collection'));
-}
-
-function prepareForLiftOff2(text) {
-    $("#filecollection").empty();
-    doSomethingUseful("filecollection", text);
-}
-
-/* This is called when the page loads. It checks to see if the albums/files cache exists
-    and builds them, if necessary. If they are there, it loads them
-*/
-
-function checkCollection(forceup, rescan) {
-    if (forceup && player.updatingcollection) {
-        infobar.notify(infobar.ERROR, "Already Updating Collection!");
-        return;
-    }
-    var update = forceup;
-    if (prefs.updateeverytime) {
-        debug.mark("GENERAL","Updating Collection due to preference");
-        update = true;
-    } else {
-        if (!prefs.hide_albumlist && collection_status == 1) {
-            debug.mark("GENERAL","Updating Collection because it is out of date");
-            collection_status = 0;
-            update = true;
-        }
-    }
-    if (update) {
-        player.updatingcollection = true;
-        $("#searchresultholder").html('');
-        player.controller.scanFiles(rescan ? 'rescan' : 'update');
-    } else {
-        if (prefs.hide_filelist && !prefs.hide_albumlist) {
-            loadCollection('albums.php?item='+collectionKey('a'), null);
-        } else if (prefs.hide_albumlist && !prefs.hide_filelist) {
-            loadCollection(null, 'dirbrowser.php');
-        } else if (!prefs.hide_albumlist && !prefs.hide_filelist) {
-            loadCollection('albums.php?item='+collectionKey('a'), 'dirbrowser.php');
-        }
-    }
-}
-
-function collectionKey(w) {
-    return w+prefs.sortcollectionby+'root';
-}
-
-function loadCollection(albums, files) {
-    if (albums != null) {
-        debug.log("GENERAL","Loading Collection from URL",albums);
-        player.controller.loadCollection(albums);
-    }
-    if (files != null) {
-        debug.log("GENERAL","Loading File Browser from URL",files);
-        player.controller.reloadFilesList(files);
-    }
-}
-
-function checkPoll(data) {
-    if (data.updating_db) {
-        update_load_timer = setTimeout( pollAlbumList, 1000);
-        update_load_timer_running = true;
-    } else {
-        if (prefs.hide_filelist && !prefs.hide_albumlist) {
-            loadCollection('albums.php?rebuild=yes&dump='+collectionKey('a'), null);
-        } else if (prefs.hidealbumlist && !prefs.hide_filelist) {
-            loadCollection(null, 'dirbrowser.php');
-        } else if (!prefs.hidealbumlist && !prefs.hide_filelist) {
-            loadCollection('albums.php?rebuild=yes&dump='+collectionKey('a'), 'dirbrowser.php');
-        }
-    }
-}
-
-function pollAlbumList() {
-    if(update_load_timer_running) {
-        clearTimeout(update_load_timer);
-        update_load_timer_running = false;
-    }
-    if (prefs.player_backend == "mopidy" && prefs.mopidy_scan_command != '') {
-        $.getJSON("player/mopidy/mopidyscan.php?check=yes", checkPoll);
-    } else {
-        $.getJSON("player/mpd/postcommand.php", checkPoll);
-    }
-}
-
-function scootTheAlbums(jq) {
-    if (prefs.downloadart) {
-        $.each(jq.find("img.notexist"), function() {
-            coverscraper.GetNewAlbumArt({imgkey: $(this).attr('name')});
-        });
-    }
+function toggleCollectionButtons() {
+    $("#collectionbuttons").slideToggle('fast');
+    var p = !prefs.collectioncontrolsvisible;
+    prefs.save({ collectioncontrolsvisible: p });
+    return false;
 }
 
 function hidePanel(panel) {
@@ -286,37 +275,6 @@ function hidePanel(panel) {
     var new_state = prefs["hide_"+panel];
     debug.log("GENERAL","Hide Panel",panel,is_hidden,new_state);
     layoutProcessor.hidePanel(panel, is_hidden, new_state);
-    if (new_state) {
-        switch (panel) {
-            case "albumlist":
-                if (update_load_timer_running == false) {
-                    $("#collection").empty();
-                    $("#collection").prev().hide();
-                    $("#collection").prev().prev().hide();
-                }
-                break;
-            case "filelist":
-                if (update_load_timer_running == false) {
-                    $("#filecollection").empty();
-                }
-                break;
-        }
-    } else {
-        switch (panel) {
-            case "albumlist":
-                if (update_load_timer_running == false) {
-                    loadCollection('albums.php?item='+collectionKey('a'), null);
-                }
-                $("#collection").prev().show();
-                $("#collection").prev().prev().show();
-                break;
-            case "filelist":
-                if (update_load_timer_running == false) {
-                    loadCollection(null, 'dirbrowser.php?item=adirroot');
-                }
-                break;
-        }
-    }
     setChooserButtons();
 }
 
@@ -395,16 +353,6 @@ function getrgbs(percent,min) {
 
 }
 
-function populateTagMenu(callback) {
-    metaHandlers.genericAction(
-        'gettags',
-        callback,
-        function() {
-            debug.error("DB TRACKS", "Failed to get tags");
-        }
-    );
-}
-
 function populateSpotiTagMenu(callback) {
     spotify.recommendations.getGenreSeeds(
         function(data) {
@@ -416,127 +364,6 @@ function populateSpotiTagMenu(callback) {
         }
     );
 }
-
-var tagAdder = function() {
-
-    var index = null;
-    var lastelement = null;
-    var callback = null;
-
-    return {
-        show: function(evt, idx, cb) {
-            callback = cb;
-            if (evt.target == lastelement) {
-                tagAdder.close();
-            }  else {
-                index = idx;
-                var position = getPosition(evt);
-                layoutProcessor.setTagAdderPosition(position);
-                $("#tagadder").slideDown('fast');
-                lastelement = evt.target;
-            }
-        },
-
-        close: function() {
-            $("#tagadder").slideUp('fast');
-            lastelement = null;
-            callback = null;
-        },
-
-        add: function(toadd) {
-            debug.log("TAGADDER","New Tags :",toadd);
-            if (index !== null) {
-                nowplaying.addTags(index, toadd);
-            } else if (callback !== null) {
-                callback($(lastelement), toadd);
-            }
-            tagAdder.close();
-        }
-    }
-}();
-
-var pluginManager = function() {
-
-    // Plugins (from the plugins directory) shoud call pluginManager.addPlugin at load time.
-    // They must supply a label and either an action function, a setup function, or both.
-    // The setup function will be called as soon as all the page scripts have loaded,
-    // before the layout is initialised. If a plugin wishes to add icons to the layout,
-    // or hotkeys, it should do it here.
-    // Alternatively, a script name can be provided. This script will be dynamically loaded
-    // the first time the plugin is clicked on. The script MUST call setAction to set the
-    // action function (for the next time it's clicked on), and call its own action function.
-    // If an action function is provided the plugin's label will be added to the dropdown list
-    // above the info panel and the action function will be called when the label is clicked.
-
-    var plugins = new Array();
-
-    function openPlugin(index) {
-        if (typeof plugins[index].action == 'function') {
-            plugins[index].action();
-        } else {
-            debug.log("PLUGINS","Loading script",plugins[index].script,"for",plugins[index].label);
-            $.getScript(plugins[index].script).fail(function(data, settings, exception) {
-                debug.error("PLUGINS","Failed Loading Script",exception);
-            });
-        }
-    }
-
-    return {
-        addPlugin: function(label, action, setup, script, icon) {
-            debug.log("PLUGINS","Adding Plugin",label,icon);
-            plugins.push({label: label, action: action, setup: setup, script: script, icon: icon});
-        },
-
-        doEarlyInit: function() {
-            for (var i in plugins) {
-                if (plugins[i].setup) {
-                    if (!only_plugins_with_icons || plugins[i].icon) {
-                        debug.log("PLUGINS","Setting up Plugin",plugins[i].label);
-                        plugins[i].setup();
-                    }
-                }
-            }
-        },
-
-        setupPlugins: function() {
-            for (var i in plugins) {
-                if (plugins[i].action || plugins[i].script) {
-                    debug.log("PLUGINS","Setting up Plugin",plugins[i].label);
-                    if (only_plugins_with_icons) {
-                        if (plugins[i].icon !== null) {
-                            $("#specialplugins .spicons").append('<i class="noshrink clickable clickicon topimg '+plugins[i].icon+'" name="'+i+'"></i>');
-                            $("#specialplugins .sptext").append('<div class="backhi clickable clickicon noselection menuitem" name="'+i+'">'+plugins[i].label+'</div>');
-                        }
-                    } else {
-                        $("#specialplugins").append('<div class="backhi clickable clickicon noselection menuitem" name="'+i+'">'+plugins[i].label+'</div>');
-                    }
-                }
-            }
-            $("#specialplugins").find(".clickicon").click(function() {
-                var index = parseInt($(this).attr('name'));
-                openPlugin(index);
-            });
-        },
-
-        setAction: function(label, action) {
-            for (var i in plugins) {
-                if (plugins[i].label == label) {
-                    debug.log("PLUGINS","Setting Action for",label);
-                    plugins[i].action = action;
-                }
-            }
-        },
-
-        autoOpen: function(label) {
-            for (var i in plugins) {
-                if (plugins[i].label == label) {
-                    openPlugin(i);
-                    return true;
-                }
-            }
-        }
-    }
-}();
 
 function setSearchLabelWidth() {
     debug.log("UI","Setting Search Label Widths");
@@ -606,7 +433,6 @@ function showUpdateWindow() {
             });
         }
     }
-
 }
 
 function removeOpenItems(index) {
@@ -717,128 +543,6 @@ function doMopidyCollectionOptions() {
     if (!player.canPlay('beets')) {
         $('#beets_server_location').parent().hide();
     }
-}
-
-function editPlayerDefs() {
-    $("#configpanel").slideToggle('fast');
-    var playerpu = new popup({
-        width: 900,
-        height: 800,
-        title: language.gettext('config_players'),
-        helplink: "https://fatg3erman.github.io/RompR/Using-Multiple-Players"});
-    var mywin = playerpu.create();
-    mywin.append('<table align="center" cellpadding="2" id="playertable" width="96%"></table>');
-    $("#playertable").append('<tr><th>NAME</th><th>HOST</th><th>PORT</th><th>PASSWORD</th><th>UNIX SOCKET</th></tr>');
-    for (var i in prefs.multihosts) {
-        $("#playertable").append('<tr class="hostdef" name="'+escape(i)+'">'+
-            '<td><input type="text" size="30" name="name" class="notspecial" value="'+i+'"/></td>'+
-            '<td><input type="text" size="30" name="host" value="'+prefs.multihosts[i]['host']+'"/></td>'+
-            '<td><input type="text" size="30" name="port" value="'+prefs.multihosts[i]['port']+'"/></td>'+
-            '<td><input type="text" size="30" name="password" value="'+prefs.multihosts[i]['password']+'"/></td>'+
-            '<td><input type="text" size="30" name="socket" value="'+prefs.multihosts[i]['socket']+'"/></td>'+
-            '<td><i class="icon-cancel-circled smallicon clickicon clickremhost"></i></td>'+
-            '</tr>'
-        );
-    }
-    var buttons = $('<div>',{class: "pref"}).appendTo(mywin);
-    var add = $('<i>',{class: "icon-plus smallicon clickicon tleft"}).appendTo(buttons);
-    add.click(function() {
-        addNewPlayerRow();
-        playerpu.setContentsSize();
-    });
-    var c = $('<button>',{class: "tright"}).appendTo(buttons);
-    c.html(language.gettext('button_cancel'));
-    playerpu.useAsCloseButton(c, false);
-
-    var d = $('<button>',{class: "tright"}).appendTo(buttons);
-    d.html(language.gettext('button_OK'));
-    playerpu.useAsCloseButton(d, updatePlayerChoices);
-
-    $('.clickremhost').unbind('click');
-    $('.clickremhost').click(removePlayerDef);
-    
-    $(document).on('keyup', 'input.notspecial', function() {
-        debug.log("ENTER","Value Changed");
-        this.value = this.value.replace(/[\*&\+\s<>\[\]:;,\.\(\)]/g, '');
-    });
-
-    playerpu.open();
-}
-
-function removePlayerDef(event) {
-    if (decodeURIComponent($(event.target).parent().parent().attr('name')) == prefs.currenthost) {
-        infobar.notify(infobar.ERROR, "You cannot delete the player you're currently using");
-    } else {
-        $(event.target).parent().parent().remove();
-    }
-}
-
-function updatePlayerChoices() {
-    var newhosts = new Object();
-    var reloadNeeded = false;
-    var error = false;
-    $("#playertable").find('tr.hostdef').each(function() {
-        var currentname = decodeURIComponent($(this).attr('name'));
-        var newname = "";
-        var temp = new Object();
-        $(this).find('input').each(function() {
-            if ($(this).attr('name') == 'name') {
-                newname = $(this).val();
-            } else {
-                temp[$(this).attr('name')] = $(this).val();
-            }
-        });
-
-        newhosts[newname] = temp;
-        if (currentname == prefs.currenthost) {
-            if (newname != currentname) {
-                debug.log("Current Player renamed to "+newname,"PLAYERS");
-                reloadNeeded = newname;
-            }
-            if (temp.host != prefs.mpd_host || temp.port != prefs.mpd_port
-                || temp.socket != prefs.unix_socket || temp.password != prefs.mpd_password) {
-                debug.log("Current Player connection details changed","PLAYERS");
-                reloadNeeded = newname;
-            }
-        }
-    });
-    debug.log("PLAYERS",newhosts);
-    if (reloadNeeded !== false) {
-        prefs.save({currenthost: reloadNeeded}, function() {
-            prefs.save({multihosts: newhosts}, function() {
-                setCookie('currenthost',reloadNeeded,3650);
-                reloadWindow();
-            });
-        });
-    } else {
-        prefs.save({multihosts: newhosts});
-        replacePlayerOptions();
-        prefs.setPrefs();
-        $("#playerdefs > .savulon").click(prefs.toggleRadio);
-    }
-}
-
-function replacePlayerOptions() {
-    $("#playerdefs").empty();
-    for (var i in prefs.multihosts) {
-        $("#playerdefs").append('<input type="radio" class="topcheck savulon" name="currenthost" value="'+
-            i+'" id="host_'+escape(i)+'">'+
-            '<label for="host_'+escape(i)+'">'+i+'</label><br/>');
-    }
-}
-
-function addNewPlayerRow() {
-    $("#playertable").append('<tr class="hostdef" name="New">'+
-        '<td><input type="text" size="30" name="name" value="New"/></td>'+
-        '<td><input type="text" size="30" name="host" value=""/></td>'+
-        '<td><input type="text" size="30" name="port" value=""/></td>'+
-        '<td><input type="text" size="30" name="password" value=""/></td>'+
-        '<td><input type="text" size="30" name="socket" value=""/></td>'+
-        '<td><i class="icon-cancel-circled smallicon clickicon clickremhost"></i></td>'+
-        '</tr>'
-    );
-    $('.clickremhost').unbind('click');
-    $('.clickremhost').click(removePlayerDef);
 }
 
 function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
@@ -958,127 +662,7 @@ function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
     }
     return false;
 }
-
-function findPosition(key) {
-    // The key is the id of a dropdown div.  But that div won't exist if the dropdown hasn't been
-    // opened. So we see if it does, and if it doesn't then we use the name attribute of the
-    // toggle arrow button to locate the position and if that doesn't work then we must be in the phone
-    // skin so return the menuitem div
-    if ($("#"+key).length > 0) {
-        return $("#"+key);
-    } else if ($('i[name="'+key+'"]').length > 0) {
-        return $('i[name="'+key+'"]').parent();
-    } else {
-        return $('.menuitem[name="'+key+'"]');
-    }
-}
  
-function updateCollectionDisplay(rdata) {
-    // rdata contains HTML fragments to insert into the collection
-    // Otherwise we would have to reload the entire collection panel every time,
-    // which would cause any opened dropdowns to be mysteriously closed,
-    // which would just look shit.
-    debug.trace("RATING PLUGIN","Update Display",rdata);
-
-    if (!rdata) {
-        return;
-    }
-
-    if (rdata.hasOwnProperty('deletedalbums')) {
-        $.each(rdata.deletedalbums, function(i, v) {
-            debug.log("REMOVING", "Album", v);
-            $("#aalbum"+v).remove();
-            // w - for wishlist. Each wishlist track is in a separate album.
-            //     We check each album flagged as modified to see if it has any visible tracks and
-            //     add it to deletedalbums if it doesn't.
-            //     - wishlist tracks are invisible anyway but the only modification that can happen
-            //       to a wishlist album is that its track has been deleted
-            $("#walbum"+v).remove();
-            findPosition('aalbum'+v).remove();
-        });
-    }
-
-    if (rdata.hasOwnProperty('deletedartists')) {
-        $.each(rdata.deletedartists, function(i, v) {
-            debug.log("REMOVING", "Artist", v);
-            $("#aartist"+v).remove();
-            findPosition('aartist'+v).remove();
-        });
-    }
-
-    if (rdata.hasOwnProperty('modifiedalbums')) {
-        $('#emptycollection').remove();
-        $.each(rdata.modifiedalbums, function(i,v) {
-            // We remove and replace any modified albums, as they may have a new date or albumartist which would cause
-            // them to appear elsewhere in the collection. First remove the dropdown if it exists and replace its contents
-            var albumindex = v.id;
-            debug.log("MODIFIED","Album",albumindex);
-            $('#aalbum'+albumindex).html(v.tracklist);
-            var dropdown = $('#aalbum'+albumindex).is(':visible');
-            var dc = $('#aalbum'+albumindex).remove()[0];
-            findPosition('aalbum'+albumindex).remove();
-            insert_new_thing(v);
-            if (dropdown) {
-                debug.log("UPDATING","Album",albumindex);
-                $(dc).insertAfter(findPosition('aalbum'+albumindex));
-                $('i[name="aalbum'+albumindex+'"]').toggleOpen();
-            }
-        });
-    }
-
-    if (rdata.hasOwnProperty('modifiedartists')) {
-        $('#emptycollection').remove();
-        $.each(rdata.modifiedartists, function(i,v) {
-            // The only thing to do with artists is to add them in if they don't exist
-            // NOTE. Do this AFTER inserting new albums, because if we're doing albumbyartist with banners showing
-            // then the insertAfter logic will be wrong if we've already inserted the artist banner. We also need
-            // to remove and replace the banner when that sort option is used, because we only insertAfter an album ID
-            if (prefs.sortcollectionby == 'albumbyartist') {
-                $("#aartist"+v.id).remove();
-            }
-            var x = findPosition('aartist'+v.id);
-            if (x.length == 0) {
-                insert_new_thing(v);
-            }
-        });
-    }
-
-    if (rdata.hasOwnProperty('addedtracks') && rdata.addedtracks.length > 0) {
-        $.each(rdata.addedtracks, function(i, v) {
-            if (v.albumindex !== null && v.trackuri != '') {
-                // (Ignore if it went into the wishlist)
-                debug.log("INSERTED","Displaying",v);
-                layoutProcessor.displayCollectionInsert(v);
-            }
-        });
-    } else {
-        infobar.markCurrentTrack();
-    }
-
-    if (rdata && rdata.hasOwnProperty('stats')) {
-        // stats is another html fragment which is the contents of the
-        // statistics box at the top of the collection
-        $("#fothergill").html(rdata.stats);
-    }
-
-    scootTheAlbums($("#collection"));
-}
-
-function insert_new_thing(data) {
-    switch (data.type) {
-        case 'insertAfter':
-            debug.log("Insert After",data.where);
-            $(data.html).insertAfter(findPosition(data.where));
-            break;
-
-        case 'insertAtStart':
-            debug.log("Insert At Start",data.where);
-            $(data.html).prependTo($('#'+data.where));
-            break;
-
-    }
-}
-
 function makeProgressOfString(stats) {
     if (stats.progressString != "" && stats.durationString != "") {
         $("#playbackTime").html(stats.progressString + " " + frequentLabels.of + " " + stats.durationString);
@@ -1088,18 +672,6 @@ function makeProgressOfString(stats) {
         $("#playbackTime").html("0:00 " + frequentLabels.of + " " + stats.durationString);
     } else if (stats.progressString == "" && stats.durationString == "") {
         $("#playbackTime").html("");
-    }
-}
-
-function setPlaylistControlClicks(t) {
-    if (t) {
-        $('#random').click(player.controller.toggleRandom).parent().removeClass('thin');
-        $('#repeat').click(player.controller.toggleRepeat).parent().removeClass('thin');
-        $('#consume').click(player.controller.toggleConsume).parent().removeClass('thin');
-    } else {
-        $('#random').unbind('click').parent().addClass('thin');
-        $('#repeat').unbind('click').parent().addClass('thin');
-        $('#consume').unbind('click').parent().addClass('thin');
     }
 }
 
@@ -1119,8 +691,4 @@ function spotifyTrackListing(data) {
             '</div>';
     }
     return h;
-}
-
-function clickBindType() {
-    return prefs.clickmode == 'double' ? 'dblclick' : 'click';
 }

@@ -24,7 +24,7 @@ function musicCollectionSpotifyPlaylistHack($monitor) {
 	global $collection;
 	$dirs = array();
 	$playlists = do_mpd_command("listplaylists", true, true);
-    if (array_key_exists('playlist', $playlists)) {
+    if (is_array($playlists) && array_key_exists('playlist', $playlists)) {
         foreach ($playlists['playlist'] as $pl) {
 	    	debuglog("Scanning Playlist ".$pl,"COLLECTION",8);
 	        fwrite($monitor, "\nScanning Playlist ".$pl);

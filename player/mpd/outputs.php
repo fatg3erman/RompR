@@ -26,7 +26,7 @@ function printOutputCheckboxes() {
         if ($outputdata[$i]['outputenabled'] == 1) {
             print ' checked';
         }
-        print '><label for="outputbutton_'.$i.'" onclick="outputswitch('.$i.')">'.
+        print '><label for="outputbutton_'.$i.'" onclick="player.controller.doOutput('.$i.')">'.
             $outputdata[$i]['outputname'].'</label>';
         print '</div>';
     }

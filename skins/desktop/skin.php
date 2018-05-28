@@ -40,7 +40,7 @@
                 print '</div>';
             } else {
                 print '<div class="tooltip fixed" title="'.get_int_text('config_audiooutputs').'" style="height:14px">';
-                print '<i id="mutebutton" onclick="toggleAudioOutputs()" class="icon-sliders outhack clickicon"></i>';
+                print '<i id="mutebutton" onclick="layoutProcessor.toggleAudioOutpts()" class="icon-sliders outhack clickicon"></i>';
                 print '</div>';
             }
 
@@ -207,7 +207,7 @@ print '<button class="fixed">'.get_int_text('button_save').'</button></div>';
     </div>
     </div>
     <div class="pref textcentre">
-    <button name="donkeykong" onclick="checkCollection(true, false)">'.get_int_text('config_updatenow').'</button>
+    <button name="donkeykong" onclick="collectionHelper.checkCollection(true, false)">'.get_int_text('config_updatenow').'</button>
     </div>';
 ?>
     

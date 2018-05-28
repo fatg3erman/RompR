@@ -124,19 +124,8 @@ jQuery.fn.makeTagMenu = function(options) {
     });
 }
 
-function setTopIconSize(panels) {
-    panels.forEach( function(div) {
-        if ($(div).is(':visible')) {
-            var jq = $(div+' .topimg:not(.noshrink):visible');
-            var imh = parseInt(jq.first().css('max-height'))
-            var numicons = jq.length+1;
-            var iw = Math.min(Math.floor(($(div).width()-16)/numicons), imh);
-            jq.css({width: iw+"px", height: iw+"px", "font-size": iw+"px"});
-            var cw = iw*numicons;
-            var mar = Math.floor(((($(div).width()-16) - cw)/2)/numicons);
-            jq.css({"margin-left": mar+"px", "margin-right": mar+"px"});
-        }
-    });
+jQuery.fn.fanoogleMenus = function() {
+    return this;
 }
 
 function showHistory() {
@@ -235,6 +224,10 @@ var layoutProcessor = function() {
 
         },
 
+        addCustomScrollBar: function(value) {
+        
+        },
+
         sourceControl: function(source, callback) {
             if (source == 'infopane') {
                 $('#infobar').css('display', 'none');
@@ -254,8 +247,23 @@ var layoutProcessor = function() {
             }
         },
 
+        setTopIconSize: function(panels) {
+            panels.forEach( function(div) {
+                if ($(div).is(':visible')) {
+                    var jq = $(div+' .topimg:not(.noshrink):visible');
+                    var imh = parseInt(jq.first().css('max-height'))
+                    var numicons = jq.length+1;
+                    var iw = Math.min(Math.floor(($(div).width()-16)/numicons), imh);
+                    jq.css({width: iw+"px", height: iw+"px", "font-size": iw+"px"});
+                    var cw = iw*numicons;
+                    var mar = Math.floor(((($(div).width()-16) - cw)/2)/numicons);
+                    jq.css({"margin-left": mar+"px", "margin-right": mar+"px"});
+                }
+            });
+        },
+        
         adjustLayout: function() {
-            setTopIconSize(['#headerbar', '#chooserbuttons']);
+            layoutProcessor.setTopIconSize(['#headerbar', '#chooserbuttons']);
             infobar.updateWindowValues();
             var ws = getWindowSize();
             var newheight = ws.y-$("#headerbar").outerHeight(true);
@@ -273,10 +281,6 @@ var layoutProcessor = function() {
             // on a narrow screen. Non of the other onlywides do. Can't figure it out
             // so just clear it here.
             $('.choose_filelist').css('display','');
-        },
-
-        fanoogleMenus: function(jq) {
-
         },
 
         displayCollectionInsert: function(d) {
@@ -416,10 +420,6 @@ function popup(opts) {
 // custom scroll bars, tipTip, and drag/drop stuff
 jQuery.fn.tipTip = function() {
     return this;
-}
-
-function addCustomScrollBar(value) {
-
 }
 
 jQuery.fn.acceptDroppedTracks = function() {

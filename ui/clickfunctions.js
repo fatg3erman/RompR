@@ -369,7 +369,7 @@ function doAlbumMenu(event, element, inbrowser, callback) {
             $('#'+menutoopen).load("albums.php?item="+menutoopen, function() {
                 $(this).removeClass("notfilled");
                 $(this).menuReveal(function() {
-                    scootTheAlbums($(this));
+                    collectionHelper.scootTheAlbums($(this));
                     if (callback) callback();
                     infobar.markCurrentTrack();
                     if ($(this).find('input.expandalbum').length > 0 ) {
@@ -383,7 +383,7 @@ function doAlbumMenu(event, element, inbrowser, callback) {
                                 element.stopSpinner();
                                 infobar.markCurrentTrack();
                                 $("#"+menutoopen).html(data);
-                                scootTheAlbums($("#"+menutoopen));
+                                collectionHelper.scootTheAlbums($("#"+menutoopen));
                             },
                             error: function(data) {
                                 debug.error("CLICKFUNCTIONS", "Got NO data for ",menutoopen);
@@ -404,7 +404,7 @@ function doAlbumMenu(event, element, inbrowser, callback) {
                                     var spunk = $("#"+menutoopen);
                                 }
                                 spunk.html(data);
-                                scootTheAlbums(spunk);
+                                collectionHelper.scootTheAlbums(spunk);
                                 infobar.markCurrentTrack();
                             },
                             error: function(data) {
@@ -722,7 +722,7 @@ function actuallyAmendAlbumDetails(albumindex) {
     metaHandlers.genericAction(
         [data],
         function(rdata) {
-            updateCollectionDisplay(rdata);
+            collectionHelper.updateCollectionDisplay(rdata);
             playlist.repopulate();
         },
         function(rdata) {

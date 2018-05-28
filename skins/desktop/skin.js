@@ -143,60 +143,17 @@ jQuery.fn.makeTagMenu = function(options) {
     });
 }
 
-function getPanelWidths() {
-    var sourcesweight = (prefs.sourceshidden) ? 0 : 1;
-    var playlistweight = (prefs.playlisthidden) ? 0 : 1;
-    var browserweight = (prefs.hidebrowser) ? 0 : 1;
-    var sourceswidth = prefs.sourceswidthpercent*sourcesweight;
-    var playlistwidth = prefs.playlistwidthpercent*playlistweight;
-    var browserwidth = (100 - sourceswidth - playlistwidth)*browserweight;
-    if (browserwidth < 0) browserwidth = 0;
-    return ({infopane: browserwidth, sources: sourceswidth, playlist: playlistwidth});
-}
-
-function expandInfo(side) {
-    switch(side) {
-        case "left":
-            var p = !prefs.sourceshidden;
-            prefs.save({sourceshidden: p});
-            break;
-        case "right":
-            var p = !prefs.playlisthidden;
-            prefs.save({playlisthidden: p});
-            break;
-    }
-    animatePanels();
-    return false;
-}
-
-function setExpandIcons() {
-    var i = (prefs.sourceshidden) ? "icon-angle-double-right" : "icon-angle-double-left";
-    $("#expandleft").removeClass("icon-angle-double-right icon-angle-double-left").addClass(i);
-    i = (prefs.playlisthidden) ? "icon-angle-double-left" : "icon-angle-double-right";
-    $("#expandright").removeClass("icon-angle-double-right icon-angle-double-left").addClass(i);
-}
-
-function animatePanels() {
-    var widths = getPanelWidths();
-    widths.speed = { sources: 400, playlist: 400, infopane: 400 };
-    // Ensure that the playlist and playlistcontrols don't get pushed off the edge
-    if ($("#playlist").is(':hidden')) {
-        var w = $("#infopane").width();
-        w -= 12;
-        $("#infopane").css({width: w+"px"});
-        $("#infopanecontrols").css({width: w+"px"});
-    } else {
-        var w = $("#playlist").width();
-        w -= 12;
-        $("#playlist").css({width: w+"px"});
-        $("#playlistcontrols").css({width: w+"px"});
-    }
-    $("#sources").animatePanel(widths);
-    $("#sourcescontrols").animatePanel(widths);
-    $("#playlist").animatePanel(widths);
-    $("#playlistcontrols").animatePanel(widths);
-    $("#infopane").animatePanel(widths);
-    $("#infopanecontrols").animatePanel(widths);
+jQuery.fn.fanoogleMenus = function() {
+    return this.each( function() {
+        var avheight = $("#bottompage").height() - 16;
+        var conheight = $(this).children().first().children('.mCSB_container').height();
+        var nh = Math.min(avheight, conheight);
+        $(this).css({height: nh+"px", "max-height":''});
+        $(this).mCustomScrollbar("update");
+        if ($(this).attr("id") == "hpscr") {
+            $(this).mCustomScrollbar("scrollTo", '.current', {scrollInertia:0});
+        }
+    });
 }
 
 jQuery.fn.animatePanel = function(options) {
@@ -216,84 +173,16 @@ jQuery.fn.animatePanel = function(options) {
                 } else {
                     if (opanel == "infopane") browser.rePoint();
                     if (opanel.match(/controls/)) {
-                        setExpandIcons();
-                        setTopIconSize(["#"+opanel]);
+                        var i = (prefs.sourceshidden) ? "icon-angle-double-right" : "icon-angle-double-left";
+                        $("#expandleft").removeClass("icon-angle-double-right icon-angle-double-left").addClass(i);
+                        i = (prefs.playlisthidden) ? "icon-angle-double-left" : "icon-angle-double-right";
+                        $("#expandright").removeClass("icon-angle-double-right icon-angle-double-left").addClass(i);
+                        layoutProcessor.setTopIconSize(["#"+opanel]);
                     }
                 }
             }
         }
     );
-}
-
-function doThatFunkyThang() {
-    var widths = getPanelWidths();
-    $("#sources").css("width", widths.sources+"%");
-    $("#sourcescontrols").css("width", widths.sources+"%");
-    $("#infopane").css("width", widths.infopane+"%");
-    $("#infopanecontrols").css("width", widths.infopane+"%");
-    $("#playlist").css("width", widths.playlist+"%");
-    $("#playlistcontrols").css("width", widths.playlist+"%");
-}
-
-function hideBrowser() {
-    if (prefs.hidebrowser) {
-        prefs.save({playlistwidthpercent: 50, sourceswidthpercent: 50});
-    } else {
-        prefs.save({playlistwidthpercent: 25, sourceswidthpercent: 25});
-    }
-    animatePanels();
-}
-
-function setTopIconSize(panels) {
-    var imw = (parseInt($('.topimg').first().css('margin-left')) +
-        parseInt($('.topimg').first().css('margin-right')));
-    panels.forEach( function(div) {
-        if ($(div).is(':visible')) {
-            var icons = $(div+" .topimg");
-            var numicons = icons.length;
-            var mw = imw*numicons;
-            var iw = Math.floor(($(div).width() - mw)/numicons);
-            if (iw > 24) iw = 24;
-            if (iw < 2) iw = 2;
-            icons.css({width: iw+"px", height: iw+"px", "font-size": (iw-2)+"px"});
-        }
-    });
-}
-
-function playlistControlButton(button) {
-    if (!$("#playlistbuttons").is(':visible')) {
-        togglePlaylistButtons()
-    }
-    $("#"+button).click();
-}
-
-function addCustomScrollBar(value) {
-    $(value).mCustomScrollbar({
-        theme: "light-thick",
-        scrollInertia: 300,
-        contentTouchScroll: 25,
-        mouseWheel: {
-            scrollAmount: parseInt(prefs.wheelscrollspeed),
-        },
-        alwaysShowScrollbar: 1,
-        advanced: {
-            updateOnContentResize: true,
-            updateOnImageLoad: false,
-            autoScrollOnFocus: false,
-            autoUpdateTimeout: 500,
-        }
-    });
-}
-
-function flashTrack(uri, album) {
-    infobar.markCurrentTrack();
-    var thing = uri ? album : uri;
-    $('[name="'+thing+'"]').makeFlasher({flashtime: 0.5, repeats: 5});
-    // The timeout is so that markCurrentTrack doesn't fuck it up - these often
-    // have CSS transitions that affect the scrollbar size
-    setTimeout(function() {
-        layoutProcessor.scrollCollectionTo($('[name="'+thing+'"]'));
-    }, 1000);
 }
 
 var layoutProcessor = function() {
@@ -306,7 +195,62 @@ var layoutProcessor = function() {
         }
     }
 
-    my_scrollers = [ "#sources", "#infopane", "#pscroller", ".topdropmenu", ".drop-box" ];
+    function flashTrack(uri, album) {
+        infobar.markCurrentTrack();
+        var thing = uri ? album : uri;
+        $('[name="'+thing+'"]').makeFlasher({flashtime: 0.5, repeats: 5});
+        // The timeout is so that markCurrentTrack doesn't fuck it up - these often
+        // have CSS transitions that affect the scrollbar size
+        setTimeout(function() {
+            layoutProcessor.scrollCollectionTo($('[name="'+thing+'"]'));
+        }, 1000);
+    }
+
+    function doThatFunkyThang() {
+        var widths = getPanelWidths();
+        $("#sources").css("width", widths.sources+"%");
+        $("#sourcescontrols").css("width", widths.sources+"%");
+        $("#infopane").css("width", widths.infopane+"%");
+        $("#infopanecontrols").css("width", widths.infopane+"%");
+        $("#playlist").css("width", widths.playlist+"%");
+        $("#playlistcontrols").css("width", widths.playlist+"%");
+    }
+
+    function getPanelWidths() {
+        var sourcesweight = (prefs.sourceshidden) ? 0 : 1;
+        var playlistweight = (prefs.playlisthidden) ? 0 : 1;
+        var browserweight = (prefs.hidebrowser) ? 0 : 1;
+        var sourceswidth = prefs.sourceswidthpercent*sourcesweight;
+        var playlistwidth = prefs.playlistwidthpercent*playlistweight;
+        var browserwidth = (100 - sourceswidth - playlistwidth)*browserweight;
+        if (browserwidth < 0) browserwidth = 0;
+        return ({infopane: browserwidth, sources: sourceswidth, playlist: playlistwidth});
+    }
+
+    function animatePanels() {
+        var widths = getPanelWidths();
+        widths.speed = { sources: 400, playlist: 400, infopane: 400 };
+        // Ensure that the playlist and playlistcontrols don't get pushed off the edge
+        if ($("#playlist").is(':hidden')) {
+            var w = $("#infopane").width();
+            w -= 12;
+            $("#infopane").css({width: w+"px"});
+            $("#infopanecontrols").css({width: w+"px"});
+        } else {
+            var w = $("#playlist").width();
+            w -= 12;
+            $("#playlist").css({width: w+"px"});
+            $("#playlistcontrols").css({width: w+"px"});
+        }
+        $("#sources").animatePanel(widths);
+        $("#sourcescontrols").animatePanel(widths);
+        $("#playlist").animatePanel(widths);
+        $("#playlistcontrols").animatePanel(widths);
+        $("#infopane").animatePanel(widths);
+        $("#infopanecontrols").animatePanel(widths);
+    }
+
+    var my_scrollers = [ "#sources", "#infopane", "#pscroller", ".topdropmenu", ".drop-box" ];
 
     return {
 
@@ -356,6 +300,13 @@ var layoutProcessor = function() {
 
         },
 
+        playlistControlHotKey: function(button) {
+            if (!$("#playlistbuttons").is(':visible')) {
+                togglePlaylistButtons()
+            }
+            $("#"+button).click();
+        },
+
         updateInfopaneScrollbars: function() {
             $('#infopane').mCustomScrollbar('update');
         },
@@ -396,6 +347,21 @@ var layoutProcessor = function() {
             infobar.notify(infobar.SMARTRADIO, "Preparing. Please Wait A Moment....");
         },
 
+        setTopIconSize: function(panels) {
+            var imw = (parseInt($('.topimg').first().css('margin-left')) + parseInt($('.topimg').first().css('margin-right')));
+            panels.forEach( function(div) {
+                if ($(div).is(':visible')) {
+                    var icons = $(div+" .topimg");
+                    var numicons = icons.length;
+                    var mw = imw*numicons;
+                    var iw = Math.floor(($(div).width() - mw)/numicons);
+                    if (iw > 24) iw = 24;
+                    if (iw < 2) iw = 2;
+                    icons.css({width: iw+"px", height: iw+"px", "font-size": (iw-2)+"px"});
+                }
+            });
+        },
+
         scrollPlaylistToCurrentTrack: function() {
             if (prefs.scrolltocurrent && $('.track[romprid="'+player.status.songid+
                 '"],.booger[romprid="'+player.status.songid+'"]').length > 0) {
@@ -417,6 +383,13 @@ var layoutProcessor = function() {
             }
         },
 
+        toggleAudioOutpts: function() {
+            prefs.save({outputsvisible: !$('#outputbox').is(':visible')});
+            $("#outputbox").animate({width: 'toggle'},'fast',function() {
+                infobar.biggerize();
+            });
+        },
+
         preHorse: function() {
             if (!$("#playlistbuttons").is(":visible")) {
                 // Make the playlist scroller shorter so the window doesn't get a vertical scrollbar
@@ -424,6 +397,48 @@ var layoutProcessor = function() {
                 var newheight = $("#pscroller").height() - 48;
                 $("#pscroller").css("height", newheight.toString()+"px");
             }
+        },
+
+        hideBrowser: function() {
+            if (prefs.hidebrowser) {
+                prefs.save({playlistwidthpercent: 50, sourceswidthpercent: 50});
+            } else {
+                prefs.save({playlistwidthpercent: 25, sourceswidthpercent: 25});
+            }
+            animatePanels();
+        },
+
+        expandInfo: function(side) {
+            switch(side) {
+                case "left":
+                    var p = !prefs.sourceshidden;
+                    prefs.save({sourceshidden: p});
+                    break;
+                case "right":
+                    var p = !prefs.playlisthidden;
+                    prefs.save({playlisthidden: p});
+                    break;
+            }
+            animatePanels();
+            return false;
+        },
+
+        addCustomScrollBar: function(value) {
+            $(value).mCustomScrollbar({
+                theme: "light-thick",
+                scrollInertia: 300,
+                contentTouchScroll: 25,
+                mouseWheel: {
+                    scrollAmount: parseInt(prefs.wheelscrollspeed),
+                },
+                alwaysShowScrollbar: 1,
+                advanced: {
+                    updateOnContentResize: true,
+                    updateOnImageLoad: false,
+                    autoScrollOnFocus: false,
+                    autoUpdateTimeout: 500,
+                }
+            });
         },
 
         scrollCollectionTo: function(jq) {
@@ -470,20 +485,10 @@ var layoutProcessor = function() {
                 $('.topdropmenu').css('height', "");
             }
             layoutProcessor.setPlaylistHeight();
-            setTopIconSize(["#sourcescontrols", "#infopanecontrols", "#playlistcontrols"]);
+            layoutProcessor.setTopIconSize(["#sourcescontrols", "#infopanecontrols", "#playlistcontrols"]);
             infobar.rejigTheText();
             browser.rePoint();
-        },
-
-        fanoogleMenus: function(jq) {
-            var avheight = $("#bottompage").height() - 16;
-            var conheight = jq.children().first().children('.mCSB_container').height();
-            var nh = Math.min(avheight, conheight);
-            jq.css({height: nh+"px", "max-height":''});
-            jq.mCustomScrollbar("update");
-            if (jq.attr("id") == "hpscr") {
-                $('#hpscr').mCustomScrollbar("scrollTo", '.current', {scrollInertia:0});
-            }
+            $('.topdropmenu').fanoogleMenus();
         },
 
         displayCollectionInsert: function(details) {
@@ -537,7 +542,7 @@ var layoutProcessor = function() {
 
         initialise: function() {
             if (prefs.outputsvisible) {
-                toggleAudioOutputs();
+                layoutProcessor.toggleAudioOutpts();
             }
             $("#sortable").disableSelection();
             setDraggable('#collection');
@@ -589,17 +594,19 @@ var layoutProcessor = function() {
             $(".enter").keyup( onKeyUp );
             $.each(my_scrollers,
                 function( index, value ) {
-                addCustomScrollBar(value);
+                layoutProcessor.addCustomScrollBar(value);
             });
 
             $("#sources").find('.mCSB_draggerRail').resizeHandle({
                 adjusticons: ['#sourcescontrols', '#infopanecontrols'],
-                side: 'left'
+                side: 'left',
+                donefunc: doThatFunkyThang
             });
 
             $("#infopane").find('.mCSB_draggerRail').resizeHandle({
                 adjusticons: ['#playlistcontrols', '#infopanecontrols'],
-                side: 'right'
+                side: 'right',
+                donefunc: doThatFunkyThang
             });
 
             shortcuts.load();
@@ -620,8 +627,8 @@ var layoutProcessor = function() {
             $('#love').click(nowplaying.love);
             $("#ratingimage").click(nowplaying.setRating);
             $('.icon-rss.npicon').click(function(){podcasts.doPodcast('nppodiput')});
-            $('#expandleft').click(function(){expandInfo('left')});
-            $('#expandright').click(function(){expandInfo('right')});
+            $('#expandleft').click(function(){layoutProcessor.expandInfo('left')});
+            $('#expandright').click(function(){layoutProcessor.expandInfo('right')});
             $('.clear_playlist').click(playlist.clear);
             $("#playlistname").parent().next('button').click(player.controller.savePlaylist);
 

@@ -144,38 +144,19 @@ jQuery.fn.makeTagMenu = function(options) {
     });
 }
 
-function getPanelWidths() {
-    var sourcesweight = (prefs.sourceshidden) ? 0 : 1;
-    var browserweight = (prefs.hidebrowser) ? 0 : 1;
-    var sourceswidth = prefs.sourceswidthpercent*sourcesweight;
-    var browserwidth = (100 - sourceswidth)*browserweight;
-    if (browserwidth < 0) browserwidth = 0;
-    return ({infopane: browserwidth, sources: sourceswidth});
-}
-
-function expandInfo(side) {
-    switch(side) {
-        case "left":
-            var p = !prefs.sourceshidden;
-            prefs.save({sourceshidden: p});
-            break;
-    }
-    animatePanels();
-    return false;
-}
-
-function setExpandIcons() {
-    var i = (prefs.sourceshidden) ? "icon-angle-double-right" : "icon-angle-double-left";
-    $("#expandleft").removeClass("icon-angle-double-right icon-angle-double-left").addClass(i);
-}
-
-function animatePanels() {
-    var widths = getPanelWidths();
-    widths.speed = { sources: 400, infopane: 400 };
-    $("#sources").animatePanel(widths);
-    $("#sourcescontrols").animatePanel(widths);
-    $("#infopane").animatePanel(widths);
-    $("#infopanecontrols").animatePanel(widths);
+jQuery.fn.fanoogleMenus = function() {
+    return this.each( function() {
+        var top = $(this).children().first().children('.mCSB_container').offset().top;
+        var conheight = $(this).children().first().children('.mCSB_container').height();
+        var ws = getWindowSize();
+        var avheight = ws.y - top;
+        var nh = Math.min(avheight, conheight);
+        $(this).css({height: nh+"px", "max-height":''});
+        $(this).mCustomScrollbar("update");
+        if ($(this).attr("id") == "hpscr") {
+            $(this).mCustomScrollbar("scrollTo", '.current', {scrollInertia:0});
+        }
+    });
 }
 
 jQuery.fn.animatePanel = function(options) {
@@ -195,75 +176,14 @@ jQuery.fn.animatePanel = function(options) {
                 } else {
                     if (opanel == "infopane") browser.rePoint();
                     if (opanel.match(/controls/)) {
-                        setExpandIcons();
-                        setTopIconSize(["#"+opanel]);
+                        var i = (prefs.sourceshidden) ? "icon-angle-double-right" : "icon-angle-double-left";
+                        $("#expandleft").removeClass("icon-angle-double-right icon-angle-double-left").addClass(i);
+                        layoutProcessor.setTopIconSize(["#"+opanel]);
                     }
                 }
             }
         }
     );
-}
-
-function doThatFunkyThang() {
-    var widths = getPanelWidths();
-    $("#sources").css("width", widths.sources+"%");
-    $("#sourcescontrols").css("width", widths.sources+"%");
-    $("#infopane").css("width", widths.infopane+"%");
-    $("#infopanecontrols").css("width", widths.infopane+"%");
-}
-
-function hideBrowser() {
-}
-
-function setTopIconSize(panels) {
-    var imw = (parseInt($('.topimg').first().css('margin-left'))+parseInt($('.topimg').first().css('margin-right')));
-    panels.forEach( function(div) {
-        if ($(div).is(':visible')) {
-            var icons = $(div+" .topimg");
-            var numicons = icons.length;
-            var mw = imw*numicons;
-            var iw = Math.floor(($(div).width() - mw)/numicons);
-            if (iw > 24) iw = 24;
-            if (iw < 2) iw = 2;
-            icons.css({width: iw+"px", height: iw+"px"});
-        }
-    });
-}
-
-function playlistControlButton(button) {
-    if (!$("#playlistbuttons").is(':visible')) {
-        togglePlaylistButtons()
-    }
-    $("#"+button).click();
-}
-
-function addCustomScrollBar(value) {
-    $(value).mCustomScrollbar({
-        theme: "light-thick",
-        scrollInertia: 300,
-        contentTouchScroll: 25,
-        mouseWheel: {
-            scrollAmount: parseInt(prefs.wheelscrollspeed),
-        },
-        alwaysShowScrollbar: 1,
-        advanced: {
-            updateOnContentResize: true,
-            updateOnImageLoad: false,
-            autoScrollOnFocus: false,
-            autoUpdateTimeout: 500,
-        }
-    });
-}
-
-function flashTrack(uri, album) {
-    infobar.markCurrentTrack();
-    var thing = uri ? album : uri;
-    $('[name="'+thing+'"]').makeFlasher({flashtime: 0.5, repeats: 5});
-    // The timeout is so that markCurrentTrack doesn't fuck it up - these often
-    // have CSS transitions that affect the scrollbar size
-    setTimeout(function() {
-        layoutProcessor.scrollCollectionTo($('[name="'+thing+'"]'));
-    }, 1000);
 }
 
 var layoutProcessor = function() {
@@ -276,7 +196,44 @@ var layoutProcessor = function() {
         }
     }
 
-    my_scrollers = [ "#sources", "#infopane", ".topdropmenu", ".drop-box" ];
+    function flashTrack(uri, album) {
+        infobar.markCurrentTrack();
+        var thing = uri ? album : uri;
+        $('[name="'+thing+'"]').makeFlasher({flashtime: 0.5, repeats: 5});
+        // The timeout is so that markCurrentTrack doesn't fuck it up - these often
+        // have CSS transitions that affect the scrollbar size
+        setTimeout(function() {
+            layoutProcessor.scrollCollectionTo($('[name="'+thing+'"]'));
+        }, 1000);
+    }
+
+    function doThatFunkyThang() {
+        var widths = getPanelWidths();
+        $("#sources").css("width", widths.sources+"%");
+        $("#sourcescontrols").css("width", widths.sources+"%");
+        $("#infopane").css("width", widths.infopane+"%");
+        $("#infopanecontrols").css("width", widths.infopane+"%");
+    }
+
+    function getPanelWidths() {
+        var sourcesweight = (prefs.sourceshidden) ? 0 : 1;
+        var browserweight = (prefs.hidebrowser) ? 0 : 1;
+        var sourceswidth = prefs.sourceswidthpercent*sourcesweight;
+        var browserwidth = (100 - sourceswidth)*browserweight;
+        if (browserwidth < 0) browserwidth = 0;
+        return ({infopane: browserwidth, sources: sourceswidth});
+    }
+
+    function animatePanels() {
+        var widths = getPanelWidths();
+        widths.speed = { sources: 400, infopane: 400 };
+        $("#sources").animatePanel(widths);
+        $("#sourcescontrols").animatePanel(widths);
+        $("#infopane").animatePanel(widths);
+        $("#infopanecontrols").animatePanel(widths);
+    }
+
+    var my_scrollers = [ "#sources", "#infopane", ".topdropmenu", ".drop-box" ];
     var rtime = '';
     var ptime = '';
     var headers = Array();
@@ -328,6 +285,13 @@ var layoutProcessor = function() {
             return {width: winsize.x - 32, height: winsize.y - 32};
         },
 
+        toggleAudioOutpts: function() {
+            prefs.save({outputsvisible: !$('#outputbox').is(':visible')});
+            $("#outputbox").animate({width: 'toggle'},'fast',function() {
+                infobar.biggerize();
+            });
+        },
+
         hidePanel: function(panel, is_hidden, new_state) {
             if (is_hidden != new_state) {
                 if (new_state && prefs.chooser == panel) {
@@ -356,12 +320,34 @@ var layoutProcessor = function() {
             
         },
 
+        playlistControlHotKey: function(button) {
+            if (!$("#playlistbuttons").is(':visible')) {
+                togglePlaylistButtons()
+            }
+            $("#"+button).click();
+        },
+
         updateInfopaneScrollbars: function() {
             $('#infopane').mCustomScrollbar('update');
         },
 
         playlistLoading: function() {
             infobar.notify(infobar.SMARTRADIO, language.gettext('label_smartsetup'));
+        },
+
+        setTopIconSize: function(panels) {
+            var imw = (parseInt($('.topimg').first().css('margin-left'))+parseInt($('.topimg').first().css('margin-right')));
+            panels.forEach( function(div) {
+                if ($(div).is(':visible')) {
+                    var icons = $(div+" .topimg");
+                    var numicons = icons.length;
+                    var mw = imw*numicons;
+                    var iw = Math.floor(($(div).width() - mw)/numicons);
+                    if (iw > 24) iw = 24;
+                    if (iw < 2) iw = 2;
+                    icons.css({width: iw+"px", height: iw+"px"});
+                }
+            });
         },
 
         scrollPlaylistToCurrentTrack: function() {
@@ -386,6 +372,28 @@ var layoutProcessor = function() {
 
         },
 
+        hideBrowser: function() {
+            
+        },
+
+        addCustomScrollBar: function(value) {
+            $(value).mCustomScrollbar({
+                theme: "light-thick",
+                scrollInertia: 300,
+                contentTouchScroll: 25,
+                mouseWheel: {
+                    scrollAmount: parseInt(prefs.wheelscrollspeed),
+                },
+                alwaysShowScrollbar: 1,
+                advanced: {
+                    updateOnContentResize: true,
+                    updateOnImageLoad: false,
+                    autoScrollOnFocus: false,
+                    autoUpdateTimeout: 500,
+                }
+            });
+        },
+
         scrollCollectionTo: function(jq) {
             if (jq) {
                 debug.log("LAYOUT","Scrolling Collection To",jq, jq.position().top,$("#collection").parent().parent().parent().height()/2);
@@ -399,6 +407,17 @@ var layoutProcessor = function() {
             } else {
                 debug.log("LAYOUT","Was asked to scroll collection to something non-existent",2);
             }
+        }
+        
+        expandInfo: function(side) {
+            switch(side) {
+                case "left":
+                    var p = !prefs.sourceshidden;
+                    prefs.save({sourceshidden: p});
+                    break;
+            }
+            animatePanels();
+            return false;
         },
 
         sourceControl: function(source, callback) {
@@ -431,22 +450,10 @@ var layoutProcessor = function() {
             }
             var newwidth = ws.x - $('#infobar').offset().left;
             $('#infobar').css('width', newwidth+'px');
-            setTopIconSize(["#sourcescontrols", "#infopanecontrols"]);
+            layoutProcessor.setTopIconSize(["#sourcescontrols", "#infopanecontrols"]);
             infobar.rejigTheText();
             browser.rePoint();
-        },
-
-        fanoogleMenus: function(jq) {
-            var top = jq.children().first().children('.mCSB_container').offset().top;
-            var conheight = jq.children().first().children('.mCSB_container').height();
-            var ws = getWindowSize();
-            var avheight = ws.y - top;
-            var nh = Math.min(avheight, conheight);
-            jq.css({height: nh+"px", "max-height":''});
-            jq.mCustomScrollbar("update");
-            if (jq.attr("id") == "hpscr") {
-                $('#hpscr').mCustomScrollbar("scrollTo", '.current', {scrollInertia:0});
-            }
+            $('.topdropmenu').fanoogleMenus();
         },
 
         displayCollectionInsert: function(details) {
@@ -584,7 +591,7 @@ var layoutProcessor = function() {
 
         initialise: function() {
             if (prefs.outputsvisible) {
-                toggleAudioOutputs();
+                layoutProcessor.toggleAudioOutpts();
             }
             $("#sortable").disableSelection();
             setDraggable('#collection');
@@ -637,17 +644,13 @@ var layoutProcessor = function() {
             $(".enter").keyup( onKeyUp );
             $.each(my_scrollers,
                 function( index, value ) {
-                addCustomScrollBar(value);
+                layoutProcessor.addCustomScrollBar(value);
             });
 
             $("#sources").find('.mCSB_draggerRail').resizeHandle({
                 adjusticons: ['#sourcescontrols', '#infopanecontrols'],
-                side: 'left'
-            });
-
-            $("#infopane").find('.mCSB_draggerRail').resizeHandle({
-                adjusticons: ['#playlistcontrols', '#infopanecontrols'],
-                side: 'right'
+                side: 'left',
+                donefunc: doThatFunkyThang
             });
 
             shortcuts.load();
@@ -668,7 +671,7 @@ var layoutProcessor = function() {
             $('#love').click(nowplaying.love);
             $("#ratingimage").click(nowplaying.setRating);
             $('.icon-rss.npicon').click(function(){podcasts.doPodcast('nppodiput')});
-            $('#expandleft').click(function(){expandInfo('left')});
+            $('#expandleft').click(function(){layoutProcessor.expandInfo('left')});
             $('.clear_playlist').click(playlist.clear);
             $("#playlistname").parent().next('button').click(player.controller.savePlaylist);
 

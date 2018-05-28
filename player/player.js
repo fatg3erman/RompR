@@ -1,5 +1,132 @@
 var player = function() {
 
+    function playerEditor() {
+
+        var self = this;
+
+        function removePlayerDef(event) {
+            if (decodeURIComponent($(event.target).parent().parent().attr('name')) == prefs.currenthost) {
+                infobar.notify(infobar.ERROR, "You cannot delete the player you're currently using");
+            } else {
+                $(event.target).parent().parent().remove();
+            }
+        }
+
+        function addNewPlayerRow() {
+            $("#playertable").append('<tr class="hostdef" name="New">'+
+                '<td><input type="text" size="30" name="name" value="New"/></td>'+
+                '<td><input type="text" size="30" name="host" value=""/></td>'+
+                '<td><input type="text" size="30" name="port" value=""/></td>'+
+                '<td><input type="text" size="30" name="password" value=""/></td>'+
+                '<td><input type="text" size="30" name="socket" value=""/></td>'+
+                '<td><i class="icon-cancel-circled smallicon clickicon clickremhost"></i></td>'+
+                '</tr>'
+            );
+            $('.clickremhost').unbind('click');
+            $('.clickremhost').click(removePlayerDef);
+        }
+
+        function updatePlayerChoices() {
+            var newhosts = new Object();
+            var reloadNeeded = false;
+            var error = false;
+            $("#playertable").find('tr.hostdef').each(function() {
+                var currentname = decodeURIComponent($(this).attr('name'));
+                var newname = "";
+                var temp = new Object();
+                $(this).find('input').each(function() {
+                    if ($(this).attr('name') == 'name') {
+                        newname = $(this).val();
+                    } else {
+                        temp[$(this).attr('name')] = $(this).val();
+                    }
+                });
+        
+                newhosts[newname] = temp;
+                if (currentname == prefs.currenthost) {
+                    if (newname != currentname) {
+                        debug.log("Current Player renamed to "+newname,"PLAYERS");
+                        reloadNeeded = newname;
+                    }
+                    if (temp.host != prefs.mpd_host || temp.port != prefs.mpd_port
+                        || temp.socket != prefs.unix_socket || temp.password != prefs.mpd_password) {
+                        debug.log("Current Player connection details changed","PLAYERS");
+                        reloadNeeded = newname;
+                    }
+                }
+            });
+            debug.log("PLAYERS",newhosts);
+            if (reloadNeeded !== false) {
+                prefs.save({currenthost: reloadNeeded}, function() {
+                    prefs.save({multihosts: newhosts}, function() {
+                        setCookie('currenthost',reloadNeeded,3650);
+                        reloadWindow();
+                    });
+                });
+            } else {
+                prefs.save({multihosts: newhosts});
+                self.replacePlayerOptions();
+                prefs.setPrefs();
+                $("#playerdefs > .savulon").click(prefs.toggleRadio);
+            }
+        }
+        
+        this.edit = function() {
+            $("#configpanel").slideToggle('fast');
+            var playerpu = new popup({
+                width: 900,
+                height: 800,
+                title: language.gettext('config_players'),
+                helplink: "https://fatg3erman.github.io/RompR/Using-Multiple-Players"});
+            var mywin = playerpu.create();
+            mywin.append('<table align="center" cellpadding="2" id="playertable" width="96%"></table>');
+            $("#playertable").append('<tr><th>NAME</th><th>HOST</th><th>PORT</th><th>PASSWORD</th><th>UNIX SOCKET</th></tr>');
+            for (var i in prefs.multihosts) {
+                $("#playertable").append('<tr class="hostdef" name="'+escape(i)+'">'+
+                    '<td><input type="text" size="30" name="name" class="notspecial" value="'+i+'"/></td>'+
+                    '<td><input type="text" size="30" name="host" value="'+prefs.multihosts[i]['host']+'"/></td>'+
+                    '<td><input type="text" size="30" name="port" value="'+prefs.multihosts[i]['port']+'"/></td>'+
+                    '<td><input type="text" size="30" name="password" value="'+prefs.multihosts[i]['password']+'"/></td>'+
+                    '<td><input type="text" size="30" name="socket" value="'+prefs.multihosts[i]['socket']+'"/></td>'+
+                    '<td><i class="icon-cancel-circled smallicon clickicon clickremhost"></i></td>'+
+                    '</tr>'
+                );
+            }
+            var buttons = $('<div>',{class: "pref"}).appendTo(mywin);
+            var add = $('<i>',{class: "icon-plus smallicon clickicon tleft"}).appendTo(buttons);
+            add.click(function() {
+                addNewPlayerRow();
+                playerpu.setContentsSize();
+            });
+            var c = $('<button>',{class: "tright"}).appendTo(buttons);
+            c.html(language.gettext('button_cancel'));
+            playerpu.useAsCloseButton(c, false);
+        
+            var d = $('<button>',{class: "tright"}).appendTo(buttons);
+            d.html(language.gettext('button_OK'));
+            playerpu.useAsCloseButton(d, updatePlayerChoices);
+        
+            $('.clickremhost').unbind('click');
+            $('.clickremhost').click(removePlayerDef);
+            
+            $(document).on('keyup', 'input.notspecial', function() {
+                debug.log("ENTER","Value Changed");
+                this.value = this.value.replace(/[\*&\+\s<>\[\]:;,\.\(\)]/g, '');
+            });
+        
+            playerpu.open();
+        }
+        
+        this.replacePlayerOptions = function() {
+            $("#playerdefs").empty();
+            for (var i in prefs.multihosts) {
+                $("#playerdefs").append('<input type="radio" class="topcheck savulon" name="currenthost" value="'+
+                    i+'" id="host_'+escape(i)+'">'+
+                    '<label for="host_'+escape(i)+'">'+i+'</label><br/>');
+            }
+        }
+    }
+
     return {
 
         // These are all the mpd status fields the program currently cares about.
@@ -26,16 +153,15 @@ var player = function() {
         urischemes: new Object(),
 
         collectionLoaded: false,
-        updatingcollection:false,
+        
+        updatingcollection: false,
 
         controller: new playerController(),
+        
+        defs: new playerEditor(),
 
         canPlay: function(urischeme) {
-            if (this.urischemes.hasOwnProperty(urischeme)) {
-                return true;
-            } else {
-                return false;
-            }
+            return this.urischemes.hasOwnProperty(urischeme);
         },
 
         skip: function(sec) {
@@ -45,8 +171,8 @@ var player = function() {
                 if (p < 0) p = 0;
                 this.controller.seek(to);
             }
-        }
-
+        },
+        
     }
 
 }();

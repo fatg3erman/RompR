@@ -28,18 +28,18 @@ $(document).ready(function(){
             }
         });
     }
-    $('.combobox').makeTagMenu({textboxextraclass: 'searchterm', textboxname: 'tag', labelhtml: '<div class="fixed searchlabel"><b>'+language.gettext("label_tag")+'</b></div>', populatefunction: populateTagMenu});
-    $('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add});
+    $('.combobox').makeTagMenu({textboxextraclass: 'searchterm', textboxname: 'tag', labelhtml: '<div class="fixed searchlabel"><b>'+language.gettext("label_tag")+'</b></div>', populatefunction: tagAdder.populateTagMenu});
+    $('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add});
     browser.createButtons();
     setClickHandlers();
     setChooserButtons();
-    replacePlayerOptions();
+    player.defs.replacePlayerOptions();
     $(".toggle").click(prefs.togglePref);
     $(".saveotron").keyup(prefs.saveTextBoxes);
     $(".saveomatic").change(prefs.saveSelectBoxes);
     $(".savulon").click(prefs.toggleRadio);
     $(".clickreplaygain").click(player.controller.replayGain);
-    setPlaylistControlClicks(true);
+    playlist.preventControlClicks(true);
     prefs.setPrefs();
     if (prefs.playlistcontrolsvisible) {
         $("#playlistbuttons").show();

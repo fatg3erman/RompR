@@ -20,7 +20,7 @@ var metaBackup = function() {
         	function(data) {
         		debug.log("BACKUPS","Success");
         		if (thing == 'restore') {
-        			forceCollectionReload();
+        			collectionHelper.forceCollectionReload();
         			infobar.removenotify();
         		}
         		getBackupData();
@@ -28,7 +28,7 @@ var metaBackup = function() {
         	function() {
         		infobar.notify(infobar.ERROR, "Failed to "+thing+' backup');
         		if (thing == 'restore') {
-        			forceCollectionReload();
+        			collectionHelper.forceCollectionReload();
         		}
         		getBackupData();
         	},
@@ -102,7 +102,7 @@ var metaBackup = function() {
 
 		handleClick: function(element, event) {
 			if (element.hasClass('restore')) {
-				prepareForLiftOff('Restoring Data');
+				collectionHelper.prepareForLiftOff('Restoring Data');
 				goDoThings('restore',element.attr("name"));
 			} else if (element.hasClass('remove')) {
 				goDoThings('remove',element.attr("name"));

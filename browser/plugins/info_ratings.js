@@ -61,7 +61,7 @@ var info_ratings = function() {
                 if (rdata) {
                     trackmeta.usermeta = rdata.metadata;
                     doThingsWithData();
-                    updateCollectionDisplay(rdata);
+                    collectionHelper.updateCollectionDisplay(rdata);
                 }
             }
 
@@ -70,7 +70,7 @@ var info_ratings = function() {
                 if (rdata) {
                     trackmeta.usermeta = rdata.metadata;
                     doThingsWithData();
-                    updateCollectionDisplay(rdata);
+                    collectionHelper.updateCollectionDisplay(rdata);
                     if (!rdata.hasOwnProperty('addedtracks')) {
                         infobar.notify(infobar.NOTIFY,"That track is already in the collection");
                     }

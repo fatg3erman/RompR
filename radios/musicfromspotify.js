@@ -13,7 +13,7 @@ var spotiMixRadio = function() {
                 $('#pluginplaylists_spotify').append(playlist.radioManager.standardBox('spotimixradio', '1year', 'icon-spotify-circled', language.gettext('label_spotify_dj')));
                 $('#pluginplaylists_spotify').append(playlist.radioManager.standardBox('spotimixradio', 'surprise', 'icon-spotify-circled', language.gettext('label_spottery_lottery')));
 
-                $('.spotimixradio').on(clickBindType(), function(evt) {
+                $('.spotimixradio').on(prefs.clickBindType(), function(evt) {
                     evt.stopPropagation();
                     playlist.radioManager.load('spotiMixRadio', $(evt.delegateTarget).attr('name'));
                 });
@@ -35,7 +35,7 @@ var mixRadio = function() {
                 // Favourite Artists and Related Artists (Music from Spotify)
                 //
                 $('#pluginplaylists_spotify').append(playlist.radioManager.standardBox('mixradio', null, 'icon-artist', language.gettext('label_radio_mix')));
-                $('.mixradio').on(clickBindType(), function(evt) {
+                $('.mixradio').on(prefs.clickBindType(), function(evt) {
                     evt.stopPropagation();
                     playlist.radioManager.load('mixRadio', null);
                 });

@@ -131,6 +131,12 @@ String.prototype.removePunctuation = function() {
     return this.replace(/\s*\&\s*/, ' and ').replace(punctRE,'').replace(/\s+/g, ' ');
 }
 
+String.prototype.fixDodgyLinks = function() {
+    var regexp = /([^"])(https*:\/\/.*?)([<|\n|\r|\s|\)])/g;
+    return this.replace(regexp, '$1<a href="$2" target="_blank">$2</a>$3');
+    // return this;
+}
+
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));

@@ -24,7 +24,7 @@ var faveArtistRadio = function() {
             // Favourite Artists (Music from Everywhere)
             //
             $('#pluginplaylists_everywhere').append(playlist.radioManager.standardBox('fartistradio', null, 'icon-artist', language.gettext('label_radio_fartist')));
-            $('.fartistradio').on(clickBindType(), function(evt) {
+            $('.fartistradio').on(prefs.clickBindType(), function(evt) {
                 evt.stopPropagation();
                 playlist.radioManager.load('faveArtistRadio', null);
             });
@@ -70,7 +70,7 @@ var lastFMArtistRadio = function() {
                 $('i[name="lastfm_mix"]').on('click', function(event) {
                     doMenu(event, $('i[name="lastfm_mix"]'));
                 });
-                $('.lfmartistradio').on(clickBindType(), function(evt) {
+                $('.lfmartistradio').on(prefs.clickBindType(), function(evt) {
                     evt.stopPropagation();
                     playlist.radioManager.load('lastFMArtistRadio', $(evt.delegateTarget).attr('name'));
                 });
@@ -96,7 +96,7 @@ var lastFMTrackRadio = function() {
                 $('i[name="lastfm_track"]').on('click', function(event) {
                     doMenu(event, $('i[name="lastfm_track"]'));
                 });
-                $('.lfmtrackradio').on(clickBindType(), function(evt) {
+                $('.lfmtrackradio').on(prefs.clickBindType(), function(evt) {
                     evt.stopPropagation();
                     playlist.radioManager.load('lastFMTrackRadio', $(evt.delegateTarget).attr('name'));
                 });
