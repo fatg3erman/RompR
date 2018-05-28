@@ -1,6 +1,6 @@
 <?php
-$skin = 'desktop';
 include ("includes/vars.php");
+$skin = 'desktop';
 include ("includes/functions.php");
 include ("international.php");
 include ("collection/collection.php");
