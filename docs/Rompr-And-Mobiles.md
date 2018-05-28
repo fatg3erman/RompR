@@ -1,5 +1,11 @@
 # Using RompЯ with mobile devices
 
+## Updating RompЯ
+
+Unfortunately it seems that many mobile devices use very strong cache settings and when you update RompЯ it may not run properly on your device. The only cure for this seems to be to completely delete the cache on your device then load RompЯ. If you have added RompЯ as an icon on your home scree, you will have to remove and recreate the icon.
+
+## Playcounts and Scrobbling
+
 RompЯ works fine on almost all mobile devices but, because it runs in a web browser, if the device goes to sleep (the screen switches off) then RompЯ will not be able to update Playcounts or scrobble tracks to Last.FM. This page explains how to set up some extras so that this still works.
 
 One option is to always leave a desktop browser open on RompЯ and that will take care of everything, but that won't be an option for most people, and the following is neater anyway.

@@ -24,6 +24,8 @@ if (is_array($opts)) {
     }
 }
 
+$skin = 'desktop';
+
 debuglog("Using Player ".$prefs['currenthost'].' of type '.$prefs['player_backend'],"ROMONITOR");
 
 while (true) {
