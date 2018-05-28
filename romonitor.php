@@ -1,4 +1,5 @@
 <?php
+$skin = 'desktop';
 include ("includes/vars.php");
 include ("includes/functions.php");
 include ("international.php");
@@ -23,8 +24,6 @@ if (is_array($opts)) {
         $prefs[$key] = $value;
     }
 }
-
-$skin = 'desktop';
 
 debuglog("Using Player ".$prefs['currenthost'].' of type '.$prefs['player_backend'],"ROMONITOR");
 
