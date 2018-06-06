@@ -412,13 +412,13 @@ $languages['ru'] = array (
 	"button_voldown" => "Volume Down",
 	// Extras for mobile version
 	"button_playlist" => "Плейлист",
-	"button_playman" => "Плейлист Management",
+	"button_playman" => "Редактировать Плейлисы",
 	"button_mob_history" => "Панель информации История",
-	"label_streamradio" => "Local and National Radio",
+	"label_streamradio" => "Местное и Национальное Радио",
 	// Various Plugins, Rating, and Tagging
 	"lastfm_import" => "Import Your Last.FM Library",
 	"lastfm_pleaselogin" => "You must be logged in to Last.FM to do this",
-	"label_nosql" => "This is not possible with your configuration",
+	"label_nosql" => "Это невозможно с вашей конфигурацией",
 	"label_onlyloved" => "Loved Tracks Only",
 	"label_onlytagged" => "Tagged Tracks Only",
 	"label_tagandlove" => "Tagged Tracks and Loved Tracks",
@@ -443,11 +443,11 @@ $languages['ru'] = array (
 	"playlist_xstar" => "%s or More Stars",
 	"playlist_5star" => "5 Star Tracks",
 	"button_about" => "О RompЯ",
-	"label_notfound" => "Track Not Found",
+	"label_notfound" => "Трек не найден",
 	// Eg + 3 more
-	"label_moreresults" => "+ %s more",
-	"label_tagmanagertop" => "Drag and Drop from the Music Collection or Playlist to add tags to tracks",
-	"label_ratingmanagertop" => "Drag and Drop from the Music Collection or Playlist to add ratings to tracks",
+	"label_moreresults" => "+ %s больше",
+	"label_tagmanagertop" => "Перетащить из музыкальной коллекции или списка воспроизведения для добавления меток в дорожки",
+	"label_ratingmanagertop" => "Перетащить из музыкальной коллекции или списка воспроизведения для добавления оценок треков",
 	"button_createtag" => "СОЗДАТЬ ТЕГ",
 	//New in 0.52
 	"config_alarm_ramp" => "Fade In",
