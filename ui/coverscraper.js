@@ -105,7 +105,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
             var percent = ((numAlbums - formObjects.length)/numAlbums)*100;
             progress.rangechooser('setProgress', percent.toFixed(2));
             if (scrolling) {
-                $('#coverslist').mCustomScrollbar("scrollTo",$('img[name="'+imgparams.imgkey+'"]').parent().parent().parent().parent().prev());
+                $('#coverslist').mCustomScrollbar("scrollTo",$('img[name="'+imgparams.imgkey+'"]').parent().parent().parent());
             }
          }
 

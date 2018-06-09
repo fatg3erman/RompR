@@ -497,6 +497,3 @@ if (localStorage.getItem("prefs.prefversion") == null) {
     localStorage.setItem('prefs.prefversion', JSON.stringify(2));
 }
 prefs.theme = prefs.theme.replace('_1080p','');
-
-var squlookle = "AIzaSyDAErKEr1g1J3yqHA0x6Ckr5jubNIF2YX4";
-var nureek = "https://www.googleapis.com/customsearch/v1?key="+squlookle+"&cx=013407992060439718401:d3vpz2xaljs&searchType=image&alt=json";
