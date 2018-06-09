@@ -80,6 +80,8 @@ $prefs = array(
     "sortcollectionby" => "artist",
     "showartistbanners" => true,
     "tradsearch" => false,
+    "google_api_key" => '',
+    "google_search_engine_id" => '',
 
     // These are currently saved in the backend, as the most likely scenario is one user
     // with multiple browsers. But what if it's multiple users?

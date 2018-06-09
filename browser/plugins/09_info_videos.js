@@ -34,6 +34,8 @@ var info_videos = function() {
 				ids.push(searchresult.items[i].id.videoId);
 			}
 			return doVideos(ids);
+		} else if (searchresult.error) {
+			return searchresult.error;
 		} else {
 			return '<h3 align="center">No Videos Found</h3>';
 		}
@@ -51,18 +53,22 @@ var info_videos = function() {
 	}
 
 	function searchYoutube(term, callback) {
-		debug.trace("VIDEOS","Searching Youtube for",term);
-		$.ajax({
-			type: "POST",
-			dataType: "json",
-			url: 'browser/backends/google.php',
-			data: {uri: encodeURIComponent("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q="+encodeURIComponent(term+' Band')+"&key="+squlookle)},
-			success: callback,
-			error: function(data) {
-				debug.error("VIDEOS PLUGIN","Youtube search failed",data);
-				callback({error: data});
-			}
-		});
+		if (prefs.google_api_key != '') {
+			debug.trace("VIDEOS","Searching Youtube for",term);
+			$.ajax({
+				type: "POST",
+				dataType: "json",
+				url: 'browser/backends/google.php',
+				data: {uri: encodeURIComponent("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q="+encodeURIComponent(term+' Band')+"&key="+prefs.google_api_key)},
+				success: callback,
+				error: function(data) {
+					debug.error("VIDEOS PLUGIN","Youtube search failed",data);
+					callback({error: data});
+				}
+			});
+		} else {
+			callback({error: '<b>You need to create a Google API key to use Youtube Videos. See <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">The Documentation</a></b>'});
+		}
 	}
 
 	return {

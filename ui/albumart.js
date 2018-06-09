@@ -301,8 +301,7 @@ var imageEditor = function() {
     var currhighlight = null;
     var currname = null;
     var current = "g";
-    var squlookle = "AIzaSyDAErKEr1g1J3yqHA0x6Ckr5jubNIF2YX4";
-    var nureek = "https://www.googleapis.com/customsearch/v1?key="+squlookle+"&cx=013407992060439718401:d3vpz2xaljs&searchType=image&alt=json";
+    var nureek = "https://www.googleapis.com/customsearch/v1?key="+prefs.google_api_key+"&cx="+prefs.google_search_engine_id+"&searchType=image&alt=json";
     bigimg.onload = function() {
         imageEditor.displayBigImage();
     }
@@ -428,25 +427,29 @@ var imageEditor = function() {
         },
 
         search: function() {
-            var searchfor = $("#searchphrase").val();
-            debug.log("IMAGEEDITOR","Searching Google for", searchfor);
-            $.ajax({
-                type: "POST",
-                dataType: "json",
-                url: 'browser/backends/google.php',
-                data: {uri: encodeURIComponent(nureek+"&q="+encodeURIComponent(searchfor)+"&start="+start)},
-                success: imageEditor.googleSearchComplete,
-                error: function(data) {
-                    debug.log("IMAGEEDITOR","IT'S ALL GONE HORRIBLY WRONG",data);
-                    if (data == null) {
-                        imageEditor.showError("No Response!");
-                    } else {
-                        var e = JSON.parse(data.responseText);
-                        imageEditor.showError(JSON.parse(e.error.message));
+            debug.log("IMAGEEDITOR",prefs.google_api_key,prefs.google_search_engine_id);
+            if (prefs.google_api_key != '' && prefs.google_search_engine_id != '') {
+                var searchfor = $("#searchphrase").val();
+                debug.log("IMAGEEDITOR","Searching Google for", searchfor);
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: 'browser/backends/google.php',
+                    data: {uri: encodeURIComponent(nureek+"&q="+encodeURIComponent(searchfor)+"&start="+start)},
+                    success: imageEditor.googleSearchComplete,
+                    error: function(data) {
+                        debug.log("IMAGEEDITOR","IT'S ALL GONE HORRIBLY WRONG",data);
+                        if (data == null) {
+                            imageEditor.showError("No Response!");
+                        } else {
+                            var e = JSON.parse(data.responseText);
+                            imageEditor.showError(JSON.parse(e.error.message));
+                        }
                     }
-                }
-            });
-
+                });
+            } else {
+                imageEditor.showError('You need to use your own Google API Key to search Google. Read more at <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">The Documentation</a>');
+            }
         },
 
         googleSearchComplete: function(data) {

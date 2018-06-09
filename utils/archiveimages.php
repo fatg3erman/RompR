@@ -14,6 +14,7 @@
 
 chdir('..');
 include ("includes/vars.php");
+$skin = 'desktop';
 include ("includes/functions.php");
 include ("backends/sql/backend.php");
 $r = generic_sql_query(

@@ -345,22 +345,26 @@ function tryGoogle() {
     global $artist;
     global $album;
     global $delaytime;
-    debuglog("  Trying Google for ".$artist." ".$album,"GETALBUMCOVER");
+    global $prefs;
     $retval = "";
-    $squlookle = "AIzaSyDAErKEr1g1J3yqHA0x6Ckr5jubNIF2YX4";
-    $nureek = "https://www.googleapis.com/customsearch/v1?key=".$squlookle."&cx=013407992060439718401:d3vpz2xaljs&searchType=image&alt=json";
-    $result = url_get_contents($nureek."&q=".urlencode(trim($artist.' '.$album)));
-    $json = json_decode($result['contents'], true);
-    if (array_key_exists('items', $json)) {
-        foreach($json['items'] as $item) {
-            $retval = $item['link'];
-            break;
+    if ($prefs['google_api_key'] != '' && $prefs['google_search_engine_id'] != '') {
+        debuglog("  Trying Google for ".$artist." ".$album,"GETALBUMCOVER");
+        $nureek = "https://www.googleapis.com/customsearch/v1?key=".$prefs['google_api_key']."&cx=".$prefs['google_search_engine_id']."&searchType=image&alt=json";
+        $result = url_get_contents($nureek."&q=".urlencode(trim($artist.' '.$album)));
+        $json = json_decode($result['contents'], true);
+        if (array_key_exists('items', $json)) {
+            foreach($json['items'] as $item) {
+                $retval = $item['link'];
+                break;
+            }
+        } else if (array_key_exists('error', $json)) {
+            debuglog("    Error response from Google : ".$json['error']['errors'][0]['reason'],"GETALBUMCOVER");
         }
-    } else if (array_key_exists('error', $json)) {
-        debuglog("    Error response from Google : ".$json['error']['errors'][0]['reason'],"GETALBUMCOVER");
-    }
-    if ($retval != '') {
-        debuglog("    Found image ".$retval." from Google","GETALBUMCOVER");
+        if ($retval != '') {
+            debuglog("    Found image ".$retval." from Google","GETALBUMCOVER");
+        }
+    } else {
+        debuglog("  Not trying Google because no API Key or Search Engine ID","GETALBUMCOVER");
     }
     return $retval;
 }
