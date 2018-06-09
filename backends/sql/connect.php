@@ -155,7 +155,6 @@ function sql_prepare_query() {
 		}
 	} else {
 		debuglog("Query prep error ".$query,"MYSQL",2);
-		debuglog("   numArgs was   ".$numArgs,"MYSQL",2);
 		show_sql_error();
 	}
 	if ($return_value !== null) {

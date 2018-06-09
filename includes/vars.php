@@ -165,6 +165,7 @@ $private_prefs = array(
 // ====================================================================
 // Load Saved Preferences
 loadPrefs();
+$logger = new debug_logger($prefs['custom_logfile'], $prefs['debug_enabled']);
 
 if (defined('ROMPR_IS_LOADING')) {
     debuglog("******++++++======------******------======++++++******","INIT",2);
@@ -229,44 +230,46 @@ function savePrefs() {
 
 function loadPrefs() {
     global $prefs, $logger;
-    $fp = fopen('prefs/prefs.var', 'r');
-    if($fp) {
-        if (flock($fp, LOCK_SH)) {
-            $sp = unserialize(fread($fp, 32768));
-            flock($fp, LOCK_UN);
-            fclose($fp);
-            if ($sp === false) {
-                error_log("ERROR!              : COULD NOT LOAD PREFS");
-                exit(1);
-            }
-            $prefs = array_replace($prefs, $sp);
+    if (file_exists('prefs/prefs.var')) {
+      $fp = fopen('prefs/prefs.var', 'r');
+      if($fp) {
+          if (flock($fp, LOCK_SH)) {
+              $sp = unserialize(fread($fp, 32768));
+              flock($fp, LOCK_UN);
+              fclose($fp);
+              if ($sp === false) {
+                  error_log("ERROR!              : COULD NOT LOAD PREFS");
+                  exit(1);
+              }
+              $prefs = array_replace($prefs, $sp);
 
-            $logger = new debug_logger($prefs['custom_logfile'], $prefs['debug_enabled']);
+              foreach ($_COOKIE as $a => $v) {
+                  if (array_key_exists($a, $prefs)) {
+                      switch ($a) {
+                          case 'debug_enabled':
+                              $logger->setLevel($v);
+                              // Fall through to default
 
-            foreach ($_COOKIE as $a => $v) {
-                if (array_key_exists($a, $prefs)) {
-                    switch ($a) {
-                        case 'debug_enabled':
-                            $logger->setLevel($v);
-                            // Fall through to default
-                            
-                        default:
-                            $prefs[$a] = $v;
-                            break;
-                            
-                    }
-                    debuglog("Pref ".$a." is set by Cookie  - Value : ".$v,"COOKIE",9);
-                }
-            }
-            
-        } else {
-            error_log("ERROR!              : COULD NOT GET READ FILE LOCK ON PREFS FILE");
-            exit(1);
-        }
-    } else {
-        error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE");
-        exit(1);
-    }
+                          default:
+                              $prefs[$a] = $v;
+                              break;
+
+                      }
+                      if ($prefs['debug_enabled'] > 8) {
+                        error_log("COOKIE             : Pref ".$a." is set by Cookie  - Value : ".$v);
+                      }
+                  }
+              }
+
+          } else {
+              error_log("ERROR!              : COULD NOT GET READ FILE LOCK ON PREFS FILE");
+              exit(1);
+          }
+      } else {
+          error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE");
+          exit(1);
+      }
+   }
 }
 
 function set_music_directory($dir) {
@@ -310,7 +313,7 @@ class debug_logger {
         $pid = getmypid();
         $in2 = str_repeat(" ", 8 - strlen($pid));
         if ($this->outfile != "") {
-            
+
             // Two options here - either colour by level
             // $col = $this->debug_colours[$level];
 
