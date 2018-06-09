@@ -17,16 +17,10 @@ if ($prefs['tradsearch']) {
 
 <?php
 foreach ($sterms as $label => $term) {
-    if ($prefs['tradsearch']) {
-        print '<div class="containerbox dropdown-container">';
-    	print '<div class="fixed searchlabel"><span class="slt"><b>'.ucwords(strtolower(get_int_text($label))).'</b></span></div>';
-        print '<div class="expand"><input class="searchterm enter" name="'.$term.'" type="text" /></div>';
-        print '</div>';
-    } else if ($term == 'any') {
-        print '<div class="containerbox dropdown-container">';
-        print '<div class="expand"><input class="searchterm enter" name="'.$term.'" type="text" /></div>';
-        print '</div>';
-    }
+    print '<div class="containerbox dropdown-container searchitem" name="'.$term.'">';
+	print '<div class="fixed searchlabel"><span class="slt"><b>'.ucwords(strtolower(get_int_text($label))).'</b></span></div>';
+    print '<div class="expand"><input class="searchterm enter" name="'.$term.'" type="text" /></div>';
+    print '</div>';
 }
 
 ?>
@@ -35,7 +29,7 @@ foreach ($sterms as $label => $term) {
 
 <div class="containerbox dropdown-container">
 <?php
-print '<div class="fixed searchlabel"><span class="slt"><b>'.get_int_text("label_rating").'</b></span></div>
+print '<div class="fixed searchlabel nohide"><span class="slt"><b>'.get_int_text("label_rating").'</b></span></div>
         <div class="expand selectholder">
         <select name="searchrating">
         <option value="5">5 '.get_int_text('stars').'</option>

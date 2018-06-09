@@ -184,28 +184,34 @@ function tryLocal() {
     $files = scan_for_images($albumpath);
     foreach ($files as $i => $file) {
         $info = pathinfo($file);
-        $file_name = strtolower(rawurldecode(html_entity_decode(basename($file,'.'.$info['extension']))));
-        if ($file_name == $imgkey) {
-            debuglog("    Returning archived image","GETALBUMCOVER");
-            return $file;
+        if (array_key_exists('extension', $info)) {
+            $file_name = strtolower(rawurldecode(html_entity_decode(basename($file,'.'.$info['extension']))));
+            if ($file_name == $imgkey) {
+                debuglog("    Returning archived image","GETALBUMCOVER");
+                return $file;
+            }
         }
     }
     foreach ($files as $i => $file) {
         $info = pathinfo($file);
-        $file_name = strtolower(rawurldecode(html_entity_decode(basename($file,'.'.$info['extension']))));
-        if ($file_name == strtolower($artist." - ".$album) ||
-            $file_name == strtolower($album)) {
-            debuglog("    Returning file matching album name","GETALBUMCOVER");
-            return $file;
+        if (array_key_exists('extension', $info)) {
+            $file_name = strtolower(rawurldecode(html_entity_decode(basename($file,'.'.$info['extension']))));
+            if ($file_name == strtolower($artist." - ".$album) ||
+                $file_name == strtolower($album)) {
+                debuglog("    Returning file matching album name","GETALBUMCOVER");
+                return $file;
+            }
         }
     }
     foreach ($covernames as $j => $name) {
         foreach ($files as $i => $file) {
             $info = pathinfo($file);
-            $file_name = strtolower(rawurldecode(html_entity_decode(basename($file,'.'.$info['extension']))));
-            if ($file_name == $name) {
-                debuglog("    Returning ".$file,"GETALBUMCOVER");
-                return $file;
+            if (array_key_exists('extension', $info)) {
+                $file_name = strtolower(rawurldecode(html_entity_decode(basename($file,'.'.$info['extension']))));
+                if ($file_name == $name) {
+                    debuglog("    Returning ".$file,"GETALBUMCOVER");
+                    return $file;
+                }
             }
         }
     }

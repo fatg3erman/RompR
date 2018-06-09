@@ -29,15 +29,15 @@ if (array_key_exists('populate', $_REQUEST)) {
 	debuglog("Page Title Is ".$page_title,"ICESCRAPER");
 	$count = 0;
 	directoryControlHeader('icecastlist', get_int_text('label_icecast'));
-	print '<div class="containerbox"><div class="expand"><b>'.get_int_text("label_searchfor").'</b></div></div>';
-	print '<div class="containerbox"><div class="expand"><input class="enter" name="searchfor" type="text"';
+	print '<div class="containerbox brick_wide"><div class="expand"><b>'.get_int_text("label_searchfor").'</b></div></div>';
+	print '<div class="containerbox brick_wide"><div class="expand"><input class="enter" name="searchfor" type="text"';
 	if (array_key_exists("searchfor", $_REQUEST)) {
 		print ' value="'.$_REQUEST['searchfor'].'"';
 	}
 	print ' /></div>';
 	print '<button class="fixed" name="cornwallis">'.get_int_text("button_search").'</button></div>';
 
-	print '<div class="configtitle textcentre">'.$page_title.'</div>';
+	print '<div class="configtitle textcentre brick_wide">'.$page_title.'</div>';
 	foreach ($list as $server) {
 		$server_web_link = '';
 		$server_name = pq($server)->find('.stream-name')->children('.name')->children('a');
@@ -81,7 +81,8 @@ if (array_key_exists('populate', $_REQUEST)) {
                 'ImgKey' => 'none',
                 'streamuri' => $listenlink,
                 'streamname' => $server_name,
-                'streamimg' => 'newimages/icecast.svg'
+                'streamimg' => 'newimages/icecast.svg',
+				'class' => 'radiochannel'
             ));
 			print '<div id="icecast_'.$count.'" class="dropmenu">';
 			trackControlHeader('','','icecast_'.$count, array(array('Image' => 'newimages/icecast.svg')));
@@ -124,7 +125,9 @@ if (array_key_exists('populate', $_REQUEST)) {
         'Artistname' => '',
         'Albumname' => get_int_text('label_icecast'),
         'why' => null,
-        'ImgKey' => 'none'
+        'ImgKey' => 'none',
+		'class' => 'radio',
+		'expand' => true
     ));
 	print '<div id="icecastlist" class="dropmenu notfilled"><div class="textcentre">Loading...</div></div>';
 	print '</div>';

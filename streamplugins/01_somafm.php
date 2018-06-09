@@ -9,7 +9,7 @@ if (array_key_exists('populate', $_REQUEST)) {
     include ("skins/".$skin."/ui_elements.php");
 
     directoryControlHeader('somafmlist', get_int_text('label_somafm'));
-    print '<div class="containerbox padright indent ninesix bumpad">';
+    print '<div class="containerbox padright indent ninesix bumpad brick_wide">';
     print '<a href="http://somafm.com" target="_blank">'.get_int_text("label_soma_beg").'</a>';
     print '</div>';
 
@@ -38,7 +38,8 @@ if (array_key_exists('populate', $_REQUEST)) {
                 'ImgKey' => 'none',
                 'streamuri' => $pls,
                 'streamname' => (string) $channel->title,
-                'streamimg' => getimage($channel)
+                'streamimg' => getimage($channel),
+                'class' => 'radiochannel'
             ));
             
             print '<div id="somafm_'.$count.'" class="dropmenu">';
@@ -99,7 +100,9 @@ if (array_key_exists('populate', $_REQUEST)) {
         'Artistname' => '',
         'Albumname' => get_int_text('label_somafm'),
         'why' => null,
-        'ImgKey' => 'none'
+        'ImgKey' => 'none',
+        'class' => 'radio',
+        'expand' => true
     ));
     print '<div id="somafmlist" class="dropmenu notfilled">';
     print '<div class="textcentre">Loading...</div></div>';

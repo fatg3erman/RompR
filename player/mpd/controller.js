@@ -161,6 +161,7 @@ function playerController() {
 	this.reloadPlaylists = function() {
         $.get("player/mpd/loadplaylists.php", function(data) {
             $("#storedplaylists").html(data);
+            layoutProcessor.postAlbumActions();
             $('b:contains("'+language.gettext('button_loadplaylist')+'")').parent('.configtitle').append('<a href="https://fatg3erman.github.io/RompR/Using-Saved-Playlists" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
         });
 	}
@@ -252,6 +253,7 @@ function playerController() {
         self.do_command_list([["rename", decodeURIComponent(oldplname), $("#newplname").val()]],
             function() {
                 self.reloadPlaylists();
+                layoutProcessor.postAlbumActions();
                 if (typeof(playlistManager) != "undefined") {
                     playlistManager.reloadAll();
                 }
@@ -270,6 +272,7 @@ function playerController() {
             data: data,
             dataType: "xml",
             success: function(data) {
+                layoutProcessor.postAlbumActions();
                 self.reloadPlaylists();
             },
             error: function(data, status) {
@@ -578,6 +581,7 @@ function playerController() {
                     success: function(data) {
                         $("#searchresultholder").html(data);
                         collectionHelper.scootTheAlbums($("#searchresultholder"));
+                        layoutProcessor.postAlbumActions();
                         data = null;
                     }
             });

@@ -28,6 +28,11 @@ First open Terminal. If you haven't used Terminal before, don't be scared. It's 
     mkdir Sites
 
 Now if you've downloaded the ZIP file from here, you can copy it into the Sites folder you just created above and unzip it. Probaby you just need to double-click it to do that.
+Now go back to that terminal window and we'll set some permissions.
+
+    cd Sites/rompr
+    mkdir prefs
+    mkdir albumart
 
 ## Install nginx webserver
 

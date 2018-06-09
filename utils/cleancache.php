@@ -64,41 +64,20 @@ if ($mysqlc) {
         }
     }
 
-    debuglog("Checking database for missing album art","CACHE CLEANER");
-    $result = generic_sql_query("SELECT Albumindex, Albumname, Image, Domain, ImgKey FROM Albumtable", false, PDO::FETCH_OBJ);
-    foreach ($result as $obj) {
-        if ($obj->Image != '' && !file_exists($obj->Image)) {
-            if (preg_match('#^getRemoteImage\.php\?url=(.*)#', $obj->Image)) {
-                // Don't do this, it archives all the soundcloud images for search results
-                // and we don't want that.
-                // debuglog($obj->Albumname." has remote image ".$obj->Image,"CACHE CLEANER");
-                // $retval = archive_image($obj->Image, $obj->ImgKey);
-                // $image = $retval['image'];
-                // $searched = 1;
-            } else {
-                debuglog($obj->Albumname." has missing image ".$obj->Image,"CACHE CLEANER");
-                if (file_exists("newimages/".$obj->Domain."-logo.svg")) {
-                    $image = "newimages/".$obj->Domain."-logo.svg";
-                    $searched = 1;
-                } else {
-                    $image = '';
-                    $searched = 0;
-                }
-                sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Searched = ?, Image = ? WHERE Albumindex = ?", $searched, $image, $obj->Albumindex);
-            }
-        }
-    }
-
     if ($prefs['cleanalbumimages']) {
         debuglog("Checking albumart folder for unneeded images","CACHE CLEANER");
         $files = glob('albumart/small/*.jpg');
         foreach ($files as $image) {
+            // Remove images for hidden tracks and search results. The missing check below will reset the db entries for those albums
             // Keep everything for 24 hours regardless, we might be using it in a playlist or something
             if (filemtime($image) < time()-86400) {
-                $count = sql_prepare_query(false, null, 'acount', 0, "SELECT COUNT(Albumindex) AS acount FROM Albumtable WHERE Image = ?", $image);
+                $count = sql_prepare_query(false, null, 'acount', 0, "SELECT COUNT(Albumindex) AS acount FROM Albumtable WHERE Image = ? AND Albumindex IN (SELECT DISTINCT Albumindex FROM Tracktable WHERE Hidden = 0 AND isSearchResult < 2 AND URI IS NOT NULL)", $image);
                 if ($count < 1) {
                     debuglog("  Removing Unused Album image ".$image,"CACHE CLEANER");
                     exec('rm albumart/small/'.basename($image));
+                    if (file_exists('albumart/medium/'.basename($image))) {
+                        exec('rm albumart/medium/'.basename($image));
+                    }
                     exec('rm albumart/asdownloaded/'.basename($image));
                 }
             }
@@ -132,6 +111,31 @@ if ($mysqlc) {
                     debuglog("  Removing orphaned podcast image ".$file,"CACHE CLEANER");
                     exec('rm "'.$file.'"');
                 }
+            }
+        }
+    }
+
+    debuglog("Checking database for missing album art","CACHE CLEANER");
+    $result = generic_sql_query("SELECT Albumindex, Albumname, Image, Domain, ImgKey FROM Albumtable", false, PDO::FETCH_OBJ);
+    foreach ($result as $obj) {
+        if ($obj->Image != '' && !file_exists($obj->Image)) {
+            if (preg_match('#^getRemoteImage\.php\?url=(.*)#', $obj->Image)) {
+                // Don't do this, it archives all the soundcloud images for search results
+                // and we don't want that.
+                // debuglog($obj->Albumname." has remote image ".$obj->Image,"CACHE CLEANER");
+                // $retval = archive_image($obj->Image, $obj->ImgKey);
+                // $image = $retval['image'];
+                // $searched = 1;
+            } else {
+                debuglog($obj->Albumname." has missing image ".$obj->Image,"CACHE CLEANER");
+                if (file_exists("newimages/".$obj->Domain."-logo.svg")) {
+                    $image = "newimages/".$obj->Domain."-logo.svg";
+                    $searched = 1;
+                } else {
+                    $image = '';
+                    $searched = 0;
+                }
+                sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Searched = ?, Image = ? WHERE Albumindex = ?", $searched, $image, $obj->Albumindex);
             }
         }
     }

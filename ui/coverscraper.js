@@ -159,6 +159,8 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
                 // Use large images for playlist and nowplaying
                 if ($(this).hasClass("clickrollup") || $(this).attr("id") == "albumpicture") {
                     $(this).attr("src", data.origimage);
+                } else if ($(this).hasClass('jalopy')) {
+                    $(this).attr("src", data.origimage.replace(/albumart\/asdownloaded/, 'albumart/medium'));
                 } else {
                     $(this).attr("src", data.url);
                 }

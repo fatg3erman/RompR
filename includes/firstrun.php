@@ -18,7 +18,10 @@ $root_level_dirs = array(
 	'prefs/crazyplaylists',
 	'prefs/databackups',
 	'prefs/userstreams',
-	'prefs/temp'
+	'prefs/temp',
+	'albumart/asdownloaded',
+	'albumart/small',
+	'albumart/medium'
 );
 foreach ($root_level_dirs as $dir) {
 	if (!is_dir($dir)) {

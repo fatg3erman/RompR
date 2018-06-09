@@ -54,11 +54,17 @@ var prefs = function() {
         "auto_discovembobulate",
         "ratman_sortby",
         "ratman_showletters",
-        "ratman_smallart",
         "sleeptime",
         "sleepon",
         "advanced_search_open",
         "mopidy_radio_domains",
+        "tradsearch"
+    ];
+    
+    const cookiePrefs = [
+        'skin',
+        'currenthost',
+        'player_backend'
     ];
 	
 	const jsonNode = document.querySelector("script[name='prefs']");
@@ -144,6 +150,16 @@ var prefs = function() {
                     prefs[p] = tags[p];
                 }
             }
+            
+            for (var i in cookiePrefs) {
+                if (getCookie(cookiePrefs[i]) != '') {
+                    prefs[cookiePrefs[i]] = getCookie(cookiePrefs[i]);
+                    if (prefs.debug_enabled > 7) {
+                        console.log("PREFS      : "+cookiePrefs[i]+' = '+prefs[cookiePrefs[i]]);
+                    }
+                }
+            }
+            
             if (prefs.icontheme == 'IconFont') {
                 prefs.icontheme = 'Colourful';
             }
@@ -166,6 +182,9 @@ var prefs = function() {
             var postSave = false;
             for (var i in options) {
                 prefs[i] = options[i];
+                if (cookiePrefs.indexOf(i) > -1) {
+                    setCookie(i, options[i], 3650);
+                }
                 if (prefsInLocalStorage.indexOf(i) > -1) {
                     debug.log("PREFS", "Setting",i,"to",options[i],"in local storage");
                     localStorage.setItem("prefs."+i, JSON.stringify(options[i]));
@@ -225,12 +244,9 @@ var prefs = function() {
                     callback = layoutProcessor.hideBrowser;
                     break;
 
-                case 'search_limit_limitsearch':
-                    callback = weaselBurrow;
-                    break;
-
                 case 'searchcollectiononly':
-                    callback = ferretMaster;
+                case "tradsearch":
+                    callback = setAvailableSearchOptions;
                     break;
 
                 case 'sortbycomposer':
@@ -246,7 +262,7 @@ var prefs = function() {
                 case "sortbydate":
                 case "notvabydate":
                 case "showartistbanners":
-                    callback = collectionHelper.forceCollectionReload;
+                    callback = layoutProcessor.changeCollectionSortMode;
                     break;
 
                 case "alarmon":
@@ -255,10 +271,6 @@ var prefs = function() {
 
                 case "sleepon":
                     callback = sleepTimer.toggle;
-                    break;
-
-                case "tradsearch":
-                    callback = function() { setTimeout(reloadWindow, 500) }
                     break;
 
             }
@@ -276,7 +288,7 @@ var prefs = function() {
                     break;
 
                 case 'sortcollectionby':
-                    callback = collectionHelper.forceCollectionReload;
+                    callback = layoutProcessor.changeCollectionSortMode;
                     break;
 
                 case 'displayresultsas':
@@ -286,10 +298,8 @@ var prefs = function() {
                     break;
 
                 case 'currenthost':
-                    callback = function() {
-                        setCookie('currenthost',prefs.currenthost,3650);
-                        reloadWindow();
-                    }
+                    callback = reloadWindow;
+                    break;
 
             }
             prefs.save(prefobj, callback);
@@ -339,8 +349,7 @@ var prefs = function() {
 
             switch(prefname) {
                 case "skin":
-                    setCookie('skin', $("#skinselector").val(),3650);
-                    callback = reloadWindow();
+                    callback = reloadWindow;
                     break;
 
                 case "theme":

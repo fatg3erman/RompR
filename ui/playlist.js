@@ -509,6 +509,7 @@ var playlist = function() {
                             prefs.save({mopidy_radio_domains: $("#radiodomains").makeDomainChooser("getSelection")});
                         });
                     });
+                    uiHelper.setupPersonalRadio();
                 }
             },
 

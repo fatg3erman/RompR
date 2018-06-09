@@ -211,6 +211,12 @@ function checkCollectionStatus() {
 	}
 }
 
+function checkAlbumArt() {
+	$oa =  generic_sql_query("SELECT COUNT(ImgVersion) AS NumOldAlbums FROM Albumtable WHERE Image LIKE 'albumart/small/%' AND ImgVersion < ".ROMPR_IMAGE_VERSION, false, null, 'NumOldAlbums', 0);
+	debuglog("There are ".$oa." albums with old-style album art","INIT");
+	return $oa;
+}
+
 function open_transaction() {
 	global $transaction_open, $mysqlc;
 	if (!$transaction_open) {

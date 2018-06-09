@@ -177,7 +177,20 @@ var browser = function() {
             extraPlugins[section].div.empty();
             extraPlugins[section].div.remove();
             extraPlugins[section].div = null;
+            if ($('#pluginholder').length > 0 && openPlugins() == 0) {
+                layoutProcessor.sourceControl('specialplugins');
+            }
         });
+    }
+    
+    function openPlugins() {
+        var c = 0;
+        for (var i in extraPlugins) {
+            if (extraPlugins[i].div !== null) {
+                c++;
+            }
+        }
+        return c;
     }
 
     function checkHistoryLength() {
@@ -414,6 +427,7 @@ var browser = function() {
 
             var bits = ["artist","album","track"];
             bits.forEach(function(n) {
+                debug.log("BROWSER","Updating",n);
                 if (history[index][n].collection) {
                     waitingon[n] = true;
                     waitingon.source = history[index].source;
@@ -435,11 +449,16 @@ var browser = function() {
         },
 
         registerExtraPlugin: function(id, name, parent, help) {
+            var displayer;
             if (prefs.hidebrowser) {
                 $("#hidebrowser").prop("checked", !$("#hidebrowser").is(':checked'));
                 prefs.save({hidebrowser: $("#hidebrowser").is(':checked')}, hideBrowser);
             }
-            var displayer = $('<div>', {id: id+"information", class: "infotext invisible"}).insertBefore('#artistchooser');
+            if ($('#pluginholder').length > 0 && !($('#pluginholder').is(':visible'))) {
+                displayer = $('<div>', {id: id+"information", class: "infotext invisible"}).appendTo('#pluginholder');
+            } else {
+                displayer = $('<div>', {id: id+"information", class: "infotext invisible"}).insertBefore('#artistchooser');
+            }
             var opts = {name: name};
             if (help) {
                 opts.help = help;
@@ -489,6 +508,7 @@ var browser = function() {
                 h.find(".tagholder2").css('width', width.toString()+'%');
                 h.find(".sizer").css('width', width.toString()+'%');
                 h.find(".tagholder_wide").css("width", "100%");
+                h.find(".brick_wide").css("width", "100%");
                 if (typeof(params) == 'undefined' && h.css('position') == 'relative') {
                     h.masonry();
                 }
@@ -512,16 +532,6 @@ var browser = function() {
                 var h = $(this);
                 var width = calcPercentWidth(h, '.tagholder4', 140, h.width());
                 h.find(".tagholder4").css('width', width.toString()+'%');
-                if (typeof(params) == 'undefined' && h.css('position') == 'relative') {
-                    h.masonry();
-                }
-            });
-
-            $('#infopane .thebigholder:visible').each(function() {
-                var h = $(this);
-                var width = calcPercentWidth(h, '.pluginitem:visible', 240, h.width());
-                h.find(".pluginitem:visible").css('width', width.toString()+'%');
-                h.find(".sizer").css('width', width.toString()+'%');
                 if (typeof(params) == 'undefined' && h.css('position') == 'relative') {
                     h.masonry();
                 }

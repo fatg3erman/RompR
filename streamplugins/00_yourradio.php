@@ -9,7 +9,9 @@ print albumHeader(array(
     'Artistname' => '',
     'Albumname' => get_int_text('label_yourradio'),
     'why' => null,
-    'ImgKey' => 'none'
+    'ImgKey' => 'none',
+    'class' => 'radio',
+    'expand' => true
 ));
 print '<div id="yourradiolist" class="dropmenu">';
 directoryControlHeader('yourradiolist', get_int_text('label_yourradio'));
@@ -17,7 +19,7 @@ print '<div id="anaconda" class="noselection fullwidth">';
 print '<div class="containerbox indent"><div class="expand">'.get_int_text("label_radioinput").'</div></div>';
 print '<div class="containerbox indent"><div class="expand"><input class="enter" id="yourradioinput" type="text" /></div>';
 print '<button class="fixed" name="spikemilligan">'.get_int_text("button_playradio").'</button></div>';
-print '<div id="yourradiostations" clas="pipl"></div>';
+print '<div id="yourradiostations" class="holderthing"></div>';
 print '</div>';
 print '</div>';
 print '</div>';

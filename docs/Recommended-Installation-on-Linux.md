@@ -30,14 +30,12 @@ We need to create directories to store data in.
     cd /PATH/TO/ROMPR
     mkdir prefs
     mkdir albumart
-    mkdir albumart/small
-    mkdir albumart/asdownloaded
 
 
 And then we need to give nginx permission to write to them. We can do this by changing the ownership of those directories to be the user that nginx runs as. This may differ depending on which distro you're running, but this is good for all Ubuntus, where nginx runs as the user www-data.
 
-    sudo chown -R www-data /PATH/TO/ROMPR/albumart
-    sudo chown -R www-data /PATH/TO/ROMPR/prefs
+    sudo chown www-data /PATH/TO/ROMPR/albumart
+    sudo chown www-data /PATH/TO/ROMPR/prefs
 
 
 ### Install some packages

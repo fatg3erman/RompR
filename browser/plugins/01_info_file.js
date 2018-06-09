@@ -4,7 +4,7 @@ var info_file = function() {
 
     function podComment(parent) {
         if (parent.playlistinfo.type == 'podcast' && parent.playlistinfo.comment) {
-            return '<div class="bumfinger tagholder_wode tagholder"><table class="fileinfotable" style="width:100%"><tr><th>'+language.gettext("info_comment").replace(':','')+'</th></tr><tr><td class="notbold">'+parent.playlistinfo.comment+'</td></tr></table></div>';
+            return '<div class="brick tagholder_wode tagholder"><table class="fileinfotable" style="width:100%"><tr><th>'+language.gettext("info_comment").replace(':','')+'</th></tr><tr><td class="notbold">'+parent.playlistinfo.comment+'</td></tr></table></div>';
         }
         return '';
     }
@@ -281,10 +281,10 @@ var info_file = function() {
 				if (displaying && trackmeta.fileinfo !== undefined) {
                     var data = '<div id="tinfobox" class="holdingcell masonified7 helpfulholder fullwidth">';
                     // data += '<div class="sizer"></div>';
-                    data += '<div class="bumfinger dingo tagholder2 tagholder">';
+                    data += '<div class="brick dingo tagholder2 tagholder">';
                     data += (trackmeta.fileinfo.player !== null) ? createInfoFromPlayerInfo(trackmeta.fileinfo.player, parent) : createInfoFromBeetsInfo(trackmeta.fileinfo.beets);
                     data += '</div>';
-                    data += '<div class="bumfinger dingo tagholder2 tagholder">';
+                    data += '<div class="brick dingo tagholder2 tagholder">';
                     data += self.ratingsInfo();
                     data += '</div>';
                     data += podComment(parent);
@@ -299,7 +299,7 @@ var info_file = function() {
 	                      data: data
 	                	}
 					);
-                    browser.rePoint($('#tinfobox'), { itemSelector: '.bumfinger', columnWidth: '.dingo', percentPosition: true });
+                    browser.rePoint($('#tinfobox'), { itemSelector: '.brick', columnWidth: '.dingo', percentPosition: true });
 				}
 			}
 		}

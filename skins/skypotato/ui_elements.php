@@ -83,30 +83,37 @@ function noAlbumsHeader() {
 
 function albumHeader($obj) {
     global $prefs;
-    $h = '';
+    $h = '<div class="collectionitem fixed selecotron clearfix">';
     if ($obj['id'] == 'nodrop') {
         // Hacky at the moment, we only use nodrop for streams but here there is no checking
         // because I'm lazy.
-        $h .= '<div class="clickable clickstream clickicon containerbox menuitem '.$obj['class'].'" name="'.$obj['streamuri'].'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
+        $h .= '<div class="containerbox wrap clickable clickstream clickicon '.$obj['class'].'" name="'.$obj['streamuri'].'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
     } else {
         if (array_key_exists('plpath', $obj)) {
             $h .= '<input type="hidden" name="dirpath" value="'.$obj['plpath'].'" />';
         }
-        $h .= '<div class="menu containerbox menuitem '.$obj['class'].'" name="'.$obj['id'].'">';
+        $h .= '<div class="containerbox wrap menu '.$obj['class'].'" name="'.$obj['id'].'">';
     }
+    $h .= '<div class="helpfulalbum expand">';
 
-    $i = $obj['Image'];
-    $h .= '<div class="smallcover fixed">';
     $extra = (array_key_exists('userplaylist', $obj)) ? ' plimage' : '';
     if (!$obj['Image'] && $obj['Searched'] != 1) {
-        $h .= '<img class="smallcover fixed notexist'.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
+        $h .= '<img class="jalopy notexist'.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
     } else  if (!$obj['Image'] && $obj['Searched'] == 1) {
-        $h .= '<img class="smallcover fixed notfound'.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
+        $h .= '<img class="jalopy notfound'.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
     } else {
-        $h .= '<img class="smallcover fixed'.$extra.'" name="'.$obj['ImgKey'].'" src="'.$i.'" />'."\n";
+        if (strpos($obj['Image'],'albumart/small/') === 0) {
+            if (file_exists('albumart/medium/'.basename($obj['Image']))) {
+                $obj['Image'] = 'albumart/medium/'.basename($obj['Image']);
+            } else {
+                $obj['Image'] = 'albumart/asdownloaded/'.basename($obj['Image']);
+            }
+        }
+        $h .= '<img class="jalopy" name="'.$obj['ImgKey'].'" src="'.$obj['Image'].'" />'."\n";
     }
-    $h .= '</div>';
 
+    $h .= '<div class="tagh albumthing">';
+    $h .= '<div class="title-menu">';
     if ($obj['AlbumUri']) {
         $d = getDomain($obj['AlbumUri']);
         $d = preg_replace('/\+.*/','', $d);
@@ -115,25 +122,21 @@ function albumHeader($obj) {
             $h .= '<i class="icon-doc-text playlisticon fixed"></i>';
         }
     }
-
-    if ($prefs['sortcollectionby'] == 'albumbyartist' && $obj['Artistname']) {
-        $h .= '<div class="expand">'.$obj['Albumname'];
-        $h .= '<br><span class="notbold">'.$obj['Artistname'].'</span>';
-        if ($obj['Year'] && $prefs['sortbydate']) {
-            $h .= ' <span class="notbold">('.$obj['Year'].')</span>';
-        }
-        $h .= '</div>';
-    } else {
-        $h .= '<div class="expand">'.$obj['Albumname'];
-        if ($obj['Year'] && $prefs['sortbydate']) {
-            $h .= ' <span class="notbold">('.$obj['Year'].')</span>';
-        }
-        if ($obj['Artistname']) {
-            $h .= '<br><span class="notbold">'.$obj['Artistname'].'</span>';
-        }
-        $h .= '</div>';
+    $h .= '<div class="artistnamething">'.$obj['Albumname'];
+    if ($obj['Year'] && $prefs['sortbydate']) {
+        $h .= ' <span class="notbold">('.$obj['Year'].')</span>';
     }
     $h .= '</div>';
+    if ($obj['Artistname']) {
+        $h.= '<div class="notbold">'.$obj['Artistname'].'</div>';
+    }
+    $h .= '</div>';
+    $h .= '</div>';
+
+    $h .= '</div>';
+    $h .= '</div>';
+    $h .= '</div>';
+    
     return $h;
 }
 
@@ -141,34 +144,30 @@ function albumControlHeader($fragment, $why, $what, $who, $artist) {
     if ($fragment || $who == 'root') {
         return '';
     }
-    $html = '<div class="menu backmenu" name="'.$why.'artist'.$who.'">';
-    $html .='</div>';
-    $html .= '<div class="configtitle textcentre"><b>'.$artist.'</b></div>';
-    $html .= '<div class="textcentre clickable clickalbum ninesix" name="'.$why.'artist'.$who.'">'.get_int_text('label_play_all').'</div>';
+    $html = '<div class="configtitle textcentre tagholder_wide brick"><b>'.$artist.'</b></div>';
+    $html .= '<div class="textcentre clickable clickalbum ninesix tagholder_wide brick" name="'.$why.'artist'.$who.'">'.get_int_text('label_play_all').'</div>';
     return $html;
 }
 
 function trackControlHeader($why, $what, $who, $dets) {
-    $html = '<div class="menu backmenu" name="'.$why.$what.$who.'"></div>';
+    $html = '';
     foreach ($dets as $det) {
-        $html .= '<div class="album-menu-header"><img class="album_menu_image" src="'.preg_replace('#albumart/small#', 'albumart/asdownloaded', $det['Image']).'" /></div>';
         if ($why != '') {
-            $html .= '<div class="textcentre ninesix playlistrow2">'.get_int_text('label_play_options').'</div>';
             $html .= '<div class="containerbox wrap album-play-controls">';
             if ($det['AlbumUri']) {
                 $albumuri = rawurlencode($det['AlbumUri']);
                 if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
-                    $html .= '<div class="icon-no-response-playbutton collectionicon expand clickable clickcue fakedouble" name="'.$albumuri.'"></div>';
+                    $html .= '<div class="icon-no-response-playbutton collectionicon expand clickable clickcue" name="'.$albumuri.'"></div>';
                 } else {
-                    $html .= '<div class="icon-no-response-playbutton collectionicon expand clickable clicktrack fakedouble" name="'.$albumuri.'"></div>';
+                    $html .= '<div class="icon-no-response-playbutton collectionicon expand clickable clicktrack" name="'.$albumuri.'"></div>';
                 }
             } else {
-                $html .= '<div class="icon-no-response-playbutton collectionicon expand clickable clickalbum fakedouble" name="'.$why.'album'.$who.'"></div>';
+                $html .= '<div class="icon-no-response-playbutton collectionicon expand clickable clickalbum" name="'.$why.'album'.$who.'"></div>';
             }
-            $html .= '<div class="icon-single-star collectionicon expand clickable clickicon clickable clickalbum fakedouble" name="ralbum'.$who.'"></div>';
-            $html .= '<div class="icon-tags collectionicon expand clickable clickicon clickable clickalbum fakedouble" name="talbum'.$who.'"></div>';
-            $html .= '<div class="icon-ratandtag collectionicon expand clickable clickicon clickable clickalbum fakedouble" name="yalbum'.$who.'"></div>';
-            $html .= '<div class="icon-ratortag collectionicon expand clickable clickicon clickable clickalbum fakedouble" name="ualbum'.$who.'"></div>';
+            $html .= '<div class="icon-single-star collectionicon expand clickable clickicon clickable clickalbum" name="ralbum'.$who.'"></div>';
+            $html .= '<div class="icon-tags collectionicon expand clickable clickicon clickable clickalbum" name="talbum'.$who.'"></div>';
+            $html .= '<div class="icon-ratandtag collectionicon expand clickable clickicon clickable clickalbum" name="yalbum'.$who.'"></div>';
+            $html .= '<div class="icon-ratortag collectionicon expand clickable clickicon clickable clickalbum" name="ualbum'.$who.'"></div>';
             $html .= '</div>';
             $html .= '<div class="textcentre ninesix playlistrow2">'.ucfirst(get_int_text('label_tracks')).'</div>';
         }
@@ -179,19 +178,18 @@ function trackControlHeader($why, $what, $who, $dets) {
 function printDirectoryItem($fullpath, $displayname, $prefix, $dircount, $printcontainer = false) {
     $c = ($printcontainer) ? "searchdir" : "directory";
     print '<input type="hidden" name="dirpath" value="'.rawurlencode($fullpath).'" />';
-    print '<div class="'.$c.' menu containerbox menuitem" name="'.$prefix.$dircount.'">';
+    print '<div class="'.$c.' menu containerbox menuitem brick_wide" name="'.$prefix.$dircount.'">';
     print '<i class="icon-folder-open-empty fixed smallicon"></i>';
     print '<div class="expand">'.htmlentities(urldecode($displayname)).'</div>';
     print '</div>';
     if ($printcontainer) {
-        print '<div class="dropmenu" id="'.$prefix.$dircount.'"><div class="menu backmenu" name="'.$prefix.$dircount.'"></div>';
+        print '<div class="dropmenu" id="'.$prefix.$dircount.'">';
     }
 }
 
 function directoryControlHeader($prefix, $name = null) {
-    print '<div class="menu backmenu" name="'.trim($prefix, '_').'"></div>';
     if ($name !== null) {
-        print '<div class="textcentre"><b>'.$name.'</b></div>';
+        print '<div class="menuitem configtitle textcentre brick_wide"><b>'.$name.'</b></div>';
     }
 }
 
@@ -199,11 +197,11 @@ function printRadioDirectory($att) {
     $name = md5($att['URL']);
     print '<input type="hidden" value="'.rawurlencode($att['URL']).'" />';
     print '<input type="hidden" value="'.rawurlencode($att['text']).'" />';
-    print '<div class="browse menu directory containerbox menuitem" name="tunein_'.$name.'">';
+    print '<div class="browse menu directory containerbox menuitem brick_wide" name="tunein_'.$name.'">';
     print '<i class="icon-folder-open-empty fixed smallicon"></i>';
     print '<div class="expand">'.$att['text'].'</div>';
     print '</div>';
-    print '<div id="tunein_'.$name.'" class="dropmenu"></div>';
+    print '<div id="tunein_'.$name.'" class="invisible indent containerbox wrap fullwidth"></div>';
 }
 
 function playlistPlayHeader($name) {
@@ -214,14 +212,19 @@ function playlistPlayHeader($name) {
 
 function addPodcastCounts($html, $extra) {
     $out = phpQuery::newDocument($html);
-    $out->find('.menuitem')->append($extra);
+    $out->find('.containerbox.wrap')->removeClass('wrap')->addClass('vertical');
+    $extra = '<div class="helpfulalbum fixed">'.$extra.'</div>';
+    $out->find('.containerbox.vertical')->append($extra);
     return $out;
 }
 
 function addUserRadioButtons($html, $index, $uri, $name, $image) {
     $out = phpQuery::newDocument($html);
-    $extra = '<div class="fixed clickable clickradioremove clickicon" name="'.$index.'"><i class="icon-cancel-circled playlisticon"></i></div>';
-    $out->find('.menuitem')->append($extra);
+    $extra = '<div class="fixed containerbox">';
+    $extra .= '<div class="expand"></div>';
+    $extra .= '<i class="clickable clickradioremove clickicon icon-cancel-circled collectionicon" name="'.$index.'"></i>';
+    $extra .= "</div>";
+    $out->find('.helpfulalbum')->append($extra);
     return $out;
 }
 
@@ -230,11 +233,14 @@ function addPlaylistControls($html, $delete, $is_user, $name) {
     $out = phpQuery::newDocument($html);
     if ($delete && ($is_user || $prefs['player_backend'] == "mpd")) {
         $add = ($is_user) ? "user" : "";
-        $h = '<i class="icon-floppy fixed smallicon clickable clickicon clickrename'.$add.'playlist"></i>';
+        $h = '<div class="fixed containerbox">';
+        $h .= '<i class="icon-floppy fixed smallicon clickable clickicon clickrename'.$add.'playlist"></i>';
         $h .= '<input type="hidden" value="'.$name.'" />';
+        $h .= '<div class="expand"></div>';
         $h .= '<i class="icon-cancel-circled fixed smallicon clickable clickicon clickdelete'.$add.'playlist"></i>';
         $h .= '<input type="hidden" value="'.$name.'" />';
-        $out->find('.menuitem')->append($h);
+        $h .= '</div>';
+        $out->find('.helpfulalbum')->append($h);
     }
     return $out;
 }

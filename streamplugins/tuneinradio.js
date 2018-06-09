@@ -12,21 +12,10 @@ var tuneinRadioPlugin = {
     },
 
     setTheThing: function() {
-        $('[name="tuneinsearcher"]').click(function(ev){
-            ev.preventDefault();
-            ev.stopPropagation();
-            var position = getPosition(ev);
-            var elemright = $('[name="tuneinsearcher"]').width() + $('[name="tuneinsearcher"]').offset().left;
-            if (position.x > elemright - 24) {
-                $('[name="tuneinsearcher"]').val("");
-                $('#tuneinlist').empty();
-                tuneinRadioPlugin.loadBigRadio();
-            }
-        });
         $('[name="tuneinsearcher"]').hover(makeHoverWork);
         $('[name="tuneinsearcher"]').mousemove(makeHoverWork);
         $('[name="tuneinsearcher"]').keyup(onKeyUp);
-        $('[name="sonicthehedgehog"]').click(tuneinRadioPlugin.search);
+        layoutProcessor.postAlbumActions();
     },
     
     handleClick: function(event) {
@@ -46,6 +35,18 @@ var tuneinRadioPlugin = {
             } else {
                 doMenu(null, clickedElement);
             }
+        } else if (clickedElement.hasClass('tuneinsearchbox')) {
+            event.preventDefault();
+            event.stopPropagation();
+            var position = getPosition(event);
+            var elemright = $('[name="tuneinsearcher"]').width() + $('[name="tuneinsearcher"]').offset().left;
+            if (position.x > elemright - 24) {
+                $('[name="tuneinsearcher"]').val("");
+                $('#tuneinlist').empty().addClass('notfilled');
+                tuneinRadioPlugin.loadBigRadio();
+            }
+        } else if (clickedElement.hasClass("tuneinsearchbutton")) {
+            tuneinRadioPlugin.search();
         } else if (clickedElement.hasClass("menu")) {
             doMenu(event, clickedElement);
         } else if (prefs.clickmode == "double") {
@@ -54,7 +55,7 @@ var tuneinRadioPlugin = {
                 trackSelect(event, clickedElement);
             }
         } else if (prefs.clickmode == "single") {
-            onCollectionDoubleClicked(event);
+            onSourcesDoubleClicked(event);
         }
 
     },
@@ -78,4 +79,4 @@ var tuneinRadioPlugin = {
 }
 
 menuOpeners['tuneinlist'] = tuneinRadioPlugin.loadBigRadio;
-clickRegistry.addClickHandlers('#tuneinradio', tuneinRadioPlugin.handleClick, onCollectionDoubleClicked);
+clickRegistry.addClickHandlers('#tuneinlist', tuneinRadioPlugin.handleClick, onSourcesDoubleClicked);

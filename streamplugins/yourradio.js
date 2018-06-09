@@ -7,15 +7,18 @@ var yourRadioPlugin = {
 	            $('i[name="yourradiolist"]').stopSpinner();
 			    $('[name="spikemilligan"]').click(yourRadioPlugin.loadSuppliedStation);
 		    	$("#anaconda").on("drop", yourRadioPlugin.handleDropRadio);
-	            $("#yourradiostations").sortableTrackList({
-	                items: ".menuitem",
-	                insidedrop: yourRadioPlugin.saveRadioOrder,
-	                scroll: true,
-	                scrollparent: "#radiolist",
-	                scrollspeed: 80,
-	                scrollzone:120,
-	                allowdragout: true
-	            });
+				layoutProcessor.postAlbumActions();
+				if (layoutProcessor.sortFaveRadios) {
+		            $("#yourradiostations").sortableTrackList({
+		                items: ".menuitem",
+		                insidedrop: yourRadioPlugin.saveRadioOrder,
+		                scroll: true,
+		                scrollparent: "#radiolist",
+		                scrollspeed: 80,
+		                scrollzone:120,
+		                allowdragout: true
+		            });
+				}
 			});
 		}
 	},
@@ -37,6 +40,7 @@ var yourRadioPlugin = {
         $.post("utils/userstreams.php", data)
             .done( function(data) {
                 $('#yourradiostations').html(data);
+				layoutProcessor.postAlbumActions();
                 infobar.notify(infobar.NOTIFY,"Added To Your Radio Stations");
             });
 	},
@@ -45,6 +49,7 @@ var yourRadioPlugin = {
         $.post("utils/userstreams.php", {remove: name})
             .done( function(data) {
                 $('#yourradiostations').html(data);
+				layoutProcessor.postAlbumActions();
             })
             .fail( function() {
 	            playlist.repopulate();
@@ -89,7 +94,7 @@ var yourRadioPlugin = {
 	            trackSelect(event, clickedElement);
 	        }
 	    } else if (prefs.clickmode == "single") {
-	        onCollectionDoubleClicked(event);
+	        onSourcesDoubleClicked(event);
 	    }
 
 	}
@@ -97,4 +102,4 @@ var yourRadioPlugin = {
 }
 
 menuOpeners['yourradiolist'] = yourRadioPlugin.loadStations;
-clickRegistry.addClickHandlers('#faveradioplugin', yourRadioPlugin.handleClick, onCollectionDoubleClicked);
+clickRegistry.addClickHandlers('#anaconda', yourRadioPlugin.handleClick, onSourcesDoubleClicked);

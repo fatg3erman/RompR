@@ -169,6 +169,10 @@ div {
     width:100%;
 }
 
+#tagadder
+{
+    z-index: 15000;
+}
 /*
 =====================================================================
 = General Classes
@@ -427,7 +431,6 @@ div.rightmenu {
     border: 6px solid transparent;
     vertical-align:middle;
 }
-
 
 .collectionicon {
     padding:0px;
@@ -948,4 +951,8 @@ div.rightmenu {
 .indent {
     padding-left: 4px;
     box-szing:border-box;
+}
+
+img.jalopy200 {
+    max-width:140px;
 }

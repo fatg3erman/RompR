@@ -352,10 +352,12 @@ var infobar = function() {
             aImg.onload = function() {
                 debug.trace("ALBUMPICTURE","Image Loaded",$(this).attr("src"));
                 $("#albumpicture").attr('class', "clickicon");
-                $("#albumpicture").attr("src", $(this).attr("src")).fadeIn('fast');
+                $("#albumpicture").attr("src", $(this).attr("src")).fadeIn('fast', function() {
+                    layoutProcessor.adjustLayout();
+                    infobar.biggerize();
+                });
                 $("#albumpicture").unbind('click');
                 $("#albumpicture").click(infobar.albumImage.displayOriginalImage);
-                setTimeout(infobar.biggerize, 1000);
             }
             aImg.onerror = function() {
                 debug.warn("ALBUMPICTURE","Image Failed To Load",$(this).attr("src"));
@@ -536,6 +538,7 @@ var infobar = function() {
         markCurrentTrack: function() {
             if (trackinfo.location) {
                 $('[name="'+encodeURIComponent(trackinfo.location)+'"]:not(.playlistcurrentitem)').addClass('playlistcurrentitem');
+                $('[name="'+trackinfo.location+'"]:not(.playlistcurrentitem)').addClass('playlistcurrentitem');
             }
         },
 
@@ -544,6 +547,7 @@ var infobar = function() {
             debug.trace("INFOBAR","NPinfo",info);
             if (trackinfo.location) {
                 $('[name="'+encodeURIComponent(trackinfo.location)+'"]').removeClass('playlistcurrentitem');
+                $('[name="'+trackinfo.location+'"]').removeClass('playlistcurrentitem');
             }
             trackinfo = info;
             infobar.markCurrentTrack();

@@ -170,7 +170,7 @@ function mpd_search() {
 }
 
 function browse_album() {
-    global $collection;
+    global $collection, $skin;
     $domains = array();
     $a = preg_match('/(a|b)(.*?)(\d+|root)/', $_REQUEST['browsealbum'], $matches);
     if (!$a) {
@@ -207,8 +207,10 @@ function browse_album() {
             print do_tracks_from_database($why, $what, find_justadded_albums(), true);
         } else {
             $artistarray = find_justadded_artists();
+            $do_controlheader = true;
             foreach ($artistarray as $artistid) {
-                do_albums_from_database($why, 'album', $artistid, false, false, true);
+                do_albums_from_database($why, 'album', $artistid, false, false, true, $do_controlheader);
+                $do_controlheader = false;
             }
         }
     }

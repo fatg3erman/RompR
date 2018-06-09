@@ -134,7 +134,6 @@ String.prototype.removePunctuation = function() {
 String.prototype.fixDodgyLinks = function() {
     var regexp = /([^"])(https*:\/\/.*?)([<|\n|\r|\s|\)])/g;
     return this.replace(regexp, '$1<a href="$2" target="_blank">$2</a>$3');
-    // return this;
 }
 
 function setCookie(cname, cvalue, exdays) {

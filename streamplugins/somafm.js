@@ -6,6 +6,7 @@ var somaFmPlugin = {
 	        $("#somafmlist").load("streamplugins/01_somafm.php?populate", function( ) {
 				$('i[name="somafmlist"]').stopSpinner();
 				$('#somafmlist').removeClass('notfilled');
+				layoutProcessor.postAlbumActions();
 	        });
 		}
 	},
@@ -20,11 +21,11 @@ var somaFmPlugin = {
                 trackSelect(event, clickedElement);
             }
         } else if (prefs.clickmode == "single") {
-            onCollectionDoubleClicked(event);
+            onSourcesDoubleClicked(event);
         }
     }
 
 }
 
 menuOpeners['somafmlist'] = somaFmPlugin.loadSomaFM;
-clickRegistry.addClickHandlers('#somafmplugin', somaFmPlugin.handleClick, onCollectionDoubleClicked);
+clickRegistry.addClickHandlers('#somafmplugin', somaFmPlugin.handleClick, onSourcesDoubleClicked);

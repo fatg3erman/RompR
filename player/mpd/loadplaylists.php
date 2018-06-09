@@ -128,17 +128,11 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
                 'why' => 'whynot',
                 'ImgKey' => $imgkey,
                 'userplaylist' => $class,
-                'plpath' => $link
+                'plpath' => $link,
+                'class' => 'playlist',
+                'expand' => true
             ));
-            $out = phpQuery::newDocument($html);
-            if ($delete && ($is_user || $prefs['player_backend'] == "mpd")) {
-                $add = ($is_user) ? "user" : "";
-                $h = '<i class="icon-floppy fixed smallicon clickable clickicon clickrename'.$add.'playlist"></i>';
-                $h .= '<input type="hidden" value="'.$name.'" />';
-                $h .= '<i class="icon-cancel-circled fixed smallicon clickable clickicon clickdelete'.$add.'playlist"></i>';
-                $h .= '<input type="hidden" value="'.$name.'" />';
-                $out->find('.menuitem')->append($h);
-            }
+            $out = addPlaylistControls($html, $delete, $is_user, $name);
             print $out->html();
             break;
 
@@ -169,8 +163,8 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
 }
 
 function do_playlist_header() {
-    print '<div class="configtitle textcentre"><b>'.get_int_text('button_loadplaylist').'</b></div>';
-    print '<div class="containerbox dropdown-container fullwidth">';
+    print '<div class="configtitle textcentre brick_wide"><b>'.get_int_text('button_loadplaylist').'</b></div>';
+    print '<div class="containerbox dropdown-container fullwidth brick_wide">';
     print '<div class="fixed padright padleft"><span class="alignmid">External URL</span></div>';
     print '<div class="expand dropdown-holder">
         <input class="enter" id="godfreybiggins" type="text" onkeyup="onKeyUp(event)" /></div>';

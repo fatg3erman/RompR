@@ -134,7 +134,7 @@ var podcasts = function() {
 	        success: function(data) {
 	            $("#podcast_"+options.channel).html(data);
 	            $("#podcast_"+options.channel).find('.fridge').tipTip({edgeOffset: 8});
-		        $("#podcast_"+options.channel).find('.clearbox').click(function(event){
+		        $("#podcast_"+options.channel).find('.clearbox').bind('click', function(event){
 		            event.preventDefault();
 		            event.stopPropagation();
 		            var position = getPosition(event);
@@ -149,6 +149,7 @@ var podcasts = function() {
 	            	callback();
 	            }
 	            podcasts.doNewCount();
+				layoutProcessor.postAlbumActions();
 	        },
 	        error: function(data, status) {
 	            debug.error("PODCASTS", "Failed To Set Option:",options,data,status);
@@ -174,6 +175,7 @@ var podcasts = function() {
 	            infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
 	            podcasts.doNewCount();
 				$('#spinner_cocksausage').remove();
+				layoutProcessor.postAlbumActions($('#fruitbat'));
 	        },
 	        error: function(data, status, thing) {
 	            infobar.notify(infobar.ERROR, "Failed to Subscribe to Podcast : "+data.responseText);
@@ -209,13 +211,15 @@ var podcasts = function() {
 	            if (target.find('.podautodown').is(':checked')) {
 		            target.find('.podnewdownload').click();
 	            }
+				infobar.markCurrentTrack();
+				layoutProcessor.postAlbumActions();
 			});
 		},
 
     	searchinpodcast: function(channel) {
     		var term = $('[name="podsearcher_'+channel+'"]').val();
     		debug.log("PODCASTS","Searching podcast",channel,'for',term);
-    		loadPodcast(channel);
+    		podcasts.loadPodcast(channel);
     	},
 
 		doPodcast: function(input) {
@@ -243,6 +247,7 @@ var podcasts = function() {
 		            $("#podcast_"+channel).html(data);
 		            $("#podcast_"+channel).find('.fridge').tipTip({edgeOffset: 8});
 		            podcasts.doNewCount();
+					layoutProcessor.postAlbumActions();
 		        },
 		        error: function(data, status) {
 		            infobar.notify(infobar.ERROR, language.gettext("podcast_general_error"));
@@ -310,6 +315,7 @@ var podcasts = function() {
 					}
 					putPodCount(element, value.new, value.unlistened)
 				});
+				layoutProcessor.postAlbumActions();
 			});
 		},
 
@@ -327,7 +333,7 @@ var podcasts = function() {
 					options.val = !element.prev().is(':checked');
 					break;
 			}
-			while(!element.hasClass('dropmenu')) {
+			while(!element.hasClass('toggledown')) {
 				element = element.parent();
 			}
 			var channel = element.attr('id');
@@ -347,9 +353,7 @@ var podcasts = function() {
 						$.each(data.updated, function(index, value){
 							if (!($('#podcast_'+value).is(':empty'))) {
 								debug.log("PODCASTS","Podcast",value,"was refreshed and is loaded - reloading it");
-					    		$('#podcast_'+value).load("includes/podcasts.php?populate=1&loadchannel="+value, function() {
-					            	$('#podcast_'+value).find('.fridge').tipTip({edgeOffset: 8});
-					            });
+								podcasts.loadPodcast(value);
 							}
 						});
 					}
@@ -374,6 +378,7 @@ var podcasts = function() {
 		            $("#fruitbat").html(data);
 		            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
 		            podcasts.doNewCount();
+					layoutProcessor.postAlbumActions();
 		        },
 		        error: function(data, status) {
 		            infobar.notify(infobar.ERROR, language.gettext("podcast_remove_error"));
@@ -398,10 +403,11 @@ var podcasts = function() {
 		        data: {search: encodeURIComponent(term), populate: 1 },
 		        success: function(data) {
 		            $("#podcast_search").html(data);
-		            $('#podcast_search').prepend('<div class="menuitem containerbox padright"><div class="configtitle textcentre expand">Search Results for &quot;'+term+'&quot;</div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch fixed"></i></div>');
-		            $('#podcast_search').append('<div class="configtitle textcentre fullwidth">Subscribed Podcasts</div>');
+		            $('#podcast_search').prepend('<div class="menuitem containerbox padright brick_wide sensiblebox"><div class="configtitle textcentre expand"><b>Search Results for &quot;'+term+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch fixed"></i></div>');
+		            $('#podcast_search').append('<div class="menuitem configtitle textcentre brick_wide sensiblebox"><b>Subscribed Podcasts</b></div>');
 		            $("#podcast_search").find('.fridge').tipTip({edgeOffset: 8});
 					$('#spinner_cocksausage').remove();
+					layoutProcessor.postAlbumActions($('#podcast_search'));
 		        },
 		        error: function(data, status, thing) {
 		            infobar.notify(infobar.ERROR, "Search Failed : "+data.responseText);
@@ -424,13 +430,36 @@ var podcasts = function() {
 		        contentType: "text/html; charset=utf-8",
 		        data: {subscribe: index, populate: 1 },
 		        success: function(data) {
-		        	$('i[name="podcast_'+index+'"]').parent().fadeOut('fast');
-					$('.menuitem[name="podcast_'+index+'"]').fadeOut('fast');
-		        	$('#podcast_'+index).remove();
-		            $("#fruitbat").html(data);
-		            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
-		            infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
-		            podcasts.doNewCount();
+					// For skypotato skin
+					$('.menu[name="podcast_'+index+'"]').parent().fadeOut('fast', function() {
+						$('.menu[name="podcast_'+index+'"]').parent().remove();
+						$('#podcast_'+index).remove();
+						$("#fruitbat").html(data);
+			            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+			            infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
+			            podcasts.doNewCount();
+						layoutProcessor.postAlbumActions();
+					});
+					// For phone skins
+					$('.menuitem[name="podcast_'+index+'"]').fadeOut('fast', function() {
+						$('.menuitem[name="podcast_'+index+'"]').remove();
+						$('#podcast_'+index).remove();
+						$("#fruitbat").html(data);
+			            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+			            infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
+			            podcasts.doNewCount();
+						layoutProcessor.postAlbumActions();
+					});
+					// For all other skins
+		        	$('i[name="podcast_'+index+'"]').parent().fadeOut('fast', function() {
+						$('i[name="podcast_'+index+'"]').parent().remove();
+						$('#podcast_'+index).remove();
+						$("#fruitbat").html(data);
+			            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+			            infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
+			            podcasts.doNewCount();
+						layoutProcessor.postAlbumActions();
+					});
 		        },
 		        error: function(data, status, thing) {
 		            infobar.notify(infobar.ERROR, "Subscribe Failed : "+data.responseText);
@@ -441,6 +470,7 @@ var podcasts = function() {
 
 		removeSearch: function() {
 			$('#podcast_search').empty();
+			layoutProcessor.postAlbumActions();
 		}
 
 	}

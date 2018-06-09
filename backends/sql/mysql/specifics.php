@@ -69,6 +69,7 @@ function check_sql_tables() {
 		"Searched TINYINT(1) UNSIGNED, ".
 		"ImgKey CHAR(32), ".
 		"mbid CHAR(40), ".
+		"ImgVersion INT UNSIGNED DEFAULT ".ROMPR_IMAGE_VERSION.", ".
 		"Domain CHAR(32), ".
 		"Image VARCHAR(255), ".
 		"justUpdated TINYINT(1) UNSIGNED DEFAULT 1, ".
@@ -539,7 +540,14 @@ function check_sql_tables() {
 				create_conditional_triggers();
 				generic_sql_query("UPDATE Statstable SET Value = 33 WHERE Item = 'SchemaVer'", true);
 				break;
-
+			
+			case 33:
+				debuglog("Updating FROM Schema version 33 TO Schema version 34","SQL");
+				generic_sql_query("ALTER TABLE Albumtable ADD ImgVersion INT UNSIGNED DEFAULT ".ROMPR_IMAGE_VERSION, true);
+				generic_sql_query("UPDATE Albumtable SET ImgVersion = 1",true);
+				generic_sql_query("UPDATE Statstable SET Value = 34 WHERE Item = 'SchemaVer'", true);
+				break;
+				
 		}
 		$sv++;
 	}

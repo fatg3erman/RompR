@@ -28,7 +28,7 @@ $(document).ready(function(){
             }
         });
     }
-    $('.combobox').makeTagMenu({textboxextraclass: 'searchterm', textboxname: 'tag', labelhtml: '<div class="fixed searchlabel"><b>'+language.gettext("label_tag")+'</b></div>', populatefunction: tagAdder.populateTagMenu});
+    $('.combobox').makeTagMenu({textboxextraclass: 'searchterm', textboxname: 'tag', labelhtml: '<div class="fixed searchlabel nohide"><b>'+language.gettext("label_tag")+'</b></div>', populatefunction: tagAdder.populateTagMenu});
     $('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add});
     browser.createButtons();
     setClickHandlers();
@@ -52,12 +52,8 @@ $(document).ready(function(){
     $("#sortable").click(onPlaylistClicked);
     $(window).bind('resize', layoutProcessor.adjustLayout);
     pluginManager.setupPlugins();
-    ferretMaster();
-    layoutProcessor.sourceControl(prefs.chooser, function() {
-        layoutProcessor.adjustLayout();
-        setTimeout(setSearchLabelWidth, 2000);
-        setTimeout(setSpotiLabelWidth, 2000);
-    });
+    setAvailableSearchOptions();
+    layoutProcessor.adjustLayout();
     if (prefs.auto_discovembobulate) {
         setTimeout(function() {
             pluginManager.autoOpen(language.gettext('button_infoyou'));
@@ -81,6 +77,8 @@ $(document).ready(function(){
     for (var i in helplinks) {
         $('b:contains("'+i+'")').parent('.configtitle').append('<a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
     }
+    layoutProcessor.changeCollectionSortMode();
+    layoutProcessor.sourceControl(prefs.chooser);
 });
 
 function cleanBackendCache() {

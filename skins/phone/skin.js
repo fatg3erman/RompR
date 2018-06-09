@@ -35,7 +35,7 @@ jQuery.fn.menuHide = function(callback) {
 }
 
 jQuery.fn.isOpen = function() {
-    if (this.hasClass('backmenu') || this.hasClass('icon-toggle-open')) {
+    if (this.hasClass('backmenu') || $('#'+this.attr('name')).is(':visible')) {
         return true;
     } else {
         return false;
@@ -43,35 +43,52 @@ jQuery.fn.isOpen = function() {
 }
 
 jQuery.fn.isClosed = function() {
-    if (this.hasClass('backmenu') || this.hasClass('icon-toggle-open')) {
+    if (this.hasClass('backmenu') || $('#'+this.attr('name')).is(':visible')) {
         return false;
     } else {
         return true;
     }
 }
 
-jQuery.fn.toggleOpen = function() {
-    if (this.hasClass('icon-toggle-closed')) {
-        this.removeClass('icon-toggle-closed').addClass('icon-toggle-open');
-    }
-    return this;
-}
-
-jQuery.fn.toggleClosed = function() {
-    if (this.hasClass('icon-toggle-open')) {
-        this.removeClass('icon-toggle-open').addClass('icon-toggle-closed');
-    }
-    return this;
-}
-
 jQuery.fn.makeSpinner = function() {
-    this.addClass('clickflash');
-    return this;
+    if (this.hasClass('icon-toggle-closed') ||
+        this.hasClass('icon-toggle-open') ||
+        this.hasClass('podicon')) {
+        return this.each(function() {
+            var originalclasses = new Array();
+            var classes = '';
+            if ($(this).attr("class")) {
+                var classes = $(this).attr("class").split(/\s/);
+            }
+            for (var i = 0, len = classes.length; i < len; i++) {
+                if (classes[i] == "invisible" || (/^icon/.test(classes[i]))) {
+                    originalclasses.push(classes[i]);
+                    $(this).removeClass(classes[i]);
+                }
+            }
+            $(this).attr("originalclass", originalclasses.join(" "));
+            $(this).addClass('icon-spin6 spinner');
+        });
+    } else {
+        this.addClass('clickflash');
+        return this;
+    }
 }
 
 jQuery.fn.stopSpinner = function() {
-    this.removeClass('clickflash');
-    return this;
+    if (this.hasClass('spinner')) {
+        return this.each(function() {
+            $(this).removeClass('icon-spin6 spinner');
+            if ($(this).attr("originalclass")) {
+                $(this).addClass($(this).attr("originalclass"));
+                $(this).removeAttr("originalclass");
+            }
+        });
+    
+    } else {
+        this.removeClass('clickflash');
+        return this;
+    }
 }
 
 jQuery.fn.findParentScroller = function() {
@@ -178,6 +195,25 @@ var layoutProcessor = function() {
         supportsDragDrop: false,
         hasCustomScrollbars: false,
         usesKeyboard: false,
+        sortFaveRadios: false,
+        openOnImage: true,
+
+        changeCollectionSortMode: function() {
+            collectionHelper.forceCollectionReload();
+        },
+
+        bindSourcesClicks: function() {
+            $('.mainpane').not('#infobar').not('#playlistm').not('#prefsm').not('#infopane').unbind('click');
+            $('.mainpane').not('#infobar').not('#playlistm').not('#prefsm').not('#infopane').unbind('dblclick');
+            $('.mainpane').not('#infobar').not('#playlistm').not('#prefsm').not('#infopane').bind('click', onSourcesClicked);
+            if (prefs.clickmode == "double") {
+                $('.mainpane').not('#infobar').not('#playlistm').not('#prefsm').not('#infopane').bind('dblclick', onSourcesClicked);
+            }
+        },
+
+        postAlbumActions: function() {
+
+        },
 
         afterHistory: function() {
             browser.rePoint();
@@ -199,9 +235,8 @@ var layoutProcessor = function() {
         },
 
         goToBrowserPlugin: function(panel) {
-            layoutProcessor.sourceControl('infopane', function() {
-                    layoutProcessor.goToBrowserPanel(panel)
-            });
+            layoutProcessor.sourceControl('infopane');
+            layoutProcessor.goToBrowserPanel(panel);
         },
 
         goToBrowserSection: function(section) {
@@ -259,7 +294,7 @@ var layoutProcessor = function() {
         
         },
 
-        sourceControl: function(source, callback) {
+        sourceControl: function(source) {
             if (source == 'infopane') {
                 $('#infobar').css('display', 'none');
             } else {
@@ -273,8 +308,14 @@ var layoutProcessor = function() {
             $('#'+source).removeClass('invisible');
             prefs.save({chooser: source});
             layoutProcessor.adjustLayout();
-            if (callback) {
-                callback();
+            switch (source) {
+                case'searchpane':
+                    setSearchLabelWidth();
+                    break;
+                    
+                case 'pluginplaylistholder':
+                    setSpotiLabelWidth();
+                    break;
             }
         },
 
@@ -302,6 +343,18 @@ var layoutProcessor = function() {
         displayCollectionInsert: function(d) {
             infobar.notify(infobar.NOTIFY,"Added track to Collection");
             infobar.markCurrentTrack();
+            if (prefs.chooser == 'albumlist') {
+                switch (prefs.sortcollectionby) {
+                    case 'artist':
+                        $('#albumlist').scrollTo($('[name="aartist'+d.artistindex+'"]'));
+                        break;
+                        
+                    default:
+                        $('#albumlist').scrollTo($('[name="aalbum'+d.albumindex+'"]'));
+                        break;
+                        
+                }
+            }
         },
 
         setProgressTime: function(stats) {
@@ -345,6 +398,14 @@ var layoutProcessor = function() {
             }
         },
         
+        getArtistDestinationDiv: function(menutoopen) {
+            if (prefs.sortcollectionby == "artist") {
+                return $('.menu[name="'+menutoopen+'"]').parent();
+            } else {
+                return  $("#"+menutoopen);
+            }
+        },
+
         initialise: function() {
 
             if (!prefs.checkSet('clickmode')) {
@@ -354,13 +415,13 @@ var layoutProcessor = function() {
             setControlClicks();
             $('.choose_nowplaying').click(function(){layoutProcessor.sourceControl('infobar')});
             $('.choose_albumlist').click(function(){layoutProcessor.sourceControl('albumlist')});
-            $('.choose_searcher').click(function(){layoutProcessor.sourceControl('searchpane', setSearchLabelWidth)});
+            $('.choose_searcher').click(function(){layoutProcessor.sourceControl('searchpane')});
             $('.choose_filelist').click(function(){layoutProcessor.sourceControl('filelist')});
             $('.choose_radiolist').click(function(){layoutProcessor.sourceControl('radiolist')});
             $('.choose_podcastslist').click(function(){layoutProcessor.sourceControl('podcastslist')});
             $('.choose_infopanel').click(function(){layoutProcessor.sourceControl('infopane')});
             $('.choose_playlistman').click(function(){layoutProcessor.sourceControl('playlistman')});
-            $('.choose_pluginplaylists').click(function(){layoutProcessor.sourceControl('pluginplaylistholder', setSpotiLabelWidth)});
+            $('.choose_pluginplaylists').click(function(){layoutProcessor.sourceControl('pluginplaylistholder')});
             $('.choose_prefs').click(function(){layoutProcessor.sourceControl('prefsm')});
             $('#choose_history').click(showHistory);
             $('.icon-rss.npicon').click(function(){podcasts.doPodcast('nppodiput')});
@@ -376,8 +437,61 @@ var layoutProcessor = function() {
                 whiledragging: infobar.volumemoved,
                 orientation: "horizontal"
             });
-        }
+        },
 
+        findAlbumDisplayer: function(key) {
+            return $('.containerbox.album[name="'+key+'"]');
+        },
+        
+        findArtistDisplayer: function(key) {
+            return $('div.menu[name="'+key+'"]');
+        },
+        
+        insertAlbum: function(v) {
+            var albumindex = v.id;
+            $('#aalbum'+albumindex).html(v.tracklist);
+            layoutProcessor.findAlbumDisplayer('aalbum'+albumindex).remove();
+            switch (v.type) {
+                case 'insertAfter':
+                    debug.log("Insert After",v.where);
+                    $(v.html).insertAfter(layoutProcessor.findAlbumDisplayer(v.where));
+                    break;
+        
+                case 'insertAtStart':
+                    debug.log("Insert At Start",v.where);
+                    $(v.html).insertAfter($('#'+v.where).find('div.clickalbum[name="'+v.where+'"]'));
+                    break;
+            }
+        },
+        
+        removeAlbum: function(key) {
+            $('#'+key).findParentScroller().restoreScrollPos();
+            $('#'+key).remove();
+            layoutProcessor.findAlbumDisplayer(key).remove();
+        },
+        
+        removeArtist: function(key) {
+            switch (prefs.sortcollectionby) {
+                case 'artist':
+                    $('#aartist'+key).findParentScroller().restoreScrollPos();
+                    $('#aartist'+key).remove();
+                    layoutProcessor.findArtistDisplayer('aartist'+key).remove();
+                    break;
+                    
+                case 'albumbyartist':
+                    $('#aartist'+key).remove();
+                    break;
+                    
+            }
+            
+        },
+        
+        fixupArtistDiv: function(jq, name) {
+            if (prefs.sortcollectionby != 'artist') {
+                jq.find('.menu.backmenu').attr('name', name);
+            }
+        }
+        
     }
 
 }();

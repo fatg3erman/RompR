@@ -417,6 +417,17 @@ button {
     overflow:hidden;
 }
 
+.minwidthed2:before
+{
+    content:"";
+    width: 20em;
+    display:block;
+    overflow:hidden;
+}
+.sensiblebox {
+	box-sizing: border-box;
+}
+
 .tagholder table tr.datetag
 {
     font-size: 120%;
@@ -1786,6 +1797,7 @@ table.ambox {
     padding-bottom:4px;
     padding-top:4px;
     box-sizing:border-box;
+	max-width:100%;
 }
 
 .tagholder_wide .helpfulalbum
@@ -1848,6 +1860,11 @@ table.ambox {
 .jalopy120
 {
     max-width:120px;
+}
+
+.jalopy200
+{
+	max-width: 200px;
 }
 
 .sponklick

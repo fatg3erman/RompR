@@ -2,6 +2,8 @@
 
 Getting this to work on macOS gets harder by the release, but it's not actually that much of a problem. This guide should work on macOS High Sierra.
 
+First open Terminal. If you haven't used Terminal before, don't be scared. It's under 'Other' or 'Utilities'. Type commands exactly as they appear here, and enter your Mac password whenever you are asked.
+
 ## 1. Installing a player
 
 You'll need either MPD or Mopidy
@@ -24,21 +26,17 @@ Then
 
 ## 2. Installing Rompr
 
-First open Terminal. If you haven't used Terminal before, don't be scared. It's under 'Other' or 'Utilities'. Type commands exactly as they appear here, and enter your Mac password whenever you are asked.
-
     cd ~
     mkdir Sites
     
 Now if you've downloaded the ZIP file from here, you can copy it into the Sites folder you just created above and unzip it. Probaby you just need to double-click it to do that.
 Now go back to that terminal window and we'll set some permissions.
 
-    cd rompr
+    cd Sites/rompr
     mkdir prefs
     mkdir albumart
-    mkdir albumart/small
-    mkdir albumart/asdownloaded
-    sudo chown -R _www prefs
-    sudo chgrp -R _www albumart
+    sudo chown _www prefs
+    sudo chown _www albumart
 
 ## 3. Configure Apache Web Server
 

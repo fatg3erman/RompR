@@ -220,8 +220,8 @@ var helpfulThings = function() {
 			// Need to make sure all the album IDs are unique, since we do get duplicates
 
 			holder.spotifyAlbumThing({
-				classes: 'bumfinger tagholder2 selecotron',
-				itemselector: 'bumfinger',
+				classes: 'brick tagholder2 selecotron',
+				itemselector: 'brick',
 				sub: 'album',
 				showbiogs: true,
 				layoutcallback: function() { doneonce = true; helpfulThings.getMoreStuff() },

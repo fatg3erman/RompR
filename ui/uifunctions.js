@@ -366,15 +366,16 @@ function populateSpotiTagMenu(callback) {
 }
 
 function setSearchLabelWidth() {
-    debug.log("UI","Setting Search Label Widths");
+    debug.trace("UI","Setting Search Label Widths");
     var w = 0;
-    $.each($(".slt"), function() {
+    $.each($(".slt:visible"), function() {
         if ($(this).width() > w) {
             w = $(this).width();
         }
     });
     w += 8;
-    $(".searchlabel").css("width", w+"px");
+    $(".searchlabel:visible").css("width", w+"px");
+    $(".searchlabel").not(':visible').css("width", "0px");
     if (prefs.search_limit_limitsearch) {
         $("#mopidysearchdomains").show();
     } else {
@@ -390,7 +391,7 @@ function setSearchLabelWidth() {
 }
 
 function setSpotiLabelWidth() {
-    debug.log("UI","Setting Spotify Label Widths");
+    debug.trace("UI","Setting Spotify Label Widths");
     var w = 0;
     $.each($(".bacon"), function() {
         if ($(this).width() > w) {
@@ -464,7 +465,9 @@ function calcPercentWidth(element, childSelector, targetWidth, parentWidth) {
     if (parentWidth/numElements > pixelwidth) {
         pixelwidth = targetWidth;
     }
-    pixelwidth -= masonry_gutter;
+    if (childSelector != '.collectionitem') {
+        pixelwidth -= masonry_gutter;
+    }
     return (pixelwidth/parentWidth)*100;
 }
 

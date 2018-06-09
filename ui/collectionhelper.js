@@ -10,6 +10,7 @@ var collectionHelper = function() {
     function scanFiles(cmd) {
         collectionHelper.prepareForLiftOff(language.gettext("label_updating"));
         collectionHelper.markWaitFileList(language.gettext("label_updating"));
+        uiHelper.emptySearchResults();
         debug.log("PLAYER","Scanning Files",cmd,prefs.player_backend,prefs.mopidy_scan_command);
         if (prefs.player_backend == "mopidy" && prefs.mopidy_scan_command != '') {
             debug.shout("PLAYER","Scanning Mopidy using external scan command");
@@ -77,6 +78,7 @@ var collectionHelper = function() {
                         infobar.notify(infobar.NOTIFY,"Music Collection Updated");
                         collectionHelper.scootTheAlbums($("#collection"));
                     }
+                    layoutProcessor.postAlbumActions($('#collection'));
                 },
                 error: function(data) {
                     clearTimeout(monitortimer);
@@ -117,35 +119,6 @@ var collectionHelper = function() {
         });
     }
     
-    function insert_new_thing(data) {
-        switch (data.type) {
-            case 'insertAfter':
-                debug.log("Insert After",data.where);
-                $(data.html).insertAfter(findPosition(data.where));
-                break;
-    
-            case 'insertAtStart':
-                debug.log("Insert At Start",data.where);
-                $(data.html).prependTo($('#'+data.where));
-                break;
-    
-        }
-    }
-
-    function findPosition(key) {
-        // The key is the id of a dropdown div.  But that div won't exist if the dropdown hasn't been
-        // opened. So we see if it does, and if it doesn't then we use the name attribute of the
-        // toggle arrow button to locate the position and if that doesn't work then we must be in the phone
-        // skin so return the menuitem div
-        if ($("#"+key).length > 0) {
-            return $("#"+key);
-        } else if ($('i[name="'+key+'"]').length > 0) {
-            return $('i[name="'+key+'"]').parent();
-        } else {
-            return $('.menuitem[name="'+key+'"]');
-        }
-    }
-
     function updateUIElements() {
         
         if (dbQueue.outstandingRequests() > 0) {
@@ -160,22 +133,20 @@ var collectionHelper = function() {
             if (rdata && rdata.hasOwnProperty('deletedalbums')) {
                 $.each(rdata.deletedalbums, function(i, v) {
                     debug.log("REMOVING", "Album", v);
-                    $("#aalbum"+v).remove();
                     // w - for wishlist. Each wishlist track is in a separate album.
                     //     We check each album flagged as modified to see if it has any visible tracks and
                     //     add it to deletedalbums if it doesn't.
                     //     - wishlist tracks are invisible anyway but the only modification that can happen
                     //       to a wishlist album is that its track has been deleted
                     $("#walbum"+v).remove();
-                    findPosition('aalbum'+v).remove();
+                    uiHelper.removeAlbum('aalbum'+v);
                 });
             }
 
             if (rdata && rdata.hasOwnProperty('deletedartists')) {
                 $.each(rdata.deletedartists, function(i, v) {
                     debug.log("REMOVING", "Artist", v);
-                    $("#aartist"+v).remove();
-                    findPosition('aartist'+v).remove();
+                    uiHelper.removeArtist(v);
                 });
             }
 
@@ -184,18 +155,8 @@ var collectionHelper = function() {
                 $.each(rdata.modifiedalbums, function(i,v) {
                     // We remove and replace any modified albums, as they may have a new date or albumartist which would cause
                     // them to appear elsewhere in the collection. First remove the dropdown if it exists and replace its contents
-                    var albumindex = v.id;
-                    debug.log("MODIFIED","Album",albumindex);
-                    $('#aalbum'+albumindex).html(v.tracklist);
-                    var dropdown = $('#aalbum'+albumindex).is(':visible');
-                    var dc = $('#aalbum'+albumindex).remove()[0];
-                    findPosition('aalbum'+albumindex).remove();
-                    insert_new_thing(v);
-                    if (dropdown) {
-                        debug.log("UPDATING","Album",albumindex);
-                        $(dc).insertAfter(findPosition('aalbum'+albumindex));
-                        $('i[name="aalbum'+albumindex+'"]').toggleOpen();
-                    }
+                    debug.log("MODIFIED","Album",v.id);
+                    uiHelper.insertAlbum(v);
                 });
             }
 
@@ -209,9 +170,9 @@ var collectionHelper = function() {
                     if (prefs.sortcollectionby == 'albumbyartist') {
                         $("#aartist"+v.id).remove();
                     }
-                    var x = findPosition('aartist'+v.id);
+                    var x = uiHelper.findArtistDisplayer('aartist'+v.id);
                     if (x.length == 0) {
-                        insert_new_thing(v);
+                        uiHelper.insertArtist(v);
                     }
                 });
             }
@@ -246,7 +207,7 @@ var collectionHelper = function() {
 
         forceCollectionReload: function() {
             collection_status = 0;
-            checkCollection(false, false);
+            collectionHelper.checkCollection(false, false);
         },
     
         prepareForLiftOff: function(text) {
