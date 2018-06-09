@@ -886,29 +886,30 @@ function search_itunes($term) {
     if ($content['status'] == '200') {
         $pods = json_decode($content['contents'], true);
         foreach ($pods['results'] as $podcast) {
-
-            $r = check_if_podcast_is_subscribed($podcast);
-            if (count($r) > 0) {
-                foreach ($r as $a) {
-                    debuglog("  Search found EXISTING podcast ".$a['Title'],"PODCASTS");
+            if (array_key_exists('feedURL', $podcast)) {
+                $r = check_if_podcast_is_subscribed($podcast);
+                if (count($r) > 0) {
+                    foreach ($r as $a) {
+                        debuglog("  Search found EXISTING podcast ".$a['Title'],"PODCASTS");
+                    }
+                    continue;
                 }
-                continue;
-            }
 
-            if (array_key_exists('artworkUrl600', $podcast) && $podcast['artworkUrl600'] != '' && $podcast['artworkUrl600'] != null) {
-                $img = 'getRemoteImage.php?url='.$podcast['artworkUrl600'];
-            } else {
-                $img = 'newimages/podcast-logo.svg';
+                if (array_key_exists('artworkUrl600', $podcast) && $podcast['artworkUrl600'] != '' && $podcast['artworkUrl600'] != null) {
+                    $img = 'getRemoteImage.php?url='.$podcast['artworkUrl600'];
+                } else {
+                    $img = 'newimages/podcast-logo.svg';
+                }
+                debuglog("Search found podcast : ".$podcast['collectionName']);
+                sql_prepare_query(true, null, null, null,
+                    "INSERT INTO Podcasttable
+                    (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, DaysLive, Description, Version, Subscribed)
+                    VALUES
+                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    $podcast['feedUrl'], time(), $img, $podcast['collectionName'], $podcast['artistName'],
+                    REFRESHOPTION_NEVER, 0, '', ROMPR_PODCAST_TABLE_VERSION, 0
+                );
             }
-            debuglog("Search found podcast : ".$podcast['collectionName']);
-            sql_prepare_query(true, null, null, null,
-                "INSERT INTO Podcasttable
-                (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, DaysLive, Description, Version, Subscribed)
-                VALUES
-                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                $podcast['feedUrl'], time(), $img, $podcast['collectionName'], $podcast['artistName'],
-                REFRESHOPTION_NEVER, 0, '', ROMPR_PODCAST_TABLE_VERSION, 0
-            );
         }
     } else {
         debuglog("SEARCH ERROR - Status was ".$content['status'],"PODCASTS",3);

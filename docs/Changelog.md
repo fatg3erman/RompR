@@ -5,6 +5,7 @@ This is not a complete list of changes and it only starts with version 1.14.
 ## Version 1.14
 
 * Added [Skypotato Skin](/RompR/Skypotato-Skin)
+* A couple of new UI themes
 * Removed the Inconfont icon theme. It was getting too difficult to maintain and didn't really fit in well with the design of the UI.
 * Building the Music Collection now uses about 1/10th or less of the RAM it used to use.
 * Fixes for many Mopidy backends - Beets, Beetslocal, and GMusic now work properly again and you can build your collection using them
@@ -13,8 +14,9 @@ This is not a complete list of changes and it only starts with version 1.14.
 * Added TuneIn Radio Directory browser, as Dirble doesn't seem very reliable.
 * Cleaned up IceCast Radio panel so it now follows the style of the main UI, instead of being simply a modded version of the xiph.org directory web page.
 * Added [romonitor](/RompR/Mobile-Devices) so playcounts still get updated while mobile devices sleep
-* Added [mopidy_scan](/RompR/Rompr-And_Mopidy) so Mopidy local files can be scanned without having to do it manually
+* Added [mopidy_scan](/RompR/Rompr-And_Mopidy#scanning-local-files) so Mopidy local files can be scanned without having to do it manually
 * Local Album Art embedded in Music Files can now be accessed, thanks to an updated getid3.
+* When downloading Album Art automatically, Google images will now be used if nothing can be found elsewhere. However, all Google operations now require you to supply your own [API Key](/RompR/Album-Art-Manager#using-google-images-to-find-album-art)
 * Updated German Translation from Frank Schraven
 * Added help links to many of the UI elements, leading directly to these docs
 * Many, many other tweaks and bugfixes. Almost all the code has been looked at and tweaked.

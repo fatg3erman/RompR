@@ -2,7 +2,7 @@
 
 ## Updating RompЯ
 
-Unfortunately it seems that many mobile devices use very strong cache settings and when you update RompЯ it may not run properly on your device. The only cure for this seems to be to completely delete the cache on your device then load RompЯ. If you have added RompЯ as an icon on your home scree, you will have to remove and recreate the icon.
+Unfortunately it seems that many mobile devices use very strong cache settings and when you update RompЯ it may not run properly on your device. The only cure for this seems to be to completely delete the cache on your device then load RompЯ. If you have added RompЯ as an icon on your home screen, you may have to remove and recreate the icon.
 
 ## Playcounts and Scrobbling
 
