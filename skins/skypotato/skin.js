@@ -940,6 +940,7 @@ var layoutProcessor = function() {
             }
             if (dropdown) {
                 uiHelper.findAlbumDisplayer('aalbum'+albumindex).find('.menu').click();
+                infobar.markCurrentTrack();
             }
             layoutProcessor.postAlbumActions();
         },

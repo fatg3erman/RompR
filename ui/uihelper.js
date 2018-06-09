@@ -175,15 +175,19 @@ var uiHelper = function() {
             try {
                 return layoutProcessor.findAlbumDisplayer(key);
             } catch (err) {
-                // For finding where to insert nre album headers
-                // The key is the id of a dropdown div.
                 if ($("#"+key).length > 0) {
-                    // If it already exists
                     return $("#"+key);
                 } else {
-                    // Opener div (standard UI)
                     return $('i[name="'+key+'"]').parent();
                 }
+            }
+        },
+
+        findAlbumParent: function(key) {
+            try {
+                return layoutProcessor.findAlbumParent(key);
+            } catch (err) {
+                return $('i[name="'+key+'"]').parent();
             }
         },
         
@@ -206,9 +210,17 @@ var uiHelper = function() {
                 return layoutProcessor.insertAlbum(v);
             } catch (err) {
                 var albumindex = v.id;
+                var reinsert = false;
                 $('#aalbum'+albumindex).html(v.tracklist);
-                var dropdown = $('#aalbum'+albumindex).is(':visible');
-                uiHelper.findAlbumDisplayer('aalbum'+albumindex).remove();
+                // This may look slightly messy but re-insertgin the dropdown instead
+                // of just removing it re-opening it is much cleaner from a user
+                // experience perspective.
+                var dropdown = $('#aalbum'+albumindex);
+                if (dropdown.is(':visible')) {
+                    reinsert = true;
+                    dropdown.detach().html(v.tracklist);
+                }
+                uiHelper.findAlbumParent('aalbum'+albumindex).remove();
                 switch (v.type) {
                     case 'insertAfter':
                         debug.log("Insert After",v.where);
@@ -220,8 +232,10 @@ var uiHelper = function() {
                         $(v.html).prependTo($('#'+v.where));
                         break;
                 }
-                if (dropdown) {
-                    uiHelper.findAlbumDisplayer('aalbum'+albumindex).find('.menu').click();
+                if (reinsert) {
+                    uiHelper.findAlbumDisplayer('aalbum'+albumindex).find('.menu').toggleOpen();
+                    dropdown.insertAfter(uiHelper.findAlbumDisplayer('aalbum'+albumindex));
+                    infobar.markCurrentTrack();
                 }
                 layoutProcessor.postAlbumActions();
             }
@@ -260,6 +274,7 @@ var uiHelper = function() {
             } catch (err) {
                 $('#'+key).remove();
                 uiHelper.findAlbumDisplayer(key).remove();
+                uiHelper.findAlbumParent(key).remove();
                 layoutProcessor.postAlbumActions();
             }
         },
