@@ -65,7 +65,7 @@ function saveImage($fname, $in_collection, $stream) {
         unlink($small_file);
     }
     if ($med_file && file_exists($med_file)) {
-        unlink($small_file);
+        unlink($med_file);
     }
     if (file_exists($anglofile)) {
         unlink($anglofile);
