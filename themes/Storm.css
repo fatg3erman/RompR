@@ -10,7 +10,7 @@ body.phone .dropmenu>div {
     background-color:rgba(0,0,0,0.3);
 }
 
-body.phone #cssisshit, body.phone #amontobin, body.phone #nowplaying {
+body.phone #geoffreyboycott, body.phone #amontobin, body.phone #nowplaying {
     background-color:rgba(0,0,0,0.3);
 }
 
@@ -392,8 +392,9 @@ tr.clickaddtrack:hover
 
 .podcastitem
 {
-    border-top:1px solid #cccccc;
+    margin-top: 4px;
 }
+
 
 #dragger
 {
