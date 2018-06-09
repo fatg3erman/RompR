@@ -356,6 +356,8 @@ function tryGoogle() {
             $retval = $item['link'];
             break;
         }
+    } else if (array_key_exists('error', $json)) {
+        debuglog("    Error response from Google : ".$json['error']['errors'][0]['reason'],"GETALBUMCOVER");
     }
     if ($retval != '') {
         debuglog("    Found image ".$retval." from Google","GETALBUMCOVER");
