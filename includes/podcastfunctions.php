@@ -593,7 +593,7 @@ function format_episode(&$y, &$item, $pm) {
     } else {
         $class = 'invisible whatdoicallthis toggledown';
     }
-    print '<div id="poddesc_'.$item->PODTrackindex.'" class="'.$class.'">'.format_text($item->Description).'</div>';
+    print '<div id="poddesc_'.$item->PODTrackindex.'" class="'.$class.'">'.format_text(fixup_links($item->Description)).'</div>';
     if ($item->FileSize > 0) {
         print '<div class="fsize">'.format_bytes($item->FileSize).'Bytes</div>';
     }
@@ -620,6 +620,10 @@ function format_episode(&$y, &$item, $pm) {
         print '</div>';
     }
     print '</div>';
+}
+
+function fixup_links($s) {
+    return preg_replace('/(^|\s+|\n|[^\s+"])(https*:\/\/.*?)(<|\n|\r|\s|\)|$|[<|\n|\r|\s|\)|$])/', '$1<a href="$2">$2</a>$3', $s);
 }
 
 function doPodcastHeader($y) {
