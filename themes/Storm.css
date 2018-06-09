@@ -7,6 +7,11 @@ html, body.phone .dropmenu {
 
 body.phone .dropmenu>div {
     background-clip:border-box;
+    background-color:rgba(0,0,0,0.3);
+}
+
+body.phone #cssisshit, body.phone #amontobin, body.phone #nowplaying {
+    background-color:rgba(0,0,0,0.3);
 }
 
 body {
