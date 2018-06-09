@@ -243,9 +243,10 @@ $(window).load(function () {
         count++;
         $(this).addClass("notexist");
     });
-    // $('.bigholder').filter(sections_without_missing_images).each( function() {
-    //     $(this).prev().find('button').hide();
-    // });
+    $('#poobag').prop('checked', false);
+    $('#dinkytoy').prop('checked', false);
+    coverscraper.toggleScrolling(false);
+    coverscraper.toggleLocal(false);
     $("#totaltext").html(numcovers+" "+language.gettext("label_albums"));
     coverscraper.reset(albums_without_cover);
     coverscraper.updateInfo(albums_without_cover - count);

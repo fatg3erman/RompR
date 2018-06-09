@@ -421,7 +421,9 @@ var prefs = function() {
                 }
             });
             prefs.rgbs = null;
-            setTimeout(prefs.postUIChange, 2000);
+            if (typeof(layoutProcessor) != 'undefined') {
+                setTimeout(prefs.postUIChange, 2000);
+            }
         },
         
         postUIChange: function() {
