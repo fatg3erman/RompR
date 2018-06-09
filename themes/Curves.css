@@ -344,6 +344,18 @@ body.mobile .configtitle
     border-radius:1em;
 }
 
+.containerbox .podcast .helpfulalbum.expand
+{
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.containerbox .podcast .helpfulalbum.fixed
+{
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
 .tagholder_wide
 {
     background-color: #d0d0d0;

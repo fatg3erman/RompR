@@ -602,7 +602,7 @@ function updateImage(url, index) {
 }
 
 function startAnimation() {
-    imgobj.removeClass('nospin').addClass('spinner');
+    imgobj.removeClass('nospin').attr('src', '').addClass('spinner');
 }
 
 function animationStop() {

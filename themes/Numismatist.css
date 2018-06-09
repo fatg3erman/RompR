@@ -355,6 +355,10 @@ div.topdropmenu
     background-image: linear-gradient(#ededed, #bbbbbb);
 }
 
+.collectionitem .helpfulalbum.fixed {
+    background-image: linear-gradient(#bbbbbb, #aaaaaa);
+}
+
 .tagholder_wide
 {
     background-image: linear-gradient(#ededed, #bbbbbb);
