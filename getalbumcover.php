@@ -345,7 +345,7 @@ function tryGoogle() {
     global $artist;
     global $album;
     global $delaytime;
-    debuglog("  Trying Google for ".$artist." ".$al,"GETALBUMCOVER");
+    debuglog("  Trying Google for ".$artist." ".$album,"GETALBUMCOVER");
     $retval = "";
     $squlookle = "AIzaSyDAErKEr1g1J3yqHA0x6Ckr5jubNIF2YX4";
     $nureek = "https://www.googleapis.com/customsearch/v1?key=".$squlookle."&cx=013407992060439718401:d3vpz2xaljs&searchType=image&alt=json";
