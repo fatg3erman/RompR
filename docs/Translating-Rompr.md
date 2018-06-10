@@ -2,6 +2,10 @@
 
 You don't need to know how to code. All you need is the ability to use a text editor and follow some simple instructions. Oh, and you need to speak two languages, that's quite important :) Please don't use Google Translate or any other online service. If I thought there were any good, I'd use them myself.
 
+## Using GitHub
+
+If you're going to do this by forking RompR on github so you can easily keep track of things, please bease all your changes on the develop branch. The master branch is for creating releases only and will be merged with develop prior to a release.
+
 ## How To Do It
 
 First thing, get the most up-to-date copy of the English translation from

@@ -50,6 +50,10 @@ div {
     margin:0px;
 }
 
+#historypanel, #popupwindow, #tagadder {
+    overflow-y: auto !important;
+}
+
 #volume {
     width:95%;
 }
@@ -205,7 +209,6 @@ div.topdropmenu {
 
 .topdrop
 {
-    display: inline-block;
     float: none !important;
 }
 
@@ -276,6 +279,14 @@ div.topdropmenu {
     padding-bottom:0px;
 }
 
+.popupcontents {
+    margin: 0px;
+}
+
+.popupcontents>div {
+    padding: 8px;
+}
+
 .dropmenu .menuitem {
     margin-top: 4px;
 }
@@ -304,7 +315,7 @@ div.normalmenu {
 }
 
 div.rightmenu {
-    top:30px;
+    top:38px;
     right:0px;
 }
 
@@ -880,7 +891,7 @@ div.rightmenu {
 
 @media screen and (min-width: 541px) {
     .onlynarrow {
-        display:none;
+        display:none !important;
     }
 }
 
