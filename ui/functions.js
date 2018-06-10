@@ -136,6 +136,14 @@ String.prototype.fixDodgyLinks = function() {
     return this.replace(regexp, '$1<a href="$2" target="_blank">$2</a>$3');
 }
 
+String.prototype.isArtistOrAlbum = function() {
+    if (this.indexOf(':artist:') > -1 || this.indexOf(':album:') > -1) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));

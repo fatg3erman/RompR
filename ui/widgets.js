@@ -831,7 +831,7 @@ $.widget('rompr.spotifyAlbumThing', {
             if (layoutProcessor.openOnImage) {
                 var t = $('<div>').appendTo(y);
                 t.append('<img class="'+this.options.imageclass+' menu infoclick'+clickclass+' clickopenalbum" src="'+img+'"  name="'+a.id+'"/>');
-                html = '<div class="tagh albumthing sponklick">'+
+                html = '<div class="tagh albumthing sponklick relpos">'+
                     '<span class="title-menu'+trackclass+' clicktrack" name="'+a.uri+'">';
                 appendto = t;
             } else {
@@ -851,6 +851,9 @@ $.widget('rompr.spotifyAlbumThing', {
             html += a.name+'</span>';
             if (!player.canPlay('spotify')) {
                 html += '<a href="'+a.external_urls['spotify']+'" target="_blank"><i class="icon-spotify-circled playlisticonr"></i></a>';
+            }
+            if (layoutProcessor.openOnImage && player.canPlay('spotify')) {
+                html += '<div class="playdiv'+trackclass+' clicktrack" name="'+a.uri+'"></div>';
             }
             html += '</div>';
             appendto.append(html);
@@ -1024,7 +1027,7 @@ $.widget('rompr.spotifyArtistThing', {
             if (layoutProcessor.openOnImage) {
                 var t = $('<div>').appendTo(y);
                 t.append('<img class="'+this.options.imageclass+' menu infoclick'+clickclass+' clickopenartist" src="'+img+'"  name="'+a.id+'"/>');
-                html = '<div class="tagh albumthing sponklick">'+
+                html = '<div class="tagh albumthing sponklick relpos">'+
                     '<span class="title-menu'+trackclass+' clicktrack" name="'+a.uri+'">'+a.name+'</span>';
                 appendto = t;
             } else {
@@ -1036,6 +1039,9 @@ $.widget('rompr.spotifyArtistThing', {
             }
             if (!player.canPlay('spotify')) {
                 html += '<a href="'+a.external_urls['spotify']+'" target="_blank"><i class="icon-spotify-circled playlisticonr"></i></a>';
+            }
+            if (layoutProcessor.openOnImage && player.canPlay('spotify')) {
+                html += '<div class="playdiv'+trackclass+' clicktrack" name="'+a.uri+'"></div>';
             }
             html += '</div>';
             appendto.append(html)

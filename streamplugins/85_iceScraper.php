@@ -37,7 +37,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 	print ' /></div>';
 	print '<button class="fixed" name="cornwallis">'.get_int_text("button_search").'</button></div>';
 
-	print '<div class="configtitle textcentre brick_wide">'.$page_title.'</div>';
+	print '<div class="configtitle textcentre brick_wide"><b>'.$page_title.'</b></div>';
 	foreach ($list as $server) {
 		$server_web_link = '';
 		$server_name = pq($server)->find('.stream-name')->children('.name')->children('a');

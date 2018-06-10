@@ -70,6 +70,15 @@ jQuery.fn.stopSpinner = function() {
     });
 }
 
+jQuery.fn.bindPlayClicks = function() {
+    return this.each(function() {
+        $(this).unbind('click').unbind('dblclick').bind('click', onSourcesClicked);
+        if (prefs.clickmode == 'double') {
+            $(this).bind('dblclick', onSourcesDoubleClicked);
+        }
+    });
+}
+
 jQuery.fn.makeTagMenu = function(options) {
     var settings = $.extend({
         textboxname: "",

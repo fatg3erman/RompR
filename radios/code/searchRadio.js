@@ -6,6 +6,8 @@ function searchRadio() {
 	this.sending = 0;
 	this.artistindex = 0;
 	var populatetimer = null;
+	var trackfinder = new faveFinder(true);
+	trackfinder.setCheckDb(false);
 
 	function searchArtist(name) {
 		debug.trace("SEARCHRADIO ARTIST","Creating",name);
@@ -16,9 +18,19 @@ function searchRadio() {
 		this.populate = function() {
 			if (!myself.populated) {
 				debug.log("SEARCHRADIO ARTIST","Getting tracks for",name);
-				// Don't limit domains at the search stage - this allows the user to
-				// change the dmoain selection afterwards and we'll honour it.
-				player.controller.rawsearch({artist: [name]}, [], false, myself.gotTracks, false);
+				if (prefs.player_backend == "mopidy") {
+					trackfinder.setPriorities($("#radiodomains").makeDomainChooser("getSelection"));
+				}
+				trackfinder.findThisOne(
+					{
+						title: null,
+						artist: name,
+						duration: 0,
+						albumartist: name,
+						date: 0
+					},
+					myself.gotTracks
+				);
 				myself.populated = true;
 			}
 		}
@@ -27,12 +39,7 @@ function searchRadio() {
 			debug.trace("SEARCHRADIO ARTIST","Got Tracks",data);
 			tracks = new Array();
 			for (var j in data) {
-				for (var k in data[j].tracks) {
-					if (!data[j].tracks[k].uri.match(/:album:/) &&
-						!data[j].tracks[k].uri.match(/:artist:/)) {
-						tracks.push({type: 'uri', name: data[j].tracks[k].uri});
-					}
-				}
+				tracks.push({type: 'uri', name: data[j].uri});
 			}
 			if (tracks.length > 0) {
 				tracks = tracks.sort(randomsort);
@@ -48,13 +55,6 @@ function searchRadio() {
 				var sent = false;
 				while (self.running && tracks && tracks.length > 0) {
 					var t = tracks.shift();
-					if (prefs.player_backend == "mopidy") {
-						var n = $("#radiodomains").makeDomainChooser("getSelection");
-						var d = t.name.substr(0, t.name.indexOf(':'));
-						if (n.indexOf(d) == -1) {
-							continue;
-						}
-					}
 					debug.log("SEARCHRADIO ARTIST",name,"is sending a track");
 					sent = true;
 					self.sending--;

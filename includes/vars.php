@@ -4,7 +4,7 @@ define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
 define('ROMPR_IMAGE_VERSION', 2);
 define('ROMPR_SCHEMA_VERSION', 34);
-define('ROMPR_VERSION', 1.14);
+define('ROMPR_VERSION', '1.15');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_PLAYLIST_KEY', 'IS_ROMPR_PLAYLIST_IMAGE');
@@ -199,6 +199,9 @@ $prefs['mpd_port'] = $prefs['multihosts']->$cockspanner->port;
 $prefs['mpd_password'] = $prefs['multihosts']->$cockspanner->password;
 $prefs['unix_socket'] = $prefs['multihosts']->$cockspanner->socket;
 
+// NOTE. skin is NOT saved as a preference on the backend. It is set as a Cookie only.
+// This is because saving it once as a preference would change the default for ALL new devices
+// and we want to allow devices to intelligently select a default skin using checkwindowsize.php
 $skin = null;
 if(array_key_exists('skin', $_REQUEST)) {
     $skin = $_REQUEST['skin'];

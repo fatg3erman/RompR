@@ -113,12 +113,7 @@ var layoutProcessor = function() {
         },
 
         bindSourcesClicks: function() {
-            $("#sources").unbind('click');
-            $("#sources").unbind('dblclick');
-            $("#sources").bind('click', onSourcesClicked);
-            if (prefs.clickmode == "double") {
-                $("#sources").bind('dblclick', onSourcesDoubleClicked);
-            }
+            $("#sources").bindPlayClicks();
         },
 
         postAlbumActions: function() {

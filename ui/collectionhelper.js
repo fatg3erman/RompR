@@ -133,12 +133,6 @@ var collectionHelper = function() {
             if (rdata && rdata.hasOwnProperty('deletedalbums')) {
                 $.each(rdata.deletedalbums, function(i, v) {
                     debug.log("REMOVING", "Album", v);
-                    // w - for wishlist. Each wishlist track is in a separate album.
-                    //     We check each album flagged as modified to see if it has any visible tracks and
-                    //     add it to deletedalbums if it doesn't.
-                    //     - wishlist tracks are invisible anyway but the only modification that can happen
-                    //       to a wishlist album is that its track has been deleted
-                    $("#walbum"+v).remove();
                     uiHelper.removeAlbum('aalbum'+v);
                 });
             }

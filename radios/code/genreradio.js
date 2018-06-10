@@ -17,6 +17,7 @@ var genreRadio = function() {
 			domains = $("#radiodomains").makeDomainChooser("getSelection");
 		}
 		debug.shout("GENRE RADIO","Searching for Genre",genre,"in domains",domains);
+		// Generally, using faveFinder is better but that doesn't support Genres
 		player.controller.rawsearch({genre: [genre]}, domains, false, genreRadio.checkResults, false);
 	}
 
@@ -90,4 +91,3 @@ var genreRadio = function() {
 }();
 
 playlist.radioManager.register("genreRadio", genreRadio, null);
-

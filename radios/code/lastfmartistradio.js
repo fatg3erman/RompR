@@ -9,7 +9,6 @@ var lastFMArtistRadio = function() {
 	var simtimer;
 	var minplays;
 	var param = null;
-	var periodmap = ['7day', '1month', '3month', '6month', '12month', 'overall'];
 
 	function getNextSimilars() {
 		var art = fartists.shift();
@@ -24,14 +23,8 @@ var lastFMArtistRadio = function() {
 
 	function getTopArtists(page) {
 		var period = null;
-		if (param === null) {
-			var p = $('#lastfmtimerange').rangechooser('getRange');
-			period = periodmap[Math.round(p.max)];
-			debug.log("LASTFM MIX RADIO","Getting listen period from selector",period,p);
-		} else {
-			period = param;
-			debug.log("LASTFM MIX RADIO","Using parameter for period",period);
-		}
+		period = param;
+		debug.log("LASTFM MIX RADIO","Using parameter for period",period);
 		switch (period) {
 			case 'overall':
 				minplays = 7;

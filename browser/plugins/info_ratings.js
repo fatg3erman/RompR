@@ -2,6 +2,7 @@ var info_ratings = function() {
 
 	var me = "ratings";
     var trackFinder = new faveFinder(false);
+	var update_wishlist = false;
 
 	return {
 		getRequirements: function(parent) {
@@ -75,6 +76,10 @@ var info_ratings = function() {
                         infobar.notify(infobar.NOTIFY,"That track is already in the collection");
                     }
                 }
+				if (update_wishlist && typeof(wishlistViewer) != 'undefined') {
+					wishlistViewer.update();
+				}
+				update_wishlist = false;
             }
             
             function setFail(rdata) {
@@ -119,8 +124,7 @@ var info_ratings = function() {
                 if (parent.playlistinfo.type == 'stream') {
                     infobar.notify(infobar.NOTIFY,language.gettext('label_searching'));
                     trackFinder.findThisOne(metaHandlers.fromPlaylistInfo.mapData(parent.playlistinfo, action, [{attribute: type, value: value}]),
-                        self.updateDatabase,
-                        false
+                        self.updateDatabase
                     );
                 } else {
                 	metaHandlers.fromPlaylistInfo.setMeta(parent.playlistinfo, action, [{attribute: type, value: value}], setSuccess, setFail);
@@ -148,6 +152,7 @@ var info_ratings = function() {
                 debug.log("RATINGS","Update Database Function Called",data);
                 if (!data.uri) {
                     infobar.notify(infobar.NOTIFY,language.gettext("label_addtow"));
+					update_wishlist = true;
                 }
                 dbQueue.request([data], findSuccess, setFail);
             }

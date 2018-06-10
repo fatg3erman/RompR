@@ -9,6 +9,7 @@
 .button-disabled { opacity: 0.1 }
 
 .icon-play-circled { background-image :url('media-playback-start.svg') }
+.playdiv { background-image :url('media-playback-start.svg') }
 .icon-pause-circled { background-image :url('media-playback-pause.svg') }
 .icon-fast-backward { background-image :url('media-skip-backward.svg') }
 .icon-fast-forward { background-image :url('media-skip-forward.svg') }

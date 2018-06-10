@@ -22,6 +22,7 @@ class musicCollection {
 	
 	public function __construct() {
 		$this->albums = array();
+		$this->filter_duplicates = false;
 	}
 
 	public function newTrack(&$track) {
@@ -30,7 +31,9 @@ class musicCollection {
 
 		$albumkey = md5($track->tags['folder'].strtolower($track->tags['Album']).strtolower($track->get_sort_artist(true)));
 		if (array_key_exists($albumkey, $this->albums)) {
-			$this->albums[$albumkey]->newTrack($track);
+			if (!$this->filter_duplicates || !$this->albums[$albumkey]->checkForDuplicate($track)) {
+				$this->albums[$albumkey]->newTrack($track);
+			}
 		} else {
 			$this->albums[$albumkey] = new album($track);
 		}
@@ -68,10 +71,15 @@ class musicCollection {
 		}
 		return null;
 	}
+	
+	public function filter_duplicate_tracks() {
+		$this->filter_duplicates = true;
+	}
 
     public function tracks_as_array() {
         $results = array();
         foreach($this->albums as $album) {
+			debuglog("Doing Album ".$album->name,"COLLECTION");
             $album->sortTracks();
             foreach($album->tracks as $trackobj) {
                 $track = array(
@@ -87,18 +95,18 @@ class musicCollection {
                     "duration" => $trackobj->tags['Time'],
                     "date" => $album->datestamp
                 );
+				debuglog("Title - ".$trackobj->tags['Title'],"COLLECTION");
                 // A lot of code that depends on this was written to handle mopidy model search results.
                 // The above is not mopidy model, so friggicate it into just such a thing
                 $d = getDomain($track['uri']);
-                $frigit = array_search($d.':bodgehack', $results);
-                if ($frigit === false) {
-                    $results[] = array(
+				if (!array_key_exists($d, $results)) {
+					debuglog("Creating Results Set For ".$d,"COLLECTION",8);
+                    $results[$d] = array(
                         "tracks" => array(),
                         "uri" => $d.':bodgehack'
                     );
-                    $frigit = count($results) - 1;
                 }
-                $results[$frigit]['tracks'][] = $track;
+                array_push($results[$d]['tracks'], $track);
             }
         }
         return $results;
@@ -316,6 +324,16 @@ class album {
 
         return $numdiscs;
     }
+	
+	public function checkForDuplicate($t) {
+		foreach ($this->tracks as $track) {
+			if ($t->tags['file'] == $track->tags['file']) {
+				debuglog("Filtering Duplicate Track ".$t->tags['file'],"COLLECTION",7);
+				return true;
+			}
+		}
+		return false;
+	}
 
     private function decideOnArtist($candidate) {
         if ($this->artist == null) {
@@ -544,7 +562,6 @@ function process_file($filedata) {
     }
 
     if (strpos($filedata['file'], ':artist:') !== false) {
-        debuglog("Found artist URI","COLLECtION",5);
         $filedata['X-AlbumUri'] = $filedata['file'];
         $filedata['Album'] = get_int_text("label_allartist").concatenate_artist_names($filedata['Artist']);
         $filedata['Disc'] = 0;

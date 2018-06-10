@@ -84,6 +84,9 @@ function playerController() {
                     debug.log("PLAYER","URL Handler : ",h);
                     player.urischemes[h] = true;
                 }
+                if (!player.canPlay('spotify')) {
+                    $('div.textcentre.textunderline:contains("Music From Spotify")').remove();
+                }
                 checkSearchDomains();
                 doMopidyCollectionOptions();
                 playlist.radioManager.init();
@@ -412,6 +415,7 @@ function playerController() {
 	}
 
     this.checkConsume = function(state, callback) {
+        debug.log("PLAYER","Checking Consume",state,callback);
         var c = player.status.consume;
         self.do_command_list([["consume",state]]);
         if (callback) callback(c);
