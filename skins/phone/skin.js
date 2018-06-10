@@ -207,7 +207,7 @@ var layoutProcessor = function() {
             $('.mainpane').not('#infobar').not('#playlistm').not('#prefsm').not('#infopane').unbind('dblclick');
             $('.mainpane').not('#infobar').not('#playlistm').not('#prefsm').not('#infopane').bind('click', onSourcesClicked);
             if (prefs.clickmode == "double") {
-                $('.mainpane').not('#infobar').not('#playlistm').not('#prefsm').not('#infopane').bind('dblclick', onSourcesClicked);
+                $('.mainpane').not('#infobar').not('#playlistm').not('#prefsm').not('#infopane').bind('dblclick', onSourcesDoubleClicked);
             }
         },
 
