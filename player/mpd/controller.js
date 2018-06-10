@@ -84,6 +84,9 @@ function playerController() {
                     debug.log("PLAYER","URL Handler : ",h);
                     player.urischemes[h] = true;
                 }
+                if (!player.canPlay('spotify')) {
+                    $('div.textcentre.textunderline:contains("Music From Spotify")').remove();
+                }
                 checkSearchDomains();
                 doMopidyCollectionOptions();
                 playlist.radioManager.init();

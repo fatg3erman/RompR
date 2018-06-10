@@ -544,7 +544,6 @@ function process_file($filedata) {
     }
 
     if (strpos($filedata['file'], ':artist:') !== false) {
-        debuglog("Found artist URI","COLLECtION",5);
         $filedata['X-AlbumUri'] = $filedata['file'];
         $filedata['Album'] = get_int_text("label_allartist").concatenate_artist_names($filedata['Artist']);
         $filedata['Disc'] = 0;

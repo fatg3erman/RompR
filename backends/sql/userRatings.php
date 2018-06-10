@@ -595,23 +595,14 @@ function get_recommendation_seeds($days, $limit, $top) {
 		if ($track['uri']) {
 			$resultset[] = array('playtotal' => $track['soundcloud_plays'],
 									'Artistname' => $track['label_artist'],
+									'Title' => $track['label_track'],
 									'Uri' => $track['uri']);
 		}
 	}
 
 	// 4. Randomise that list and return the first $top.
-	$artists = array();
-	$results = array();
-	foreach ($resultset as $result) {
-		if (!in_array($result['Artistname'], $artists)) {
-			$artists[] = $result['Artistname'];
-			$results[] = $result;
-		}
-	}
-
-	shuffle($results);
-	$resultset = array_slice($results,0,$top);
-	return $resultset;
+	shuffle($resultset);
+	return array_slice($resultset,0,$top);
 }
 
 function getAveragePlays() {

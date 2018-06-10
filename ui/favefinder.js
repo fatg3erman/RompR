@@ -5,16 +5,15 @@ function faveFinder(returnall) {
     var self = this;
     var queue = new Array();
     var throttle = null;
-    var withalbum = false;
     var priority = [];
+    var checkdb = true;
+    var exact = false;
 
-    // Prioritize - local, beetslocal, beets, gmusic, spotify - in that order
-    // Everything else can take its chance. These are the default priorities, but they can be changed
-    // from the lastfm importer gui.
+    // Prioritize - local, beetslocal, beets, spotify, gmusic - in that order
     // There's currently no way to change these for tracks that are rated from radio stations
     // which means that these are the only domains that will be searched.
     if (prefs.player_backend == 'mopidy') {
-        priority = ["spotify", "gmusic", "beets", "beetslocal", "local"];
+        priority = ["gmusic", "spotify", "beets", "beetslocal", "local"];
     }
 
     function brk(b) {
@@ -40,11 +39,30 @@ function faveFinder(returnall) {
     }
 
     function compare_tracks(lookingfor, found) {
-        if (lookingfor.title.removePunctuation().toLowerCase() !=
-                found.title.removePunctuation().toLowerCase()) {
+        if (found.title == null) {
             return false;
+        } else if (lookingfor.title == null || lookingfor.title.removePunctuation().toLowerCase() == found.title.removePunctuation().toLowerCase()) {
+            return true;
         }
-        return true;
+        return false;
+    }
+
+    function compare_tracks_with_artist(lookingfor, found) {
+        if (lookingfor.title !== null && lookingfor.artist !== null) {
+            if (lookingfor.title.removePunctuation().toLowerCase() == found.title.removePunctuation().toLowerCase() &&
+                lookingfor.artist.removePunctuation().toLowerCase() == found.artist.removePunctuation().toLowerCase()) {
+                return true;
+            }
+        } else if (lookingfor.title === null) {
+            if (lookingfor.artist.removePunctuation().toLowerCase() == found.artist.removePunctuation().toLowerCase()) {
+                return true;
+            }
+        } else if (lookingfor.artist === null) {
+            if (lookingfor.title.removePunctuation().toLowerCase() == found.title.removePunctuation().toLowerCase()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function foundNothing(req) {
@@ -102,60 +120,60 @@ function faveFinder(returnall) {
         for (var i in data) {
             if (data[i].tracks) {
                 for (var k = 0; k < data[i].tracks.length; k++) {
-                    debug.log("FAVEFINDER","Found Track",data[i].tracks[k],req);
-                    var r = cloneObject(req);
-                    for (var g in data[i].tracks[k]) {
-                        r.data[g] = data[i].tracks[k][g];
-                    }
-                    // Prioritise results with a matching album if the track name matches
-                    // and it's not a compilation
-                    if (req.data.album &&
-                        r.data.album &&
-                        r.data.album.toLowerCase() == req.data.album.toLowerCase() &&
-                        r.data.albumartist != "Various Artists" &&
-                        compare_tracks(r.data, req.data)) {
-                        results.push(r.data);
+                    if (data[i].tracks[k].uri.isArtistOrAlbum()) {
+                        debug.trace("FAVEFINDER", "Ignoring non-track ",data[i].tracks[k].uri);
                     } else {
-                        if (r.data.albumartist != "Various Artists") {
-                            if (compare_tracks(r.data, req.data)) {
-                                // Exactly matching track titles are preferred...
-                                results_without_album.unshift(r.data);
+                        debug.debug("FAVEFINDER","Found Track",data[i].tracks[k],req);
+                        var r = cloneObject(req);
+                        for (var g in data[i].tracks[k]) {
+                            r.data[g] = data[i].tracks[k][g];
+                        }
+                        // Prioritise results with a matching album if the track name matches
+                        // and it's not a compilation
+                        // NOTE. There is nowhere anywhere in the code where we pass an album into here
+                        // but at some point there was - it was for the old Last.FM importer - so I've left this
+                        // in in case it becomes useful
+                        if (req.data.album &&
+                            r.data.album &&
+                            r.data.album.toLowerCase() == req.data.album.toLowerCase() &&
+                            r.data.albumartist != "Various Artists" &&
+                            compare_tracks(r.data, req.data)) {
+                            results.push(r.data);
+                        } else {
+                            if (r.data.albumartist != "Various Artists") {
+                                if (compare_tracks(r.data, req.data)) {
+                                    // Exactly matching track titles are preferred...
+                                    results_without_album.unshift(r.data);
+                                } else {
+                                    // .. over non-matching track titles ..
+                                    results_without_album.push(r.data);
+                                }
                             } else {
-                                // .. over non-matching track titles ..
+                                // .. and compilation albums ..
                                 results_without_album.push(r.data);
                             }
-                        } else {
-                            // .. and compilation albums ..
-                            results_without_album.push(r.data);
                         }
                     }
                 }
             }
         }
         results = results.concat(results_without_album);
-        debug.log("FAVEFINDER","Prioritised Results are",results);
+        debug.debug("FAVEFINDER","Prioritised Results are",results);
         if (results.length == 0) {
-            if (withalbum) {
-                debug.log("FAVEFINDER", "Trying without album name");
-                withalbum = false;
-                queue[0].image = null;
-                self.searchForTrack();
-                return;
-            } else {
-                foundNothing(req);
-            }
+            foundNothing(req);
         } else {
             if (returnall) {
                 req.callback(results);
             } else {
                 var f = false;
                 for (var i in results) {
-                    if (results.length == 1 || compare_tracks(req.data, results[i])) {
+                    if (results.length == 1 || compare_tracks_with_artist(req.data, results[i])) {
                         for (var g in results[i]) {
                             req.data[g] = results[i][g];
                         }
                         f = true;
                         req.callback(req.data);
+                        debug.log("FAVEFINDER","Single track asked for, returning",req.data);
                         break;
                     }
                 }
@@ -165,13 +183,13 @@ function faveFinder(returnall) {
             }
         }
 
-        throttle = setTimeout(self.next, 4000);
+        throttle = setTimeout(self.next, 1000);
         queue.shift();
     }
 
-    this.findThisOne = function(data, callback, withalbum) {
+    this.findThisOne = function(data, callback) {
         debug.log("FAVEFINDER","New thing to look for",data);
-        queue.push({data: data, callback: callback, withalbum: withalbum});
+        queue.push({data: data, callback: callback});
         if (throttle == null && queue.length == 1) {
             self.next();
         }
@@ -181,7 +199,6 @@ function faveFinder(returnall) {
         var req = queue[0];
         clearTimeout(throttle);
         if (req) {
-            withalbum = req.withalbum;
             self.searchForTrack();
         } else {
             throttle = null;
@@ -202,15 +219,11 @@ function faveFinder(returnall) {
         if (req.data.artist) {
             st.artist = [req.data.artist];
         }
-        if (withalbum) {
-            if (req.data.album) {
-                st.album = [req.data.album];
-            } else {
-                withalbum = false;
-            }
+        if (req.data.album) {
+            st.album = [req.data.album];
         }
         debug.log("FAVEFINDER","Performing search",st,priority);
-        player.controller.rawsearch(st, priority, false, self.handleResults, true);
+        player.controller.rawsearch(st, priority, exact, self.handleResults, checkdb);
     }
 
     this.trackHtml = function(data, breaks) {
@@ -235,7 +248,12 @@ function faveFinder(returnall) {
         return html;
     }
 
+    this.setCheckDb = function(d) {
+        checkdb = d;
+    }
+    
+    this.setExact = function(e) {
+        exact = e;
+    }
 
 }
-
-

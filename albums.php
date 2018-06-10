@@ -242,6 +242,25 @@ function raw_search() {
         debuglog("Search command : ".$cmd,"MPD SEARCH");
         $doing_search = true;
         doCollection($cmd, $domains);
+        
+        // For backends that don't support multiple parameters (Google Play)
+        // This'll return nothing for Spotify, so it's OK. It might help SoundCloud too.
+        
+        $cmd = $_REQUEST['command'].' any ';
+        $parms = array();
+        if (array_key_exists('artist', $_REQUEST['rawterms'])) {
+            $parms[] = format_for_mpd(html_entity_decode($_REQUEST['rawterms']['artist'][0]));
+        }
+        if (array_key_exists('track_name', $_REQUEST['rawterms'])) {
+            $parms[] = format_for_mpd(html_entity_decode($_REQUEST['rawterms']['track_name'][0]));
+        }
+        if (count($parms) > 0) {
+            $cmd .= '"'.implode(' ',$parms).'"';
+            debuglog("Search command : ".$cmd,"MPD SEARCH");
+            $doing_search = true;
+            doCollection($cmd, $domains, false);
+        }
+        
     }
     print json_encode($collection->tracks_as_array());
 }
