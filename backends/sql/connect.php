@@ -155,7 +155,6 @@ function sql_prepare_query() {
 		}
 	} else {
 		debuglog("Query prep error ".$query,"MYSQL",2);
-		debuglog("   numArgs was   ".$numArgs,"MYSQL",2);
 		show_sql_error();
 	}
 	if ($return_value !== null) {
@@ -209,6 +208,12 @@ function checkCollectionStatus() {
 			return "2";
 		}
 	}
+}
+
+function checkAlbumArt() {
+	$oa =  generic_sql_query("SELECT COUNT(ImgVersion) AS NumOldAlbums FROM Albumtable WHERE Image LIKE 'albumart/small/%' AND ImgVersion < ".ROMPR_IMAGE_VERSION, false, null, 'NumOldAlbums', 0);
+	debuglog("There are ".$oa." albums with old-style album art","INIT");
+	return $oa;
 }
 
 function open_transaction() {

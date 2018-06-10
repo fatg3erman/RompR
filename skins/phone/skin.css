@@ -84,7 +84,7 @@ div {
 #nowplaying {
     white-space:nowrap;
     margin:auto;
-    width:95%;
+    padding:4px;
 }
 
 #nptext {
@@ -169,6 +169,10 @@ div {
     width:100%;
 }
 
+#tagadder
+{
+    z-index: 15000;
+}
 /*
 =====================================================================
 = General Classes
@@ -409,6 +413,17 @@ div.rightmenu {
     padding-bottom:6px;
 }
 
+#fruitbat .indent.dropmenu.padright {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+#fruitbat .indent.dropmenu.padright>div {
+    padding-left: 8px;
+    width:100%;
+    padding-right:8px;
+}
+
 .playlisticon
 {
     padding:0px;
@@ -427,7 +442,6 @@ div.rightmenu {
     border: 6px solid transparent;
     vertical-align:middle;
 }
-
 
 .collectionicon {
     padding:0px;
@@ -938,7 +952,7 @@ div.rightmenu {
 .album_menu_image {
     max-width: 100%;
     height: auto;
-    max-height: 80vh;
+    max-height: 60vh;
 }
 
 .calign {
@@ -948,4 +962,8 @@ div.rightmenu {
 .indent {
     padding-left: 4px;
     box-szing:border-box;
+}
+
+img.jalopy200 {
+    max-width:140px;
 }

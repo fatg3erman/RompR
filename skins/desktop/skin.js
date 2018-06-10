@@ -1,160 +1,3 @@
-jQuery.fn.menuReveal = function(callback) {
-    if (callback) {
-        this.slideToggle('fast',callback);
-    } else {
-        this.slideToggle('fast');
-    }
-    return this;
-}
-
-jQuery.fn.menuHide = function(callback) {
-    if (callback) {
-        this.slideToggle('fast',callback);
-    } else {
-        this.slideToggle('fast');
-    }
-    return this;
-}
-
-jQuery.fn.isOpen = function() {
-    return this.hasClass('icon-toggle-open');
-}
-
-jQuery.fn.isClosed = function() {
-    return this.hasClass('icon-toggle-closed');
-}
-
-jQuery.fn.toggleOpen = function() {
-    this.removeClass('icon-toggle-closed').addClass('icon-toggle-open');
-    return this;
-}
-
-jQuery.fn.toggleClosed = function() {
-    this.removeClass('icon-toggle-open').addClass('icon-toggle-closed');
-    return this;
-}
-
-jQuery.fn.makeSpinner = function() {
-
-    return this.each(function() {
-        var originalclasses = new Array();
-        var classes = '';
-        if ($(this).attr("class")) {
-            var classes = $(this).attr("class").split(/\s/);
-        }
-        for (var i = 0, len = classes.length; i < len; i++) {
-            if (classes[i] == "invisible" || (/^icon/.test(classes[i]))) {
-                originalclasses.push(classes[i]);
-                $(this).removeClass(classes[i]);
-            }
-        }
-        $(this).attr("originalclass", originalclasses.join(" "));
-        $(this).addClass('icon-spin6 spinner');
-    });
-}
-
-jQuery.fn.stopSpinner = function() {
-
-    return this.each(function() {
-        $(this).removeClass('icon-spin6 spinner');
-        if ($(this).attr("originalclass")) {
-            $(this).addClass($(this).attr("originalclass"));
-            $(this).removeAttr("originalclass");
-        }
-    });
-}
-
-jQuery.fn.makeTagMenu = function(options) {
-    var settings = $.extend({
-        textboxname: "",
-        textboxextraclass: "",
-        labelhtml: "",
-        populatefunction: null,
-        buttontext: null,
-        buttonfunc: null,
-        buttonclass: ""
-    },options);
-
-    this.each(function() {
-        var tbc = "enter combobox-entry";
-        if (settings.textboxextraclass) {
-            tbc = tbc + " "+settings.textboxextraclass;
-        }
-        $(this).append(settings.labelhtml);
-        var holder = $('<div>', { class: "expand"}).appendTo($(this));
-        var textbox = $('<input>', { type: "text", class: tbc, name: settings.textboxname }).
-            appendTo(holder);
-        var dropbox = $('<div>', {class: "drop-box tagmenu dropshadow"}).appendTo(holder);
-        var menucontents = $('<div>', {class: "tagmenu-contents"}).appendTo(dropbox);
-        if (settings.buttontext !== null) {
-            var submitbutton = $('<button>', {class: "fixed"+settings.buttonclass,
-                style: "margin-left: 8px"}).appendTo($(this));
-            submitbutton.html(settings.buttontext);
-            if (settings.buttonfunc) {
-                submitbutton.click(function() {
-                    settings.buttonfunc(textbox.val());
-                });
-            }
-        }
-
-        dropbox.mCustomScrollbar({
-        theme: "light-thick",
-        scrollInertia: 120,
-        contentTouchScroll: 25,
-        advanced: {
-            updateOnContentResize: true,
-            updateOnImageLoad: false,
-            autoScrollOnFocus: false,
-            autoUpdateTimeout: 500,
-        }
-        });
-        textbox.hover(makeHoverWork);
-        textbox.mousemove(makeHoverWork);
-        textbox.click(function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-            var position = getPosition(ev);
-            var elemright = textbox.width() + textbox.offset().left;
-            if (position.x > elemright - 24) {
-                if (dropbox.is(':visible')) {
-                    dropbox.slideToggle('fast');
-                } else {
-                    var data = settings.populatefunction(function(data) {
-                        menucontents.empty();
-                        for (var i in data) {
-                            var d = $('<div>', {class: "backhi"}).appendTo(menucontents);
-                            d.html(data[i]);
-                            d.click(function() {
-                                var cv = textbox.val();
-                                if (cv != "") {
-                                    cv += ",";
-                                }
-                                cv += $(this).html();
-                                textbox.val(cv);
-                            });
-                        }
-                        dropbox.slideToggle('fast', function() {
-                            dropbox.mCustomScrollbar("update");
-                        });
-                    });
-                }
-            }
-        });
-    });
-}
-
-jQuery.fn.fanoogleMenus = function() {
-    return this.each( function() {
-        var avheight = $("#bottompage").height() - 16;
-        var conheight = $(this).children().first().children('.mCSB_container').height();
-        var nh = Math.min(avheight, conheight);
-        $(this).css({height: nh+"px", "max-height":''});
-        $(this).mCustomScrollbar("update");
-        if ($(this).attr("id") == "hpscr") {
-            $(this).mCustomScrollbar("scrollTo", '.current', {scrollInertia:0});
-        }
-    });
-}
 
 jQuery.fn.animatePanel = function(options) {
     var settings = $.extend({},options);
@@ -187,12 +30,17 @@ jQuery.fn.animatePanel = function(options) {
 
 var layoutProcessor = function() {
 
-    function showPanel(source, callback) {
-        if (callback) {
-            $('#'+source).fadeIn('fast', callback);
-        } else {
-            $('#'+source).fadeIn('fast');
-        }
+    function showPanel(source) {
+        $('#'+source).fadeIn('fast', function() {
+            switch (source) {
+                case'searcher':
+                    setSearchLabelWidth();
+                    break;
+                    
+                case 'pluginplaylistslist':
+                    setSpotiLabelWidth();
+            }
+        });
     }
 
     function flashTrack(uri, album) {
@@ -206,7 +54,7 @@ var layoutProcessor = function() {
         }, 1000);
     }
 
-    function doThatFunkyThang() {
+    function setBottomPanelWidths() {
         var widths = getPanelWidths();
         $("#sources").css("width", widths.sources+"%");
         $("#sourcescontrols").css("width", widths.sources+"%");
@@ -257,6 +105,20 @@ var layoutProcessor = function() {
         supportsDragDrop: true,
         hasCustomScrollbars: true,
         usesKeyboard: true,
+        sortFaveRadios: true,
+        openOnImage: false,
+
+        changeCollectionSortMode: function() {
+            collectionHelper.forceCollectionReload();
+        },
+
+        bindSourcesClicks: function() {
+            $("#sources").bindPlayClicks();
+        },
+
+        postAlbumActions: function() {
+
+        },
 
         afterHistory: function() {
             browser.rePoint();
@@ -318,7 +180,7 @@ var layoutProcessor = function() {
                     var s = ["albumlist", "searcher", "filelist", "radiolist", "podcastslist", "playlistslist", "pluginplaylistslist"];
                     for (var i in s) {
                         if (s[i] != panel && !prefs["hide_"+s[i]]) {
-                            layoutProcessor.sourceControl(s[i], null);
+                            layoutProcessor.sourceControl(s[i]);
                             break;
                         }
                     }
@@ -456,20 +318,18 @@ var layoutProcessor = function() {
             }
         },
 
-        sourceControl: function(source, callback) {
+        sourceControl: function(source) {
             if ($('#'+source).length == 0) {
                 prefs.save({chooser: 'albumlist'});
                 source = 'albumlist';
             }
             if (source != prefs.chooser) {
                 $('#'+prefs.chooser).fadeOut('fast', function() {
+                    showPanel(source);
                     prefs.save({chooser: source});
-                    showPanel(source, function() {
-                        if (callback) { callback(); }
-                    });
                 });
             } else {
-                showPanel(source, callback);
+                showPanel(source);
             }
             return false;
         },
@@ -540,6 +400,14 @@ var layoutProcessor = function() {
             }
         },
 
+        getArtistDestinationDiv: function(menutoopen) {
+            if (prefs.sortcollectionby == "artist") {
+                return $("#"+menutoopen).parent();
+            } else {
+                return $("#"+menutoopen);
+            }
+        },
+
         initialise: function() {
             if (prefs.outputsvisible) {
                 layoutProcessor.toggleAudioOutpts();
@@ -600,13 +468,13 @@ var layoutProcessor = function() {
             $("#sources").find('.mCSB_draggerRail').resizeHandle({
                 adjusticons: ['#sourcescontrols', '#infopanecontrols'],
                 side: 'left',
-                donefunc: doThatFunkyThang
+                donefunc: setBottomPanelWidths
             });
 
             $("#infopane").find('.mCSB_draggerRail').resizeHandle({
                 adjusticons: ['#playlistcontrols', '#infopanecontrols'],
                 side: 'right',
-                donefunc: doThatFunkyThang
+                donefunc: setBottomPanelWidths
             });
 
             shortcuts.load();
@@ -617,12 +485,12 @@ var layoutProcessor = function() {
             } );
             setControlClicks();
             $('.choose_albumlist').click(function(){layoutProcessor.sourceControl('albumlist')});
-            $('.choose_searcher').click(function(){layoutProcessor.sourceControl('searcher',setSearchLabelWidth)});
+            $('.choose_searcher').click(function(){layoutProcessor.sourceControl('searcher')});
             $('.choose_filelist').click(function(){layoutProcessor.sourceControl('filelist')});
             $('.choose_radiolist').click(function(){layoutProcessor.sourceControl('radiolist')});
             $('.choose_podcastslist').click(function(){layoutProcessor.sourceControl('podcastslist')});
             $('.choose_playlistslist').click(function(){layoutProcessor.sourceControl('playlistslist')});
-            $('.choose_pluginplaylistslist').click(function(){layoutProcessor.sourceControl('pluginplaylistslist',setSpotiLabelWidth)});
+            $('.choose_pluginplaylistslist').click(function(){layoutProcessor.sourceControl('pluginplaylistslist')});
             $('.open_albumart').click(openAlbumArtManager);
             $('#love').click(nowplaying.love);
             $("#ratingimage").click(nowplaying.setRating);

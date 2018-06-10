@@ -8,6 +8,7 @@ var ratingManager = function() {
 	var current_letter = '';
 	var to_refresh = new Array();
 	var updating_section = false;
+	var current_section = 0;
 
 	function startNewSection(title, section, atstart) {
 		debug.log("RATMAN","Starting Section",title);
@@ -18,12 +19,12 @@ var ratingManager = function() {
 			a = $('<div>').insertAfter(atstart.parent());
 		}
 		var x = $('<div>', { class: "pluginsection textunderline containerbox menuitem" }).appendTo(a);
-		x.append('<i class="icon-toggle-closed fixed menu infoclick plugclickable clickopensection"></i><span class="fixed rattitle">'+title+'</span><div class="expand filterinfo"></div></div>');
+		x.append('<i class="icon-toggle-closed fixed menu infoclick plugclickable clickopensection" name="ratman_'+current_section+'"></i><span class="fixed rattitle">'+title+'</span><div class="expand filterinfo"></div></div>');
 		if (sortby == "Tag") {
 			x.append('<i class="fixed icon-trash topimg infoclick plugclickable clickdeletetag"></i>');
 		}
-		var b = $('<div>', {class: 'thebigholder fullwidth notthere', name: encodeURIComponent(section)}).appendTo(a);
-		b.append('<div class="sizer"></div>');
+		var b = $('<div>', {class: 'thebigholder fullwidth notthere', id: 'ratman_'+current_section, name: encodeURIComponent(section)}).appendTo(a);
+		current_section++;
 		if (sortby != 'AlbumArtist') {
 			a.acceptDroppedTracks({
 				ondrop: ratingManager.dropped
@@ -34,16 +35,16 @@ var ratingManager = function() {
 	function putTracksInSection(section, element) {
 		updating_section = true;
 		debug.log("RATMAN","Putting Tracks In Section",section);
-		var dropper = $('.thebigholder[name="'+section+'"]');
+		var dropper = $('#'+section);
 		dropper.prev().children('.clickopensection').makeSpinner();
 		if (dropper.hasClass('notthere')) {
 			
 		} else {
-			dropper.addClass('notthere');
-			dropper.masonry('destroy').empty().append('<div class="sizer"></div>');
+			dropper.addClass('notthere').empty();
 		}
+		var s = dropper.attr('name');
 		metaHandlers.genericAction(
-			[{action: 'ratentries', sortby: sortby, value: decodeURIComponent(section)}],
+			[{action: 'ratentries', sortby: sortby, value: decodeURIComponent(s)}],
 			function(tracks) {
 				debug.trace("RATMAN","Got Tracks",tracks);
 				current_letter = '';
@@ -51,18 +52,12 @@ var ratingManager = function() {
 				for (var i in tracks) {
 					putNewAlbumTrack(dropper, tracks[i]);
 				}
-				dropper.imagesLoaded(function() {
-					debug.log("RATMAN","Images Loaded In",section);
-					browser.rePoint(dropper, { itemSelector: '.slaphead', columnWidth: '.sizer', percentPosition: true });
-					dropper.prev().children('.clickopensection').stopSpinner().toggleOpen();
-					dropper.removeClass('notthere');
-		            infobar.markCurrentTrack();
-				});
+				dropper.prev().children('.clickopensection').stopSpinner();
+				dropper.prev().children('.clickopensection').toggleOpen();
+				dropper.removeClass('notthere');
+				infobar.markCurrentTrack();
 				updating_section = false;
 				checkSectionRefresh();
-				if (element) {
-					element.stopSpinner();
-				}
 			},
 			function() {
 				infobar.notify(infobar.ERROR, "Failed to get data!");
@@ -89,20 +84,23 @@ var ratingManager = function() {
 				var nl = data.SortLetter;
 			}
 			if (prefs.ratman_showletters && nl != current_letter) {
-				holder.append('<div class="slaphead highlighted fullwidth letterholder">'+nl+'</div>');
+				holder.append('<div class="brick_wide highlighted fullwidth letterholder">'+nl+'</div>');
 				current_letter = nl;
 			}
-			var b = $('<div>', {class: "slaphead pluginitem"}).appendTo(holder);
-			var c = $('<div>', {class: "helpfulalbum fullwidth selecotron"}).appendTo(b);
+			var a = $('<div>', {class: "pluginitem fixed selecotron clearfix fullwidth tagholder_wide"}).appendTo(holder);
+			var b = $('<div>', {class: "containerbox wrap"}).appendTo(a);
+			var c = $('<div>', {class: "helpfulalbum fixed"}).appendTo(b);
 			var src = data.Image;
 			if (src) {
-				if (!prefs.ratman_smallart) {
+				if (old_style_albumart == 0) {
+					src = src.replace(/albumart\/small/, 'albumart/medium');
+				} else {
 					src = src.replace(/albumart\/small/, 'albumart/asdownloaded');
 				}
-				c.append('<img class="masochist" src="'+src+'" />');
+				c.append('<img class="jalopy jalopy200" src="'+src+'" />');
 			}
 			c.append('<div class="tagh albumthing sponclick clickable infoclick draggable clickalbumname" name="dummy">'+tit+'</div>');
-			current_albumholder = $('<div>', {class: "tagh albumthing"}).appendTo(c);
+			current_albumholder = $('<div>', {class: "minwidthed2 expand"}).appendTo(b);
 		}
 		var setdata = encodeURIComponent(JSON.stringify({title: data.Title, artist: data.Artistname, trackno: data.TrackNo, album: data.Albumname, albumartist: data.AlbumArtist}));
 		var html = '<div class="ntu infoclick clickable draggable clicktrack fullwidth" name="'+encodeURIComponent(data.Uri)+'">';
@@ -174,7 +172,7 @@ var ratingManager = function() {
 	}
 	
 	function refreshSection(section) {
-		if (to_refresh.indexOf(section) == -1 && !($('.thebigholder[name="'+section+'"]').hasClass('notthere'))) {
+		if (to_refresh.indexOf(section) == -1 && !($('#ratman_'+section).hasClass('notthere'))) {
 			to_refresh.push(section);
 		}
 		checkSectionRefresh();
@@ -221,7 +219,6 @@ var ratingManager = function() {
 	        	$("#rmgfoldup").append('<div class="containerbox padright wrap ratsoptions">'+
 	        		'<div class="fixed"><b>Display Options :&nbsp; </b></div>'+
 	        		'<div class="fixed brianblessed styledinputs"><input type="checkbox" class="topcheck" id="ratman_showletters"><label for="ratman_showletters">Show Letter Headers</label></div>'+
-	        		'<div class="fixed brianblessed styledinputs"><input type="checkbox" class="topcheck" id="ratman_smallart"><label for="ratman_smallart">Small Album Art</label></div>'+
 	        		'</div>');
 
     			$("#rmgfoldup").append('<div class="containerbox padright noselection ratsoptions">'+
@@ -241,6 +238,7 @@ var ratingManager = function() {
 		            var elemright = $('[name="filterinput"]').width() + $('[name="filterinput"]').offset().left;
 		            if (position.x > elemright - 24) {
 		            	$('[name="filterinput"]').val("");
+						debug.log("RATMAN","Filtering");
 		            	ratingManager.filter();
 		            }
 			    });
@@ -250,13 +248,11 @@ var ratingManager = function() {
 				rmg.show();
 				$('[name="ratman_sortby"][value="'+prefs.ratman_sortby+'"]').prop('checked', true);
 	            $('#ratman_showletters').prop('checked', prefs.ratman_showletters ? true : false );
-	            $('#ratman_smallart').prop('checked', prefs.ratman_smallart ? true : false );
 	        	browser.goToPlugin("rmg");
 			    ratingManager.reloadEntireRatList();
 	            $('#rmgfoldup .enter').keyup(onKeyUp);
 	            $('[name="ratman_sortby"]').on('click', ratingManager.reloadEntireRatList );
 	            $('#ratman_showletters').on('click', ratingManager.reloadEntireRatList );
-	            $('#ratman_smallart').on('click', ratingManager.reloadEntireRatList );
 	        } else {
 	        	browser.goToPlugin("rmg");
 	        }
@@ -285,9 +281,10 @@ var ratingManager = function() {
 
 		handleClick: function(element, event) {
 			if (element.hasClass('clickopensection')) {
-				var dropper = element.parent().next();
-				if (element.isClosed()) {
-					element.makeSpinner();
+				var dropper = $('#'+element.attr('name'));
+				debug.log("RATMAN","Opening Section",element.attr('name'));
+				if (element.hasClass('icon-toggle-closed')) {
+					debug.log("RATMAN","    Section is closed");
 					var fi = element.next().next();
 					var term = $('[name=filterinput]').val();
 					if (term == '') {
@@ -295,11 +292,12 @@ var ratingManager = function() {
 					} else {
 						fi.html("Filtered By '"+term+"'");
 					}
-					var section = dropper.attr('name');
+					var section = element.attr('name');
 					putTracksInSection(section, element);
 				} else {
 					element.toggleClosed();
-					dropper.addClass('notthere').masonry('destroy').empty().append('<div class="sizer"></div>');
+					debug.log("RATMAN","    Section is open");
+					dropper.addClass('notthere').empty();
 				}
 			} else if (element.hasClass('clickdeletetag')) {
 				var tag = element.parent().next().attr('name');
@@ -326,7 +324,6 @@ var ratingManager = function() {
 							});
 						}
 					});
-    				browser.rePoint();
 				});
 			} else if (element.hasClass('clicksetrat')) {
 				var setstring = element.parent().parent().parent().parent().children('input').val();
@@ -369,7 +366,6 @@ var ratingManager = function() {
 						}
 					}
 				});
-				browser.rePoint();
 				for (var i in tagarr) {
 					refreshSection(encodeURIComponent(tagarr[i]));
 				}
@@ -399,14 +395,14 @@ var ratingManager = function() {
 			$('.ratinstr').hide();
 			$('[name="ratman_loading"]').show();
 		    sortby = $('[name="ratman_sortby"]:checked').val();
-		    prefs.save({ratman_sortby: sortby, ratman_showletters: $('#ratman_showletters').is(':checked'), ratman_smallart: $('#ratman_smallart').is(':checked')});
+		    prefs.save({ratman_sortby: sortby, ratman_showletters: $('#ratman_showletters').is(':checked')});
 	    	$('#ratmunger').empty();
 			ratingManager.reloadRatList();
 		},
 
 		dropped: function(event, element) {
 	        event.stopImmediatePropagation();
-	        var value = decodeURIComponent(element.children('.thebigholder').attr('name'));
+	        var value = decodeURIComponent(element.children('.thebigholder').attr('id'));
 	        switch (sortby) {
 	        	case 'Rating':
 	        		var attributes = {attribute: 'Rating', value: value};

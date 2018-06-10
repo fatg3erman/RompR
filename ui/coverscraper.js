@@ -105,7 +105,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
             var percent = ((numAlbums - formObjects.length)/numAlbums)*100;
             progress.rangechooser('setProgress', percent.toFixed(2));
             if (scrolling) {
-                $('#coverslist').mCustomScrollbar("scrollTo",$('img[name="'+imgparams.imgkey+'"]').parent().parent().parent().parent().prev());
+                $('#coverslist').mCustomScrollbar("scrollTo",$('img[name="'+imgparams.imgkey+'"]').parent().parent().parent());
             }
          }
 
@@ -159,6 +159,8 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
                 // Use large images for playlist and nowplaying
                 if ($(this).hasClass("clickrollup") || $(this).attr("id") == "albumpicture") {
                     $(this).attr("src", data.origimage);
+                } else if ($(this).hasClass('jalopy')) {
+                    $(this).attr("src", data.origimage.replace(/albumart\/asdownloaded/, 'albumart/medium'));
                 } else {
                     $(this).attr("src", data.url);
                 }

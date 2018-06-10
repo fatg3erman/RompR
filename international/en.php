@@ -631,7 +631,9 @@ $languages['en'] = array (
 	"label_with_ratings" => "Play Only Tracks With Ratings",
 	"label_with_tags" => "Play Only Tracks With Tags",
 	"label_with_tagandrat" => "Play Only Tracks With Tags And Ratings",
-	"label_with_tagorrat" => "Play Only Tracks With Tags Or Ratings"
+	"label_with_tagorrat" => "Play Only Tracks With Tags Or Ratings",
+	"config_google_credentials" => "Google API Credentials",
+	"config_read_the_docs" => "Please Read The Documentation"
 
 );
 

@@ -170,7 +170,7 @@ function mpd_search() {
 }
 
 function browse_album() {
-    global $collection;
+    global $collection, $skin;
     $domains = array();
     $a = preg_match('/(a|b)(.*?)(\d+|root)/', $_REQUEST['browsealbum'], $matches);
     if (!$a) {
@@ -207,8 +207,10 @@ function browse_album() {
             print do_tracks_from_database($why, $what, find_justadded_albums(), true);
         } else {
             $artistarray = find_justadded_artists();
+            $do_controlheader = true;
             foreach ($artistarray as $artistid) {
-                do_albums_from_database($why, 'album', $artistid, false, false, true);
+                do_albums_from_database($why, 'album', $artistid, false, false, true, $do_controlheader);
+                $do_controlheader = false;
             }
         }
     }
@@ -240,6 +242,26 @@ function raw_search() {
         debuglog("Search command : ".$cmd,"MPD SEARCH");
         $doing_search = true;
         doCollection($cmd, $domains);
+        
+        // For backends that don't support multiple parameters (Google Play)
+        // This'll return nothing for Spotify, so it's OK. It might help SoundCloud too.
+        
+        $cmd = $_REQUEST['command'].' any ';
+        $parms = array();
+        if (array_key_exists('artist', $_REQUEST['rawterms'])) {
+            $parms[] = format_for_mpd(html_entity_decode($_REQUEST['rawterms']['artist'][0]));
+        }
+        if (array_key_exists('track_name', $_REQUEST['rawterms'])) {
+            $parms[] = format_for_mpd(html_entity_decode($_REQUEST['rawterms']['track_name'][0]));
+        }
+        if (count($parms) > 0) {
+            $cmd .= '"'.implode(' ',$parms).'"';
+            debuglog("Search command : ".$cmd,"MPD SEARCH");
+            $doing_search = true;
+            $collection->filter_duplicate_tracks();
+            doCollection($cmd, $domains, false);
+        }
+        
     }
     print json_encode($collection->tracks_as_array());
 }

@@ -386,25 +386,24 @@ function doPodcast($y, $do_searchbox) {
     trackControlHeader('','','podcast_'. $pm,array(array('Image' => $y->Image)));
     print '<div class="whatdoicallthis">'.format_text($y->Description).'</div>';
     if ($y->Subscribed == 1) {
-        print '<div class="clearfix bumpad">';
-        print '<i title="'.get_int_text("podcast_delete").'" class="icon-cancel-circled podicon '.
-            'clickable clickicon podremove tright fridge" name="podremove_'.$pm.'"></i>';
+        print '<div class="containerbox bumpad">';
         print '<i title="'.get_int_text("podcast_configure").'" class="icon-cog-alt podicon clickable '.
-            'clickicon podconf tleft fridge" name="podconf_'.$pm.'"></i>';
+            'clickicon podconf fixed fridge" name="podconf_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_refresh").'" class="icon-refresh podicon podaction clickable '.
-            'clickicon tleft fridge" name="refresh_'.$pm.'"></i>';
+            'clickicon fixed fridge" name="refresh_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_download_all").'" class="icon-download podicon '.
-            'clickable clickicon podgroupload tleft fridge" name="podgroupload_'.$pm.'"></i>';
+            'clickable clickicon podgroupload fixed fridge" name="podgroupload_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_mark_all").'" class="icon-headphones podicon podaction '.
-            'clickable clickicon tleft fridge" name="channellistened_'.$pm.'"></i>';
+            'clickable clickicon fixed fridge" name="channellistened_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_undelete").'" class="icon-trash podicon podaction oneeighty '.
-            'clickable clickicon tleft fridge" name="channelundelete_'.$pm.'"></i>';
+            'clickable clickicon fixed fridge" name="channelundelete_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_removedownloaded").'" class="icon-download podicon podaction oneeighty '.
-            'clickable clickicon tleft fridge" name="removedownloaded_'.$pm.'"></i>';
+            'clickable clickicon fixed fridge" name="removedownloaded_'.$pm.'"></i>';
+        print '<div class="expand"></div>';
+        print '<i title="'.get_int_text("podcast_delete").'" class="icon-cancel-circled podicon '.
+                'clickable clickicon podremove fixed fridge" name="podremove_'.$pm.'"></i>';
         print '</div>';
-    }
-    
-    if ($y->Subscribed == 1) {
+
         $class = "marged whatdoicallthis toggledown";
         if ((array_key_exists('channel', $_REQUEST) && $_REQUEST['channel'] == $pm) &&
             array_key_exists('option', $_REQUEST)) {
@@ -521,6 +520,7 @@ function doPodcast($y, $do_searchbox) {
         }
         print '/></div><button class="fixed" onclick="podcasts.searchinpodcast('.$y->PODindex.')">'.get_int_text('button_search').'</button></div>';
     }
+    print '<div class="clearfix bumpad"></div>';
     if (array_key_exists('searchterm', $_REQUEST)) {
         $extrabit = ' AND (Title LIKE "%'.urldecode($_REQUEST['searchterm']).'%" OR Description LIKE "%'.urldecode($_REQUEST['searchterm']).'%")';
     } else {
@@ -593,7 +593,7 @@ function format_episode(&$y, &$item, $pm) {
     } else {
         $class = 'invisible whatdoicallthis toggledown';
     }
-    print '<div id="poddesc_'.$item->PODTrackindex.'" class="'.$class.'">'.format_text($item->Description).'</div>';
+    print '<div id="poddesc_'.$item->PODTrackindex.'" class="'.$class.'">'.format_text(fixup_links($item->Description)).'</div>';
     if ($item->FileSize > 0) {
         print '<div class="fsize">'.format_bytes($item->FileSize).'Bytes</div>';
     }
@@ -622,6 +622,10 @@ function format_episode(&$y, &$item, $pm) {
     print '</div>';
 }
 
+function fixup_links($s) {
+    return preg_replace('/(^|\s+|\n|[^\s+"])(https*:\/\/.*?)(<|\n|\r|\s|\)|$|[<|\n|\r|\s|\)|$])/', '$1<a href="$2">$2</a>$3', $s);
+}
+
 function doPodcastHeader($y) {
     
     $i = getDomain($y->Image);
@@ -640,7 +644,8 @@ function doPodcastHeader($y) {
         'Artistname' => htmlspecialchars(html_entity_decode($y->Artist)),
         'Albumname' => htmlspecialchars(html_entity_decode($y->Title)),
         'why' => null,
-        'ImgKey' => 'none'
+        'ImgKey' => 'none',
+        'class' => 'podcast'
     ));
     
     $extra = '<div class="fixed">';
@@ -664,8 +669,7 @@ function doPodcastHeader($y) {
     
     // phpQuery is something like 160K of extra code. Just to do this.
     // The fact that I'm willing to include it indicates just how crap php's DOMDocument is
-    $out = phpQuery::newDocument($html);
-    $out->find('.menuitem')->append($extra);
+    $out = addPodcastCounts($html, $extra);
     print $out->html();
     
     print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu padright"><div class="textcentre">Losding...</div></div>';
@@ -728,7 +732,7 @@ function markChannelAsListened($channel) {
 
 function undeleteFromChannel($channel) {
     generic_sql_query("UPDATE PodcastTracktable SET Downloaded=0 WHERE PODindex=".$channel." AND Deleted=1", true);
-    generic_sql_query("UPDATE PodcastTracktable SET Deleted=0 WHERE PODindex=".$channle." AND Deleted=1", true);
+    generic_sql_query("UPDATE PodcastTracktable SET Deleted=0 WHERE PODindex=".$channel." AND Deleted=1", true);
     return $channel;
 }
 
@@ -882,29 +886,30 @@ function search_itunes($term) {
     if ($content['status'] == '200') {
         $pods = json_decode($content['contents'], true);
         foreach ($pods['results'] as $podcast) {
-
-            $r = check_if_podcast_is_subscribed($podcast);
-            if (count($r) > 0) {
-                foreach ($r as $a) {
-                    debuglog("  Search found EXISTING podcast ".$a['Title'],"PODCASTS");
+            if (array_key_exists('feedURL', $podcast)) {
+                $r = check_if_podcast_is_subscribed($podcast);
+                if (count($r) > 0) {
+                    foreach ($r as $a) {
+                        debuglog("  Search found EXISTING podcast ".$a['Title'],"PODCASTS");
+                    }
+                    continue;
                 }
-                continue;
-            }
 
-            if (array_key_exists('artworkUrl600', $podcast) && $podcast['artworkUrl600'] != '' && $podcast['artworkUrl600'] != null) {
-                $img = 'getRemoteImage.php?url='.$podcast['artworkUrl600'];
-            } else {
-                $img = 'newimages/podcast-logo.svg';
+                if (array_key_exists('artworkUrl600', $podcast) && $podcast['artworkUrl600'] != '' && $podcast['artworkUrl600'] != null) {
+                    $img = 'getRemoteImage.php?url='.$podcast['artworkUrl600'];
+                } else {
+                    $img = 'newimages/podcast-logo.svg';
+                }
+                debuglog("Search found podcast : ".$podcast['collectionName']);
+                sql_prepare_query(true, null, null, null,
+                    "INSERT INTO Podcasttable
+                    (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, DaysLive, Description, Version, Subscribed)
+                    VALUES
+                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    $podcast['feedUrl'], time(), $img, $podcast['collectionName'], $podcast['artistName'],
+                    REFRESHOPTION_NEVER, 0, '', ROMPR_PODCAST_TABLE_VERSION, 0
+                );
             }
-            debuglog("Search found podcast : ".$podcast['collectionName']);
-            sql_prepare_query(true, null, null, null,
-                "INSERT INTO Podcasttable
-                (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, DaysLive, Description, Version, Subscribed)
-                VALUES
-                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                $podcast['feedUrl'], time(), $img, $podcast['collectionName'], $podcast['artistName'],
-                REFRESHOPTION_NEVER, 0, '', ROMPR_PODCAST_TABLE_VERSION, 0
-            );
         }
     } else {
         debuglog("SEARCH ERROR - Status was ".$content['status'],"PODCASTS",3);

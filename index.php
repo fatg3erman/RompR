@@ -119,17 +119,13 @@ if (is_array($r) && array_key_exists('tagtype', $r)) {
     $prefs['player_backend'] = "mopidy";
     $oldmopidy = true;
 }
+setcookie('player_backend',$prefs['player_backend'],time()+365*24*60*60*10,'/');
 
 if ($prefs['unix_socket'] != '') {
     // If we're connected by a local socket we can read the music directory
     $arse = do_mpd_command('config', true);
     if (array_key_exists('music_directory', $arse)) {
-        debuglog("Music Directory Is ".$arse['music_directory'],"INIT",9);
-        $prefs['music_directory'] = $arse['music_directory'];
-        if (is_link("prefs/MusicFolders")) {
-            system ("unlink prefs/MusicFolders");
-        }
-        system ('ln -s "'.$arse['music_directory'].'" prefs/MusicFolders');
+        set_music_directory($arse['music_directory']);
     }
 }
 
@@ -191,7 +187,13 @@ debuglog("******++++++======------******------======++++++******","CREATING PAGE
 <meta name="mobile-web-app-capable" content="yes" />
 <?php
 print '<script type="application/json" name="translations">'."\n".json_encode($translations)."\n</script>\n";
-print '<script type="application/json" name="prefs">'."\n".json_encode($prefs)."\n</script>\n";
+$safeprefs = array();
+foreach ($prefs as $p => $v) {
+    if (!in_array($p, $private_prefs)) {
+        $safeprefs[$p] = $v;
+    }
+}
+print '<script type="application/json" name="prefs">'."\n".json_encode($safeprefs)."\n</script>\n";
 print '<link rel="stylesheet" type="text/css" href="css/layout-january.css?version='.time().'" />'."\n";
 print '<link rel="stylesheet" type="text/css" href="skins/'.$skin.'/skin.css?version='.time().'" />'."\n";
 foreach ($skinrequires as $s) {
@@ -217,22 +219,24 @@ foreach ($css as $s) {
 <?php
 debuglog("Reconfiguring the Forward Deflector Array","INIT",6);
 $scripts = array(
-    "ui/prefs.js",
-    "ui/language.js",
     "jquery/jquery-2.1.4.min.js",
     "jquery/jquery-migrate-1.2.1.js",
+    "ui/functions.js",
+    "ui/prefs.js",
+    "ui/language.js",
     "jquery/jquery-ui.min.js",
     "jshash-2.2/md5-min.js",
     "jquery/imagesloaded.pkgd.min.js",
     "jquery/masonry.pkgd.min.js",
     "includes/globals.js",
+    "ui/uihelper.js",
+    "skins/".$skin."/skin.js",
     "player/mpd/controller.js",
     "ui/collectionhelper.js",
     "player/player.js",
     "ui/playlist.js",
     "ui/readyhandlers.js",
     "ui/debug.js",
-    "ui/functions.js",
     "ui/uifunctions.js",
     "ui/metahandlers.js",
     "ui/clickfunctions.js",
@@ -243,9 +247,7 @@ $scripts = array(
     "ui/coverscraper.js",
     "ui/favefinder.js",
     "ui/podcasts.js",
-    "browser/info.js",
-    "skins/".$skin."/skin.js"
-
+    "browser/info.js"
 );
 foreach ($scripts as $i) {
     debuglog("Loading ".$i,"INIT",7);

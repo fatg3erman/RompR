@@ -7,7 +7,8 @@ var lastFMTrackRadio = function() {
 	var tosend = 0;
 	var started = false;
 	var param = null;
-	var periodmap = ['7day', '1month', '3month', '6month', '12month', 'overall'];
+	var trackfinder = new faveFinder(false);
+	trackfinder.setCheckDb(false);
 
 	function topTrack(track, artist) {
 		var self = this;
@@ -18,7 +19,7 @@ var lastFMTrackRadio = function() {
 			debug.log("LASTFM TRACK RADIO",track,artist,"sending a track",self.populated);
 			if (!self.populated) {
 				debug.log("LASTFM TRACK RADIO","Getting Similar Tracks For",track,artist);
-				tracks.push({track_name: [track], artist: [artist]});
+				tracks.push({track_name: track, artist: artist});
 				lastfm.track.getSimilar({
 						track: track,
 						artist: artist,
@@ -37,7 +38,19 @@ var lastFMTrackRadio = function() {
 				if (tracks.length > 0) {
 					var t = tracks.shift();
 					debug.log("LASTFM TRACK RADIO","Getting a URI For",t);
-					player.controller.rawsearch(t, [], false, self.gotAUri, false);
+					if (prefs.player_backend == "mopidy") {
+						trackfinder.setPriorities($("#radiodomains").makeDomainChooser("getSelection"));
+					}
+					trackfinder.findThisOne(
+						{
+							title: t.track_name,
+							artist: t.artist,
+							duration: 0,
+							albumartist: t.artist,
+							date: 0
+						},
+						self.gotAUri
+					);
 				} else {
 					// This isn't ideal. What we need to do is inform the parent that we're out
 					// of tracks so he longer asks us to send any.
@@ -53,8 +66,8 @@ var lastFMTrackRadio = function() {
 				for (var i in data.similartracks.track) {
 					if (data.similartracks.track[i].name && data.similartracks.track[i].artist) {
 						tracks.push({
-							track_name: [data.similartracks.track[i].name],
-							artist: [data.similartracks.track[i].artist.name]
+							track_name: data.similartracks.track[i].name,
+							artist: data.similartracks.track[i].artist.name
 						});
 					}
 				}
@@ -68,28 +81,9 @@ var lastFMTrackRadio = function() {
 		}
 
 		this.gotAUri = function(data) {
-			var track = null;
-			st: {
-				for (var j in data) {
-					for (var k in data[j].tracks) {
-						if (!data[j].tracks[k].uri.match(/:album:/) &&
-							!data[j].tracks[k].uri.match(/:artist:/)) {
-							if (prefs.player_backend == "mopidy") {
-								var n = $("#radiodomains").makeDomainChooser("getSelection");
-								var d = data[j].tracks[k].uri.substr(0, data[j].tracks[k].uri.indexOf(':'));
-								if (n.indexOf(d) == -1) {
-									continue;
-								}
-							}
-							track = {type: 'uri', name: data[j].tracks[k].uri};
-							break st;
-						}
-					}
-				}
-			}
-			if (track !== null) {
+			if (data.uri) {
 				tosend--;
-        		player.controller.addTracks([track], playlist.radioManager.playbackStartPos(), null);
+        		player.controller.addTracks([{type: 'uri', name: data.uri}], playlist.radioManager.playbackStartPos(), null);
 			} else {
 				debug.warn("LASTFM TRACK RADIO","Failed to get a URI");
 				lastFMTrackRadio.trackAddFailed();
@@ -99,14 +93,8 @@ var lastFMTrackRadio = function() {
 
 	function getTopTracks(page) {
 		var period = null;
-		if (param === null) {
-			var p = $('#lastfmtimerange').rangechooser('getRange');
-			period = periodmap[Math.round(p.max)];
-			debug.log("LASTFM TRACK RADIO","Getting listen period from selector",period,p);
-		} else {
-			period = param;
-			debug.log("LASTFM TRACK RADIO","Using parameter for period",period);
-		}
+		period = param;
+		debug.log("LASTFM TRACK RADIO","Using parameter for period",period);
 		lastfm.user.getTopTracks(
 			{period: period,
 			page: page,

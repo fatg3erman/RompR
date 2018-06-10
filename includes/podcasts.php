@@ -82,13 +82,14 @@ function doPodcastBase() {
     print '<div class="containerbox indent"><div class="expand">'.get_int_text("label_searchfor").' (iTunes)</div></div>';
     print '<div class="containerbox indent"><div class="expand"><input class="enter" id="podcastsearch" type="text" /></div>';
     print '<button class="fixed" onclick="podcasts.search()">'.get_int_text("button_search").'</button></div>';
-    print '</div>';
 
     print '<div class="fullwidth noselection clearfix"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon padright" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
+    print '</div>';
     print '<div id="podcast_search" class="fullwidth noselection padright"></div>';
 }
 
 function doPodcastList($subscribed) {
+    // directoryControlHeader(null);
     $result = generic_sql_query("SELECT * FROM Podcasttable WHERE Subscribed = ".$subscribed." ORDER BY Artist, Title", false, PDO::FETCH_OBJ);
     foreach ($result as $obj) {
         doPodcastHeader($obj);

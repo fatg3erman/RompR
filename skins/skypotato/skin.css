@@ -1,0 +1,697 @@
+/*
+=====================================================================
+= Specific Elements By ID
+=====================================================================
+*/
+
+#infobar {
+    width:100%;
+    padding-top:4px;
+    margin:0px;
+}
+
+#progress {
+    font-size:4px;
+    width: 100%;
+}
+
+#playbackTime {
+    font-weight:bold;
+    font-size:11px;
+    padding-top:1px;
+    height:15px;
+    line-height:15px;
+    text-align:center;
+    width:100%;
+    height:15px;
+}
+
+#albumcover {
+    margin:0px;
+    z-index:500;
+}
+
+#upcoming {
+    max-width:35%;
+    min-width:20%;
+    height:100%;
+    overflow:hidden;
+    font-size:90%;
+}
+
+#uptrackcount, #uptimecount {
+    font-weight:bold;
+}
+
+#upcontents {
+    line-height:110%;
+}
+
+#albumpicture {
+    width: auto;
+}
+
+.timebox {
+    min-width: 4em;
+    font-size:9pt;
+    font-weight:bold;
+    line-height:100%;
+}
+
+.tboxl {
+    text-align:left;
+}
+
+.tboxr {
+    text-align:right;
+}
+
+#nowplaying {
+    font-size:8pt;
+    padding-top:0px;
+    padding-bottom:0px;
+    white-space:nowrap;
+    height:60px;
+    width:100%;
+    overflow:hidden;
+}
+
+#patrickmoore {
+    box-shadow: none !important;
+}
+
+#firefoxisshitwrapper {
+    overflow:hidden;
+}
+
+#nptext {
+    width:auto;
+    overflow:hidden;
+}
+
+#gronky {
+    margin-left:8px;
+    margin-right:8px;
+}
+
+#amontobin {
+    padding-top:4px;
+}
+
+#infopane {
+    height:100%;
+    overflow:auto;
+    position:relative;
+    display:block;
+}
+
+#dbtags {
+    overflow:hidden;
+    opacity:0.9;
+    font-size:8pt;
+    height:22px;
+    line-height:22px;
+}
+
+#tagadder {
+    width:400px;
+    padding-right:8px;
+    padding-bottom:4px;
+}
+
+#playcount {
+    overflow:hidden;
+    opacity:0.9;
+    font-size:8pt;
+    height:22px;
+    line-height:22px;
+}
+
+#lastfm {
+    float:left;
+    margin-left:4px;
+    padding-top:1px;
+}
+
+#lastfm img {
+    margin-right:2px;
+    margin-left:2px;
+}
+
+#headerbar {
+    padding:0px;
+    margin:0px;
+    width:42px;
+    height:100%;
+}
+
+#headerbar i {
+    display: block;
+    margin-top: 12px;
+    margin-left:8px;
+    width: 28px;
+    height: 32px;
+}
+
+#infopanecontrols {
+    text-align: center;
+}
+
+#bottompage {
+    width:100%;
+}
+
+#sources {
+    height:100%;
+    overflow:auto;
+}
+
+#volumecontrol {
+    width:14px;
+    margin-left:0px;
+    margin-right:0px;
+    font-size:8px;
+}
+
+#notifications {
+    position:absolute;
+    width:50%;
+    max-width:500px;
+    padding:8px;
+    top:0px;
+    display:none;
+    z-index:2000;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+}
+
+#keybindtable {
+    margin-bottom:1em;
+}
+
+#outputbox {
+    max-width:20%;
+}
+
+#mobileplaylistcontrols
+{
+    display:none;
+}
+
+#plmode {
+    font-size:8pt;
+    height:22px;
+    line-height:22px;
+}
+
+/*
+=====================================================================
+= General Classes
+=====================================================================
+*/
+
+.infobarlayout {
+    margin-left:6px;
+    margin-right:6px;
+    margin-top:0px;
+    margin-bottom:0px;
+    padding-top:0px;
+    padding-bottom:2px;
+    padding-left:0px;
+    padding-right:0px;
+    height:90px;
+}
+
+.infobarnoheight {
+    margin-left:6px;
+    margin-right:6px;
+    margin-top:2px;
+    margin-bottom:2px;
+    padding-top:0px;
+    padding-left:0px;
+    padding-right:0px;
+}
+
+.nopadright {
+    margin-right:0px !important;
+}
+
+.tinycover
+{
+    margin-right:8px;
+    width:28px;
+    height:auto;
+}
+
+.controlbutton-left
+{
+    margin-right:6px;
+    margin-left:6px;
+}
+
+.topstats {
+    float:left;
+    margin-right:8px;
+    margin-top:1px;
+}
+
+
+.tagremover {
+    margin-left:0.5em;
+}
+
+
+.clicktext {
+    font-size:7pt;
+    font-weight:bold;
+}
+
+.topimg {
+    margin-right:4px;
+    margin-left:4px;
+    height: 24px;
+    width:24px;
+    font-size:24px;
+    margin-bottom:2px;
+    cursor: pointer;
+    vertical-align:middle;
+}
+
+.smallicon {
+    padding:0px;
+    margin:4px;
+    height:16px;
+    vertical-align:middle;
+}
+
+.smallcover {
+    transition: width 0.5s ease;
+    max-width:300px;
+}
+
+#infopane .dropmenu {
+    margin-bottom: 20px;
+    padding-left: 0px;
+}
+
+.dropmenu {
+    padding-left:16px;
+}
+
+.npicon {
+    padding:0px;
+    margin-top:0px;
+    margin-left:0px;
+    margin-bottom:0px;
+    margin-right:4px;
+    height:20px;
+    width:20px;
+    font-size:20px;
+    vertical-align:middle;
+}
+
+.medicon {
+    padding:0px;
+    margin:2px;
+    height:24px;
+    width:24px;
+    font-size:24px;
+    vertical-align:middle;
+}
+
+.playlisticon {
+    padding:0px;
+    margin-right:4px;
+    margin-bottom:2px;
+    margin-top:2px;
+    vertical-align:middle;
+}
+
+.collectionicon {
+    padding:0px;
+    margin-right:4px;
+    margin-bottom:2px;
+    margin-top:2px;
+    vertical-align:middle;
+}
+
+.playlisticonr {
+    padding:0px;
+    margin-left:4px;
+    margin-right:2px;
+    margin-bottom:2px;
+    margin-top:2px;
+    vertical-align:middle;
+}
+
+.rating-icon-big {
+    height: 20px;
+    width: 100px;
+    font-size:20px;
+    cursor: pointer;
+    vertical-align:middle;
+}
+
+.rating-icon-small {
+    height: 14px;
+    width: 70px;
+    font-size:14px;
+    cursor: pointer;
+    vertical-align:middle;
+}
+
+.headercontainer {
+    max-height:36px;
+}
+
+.dragmenu {
+    cursor:move;
+}
+
+.menuitem {
+    font-weight:bold;
+    margin:0px;
+    padding-left:8px;
+    padding-right:0px;
+    padding-top:2px;
+    padding-bottom:2px;
+    -webkit-box-align:center;
+    align-items: center;
+}
+
+.playlistitem.menuitem {
+    align-items: inherit !important;
+}
+
+.playlistalbum {
+    font-weight:bold;
+    margin:0px;
+    padding-left:4px;
+    padding-right:0px;
+    padding-top:4px;
+    padding-bottom:2px;
+    -webkit-box-align:stretch;
+    align-items: stretch;
+}
+
+.mh {
+    margin-right:6px;
+    display:block;
+    margin-top:2px;
+    margin-bottom:2px;
+}
+
+.menu {
+    cursor:pointer;
+}
+
+.ninesix {
+    font-size:96%;
+    padding-top:2px;
+}
+
+.indent {
+    margin-left:16px;
+}
+
+.padright {
+    padding-right:4px;
+}
+
+.buttonchange {
+    text-align:center;
+}
+
+.outhack {
+    width:14px;
+    height:14px;
+    margin-top:2px;
+}
+
+.cshrinker {
+    max-width:400px;
+}
+
+.smallpluginicon {
+    padding:0px;
+    margin-right:4px;
+    margin-bottom:2px;
+    margin-top:1px;
+    vertical-align:middle;
+}
+
+/*
+=====================================================================
+= Info Panel - General
+=====================================================================
+*/
+
+.info-box-fixed {
+    -webkit-box-flex:0;
+    flex-grow: 0;
+    flex-shrink:0;
+}
+
+.info-border-right {
+    border-right: 1px solid #454545;
+    padding-right:1em;
+    max-width:240px;
+}
+
+.info-box-expand {
+    -webkit-box-flex:1.0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+
+}
+
+.info-detail-layout {
+    margin-top:8px;
+}
+
+.cleft {
+    border-left: 1px solid #454545;
+    padding-left:1em;
+    margin-left:1em;
+}
+
+/*
+=====================================================================
+= Dropdown Menus
+=====================================================================
+*/
+
+div.normalmenu
+{
+    width:240px;
+}
+
+div.widemenu
+{
+    width:420px;
+}
+
+div.leftmenu
+{
+    top: 30px;
+    left: 0px;
+}
+
+div.rightmenu.widemenu
+{
+    top:30px;
+    left:-400px;
+}
+
+div.rightmenu.normalmenu
+{
+    top:30px;
+    left:-228px;
+}
+
+/*
+=====================================================================
+= Podcasts
+=====================================================================
+*/
+
+.podicon {
+    padding:0px;
+    margin:2px;
+    height:16px;
+    width:16px;
+    font-size:16px;
+    vertical-align:middle;
+}
+
+/*
+=====================================================================
+= Responsive Layout
+=====================================================================
+*/
+
+@media screen and (max-width: 480px) {
+    #notifications {
+        width: 90% !important;
+    }
+}
+
+@media screen and (max-height: 1099px) {
+    .infobarlayout {
+        height:140px;
+    }
+    #albumcover {
+        height: 162px;
+    }
+    #albumpicture {
+        height: 158px;
+        padding: 2px;
+    }
+    #nowplaying {
+        height: 110px;
+    }
+
+    .controlbutton-small
+    {
+        width:24px !important;
+        height:24px !important;
+        font-size:24px !important;
+        margin-top:6px !important;
+        margin-left:4px !important;
+    }
+    
+    .controlbutton-main
+    {
+        width:32px !important;
+        height:32px !important;
+        font-size:32px !important;
+        margin-top:6px !important;
+    }
+
+    .smallpluginicon
+    {
+        height: 20px !important;
+        width: 18px !important;
+    }
+}
+
+@media screen and (min-height: 1100px) {
+    .infobarlayout {
+        height:160px;
+    }
+    #albumcover {
+        height: 182px;
+    }
+    #albumpicture {
+        height: 178px;
+        padding: 2px;
+    }
+    #nowplaying {
+        height: 130px;
+    }
+    .controlbutton-small
+    {
+        width:28px !important;
+        height:28px !important;
+        font-size:28px !important;
+        margin-top:6px !important;
+        margin-left:4px !important;
+    }
+
+    .controlbutton-main
+    {
+        width:36px !important;
+        height:36px !important;
+        font-size:36px !important;
+        margin-top:6px !important;
+    }
+
+    .smallpluginicon
+    {
+        height: 24px !important;
+        width: 18px !important;
+    }
+}
+
+/*
+=====================================================================
+= Plugins - Alarm Clock
+=====================================================================
+*/
+
+.bigalarm
+{
+    width: 250px;
+    height: 250px;
+    font-size:250px;
+}
+
+@-webkit-keyframes clickflash {
+     0%{
+          background-color: rgba(255,255,255,0.7);
+     }
+     50%{
+         background-color: rgba(255,255,255,0.3);
+     }
+     100%{
+         background-color: rgba(255,255,255,0);
+     }
+}
+@-moz-keyframes clickflash {
+     0%{
+          background-color: rgba(255,255,255,0.7);
+     }
+     50%{
+         background-color: rgba(255,255,255,0.3);
+     }
+     100%{
+         background-color: rgba(255,255,255,0);
+     }
+}
+@keyframes clickflash {
+     0%{
+          background-color: rgba(255,255,255,0.7);
+     }
+     50%{
+         background-color: rgba(255,255,255,0.3);
+     }
+     100%{
+         background-color: rgba(255,255,255,0);
+     }
+}
+
+.clickflash {
+    animation: clickflash 0.75s linear 1;
+}
+
+[class^="icon-"].menu, [class*=" icon-"].menu {
+    width: 24px;
+    height: 24px;
+    box-sizing: border-box;
+    border: 6px solid transparent;
+    vertical-align:middle;
+}
+
+.collectionitem {
+    box-sizing:border-box;
+    border: 4px solid transparent;
+}
+
+#pluginplaylistslist .collectionitem.brick_wide {
+    margin-bottom:4px;
+}
+
+#pluginplaylistslist .collectionitem .helpfulalbum {
+    padding-top:4px;
+    padding-bottom:4px;
+}
+
+#pluginplaylistslist .collectionitem .menuitem {
+    padding-left:0px;
+}
+
+#pluginplaylistslist .collectionitem .svg-square {
+    margin-right:0px;
+}

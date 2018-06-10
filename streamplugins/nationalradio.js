@@ -5,27 +5,17 @@ var nationalRadioPlugin = {
             $('i[name="bbclist"]').makeSpinner();
             $("#bbclist").load("streamplugins/02_nationalradio.php?populate=2&country="+prefs.newradiocountry, function() {
                 $('i[name="bbclist"]').stopSpinner();
-                $('#somafmlist').removeClass('notfilled');
+                $('#bbclist').removeClass('notfilled');
                 nationalRadioPlugin.setTheThing();
+                layoutProcessor.postAlbumActions();
             });
         }
     },
 
     setTheThing: function() {
-        $('[name="radiosearcher"]').click(function(ev){
-            ev.preventDefault();
-            ev.stopPropagation();
-            var position = getPosition(ev);
-            var elemright = $('[name="radiosearcher]').width() + $('[name="radiosearcher"]').offset().left;
-            if (position.x > elemright - 24) {
-                $('[name="radiosearcher"]').val("");
-                nationalRadioPlugin.changeradiocountry();
-            }
-        });
         $('[name="radiosearcher"]').hover(makeHoverWork);
         $('[name="radiosearcher"]').mousemove(makeHoverWork);
         $('[name="radiosearcher"]').keyup(onKeyUp);
-        $('[name="bumfeatures"]').click(nationalRadioPlugin.searchBigRadio);
     },
 
     changeradiocountry: function() {
@@ -37,8 +27,10 @@ var nationalRadioPlugin = {
     loadBigRadioHtml: function(qstring, callback) {
         debug.log("RADIO","Getting",qstring);
         $('i[name="bbclist"]').makeSpinner();
-        $("#alltheradiostations").load("streamplugins/02_nationalradio.php?"+qstring, function() {
+        $("#bbclist").load("streamplugins/02_nationalradio.php?"+qstring, function() {
         	$('i[name="bbclist"]').stopSpinner();
+            nationalRadioPlugin.setTheThing();
+            layoutProcessor.postAlbumActions();
         });
     },
 
@@ -54,9 +46,10 @@ var nationalRadioPlugin = {
         var page = element.parent().parent().children('input[name="spage"]').val();
         var term = element.parent().parent().children('input[name="term"]').val();
         debug.log("RADIO","Searching For Page",page,"of",term);
-        $.get('streamplugins/02_nationalradio.php?populate=1&country='+prefs.newradiocountry+'&page='+page+'&search='+term, function(data) {
+        $.get('streamplugins/02_nationalradio.php?populate=3&country='+prefs.newradiocountry+'&page='+page+'&search='+term, function(data) {
             element.parent().parent().remove();
-            $('#alltheradiostations').append(data);
+            $('#bbclist').append(data);
+            layoutProcessor.postAlbumActions();
         });
     },
 
@@ -85,13 +78,24 @@ var nationalRadioPlugin = {
         } else if (clickedElement.hasClass("clicksearchmore")) {
             event.stopImmediatePropagation();
             nationalRadioPlugin.searchRadioMore(clickedElement);
+        } else if (clickedElement.hasClass('searchdirble')) {
+            event.preventDefault();
+            event.stopPropagation();
+            var position = getPosition(event);
+            var elemright = $('[name="radiosearcher"]').width() + $('[name="radiosearcher"]').offset().left;
+            if (position.x > elemright - 24) {
+                $('[name="radiosearcher"]').val("");
+                nationalRadioPlugin.changeradiocountry();
+            }
+        } else if (clickedElement.hasClass('dirblesearch')) {
+                nationalRadioPlugin.searchBigRadio();
         } else if (prefs.clickmode == "double") {
             if (clickedElement.hasClass("clickstream")) {
                 event.stopImmediatePropagation();
                 trackSelect(event, clickedElement);
             }
         } else if (prefs.clickmode == "single") {
-            onCollectionDoubleClicked(event);
+            onSourcesDoubleClicked(event);
         }
 
     }
@@ -99,4 +103,4 @@ var nationalRadioPlugin = {
 }
 
 menuOpeners['bbclist'] = nationalRadioPlugin.loadBigRadio;
-clickRegistry.addClickHandlers('#nationalradio', nationalRadioPlugin.handleClick, onCollectionDoubleClicked);
+clickRegistry.addClickHandlers('#bbclist', nationalRadioPlugin.handleClick, onSourcesDoubleClicked);

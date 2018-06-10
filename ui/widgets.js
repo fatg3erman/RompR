@@ -111,8 +111,10 @@ $.widget("rompr.trackdragger", $.ui.mouse, {
         }
         $('.trackacceptor').each(function() {
             if ($(this).acceptDroppedTracks('checkMouseOver', event)) {
-                // Break out of the each loop
-                return false;
+                // DON'T Break out of the each loop, as it prevents checkMouseOver
+                // from removing the 'highlighted' class from things we've previously dragged over
+                // if they would be the nxt one in the loop.
+                // return false;
             }
         });
         return true;
@@ -710,8 +712,7 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 
     _findSourceElement: function(event) {
         var el = $(event.target);
-        while (!el.hasClass(this.options.handleClass) &&
-                el != this.element)
+        while (!el.hasClass(this.options.handleClass) && !el.hasClass('topdropmenu') && el != this.element)
         {
             el = el.parent();
         }
@@ -825,10 +826,21 @@ $.widget('rompr.spotifyAlbumThing', {
             var trackclass = (player.canPlay('spotify')) ? ' infoclick clickable draggable' : '';
             var cx = (this.options.showbiogs) ? ' tleft' : '';
             var y = $('<div>', {class: 'helpfulalbum fullwidth notthere'+cx}).appendTo(x);
-            y.append('<img class="'+this.options.imageclass+trackclass+' clicktrack" '+'src="'+img+'" name="'+a.uri+'"/>');
-            var html = '<div class="tagh albumthing sponklick">'+
-                '<i class="icon-toggle-closed menu infoclick'+clickclass+' clickopenalbum"></i>'+
-                '<span class="title-menu'+trackclass+' clicktrack" name="'+a.uri+'">';
+            var html;
+            var appendto;
+            if (layoutProcessor.openOnImage) {
+                var t = $('<div>').appendTo(y);
+                t.append('<img class="'+this.options.imageclass+' menu infoclick'+clickclass+' clickopenalbum" src="'+img+'"  name="'+a.id+'"/>');
+                html = '<div class="tagh albumthing sponklick relpos">'+
+                    '<span class="title-menu'+trackclass+' clicktrack" name="'+a.uri+'">';
+                appendto = t;
+            } else {
+                y.append('<img class="'+this.options.imageclass+trackclass+' clicktrack" '+'src="'+img+'" name="'+a.uri+'"/>');
+                html = '<div class="tagh albumthing sponklick">'+
+                    '<i class="icon-toggle-closed menu infoclick'+clickclass+' clickopenalbum" name="'+a.id+'"></i>'+
+                    '<span class="title-menu'+trackclass+' clicktrack" name="'+a.uri+'">';
+                appendto = y;
+            }
             if (this.options.showbiogs) {
                 var an = new Array();
                 for (var i in a.artists) {
@@ -840,8 +852,11 @@ $.widget('rompr.spotifyAlbumThing', {
             if (!player.canPlay('spotify')) {
                 html += '<a href="'+a.external_urls['spotify']+'" target="_blank"><i class="icon-spotify-circled playlisticonr"></i></a>';
             }
+            if (layoutProcessor.openOnImage && player.canPlay('spotify')) {
+                html += '<div class="playdiv'+trackclass+' clicktrack" name="'+a.uri+'"></div>';
+            }
             html += '</div>';
-            y.append(html);
+            appendto.append(html);
             y.append('<div class="tagh albumthing invisible" id="'+a.id+'"></div>');
             if (this.options.showbiogs) {
                 y.append('<input type="hidden" value="'+encodeURIComponent(concatenate_artist_names(an))+'" />');
@@ -870,8 +885,8 @@ $.widget('rompr.spotifyAlbumThing', {
 
     handleClick: function(element) {
         var self = this;
-        var id = element.parent().next().attr("id");
-        var dropper = element.parent().next();
+        var id = element.attr("name");
+        var dropper = $('#'+id);
         if (element.isOpen()) {
             self.element.find('#'+self.options.id+'bio_'+id).hide();
             element.toggleClosed();
@@ -888,6 +903,11 @@ $.widget('rompr.spotifyAlbumThing', {
                 dropper.show();
                 browser.rePoint();
             } else {
+                if (layoutProcessor.openOnImage) {
+                    element.parent().parent().makeSpinner();
+                } else {
+                    element.makeSpinner();
+                }
                 spotify.album.getInfo(id, $.proxy(self.spotifyAlbumResponse, self), self.spotiError, true);
             }
         }
@@ -916,6 +936,11 @@ $.widget('rompr.spotifyAlbumThing', {
     },
 
     spotifyAlbumResponse: function(data) {
+        if (layoutProcessor.openOnImage) {
+            $('[name="'+data.id+'"]').parent().parent().stopSpinner();
+        } else {
+            $('[name="'+data.id+'"]').stopSpinner();
+        }
         var e = this.element.find("#"+data.id);
         e.show();
         this._openAlbum(e);
@@ -997,15 +1022,29 @@ $.widget('rompr.spotifyArtistThing', {
             var clickclass = (this.options.is_plugin) ? ' plugclickable' : '';
             var trackclass = (player.canPlay('spotify')) ? ' infoclick clickable draggable' : '';
             var y = $('<div>', {class: 'helpfulalbum fullwidth tleft notthere'}).appendTo(x);
-            y.append('<img class="'+this.options.imageclass+trackclass+' clicktrack" src="'+img+'" name="'+a.uri+'"/>');
-            var html = '<div class="tagh albumthing">'+
-                        '<i class="icon-toggle-closed menu infoclick clickopenartist"></i>'+
-                        '<span class="title-menu '+trackclass+' clicktrack" name="'+a.uri+'">'+a.name+'</span>';
+            var html;
+            var appendto;
+            if (layoutProcessor.openOnImage) {
+                var t = $('<div>').appendTo(y);
+                t.append('<img class="'+this.options.imageclass+' menu infoclick'+clickclass+' clickopenartist" src="'+img+'"  name="'+a.id+'"/>');
+                html = '<div class="tagh albumthing sponklick relpos">'+
+                    '<span class="title-menu'+trackclass+' clicktrack" name="'+a.uri+'">'+a.name+'</span>';
+                appendto = t;
+            } else {
+                y.append('<img class="'+this.options.imageclass+trackclass+' clicktrack" src="'+img+'" name="'+a.uri+'"/>');
+                var html = '<div class="tagh albumthing">'+
+                            '<i class="icon-toggle-closed menu infoclick clickopenartist" name="'+a.id+'"></i>'+
+                            '<span class="title-menu '+trackclass+' clicktrack" name="'+a.uri+'">'+a.name+'</span>';
+                appendto = y;
+            }
             if (!player.canPlay('spotify')) {
                 html += '<a href="'+a.external_urls['spotify']+'" target="_blank"><i class="icon-spotify-circled playlisticonr"></i></a>';
             }
+            if (layoutProcessor.openOnImage && player.canPlay('spotify')) {
+                html += '<div class="playdiv'+trackclass+' clicktrack" name="'+a.uri+'"></div>';
+            }
             html += '</div>';
-            y.append(html)
+            appendto.append(html)
 
             x.append('<span class="minwidthed" id="'+self.options.id+'bio_'+a.id+'"></span>');
             // The inline styles make Masonry lay it out without a big vertical gap between elements
@@ -1034,8 +1073,8 @@ $.widget('rompr.spotifyArtistThing', {
 
     handleClick: function(element) {
         var self = this;
-        var dropper = element.parent().parent().parent().children().last();
-        var id = dropper.attr("id");
+        var id = element.attr("name");
+        var dropper = $('#'+id);
         if (element.hasClass('clickopenartist')) {
             if (element.isOpen()) {
                 self.element.find('#'+self.options.id+'bio_'+id).hide();
@@ -1051,6 +1090,11 @@ $.widget('rompr.spotifyArtistThing', {
                     dropper.show();
                     browser.rePoint();
                 } else {
+                    if (layoutProcessor.openOnImage) {
+                        element.parent().parent().makeSpinner();
+                    } else {
+                        element.makeSpinner();
+                    }
                     spotify.artist.getAlbums(id, 'album', $.proxy(self._gotAlbumsForArtist, self), self.spotiError, true);
                 }
             }
@@ -1062,6 +1106,11 @@ $.widget('rompr.spotifyArtistThing', {
     _gotAlbumsForArtist: function(data) {
         var self = this;
         var e = self.element.find('#'+data.reqid);
+        if (layoutProcessor.openOnImage) {
+            $('[name="'+data.reqid+'"]').parent().parent().stopSpinner();
+        } else {
+            $('[name="'+data.reqid+'"]').stopSpinner();
+        }
         e.show();
         self._openArtist(e)
         e.addClass('filled');

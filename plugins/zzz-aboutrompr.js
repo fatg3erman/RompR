@@ -6,7 +6,7 @@ var aboutRompr = function() {
 
       open: function() {
             if (about == null) {
-      	      about = browser.registerExtraPlugin("about", "About RompЯ (version "+parseFloat(rompr_version).toFixed(2)+")", aboutRompr);
+      	      about = browser.registerExtraPlugin("about", "About RompЯ (version "+rompr_version+")", aboutRompr);
                   // randomly change the url to avoid the cache
                   $("#aboutfoldup").load("includes/begging.html?_="+Math.round(Math.random()*10000), function() {
                         about.slideToggle('fast', function() {

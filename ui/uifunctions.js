@@ -366,15 +366,16 @@ function populateSpotiTagMenu(callback) {
 }
 
 function setSearchLabelWidth() {
-    debug.log("UI","Setting Search Label Widths");
+    debug.trace("UI","Setting Search Label Widths");
     var w = 0;
-    $.each($(".slt"), function() {
+    $.each($(".slt:visible"), function() {
         if ($(this).width() > w) {
             w = $(this).width();
         }
     });
     w += 8;
-    $(".searchlabel").css("width", w+"px");
+    $(".searchlabel:visible").css("width", w+"px");
+    $(".searchlabel").not(':visible').css("width", "0px");
     if (prefs.search_limit_limitsearch) {
         $("#mopidysearchdomains").show();
     } else {
@@ -390,7 +391,7 @@ function setSearchLabelWidth() {
 }
 
 function setSpotiLabelWidth() {
-    debug.log("UI","Setting Spotify Label Widths");
+    debug.trace("UI","Setting Spotify Label Widths");
     var w = 0;
     $.each($(".bacon"), function() {
         if ($(this).width() > w) {
@@ -412,7 +413,7 @@ function showUpdateWindow() {
     if (mopidy_is_old) {
         alert(language.gettext("mopidy_tooold", [mopidy_min_version]));
     } else {
-        if (prefs.shownupdatewindow === true || prefs.shownupdatewindow < rompr_version) {
+        if (prefs.shownupdatewindow === true || compare_version_numbers(prefs.shownupdatewindow, rompr_version)) {
             var fnarkle = new popup({
                 width: 800,
                 height: 1100,
@@ -433,6 +434,34 @@ function showUpdateWindow() {
             });
         }
     }
+}
+
+function compare_version_numbers(ver1, ver2) {
+    // Returns true if ver1 < ver2
+    // Eg ver1 = '1.14.9' ver2 = '1.14.10'
+    // We need to compare them as digits because as a string 10 < 9
+    // The internet's collected wisdom says the only way to do it is to compare
+    // digit by digit, so I came up with this.
+    // This even seems to work with 1.14.2Beta etc
+    var ver1_split = ver1.split('.');
+    var ver2_split = ver2.split('.');
+    for (var i in ver1_split) {
+        if (i > ver2_split.length) {
+            // ver1 has more digits than ver2.
+            // If we got here then we must have already compared the other digits, therefore ver1 must be > ver2 ie. 1.14.1 vs 1.14
+            return false;
+        }
+        if (parseInt(ver1_split[i]) < parseInt(ver2_split[i])) {
+            return true;
+        } else if (parseInt(ver1_split[i]) > parseInt(ver2_split[i])) {
+            return false;
+        }
+    }
+    if (ver2_split.length > ver1_split.length) {
+        // We got here with no differences, therefore ver2 has more digits than ver1 and must be the greater of the two
+        return true;
+    }
+    return false;
 }
 
 function removeOpenItems(index) {
@@ -464,7 +493,9 @@ function calcPercentWidth(element, childSelector, targetWidth, parentWidth) {
     if (parentWidth/numElements > pixelwidth) {
         pixelwidth = targetWidth;
     }
-    pixelwidth -= masonry_gutter;
+    if (childSelector != '.collectionitem') {
+        pixelwidth -= masonry_gutter;
+    }
     return (pixelwidth/parentWidth)*100;
 }
 

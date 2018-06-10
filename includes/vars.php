@@ -2,8 +2,9 @@
 
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
-define('ROMPR_SCHEMA_VERSION', 33);
-define('ROMPR_VERSION', 1.13);
+define('ROMPR_IMAGE_VERSION', 2);
+define('ROMPR_SCHEMA_VERSION', 34);
+define('ROMPR_VERSION', '1.15');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_PLAYLIST_KEY', 'IS_ROMPR_PLAYLIST_IMAGE');
@@ -51,11 +52,20 @@ $prefs = array(
     "custom_logfile" => "",
     "player_backend" => "mpd",
     "cleanalbumimages" => true,
-    // This option for plugin debugging ONLY
     "do_not_show_prefs" => false,
+    // This option for plugin debugging ONLY
     "load_plugins_at_loadtime" => false,
     "beets_server_location" => "",
     "mopidy_scan_command" => "",
+    "multihosts" => (object) array (
+        'Default' => (object) array(
+            'host' => 'localhost',
+            'port' => '6600',
+            'password' => '',
+            'socket' => ''
+        )
+    ),
+    "currenthost" => 'Default',
 
     // Things that could be set on a per-user basis but need to be known by the backend
     "mpd_host" => "localhost",
@@ -70,6 +80,8 @@ $prefs = array(
     "sortcollectionby" => "artist",
     "showartistbanners" => true,
     "tradsearch" => false,
+    "google_api_key" => '',
+    "google_search_engine_id" => '',
 
     // These are currently saved in the backend, as the most likely scenario is one user
     // with multiple browsers. But what if it's multiple users?
@@ -132,68 +144,35 @@ $prefs = array(
     "auto_discovembobulate" => false,
     "ratman_sortby" => 'Rating',
     "ratman_showletters" => false,
-    "ratman_smallart" => false,
     "sleeptime" => 30,
     "sleepon" => false,
     "advanced_search_open" => false
 );
 
+// Prefs that should not be exposed to the browser for security reasons
+// lastfm_session_key should really be one of these, but it is needed by the frontend
+$private_prefs = array(
+    'mysql_database',
+    'mysql_host',
+    'mysql_password',
+    'mysql_port',
+    'mysql_user',
+    'proxy_host',
+    'proxy_password',
+    'proxy_user',
+    'spotify_token',
+    'spotify_token_expires'
+);
+
 // ====================================================================
 // Load Saved Preferences
-
-if (file_exists('prefs/prefs')) {
-    // Convert old-style prefs file
-    include("utils/convertprefs.php");
-} else if (file_exists('prefs/prefs.var')) {
-    // Else, load new-style prefs file
-    loadPrefs();
-}
-
-if ($prefs['debug_enabled'] === true) {
-    // Convert old-style debug pref
-    $prefs['debug_enabled'] = 7;
-}
-
+loadPrefs();
 $logger = new debug_logger($prefs['custom_logfile'], $prefs['debug_enabled']);
+
 if (defined('ROMPR_IS_LOADING')) {
     debuglog("******++++++======------******------======++++++******","INIT",2);
 }
 
-if (!array_key_exists('multihosts', $prefs)) {
-    $prefs['multihosts'] = new stdClass;
-    $prefs['multihosts']->Default = (object) array(
-            'host' => $prefs['mpd_host'],
-            'port' => $prefs['mpd_port'],
-            'password' => $prefs['mpd_password'],
-            'socket' => $prefs['unix_socket']
-    );
-    setcookie('currenthost','Default',time()+365*24*60*60*10,'/');
-    $prefs['currenthost'] = 'Default';
-    savePrefs();
-}
-
-// Prefs can be overridden by cookies
-foreach ($_COOKIE as $a => $v) {
-    if (array_key_exists($a, $prefs)) {
-        switch ($a) {
-            case 'artistsatstart':
-            case 'nosortprefixes':
-                // There was a version where these were set as cookies, but I decided against it
-                $prefs[$a] = explode(',',$v);
-                break;
-                
-            case 'debug_enabled':
-                $logger->setLevel($v);
-                // Fall through to default
-                
-            default:
-                $prefs[$a] = $v;
-                break;
-                
-        }
-        debuglog("Pref ".$a." overridden by Cookie  - Value : ".$v,"COOKIE",9);
-    }
-}
 if (!property_exists($prefs['multihosts'], $prefs['currenthost'])) {
     debuglog($prefs['currenthost']." is not defined in the hosts defs. Falling back to Default","INIT",3);
     if (!property_exists($prefs['multihosts'], 'Default')) {
@@ -214,21 +193,17 @@ if (!array_key_exists('currenthost', $_COOKIE)) {
     setcookie('currenthost',$prefs['currenthost'],time()+365*24*60*60*10,'/');
 }
 
-// So, er seemingly PHP7 can't do $prefs['multihosts']->$prefs['currenthost']->host;
-// although PHP5 could do it just fucking fine. PHP7 barfs with 'Array to string conversion'
-
 $cockspanner = $prefs['currenthost'];
 $prefs['mpd_host'] = $prefs['multihosts']->$cockspanner->host;
 $prefs['mpd_port'] = $prefs['multihosts']->$cockspanner->port;
 $prefs['mpd_password'] = $prefs['multihosts']->$cockspanner->password;
 $prefs['unix_socket'] = $prefs['multihosts']->$cockspanner->socket;
 
+// NOTE. skin is NOT saved as a preference on the backend. It is set as a Cookie only.
+// This is because saving it once as a preference would change the default for ALL new devices
+// and we want to allow devices to intelligently select a default skin using checkwindowsize.php
 $skin = null;
-
-if (array_key_exists('mobile', $_REQUEST)) {
-    $skin = ($_REQUEST['mobile'] == "phone") ? "phone" : "desktop";
-    debuglog("Request asked for skin: ".$skin,"INIT",9);
-} else if(array_key_exists('skin', $_REQUEST)) {
+if(array_key_exists('skin', $_REQUEST)) {
     $skin = $_REQUEST['skin'];
     debuglog("Request asked for skin: ".$skin,"INIT",9);
 } else if (array_key_exists('skin', $_COOKIE)) {
@@ -251,11 +226,6 @@ function savePrefs() {
 
     global $prefs;
     $sp = $prefs;
-    foreach (array('albumslist', 'fileslist', 'showfileinfo') as $p) {
-        if (array_key_exists($p, $sp)) {
-            unset($sp[$p]);
-        }
-    }
     $ps = serialize($sp);
     $r = file_put_contents('prefs/prefs.var', $ps, LOCK_EX);
     if ($r === false) {
@@ -264,26 +234,55 @@ function savePrefs() {
 }
 
 function loadPrefs() {
-    global $prefs;
-    $fp = fopen('prefs/prefs.var', 'r');
-    if($fp) {
-        if (flock($fp, LOCK_SH)) {
-            $sp = unserialize(fread($fp, 32768));
-            flock($fp, LOCK_UN);
-            fclose($fp);
-            if ($sp === false) {
-                error_log("ERROR!              : COULD NOT LOAD PREFS");
-                exit(1);
-            }
-            $prefs = array_replace($prefs, $sp);
-        } else {
-            error_log("ERROR!              : COULD NOT GET READ FILE LOCK ON PREFS FILE");
-            exit(1);
-        }
-    } else {
-        error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE");
-        exit(1);
+    global $prefs, $logger;
+    if (file_exists('prefs/prefs.var')) {
+      $fp = fopen('prefs/prefs.var', 'r');
+      if($fp) {
+          if (flock($fp, LOCK_SH)) {
+              $sp = unserialize(fread($fp, 32768));
+              flock($fp, LOCK_UN);
+              fclose($fp);
+              if ($sp === false) {
+                  error_log("ERROR!              : COULD NOT LOAD PREFS");
+                  exit(1);
+              }
+              $prefs = array_replace($prefs, $sp);
+
+              foreach ($_COOKIE as $a => $v) {
+                  if (array_key_exists($a, $prefs)) {
+                      switch ($a) {
+                          case 'debug_enabled':
+                              $logger->setLevel($v);
+                              // Fall through to default
+
+                          default:
+                              $prefs[$a] = $v;
+                              break;
+
+                      }
+                      if ($prefs['debug_enabled'] > 8) {
+                        error_log("COOKIE             : Pref ".$a." is set by Cookie  - Value : ".$v);
+                      }
+                  }
+              }
+
+          } else {
+              error_log("ERROR!              : COULD NOT GET READ FILE LOCK ON PREFS FILE");
+              exit(1);
+          }
+      } else {
+          error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE");
+          exit(1);
+      }
+   }
+}
+
+function set_music_directory($dir) {
+    debuglog("Creating Album Art SymLink to ".$dir,"SAVEPREFS");
+    if (is_link("prefs/MusicFolders")) {
+        system ("unlink prefs/MusicFolders");
     }
+    system ('ln -s "'.$dir.'" prefs/MusicFolders');
 }
 
 class debug_logger {
@@ -319,7 +318,7 @@ class debug_logger {
         $pid = getmypid();
         $in2 = str_repeat(" ", 8 - strlen($pid));
         if ($this->outfile != "") {
-            
+
             // Two options here - either colour by level
             // $col = $this->debug_colours[$level];
 

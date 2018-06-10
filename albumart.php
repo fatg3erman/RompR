@@ -33,15 +33,15 @@ print '<link rel="stylesheet" type="text/css" href="css/albumart.css?version=?'.
 <link type="text/css" href="css/jquery.mCustomScrollbar.css" rel="stylesheet" />
 <?php
 $scripts = array(
-    "ui/prefs.js",
-    "ui/language.js",
     "jquery/jquery-2.1.4.min.js",
     "jquery/jquery-migrate-1.2.1.js",
+    "ui/functions.js",
+    "ui/prefs.js",
+    "ui/language.js",
     "jquery/jquery-ui.min.js",
     "jquery/jquery.mCustomScrollbar.concat.min.js",
-    "skins/desktop/skin.js",
+    // "skins/desktop/skin.js",
     "includes/globals.js",
-    "ui/functions.js",
     "ui/uifunctions.js",
     "ui/metahandlers.js",
     "ui/widgets.js",

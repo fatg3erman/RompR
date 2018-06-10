@@ -4,8 +4,12 @@ var spotiMixRadio = function() {
 	var tuner;
 	var trackseeds;
 	var nonspotitracks;
-	var medebug = "CONKERS";
+	var medebug = "SPOTIMIXRADIO";
 	var param;
+	var trackfinder = new faveFinder(false);
+	trackfinder.setCheckDb(false);
+	trackfinder.setExact(true);
+	trackfinder.setPriorities(['spotify']);
 
 	function populateTuner(numtracks) {
 		var sods = trackseeds.splice(0,5);
@@ -114,14 +118,15 @@ var spotiMixRadio = function() {
 			if (nonspotitracks.length > 0) {
 				var t = nonspotitracks.shift();
 				debug.log(medebug, "Searching For Spotify ID for",t);
-				player.controller.rawsearch(
-					{artist: [t.Artistname],
-					 title: [t.Title]
+				trackfinder.findThisOne(
+					{
+						title: t.Title,
+						artist: t.Artistname,
+						duration: 0,
+						albumartist: t.Artistname,
+						date: 0
 					},
-					['spotify'],
-					true,
-					spotiMixRadio.gotTrackResults,
-					false
+					spotiMixRadio.gotTrackResults
 				);
 			} else if (trackseeds.length > 0) {
 				populateTuner(5);
@@ -133,14 +138,11 @@ var spotiMixRadio = function() {
 
 		gotTrackResults: function(data) {
 			debug.log(medebug,"Got Track Results",data);
-			if (data && data[0] && data[0].tracks && data[0].tracks[0]) {
-				var uri = data[0].tracks[0].uri;
-				if (uri) {
-					var m = uri.match(/spotify:track:(.*)$/);
-					if (m && m[1]) {
-						debug.log(medebug,"Found Spotify Track Uri",m[1]);
-						trackseeds.push(m[1]);
-					}
+			if (data.uri) {
+				var m = data.uri.match(/spotify:track:(.*)$/);
+				if (m && m[1]) {
+					debug.log(medebug,"Found Spotify Track Uri",m[1]);
+					trackseeds.push(m[1]);
 				}
 			}
 			spotiMixRadio.doStageTwo();

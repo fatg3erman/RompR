@@ -41,6 +41,10 @@ body.phone .dropmenu>div {
     padding:4px;
 }
 
+#pset {
+    background-color: rgba(1, 1, 1, 0);
+}
+
 body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input
 {
     color:#eeeeee;
@@ -386,7 +390,7 @@ tr.clickaddtrack:hover
 
 .dropshadow
 {
-    box-shadow:         7px 7px 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 7px 7px 5px rgba(0, 0, 0, 0.5);
 }
 
 .progressbar

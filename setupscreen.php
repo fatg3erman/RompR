@@ -1,5 +1,5 @@
-
 <?php
+debuglog("Displaying Setup Screen","SETUP");
 print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -115,23 +115,6 @@ print '<p>Proxy Password<br><input type="text" name="proxy_password" value="'.
 print '<hr class="dingleberry" />';
 print '<h3>Debug Logging</h3>';
 print '<table width="100%"><tr>';
-// for ($i = 0; $i<10; $i++) {
-//     print '<td align="left" class="styledinputs"><input id="debug'.$i.'" type="radio" name="debug_enabled" value="'.$i.'"';
-//     if ($prefs['debug_enabled'] == $i) {
-//         print " checked";
-//     }
-//     print '>';
-//     print '<label for="debug'.$i.'">';
-//     if ($i == 0) {
-//         print 'Off';
-//     } else {
-//         print 'Level '.$i;
-//     }
-//     print '</label></td>';
-//     if ($i == 4) {
-//         print '</tr><tr>';
-//     }
-// }
 
 for ($i = 0; $i<5; $i++) {
     print '<td align="center">';

@@ -1,69 +1,3 @@
-jQuery.fn.menuReveal = function(callback) {
-    if (callback) {
-        this.show(0, callback);
-    } else {
-        this.show();
-    }
-    return this;
-}
-
-jQuery.fn.menuHide = function(callback) {
-    if (callback) {
-        this.hide(0, callback);
-    } else {
-        this.hide();
-    }
-    return this;
-}
-
-jQuery.fn.isOpen = function() {
-    return this.hasClass('icon-toggle-open');
-}
-
-jQuery.fn.isClosed = function() {
-    return this.hasClass('icon-toggle-closed');
-}
-
-jQuery.fn.toggleOpen = function() {
-    this.removeClass('icon-toggle-closed').addClass('icon-toggle-open');
-    return this;
-}
-
-jQuery.fn.toggleClosed = function() {
-    this.removeClass('icon-toggle-open').addClass('icon-toggle-closed');
-    return this;
-}
-
-jQuery.fn.makeSpinner = function() {
-
-    return this.each(function() {
-        var originalclasses = new Array();
-        var classes = '';
-        if ($(this).attr("class")) {
-            var classes = $(this).attr("class").split(/\s/);
-        }
-        for (var i = 0, len = classes.length; i < len; i++) {
-            if (classes[i] == "invisible" || (/^icon/.test(classes[i]))) {
-                originalclasses.push(classes[i]);
-                $(this).removeClass(classes[i]);
-            }
-        }
-        $(this).attr("originalclass", originalclasses.join(" "));
-        $(this).addClass('icon-spin6 spinner');
-    });
-}
-
-jQuery.fn.stopSpinner = function() {
-
-    return this.each(function() {
-        $(this).removeClass('icon-spin6 spinner');
-        if ($(this).attr("originalclass")) {
-            $(this).addClass($(this).attr("originalclass"));
-            $(this).removeAttr("originalclass");
-        }
-    });
-}
-
 jQuery.fn.makeTagMenu = function(options) {
     var settings = $.extend({
         textboxname: "",
@@ -147,6 +81,20 @@ var layoutProcessor = function() {
         supportsDragDrop: false,
         hasCustomScrollbars: false,
         usesKeyboard: false,
+        sortFaveRadios: false,
+        openOnImage: false,
+
+        changeCollectionSortMode: function() {
+            collectionHelper.forceCollectionReload();
+        },
+
+        bindSourcesClicks: function() {
+            $('.mainpane').not('#infobar').not('#playlistm').not('#prefsm').not('#infopane').bindPlayClicks();
+        },
+
+        postAlbumActions: function() {
+
+        },
 
         afterHistory: function() {
             browser.rePoint();
@@ -168,9 +116,8 @@ var layoutProcessor = function() {
         },
 
         goToBrowserPlugin: function(panel) {
-            layoutProcessor.sourceControl('infopane', function() {
-                    layoutProcessor.goToBrowserPanel(panel)
-            });
+            layoutProcessor.sourceControl('infopane');
+            layoutProcessor.goToBrowserPanel(panel);
         },
 
         goToBrowserSection: function(section) {
@@ -228,7 +175,7 @@ var layoutProcessor = function() {
         
         },
 
-        sourceControl: function(source, callback) {
+        sourceControl: function(source) {
             if (source == 'infopane') {
                 $('#infobar').css('display', 'none');
             } else {
@@ -242,8 +189,14 @@ var layoutProcessor = function() {
             $('#'+source).removeClass('invisible');
             prefs.save({chooser: source});
             layoutProcessor.adjustLayout();
-            if (callback) {
-                callback();
+            switch (source) {
+                case'searchpane':
+                    setSearchLabelWidth();
+                    break;
+                    
+                case 'pluginplaylistholder':
+                    setSpotiLabelWidth();
+                    break;
             }
         },
 
@@ -314,6 +267,14 @@ var layoutProcessor = function() {
             }
         },
         
+        getArtistDestinationDiv: function(menutoopen) {
+            if (prefs.sortcollectionby == "artist") {
+                return $("#"+menutoopen).parent();
+            } else {
+                return $("#"+menutoopen);
+            }
+        },
+
         initialise: function() {
 
             if (!prefs.checkSet('clickmode')) {
@@ -323,13 +284,13 @@ var layoutProcessor = function() {
             setControlClicks();
             $('.choose_nowplaying').click(function(){layoutProcessor.sourceControl('infobar')});
             $('.choose_albumlist').click(function(){layoutProcessor.sourceControl('albumlist')});
-            $('.choose_searcher').click(function(){layoutProcessor.sourceControl('searchpane', setSearchLabelWidth)});
+            $('.choose_searcher').click(function(){layoutProcessor.sourceControl('searchpane')});
             $('.choose_filelist').click(function(){layoutProcessor.sourceControl('filelist')});
             $('.choose_radiolist').click(function(){layoutProcessor.sourceControl('radiolist')});
             $('.choose_podcastslist').click(function(){layoutProcessor.sourceControl('podcastslist')});
             $('.choose_infopanel').click(function(){layoutProcessor.sourceControl('infopane')});
             $('.choose_playlistman').click(function(){layoutProcessor.sourceControl('playlistman')});
-            $('.choose_pluginplaylists').click(function(){layoutProcessor.sourceControl('pluginplaylistholder', setSpotiLabelWidth)});
+            $('.choose_pluginplaylists').click(function(){layoutProcessor.sourceControl('pluginplaylistholder')});
             $('.choose_prefs').click(function(){layoutProcessor.sourceControl('prefsm')});
             $('#choose_history').click(showHistory);
             $('.icon-rss.npicon').click(function(){podcasts.doPodcast('nppodiput')});

@@ -62,6 +62,10 @@ body.mobile, body.phone .dropmenu {
     background-image: linear-gradient(#ffffff, #bbbbbb);
 }
 
+.album2 {
+    background-color:rgba(0,0,0,0.1);
+}
+
 .setupdiv
 {
     background-image: linear-gradient(#ffffff, #bbbbbb);
@@ -349,6 +353,10 @@ div.topdropmenu
 .helpfulalbum
 {
     background-image: linear-gradient(#ededed, #bbbbbb);
+}
+
+.collectionitem .helpfulalbum.fixed {
+    background-image: linear-gradient(#bbbbbb, #aaaaaa);
 }
 
 .tagholder_wide

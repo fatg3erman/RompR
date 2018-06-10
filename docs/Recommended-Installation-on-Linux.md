@@ -30,14 +30,12 @@ We need to create directories to store data in.
     cd /PATH/TO/ROMPR
     mkdir prefs
     mkdir albumart
-    mkdir albumart/small
-    mkdir albumart/asdownloaded
 
 
 And then we need to give nginx permission to write to them. We can do this by changing the ownership of those directories to be the user that nginx runs as. This may differ depending on which distro you're running, but this is good for all Ubuntus, where nginx runs as the user www-data.
 
-    sudo chown -R www-data /PATH/TO/ROMPR/albumart
-    sudo chown -R www-data /PATH/TO/ROMPR/prefs
+    sudo chown www-data /PATH/TO/ROMPR/albumart
+    sudo chown www-data /PATH/TO/ROMPR/prefs
 
 
 ### Install some packages
@@ -52,9 +50,22 @@ We're going to create RompЯ as a standalone website which will be accessible th
 
 _Note. This sets RompЯ as the default site on your machine. For most people this will be the best configuration. If you are someone who cares about what that means and understands what that means, then you already know how to add RompЯ as the non-default site. What is described here is the easiest setup, which will work for most people_
 
-First we will remove the existing default config, since we don't want it.
+Nginx comes set up with a default web site, which we don't want to use. You used to be able to just delete it but now we can't do that as it causes errors. So first we will edit the existing default config, since we don't want it to be the default
 
-    sudo unlink /etc/nginx/sites-enabled/default
+    sudo nano /etc/nginx/sites-available/default
+    
+Find the lines
+
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    
+and change them to
+
+    listen 80;
+    listen [::]:80;
+    
+_Explnanation: The reason we want to set rompr as the default site on the machine is so we can easily access it from any device just by typing the machine's IP address into the browser_
+
 
 Then we will create the rompr config and set that to be the default
 
@@ -106,9 +117,9 @@ and just add the line
 
     127.0.0.1        www.myrompr.net
 
-You will need to make this change on every device you want to access rompr from - with an appropriate IP address. On devices where this is not possible - eg a mobile device - you can just enter the IP address of your web server into your browser to access RompЯ (because we have set RompЯ as the default site).
+You will need to make this change on every device you want to access rompr from - with an appropriate IP address. On devices where this is not possible - eg a mobile device - you can just enter the IP address of your web server into your browser to access RompЯ, because we have set RompЯ as the default site.
 
-_Those of you who want to be clever and know how to edit hostname and DNS mapping on your router can do that, you will then not need RompЯ to be default site and you will not need to remove the existing default config. Just remove default_server where it appears above and set server_name appopriately. If you didn't understand that, then ignore this paragraph._
+_Those of you who want to be clever and know how to edit hostname and DNS mapping on your router can do that, you will then not need RompЯ to be the default site and you will not need to edit the existing default config. Just remove default_server from the rompr configuration above and set server_name appopriately. If you didn't understand that, then ignore this paragraph._
 
 ### Edit PHP configuration
 
@@ -120,7 +131,7 @@ Now find and modify (or add in if they're not there) the following parameters. C
 
     allow_url_fopen = On
     memory_limit = 128M
-    max_execution_time = 300
+    max_execution_time = 600
 
 ### That's all the configuring. Let's get everything running
 

@@ -59,7 +59,6 @@ var player = function() {
             if (reloadNeeded !== false) {
                 prefs.save({currenthost: reloadNeeded}, function() {
                     prefs.save({multihosts: newhosts}, function() {
-                        setCookie('currenthost',reloadNeeded,3650);
                         reloadWindow();
                     });
                 });

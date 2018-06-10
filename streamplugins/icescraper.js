@@ -19,6 +19,7 @@ var icecastPlugin = {
         $('[name="searchfor"]').keyup(onKeyUp);
         $('[name="cornwallis"]').click(icecastPlugin.iceSearch);
         $("#icecastlist").removeClass('notfilled');
+        layoutProcessor.postAlbumActions();
     },
 
     iceSearch: function() {
@@ -38,11 +39,11 @@ var icecastPlugin = {
                 trackSelect(event, clickedElement);
             }
         } else if (prefs.clickmode == "single") {
-            onCollectionDoubleClicked(event);
+            onSourcesDoubleClicked(event);
         }
     }
 
 }
 
 menuOpeners['icecastlist'] = icecastPlugin.refreshMyDrink;
-clickRegistry.addClickHandlers('#icecastplugin', icecastPlugin.handleClick, onCollectionDoubleClicked);
+clickRegistry.addClickHandlers('#icecastlist', icecastPlugin.handleClick, onSourcesDoubleClicked);

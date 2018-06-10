@@ -472,12 +472,24 @@ var playlist = function() {
                 // Don't do anything if we're waiting on playlist updates
                 var fromend = playlist.getfinaltrack()+1 - currentTrack.playlistpos;
                 populating = false;
-                debug.blurt("RADIO MANAGER","Repopulate Check : Final Track :",playlist.getfinaltrack()+1,"Fromend :",fromend,"Chunksize :",chunksize,"Mode :",mode);
+                debug.log("RADIO MANAGER","Repopulate Check : Final Track :",playlist.getfinaltrack()+1,"Fromend :",fromend,"Chunksize :",chunksize,"Mode :",mode);
                 if (fromend < chunksize && mode) {
                     playlist.waiting();
                     radios[mode].func.populate(prefs.radioparam, chunksize - fromend);
                 }
             }
+        }
+
+        function befuddle(originalstate) {
+            debug.log("RADIO MANAGER","Beffuddling",originalstate);
+            oldconsume = originalstate;
+            playlist.preventControlClicks(false);
+        }
+
+        function unbefuddle() {
+            debug.log("RADIO MANAGER","Un-Beffuddling");
+            playlist.preventControlClicks(true);
+            oldconsume = null;
         }
 
         return {
@@ -509,6 +521,7 @@ var playlist = function() {
                             prefs.save({mopidy_radio_domains: $("#radiodomains").makeDomainChooser("getSelection")});
                         });
                     });
+                    uiHelper.setupPersonalRadio();
                 }
             },
 
@@ -527,7 +540,7 @@ var playlist = function() {
                 prefs.save({radiomode: mode, radioparam: param});
                 layoutProcessor.playlistLoading();
                 player.controller.takeBackControl();
-                player.controller.checkConsume(1, self.beffuddle);
+                player.controller.checkConsume(1, befuddle);
                 populating = true;
                 startplaybackfrom = (player.status.state == 'play') ? -1 : 0;
                 if (radios[mode].script) {
@@ -538,22 +551,12 @@ var playlist = function() {
                             mode = null;
                             populating = false;
                             self.repopulate();
-                            player.controller.checkConsume(oldconsume, self.unbefuddle);
-                            infobar.notify(infobar.ERROR,"Failed To Load Script!");
+                            player.controller.checkConsume(oldconsume, unbefuddle);
+                            infobar.notify(infobar.ERROR,"Something Went Badly Wrong");
                         });
                 } else {
                     player.controller.clearPlaylist();
                 }
-            },
-
-            beffuddle: function(originalstate) {
-                oldconsume = originalstate;
-                playlist.preventControlClicks(false);
-            },
-
-            unbefuddle: function() {
-                playlist.preventControlClicks(true);
-                oldconsume = null;
             },
 
             playbackStartPos: function() {
@@ -580,7 +583,7 @@ var playlist = function() {
                 populating = false;
                 playlist.repopulate();
                 if (oldconsume !== null) {
-                    player.controller.checkConsume(oldconsume, self.unbefuddle);
+                    player.controller.checkConsume(oldconsume, unbefuddle);
                 }
             },
 

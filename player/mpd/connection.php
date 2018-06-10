@@ -60,9 +60,11 @@ $coll_time = 0;
 $rtime = 0;
 $cp_time = 0;
 
-function doCollection($command, $domains = null) {
+function doCollection($command, $domains = null, $newcollection = true) {
     global $connection, $collection;
-    $collection = new musicCollection();
+    if ($newcollection) {
+        $collection = new musicCollection();
+    }
     debuglog("Starting Collection Scan ".$command, "MPD",4);
     $dirs = array();
     doMpdParse($command, $dirs, $domains);

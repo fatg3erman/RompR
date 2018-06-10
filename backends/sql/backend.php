@@ -280,7 +280,7 @@ function get_rating_headers($sortby) {
 						LEFT JOIN Ratingtable USING (TTindex)
 						LEFT JOIN `TagListtable` USING (TTindex)
 						LEFT JOIN Tagtable AS t USING (Tagindex)
-						WHERE Uri IS NOT NULL and Hidden = 0 AND (Rating IS NOT NULL OR t.Name IS NOT NULL)
+						WHERE Uri IS NOT NULL and Hidden = 0 AND isSearchResult < 2 AND (Rating IS NOT NULL OR t.Name IS NOT NULL)
 						GROUP BY TTindex
 						ORDER BY ";
 			$qstring .= sort_artists_by_name();
@@ -357,7 +357,7 @@ function get_rating_info($sortby, $value) {
 					JOIN Albumtable AS al USING (Albumindex)
 					JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-				WHERE r.Rating = ".$value." AND tr.Uri IS NOT NULL";
+				WHERE r.Rating = ".$value." AND tr.Uri IS NOT NULL AND tr.isSearchResult < 2";
 				break;
 				
 			case 'Tag':
@@ -383,7 +383,7 @@ function get_rating_info($sortby, $value) {
 					JOIN Albumtable AS al USING (Albumindex)
 					JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-				WHERE tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name = '".$value."')";
+				WHERE tr.isSearchResult < 2 AND tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name = '".$value."')";
 				break;
 										
 			case 'AlbumArtist':
@@ -409,7 +409,7 @@ function get_rating_info($sortby, $value) {
 			 		JOIN Albumtable AS al USING (Albumindex)
 			 		JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 			 		JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL) AND tr.Uri IS NOT NULL AND a.Artistname = '".$value."'";
+			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL) AND tr.isSearchResult < 2 AND tr.Uri IS NOT NULL AND a.Artistname = '".$value."'";
 				break;
 				
 			case 'Tags':
@@ -442,7 +442,7 @@ function get_rating_info($sortby, $value) {
 						$tags[$i] = "tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name='".$t."')";
 					}
 					$qstring .= implode(' AND ', $tags);
-					$qstring .= " AND tr.Uri IS NOT NULL";
+					$qstring .= " AND tr.Uri IS NOT NULL AND tr.isSearchResult < 2";
 					break;
 	}
 	
@@ -875,7 +875,7 @@ function do_artist_banner($why, $what, $who) {
 	}
 }
 
-function do_albums_from_database($why, $what, $who, $fragment = false, $use_artistindex = false, $force_artistname = false) {
+function do_albums_from_database($why, $what, $who, $fragment = false, $use_artistindex = false, $force_artistname = false, $do_controlheader = true) {
 	global $prefs;
 	$singleheader = array();
 	if ($prefs['sortcollectionby'] == "artist") {
@@ -894,12 +894,15 @@ function do_albums_from_database($why, $what, $who, $fragment = false, $use_arti
 	$currart = "";
 	$currban = "";
 	$result = generic_sql_query($qstring);
-	print albumControlHeader($fragment, $why, $what, $who, $result[0]['Artistname']);
+	if ($do_controlheader) {
+		print albumControlHeader($fragment, $why, $what, $who, $result[0]['Artistname']);
+	}
 	foreach ($result as $obj) {
 		$artistbanner = ($prefs['sortcollectionby'] == 'albumbyartist' && $prefs['showartistbanners']) ? $obj['Artistname'] : null;
 		$obj['Artistname'] = ($force_artistname || $prefs['sortcollectionby'] == "album") ? $obj['Artistname'] : null;
 		$obj['why'] = $why;
 		$obj['id'] = $why.$what.$obj['Albumindex'];
+		$obj['class'] = 'album';
 		if ($fragment === false) {
 			if ($artistbanner !== null && $artistbanner !== $currban) {
 				print artistBanner($artistbanner, $obj['AlbumArtistindex'], $why);
@@ -927,7 +930,7 @@ function do_albums_from_database($why, $what, $who, $fragment = false, $use_arti
 }
 
 function artistBanner($a, $i, $why) {
-	return '<div class="configtitle artistbanner" id="'.$why.'artist'.$i.'"><b>'.$a.'</b></div>';
+	return '<div class="configtitle artistbanner brick brick_wide" id="'.$why.'artist'.$i.'"><b>'.$a.'</b></div>';
 }
 
 function remove_album_from_database($albumid) {
@@ -1311,6 +1314,7 @@ function dumpAlbums($which) {
 
     switch ($who) {
     	case 'root':
+			print '<div class="sizer"></div>';
 	    	if ($why == 'a') {
 	    		collectionStats();
 	    	} else {
@@ -1351,7 +1355,7 @@ function dumpAlbums($which) {
 }
 
 function collectionStats() {
-    print '<div id="fothergill">';
+    print '<div id="fothergill" class="brick brick_wide">';
     print alistheader(get_stat('ArtistCount'), get_stat('AlbumCount'), get_stat('TrackCount'), format_time(get_stat('TotalTime')));
     print '</div>';
 }
@@ -1375,7 +1379,9 @@ function searchStats() {
 		"SELECT SUM(Duration) AS TotalTime FROM Tracktable WHERE Uri IS NOT NULL AND
 		Hidden=0 AND isSearchResult > 0", false, null, 'TotalTime', 0);
 
+	print '<div class="brick brick_wide">';
     print alistheader($numartists, $numalbums, $numtracks, format_time($numtime));
+	print '</div>';
 
 }
 
@@ -1676,9 +1682,15 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
     // When doing a search, we MUST NOT change lastmodified of any track, because this will cause
     // user-added tracks to get a lastmodified date, and lastmodified == NULL
     // is how we detect user-added tracks and prevent them being deleted on collection updates
+	
+	// Note the use of === to detect LastModified, because == doesn't tell the difference between 0 and null
+	//  - so if we have a manually added track and the add a collection track over it from a backend that doesn't
+	//  give us LastModified (eg Spotify-Web), we don't update lastModified and the track remains manually added.
+	//  This does lead to us updating LastModified for those tracks every time, since 0 from the database !== "0" from mopidy.
+	//  Ah well.
 
     if ($ttid) {
-    	if ((!$doing_search && $trackobj->tags['Last-Modified'] != $lastmodified) ||
+    	if ((!$doing_search && $trackobj->tags['Last-Modified'] !== $lastmodified) ||
     		($doing_search && $issearchresult == 0) ||
     		($trackobj->tags['Disc'] != $disc && $trackobj->tags['Disc'] !== '') ||
     		$hidden != 0 ||
@@ -1691,8 +1703,8 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
     		if ($prefs['debug_enabled'] > 6) {
 		    	debuglog("  Updating track with ttid $ttid because :","MYSQL",7);
 		    	if (!$doing_search && $lastmodified === null) debuglog("    LastModified is not set in the database","MYSQL",7);
-		    	if (!$doing_search && $trackobj->tags['Last-Modified'] === null) debuglog("    TrackObj LastModified is NULL too!","MYSQL",7);
-		    	if (!$doing_search && $lastmodified != $trackobj->tags['Last-Modified']) debuglog("    LastModified has changed: We have ".$lastmodified." but track has ".$trackobj->tags['Last-Modified'],"MYSQL",7);
+				if (!$doing_search && $trackobj->tags['Last-Modified'] === null) debuglog("    TrackObj LastModified is NULL too!","MYSQL",7);
+		    	if (!$doing_search && $lastmodified !== $trackobj->tags['Last-Modified']) debuglog("    LastModified has changed: We have ".$lastmodified." but track has ".$trackobj->tags['Last-Modified'],"MYSQL",7);
 		    	if ($disc != $trackobj->tags['Disc']) debuglog("    Disc Number has changed: We have ".$disc." but track has ".$trackobj->tags['Disc'],"MYSQL",7);
 		    	if ($hidden != 0) debuglog("    It is hidden","MYSQL",7);
 		    	if ($trackobj->tags['file'] != $uri) {

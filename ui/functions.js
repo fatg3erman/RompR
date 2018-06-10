@@ -134,7 +134,14 @@ String.prototype.removePunctuation = function() {
 String.prototype.fixDodgyLinks = function() {
     var regexp = /([^"])(https*:\/\/.*?)([<|\n|\r|\s|\)])/g;
     return this.replace(regexp, '$1<a href="$2" target="_blank">$2</a>$3');
-    // return this;
+}
+
+String.prototype.isArtistOrAlbum = function() {
+    if (this.indexOf(':artist:') > -1 || this.indexOf(':album:') > -1) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 function setCookie(cname, cvalue, exdays) {

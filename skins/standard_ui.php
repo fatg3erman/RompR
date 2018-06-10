@@ -70,9 +70,8 @@ function albumTrack($data) {
 
 function artistHeader($id, $name) {
     global $divtype;
-    $h = '<div class="clickable clickalbum draggable containerbox menuitem '.
-        $divtype.'" name="'.$id.'">';
-    $h .= '<i class="icon-toggle-closed menu mh fixed" name="'.$id.'"></i>';
+    $h = '<div class="clickable clickalbum draggable containerbox menuitem '.$divtype.'" name="'.$id.'">';
+    $h .= '<i class="icon-toggle-closed menu mh fixed artist" name="'.$id.'"></i>';
     $h .= '<div class="expand">'.$name.'</div>';
     $h .= '</div>';
     return $h;
@@ -108,7 +107,9 @@ function albumHeader($obj) {
     if (array_key_exists('plpath', $obj)) {
         $h .= '<input type="hidden" name="dirpath" value="'.$obj['plpath'].'" />';
     }
-    $h .= '<i class="icon-toggle-closed menu mh fixed" name="'.$obj['id'].'"></i>';
+    if ($obj['id'] != 'nodrop') {
+        $h .= '<i class="icon-toggle-closed menu mh fixed '.$obj['class'].'" name="'.$obj['id'].'"></i>';
+    }
 
     // For BLOODY FIREFOX only we have to wrap the image in a div of the same size,
     // because firefox won't squash the image horizontally if it's in a box-flex layout.
@@ -177,9 +178,9 @@ function trackControlHeader($why, $what, $who, $dets) {
 
 function printDirectoryItem($fullpath, $displayname, $prefix, $dircount, $printcontainer = false) {
     $c = ($printcontainer) ? "searchdir" : "directory";
-    print '<div class="clickable '.$c.' clickalbum draggable containerbox menuitem clickdir" name="'.$prefix.$dircount.'">';
+    print '<div class="clickable '.$c.' clickalbum draggable containerbox menuitem" name="'.$prefix.$dircount.'">';
     print '<input type="hidden" name="dirpath" value="'.rawurlencode($fullpath).'" />';
-    print '<i class="icon-toggle-closed menu mh fixed" name="'.$prefix.$dircount.'"></i>';
+    print '<i class="icon-toggle-closed menu mh fixed '.$c.'" name="'.$prefix.$dircount.'"></i>';
     print '<i class="icon-folder-open-empty fixed smallicon"></i>';
     print '<div class="expand">'.htmlentities(urldecode($displayname)).'</div>';
     print '</div>';
@@ -206,6 +207,33 @@ function printRadioDirectory($att) {
 
 function playlistPlayHeader($name) {
     
+}
+
+function addPodcastCounts($html, $extra) {
+    $out = phpQuery::newDocument($html);
+    $out->find('.menuitem')->append($extra);
+    return $out;
+}
+
+function addUserRadioButtons($html, $index, $uri, $name, $image) {
+    $out = phpQuery::newDocument($html);
+    $extra = '<div class="fixed clickable clickradioremove clickicon" name="'.$index.'"><i class="icon-cancel-circled playlisticon"></i></div>';
+    $out->find('.menuitem')->append($extra);
+    return $out;
+}
+
+function addPlaylistControls($html, $delete, $is_user, $name) {
+    global $prefs;
+    $out = phpQuery::newDocument($html);
+    if ($delete && ($is_user || $prefs['player_backend'] == "mpd")) {
+        $add = ($is_user) ? "user" : "";
+        $h = '<i class="icon-floppy fixed smallicon clickable clickicon clickrename'.$add.'playlist"></i>';
+        $h .= '<input type="hidden" value="'.$name.'" />';
+        $h .= '<i class="icon-cancel-circled fixed smallicon clickable clickicon clickdelete'.$add.'playlist"></i>';
+        $h .= '<input type="hidden" value="'.$name.'" />';
+        $out->find('.menuitem')->append($h);
+    }
+    return $out;
 }
 
 ?>

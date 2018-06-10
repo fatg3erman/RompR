@@ -30,34 +30,9 @@ function setClickHandlers() {
 
     // Set up all our click event listeners
 
-    $("#collection").unbind('click');
-    $("#collection").unbind('dblclick');
-    $("#collectionsearcher").unbind('click');
-    $("#filecollection").unbind('click');
-    $("#filecollection").unbind('dblclick');
-    $("#searchresultholder").unbind('click');
-    $("#searchresultholder").unbind('dblclick');
-    $("#podcastslist").unbind('click');
-    $("#podcastslist").unbind('dblclick');
-    $("#storedplaylists").unbind('click');
-    $("#storedplaylists").unbind('dblclick');
+    layoutProcessor.bindSourcesClicks();
+
     clickRegistry.unbindClicks();
-
-    $("#collection").click(onCollectionClicked);
-    $("#collectionsearcher").click(onPodcastsClicked);
-    $("#filecollection").click(onFileCollectionClicked);
-    $("#searchresultholder").click(onCollectionClicked);
-    $("#podcastslist").click(onPodcastsClicked);
-    $("#storedplaylists").click(onFileCollectionClicked);
-
-    if (prefs.clickmode == "double") {
-        $("#collection").dblclick(onCollectionDoubleClicked);
-        $("#filecollection").dblclick(onFileCollectionDoubleClicked);
-        $("#searchresultholder").dblclick(onCollectionDoubleClicked);
-        $("#podcastslist").dblclick(onCollectionDoubleClicked);
-        $("#storedplaylists").dblclick(onFileCollectionDoubleClicked);
-    }
-
     clickRegistry.bindClicks();
 
     $('.infotext').unbind('click');
@@ -115,14 +90,19 @@ function findClickableBrowserElement(event) {
     return clickedElement;
 }
 
-function onCollectionClicked(event) {
+function onSourcesClicked(event) {
     var clickedElement = findClickableElement(event);
-    debug.log("CLICK","On",clickedElement);
-    if (clickedElement.hasClass("menu")) {
-        if (clickedElement.parent().hasClass('clickdir')) {
+    debug.log('UI','Clicked On',clickedElement);
+    if (clickedElement.hasClass("menu") || clickedElement.hasClass("podconf")) {
+        if (clickedElement.hasClass('searchdir') ||
+            clickedElement.hasClass('directory') ||
+            clickedElement.hasClass('playlist')) {
             doFileMenu(event, clickedElement);
-        } else {
+        } else if (clickedElement.hasClass('album') ||
+                    clickedElement.hasClass('artist')) {
             doAlbumMenu(event, clickedElement, false);
+        } else {
+            doMenu(event, clickedElement);
         }
     } else if (clickedElement.hasClass("clickremdb")) {
         event.stopImmediatePropagation();
@@ -134,48 +114,7 @@ function onCollectionClicked(event) {
         event.stopImmediatePropagation();
         amendAlbumDetails(event, clickedElement);
     } else if (clickedElement.hasClass("fakedouble")) {
-        onCollectionDoubleClicked(event);
-    } else if (prefs.clickmode == "double") {
-        if (clickedElement.hasClass("clickalbum")) {
-            event.stopImmediatePropagation();
-            albumSelect(event, clickedElement);
-        } else if (clickedElement.hasClass("clickdisc")) {
-            event.stopImmediatePropagation();
-            discSelect(event, clickedElement);
-        } else if (clickedElement.hasClass("clicktrack") || clickedElement.hasClass("clickcue")) {
-            event.stopImmediatePropagation();
-            trackSelect(event, clickedElement);
-        }
-    } else {
-        onCollectionDoubleClicked(event);
-    }
-}
-
-function onCollectionDoubleClicked(event) {
-    debug.log("COLLECTION","Handling Click");
-    var clickedElement = findClickableElement(event);
-    if (clickedElement.hasClass('clickalbum') ||
-        clickedElement.hasClass('clickartist') ||
-        clickedElement.hasClass('searchdir') ||
-        clickedElement.hasClass('clicktrack') ||
-        clickedElement.hasClass('clickcue') ||
-        clickedElement.hasClass("clickstream")) {
-        event.stopImmediatePropagation();
-        playlist.addItems(clickedElement, null);
-    } else if (clickedElement.hasClass('clickdisc')) {
-        event.stopImmediatePropagation();
-        discSelect(event, clickedElement);
-        playlist.addItems($('.selected'),null);
-    }
-    if (clickedElement.hasClass('fakedouble')) {
-        clickedElement.parent().remove();
-    }
-}
-
-function onFileCollectionClicked(event) {
-    var clickedElement = findClickableElement(event);
-    if (clickedElement.hasClass("menu")) {
-        doFileMenu(event, clickedElement);
+        onSourcesDoubleClicked(event);
     } else if (clickedElement.hasClass('clickdeleteplaylist')) {
         event.stopImmediatePropagation();
         player.controller.deletePlaylist(clickedElement.next().val());
@@ -194,42 +133,6 @@ function onFileCollectionClicked(event) {
             clickedElement.next().val(),
             clickedElement.attr('name'),
             false);
-    } else if (prefs.clickmode == "double") {
-        if (clickedElement.hasClass("clickalbum") ||
-            clickedElement.hasClass("clickloadplaylist") ||
-            clickedElement.hasClass("clickloaduserplaylist")) {
-            event.stopImmediatePropagation();
-            albumSelect(event, clickedElement);
-        } else if (clickedElement.hasClass("clicktrack") || clickedElement.hasClass("clickcue")) {
-            event.stopImmediatePropagation();
-            trackSelect(event, clickedElement);
-        }
-    } else {
-        onFileCollectionDoubleClicked(event);
-    }
-}
-
-function onFileCollectionDoubleClicked(event) {
-    var clickedElement = findClickableElement(event);
-    if (clickedElement.hasClass('searchdir') ||
-        clickedElement.hasClass('clickalbum') ||
-        clickedElement.hasClass('clicktrack') ||
-        clickedElement.hasClass('clickcue') ||
-        clickedElement.hasClass("clickloadplaylist") ||
-        clickedElement.hasClass("clickloaduserplaylist")) {
-        event.stopImmediatePropagation();
-        playlist.addItems(clickedElement, null);
-    }
-}
-
-function onPodcastsClicked(event) {
-    var clickedElement = findClickableElement(event);
-    if (clickedElement.hasClass("menu")) {
-        doMenu(event, clickedElement);
-    } else if (clickedElement.hasClass("podconf")) {
-        // event.stopImmediatePropagation();
-        // $("#"+clickedElement.attr('name')).slideToggle('fast');
-        doMenu(event, clickedElement);
     } else if (clickedElement.hasClass("podremove")) {
         event.stopImmediatePropagation();
         var n = clickedElement.attr('name');
@@ -264,13 +167,51 @@ function onPodcastsClicked(event) {
         var n = clickedElement.attr('name');
         var m = clickedElement.parent().attr('name');
         podcasts.markEpisodeAsListened(n.replace(/podmarklistened_/, ''), m.replace(/podcontrols_/,''));
+    } else if (clickedElement.hasClass('closepanel')) {
+            event.stopImmediatePropagation();
+            var id = clickedElement.parent().parent().attr('id');
+            $('[name="'+id+'"]').removeClass('selected');
+            clickedElement.parent().parent().remove();
     } else if (prefs.clickmode == "double") {
-        if (clickedElement.hasClass("clickstream") || clickedElement.hasClass("clicktrack")) {
+        if (clickedElement.hasClass("clickalbum") ||
+            clickedElement.hasClass("clickloadplaylist") ||
+            clickedElement.hasClass("clickloaduserplaylist")) {
+            event.stopImmediatePropagation();
+            albumSelect(event, clickedElement);
+        } else if (clickedElement.hasClass("clickdisc")) {
+            event.stopImmediatePropagation();
+            discSelect(event, clickedElement);
+        } else if (clickedElement.hasClass("clicktrack") ||
+                    clickedElement.hasClass("clickcue") ||
+                    clickedElement.hasClass("clickstream")) {
             event.stopImmediatePropagation();
             trackSelect(event, clickedElement);
         }
-    } else if (prefs.clickmode == "single") {
-        onCollectionDoubleClicked(event);
+    } else {
+        onSourcesDoubleClicked(event);
+    }
+}
+
+function onSourcesDoubleClicked(event) {
+    debug.log("COLLECTION","Handling Click");
+    var clickedElement = findClickableElement(event);
+    if (clickedElement.hasClass('clickalbum') ||
+        clickedElement.hasClass('clickartist') ||
+        clickedElement.hasClass('searchdir') ||
+        clickedElement.hasClass('clicktrack') ||
+        clickedElement.hasClass('clickcue') ||
+        clickedElement.hasClass("clickstream") ||
+        clickedElement.hasClass("clickloadplaylist") ||
+        clickedElement.hasClass("clickloaduserplaylist")) {
+        event.stopImmediatePropagation();
+        playlist.addItems(clickedElement, null);
+    } else if (clickedElement.hasClass('clickdisc')) {
+        event.stopImmediatePropagation();
+        discSelect(event, clickedElement);
+        playlist.addItems($('.selected'),null);
+    }
+    if (clickedElement.hasClass('fakedouble' && clickedElement.hasClass('backhi'))) {
+        clickedElement.parent().remove();
     }
 }
 
@@ -301,10 +242,16 @@ function findClickableElement(event) {
 
     var clickedElement = $(event.target);
     // Search upwards through the parent elements to find the clickable object
-    while (!clickedElement.hasClass("clickable") && !clickedElement.hasClass("menu") &&
-            clickedElement.prop("id") != "sources" && clickedElement.prop("id") != "sortable" &&
+    while (!clickedElement.hasClass("clickable") &&
+            !clickedElement.hasClass("menu") &&
+            !clickedElement.hasClass("mainpane") &&
+            !clickedElement.hasClass("topdropmenu") &&
+            clickedElement.prop("id") != "sources" &&
+            clickedElement.prop("id") != "sortable" &&
             clickedElement.prop("id") != "bottompage" &&
-            !clickedElement.hasClass("mainpane") && !clickedElement.hasClass("topdropmenu")) {
+            !(clickedElement.is(':button')) &&
+            !(clickedElement.is(':input'))
+        ) {
         clickedElement = clickedElement.parent();
     }
     return clickedElement;
@@ -316,6 +263,7 @@ function doMenu(event, element) {
         event.stopImmediatePropagation();
     }
     var menutoopen = element.attr("name");
+    debug.trace("UI","Doing Menu",menutoopen);
     if (element.isClosed()) {
         element.toggleOpen();
         if (menuOpeners[menutoopen]) {
@@ -398,14 +346,13 @@ function doAlbumMenu(event, element, inbrowser, callback) {
                             url: 'albums.php?browsealbum='+menutoopen,
                             success: function(data) {
                                 element.stopSpinner();
-                                if (prefs.sortcollectionby == "artist") {
-                                    var spunk = $("#"+menutoopen).parent();
-                                } else {
-                                    var spunk = $("#"+menutoopen);
-                                }
+                                var spunk = layoutProcessor.getArtistDestinationDiv(menutoopen);
                                 spunk.html(data);
+                                layoutProcessor.postAlbumActions();
                                 collectionHelper.scootTheAlbums(spunk);
                                 infobar.markCurrentTrack();
+                                uiHelper.fixupArtistDiv(spunk, menutoopen);
+                                layoutProcessor.postAlbumActions();
                             },
                             error: function(data) {
                                 element.stopSpinner();
@@ -415,12 +362,14 @@ function doAlbumMenu(event, element, inbrowser, callback) {
                 });
             });
         } else {
+            debug.log("Opening",menutoopen);
             $('#'+menutoopen).menuReveal(function() {
                 if (callback) callback();
             });
         }
         element.toggleOpen();
     } else {
+        debug.log("Closing",menutoopen);
         $('#'+menutoopen).menuHide();
         if (callback) callback();
         element.toggleClosed();
@@ -443,6 +392,7 @@ function doFileMenu(event, element) {
         event.stopImmediatePropagation();
     }
     var menutoopen = element.attr("name");
+    debug.log("UI","File Menu",menutoopen);
     if (element.isClosed()) {
         layoutProcessor.makeCollectionDropMenu(element, menutoopen);
         element.toggleOpen();
@@ -465,12 +415,14 @@ function doFileMenu(event, element) {
             $('#'+menutoopen).menuReveal();
         }
     } else {
-        $('#'+menutoopen).menuHide();
-        element.toggleClosed();
-        // Remove this dropdown - this is so that when we next open it
-        // mopidy will rescan it. This makes things like soundcloud and spotify update
-        // without us having to refresh the window
-        $('#'+menutoopen).remove();
+        debug.log("UI","Hiding Menu");
+        $('#'+menutoopen).menuHide(function() {
+            element.toggleClosed();
+            // Remove this dropdown - this is so that when we next open it
+            // mopidy will rescan it. This makes things like soundcloud and spotify update
+            // without us having to refresh the window
+            $('#'+menutoopen).remove();
+        });
     }
     return false;
 }
@@ -492,18 +444,18 @@ function onKeyUp(e) {
     }
 }
 
-function weaselBurrow() {
-    $("#mopidysearchdomains").slideToggle('fast');
-}
-
-function ferretMaster() {
-    $.each(['genre', 'composer', 'performer'], function(v,i) {
-        if (prefs.searchcollectiononly) {
-            $('#collectionsearcher [name="'+i+'"]').val('').parent().parent().fadeOut('fast');
-        } else {
-            $('#collectionsearcher [name="'+i+'"]').val('').parent().parent().fadeIn('fast');
-        }
-    });
+function setAvailableSearchOptions() {
+    if (!prefs.tradsearch) {
+        $('.searchitem').not('[name="any"]').fadeOut('fast').find('input').val('');
+        $('.searchlabel').not('.nohide').hide(0, setSearchLabelWidth);
+    } else if (prefs.searchcollectiononly) {
+        $('.searchitem').not(':visible').not('[name="genre"]').not('[name="composer"]').not('[name="performer"]').fadeIn('fast');
+        $('.searchitem[name="genre"]:visible,.searchitem[name="composer"]:visible,.searchitem[name="performer"]:visible').fadeOut('fast').find('input').val('');
+        $('.searchlabel').show(0, setSearchLabelWidth);
+    } else {
+        $('.searchitem').not(':visible').fadeIn('fast');
+        $('.searchlabel').show(0, setSearchLabelWidth);
+    }
 }
 
 function checkMetaKeys(event, element) {

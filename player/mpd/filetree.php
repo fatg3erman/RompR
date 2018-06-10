@@ -74,7 +74,6 @@ function doFileSearch($cmd, $domains = null) {
 
 function printFileSearch($tree, $fcount) {
     $prefix = "sdirholder";
-    $dircount = 0;
     print '<div class="menuitem">';
     print "<h3>".get_int_text("label_searchresults")."</h3>";
     print "</div>";
@@ -83,13 +82,13 @@ function printFileSearch($tree, $fcount) {
             <tr><td align="left">'.$fcount.' '.get_int_text('label_files').'</td></tr>
             </table>
             </div>';
-    $tree->getHTML($prefix, $dircount);
+    $tree->getHTML($prefix);
 }
 
 function printFileItem($displayname, $fullpath, $time) {
     global $prefs;
     $ext = strtolower(pathinfo($fullpath, PATHINFO_EXTENSION));
-    print '<div class="clickable clicktrack ninesix draggable indent containerbox padright line" name="'.
+    print '<div class="clickable clicktrack ninesix draggable indent containerbox padright line brick_wide" name="'.
         rawurlencode($fullpath).'">';
     print '<i class="'.audioClass($ext).' fixed smallicon"></i>';
     print '<div class="expand">'.$displayname.'</div>';
@@ -118,6 +117,7 @@ class mpdlistthing {
         $this->name = $name;
         $this->parent = $parent;
         $this->filedata = $filedata;
+        $this->dircount = 0;
     }
 
     public function newItem($filedata) {
@@ -227,28 +227,26 @@ class mpdlistthing {
         }
     }
 
-    public function getHTML($prefix, &$dircount) {
+    public function getHTML($prefix) {
         if ($this->name !== null) {
             if (count($this->children) > 0) {
                 // Must be a directory
-                printDirectoryItem($this->parent->getName($this->name), $this->name,
-                    $prefix, $dircount, true);
-                $dircount++;
+                printDirectoryItem($this->parent->getName($this->name), $this->name, $prefix, $this->dircount, true);
+                $this->parent->dircount++;
                 foreach ($this->children as $child) {
-                    $child->getHTML($prefix, $dircount);
+                    $child->getHTML($prefix.$this->dircount.'_');
                 }
                 print '</div>';
             } else {
                 if (array_key_exists('playlist', $this->filedata)) {
                     printPlaylistItem($this->filedata['file_display_name'],$this->filedata['file']);
                 } else {
-                    printFileItem($this->filedata['file_display_name'],
-                        $this->filedata['file'], $this->filedata['Time']);
+                    printFileItem($this->filedata['file_display_name'], $this->filedata['file'], $this->filedata['Time']);
                 }
             }
         } else {
             foreach ($this->children as $child) {
-                $child->getHTML($prefix, $dircount);
+                $child->getHTML($prefix.$this->dircount.'_');
             }
         }
     }

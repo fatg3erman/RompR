@@ -6,9 +6,14 @@ var helpfulThings = function() {
 	var medebug = "SPANKY";
 	var trackseeds;
 	var nonspotitracks;
+	var artists;
     var maxwidth = 640;
     var doneonce = false;
     var current_seed = null;
+	var trackfinder = new faveFinder(false);
+	trackfinder.setCheckDb(false);
+	trackfinder.setExact(true);
+	trackfinder.setPriorities(['spotify']);
 
 	function getRecommendationSeeds() {
 		debug.log(medebug, "Getting Seeds For Recommendations");
@@ -28,12 +33,14 @@ var helpfulThings = function() {
 		}
 		trackseeds = new Array();
 		nonspotitracks = new Array();
+		artists = new Array();
 		for (var i in data) {
-			if (data[i].Uri) {
+			if (data[i].Uri && data[i].Artistname && artists.indexOf(data[i].Artistname) == -1) {
 				var m = data[i].Uri.match(/spotify:track:(.*)$/);
 				if (m && m[1]) {
 					data[i].id = m[1];
 					trackseeds.push(data[i]);
+					artists.push(data[i].Artistname);
 				} else {
 					debug.log(medebug,"Didn't match Uri",data[i].Uri);
 					nonspotitracks.push(data[i]);
@@ -52,29 +59,43 @@ var helpfulThings = function() {
 
 			    $('#hplfoldup').append('<div id="helpful_radio" class="containerbox wrap mixcontainer"></div>');
 
-			    if (player.canPlay('spotify') && lastfm.isLoggedIn()) {
+			    if ((player.canPlay('spotify') || player.canPlay('gmusic')) && lastfm.isLoggedIn()) {
 			    	var html = '<div class="fixed infosection containerbox mixbox clickable infoclick plugclickable clickmixradio">';
 			    	html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
 			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_dailymix")+'</b><br/>';
-			    	html += "A playlist just for you, a mix of tracks you know and new music you might love. Powered by Last.FM and Spotify</div>";
-			    	html += '</div>';
+			    	html += "A playlist just for you, a mix of tracks you know and new music you might love. Powered by Last.FM";
+					if (player.canPlay('spotify') && player.canPlay('gmusic')) {
+						html += ', Spotify, and Google Play Music';
+					} else if (player.canPlay('gmusic')) {
+						html += ' and Google Play Music';
+					} else {
+						html += " and Spotify";
+					}
+			    	html += '</div></div>';
 
 			    	html += '<div class="fixed infosection containerbox mixbox clickable infoclick plugclickable clickartradio">';
 			    	html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
 			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_luckydip")+'</b><br/>';
-			    	html += "A radio station just for you, playing a wider range of music by artists you know and artists you don't yet love. Powered by Last.FM and Spotify</div>";
-			    	html += '</div>';
-			    } else if (player.canPlay('spotify') && !lastfm.isLoggedIn()) {
+			    	html += "A radio station just for you, playing a wider range of music by artists you know and artists you don't yet love. Powered by Last.FM";
+					if (player.canPlay('spotify') && player.canPlay('gmusic')) {
+						html += ', Spotify, and Google Play Music';
+					} else if (player.canPlay('gmusic')) {
+						html += ' and Google Play Music';
+					} else {
+						html += " and Spotify";
+					}
+			    	html += '</div></div>';
+			    } else if ((player.canPlay('spotify') || player.canPlay('gmusic')) && !lastfm.isLoggedIn()) {
 			    	var html = '<div class="fixed infosection containerbox mixbox clickable infoclick plugclickable clickmixradio">';
 			    	html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
 			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_startshere")+'</b><br/>';
 			    	html += "Log in to Last.FM and start scrobbling. Rompr can then delight you with new music you're going to love!</div>";
 			    	html += '</div>';
-			    } else if (!player.canPlay('spotify')) {
+			    } else if (!player.canPlay('spotify') && !player.canPlay('gmusic')) {
 			    	var html = '<div class="fixed infosection containerbox mixbox clickable infoclick plugclickable clickmixradio">';
 			    	html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
 			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_getspotify")+'</b><br/>';
-			    	html += "Use Mopidy, a Spotify Premium subscription, and start scrobbbling to Last.FM so RompЯ can delight you with new music you're going to love!</div>";
+			    	html += "Use Mopidy with a Spotify Premium subscription or a Google Play Music subscription, and start scrobbbling to Last.FM so RompЯ can delight you with new music you're going to love!</div>";
 			    	html += '</div>';
 			    }
 
@@ -150,14 +171,15 @@ var helpfulThings = function() {
 			if (nonspotitracks.length > 0) {
 				var t = nonspotitracks[0];
 				debug.log(medebug, "Searching For Spotify ID for",t);
-				player.controller.rawsearch(
-					{artist: [t.Artistname],
-					 title: [t.Title]
+				trackfinder.findThisOne(
+					{
+						title: t.Title,
+						artist: t.Artistname,
+						duration: 0,
+						albumartist: t.Artistname,
+						date: 0
 					},
-					['spotify'],
-					true,
-					helpfulThings.gotTrackResults,
-					false
+					helpfulThings.gotTrackResults
 				);
 			} else if (trackseeds.length > 0) {
 				helpfulThings.getMoreStuff();
@@ -172,15 +194,13 @@ var helpfulThings = function() {
 		gotTrackResults: function(data) {
 			debug.log(medebug,"Got Track Results",data);
 			var t = nonspotitracks.shift();
-			if (data && data[0] && data[0].tracks && data[0].tracks[0]) {
-				var uri = data[0].tracks[0].uri;
-				if (uri) {
-					var m = uri.match(/spotify:track:(.*)$/);
-					if (m && m[1]) {
-						debug.log(medebug,"Found Spotify Track Uri",m[1]);
-						t.id = m[1];
-						trackseeds.push(t);
-					}
+			if (data.uri && data.artist && artists.indexOf(data.artist) == -1) {
+				var m = data.uri.match(/spotify:track:(.*)$/);
+				if (m && m[1]) {
+					debug.log(medebug,"Found Spotify Track Uri",m[1]);
+					t.id = m[1];
+					trackseeds.push(t);
+					artists.push(data.artist);
 				}
 			}
 			helpfulThings.doStageTwo();
@@ -220,8 +240,8 @@ var helpfulThings = function() {
 			// Need to make sure all the album IDs are unique, since we do get duplicates
 
 			holder.spotifyAlbumThing({
-				classes: 'bumfinger tagholder2 selecotron',
-				itemselector: 'bumfinger',
+				classes: 'brick tagholder2 selecotron',
+				itemselector: 'brick',
 				sub: 'album',
 				showbiogs: true,
 				layoutcallback: function() { doneonce = true; helpfulThings.getMoreStuff() },

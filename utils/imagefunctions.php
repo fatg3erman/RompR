@@ -45,10 +45,12 @@ function saveImage($fname, $in_collection, $stream) {
     global $convert_path, $download_file;
     debuglog("  Saving Image ".$download_file,"GETALBUMCOVER");
     $small_file = null;
+    $med_file = null;
     $anglofile = null;
     if ($in_collection === 1) {
         debuglog("    Saving image to albumart folder","GETALBUMCOVER");
         $small_file = "albumart/small/".$fname.".jpg";
+        $med_file = "albumart/medium/".$fname.".jpg";
         $anglofile = "albumart/asdownloaded/".$fname.".jpg";
     } else if ($stream == ROMPR_PLAYLIST_KEY) {
         debuglog("    Saving image to user playlist folder","GETALBUMCOVER");
@@ -62,6 +64,9 @@ function saveImage($fname, $in_collection, $stream) {
     if ($small_file && file_exists($small_file)) {
         unlink($small_file);
     }
+    if ($med_file && file_exists($med_file)) {
+        unlink($med_file);
+    }
     if (file_exists($anglofile)) {
         unlink($anglofile);
     }
@@ -71,6 +76,10 @@ function saveImage($fname, $in_collection, $stream) {
     if ($small_file) {
         debuglog("Creating file ".$small_file,"SAVEIMAGE");
         $r = exec( $convert_path."convert \"".$download_file."\" -resize 82x82 -background black -alpha remove -gravity center -extent 82x82 \"".$small_file."\" 2>&1", $o);
+    }
+    if ($med_file) {
+        debuglog("Creating file ".$med_file,"SAVEIMAGE");
+        $r = exec( $convert_path."convert \"".$download_file."\" -quality 70 -thumbnail 400x400 -alpha remove \"".$med_file."\" 2>&1", $o);
     }
     debuglog("Creating file ".$anglofile,"SAVEIMAGE");
     $r = exec( $convert_path."convert \"".$download_file."\" -background black -alpha remove \"".$anglofile."\" 2>&1", $o);

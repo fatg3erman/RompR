@@ -36,7 +36,9 @@ var wishlistViewer = function() {
 		element.addClass('wlsch_'+reqid).makeSpinner();
 		if (trawler == null) {
 			trawler = new faveFinder(true);
-			trawler.setPriorities(['local','spotify','soundcloud']);
+			trawler.setPriorities([]);
+			trawler.setCheckDb(false);
+			trawler.setExact(false);
 		}
 		databits[reqid] = {
 			index: 0,
@@ -77,7 +79,7 @@ var wishlistViewer = function() {
 			debug.mark("WISHLIST","Setting Tags Attribute");
 			databits[reqid].attributes.push({attribute: 'Tags', value: tag.text().split(", ")});
 		}
-		trawler.findThisOne(databits[reqid].data[databits[reqid].index], wishlistViewer.updateDatabase, false);
+		trawler.findThisOne(databits[reqid].data[databits[reqid].index], wishlistViewer.updateDatabase);
 	}
 
 	function chooseNew(clickedElement) {
@@ -184,6 +186,12 @@ var wishlistViewer = function() {
 			}
 			trackDiv.find('.invisible').first().fadeIn('fast');
 
+		},
+		
+		update: function() {
+			if (wlv !== null) {
+				loadWishlist(false);
+			}
 		}
 
 	}
