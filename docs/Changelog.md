@@ -1,10 +1,16 @@
 # Versions
 
 This is not a complete list of changes and it only starts with version 1.14.
+Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
+
+## Version 1.15
+
+* The Last.FM radio stations and adding radio tracks to the Music Collection now work with Mopidy-Gmusic.
 
 ## Version 1.14
 
 * Added [Skypotato Skin](/RompR/Skypotato-Skin)
+* Made the Phone skin more 'touchy'. The old phone skin is now called 'Tablet'
 * A couple of new UI themes
 * Removed the Inconfont icon theme. It was getting too difficult to maintain and didn't really fit in well with the design of the UI.
 * Building the Music Collection now uses about 1/10th or less of the RAM it used to use.
