@@ -186,7 +186,6 @@ if ($use_smartradio) {
 <?php
 print '<div class="configtitle textcentre"><b>'.get_int_text('label_pluginplaylists').'</b></div>';
 ?>
-<div class="pref">
 <?php
 if ($prefs['player_backend'] == "mopidy") {
     print '<div class="textcentre textunderline"><b>Music From Your Collection</b></div>';
@@ -209,7 +208,6 @@ if ($prefs['player_backend'] == "mopidy") {
 ?>
 <div class="fullwidth" id="pluginplaylists_everywhere"></div>
 <div class="clearfix containerbox vertical" id="pluginplaylists_crazy"></div>
-</div>
 </div>
 <?php
 }
