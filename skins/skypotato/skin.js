@@ -22,10 +22,7 @@ jQuery.fn.menuReveal = function(callback) {
         if (self.hasClass('dropmenu')) {
             self.find('.holderthing').removeClass('holderthing').addClass('containerbox wrap');
             self.detach().removeClass('dropmenu').addClass('collectionpanel radiolist containerbox wrap noselection').insertBefore($('#infoholder'));
-            self.bind('click', onSourcesClicked);
-            if (prefs.clickmode == 'double') {
-                self.bind('dblclick', onSourcesDoubleClicked);
-            }
+            self.bindPlayClicks();
             setDraggable('#'+id);
         }
         self.removeClass('closed');
@@ -297,12 +294,11 @@ var layoutProcessor = function() {
                             .removeClass('containerbox wrap collectionpanel').css('display', '')
                             .addClass('noborder')
                             .appendTo($('#albumlist'));
-                        $('#collection').unbind('click').unbind('dblclick');
                         $('#searchresultholder').detach().empty()
                             .removeClass('containerbox wrap collectionpanel').css('display', '')
                             .addClass('noborder')
                             .appendTo($('#searcher'));
-                        $('#searchresultholder').unbind('click').unbind('dblclick');
+                        $('#collection, #searchresultholder').unbind('click').unbind('dblclick');
                     }
                     break;
                     
@@ -319,12 +315,7 @@ var layoutProcessor = function() {
                             .addClass('containerbox wrap collectionpanel').css('display', '')
                             .insertBefore($('#infoholder'));
                     }
-                    $('#collection').bind('click', onSourcesClicked);
-                    $('#searchresultholder').bind('click', onSourcesClicked);
-                    if (prefs.clickmode == 'double') {
-                        $('#collection').bind('dblclick', onSourcesDoubleClicked);
-                        $('#searchresultholder').bind('dblclick', onSourcesDoubleClicked);
-                    }
+                    $('#collection, #searchresultholder').bindPlayClicks();
                     break;
             }
             collectionHelper.forceCollectionReload();
@@ -342,24 +333,7 @@ var layoutProcessor = function() {
         },
 
         bindSourcesClicks: function() {
-            $("#sources").unbind('click');
-            $("#sources").unbind('dblclick');
-            $("#sources").bind('click', onSourcesClicked);
-            if (prefs.clickmode == "double") {
-                $("#sources").bind('dblclick', onSourcesDoubleClicked);
-            }
-            $("#podcastslist").unbind('click');
-            $("#podcastslist").unbind('dblclick');
-            $("#podcastslist").bind('click', onSourcesClicked);
-            if (prefs.clickmode == "double") {
-                $("#podcastslist").bind('dblclick', onSourcesDoubleClicked);
-            }
-            $("#playlistslist").unbind('click');
-            $("#playlistslist").unbind('dblclick');
-            $("#playlistslist").bind('click', onSourcesClicked);
-            if (prefs.clickmode == "double") {
-                $("#playlistslist").bind('dblclick', onSourcesDoubleClicked);
-            }
+            $('#sources, #podcastslist, #playlistslist').bindPlayClicks();
         },
         
         postAlbumActions: function(panel) {
@@ -732,10 +706,7 @@ var layoutProcessor = function() {
                     $('#filelist .highlighted').removeClass('highlighted');
                     element.addClass('highlighted');
                     var t = $('<div>', {id: name, class: 'collectionpanel filelist containerbox wrap noselection notfilled'}).insertBefore($('#infoholder'));
-                    t.bind('click', onSourcesClicked);
-                    if (prefs.clickmode == 'double') {
-                        t.bind('dblclick', onSourcesDoubleClicked);
-                    }
+                    t.bindPlayClicks();
                     setDraggable('#'+name);
                 } else {
                     var t= ($('<div>', {id: name, class: 'indent containerbox wrap notfilled'})).insertAfter(element);
@@ -751,20 +722,14 @@ var layoutProcessor = function() {
                     $('#collection .highlighted').removeClass('highlighted');
                     if (x.length == 0) {
                         t = $('<div>', {id: name, class: 'collectionpanel albumlist containerbox wrap noselection notfilled'}).insertBefore($('#infoholder'));
-                        t.bind('click', onSourcesClicked);
-                        if (prefs.clickmode == 'double') {
-                            t.bind('dblclick', onSourcesDoubleClicked);
-                        }
+                        t.bindPlayClicks();
                     }
                 } else {
                     $('.collectionpanel.searcher').remove();
                     $('#searchresultholder .highlighted').removeClass('highlighted');
                     if (x.length == 0) {
                         t = $('<div>', {id: name, class: 'collectionpanel searcher containerbox wrap noselection notfilled'}).insertBefore($('#infoholder'));
-                        t.bind('click', onSourcesClicked);
-                        if (prefs.clickmode == 'double') {
-                            t.bind('dblclick', onSourcesDoubleClicked);
-                        }
+                        t.bindPlayClicks();
                     }
                 }
                 $('.collectionpanel').hide(0);

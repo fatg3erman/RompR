@@ -11,9 +11,10 @@ function faveFinder(returnall) {
 
     // Prioritize - local, beetslocal, beets, spotify, gmusic - in that order
     // There's currently no way to change these for tracks that are rated from radio stations
-    // which means that these are the only domains that will be searched.
+    // which means that these are the only domains that will be searched, but this is better
+    // than including podcasts and radio stations, which we'll never want
     if (prefs.player_backend == 'mopidy') {
-        priority = ["gmusic", "spotify", "beets", "beetslocal", "local"];
+        priority = ["soundcloud", "gmusic", "spotify", "beets", "beetslocal", "local"];
     }
 
     function brk(b) {
@@ -80,7 +81,7 @@ function faveFinder(returnall) {
 
     this.setPriorities = function(p) {
         priority = p;
-        debug.log("FAVEFINDER","Priorities Set To (reverse order)",priority);
+        debug.log("FAVEFINDER","Domains We Will Search",priority);
     }
 
     this.queueLength = function() {
@@ -93,29 +94,12 @@ function faveFinder(returnall) {
             return false;
         }
         var req = queue[0];
-
         debug.trace("FAVEFINDER","Raw Results for",req,data);
-
-        $.each(priority,
-            function(j,v) {
-                var spot = null;
-                for (var i in data) {
-                    var match = new RegExp('^'+v+':');
-                    if (match.test(data[i].uri)) {
-                        spot = i;
-                        break;
-                    }
-                }
-                if (spot !== null) {
-                    data.unshift(data.splice(spot, 1)[0]);
-                }
-            }
-        );
-
-        debug.log("FAVEFINDER","Sorted Search Results are",data);
-
+        
         var results = new Array();
-        var results_without_album = new Array();
+        var best_matches = new Array();
+        var medium_matches = new Array();
+        var worst_matches = new Array();
         // Sort the results
         for (var i in data) {
             if (data[i].tracks) {
@@ -123,41 +107,36 @@ function faveFinder(returnall) {
                     if (data[i].tracks[k].uri.isArtistOrAlbum()) {
                         debug.trace("FAVEFINDER", "Ignoring non-track ",data[i].tracks[k].uri);
                     } else {
-                        debug.debug("FAVEFINDER","Found Track",data[i].tracks[k],req);
+                        debug.trace("FAVEFINDER","Found Track",data[i].tracks[k]);
                         var r = cloneObject(req);
                         for (var g in data[i].tracks[k]) {
                             r.data[g] = data[i].tracks[k][g];
                         }
-                        // Prioritise results with a matching album if the track name matches
-                        // and it's not a compilation
-                        // NOTE. There is nowhere anywhere in the code where we pass an album into here
-                        // but at some point there was - it was for the old Last.FM importer - so I've left this
-                        // in in case it becomes useful
-                        if (req.data.album &&
-                            r.data.album &&
-                            r.data.album.toLowerCase() == req.data.album.toLowerCase() &&
-                            r.data.albumartist != "Various Artists" &&
-                            compare_tracks(r.data, req.data)) {
-                            results.push(r.data);
+
+                        if (r.data.title == null && r.data.artist == null) {
+                            
                         } else {
                             if (r.data.albumartist != "Various Artists") {
-                                if (compare_tracks(r.data, req.data)) {
-                                    // Exactly matching track titles are preferred...
-                                    results_without_album.unshift(r.data);
+                                if (compare_tracks_with_artist(r.data, req.data)) {
+                                    // Exactly matching track and artist are preferred...
+                                    best_matches.push(r.data);
+                                } else if (compare_tracks(r.data, req.data)) {
+                                    // .. over matching track title only ...
+                                    medium_matches.push(r.data);
                                 } else {
                                     // .. over non-matching track titles ..
-                                    results_without_album.push(r.data);
+                                    worst_matches.unshift(r.data);
                                 }
                             } else {
                                 // .. and compilation albums ..
-                                results_without_album.push(r.data);
+                                worst_matches.push(r.data);
                             }
                         }
                     }
                 }
             }
         }
-        results = results.concat(results_without_album);
+        results = results.concat(best_matches, medium_matches, worst_matches);
         debug.debug("FAVEFINDER","Prioritised Results are",results);
         if (results.length == 0) {
             foundNothing(req);
@@ -237,10 +216,14 @@ function faveFinder(returnall) {
             html += '<i class="icon-youtube-circled smallicon"></i>';
         } else if (u.match(/gmusic:/)) {
             html += '<i class="icon-gmusic-circled smallicon"></i>';
+        } else if (u.match(/^podcast/)) {
+            html += '<i class="icon-podcast-circled smallicon"></i>';
         }
-        html += '<b>'+data.title+'</b>'+brk(breaks)+'<i>by </i>';
-        html += data.artist+brk(breaks)+'<i>on </i>';
-        html += data.album;
+        html += '<b>'+data.title+'</b>'+brk(breaks);
+        if (data.artist) {
+            html += '<i>by </i>'+data.artist+brk(breaks);
+        }
+        html += '<i>on </i>'+data.album;
         var arse = data.uri;
         if (arse.indexOf(":") > 0) {
             html += '  <i>(' + arse.substr(0, arse.indexOf(":")) + ')</i>';

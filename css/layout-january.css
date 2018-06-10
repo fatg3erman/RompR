@@ -620,8 +620,6 @@ button {
     padding-bottom:4px;
     margin-bottom:4px;
     font-size:110%;
-    margin-left:4px;
-    margin-right:4px;
 	display:flex;
 	align-items:center;
 }

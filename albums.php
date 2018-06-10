@@ -258,6 +258,7 @@ function raw_search() {
             $cmd .= '"'.implode(' ',$parms).'"';
             debuglog("Search command : ".$cmd,"MPD SEARCH");
             $doing_search = true;
+            $collection->filter_duplicate_tracks();
             doCollection($cmd, $domains, false);
         }
         

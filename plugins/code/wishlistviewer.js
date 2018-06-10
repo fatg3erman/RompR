@@ -36,7 +36,9 @@ var wishlistViewer = function() {
 		element.addClass('wlsch_'+reqid).makeSpinner();
 		if (trawler == null) {
 			trawler = new faveFinder(true);
-			trawler.setPriorities(['local','soundcloud','gmusic','spotify']);
+			trawler.setPriorities([]);
+			trawler.setCheckDb(false);
+			trawler.setExact(false);
 		}
 		databits[reqid] = {
 			index: 0,

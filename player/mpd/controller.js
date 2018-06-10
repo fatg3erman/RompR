@@ -415,6 +415,7 @@ function playerController() {
 	}
 
     this.checkConsume = function(state, callback) {
+        debug.log("PLAYER","Checking Consume",state,callback);
         var c = player.status.consume;
         self.do_command_list([["consume",state]]);
         if (callback) callback(c);
