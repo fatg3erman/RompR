@@ -6,6 +6,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 ## Version 1.15
 
 * The Last.FM radio stations and adding radio tracks to the Music Collection now work with Mopidy-Gmusic.
+* Russian translation by Паша
 
 ## Version 1.14
 
