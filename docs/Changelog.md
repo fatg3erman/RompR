@@ -3,9 +3,9 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
-## Version 1.15.1
+## Version 1.15.5
 
-* Quick bugfix release as, ironically, a bug in the new version number checking code meant that clean installs of 1.15 would not start.
+* Quick bugfix release as, ironically, a bug in the new version number checking code meant that clean installs of 1.15 would not start. Yes I know I jumped several minor version numbers. That happens.
 
 ## Version 1.15
 
