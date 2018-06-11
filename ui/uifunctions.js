@@ -413,7 +413,7 @@ function showUpdateWindow() {
     if (mopidy_is_old) {
         alert(language.gettext("mopidy_tooold", [mopidy_min_version]));
     } else {
-        if (prefs.shownupdatewindow === true || compare_version_numbers(prefs.shownupdatewindow, rompr_version)) {
+        if (typeof(prefs.shownupdatewindow) != 'string' || compare_version_numbers(prefs.shownupdatewindow, rompr_version)) {
             var fnarkle = new popup({
                 width: 800,
                 height: 1100,
