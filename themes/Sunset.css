@@ -6,9 +6,26 @@ html, body.phone .dropmenu
     background-attachment:fixed;
 }
 
-body.phone .dropmenu>div {
+body.phone .dropmenu>div.clickable,
+body.phone .dropmenu>div.menuitem,
+body.phone #pluginplaylistholder .menuitem.clickable,
+body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
     background-color:rgba(0,0,0,0.2);
     background-clip:border-box;
+    margin-top: 4px;
+}
+
+body.phone .dropmenu>div {
+    background-color:rgba(0,0,0,0.2);
+}
+
+body.phone .mainpane .faveradio,
+body.phone .mainpane .radio,
+body.phone .mainpane .podcast,
+body.phone .mainpane .directory {
+    background-color:rgba(0,0,0,0.1);
+    background-clip:border-box;
+    margin-top: 4px;
 }
 
 #sources, .mainpane

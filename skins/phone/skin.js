@@ -177,7 +177,9 @@ jQuery.fn.fanoogleMenus = function() {
 }
 
 function showHistory() {
-    $('#historypanel').slideToggle('fast');
+    if ($('#historypanel').find('.configtitle').length > 0) {
+        $('#historypanel').slideToggle('fast');
+    }
 }
 
 var layoutProcessor = function() {
@@ -218,7 +220,7 @@ var layoutProcessor = function() {
         addInfoSource: function(name, obj) {
             $("#chooserbuttons").append($('<i>', {
                 onclick: "browser.switchsource('"+name+"')",
-                class: obj.icon+' topimg fixed',
+                class: obj.icon+' topimg expand',
                 id: "button_source"+name
             }));
         },
@@ -315,7 +317,6 @@ var layoutProcessor = function() {
         },
 
         adjustLayout: function() {
-            layoutProcessor.setTopIconSize(['#headerbar', '#chooserbuttons']);
             infobar.updateWindowValues();
             var ws = getWindowSize();
             var newheight = ws.y-$("#headerbar").outerHeight(true);
@@ -364,18 +365,7 @@ var layoutProcessor = function() {
         },
         
         setTopIconSize: function(panels) {
-            panels.forEach( function(div) {
-                if ($(div).is(':visible')) {
-                    var jq = $(div+' .topimg:not(.noshrink):visible');
-                    var imh = parseInt(jq.first().css('max-height'))
-                    var numicons = jq.length+1;
-                    var iw = Math.min(Math.floor(($(div).width()-16)/numicons), imh);
-                    jq.css({width: iw+"px", height: iw+"px"});
-                    var cw = iw*numicons;
-                    var mar = Math.floor(((($(div).width()-16) - cw)/2)/numicons);
-                    jq.css({"margin-left": mar+"px", "margin-right": mar+"px"});
-                }
-            });
+
         },
         
         makeCollectionDropMenu: function(element, name) {
@@ -407,6 +397,9 @@ var layoutProcessor = function() {
                 prefs.clickmode = 'single';
             }
             $(".dropdown").floatingMenu({ });
+            $('.topbarmenu').bind('click', function() {
+                $('#'+$(this).attr('name')).slideToggle('fast');
+            });
             setControlClicks();
             $('.choose_nowplaying').click(function(){layoutProcessor.sourceControl('infobar')});
             $('.choose_albumlist').click(function(){layoutProcessor.sourceControl('albumlist')});

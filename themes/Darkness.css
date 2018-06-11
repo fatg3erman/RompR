@@ -5,8 +5,11 @@
 */
 
 html, body.phone .dropmenu {
-    color:#000000;
     background-color:#181818;
+}
+
+body.phone .dropmenu div.clickable, body.phone .dropmenu div.menu {
+    background-color: rgba(100,100,100,0.1);
 }
 
 body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,textarea,input

@@ -2,43 +2,40 @@
 <div id="pset" class="invisible"></div>
 <div id="notifications"></div>
 <div id="headerbar" class="noborder fullwidth containerbox">
-    <div id="sourcescontrols" class="fixed noborder">
-        <i class="icon-play-circled topimg choose_nowplaying"></i>
-        <i class="icon-music topimg choose_albumlist"></i>
-        <i class="icon-search topimg choose_searcher"></i>
-        <i class="icon-folder-open-empty onlywide topimg choose_filelist"></i>
-        <i class="icon-radio-tower topimg choose_radiolist"></i>
-        <i class="icon-podcast-circled topimg choose_podcastslist"></i>
-        <i class="choose_playlistman onlywide icon-doc-text topimg"></i>
-        <i class="choose_pluginplaylists icon-wifi topimg"></i>
-        <div class="topdrop fixed"><i class="icon-volume-up topimg"></i>
-            <div class="topdropmenu rightmenu widemenu dropdown">
-                <div class="configtitle textcentre"><b>Volume</b></div>
-                <div class="pref">
+    <div id="sourcescontrols" class="expand center containerbox noborder">
+        <div id="volumedropper" class="topdropmenu rightmenu widemenu">
+            <div class="configtitle textcentre"><b>Volume</b></div>
+            <div class="pref">
 <?php
 include('player/mpd/outputs.php');
 printOutputCheckboxes();
 ?>
-                </div>
-                <div id="volumecontrol" class="fullwidth"><div id="volume"></div></div>
             </div>
+            <div id="volumecontrol" class="fullwidth"><div id="volume"></div></div>
         </div>
-        <i class="icon-doc-text topimg choose_playlist"></i>
-        <i class="onlywide icon-info-circled topimg choose_infopanel"></i>
-        <i class="onlywide choose_prefs icon-cog-alt topimg"></i>
-        <div class="topdrop fixed"><i class="icon-menu topimg tleft ninety"></i>
-            <div id="specialplugins" class="topdropmenu rightmenu dropdown">
-                <div class="sptext"></div>
-            </div>
+        <div id="specialplugins" class="topdropmenu rightmenu">
+            <div class="sptext"></div>
         </div>
-        <div class="topdrop fixed onlynarrow"><i class="icon-menu topimg"></i>
-            <div class="topdropmenu rightmenu dropdown">
-                <i class="noshrink icon-folder-open-empty topimg choose_filelist"></i>
-                <i class="noshrink choose_playlistman icon-doc-text topimg"></i>
-                <i class="noshrink icon-info-circled topimg choose_infopanel"></i>
-                <i class="noshrink choose_prefs icon-cog-alt topimg"></i>
-            </div>
+        <div id="narrowscreenicons" class="topdropmenu rightmenu">
+            <i class="noshrink icon-folder-open-empty topimg choose_filelist"></i>
+            <i class="noshrink choose_playlistman icon-doc-text topimg"></i>
+            <i class="noshrink icon-info-circled topimg choose_infopanel"></i>
+            <i class="noshrink choose_prefs icon-cog-alt topimg"></i>
         </div>
+        <i class="icon-play-circled topimg choose_nowplaying expand"></i>
+        <i class="icon-music topimg choose_albumlist expand"></i>
+        <i class="icon-search topimg choose_searcher expand"></i>
+        <i class="icon-folder-open-empty onlywide topimg choose_filelist expand"></i>
+        <i class="icon-radio-tower topimg choose_radiolist expand"></i>
+        <i class="icon-podcast-circled topimg choose_podcastslist expand"></i>
+        <i class="choose_playlistman onlywide icon-doc-text topimg expand"></i>
+        <i class="choose_pluginplaylists icon-wifi topimg expand"></i>
+        <i class="icon-volume-up topimg expand topbarmenu" name="volumedropper"></i>
+        <i class="icon-doc-text topimg choose_playlist expand"></i>
+        <i class="onlywide icon-info-circled topimg choose_infopanel expand"></i>
+        <i class="onlywide choose_prefs icon-cog-alt topimg expand"></i>
+        <i class="icon-menu topimg ninety expand topbarmenu" name="specialplugins"></i>
+        <i class="icon-menu topimg expand onlynarrow topbarmenu" name="narrowscreenicons"></i>
     </div>
 </div>
 
@@ -149,9 +146,9 @@ include("player/".$prefs['player_backend']."/search.php");
 <div id="infopane" class="infowiki scroller mainpane invisible">
     <div class="containerbox headercontainer">
         <div id="chooserbuttons" class="noborder expand center topbox containerbox fullwidth">
-            <i id="choose_history" class="icon-versions topimg fixed"></i>
-            <i id="backbutton" class="icon-left-circled topimg button-disabled fixed onlywide"></i>
-            <i id="forwardbutton" class="icon-right-circled topimg button-disabled fixed onlywide"></i>
+            <i id="choose_history" class="icon-versions topimg expand"></i>
+            <i id="backbutton" class="icon-left-circled topimg button-disabled expand onlywide"></i>
+            <i id="forwardbutton" class="icon-right-circled topimg button-disabled expand onlywide"></i>
         </div>
     </div>
     <div id="artistchooser" class="infotext invisible"></div>
@@ -189,7 +186,6 @@ if ($use_smartradio) {
 <?php
 print '<div class="configtitle textcentre"><b>'.get_int_text('label_pluginplaylists').'</b></div>';
 ?>
-<div class="pref">
 <?php
 if ($prefs['player_backend'] == "mopidy") {
     print '<div class="textcentre textunderline"><b>Music From Your Collection</b></div>';
@@ -212,7 +208,6 @@ if ($prefs['player_backend'] == "mopidy") {
 ?>
 <div class="fullwidth" id="pluginplaylists_everywhere"></div>
 <div class="clearfix containerbox vertical" id="pluginplaylists_crazy"></div>
-</div>
 </div>
 <?php
 }
@@ -249,11 +244,11 @@ include('skins/playlist.php');
 </div>
 
 
-<div id="historypanel" class="topdropmenu scroller dropmenu dropshadow mobmenu">
+<div id="historypanel" class="topdropmenu scroller dropmenu">
 </div>
-<div id="popupwindow" class="topdropmenu scroller dropmenu dropshadow mobmenu">
+<div id="popupwindow" class="topdropmenu scroller dropmenu">
 </div>
-<div id="tagadder" class="topdropmenu dropmenu dropshadow mobmenu">
+<div id="tagadder" class="topdropmenu dropmenu">
     <div class="configtitle textcentre moveable" style="padding-top:4px"><b>
 <?php
 print get_int_text("lastfm_addtags").'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div><div>'.get_int_text("lastfm_addtagslabel");
