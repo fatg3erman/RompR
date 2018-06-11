@@ -3,6 +3,10 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.15.1
+
+* Quick bugfix release as, ironically, a bug in the new version number checking code meant that clean installs of 1.15 would not start.
+
 ## Version 1.15
 
 * The Last.FM radio stations and adding radio tracks to the Music Collection now work with Mopidy-Gmusic.
