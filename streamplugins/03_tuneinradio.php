@@ -36,6 +36,10 @@ if (array_key_exists('populate', $_REQUEST)) {
     $result = url_get_contents($url);
     $opml = $result['contents'];
     $x = simplexml_load_string($opml);
+    
+    $v = (string) $x['version'];
+    debuglog("OPML version is ".$v, "TUNEIN");
+    
     parse_tree($x->body, $title);
     
     // print '<hr>';
@@ -87,7 +91,7 @@ function parse_tree($node, $title) {
                         
                     case 'topic':
                         $sname = $title;
-                        $year = 'Podcast';
+                        $year = 'Podcast Episode';
                         break;
                       
                     default:

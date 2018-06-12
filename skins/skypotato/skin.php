@@ -5,7 +5,7 @@
 <div class="fullwidth containerbox" id="thetopbit">
     <div class="fixed">
         <div id="albumcover" class="fixed">
-            <img id="albumpicture" class="notexist" />
+            <img id="albumpicture" />
         </div>
     </div>
     <div id="groonburger" class="fixed containerbox vertical controlbutton-left">

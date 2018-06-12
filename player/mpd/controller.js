@@ -452,6 +452,9 @@ function playerController() {
                 case "stream":
                     cmdlist.push(['loadstreamplaylist',v.url,v.image,v.station]);
                     break;
+                case "playlisttoend":
+                    cmdlist.push(['playlisttoend',v.playlist,v.frompos]);
+                    break;
     		}
 		});
 		// Note : playpos will only be set if at_pos isn't, because at_pos is only set when

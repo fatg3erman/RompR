@@ -62,7 +62,7 @@
 ?>
     <div id="patrickmoore" class="infobarlayout bordered noselection expand containerbox">
         <div id="albumcover" class="fixed">
-            <img id="albumpicture" class="notexist" />
+            <img id="albumpicture" />
         </div>
         <div id="firefoxisshitwrapper" class="expand">
             <div id="nowplaying">

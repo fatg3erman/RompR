@@ -942,6 +942,11 @@ var playlist = function() {
                         $(element).next().children('.clicktrack').each(function() {
                             tracks.push({ type: 'uri', name: decodeURIComponent($(this).attr('name'))});
                         });
+                    } else if ($(element).hasClass('playlisttrack') && prefs.cdplayermode) {
+                        tracks.push({   type: 'playlisttoend',
+                                        playlist: $(element).prev().prev().val(),
+                                        frompos: $(element).prev().val()
+                                    });
                     } else {
                         tracks.push({ type: "uri",
                                         name: decodeURIComponent(uri)});

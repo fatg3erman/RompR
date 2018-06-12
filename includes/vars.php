@@ -236,35 +236,35 @@ function savePrefs() {
 function loadPrefs() {
     global $prefs, $logger;
     if (file_exists('prefs/prefs.var')) {
-      $fp = fopen('prefs/prefs.var', 'r');
-      if($fp) {
-          if (flock($fp, LOCK_SH)) {
-              $sp = unserialize(fread($fp, 32768));
-              flock($fp, LOCK_UN);
-              fclose($fp);
-              if ($sp === false) {
-                  error_log("ERROR!              : COULD NOT LOAD PREFS");
-                  exit(1);
-              }
-              $prefs = array_replace($prefs, $sp);
+        $fp = fopen('prefs/prefs.var', 'r');
+        if($fp) {
+            if (flock($fp, LOCK_SH)) {
+                $sp = unserialize(fread($fp, 32768));
+                flock($fp, LOCK_UN);
+                fclose($fp);
+                if ($sp === false) {
+                    error_log("ERROR!              : COULD NOT LOAD PREFS");
+                    exit(1);
+                }
+                $prefs = array_replace($prefs, $sp);
 
-              foreach ($_COOKIE as $a => $v) {
-                  if (array_key_exists($a, $prefs)) {
-                      switch ($a) {
-                          case 'debug_enabled':
-                              $logger->setLevel($v);
-                              // Fall through to default
+                foreach ($_COOKIE as $a => $v) {
+                    if (array_key_exists($a, $prefs)) {
+                        switch ($a) {
+                            case 'debug_enabled':
+                                $logger->setLevel($v);
+                                // Fall through to default
 
-                          default:
-                              $prefs[$a] = $v;
-                              break;
+                            default:
+                                $prefs[$a] = $v;
+                                break;
 
-                      }
-                      if ($prefs['debug_enabled'] > 8) {
-                        error_log("COOKIE             : Pref ".$a." is set by Cookie  - Value : ".$v);
-                      }
-                  }
-              }
+                        }
+                        if ($prefs['debug_enabled'] > 8) {
+                            error_log("COOKIE             : Pref ".$a." is set by Cookie  - Value : ".$v);
+                        }
+                    }
+                }
 
           } else {
               error_log("ERROR!              : COULD NOT GET READ FILE LOCK ON PREFS FILE");
