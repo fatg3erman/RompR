@@ -3,7 +3,16 @@
 print "var skin = '".$skin."';\n";
 print "var small_plugin_icons = '".$small_plugin_icons."';\n";
 print "var only_plugins_with_icons = '".$only_plugins_with_icons."';\n";
-print "var rompr_version = '".ROMPR_VERSION."';\n";
+if ($prefs['dev_mode']) {
+    $git_ver = exec("git log --pretty=format:'%h' -n 1", $output);
+    if (count($output) == 1) {
+        print "var rompr_version = '".ROMPR_VERSION.".".$output[0]."';\n";
+    } else {
+        print "var rompr_version = '".ROMPR_VERSION."';\n";
+    }
+} else {
+    print "var rompr_version = '".ROMPR_VERSION."';\n";
+}
 print "var collection_status = ".checkCollectionStatus().";\n";
 print "var old_style_albumart = ".checkAlbumArt().";\n";
 print "prefs.skin = '".$skin."';\n";

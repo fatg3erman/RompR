@@ -66,6 +66,7 @@ $prefs = array(
         )
     ),
     "currenthost" => 'Default',
+    'dev_mode' => false,
 
     // Things that could be set on a per-user basis but need to be known by the backend
     "mpd_host" => "localhost",
