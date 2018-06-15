@@ -883,9 +883,14 @@ function search_itunes($term) {
     generic_sql_query("DELETE FROM PodcastTracktable WHERE PODindex IN (SELECT PODindex FROM Podcasttable WHERE Subscribed = 0)", true);
     generic_sql_query("DELETE FROM Podcasttable WHERE Subscribed = 0", true);
     $content = url_get_contents('https://itunes.apple.com/search?term='.$term.'&entity=podcast');
+    debuglog("Status is ".$content['status'],"PODCASTS");
     if ($content['status'] == '200') {
-        $pods = json_decode($content['contents'], true);
+        $pods = json_decode(trim($content['contents']), true);
         foreach ($pods['results'] as $podcast) {
+            if (array_key_exists('feedUrl', $podcast)) {
+                // Bloody hell they can't even be consistent!
+                $podcast['feedURL'] = $podcast['feedUrl'];
+            }
             if (array_key_exists('feedURL', $podcast)) {
                 $r = check_if_podcast_is_subscribed($podcast);
                 if (count($r) > 0) {

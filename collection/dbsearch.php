@@ -50,6 +50,7 @@ function doDbCollection($terms, $domains, $resultstype) {
 		'artist' => 'a1.Artistname',
 		'album' =>  'al.Albumname',
 		'title' => 't.Title',
+		'track_name' => 't.Title',
 		'file' => 't.Uri',
 		'albumartist' => 'a2.Artistname'
 	);

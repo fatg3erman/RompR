@@ -13,8 +13,11 @@ function faveFinder(returnall) {
     // There's currently no way to change these for tracks that are rated from radio stations
     // which means that these are the only domains that will be searched, but this is better
     // than including podcasts and radio stations, which we'll never want
+    
+    // I'm also not including SoundCloud because it produces far too many false positives
+    
     if (prefs.player_backend == 'mopidy') {
-        priority = ["soundcloud", "gmusic", "spotify", "beets", "beetslocal", "local"];
+        priority = ["gmusic", "spotify", "beets", "beetslocal", "local"];
     }
 
     function brk(b) {

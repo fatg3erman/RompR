@@ -20,6 +20,28 @@ Then
 
     brew install mpd --with-opus --with-libmss
 
+### Player Connection Timeout
+    
+There is one thing you should adjust in the configuration for MPD and Mopidy
+    
+MPD and Mopidy both have a connection timeout parameter, after which time they will drop the connection between them and Rompr. This is seriously bad news for Rompr. You should make sure you increase it.
+    
+### For Mopidy
+    
+In mopidy.conf, your mpd section needs to contain
+    
+    [mpd]
+    connection_timeout = 120
+        
+### For MPD
+    
+Somewhere in mpd.conf
+    
+    connection_timeout     "120"
+    
+    
+If you have a very large music collection, the higher the numbeer the better. It is in seconds.
+
 ## Install Rompr
 
 First open Terminal. If you haven't used Terminal before, don't be scared. It's under 'Other' or 'Utilities'. Type commands exactly as they appear here, and enter your Mac password whenever you are asked.

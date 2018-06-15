@@ -9,6 +9,13 @@ If you use Mopidy, please make sure you read the following to ensure you get the
 RompЯ communicates with mopidy using its MPD frontend.
 Mopidy version 1.1 or later is required.
 
+In mopidy.conf, your mpd section needs to contain
+
+    [mpd]
+    connection_timeout = 60
+    
+60 is a minimum (it's in seconds). If you have a large music collection try a much larger number, say 600.
+
 ## Building Your Music Collection
 
 The configuration panel will allow you to choose various sources from which to build your [Music Collection](/RompR/Music-Collection).
@@ -89,19 +96,37 @@ We need to create a simple shell script that will run mopidy local scan as the c
 
 So create a file called **mopidy_scan.sh** (the filename MUST be mopidy_scan.sh) with the following contents
 
-**EITHER** If you're [running mopidy as a service](https://docs.mopidy.com/en/latest/service/#service) then the file needs to contain
+#### **EITHER** If you're [running mopidy as a service](https://docs.mopidy.com/en/latest/service/#service)
+
+You need to know the full path to your installation of mopidyctl. Typing
+
+    which mopidyctl
+    
+Will tell you this. On my system it is /usr/sbin/mopidyctl
+ 
+then the file needs to contain
 
     #!/bin/bash
 
-    mopidyctl local scan
+    /usr/sbin/mopidyctl local scan
 
-**OR** If you're just running mopidy as a login program
+#### **OR** If you're just running mopidy as a login program
+
+You need to know the full path to your installation of mopidy. Typing
+
+    which mopidy
+    
+Will tell you this. On my system it is /usr/local/bin/mopidy
+
+then the file needs to contain
 
     #!/bin/bash
 
-    mopidy local scan
+    /usr/local/bin/mopidy local scan
 
-and save it somewhere. I put mine in /home/bob/bin/mopidy_scan.sh. Where you save it doesn't matter, but the filename does.
+#### Then save the file
+
+Save this file somewhere, anywhere. I put mine in /home/bob/bin/mopidy_scan.sh. Where you save it doesn't matter, but the filename does.
 
 Now we need to make the script executable and use setuid to make it run as the correct user
 

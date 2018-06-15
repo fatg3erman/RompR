@@ -30,6 +30,26 @@ If Mopidy is not on the same computer as the webserver, you probably need to set
     
 in your mopidy.conf
 
+## Connection errors or other strange behaviour
+
+MPD and Mopidy both have a connection timeout parameter, after which time they will drop the connection between them and Rompr. This is seriously bad news for Rompr. You should make sure you increase it.
+
+### For Mopidy
+
+In mopidy.conf, your mpd section needs to contain
+
+    [mpd]
+    connection_timeout = 120
+    
+### For MPD
+
+Somewhere in mpd.conf
+
+    connection_timeout     "120"
+
+
+If you have a very large music collection, the higher the numbeer the better. It is in seconds.
+
 ## Web Proxy Configuration
 
 You can configure RompЯ to use a web proxy from the setup page. Even if you have configured this in your browser you still need to confiugure RompЯ to use it too.

@@ -521,11 +521,6 @@ function process_file($filedata) {
 
     $mytime = microtime(true);
 	
-	if (trim($filedata['file']) == 'spotify:track:5V1bpfHhqyHPpmeKLFUZVl') {
-		debuglog("FOUND IT!!!!!!","COLLECTION");
-	}
-	
-
     if ($dbterms['tags'] !== null || $dbterms['rating'] !== null) {
         // If this is a search and we have tags or ratings to search for, check them here.
         if (check_url_against_database($filedata['file'], $dbterms['tags'], $dbterms['rating']) == false) {

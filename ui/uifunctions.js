@@ -415,9 +415,9 @@ function showUpdateWindow() {
     } else {
         if (typeof(prefs.shownupdatewindow) != 'string' || compare_version_numbers(prefs.shownupdatewindow, rompr_version)) {
             var fnarkle = new popup({
-                width: 800,
-                height: 1100,
-                title: language.gettext("intro_title"),
+                width: 1600,
+                height: 1600,
+                title: 'RompЯ Version '+rompr_version,
                 hasclosebutton: false});
             var mywin = fnarkle.create();
             mywin.append('<div id="begging"></div>');

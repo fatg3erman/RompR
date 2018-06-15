@@ -1551,13 +1551,13 @@ function remove_cruft() {
 	$t = microtime(true);
     generic_sql_query("DELETE FROM Albumtable WHERE Albumindex NOT IN (SELECT DISTINCT Albumindex FROM Tracktable WHERE Albumindex IS NOT NULL)", true);
 	$at = microtime(true) - $t;
-	debuglog(" -- Removing orphaned albums took ".$at." seconds","BACKEND",8);
+	debuglog(" -- Removing orphaned albums took ".$at." seconds","BACKEND",6);
 
     debuglog("Removing orphaned artists","MYSQL",6);
 	$t = microtime(true);
     delete_orphaned_artists();
 	$at = microtime(true) - $t;
-	debuglog(" -- Removing orphaned artists took ".$at." seconds","BACKEND",8);
+	debuglog(" -- Removing orphaned artists took ".$at." seconds","BACKEND",6);
 
     debuglog("Tidying Metadata","MYSQL",6);
 	$t = microtime(true);
@@ -1570,7 +1570,7 @@ function remove_cruft() {
 	generic_sql_query("DELETE FROM Playcounttable WHERE Playcount = '0'", true);
 	generic_sql_query("DELETE FROM Playcounttable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
 	$at = microtime(true) - $t;
-	debuglog(" -- Tidying metadata took ".$at." seconds","BACKEND",8);
+	debuglog(" -- Tidying metadata took ".$at." seconds","BACKEND",6);
 }
 
 function do_track_by_track($trackobject) {

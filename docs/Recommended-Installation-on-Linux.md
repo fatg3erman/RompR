@@ -5,9 +5,33 @@ These are basic installation instructions for RompЯ on Linux, using the code yo
 
 **The old project homepage is at [SourceForge](https://sourceforge.net/projects/rompr/). The old discussion forum is still there and you may find answers to some questions is you have them.**
 
-## Assumptions
+## Install MPD or Mopidy
 
-I'm going to assume you already have mpd or mopidy installed and working. This is not the place to discuss the arcane art of configuring mpd. For that you'll have to read the mpd community wiki. Sorry about that. The mopidy instructions are quite good.
+Mpd should be available from your normal package manager. If you want to run Mopidy it is easy to install -  see [mopdy.com](http://www.mopidy.com).
+
+
+### Player Connection Timeout
+
+There is one thing you should adjust in the configuration for MPD and Mopidy
+
+MPD and Mopidy both have a connection timeout parameter, after which time they will drop the connection between them and Rompr. This is seriously bad news for Rompr. You should make sure you increase it.
+
+### For Mopidy
+
+In mopidy.conf, your mpd section needs to contain
+
+    [mpd]
+    connection_timeout = 120
+    
+### For MPD
+
+Somewhere in mpd.conf
+
+    connection_timeout     "120"
+
+
+If you have a very large music collection, the higher the numbeer the better. It is in seconds.
+
 
 ## Recommended Setup for Linux
 

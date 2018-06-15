@@ -131,7 +131,7 @@ function check_radio_and_podcasts($filedata) {
         $album,
         getStreamFolder(unwanted_array($url)),
         "stream",
-        $filedata['X-AlbumImage'],
+        ($filedata['X-AlbumImage'] == null) ? 'newimages/broadcast.svg' : $filedata['X-AlbumImage'],
         getDummyStation(unwanted_array($url)),
         null,
         $filedata['AlbumArtist'],
