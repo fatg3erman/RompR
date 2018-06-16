@@ -6,6 +6,8 @@ var collectionHelper = function() {
     var update_load_timer_running = false;
     var returned_data = new Array();
     var update_timer = null;
+    // For testing only
+    var collection_load_timeout = 3600000;
 
     function scanFiles(cmd) {
         collectionHelper.prepareForLiftOff(language.gettext("label_updating"));
@@ -32,11 +34,7 @@ var collectionHelper = function() {
             clearTimeout(update_load_timer);
             update_load_timer_running = false;
         }
-        if (prefs.player_backend == "mopidy" && prefs.mopidy_scan_command != '') {
-            $.getJSON("player/mopidy/mopidyscan.php?check=yes", checkPoll);
-        } else {
-            $.getJSON("player/mpd/postcommand.php", checkPoll);
-        }
+        $.getJSON("player/mpd/postcommand.php", checkPoll);
     }
 
     function checkPoll(data) {
@@ -60,7 +58,7 @@ var collectionHelper = function() {
             $.ajax({
                 type: "GET",
                 url: albums,
-                timeout: 800000,
+                timeout: collection_load_timeout,
                 dataType: "html",
                 success: function(data) {
                     clearTimeout(monitortimer);
@@ -82,10 +80,17 @@ var collectionHelper = function() {
                 },
                 error: function(data) {
                     clearTimeout(monitortimer);
-                    $("#collection").html(
-                        '<p align="center"><b><font color="red">Failed To Generate Collection :</font>'+
-                        '</b><br>'+data.responseText+"<br>"+data.statusText+"</p>");
-                    debug.error("PLAYER","Failed to generate albums list",data);
+                    $('[name="donkeykong"]').hide();
+                    var html = '<p align="center"><b><font color="red">Failed To Generate Collection</font></b></p>';
+                    if (data.responseText) {
+                        html += '<p align="center">'+data.responseText+'</p>';
+                    }
+                    if (data.statusText) {
+                        html += '<p align="center">'+data.statusText+'</p>';
+                    }
+                    html += '<p align="center"><a href="https://fatg3erman.github.io/RompR/Troubleshooting#very-large-collections" target="_blank">Read The Troubleshooting Docs</a></p>';
+                    $("#collection").html(html);
+                    debug.error("PLAYER","Failed to generate collection",data);
                     infobar.notify(infobar.ERROR,"Music Collection Update Failed");
                     player.updatingcollection = false;
                 }
@@ -121,7 +126,7 @@ var collectionHelper = function() {
     
     function updateUIElements() {
         
-        if (dbQueue.outstandingRequests() > 0) {
+        if (dbQueue.queuelength() > 0) {
             debug.log("UI","Deferring updates due to outstanding requests");
             clearTimeout(update_timer);
             setTimeout(updateUIElements, 1000);
@@ -198,6 +203,11 @@ var collectionHelper = function() {
     }
         
     return {
+                
+        // For testing only
+        setCollectionLoadTimeout: function(v) {
+            collection_load_timeout = v;
+        },
 
         forceCollectionReload: function() {
             collection_status = 0;

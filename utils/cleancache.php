@@ -147,6 +147,8 @@ if ($mysqlc) {
         generic_sql_query("PRAGMA optimize", true);
     }
 
+    debuglog("Cache Cleaning Is Complete","CACHE CLEANER");
+
 }
 
 function clean_cache_dir($dir, $time) {

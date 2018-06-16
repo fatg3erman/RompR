@@ -56,6 +56,7 @@ $prefs = array(
     // This option for plugin debugging ONLY
     "load_plugins_at_loadtime" => false,
     "beets_server_location" => "",
+    // Doesn't actually work.
     "mopidy_scan_command" => "",
     "multihosts" => (object) array (
         'Default' => (object) array(

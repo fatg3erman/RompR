@@ -91,6 +91,8 @@ We're going to create an Apache configuration file for RompЯ. I'll assume it's 
 
 So, create this file, note I've assumed the default apache root directory of /var/www/html
 
+    Timeout 1800
+
     <Directory /var/www/html/rompr>
         Options Indexes FollowSymLinks MultiViews Includes ExecCGI
         DirectoryIndex index.php
@@ -110,7 +112,8 @@ So, create this file, note I've assumed the default apache root directory of /va
             php_admin_value open_basedir none
             php_admin_value memory_limit 128M
             php_admin_value post_max_size 32M
-            php_admin_value upload_max_filesize 32M                
+            php_admin_value upload_max_filesize 32M       
+            php_admin_value max_execution_time 1800         
         </IfModule>
 
     </Directory>
@@ -131,7 +134,9 @@ Now symlink that file so that Apache can find it
 
     sudo ln -s /PATH/TO/ROMPRCONF /etc/apache2/sites-enabled/rompr.conf
 
-### Create mysql database
+### Create mysql database (optional)
+
+You don't need to create a mysql database. Rompr will default to an SQLite database, which requires no setup. If you are already running a mysql server anyway - as I was on my mythbuntu setup - then you can use it for your Rompr database as follows:
 
 Now we'll create the mysql database for RompЯ. You will need to know your mysql root password. If you've installed the standard mythbuntu install, this will be your login password.
 

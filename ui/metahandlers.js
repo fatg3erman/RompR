@@ -144,8 +144,8 @@ var metaHandlers = function() {
 			    dbQueue.request(
 			        [{action: 'delete', uri: decodeURIComponent(trackToGo)}],
 			        collectionHelper.updateCollectionDisplay,
-			        function() {
-			            infobar.notify(infobar.ERROR, "Failed to remove track!");
+			        function(data) {
+			            debug.warn("Failed to remove track! Possibly duplicate request?");
 			        }
 			    );
 			}
@@ -234,18 +234,20 @@ var dbQueue = function() {
 	var queue = new Array();
 	var throttle = null;
 	var cleanuptimer = null;
-
+	
 	return {
 
 		request: function(data, success, fail) {
 
-			queue.push( {flag: false, data: data, success: success, fail: fail } );
-			debug.trace("DB QUEUE","New request",data);
-			if (throttle == null && queue.length == 1) {
-				dbQueue.dorequest();
-			}
+			request: function(data, success, fail) {
 
-		},
+				queue.push( {flag: false, data: data, success: success, fail: fail } );
+				debug.trace("DB QUEUE","New request",data);
+				if (throttle == null && queue.length == 1) {
+					dbQueue.dorequest();
+				}
+
+			},
 
 		queuelength: function() {
 			return queue.length;
@@ -254,44 +256,48 @@ var dbQueue = function() {
 		dorequest: function() {
 
 			clearTimeout(throttle);
-			clearTimeout(cleanuptimer);
 			var req = queue[0];
 
-            if (req) {
-            	if (req.flag) {
-            		debug.debug("DB QUEUE","Request just pulled from queue is already being handled");
-            		return;
-            	}
-				queue[0].flag = true;
-				debug.trace("DB QUEUE","Taking next request from queue",req);
-			    $.ajax({
-			        url: "backends/sql/userRatings.php",
-			        type: "POST",
-			        data: JSON.stringify(req.data),
-			        dataType: 'json',
-			        success: function(data) {
-	                	req = queue.shift();
-			        	debug.trace("DB QUEUE","Request Success",req,data);
-			        	if (req.success) {
-			        		req.success(data);
-			        	}
-			        	throttle = setTimeout(dbQueue.dorequest, 1);
-			        },
-			        error: function(data) {
-	                	req = queue.shift();
-			        	debug.fail("DB QUEUE","Request Failed",req,data.responseText);
-			        	if (req.fail) {
-			        		req.fail(data);
-			        	}
-			        	throttle = setTimeout(dbQueue.dorequest, 1);
-			        }
-			    });
-	        } else {
-            	throttle = null;
-				cleanuptimer = setTimeout(dbQueue.doCleanup, 1000);
-	        }
+			if (player.updatingcollection) {
+				debug.log("DB QUEUE","Deferring",req.data[0].action,"request because collection is being updated");
+				throttle = setTimeout(dbQueue.dorequest, 1000);
+			} else {
+	            if (req) {
+	            	if (req.flag) {
+	            		debug.trace("DB QUEUE","Request just pulled from queue is already being handled");
+	            		return;
+	            	}
+					queue[0].flag = true;
+					debug.trace("DB QUEUE","Taking next request from queue",req);
+				    $.ajax({
+				        url: "backends/sql/userRatings.php",
+				        type: "POST",
+				        data: JSON.stringify(req.data),
+				        dataType: 'json',
+				        success: function(data) {
+							req = queue.shift();
+				        	debug.trace("DB QUEUE","Request Success",req,data);
+				        	if (req.success) {
+				        		req.success(data);
+				        	}
+				        	throttle = setTimeout(dbQueue.dorequest, 1);
+				        },
+				        error: function(data) {
+		                	req = queue.shift();
+				        	debug.fail("DB QUEUE","Request Failed",req,data);
+				        	if (req.fail) {
+				        		req.fail(data);
+				        	}
+				        	throttle = setTimeout(dbQueue.dorequest, 1);
+				        }
+				    });
+		        } else {
+	            	throttle = null;
+					cleanuptimer = setTimeout(dbQueue.doCleanup, 1000);
+				}
+			}
 		},
-		
+
 		doCleanup: function() {
 			debug.log("DB QUEUE", "Doing backend Cleanup");
 			// We do these out-of-band to improve the responsiveness of the GUI.
@@ -308,10 +314,7 @@ var dbQueue = function() {
 				}
 			});
 			
-		},
-		
-		outstandingRequests: function() {
-			return queue.length;
 		}
+		
 	}
 }();

@@ -107,7 +107,7 @@ This will create an empty file, into which you should paste the following (cmd-V
                         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
                         fastcgi_split_path_info ^(.+\.php)(/.+)$;
                         include fastcgi_params;
-                        fastcgi_read_timeout 600;
+                        fastcgi_read_timeout 1800;
                         fastcgi_buffers 16 16k;
                         fastcgi_buffer_size 32k;
                 }

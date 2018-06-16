@@ -92,6 +92,7 @@ This will open nano again. It may bring up an empty file, or it may bring up a f
 	    DocumentRoot /Users/YOURNAME/Sites/rompr
 	    ServerName www.myrompr.net
         ErrorDocument 404 /404.php
+        Timeout 1800
 
 	    <Directory /Users/YOURNAME/Sites/rompr>
             Options Indexes FollowSymLinks Includes ExecCGI
@@ -112,6 +113,7 @@ This will open nano again. It may bring up an empty file, or it may bring up a f
     		    php_admin_value memory_limit 128M
                 php_admin_value post_max_size 32M
                 php_admin_value upload_max_filesize 32M                
+                php_admin_value max_execution_time 1800         
 		    </IfModule>
 
 	    </Directory>
