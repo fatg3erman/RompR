@@ -13,20 +13,12 @@ var collectionHelper = function() {
         collectionHelper.prepareForLiftOff(language.gettext("label_updating"));
         collectionHelper.markWaitFileList(language.gettext("label_updating"));
         uiHelper.emptySearchResults();
-        debug.log("PLAYER","Scanning Files",cmd,prefs.player_backend,prefs.mopidy_scan_command);
-        if (prefs.player_backend == "mopidy" && prefs.mopidy_scan_command != '') {
-            debug.shout("PLAYER","Scanning Mopidy using external scan command");
-            $.getJSON("player/mopidy/mopidyscan.php?scan=yes", function() {
-                update_load_timer = setTimeout( pollAlbumList, 2000);
-                update_load_timer_running = true;
-            });
-        } else {
-            debug.shout("PLAYER","Scanning using",cmd);
-            player.controller.do_command_list([[cmd]], function() {
-                update_load_timer = setTimeout( pollAlbumList, 2000);
-                update_load_timer_running = true;
-            });
-        }
+        debug.log("PLAYER","Scanning Files",cmd,prefs.player_backend);
+        debug.shout("PLAYER","Scanning using",cmd);
+        player.controller.do_command_list([[cmd]], function() {
+            update_load_timer = setTimeout( pollAlbumList, 2000);
+            update_load_timer_running = true;
+        });
     }
 
     function pollAlbumList() {
