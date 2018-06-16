@@ -916,7 +916,7 @@ var playlist = function() {
                         }
                     } else if ($(element).hasClass('directory')) {
                         tracks.push({   type: "uri",
-                                        name: decodeURIComponent($(element).children('input').first().attr('name'))});
+                                        name: decodeURIComponent($(element).children('input').first().attr('value'))});
                     } else if ($(element).hasClass('clickalbum')) {
                         tracks.push({  type: "item",
                                         name: uri});

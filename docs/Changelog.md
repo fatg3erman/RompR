@@ -3,6 +3,17 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.16
+
+* Increase Collection Build timemout and update docs to add bigger timeout values for webservers
+* Fix bug where clicking a track in a saved playlist with CD Player Mode on didn't work
+* Fix bug where messy covers or the previous track's cover were displayed for albums without covers
+* Fix bug where deleting a track from the Wishlist did not update the display
+* Add sort options to Wishlist Viewer
+* Wishlist Viewer now records the radio station that was playing when the track was added
+* Some work to prevent simultaneous write operations to the database in order to prevent deadlocks
+* Make podcast search work again. iTunes is sending feedURI or feedUri in its output, which is stupid
+
 ## Version 1.15.5
 
 * Quick bugfix release as, ironically, a bug in the new version number checking code meant that clean installs of 1.15 would not start. Yes I know I jumped several minor version numbers. That happens.
