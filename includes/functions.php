@@ -614,7 +614,8 @@ function getWishlist() {
         tr.Title AS title,
         tr.Duration AS time,
         tr.Albumindex AS albumindex,
-        a.Artistname AS albumartist
+        a.Artistname AS albumartist,
+        tr.DateAdded AS DateAdded
         FROM
         Tracktable AS tr
         LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
@@ -651,7 +652,6 @@ function getWishlist() {
 
         print '<div class="containerbox vertical" id="walbum'.$obj['albumindex'].'">';
         print '<div class="containerbox fixed">';
-        print '<div class="smallcover fixed"><img class="smallcover fixed notfound" /></div>';
         print '<div class="expand containerbox vertical">';
         print '<div class="fixed tracktitle"><b>'.$obj['title'].'</b></div>';
         print '<div class="fixed playlistrow2 trackartist">'.$obj['albumartist'].'</div>';
@@ -661,6 +661,7 @@ function getWishlist() {
         if ($obj['tags']) {
             print '<div class="fixed playlistrow2 tracktags"><i class="icon-tags smallicon"></i>'.$obj['tags'].'</div>';
         }
+        print '<div class="fixed playlistrow2">Added On : '.date('r', strtotime($obj['DateAdded'])).'</div>';
         print '</div>';
         print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed"></i>';
         print '<input type="hidden" value="'.$obj['title'].'" />';

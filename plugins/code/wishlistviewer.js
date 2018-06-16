@@ -7,6 +7,7 @@ var wishlistViewer = function() {
 
 	function removeTrackFromWl(element, command) {
 	    debug.log("DB_TRACKS","Remove track from database",element.next().val());
+		var trackDiv = element.parent().parent();
 	    metaHandlers.genericAction(
 			[{action: command, wltrack: element.next().val()}],
 	       	collectionHelper.updateCollectionDisplay,
@@ -15,6 +16,7 @@ var wishlistViewer = function() {
 	            infobar.notify(infobar.ERROR, "Failed to remove track!");
 	        }
 	    );
+		trackDiv.fadeOut('fast');
 	}
 
 	function clearWishlist() {
@@ -167,9 +169,9 @@ var wishlistViewer = function() {
 			var trackDiv = element.parent().parent();
 			var html;
 			if (data.uri) {
-				html = trawler.trackHtml(data, false);
+				temphtml = trawler.trackHtml(data, false);
 				if (results.length > 1) {
-					html += '<br /><span class="clickicon tiny plugclickable dropchoices infoclick" name="'+data.key+'"> '+
+					temphtml += '<br /><span class="clickicon tiny plugclickable dropchoices infoclick" name="'+data.key+'"> '+
 								language.gettext("label_moreresults", [(results.length - 1)]) +
 								'</span>';
 					var choicesDiv = $('<div>', {id: 'wlchoices_'+data.key, class: "invisible ninesix indent padright getridof"}).appendTo(trackDiv);
@@ -178,12 +180,12 @@ var wishlistViewer = function() {
 											trawler.trackHtml(results[i], false))+'</div>';
 					}
 				}
-				element.removeClass('wlsch_'+data.reqid).stopSpinner().replaceWith('<div id="wltrackfound'+data.key+'" class="expand invisible">'+html+'</div>'+
-					'<button class="fixed plugclickable infoclick importrow">Import</button>');
+				html = '<div class="containerbox expand"><div id="wltrackfound'+data.key+'" class="indent expand invisible">'+temphtml+'</div>'+'<button class="fixed plugclickable infoclick importrow">Import</button></div>';
 			} else {
-				html = "<b><i>"+language.gettext("label_notfound")+"</i></b>";
-				element.removeClass('wlsch_'+data.reqid).stopSpinner().replaceWith('<div id="wltrackfound'+data.key+'" class="expand invisible">'+html+'</div>');
+				html = '<div id="wltrackfound'+data.key+'" class="expand invisible"><b><i>'+language.gettext("label_notfound")+'</i></b></div>';
 			}
+			element.prev().append(html);
+			element.removeClass('wlsch_'+data.reqid).stopSpinner().remove();
 			trackDiv.find('.invisible').first().fadeIn('fast');
 
 		},
