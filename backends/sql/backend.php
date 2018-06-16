@@ -80,19 +80,39 @@ function create_new_track(&$data) {
 			return null;
 		}
 	}
+	
+	$data['sourceindex'] = null;
+	if ($data['uri'] === null && array_key_exists('streamuri', $data) && $data['streamuri'] !== null) {
+		$data['sourceindex'] = check_radio_source($data);
+	}
 
 	if (sql_prepare_query(true, null, null, null,
 		"INSERT INTO
 			Tracktable
-			(Title, Albumindex, Trackno, Duration, Artistindex, Disc, Uri, LastModified, Hidden, isSearchResult)
+			(Title, Albumindex, Trackno, Duration, Artistindex, Disc, Uri, LastModified, Hidden, isSearchResult, Sourceindex)
 			VALUES
-			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		$data['title'], $data['albumindex'], $data['trackno'], $data['duration'], $data['trackai'],
-		$data['disc'], $data['uri'], $data['lastmodified'], $data['hidden'], $data['searchflag']))
+		$data['disc'], $data['uri'], $data['lastmodified'], $data['hidden'], $data['searchflag'], $data['sourceindex']))
 	{
 		return $mysqlc->lastInsertId();
 	}
 	return null;
+}
+
+function check_radio_source($data) {
+	global $mysqlc;
+	$index = simple_query('Sourceindex', 'WishlistSourcetable', 'SourceUri', $data['streamuri'], null);
+	if ($index === null) {
+		debuglog("Creating Wishlist Source ".$data['streamname'],"SQL");
+		if (sql_prepare_query(true, null, null, null,
+		"INSERT INTO WishlistSourcetable (SourceName, SourceImage, SourceUri) VALUES (?, ?, ?)",
+		$data['streamname'], $data['streamimage'], $data['streamuri']))
+		{
+			$index = $mysqlc->lastInsertId();
+		}
+	}
+	return $index;
 }
 
 function check_artist($artist) {

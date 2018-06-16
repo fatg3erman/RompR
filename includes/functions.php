@@ -469,7 +469,7 @@ print '<h3 align="center">RompЯ encountered an error while checking your '.
     ucfirst($prefs['collection_type']).' database.</h3>';
 ?>
 <h3 align="center">An SQLite or MySQL database is required to run RompЯ</h3>
-<h3 align="center">You may find it helpful to <a href="https://sourceforge.net/p/rompr/wiki/Installation/" target="_blank">Read The Wiki</a></h3>
+<h3 align="center">You may find it helpful to <a href="https://fatg3erman.github.io/RompR/" target="_blank">Read The Docs</a></h3>
 <h3 align="center">The error message was:</h3><br>
 <?php
     print '<div class="bordered" style="width:75%;margin:auto"><p align="center"><b>'.
@@ -615,12 +615,16 @@ function getWishlist() {
         tr.Duration AS time,
         tr.Albumindex AS albumindex,
         a.Artistname AS albumartist,
-        tr.DateAdded AS DateAdded
+        tr.DateAdded AS DateAdded,
+        ws.SourceName AS SourceName,
+        ws.SourceImage AS SourceImage,
+        ws.SourceUri AS SourceUri
         FROM
         Tracktable AS tr
         LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
         LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
         LEFT JOIN Tagtable AS t USING (Tagindex)
+        LEFT JOIN WishlistSourcetable AS ws USING (Sourceindex)
         JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
         WHERE
         tr.Uri IS NULL AND tr.Hidden = 0
@@ -662,6 +666,9 @@ function getWishlist() {
             print '<div class="fixed playlistrow2 tracktags"><i class="icon-tags smallicon"></i>'.$obj['tags'].'</div>';
         }
         print '<div class="fixed playlistrow2">Added On : '.date('r', strtotime($obj['DateAdded'])).'</div>';
+        if ($obj['SourceUri']) {
+            print '<div class="fixed playlistrow2 clickable infoclick plugclickable clickstream" name="'.$obj['SourceUri'].'" streamname="'.$obj['SourceName'].'" streamimg="'.$obj['SourceImage'].'">While Listening To : <b>'.$obj['SourceName'].'</b></div>';
+        }
         print '</div>';
         print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed"></i>';
         print '<input type="hidden" value="'.$obj['title'].'" />';

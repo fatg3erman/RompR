@@ -50,14 +50,17 @@ var metaHandlers = function() {
 	        data.album = playlistinfo.album;
 	    }
 	    if (playlistinfo.type == "local" || playlistinfo.type == "podcast") {
-	        if (playlistinfo.location.match(/api\.soundcloud\.com\/tracks\/(\d+)\//)
-	            && prefs.player_backend == "mpd") {
+	        if (playlistinfo.location.match(/api\.soundcloud\.com\/tracks\/(\d+)\//) && prefs.player_backend == "mpd") {
 	            var sc = playlistinfo.location.match(/api\.soundcloud\.com\/tracks\/(\d+)\//);
 	            data.uri = "soundcloud://track/"+sc[1];
 	        } else {
 	            data.uri = playlistinfo.location;
 	        }
-	    }
+	    } else if (playlistinfo.type == "stream") {
+			data.streamname = playlistinfo.album;
+			data.streamimage = playlistinfo.image;
+			data.streamuri = playlistinfo.location;
+		}
 	    if (playlistinfo.date) {
 	        data.date = playlistinfo.date;
 	    } else {
