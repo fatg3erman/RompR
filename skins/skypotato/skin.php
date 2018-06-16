@@ -180,7 +180,7 @@ print '<i class="icon-menu topimg tooltip choose_specialplugins" title="'.get_in
     </div>
     </div>
     <div class="pref textcentre">
-    <button name="donkeykong" onclick="collectionHelper.checkCollection(true, false)">'.get_int_text('config_updatenow').'</button>
+    <button name="donkeykong">'.get_int_text('config_updatenow').'</button>
     </div>';
 ?>
     

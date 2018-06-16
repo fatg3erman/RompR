@@ -72,7 +72,7 @@ var collectionHelper = function() {
                 },
                 error: function(data) {
                     clearTimeout(monitortimer);
-                    $('[name="donkeykong"]').hide();
+                    collectionHelper.disableCollectionUpdates();
                     var html = '<p align="center"><b><font color="red">Failed To Generate Collection</font></b></p>';
                     if (data.responseText) {
                         html += '<p align="center">'+data.responseText+'</p>';
@@ -199,6 +199,14 @@ var collectionHelper = function() {
         // For testing only
         setCollectionLoadTimeout: function(v) {
             collection_load_timeout = v;
+        },
+        
+        disableCollectionUpdates: function() {
+            $('button[name="donkeykong"]').unbind('click').css('opacity', '0.2');
+        },
+        
+        enableCollectionUpdates: function() {
+            $('button[name="donkeykong"]').unbind('click').bind('click', function() { collectionHelper.checkCollection(true, false) }).css('opacity', '');
         },
 
         forceCollectionReload: function() {

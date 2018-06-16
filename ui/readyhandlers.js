@@ -13,7 +13,7 @@ $(document).ready(function(){
     player.controller.initialise();
     layoutProcessor.initialise();
     checkServerTimeOffset();
-    cleanBackendCache();
+    setTimeout(cleanBackendCache, 5000);
     if (prefs.country_userset == false) {
         // Have to pull this data in via the webserver as it's cross-domain
         // It's helpful and important to get the country code set, as many users won't see it
@@ -82,8 +82,15 @@ $(document).ready(function(){
 });
 
 function cleanBackendCache() {
-    $.get('utils/cleancache.php', function() {
-        debug.shout("INIT","Cache Has Been Cleaned");
-        setTimeout(cleanBackendCache, 86400000)
-    });
+    if (player.updatingcollection) {
+        setTimeout(cleanBackendCache, 200000);
+        
+    } else {
+        collectionHelper.disableCollectionUpdates();
+        $.get('utils/cleancache.php', function() {
+            debug.shout("INIT","Cache Has Been Cleaned");
+            collectionHelper.enableCollectionUpdates();
+            setTimeout(cleanBackendCache, 86400000)
+        });
+    }
 }

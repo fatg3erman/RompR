@@ -41,6 +41,8 @@ function setClickHandlers() {
     $('.infotext').unbind('dblclick');
     $('.infotext').dblclick(onBrowserDoubleClicked);
 
+    collectionHelper.enableCollectionUpdates()
+
 }
 
 function setControlClicks() {

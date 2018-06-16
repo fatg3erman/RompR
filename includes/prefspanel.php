@@ -295,7 +295,7 @@ print '<div class="pref styledinputs">
         <div class="tleft">
             <input class="autoset toggle" type="checkbox" id="updateeverytime"><label for="updateeverytime">'.get_int_text('config_updateonstart').'</label>
         </div>';
-print '<button class="tright" name="donkeykong" onclick="collectionHelper.checkCollection(true, false)">'.get_int_text('config_updatenow').'</button>';
+print '<button class="tright" name="donkeykong">'.get_int_text('config_updatenow').'</button>';
 if ($prefs['player_backend'] == "mpd") {
     print '<button class="tright" onclick="collectionHelper.checkCollection(true, true)">'.get_int_text('config_rescan').'</button>';
 }
