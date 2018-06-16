@@ -148,7 +148,8 @@ $prefs = array(
     "ratman_showletters" => false,
     "sleeptime" => 30,
     "sleepon" => false,
-    "advanced_search_open" => false
+    "advanced_search_open" => false,
+    "sortwishlistby" => 'artist'
 );
 
 // Prefs that should not be exposed to the browser for security reasons

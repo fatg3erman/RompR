@@ -58,7 +58,8 @@ var prefs = function() {
         "sleepon",
         "advanced_search_open",
         "mopidy_radio_domains",
-        "tradsearch"
+        "tradsearch",
+        "sortwishlistby"
     ];
     
     const cookiePrefs = [

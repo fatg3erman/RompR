@@ -36,6 +36,8 @@ If you have a very large music collection, the higher the numbeer the better. It
 
 This guide came about because I was installing RompЯ on a Mythbuntu 16.04 installation where I also wanted to use Mythweb. Because Mythweb brings in Apache2 I was unable to use nginx as the webserver. So I came up with this method. If you already have a mythtv install, or another system which already uses Apache2 (and mysql, optionally) then this method should work for you.
 
+_You can use Apache with SQLite instead of MySQL if you would prefer. Ignore the steps here about setting up the MySQL server and make sure you install php7.0-sqlite instead of php7.0-mysql_
+
 If you are using Mythweb, you should make sure you've installed it with the option to use it alongside other websites. If you want to check this, do
 
     sudo dpkg-reconfigure mythweb
@@ -134,9 +136,7 @@ Now symlink that file so that Apache can find it
 
     sudo ln -s /PATH/TO/ROMPRCONF /etc/apache2/sites-enabled/rompr.conf
 
-### Create mysql database (optional)
-
-You don't need to create a mysql database. Rompr will default to an SQLite database, which requires no setup. If you are already running a mysql server anyway - as I was on my mythbuntu setup - then you can use it for your Rompr database as follows:
+### Create mysql database
 
 Now we'll create the mysql database for RompЯ. You will need to know your mysql root password. If you've installed the standard mythbuntu install, this will be your login password.
 

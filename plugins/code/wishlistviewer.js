@@ -117,13 +117,21 @@ var wishlistViewer = function() {
 	}
 
 	function loadWishlist(display) {
-        $("#wishlistlist").load("albums.php?wishlist=1", function() {
-            if (display) {
+        $("#wishlistlist").load("albums.php?wishlist=1&sortby="+prefs.sortwishlistby, function() {
+			$('[name="sortwishlistby"][value="'+prefs.sortwishlistby+'"]').prop('checked', true);
+			$('[name="sortwishlistby"]').on('click', reloadWishlist);
+			infobar.markCurrentTrack();
+            if (display && !wlv.is(':visible')) {
 	            wlv.slideToggle('fast', function() {
 		        	browser.goToPlugin("wlv");
 	            });
 	        }
         });
+	}
+	
+	function reloadWishlist() {
+		prefs.save({sortwishlistby: $('[name="sortwishlistby"]:checked').val()});
+		loadWishlist(false);
 	}
 
 	return {
@@ -170,13 +178,14 @@ var wishlistViewer = function() {
 			var element = $('.wlsch_'+data.reqid);
 			var trackDiv = element.parent().parent();
 			var html;
+			var choicesDiv;
 			if (data.uri) {
 				temphtml = trawler.trackHtml(data, false);
 				if (results.length > 1) {
 					temphtml += '<br /><span class="clickicon tiny plugclickable dropchoices infoclick" name="'+data.key+'"> '+
 								language.gettext("label_moreresults", [(results.length - 1)]) +
 								'</span>';
-					var choicesDiv = $('<div>', {id: 'wlchoices_'+data.key, class: "invisible ninesix indent padright getridof"}).appendTo(trackDiv);
+					choicesDiv = $('<div>', {id: 'wlchoices_'+data.key, class: "invisible ninesix indent padright"});
 					for (var i = 1; i < results.length; i++) {
 						choicesDiv.append('<div class="backhi plugclickable infoclick choosenew" name="'+i+'" style="margin-bottom:4px">'+
 											trawler.trackHtml(results[i], false))+'</div>';
@@ -186,7 +195,10 @@ var wishlistViewer = function() {
 			} else {
 				html = '<div id="wltrackfound'+data.key+'" class="expand invisible"><b><i>'+language.gettext("label_notfound")+'</i></b></div>';
 			}
-			element.prev().append(html);
+			trackDiv.append(html);
+			if (choicesDiv) {
+				trackDiv.append(choicesDiv);
+			}
 			element.removeClass('wlsch_'+data.reqid).stopSpinner().remove();
 			trackDiv.find('.invisible').first().fadeIn('fast');
 
