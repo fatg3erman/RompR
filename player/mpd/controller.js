@@ -539,6 +539,10 @@ function playerController() {
     }
 
     this.search = function(command) {
+        if (player.updatingcollection) {
+            infobar.notify(infobar.NOTIFY,"Cannot Search while updating collection");
+            return false;
+        }
         var terms = {};
         var termcount = 0;
         lastsearchcmd = command;
@@ -601,6 +605,10 @@ function playerController() {
     }
 
     this.rawsearch = function(terms, sources, exact, callback, checkdb) {
+        if (player.updatingcollection) {
+            infobar.notify(infobar.NOTIFY,"Cannot Search while updating collection");
+            callback([]);
+        }
         $.ajax({
                 type: "POST",
                 url: "albums.php",

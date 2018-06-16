@@ -234,20 +234,24 @@ var dbQueue = function() {
 	var queue = new Array();
 	var throttle = null;
 	var cleanuptimer = null;
+	var cleanuprequired = false;
+	
+	// Cleanup cleans the database but it also updates the track stats
+	var actions_requiring_cleanup = [
+		'add', 'set', 'remove', 'amendalbum', 'deletetag', 'delete', 'deletewl', 'clearwishlist'
+	];
 	
 	return {
 
 		request: function(data, success, fail) {
 
-			request: function(data, success, fail) {
+			queue.push( {flag: false, data: data, success: success, fail: fail } );
+			debug.trace("DB QUEUE","New request",data);
+			if (throttle == null && queue.length == 1) {
+				dbQueue.dorequest();
+			}
 
-				queue.push( {flag: false, data: data, success: success, fail: fail } );
-				debug.trace("DB QUEUE","New request",data);
-				if (throttle == null && queue.length == 1) {
-					dbQueue.dorequest();
-				}
-
-			},
+		},
 
 		queuelength: function() {
 			return queue.length;
@@ -256,9 +260,10 @@ var dbQueue = function() {
 		dorequest: function() {
 
 			clearTimeout(throttle);
+			clearTimeout(cleanuptimer);
 			var req = queue[0];
 
-			if (player.updatingcollection) {
+			if (req && player.updatingcollection) {
 				debug.log("DB QUEUE","Deferring",req.data[0].action,"request because collection is being updated");
 				throttle = setTimeout(dbQueue.dorequest, 1000);
 			} else {
@@ -277,6 +282,12 @@ var dbQueue = function() {
 				        success: function(data) {
 							req = queue.shift();
 				        	debug.trace("DB QUEUE","Request Success",req,data);
+							for (var i in req.data) {
+								if (actions_requiring_cleanup.indexOf(req.data[i].action) > -1) {
+									debug.log("DB QUEUE","Setting cleanup flag for",req.data[i].action,"request");
+									cleanuprequired = true;
+								}
+							}
 				        	if (req.success) {
 				        		req.success(data);
 				        	}
@@ -299,21 +310,21 @@ var dbQueue = function() {
 		},
 
 		doCleanup: function() {
-			debug.log("DB QUEUE", "Doing backend Cleanup");
 			// We do these out-of-band to improve the responsiveness of the GUI.
-			$.ajax({
-				url: "backends/sql/userRatings.php",
-				type: "POST",
-				data: JSON.stringify([{action: 'cleanup'}]),
-				dataType: 'json',
-				success: function(data) {
-					collectionHelper.updateCollectionDisplay(data);
-				},
-				error: function(data) {
-					debug.fail("DB QUEUE","Cleanup Failed");
-				}
-			});
-			
+			clearTimeout(cleanuptimer);
+			if (cleanuprequired) {
+				debug.log("DB QUEUE", "Doing backend Cleanup");
+				dbQueue.request([{action: 'cleanup'}], dbQueue.cleanupComplete, dbQueue.cleanupFailed);
+			}
+		},
+		
+		cleanupComplete: function(data) {
+			collectionHelper.updateCollectionDisplay(data);
+			cleanuprequired = false;
+		},
+		
+		cleanupFailed: function(data) {
+			debug.fail("DB QUEUE","Cleanup Failed");
 		}
 		
 	}

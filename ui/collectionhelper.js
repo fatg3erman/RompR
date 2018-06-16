@@ -6,7 +6,6 @@ var collectionHelper = function() {
     var update_load_timer_running = false;
     var returned_data = new Array();
     var update_timer = null;
-    // For testing only
     var collection_load_timeout = 3600000;
 
     function scanFiles(cmd) {
@@ -55,15 +54,18 @@ var collectionHelper = function() {
                 success: function(data) {
                     clearTimeout(monitortimer);
                     $("#collection").html(data);
+                    player.collectionLoaded = true;
+                    player.updatingcollection = false;
                     if ($('#emptycollection').length > 0) {
+                        player.collection_is_empty = true;
                         if (!$('#collectionbuttons').is(':visible')) {
                             toggleCollectionButtons();
                         }
                         $('[name="donkeykong"]').makeFlasher({flashtime: 0.5, repeats: 3});
+                    } else {
+                        player.collection_is_empty = false;
                     }
                     data = null;
-                    player.collectionLoaded = true;
-                    player.updatingcollection = false;
                     if (albums.match(/rebuild/)) {
                         infobar.notify(infobar.NOTIFY,"Music Collection Updated");
                         collectionHelper.scootTheAlbums($("#collection"));
@@ -203,10 +205,12 @@ var collectionHelper = function() {
         
         disableCollectionUpdates: function() {
             $('button[name="donkeykong"]').unbind('click').css('opacity', '0.2');
+            $('button[name="dinkeyking"]').unbind('click').css('opacity', '0.2');
         },
         
         enableCollectionUpdates: function() {
             $('button[name="donkeykong"]').unbind('click').bind('click', function() { collectionHelper.checkCollection(true, false) }).css('opacity', '');
+            $('button[name="dinkeyking"]').unbind('click').bind('click', function() { collectionHelper.checkCollection(true, false) }).css('opacity', '');
         },
 
         forceCollectionReload: function() {

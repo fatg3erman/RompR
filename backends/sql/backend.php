@@ -1547,9 +1547,8 @@ function create_foundtracks() {
 
 function remove_cruft() {
     debuglog("Removing orphaned albums","MYSQL",6);
-    // NOTE - the Albumindex IS NOT NULL is essential - if any albumindex is NULL the entire () expression returns NULL
 	$t = microtime(true);
-    generic_sql_query("DELETE FROM Albumtable WHERE Albumindex NOT IN (SELECT DISTINCT Albumindex FROM Tracktable WHERE Albumindex IS NOT NULL)", true);
+    generic_sql_query("DELETE FROM Albumtable WHERE Albumindex NOT IN (SELECT DISTINCT Albumindex FROM Tracktable)", true);
 	$at = microtime(true) - $t;
 	debuglog(" -- Removing orphaned albums took ".$at." seconds","BACKEND",6);
 
