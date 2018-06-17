@@ -30,4 +30,4 @@ var aboutRompr = function() {
 
 }();
 
-pluginManager.addPlugin(language.gettext("button_about"), aboutRompr.open, null, null, 'icon-info-circled');
+pluginManager.addPlugin(language.gettext("button_about"), aboutRompr.open, null, null, true);

@@ -2,7 +2,7 @@
 <?php
 print "var skin = '".$skin."';\n";
 print "var small_plugin_icons = '".$small_plugin_icons."';\n";
-print "var only_plugins_with_icons = '".$only_plugins_with_icons."';\n";
+print "var only_plugins_on_menu = '".$only_plugins_on_menu."';\n";
 if ($prefs['dev_mode']) {
     // This adds an extra parameter to the version number - the short
     // hash of the most recent git commit. It's for use in testing,

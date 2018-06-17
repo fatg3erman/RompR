@@ -183,4 +183,4 @@ var alarm = function() {
 
 }();
 
-pluginManager.addPlugin("Alarm Clock", null, alarm.setup, null, null);
+pluginManager.addPlugin("Alarm Clock", null, alarm.setup, null, false);

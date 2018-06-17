@@ -635,7 +635,8 @@ $languages['en'] = array (
 	"config_google_credentials" => "Google API Credentials",
 	"config_read_the_docs" => "Please Read The Documentation",
 	"label_dateadded" => "Date Added",
-	"label_radiostation" => "Radio Station"
+	"label_radiostation" => "Radio Station",
+	"label_opmlimporter" => "OPML Importer"
 
 );
 

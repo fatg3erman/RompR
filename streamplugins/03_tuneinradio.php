@@ -68,7 +68,7 @@ function parse_tree($node, $title) {
 
     foreach ($node->outline as $o) {
         $att = $o->attributes();
-        debuglog("  Text is ".$att['text'].", type is ".$att['type']);
+        debuglog("  Text is ".$att['text'].", type is ".$att['type'], "TUNEIN");
         switch ($att['type']) {
             
             case '':

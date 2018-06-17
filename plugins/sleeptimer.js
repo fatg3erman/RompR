@@ -136,4 +136,4 @@ var sleepTimer = function() {
 
 }();
 
-pluginManager.addPlugin("Sleep Timer", null, sleepTimer.setup, null, null);
+pluginManager.addPlugin("Sleep Timer", null, sleepTimer.setup, null, false);

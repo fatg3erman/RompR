@@ -11,6 +11,7 @@ if (array_key_exists('populate', $_REQUEST)) {
     include( "skins/".$skin."/ui_elements.php");
     include("utils/phpQuery.php");
     connect_to_database();
+    set_error_handler('handle_error', E_ALL);
     $subflag = 1;
     $dtz = ini_get('date.timezone');
     if (!$dtz) {
@@ -95,6 +96,12 @@ function doPodcastList($subscribed) {
         doPodcastHeader($obj);
     }
 
+}
+
+function handle_error($errno, $errstr, $errfile, $errline) {
+    debuglog("Error ".$errno." ".$errstr." in ".$errfile." at line ".$errline,"PODCASTS");
+    header('HTTP/1.1 400 Bad Request');
+    exit(0);
 }
 
 ?>
