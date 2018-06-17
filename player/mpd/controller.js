@@ -349,7 +349,7 @@ function playerController() {
 	}
 
 	this.stop = function() {
-        self.do_command_list([["stop"]], self.onStop );
+        self.do_command_list([["stop"]], self.onStop);
 	}
 
 	this.next = function() {

@@ -1034,11 +1034,7 @@ var playlist = function() {
                 lookforcurrenttrack = backendid;
                 return;
             }
-
-            if (currentTrack.type == 'podcast') {
-                debug.log("PLAYLIST","Here we could set the progress in the database!",currentTrack.progress);
-            }
-
+            var force = (currentTrack.backendid == -1) ? true : false;
             lookforcurrenttrack = false;
             if (backendid != currentTrack.backendid) {
                 debug.log("PLAYLIST","Looking For Current Track",backendid);
@@ -1059,7 +1055,7 @@ var playlist = function() {
                     currentTrack = emptyTrack;
                 }
                 playlist.radioManager.repopulate();
-                nowplaying.newTrack(currentTrack, false);
+                nowplaying.newTrack(currentTrack, force);
             }
             playlist.doUpcomingCrap();
             clearTimeout(pscrolltimer);
