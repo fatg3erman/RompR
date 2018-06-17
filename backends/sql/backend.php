@@ -282,43 +282,39 @@ function list_tags() {
 
 function get_rating_headers($sortby) {
 		
+	$ratings = array();
+		
 	switch ($sortby) {
 		
 		case 'Rating':
-			$ratings = array('1','2','3','4','5');
+			$ratings = generic_sql_query("SELECT Rating AS Name, COUNT(TTindex) AS NumTracks FROM Ratingtable GROUP BY Rating ORDER BY Rating");
 			break;
 			
 		case 'Tag':
-			$ratings = sql_get_column('SELECT Name from Tagtable ORDER BY Name', 'Name');
+			$ratings = generic_sql_query('SELECT Name, COUNT(TTindex) AS NumTracks FROM Tagtable JOIN TagListtable USING (Tagindex) GROUP BY Name ORDER BY Name');
 			break;
 			
 		case 'AlbumArtist':
 			// It's actually Track Artist, but sod changing it now.
-			$qstring = "SELECT DISTINCT Artistname
+			$qstring = "SELECT DISTINCT Artistname AS Name, COUNT(DISTINCT TTindex) AS NumTracks
 						FROM
 						Artisttable AS a JOIN Tracktable AS tt USING (Artistindex)
 						LEFT JOIN Ratingtable USING (TTindex)
 						LEFT JOIN `TagListtable` USING (TTindex)
 						LEFT JOIN Tagtable AS t USING (Tagindex)
-						WHERE Uri IS NOT NULL and Hidden = 0 AND isSearchResult < 2 AND (Rating IS NOT NULL OR t.Name IS NOT NULL)
-						GROUP BY TTindex
+						WHERE Hidden = 0 AND isSearchResult < 2 AND (Rating IS NOT NULL OR t.Name IS NOT NULL)
+						GROUP BY Artistname
 						ORDER BY ";
 			$qstring .= sort_artists_by_name();
-			$ratings = sql_get_column($qstring, 'Artistname');
+			$ratings = generic_sql_query($qstring);
 			break;
 			
 		case 'Tags':
-			// This might seem a faff but we need a TagListtable sorted by Tag name otherwise we get
-			// results like Taga,Tagb and Tagb,Taga
-			generic_sql_query("DROP TABLE IF EXISTS tagorder");
-			generic_sql_query("CREATE TEMPORARY TABLE tagorder(Tagindex INTEGER, TTindex INTEGER)");
-			generic_sql_query("INSERT INTO tagorder (Tagindex, TTindex)  SELECT Tagindex, TTindex FROM TagListtable ORDER BY Tagindex");
-			$ratings = sql_get_column("SELECT DISTINCT ".SQL_TAG_CONCAT." AS Tags FROM
-										Tagtable AS t
-										JOIN tagorder USING (Tagindex)
-										GROUP BY TTindex
-										ORDER By Tags", "Tags");
-				
+			$ratings = generic_sql_query("SELECT DISTINCT ".SQL_TAG_CONCAT." AS Name, 0 AS NumTracks FROM
+											(SELECT Tagindex, TTindex FROM TagListtable ORDER BY Tagindex) AS tagorder
+											JOIN Tagtable AS t USING (Tagindex)
+											GROUP BY TTindex
+											ORDER By Name");
 			break;
 			
 		default:
@@ -377,7 +373,7 @@ function get_rating_info($sortby, $value) {
 					JOIN Albumtable AS al USING (Albumindex)
 					JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-				WHERE r.Rating = ".$value." AND tr.Uri IS NOT NULL AND tr.isSearchResult < 2";
+				WHERE r.Rating = ".$value." AND tr.isSearchResult < 2";
 				break;
 				
 			case 'Tag':
@@ -429,7 +425,7 @@ function get_rating_info($sortby, $value) {
 			 		JOIN Albumtable AS al USING (Albumindex)
 			 		JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 			 		JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL) AND tr.isSearchResult < 2 AND tr.Uri IS NOT NULL AND a.Artistname = '".$value."'";
+			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL) AND tr.isSearchResult < 2 AND a.Artistname = '".$value."'";
 				break;
 				
 			case 'Tags':
@@ -462,7 +458,7 @@ function get_rating_info($sortby, $value) {
 						$tags[$i] = "tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name='".$t."')";
 					}
 					$qstring .= implode(' AND ', $tags);
-					$qstring .= " AND tr.Uri IS NOT NULL AND tr.isSearchResult < 2";
+					$qstring .= " AND tr.isSearchResult < 2";
 					break;
 	}
 	
