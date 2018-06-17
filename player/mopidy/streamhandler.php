@@ -68,7 +68,7 @@ function check_radio_and_podcasts($filedata) {
             '',
             ($obj->albumartist == '') ? $filedata['AlbumArtist'] : array($obj->albumartist),
             null,
-            format_text($obj->comment),
+            format_text(fixup_links($obj->comment)),
             null
         );
     }

@@ -557,11 +557,7 @@ function format_episode(&$y, &$item, $pm) {
     if ($y->DisplayMode == DISPLAYMODE_DOWNLOADED && $item->Downloaded == 0) {
         return;
     }
-    if ($item->Downloaded == 1 && $y->Version > 1) {
-        print '<div class="clickable clicktrack item podcastitem draggable" name="'.get_base_url().'/prefs/podcasts/'.$y->PODindex.'/'.$item->PODTrackindex.'/'.$item->Localfilename.'">';
-    } else {
-        print '<div class="clickable clicktrack item podcastitem draggable" name="'.$item->Link.'">';
-    }
+    print '<div class="item podcastitem">';
     print '<div class="containerbox">';
     if ($y->Subscribed == 1) {
         if ($item->New == 1) {
@@ -572,7 +568,11 @@ function format_episode(&$y, &$item, $pm) {
                 '" class="icon-unlistened fixed oldpodicon fridge"></i>';
         }
     }
-    print '<div class="podtitle expand">'.htmlspecialchars(html_entity_decode($item->Title)).'</div></div>';
+    if ($item->Downloaded == 1 && $y->Version > 1) {
+        print '<div class="clickable clicktrack podtitle expand draggable" name="'.get_base_url().'/prefs/podcasts/'.$y->PODindex.'/'.$item->PODTrackindex.'/'.$item->Localfilename.'">'.htmlspecialchars(html_entity_decode($item->Title)).'</div></div>';
+    } else {
+        print '<div class="clickable clicktrack podtitle expand draggable" name="'.$item->Link.'">'.htmlspecialchars(html_entity_decode($item->Title)).'</div></div>';
+    }
     $pee = date(DATE_RFC2822, $item->PubDate);
     $pee = preg_replace('/ \+\d\d\d\d$/','',$pee);
     print '<div class="whatdoicallthis padright containerbox menuitem notbold">';
@@ -620,10 +620,6 @@ function format_episode(&$y, &$item, $pm) {
         print '</div>';
     }
     print '</div>';
-}
-
-function fixup_links($s) {
-    return preg_replace('/(^|\s+|\n|[^\s+"])(https*:\/\/.*?)(<|\n|\r|\s|\)|$|[<|\n|\r|\s|\)|$])/', '$1<a href="$2">$2</a>$3', $s);
 }
 
 function doPodcastHeader($y) {
