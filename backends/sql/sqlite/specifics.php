@@ -45,6 +45,7 @@ function check_sql_tables() {
 		"Hidden TINYINT(1) DEFAULT 0, ".
 		"DateAdded TIMESTAMP DEFAULT CURRENT_TIMESTAMP, ".
 		"isSearchResult TINYINT(1) DEFAULT 0, ".
+		"Sourceindex INTEGER DEFAULT NULL, ".
 		"justAdded TINYINT(1) DEFAULT 1)", true))
 	{
 		debuglog("  Tracktable OK","SQLITE_CONNECT");

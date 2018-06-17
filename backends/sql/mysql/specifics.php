@@ -49,6 +49,7 @@ function check_sql_tables() {
 		"DateAdded TIMESTAMP DEFAULT CURRENT_TIMESTAMP, ".
 		"isSearchResult TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"justAdded TINYINT(1) UNSIGNED DEFAULT 1, ".
+		"Sourceindex INT UNSIGNED DEFAULT NULL, ".
 		"INDEX(Albumindex), ".
 		"INDEX(Title), ".
 		"INDEX(TrackNo)) ENGINE=InnoDB", true))
