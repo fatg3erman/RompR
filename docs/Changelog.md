@@ -15,6 +15,8 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Make podcast search work again. iTunes is sending feedURI or feedUri in its output, which is stupid
 * Fix bug where adding directories to the queue did not work
 * Stop enabling consume when CD Player Mode is on
+* [OPML Importer](https://fatg3erman.github.io/RompR/OPML-Importer)
+* Remove mopidy-scan as most distros don't permit setuid on shell scripts :(
 
 ## Version 1.15.5
 
@@ -27,7 +29,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 
 ## Version 1.14
 
-* Added [Skypotato Skin](/RompR/Skypotato-Skin)
+* Added [Skypotato Skin](https://fatg3erman.github.io/RompR/Skypotato-Skin)
 * Made the Phone skin more 'touchy'. The old phone skin is now called 'Tablet'
 * A couple of new UI themes
 * Removed the Inconfont icon theme. It was getting too difficult to maintain and didn't really fit in well with the design of the UI.
@@ -37,10 +39,10 @@ Note that some versions listed here may be unreleased, I use version number incr
 * 'Local and National Radio' now uses the Dirble radio directory, as the old listenlive links had stopped working for people outside Europe
 * Added TuneIn Radio Directory browser, as Dirble doesn't seem very reliable.
 * Cleaned up IceCast Radio panel so it now follows the style of the main UI, instead of being simply a modded version of the xiph.org directory web page.
-* Added [romonitor](/RompR/Mobile-Devices) so playcounts still get updated while mobile devices sleep
-* Added [mopidy_scan](/RompR/Rompr-And_Mopidy#scanning-local-files) so Mopidy local files can be scanned without having to do it manually
+* Added [romonitor](https://fatg3erman.github.io/RompR/Mobile-Devices) so playcounts still get updated while mobile devices sleep
+* Added mopidy-scan so Mopidy local files can be scanned without having to do it manually
 * Local Album Art embedded in Music Files can now be accessed, thanks to an updated getid3.
-* When downloading Album Art automatically, Google images will now be used if nothing can be found elsewhere. However, all Google operations now require you to supply your own [API Key](/RompR/Album-Art-Manager#using-google-images-to-find-album-art)
+* When downloading Album Art automatically, Google images will now be used if nothing can be found elsewhere. However, all Google operations now require you to supply your own [API Key](https://fatg3erman.github.io/RompR/Album-Art-Manager#using-google-images-to-find-album-art)
 * Updated German Translation from Frank Schraven
 * Added help links to many of the UI elements, leading directly to these docs
 * Many, many other tweaks and bugfixes. Almost all the code has been looked at and tweaked.
