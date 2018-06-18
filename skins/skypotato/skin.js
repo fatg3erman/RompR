@@ -151,6 +151,10 @@ jQuery.fn.animatePanel = function(options) {
     this.css('width', settings[panel]+'%');
 }
 
+function showHistory() {
+    
+}
+
 var layoutProcessor = function() {
 
     var my_scrollers = [ "#sources", "#infopane", ".topdropmenu", ".drop-box" ];
