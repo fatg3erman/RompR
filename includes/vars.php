@@ -149,7 +149,8 @@ $prefs = array(
     "sleeptime" => 30,
     "sleepon" => false,
     "advanced_search_open" => false,
-    "sortwishlistby" => 'artist'
+    "sortwishlistby" => 'artist',
+    "player_in_titlebar" => false
 );
 
 // Prefs that should not be exposed to the browser for security reasons

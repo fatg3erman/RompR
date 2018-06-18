@@ -86,6 +86,20 @@ foreach($themes as $theme) {
 }
 print '</select></div></div>';
 
+// Players
+print '<div class="textcentre configtitle"><b>'.get_int_text('config_players').'</b></div>';
+print '<div class="fullwidth">';
+print '<div class="clearfix">';
+print '<div class="pref styledinputs tleft" id="playerdefs">';
+print '</div>';
+print '<div class="pref tright"><button onclick="player.defs.edit()">'.get_int_text('button_edit_players').'</button></div>';
+print '</div>';
+print '<div class="pref styledinputs">
+<input class="autoset toggle" type="checkbox" id="player_in_titlebar">
+<label for="player_in_titlebar">'.get_int_text('config_playerintitlebar').'</label>
+</div>';
+print '</div>';
+
 // Sources Panel Hiding
 print '<div class="textcentre configtitle"><b>'.get_int_text('settings_panels').'</b></div>';
 print '<div class="pref styledinputs">
@@ -224,14 +238,6 @@ print '<div class="pref"><b>Google API Key</b>
 <input class="saveotron prefinput" id="google_api_key" type="text" size="120" /></div>
 <div class="pref"><b>Google Search Engine ID</b>
 <input class="saveotron prefinput" id="google_search_engine_id" type="text" size="120" /></div>';
-
-// Players
-print '<div class="textcentre configtitle"><b>'.get_int_text('config_players').'</b></div>';
-print '<div class="clearfix">';
-print '<div class="pref styledinputs tleft" id="playerdefs">';
-print '</div>';
-print '<div class="pref tright"><button onclick="player.defs.edit()">'.get_int_text('button_edit_players').'</button></div>';
-print '</div>';
 
 // Last.FM
 print '<div class="textcentre configtitle">

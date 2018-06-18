@@ -59,7 +59,8 @@ var prefs = function() {
         "advanced_search_open",
         "mopidy_radio_domains",
         "tradsearch",
-        "sortwishlistby"
+        "sortwishlistby",
+        "player_in_titlebar"
     ];
     
     const cookiePrefs = [
@@ -272,6 +273,10 @@ var prefs = function() {
 
                 case "sleepon":
                     callback = sleepTimer.toggle;
+                    break;
+                    
+                case 'player_in_titlebar':
+                    callback = infobar.forceTitleUpdate;
                     break;
 
             }

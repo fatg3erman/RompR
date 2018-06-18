@@ -722,3 +722,9 @@ function spotifyTrackListing(data) {
     }
     return h;
 }
+
+function setWindowTitle(t) {
+    if (document.title != t) {
+        document.title = t;
+    }
+}

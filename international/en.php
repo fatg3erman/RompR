@@ -636,7 +636,8 @@ $languages['en'] = array (
 	"config_read_the_docs" => "Please Read The Documentation",
 	"label_dateadded" => "Date Added",
 	"label_radiostation" => "Radio Station",
-	"label_opmlimporter" => "OPML Importer"
+	"label_opmlimporter" => "OPML Importer",
+	"config_playerintitlebar" => "Show Player Name in Titlebar"
 
 );
 

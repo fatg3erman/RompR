@@ -58,7 +58,7 @@ var infobar = function() {
 
     function setTheText(info) {
         var stuff = mungeTrackInfo(info);
-        document.title = stuff.doctitle;
+        setWindowTitle(stuff.doctitle);
         npinfo = stuff.textbits
         debug.log("INFOBAR","Now Playing Info",npinfo);
         infobar.biggerize(2);
@@ -112,6 +112,9 @@ var infobar = function() {
             npinfo.album = info.album;
         }
         npinfo.stream = info.stream;
+        if (prefs.player_in_titlebar) {
+            doctitle = prefs.currenthost+' - RompЯ';
+        }
 
         return {doctitle: doctitle, textbits: npinfo};
 
@@ -510,6 +513,10 @@ var infobar = function() {
                 $('[name="'+rawurlencode(trackinfo.location)+'"]:not(.playlistcurrentitem)').addClass('playlistcurrentitem');
                 $('[name="'+trackinfo.location+'"]:not(.playlistcurrentitem)').addClass('playlistcurrentitem');
             }
+        },
+        
+        forceTitleUpdate: function() {
+            setTheText(trackinfo);
         },
 
         setNowPlayingInfo: function(info) {

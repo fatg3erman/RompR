@@ -49,16 +49,10 @@ If none of this works, you will have to use 'Update Music Collection Now' on all
 All that was rather complicated, so here's an example setup.
 
 * One computer in room 1, running Mopidy and RompЯ.
-    * Mopidy is configured to use mopidy-local-sqlite.
     * Music is stored on an external USB drive which is mounted on /media/USBDrive.
-    * Mopidy Local Scanning is [configured](/RompR/Rompr-And-Mopidy#scanning-local-files).
     * /media/USBDrive is shared on the network
-    * Mopidy's data directory is shared on the network
     
 * Another computer in room 2, running Mopidy
-    * Mopidy is configured to use mopidy-local-sqlite.
-    * The shared Mopidy data directory above is mounted at, say, /media/Mopidydata
-    * Mopidy's [data_dir config item](https://docs.mopidy.com/en/latest/config/) is set to /media/Mopidydata
     * The shared /media/USBDrive from above is mounted on /media/USBDrive
     
-With this configuration, all your data is kept in sync. Further players can simply copy room 2. You will only need to update the collection on room 1.
+With this configuration, all your data is kept in sync. Further players can simply copy room 2.
