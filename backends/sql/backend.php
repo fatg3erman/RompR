@@ -1272,7 +1272,10 @@ function find_podcast_track_from_url($url) {
 									Podcasttable.Artist AS albumartist,
 									Podcasttable.Image AS image
 									FROM PodcastTracktable JOIN Podcasttable USING (PODindex)
-									WHERE PodcastTracktable.Link=? OR PodcastTracktable.Localfilename=?",$url, $url);
+									WHERE PodcastTracktable.Link=?
+									OR PodcastTracktable.Localfilename=?",
+									$url,
+									preg_replace('#http://.*?/#', '/', $url));
 }
 
 //

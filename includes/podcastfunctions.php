@@ -558,7 +558,11 @@ function format_episode(&$y, &$item, $pm) {
         return;
     }
     print '<div class="item podcastitem">';
-    print '<div class="containerbox">';
+    if ($item->Downloaded == 1 && $y->Version > 1) {
+        print '<div class="containerbox clickable clicktrack draggable" name="'.get_base_url().$item->Localfilename.'">';
+    } else {
+        print '<div class="containerbox clickable clicktrack draggable" name="'.$item->Link.'">';
+    }
     if ($y->Subscribed == 1) {
         if ($item->New == 1) {
             print '<i title="'.get_int_text("podcast_tooltip_new").
@@ -568,11 +572,9 @@ function format_episode(&$y, &$item, $pm) {
                 '" class="icon-unlistened fixed oldpodicon fridge"></i>';
         }
     }
-    if ($item->Downloaded == 1 && $y->Version > 1) {
-        print '<div class="clickable clicktrack podtitle expand draggable" name="'.get_base_url().'/prefs/podcasts/'.$y->PODindex.'/'.$item->PODTrackindex.'/'.$item->Localfilename.'">'.htmlspecialchars(html_entity_decode($item->Title)).'</div></div>';
-    } else {
-        print '<div class="clickable clicktrack podtitle expand draggable" name="'.$item->Link.'">'.htmlspecialchars(html_entity_decode($item->Title)).'</div></div>';
-    }
+    print '<div class="podtitle expand">'.htmlspecialchars(html_entity_decode($item->Title)).'</div>';
+    print '<i class="fixed icon-no-response-playbutton newpodicon"></i>';
+    print '</div>';
     $pee = date(DATE_RFC2822, $item->PubDate);
     $pee = preg_replace('/ \+\d\d\d\d$/','',$pee);
     print '<div class="whatdoicallthis padright containerbox menuitem notbold">';
@@ -789,7 +791,7 @@ function downloadTrack($key, $channel) {
             system ('rm -fR prefs/podcasts/'.$channel.'/'.$key);
             return $channel;
         }
-        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?",1,$filename,$key);
+        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?", 1, '/prefs/podcasts/'.$channel.'/'.$key.'/'.$filename, $key);
     } else {
         debuglog('Failed to create directory prefs/podcasts/'.$channel.'/'.$key,"PODCASTS",2);
         return $channel;
