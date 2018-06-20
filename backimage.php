@@ -3,6 +3,10 @@ ob_start();
 include ("includes/vars.php");
 include ("includes/functions.php");
 
+foreach($_REQUEST as $i => $r) {
+	debuglog($i.' = '.$r,"BACKIMAGE");
+}
+
 $output = array();
 
 if (array_key_exists('getbackground', $_REQUEST)) {
