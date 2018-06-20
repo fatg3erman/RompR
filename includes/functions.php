@@ -545,6 +545,7 @@ function audioClass($filetype) {
         case "m4a":
         case "aac":
         case "aacplus":
+        case "aac+":
         case "aacp":
         case "audio/aac":
         case "audio/aacp":

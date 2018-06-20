@@ -60,7 +60,12 @@ var prefs = function() {
         "mopidy_radio_domains",
         "tradsearch",
         "sortwishlistby",
-        "player_in_titlebar"
+        "player_in_titlebar",
+        "communityradiocountry",
+    	"communityradiolanguage",
+    	"communityradiotag",
+    	"communityradiolistby",
+        "communityradioorderby"
     ];
     
     const cookiePrefs = [

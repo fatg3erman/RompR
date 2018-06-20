@@ -322,9 +322,17 @@ var uiHelper = function() {
             }
         },
         
-        fixupArtistDiv(jq, name) {
+        fixupArtistDiv: function(jq, name) {
             try {
                 return layoutProcessor.fixupArtistDiv(jq, name);
+            } catch (err) {
+                
+            }
+        },
+        
+        hackForSkinsThatModifyStuff: function(id) {
+            try {
+                return layoutProcessor.hackForSkinsThatModifyStuff(id);
             } catch (err) {
                 
             }

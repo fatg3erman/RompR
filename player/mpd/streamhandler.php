@@ -23,9 +23,6 @@ function preprocess_stream(&$filedata) {
         $filedata['Album'] = substr($filedata['file'], strrpos($filedata['file'], '#')+1, strlen($filedata['file']));
     }
 
-    if (preg_match('/^http:/', $filedata['X-AlbumImage'])) {
-        $image = "getRemoteImage.php?url=".$filedata['X-AlbumImage'];
-    }
 }
 
 function preprocess_soundcloud(&$filedata) {

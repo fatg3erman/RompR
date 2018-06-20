@@ -22,6 +22,11 @@ var clickRegistry = function() {
                 $(clickHandlers[i].source).unbind('click');
                 $(clickHandlers[i].source).unbind('dblclick');
             }
+        },
+        
+        reset: function() {
+            clickRegistry.unbindClicks();
+            clickRegistry.bindClicks();
         }
     }
 }();

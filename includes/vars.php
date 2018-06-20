@@ -150,7 +150,13 @@ $prefs = array(
     "sleepon" => false,
     "advanced_search_open" => false,
     "sortwishlistby" => 'artist',
-    "player_in_titlebar" => false
+    "player_in_titlebar" => false,
+    "communityradiocountry" => 'united kingdom',
+	"communityradiolanguage" => '',
+	"communityradiotag" => '',
+	"communityradiolistby" => 'country',
+    "communityradioorderby" => 'name',
+    
 );
 
 // Prefs that should not be exposed to the browser for security reasons

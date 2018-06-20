@@ -109,14 +109,14 @@ function doNewPlaylistFile(&$filedata) {
             "iscomposer" => 'false',
             "artists" => array(),
             "album" => array(
-                "name" => $filedata['Album'],
-                "artist" => $albumartist,
-                "musicbrainz_id" => $filedata['MUSICBRAINZ_ALBUMID'],
+                "name" => trim($filedata['Album']),
+                "artist" => trim($albumartist),
+                "musicbrainz_id" => trim($filedata['MUSICBRAINZ_ALBUMID']),
                 "uri" => $filedata['X-AlbumUri']
             ),
             "track" => array(
-                "name" => $filedata['Title'],
-                "musicbrainz_id" => $filedata['MUSICBRAINZ_TRACKID'],
+                "name" => trim($filedata['Title']),
+                "musicbrainz_id" => trim($filedata['MUSICBRAINZ_TRACKID']),
             ),
         )
     );
@@ -198,7 +198,7 @@ function do_composers(&$filedata, &$info) {
     }
     foreach ($filedata['Composer'] as $comp) {
         if (artist_not_found_yet($comp)) {
-            array_push($info['metadata']['artists'], array( "name" => $comp, "musicbrainz_id" => "", "type" => "composer", "ignore" => "false"));
+            array_push($info['metadata']['artists'], array( "name" => trim($comp), "musicbrainz_id" => "", "type" => "composer", "ignore" => "false"));
         }
     }
 }
@@ -222,7 +222,7 @@ function do_performers(&$filedata, &$info) {
         }
 
         if ($toremove !== null || artist_not_found_yet($comp)) {
-            array_push($info['metadata']['artists'], array( "name" => $comp, "musicbrainz_id" => "", "type" => "performer", "ignore" => "false"));
+            array_push($info['metadata']['artists'], array( "name" => trim($comp), "musicbrainz_id" => "", "type" => "performer", "ignore" => "false"));
         }
     }
 }
@@ -236,7 +236,7 @@ function do_albumartist(&$filedata, &$info, $albumartist) {
         $aartist = $albumartist;
     }
     if ($aartist !== null && artist_not_found_yet($aartist)) {
-        array_push($info['metadata']['artists'], array( "name" => $aartist, "musicbrainz_id" => $filedata['MUSICBRAINZ_ALBUMARTISTID'], "type" => "albumartist", "ignore" => "false"));
+        array_push($info['metadata']['artists'], array( "name" => trim($aartist), "musicbrainz_id" => trim($filedata['MUSICBRAINZ_ALBUMARTISTID']), "type" => "albumartist", "ignore" => "false"));
     }
 }
 
@@ -244,19 +244,32 @@ function do_track_artists(&$filedata, &$info) {
     if ($filedata['Artist'] == null) {
         return;
     }
-    $c = $filedata['Artist'];
-    if (!is_array($c)) {
-        $c = array($filedata['Artist']);
+    $artists = $filedata['Artist'];
+    if (!is_array($artists)) {
+        $artists = array($filedata['Artist']);
     }
-    $m = $filedata['MUSICBRAINZ_ARTISTID'];
-    while (count($m) < count($c)) {
-        $m[] = "";
+    $mbids = $filedata['MUSICBRAINZ_ARTISTID'];
+    if (count($mbids) > count($artists)) {
+        // More MBIDs that Artists. This might be one of those daft things where MBIDs are semicolon-separated
+        // but artists are comma-separated.
+        // You can even get artists = ['artist1, artist2', 'artist3']. Sigh. Hence the first implode.
+        $astring = implode(', ',$artists);
+        $newartists = explode(',', $astring);
+        if (count($newartists) == count($mbids)) {
+            debuglog("GETPLAYLIST","Trying splitting comma-separated artist string",8);
+            // In case AlbumArtist has that format too
+            artist_not_found_yet($astring);
+            $artists = $newartists;
+        }
+    }
+    while (count($mbids) < count($artists)) {
+        $mbids[] = "";
     }
     $a = array();
-    foreach ($c as $i => $comp) {
+    foreach ($artists as $i => $comp) {
         if ($comp != "") {
             if (artist_not_found_yet($comp)) {
-                array_push($info['metadata']['artists'], array( "name" => $comp, "musicbrainz_id" => $m[$i], "type" => "artist", "ignore" => "false"));
+                array_push($info['metadata']['artists'], array( "name" => trim($comp), "musicbrainz_id" => trim($mbids[$i]), "type" => "artist", "ignore" => "false"));
                 $a[] = $comp;
             }
         }

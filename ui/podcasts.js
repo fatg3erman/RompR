@@ -311,7 +311,7 @@ var podcasts = function() {
 	        var divid = null;
 	        debug.log("PODCASTS","Looking for podcast",file,p.length);
 	        if (p.length == 1) {
-	            divid = p.parent().attr("id");
+	            divid = p.parent().parent().attr("id");
 	            debug.log("PODCASTS", "We just listened to an episode from podcast",divid);
 	        }
             $.ajax( {

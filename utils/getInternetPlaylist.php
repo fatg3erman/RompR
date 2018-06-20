@@ -36,9 +36,6 @@ function download_internet_playlist($url, $image, $station) {
 	debuglog("  url : ".$url,"RADIO_PLAYLIST");
 	debuglog("  station : ".$station,"RADIO_PLAYLIST");
 	debuglog("  image : ".$image,"RADIO_PLAYLIST");
-	if (preg_match('/^http/', $image)) {
-		$image = 'getRemoteImage.php?url='.$image;
-	}
 
 	if ($url) {
 
@@ -90,6 +87,16 @@ function download_internet_playlist($url, $image, $station) {
 			$type = pathinfo($path, PATHINFO_EXTENSION);
 			$qpos = strpos($type, "?");
 		  	if ($qpos != false) $type = substr($type, 0, $qpos);
+			debuglog("Playlist Type From URL is ".$type,"RADIO_PLAYLIST");
+		}
+
+		if (($type == "" || $type == null) && preg_match('#www.radio-browser.info/webservice/v2/m3u#', $url)) {
+			$type = 'm3u';
+			debuglog("Playlist Type From URL is ".$type,"RADIO_PLAYLIST");
+		}
+
+		if (($type == "" || $type == null) && preg_match('#www.radio-browser.info/webservice/v2/pls#', $url)) {
+			$type = 'pls';
 			debuglog("Playlist Type From URL is ".$type,"RADIO_PLAYLIST");
 		}
 

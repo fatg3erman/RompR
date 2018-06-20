@@ -37,7 +37,7 @@ var playlist = function() {
     }
 
     function filterMissingImages() {
-        if ($(this).prop("naturalHeight") === 0 && $(this).prop("naturalWidth") === 0) {
+        if ($(this).prop("naturalHeight") === 0 && $(this).prop("naturalWidth") === 0 && !$(this).attr('src').match(/\.svg\?version=/)) {
             return true;
         }
         return false;
@@ -792,12 +792,12 @@ var playlist = function() {
         checkImages: function() {
             if (prefs.downloadart) {
                 $.each($('#sortable').find("img").filter(filterImages), function() {
-                    debug.log("PLAYLIST","Getting Art For ",tracklist[$(this).parent().attr('romprname')]);
+                    debug.log("PLAYLIST","1. Getting Art For ",tracklist[$(this).parent().attr('romprname')]);
                     $(this).addClass("notexist");
                     tracklist[$(this).parent().attr('romprname')].getart();
                 });
                 $.each($('#sortable').find("img").filter(filterMissingImages), function() {
-                    debug.log("PLAYLIST","Getting Art For ",tracklist[$(this).parent().attr('romprname')]);
+                    debug.log("PLAYLIST","2. Getting Art For ",tracklist[$(this).parent().attr('romprname')], $(this).attr('src'));
                     var n = $(this).attr('name');
                     var rn = $(this).parent().attr('romprname');
                     $(this).replaceWith('<img class="smallcover fixed notexist" name="'+n+'" />');

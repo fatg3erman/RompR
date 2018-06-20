@@ -32,9 +32,6 @@ function preprocess_stream(&$filedata) {
         $filedata['type'] = "podcast";
     }
 
-    if (preg_match('/^http:/', $filedata['X-AlbumImage'])) {
-        $filedata['X-AlbumImage'] = "getRemoteImage.php?url=".$filedata['X-AlbumImage'];
-    }
 }
 
 function preprocess_soundcloud(&$filedata) {
