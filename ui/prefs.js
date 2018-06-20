@@ -65,7 +65,8 @@ var prefs = function() {
     	"communityradiolanguage",
     	"communityradiotag",
     	"communityradiolistby",
-        "communityradioorderby"
+        "communityradioorderby",
+        "browser_id"
     ];
     
     const cookiePrefs = [
@@ -170,6 +171,7 @@ var prefs = function() {
             if (prefs.icontheme == 'IconFont') {
                 prefs.icontheme = 'Colourful';
             }
+            
         },
 
         checkSet: function(key) {
@@ -425,10 +427,11 @@ var prefs = function() {
             $("#fontfamily").attr("href", "fonts/"+prefs.fontfamily+"?version="+t);
             $("#icontheme-theme").attr("href", "iconsets/"+prefs.icontheme+"/theme.css"+"?version="+t);
             $("#icontheme-adjustments").attr("href", "iconsets/"+prefs.icontheme+"/adjustments.css"+"?version="+t);
-            $.getJSON('backimage.php?getbackground='+theme, function(data) {
+            $.getJSON('backimage.php?getbackground='+theme+'&browser_id='+prefs.browser_id, function(data) {
                 if (data.image) {
                     debug.log("PREFS","Custom Background Image",data.image);
                     setCustombackground(data.image);
+                    $('input[name="thisbrowseronly"]').prop('checked', data.thisbrowseronly);
                 }
             });
             prefs.rgbs = null;
@@ -451,6 +454,7 @@ var prefs = function() {
         
         changeBackgroundImage: function() {
             $('[name="currbackground"]').val(prefs.theme);
+            $('[name="browser_id"]').val(prefs.browser_id);
             var formElement = document.getElementById('backimageform');
             var xhr = new XMLHttpRequest();
             xhr.open("POST", "backimage.php");
@@ -477,7 +481,7 @@ var prefs = function() {
         
         clearBgImage: function() {
             prefs.resetCustomBackground();
-            $.getJSON('backimage.php?clearbackground='+prefs.theme, function(data) {
+            $.getJSON('backimage.php?clearbackground='+prefs.theme+'&browser_id='+prefs.browser_id, function(data) {
                 $('[name=imagefile').val('');
             });
         },

@@ -76,6 +76,10 @@ $(document).ready(function(){
     }
     layoutProcessor.changeCollectionSortMode();
     layoutProcessor.sourceControl(prefs.chooser);
+    if (prefs.browser_id == null) {
+        prefs.save({browser_id: Date.now()});
+    }
+
 });
 
 function cleanBackendCache() {

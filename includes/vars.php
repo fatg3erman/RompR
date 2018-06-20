@@ -156,7 +156,7 @@ $prefs = array(
 	"communityradiotag" => '',
 	"communityradiolistby" => 'country',
     "communityradioorderby" => 'name',
-    
+    "browser_id" => null
 );
 
 // Prefs that should not be exposed to the browser for security reasons

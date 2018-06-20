@@ -36,7 +36,11 @@ print '<div id="custombackground" class="pref containerbox dropdown-container">
 <div class="selectholder-noselect">
 <form id="backimageform" action="backimage.php" method="post" enctype="multipart/form-data">
 <input type="hidden" name="currbackground" value="" />
+<input type="hidden" name="browser_id" value="" />
 <input type="file" name="imagefile" class="infowiki">
+<div class="pref styledinputs">
+<input type="checkbox" id="thisbrowseronly" name="thisbrowseronly" /><label for="thisbrowseronly">For this browser only</label>
+</div>
 <input type="button" onclick="prefs.changeBackgroundImage()" value="'.get_int_text('albumart_uploadbutton').'">
 <i class="icon-cancel-circled clickicon playlisticonr" onclick="prefs.clearBgImage()"></i>
 </form>

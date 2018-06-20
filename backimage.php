@@ -8,15 +8,28 @@ $output = array();
 if (array_key_exists('getbackground', $_REQUEST)) {
 
 	if (is_dir('prefs/userbackgrounds/'.$_REQUEST['getbackground'])) {
-		$f = glob('prefs/userbackgrounds/'.$_REQUEST['getbackground'].'/*.*');
-		if (count($f) > 0) {
-			$output = array('image' => $f[0]);
+		if (is_dir('prefs/userbackgrounds/'.$_REQUEST['getbackground'].'/'.$_REQUEST['browser_id'])) {
+			$f = glob('prefs/userbackgrounds/'.$_REQUEST['getbackground'].'/'.$_REQUEST['browser_id'].'/*.*');
+			if (count($f) > 0) {
+				debuglog("Custom Background exists for ".$_REQUEST['getbackground'].'/'.$_REQUEST['browser_id'].' : '.$f[0],"BACKIMAGE");
+				$output = array('image' => $f[0], 'thisbrowseronly' => true);
+			}
+		} else {
+			$f = glob('prefs/userbackgrounds/'.$_REQUEST['getbackground'].'/*.*');
+			if (count($f) > 0) {
+				debuglog("Custom Background exists for ".$_REQUEST['getbackground'].' : '.$f[0],"BACKIMAGE");
+				$output = array('image' => $f[0], 'thisbrowseronly' => false);
+			}
 		}
 	}
 } else if (array_key_exists('clearbackground', $_REQUEST)) {
 
 	if (is_dir('prefs/userbackgrounds/'.$_REQUEST['clearbackground'])) {
-		system('rm -rf prefs/userbackgrounds/'.$_REQUEST['clearbackground']);
+		if (is_dir('prefs/userbackgrounds/'.$_REQUEST['clearbackground'].'/'.$_REQUEST['browser_id'])) {
+			system('rm -rf prefs/userbackgrounds/'.$_REQUEST['clearbackground'].'/'.$_REQUEST['browser_id']);
+		} else {
+			system('rm prefs/userbackgrounds/'.$_REQUEST['clearbackground'].'/*.*');
+		}
 	}
 
 } else {
@@ -28,6 +41,9 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 
 	$file = $_FILES['imagefile']['name'];
 	$base = $_REQUEST['currbackground'];
+	if (array_key_exists('thisbrowseronly', $_REQUEST)) {
+		$base .= '/'.$_REQUEST['browser_id'];
+	}
 	$download_file = "";
 	$fname = basename($file);
 	$download_file = get_user_file($file, $fname, $_FILES['imagefile']['tmp_name']);
@@ -35,12 +51,12 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 	if (is_dir('prefs/userbackgrounds/'.$base)) {
 		system('rm prefs/userbackgrounds/'.$base.'/*.*');
 	} else {
-		system('mkdir prefs/userbackgrounds/'.$base);
+		system('mkdir -p prefs/userbackgrounds/'.$base);
 	}
-
+	
 	system('mv "'.$download_file.'" "prefs/userbackgrounds/'.$base.'/'.$fname.'"');
 
-	$output = array('image' => 'prefs/userbackgrounds/'.$base.'/'.$fname);
+	$output = array('image' => 'prefs/userbackgrounds/'.$base.'/'.$fname, 'thisbrowseronly' => array_key_exists('thisbrowseronly', $_REQUEST));
 
 }
 
