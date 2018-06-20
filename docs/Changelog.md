@@ -17,6 +17,9 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Stop enabling consume when CD Player Mode is on
 * [OPML Importer](https://fatg3erman.github.io/RompR/OPML-Importer)
 * Remove mopidy-scan as most distros don't permit setuid on shell scripts :(
+* [Community Radio Browser](https://fatg3erman.github.io/RompR/Internet Radio)
+* Custom Background Images can now be set for a specific browser instead of applying to everybody
+* Custom Background Images can now be set separately for portrait and landscape orientations
 
 ## Version 1.15.5
 
@@ -32,7 +35,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Added [Skypotato Skin](https://fatg3erman.github.io/RompR/Skypotato-Skin)
 * Made the Phone skin more 'touchy'. The old phone skin is now called 'Tablet'
 * A couple of new UI themes
-* Removed the Inconfont icon theme. It was getting too difficult to maintain and didn't really fit in well with the design of the UI.
+* Removed the Iconfont icon theme. It was getting too difficult to maintain and didn't really fit in well with the design of the UI.
 * Building the Music Collection now uses about 1/10th or less of the RAM it used to use.
 * Fixes for many Mopidy backends - Beets, Beetslocal, and GMusic now work properly again and you can build your collection using them
 * Made the Ratings and Tags Manager much faster.
