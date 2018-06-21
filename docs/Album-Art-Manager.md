@@ -23,6 +23,8 @@ First, go to the Configuration panel and enter the full path to your music in th
 
 Now when RompЯ searches for album art it will use your local images in preference. If you have lots of local images for an album the image selector will allow you to choose between them.
 
+_Note: this setting only works if you're using MPD, or Mopidy;s local backend. Other mopidy backends that play local files (eg beets) will not work_
+
 ### Archving Local Images
 
 Once you've downloaded all the art for your Collection, you can archive the images for your local files if you have set the path correctly as above. This is a manual step and requires a terminal open on the PC where your webserver runs.
