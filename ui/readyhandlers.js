@@ -13,7 +13,7 @@ $(document).ready(function(){
     player.controller.initialise();
     layoutProcessor.initialise();
     checkServerTimeOffset();
-    cleanBackendCache();
+    setTimeout(cleanBackendCache, 5000);
     if (prefs.country_userset == false) {
         // Have to pull this data in via the webserver as it's cross-domain
         // It's helpful and important to get the country code set, as many users won't see it
@@ -63,9 +63,6 @@ $(document).ready(function(){
     prefs.save({test_width: $(window).width(), test_height: $(window).height()});
     coverscraper = new coverScraper(0, false, false, prefs.downloadart);
     lastfm = new LastFM(prefs.lastfm_user);
-    // setTimeout(function() {
-    //     $('#scrobwrangler').rangechooser('setProgress', prefs.scrobblepercent);
-    // }, 2000);
     var helplinks = {};
     helplinks[language.gettext('button_local_music')] = 'https://fatg3erman.github.io/RompR/Music-Collection';
     helplinks[language.gettext('label_searchfor')] = 'https://fatg3erman.github.io/RompR/Searching-For-Music';
@@ -79,11 +76,24 @@ $(document).ready(function(){
     }
     layoutProcessor.changeCollectionSortMode();
     layoutProcessor.sourceControl(prefs.chooser);
+    if (prefs.browser_id == null) {
+        prefs.save({browser_id: Date.now()});
+    }
+
 });
 
 function cleanBackendCache() {
-    $.get('utils/cleancache.php', function() {
-        debug.shout("INIT","Cache Has Been Cleaned");
-        setTimeout(cleanBackendCache, 86400000)
-    });
+    if (player.updatingcollection || !player.collectionLoaded || player.collection_is_empty) {
+        debug.trace("INIT","Deferring cache clean because collection is not ready",
+                        player.updatingcollection, player.collectionLoaded, player.collection_is_empty);
+        setTimeout(cleanBackendCache, 200000);
+    } else {
+        debug.shout("INIT","Starting Backend Cache Clean");
+        collectionHelper.disableCollectionUpdates();
+        $.get('utils/cleancache.php', function() {
+            debug.shout("INIT","Cache Has Been Cleaned");
+            collectionHelper.enableCollectionUpdates();
+            setTimeout(cleanBackendCache, 86400000)
+        });
+    }
 }

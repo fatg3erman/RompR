@@ -118,7 +118,7 @@ function getimage($c) {
     if (!$img) {
         $img = (string) $c->image;
     }
-    return $img;
+    return 'getRemoteImage.php?url='.$img;
 }
 
 function format_listenlink($c, $p, $label) {

@@ -58,7 +58,7 @@ var infobar = function() {
 
     function setTheText(info) {
         var stuff = mungeTrackInfo(info);
-        document.title = stuff.doctitle;
+        setWindowTitle(stuff.doctitle);
         npinfo = stuff.textbits
         debug.log("INFOBAR","Now Playing Info",npinfo);
         infobar.biggerize(2);
@@ -112,6 +112,9 @@ var infobar = function() {
             npinfo.album = info.album;
         }
         npinfo.stream = info.stream;
+        if (prefs.player_in_titlebar) {
+            doctitle = prefs.currenthost+' - RompЯ';
+        }
 
         return {doctitle: doctitle, textbits: npinfo};
 
@@ -132,15 +135,6 @@ var infobar = function() {
     function checkLines(lines, maxwidth) {
         for (var i in lines) {
             if (lines[i].width > maxwidth) return true;
-        }
-    }
-
-    function getRealUrl(url) {
-        var r = url.match(/getRemoteImage\.php\?url=(.*)/);
-        if (r && r[1]) {
-            return r[1];
-        } else {
-            return url;
         }
     }
 
@@ -347,70 +341,50 @@ var infobar = function() {
 
         albumImage: function() {
             var aImg = new Image();
-            $("#albumpicture").attr('class', "notfound");
+            var current_image;
+            const noimage = "newimages/compact-disc.png";
+            const notafile = "newimages/thisdosntexist.png";
 
             aImg.onload = function() {
                 debug.trace("ALBUMPICTURE","Image Loaded",$(this).attr("src"));
-                $("#albumpicture").attr('class', "clickicon");
-                $("#albumpicture").attr("src", $(this).attr("src")).fadeIn('fast', function() {
+                $('#albumpicture').attr("src", $(this).attr("src")).fadeIn('fast', function() {
                     layoutProcessor.adjustLayout();
                     infobar.biggerize();
                 });
-                $("#albumpicture").unbind('click');
-                $("#albumpicture").click(infobar.albumImage.displayOriginalImage);
+                if (!$('#albumpicture').hasClass('clickicon')) {
+                    $('#albumpicture').addClass('clickicon');
+                }
+                $('#albumpicture').unbind('click').bind('click', infobar.albumImage.displayOriginalImage);
             }
+            
             aImg.onerror = function() {
-                debug.warn("ALBUMPICTURE","Image Failed To Load",$(this).attr("src"));
+                debug.trace("ALBUMPICTURE","Image Failed To Load",$(this).attr("src"));
                 $('img[name="'+$(this).attr('name')+'"]').addClass("notfound");
-                $("#albumpicture").attr('class', "notexist");
-                $("#albumpicture").fadeOut('fast');
-                $("#albumpicture").unbind('click');
-                // Don't call coverscraper here - the playlist will do it for us and
-                // its callback will call setSecondarySource
+                $('#albumpicture').fadeOut('fast',layoutProcessor.adjustLayout);
             }
 
             return {
                 setSource: function(data) {
                     debug.trace("ALBUMPICTURE","New source",data.image,"current is",aImg.src);
                     if (data.image === null) {
-                        // null means playlist.emptytrack. Just fade it out in case we start playing the same album again -
-                        // settings the source to the same url won't trigger the onload event
-                        $("#albumpicture").fadeOut('fast',layoutProcessor.adjustLayout);
+                        // null means playlist.emptytrack. Set the source to a file that doesn't exist
+                        // and let the onerror handler do the stuff. Then if we start playing the same
+                        // album sa previously again the simage src will change and the image will be re-displayed.
+                        aImg.src = notafile;
                     } else if (data.image == "") {
                         // No album image was supplied
-                        $("#albumpicture").unbind('click');
-                        $("#albumpicture").removeClass('clickicon');
-                        $("#albumpicture").attr('class', "notexist");
-                        // $("#albumpicture").attr('src','');
-                        if ($("#albumpicture").is(':hidden')) {
-                            $("#albumpicture").fadeIn('fast',layoutProcessor.adjustLayout);
-                        }
+                        aImg.src = noimage;
                     } else {
-                        var re = new RegExp(getRealUrl(data.image)+'$');
-                        if (!re.test(getRealUrl(aImg.src))) {
-                            debug.trace("ALBUMPICTURE","Source is being set to ",data.image);
-                            aImg.src = data.image;
-                        } else if ($("#albumpicture").is(':hidden')) {
-                            $("#albumpicture").attr("src", aImg.src).fadeIn('fast',layoutProcessor.adjustLayout);
-                        } else if ($("#albumpicture").hasClass('notexist') ||
-                            $("#albumpicture").hasClass('notfound')) {
-                            $("#albumpicture").removeClass('notfound');
-                            $("#albumpicture").removeClass('notexist');
-                            $("#albumpicture").attr('class', "clickicon");
-                            $("#albumpicture").attr("src", aImg.src).fadeIn('fast',layoutProcessor.adjustLayout);
-                            $("#albumpicture").click(infobar.albumImage.displayOriginalImage);
-                            setTimeout(infobar.biggerize, 1000);
-                        }
+                        debug.trace("ALBUMPICTURE","Source is being set to ",data.image);
+                        aImg.src = data.image;
                     }
                 },
 
                 setSecondarySource: function(data) {
                     if (data.key === undefined || data.key == aImg.getAttribute('name')) {
                         debug.log("ALBUMPICTURE","Secondary Source is being set to ",data.image,aImg);
-                        if (data.image != "" && data.image !== null && (aImg.src == "" || aImg.className == "notexist")) {
+                        if (data.image != "" && data.image !== null && (aImg.src.match(noimage) !== null || aImg.src.match(notafile) !== null)) {
                             debug.trace("ALBUMPICTURE","  OK, the criteria have been met");
-                            $("#albumpicture").unbind('click');
-                            $("#albumpicture").removeClass('clickicon');
                             aImg.src = data.image;
                         }
                     }
@@ -419,9 +393,7 @@ var infobar = function() {
                 setKey: function(key) {
                     if (aImg.name != key) {
                         debug.trace("ALBUMPICTURE","Setting Image Key to ",key);
-                        aImg.name = key;
-                        $("#albumpicture").attr("name", key);
-                        aImg.className = "notfound";
+                        $(aImg).attr('name', key);
                     }
                 },
 
@@ -455,11 +427,12 @@ var infobar = function() {
 
                 handleDrop: function(ev) {
                     debug.mark("INFOBAR","Something dropped onto album image");
-                    // evt = ev.originalEvent;
                     $(ev.target).parent().removeClass("highlighted");
-                    imgobj = $("#albumpicture");
-                    imagekey = imgobj.attr("name");
-                    dropProcessor(ev.originalEvent, imgobj, imagekey, null, infobar.albumImage.uploaded, infobar.albumImage.uploadfail);
+                    imagekey = $('#albumpicture').attr("name");
+                    current_image = aImg.src;
+                    aImg.src = noimage;
+                    $('#albumpicture').attr('src', noimage);
+                    dropProcessor(ev.originalEvent, $('#albumpicture'), imagekey, null, infobar.albumImage.uploaded, infobar.albumImage.uploadfail);
                 },
 
                 uploaded: function(data) {
@@ -468,15 +441,15 @@ var infobar = function() {
                         return;
                     }
                     debug.log("INFOBAR","Album Image Updated Successfully",aImg.name);
-                    $("albumpicture").removeClass('spinner').addClass('nospin');
+                    $('#albumpicture').removeClass('spinner').addClass('nospin');
                     var firefoxcrapnesshack = Math.floor(Date.now());
                     infobar.albumImage.setSource({image: "albumart/asdownloaded/"+aImg.name+'.jpg?version='+firefoxcrapnesshack.toString()});
                     $('img[name="'+aImg.name+'"]').attr("src", "albumart/asdownloaded/"+aImg.name+'.jpg?version='+firefoxcrapnesshack.toString());
-                    // playlist.repopulate();
                 },
 
                 uploadfail: function() {
-                    $("albumpicture").removeClass('spinner').addClass('nospin');
+                    $('#albumpicture').removeClass('spinner').addClass('nospin');
+                    aImg.src = current_image;
                     infobar.notify(infobar.ERROR, "Image Upload Failed!");
                 }
 
@@ -537,16 +510,20 @@ var infobar = function() {
 
         markCurrentTrack: function() {
             if (trackinfo.location) {
-                $('[name="'+encodeURIComponent(trackinfo.location)+'"]:not(.playlistcurrentitem)').addClass('playlistcurrentitem');
+                $('[name="'+rawurlencode(trackinfo.location)+'"]:not(.playlistcurrentitem)').addClass('playlistcurrentitem');
                 $('[name="'+trackinfo.location+'"]:not(.playlistcurrentitem)').addClass('playlistcurrentitem');
             }
+        },
+        
+        forceTitleUpdate: function() {
+            setTheText(trackinfo);
         },
 
         setNowPlayingInfo: function(info) {
             //Now playing info
             debug.trace("INFOBAR","NPinfo",info);
             if (trackinfo.location) {
-                $('[name="'+encodeURIComponent(trackinfo.location)+'"]').removeClass('playlistcurrentitem');
+                $('[name="'+rawurlencode(trackinfo.location)+'"]').removeClass('playlistcurrentitem');
                 $('[name="'+trackinfo.location+'"]').removeClass('playlistcurrentitem');
             }
             trackinfo = info;
@@ -576,7 +553,6 @@ var infobar = function() {
                 }
             }
             if (info.backendid === -1) {
-                debug.trace("INFOBAR","Fading out Album Picture")
                 $("#stars").fadeOut('fast');
                 $("#dbtags").fadeOut('fast');
                 $("#playcount").fadeOut('fast');

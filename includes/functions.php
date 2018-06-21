@@ -469,7 +469,7 @@ print '<h3 align="center">RompЯ encountered an error while checking your '.
     ucfirst($prefs['collection_type']).' database.</h3>';
 ?>
 <h3 align="center">An SQLite or MySQL database is required to run RompЯ</h3>
-<h3 align="center">You may find it helpful to <a href="https://sourceforge.net/p/rompr/wiki/Installation/" target="_blank">Read The Wiki</a></h3>
+<h3 align="center">You may find it helpful to <a href="https://fatg3erman.github.io/RompR/" target="_blank">Read The Docs</a></h3>
 <h3 align="center">The error message was:</h3><br>
 <?php
     print '<div class="bordered" style="width:75%;margin:auto"><p align="center"><b>'.
@@ -545,6 +545,7 @@ function audioClass($filetype) {
         case "m4a":
         case "aac":
         case "aacplus":
+        case "aac+":
         case "aacp":
         case "audio/aac":
         case "audio/aacp":
@@ -610,48 +611,78 @@ function getWishlist() {
         IFNULL(r.Rating, 0) AS rating,
         ".SQL_TAG_CONCAT." AS tags,
         tr.TTindex AS ttid,
-        tr.TrackNo AS trackno,
         tr.Title AS title,
         tr.Duration AS time,
         tr.Albumindex AS albumindex,
-        a.Artistname AS albumartist
+        a.Artistname AS albumartist,
+        tr.DateAdded AS DateAdded,
+        ws.SourceName AS SourceName,
+        ws.SourceImage AS SourceImage,
+        ws.SourceUri AS SourceUri
         FROM
         Tracktable AS tr
         LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
         LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
         LEFT JOIN Tagtable AS t USING (Tagindex)
+        LEFT JOIN WishlistSourcetable AS ws USING (Sourceindex)
         JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
         WHERE
         tr.Uri IS NULL AND tr.Hidden = 0
         GROUP BY ttid
         ORDER BY ";
 
-    foreach ($prefs['artistsatstart'] as $a) {
-        $qstring .= "CASE WHEN LOWER(albumartist) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
+    switch ($_REQUEST['sortby']) {
+        case 'artist':
+            foreach ($prefs['artistsatstart'] as $a) {
+                $qstring .= "CASE WHEN LOWER(albumartist) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
+            }
+            if (count($prefs['nosortprefixes']) > 0) {
+                $qstring .= "(CASE ";
+                foreach($prefs['nosortprefixes'] AS $p) {
+                    $phpisshitsometimes = strlen($p)+2;
+                    $qstring .= "WHEN LOWER(albumartist) LIKE '".strtolower($p)." %' THEN LOWER(SUBSTR(albumartist,".
+                        $phpisshitsometimes.")) ";
+                }
+                $qstring .= "ELSE LOWER(albumartist) END)";
+            } else {
+                $qstring .= "LOWER(albumartist)";
+            }
+            $qstring .= ", DateAdded, SourceName";
+            break;
+            
+        case 'date':
+            $qstring .= "DateAdded, SourceName";
+            break;
+            
+        case 'station':
+            $qstring .= 'SourceName, DateAdded';
+            break;
+            
+        default:
+            $qstring .= "rating, DateAdded";
+            break;
+        
     }
-    if (count($prefs['nosortprefixes']) > 0) {
-        $qstring .= "(CASE ";
-        foreach($prefs['nosortprefixes'] AS $p) {
-            $phpisshitsometimes = strlen($p)+2;
-            $qstring .= "WHEN LOWER(albumartist) LIKE '".strtolower($p)." %' THEN LOWER(SUBSTR(albumartist,".
-                $phpisshitsometimes.")) ";
-        }
-        $qstring .= "ELSE LOWER(albumartist) END)";
-    } else {
-        $qstring .= "LOWER(albumartist)";
-    }
-    $qstring .= ', trackno';
 
     $result = generic_sql_query($qstring);
     if (count($result) > 0) {
         print '<div class="containerbox padright noselection"><button class="fixed infoclick plugclickable clickclearwishlist">Clear Wishlist</button><div class="expand"></div></div>';
+        print '<div class="configtitle brick_wide">Sort By</div>';
+        print '<div class="containerbox padright noselection">';
+        print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_artist" class="topcheck savulon" type="radio" name="sortwishlistby" value="artist"><label for="wishlist_sort_artist">'.get_int_text('label_artist').'</label></div>';
+        print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_date" class="topcheck savulon" type="radio" name="sortwishlistby" value="date"><label for="wishlist_sort_date">'.get_int_text('label_dateadded').'</label></div>';
+        print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_station" class="topcheck savulon" type="radio" name="sortwishlistby" value="station"><label for="wishlist_sort_station">'.get_int_text('label_radiostation').'</label></div>';
+        print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_rating" class="topcheck savulon" type="radio" name="sortwishlistby" value="rating"><label for="wishlist_sort_rating">'.get_int_text('label_rating').'</label></div>';
+        print '</div>';
     }
     foreach ($result as $obj) {
         debuglog("Found Track ".$obj['title']." by ".$obj['albumartist'],"WISHLIST");
 
         print '<div class="containerbox vertical" id="walbum'.$obj['albumindex'].'">';
         print '<div class="containerbox fixed">';
-        print '<div class="smallcover fixed"><img class="smallcover fixed notfound" /></div>';
+        if ($obj['SourceImage']) {
+            print '<div class="smallcover fixed"><img class="smallcover" src="'.$obj['SourceImage'].'" /></div>';
+        }
         print '<div class="expand containerbox vertical">';
         print '<div class="fixed tracktitle"><b>'.$obj['title'].'</b></div>';
         print '<div class="fixed playlistrow2 trackartist">'.$obj['albumartist'].'</div>';
@@ -660,6 +691,12 @@ function getWishlist() {
         }
         if ($obj['tags']) {
             print '<div class="fixed playlistrow2 tracktags"><i class="icon-tags smallicon"></i>'.$obj['tags'].'</div>';
+        }
+        print '</div>';
+        print '<div class="expand containerbox vertical">';
+        print '<div class="fixed playlistrow2">Added On : '.date('r', strtotime($obj['DateAdded'])).'</div>';
+        if ($obj['SourceUri']) {
+            print '<div class="fixed playlistrow2 clickable infoclick plugclickable clickstream" name="'.$obj['SourceUri'].'" streamname="'.$obj['SourceName'].'" streamimg="'.$obj['SourceImage'].'">While Listening To : <b>'.$obj['SourceName'].'</b></div>';
         }
         print '</div>';
         print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed"></i>';
@@ -859,5 +896,10 @@ function format_bytes($size, $precision = 1)
 
     return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
 }
+
+function fixup_links($s) {
+    return preg_replace('/(^|\s+|\n|[^\s+"])(https*:\/\/.*?)(<|\n|\r|\s|\)|$|[<|\n|\r|\s|\)|$])/', '$1<a href="$2">$2</a>$3', $s);
+}
+
 
 ?>

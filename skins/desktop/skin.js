@@ -28,6 +28,10 @@ jQuery.fn.animatePanel = function(options) {
     );
 }
 
+function showHistory() {
+    
+}
+
 var layoutProcessor = function() {
 
     function showPanel(source) {

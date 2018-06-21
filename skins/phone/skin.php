@@ -44,7 +44,7 @@ printOutputCheckboxes();
 <div id="infobar" class="mainpane invisible">
     <div id="toomanywrappers">
         <div id="geoffreyboycott" class="fullwidth">
-            <div id="albumcover"><img id="albumpicture" class="notexist" /></div>
+            <div id="albumcover"><img id="albumpicture" /></div>
             <div id="cssisshit">
                 <div id="buttonholder" class="containerbox vertical">
                     <div id="buttons" class="fixed">
@@ -122,7 +122,7 @@ printOutputCheckboxes();
     </div>
     </div>
     <div class="pref textcentre">
-    <button name="donkeykong" onclick="collectionHelper.checkCollection(true, false)">'.get_int_text('config_updatenow').'</button>
+    <button name="donkeykong">'.get_int_text('config_updatenow').'</button>
     </div>';
 ?>
     </div>

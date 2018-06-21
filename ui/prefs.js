@@ -58,7 +58,15 @@ var prefs = function() {
         "sleepon",
         "advanced_search_open",
         "mopidy_radio_domains",
-        "tradsearch"
+        "tradsearch",
+        "sortwishlistby",
+        "player_in_titlebar",
+        "communityradiocountry",
+    	"communityradiolanguage",
+    	"communityradiotag",
+    	"communityradiolistby",
+        "communityradioorderby",
+        "browser_id"
     ];
     
     const cookiePrefs = [
@@ -122,14 +130,39 @@ var prefs = function() {
         prefs.save({scrobblepercent: e.max});
     }
 
-    function setCustombackground(image) {
-        debug.log("UI","Setting Custom Background To",image);
+    function setCustombackground(images) {
+        debug.log("UI","Setting Custom Background To",images);
         $('style[id="phoneback"]').remove();
-        $('html').css('background-image', 'url("'+image+"?version="+rompr_version+'")');
-        $('html').css('background-size', 'cover');
-        $('html').css('background-repeat', 'no-repeat');
-        $('#cusbgname').html(image.split(/[\\/]/).pop())
-        $('<style id="phoneback">body.phone .dropmenu { background-image: url("'+image+"?version="+rompr_version+'") }</style>').appendTo('head');
+        $('style[id="background"]').remove();
+        $('style[id="phonebackl"]').remove();
+        $('style[id="backgroundl"]').remove();
+        $('style[id="phonebackp"]').remove();
+        $('style[id="backgroundp"]').remove();
+        var cusname = new Array();
+        if (images != '') {
+            for (var i in images) {
+                if (images[i].match(/_landscape/)) {
+                    $('style[id="phonebackl"]').remove();
+                    $('style[id="backgroundl"]').remove();
+                    $('<style id="backgroundl">@media screen and (orientation: landscape) { html { background-image: url("'+images[i]+'?version='+rompr_version+'"); background-size: cover; background-repeat: no-repeat } }</style>').appendTo('head');
+                    $('<style id="phonebackl">@media screen and (orientation: landscape) { body.phone .dropmenu { background-image: url("'+images[i]+"?version="+rompr_version+'") } }</style>').appendTo('head');
+                } else if (images[i].match(/_portrait/)) {
+                    $('style[id="phonebackp"]').remove();
+                    $('style[id="backgroundp"]').remove();
+                    $('<style id="backgroundp">@media screen and (orientation: portrait) { html { background-image: url("'+images[i]+'?version='+rompr_version+'"); background-size: cover; background-repeat: no-repeat } }</style>').appendTo('head');
+                    $('<style id="phonebackp">@media screen and (orientation: portrait) { body.phone .dropmenu { background-image: url("'+images[i]+"?version="+rompr_version+'") } }</style>').appendTo('head');
+                } else {
+                    $('style[id="phoneback"]').remove();
+                    $('style[id="background"]').remove();
+                    $('<style id="background">html { background-image: url("'+images[i]+'?version='+rompr_version+'"); background-size: cover; background-repeat: no-repeat }</style>').appendTo('head');
+                    $('<style id="phoneback">body.phone .dropmenu { background-image: url("'+images[i]+"?version="+rompr_version+'") }</style>').appendTo('head');
+                }
+                cusname.push(images[i].split(/[\\/]/).pop());
+            }
+            $('#cusbgname').html(cusname.join(', '));
+        } else {
+            $('#cusbgname').html('');
+        }
     }
 
     return {
@@ -163,6 +196,7 @@ var prefs = function() {
             if (prefs.icontheme == 'IconFont') {
                 prefs.icontheme = 'Colourful';
             }
+            
         },
 
         checkSet: function(key) {
@@ -271,6 +305,10 @@ var prefs = function() {
 
                 case "sleepon":
                     callback = sleepTimer.toggle;
+                    break;
+                    
+                case 'player_in_titlebar':
+                    callback = infobar.forceTitleUpdate;
                     break;
 
             }
@@ -404,7 +442,7 @@ var prefs = function() {
 
         setTheme: function(theme) {
             if (!theme) theme = prefs.theme;
-            prefs.resetCustomBackground();
+            setCustombackground('');
             // Use a different version every time to ensure the browser doesn't cache.
             // Browsers are funny about CSS.
             var t = Date.now();
@@ -414,10 +452,11 @@ var prefs = function() {
             $("#fontfamily").attr("href", "fonts/"+prefs.fontfamily+"?version="+t);
             $("#icontheme-theme").attr("href", "iconsets/"+prefs.icontheme+"/theme.css"+"?version="+t);
             $("#icontheme-adjustments").attr("href", "iconsets/"+prefs.icontheme+"/adjustments.css"+"?version="+t);
-            $.getJSON('backimage.php?getbackground='+theme, function(data) {
-                if (data.image) {
-                    debug.log("PREFS","Custom Background Image",data.image);
-                    setCustombackground(data.image);
+            $.getJSON('backimage.php?getbackground='+theme+'&browser_id='+prefs.browser_id, function(data) {
+                if (data.images) {
+                    debug.log("PREFS","Custom Background Image",data.images);
+                    setCustombackground(data.images);
+                    $('input[name="thisbrowseronly"]').prop('checked', data.thisbrowseronly);
                 }
             });
             prefs.rgbs = null;
@@ -440,6 +479,7 @@ var prefs = function() {
         
         changeBackgroundImage: function() {
             $('[name="currbackground"]').val(prefs.theme);
+            $('[name="browser_id"]').val(prefs.browser_id);
             var formElement = document.getElementById('backimageform');
             var xhr = new XMLHttpRequest();
             xhr.open("POST", "backimage.php");
@@ -456,17 +496,9 @@ var prefs = function() {
             xhr.send(new FormData(formElement));
         },
 
-        resetCustomBackground: function() {
-            $('html').css('background-image', '');
-            $('html').css('background-size', '');
-            $('html').css('background-repeat', '');
-            $('#cusbgname').html('');
-            $('style[id="phoneback"]').remove();
-        },
-        
         clearBgImage: function() {
-            prefs.resetCustomBackground();
-            $.getJSON('backimage.php?clearbackground='+prefs.theme, function(data) {
+            setCustombackground('');
+            $.getJSON('backimage.php?clearbackground='+prefs.theme+'&browser_id='+prefs.browser_id, function(data) {
                 $('[name=imagefile').val('');
             });
         },

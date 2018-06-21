@@ -32,9 +32,6 @@ function preprocess_stream(&$filedata) {
         $filedata['type'] = "podcast";
     }
 
-    if (preg_match('/^http:/', $filedata['X-AlbumImage'])) {
-        $filedata['X-AlbumImage'] = "getRemoteImage.php?url=".$filedata['X-AlbumImage'];
-    }
 }
 
 function preprocess_soundcloud(&$filedata) {
@@ -68,7 +65,7 @@ function check_radio_and_podcasts($filedata) {
             '',
             ($obj->albumartist == '') ? $filedata['AlbumArtist'] : array($obj->albumartist),
             null,
-            format_text($obj->comment),
+            format_text(fixup_links($obj->comment)),
             null
         );
     }
@@ -131,7 +128,7 @@ function check_radio_and_podcasts($filedata) {
         $album,
         getStreamFolder(unwanted_array($url)),
         "stream",
-        $filedata['X-AlbumImage'],
+        ($filedata['X-AlbumImage'] == null) ? 'newimages/broadcast.svg' : $filedata['X-AlbumImage'],
         getDummyStation(unwanted_array($url)),
         null,
         $filedata['AlbumArtist'],

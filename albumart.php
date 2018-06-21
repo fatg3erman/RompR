@@ -8,7 +8,7 @@ include("player/mpd/connection.php");
 set_time_limit(240);
 $oldmopidy = false;
 $small_plugin_icons = false;
-$only_plugins_with_icons = false;
+$only_plugins_on_menu = false;
 $skin = "desktop";
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">

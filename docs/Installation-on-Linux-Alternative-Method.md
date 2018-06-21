@@ -1,19 +1,42 @@
-# Installation Guide
+# How to install on Linux with Apache and MySQL
 
 RompЯ is a client for mpd or mopidy - you use RompЯ in a web browser to make mpd or mopidy play music
 These are basic installation instructions for RompЯ on Linux, using the code you can download from here on github.
 
 **The old project homepage is at [SourceForge](https://sourceforge.net/projects/rompr/). The old discussion forum is still there and you may find answers to some questions is you have them.**
 
-## Assumptions
+## Install MPD or Mopidy
 
-I'm going to assume you already have mpd or mopidy installed and working. This is not the place to discuss the arcane art of configuring mpd. For that you'll have to read the mpd community wiki. Sorry about that. The mopidy instructions are quite good.
+Mpd should be available from your normal package manager. If you want to run Mopidy it is easy to install -  see [mopdy.com](http://www.mopidy.com).
 
-This guide works on the assumption that you're using RompЯ on a machine that has apache2 and mysql installed and set up already. If you've installed Mythbuntu and Mythweb then this will be the csae.
 
-## How to install on Linux with Apache and MySQL
+### Player Connection Timeout
+
+There is one thing you should adjust in the configuration for MPD and Mopidy
+
+MPD and Mopidy both have a connection timeout parameter, after which time they will drop the connection between them and Rompr. This is seriously bad news for Rompr. You should make sure you increase it.
+
+### For Mopidy
+
+In mopidy.conf, your mpd section needs to contain
+
+    [mpd]
+    connection_timeout = 120
+    
+### For MPD
+
+Somewhere in mpd.conf
+
+    connection_timeout     "120"
+
+
+If you have a very large music collection, the higher the numbeer the better. It is in seconds.
+
+## Getting Started
 
 This guide came about because I was installing RompЯ on a Mythbuntu 16.04 installation where I also wanted to use Mythweb. Because Mythweb brings in Apache2 I was unable to use nginx as the webserver. So I came up with this method. If you already have a mythtv install, or another system which already uses Apache2 (and mysql, optionally) then this method should work for you.
+
+_You can use Apache with SQLite instead of MySQL if you would prefer. Ignore the steps here about setting up the MySQL server and make sure you install php7.0-sqlite instead of php7.0-mysql_
 
 If you are using Mythweb, you should make sure you've installed it with the option to use it alongside other websites. If you want to check this, do
 
@@ -70,6 +93,8 @@ We're going to create an Apache configuration file for RompЯ. I'll assume it's 
 
 So, create this file, note I've assumed the default apache root directory of /var/www/html
 
+    Timeout 1800
+
     <Directory /var/www/html/rompr>
         Options Indexes FollowSymLinks MultiViews Includes ExecCGI
         DirectoryIndex index.php
@@ -89,7 +114,8 @@ So, create this file, note I've assumed the default apache root directory of /va
             php_admin_value open_basedir none
             php_admin_value memory_limit 128M
             php_admin_value post_max_size 32M
-            php_admin_value upload_max_filesize 32M                
+            php_admin_value upload_max_filesize 32M       
+            php_admin_value max_execution_time 1800         
         </IfModule>
 
     </Directory>

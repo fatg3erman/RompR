@@ -204,11 +204,6 @@ foreach ($skinrequires as $s) {
         print '<link rel="stylesheet" type="text/css" href="'.$s.'?version='.time().'" />'."\n";
     }
 }
-$css = glob('plugins/css/*.css');
-foreach ($css as $s) {
-    debuglog("Including Dynamic CSS ".$s,"INIT",6);
-    print '<link rel="stylesheet" type="text/css" href="'.$s.'?version='.time().'" />'."\n";
-}
 ?>
 <link rel="stylesheet" id="theme" type="text/css" />
 <link rel="stylesheet" id="fontsize" type="text/css" />

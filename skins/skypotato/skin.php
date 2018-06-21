@@ -5,7 +5,7 @@
 <div class="fullwidth containerbox" id="thetopbit">
     <div class="fixed">
         <div id="albumcover" class="fixed">
-            <img id="albumpicture" class="notexist" />
+            <img id="albumpicture" />
         </div>
     </div>
     <div id="groonburger" class="fixed containerbox vertical controlbutton-left">
@@ -180,7 +180,7 @@ print '<i class="icon-menu topimg tooltip choose_specialplugins" title="'.get_in
     </div>
     </div>
     <div class="pref textcentre">
-    <button name="donkeykong" onclick="collectionHelper.checkCollection(true, false)">'.get_int_text('config_updatenow').'</button>
+    <button name="donkeykong">'.get_int_text('config_updatenow').'</button>
     </div>';
 ?>
     

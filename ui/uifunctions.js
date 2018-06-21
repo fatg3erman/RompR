@@ -75,15 +75,15 @@ var pluginManager = function() {
     }
 
     return {
-        addPlugin: function(label, action, setup, script, icon) {
-            debug.log("PLUGINS","Adding Plugin",label,icon);
-            plugins.push({label: label, action: action, setup: setup, script: script, icon: icon});
+        addPlugin: function(label, action, setup, script, onmenu) {
+            debug.log("PLUGINS","Adding Plugin",label,onmenu);
+            plugins.push({label: label, action: action, setup: setup, script: script, onmenu: onmenu});
         },
 
         doEarlyInit: function() {
             for (var i in plugins) {
                 if (plugins[i].setup) {
-                    if (!only_plugins_with_icons || plugins[i].icon) {
+                    if (!only_plugins_on_menu || plugins[i].menu) {
                         debug.log("PLUGINS","Setting up Plugin",plugins[i].label);
                         plugins[i].setup();
                     }
@@ -95,9 +95,8 @@ var pluginManager = function() {
             for (var i in plugins) {
                 if (plugins[i].action || plugins[i].script) {
                     debug.log("PLUGINS","Setting up Plugin",plugins[i].label);
-                    if (only_plugins_with_icons) {
-                        if (plugins[i].icon !== null) {
-                            $("#specialplugins .spicons").append('<i class="noshrink clickable clickicon topimg '+plugins[i].icon+'" name="'+i+'"></i>');
+                    if (only_plugins_on_menu) {
+                        if (plugins[i].onmenu) {
                             $("#specialplugins .sptext").append('<div class="backhi clickable clickicon noselection menuitem" name="'+i+'">'+plugins[i].label+'</div>');
                         }
                     } else {
@@ -415,9 +414,9 @@ function showUpdateWindow() {
     } else {
         if (typeof(prefs.shownupdatewindow) != 'string' || compare_version_numbers(prefs.shownupdatewindow, rompr_version)) {
             var fnarkle = new popup({
-                width: 800,
-                height: 1100,
-                title: language.gettext("intro_title"),
+                width: 1600,
+                height: 1600,
+                title: 'RompЯ Version '+rompr_version,
                 hasclosebutton: false});
             var mywin = fnarkle.create();
             mywin.append('<div id="begging"></div>');
@@ -722,4 +721,10 @@ function spotifyTrackListing(data) {
             '</div>';
     }
     return h;
+}
+
+function setWindowTitle(t) {
+    if (document.title != t) {
+        document.title = t;
+    }
 }

@@ -1,6 +1,9 @@
 // This skin works by taking what is basically a default layout
 // and jQuery-ing it to feck to move things around.
 
+// The biggest problem with this skin is that if we change stuff in the UI, itnusually fucks it up.
+// So be careful to test it.
+
 jQuery.fn.menuReveal = function(callback) {
     
     // 'self' is the menu being opened, which will alresady have contents
@@ -23,6 +26,7 @@ jQuery.fn.menuReveal = function(callback) {
             self.find('.holderthing').removeClass('holderthing').addClass('containerbox wrap');
             self.detach().removeClass('dropmenu').addClass('collectionpanel radiolist containerbox wrap noselection').insertBefore($('#infoholder'));
             self.bindPlayClicks();
+            clickRegistry.reset();
             setDraggable('#'+id);
         }
         self.removeClass('closed');
@@ -149,6 +153,10 @@ jQuery.fn.animatePanel = function(options) {
     var settings = $.extend({},options);
     var panel = this.attr("id");
     this.css('width', settings[panel]+'%');
+}
+
+function showHistory() {
+    
 }
 
 var layoutProcessor = function() {
@@ -338,6 +346,10 @@ var layoutProcessor = function() {
         
         postAlbumActions: function(panel) {
             layoutProcessor.adjustBoxSizes();
+        },
+        
+        hackForSkinsThatModifyStuff: function(id) {
+            $(id+'.holderthing').removeClass('holderthing').addClass('containerbox wrap');
         },
 
         afterHistory: function() {

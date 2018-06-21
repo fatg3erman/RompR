@@ -45,6 +45,7 @@ function check_sql_tables() {
 		"Hidden TINYINT(1) DEFAULT 0, ".
 		"DateAdded TIMESTAMP DEFAULT CURRENT_TIMESTAMP, ".
 		"isSearchResult TINYINT(1) DEFAULT 0, ".
+		"Sourceindex INTEGER DEFAULT NULL, ".
 		"justAdded TINYINT(1) DEFAULT 1)", true))
 	{
 		debuglog("  Tracktable OK","SQLITE_CONNECT");
@@ -259,6 +260,23 @@ function check_sql_tables() {
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking RadioTracktable : ".$err);
+	}
+
+	if (generic_sql_query("CREATE TABLE IF NOT EXISTS WishlistSourcetable(".
+		"Sourceindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+		"SourceName VARCHAR(255), ".
+		"SourceImage VARCHAR(255), ".
+		"SourceUri TEXT)", true))
+	{
+		debuglog("  WishlistSourcetable OK","SQLITE_CONNECT");
+		if (generic_sql_query("CREATE INDEX IF NOT EXISTS suri ON WishlistSourcetable (SourceUri)", true)) {
+		} else {
+			$err = $mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking WishlistSourcetable : ".$err);
+		}
+	} else {
+		$err = $mysqlc->errorInfo()[2];
+		return array(false, "Error While Checking WishlistSourcetable : ".$err);
 	}
 
 	// Check schema version and update tables as necessary
@@ -516,6 +534,24 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 34 WHERE Item = 'SchemaVer'", true);
 				break;
 				
+			case 34:
+				debuglog("Updating FROM Schema version 34 TO Schema version 35","SQL");
+				generic_sql_query("ALTER TABLE Tracktable ADD COLUMN Sourceindex INTEGER DEFAULT NULL", true);
+				generic_sql_query(true, null, null, null, "UPDATE Statstable SET Value = 35 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 35:
+				generic_sql_query("UPDATE Statstable SET Value = 36 WHERE Item = 'SchemaVer'", true);
+				break;
+				
+			case 36:
+				debuglog("Updating FROM Schema version 35 TO Schema version 37","SQL");
+				$localpods = generic_sql_query("SELECT PODTrackindex, PODindex, LocalFilename FROM PodcastTracktable WHERE LocalFilename IS NOT NULL");
+				foreach ($localpods as $pod) {
+					sql_prepare_query("UPDATE PodcastTracktable SET LocalFilename = ? WHERE PODTrackindex = ?", '/prefs/podcasts/'.$pod['PODindex'].'/'.$pod['PODTrackindex'].'/'.$pod['LocalFilename'], $pod['PODTrackindex']);
+				}
+				generic_sql_query("UPDATE Statstable SET Value = 37 WHERE Item = 'SchemaVer'", true);
+				break;
 
 		}
 		$sv++;

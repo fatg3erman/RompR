@@ -557,12 +557,12 @@ function format_episode(&$y, &$item, $pm) {
     if ($y->DisplayMode == DISPLAYMODE_DOWNLOADED && $item->Downloaded == 0) {
         return;
     }
+    print '<div class="item podcastitem">';
     if ($item->Downloaded == 1 && $y->Version > 1) {
-        print '<div class="clickable clicktrack item podcastitem draggable" name="'.get_base_url().'/prefs/podcasts/'.$y->PODindex.'/'.$item->PODTrackindex.'/'.$item->Localfilename.'">';
+        print '<div class="containerbox clickable clicktrack draggable" name="'.get_base_url().$item->Localfilename.'">';
     } else {
-        print '<div class="clickable clicktrack item podcastitem draggable" name="'.$item->Link.'">';
+        print '<div class="containerbox clickable clicktrack draggable" name="'.$item->Link.'">';
     }
-    print '<div class="containerbox">';
     if ($y->Subscribed == 1) {
         if ($item->New == 1) {
             print '<i title="'.get_int_text("podcast_tooltip_new").
@@ -572,7 +572,9 @@ function format_episode(&$y, &$item, $pm) {
                 '" class="icon-unlistened fixed oldpodicon fridge"></i>';
         }
     }
-    print '<div class="podtitle expand">'.htmlspecialchars(html_entity_decode($item->Title)).'</div></div>';
+    print '<div class="podtitle expand">'.htmlspecialchars(html_entity_decode($item->Title)).'</div>';
+    print '<i class="fixed icon-no-response-playbutton newpodicon"></i>';
+    print '</div>';
     $pee = date(DATE_RFC2822, $item->PubDate);
     $pee = preg_replace('/ \+\d\d\d\d$/','',$pee);
     print '<div class="whatdoicallthis padright containerbox menuitem notbold">';
@@ -620,10 +622,6 @@ function format_episode(&$y, &$item, $pm) {
         print '</div>';
     }
     print '</div>';
-}
-
-function fixup_links($s) {
-    return preg_replace('/(^|\s+|\n|[^\s+"])(https*:\/\/.*?)(<|\n|\r|\s|\)|$|[<|\n|\r|\s|\)|$])/', '$1<a href="$2">$2</a>$3', $s);
 }
 
 function doPodcastHeader($y) {
@@ -793,7 +791,7 @@ function downloadTrack($key, $channel) {
             system ('rm -fR prefs/podcasts/'.$channel.'/'.$key);
             return $channel;
         }
-        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?",1,$filename,$key);
+        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?", 1, '/prefs/podcasts/'.$channel.'/'.$key.'/'.$filename, $key);
     } else {
         debuglog('Failed to create directory prefs/podcasts/'.$channel.'/'.$key,"PODCASTS",2);
         return $channel;
@@ -883,9 +881,14 @@ function search_itunes($term) {
     generic_sql_query("DELETE FROM PodcastTracktable WHERE PODindex IN (SELECT PODindex FROM Podcasttable WHERE Subscribed = 0)", true);
     generic_sql_query("DELETE FROM Podcasttable WHERE Subscribed = 0", true);
     $content = url_get_contents('https://itunes.apple.com/search?term='.$term.'&entity=podcast');
+    debuglog("Status is ".$content['status'],"PODCASTS");
     if ($content['status'] == '200') {
-        $pods = json_decode($content['contents'], true);
+        $pods = json_decode(trim($content['contents']), true);
         foreach ($pods['results'] as $podcast) {
+            if (array_key_exists('feedUrl', $podcast)) {
+                // Bloody hell they can't even be consistent!
+                $podcast['feedURL'] = $podcast['feedUrl'];
+            }
             if (array_key_exists('feedURL', $podcast)) {
                 $r = check_if_podcast_is_subscribed($podcast);
                 if (count($r) > 0) {

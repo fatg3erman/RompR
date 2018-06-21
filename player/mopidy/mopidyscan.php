@@ -10,7 +10,8 @@ if (file_exists($prefs['mopidy_scan_command'])) {
 
     if (array_key_exists('scan', $_REQUEST)) {
         debuglog("Starting Mopidy Scan Command","COLLECTION", 4);
-        exec($prefs['mopidy_scan_command'].' > /dev/null 2>&1 &');
+        // exec($prefs['mopidy_scan_command'].' > /dev/null 2>&1 &');
+        exec($prefs['mopidy_scan_command'].' &');
     } else if (array_key_exists('check', $_REQUEST)) {
         debuglog("Checking For Mopidy Scan Process","COLLECTION", 8);
         exec ('ps aux | grep "mopidy_scan.sh"', $result);

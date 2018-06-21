@@ -144,7 +144,7 @@ function albumControlHeader($fragment, $why, $what, $who, $artist) {
     $html = '<div class="menu backmenu" name="'.$why.'artist'.$who.'">';
     $html .='</div>';
     $html .= '<div class="configtitle textcentre"><b>'.$artist.'</b></div>';
-    $html .= '<div class="textcentre clickable clickalbum ninesix" name="'.$why.'artist'.$who.'">'.get_int_text('label_play_all').'</div>';
+    $html .= '<div class="textcentre clickable clickalbum ninesix noselect" name="'.$why.'artist'.$who.'">'.get_int_text('label_play_all').'</div>';
     return $html;
 }
 
@@ -158,17 +158,17 @@ function trackControlHeader($why, $what, $who, $dets) {
             if ($det['AlbumUri']) {
                 $albumuri = rawurlencode($det['AlbumUri']);
                 if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
-                    $html .= '<div class="icon-no-response-playbutton collectionicon expand clickable clickcue fakedouble" name="'.$albumuri.'"></div>';
+                    $html .= '<div class="icon-no-response-playbutton collectionicon expand clickable clickcue fakedouble noselect" name="'.$albumuri.'"></div>';
                 } else {
-                    $html .= '<div class="icon-no-response-playbutton collectionicon expand clickable clicktrack fakedouble" name="'.$albumuri.'"></div>';
+                    $html .= '<div class="icon-no-response-playbutton collectionicon expand clickable clicktrack fakedouble noselect" name="'.$albumuri.'"></div>';
                 }
             } else {
-                $html .= '<div class="icon-no-response-playbutton collectionicon expand clickable clickalbum fakedouble" name="'.$why.'album'.$who.'"></div>';
+                $html .= '<div class="icon-no-response-playbutton collectionicon expand clickable clickalbum fakedouble noselect" name="'.$why.'album'.$who.'"></div>';
             }
-            $html .= '<div class="icon-single-star collectionicon expand clickable clickicon clickable clickalbum fakedouble" name="ralbum'.$who.'"></div>';
-            $html .= '<div class="icon-tags collectionicon expand clickable clickicon clickable clickalbum fakedouble" name="talbum'.$who.'"></div>';
-            $html .= '<div class="icon-ratandtag collectionicon expand clickable clickicon clickable clickalbum fakedouble" name="yalbum'.$who.'"></div>';
-            $html .= '<div class="icon-ratortag collectionicon expand clickable clickicon clickable clickalbum fakedouble" name="ualbum'.$who.'"></div>';
+            $html .= '<div class="icon-single-star collectionicon expand clickable clickicon clickable clickalbum fakedouble noselect" name="ralbum'.$who.'"></div>';
+            $html .= '<div class="icon-tags collectionicon expand clickable clickicon clickable clickalbum fakedouble noselect" name="talbum'.$who.'"></div>';
+            $html .= '<div class="icon-ratandtag collectionicon expand clickable clickicon clickable clickalbum fakedouble noselect" name="yalbum'.$who.'"></div>';
+            $html .= '<div class="icon-ratortag collectionicon expand clickable clickicon clickable clickalbum fakedouble noselect" name="ualbum'.$who.'"></div>';
             $html .= '</div>';
             $html .= '<div class="textcentre ninesix playlistrow2">'.ucfirst(get_int_text('label_tracks')).'</div>';
         }

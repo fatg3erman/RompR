@@ -159,32 +159,61 @@ var podcasts = function() {
 
 	}
 
-	function getPodcast(url) {
-	    debug.log("PODCAST","Getting podcast",url);
-	    infobar.notify(infobar.NOTIFY, "Subscribing to Podcast....")
-	    doSomethingUseful('cocksausage', language.gettext("label_downloading"));
-	    $.ajax( {
-	        type: "GET",
-	        url: "includes/podcasts.php",
-	        cache: false,
-	        contentType: "text/html; charset=utf-8",
-	        data: {url: encodeURIComponent(url), populate: 1 },
-	        success: function(data) {
-	            $("#fruitbat").html(data);
-	            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
-	            infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
-	            podcasts.doNewCount();
-				$('#spinner_cocksausage').remove();
-				layoutProcessor.postAlbumActions($('#fruitbat'));
-	        },
-	        error: function(data, status, thing) {
-	            infobar.notify(infobar.ERROR, "Failed to Subscribe to Podcast : "+data.responseText);
-	            $('#spinner_cocksausage').remove();
-	        }
-	    } );
-	}
-
 	return {
+
+		getPodcast: function(url, callback) {
+		    debug.log("PODCAST","Getting podcast",url);
+			if (!callback) {
+			    infobar.notify(infobar.NOTIFY, "Subscribing to Podcast....")
+			    doSomethingUseful('cocksausage', language.gettext("label_downloading"));
+			}
+		    $.ajax( {
+		        type: "GET",
+		        url: "includes/podcasts.php",
+		        cache: false,
+		        contentType: "text/html; charset=utf-8",
+		        data: {url: encodeURIComponent(url), populate: 1 },
+		        success: function(data) {
+					if (callback) {
+						callback(true);
+					} else {
+			            $("#fruitbat").html(data);
+			            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+			            infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
+			            podcasts.doNewCount();
+						$('#spinner_cocksausage').remove();
+						layoutProcessor.postAlbumActions($('#fruitbat'));
+					}
+		        },
+		        error: function(data, status, thing) {
+					if (callback) {
+						callback(false);
+					} else {
+		            	infobar.notify(infobar.ERROR, "Failed to Subscribe to Podcast : "+data.responseText);
+		            	$('#spinner_cocksausage').remove();
+					}
+		        }
+		    } );
+		},
+		
+		reloadList: function() {
+			$.ajax( {
+		        type: "GET",
+		        url: "includes/podcasts.php",
+		        cache: false,
+		        contentType: "text/html; charset=utf-8",
+		        data: {populate: 1 },
+		        success: function(data) {
+		            $("#fruitbat").html(data);
+		            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+		            podcasts.doNewCount();
+					layoutProcessor.postAlbumActions($('#fruitbat'));
+		        },
+		        error: function(data, status, thing) {
+	            	infobar.notify(infobar.ERROR, "Failed to load podcasts list : "+data.responseText);
+		        }
+		    });
+		},
 
 		loadPodcast: function(channel) {
 			var target = $('#podcast_'+channel);
@@ -224,7 +253,7 @@ var podcasts = function() {
 
 		doPodcast: function(input) {
 		    var url = $("#"+input).val();
-		    getPodcast(url);
+		    podcasts.getPodcast(url);
 		},
 
 		handleDrop: function() {
@@ -282,7 +311,7 @@ var podcasts = function() {
 	        var divid = null;
 	        debug.log("PODCASTS","Looking for podcast",file,p.length);
 	        if (p.length == 1) {
-	            divid = p.parent().attr("id");
+	            divid = p.parent().parent().attr("id");
 	            debug.log("PODCASTS", "We just listened to an episode from podcast",divid);
 	        }
             $.ajax( {

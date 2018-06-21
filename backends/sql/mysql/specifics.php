@@ -49,6 +49,7 @@ function check_sql_tables() {
 		"DateAdded TIMESTAMP DEFAULT CURRENT_TIMESTAMP, ".
 		"isSearchResult TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"justAdded TINYINT(1) UNSIGNED DEFAULT 1, ".
+		"Sourceindex INT UNSIGNED DEFAULT NULL, ".
 		"INDEX(Albumindex), ".
 		"INDEX(Title), ".
 		"INDEX(TrackNo)) ENGINE=InnoDB", true))
@@ -221,6 +222,20 @@ function check_sql_tables() {
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking RadioTracktable : ".$err);
+	}
+	
+	if (generic_sql_query("CREATE TABLE IF NOT EXISTS WishlistSourcetable(".
+		"Sourceindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+		"SourceName VARCHAR(255), ".
+		"SourceImage VARCHAR(255), ".
+		"SourceUri TEXT, ".
+		"PRIMARY KEY (Sourceindex), ".
+		"FULLTEXT KEY SourceUri (SourceUri)) ENGINE=InnoDB", true))
+	{
+		debuglog("  WishlistSourcetable OK","MYSQL_CONNECT");
+	} else {
+		$err = $mysqlc->errorInfo()[2];
+		return array(false, "Error While Checking WishlistSourcetable : ".$err);
 	}
 
 	if (!generic_sql_query("CREATE TABLE IF NOT EXISTS Statstable(Item CHAR(11), PRIMARY KEY(Item), Value INT UNSIGNED) ENGINE=InnoDB", true)) {
@@ -546,6 +561,25 @@ function check_sql_tables() {
 				generic_sql_query("ALTER TABLE Albumtable ADD ImgVersion INT UNSIGNED DEFAULT ".ROMPR_IMAGE_VERSION, true);
 				generic_sql_query("UPDATE Albumtable SET ImgVersion = 1",true);
 				generic_sql_query("UPDATE Statstable SET Value = 34 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 34:
+				debuglog("Updating FROM Schema version 34 TO Schema version 35","SQL");
+				generic_sql_query("ALTER TABLE Tracktable ADD Sourceindex INT UNSIGNED DEFAULT NULL", true);
+				generic_sql_query("UPDATE Statstable SET Value = 35 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 35:
+				generic_sql_query("UPDATE Statstable SET Value = 36 WHERE Item = 'SchemaVer'", true);
+				break;
+				
+			case 36:
+				debuglog("Updating FROM Schema version 35 TO Schema version 37","SQL");
+				$localpods = generic_sql_query("SELECT PODTrackindex, PODindex, LocalFilename FROM PodcastTracktable WHERE LocalFilename IS NOT NULL");
+				foreach ($localpods as $pod) {
+					sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET LocalFilename = ? WHERE PODTrackindex = ?", '/prefs/podcasts/'.$pod['PODindex'].'/'.$pod['PODTrackindex'].'/'.$pod['LocalFilename'], $pod['PODTrackindex']);
+				}
+				generic_sql_query("UPDATE Statstable SET Value = 37 WHERE Item = 'SchemaVer'", true);
 				break;
 				
 		}

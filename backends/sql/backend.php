@@ -80,19 +80,39 @@ function create_new_track(&$data) {
 			return null;
 		}
 	}
+	
+	$data['sourceindex'] = null;
+	if ($data['uri'] === null && array_key_exists('streamuri', $data) && $data['streamuri'] !== null) {
+		$data['sourceindex'] = check_radio_source($data);
+	}
 
 	if (sql_prepare_query(true, null, null, null,
 		"INSERT INTO
 			Tracktable
-			(Title, Albumindex, Trackno, Duration, Artistindex, Disc, Uri, LastModified, Hidden, isSearchResult)
+			(Title, Albumindex, Trackno, Duration, Artistindex, Disc, Uri, LastModified, Hidden, isSearchResult, Sourceindex)
 			VALUES
-			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		$data['title'], $data['albumindex'], $data['trackno'], $data['duration'], $data['trackai'],
-		$data['disc'], $data['uri'], $data['lastmodified'], $data['hidden'], $data['searchflag']))
+		$data['disc'], $data['uri'], $data['lastmodified'], $data['hidden'], $data['searchflag'], $data['sourceindex']))
 	{
 		return $mysqlc->lastInsertId();
 	}
 	return null;
+}
+
+function check_radio_source($data) {
+	global $mysqlc;
+	$index = simple_query('Sourceindex', 'WishlistSourcetable', 'SourceUri', $data['streamuri'], null);
+	if ($index === null) {
+		debuglog("Creating Wishlist Source ".$data['streamname'],"SQL");
+		if (sql_prepare_query(true, null, null, null,
+		"INSERT INTO WishlistSourcetable (SourceName, SourceImage, SourceUri) VALUES (?, ?, ?)",
+		$data['streamname'], $data['streamimage'], $data['streamuri']))
+		{
+			$index = $mysqlc->lastInsertId();
+		}
+	}
+	return $index;
 }
 
 function check_artist($artist) {
@@ -262,43 +282,39 @@ function list_tags() {
 
 function get_rating_headers($sortby) {
 		
+	$ratings = array();
+		
 	switch ($sortby) {
 		
 		case 'Rating':
-			$ratings = array('1','2','3','4','5');
+			$ratings = generic_sql_query("SELECT Rating AS Name, COUNT(TTindex) AS NumTracks FROM Ratingtable GROUP BY Rating ORDER BY Rating");
 			break;
 			
 		case 'Tag':
-			$ratings = sql_get_column('SELECT Name from Tagtable ORDER BY Name', 'Name');
+			$ratings = generic_sql_query('SELECT Name, COUNT(TTindex) AS NumTracks FROM Tagtable JOIN TagListtable USING (Tagindex) GROUP BY Name ORDER BY Name');
 			break;
 			
 		case 'AlbumArtist':
 			// It's actually Track Artist, but sod changing it now.
-			$qstring = "SELECT DISTINCT Artistname
+			$qstring = "SELECT DISTINCT Artistname AS Name, COUNT(DISTINCT TTindex) AS NumTracks
 						FROM
 						Artisttable AS a JOIN Tracktable AS tt USING (Artistindex)
 						LEFT JOIN Ratingtable USING (TTindex)
 						LEFT JOIN `TagListtable` USING (TTindex)
 						LEFT JOIN Tagtable AS t USING (Tagindex)
-						WHERE Uri IS NOT NULL and Hidden = 0 AND isSearchResult < 2 AND (Rating IS NOT NULL OR t.Name IS NOT NULL)
-						GROUP BY TTindex
+						WHERE Hidden = 0 AND isSearchResult < 2 AND (Rating IS NOT NULL OR t.Name IS NOT NULL)
+						GROUP BY Artistname
 						ORDER BY ";
 			$qstring .= sort_artists_by_name();
-			$ratings = sql_get_column($qstring, 'Artistname');
+			$ratings = generic_sql_query($qstring);
 			break;
 			
 		case 'Tags':
-			// This might seem a faff but we need a TagListtable sorted by Tag name otherwise we get
-			// results like Taga,Tagb and Tagb,Taga
-			generic_sql_query("DROP TABLE IF EXISTS tagorder");
-			generic_sql_query("CREATE TEMPORARY TABLE tagorder(Tagindex INTEGER, TTindex INTEGER)");
-			generic_sql_query("INSERT INTO tagorder (Tagindex, TTindex)  SELECT Tagindex, TTindex FROM TagListtable ORDER BY Tagindex");
-			$ratings = sql_get_column("SELECT DISTINCT ".SQL_TAG_CONCAT." AS Tags FROM
-										Tagtable AS t
-										JOIN tagorder USING (Tagindex)
-										GROUP BY TTindex
-										ORDER By Tags", "Tags");
-				
+			$ratings = generic_sql_query("SELECT DISTINCT ".SQL_TAG_CONCAT." AS Name, 0 AS NumTracks FROM
+											(SELECT Tagindex, TTindex FROM TagListtable ORDER BY Tagindex) AS tagorder
+											JOIN Tagtable AS t USING (Tagindex)
+											GROUP BY TTindex
+											ORDER By Name");
 			break;
 			
 		default:
@@ -357,7 +373,7 @@ function get_rating_info($sortby, $value) {
 					JOIN Albumtable AS al USING (Albumindex)
 					JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-				WHERE r.Rating = ".$value." AND tr.Uri IS NOT NULL AND tr.isSearchResult < 2";
+				WHERE r.Rating = ".$value." AND tr.isSearchResult < 2";
 				break;
 				
 			case 'Tag':
@@ -409,7 +425,7 @@ function get_rating_info($sortby, $value) {
 			 		JOIN Albumtable AS al USING (Albumindex)
 			 		JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 			 		JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL) AND tr.isSearchResult < 2 AND tr.Uri IS NOT NULL AND a.Artistname = '".$value."'";
+			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL) AND tr.isSearchResult < 2 AND a.Artistname = '".$value."'";
 				break;
 				
 			case 'Tags':
@@ -442,7 +458,7 @@ function get_rating_info($sortby, $value) {
 						$tags[$i] = "tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name='".$t."')";
 					}
 					$qstring .= implode(' AND ', $tags);
-					$qstring .= " AND tr.Uri IS NOT NULL AND tr.isSearchResult < 2";
+					$qstring .= " AND tr.isSearchResult < 2";
 					break;
 	}
 	
@@ -1256,7 +1272,10 @@ function find_podcast_track_from_url($url) {
 									Podcasttable.Artist AS albumartist,
 									Podcasttable.Image AS image
 									FROM PodcastTracktable JOIN Podcasttable USING (PODindex)
-									WHERE PodcastTracktable.Link=? OR PodcastTracktable.Localfilename=?",$url, $url);
+									WHERE PodcastTracktable.Link=?
+									OR PodcastTracktable.Localfilename=?",
+									$url,
+									preg_replace('#http://.*?/#', '/', $url));
 }
 
 //
@@ -1547,17 +1566,16 @@ function create_foundtracks() {
 
 function remove_cruft() {
     debuglog("Removing orphaned albums","MYSQL",6);
-    // NOTE - the Albumindex IS NOT NULL is essential - if any albumindex is NULL the entire () expression returns NULL
 	$t = microtime(true);
-    generic_sql_query("DELETE FROM Albumtable WHERE Albumindex NOT IN (SELECT DISTINCT Albumindex FROM Tracktable WHERE Albumindex IS NOT NULL)", true);
+    generic_sql_query("DELETE FROM Albumtable WHERE Albumindex NOT IN (SELECT DISTINCT Albumindex FROM Tracktable)", true);
 	$at = microtime(true) - $t;
-	debuglog(" -- Removing orphaned albums took ".$at." seconds","BACKEND",8);
+	debuglog(" -- Removing orphaned albums took ".$at." seconds","BACKEND",6);
 
     debuglog("Removing orphaned artists","MYSQL",6);
 	$t = microtime(true);
     delete_orphaned_artists();
 	$at = microtime(true) - $t;
-	debuglog(" -- Removing orphaned artists took ".$at." seconds","BACKEND",8);
+	debuglog(" -- Removing orphaned artists took ".$at." seconds","BACKEND",6);
 
     debuglog("Tidying Metadata","MYSQL",6);
 	$t = microtime(true);
@@ -1570,7 +1588,7 @@ function remove_cruft() {
 	generic_sql_query("DELETE FROM Playcounttable WHERE Playcount = '0'", true);
 	generic_sql_query("DELETE FROM Playcounttable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
 	$at = microtime(true) - $t;
-	debuglog(" -- Tidying metadata took ".$at." seconds","BACKEND",8);
+	debuglog(" -- Tidying metadata took ".$at." seconds","BACKEND",6);
 }
 
 function do_track_by_track($trackobject) {

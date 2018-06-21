@@ -5,9 +5,33 @@ These are basic installation instructions for RompЯ on Linux, using the code yo
 
 **The old project homepage is at [SourceForge](https://sourceforge.net/projects/rompr/). The old discussion forum is still there and you may find answers to some questions is you have them.**
 
-## Assumptions
+## Install MPD or Mopidy
 
-I'm going to assume you already have mpd or mopidy installed and working. This is not the place to discuss the arcane art of configuring mpd. For that you'll have to read the mpd community wiki. Sorry about that. The mopidy instructions are quite good.
+Mpd should be available from your normal package manager. If you want to run Mopidy it is easy to install -  see [mopdy.com](http://www.mopidy.com).
+
+
+### Player Connection Timeout
+
+There is one thing you should adjust in the configuration for MPD and Mopidy
+
+MPD and Mopidy both have a connection timeout parameter, after which time they will drop the connection between them and Rompr. This is seriously bad news for Rompr. You should make sure you increase it.
+
+### For Mopidy
+
+In mopidy.conf, your mpd section needs to contain
+
+    [mpd]
+    connection_timeout = 120
+    
+### For MPD
+
+Somewhere in mpd.conf
+
+    connection_timeout     "120"
+
+
+If you have a very large music collection, the higher the numbeer the better. It is in seconds.
+
 
 ## Recommended Setup for Linux
 
@@ -93,7 +117,7 @@ Paste in the following lines, remembering to change /PATH/TO/ROMPR as above, and
                     fastcgi_index index.php;
                     fastcgi_param SCRIPT_FILENAME $request_filename;
                     include /etc/nginx/fastcgi_params;
-                    fastcgi_read_timeout 600;
+                    fastcgi_read_timeout 1800;
             }
             error_page 404 = /404.php;
             try_files $uri $uri/ =404;
@@ -111,13 +135,15 @@ Save the file (Ctrl-X in nano, then answer 'Y'). Now link the configuration so i
 
 To make your browser capable of accessing www.myrompr.net we need to edit your hosts file so the computer knows where www.myrompr.net actually is.
 
+On the computer where nginx is running you can use
+
     sudo nano /etc/hosts
 
 and just add the line
 
     127.0.0.1        www.myrompr.net
-
-You will need to make this change on every device you want to access rompr from - with an appropriate IP address. On devices where this is not possible - eg a mobile device - you can just enter the IP address of your web server into your browser to access RompЯ, because we have set RompЯ as the default site.
+    
+On any other device you will have to edit /etc/hosts but you will need to use the full IP address of the computer running the nginx server. On devices where this is not possible - eg a mobile device - you can just enter the IP address of the machine running nginx into your browser to access RompЯ, because we have set RompЯ as the default site.
 
 _Those of you who want to be clever and know how to edit hostname and DNS mapping on your router can do that, you will then not need RompЯ to be the default site and you will not need to edit the existing default config. Just remove default_server from the rompr configuration above and set server_name appopriately. If you didn't understand that, then ignore this paragraph._
 
@@ -131,7 +157,7 @@ Now find and modify (or add in if they're not there) the following parameters. C
 
     allow_url_fopen = On
     memory_limit = 128M
-    max_execution_time = 600
+    max_execution_time = 1800
 
 ### That's all the configuring. Let's get everything running
 

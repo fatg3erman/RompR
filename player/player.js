@@ -154,6 +154,8 @@ var player = function() {
         collectionLoaded: false,
         
         updatingcollection: false,
+        
+        collection_is_empty: true,
 
         controller: new playerController(),
         

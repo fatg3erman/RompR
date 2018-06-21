@@ -38,6 +38,16 @@ if ($is_connected) {
                     debuglog("Addtoend ".$cmd[1],"POSTCOMMAND");
                     $cmds = array_merge($cmds, playAlbumFromTrack($cmd[1]));
                     break;
+                    
+                case 'playlisttoend':
+                    debuglog("Playing playlist ".$cmd[1]." from position ".$cmd[2]." to end","POSTCOMMAND");
+                    $putinplaylistarray = true;
+                    doCollection('listplaylistinfo "'.$cmd[1].'"');
+                    for ($c = $cmd[2]; $c < count($playlist); $c++) {
+                        list($class, $url) = $playlist[$c]->get_checked_url();
+                        $cmds[] = 'add "'.$url.'"';
+                    }
+                    break;
                                     
                 case "additem":
                     require_once("backends/sql/backend.php");

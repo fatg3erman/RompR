@@ -62,7 +62,7 @@
 ?>
     <div id="patrickmoore" class="infobarlayout bordered noselection expand containerbox">
         <div id="albumcover" class="fixed">
-            <img id="albumpicture" class="notexist" />
+            <img id="albumpicture" />
         </div>
         <div id="firefoxisshitwrapper" class="expand">
             <div id="nowplaying">
@@ -207,7 +207,7 @@ print '<button class="fixed">'.get_int_text('button_save').'</button></div>';
     </div>
     </div>
     <div class="pref textcentre">
-    <button name="donkeykong" onclick="collectionHelper.checkCollection(true, false)">'.get_int_text('config_updatenow').'</button>
+    <button name="donkeykong">'.get_int_text('config_updatenow').'</button>
     </div>';
 ?>
     

@@ -34,6 +34,8 @@ debuglog("Creating FoundTracks took ".$took." seconds", "USERRATING",8);
 
 $params = json_decode(file_get_contents('php://input'), true);
 
+// If you add new actions remember to update actions_requring_cleanup in metahandlers.js
+
 foreach($params as $p) {
 
 	romprmetadata::sanitise_data($p);

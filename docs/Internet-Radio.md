@@ -40,6 +40,16 @@ There is a browseable list of categories and a search box.
 
 Double-click a Radio Station or Podcast in this list to listen to it.
 
+## Community Radio Browser
+
+This uses the radio directory at [http://www.radio-browser.info/](http://www.radio-browser.info)
+
+![](images/commradio.png)
+
+You have a choice of either listing stations by Country, Language, or Tag by choosing an option from one of the dropdowns, or searching using the search boxes. You can use more than one search term at a time.
+
+You can change the order of the list by using the Order By buttons.
+
 ## Icecast Radio
 
 Icecast is an open-source alternative to ShoutCast.

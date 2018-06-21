@@ -23,9 +23,6 @@ function preprocess_stream(&$filedata) {
         $filedata['Album'] = substr($filedata['file'], strrpos($filedata['file'], '#')+1, strlen($filedata['file']));
     }
 
-    if (preg_match('/^http:/', $filedata['X-AlbumImage'])) {
-        $image = "getRemoteImage.php?url=".$filedata['X-AlbumImage'];
-    }
 }
 
 function preprocess_soundcloud(&$filedata) {
@@ -124,7 +121,7 @@ function check_radio_and_podcasts($filedata) {
         $album,
         getStreamFolder(unwanted_array($url)),
         "stream",
-        $filedata['X-AlbumImage'],
+        ($filedata['X-AlbumImage'] == null) ? 'newimages/broadcast.svg' : $filedata['X-AlbumImage'],
         getDummyStation(unwanted_array($url)),
         null,
         $filedata['AlbumArtist'],

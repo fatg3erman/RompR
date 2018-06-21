@@ -24,6 +24,29 @@ Then
 
     brew install mpd --with-opus --with-libmss
 
+### Player Connection Timeout
+    
+There is one thing you should adjust in the configuration for MPD and Mopidy
+    
+MPD and Mopidy both have a connection timeout parameter, after which time they will drop the connection between them and Rompr. This is seriously bad news for Rompr. You should make sure you increase it.
+    
+### For Mopidy
+    
+In mopidy.conf, your mpd section needs to contain
+    
+    [mpd]
+    connection_timeout = 120
+        
+### For MPD
+    
+Somewhere in mpd.conf
+    
+    connection_timeout     "120"
+    
+    
+If you have a very large music collection, the higher the numbeer the better. It is in seconds.
+
+
 ## 2. Installing Rompr
 
     cd ~
@@ -69,6 +92,7 @@ This will open nano again. It may bring up an empty file, or it may bring up a f
 	    DocumentRoot /Users/YOURNAME/Sites/rompr
 	    ServerName www.myrompr.net
         ErrorDocument 404 /404.php
+        Timeout 1800
 
 	    <Directory /Users/YOURNAME/Sites/rompr>
             Options Indexes FollowSymLinks Includes ExecCGI
@@ -89,6 +113,7 @@ This will open nano again. It may bring up an empty file, or it may bring up a f
     		    php_admin_value memory_limit 128M
                 php_admin_value post_max_size 32M
                 php_admin_value upload_max_filesize 32M                
+                php_admin_value max_execution_time 1800         
 		    </IfModule>
 
 	    </Directory>

@@ -22,6 +22,11 @@ var clickRegistry = function() {
                 $(clickHandlers[i].source).unbind('click');
                 $(clickHandlers[i].source).unbind('dblclick');
             }
+        },
+        
+        reset: function() {
+            clickRegistry.unbindClicks();
+            clickRegistry.bindClicks();
         }
     }
 }();
@@ -40,6 +45,8 @@ function setClickHandlers() {
 
     $('.infotext').unbind('dblclick');
     $('.infotext').dblclick(onBrowserDoubleClicked);
+
+    collectionHelper.enableCollectionUpdates();
 
 }
 
@@ -98,8 +105,7 @@ function onSourcesClicked(event) {
             clickedElement.hasClass('directory') ||
             clickedElement.hasClass('playlist')) {
             doFileMenu(event, clickedElement);
-        } else if (clickedElement.hasClass('album') ||
-                    clickedElement.hasClass('artist')) {
+        } else if (clickedElement.hasClass('album') || clickedElement.hasClass('artist')) {
             doAlbumMenu(event, clickedElement, false);
         } else {
             doMenu(event, clickedElement);
@@ -173,7 +179,7 @@ function onSourcesClicked(event) {
             $('[name="'+id+'"]').removeClass('selected');
             clickedElement.parent().parent().remove();
     } else if (prefs.clickmode == "double") {
-        if (clickedElement.hasClass("clickalbum") ||
+        if ((clickedElement.hasClass("clickalbum") && !clickedElement.hasClass('noselect')) ||
             clickedElement.hasClass("clickloadplaylist") ||
             clickedElement.hasClass("clickloaduserplaylist")) {
             event.stopImmediatePropagation();
@@ -545,7 +551,7 @@ function trackSelect(event, element) {
 }
 
 function checkNotSmallIcon() {
-    if ($(this).hasClass('playlisticonr') || $(this).hasClass('podicon')) {
+    if ($(this).hasClass('playlisticonr') || $(this).hasClass('podicon') || $(this).hasClass('noselect')) {
         return false;
     }
     return true;

@@ -137,7 +137,9 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
             break;
 
         case "clicktrack":
-            print '<div class="containerbox menuitem draggable clickable '.$class.'" name="'.$link.'">';
+            print '<input type="hidden" value="'.$pl.'" />';
+            print '<input type="hidden" value="'.$count.'" />';
+            print '<div class="containerbox menuitem draggable clickable '.$class.' playlisttrack" name="'.$link.'">';
             print '<i class="'.$icon.' fixed smallicon"></i>';
             print '<div class="expand">'.$name.'</div>';
             if ($delete) {

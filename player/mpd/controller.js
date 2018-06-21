@@ -349,7 +349,7 @@ function playerController() {
 	}
 
 	this.stop = function() {
-        self.do_command_list([["stop"]], self.onStop );
+        self.do_command_list([["stop"]], self.onStop);
 	}
 
 	this.next = function() {
@@ -433,7 +433,7 @@ function playerController() {
 		$.each(tracks, function(i,v) {
 			switch (v.type) {
 				case "uri":
-                    if (prefs.cdplayermode && at_pos === null && !playlist.radioManager.isRunning()) {
+                    if (prefs.cdplayermode && at_pos === null) {
                         cmdlist.push(['addtoend', v.name]);
                     } else {
     				    cmdlist.push(['add',v.name]);
@@ -452,12 +452,14 @@ function playerController() {
                 case "stream":
                     cmdlist.push(['loadstreamplaylist',v.url,v.image,v.station]);
                     break;
+                case "playlisttoend":
+                    cmdlist.push(['playlisttoend',v.playlist,v.frompos]);
+                    break;
     		}
 		});
 		// Note : playpos will only be set if at_pos isn't, because at_pos is only set when
         // dragging to the playlist, for which action auto-play is always disabled
         if (prefs.cdplayermode && at_pos === null && !playlist.radioManager.isRunning()) {
-            cmdlist.unshift(['consume', '1']);
             cmdlist.unshift(["clear"]);
             cmdlist.push(['play']);
         } else if (playpos !== null && playpos > -1) {
@@ -536,6 +538,10 @@ function playerController() {
     }
 
     this.search = function(command) {
+        if (player.updatingcollection) {
+            infobar.notify(infobar.NOTIFY,"Cannot Search while updating collection");
+            return false;
+        }
         var terms = {};
         var termcount = 0;
         lastsearchcmd = command;
@@ -598,6 +604,10 @@ function playerController() {
     }
 
     this.rawsearch = function(terms, sources, exact, callback, checkdb) {
+        if (player.updatingcollection) {
+            infobar.notify(infobar.NOTIFY,"Cannot Search while updating collection");
+            callback([]);
+        }
         $.ajax({
                 type: "POST",
                 url: "albums.php",

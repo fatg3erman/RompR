@@ -36,7 +36,11 @@ print '<div id="custombackground" class="pref containerbox dropdown-container">
 <div class="selectholder-noselect">
 <form id="backimageform" action="backimage.php" method="post" enctype="multipart/form-data">
 <input type="hidden" name="currbackground" value="" />
+<input type="hidden" name="browser_id" value="" />
 <input type="file" name="imagefile" class="infowiki">
+<div class="pref styledinputs">
+<input type="checkbox" id="thisbrowseronly" name="thisbrowseronly" /><label for="thisbrowseronly">For this browser only</label>
+</div>
 <input type="button" onclick="prefs.changeBackgroundImage()" value="'.get_int_text('albumart_uploadbutton').'">
 <i class="icon-cancel-circled clickicon playlisticonr" onclick="prefs.clearBgImage()"></i>
 </form>
@@ -85,6 +89,20 @@ foreach($themes as $theme) {
         preg_replace('/coversizes\/\d+-(.*?)\.css$/', "$1", $theme).'</option>';
 }
 print '</select></div></div>';
+
+// Players
+print '<div class="textcentre configtitle"><b>'.get_int_text('config_players').'</b></div>';
+print '<div class="fullwidth">';
+print '<div class="clearfix">';
+print '<div class="pref styledinputs tleft" id="playerdefs">';
+print '</div>';
+print '<div class="pref tright"><button onclick="player.defs.edit()">'.get_int_text('button_edit_players').'</button></div>';
+print '</div>';
+print '<div class="pref styledinputs">
+<input class="autoset toggle" type="checkbox" id="player_in_titlebar">
+<label for="player_in_titlebar">'.get_int_text('config_playerintitlebar').'</label>
+</div>';
+print '</div>';
 
 // Sources Panel Hiding
 print '<div class="textcentre configtitle"><b>'.get_int_text('settings_panels').'</b></div>';
@@ -225,14 +243,6 @@ print '<div class="pref"><b>Google API Key</b>
 <div class="pref"><b>Google Search Engine ID</b>
 <input class="saveotron prefinput" id="google_search_engine_id" type="text" size="120" /></div>';
 
-// Players
-print '<div class="textcentre configtitle"><b>'.get_int_text('config_players').'</b></div>';
-print '<div class="clearfix">';
-print '<div class="pref styledinputs tleft" id="playerdefs">';
-print '</div>';
-print '<div class="pref tright"><button onclick="player.defs.edit()">'.get_int_text('button_edit_players').'</button></div>';
-print '</div>';
-
 // Last.FM
 print '<div class="textcentre configtitle">
 <i class="icon-lastfm-1 medicon"></i><b>'.get_int_text('label_lastfm').'</b>
@@ -295,9 +305,9 @@ print '<div class="pref styledinputs">
         <div class="tleft">
             <input class="autoset toggle" type="checkbox" id="updateeverytime"><label for="updateeverytime">'.get_int_text('config_updateonstart').'</label>
         </div>';
-print '<button class="tright" name="donkeykong" onclick="collectionHelper.checkCollection(true, false)">'.get_int_text('config_updatenow').'</button>';
+print '<button class="tright" name="donkeykong">'.get_int_text('config_updatenow').'</button>';
 if ($prefs['player_backend'] == "mpd") {
-    print '<button class="tright" onclick="collectionHelper.checkCollection(true, true)">'.get_int_text('config_rescan').'</button>';
+    print '<button class="tright" name="dinkeyking"">'.get_int_text('config_rescan').'</button>';
 }
 print '</div></div>';
 

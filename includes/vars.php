@@ -3,8 +3,8 @@
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
 define('ROMPR_IMAGE_VERSION', 2);
-define('ROMPR_SCHEMA_VERSION', 34);
-define('ROMPR_VERSION', '1.15.5');
+define('ROMPR_SCHEMA_VERSION', 37);
+define('ROMPR_VERSION', '1.16');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_PLAYLIST_KEY', 'IS_ROMPR_PLAYLIST_IMAGE');
@@ -56,6 +56,7 @@ $prefs = array(
     // This option for plugin debugging ONLY
     "load_plugins_at_loadtime" => false,
     "beets_server_location" => "",
+    // Doesn't actually work.
     "mopidy_scan_command" => "",
     "multihosts" => (object) array (
         'Default' => (object) array(
@@ -66,6 +67,7 @@ $prefs = array(
         )
     ),
     "currenthost" => 'Default',
+    'dev_mode' => false,
 
     // Things that could be set on a per-user basis but need to be known by the backend
     "mpd_host" => "localhost",
@@ -146,7 +148,15 @@ $prefs = array(
     "ratman_showletters" => false,
     "sleeptime" => 30,
     "sleepon" => false,
-    "advanced_search_open" => false
+    "advanced_search_open" => false,
+    "sortwishlistby" => 'artist',
+    "player_in_titlebar" => false,
+    "communityradiocountry" => 'united kingdom',
+	"communityradiolanguage" => '',
+	"communityradiotag" => '',
+	"communityradiolistby" => 'country',
+    "communityradioorderby" => 'name',
+    "browser_id" => null
 );
 
 // Prefs that should not be exposed to the browser for security reasons
@@ -236,35 +246,35 @@ function savePrefs() {
 function loadPrefs() {
     global $prefs, $logger;
     if (file_exists('prefs/prefs.var')) {
-      $fp = fopen('prefs/prefs.var', 'r');
-      if($fp) {
-          if (flock($fp, LOCK_SH)) {
-              $sp = unserialize(fread($fp, 32768));
-              flock($fp, LOCK_UN);
-              fclose($fp);
-              if ($sp === false) {
-                  error_log("ERROR!              : COULD NOT LOAD PREFS");
-                  exit(1);
-              }
-              $prefs = array_replace($prefs, $sp);
+        $fp = fopen('prefs/prefs.var', 'r');
+        if($fp) {
+            if (flock($fp, LOCK_SH)) {
+                $sp = unserialize(fread($fp, 32768));
+                flock($fp, LOCK_UN);
+                fclose($fp);
+                if ($sp === false) {
+                    error_log("ERROR!              : COULD NOT LOAD PREFS");
+                    exit(1);
+                }
+                $prefs = array_replace($prefs, $sp);
 
-              foreach ($_COOKIE as $a => $v) {
-                  if (array_key_exists($a, $prefs)) {
-                      switch ($a) {
-                          case 'debug_enabled':
-                              $logger->setLevel($v);
-                              // Fall through to default
+                foreach ($_COOKIE as $a => $v) {
+                    if (array_key_exists($a, $prefs)) {
+                        switch ($a) {
+                            case 'debug_enabled':
+                                $logger->setLevel($v);
+                                // Fall through to default
 
-                          default:
-                              $prefs[$a] = $v;
-                              break;
+                            default:
+                                $prefs[$a] = $v;
+                                break;
 
-                      }
-                      if ($prefs['debug_enabled'] > 8) {
-                        error_log("COOKIE             : Pref ".$a." is set by Cookie  - Value : ".$v);
-                      }
-                  }
-              }
+                        }
+                        if ($prefs['debug_enabled'] > 8) {
+                            error_log("COOKIE             : Pref ".$a." is set by Cookie  - Value : ".$v);
+                        }
+                    }
+                }
 
           } else {
               error_log("ERROR!              : COULD NOT GET READ FILE LOCK ON PREFS FILE");
