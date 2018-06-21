@@ -27,6 +27,7 @@ if (!$url) {
 	$content_type = rawurldecode(array_pop($bits));
 	debuglog("  .. Content Type is ".$content_type,"TOMATO",8);
 	if (substr($content_type,0,5) != 'image') {
+		debuglog("Not an image file! ".$url,"TOMATO",5);
 		header("HTTP/1.1 404 Not Found");
 	} else {
 		header('Content-type: '.$content_type);

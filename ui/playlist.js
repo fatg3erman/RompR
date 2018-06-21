@@ -715,7 +715,6 @@ var playlist = function() {
 
             $("#sortable").empty();
             for (var i in tracklist) {
-                // $("#sortable").append(tracklist[i].getHTML());
                 tracklist[i].presentYourself();
             }
 
