@@ -20,6 +20,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * [Community Radio Browser](https://fatg3erman.github.io/RompR/Internet Radio)
 * Custom Background Images can now be set for a specific browser instead of applying to everybody
 * Custom Background Images can now be set separately for portrait and landscape orientations
+* Fixes and speed improvements, especially to the backend cache which is now much faster at dealing with images
 
 ## Version 1.15.5
 
