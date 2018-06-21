@@ -96,9 +96,9 @@ if (array_key_exists('populate', $_REQUEST)) {
             debuglog("Station ".$station['name'].' '.count($station['streams']).' streams',"RADIO");
             $image = null;
             if ($station['image']['url']) {
-                $image = $station['image']['url'];
+                $image = 'getRemoteImage.php?url='.$station['image']['url'];
             } else if ($station['image']['thumb']['url']) {
-                $image = $station['image']['thumb']['url'];
+                $image = 'getRemoteImage.php?url='.$station['image']['thumb']['url'];
             } else {
                 $image = "newimages/broadcast.svg";
             }

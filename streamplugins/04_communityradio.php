@@ -89,7 +89,7 @@ if (array_key_exists('populate', $_REQUEST)) {
         
         print '<div class="configtitle textcentre brick_wide">Search All Stations:</div>';
         foreach ($searchterms as $term) {
-            print '<div class="containerbox dropdown-container" name="'.$term.'">';
+            print '<div class="containerbox dropdown-container brick_wide fullwidth" name="'.$term.'">';
             print '<div class="fixed comm-search-label"><span class="cslt"><b>'.ucfirst($term).'</b></span></div>';
             print '<div class="expand">';
             print '<input class="comm_radio_searchterm" name="'.$term.'" type="text" />';
@@ -247,7 +247,7 @@ function comm_radio_make_list_button($which) {
 
 function comm_radio_get_image($station) {
     if ($station['favicon']) {
-        return $station['favicon'];
+        return 'getRemoteImage.php?url='.$station['favicon'];
     } else {
         return 'newimages/broadcast.svg';
     }

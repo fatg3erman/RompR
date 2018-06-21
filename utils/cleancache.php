@@ -35,8 +35,8 @@ clean_cache_dir('prefs/jsoncache/spotify/', 2592000);
 clean_cache_dir('prefs/jsoncache/google/', 2592000);
 // Six Months - after all, lyrics are small and don't change
 clean_cache_dir('prefs/jsoncache/lyrics/', 15552000);
-// Two weeks (or it can get REALLY big)
-clean_cache_dir('prefs/imagecache/', 1296000);
+// One week (or it can get REALLY big)
+clean_cache_dir('prefs/imagecache/', 648000);
 // Clean the albumart temporary upload directory
 clean_cache_dir('albumart/', 1);
 // Clean the temp directory
