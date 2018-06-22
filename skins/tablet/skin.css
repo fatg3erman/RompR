@@ -427,10 +427,11 @@ div.rightmenu {
 
 #sortable .playlisticonr {
     border-top: none;
-    border-left: 12px solid transparent;
-    border-right: 4px solid transparent;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
     border-bottom: 16px solid transparent;
     margin-top: 0px;
+    margin-right:4px;
 }
 
 #sortable .track>div>div.clickable {
