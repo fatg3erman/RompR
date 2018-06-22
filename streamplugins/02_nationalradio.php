@@ -160,7 +160,7 @@ class dirbleplugin {
             foreach ($streams as $s) {
                 debuglog("Content type ".$s['content_type']." and uri ".$s['stream'],"DIRBLE");
                 print '<div class="clickable clickstream draggable indent containerbox padright menuitem" name="'.trim($s['stream']).'" streamname="'.trim($station['name']).'" streamimg="'.$image.'">';
-                print '<i class="'.audioClass($s['content_type']).' playlisticon fixed"></i>';
+                print '<i class="'.audioClass($s['content_type']).' collectionicon fixed"></i>';
                 print '<div class="expand">';
                 print $this->get_speed($s['bitrate']);
                 print '</div>';

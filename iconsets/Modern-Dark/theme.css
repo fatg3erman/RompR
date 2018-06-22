@@ -62,7 +62,6 @@
 .icon-internetarchive-circled { background-image: url('internetarchive-logo.svg') }
 .icon-increase { background-image: url('arrow-increase.svg') }
 .icon-decrease { background-image: url('arrow-decrease.svg') }
-.icon-basket-circled { background-image: url('cart.svg') }
 .icon-attention-1 { background-image: url('dialog-error.svg') }
 .icon-info-circled { background-image: url('dialog-information.svg') }
 .icon-download { background-image: url('download-icon.svg') }
@@ -75,7 +74,6 @@
 .icon-refresh { background-image: url('refresh.svg') }
 .icon-dirble-circled { background-image: url('dirble-logo.svg') }
 .icon-tunein { background-image: url('../../newimages/tunein-logo.svg') }
-.icon-icecast { background-image: url('icecast.svg') }
 .icon-no-response-playbutton { background-image :url('media-playback-start.svg') }
 .icon-tags { background-image: url('tag.svg') }
 .icon-volume-up { background-image: url('volume.svg') }
@@ -102,7 +100,7 @@
 .icon-recentlyplayed { background-image: url('calendar.svg') }
 .icon-artist { background-image: url('artist-icon.png') }
 .icon-mp3-audio { background-image: url('mp3-audio.svg') }
-.icon-aac-audio { background-image: url('aac-audio.jpg') }
+.icon-aac-audio { background-image: url('aac-audio.svg') }
 .icon-flac-audio { background-image: url('flac-audio.svg') }
 .icon-wma-audio { background-image: url('wma-audio.svg') }
 .icon-ogg-audio { background-image: url('ogg-audio.svg') }

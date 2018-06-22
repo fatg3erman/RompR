@@ -187,7 +187,7 @@ class commradioplugin {
         }
         print '<div class="containerbox expand ninesix indent padright"><b>Listen:</b></div>';
         print '<div class="clickable clickstream draggable indent containerbox padright menuitem" name="'.$station['playurl'].'" streamimg="'.$this->comm_radio_get_image($station).'" streamname="'.$station['name'].'">';
-        print '<i class="'.audioClass($station['codec']).' playlisticon fixed"></i>';
+        print '<i class="'.audioClass($station['codec']).' collectionicon fixed"></i>';
         print '<div class="expand">'.$station['bitrate'].'kbps &nbsp'.$station['codec'].'</div>';
         print '</div>';
         print '</div>';

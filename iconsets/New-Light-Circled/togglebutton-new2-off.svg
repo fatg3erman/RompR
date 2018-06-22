@@ -23,12 +23,12 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1581"
-     inkscape:window-height="758"
+     inkscape:window-width="1378"
+     inkscape:window-height="745"
      id="namedview7244"
      showgrid="false"
      inkscape:zoom="0.30035326"
-     inkscape:cx="-210.6454"
+     inkscape:cx="388.64891"
      inkscape:cy="392.87072"
      inkscape:window-x="0"
      inkscape:window-y="0"
@@ -441,10 +441,4 @@
      cx="-103.94704"
      id="path815"
      style="opacity:1;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-  <style
-     id="stylebodge1"
-     type="text/css">[id^=&quot;polygon&quot;]{fill:#ffffff;fill-opacity:1}</style>
-  <style
-     id="stylebodge2"
-     type="text/css">[id^=&quot;path&quot;]{fill:#ffffff;fill-opacity:1}</style>
-</svg>
+<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#ffffff;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#ffffff;fill-opacity:1}</style></svg>

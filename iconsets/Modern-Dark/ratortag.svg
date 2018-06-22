@@ -7,10 +7,11 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   version="1.0"
-   width="537.04407"
-   height="237.70274"
-   id="svg2"
+   width="205.66005mm"
+   height="207.89409mm"
+   viewBox="0 0 205.66004 207.89409"
+   version="1.1"
+   id="svg8"
    sodipodi:docname="ratortag.svg"
    inkscape:version="0.92.2 5c3e80d, 2017-08-06">
   <sodipodi:namedview
@@ -22,153 +23,63 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1526"
-     inkscape:window-height="844"
-     id="namedview26"
+     inkscape:window-width="1461"
+     inkscape:window-height="868"
+     id="namedview11"
      showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:zoom="1"
-     inkscape:cx="272.01359"
-     inkscape:cy="118.30687"
-     inkscape:window-x="467"
-     inkscape:window-y="366"
+     inkscape:zoom="0.30035326"
+     inkscape:cx="388.64891"
+     inkscape:cy="392.87072"
+     inkscape:window-x="770"
+     inkscape:window-y="311"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg2" />
+     inkscape:current-layer="svg8" />
   <defs
-     id="defs4">
-    <filter
-       id="filter3408"
-       style="color-interpolation-filters:sRGB">
-      <feGaussianBlur
-         id="feGaussianBlur3410"
-         stdDeviation="4.1410521" />
-    </filter>
-    <linearGradient
-       id="linearGradient3139"
-       y2="673.85999"
-       gradientUnits="userSpaceOnUse"
-       x2="241.16"
-       gradientTransform="rotate(-45,343.82546,672.06282)"
-       y1="673.85999"
-       x1="224.72">
-      <stop
-         id="stop3463"
-         stop-color="#eeeeec"
-         stop-opacity="0.73239437"
-         offset="0" />
-      <stop
-         id="stop3465"
-         stop-color="#eeeeec"
-         stop-opacity="0"
-         offset="1" />
-    </linearGradient>
-    <linearGradient
-       id="linearGradient3141"
-       y2="672.40002"
-       gradientUnits="userSpaceOnUse"
-       x2="399.16"
-       gradientTransform="rotate(-45,343.22192,672.31282)"
-       y1="672.40002"
-       x1="426">
-      <stop
-         id="stop3478"
-         stop-color="#FFF"
-         offset="0" />
-      <stop
-         id="stop3480"
-         stop-color="#FFF"
-         stop-opacity="0"
-         offset="1" />
-    </linearGradient>
-    <linearGradient
-       id="linearGradient3143"
-       y2="665.16998"
-       gradientUnits="userSpaceOnUse"
-       x2="366.89999"
-       gradientTransform="rotate(-45,343.82546,672.06282)"
-       y1="664.66998"
-       x1="384.89999">
-      <stop
-         id="stop3206"
-         stop-color="#FFF"
-         offset="0" />
-      <stop
-         id="stop3208"
-         stop-color="#FFF"
-         stop-opacity="0"
-         offset="1" />
-    </linearGradient>
-    <linearGradient
-       id="linearGradient3145"
-       y2="673.66998"
-       gradientUnits="userSpaceOnUse"
-       x2="234.64"
-       gradientTransform="rotate(-45,343.82546,672.06282)"
-       y1="673.66998"
-       x1="218.88">
-      <stop
-         id="stop3198"
-         stop-color="#000"
-         offset="0" />
-      <stop
-         id="stop3200"
-         stop-color="#000"
-         stop-opacity="0"
-         offset="1" />
-    </linearGradient>
-    <linearGradient
-       id="linearGradient3147"
-       y2="671.48999"
-       gradientUnits="userSpaceOnUse"
-       x2="411"
-       y1="671.48999"
-       x1="397.75">
-      <stop
-         id="stop3224"
-         stop-color="#000"
-         stop-opacity="0.29411766"
-         offset="0" />
-      <stop
-         id="stop3226"
-         stop-color="#FFF"
-         stop-opacity="0.29411766"
-         offset="1" />
-    </linearGradient>
-  </defs>
+     id="defs2" />
   <metadata
-     id="metadata7">
+     id="metadata5">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
+  <style
+     type="text/css"
+     id="style3111">
+	.st0{fill:#333333;}
+</style>
+  <style
+     type="text/css"
+     id="style2">
+	.st0{fill:none;}
+	.st1{fill:#F4481E;}
+	.st2{fill:url(#SVGID_1_);}
+	.st3{opacity:0.1;fill:#FFFFFF;enable-background:new    ;}
+	.st4{fill:#FFD119;}
+	.st5{fill:#FF8C00;}
+	.st6{fill:url(#SVGID_2_);}
+	.st7{fill:#FAFAFA;}
+	.st8{opacity:0.3;fill:#FFFFFF;enable-background:new    ;}
+</style>
   <path
-     stroke-miterlimit="4"
-     d="M 198.11124,233.1627 124.5822,184.83449 50.412563,232.5939 73.653303,147.72899 5.310882,91.947653 93.203379,87.825916 125.13513,5.5928329 156.21412,87.91158 l 88.07891,4.957816 -68.68397,54.995874 z"
-     id="path3817"
      inkscape:connector-curvature="0"
-     style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none" />
+     id="path3817"
+     d="M 92.557712,97.73068 62.462182,77.949876 32.104447,97.497874 41.616915,62.762544 13.644268,39.931166 49.618789,38.244133 62.688497,4.5860189 75.409166,38.279195 111.45999,40.308437 83.347545,62.818325 Z"
+     stroke-miterlimit="4"
+     style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:1.63720548;stroke-miterlimit:4;stroke-dasharray:none" />
   <path
-     style="stroke-width:0.43818796"
-     d="m 515.65015,8.3515009 h -64.18122 c -11.76722,0 -28.20164,6.6053921 -36.52183,14.6787931 l -99.41836,96.469446 c -8.3202,8.07341 -8.3202,21.28505 0,29.35845 l 76.71398,74.43768 c 8.32021,8.07382 21.93526,8.07382 30.25545,0 l 99.41837,-96.46904 c 8.32019,-8.07383 15.1275,-24.02121 15.1275,-35.438523 V 29.110811 c 0,-11.417749 -9.62756,-20.7593101 -21.39389,-20.7593101 z M 487.22253,77.413956 c -11.79256,0 -21.35207,-9.275951 -21.35207,-20.718737 0,-11.442786 9.55951,-20.718736 21.35207,-20.718736 11.79257,0 21.35208,9.27595 21.35208,20.718736 0,11.442786 -9.55951,20.718737 -21.35208,20.718737 z"
-     id="path1010"
-     inkscape:connector-curvature="0" />
-  <text
-     id="text1022"
-     y="208.48036"
-     x="234.6647"
-     style="font-style:normal;font-weight:normal;font-size:56.47851181px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.41196275px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     xml:space="preserve"><tspan
-       style="font-size:271.09686279px;stroke-width:1.41196275px"
-       y="208.48036"
-       x="234.6647"
-       id="tspan1020">/</tspan></text>
+     inkscape:connector-curvature="0"
+     style="stroke-width:0.21408163"
+     d="m 182.36904,97.346446 h -30.8879 c -5.6631,0 -13.57235,3.276084 -17.57654,7.280284 L 86.058449,152.4729 c -4.004181,4.00417 -4.004181,10.55677 0,14.56097 l 36.919441,36.91901 c 4.00417,4.00439 10.55657,4.00439 14.56076,0 l 47.84618,-47.84595 c 4.00417,-4.00439 7.28027,-11.91387 7.28027,-17.57655 v -30.88789 c 0,-5.66291 -4.63339,-10.296044 -10.29606,-10.296044 z m -13.68109,34.253064 c -5.67531,0 -10.27591,-4.60063 -10.27591,-10.27593 0,-5.67531 4.6006,-10.27591 10.27591,-10.27591 5.67531,0 10.27592,4.6006 10.27592,10.27591 0,5.6753 -4.60061,10.27593 -10.27592,10.27593 z"
+     id="path3925" />
+  <path
+     inkscape:connector-curvature="0"
+     id="path3979"
+     d="M 21.674442,183.02941 C 76.292548,130.46632 131.05587,77.763472 185.74596,25.131098"
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:15.87499923;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
 </svg>

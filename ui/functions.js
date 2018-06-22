@@ -276,38 +276,3 @@ function randomsort(a,b) {
         return -1;
     }
 }
-
-function audioClass(filetype) {
-    filetype = filetype.toLowerCase();
-    switch (filetype) {
-        case "mp3":
-            return 'icon-mp3-audio';
-            break;
-
-        case "mp4":
-        case "m4a":
-        case "aac":
-        case "aacplus":
-            return 'icon-aac-audio';
-            break;
-
-        case "flac":
-            return 'icon-flac-audio';
-            break;
-
-        case "wma":
-        case "windows media":
-            return 'icon-wma-audio';
-            break;
-
-        case "ogg":
-        case "ogg vorbis":
-            return 'icon-ogg-audio';
-            break;
-
-        default:
-            return 'icon-library';
-            break;
-
-    }
-}

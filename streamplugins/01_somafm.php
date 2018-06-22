@@ -56,7 +56,7 @@ class somafmplugin {
     private function format_listenlink($c, $p, $label) {
         $img = $this->getimage($c);
         print '<div class="clickable clickstream draggable indent containerbox padright menuitem" name="'.(string) $p.'" streamimg="'.$img.'" streamname="'.$c->title.'">';
-        print '<i class="'.audioClass($p[0]['format']).' playlisticon fixed"></i>';
+        print '<i class="'.audioClass($p[0]['format']).' collectionicon fixed"></i>';
         print '<div class="expand">'.$label.'&nbsp';
         switch ($p[0]['format']) {
             case 'mp3':
@@ -140,7 +140,7 @@ class somafmplugin {
         if ($channel->twitter && $channel->dj) {
             print '<a href="http://twitter.com/@'.$channel->twitter.'" target="_blank">';
             print '<div class="containerbox indent padright menuitem">';
-            print '<i class="icon-twitter-logo playlisticon fixed"></i>';
+            print '<i class="icon-twitter-logo collectionicon fixed"></i>';
             print '<div class="expand"><b>DJ: </b>'.$channel->dj.'</div>';
             print '</div></a>';
         }
