@@ -665,22 +665,17 @@ div.rightmenu {
         margin-bottom:1em;
         padding-bottom:0.5em;
     }
-    .sptext {
-        display:none;
-    }
 }
 
 @media screen and (min-width: 641px) {
     .cleft.narrowright {
         margin-left:1em;
     }
-    .spicons {
-        display:none;
-    }
-    .sptext {
-        white-space:nowrap;
-        padding-right:4px;
-    }
+}
+
+.sptext {
+    white-space:nowrap;
+    padding-right:4px;
 }
 
 @media screen and (max-height: 380px) and (orientation: portrait) {

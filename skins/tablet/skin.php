@@ -27,7 +27,6 @@ printOutputCheckboxes();
         <i class="onlywide choose_prefs icon-cog-alt topimg"></i>
         <div class="topdrop fixed"><i class="icon-menu topimg tleft ninety"></i>
             <div id="specialplugins" class="topdropmenu rightmenu dropdown">
-                <div class="spicons"></div>
                 <div class="sptext"></div>
             </div>
         </div>
