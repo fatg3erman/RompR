@@ -4,18 +4,24 @@
 <div id="headerbar" class="noborder fullwidth containerbox">
     <div id="sourcescontrols" class="expand center containerbox noborder">
         <div id="volumedropper" class="topdropmenu rightmenu widemenu">
-            <div class="configtitle textcentre"><b>Volume</b></div>
+<?php
+            print '<div class="configtitle textcentre"><b>'.get_int_text('label_volume').'</b></div>';
+?>
             <div id="volumecontrol" class="fullwidth">
                 <div id="volume"></div>
             </div>
-            <div class="configtitle textcentre"><b>Outputs</b></div>
+<?php
+            print '<div class="configtitle textcentre"><b>'.get_int_text('config_audiooutputs').'</b></div>';
+?>
             <div class="pref">
 <?php
 include('player/mpd/outputs.php');
 printOutputCheckboxes();
 ?>
             </div>
-            <div class="configtitle textcentre"><b>Players</b></div>
+<?php
+            print '<div class="configtitle textcentre nohelp"><b>'.get_int_text('config_players').'</b></div>';
+?>
             <div class="pref styledinputs" name="playerdefs">
             </div>
             

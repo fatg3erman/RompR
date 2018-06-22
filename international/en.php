@@ -638,7 +638,8 @@ $languages['en'] = array (
 	"label_radiostation" => "Radio Station",
 	"label_opmlimporter" => "OPML Importer",
 	"config_playerintitlebar" => "Show Player Name in Titlebar",
-	"label_communityradio" => "Community Radio Browser"
+	"label_communityradio" => "Community Radio Browser",
+	"label_volume" => "Volume"
 );
 
 ?>

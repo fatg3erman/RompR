@@ -13,13 +13,26 @@
         <i class="choose_pluginplaylists icon-wifi topimg"></i>
         <div class="topdrop fixed"><i class="icon-volume-up topimg"></i>
             <div class="topdropmenu rightmenu widemenu dropdown" style="width:50vw">
-                <div class="pref">
+<?php
+            print '<div class="configtitle textcentre"><b>'.get_int_text('label_volume').'</b></div>';
+?>
+            <div id="volumecontrol" class="fullwidth">
+                <div id="volume"></div>
+            </div>
+<?php
+            print '<div class="configtitle textcentre"><b>'.get_int_text('config_audiooutputs').'</b></div>';
+?>
+            <div class="pref">
 <?php
 include('player/mpd/outputs.php');
 printOutputCheckboxes();
 ?>
-                </div>
-                <div id="volumecontrol" class="fullwidth"><div id="volume"></div></div>
+            </div>
+<?php
+            print '<div class="configtitle textcentre nohelp"><b>'.get_int_text('config_players').'</b></div>';
+?>
+            <div class="pref styledinputs" name="playerdefs">
+            </div>
             </div>
         </div>
         <i class="icon-doc-text topimg choose_playlist"></i>
