@@ -400,6 +400,9 @@ var layoutProcessor = function() {
             $('.topbarmenu').bind('click', function() {
                 $('#'+$(this).attr('name')).slideToggle('fast');
             });
+            $('.autohide').bind('click', function() {
+                $(this).slideToggle('fast');
+            });
             setControlClicks();
             $('.choose_nowplaying').click(function(){layoutProcessor.sourceControl('infobar')});
             $('.choose_albumlist').click(function(){layoutProcessor.sourceControl('albumlist')});

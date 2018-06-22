@@ -220,7 +220,7 @@ function addPodcastCounts($html, $extra) {
 
 function addUserRadioButtons($html, $index, $uri, $name, $image) {
     $out = phpQuery::newDocument($html);
-    $extra = '<div class="fixed clickable clickradioremove clickicon" name="'.$index.'"><i class="icon-cancel-circled playlisticon"></i></div>';
+    $extra = '<div class="fixed clickable clickradioremove clickicon" name="'.$index.'"><i class="icon-cancel-circled playlisticonr"></i></div>';
     $out->find('.menuitem')->append($extra);
     return $out;
 }

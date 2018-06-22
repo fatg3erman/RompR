@@ -13,10 +13,10 @@ printOutputCheckboxes();
             </div>
             <div id="volumecontrol" class="fullwidth"><div id="volume"></div></div>
         </div>
-        <div id="specialplugins" class="topdropmenu rightmenu">
+        <div id="specialplugins" class="topdropmenu rightmenu autohide">
             <div class="sptext"></div>
         </div>
-        <div id="narrowscreenicons" class="topdropmenu rightmenu">
+        <div id="narrowscreenicons" class="topdropmenu rightmenu autohide">
             <i class="noshrink icon-folder-open-empty topimg choose_filelist"></i>
             <i class="noshrink choose_playlistman icon-doc-text topimg"></i>
             <i class="noshrink icon-info-circled topimg choose_infopanel"></i>
