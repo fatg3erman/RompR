@@ -533,7 +533,7 @@ function trim_content_type($filetype) {
     return $filetype;
 }
 
-function audioClass($filetype) {
+function audioClass($filetype, $domain = '') {
     $filetype = trim_content_type($filetype);
     switch ($filetype) {
         case "mp3":
@@ -579,15 +579,44 @@ function audioClass($filetype) {
         case 'text/html':
         case '':
         case ' ';
-            return 'notastream';
+            return domainCheck('notastream', $domain);
             break;
 
         default:
-            return 'icon-library';
+            return domainCheck('icon-music', $domain);
             break;
 
     }
 
+}
+
+function domainCheck($default, $domain) {
+    if ($domain == '') {
+        return $default;
+    }
+    switch ($domain) {
+        case 'soundcloud':
+        case 'spotify':
+        case 'gmusic':
+        case 'vkontakte':
+        case 'internetarchive':
+        case 'podcast':
+        case 'podcast http:':
+        case 'podcast https:':
+        case 'dirble':
+            return 'icon-'.$domain.'-circled';
+            break;
+            
+        case 'tunein':
+            return 'icon-tunein';
+            break;
+            
+        default:
+            return $default;
+            break;
+        
+    }
+    
 }
 
 function checkComposerGenre($genre, $pref) {
@@ -690,7 +719,7 @@ function getWishlist() {
             print '<div class="fixed playlistrow2 trackrating"><i class="icon-'.$obj['rating'].'-stars rating-icon-small nopointer"></i></div>';
         }
         if ($obj['tags']) {
-            print '<div class="fixed playlistrow2 tracktags"><i class="icon-tags smallicon"></i>'.$obj['tags'].'</div>';
+            print '<div class="fixed playlistrow2 tracktags"><i class="icon-tags collectionicon"></i>'.$obj['tags'].'</div>';
         }
         print '</div>';
         print '<div class="expand containerbox vertical">';
@@ -699,7 +728,7 @@ function getWishlist() {
             print '<div class="fixed playlistrow2 clickable infoclick plugclickable clickstream" name="'.$obj['SourceUri'].'" streamname="'.$obj['SourceName'].'" streamimg="'.$obj['SourceImage'].'">While Listening To : <b>'.$obj['SourceName'].'</b></div>';
         }
         print '</div>';
-        print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed"></i>';
+        print '<i class="icon-search playlisticon infoclick clicksearchtrack plugclickable fixed"></i>';
         print '<input type="hidden" value="'.$obj['title'].'" />';
         print '<input type="hidden" value="'.$obj['albumartist'].'" />';
         print '<i class="icon-cancel-circled playlisticonr fixed clickicon clickremdb infoclick plugclickable"></i>';

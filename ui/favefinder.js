@@ -212,15 +212,15 @@ function faveFinder(returnall) {
         var html = "";
         var u = data.uri;
         if (u.match(/spotify:/)) {
-            html += '<i class="icon-spotify-circled smallicon"></i>';
+            html += '<i class="icon-spotify-circled collectionicon"></i>';
         } else if (u.match(/soundcloud:/)) {
-            html += '<i class="icon-soundcloud-circled smallicon"></i>';
+            html += '<i class="icon-soundcloud-circled collectionicon"></i>';
         } else if (u.match(/youtube:/)) {
-            html += '<i class="icon-youtube-circled smallicon"></i>';
+            html += '<i class="icon-youtube-circled collectionicon"></i>';
         } else if (u.match(/gmusic:/)) {
-            html += '<i class="icon-gmusic-circled smallicon"></i>';
+            html += '<i class="icon-gmusic-circled collectionicon"></i>';
         } else if (u.match(/^podcast/)) {
-            html += '<i class="icon-podcast-circled smallicon"></i>';
+            html += '<i class="icon-podcast-circled collectionicon"></i>';
         }
         html += '<b>'+data.title+'</b>'+brk(breaks);
         if (data.artist) {

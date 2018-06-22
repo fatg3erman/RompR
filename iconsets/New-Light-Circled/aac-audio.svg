@@ -5,11 +5,36 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg8"
    version="1.1"
    viewBox="0 0 205.66004 207.89409"
    height="207.89409mm"
-   width="205.66005mm">
+   width="205.66005mm"
+   sodipodi:docname="aac-audio.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1411"
+     inkscape:window-height="980"
+     id="namedview17"
+     showgrid="false"
+     inkscape:pagecheckerboard="false"
+     inkscape:zoom="0.8495273"
+     inkscape:cx="210.0605"
+     inkscape:cy="292.98833"
+     inkscape:window-x="755"
+     inkscape:window-y="196"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg8" />
   <defs
      id="defs2">
     <marker
@@ -49,36 +74,23 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <g
-     transform="translate(-4.4983063,-46.776161)"
-     id="layer1">
-    <ellipse
-       ry="94.947044"
-       rx="93.830025"
-       cy="150.72321"
-       cx="107.32833"
-       id="path815"
-       style="opacity:1;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <path
-       id="path9040"
-       d="m 145.80484,206.92 c -10.45875,-10.13333 0.43121,-28.49615 12.58386,-21.2191 6.39661,3.83032 4.32966,9.9574 -2.50222,7.41733 -4.12813,-1.53482 -6.35893,0.10552 -6.35893,4.67574 0,4.57027 2.2308,6.21058 6.35893,4.67575 3.49742,-1.30032 6.35894,-0.77167 6.35894,1.17481 0,5.91647 -11.37561,8.18284 -16.44058,3.27547 z M 91.059017,195.05572 c 2.302942,-6.40068 5.721611,-11.63759 7.597035,-11.63759 1.875438,0 5.294108,5.23691 7.597048,11.63759 3.94354,10.96047 3.5015,11.6376 -7.597048,11.6376 -11.098549,0 -11.540576,-0.67713 -7.597035,-11.6376 z m 24.554213,10.78591 c 0,-0.74349 2.05019,-6.55502 4.55597,-12.9145 4.39426,-11.15225 4.77048,-11.27967 10.59824,-3.58973 8.77464,11.57849 7.45061,16.59228 -4.55898,17.26369 -5.82738,0.32579 -10.59523,-0.016 -10.59523,-0.75946 z M 70.321311,165.96173 C 53.086489,148.31957 47.784562,137.61937 47.784562,120.47869 c 0,-22.605297 11.352684,-32.457986 40.056887,-34.764299 28.897021,-2.32181 67.179361,5.034511 75.136191,14.438129 4.98783,5.89477 4.42333,6.31745 -4.97151,3.72257 -66.736632,-18.432838 -92.078478,-11.157999 -87.846705,25.218 1.618445,13.91197 5.864516,21.84773 18.282329,34.16905 15.823676,15.7007 15.943926,16.0486 5.547325,16.0486 -6.488169,0 -15.70585,-5.19893 -23.667768,-13.34901 z m 35.803129,5.24594 C 100.27674,166.751 92.223468,156.43048 88.228264,148.27319 73.274089,117.74015 97.9144,97.33658 140.33013,105.12992 c 27.09809,4.97893 34.2846,14.0988 8.19189,10.39575 -25.83005,-3.66579 -38.84253,-0.34341 -44.3259,11.31741 -5.49666,11.68907 -0.44776,25.9535 14.57296,41.17234 13.45002,13.62741 4.13365,15.97942 -12.64464,3.19225 z m 22.64582,-6.4157 c -23.08562,-25.47496 -15.31214,-44.47978 17.26451,-42.2088 l 18.33029,1.27785 1.25353,27.72486 1.25351,27.72486 h -12.47241 c -8.96994,0 -16.16713,-4.07712 -25.62943,-14.51877 z"
-       style="fill:#ffffff;stroke-width:4.17281771" />
-    <rect
-       y="179.31075"
-       x="66.330452"
-       height="30.616072"
-       width="100.54166"
-       id="rect9042"
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <text
-       id="text9050"
-       y="216.52519"
-       x="72.770164"
-       style="font-style:normal;font-weight:normal;font-size:34.05105972px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.85127652px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       xml:space="preserve"><tspan
-         style="stroke-width:0.85127652px;fill:#ffffff;fill-opacity:1"
-         y="216.52519"
-         x="72.770164"
-         id="tspan9048">AAC</tspan></text>
-  </g>
-<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#ffffff;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#ffffff;fill-opacity:1}</style></svg>
+  <ellipse
+     style="opacity:1;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="path815"
+     cx="102.83002"
+     cy="103.94704"
+     rx="93.830025"
+     ry="94.947044" />
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#ffffff;stroke-width:4.68517113"
+     d="M 65.435867,139.1611 C 48.020749,117.15088 42.663358,103.8014 42.663358,82.416831 c 0,-28.202181 11.471446,-40.494314 40.475928,-43.371651 29.199314,-2.896671 67.882124,6.281014 75.922194,18.01289 5.04001,7.354266 4.4696,7.881598 -5.02352,4.644247 C 86.603196,38.705661 60.996245,47.78169 65.272287,93.164085 c 1.635376,17.356455 5.925866,27.257045 18.473583,42.629025 15.989212,19.58806 16.110722,20.0221 5.605357,20.0221 -6.556043,0 -15.870151,-6.48614 -23.91536,-16.65411 z m 36.177663,6.54479 C 95.704664,140.14578 87.567145,127.26999 83.530147,117.09302 68.419534,79.000251 93.317611,53.544926 136.17705,63.267833 c 27.38157,6.211672 34.64326,17.589546 8.27759,12.969652 -26.10026,-4.57341 -39.24887,-0.428436 -44.789598,14.119507 -5.554158,14.583188 -0.452441,32.379368 14.725408,51.366268 13.59072,17.00145 4.17689,19.9358 -12.77692,3.98263 z m 22.88272,-8.00418 C 101.16913,105.91936 109.02393,82.209107 141.94137,85.042363 l 18.52204,1.594235 1.26665,34.589312 1.26662,34.5893 H 150.3938 c -9.06378,0 -16.33626,-5.08658 -25.89755,-18.1135 z"
+     id="path9040"
+     sodipodi:nodetypes="ssssssssscssssscsscccss" />
+  <style
+     id="stylebodge1"
+     type="text/css">[id^=&quot;polygon&quot;]{fill:#ffffff;fill-opacity:1}</style>
+  <style
+     id="stylebodge2"
+     type="text/css">[id^=&quot;path&quot;]{fill:#ffffff;fill-opacity:1}</style>
+</svg>

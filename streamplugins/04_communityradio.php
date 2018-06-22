@@ -180,14 +180,14 @@ class commradioplugin {
         if ($station['homepage']) {
             print '<a href="'.$station['homepage'].'" target="_blank">';
             print '<div class="containerbox indent padright menuitem">';
-            print '<i class="icon-www playlisticon fixed"></i>';
+            print '<i class="icon-www smallicon fixed"></i>';
             print '<div class="expand">'.get_int_text('label_station_website').'</div>';
             print '</div>';
             print '</a>';
         }
         print '<div class="containerbox expand ninesix indent padright"><b>Listen:</b></div>';
         print '<div class="clickable clickstream draggable indent containerbox padright menuitem" name="'.$station['playurl'].'" streamimg="'.$this->comm_radio_get_image($station).'" streamname="'.$station['name'].'">';
-        print '<i class="'.audioClass($station['codec']).' collectionicon fixed"></i>';
+        print '<i class="'.audioClass($station['codec']).' smallicon fixed"></i>';
         print '<div class="expand">'.$station['bitrate'].'kbps &nbsp'.$station['codec'].'</div>';
         print '</div>';
         print '</div>';

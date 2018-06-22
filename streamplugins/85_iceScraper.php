@@ -97,7 +97,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 			print '<div class="containerbox rowspacer"></div>';
 			print '<a href="'.$server_web_link.'" target="_blank">';
 			print '<div class="containerbox indent padright menuitem">';
-			print '<i class="icon-www playlisticon fixed"></i>';
+			print '<i class="icon-www collectionicon fixed"></i>';
 			print '<div class="expand">'.get_int_text('label_station_website').'</div>';
 			print '</div>';
 			print '</a>';

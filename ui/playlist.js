@@ -121,7 +121,7 @@ var playlist = function() {
                     }
                     var t = tracks[trackpointer].metadata.track.usermeta.Tags.join(', ');
                     if (t != '') {
-                        trackinfo.append('<div class="fixed playlistrow2 tracktags"><i class="icon-tags smallicon"></i>'+t+'</div>');
+                        trackinfo.append('<div class="fixed playlistrow2 tracktags"><i class="icon-tags playlisticon"></i>'+t+'</div>');
                     }
                 }
                 

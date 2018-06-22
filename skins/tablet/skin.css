@@ -368,22 +368,6 @@ div.rightmenu {
     padding-left: 1em;
 }
 
-.smallicon {
-    padding:0px;
-    margin:4px;
-    height:20px;
-    vertical-align:middle;
-}
-
-.medicon {
-    padding:0px;
-    margin:2px;
-    height:24px;
-    width:24px;
-    font-size:24px;
-    vertical-align:middle;
-}
-
 .podicon {
     margin-top:4px;
     margin-bottom:4px;

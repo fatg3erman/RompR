@@ -206,13 +206,6 @@
     vertical-align:middle;
 }
 
-.smallicon {
-    padding:0px;
-    margin:4px;
-    height:16px;
-    vertical-align:middle;
-}
-
 .npicon {
     padding:0px;
     margin-top:0px;
@@ -227,15 +220,6 @@
 
 .dropmenu {
     padding-left:16px;
-}
-
-.medicon {
-    padding:0px;
-    margin:2px;
-    height:24px;
-    width:24px;
-    font-size:24px;
-    vertical-align:middle;
 }
 
 .playlisticon {

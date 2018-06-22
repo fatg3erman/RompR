@@ -122,7 +122,7 @@ var ratingManager = function() {
 		if (data.Tags && data.Tags != "No Tags") {
 			var tags = data.Tags.split(', ');
 			for (var i in tags) {
-				html += '<span class="tag">'+tags[i]+'<i class="icon-cancel-circled infoclick plugclickable clickicon tagremover playlisticon"></i></span> ';
+				html += '<span class="tag">'+tags[i]+'<i class="icon-cancel-circled infoclick plugclickable clickicon tagremover collectionicon"></i></span> ';
 			}
 		}
 		html += '</div>';

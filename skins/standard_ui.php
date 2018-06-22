@@ -30,7 +30,7 @@ function albumTrack($data) {
         print '>'.$data['trackno'].'</div>';
     }
 
-    print domainIcon($d, 'playlisticon');
+    print domainIcon($d, 'collectionicon');
 
     // Track Title, Artist, and Rating
     if ((string) $data['title'] == "") $data['title'] = urldecode($data['uri']);
@@ -46,7 +46,7 @@ function albumTrack($data) {
     }
     if ($data['tags']) {
         print '<div class="fixed playlistrow2 tracktags">';
-        print '<i class="icon-tags smallicon"></i>'.$data['tags'];
+        print '<i class="icon-tags collectionicon"></i>'.$data['tags'];
         print '</div>';
     }
     print '</div>';
@@ -181,7 +181,7 @@ function printDirectoryItem($fullpath, $displayname, $prefix, $dircount, $printc
     print '<div class="clickable '.$c.' clickalbum draggable containerbox menuitem" name="'.$prefix.$dircount.'">';
     print '<input type="hidden" name="dirpath" value="'.rawurlencode($fullpath).'" />';
     print '<i class="icon-toggle-closed menu mh fixed '.$c.'" name="'.$prefix.$dircount.'"></i>';
-    print '<i class="icon-folder-open-empty fixed smallicon"></i>';
+    print '<i class="icon-folder-open-empty fixed collectionicon"></i>';
     print '<div class="expand">'.htmlentities(urldecode($displayname)).'</div>';
     print '</div>';
     if ($printcontainer) {
@@ -199,7 +199,7 @@ function printRadioDirectory($att) {
     print '<input type="hidden" value="'.rawurlencode($att['URL']).'" />';
     print '<input type="hidden" value="'.rawurlencode($att['text']).'" />';
     print '<i class="browse menu mh fixed icon-toggle-closed" name="tunein_'.$name.'"></i>';
-    print '<i class="icon-folder-open-empty fixed smallicon"></i>';
+    print '<i class="icon-folder-open-empty fixed collectionicon"></i>';
     print '<div class="expand">'.$att['text'].'</div>';
     print '</div>';
     print '<div id="tunein_'.$name.'" class="dropmenu"></div>';
@@ -217,7 +217,7 @@ function addPodcastCounts($html, $extra) {
 
 function addUserRadioButtons($html, $index, $uri, $name, $image) {
     $out = phpQuery::newDocument($html);
-    $extra = '<div class="fixed clickable clickradioremove clickicon" name="'.$index.'"><i class="icon-cancel-circled playlisticon"></i></div>';
+    $extra = '<div class="fixed clickable clickradioremove clickicon" name="'.$index.'"><i class="icon-cancel-circled playlisticonr"></i></div>';
     $out->find('.menuitem')->append($extra);
     return $out;
 }

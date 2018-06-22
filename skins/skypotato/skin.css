@@ -278,13 +278,6 @@
     vertical-align:middle;
 }
 
-.smallicon {
-    padding:0px;
-    margin:4px;
-    height:16px;
-    vertical-align:middle;
-}
-
 .smallcover {
     transition: width 0.5s ease;
     max-width:300px;
@@ -308,15 +301,6 @@
     height:20px;
     width:20px;
     font-size:20px;
-    vertical-align:middle;
-}
-
-.medicon {
-    padding:0px;
-    margin:2px;
-    height:24px;
-    width:24px;
-    font-size:24px;
     vertical-align:middle;
 }
 

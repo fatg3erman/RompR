@@ -160,7 +160,7 @@ class dirbleplugin {
             foreach ($streams as $s) {
                 debuglog("Content type ".$s['content_type']." and uri ".$s['stream'],"DIRBLE");
                 print '<div class="clickable clickstream draggable indent containerbox padright menuitem" name="'.trim($s['stream']).'" streamname="'.trim($station['name']).'" streamimg="'.$image.'">';
-                print '<i class="'.audioClass($s['content_type']).' collectionicon fixed"></i>';
+                print '<i class="'.audioClass($s['content_type']).' smallicon fixed"></i>';
                 print '<div class="expand">';
                 print $this->get_speed($s['bitrate']);
                 print '</div>';
@@ -172,7 +172,7 @@ class dirbleplugin {
             if (array_key_exists('website', $station) && $station['website'] != '') {
                 print '<a href="'.$station['website'].'" target="_blank">';
                 print '<div class="containerbox indent padright menuitem">';
-                print '<i class="icon-www playlisticon fixed"></i>';
+                print '<i class="icon-www smallicon fixed"></i>';
                 print '<div class="expand">'.get_int_text('label_station_website').'</div>';
                 print '</div>';
                 print '</a>';
@@ -180,7 +180,7 @@ class dirbleplugin {
             if (array_key_exists('facebook', $station) && $station['facebook'] != '') {
                 print '<a href="'.$station['facebook'].'" target="_blank">';
                 print '<div class="containerbox indent padright menuitem">';
-                print '<i class="icon-facebook-logo playlisticon fixed"></i><div class="expand">Facebook</div>';
+                print '<i class="icon-facebook-logo smallicon fixed"></i><div class="expand">Facebook</div>';
                 print '</div>';
                 print '</a>';
             }
@@ -195,7 +195,7 @@ class dirbleplugin {
                 }
                 print '<a href="'.$t.'" target="_blank">';
                 print '<div class="containerbox indent padright menuitem">';
-                print '<i class="icon-twitter-logo playlisticon fixed"></i><div class="expand">Twitter</div>';
+                print '<i class="icon-twitter-logo smallicon fixed"></i><div class="expand">Twitter</div>';
                 print '</div>';
                 print '</a>';
             }

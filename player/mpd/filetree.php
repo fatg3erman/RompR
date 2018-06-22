@@ -86,11 +86,12 @@ function printFileSearch($tree, $fcount) {
 }
 
 function printFileItem($displayname, $fullpath, $time) {
+    debuglog("Printing File Item ".$fullpath,"DIRECTORY");
     global $prefs;
     $ext = strtolower(pathinfo($fullpath, PATHINFO_EXTENSION));
     print '<div class="clickable clicktrack ninesix draggable indent containerbox padright line brick_wide" name="'.
         rawurlencode($fullpath).'">';
-    print '<i class="'.audioClass($ext).' fixed smallicon"></i>';
+    print '<i class="'.audioClass($ext, getDomain($fullpath)).' fixed collectionicon"></i>';
     print '<div class="expand">'.$displayname.'</div>';
     if ($time > 0) {
         print '<div class="fixed playlistrow2 tracktime">'.format_time($time).'</div>';
@@ -101,7 +102,7 @@ function printFileItem($displayname, $fullpath, $time) {
 function printPlaylistItem($displayname, $fullpath) {
     print '<div class="clickable clickcue ninesix draggable indent containerbox padright line" name="'.
         rawurlencode($fullpath).'">';
-    print '<i class="icon-doc-text fixed smallicon"></i>';
+    print '<i class="icon-doc-text fixed collectionitem"></i>';
     print '<div class="expand">'.$displayname.'</div>';
     print '</div>';
 }

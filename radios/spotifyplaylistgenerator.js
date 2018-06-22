@@ -34,7 +34,7 @@ var crazyRadioManager = function() {
                     var html = $(playlist.radioManager.standardBox('crazyradio', i, 'icon-spotify-circled', crazySettings[i].playlistname));
                     html.append(
                         '<div class="fixed">'+
-                        '<i class="icon-cancel-circled smallicon clickicon clickremcrazy" name="'+i+'"></i>'+
+                        '<i class="icon-cancel-circled collectionicon clickicon clickremcrazy" name="'+i+'"></i>'+
                         '</div>'
                     );
                     $("#pluginplaylists_spotify").append(html);
