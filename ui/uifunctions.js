@@ -441,10 +441,12 @@ function compare_version_numbers(ver1, ver2) {
     // We need to compare them as digits because as a string 10 < 9
     // The internet's collected wisdom says the only way to do it is to compare
     // digit by digit, so I came up with this.
-    // This even seems to work with 1.14.2Beta etc
     var ver1_split = ver1.split('.');
     var ver2_split = ver2.split('.');
     for (var i in ver1_split) {
+        if (prefs.dev_mode && ver2_split[i].length > 4) {
+            return false;
+        }
         if (i > ver2_split.length) {
             // ver1 has more digits than ver2.
             // If we got here then we must have already compared the other digits, therefore ver1 must be > ver2 ie. 1.14.1 vs 1.14

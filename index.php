@@ -11,6 +11,21 @@ if ($skin === null) {
    exit(0);
 }
 
+if ($prefs['dev_mode']) {
+    // This adds an extra parameter to the version number - the short
+    // hash of the most recent git commit. It's for use in testing,
+    // to make sure the browser pulls in the latest version of all the files.
+    // DO NOT USE OUTSIDE A git REPO!
+    $git_ver = exec("git log --pretty=format:'%h' -n 1", $output);
+    if (count($output) == 1) {
+        $version_string = ROMPR_VERSION.".".$output[0];
+    } else {
+        $version_string = ROMPR_VERSION;
+    }
+} else {
+    $version_string = ROMPR_VERSION;
+}
+
 debuglog("Using skin : ".$skin,"INIT",6);
 
 if (!is_dir('skins/'.$skin)) {
@@ -246,12 +261,12 @@ $scripts = array(
 );
 foreach ($scripts as $i) {
     debuglog("Loading ".$i,"INIT",7);
-    print '<script type="text/javascript" src="'.$i.'?version='.ROMPR_VERSION.'"></script>'."\n";
+    print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
 $inc = glob("streamplugins/*.js");
 foreach($inc as $i) {
     debuglog("Loading ".$i,"INIT",7);
-    print '<script type="text/javascript" src="'.$i.'?version='.ROMPR_VERSION.'"></script>'."\n";
+    print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
 
 debuglog("Including skins/".$skin.'/skinvars.php',"LAYOUT",5);
@@ -261,33 +276,33 @@ include('includes/globals.php');
 $inc = glob("browser/helpers/*.js");
 foreach($inc as $i) {
     debuglog("Including Browser Helper ".$i,"INIT",7);
-    print '<script type="text/javascript" src="'.$i.'?version='.ROMPR_VERSION.'"></script>'."\n";
+    print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
 $inc = glob("browser/plugins/*.js");
 ksort($inc);
 foreach($inc as $i) {
     debuglog("Including Info Panel Plugin ".$i,"INIT",7);
-    print '<script type="text/javascript" src="'.$i.'?version='.ROMPR_VERSION.'"></script>'."\n";
+    print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
 if ($use_smartradio) {
     $inc = glob("radios/*.js");
     ksort($inc);
     foreach($inc as $i) {
         debuglog("Including Smart Radio Plugin ".$i,"INIT",7);
-        print '<script type="text/javascript" src="'.$i.'?version='.ROMPR_VERSION.'"></script>'."\n";
+        print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
     }
 }
 if ($use_plugins) {
     $inc = glob("plugins/*.js");
     foreach($inc as $i) {
         debuglog("Including Plugin ".$i,"INIT",7);
-        print '<script type="text/javascript" src="'.$i.'?version='.ROMPR_VERSION.'"></script>'."\n";
+        print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
     }
     if ($prefs['load_plugins_at_loadtime']) {
         $inc = glob("plugins/code/*.js");
         foreach($inc as $i) {
             debuglog("DEVELOPMENT MODE : Including Plugin ".$i,"INIT",2);
-            print '<script type="text/javascript" src="'.$i.'?version='.ROMPR_VERSION.'"></script>'."\n";
+            print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
         }
     }
 }
@@ -296,7 +311,7 @@ foreach ($skinrequires as $s) {
     $ext = strtolower(pathinfo($s, PATHINFO_EXTENSION));
     if ($ext == "js") {
         debuglog("Including Skin Requirement ".$s,"INIT",7);
-        print '<script type="text/javascript" src="'.$s.'?version='.ROMPR_VERSION.'"></script>'."\n";
+        print '<script type="text/javascript" src="'.$s.'?version='.$version_string.'"></script>'."\n";
     }
 }
 ?>
