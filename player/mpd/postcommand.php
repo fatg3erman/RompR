@@ -166,7 +166,7 @@ if ($is_connected) {
     // Query mpd's status
     //
 
-    if (PHP_OS == 'Darwin' && $slow_gstreamer_hack && $prefs['player_backend'] == 'mopidy') {
+    if ($slow_gstreamer_hack && $prefs['player_backend'] == 'mopidy') {
         debuglog("Sleeping....","POSTCOMMAND");
         usleep(500000);
     }

@@ -29,6 +29,30 @@ var playlist = function() {
 
     var currentTrack = emptyTrack;
 
+    function getDomainIcon(track, def) {
+        var s = track.location.split(':');
+        var d = s.shift();
+        switch (d) {
+            case "spotify":
+            case "gmusic":
+            case "youtube":
+            case "internetarchive":
+            case "soundcloud":
+            case "podcast":
+            case "dirble":
+                return '<i class="icon-'+d+'-circled playlisticon fixed"></i>';
+                break;
+                
+            case 'tunein':
+                return '<i class="icon-tunein playlisticon fixed"></i>';
+                break;
+        }
+        if (track.type == 'podcast') {
+            return '<i class="icon-podcast-circled playlisticon fixed"></i>';
+        }
+        return def;
+    }
+
     function addSearchDir(element) {
         var options = new Array();
         element.next().find('.clickable').each(function(index, elem){
@@ -60,12 +84,15 @@ var playlist = function() {
             self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].key });
             self.image.on('error', self.getart);
             
-            var holder = $('<div>', { name: self.index, romprid: tracks[0].backendid, class: 'item clickable clickplaylist sortable containerbox playlistalbum playlisttitle'}).appendTo('#sortable');
+            var holder = $('<div>', { name: self.index, romprid: tracks[0].backendid, class: 'item fullwidth sortable playlistalbum playlisttitle'}).appendTo('#sortable');
             if (self.index == currentalbum) {
                 holder.removeClass('playlisttitle').addClass('playlistcurrenttitle');
             }
             
-            var imgholder = $('<div>', { class: 'smallcover fixed clickable clickicon clickrollup selfcentered', romprname: self.index}).appendTo(holder);
+            var inner = $('<div>', {class: 'containerbox'}).appendTo(holder);
+            var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'expand clickable clickplaylist containerbox'}).appendTo(inner);
+            
+            var imgholder = $('<div>', { class: 'smallcover fixed clickable clickicon clickrollup selfcentered', romprname: self.index}).appendTo(albumDetails);
             if (tracks[0].image && tracks[0].image != "") {
                 var firefoxcrapnesshack = tracks[0].image.match(/getRemoteImage.php/) ? '' : '?version='+Math.floor(Date.now()).toString();
                 self.image.attr('src', tracks[0].image+firefoxcrapnesshack).appendTo(imgholder);
@@ -73,9 +100,10 @@ var playlist = function() {
                 self.image.addClass('notexist').appendTo(imgholder);
                 self.getart();
             }
-            var title = $('<div>', {class: 'containerbox vertical expand selfcentered'}).appendTo(holder);
+            var title = $('<div>', {class: 'containerbox vertical expand selfcentered'}).appendTo(albumDetails);
             title.append('<div class="bumpad">'+self.artist+'</div><div class="bumpad">'+self.album+'</div>');
-            var controls = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(holder)
+            
+            var controls = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(inner)
             controls.append('<div class="expand clickable clickicon clickremovealbum" name="'+self.index+'"><i class="icon-cancel-circled playlisticonr"></i></div>');
             if (tracks[0].metadata.album.uri && tracks[0].metadata.album.uri.substring(0,7) == "spotify") {
                 controls.append('<div class="fixed clickable clickicon clickaddwholealbum" name="'+self.index+'"><i class="icon-music playlisticonr"></i></div>');
@@ -86,31 +114,25 @@ var playlist = function() {
                 trackgroup.addClass('invisible');
             }
             for (var trackpointer in tracks) {
-                var trackdiv = $('<div>', {name: tracks[trackpointer].playlistpos, romprid: tracks[trackpointer].backendid, class: 'track clickable clickplaylist sortable containerbox playlistitem menuitem'}).appendTo(trackgroup);
+                var trackdiv = $('<div>', {name: tracks[trackpointer].playlistpos, romprid: tracks[trackpointer].backendid, class: 'track sortable fullwidth playlistitem menuitem'}).appendTo(trackgroup);
                 if (tracks[trackpointer].backendid == player.status.songid) {
                     trackdiv.removeClass('playlistitem').addClass('playlistcurrentitem');
                 }
                 
+                var trackOuter = $('<div>', {class: 'containerbox'}).appendTo(trackdiv);
+                var trackDetails = $('<div>', {class: 'expand clickable clickplaylist containerbox', romprid: tracks[trackpointer].backendid}).appendTo(trackOuter);
+                
                 if (tracks[trackpointer].tracknumber) {
-                    var trackNodiv = $('<div>', {class: 'tracknumber fixed'}).appendTo(trackdiv);
+                    var trackNodiv = $('<div>', {class: 'tracknumber fixed'}).appendTo(trackDetails);
                     if (tracks.length > 99 || tracks[trackpointer].tracknumber > 99) {
                         trackNodiv.css('width', '3em');
                     }
                     trackNodiv.html(format_tracknum(tracks[trackpointer].tracknumber));
                 }
                 
-                var l = tracks[trackpointer].location;
-                if (l.substring(0, 7) == "spotify") {
-                    trackdiv.append('<i class="icon-spotify-circled playlisticon fixed"></i>');
-                } else if (l.substring(0, 6) == "gmusic") {
-                    trackdiv.append('<i class="icon-gmusic-circled playlisticon fixed"></i>');
-                } else if (l.substring(0, 10) == "soundcloud") {
-                    trackdiv.append('<i class="icon-soundcloud-circled playlisticon fixed"></i>');
-                } else if (tracks[trackpointer].type == "podcast") {
-                    trackdiv.append('<i class="icon-podcast-circled playlisticon fixed"></i>');
-                }
+                trackDetails.append(getDomainIcon(tracks[trackpointer], ''));
                 
-                var trackinfo = $('<div>', {class: 'containerbox vertical expand'}).appendTo(trackdiv);
+                var trackinfo = $('<div>', {class: 'containerbox vertical expand'}).appendTo(trackDetails);
                 trackinfo.append('<div class="line">'+tracks[trackpointer].title+'</div>');
                 if ((tracks[trackpointer].albumartist != "" && tracks[trackpointer].albumartist != tracks[trackpointer].trackartist)) {
                     trackinfo.append('<div class="line playlistrow2">'+tracks[trackpointer].trackartist+'</div>');
@@ -125,8 +147,8 @@ var playlist = function() {
                     }
                 }
                 
-                trackdiv.append('<div class="tracktime tiny fixed">'+formatTimeString(tracks[trackpointer].duration)+'</div>');
-                trackdiv.append('<i class="icon-cancel-circled playlisticonr fixed clickable clickicon clickremovetrack" romprid="'+tracks[trackpointer].backendid+'"></i>');
+                trackDetails.append('<div class="tracktime tiny fixed">'+formatTimeString(tracks[trackpointer].duration)+'</div>');
+                trackOuter.append('<i class="icon-cancel-circled playlisticonr fixed clickable clickicon clickremovetrack" romprid="'+tracks[trackpointer].backendid+'"></i>');
 
             }
         }
@@ -284,17 +306,21 @@ var playlist = function() {
         this.presentYourself = function() {
             self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].key });
             self.image.on('error', self.getart);
-            var header = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'item clickable clickplaylist sortable containerbox playlistalbum playlisttitle'}).appendTo('#sortable');
+            var header = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'item sortable fullwidth playlistalbum playlisttitle'}).appendTo('#sortable');
             if (self.index == currentalbum) {
                 header.removeClass('playlisttitle').addClass('playlistcurrenttitle');
             }
-            var imgholder = $('<div>', { class: 'smallcover fixed clickable clickicon clickrollup selfcentered', romprname: self.index}).appendTo(header);
+
+            var inner = $('<div>', {class: 'containerbox'}).appendTo(header);
+            var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'expand clickable clickplaylist containerbox'}).appendTo(inner);
+            
+            var imgholder = $('<div>', { class: 'smallcover fixed clickable clickicon clickrollup selfcentered', romprname: self.index}).appendTo(albumDetails);
             var firefoxcrapnesshack = tracks[0].image.match(/getRemoteImage.php/) ? '' : '?version='+Math.floor(Date.now()).toString();
             var image = (tracks[0].image) ? tracks[0].image : "newimages/broadcast.svg";
             self.image.attr('src', image).appendTo(imgholder);
-            var title = $('<div>', {class: 'containerbox vertical expand selfcentered'}).appendTo(header);
+            var title = $('<div>', {class: 'containerbox vertical expand selfcentered'}).appendTo(albumDetails);
             title.append('<div class="bumpad">'+tracks[0].album+'</div>');
-            var buttons = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(header);
+            var buttons = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(inner);
             buttons.append('<div class="clickable clickicon clickremovealbum expand" name="'+self.index+'"><i class="icon-cancel-circled playlisticonr"></i></div>');
             buttons.append('<div class="clickable clickicon clickaddfave fixed" name="'+self.index+'"><i class="icon-radio-tower playlisticonr"></i></div>');
             
@@ -304,7 +330,7 @@ var playlist = function() {
             }
             for (var trackpointer in tracks) {
                 var trackdiv = $('<div>', {name: tracks[trackpointer].playlistpos, romprid: tracks[trackpointer].backendid, class: 'booger clickable clickplaylist containerbox playlistitem menuitem'}).appendTo(trackgroup);
-                trackdiv.append('<i class="icon-radio-tower playlisticon fixed"></i>');
+                trackdiv.append(getDomainIcon(tracks[trackpointer], '<i class="icon-radio-tower playlisticon fixed"></i>'));
                 var h = $('<div>', {class: 'containerbox vertical expand' }).appendTo(trackdiv);
                 if (tracks[trackpointer].stream && tracks[trackpointer].stream != 'null') {
                     h.append('<div class="playlistrow2 line">'+tracks[trackpointer].stream+'</div>');

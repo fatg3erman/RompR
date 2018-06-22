@@ -749,6 +749,7 @@ button {
 
 div.item {
     margin-right:2px;
+	box-sizing: border-box;
 }
 
 .playlistrow2 {
@@ -759,6 +760,10 @@ div.item {
 
 .tracktime {
     margin-left:4px !important;
+}
+
+.track {
+	box-sizing: border-box;
 }
 
 .togglebutton {
