@@ -402,6 +402,8 @@ div.rightmenu {
     vertical-align:middle;
     box-sizing:border-box;
     border:6px solid transparent;
+    height: 26px;
+    width: 26px;
 }
 
 .collectionicon {
@@ -410,6 +412,8 @@ div.rightmenu {
     margin-bottom:2px;
     margin-top:2px;
     vertical-align:middle;
+    width:20px;
+    height:20px
 }
 
 .playlisticonr {
@@ -426,12 +430,13 @@ div.rightmenu {
 }
 
 #sortable .playlisticonr {
-    border-top: none;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-bottom: 16px solid transparent;
-    margin-top: 0px;
     margin-right:4px;
+    width: 48px;
+}
+
+#collection .playlisticonr {
+    margin-right:4px;
+    width: 48px;
 }
 
 #sortable .track>div>div.clickable {

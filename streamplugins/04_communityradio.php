@@ -164,7 +164,7 @@ class commradioplugin {
             'Searched' => 1,
             'AlbumUri' => null,
             'Year' => null,
-            'Artistname' => htmlspecialchars($station['tags']),
+            'Artistname' => preg_replace('/,/', ', ', htmlspecialchars($station['tags'])),
             'Albumname' => htmlspecialchars($station['name']),
             'why' => 'whynot',
             'ImgKey' => 'none',

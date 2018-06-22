@@ -119,8 +119,8 @@ var playlist = function() {
                     trackdiv.removeClass('playlistitem').addClass('playlistcurrentitem');
                 }
                 
-                var trackOuter = $('<div>', {class: 'containerbox'}).appendTo(trackdiv);
-                var trackDetails = $('<div>', {class: 'expand clickable clickplaylist containerbox', romprid: tracks[trackpointer].backendid}).appendTo(trackOuter);
+                var trackOuter = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(trackdiv);
+                var trackDetails = $('<div>', {class: 'expand clickable clickplaylist containerbox dropdown-container', romprid: tracks[trackpointer].backendid}).appendTo(trackOuter);
                 
                 if (tracks[trackpointer].tracknumber) {
                     var trackNodiv = $('<div>', {class: 'tracknumber fixed'}).appendTo(trackDetails);

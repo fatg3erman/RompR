@@ -228,6 +228,8 @@
     margin-bottom:2px;
     margin-top:2px;
     vertical-align:middle;
+    height: 12px;
+    width: 12px;
 }
 
 .collectionicon {
@@ -236,6 +238,8 @@
     margin-bottom:2px;
     margin-top:2px;
     vertical-align:middle;
+    width:16px;
+    height:16px;
 }
 
 .playlisticonr {
@@ -245,6 +249,8 @@
     margin-bottom:2px;
     margin-top:2px;
     vertical-align:middle;
+    height: 12px;
+    width: 12px;
 }
 
 .rating-icon-big {

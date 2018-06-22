@@ -2029,30 +2029,6 @@ table.fileinfotable tr td:nth-child(2) {
 	opacity: 0.2;
 }
 
-.desktop .playlisticon
-{
-    width:12px;
-    height:12px;
-}
-
-.mobile .playlisticon
-{
-    width:26px;
-    height:26px;
-}
-
-.desktop .playlisticonr
-{
-    width:12px;
-    height:12px;
-}
-
-.collectionicon
-{
-    width:16px;
-    height:16px;
-}
-
 .smallicon {
     padding:0px;
     margin:4px;
@@ -2064,7 +2040,7 @@ table.fileinfotable tr td:nth-child(2) {
 .medicon {
     padding:0px;
     margin:2px;
-    height:24px;
-    width:24px;
+    height:30px;
+    width:30px;
     vertical-align:middle;
 }

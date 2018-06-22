@@ -19,7 +19,6 @@ var communityRadioPlugin = {
     },
     
     update: function() {
-        $('#communitystations').empty();
         $('i[name="communityradiolist"]').makeSpinner();
         $('#communitystations').load(communityRadioPlugin.getUri(2),
             function() {
@@ -118,9 +117,11 @@ var communityRadioPlugin = {
             doMenu(event, clickedElement);
         } else if (clickedElement.hasClass('clickcommradioforward')) {
             communityRadioPlugin.page++;
+            clickedElement.unbind('click').makeSpinner();
             communityRadioPlugin.update();
         } else if (clickedElement.hasClass('clickcommradioback')) {
             communityRadioPlugin.page--;
+            clickedElement.unbind('click').makeSpinner();
             communityRadioPlugin.update();
         } else if (prefs.clickmode == "double") {
             if (clickedElement.hasClass("clickstream")) {
