@@ -457,8 +457,7 @@ function playerController() {
                     break;
     		}
 		});
-		// Note : playpos will only be set if at_pos isn't, because at_pos is only set when
-        // dragging to the playlist
+		// Note : playpos will only be set if at_pos isn't, because at_pos is only set when dragging to the playlist
         if (prefs.cdplayermode && at_pos === null) {
             cmdlist.unshift(["clear"]);
             cmdlist.push(['play']);

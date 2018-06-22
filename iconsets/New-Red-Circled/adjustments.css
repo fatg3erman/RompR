@@ -1,0 +1,276 @@
+#buttons
+{
+    padding-left:12px;
+    padding-right:12px;
+    padding-top:4px;
+    padding-bottom:6px;
+}
+
+.controlbutton
+{
+    margin:0px;
+    padding:0px;
+    vertical-align:middle;
+    display:inline-block;
+    width:56px;
+    height:56px;
+}
+
+.controlbutton-small
+{
+    margin:0px;
+    vertical-align:middle;
+    display:inline-block;
+    width:48px;
+    height:48px;
+}
+
+@media screen and (min-height: 800px) and (max-height: 939px) {
+    .controlbutton {
+        width:64px;
+        height:64px;
+    }
+    #buttons {
+        padding-top:12px;
+    }
+    #playbackTime {
+        margin-top:2px;
+        font-size:12px;
+        line-height:14px;
+        height:14px;
+    }
+}
+
+@media screen  and (min-height: 940px) and (max-height: 1099px) and (min-width: 650px) {
+    .controlbutton {
+        width:84px;
+        height:84px;
+    }
+    
+    .controlbutton-small {
+        width:64px;
+        height:64px;
+    }
+    
+    .shiftleft
+    {
+        left:-12px;
+        position:relative;
+        z-index:250;
+    }
+
+    .shiftleft2
+    {
+        left:-26px;
+        position:relative;
+    }
+
+    .shiftleft3
+    {
+        position:relative;
+        left:-36px;
+        z-index:5;
+    }
+
+    .shiftleft4
+    {
+        position:relative;
+        left:-48px;
+        z-index:1;
+        margin-right:-36px;
+    }
+    
+}
+
+@media screen and (min-height: 940px) and (max-height: 1099px) and (min-width: 650px) {
+    .controlbutton {
+        width:84px;
+        height:84px;
+    }
+    .controlbutton-small {
+        width:64px;
+        height:64px;
+    }
+    #buttons {
+        padding-top:16px;
+        padding-left:24px;
+    }
+    #playbackTime {
+        margin-top:4px;
+        font-size:14px;
+        line-height:16px;
+        height:16px;
+    }
+    .shiftleft
+    {
+        left:-12px;
+        position:relative;
+        z-index:250;
+    }
+
+    .shiftleft2
+    {
+        left:-24px;
+        position:relative;
+    }
+
+    .shiftleft3
+    {
+        position:relative;
+        left:-36px;
+        z-index:5;
+    }
+
+    .shiftleft4
+    {
+        position:relative;
+        left:-48px;
+        z-index:1;
+        margin-right:-36px;
+    }
+}
+
+@media screen  and (min-height: 1100px) and (min-width: 651px) and (max-width: 749px) {
+    .controlbutton {
+        width:84px;
+        height:84px;
+    }
+    .controlbutton-small {
+        width:64px;
+        height:64px;
+    }
+    #buttons {
+        padding-top:16px;
+        padding-left:24px;
+    }
+    #playbackTime {
+        margin-top:4px;
+        font-size:14px;
+        line-height:16px;
+        height:16px;
+    }
+    .shiftleft
+    {
+        left:-12px;
+        position:relative;
+        z-index:250;
+    }
+
+    .shiftleft2
+    {
+        left:-26px;
+        position:relative;
+    }
+
+    .shiftleft3
+    {
+        position:relative;
+        left:-36px;
+        z-index:5;
+    }
+
+    .shiftleft4
+    {
+        position:relative;
+        left:-48px;
+        z-index:1;
+        margin-right:-36px;
+    }
+}
+
+@media screen and (min-height: 1100px) and (min-width: 720px) {
+    .controlbutton {
+        width:90px;
+        height:90px;
+    }
+    .controlbutton-small {
+        width:70px;
+        height:70px;
+    }
+    #buttons {
+        padding-top:12px;
+        padding-left:20px;
+    }
+    #progress {
+        margin-top:8px;
+    }
+    #playbackTime {
+        margin-top:12px;
+        font-size:16px;
+        line-height:18px;
+        height:18px;
+    }
+    .shiftleft
+    {
+        left:-10px;
+        position:relative;
+        z-index:250;
+    }
+
+    .shiftleft2
+    {
+        left:-22px;
+        position:relative;
+    }
+
+    .shiftleft3
+    {
+        position:relative;
+        left:-34px;
+        z-index:5;
+    }
+
+    .shiftleft4
+    {
+        position:relative;
+        left:-44px;
+        z-index:1;
+        margin-right:-36px;
+    }
+}
+
+.desktop .playlisticon
+{
+    width:12px;
+    height:12px;
+}
+
+.mobile .playlisticon
+{
+    width:24px;
+    height:24px;
+}
+
+.desktop .collectionicon
+{
+    width:16px;
+    height:16px;
+}
+
+.mobile .collectionicon
+{
+    width:20px;
+    height:20px;
+}
+
+.desktop .playlisticonr
+{
+    width:12px;
+    height:12px;
+}
+
+.mobile .playlisticonr
+{
+    width:30px;
+    height:30px;
+}
+
+.desktop .smallicon
+{
+    width:16px;
+}
+
+.mobile .smallicon
+{
+    width:30px;
+}

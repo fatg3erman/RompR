@@ -53,7 +53,9 @@ print '<div class="pref containerbox dropdown-container"><div class="divlabel">'
     '</div><div class="selectholder"><select id="iconthemeselector" class="saveomatic">';
 $themes = glob("iconsets/*");
 foreach($themes as $theme) {
-    print '<option value="'.basename($theme).'">'.basename($theme).'</option>';
+    if (is_dir($theme)) {
+        print '<option value="'.basename($theme).'">'.basename($theme).'</option>';
+    }
 }
 print '</select></div></div>';
 

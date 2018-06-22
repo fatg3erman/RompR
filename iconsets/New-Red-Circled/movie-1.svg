@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   width="205.66005mm"
+   height="207.89409mm"
+   viewBox="0 0 205.66004 207.89409"
+   version="1.1"
+   id="svg8">
+  <defs
+     id="defs2" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <ellipse
+     ry="94.947044"
+     rx="93.830025"
+     cy="103.94704"
+     cx="102.83002"
+     id="path815"
+     style="opacity:1;fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <path
+     style="stroke-width:0.22869384;fill:#ff0000;fill-opacity:1"
+     d="M 154.05744,45.40142 H 51.602604 c -4.044908,0 -7.318203,3.276726 -7.318203,7.318203 V 155.17445 c 0,4.04514 3.273295,7.31821 7.318203,7.31821 H 154.05744 c 4.04514,0 7.3182,-3.27329 7.3182,-7.31821 V 52.719623 c 0,-4.041477 -3.27306,-7.318203 -7.3182,-7.318203 z m -36.59101,7.318203 7.3182,14.636403 h -14.6364 l -7.31821,-14.636403 z m -29.272812,0 7.318203,14.636403 H 80.875415 L 73.557212,52.719623 Z m -36.591014,0 h 7.318203 L 66.23901,67.356026 H 51.602604 Z M 154.05744,155.17445 H 51.602604 V 74.674232 H 154.05744 Z m 0,-87.818424 h -14.6364 l -7.3182,-14.636403 h 14.6364 l 7.3182,7.318206 z m -28.50097,44.295254 c 3.60194,1.80096 3.60194,4.7454 0,6.54636 l -38.134694,19.06734 c -3.601927,1.80097 -6.546361,-0.0215 -6.546361,-4.04513 V 96.628839 c 0,-4.02364 2.944434,-5.8461 6.546361,-4.04513 z"
+     id="path928" />
+<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#ff0000;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#ff0000;fill-opacity:1}</style></svg>

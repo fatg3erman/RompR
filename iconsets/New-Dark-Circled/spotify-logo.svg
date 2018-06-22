@@ -5,11 +5,35 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="205.66005mm"
    height="207.89409mm"
    viewBox="0 0 205.66004 207.89409"
    version="1.1"
-   id="svg8">
+   id="svg8"
+   sodipodi:docname="spotify-logo.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1690"
+     inkscape:window-height="1016"
+     id="namedview38"
+     showgrid="false"
+     inkscape:zoom="0.30035326"
+     inkscape:cx="388.64891"
+     inkscape:cy="392.87072"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg8" />
   <defs
      id="defs2">
     <linearGradient
@@ -48,240 +72,6 @@
          stop-color="#D95B29"
          id="stop18" />
     </linearGradient>
-    <filter
-       x="0"
-       y="0"
-       width="1"
-       height="1"
-       color-interpolation-filters="sRGB"
-       id="filter3011">
-      <feColorMatrix
-         type="saturate"
-         values="0"
-         id="feColorMatrix3013"
-         result="fbSourceGraphic" />
-      <feColorMatrix
-         result="fbSourceGraphicAlpha"
-         in="fbSourceGraphic"
-         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
-         id="feColorMatrix3035" />
-      <feFlood
-         id="feFlood3037"
-         result="result1"
-         flood-opacity="0"
-         flood-color="rgb(128,128,128)"
-         in="fbSourceGraphic" />
-      <feBlend
-         id="feBlend3039"
-         in2="fbSourceGraphic"
-         mode="normal"
-         result="result2" />
-      <feComposite
-         id="feComposite3041"
-         in2="fbSourceGraphic"
-         k2="1"
-         operator="arithmetic"
-         result="result3" />
-      <feComposite
-         id="feComposite3043"
-         in2="fbSourceGraphic"
-         operator="in" />
-    </filter>
-    <filter
-       x="0"
-       y="0"
-       width="1"
-       height="1"
-       color-interpolation-filters="sRGB"
-       id="filter3015">
-      <feColorMatrix
-         type="saturate"
-         values="0"
-         id="feColorMatrix3017"
-         result="fbSourceGraphic" />
-      <feColorMatrix
-         result="fbSourceGraphicAlpha"
-         in="fbSourceGraphic"
-         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
-         id="feColorMatrix3045" />
-      <feFlood
-         id="feFlood3047"
-         result="result1"
-         flood-opacity="0"
-         flood-color="rgb(128,128,128)"
-         in="fbSourceGraphic" />
-      <feBlend
-         id="feBlend3049"
-         in2="fbSourceGraphic"
-         mode="normal"
-         result="result2" />
-      <feComposite
-         id="feComposite3051"
-         in2="fbSourceGraphic"
-         k2="1"
-         operator="arithmetic"
-         result="result3" />
-      <feComposite
-         id="feComposite3053"
-         in2="fbSourceGraphic"
-         operator="in" />
-    </filter>
-    <filter
-       x="0"
-       y="0"
-       width="1"
-       height="1"
-       color-interpolation-filters="sRGB"
-       id="filter3019">
-      <feColorMatrix
-         type="saturate"
-         values="0"
-         id="feColorMatrix3021"
-         result="fbSourceGraphic" />
-      <feColorMatrix
-         result="fbSourceGraphicAlpha"
-         in="fbSourceGraphic"
-         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
-         id="feColorMatrix3055" />
-      <feFlood
-         id="feFlood3057"
-         result="result1"
-         flood-opacity="0"
-         flood-color="rgb(128,128,128)"
-         in="fbSourceGraphic" />
-      <feBlend
-         id="feBlend3059"
-         in2="fbSourceGraphic"
-         mode="normal"
-         result="result2" />
-      <feComposite
-         id="feComposite3061"
-         in2="fbSourceGraphic"
-         k2="1"
-         operator="arithmetic"
-         result="result3" />
-      <feComposite
-         id="feComposite3063"
-         in2="fbSourceGraphic"
-         operator="in" />
-    </filter>
-    <filter
-       x="0"
-       y="0"
-       width="1"
-       height="1"
-       color-interpolation-filters="sRGB"
-       id="filter3023">
-      <feColorMatrix
-         type="saturate"
-         values="0"
-         id="feColorMatrix3025"
-         result="fbSourceGraphic" />
-      <feColorMatrix
-         result="fbSourceGraphicAlpha"
-         in="fbSourceGraphic"
-         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
-         id="feColorMatrix3065" />
-      <feFlood
-         id="feFlood3067"
-         result="result1"
-         flood-opacity="0"
-         flood-color="rgb(128,128,128)"
-         in="fbSourceGraphic" />
-      <feBlend
-         id="feBlend3069"
-         in2="fbSourceGraphic"
-         mode="normal"
-         result="result2" />
-      <feComposite
-         id="feComposite3071"
-         in2="fbSourceGraphic"
-         k2="1"
-         operator="arithmetic"
-         result="result3" />
-      <feComposite
-         id="feComposite3073"
-         in2="fbSourceGraphic"
-         operator="in" />
-    </filter>
-    <filter
-       x="0"
-       y="0"
-       width="1"
-       height="1"
-       color-interpolation-filters="sRGB"
-       id="filter3027">
-      <feColorMatrix
-         type="saturate"
-         values="0"
-         id="feColorMatrix3029"
-         result="fbSourceGraphic" />
-      <feColorMatrix
-         result="fbSourceGraphicAlpha"
-         in="fbSourceGraphic"
-         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
-         id="feColorMatrix3075" />
-      <feFlood
-         id="feFlood3077"
-         result="result1"
-         flood-opacity="0"
-         flood-color="rgb(128,128,128)"
-         in="fbSourceGraphic" />
-      <feBlend
-         id="feBlend3079"
-         in2="fbSourceGraphic"
-         mode="normal"
-         result="result2" />
-      <feComposite
-         id="feComposite3081"
-         in2="fbSourceGraphic"
-         k2="1"
-         operator="arithmetic"
-         result="result3" />
-      <feComposite
-         id="feComposite3083"
-         in2="fbSourceGraphic"
-         operator="in" />
-    </filter>
-    <filter
-       x="0"
-       y="0"
-       width="1"
-       height="1"
-       color-interpolation-filters="sRGB"
-       id="filter3031">
-      <feColorMatrix
-         type="saturate"
-         values="0"
-         id="feColorMatrix3033"
-         result="fbSourceGraphic" />
-      <feColorMatrix
-         result="fbSourceGraphicAlpha"
-         in="fbSourceGraphic"
-         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
-         id="feColorMatrix3085" />
-      <feFlood
-         id="feFlood3087"
-         result="result1"
-         flood-opacity="0"
-         flood-color="rgb(128,128,128)"
-         in="fbSourceGraphic" />
-      <feBlend
-         id="feBlend3089"
-         in2="fbSourceGraphic"
-         mode="normal"
-         result="result2" />
-      <feComposite
-         id="feComposite3091"
-         in2="fbSourceGraphic"
-         k2="1"
-         operator="arithmetic"
-         result="result3" />
-      <feComposite
-         id="feComposite3093"
-         in2="fbSourceGraphic"
-         operator="in" />
-    </filter>
   </defs>
   <metadata
      id="metadata5">
@@ -291,7 +81,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -322,25 +112,29 @@
 </style>
   <g
      transform="matrix(0.49298603,0,0,0.49298603,-19.661038,-23.021822)"
-     id="g5133">
+     id="g5133"
+     style="fill:#000000;fill-opacity:1">
     <g
-       id="g5131">
+       id="g5131"
+       style="fill:#000000;fill-opacity:1">
       <g
-         id="g5129">
+         id="g5129"
+         style="fill:#000000;fill-opacity:1">
         <g
-           id="g5127">
+           id="g5127"
+           style="fill:#000000;fill-opacity:1">
           <path
              id="path5121"
              d="m 384.568,201.787 c -50.089,-24.981 -103.96,-37.63 -160.247,-37.63 -29.303,0 -58.48,3.56 -86.798,10.584 -9.376,2.32 -15.065,13.635 -12.745,22.979 2.32,9.344 11.791,15.065 21.167,12.745 25.553,-6.325 51.933,-9.535 78.407,-9.535 50.788,0 99.416,11.41 144.61,33.944 2.479,1.24 5.149,1.843 7.755,1.843 6.452,0 12.586,-5.371 15.701,-11.505 4.291,-8.614 0.795,-19.134 -7.85,-23.425 z"
-             style="fill:#090509" />
+             style="fill:#000000;fill-opacity:1" />
           <path
              id="path5123"
              d="m 224.321,311.977 c -23.614,0 -46.943,3.464 -69.349,10.425 -6.929,2.066 -10.774,16.749 -8.645,23.71 2.129,6.897 9.471,10.806 16.4,8.613 19.864,-6.166 40.618,-9.28 61.594,-9.28 35.024,0 69.699,8.867 100.242,25.776 l 6.325,1.621 c 4.64,0 9.122,-2.479 11.442,-6.833 3.464,-6.325 1.24,-21.676 -5.149,-25.14 -34.389,-18.881 -73.418,-28.892 -112.86,-28.892 z"
-             style="fill:#090509" />
+             style="fill:#000000;fill-opacity:1" />
           <path
              id="path5125"
              d="m 360.064,273.615 c -41.635,-21.612 -88.546,-33.086 -135.711,-33.086 -26.316,0 -52.505,3.496 -77.772,10.393 -8.136,2.225 -12.935,16.114 -10.711,24.25 2.225,8.136 10.615,12.904 18.783,10.711 22.629,-6.166 46.116,-9.312 69.699,-9.312 42.906,0 83.779,9.948 121.663,29.621 2.225,1.176 4.64,1.78 7.024,1.78 5.562,0 10.87,-8.581 13.603,-13.794 3.815,-7.468 0.891,-16.717 -6.578,-20.563 z"
-             style="fill:#090509" />
+             style="fill:#000000;fill-opacity:1" />
         </g>
       </g>
     </g>

@@ -1,0 +1,187 @@
+
+ [class^="icon-"], [class*=" icon-"] {
+ 	background-size:contain;
+	background-position: center;
+	background-repeat:no-repeat;
+	display:inline-block;
+    opacity:0.85;
+}
+
+[class^="icon-"]:not(.button-disabled):hover, [class*=" icon-"]:not(.button-disabled):hover {
+    opacity: 1;
+    background-color: rgba(255,173,0,0.07);
+}
+
+.clearbox {
+    background: #fff url('edit-delete.svg') right 2px center no-repeat;
+    background-size: auto 1em;
+}
+
+.button-disabled { opacity: 0.1 }
+
+.icon-play-circled { background-image :url('media-playback-start.svg') }
+.playdiv { background-image :url('media-playback-start.svg') }
+.icon-play-circled:hover { background-image :url('media-playback-start-highlight.svg') }
+.icon-pause-circled { background-image :url('media-playback-pause.svg') }
+.icon-pause-circled:hover { background-image :url('media-playback-pause-highlight.svg') }
+.icon-fast-backward { background-image :url('media-skip-backward.svg') }
+.icon-fast-backward:hover { background-image :url('media-skip-backward-highlight.svg') }
+.icon-fast-forward { background-image :url('media-skip-forward.svg') }
+.icon-fast-forward:hover { background-image :url('media-skip-forward-highlight.svg') }
+.icon-stop-1 { background-image :url('media-playback-stop.svg') }
+.icon-stop-1:hover { background-image :url('media-playback-stop-highlight.svg') }
+.icon-to-end-1 { background-image :url('stopafter.svg') }
+.icon-to-end-1:hover { background-image :url('stopafter-highlight.svg') }
+
+.icon-music { background-image: url('collection.svg') }
+.icon-search { background-image: url('system-search.svg') }
+.icon-folder-open-empty { background-image: url('folder.svg') }
+.icon-radio-tower { background-image: url('broadcast-new.svg') }
+.icon-cd { background-image: url('cd_case.svg') }
+.icon-resize-horizontal { background-image: url('resize.svg') }
+.icon-angle-double-left { background-image:url('arrow-left-double.svg') }
+.icon-angle-double-right { background-image:url('arrow-right-double.svg') }
+.icon-menu { background-image: url('pushbutton.svg') }
+.icon-versions { background-image: url('history.svg') }
+.icon-left-circled { background-image: url('backbutton.svg') }
+.icon-right-circled { background-image: url('forwardbutton.svg') }
+.icon-cog-alt { background-image: url('preferences.svg') }
+.icon-trash { background-image: url('edit-clear-list.svg') }
+.icon-wifi { background-image: url('smartradio.svg') }
+.icon-doc-text { background-image: url('playlist.svg') }
+.icon-floppy { background-image: url('document-save.svg') }
+.icon-cancel-circled { background-image: url('edit-delete.svg') }
+.icon-plus {
+	background-image: url('add.svg');
+  	opacity:0.7;
+}
+.icon-alarm { background-image: url('alarmclock_false.svg') }
+.icon-alarm-on { background-image: url('alarmclock_true.svg') }
+.icon-sleep { background-image: url('sleep.svg') }
+.icon-library { background-image: url('file.svg') }
+.icon-lastfm-1 { background-image: url('lastfm.svg') }
+.icon-wikipedia { background-image: url('wikipedia-logo.svg') }
+.icon-musicbrainz {	background-image: url('musicbrainz_logo.svg') }
+.icon-discogs {	background-image: url('discogs-logo.svg') }
+.icon-doc-text-1 { background-image: url('lyrics.svg') }
+.icon-soundcloud-circled { background-image: url( 'soundcloud-logo.svg') }
+.icon-youtube-circled { background-image: url('youtube-logo.svg') }
+.icon-gmusic-circled { background-image: url('gmusic-logo.svg') }
+.icon-spotify-circled { background-image: url('spotify-logo.svg') }
+.icon-vkontakte-circled { background-image: url('vkontakte-logo.svg') }
+.icon-podcast-circled { background-image: url('podcast-logo.svg') }
+.icon-internetarchive-circled { background-image: url('internetarchive-logo.svg') }
+.icon-increase { background-image: url('arrow-increase.svg') }
+.icon-decrease { background-image: url('arrow-decrease.svg') }
+.icon-basket-circled { background-image: url('cart.svg') }
+.icon-attention-1 { background-image: url('dialog-error.svg') }
+.icon-info-circled { background-image: url('dialog-information.svg') }
+.icon-download { background-image: url('download-icon.svg') }
+.icon-sun { background-image: url('icon-new.svg') }
+.icon-headphones { background-image: url('headphones.svg') }
+.icon-unlistened { background-image: url('headphones.svg') }
+.icon-block { background-image: url('lastfm-ban.svg') }
+.icon-heart { background-image: url('lastfm-love.svg') }
+.icon-heart-broken { background-image: url('lastfm-unlove.svg') }
+.icon-refresh { background-image: url('refresh.svg') }
+.icon-dirble-circled { background-image: url('dirble-logo.svg') }
+.icon-tunein { background-image: url('../../newimages/tunein-logo.svg') }
+.icon-icecast { background-image: url('icecast.svg') }
+.icon-no-response-playbutton { background-image :url('media-playback-start.svg') }
+.icon-tags { background-image: url('tag.svg') }
+.icon-volume-up { background-image: url('volume.svg') }
+.icon-toggle-open { background-image: url('toggle-open.svg') }
+.icon-toggle-closed { background-image: url('toggle-closed.svg') }
+.icon-spin6 { background-image: url('spinner.svg') }
+.icon-output { background-image: url('output.svg') }
+.icon-output-mute { background-image: url('output_mute.svg') }
+.icon-sliders { background-image: url('sliders.svg') }
+.icon-0-stars { background-image: url('0stars.svg') }
+.icon-1-stars { background-image: url('1stars.svg') }
+.icon-2-stars { background-image: url('2stars.svg') }
+.icon-3-stars { background-image: url('3stars.svg') }
+.icon-4-stars { background-image: url('4stars.svg') }
+.icon-5-stars { background-image: url('5stars.svg') }
+.icon-single-star { background-image: url('singlestar.svg') }
+.icon-ratandtag { background-image: url('ratandtag.svg') }
+.icon-ratortag { background-image: url('ratortag.svg') }
+.icon-toggle-on { background-image: url('togglebutton-new2-on.svg') }
+.icon-toggle-off { background-image: url('togglebutton-new2-off.svg') }
+
+.icon-allrandom { background-image: url('shuffle.svg') }
+.icon-neverplayed { background-image: url('neverheard.svg') }
+.icon-recentlyplayed { background-image: url('calendar.svg') }
+.icon-artist { background-image: url('artist-icon.svg') }
+.icon-mp3-audio { background-image: url('mp3-audio.svg') }
+.icon-aac-audio { background-image: url('aac-audio.svg') }
+.icon-flac-audio { background-image: url('flac-audio.svg') }
+.icon-wma-audio { background-image: url('wma-audio.svg') }
+.icon-ogg-audio { background-image: url('ogg-audio.svg') }
+.icon-explicit { background-image: url('parental-advisory.svg') }
+.icon-expand-up { background-image: url('expand-up.svg') }
+.icon-rss { background-image: url('rss.svg') }
+.icon-tick { background-image: url('tick.svg') }
+.icon-video { background-image: url('movie-1.svg') }
+.icon-bbc-logo { background-image: url('bbc-logo.svg') }
+.icon-imdb-logo { background-image: url('imdb-logo.svg') }
+.icon-facebook-logo { background-image: url('facebook-logo.svg') }
+.icon-twitter-logo { background-image: url('twitter-logo.svg') }
+.icon-www { background-image: url('world-wide-web.svg') }
+
+.styledinputs label
+{
+    display:inline-block;
+    cursor:pointer;
+    position:relative;
+    padding-left:2em;
+    line-height:1.5em;
+}
+
+.styledinputs input[type=radio]
+{
+    display:none;
+}
+
+.styledinputs input[type=checkbox]
+{
+    display:none;
+}
+
+.styledinputs label:before
+{
+    content:"";
+    display:inline-block;
+    width:1.5em;
+    height:1.5em;
+    position:absolute;
+    left:0;
+    background-image: url('togglebutton-new2-off.svg');
+    background-size: auto 80%;
+	background-position: center;
+	background-repeat:no-repeat;
+}
+
+.styledinputs input:checked + label:before
+{
+    background-image: url('togglebutton-new2-on.svg') !important;
+}
+
+img.notexist,img.notfound
+{
+    background-image: url('compact-disc.svg');
+    background-size:contain;
+    display:inline-block;
+
+}
+
+img.plimage.notfound
+{
+    background-image: url('playlist.svg');
+}
+
+.backmenu
+{
+    background-image: url('arrow-left-double.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+}
