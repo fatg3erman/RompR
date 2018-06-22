@@ -183,7 +183,7 @@ var info_musicbrainz = function() {
 					break;
 
 				case "allmusic":
-					html += '<li><i class="icon-noicon smallicon padright"></i><a href="'+u+'" target="_blank">Allmusic</a></li>';
+					html += '<li><i class="icon-allmusic smallicon padright"></i><a href="'+u+'" target="_blank">Allmusic</a></li>';
 					break;
 
 				case "BBC Music page":

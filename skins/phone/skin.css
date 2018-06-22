@@ -461,10 +461,14 @@ div.rightmenu {
 
 #sortable .playlisticonr {
     border-top: none;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
+    border-left: 12px solid transparent;
+    border-right: 4px solid transparent;
     border-bottom: 16px solid transparent;
     margin-top: 0px;
+}
+
+#sortable .track>div>div.clickable {
+    margin-right: 8px;
 }
 
 .npicon {
