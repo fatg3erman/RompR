@@ -42,7 +42,7 @@ print '<div id="custombackground" class="pref containerbox dropdown-container">
 <input type="checkbox" id="thisbrowseronly" name="thisbrowseronly" /><label for="thisbrowseronly">For this browser only</label>
 </div>
 <input type="button" onclick="prefs.changeBackgroundImage()" value="'.get_int_text('albumart_uploadbutton').'">
-<i class="icon-cancel-circled clickicon playlisticonr" onclick="prefs.clearBgImage()"></i>
+<i class="icon-cancel-circled clickicon collectionicon" onclick="prefs.clearBgImage()"></i>
 </form>
 </div>
 </div>';
