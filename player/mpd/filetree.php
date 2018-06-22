@@ -86,7 +86,6 @@ function printFileSearch($tree, $fcount) {
 }
 
 function printFileItem($displayname, $fullpath, $time) {
-    debuglog("Printing File Item ".$fullpath,"DIRECTORY");
     global $prefs;
     $ext = strtolower(pathinfo($fullpath, PATHINFO_EXTENSION));
     print '<div class="clickable clicktrack ninesix draggable indent containerbox padright line brick_wide" name="'.

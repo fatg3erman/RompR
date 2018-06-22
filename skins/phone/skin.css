@@ -454,7 +454,9 @@ div.rightmenu {
     margin-right:2px;
     vertical-align:middle;
     box-sizing:border-box;
-    border:6px solid transparent;
+    border:8px solid transparent;
+    width:32px;
+    height:32px;
 }
 
 .npicon {
