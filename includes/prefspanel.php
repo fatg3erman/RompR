@@ -96,7 +96,7 @@ print '</select></div></div>';
 print '<div class="textcentre configtitle"><b>'.get_int_text('config_players').'</b></div>';
 print '<div class="fullwidth">';
 print '<div class="clearfix">';
-print '<div class="pref styledinputs tleft" id="playerdefs">';
+print '<div class="pref styledinputs tleft" name="playerdefs">';
 print '</div>';
 print '<div class="pref tright"><button onclick="player.defs.edit()">'.get_int_text('button_edit_players').'</button></div>';
 print '</div>';

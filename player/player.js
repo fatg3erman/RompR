@@ -66,7 +66,7 @@ var player = function() {
                 prefs.save({multihosts: newhosts});
                 self.replacePlayerOptions();
                 prefs.setPrefs();
-                $("#playerdefs > .savulon").click(prefs.toggleRadio);
+                $('[name="playerdefs"] > .savulon').click(prefs.toggleRadio);
             }
         }
         
@@ -117,12 +117,14 @@ var player = function() {
         }
         
         this.replacePlayerOptions = function() {
-            $("#playerdefs").empty();
-            for (var i in prefs.multihosts) {
-                $("#playerdefs").append('<input type="radio" class="topcheck savulon" name="currenthost" value="'+
-                    i+'" id="host_'+escape(i)+'">'+
-                    '<label for="host_'+escape(i)+'">'+i+'</label><br/>');
-            }
+            $('[name="playerdefs"]').each(function(index) {
+                $(this).empty();
+                for (var i in prefs.multihosts) {
+                    $(this).append('<input type="radio" class="topcheck savulon" name="currenthost_duplicate'+index+'" value="'+
+                        i+'" id="host_'+escape(i)+index+'">'+
+                        '<label for="host_'+escape(i)+index+'">'+i+'</label><br/>');
+                }
+            });
         }
     }
 

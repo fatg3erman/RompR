@@ -5,13 +5,20 @@
     <div id="sourcescontrols" class="expand center containerbox noborder">
         <div id="volumedropper" class="topdropmenu rightmenu widemenu">
             <div class="configtitle textcentre"><b>Volume</b></div>
+            <div id="volumecontrol" class="fullwidth">
+                <div id="volume"></div>
+            </div>
+            <div class="configtitle textcentre"><b>Outputs</b></div>
             <div class="pref">
 <?php
 include('player/mpd/outputs.php');
 printOutputCheckboxes();
 ?>
             </div>
-            <div id="volumecontrol" class="fullwidth"><div id="volume"></div></div>
+            <div class="configtitle textcentre"><b>Players</b></div>
+            <div class="pref styledinputs" name="playerdefs">
+            </div>
+            
         </div>
         <div id="specialplugins" class="topdropmenu rightmenu autohide">
             <div class="sptext"></div>

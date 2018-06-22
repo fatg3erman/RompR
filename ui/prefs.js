@@ -318,9 +318,10 @@ var prefs = function() {
         toggleRadio: function(event) {
             var prefobj = new Object;
             var prefname = $(event.target).attr("name");
-            prefobj[prefname] = $('[name='+prefname+']:checked').val();
+            var prefsave = prefname.replace(/_duplicate\d+/, '');
+            prefobj[prefsave] = $('[name='+prefname+']:checked').val();
             var callback = null;
-            switch(prefname) {
+            switch(prefsave) {
                 case 'clickmode':
                     callback = setClickHandlers;
                     break;
@@ -374,7 +375,8 @@ var prefs = function() {
 
             $.each($('.savulon'), function() {
                 var prefname = $(this).attr("name");
-                $("[name="+prefname+"][value="+prefs[prefname]+"]").prop("checked", true);
+                var prefsave = prefname.replace(/_duplicate\d+/, '');
+                $("[name="+prefname+"][value="+prefs[prefsave]+"]").prop("checked", true);
             });
 
         },
