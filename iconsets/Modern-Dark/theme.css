@@ -73,7 +73,7 @@
 .icon-heart { background-image: url('lastfm-love.svg') }
 .icon-heart-broken { background-image: url('lastfm-unlove.svg') }
 .icon-refresh { background-image: url('refresh.svg') }
-.icon-dirble { background-image: url('dirble-logo.svg') }
+.icon-dirble-circled { background-image: url('dirble-logo.svg') }
 .icon-tunein { background-image: url('../../newimages/tunein-logo.svg') }
 .icon-icecast { background-image: url('icecast.svg') }
 .icon-no-response-playbutton { background-image :url('media-playback-start.svg') }
@@ -144,7 +144,7 @@
     height:1.5em;
     position:absolute;
     left:0;
-    bottom:0.2em;
+    /* bottom:0.2em; */
     background-image: url('togglebutton-new2-off.svg');
  	background-size:contain;
 	background-position: center;

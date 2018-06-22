@@ -771,7 +771,7 @@ var playlist = function() {
 
         draggedToEmpty: function(event, ui) {
             debug.log("PLAYLIST","Something was dropped on the empty playlist area",event,ui);
-            playlist.addItems($('.selected').filter(removeOpenItems), "");
+            playlist.addItems($('.selected').filter(removeOpenItems), parseInt(finaltrack)+1);
         },
 
         dragstopped: function(event, ui) {
@@ -891,9 +891,6 @@ var playlist = function() {
                 }
             });
             if (tracks.length > 0) {
-                if (moveto == "") {
-                    moveto = null;
-                }
                 if (moveto === null) { playlist.waiting(); }
                 var playpos = (moveto === null) ? playlist.playFromEnd() : null;
                 player.controller.addTracks(tracks, playpos, moveto);
@@ -956,7 +953,7 @@ var playlist = function() {
                 return finaltrack+1;
             } else {
                 debug.trace("PLAYLIST","Disabling auto-play");
-                return -1;
+                return null;
             }
         },
 

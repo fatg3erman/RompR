@@ -388,12 +388,12 @@ function domainIcon($d, $c) {
         case "internetarchive":
         case "soundcloud":
         case "podcast":
+        case "dirble":
             $h = '<i class="icon-'.$d.'-circled '.$c.' fixed"></i>';
             break;
 
         case "tunein":
         case "radio-de":
-        case "dirble":
         case "bassdrive":
             $h = '<div class="'.$c.' fixed"><img class="imgfill" src="newimages/'.$d.'-logo.svg" /></div>';
             break;

@@ -52,7 +52,7 @@ var sleepTimer = function() {
 			if (prefs.sleepon) {
 				$("#sleeptimer").makeFlasher({flashtime: 10, repeats: prefs.sleeptime*6});
 			} else {
-				$("#alarmclock").stopFlasher();
+				$("#sleeptimer").stopFlasher();
 			}
 		},
 

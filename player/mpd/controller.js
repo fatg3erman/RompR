@@ -458,11 +458,11 @@ function playerController() {
     		}
 		});
 		// Note : playpos will only be set if at_pos isn't, because at_pos is only set when
-        // dragging to the playlist, for which action auto-play is always disabled
-        if (prefs.cdplayermode && at_pos === null && !playlist.radioManager.isRunning()) {
+        // dragging to the playlist
+        if (prefs.cdplayermode && at_pos === null) {
             cmdlist.unshift(["clear"]);
             cmdlist.push(['play']);
-        } else if (playpos !== null && playpos > -1) {
+        } else if (playpos !== null) {
 			cmdlist.push(['play', playpos.toString()]);
 		}
         if (at_pos === 0 || at_pos) {
