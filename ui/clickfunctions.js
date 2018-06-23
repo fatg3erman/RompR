@@ -50,6 +50,15 @@ function setClickHandlers() {
 
 }
 
+function bindPlaylistClicks() {
+    $("#sortable").unbind('click');
+    $("#sortable").bind('click', onPlaylistClicked);
+}
+
+function unbindPlaylistClicks() {
+    $("#sortable").unbind('click');
+}
+
 function setControlClicks() {
     $('i[title="'+language.gettext('button_previous')+'"]').click(playlist.previous);
     $('i[title="'+language.gettext('button_play')+'"]').click(infobar.playbutton.clicked);
@@ -241,7 +250,23 @@ function onPlaylistClicked(event) {
     } else if (clickedElement.hasClass("clickaddfave")) {
         event.stopImmediatePropagation();
         playlist.addFavourite(clickedElement.attr("name"));
+    } else if (clickedElement.hasClass("playlistup")) {
+        event.stopImmediatePropagation();
+        playlist.moveTrackUp(clickedElement.findPlParent(), event);
+    } else if (clickedElement.hasClass("playlistdown")) {
+        event.stopImmediatePropagation();
+        playlist.moveTrackDown(clickedElement.findPlParent(), event);
+    } else if (clickedElement.hasClass('rearrange_playlist')) {
+        clickedElement.findPlParent().addBunnyEars();
     }
+}
+
+jQuery.fn.findPlParent = function() {
+    var el = $(this).parent();
+    while (!el.hasClass('track') && !el.hasClass('item')) {
+        el = el.parent();
+    }
+    return el;
 }
 
 function findClickableElement(event) {

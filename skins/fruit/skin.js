@@ -549,8 +549,7 @@ var layoutProcessor = function() {
                 whiledragging: infobar.volumemoved,
                 orientation: "vertical"
             });
-            // $("#playlistbuttons").empty();
-            // $("#giblets").remove();
         }
+        
     }
 }();

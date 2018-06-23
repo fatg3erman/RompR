@@ -173,6 +173,46 @@ jQuery.fn.fanoogleMenus = function() {
     });
 }
 
+jQuery.fn.addBunnyEars = function() {
+    this.each(function() {
+        if ($(this).hasBunnyEars()) {
+            $(this).removeBunnyEars();
+        } else {
+            var w = $(this).outerWidth(true);
+            var up = $('<div>', { class: 'playlistup containerbox clickable'}).prependTo($(this));
+            up.html('<i class="icon-increase medicon expand"></i>').css('width', w+'px');
+            var down = $('<div>', { class: 'playlistdown containerbox clickable'}).appendTo($(this));
+            down.html('<i class="icon-decrease medicon expand"></i>').css('width', w+'px');
+            $(this).addClass('highlighted');
+            if ($(this).hasClass('item')) {
+                $(this).next().addClass('highlighted').slideUp('fast');
+            }
+        }
+    });
+    return this;
+}
+
+jQuery.fn.hasBunnyEars = function() {
+    if ($(this).find('.playlistup').length > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+jQuery.fn.removeBunnyEars = function() {
+    this.each(function() {
+        $(this).find('.playlistup').remove();
+        $(this).find('.playlistdown').remove();
+        $(this).removeClass('highlighted');
+        if ($(this).hasClass('item')) {
+            $(this).next().removeClass('highlighted');
+        }
+    });
+    playlist.doPopMove();
+    return this;
+}
+
 // Functions that could just be in layoutProcessor, but it makes maintenance easier
 // if we have a proxy like this so we don't have to add new stuff to every single skin.
 
@@ -336,8 +376,25 @@ var uiHelper = function() {
             } catch (err) {
                 
             }
+        },
+        
+        postPlaylistLoad: function() {
+            try {
+                return layoutProcessor.postPlaylistLoad();
+            } catch (err) {
+                
+            }
+        },
+        
+        getElementPlaylistOffset: function(element) {
+            try {
+                return layoutProcessor.getElementPlaylistOffset(element);
+            } catch (err) {
+                
+            }
+            
         }
-    
+            
     }
 
 }();

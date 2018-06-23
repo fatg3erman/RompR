@@ -11,6 +11,8 @@ var playlist = function() {
     var last_reqid = 0;
     var update_error = false;
     var retrytimer;
+    var popmovetimer = null;
+    var popmoveelement = null;
 
     // Minimal set of information - just what infobar requires to make sure
     // it blanks everything out
@@ -67,7 +69,7 @@ var playlist = function() {
         });
         return options;
     }
-
+    
     function Album(artist, album, index, rolledup) {
 
         var self = this;
@@ -526,7 +528,7 @@ var playlist = function() {
                 startplaybackfrom = (player.status.state == 'play') ? -1 : 0;
                 if (radios[mode].script) {
                     debug.shout("RADIO MANAGER","Loading Script",radios[mode].script,"for",mode);
-                    $.getScript(radios[mode].script).done(player.controller.clearPlaylist)
+                    $.getScript(radios[mode].script+'?version='+rompr_version).done(player.controller.clearPlaylist)
                         .fail(function(data,thing,wotsit) {
                             debug.error("RADIO MANAGER","Failed to Load Script",wotsit);
                             mode = null;
@@ -766,7 +768,7 @@ var playlist = function() {
                 playlist.waiting();
             }
             player.controller.postLoadActions();
-
+            uiHelper.postPlaylistLoad();
         },
 
         doUpcomingCrap: function() {
@@ -802,8 +804,9 @@ var playlist = function() {
 
         dragstopped: function(event, ui) {
             debug.log("PLAYLIST","Drag Stopped",event,ui);
-
-            event.stopImmediatePropagation();
+            if (event) {
+                event.stopImmediatePropagation();
+            }
             var moveto  = (function getMoveTo(i) {
                 if (i !== null) {
                     debug.log("PLAYLIST", "Finding Next Item In List",i.next(),i.parent());
@@ -1098,8 +1101,95 @@ var playlist = function() {
         getAlbum: function(i) {
             debug.log("PLAYLIST","Getting Tracks For",i);
             return tracklist[i].getTracks();
+        },
+        
+        // Functions for moving things around by clicking icons
+        // To be honest, if I hadn't decided to do trackgroups in the playlist
+        // this would be a fuck of a lot easier. But then trackgroups simplify other things, so....
+        
+        moveTrackUp: function(element, event) {
+            clearTimeout(popmovetimer);
+            popmoveelement = element;
+            var startoffset = uiHelper.getElementPlaylistOffset(element);
+            var tracks = null;
+            if (element.hasClass('item')) {
+                tracks = element.next();
+            }
+            var cheese = element.prev();
+            if (cheese.length == 0) {
+                if (element.parent().hasClass('trackgroup')) {
+                    cheese = element.parent().prev().prev();
+                    if (cheese.length > 0) {
+                        element.detach().insertBefore(cheese.children().last());
+                    }
+                }
+            } else if (cheese.hasClass('track')) {
+                element.detach().insertBefore(cheese);
+            } else if (cheese.hasClass('trackgroup')) {
+                element.detach().insertBefore(cheese.children().last());
+            }
+            if (tracks !== null) {
+                tracks.detach().insertAfter(element);
+            }
+            var offsetnow = uiHelper.getElementPlaylistOffset(element);
+            var scrollnow = $('#pscroller').scrollTop();
+            $('#pscroller').scrollTop(scrollnow+offsetnow-startoffset);
+            popmovetimer = setTimeout(playlist.doPopMove, 1500);
+        },
+        
+        moveTrackDown: function(element, event) {
+            clearTimeout(popmovetimer);
+            popmoveelement = element;
+            var startoffset = uiHelper.getElementPlaylistOffset(element);
+            var tracks = null;
+            if (element.hasClass('item')) {
+                tracks = element.next();
+            }
+            var cheese = element.next();
+            if (cheese.length == 0) {
+                if (element.parent().hasClass('trackgroup')) {
+                    cheese = element.parent().next().next();
+                    if (cheese.length > 0) {
+                        element.detach().insertAfter(cheese.children().first());
+                    }
+                }
+            } else if (cheese.hasClass('track')) {
+                element.detach().insertAfter(cheese);
+            } else if (cheese.hasClass('trackgroup')) {
+                // This will be its own trackgroup
+                cheese = cheese.next();
+                if (cheese.hasClass('track')) {
+                    element.detach().insertAfter(cheese);
+                } else if (cheese.hasClass('item')) {
+                    element.detach().insertAfter(cheese.next().children().first());
+                } else if (cheese.length == 0) {
+                    if (element.parent().hasClass('trackgroup')) {
+                        cheese = element.parent().next().next();
+                        if (cheese.length > 0) {
+                            element.detach().insertAfter(cheese.children().first());
+                        }
+                    }
+                }
+            }
+            if (tracks !== null) {
+                tracks.detach().insertAfter(element);
+            }
+            var offsetnow = uiHelper.getElementPlaylistOffset(element);
+            var scrollnow = $('#pscroller').scrollTop();
+            $('#pscroller').scrollTop(scrollnow+offsetnow-startoffset);
+            popmovetimer = setTimeout(playlist.doPopMove, 1500);
+        },
+        
+        doPopMove: function() {
+            if (popmoveelement !== null) {
+                if (popmoveelement.hasClass('item')){
+                    popmoveelement.next().remove();
+                }
+                playlist.dragstopped(null, popmoveelement);
+                popmoveelement = null;
+            }
         }
-
+        
     }
 
 }();

@@ -11,7 +11,7 @@ var singleArtistRadio = function() {
 				artist = p;
 				if (typeof(searchRadio) == 'undefined') {
 					debug.log("ARTIST RADIO","Loading Search Radio Tuner");
-					$.getScript('radios/code/searchRadio.js',function() {
+					$.getScript('radios/code/searchRadio.js?version='+rompr_version,function() {
 						singleArtistRadio.actuallyGo(numtracks)
 					});
 				} else {

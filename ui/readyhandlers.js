@@ -49,7 +49,7 @@ $(document).ready(function(){
     }
     showUpdateWindow();
     window.addEventListener("storage", onStorageChanged, false);
-    $("#sortable").click(onPlaylistClicked);
+    bindPlaylistClicks();
     $(window).bind('resize', layoutProcessor.adjustLayout);
     pluginManager.setupPlugins();
     setAvailableSearchOptions();

@@ -28,7 +28,7 @@ var spotiMixRadio = function() {
 			}
 			if (typeof(spotifyRecommendationsRadio) == 'undefined') {
 				debug.log("CRAZY RADIO","Loading Spotify Radio Tuner");
-				$.getScript('radios/code/spotifyrecommendationsradio.js',function() {
+				$.getScript('radios/code/spotifyrecommendationsradio.js?version='+rompr_version,function() {
 					spotiMixRadio.actuallyGo(numtracks);
 				});
 			} else {

@@ -463,9 +463,41 @@ div.rightmenu {
     height:32px;
 }
 
+#sortable {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+#sortable .trackgroup {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+#sortable .item {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+#sortable .trackgroup .track {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+#sortable .playlisticonr.icon-cancel-circled {
+    /* display: none; */
+}
+
+.prearranger {
+    display:none;
+}
+
 #sortable .playlisticonr {
     margin-right:4px;
-    width: 48px;
+    width: 40px;
 }
 
 #collection .playlisticonr {

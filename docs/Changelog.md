@@ -3,6 +3,14 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.18
+
+* Fixed bu where plugins menu didn't wokr in Tablet skin
+* Added two new icon themes
+* Some code refactoring and minor UI bugfixing
+* Added swipe and long press options to phone skin to allow tracks to be re-ordered and removed from the Current Playlist
+* Added a new button to allow the Current Playlist to be re-ordered on the Tablet Skin
+
 ## Version 1.16
 
 * Increase Collection Build timeout and update docs to add bigger timeout values for webservers

@@ -38,7 +38,7 @@ var faveArtistRadio = function() {
 			if (!populating) {
 				if (typeof(searchRadio) == 'undefined') {
 					debug.log("FAVE ARTIST RADIO","Loading Search Radio Tuner");
-					$.getScript('radios/code/searchRadio.js',function() {
+					$.getScript('radios/code/searchRadio.js?version=?'+rompr_version,function() {
 						faveArtistRadio.actuallyGo(numtracks)
 					});
 				} else {

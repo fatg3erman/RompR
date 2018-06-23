@@ -13,14 +13,18 @@ if ($skin === null) {
 
 if ($prefs['dev_mode']) {
     // This adds an extra parameter to the version number - the short
-    // hash of the most recent git commit. It's for use in testing,
+    // hash of the most recent git commit, or a timestamp. It's for use in testing,
     // to make sure the browser pulls in the latest version of all the files.
-    // DO NOT USE OUTSIDE A git REPO!
-    $git_ver = exec("git log --pretty=format:'%h' -n 1", $output);
-    if (count($output) == 1) {
-        $version_string = ROMPR_VERSION.".".$output[0];
+    if ($prefs['live_mode']) {
+        $version_string = ROMPR_VERSION.".".time();
     } else {
-        $version_string = ROMPR_VERSION;
+        // DO NOT USE OUTSIDE A git REPO!
+        $git_ver = exec("git log --pretty=format:'%h' -n 1", $output);
+        if (count($output) == 1) {
+            $version_string = ROMPR_VERSION.".".$output[0];
+        } else {
+            $version_string = ROMPR_VERSION.".".time();
+        }
     }
 } else {
     $version_string = ROMPR_VERSION;

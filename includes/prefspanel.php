@@ -165,6 +165,11 @@ print '<div class="pref styledinputs">'.get_int_text('config_wheelspeed').
     </div>';
 print '<div class="pref textcentre"><button onclick="shortcuts.edit()">'.
     get_int_text('config_editshortcuts').'</button></div>'."\n";
+} else {
+    print '<div class="pref styledinputs">
+    <input class="autoset toggle" type="checkbox" id="playlistswipe">
+    <label for="playlistswipe">'.get_int_text('config_playlistswipe').'</label>
+    </div>';
 }
 
 // Click Policy

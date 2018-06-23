@@ -66,7 +66,8 @@ var prefs = function() {
     	"communityradiotag",
     	"communityradiolistby",
         "communityradioorderby",
-        "browser_id"
+        "browser_id",
+        "playlistswipe"
     ];
     
     const cookiePrefs = [
@@ -309,6 +310,10 @@ var prefs = function() {
                     
                 case 'player_in_titlebar':
                     callback = infobar.forceTitleUpdate;
+                    break;
+                    
+                case "playlistswipe":
+                    callback = reloadWindow;
                     break;
 
             }

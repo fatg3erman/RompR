@@ -314,6 +314,10 @@
     width: 12px;
 }
 
+.prearranger {
+    display:none;
+}
+
 .collectionicon {
     padding:0px;
     margin-right:4px;

@@ -2044,3 +2044,17 @@ table.fileinfotable tr td:nth-child(2) {
     width:30px;
     vertical-align:middle;
 }
+
+.playlistup {
+    position: relative;
+    left: 0;
+    bottom: 100%;
+    z-index: 5000;
+}
+
+.playlistdown {
+    position: relative;
+    left: 0;
+    top: 100%;
+    z-index: 5000;
+}

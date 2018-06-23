@@ -443,6 +443,14 @@ div.rightmenu {
     margin-right: 8px;
 }
 
+#sortable {
+    position: relative;
+}
+
+.playlistdown {
+    margin-right: 12px;
+}
+
 .npicon {
     padding-top:0px;
     padding-left:0px;

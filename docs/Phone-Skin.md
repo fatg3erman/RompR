@@ -21,3 +21,9 @@ The double arrow at the top is the 'back' button, which will take you back to th
 And here's an album being browsed
 
 ![](images/iphone5-album.png)
+
+The phone skin also supports swiping. In the [Current Playlist](/RompR/The-Playlist) you can swipe left to remove tracks. This can be disabled by setting the option in the Config panel. This option also allows you to re-order tracks in the playlist - use a long press on the track and and up/down arrows will appear. Tap the arrows to move the track up and down the playlist.
+
+![](images/iphonemove1.png)
+
+Disabling the swipe option will make the phone skin behave like the [Tablet Skin](/RompR/Tablet-Skin)

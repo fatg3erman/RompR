@@ -162,11 +162,12 @@ var layoutProcessor = function() {
         },
 
         scrollPlaylistToCurrentTrack: function() {
-            if (prefs.scrolltocurrent && $('playlistcurrentitem').length > 0) {
-                $('#pscroller').scrollTo('.playlistcurrentitem',800,{offset: {top: -32}, easing: 'swing'});
+            if (prefs.scrolltocurrent && $('.playlistcurrentitem').length > 0) {
+                var offset = 0 - ($('#pscroller').outerHeight(true) / 2);
+                $('#pscroller').scrollTo(('.playlistcurrentitem'), 800, {offset: {top: offset}, easing: 'swing'});
             }
         },
-
+        
         playlistupdate: function(upcoming) {
 
         },
@@ -306,6 +307,16 @@ var layoutProcessor = function() {
                 whiledragging: infobar.volumemoved,
                 orientation: "horizontal"
             });
+        },
+        
+        postPlaylistLoad: function() {
+            $('#pscroller').find('.icon-cancel-circled').each(function() {
+                var d = $('<i>', {class: 'icon-updown playlisticonr fixed clickable clickicon rearrange_playlist'}).insertBefore($(this));
+            });
+        },
+        
+        getElementPlaylistOffset: function(element) {
+            return element.position().top;
         }
 
     }

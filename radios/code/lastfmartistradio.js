@@ -66,7 +66,7 @@ var lastFMArtistRadio = function() {
 				param = p;
 				if (typeof(searchRadio) == 'undefined') {
 					debug.log("LASTFM MIX RADIO","Loading Search Radio Tuner");
-					$.getScript('radios/code/searchRadio.js',function() {
+					$.getScript('radios/code/searchRadio.js?version='+rompr_version,function() {
 						lastFMArtistRadio.actuallyGo(numtracks);
 					});
 				} else {

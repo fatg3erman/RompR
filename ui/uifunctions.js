@@ -68,7 +68,7 @@ var pluginManager = function() {
             plugins[index].action();
         } else {
             debug.log("PLUGINS","Loading script",plugins[index].script,"for",plugins[index].label);
-            $.getScript(plugins[index].script).fail(function(data, settings, exception) {
+            $.getScript(plugins[index].script+'?version='+rompr_version).fail(function(data, settings, exception) {
                 debug.error("PLUGINS","Failed Loading Script",exception);
             });
         }

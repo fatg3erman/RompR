@@ -68,6 +68,7 @@ $prefs = array(
     ),
     "currenthost" => 'Default',
     'dev_mode' => false,
+    'live_mode' => false,
 
     // Things that could be set on a per-user basis but need to be known by the backend
     "mpd_host" => "localhost",
@@ -156,7 +157,8 @@ $prefs = array(
 	"communityradiotag" => '',
 	"communityradiolistby" => 'country',
     "communityradioorderby" => 'name',
-    "browser_id" => null
+    "browser_id" => null,
+    "playlistswipe" => true
 );
 
 // Prefs that should not be exposed to the browser for security reasons
