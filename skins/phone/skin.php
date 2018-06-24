@@ -76,7 +76,7 @@ printOutputCheckboxes();
                         print '<i title="'.get_int_text('button_stop').
                             '" class="stop-button icon-stop-1 shiftleft2 clickicon controlbutton-small"></i>';
                         print '<i title="'.get_int_text('button_stopafter').
-                            '" class="topafter-button icon-to-end-1 shiftleft3 clickicon controlbutton-small"></i>';
+                            '" class="stopafter-button icon-to-end-1 shiftleft3 clickicon controlbutton-small"></i>';
                         print '<i title="'.get_int_text('button_next').
                             '" class="next-button icon-fast-forward shiftleft4 clickicon controlbutton-small"></i>';
         ?>

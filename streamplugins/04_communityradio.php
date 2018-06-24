@@ -175,6 +175,11 @@ class commradioplugin {
         ));
         print '<div id="communityradio_'.$index.'" class="dropmenu">';
         trackControlHeader('','','communityradio_'.$index, array(array('Image' => $this->comm_radio_get_image($station))));
+        print '<div class="containerbox expand ninesix indent padright"><b>Listen:</b></div>';
+        print '<div class="clickable clickstream draggable indent containerbox padright menuitem" name="'.$station['playurl'].'" streamimg="'.$this->comm_radio_get_image($station).'" streamname="'.$station['name'].'">';
+        print '<i class="'.audioClass($station['codec']).' smallicon fixed"></i>';
+        print '<div class="expand">'.$station['bitrate'].'kbps &nbsp'.$station['codec'].'</div>';
+        print '</div>';
         print '<div class="containerbox ninesix indent padright">'.utf8_encode($station['state']).utf8_encode($station['country']).'</div>';
         print '<div class="containerbox ninesix indent padright">'.utf8_encode($station['votes']).' Upvotes, '.utf8_encode($station['negativevotes']).' Downvotes</div>';
         if ($station['homepage']) {
@@ -185,11 +190,6 @@ class commradioplugin {
             print '</div>';
             print '</a>';
         }
-        print '<div class="containerbox expand ninesix indent padright"><b>Listen:</b></div>';
-        print '<div class="clickable clickstream draggable indent containerbox padright menuitem" name="'.$station['playurl'].'" streamimg="'.$this->comm_radio_get_image($station).'" streamname="'.$station['name'].'">';
-        print '<i class="'.audioClass($station['codec']).' smallicon fixed"></i>';
-        print '<div class="expand">'.$station['bitrate'].'kbps &nbsp'.$station['codec'].'</div>';
-        print '</div>';
         print '</div>';
         
     }

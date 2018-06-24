@@ -70,15 +70,15 @@ printOutputCheckboxes();
                     <div id="buttons" class="fixed">
         <?php
                         print '<i title="'.get_int_text('button_previous').
-                            '" class="icon-fast-backward clickicon controlbutton-small"></i>';
+                            '" class="prev-button icon-fast-backward clickicon controlbutton-small"></i>';
                         print '<i title="'.get_int_text('button_play').
-                            '" class="icon-play-circled shiftleft clickicon controlbutton"></i>';
+                            '" class="play-button icon-play-circled shiftleft clickicon controlbutton"></i>';
                         print '<i title="'.get_int_text('button_stop').
-                            '" class="icon-stop-1 shiftleft2 clickicon controlbutton-small"></i>';
+                            '" class="stop-button icon-stop-1 shiftleft2 clickicon controlbutton-small"></i>';
                         print '<i title="'.get_int_text('button_stopafter').
-                            '" class="icon-to-end-1 shiftleft3 clickicon controlbutton-small"></i>';
+                            '" class="stopafter-button icon-to-end-1 shiftleft3 clickicon controlbutton-small"></i>';
                         print '<i title="'.get_int_text('button_next').
-                            '" class="icon-fast-forward shiftleft4 clickicon controlbutton-small"></i>';
+                            '" class="next-button icon-fast-forward shiftleft4 clickicon controlbutton-small"></i>';
         ?>
                     </div>
                     <div id="progress" class="fixed"></div>
