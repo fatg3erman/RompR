@@ -161,7 +161,8 @@ function trackControlHeader($why, $what, $who, $dets) {
                     $html .= '<div class="icon-no-response-playbutton smallicon expand clickable clickcue fakedouble noselect" name="'.$albumuri.'"></div>';
                 } else {
                     $html .= '<div class="icon-no-response-playbutton smallicon expand clickable clicktrack fakedouble noselect" name="'.$albumuri.'"></div>';
-                }
+                    $html .= '<div class="icon-music smallicon expand clickable clickalbum noselect" name="'.$why.'album'.$who.'"></div>';
+}
             } else {
                 $html .= '<div class="icon-no-response-playbutton smallicon expand clickable clickalbum fakedouble noselect" name="'.$why.'album'.$who.'"></div>';
             }

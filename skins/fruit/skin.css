@@ -258,9 +258,6 @@
 .topimg {
     margin-right:4px;
     margin-left:4px;
-    height: 24px;
-    width:24px;
-    font-size:24px;
     margin-bottom:2px;
     cursor: pointer;
     vertical-align:middle;
@@ -335,7 +332,23 @@
 }
 
 .headercontainer {
-    max-height:36px;
+    height:90%;
+    box-sizing:border-box;
+}
+
+.background-left {
+    background-position: left !important;
+    max-height: 24px;
+}
+
+#sourcescontrols i, #chooserbuttons i {
+    max-width: 24px;
+}
+
+i.topdrop
+{
+    position: relative;
+    font-style: normal;
 }
 
 .dragmenu {

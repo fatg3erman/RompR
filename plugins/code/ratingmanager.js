@@ -27,7 +27,7 @@ var ratingManager = function() {
 		html += '<div class="expand filterinfo"></div>';
 		x.append(html);
 		if (sortby == "Tag") {
-			x.append('<i class="fixed icon-trash topimg infoclick plugclickable clickdeletetag"></i>');
+			x.append('<i class="fixed icon-trash medicon infoclick plugclickable clickdeletetag"></i>');
 		}
 		var b = $('<div>', {class: 'thebigholder fullwidth notthere', id: 'ratman_'+current_section, name: encodeURIComponent(section)}).appendTo(a);
 		current_section++;

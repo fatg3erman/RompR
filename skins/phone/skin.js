@@ -554,6 +554,7 @@ var layoutProcessor = function() {
             }
             $(".dropdown").floatingMenu({ });
             $('.topbarmenu').bind('click', function() {
+                $('.autohide:visible').not('#'+$(this).attr('name')).slideToggle('fast');
                 $('#'+$(this).attr('name')).slideToggle('fast');
             });
             $('.autohide').bind('click', function() {

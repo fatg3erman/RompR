@@ -220,13 +220,18 @@ div.topdropmenu {
 .topimg {
     margin-right:4px;
     margin-left:4px;
-    height: 34px;
-    width: 34px;
-    font-size:34px;
-    max-height: 34px;
     margin-bottom:2px;
     margin-top:4px;
     cursor: pointer;
+}
+
+.topdropmenu .topimg {
+    width:36px;
+    height:36px;
+}
+
+#narrowscreenicons {
+    padding-right: 24px;
 }
 
 .topimg.infoclick {
@@ -546,6 +551,8 @@ div.rightmenu {
 .sptext {
     white-space:nowrap;
     padding-right:4px;
+    text-align:right;
+    margin-right:24px;
 }
 
 #ratingimage {
@@ -890,13 +897,6 @@ div.rightmenu {
         width:100%;
     }
 
-    .topimg {
-        height: 36px;
-        width: 36px;
-        font-size: 36px;
-        max-height:36px;
-    }
-
     div.normalmenu {
         width:44px !important;
     }
@@ -1013,4 +1013,25 @@ div.rightmenu {
 
 img.jalopy200 {
     max-width:140px;
+}
+
+.headercontainer {
+    height:90%;
+    box-sizing: border-box;
+}
+
+.buttonbar {
+    height: 42px;
+}
+
+.onlyverywide {
+    padding-left:8px;
+    padding-right:8px;
+    box-sizing:border-box;
+}
+
+@media screen and (max-width: 799px) {
+    .onlyverywide {
+        display: none;
+    }
 }

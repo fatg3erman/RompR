@@ -29,11 +29,11 @@ printOutputCheckboxes();
         <div id="specialplugins" class="topdropmenu rightmenu autohide">
             <div class="sptext"></div>
         </div>
-        <div id="narrowscreenicons" class="topdropmenu rightmenu autohide">
-            <i class="noshrink icon-folder-open-empty topimg choose_filelist"></i>
-            <i class="noshrink choose_playlistman icon-doc-text topimg"></i>
-            <i class="noshrink icon-info-circled topimg choose_infopanel"></i>
-            <i class="noshrink choose_prefs icon-cog-alt topimg"></i>
+        <div id="narrowscreenicons" class="topdropmenu rightmenu autohide clearfix">
+            <i class="noshrink icon-folder-open-empty topimg choose_filelist tright"></i>
+            <i class="noshrink choose_playlistman icon-doc-text topimg tright"></i>
+            <i class="noshrink icon-info-circled topimg choose_infopanel tright"></i>
+            <i class="noshrink choose_prefs icon-cog-alt topimg tright"></i>
         </div>
         <i class="icon-play-circled topimg choose_nowplaying expand"></i>
         <i class="icon-music topimg choose_albumlist expand"></i>
@@ -43,6 +43,13 @@ printOutputCheckboxes();
         <i class="icon-podcast-circled topimg choose_podcastslist expand"></i>
         <i class="choose_playlistman onlywide icon-doc-text topimg expand"></i>
         <i class="choose_pluginplaylists icon-wifi topimg expand"></i>
+        <div class="onlyverywide containerbox expandabit topbarplaycontrols">
+            <i class="prev-button icon-fast-backward topimg expand"></i>
+            <i class="play-button icon-play-circled topimg expand"></i>
+            <i class="stop-button icon-stop-1 topimg expand"></i>
+            <i class="stopafter-button icon-to-end-1 topimg expand"></i>
+            <i class="next-button icon-fast-forward topimg expand"></i>
+        </div>
         <i class="icon-volume-up topimg expand topbarmenu" name="volumedropper"></i>
         <i class="icon-doc-text topimg choose_playlist expand"></i>
         <i class="onlywide icon-info-circled topimg choose_infopanel expand"></i>
@@ -63,15 +70,15 @@ printOutputCheckboxes();
                     <div id="buttons" class="fixed">
         <?php
                         print '<i title="'.get_int_text('button_previous').
-                            '" class="icon-fast-backward clickicon controlbutton-small"></i>';
+                            '" class="prev-button icon-fast-backward clickicon controlbutton-small"></i>';
                         print '<i title="'.get_int_text('button_play').
-                            '" class="icon-play-circled shiftleft clickicon controlbutton"></i>';
+                            '" class="play-button icon-play-circled shiftleft clickicon controlbutton"></i>';
                         print '<i title="'.get_int_text('button_stop').
-                            '" class="icon-stop-1 shiftleft2 clickicon controlbutton-small"></i>';
+                            '" class="stop-button icon-stop-1 shiftleft2 clickicon controlbutton-small"></i>';
                         print '<i title="'.get_int_text('button_stopafter').
-                            '" class="icon-to-end-1 shiftleft3 clickicon controlbutton-small"></i>';
+                            '" class="topafter-button icon-to-end-1 shiftleft3 clickicon controlbutton-small"></i>';
                         print '<i title="'.get_int_text('button_next').
-                            '" class="icon-fast-forward shiftleft4 clickicon controlbutton-small"></i>';
+                            '" class="next-button icon-fast-forward shiftleft4 clickicon controlbutton-small"></i>';
         ?>
                     </div>
                     <div id="progress" class="fixed"></div>
@@ -157,14 +164,15 @@ include("player/".$prefs['player_backend']."/search.php");
 </div>
 
 <div id="infopane" class="infowiki scroller mainpane invisible">
-    <div class="containerbox headercontainer">
-        <div id="chooserbuttons" class="noborder expand center topbox containerbox fullwidth">
+    <div class="fullwidth buttonbar noborder containerbox">
+        <div id="chooserbuttons" class="noborder expand center topbox containerbox fullwidth headercontainer">
             <i id="choose_history" class="icon-versions topimg expand"></i>
             <i id="backbutton" class="icon-left-circled topimg button-disabled expand onlywide"></i>
             <i id="forwardbutton" class="icon-right-circled topimg button-disabled expand onlywide"></i>
         </div>
     </div>
     <div id="artistchooser" class="infotext invisible"></div>
+    <div id="historypanel" class="fullwdith invisible"></div>
 <?php
     print '<div id="artistinformation" class="infotext"><h2 align="center">'.
         get_int_text('label_emptyinfo').'</h2></div>';
@@ -256,9 +264,6 @@ include('skins/playlist.php');
 
 </div>
 
-
-<div id="historypanel" class="topdropmenu scroller dropmenu">
-</div>
 <div id="popupwindow" class="topdropmenu scroller dropmenu">
 </div>
 <div id="tagadder" class="topdropmenu dropmenu">

@@ -11,25 +11,6 @@ if ($skin === null) {
    exit(0);
 }
 
-if ($prefs['dev_mode']) {
-    // This adds an extra parameter to the version number - the short
-    // hash of the most recent git commit, or a timestamp. It's for use in testing,
-    // to make sure the browser pulls in the latest version of all the files.
-    if ($prefs['live_mode']) {
-        $version_string = ROMPR_VERSION.".".time();
-    } else {
-        // DO NOT USE OUTSIDE A git REPO!
-        $git_ver = exec("git log --pretty=format:'%h' -n 1", $output);
-        if (count($output) == 1) {
-            $version_string = ROMPR_VERSION.".".$output[0];
-        } else {
-            $version_string = ROMPR_VERSION.".".time();
-        }
-    }
-} else {
-    $version_string = ROMPR_VERSION;
-}
-
 debuglog("Using skin : ".$skin,"INIT",6);
 
 if (!is_dir('skins/'.$skin)) {
@@ -60,6 +41,7 @@ if ($prefs['player_backend'] == '') {
 
 include("includes/functions.php");
 include("international.php");
+set_version_string();
 include("skins/".$skin."/ui_elements.php");
 //
 // See if there are any POST values from the setup screen

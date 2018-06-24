@@ -111,6 +111,19 @@ If you need to use a web proxy you will need to configure Rompr to use it. You c
 
 ![](images/proxysetup.png)
 
+## Reporting Bugs
+
+If you think you've found a bug, please report it at the [Issue Tracker](https://github.com/fatg3erman/RompR/issues), it helps to make Rompr better.
+
+Before reporting, make sure you know exactly how to reproduce the problem. Describe it in logical steps.
+
+It also helps a lot if you can provide the Debug Information available from the Plugins Menu:
+
+![](images/debuginfo.png)
+
+Use the 'Copy To Clipboard' button to copy all the info the clipboard in a nicely-formatted way, and then paste it into your bug report.
+
+If your bug is particularly complex you may be asked to provide a debug log. Or you can include one anyway, it all helps.
 
 ## Debug Logging
 

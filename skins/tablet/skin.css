@@ -171,6 +171,14 @@ select {
 =====================================================================
 */
 
+div.topdropmenu {
+    z-index:10009;
+    box-sizing:border-box;
+    width:100%;
+    position:fixed;
+    right: 0;
+}
+
 .chooser {
     margin-left:auto;
     margin-right:auto;
@@ -195,13 +203,18 @@ select {
 .topimg {
     margin-right:4px;
     margin-left:4px;
-    height: 34px;
-    width: 34px;
-    font-size:34px;
-    max-height: 34px;
     margin-bottom:2px;
     margin-top:4px;
     cursor: pointer;
+}
+
+.topdropmenu .topimg {
+    width:36px;
+    height:36px;
+}
+
+#narrowscreenicons {
+    padding-right: 24px;
 }
 
 .mobonly {
@@ -300,7 +313,7 @@ div.normalmenu {
 }
 
 div.rightmenu {
-    top:30px;
+    top:38px;
     right:0px;
 }
 
@@ -694,6 +707,8 @@ div.rightmenu {
 .sptext {
     white-space:nowrap;
     padding-right:4px;
+    text-align:right;
+    margin-right:24px;
 }
 
 @media screen and (max-height: 380px) and (orientation: portrait) {
@@ -831,13 +846,6 @@ div.rightmenu {
         width:100%;
     }
 
-    .topimg {
-        height: 36px;
-        width: 36px;
-        font-size: 36px;
-        max-height:36px;
-    }
-
     div.normalmenu {
         width:44px !important;
     }
@@ -868,7 +876,7 @@ div.rightmenu {
 
 @media screen and (min-width: 541px) {
     .onlynarrow {
-        display:none;
+        display:none !important;
     }
 }
 
@@ -876,4 +884,25 @@ div.rightmenu {
 {
     width:100%;
     box-sizing:border-box;
+}
+
+.headercontainer {
+    height:90%;
+    box-sizing: border-box;
+}
+
+.buttonbar {
+    height: 42px;
+}
+
+.onlyverywide {
+    padding-left:8px;
+    padding-right:8px;
+    box-sizing:border-box;
+}
+
+@media screen and (max-width: 799px) {
+    .onlyverywide {
+        display: none;
+    }
 }

@@ -243,12 +243,13 @@ print '<div class="pref styledinputs">
 <div class="tiny">'.get_int_text('config_musicfolders').'</div>
 <input class="saveotron prefinput" id="music_directory_albumart" type="text" size="40" />
 </div>';
-print '<div class="pref"><b>'.get_int_text('config_google_credentials').'</b></div>
-<div class="pref"><a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></div>';
-print '<div class="pref"><b>Google API Key</b>
-<input class="saveotron prefinput" id="google_api_key" type="text" size="120" /></div>
-<div class="pref"><b>Google Search Engine ID</b>
-<input class="saveotron prefinput" id="google_search_engine_id" type="text" size="120" /></div>';
+print '<div class="tiny">If you want to use Google Images to get Album Art you need to sign up for an API Key. Please <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></div>';
+// print '<div class="pref"><b>'.get_int_text('config_google_credentials').'</b></div>
+// <div class="pref"><a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></div>';
+// print '<div class="pref"><b>Google API Key</b>
+// <input class="saveotron prefinput" id="google_api_key" type="text" size="120" /></div>
+// <div class="pref"><b>Google Search Engine ID</b>
+// <input class="saveotron prefinput" id="google_search_engine_id" type="text" size="120" /></div>';
 
 // Last.FM
 print '<div class="textcentre configtitle">

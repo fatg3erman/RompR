@@ -60,11 +60,11 @@ function unbindPlaylistClicks() {
 }
 
 function setControlClicks() {
-    $('i[title="'+language.gettext('button_previous')+'"]').click(playlist.previous);
-    $('i[title="'+language.gettext('button_play')+'"]').click(infobar.playbutton.clicked);
-    $('i[title="'+language.gettext('button_stop')+'"]').click(player.controller.stop);
-    $('i[title="'+language.gettext('button_stopafter')+'"]').click(playlist.stopafter);
-    $('i[title="'+language.gettext('button_next')+'"]').click(playlist.next);
+    $('i.prev-button').bind('click', playlist.previous);
+    $('i.play-button').bind('click', infobar.playbutton.clicked);
+    $('i.stop-button').bind('click', player.controller.stop);
+    $('i.stopafter-button').bind('click', playlist.stopafter);
+    $('i.next-button').bind('click', playlist.next);
 }
 
 function onBrowserClicked(event) {

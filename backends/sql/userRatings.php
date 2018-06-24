@@ -40,7 +40,17 @@ foreach($params as $p) {
 
 	romprmetadata::sanitise_data($p);
 	
-	debuglog("  Action is \n".multi_implode($p,", "),"USERRATING",8);
+	debuglog("Doing action ".strtoupper($p['action']), "USERRATING", 7);
+	foreach ($p as $i => $v) {
+		if ($i != 'action' && $v) {
+			if (is_array($v)) {
+				debuglog('  : Array - '.multi_implode($v,', '), ' '.$i,8);
+			} else {
+				debuglog('  : '.$v, ' '.$i,8);
+			}
+		}
+	}
+	// debuglog("  Action is \n".multi_implode($p,", "),"USERRATING",9);
 
 	switch ($p['action']) {
 

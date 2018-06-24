@@ -492,3 +492,8 @@ th.tlheader
 .ratsoptions {
     border-top: 1px solid #444444;
 }
+
+.topbarplaycontrols {
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+}

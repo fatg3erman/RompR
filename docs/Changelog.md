@@ -10,6 +10,10 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Some code refactoring and minor UI bugfixing
 * Added swipe and long press options to phone skin to allow tracks to be re-ordered and removed from the Current Playlist
 * Added a new button to allow the Current Playlist to be re-ordered on the Tablet Skin
+* Moved Google API Credentials fields to the setup screen - they're messy, technical, and don't really want to be exposed to all and sundry.
+* Added Debug Information plugin to help with assisting in bug reports.
+* Added play controls to top bar on wide screens (>799px) on Phone and Tablet skins
+* Fix bug where Playcounts could be lost if the browser was refreshed while a track was playing
 
 ## Version 1.16
 

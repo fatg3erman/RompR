@@ -328,3 +328,8 @@ table.navbox th {
     color:#ff4800;
     text-decoration:none;
 }
+
+.topbarplaycontrols {
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}

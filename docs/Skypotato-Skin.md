@@ -7,3 +7,5 @@ It is based on the [Fruit Skin](/RompR/Fruit-Skin) but puts more emphasis on dis
 ![](images/skypotato1.png)
 
 ![](images/skypotato2.png)
+
+When browsing albums, the Play Options you will be presented with work the same way as in the [Phone Skin](/RompR/Phone-Skin)

@@ -10,11 +10,11 @@
     </div>
     <div id="groonburger" class="fixed containerbox vertical controlbutton-left">
 <?php
-        print '<i title="'.get_int_text('button_previous').'" class="fixed icon-fast-backward clickicon controlbutton-small lettuce"></i>';
-        print '<i title="'.get_int_text('button_play').'" class="fixed icon-play-circled clickicon controlbutton-main lettuce"></i>';
-        print '<i title="'.get_int_text('button_stop').'" class="fixed icon-stop-1 clickicon controlbutton-small lettuce"></i>';
-        print '<i title="'.get_int_text('button_stopafter').'" class="fixed icon-to-end-1 clickicon controlbutton-small lettuce"></i>';
-        print '<i title="'.get_int_text('button_next').'" class="fixed icon-fast-forward clickicon controlbutton-small lettuce"></i>';
+        print '<i title="'.get_int_text('button_previous').'" class="prev-button fixed icon-fast-backward clickicon controlbutton-small lettuce"></i>';
+        print '<i title="'.get_int_text('button_play').'" class="play-button fixed icon-play-circled clickicon controlbutton-main lettuce"></i>';
+        print '<i title="'.get_int_text('button_stop').'" class="stop-button fixed icon-stop-1 clickicon controlbutton-small lettuce"></i>';
+        print '<i title="'.get_int_text('button_stopafter').'" class="stopfater-button fixed icon-to-end-1 clickicon controlbutton-small lettuce"></i>';
+        print '<i title="'.get_int_text('button_next').'" class="next-button fixed icon-fast-forward clickicon controlbutton-small lettuce"></i>';
 ?>
     </div>
     <!-- <div class="expand"> -->

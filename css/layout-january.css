@@ -15,6 +15,11 @@ body {
     -webkit-font-smoothing: subpixel-antialiased;
     -moz-osx-font-smoothing: auto;
     font-smooth:always;
+	-webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
 }
 
 body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input {
@@ -285,6 +290,24 @@ button {
     flex-grow: 1;
     flex-shrink: 1;
     flex-basis: auto;
+}
+
+.expandslightly {
+	flex-grow: 1;
+	flex-shrink: 2;
+	flex-basis: auto;
+}
+
+.expandalot {
+	flex-grow: 5;
+	flex-shrink: 1;
+	flex-basis: auto;
+}
+
+.expandabit {
+	flex-grow: 2;
+	flex-shrink: 2;
+	flex-basis: auto;
 }
 
 .fixed {

@@ -506,3 +506,8 @@ th.tlheader
 {
     border-bottom:2px solid #222222;
 }
+
+.topbarplaycontrols {
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}

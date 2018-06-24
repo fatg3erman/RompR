@@ -20,7 +20,6 @@ jQuery.fn.animatePanel = function(options) {
                         $("#expandleft").removeClass("icon-angle-double-right icon-angle-double-left").addClass(i);
                         i = (prefs.playlisthidden) ? "icon-angle-double-left" : "icon-angle-double-right";
                         $("#expandright").removeClass("icon-angle-double-right icon-angle-double-left").addClass(i);
-                        layoutProcessor.setTopIconSize(["#"+opanel]);
                     }
                 }
             }
@@ -133,7 +132,7 @@ var layoutProcessor = function() {
             $("#chooserbuttons").append($('<i>', {
                 onclick: "browser.switchsource('"+name+"')",
                 title: language.gettext(obj.text),
-                class: obj.icon+' topimg sep fixed',
+                class: obj.icon+' topimg sep expand',
                 id: "button_source"+name
             }));
         },
@@ -211,21 +210,6 @@ var layoutProcessor = function() {
 
         playlistLoading: function() {
             infobar.notify(infobar.SMARTRADIO, "Preparing. Please Wait A Moment....");
-        },
-
-        setTopIconSize: function(panels) {
-            var imw = (parseInt($('.topimg').first().css('margin-left')) + parseInt($('.topimg').first().css('margin-right')));
-            panels.forEach( function(div) {
-                if ($(div).is(':visible')) {
-                    var icons = $(div+" .topimg");
-                    var numicons = icons.length;
-                    var mw = imw*numicons;
-                    var iw = Math.floor(($(div).width() - mw)/numicons);
-                    if (iw > 24) iw = 24;
-                    if (iw < 2) iw = 2;
-                    icons.css({width: iw+"px", height: iw+"px", "font-size": (iw-2)+"px"});
-                }
-            });
         },
 
         scrollPlaylistToCurrentTrack: function() {
@@ -349,7 +333,6 @@ var layoutProcessor = function() {
                 $('.topdropmenu').css('height', "");
             }
             layoutProcessor.setPlaylistHeight();
-            layoutProcessor.setTopIconSize(["#sourcescontrols", "#infopanecontrols", "#playlistcontrols"]);
             infobar.rejigTheText();
             browser.rePoint();
             $('.topdropmenu').fanoogleMenus();
@@ -520,6 +503,12 @@ var layoutProcessor = function() {
                 whiledragging: infobar.volumemoved,
                 orientation: "vertical"
             });
+        },
+        
+        createPluginHolder: function(icon, title) {
+            var i = $('<i>', {class: 'topimg tooltip topdrop expand', title: title}).insertAfter('#rightspacer');
+            i.addClass(icon);
+            return i;
         }
     }
 }();

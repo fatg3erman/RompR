@@ -877,6 +877,10 @@ function rejig_wishlist_tracks() {
 function multi_implode($array, $glue = ', ') {
     $ret = '';
 
+    if (!is_array($array)) {
+        return $array;
+    }
+
     foreach ($array as $key => $item) {
         if (is_array($item)) {
             $ret .= $key . '=[' . multi_implode($item, $glue) . ']' . $glue;
@@ -930,5 +934,25 @@ function fixup_links($s) {
     return preg_replace('/(^|\s+|\n|[^\s+"])(https*:\/\/.*?)(<|\n|\r|\s|\)|$|[<|\n|\r|\s|\)|$])/', '$1<a href="$2">$2</a>$3', $s);
 }
 
-
+function set_version_string() {
+    global $version_string, $prefs;
+    if ($prefs['dev_mode']) {
+        // This adds an extra parameter to the version number - the short
+        // hash of the most recent git commit, or a timestamp. It's for use in testing,
+        // to make sure the browser pulls in the latest version of all the files.
+        if ($prefs['live_mode']) {
+            $version_string = ROMPR_VERSION.".".time();
+        } else {
+            // DO NOT USE OUTSIDE A git REPO!
+            $git_ver = exec("git log --pretty=format:'%h' -n 1", $output);
+            if (count($output) == 1) {
+                $version_string = ROMPR_VERSION.".".$output[0];
+            } else {
+                $version_string = ROMPR_VERSION.".".time();
+            }
+        }
+    } else {
+        $version_string = ROMPR_VERSION;
+    }
+}
 ?>

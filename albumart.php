@@ -10,6 +10,7 @@ $oldmopidy = false;
 $small_plugin_icons = false;
 $only_plugins_on_menu = false;
 $skin = "desktop";
+set_version_string();
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -40,7 +41,6 @@ $scripts = array(
     "ui/language.js",
     "jquery/jquery-ui.min.js",
     "jquery/jquery.mCustomScrollbar.concat.min.js",
-    // "skins/desktop/skin.js",
     "includes/globals.js",
     "ui/uifunctions.js",
     "ui/metahandlers.js",

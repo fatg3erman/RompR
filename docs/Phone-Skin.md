@@ -20,7 +20,18 @@ The double arrow at the top is the 'back' button, which will take you back to th
 
 And here's an album being browsed
 
-![](images/iphone5-album.png)
+![](images/phone-album.png)
+
+The Play Options do the following:
+
+* Play the whole album. For albums from Spotify/GMusic etc this will always play the entire album, no matter if only a selection of tracks from it are in the display.
+* Play only tracks that are in the display. This button will not be visible for sources where it is not relevant (eg local files).
+* Play only tracks with Ratings
+* Play Only tracks with Tags
+* Play only tracks that are Rated and Tagged
+* Play only tracks that are Rated Or Tagged
+
+All these options apply to the Music Collection and Search Results. Reasons why the display may not show all the tracks from the album are firstly that Spotify search results often don't return the entire album, and secondly you could have an album that you added tracks to by rating or tagging them.
 
 The phone skin also supports swiping. In the [Current Playlist](/RompR/The-Playlist) you can swipe left to remove tracks. This can be disabled by setting the option in the Config panel. This option also allows you to re-order tracks in the playlist - use a long press on the track and and up/down arrows will appear. Tap the arrows to move the track up and down the playlist.
 
