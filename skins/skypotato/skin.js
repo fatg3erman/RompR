@@ -654,10 +654,6 @@ var layoutProcessor = function() {
             }
         },
 
-        postAlbumMenu: function(element) {
-
-        },
-
         makeCollectionDropMenu: function(element, name) {
             
             // Creates a nonexisted drop menu to hold contents.

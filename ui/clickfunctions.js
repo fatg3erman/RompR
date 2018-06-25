@@ -307,9 +307,7 @@ function doMenu(event, element) {
         element.toggleClosed();
         $('#'+menutoopen).menuHide();
     }
-    if (layoutProcessor.postAlbumMenu) {
-        layoutProcessor.postAlbumMenu(element);
-    }
+    uiHelper.postAlbumMenu(element);
     if (menutoopen == 'advsearchoptions') {
         prefs.save({advanced_search_open: element.isOpen()});
     }
@@ -368,9 +366,7 @@ function doAlbumMenu(event, element, callback) {
         $('#'+menutoopen).menuHide(callback);
         element.toggleClosed();
     }
-    if (layoutProcessor.postAlbumMenu && !inbrowser) {
-        layoutProcessor.postAlbumMenu(element);
-    }
+    uiHelper.postAlbumMenu(element);
     return false;
 }
 

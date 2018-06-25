@@ -408,6 +408,14 @@ var uiHelper = function() {
                 }
                 return d;
             }
+        },
+        
+        postAlbumMenu: function(element) {
+            try {
+                return layoutProcessor.postAlbumMenu(element);
+            } catch (err) {
+                
+            }
         }
             
     }
