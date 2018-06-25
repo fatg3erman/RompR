@@ -79,9 +79,7 @@ var playlistManager = function() {
         	type: "POST",
         	data: {action: 'getlist'},
         	dataType: 'json',
-        	success: function(data) {
-        		playlistManager.doMainLayout(data);
-        	},
+        	success: playlistManager.doMainLayout,
         	error: function() {
         		infobar.notify(infobar.ERROR, "Failed to get Playlists");
         		pmg.slideToggle('fast');

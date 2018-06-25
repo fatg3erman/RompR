@@ -115,7 +115,7 @@ function onSourcesClicked(event) {
             clickedElement.hasClass('playlist')) {
             doFileMenu(event, clickedElement);
         } else if (clickedElement.hasClass('album') || clickedElement.hasClass('artist')) {
-            doAlbumMenu(event, clickedElement, false);
+            doAlbumMenu(event, clickedElement, null);
         } else {
             doMenu(event, clickedElement);
         }
@@ -335,7 +335,7 @@ function getMenuIndex(m) {
     }
 }
 
-function doAlbumMenu(event, element, inbrowser, callback) {
+function doAlbumMenu(event, element, callback) {
 
     if (event) {
         event.stopImmediatePropagation();
@@ -352,63 +352,68 @@ function doAlbumMenu(event, element, inbrowser, callback) {
                     if (callback) callback();
                     infobar.markCurrentTrack();
                     if ($(this).find('input.expandalbum').length > 0 ) {
-                        debug.log("CLICKFUNCTIONS", "Album has link to get all tracks");
-                        element.makeSpinner();
-                        $.ajax({
-                            type: 'GET',
-                            url: 'albums.php?browsealbum='+menutoopen,
-                            success: function(data) {
-                                debug.log("CLICKFUNCTIONS", "Got data. Inserting it into ",menutoopen);
-                                element.stopSpinner();
-                                infobar.markCurrentTrack();
-                                $("#"+menutoopen).html(data);
-                                collectionHelper.scootTheAlbums($("#"+menutoopen));
-                            },
-                            error: function(data) {
-                                debug.error("CLICKFUNCTIONS", "Got NO data for ",menutoopen);
-                                element.stopSpinner();
-                            }
-                        });
+                        getAllTracksForAlbum(element, menutoopen);
                     } else if ($(this).find('input.expandartist').length > 0) {
-                        debug.log("CLICKFUNCTIONS", "Album has link to get all tracks for artist",menutoopen);
-                        element.makeSpinner();
-                        $.ajax({
-                            type: 'GET',
-                            url: 'albums.php?browsealbum='+menutoopen,
-                            success: function(data) {
-                                element.stopSpinner();
-                                var spunk = layoutProcessor.getArtistDestinationDiv(menutoopen);
-                                spunk.html(data);
-                                layoutProcessor.postAlbumActions();
-                                collectionHelper.scootTheAlbums(spunk);
-                                infobar.markCurrentTrack();
-                                uiHelper.fixupArtistDiv(spunk, menutoopen);
-                                layoutProcessor.postAlbumActions();
-                            },
-                            error: function(data) {
-                                element.stopSpinner();
-                            }
-                        });
+                        getAllTracksForArtist(element, menutopopen)
                     }
                 });
             });
         } else {
             debug.log("Opening",menutoopen);
-            $('#'+menutoopen).menuReveal(function() {
-                if (callback) callback();
-            });
+            $('#'+menutoopen).menuReveal(callback);
         }
         element.toggleOpen();
     } else {
         debug.log("Closing",menutoopen);
-        $('#'+menutoopen).menuHide();
-        if (callback) callback();
+        $('#'+menutoopen).menuHide(callback);
         element.toggleClosed();
     }
     if (layoutProcessor.postAlbumMenu && !inbrowser) {
         layoutProcessor.postAlbumMenu(element);
     }
     return false;
+}
+
+function getAllTracksForAlbum(element, menutoopen) {
+    debug.log("CLICKFUNCTIONS", "Album has link to get all tracks");
+    element.makeSpinner();
+    $.ajax({
+        type: 'GET',
+        url: 'albums.php?browsealbum='+menutoopen,
+        success: function(data) {
+            debug.log("CLICKFUNCTIONS", "Got data. Inserting it into ",menutoopen);
+            element.stopSpinner();
+            infobar.markCurrentTrack();
+            $("#"+menutoopen).html(data);
+            collectionHelper.scootTheAlbums($("#"+menutoopen));
+        },
+        error: function(data) {
+            debug.error("CLICKFUNCTIONS", "Got NO data for ",menutoopen);
+            element.stopSpinner();
+        }
+    });
+}
+
+function getAllTracksForArtist(element, menutoopen) {
+    debug.log("CLICKFUNCTIONS", "Album has link to get all tracks for artist",menutoopen);
+    element.makeSpinner();
+    $.ajax({
+        type: 'GET',
+        url: 'albums.php?browsealbum='+menutoopen,
+        success: function(data) {
+            element.stopSpinner();
+            var spunk = layoutProcessor.getArtistDestinationDiv(menutoopen);
+            spunk.html(data);
+            layoutProcessor.postAlbumActions();
+            collectionHelper.scootTheAlbums(spunk);
+            infobar.markCurrentTrack();
+            uiHelper.fixupArtistDiv(spunk, menutoopen);
+            layoutProcessor.postAlbumActions();
+        },
+        error: function(data) {
+            element.stopSpinner();
+        }
+    });
 }
 
 function browsePlaylist(plname, menutoopen) {

@@ -213,10 +213,10 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 
 function sendLocalStorageEvent(key, data) {
     var firefoxcrapnesshack = Math.floor(Date.now());
-    if (data && data.url) {
-        localStorage.setItem("albumimg_"+key, data.url+'?version='+firefoxcrapnesshack.toString());
-    } else if (data && data.origimage) {
+    if (data && data.origimage) {
         localStorage.setItem("albumimg_"+key, data.origimage+'?version='+firefoxcrapnesshack.toString());
+    } else if (data && data.url) {
+        localStorage.setItem("albumimg_"+key, data.url+'?version='+firefoxcrapnesshack.toString());
     }
     debug.log("COVERSCRAPER","Sending local storage event",key);
     // Event only fires when the key value actually CHANGES

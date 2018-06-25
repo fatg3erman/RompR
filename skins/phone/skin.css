@@ -18,10 +18,11 @@ right-hand border that overlaps the dropdown button
 */
 select {
     width:100%;
+    height:3em;
 }
 
 .selectholder {
-    height:2em;
+    height:3em;
 }
 
 div {

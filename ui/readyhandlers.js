@@ -79,7 +79,9 @@ $(document).ready(function(){
     if (prefs.browser_id == null) {
         prefs.save({browser_id: Date.now()});
     }
-
+    if (old_style_albumart > 0) {
+        show_albumart_update_window();
+    }
 });
 
 function cleanBackendCache() {

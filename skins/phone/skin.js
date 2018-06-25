@@ -727,6 +727,10 @@ function popup(opts) {
 
     }
 
+    this.setWindowToContent = function() {
+
+    }
+
 }
 
 // Dummy functions standing in for widgets we don't use in this version -

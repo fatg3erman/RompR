@@ -216,10 +216,7 @@ function onStorageChanged(e) {
             $('img[name="'+key+'"]').removeClass("notexist").addClass("notfound");
         } else {
             $('img[name="'+key+'"]').removeClass("notexist notfound").attr("src", "").hide().show();
-            $('img[name="'+key+'"]').not('.jalopy').not('.clickrollup').not('#albumpicture').attr("src", localStorage.getItem('albumimg_'+key));
-            $('img.jalopy[name="'+key+'"]').attr("src", localStorage.getItem('albumimg_'+key).replace(/albumart\/small/, 'albumart/medium'));
-            $('img.clickrollup[name="'+key+'"]').attr("src", localStorage.getItem('albumimg_'+key).replace(/albumart\/small/, 'albumart/asdownloaded'));
-            $('img.#albumpicture[name="'+key+'"]').attr("src", localStorage.getItem('albumimg_'+key).replace(/albumart\/small/, 'albumart/asdownloaded'));
+            $('img[name="'+key+'"]').attr("src", localStorage.getItem('albumimg_'+key));
             localStorage.removeItem('albumimg_'+key);
         }
     }

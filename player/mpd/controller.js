@@ -72,32 +72,34 @@ function playerController() {
         clearProgressTimer();
         progresstimer = setTimeout(callback, timeout);
     }
+    
+    function initialised(data) {
+        for(var i =0; i < data.length; i++) {
+            var h = data[i].replace(/\:\/\/$/,'');
+            debug.log("PLAYER","URL Handler : ",h);
+            player.urischemes[h] = true;
+        }
+        if (!player.canPlay('spotify')) {
+            $('div.textcentre.textunderline:contains("Music From Spotify")').remove();
+        }
+        checkSearchDomains();
+        doMopidyCollectionOptions();
+        playlist.radioManager.init();
+        // Need to call this with a callback when we start up so that checkprogress doesn't get called
+        // before the playlist has repopulated.
+        self.do_command_list([],self.ready);
+        if (!player.collectionLoaded) {
+            debug.log("MPD", "Checking Collection");
+            collectionHelper.checkCollection(false, false);
+        }
+    }
 
     this.initialise = function() {
         $.ajax({
             type: 'GET',
             url: 'player/mpd/geturlhandlers.php',
             dataType: 'json',
-            success: function(data) {
-                for(var i =0; i < data.length; i++) {
-                    var h = data[i].replace(/\:\/\/$/,'');
-                    debug.log("PLAYER","URL Handler : ",h);
-                    player.urischemes[h] = true;
-                }
-                if (!player.canPlay('spotify')) {
-                    $('div.textcentre.textunderline:contains("Music From Spotify")').remove();
-                }
-                checkSearchDomains();
-                doMopidyCollectionOptions();
-                playlist.radioManager.init();
-                // Need to call this with a callback when we start up so that checkprogress doesn't get called
-                // before the playlist has repopulated.
-                self.do_command_list([],self.ready);
-                if (!player.collectionLoaded) {
-                    debug.log("MPD", "Checking Collection");
-                    collectionHelper.checkCollection(false, false);
-                }
-            },
+            success: initialised,
             error: function(data) {
                 debug.error("MPD","Failed to get URL Handlers",data);
                 infobar.notify(infobar.PERMERROR, "Could not get a respone from the player!");
@@ -182,9 +184,7 @@ function playerController() {
             cache: false,
             data: data,
             dataType: "xml",
-            success: function(data) {
-                self.reloadPlaylists();
-            },
+            success: self.reloadPlaylists,
             error: function(data, status) {
                 playlist.repopulate();
                 debug.error("MPD","Failed to save user playlist URL");
@@ -222,9 +222,7 @@ function playerController() {
             cache: false,
             data: data,
             dataType: "xml",
-            success: function(data) {
-                self.reloadPlaylists();
-            },
+            success: self.reloadPlaylists,
             error: function(data, status) {
                 debug.error("MPD","Failed to delete user playlist",name);
             }

@@ -46,7 +46,7 @@ var layoutProcessor = function() {
 
     function flashTrack(uri, album) {
         infobar.markCurrentTrack();
-        var thing = uri ? album : uri;
+        var thing = uri ?  uri : album;
         $('[name="'+thing+'"]').makeFlasher({flashtime: 0.5, repeats: 5});
         // The timeout is so that markCurrentTrack doesn't fuck it up - these often
         // have CSS transitions that affect the scrollbar size
@@ -293,10 +293,10 @@ var layoutProcessor = function() {
             layoutProcessor.sourceControl('albumlist');
             if (prefs.sortcollectionby == "artist" && $('i[name="aartist'+details.artistindex+'"]').isClosed()) {
                 debug.log("COLLECTION","Opening Menu","aartist"+details.artistindex);
-                doAlbumMenu(null, $('i[name="aartist'+details.artistindex+'"]'), false, function() {
+                doAlbumMenu(null, $('i[name="aartist'+details.artistindex+'"]'), function() {
                     if ($('i[name="aalbum'+details.albumindex+'"]').isClosed()) {
                         debug.log("COLLECTION","Opening Menu","aalbum"+details.albumindex);
-                        doAlbumMenu(null, $('i[name="aalbum'+details.albumindex+'"]'), false, function() {
+                        doAlbumMenu(null, $('i[name="aalbum'+details.albumindex+'"]'), function() {
                             flashTrack(details.trackuri, 'aalbum'+details.albumindex);
                         });
                     } else {
@@ -305,7 +305,7 @@ var layoutProcessor = function() {
                 });
             } else if ($('i[name="aalbum'+details.albumindex+'"]').isClosed()) {
                 debug.log("COLLECTION","Opening Menu","aalbum"+details.albumindex);
-                doAlbumMenu(null, $('i[name="aalbum'+details.albumindex+'"]'), false, function() {
+                doAlbumMenu(null, $('i[name="aalbum'+details.albumindex+'"]'), function() {
                     flashTrack(details.trackuri,'aalbum'+details.albumindex);
                 });
             } else {

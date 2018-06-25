@@ -12,11 +12,6 @@ img.notexist,img.notfound {
 	height:64px;
 }
 
-#sortable .smallcover
-{
-	width: 78px;
-}
-
 body.desktop .smallcover.svg-square.noindent
 {
 	width:42px;

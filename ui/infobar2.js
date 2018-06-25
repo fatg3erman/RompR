@@ -560,7 +560,7 @@ var infobar = function() {
                 infobar.albumImage.setSource({ image: null });
             } else {
                 infobar.albumImage.setKey(info.key);
-                infobar.albumImage.setSource({ image: info.image });
+                infobar.albumImage.setSource({ image: info.bigimage });
             }
             layoutProcessor.adjustLayout();
         },

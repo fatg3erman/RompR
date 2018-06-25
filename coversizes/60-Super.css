@@ -1,15 +1,15 @@
 .smallcover
 {
-	width:82px;
+	width:100px;
 }
 
 .smallcover-svg {
-	height:82px;
+	height:100px;
 }
 
 img.notexist,img.notfound {
-	width:82px;
-	height:82px;
+	width:100px;
+	height:100px;
 }
 
 body.desktop .smallcover.svg-square.noindent

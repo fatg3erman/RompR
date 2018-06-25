@@ -1317,7 +1317,7 @@ function popup(opts) {
         if (x < 0) {
             x = 0;
         }
-
+        
         win.css({width: initialsize.width+'px',
                 height: initialsize.height+'px',
                 top: y+'px',
@@ -1370,6 +1370,11 @@ function popup(opts) {
     this.setContentsSize = function() {
         var h = win.outerHeight(true) - titlebar.outerHeight(true) - 16;
         contents.css("height", h.toString() + 'px');
+    },
+    
+    this.setWindowToContent = function() {
+        var h= contents.outerHeight(true) + titlebar.outerHeight(true);
+        win.css('height', h+'px');
     }
-
+    
 }

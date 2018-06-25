@@ -404,9 +404,9 @@ function domainIcon($d, $c) {
 
 function getImageForAlbum(&$filedata, $imagekey) {
     if ($filedata['ImageForPlaylist'] !== null && $filedata['ImageForPlaylist'] !== '') {
-        return preg_replace('#/small/#', '/asdownloaded/',  $filedata['ImageForPlaylist']);
+        return $filedata['ImageForPlaylist'];
     } else {
-        $im = cacheOrDefaultImage($filedata['X-AlbumImage'], $imagekey, 'asdownloaded', $filedata['domain']);
+        $im = cacheOrDefaultImage($filedata['X-AlbumImage'], $imagekey, 'small', $filedata['domain']);
         if ($im == null) $im = '';
         return $im;
     }

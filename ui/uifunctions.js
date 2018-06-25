@@ -254,6 +254,46 @@ var imagePopup = function() {
     }
 }();
 
+function show_albumart_update_window() {
+    var ws = getWindowSize();
+    var fnarkle = new popup({
+        width: 600,
+        height: 400,
+        ypos: ws.y/2,
+        title: "Album Art Update",
+        hasclosebutton: false});
+    var mywin = fnarkle.create();
+    mywin.append('<div id="artupdate" class="fullwdith"></div>');
+    $('#artupdate').append('<div class="pref textcentre">Your Album Art needs to be updated. This process has now started. You can close this window to pause the process and it will continue the next time you open Rompr. Until you have updated all your art Rompr may run slowly and album art may look wierd</div>');
+    $('#artupdate').append('<div id="albumart_update_bar" style="height:2em;width:100%"></div>');
+    $('#artupdate').append('<div class="pref textcentre"><button id="artclosebutton">Close</button></div>');
+    fnarkle.useAsCloseButton($('#artclosebutton'), stop_albumart_update);
+    $('#albumart_update_bar').rangechooser({
+        ends: ['max'],
+        startmax: 0,
+        range: 100
+    });
+    fnarkle.open();
+    setTimeout(fnarkle.setWindowToContent, 2000);;
+    do_albumart_update();
+}
+
+function do_albumart_update() {
+    $.getJSON('update_albumart.php', function(data) {
+        $('#albumart_update_bar').rangechooser('setProgress', data.percent);
+        if (data.percent < 100 && albumart_update) {
+            setTimeout(do_albumart_update, 100);
+        } else {
+            $('#artclosebutton').click();
+        }
+    });
+}
+
+function stop_albumart_update() {
+    debug.log("UI", "Cancelling album art update");
+    albumart_update = false;
+}
+
 function togglePlaylistButtons() {
     layoutProcessor.preHorse();
     $("#playlistbuttons").slideToggle('fast', layoutProcessor.setPlaylistHeight);
@@ -280,9 +320,9 @@ function hidePanel(panel) {
 function doSomethingUseful(div,text) {
     var html = '<div class="containerbox bar">';
     if (typeof div == "string") {
-        html = '<div class="containerbox bar" id="spinner_'+div+'">';
+        html = '<div class="containerbox bar menuitem" id="spinner_'+div+'">';
     }
-    html += '<div class="fixed alignmid padleft">'+
+    html += '<div class="fixed alignmid">'+
         '<i class="icon-spin6 svg-square spinner"></i></div>';
     html += '<h3 class="expand ucfirst label">'+text+'</h3>';
     html += '</div>';

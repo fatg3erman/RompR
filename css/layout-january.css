@@ -373,10 +373,6 @@ button {
     padding:0px;
 }
 
-.selfcentered {
-    align-self:center;
-}
-
 .ucfirst {
     text-transform:capitalize;
 }
@@ -698,6 +694,10 @@ button {
     height:auto;
     vertical-align:middle;
     margin-right:8px;
+}
+
+div.item div.containerbox.vertical.expand {
+	align-self: center;
 }
 
 .svg-square {

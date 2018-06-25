@@ -83,6 +83,8 @@ function doNewPlaylistFile(&$filedata) {
         $doneone = true;
     }
 
+    $img = getImageForAlbum($filedata, $imagekey);
+
     $info = array(
         "title" => $t,
         "album" => $filedata['Album'],
@@ -99,7 +101,8 @@ function doNewPlaylistFile(&$filedata) {
         "streamid" => $filedata['StreamIndex'],
         "dir" => rawurlencode($filedata['folder']),
         "key" => $imagekey,
-        "image" => getImageForAlbum($filedata, $imagekey),
+        "image" => $img,
+        "bigimage" => preg_replace('#^albumart/small/#', 'albumart/asdownloaded/', $img),
         "stream" => $filedata['stream'],
         "playlistpos" => $filedata['Pos'],
         "genre" => $filedata['Genre'],
