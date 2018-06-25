@@ -581,6 +581,12 @@ function check_sql_tables() {
 				}
 				generic_sql_query("UPDATE Statstable SET Value = 37 WHERE Item = 'SchemaVer'", true);
 				break;
+
+			case 37:
+				debuglog("Updating FROM Schema version 37 TO Schema version 38","SQL");
+				generic_sql_query("ALTER TABLE Albumtable MODIFY ImgVersion INT UNSIGNED DEFAULT ".ROMPR_IMAGE_VERSION, true);
+				generic_sql_query("UPDATE Statstable SET Value = 38 WHERE Item = 'SchemaVer'", true);
+				break;
 				
 		}
 		$sv++;

@@ -633,7 +633,7 @@ function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
                     if (srces && srces[1]) {
                         src = srces[1];
                         debug.log("ALBUMART","Image Source",src);
-                        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist');
+                        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').attr('src', 'notanimage.jpg');
                         if (src.match(/image\/.*;base64/)) {
                             debug.log("ALBUMART","Looks like Base64");
                             // For some reason I no longer care about, doing this with jQuery.post doesn't work
@@ -678,7 +678,7 @@ function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
                     debug.log("ALBUMART","Found Files");
                     var files = evt.dataTransfer.files;
                     if (files[0]) {
-                        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist');
+                        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').attr('src', 'notanimage.jpg');
                         // For some reason I no longer care about, doing this with jQuery.post doesn't work
                         var formData = new FormData();
                         formData.append('ufile', files[0]);
@@ -712,6 +712,7 @@ function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
     debug.log("ALBUMART","Trying last resort methods",src);
     if (src.match(/^http:\/\//)) {
         debug.log("ALBUMART","Appears to be a URL");
+        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').attr('src', 'notanimage.jpg');
         var u = src.match(/images.google.com.*imgurl=(.*?)&/)
         if (u && u[1]) {
             src = u[1];

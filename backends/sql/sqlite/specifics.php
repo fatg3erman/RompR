@@ -553,6 +553,33 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 37 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 37:
+				debuglog("Updating FROM Schema version 37 TO Schema version 38","SQL");
+				generic_sql_query("CREATE TABLE IF NOT EXISTS Albumtable_New(".
+					"Albumindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+					"Albumname VARCHAR(255), ".
+					"AlbumArtistindex INTEGER, ".
+					"AlbumUri VARCHAR(255), ".
+					"Year YEAR, ".
+					"Searched TINYINT(1), ".
+					"ImgKey CHAR(32), ".
+					"mbid CHAR(40), ".
+					"ImgVersion INTEGER DEFAULT ".ROMPR_IMAGE_VERSION.", ".
+					"Domain CHAR(32), ".
+					"Image VARCHAR(255), ".
+					"justUpdated TINYINT(1) DEFAULT 0)", true);
+				generic_sql_query("INSERT INTO Albumtable_New SELECT Albumindex, Albumname, AlbumArtistindex,
+					AlbumUri, Year, Searched, ImgKey, mbid, ImgVersion, Domain, Image, justUpdated
+					FROM Albumtable", true);
+				generic_sql_query("DROP TABLE Albumtable", true);
+				generic_sql_query("ALTER TABLE Albumtable_New RENAME TO Albumtable", true);
+				generic_sql_query("CREATE INDEX IF NOT EXISTS ni ON Albumtable (Albumname)", true);
+				generic_sql_query("CREATE INDEX IF NOT EXISTS aai ON Albumtable (AlbumArtistindex)", true);
+				generic_sql_query("CREATE INDEX IF NOT EXISTS di ON Albumtable (Domain)", true);
+				generic_sql_query("CREATE INDEX IF NOT EXISTS ii ON Albumtable (ImgKey)", true);
+				generic_sql_query("UPDATE Statstable SET Value = 38 WHERE Item = 'SchemaVer'", true);
+				break;
+
 		}
 		$sv++;
 	}

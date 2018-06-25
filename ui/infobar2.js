@@ -366,6 +366,9 @@ var infobar = function() {
             return {
                 setSource: function(data) {
                     debug.trace("ALBUMPICTURE","New source",data.image,"current is",aImg.src);
+                    if (data.key && data.key != aImg.name) {
+                        return false;
+                    }
                     if (data.image === null) {
                         // null means playlist.emptytrack. Set the source to a file that doesn't exist
                         // and let the onerror handler do the stuff. Then if we start playing the same

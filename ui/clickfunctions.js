@@ -354,7 +354,7 @@ function doAlbumMenu(event, element, callback) {
                     if ($(this).find('input.expandalbum').length > 0 ) {
                         getAllTracksForAlbum(element, menutoopen);
                     } else if ($(this).find('input.expandartist').length > 0) {
-                        getAllTracksForArtist(element, menutopopen)
+                        getAllTracksForArtist(element, menutoopen)
                     }
                 });
             });

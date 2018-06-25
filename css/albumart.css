@@ -80,6 +80,16 @@ img#browns {
     padding:8px;
 }
 
+.albumimg .covercontainer img {
+    width: 100px;
+    height:auto;
+}
+
+.albumimg .covercontainer img.notfound, .albumimg .covercontainer img.notexist {
+    width: 100px;
+    height: 100px;
+}
+
 #brian {
     padding-left:8px;
     padding-right:8px;

@@ -217,6 +217,7 @@ function onStorageChanged(e) {
         } else {
             $('img[name="'+key+'"]').removeClass("notexist notfound").attr("src", "").hide().show();
             $('img[name="'+key+'"]').attr("src", localStorage.getItem('albumimg_'+key));
+            infobar.albumImage.setSource({image: localStorage.getItem('albumimg_'+key).replace(/albumart\/small/, 'albumart/asdownloaded'), key: key});
             localStorage.removeItem('albumimg_'+key);
         }
     }
