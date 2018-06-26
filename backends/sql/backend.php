@@ -1234,7 +1234,7 @@ function add_fave_station($info) {
 		return true;
 	}
 	$stationindex = check_radio_station($info['location'],$info['album'],$info['image']);
-	check_radio_tracks($stationindex, array('TrackUri' => $info['location'], 'PrettyStream' => $info['stream']));
+	check_radio_tracks($stationindex, array(array('TrackUri' => $info['location'], 'PrettyStream' => $info['stream'])));
 	generic_sql_query("UPDATE RadioStationtable SET IsFave = 1 WHERE Stationindex = ".$stationindex, true);
 }
 

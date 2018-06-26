@@ -140,7 +140,7 @@ function do_covers_db_style() {
                             }
                             print '<input type="hidden" value="'.get_album_directory($album['Albumindex'], $album['AlbumUri']).'" />';
                             print '<input type="hidden" value="'.rawurlencode($artist['Artistname']." ".munge_album_name($album['Albumname'])).'" />';
-                            print '<img class="'.$class.'" name="'.$album['ImgKey'].'" height="82px" width="82px" ';
+                            print '<img class="'.$class.'" name="'.$album['ImgKey'].'"';
                             if ($src != "") {
                                 print 'src="'.$src.'" ';
                             }
@@ -173,14 +173,17 @@ function do_radio_stations() {
                     print '<div class="covercontainer">';
                     $class = "";
                     $src = "";
-                    if ($file['Image'] && $file['Image'] != 'newimages/icecast.svg') {
+                    if ($file['Image']) {
                         $src = $file['Image'];
+                        if ($file['Image'] == 'newimages/broadcast.svg' || $file['Image'] == 'newimages/icecast.svg') {
+                            $class = " notexist";
+                        }
                     } else {
                         $class = " notexist";
                         $albums_without_cover++;
                     }
                     print '<input type="hidden" value="'.rawurlencode($file['StationName']).'" />';
-                    print '<img class="clickable clickicon clickalbumcover droppable'.$class.'" romprstream="'.get_stream_imgkey($file['Stationindex']).'" name="'.get_stream_imgkey($file['Stationindex']).'" height="82px" width="82px" src="'.$src.'" />';
+                    print '<img class="clickable clickicon clickalbumcover droppable'.$class.'" romprstream="'.get_stream_imgkey($file['Stationindex']).'" name="'.get_stream_imgkey($file['Stationindex']).'" src="'.$src.'" />';
                     print '<div>'.$file['StationName'].'</div>';
                     print '</div>';
                     print '</div>';
@@ -226,7 +229,7 @@ function do_playlists() {
 
                             $plsearch = preg_replace('/ \(by .*?\)$/', '', $pl);
                             print '<input type="hidden" value="'.rawurlencode($plsearch).'" />';
-                            print '<img class="clickable clickicon clickalbumcover droppable'.$class.'" romprstream="'.ROMPR_PLAYLIST_KEY.'" name="'.$artname.'" height="82px" width="82px" src="'.$src.'" />';
+                            print '<img class="clickable clickicon clickalbumcover droppable'.$class.'" romprstream="'.ROMPR_PLAYLIST_KEY.'" name="'.$artname.'" src="'.$src.'" />';
                             print '<div>'.htmlentities($pl).'</div>';
                         print '</div>';
                     print '</div>';
