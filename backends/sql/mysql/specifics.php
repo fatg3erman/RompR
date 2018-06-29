@@ -592,7 +592,7 @@ function check_sql_tables() {
 
 			case 38:
 				debuglog("Updating FROM Schema version 38 TO Schema version 39","SQL");
-				generic_sql_query("ALTER TABLE PodcastTable ADD LastPubDate INT UNSIGNED DEFAULT NULL", true);
+				generic_sql_query("ALTER TABLE Podcasttable ADD LastPubDate INT UNSIGNED DEFAULT NULL", true);
 				generic_sql_query("CREATE INDEX ptt ON PodcastTracktable (Title)", true);
 				require_once('includes/podcastfunctions.php');
 				upgrade_podcasts_to_version();
