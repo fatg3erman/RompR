@@ -67,7 +67,8 @@ var prefs = function() {
     	"communityradiolistby",
         "communityradioorderby",
         "browser_id",
-        "playlistswipe"
+        "playlistswipe",
+        "podcastcontrolsvisible"
     ];
     
     const cookiePrefs = [

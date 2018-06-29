@@ -194,7 +194,8 @@ function check_sql_tables() {
 		"DaysLive INTEGER, ".
 		"Version TINYINT(2), ".
 		"Subscribed TINYINT(1) NOT NULL DEFAULT 1, ".
-		"Description TEXT)", true))
+		"Description TEXT, ".
+		"LastPubDate INTEGER DEFAULT NULL)", true))
 	{
 		debuglog("  Podcasttable OK","SQLITE_CONNECT");
 	} else {
@@ -221,6 +222,11 @@ function check_sql_tables() {
 		"Deleted TINYINT(1) DEFAULT 0)", true))
 	{
 		debuglog("  PodcastTracktable OK","SQLITE_CONNECT");
+		if (generic_sql_query("CREATE INDEX IF NOT EXISTS ptt ON PodcastTracktable (Title)", true)) {
+		} else {
+			$err = $mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking PodcastTracktable : ".$err);
+		}
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking PodcastTracktable : ".$err);
@@ -537,7 +543,7 @@ function check_sql_tables() {
 			case 34:
 				debuglog("Updating FROM Schema version 34 TO Schema version 35","SQL");
 				generic_sql_query("ALTER TABLE Tracktable ADD COLUMN Sourceindex INTEGER DEFAULT NULL", true);
-				generic_sql_query(true, null, null, null, "UPDATE Statstable SET Value = 35 WHERE Item = 'SchemaVer'", true);
+				generic_sql_query("UPDATE Statstable SET Value = 35 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 35:
@@ -579,6 +585,23 @@ function check_sql_tables() {
 				generic_sql_query("CREATE INDEX IF NOT EXISTS ii ON Albumtable (ImgKey)", true);
 				generic_sql_query("UPDATE Statstable SET Value = 38 WHERE Item = 'SchemaVer'", true);
 				break;
+
+			case 38:
+				debuglog("Updating FROM Schema version 38 TO Schema version 39","SQL");
+				generic_sql_query("ALTER TABLE Podcasttable ADD LastPubDate INTEGER DEFAULT NULL", true);
+				require_once('includes/podcastfunctions.php');
+				upgrade_podcasts_to_version();
+				generic_sql_query("UPDATE Statstable SET Value = 39 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 39:
+				debuglog("Updating FROM Schema version 39 TO Schema version 40","SQL");
+				// Takes too long. It'll happen when they get refreshed anyway.
+				// require_once('includes/podcastfunctions.php');
+				// upgrade_podcast_images();
+				generic_sql_query("UPDATE Statstable SET Value = 40 WHERE Item = 'SchemaVer'", true);
+				break;
+
 
 		}
 		$sv++;

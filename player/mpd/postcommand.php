@@ -70,12 +70,11 @@ if ($is_connected) {
                     break;
 
                 case "rename":
-                    $oldimage = md5('Playlist '.$cmd[1]);
-                    $newimage = md5('Playlist '.$cmd[2]);
-                    if (file_exists('albumart/small/'.$oldimage.'.jpg')) {
+                    $oldimage = md5($cmd[1]);
+                    $newimage = md5($cmd[2]);
+                    if (file_exists('prefs/plimages/'.$oldimage.'.jpg')) {
                         debuglog("Renaming playlist image for ".$cmd[1]." to ".$cmd[2],"MPD");
-                        system('mv "albumart/small/'.$oldimage.'.jpg" "albumart/small/'.$newimage.'.jpg"');
-                        system('mv "albumart/asdownloaded/'.$oldimage.'.jpg" "albumart/asdownloaded/'.$newimage.'.jpg"');
+                        system('mv "prefs/plimages/'.$oldimage.'.jpg" "prefs/plimages/'.$newimage.'.jpg"');
                     }
                     $cmds[] = join_command_string($cmd);
                     break;

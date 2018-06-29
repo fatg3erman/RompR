@@ -74,11 +74,11 @@ function saveImage($fname, $in_collection, $stream) {
     $o = array();
     if ($small_file) {
         debuglog("Creating file ".$small_file,"SAVEIMAGE");
-        $r = exec( $convert_path."convert \"".$download_file."\" -quality 70 -resize 100 -alpha remove \"".$small_file."\" 2>&1", $o);
+        $r = exec( $convert_path."convert \"".$download_file."\" -quality 80 -resize 100 -alpha remove \"".$small_file."\" 2>&1", $o);
     }
     if ($med_file) {
         debuglog("Creating file ".$med_file,"SAVEIMAGE");
-        $r = exec( $convert_path."convert \"".$download_file."\" -quality 70 -thumbnail 400x400 -alpha remove \"".$med_file."\" 2>&1", $o);
+        $r = exec( $convert_path."convert \"".$download_file."\" -quality 70 -resize 400 -alpha remove \"".$med_file."\" 2>&1", $o);
     }
     debuglog("Creating file ".$anglofile,"SAVEIMAGE");
     $r = exec( $convert_path."convert \"".$download_file."\" -background black -alpha remove \"".$anglofile."\" 2>&1", $o);

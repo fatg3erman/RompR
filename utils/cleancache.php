@@ -75,9 +75,7 @@ if ($mysqlc) {
                 if ($count < 1) {
                     debuglog("  Removing Unused Album image ".$image,"CACHE CLEANER");
                     exec('rm albumart/small/'.basename($image));
-                    if (file_exists('albumart/medium/'.basename($image))) {
-                        exec('rm albumart/medium/'.basename($image));
-                    }
+                    exec('rm albumart/medium/'.basename($image));
                     exec('rm albumart/asdownloaded/'.basename($image));
                 }
             }

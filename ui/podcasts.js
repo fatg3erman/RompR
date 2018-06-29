@@ -4,6 +4,7 @@ var podcasts = function() {
 	var downloadRunning = false;
 	var loaded = false;
 	var refreshtimer;
+	var podcast_refresh_timeout = 3600000;
 
 	function checkDownloadQueue() {
 		if (downloadRunning == false) {
@@ -352,7 +353,6 @@ var podcasts = function() {
 			var element = $(event.target);
 			var elementType = element[0].tagName;
 			var options = {option: element.attr("name")};
-			var callback = null;
 			debug.log("PODCASTS","Option:",element,elementType);
 			switch(elementType) {
 				case "SELECT":
@@ -367,32 +367,39 @@ var podcasts = function() {
 			}
 			var channel = element.attr('id');
 			options.channel = channel.replace(/podconf_/,'');
-			if (options.option == 'RefreshOption') {
-				callback = podcasts.checkRefresh;
-			}
-			podcastRequest(options, callback);
+			podcastRequest(options, null);
 		},
 
 		checkRefresh: function() {
 			clearTimeout(refreshtimer);
-			$.getJSON("includes/podcasts.php?populate=1&checkrefresh=1", function(data) {
-				debug.log("PODCASTS","Refresh result",data);
-				if (data.updated && data.updated.length > 0) {
-					if (loaded) {
-						$.each(data.updated, function(index, value){
-							if (!($('#podcast_'+value).is(':empty'))) {
-								debug.log("PODCASTS","Podcast",value,"was refreshed and is loaded - reloading it");
-								podcasts.loadPodcast(value);
-							}
-						});
+			$.ajax({
+				type: 'GET',
+				url: "includes/podcasts.php?populate=1&checkrefresh=1",
+				timeout: podcast_refresh_timeout,
+				dataType: 'JSON',
+				success: function(data) {
+					debug.log("PODCASTS","Refresh result",data);
+					if (data.updated && data.updated.length > 0) {
+						if (loaded) {
+							$.each(data.updated, function(index, value){
+								if (!($('#podcast_'+value).is(':empty'))) {
+									debug.log("PODCASTS","Podcast",value,"was refreshed and is loaded - reloading it");
+									podcasts.loadPodcast(value);
+								}
+							});
+						}
+						podcasts.doNewCount();
 					}
-					podcasts.doNewCount();
+					if (data.nextupdate) {
+						debug.log("PODCASTS","Setting next podcast refresh for",data.nextupdate,'seconds');
+						refreshtimer = setTimeout(podcasts.checkRefresh, data.nextupdate*1000);
+					}
+				},
+				error: function() {
+					debug.error("PODCASTS","Refresh Failed");
+					infobar.notify(infobar.ERROR, "Podcast Refresh Failed");
 				}
-				if (data.nextupdate) {
-					debug.log("PODCASTS","Setting next podcast refresh for",data.nextupdate,'seconds');
-					refreshtimer = setTimeout(podcasts.checkRefresh, data.nextupdate*1000);
-				}
-			});
+			})
 		},
 
 		removePodcast: function(name) {
@@ -419,7 +426,7 @@ var podcasts = function() {
 			clearTimeout(refreshtimer);
 			refreshtimer = setTimeout(podcasts.checkRefresh, 10000);
 		},
-
+		
 		search: function() {
 		    doSomethingUseful('cocksausage', language.gettext("label_searching"));
 			var term = $('#podcastsearch').val();
@@ -459,37 +466,8 @@ var podcasts = function() {
 		        contentType: "text/html; charset=utf-8",
 		        data: {subscribe: index, populate: 1 },
 		        success: function(data) {
-					// For skypotato skin
-					$('.menu[name="podcast_'+index+'"]').parent().fadeOut('fast', function() {
-						$('.menu[name="podcast_'+index+'"]').parent().remove();
-						$('#podcast_'+index).remove();
-						$("#fruitbat").html(data);
-			            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
-			            infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
-			            podcasts.doNewCount();
-						layoutProcessor.postAlbumActions();
-					});
-					// For phone skins
-					$('.menuitem[name="podcast_'+index+'"]').fadeOut('fast', function() {
-						$('.menuitem[name="podcast_'+index+'"]').remove();
-						$('#podcast_'+index).remove();
-						$("#fruitbat").html(data);
-			            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
-			            infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
-			            podcasts.doNewCount();
-						layoutProcessor.postAlbumActions();
-					});
-					// For all other skins
-		        	$('i[name="podcast_'+index+'"]').parent().fadeOut('fast', function() {
-						$('i[name="podcast_'+index+'"]').parent().remove();
-						$('#podcast_'+index).remove();
-						$("#fruitbat").html(data);
-			            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
-			            infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
-			            podcasts.doNewCount();
-						layoutProcessor.postAlbumActions();
-					});
-		        },
+					uiHelper.postPodcastSubscribe(data, index);
+				},
 		        error: function(data, status, thing) {
 		            infobar.notify(infobar.ERROR, "Subscribe Failed : "+data.responseText);
 		            $('#spinner_cocksausage').remove();
@@ -500,6 +478,13 @@ var podcasts = function() {
 		removeSearch: function() {
 			$('#podcast_search').empty();
 			layoutProcessor.postAlbumActions();
+		},
+		
+		toggleButtons: function() {
+			$("#podcastbuttons").slideToggle('fast');
+		    var p = !prefs.podcastcontrolsvisible;
+		    prefs.save({ podcastcontrolsvisible: p });
+		    return false;
 		}
 
 	}

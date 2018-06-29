@@ -1,6 +1,7 @@
 <?php
 
-function parse_rss_feed($url, $id = false) {
+function parse_rss_feed($url, $id = false, $lastpubdate = null) {
+    global $prefs;
     $url = preg_replace('#^itpc://#', 'http://', $url);
     $url = preg_replace('#^feed://#', 'http://', $url);
     $result = url_get_contents($url);
@@ -11,6 +12,7 @@ function parse_rss_feed($url, $id = false) {
         exit;
     }
     debuglog("Feed retrieved from ".$url,"PODCASTS");
+    file_put_contents('prefs/temp/feed.xml', $result['contents']);
     if ($id) {
         if (!is_dir('prefs/podcasts/'.$id)) {
             exec('mkdir prefs/podcasts/'.$id);
@@ -25,6 +27,7 @@ function parse_rss_feed($url, $id = false) {
     $domain = preg_replace('#^(http://.*?)/.*$#', '$1', $url);
     $ppg = $feed->channel->children('ppg', TRUE);
     $m = $feed->channel->children('itunes', TRUE);
+    $sy = $feed->channel->children('sy', TRUE);
 
     // Automatic Refresh
     if ($ppg && $ppg->seriesDetails) {
@@ -45,8 +48,26 @@ function parse_rss_feed($url, $id = false) {
                 $podcast['RefreshOption'] = REFRESHOPTION_NEVER;
                 break;
         }
+    } else if ($sy && $sy->updatePeriod) {
+        switch ($sy->updatePeriod) {
+            case "hourly":
+                $podcast['RefreshOption'] = REFRESHOPTION_HOURLY;
+                break;
+            case "daily":
+                $podcast['RefreshOption'] = REFRESHOPTION_DAILY;
+                break;
+            case "weekly":
+                $podcast['RefreshOption'] = REFRESHOPTION_WEEKLY;
+                break;
+            case "monthly":
+                $podcast['RefreshOption'] = REFRESHOPTION_MONTHLY;
+                break;
+            default:
+                $podcast['RefreshOption'] = REFRESHOPTION_NEVER;
+                break;
+        }
     } else {
-        $podcast['RefreshOption'] = REFRESHOPTION_NEVER;
+        $podcast['RefreshOption'] = $prefs['default_podcast_refresh_mode'];
     }
 
     // Episode Expiry
@@ -85,6 +106,7 @@ function parse_rss_feed($url, $id = false) {
 
     // Tracks
     $podcast['tracks'] = array();
+    $podcast['LastPubDate'] = null;
     foreach($feed->channel->item as $item) {
         $track = array();
 
@@ -149,7 +171,11 @@ function parse_rss_feed($url, $id = false) {
         }
 
         // Track Publication Date
-        $track['PubDate'] = strtotime((string) $item->pubDate);
+        $t = strtotime((string) $item->pubDate);
+        if ($podcast['LastPubDate'] === null || $t > $podcast['LastPubDate']) {
+            $podcast['LastPubDate'] = $t;
+        }
+        $track['PubDate'] = $t;
         if ($item->enclosure && $item->enclosure->attributes()) {
             $track['FileSize'] = $item->enclosure->attributes()->length;
         } else {
@@ -171,12 +197,19 @@ function parse_rss_feed($url, $id = false) {
         $podcast['tracks'][] = $track;
     }
 
+    if ($lastpubdate !== null) {
+        if ($podcast['LastPubDate'] == $lastpubdate) {
+            debuglog("Podcast has not been updated since last refresh","PODCASTS");
+            return false;
+        }
+    }
+
     return $podcast;
 
 }
 
 function getNewPodcast($url, $subbed = 1) {
-    global $mysqlc;
+    global $mysqlc, $prefs;
     debuglog("Getting podcast ".$url,"PODCASTS");
     $newpodid = null;
     $podcast = parse_rss_feed($url);
@@ -192,13 +225,27 @@ function getNewPodcast($url, $subbed = 1) {
         exit(0);
     }
     debuglog("Adding New Podcast ".$podcast['Title'],"PODCASTS");
+    
+    $lastupdate = calculate_best_update_time($podcast);
+    
     if (sql_prepare_query(true, null, null, null,
         "INSERT INTO Podcasttable
-        (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, DaysLive, Description, Version, Subscribed)
+        (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, SortMode, DisplayMode, DaysLive, Description, Version, Subscribed, LastPubDate)
         VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        $podcast['FeedURL'], time(), $podcast['Image'], $podcast['Title'], $podcast['Artist'],
-        $podcast['RefreshOption'], $podcast['DaysLive'], $podcast['Description'], ROMPR_PODCAST_TABLE_VERSION, $subbed))
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)",
+        $podcast['FeedURL'],
+        calculate_best_update_time($podcast),
+        $podcast['Image'],
+        $podcast['Title'],
+        $podcast['Artist'],
+        $podcast['RefreshOption'],
+        $prefs['default_podcast_sort_mode'],
+        $prefs['default_podcast_display_mode'],
+        $podcast['DaysLive'],
+        $podcast['Description'],
+        ROMPR_PODCAST_TABLE_VERSION,
+        $subbed,
+        $podcast['LastPubDate']))
     {
         $newpodid = $mysqlc->lastInsertId();
         if (is_dir('prefs/podcasts/'.$newpodid)) {
@@ -226,29 +273,108 @@ function getNewPodcast($url, $subbed = 1) {
     return $newpodid;
 }
 
+function calculate_best_update_time($podcast) {
+    
+    // Note: this returns a value for LastUpdate, since that is what refresh is based on.
+    // The purpose of this is try to get the refresh in sync with the podcast's publication date.
+    
+    if ($podcast['LastPubDate'] === null) {
+        debuglog($podcast['Title']." last pub date is null","PODCASTS");
+        return time();
+    }
+    switch ($podcast['RefreshOption']) {
+        case REFRESHOPTION_NEVER:
+        case REFRESHOPTION_HOURLY:
+        case REFRESHOPTION_DAILY:
+            return time();
+            break;
+            
+    }
+    debuglog("Working out best update time for ".$podcast['Title'],"PODCASTS");
+    $dt = new DateTime(date('c', $podcast['LastPubDate']));
+    debuglog("  Last Pub Date is ".$podcast['LastPubDate'].' ('.$dt->format('c').')',"PODCASTS");
+    debuglog("  Podcast Refresh interval is ".$podcast['RefreshOption'],"PODCASTS");
+    while ($dt->getTimestamp() < time()) {
+        switch ($podcast['RefreshOption']) {
+                
+            case REFRESHOPTION_WEEKLY:
+                $dt->modify('+1 week');
+                break;
+                
+            case REFRESHOPTION_MONTHLY:
+                $dt->modify('+1 month');
+                break;
+                
+            default:
+                debuglog("  Unknown refresh option for podcast ID ".$podcast['podid'], "PODCASTS");
+                return time();
+                break;
+        }
+            
+    }
+    debuglog("  Worked out update time based on pubDate and RefreshOption: ".$dt->format('r').' ('.$dt->getTImestamp().')',"PODCASTS");
+    debuglog("  Give it an hour's grace","PODCASTS");
+    $dt->modify('+1 hour');
+    
+    switch ($podcast['RefreshOption']) {
+            
+        case REFRESHOPTION_WEEKLY:
+            $dt->modify('-1 week');
+            break;
+            
+        case REFRESHOPTION_MONTHLY:
+            $dt->modify('-1 month');
+            break;
+            
+    }
+    
+    debuglog("  Therefore setting lastupdate to: ".$dt->format('r').' ('.$dt->getTImestamp().')',"PODCASTS");
+
+    return $dt->getTimestamp();
+    
+}
+
 function download_image($url, $podid) {
+    $convert_path = find_executable('convert');
     debuglog("Downloading image ".$url." for podcast ".$podid,"PODCASTS");
     $fp = fopen('prefs/podcasts/tempimage', 'w');
     $aagh = url_get_contents($url, ROMPR_IDSTRING, false, true, false, $fp);
     fclose($fp);
+    $outdir = 'prefs/podcasts/'.$podid.'/albumart/';
     if ($aagh['status'] == "200") {
         if (preg_match('#image/(.*?)$#', $aagh['content-type'], $matches)) {
-            $outfile = 'prefs/podcasts/'.$podid.'/image.'.$matches[1];
+            $filename = 'image.'.$matches[1];
         } else {
-            $outfile = 'prefs/podcasts/'.$podid.'/'.basename($url);
+            $filename = basename($url);
         }
-        debuglog("  .. success. Saving as ".$outfile,"PODCASTS");
-        if (file_exists($outfile)) {
-            unlink($outfile);
+        debuglog("  .. success. Saving to ".$outdir,"PODCASTS");
+        if (is_dir($outdir)) {
+            exec('rm -fR '.$outdir);
         }
-        exec('mv prefs/podcasts/tempimage "'.$outfile.'"');
-        sql_prepare_query(true, null, null, null, 'UPDATE Podcasttable SET Image = ? WHERE PODindex = ?',$outfile,$podid);
+        exec('mkdir prefs/podcasts/'.$podid.'/albumart');
+        exec('mkdir prefs/podcasts/'.$podid.'/albumart/small');
+        exec('mkdir prefs/podcasts/'.$podid.'/albumart/medium');
+        exec('mkdir prefs/podcasts/'.$podid.'/albumart/asdownloaded');
+        $r = exec( $convert_path."convert prefs/podcasts/tempimage -quality 80 -resize 100 -alpha remove \"".$outdir.'small/'.$filename."\" 2>&1", $o);
+        $r = exec( $convert_path."convert prefs/podcasts/tempimage -quality 70 -resize 400 -alpha remove \"".$outdir.'medium/'.$filename."\" 2>&1", $o);
+        exec('mv prefs/podcasts/tempimage "'.$outdir.'asdownloaded/'.$filename.'"');
+        sql_prepare_query(true, null, null, null, 'UPDATE Podcasttable SET Image = ? WHERE PODindex = ?',$outdir.'small/'.$filename,$podid);
     } else {
         debuglog("  .. failed to download image ".$aagh['status'],"PODCASTS");
     }
 }
 
+function check_podcast_upgrade($podetails, $podid, $podcast) {
+    if ($podetails->Version < ROMPR_PODCAST_TABLE_VERSION) {
+        if ($podcast === false) {
+            $podcast = parse_rss_feed($podetails->FeedURL, $podid, null);
+        }
+        upgrade_podcast($podid, $podetails, $podcast);
+    }
+}
+
 function refreshPodcast($podid) {
+    global $prefs;
     debuglog("Refreshing podcast ".$podid,"PODCASTS");
     $result = generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$podid, false, PDO::FETCH_OBJ);
     if (count($result) > 0) {
@@ -258,20 +384,57 @@ function refreshPodcast($podid) {
         debuglog("ERROR Looking up podcast ".$podid,"PODCASTS",2);
         return $podid;
     }
-    $podcast = parse_rss_feed($podetails->FeedURL, $podid);
-    if ($podetails->Version < ROMPR_PODCAST_TABLE_VERSION) {
-        upgrade_podcast($podid, $podetails, $podcast);
+    $podcast = parse_rss_feed($podetails->FeedURL, $podid, $podetails->LastPubDate);
+    if ($podetails->Subscribed == 1 && $prefs['podcast_mark_new_as_unlistened']) {
+        generic_sql_query("UPDATE PodcastTracktable SET New = 0 WHERE PODindex = ".$podetails->PODindex);
     }
+    if ($podcast === false) {
+        check_podcast_upgrade($podetails, $podid, $podcast);
+        // Podcast pubDate has not changed, hence we didn't re-parse the feed. Just mark all 'New' episodes as not new
+        // and tell the GUI to refresh the counts if they have changed
+        
+        // No, in fact let's not do that. Firstly it messes with subscribing to search results (all track get marked as not new)
+        // Secondly, actually, it makes sense - if the Podcast hasn't published any new episodes then these are still 'new'
+        
+        // Still calculate the best next update time
+        sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET LastUpdate = ? WHERE PODindex = ?",
+            calculate_best_update_time(
+                array(
+                    'LastPubDate' => $podetails->LastPubDate,
+                    'RefreshOption' => $podetails->RefreshOption,
+                    'Title' => $podetails->Title
+                )
+            ),
+            $podid);
+        // Still check to keep (days to keep still needs to be honoured)
+        if (check_tokeep($podetails, $podid) || $prefs['podcast_mark_new_as_unlistened']) {
+            return $podid;
+        } else {
+            return false;
+        }
+    }
+    check_podcast_upgrade($podetails, $podid, $podcast);
     if ($podetails->Subscribed == 0) {
-        sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Description = ?, DaysLive = ?, RefreshOption = ?, LastUpdate = ? WHERE PODindex = ?",$podcast['Description'],$podcast['DaysLive'],$podcast['RefreshOption'],time(),$podid);
-        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET New=?, JustUpdated=? WHERE PODindex=?", 1, 0, $podid);
+        sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Description = ?, DaysLive = ?, RefreshOption = ?, LastUpdate = ?, LastPubDate = ? WHERE PODindex = ?",
+            $podcast['Description'],
+            $podcast['DaysLive'],
+            $podcast['RefreshOption'],
+            calculate_best_update_time($podcast),
+            $podcast['LastPubDate'],
+            $podid);
+        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET New=?, JustUpdated=?, Listened = 0 WHERE PODindex=?", 1, 0, $podid);
     } else {
         sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET New=?, JustUpdated=? WHERE PODindex=?", 0, 0, $podid);
-        sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Description=?, LastUpdate=?, DaysLive=? WHERE PODindex=?", $podcast['Description'], time(), $podcast['DaysLive'], $podid);
+        sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Description=?, LastUpdate=?, DaysLive=?, LastPubDate=? WHERE PODindex=?",
+            $podcast['Description'],
+            calculate_best_update_time($podcast),
+            $podcast['DaysLive'],
+            $podcast['LastPubDate'],
+            $podid);
     }
     download_image($podcast['Image'], $podid);
     foreach ($podcast['tracks'] as $track) {
-        $trackid = sql_prepare_query(false, null, 'PODTrackindex' , null, "SELECT PODTrackindex FROM PodcastTracktable WHERE Guid=? AND PODindex = ?", $track['GUID'], $podid);
+        $trackid = sql_prepare_query(false, null, 'PODTrackindex' , null, "SELECT PODTrackindex FROM PodcastTracktable WHERE Title=? AND PODindex = ?", $track['Title'], $podid);
         if ($trackid !== null) {
             debuglog("  Found existing track ".$track['Title'],"PODCASTS");
             sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET JustUpdated=?, Duration=?, Link=? WHERE PODTrackindex=?",1,$track['Duration'], $track['Link'], $trackid);
@@ -280,7 +443,7 @@ function refreshPodcast($podid) {
                 "INSERT INTO PodcastTracktable
                 (JustUpdated, PODindex, Title, Artist, Duration, PubDate, FileSize, Description, Link, Guid, New)
                 VALUES
-                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,? )",
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 1, $podid, $track['Title'], $track['Artist'], $track['Duration'], $track['PubDate'],
                 $track['FileSize'], $track['Description'], $track['Link'], $track['GUID'], 1))
             {
@@ -290,6 +453,12 @@ function refreshPodcast($podid) {
             }
         }
     }
+    check_tokeep($podetails, $podid);
+    return $podid;
+}
+
+function check_tokeep($podetails, $podid) {
+    $retval = false;
     // Remove tracks that are no longer in the feed and haven't been downloaded
     if ($podetails->Subscribed == 1) {
         sql_prepare_query(true, null, null, null, "DELETE FROM PodcastTracktable WHERE PODindex=? AND JustUpdated=? AND Downloaded=?",$podid, 0, 0);
@@ -297,11 +466,17 @@ function refreshPodcast($podid) {
         // Remove tracks that have been around longer than DaysToKeep - honoring KeepDownloaded
         if ($podetails->DaysToKeep > 0) {
             $oldesttime = time() - ($podetails->DaysToKeep * 86400);
+            $numthen = simple_query("COUNT(PODTrackindex)", "PodcastTracktable", 'Deleted = 0 AND PODindex', $podid, 0);
             $qstring = "UPDATE PodcastTracktable SET Deleted=1 WHERE PODindex = ".$podid." AND PubDate < ".$oldesttime." AND Deleted = 0";
             if ($podetails->KeepDownloaded == 1) {
                 $qstring .= " AND Downloaded = 0";
             }
             generic_sql_query($qstring, true);
+            $numnow = simple_query("COUNT(PODTrackindex)", "PodcastTracktable", 'Deleted = 0 AND PODindex', $podid, 0);
+            if ($numnow != $numthen) {
+                debuglog("  Old episodes were removed from podcast ID ".$podid,"PODCASTS");
+                $retval = true;
+            }
         }
 
         // Remove tracks where there are more than NumToKeep - honoring KeepDownloaded
@@ -324,11 +499,12 @@ function refreshPodcast($podid) {
                 foreach ($pods as $i) {
                     debuglog("  Removing Track ".$i,"PODCASTS");
                     generic_sql_query("UPDATE PodcastTracktable SET Deleted=1 WHERE PODTrackindex=".$i, true);
+                    $retval = true;
                 }
             }
         }
     }
-    return $podid;
+    return $retval;
 }
 
 function upgrade_podcast($podid, $podetails, $podcast) {
@@ -353,6 +529,54 @@ function upgrade_podcast($podid, $podetails, $podcast) {
                 generic_sql_query("UPDATE Podcasttable SET Version = 2 WHERE PODindex = ".$podid, true);
                 $v++;
                 break;
+
+        }
+    }
+}
+
+function upgrade_podcasts_to_version() {
+    debuglog("Upgrading all subscribed podcasts to version ".ROMPR_PODCAST_TABLE_VERSION,"PODCASTS");
+    $pods = generic_sql_query('SELECT * FROM Podcasttable WHERE Subscribed = 1 AND Version < '.ROMPR_PODCAST_TABLE_VERSION);
+    foreach ($pods as $podcast) {
+        $v = $podcast['Version'];
+        while ($v < ROMPR_PODCAST_TABLE_VERSION) {
+            switch ($v) {
+                case 2;
+                    debuglog("  Updating Podcast ".$podcast['Title']." to version 3","PODCASTS");
+                    $newest_track = generic_sql_query("SELECT PubDate FROM PodcastTracktable WHERE PODindex = ".$podcast['PODindex']." ORDER BY PubDate DESC LIMIT 1");
+                    $podcast['LastPubDate'] = $newest_track[0]['PubDate'];
+                    debuglog("    Last episode for this podcast was published on ".date('c', $podcast['LastPubDate']),"PODCASTS");
+                    switch($podcast['RefreshOption']) {
+                        case REFRESHOPTION_WEEKLY:
+                        case REFRESHOPTION_MONTHLY:
+                            $podcast['LastUpdate'] = calculate_best_update_time($podcast);
+                            break;
+                    }
+                    generic_sql_query("UPDATE Podcasttable SET LastUpdate = ".$podcast['LastUpdate'].", LastPubDate = ".$podcast['LastPubDate'].", Version = 3 WHERE PODindex = ".$podcast['PODindex']);
+                    $v++;
+                    break;
+            }
+        }
+    }
+}
+
+function upgrade_podcast_images() {
+    $convert_path = find_executable('convert');
+    $pods = generic_sql_query('SELECT * FROM Podcasttable');
+    foreach ($pods as $pod) {
+        if (preg_match('#^prefs/podcasts#', $pod['Image'])) {
+            debuglog("Updating Podcast Image For ".$pod['Title'],"PODCASTS");
+            $podid = $pod['PODindex'];
+            exec('mkdir prefs/podcasts/'.$podid.'/albumart');
+            exec('mkdir prefs/podcasts/'.$podid.'/albumart/small');
+            exec('mkdir prefs/podcasts/'.$podid.'/albumart/medium');
+            exec('mkdir prefs/podcasts/'.$podid.'/albumart/asdownloaded');
+            $filename = basename($pod['Image']);
+            $outdir = 'prefs/podcasts/'.$podid.'/albumart/';
+            $r = exec( $convert_path.'convert '.$pod['Image'].' -quality 70 -resize 100 -alpha remove '.$outdir.'small/'.$filename.' 2>&1', $o);
+            $r = exec( $convert_path.'convert '.$pod['Image'].' -quality 70 -resize 400 -alpha remove '.$outdir.'medium/'.$filename.' 2>&1', $o);
+            exec('mv '.$pod['Image'].' '.$outdir.'asdownloaded/'.$filename);
+            generic_sql_query('UPDATE Podcasttable SET Image = "'.$outdir.'small/'.$filename.'" WHERE PODindex = '.$podid);
         }
     }
 }
@@ -494,13 +718,13 @@ function doPodcast($y, $do_searchbox) {
             '" name="KeepDownloaded" onclick="podcasts.changeOption(event)">'.
             get_int_text("podcast_keep_downloaded").'</label></div>';
 
-        print '<div class="containerbox fixed bumpad styledinputs">';
-        print '<input type="checkbox" class="topcheck podautodown" id="podad"';
-        if ($y->AutoDownload == 1) {
-            print ' checked';
-        }
-        print '><label for="podad" name="AutoDownload" onclick="podcasts.changeOption(event)">'.
-            get_int_text("podcast_auto_download").'</label></div>';
+        // print '<div class="containerbox fixed bumpad styledinputs">';
+        // print '<input type="checkbox" class="topcheck podautodown" id="podad"';
+        // if ($y->AutoDownload == 1) {
+        //     print ' checked';
+        // }
+        // print '><label for="podad" name="AutoDownload" onclick="podcasts.changeOption(event)">'.
+        //     get_int_text("podcast_auto_download").'</label></div>';
 
         print '<div class="containerbox fixed bumpad styledinputs">';
         print '<input type="checkbox" class="topcheck" id="podhd"';
@@ -670,7 +894,7 @@ function doPodcastHeader($y) {
     $out = addPodcastCounts($html, $extra);
     print $out->html();
     
-    print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu padright"><div class="textcentre">Losding...</div></div>';
+    print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu padright"><div class="textcentre">Loading...</div></div>';
 }
 
 function removePodcast($podid) {
@@ -719,6 +943,34 @@ function changeOption($option, $val, $channel) {
     generic_sql_query("UPDATE Podcasttable SET ".$option."=".$val." WHERE PODindex=".$channel, true);
     if ($option == 'DaysToKeep' || $option == 'NumToKeep') {
         refreshPodcast($channel);
+    }
+    if ($option == 'RefreshOption') {
+        $podcast = generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$channel, false, PDO::FETCH_ASSOC);
+        $dt = new DateTime(date('c', $podcast[0]['LastUpdate']));
+        debuglog("Changed Refresh Option for podcast ".$channel.". Last Update Was ".$dt->format('c'),"PODCASTS");
+        switch($podcast[0]['RefreshOption']) {
+            case REFRESHOPTION_HOURLY:
+                $dt->modify('+1 hour');
+                break;
+            case REFRESHOPTION_DAILY:
+                $dt->modify('+24 hours');
+                break;
+            case REFRESHOPTION_WEEKLY:
+                $dt->modify('+1 week');
+                break;
+            case REFRESHOPTION_MONTHLY:
+                $dt->modify('+1 month');
+                break;
+            default:
+                $dt->modify('+10 years');
+                break;
+        }
+        $updatetime = $dt->getTimestamp();
+        if ($updatetime <= time()) {
+            refreshPodcast($channel);
+        } else {
+            generic_sql_query("UPDATE Podcasttable SET LastUpdate = ".calculate_best_update_time($podcast[0])." WHERE PODindex = ".$channel);
+        }
     }
     return $channel;
 }
@@ -826,8 +1078,6 @@ function get_all_counts() {
 
 function check_podcast_refresh() {
     $tocheck = array();
-    // Seconds in a month is roughly 2419200, but this value is TOO BIG
-    // for Javascript's setTimeout which is 32 bit signed milliseconds.
     $nextupdate_seconds = 2119200;
     $result = generic_sql_query("SELECT PODindex, LastUpdate, RefreshOption FROM Podcasttable WHERE RefreshOption > 0 AND Subscribed = 1", false, PDO::FETCH_OBJ);
     foreach ($result as $obj) {
@@ -836,31 +1086,38 @@ function check_podcast_refresh() {
     $updated = array('nextupdate' => $nextupdate_seconds, 'updated' => array());
     $now = time();
     foreach ($tocheck as $pod) {
-        debuglog("Checking for refresh to podcast ".$pod['podid'].' refreshoption is '.$pod['refreshoption'],"PODCASTS");
+        $dt = new DateTime(date('c', $pod['lastupdate']));
+        debuglog("Checking for refresh to podcast ".$pod['podid'].' refreshoption is '.$pod['refreshoption']." LastUpdate is ".$dt->format('c'),"PODCASTS");
         switch($pod['refreshoption']) {
             case REFRESHOPTION_HOURLY:
-                $updatetime = $pod['lastupdate'] + 3600;
+                $dt->modify('+1 hour');
                 $tempnextupdate = 3600;
                 break;
             case REFRESHOPTION_DAILY:
-                $updatetime = $pod['lastupdate'] + 86400;
+                $dt->modify('+24 hours');
                 $tempnextupdate = 86400;
                 break;
             case REFRESHOPTION_WEEKLY:
-                $updatetime = $pod['lastupdate'] + 604800;
+                $dt->modify('+1 week');
                 $tempnextupdate = 604800;
                 break;
             case REFRESHOPTION_MONTHLY:
-                $updatetime = $pod['lastupdate'] + 2419200;
+                $dt->modify('+1 month');
+                // Seconds in a month is roughly 2419200, but this value is TOO BIG
+                // for Javascript's setTimeout which is 32 bit signed milliseconds.
                 $tempnextupdate = 2119200;
                 break;
             default:
-                debuglog("Unknown refresh option for podcast id ".$pod['podid'],"PODCASTS",3);
+                debuglog("Not automatic update option for podcast id ".$pod['podid'],"PODCASTS",3);
                 continue 2;
         }
+        $updatetime = $dt->getTimestamp();
         debuglog('  lastupdate is '.$pod['lastupdate'].' update time is '.$updatetime.' current time is '.$now,"PODCASTS");
         if ($updatetime <= $now) {
-            $updated['updated'][] = refreshPodcast($pod['podid']);
+            $retval = refreshPodcast($pod['podid']);
+            if ($retval !== false) {
+                $updated['updated'][] = $retval;
+            }
             if ($tempnextupdate < $nextupdate_seconds) {
                 $nextupdate_seconds = $tempnextupdate;
             }
@@ -877,6 +1134,7 @@ function check_podcast_refresh() {
 }
 
 function search_itunes($term) {
+    global $prefs;
     debuglog("Searching iTunes for podcasts '".$term."'","PODCASTS",6);
     generic_sql_query("DELETE FROM PodcastTracktable WHERE PODindex IN (SELECT PODindex FROM Podcasttable WHERE Subscribed = 0)", true);
     generic_sql_query("DELETE FROM Podcasttable WHERE Subscribed = 0", true);
@@ -903,14 +1161,29 @@ function search_itunes($term) {
                 } else {
                     $img = 'newimages/podcast-logo.svg';
                 }
-                debuglog("Search found podcast : ".$podcast['collectionName']);
+                debuglog("Search found podcast : ".$podcast['collectionName'], "PODCASTS");
+                
+                // IMPORTANT NOTE. We do NOT set LastPubDate here, because that would prevent the podcasts from being refreshed
+                // if we subscribe to it. (If it hasn't been browsed then we need to refresh it to get all the episodes)
+                // LastPubDate will get set by refrteshPodcast if we subscribe
+                
                 sql_prepare_query(true, null, null, null,
                     "INSERT INTO Podcasttable
-                    (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, DaysLive, Description, Version, Subscribed)
+                    (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, SortMode, DisplayMode, DaysLive, Description, Version, Subscribed)
                     VALUES
-                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    $podcast['feedUrl'], time(), $img, $podcast['collectionName'], $podcast['artistName'],
-                    REFRESHOPTION_NEVER, 0, '', ROMPR_PODCAST_TABLE_VERSION, 0
+                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    $podcast['feedUrl'],
+                    time(),
+                    $img,
+                    $podcast['collectionName'],
+                    $podcast['artistName'],
+                    $prefs['default_podcast_refresh_mode'],
+                    $prefs['default_podcast_sort_mode'],
+                    $prefs['default_podcast_display_mode'],
+                    0,
+                    '',
+                    ROMPR_PODCAST_TABLE_VERSION,
+                    0
                 );
             }
         }

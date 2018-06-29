@@ -216,7 +216,8 @@ function onStorageChanged(e) {
             $('img[name="'+key+'"]').removeClass("notexist").addClass("notfound");
         } else {
             $('img[name="'+key+'"]').removeClass("notexist notfound").attr("src", "").hide().show();
-            $('img[name="'+key+'"]').attr("src", localStorage.getItem('albumimg_'+key));
+            $('img[name="'+key+'"]').not('.jalopy').attr("src", localStorage.getItem('albumimg_'+key));
+            $('img[name="'+key+'"].jalopy').attr("src",localStorage.getItem('albumimg_'+key).replace(/albumart\/small/, 'albumart/medium'));
             infobar.albumImage.setSource({image: localStorage.getItem('albumimg_'+key).replace(/albumart\/small/, 'albumart/asdownloaded'), key: key});
             localStorage.removeItem('albumimg_'+key);
         }

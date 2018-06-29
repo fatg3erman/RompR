@@ -218,7 +218,7 @@ function do_playlists() {
                     print '<div class="fixed albumimg closet">';
                         print '<div class="covercontainer">';
                             $class = "";
-                            $artname = md5(htmlentities($pl));
+                            $artname = md5($pl);
                             $src = "";
                             if (file_exists('prefs/plimages/'.$artname.'.jpg')) {
                                 $src = 'prefs/plimages/'.$artname.'.jpg';

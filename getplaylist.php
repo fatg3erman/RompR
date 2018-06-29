@@ -102,7 +102,7 @@ function doNewPlaylistFile(&$filedata) {
         "dir" => rawurlencode($filedata['folder']),
         "key" => $imagekey,
         "image" => $img,
-        "bigimage" => preg_replace('#^albumart/small/#', 'albumart/asdownloaded/', $img),
+        "bigimage" => preg_replace('#albumart/small/#', 'albumart/asdownloaded/', $img),
         "stream" => $filedata['stream'],
         "playlistpos" => $filedata['Pos'],
         "genre" => $filedata['Genre'],

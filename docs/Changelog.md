@@ -5,7 +5,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 
 ## Version 1.18
 
-* Fixed bu where plugins menu didn't wokr in Tablet skin
+* Fixed bug where plugins menu didn't wokr in Tablet skin
 * Added two new icon themes
 * Some code refactoring and minor UI bugfixing
 * Added swipe and long press options to phone skin to allow tracks to be re-ordered and removed from the Current Playlist
@@ -14,6 +14,11 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Added Debug Information plugin to help with assisting in bug reports.
 * Added play controls to top bar on wide screens (>799px) on Phone and Tablet skins
 * Fix bug where Playcounts could be lost if the browser was refreshed while a track was playing
+* Added default options for new Podcasts
+* Added option to mark 'New' podcast episodes as 'Unlistened' before refresh. This used to be the default behaviour. The default is now that episodes will remain as 'New' until a new one is published. Rompr therefore accurately reflects the state of the podcast's feed.
+* Improved podcast refresh intervals. 'Weekly' and 'Montly' now actually mean what they say (same time and day of the month) and will attempt to set their refresh time based on the peridocity of the episodes in the podcast, to try to ensure the refresh happens automatically when a new episode is published.
+* The Current Playlist and the Subscribed Podcasts display now use thumbail album covers instead of full resolution ones scaled down. This should save a lot of memory which may help users on mobile devices.
+* All your Album Art needs to be updated in this version. The process will start automatically and may take a long time. There is a progress bar, and you can continue to use Rompr while it happens.
 
 ## Version 1.16
 

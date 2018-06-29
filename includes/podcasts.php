@@ -5,7 +5,7 @@ if (array_key_exists('populate', $_REQUEST)) {
     chdir('..');
     include("includes/vars.php");
     include("includes/functions.php");
-    include("includes/podcastfunctions.php");
+    require_once("includes/podcastfunctions.php");
     include("international.php");
     include( "backends/sql/connect.php");
     include( "skins/".$skin."/ui_elements.php");
@@ -57,14 +57,17 @@ if (array_key_exists('populate', $_REQUEST)) {
         exit(0);
     }
 
-    if ($podid !== null) {
+    if ($podid === false) {
+        header('HTTP/1.1 204 No Content');
+    } else if ($podid !== null) {
         outputPodcast($podid);
     } else {
         doPodcastList($subflag);
     }
+
 } else {
 
-    include("includes/podcastfunctions.php");
+    require_once("includes/podcastfunctions.php");
     require_once("skins/".$skin."/ui_elements.php");
     include("utils/phpQuery.php");
     doPodcastBase();
@@ -75,18 +78,76 @@ if (array_key_exists('populate', $_REQUEST)) {
 }
 
 function doPodcastBase() {
-    print '<div class="containerbox"><div class="configtitle textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div></div>';
+    global $prefs;
+    print '<div class="containerbox menuitem" style="padding-left:8px">';
+    print '<div class="fixed" style="padding-right:4px"><i onclick="podcasts.toggleButtons()" class="icon-menu playlisticon clickicon"></i></div>';
+    print '<div class="configtitle textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div></div>';
+    print '<div id="podcastbuttons" class="invisible">';
+
+
+    
+    print '<div class="containerbox vertical indent">';
+    print '<div class="fullwidth fixed"><b>'.get_int_text('config_podcast_defaults').'</b></div>';
+    
+    print '<div class="containerbox fixed dropdown-container"><div class="divlabel">'.
+        get_int_text("podcast_display").'</div>';
+    print '<div class="selectholder">';
+    print '<select id="default_podcast_display_modeselector" class="saveomatic">';
+    $options =  '<option value="'.DISPLAYMODE_ALL.'">'.get_int_text("podcast_display_all").'</option>'.
+                '<option value="'.DISPLAYMODE_NEW.'">'.get_int_text("podcast_display_onlynew").'</option>'.
+                '<option value="'.DISPLAYMODE_UNLISTENED.'">'.get_int_text("podcast_display_unlistened").'</option>'.
+                '<option value="'.DISPLAYMODE_DOWNLOADEDNEW.'">'.get_int_text("podcast_display_downloadnew").'</option>'.
+                '<option value="'.DISPLAYMODE_DOWNLOADED.'">'.get_int_text("podcast_display_downloaded").'</option>';
+    print $options;
+    // print preg_replace('/(<option value="'.$prefs['default_podcast_display_mode'].'")/', '$1 selected', $options);
+    print '</select>';
+    print '</div></div>';
+
+    print '<div class="containerbox fixed dropdown-container"><div class="divlabel">'.
+        get_int_text("podcast_refresh").'</div>';
+    print '<div class="selectholder">';
+    print '<select id="default_podcast_refresh_modeselector" class="saveomatic">';
+    $options =  '<option value="'.REFRESHOPTION_NEVER.'">'.get_int_text("podcast_refresh_never").'</option>'.
+                '<option value="'.REFRESHOPTION_HOURLY.'">'.get_int_text("podcast_refresh_hourly").'</option>'.
+                '<option value="'.REFRESHOPTION_DAILY.'">'.get_int_text("podcast_refresh_daily").'</option>'.
+                '<option value="'.REFRESHOPTION_WEEKLY.'">'.get_int_text("podcast_refresh_weekly").'</option>'.
+                '<option value="'.REFRESHOPTION_MONTHLY.'">'.get_int_text("podcast_refresh_monthly").'</option>';
+    // print preg_replace('/(<option value="'.$prefs['default_podcast_refresh_option'].'")/', '$1 selected', $options);
+    print $options;
+    print '</select>';
+    print '</div></div>';
+
+    print '<div class="containerbox fixed dropdown-container"><div class="divlabel">'.
+        get_int_text("podcast_sortmode").'</div>';
+    print '<div class="selectholder">';
+    print '<select id="default_podcast_sort_modeselector" class="saveomatic">';
+    $options =  '<option value="'.SORTMODE_NEWESTFIRST.'">'.get_int_text("podcast_newestfirst").'</option>'.
+                '<option value="'.SORTMODE_OLDESTFIRST.'">'.get_int_text("podcast_oldestfirst").'</option>';
+    // print preg_replace('/(<option value="'.$prefs['default_podcast_sort_mode'].'")/', '$1 selected', $options);
+    print $options;
+    print '</select>';
+    print '</div></div>';
+    
+    print '<div class="pref styledinputs">
+    <input class="autoset toggle" type="checkbox" id="podcast_mark_new_as_unlistened">
+    <label for="podcast_mark_new_as_unlistened">'.get_int_text('config_marknewasunlistened').'</label>
+    </div>';
+    
+    print '</div>';
+    
     print '<div id="cocksausage">';
     print '<div class="containerbox indent"><div class="expand">'.get_int_text("podcast_entrybox").'</div></div>';
     print '<div class="containerbox indent"><div class="expand"><input class="enter" id="podcastsinput" type="text" /></div>';
     print '<button class="fixed" onclick="podcasts.doPodcast(\'podcastsinput\')">'.get_int_text("label_retrieve").'</button></div>';
+    print '</div>';
+    
     print '<div class="containerbox indent"><div class="expand">'.get_int_text("label_searchfor").' (iTunes)</div></div>';
     print '<div class="containerbox indent"><div class="expand"><input class="enter" id="podcastsearch" type="text" /></div>';
     print '<button class="fixed" onclick="podcasts.search()">'.get_int_text("button_search").'</button></div>';
 
     print '<div class="fullwidth noselection clearfix"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon padright" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
-    print '</div>';
     print '<div id="podcast_search" class="fullwidth noselection padright"></div>';
+    print '</div>';
 }
 
 function doPodcastList($subscribed) {

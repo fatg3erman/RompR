@@ -101,14 +101,7 @@ function albumHeader($obj) {
     } else  if (!$obj['Image'] && $obj['Searched'] == 1) {
         $h .= '<img class="jalopy notfound'.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
     } else {
-        if (strpos($obj['Image'],'albumart/small/') === 0) {
-            if (file_exists('albumart/medium/'.basename($obj['Image']))) {
-                $obj['Image'] = 'albumart/medium/'.basename($obj['Image']);
-            } else {
-                $obj['Image'] = 'albumart/asdownloaded/'.basename($obj['Image']);
-            }
-        }
-        $h .= '<img class="jalopy" name="'.$obj['ImgKey'].'" src="'.$obj['Image'].'" />'."\n";
+        $h .= '<img class="jalopy" name="'.$obj['ImgKey'].'" src="'.preg_replace('#albumart/small/#', 'albumart/medium/', $obj['Image']).'" />'."\n";
     }
 
     $h .= '<div class="tagh albumthing">';

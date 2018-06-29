@@ -416,6 +416,22 @@ var uiHelper = function() {
             } catch (err) {
                 
             }
+        },
+        
+        postPodcastSubscribe: function(data, index) {
+            try {
+                return layoutProcessor.postPodcastSubscribe(data, index);
+            } catch (err) {
+                $('i[name="podcast_'+index+'"]').parent().fadeOut('fast', function() {
+                    $('i[name="podcast_'+index+'"]').parent().remove();
+                    $('#podcast_'+index).remove();
+                    $("#fruitbat").html(data);
+                    $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+                    infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
+                    podcasts.doNewCount();
+                    layoutProcessor.postAlbumActions();
+                });
+            }
         }
             
     }

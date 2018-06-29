@@ -126,7 +126,7 @@ function playerController() {
                 if (data) {
                     if (data.state) {
                         player.status = data;
-                        // debug.trace("MPD","Status",player.status);
+                        debug.log("MPD","Status",player.status);
                         if (player.status.playlist !== plversion && !moving) {
                             playlist.repopulate();
                         }

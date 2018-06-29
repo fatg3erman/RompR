@@ -658,6 +658,18 @@ var layoutProcessor = function() {
                     var d = $('<i>', {class: 'icon-updown playlisticonr fixed clickable clickicon rearrange_playlist'}).insertBefore($(this));
                 });
             }
+        },
+        
+        postPodcastSubscribe: function(data, index) {
+            $('.menuitem[name="podcast_'+index+'"]').fadeOut('fast', function() {
+                $('.menuitem[name="podcast_'+index+'"]').remove();
+                $('#podcast_'+index).remove();
+                $("#fruitbat").html(data);
+                $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+                infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
+                podcasts.doNewCount();
+                layoutProcessor.postAlbumActions();
+            });
         }
         
     }

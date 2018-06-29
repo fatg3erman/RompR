@@ -16,7 +16,7 @@ if ($k) {
     $r = exec( $convert_path."convert \"".$source."\" -quality 70 -thumbnail 400x400 -alpha remove \"".$dest."\" 2>&1", $o);
     $dest = "albumart/small/".$k.".jpg";
     debuglog("  Making ".$dest,"AA_UPGRADE");
-    $r = exec( $convert_path."convert \"".$source."\" -quality 70 -resize 100 -alpha remove \"".$dest."\" 2>&1", $o);
+    $r = exec( $convert_path."convert \"".$source."\" -quality 80 -resize 100 -alpha remove \"".$dest."\" 2>&1", $o);
     generic_sql_query("UPDATE Albumtable SET ImgVersion = ".ROMPR_IMAGE_VERSION." WHERE ImgKey = '".$k."'");
 }
 

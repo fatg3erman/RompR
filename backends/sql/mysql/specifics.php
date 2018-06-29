@@ -161,6 +161,7 @@ function check_sql_tables() {
 		"Version TINYINT(2), ".
 		"Subscribed TINYINT(1) NOT NULL DEFAULT 1, ".
 		"Description TEXT, ".
+		"LastPubDate INT UNSIGNED DEFAULT NULL, ".
 		"PRIMARY KEY (PODindex)) ENGINE=InnoDB", true))
 	{
 		debuglog("  Podcasttable OK","MYSQL_CONNECT");
@@ -187,7 +188,8 @@ function check_sql_tables() {
 		"New TINYINT(1) UNSIGNED DEFAULT 1, ".
 		"Deleted TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"INDEX (PODindex), ".
-		"PRIMARY KEY (PODTrackindex)) ENGINE=InnoDB", true))
+		"PRIMARY KEY (PODTrackindex), ".
+		"INDEX (Title)) ENGINE=InnoDB", true))
 	{
 		debuglog("  PodcastTracktable OK","MYSQL_CONNECT");
 	} else {
@@ -586,6 +588,23 @@ function check_sql_tables() {
 				debuglog("Updating FROM Schema version 37 TO Schema version 38","SQL");
 				generic_sql_query("ALTER TABLE Albumtable MODIFY ImgVersion INT UNSIGNED DEFAULT ".ROMPR_IMAGE_VERSION, true);
 				generic_sql_query("UPDATE Statstable SET Value = 38 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 38:
+				debuglog("Updating FROM Schema version 38 TO Schema version 39","SQL");
+				generic_sql_query("ALTER TABLE PodcastTable ADD LastPubDate INT UNSIGNED DEFAULT NULL", true);
+				generic_sql_query("CREATE INDEX ptt ON PodcastTracktable (Title)", true);
+				require_once('includes/podcastfunctions.php');
+				upgrade_podcasts_to_version();
+				generic_sql_query("UPDATE Statstable SET Value = 39 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 39:
+				debuglog("Updating FROM Schema version 39 TO Schema version 40","SQL");
+				// Takes too long. It'll happen when they get refreshed anyway.
+				// require_once('includes/podcastfunctions.php');
+				// upgrade_podcast_images();
+				generic_sql_query("UPDATE Statstable SET Value = 40 WHERE Item = 'SchemaVer'", true);
 				break;
 				
 		}

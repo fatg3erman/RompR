@@ -906,6 +906,18 @@ var layoutProcessor = function() {
         
         fixupArtistDiv(jq, name) {
             jq.addClass('containerbox wrap');
+        },
+        
+        postPodcastSubscribe: function(data, index) {
+            $('.menu[name="podcast_'+index+'"]').parent().fadeOut('fast', function() {
+                $('.menu[name="podcast_'+index+'"]').parent().remove();
+                $('#podcast_'+index).remove();
+                $("#fruitbat").html(data);
+                $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+                infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
+                podcasts.doNewCount();
+                layoutProcessor.postAlbumActions();
+            });
         }
         
     }

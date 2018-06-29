@@ -15,3 +15,5 @@ Browse to your OPML file and then click Upload.
 You will see the list of podcasts that are in the OPML file. Next to each name is a link to the webpage for that podcast.
 
 Any podcast to which you are already subscribed in RompR will have a tick next to it. All others will have a checkbox. If there are any podcasts you don't want to import into RompR, un-select the checkbox. Click 'Import Selected' to import all the checked podcasts into RompR.
+
+Imports via the OPML importer will honor the default settings set in the [Podcasts panel](/RompR/Podcasts.md)

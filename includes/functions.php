@@ -826,7 +826,7 @@ function albumImageBuggery() {
     $result = generic_sql_query(
         "SELECT Albumindex, Artistname, Albumname, ImgKey, Image FROM Albumtable JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex", false, PDO::FETCH_OBJ);
     open_transaction();
-foreach ($result as $obj) {
+    foreach ($result as $obj) {
         $oldkey = $obj->ImgKey;
         $newkey = make_image_key($obj->Artistname, $obj->Albumname);
         $oldimage = $obj->Image;

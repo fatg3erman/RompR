@@ -3,7 +3,7 @@
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 38);
+define('ROMPR_SCHEMA_VERSION', 40);
 define('ROMPR_VERSION', '1.18');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
@@ -25,7 +25,7 @@ define('DISPLAYMODE_UNLISTENED', 2);
 define('DISPLAYMODE_DOWNLOADEDNEW', 3);
 define('DISPLAYMODE_DOWNLOADED', 4);
 
-define('ROMPR_PODCAST_TABLE_VERSION', 2);
+define('ROMPR_PODCAST_TABLE_VERSION', 3);
 
 $connection = null;
 $is_connected = false;
@@ -158,7 +158,12 @@ $prefs = array(
 	"communityradiolistby" => 'country',
     "communityradioorderby" => 'name',
     "browser_id" => null,
-    "playlistswipe" => true
+    "playlistswipe" => true,
+    "podcastcontrolsvisible" => false,
+    "default_podcast_display_mode" => DISPLAYMODE_ALL,
+    "default_podcast_refresh_mode" => REFRESHOPTION_MONTHLY,
+    "default_podcast_sort_mode" => SORTMODE_NEWESTFIRST,
+    "podcast_mark_new_as_unlistened" => false
 );
 
 // Prefs that should not be exposed to the browser for security reasons
@@ -224,12 +229,6 @@ if(array_key_exists('skin', $_REQUEST)) {
 }
 if ($skin !== null) {
     $skin = trim($skin);
-}
-
-if (is_dir('albumart/original')) {
-    // Re-arrange the saved album art
-    system('mv albumart/small albumart/not_used_anymore');
-    system('mv albumart/original albumart/small');
 }
 
 // ====================================================================

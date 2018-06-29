@@ -47,6 +47,9 @@ $(document).ready(function(){
     if (prefs.collectioncontrolsvisible) {
         $("#collectionbuttons").show();
     }
+    if (prefs.podcastcontrolsvisible) {
+        $("#podcastbuttons").show();
+    }
     showUpdateWindow();
     window.addEventListener("storage", onStorageChanged, false);
     bindPlaylistClicks();
