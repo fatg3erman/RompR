@@ -22,7 +22,7 @@ The numbers next to each podcast is the count of New (red background) and Unlist
 
 **New** episodes are those which were newly added the last time the podcast feed was updated - in other words the last time the podcast publisher published a new episode.  The first time you add a podcast to Rompr, all episodes are 'New'. They will remain as 'New' until a new episode is published, at which point any you have not listened to will become **Unlistened**.
 
-You can change the meaning of 'New' to mean 'episodes that were added the last time the podcast was refreshed'. To do this you enable the option in the 'hamburger' dropdown. When this option is enabled, New episodes (that have not been listened to) will become Unlistened when you refresh the podcast. If no new episodes have been published then there will be no New episodes in your list. Note that this was the default behaviour in Rompr prior to version 1.18
+You can change the meaning of 'New' to mean 'episodes that were added the last time the podcast was refreshed'. To do this you enable the option in the Configuration Panel. When this option is enabled, New episodes (that have not been listened to) will become Unlistened when you refresh the podcast. If no new episodes have been published then there will be no New episodes in your list. Note that this was the default behaviour in Rompr prior to version 1.18
 
 ![](images/podcast6.png)
 
@@ -63,7 +63,7 @@ Each Podcast has several configuration options which are stored alongside the po
 * **Keep all downloaded episodes:** Downloaded episodes will not count towards 'Number To Keep' and will not be removed if they become older than 'Keep Episodes For'.
 * **Hide Descriptions:** By default, don't show the description for each episode. You can still expand the descriptions by clicking the triangle.
 
-You can set default values for some of these options, to be set on newly subscribed podcasts, from the 'hamburger' dropdwon menu described above. Note that some podcasts announce their own refresh period. In this case that value will override your default.
+You can set default values for some of these options, to be set on newly subscribed podcasts, from the Configuration Panel. Note that some podcasts announce their own refresh period. In this case that value will override your default.
 
 ## Episode Controls
 

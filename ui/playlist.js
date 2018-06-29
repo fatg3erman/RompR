@@ -94,13 +94,16 @@ var playlist = function() {
             var inner = $('<div>', {class: 'containerbox'}).appendTo(holder);
             var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'expand clickable clickplaylist containerbox'}).appendTo(inner);
             
-            var imgholder = $('<div>', { class: 'smallcover fixed clickable clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
-            if (tracks[0].image && tracks[0].image != "") {
-                self.image.attr('src', tracks[0].image).appendTo(imgholder);
-            } else {
-                self.image.addClass('notexist').appendTo(imgholder);
-                self.getart();
+            if (prefs.use_albumart_in_playlist) {
+                var imgholder = $('<div>', { class: 'smallcover fixed clickable clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
+                if (tracks[0].image && tracks[0].image != "") {
+                    self.image.attr('src', tracks[0].image).appendTo(imgholder);
+                } else {
+                    self.image.addClass('notexist').appendTo(imgholder);
+                    self.getart();
+                }
             }
+            
             var title = $('<div>', {class: 'containerbox vertical expand'}).appendTo(albumDetails);
             title.append('<div class="bumpad">'+self.artist+'</div><div class="bumpad">'+self.album+'</div>');
             
@@ -315,9 +318,12 @@ var playlist = function() {
             var inner = $('<div>', {class: 'containerbox'}).appendTo(header);
             var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'expand clickable clickplaylist containerbox'}).appendTo(inner);
             
-            var imgholder = $('<div>', { class: 'smallcover fixed clickable clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
-            var image = (tracks[0].image) ? tracks[0].image : "newimages/broadcast.svg";
-            self.image.attr('src', image).appendTo(imgholder);
+            if (prefs.use_albumart_in_playlist) {
+                var imgholder = $('<div>', { class: 'smallcover fixed clickable clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
+                var image = (tracks[0].image) ? tracks[0].image : "newimages/broadcast.svg";
+                self.image.attr('src', image).appendTo(imgholder);
+            }
+            
             var title = $('<div>', {class: 'containerbox vertical expand'}).appendTo(albumDetails);
             title.append('<div class="bumpad">'+tracks[0].album+'</div>');
             var buttons = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(inner);

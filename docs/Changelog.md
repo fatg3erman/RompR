@@ -19,6 +19,8 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Improved podcast refresh intervals. 'Weekly' and 'Montly' now actually mean what they say (same time and day of the month) and will attempt to set their refresh time based on the peridocity of the episodes in the podcast, to try to ensure the refresh happens automatically when a new episode is published.
 * The Current Playlist and the Subscribed Podcasts display now use thumbail album covers instead of full resolution ones scaled down. This should save a lot of memory which may help users on mobile devices.
 * All your Album Art needs to be updated in this version. The process will start automatically and may take a long time. There is a progress bar, and you can continue to use Rompr while it happens.
+* Player selection can now be done from the volume control dropdown on Phone and Tablet skins
+* Option to not display album art in the Playlist, which might help memory usage on phones, although the change to use thumbnail images will probably be enough.
 
 ## Version 1.16
 

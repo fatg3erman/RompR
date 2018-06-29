@@ -643,7 +643,8 @@ $languages['en'] = array (
 	"config_playlistswipe" => "Swipe to remove tracks from Current Playlist",
 	"button_debuginfo" => "Debug Information",
 	"config_podcast_defaults" => "Default Options For New Podcasts",
-	"config_marknewasunlistened" => "Mark New Episodes as Unlistened Before Refresh"
+	"config_marknewasunlistened" => "Mark New Episodes as Unlistened Before Refresh",
+	"config_albumartinplaylist" => "Show Album Art in Current Playlist"
 );
 
 ?>

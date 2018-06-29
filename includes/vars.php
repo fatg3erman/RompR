@@ -163,7 +163,8 @@ $prefs = array(
     "default_podcast_display_mode" => DISPLAYMODE_ALL,
     "default_podcast_refresh_mode" => REFRESHOPTION_MONTHLY,
     "default_podcast_sort_mode" => SORTMODE_NEWESTFIRST,
-    "podcast_mark_new_as_unlistened" => false
+    "podcast_mark_new_as_unlistened" => false,
+    "use_albumart_in_playlist" => true
 );
 
 // Prefs that should not be exposed to the browser for security reasons

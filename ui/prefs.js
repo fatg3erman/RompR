@@ -68,7 +68,8 @@ var prefs = function() {
         "communityradioorderby",
         "browser_id",
         "playlistswipe",
-        "podcastcontrolsvisible"
+        "podcastcontrolsvisible",
+        "use_albumart_in_playlist"
     ];
     
     const cookiePrefs = [
@@ -316,6 +317,11 @@ var prefs = function() {
                 case "playlistswipe":
                     callback = reloadWindow;
                     break;
+                    
+                case "use_albumart_in_playlist":
+                    callback = playlist.repopulate;
+                    break;
+
 
             }
             prefs.save(prefobj, callback);
