@@ -101,6 +101,7 @@ if ($is_connected) {
                     debuglog("  .. and seeking position ".$cmd[3]." to ".$cmd[2],"POSTCOMMAND");
                     $cmds[] = join_command_string(array('add', $cmd[1]));
                     $cmds[] = join_command_string(array('play', $cmd[3]));
+                    $cmds[] = 'pause';
                     $cmds[] = join_command_string(array('seek', $cmd[3], $cmd[2]));
                     break;
 
@@ -154,8 +155,14 @@ if ($is_connected) {
             // Note. We don't use send_command because that closes and re-opens the connection
             // if it fails to fputs, and that loses our command list status. Also if this fputs
             // fails it means the connection has dropped anyway, so we're screwed whatever happens.
-            fputs($connection, $c."\n");
-            $done++;
+            if ($c  == 'pause') {
+                do_mpd_command("command_list_end", true);
+                sleep(1);
+                send_command("command_list_begin");
+            } else {
+                fputs($connection, $c."\n");
+                $done++;
+            }
             // Command lists have a maximum length, 50 seems to be the default
             if ($done == 50) {
                 do_mpd_command("command_list_end", true);

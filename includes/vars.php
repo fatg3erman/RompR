@@ -159,12 +159,17 @@ $prefs = array(
     "communityradioorderby" => 'name',
     "browser_id" => null,
     "playlistswipe" => true,
-    "podcastcontrolsvisible" => false,
+    "podcastcontrolsvisible" => true,
     "default_podcast_display_mode" => DISPLAYMODE_ALL,
     "default_podcast_refresh_mode" => REFRESHOPTION_MONTHLY,
     "default_podcast_sort_mode" => SORTMODE_NEWESTFIRST,
     "podcast_mark_new_as_unlistened" => false,
-    "use_albumart_in_playlist" => true
+    "use_albumart_in_playlist" => true,
+    "podcast_sort_levels" => 4,
+    "podcast_sort_0" => 'Title',
+    "podcast_sort_1" => 'Artist',
+    "podcast_sort_2" => 'Category',
+    "podcast_sort_3" => 'new'
 );
 
 // Prefs that should not be exposed to the browser for security reasons

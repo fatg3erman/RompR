@@ -26,6 +26,22 @@ You can change the meaning of 'New' to mean 'episodes that were added the last t
 
 ![](images/podcast6.png)
 
+## Sorting The List
+
+You can sort the list of Podcasts in a very flexible way. You have 4 options:
+
+![](images/podcastsort.png)
+
+The first option will be the primary sort option. In this example, podcasts will be sorted by Publisher. For all podcasts where 'Publisher' is the same, those will be sorted next by Title, and so on. Some combinations will not be as useful as others - for example there can be no Podcasts where both Publisher and Title are the same, so the next two option have no effect, but other combinations might use all 4 levels.
+
+The full set of options for each level is:
+
+* Publisher
+* Title
+* Category
+* Number of New Episodes
+* Number of Unlistened Episodes (this will include New episodes because New episodes are Unlistened by definition)
+
 ## Viewing Podcasts
 
 Each podcasts can be opened up to present you with the podcast's description, some options, and the list of episodes. Episodes can be added to the Playlist by douible-clicking.
@@ -92,7 +108,9 @@ If you stop or skip a Podcast episode while it is playing, Rompr will store the 
 
 ![](images/podresume.png)
 
-Double-click the Resume bar to add the podcast to the Current Playlist and start playback from the position shown. Note that this functionality may be flaky if you use Mopidy, there appears to be a bug in Mopidy to do with seeking. Resume functionality will only work when you add the episode to the current playlist - once the itme is in the playlist and has been stopped, you will need to re-add it to the playlist for resume to work again.
+Double-click the Resume bar to add the podcast to the Current Playlist and start playback from the position shown. Note that this functionality may be flaky if you use Mopidy, there appears to be a bug in Mopidy to do with seeking.
+
+If the episode is already in the playlist, the episode will not be added again, instead the exisiting item in the playlist will be played from the resume position.
 
 ## Using Mopidy-Podcasts
 

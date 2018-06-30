@@ -231,6 +231,15 @@ var playlist = function() {
             }
             return false;
         }
+        
+        this.findByUri = function(uri) {
+            for(var i in tracks) {
+                if (tracks[i].location == uri) {
+                    return tracks[i].backendid;
+                }
+            }
+            return false;
+        }
 
         this.getByIndex = function(i) {
             return tracks[i];
@@ -402,6 +411,15 @@ var playlist = function() {
                 if (tracks[i].backendid == which) {
                     currentTrack = tracks[i];
                     return true;
+                }
+            }
+            return false;
+        }
+
+        this.findByUri = function(uri) {
+            for(var i in tracks) {
+                if (tracks[i].location == uri) {
+                    return tracks[i].backendid;
                 }
             }
             return false;
@@ -935,13 +953,22 @@ var playlist = function() {
                             frompos: $(element).prev().val()
                         });
                     } else if ($(element).hasClass('podcastresume')) {
-                        tracks.push({
-                            type: 'resumepodcast',
-                            resumefrom: $(element).next().val(),
-                            uri: uri,
-                            pos: prefs.cdplayermode ? 0 : playlist.getfinaltrack()+1
-                        });
-                        moveto = null;
+                        var is_already_in_playlist = playlist.findIdByUri(uri);
+                        if (is_already_in_playlist !== false) {
+                            player.controller.do_command_list([
+                                ['playid', is_already_in_playlist],
+                                ['pause'],
+                                ['seekid', is_already_in_playlist, $(element).next().val()]
+                            ])
+                        } else {
+                            tracks.push({
+                                type: 'resumepodcast',
+                                resumefrom: $(element).next().val(),
+                                uri: uri,
+                                pos: prefs.cdplayermode ? 0 : playlist.getfinaltrack()+1
+                            });
+                            moveto = null;
+                        }
                     } else {
                         tracks.push({ type: "uri",
                                         name: decodeURIComponent(uri)});
@@ -1125,13 +1152,23 @@ var playlist = function() {
             }
         },
 
-        getId:function(id) {
+        getId: function(id) {
             for(var i in tracklist) {
                 if (tracklist[i].findById(id) !== false) {
                     return tracklist[i].getByIndex(tracklist[i].findById(id));
                     break;
                 }
             }
+        },
+        
+        findIdByUri: function(uri) {
+            for (var i in tracklist) {
+                if (tracklist[i].findByUri(uri) !== false) {
+                    return tracklist[i].findByUri(uri);
+                    break;
+                }
+            }
+            return false;
         },
 
         getAlbum: function(i) {

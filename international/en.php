@@ -645,7 +645,13 @@ $languages['en'] = array (
 	"config_podcast_defaults" => "Default Options For New Podcasts",
 	"config_marknewasunlistened" => "Mark New Episodes as Unlistened Before Refresh",
 	"config_albumartinplaylist" => "Show Album Art in Current Playlist",
-	"label_resume" => "Resume"
+	"label_resume" => "Resume",
+	"label_sortby" => "Sort By",
+	"label_then" => "Then",
+	"label_publisher" => 'Publisher',
+	"label_category" => "Category",
+	"label_new_episodes" => "New Episodes",
+	"label_unlistened_episodes" => "Unlistened Episodes"
 );
 
 ?>

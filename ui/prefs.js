@@ -438,6 +438,13 @@ var prefs = function() {
                     $("#albumcoversize").attr({href: "coversizes/"+$("#coversizeselector").val()});
                     setTimeout(browser.rePoint, 1000);
                     break;
+                    
+                case 'podcast_sort_0':
+                case 'podcast_sort_1':
+                case 'podcast_sort_2':
+                case 'podcast_sort_3':
+                    callback = podcasts.reloadList;
+                    break;
 
             }
             prefs.save(prefobj, callback);

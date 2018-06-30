@@ -10,6 +10,7 @@ var infobar = function() {
     var starttime = 0;
     var scrobbled = false;
     var nowplaying_updated = false;
+    var markedaslistened = false;
     var fontsize = 8;
     var ftimer = null;
     var canvas = null;
@@ -513,8 +514,8 @@ var infobar = function() {
 
         markCurrentTrack: function() {
             if (trackinfo.location) {
-                $('[name="'+rawurlencode(trackinfo.location)+'"]:not(.playlistcurrentitem)').addClass('playlistcurrentitem');
-                $('[name="'+trackinfo.location+'"]:not(.playlistcurrentitem)').addClass('playlistcurrentitem');
+                $('[name="'+rawurlencode(trackinfo.location)+'"]').not('.playlistcurrentitem').addClass('playlistcurrentitem');
+                $('[name="'+trackinfo.location+'"]').not('.playlistcurrentitem').not('.podcastresume').addClass('playlistcurrentitem');
             }
         },
         
@@ -669,11 +670,16 @@ var infobar = function() {
             if (progress < 3) {
                 scrobbled = false;
                 nowplaying_updated = false;
+                markedaslistened = false;
             }
             if (progress > 4) { updateNowPlaying() };
             var percent = (duration == 0) ? 0 : (progress/duration) * 100;
             if (percent >= prefs.scrobblepercent) {
                 scrobble();
+            }
+            if (!markedaslistened && percent >= 95 && playlist.getCurrent('type') == 'podcast') {
+                podcasts.checkMarkPodcastAsListened(playlist.getCurrent('location'));
+                markedaslistened = true;
             }
             $("#progress").rangechooser("setRange", {min: 0, max: progress});
             var remain = duration - progress;

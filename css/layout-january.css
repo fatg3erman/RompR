@@ -2081,3 +2081,8 @@ table.fileinfotable tr td:nth-child(2) {
     top: 100%;
     z-index: 5000;
 }
+
+.podcastresume {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}

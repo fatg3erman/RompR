@@ -101,14 +101,56 @@ function doPodcastBase() {
     print '<div class="containerbox indent"><div class="expand"><input class="enter" id="podcastsearch" type="text" /></div>';
     print '<button class="fixed" onclick="podcasts.search()">'.get_int_text("button_search").'</button></div>';
 
+    $sortoptions = array(
+        ucfirst(strtolower(get_int_text('title_title'))) => 'Title',
+        get_int_text('label_publisher') => 'Artist',
+        get_int_text('label_category') => 'Category',
+        get_int_text('label_new_episodes') => 'new',
+        get_int_text('label_unlistened_episodes') => 'unlistened'
+    );
+
+    print '<div class="indent"><b>'.get_int_text('label_sortby').'</b></div>';
+
+    for ($count = 0; $count < $prefs['podcast_sort_levels']; $count++) {
+        print '<div class="containerbox dropdown-container indent padright">';
+        print '<div class="selectholder expand">';
+        print '<select id="podcast_sort_'.$count.'selector" class="saveomatic">';
+        $options = '';
+        foreach ($sortoptions as $i => $o) {
+            $options .= '<option value="'.$o.'">'.$i.'</option>';
+        }
+        print preg_replace('/(<option value="'.$prefs['podcast_sort_'.$count].'")/', '$1 selected', $options);
+        print '</select>';
+        print '</div>';
+        print '</div>';
+        if ($count < $prefs['podcast_sort_levels']-1) {
+            print '<div class="indent playlistrow2">'.get_int_text('label_then').'</div>';
+        }
+    }
+
+
     print '<div class="fullwidth noselection clearfix"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon padright" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
     print '<div id="podcast_search" class="fullwidth noselection padright"></div>';
     print '</div>';
 }
 
 function doPodcastList($subscribed) {
-    // directoryControlHeader(null);
-    $result = generic_sql_query("SELECT * FROM Podcasttable WHERE Subscribed = ".$subscribed." ORDER BY Artist, Title", false, PDO::FETCH_OBJ);
+    global $prefs;
+    if ($subscribed == 1) {
+        $qstring = "SELECT Podcasttable.*, SUM(New = 1) AS new, SUM(Listened = 0) AS unlistened FROM PodcastTable JOIN PodcastTracktable USING(PODindex) WHERE Subscribed = 1 AND Deleted = 0 GROUP BY PODindex ORDER BY";
+    } else {
+        $qstring = "SELECT Podcasttable.*, 0 AS new, 0 AS unlistened FROM PodcastTable WHERE Subscribed = 0 ORDER BY";
+    }
+    $sortarray = array();
+    for ($i = 0; $i < $prefs['podcast_sort_levels']; $i++) {
+        if ($prefs['podcast_sort_'.$i] == 'new' || $prefs['podcast_sort_'.$i] == 'unlistened') {
+            $sortarray[] = ' '.$prefs['podcast_sort_'.$i].' DESC';
+        } else {
+            $sortarray[] = ' '.$prefs['podcast_sort_'.$i].' ASC';
+        }
+    }
+    $qstring .= implode(', ', $sortarray);
+    $result = generic_sql_query($qstring, false, PDO::FETCH_OBJ);
     foreach ($result as $obj) {
         doPodcastHeader($obj);
     }

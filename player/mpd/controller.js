@@ -715,7 +715,6 @@ function playerController() {
     }
 
     this.onStop = function() {
-        playlist.checkPodcastProgress();
         infobar.setProgress(0,-1,-1);
         self.checkProgress();
     }

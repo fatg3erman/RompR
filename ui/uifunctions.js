@@ -274,7 +274,8 @@ function show_albumart_update_window() {
         range: 100
     });
     fnarkle.open();
-    setTimeout(fnarkle.setWindowToContent, 2000);;
+    setTimeout(fnarkle.setWindowToContent, 2000);
+    $('.open_albumart').hide();
     do_albumart_update();
 }
 
@@ -291,6 +292,7 @@ function do_albumart_update() {
 
 function stop_albumart_update() {
     debug.log("UI", "Cancelling album art update");
+    $('.open_albumart').show();
     albumart_update = false;
 }
 

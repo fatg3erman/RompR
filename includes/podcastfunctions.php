@@ -111,7 +111,9 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null) {
             }
         }
     }
-    $podcast['Category'] = implode(', ', array_diff($cats, array('Podcasts')));
+    $spaz = array_diff($cats, array('Podcasts'));
+    natsort($spaz);
+    $podcast['Category'] = implode(', ', $spaz);
     debuglog("  Category is ".$podcast['Category'],"PODCASTS");
 
     // Title
@@ -384,6 +386,7 @@ function download_image($url, $podid) {
 function check_podcast_upgrade($podetails, $podid, $podcast) {
     if ($podetails->Version < ROMPR_PODCAST_TABLE_VERSION) {
         if ($podcast === false) {
+            debuglog("Podcast needs to be upgraded, must re-parse the feed","PODCASTS");
             $podcast = parse_rss_feed($podetails->FeedURL, $podid, null);
         }
         upgrade_podcast($podid, $podetails, $podcast);
@@ -815,9 +818,9 @@ function format_episode(&$y, &$item, $pm) {
     }
     print '<div class="item podcastitem">';
     if ($item->Downloaded == 1 && $y->Version > 1) {
-        print '<div class="containerbox clickable clicktrack draggable" name="'.get_base_url().$item->Localfilename.'">';
+        print '<div class="containerbox clickable clicktrack draggable dropdown-container" name="'.get_base_url().$item->Localfilename.'">';
     } else {
-        print '<div class="containerbox clickable clicktrack draggable" name="'.$item->Link.'">';
+        print '<div class="containerbox clickable clicktrack draggable dropdown-container" name="'.$item->Link.'">';
     }
     if ($y->Subscribed == 1) {
         if ($item->New == 1) {
@@ -829,7 +832,7 @@ function format_episode(&$y, &$item, $pm) {
         }
     }
     print '<div class="podtitle expand">'.htmlspecialchars(html_entity_decode($item->Title)).'</div>';
-    print '<i class="fixed icon-no-response-playbutton newpodicon"></i>';
+    print '<i class="fixed icon-no-response-playbutton podicon"></i>';
     print '</div>';
     
     if ($item->Progress > 0) {
