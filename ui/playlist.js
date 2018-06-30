@@ -885,38 +885,63 @@ var playlist = function() {
                             tracks.concat(s);
                         }
                     } else if ($(element).hasClass('directory')) {
-                        tracks.push({   type: "uri",
-                                        name: decodeURIComponent($(element).children('input').first().attr('value'))});
+                        tracks.push({
+                            type: "uri",
+                            name: decodeURIComponent($(element).children('input').first().attr('value'))
+                        });
                     } else if ($(element).hasClass('clickalbum')) {
-                        tracks.push({  type: "item",
-                                        name: uri});
+                        tracks.push({
+                            type: "item",
+                            name: uri
+                        });
                     } else if ($(element).hasClass('clickartist')) {
-                        tracks.push({  type: "artist",
-                                        name: uri});
+                        tracks.push({
+                            type: "artist",
+                            name: uri
+                        });
                     } else if ($(element).hasClass('clickcue')) {
-                        tracks.push({  type: "cue",
-                                        name: decodeURIComponent(uri)});
+                        tracks.push({
+                            type: "cue",
+                            name: decodeURIComponent(uri)
+                        });
                     } else if ($(element).hasClass('clickstream')) {
-                        tracks.push({  type: "stream",
-                                        url: decodeURIComponent(uri),
-                                        image: $(element).attr('streamimg') || 'null',
-                                        station: $(element).attr('streamname') || 'null'
-                                    });
+                        tracks.push({
+                            type: "stream",
+                            url: decodeURIComponent(uri),
+                            image: $(element).attr('streamimg') || 'null',
+                            station: $(element).attr('streamname') || 'null'
+                        });
                     } else if ($(element).hasClass('clickloadplaylist')) {
-                        tracks.push({ type: "playlist",
-                                        name: decodeURIComponent($(element).children('input[name="dirpath"]').val())});
+                        tracks.push({
+                            type: "playlist",
+                            name: decodeURIComponent($(element).children('input[name="dirpath"]').val())
+                        });
                     } else if ($(element).hasClass('clickloaduserplaylist')) {
-                        tracks.push({ type: (prefs.player_backend == 'mpd') ? "playlist" : 'uri',
-                                        name: decodeURIComponent($(element).children('input[name="dirpath"]').val())});
+                        tracks.push({
+                            type: (prefs.player_backend == 'mpd') ? "playlist" : 'uri',
+                            name: decodeURIComponent($(element).children('input[name="dirpath"]').val())
+                        });
                     } else if ($(element).hasClass('clickalbumname')) {
                         $(element).next().children('.clicktrack').each(function() {
-                            tracks.push({ type: 'uri', name: decodeURIComponent($(this).attr('name'))});
+                            tracks.push({
+                                type: 'uri',
+                                name: decodeURIComponent($(this).attr('name'))
+                            });
                         });
                     } else if ($(element).hasClass('playlisttrack') && prefs.cdplayermode) {
-                        tracks.push({   type: 'playlisttoend',
-                                        playlist: $(element).prev().prev().val(),
-                                        frompos: $(element).prev().val()
-                                    });
+                        tracks.push({
+                            type: 'playlisttoend',
+                            playlist: $(element).prev().prev().val(),
+                            frompos: $(element).prev().val()
+                        });
+                    } else if ($(element).hasClass('podcastresume')) {
+                        tracks.push({
+                            type: 'resumepodcast',
+                            resumefrom: $(element).next().val(),
+                            uri: uri,
+                            pos: prefs.cdplayermode ? 0 : playlist.getfinaltrack()+1
+                        });
+                        moveto = null;
                     } else {
                         tracks.push({ type: "uri",
                                         name: decodeURIComponent(uri)});
@@ -989,13 +1014,20 @@ var playlist = function() {
                 return null;
             }
         },
-
+        
         getfinaltrack: function() {
             return finaltrack;
         },
+        
+        checkPodcastProgress: function() {
+            if (currentTrack.type == "podcast") {
+                var durationfraction = currentTrack.progress/currentTrack.duration;
+                var progresstostore = (durationfraction > 0.05 && durationfraction < 0.98) ? currentTrack.progress : 0;
+                podcasts.storePlaybackProgress({uri: currentTrack.location, progress: Math.round(progresstostore)});
+            }
+        },
 
         trackHasChanged: function(backendid) {
-
             if (reqid != last_reqid) {
                 debug.log("PLAYLIST","Deferring looking for current track - there is an ongoing update");
                 lookforcurrenttrack = backendid;

@@ -238,7 +238,7 @@ var info_spotify = function() {
         	function getAlbums() {
         		$("#hibbert").makeSpinner();
 	        	if (artistmeta.spotify.albums === undefined) {
-	        		spotify.artist.getAlbums(artistmeta.spotify.id, 'album', storeAlbums, self.artist.spotifyError, true)
+	        		spotify.artist.getAlbums(artistmeta.spotify.id, 'album,single', storeAlbums, self.artist.spotifyError, true)
 	        	} else {
 	        		doAlbums(artistmeta.spotify.albums);
 	        	}

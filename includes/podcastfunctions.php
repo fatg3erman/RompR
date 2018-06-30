@@ -12,7 +12,10 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null) {
         exit;
     }
     debuglog("Feed retrieved from ".$url,"PODCASTS");
+    
+    // For debugging
     file_put_contents('prefs/temp/feed.xml', $result['contents']);
+    
     if ($id) {
         if (!is_dir('prefs/podcasts/'.$id)) {
             exec('mkdir prefs/podcasts/'.$id);
@@ -97,6 +100,19 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null) {
     } else {
         $podcast['Artist'] = '';
     }
+    
+    // Category
+    $cats = array();
+    if ($m && $m->category) {
+        for ($i = 0; $i < count($m->category); $i++) {
+            $cat = html_entity_decode((string) $m->category[$i]->attributes()->text);
+            if (!in_array($cat, $cats)) {
+                $cats[] = $cat;
+            }
+        }
+    }
+    $podcast['Category'] = implode(', ', array_diff($cats, array('Podcasts')));
+    debuglog("  Category is ".$podcast['Category'],"PODCASTS");
 
     // Title
     $podcast['Title'] = (string) $feed->channel->title;
@@ -230,9 +246,9 @@ function getNewPodcast($url, $subbed = 1) {
     
     if (sql_prepare_query(true, null, null, null,
         "INSERT INTO Podcasttable
-        (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, SortMode, DisplayMode, DaysLive, Description, Version, Subscribed, LastPubDate)
+        (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, SortMode, DisplayMode, DaysLive, Description, Version, Subscribed, LastPubDate, Category)
         VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)",
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         $podcast['FeedURL'],
         calculate_best_update_time($podcast),
         $podcast['Image'],
@@ -245,7 +261,8 @@ function getNewPodcast($url, $subbed = 1) {
         $podcast['Description'],
         ROMPR_PODCAST_TABLE_VERSION,
         $subbed,
-        $podcast['LastPubDate']))
+        $podcast['LastPubDate'],
+        $podcast['Category']))
     {
         $newpodid = $mysqlc->lastInsertId();
         if (is_dir('prefs/podcasts/'.$newpodid)) {
@@ -392,10 +409,10 @@ function refreshPodcast($podid) {
         check_podcast_upgrade($podetails, $podid, $podcast);
         // Podcast pubDate has not changed, hence we didn't re-parse the feed. Just mark all 'New' episodes as not new
         // and tell the GUI to refresh the counts if they have changed
-        
+    
         // No, in fact let's not do that. Firstly it messes with subscribing to search results (all track get marked as not new)
         // Secondly, actually, it makes sense - if the Podcast hasn't published any new episodes then these are still 'new'
-        
+    
         // Still calculate the best next update time
         sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET LastUpdate = ? WHERE PODindex = ?",
             calculate_best_update_time(
@@ -512,7 +529,7 @@ function upgrade_podcast($podid, $podetails, $podcast) {
     while ($v < ROMPR_PODCAST_TABLE_VERSION) {
         switch ($v) {
             case 1:
-                debuglog("Updating Podcast ".$podetails->Title." to version ".ROMPR_PODCAST_TABLE_VERSION,"PODCASTS");
+                debuglog("Updating Podcast ".$podetails->Title." to version 2","PODCASTS");
                 foreach ($podcast['tracks'] as $track) {
                     $t = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, "SELECT * FROM PodcastTracktable WHERE Link=? OR OrigLink=?", $track['Link'], $track['Link']);
                     foreach($t as $result) {
@@ -529,13 +546,23 @@ function upgrade_podcast($podid, $podetails, $podcast) {
                 generic_sql_query("UPDATE Podcasttable SET Version = 2 WHERE PODindex = ".$podid, true);
                 $v++;
                 break;
+                
+            case 2:
+                // This will have been done by the function below
+                $v++;
+                break;
+                
+            case 3:
+                debuglog("Updating Podcast ".$podetails->Title." to version 4","PODCASTS");
+                sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Version = ?, Category = ? WHERE PODindex = ?", 4, $podcast['Category'], $podid);
+                $v++;
+                break;
 
         }
     }
 }
 
 function upgrade_podcasts_to_version() {
-    debuglog("Upgrading all subscribed podcasts to version ".ROMPR_PODCAST_TABLE_VERSION,"PODCASTS");
     $pods = generic_sql_query('SELECT * FROM Podcasttable WHERE Subscribed = 1 AND Version < '.ROMPR_PODCAST_TABLE_VERSION);
     foreach ($pods as $podcast) {
         $v = $podcast['Version'];
@@ -553,6 +580,11 @@ function upgrade_podcasts_to_version() {
                             break;
                     }
                     generic_sql_query("UPDATE Podcasttable SET LastUpdate = ".$podcast['LastUpdate'].", LastPubDate = ".$podcast['LastPubDate'].", Version = 3 WHERE PODindex = ".$podcast['PODindex']);
+                    $v++;
+                    break;
+                    
+                case 3;
+                    // Upgrade to version 4 can only happen after feed has been re-parsed
                     $v++;
                     break;
             }
@@ -799,6 +831,12 @@ function format_episode(&$y, &$item, $pm) {
     print '<div class="podtitle expand">'.htmlspecialchars(html_entity_decode($item->Title)).'</div>';
     print '<i class="fixed icon-no-response-playbutton newpodicon"></i>';
     print '</div>';
+    
+    if ($item->Progress > 0) {
+        print '<input type="hidden" class="resumepos" value="'.$item->Progress.'" />';
+        print '<input type="hidden" class="length" value="'.$item->Duration.'" />';
+    }
+    
     $pee = date(DATE_RFC2822, $item->PubDate);
     $pee = preg_replace('/ \+\d\d\d\d$/','',$pee);
     print '<div class="whatdoicallthis padright containerbox menuitem notbold">';
@@ -856,6 +894,11 @@ function doPodcastHeader($y) {
     } else {
         $img = $y->Image;
     }
+    
+    $aname = htmlspecialchars(html_entity_decode($y->Artist));
+    if ($y->Category) {
+        $aname .= '<br /><span class="playlistrow2">'.htmlspecialchars($y->Category).'</span>';
+    }
 
     $html = albumHeader(array(
         'id' => 'podcast_'.$y->PODindex,
@@ -863,7 +906,7 @@ function doPodcastHeader($y) {
         'Searched' => 1,
         'AlbumUri' => null,
         'Year' => null,
-        'Artistname' => htmlspecialchars(html_entity_decode($y->Artist)),
+        'Artistname' => $aname,
         'Albumname' => htmlspecialchars(html_entity_decode($y->Title)),
         'why' => null,
         'ImgKey' => 'none',
@@ -907,7 +950,7 @@ function removePodcast($podid) {
 }
 
 function markAsListened($url) {
-    $podid = -1;
+    $podid = false;
     $pods = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, "SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR Localfilename = ?", $url, basename($url));
     foreach ($pods as $pod) {
         $podid = $pod->PODindex;
@@ -990,7 +1033,7 @@ function removeDownloaded($channel) {
     if (is_dir('prefs/podcasts/'.$channel)) {
         $things = glob('prefs/podcasts/'.$channel.'/*');
         foreach ($things as $thing) {
-            if (is_dir($thing)) {
+            if (is_dir($thing) && basename($thing) != 'albumart') {
                 system('rm -fR '.$thing);
             }
         }
@@ -1116,7 +1159,7 @@ function check_podcast_refresh() {
         if ($updatetime <= $now) {
             $retval = refreshPodcast($pod['podid']);
             if ($retval !== false) {
-                $updated['updated'][] = $retval;
+                $updated[] = $retval;
             }
             if ($tempnextupdate < $nextupdate_seconds) {
                 $nextupdate_seconds = $tempnextupdate;
@@ -1169,9 +1212,9 @@ function search_itunes($term) {
                 
                 sql_prepare_query(true, null, null, null,
                     "INSERT INTO Podcasttable
-                    (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, SortMode, DisplayMode, DaysLive, Description, Version, Subscribed)
+                    (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, SortMode, DisplayMode, DaysLive, Description, Version, Subscribed, Category)
                     VALUES
-                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     $podcast['feedUrl'],
                     time(),
                     $img,
@@ -1183,7 +1226,8 @@ function search_itunes($term) {
                     0,
                     '',
                     ROMPR_PODCAST_TABLE_VERSION,
-                    0
+                    0,
+                    implode(', ', array_diff($podcast['genres'], array('Podcasts')))
                 );
             }
         }
@@ -1200,6 +1244,17 @@ function subscribe($index) {
 
 function check_if_podcast_is_subscribed($podcast) {
     return sql_prepare_query(false, PDO::FETCH_ASSOC, null, null, "SELECT Title FROM Podcasttable WHERE Subscribed = 1 AND (FeedURL = ? OR (Title = ? AND Artist = ?))", $podcast['feedUrl'], $podcast['collectionName'], $podcast['artistName']);
+}
+
+function setPlaybackProgress($progress, $uri) {
+    $podid = false;
+    $pod = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, "SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR LocalFilename = ?", $uri, $uri);
+    foreach ($pod as $podcast) {
+        $podid = $podcast->PODindex;
+        debuglog("Updating Playback Progress for Podcast ".$podcast->PODTrackindex." in channel ".$podid." to ".$progress,"PODCASTS");
+        generic_sql_query("UPDATE PodcastTrackTable SET Progress = ".$progress." WHERE PODTrackindex = ".$podcast->PODTrackindex);
+    }
+    return $podid;
 }
 
 ?>

@@ -3,7 +3,7 @@
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 40);
+define('ROMPR_SCHEMA_VERSION', 42);
 define('ROMPR_VERSION', '1.18');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
@@ -25,7 +25,7 @@ define('DISPLAYMODE_UNLISTENED', 2);
 define('DISPLAYMODE_DOWNLOADEDNEW', 3);
 define('DISPLAYMODE_DOWNLOADED', 4);
 
-define('ROMPR_PODCAST_TABLE_VERSION', 3);
+define('ROMPR_PODCAST_TABLE_VERSION', 4);
 
 $connection = null;
 $is_connected = false;

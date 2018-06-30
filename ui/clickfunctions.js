@@ -216,6 +216,7 @@ function onSourcesDoubleClicked(event) {
         clickedElement.hasClass('clicktrack') ||
         clickedElement.hasClass('clickcue') ||
         clickedElement.hasClass("clickstream") ||
+        clickedElement.hasClass("podcastresume") ||
         clickedElement.hasClass("clickloadplaylist") ||
         clickedElement.hasClass("clickloaduserplaylist")) {
         event.stopImmediatePropagation();

@@ -195,7 +195,8 @@ function check_sql_tables() {
 		"Version TINYINT(2), ".
 		"Subscribed TINYINT(1) NOT NULL DEFAULT 1, ".
 		"Description TEXT, ".
-		"LastPubDate INTEGER DEFAULT NULL)", true))
+		"LastPubDate INTEGER DEFAULT NULL, ".
+		"Category VARCHAR(255))", true))
 	{
 		debuglog("  Podcasttable OK","SQLITE_CONNECT");
 	} else {
@@ -219,6 +220,7 @@ function check_sql_tables() {
 		"Downloaded TINYINT(1) DEFAULT 0, ".
 		"Listened TINYINT(1) DEFAULT 0, ".
 		"New TINYINT(1) DEFAULT 1, ".
+		"Progress INTEGER DEFAULT 0, ".
 		"Deleted TINYINT(1) DEFAULT 0)", true))
 	{
 		debuglog("  PodcastTracktable OK","SQLITE_CONNECT");
@@ -602,6 +604,66 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 40 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 40:
+				debuglog("Updating FROM Schema version 40 TO Schema version 41","SQL");
+				generic_sql_query("CREATE TABLE IF NOT EXISTS Podcasttable_New(".
+					"PODindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+					"FeedURL TEXT, ".
+					"LastUpdate INTEGER, ".
+					"Image VARCHAR(255), ".
+					"Title VARCHAR(255), ".
+					"Artist VARCHAR(255), ".
+					"RefreshOption TINYINT(2) DEFAULT 0, ".
+					"SortMode TINYINT(2) DEFAULT 0, ".
+					"HideDescriptions TINYINT(1) DEFAULT 0, ".
+					"DisplayMode TINYINT(2) DEFAULT 0, ".
+					"DaysToKeep INTEGER DEFAULT 0, ".
+					"NumToKeep INTEGER DEFAULT 0, ".
+					"KeepDownloaded TINYINT(1) DEFAULT 0, ".
+					"AutoDownload TINYINT(1) DEFAULT 0, ".
+					"DaysLive INTEGER, ".
+					"Version TINYINT(2), ".
+					"Subscribed TINYINT(1) NOT NULL DEFAULT 1, ".
+					"Description TEXT, ".
+					"LastPubDate INTEGER DEFAULT NULL, ".
+					"Category VARCHAR(255))", true);
+				generic_sql_query("INSERT INTO Podcasttable_New SELECT PODindex, FeedURL, LastUpdate, Image, Title, Artist,
+					RefreshOption, SortMode, HideDescriptions, DisplayMode, DaysToKeep, NumToKeep, KeepDownloaded, AutoDownload,
+					DaysLive, Version, Subscribed, Description, LastPubDate, '' AS Category
+					FROM Podcasttable", true);
+				generic_sql_query("DROP TABLE Podcasttable", true);
+				generic_sql_query("ALTER TABLE Podcasttable_New RENAME TO Podcasttable", true);
+				generic_sql_query("UPDATE Statstable SET Value = 41 WHERE Item = 'SchemaVer'", true);
+				break;
+				
+			case 41:
+				debuglog("Updating FROM Schema version 41 TO Schema version 42","SQL");
+				generic_sql_query("CREATE TABLE IF NOT EXISTS PodcastTracktable_New(".
+					"PODTrackindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+					"JustUpdated TINYINT(1), ".
+					"PODindex INTEGER, ".
+					"Title VARCHAR(255), ".
+					"Artist VARCHAR(255), ".
+					"Duration INTEGER, ".
+					"PubDate INTEGER, ".
+					"FileSize INTEGER, ".
+					"Description TEXT, ".
+					"Link TEXT, ".
+					"Guid TEXT, ".
+					"Localfilename VARCHAR(255), ".
+					"Downloaded TINYINT(1) DEFAULT 0, ".
+					"Listened TINYINT(1) DEFAULT 0, ".
+					"New TINYINT(1) DEFAULT 1, ".
+					"Progress INTEGER DEFAULT 0, ".
+					"Deleted TINYINT(1) DEFAULT 0)", true);
+				generic_sql_query("INSERT INTO PodcastTracktable_New SELECT PODTrackindex, JustUpdated, PODindex, Title, Artist,
+					Duration, PubDate, FileSize, Description, Link, Guid, Localfilename, Downloaded, Listened, New, 0 AS Progress, Deleted
+					FROM PodcastTracktable", true);
+				generic_sql_query("DROP TABLE PodcastTracktable", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable_New RENAME TO PodcastTracktable", true);
+				generic_sql_query("CREATE INDEX IF NOT EXISTS ptt ON PodcastTracktable (Title)", true);
+				generic_sql_query("UPDATE Statstable SET Value = 42 WHERE Item = 'SchemaVer'", true);
+				break;
 
 		}
 		$sv++;

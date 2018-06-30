@@ -95,6 +95,14 @@ if ($is_connected) {
                     $thing = array('searchaddpl',$cmd[1],'base',$cmd[2]);
                     $cmds[] = join_command_string($thing);
                     break;
+                    
+                case "resume":
+                    debuglog("Adding Track ".$cmd[1],"POSTCOMMAND");
+                    debuglog("  .. and seeking position ".$cmd[3]." to ".$cmd[2],"POSTCOMMAND");
+                    $cmds[] = join_command_string(array('add', $cmd[1]));
+                    $cmds[] = join_command_string(array('play', $cmd[3]));
+                    $cmds[] = join_command_string(array('seek', $cmd[3], $cmd[2]));
+                    break;
 
                 case 'save':
                 case 'rm':

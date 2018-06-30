@@ -21,25 +21,27 @@ if (array_key_exists('populate', $_REQUEST)) {
     if (array_key_exists('url', $_REQUEST)) {
         getNewPodcast(rawurldecode($_REQUEST['url']));
     } else if (array_key_exists('refresh', $_REQUEST)) {
-        $podid = refreshPodcast($_REQUEST['refresh']);
+        $podid = array(refreshPodcast($_REQUEST['refresh']));
     } else if (array_key_exists('remove', $_REQUEST)) {
         removePodcast($_REQUEST['remove']);
     } else if (array_key_exists('listened', $_REQUEST)) {
-        $podid = markAsListened(rawurldecode($_REQUEST['listened']));
+        $podid = array(markAsListened(rawurldecode($_REQUEST['listened'])));
     } else if (array_key_exists('removetrack', $_REQUEST)) {
-        $podid = deleteTrack($_REQUEST['removetrack'], $_REQUEST['channel']);
+        $podid = array(deleteTrack($_REQUEST['removetrack'], $_REQUEST['channel']));
     } else if (array_key_exists('downloadtrack', $_REQUEST)) {
         $podid = downloadTrack($_REQUEST['downloadtrack'], $_REQUEST['channel']);
     } else if (array_key_exists('markaslistened', $_REQUEST)) {
-        $podid = markKeyAsListened($_REQUEST['markaslistened'], $_REQUEST['channel']);
+        $podid = array(markKeyAsListened($_REQUEST['markaslistened'], $_REQUEST['channel']));
     } else if (array_key_exists('channellistened', $_REQUEST)) {
-        $podid = markChannelAsListened($_REQUEST['channellistened']);
+        $podid = array(markChannelAsListened($_REQUEST['channellistened']));
     } else if (array_key_exists('channelundelete', $_REQUEST)) {
-        $podid = undeleteFromChannel($_REQUEST['channelundelete']);
+        $podid = array(undeleteFromChannel($_REQUEST['channelundelete']));
+    } else if (array_key_exists('setprogress', $_REQUEST)) {
+        $podid = array(setPlaybackProgress($_REQUEST['setprogress'], rawurldecode($_REQUEST['track'])));
     } else if (array_key_exists('removedownloaded', $_REQUEST)) {
-        $podid = removeDownloaded($_REQUEST['removedownloaded']);
+        $podid = array(removeDownloaded($_REQUEST['removedownloaded']));
     } else if (array_key_exists('option', $_REQUEST)) {
-        $podid = changeOption($_REQUEST['option'], $_REQUEST['val'], $_REQUEST['channel']);
+        $podid = array(changeOption($_REQUEST['option'], $_REQUEST['val'], $_REQUEST['channel']));
     } else if (array_key_exists('loadchannel', $_REQUEST)) {
         $podid = $_REQUEST['loadchannel'];
     } else if (array_key_exists('search', $_REQUEST)) {
@@ -48,20 +50,25 @@ if (array_key_exists('populate', $_REQUEST)) {
     } else if (array_key_exists('subscribe', $_REQUEST)) {
         subscribe($_REQUEST['subscribe']);
     } else if (array_key_exists('getcounts', $_REQUEST)) {
-        $count = get_all_counts();
-        print json_encode($count);
-        exit(0);
+        $podid = get_all_counts();
     } else if (array_key_exists('checkrefresh', $_REQUEST)) {
-        $refreshers = check_podcast_refresh();
-        print json_encode($refreshers);
-        exit(0);
+        $podid = check_podcast_refresh();
     }
 
     if ($podid === false) {
         header('HTTP/1.1 204 No Content');
+    } else if (is_array($podid)) {
+        if (array_key_exists(0, $podid) && $podid[0] === false) {
+            header('HTTP/1.1 204 No Content');
+        } else {
+            header('Content-Type: application/json');
+            print json_encode($podid);
+        }
     } else if ($podid !== null) {
+        header('Content-Type: text/htnml; charset=utf-8');
         outputPodcast($podid);
     } else {
+        header('Content-Type: text/htnml; charset=utf-8');
         doPodcastList($subflag);
     }
 

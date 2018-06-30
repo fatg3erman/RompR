@@ -86,6 +86,14 @@ Search results are displayed very much like your subscribed podcasts, except the
 
 To subscribe to a podcast from search results, click the RSS icon to the right.
 
+## Resuming Playback
+
+If you stop or skip a Podcast episode while it is playing, Rompr will store the playback position, allowing you to resume from where you left off.
+
+![](images/podresume.png)
+
+Double-click the Resume bar to add the podcast to the Current Playlist and start playback from the position shown. Note that this functionality may be flaky if you use Mopidy, there appears to be a bug in Mopidy to do with seeking. Resume functionality will only work when you add the episode to the current playlist - once the itme is in the playlist and has been stopped, you will need to re-add it to the playlist for resume to work again.
+
 ## Using Mopidy-Podcasts
 
 Users of the mopidy-podcasts backend will know that it has its own search engines, these are accessed using the main RompЯ search panel. If you're playing a podcast episode via that backend, an RSS icon will appear in the now playing area. Clicking that icon will add that podcast to your list of subscribed podcasts.

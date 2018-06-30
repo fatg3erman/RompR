@@ -162,6 +162,7 @@ function check_sql_tables() {
 		"Subscribed TINYINT(1) NOT NULL DEFAULT 1, ".
 		"Description TEXT, ".
 		"LastPubDate INT UNSIGNED DEFAULT NULL, ".
+		"Category VARCHAR(255) NOT NULL, ".
 		"PRIMARY KEY (PODindex)) ENGINE=InnoDB", true))
 	{
 		debuglog("  Podcasttable OK","MYSQL_CONNECT");
@@ -187,6 +188,7 @@ function check_sql_tables() {
 		"Listened TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"New TINYINT(1) UNSIGNED DEFAULT 1, ".
 		"Deleted TINYINT(1) UNSIGNED DEFAULT 0, ".
+		"Progress INT UNSIGNED DEFAULT 0, ".
 		"INDEX (PODindex), ".
 		"PRIMARY KEY (PODTrackindex), ".
 		"INDEX (Title)) ENGINE=InnoDB", true))
@@ -605,6 +607,18 @@ function check_sql_tables() {
 				// require_once('includes/podcastfunctions.php');
 				// upgrade_podcast_images();
 				generic_sql_query("UPDATE Statstable SET Value = 40 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 40:
+				debuglog("Updating FROM Schema version 40 TO Schema version 41","SQL");
+				generic_sql_query("ALTER TABLE Podcasttable ADD Category VARCHAR(255) NOT NULL", true);
+				generic_sql_query("UPDATE Statstable SET Value = 41 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 41:
+				debuglog("Updating FROM Schema version 41 TO Schema version 42","SQL");
+				generic_sql_query("ALTER TABLE PodcastTracktable ADD Progress INT UNSIGNED DEFAULT 0", true);
+				generic_sql_query("UPDATE Statstable SET Value = 42 WHERE Item = 'SchemaVer'", true);
 				break;
 				
 		}

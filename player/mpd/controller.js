@@ -126,7 +126,7 @@ function playerController() {
                 if (data) {
                     if (data.state) {
                         player.status = data;
-                        debug.log("MPD","Status",player.status);
+                        // debug.trace("MPD","Status",player.status);
                         if (player.status.playlist !== plversion && !moving) {
                             playlist.repopulate();
                         }
@@ -347,14 +347,17 @@ function playerController() {
 	}
 
 	this.stop = function() {
+        playlist.checkPodcastProgress();
         self.do_command_list([["stop"]], self.onStop);
 	}
 
 	this.next = function() {
+        playlist.checkPodcastProgress();
         self.do_command_list([["next"]]);
 	}
 
 	this.previous = function() {
+        playlist.checkPodcastProgress();
         self.do_command_list([["previous"]]);
 	}
 
@@ -364,10 +367,12 @@ function playerController() {
 	}
 
 	this.playId = function(id) {
+        playlist.checkPodcastProgress();
         self.do_command_list([["playid",id]]);
 	}
 
 	this.playByPosition = function(pos) {
+        playlist.checkPodcastProgress();
         self.do_command_list([["play",pos.toString()]]);
 	}
 
@@ -424,6 +429,7 @@ function playerController() {
     }
 
 	this.addTracks = function(tracks, playpos, at_pos) {
+        var abitofahack = true;
         layoutProcessor.notifyAddTracks();
 		debug.log("MPD","Adding Tracks",tracks,playpos,at_pos);
 		var cmdlist = [];
@@ -453,12 +459,21 @@ function playerController() {
                 case "playlisttoend":
                     cmdlist.push(['playlisttoend',v.playlist,v.frompos]);
                     break;
+                case "resumepodcast":
+                    cmdlist.push(['resume', v.uri, v.resumefrom, v.pos]);
+                    playpos = null;
+                    abitofahack = false;
+                    break;
     		}
 		});
 		// Note : playpos will only be set if at_pos isn't, because at_pos is only set when dragging to the playlist
         if (prefs.cdplayermode && at_pos === null) {
             cmdlist.unshift(["clear"]);
-            cmdlist.push(['play']);
+            if (abitofahack) {
+                // Don't add the play command if we're doing a resume,
+                // because postcommand.php will add it and this will override it
+                cmdlist.push(['play']);
+            }
         } else if (playpos !== null) {
 			cmdlist.push(['play', playpos.toString()]);
 		}
@@ -700,6 +715,7 @@ function playerController() {
     }
 
     this.onStop = function() {
+        playlist.checkPodcastProgress();
         infobar.setProgress(0,-1,-1);
         self.checkProgress();
     }
