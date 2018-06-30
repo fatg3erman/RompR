@@ -108,7 +108,7 @@ The response you get back looks like
 {"volume":"100","repeat":"0","random":"0","single":"0","consume":"0","playlist":"12","playlistlength":"10","xfade":"0","state":"play","song":"0","songid":"2","nextsong":"1","nextsongid":"3","time":"22:150","elapsed":"22.610","bitrate":"0","file":"local:track:Acoustic%20Ladyland\/Living%20With%20a%20Tiger\/01%20Sport%20Mode.mp3","Time":"150","Artist":"Acoustic Ladyland","Album":"Living With a Tiger","Title":"Sport Mode","Date":"2009-07-06","Track":"1\/10","Pos":"0","Id":"2","MUSICBRAINZ_ALBUMID":"64dbb31b-c549-4a20-b1d1-7f69503ef51c","AlbumArtist":"Acoustic Ladyland","MUSICBRAINZ_ALBUMARTISTID":"187d33be-74c2-48bd-bf44-412c06b94eee","MUSICBRAINZ_ARTISTID":"187d33be-74c2-48bd-bf44-412c06b94eee","Genre":"Jazz","Disc":"1","Last-Modified":"2013-08-17T19:16:37Z","MUSICBRAINZ_TRACKID":"00397625-ea7d-4870-ad3e-ac32ee2739e5","X-AlbumUri":"local:album:md5:f13a06a18ababeb04d4047c9307c0bb2"}
 ````
 
-You can also specify a file that contains the JSON data. Eg create file called 'play.json':
+You can also specify a file that contains the JSON data. Eg create a file called 'play.json':
 
     [
         ["play"]
