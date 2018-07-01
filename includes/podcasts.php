@@ -137,9 +137,9 @@ function doPodcastBase() {
 function doPodcastList($subscribed) {
     global $prefs;
     if ($subscribed == 1) {
-        $qstring = "SELECT Podcasttable.*, SUM(New = 1) AS new, SUM(Listened = 0) AS unlistened FROM PodcastTable JOIN PodcastTracktable USING(PODindex) WHERE Subscribed = 1 AND Deleted = 0 GROUP BY PODindex ORDER BY";
+        $qstring = "SELECT Podcasttable.*, SUM(New = 1) AS new, SUM(Listened = 0) AS unlistened FROM Podcasttable JOIN PodcastTracktable USING(PODindex) WHERE Subscribed = 1 AND Deleted = 0 GROUP BY PODindex ORDER BY";
     } else {
-        $qstring = "SELECT Podcasttable.*, 0 AS new, 0 AS unlistened FROM PodcastTable WHERE Subscribed = 0 ORDER BY";
+        $qstring = "SELECT Podcasttable.*, 0 AS new, 0 AS unlistened FROM Podcasttable WHERE Subscribed = 0 ORDER BY";
     }
     $sortarray = array();
     for ($i = 0; $i < $prefs['podcast_sort_levels']; $i++) {
