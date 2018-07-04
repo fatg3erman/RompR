@@ -10,9 +10,9 @@ include ("getid3/getid3.php");
 debuglog("------- Searching For Album Art --------","GETALBUMCOVER");
 foreach ($_REQUEST as $k => $v) {
     if ($k == 'base64data') {
-        debuglog('Present', $k ,7);
+        debuglog(' Present', ' '.$k ,7);
     } else {
-        debuglog($v, $k ,7);
+        debuglog(' '.$v, ' '.$k ,7);
     }
 }
 

@@ -38,13 +38,13 @@ while (true) {
             doCollection('currentsong', array(), null);
             $current_id = $mpd_status['songid'];
             $playcount_updated = false;
+			romprmetadata::get($current_song);
+            $current_playcount = array_key_exists('Playcount', $returninfo) ? $returninfo['Playcount'] : 0;
+			debuglog("Current Playcount is ".$current_playcount,"ROMONITOR",8);
         }
         $progress = $mpd_status['elapsed']/$current_song['duration'];
         if ($current_song['type'] !== 'stream' && $progress > 0.6 && !$playcount_updated) {
             debuglog("Updating Playcount for current song","ROMONITOR");
-            romprmetadata::get($current_song);
-            $current_playcount = array_key_exists('Playcount', $returninfo) ? $returninfo['Playcount'] : 0;
-            debuglog("Current Playcount is ".$current_playcount,"ROMONITOR",9);
             $current_song['attributes'] = array(array('attribute' => 'Playcount', 'value' => $current_playcount+1));
             romprmetadata::inc($current_song);
             if ($current_song['type'] == 'podcast') {
