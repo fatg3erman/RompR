@@ -8,7 +8,7 @@ function musicCollectionUpdate() {
     $dirs = array("/");
     while (count($dirs) > 0) {
         $dir = array_shift($dirs);
-        fwrite($monitor, "\nScanning Directory ".$dir);
+        fwrite($monitor, "\n<b>Scanning Directory</b> ".$dir.'<br/>'.count($dirs).' folders remaining');
         doMpdParse('lsinfo "'.format_for_mpd($dir).'"', $dirs, null);
 	    $collection->tracks_to_database();
     }

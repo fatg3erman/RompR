@@ -13,5 +13,4 @@ if (file_exists('prefs/monitor.xml')) {
 }
 
 print json_encode($status);
-
 ?>

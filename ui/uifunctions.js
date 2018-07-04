@@ -255,6 +255,9 @@ var imagePopup = function() {
 }();
 
 function albumart_translator(source) {
+    
+    // This should be kept in step with class baseAlbumImgae in imagefunctions.php
+    
     // Given an album image of any size, return any other size
     this.source = source;
     this.getSize = function(size) {
@@ -269,6 +272,7 @@ function albumart_translator(source) {
         }
     }
     
+    // Get an image key
     this.getKey = function(type, artist, album) {
         switch (type) {
             case 'stream':

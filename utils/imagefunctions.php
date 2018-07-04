@@ -12,6 +12,8 @@ class baseAlbumImage {
         A key must NOT be supplied in this case.
     */
     
+    // Remember to keep albumart_translator in uifunctions.js in step with this
+    
     public function __construct($params) {
         global $prefs;
         foreach (array('artist', 'album', 'key', 'source', 'file', 'base64data', 'mbid', 'albumpath', 'albumuri') as $param) {
