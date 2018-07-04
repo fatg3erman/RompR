@@ -8,7 +8,7 @@ print '<table id="debuginfotable" width="100%">';
 print '<tr><th colspan="2">Backend Info</th></tr>';
 print '<tr><td>Version</td><td>'.$version_string.'</td></tr>';
 foreach ($private_prefs as $p) {
-    if ($prefs[$p] != '') {
+    if (array_key_exists($p, $orefs) && $prefs[$p] != '') {
         $prefs[$p] = '[Redacted]';
     }
     print '<tr><td>'.$p.'</td><td>'.$prefs[$p].'</td></tr>';

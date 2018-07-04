@@ -199,7 +199,7 @@ function tryLastFM($albumimage) {
             if ($image) { $pic = $image; }
             $s = array_search($attrs['size'], $sizeorder);
             if ($s > $cs) {
-                debuglog("    Image ".$attrs['size']." '".$image."'");
+                debuglog("    Image ".$attrs['size']." '".$image."'","GETALBUMCOVER");
                 $retval = $image;
                 $cs = $s;
             }
