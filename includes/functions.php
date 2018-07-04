@@ -43,111 +43,170 @@ function format_text($d) {
     return $d;
 }
 
-# url_get_contents function by Andy Langton: http://andylangton.co.uk/
-function url_get_contents(  $url,
-                            $useragent = ROMPR_IDSTRING,
-                            $headers = false,
-                            $follow_redirects = true,
-                            $debug = false,
-                            $fp = null,
-                            $header = null,
-                            $postfields = null,
-                            $timeout = 120,
-                            $conntimeout = 60) {
-
-    global $prefs;
-    $headerarray = [];
-    $headerlen = 0;
-    $url = preg_replace('/ /', '%20', $url);
-    # initialise the CURL library
-    $ch = curl_init();
-    # specify the URL to be retrieved
-    curl_setopt($ch, CURLOPT_URL,$url);
-    curl_setopt($ch, CURLOPT_ENCODING , "");
-    if ($fp === null) {
-        # we want to get the contents of the URL and store it in a variable
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-    } else {
-        curl_setopt($ch, CURLOPT_FILE, $fp);
+class url_downloader {
+    
+    private $default_options = array(
+        'useragent' => ROMPR_IDSTRING,
+        'timeout' => 120,
+        'connection_timeout' => 60,
+        'url' => '',
+        'header' => null,
+        'postfields' => null,
+        'cache' => null,
+        'return_data' => false,
+        'send_cache_headers' => false
+    );
+    
+    private $ch;
+    private $headerarray = array();
+    private $headerlen = 0;
+    private $content;
+    private $content_type;
+    private $info;
+    private $status;
+    
+    public function __construct($options) {
+        global $prefs;
+        $this->options = array_merge($this->default_options, $options);
+        $this->ch = curl_init();
+        curl_setopt($this->ch, CURLOPT_URL, $this->options['url']);
+        curl_setopt($this->ch, CURLOPT_ENCODING, '');
+        curl_setopt($this->ch, CURLOPT_USERAGENT, $this->options['useragent']);
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($this->ch, CURLOPT_TIMEOUT, $this->options['timeout']);
+        curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, $this->options['connection_timeout']);
+        if ($prefs['proxy_host'] != "") {
+            curl_setopt($this->ch, CURLOPT_PROXY, $prefs['proxy_host']);
+        }
+        if ($prefs['proxy_user'] != "" && $prefs['proxy_password'] != "") {
+            curl_setopt($this->ch, CURLOPT_PROXYUSERPWD, $prefs['proxy_user'].':'.$prefs['proxy_password']);
+        }
+        curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
+        if ($this->options['header']) {
+            curl_setopt($this->ch, CURLOPT_HTTPHEADER, $this->options['header']);
+        }
+        if ($this->options['postfields'] !== null) {
+            $fields_string = '';
+            foreach ($this->options['postfields'] as $key => $value) {
+                $fields_string .= $key.'='.$value.'&';
+            }
+            rtrim($fields_string,'&');
+            curl_setopt($this->ch, CURLOPT_POST, count($this->options['postfields']));
+            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $fields_string);
+        }
     }
-    # specify the useragent: this is a required courtesy to site owners
-    curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
-    # ignore SSL errors
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $conntimeout);
-    if ($prefs['proxy_host'] != "") {
-        curl_setopt($ch, CURLOPT_PROXY, $prefs['proxy_host']);
-    }
-    if ($prefs['proxy_user'] != "" && $prefs['proxy_password'] != "") {
-        curl_setopt($ch, CURLOPT_PROXYUSERPWD, $prefs['proxy_user'].':'.$prefs['proxy_password']);
-    }
-
-    # return headers as requested
-    if ($headers === true) {
-        debuglog("Requesting Headers","BLURBLE");
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_HEADERFUNCTION,
-            function($curl, $header) use (&$headerarray, &$headerlen)
+    
+    public function get_data_to_string() {
+        debuglog("Downloading ".$this->options['url'],"URL_DOWNLOADER");
+        if ($this->options['send_cache_headers']) {
+            header("Pragma: Not Cached");
+        }
+        curl_setopt($this->ch, CURLOPT_HEADER, true);
+        curl_setopt($this->ch, CURLOPT_HEADERFUNCTION, function($curl, $header)
             {
                 $len = strlen($header);
-                $headerlen += $len;
+                $this->headerlen += $len;
                 $header = explode(':', $header, 2);
                 if (count($header) < 2) // ignore invalid headers
                     return $len;
 
                 $name = ($header[0]);
-                $headerarray[$name] = trim($header[1]);
+                $this->headerarray[$name] = trim($header[1]);
                 return $len;
             }
         );
+        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
+        $this->content = curl_exec($this->ch);
+        return $this->get_final_info();
     }
-
-    # only return headers
-    if ($headers === 'headers only') {
-        curl_setopt($ch, CURLOPT_NOBODY, true);
-    }
-
-    # follow redirects - note this is disabled by default in most PHP installs from 4.4.4 up
-    if ($follow_redirects==true) {
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    }
-
-    if ($header !== null) {
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-    }
-
-    if ($postfields !== null) {
-        $fields_string = '';
-        foreach ($postfields as $key=>$value) {
-            $fields_string .= $key.'='.$value.'&';
+    
+    public function get_data_to_file($file = null, $binary = false) {
+        if ($file === null && $this->options['cache'] === null) {
+            debuglog("  No file or cache dir for request","URL_DOWNLOADER");
+            return $this->get_data_to_string();
+        } else if ($this->options['cache'] !== null) {
+            $file = 'prefs/jsoncache/'.$this->options['cache'].'/'.md5($this->options['url']);
         }
-        rtrim($fields_string,'&');
-        curl_setopt($ch, CURLOPT_POST, count($postfields));
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+        if ($this->options['cache'] !== null && $this->check_cache($file)) {
+            debuglog("Returning cached data ".$file,"URL_DOWNLOADER");
+            $this->content = file_get_contents($file);
+            return true;
+        } else {
+            debuglog("Downloading ".$this->options['url']." to ".$file,"URL_DOWNLOADER");
+            if (file_exists($file)) {
+                unlink ($file);
+            }
+            $open_mode = $binary ? 'wb' : 'w';
+            $fp = fopen($file, $open_mode);
+            curl_setopt($this->ch, CURLOPT_FILE, $fp);
+            curl_exec($this->ch);
+            fclose($fp);
+            if ($this->options['return_data']) {
+                $this->content = file_get_contents($file);
+            }
+            if (curl_getinfo($this->ch,CURLINFO_RESPONSE_CODE) != '200') {
+                unlink($file);
+            }
+            return $this->get_final_info();
+        }
+    }
+    
+    private function check_cache($file) {
+        if (file_exists($file)) {
+            if ($this->options['send_cache_headers']) {
+                header("Pragma: From Cache");
+            }
+            return true;
+        } else {
+            if ($this->options['send_cache_headers']) {
+                header("Pragma: Not Cached");
+            }
+            return false;
+        }
+    }
+    
+    private function get_final_info() {
+        $this->status = curl_getinfo($this->ch, CURLINFO_RESPONSE_CODE);
+        $this->content_type = curl_getinfo($this->ch, CURLINFO_CONTENT_TYPE);
+        $this->info = curl_getinfo($this->ch);
+        curl_close($this->ch);
+        if ($this->get_status() == '200') {
+            debuglog("  ..  Download Success","URL_DOWNLOADER");
+            return true;
+        } else {
+            debuglog("  ..  Download Failed With Status Code ".$this->get_status(),"URL_DOWNLOADER");
+            return false;
+        }
+    }
+    
+    public function get_data() {
+        return substr($this->content, $this->headerlen);
+    }
+    
+    public function get_headers() {
+        return $this->headerarray;
+    }
+    
+    public function get_header($h) {
+        if (array_key_exists($h, $this->headerarray)) {
+            return $this->headerarray[$h];
+        } else {
+            return false;
+        }
+    }
+    
+    public function get_status() {
+        return $this->status;
+    }
+    
+    public function get_info() {
+        return $this->info;
+    }
+    
+    public function get_content_type() {
+        return $this->content_type;
     }
 
-    if ($fp === null) {
-        $result['contents'] = curl_exec($ch);
-    } else {
-        curl_exec($ch);
-    }
-
-    $result['status'] = curl_getinfo($ch,CURLINFO_HTTP_CODE);
-    $result['content-type'] = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-    if ($headers === true) {
-        $result['headers'] = $headerarray;
-        $result['contents'] = substr($result['contents'], $headerlen);
-    }
-    # if debugging, return an array with CURL's debug info and the URL contents
-    if ($debug==true) {
-        $result['info'] = curl_getinfo($ch);
-    }
-    # free resources
-    curl_close($ch);
-
-    # send back the data
-    return $result;
 }
 
 function format_time($t,$f=':') // t = seconds, f = separator
@@ -746,40 +805,27 @@ function getCacheData($uri, $cache, $returndata = false, $use_cache = true) {
     if ($use_cache == false) {
         debuglog("  Not using cache for this request","CACHE");
     }
-
-    if ($use_cache && file_exists('prefs/jsoncache/'.$cache.'/'.md5($uri))) {
-        debuglog("Returning cached data",$me);
+    $options = array(
+        'url' => $uri,
+        'send_cache_headers' => !$returndata,
+        'cache' => $use_cache ? $cache : null,
+        'return_data' => true
+    );
+    $d = new url_downloader($options);
+    if ($d->get_data_to_file()) {
         if ($returndata) {
-            return json_decode(file_get_contents('prefs/jsoncache/'.$cache.'/'.md5($uri)));
+            return json_decode($d->get_data());
         } else {
-            header("Pragma: From Cache");
-            print file_get_contents('prefs/jsoncache/'.$cache.'/'.md5($uri));
+            print $d->get_data();
         }
     } else {
-        $content = url_get_contents($uri);
-        $s = $content['status'];
-        debuglog("Response Status was ".$s, $me);
-        if ($s == "200") {
-            if ($use_cache) {
-                file_put_contents('prefs/jsoncache/'.$cache.'/'.md5($uri), $content['contents']);
-            }
-            if ($returndata) {
-                return json_decode($content['contents']);
-            } else {
-                header("Pragma: Not Cached");
-                print $content['contents'];
-            }
+        $a = array( 'error' => get_int_text($cache."_error"));
+        if ($returndata) {
+            return $a;
         } else {
-            $a = array( 'error' => get_int_text($cache."_error"));
-            if ($returndata) {
-                return $a;
-            } else {
-                header("Pragma: Not Cached");
-                print json_encode($a);
-            }
+            print json_encode($a);
         }
     }
-
 }
 
 function get_user_file($src, $fname, $tmpname) {
@@ -930,6 +976,12 @@ function update_stream_images() {
         } else {
             generic_sql_query("UPDATE RadioStationtable SET IMAGE = NULL WHERE Stationindex = ".$station['Stationindex']);
         }
+    }
+}
+
+function empty_modified_cache_dirs() {
+    foreach(array('allmusic', 'lyrics') as $d) {
+        exec('rm prefs/jsoncache/'.$d.'/*');
     }
 }
 

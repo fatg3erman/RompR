@@ -524,10 +524,6 @@ var layoutProcessor = function() {
             $("#plmode").html(html);
         },
         
-        setTopIconSize: function(panels) {
-
-        },
-        
         makeCollectionDropMenu: function(element, name) {
             var x = $('#'+name);
             // If the dropdown doesn't exist then create it

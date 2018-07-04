@@ -26,7 +26,7 @@ if (!$url) {
 	$bits = explode('_', $outfile);
 	$content_type = rawurldecode(array_pop($bits));
 	debuglog("  .. Content Type is ".$content_type,"TOMATO",8);
-	if (substr($content_type,0,5) != 'image') {
+	if (substr($content_type,0,5) != 'image' && $content_type != 'application/octet-stream') {
 		debuglog("Not an image file! ".$url,"TOMATO",5);
 		header("HTTP/1.1 404 Not Found");
 	} else {
@@ -38,22 +38,19 @@ if (!$url) {
 function download_image_file($url, $outfile) {
 
 	debuglog("  ... Downloading it", "TOMATO",8);
-	$fp = fopen($outfile, 'w');
-	$aagh = url_get_contents($url, ROMPR_IDSTRING, false, true, true, $fp);
-	fclose($fp);
-	if ($aagh['status'] == "200") {
+	$d = new url_downloader(array('url' => $url));
+	if ($d->get_data_to_file($outfile, true)) {
 		debuglog("Cached Image ".$outfile,"TOMATO",9);
+		$content_type = $d->get_content_type();
+		debuglog("  ... Content Type is ".$content_type,"TOMATO", 9);
+		$fileplusmime = $outfile.'_'.rawurlencode($content_type);
+		system('mv '.$outfile.' '.$fileplusmime);
+		return $fileplusmime;
 	} else {
-		debuglog("Failed to download ".$url." - status was ".$aagh['status'],"TOMATO",5);
+		debuglog("Failed to download ".$url." - status was ".$d->get_status(),"TOMATO",5);
 		header("HTTP/1.1 404 Not Found");
 		exit(0);
 	}
-	$content_type = $aagh['info']['content_type'];
-	debuglog("  ... Content Type is ".$content_type,"TOMATO", 9);
-	$fileplusmime = $outfile.'_'.rawurlencode($content_type);
-	system('mv '.$outfile.' '.$fileplusmime);
-	return $fileplusmime;
-
 }
 
 

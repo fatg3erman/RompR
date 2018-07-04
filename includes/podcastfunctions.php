@@ -4,25 +4,24 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null) {
     global $prefs;
     $url = preg_replace('#^itpc://#', 'http://', $url);
     $url = preg_replace('#^feed://#', 'http://', $url);
-    $result = url_get_contents($url);
-    if ($result['status'] != "200") {
+    $d = new url_downloader(array('url' => $url));
+    if (!$d->get_data_to_string()) {
         header('HTTP/1.0 404 Not Found');
         print "Feed Not Found";
         debuglog("Failed to get ".$url,"PODCASTS",2);
         exit;
     }
-    debuglog("Feed retrieved from ".$url,"PODCASTS");
-    
+        
     // For debugging
-    file_put_contents('prefs/temp/feed.xml', $result['contents']);
+    file_put_contents('prefs/temp/feed.xml', $d->get_data());
     
     if ($id) {
         if (!is_dir('prefs/podcasts/'.$id)) {
             exec('mkdir prefs/podcasts/'.$id);
         }
-        file_put_contents('prefs/podcasts/'.$id.'/feed.xml', $result['contents']);
+        file_put_contents('prefs/podcasts/'.$id.'/feed.xml', $d->get_data());
     }
-    $feed = simplexml_load_string($result['contents']);
+    $feed = simplexml_load_string($d->get_data());
 
     // Begin RSS Parse
     $podcast = array();
@@ -1058,21 +1057,13 @@ function downloadTrack($key, $channel) {
         fwrite($fp, $xml);
         fclose($fp);
         debuglog('Downloading To prefs/podcasts/'.$channel.'/'.$key.'/'.$filename,"PODCASTS");
-        $fp = fopen('prefs/podcasts/'.$channel.'/'.$key.'/'.$filename, 'wb');
-        if ($fp === false) {
-            debuglog("Failed to open file","PODCASTS",2);
-            return $channel;
-        }
-        $result = url_get_contents($url, ROMPR_IDSTRING, false, true, false, $fp);
-        fclose($fp);
-        if ($result['status'] != "200") {
+        $d = new url_downloader(array('url' => $url));
+        if ($d->get_data_to_file('prefs/podcasts/'.$channel.'/'.$key.'/'.$filename, true)) {
+            sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?", 1, '/prefs/podcasts/'.$channel.'/'.$key.'/'.$filename, $key);
+        } else {
             header('HTTP/1.0 404 Not Found');
-            debuglog("Failed to get ".$url,"PODCASTS",2);
-            debuglog("   Status was ".$result['status'],"PODCASTS",2);
             system ('rm -fR prefs/podcasts/'.$channel.'/'.$key);
-            return $channel;
         }
-        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?", 1, '/prefs/podcasts/'.$channel.'/'.$key.'/'.$filename, $key);
     } else {
         debuglog('Failed to create directory prefs/podcasts/'.$channel.'/'.$key,"PODCASTS",2);
         return $channel;
@@ -1167,10 +1158,9 @@ function search_itunes($term) {
     debuglog("Searching iTunes for podcasts '".$term."'","PODCASTS",6);
     generic_sql_query("DELETE FROM PodcastTracktable WHERE PODindex IN (SELECT PODindex FROM Podcasttable WHERE Subscribed = 0)", true);
     generic_sql_query("DELETE FROM Podcasttable WHERE Subscribed = 0", true);
-    $content = url_get_contents('https://itunes.apple.com/search?term='.$term.'&entity=podcast');
-    debuglog("Status is ".$content['status'],"PODCASTS");
-    if ($content['status'] == '200') {
-        $pods = json_decode(trim($content['contents']), true);
+    $d = new url_downloader(array('url' => 'https://itunes.apple.com/search?term='.$term.'&entity=podcast'));
+    if ($d->get_data_to_string()) {
+        $pods = json_decode(trim($d->get_data()), true);
         foreach ($pods['results'] as $podcast) {
             if (array_key_exists('feedUrl', $podcast)) {
                 // Bloody hell they can't even be consistent!
@@ -1217,10 +1207,7 @@ function search_itunes($term) {
                 );
             }
         }
-    } else {
-        debuglog("SEARCH ERROR - Status was ".$content['status'],"PODCASTS",3);
     }
-
 }
 
 function subscribe($index) {

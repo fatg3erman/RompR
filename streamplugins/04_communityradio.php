@@ -42,24 +42,21 @@ class commradioplugin {
 
         print '<div class="configtitle textcentre brick_wide">List By:</div>';
         
-        $content = url_get_contents('http://www.radio-browser.info/webservice/json/countries', ROMPR_IDSTRING, false, true);
-        if ($content['status'] == '200') {
-            $countries = json_decode($content['contents'], true);
-            debuglog("Loaded Countries List","COMMRADIO");
+        $d = new url_downloader(array('url' => 'http://www.radio-browser.info/webservice/json/countries'));
+        if ($d->get_data_to_string()) {
+            $countries = json_decode($d->get_data(), true);
             $this->makeSelector($countries, 'country', $this->country);
         }
 
-        $content = url_get_contents('http://www.radio-browser.info/webservice/json/languages', ROMPR_IDSTRING, false, true);
-        if ($content['status'] == '200') {
-            $langs = json_decode($content['contents'], true);
-            debuglog("Loaded Languages List","COMMRADIO");
+        $d = new url_downloader(array('url' => 'http://www.radio-browser.info/webservice/json/languages'));
+        if ($d->get_data_to_string()) {
+            $langs = json_decode($d->get_data(), true);
             $this->makeSelector($langs, 'language', $this->language);
         }
 
-        $content = url_get_contents('http://www.radio-browser.info/webservice/json/tags', ROMPR_IDSTRING, false, true);
-        if ($content['status'] == '200') {
-            $tags = json_decode($content['contents'], true);
-            debuglog("Loaded Tags List","COMMRADIO");
+        $d = new url_downloader(array('url' => 'http://www.radio-browser.info/webservice/json/tags'));
+        if ($d->get_data_to_string()) {
+            $tags = json_decode($d->get_data(), true);
             $this->makeSelector($tags, 'tag', $this->tag);
         }
         
@@ -133,9 +130,9 @@ class commradioplugin {
                 break;
         }
 
-        $content = url_get_contents($url, ROMPR_IDSTRING, false, true);
-        if ($content['status'] == '200') {
-            $stations = json_decode($content['contents'], true);
+        $d = new url_downloader(array('url' => $url));
+        if ($d->get_data_to_string()) {
+            $stations = json_decode($d->get_data(), true);
             $this->comm_radio_do_page_buttons($this->page, count($stations), $this->pagination);
             for ($i = 0; $i < $this->pagination; $i++) {
                 $index = $this->page * $this->pagination + $i;
@@ -145,10 +142,8 @@ class commradioplugin {
                 $this->doStation($this->comm_radio_sanitise_station($stations[$index]), $index);
             }
             $this->comm_radio_do_page_buttons($this->page, count($stations), $this->pagination);
-        } else {
-            print 'ERROR Downloading Stations List';
         }
-        
+
     }
     
     public function closeDropdown() {

@@ -115,10 +115,10 @@ function trySpotify($albumimage) {
     $boop = $spaffy[1];
     $url = 'https://api.spotify.com/v1/'.$boop.'s/'.$spiffy;
     debuglog("      Getting ".$url,"GETALBUMCOVER");
-    $content = get_spotify_data($url);
+    list($success, $content, $status) = get_spotify_data($url);
 
-    if ($content['contents'] && $content['contents'] != "") {
-        $data = json_decode($content['contents']);
+    if ($success) {
+        $data = json_decode($content);
         if (property_exists($data, 'images')) {
             $width = 0;
             foreach ($data->images as $img) {
@@ -166,14 +166,14 @@ function tryLastFM($albumimage) {
     $sa = $albumimage->get_artist_for_search();
     if ($sa == '') {
         debuglog("  Trying last.FM for ".$al,"GETALBUMCOVER");
-        $xml = loadXML("http://ws.audioscrobbler.com", "/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&album=".rawurlencode($al)."&autocorrect=1");
+        $xml = loadXML('lastfm', "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&album=".rawurlencode($al)."&autocorrect=1");
     } else if ($sa == 'Podcast') {
         debuglog("  Trying last.FM for ".$al,"GETALBUMCOVER");
         // Last.FM sometimes works for podcasts if you use Artist
-        $xml = loadXML("http://ws.audioscrobbler.com", "/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&artist=".rawurlencode($al)."&autocorrect=1");
+        $xml = loadXML('lastfm', "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&artist=".rawurlencode($al)."&autocorrect=1");
     } else {
         debuglog("  Trying last.FM for ".$sa." ".$al,"GETALBUMCOVER");
-        $xml = loadXML("http://ws.audioscrobbler.com", "/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&album=".rawurlencode($al)."&artist=".rawurlencode($sa)."&autocorrect=1");
+        $xml = loadXML('lastfm', "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&album=".rawurlencode($al)."&artist=".rawurlencode($sa)."&autocorrect=1");
     }
     if ($xml === false) {
         debuglog("    Received error response from Last.FM","GETALBUMCOVER");
@@ -230,12 +230,18 @@ function tryGoogle($albumimage) {
         $ma = munge_album_name($albumimage->album);
         if ($sa == '') {
             debuglog("  Trying Google for ".$ma,"GETALBUMCOVER");
-            $result = url_get_contents($nureek."&q=".urlencode($ma));
+            $uri = $nureek."&q=".urlencode($ma);
         } else {
             debuglog("  Trying Google for ".$sa." ".$ma,"GETALBUMCOVER");
-            $result = url_get_contents($nureek."&q=".urlencode($sa.' '.$ma));
+            $uri = $nureek."&q=".urlencode($sa.' '.$ma);
         }
-        $json = json_decode($result['contents'], true);
+        $d = new url_downloader(array(
+            'url' => $uri,
+            'cache' => 'google',
+            'return_data' => true
+        ));
+        $d->get_data_to_file();
+        $json = json_decode($d->get_data(), true);
         if (array_key_exists('items', $json)) {
             foreach($json['items'] as $item) {
                 $retval = $item['link'];
@@ -263,31 +269,37 @@ function tryMusicBrainz($albumimage) {
     $retval = "";
     // Let's get some information from musicbrainz about this album
     debuglog("  Getting MusicBrainz release info for ".$albumimage->mbid,"GETALBUMCOVER");
-    $release_info = url_get_contents('http://musicbrainz.org/ws/2/release/'.$albumimage->mbid.'?inc=release-groups');
-    if ($release_info['status'] != "200") {
-        debuglog("    Error response from musicbrainz","GETALBUMCOVER");
-        return "";
+    $url = 'http://musicbrainz.org/ws/2/release/'.$albumimage->mbid.'?inc=release-groups';
+    $d = new url_downloader(array(
+        'url' => $url,
+        'cache' => 'musicbrainz',
+        'return_data' => true
+    ));
+    if ($d->get_data_to_file()) {
+        $x = simplexml_load_string($d->get_data(), 'SimpleXMLElement', LIBXML_NOCDATA);
+        if ($x->{'release'}->{'cover-art-archive'}->{'artwork'} == "true" &&
+            $x->{'release'}->{'cover-art-archive'}->{'front'} == "true") {
+            debuglog("    Musicbrainz has artwork for this release", "GETALBUMCOVER");
+            $retval = "http://coverartarchive.org/release/".$albumimage->mbid."/front";
+        }
+    } else {
+        debuglog("    Status code ".$d->get_status()." from Musicbrainz","GETALBUMCOVER");
     }
-    $x = simplexml_load_string($release_info['contents'], 'SimpleXMLElement', LIBXML_NOCDATA);
-
-    if ($x->{'release'}->{'cover-art-archive'}->{'artwork'} == "true" &&
-        $x->{'release'}->{'cover-art-archive'}->{'front'} == "true") {
-        debuglog("    Musicbrainz has artwork for this release", "GETALBUMCOVER");
-        $retval = "http://coverartarchive.org/release/".$mbid."/front";
-    }
-
     return $retval;
 
 }
 
 function loadXML($domain, $path) {
-
-    $t = url_get_contents($domain.$path);
-    if ($t['status'] == "200") {
-        return simplexml_load_string($t['contents']);
+    $d = new url_downloader(array(
+        'url' => $path,
+        'cache' => $domain,
+        'return_data' => true
+    ));
+    if ($d->get_data_to_file()) {
+        return simplexml_load_string($d->get_data());
+    } else {
+        return false;
     }
-    return false;
-
 }
 
 ?>

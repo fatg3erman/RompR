@@ -337,23 +337,14 @@ class albumImage extends baseAlbumImage {
     private function download_remote_file() {
         $download_file = 'prefs/temp/'.$this->key;
         $retval = $download_file;
-        debuglog("   Downloading Image ".$this->source." to ".$download_file, "ALBUMIMAGE");
-        if (file_exists($download_file)) {
-            unlink ($download_file);
-        }
-        $fp = fopen($download_file, 'w');
-    	$aagh = url_get_contents($this->source, ROMPR_IDSTRING, false, true, true, $fp);
-    	fclose($fp);
-    	if ($aagh['status'] == "200") {
-    		debuglog("  .. Success", "ALBUMIMAGE");
-            $content_type = $aagh['info']['content_type'];
-        	debuglog("  .. Content Type is ".$content_type,"ALBUMIMAGE");
-            if (substr($content_type,0,5) != 'image') {
-        		debuglog("  .. Not an image file! ".$this->source,"ALBUMIMAGE");
+        $d = new url_downloader(array('url' => $this->source));
+        if ($d->get_data_to_file($download_file, true)) {
+            $content_type = $d->get_content_type();
+            if (substr($content_type,0,5) != 'image' && $content_type != 'application/octet-stream') {
+        		debuglog("  .. Content type is ".$content_type." - not an image file! ".$this->source,"ALBUMIMAGE");
                 $retval = false;
             }
     	} else {
-    		debuglog("Failed to download ".$this->source." - status was ".$aagh['status'],"ALBUMIMAGE",5);
             $retval = false;
     	}
         return $retval;

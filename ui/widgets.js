@@ -497,14 +497,12 @@ $.widget("rompr.resizeHandle", $.ui.mouse, {
                 }
             }
             this.options.donefunc();
-            layoutProcessor.setTopIconSize(this.options.adjusticons);
         }
         return true;
     },
 
     _mouseStop: function(event) {
         this.dragging = false;
-        layoutProcessor.setTopIconSize(["#sourcescontrols", "#infopanecontrols", "#playlistcontrols"]);
         browser.rePoint();
         prefs.save({sourceswidthpercent: prefs.sourceswidthpercent});
         prefs.save({playlistwidthpercent: prefs.playlistwidthpercent});

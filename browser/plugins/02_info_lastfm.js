@@ -410,11 +410,6 @@ var info_lastfm = function() {
 						if (displaying && artistmeta.lastfm !== undefined) {
                             debug.trace(medebug,parent.nowplayingindex,"artist was asked to display");
                             var lfmdata = new lfmDataExtractor(artistmeta.lastfm.artist);
-                            // if (prefs.fullbiobydefault && lfmdata.url() && artistmeta.lastfm.fullbio === undefined) {
-                            //     self.artist.getFullBio(null, null);
-                            //     return;
-                            // }
-
 					        var accepted = browser.Update(
                                 null,
                                 'artist',
@@ -443,28 +438,7 @@ var info_lastfm = function() {
                     },
 
                     getFullBio: function(callback, failcallback) {
-                        debug.shout(medebug,parent.nowplayingindex,"Getting Bio URL:", artistmeta.lastfm.artist.url);
-                        // var url = "browser/backends/getLfmBio.php?url="+encodeURIComponent(artistmeta.lastfm.artist.url);
-                        // if (lastfm.getLanguage() !== null) {
-                        //     url = url + "&lang="+lastfm.getLanguage();
-                        // }
-                        // $.get(url)
-                        //     .done( function(data) {
-                        //         artistmeta.lastfm.fullbio = data;
-                        //         if (callback) {
-                        //             callback(data);
-                        //         } else {
-                        //             self.artist.doBrowserUpdate();
-                        //         }
-                        //     })
-                        //     .fail( function(data) {
-                        //         artistmeta.lastfm.fullbio = null;
-                        //         if (failcallback) {
-                        //             failcallback();
-                        //         } else {
-                        //             self.artist.doBrowserUpdate();
-                        //         }
-                        //     })
+                        debug.shout(medebug,parent.nowplayingindex,"Not Getting Bio URL:", artistmeta.lastfm.artist.url);
                     },
 
                     updateBio: function(data) {

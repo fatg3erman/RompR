@@ -1,4 +1,11 @@
 <?php
-$a = 'The Adam & Joe Show';
-echo rawurlencode($a), PHP_EOL;
+
+if (($d = return_a_value(3)) !== false) {
+    echo $d, PHP_EOL;
+}
+
+function return_a_value($v) {
+    return $v;
+}
+
 ?>

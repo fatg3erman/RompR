@@ -48,10 +48,14 @@ function download_internet_playlist($url, $image, $station) {
 		$path = $url;
 		$type = null;
 
-		$content = url_get_contents($url, ROMPR_IDSTRING, false, true, true, null, null, null, 10, 10);
-		debuglog("Status Code Is ".$content['status'],"RADIO_PLAYLIST");
+		$d = new url_downloader(array(
+			'url' => $url,
+			'timeout' => 10,
+			'connection_timeout' => 10
+		));
+		$d->get_data_to_string();
 
-		$content_type = $content['info']['content_type'];
+		$content_type = $d->get_content_type();
 		// To cope with charsets in the header...
 		// case "audio/x-scpls;charset=UTF-8";
 		$content_type = trim_content_type($content_type);
@@ -59,23 +63,23 @@ function download_internet_playlist($url, $image, $station) {
 
 		switch ($content_type) {
 			case "video/x-ms-asf":
-				debuglog("Playlist Is ".$content['contents'],"RADIO_PLAYLIST",8);
-				$type = asfOrasx($content['contents']);
+				debuglog("Playlist Is ".PHP_EOL.$d->get_data(),"RADIO_PLAYLIST",8);
+				$type = asfOrasx($d->get_data());
 				break;
 
 			case "audio/x-scpls":
-				debuglog("Playlist Is ".$content['contents'],"RADIO_PLAYLIST",8);
+				debuglog("Playlist Is ".PHP_EOL.$d->get_data(),"RADIO_PLAYLIST",8);
 				$type = "pls";
 				break;
 
 			case "audio/x-mpegurl":
 			case "application/x-mpegurl":
-				debuglog("Playlist Is ".$content['contents'],"RADIO_PLAYLIST",8);
+				debuglog("Playlist Is ".PHP_EOL.$d->get_data(),"RADIO_PLAYLIST",8);
 				$type = "m3u";
 				break;
 
 			case "application/xspf+xml":
-				debuglog("Playlist Is ".$content['contents'],"RADIO_PLAYLIST",8);
+				debuglog("Playlist Is ".PHP_EOL.$d->get_data(),"RADIO_PLAYLIST",8);
 				$type = "xspf";
 				break;
 
@@ -109,34 +113,34 @@ function download_internet_playlist($url, $image, $station) {
 
 		$playlist = null;
 
-		switch ($content['status']) {
+		switch ($d->get_status()) {
 			case '200':
 				switch ($type) {
 					case "pls":
 					case "PLS":
-						$playlist = new plsFile($content['contents'], $url, $station, $image);
+						$playlist = new plsFile($d->get_data(), $url, $station, $image);
 						break;
 
 					case "asx":
 					case "ASX":
-						$playlist = new asxFile($content['contents'], $url, $station, $image);
+						$playlist = new asxFile($d->get_data(), $url, $station, $image);
 						break;
 
 					case "asf":
 					case "ASF":
-						$playlist = new asfFile($content['contents'], $url, $station, $image);
+						$playlist = new asfFile($d->get_data(), $url, $station, $image);
 						break;
 
 					case "xspf":
 					case "XSPF":
-						$playlist = new xspfFile($content['contents'], $url, $station, $image);
+						$playlist = new xspfFile($d->get_data(), $url, $station, $image);
 						break;
 
 					case "m3u":
 					case "m3u8":
 					case "M3U":
 					case "M3U8":
-						$playlist = new m3uFile($content['contents'], $url, $station, $image);
+						$playlist = new m3uFile($d->get_data(), $url, $station, $image);
 						break;
 
 					case "stream":
@@ -156,7 +160,7 @@ function download_internet_playlist($url, $image, $station) {
 				break;
 
 			default:
-				debuglog("Unexpected cURL status ".$content['status']." - treating as stream URL","RADIO_PLAYLIST");
+				debuglog("Unexpected cURL status ".$d->get_status()." - treating as stream URL","RADIO_PLAYLIST");
 				$playlist = new possibleStreamUrl($url, $station, $image);
 		}
 

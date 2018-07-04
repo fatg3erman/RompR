@@ -31,12 +31,11 @@ class somafmplugin {
         print '<div class="containerbox padright indent ninesix bumpad brick_wide">';
         print '<a href="http://somafm.com" target="_blank">'.get_int_text("label_soma_beg").'</a>';
         print '</div>';
-
-        $content = url_get_contents("http://api.somafm.com/channels.xml", $_SERVER['HTTP_USER_AGENT'], false, true);
-        if ($content['status'] == "200") {
-            $this->doAllStations($content);
+        $d = new url_downloader(array('url' => "http://api.somafm.com/channels.xml"));
+        if ($d->get_data_to_string()) {
+            $this->doAllStations($d->get_data());
         } else {
-            print 'There was an error getting the channels from Soma FM - status code '.$content['status'];
+            print 'There was an error getting the channels from Soma FM - status code '.$d->get_status();
         }
     }
 
@@ -79,7 +78,7 @@ class somafmplugin {
     
     private function doAllStations($content) {
         debuglog("Loaded Soma FM channels list","SOMAFM");
-        $x = simplexml_load_string($content['contents']);
+        $x = simplexml_load_string($content);
         $count = 0;
         foreach ($x->channel as $channel) {
             $this->doChannel($count, $channel);

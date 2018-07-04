@@ -402,10 +402,6 @@ var layoutProcessor = function() {
             infobar.notify(infobar.SMARTRADIO, language.gettext('label_smartsetup'));
         },
 
-        setTopIconSize: function(panels) {
-
-        },
-
         scrollPlaylistToCurrentTrack: function() {
             if (prefs.scrolltocurrent && $('.track[romprid="'+player.status.songid+'"],.booger[romprid="'+player.status.songid+'"]').length > 0) {
                 $('#phacker').mCustomScrollbar("stop");
