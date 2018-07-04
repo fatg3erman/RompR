@@ -87,11 +87,7 @@ class baseAlbumImage {
         // so it can set them in the playlist even when auto art download is off
         
         $disc_checked = false;
-        debuglog("Checking Image","ALBUMIMAGE");
         if ($this->images['small'] == '' || $this->images['small'] === null) {
-            
-            debuglog("  There Is No Image","ALBUMIMAGE");
-            
             if ($this->artist == 'STREAM') {
                 // Stream images my not be in the database
                 // BUT they may be present anyway, if a stream was added eg from a playlist
@@ -130,7 +126,6 @@ class baseAlbumImage {
                         case 'soundcloud':
                         // case 'tunein':
                         case 'youtube':
-                            debuglog("  Setting Default Image","ALBUMIMAGE");
                             $this->images = $this->image_paths_from_base_image('newimages/'.$domain.'-logo.svg');
                             break;
                     }
@@ -155,7 +150,6 @@ class baseAlbumImage {
                 case 'soundcloud':
                 case 'tunein':
                 case 'youtube':
-                    debuglog("  Setting Default Image","ALBUMIMAGE");
                     $this->images = $this->image_paths_from_base_image('newimages/'.$domain.'-logo.svg');
                     break;
 
