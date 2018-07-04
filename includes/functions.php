@@ -1,9 +1,4 @@
 <?php
-
-function xmlnode($node, $content) {
-    return '<'.$node.'>'.htmlspecialchars($content).'</'.$node.'>'."\n";
-}
-
 function format_for_mpd($term) {
     $term = str_replace('"','\\"',$term);
     return trim($term);
@@ -452,6 +447,9 @@ function domainIcon($d, $c) {
             break;
 
         case "tunein":
+            $h = '<i class="icon-tunein '.$c.' fixed"></i>';
+            break;
+        
         case "radio-de":
         case "bassdrive":
             $h = '<div class="'.$c.' fixed"><img class="imgfill" src="newimages/'.$d.'-logo.svg" /></div>';
@@ -912,14 +910,6 @@ function debug_format($dbg) {
         $dbg = implode($dbg, ", ");
     }
     return $dbg;
-}
-
-function get_stream_imgkey($i) {
-    return "STREAM_".$i;
-}
-
-function stream_index_from_key($key) {
-    return preg_replace('/STREAM_/','',$key);
 }
 
 function format_bytes($size, $precision = 1)
