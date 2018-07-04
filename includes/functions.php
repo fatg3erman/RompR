@@ -117,7 +117,7 @@ class url_downloader {
     
     public function get_data_to_file($file = null, $binary = false) {
         if ($file === null && $this->options['cache'] === null) {
-            debuglog("  No file or cache dir for request","URL_DOWNLOADER");
+            debuglog("  No file or cache dir for request, returning data as string","URL_DOWNLOADER");
             return $this->get_data_to_string();
         } else if ($this->options['cache'] !== null) {
             $file = 'prefs/jsoncache/'.$this->options['cache'].'/'.md5($this->options['url']);
@@ -204,8 +204,7 @@ class url_downloader {
 
 }
 
-function format_time($t,$f=':') // t = seconds, f = separator
-{
+function format_time($t,$f=':') {
     if (($t/86400) >= 1) {
         return sprintf("%d%s%2d%s%02d%s%02d", ($t/86400), " ".get_int_text("label_days")." ",
             ($t/3600)%24, $f, ($t/60)%60, $f, $t%60);
@@ -214,18 +213,6 @@ function format_time($t,$f=':') // t = seconds, f = separator
         return sprintf("%2d%s%02d%s%02d", ($t/3600), $f, ($t/60)%60, $f, $t%60);
     } else {
         return sprintf("%02d%s%02d", ($t/60)%60, $f, $t%60);
-    }
-}
-
-function format_time2($t,$f=':') // t = seconds, f = separator
-{
-    if (($t/86400) >= 1) {
-        return sprintf("%d%s", ($t/86400), " ".get_int_text("label_days"));
-    }
-    if (($t/3600) >= 1) {
-        return sprintf("%d%s", ($t/3600), " ".get_int_text("label_hours"));
-    } else {
-        return sprintf("%d%s", ($t/60)%60, " ".get_int_text("label_minutes"));
     }
 }
 
@@ -975,4 +962,28 @@ function empty_modified_cache_dirs() {
     }
 }
 
+function getRemoteFilesize($url, $default) {
+    $context = stream_context_create(array('http' => array('method' => 'HEAD')));
+    $head = array_change_key_case(get_headers($url, 1, $context));
+    // content-length of download (in bytes), read from Content-Length: field
+    $clen = isset($head['content-length']) ? $head['content-length'] : 0;
+    $cstring = $clen;
+    if (is_array($clen)) {
+        debuglog("Content Length is an array ".PHP_EOL.print_r($clen, true),"FUNCTIONS");
+        $cstring = 0;
+        foreach ($clen as $l) {
+            if ($l > $cstring) {
+                $cstring = $l;
+            }
+        }
+    }
+
+    if ($cstring !== 0) {
+        debuglog("  Read file size remotelay as ".$cstring,"FUNCTIONS");
+        return $cstring;
+    } else {
+        debuglog("  Couldn't read filesize remotely. Using default value of ".$default,"FUNCTIONS");
+        return $default;
+    }
+}
 ?>

@@ -843,9 +843,10 @@ function format_episode(&$y, &$item, $pm) {
         $class = 'invisible whatdoicallthis toggledown';
     }
     print '<div id="poddesc_'.$item->PODTrackindex.'" class="'.$class.'">'.format_text(fixup_links($item->Description)).'</div>';
-    if ($item->FileSize > 0) {
-        print '<div class="fsize">'.format_bytes($item->FileSize).'Bytes</div>';
-    }
+    // Usually very inaccurate
+    // if ($item->FileSize > 0) {
+    //     print '<div class="fsize">'.format_bytes($item->FileSize).'Bytes</div>';
+    // }
     if ($y->Subscribed == 1) {
         print '<div class="clearfix" name="podcontrols_'.$pm.'">';
         if ($item->Downloaded == 1) {
@@ -1040,7 +1041,9 @@ function downloadTrack($key, $channel) {
         debuglog("  Failed to find URL for podcast","PODCASTS",3);
         return $channel;
     }
-
+    // The file size reported in the RSS is often VERY inaccurate.Probably based on raw audio prior to converting to MP3
+    // To make the progress bars look better in the GUI we attempt to read the actual filesize
+    $filesize = getRemoteFilesize($url, $filesize);
     if (is_dir('prefs/podcasts/'.$channel.'/'.$key) || mkdir ('prefs/podcasts/'.$channel.'/'.$key, 0755, true)) {
         $filename = basename($url);
         $filename = preg_replace('/\?.*$/','',$filename);

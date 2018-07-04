@@ -1650,8 +1650,6 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 	// Note the use of === to detect LastModified, because == doesn't tell the difference between 0 and null
 	//  - so if we have a manually added track and the add a collection track over it from a backend that doesn't
 	//  give us LastModified (eg Spotify-Web), we don't update lastModified and the track remains manually added.
-	//  This does lead to us updating LastModified for those tracks every time, since 0 from the database !== "0" from mopidy.
-	//  Ah well.
 
     if ($ttid) {
     	if ((!$doing_search && $trackobj->tags['Last-Modified'] !== $lastmodified) ||

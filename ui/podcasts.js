@@ -23,7 +23,7 @@ var podcasts = function() {
 			        data: {downloadtrack: track, channel: channel, populate: 1 },
 			        timeout: 360000,
 			        success: function(data) {
-			            monitor.stop();
+			            monitor.stop(false);
 						updatePodcastDropdown(channel, data);
 			            doDummyProgressBars();
 			            downloadRunning = false;
@@ -31,10 +31,8 @@ var podcasts = function() {
 			            checkDownloadQueue();
 			        },
 			        error: function(data, status) {
-			            monitor.stop();
-			            $("#podcastdownload").remove();
+			            monitor.stop(true);
 			            debug.error("PODCASTS", "Podcast Download Failed!",data,status);
-			            infobar.notify(infobar.ERROR, "Failed To Download Podcast");
 			            downloadRunning = false;
 				    	$('[name="podgroupload_'+channel+'"]').stopFlasher().removeClass('podgroupload').addClass('podgroupload');
 			            checkDownloadQueue();
@@ -50,7 +48,7 @@ var podcasts = function() {
 
 	    var self = this;
 	    var progressdiv = $('i[name="poddownload_'+track+'"]').parent();
-	    progressdiv.html('<div id="podcastdownload" width="100%"></div>');
+	    progressdiv.html('<div class="fullwidth"></div>');
 	    progressdiv.rangechooser({range: 100, startmax: 0, interactive: false});
 	    var timer;
 	    var running = true;
@@ -74,13 +72,15 @@ var podcasts = function() {
 	        });
 	    }
 
-	    this.stop = function() {
+	    this.stop = function(error) {
 	        running = false;
 	        clearTimeout(timer);
-	        pb = null;
+			if (error) {
+				progressdiv.replaceWith('<div class="fullwidth">Download Failed</div>');
+			}
 	    }
 
-	    timer = setTimeout(self.checkProgress, 2000);
+	    timer = setTimeout(self.checkProgress, 1000);
 	}
 
 	function doDummyProgressBars() {
