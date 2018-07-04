@@ -7,11 +7,15 @@ include ("collection/collection.php");
 include ("player/mpd/connection.php");
 include ("backends/sql/backend.php");
 include ("utils/phpQuery.php");
+require_once ("utils/imagefunctions.php");
 $used_images = array();
 
 if (array_key_exists('playlist', $_REQUEST)) {
     $pl = $_REQUEST['playlist'];
     do_playlist_tracks($pl,'icon-music', $_REQUEST['target']);
+} else if (array_key_exists('userplaylist', $_REQUEST)) {
+    $pl = $_REQUEST['userplaylist'];
+    do_user_playlist_tracks($pl,'icon-music', $_REQUEST['target']);
 } else {
     do_playlist_header();
     $playlists = do_mpd_command("listplaylists", true, true);
@@ -30,12 +34,12 @@ if (array_key_exists('playlist', $_REQUEST)) {
         $c++;
     }
     sort($used_images);
-    $imgs = glob('prefs/plimages/*.jpg');
+    $imgs = glob('prefs/plimages/*');
     sort($imgs);
     $unneeded = array_diff($imgs, $used_images);
     foreach ($unneeded as $img) {
         debuglog("Removing uneeded playlist image ".$img,"PLAYLISTS");
-        system('rm '.$img);
+        system('rm -fR '.$img);
     }
 }
 
@@ -94,6 +98,29 @@ function do_playlist_tracks($pl, $icon, $target) {
     }
 }
 
+function do_user_playlist_tracks($pl, $icon, $target) {
+    debuglog("Downloading remote playlist ".$pl,"USERPLAYLISTS");
+    // Use the MPD version of the playlist parser, since that parses all tracks,
+    // which is what we want.
+    require_once ("player/mpd/streamplaylisthandler.php");
+    require_once ("utils/getInternetPlaylist.php");
+    $tracks = load_internet_playlist($pl, '', '', true);
+    directoryControlHeader($target, $pl);
+    playlistPlayHeader($pl);
+    foreach ($tracks as $c => $track) {
+        add_playlist(
+            rawurlencode($track['TrackUri']),
+            ($track['PrettyStream'] == '') ? $track['TrackUri'] : $track['PrettyStream'],
+            'icon-radio-tower',
+            'clicktrack',
+            false,
+            $c,
+            false,
+            $pl
+        );
+    }
+}
+
 function allow_track_deletion($pl) {
     global $prefs;
     if ($prefs['player_backend'] == 'mpd') {
@@ -111,14 +138,11 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
     switch ($class) {
         case 'clickloadplaylist':
         case 'clickloaduserplaylist':
-            $imgkey = md5($name);
-            $image = null;
-            if (file_exists('prefs/plimages/'.$imgkey.'.jpg')) {
-                $used_images[] = "prefs/plimages/".$imgkey.".jpg";
-                $image = "prefs/plimages/".$imgkey.".jpg";
-            }
+            $albumimage = new albumImage(array('artist' => "PLAYLIST", 'album' => $name));
+            $image = $albumimage->get_image_if_exists();
+            $used_images[] = dirname($albumimage->basepath);
             $html = albumHeader(array(
-                'id' => 'pholder_'.$name,
+                'id' => 'pholder_'.md5($name),
                 'Image' => $image,
                 'Searched' => 1,
                 'AlbumUri' => null,
@@ -126,10 +150,10 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
                 'Artistname' => '',
                 'Albumname' => $name,
                 'why' => 'whynot',
-                'ImgKey' => $imgkey,
+                'ImgKey' => $albumimage->get_image_key(),
                 'userplaylist' => $class,
                 'plpath' => $link,
-                'class' => 'playlist',
+                'class' => preg_replace('/clickload/', '', $class),
                 'expand' => true
             ));
             $out = addPlaylistControls($html, $delete, $is_user, $name);

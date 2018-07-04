@@ -112,7 +112,8 @@ function onSourcesClicked(event) {
     if (clickedElement.hasClass("menu") || clickedElement.hasClass("podconf")) {
         if (clickedElement.hasClass('searchdir') ||
             clickedElement.hasClass('directory') ||
-            clickedElement.hasClass('playlist')) {
+            clickedElement.hasClass('playlist') ||
+            clickedElement.hasClass('userplaylist')) {
             doFileMenu(event, clickedElement);
         } else if (clickedElement.hasClass('album') || clickedElement.hasClass('artist')) {
             doAlbumMenu(event, clickedElement, null);
@@ -135,7 +136,7 @@ function onSourcesClicked(event) {
         player.controller.deletePlaylist(clickedElement.next().val());
     } else if (clickedElement.hasClass('clickdeleteuserplaylist')) {
         event.stopImmediatePropagation();
-        player.controller.deleteUserPlaylist(clickedElement.prev().prev().html());
+        player.controller.deleteUserPlaylist(clickedElement.next().val());
     } else if (clickedElement.hasClass('clickrenameplaylist')) {
         event.stopImmediatePropagation();
         player.controller.renamePlaylist(clickedElement.next().val(), event, player.controller.doRenamePlaylist);
@@ -414,8 +415,14 @@ function getAllTracksForArtist(element, menutoopen) {
 }
 
 function browsePlaylist(plname, menutoopen) {
-    debug.log("MPD","Browsing playlist",plname);
+    debug.log("CLICKFUNCTIONS","Browsing playlist",plname);
     string = "player/mpd/loadplaylists.php?playlist="+plname+'&target='+menutoopen;
+    return string;
+}
+
+function browseUserPlaylist(plname, menutoopen) {
+    debug.log("CLICKFUNCTIONS","Browsing playlist",plname);
+    string = "player/mpd/loadplaylists.php?userplaylist="+plname+'&target='+menutoopen;
     return string;
 }
 
@@ -433,8 +440,10 @@ function doFileMenu(event, element) {
             element.makeSpinner();
             var string;
             var plname = element.prev().val();
-            if (menutoopen.match(/^pholder_/)) {
+            if (element.hasClass('playlist')) {
                 string = browsePlaylist(plname, menutoopen);
+            } else if (element.hasClass('userplaylist')) {
+                string = browseUserPlaylist(plname, menutoopen);
             } else {
                 string = "dirbrowser.php?path="+plname+'&prefix='+menutoopen;
             }

@@ -620,6 +620,12 @@ function check_sql_tables() {
 				generic_sql_query("ALTER TABLE PodcastTracktable ADD Progress INT UNSIGNED DEFAULT 0", true);
 				generic_sql_query("UPDATE Statstable SET Value = 42 WHERE Item = 'SchemaVer'", true);
 				break;
+
+			case 42:
+				debuglog("Updating FROM Schema version 42 TO Schema version 43","SQL");
+				update_stream_images();
+				generic_sql_query("UPDATE Statstable SET Value = 43 WHERE Item = 'SchemaVer'", true);
+				break;
 				
 		}
 		$sv++;

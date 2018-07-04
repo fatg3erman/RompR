@@ -17,6 +17,7 @@ jQuery.fn.menuReveal = function(callback) {
 }
 
 jQuery.fn.menuHide = function(callback) {
+    var self = this;
     if (this.hasClass('toggledown')) {
         if (callback) {
             this.slideToggle('fast',callback);
@@ -24,12 +25,15 @@ jQuery.fn.menuHide = function(callback) {
             this.slideToggle('fast');
         }
     } else {
-        if (callback) {
-            this.hide(0, callback);
-        } else {
-            this.hide();
-        }
-        this.findParentScroller().restoreScrollPos();
+        this.hide(0, function() {
+            if (callback) {
+                callback();
+            }
+            self.findParentScroller().restoreScrollPos();
+            if (self.hasClass('removeable')) {
+                self.remove();
+            }
+        });
     }
     return this;
 }
@@ -535,7 +539,11 @@ var layoutProcessor = function() {
                 } else {
                     var c = 'dropmenu notfilled';
                 }
-                var t = $('<div>', {id: name, class: c}).insertAfter(element);
+                var ec = '';
+                if (/aalbum/.test(name) || /aartist/.test(name)) {
+                    ec = ' removeable';
+                }
+                var t = $('<div>', {id: name, class: c+ec}).insertAfter(element);
             }
         },
         

@@ -97,12 +97,8 @@ var ratingManager = function() {
 			var c = $('<div>', {class: "helpfulalbum fixed"}).appendTo(b);
 			var src = data.Image;
 			if (src) {
-				if (old_style_albumart == 0) {
-					src = src.replace(/albumart\/small/, 'albumart/medium');
-				} else {
-					src = src.replace(/albumart\/small/, 'albumart/asdownloaded');
-				}
-				c.append('<img class="jalopy jalopy200" src="'+src+'" />');
+				var aa = new albumart_translator(src);
+				c.append('<img class="jalopy jalopy200" src="'+aa.getSize('medium')+'" />');
 			}
 			c.append('<div class="tagh albumthing sponclick clickable infoclick draggable clickalbumname" name="dummy">'+tit+'</div>');
 			current_albumholder = $('<div>', {class: "minwidthed2 expand"}).appendTo(b);

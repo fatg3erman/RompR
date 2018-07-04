@@ -15,14 +15,13 @@ $(document).ready(function(){
     checkServerTimeOffset();
     setTimeout(cleanBackendCache, 5000);
     if (prefs.country_userset == false) {
-        // Have to pull this data in via the webserver as it's cross-domain
         // It's helpful and important to get the country code set, as many users won't see it
         // and it's necessary for the Spotify info panel to return accurate data
         $.getJSON("utils/getgeoip.php", function(result) {
-            debug.shout("GET COUNTRY", 'Country:',result.country_name,'Code:',result.country_code);
-            if (result.country_name && result.country_name != 'ERROR') {
+            debug.shout("GET COUNTRY", 'Country:',result.country,'Code:',result.countryCode);
+            if (result.country != 'ERROR') {
                 $("#lastfm_country_codeselector").val(result.country_code);
-                prefs.save({lastfm_country_code: result.country_code});
+                prefs.save({lastfm_country_code: result.countryCode});
             } else {
                 debug.error("GET COUNTRY","Country code error",result);
             }

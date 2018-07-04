@@ -258,6 +258,7 @@ var podcasts = function() {
 			}
 			$('i[name="podcast_'+channel+'"]').makeSpinner();
 			target.load(uri, function() {
+				target.removeClass('loaded').addClass('loaded');
 				updatePodcastDropdown(channel,  null);
 			});
 		},
@@ -361,7 +362,7 @@ var podcasts = function() {
 					if (data.updated && data.updated.length > 0) {
 						if (loaded) {
 							$.each(data.updated, function(index, value){
-								if (!($('#podcast_'+value).is(':empty'))) {
+								if (!($('#podcast_'+value).hasClass('loaded'))) {
 									debug.log("PODCASTS","Podcast",value,"was refreshed and is loaded - reloading it");
 									podcasts.loadPodcast(value);
 								}
@@ -419,7 +420,6 @@ var podcasts = function() {
 		        success: function(data) {
 		            $("#podcast_search").html(data);
 		            $('#podcast_search').prepend('<div class="menuitem containerbox padright brick_wide sensiblebox"><div class="configtitle textcentre expand"><b>Search Results for &quot;'+term+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch fixed"></i></div>');
-		            $('#podcast_search').append('<div class="menuitem configtitle textcentre brick_wide sensiblebox"><b>Subscribed Podcasts</b></div>');
 		            $("#podcast_search").find('.fridge').tipTip({edgeOffset: 8});
 					$('#spinner_cocksausage').remove();
 					layoutProcessor.postAlbumActions($('#podcast_search'));

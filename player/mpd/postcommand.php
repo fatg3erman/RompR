@@ -63,19 +63,41 @@ if ($is_connected) {
                     break;
 
                 case "loadstreamplaylist":
-                    require_once("backends/sql/backend.php");
+                    require_once ("backends/sql/backend.php");
                     require_once ("player/".$prefs['player_backend']."/streamplaylisthandler.php");
                     require_once ("utils/getInternetPlaylist.php");
                     $cmds = array_merge($cmds, load_internet_playlist($cmd[1], $cmd[2], $cmd[3]));
                     break;
+                    
+                case "addremoteplaylist":
+                    debuglog("  URL is ".$cmd[1],"POSTCOMMAND");
+                    // First, see if we can just 'load' the remote playlist. This is better with MPD
+                    // as it parses track names from the playlist
+                    if (check_track_load_command($cmd[1]) == 'load') {
+                        debuglog("Loading remote playlist","POSTCOMMAND");
+                        $cmds[] = join_command_string(array('load', $cmd[1]));
+                    } else {
+                        // Always use the MPD version of the stream playlist handler, since that parses
+                        // all tracks (Mopidy's version doesn't because we use Mopidy's playlist parser instead).
+                        // Perversely, we need to use this because we can't use 'load' on a remote playlist with Mopidy,
+                        // and 'add' only adds the first track. As user remtote playlists can have multiple types of
+                        // thing in them, including streams, we need to 'add' every track - unless we're using mpd and
+                        // the 'track' is a playlist we need to load..... Crikey.
+                        debuglog("Adding remote playlist (track by track)","POSTCOMMAND");
+                        require_once ("player/mpd/streamplaylisthandler.php");
+                        require_once ("utils/getInternetPlaylist.php");
+                        $tracks = load_internet_playlist($cmd[1], '', '', true);
+                        foreach ($tracks as $track) {
+                            $cmd = check_track_load_command($track['TrackUri']);
+                            $cmds[] = join_command_string(array($cmd, $track['TrackUri']));
+                        }
+                    }
+                    break;
 
                 case "rename":
-                    $oldimage = md5($cmd[1]);
-                    $newimage = md5($cmd[2]);
-                    if (file_exists('prefs/plimages/'.$oldimage.'.jpg')) {
-                        debuglog("Renaming playlist image for ".$cmd[1]." to ".$cmd[2],"MPD");
-                        system('mv "prefs/plimages/'.$oldimage.'.jpg" "prefs/plimages/'.$newimage.'.jpg"');
-                    }
+                    require_once ('utils/imagefunctions.php');
+                    $oldimage = new albumImage(array('artist' => 'PLAYLIST', 'album' => $cmd[1]));
+                    $oldimage->change_name($cmd[2]);
                     $cmds[] = join_command_string($cmd);
                     break;
 
@@ -275,6 +297,30 @@ function check_playlist_add_move($cmd, $incvalue) {
         if ($playlist_movefrom === null) $playlist_movefrom = $cmd[4];
         if ($playlist_moveto === null) $playlist_moveto = $cmd[3];
         $playlist_tracksadded += $incvalue;
+    }
+}
+
+function check_track_load_command($uri) {
+    global $prefs;
+    if ($prefs['player_backend'] == 'mopidy') {
+        return 'add';
+    }
+    $ext = strtolower(pathinfo($uri, PATHINFO_EXTENSION));
+    switch ($ext) {
+        case 'm3u':
+        case 'm3u8':
+        case 'asf':
+        case 'asx':
+            return 'load';
+            break;
+            
+        default:
+            if (preg_match('#www\.radio-browser\.info/webservice/v2/m3u#', $uri)) {
+                return 'load';
+            } else {
+                return 'add';
+            }
+            break;
     }
 }
 

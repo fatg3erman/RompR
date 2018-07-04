@@ -21,8 +21,10 @@ class romprmetadata {
 						'streamname',
 						'streamimage',
 						'streamuri',
+						'type',
 						'ambid',
 						'attributes',
+						'imagekey',
 						'which',
 						'wltrack',
 						'reqid') as $key) {
@@ -40,13 +42,18 @@ class romprmetadata {
 		$data['urionly'] = array_key_exists('urionly', $data) ? true : false;
 		$data['disc'] = array_key_exists('disc', $data) ? $data['disc'] : 1;
 		$data['domain'] = array_key_exists('domain', $data) ? $data['domain'] : ($data['uri'] === null ? "local" : getDomain($data['uri']));
-		$data['imagekey'] = array_key_exists('imagekey', $data) ? $data['imagekey'] : make_image_key($data['albumartist'],$data['album']);
 		$data['hidden'] = 0;
 		$data['searchflag'] = 0;
 		if (substr($data['image'],0,4) == "http") {
 			$data['image'] = "getRemoteImage.php?url=".$data['image'];
 		}
-	
+		if ($data['imagekey'] === null) {
+			$albumimage = new baseAlbumImage(array(
+				'artist' => artist_for_image($data['type'], $data['albumartist']),
+				'album' => $data['album']
+			));
+			$data['imagekey'] = $albumimage->get_image_key();
+		}
 	}
 
 	public static function set($data) {

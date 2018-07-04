@@ -3,7 +3,7 @@ chdir('../..');
 set_time_limit(360);
 include ("includes/vars.php");
 include ("includes/functions.php");
-include ("utils/imagefunctions.php");
+require_once ("utils/imagefunctions.php");
 include ("international.php");
 debuglog("--------------------------START---------------------","USERRATING",4);
 include ("backends/sql/backend.php");

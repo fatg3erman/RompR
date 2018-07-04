@@ -1,5 +1,7 @@
 <?php
 
+require_once('utils/imagefunctions.php');
+
 function albumTrack($data) {
     global $prefs;
     if (substr($data['title'],0,6) == "Album:") return 2;
@@ -101,7 +103,9 @@ function albumHeader($obj) {
     } else  if (!$obj['Image'] && $obj['Searched'] == 1) {
         $h .= '<img class="jalopy notfound'.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
     } else {
-        $h .= '<img class="jalopy" name="'.$obj['ImgKey'].'" src="'.preg_replace('#albumart/small/#', 'albumart/medium/', $obj['Image']).'" />'."\n";
+        $albumimage = new baseAlbumImage(array('baseimage' => $obj['Image']));
+        $images = $albumimage->get_images();
+        $h .= '<img class="jalopy" name="'.$obj['ImgKey'].'" src="'.$images['medium'].'" />'."\n";
     }
 
     $h .= '<div class="tagh albumthing">';

@@ -5,6 +5,7 @@ include ("international.php");
 include ("collection/collection.php");
 include ("player/mpd/connection.php");
 include ("backends/sql/backend.php");
+require_once ("utils/imagefunctions.php");
 
 // 2 Changes recently
 // Don't create the entire playlist array and then json_encode it all as one - rather json_encode
@@ -75,15 +76,19 @@ function doNewPlaylistFile(&$filedata) {
         $tartist = $tartistr;
         $albumartist = $tartistr;
     }
-    $imagekey = getImageKey($filedata, $albumartist);
+
+    $albumimage = new baseAlbumImage(array(
+        'baseimage' => $filedata['X-AlbumImage'],
+        'artist' => artist_for_image($filedata['type'], $albumartist),
+        'album' => $filedata['Album']
+    ));
+    $albumimage->check_image($filedata['domain'], $filedata['type'], true);
 
     if ($doneone) {
         print ', ';
     } else {
         $doneone = true;
     }
-
-    $img = getImageForAlbum($filedata, $imagekey);
 
     $info = array(
         "title" => $t,
@@ -94,15 +99,13 @@ function doNewPlaylistFile(&$filedata) {
         "type" => $filedata['type'],
         "date" => getYear($filedata['Date']),
         "tracknumber" => $filedata['Track'],
-        // "station" => $filedata['station'],
         "disc" => $filedata['Disc'],
         "location" => $filedata['file'],
         "backendid" => (int) $filedata['Id'],
         "streamid" => $filedata['StreamIndex'],
         "dir" => rawurlencode($filedata['folder']),
-        "key" => $imagekey,
-        "image" => $img,
-        "bigimage" => preg_replace('#albumart/small/#', 'albumart/asdownloaded/', $img),
+        "key" => $albumimage->get_image_key(),
+        "images" => $albumimage->get_images(),
         "stream" => $filedata['stream'],
         "playlistpos" => $filedata['Pos'],
         "genre" => $filedata['Genre'],
@@ -123,14 +126,6 @@ function doNewPlaylistFile(&$filedata) {
             ),
         )
     );
-
-    // This is needed if we're using the pre-populate version of get_extra_track_info
-    // But until we can speed that query up, we're not doing that
-    // foreach(array('DateAdded', 'Hidden', 'LastTime', 'Last', 'Playcount', 'Rating', 'Tags', 'isSearchResult') as $i) {
-    //     if (array_key_exists($i, $filedata)) {
-    //         $info['metadata']['track']['usermeta'][$i] = $filedata[$i];
-    //     }
-    // }
 
     $foundartists = array();
 

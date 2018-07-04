@@ -366,21 +366,21 @@ var infobar = function() {
 
             return {
                 setSource: function(data) {
-                    debug.trace("ALBUMPICTURE","New source",data.image,"current is",aImg.src);
+                    debug.trace("ALBUMPICTURE","New source",data,"current is",aImg.src);
                     if (data.key && data.key != aImg.name) {
                         return false;
                     }
-                    if (data.image === null) {
+                    if (data.images === null) {
                         // null means playlist.emptytrack. Set the source to a file that doesn't exist
                         // and let the onerror handler do the stuff. Then if we start playing the same
                         // album sa previously again the simage src will change and the image will be re-displayed.
                         aImg.src = notafile;
-                    } else if (data.image == "") {
+                    } else if (data.images.asdownloaded == "") {
                         // No album image was supplied
                         aImg.src = noimage;
                     } else {
-                        debug.trace("ALBUMPICTURE","Source is being set to ",data.image);
-                        aImg.src = data.image;
+                        debug.trace("ALBUMPICTURE","Source is being set to ",data.images.asdownloaded);
+                        aImg.src = data.images.asdownloaded;
                     }
                 },
 
@@ -432,27 +432,24 @@ var infobar = function() {
                 handleDrop: function(ev) {
                     debug.mark("INFOBAR","Something dropped onto album image");
                     $(ev.target).parent().removeClass("highlighted");
-                    imagekey = $('#albumpicture').attr("name");
+                    $('#albumpicture').attr("name", aImg.name).removeAttr('src');
                     current_image = aImg.src;
                     aImg.src = noimage;
-                    $('#albumpicture').attr('src', noimage);
-                    dropProcessor(ev.originalEvent, $('#albumpicture'), imagekey, null, infobar.albumImage.uploaded, infobar.albumImage.uploadfail);
+                    dropProcessor(ev.originalEvent, $('#albumpicture'), coverscraper, infobar.albumImage.uploaded, infobar.albumImage.uploadfail);
                 },
 
                 uploaded: function(data) {
-                    if (!data.url || data.url == "") {
+                    if (data.asdownlaoded) {
                         infobar.albumimage.uploadfail();
                         return;
                     }
                     debug.log("INFOBAR","Album Image Updated Successfully",aImg.name);
-                    $('#albumpicture').removeClass('spinner').addClass('nospin');
-                    var firefoxcrapnesshack = Math.floor(Date.now());
-                    infobar.albumImage.setSource({image: "albumart/asdownloaded/"+aImg.name+'.jpg?version='+firefoxcrapnesshack.toString()});
-                    $('img[name="'+aImg.name+'"]').attr("src", "albumart/asdownloaded/"+aImg.name+'.jpg?version='+firefoxcrapnesshack.toString());
+                    $('#albumpicture').removeClass('spinner').addClass('nospin').removeAttr('name');
+                    update_ui_images(aImg.name, data);
                 },
 
                 uploadfail: function() {
-                    $('#albumpicture').removeClass('spinner').addClass('nospin');
+                    $('#albumpicture').removeClass('spinner').addClass('nospin').removeAttr('name');
                     aImg.src = current_image;
                     infobar.notify(infobar.ERROR, "Image Upload Failed!");
                 }
@@ -561,11 +558,10 @@ var infobar = function() {
                 $("#dbtags").fadeOut('fast');
                 $("#playcount").fadeOut('fast');
                 $("#subscribe").fadeOut('fast');
-                infobar.albumImage.setSource({ image: null });
             } else {
                 infobar.albumImage.setKey(info.key);
-                infobar.albumImage.setSource({ image: info.bigimage });
             }
+            infobar.albumImage.setSource(info);
             layoutProcessor.adjustLayout();
         },
 

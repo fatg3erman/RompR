@@ -10,7 +10,7 @@
 
 include ("includes/vars.php");
 include ("includes/functions.php");
-include ("utils/imagefunctions.php");
+require_once ("utils/imagefunctions.php");
 include ("international.php");
 
 set_time_limit(800);

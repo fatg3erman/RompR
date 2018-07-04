@@ -5,12 +5,11 @@ if (array_key_exists('populate', $_REQUEST)) {
     chdir('..');
     include("includes/vars.php");
     include("includes/functions.php");
-    require_once("includes/podcastfunctions.php");
     include("international.php");
-    include( "backends/sql/connect.php");
-    include( "skins/".$skin."/ui_elements.php");
+    require_once("includes/podcastfunctions.php");
+    include( "backends/sql/backend.php");
     include("utils/phpQuery.php");
-    connect_to_database();
+    require_once('utils/imagefunctions.php');
     set_error_handler('handle_error', E_ALL);
     $subflag = 1;
     $dtz = ini_get('date.timezone');
@@ -108,8 +107,14 @@ function doPodcastBase() {
         get_int_text('label_new_episodes') => 'new',
         get_int_text('label_unlistened_episodes') => 'unlistened'
     );
-
-    print '<div class="indent"><b>'.get_int_text('label_sortby').'</b></div>';
+    
+    
+    print '<div class="containerbox menuitem noselection">';
+    print '<i class="icon-toggle-closed mh menu fixed" name="podcastsortoptions"></i>';
+    print '<div class="indent expand"><b>'.get_int_text('label_sortby').'</b></div>';
+    print '</div>';
+    
+    print '<div id="podcastsortoptions" class="toggledown invisible marged">';
 
     for ($count = 0; $count < $prefs['podcast_sort_levels']; $count++) {
         print '<div class="containerbox dropdown-container indent padright">';
@@ -127,19 +132,21 @@ function doPodcastBase() {
             print '<div class="indent playlistrow2">'.get_int_text('label_then').'</div>';
         }
     }
-
+    print '</div>';
 
     print '<div class="fullwidth noselection clearfix"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon padright" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
     print '<div id="podcast_search" class="fullwidth noselection padright"></div>';
     print '</div>';
+
+    print '<div class="menuitem configtitle textcentre brick_wide sensiblebox" style="margin-left:8px;margin-top:1em;margin-bottom:1em"><b>Subscribed Podcasts</b></div>';
 }
 
 function doPodcastList($subscribed) {
     global $prefs;
     if ($subscribed == 1) {
-        $qstring = "SELECT Podcasttable.*, SUM(New = 1) AS new, SUM(Listened = 0) AS unlistened FROM PodcastTable JOIN PodcastTracktable USING(PODindex) WHERE Subscribed = 1 AND Deleted = 0 GROUP BY PODindex ORDER BY";
+        $qstring = "SELECT Podcasttable.*, SUM(New = 1) AS new, SUM(Listened = 0) AS unlistened FROM Podcasttable JOIN PodcastTracktable USING(PODindex) WHERE Subscribed = 1 AND Deleted = 0 GROUP BY PODindex ORDER BY";
     } else {
-        $qstring = "SELECT Podcasttable.*, 0 AS new, 0 AS unlistened FROM PodcastTable WHERE Subscribed = 0 ORDER BY";
+        $qstring = "SELECT Podcasttable.*, 0 AS new, 0 AS unlistened FROM Podcasttable WHERE Subscribed = 0 ORDER BY";
     }
     $sortarray = array();
     for ($i = 0; $i < $prefs['podcast_sort_levels']; $i++) {

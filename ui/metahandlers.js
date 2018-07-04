@@ -28,6 +28,9 @@ var metaHandlers = function() {
 	    } else {
 	        data.duration = 0;
 	    }
+		if (playlistinfo.type) {
+			data.type = playlistinfo.type;
+		}
 	    if (playlistinfo.disc) {
 	        data.disc = playlistinfo.disc;
 	    }
@@ -43,8 +46,8 @@ var metaHandlers = function() {
 	    if (playlistinfo.metadata.album.uri) {
 	        data.albumuri = playlistinfo.metadata.album.uri;
 	    }
-	    if (playlistinfo.type != "stream" && playlistinfo.image) {
-	        data.image = playlistinfo.image;
+	    if (playlistinfo.type != "stream" && playlistinfo.images.small) {
+	        data.image = playlistinfo.images.small;
 	    }
 	    if ((playlistinfo.type == "local" || playlistinfo.type == "podcast") && playlistinfo.album) {
 	        data.album = playlistinfo.album;
@@ -58,7 +61,7 @@ var metaHandlers = function() {
 	        }
 	    } else if (playlistinfo.type == "stream") {
 			data.streamname = playlistinfo.album;
-			data.streamimage = playlistinfo.image;
+			data.streamimage = playlistinfo.images.small;
 			data.streamuri = playlistinfo.location;
 		}
 	    if (playlistinfo.date) {

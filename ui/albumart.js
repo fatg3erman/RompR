@@ -14,8 +14,7 @@ function getNewAlbumArt(div) {
 
     debug.log("ALBUMART","Getting art in",div);
     $.each($(div).find("img").filter(filterImages), function () {
-            var a = this.getAttribute('name');
-            coverscraper.GetNewAlbumArt({imgkey: a});
+            coverscraper.GetNewAlbumArt($(this));
         }
     );
     if (running == false) {
@@ -283,12 +282,8 @@ function handleDrop(ev) {
     imgobj = $(ev.target);
     imagekey = imgobj.attr("name");
     nosource = (imgobj.hasClass('notfound') || imgobj.hasClass('notexist'));
-    stream = imgobj.attr("romprstream");
-    if (typeof(stream) == "undefined") {
-        stream = null;
-    }
     clickindex = null;
-    dropProcessor(ev.originalEvent, imgobj, imagekey, stream, uploadComplete, searchFail);
+    dropProcessor(ev.originalEvent, imgobj, coverscraper, uploadComplete, searchFail);
 }
 
 var imageEditor = function() {
@@ -329,10 +324,10 @@ var imageEditor = function() {
             bigdiv.empty();
             imgobj = where;
             imagekey = imgobj.attr('name');
-            stream = imgobj.attr('romprstream');
             nosource = (imgobj.hasClass('notfound') || imgobj.hasClass('notexist'));
-            var phrase =  decodeURIComponent(where.prev('input').val());
-            var path =  where.prev('input').prev('input').val();
+            var phrase = decodeURIComponent(imgobj.parent().find('input[name="searchterm"]').val());
+            var path = imgobj.parent().find('input[name="albumpath"]').val();
+            debug.log('ALBUMART','Local Path Is',path);
 
             bigdiv.append($('<div>', { id: "searchcontent" }));
             bigdiv.append($('<div>', { id: "origimage"}));
@@ -351,7 +346,9 @@ var imageEditor = function() {
 
             var uform =                 $('<form>', { id: 'uform', action: 'getalbumcover.php', method: 'post', enctype: 'multipart/form-data' }).appendTo($("#usearch"));
             var fdiv =                  $('<div>', {class: "containerbox dropdown-container"}).appendTo(uform);
-            fdiv.append(                $('<input>', { id: 'imagekey', type: 'hidden', name: 'imgkey', value: '' }),
+            fdiv.append(                $('<input>', { id: 'uploadkey', type: 'hidden', name: 'key', value: '' }),
+                                        $('<input>', { id: 'uploadartist', type: 'hidden', name: 'artist', value: '' }),
+                                        $('<input>', { id: 'uploadalbum', type: 'hidden', name: 'album', value: '' }),
                                         $('<input>', { type: 'button', class: 'fixed', value: language.gettext("albumart_uploadbutton"), style: 'width:8em', onclick: "imageEditor.uploadFile()" }),
                                         $('<input>', { name: 'ufile', type: 'file', size: '80', class: 'expand inbrowser', style: "margin-left:8px" }));
             $("#usearch").append(      '<div class="holdingcell"><p>'+language.gettext("albumart_dragdrop")+'</p></div>');
@@ -371,21 +368,20 @@ var imageEditor = function() {
 
             $("#searchphrase").val(phrase);
 
-            var bigsauce = imgobj.attr("src");
-            if (bigsauce) {
-                var m = bigsauce.match(/albumart\/small\/(.*)/);
-                if (m && m[1]) {
-                    bigsauce = 'albumart/asdownloaded/'+m[1];
-                }
-                bigimg.src = bigsauce;
+            if (imgobj.attr("src")) {
+                var aa = new albumart_translator(imgobj.attr("src"));
+                bigimg.src = aa.getSize('asdownloaded');
             }
 
             imageEditor.search();
             if (path) {
                 $.getJSON("utils/findLocalImages.php?path="+path, imageEditor.gotLocalImages)
             }
-
-            $("#imagekey").val(imagekey);
+            
+            var searchparams = coverscraper.getImageSearchParams(imgobj);
+            $('input#uploadkey').val(searchparams.key);
+            $('input#uploadartist').val(searchparams.artist);
+            $('input#uploadalbum').val(searchparams.album);
             $('#searchphrase').keyup(imageEditor.bumblefuck);
             wobbleMyBottom();
             $('#coverslist').mCustomScrollbar('scrollTo', currparent.parent().parent().prev());
@@ -584,13 +580,8 @@ function updateImage(url, index) {
     imgobj.removeClass('notfound notexist').addClass('notfound');
     imageEditor.updateBigImg(true);
     startAnimation();
-    var options = { imgkey: imagekey,
-                    src: url,
-                    };
-    var stream = imgobj.attr("romprstream");
-    if (typeof(stream) != "undefined") {
-        options.stream = stream;
-    }
+    var options = coverscraper.getImageSearchParams(imgobj);
+    options.source = url;
     $.ajax({
         url: "getalbumcover.php",
         type: "POST",
@@ -602,7 +593,7 @@ function updateImage(url, index) {
 }
 
 function startAnimation() {
-    imgobj.removeClass('nospin').attr('src', 'notanimage.jpg').addClass('spinner');
+    imgobj.removeClass('nospin').removeAttr('src').addClass('spinner');
 }
 
 function animationStop() {
@@ -612,41 +603,28 @@ function animationStop() {
 function searchFail() {
     debug.log("ALBUMART","No Source Found");
     $('#img'+clickindex).attr('src', 'newimages/imgnotfound.svg');
-    imgobj.removeClass('notfound notexist');
-    if (imgobj.attr("src") == "") imgobj.addClass('notexist');
+    imgobj.removeClass('notfound notexist').addClass('notexist');
     imageEditor.updateBigImg(false);
     animationStop();
 }
 
 function uploadComplete(data) {
     debug.log("ALBUMART","Upload Complete");
-    if (!data.origimage || data.origimage == "") {
-        searchFail();
-        return;
-    }
-    animationStop();
-    debug.log("ALBUMART","Success for",imagekey);
-    if (nosource) {
-        coverscraper.updateInfo(1);
-        nosource = false;
-    }
-    imgobj.removeClass("notexist notfound");
-
-    imgobj.attr('src', "");
-    var firefoxcrapnesshack = Math.floor(Date.now());
-    if (data.stream) {
-        debug.log("ALBUMART","Stream is present");
-        imgobj.attr('src', data.origimage+'?version='+firefoxcrapnesshack.toString());
-        imageEditor.updateBigImg(data.origimage+'?version='+firefoxcrapnesshack.toString());
-    } else if (!data.url || data.url == '') {
-        imgobj.attr('src', data.origimage);
-        imageEditor.updateBigImg(data.origimage);
+    if (data.small) {
+        animationStop();
+        debug.log("ALBUMART","Success for",imagekey);
+        if (nosource) {
+            coverscraper.updateInfo(1);
+            nosource = false;
+        }
+        imgobj.removeClass("notexist notfound");
+        var firefoxcrapnesshack = Math.floor(Date.now());
+        imgobj.attr('src', data.small+'?version='+firefoxcrapnesshack.toString());
+        imageEditor.updateBigImg(data.asdownloaded+'?version='+firefoxcrapnesshack.toString());
+        sendLocalStorageEvent(imagekey, data);
     } else {
-        imgobj.attr('src', data.url+'?version='+firefoxcrapnesshack.toString());
-        imageEditor.updateBigImg(data.origimage+'?version='+firefoxcrapnesshack.toString());
+        searchFail();
     }
-
-    sendLocalStorageEvent(imagekey, data);
 }
 
 function toggleScrolling() {

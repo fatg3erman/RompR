@@ -387,17 +387,18 @@ var layoutProcessor = function() {
         postAlbumMenu: function(element) {
             debug.log("SKIN","Post Album Menu Thing",element.next());
             if (element.next().hasClass('smallcover')) {
+                var imgsrc = element.next().children('img').attr('src');
+                var aa = new albumart_translator(imgsrc);
                 if (element.isClosed()) {
+                    if (imgsrc) {
+                        element.next().children('img').attr('src', aa.getSize('small'));
+                    }
+                    element.next().css('width','50%');
                     element.next().css('width','');
                     element.next().children('img').css('width', '');
                 } else {
-                    var imgsrc = element.next().children('img').attr('src');
                     if (imgsrc) {
-                        var newsrc = imgsrc;
-                        newsrc = imgsrc.replace('albumart/small','albumart/asdownloaded');
-                        if (newsrc != imgsrc) {
-                            element.next().children('img').attr('src', newsrc);
-                        }
+                        element.next().children('img').attr('src', aa.getSize('asdownloaded'));
                     }
                     element.next().css('width','50%');
                     element.next().children('img').css('width', '100%');

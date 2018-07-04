@@ -124,10 +124,13 @@ class dirbleplugin {
         if (count($streams) > 0) {
             debuglog("Station ".$station['name'].' '.count($station['streams']).' streams',"RADIO");
             $image = null;
+            $streamimage = '';
             if ($station['image']['url']) {
                 $image = 'getRemoteImage.php?url='.$station['image']['url'];
+                $streamimage = $image;
             } else if ($station['image']['thumb']['url']) {
                 $image = 'getRemoteImage.php?url='.$station['image']['thumb']['url'];
+                $streamimage = $image;
             } else {
                 $image = "newimages/broadcast.svg";
             }
@@ -145,7 +148,7 @@ class dirbleplugin {
                 'ImgKey' => 'none',
                 'streamuri' => $k,
                 'streamname' => $station['name'],
-                'streamimg' => $image,
+                'streamimg' => $streamimage,
                 'class' => 'radiochannel',
                 'expand' => true
             ));
@@ -159,7 +162,7 @@ class dirbleplugin {
 
             foreach ($streams as $s) {
                 debuglog("Content type ".$s['content_type']." and uri ".$s['stream'],"DIRBLE");
-                print '<div class="clickable clickstream draggable indent containerbox padright menuitem" name="'.trim($s['stream']).'" streamname="'.trim($station['name']).'" streamimg="'.$image.'">';
+                print '<div class="clickable clickstream draggable indent containerbox padright menuitem" name="'.trim($s['stream']).'" streamname="'.trim($station['name']).'" streamimg="'.$streamimage.'">';
                 print '<i class="'.audioClass($s['content_type']).' smallicon fixed"></i>';
                 print '<div class="expand">';
                 print $this->get_speed($s['bitrate']);

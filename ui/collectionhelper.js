@@ -268,7 +268,7 @@ var collectionHelper = function() {
         scootTheAlbums: function(jq) {
             if (prefs.downloadart) {
                 $.each(jq.find("img.notexist"), function() {
-                    coverscraper.GetNewAlbumArt({imgkey: $(this).attr('name')});
+                    coverscraper.GetNewAlbumArt($(this));
                 });
             }
         },

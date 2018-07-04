@@ -41,6 +41,7 @@ function playerController() {
             }
             if (player.status.Name && !player.status.Name.match(/^\//) && temp.album == rompr_unknown_stream) {
                 // NOTE: 'Name' is returned by MPD - it's the station name as read from the station's stream metadata
+                debug.shout('STREAMHANDLER',"Checking For Stream Name Update");
                 checkForUpdateToUnknownStream(playlist.getCurrent('streamid'), player.status.Name);
                 temp.album = player.status.Name;
                 temp.metadata.album = {name: temp.album, musicbrainz_id: ""};
@@ -51,7 +52,9 @@ function playerController() {
                 playlist.getCurrent('trackartist') != temp.trackartist)
             {
                 debug.log("STREAMHANDLER","Detected change of track",temp);
-                playlist.setCurrent({title: temp.title, album: temp.album, trackartist: temp.trackartist});
+                var aa = new albumart_translator('');
+                temp.key = aa.getKey('stream', '', temp.album);
+                playlist.setCurrent({title: temp.title, album: temp.album, trackartist: temp.trackartist });
                 nowplaying.newTrack(temp, true);
             }
         }
@@ -60,11 +63,11 @@ function playerController() {
     function checkForUpdateToUnknownStream(streamid, name) {
         // If our playlist for this station has 'Unknown Internet Stream' as the
         // station name, let's see if we can update it from the metadata.
-        debug.log("STREAMHANDLER","Checking For Update to Stream",streamid,name);
+        debug.log("STREAMHANDLER","Checking For Update to Stream",streamid,name, location);
         var m = playlist.getCurrent('album');
         if (m.match(/^Unknown Internet Stream/)) {
             debug.shout("PLAYLIST","Updating Stream",name);
-            yourRadioPlugin.updateStreamName(streamid, name, playlist.repopulate);
+            yourRadioPlugin.updateStreamName(streamid, name, playlist.getCurrent('location'), playlist.repopulate);
         }
     }
 
@@ -128,6 +131,7 @@ function playerController() {
                         player.status = data;
                         // debug.trace("MPD","Status",player.status);
                         if (player.status.playlist !== plversion && !moving) {
+                            debug.blurt("PLAYER","Player has marked playlist as changed");
                             playlist.repopulate();
                         }
                         plversion = player.status.playlist;
@@ -178,23 +182,21 @@ function playerController() {
 
     this.loadPlaylistURL = function(name) {
         var data = {url: encodeURIComponent(name)};
-        $.ajax( {
+        $.ajax({
             type: "GET",
             url: "utils/getUserPlaylist.php",
             cache: false,
             data: data,
             dataType: "xml",
-            success: self.reloadPlaylists,
+            success: function() {
+                self.reloadPlaylists();
+                self.addTracks([{type: 'remoteplaylist', name: name}]);
+            },
             error: function(data, status) {
                 playlist.repopulate();
                 debug.error("MPD","Failed to save user playlist URL");
             }
-        } );
-        if (prefs.player_backend == "mpd") {
-            self.do_command_list([['load', name]]);
-        } else {
-            self.do_command_list([['add', name]]);
-        }
+        });
         return false;
     }
 
@@ -463,6 +465,9 @@ function playerController() {
                     cmdlist.push(['resume', v.uri, v.resumefrom, v.pos]);
                     playpos = null;
                     abitofahack = false;
+                    break;
+                case 'remoteplaylist':
+                    cmdlist.push(['addremoteplaylist', v.name]);
                     break;
     		}
 		});

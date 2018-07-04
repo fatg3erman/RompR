@@ -254,6 +254,35 @@ var imagePopup = function() {
     }
 }();
 
+function albumart_translator(source) {
+    // Given an album image of any size, return any other size
+    this.source = source;
+    this.getSize = function(size) {
+        if (/albumart\/small\//.test(this.source)) {
+            return this.source.replace('albumart/small/', 'albumart/'+size+'/');
+        } else if (/albumart\/medium\//.test(this.source)) {
+            return this.source.replace('albumart/medium/', 'albumart/'+size+'/');
+        } else if (/albumart\/asdownloaded\//.test(this.source)) {
+            return this.source.replace('albumart/asdownloaded/', 'albumart/'+size+'/');
+        } else {
+            return this.source;
+        }
+    }
+    
+    this.getKey = function(type, artist, album) {
+        switch (type) {
+            case 'stream':
+                artist = 'STREAM'
+                break;
+                
+            case 'podcast':
+                artist = 'podcast';
+                break;
+        }
+        return hex_md5(artist.toLowerCase()+album.toLowerCase());
+    }
+}
+
 function show_albumart_update_window() {
     var ws = getWindowSize();
     var fnarkle = new popup({
@@ -619,10 +648,40 @@ function doMopidyCollectionOptions() {
     }
 }
 
-function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
+function fileUploadThing(formData, options, success, fail) {
+    if (formData === null) {
+        $.ajax({
+            url: "getalbumcover.php",
+            type: "POST",
+            data: options,
+            cache:false,
+            success: success,
+            error: fail,
+        });
+    } else {
+        $.each(options, function(i, v) {
+            formData.append(i, v);
+        })
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'getalbumcover.php');
+        xhr.responseType = "json";
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                success(xhr.response);
+            } else {
+                fail();
+            }
+        };
+        xhr.send(formData);
+    }
+}
+
+function dropProcessor(evt, imgobj, coverscraper, success, fail) {
 
     evt.stopPropagation();
     evt.preventDefault();
+    var options = coverscraper.getImageSearchParams(imgobj);
+    var formData = new FormData();
     if (evt.dataTransfer.types) {
         for (var i in evt.dataTransfer.types) {
             type = evt.dataTransfer.types[i];
@@ -635,42 +694,14 @@ function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
                     if (srces && srces[1]) {
                         src = srces[1];
                         debug.log("ALBUMART","Image Source",src);
-                        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').attr('src', 'notanimage.jpg');
+                        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').removeAttr('src');
                         if (src.match(/image\/.*;base64/)) {
                             debug.log("ALBUMART","Looks like Base64");
-                            // For some reason I no longer care about, doing this with jQuery.post doesn't work
-                            var formData = new FormData();
                             formData.append('base64data', src);
-                            formData.append('imgkey', imagekey);
-                            if (stream !== null) {
-                                formData.append('stream', stream);
-                            }
-                            var xhr = new XMLHttpRequest();
-                            xhr.open('POST', 'getalbumcover.php');
-                            xhr.responseType = "json";
-                            xhr.onload = function () {
-                                if (xhr.status === 200) {
-                                    success(xhr.response);
-                                } else {
-                                    fail();
-                                }
-                            };
-                            xhr.send(formData);
+                            fileUploadThing(formData, options, success, fail);
                         } else {
-                            var data = { imgkey: imagekey,
-                                        src: src
-                                };
-                            if (stream !== null) {
-                                data.stream = stream;
-                            }
-                            $.ajax({
-                                url: "getalbumcover.php",
-                                type: "POST",
-                                data: data,
-                                cache:false,
-                                success: success,
-                                error: fail,
-                            });
+                            options.source = src;
+                            fileUploadThing(null, options, success, fail);
                         }
                         return false;
                     }
@@ -680,25 +711,9 @@ function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
                     debug.log("ALBUMART","Found Files");
                     var files = evt.dataTransfer.files;
                     if (files[0]) {
-                        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').attr('src', 'notanimage.jpg');
-                        // For some reason I no longer care about, doing this with jQuery.post doesn't work
-                        var formData = new FormData();
+                        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').removeAttr('src');
                         formData.append('ufile', files[0]);
-                        formData.append('imgkey', imagekey);
-                        if (stream !== null) {
-                            formData.append('stream', stream);
-                        }
-                        var xhr = new XMLHttpRequest();
-                        xhr.open('POST', 'getalbumcover.php');
-                        xhr.responseType = "json";
-                        xhr.onload = function () {
-                            if (xhr.status === 200) {
-                                success(xhr.response);
-                            } else {
-                                fail();
-                            }
-                        };
-                        xhr.send(formData);
+                        fileUploadThing(formData, options, success, fail);
                         return false;
                     }
                     break;
@@ -706,34 +721,21 @@ function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
 
         }
     }
-    // IF we get here, we didn't find anything. Let's try the basic text,
-    // which might give us something if we're lucky.
+    // IF we get here, we didn't find anything. Let's try the basic text, which might give us something if we're lucky.
     // Safari returns a plethora of MIME types, but none seem to be useful.
     var data = evt.dataTransfer.getData('Text');
     var src = data;
     debug.log("ALBUMART","Trying last resort methods",src);
-    if (src.match(/^http:\/\//)) {
+    if (src.match(/^https*:\/\//)) {
         debug.log("ALBUMART","Appears to be a URL");
-        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').attr('src', 'notanimage.jpg');
+        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').removeAttr('src');
         var u = src.match(/images.google.com.*imgurl=(.*?)&/)
         if (u && u[1]) {
             src = u[1];
             debug.log("ALBUMART","Found possible Google Image Result",src);
         }
-        var data = { imgkey: imagekey,
-                    src: src
-            };
-        if (stream !== null) {
-            data.stream = stream;
-        }
-        $.ajax({
-            url: "getalbumcover.php",
-            type: "POST",
-            data: data,
-            cache:false,
-            success: success,
-            error: fail,
-        });
+        options.source = src;
+        fileUploadThing(null, options, success, fail);
     }
     return false;
 }

@@ -402,24 +402,6 @@ function domainIcon($d, $c) {
     return $h;
 }
 
-function getImageForAlbum(&$filedata, $imagekey) {
-    if ($filedata['ImageForPlaylist'] !== null && $filedata['ImageForPlaylist'] !== '') {
-        return $filedata['ImageForPlaylist'];
-    } else {
-        $im = cacheOrDefaultImage($filedata['X-AlbumImage'], $imagekey, 'small', $filedata['domain']);
-        if ($im == null) $im = '';
-        return $im;
-    }
-}
-
-function getImageKey(&$filedata, $albumartist) {
-    if ($filedata['ImgKey'] !== null) {
-        return $filedata['ImgKey'];
-    } else {
-        return make_image_key($albumartist, $filedata['Album']);
-    }
-}
-
 function getStreamFolder($url) {
     $f = dirname($url);
     if ($f == "." || $f == "") $f = $url;
@@ -803,7 +785,7 @@ function getCacheData($uri, $cache, $returndata = false, $use_cache = true) {
 function get_user_file($src, $fname, $tmpname) {
     global $error;
     debuglog("  Uploading ".$src." ".$fname." ".$tmpname,"GETALBUMCOVER");
-    $download_file = "prefs/".$fname;
+    $download_file = "prefs/temp/".$fname;
     debuglog("Checking Temp File ".$tmpname,"GETALBUMCOVER");
     if (move_uploaded_file($tmpname, $download_file)) {
         debuglog("    File ".$src." is valid, and was successfully uploaded.","GETALBUMCOVER");
@@ -816,41 +798,13 @@ function get_user_file($src, $fname, $tmpname) {
     return $download_file;
 }
 
-function make_image_key($artist,$album) {
-    $c = strtolower($artist.$album);
-    return md5($c);
-}
-
 function albumImageBuggery() {
-    set_time_limit(600);
-    $result = generic_sql_query(
-        "SELECT Albumindex, Artistname, Albumname, ImgKey, Image FROM Albumtable JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex", false, PDO::FETCH_OBJ);
-    open_transaction();
-    foreach ($result as $obj) {
-        $oldkey = $obj->ImgKey;
-        $newkey = make_image_key($obj->Artistname, $obj->Albumname);
-        $oldimage = $obj->Image;
-        $newimage = $oldimage;
-        if (preg_match('#^albumart/#', $oldimage)) {
-            if (file_exists($oldimage)) {
-                debuglog("Renaming albumart image ".$oldkey." to ".$newkey,"BACKEND_UPGRADE");
-                $newimage = 'albumart/small/'.$newkey.'.jpg';
-                exec( 'mv albumart/small/'.$oldkey.'.jpg '.$newimage);
-                exec( 'mv albumart/asdownloaded/'.$oldkey.'.jpg albumart/asdownloaded/'.$newkey.'.jpg');
-                sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET ImgKey = ?, Image = ? WHERE Albumindex = ?",$newkey,$newimage,$obj->Albumindex);
-            }
-        } else if (preg_match('#^prefs/imagecache/#', $oldimage)) {
-            if (file_exists($oldimage)) {
-                debuglog("Renaming imagecache image ".$oldkey." to ".$newkey,"BACKEND_UPGRADE");
-                $newimage = 'prefs/imagecache/'.$newkey.'_small.jpg';
-                exec('mv prefs/imagecache/'.$oldkey.'_small.jpg '.$newimage);
-                exec('mv prefs/imagecache/'.$oldkey.'_asdownloaded.jpg prefs/imagecache/'.$newkey.'_asdownloaded.jpg');
-                sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET ImgKey = ?, Image = ? WHERE Albumindex = ?",$newkey,$newimage,$obj->Albumindex);
-            }
-        }
-        check_transaction();
-    }
-    close_transaction();
+    // This was used to update album art to a new format but it's really old now and we've totally refactored the album image code
+    // In the eventuality that someone is still using a version that old we'll keep the function but just use it to remove all album art
+    // and start again.
+    exec('rm -fR albumart/small/*.*');
+    exec('rm -fR albumart/asdownloaded/*.*');
+    generic_sql_query("UPDATE Albumtable SET Searched = 0. Image = ''");
 }
 
 function rejig_wishlist_tracks() {
@@ -955,4 +909,28 @@ function set_version_string() {
         $version_string = ROMPR_VERSION;
     }
 }
+
+function update_stream_images() {
+    require_once('utils/imagefunctions.php');
+    $stations = generic_sql_query("SELECT Stationindex, StationName, Image FROM RadioStationtable WHERE Image LIKE 'prefs/userstreams/STREAM_%'");
+    foreach ($stations as $station) {
+        debuglog("  Updating Image For Station ".$station['StationName'], "BACKEND");
+        if (file_exists($station['Image'])) {
+            debuglog("    Image is ".$station['StationName'], "BACKEND");
+            $src = get_base_url().'/'.$station['Image'];
+            $albumimage = new albumImage(array('artist' => "STREAM", 'album' => $station['StationName'], 'source' => $src));
+            if ($albumimage->download_image()) {
+                // Can't call $albumimage->update_image_database because the functions that requires are in the backend
+                $images = $albumimage->get_images();
+                sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET Image = ? WHERE StationName = ?",$images['small'],$station['StationName']);
+                unlink($station['Image']);
+            } else {
+                debuglog("  Image Upgrade Failed!","BACKEND");
+            }
+        } else {
+            generic_sql_query("UPDATE RadioStationtable SET IMAGE = NULL WHERE Stationindex = ".$station['Stationindex']);
+        }
+    }
+}
+
 ?>

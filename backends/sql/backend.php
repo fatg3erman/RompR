@@ -184,10 +184,6 @@ function check_album(&$data) {
 		$year = best_value($obj->Year, $data['date']);
 		$img  = best_value($obj->Image, $data['image']);
 		$uri  = best_value($obj->AlbumUri, $data['albumuri']);
-		if ($img != $obj->Image) {
-			$retval = archive_image($img, $data['imagekey']);
-			$img = $retval['image'];
-		}
 		if ($year != $obj->Year || $img != $obj->Image || $uri != $obj->AlbumUri) {
 
 			if ($prefs['debug_enabled'] > 6) {
@@ -221,10 +217,10 @@ function create_new_album($data) {
 
 	global $mysqlc;
 	$retval = null;
-	$im = array('searched' => 0, 'image' => null);
-	if ($data['imagekey'] !== null) {
-		$im = archive_image($data['image'], $data['imagekey']);
-	}
+	$im = array(
+		'searched' => $data['image'] ? 1: 0,
+		'image' => $data['image']
+	);
 	if (sql_prepare_query(true, null, null, null,
 		"INSERT INTO
 			Albumtable
@@ -537,14 +533,14 @@ function get_all_data($ttid) {
 function get_extra_track_info(&$filedata) {
 	$data = array();;
 	$result = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
-		"SELECT Uri, TTindex, Disc, Artistname AS AlbumArtist, Albumtable.Image AS ImageForPlaylist, ImgKey AS ImgKey, mbid AS MUSICBRAINZ_ALBUMID
+		'SELECT Uri, TTindex, Disc, Artistname AS AlbumArtist, Albumtable.Image AS "X-AlbumImage", ImgKey AS ImgKey, mbid AS MUSICBRAINZ_ALBUMID
 			FROM
 				Tracktable
 				JOIN Albumtable USING (Albumindex)
 				JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
 				WHERE Title = ?
 				AND TrackNo = ?
-				AND Albumname = ?",
+				AND Albumname = ?',
 			$filedata['Title'], $filedata['Track'], $filedata['Album']
 	);
 	foreach ($result as $tinfo) {
@@ -556,63 +552,11 @@ function get_extra_track_info(&$filedata) {
 	return $data;
 }
 
-// While this is nice, the complexity of the query makes it very slow - the above query completes
-// in about 1/3 of the time. It's s shame, since this pre-populates all our usermeta for the playlist
-// but the delay is unacceptable with large playlists. Even the above version is pushing it
-// function get_extra_track_info(&$filedata) {
-// 	$data = null;
-// 	if ($result = sql_prepare_query("SELECT
-// 			IFNULL(r.Rating, 0) AS Rating,
-// 			IFNULL(p.Playcount, 0) AS Playcount,
-// 			".sql_to_unixtime('p.LastPlayed')." AS LastTime,
-// 			".sql_to_unixtime('tr.DateAdded')." AS DateAdded,
-// 			IFNULL(".SQL_TAG_CONCAT.", '') AS Tags,
-// 			tr.Uri,
-// 			tr.TTindex AS TTindex,
-// 			tr.Disc AS Disc,
-// 			tr.isSearchResult AS isSearchResult,
-// 			tr.Hidden AS Hidden,
-// 			ta.Artistname AS AlbumArtist,
-// 			al.Image AS ImageForPlaylist,
-// 			al.ImgKey AS ImgKey
-// 		FROM
-// 			(Tracktable AS tr, Artisttable AS ta, Albumtable AS al)
-// 			LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
-// 			LEFT JOIN Playcounttable AS p ON tr.TTindex = p.TTindex
-// 			LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
-// 			LEFT JOIN Tagtable AS t USING (Tagindex)
-// 				WHERE tr.Title = ?
-// 				AND al.Albumname = ?
-// 				AND tr.Trackno = ?
-// 				AND al.AlbumArtistindex = ta.Artistindex
-// 				AND al.Albumindex = tr.Albumindex
-// 		GROUP BY tr.TTindex
-// 		ORDER BY t.Name",
-// 		$filedata['Title'], $filedata['Album'], $filedata['Track']
-// 		)) {
-
-// 		while ($tinfo = $result->fetch(PDO::FETCH_ASSOC)) {
-// 			if ($tinfo['Uri'] == $filedata['file']) {
-// 				$data = $tinfo;
-// 				break;
-// 			}
-// 		}
-// 	}
-// 	if (is_array($data)) {
-// 		$data['Tags'] = explode(', ', $data['Tags']);
-// 		if ($data['LastTime'] != null && $data['LastTime'] != 0 && $data['LastTime'] != '0') {
-// 			$data['Last'] = $data['LastTime'];
-// 		}
-// 		return $data;
-// 	} else {
-// 		return array();
-// 	}
-// }
-
 function get_imagesearch_info($key) {
 
 	// Used by getalbumcover.php to get album and artist names etc based on an Image Key
-	$retval = array(false, null, null, null, null, null, false);
+	
+	$retval = array('artist' => null, 'album' => null, 'mbid' => null, 'albumpath' => null, 'albumuri' => null);
 	$result = generic_sql_query(
 		"SELECT DISTINCT
 			Artisttable.Artistname,
@@ -630,24 +574,22 @@ function get_imagesearch_info($key) {
 	// This can come back with multiple results if we have the same album on multiple backends
 	// So we make sure we combine the data to get the best possible set
 	foreach ($result as $obj) {
-		if ($retval[1] == null) {
-			$retval[1] = $obj->Artistname;
+		if ($retval['artist'] == null) {
+			$retval['artist'] = $obj->Artistname;
 		}
-		if ($retval[2] == null) {
-			$retval[2] = $obj->Albumname;
+		if ($retval['album'] == null) {
+			$retval['album'] = $obj->Albumname;
 		}
-		if ($retval[3] == null || $retval[3] == "") {
+		if ($retval['mbid'] == null || $retval['mbid'] == "") {
 			$retval[3] = $obj->mbid;
 		}
-		if ($retval[4] == null) {
-			$retval[4] = get_album_directory($obj->Albumindex, $obj->AlbumUri);
+		if ($retval['albumpath'] == null) {
+			$retval['albumpath'] = get_album_directory($obj->Albumindex, $obj->AlbumUri);
 		}
-		if ($retval[5] == null || $retval[5] == "") {
-			$retval[5] = $obj->AlbumUri;
+		if ($retval['albumuri'] == null || $retval['albumuri'] == "") {
+			$retval['albumuri'] = $obj->AlbumUri;
 		}
-		$retval[0] = 1;
-		$retval[6] = true;
-		debuglog("Found album ".$retval[2]." in database","GETALBUMCOVER",6);
+		debuglog("Found album ".$retval['album']." in collection","GETALBUMCOVER",6);
 	}
 
 	$result = generic_sql_query(
@@ -667,26 +609,22 @@ function get_imagesearch_info($key) {
 	// This can come back with multiple results if we have the same album on multiple backends
 	// So we make sure we combine the data to get the best possible set
 	foreach ($result as $obj) {
-		if ($retval[1] == null) {
-			$retval[1] = $obj->Artistname;
+		if ($retval['artist'] == null) {
+			$retval['artist'] = $obj->Artistname;
 		}
-		if ($retval[2] == null) {
-			$retval[2] = $obj->Albumname;
+		if ($retval['album'] == null) {
+			$retval['album'] = $obj->Albumname;
 		}
-		if ($retval[3] == null || $retval[3] == "") {
+		if ($retval['mbid'] == null || $retval['mbid'] == "") {
 			$retval[3] = $obj->mbid;
 		}
-		if ($retval[4] == null) {
-			$retval[4] = get_album_directory($obj->Albumindex, $obj->AlbumUri);
+		if ($retval['albumpath'] == null) {
+			$retval['albumpath'] = get_album_directory($obj->Albumindex, $obj->AlbumUri);
 		}
-		if ($retval[5] == null || $retval[5] == "") {
-			$retval[5] = $obj->AlbumUri;
+		if ($retval['albumuri'] == null || $retval['albumuri'] == "") {
+			$retval['albumuri'] = $obj->AlbumUri;
 		}
-		if ($retval[0] === false) {
-			$retval[0] = 1;
-		}
-		$retval[6] = true;
-		debuglog("Found album ".$retval[2]." in search results or hidden tracks","GETALBUMCOVER",6);
+		debuglog("Found album ".$retval['album']." in search results or hidden tracks","GETALBUMCOVER",6);
 	}
 	return $retval;
 }
@@ -712,9 +650,9 @@ function get_album_directory($albumindex, $uri) {
 	return $retval;
 }
 
-function update_image_db($key, $notfound, $imagefile) {
-	$val = ($notfound == 0) ? $imagefile : "";
-	if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Image=?, Searched = 1 WHERE ImgKey=?", $val, $key)) {
+function update_image_db($key, $found, $imagefile) {
+	$val = ($found) ? $imagefile : null;
+	if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Image = ?, Searched = 1 WHERE ImgKey = ?", $val, $key)) {
 		debuglog("    Database Image URL Updated","MYSQL",8);
 	} else {
 		debuglog("    Failed To Update Database Image URL","MYSQL",2);
@@ -1239,8 +1177,13 @@ function add_fave_station($info) {
 }
 
 function update_radio_station_name($info) {
-	debuglog("Updating Stationindex ".$info['streamid'].' with new name '.$info['name']);
-	sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET StationName = ? WHERE Stationindex = ?",$info['name'],$info['streamid']);
+	if ($info['streamid']) {
+		debuglog("Updating Stationindex ".$info['streamid'].' with new name '.$info['name']);
+		sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET StationName = ? WHERE Stationindex = ?",$info['name'],$info['streamid']);
+	} else {
+		$stationid = check_radio_station($info['uri'], $info['name'], '');
+		check_radio_tracks($stationid, array(array('TrackUri' => $info['uri'], 'PrettyStream' => '')));
+	}
 }
 
 function find_stream_name_from_index($index) {
@@ -1248,8 +1191,11 @@ function find_stream_name_from_index($index) {
 }
 
 function update_stream_image($stream, $image) {
-	$streamid = stream_index_from_key($stream);
-	sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET Image = ? WHERE Stationindex = ?",$image,$streamid);
+	sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET Image = ? WHERE StationName = ?",$image,$stream);
+}
+
+function update_podcast_image($image, $podid) {
+	sql_prepare_query(true, null, null, null, 'UPDATE Podcasttable SET Image = ? WHERE PODindex = ?',$image, $podid);
 }
 
 function find_radio_track_from_url($url) {

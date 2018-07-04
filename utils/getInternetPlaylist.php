@@ -11,7 +11,7 @@
 // The generated playlists can be updated later if no information is known -
 // the playlist will handle that when it gets stream info from mpd
 
-function load_internet_playlist($url, $image, $station) {
+function load_internet_playlist($url, $image, $station, $return_tracks = false) {
 	
 	$playlist = download_internet_playlist($url, $image, $station);
 	if ($playlist !== false) {
@@ -20,8 +20,14 @@ function load_internet_playlist($url, $image, $station) {
 			$playlist = download_internet_playlist($playlist->get_first_track(), $image, $station);
 		}
 		if ($playlist !== false) {
-			$playlist->updateDatabase();
-			return $playlist->getTracksToAdd();
+			if ($return_tracks) {
+				return $playlist->tracks;
+			} else {
+				$playlist->updateDatabase();
+				return $playlist->getTracksToAdd();
+			}
+		} else {
+			return array();
 		}
 	}
 
@@ -30,7 +36,7 @@ function load_internet_playlist($url, $image, $station) {
 function download_internet_playlist($url, $image, $station) {
 
 	$station = ($station == 'null') ? ROMPR_UNKNOWN_STREAM : $station;
-	$image = ($image == 'null') ? 'newimages/broadcast.svg' : $image;
+	$image = ($image == 'null') ? '' : $image;
 	$url = trim($url);
 	debuglog("Getting Internet Stream:","RADIO_PLAYLIST");
 	debuglog("  url : ".$url,"RADIO_PLAYLIST");
@@ -63,6 +69,7 @@ function download_internet_playlist($url, $image, $station) {
 				break;
 
 			case "audio/x-mpegurl":
+			case "application/x-mpegurl":
 				debuglog("Playlist Is ".$content['contents'],"RADIO_PLAYLIST",8);
 				$type = "m3u";
 				break;
@@ -126,7 +133,9 @@ function download_internet_playlist($url, $image, $station) {
 						break;
 
 					case "m3u":
+					case "m3u8":
 					case "M3U":
+					case "M3U8":
 						$playlist = new m3uFile($content['contents'], $url, $station, $image);
 						break;
 
