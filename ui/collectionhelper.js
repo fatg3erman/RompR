@@ -241,11 +241,11 @@ var collectionHelper = function() {
             }
             var update = forceup;
             if (prefs.updateeverytime) {
-                debug.mark("GENERAL","Updating Collection due to preference");
+                debug.mark("COLLECTION","Updating Collection due to preference");
                 update = true;
             } else {
                 if (!prefs.hide_albumlist && collection_status == 1) {
-                    debug.mark("GENERAL","Updating Collection because it is out of date");
+                    debug.mark("COLLECTION","Updating Collection because it is out of date");
                     collection_status = 0;
                     update = true;
                 }
@@ -278,7 +278,7 @@ var collectionHelper = function() {
             // Otherwise we would have to reload the entire collection panel every time,
             // which would cause any opened dropdowns to be mysteriously closed,
             // which would just look shit.
-            debug.trace("RATING PLUGIN","Update Display",rdata);
+            debug.trace("COLLECTION","Update Display",rdata);
             if (rdata) {
                 returned_data.push(rdata);
                 clearTimeout(update_timer);

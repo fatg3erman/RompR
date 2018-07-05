@@ -74,6 +74,7 @@ $(document).ready(function(){
     helplinks[language.gettext('label_lastfm')] = 'https://fatg3erman.github.io/RompR/LastFM';
     helplinks[language.gettext('config_players')] = 'https://fatg3erman.github.io/RompR/Using-Multiple-Players';
     for (var i in helplinks) {
+        debug.log("HELPLINKS","Appending Help Link For",i);
         $('b:contains("'+i+'")').parent('.configtitle').not('.nohelp').append('<a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
     }
     layoutProcessor.changeCollectionSortMode();
@@ -82,6 +83,7 @@ $(document).ready(function(){
         prefs.save({browser_id: Date.now()});
     }
     if (old_style_albumart > 0) {
+        debug.shout("INIT","There are",old_style_albumart,"albums whose covers need updating");
         show_albumart_update_window();
     }
 });
