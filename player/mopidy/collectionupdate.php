@@ -11,7 +11,7 @@ function musicCollectionUpdate() {
         if ($dir == "Spotify Playlists") {
         	musicCollectionSpotifyPlaylistHack($monitor);
         } else {
-        	fwrite($monitor, "\nScanning Directory ".$dir);
+        	fwrite($monitor, "\n<b>Scanning Directory</b> ".$dir.'<br/>'.count($dirs).' folders remaining');
         	doMpdParse('lsinfo "'.format_for_mpd(local_media_check($dir)).'"', $dirs, null);
 	    	$collection->tracks_to_database();
 	    }

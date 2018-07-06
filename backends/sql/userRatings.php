@@ -3,7 +3,7 @@ chdir('../..');
 set_time_limit(360);
 include ("includes/vars.php");
 include ("includes/functions.php");
-include ("utils/imagefunctions.php");
+require_once ("utils/imagefunctions.php");
 include ("international.php");
 debuglog("--------------------------START---------------------","USERRATING",4);
 include ("backends/sql/backend.php");
@@ -44,9 +44,9 @@ foreach($params as $p) {
 	foreach ($p as $i => $v) {
 		if ($i != 'action' && $v) {
 			if (is_array($v)) {
-				debuglog('  : Array - '.multi_implode($v,', '), ' '.$i,8);
+				debuglog(' Array - '.multi_implode($v,', '), ' '.$i,8);
 			} else {
-				debuglog('  : '.$v, ' '.$i,8);
+				debuglog(' '.$v, ' '.$i,8);
 			}
 		}
 	}
@@ -172,7 +172,7 @@ function prepare_returninfo() {
 	}
 
 	$at = microtime(true) - $t;
-	debuglog("   -- Finding removed artists took ".$at." seconds","BACKEND",8);
+	debuglog(" -- Finding removed artists took ".$at." seconds","BACKEND",8);
 
 	$t = microtime(true);
 	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');

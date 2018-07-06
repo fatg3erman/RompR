@@ -124,10 +124,13 @@ class dirbleplugin {
         if (count($streams) > 0) {
             debuglog("Station ".$station['name'].' '.count($station['streams']).' streams',"RADIO");
             $image = null;
+            $streamimage = '';
             if ($station['image']['url']) {
                 $image = 'getRemoteImage.php?url='.$station['image']['url'];
+                $streamimage = $image;
             } else if ($station['image']['thumb']['url']) {
                 $image = 'getRemoteImage.php?url='.$station['image']['thumb']['url'];
+                $streamimage = $image;
             } else {
                 $image = "newimages/broadcast.svg";
             }
@@ -145,7 +148,7 @@ class dirbleplugin {
                 'ImgKey' => 'none',
                 'streamuri' => $k,
                 'streamname' => $station['name'],
-                'streamimg' => $image,
+                'streamimg' => $streamimage,
                 'class' => 'radiochannel',
                 'expand' => true
             ));
@@ -159,7 +162,7 @@ class dirbleplugin {
 
             foreach ($streams as $s) {
                 debuglog("Content type ".$s['content_type']." and uri ".$s['stream'],"DIRBLE");
-                print '<div class="clickable clickstream draggable indent containerbox padright menuitem" name="'.trim($s['stream']).'" streamname="'.trim($station['name']).'" streamimg="'.$image.'">';
+                print '<div class="clickable clickstream draggable indent containerbox padright menuitem" name="'.trim($s['stream']).'" streamname="'.trim($station['name']).'" streamimg="'.$streamimage.'">';
                 print '<i class="'.audioClass($s['content_type']).' smallicon fixed"></i>';
                 print '<div class="expand">';
                 print $this->get_speed($s['bitrate']);
@@ -216,25 +219,23 @@ class dirbleplugin {
                         'json' => array(),
                         'spage' => 0,
                         'total' => 0);
-        $content = url_get_contents($url.'?page='.$page.'&per_page='.$per_page.'&token='.$token, ROMPR_IDSTRING, true);
-        debuglog("  Status Code was ".$content['status'],"DIRBLE");
-        if ($content['status'] == '200') {
-            $result['json'] = array_merge($result['json'], json_decode($content['contents'], true));
-            if (array_key_exists('X-Page', $content['headers'])) {
-                debuglog("  Got Page ".$content['headers']['X-Page'],"DIRBLE");
+
+        $d = new url_downloader(array('url' => $url.'?page='.$page.'&per_page='.$per_page.'&token='.$token));
+        if ($d->get_data_to_string()) {
+            $result['json'] = array_merge($result['json'], json_decode($d->get_data(), true));
+            if (($p = $d->get_header('X-Page')) !== false) {
+                debuglog("  Got Page ".$p,"DIRBLE");
             }
-            if (array_key_exists('X-Total', $content['headers'])) {
-                debuglog("  Total ".$content['headers']['X-Total'],"DIRBLE");
-                $result['total'] = $content['headers']['X-Total'];
+            if (($p = $d->get_header('X-Total')) !== false) {
+                debuglog("  Total Pages ".$p,"DIRBLE");
+                $result['total'] = $p;
             }
-            if (array_key_exists('X-Next-Page', $content['headers'])) {
-                debuglog("  Next Page : ".$content['headers']['X-Next-Page'],"DIRBLE");
-                $result['nextpage'] = $content['headers']['X-Next-Page'];
+            if (($p = $d->get_header('X-Next-Page')) !== false) {
+                debuglog("  Next Page ".$p,"DIRBLE");
+                $result['nextpage'] = $p;
             }
             $result['num'] = $result['first'] + count($result['json']) - 1;
             debuglog('Showing '.$result['first'].' to '.$result['num'].' of '.$result['total'],"DIRBLE");
-            debuglog('Next Page : '.$result['nextpage'],"DIRBLE");
-            debuglog('Prev Page : '.$result['prevpage'],"DIRBLE");
         }
         return $result;
     }
@@ -258,9 +259,12 @@ class dirbleplugin {
         } else if (preg_match('#category/(.*)#', $country, $matches)) {
             $sterms['category'] = $matches[1];
         }
-        $content = url_get_contents('http://api.dirble.com/v2/search?token='.$token, ROMPR_IDSTRING, false, true, false, null, null, $sterms);
-        if ($content['status'] == '200') {
-            $result['json'] = array_merge($result['json'], json_decode($content['contents'], true));
+        $d = new url_downloader(array(
+            'url' => 'http://api.dirble.com/v2/search?token='.$token,
+            'postfields' => $sterms
+        ));
+        if ($d->get_data_to_string()) {
+            $result['json'] = array_merge($result['json'], json_decode($d->get_data(), true));
             $result['num'] = $result['first'] + count($result['json']) - 1;
         }
         return $result;

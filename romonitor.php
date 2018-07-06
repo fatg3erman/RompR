@@ -38,13 +38,13 @@ while (true) {
             doCollection('currentsong', array(), null);
             $current_id = $mpd_status['songid'];
             $playcount_updated = false;
+			romprmetadata::get($current_song);
+            $current_playcount = array_key_exists('Playcount', $returninfo) ? $returninfo['Playcount'] : 0;
+			debuglog("Current Playcount is ".$current_playcount,"ROMONITOR",8);
         }
         $progress = $mpd_status['elapsed']/$current_song['duration'];
         if ($current_song['type'] !== 'stream' && $progress > 0.6 && !$playcount_updated) {
             debuglog("Updating Playcount for current song","ROMONITOR");
-            romprmetadata::get($current_song);
-            $current_playcount = array_key_exists('Playcount', $returninfo) ? $returninfo['Playcount'] : 0;
-            debuglog("Current Playcount is ".$current_playcount,"ROMONITOR",9);
             $current_song['attributes'] = array(array('attribute' => 'Playcount', 'value' => $current_playcount+1));
             romprmetadata::inc($current_song);
             if ($current_song['type'] == 'podcast') {
@@ -75,7 +75,13 @@ function doNewPlaylistFile(&$filedata) {
         $tartist = $tartistr;
         $albumartist = $tartistr;
     }
-    $imagekey = getImageKey($filedata, $albumartist);
+	$albumimage = new baseAlbumImage(array(
+        'baseimage' => $filedata['X-AlbumImage'],
+        'artist' => artist_for_image($filedata['type'], $albumartist),
+        'album' => $filedata['Album']
+    ));
+    $albumimage->check_image($filedata['domain'], $filedata['type'], true);
+	$images = $albumimage->get_images();
 
     $current_song = array(
         "title" => $t,
@@ -88,9 +94,9 @@ function doNewPlaylistFile(&$filedata) {
         "trackno" => $filedata['Track'],
         "disc" => $filedata['Disc'],
         "uri" => $filedata['file'],
-        "imagekey" => $imagekey,
+        "imagekey" => $albumimage->get_image_key(),
         "domain" => getDomain($filedata['file']),
-        "image" => getImageForAlbum($filedata, $imagekey),
+        "image" => $images['small'],
         "albumuri" => $filedata['X-AlbumUri'],
     );
     

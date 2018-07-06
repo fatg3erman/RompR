@@ -4,25 +4,24 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null) {
     global $prefs;
     $url = preg_replace('#^itpc://#', 'http://', $url);
     $url = preg_replace('#^feed://#', 'http://', $url);
-    $result = url_get_contents($url);
-    if ($result['status'] != "200") {
+    $d = new url_downloader(array('url' => $url));
+    if (!$d->get_data_to_string()) {
         header('HTTP/1.0 404 Not Found');
         print "Feed Not Found";
         debuglog("Failed to get ".$url,"PODCASTS",2);
         exit;
     }
-    debuglog("Feed retrieved from ".$url,"PODCASTS");
-    
+        
     // For debugging
-    file_put_contents('prefs/temp/feed.xml', $result['contents']);
+    file_put_contents('prefs/temp/feed.xml', $d->get_data());
     
     if ($id) {
         if (!is_dir('prefs/podcasts/'.$id)) {
             exec('mkdir prefs/podcasts/'.$id);
         }
-        file_put_contents('prefs/podcasts/'.$id.'/feed.xml', $result['contents']);
+        file_put_contents('prefs/podcasts/'.$id.'/feed.xml', $d->get_data());
     }
-    $feed = simplexml_load_string($result['contents']);
+    $feed = simplexml_load_string($d->get_data());
 
     // Begin RSS Parse
     $podcast = array();
@@ -87,7 +86,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null) {
     } else if ($m && $m->image) {
         $podcast['Image'] = $m->image[0]->attributes()->href;
     } else {
-        $podcast['Image'] = "newimages/podcast-logo.png";
+        $podcast['Image'] = "newimages/podcast-logo.svg";
     }
     if (preg_match('#^/#', $podcast['Image'])) {
         // Image link with a relative URL. Duh.
@@ -271,7 +270,7 @@ function getNewPodcast($url, $subbed = 1) {
             exec('rm -fR prefs/podcasts/'.$newpodid);
         }
         exec('mkdir prefs/podcasts/'.$newpodid);
-        download_image($podcast['Image'], $newpodid);
+        download_image($podcast['Image'], $newpodid, $podcast['Title']);
         if ($subbed == 1) {
             foreach ($podcast['tracks'] as $track) {
                 if (sql_prepare_query(true, null, null, null,
@@ -353,34 +352,17 @@ function calculate_best_update_time($podcast) {
     
 }
 
-function download_image($url, $podid) {
-    $convert_path = find_executable('convert');
-    debuglog("Downloading image ".$url." for podcast ".$podid,"PODCASTS");
-    $fp = fopen('prefs/podcasts/tempimage', 'w');
-    $aagh = url_get_contents($url, ROMPR_IDSTRING, false, true, false, $fp);
-    fclose($fp);
-    $outdir = 'prefs/podcasts/'.$podid.'/albumart/';
-    if ($aagh['status'] == "200") {
-        if (preg_match('#image/(.*?)$#', $aagh['content-type'], $matches)) {
-            $filename = 'image.'.$matches[1];
-        } else {
-            $filename = basename($url);
-        }
-        debuglog("  .. success. Saving to ".$outdir,"PODCASTS");
-        if (is_dir($outdir)) {
-            exec('rm -fR '.$outdir);
-        }
-        exec('mkdir prefs/podcasts/'.$podid.'/albumart');
-        exec('mkdir prefs/podcasts/'.$podid.'/albumart/small');
-        exec('mkdir prefs/podcasts/'.$podid.'/albumart/medium');
-        exec('mkdir prefs/podcasts/'.$podid.'/albumart/asdownloaded');
-        $r = exec( $convert_path."convert prefs/podcasts/tempimage -quality 80 -resize 100 -alpha remove \"".$outdir.'small/'.$filename."\" 2>&1", $o);
-        $r = exec( $convert_path."convert prefs/podcasts/tempimage -quality 70 -resize 400 -alpha remove \"".$outdir.'medium/'.$filename."\" 2>&1", $o);
-        exec('mv prefs/podcasts/tempimage "'.$outdir.'asdownloaded/'.$filename.'"');
-        sql_prepare_query(true, null, null, null, 'UPDATE Podcasttable SET Image = ? WHERE PODindex = ?',$outdir.'small/'.$filename,$podid);
-    } else {
-        debuglog("  .. failed to download image ".$aagh['status'],"PODCASTS");
-    }
+function download_image($url, $podid, $title) {
+    
+    $albumimage = new albumImage(array(
+        'artist' => 'PODCAST',
+        'albumpath' => $podid,
+        'album' => $title,
+        'source' => $url
+    ));
+    $albumimage->download_image();
+    $albumimage->update_image_database();
+
 }
 
 function check_podcast_upgrade($podetails, $podid, $podcast) {
@@ -452,7 +434,7 @@ function refreshPodcast($podid) {
             $podcast['LastPubDate'],
             $podid);
     }
-    download_image($podcast['Image'], $podid);
+    download_image($podcast['Image'], $podid, $podetails->Title);
     foreach ($podcast['tracks'] as $track) {
         $trackid = sql_prepare_query(false, null, 'PODTrackindex' , null, "SELECT PODTrackindex FROM PodcastTracktable WHERE Title=? AND PODindex = ?", $track['Title'], $podid);
         if ($trackid !== null) {
@@ -595,26 +577,26 @@ function upgrade_podcasts_to_version() {
     }
 }
 
-function upgrade_podcast_images() {
-    $convert_path = find_executable('convert');
-    $pods = generic_sql_query('SELECT * FROM Podcasttable');
-    foreach ($pods as $pod) {
-        if (preg_match('#^prefs/podcasts#', $pod['Image'])) {
-            debuglog("Updating Podcast Image For ".$pod['Title'],"PODCASTS");
-            $podid = $pod['PODindex'];
-            exec('mkdir prefs/podcasts/'.$podid.'/albumart');
-            exec('mkdir prefs/podcasts/'.$podid.'/albumart/small');
-            exec('mkdir prefs/podcasts/'.$podid.'/albumart/medium');
-            exec('mkdir prefs/podcasts/'.$podid.'/albumart/asdownloaded');
-            $filename = basename($pod['Image']);
-            $outdir = 'prefs/podcasts/'.$podid.'/albumart/';
-            $r = exec( $convert_path.'convert '.$pod['Image'].' -quality 70 -resize 100 -alpha remove '.$outdir.'small/'.$filename.' 2>&1', $o);
-            $r = exec( $convert_path.'convert '.$pod['Image'].' -quality 70 -resize 400 -alpha remove '.$outdir.'medium/'.$filename.' 2>&1', $o);
-            exec('mv '.$pod['Image'].' '.$outdir.'asdownloaded/'.$filename);
-            generic_sql_query('UPDATE Podcasttable SET Image = "'.$outdir.'small/'.$filename.'" WHERE PODindex = '.$podid);
-        }
-    }
-}
+// function upgrade_podcast_images() {
+//     $convert_path = find_executable('convert');
+//     $pods = generic_sql_query('SELECT * FROM Podcasttable');
+//     foreach ($pods as $pod) {
+//         if (preg_match('#^prefs/podcasts#', $pod['Image'])) {
+//             debuglog("Updating Podcast Image For ".$pod['Title'],"PODCASTS");
+//             $podid = $pod['PODindex'];
+//             exec('mkdir prefs/podcasts/'.$podid.'/albumart');
+//             exec('mkdir prefs/podcasts/'.$podid.'/albumart/small');
+//             exec('mkdir prefs/podcasts/'.$podid.'/albumart/medium');
+//             exec('mkdir prefs/podcasts/'.$podid.'/albumart/asdownloaded');
+//             $filename = basename($pod['Image']);
+//             $outdir = 'prefs/podcasts/'.$podid.'/albumart/';
+//             $r = exec( $convert_path.'convert '.$pod['Image'].' -quality 70 -resize 100 -alpha remove '.$outdir.'small/'.$filename.' 2>&1', $o);
+//             $r = exec( $convert_path.'convert '.$pod['Image'].' -quality 70 -resize 400 -alpha remove '.$outdir.'medium/'.$filename.' 2>&1', $o);
+//             exec('mv '.$pod['Image'].' '.$outdir.'asdownloaded/'.$filename);
+//             generic_sql_query('UPDATE Podcasttable SET Image = "'.$outdir.'small/'.$filename.'" WHERE PODindex = '.$podid);
+//         }
+//     }
+// }
 
 function outputPodcast($podid, $do_searchbox = true) {
     $result = generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$podid, false, PDO::FETCH_OBJ);
@@ -861,9 +843,10 @@ function format_episode(&$y, &$item, $pm) {
         $class = 'invisible whatdoicallthis toggledown';
     }
     print '<div id="poddesc_'.$item->PODTrackindex.'" class="'.$class.'">'.format_text(fixup_links($item->Description)).'</div>';
-    if ($item->FileSize > 0) {
-        print '<div class="fsize">'.format_bytes($item->FileSize).'Bytes</div>';
-    }
+    // Usually very inaccurate
+    // if ($item->FileSize > 0) {
+    //     print '<div class="fsize">'.format_bytes($item->FileSize).'Bytes</div>';
+    // }
     if ($y->Subscribed == 1) {
         print '<div class="clearfix" name="podcontrols_'.$pm.'">';
         if ($item->Downloaded == 1) {
@@ -1058,7 +1041,9 @@ function downloadTrack($key, $channel) {
         debuglog("  Failed to find URL for podcast","PODCASTS",3);
         return $channel;
     }
-
+    // The file size reported in the RSS is often VERY inaccurate.Probably based on raw audio prior to converting to MP3
+    // To make the progress bars look better in the GUI we attempt to read the actual filesize
+    $filesize = getRemoteFilesize($url, $filesize);
     if (is_dir('prefs/podcasts/'.$channel.'/'.$key) || mkdir ('prefs/podcasts/'.$channel.'/'.$key, 0755, true)) {
         $filename = basename($url);
         $filename = preg_replace('/\?.*$/','',$filename);
@@ -1075,21 +1060,13 @@ function downloadTrack($key, $channel) {
         fwrite($fp, $xml);
         fclose($fp);
         debuglog('Downloading To prefs/podcasts/'.$channel.'/'.$key.'/'.$filename,"PODCASTS");
-        $fp = fopen('prefs/podcasts/'.$channel.'/'.$key.'/'.$filename, 'wb');
-        if ($fp === false) {
-            debuglog("Failed to open file","PODCASTS",2);
-            return $channel;
-        }
-        $result = url_get_contents($url, ROMPR_IDSTRING, false, true, false, $fp);
-        fclose($fp);
-        if ($result['status'] != "200") {
+        $d = new url_downloader(array('url' => $url));
+        if ($d->get_data_to_file('prefs/podcasts/'.$channel.'/'.$key.'/'.$filename, true)) {
+            sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?", 1, '/prefs/podcasts/'.$channel.'/'.$key.'/'.$filename, $key);
+        } else {
             header('HTTP/1.0 404 Not Found');
-            debuglog("Failed to get ".$url,"PODCASTS",2);
-            debuglog("   Status was ".$result['status'],"PODCASTS",2);
             system ('rm -fR prefs/podcasts/'.$channel.'/'.$key);
-            return $channel;
         }
-        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?", 1, '/prefs/podcasts/'.$channel.'/'.$key.'/'.$filename, $key);
     } else {
         debuglog('Failed to create directory prefs/podcasts/'.$channel.'/'.$key,"PODCASTS",2);
         return $channel;
@@ -1184,10 +1161,9 @@ function search_itunes($term) {
     debuglog("Searching iTunes for podcasts '".$term."'","PODCASTS",6);
     generic_sql_query("DELETE FROM PodcastTracktable WHERE PODindex IN (SELECT PODindex FROM Podcasttable WHERE Subscribed = 0)", true);
     generic_sql_query("DELETE FROM Podcasttable WHERE Subscribed = 0", true);
-    $content = url_get_contents('https://itunes.apple.com/search?term='.$term.'&entity=podcast');
-    debuglog("Status is ".$content['status'],"PODCASTS");
-    if ($content['status'] == '200') {
-        $pods = json_decode(trim($content['contents']), true);
+    $d = new url_downloader(array('url' => 'https://itunes.apple.com/search?term='.$term.'&entity=podcast'));
+    if ($d->get_data_to_string()) {
+        $pods = json_decode(trim($d->get_data()), true);
         foreach ($pods['results'] as $podcast) {
             if (array_key_exists('feedUrl', $podcast)) {
                 // Bloody hell they can't even be consistent!
@@ -1234,10 +1210,7 @@ function search_itunes($term) {
                 );
             }
         }
-    } else {
-        debuglog("SEARCH ERROR - Status was ".$content['status'],"PODCASTS",3);
     }
-
 }
 
 function subscribe($index) {

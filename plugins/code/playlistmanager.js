@@ -30,7 +30,7 @@ var playlistManager = function() {
 					html += ' notfound';
 				}
 				if (tracks[i].Type == "stream") {
-					html += '" /></td><td colspan="2" class="dan"><b>'+tracks[i].Album+'</b>';
+					html += '" name="'+tracks[i].key+'"/></td><td colspan="2" class="dan"><b>'+tracks[i].Album+'</b>';
 					if (tracks[i].Album == rompr_unknown_stream) {
 						html += '<br>'+tracks[i].Uri;
 					}

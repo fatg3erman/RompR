@@ -7,7 +7,7 @@
 chdir('..');
 include("includes/vars.php");
 include("includes/functions.php");
-include("utils/imagefunctions.php");
+require_once("utils/imagefunctions.php");
 include("backends/sql/backend.php");
 
 debuglog("Checking Cache","CACHE CLEANER");
@@ -82,12 +82,12 @@ if ($mysqlc) {
         }
 
         debuglog("Checking for orphaned radio station images","CACHE CLEANER");
-        $files = glob('prefs/userstreams/*.*');
+        $files = glob('prefs/userstreams/*');
         foreach ($files as $image) {
-            $count = sql_prepare_query(false, null, 'acount', 0, "SELECT COUNT(Stationindex) AS acount FROM RadioStationtable WHERE Image = ?",$image);
+            $count = generic_sql_query("SELECT COUNT(Stationindex) AS acount FROM RadioStationtable WHERE Image LIKE '".$image."%'", false, null, 'acount', 0);
             if ($count < 1) {
                 debuglog("  Removing orphaned radio station image ".$image,"CACHE CLEANER");
-                exec('rm '.$image);
+                exec('rm -fR '.$image);
             }
         }
 
@@ -100,41 +100,21 @@ if ($mysqlc) {
                 exec('rm -fR '.$file);
             }
         }
-        $files = glob('prefs/podcasts/*');
-        foreach ($files as $pod) {
-            $i = simple_query('Image', 'Podcasttable', 'PODindex', basename($pod), '');
-            $files = glob($pod.'/{*.jpg,*.jpeg,*.JPEG,*.JPG,*.gif,*.GIF,*.png,*.PNG}', GLOB_BRACE);
-            foreach ($files as $file) {
-                if ($file != $i) {
-                    debuglog("  Removing orphaned podcast image ".$file,"CACHE CLEANER");
-                    exec('rm "'.$file.'"');
-                }
-            }
-        }
     }
 
     debuglog("Checking database for missing album art","CACHE CLEANER");
-    $result = generic_sql_query("SELECT Albumindex, Albumname, Image, Domain, ImgKey FROM Albumtable", false, PDO::FETCH_OBJ);
+    $result = generic_sql_query("SELECT Albumindex, Albumname, Image, Domain FROM Albumtable WHERE Image LIKE 'albumart/%'", false, PDO::FETCH_OBJ);
     foreach ($result as $obj) {
         if ($obj->Image != '' && !file_exists($obj->Image)) {
-            if (preg_match('#^getRemoteImage\.php\?url=(.*)#', $obj->Image)) {
-                // Don't do this, it archives all the soundcloud images for search results
-                // and we don't want that.
-                // debuglog($obj->Albumname." has remote image ".$obj->Image,"CACHE CLEANER");
-                // $retval = archive_image($obj->Image, $obj->ImgKey);
-                // $image = $retval['image'];
-                // $searched = 1;
+            debuglog($obj->Albumname." has missing image ".$obj->Image,"CACHE CLEANER");
+            if (file_exists("newimages/".$obj->Domain."-logo.svg")) {
+                $image = "newimages/".$obj->Domain."-logo.svg";
+                $searched = 1;
             } else {
-                debuglog($obj->Albumname." has missing image ".$obj->Image,"CACHE CLEANER");
-                if (file_exists("newimages/".$obj->Domain."-logo.svg")) {
-                    $image = "newimages/".$obj->Domain."-logo.svg";
-                    $searched = 1;
-                } else {
-                    $image = '';
-                    $searched = 0;
-                }
-                sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Searched = ?, Image = ? WHERE Albumindex = ?", $searched, $image, $obj->Albumindex);
+                $image = '';
+                $searched = 0;
             }
+            sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Searched = ?, Image = ? WHERE Albumindex = ?", $searched, $image, $obj->Albumindex);
         }
     }
     

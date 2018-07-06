@@ -180,6 +180,11 @@ div.topdropmenu {
     right: 0;
 }
 
+div.topdropmenu.albumbitsmenu {
+    position: absolute;
+    top: 12px;
+}
+
 .chooser {
     margin-left:auto;
     margin-right:auto;

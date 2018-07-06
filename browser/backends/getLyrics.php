@@ -36,26 +36,32 @@ if (file_exists($fname)) {
 
 if ($output == null) {
 	$uri = "http://lyrics.wikia.com/api.php?func=getSong&artist=".urlencode($_REQUEST['artist'])."&song=".urlencode($_REQUEST['song'])."&fmt=xml";
-	if (file_exists('prefs/jsoncache/lyrics/'.md5($uri))) {
-		$output = file_get_contents('prefs/jsoncache/lyrics/'.md5($uri));
-	} else {
-		debuglog("Getting ".$uri,"LYRICS");
-		$content = url_get_contents($uri);
-		if ($content['status'] == "200") {
-			$l = simplexml_load_string($content['contents']);
-			if ($l->url) {
-				debuglog("Getting ".$l->url,"LYRICS");
-				$webpage = url_get_contents(urldecode($l->url));
-				if ($webpage['status'] == "200") {
-					debuglog("   Got something","LYRICS");
-					if (preg_match('/\<div class=\'lyricbox\'\>\<script\>.*?\<\/script\>(.*?)\<\!--/', $webpage['contents'], $matches)) {
-						$output = html_entity_decode($matches[1]);
-						file_put_contents('prefs/jsoncache/lyrics/'.md5($uri), $output);
-					} else {
-						debuglog("     preg didn't match","LYRICS");
-					}
+	debuglog("Trying ".$uri,"LYRICS");
+	$d = new url_downloader(array(
+		'url' => $uri,
+		'cache' => 'lyrics',
+		'return_data' => true
+	));
+	if ($d->get_data_to_file()) {
+		$l = simplexml_load_string($d->get_data());
+		if ($l->url) {
+			debuglog("  Now Getting ".$l->url,"LYRICS");
+			$d2 = new url_downloader(array(
+				'url' => $l->url,
+				'cache' => 'lyrics',
+				'return_data' => true
+			));
+			if ($d2->get_data_to_file()) {
+				if (preg_match('/\<div class=\'lyricbox\'\>\<script\>.*?\<\/script\>(.*?)\<\!--/', $d2->get_data(), $matches)) {
+					$output = html_entity_decode($matches[1]);
+				} else if (preg_match('/\<div class=\'lyricbox\'\>(.*?)\<div class=\'lyricsbreak\'\>/', $d2->get_data(), $matches)) {
+					$output = html_entity_decode($matches[1]);
+				} else {
+					debuglog("    Could Not Find Lyrics","LYRICS");
 				}
 			}
+		} else {
+			debuglog("  Nope, nothing there","LYRICS");
 		}
 	}
 } else {

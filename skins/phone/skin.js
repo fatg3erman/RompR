@@ -17,6 +17,7 @@ jQuery.fn.menuReveal = function(callback) {
 }
 
 jQuery.fn.menuHide = function(callback) {
+    var self = this;
     if (this.hasClass('toggledown')) {
         if (callback) {
             this.slideToggle('fast',callback);
@@ -24,12 +25,15 @@ jQuery.fn.menuHide = function(callback) {
             this.slideToggle('fast');
         }
     } else {
-        if (callback) {
-            this.hide(0, callback);
-        } else {
-            this.hide();
-        }
-        this.findParentScroller().restoreScrollPos();
+        this.hide(0, function() {
+            if (callback) {
+                callback();
+            }
+            self.findParentScroller().restoreScrollPos();
+            if (self.hasClass('removeable')) {
+                self.remove();
+            }
+        });
     }
     return this;
 }
@@ -401,10 +405,6 @@ var layoutProcessor = function() {
             }
         },
 
-        maxPopupSize: function(winsize) {
-            return {width: winsize.x - 16, height: winsize.y - 16};
-        },
-
         hidePanel: function(panel, is_hidden, new_state) { },
 
         setTagAdderPosition: function(position) {
@@ -520,10 +520,6 @@ var layoutProcessor = function() {
             $("#plmode").html(html);
         },
         
-        setTopIconSize: function(panels) {
-
-        },
-        
         makeCollectionDropMenu: function(element, name) {
             var x = $('#'+name);
             // If the dropdown doesn't exist then create it
@@ -535,7 +531,11 @@ var layoutProcessor = function() {
                 } else {
                     var c = 'dropmenu notfilled';
                 }
-                var t = $('<div>', {id: name, class: c}).insertAfter(element);
+                var ec = '';
+                if (/aalbum/.test(name) || /aartist/.test(name)) {
+                    ec = ' removeable';
+                }
+                var t = $('<div>', {id: name, class: c+ec}).insertAfter(element);
             }
         },
         
@@ -675,75 +675,6 @@ var layoutProcessor = function() {
     }
 
 }();
-
-function popup(opts) {
-
-    var self = this;
-    var returnTo;
-    var contents;
-
-    var options = {
-        width: 100,
-        height: 100,
-        title: "Popup",
-        helplink: null,
-        xpos: null,
-        ypos : null,
-        id: null,
-        toggleable: false,
-        hasclosebutton: true
-    }
-
-    for (var i in opts) {
-        options[i] = opts[i];
-    }
-
-    this.create = function() {
-        $('#popupwindow').empty();
-        var titlebar = $('<div>', { class: "cheese" }).appendTo($("#popupwindow"));
-        var tit = $('<div>', { class: "configtitle textcentre"}).appendTo(titlebar)
-        tit.html('<b>'+options.title+'</b>');
-        if (options.hasclosebutton) {
-            tit.append('<i class="icon-cancel-circled playlisticonr clickicon tright"></i></div>');
-        }
-        if (options.helplink !== null) {
-            tit.append('<a href="'+options.helplink+'" target="_blank"><i class="icon-info-circled playlisticonr clickicon tright"></i></a>');
-        }
-        titlebar.find('.icon-cancel-circled').click( function() {self.close(false)});
-        contents = $('<div>',{class: 'popupcontents'}).appendTo($("#popupwindow"));
-        return contents;
-    }
-
-    this.open = function() {
-        $('#popupwindow').slideDown('fast');
-    }
-
-    this.close = function(callback) {
-        if (callback) {
-            callback();
-        }
-        $('#popupwindow').slideUp('fast');
-    }
-
-    this.addCloseButton = function(text, func) {
-        var button = $('<button>',{class: 'tright'}).appendTo(contents);
-        button.html(text);
-        button.click(function() { self.close(func) });
-    }
-
-    this.useAsCloseButton = function(elem, func) {
-        elem.click(function() { self.close(func) });
-    }
-
-    this.setContentsSize = function() {
-
-    }
-
-    this.setWindowToContent = function() {
-
-    }
-
-}
 
 // Dummy functions standing in for widgets we don't use in this version -
 // custom scroll bars, tipTip, and drag/drop stuff

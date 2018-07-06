@@ -51,7 +51,7 @@ div {
     margin:0px;
 }
 
-#historypanel, #popupwindow, #tagadder {
+#historypanel, #tagadder {
     overflow-y: auto !important;
 }
 

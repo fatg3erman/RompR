@@ -348,10 +348,6 @@ var layoutProcessor = function() {
             $("#infopane").mCustomScrollbar("scrollTo",section);
         },
 
-        maxPopupSize : function(winsize) {
-            return {width: winsize.x - 32, height: winsize.y - 32};
-        },
-
         toggleAudioOutpts: function() {
             prefs.save({outputsvisible: !$('#outputbox').is(':visible')});
             $("#outputbox").animate({width: 'toggle'},'fast',function() {
@@ -400,10 +396,6 @@ var layoutProcessor = function() {
 
         playlistLoading: function() {
             infobar.notify(infobar.SMARTRADIO, language.gettext('label_smartsetup'));
-        },
-
-        setTopIconSize: function(panels) {
-
         },
 
         scrollPlaylistToCurrentTrack: function() {

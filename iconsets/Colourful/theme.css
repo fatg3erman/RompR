@@ -161,7 +161,11 @@ img.notexist,img.notfound
     background-image: url('compact-disc.svg');
     background-size:contain;
     display:inline-block;
+}
 
+img.stream.notfound, img.stream.notexist
+{
+    background-image: url('broadcast-new.svg');
 }
 
 img.plimage.notfound

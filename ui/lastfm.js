@@ -90,9 +90,13 @@ function LastFM(user) {
             token = data.token;
             debug.log("LASTFM","Token",token);
             var lfmlog = new popup({
-                width: 500,
-                height: 400,
-                title: language.gettext("lastfm_loginwindow")});
+                css: {
+                    width: 600,
+                    height: 400
+                },
+                fitheight: true,
+                title: language.gettext("lastfm_loginwindow")
+            });
             var mywin = lfmlog.create();
             mywin.append('<table align="center" cellpadding="2" id="lfmlogintable" width="90%"></table>');
             $("#lfmlogintable").append('<tr><td>'+language.gettext("lastfm_login1")+'</td></tr>');
@@ -127,6 +131,7 @@ function LastFM(user) {
                 alert(language.gettext("lastfm_loginfailed"));
             }
         );
+        return true;
     }
 
     this.flushReqids = function() {

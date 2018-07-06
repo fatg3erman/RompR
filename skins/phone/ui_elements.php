@@ -1,5 +1,7 @@
 <?php
 
+require_once('utils/imagefunctions.php');
+
 function albumTrack($data) {
     global $prefs;
     if (substr($data['title'],0,6) == "Album:") return 2;
@@ -151,7 +153,9 @@ function albumControlHeader($fragment, $why, $what, $who, $artist) {
 function trackControlHeader($why, $what, $who, $dets) {
     $html = '<div class="menu backmenu" name="'.$why.$what.$who.'"></div>';
     foreach ($dets as $det) {
-        $html .= '<div class="album-menu-header"><img class="album_menu_image" src="'.preg_replace('#albumart/small#', 'albumart/asdownloaded', $det['Image']).'" /></div>';
+        $albumimage = new baseAlbumImage(array('baseimage' => $det['Image']));
+        $images = $albumimage->get_images();
+        $html .= '<div class="album-menu-header"><img class="album_menu_image" src="'.$images['asdownloaded'].'" /></div>';
         if ($why != '') {
             $html .= '<div class="textcentre ninesix playlistrow2">'.get_int_text('label_play_options').'</div>';
             $html .= '<div class="containerbox wrap album-play-controls">';

@@ -254,14 +254,52 @@ var imagePopup = function() {
     }
 }();
 
+function albumart_translator(source) {
+    
+    // This should be kept in step with class baseAlbumImgae in imagefunctions.php
+    
+    // Given an album image of any size, return any other size
+    this.source = source;
+    this.getSize = function(size) {
+        if (/albumart\/small\//.test(this.source)) {
+            return this.source.replace('albumart/small/', 'albumart/'+size+'/');
+        } else if (/albumart\/medium\//.test(this.source)) {
+            return this.source.replace('albumart/medium/', 'albumart/'+size+'/');
+        } else if (/albumart\/asdownloaded\//.test(this.source)) {
+            return this.source.replace('albumart/asdownloaded/', 'albumart/'+size+'/');
+        } else {
+            return this.source;
+        }
+    }
+    
+    // Get an image key
+    this.getKey = function(type, artist, album) {
+        switch (type) {
+            case 'stream':
+                artist = 'STREAM'
+                break;
+                
+            case 'podcast':
+                artist = 'podcast';
+                break;
+        }
+        return hex_md5(artist.toLowerCase()+album.toLowerCase());
+    }
+}
+
 function show_albumart_update_window() {
-    var ws = getWindowSize();
+    if (old_style_albumart == 0) {
+        return true;
+    }
     var fnarkle = new popup({
-        width: 600,
-        height: 400,
-        ypos: ws.y/2,
+        css: {
+            width: 600,
+            height: 400
+        },
+        fitheight: true,
         title: "Album Art Update",
-        hasclosebutton: false});
+        hasclosebutton: false
+    });
     var mywin = fnarkle.create();
     mywin.append('<div id="artupdate" class="fullwdith"></div>');
     $('#artupdate').append('<div class="pref textcentre">Your Album Art needs to be updated. This process has now started. You can close this window to pause the process and it will continue the next time you open Rompr. Until you have updated all your art Rompr may run slowly and album art may look wierd</div>');
@@ -274,9 +312,9 @@ function show_albumart_update_window() {
         range: 100
     });
     fnarkle.open();
-    setTimeout(fnarkle.setWindowToContent, 2000);
     $('.open_albumart').hide();
     do_albumart_update();
+    return true;
 }
 
 function do_albumart_update() {
@@ -294,6 +332,7 @@ function stop_albumart_update() {
     debug.log("UI", "Cancelling album art update");
     $('.open_albumart').show();
     albumart_update = false;
+    return true;
 }
 
 function togglePlaylistButtons() {
@@ -456,10 +495,14 @@ function showUpdateWindow() {
     } else {
         if (typeof(prefs.shownupdatewindow) != 'string' || compare_version_numbers(prefs.shownupdatewindow, rompr_version)) {
             var fnarkle = new popup({
-                width: 1600,
-                height: 1600,
+                css: {
+                    width: 1200,
+                    height: 1600
+                },
+                fitheight: true,
                 title: 'RompЯ Version '+rompr_version,
-                hasclosebutton: false});
+                hasclosebutton: false
+            });
             var mywin = fnarkle.create();
             mywin.append('<div id="begging"></div>');
             mywin.append('<div id="license"></div>');
@@ -467,7 +510,7 @@ function showUpdateWindow() {
             $('#begging').load('includes/begging.html', function() {
                 $('#license').load('includes/license.html', function(){
                     $('#about').load('includes/about.html', function() {
-                        fnarkle.addCloseButton('OK');
+                        fnarkle.addCloseButton('OK', show_albumart_update_window);
                         prefs.save({shownupdatewindow: rompr_version});
                         fnarkle.open();
                     });
@@ -619,10 +662,40 @@ function doMopidyCollectionOptions() {
     }
 }
 
-function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
+function fileUploadThing(formData, options, success, fail) {
+    if (formData === null) {
+        $.ajax({
+            url: "getalbumcover.php",
+            type: "POST",
+            data: options,
+            cache:false,
+            success: success,
+            error: fail,
+        });
+    } else {
+        $.each(options, function(i, v) {
+            formData.append(i, v);
+        })
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'getalbumcover.php');
+        xhr.responseType = "json";
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                success(xhr.response);
+            } else {
+                fail();
+            }
+        };
+        xhr.send(formData);
+    }
+}
+
+function dropProcessor(evt, imgobj, coverscraper, success, fail) {
 
     evt.stopPropagation();
     evt.preventDefault();
+    var options = coverscraper.getImageSearchParams(imgobj);
+    var formData = new FormData();
     if (evt.dataTransfer.types) {
         for (var i in evt.dataTransfer.types) {
             type = evt.dataTransfer.types[i];
@@ -635,42 +708,14 @@ function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
                     if (srces && srces[1]) {
                         src = srces[1];
                         debug.log("ALBUMART","Image Source",src);
-                        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').attr('src', 'notanimage.jpg');
+                        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').removeAttr('src');
                         if (src.match(/image\/.*;base64/)) {
                             debug.log("ALBUMART","Looks like Base64");
-                            // For some reason I no longer care about, doing this with jQuery.post doesn't work
-                            var formData = new FormData();
                             formData.append('base64data', src);
-                            formData.append('imgkey', imagekey);
-                            if (stream !== null) {
-                                formData.append('stream', stream);
-                            }
-                            var xhr = new XMLHttpRequest();
-                            xhr.open('POST', 'getalbumcover.php');
-                            xhr.responseType = "json";
-                            xhr.onload = function () {
-                                if (xhr.status === 200) {
-                                    success(xhr.response);
-                                } else {
-                                    fail();
-                                }
-                            };
-                            xhr.send(formData);
+                            fileUploadThing(formData, options, success, fail);
                         } else {
-                            var data = { imgkey: imagekey,
-                                        src: src
-                                };
-                            if (stream !== null) {
-                                data.stream = stream;
-                            }
-                            $.ajax({
-                                url: "getalbumcover.php",
-                                type: "POST",
-                                data: data,
-                                cache:false,
-                                success: success,
-                                error: fail,
-                            });
+                            options.source = src;
+                            fileUploadThing(null, options, success, fail);
                         }
                         return false;
                     }
@@ -680,25 +725,9 @@ function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
                     debug.log("ALBUMART","Found Files");
                     var files = evt.dataTransfer.files;
                     if (files[0]) {
-                        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').attr('src', 'notanimage.jpg');
-                        // For some reason I no longer care about, doing this with jQuery.post doesn't work
-                        var formData = new FormData();
+                        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').removeAttr('src');
                         formData.append('ufile', files[0]);
-                        formData.append('imgkey', imagekey);
-                        if (stream !== null) {
-                            formData.append('stream', stream);
-                        }
-                        var xhr = new XMLHttpRequest();
-                        xhr.open('POST', 'getalbumcover.php');
-                        xhr.responseType = "json";
-                        xhr.onload = function () {
-                            if (xhr.status === 200) {
-                                success(xhr.response);
-                            } else {
-                                fail();
-                            }
-                        };
-                        xhr.send(formData);
+                        fileUploadThing(formData, options, success, fail);
                         return false;
                     }
                     break;
@@ -706,34 +735,21 @@ function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
 
         }
     }
-    // IF we get here, we didn't find anything. Let's try the basic text,
-    // which might give us something if we're lucky.
+    // IF we get here, we didn't find anything. Let's try the basic text, which might give us something if we're lucky.
     // Safari returns a plethora of MIME types, but none seem to be useful.
     var data = evt.dataTransfer.getData('Text');
     var src = data;
     debug.log("ALBUMART","Trying last resort methods",src);
-    if (src.match(/^http:\/\//)) {
+    if (src.match(/^https*:\/\//)) {
         debug.log("ALBUMART","Appears to be a URL");
-        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').attr('src', 'notanimage.jpg');
+        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').removeAttr('src');
         var u = src.match(/images.google.com.*imgurl=(.*?)&/)
         if (u && u[1]) {
             src = u[1];
             debug.log("ALBUMART","Found possible Google Image Result",src);
         }
-        var data = { imgkey: imagekey,
-                    src: src
-            };
-        if (stream !== null) {
-            data.stream = stream;
-        }
-        $.ajax({
-            url: "getalbumcover.php",
-            type: "POST",
-            data: data,
-            cache:false,
-            success: success,
-            error: fail,
-        });
+        options.source = src;
+        fileUploadThing(null, options, success, fail);
     }
     return false;
 }

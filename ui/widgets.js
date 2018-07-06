@@ -497,14 +497,12 @@ $.widget("rompr.resizeHandle", $.ui.mouse, {
                 }
             }
             this.options.donefunc();
-            layoutProcessor.setTopIconSize(this.options.adjusticons);
         }
         return true;
     },
 
     _mouseStop: function(event) {
         this.dragging = false;
-        layoutProcessor.setTopIconSize(["#sourcescontrols", "#infopanecontrols", "#playlistcontrols"]);
         browser.rePoint();
         prefs.save({sourceswidthpercent: prefs.sourceswidthpercent});
         prefs.save({playlistwidthpercent: prefs.playlistwidthpercent});
@@ -678,7 +676,8 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
         handleClass: null,
         addClassTo: null,
         siblings: '',
-        handleshow: true
+        handleshow: true,
+        movecallback: null
     },
 
     _create: function() {
@@ -739,6 +738,9 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
         if (this.dragging) {
             var pos = {top: event.pageY - this.drag_y_offset, left: event.pageX - this.drag_x_offset};
             this.element.css({top: pos.top+"px", left: pos.left+"px"});
+            if (this.options.movecallback) {
+                this.options.movecallback(pos);
+            }
         }
         return true;
     },
@@ -1261,15 +1263,20 @@ function popup(opts) {
     var contents;
 
     var options = {
-        width: 100,
-        height: 100,
+        css: {
+            width: 100,
+            height: 100
+        },
         title: "Popup",
         helplink: null,
-        xpos: null,
-        ypos : null,
+        atmousepos: false,
+        mousevent: null,
+        mouseside: 'left',
         id: null,
         toggleable: false,
-        hasclosebutton: true
+        hasclosebutton: true,
+        fitheight: false,
+        closecallbacks: {}
     }
 
     for (var i in opts) {
@@ -1296,85 +1303,94 @@ function popup(opts) {
         if (options.hasclosebutton) {
             tit.append('<i class="icon-cancel-circled playlisticonr clickicon tright"></i>');
         }
-        if (options.helplink !== null) {
+        if (options.helplink) {
             tit.append('<a href="'+options.helplink+'" target="_blank"><i class="icon-info-circled playlisticonr clickicon tright"></i></a>');
         }
-        contents = $('<div>',{class: 'popupcontents'}).appendTo(win);
+        contents = $('<div>',{class: 'popupcontents clearfix'}).appendTo(win);
         titlebar.find('.icon-cancel-circled').click( function() {self.close(false)});
-        var winsize = getWindowSize();
-        var maxsizeallowed = layoutProcessor.maxPopupSize(winsize);
-        initialsize = { width: Math.min(options.width, maxsizeallowed.width),
-                            height: Math.min(options.height, maxsizeallowed.height)};
-        if (options.xpos == null) {
-            var x = (winsize.x - initialsize.width)/2;
-            var y = (winsize.y - initialsize.height)/2;
-        } else {
-            options.xpos += 4;
-            options.ypos += 4;
-            var x = Math.min(options.xpos, (winsize.x - initialsize.width));
-            var y = Math.min(options.ypos, (winsize.y - initialsize.height));
-        }
-        if (x < 0) {
-            x = 0;
-        }
-        
-        win.css({width: initialsize.width+'px',
-                height: initialsize.height+'px',
-                top: y+'px',
-                left: x+'px'});
-
-        win.floatingMenu({handleshow: false, handleclass: 'cheese'});
-
+        win.floatingMenu({handleshow: false, handleclass: 'cheese', movecallback: self.moved });
         return contents;
-
     }
-
+    
     this.open = function() {
-        win.show();
-        // Space in the outer window
-        var h = win.outerHeight(true) - titlebar.outerHeight(true) - 16;
-        // Height of the contents. Fudge factor allows for custom scrollbar disappearing or reappearing
-        var a = contents.outerHeight(true) + titlebar.outerHeight(true);
-        if (a < h) {
-            win.css('height',a.toString()+'px');
-        } else {
-            contents.css("height", h.toString() + 'px');
-        }
-        var winsize = getWindowSize();
-        if (options.ypos != null) {
-            var y = Math.min(options.ypos, (winsize.y - win.outerHeight(true)));
-        } else {
-            var y = Math.max((winsize.y - win.outerHeight(true))/2, 0);
-        }
-        win.css({top: y+'px'});
-        layoutProcessor.addCustomScrollBar(contents);
+        win.css({display: 'block'});
+        self.adjustCSS(true, true);
+        self.setCSS();
+        win.css({opacity: 1});
+        layoutProcessor.addCustomScrollBar(win);
     }
 
-    this.close = function(callback) {
-        if (callback) {
-            callback();
+    this.close = function(event) {
+        var button = $(event.target).html();
+        debug.log("POPUP","Button",button,"was clicked");
+        var result = true;
+        if (options.closecallbacks.hasOwnProperty(button) && options.closecallbacks[button] !== false) {
+            result = options.closecallbacks[button]();
         }
-        win.remove();
+        if (result !== false) {
+            win.remove();
+        }
+    }
+    
+    this.moved = function(pos) {
+        options.css.top = pos.top;
+        options.css.left = pos.left;
+    }
+    
+    this.adjustCSS = function(setleft, settop) {
+        var contentheight = contents.outerHeight(true) + titlebar.outerHeight(true);
+        if (options.fitheight) {
+            options.css.height = contentheight+8;
+        } else if (contentheight < options.css.height) {
+            options.css.height = contentheight+8;
+        }
+        var w = getWindowSize();
+        options.css.width = Math.min(w.x-16, options.css.width);
+        options.css.height = Math.min(w.y-16, options.css.height);
+        if (options.atmousepos) {
+            options.css.top = Math.min(options.mousevent.clientY+8, w.y - options.css.height);
+            switch (options.mouseside) {
+                case 'left':
+                    options.css.left = Math.min(options.mousevent.clientX-8, w.x - options.css.width);
+                    break;
+                    
+                case 'right':
+                    options.css.right = Math.max(options.mousevent.clientX+8, options.css.width);
+                    break;
+            }
+        } else {
+            if (setleft) {
+                options.css.left = Math.max(0, (w.x/2 - options.css.width/2));
+            }
+            if (settop) {
+                options.css.top =  Math.max(0, (w.y/2 - options.css.height/2));
+            }
+            options.css.height = Math.min(options.css.height, (w.y - options.css.top));
+        }
     }
 
-    this.addCloseButton = function(text, func) {
+    this.setCSS = function() {
+        for (var i in options.css) {
+            debug.trace("POPUP","Setting CSS",i,'to',options.css[i]);
+            win.css(i, options.css[i]+'px');
+        }
+    }
+
+    this.addCloseButton = function(text, callback) {
         var button = $('<button>',{class: 'tright'}).appendTo(contents);
         button.html(text);
-        button.click(function() { self.close(func) });
+        options.closecallbacks[text] = callback;
+        button.click(self.close);
     }
 
-    this.useAsCloseButton = function(elem, func) {
-        elem.click(function() { self.close(func) });
+    this.useAsCloseButton = function(elem, callback) {
+        options.closecallbacks[elem.html()] = callback;
+        elem.click(self.close);
     }
 
-    this.setContentsSize = function() {
-        var h = win.outerHeight(true) - titlebar.outerHeight(true) - 16;
-        contents.css("height", h.toString() + 'px');
-    },
-    
-    this.setWindowToContent = function() {
-        var h= contents.outerHeight(true) + titlebar.outerHeight(true);
-        win.css('height', h+'px');
+    this.setWindowToContentsSize = function() {
+        self.adjustCSS(false, false);
+        self.setCSS();
     }
     
 }

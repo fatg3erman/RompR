@@ -26,7 +26,8 @@ var playlist = function() {
         type: "",
         playlistpos: 0,
         backendid: -1,
-        progress: 0
+        progress: 0,
+        images: null
     };
 
     var currentTrack = emptyTrack;
@@ -83,9 +84,6 @@ var playlist = function() {
         }
         
         this.presentYourself = function() {
-            self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].key });
-            self.image.on('error', self.getart);
-            
             var holder = $('<div>', { name: self.index, romprid: tracks[0].backendid, class: 'item fullwidth sortable playlistalbum playlisttitle'}).appendTo('#sortable');
             if (self.index == currentalbum) {
                 holder.removeClass('playlisttitle').addClass('playlistcurrenttitle');
@@ -95,9 +93,11 @@ var playlist = function() {
             var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'expand clickable clickplaylist containerbox'}).appendTo(inner);
             
             if (prefs.use_albumart_in_playlist) {
+                self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].key });
+                self.image.on('error', self.getart);
                 var imgholder = $('<div>', { class: 'smallcover fixed clickable clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
-                if (tracks[0].image && tracks[0].image != "") {
-                    self.image.attr('src', tracks[0].image).appendTo(imgholder);
+                if (tracks[0].images.small) {
+                    self.image.attr('src', tracks[0].images.small).appendTo(imgholder);
                 } else {
                     self.image.addClass('notexist').appendTo(imgholder);
                     self.getart();
@@ -159,20 +159,20 @@ var playlist = function() {
 
         this.getart = function() {
             coverscraper.GetNewAlbumArt({
-                imgkey:     tracks[0].key,
                 artist:     tracks[0].albumartist,
                 album:      tracks[0].album,
                 mbid:       tracks[0].metadata.album.musicbrainz_id,
-                dir:        tracks[0].dir,
+                albumpath:  tracks[0].dir,
                 albumuri:   tracks[0].metadata.album.uri,
+                imgkey:     tracks[0].key,
+                type:       tracks[0].type,
                 cb:         self.updateImages
             });
         }
 
-
         this.getFnackle = function() {
             return { album: tracks[0].album,
-                     image: tracks[0].image,
+                     image: tracks[0].images.small,
                      location: tracks[0].location,
                      stream: tracks[0].stream,
                      streamid: tracks[0].streamid
@@ -190,11 +190,10 @@ var playlist = function() {
         }
 
         this.updateImages = function(data) {
-            debug.log("PLAYLIST","Updating track images with",data.origimage);
+            debug.log("PLAYLIST","Updating track images with",data);
             for (var trackpointer in tracks) {
-                tracks[trackpointer].image = data.origimage;
+                tracks[trackpointer].images = data;
             }
-            infobar.albumImage.setSecondarySource( {key: tracks[0].key, image: data.origimage });
         }
 
         this.getFirst = function() {
@@ -317,8 +316,6 @@ var playlist = function() {
         }
 
         this.presentYourself = function() {
-            self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].key });
-            self.image.on('error', self.getart);
             var header = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'item sortable fullwidth playlistalbum playlisttitle'}).appendTo('#sortable');
             if (self.index == currentalbum) {
                 header.removeClass('playlisttitle').addClass('playlistcurrenttitle');
@@ -328,9 +325,17 @@ var playlist = function() {
             var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'expand clickable clickplaylist containerbox'}).appendTo(inner);
             
             if (prefs.use_albumart_in_playlist) {
+                self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].key });
+                self.image.on('error', self.getart);
                 var imgholder = $('<div>', { class: 'smallcover fixed clickable clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
-                var image = (tracks[0].image) ? tracks[0].image : "newimages/broadcast.svg";
-                self.image.attr('src', image).appendTo(imgholder);
+                if (tracks[0].images.small) {
+                    self.image.attr('src', tracks[0].images.small).appendTo(imgholder);
+                } else {
+                    self.image.addClass('notexist stream').appendTo(imgholder);
+                    if (tracks[0].album != rompr_unknown_stream) {
+                        self.getart();
+                    }
+                }
             }
             
             var title = $('<div>', {class: 'containerbox vertical expand'}).appendTo(albumDetails);
@@ -356,7 +361,7 @@ var playlist = function() {
 
         this.getFnackle = function() {
             return { album: tracks[0].album,
-                     image: tracks[0].image,
+                     image: tracks[0].images.small,
                      location: tracks[0].location,
                      stream: tracks[0].stream,
                      streamid: tracks[0].streamid
@@ -430,7 +435,20 @@ var playlist = function() {
         }
 
         this.getart = function() {
-            self.image.attr('src', 'newimages/broadcast.svg');
+            coverscraper.GetNewAlbumArt({
+                artist:     'STREAM',
+                type:       'stream',
+                album:      tracks[0].album,
+                imgkey:     tracks[0].key,
+                cb:         self.updateImages
+            });
+        }
+
+        this.updateImages = function(data) {
+            debug.log("PLAYLIST","Updating track images with",data);
+            for (var trackpointer in tracks) {
+                tracks[trackpointer].images = data;
+            }
         }
 
         this.deleteSelf = function() {
@@ -936,7 +954,7 @@ var playlist = function() {
                         });
                     } else if ($(element).hasClass('clickloaduserplaylist')) {
                         tracks.push({
-                            type: (prefs.player_backend == 'mpd') ? "playlist" : 'uri',
+                            type: 'remoteplaylist',
                             name: decodeURIComponent($(element).children('input[name="dirpath"]').val())
                         });
                     } else if ($(element).hasClass('clickalbumname')) {

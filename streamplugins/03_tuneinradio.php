@@ -50,15 +50,13 @@ class tuneinplugin {
     
     public function getUrl() {
         debuglog("Getting URL ".$this->url,"TUNEIN");
-
-        $result = url_get_contents($this->url);
-        $opml = $result['contents'];
-        $x = simplexml_load_string($opml);
-        
-        $v = (string) $x['version'];
-        debuglog("OPML version is ".$v, "TUNEIN", 8);
-        
-        $this->parse_tree($x->body, $this->title);
+        $d = new url_downloader(array('url' => $this->url));
+        if ($d->get_data_to_string()) {
+            $x = simplexml_load_string($d->get_data());
+            $v = (string) $x['version'];
+            debuglog("OPML version is ".$v, "TUNEIN", 8);
+            $this->parse_tree($x->body, $this->title);
+        }
     }
 
     private function parse_tree($node, $title) {

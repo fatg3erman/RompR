@@ -13,9 +13,6 @@
 // Length3=-1
 // Version=2
 
-// For Soma FM, is called with 	url = playlist URL
-//								station = (eg) Groove Salad
-
 class plsFile {
 
 	public function __construct($data, $url, $station, $image) {
@@ -192,15 +189,16 @@ class m3uFile {
 		$this->station = $station;
 		$this->image = $image;
 		$this->tracks = array();
+		$prettystream = '';
 
 		$parts = explode(PHP_EOL, $data);
 		foreach ($parts as $line) {
-			if (preg_match('/#EXTINF:(.*?),(.*?)$/', $line, $matches) ||
-				preg_match('/^\#/', $line) ||
-				preg_match('/^\s*$/', $line)) {
+			if (preg_match('/#EXTINF:(.*?),(.*?)$/', $line, $matches)) {
+				$prettystream = $matches[2];
+			} else if (preg_match('/^\#/', $line) || preg_match('/^\s*$/', $line)) {
 
 			} else {
-				$this->tracks[] = array('TrackUri' => trim($line), 'PrettyStream' => '');
+				$this->tracks[] = array('TrackUri' => trim($line), 'PrettyStream' => $prettystream);
 			}
 		}
 	}
@@ -280,12 +278,13 @@ class possibleStreamUrl {
 		$this->url = $url;
 		$this->station = $station;
 		$this->image = $image;
+		$this->tracks = array(array('TrackUri' => $this->url, 'PrettyStream' => ''));
 	}
 
 	public function updateDatabase() {
 		$stationid = check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			check_radio_tracks($stationid, array(array('TrackUri' => $this->url, 'PrettyStream' => '')));
+			check_radio_tracks($stationid, $this->tracks);
 		} else {
 			debuglog("ERROR! Null station ID!","RADIO",2);
 			header('HTTP/1.1 417 Expectation Failed');

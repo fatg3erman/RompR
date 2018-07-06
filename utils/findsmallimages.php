@@ -2,7 +2,7 @@
 chdir('..');
 include ("includes/vars.php");
 include ("includes/functions.php");
-include ("utils/imagefunctions.php");
+require_once ("utils/imagefunctions.php");
 include ("backends/sql/backend.php");
 $results = array();
 $convert_path = find_executable("identify");

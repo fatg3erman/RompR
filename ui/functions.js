@@ -36,14 +36,7 @@ function zeroPad(num, count)
 }
 
 function cloneObject(obj) {
-    var clone = {};
-    for(var i in obj) {
-        if(obj[i] !== null && typeof(obj[i])=="object")
-            clone[i] = cloneObject(obj[i]);
-        else
-            clone[i] = obj[i];
-    }
-    return clone;
+    return JSON.parse(JSON.stringify(obj));
 }
 
 function rawurlencode (str) {
@@ -213,15 +206,31 @@ function onStorageChanged(e) {
         debug.log("GENERAL","Updating album image for key",key,e);
         if (key.substring(0,1) == "!") {
             key = key.substring(1,key.length);
-            $('img[name="'+key+'"]').removeClass("notexist").addClass("notfound");
+            update_failed_ui_images(key)
         } else {
-            $('img[name="'+key+'"]').removeClass("notexist notfound").attr("src", "").hide().show();
-            $('img[name="'+key+'"]').not('.jalopy').attr("src", localStorage.getItem('albumimg_'+key));
-            $('img[name="'+key+'"].jalopy').attr("src",localStorage.getItem('albumimg_'+key).replace(/albumart\/small/, 'albumart/medium'));
-            infobar.albumImage.setSource({image: localStorage.getItem('albumimg_'+key).replace(/albumart\/small/, 'albumart/asdownloaded'), key: key});
+            var images = JSON.parse(localStorage.getItem('albumimg_'+key));
+            update_ui_images(key, images);
             localStorage.removeItem('albumimg_'+key);
         }
     }
+}
+
+function update_ui_images(key, images) {
+    $.each(images, function(i,v) {
+        if (i != 'delaytime') {
+            images[i] = images[i]+'?version='+Date.now();
+        }
+    });
+    $('img[name="'+key+'"]').removeClass("notexist notfound").attr("src", "").hide().show();
+    $('img[name="'+key+'"]').not('.jalopy').attr("src", images.small);
+    $('img[name="'+key+'"].jalopy').attr("src", images.medium);
+    if (typeof(infobar) != 'undefined') {
+        infobar.albumImage.setSource({images: images, key: key});
+    }
+}
+
+function update_failed_ui_images(key) {
+    $('img.notexist[name="'+key+'"]').removeClass("notexist").removeClass('notfound').addClass("notfound");
 }
 
 function preventDefault(ev) {

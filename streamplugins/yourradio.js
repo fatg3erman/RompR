@@ -23,8 +23,8 @@ var yourRadioPlugin = {
 		}
 	},
 
-	updateStreamName: function(streamid, name, callback) {
-        $.post("utils/userstreams.php", { updatename: 1, streamid: streamid, name: name })
+	updateStreamName: function(streamid, name, uri, callback) {
+        $.post("utils/userstreams.php", { updatename: 1, streamid: streamid, name: name, uri: uri })
 		.done( function(data) {
 			if (callback) {
 				callback();
