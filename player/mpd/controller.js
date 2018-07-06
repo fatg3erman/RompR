@@ -236,11 +236,14 @@ function playerController() {
         oldplname = name;
         debug.log("MPD","Renaming Playlist",name,e);
         var fnarkle = new popup({
-            width: 400,
-            height: 300,
+            css: {
+                width: 400,
+                height: 300
+            },
             title: language.gettext("label_renameplaylist"),
-            xpos: e.clientX,
-            ypos: e.clientY});
+            atmousepos: true,
+            mousevent: e
+        });
         var mywin = fnarkle.create();
         var d = $('<div>',{class: 'containerbox'}).appendTo(mywin);
         var e = $('<div>',{class: 'expand'}).appendTo(d);
@@ -262,6 +265,7 @@ function playerController() {
                 }
             }
         );
+        return true;
     }
 
     this.doRenameUserPlaylist = function() {
@@ -282,6 +286,7 @@ function playerController() {
                 debug.error("MPD","Failed to rename user playlist",name);
             }
         } );
+        return true;
     }
 
     this.deletePlaylistTrack = function(name,songpos,callback) {

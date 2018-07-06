@@ -668,13 +668,16 @@ function amendAlbumDetails(e, element) {
     $(element).parent().remove();
     var albumindex = $(element).attr('name');
     var fnarkle = new popup({
-        width: 400,
-        height: 300,
+        css: {
+            width: 400,
+            height: 300
+        },
         title: language.gettext("label_amendalbum"),
-        xpos: e.clientX,
-        ypos: e.clientY,
+        atmousepos: true,
+        mousevent: e,
         id: 'amotron'+albumindex,
-        toggleable: true});
+        toggleable: true
+    });
     var mywin = fnarkle.create();
     if (mywin === false) {
         return;
@@ -724,4 +727,5 @@ function actuallyAmendAlbumDetails(albumindex) {
             infobar.notify(infobar.ERROR,"Failed! Internal Error");
         }
     );
+    return true;
 }

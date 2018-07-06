@@ -266,9 +266,6 @@ include('skins/playlist.php');
 
 </div>
 
-
-<div id="popupwindow" class="topdropmenu scroller dropmenu dropshadow mobmenu">
-</div>
 <div id="tagadder" class="topdropmenu dropmenu dropshadow mobmenu">
     <div class="configtitle textcentre moveable" style="padding-top:4px"><b>
 <?php

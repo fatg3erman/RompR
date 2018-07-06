@@ -82,10 +82,6 @@ $(document).ready(function(){
     if (prefs.browser_id == null) {
         prefs.save({browser_id: Date.now()});
     }
-    if (old_style_albumart > 0) {
-        debug.shout("INIT","There are",old_style_albumart,"albums whose covers need updating");
-        show_albumart_update_window();
-    }
 });
 
 function cleanBackendCache() {

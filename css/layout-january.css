@@ -850,13 +850,14 @@ td.fil {
     position:absolute;
     display:none;
     z-index:1001;
-    overflow:hidden;
+    overflow-y: auto;
+	overflow-x: hidden;
+	transition: opacity 0.3s ease;
+	opacity: 0;
 }
 
 .popupcontents {
-    padding:0px;
-    margin:8px;
-    overflow:auto;
+    padding:8px;
 }
 
 .cheese {
@@ -942,8 +943,16 @@ div.topdropmenu
     overflow-x:hidden;
     display:none;
     position: absolute;
-    opacity:1;
+    opacity:1 !important;
     padding:4px;
+}
+
+div.topdropmenu div {
+	opacity: 1 !important;
+}
+
+div.topdropmenu.albumbitsmenu {
+    top: 12px;
 }
 
 div.clickalbummenu div.rightmenu

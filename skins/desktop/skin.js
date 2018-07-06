@@ -159,10 +159,6 @@ var layoutProcessor = function() {
 
         notifyAddTracks: function() { },
 
-        maxPopupSize : function(winsize) {
-            return {width: winsize.x - 32, height: winsize.y - 32};
-        },
-
         playlistupdate: function(upcoming) {
 
         },

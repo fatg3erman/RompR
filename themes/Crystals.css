@@ -249,16 +249,6 @@ tr.clickaddtrack:hover
     background-color:#e1e4ea;
 }
 
-.topimg
-{
-    opacity:0.8;
-}
-
-.topimg:not(.button-disabled):hover
-{
-    opacity:1;
-}
-
 .bsel
 {
     color:#000000;

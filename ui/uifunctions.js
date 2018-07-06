@@ -288,13 +288,18 @@ function albumart_translator(source) {
 }
 
 function show_albumart_update_window() {
-    var ws = getWindowSize();
+    if (old_style_albumart == 0) {
+        return true;
+    }
     var fnarkle = new popup({
-        width: 600,
-        height: 400,
-        ypos: ws.y/2,
+        css: {
+            width: 600,
+            height: 400
+        },
+        fitheight: true,
         title: "Album Art Update",
-        hasclosebutton: false});
+        hasclosebutton: false
+    });
     var mywin = fnarkle.create();
     mywin.append('<div id="artupdate" class="fullwdith"></div>');
     $('#artupdate').append('<div class="pref textcentre">Your Album Art needs to be updated. This process has now started. You can close this window to pause the process and it will continue the next time you open Rompr. Until you have updated all your art Rompr may run slowly and album art may look wierd</div>');
@@ -307,9 +312,9 @@ function show_albumart_update_window() {
         range: 100
     });
     fnarkle.open();
-    setTimeout(fnarkle.setWindowToContent, 2000);
     $('.open_albumart').hide();
     do_albumart_update();
+    return true;
 }
 
 function do_albumart_update() {
@@ -327,6 +332,7 @@ function stop_albumart_update() {
     debug.log("UI", "Cancelling album art update");
     $('.open_albumart').show();
     albumart_update = false;
+    return true;
 }
 
 function togglePlaylistButtons() {
@@ -489,10 +495,14 @@ function showUpdateWindow() {
     } else {
         if (typeof(prefs.shownupdatewindow) != 'string' || compare_version_numbers(prefs.shownupdatewindow, rompr_version)) {
             var fnarkle = new popup({
-                width: 1600,
-                height: 1600,
+                css: {
+                    width: 1200,
+                    height: 1600
+                },
+                fitheight: true,
                 title: 'RompЯ Version '+rompr_version,
-                hasclosebutton: false});
+                hasclosebutton: false
+            });
             var mywin = fnarkle.create();
             mywin.append('<div id="begging"></div>');
             mywin.append('<div id="license"></div>');
@@ -500,7 +510,7 @@ function showUpdateWindow() {
             $('#begging').load('includes/begging.html', function() {
                 $('#license').load('includes/license.html', function(){
                     $('#about').load('includes/about.html', function() {
-                        fnarkle.addCloseButton('OK');
+                        fnarkle.addCloseButton('OK', show_albumart_update_window);
                         prefs.save({shownupdatewindow: rompr_version});
                         fnarkle.open();
                     });

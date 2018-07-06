@@ -4,7 +4,6 @@
 	background-position: center;
 	background-repeat:no-repeat;
 	display:inline-block;
-    opacity:0.7;
 }
 
 [class^="icon-"]:not(.button-disabled):hover, [class*=" icon-"]:not(.button-disabled):hover {
