@@ -485,7 +485,7 @@ class SimpleImage {
         
         switch ($this->image_type) {
             case IMAGETYPE_JPEG:
-                debuglog("Image type is JPEG","IMAGE_GD");
+                debuglog("Image type is JPEG","GD-IMAGE");
                 if (defined('IMG_JPG') && ($imgtypes && IMG_JPG) && function_exists('imagecreatefromjpeg')) {
                     $this->image = imagecreatefromjpeg($filename);
                 } else {
@@ -494,7 +494,7 @@ class SimpleImage {
                 break;
             
             case IMAGETYPE_GIF:
-                debuglog("Image type is GIF","IMAGE_GD");
+                debuglog("Image type is GIF","GD-IMAGE");
                 if (defined('IMG_GIF') && ($imgtypes && IMG_GIF) && function_exists('imagecreatefromgif')) {
                     $this->image = imagecreatefromgif($filename);
                 } else {
@@ -503,7 +503,7 @@ class SimpleImage {
                 break;
             
             case IMAGETYPE_PNG:
-                debuglog("Image type is PNG","IMAGE_GD");
+                debuglog("Image type is PNG","GD-IMAGE");
                 if (defined('IMG_PNG') && ($imgtypes && IMG_PNG) && function_exists('imagecreatefrompng')) {
                     $this->image = imagecreatefrompng($filename);
                 } else {
@@ -512,7 +512,7 @@ class SimpleImage {
                 break;
             
             case IMAGETYPE_WBMP:
-                debuglog("Image type is WBMP","IMAGE_GD");
+                debuglog("Image type is WBMP","GD-IMAGE");
                 if (defined('IMG_WBMP') && ($imgtypes && IMG_WBMP) && function_exists('imagecreatefromwbmp')) {
                     $this->image = imagecreatefromwbmp($filename);
                 } else {
@@ -521,7 +521,7 @@ class SimpleImage {
                 break;
 
             case IMAGETYPE_XBM:
-                debuglog("Image type is XBM","IMAGE_GD");
+                debuglog("Image type is XBM","GD-IMAGE");
                 if (defined('IMG_XPM') && ($imgtypes && IMG_XPM) && function_exists('imagecreatefromxbm')) {
                     $this->image = imagecreatefromxbm($filename);
                 } else {
@@ -530,7 +530,7 @@ class SimpleImage {
                 break;
 
             case IMAGETYPE_WEBP:
-                debuglog("Image type is WEBP","IMAGE_GD");
+                debuglog("Image type is WEBP","GD-IMAGE");
                 if (defined('IMG_WEBP') && ($imgtypes && IMG_WEBP) && function_exists('imagecreatefromwebp')) {
                     $this->image = imagecreatefromwebp($filename);
                 } else {
@@ -539,7 +539,7 @@ class SimpleImage {
                 break;
 
             case IMAGETYPE_BMP:
-                debuglog("Image type is BMP","IMAGE_GD");
+                debuglog("Image type is BMP","GD-IMAGE");
                 if (defined('IMG_BMP') && ($imgtypes && IMG_BMP) && function_exists('imagecreatefrombmp')) {
                     $this->image = imagecreatefrombmp($filename);
                 } else {
@@ -557,7 +557,7 @@ class SimpleImage {
     
     public function checkImage() {
         if ($this->image_type === false) {
-            debuglog("  Unsupported Image Type", "IMAGE_GD");
+            debuglog("  Unsupported Image Type", "GD-IMAGE");
         }
         return $this->image_type;
     }

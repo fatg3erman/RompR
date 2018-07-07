@@ -1261,6 +1261,7 @@ function popup(opts) {
     var win;
     var titlebar;
     var contents;
+    var contentholder;
 
     var options = {
         css: {
@@ -1297,7 +1298,8 @@ function popup(opts) {
             }
         }
         win = $('<div>', { id: winid, class: "popupwindow dropshadow noselection" }).appendTo($('body'));
-        titlebar = $('<div>', { class: "cheese dragmenu" }).appendTo(win);
+        var container = $('<div>', {class: 'containerbox vertical popupcontentcontainer'}).appendTo(win);
+        titlebar = $('<div>', { class: "cheese dragmenu fixed" }).appendTo(container);
         var tit = $('<div>', { class: "configtitle textcentre"}).appendTo(titlebar)
         tit.html('<b>'+options.title+'</b>');
         if (options.hasclosebutton) {
@@ -1306,7 +1308,8 @@ function popup(opts) {
         if (options.helplink) {
             tit.append('<a href="'+options.helplink+'" target="_blank"><i class="icon-info-circled playlisticonr clickicon tright"></i></a>');
         }
-        contents = $('<div>',{class: 'popupcontents clearfix'}).appendTo(win);
+        contentholder = $('<div>', {class: 'popupcontentholder expand'}).appendTo(container);
+        contents = $('<div>',{class: 'popupcontents clearfix'}).appendTo(contentholder);
         titlebar.find('.icon-cancel-circled').click( function() {self.close(false)});
         win.floatingMenu({handleshow: false, handleclass: 'cheese', movecallback: self.moved });
         return contents;
@@ -1317,7 +1320,7 @@ function popup(opts) {
         self.adjustCSS(true, true);
         self.setCSS();
         win.css({opacity: 1});
-        layoutProcessor.addCustomScrollBar(win);
+        layoutProcessor.addCustomScrollBar(contentholder);
     }
 
     this.close = function(event) {

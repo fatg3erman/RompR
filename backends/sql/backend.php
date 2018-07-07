@@ -586,7 +586,7 @@ function get_imagesearch_info($key) {
 			$retval['album'] = $obj->Albumname;
 		}
 		if ($retval['mbid'] == null || $retval['mbid'] == "") {
-			$retval[3] = $obj->mbid;
+			$retval['mbid'] = $obj->mbid;
 		}
 		if ($retval['albumpath'] == null) {
 			$retval['albumpath'] = get_album_directory($obj->Albumindex, $obj->AlbumUri);
@@ -621,7 +621,7 @@ function get_imagesearch_info($key) {
 			$retval['album'] = $obj->Albumname;
 		}
 		if ($retval['mbid'] == null || $retval['mbid'] == "") {
-			$retval[3] = $obj->mbid;
+			$retval['mbid'] = $obj->mbid;
 		}
 		if ($retval['albumpath'] == null) {
 			$retval['albumpath'] = get_album_directory($obj->Albumindex, $obj->AlbumUri);

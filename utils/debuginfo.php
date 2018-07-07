@@ -8,7 +8,7 @@ print '<table id="debuginfotable" width="100%">';
 print '<tr><th colspan="2">Backend Info</th></tr>';
 print '<tr><td>Version</td><td>'.$version_string.'</td></tr>';
 foreach ($private_prefs as $p) {
-    if (array_key_exists($p, $orefs) && $prefs[$p] != '') {
+    if (array_key_exists($p, $prefs) && $prefs[$p] != '') {
         $prefs[$p] = '[Redacted]';
     }
     print '<tr><td>'.$p.'</td><td>'.$prefs[$p].'</td></tr>';
@@ -39,6 +39,14 @@ print '<tr><td>date</td><td>'.phpversion('date').'</td></tr>';
 print '<tr><td>fileinfo</td><td>'.phpversion('fileinfo').'</td></tr>';
 print '<tr><td>json</td><td>'.phpversion('json').'</td></tr>';
 print '<tr><td>SimpleXML</td><td>'.phpversion('SimpleXML').'</td></tr>';
+print '<tr><td>GD</td><td>'.phpversion('GD').'</td></tr>';
+$convert_path = find_executable('convert');
+if ($convert_path === false) {
+    print '<tr><td>ImageMagick</td><td>Not Installed</td></tr>';
+} else {
+    print '<tr><td>ImageMagick</td><td>Installed</td></tr>';
+}
+
 $php_values = array(
     'date.timezone',
     'default_charset',

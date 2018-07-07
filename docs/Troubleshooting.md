@@ -111,6 +111,20 @@ If you need to use a web proxy you will need to configure Rompr to use it. You c
 
 ![](images/proxysetup.png)
 
+## Album Art not working
+
+If you're having trouble with album art not displaying, it might be that you haven't installed php-gd (it's one of the things the installation instructions asks you to install), or that your distribution's build of php-gd dosn't support many image types.
+
+In this case you can install imagemagick to be used as a fallback when gd doesn't work
+
+    sudo apt-get install imagemagick
+    
+or on macOS
+
+    brew install imagemagick
+    
+Versions of Rompr prior to 1.18 always used imagemagick, but 1.18 will use gd in preference if it is installed, because it is much, much faster
+
 ## Reporting Bugs
 
 If you think you've found a bug, please report it at the [Issue Tracker](https://github.com/fatg3erman/RompR/issues), it helps to make Rompr better.

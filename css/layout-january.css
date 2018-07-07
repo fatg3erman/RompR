@@ -850,10 +850,18 @@ td.fil {
     position:absolute;
     display:none;
     z-index:1001;
-    overflow-y: auto;
+    overflow-y: hidden;
 	overflow-x: hidden;
 	transition: opacity 0.3s ease;
 	opacity: 0;
+}
+
+.popupcontentcontainer {
+	height: 100%;
+}
+
+.popupcontentholder {
+	overflow-y: auto;
 }
 
 .popupcontents {
