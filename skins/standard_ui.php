@@ -123,6 +123,9 @@ function albumHeader($obj) {
     } else  if (!$obj['Image'] && $obj['Searched'] == 1) {
         $h .= '<img class="smallcover fixed notfound'.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
     } else {
+        if (substr($i,0, 14) == 'getRemoteImage') {
+            $i .= '&rompr_resize_size=small';
+        }
         $h .= '<img class="smallcover fixed'.$extra.'" name="'.$obj['ImgKey'].'" src="'.$i.'" />'."\n";
     }
     $h .= '</div>';

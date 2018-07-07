@@ -667,13 +667,13 @@ function check_sql_tables() {
 
 			case 42:
 				debuglog("Updating FROM Schema version 42 TO Schema version 43","SQL");
-				update_stream_images();
+				update_stream_images(43);
 				generic_sql_query("UPDATE Statstable SET Value = 43 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 43:
 				debuglog("Updating FROM Schema version 43 TO Schema version 44","SQL");
-				empty_modified_cache_dirs();
+				empty_modified_cache_dirs(44);
 				generic_sql_query("UPDATE Statstable SET Value = 44 WHERE Item = 'SchemaVer'", true);
 				break;
 

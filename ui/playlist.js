@@ -486,7 +486,7 @@ var playlist = function() {
         var oldconsume = null;
         var chunksize = 5;
         var rptimer = null;
-        var startplaybackfrom = -1;
+        var startplaybackfrom = null;
         var populating = false;
 
         function actuallyRepopulate() {
@@ -565,16 +565,17 @@ var playlist = function() {
                 player.controller.takeBackControl();
                 player.controller.checkConsume(1, befuddle);
                 populating = true;
-                startplaybackfrom = (player.status.state == 'play') ? -1 : 0;
+                startplaybackfrom = (player.status.state == 'play') ? null : 0;
                 if (radios[mode].script) {
                     debug.shout("RADIO MANAGER","Loading Script",radios[mode].script,"for",mode);
-                    $.getScript(radios[mode].script+'?version='+rompr_version).done(player.controller.clearPlaylist)
+                    $.getScript(radios[mode].script+'?version='+rompr_version)
+                        .done(player.controller.clearPlaylist)
                         .fail(function(data,thing,wotsit) {
                             debug.error("RADIO MANAGER","Failed to Load Script",wotsit);
                             mode = null;
                             populating = false;
-                            self.repopulate();
                             player.controller.checkConsume(oldconsume, unbefuddle);
+                            playlist.repopulate();
                             infobar.notify(infobar.ERROR,"Something Went Badly Wrong");
                         });
                 } else {
@@ -584,7 +585,7 @@ var playlist = function() {
 
             playbackStartPos: function() {
                 var a = startplaybackfrom;
-                startplaybackfrom = -1;
+                startplaybackfrom = null;
                 return a;
             },
 

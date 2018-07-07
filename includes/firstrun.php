@@ -26,7 +26,7 @@ $root_level_dirs = array(
 foreach ($root_level_dirs as $dir) {
 	if (!is_dir($dir)) {
 		debuglog("Making Directory ".$dir,"INIT");
-		mkdir($dir);
+		mkdir($dir, 0744, true);
 	}
 }
 $all = glob('prefs/*');

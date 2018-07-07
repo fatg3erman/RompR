@@ -168,9 +168,6 @@ var ratingManager = function() {
 
 	function update_rest_of_ui() {
     	nowplaying.refreshUserMeta();
-    	// We need to do this if we're pre-populating the playlist using get_extra_track_info
-    	// but we're not currently, because it's too slow
-    	// playlist.repopulate();
 	}
 	
 	function refreshSection(section) {

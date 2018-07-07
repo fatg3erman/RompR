@@ -53,7 +53,7 @@ function getsmall() {
             $('#doobag').stopFlasher().css('opacity', '0');
             debug.log("SMALL IMAGES","Got List!",data);
             for (var i in data) {
-                $('img[name="'+data[i]+'"]').attr('src','').addClass('notexist');
+                $('img[name="'+data[i]+'"]').removeAttr('src').addClass('notexist');
             }
             coverscraper.reset($('.notexist:not(.notfound)').length + $('.notfound:not(.notexist)').length);
         },
@@ -134,24 +134,37 @@ function boogerbenson() {
 }
 
 function onlywithcovers() {
-    if ($(this).hasClass('notexist') || $(this).hasClass('notfound')) {
+    if ($(this).hasAttr('src')) {
+        return true;
+    } else {
         return false;
     }
-    if ($(this).prop("naturalHeight") === 0 && $(this).prop("naturalWidth") === 0) {
-        return false;
-    }
-    return true;
+    // if ($(this).hasClass('notexist') || $(this).hasClass('notfound')) {
+    //     return false;
+    // }
+    // if ($(this).prop("naturalHeight") === 0 && $(this).prop("naturalWidth") === 0) {
+    //     return false;
+    // }
+    // return true;
 }
 
 function filterImages() {
-    if ($(this).hasClass("notexist") || $(this).hasClass("notfound")) {
-        return true;
-    } else {
-        if ($(this).prop("naturalHeight") === 0 && $(this).prop("naturalWidth") === 0) {
-            return true;
-        }
+    if ($(this).hasClass('playlistimage')){
+        return false;
     }
-    return false;
+    if ($(this).hasAttr('src')) {
+        return false;
+    } else {
+        return true;
+    }
+    // if ($(this).hasClass("notexist") || $(this).hasClass("notfound")) {
+    //     return true;
+    // } else {
+    //     if ($(this).prop("naturalHeight") === 0 && $(this).prop("naturalWidth") === 0) {
+    //         return true;
+    //     }
+    // }
+    // return false;
 }
 
 // This comment is useless
@@ -330,7 +343,7 @@ var imageEditor = function() {
             debug.log('ALBUMART','Local Path Is',path);
 
             bigdiv.append($('<div>', { id: "searchcontent" }));
-            bigdiv.append($('<div>', { id: "origimage"}));
+            bigdiv.append($('<div>', { id: "origimage"}).append($("<img>", { id: 'browns' })));
 
             $("#searchcontent").append( $('<div>', {id: "editcontrols", class: "clearfix fullwidth"}),
                                         $('<div>', {id: "gsearch", class: "noddy fullwidth invisible"}),
@@ -411,8 +424,7 @@ var imageEditor = function() {
 
         displayBigImage: function() {
             if (bigdiv) {
-                $('#origimage').empty();
-                $("#origimage").append($("<img>", { src: bigimg.src, id: 'browns' }));
+                $('#browns').attr('src', bigimg.src).css('opacity', 1);
             }
         },
 
@@ -499,13 +511,9 @@ var imageEditor = function() {
         },
 
         updateBigImg: function(url) {
+            $("#browns").css('opacity', 0);
             if (typeof url == "string") {
-                $("#browns").removeClass("notfound notexist");
-                bigimg.src = "";
                 bigimg.src = url;
-            } else {
-                $("#browns").removeClass("notfound notexist");
-                if (url || bigimg.src == "") $("#browns").addClass('notfound');
             }
         },
 

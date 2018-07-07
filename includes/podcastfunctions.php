@@ -17,7 +17,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null) {
     
     if ($id) {
         if (!is_dir('prefs/podcasts/'.$id)) {
-            exec('mkdir prefs/podcasts/'.$id);
+            mkdir('prefs/podcasts/'.$id, 0744);
         }
         file_put_contents('prefs/podcasts/'.$id.'/feed.xml', $d->get_data());
     }
@@ -269,7 +269,7 @@ function getNewPodcast($url, $subbed = 1) {
         if (is_dir('prefs/podcasts/'.$newpodid)) {
             exec('rm -fR prefs/podcasts/'.$newpodid);
         }
-        exec('mkdir prefs/podcasts/'.$newpodid);
+        mkdir('prefs/podcasts/'.$newpodid, 0744);
         download_image($podcast['Image'], $newpodid, $podcast['Title']);
         if ($subbed == 1) {
             foreach ($podcast['tracks'] as $track) {
@@ -576,27 +576,6 @@ function upgrade_podcasts_to_version() {
         }
     }
 }
-
-// function upgrade_podcast_images() {
-//     $convert_path = find_executable('convert');
-//     $pods = generic_sql_query('SELECT * FROM Podcasttable');
-//     foreach ($pods as $pod) {
-//         if (preg_match('#^prefs/podcasts#', $pod['Image'])) {
-//             debuglog("Updating Podcast Image For ".$pod['Title'],"PODCASTS");
-//             $podid = $pod['PODindex'];
-//             exec('mkdir prefs/podcasts/'.$podid.'/albumart');
-//             exec('mkdir prefs/podcasts/'.$podid.'/albumart/small');
-//             exec('mkdir prefs/podcasts/'.$podid.'/albumart/medium');
-//             exec('mkdir prefs/podcasts/'.$podid.'/albumart/asdownloaded');
-//             $filename = basename($pod['Image']);
-//             $outdir = 'prefs/podcasts/'.$podid.'/albumart/';
-//             $r = exec( $convert_path.'convert '.$pod['Image'].' -quality 70 -resize 100 -alpha remove '.$outdir.'small/'.$filename.' 2>&1', $o);
-//             $r = exec( $convert_path.'convert '.$pod['Image'].' -quality 70 -resize 400 -alpha remove '.$outdir.'medium/'.$filename.' 2>&1', $o);
-//             exec('mv '.$pod['Image'].' '.$outdir.'asdownloaded/'.$filename);
-//             generic_sql_query('UPDATE Podcasttable SET Image = "'.$outdir.'small/'.$filename.'" WHERE PODindex = '.$podid);
-//         }
-//     }
-// }
 
 function outputPodcast($podid, $do_searchbox = true) {
     $result = generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$podid, false, PDO::FETCH_OBJ);

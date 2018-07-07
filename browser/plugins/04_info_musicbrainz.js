@@ -892,7 +892,7 @@ var info_musicbrainz = function() {
 								return;
 							}
 							if (albummeta.musicbrainz_id === null) {
-								debug.fail(medebug,parent.nowplayingindex,"Album asked to populate but no MBID could be found. Shit.");
+								debug.fail(medebug,parent.nowplayingindex,"Album asked to populate but no MBID could be found.");
 								albummeta.musicbrainz.album = {error: language.gettext("musicbrainz_noalbum")};
 								parent.updateData({
 								            musicbrainz: { album_releasegroupid: null },

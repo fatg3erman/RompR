@@ -933,32 +933,41 @@ function set_version_string() {
     }
 }
 
-function update_stream_images() {
+function update_stream_images($schemaver) {
     require_once('utils/imagefunctions.php');
-    $stations = generic_sql_query("SELECT Stationindex, StationName, Image FROM RadioStationtable WHERE Image LIKE 'prefs/userstreams/STREAM_%'");
-    foreach ($stations as $station) {
-        debuglog("  Updating Image For Station ".$station['StationName'], "BACKEND");
-        if (file_exists($station['Image'])) {
-            debuglog("    Image is ".$station['StationName'], "BACKEND");
-            $src = get_base_url().'/'.$station['Image'];
-            $albumimage = new albumImage(array('artist' => "STREAM", 'album' => $station['StationName'], 'source' => $src));
-            if ($albumimage->download_image()) {
-                // Can't call $albumimage->update_image_database because the functions that requires are in the backend
-                $images = $albumimage->get_images();
-                sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET Image = ? WHERE StationName = ?",$images['small'],$station['StationName']);
-                unlink($station['Image']);
-            } else {
-                debuglog("  Image Upgrade Failed!","BACKEND");
+    switch ($schemaver) {
+        case 43:
+            $stations = generic_sql_query("SELECT Stationindex, StationName, Image FROM RadioStationtable WHERE Image LIKE 'prefs/userstreams/STREAM_%'");
+            foreach ($stations as $station) {
+                debuglog("  Updating Image For Station ".$station['StationName'], "BACKEND");
+                if (file_exists($station['Image'])) {
+                    debuglog("    Image is ".$station['StationName'], "BACKEND");
+                    $src = get_base_url().'/'.$station['Image'];
+                    $albumimage = new albumImage(array('artist' => "STREAM", 'album' => $station['StationName'], 'source' => $src));
+                    if ($albumimage->download_image()) {
+                        // Can't call $albumimage->update_image_database because the functions that requires are in the backend
+                        $images = $albumimage->get_images();
+                        sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET Image = ? WHERE StationName = ?",$images['small'],$station['StationName']);
+                        sql_prepare_query(true, null, null, null, "UPDATE WishlistSourcetable SET Image = ? WHERE Image = ?",$images['small'],$station['Image']);
+                        unlink($station['Image']);
+                    } else {
+                        debuglog("  Image Upgrade Failed!","BACKEND");
+                    }
+                } else {
+                    generic_sql_query("UPDATE RadioStationtable SET IMAGE = NULL WHERE Stationindex = ".$station['Stationindex']);
+                }
             }
-        } else {
-            generic_sql_query("UPDATE RadioStationtable SET IMAGE = NULL WHERE Stationindex = ".$station['Stationindex']);
-        }
+            break;
     }
 }
 
-function empty_modified_cache_dirs() {
-    foreach(array('allmusic', 'lyrics') as $d) {
-        exec('rm prefs/jsoncache/'.$d.'/*');
+function empty_modified_cache_dirs($schemaver) {
+    switch ($schemaver) {
+        case 44:
+            foreach(array('allmusic', 'lyrics') as $d) {
+                exec('rm prefs/jsoncache/'.$d.'/*');
+            }
+            break;
     }
 }
 

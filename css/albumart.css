@@ -16,6 +16,12 @@
     padding-right: 8px;
     padding-bottom: 8px;
     margin-top:8px;
+    transition: width 0.5s ease;
+}
+
+#browns {
+    transition: opacity 0.5s ease;
+    opacity: 0;
 }
 
 .albumcovers .infosection {

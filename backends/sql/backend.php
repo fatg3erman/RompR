@@ -545,7 +545,12 @@ function get_extra_track_info(&$filedata) {
 	);
 	foreach ($result as $tinfo) {
 		if ($tinfo['Uri'] == $filedata['file']) {
-			$data = $tinfo;
+			$data = array_filter($tinfo, function($v) {
+				if ($v === null || $v == '') {
+					return false;
+				}
+				return true;
+			});
 			break;
 		}
 	}

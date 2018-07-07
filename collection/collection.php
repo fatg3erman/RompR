@@ -637,24 +637,14 @@ function process_file($filedata) {
 		// If we're doing a search, we check to see if that track is in the database
 		// because the user might have set the AlbumArtist to something different
         $tstart = microtime(true);
-        $extrainfo = get_extra_track_info($filedata);
-		foreach ($extrainfo as $i => $v) {
-            if ($v !== null && $v != "") {
-                $filedata[$i] = $v;
-            }
-        }
+		$filedata = array_replace($filedata, get_extra_track_info($filedata));
         $db_time += microtime(true) - $tstart;
     }
 
     if ($filedata['Pos'] !== null) {
         // Playlist track. Swerve the collectioniser and use the database
         $tstart = microtime(true);
-        $extrainfo = get_extra_track_info($filedata);
-        foreach ($extrainfo as $i => $v) {
-            if ($v !== null && $v != "") {
-                $filedata[$i] = $v;
-            }
-        }
+		$filedata = array_replace($filedata, get_extra_track_info($filedata));
         $db_time += microtime(true) - $tstart;
         $cstart = microtime(true);
         doNewPlaylistFile($filedata);

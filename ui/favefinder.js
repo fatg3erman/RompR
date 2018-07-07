@@ -196,7 +196,7 @@ function faveFinder(returnall) {
         var req = queue[0];
         var st = {};
         if (req.data.title) {
-            st.track_name = [req.data.title];
+            st.title = [req.data.title];
         }
         if (req.data.artist) {
             st.artist = [req.data.artist];

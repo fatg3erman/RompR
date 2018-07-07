@@ -91,7 +91,7 @@ class baseAlbumImage {
         $disc_checked = false;
         if ($this->images['small'] == '' || $this->images['small'] === null) {
             if ($this->artist == 'STREAM') {
-                // Stream images my not be in the database
+                // Stream images may not be in the database
                 // BUT they may be present anyway, if a stream was added eg from a playlist
                 // of streams and coverscraper found one. So check, otherwise coverscraper
                 // will search for it every time the playlist repopulated.
@@ -99,7 +99,6 @@ class baseAlbumImage {
                     return true;
                 }
                 $disc_checked = true;
-                
             }
 
             // Checking if the file already exists on disc doesn't help at all
@@ -114,8 +113,8 @@ class baseAlbumImage {
                     // to the Current Playlist from search results.
                 } else {
                     // Different defaults for the Playlist, we'd like to be able
-                    // to download images, and the information we get in the playlist
-                    // from Mopidy, anyway, which is where these matter, is more complete
+                    // to download images and the information we get in the playlist
+                    // (from Mopidy anyway, which is where these matter), is more complete
                     // than what comes from search results which often lack any sort
                     // of useful information.
                     switch ($domain) {
@@ -166,6 +165,13 @@ class baseAlbumImage {
             'asdownloaded' => preg_replace('#albumart/small/#', 'albumart/asdownloaded/', $image)
         );
         return $images;
+    }
+    
+    protected function change_file_extension($new) {
+        foreach ($this->images as $size => $path) {
+            $p = pathinfo($path);
+            $this->images[$size] = $p['dirname'].'/'.$p['filename'].'.'.$new;
+        }
     }
     
     private function image_info_from_database() {
@@ -229,6 +235,7 @@ class albumImage extends baseAlbumImage {
         if (!$this->has_source()) {
             return false;
         }
+        $retval = false;
         if ($this->source) {
             $retval = $this->download_remote_file();
         } else if ($this->file) {
@@ -296,10 +303,10 @@ class albumImage extends baseAlbumImage {
                     $this->images = $this->image_info_from_album_info();
                     $newbasepath = dirname($this->basepath);
                     debuglog("Renaming Playlist Image from ".$oldbasepath." to ".$newbasepath,"ALBUMIMAGE");
-                    system('mv '.$oldbasepath.' '.$newbasepath);
+                    rename($oldbasepath, $newbasepath);
                     foreach ($this->images as $image) {
                         $oldimage = dirname($image).'/'.$oldkey.'.jpg';
-                        system('mv '.$oldimage.' '.$image);
+                        rename($oldimage, $image);
                     }
                 }
                 break;
@@ -307,7 +314,13 @@ class albumImage extends baseAlbumImage {
     }
     
     private function saveImage($download_file) {
-        $convert_path = find_executable('convert');
+        if (extension_loaded('gd')) {
+            debuglog("Using GD to create image","ALBUMPICTURE");
+            $simpleimage = new SimpleImage($download_file);
+        } else {
+            debuglog("Using ImageMagick to create image. You should install the GD extension for your PHP installation","ALBUMPICTURE");
+            $convert_path = find_executable('convert');
+        }
         foreach ($this->images as $image) {
             $dir = dirname($image);
             $size = basename($dir);
@@ -315,12 +328,51 @@ class albumImage extends baseAlbumImage {
                 unlink($image);
             }
             if (!is_dir($dir)) {
-                exec('mkdir -p '.$dir);
+                mkdir($dir, 0744, true);
             }
             debuglog("  Creating file ".$image,"ALBUMIMAGE");
+            if (extension_loaded('gd')) {
+                if ($simpleimage->checkImage() !== false) {
+                    switch ($size) {
+                        case 'small':
+                            $simpleimage->resizeToWidth(100);
+                            $simpleimage->save($image, IMAGETYPE_JPEG, 75);
+                            break;
+            
+                        case 'medium':
+                            $simpleimage->resizeToWidth(400);
+                            $simpleimage->save($image, IMAGETYPE_JPEG, 70);
+                            break;
+            
+                        case 'asdownloaded':
+                            $simpleimage->reset();
+                            $simpleimage->save($image, IMAGETYPE_JPEG, 90);
+                            break;
+                    }
+                } else {
+                    $convert_path = find_executable('convert');
+                    $this->convert_with_imagemagick($convert_path, $download_file, $image, $size);
+                }
+            } else {
+                $this->convert_with_imagemagick($convert_path, $download_file, $image, $size);
+            }
+        }
+        unlink($download_file);
+        return $this->images;
+    }
+    
+    private function convert_with_imagemagick($convert_path, $download_file, $image, $size) {
+        if (mime_content_type($download_file) == 'image/svg+xml') {
+            debuglog("  Copying SVG file instead of converting","ALBUMIMAGE");
+            $this->change_file_extension('svg');
+            copy($download_file, $this->images[$size]);
+        } else if ($convert_path === false) {
+            debuglog("WARNING! No GD support, and couldn't find ImageMagick!","ALBUMIMAGE", 1);
+        } else {
+            debuglog("Converting image with ImageMagick","ALBUMIMAGE");
             switch ($size) {
                 case 'small':
-                    exec( $convert_path."convert \"".$download_file."\" -quality 75 -resize 100 -alpha remove \"".$image."\" 2>&1");
+                    exec( $convert_path."convert \"".$download_file."\" -quality 75 -thumbnail 100 -alpha remove \"".$image."\" 2>&1");
                     break;
                     
                 case 'medium':
@@ -332,8 +384,6 @@ class albumImage extends baseAlbumImage {
                     break;
             }
         }
-        unlink($download_file);
-        return $this->images;
     }
     
     private function download_remote_file() {
@@ -363,27 +413,28 @@ class albumImage extends baseAlbumImage {
 }
 
 function get_image_dimensions($image) {
-    global $convert_path;
-    $c = $convert_path."identify \"".$image."\" 2>&1";
-    $o = array();
-    $r = exec($c, $o);
-    $width = -1;
-    $height = -1;
-    if (preg_match('/ (\d+)x(\d+) /', $r, $matches)) {
-        $width = $matches[1];
-        $height = $matches[2];
+    if (extension_loaded('gd')) {
+        $a = getimagesize($image);
+        return array('width' => $a[0], 'height' => $a[1]);
+    } else {
+        $convert_path = find_executable('identify');
+        $c = $convert_path."identify \"".$image."\" 2>&1";
+        $o = array();
+        $r = exec($c, $o);
+        $width = -1;
+        $height = -1;
+        if (preg_match('/ (\d+)x(\d+) /', $r, $matches)) {
+            $width = $matches[1];
+            $height = $matches[2];
+        }
+        return array('width' => $width, 'height' => $height);
     }
-    return array('width' => $width, 'height' => $height);
 }
 
 function artist_for_image($type, $artist) {
 	switch ($type) {
-		// case 'podcast':
-        //     if ($artist)
-        
-        
 		case 'stream':
-			$artistforimage = strtoupper($type);
+			$artistforimage = 'STREAM';
 			break;
 			
 		default:
@@ -391,6 +442,197 @@ function artist_for_image($type, $artist) {
 			break;
 	}
 	return $artistforimage;
+}
+
+/*
+* File: SimpleImage.php
+* Author: Simon Jarvis
+* Copyright: 2006 Simon Jarvis
+* Date: 08/11/06
+* Link: http://www.white-hat-web-design.co.uk/blog/resizing-images-with-php/
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details:
+* http://www.gnu.org/licenses/gpl.html
+*
+*/
+
+// With a few FGP mods for our purposes
+
+class SimpleImage {
+
+    private $image;
+    private $resizedimage;
+    private $image_type;
+    private $filename;
+
+    public function __construct($filename) {
+        $this->filename = $filename;
+        $image_info = getimagesize($filename);
+        $this->image_type = $image_info[2];
+        $imgtypes = imagetypes();
+        
+        // We're being very careful here to check that the image is of a supported type
+        // without throwing any errors. Belt and braces, since different PHP-GD installations
+        // have different supported types, and IMG_BMP wasn't introduced until PHP7.2
+        
+        switch ($this->image_type) {
+            case IMAGETYPE_JPEG:
+                debuglog("Image type is JPEG","IMAGE_GD");
+                if (defined('IMG_JPG') && ($imgtypes && IMG_JPG) && function_exists('imagecreatefromjpeg')) {
+                    $this->image = imagecreatefromjpeg($filename);
+                } else {
+                    $this->image_type = false;
+                }
+                break;
+            
+            case IMAGETYPE_GIF:
+                debuglog("Image type is GIF","IMAGE_GD");
+                if (defined('IMG_GIF') && ($imgtypes && IMG_GIF) && function_exists('imagecreatefromgif')) {
+                    $this->image = imagecreatefromgif($filename);
+                } else {
+                    $this->image_type = false;
+                }
+                break;
+            
+            case IMAGETYPE_PNG:
+                debuglog("Image type is PNG","IMAGE_GD");
+                if (defined('IMG_PNG') && ($imgtypes && IMG_PNG) && function_exists('imagecreatefrompng')) {
+                    $this->image = imagecreatefrompng($filename);
+                } else {
+                    $this->image_type = false;
+                }
+                break;
+            
+            case IMAGETYPE_WBMP:
+                debuglog("Image type is WBMP","IMAGE_GD");
+                if (defined('IMG_WBMP') && ($imgtypes && IMG_WBMP) && function_exists('imagecreatefromwbmp')) {
+                    $this->image = imagecreatefromwbmp($filename);
+                } else {
+                    $this->image_type = false;
+                }
+                break;
+
+            case IMAGETYPE_XBM:
+                debuglog("Image type is XBM","IMAGE_GD");
+                if (defined('IMG_XPM') && ($imgtypes && IMG_XPM) && function_exists('imagecreatefromxbm')) {
+                    $this->image = imagecreatefromxbm($filename);
+                } else {
+                    $this->image_type = false;
+                }
+                break;
+
+            case IMAGETYPE_WEBP:
+                debuglog("Image type is WEBP","IMAGE_GD");
+                if (defined('IMG_WEBP') && ($imgtypes && IMG_WEBP) && function_exists('imagecreatefromwebp')) {
+                    $this->image = imagecreatefromwebp($filename);
+                } else {
+                    $this->image_type = false;
+                }
+                break;
+
+            case IMAGETYPE_BMP:
+                debuglog("Image type is BMP","IMAGE_GD");
+                if (defined('IMG_BMP') && ($imgtypes && IMG_BMP) && function_exists('imagecreatefrombmp')) {
+                    $this->image = imagecreatefrombmp($filename);
+                } else {
+                    $this->image_type = false;
+                }
+                break;
+
+            default:
+                $this->image_type = false;
+                break;
+          
+        }
+        $this->resizedimage = $this->image;
+    }
+    
+    public function checkImage() {
+        if ($this->image_type === false) {
+            debuglog("  Unsupported Image Type", "IMAGE_GD");
+        }
+        return $this->image_type;
+    }
+   
+    public function reset() {
+        $this->resizedimage = $this->image;
+    }
+   
+    public function save($filename, $image_type=IMAGETYPE_JPEG, $compression=75) {
+        if ($this->image_type === false) {
+            copy($this->filename, $filename);
+        } else if( $image_type == IMAGETYPE_JPEG ) {
+            imagejpeg($this->resizedimage,$filename,$compression);
+        } else if( $image_type == IMAGETYPE_GIF ) {
+            imagegif($this->resizedimage,$filename);
+        } else if( $image_type == IMAGETYPE_PNG ) {
+            imagepng($this->resizedimage,$filename);
+        }
+    }
+
+    public function outputResizedFile($size) {
+        debuglog("Outputting file of size ".$size,"GD-IMAGE");
+        switch ($size) {
+            case 'small':
+                $this->resizeToWidth(100);
+                $this->save(null, IMAGETYPE_JPEG, 75);
+                break;
+
+            case 'medium':
+                $this->resizeToWidth(400);
+                $this->save(null, IMAGETYPE_JPEG, 70);
+                break;
+                
+            default:
+                $this->save(null, IMAGETYPE_JPEG, 90);
+                break;
+                
+        }
+    }
+
+    public function getWidth() {
+        return imagesx($this->image);
+    }
+
+    public function getHeight() {
+        return imagesy($this->image);
+    }
+
+    public function resizeToHeight($height) {
+        $ratio = $height / $this->getHeight();
+        $width = $this->getWidth() * $ratio;
+        $this->resize($width,$height);
+    }
+
+    public function resizeToWidth($width) {
+        $ratio = $width / $this->getWidth();
+        $height = $this->getheight() * $ratio;
+        $this->resize($width,$height);
+    }
+
+    public function scale($scale) {
+        $width = $this->getWidth() * $scale/100;
+        $height = $this->getheight() * $scale/100;
+        $this->resize($width,$height);
+    }
+
+    public function resize($width,$height) {
+        if ($this->image_type === false) {
+           return true;
+        } else {
+           $this->resizedimage = imagecreatetruecolor($width, $height);
+           imagecopyresampled($this->resizedimage, $this->image, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight());
+        }
+    }
+
 }
 
 ?>

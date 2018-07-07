@@ -161,13 +161,7 @@ Assuming all is OK
 
     sudo apachectl restart
 
-## 4. Install Some Additional Bits
-We're nearly there. So nearly.
-
-    brew install imagemagick
-
-
-## 5. Edit Hosts Definition
+## 4. Edit Hosts Definition
 
 You may have noticed we used www.myrompr.net above. We need the OS to know where that is
 
@@ -177,7 +171,7 @@ and add a line
 
     127.0.0.1	www.myrompr.net
 
-## 6. And We're Done##
+## 5. And We're Done##
 
 Your browser can now be pointed at www.myrompr.net.
 To access rompr from another device you need to edit the hosts file there too. If you can't edit the hosts file, just use the computer's IP address.

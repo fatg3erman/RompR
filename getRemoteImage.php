@@ -1,11 +1,12 @@
 <?php
 include ("includes/vars.php");
 include ("includes/functions.php");
+include ("utils/imagefunctions.php");
 
 $url = $_REQUEST['url'];
 
 foreach ($_GET as $k => $v) {
-	if ($k != 'url') {
+	if ($k != 'url' && $k != 'rompr_resize_size') {
 		$url .= '&'.$k.'='.$v;
 	}
 }
@@ -30,8 +31,19 @@ if (!$url) {
 		debuglog("Not an image file! ".$url,"TOMATO",5);
 		header("HTTP/1.1 404 Not Found");
 	} else {
-		header('Content-type: '.$content_type);
-		readfile($outfile);
+		if (extension_loaded('gd') && array_key_exists('rompr_resize_size', $_REQUEST)) {
+			$simpleimage = new SimpleImage($outfile);
+			if ($simpleimage->checkImage() === false) {
+				header('Content-type: '.$content_type);
+				readfile($outfile);
+			} else {
+				header('Content-type: image/jpeg');
+				$simpleimage->outputResizedFile($_REQUEST['rompr_resize_size']);
+			}
+		} else {
+			header('Content-type: '.$content_type);
+			readfile($outfile);
+		}
 	}
 }
 
@@ -44,7 +56,7 @@ function download_image_file($url, $outfile) {
 		$content_type = $d->get_content_type();
 		debuglog("  ... Content Type is ".$content_type,"TOMATO", 9);
 		$fileplusmime = $outfile.'_'.rawurlencode($content_type);
-		system('mv '.$outfile.' '.$fileplusmime);
+		rename($outfile, $fileplusmime);
 		return $fileplusmime;
 	} else {
 		debuglog("Failed to download ".$url." - status was ".$d->get_status(),"TOMATO",5);

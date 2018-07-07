@@ -268,7 +268,7 @@ function albumart_translator(source) {
         } else if (/albumart\/asdownloaded\//.test(this.source)) {
             return this.source.replace('albumart/asdownloaded/', 'albumart/'+size+'/');
         } else {
-            return this.source;
+            return this.source.replace(/\&rompr_resize_size=.+/, '');
         }
     }
     

@@ -105,6 +105,9 @@ function albumHeader($obj) {
     } else {
         $albumimage = new baseAlbumImage(array('baseimage' => $obj['Image']));
         $images = $albumimage->get_images();
+        if (substr($images['medium'],0, 14) == 'getRemoteImage') {
+            $images['medium'] .= '&rompr_resize_size=medium';
+        }
         $h .= '<img class="jalopy" name="'.$obj['ImgKey'].'" src="'.$images['medium'].'" />'."\n";
     }
 

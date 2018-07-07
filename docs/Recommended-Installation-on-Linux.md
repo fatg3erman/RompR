@@ -64,7 +64,7 @@ And then we need to give nginx permission to write to them. We can do this by ch
 
 ### Install some packages
 
-`sudo apt-get install php7.1-sqlite3 nginx php7.1-curl imagemagick php7.1-json php7.1-fpm php7.1-xml php7.1-mbstring`
+`sudo apt-get install nginx php7.0-curl php7.0-mysql php7.0-gd php7.0-json php7.0-xml php7.0-mbstring`
 
 _Note the version numbers - 7.1 is current at the time of  writing but as times change it may become 7.2,etc. On Ubuntu 16.04 I think it is 7.0. Amend the command as applicable_
 

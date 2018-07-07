@@ -66,7 +66,7 @@ if ($mysqlc) {
 
     if ($prefs['cleanalbumimages']) {
         debuglog("Checking albumart folder for unneeded images","CACHE CLEANER");
-        $files = glob('albumart/small/*.jpg');
+        $files = glob('albumart/small/*.*');
         foreach ($files as $image) {
             // Remove images for hidden tracks and search results. The missing check below will reset the db entries for those albums
             // Keep everything for 24 hours regardless, we might be using it in a playlist or something
@@ -74,9 +74,8 @@ if ($mysqlc) {
                 $count = sql_prepare_query(false, null, 'acount', 0, "SELECT COUNT(Albumindex) AS acount FROM Albumtable WHERE Image = ? AND Albumindex IN (SELECT DISTINCT Albumindex FROM Tracktable WHERE Hidden = 0 AND isSearchResult < 2 AND URI IS NOT NULL)", $image);
                 if ($count < 1) {
                     debuglog("  Removing Unused Album image ".$image,"CACHE CLEANER");
-                    exec('rm albumart/small/'.basename($image));
-                    exec('rm albumart/medium/'.basename($image));
-                    exec('rm albumart/asdownloaded/'.basename($image));
+                    $albumimage = new baseAlbumImage(array('baseimage' => $image));
+                    array_map('unlink', $albumimage->get_images());
                 }
             }
         }

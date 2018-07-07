@@ -152,11 +152,7 @@ As usual, ctrl-X and then answer 'Y'.
 
 ## Install Some Additional Bits
 
-We're nearly there. So nearly.
-
-    brew install imagemagick
-
-And if you're using Mopidy
+If you're using Mopidy
 
     brew install gst-libav
 

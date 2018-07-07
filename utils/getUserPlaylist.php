@@ -14,13 +14,13 @@ if (array_key_exists('url', $_REQUEST)) {
 	}
 	file_put_contents('prefs/userplaylists/User_Playlist_'.$number, $url);
 } else if (array_key_exists('del', $_REQUEST)) {
-	system('rm "prefs/userplaylists/'.rawurldecode($_REQUEST['del']).'"');
+	unlink('prefs/userplaylists/'.rawurldecode($_REQUEST['del']));
 } else if (array_key_exists('rename', $_REQUEST)) {
 	$old_name = rawurldecode($_REQUEST['rename']);
 	$new_name = rawurldecode($_REQUEST['newname']);
 	$oldimage = new albumImage(array('artist' => 'PLAYLIST', 'album' => $old_name));
 	$oldimage->change_name($new_name);
-	system('mv "prefs/userplaylists/'.$old_name.'" "prefs/userplaylists/'.$new_name.'"');
+	rename('prefs/userplaylists/'.$old_name, 'prefs/userplaylists/'.$new_name);
 }
 
 ?>

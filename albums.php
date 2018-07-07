@@ -123,33 +123,43 @@ function checkDomains($d) {
         return $d['domains'];
     }
     debuglog("No search domains in use","SEARCH");
-    return null;
+    return false;
 }
 
 function mpd_search() {
     global $collection, $dbterms, $skin;
     // If we're searching for tags or ratings it would seem sensible to only search the database
-    // HOWEVER - we could be searching for genre of performer or composer or any - which will not match in the database
+    // HOWEVER - we could be searching for genre of performer or composer - which will not match in the database
     // For those cases ONLY, controller.js will call into this instead of database_search, and we set $dbterms
     // to make the collection check everything it finds against the database
     $cmd = $_REQUEST['command'];
     $domains = checkDomains($_REQUEST);
     foreach ($_REQUEST['mpdsearch'] as $key => $term) {
-        if ($key == "tag") {
-            $dbterms['tags'] = $term;
-        } else if ($key == "rating") {
-            $dbterms['rating'] = $term;
-        } else if ($key == "any") {
-            foreach ($term as $t) {
-                $terms = explode(' ',$t);
-                foreach ($terms as $tom) {
-                    $cmd .= " ".$key.' "'.format_for_mpd(html_entity_decode(trim($tom))).'"';
+        switch ($key) {
+            case 'tag':
+            case 'rating':
+                $dbterms[$key] = $term;
+                break;
+        
+            case 'any':
+                // This makes a search term of 'Madness My Girl' into
+                // search any Madness any My any Girl
+                // which seems to produce better results with Spotify. But probably doesn't with Google Play, which
+                // only uses the first term. Soundcloud concatenates them all back into one term again. What does MPD do?
+                foreach ($term as $t) {
+                    $terms = explode(' ',$t);
+                    foreach ($terms as $tom) {
+                        $cmd .= " ".$key.' "'.format_for_mpd(html_entity_decode(trim($tom))).'"';
+                    }
                 }
-            }
-        } else {
-            foreach ($term as $t) {
-                $cmd .= " ".$key.' "'.format_for_mpd(html_entity_decode(trim($t))).'"';
-            }
+                break;
+        
+            default:
+                foreach ($term as $t) {
+                    $cmd .= " ".$key.' "'.format_for_mpd(html_entity_decode(trim($t))).'"';
+                }
+                break;
+        
         }
     }
     debuglog("Search command : ".$cmd,"MPD SEARCH");
@@ -171,7 +181,6 @@ function mpd_search() {
 
 function browse_album() {
     global $collection, $skin;
-    $domains = array();
     $a = preg_match('/(a|b)(.*?)(\d+|root)/', $_REQUEST['browsealbum'], $matches);
     if (!$a) {
         print '<h3>'.get_int_text("label_general_error").'</h3>';
@@ -195,7 +204,7 @@ function browse_album() {
         $cmd = 'find file "'.$albumlink.'"';
         debuglog("Doing Album Browse : ".$cmd,"MPD");
         prepareCollectionUpdate();
-        doCollection($cmd, $domains);
+        doCollection($cmd, false);
         $collection->tracks_to_database(true);
         close_transaction();
         remove_findtracks();
@@ -233,11 +242,7 @@ function raw_search() {
     if ($found == 0) {
         $cmd = $_REQUEST['command'];
         foreach ($_REQUEST['rawterms'] as $key => $term) {
-            if ($key == "track_name") {
-                $cmd .= ' title "'.format_for_mpd(html_entity_decode($term[0])).'"';
-            } else {
-                $cmd .= " ".$key.' "'.format_for_mpd(html_entity_decode($term[0])).'"';
-            }
+            $cmd .= " ".$key.' "'.format_for_mpd(html_entity_decode($term[0])).'"';
         }
         debuglog("Search command : ".$cmd,"MPD SEARCH");
         $doing_search = true;
@@ -251,8 +256,8 @@ function raw_search() {
         if (array_key_exists('artist', $_REQUEST['rawterms'])) {
             $parms[] = format_for_mpd(html_entity_decode($_REQUEST['rawterms']['artist'][0]));
         }
-        if (array_key_exists('track_name', $_REQUEST['rawterms'])) {
-            $parms[] = format_for_mpd(html_entity_decode($_REQUEST['rawterms']['track_name'][0]));
+        if (array_key_exists('title', $_REQUEST['rawterms'])) {
+            $parms[] = format_for_mpd(html_entity_decode($_REQUEST['rawterms']['title'][0]));
         }
         if (count($parms) > 0) {
             $cmd .= '"'.implode(' ',$parms).'"';

@@ -230,7 +230,7 @@ function update_ui_images(key, images) {
 }
 
 function update_failed_ui_images(key) {
-    $('img.notexist[name="'+key+'"]').removeClass("notexist").removeClass('notfound').addClass("notfound");
+    $('img.notexist[name="'+key+'"]').removeClass("notexist").removeClass('notfound').addClass("notfound").removeAttr('src');
 }
 
 function preventDefault(ev) {

@@ -35,7 +35,7 @@ while (true) {
     if (array_key_exists('songid', $mpd_status) && array_key_exists('elapsed', $mpd_status)) {
         if ($current_id != $mpd_status['songid']) {
             debuglog("Song has changed","ROMONITOR");
-            doCollection('currentsong', array(), null);
+            doCollection('currentsong', array(), false);
             $current_id = $mpd_status['songid'];
             $playcount_updated = false;
 			romprmetadata::get($current_song);

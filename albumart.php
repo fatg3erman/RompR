@@ -143,7 +143,7 @@ function do_covers_db_style() {
                             print '<input name="searchterm" type="hidden" value="'.rawurlencode($artist['Artistname']." ".munge_album_name($album['Albumname'])).'" />';
                             print '<img class="'.$class.'" name="'.$album['ImgKey'].'"';
                             if ($src != "") {
-                                print 'src="'.$src.'" ';
+                                print ' src="'.$src.'" ';
                             }
                             print '/>';
 
@@ -184,7 +184,11 @@ function do_radio_stations() {
                     print '<input name="artist" type="hidden" value="STREAM" />';
                     print '<input name="album" type="hidden" value="'.rawurlencode($file['StationName']).'" />';
                     $albumimage = new baseAlbumImage(array('artist' => 'STREAM', 'album' => $file['StationName']));
-                    print '<img class="clickable clickicon clickalbumcover droppable'.$class.'" name="'.$albumimage->get_image_key().'" src="'.$src.'" />';
+                    print '<img class="clickable clickicon clickalbumcover droppable'.$class.'" name="'.$albumimage->get_image_key().'"';
+                    if ($src != "") {
+                        print ' src="'.$src.'" ';
+                    }
+                    print '/>';
                     print '<div>'.htmlentities($file['StationName']).'</div>';
                     print '</div>';
                     print '</div>';
@@ -211,7 +215,7 @@ function do_playlists() {
     if (array_key_exists('playlist', $playlists)) {
         print '<div class="cheesegrater" name="savedplaylists">';
             print '<div class="albumsection">';
-                print '<div class="tleft"><h2>Saved Playlists</h2></div><div class="tright rightpad"><button onclick="getNewAlbumArt(\'#album'.$count.'\')">'.get_int_text("albumart_getthese").'</button></div>';
+                print '<div class="tleft"><h2>Saved Playlists</h2></div>';
             print "</div>\n";
                 print '<div id="album'.$count.'" class="containerbox fullwidth bigholder wrap">';
                 sort($playlists['playlist'], SORT_STRING);
@@ -230,7 +234,11 @@ function do_playlists() {
                             print '<input name = "searchterm" type="hidden" value="'.rawurlencode($plsearch).'" />';
                             print '<input name="artist" type="hidden" value="PLAYLIST" />';
                             print '<input name="album" type="hidden" value="'.rawurlencode($pl).'" />';
-                            print '<img class="clickable clickicon clickalbumcover droppable'.$class.'" name="'.$albumimage->get_image_key().'" src="'.$src.'" />';
+                            print '<img class="clickable clickicon clickalbumcover droppable playlistimage'.$class.'" name="'.$albumimage->get_image_key().'"';
+                            if ($src != "") {
+                                print ' src="'.$src.'" ';
+                            }
+                            print '/>';
                             print '<div>'.htmlentities($pl).'</div>';
                         print '</div>';
                     print '</div>';

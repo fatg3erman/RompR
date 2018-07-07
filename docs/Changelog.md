@@ -24,6 +24,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Added Categories to Podcasts
 * Added a resume feature to Podcasts, so episodes can be stopped part way through and then restarted from that position.
 * Added Podcast Sort Options
+* Added support for PHP-GD to speed up all image handling. RompR will continue to use imagemagick if GD is not available, but you should try to install PHP-GD on your installation (sudo apt-get install php7.0-gd)
 
 ## Version 1.16
 
