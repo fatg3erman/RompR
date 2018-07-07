@@ -6,8 +6,6 @@ include ("player/mpd/connection.php");
 include ("collection/collection.php");
 
 $mpd_status = array();
-$mpd_status['albumart'] = "";
-
 $playlist_movefrom = null;
 $playlist_moveto = null;
 $playlist_moving_within = null;

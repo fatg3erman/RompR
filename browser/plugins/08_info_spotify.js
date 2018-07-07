@@ -2,7 +2,7 @@ var info_spotify = function() {
 
 	var me = "spotify";
     var medebug = "SPOTIFY PLUGIN";
-    var maxwidth = 640;
+    var maxwidth = 300;
 
     function getTrackHTML(data) {
 
@@ -291,6 +291,7 @@ var info_spotify = function() {
                         layoutcallback: function() { $("#hibbert").stopSpinner(); browser.rePoint() },
                         is_plugin: false,
                         imageclass: 'jalopy',
+						maxalbumwidth: maxwidth,
                         data: data.artists
                     });
 

@@ -814,9 +814,11 @@ $.widget('rompr.spotifyAlbumThing', {
             var x = $('<div>', {class: this.options.classes+' clearfix'}).appendTo(this.element);
             var img = '';
             if (a.images && a.images[0]) {
+                debug.log("SPOTIALBUM","Images",a.images);
                 img = 'getRemoteImage.php?url='+a.images[0].url
                 for (var j in a.images) {
                     if (a.images[j].width <= this.options.maxwidth) {
+                        debug.log("SPOTIALBUM","Using Image with width",a.images[j].width);
                         img = 'getRemoteImage.php?url='+a.images[j].url;
                         break;
                     }
@@ -993,6 +995,7 @@ $.widget('rompr.spotifyArtistThing', {
         sub: '',
         layoutcallback: null,
         maxwidth: 640,
+        maxalbumwidth: 640,
         is_plugin: false,
         imageclass: 'masochist',
         masonified: false,
@@ -1122,6 +1125,7 @@ $.widget('rompr.spotifyArtistThing', {
             sub: false,
             layoutcallback: browser.rePoint,
             imageclass: 'masochist',
+            maxwidth: self.options.maxalbumwidth,
             data: data.items
         });
     },
