@@ -327,7 +327,7 @@ function check_backup_dir() {
 	if (is_dir('prefs/databackups/'.$dirname)) {
 		exec('rm -fR prefs/databackups/'.$dirname);
 	}
-	mkdir('prefs/databackups/'.$dirname, 0744);
+	mkdir('prefs/databackups/'.$dirname, 0755);
 	return 'prefs/databackups/'.$dirname;
 }
 

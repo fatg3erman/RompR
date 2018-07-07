@@ -328,7 +328,7 @@ class albumImage extends baseAlbumImage {
                 unlink($image);
             }
             if (!is_dir($dir)) {
-                mkdir($dir, 0744, true);
+                mkdir($dir, 0755, true);
             }
             debuglog("  Creating file ".$image,"ALBUMIMAGE");
             if (extension_loaded('gd')) {

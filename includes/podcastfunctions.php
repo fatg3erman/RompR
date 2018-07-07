@@ -17,7 +17,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null) {
     
     if ($id) {
         if (!is_dir('prefs/podcasts/'.$id)) {
-            mkdir('prefs/podcasts/'.$id, 0744);
+            mkdir('prefs/podcasts/'.$id, 0755);
         }
         file_put_contents('prefs/podcasts/'.$id.'/feed.xml', $d->get_data());
     }
@@ -269,7 +269,7 @@ function getNewPodcast($url, $subbed = 1) {
         if (is_dir('prefs/podcasts/'.$newpodid)) {
             exec('rm -fR prefs/podcasts/'.$newpodid);
         }
-        mkdir('prefs/podcasts/'.$newpodid, 0744);
+        mkdir('prefs/podcasts/'.$newpodid, 0755);
         download_image($podcast['Image'], $newpodid, $podcast['Title']);
         if ($subbed == 1) {
             foreach ($podcast['tracks'] as $track) {

@@ -62,7 +62,7 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 		debuglog("Removing Current Portrait Backgrounds For This Path","BACKIMAGE");
 		delete_files('prefs/userbackgrounds/'.$base, '*_portrait.*');
 	} else {
-		mkdir('prefs/userbackgrounds/'.$base, 0744, true);
+		mkdir('prefs/userbackgrounds/'.$base, 0755, true);
 	}
 	
 	rename($download_file, 'prefs/userbackgrounds/'.$base.'/'.$fname);
