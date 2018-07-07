@@ -3,8 +3,6 @@
 RompЯ is a client for mpd or mopidy - you use RompЯ in a web browser to make mpd or mopidy play music
 These are basic installation instructions for RompЯ on Linux, using the code you can download from here on github.
 
-**The old project homepage is at [SourceForge](https://sourceforge.net/projects/rompr/). The old discussion forum is still there and you may find answers to some questions is you have them.**
-
 ## Install MPD or Mopidy
 
 Mpd should be available from your normal package manager. If you want to run Mopidy it is easy to install -  see [mopdy.com](http://www.mopidy.com).
