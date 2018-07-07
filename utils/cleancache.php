@@ -86,7 +86,7 @@ if ($mysqlc) {
             $count = generic_sql_query("SELECT COUNT(Stationindex) AS acount FROM RadioStationtable WHERE Image LIKE '".$image."%'", false, null, 'acount', 0);
             if ($count < 1) {
                 debuglog("  Removing orphaned radio station image ".$image,"CACHE CLEANER");
-                exec('rm -fR '.$image);
+                rrmdir($image);
             }
         }
 
@@ -96,7 +96,7 @@ if ($mysqlc) {
         foreach ($files as $file) {
             if (!in_array(basename($file), $pods)) {
                 debuglog("  Removing orphaned podcast directory ".$file,"CACHE CLEANER");
-                exec('rm -fR '.$file);
+                rrmdir($file);
             }
         }
     }

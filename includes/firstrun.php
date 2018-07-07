@@ -33,7 +33,7 @@ $all = glob('prefs/*');
 foreach ($all as $dir) {
 	if (is_dir($dir) && !in_array($dir, $root_level_dirs) && basename($dir) != 'MusicFolders') {
 		debuglog("Removing Directory ".$dir,"INIT");
-		system('rm -fR "'.$dir.'"');
+		rrmdir($dir);
 	}
 }
 if (file_exists('prefs/monitor.xml')) {

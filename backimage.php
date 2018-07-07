@@ -30,7 +30,7 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 
 	if (is_dir('prefs/userbackgrounds/'.$_REQUEST['clearbackground'])) {
 		if (is_dir('prefs/userbackgrounds/'.$_REQUEST['clearbackground'].'/'.$_REQUEST['browser_id'])) {
-			system('rm -rf prefs/userbackgrounds/'.$_REQUEST['clearbackground'].'/'.$_REQUEST['browser_id']);
+			rrmdir('prefs/userbackgrounds/'.$_REQUEST['clearbackground'].'/'.$_REQUEST['browser_id']);
 		} else {
 			delete_files('prefs/userbackgrounds/'.$_REQUEST['clearbackground']);
 		}

@@ -325,7 +325,7 @@ function doCollectionHeader() {
 function check_backup_dir() {
 	$dirname = date('Y-m-d-H-i');
 	if (is_dir('prefs/databackups/'.$dirname)) {
-		exec('rm -fR prefs/databackups/'.$dirname);
+		rrmdir('prefs/databackups/'.$dirname);
 	}
 	mkdir('prefs/databackups/'.$dirname, 0755);
 	return 'prefs/databackups/'.$dirname;
@@ -383,7 +383,7 @@ function analyse_backups() {
 }
 
 function removeBackup($which) {
-	system('rm -fR prefs/databackups/'.$which);
+	rrmdir('prefs/databackups/'.$which);
 }
 
 function restoreBackup($backup) {

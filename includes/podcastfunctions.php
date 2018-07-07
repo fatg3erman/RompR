@@ -267,7 +267,7 @@ function getNewPodcast($url, $subbed = 1) {
     {
         $newpodid = $mysqlc->lastInsertId();
         if (is_dir('prefs/podcasts/'.$newpodid)) {
-            exec('rm -fR prefs/podcasts/'.$newpodid);
+            rrmdir('prefs/podcasts/'.$newpodid);
         }
         mkdir('prefs/podcasts/'.$newpodid, 0755);
         download_image($podcast['Image'], $newpodid, $podcast['Title']);
@@ -908,7 +908,7 @@ function doPodcastHeader($y) {
 function removePodcast($podid) {
     debuglog("Removing podcast ".$podid,"PODCASTS");
     if (is_dir('prefs/podcasts/'.$podid)) {
-        system('rm -fR prefs/podcasts/'.$podid);
+        rrmdir('prefs/podcasts/'.$podid);
     }
     generic_sql_query("DELETE FROM Podcasttable WHERE PODindex = ".$podid, true);
     generic_sql_query("DELETE FROM PodcastTracktable WHERE PODindex = ".$podid, true);
@@ -929,7 +929,7 @@ function deleteTrack($trackid, $channel) {
     debuglog("Marking ".$trackid." from ".$channel." as deleted","PODCASTS");
     generic_sql_query("UPDATE PodcastTracktable SET Deleted = 1 WHERE PODTrackindex = ".$trackid, true);
     if (is_dir('prefs/podcasts/'.$channel.'/'.$trackid)) {
-        system('rm -fR prefs/podcasts/'.$channel.'/'.$trackid);
+        rrmdir('prefs/podcasts/'.$channel.'/'.$trackid);
     }
     return $channel;
 }
@@ -999,7 +999,7 @@ function removeDownloaded($channel) {
         $things = glob('prefs/podcasts/'.$channel.'/*');
         foreach ($things as $thing) {
             if (is_dir($thing) && basename($thing) != 'albumart') {
-                system('rm -fR '.$thing);
+                rrmdir($thing);
             }
         }
     }

@@ -833,9 +833,11 @@ function albumImageBuggery() {
     // This was used to update album art to a new format but it's really old now and we've totally refactored the album image code
     // In the eventuality that someone is still using a version that old we'll keep the function but just use it to remove all album art
     // and start again.
-    exec('rm -fR albumart/small/*.*');
-    exec('rm -fR albumart/asdownloaded/*.*');
-    generic_sql_query("UPDATE Albumtable SET Searched = 0. Image = ''");
+    rrmdir('albumart/small');
+    rrmdir('albumart/asdownloaded');
+    mkdir('albumart/small', 0755);
+    mkdir('albumart/asdownloaded', 0755);
+    generic_sql_query("UPDATE Albumtable SET Searched = 0, Image = ''");
 }
 
 function rejig_wishlist_tracks() {
@@ -965,7 +967,8 @@ function empty_modified_cache_dirs($schemaver) {
     switch ($schemaver) {
         case 44:
             foreach(array('allmusic', 'lyrics') as $d) {
-                exec('rm prefs/jsoncache/'.$d.'/*');
+                rrmdir('prefs/jsoncache/'.$d);
+                mkdir('prefs/jsoncache/'.$d, 0755);
             }
             break;
     }
@@ -978,7 +981,7 @@ function getRemoteFilesize($url, $default) {
     $clen = isset($head['content-length']) ? $head['content-length'] : 0;
     $cstring = $clen;
     if (is_array($clen)) {
-        debuglog("Content Length is an array ".PHP_EOL.print_r($clen, true),"FUNCTIONS");
+        debuglog("Content Length is an array ".PHP_EOL.print_r($clen, true),"FUNCTIONS", 9);
         $cstring = 0;
         foreach ($clen as $l) {
             if ($l > $cstring) {
@@ -986,13 +989,24 @@ function getRemoteFilesize($url, $default) {
             }
         }
     }
-
     if ($cstring !== 0) {
-        debuglog("  Read file size remotelay as ".$cstring,"FUNCTIONS");
+        debuglog("  Read file size remotely as ".$cstring,"FUNCTIONS",8);
         return $cstring;
     } else {
-        debuglog("  Couldn't read filesize remotely. Using default value of ".$default,"FUNCTIONS");
+        debuglog("  Couldn't read filesize remotely. Using default value of ".$default,"FUNCTIONS",8);
         return $default;
     }
+}
+
+function rrmdir($path) {
+    $i = new DirectoryIterator($path);
+    foreach ($i as $f) {
+        if($f->isFile()) {
+            unlink($f->getRealPath());
+        } else if (!$f->isDot() && $f->isDir()) {
+            rrmdir($f->getRealPath());
+        }
+    }
+    rmdir($path);
 }
 ?>
