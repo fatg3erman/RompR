@@ -155,7 +155,8 @@ img.notexist,img.notfound
     background-image: url('compact-disc.svg');
     background-size:contain;
     display:inline-block;
-
+    background-position:center;
+    background-repeat: no-repeat;
 }
 
 img.stream.notfound, img.stream.notexist
