@@ -39,7 +39,9 @@ function searchRadio() {
 			debug.trace("SEARCHRADIO ARTIST","Got Tracks",data);
 			tracks = new Array();
 			for (var j in data) {
-				tracks.push({type: 'uri', name: data[j].uri});
+				if (data[j].uri) {
+					tracks.push({type: 'uri', name: data[j].uri});
+				}
 			}
 			if (tracks.length > 0) {
 				tracks = tracks.sort(randomsort);
