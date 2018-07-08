@@ -126,11 +126,11 @@ class dirbleplugin {
             $image = null;
             $streamimage = '';
             if ($station['image']['url']) {
-                $image = 'getRemoteImage.php?url='.$station['image']['url'];
-                $streamimage = $image;
+                $streamimage = 'getRemoteImage.php?url='.$station['image']['url'];
+                $image = $streamimage.'&rompr_backup_type=stream';
             } else if ($station['image']['thumb']['url']) {
-                $image = 'getRemoteImage.php?url='.$station['image']['thumb']['url'];
-                $streamimage = $image;
+                $streamimage = 'getRemoteImage.php?url='.$station['image']['thumb']['url'];
+                $image = $streamimage.'&rompr_backup_type=stream';
             } else {
                 $image = "newimages/broadcast.svg";
             }

@@ -222,7 +222,7 @@ class commradioplugin {
 
     private function comm_radio_get_image($station) {
         if ($station['favicon']) {
-            return 'getRemoteImage.php?url='.$station['favicon'];
+            return 'getRemoteImage.php?url='.$station['favicon'].'&rompr_backup_type=stream';
         } else {
             return 'newimages/broadcast.svg';
         }

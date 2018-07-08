@@ -6,7 +6,7 @@ include ("utils/imagefunctions.php");
 $url = $_REQUEST['url'];
 
 foreach ($_GET as $k => $v) {
-	if ($k != 'url' && $k != 'rompr_resize_size') {
+	if ($k != 'url' && $k != 'rompr_resize_size' && $k != 'rompr_backup_type') {
 		$url .= '&'.$k.'='.$v;
 	}
 }
@@ -29,7 +29,7 @@ if (!$url) {
 	debuglog("  .. Content Type is ".$content_type,"TOMATO",8);
 	if (substr($content_type,0,5) != 'image' && $content_type != 'application/octet-stream') {
 		debuglog("Not an image file! ".$url,"TOMATO",5);
-		header("HTTP/1.1 404 Not Found");
+		send_backup_image();
 	} else {
 		if (extension_loaded('gd') && array_key_exists('rompr_resize_size', $_REQUEST)) {
 			$simpleimage = new SimpleImage($outfile);
@@ -60,10 +60,22 @@ function download_image_file($url, $outfile) {
 		return $fileplusmime;
 	} else {
 		debuglog("Failed to download ".$url." - status was ".$d->get_status(),"TOMATO",5);
-		header("HTTP/1.1 404 Not Found");
+		send_backup_image();
 		exit(0);
 	}
 }
 
+function send_backup_image() {
+	if (array_key_exists('rompr_backup_type', $_REQUEST)) {
+		switch ($_REQUEST['rompr_backup_type']) {
+			case 'stream':
+				header('Content-type: image/svg+xml');
+				readfile('newimages/broadcast.svg');
+				break;
+		}
+	} else {
+		header("HTTP/1.1 404 Not Found");
+	}
+}
 
 ?>
