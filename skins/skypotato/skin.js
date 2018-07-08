@@ -168,7 +168,6 @@ var layoutProcessor = function() {
     var currheader = 0;
     var headertimer;
     var loading_ui = true;
-    var albumart_update = true;
 
     function showPanel(source) {
         debug.log("UI","Showing Panel",source);
@@ -245,28 +244,6 @@ var layoutProcessor = function() {
         $("#infopane").animatePanel(widths);
     }
     
-    function show_albumart_update_window() {
-        var fnarkle = new popup({
-            width: 600,
-            height: 600,
-            title: "Album Art Update",
-            hasclosebutton: false});
-        var mywin = fnarkle.create();
-        mywin.append('<div id="artupdate" class="fullwdith"></div>');
-        $('#artupdate').append('<div class="pref textcentre">Your Album Art needs to be updated to use this skin effectively. This process has now started. You can close this window to pause the process and it will continue the next time you choose this skin. Until you have updated all your art this skin may run slowly</div>');
-        $('#artupdate').append('<div id="albumart_update_bar" style="height:2em;width:100%"></div>');
-        $('#artupdate').append('<div class="pref textcentre"><button id="artclosebutton">Close</button></div>');
-        fnarkle.useAsCloseButton($('#artclosebutton'), layoutProcessor.stop_albumart_update);
-        fnarkle.setContentsSize();
-        $('#albumart_update_bar').rangechooser({
-            ends: ['max'],
-            startmax: 0,
-            range: 100
-        });
-        fnarkle.open();
-        layoutProcessor.do_albumart_update();
-    }
-        
     return {
 
         supportsDragDrop: true,
@@ -274,22 +251,6 @@ var layoutProcessor = function() {
         usesKeyboard: true,
         sortFaveRadios: false,
         openOnImage: true,
-
-        do_albumart_update: function() {
-            $.getJSON('update_albumart.php', function(data) {
-                $('#albumart_update_bar').rangechooser('setProgress', data.percent);
-                if (data.percent < 100 && albumart_update) {
-                    setTimeout(layoutProcessor.do_albumart_update, 100);
-                } else {
-                    $('#artclosebutton').click();
-                }
-            });
-        },
-        
-        stop_albumart_update: function() {
-            debug.log("UI", "Cancelling album art update");
-            albumart_update = false;
-        },
 
         changeCollectionSortMode: function() {
             $('.collectionpanel.albumlist').remove();
@@ -387,10 +348,6 @@ var layoutProcessor = function() {
             $("#infopane").mCustomScrollbar("scrollTo",section);
         },
 
-        maxPopupSize : function(winsize) {
-            return {width: winsize.x - 32, height: winsize.y - 32};
-        },
-
         toggleAudioOutpts: function() {
             prefs.save({outputsvisible: !$('#outputbox').is(':visible')});
             $("#outputbox").animate({width: 'toggle'},'fast',function() {
@@ -439,10 +396,6 @@ var layoutProcessor = function() {
 
         playlistLoading: function() {
             infobar.notify(infobar.SMARTRADIO, language.gettext('label_smartsetup'));
-        },
-
-        setTopIconSize: function(panels) {
-
         },
 
         scrollPlaylistToCurrentTrack: function() {
@@ -693,10 +646,6 @@ var layoutProcessor = function() {
             }
         },
 
-        postAlbumMenu: function(element) {
-
-        },
-
         makeCollectionDropMenu: function(element, name) {
             
             // Creates a nonexisted drop menu to hold contents.
@@ -883,10 +832,6 @@ var layoutProcessor = function() {
                 whiledragging: infobar.volumemoved,
                 orientation: "vertical"
             });
-            
-            if (old_style_albumart > 0) {
-                show_albumart_update_window();
-            }
         },
         
         // Optional Additions
@@ -953,6 +898,18 @@ var layoutProcessor = function() {
         
         fixupArtistDiv(jq, name) {
             jq.addClass('containerbox wrap');
+        },
+        
+        postPodcastSubscribe: function(data, index) {
+            $('.menu[name="podcast_'+index+'"]').parent().fadeOut('fast', function() {
+                $('.menu[name="podcast_'+index+'"]').parent().remove();
+                $('#podcast_'+index).remove();
+                $("#fruitbat").html(data);
+                $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+                infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
+                podcasts.doNewCount();
+                layoutProcessor.postAlbumActions();
+            });
         }
         
     }

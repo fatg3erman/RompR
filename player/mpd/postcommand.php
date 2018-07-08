@@ -6,8 +6,6 @@ include ("player/mpd/connection.php");
 include ("collection/collection.php");
 
 $mpd_status = array();
-$mpd_status['albumart'] = "";
-
 $playlist_movefrom = null;
 $playlist_moveto = null;
 $playlist_moving_within = null;
@@ -63,20 +61,41 @@ if ($is_connected) {
                     break;
 
                 case "loadstreamplaylist":
-                    require_once("backends/sql/backend.php");
+                    require_once ("backends/sql/backend.php");
                     require_once ("player/".$prefs['player_backend']."/streamplaylisthandler.php");
                     require_once ("utils/getInternetPlaylist.php");
                     $cmds = array_merge($cmds, load_internet_playlist($cmd[1], $cmd[2], $cmd[3]));
                     break;
+                    
+                case "addremoteplaylist":
+                    debuglog("  URL is ".$cmd[1],"POSTCOMMAND");
+                    // First, see if we can just 'load' the remote playlist. This is better with MPD
+                    // as it parses track names from the playlist
+                    if (check_track_load_command($cmd[1]) == 'load') {
+                        debuglog("Loading remote playlist","POSTCOMMAND");
+                        $cmds[] = join_command_string(array('load', $cmd[1]));
+                    } else {
+                        // Always use the MPD version of the stream playlist handler, since that parses
+                        // all tracks (Mopidy's version doesn't because we use Mopidy's playlist parser instead).
+                        // Perversely, we need to use this because we can't use 'load' on a remote playlist with Mopidy,
+                        // and 'add' only adds the first track. As user remtote playlists can have multiple types of
+                        // thing in them, including streams, we need to 'add' every track - unless we're using mpd and
+                        // the 'track' is a playlist we need to load..... Crikey.
+                        debuglog("Adding remote playlist (track by track)","POSTCOMMAND");
+                        require_once ("player/mpd/streamplaylisthandler.php");
+                        require_once ("utils/getInternetPlaylist.php");
+                        $tracks = load_internet_playlist($cmd[1], '', '', true);
+                        foreach ($tracks as $track) {
+                            $cmd = check_track_load_command($track['TrackUri']);
+                            $cmds[] = join_command_string(array($cmd, $track['TrackUri']));
+                        }
+                    }
+                    break;
 
                 case "rename":
-                    $oldimage = md5('Playlist '.$cmd[1]);
-                    $newimage = md5('Playlist '.$cmd[2]);
-                    if (file_exists('albumart/small/'.$oldimage.'.jpg')) {
-                        debuglog("Renaming playlist image for ".$cmd[1]." to ".$cmd[2],"MPD");
-                        system('mv "albumart/small/'.$oldimage.'.jpg" "albumart/small/'.$newimage.'.jpg"');
-                        system('mv "albumart/asdownloaded/'.$oldimage.'.jpg" "albumart/asdownloaded/'.$newimage.'.jpg"');
-                    }
+                    require_once ('utils/imagefunctions.php');
+                    $oldimage = new albumImage(array('artist' => 'PLAYLIST', 'album' => $cmd[1]));
+                    $oldimage->change_name($cmd[2]);
                     $cmds[] = join_command_string($cmd);
                     break;
 
@@ -95,6 +114,15 @@ if ($is_connected) {
                 case "playlistadddir":
                     $thing = array('searchaddpl',$cmd[1],'base',$cmd[2]);
                     $cmds[] = join_command_string($thing);
+                    break;
+                    
+                case "resume":
+                    debuglog("Adding Track ".$cmd[1],"POSTCOMMAND");
+                    debuglog("  .. and seeking position ".$cmd[3]." to ".$cmd[2],"POSTCOMMAND");
+                    $cmds[] = join_command_string(array('add', $cmd[1]));
+                    $cmds[] = join_command_string(array('play', $cmd[3]));
+                    $cmds[] = 'pause';
+                    $cmds[] = join_command_string(array('seek', $cmd[3], $cmd[2]));
                     break;
 
                 case 'save':
@@ -147,8 +175,14 @@ if ($is_connected) {
             // Note. We don't use send_command because that closes and re-opens the connection
             // if it fails to fputs, and that loses our command list status. Also if this fputs
             // fails it means the connection has dropped anyway, so we're screwed whatever happens.
-            fputs($connection, $c."\n");
-            $done++;
+            if ($c  == 'pause') {
+                do_mpd_command("command_list_end", true);
+                sleep(1);
+                send_command("command_list_begin");
+            } else {
+                fputs($connection, $c."\n");
+                $done++;
+            }
             // Command lists have a maximum length, 50 seems to be the default
             if ($done == 50) {
                 do_mpd_command("command_list_end", true);
@@ -166,7 +200,7 @@ if ($is_connected) {
     // Query mpd's status
     //
 
-    if (PHP_OS == 'Darwin' && $slow_gstreamer_hack && $prefs['player_backend'] == 'mopidy') {
+    if ($slow_gstreamer_hack && $prefs['player_backend'] == 'mopidy') {
         debuglog("Sleeping....","POSTCOMMAND");
         usleep(500000);
     }
@@ -261,6 +295,30 @@ function check_playlist_add_move($cmd, $incvalue) {
         if ($playlist_movefrom === null) $playlist_movefrom = $cmd[4];
         if ($playlist_moveto === null) $playlist_moveto = $cmd[3];
         $playlist_tracksadded += $incvalue;
+    }
+}
+
+function check_track_load_command($uri) {
+    global $prefs;
+    if ($prefs['player_backend'] == 'mopidy') {
+        return 'add';
+    }
+    $ext = strtolower(pathinfo($uri, PATHINFO_EXTENSION));
+    switch ($ext) {
+        case 'm3u':
+        case 'm3u8':
+        case 'asf':
+        case 'asx':
+            return 'load';
+            break;
+            
+        default:
+            if (preg_match('#www\.radio-browser\.info/webservice/v2/m3u#', $uri)) {
+                return 'load';
+            } else {
+                return 'add';
+            }
+            break;
     }
 }
 

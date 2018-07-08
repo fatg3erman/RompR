@@ -139,14 +139,9 @@ var alarm = function() {
 		},
 
 		setup: function() {
-			var html = '<div class="topdrop">';
-			if (small_plugin_icons) {
-				html += '<i id="alarmclock" class="icon-alarm smallpluginicon tooltip clickicon" title="'+language.gettext('button_alarm')+'"></i>'
-			} else {
-				html += '<i id="alarmclock" class="icon-alarm topimg tooltip" title="'+language.gettext('button_alarm')+'"></i>';
-			}
-			html += '<div class="topdropmenu dropshadow rightmenu normalmenu stayopen" id="alarmpanel">'+
-				'<div class="textcentre configtitle"><b>'+language.gettext('button_alarm')+'</b></div>'+
+			var d = uiHelper.createPluginHolder('icon-alarm', language.gettext('button_alarm'));
+			var holder = $('<div>', {class: 'topdropmenu dropshadow rightmenu normalmenu stayopen', id: 'alarmpanel'}).appendTo(d);
+			var html = '<div class="textcentre configtitle"><b>'+language.gettext('button_alarm')+'</b></div>'+
 				'<input type="hidden" class="helplink" value="https://fatg3erman.github.io/RompR/Alarm-And-Sleep" />'+
 				'<div class="noselection">'+
 				'<table align="center"><tr>'+
@@ -169,10 +164,8 @@ var alarm = function() {
 			html += '<tr><td colspan="2">'+language.gettext('config_snoozetime')+'</td><td><input class="saveotron prefinput" id="alarm_snoozetime" type="text" size="2" /></td></tr>';
 			html += '<tr><td colspan="3" align="center" colspan="2"><button id="freddibnah" onclick="alarm.snooze()">Snooze...</button></td></tr>';
 			html += '</table>';
-			html += '</div></div></div>';
-
-			$("#righthandtop").prepend(html);
-			html = null;
+			html += '</div>';
+			holder.html(html);
 			alarm.setBoxes();
 			alarm.setButton();
 			alarm.setAlarm();

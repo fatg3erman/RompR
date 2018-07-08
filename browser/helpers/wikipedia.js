@@ -10,7 +10,7 @@ var wikipedia = function() {
 			}
 		},
 
-		search: function(terms, success, fail) {
+		search: function(terms, successCallback, failCallback) {
 			var url = "browser/backends/info_wikipedia.php?";
 			for (var i in terms) {
 				url = url + i+'='+encodeURIComponent(terms[i])+"&";
@@ -21,16 +21,12 @@ var wikipedia = function() {
 		        url: url,
 		        contentType: "text/xml; charset=utf-8",
 		        dataType: "xml",
-		        success: function(data) {
-		        	success(data);
-		        },
-		        error: function(data) {
-		        	fail(data);
-		        }
+		        success: successCallback,
+		        error: failCallback
 		    });
 		},
 
-		getFullUri: function(terms, success, fail) {
+		getFullUri: function(terms, successCallback, failCallback) {
 			var url = "browser/backends/info_wikipedia.php?";
 			for (var i in terms) {
 				url = url + i+'='+encodeURIComponent(terms[i])+"&";
@@ -41,12 +37,8 @@ var wikipedia = function() {
 		        url: url,
 		        contentType: "text/xml; charset=utf-8",
 		        dataType: "xml",
-		        success: function(data) {
-		        	success(data);
-		        },
-		        error: function(data) {
-		        	fail(data);
-		        }
+				success: successCallback,
+		        error: failCallback
 		    });
 		},
 
@@ -70,7 +62,7 @@ var wikipedia = function() {
 		    return false;
 		},
 
-		getWiki: function(link, success, fail) {
+		getWiki: function(link, successCallback, failCallback) {
 			$("#infopane").css({cursor:'wait'});
 			$("#infopane a").css({cursor:'wait'});
 			var url = "browser/backends/info_wikipedia.php?wiki="+link+"&layout="+skin;
@@ -79,13 +71,8 @@ var wikipedia = function() {
 		        url: url,
 		        contentType: "text/xml; charset=utf-8",
 		        dataType: "xml",
-		        success: function(data) {
-		        	debug.log("WIKIPEDIA","Wiki Link Success",data);
-		        	success(data);
-		        },
-		        error: function(data) {
-		        	fail(data);
-		        },
+				success: successCallback,
+		        error: failCallback,
 		        complete: function() {
 					$("#infopane").css({cursor:'auto'});
 					$("#infopane a").css({cursor:'auto'});

@@ -3,7 +3,7 @@ chdir('../..');
 set_time_limit(360);
 include ("includes/vars.php");
 include ("includes/functions.php");
-include ("utils/imagefunctions.php");
+require_once ("utils/imagefunctions.php");
 include ("international.php");
 debuglog("--------------------------START---------------------","USERRATING",4);
 include ("backends/sql/backend.php");
@@ -40,7 +40,17 @@ foreach($params as $p) {
 
 	romprmetadata::sanitise_data($p);
 	
-	debuglog("  Action is \n".multi_implode($p,", "),"USERRATING",8);
+	debuglog("Doing action ".strtoupper($p['action']), "USERRATING", 7);
+	foreach ($p as $i => $v) {
+		if ($i != 'action' && $v) {
+			if (is_array($v)) {
+				debuglog(' Array - '.multi_implode($v,', '), ' '.$i,8);
+			} else {
+				debuglog(' '.$v, ' '.$i,8);
+			}
+		}
+	}
+	// debuglog("  Action is \n".multi_implode($p,", "),"USERRATING",9);
 
 	switch ($p['action']) {
 
@@ -162,7 +172,7 @@ function prepare_returninfo() {
 	}
 
 	$at = microtime(true) - $t;
-	debuglog("   -- Finding removed artists took ".$at." seconds","BACKEND",8);
+	debuglog(" -- Finding removed artists took ".$at." seconds","BACKEND",8);
 
 	$t = microtime(true);
 	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
@@ -315,9 +325,9 @@ function doCollectionHeader() {
 function check_backup_dir() {
 	$dirname = date('Y-m-d-H-i');
 	if (is_dir('prefs/databackups/'.$dirname)) {
-		exec('rm -fR prefs/databackups/'.$dirname);
+		rrmdir('prefs/databackups/'.$dirname);
 	}
-	exec('mkdir prefs/databackups/'.$dirname);
+	mkdir('prefs/databackups/'.$dirname, 0755);
 	return 'prefs/databackups/'.$dirname;
 }
 
@@ -373,7 +383,7 @@ function analyse_backups() {
 }
 
 function removeBackup($which) {
-	system('rm -fR prefs/databackups/'.$which);
+	rrmdir('prefs/databackups/'.$which);
 }
 
 function restoreBackup($backup) {

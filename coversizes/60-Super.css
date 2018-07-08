@@ -1,0 +1,25 @@
+.smallcover
+{
+	width:100px;
+}
+
+.smallcover-svg {
+	height:100px;
+}
+
+img.notexist,img.notfound {
+	width:100px;
+	height:100px;
+}
+
+body.desktop .smallcover.svg-square.noindent
+{
+	width:42px;
+	margin-right:28px;
+}
+
+body.mobile .smallcover.svg-square.noindent
+{
+	width:32px;
+	margin-right:16px;
+}

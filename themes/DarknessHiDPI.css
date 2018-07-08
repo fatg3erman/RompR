@@ -468,3 +468,8 @@ th.tlheader
 {
     border-bottom:2px solid #eeeeee;
 }
+
+.topbarplaycontrols {
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+}

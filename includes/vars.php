@@ -2,9 +2,9 @@
 
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
-define('ROMPR_IMAGE_VERSION', 2);
-define('ROMPR_SCHEMA_VERSION', 37);
-define('ROMPR_VERSION', '1.16');
+define('ROMPR_IMAGE_VERSION', 4);
+define('ROMPR_SCHEMA_VERSION', 44);
+define('ROMPR_VERSION', '1.19');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_PLAYLIST_KEY', 'IS_ROMPR_PLAYLIST_IMAGE');
@@ -25,7 +25,7 @@ define('DISPLAYMODE_UNLISTENED', 2);
 define('DISPLAYMODE_DOWNLOADEDNEW', 3);
 define('DISPLAYMODE_DOWNLOADED', 4);
 
-define('ROMPR_PODCAST_TABLE_VERSION', 2);
+define('ROMPR_PODCAST_TABLE_VERSION', 4);
 
 $connection = null;
 $is_connected = false;
@@ -56,8 +56,6 @@ $prefs = array(
     // This option for plugin debugging ONLY
     "load_plugins_at_loadtime" => false,
     "beets_server_location" => "",
-    // Doesn't actually work.
-    "mopidy_scan_command" => "",
     "multihosts" => (object) array (
         'Default' => (object) array(
             'host' => 'localhost',
@@ -68,6 +66,7 @@ $prefs = array(
     ),
     "currenthost" => 'Default',
     'dev_mode' => false,
+    'live_mode' => false,
 
     // Things that could be set on a per-user basis but need to be known by the backend
     "mpd_host" => "localhost",
@@ -156,7 +155,19 @@ $prefs = array(
 	"communityradiotag" => '',
 	"communityradiolistby" => 'country',
     "communityradioorderby" => 'name',
-    "browser_id" => null
+    "browser_id" => null,
+    "playlistswipe" => true,
+    "podcastcontrolsvisible" => true,
+    "default_podcast_display_mode" => DISPLAYMODE_ALL,
+    "default_podcast_refresh_mode" => REFRESHOPTION_MONTHLY,
+    "default_podcast_sort_mode" => SORTMODE_NEWESTFIRST,
+    "podcast_mark_new_as_unlistened" => false,
+    "use_albumart_in_playlist" => true,
+    "podcast_sort_levels" => 4,
+    "podcast_sort_0" => 'Title',
+    "podcast_sort_1" => 'Artist',
+    "podcast_sort_2" => 'Category',
+    "podcast_sort_3" => 'new'
 );
 
 // Prefs that should not be exposed to the browser for security reasons
@@ -222,12 +233,6 @@ if(array_key_exists('skin', $_REQUEST)) {
 }
 if ($skin !== null) {
     $skin = trim($skin);
-}
-
-if (is_dir('albumart/original')) {
-    // Re-arrange the saved album art
-    system('mv albumart/small albumart/not_used_anymore');
-    system('mv albumart/original albumart/small');
 }
 
 // ====================================================================

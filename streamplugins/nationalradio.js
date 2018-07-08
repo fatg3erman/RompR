@@ -71,9 +71,11 @@ var nationalRadioPlugin = {
             doMenu(event, clickedElement);
         } else if (clickedElement.hasClass("clickradioback")) {
             event.stopImmediatePropagation();
+            clickedElement.unbind('click').makeSpinner();
             nationalRadioPlugin.browseRadio(clickedElement);
         } else if (clickedElement.hasClass("clickradioforward")) {
             event.stopImmediatePropagation();
+            clickedElement.unbind('click').makeSpinner();
             nationalRadioPlugin.browseRadio(clickedElement);
         } else if (clickedElement.hasClass("clicksearchmore")) {
             event.stopImmediatePropagation();

@@ -617,7 +617,6 @@ $languages['en'] = array (
 	"label_tuneinradio" => "TuneIn Radio Directory",
 	"label_generalsettings" => "General Settings",
 	"config_beetsserver" => "Location of Beets Server (ip.address:port)",
-	"config_mopidy_scan" => "Mopidy Local Scan Command",
 	"config_players" => 'Players',
 	"button_edit_players" => 'Edit Players',
 	
@@ -638,7 +637,20 @@ $languages['en'] = array (
 	"label_radiostation" => "Radio Station",
 	"label_opmlimporter" => "OPML Importer",
 	"config_playerintitlebar" => "Show Player Name in Titlebar",
-	"label_communityradio" => "Community Radio Browser"
+	"label_communityradio" => "Community Radio Browser",
+	"label_volume" => "Volume",
+	"config_playlistswipe" => "Swipe to remove tracks from Current Playlist",
+	"button_debuginfo" => "Debug Information",
+	"config_podcast_defaults" => "Default Options For New Podcasts",
+	"config_marknewasunlistened" => "Mark New Episodes as Unlistened Before Refresh",
+	"config_albumartinplaylist" => "Show Album Art in Current Playlist",
+	"label_resume" => "Resume",
+	"label_sortby" => "Sort By",
+	"label_then" => "Then",
+	"label_publisher" => 'Publisher',
+	"label_category" => "Category",
+	"label_new_episodes" => "New Episodes",
+	"label_unlistened_episodes" => "Unlistened Episodes"
 );
 
 ?>

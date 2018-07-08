@@ -56,7 +56,7 @@ var mixRadio = function() {
 				debug.shout("MIX RADIO","Populating");
 				if (typeof(spotifyRadio) == 'undefined') {
 					debug.log("ARTIST RADIO","Loading Spotify Radio Tuner");
-					$.getScript('radios/code/spotifyRadio.js',function() {
+					$.getScript('radios/code/spotifyRadio.js?version='+rompr_version,function() {
 						mixRadio.actuallyGo(numtracks)
 					});
 				} else {

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 205.66004 207.89409"
+   height="207.89409mm"
+   width="205.66005mm"
+   sodipodi:docname="aac-audio.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1785"
+     inkscape:window-height="1163"
+     id="namedview15"
+     showgrid="false"
+     inkscape:zoom="1.201413"
+     inkscape:cx="346.29619"
+     inkscape:cy="392.87072"
+     inkscape:window-x="628"
+     inkscape:window-y="123"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg8"
+     inkscape:pagecheckerboard="false" />
+  <defs
+     id="defs2">
+    <marker
+       style="overflow:visible"
+       id="marker8033"
+       refX="0.0"
+       refY="0.0"
+       orient="auto">
+      <path
+         transform="scale(1.1) translate(1,0)"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#ffffff;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         id="path8031" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker7647"
+       refX="0.0"
+       refY="0.0"
+       orient="auto">
+      <path
+         transform="scale(1.1) translate(1,0)"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#ffffff;stroke-opacity:1;fill:#ffffff;fill-opacity:1"
+         id="path7645" />
+    </marker>
+  </defs>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#ffffff;stroke-width:7.68930483"
+     d="M 43.870966,175.36279 C 16.412695,137.76169 7.9657413,114.95612 7.9657413,78.423822 7.9657413,30.244673 26.052674,9.2454279 71.783799,4.3299341 117.82212,-0.61858871 178.81299,15.060094 191.48969,35.102224 c 7.94655,12.563647 7.04719,13.464516 -7.92053,7.933993 C 77.245317,3.7499186 36.871052,19.254936 43.613051,96.783875 c 2.578483,29.650875 9.343264,46.564535 29.127145,72.825215 25.210052,33.46324 25.401632,34.20473 8.837918,34.20473 -10.336858,0 -25.022334,-11.08058 -37.707148,-28.45103 z m 57.041024,11.18077 C 91.595526,177.04498 78.765168,155.04863 72.400067,137.66283 48.575289,72.587113 87.831879,29.100551 155.408,45.710663 c 43.1723,10.611698 54.62174,30.04907 13.05121,22.15668 -41.15206,-7.812975 -61.88337,-0.731915 -70.619384,24.121037 -8.757201,24.91317 -0.713366,55.31525 23.217424,87.7515 21.42838,29.04436 6.58567,34.05726 -20.14526,6.80368 z m 36.079,-13.6739 C 100.21131,118.57433 112.59591,78.068956 164.49655,82.909144 l 29.20356,2.723508 1.99711,59.090588 1.99708,59.09058 h -19.87087 c -14.29079,0 -25.75724,-8.68966 -40.83244,-30.94416 z"
+     id="path9040"
+     sodipodi:nodetypes="ssssssssscssssscsscccss" />
+  <style
+     id="stylebodge1"
+     type="text/css">[id^=&quot;polygon&quot;]{fill:#ffffff;fill-opacity:1}</style>
+  <style
+     id="stylebodge2"
+     type="text/css">[id^=&quot;path&quot;]{fill:#ffffff;fill-opacity:1}</style>
+</svg>

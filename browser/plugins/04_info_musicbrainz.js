@@ -183,7 +183,7 @@ var info_musicbrainz = function() {
 					break;
 
 				case "allmusic":
-					html += '<li><i class="icon-noicon smallicon padright"></i><a href="'+u+'" target="_blank">Allmusic</a></li>';
+					html += '<li><i class="icon-allmusic smallicon padright"></i><a href="'+u+'" target="_blank">Allmusic</a></li>';
 					break;
 
 				case "BBC Music page":
@@ -892,7 +892,7 @@ var info_musicbrainz = function() {
 								return;
 							}
 							if (albummeta.musicbrainz_id === null) {
-								debug.fail(medebug,parent.nowplayingindex,"Album asked to populate but no MBID could be found. Shit.");
+								debug.fail(medebug,parent.nowplayingindex,"Album asked to populate but no MBID could be found.");
 								albummeta.musicbrainz.album = {error: language.gettext("musicbrainz_noalbum")};
 								parent.updateData({
 								            musicbrainz: { album_releasegroupid: null },

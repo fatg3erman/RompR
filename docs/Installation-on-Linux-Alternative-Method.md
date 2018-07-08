@@ -3,8 +3,6 @@
 RompЯ is a client for mpd or mopidy - you use RompЯ in a web browser to make mpd or mopidy play music
 These are basic installation instructions for RompЯ on Linux, using the code you can download from here on github.
 
-**The old project homepage is at [SourceForge](https://sourceforge.net/projects/rompr/). The old discussion forum is still there and you may find answers to some questions is you have them.**
-
 ## Install MPD or Mopidy
 
 Mpd should be available from your normal package manager. If you want to run Mopidy it is easy to install -  see [mopdy.com](http://www.mopidy.com).
@@ -72,7 +70,7 @@ We need to make sure Apache can find the stuff you've just downloaded. To do thi
 
 ### Install some packages
 
-`sudo apt-get install php7.0-mysql nginx php7.0-curl imagemagick php7.0-json php7.0-xml php7.0-mbstring`
+`sudo apt-get install nginx php7.0-curl php7.0-mysql php7.0-gd php7.0-json php7.0-xml php7.0-mbstring`
 
 _Note the version numbers - 7.0 is current for Ubuntu 16.04 at the time of  writing but as times change it may become 7.1, etc. Amend the command as applicable_
 

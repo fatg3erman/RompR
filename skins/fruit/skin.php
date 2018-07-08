@@ -10,11 +10,11 @@
     </div>
     <div id="groonburger" class="fixed containerbox vertical controlbutton-left">
 <?php
-        print '<i title="'.get_int_text('button_previous').'" class="fixed icon-fast-backward clickicon controlbutton-small lettuce"></i>';
-        print '<i title="'.get_int_text('button_play').'" class="fixed icon-play-circled clickicon controlbutton-main lettuce"></i>';
-        print '<i title="'.get_int_text('button_stop').'" class="fixed icon-stop-1 clickicon controlbutton-small lettuce"></i>';
-        print '<i title="'.get_int_text('button_stopafter').'" class="fixed icon-to-end-1 clickicon controlbutton-small lettuce"></i>';
-        print '<i title="'.get_int_text('button_next').'" class="fixed icon-fast-forward clickicon controlbutton-small lettuce"></i>';
+        print '<i title="'.get_int_text('button_previous').'" class="prev-button fixed icon-fast-backward clickicon controlbutton-small lettuce"></i>';
+        print '<i title="'.get_int_text('button_play').'" class="play-button fixed icon-play-circled clickicon controlbutton-main lettuce"></i>';
+        print '<i title="'.get_int_text('button_stop').'" class="stop-button fixed icon-stop-1 clickicon controlbutton-small lettuce"></i>';
+        print '<i title="'.get_int_text('button_stopafter').'" class="stopafter-button fixed icon-to-end-1 clickicon controlbutton-small lettuce"></i>';
+        print '<i title="'.get_int_text('button_next').'" class="next-button fixed icon-fast-forward clickicon controlbutton-small lettuce"></i>';
 ?>
     </div>
     <!-- <div class="expand"> -->
@@ -132,47 +132,46 @@ include ("includes/prefspanel.php");
 </div>
 <div id="headerbar" class="noborder fullwidth">
 
-<div id="sourcescontrols" class="column noborder tleft containerbox headercontainer">
-<div class="expand topbox">
+<div id="sourcescontrols" class="noborder tleft containerbox headercontainer topbox">
 <?php
-print '<i title="'.get_int_text('button_local_music').'" class="icon-music tooltip topimg choose_albumlist"></i>';
-print '<i title="'.get_int_text('button_searchmusic').'" class="icon-search topimg tooltip choose_searcher"></i>';
-print '<i title="'.get_int_text('button_file_browser').'" class="icon-folder-open-empty tooltip topimg choose_filelist"></i>';
-print '<i title="'.get_int_text('button_internet_radio').'" class="icon-radio-tower tooltip topimg choose_radiolist"></i>';
-print '<i title="'.get_int_text('label_podcasts').'" class="icon-podcast-circled tooltip topimg choose_podcastslist"></i>';
-print '<i title="'.get_int_text('button_loadplaylist').'" class="icon-doc-text tooltip topimg choose_playlistslist"></i>';
-print '<i title="'.get_int_text('label_pluginplaylists').'" class="icon-wifi tooltip topimg choose_pluginplaylistslist"></i>';
+print '<i title="'.get_int_text('button_local_music').'" class="icon-music tooltip topimg choose_albumlist expand"></i>';
+print '<i title="'.get_int_text('button_searchmusic').'" class="icon-search topimg tooltip choose_searcher expand"></i>';
+print '<i title="'.get_int_text('button_file_browser').'" class="icon-folder-open-empty tooltip topimg choose_filelist expand"></i>';
+print '<i title="'.get_int_text('button_internet_radio').'" class="icon-radio-tower tooltip topimg choose_radiolist expand"></i>';
+print '<i title="'.get_int_text('label_podcasts').'" class="icon-podcast-circled tooltip topimg choose_podcastslist expand"></i>';
+print '<i title="'.get_int_text('button_loadplaylist').'" class="icon-doc-text tooltip topimg choose_playlistslist expand"></i>';
+print '<i title="'.get_int_text('label_pluginplaylists').'" class="icon-wifi tooltip topimg choose_pluginplaylistslist expand"></i>';
 ?>
-</div>
+<div class="expand"></div>
 </div>
 
-<div id="infopanecontrols" class="cmiddle noborder tleft containerbox headercontainer">
+<div id="infopanecontrols" class="noborder tleft containerbox headercontainer topbox">
 <?php
- print '<i title="'.get_int_text('button_togglesources').'" class="icon-angle-double-left tooltip topimg fixed topbox" id="expandleft"></i>';
+ print '<i title="'.get_int_text('button_togglesources').'" class="icon-angle-double-left tooltip topimg expandslightly background-left" id="expandleft"></i>';
  ?>
 
-<div id="chooserbuttons" class="noborder expand center topbox containerbox">
+<div id="chooserbuttons" class="noborder expandalot center containerbox headercontainer">
 <?php
-print '<div class="topdrop fixed"><i class="icon-menu topimg tooltip" title="'.get_int_text('button_plugins').'"></i>';
+print '<i class="icon-menu topimg tooltip topdrop expand" title="'.get_int_text('button_plugins').'">';
 ?>
 <div class="topdropmenu dropshadow leftmenu normalmenu">
     <div id="specialplugins" class="clearfix"></div>
 </div>
-</div>
+</i>
 <?php
-print '<div class="topdrop fixed"><i class="icon-versions topimg tooltip" title="'.get_int_text('button_history').'"></i>';
+print '<i class="icon-versions topimg tooltip topdrop expand" title="'.get_int_text('button_history').'">';
 ?>
 <div class="topdropmenu dropshadow leftmenu widemenu" id="hpscr">
     <div id="historypanel" class="clearfix"></div>
 </div>
-</div>
+</i>
 
 <?php
-print '<i title="'.get_int_text('button_back').'" id="backbutton" class="icon-left-circled topimg tooltip button-disabled fixed"></i>';
-print '<i title="'.get_int_text('button_forward').'" id="forwardbutton" class="icon-right-circled tooltip topimg button-disabled fixed"></i>';
+print '<i title="'.get_int_text('button_back').'" id="backbutton" class="icon-left-circled topimg tooltip button-disabled expand"></i>';
+print '<i title="'.get_int_text('button_forward').'" id="forwardbutton" class="icon-right-circled tooltip topimg button-disabled expand"></i>';
 ?>
 </div>
-</div>
+
 </div>
 
 <div id="bottompage" class="clearfix">

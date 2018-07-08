@@ -42,7 +42,7 @@ print '<div id="custombackground" class="pref containerbox dropdown-container">
 <input type="checkbox" id="thisbrowseronly" name="thisbrowseronly" /><label for="thisbrowseronly">For this browser only</label>
 </div>
 <input type="button" onclick="prefs.changeBackgroundImage()" value="'.get_int_text('albumart_uploadbutton').'">
-<i class="icon-cancel-circled clickicon playlisticonr" onclick="prefs.clearBgImage()"></i>
+<i class="icon-cancel-circled clickicon collectionicon" onclick="prefs.clearBgImage()"></i>
 </form>
 </div>
 </div>';
@@ -53,7 +53,9 @@ print '<div class="pref containerbox dropdown-container"><div class="divlabel">'
     '</div><div class="selectholder"><select id="iconthemeselector" class="saveomatic">';
 $themes = glob("iconsets/*");
 foreach($themes as $theme) {
-    print '<option value="'.basename($theme).'">'.basename($theme).'</option>';
+    if (is_dir($theme)) {
+        print '<option value="'.basename($theme).'">'.basename($theme).'</option>';
+    }
 }
 print '</select></div></div>';
 
@@ -94,7 +96,7 @@ print '</select></div></div>';
 print '<div class="textcentre configtitle"><b>'.get_int_text('config_players').'</b></div>';
 print '<div class="fullwidth">';
 print '<div class="clearfix">';
-print '<div class="pref styledinputs tleft" id="playerdefs">';
+print '<div class="pref styledinputs tleft" name="playerdefs">';
 print '</div>';
 print '<div class="pref tright"><button onclick="player.defs.edit()">'.get_int_text('button_edit_players').'</button></div>';
 print '</div>';
@@ -157,13 +159,10 @@ print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="displaycomposer">
 <label for="displaycomposer">'.get_int_text('config_displaycomposer').'</label>
 </div>';
-if ($skin != "phone") {
-print '<div class="pref styledinputs">'.get_int_text('config_wheelspeed').
-    '<input class="saveotron" id="wheelscrollspeed" style="width:4em;margin-left:1em" type="text" size="4" />
-    </div>';
-print '<div class="pref textcentre"><button onclick="shortcuts.edit()">'.
-    get_int_text('config_editshortcuts').'</button></div>'."\n";
-}
+print '<div class="pref styledinputs">
+<input class="autoset toggle" type="checkbox" id="use_albumart_in_playlist">
+<label for="use_albumart_in_playlist">'.get_int_text('config_albumartinplaylist').'</label>
+</div>';
 
 // Click Policy
 print '<div class="pref styledinputs">';
@@ -176,6 +175,18 @@ print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="cdplayermode">
 <label for="cdplayermode">'.get_int_text('config_cdplayermode').'</label>
 </div>';
+if ($skin != "phone") {
+print '<div class="pref styledinputs">'.get_int_text('config_wheelspeed').
+    '<input class="saveotron" id="wheelscrollspeed" style="width:4em;margin-left:1em" type="text" size="4" />
+    </div>';
+print '<div class="pref textcentre"><button onclick="shortcuts.edit()">'.
+    get_int_text('config_editshortcuts').'</button></div>'."\n";
+} else {
+    print '<div class="pref styledinputs">
+    <input class="autoset toggle" type="checkbox" id="playlistswipe">
+    <label for="playlistswipe">'.get_int_text('config_playlistswipe').'</label>
+    </div>';
+}
 if ($prefs['player_backend'] == "mpd") {
 print '<div class="pref containerbox dropdown-container">
     <div class="fixed" style="margin-right:2em">'.
@@ -236,12 +247,63 @@ print '<div class="pref styledinputs">
 <div class="tiny">'.get_int_text('config_musicfolders').'</div>
 <input class="saveotron prefinput" id="music_directory_albumart" type="text" size="40" />
 </div>';
-print '<div class="pref"><b>'.get_int_text('config_google_credentials').'</b></div>
-<div class="pref"><a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></div>';
-print '<div class="pref"><b>Google API Key</b>
-<input class="saveotron prefinput" id="google_api_key" type="text" size="120" /></div>
-<div class="pref"><b>Google Search Engine ID</b>
-<input class="saveotron prefinput" id="google_search_engine_id" type="text" size="120" /></div>';
+print '<div class="tiny">If you want to use Google Images to get Album Art you need to sign up for an API Key. Please <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></div>';
+// print '<div class="pref"><b>'.get_int_text('config_google_credentials').'</b></div>
+// <div class="pref"><a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></div>';
+// print '<div class="pref"><b>Google API Key</b>
+// <input class="saveotron prefinput" id="google_api_key" type="text" size="120" /></div>
+// <div class="pref"><b>Google Search Engine ID</b>
+// <input class="saveotron prefinput" id="google_search_engine_id" type="text" size="120" /></div>';
+
+
+print '<div class="textcentre configtitle">
+<i class="icon-podcast-circled medicon"></i><b>'.get_int_text('label_podcasts').'</b></div>';
+
+print '<div class="pref"><b>'.get_int_text('config_podcast_defaults').'</b></div>';
+
+print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+    get_int_text("podcast_display").'</div>';
+print '<div class="selectholder">';
+print '<select id="default_podcast_display_modeselector" class="saveomatic">';
+$options =  '<option value="'.DISPLAYMODE_ALL.'">'.get_int_text("podcast_display_all").'</option>'.
+            '<option value="'.DISPLAYMODE_NEW.'">'.get_int_text("podcast_display_onlynew").'</option>'.
+            '<option value="'.DISPLAYMODE_UNLISTENED.'">'.get_int_text("podcast_display_unlistened").'</option>'.
+            '<option value="'.DISPLAYMODE_DOWNLOADEDNEW.'">'.get_int_text("podcast_display_downloadnew").'</option>'.
+            '<option value="'.DISPLAYMODE_DOWNLOADED.'">'.get_int_text("podcast_display_downloaded").'</option>';
+print $options;
+// print preg_replace('/(<option value="'.$prefs['default_podcast_display_mode'].'")/', '$1 selected', $options);
+print '</select>';
+print '</div></div>';
+
+print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+    get_int_text("podcast_refresh").'</div>';
+print '<div class="selectholder">';
+print '<select id="default_podcast_refresh_modeselector" class="saveomatic">';
+$options =  '<option value="'.REFRESHOPTION_NEVER.'">'.get_int_text("podcast_refresh_never").'</option>'.
+            '<option value="'.REFRESHOPTION_HOURLY.'">'.get_int_text("podcast_refresh_hourly").'</option>'.
+            '<option value="'.REFRESHOPTION_DAILY.'">'.get_int_text("podcast_refresh_daily").'</option>'.
+            '<option value="'.REFRESHOPTION_WEEKLY.'">'.get_int_text("podcast_refresh_weekly").'</option>'.
+            '<option value="'.REFRESHOPTION_MONTHLY.'">'.get_int_text("podcast_refresh_monthly").'</option>';
+// print preg_replace('/(<option value="'.$prefs['default_podcast_refresh_option'].'")/', '$1 selected', $options);
+print $options;
+print '</select>';
+print '</div></div>';
+
+print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+    get_int_text("podcast_sortmode").'</div>';
+print '<div class="selectholder">';
+print '<select id="default_podcast_sort_modeselector" class="saveomatic">';
+$options =  '<option value="'.SORTMODE_NEWESTFIRST.'">'.get_int_text("podcast_newestfirst").'</option>'.
+            '<option value="'.SORTMODE_OLDESTFIRST.'">'.get_int_text("podcast_oldestfirst").'</option>';
+// print preg_replace('/(<option value="'.$prefs['default_podcast_sort_mode'].'")/', '$1 selected', $options);
+print $options;
+print '</select>';
+print '</div></div>';
+
+print '<div class="pref styledinputs">
+<input class="autoset toggle" type="checkbox" id="podcast_mark_new_as_unlistened">
+<label for="podcast_mark_new_as_unlistened">'.get_int_text('config_marknewasunlistened').'</label>
+</div>';
 
 // Last.FM
 print '<div class="textcentre configtitle">

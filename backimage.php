@@ -30,7 +30,7 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 
 	if (is_dir('prefs/userbackgrounds/'.$_REQUEST['clearbackground'])) {
 		if (is_dir('prefs/userbackgrounds/'.$_REQUEST['clearbackground'].'/'.$_REQUEST['browser_id'])) {
-			system('rm -rf prefs/userbackgrounds/'.$_REQUEST['clearbackground'].'/'.$_REQUEST['browser_id']);
+			rrmdir('prefs/userbackgrounds/'.$_REQUEST['clearbackground'].'/'.$_REQUEST['browser_id']);
 		} else {
 			delete_files('prefs/userbackgrounds/'.$_REQUEST['clearbackground']);
 		}
@@ -62,10 +62,10 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 		debuglog("Removing Current Portrait Backgrounds For This Path","BACKIMAGE");
 		delete_files('prefs/userbackgrounds/'.$base, '*_portrait.*');
 	} else {
-		system('mkdir -p prefs/userbackgrounds/'.$base);
+		mkdir('prefs/userbackgrounds/'.$base, 0755, true);
 	}
 	
-	system('mv "'.$download_file.'" "prefs/userbackgrounds/'.$base.'/'.$fname.'"');
+	rename($download_file, 'prefs/userbackgrounds/'.$base.'/'.$fname);
 
 	// This isn't actually used by the UI anyway but....
 	$output = array('images' => array('prefs/userbackgrounds/'.$base.'/'.$fname), 'thisbrowseronly' => array_key_exists('thisbrowseronly', $_REQUEST));
@@ -80,7 +80,7 @@ function delete_files($path, $expr = '*.*') {
 	// Prevents file not found or could not stat errors
 	$f = glob($path.'/'.$expr);
 	foreach ($f as $file) {
-		system('rm '.$file);
+		unlink($file);
 	}
 }
 

@@ -278,13 +278,6 @@
     vertical-align:middle;
 }
 
-.smallicon {
-    padding:0px;
-    margin:4px;
-    height:16px;
-    vertical-align:middle;
-}
-
 .smallcover {
     transition: width 0.5s ease;
     max-width:300px;
@@ -311,21 +304,18 @@
     vertical-align:middle;
 }
 
-.medicon {
-    padding:0px;
-    margin:2px;
-    height:24px;
-    width:24px;
-    font-size:24px;
-    vertical-align:middle;
-}
-
 .playlisticon {
     padding:0px;
     margin-right:4px;
     margin-bottom:2px;
     margin-top:2px;
     vertical-align:middle;
+    height: 12px;
+    width: 12px;
+}
+
+.prearranger {
+    display:none;
 }
 
 .collectionicon {
@@ -334,6 +324,8 @@
     margin-bottom:2px;
     margin-top:2px;
     vertical-align:middle;
+    width:16px;
+    height:16px;
 }
 
 .playlisticonr {
@@ -343,6 +335,8 @@
     margin-bottom:2px;
     margin-top:2px;
     vertical-align:middle;
+    height: 12px;
+    width: 12px;
 }
 
 .rating-icon-big {

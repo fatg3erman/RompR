@@ -16,7 +16,7 @@ switch ($_REQUEST['action']) {
 	case 'remove':
 		$index = $_REQUEST['index'];
 		$files = glob('../prefs/crazyplaylists/*.json');
-		system('rm '.$files[$index]);
+		unlink($files[$index]);
 		print '<html></html>';
 		break;
 

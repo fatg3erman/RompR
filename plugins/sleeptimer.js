@@ -52,7 +52,7 @@ var sleepTimer = function() {
 			if (prefs.sleepon) {
 				$("#sleeptimer").makeFlasher({flashtime: 10, repeats: prefs.sleeptime*6});
 			} else {
-				$("#alarmclock").stopFlasher();
+				$("#sleeptimer").stopFlasher();
 			}
 		},
 
@@ -100,14 +100,9 @@ var sleepTimer = function() {
 		},
 
 		setup: function() {
-			var html = '<div class="topdrop">';
-			if (small_plugin_icons) {
-				html += '<i id="sleeptimer" class="icon-sleep smallpluginicon tooltip clickicon" title="'+language.gettext('button_sleep')+'"></i>'
-			} else {
-				html += '<i id="sleeptimer" class="icon-sleep topimg tooltip" title="'+language.gettext('button_sleep')+'"></i>';
-			}
-			html += '<div class="topdropmenu dropshadow rightmenu normalmenu stayopen" id="sleeppanel">'+
-				'<div class="textcentre configtitle"><b>'+language.gettext('button_sleep')+'</b></div>'+
+			var d = uiHelper.createPluginHolder('icon-sleep', language.gettext('button_sleep'));
+			var holder = $('<div>', {class: 'topdropmenu dropshadow rightmenu normalmenu stayopen', id: 'sleeppanel'}).appendTo(d);
+			var html = '<div class="textcentre configtitle"><b>'+language.gettext('button_sleep')+'</b></div>'+
 				'<input type="hidden" class="helplink" value="https://fatg3erman.github.io/RompR/Alarm-And-Sleep#sleep-timer" />'+
 				'<div class="noselection">'+
 				'<table align="center"><tr>'+
@@ -122,10 +117,8 @@ var sleepTimer = function() {
 			html += '<td colspan="3"><div class="styledinputs textcentre"><input type="checkbox" class="autoset toggle" id="sleepon"><label for="sleepon">ON</label></div></td>';
 			html += '</tr>';
 			html += '</table>';
-			html += '</div></div></div>';
-
-			$("#righthandtop").prepend(html);
-			html = null;
+			html += '</div>';
+			holder.html(html);
 			sleepTimer.setBoxes();
 			sleepTimer.setButton();
 			sleepTimer.setTimer();

@@ -226,12 +226,12 @@ div.clickable.selected:hover
 .playlistcurrentitem
 {
     font-size:120%;
-    transition:all 0.5s ease;
+    transition:font-size 0.5s ease, text-shadow 0.5s ease;
 }
 
 .playlistitem
 {
-    transition:all 0.5s ease;
+    transition:font-size 0.5s ease, text-shadow 0.5s ease;
 }
 
 .currenttitle
@@ -505,4 +505,9 @@ th.tlheader
 .infosection h2
 {
     border-bottom:2px solid #222222;
+}
+
+.topbarplaycontrols {
+    border-left: 1px solid black;
+    border-right: 1px solid black;
 }

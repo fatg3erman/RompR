@@ -50,12 +50,21 @@ function setClickHandlers() {
 
 }
 
+function bindPlaylistClicks() {
+    $("#sortable").unbind('click');
+    $("#sortable").bind('click', onPlaylistClicked);
+}
+
+function unbindPlaylistClicks() {
+    $("#sortable").unbind('click');
+}
+
 function setControlClicks() {
-    $('i[title="'+language.gettext('button_previous')+'"]').click(playlist.previous);
-    $('i[title="'+language.gettext('button_play')+'"]').click(infobar.playbutton.clicked);
-    $('i[title="'+language.gettext('button_stop')+'"]').click(player.controller.stop);
-    $('i[title="'+language.gettext('button_stopafter')+'"]').click(playlist.stopafter);
-    $('i[title="'+language.gettext('button_next')+'"]').click(playlist.next);
+    $('i.prev-button').bind('click', playlist.previous);
+    $('i.play-button').bind('click', infobar.playbutton.clicked);
+    $('i.stop-button').bind('click', player.controller.stop);
+    $('i.stopafter-button').bind('click', playlist.stopafter);
+    $('i.next-button').bind('click', playlist.next);
 }
 
 function onBrowserClicked(event) {
@@ -103,10 +112,11 @@ function onSourcesClicked(event) {
     if (clickedElement.hasClass("menu") || clickedElement.hasClass("podconf")) {
         if (clickedElement.hasClass('searchdir') ||
             clickedElement.hasClass('directory') ||
-            clickedElement.hasClass('playlist')) {
+            clickedElement.hasClass('playlist') ||
+            clickedElement.hasClass('userplaylist')) {
             doFileMenu(event, clickedElement);
         } else if (clickedElement.hasClass('album') || clickedElement.hasClass('artist')) {
-            doAlbumMenu(event, clickedElement, false);
+            doAlbumMenu(event, clickedElement, null);
         } else {
             doMenu(event, clickedElement);
         }
@@ -126,7 +136,7 @@ function onSourcesClicked(event) {
         player.controller.deletePlaylist(clickedElement.next().val());
     } else if (clickedElement.hasClass('clickdeleteuserplaylist')) {
         event.stopImmediatePropagation();
-        player.controller.deleteUserPlaylist(clickedElement.prev().prev().html());
+        player.controller.deleteUserPlaylist(clickedElement.next().val());
     } else if (clickedElement.hasClass('clickrenameplaylist')) {
         event.stopImmediatePropagation();
         player.controller.renamePlaylist(clickedElement.next().val(), event, player.controller.doRenamePlaylist);
@@ -207,6 +217,7 @@ function onSourcesDoubleClicked(event) {
         clickedElement.hasClass('clicktrack') ||
         clickedElement.hasClass('clickcue') ||
         clickedElement.hasClass("clickstream") ||
+        clickedElement.hasClass("podcastresume") ||
         clickedElement.hasClass("clickloadplaylist") ||
         clickedElement.hasClass("clickloaduserplaylist")) {
         event.stopImmediatePropagation();
@@ -241,7 +252,23 @@ function onPlaylistClicked(event) {
     } else if (clickedElement.hasClass("clickaddfave")) {
         event.stopImmediatePropagation();
         playlist.addFavourite(clickedElement.attr("name"));
+    } else if (clickedElement.hasClass("playlistup")) {
+        event.stopImmediatePropagation();
+        playlist.moveTrackUp(clickedElement.findPlParent(), event);
+    } else if (clickedElement.hasClass("playlistdown")) {
+        event.stopImmediatePropagation();
+        playlist.moveTrackDown(clickedElement.findPlParent(), event);
+    } else if (clickedElement.hasClass('rearrange_playlist')) {
+        clickedElement.findPlParent().addBunnyEars();
     }
+}
+
+jQuery.fn.findPlParent = function() {
+    var el = $(this).parent();
+    while (!el.hasClass('track') && !el.hasClass('item')) {
+        el = el.parent();
+    }
+    return el;
 }
 
 function findClickableElement(event) {
@@ -282,9 +309,7 @@ function doMenu(event, element) {
         element.toggleClosed();
         $('#'+menutoopen).menuHide();
     }
-    if (layoutProcessor.postAlbumMenu) {
-        layoutProcessor.postAlbumMenu(element);
-    }
+    uiHelper.postAlbumMenu(element);
     if (menutoopen == 'advsearchoptions') {
         prefs.save({advanced_search_open: element.isOpen()});
     }
@@ -310,7 +335,7 @@ function getMenuIndex(m) {
     }
 }
 
-function doAlbumMenu(event, element, inbrowser, callback) {
+function doAlbumMenu(event, element, callback) {
 
     if (event) {
         event.stopImmediatePropagation();
@@ -327,68 +352,77 @@ function doAlbumMenu(event, element, inbrowser, callback) {
                     if (callback) callback();
                     infobar.markCurrentTrack();
                     if ($(this).find('input.expandalbum').length > 0 ) {
-                        debug.log("CLICKFUNCTIONS", "Album has link to get all tracks");
-                        element.makeSpinner();
-                        $.ajax({
-                            type: 'GET',
-                            url: 'albums.php?browsealbum='+menutoopen,
-                            success: function(data) {
-                                debug.log("CLICKFUNCTIONS", "Got data. Inserting it into ",menutoopen);
-                                element.stopSpinner();
-                                infobar.markCurrentTrack();
-                                $("#"+menutoopen).html(data);
-                                collectionHelper.scootTheAlbums($("#"+menutoopen));
-                            },
-                            error: function(data) {
-                                debug.error("CLICKFUNCTIONS", "Got NO data for ",menutoopen);
-                                element.stopSpinner();
-                            }
-                        });
+                        getAllTracksForAlbum(element, menutoopen);
                     } else if ($(this).find('input.expandartist').length > 0) {
-                        debug.log("CLICKFUNCTIONS", "Album has link to get all tracks for artist",menutoopen);
-                        element.makeSpinner();
-                        $.ajax({
-                            type: 'GET',
-                            url: 'albums.php?browsealbum='+menutoopen,
-                            success: function(data) {
-                                element.stopSpinner();
-                                var spunk = layoutProcessor.getArtistDestinationDiv(menutoopen);
-                                spunk.html(data);
-                                layoutProcessor.postAlbumActions();
-                                collectionHelper.scootTheAlbums(spunk);
-                                infobar.markCurrentTrack();
-                                uiHelper.fixupArtistDiv(spunk, menutoopen);
-                                layoutProcessor.postAlbumActions();
-                            },
-                            error: function(data) {
-                                element.stopSpinner();
-                            }
-                        });
+                        getAllTracksForArtist(element, menutoopen)
                     }
                 });
             });
         } else {
             debug.log("Opening",menutoopen);
-            $('#'+menutoopen).menuReveal(function() {
-                if (callback) callback();
-            });
+            $('#'+menutoopen).menuReveal(callback);
         }
         element.toggleOpen();
     } else {
         debug.log("Closing",menutoopen);
-        $('#'+menutoopen).menuHide();
-        if (callback) callback();
+        $('#'+menutoopen).menuHide(callback);
         element.toggleClosed();
     }
-    if (layoutProcessor.postAlbumMenu && !inbrowser) {
-        layoutProcessor.postAlbumMenu(element);
-    }
+    uiHelper.postAlbumMenu(element);
     return false;
 }
 
+function getAllTracksForAlbum(element, menutoopen) {
+    debug.log("CLICKFUNCTIONS", "Album has link to get all tracks");
+    element.makeSpinner();
+    $.ajax({
+        type: 'GET',
+        url: 'albums.php?browsealbum='+menutoopen,
+        success: function(data) {
+            debug.log("CLICKFUNCTIONS", "Got data. Inserting it into ",menutoopen);
+            element.stopSpinner();
+            infobar.markCurrentTrack();
+            $("#"+menutoopen).html(data);
+            collectionHelper.scootTheAlbums($("#"+menutoopen));
+        },
+        error: function(data) {
+            debug.error("CLICKFUNCTIONS", "Got NO data for ",menutoopen);
+            element.stopSpinner();
+        }
+    });
+}
+
+function getAllTracksForArtist(element, menutoopen) {
+    debug.log("CLICKFUNCTIONS", "Album has link to get all tracks for artist",menutoopen);
+    element.makeSpinner();
+    $.ajax({
+        type: 'GET',
+        url: 'albums.php?browsealbum='+menutoopen,
+        success: function(data) {
+            element.stopSpinner();
+            var spunk = layoutProcessor.getArtistDestinationDiv(menutoopen);
+            spunk.html(data);
+            layoutProcessor.postAlbumActions();
+            collectionHelper.scootTheAlbums(spunk);
+            infobar.markCurrentTrack();
+            uiHelper.fixupArtistDiv(spunk, menutoopen);
+            layoutProcessor.postAlbumActions();
+        },
+        error: function(data) {
+            element.stopSpinner();
+        }
+    });
+}
+
 function browsePlaylist(plname, menutoopen) {
-    debug.log("MPD","Browsing playlist",plname);
+    debug.log("CLICKFUNCTIONS","Browsing playlist",plname);
     string = "player/mpd/loadplaylists.php?playlist="+plname+'&target='+menutoopen;
+    return string;
+}
+
+function browseUserPlaylist(plname, menutoopen) {
+    debug.log("CLICKFUNCTIONS","Browsing playlist",plname);
+    string = "player/mpd/loadplaylists.php?userplaylist="+plname+'&target='+menutoopen;
     return string;
 }
 
@@ -406,8 +440,10 @@ function doFileMenu(event, element) {
             element.makeSpinner();
             var string;
             var plname = element.prev().val();
-            if (menutoopen.match(/^pholder_/)) {
+            if (element.hasClass('playlist')) {
                 string = browsePlaylist(plname, menutoopen);
+            } else if (element.hasClass('userplaylist')) {
+                string = browseUserPlaylist(plname, menutoopen);
             } else {
                 string = "dirbrowser.php?path="+plname+'&prefix='+menutoopen;
             }
@@ -632,13 +668,16 @@ function amendAlbumDetails(e, element) {
     $(element).parent().remove();
     var albumindex = $(element).attr('name');
     var fnarkle = new popup({
-        width: 400,
-        height: 300,
+        css: {
+            width: 400,
+            height: 300
+        },
         title: language.gettext("label_amendalbum"),
-        xpos: e.clientX,
-        ypos: e.clientY,
+        atmousepos: true,
+        mousevent: e,
         id: 'amotron'+albumindex,
-        toggleable: true});
+        toggleable: true
+    });
     var mywin = fnarkle.create();
     if (mywin === false) {
         return;
@@ -688,4 +727,5 @@ function actuallyAmendAlbumDetails(albumindex) {
             infobar.notify(infobar.ERROR,"Failed! Internal Error");
         }
     );
+    return true;
 }

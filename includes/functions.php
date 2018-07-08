@@ -1,9 +1,4 @@
 <?php
-
-function xmlnode($node, $content) {
-    return '<'.$node.'>'.htmlspecialchars($content).'</'.$node.'>'."\n";
-}
-
 function format_for_mpd($term) {
     $term = str_replace('"','\\"',$term);
     return trim($term);
@@ -43,115 +38,173 @@ function format_text($d) {
     return $d;
 }
 
-# url_get_contents function by Andy Langton: http://andylangton.co.uk/
-function url_get_contents(  $url,
-                            $useragent = ROMPR_IDSTRING,
-                            $headers = false,
-                            $follow_redirects = true,
-                            $debug = false,
-                            $fp = null,
-                            $header = null,
-                            $postfields = null,
-                            $timeout = 120,
-                            $conntimeout = 60) {
-
-    global $prefs;
-    $headerarray = [];
-    $headerlen = 0;
-    $url = preg_replace('/ /', '%20', $url);
-    # initialise the CURL library
-    $ch = curl_init();
-    # specify the URL to be retrieved
-    curl_setopt($ch, CURLOPT_URL,$url);
-    curl_setopt($ch, CURLOPT_ENCODING , "");
-    if ($fp === null) {
-        # we want to get the contents of the URL and store it in a variable
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-    } else {
-        curl_setopt($ch, CURLOPT_FILE, $fp);
+class url_downloader {
+    
+    private $default_options = array(
+        'useragent' => ROMPR_IDSTRING,
+        'timeout' => 120,
+        'connection_timeout' => 60,
+        'url' => '',
+        'header' => null,
+        'postfields' => null,
+        'cache' => null,
+        'return_data' => false,
+        'send_cache_headers' => false
+    );
+    
+    private $ch;
+    private $headerarray = array();
+    private $headerlen = 0;
+    private $content;
+    private $content_type;
+    private $info;
+    private $status;
+    
+    public function __construct($options) {
+        global $prefs;
+        $this->options = array_merge($this->default_options, $options);
+        $this->ch = curl_init();
+        curl_setopt($this->ch, CURLOPT_URL, $this->options['url']);
+        curl_setopt($this->ch, CURLOPT_ENCODING, '');
+        curl_setopt($this->ch, CURLOPT_USERAGENT, $this->options['useragent']);
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($this->ch, CURLOPT_TIMEOUT, $this->options['timeout']);
+        curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, $this->options['connection_timeout']);
+        if ($prefs['proxy_host'] != "") {
+            curl_setopt($this->ch, CURLOPT_PROXY, $prefs['proxy_host']);
+        }
+        if ($prefs['proxy_user'] != "" && $prefs['proxy_password'] != "") {
+            curl_setopt($this->ch, CURLOPT_PROXYUSERPWD, $prefs['proxy_user'].':'.$prefs['proxy_password']);
+        }
+        curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
+        if ($this->options['header']) {
+            curl_setopt($this->ch, CURLOPT_HTTPHEADER, $this->options['header']);
+        }
+        if ($this->options['postfields'] !== null) {
+            $fields_string = '';
+            foreach ($this->options['postfields'] as $key => $value) {
+                $fields_string .= $key.'='.$value.'&';
+            }
+            rtrim($fields_string,'&');
+            curl_setopt($this->ch, CURLOPT_POST, count($this->options['postfields']));
+            curl_setopt($this->ch, CURLOPT_POSTFIELDS, $fields_string);
+        }
     }
-    # specify the useragent: this is a required courtesy to site owners
-    curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
-    # ignore SSL errors
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $conntimeout);
-    if ($prefs['proxy_host'] != "") {
-        curl_setopt($ch, CURLOPT_PROXY, $prefs['proxy_host']);
-    }
-    if ($prefs['proxy_user'] != "" && $prefs['proxy_password'] != "") {
-        curl_setopt($ch, CURLOPT_PROXYUSERPWD, $prefs['proxy_user'].':'.$prefs['proxy_password']);
-    }
-
-    # return headers as requested
-    if ($headers === true) {
-        debuglog("Requesting Headers","BLURBLE");
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_HEADERFUNCTION,
-            function($curl, $header) use (&$headerarray, &$headerlen)
+    
+    public function get_data_to_string() {
+        debuglog("Downloading ".$this->options['url'],"URL_DOWNLOADER");
+        if ($this->options['send_cache_headers']) {
+            header("Pragma: Not Cached");
+        }
+        curl_setopt($this->ch, CURLOPT_HEADER, true);
+        curl_setopt($this->ch, CURLOPT_HEADERFUNCTION, function($curl, $header)
             {
                 $len = strlen($header);
-                $headerlen += $len;
+                $this->headerlen += $len;
                 $header = explode(':', $header, 2);
                 if (count($header) < 2) // ignore invalid headers
                     return $len;
 
                 $name = ($header[0]);
-                $headerarray[$name] = trim($header[1]);
+                $this->headerarray[$name] = trim($header[1]);
                 return $len;
             }
         );
+        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
+        $this->content = curl_exec($this->ch);
+        return $this->get_final_info();
     }
-
-    # only return headers
-    if ($headers === 'headers only') {
-        curl_setopt($ch, CURLOPT_NOBODY, true);
-    }
-
-    # follow redirects - note this is disabled by default in most PHP installs from 4.4.4 up
-    if ($follow_redirects==true) {
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    }
-
-    if ($header !== null) {
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-    }
-
-    if ($postfields !== null) {
-        $fields_string = '';
-        foreach ($postfields as $key=>$value) {
-            $fields_string .= $key.'='.$value.'&';
+    
+    public function get_data_to_file($file = null, $binary = false) {
+        if ($file === null && $this->options['cache'] === null) {
+            debuglog("  No file or cache dir for request, returning data as string","URL_DOWNLOADER");
+            return $this->get_data_to_string();
+        } else if ($this->options['cache'] !== null) {
+            $file = 'prefs/jsoncache/'.$this->options['cache'].'/'.md5($this->options['url']);
         }
-        rtrim($fields_string,'&');
-        curl_setopt($ch, CURLOPT_POST, count($postfields));
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+        if ($this->options['cache'] !== null && $this->check_cache($file)) {
+            debuglog("Returning cached data ".$file,"URL_DOWNLOADER");
+            $this->content = file_get_contents($file);
+            return true;
+        } else {
+            debuglog("Downloading ".$this->options['url']." to ".$file,"URL_DOWNLOADER");
+            if (file_exists($file)) {
+                unlink ($file);
+            }
+            $open_mode = $binary ? 'wb' : 'w';
+            $fp = fopen($file, $open_mode);
+            curl_setopt($this->ch, CURLOPT_FILE, $fp);
+            curl_exec($this->ch);
+            fclose($fp);
+            if ($this->options['return_data']) {
+                $this->content = file_get_contents($file);
+            }
+            if (curl_getinfo($this->ch,CURLINFO_RESPONSE_CODE) != '200') {
+                unlink($file);
+            }
+            return $this->get_final_info();
+        }
+    }
+    
+    private function check_cache($file) {
+        if (file_exists($file)) {
+            if ($this->options['send_cache_headers']) {
+                header("Pragma: From Cache");
+            }
+            return true;
+        } else {
+            if ($this->options['send_cache_headers']) {
+                header("Pragma: Not Cached");
+            }
+            return false;
+        }
+    }
+    
+    private function get_final_info() {
+        $this->status = curl_getinfo($this->ch, CURLINFO_RESPONSE_CODE);
+        $this->content_type = curl_getinfo($this->ch, CURLINFO_CONTENT_TYPE);
+        $this->info = curl_getinfo($this->ch);
+        curl_close($this->ch);
+        if ($this->get_status() == '200') {
+            debuglog("  ..  Download Success","URL_DOWNLOADER");
+            return true;
+        } else {
+            debuglog("  ..  Download Failed With Status Code ".$this->get_status(),"URL_DOWNLOADER");
+            return false;
+        }
+    }
+    
+    public function get_data() {
+        return substr($this->content, $this->headerlen);
+    }
+    
+    public function get_headers() {
+        return $this->headerarray;
+    }
+    
+    public function get_header($h) {
+        if (array_key_exists($h, $this->headerarray)) {
+            return $this->headerarray[$h];
+        } else {
+            return false;
+        }
+    }
+    
+    public function get_status() {
+        return $this->status;
+    }
+    
+    public function get_info() {
+        return $this->info;
+    }
+    
+    public function get_content_type() {
+        return $this->content_type;
     }
 
-    if ($fp === null) {
-        $result['contents'] = curl_exec($ch);
-    } else {
-        curl_exec($ch);
-    }
-
-    $result['status'] = curl_getinfo($ch,CURLINFO_HTTP_CODE);
-    $result['content-type'] = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-    if ($headers === true) {
-        $result['headers'] = $headerarray;
-        $result['contents'] = substr($result['contents'], $headerlen);
-    }
-    # if debugging, return an array with CURL's debug info and the URL contents
-    if ($debug==true) {
-        $result['info'] = curl_getinfo($ch);
-    }
-    # free resources
-    curl_close($ch);
-
-    # send back the data
-    return $result;
 }
 
-function format_time($t,$f=':') // t = seconds, f = separator
-{
+function format_time($t,$f=':') {
     if (($t/86400) >= 1) {
         return sprintf("%d%s%2d%s%02d%s%02d", ($t/86400), " ".get_int_text("label_days")." ",
             ($t/3600)%24, $f, ($t/60)%60, $f, $t%60);
@@ -160,18 +213,6 @@ function format_time($t,$f=':') // t = seconds, f = separator
         return sprintf("%2d%s%02d%s%02d", ($t/3600), $f, ($t/60)%60, $f, $t%60);
     } else {
         return sprintf("%02d%s%02d", ($t/60)%60, $f, $t%60);
-    }
-}
-
-function format_time2($t,$f=':') // t = seconds, f = separator
-{
-    if (($t/86400) >= 1) {
-        return sprintf("%d%s", ($t/86400), " ".get_int_text("label_days"));
-    }
-    if (($t/3600) >= 1) {
-        return sprintf("%d%s", ($t/3600), " ".get_int_text("label_hours"));
-    } else {
-        return sprintf("%d%s", ($t/60)%60, " ".get_int_text("label_minutes"));
     }
 }
 
@@ -388,36 +429,21 @@ function domainIcon($d, $c) {
         case "internetarchive":
         case "soundcloud":
         case "podcast":
+        case "dirble":
             $h = '<i class="icon-'.$d.'-circled '.$c.' fixed"></i>';
             break;
 
         case "tunein":
+            $h = '<i class="icon-tunein '.$c.' fixed"></i>';
+            break;
+        
         case "radio-de":
-        case "dirble":
         case "bassdrive":
             $h = '<div class="'.$c.' fixed"><img class="imgfill" src="newimages/'.$d.'-logo.svg" /></div>';
             break;
 
     }
     return $h;
-}
-
-function getImageForAlbum(&$filedata, $imagekey) {
-    if ($filedata['ImageForPlaylist'] !== null && $filedata['ImageForPlaylist'] !== '') {
-        return preg_replace('#/small/#', '/asdownloaded/',  $filedata['ImageForPlaylist']);
-    } else {
-        $im = cacheOrDefaultImage($filedata['X-AlbumImage'], $imagekey, 'asdownloaded', $filedata['domain']);
-        if ($im == null) $im = '';
-        return $im;
-    }
-}
-
-function getImageKey(&$filedata, $albumartist) {
-    if ($filedata['ImgKey'] !== null) {
-        return $filedata['ImgKey'];
-    } else {
-        return make_image_key($albumartist, $filedata['Album']);
-    }
 }
 
 function getStreamFolder($url) {
@@ -533,7 +559,7 @@ function trim_content_type($filetype) {
     return $filetype;
 }
 
-function audioClass($filetype) {
+function audioClass($filetype, $domain = '') {
     $filetype = trim_content_type($filetype);
     switch ($filetype) {
         case "mp3":
@@ -579,15 +605,44 @@ function audioClass($filetype) {
         case 'text/html':
         case '':
         case ' ';
-            return 'notastream';
+            return domainCheck('notastream', $domain);
             break;
 
         default:
-            return 'icon-library';
+            return domainCheck('icon-music', $domain);
             break;
 
     }
 
+}
+
+function domainCheck($default, $domain) {
+    if ($domain == '') {
+        return $default;
+    }
+    switch ($domain) {
+        case 'soundcloud':
+        case 'spotify':
+        case 'gmusic':
+        case 'vkontakte':
+        case 'internetarchive':
+        case 'podcast':
+        case 'podcast http:':
+        case 'podcast https:':
+        case 'dirble':
+            return 'icon-'.$domain.'-circled';
+            break;
+            
+        case 'tunein':
+            return 'icon-tunein';
+            break;
+            
+        default:
+            return $default;
+            break;
+        
+    }
+    
 }
 
 function checkComposerGenre($genre, $pref) {
@@ -690,7 +745,7 @@ function getWishlist() {
             print '<div class="fixed playlistrow2 trackrating"><i class="icon-'.$obj['rating'].'-stars rating-icon-small nopointer"></i></div>';
         }
         if ($obj['tags']) {
-            print '<div class="fixed playlistrow2 tracktags"><i class="icon-tags smallicon"></i>'.$obj['tags'].'</div>';
+            print '<div class="fixed playlistrow2 tracktags"><i class="icon-tags collectionicon"></i>'.$obj['tags'].'</div>';
         }
         print '</div>';
         print '<div class="expand containerbox vertical">';
@@ -702,7 +757,7 @@ function getWishlist() {
         print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed"></i>';
         print '<input type="hidden" value="'.$obj['title'].'" />';
         print '<input type="hidden" value="'.$obj['albumartist'].'" />';
-        print '<i class="icon-cancel-circled playlisticonr fixed clickicon clickremdb infoclick plugclickable"></i>';
+        print '<i class="icon-cancel-circled smallicon fixed clickicon clickremdb infoclick plugclickable"></i>';
         print '<input type="hidden" value="'.$obj['ttid'].'" />';
         print '</div>';
         print '</div>';
@@ -735,46 +790,33 @@ function getCacheData($uri, $cache, $returndata = false, $use_cache = true) {
     if ($use_cache == false) {
         debuglog("  Not using cache for this request","CACHE");
     }
-
-    if ($use_cache && file_exists('prefs/jsoncache/'.$cache.'/'.md5($uri))) {
-        debuglog("Returning cached data",$me);
+    $options = array(
+        'url' => $uri,
+        'send_cache_headers' => !$returndata,
+        'cache' => $use_cache ? $cache : null,
+        'return_data' => true
+    );
+    $d = new url_downloader($options);
+    if ($d->get_data_to_file()) {
         if ($returndata) {
-            return json_decode(file_get_contents('prefs/jsoncache/'.$cache.'/'.md5($uri)));
+            return json_decode($d->get_data());
         } else {
-            header("Pragma: From Cache");
-            print file_get_contents('prefs/jsoncache/'.$cache.'/'.md5($uri));
+            print $d->get_data();
         }
     } else {
-        $content = url_get_contents($uri);
-        $s = $content['status'];
-        debuglog("Response Status was ".$s, $me);
-        if ($s == "200") {
-            if ($use_cache) {
-                file_put_contents('prefs/jsoncache/'.$cache.'/'.md5($uri), $content['contents']);
-            }
-            if ($returndata) {
-                return json_decode($content['contents']);
-            } else {
-                header("Pragma: Not Cached");
-                print $content['contents'];
-            }
+        $a = array( 'error' => get_int_text($cache."_error"));
+        if ($returndata) {
+            return $a;
         } else {
-            $a = array( 'error' => get_int_text($cache."_error"));
-            if ($returndata) {
-                return $a;
-            } else {
-                header("Pragma: Not Cached");
-                print json_encode($a);
-            }
+            print json_encode($a);
         }
     }
-
 }
 
 function get_user_file($src, $fname, $tmpname) {
     global $error;
     debuglog("  Uploading ".$src." ".$fname." ".$tmpname,"GETALBUMCOVER");
-    $download_file = "prefs/".$fname;
+    $download_file = "prefs/temp/".$fname;
     debuglog("Checking Temp File ".$tmpname,"GETALBUMCOVER");
     if (move_uploaded_file($tmpname, $download_file)) {
         debuglog("    File ".$src." is valid, and was successfully uploaded.","GETALBUMCOVER");
@@ -787,41 +829,15 @@ function get_user_file($src, $fname, $tmpname) {
     return $download_file;
 }
 
-function make_image_key($artist,$album) {
-    $c = strtolower($artist.$album);
-    return md5($c);
-}
-
 function albumImageBuggery() {
-    set_time_limit(600);
-    $result = generic_sql_query(
-        "SELECT Albumindex, Artistname, Albumname, ImgKey, Image FROM Albumtable JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex", false, PDO::FETCH_OBJ);
-    open_transaction();
-foreach ($result as $obj) {
-        $oldkey = $obj->ImgKey;
-        $newkey = make_image_key($obj->Artistname, $obj->Albumname);
-        $oldimage = $obj->Image;
-        $newimage = $oldimage;
-        if (preg_match('#^albumart/#', $oldimage)) {
-            if (file_exists($oldimage)) {
-                debuglog("Renaming albumart image ".$oldkey." to ".$newkey,"BACKEND_UPGRADE");
-                $newimage = 'albumart/small/'.$newkey.'.jpg';
-                exec( 'mv albumart/small/'.$oldkey.'.jpg '.$newimage);
-                exec( 'mv albumart/asdownloaded/'.$oldkey.'.jpg albumart/asdownloaded/'.$newkey.'.jpg');
-                sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET ImgKey = ?, Image = ? WHERE Albumindex = ?",$newkey,$newimage,$obj->Albumindex);
-            }
-        } else if (preg_match('#^prefs/imagecache/#', $oldimage)) {
-            if (file_exists($oldimage)) {
-                debuglog("Renaming imagecache image ".$oldkey." to ".$newkey,"BACKEND_UPGRADE");
-                $newimage = 'prefs/imagecache/'.$newkey.'_small.jpg';
-                exec('mv prefs/imagecache/'.$oldkey.'_small.jpg '.$newimage);
-                exec('mv prefs/imagecache/'.$oldkey.'_asdownloaded.jpg prefs/imagecache/'.$newkey.'_asdownloaded.jpg');
-                sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET ImgKey = ?, Image = ? WHERE Albumindex = ?",$newkey,$newimage,$obj->Albumindex);
-            }
-        }
-        check_transaction();
-    }
-    close_transaction();
+    // This was used to update album art to a new format but it's really old now and we've totally refactored the album image code
+    // In the eventuality that someone is still using a version that old we'll keep the function but just use it to remove all album art
+    // and start again.
+    rrmdir('albumart/small');
+    rrmdir('albumart/asdownloaded');
+    mkdir('albumart/small', 0755);
+    mkdir('albumart/asdownloaded', 0755);
+    generic_sql_query("UPDATE Albumtable SET Searched = 0, Image = ''");
 }
 
 function rejig_wishlist_tracks() {
@@ -847,6 +863,10 @@ function rejig_wishlist_tracks() {
 
 function multi_implode($array, $glue = ', ') {
     $ret = '';
+
+    if (!is_array($array)) {
+        return $array;
+    }
 
     foreach ($array as $key => $item) {
         if (is_array($item)) {
@@ -881,14 +901,6 @@ function debug_format($dbg) {
     return $dbg;
 }
 
-function get_stream_imgkey($i) {
-    return "STREAM_".$i;
-}
-
-function stream_index_from_key($key) {
-    return preg_replace('/STREAM_/','',$key);
-}
-
 function format_bytes($size, $precision = 1)
 {
     $base = log($size, 1024);
@@ -901,5 +913,100 @@ function fixup_links($s) {
     return preg_replace('/(^|\s+|\n|[^\s+"])(https*:\/\/.*?)(<|\n|\r|\s|\)|$|[<|\n|\r|\s|\)|$])/', '$1<a href="$2">$2</a>$3', $s);
 }
 
+function set_version_string() {
+    global $version_string, $prefs;
+    if ($prefs['dev_mode']) {
+        // This adds an extra parameter to the version number - the short
+        // hash of the most recent git commit, or a timestamp. It's for use in testing,
+        // to make sure the browser pulls in the latest version of all the files.
+        if ($prefs['live_mode']) {
+            $version_string = ROMPR_VERSION.".".time();
+        } else {
+            // DO NOT USE OUTSIDE A git REPO!
+            $git_ver = exec("git log --pretty=format:'%h' -n 1", $output);
+            if (count($output) == 1) {
+                $version_string = ROMPR_VERSION.".".$output[0];
+            } else {
+                $version_string = ROMPR_VERSION.".".time();
+            }
+        }
+    } else {
+        $version_string = ROMPR_VERSION;
+    }
+}
 
+function update_stream_images($schemaver) {
+    require_once('utils/imagefunctions.php');
+    switch ($schemaver) {
+        case 43:
+            $stations = generic_sql_query("SELECT Stationindex, StationName, Image FROM RadioStationtable WHERE Image LIKE 'prefs/userstreams/STREAM_%'");
+            foreach ($stations as $station) {
+                debuglog("  Updating Image For Station ".$station['StationName'], "BACKEND");
+                if (file_exists($station['Image'])) {
+                    debuglog("    Image is ".$station['StationName'], "BACKEND");
+                    $src = get_base_url().'/'.$station['Image'];
+                    $albumimage = new albumImage(array('artist' => "STREAM", 'album' => $station['StationName'], 'source' => $src));
+                    if ($albumimage->download_image()) {
+                        // Can't call $albumimage->update_image_database because the functions that requires are in the backend
+                        $images = $albumimage->get_images();
+                        sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET Image = ? WHERE StationName = ?",$images['small'],$station['StationName']);
+                        sql_prepare_query(true, null, null, null, "UPDATE WishlistSourcetable SET Image = ? WHERE Image = ?",$images['small'],$station['Image']);
+                        unlink($station['Image']);
+                    } else {
+                        debuglog("  Image Upgrade Failed!","BACKEND");
+                    }
+                } else {
+                    generic_sql_query("UPDATE RadioStationtable SET IMAGE = NULL WHERE Stationindex = ".$station['Stationindex']);
+                }
+            }
+            break;
+    }
+}
+
+function empty_modified_cache_dirs($schemaver) {
+    switch ($schemaver) {
+        case 44:
+            foreach(array('allmusic', 'lyrics') as $d) {
+                rrmdir('prefs/jsoncache/'.$d);
+                mkdir('prefs/jsoncache/'.$d, 0755);
+            }
+            break;
+    }
+}
+
+function getRemoteFilesize($url, $default) {
+    $context = stream_context_create(array('http' => array('method' => 'HEAD')));
+    $head = array_change_key_case(get_headers($url, 1, $context));
+    // content-length of download (in bytes), read from Content-Length: field
+    $clen = isset($head['content-length']) ? $head['content-length'] : 0;
+    $cstring = $clen;
+    if (is_array($clen)) {
+        debuglog("Content Length is an array ".PHP_EOL.print_r($clen, true),"FUNCTIONS", 9);
+        $cstring = 0;
+        foreach ($clen as $l) {
+            if ($l > $cstring) {
+                $cstring = $l;
+            }
+        }
+    }
+    if ($cstring !== 0) {
+        debuglog("  Read file size remotely as ".$cstring,"FUNCTIONS",8);
+        return $cstring;
+    } else {
+        debuglog("  Couldn't read filesize remotely. Using default value of ".$default,"FUNCTIONS",8);
+        return $default;
+    }
+}
+
+function rrmdir($path) {
+    $i = new DirectoryIterator($path);
+    foreach ($i as $f) {
+        if($f->isFile()) {
+            unlink($f->getRealPath());
+        } else if (!$f->isDot() && $f->isDir()) {
+            rrmdir($f->getRealPath());
+        }
+    }
+    rmdir($path);
+}
 ?>

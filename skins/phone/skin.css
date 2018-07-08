@@ -18,10 +18,11 @@ right-hand border that overlaps the dropdown button
 */
 select {
     width:100%;
+    height:3em;
 }
 
 .selectholder {
-    height:2em;
+    height:3em;
 }
 
 div {
@@ -50,7 +51,7 @@ div {
     margin:0px;
 }
 
-#historypanel, #popupwindow, #tagadder {
+#historypanel, #tagadder {
     overflow-y: auto !important;
 }
 
@@ -220,13 +221,18 @@ div.topdropmenu {
 .topimg {
     margin-right:4px;
     margin-left:4px;
-    height: 34px;
-    width: 34px;
-    font-size:34px;
-    max-height: 34px;
     margin-bottom:2px;
     margin-top:4px;
     cursor: pointer;
+}
+
+.topdropmenu .topimg {
+    width:36px;
+    height:36px;
+}
+
+#narrowscreenicons {
+    padding-right: 24px;
 }
 
 .topimg.infoclick {
@@ -383,22 +389,6 @@ div.rightmenu {
     padding-left: 1em;
 }
 
-.smallicon {
-    padding:0px;
-    margin:4px;
-    height:20px;
-    vertical-align:middle;
-}
-
-.medicon {
-    padding:0px;
-    margin:2px;
-    height:24px;
-    width:24px;
-    font-size:24px;
-    vertical-align:middle;
-}
-
 .podicon {
     margin-top:4px;
     margin-bottom:4px;
@@ -444,6 +434,8 @@ div.rightmenu {
     vertical-align:middle;
     box-sizing:border-box;
     border:6px solid transparent;
+    height: 26px;
+    width: 26px;
 }
 
 [class^="icon-"].menu, [class*=" icon-"].menu {
@@ -460,6 +452,8 @@ div.rightmenu {
     margin-bottom:2px;
     margin-top:2px;
     vertical-align:middle;
+    width:20px;
+    height:20px
 }
 
 .playlisticonr {
@@ -470,7 +464,55 @@ div.rightmenu {
     margin-right:2px;
     vertical-align:middle;
     box-sizing:border-box;
-    border:6px solid transparent;
+    border:8px solid transparent;
+    width:32px;
+    height:32px;
+}
+
+#sortable {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+#sortable .trackgroup {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+#sortable .item {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+#sortable .trackgroup .track {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+#sortable .playlisticonr.icon-cancel-circled {
+    /* display: none; */
+}
+
+.prearranger {
+    display:none;
+}
+
+#sortable .playlisticonr {
+    margin-right:4px;
+    width: 40px;
+}
+
+#collection .playlisticonr {
+    margin-right:4px;
+    width: 48px;
+}
+
+#sortable .track>div>div.clickable {
+    margin-right: 8px;
 }
 
 .npicon {
@@ -510,6 +552,8 @@ div.rightmenu {
 .sptext {
     white-space:nowrap;
     padding-right:4px;
+    text-align:right;
+    margin-right:24px;
 }
 
 #ratingimage {
@@ -854,13 +898,6 @@ div.rightmenu {
         width:100%;
     }
 
-    .topimg {
-        height: 36px;
-        width: 36px;
-        font-size: 36px;
-        max-height:36px;
-    }
-
     div.normalmenu {
         width:44px !important;
     }
@@ -977,4 +1014,25 @@ div.rightmenu {
 
 img.jalopy200 {
     max-width:140px;
+}
+
+.headercontainer {
+    height:90%;
+    box-sizing: border-box;
+}
+
+.buttonbar {
+    height: 42px;
+}
+
+.onlyverywide {
+    padding-left:8px;
+    padding-right:8px;
+    box-sizing:border-box;
+}
+
+@media screen and (max-width: 799px) {
+    .onlyverywide {
+        display: none;
+    }
 }

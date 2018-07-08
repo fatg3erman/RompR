@@ -89,7 +89,7 @@ var browser = function() {
             html += '<h2 class="expand">' + data.name + '</h2>';
         }
         html += '<div class="fixed alignmid">';
-        html += '<i class="icon-menu topimg infoclick clickicon frog"></i>';
+        html += '<i class="icon-menu svg-square infoclick clickicon frog"></i>';
         html += '</div>';
         if (data.help) {
             html += '<div class="fixed alignmid"><a href="'+data.help+'" title="Help" target="_blank">'+
@@ -104,7 +104,7 @@ var browser = function() {
             }
         }
         if (close) {
-            html += '<div class="fixed alignmid padright"><i class="icon-cancel-circled topimg infoclick clickicon tadpole"></i></div>';
+            html += '<div class="fixed alignmid padright"><i class="icon-cancel-circled svg-square infoclick clickicon tadpole"></i></div>';
         }
         html += '</div>';
         html += '<div class="foldup" id="'+title+'foldup"';

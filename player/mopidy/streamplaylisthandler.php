@@ -15,6 +15,9 @@
 // For Soma FM, is called with 	url = playlist URL
 //								station = (eg) Groove Salad
 
+// This is the mopidy version, where we must generally use 'add' and not 'load'. Also this makes
+// Mopidy's parser do some work for us in putting accurate information into the Current Playlist
+
 class plsFile {
 
 	public function __construct($data, $url, $station, $image) {
@@ -185,15 +188,16 @@ class m3uFile {
 		$this->station = $station;
 		$this->image = $image;
 		$this->tracks = array();
+		$prettystream = '';
 
 		$parts = explode(PHP_EOL, $data);
 		foreach ($parts as $line) {
-			if (preg_match('/#EXTINF:(.*?),(.*?)$/', $line, $matches) ||
-				preg_match('/^\#/', $line) ||
-				preg_match('/^\s*$/', $line)) {
+			if (preg_match('/#EXTINF:(.*?),(.*?)$/', $line, $matches)) {
+				$prettystream = $matches[2];
+			} else if (preg_match('/^\#/', $line) || preg_match('/^\s*$/', $line)) {
 
 			} else {
-				$this->tracks[] = array('TrackUri' => trim($line), 'PrettyStream' => '');
+				$this->tracks[] = array('TrackUri' => trim($line), 'PrettyStream' => $prettystream);
 			}
 		}
 }
@@ -242,7 +246,7 @@ class asfFile {
 	public function updateDatabase() {
 		$stationid = check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			check_radio_tracks($stationid, array(array('TrackUri' => $this->url, 'PrettyStream' => $this->prettystream)));
+			check_radio_tracks($stationid, array(array('TrackUri' => $this->url, 'PrettyStream' => '')));
 		} else {
 			debuglog("ERROR! Null station ID!","RADIO",2);
 		}

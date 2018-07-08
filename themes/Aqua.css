@@ -381,3 +381,8 @@ table.tracklist {
 .infosection h2 {
     border-bottom:2px solid #444444;
 }
+
+.topbarplaycontrols {
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}

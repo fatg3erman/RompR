@@ -54,4 +54,6 @@ You can change the order of the list by using the Order By buttons.
 
 Icecast is an open-source alternative to ShoutCast.
 
+Note that while Rompr will allow you to add IceCast stations to Your Radio Stations, the URLs for the stations have a habit of changing and this will make your favourites stop working. There's nothing I can do about this - you'll have to remove the favourite and search for it again. Or find it in one of the other radio panels.
+
 ![](images/icecast.png)

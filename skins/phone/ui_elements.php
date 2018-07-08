@@ -1,5 +1,7 @@
 <?php
 
+require_once('utils/imagefunctions.php');
+
 function albumTrack($data) {
     global $prefs;
     if (substr($data['title'],0,6) == "Album:") return 2;
@@ -30,7 +32,7 @@ function albumTrack($data) {
         print '>'.$data['trackno'].'</div>';
     }
 
-    print domainIcon($d, 'playlisticon');
+    print domainIcon($d, 'collectionicon');
 
     // Track Title, Artist, and Rating
     if ((string) $data['title'] == "") $data['title'] = urldecode($data['uri']);
@@ -46,7 +48,7 @@ function albumTrack($data) {
     }
     if ($data['tags']) {
         print '<div class="fixed playlistrow2 tracktags">';
-        print '<i class="icon-tags smallicon"></i>'.$data['tags'];
+        print '<i class="icon-tags collectionicon"></i>'.$data['tags'];
         print '</div>';
     }
     print '</div>';
@@ -103,6 +105,9 @@ function albumHeader($obj) {
     } else  if (!$obj['Image'] && $obj['Searched'] == 1) {
         $h .= '<img class="smallcover fixed notfound'.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
     } else {
+        if (substr($i,0, 14) == 'getRemoteImage') {
+            $i .= '&rompr_resize_size=small';
+        }
         $h .= '<img class="smallcover fixed'.$extra.'" name="'.$obj['ImgKey'].'" src="'.$i.'" />'."\n";
     }
     $h .= '</div>';
@@ -151,24 +156,27 @@ function albumControlHeader($fragment, $why, $what, $who, $artist) {
 function trackControlHeader($why, $what, $who, $dets) {
     $html = '<div class="menu backmenu" name="'.$why.$what.$who.'"></div>';
     foreach ($dets as $det) {
-        $html .= '<div class="album-menu-header"><img class="album_menu_image" src="'.preg_replace('#albumart/small#', 'albumart/asdownloaded', $det['Image']).'" /></div>';
+        $albumimage = new baseAlbumImage(array('baseimage' => $det['Image']));
+        $images = $albumimage->get_images();
+        $html .= '<div class="album-menu-header"><img class="album_menu_image" src="'.$images['asdownloaded'].'" /></div>';
         if ($why != '') {
             $html .= '<div class="textcentre ninesix playlistrow2">'.get_int_text('label_play_options').'</div>';
             $html .= '<div class="containerbox wrap album-play-controls">';
             if ($det['AlbumUri']) {
                 $albumuri = rawurlencode($det['AlbumUri']);
                 if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
-                    $html .= '<div class="icon-no-response-playbutton collectionicon expand clickable clickcue fakedouble noselect" name="'.$albumuri.'"></div>';
+                    $html .= '<div class="icon-no-response-playbutton smallicon expand clickable clickcue fakedouble noselect" name="'.$albumuri.'"></div>';
                 } else {
-                    $html .= '<div class="icon-no-response-playbutton collectionicon expand clickable clicktrack fakedouble noselect" name="'.$albumuri.'"></div>';
-                }
+                    $html .= '<div class="icon-no-response-playbutton smallicon expand clickable clicktrack fakedouble noselect" name="'.$albumuri.'"></div>';
+                    $html .= '<div class="icon-music smallicon expand clickable clickalbum noselect" name="'.$why.'album'.$who.'"></div>';
+}
             } else {
-                $html .= '<div class="icon-no-response-playbutton collectionicon expand clickable clickalbum fakedouble noselect" name="'.$why.'album'.$who.'"></div>';
+                $html .= '<div class="icon-no-response-playbutton smallicon expand clickable clickalbum fakedouble noselect" name="'.$why.'album'.$who.'"></div>';
             }
-            $html .= '<div class="icon-single-star collectionicon expand clickable clickicon clickable clickalbum fakedouble noselect" name="ralbum'.$who.'"></div>';
-            $html .= '<div class="icon-tags collectionicon expand clickable clickicon clickable clickalbum fakedouble noselect" name="talbum'.$who.'"></div>';
-            $html .= '<div class="icon-ratandtag collectionicon expand clickable clickicon clickable clickalbum fakedouble noselect" name="yalbum'.$who.'"></div>';
-            $html .= '<div class="icon-ratortag collectionicon expand clickable clickicon clickable clickalbum fakedouble noselect" name="ualbum'.$who.'"></div>';
+            $html .= '<div class="icon-single-star smallicon expand clickable clickicon clickable clickalbum fakedouble noselect" name="ralbum'.$who.'"></div>';
+            $html .= '<div class="icon-tags smallicon expand clickable clickicon clickable clickalbum fakedouble noselect" name="talbum'.$who.'"></div>';
+            $html .= '<div class="icon-ratandtag smallicon expand clickable clickicon clickable clickalbum fakedouble noselect" name="yalbum'.$who.'"></div>';
+            $html .= '<div class="icon-ratortag smallicon expand clickable clickicon clickable clickalbum fakedouble noselect" name="ualbum'.$who.'"></div>';
             $html .= '</div>';
             $html .= '<div class="textcentre ninesix playlistrow2">'.ucfirst(get_int_text('label_tracks')).'</div>';
         }
@@ -180,7 +188,7 @@ function printDirectoryItem($fullpath, $displayname, $prefix, $dircount, $printc
     $c = ($printcontainer) ? "searchdir" : "directory";
     print '<input type="hidden" name="dirpath" value="'.rawurlencode($fullpath).'" />';
     print '<div class="'.$c.' menu containerbox menuitem" name="'.$prefix.$dircount.'">';
-    print '<i class="icon-folder-open-empty fixed smallicon"></i>';
+    print '<i class="icon-folder-open-empty fixed collectionitem"></i>';
     print '<div class="expand">'.htmlentities(urldecode($displayname)).'</div>';
     print '</div>';
     if ($printcontainer) {
@@ -200,7 +208,7 @@ function printRadioDirectory($att) {
     print '<input type="hidden" value="'.rawurlencode($att['URL']).'" />';
     print '<input type="hidden" value="'.rawurlencode($att['text']).'" />';
     print '<div class="browse menu directory containerbox menuitem" name="tunein_'.$name.'">';
-    print '<i class="icon-folder-open-empty fixed smallicon"></i>';
+    print '<i class="icon-folder-open-empty fixed collectionitem"></i>';
     print '<div class="expand">'.$att['text'].'</div>';
     print '</div>';
     print '<div id="tunein_'.$name.'" class="dropmenu"></div>';
@@ -220,7 +228,7 @@ function addPodcastCounts($html, $extra) {
 
 function addUserRadioButtons($html, $index, $uri, $name, $image) {
     $out = phpQuery::newDocument($html);
-    $extra = '<div class="fixed clickable clickradioremove clickicon" name="'.$index.'"><i class="icon-cancel-circled playlisticon"></i></div>';
+    $extra = '<div class="fixed clickable clickradioremove clickicon" name="'.$index.'"><i class="icon-cancel-circled playlisticonr"></i></div>';
     $out->find('.menuitem')->append($extra);
     return $out;
 }

@@ -1,40 +1,58 @@
 <?php
-if (array_key_exists('populate', $_REQUEST)) {
 
-    chdir('..');
-
-    include("includes/vars.php");
-    include("includes/functions.php");
-    include("international.php");
-    include("skins/".$skin."/ui_elements.php");
-
-    $base_url = 'http://api.dirble.com/v2/';
-    $countries = array();
-    $categories = array();
-
-    $to_get = '';
-    $country = $prefs['newradiocountry'];
-    $page = 1;
-    $searchterm = '';
-    if (array_key_exists('country', $_REQUEST)) {
-        $to_get = $base_url.$_REQUEST['country'].'/stations';
-        $country = $_REQUEST['country'];
+class dirbleplugin {
+        
+    public function __construct() {
+        global $prefs;
+        $this->base_url = 'http://api.dirble.com/v2/';
+        $this->to_get = '';
+        $this->country = $prefs['newradiocountry'];
+        $this->page = 1;
+        $this->searchterm = '';
     }
-    if (array_key_exists('page', $_REQUEST)) {
-        $page = $_REQUEST['page'];
+    
+    public function doHeader() {
+        print '<div id="nationalradio">';
+        print albumHeader(array(
+            'id' => 'bbclist',
+            'Image' => 'newimages/dirble-logo.svg',
+            'Searched' => 1,
+            'AlbumUri' => null,
+            'Year' => null,
+            'Artistname' => '',
+            'Albumname' => get_int_text('label_streamradio'),
+            'why' => null,
+            'ImgKey' => 'none',
+            'class' => 'radio',
+            'expand' => true
+        ));
+        print '<div id="bbclist" class="dropmenu notfilled"><div class="textcentre">Loading...</div></div>';
+        print '</div>';
     }
-    if (array_key_exists('url', $_REQUEST)) {
-        $to_get = rawurldecode($_REQUEST['url']);
+    
+    public function parseParams() {
+        if (array_key_exists('country', $_REQUEST)) {
+            $this->to_get = $this->base_url.$_REQUEST['country'].'/stations';
+            $this->country = $_REQUEST['country'];
+        }
+        if (array_key_exists('page', $_REQUEST)) {
+            $this->page = $_REQUEST['page'];
+        }
+        if (array_key_exists('url', $_REQUEST)) {
+            $this->to_get = rawurldecode($_REQUEST['url']);
+        }
+        if (array_key_exists('search', $_REQUEST)) {
+            $this->to_get = null;
+            $this->searchterm = rawurldecode($_REQUEST['search']);
+        }
+        debuglog("Country Is ".$this->country,"DIRBLE");
     }
-    if (array_key_exists('search', $_REQUEST)) {
-        $to_get = null;
-        $searchterm = rawurldecode($_REQUEST['search']);
-    }
-    debuglog("Country Is ".$country,"RADIO");
-
-    if ($_REQUEST['populate'] != 3) {
+    
+    public function doDropdownHeader() {
+        $countries = array();
+        $categories = array();
         directoryControlHeader('bbclist', get_int_text('label_streamradio'));
-        $json = get_from_dirble($base_url.'countries');
+        $json = $this->get_from_dirble($this->base_url.'countries');
         if (count($json['json']) == 0) {
             print '<div class="configttitle textcentre brick_wide"><h3>Got no response from Dirble!</h3></div>"';
             exit(0);
@@ -43,7 +61,8 @@ if (array_key_exists('populate', $_REQUEST)) {
             $countries[$station['name']] = 'countries/'.$station['country_code'];
         }
         ksort($countries);
-        $json = get_from_dirble($base_url.'categories/tree');
+        
+        $json = $this->get_from_dirble($this->base_url.'categories/tree');
         foreach ($json['json'] as $station) {
             $categories[$station['title']] = 'category/'.$station['id'];
             foreach ($station['children'] as $child) {
@@ -55,7 +74,7 @@ if (array_key_exists('populate', $_REQUEST)) {
         print '<option disabled>_______________COUNTRIES______________</option>';
         foreach ($countries as $name => $link) {
             print '<option value="'.$link.'"';
-            if ($link == $country) {
+            if ($link == $this->country) {
                 print ' selected';
             }
             print '>'.$name.'</option>';
@@ -63,7 +82,7 @@ if (array_key_exists('populate', $_REQUEST)) {
         print '<option disabled>_______________CATEGORIES______________</option>';
         foreach ($categories as $name => $link) {
             print '<option value="'.$link.'"';
-            if ($link == $country) {
+            if ($link == $this->country) {
                 print ' selected';
             }
             print '>'.$name.'</option>';
@@ -72,37 +91,50 @@ if (array_key_exists('populate', $_REQUEST)) {
 
         print '<div class="fullwidth padright brick_wide" style="margin-bottom:0px"><div class="containerbox padright noselection fullwidth"><div class="expand">
             <input class="enter clearbox searchdirble" name="radiosearcher" type="text" ';
-        if ($searchterm) {
-            print 'value="'.$searchterm.'" ';
+        if ($this->searchterm) {
+            print 'value="'.$this->searchterm.'" ';
         }
         print '/></div><button class="fixed dirblesearch" name="bumfeatures">'.get_int_text('button_search').'</button></div></div>';
-
-
-        // print '<div id="alltheradiostations">';
+        
     }
-
-    $json = array('json' => array());
-    if ($to_get) {
-        $json = get_from_dirble($to_get, $page);
-    } else if ($searchterm) {
-        $json = dirble_search($searchterm, $page, $country);
+    
+    public function doStations() {
+        $json = array('json' => array());
+        if ($this->to_get) {
+            $json = $this->get_from_dirble($this->to_get, $this->page);
+        } else if ($this->searchterm) {
+            $json = $this->dirble_search($this->searchterm, $this->page, $this->country);
+        }
+        usort($json['json'], 'dirble_sort_by_station');
+        $this->do_page_buttons($json, false);
+        $count = 0;
+        foreach ($json['json'] as $station) {
+            $this->doStation($station, $count);
+            $count++;
+        }
+        $this->do_page_buttons($json, true);
+        print '</div>';
+        
     }
-    usort($json['json'], 'sort_by_station');
-    do_page_buttons($json, false);
-    $count = 0;
-    foreach ($json['json'] as $station) {
-        $streams = check_streams($station['streams']);
+    
+    // -- Private Functions -- //
+
+    private function doStation($station, $count) {
+        $streams = $this->check_streams($station['streams']);
         if (count($streams) > 0) {
             debuglog("Station ".$station['name'].' '.count($station['streams']).' streams',"RADIO");
             $image = null;
+            $streamimage = '';
             if ($station['image']['url']) {
-                $image = 'getRemoteImage.php?url='.$station['image']['url'];
+                $streamimage = 'getRemoteImage.php?url='.$station['image']['url'];
+                $image = $streamimage.'&rompr_backup_type=stream';
             } else if ($station['image']['thumb']['url']) {
-                $image = 'getRemoteImage.php?url='.$station['image']['thumb']['url'];
+                $streamimage = 'getRemoteImage.php?url='.$station['image']['thumb']['url'];
+                $image = $streamimage.'&rompr_backup_type=stream';
             } else {
                 $image = "newimages/broadcast.svg";
             }
-            $k = check_for_playlist($streams);
+            $k = $this->check_for_playlist($streams);
 
             print albumHeader(array(
                 'id' => 'radio_'.$count,
@@ -110,13 +142,13 @@ if (array_key_exists('populate', $_REQUEST)) {
                 'Searched' => 1,
                 'AlbumUri' => null,
                 'Year' => null,
-                'Artistname' => get_categories($station),
+                'Artistname' => $this->get_categories($station),
                 'Albumname' => $station['name'],
                 'why' => 'whynot',
                 'ImgKey' => 'none',
                 'streamuri' => $k,
                 'streamname' => $station['name'],
-                'streamimg' => $image,
+                'streamimg' => $streamimage,
                 'class' => 'radiochannel',
                 'expand' => true
             ));
@@ -130,10 +162,10 @@ if (array_key_exists('populate', $_REQUEST)) {
 
             foreach ($streams as $s) {
                 debuglog("Content type ".$s['content_type']." and uri ".$s['stream'],"DIRBLE");
-                print '<div class="clickable clickstream draggable indent containerbox padright menuitem" name="'.trim($s['stream']).'" streamname="'.trim($station['name']).'" streamimg="'.$image.'">';
-                print '<i class="'.audioClass($s['content_type']).' playlisticon fixed"></i>';
+                print '<div class="clickable clickstream draggable indent containerbox padright menuitem" name="'.trim($s['stream']).'" streamname="'.trim($station['name']).'" streamimg="'.$streamimage.'">';
+                print '<i class="'.audioClass($s['content_type']).' smallicon fixed"></i>';
                 print '<div class="expand">';
-                print get_speed($s['bitrate']);
+                print $this->get_speed($s['bitrate']);
                 print '</div>';
                 print '</div>';
             }
@@ -143,7 +175,7 @@ if (array_key_exists('populate', $_REQUEST)) {
             if (array_key_exists('website', $station) && $station['website'] != '') {
                 print '<a href="'.$station['website'].'" target="_blank">';
                 print '<div class="containerbox indent padright menuitem">';
-                print '<i class="icon-www playlisticon fixed"></i>';
+                print '<i class="icon-www smallicon fixed"></i>';
                 print '<div class="expand">'.get_int_text('label_station_website').'</div>';
                 print '</div>';
                 print '</a>';
@@ -151,7 +183,7 @@ if (array_key_exists('populate', $_REQUEST)) {
             if (array_key_exists('facebook', $station) && $station['facebook'] != '') {
                 print '<a href="'.$station['facebook'].'" target="_blank">';
                 print '<div class="containerbox indent padright menuitem">';
-                print '<i class="icon-facebook-logo playlisticon fixed"></i><div class="expand">Facebook</div>';
+                print '<i class="icon-facebook-logo smallicon fixed"></i><div class="expand">Facebook</div>';
                 print '</div>';
                 print '</a>';
             }
@@ -166,164 +198,165 @@ if (array_key_exists('populate', $_REQUEST)) {
                 }
                 print '<a href="'.$t.'" target="_blank">';
                 print '<div class="containerbox indent padright menuitem">';
-                print '<i class="icon-twitter-logo playlisticon fixed"></i><div class="expand">Twitter</div>';
+                print '<i class="icon-twitter-logo smallicon fixed"></i><div class="expand">Twitter</div>';
                 print '</div>';
                 print '</a>';
             }
 
             print '</div>';
         }
-        $count++;
     }
-    do_page_buttons($json, true);
-    print '</div>';
-    // if ($_REQUEST['populate'] == 2) {
-    //     print '</div>';
-    // }
+        
+    private function get_from_dirble($url, $page = 1) {
+        debuglog("Getting ".$url,"DIRBLE");
+        $token = "9dc8c8f09575129e9289717a9b8377658906b460";
+        $per_page = 30;
+        $result = array('url' => $url,
+                        'perpage' => $per_page,
+                        'first' => (($page-1)*$per_page)+1,
+                        'prevpage' => $page-1,
+                        'nextpage' => 0,
+                        'json' => array(),
+                        'spage' => 0,
+                        'total' => 0);
+
+        $d = new url_downloader(array('url' => $url.'?page='.$page.'&per_page='.$per_page.'&token='.$token));
+        if ($d->get_data_to_string()) {
+            $result['json'] = array_merge($result['json'], json_decode($d->get_data(), true));
+            if (($p = $d->get_header('X-Page')) !== false) {
+                debuglog("  Got Page ".$p,"DIRBLE");
+            }
+            if (($p = $d->get_header('X-Total')) !== false) {
+                debuglog("  Total Pages ".$p,"DIRBLE");
+                $result['total'] = $p;
+            }
+            if (($p = $d->get_header('X-Next-Page')) !== false) {
+                debuglog("  Next Page ".$p,"DIRBLE");
+                $result['nextpage'] = $p;
+            }
+            $result['num'] = $result['first'] + count($result['json']) - 1;
+            debuglog('Showing '.$result['first'].' to '.$result['num'].' of '.$result['total'],"DIRBLE");
+        }
+        return $result;
+    }
+
+    private function dirble_search($term, $page, $country) {
+        debuglog("Searching For ".$term." in ".$country,"RADIO");
+        $token = "9dc8c8f09575129e9289717a9b8377658906b460";
+        $per_page = 30;
+        $result = array('url' => '',
+                        'perpage' => $per_page,
+                        'first' => (($page-1)*$per_page)+1,
+                        'prevpage' => $page-1,
+                        'nextpage' => 0,
+                        'json' => array(),
+                        'spage' => $page+1,
+                        'total' => 0,
+                        'term' => $term);
+        $sterms = array('query' => $term, 'page' => $page);
+        if (preg_match('#countries/(.*)#', $country, $matches)) {
+            $sterms['country'] = $matches[1];
+        } else if (preg_match('#category/(.*)#', $country, $matches)) {
+            $sterms['category'] = $matches[1];
+        }
+        $d = new url_downloader(array(
+            'url' => 'http://api.dirble.com/v2/search?token='.$token,
+            'postfields' => $sterms
+        ));
+        if ($d->get_data_to_string()) {
+            $result['json'] = array_merge($result['json'], json_decode($d->get_data(), true));
+            $result['num'] = $result['first'] + count($result['json']) - 1;
+        }
+        return $result;
+    }
+
+    private function do_page_buttons($json, $is_bottom) {
+        if ($json['total'] > 0) {
+            print '<div class="fullwidth"><div class="containerbox padright noselection menuitem">';
+            $class = ($json['prevpage'] == 0) ? ' button-disabled' : ' clickable clickicon clickradioback';
+            print '<i class="fixed icon-left-circled medicon'.$class.'"></i>';
+            print '<div class="expand textcentre">Showing '.$json['first'].' to '.$json['num'].' of '.$json['total'].'</div>';
+            $class = ($json['nextpage'] == 0) ? ' button-disabled' : ' clickable clickicon clickradioforward';
+            print '<i class="fixed icon-right-circled medicon'.$class.'"></i>';
+            print '</div>';
+            print '<input type="hidden" name="url" value="'.$json['url'].'" />';
+            print '<input type="hidden" name="next" value="'.$json['nextpage'].'" />';
+            print '<input type="hidden" name="prev" value="'.$json['prevpage'].'" />';
+            print '</div>';
+        } else if ($is_bottom && $json['spage'] > 0) {
+            print '<div class="fullwidth"><div class="containerbox padright noselection fullwidth menuitem">';
+            print '<div class="expand textcentre clickable clickicon clicksearchmore">Show More Results...</div>';
+            print '</div>';
+            print '<input type="hidden" name="spage" value="'.$json['spage'].'" />';
+            print '<input type="hidden" name="term" value="'.rawurlencode($json['term']).'" />';
+            print '</div>';
+        }
+    }
+
+    private function check_streams($streams) {
+        $ss = array();
+        foreach ($streams as $s) {
+            if (!preg_match('/\.ram$/', $s['stream']) && !preg_match('/\.qtl$/', $s['stream']) && audioClass($s['content_type']) != 'notastream') {
+                $ss[] = $s;
+            }
+        }
+        return $ss;
+    }
+    
+    private function check_for_playlist($streams) {
+        foreach ($streams as $s) {
+            if (audioClass($s['content_type']) == 'icon-doc-text') {
+                debuglog("   Using Playlist ".$s['stream'],"DIRBLE");
+                return $s['stream'];
+            }
+        }
+        return $streams[0]['stream'];
+    }
+    
+    private function get_categories($station) {
+        $cat = array();
+        foreach ($station['categories'] as $c) {
+            $cat[] = $c['title'];
+        }
+        return implode(', ',$cat);
+    }
+
+    private function get_speed($b) {
+        if ($b > 0) {
+            return $b." Kbps";
+        } else {
+            return "Unknown Kbps";
+        }
+    }
+
+}
+
+if (array_key_exists('populate', $_REQUEST)) {
+
+    chdir('..');
+
+    include("includes/vars.php");
+    include("includes/functions.php");
+    include("international.php");
+    include("skins/".$skin."/ui_elements.php");
+    
+    $dirble = new dirbleplugin();
+    $dirble->parseParams();
+    if ($_REQUEST['populate'] != 3) {
+        $dirble->doDropdownHeader();
+    }
+    $dirble->doStations();
+
 } else {
 
-    print '<div id="nationalradio">';
-    print albumHeader(array(
-        'id' => 'bbclist',
-        'Image' => 'newimages/dirble-logo.svg',
-        'Searched' => 1,
-        'AlbumUri' => null,
-        'Year' => null,
-        'Artistname' => '',
-        'Albumname' => get_int_text('label_streamradio'),
-        'why' => null,
-        'ImgKey' => 'none',
-        'class' => 'radio',
-        'expand' => true
-    ));
-    print '<div id="bbclist" class="dropmenu notfilled"><div class="textcentre">Loading...</div></div>';
-    print '</div>';
+    $dirble = new dirbleplugin();
+    $dirble->doHeader();
 
 }
 
-function check_streams($streams) {
-    $ss = array();
-    foreach ($streams as $s) {
-        if (!preg_match('/\.ram$/', $s['stream']) && !preg_match('/\.qtl$/', $s['stream']) && audioClass($s['content_type']) != 'notastream') {
-            $ss[] = $s;
-        }
-    }
-    return $ss;
-}
-
-function check_for_playlist($streams) {
-    foreach ($streams as $s) {
-        if (audioClass($s['content_type']) == 'icon-doc-text') {
-            debuglog("   Using Playlist ".$s['stream'],"DIRBLE");
-            return $s['stream'];
-        }
-    }
-    return $streams[0]['stream'];
-}
-
-function get_from_dirble($url, $page = 1) {
-    debuglog("Getting ".$url,"DIRBLE");
-    $token = "9dc8c8f09575129e9289717a9b8377658906b460";
-    $per_page = 30;
-    $result = array('url' => $url,
-                    'perpage' => $per_page,
-                    'first' => (($page-1)*$per_page)+1,
-                    'prevpage' => $page-1,
-                    'nextpage' => 0,
-                    'json' => array(),
-                    'spage' => 0,
-                    'total' => 0);
-    $content = url_get_contents($url.'?page='.$page.'&per_page='.$per_page.'&token='.$token, ROMPR_IDSTRING, true);
-    debuglog("  Status Code was ".$content['status'],"DIRBLE");
-    if ($content['status'] == '200') {
-        $result['json'] = array_merge($result['json'], json_decode($content['contents'], true));
-        if (array_key_exists('X-Page', $content['headers'])) {
-            debuglog("  Got Page ".$content['headers']['X-Page'],"DIRBLE");
-        }
-        if (array_key_exists('X-Total', $content['headers'])) {
-            debuglog("  Total ".$content['headers']['X-Total'],"DIRBLE");
-            $result['total'] = $content['headers']['X-Total'];
-        }
-        if (array_key_exists('X-Next-Page', $content['headers'])) {
-            debuglog("  Next Page : ".$content['headers']['X-Next-Page'],"DIRBLE");
-            $result['nextpage'] = $content['headers']['X-Next-Page'];
-        }
-        $result['num'] = $result['first'] + count($result['json']) - 1;
-        debuglog('Showing '.$result['first'].' to '.$result['num'].' of '.$result['total'],"DIRBLE");
-        debuglog('Next Page : '.$result['nextpage'],"DIRBLE");
-        debuglog('Prev Page : '.$result['prevpage'],"DIRBLE");
-    }
-    return $result;
-}
-
-function dirble_search($term, $page, $country) {
-    debuglog("Searching For ".$term." in ".$country,"RADIO");
-    $token = "9dc8c8f09575129e9289717a9b8377658906b460";
-    $per_page = 30;
-    $result = array('url' => '',
-                    'perpage' => $per_page,
-                    'first' => (($page-1)*$per_page)+1,
-                    'prevpage' => $page-1,
-                    'nextpage' => 0,
-                    'json' => array(),
-                    'spage' => $page+1,
-                    'total' => 0,
-                    'term' => $term);
-    $sterms = array('query' => $term, 'page' => $page);
-    if (preg_match('#countries/(.*)#', $country, $matches)) {
-        $sterms['country'] = $matches[1];
-    } else if (preg_match('#category/(.*)#', $country, $matches)) {
-        $sterms['category'] = $matches[1];
-    }
-    $content = url_get_contents('http://api.dirble.com/v2/search?token='.$token, ROMPR_IDSTRING, false, true, false, null, null, $sterms);
-    if ($content['status'] == '200') {
-        $result['json'] = array_merge($result['json'], json_decode($content['contents'], true));
-        $result['num'] = $result['first'] + count($result['json']) - 1;
-    }
-    return $result;
-}
-
-function get_categories($station) {
-    $cat = array();
-    foreach ($station['categories'] as $c) {
-        $cat[] = $c['title'];
-    }
-    return implode(', ',$cat);
-}
-
-function get_speed($b) {
-    if ($b > 0) {
-        return $b." Kbps";
-    } else {
-        return "Unknown Kbps";
-    }
-}
-
-function sort_by_station($a, $b) {
+function dirble_sort_by_station($a, $b) {
     return ($a['name'] < $b['name']) ? -1 : 1;
 }
 
-function do_page_buttons($json, $is_bottom) {
-    if ($json['total'] > 0) {
-        print '<div class="fullwidth"><div class="containerbox padright noselection menuitem">';
-        $class = ($json['prevpage'] == 0) ? ' button-disabled' : ' clickable clickicon clickradioback';
-        print '<i class="fixed icon-left-circled medicon'.$class.'"></i>';
-        print '<div class="expand textcentre">Showing '.$json['first'].' to '.$json['num'].' of '.$json['total'].'</div>';
-        $class = ($json['nextpage'] == 0) ? ' button-disabled' : ' clickable clickicon clickradioforward';
-        print '<i class="fixed icon-right-circled medicon'.$class.'"></i>';
-        print '</div>';
-        print '<input type="hidden" name="url" value="'.$json['url'].'" />';
-        print '<input type="hidden" name="next" value="'.$json['nextpage'].'" />';
-        print '<input type="hidden" name="prev" value="'.$json['prevpage'].'" />';
-        print '</div>';
-    } else if ($is_bottom && $json['spage'] > 0) {
-        print '<div class="fullwidth"><div class="containerbox padright noselection fullwidth menuitem">';
-        print '<div class="expand textcentre clickable clickicon clicksearchmore">Show More Results...</div>';
-        print '</div>';
-        print '<input type="hidden" name="spage" value="'.$json['spage'].'" />';
-        print '<input type="hidden" name="term" value="'.rawurlencode($json['term']).'" />';
-        print '</div>';
-    }
-}
 
 ?>

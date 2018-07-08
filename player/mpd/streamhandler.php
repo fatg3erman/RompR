@@ -97,7 +97,7 @@ function check_radio_and_podcasts($filedata) {
             $filedata['AlbumArtist'],
             $obj->Stationindex,
             array_key_exists('Comment', $filedata) ? $filedata['Comment'] : '',
-            get_stream_imgkey($obj->Stationindex)
+            null
         );
     }
 
@@ -106,10 +106,16 @@ function check_radio_and_podcasts($filedata) {
     if ($filedata['Name']) {
         debuglog("  Setting Album from Name ".$filedata['Name'],"STREAMHANDLER");
         $album = $filedata['Name'];
+        if ($filedata['Pos'] !== null) {
+            update_radio_station_name(array('streamid' => null,'uri' => $filedata['file'], 'name' => $album));
+        }
     } else if ($filedata['Name'] == null && $filedata['Title'] != null && $filedata['Artist'] == null && $filedata['Album'] == null) {
         debuglog("  Setting Album from Title ".$filedata['Title'],"STREAMHANDLER");
         $album = $filedata['Title'];
         $filedata['Title'] = null;
+        if ($filedata['Pos'] !== null) {
+            update_radio_station_name(array('streamid' => null,'uri' => $filedata['file'], 'name' => $album));
+        }
     } else {
         debuglog("  No information to set Album field","STREAMHANDLER");
         $album = ROMPR_UNKNOWN_STREAM;
@@ -121,7 +127,7 @@ function check_radio_and_podcasts($filedata) {
         $album,
         getStreamFolder(unwanted_array($url)),
         "stream",
-        ($filedata['X-AlbumImage'] == null) ? 'newimages/broadcast.svg' : $filedata['X-AlbumImage'],
+        ($filedata['X-AlbumImage'] == null) ? '' : $filedata['X-AlbumImage'],
         getDummyStation(unwanted_array($url)),
         null,
         $filedata['AlbumArtist'],

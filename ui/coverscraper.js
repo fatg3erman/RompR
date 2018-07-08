@@ -5,7 +5,6 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
     var formObjects = [];
     var numAlbums = 0;
     var albums_without_cover = 0;
-    var imgobj = null;
     var infotext = $('#infotext');
     var statusobj = $('#status');
     var imgparams = null;
@@ -18,13 +17,15 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 
     // Pass the img name to this function
     this.GetNewAlbumArt = function(params) {
-        debug.log("COVERSCRAPER","getNewAlbumArt",params);
-        if (enabled && params.imgkey !== undefined) {
+        if (enabled) {
             formObjects.push(params);
             numAlbums = (formObjects.length)-1;
             if (timer_running == false) {
                 doNextImage(1);
             }
+        } else {
+            imgparams = self.getImageSearchParams(params);
+            setDefaultImage(imgparams);
         }
     }
 
@@ -51,13 +52,29 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
             infotext.html(albums_without_cover+" "+language.gettext("albumart_nocovercount"));
         }
     }
-
+    
     this.toggleScrolling = function(s) {
         scrolling = s;
     }
 
     this.toggleLocal = function(s) {
         ignorelocal = s;
+    }
+
+    this.getImageSearchParams =  function(imgobj) {
+        if (imgobj.hasOwnProperty('cb')) {
+            // pre-populated data from the playlist
+            return imgobj;
+        } else {
+            var key = imgobj.attr('name');
+            var artist =  imgobj.parent().find('input[name="artist"]').val();
+            var album =  imgobj.parent().find('input[name="album"]').val();
+            if (artist) {
+                return {key: '', artist: decodeURIComponent(artist), album: decodeURIComponent(album), imgkey: imgobj.attr('name')};
+            } else {
+                return {key: key, artist: '', album: '', imgkey: imgobj.attr('name')};
+            }
+        }
     }
 
     // Is there something else I could be doing?
@@ -79,28 +96,17 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 
     function processForm() {
 
-        if (formObjects.length > 0) {
-            imgparams = formObjects.shift();
-            if (imgparams.imgkey === null || $('[name="'+imgparams.imgkey+'"]').length == 0) {
-                doNextImage(1);
-                return 0;
-            }
-        } else {
+        if (formObjects.length == 0) {
             return 0;
         }
 
+        image = formObjects.shift();
+        imgparams = self.getImageSearchParams(image);
+        imgparams.ignorelocal = ignorelocal;
         debug.log("COVERSCRAPER","Getting Cover for", imgparams.imgkey);
-        var stream = "";
-        $.each($('[name="'+imgparams.imgkey+'"]'), function() {
-            if (stream == "") {
-                stream = $(this).attr('romprstream') || "";
-            }
-        });
-        imgparams.stream = stream;
-        debug.log("COVERSCRAPER","Stream is", stream);
 
         if (sendUpdates) {
-            var x = $('img[name="'+imgparams.imgkey+'"]').prev('input').val();
+            var x = image.prev('input').val();
             statusobj.empty().html(language.gettext("albumart_getting")+" "+decodeURIComponent(x));
             var percent = ((numAlbums - formObjects.length)/numAlbums)*100;
             progress.rangechooser('setProgress', percent.toFixed(2));
@@ -112,77 +118,48 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
         animateWaiting();
 
         // Munge params here as we can't pass the 'callback' (cb) parameter to $.post
-        $.post("getalbumcover.php",
-            {imgkey : imgparams.imgkey,
-                artist: imgparams.artist,
-                album: imgparams.album,
-                mbid: imgparams.mbid,
-                dir: imgparams.dir,
-                albumuri: imgparams.albumuri,
-                stream: imgparams.stream,
-                ignorelocal: ignorelocal}
-        )
+        var postparams = cloneObject(imgparams);
+        delete postparams.cb;
+        $.post("getalbumcover.php", postparams)
         .done( gotImage )
         .fail( revertCover );
 
     }
 
     function animateWaiting() {
-        $('img.notexist[name="'+imgparams.imgkey+'"]').removeClass('nospin').addClass('spinner');
+        $('img.notexist[name="'+imgparams.imgkey+'"]').removeClass('nospin').addClass('spinner').removeAttr('src');
     }
 
     function stopAnimation() {
-        $('img[name="'+imgparams.imgkey+'"]').removeClass('spinner').addClass('nospin');
+        $('img[name="'+imgparams.imgkey+'"]').removeClass('spinner').addClass('nospin').removeAttr('src');
     }
 
     // Hello
 
-    this.archiveImage = function(imgkey, url) {
-        $.post("getalbumcover.php", {key: imgkey, src: url})
-        .done( )
-        .fail( );
-    }
-
     function gotImage(data) {
-        debug.log("COVERSCRAPER","Retrieved Image", data);
-        finaliseImage(data);
-   }
-
-   function finaliseImage(data) {
-        debug.log("COVERSCRAPER","Source is",data.url);
-        if (data.url == "" || data.url === null) {
-            revertCover(data.delaytime);
-        } else {
-            angle = 0;
-            stopAnimation();
-            $.each($('img[name="'+imgparams.imgkey+'"]'), function() {
-                // Use large images for playlist and nowplaying
-                if ($(this).hasClass("clickrollup") || $(this).attr("id") == "albumpicture") {
-                    $(this).attr("src", data.origimage);
-                } else if ($(this).hasClass('jalopy')) {
-                    $(this).attr("src", data.origimage.replace(/albumart\/asdownloaded/, 'albumart/medium'));
-                } else {
-                    $(this).attr("src", data.url);
-                }
-                $(this).removeClass("notexist");
-                $(this).removeClass("notfound");
-            });
+        debug.log("COVERSCRAPER","Result Is", data);
+        stopAnimation();
+        if (data.small) {
             self.updateInfo(1);
             if (useLocalStorage) {
                 sendLocalStorageEvent(imgparams.imgkey, data);
             }
-            if (typeof (imgparams.cb) == 'function') {
-                debug.log("COVERSCRAPER","calling back for",imgparams.imgkey,data);
-                imgparams.cb(data);
-            }
-            for (var j in formObjects) {
-                if (formObjects[j].imgkey == imgparams.imgkey && typeof (formObjects[j].cb) == 'function') {
-                    debug.log("COVERSCRAPER","Also calling back for",formObjects[j].imgkey);
-                    formObjects[j].cb(data);
-                    formObjects[j].imgkey = null;
-                }
-            }
+            finaliseImage(data);
             doNextImage(data.delaytime);
+        } else {
+            if (setDefaultImage(imgparams)) {
+                doNextImage(data.delaytime);
+            } else {
+                revertCover(data.delaytime);
+            }
+        }
+   }
+
+   function finaliseImage(data) {
+        update_ui_images(imgparams.imgkey, data);
+        if (typeof (imgparams.cb) == 'function') {
+            debug.log("COVERSCRAPER","calling back for",imgparams.imgkey,data);
+            imgparams.cb(data);
         }
     }
 
@@ -190,17 +167,53 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
         if (!delaytime) {
             delaytime = 800;
         }
-        stopAnimation();
         debug.log("COVERSCRAPER","No Cover Found. Reverting to the blank icon");
-        $.each($('img.notexist[name="'+imgparams.imgkey+'"]'), function() {
-            // Remove this class to prevent it being searched again
-            $(this).removeClass("notexist");
-            $(this).removeClass("notfound").addClass("notfound");
-        });
+        update_failed_ui_images(imgparams.imagekey);
         if (useLocalStorage) {
             sendLocalStorageEvent("!"+imgparams.imgkey);
         }
         doNextImage(delaytime);
+    }
+    
+    function setDefaultImage(imgparams) {
+        if (sendUpdates) {
+            // Dont' do this if we're using the album art manager
+            return false;
+        }
+        var def = null;
+        if (imgparams.type) {
+            switch (imgparams.type) {
+                case 'stream':
+                    def = 'newimages/broadcast.svg';
+                    break;
+                    
+                case 'podcast':
+                    def = 'newimages/podcast-logo.svg';
+                    break;
+            }
+        } else {
+            switch (imgparams.artist) {
+                case 'STREAM':
+                    def = 'newimages/broadcast.svg';
+                    break;
+                    
+                case 'PODCAST':
+                    def = 'newimages/podcast-logo.svg';
+                    break;
+            }
+        }
+        if (def) {
+            debug.log("COVERSCRAPER", "Returning default image of",def);
+            var images = {
+                small: def,
+                medium: def,
+                asdownloaded: def
+            }
+            finaliseImage(images);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     this.clearCallbacks = function() {
@@ -212,11 +225,8 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 }
 
 function sendLocalStorageEvent(key, data) {
-    var firefoxcrapnesshack = Math.floor(Date.now());
-    if (data && data.url) {
-        localStorage.setItem("albumimg_"+key, data.url+'?version='+firefoxcrapnesshack.toString());
-    } else if (data && data.origimage) {
-        localStorage.setItem("albumimg_"+key, data.origimage+'?version='+firefoxcrapnesshack.toString());
+    if (data && data.small) {
+        localStorage.setItem("albumimg_"+key, JSON.stringify(data));
     }
     debug.log("COVERSCRAPER","Sending local storage event",key);
     // Event only fires when the key value actually CHANGES

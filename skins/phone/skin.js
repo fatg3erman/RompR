@@ -17,6 +17,7 @@ jQuery.fn.menuReveal = function(callback) {
 }
 
 jQuery.fn.menuHide = function(callback) {
+    var self = this;
     if (this.hasClass('toggledown')) {
         if (callback) {
             this.slideToggle('fast',callback);
@@ -24,12 +25,15 @@ jQuery.fn.menuHide = function(callback) {
             this.slideToggle('fast');
         }
     } else {
-        if (callback) {
-            this.hide(0, callback);
-        } else {
-            this.hide();
-        }
-        this.findParentScroller().restoreScrollPos();
+        this.hide(0, function() {
+            if (callback) {
+                callback();
+            }
+            self.findParentScroller().restoreScrollPos();
+            if (self.hasClass('removeable')) {
+                self.remove();
+            }
+        });
     }
     return this;
 }
@@ -176,6 +180,152 @@ jQuery.fn.fanoogleMenus = function() {
     return this;
 }
 
+/* Touchwipe for playlist only, based on the more general jquery touchwipe */
+/*! jquery.touchwipe - v1.3.0 - 2015-01-08
+* Copyright (c) 2015 Josh Stafford; Licensed MIT */
+
+/* This version ignores all vertical swipes but adds a long press function
+   and uses the touchend event instead of a timer to make the action happen */
+
+jQuery.fn.playlistTouchWipe = function(settings) {
+        
+    var config = {
+        min_move_x: 20,
+        min_move_y: 20,
+        swipeSpeed: 300,
+        swipeDistance: 120,
+        longPressTime: 1000,
+        preventDefaultEvents: false, // prevent default on swipe
+        preventDefaultEventsX: true, // prevent default is touchwipe is triggered on horizontal movement
+        preventDefaultEventsY: true // prevent default is touchwipe is triggered on vertical movement
+    };
+
+    if (settings) {
+        $.extend(config, settings);
+    }
+
+    this.each(function() {
+        var startX;
+        var startY;
+        var isMoving = false;
+        var touchesX = [];
+        var touchesY = [];
+        var self = this;
+        var starttime = 0;
+        var longpresstimer = null;
+        var pressing = false;
+  
+        function cancelTouch() {
+            clearTimeout(longpresstimer);
+            this.removeEventListener('touchmove', onTouchMove);
+            this.removeEventListener('touchend', onTouchEnd);
+            startX = null;
+            startY = null;
+            isMoving = false;
+            pressing = false;
+        }
+
+        function onTouchEnd(e) {
+            var time = Date.now();
+            clearTimeout(longpresstimer);
+            if (pressing) {
+                e.stopImmediatePropagation();
+                e.stopPropagation();
+                e.preventDefault();
+                pressing = false;
+                setTimeout(bindPlaylistClicks, 500);
+            } else if (isMoving) {
+                var dx = touchesX.pop();
+                touchesX.push(dx);
+                if (time - starttime < config.swipeSpeed && dx > config.swipeDistance) {
+                    touchesX.push($(self).outerWidth(true));
+                    if ($(self).hasClass('item')) {
+                        $(self).next().animate({left: 0 - $(self).outerWidth(true)}, 'fast', 'swing');
+                    }
+                    $(self).animate({left: 0 - $(self).outerWidth(true)}, 'fast', 'swing', doAction);
+                } else {
+                    doAction();
+                }
+            }
+        }
+        
+        function doAction() {
+            var dxFinal, dyFinal;
+            cancelTouch();
+            dxFinal = touchesX.pop();
+            touchesX = [];
+            if (dxFinal > ($(self).outerWidth(true)*0.75)) {
+                if ($(self).hasClass('track')) {
+                    playlist.delete($(self).attr('romprid'));
+                } else if ($(self).hasClass('item')) {
+                    playlist.deleteGroup($(self).attr('name'));
+                }
+            } else {
+                $(self).animate({left: 0}, 'fast', 'swing');
+                if ($(self).hasClass('item')) {
+                    $(self).next().animate({left: 0}, 'fast', 'swing');
+                }
+            }
+        }
+
+        function onTouchMove(e) {
+            clearTimeout(longpresstimer);
+            if(config.preventDefaultEvents) {
+                e.preventDefault();
+            }
+
+            if (isMoving) {
+                var x = e.touches[0].pageX;
+                var y = e.touches[0].pageY;
+                var dx = startX - x;
+                var dy = startY - y;
+                                
+                if (Math.abs(dx) >= config.min_move_x) {
+                    if (config.preventDefaultEventsX) {
+                        e.preventDefault();
+                    }
+                    var newpos = 0 - dx;
+                    if (newpos < 0) {
+                        $(self).css('left', newpos.toString()+'px');
+                        if ($(self).hasClass('item')) {
+                            $(self).next().css('left', newpos.toString()+'px');
+                        }
+                        touchesX.push(dx);
+                    }
+                }
+            }
+        }
+        
+        function longPress() {
+            debug.log("TOUCHWIPE","Long Press");
+            pressing = true;
+            // Unbind click handler from playlist, otherwise the touchend
+            // event makes it start playing the clicked track.
+            // Don't seem to be able to prevent the event propagating.
+            $(self).addBunnyEars();
+            unbindPlaylistClicks();
+        }
+
+        function onTouchStart(e) {
+            starttime = Date.now();
+            if (e.touches.length === 1) {
+                startX = e.touches[0].pageX;
+                startY = e.touches[0].pageY;
+                isMoving = true;
+                this.addEventListener('touchmove', onTouchMove, false);
+                this.addEventListener('touchend', onTouchEnd, false);
+                longpresstimer = setTimeout(longPress, config.longPressTime);
+            }
+        }
+
+        this.addEventListener('touchstart', onTouchStart, false);
+
+    });
+
+    return this;
+};
+
+
 function showHistory() {
     if ($('#historypanel').find('.configtitle').length > 0) {
         $('#historypanel').slideToggle('fast');
@@ -191,7 +341,15 @@ var layoutProcessor = function() {
             return true;
         }
     }
-
+    
+    function doSwipeCss() {
+        if (prefs.playlistswipe) {
+            $('<style id="playlist_swipe">#sortable .playlisticonr.icon-cancel-circled { display: none }</style>').appendTo('head');
+        } else {
+            $('style[id="playlist_swipe"]').remove();
+        }
+    }
+    
     return {
 
         supportsDragDrop: false,
@@ -199,6 +357,7 @@ var layoutProcessor = function() {
         usesKeyboard: false,
         sortFaveRadios: false,
         openOnImage: true,
+        swipewason: prefs.playlistswipe,
 
         changeCollectionSortMode: function() {
             collectionHelper.forceCollectionReload();
@@ -246,10 +405,6 @@ var layoutProcessor = function() {
             }
         },
 
-        maxPopupSize: function(winsize) {
-            return {width: winsize.x - 16, height: winsize.y - 16};
-        },
-
         hidePanel: function(panel, is_hidden, new_state) { },
 
         setTagAdderPosition: function(position) {
@@ -278,8 +433,9 @@ var layoutProcessor = function() {
         },
 
         scrollPlaylistToCurrentTrack: function() {
-            if (prefs.scrolltocurrent && $('playlistcurrentitem').length > 0) {
-                $('#pscroller').scrollTo('.playlistcurrentitem',800,{offset: {top: -32}, easing: 'swing'});
+            if (prefs.scrolltocurrent && $('.playlistcurrentitem').length > 0) {
+                var offset = 0 - ($('#pscroller').outerHeight(true) / 2);
+                $('#pscroller').scrollTo($('.playlistcurrentitem'), 800, {offset: {top: offset}, easing: 'swing'});
             }
         },
 
@@ -364,10 +520,6 @@ var layoutProcessor = function() {
             $("#plmode").html(html);
         },
         
-        setTopIconSize: function(panels) {
-
-        },
-        
         makeCollectionDropMenu: function(element, name) {
             var x = $('#'+name);
             // If the dropdown doesn't exist then create it
@@ -379,7 +531,11 @@ var layoutProcessor = function() {
                 } else {
                     var c = 'dropmenu notfilled';
                 }
-                var t = $('<div>', {id: name, class: c}).insertAfter(element);
+                var ec = '';
+                if (/aalbum/.test(name) || /aartist/.test(name)) {
+                    ec = ' removeable';
+                }
+                var t = $('<div>', {id: name, class: c+ec}).insertAfter(element);
             }
         },
         
@@ -398,7 +554,11 @@ var layoutProcessor = function() {
             }
             $(".dropdown").floatingMenu({ });
             $('.topbarmenu').bind('click', function() {
+                $('.autohide:visible').not('#'+$(this).attr('name')).slideToggle('fast');
                 $('#'+$(this).attr('name')).slideToggle('fast');
+            });
+            $('.autohide').bind('click', function() {
+                $(this).slideToggle('fast');
             });
             setControlClicks();
             $('.choose_nowplaying').click(function(){layoutProcessor.sourceControl('infobar')});
@@ -425,6 +585,7 @@ var layoutProcessor = function() {
                 whiledragging: infobar.volumemoved,
                 orientation: "horizontal"
             });
+            doSwipeCss();
         },
 
         findAlbumDisplayer: function(key) {
@@ -478,76 +639,42 @@ var layoutProcessor = function() {
             if (prefs.sortcollectionby != 'artist') {
                 jq.find('.menu.backmenu').attr('name', name);
             }
+        },
+        
+        getElementPlaylistOffset: function(element) {
+            var top = element.position().top;
+            if (element.parent().hasClass('trackgroup')) {
+                top += element.parent().position().top;
+            }
+            return top;
+        },
+        
+        postPlaylistLoad: function() {
+            if (prefs.playlistswipe) {
+                $('#sortable .track').playlistTouchWipe({});
+                $('#sortable .item').playlistTouchWipe({});
+            } else {
+                $('#pscroller').find('.icon-cancel-circled').each(function() {
+                    var d = $('<i>', {class: 'icon-updown playlisticonr fixed clickable clickicon rearrange_playlist'}).insertBefore($(this));
+                });
+            }
+        },
+        
+        postPodcastSubscribe: function(data, index) {
+            $('.menuitem[name="podcast_'+index+'"]').fadeOut('fast', function() {
+                $('.menuitem[name="podcast_'+index+'"]').remove();
+                $('#podcast_'+index).remove();
+                $("#fruitbat").html(data);
+                $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+                infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
+                podcasts.doNewCount();
+                layoutProcessor.postAlbumActions();
+            });
         }
         
     }
 
 }();
-
-function popup(opts) {
-
-    var self = this;
-    var returnTo;
-    var contents;
-
-    var options = {
-        width: 100,
-        height: 100,
-        title: "Popup",
-        helplink: null,
-        xpos: null,
-        ypos : null,
-        id: null,
-        toggleable: false,
-        hasclosebutton: true
-    }
-
-    for (var i in opts) {
-        options[i] = opts[i];
-    }
-
-    this.create = function() {
-        $('#popupwindow').empty();
-        var titlebar = $('<div>', { class: "cheese" }).appendTo($("#popupwindow"));
-        var tit = $('<div>', { class: "configtitle textcentre"}).appendTo(titlebar)
-        tit.html('<b>'+options.title+'</b>');
-        if (options.hasclosebutton) {
-            tit.append('<i class="icon-cancel-circled playlisticonr clickicon tright"></i></div>');
-        }
-        if (options.helplink !== null) {
-            tit.append('<a href="'+options.helplink+'" target="_blank"><i class="icon-info-circled playlisticonr clickicon tright"></i></a>');
-        }
-        titlebar.find('.icon-cancel-circled').click( function() {self.close(false)});
-        contents = $('<div>',{class: 'popupcontents'}).appendTo($("#popupwindow"));
-        return contents;
-    }
-
-    this.open = function() {
-        $('#popupwindow').slideDown('fast');
-    }
-
-    this.close = function(callback) {
-        if (callback) {
-            callback();
-        }
-        $('#popupwindow').slideUp('fast');
-    }
-
-    this.addCloseButton = function(text, func) {
-        var button = $('<button>',{class: 'tright'}).appendTo(contents);
-        button.html(text);
-        button.click(function() { self.close(func) });
-    }
-
-    this.useAsCloseButton = function(elem, func) {
-        elem.click(function() { self.close(func) });
-    }
-
-    this.setContentsSize = function() {
-
-    }
-
-}
 
 // Dummy functions standing in for widgets we don't use in this version -
 // custom scroll bars, tipTip, and drag/drop stuff

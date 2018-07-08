@@ -196,20 +196,19 @@ class album {
 	}
 
     public function getKey() {
-        if ($this->key == null) {
-            $this->key = make_image_key($this->artist, $this->name);
-        }
         return $this->key;
     }
-
+	
     public function getImage($size) {
-        $image = "";
-        $artname = $this->getKey();
-        if ($this->image && $this->image !== "") {
-            $image = $this->image;
-        }
-        $image = cacheOrDefaultImage($image, $artname, $size, $this->domain);
-        return $image;
+		$albumimage = new baseAlbumImage(array(
+			'baseimage' => ($this->image) ? $this->image : '',
+			'artist' => artist_for_image($this->tracks[0]->tags['type'], $this->artist),
+			'album' => $this->name
+		));
+		$albumimage->check_image($this->domain, $this->tracks[0]->tags['type']);
+		$images = $albumimage->get_images();
+		$this->key = $albumimage->get_image_key();
+        return $images[$size];
     }
 
     public function trackCount() {
@@ -423,21 +422,6 @@ function format_sortartist($tags, $return_albumartist = false) {
     return $sortartist;
 }
 
-function cacheOrDefaultImage($image, $artname, $size, $domain) {
-
-	if ($image == '' && file_exists("newimages/".$domain."-logo.svg")) {
-		$image = "newimages/".$domain."-logo.svg";
-	}
-
-    if (file_exists("albumart/".$size."/".$artname.".jpg")) {
-        // If there's a local image this overrides everything else because it might
-        // be something the user has downloaded
-        $image = "albumart/".$size."/".$artname.".jpg";
-    }
-
-    return $image;
-}
-
 function munge_youtube_track_into_artist($t) {
     // Risky, but mopidy-youtube doesn't return artists (for obvious reasons)
     if (preg_match('/^(.*?)\s*[-|\|+]\s*/', $t, $matches)) {
@@ -638,6 +622,7 @@ function process_file($filedata) {
                 substr($filedata['Artist'][0],0,7) == "podcast")) {
                 $filedata['Artist'] = $filedata['AlbumArtist'];
             }
+			$filedata['type'] = 'podcast';
             break;
 
         default:
@@ -652,24 +637,14 @@ function process_file($filedata) {
 		// If we're doing a search, we check to see if that track is in the database
 		// because the user might have set the AlbumArtist to something different
         $tstart = microtime(true);
-        $extra = get_extra_track_info($filedata);
-        if (count($extra) > 0) {
-            debuglog("Search - Found TTindex ".$extra['TTindex']." already in database","COLLECTION");
-            $filedata['AlbumArtist'] = $extra['AlbumArtist'];
-            $filedata['Disc'] = $extra['Disc'];
-        }
+		$filedata = array_replace($filedata, get_extra_track_info($filedata));
         $db_time += microtime(true) - $tstart;
     }
 
     if ($filedata['Pos'] !== null) {
         // Playlist track. Swerve the collectioniser and use the database
         $tstart = microtime(true);
-        $extrainfo = get_extra_track_info($filedata);
-        foreach ($extrainfo as $i => $v) {
-            if ($v !== null && $v != "") {
-                $filedata[$i] = $v;
-            }
-        }
+		$filedata = array_replace($filedata, get_extra_track_info($filedata));
         $db_time += microtime(true) - $tstart;
         $cstart = microtime(true);
         doNewPlaylistFile($filedata);

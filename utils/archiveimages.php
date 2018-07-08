@@ -40,8 +40,12 @@ foreach ($r as $obj) {
 			$albumpath = munge_filepath($retval);
 			if (is_dir($albumpath)) {
 				$img = 'albumart/asdownloaded/'.basename($obj->Image);
-				print "Archiving Image ".$img.' to '.$albumpath."\n";
-				system('cp -f "'.$img.'" "'.$albumpath.'/'.basename($obj->Image).'"');
+				$out = $albumpath.'/'.basename($obj->Image);
+				print "Archiving Image ".$img.' to '.$out."\n";
+				if (file_exists($out)) {
+					unlink($out);
+				}
+				copy($img, $out);
 			}
 		}
 	}

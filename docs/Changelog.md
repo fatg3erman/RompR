@@ -3,6 +3,29 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.19
+
+* Fixed bug where plugins menu didn't wokr in Tablet skin
+* Added two new icon themes
+* Some code refactoring and minor UI bugfixing
+* Added swipe and long press options to phone skin to allow tracks to be removed from and re-ordered within the Current Playlist
+* Added a new button to allow the Current Playlist to be re-ordered on the Tablet Skin
+* Moved Google API Credentials fields to the setup screen - they're messy, technical, and don't really want to be exposed to all and sundry.
+* Added Debug Information plugin to help with assisting in bug reports.
+* Added play controls to top bar on wide screens (>799px) on Phone and Tablet skins
+* Fix bug where Playcounts could be lost if the browser was refreshed while a track was playing
+* Added default options for new Podcasts
+* Added option to mark 'New' podcast episodes as 'Unlistened' before refresh. This used to be the default behaviour. The default is now that episodes will remain as 'New' until a new one is published. Rompr therefore accurately reflects the state of the podcast's feed.
+* Improved podcast refresh intervals. 'Weekly' and 'Monthly' now actually mean what they say (same time and day of the week) and will attempt to set their refresh time based on the peridocity of the episodes in the podcast, to try to ensure the refresh happens automatically when a new episode is published.
+* The Current Playlist and the Subscribed Podcasts display now use thumbnail album covers instead of full resolution ones scaled down. This should save a lot of memory which may help users on mobile devices.
+* All your Album Art needs to be updated in this version. The process will start automatically and may take a long time. There is a progress bar, and you can continue to use Rompr while it happens.
+* Player selection can now be done from the volume control dropdown on Phone and Tablet skins
+* Option to not display album art in the Playlist, which might help memory usage on phones, although the change to use thumbnail images will probably be enough.
+* Added Categories to Podcasts
+* Added a resume feature to Podcasts, so episodes can be stopped part way through and then restarted from that position.
+* Added Podcast Sort Options
+* Added support for PHP-GD to speed up all image handling. RompR will continue to use imagemagick if GD is not available, but you should try to install PHP-GD on your installation (sudo apt-get install php7.0-gd)
+
 ## Version 1.16
 
 * Increase Collection Build timeout and update docs to add bigger timeout values for webservers

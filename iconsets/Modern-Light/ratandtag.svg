@@ -7,10 +7,11 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   version="1.0"
-   width="638.28845"
-   height="237.70274"
-   id="svg2"
+   width="205.66005mm"
+   height="207.89409mm"
+   viewBox="0 0 205.66004 207.89409"
+   version="1.1"
+   id="svg8"
    sodipodi:docname="ratandtag.svg"
    inkscape:version="0.92.2 5c3e80d, 2017-08-06">
   <sodipodi:namedview
@@ -22,89 +23,62 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1811"
-     inkscape:window-height="1085"
-     id="namedview12"
+     inkscape:window-width="1349"
+     inkscape:window-height="899"
+     id="namedview10"
      showgrid="false"
-     inkscape:zoom="1"
-     inkscape:cx="320.21395"
-     inkscape:cy="118.85137"
-     inkscape:window-x="605"
-     inkscape:window-y="159"
+     inkscape:zoom="0.30035326"
+     inkscape:cx="388.64891"
+     inkscape:cy="392.87072"
+     inkscape:window-x="609"
+     inkscape:window-y="137"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg2"
-     inkscape:pagecheckerboard="true" />
+     inkscape:current-layer="svg8" />
   <defs
-     id="defs4">
-    <filter
-       style="color-interpolation-filters:sRGB"
-       x="0"
-       y="0"
-       width="1"
-       height="1"
-       id="filter2986">
-      <feColorMatrix
-         type="saturate"
-         values="1"
-         result="fbSourceGraphic"
-         id="feColorMatrix2988" />
-      <feColorMatrix
-         in="fbSourceGraphic"
-         values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0 "
-         id="feColorMatrix2990" />
-    </filter>
-    <filter
-       id="filter2986-7"
-       color-interpolation-filters="sRGB"
-       inkscape:menu-tooltip="Invert colors"
-       inkscape:menu="Color"
-       height="1"
-       width="1"
-       y="0"
-       x="0"
-       inkscape:label="Invert">
-      <feColorMatrix
-         id="feColorMatrix2988-9"
-         result="fbSourceGraphic"
-         values="1"
-         type="saturate" />
-      <feColorMatrix
-         id="feColorMatrix2990-3"
-         values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0 "
-         in="fbSourceGraphic" />
-    </filter>
-  </defs>
+     id="defs2" />
   <metadata
-     id="metadata7">
+     id="metadata5">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <path
-     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none"
-     stroke-miterlimit="4"
-     d="M 198.11124,233.1627 124.5822,184.83449 50.412563,232.5939 73.653303,147.72899 5.3108819,91.947653 93.203379,87.825916 125.13513,5.5928326 156.21412,87.91158 l 88.07891,4.957816 -68.68397,54.995874 z"
-     id="path3817" />
-  <text
-     id="text945"
-     y="220.63741"
-     x="229.37509"
-     style="font-style:normal;font-weight:normal;font-size:56.25134659px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.40628362px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     xml:space="preserve"><tspan
-       style="font-size:270.00646973px;fill:#ffffff;fill-opacity:1;stroke-width:1.40628362px"
-       y="220.63741"
-       x="229.37509"
-       id="tspan943">&amp;</tspan></text>
-  <path
-     style="filter:url(#filter2986-7)"
-     id="path3"
-     d="m 402.93858,85.867998 h -144.281 c -26.453,0 -63.398,15.303002 -82.102,34.007002 L -46.939417,343.37 c -18.704,18.704 -18.704,49.312 0,68.016 L 125.51558,583.839 c 18.704,18.705 49.311,18.705 68.015,0 l 223.495,-223.494 c 18.704,-18.705 34.007,-55.651 34.007,-82.102 V 133.962 c 0,-26.452 -21.643,-48.094002 -48.094,-48.094002 z M 339.03258,245.868 c -26.51,0 -48,-21.49 -48,-48 0,-26.51 21.49,-48 48,-48 26.51,0 48,21.49 48,48 0,26.51 -21.49,48 -48,48 z"
-     inkscape:connector-curvature="0"
-     transform="matrix(0.39398611,0,0,0.3882351,457.28319,-13.873738)" />
-</svg>
+  <style
+     type="text/css"
+     id="style3111">
+	.st0{fill:#ffffff;}
+</style>
+  <style
+     type="text/css"
+     id="style2">
+	.st0{fill:none;}
+	.st1{fill:#F4481E;}
+	.st2{fill:url(#SVGID_1_);}
+	.st3{opacity:0.1;fill:#FFFFFF;enable-background:new    ;}
+	.st4{fill:#FFD119;}
+	.st5{fill:#FF8C00;}
+	.st6{fill:url(#SVGID_2_);}
+	.st7{fill:#FAFAFA;}
+	.st8{opacity:0.3;fill:#FFFFFF;enable-background:new    ;}
+</style>
+  <g
+     id="g819"
+     transform="matrix(1.4002093,0,0,1.4002093,-39.870029,-43.349341)">
+    <path
+       style="fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.29788911;stroke-miterlimit:4;stroke-dasharray:none"
+       stroke-miterlimit="4"
+       d="M 102.89191,108.21399 79.03378,92.532822 54.967789,108.02943 62.508765,80.493116 40.333544,62.393618 68.852224,61.056228 79.213191,34.373872 89.297458,61.084024 117.87663,62.692698 95.590581,80.537335 Z"
+       id="path3817"
+       inkscape:connector-curvature="0" />
+    <path
+       id="path3925"
+       d="m 157.84529,99.361137 h -22.11323 c -4.05432,0 -9.7167,2.345413 -12.58337,5.212093 L 88.89473,138.8272 c -2.866668,2.86666 -2.866668,7.55779 0,10.42447 l 26.43132,26.43101 c 2.86666,2.86682 7.55765,2.86682 10.42432,0 l 34.25398,-34.25381 c 2.86666,-2.86682 5.21208,-8.52936 5.21208,-12.58338 v -22.11322 c 0,-4.05418 -3.31713,-7.371133 -7.37114,-7.371133 z m -9.79455,24.522413 c -4.06306,0 -7.35672,-3.29368 -7.35672,-7.35673 0,-4.06306 3.29366,-7.35672 7.35672,-7.35672 4.06306,0 7.35672,3.29366 7.35672,7.35672 0,4.06305 -3.29366,7.35673 -7.35672,7.35673 z"
+       style="stroke-width:0.15326504;fill:#ffffff;fill-opacity:1"
+       inkscape:connector-curvature="0" />
+  </g>
+<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#ffffff;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#ffffff;fill-opacity:1}</style></svg>

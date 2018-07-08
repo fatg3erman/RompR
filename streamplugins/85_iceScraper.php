@@ -21,8 +21,9 @@ if (array_key_exists('populate', $_REQUEST)) {
 		$getstr = $getstr . "search?search=" . $_REQUEST['searchfor'];
 	}
 	debuglog("Getting ".$getstr,"ICESCRAPER");
-	$content = url_get_contents($getstr);
-	$icecast_shitty_page = preg_replace('/<\?xml.*?\?>/', '', $content['contents']);
+	$d = new url_downloader(array('url' => $getstr));
+	$d->get_data_to_string();
+	$icecast_shitty_page = preg_replace('/<\?xml.*?\?>/', '', $d->get_data());
 	$doc = phpQuery::newDocument($icecast_shitty_page);
 	$list = $doc->find('table.servers-list')->find('tr');
 	$page_title = $doc->find('#content')->children('h2')->text();
@@ -97,7 +98,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 			print '<div class="containerbox rowspacer"></div>';
 			print '<a href="'.$server_web_link.'" target="_blank">';
 			print '<div class="containerbox indent padright menuitem">';
-			print '<i class="icon-www playlisticon fixed"></i>';
+			print '<i class="icon-www collectionicon fixed"></i>';
 			print '<div class="expand">'.get_int_text('label_station_website').'</div>';
 			print '</div>';
 			print '</a>';

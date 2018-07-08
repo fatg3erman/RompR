@@ -161,6 +161,8 @@ function check_sql_tables() {
 		"Version TINYINT(2), ".
 		"Subscribed TINYINT(1) NOT NULL DEFAULT 1, ".
 		"Description TEXT, ".
+		"LastPubDate INT UNSIGNED DEFAULT NULL, ".
+		"Category VARCHAR(255) NOT NULL, ".
 		"PRIMARY KEY (PODindex)) ENGINE=InnoDB", true))
 	{
 		debuglog("  Podcasttable OK","MYSQL_CONNECT");
@@ -186,8 +188,10 @@ function check_sql_tables() {
 		"Listened TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"New TINYINT(1) UNSIGNED DEFAULT 1, ".
 		"Deleted TINYINT(1) UNSIGNED DEFAULT 0, ".
+		"Progress INT UNSIGNED DEFAULT 0, ".
 		"INDEX (PODindex), ".
-		"PRIMARY KEY (PODTrackindex)) ENGINE=InnoDB", true))
+		"PRIMARY KEY (PODTrackindex), ".
+		"INDEX (Title)) ENGINE=InnoDB", true))
 	{
 		debuglog("  PodcastTracktable OK","MYSQL_CONNECT");
 	} else {
@@ -580,6 +584,53 @@ function check_sql_tables() {
 					sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET LocalFilename = ? WHERE PODTrackindex = ?", '/prefs/podcasts/'.$pod['PODindex'].'/'.$pod['PODTrackindex'].'/'.$pod['LocalFilename'], $pod['PODTrackindex']);
 				}
 				generic_sql_query("UPDATE Statstable SET Value = 37 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 37:
+				debuglog("Updating FROM Schema version 37 TO Schema version 38","SQL");
+				generic_sql_query("ALTER TABLE Albumtable MODIFY ImgVersion INT UNSIGNED DEFAULT ".ROMPR_IMAGE_VERSION, true);
+				generic_sql_query("UPDATE Statstable SET Value = 38 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 38:
+				debuglog("Updating FROM Schema version 38 TO Schema version 39","SQL");
+				generic_sql_query("ALTER TABLE Podcasttable ADD LastPubDate INT UNSIGNED DEFAULT NULL", true);
+				generic_sql_query("CREATE INDEX ptt ON PodcastTracktable (Title)", true);
+				require_once('includes/podcastfunctions.php');
+				upgrade_podcasts_to_version();
+				generic_sql_query("UPDATE Statstable SET Value = 39 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 39:
+				debuglog("Updating FROM Schema version 39 TO Schema version 40","SQL");
+				// Takes too long. It'll happen when they get refreshed anyway.
+				// require_once('includes/podcastfunctions.php');
+				// upgrade_podcast_images();
+				generic_sql_query("UPDATE Statstable SET Value = 40 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 40:
+				debuglog("Updating FROM Schema version 40 TO Schema version 41","SQL");
+				generic_sql_query("ALTER TABLE Podcasttable ADD Category VARCHAR(255) NOT NULL", true);
+				generic_sql_query("UPDATE Statstable SET Value = 41 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 41:
+				debuglog("Updating FROM Schema version 41 TO Schema version 42","SQL");
+				generic_sql_query("ALTER TABLE PodcastTracktable ADD Progress INT UNSIGNED DEFAULT 0", true);
+				generic_sql_query("UPDATE Statstable SET Value = 42 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 42:
+				debuglog("Updating FROM Schema version 42 TO Schema version 43","SQL");
+				update_stream_images(43);
+				generic_sql_query("UPDATE Statstable SET Value = 43 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 43:
+				debuglog("Updating FROM Schema version 43 TO Schema version 44","SQL");
+				empty_modified_cache_dirs(44);
+				generic_sql_query("UPDATE Statstable SET Value = 44 WHERE Item = 'SchemaVer'", true);
 				break;
 				
 		}

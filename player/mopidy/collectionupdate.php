@@ -11,8 +11,8 @@ function musicCollectionUpdate() {
         if ($dir == "Spotify Playlists") {
         	musicCollectionSpotifyPlaylistHack($monitor);
         } else {
-        	fwrite($monitor, "\nScanning Directory ".$dir);
-        	doMpdParse('lsinfo "'.format_for_mpd(local_media_check($dir)).'"', $dirs, null);
+        	fwrite($monitor, "\n<b>Scanning Directory</b> ".$dir.'<br/>'.count($dirs).' folders remaining');
+        	doMpdParse('lsinfo "'.format_for_mpd(local_media_check($dir)).'"', $dirs, false);
 	    	$collection->tracks_to_database();
 	    }
     }
@@ -28,7 +28,7 @@ function musicCollectionSpotifyPlaylistHack($monitor) {
         foreach ($playlists['playlist'] as $pl) {
 	    	debuglog("Scanning Playlist ".$pl,"COLLECTION",8);
 	        fwrite($monitor, "\nScanning Playlist ".$pl);
-	    	doMpdParse('listplaylistinfo "'.format_for_mpd($pl).'"',$dirs, array("spotify"));
+	    	doMpdParse('listplaylistinfo "'.format_for_mpd($pl).'"', $dirs, array("spotify"));
 		    $collection->tracks_to_database();
 	    }
 	}

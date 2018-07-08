@@ -17,8 +17,6 @@ foreach ($result as $obj) {
 	print '<td width="40px"><img class="smallcover';
 	if ($obj->Image) {
 		print '" src="'.$obj->Image;
-	} else if (file_exists('albumart/small/'.$obj->ImgKey.'.jpg')) {
-		print '" src="albumart/small/'.$obj->ImgKey.'.jpg"';
 	} else {
 		print ' notfound';
 	}

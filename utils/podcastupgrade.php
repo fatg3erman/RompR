@@ -113,7 +113,7 @@ foreach($pods as $pod) {
     	            	$newtrackid = $mysqlc->lastInsertId();
     	            	if (is_dir($pod.'/'.$key)) {
     	            		debuglog("  Renaming ".$pod.'/'.$key." to ".$pod.'/'.$newtrackid,"SCHEMA_18",6);
-    	            		system("mv ".$pod.'/'.$key.' '.$pod.'/'.$newtrackid);
+    	            		rename($pod.'/'.$key, $pod.'/'.$newtrackid);
     	            		if ($origlink != "NO_ORIGINAL_LINK") {
     	            			$fname = basename($link);
     	            			$newname = get_base_url().'/prefs/podcasts/'.$newpodid.'/'.$newtrackid.'/'.$fname;
@@ -141,7 +141,7 @@ foreach($pods as $pod) {
     				debuglog("ERROR updating image link","SCHEMA_18",2);
     			}
             }
-            system("mv ".$pod." prefs/podcasts/".$newpodid);
+            rename($pod, "prefs/podcasts/".$newpodid);
         }
     }
 }

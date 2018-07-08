@@ -249,16 +249,6 @@ tr.clickaddtrack:hover
     background-color:#e1e4ea;
 }
 
-.topimg
-{
-    opacity:0.8;
-}
-
-.topimg:not(.button-disabled):hover
-{
-    opacity:1;
-}
-
 .bsel
 {
     color:#000000;
@@ -466,4 +456,8 @@ table.tracklist {
 .infosection h2
 {
     border-bottom:2px solid black;
+}
+
+.topbarplaycontrols {
+    background-color: rgba(0,0,0,0.2);
 }

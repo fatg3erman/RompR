@@ -28,4 +28,14 @@ If you have a really small screen, you won't get two columns in landscape mode:
 
 ![](images/iphone4-landscape.png)
 
-The default action on the Tablet skin is to single-click to add items to the Current Playlist, though this can be changed from the Configuration menu. Everything else works the same as the Desktop skin.
+The default action on the Tablet skin is to single-click to add items to the Current Playlist, though this can be changed from the Configuration menu.
+
+Almost everything else works the same as the Desktop skin. The only difference being the way you re-order tracks in the Current Playlist. Because this skin does not support drag and drop, you get an up-down arrow icon next to each item in the Playlist.
+
+![](images/tabletmove1.png)
+
+Clicking on this icon reveals a large up arrow and a large down arrow, which can be used to move the item up and down.
+
+![](images/tabletmove2.png)
+
+Individual tracks or entire albums can be moved this way

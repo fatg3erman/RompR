@@ -15,14 +15,13 @@ $(document).ready(function(){
     checkServerTimeOffset();
     setTimeout(cleanBackendCache, 5000);
     if (prefs.country_userset == false) {
-        // Have to pull this data in via the webserver as it's cross-domain
         // It's helpful and important to get the country code set, as many users won't see it
         // and it's necessary for the Spotify info panel to return accurate data
         $.getJSON("utils/getgeoip.php", function(result) {
-            debug.shout("GET COUNTRY", 'Country:',result.country_name,'Code:',result.country_code);
-            if (result.country_name && result.country_name != 'ERROR') {
+            debug.shout("GET COUNTRY", 'Country:',result.country,'Code:',result.countryCode);
+            if (result.country != 'ERROR') {
                 $("#lastfm_country_codeselector").val(result.country_code);
-                prefs.save({lastfm_country_code: result.country_code});
+                prefs.save({lastfm_country_code: result.countryCode});
             } else {
                 debug.error("GET COUNTRY","Country code error",result);
             }
@@ -47,9 +46,12 @@ $(document).ready(function(){
     if (prefs.collectioncontrolsvisible) {
         $("#collectionbuttons").show();
     }
+    if (prefs.podcastcontrolsvisible) {
+        $("#podcastbuttons").show();
+    }
     showUpdateWindow();
     window.addEventListener("storage", onStorageChanged, false);
-    $("#sortable").click(onPlaylistClicked);
+    bindPlaylistClicks();
     $(window).bind('resize', layoutProcessor.adjustLayout);
     pluginManager.setupPlugins();
     setAvailableSearchOptions();
@@ -72,14 +74,14 @@ $(document).ready(function(){
     helplinks[language.gettext('label_lastfm')] = 'https://fatg3erman.github.io/RompR/LastFM';
     helplinks[language.gettext('config_players')] = 'https://fatg3erman.github.io/RompR/Using-Multiple-Players';
     for (var i in helplinks) {
-        $('b:contains("'+i+'")').parent('.configtitle').append('<a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
+        debug.log("HELPLINKS","Appending Help Link For",i);
+        $('b:contains("'+i+'")').parent('.configtitle').not('.nohelp').append('<a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
     }
     layoutProcessor.changeCollectionSortMode();
     layoutProcessor.sourceControl(prefs.chooser);
     if (prefs.browser_id == null) {
         prefs.save({browser_id: Date.now()});
     }
-
 });
 
 function cleanBackendCache() {

@@ -4,7 +4,13 @@ This might be better termed the 'Play Queue', but mpd uses the term Playlist, or
 
 ![](images/playlist.png)
 
-To add a track or album (or all tracks by an artist) to the end of the Playlist, double-click it in the collection (single-click on the Phone skin). On the Desktop skins you can also drag tracks to any position in the playlist. You can re-order tracks or albums by dragging them within the playlist, and remove them by clickng the x.
+To add a track or album (or all tracks by an artist) to the end of the Playlist, double-click it in the collection (single-click on the Phone skin).
+
+On the Desktop skins you can also drag tracks to any position in the playlist. You can re-order tracks or albums by dragging them within the playlist, and remove them by clickng the x.
+
+On the Phone skin you can remove items by swiping left, and move items with a long press - this is described under [The Phone Skin](/RompR/Phone-Skin).
+
+On the Tablet skin you can re-order tracks by using the re-order buttons as described under [The Tablet Skin](/RompR/Tablet-Skin).
 
 To clear the entire playlist use the wastebasket icon at the top right.
 

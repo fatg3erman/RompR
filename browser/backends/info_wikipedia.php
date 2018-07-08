@@ -78,19 +78,15 @@ if(array_key_exists("wiki", $_REQUEST)) {
 
 function wikipedia_request($url) {
     debuglog("Getting : ".$url,"WIKIPEDIA");
-    if (file_exists('prefs/jsoncache/wikipedia/'.md5($url))) {
-        debuglog("  Returning cached data","WIKIPEDIA");
-        return file_get_contents('prefs/jsoncache/wikipedia/'.md5($url));
+    $d = new url_downloader(array(
+        'url' => $url,
+        'cache' => 'wikipedia',
+        'return_data' => true
+    ));
+    if ($d->get_data_to_file()) {
+        return $d->get_data();
     } else {
-        $content = url_get_contents($url);
-        $s = $content['status'];
-        debuglog("Response Status was ".$s, "WIKIPEDIA");
-        if ($s == "200") {
-            file_put_contents('prefs/jsoncache/wikipedia/'.md5($url), $content['contents']);
-            return $content['contents'];
-        } else {
-            return null;
-        }
+        return null;
     }
 }
 

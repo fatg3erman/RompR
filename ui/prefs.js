@@ -66,7 +66,10 @@ var prefs = function() {
     	"communityradiotag",
     	"communityradiolistby",
         "communityradioorderby",
-        "browser_id"
+        "browser_id",
+        "playlistswipe",
+        "podcastcontrolsvisible",
+        "use_albumart_in_playlist"
     ];
     
     const cookiePrefs = [
@@ -310,6 +313,15 @@ var prefs = function() {
                 case 'player_in_titlebar':
                     callback = infobar.forceTitleUpdate;
                     break;
+                    
+                case "playlistswipe":
+                    callback = reloadWindow;
+                    break;
+                    
+                case "use_albumart_in_playlist":
+                    callback = playlist.repopulate;
+                    break;
+
 
             }
             prefs.save(prefobj, callback);
@@ -318,9 +330,10 @@ var prefs = function() {
         toggleRadio: function(event) {
             var prefobj = new Object;
             var prefname = $(event.target).attr("name");
-            prefobj[prefname] = $('[name='+prefname+']:checked').val();
+            var prefsave = prefname.replace(/_duplicate\d+/, '');
+            prefobj[prefsave] = $('[name='+prefname+']:checked').val();
             var callback = null;
-            switch(prefname) {
+            switch(prefsave) {
                 case 'clickmode':
                     callback = setClickHandlers;
                     break;
@@ -374,7 +387,8 @@ var prefs = function() {
 
             $.each($('.savulon'), function() {
                 var prefname = $(this).attr("name");
-                $("[name="+prefname+"][value="+prefs[prefname]+"]").prop("checked", true);
+                var prefsave = prefname.replace(/_duplicate\d+/, '');
+                $("[name="+prefname+"][value="+prefs[prefsave]+"]").prop("checked", true);
             });
 
         },
@@ -423,6 +437,13 @@ var prefs = function() {
                 case "coversize":
                     $("#albumcoversize").attr({href: "coversizes/"+$("#coversizeselector").val()});
                     setTimeout(browser.rePoint, 1000);
+                    break;
+                    
+                case 'podcast_sort_0':
+                case 'podcast_sort_1':
+                case 'podcast_sort_2':
+                case 'podcast_sort_3':
+                    callback = podcasts.reloadList;
                     break;
 
             }
