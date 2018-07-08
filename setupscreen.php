@@ -136,7 +136,7 @@ for ($i = 0; $i<5; $i++) {
         print " checked";
     }
     print '>';
-    print '<label for="debug'.$i.'"></label>';
+    print '<label for="debug'.$i.'" style="display:inline"></label>';
 }
 print '</tr><tr>';
 for ($i = 5; $i<10; $i++) {
@@ -155,7 +155,7 @@ for ($i = 5; $i<10; $i++) {
         print " checked";
     }
     print '>';
-    print '<label for="debug'.$i.'"></label>';
+    print '<label for="debug'.$i.'" style="display:inline"></label>';
 }
 print '</tr></table>';
 print '<p>Custom Log File</p>';
