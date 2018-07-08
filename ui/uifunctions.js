@@ -312,6 +312,7 @@ function show_albumart_update_window() {
         range: 100
     });
     fnarkle.open();
+    fnarkle.setWindowToContentsSize();
     $('.open_albumart').hide();
     do_albumart_update();
     return true;

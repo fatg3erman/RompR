@@ -3,12 +3,12 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
-## Version 1.18
+## Version 1.19
 
 * Fixed bug where plugins menu didn't wokr in Tablet skin
 * Added two new icon themes
 * Some code refactoring and minor UI bugfixing
-* Added swipe and long press options to phone skin to allow tracks to be re-ordered and removed from the Current Playlist
+* Added swipe and long press options to phone skin to allow tracks to be removed from and re-ordered within the Current Playlist
 * Added a new button to allow the Current Playlist to be re-ordered on the Tablet Skin
 * Moved Google API Credentials fields to the setup screen - they're messy, technical, and don't really want to be exposed to all and sundry.
 * Added Debug Information plugin to help with assisting in bug reports.
