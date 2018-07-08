@@ -309,7 +309,8 @@ function playerController() {
     }
 
 	this.clearPlaylist = function() {
-	    self.do_command_list([['clear']]);
+        // Mopidy does not like removing tracks while they're playing
+	    self.do_command_list([['stop'], ['clear']]);
 	}
 
 	this.savePlaylist = function() {

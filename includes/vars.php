@@ -27,6 +27,30 @@ define('DISPLAYMODE_DOWNLOADED', 4);
 
 define('ROMPR_PODCAST_TABLE_VERSION', 4);
 
+// Safe definitions for setups that do not have a full set of image support built in,
+// Otherwise we spam the server logs will udefined constant errors.
+if (!defined('IMAGETYPE_JPEG')) {
+    define('IMAGETYPE_JPEG', 'jpeg');
+}
+if (!defined('IMAGETYPE_GIF')) {
+    define('IMAGETYPE_GIF', 'gif');
+}
+if (!defined('IMAGETYPE_PNG')) {
+    define('IMAGETYPE_PNG', 'png');
+}
+if (!defined('IMAGETYPE_WBMP')) {
+    define('IMAGETYPE_WBMP', 'wbmp');
+}
+if (!defined('IMAGETYPE_XBM')) {
+    define('IMAGETYPE_XBM', 'xbm');
+}
+if (!defined('IMAGETYPE_WEBP')) {
+    define('IMAGETYPE_WEBP', 'webp');
+}
+if (!defined('IMAGETYPE_BMP')) {
+    define('IMAGETYPE_BMP', 'bmp');
+}
+
 $connection = null;
 $is_connected = false;
 $mysqlc = null;

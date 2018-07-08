@@ -1,17 +1,11 @@
 <?php
 
-rrmdir('/Users/bob/Temp/lib/');
-
-function rrmdir($path) {
-    $i = new DirectoryIterator($path);
-    foreach($i as $f) {
-        if($f->isFile()) {
-            unlink($f->getRealPath());
-        } else if(!$f->isDot() && $f->isDir()) {
-            rrmdir($f->getRealPath());
-        }
-    }
-    rmdir($path);
-}
+echo IMAGETYPE_JPEG,PHP_EOL;
+echo IMAGETYPE_GIF,PHP_EOL;
+echo IMAGETYPE_PNG,PHP_EOL;
+echo IMAGETYPE_WBMP,PHP_EOL;
+echo IMAGETYPE_XBM,PHP_EOL;
+echo IMAGETYPE_WEBP,PHP_EOL;
+echo IMAGETYPE_BMP,PHP_EOL;
 
 ?>
