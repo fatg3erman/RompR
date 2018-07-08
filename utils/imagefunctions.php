@@ -314,9 +314,14 @@ class albumImage extends baseAlbumImage {
     }
     
     private function saveImage($download_file) {
+        $outputtype = IMAGETYPE_JPEG;
         if (extension_loaded('gd')) {
             debuglog("Using GD to create image","ALBUMPICTURE");
             $simpleimage = new SimpleImage($download_file);
+            if ($simpleimage->checkImage() == IMAGETYPE_PNG) {
+                $this->change_file_extension('png');
+                $outputtype = IMAGETYPE_PNG;
+            }
         } else {
             debuglog("Using ImageMagick to create image. You should install the GD extension for your PHP installation","ALBUMPICTURE");
             $convert_path = find_executable('convert');
@@ -336,17 +341,17 @@ class albumImage extends baseAlbumImage {
                     switch ($size) {
                         case 'small':
                             $simpleimage->resizeToWidth(100);
-                            $simpleimage->save($image, IMAGETYPE_JPEG, 75);
+                            $simpleimage->save($image, $outputtype, 75);
                             break;
             
                         case 'medium':
                             $simpleimage->resizeToWidth(400);
-                            $simpleimage->save($image, IMAGETYPE_JPEG, 70);
+                            $simpleimage->save($image, $outputtype, 70);
                             break;
             
                         case 'asdownloaded':
                             $simpleimage->reset();
-                            $simpleimage->save($image, IMAGETYPE_JPEG, 90);
+                            $simpleimage->save($image, $outputtype, 90);
                             break;
                     }
                 } else {
@@ -564,35 +569,45 @@ class SimpleImage {
    
     public function reset() {
         $this->resizedimage = $this->image;
+        imagealphablending($this->resizedimage, false);
+        imagesavealpha($this->resizedimage, true);
     }
    
     public function save($filename, $image_type=IMAGETYPE_JPEG, $compression=75) {
         if ($this->image_type === false) {
             copy($this->filename, $filename);
         } else if( $image_type == IMAGETYPE_JPEG ) {
-            imagejpeg($this->resizedimage,$filename,$compression);
+            imagejpeg($this->resizedimage, $filename, $compression);
         } else if( $image_type == IMAGETYPE_GIF ) {
-            imagegif($this->resizedimage,$filename);
+            imagegif($this->resizedimage, $filename);
         } else if( $image_type == IMAGETYPE_PNG ) {
-            imagepng($this->resizedimage,$filename);
+            imagepng($this->resizedimage, $filename, 9);
         }
     }
 
     public function outputResizedFile($size) {
         debuglog("Outputting file of size ".$size,"GD-IMAGE");
+        if ($this->image_type == IMAGETYPE_PNG) {
+            // Output a PNG image to preserve transparency information
+            header('Content-type: image/png');
+            $type = IMAGETYPE_PNG;
+        } else {
+            header('Content-type: image/jpeg');
+            $type = IMAGETYPE_JPEG;
+        }
         switch ($size) {
             case 'small':
                 $this->resizeToWidth(100);
-                $this->save(null, IMAGETYPE_JPEG, 75);
+                $this->save(null, $type, 75);
                 break;
 
             case 'medium':
                 $this->resizeToWidth(400);
-                $this->save(null, IMAGETYPE_JPEG, 70);
+                $this->save(null, $type, 70);
                 break;
                 
             default:
-                $this->save(null, IMAGETYPE_JPEG, 90);
+                $this->save(null, $type, 90);
                 break;
                 
         }
@@ -629,6 +644,8 @@ class SimpleImage {
            return true;
         } else {
            $this->resizedimage = imagecreatetruecolor($width, $height);
+           imagealphablending($this->resizedimage, false);
+           imagesavealpha($this->resizedimage, true);
            imagecopyresampled($this->resizedimage, $this->image, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight());
         }
     }

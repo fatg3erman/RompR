@@ -37,7 +37,6 @@ if (!$url) {
 				header('Content-type: '.$content_type);
 				readfile($outfile);
 			} else {
-				header('Content-type: image/jpeg');
 				$simpleimage->outputResizedFile($_REQUEST['rompr_resize_size']);
 			}
 		} else {

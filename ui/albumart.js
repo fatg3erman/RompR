@@ -367,7 +367,7 @@ var imageEditor = function() {
             $("#usearch").append(      '<div class="holdingcell"><p>'+language.gettext("albumart_dragdrop")+'</p></div>');
 
             $("#editcontrols").append(  '<div id="g" class="tleft bleft clickable clickicon bmenu">'+language.gettext("albumart_googlesearch")+'</div>');
-            if (path) {
+            if (path && path != '.') {
                 $("#editcontrols").append( '<div id="f" class="tleft bleft bmid clickable clickicon bmenu">'+language.gettext("albumart_local")+'</div>');
             }
             $("#editcontrols").append(  '<div id="u" class="tleft bleft bmid clickable clickicon bmenu">'+language.gettext("albumart_upload")+'</div>'+
@@ -387,7 +387,7 @@ var imageEditor = function() {
             }
 
             imageEditor.search();
-            if (path) {
+            if (path && path != '.') {
                 $.getJSON("utils/findLocalImages.php?path="+path, imageEditor.gotLocalImages)
             }
             
