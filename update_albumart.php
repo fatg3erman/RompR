@@ -12,21 +12,16 @@ switch (ROMPR_IMAGE_VERSION) {
         
         $k = generic_sql_query("SELECT ImgKey FROM Albumtable WHERE Image LIKE 'albumart/small/%' AND ImgVersion < ".ROMPR_IMAGE_VERSION." LIMIT 1", false, null, 'ImgKey', null);
         if ($k) {
+            // We're dealing with a specific version here, where all images are jpg.
+            // We'll mimic the behaviour of baseAlbumImage at the point in time, so if it changes
+            // in the future it doesn't mess this up.
             $source = "albumart/asdownloaded/".$k.".jpg";
             debuglog("Converting image ".$k,"AA_UPGRADE");
-            if (extension_loaded('gd')) {
-                $simpleimage = new SimpleImage($source);
-                $simpleimage->resizeToWidth(400);
-                $simpleimage->save("albumart/medium/".$k.".jpg", IMAGETYPE_JPEG, 70);
-                $simpleimage->resizeToWidth(100);
-                $simpleimage->save("albumart/small/".$k.".jpg", IMAGETYPE_JPEG, 75);
-            } else {
-                $convert_path = find_executable('convert');
-                $dest = "albumart/medium/".$k.".jpg";
-                $r = exec( $convert_path."convert \"".$source."\" -quality 70 -resize 400 -alpha remove \"".$dest."\" 2>&1", $o);
-                $dest = "albumart/small/".$k.".jpg";
-                $r = exec( $convert_path."convert \"".$source."\" -quality 75 -resize 100 -alpha remove \"".$dest."\" 2>&1", $o);
-            }
+            $ih = new imageHandler($source);
+            $ih->resizeToWidth(400);
+            $ih->save("albumart/medium/".$k.".jpg", 70);
+            $ih->resizeToWidth(100);
+            $ih->save("albumart/small/".$k.".jpg", 75);
             generic_sql_query("UPDATE Albumtable SET ImgVersion = ".ROMPR_IMAGE_VERSION." WHERE ImgKey = '".$k."'");
         }
         

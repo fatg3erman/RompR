@@ -30,25 +30,28 @@ define('ROMPR_PODCAST_TABLE_VERSION', 4);
 // Safe definitions for setups that do not have a full set of image support built in,
 // Otherwise we spam the server logs will udefined constant errors.
 if (!defined('IMAGETYPE_JPEG')) {
-    define('IMAGETYPE_JPEG', 'jpeg');
+    define('IMAGETYPE_JPEG', 'image/jpeg');
 }
 if (!defined('IMAGETYPE_GIF')) {
-    define('IMAGETYPE_GIF', 'gif');
+    define('IMAGETYPE_GIF', 'image/gif');
 }
 if (!defined('IMAGETYPE_PNG')) {
-    define('IMAGETYPE_PNG', 'png');
+    define('IMAGETYPE_PNG', 'image/png');
 }
 if (!defined('IMAGETYPE_WBMP')) {
-    define('IMAGETYPE_WBMP', 'wbmp');
+    define('IMAGETYPE_WBMP', 'image/wbmp');
 }
 if (!defined('IMAGETYPE_XBM')) {
-    define('IMAGETYPE_XBM', 'xbm');
+    define('IMAGETYPE_XBM', 'image/xbm');
 }
 if (!defined('IMAGETYPE_WEBP')) {
-    define('IMAGETYPE_WEBP', 'webp');
+    define('IMAGETYPE_WEBP', 'image/webp');
 }
 if (!defined('IMAGETYPE_BMP')) {
-    define('IMAGETYPE_BMP', 'bmp');
+    define('IMAGETYPE_BMP', 'image/bmp');
+}
+if (!defined('IMAGETYPE_SVG')) {
+    define('IMAGETYPE_SVG', 'image/svg+xml');
 }
 
 $connection = null;
@@ -91,6 +94,7 @@ $prefs = array(
     "currenthost" => 'Default',
     'dev_mode' => false,
     'live_mode' => false,
+    'collection_load_timeout' => 3600000,
 
     // Things that could be set on a per-user basis but need to be known by the backend
     "mpd_host" => "localhost",

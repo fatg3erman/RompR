@@ -6,7 +6,6 @@ var collectionHelper = function() {
     var update_load_timer_running = false;
     var returned_data = new Array();
     var update_timer = null;
-    var collection_load_timeout = 3600000;
 
     function scanFiles(cmd) {
         collectionHelper.prepareForLiftOff(language.gettext("label_updating"));
@@ -49,7 +48,7 @@ var collectionHelper = function() {
             $.ajax({
                 type: "GET",
                 url: albums,
-                timeout: collection_load_timeout,
+                timeout: prefs.collection_load_timeout,
                 dataType: "html",
                 success: function(data) {
                     clearTimeout(monitortimer);
@@ -58,9 +57,8 @@ var collectionHelper = function() {
                     player.updatingcollection = false;
                     if ($('#emptycollection').length > 0) {
                         player.collection_is_empty = true;
-                        if (!$('#collectionbuttons').is(':visible')) {
-                            toggleCollectionButtons();
-                        }
+                        $('#collectionbuttons').show();
+                        prefs.save({ collectioncontrolsvisible: true });
                         $('[name="donkeykong"]').makeFlasher({flashtime: 0.5, repeats: 3});
                     } else {
                         player.collection_is_empty = false;
@@ -198,11 +196,6 @@ var collectionHelper = function() {
         
     return {
                 
-        // For testing only
-        setCollectionLoadTimeout: function(v) {
-            collection_load_timeout = v;
-        },
-        
         disableCollectionUpdates: function() {
             $('button[name="donkeykong"]').unbind('click').css('opacity', '0.2');
             $('button[name="dinkeyking"]').unbind('click').css('opacity', '0.2');

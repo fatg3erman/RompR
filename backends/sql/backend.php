@@ -1199,7 +1199,8 @@ function update_stream_image($stream, $image) {
 	sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET Image = ? WHERE StationName = ?",$image,$stream);
 }
 
-function update_podcast_image($image, $podid) {
+function update_podcast_image($podid, $image) {
+	debuglog("Setting Image to ".$image." for podid ".$podid,"PODCASTS");
 	sql_prepare_query(true, null, null, null, 'UPDATE Podcasttable SET Image = ? WHERE PODindex = ?',$image, $podid);
 }
 

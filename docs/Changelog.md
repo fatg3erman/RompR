@@ -3,6 +3,10 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.20
+
+* Album Art now supports transparency in PNG files, and SVG files will be saved and served as SVG
+
 ## Version 1.19
 
 * Fixed bug where plugins menu didn't wokr in Tablet skin

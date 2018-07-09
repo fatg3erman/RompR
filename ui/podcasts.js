@@ -4,7 +4,6 @@ var podcasts = function() {
 	var downloadRunning = false;
 	var loaded = false;
 	var refreshtimer;
-	var podcast_refresh_timeout = 3600000;
 
 	function checkDownloadQueue() {
 		if (downloadRunning == false) {
@@ -355,7 +354,7 @@ var podcasts = function() {
 			$.ajax({
 				type: 'GET',
 				url: "includes/podcasts.php?populate=1&checkrefresh=1",
-				timeout: podcast_refresh_timeout,
+				timeout: prefs.collection_load_timeout,
 				dataType: 'JSON',
 				success: function(data) {
 					debug.log("PODCASTS","Refresh result",data);

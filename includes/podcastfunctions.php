@@ -392,12 +392,7 @@ function refreshPodcast($podid) {
     }
     if ($podcast === false) {
         check_podcast_upgrade($podetails, $podid, $podcast);
-        // Podcast pubDate has not changed, hence we didn't re-parse the feed. Just mark all 'New' episodes as not new
-        // and tell the GUI to refresh the counts if they have changed
-    
-        // No, in fact let's not do that. Firstly it messes with subscribing to search results (all track get marked as not new)
-        // Secondly, actually, it makes sense - if the Podcast hasn't published any new episodes then these are still 'new'
-    
+        // Podcast pubDate has not changed, hence we didn't re-parse the feed.
         // Still calculate the best next update time
         sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET LastUpdate = ? WHERE PODindex = ?",
             calculate_best_update_time(
@@ -1207,7 +1202,7 @@ function setPlaybackProgress($progress, $uri) {
     foreach ($pod as $podcast) {
         $podid = $podcast->PODindex;
         debuglog("Updating Playback Progress for Podcast ".$podcast->PODTrackindex." in channel ".$podid." to ".$progress,"PODCASTS");
-        generic_sql_query("UPDATE PodcastTrackTable SET Progress = ".$progress." WHERE PODTrackindex = ".$podcast->PODTrackindex);
+        generic_sql_query("UPDATE PodcastTracktable SET Progress = ".$progress." WHERE PODTrackindex = ".$podcast->PODTrackindex);
     }
     return $podid;
 }
