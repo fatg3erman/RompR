@@ -398,15 +398,7 @@ var uiHelper = function() {
             try {
                 return layoutProcessor.createPluginHolder(icon, title);
             } catch (err) {
-                var d = $('<div>', {class: 'topdrop'}).prependTo('#righthandtop');
-                var i = $('<i>', {class: 'tooltip', title: title}).appendTo(d);
-                i.addClass(icon);
-                if (small_plugin_icons) {
-                    i.addClass('smallpluginicon clickicon');
-                } else {
-                    i.addClass('topimg')
-                }
-                return d;
+                return false;
             }
         },
         

@@ -5,7 +5,6 @@ print "var old_style_albumart = ".checkAlbumArt().";\n";
 print "var interfaceLanguage = '".$interface_language."';\n";
 print "prefs.skin = '".$skin."';\n";
 print "const skin = '".$skin."';\n";
-print "const small_plugin_icons = '".$small_plugin_icons."';\n";
 print "const only_plugins_on_menu = '".$only_plugins_on_menu."';\n";
 print "const rompr_version = '".$version_string."';\n";
 print "const browserLanguage = '".$browser_language."';\n";

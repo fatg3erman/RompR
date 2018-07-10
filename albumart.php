@@ -8,7 +8,6 @@ include ("backends/sql/backend.php");
 include ("player/mpd/connection.php");
 set_time_limit(240);
 $oldmopidy = false;
-$small_plugin_icons = false;
 $only_plugins_on_menu = false;
 $skin = "desktop";
 set_version_string();

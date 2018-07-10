@@ -95,32 +95,16 @@ function albumHeader($obj) {
         }
         $h .= '<div class="containerbox wrap menu '.$obj['class'].'" name="'.$obj['id'].'">';
     }
+    
     $h .= '<div class="helpfulalbum expand">';
-
-    $extra = (array_key_exists('userplaylist', $obj)) ? ' plimage' : '';
-    if (!$obj['Image'] && $obj['Searched'] != 1) {
-        $h .= '<img class="jalopy notexist'.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
-    } else  if (!$obj['Image'] && $obj['Searched'] == 1) {
-        $h .= '<img class="jalopy notfound'.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
-    } else {
-        $albumimage = new baseAlbumImage(array('baseimage' => $obj['Image']));
-        $images = $albumimage->get_images();
-        if (substr($images['medium'],0, 14) == 'getRemoteImage') {
-            $images['medium'] .= '&rompr_resize_size=medium';
-        }
-        $h .= '<img class="jalopy" name="'.$obj['ImgKey'].'" src="'.$images['medium'].'" />'."\n";
-    }
+    $albumimage = new baseAlbumImage(array('baseimage' => $obj['Image']));
+    $h .= $albumimage->html_for_image($obj, 'jalopy', 'medium');
 
     $h .= '<div class="tagh albumthing">';
     $h .= '<div class="title-menu">';
-    if ($obj['AlbumUri']) {
-        $d = getDomain($obj['AlbumUri']);
-        $d = preg_replace('/\+.*/','', $d);
-        $h .= domainIcon($d, 'collectionicon');
-        if (strtolower(pathinfo($obj['AlbumUri'], PATHINFO_EXTENSION)) == "cue") {
-            $h .= '<i class="icon-doc-text playlisticon fixed"></i>';
-        }
-    }
+    
+    $h .= domainHtml($obj['AlbumUri']);
+    
     $h .= '<div class="artistnamething">'.$obj['Albumname'];
     if ($obj['Year'] && $prefs['sortbydate']) {
         $h .= ' <span class="notbold">('.$obj['Year'].')</span>';

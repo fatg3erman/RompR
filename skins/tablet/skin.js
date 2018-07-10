@@ -158,9 +158,10 @@ var layoutProcessor = function() {
         },
 
         scrollPlaylistToCurrentTrack: function() {
-            if (prefs.scrolltocurrent && $('.playlistcurrentitem').length > 0) {
+            var scrollto = playlist.getCurrentTrackElement();
+            if (prefs.scrolltocurrent && scrollto.length > 0) {
                 var offset = 0 - ($('#pscroller').outerHeight(true) / 2);
-                $('#pscroller').scrollTo(('.playlistcurrentitem'), 800, {offset: {top: offset}, easing: 'swing'});
+                $('#pscroller').scrollTo(scrollto, 800, {offset: {top: offset}, easing: 'swing'});
             }
         },
         

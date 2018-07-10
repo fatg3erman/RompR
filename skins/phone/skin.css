@@ -591,9 +591,9 @@ div.rightmenu {
 
 .pleft
 {
-    include("utils/phpQuery.php");
     padding-left:8px;
 }
+
 .pright
 {
     box-sizing:border-box;

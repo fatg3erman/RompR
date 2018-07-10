@@ -140,6 +140,9 @@ var alarm = function() {
 
 		setup: function() {
 			var d = uiHelper.createPluginHolder('icon-alarm', language.gettext('button_alarm'));
+			if (d === false) {
+				return false;
+			}
 			var holder = $('<div>', {class: 'topdropmenu dropshadow rightmenu normalmenu stayopen', id: 'alarmpanel'}).appendTo(d);
 			var html = '<div class="textcentre configtitle"><b>'+language.gettext('button_alarm')+'</b></div>'+
 				'<input type="hidden" class="helplink" value="https://fatg3erman.github.io/RompR/Alarm-And-Sleep" />'+

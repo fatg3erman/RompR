@@ -6,10 +6,12 @@ Note that some versions listed here may be unreleased, I use version number incr
 ## Version 1.20
 
 * Album Art now supports transparency in PNG files, and SVG files will be saved and served as SVG
+* Much cleaner image handling, with automatic fallback to ImageMagick if image is not supported by GD
+* Fixed typo where podcast images did not get updated
 
 ## Version 1.19
 
-* Fixed bug where plugins menu didn't wokr in Tablet skin
+* Fixed bug where plugins menu didn't work in Tablet skin
 * Added two new icon themes
 * Some code refactoring and minor UI bugfixing
 * Added swipe and long press options to phone skin to allow tracks to be removed from and re-ordered within the Current Playlist

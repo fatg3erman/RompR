@@ -1,4 +1,5 @@
 jQuery.fn.menuReveal = function(callback) {
+    var self = this;
     if (this.hasClass('toggledown')) {
         if (callback) {
             this.slideToggle('fast',callback);
@@ -7,11 +8,13 @@ jQuery.fn.menuReveal = function(callback) {
         }
     } else {
         this.findParentScroller().saveScrollPos();
-        if (callback) {
-            this.show(0, callback);
-        } else {
-            this.show();
-        }
+        this.show(0, function() {
+            var i = self.find('.album_menu_image');
+            i.attr('src', i.attr('asrc'));
+            if (callback) {
+                callback();
+            }
+        });
     }
     return this;
 }
@@ -32,6 +35,9 @@ jQuery.fn.menuHide = function(callback) {
             self.findParentScroller().restoreScrollPos();
             if (self.hasClass('removeable')) {
                 self.remove();
+            } else {
+                var i = self.find('.album_menu_image');
+                i.removeAttr('src');
             }
         });
     }
@@ -368,7 +374,7 @@ var layoutProcessor = function() {
         },
 
         postAlbumActions: function() {
-
+            
         },
 
         afterHistory: function() {
@@ -433,9 +439,10 @@ var layoutProcessor = function() {
         },
 
         scrollPlaylistToCurrentTrack: function() {
-            if (prefs.scrolltocurrent && $('.playlistcurrentitem').length > 0) {
+            var scrollto = playlist.getCurrentTrackElement();
+            if (prefs.scrolltocurrent && scrollto.length > 0) {
                 var offset = 0 - ($('#pscroller').outerHeight(true) / 2);
-                $('#pscroller').scrollTo($('.playlistcurrentitem'), 800, {offset: {top: offset}, easing: 'swing'});
+                $('#pscroller').scrollTo(scrollto, 800, {offset: {top: offset}, easing: 'swing'});
             }
         },
 

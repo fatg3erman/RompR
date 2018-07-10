@@ -1280,6 +1280,14 @@ var playlist = function() {
                 playlist.dragstopped(null, popmoveelement);
                 popmoveelement = null;
             }
+        },
+        
+        getCurrentTrackElement: function() {
+            var scrollto = $('#sortable .playlistcurrentitem');
+            if (!scrollto.is(':visible')) {
+                scrollto = scrollto.parent().prev();
+            }
+            return scrollto;
         }
         
     }

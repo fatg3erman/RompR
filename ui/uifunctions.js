@@ -260,6 +260,7 @@ function albumart_translator(source) {
     
     // Given an album image of any size, return any other size
     this.source = source;
+    
     this.getSize = function(size) {
         if (/albumart\/small\//.test(this.source)) {
             return this.source.replace('albumart/small/', 'albumart/'+size+'/');
@@ -268,7 +269,7 @@ function albumart_translator(source) {
         } else if (/albumart\/asdownloaded\//.test(this.source)) {
             return this.source.replace('albumart/asdownloaded/', 'albumart/'+size+'/');
         } else {
-            return this.source.replace(/\&rompr_resize_size=.+/, '');
+            return this.source.replace(/\&rompr_resize_size=.+/, '&rompr_resize_size='+size);
         }
     }
     

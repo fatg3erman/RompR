@@ -211,23 +211,20 @@ var layoutProcessor = function() {
         },
 
         scrollPlaylistToCurrentTrack: function() {
-            if (prefs.scrolltocurrent && $('.track[romprid="'+player.status.songid+
-                '"],.booger[romprid="'+player.status.songid+'"]').length > 0) {
-                $('#pscroller').mCustomScrollbar("stop");
-                $('#pscroller').mCustomScrollbar("update");
-                var pospixels = Math.round($('div.track[romprid="'+player.status.songid+
-                    '"],.booger[romprid="'+player.status.songid+'"]').position().top -
-                    ($("#sortable").parent().parent().height()/2));
-                if (pospixels < 0) { pospixels = 0 }
-                if (pospixels > $("#sortable").parent().height()) {
-                    pospixels = $("#sortable").parent().height();
+            if (prefs.scrolltocurrent) {
+                var scrollto = playlist.getCurrentTrackElement();;
+                if (scrollto.length > 0) {
+                    debug.log("LAYOUT","Scrolling Playlist To Song:",player.status.songid);
+                    $('#pscroller').mCustomScrollbar("stop");
+                    $('#pscroller').mCustomScrollbar("update");
+                    var pospixels = Math.round(scrollto.position().top - ($("#sortable").parent().parent().height()/2));
+                    pospixels = Math.min($("#sortable").parent().height(), Math.max(pospixels, 0));
+                    $('#pscroller').mCustomScrollbar(
+                        "scrollTo",
+                        pospixels,
+                        { scrollInertia: 0 }
+                    );
                 }
-                debug.log("LAYOUT","Scrolling Playlist To Song:",player.status.songid);
-                $('#pscroller').mCustomScrollbar(
-                    "scrollTo",
-                    pospixels,
-                    { scrollInertia: 0 }
-                );
             }
         },
 

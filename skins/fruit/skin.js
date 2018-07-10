@@ -181,20 +181,20 @@ var layoutProcessor = function() {
         },
 
         scrollPlaylistToCurrentTrack: function() {
-            if (prefs.scrolltocurrent && $('.track[romprid="'+player.status.songid+'"],.booger[romprid="'+player.status.songid+'"]').length > 0) {
-                $('#phacker').mCustomScrollbar("stop");
-                $('#phacker').mCustomScrollbar("update");
-                var pospixels = Math.round($('div.track[romprid="'+player.status.songid+'"],.booger[romprid="'+player.status.songid+'"]').position().top - ($("#phacker").height()/2));
-                if (pospixels < 0) { pospixels = 0 }
-                if (pospixels > $("#sortable").parent().height()) {
-                    pospixels = $("#sortable").parent().height();
+            if (prefs.scrolltocurrent) {
+                var scrollto = playlist.getCurrentTrackElement();;
+                if (scrollto.length > 0) {
+                    debug.log("LAYOUT","Scrolling Playlist To Song:",player.status.songid);
+                    $('#phacker').mCustomScrollbar("stop");
+                    $('#phacker').mCustomScrollbar("update");
+                    var pospixels = Math.round(scrollto.position().top - ($("#sortable").parent().parent().height()/2));
+                    pospixels = Math.min($("#sortable").parent().height(), Math.max(pospixels, 0));
+                    $('#phacker').mCustomScrollbar(
+                        "scrollTo",
+                        pospixels,
+                        { scrollInertia: 0 }
+                    );
                 }
-                debug.log("LAYOUT","Scrolling Playlist To Song:",player.status.songid);
-                $('#phacker').mCustomScrollbar(
-                    "scrollTo",
-                    pospixels,
-                    { scrollInertia: 0 }
-                );
             }
         },
 
@@ -394,7 +394,7 @@ var layoutProcessor = function() {
                     element.next().children('img').css('width', '');
                 } else {
                     if (imgsrc) {
-                        element.next().children('img').attr('src', aa.getSize('asdownloaded'));
+                        element.next().children('img').attr('src', aa.getSize('medium'));
                     }
                     element.next().css('width','50%');
                     element.next().children('img').css('width', '100%');
@@ -529,6 +529,14 @@ var layoutProcessor = function() {
                 whiledragging: infobar.volumemoved,
                 orientation: "vertical"
             });
+        },
+
+        createPluginHolder: function(icon, title) {
+            var d = $('<div>', {class: 'topdrop'}).prependTo('#righthandtop');
+            var i = $('<i>', {class: 'tooltip', title: title}).appendTo(d);
+            i.addClass(icon);
+            i.addClass('smallpluginicon clickicon');
+            return d;
         }
         
     }

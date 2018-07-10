@@ -391,61 +391,6 @@ function get_browser_language() {
     }
 }
 
-function getDomain($d) {
-    if ($d === null || $d == "") {
-        return "local";
-    }
-    $d = urldecode($d);
-    $pos = strpos($d, ":");
-    $a = substr($d,0,$pos);
-    if ($a == "") {
-        return "local";
-    }
-    $s = substr($d,$pos+3,15);
-    if ($s == "api.soundcloud.") {
-        return "soundcloud";
-    }
-    if ($a == 'http' || $a == 'https') {
-        if (strpos($d, 'vk.me') !== false) {
-    		return 'vkontakte';
-    	} else if (strpos($d, 'oe1:archive') !== false) {
-    		return 'oe1';
-    	} else if (strpos($d, 'http://leftasrain.com') !== false) {
-    		return 'leftasrain';
-    	} else if (strpos($d, 'archives.bassdrivearchive.com') !== false ||
-                    strpos($d, 'bassdrive.com') !== false) {
-            return 'bassdrive';
-        }
-    }
-    return strtok($a, ' ');
-}
-
-function domainIcon($d, $c) {
-    $h = '';
-    switch($d) {
-        case "spotify":
-        case "gmusic":
-        case "youtube":
-        case "internetarchive":
-        case "soundcloud":
-        case "podcast":
-        case "dirble":
-            $h = '<i class="icon-'.$d.'-circled '.$c.' fixed"></i>';
-            break;
-
-        case "tunein":
-            $h = '<i class="icon-tunein '.$c.' fixed"></i>';
-            break;
-        
-        case "radio-de":
-        case "bassdrive":
-            $h = '<div class="'.$c.' fixed"><img class="imgfill" src="newimages/'.$d.'-logo.svg" /></div>';
-            break;
-
-    }
-    return $h;
-}
-
 function getStreamFolder($url) {
     $f = dirname($url);
     if ($f == "." || $f == "") $f = $url;
@@ -627,9 +572,8 @@ function domainCheck($default, $domain) {
         case 'vkontakte':
         case 'internetarchive':
         case 'podcast':
-        case 'podcast http:':
-        case 'podcast https:':
         case 'dirble':
+        case 'youtube':
             return 'icon-'.$domain.'-circled';
             break;
             
@@ -643,6 +587,89 @@ function domainCheck($default, $domain) {
         
     }
     
+}
+
+function getDomain($d) {
+    if ($d === null || $d == "") {
+        return "local";
+    }
+    $d = urldecode($d);
+    $pos = strpos($d, ":");
+    $a = substr($d,0,$pos);
+    if ($a == "") {
+        return "local";
+    }
+    $s = substr($d,$pos+3,15);
+    if ($s == "api.soundcloud.") {
+        return "soundcloud";
+    }
+    if ($a == 'http' || $a == 'https') {
+        if (strpos($d, 'vk.me') !== false) {
+    		return 'vkontakte';
+    	} else if (strpos($d, 'oe1:archive') !== false) {
+    		return 'oe1';
+    	} else if (strpos($d, 'http://leftasrain.com') !== false) {
+    		return 'leftasrain';
+    	} else if (strpos($d, 'archives.bassdrivearchive.com') !== false ||
+                    strpos($d, 'bassdrive.com') !== false) {
+            return 'bassdrive';
+        }
+    }
+    return strtok($a, ' ');
+}
+
+function domainIcon($d, $c) {
+    $h = '';
+    switch($d) {
+        case "spotify":
+        case "gmusic":
+        case "youtube":
+        case "internetarchive":
+        case "soundcloud":
+        case "podcast":
+        case "dirble":
+        case "tunein":
+            $h = '<i class="'.domainCheck('icon-music', $d).' '.$c.' fixed"></i>';
+            break;
+
+        case "radio-de":
+        case "bassdrive":
+            $h = '<div class="'.$c.' fixed"><img class="imgfill" src="newimages/'.$d.'-logo.svg" /></div>';
+            break;
+
+    }
+    return $h;
+}
+
+function domainHtml($uri) {
+    $h = domainIcon(getDomain($uri), 'collectionicon');
+    if ($h == '') {
+        if (strtolower(pathinfo($uri, PATHINFO_EXTENSION)) == "cue") {
+            $h = '<i class="icon-doc-text collectionicon fixed"></i>';
+        }
+    }
+    return $h;
+}
+
+function artistNameHtml($obj) {
+    global $prefs;
+    $h = '';
+    if ($prefs['sortcollectionby'] == 'albumbyartist' && $obj['Artistname']) {
+        $h .= '<div class="expand">'.$obj['Albumname'];
+        $h .= '<br><span class="notbold">'.$obj['Artistname'].'</span>';
+        if ($obj['Year'] && $prefs['sortbydate']) {
+            $h .= ' <span class="notbold">('.$obj['Year'].')</span>';
+        }
+    } else {
+        $h .= '<div class="expand">'.$obj['Albumname'];
+        if ($obj['Year'] && $prefs['sortbydate']) {
+            $h .= ' <span class="notbold">('.$obj['Year'].')</span>';
+        }
+        if ($obj['Artistname']) {
+            $h .= '<br><span class="notbold">'.$obj['Artistname'].'</span>';
+        }
+    }
+    return $h;
 }
 
 function checkComposerGenre($genre, $pref) {

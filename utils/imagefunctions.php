@@ -169,6 +169,11 @@ class baseAlbumImage {
             'medium' => preg_replace('#albumart/small/#', 'albumart/medium/', $image),
             'asdownloaded' => preg_replace('#albumart/small/#', 'albumart/asdownloaded/', $image)
         );
+        if (substr($image, 0, 14) == 'getRemoteImage') {
+            array_walk($images, function(&$v, $k) {
+                $v .= '&amp;rompr_resize_size='.$k;
+            });
+        }
         return $images;
     }
     
@@ -218,6 +223,17 @@ class baseAlbumImage {
     private function make_image_key() {
         $key = strtolower($this->artist.$this->album);
         return md5($key);
+    }
+    
+    public function html_for_image($obj, $imageclass, $size) {
+        $extra = (array_key_exists('userplaylist', $obj)) ? 'plimage '.$imageclass : $imageclass;
+        if (!$this->images['small'] && $obj['Searched'] != 1) {
+            return '<img class="notexist '.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
+        } else  if (!$this->images['small'] && $obj['Searched'] == 1) {
+            return '<img class="notfound '.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
+        } else {
+            return '<img class="'.$extra.'" name="'.$obj['ImgKey'].'" src="'.$this->images[$size].'" />'."\n";
+        }
     }
     
 }
@@ -392,7 +408,7 @@ function artist_for_image($type, $artist) {
 		case 'stream':
 			$artistforimage = 'STREAM';
 			break;
-			
+            
 		default:
 			$artistforimage = $artist;
 			break;

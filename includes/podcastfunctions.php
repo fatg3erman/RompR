@@ -848,12 +848,16 @@ function format_episode(&$y, &$item, $pm) {
 
 function doPodcastHeader($y) {
     
+    debuglog("Doing Header For Podcast ".$y->Title.' '.htmlspecialchars(html_entity_decode($y->Title)),"PODCASTS",8);
+    
     $i = getDomain($y->Image);
     if ($i == "http" || $i == "https") {
         $img = "getRemoteImage.php?url=".$y->Image;
     } else {
         $img = $y->Image;
     }
+    
+    debuglog("  Image Is ".$img,"PODCASTS",8);
     
     $aname = htmlspecialchars(html_entity_decode($y->Artist));
     if ($y->Category) {

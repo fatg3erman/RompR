@@ -1,5 +1,7 @@
 <?php
 
+require_once('utils/imagefunctions.php');
+
 function albumTrack($data) {
     global $prefs;
     if (substr($data['title'],0,6) == "Album:") return 2;
@@ -111,48 +113,15 @@ function albumHeader($obj) {
         $h .= '<i class="icon-toggle-closed menu mh fixed '.$obj['class'].'" name="'.$obj['id'].'"></i>';
     }
 
-    // For BLOODY FIREFOX only we have to wrap the image in a div of the same size,
-    // because firefox won't squash the image horizontally if it's in a box-flex layout.
-    // Secondly, while Firefox have now fixed this, don't fuck with this as there are places in the code
-    // where we parse the layout.......
-    $i = $obj['Image'];
     $h .= '<div class="smallcover fixed">';
-    $extra = (array_key_exists('userplaylist', $obj)) ? ' plimage' : '';
-    if (!$obj['Image'] && $obj['Searched'] != 1) {
-        $h .= '<img class="smallcover fixed notexist'.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
-    } else  if (!$obj['Image'] && $obj['Searched'] == 1) {
-        $h .= '<img class="smallcover fixed notfound'.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
-    } else {
-        if (substr($i,0, 14) == 'getRemoteImage') {
-            $i .= '&rompr_resize_size=small';
-        }
-        $h .= '<img class="smallcover fixed'.$extra.'" name="'.$obj['ImgKey'].'" src="'.$i.'" />'."\n";
-    }
+    $albumimage = new baseAlbumImage(array('baseimage' => $obj['Image']));
+    $h .= $albumimage->html_for_image($obj, 'smallcover fixed', 'small');
     $h .= '</div>';
-    if ($obj['AlbumUri']) {
-        $d = getDomain($obj['AlbumUri']);
-        $d = preg_replace('/\+.*/','', $d);
-        $h .= domainIcon($d, 'collectionicon');
-        if (strtolower(pathinfo($obj['AlbumUri'], PATHINFO_EXTENSION)) == "cue") {
-            $h .= '<i class="icon-doc-text playlisticon fixed"></i>';
-        }
-    }
 
-    if ($prefs['sortcollectionby'] == 'albumbyartist' && $obj['Artistname']) {
-        $h .= '<div class="expand">'.$obj['Albumname'];
-        $h .= '<br><span class="notbold">'.$obj['Artistname'].'</span>';
-        if ($obj['Year'] && $prefs['sortbydate']) {
-            $h .= ' <span class="notbold">('.$obj['Year'].')</span>';
-        }
-    } else {
-        $h .= '<div class="expand">'.$obj['Albumname'];
-        if ($obj['Year'] && $prefs['sortbydate']) {
-            $h .= ' <span class="notbold">('.$obj['Year'].')</span>';
-        }
-        if ($obj['Artistname']) {
-            $h .= '<br><span class="notbold">'.$obj['Artistname'].'</span>';
-        }
-    }
+    $h .= domainHtml($obj['AlbumUri']);
+
+    $h .= artistNameHtml($obj);
+
     $h .= '</div>';
     if ($obj['why'] == "a") {
         $id = preg_replace('/^.album/','',$obj['id']);

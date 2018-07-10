@@ -101,6 +101,9 @@ var sleepTimer = function() {
 
 		setup: function() {
 			var d = uiHelper.createPluginHolder('icon-sleep', language.gettext('button_sleep'));
+			if (d === false) {
+				return false;
+			}
 			var holder = $('<div>', {class: 'topdropmenu dropshadow rightmenu normalmenu stayopen', id: 'sleeppanel'}).appendTo(d);
 			var html = '<div class="textcentre configtitle"><b>'+language.gettext('button_sleep')+'</b></div>'+
 				'<input type="hidden" class="helplink" value="https://fatg3erman.github.io/RompR/Alarm-And-Sleep#sleep-timer" />'+
