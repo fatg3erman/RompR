@@ -27,6 +27,9 @@ if (array_key_exists('playlist', $_REQUEST)) {
             add_playlist(rawurlencode($pl), htmlentities($pl), 'icon-doc-text', 'clickloadplaylist', true, $c, false, null);
             $c++;
         }
+    } else if (is_array($playlists) && array_key_exists('error', $playlists)) {
+        // Prevent unwanted deletion of playlist images when there was an error getting the list
+        $used_images = glob('/prefs/plimages/*');
     }
     $existingfiles = glob('prefs/userplaylists/*');
     foreach($existingfiles as $file) {
@@ -140,7 +143,10 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
         case 'clickloaduserplaylist':
             $albumimage = new albumImage(array('artist' => "PLAYLIST", 'album' => $name));
             $image = $albumimage->get_image_if_exists();
-            $used_images[] = dirname($albumimage->basepath);
+            $i = dirname($albumimage->basepath);
+            if (!in_array($i, $used_images)) {
+                $used_images[] = $i;
+            }
             $html = albumHeader(array(
                 'id' => 'pholder_'.md5($name),
                 'Image' => $image,

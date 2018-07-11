@@ -1,6 +1,6 @@
 # Keyboard Shortcuts
 
-The [Desktop](/RompR/Desktop-Skin) and [Fruit](/RompR/Fruit-Skin) skins allow you to control RompЯ with the keyboard.
+The [Desktop](/RompR/Desktop-Skin), [Fruit](/RompR/Fruit-Skin), and [Skypotato](/RompR/Skypotato-Skin) skins allow you to control RompЯ with the keyboard.
 
 The shortcuts editor can be opened from the Configuration panel.
 

@@ -171,7 +171,7 @@ class baseAlbumImage {
         );
         if (substr($image, 0, 14) == 'getRemoteImage') {
             array_walk($images, function(&$v, $k) {
-                $v .= '&amp;rompr_resize_size='.$k;
+                $v .= '&rompr_resize_size='.$k;
             });
         }
         return $images;
