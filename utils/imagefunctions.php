@@ -373,6 +373,7 @@ class albumImage extends baseAlbumImage {
             }
         }
         unlink($download_file);
+        $imagehandler->destroy();
         return $this->images;
     
     }
@@ -455,7 +456,11 @@ class imageHandler {
     public function get_image_dimensions() {
         return $this->image->get_image_dimensions();
     }
-        
+    
+    public function destroy() {
+        $this->image->destroy();
+    }
+    
 }
 
 class imageMagickImage {
@@ -524,6 +529,10 @@ class imageMagickImage {
             }
         }
         return array('width' => $width, 'height' => $height);
+    }
+
+    public function destroy() {
+
     }
     
 }
@@ -698,6 +707,10 @@ class gdImage {
 
     public function get_image_dimensions() {
         return array('width' => $this->getWidth(), 'height' => $this->getHeight());
+    }
+
+    public function destroy() {
+        imagedestroy($this->image);
     }
 
 }

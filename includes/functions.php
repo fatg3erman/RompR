@@ -66,7 +66,9 @@ class url_downloader {
         $this->ch = curl_init();
         curl_setopt($this->ch, CURLOPT_URL, $this->options['url']);
         curl_setopt($this->ch, CURLOPT_ENCODING, '');
-        curl_setopt($this->ch, CURLOPT_USERAGENT, $this->options['useragent']);
+        if ($this->options['useragent']) {
+            curl_setopt($this->ch, CURLOPT_USERAGENT, $this->options['useragent']);
+        }
         curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($this->ch, CURLOPT_TIMEOUT, $this->options['timeout']);
         curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, $this->options['connection_timeout']);

@@ -189,7 +189,7 @@ var podcasts = function() {
 			bar.rangechooser({range: duration, startmax: pos/duration, interactive: false});
 		});
 		infobar.markCurrentTrack();
-		layoutProcessor.postAlbumActions();
+		layoutProcessor.postAlbumActions( $('#podcast_'+channel));
 	}
 
 	return {

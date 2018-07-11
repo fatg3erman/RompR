@@ -102,7 +102,7 @@ if ($mysqlc) {
     }
 
     debuglog("Checking database for missing album art","CACHE CLEANER");
-    $result = generic_sql_query("SELECT Albumindex, Albumname, Image, Domain FROM Albumtable WHERE Image LIKE 'albumart/%'", false, PDO::FETCH_OBJ);
+    $result = generic_sql_query("SELECT Albumindex, Albumname, Image, Domain FROM Albumtable WHERE Image NOT LIKE 'getRemoteImage%'", false, PDO::FETCH_OBJ);
     foreach ($result as $obj) {
         if ($obj->Image != '' && !file_exists($obj->Image)) {
             debuglog($obj->Albumname." has missing image ".$obj->Image,"CACHE CLEANER");

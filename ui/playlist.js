@@ -13,6 +13,7 @@ var playlist = function() {
     var retrytimer;
     var popmovetimer = null;
     var popmoveelement = null;
+    var popmovetimeout = 2000;
 
     // Minimal set of information - just what infobar requires to make sure
     // it blanks everything out
@@ -851,7 +852,7 @@ var playlist = function() {
             var moveto  = (function getMoveTo(i) {
                 if (i !== null) {
                     debug.log("PLAYLIST", "Finding Next Item In List",i.next(),i.parent());
-                    if (i.next().hasClass('track')) {
+                    if (i.next().hasClass('track') || i.next().hasClass('booger')) {
                         debug.log("PLAYLIST","Next Item Is Track");
                         return parseInt(i.next().attr("name"));
                     }
@@ -1207,18 +1208,9 @@ var playlist = function() {
             if (element.hasClass('item')) {
                 tracks = element.next();
             }
-            var cheese = element.prev();
-            if (cheese.length == 0) {
-                if (element.parent().hasClass('trackgroup')) {
-                    cheese = element.parent().prev().prev();
-                    if (cheese.length > 0) {
-                        element.detach().insertBefore(cheese.children().last());
-                    }
-                }
-            } else if (cheese.hasClass('track')) {
-                element.detach().insertBefore(cheese);
-            } else if (cheese.hasClass('trackgroup')) {
-                element.detach().insertBefore(cheese.children().last());
+            var p = element.findPreviousPlaylistElement();
+            if (p.length > 0) {
+                element.detach().insertBefore(p);
             }
             if (tracks !== null) {
                 tracks.detach().insertAfter(element);
@@ -1226,7 +1218,7 @@ var playlist = function() {
             var offsetnow = uiHelper.getElementPlaylistOffset(element);
             var scrollnow = $('#pscroller').scrollTop();
             $('#pscroller').scrollTop(scrollnow+offsetnow-startoffset);
-            popmovetimer = setTimeout(playlist.doPopMove, 1500);
+            popmovetimer = setTimeout(playlist.doPopMove, popmovetimeout);
         },
         
         moveTrackDown: function(element, event) {
@@ -1237,31 +1229,9 @@ var playlist = function() {
             if (element.hasClass('item')) {
                 tracks = element.next();
             }
-            var cheese = element.next();
-            if (cheese.length == 0) {
-                if (element.parent().hasClass('trackgroup')) {
-                    cheese = element.parent().next().next();
-                    if (cheese.length > 0) {
-                        element.detach().insertAfter(cheese.children().first());
-                    }
-                }
-            } else if (cheese.hasClass('track')) {
-                element.detach().insertAfter(cheese);
-            } else if (cheese.hasClass('trackgroup')) {
-                // This will be its own trackgroup
-                cheese = cheese.next();
-                if (cheese.hasClass('track')) {
-                    element.detach().insertAfter(cheese);
-                } else if (cheese.hasClass('item')) {
-                    element.detach().insertAfter(cheese.next().children().first());
-                } else if (cheese.length == 0) {
-                    if (element.parent().hasClass('trackgroup')) {
-                        cheese = element.parent().next().next();
-                        if (cheese.length > 0) {
-                            element.detach().insertAfter(cheese.children().first());
-                        }
-                    }
-                }
+            var n = element.findNextPlaylistElement();
+            if (n.length > 0) {
+                element.detach().insertAfter(n);
             }
             if (tracks !== null) {
                 tracks.detach().insertAfter(element);
@@ -1269,12 +1239,12 @@ var playlist = function() {
             var offsetnow = uiHelper.getElementPlaylistOffset(element);
             var scrollnow = $('#pscroller').scrollTop();
             $('#pscroller').scrollTop(scrollnow+offsetnow-startoffset);
-            popmovetimer = setTimeout(playlist.doPopMove, 1500);
+            popmovetimer = setTimeout(playlist.doPopMove, popmovetimeout);
         },
         
         doPopMove: function() {
             if (popmoveelement !== null) {
-                if (popmoveelement.hasClass('item')){
+                if (popmoveelement.hasClass('item')) {
                     popmoveelement.next().remove();
                 }
                 playlist.dragstopped(null, popmoveelement);
@@ -1293,3 +1263,39 @@ var playlist = function() {
     }
 
 }();
+
+jQuery.fn.findNextPlaylistElement = function() {
+    var next = $(this).next();
+    while (next.length > 0 && !next.is(':visible')) {
+        next = next.next();
+    }
+    if (next.length == 0 && $(this).parent().hasClass('trackgroup')) {
+        next = $(this).parent().next();
+    }
+    if (next.hasClass('item')) {
+        if (next.next().is(':hidden')) {
+            next = next.next();
+        } else {
+            next = next.next().children().first();
+        }
+    }
+    return next;
+}
+
+jQuery.fn.findPreviousPlaylistElement = function() {
+    var prev = $(this).prev();
+    while (prev.length >0 && !prev.is(':visible')) {
+        prev = prev.prev();
+    }
+    if (prev.length == 0 && $(this).parent().hasClass('trackgroup')) {
+        prev = $(this).parent().prev().prev();
+    }
+    if (prev.hasClass('trackgroup')) {
+        if (prev.is(':hidden')) {
+            prev = prev.prev();
+        } else {
+            prev = prev.children().last();
+        }
+    }
+    return prev;
+}

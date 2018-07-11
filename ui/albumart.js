@@ -362,8 +362,8 @@ var imageEditor = function() {
             fdiv.append(                $('<input>', { id: 'uploadkey', type: 'hidden', name: 'key', value: '' }),
                                         $('<input>', { id: 'uploadartist', type: 'hidden', name: 'artist', value: '' }),
                                         $('<input>', { id: 'uploadalbum', type: 'hidden', name: 'album', value: '' }),
-                                        $('<input>', { type: 'button', class: 'fixed', value: language.gettext("albumart_uploadbutton"), style: 'width:8em', onclick: "imageEditor.uploadFile()" }),
-                                        $('<input>', { name: 'ufile', type: 'file', size: '80', class: 'expand inbrowser', style: "margin-left:8px" }));
+                                        $('<input>', { name: 'ufile', type: 'file', size: '80', class: 'expand inbrowser', style: "margin-left:8px" }),
+                                        $('<input>', { type: 'button', class: 'fixed', value: language.gettext("albumart_uploadbutton"), style: 'width:8em', onclick: "imageEditor.uploadFile()" }));
             $("#usearch").append(      '<div class="holdingcell"><p>'+language.gettext("albumart_dragdrop")+'</p></div>');
 
             $("#editcontrols").append(  '<div id="g" class="tleft bleft clickable clickicon bmenu">'+language.gettext("albumart_googlesearch")+'</div>');

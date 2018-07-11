@@ -1,4 +1,5 @@
 jQuery.fn.menuReveal = function(callback) {
+    debug.log("UI", "Revealing",$(this).attr('id'));
     var self = this;
     if (this.hasClass('toggledown')) {
         if (callback) {
@@ -10,7 +11,9 @@ jQuery.fn.menuReveal = function(callback) {
         this.findParentScroller().saveScrollPos();
         this.show(0, function() {
             var i = self.find('.album_menu_image');
-            i.attr('src', i.attr('asrc'));
+            if (i.length > 0) {
+                i.attr('src', i.attr('asrc'));
+            }
             if (callback) {
                 callback();
             }
@@ -20,6 +23,7 @@ jQuery.fn.menuReveal = function(callback) {
 }
 
 jQuery.fn.menuHide = function(callback) {
+    debug.log("UI", "Hiding",$(this).attr('id'));
     var self = this;
     if (this.hasClass('toggledown')) {
         if (callback) {
@@ -36,6 +40,7 @@ jQuery.fn.menuHide = function(callback) {
             if (self.hasClass('removeable')) {
                 self.remove();
             } else {
+                debug.log("UI", "Hiding Image",$(this).attr('id'));
                 var i = self.find('.album_menu_image');
                 i.removeAttr('src');
             }
@@ -94,7 +99,6 @@ jQuery.fn.stopSpinner = function() {
                 $(this).removeAttr("originalclass");
             }
         });
-    
     } else {
         this.removeClass('clickflash');
         return this;
@@ -373,8 +377,14 @@ var layoutProcessor = function() {
             $('.mainpane').not('#infobar').not('#playlistm').not('#prefsm').not('#infopane').bindPlayClicks();
         },
 
-        postAlbumActions: function() {
-            
+        postAlbumActions: function(menu) {
+            if (menu && menu.is(':visible')) {
+                var i = menu.find('.album_menu_image');
+                if (i.length > 0) {
+                    debug.log("UI", "Image has source",i.attr('src'),'asrc',i.attr('asrc'));
+                    i.attr('src', i.attr('asrc'));
+                }
+            }
         },
 
         afterHistory: function() {

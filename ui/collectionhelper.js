@@ -260,6 +260,7 @@ var collectionHelper = function() {
         
         scootTheAlbums: function(jq) {
             if (prefs.downloadart) {
+                debug.log("COLLECTION", "Scooting albums in",jq.attr('id'));
                 $.each(jq.find("img.notexist"), function() {
                     coverscraper.GetNewAlbumArt($(this));
                 });

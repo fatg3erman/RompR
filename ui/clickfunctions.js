@@ -265,7 +265,7 @@ function onPlaylistClicked(event) {
 
 jQuery.fn.findPlParent = function() {
     var el = $(this).parent();
-    while (!el.hasClass('track') && !el.hasClass('item')) {
+    while (!el.hasClass('track') && !el.hasClass('item') && !el.hasClass('booger')) {
         el = el.parent();
     }
     return el;
@@ -346,14 +346,15 @@ function doAlbumMenu(event, element, callback) {
         if ($('#'+menutoopen).hasClass("notfilled")) {
             debug.log("CLICKFUNCTIONS","Opening and filling",menutoopen);
             $('#'+menutoopen).load("albums.php?item="+menutoopen, function() {
-                $(this).removeClass("notfilled");
-                $(this).menuReveal(function() {
-                    collectionHelper.scootTheAlbums($(this));
+                var self = $(this);
+                self.removeClass("notfilled");
+                self.menuReveal(function() {
+                    collectionHelper.scootTheAlbums(self);
                     if (callback) callback();
                     infobar.markCurrentTrack();
-                    if ($(this).find('input.expandalbum').length > 0 ) {
+                    if (self.find('input.expandalbum').length > 0 ) {
                         getAllTracksForAlbum(element, menutoopen);
-                    } else if ($(this).find('input.expandartist').length > 0) {
+                    } else if (self.find('input.expandartist').length > 0) {
                         getAllTracksForArtist(element, menutoopen)
                     }
                 });

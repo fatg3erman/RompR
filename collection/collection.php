@@ -614,7 +614,7 @@ function process_file($filedata) {
 				$filedata['AlbumArtist'] = $filedata['Artist'];
 			}
 			if ($filedata['AlbumArtist'] === null) {
-                $filedata['AlbumArtist'] = array("PODCAST");
+                $filedata['AlbumArtist'] = array("Podcasts");
 			}
             if (is_array($filedata['Artist']) &&
 				($filedata['Artist'][0] == "http" ||

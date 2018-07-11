@@ -22,6 +22,7 @@ switch (ROMPR_IMAGE_VERSION) {
             $ih->save("albumart/medium/".$k.".jpg", 70);
             $ih->resizeToWidth(100);
             $ih->save("albumart/small/".$k.".jpg", 75);
+            $ih->destroy();
             generic_sql_query("UPDATE Albumtable SET ImgVersion = ".ROMPR_IMAGE_VERSION." WHERE ImgKey = '".$k."'");
         }
         

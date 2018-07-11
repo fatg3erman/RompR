@@ -14,19 +14,7 @@ $(document).ready(function(){
     layoutProcessor.initialise();
     checkServerTimeOffset();
     setTimeout(cleanBackendCache, 5000);
-    if (prefs.country_userset == false) {
-        // It's helpful and important to get the country code set, as many users won't see it
-        // and it's necessary for the Spotify info panel to return accurate data
-        $.getJSON("utils/getgeoip.php", function(result) {
-            debug.shout("GET COUNTRY", 'Country:',result.country,'Code:',result.countryCode);
-            if (result.country != 'ERROR') {
-                $("#lastfm_country_codeselector").val(result.country_code);
-                prefs.save({lastfm_country_code: result.countryCode});
-            } else {
-                debug.error("GET COUNTRY","Country code error",result);
-            }
-        });
-    }
+    get_geo_country();
     $('.combobox').makeTagMenu({textboxextraclass: 'searchterm', textboxname: 'tag', labelhtml: '<div class="fixed searchlabel nohide"><b>'+language.gettext("label_tag")+'</b></div>', populatefunction: tagAdder.populateTagMenu});
     $('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add});
     browser.createButtons();
@@ -96,6 +84,22 @@ function cleanBackendCache() {
             debug.shout("INIT","Cache Has Been Cleaned");
             collectionHelper.enableCollectionUpdates();
             setTimeout(cleanBackendCache, 86400000)
+        });
+    }
+}
+
+function get_geo_country() {
+    if (prefs.country_userset == false) {
+        // It's helpful and important to get the country code set, as many users won't see it
+        // and it's necessary for the Spotify info panel to return accurate data
+        $.getJSON("utils/getgeoip.php", function(result) {
+            debug.shout("GET COUNTRY", 'Country:',result.country,'Code:',result.countryCode);
+            if (result.country != 'ERROR') {
+                $("#lastfm_country_codeselector").val(result.country_code);
+                prefs.save({lastfm_country_code: result.countryCode});
+            } else {
+                debug.error("GET COUNTRY","Country code error",result);
+            }
         });
     }
 }
