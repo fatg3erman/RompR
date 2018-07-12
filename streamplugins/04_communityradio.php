@@ -61,6 +61,7 @@ class commradioplugin {
         }
         
         print '<div class="configtitle textcentre brick_wide">Search All Stations:</div>';
+        print '<div class="padright">';
         foreach ($this->searchterms as $term) {
             print '<div class="containerbox dropdown-container brick_wide fullwidth" name="'.$term.'">';
             print '<div class="fixed comm-search-label"><span class="cslt"><b>'.ucfirst($term).'</b></span></div>';
@@ -72,6 +73,7 @@ class commradioplugin {
         print '<div class="containerbox">';
         print '<div class="expand"></div>';
         print '<button class="fixed" name="commradiosearch">'.get_int_text('button_search').'</button>';
+        print '</div>';
         print '</div>';
         
         print '<div class="configtitle textcentre brick_wide">Order By:</div>';

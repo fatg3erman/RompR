@@ -77,7 +77,7 @@ input[type=checkbox], input[type=radio] {
 }
 
 input[type=text] {
-    padding: 0px 2px;
+    /* padding: 0px 2px; */
     height: 2em;
     border: 0px none;
     border-radius: 0 0;

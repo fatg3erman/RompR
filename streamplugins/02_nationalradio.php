@@ -293,7 +293,6 @@ class dirbleplugin {
             }
             print '</div>';
             
-            
             print '<input type="hidden" name="url" value="'.$json['url'].'" />';
             print '<input type="hidden" name="next" value="'.$json['nextpage'].'" />';
             print '<input type="hidden" name="prev" value="'.$json['prevpage'].'" />';

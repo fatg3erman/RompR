@@ -381,7 +381,7 @@ var layoutProcessor = function() {
         },
 
         postAlbumMenu: function(element) {
-            debug.log("SKIN","Post Album Menu Thing",element.next());
+            debug.trace("SKIN","Post Album Menu Thing",element.next());
             if (element.next().hasClass('smallcover')) {
                 var imgsrc = element.next().children('img').attr('src');
                 var aa = new albumart_translator(imgsrc);

@@ -453,6 +453,7 @@ function doFileMenu(event, element) {
                 $(this).menuReveal();
                 infobar.markCurrentTrack();
                 element.stopSpinner();
+                uiHelper.postAlbumMenu(element);
             });
         } else {
             $('#'+menutoopen).menuReveal();
@@ -461,6 +462,7 @@ function doFileMenu(event, element) {
         debug.log("UI","Hiding Menu");
         $('#'+menutoopen).menuHide(function() {
             element.toggleClosed();
+            uiHelper.postAlbumMenu(element);
             // Remove this dropdown - this is so that when we next open it
             // mopidy will rescan it. This makes things like soundcloud and spotify update
             // without us having to refresh the window
