@@ -23,7 +23,12 @@ var playlistManager = function() {
 			html += '<tr class="sortable" name="dummy" romprpos="playmanitem_null"><td style="height:24px"></td></tr>';
 		} else {
 			for (var i in tracks) {
-				html += '<tr class="sortable draggable infoclick clickable clicktrack" name="'+tracks[i].Uri+'" romprpos="playmanitem_'+i+'"><td width="40px"><img class="smallcover';
+				if (tracks[i].Type == 'stream') {
+					html += '<tr class="sortable draggable infoclick clickable clickstream" name="'+tracks[i].Uri+'" streamname="'+tracks[i].Album+'" streamimg="'+tracks[i].Image+'" romprpos="playmanitem_'+i+'">';
+				} else {
+					html += '<tr class="sortable draggable infoclick clickable clicktrack" name="'+tracks[i].Uri+'" romprpos="playmanitem_'+i+'">';
+				}
+				html += '<td width="40px"><img class="smallcover';
 				if (tracks[i].Image) {
 					html += '" src="'+tracks[i].Image;
 				} else {

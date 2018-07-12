@@ -26,12 +26,14 @@ function print_playlists_as_json() {
         	$playlist = array();
         	$pls[rawurlencode($name)] = array();
             doCollection('listplaylistinfo "'.$name.'"');
-			$albumimage = new albumImage(array('artist' => "PLAYLIST", 'album' => $name));
+			$albumimage = new baseAlbumImage(array('artist' => "PLAYLIST", 'album' => $name));
             $c = 0;
 			$plimage = $albumimage->get_image_if_exists();
             foreach($playlist as $track) {
+				$usealbumimage = $albumimage;
                 list($flag, $link) = $track->get_checked_url();
                 $albumartist = format_sortartist($track->tags);
+				debuglog('AlbumArtist Is '.$albumartist,"PLAYLISTS");
                 $image = $plimage;
                 $result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
                         "SELECT Image FROM
@@ -40,15 +42,29 @@ function print_playlists_as_json() {
                         WHERE Albumname = ? AND Artistname = ?", $track->tags['Album'], $albumartist);
                 foreach ($result as $obj) {
                     $image = $obj->Image;
+					$usealbumimage = new baseAlbumImage(array('artist' => $albumartist, 'album' => $track->tags['Album']));
+					break;
                 }
                 if ($image == $plimage) {
                     $result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
-                            "SELECT Image FROM
-                            Tracktable JOIN Albumtable USING
-                            (Albumindex)
+                            "SELECT Image, Artistname FROM
+                            Tracktable JOIN Albumtable USING (Albumindex)
+							JOIN Artisttable ON (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
                             WHERE Albumname = ? AND Title = ?", $track->tags['Album'], $track->tags['Title']);
                     foreach ($result as $obj) {
                         $image = $obj->Image;
+						$usealbumimage = new baseAlbumImage(array('artist' => $obj->Artistname, 'album' => $track->tags['Album']));
+						break;
+                    }
+                }
+				if ($image == $plimage) {
+                    $result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
+                            "SELECT Image FROM RadioStationtable
+                            WHERE StationName = ?", $track->tags['Album']);
+                    foreach ($result as $obj) {
+                        $image = $obj->Image;
+						$usealbumimage = new baseAlbumImage(array('artist' => 'STREAM', 'album' => $track->tags['Album']));
+						break;
                     }
                 }
     	        $pls[rawurlencode($name)][] = array(
@@ -59,7 +75,7 @@ function print_playlists_as_json() {
     	        	'albumartist' => $albumartist,
     	        	'duration' => $track->tags['Time'],
     	        	'Image' => $image,
-    	        	'key' => $albumimage->get_image_key(),
+    	        	'key' => $usealbumimage->get_image_key(),
     	        	'pos' => $c,
     	        	'plimage' => $plimage,
                     'Type' => $track->tags['type']

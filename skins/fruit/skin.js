@@ -436,7 +436,9 @@ var layoutProcessor = function() {
             setDraggable("#podcastslist");
             setDraggable("#somafmlist");
             setDraggable("#bbclist");
+            setDraggable("#communityradiolist");
             setDraggable("#icecastlist");
+            setDraggable("#tuneinlist");
             setDraggable('#artistinformation');
             setDraggable('#albuminformation');
             setDraggable('#storedplaylists');

@@ -842,6 +842,7 @@ var playlist = function() {
         draggedToEmpty: function(event, ui) {
             debug.log("PLAYLIST","Something was dropped on the empty playlist area",event,ui);
             playlist.addItems($('.selected').filter(removeOpenItems), parseInt(finaltrack)+1);
+            doSomethingUseful('waiter', language.gettext('label_incoming'));
         },
 
         dragstopped: function(event, ui) {
