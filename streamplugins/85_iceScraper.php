@@ -82,7 +82,8 @@ if (array_key_exists('populate', $_REQUEST)) {
                 'ImgKey' => 'none',
                 'streamuri' => $listenlink,
                 'streamname' => $server_name,
-                'streamimg' => 'newimages/icecast.svg',
+                // 'streamimg' => 'newimages/icecast.svg',
+				'streamimg' => '',
 				'class' => 'radiochannel'
             ));
 			print '<div id="icecast_'.$count.'" class="dropmenu">';
@@ -92,7 +93,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 			print '<div class="containerbox rowspacer"></div>';
 			print '<div class="indent">'.$listeners.'</div>';
 			print '<div class="containerbox rowspacer"></div>';
-			print '<div class="stream-description clickable clickstream draggable indent" name="'.$listenlink.'" streamname="'.$server_name.'" streamimg="newimages/icecast.svg">';
+			print '<div class="stream-description clickable clickstream draggable indent" name="'.$listenlink.'" streamname="'.$server_name.'" streamimg="">';
 			print '<b>Listen</b> '.$format;
 			print '</div>';
 			print '<div class="containerbox rowspacer"></div>';
@@ -108,7 +109,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 	}
 	
 	$pager = $doc->find('ul.pager')->children('li');
-	print '<div class="containerbox wrap">';
+	print '<div class="containerbox wrap brick_wide configtitle textcentre">';
 	foreach ($pager as $page) {
 		$link = pq($page)->children('a')->attr('href');
 		print '<div class="clickable clickicon clickicepager expand" name="/search'.$link.'">'.pq($page)->children('a')->text().'</div>';

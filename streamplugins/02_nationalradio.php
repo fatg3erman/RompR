@@ -227,7 +227,7 @@ class dirbleplugin {
                 debuglog("  Got Page ".$p,"DIRBLE");
             }
             if (($p = $d->get_header('X-Total')) !== false) {
-                debuglog("  Total Pages ".$p,"DIRBLE");
+                debuglog("  Total Stations ".$p,"DIRBLE");
                 $result['total'] = $p;
             }
             if (($p = $d->get_header('X-Next-Page')) !== false) {
@@ -279,6 +279,21 @@ class dirbleplugin {
             $class = ($json['nextpage'] == 0) ? ' button-disabled' : ' clickable clickicon clickradioforward';
             print '<i class="fixed icon-right-circled medicon'.$class.'"></i>';
             print '</div>';
+            
+            $page = $json['prevpage']+1;
+            $firstpage = max(1, $page-5);
+            $lastpage = min($firstpage+9, round(($json['total']/$json['perpage']), 0, PHP_ROUND_HALF_DOWN)+1);
+            print '<div class="textcentre brick_wide containerbox wrap menuitem">';
+            for ($p = $firstpage; $p < $lastpage; $p++) {
+                print '<div class="clickable clickicon clickdirblepager expand';
+                if ($p == $page) {
+                    print ' highlighted';
+                }
+                print '" name="'.$p.'">'.$p.'</div>';
+            }
+            print '</div>';
+            
+            
             print '<input type="hidden" name="url" value="'.$json['url'].'" />';
             print '<input type="hidden" name="next" value="'.$json['nextpage'].'" />';
             print '<input type="hidden" name="prev" value="'.$json['prevpage'].'" />';

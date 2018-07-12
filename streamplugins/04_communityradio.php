@@ -3,7 +3,7 @@
 class commradioplugin {
     
     public function __construct() {
-        $this->pagination = 100;
+        $this->pagination = 50;
         $this->searchterms = array('name', 'country', 'state', 'language', 'tag');
         $this->page = 0;
     }
@@ -244,6 +244,19 @@ class commradioplugin {
         $class = ((($page+1) * $per_page) >= $count || $count < $per_page) ? ' button-disabled' : ' clickable clickicon clickcommradioforward';
         print '<i class="fixed icon-right-circled medicon'.$class.'"></i>';
         print '</div>';
+        
+        $firstpage = max(0, $page-5);
+        $lastpage = min($firstpage+10, round(($count/$per_page), 0, PHP_ROUND_HALF_DOWN)+1);
+        print '<div class="textcentre brick_wide containerbox wrap menuitem">';
+        for ($p = $firstpage; $p < $lastpage; $p++) {
+            print '<div class="clickable clickicon clickcommradiopager expand';
+            if ($p == $page) {
+                print ' highlighted';
+            }
+            print '" name="'.$p.'">'.($p+1).'</div>';
+        }
+        print '</div>';
+        
         print '</div>';
     }
 
