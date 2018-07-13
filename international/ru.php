@@ -630,8 +630,27 @@ $languages['ru'] = array (
 	"label_with_ratings" => "Воспроизвести только треки с рейтингами",
 	"label_with_tags" => "Воспроизвести только треки с тегами",
 	"label_with_tagandrat" => "Играть только треки с тегами и рейтингами",
-	"label_with_tagorrat" => "Воспроизвести только треки с тегами или рейтингами"
-	
+	"label_with_tagorrat" => "Воспроизвести только треки с тегами или рейтингами",
+        "config_google_credentials" => "Google API Credentials",
+	"config_read_the_docs" => "Please Read The Documentation",
+	"label_dateadded" => "Date Added",
+	"label_radiostation" => "Радио Станция",
+	"label_opmlimporter" => "OPML Импортёр",
+	"config_playerintitlebar" => "Паказывать имя плеера в Titlebar",
+	"label_communityradio" => "Community Radio Browser",
+	"label_volume" => "Громкость",
+	"config_playlistswipe" => "Swipe to remove tracks from Current Playlist",
+	"button_debuginfo" => "Отладочная информация",
+	"config_podcast_defaults" => "Default Options For New Podcasts",
+	"config_marknewasunlistened" => "Mark New Episodes as Unlistened Before Refresh",
+	"config_albumartinplaylist" => "Show Album Art in Current Playlist",
+	"label_resume" => "Продолжить",
+	"label_sortby" => "Сортировать по",
+	"label_then" => "Затем",
+	"label_publisher" => 'Издателью',
+	"label_category" => "Категории",
+	"label_new_episodes" => "Новым эпизодам",
+	"label_unlistened_episodes" => "Незарегистрированные Эпизоды"	
 );
 
 ?>
