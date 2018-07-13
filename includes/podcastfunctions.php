@@ -894,8 +894,13 @@ function doPodcastHeader($y) {
     
     // phpQuery is something like 160K of extra code. Just to do this.
     // The fact that I'm willing to include it indicates just how crap php's DOMDocument is
+    
+    // phpQuery barfs at out '&rompr_resize_size' because it's expecting an HTML entity after &
+    $html = preg_replace('/&rompr_/','&amp;rompr_', $html);
     $out = addPodcastCounts($html, $extra);
-    print $out->html();
+    $h = $out->html();
+    $html = preg_replace('/&amp;rompr_/','&rompr_', $h);
+    print $html;
     
     print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu padright"><div class="textcentre">Loading...</div></div>';
 }
