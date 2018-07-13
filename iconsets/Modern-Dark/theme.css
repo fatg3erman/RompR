@@ -62,7 +62,6 @@
 .icon-internetarchive-circled { background-image: url('internetarchive-logo.svg') }
 .icon-increase { background-image: url('arrow-increase.svg') }
 .icon-decrease { background-image: url('arrow-decrease.svg') }
-.icon-basket-circled { background-image: url('cart.svg') }
 .icon-attention-1 { background-image: url('dialog-error.svg') }
 .icon-info-circled { background-image: url('dialog-information.svg') }
 .icon-download { background-image: url('download-icon.svg') }
@@ -73,9 +72,8 @@
 .icon-heart { background-image: url('lastfm-love.svg') }
 .icon-heart-broken { background-image: url('lastfm-unlove.svg') }
 .icon-refresh { background-image: url('refresh.svg') }
-.icon-dirble { background-image: url('dirble-logo.svg') }
+.icon-dirble-circled { background-image: url('dirble-logo.svg') }
 .icon-tunein { background-image: url('../../newimages/tunein-logo.svg') }
-.icon-icecast { background-image: url('icecast.svg') }
 .icon-no-response-playbutton { background-image :url('media-playback-start.svg') }
 .icon-tags { background-image: url('tag.svg') }
 .icon-volume-up { background-image: url('volume.svg') }
@@ -102,7 +100,7 @@
 .icon-recentlyplayed { background-image: url('calendar.svg') }
 .icon-artist { background-image: url('artist-icon.png') }
 .icon-mp3-audio { background-image: url('mp3-audio.svg') }
-.icon-aac-audio { background-image: url('aac-audio.jpg') }
+.icon-aac-audio { background-image: url('aac-audio.svg') }
 .icon-flac-audio { background-image: url('flac-audio.svg') }
 .icon-wma-audio { background-image: url('wma-audio.svg') }
 .icon-ogg-audio { background-image: url('ogg-audio.svg') }
@@ -116,6 +114,8 @@
 .icon-facebook-logo { background-image: url('facebook-logo.svg') }
 .icon-twitter-logo { background-image: url('twitter-logo.svg') }
 .icon-www { background-image: url('world-wide-web.svg') }
+.icon-allmusic { background-image: url('allmusic-logo.svg') }
+.icon-updown { background-image: url('arrow-updown.svg') }
 
 .styledinputs label
 {
@@ -144,7 +144,7 @@
     height:1.5em;
     position:absolute;
     left:0;
-    bottom:0.2em;
+    /* bottom:0.2em; */
     background-image: url('togglebutton-new2-off.svg');
  	background-size:contain;
 	background-position: center;
@@ -161,7 +161,13 @@ img.notexist,img.notfound
     background-image: url('compact-disc.svg');
     background-size:contain;
     display:inline-block;
+    background-position:center;
+    background-repeat: no-repeat;
+}
 
+img.stream.notfound, img.stream.notexist
+{
+    background-image: url('broadcast-new.svg');
 }
 
 img.plimage.notfound

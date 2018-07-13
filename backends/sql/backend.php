@@ -80,19 +80,39 @@ function create_new_track(&$data) {
 			return null;
 		}
 	}
+	
+	$data['sourceindex'] = null;
+	if ($data['uri'] === null && array_key_exists('streamuri', $data) && $data['streamuri'] !== null) {
+		$data['sourceindex'] = check_radio_source($data);
+	}
 
 	if (sql_prepare_query(true, null, null, null,
 		"INSERT INTO
 			Tracktable
-			(Title, Albumindex, Trackno, Duration, Artistindex, Disc, Uri, LastModified, Hidden, isSearchResult)
+			(Title, Albumindex, Trackno, Duration, Artistindex, Disc, Uri, LastModified, Hidden, isSearchResult, Sourceindex)
 			VALUES
-			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		$data['title'], $data['albumindex'], $data['trackno'], $data['duration'], $data['trackai'],
-		$data['disc'], $data['uri'], $data['lastmodified'], $data['hidden'], $data['searchflag']))
+		$data['disc'], $data['uri'], $data['lastmodified'], $data['hidden'], $data['searchflag'], $data['sourceindex']))
 	{
 		return $mysqlc->lastInsertId();
 	}
 	return null;
+}
+
+function check_radio_source($data) {
+	global $mysqlc;
+	$index = simple_query('Sourceindex', 'WishlistSourcetable', 'SourceUri', $data['streamuri'], null);
+	if ($index === null) {
+		debuglog("Creating Wishlist Source ".$data['streamname'],"SQL");
+		if (sql_prepare_query(true, null, null, null,
+		"INSERT INTO WishlistSourcetable (SourceName, SourceImage, SourceUri) VALUES (?, ?, ?)",
+		$data['streamname'], $data['streamimage'], $data['streamuri']))
+		{
+			$index = $mysqlc->lastInsertId();
+		}
+	}
+	return $index;
 }
 
 function check_artist($artist) {
@@ -164,10 +184,6 @@ function check_album(&$data) {
 		$year = best_value($obj->Year, $data['date']);
 		$img  = best_value($obj->Image, $data['image']);
 		$uri  = best_value($obj->AlbumUri, $data['albumuri']);
-		if ($img != $obj->Image) {
-			$retval = archive_image($img, $data['imagekey']);
-			$img = $retval['image'];
-		}
 		if ($year != $obj->Year || $img != $obj->Image || $uri != $obj->AlbumUri) {
 
 			if ($prefs['debug_enabled'] > 6) {
@@ -201,10 +217,10 @@ function create_new_album($data) {
 
 	global $mysqlc;
 	$retval = null;
-	$im = array('searched' => 0, 'image' => null);
-	if ($data['imagekey'] !== null) {
-		$im = archive_image($data['image'], $data['imagekey']);
-	}
+	$im = array(
+		'searched' => $data['image'] ? 1: 0,
+		'image' => $data['image']
+	);
 	if (sql_prepare_query(true, null, null, null,
 		"INSERT INTO
 			Albumtable
@@ -262,43 +278,39 @@ function list_tags() {
 
 function get_rating_headers($sortby) {
 		
+	$ratings = array();
+		
 	switch ($sortby) {
 		
 		case 'Rating':
-			$ratings = array('1','2','3','4','5');
+			$ratings = generic_sql_query("SELECT Rating AS Name, COUNT(TTindex) AS NumTracks FROM Ratingtable GROUP BY Rating ORDER BY Rating");
 			break;
 			
 		case 'Tag':
-			$ratings = sql_get_column('SELECT Name from Tagtable ORDER BY Name', 'Name');
+			$ratings = generic_sql_query('SELECT Name, COUNT(TTindex) AS NumTracks FROM Tagtable JOIN TagListtable USING (Tagindex) GROUP BY Name ORDER BY Name');
 			break;
 			
 		case 'AlbumArtist':
 			// It's actually Track Artist, but sod changing it now.
-			$qstring = "SELECT DISTINCT Artistname
+			$qstring = "SELECT DISTINCT Artistname AS Name, COUNT(DISTINCT TTindex) AS NumTracks
 						FROM
 						Artisttable AS a JOIN Tracktable AS tt USING (Artistindex)
 						LEFT JOIN Ratingtable USING (TTindex)
 						LEFT JOIN `TagListtable` USING (TTindex)
 						LEFT JOIN Tagtable AS t USING (Tagindex)
-						WHERE Uri IS NOT NULL and Hidden = 0 AND isSearchResult < 2 AND (Rating IS NOT NULL OR t.Name IS NOT NULL)
-						GROUP BY TTindex
+						WHERE Hidden = 0 AND isSearchResult < 2 AND (Rating IS NOT NULL OR t.Name IS NOT NULL)
+						GROUP BY Artistname
 						ORDER BY ";
 			$qstring .= sort_artists_by_name();
-			$ratings = sql_get_column($qstring, 'Artistname');
+			$ratings = generic_sql_query($qstring);
 			break;
 			
 		case 'Tags':
-			// This might seem a faff but we need a TagListtable sorted by Tag name otherwise we get
-			// results like Taga,Tagb and Tagb,Taga
-			generic_sql_query("DROP TABLE IF EXISTS tagorder");
-			generic_sql_query("CREATE TEMPORARY TABLE tagorder(Tagindex INTEGER, TTindex INTEGER)");
-			generic_sql_query("INSERT INTO tagorder (Tagindex, TTindex)  SELECT Tagindex, TTindex FROM TagListtable ORDER BY Tagindex");
-			$ratings = sql_get_column("SELECT DISTINCT ".SQL_TAG_CONCAT." AS Tags FROM
-										Tagtable AS t
-										JOIN tagorder USING (Tagindex)
-										GROUP BY TTindex
-										ORDER By Tags", "Tags");
-				
+			$ratings = generic_sql_query("SELECT DISTINCT ".SQL_TAG_CONCAT." AS Name, 0 AS NumTracks FROM
+											(SELECT Tagindex, TTindex FROM TagListtable ORDER BY Tagindex) AS tagorder
+											JOIN Tagtable AS t USING (Tagindex)
+											GROUP BY TTindex
+											ORDER By Name");
 			break;
 			
 		default:
@@ -357,7 +369,7 @@ function get_rating_info($sortby, $value) {
 					JOIN Albumtable AS al USING (Albumindex)
 					JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-				WHERE r.Rating = ".$value." AND tr.Uri IS NOT NULL AND tr.isSearchResult < 2";
+				WHERE r.Rating = ".$value." AND tr.isSearchResult < 2";
 				break;
 				
 			case 'Tag':
@@ -409,7 +421,7 @@ function get_rating_info($sortby, $value) {
 			 		JOIN Albumtable AS al USING (Albumindex)
 			 		JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 			 		JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL) AND tr.isSearchResult < 2 AND tr.Uri IS NOT NULL AND a.Artistname = '".$value."'";
+			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL) AND tr.isSearchResult < 2 AND a.Artistname = '".$value."'";
 				break;
 				
 			case 'Tags':
@@ -442,7 +454,7 @@ function get_rating_info($sortby, $value) {
 						$tags[$i] = "tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name='".$t."')";
 					}
 					$qstring .= implode(' AND ', $tags);
-					$qstring .= " AND tr.Uri IS NOT NULL AND tr.isSearchResult < 2";
+					$qstring .= " AND tr.isSearchResult < 2";
 					break;
 	}
 	
@@ -521,82 +533,35 @@ function get_all_data($ttid) {
 function get_extra_track_info(&$filedata) {
 	$data = array();;
 	$result = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
-		"SELECT Uri, TTindex, Disc, Artistname AS AlbumArtist, Albumtable.Image AS ImageForPlaylist, ImgKey AS ImgKey, mbid AS MUSICBRAINZ_ALBUMID
+		'SELECT Uri, TTindex, Disc, Artistname AS AlbumArtist, Albumtable.Image AS "X-AlbumImage", ImgKey AS ImgKey, mbid AS MUSICBRAINZ_ALBUMID
 			FROM
 				Tracktable
 				JOIN Albumtable USING (Albumindex)
 				JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
 				WHERE Title = ?
 				AND TrackNo = ?
-				AND Albumname = ?",
+				AND Albumname = ?',
 			$filedata['Title'], $filedata['Track'], $filedata['Album']
 	);
 	foreach ($result as $tinfo) {
 		if ($tinfo['Uri'] == $filedata['file']) {
-			$data = $tinfo;
+			$data = array_filter($tinfo, function($v) {
+				if ($v === null || $v == '') {
+					return false;
+				}
+				return true;
+			});
 			break;
 		}
 	}
 	return $data;
 }
 
-// While this is nice, the complexity of the query makes it very slow - the above query completes
-// in about 1/3 of the time. It's s shame, since this pre-populates all our usermeta for the playlist
-// but the delay is unacceptable with large playlists. Even the above version is pushing it
-// function get_extra_track_info(&$filedata) {
-// 	$data = null;
-// 	if ($result = sql_prepare_query("SELECT
-// 			IFNULL(r.Rating, 0) AS Rating,
-// 			IFNULL(p.Playcount, 0) AS Playcount,
-// 			".sql_to_unixtime('p.LastPlayed')." AS LastTime,
-// 			".sql_to_unixtime('tr.DateAdded')." AS DateAdded,
-// 			IFNULL(".SQL_TAG_CONCAT.", '') AS Tags,
-// 			tr.Uri,
-// 			tr.TTindex AS TTindex,
-// 			tr.Disc AS Disc,
-// 			tr.isSearchResult AS isSearchResult,
-// 			tr.Hidden AS Hidden,
-// 			ta.Artistname AS AlbumArtist,
-// 			al.Image AS ImageForPlaylist,
-// 			al.ImgKey AS ImgKey
-// 		FROM
-// 			(Tracktable AS tr, Artisttable AS ta, Albumtable AS al)
-// 			LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
-// 			LEFT JOIN Playcounttable AS p ON tr.TTindex = p.TTindex
-// 			LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
-// 			LEFT JOIN Tagtable AS t USING (Tagindex)
-// 				WHERE tr.Title = ?
-// 				AND al.Albumname = ?
-// 				AND tr.Trackno = ?
-// 				AND al.AlbumArtistindex = ta.Artistindex
-// 				AND al.Albumindex = tr.Albumindex
-// 		GROUP BY tr.TTindex
-// 		ORDER BY t.Name",
-// 		$filedata['Title'], $filedata['Album'], $filedata['Track']
-// 		)) {
-
-// 		while ($tinfo = $result->fetch(PDO::FETCH_ASSOC)) {
-// 			if ($tinfo['Uri'] == $filedata['file']) {
-// 				$data = $tinfo;
-// 				break;
-// 			}
-// 		}
-// 	}
-// 	if (is_array($data)) {
-// 		$data['Tags'] = explode(', ', $data['Tags']);
-// 		if ($data['LastTime'] != null && $data['LastTime'] != 0 && $data['LastTime'] != '0') {
-// 			$data['Last'] = $data['LastTime'];
-// 		}
-// 		return $data;
-// 	} else {
-// 		return array();
-// 	}
-// }
-
 function get_imagesearch_info($key) {
 
 	// Used by getalbumcover.php to get album and artist names etc based on an Image Key
-	$retval = array(false, null, null, null, null, null, false);
+	
+	$retval = array('artist' => null, 'album' => null, 'mbid' => null, 'albumpath' => null, 'albumuri' => null);
 	$result = generic_sql_query(
 		"SELECT DISTINCT
 			Artisttable.Artistname,
@@ -614,24 +579,22 @@ function get_imagesearch_info($key) {
 	// This can come back with multiple results if we have the same album on multiple backends
 	// So we make sure we combine the data to get the best possible set
 	foreach ($result as $obj) {
-		if ($retval[1] == null) {
-			$retval[1] = $obj->Artistname;
+		if ($retval['artist'] == null) {
+			$retval['artist'] = $obj->Artistname;
 		}
-		if ($retval[2] == null) {
-			$retval[2] = $obj->Albumname;
+		if ($retval['album'] == null) {
+			$retval['album'] = $obj->Albumname;
 		}
-		if ($retval[3] == null || $retval[3] == "") {
-			$retval[3] = $obj->mbid;
+		if ($retval['mbid'] == null || $retval['mbid'] == "") {
+			$retval['mbid'] = $obj->mbid;
 		}
-		if ($retval[4] == null) {
-			$retval[4] = get_album_directory($obj->Albumindex, $obj->AlbumUri);
+		if ($retval['albumpath'] == null) {
+			$retval['albumpath'] = get_album_directory($obj->Albumindex, $obj->AlbumUri);
 		}
-		if ($retval[5] == null || $retval[5] == "") {
-			$retval[5] = $obj->AlbumUri;
+		if ($retval['albumuri'] == null || $retval['albumuri'] == "") {
+			$retval['albumuri'] = $obj->AlbumUri;
 		}
-		$retval[0] = 1;
-		$retval[6] = true;
-		debuglog("Found album ".$retval[2]." in database","GETALBUMCOVER",6);
+		debuglog("Found album ".$retval['album']." in collection","GETALBUMCOVER",6);
 	}
 
 	$result = generic_sql_query(
@@ -651,26 +614,22 @@ function get_imagesearch_info($key) {
 	// This can come back with multiple results if we have the same album on multiple backends
 	// So we make sure we combine the data to get the best possible set
 	foreach ($result as $obj) {
-		if ($retval[1] == null) {
-			$retval[1] = $obj->Artistname;
+		if ($retval['artist'] == null) {
+			$retval['artist'] = $obj->Artistname;
 		}
-		if ($retval[2] == null) {
-			$retval[2] = $obj->Albumname;
+		if ($retval['album'] == null) {
+			$retval['album'] = $obj->Albumname;
 		}
-		if ($retval[3] == null || $retval[3] == "") {
-			$retval[3] = $obj->mbid;
+		if ($retval['mbid'] == null || $retval['mbid'] == "") {
+			$retval['mbid'] = $obj->mbid;
 		}
-		if ($retval[4] == null) {
-			$retval[4] = get_album_directory($obj->Albumindex, $obj->AlbumUri);
+		if ($retval['albumpath'] == null) {
+			$retval['albumpath'] = get_album_directory($obj->Albumindex, $obj->AlbumUri);
 		}
-		if ($retval[5] == null || $retval[5] == "") {
-			$retval[5] = $obj->AlbumUri;
+		if ($retval['albumuri'] == null || $retval['albumuri'] == "") {
+			$retval['albumuri'] = $obj->AlbumUri;
 		}
-		if ($retval[0] === false) {
-			$retval[0] = 1;
-		}
-		$retval[6] = true;
-		debuglog("Found album ".$retval[2]." in search results or hidden tracks","GETALBUMCOVER",6);
+		debuglog("Found album ".$retval['album']." in search results or hidden tracks","GETALBUMCOVER",6);
 	}
 	return $retval;
 }
@@ -696,9 +655,9 @@ function get_album_directory($albumindex, $uri) {
 	return $retval;
 }
 
-function update_image_db($key, $notfound, $imagefile) {
-	$val = ($notfound == 0) ? $imagefile : "";
-	if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Image=?, Searched = 1 WHERE ImgKey=?", $val, $key)) {
+function update_image_db($key, $found, $imagefile) {
+	$val = ($found) ? $imagefile : null;
+	if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Image = ?, Searched = 1 WHERE ImgKey = ?", $val, $key)) {
 		debuglog("    Database Image URL Updated","MYSQL",8);
 	} else {
 		debuglog("    Failed To Update Database Image URL","MYSQL",2);
@@ -1218,13 +1177,18 @@ function add_fave_station($info) {
 		return true;
 	}
 	$stationindex = check_radio_station($info['location'],$info['album'],$info['image']);
-	check_radio_tracks($stationindex, array('TrackUri' => $info['location'], 'PrettyStream' => $info['stream']));
+	check_radio_tracks($stationindex, array(array('TrackUri' => $info['location'], 'PrettyStream' => $info['stream'])));
 	generic_sql_query("UPDATE RadioStationtable SET IsFave = 1 WHERE Stationindex = ".$stationindex, true);
 }
 
 function update_radio_station_name($info) {
-	debuglog("Updating Stationindex ".$info['streamid'].' with new name '.$info['name']);
-	sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET StationName = ? WHERE Stationindex = ?",$info['name'],$info['streamid']);
+	if ($info['streamid']) {
+		debuglog("Updating Stationindex ".$info['streamid'].' with new name '.$info['name']);
+		sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET StationName = ? WHERE Stationindex = ?",$info['name'],$info['streamid']);
+	} else {
+		$stationid = check_radio_station($info['uri'], $info['name'], '');
+		check_radio_tracks($stationid, array(array('TrackUri' => $info['uri'], 'PrettyStream' => '')));
+	}
 }
 
 function find_stream_name_from_index($index) {
@@ -1232,8 +1196,11 @@ function find_stream_name_from_index($index) {
 }
 
 function update_stream_image($stream, $image) {
-	$streamid = stream_index_from_key($stream);
-	sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET Image = ? WHERE Stationindex = ?",$image,$streamid);
+	sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET Image = ? WHERE StationName = ?",$image,$stream);
+}
+
+function update_podcast_image($image, $podid) {
+	sql_prepare_query(true, null, null, null, 'UPDATE Podcasttable SET Image = ? WHERE PODindex = ?',$image, $podid);
 }
 
 function find_radio_track_from_url($url) {
@@ -1256,7 +1223,10 @@ function find_podcast_track_from_url($url) {
 									Podcasttable.Artist AS albumartist,
 									Podcasttable.Image AS image
 									FROM PodcastTracktable JOIN Podcasttable USING (PODindex)
-									WHERE PodcastTracktable.Link=? OR PodcastTracktable.Localfilename=?",$url, $url);
+									WHERE PodcastTracktable.Link=?
+									OR PodcastTracktable.Localfilename=?",
+									$url,
+									preg_replace('#http://.*?/#', '/', $url));
 }
 
 //
@@ -1547,17 +1517,16 @@ function create_foundtracks() {
 
 function remove_cruft() {
     debuglog("Removing orphaned albums","MYSQL",6);
-    // NOTE - the Albumindex IS NOT NULL is essential - if any albumindex is NULL the entire () expression returns NULL
 	$t = microtime(true);
-    generic_sql_query("DELETE FROM Albumtable WHERE Albumindex NOT IN (SELECT DISTINCT Albumindex FROM Tracktable WHERE Albumindex IS NOT NULL)", true);
+    generic_sql_query("DELETE FROM Albumtable WHERE Albumindex NOT IN (SELECT DISTINCT Albumindex FROM Tracktable)", true);
 	$at = microtime(true) - $t;
-	debuglog(" -- Removing orphaned albums took ".$at." seconds","BACKEND",8);
+	debuglog(" -- Removing orphaned albums took ".$at." seconds","BACKEND",6);
 
     debuglog("Removing orphaned artists","MYSQL",6);
 	$t = microtime(true);
     delete_orphaned_artists();
 	$at = microtime(true) - $t;
-	debuglog(" -- Removing orphaned artists took ".$at." seconds","BACKEND",8);
+	debuglog(" -- Removing orphaned artists took ".$at." seconds","BACKEND",6);
 
     debuglog("Tidying Metadata","MYSQL",6);
 	$t = microtime(true);
@@ -1570,7 +1539,7 @@ function remove_cruft() {
 	generic_sql_query("DELETE FROM Playcounttable WHERE Playcount = '0'", true);
 	generic_sql_query("DELETE FROM Playcounttable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
 	$at = microtime(true) - $t;
-	debuglog(" -- Tidying metadata took ".$at." seconds","BACKEND",8);
+	debuglog(" -- Tidying metadata took ".$at." seconds","BACKEND",6);
 }
 
 function do_track_by_track($trackobject) {
@@ -1686,8 +1655,6 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 	// Note the use of === to detect LastModified, because == doesn't tell the difference between 0 and null
 	//  - so if we have a manually added track and the add a collection track over it from a backend that doesn't
 	//  give us LastModified (eg Spotify-Web), we don't update lastModified and the track remains manually added.
-	//  This does lead to us updating LastModified for those tracks every time, since 0 from the database !== "0" from mopidy.
-	//  Ah well.
 
     if ($ttid) {
     	if ((!$doing_search && $trackobj->tags['Last-Modified'] !== $lastmodified) ||

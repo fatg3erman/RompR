@@ -156,10 +156,10 @@ $languages['ru'] = array (
 	"label_waitingforstation" => "Ожидание информации о станции...",
 	"label_notforradio" => "Не поддерживается для радиопотоков",
 	"label_incoming" => "Входящие...",
-	"label_addingtracks" => "Треки в очереди",	
+	"label_addingtracks" => "Треки в очереди",
 	// Now Playing - [track name] by [artist] on [album]
 	"label_by" => "от",
-	"label_on" => "на",	
+	"label_on" => "на",
 	// Now playing - 1:45 of 6:50
 	"label_of" => "из",
 	
@@ -167,7 +167,7 @@ $languages['ru'] = array (
 	"podcast_rss_error" => "Не удалось загрузить RSS-канал",
 	"podcast_remove_error" => "Не удалось удалить подкаст",
 	"podcast_general_error" => "Операция не удалась :(",
-	"podcast_entrybox" => "Введите URL-адрес RSS-канала подкаста в этом поле или перетащите его значок сюда",	
+	"podcast_entrybox" => "Введите URL-адрес RSS-канала подкаста в этом поле или перетащите его значок сюда",
 	// Podcast tooltips
 	"podcast_delete" => "Удалить этот подкаст",
 	"podcast_configure" => "Настроить этот подкаст",
@@ -175,21 +175,21 @@ $languages['ru'] = array (
 	"podcast_download_all" => "Скачать все эпизоды этого подкаста",
 	"podcast_mark_all" => "Отметить все эпизоды как прослушанные",
 	"podcast_undelete" => "Восстановить удаленные эпизоды",
-	"podcast_removedownloaded" => "Удаление загруженных файлов",	
+	"podcast_removedownloaded" => "Удаление загруженных файлов",
 	// Podcast display options
 	"podcast_display" => "Показывать",
 	"podcast_display_all" => "Все",
 	"podcast_display_onlynew" => "Только новые",
 	"podcast_display_unlistened" => "Новые и незарегистрированные",
 	"podcast_display_downloadnew" => "Новые и Скачаные",
-	"podcast_display_downloaded" => "Только скачаные",	
+	"podcast_display_downloaded" => "Только скачаные",
 	// Podcast refresh options
 	"podcast_refresh" => "Обновлять",
 	"podcast_refresh_never" => "Вручную",
 	"podcast_refresh_hourly" => "Ежечасно",
 	"podcast_refresh_daily" => "Ежедневно",
 	"podcast_refresh_weekly" => "Еженедельно",
-	"podcast_refresh_monthly" => "Ежемесячно",	
+	"podcast_refresh_monthly" => "Ежемесячно",
 	// Podcast auto expire
 	"podcast_expire" => "Хранить эпизоды за",
 	"podcast_expire_tooltip" => "Любые эпизоды старше этого значения будут удалены из списка. Изменения этого параметра вступят в силу при следующем обновлении подкаста",
@@ -199,11 +199,11 @@ $languages['ru'] = array (
 	"podcast_expire_month" => "Один месяц",
 	"podcast_expire_2month" => "Два месяца",
 	"podcast_expire_6month" => "Шесть месяцев",
-	"podcast_expire_year" => "Год",	
+	"podcast_expire_year" => "Год",
 	// Podcast number to keep
 	"podcast_keep" => "Сохранять",
 	"podcast_keep_tooltip" => "В этом списке будет показано только много эпизодов. Изменения этого параметра вступят в силу при следующем обновлении подкаста",
-	"podcast_keep_0" => "Неограниченно",	
+	"podcast_keep_0" => "Неограниченно",
 	// Podcast other options
 	"podcast_keep_downloaded" => "Хранить все загруженные эпизоды",
 	"podcast_kd_tooltip" => "Включите эту опцию, чтобы сохранить все загруженные эпизоды. Вышеуказанные два варианта будут применяться только к эпизодам, которые не были загружены",
@@ -214,7 +214,7 @@ $languages['ru'] = array (
 	"podcast_tooltip_download" => "Загрузите этот эпизод на свой компьютер",
 	"podcast_tooltip_mark" => "Отметить как прослушанный",
 	"podcast_tooltip_delepisode" => "Удалить этот эпизод",
-	"podcast_expired" => "Этот эпизод истек",	
+	"podcast_expired" => "Этот эпизод истек",
 	// eg 2 days left to listen
 	"podcast_timeleft" => "%s левый, чтобы слушать",
 	
@@ -617,7 +617,6 @@ $languages['ru'] = array (
 	"label_tuneinradio" => "Радиостанция TuneIn",
 	"label_generalsettings" => "Общие настройки",
 	"config_beetsserver" => "Location of Beets Server (ip.address:port)",
-	"config_mopidy_scan" => "Команда локального сканирования Mopidy",
 	"config_players" => 'Плеер',
 	"button_edit_players" => 'Изменить Плеер',
 	

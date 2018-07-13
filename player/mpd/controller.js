@@ -41,6 +41,7 @@ function playerController() {
             }
             if (player.status.Name && !player.status.Name.match(/^\//) && temp.album == rompr_unknown_stream) {
                 // NOTE: 'Name' is returned by MPD - it's the station name as read from the station's stream metadata
+                debug.shout('STREAMHANDLER',"Checking For Stream Name Update");
                 checkForUpdateToUnknownStream(playlist.getCurrent('streamid'), player.status.Name);
                 temp.album = player.status.Name;
                 temp.metadata.album = {name: temp.album, musicbrainz_id: ""};
@@ -51,7 +52,9 @@ function playerController() {
                 playlist.getCurrent('trackartist') != temp.trackartist)
             {
                 debug.log("STREAMHANDLER","Detected change of track",temp);
-                playlist.setCurrent({title: temp.title, album: temp.album, trackartist: temp.trackartist});
+                var aa = new albumart_translator('');
+                temp.key = aa.getKey('stream', '', temp.album);
+                playlist.setCurrent({title: temp.title, album: temp.album, trackartist: temp.trackartist });
                 nowplaying.newTrack(temp, true);
             }
         }
@@ -60,11 +63,11 @@ function playerController() {
     function checkForUpdateToUnknownStream(streamid, name) {
         // If our playlist for this station has 'Unknown Internet Stream' as the
         // station name, let's see if we can update it from the metadata.
-        debug.log("STREAMHANDLER","Checking For Update to Stream",streamid,name);
+        debug.log("STREAMHANDLER","Checking For Update to Stream",streamid,name, location);
         var m = playlist.getCurrent('album');
         if (m.match(/^Unknown Internet Stream/)) {
             debug.shout("PLAYLIST","Updating Stream",name);
-            yourRadioPlugin.updateStreamName(streamid, name, playlist.repopulate);
+            yourRadioPlugin.updateStreamName(streamid, name, playlist.getCurrent('location'), playlist.repopulate);
         }
     }
 
@@ -72,32 +75,34 @@ function playerController() {
         clearProgressTimer();
         progresstimer = setTimeout(callback, timeout);
     }
+    
+    function initialised(data) {
+        for(var i =0; i < data.length; i++) {
+            var h = data[i].replace(/\:\/\/$/,'');
+            debug.log("PLAYER","URL Handler : ",h);
+            player.urischemes[h] = true;
+        }
+        if (!player.canPlay('spotify')) {
+            $('div.textcentre.textunderline:contains("Music From Spotify")').remove();
+        }
+        checkSearchDomains();
+        doMopidyCollectionOptions();
+        playlist.radioManager.init();
+        // Need to call this with a callback when we start up so that checkprogress doesn't get called
+        // before the playlist has repopulated.
+        self.do_command_list([],self.ready);
+        if (!player.collectionLoaded) {
+            debug.log("MPD", "Checking Collection");
+            collectionHelper.checkCollection(false, false);
+        }
+    }
 
     this.initialise = function() {
         $.ajax({
             type: 'GET',
             url: 'player/mpd/geturlhandlers.php',
             dataType: 'json',
-            success: function(data) {
-                for(var i =0; i < data.length; i++) {
-                    var h = data[i].replace(/\:\/\/$/,'');
-                    debug.log("PLAYER","URL Handler : ",h);
-                    player.urischemes[h] = true;
-                }
-                if (!player.canPlay('spotify')) {
-                    $('div.textcentre.textunderline:contains("Music From Spotify")').remove();
-                }
-                checkSearchDomains();
-                doMopidyCollectionOptions();
-                playlist.radioManager.init();
-                // Need to call this with a callback when we start up so that checkprogress doesn't get called
-                // before the playlist has repopulated.
-                self.do_command_list([],self.ready);
-                if (!player.collectionLoaded) {
-                    debug.log("MPD", "Checking Collection");
-                    collectionHelper.checkCollection(false, false);
-                }
-            },
+            success: initialised,
             error: function(data) {
                 debug.error("MPD","Failed to get URL Handlers",data);
                 infobar.notify(infobar.PERMERROR, "Could not get a respone from the player!");
@@ -126,6 +131,7 @@ function playerController() {
                         player.status = data;
                         // debug.trace("MPD","Status",player.status);
                         if (player.status.playlist !== plversion && !moving) {
+                            debug.blurt("PLAYER","Player has marked playlist as changed");
                             playlist.repopulate();
                         }
                         plversion = player.status.playlist;
@@ -176,25 +182,21 @@ function playerController() {
 
     this.loadPlaylistURL = function(name) {
         var data = {url: encodeURIComponent(name)};
-        $.ajax( {
+        $.ajax({
             type: "GET",
             url: "utils/getUserPlaylist.php",
             cache: false,
             data: data,
             dataType: "xml",
-            success: function(data) {
+            success: function() {
                 self.reloadPlaylists();
+                self.addTracks([{type: 'remoteplaylist', name: name}]);
             },
             error: function(data, status) {
                 playlist.repopulate();
                 debug.error("MPD","Failed to save user playlist URL");
             }
-        } );
-        if (prefs.player_backend == "mpd") {
-            self.do_command_list([['load', name]]);
-        } else {
-            self.do_command_list([['add', name]]);
-        }
+        });
         return false;
     }
 
@@ -222,9 +224,7 @@ function playerController() {
             cache: false,
             data: data,
             dataType: "xml",
-            success: function(data) {
-                self.reloadPlaylists();
-            },
+            success: self.reloadPlaylists,
             error: function(data, status) {
                 debug.error("MPD","Failed to delete user playlist",name);
             }
@@ -236,11 +236,14 @@ function playerController() {
         oldplname = name;
         debug.log("MPD","Renaming Playlist",name,e);
         var fnarkle = new popup({
-            width: 400,
-            height: 300,
+            css: {
+                width: 400,
+                height: 300
+            },
             title: language.gettext("label_renameplaylist"),
-            xpos: e.clientX,
-            ypos: e.clientY});
+            atmousepos: true,
+            mousevent: e
+        });
         var mywin = fnarkle.create();
         var d = $('<div>',{class: 'containerbox'}).appendTo(mywin);
         var e = $('<div>',{class: 'expand'}).appendTo(d);
@@ -262,6 +265,7 @@ function playerController() {
                 }
             }
         );
+        return true;
     }
 
     this.doRenameUserPlaylist = function() {
@@ -282,6 +286,7 @@ function playerController() {
                 debug.error("MPD","Failed to rename user playlist",name);
             }
         } );
+        return true;
     }
 
     this.deletePlaylistTrack = function(name,songpos,callback) {
@@ -349,14 +354,17 @@ function playerController() {
 	}
 
 	this.stop = function() {
-        self.do_command_list([["stop"]], self.onStop );
+        playlist.checkPodcastProgress();
+        self.do_command_list([["stop"]], self.onStop);
 	}
 
 	this.next = function() {
+        playlist.checkPodcastProgress();
         self.do_command_list([["next"]]);
 	}
 
 	this.previous = function() {
+        playlist.checkPodcastProgress();
         self.do_command_list([["previous"]]);
 	}
 
@@ -366,10 +374,12 @@ function playerController() {
 	}
 
 	this.playId = function(id) {
+        playlist.checkPodcastProgress();
         self.do_command_list([["playid",id]]);
 	}
 
 	this.playByPosition = function(pos) {
+        playlist.checkPodcastProgress();
         self.do_command_list([["play",pos.toString()]]);
 	}
 
@@ -426,6 +436,7 @@ function playerController() {
     }
 
 	this.addTracks = function(tracks, playpos, at_pos) {
+        var abitofahack = true;
         layoutProcessor.notifyAddTracks();
 		debug.log("MPD","Adding Tracks",tracks,playpos,at_pos);
 		var cmdlist = [];
@@ -433,7 +444,7 @@ function playerController() {
 		$.each(tracks, function(i,v) {
 			switch (v.type) {
 				case "uri":
-                    if (prefs.cdplayermode && at_pos === null && !playlist.radioManager.isRunning()) {
+                    if (prefs.cdplayermode && at_pos === null) {
                         cmdlist.push(['addtoend', v.name]);
                     } else {
     				    cmdlist.push(['add',v.name]);
@@ -452,15 +463,28 @@ function playerController() {
                 case "stream":
                     cmdlist.push(['loadstreamplaylist',v.url,v.image,v.station]);
                     break;
+                case "playlisttoend":
+                    cmdlist.push(['playlisttoend',v.playlist,v.frompos]);
+                    break;
+                case "resumepodcast":
+                    cmdlist.push(['resume', v.uri, v.resumefrom, v.pos]);
+                    playpos = null;
+                    abitofahack = false;
+                    break;
+                case 'remoteplaylist':
+                    cmdlist.push(['addremoteplaylist', v.name]);
+                    break;
     		}
 		});
-		// Note : playpos will only be set if at_pos isn't, because at_pos is only set when
-        // dragging to the playlist, for which action auto-play is always disabled
-        if (prefs.cdplayermode && at_pos === null && !playlist.radioManager.isRunning()) {
-            cmdlist.unshift(['consume', '1']);
+		// Note : playpos will only be set if at_pos isn't, because at_pos is only set when dragging to the playlist
+        if (prefs.cdplayermode && at_pos === null) {
             cmdlist.unshift(["clear"]);
-            cmdlist.push(['play']);
-        } else if (playpos !== null && playpos > -1) {
+            if (abitofahack) {
+                // Don't add the play command if we're doing a resume,
+                // because postcommand.php will add it and this will override it
+                cmdlist.push(['play']);
+            }
+        } else if (playpos !== null) {
 			cmdlist.push(['play', playpos.toString()]);
 		}
         if (at_pos === 0 || at_pos) {
@@ -536,6 +560,10 @@ function playerController() {
     }
 
     this.search = function(command) {
+        if (player.updatingcollection) {
+            infobar.notify(infobar.NOTIFY,"Cannot Search while updating collection");
+            return false;
+        }
         var terms = {};
         var termcount = 0;
         lastsearchcmd = command;
@@ -598,6 +626,10 @@ function playerController() {
     }
 
     this.rawsearch = function(terms, sources, exact, callback, checkdb) {
+        if (player.updatingcollection) {
+            infobar.notify(infobar.NOTIFY,"Cannot Search while updating collection");
+            callback([]);
+        }
         $.ajax({
                 type: "POST",
                 url: "albums.php",

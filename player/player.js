@@ -3,12 +3,14 @@ var player = function() {
     function playerEditor() {
 
         var self = this;
+        var playerpu;
 
         function removePlayerDef(event) {
             if (decodeURIComponent($(event.target).parent().parent().attr('name')) == prefs.currenthost) {
                 infobar.notify(infobar.ERROR, "You cannot delete the player you're currently using");
             } else {
                 $(event.target).parent().parent().remove();
+                playerpu.setWindowToContentsSize();
             }
         }
 
@@ -42,6 +44,11 @@ var player = function() {
                     }
                 });
         
+                if (newhosts.hasOwnProperty(newname)) {
+                    infobar.notify(infobar.ERROR, "You cannot have two players with the same name");
+                    error = true;
+                }
+        
                 newhosts[newname] = temp;
                 if (currentname == prefs.currenthost) {
                     if (newname != currentname) {
@@ -55,6 +62,9 @@ var player = function() {
                     }
                 }
             });
+            if (error) {
+                return false;
+            }
             debug.log("PLAYERS",newhosts);
             if (reloadNeeded !== false) {
                 prefs.save({currenthost: reloadNeeded}, function() {
@@ -66,15 +76,19 @@ var player = function() {
                 prefs.save({multihosts: newhosts});
                 self.replacePlayerOptions();
                 prefs.setPrefs();
-                $("#playerdefs > .savulon").click(prefs.toggleRadio);
+                $('[name="playerdefs"] > .savulon').click(prefs.toggleRadio);
             }
+            return true;
         }
         
         this.edit = function() {
             $("#configpanel").slideToggle('fast');
-            var playerpu = new popup({
-                width: 900,
-                height: 800,
+            playerpu = new popup({
+                css: {
+                    width: 900,
+                    height: 800
+                },
+                fitheight: true,
                 title: language.gettext('config_players'),
                 helplink: "https://fatg3erman.github.io/RompR/Using-Multiple-Players"});
             var mywin = playerpu.create();
@@ -91,11 +105,11 @@ var player = function() {
                     '</tr>'
                 );
             }
-            var buttons = $('<div>',{class: "pref"}).appendTo(mywin);
+            var buttons = $('<div>',{class: "pref clearfix"}).appendTo(mywin);
             var add = $('<i>',{class: "icon-plus smallicon clickicon tleft"}).appendTo(buttons);
             add.click(function() {
                 addNewPlayerRow();
-                playerpu.setContentsSize();
+                playerpu.setWindowToContentsSize();
             });
             var c = $('<button>',{class: "tright"}).appendTo(buttons);
             c.html(language.gettext('button_cancel'));
@@ -117,12 +131,14 @@ var player = function() {
         }
         
         this.replacePlayerOptions = function() {
-            $("#playerdefs").empty();
-            for (var i in prefs.multihosts) {
-                $("#playerdefs").append('<input type="radio" class="topcheck savulon" name="currenthost" value="'+
-                    i+'" id="host_'+escape(i)+'">'+
-                    '<label for="host_'+escape(i)+'">'+i+'</label><br/>');
-            }
+            $('[name="playerdefs"]').each(function(index) {
+                $(this).empty();
+                for (var i in prefs.multihosts) {
+                    $(this).append('<input type="radio" class="topcheck savulon" name="currenthost_duplicate'+index+'" value="'+
+                        i+'" id="host_'+escape(i)+index+'">'+
+                        '<label for="host_'+escape(i)+index+'">'+i+'</label><br/>');
+                }
+            });
         }
     }
 
@@ -154,6 +170,8 @@ var player = function() {
         collectionLoaded: false,
         
         updatingcollection: false,
+        
+        collection_is_empty: true,
 
         controller: new playerController(),
         

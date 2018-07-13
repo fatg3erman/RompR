@@ -6,3 +6,4 @@ var menuOpeners = new Array();
 const masonry_gutter = 8;
 var coverscraper;
 var lastfm;
+var albumart_update = true;

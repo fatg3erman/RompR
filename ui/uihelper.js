@@ -173,6 +173,46 @@ jQuery.fn.fanoogleMenus = function() {
     });
 }
 
+jQuery.fn.addBunnyEars = function() {
+    this.each(function() {
+        if ($(this).hasBunnyEars()) {
+            $(this).removeBunnyEars();
+        } else {
+            var w = $(this).outerWidth(true);
+            var up = $('<div>', { class: 'playlistup containerbox clickable'}).prependTo($(this));
+            up.html('<i class="icon-increase medicon expand"></i>').css('width', w+'px');
+            var down = $('<div>', { class: 'playlistdown containerbox clickable'}).appendTo($(this));
+            down.html('<i class="icon-decrease medicon expand"></i>').css('width', w+'px');
+            $(this).addClass('highlighted');
+            if ($(this).hasClass('item')) {
+                $(this).next().addClass('highlighted').slideUp('fast');
+            }
+        }
+    });
+    return this;
+}
+
+jQuery.fn.hasBunnyEars = function() {
+    if ($(this).find('.playlistup').length > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+jQuery.fn.removeBunnyEars = function() {
+    this.each(function() {
+        $(this).find('.playlistup').remove();
+        $(this).find('.playlistdown').remove();
+        $(this).removeClass('highlighted');
+        if ($(this).hasClass('item')) {
+            $(this).next().removeClass('highlighted');
+        }
+    });
+    playlist.doPopMove();
+    return this;
+}
+
 // Functions that could just be in layoutProcessor, but it makes maintenance easier
 // if we have a proxy like this so we don't have to add new stuff to every single skin.
 
@@ -322,14 +362,78 @@ var uiHelper = function() {
             }
         },
         
-        fixupArtistDiv(jq, name) {
+        fixupArtistDiv: function(jq, name) {
             try {
                 return layoutProcessor.fixupArtistDiv(jq, name);
             } catch (err) {
                 
             }
+        },
+        
+        hackForSkinsThatModifyStuff: function(id) {
+            try {
+                return layoutProcessor.hackForSkinsThatModifyStuff(id);
+            } catch (err) {
+                
+            }
+        },
+        
+        postPlaylistLoad: function() {
+            try {
+                return layoutProcessor.postPlaylistLoad();
+            } catch (err) {
+                
+            }
+        },
+        
+        getElementPlaylistOffset: function(element) {
+            try {
+                return layoutProcessor.getElementPlaylistOffset(element);
+            } catch (err) {
+                
+            }
+        },
+        
+        createPluginHolder: function(icon, title) {
+            try {
+                return layoutProcessor.createPluginHolder(icon, title);
+            } catch (err) {
+                var d = $('<div>', {class: 'topdrop'}).prependTo('#righthandtop');
+                var i = $('<i>', {class: 'tooltip', title: title}).appendTo(d);
+                i.addClass(icon);
+                if (small_plugin_icons) {
+                    i.addClass('smallpluginicon clickicon');
+                } else {
+                    i.addClass('topimg')
+                }
+                return d;
+            }
+        },
+        
+        postAlbumMenu: function(element) {
+            try {
+                return layoutProcessor.postAlbumMenu(element);
+            } catch (err) {
+                
+            }
+        },
+        
+        postPodcastSubscribe: function(data, index) {
+            try {
+                return layoutProcessor.postPodcastSubscribe(data, index);
+            } catch (err) {
+                $('i[name="podcast_'+index+'"]').parent().fadeOut('fast', function() {
+                    $('i[name="podcast_'+index+'"]').parent().remove();
+                    $('#podcast_'+index).remove();
+                    $("#fruitbat").html(data);
+                    $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+                    infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
+                    podcasts.doNewCount();
+                    layoutProcessor.postAlbumActions();
+                });
+            }
         }
-    
+            
     }
 
 }();

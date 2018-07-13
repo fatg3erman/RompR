@@ -5,12 +5,12 @@ if (array_key_exists('populate', $_REQUEST)) {
     chdir('..');
     include("includes/vars.php");
     include("includes/functions.php");
-    include("includes/podcastfunctions.php");
     include("international.php");
-    include( "backends/sql/connect.php");
-    include( "skins/".$skin."/ui_elements.php");
+    require_once("includes/podcastfunctions.php");
+    include( "backends/sql/backend.php");
     include("utils/phpQuery.php");
-    connect_to_database();
+    require_once('utils/imagefunctions.php');
+    set_error_handler('handle_error', E_ALL);
     $subflag = 1;
     $dtz = ini_get('date.timezone');
     if (!$dtz) {
@@ -20,25 +20,27 @@ if (array_key_exists('populate', $_REQUEST)) {
     if (array_key_exists('url', $_REQUEST)) {
         getNewPodcast(rawurldecode($_REQUEST['url']));
     } else if (array_key_exists('refresh', $_REQUEST)) {
-        $podid = refreshPodcast($_REQUEST['refresh']);
+        $podid = array(refreshPodcast($_REQUEST['refresh']));
     } else if (array_key_exists('remove', $_REQUEST)) {
         removePodcast($_REQUEST['remove']);
     } else if (array_key_exists('listened', $_REQUEST)) {
-        $podid = markAsListened(rawurldecode($_REQUEST['listened']));
+        $podid = array(markAsListened(rawurldecode($_REQUEST['listened'])));
     } else if (array_key_exists('removetrack', $_REQUEST)) {
-        $podid = deleteTrack($_REQUEST['removetrack'], $_REQUEST['channel']);
+        $podid = array(deleteTrack($_REQUEST['removetrack'], $_REQUEST['channel']));
     } else if (array_key_exists('downloadtrack', $_REQUEST)) {
         $podid = downloadTrack($_REQUEST['downloadtrack'], $_REQUEST['channel']);
     } else if (array_key_exists('markaslistened', $_REQUEST)) {
-        $podid = markKeyAsListened($_REQUEST['markaslistened'], $_REQUEST['channel']);
+        $podid = array(markKeyAsListened($_REQUEST['markaslistened'], $_REQUEST['channel']));
     } else if (array_key_exists('channellistened', $_REQUEST)) {
-        $podid = markChannelAsListened($_REQUEST['channellistened']);
+        $podid = array(markChannelAsListened($_REQUEST['channellistened']));
     } else if (array_key_exists('channelundelete', $_REQUEST)) {
-        $podid = undeleteFromChannel($_REQUEST['channelundelete']);
+        $podid = array(undeleteFromChannel($_REQUEST['channelundelete']));
+    } else if (array_key_exists('setprogress', $_REQUEST)) {
+        $podid = array(setPlaybackProgress($_REQUEST['setprogress'], rawurldecode($_REQUEST['track'])));
     } else if (array_key_exists('removedownloaded', $_REQUEST)) {
-        $podid = removeDownloaded($_REQUEST['removedownloaded']);
+        $podid = array(removeDownloaded($_REQUEST['removedownloaded']));
     } else if (array_key_exists('option', $_REQUEST)) {
-        $podid = changeOption($_REQUEST['option'], $_REQUEST['val'], $_REQUEST['channel']);
+        $podid = array(changeOption($_REQUEST['option'], $_REQUEST['val'], $_REQUEST['channel']));
     } else if (array_key_exists('loadchannel', $_REQUEST)) {
         $podid = $_REQUEST['loadchannel'];
     } else if (array_key_exists('search', $_REQUEST)) {
@@ -47,23 +49,31 @@ if (array_key_exists('populate', $_REQUEST)) {
     } else if (array_key_exists('subscribe', $_REQUEST)) {
         subscribe($_REQUEST['subscribe']);
     } else if (array_key_exists('getcounts', $_REQUEST)) {
-        $count = get_all_counts();
-        print json_encode($count);
-        exit(0);
+        $podid = get_all_counts();
     } else if (array_key_exists('checkrefresh', $_REQUEST)) {
-        $refreshers = check_podcast_refresh();
-        print json_encode($refreshers);
-        exit(0);
+        $podid = check_podcast_refresh();
     }
 
-    if ($podid !== null) {
+    if ($podid === false) {
+        header('HTTP/1.1 204 No Content');
+    } else if (is_array($podid)) {
+        if (array_key_exists(0, $podid) && $podid[0] === false) {
+            header('HTTP/1.1 204 No Content');
+        } else {
+            header('Content-Type: application/json');
+            print json_encode($podid);
+        }
+    } else if ($podid !== null) {
+        header('Content-Type: text/htnml; charset=utf-8');
         outputPodcast($podid);
     } else {
+        header('Content-Type: text/htnml; charset=utf-8');
         doPodcastList($subflag);
     }
+
 } else {
 
-    include("includes/podcastfunctions.php");
+    require_once("includes/podcastfunctions.php");
     require_once("skins/".$skin."/ui_elements.php");
     include("utils/phpQuery.php");
     doPodcastBase();
@@ -74,27 +84,90 @@ if (array_key_exists('populate', $_REQUEST)) {
 }
 
 function doPodcastBase() {
-    print '<div class="containerbox"><div class="configtitle textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div></div>';
+    global $prefs;
+    print '<div class="containerbox menuitem" style="padding-left:8px">';
+    print '<div class="fixed" style="padding-right:4px"><i onclick="podcasts.toggleButtons()" class="icon-menu playlisticon clickicon"></i></div>';
+    print '<div class="configtitle textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div></div>';
+    print '<div id="podcastbuttons" class="invisible">';
+
     print '<div id="cocksausage">';
     print '<div class="containerbox indent"><div class="expand">'.get_int_text("podcast_entrybox").'</div></div>';
     print '<div class="containerbox indent"><div class="expand"><input class="enter" id="podcastsinput" type="text" /></div>';
     print '<button class="fixed" onclick="podcasts.doPodcast(\'podcastsinput\')">'.get_int_text("label_retrieve").'</button></div>';
+    print '</div>';
+    
     print '<div class="containerbox indent"><div class="expand">'.get_int_text("label_searchfor").' (iTunes)</div></div>';
     print '<div class="containerbox indent"><div class="expand"><input class="enter" id="podcastsearch" type="text" /></div>';
     print '<button class="fixed" onclick="podcasts.search()">'.get_int_text("button_search").'</button></div>';
 
-    print '<div class="fullwidth noselection clearfix"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon padright" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
+    $sortoptions = array(
+        ucfirst(strtolower(get_int_text('title_title'))) => 'Title',
+        get_int_text('label_publisher') => 'Artist',
+        get_int_text('label_category') => 'Category',
+        get_int_text('label_new_episodes') => 'new',
+        get_int_text('label_unlistened_episodes') => 'unlistened'
+    );
+    
+    
+    print '<div class="containerbox menuitem noselection">';
+    print '<i class="icon-toggle-closed mh menu fixed" name="podcastsortoptions"></i>';
+    print '<div class="indent expand"><b>'.get_int_text('label_sortby').'</b></div>';
     print '</div>';
+    
+    print '<div id="podcastsortoptions" class="toggledown invisible marged">';
+
+    for ($count = 0; $count < $prefs['podcast_sort_levels']; $count++) {
+        print '<div class="containerbox dropdown-container indent padright">';
+        print '<div class="selectholder expand">';
+        print '<select id="podcast_sort_'.$count.'selector" class="saveomatic">';
+        $options = '';
+        foreach ($sortoptions as $i => $o) {
+            $options .= '<option value="'.$o.'">'.$i.'</option>';
+        }
+        print preg_replace('/(<option value="'.$prefs['podcast_sort_'.$count].'")/', '$1 selected', $options);
+        print '</select>';
+        print '</div>';
+        print '</div>';
+        if ($count < $prefs['podcast_sort_levels']-1) {
+            print '<div class="indent playlistrow2">'.get_int_text('label_then').'</div>';
+        }
+    }
+    print '</div>';
+
+    print '<div class="fullwidth noselection clearfix"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon padright" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
     print '<div id="podcast_search" class="fullwidth noselection padright"></div>';
+    print '</div>';
+
+    print '<div class="menuitem configtitle textcentre brick_wide sensiblebox" style="margin-left:8px;margin-top:1em;margin-bottom:1em"><b>Subscribed Podcasts</b></div>';
 }
 
 function doPodcastList($subscribed) {
-    // directoryControlHeader(null);
-    $result = generic_sql_query("SELECT * FROM Podcasttable WHERE Subscribed = ".$subscribed." ORDER BY Artist, Title", false, PDO::FETCH_OBJ);
+    global $prefs;
+    if ($subscribed == 1) {
+        $qstring = "SELECT Podcasttable.*, SUM(New = 1) AS new, SUM(Listened = 0) AS unlistened FROM Podcasttable JOIN PodcastTracktable USING(PODindex) WHERE Subscribed = 1 AND Deleted = 0 GROUP BY PODindex ORDER BY";
+    } else {
+        $qstring = "SELECT Podcasttable.*, 0 AS new, 0 AS unlistened FROM Podcasttable WHERE Subscribed = 0 ORDER BY";
+    }
+    $sortarray = array();
+    for ($i = 0; $i < $prefs['podcast_sort_levels']; $i++) {
+        if ($prefs['podcast_sort_'.$i] == 'new' || $prefs['podcast_sort_'.$i] == 'unlistened') {
+            $sortarray[] = ' '.$prefs['podcast_sort_'.$i].' DESC';
+        } else {
+            $sortarray[] = ' '.$prefs['podcast_sort_'.$i].' ASC';
+        }
+    }
+    $qstring .= implode(', ', $sortarray);
+    $result = generic_sql_query($qstring, false, PDO::FETCH_OBJ);
     foreach ($result as $obj) {
         doPodcastHeader($obj);
     }
 
+}
+
+function handle_error($errno, $errstr, $errfile, $errline) {
+    debuglog("Error ".$errno." ".$errstr." in ".$errfile." at line ".$errline,"PODCASTS");
+    header('HTTP/1.1 400 Bad Request');
+    exit(0);
 }
 
 ?>

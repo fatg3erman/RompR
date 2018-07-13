@@ -28,6 +28,9 @@ var metaHandlers = function() {
 	    } else {
 	        data.duration = 0;
 	    }
+		if (playlistinfo.type) {
+			data.type = playlistinfo.type;
+		}
 	    if (playlistinfo.disc) {
 	        data.disc = playlistinfo.disc;
 	    }
@@ -43,21 +46,24 @@ var metaHandlers = function() {
 	    if (playlistinfo.metadata.album.uri) {
 	        data.albumuri = playlistinfo.metadata.album.uri;
 	    }
-	    if (playlistinfo.type != "stream" && playlistinfo.image) {
-	        data.image = playlistinfo.image;
+	    if (playlistinfo.type != "stream" && playlistinfo.images.small) {
+	        data.image = playlistinfo.images.small;
 	    }
 	    if ((playlistinfo.type == "local" || playlistinfo.type == "podcast") && playlistinfo.album) {
 	        data.album = playlistinfo.album;
 	    }
 	    if (playlistinfo.type == "local" || playlistinfo.type == "podcast") {
-	        if (playlistinfo.location.match(/api\.soundcloud\.com\/tracks\/(\d+)\//)
-	            && prefs.player_backend == "mpd") {
+	        if (playlistinfo.location.match(/api\.soundcloud\.com\/tracks\/(\d+)\//) && prefs.player_backend == "mpd") {
 	            var sc = playlistinfo.location.match(/api\.soundcloud\.com\/tracks\/(\d+)\//);
 	            data.uri = "soundcloud://track/"+sc[1];
 	        } else {
 	            data.uri = playlistinfo.location;
 	        }
-	    }
+	    } else if (playlistinfo.type == "stream") {
+			data.streamname = playlistinfo.album;
+			data.streamimage = playlistinfo.images.small;
+			data.streamuri = playlistinfo.location;
+		}
 	    if (playlistinfo.date) {
 	        data.date = playlistinfo.date;
 	    } else {
@@ -144,8 +150,8 @@ var metaHandlers = function() {
 			    dbQueue.request(
 			        [{action: 'delete', uri: decodeURIComponent(trackToGo)}],
 			        collectionHelper.updateCollectionDisplay,
-			        function() {
-			            infobar.notify(infobar.ERROR, "Failed to remove track!");
+			        function(data) {
+			            debug.warn("Failed to remove track! Possibly duplicate request?");
 			        }
 			    );
 			}
@@ -234,7 +240,13 @@ var dbQueue = function() {
 	var queue = new Array();
 	var throttle = null;
 	var cleanuptimer = null;
-
+	var cleanuprequired = false;
+	
+	// Cleanup cleans the database but it also updates the track stats
+	var actions_requiring_cleanup = [
+		'add', 'set', 'remove', 'amendalbum', 'deletetag', 'delete', 'deletewl', 'clearwishlist'
+	];
+	
 	return {
 
 		request: function(data, success, fail) {
@@ -257,61 +269,69 @@ var dbQueue = function() {
 			clearTimeout(cleanuptimer);
 			var req = queue[0];
 
-            if (req) {
-            	if (req.flag) {
-            		debug.debug("DB QUEUE","Request just pulled from queue is already being handled");
-            		return;
-            	}
-				queue[0].flag = true;
-				debug.trace("DB QUEUE","Taking next request from queue",req);
-			    $.ajax({
-			        url: "backends/sql/userRatings.php",
-			        type: "POST",
-			        data: JSON.stringify(req.data),
-			        dataType: 'json',
-			        success: function(data) {
-	                	req = queue.shift();
-			        	debug.trace("DB QUEUE","Request Success",req,data);
-			        	if (req.success) {
-			        		req.success(data);
-			        	}
-			        	throttle = setTimeout(dbQueue.dorequest, 1);
-			        },
-			        error: function(data) {
-	                	req = queue.shift();
-			        	debug.fail("DB QUEUE","Request Failed",req,data.responseText);
-			        	if (req.fail) {
-			        		req.fail(data);
-			        	}
-			        	throttle = setTimeout(dbQueue.dorequest, 1);
-			        }
-			    });
-	        } else {
-            	throttle = null;
-				cleanuptimer = setTimeout(dbQueue.doCleanup, 1000);
-	        }
-		},
-		
-		doCleanup: function() {
-			debug.log("DB QUEUE", "Doing backend Cleanup");
-			// We do these out-of-band to improve the responsiveness of the GUI.
-			$.ajax({
-				url: "backends/sql/userRatings.php",
-				type: "POST",
-				data: JSON.stringify([{action: 'cleanup'}]),
-				dataType: 'json',
-				success: function(data) {
-					collectionHelper.updateCollectionDisplay(data);
-				},
-				error: function(data) {
-					debug.fail("DB QUEUE","Cleanup Failed");
+			if (req && player.updatingcollection) {
+				debug.log("DB QUEUE","Deferring",req.data[0].action,"request because collection is being updated");
+				throttle = setTimeout(dbQueue.dorequest, 1000);
+			} else {
+	            if (req) {
+	            	if (req.flag) {
+	            		debug.trace("DB QUEUE","Request just pulled from queue is already being handled");
+	            		return;
+	            	}
+					queue[0].flag = true;
+					debug.trace("DB QUEUE","Taking next request from queue",req);
+				    $.ajax({
+				        url: "backends/sql/userRatings.php",
+				        type: "POST",
+				        data: JSON.stringify(req.data),
+				        dataType: 'json',
+				        success: function(data) {
+							req = queue.shift();
+				        	debug.trace("DB QUEUE","Request Success",req,data);
+							for (var i in req.data) {
+								if (actions_requiring_cleanup.indexOf(req.data[i].action) > -1) {
+									debug.log("DB QUEUE","Setting cleanup flag for",req.data[i].action,"request");
+									cleanuprequired = true;
+								}
+							}
+				        	if (req.success) {
+				        		req.success(data);
+				        	}
+				        	throttle = setTimeout(dbQueue.dorequest, 1);
+				        },
+				        error: function(data) {
+		                	req = queue.shift();
+				        	debug.fail("DB QUEUE","Request Failed",req,data);
+				        	if (req.fail) {
+				        		req.fail(data);
+				        	}
+				        	throttle = setTimeout(dbQueue.dorequest, 1);
+				        }
+				    });
+		        } else {
+	            	throttle = null;
+					cleanuptimer = setTimeout(dbQueue.doCleanup, 1000);
 				}
-			});
-			
+			}
+		},
+
+		doCleanup: function() {
+			// We do these out-of-band to improve the responsiveness of the GUI.
+			clearTimeout(cleanuptimer);
+			if (cleanuprequired) {
+				debug.log("DB QUEUE", "Doing backend Cleanup");
+				dbQueue.request([{action: 'cleanup'}], dbQueue.cleanupComplete, dbQueue.cleanupFailed);
+			}
 		},
 		
-		outstandingRequests: function() {
-			return queue.length;
+		cleanupComplete: function(data) {
+			collectionHelper.updateCollectionDisplay(data);
+			cleanuprequired = false;
+		},
+		
+		cleanupFailed: function(data) {
+			debug.fail("DB QUEUE","Cleanup Failed");
 		}
+		
 	}
 }();

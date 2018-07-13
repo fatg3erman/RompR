@@ -13,8 +13,11 @@ function faveFinder(returnall) {
     // There's currently no way to change these for tracks that are rated from radio stations
     // which means that these are the only domains that will be searched, but this is better
     // than including podcasts and radio stations, which we'll never want
+    
+    // I'm also not including SoundCloud because it produces far too many false positives
+    
     if (prefs.player_backend == 'mopidy') {
-        priority = ["soundcloud", "gmusic", "spotify", "beets", "beetslocal", "local"];
+        priority = ["gmusic", "spotify", "beets", "beetslocal", "local"];
     }
 
     function brk(b) {
@@ -193,7 +196,7 @@ function faveFinder(returnall) {
         var req = queue[0];
         var st = {};
         if (req.data.title) {
-            st.track_name = [req.data.title];
+            st.title = [req.data.title];
         }
         if (req.data.artist) {
             st.artist = [req.data.artist];
@@ -209,15 +212,15 @@ function faveFinder(returnall) {
         var html = "";
         var u = data.uri;
         if (u.match(/spotify:/)) {
-            html += '<i class="icon-spotify-circled smallicon"></i>';
+            html += '<i class="icon-spotify-circled collectionicon"></i>';
         } else if (u.match(/soundcloud:/)) {
-            html += '<i class="icon-soundcloud-circled smallicon"></i>';
+            html += '<i class="icon-soundcloud-circled collectionicon"></i>';
         } else if (u.match(/youtube:/)) {
-            html += '<i class="icon-youtube-circled smallicon"></i>';
+            html += '<i class="icon-youtube-circled collectionicon"></i>';
         } else if (u.match(/gmusic:/)) {
-            html += '<i class="icon-gmusic-circled smallicon"></i>';
+            html += '<i class="icon-gmusic-circled collectionicon"></i>';
         } else if (u.match(/^podcast/)) {
-            html += '<i class="icon-podcast-circled smallicon"></i>';
+            html += '<i class="icon-podcast-circled collectionicon"></i>';
         }
         html += '<b>'+data.title+'</b>'+brk(breaks);
         if (data.artist) {

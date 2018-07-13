@@ -161,6 +161,8 @@ var nowplaying = function() {
     var currenttrack = 0;
     var nowplayingindex = 0;
     var currentbackendid = -2;
+	var deferred = new Array();
+	var deftimer = null;
 
     function findCurrentTrack() {
     	for (var i in history) {
@@ -403,10 +405,14 @@ var nowplaying = function() {
 
 		incPlaycount: function(index) {
 			if (!index) index = findCurrentTrack();
-			var p = parseInt(history[index].getMeta("Playcount"));
-			history[index].setMeta('inc', 'Playcount', p+1);
-			if (history[index].playlistinfo.type == 'podcast') {
-                podcasts.checkMarkPodcastAsListened(history[index].playlistinfo.location);
+			if (history[index].playlistinfo.metadata.track && history[index].playlistinfo.metadata.track.usermeta) {
+				var p = parseInt(history[index].getMeta("Playcount"));
+				history[index].setMeta('inc', 'Playcount', p+1);
+			} else {
+				clearTimeout(deftimer);
+				debug.warn("NOWPLAYING","Trying to incremment Playcount on index",index,"before metadata has populated. Deferring request");
+				deferred.push({action: nowplaying.incPlaycount, index: index});
+				deftimer = setTimeout(nowplaying.doDeferredRequests, 1000);
 			}
 		},
 
@@ -432,9 +438,25 @@ var nowplaying = function() {
 			for (var i in history) {
 				history[i].refreshUserMeta();
 			}
+		},
+		
+		doDeferredRequests: function() {
+			clearTimeout(deftimer);
+			if (deferred.length > 0) {
+				var req = deferred.shift();
+				debug.shout("NOWPLAYING", "Doing Deferred Request On",req.index);
+				req.action(req.index);
+			}
+			if (deferred.length > 0) {
+				deftimer = setTimeout(nowplaying.doDeferredRequests, 1000);
+			}
+		},
+		
+		getCurrentCollection(index) {
+			if (!index) index = findCurrentTrack();
+			debug.log("NOWPLAYING", history[index]);
 		}
 
 	}
 
 }();
-

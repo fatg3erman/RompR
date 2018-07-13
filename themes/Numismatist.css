@@ -14,6 +14,20 @@ body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol
     color:#111111;
 }
 
+body.phone .dropmenu>div.clickable,
+body.phone .dropmenu>div.menuitem,
+body.phone .mainpane .radio,
+body.phone .mainpane .faveradio,
+body.phone .mainpane .podcast,
+body.phone .mainpane .directory {
+    border-top: 1px solid rgba(60,60,60,0.4);
+}
+
+body.phone #pluginplaylistholder .menuitem.clickable,
+body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
+    border-bottom: 1px solid rgba(60,60,60,0.4);
+}
+
 button, input[type="button"]
 {
     background-color:#cccccc !important;
@@ -212,12 +226,12 @@ div.clickable.selected:hover
 .playlistcurrentitem
 {
     font-size:120%;
-    transition:all 0.5s ease;
+    transition:font-size 0.5s ease, text-shadow 0.5s ease;
 }
 
 .playlistitem
 {
-    transition:all 0.5s ease;
+    transition:font-size 0.5s ease, text-shadow 0.5s ease;
 }
 
 .currenttitle
@@ -491,4 +505,9 @@ th.tlheader
 .infosection h2
 {
     border-bottom:2px solid #222222;
+}
+
+.topbarplaycontrols {
+    border-left: 1px solid black;
+    border-right: 1px solid black;
 }

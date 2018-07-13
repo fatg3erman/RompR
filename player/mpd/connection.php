@@ -26,7 +26,7 @@ $mpd_file_model = array (
     'playlist' => '',
     'X-AlbumImage' => null,
     'Date' => null,
-    'Last-Modified' => 0,
+    'Last-Modified' => '0',
     'Disc' => null,
     'Composer' => null,
     'Performer' => null,
@@ -60,7 +60,7 @@ $coll_time = 0;
 $rtime = 0;
 $cp_time = 0;
 
-function doCollection($command, $domains = null, $newcollection = true) {
+function doCollection($command, $domains = false, $newcollection = true) {
     global $connection, $collection;
     if ($newcollection) {
         $collection = new musicCollection();
@@ -79,8 +79,8 @@ function doMpdParse($command, &$dirs, $domains) {
     $success = send_command($command);
     $filedata = $mpd_file_model;
     $parts = true;
-    if (!is_array($domains) || count($domains) == 0) {
-        $domains = null;
+    if (is_array($domains) && count($domains) == 0) {
+        $domains = false;
     }
 
     $pstart = microtime(true);
@@ -102,7 +102,7 @@ function doMpdParse($command, &$dirs, $domains) {
                     break;
 
                 case 'file':
-                    if ($filedata['file'] != null && (!is_array($domains) || in_array(getDomain($filedata['file']),$domains))) {
+                    if ($filedata['file'] != null && ($domains === false || in_array(getDomain($filedata['file']),$domains))) {
                         $parse_time += microtime(true) - $pstart;
                         process_file($filedata);
                         $pstart = microtime(true);
@@ -129,7 +129,7 @@ function doMpdParse($command, &$dirs, $domains) {
         }
     }
 
-    if ($filedata['file'] !== null && (!is_array($domains) || in_array(getDomain($filedata['file']),$domains))) {
+    if ($filedata['file'] !== null && ($domains === false || in_array(getDomain($filedata['file']),$domains))) {
         $parse_time += microtime(true) - $pstart;
         process_file($filedata);
     }

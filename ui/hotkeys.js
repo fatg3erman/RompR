@@ -170,10 +170,14 @@ var shortcuts = function() {
         edit: function() {
             $("#configpanel").slideToggle('fast');
             var fnarkle = new popup({
-              width: 400,
-              height: 1024,
-              helplink: 'https://fatg3erman.github.io/RompR/Keyboard-Shortcuts',
-              title: language.gettext("title_keybindings")});
+                css: {
+                    width: 500,
+                    height: 1024
+                },
+                fitheight: true,
+                helplink: 'https://fatg3erman.github.io/RompR/Keyboard-Shortcuts',
+                title: language.gettext("title_keybindings")
+            });
             var mywin = fnarkle.create()
             mywin.append('<table align="center" cellpadding="2" id="keybindtable" width="90%"></table>');
             for (var i in hotkeys) {

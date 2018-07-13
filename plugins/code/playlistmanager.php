@@ -6,6 +6,7 @@ include ("includes/functions.php");
 include ("collection/collection.php");
 include ("player/mpd/connection.php");
 include ("backends/sql/backend.php");
+require_once ("utils/imagefunctions.php");
 
 switch ($_REQUEST['action']) {
 
@@ -25,12 +26,9 @@ function print_playlists_as_json() {
         	$playlist = array();
         	$pls[rawurlencode($name)] = array();
             doCollection('listplaylistinfo "'.$name.'"');
+			$albumimage = new albumImage(array('artist' => "PLAYLIST", 'album' => $name));
             $c = 0;
-            $plimage = "";
-            $key = md5(htmlentities($name));
-            if (file_exists('prefs/plimages/'.$key.".jpg")) {
-            	$plimage = 'prefs/plimages/'.$key.".jpg";
-            }
+			$plimage = $albumimage->get_image_if_exists();
             foreach($playlist as $track) {
                 list($flag, $link) = $track->get_checked_url();
                 $albumartist = format_sortartist($track->tags);
@@ -61,7 +59,7 @@ function print_playlists_as_json() {
     	        	'albumartist' => $albumartist,
     	        	'duration' => $track->tags['Time'],
     	        	'Image' => $image,
-    	        	'key' => $key,
+    	        	'key' => $albumimage->get_image_key(),
     	        	'pos' => $c,
     	        	'plimage' => $plimage,
                     'Type' => $track->tags['type']

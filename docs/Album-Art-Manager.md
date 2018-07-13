@@ -23,6 +23,8 @@ First, go to the Configuration panel and enter the full path to your music in th
 
 Now when RompЯ searches for album art it will use your local images in preference. If you have lots of local images for an album the image selector will allow you to choose between them.
 
+_Note: this setting only works if you're using MPD, or Mopidy;s local backend. Other mopidy backends that play local files (eg beets) will not work_
+
 ### Archving Local Images
 
 Once you've downloaded all the art for your Collection, you can archive the images for your local files if you have set the path correctly as above. This is a manual step and requires a terminal open on the PC where your webserver runs.
@@ -49,7 +51,9 @@ Next you must create a Project. There should be a 'Create Project' button for th
 
 Click 'Enable APIs and Services' and then search for 'Custom Search API' and enable it.
 
-Now you need to create credentials (this is your API key). Click 'Create credentials'. Then click 'What credentials do I need?' and you will be provided with an API key. Copy this value to the 'Google API Key' box in the configuration panel in RompЯ.
+Now you need to create credentials (this is your API key). Click 'Create credentials'. Then click 'What credentials do I need?' and you will be provided with an API key. Copy this value to the 'Google API Key' box in the setup screen you reach by going to rompr?setup in your browser
+
+**NOTE: Someties Google puts spaces at the start or end of the API Key when you copy it to the clipboard. You MUST remove these or the key will not work - check the value you have pasted into the setup screen carefully and remove any spaces from the beginning or end**
 
 ![](images/google_credentials.png)
 
@@ -63,8 +67,10 @@ Go to [Google Custom Search](https://cse.google.com/cse/all) and click 'Add'.
 
 Under 'Sites To Search', enter *.google. Then click 'Create'.
 
-You will be returned to CSE Home. Now click 'Control Panel' next to 'Modify Your Search Engine'. Make sure 'Image search' is ON. Next to 'Sites To Search' select 'Search the entire web but emphasize included sites'. Now click on 'Search Engine ID' and copy the value into the configuration panel in RompЯ.
+You will be returned to CSE Home. Now click 'Control Panel' next to 'Modify Your Search Engine'. Make sure 'Image search' is ON. Next to 'Sites To Search' select 'Search the entire web but emphasize included sites'. Now click on 'Search Engine ID' and copy the value into the box on the setup screen.
 
-![](images/google_credentials.png)
+**NOTE: Someties Google puts spaces at the start or end of the Search Engine ID when you copy it to the clipboard. You MUST remove these or the key will not work - check the value you have pasted into the setup screen carefully and remove any spaces from the beginning or end**
 
 Click 'Update' on the Google CSE webpage.
+
+Click 'OK' on Rompr's setup screen.

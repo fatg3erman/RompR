@@ -19,7 +19,7 @@ var lastFMTrackRadio = function() {
 			debug.log("LASTFM TRACK RADIO",track,artist,"sending a track",self.populated);
 			if (!self.populated) {
 				debug.log("LASTFM TRACK RADIO","Getting Similar Tracks For",track,artist);
-				tracks.push({track_name: track, artist: artist});
+				tracks.push({title: track, artist: artist});
 				lastfm.track.getSimilar({
 						track: track,
 						artist: artist,
@@ -43,7 +43,7 @@ var lastFMTrackRadio = function() {
 					}
 					trackfinder.findThisOne(
 						{
-							title: t.track_name,
+							title: t.title,
 							artist: t.artist,
 							duration: 0,
 							albumartist: t.artist,
@@ -66,7 +66,7 @@ var lastFMTrackRadio = function() {
 				for (var i in data.similartracks.track) {
 					if (data.similartracks.track[i].name && data.similartracks.track[i].artist) {
 						tracks.push({
-							track_name: data.similartracks.track[i].name,
+							title: data.similartracks.track[i].name,
 							artist: data.similartracks.track[i].artist.name
 						});
 					}

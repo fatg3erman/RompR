@@ -15,6 +15,11 @@ body {
     -webkit-font-smoothing: subpixel-antialiased;
     -moz-osx-font-smoothing: auto;
     font-smooth:always;
+	-webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
 }
 
 body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input {
@@ -287,6 +292,24 @@ button {
     flex-basis: auto;
 }
 
+.expandslightly {
+	flex-grow: 1;
+	flex-shrink: 2;
+	flex-basis: auto;
+}
+
+.expandalot {
+	flex-grow: 5;
+	flex-shrink: 1;
+	flex-basis: auto;
+}
+
+.expandabit {
+	flex-grow: 2;
+	flex-shrink: 2;
+	flex-basis: auto;
+}
+
 .fixed {
     -webkit-box-flex:0;
     flex-grow: 0;
@@ -348,10 +371,6 @@ button {
 .noborder {
     margin:0px;
     padding:0px;
-}
-
-.selfcentered {
-    align-self:center;
 }
 
 .ucfirst {
@@ -677,6 +696,10 @@ button {
     margin-right:8px;
 }
 
+div.item div.containerbox.vertical.expand {
+	align-self: center;
+}
+
 .svg-square {
     width:32px;
     height:32px;
@@ -749,6 +772,7 @@ button {
 
 div.item {
     margin-right:2px;
+	box-sizing: border-box;
 }
 
 .playlistrow2 {
@@ -759,6 +783,10 @@ div.item {
 
 .tracktime {
     margin-left:4px !important;
+}
+
+.track {
+	box-sizing: border-box;
 }
 
 .togglebutton {
@@ -822,13 +850,22 @@ td.fil {
     position:absolute;
     display:none;
     z-index:1001;
-    overflow:hidden;
+    overflow-y: hidden;
+	overflow-x: hidden;
+	transition: opacity 0.3s ease;
+	opacity: 0;
+}
+
+.popupcontentcontainer {
+	height: 100%;
+}
+
+.popupcontentholder {
+	overflow-y: auto;
 }
 
 .popupcontents {
-    padding:0px;
-    margin:8px;
-    overflow:auto;
+    padding:8px;
 }
 
 .cheese {
@@ -914,8 +951,16 @@ div.topdropmenu
     overflow-x:hidden;
     display:none;
     position: absolute;
-    opacity:1;
+    opacity:1 !important;
     padding:4px;
+}
+
+div.topdropmenu div {
+	opacity: 1 !important;
+}
+
+div.topdropmenu.albumbitsmenu {
+    top: 12px;
 }
 
 div.clickalbummenu div.rightmenu
@@ -2022,4 +2067,39 @@ table.fileinfotable tr td:nth-child(2) {
 	background-repeat: no-repeat;
 	background-position: center;
 	opacity: 0.2;
+}
+
+.smallicon {
+    padding:0px;
+    margin:4px;
+    height:20px;
+	width:20px;
+    vertical-align:middle;
+}
+
+.medicon {
+    padding:0px;
+    margin:2px;
+    height:30px;
+    width:30px;
+    vertical-align:middle;
+}
+
+.playlistup {
+    position: relative;
+    left: 0;
+    bottom: 100%;
+    z-index: 5000;
+}
+
+.playlistdown {
+    position: relative;
+    left: 0;
+    top: 100%;
+    z-index: 5000;
+}
+
+.podcastresume {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
 }

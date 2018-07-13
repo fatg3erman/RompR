@@ -1,4 +1,5 @@
 <?php
+$skin = 'desktop';
 debuglog("Displaying Setup Screen","SETUP");
 print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -65,7 +66,7 @@ if ($prefs['cleanalbumimages']) {
     print " checked";
 }
 print '><label for="cli">Clean ununsed album art on startup</label></div>';
-print '<p class="tiny">You almost certaoinly want to kep this enabled</p>';
+print '<p class="tiny">You almost certainly want to kep this enabled</p>';
 
 print '<div class="styledinputs"><input id="dsp" type="checkbox" name="do_not_show_prefs" ';
 if ($prefs['do_not_show_prefs']) {
@@ -75,10 +76,13 @@ print '><label for="dsp">Do not show preferences panel on the interface</label><
 print '<p class="tiny">This will stop people messing with your configuration, but also with theirs</p>';
 
 print '<hr class="dingleberry" />';
-print '<h3>'.get_int_text("config_mopidy_scan").'</h3>';
-print '<p><a href="https://fatg3erman.github.io/RompR/Rompr-And-Mopidy" target="_blank">Read The Documentation</a> before using this command</p>';
-print '<p>Executable Path<br><input type="text" name="mopidy_scan_command" value="'.
-    $prefs['mopidy_scan_command'].'" /></p>'."\n";
+print '<h3>'.get_int_text('config_google_credentials').'</h3>';
+print '<p class="tiny">To use Google and YoutTube features you need to create an API key</p>';
+print '<p><a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></p>';
+print '<p>Google API Key<br/>';
+print '<input type="text" name="google_api_key" value="'.$prefs['google_api_key'].'" /></p>'."\n";
+print '<p>Google Search Engine ID<br/>';
+print '<input type="text" name="google_search_engine_id" value="'.$prefs['google_search_engine_id'].'" /></p>'."\n";
 
 print '<hr class="dingleberry" />';
 print '<h3>Collection Settings</h3>';
@@ -132,7 +136,7 @@ for ($i = 0; $i<5; $i++) {
         print " checked";
     }
     print '>';
-    print '<label for="debug'.$i.'"></label>';
+    print '<label for="debug'.$i.'" style="display:inline"></label>';
 }
 print '</tr><tr>';
 for ($i = 5; $i<10; $i++) {
@@ -151,7 +155,7 @@ for ($i = 5; $i<10; $i++) {
         print " checked";
     }
     print '>';
-    print '<label for="debug'.$i.'"></label>';
+    print '<label for="debug'.$i.'" style="display:inline"></label>';
 }
 print '</tr></table>';
 print '<p>Custom Log File</p>';

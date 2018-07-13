@@ -144,12 +144,12 @@ div.clickable.selected:hover
     font-weight:bold;
     font-size:105%;
     text-shadow: 0 0 15px #ff4800;
-    transition:all 0.3s;
+    transition:font-size 0.3s ease, text-shadow 0.3s ease;
 }
 
 .playlistitem
 {
-    transition: all 0.4s;
+    transition:font-size 0.3s ease, text-shadow 0.3s ease;
 }
 
 .playlistcurrenttitle
@@ -209,16 +209,6 @@ table.histable tr
 tr.clickaddtrack:hover
 {
     background-color:#e1e4ea;
-}
-
-.topimg
-{
-    opacity:0.8;
-}
-
-.topimg:not(.button-disabled):hover
-{
-    opacity:1;
 }
 
 .tagholder table tr th {

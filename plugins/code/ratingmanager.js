@@ -10,7 +10,7 @@ var ratingManager = function() {
 	var updating_section = false;
 	var current_section = 0;
 
-	function startNewSection(title, section, atstart) {
+	function startNewSection(title, section, numtracks, atstart) {
 		debug.log("RATMAN","Starting Section",title);
 		var a;
 		if (atstart === true) {
@@ -19,9 +19,15 @@ var ratingManager = function() {
 			a = $('<div>').insertAfter(atstart.parent());
 		}
 		var x = $('<div>', { class: "pluginsection textunderline containerbox menuitem" }).appendTo(a);
-		x.append('<i class="icon-toggle-closed fixed menu infoclick plugclickable clickopensection" name="ratman_'+current_section+'"></i><span class="fixed rattitle">'+title+'</span><div class="expand filterinfo"></div></div>');
+		var html = '<i class="icon-toggle-closed fixed menu infoclick plugclickable clickopensection" name="ratman_'+current_section+'"></i>';
+		html += '<span class="fixed rattitle">'+title+'</span>';
+		if (numtracks > 0) {
+			html += '<span class="fixed ninesix indent ratcount">('+numtracks+' '+language.gettext('label_tracks')+')</span>';
+		}
+		html += '<div class="expand filterinfo"></div>';
+		x.append(html);
 		if (sortby == "Tag") {
-			x.append('<i class="fixed icon-trash topimg infoclick plugclickable clickdeletetag"></i>');
+			x.append('<i class="fixed icon-trash medicon infoclick plugclickable clickdeletetag"></i>');
 		}
 		var b = $('<div>', {class: 'thebigholder fullwidth notthere', id: 'ratman_'+current_section, name: encodeURIComponent(section)}).appendTo(a);
 		current_section++;
@@ -35,16 +41,15 @@ var ratingManager = function() {
 	function putTracksInSection(section, element) {
 		updating_section = true;
 		debug.log("RATMAN","Putting Tracks In Section",section);
-		var dropper = $('#'+section);
+		var dropper = $('.thebigholder[name="'+section+'"]');
 		dropper.prev().children('.clickopensection').makeSpinner();
 		if (dropper.hasClass('notthere')) {
 			
 		} else {
 			dropper.addClass('notthere').empty();
 		}
-		var s = dropper.attr('name');
 		metaHandlers.genericAction(
-			[{action: 'ratentries', sortby: sortby, value: decodeURIComponent(s)}],
+			[{action: 'ratentries', sortby: sortby, value: decodeURIComponent(section)}],
 			function(tracks) {
 				debug.trace("RATMAN","Got Tracks",tracks);
 				current_letter = '';
@@ -92,12 +97,8 @@ var ratingManager = function() {
 			var c = $('<div>', {class: "helpfulalbum fixed"}).appendTo(b);
 			var src = data.Image;
 			if (src) {
-				if (old_style_albumart == 0) {
-					src = src.replace(/albumart\/small/, 'albumart/medium');
-				} else {
-					src = src.replace(/albumart\/small/, 'albumart/asdownloaded');
-				}
-				c.append('<img class="jalopy jalopy200" src="'+src+'" />');
+				var aa = new albumart_translator(src);
+				c.append('<img class="jalopy jalopy200" src="'+aa.getSize('medium')+'" />');
 			}
 			c.append('<div class="tagh albumthing sponclick clickable infoclick draggable clickalbumname" name="dummy">'+tit+'</div>');
 			current_albumholder = $('<div>', {class: "minwidthed2 expand"}).appendTo(b);
@@ -113,6 +114,7 @@ var ratingManager = function() {
 		}
 		html += '<div class="fixed playlistrow2 trackrating"><i class="icon-'+data.Rating+'-stars rating-icon-small infoclick plugclickable clicksetrat"></i></div>';
 		html += '<div class="carol fixed playlistrow2 tracktags">';
+		html += '<i class="fixed icon-plus infoclick plugclickable clickicon playlisticon clickaddtags"></i>';
 		if (data.Tags && data.Tags != "No Tags") {
 			var tags = data.Tags.split(', ');
 			for (var i in tags) {
@@ -123,7 +125,7 @@ var ratingManager = function() {
 		html += '</div>';
 		html += '<div class="fixed playlistrow2 tracktime">'+formatTimeString(data.Duration)+'</div>';
 		html += '</div>';
-		html += '<div class="containerbox line"><i class="fixed icon-plus infoclick plugclickable clickicon playlisticon clickaddtags"></i></div>';
+		// html += '<div class="containerbox line"><i class="fixed icon-plus infoclick plugclickable clickicon playlisticon clickaddtags"></i></div>';
 		html += '<input type="hidden" class="setdata" value="'+setdata+'" />';
 		html += '</div>';
 		current_albumholder.append(html);
@@ -166,13 +168,10 @@ var ratingManager = function() {
 
 	function update_rest_of_ui() {
     	nowplaying.refreshUserMeta();
-    	// We need to do this if we're pre-populating the playlist using get_extra_track_info
-    	// but we're not currently, because it's too slow
-    	// playlist.repopulate();
 	}
 	
 	function refreshSection(section) {
-		if (to_refresh.indexOf(section) == -1 && !($('#ratman_'+section).hasClass('notthere'))) {
+		if (to_refresh.indexOf(section) == -1 && !($('.thebigholder[name="'+section+'"]').hasClass('notthere'))) {
 			to_refresh.push(section);
 		}
 		checkSectionRefresh();
@@ -185,6 +184,10 @@ var ratingManager = function() {
 				putTracksInSection(section, null);
 			}
 		}
+	}
+	
+	function updateCount(section, count) {
+		$('.thebigholder[name="'+section+'"]').prev().find('.ratcount').html('('+count+' tracks)');
 	}
 
 	return {
@@ -261,15 +264,20 @@ var ratingManager = function() {
 		doMainLayout: function(alldata) {
 			debug.log("RATINGMANAGER","Got data",alldata);
 			var secdiv = true;
+			// Clear all counts, otherwise sections which were there but now have a count of 0
+			// don't get updated, because they don't come back in the returend data
+			$('.thebigholder').prev().find('.ratcount').html('');
 			for (var i in alldata) {
-				var section = alldata[i];
+				var section = alldata[i].Name;
 				debug.log("RATMAN","Doing Section",section);
 				if ($('.thebigholder[name="'+encodeURIComponent(section)+'"]').length == 0 && section != 'No Tags') {
 					if (sortby == 'Rating') {
-						startNewSection('<i class="icon-'+section+'-stars rating-icon-big"></i>', section, secdiv);
+						startNewSection('<i class="icon-'+section+'-stars rating-icon-big"></i>', section, alldata[i].NumTracks, secdiv);
 					} else {
-						startNewSection(section, section, secdiv);
+						startNewSection(section, section, alldata[i].NumTracks, secdiv);
 					}
+				} else {
+					updateCount(encodeURIComponent(section), alldata[i].NumTracks);
 				}
 				secdiv = $('.thebigholder[name="'+encodeURIComponent(section)+'"]');
 			}
@@ -285,14 +293,14 @@ var ratingManager = function() {
 				debug.log("RATMAN","Opening Section",element.attr('name'));
 				if (element.hasClass('icon-toggle-closed')) {
 					debug.log("RATMAN","    Section is closed");
-					var fi = element.next().next();
+					var fi = element.siblings('.filterinfo');
 					var term = $('[name=filterinput]').val();
 					if (term == '') {
 						fi.html('')
 					} else {
 						fi.html("Filtered By '"+term+"'");
 					}
-					var section = element.attr('name');
+					var section = dropper.attr('name');
 					putTracksInSection(section, element);
 				} else {
 					element.toggleClosed();
@@ -324,6 +332,7 @@ var ratingManager = function() {
 							});
 						}
 					});
+					ratingManager.reloadRatList();
 				});
 			} else if (element.hasClass('clicksetrat')) {
 				var setstring = element.parent().parent().parent().parent().children('input').val();
@@ -343,6 +352,7 @@ var ratingManager = function() {
 							$(this).parent().find('.trackrating').html('<i class="icon-'+rating+'-stars rating-icon-small infoclick plugclickable clicksetrat"></i>');
 						}
 					});
+					ratingManager.reloadRatList();
 				});
 			} else if (element.hasClass('clickaddtags')) {
 				tagAdder.show(event, null, ratingManager.addTags);
@@ -350,7 +360,7 @@ var ratingManager = function() {
 		},
 
 		addTags: function(element, toadd) {
-			var setstring = element.parent().parent().children('input').val();
+			var setstring = element.parent().parent().parent().parent().children('input').val();
 			var setdata = JSON.parse(decodeURIComponent(setstring));
 			var uri = decodeURIComponent(element.parent().parent().attr('name'));
 			setdata.uri = uri;
@@ -402,7 +412,7 @@ var ratingManager = function() {
 
 		dropped: function(event, element) {
 	        event.stopImmediatePropagation();
-	        var value = decodeURIComponent(element.children('.thebigholder').attr('id'));
+	        var value = decodeURIComponent(element.children('.thebigholder').attr('name'));
 	        switch (sortby) {
 	        	case 'Rating':
 	        		var attributes = {attribute: 'Rating', value: value};
@@ -419,6 +429,7 @@ var ratingManager = function() {
 	        		break;
 	        }
 	        metaHandlers.fromUiElement.doMeta('set', value, [attributes], function() {
+				ratingManager.reloadRatList();
 				refreshSection(encodeURIComponent(value));
 	        	update_rest_of_ui();
 	       	});
@@ -435,9 +446,13 @@ var ratingManager = function() {
 			if (term == '') {
 				$('.filterinfo').html('')
 			} else {
-				$('.icon-toggle-open').next().next().html("Filtered By '"+term+"'");
+				$('.icon-toggle-open').siblings('.filterinfo').html("Filtered By '"+term+"'");
 			}
-			ratingManager.reloadRatList(true);
+			$('.thebigholder').each(function() {
+				if (!$(this).hasClass('notthere')) {
+					refreshSection($(this).attr('name'));
+				}
+			});
 		},
 
 		createTag: function() {
@@ -446,7 +461,7 @@ var ratingManager = function() {
 				infobar.notify(infobar.ERROR, "That tag already exists");
 			} else {
 				name = name.replace(/\s*,\s*/, ', ');
-				startNewSection(name, name, true);
+				startNewSection(name, name, 0, true);
 			}
 		}
 	}

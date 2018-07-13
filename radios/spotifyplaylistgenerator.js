@@ -34,7 +34,7 @@ var crazyRadioManager = function() {
                     var html = $(playlist.radioManager.standardBox('crazyradio', i, 'icon-spotify-circled', crazySettings[i].playlistname));
                     html.append(
                         '<div class="fixed">'+
-                        '<i class="icon-cancel-circled smallicon clickicon clickremcrazy" name="'+i+'"></i>'+
+                        '<i class="icon-cancel-circled collectionicon clickicon clickremcrazy" name="'+i+'"></i>'+
                         '</div>'
                     );
                     $("#pluginplaylists_spotify").append(html);
@@ -80,15 +80,19 @@ var crazyRadioManager = function() {
                     infobar.notify(infobar.ERROR,"Couldn't save it. Sorry, something went wrong");
                 }
             });
+            return true;
         },
 
         saveCrazyRadioSettings: function(e) {
             var fnarkle = new popup({
-                width: 400,
-                height: 300,
+                css: {
+                    width: 400,
+                    height: 300
+                },
                 title: language.gettext("button_createplaylist"),
-                xpos: e.clientX,
-                ypos: e.clientY});
+                atmousepos: true,
+                mousevent: e
+            });
             var mywin = fnarkle.create();
             var d = $('<div>',{class: 'containerbox'}).appendTo(mywin);
             var e = $('<div>',{class: 'expand'}).appendTo(d);

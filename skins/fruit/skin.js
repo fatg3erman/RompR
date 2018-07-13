@@ -18,12 +18,15 @@ jQuery.fn.animatePanel = function(options) {
                     if (opanel.match(/controls/)) {
                         var i = (prefs.sourceshidden) ? "icon-angle-double-right" : "icon-angle-double-left";
                         $("#expandleft").removeClass("icon-angle-double-right icon-angle-double-left").addClass(i);
-                        layoutProcessor.setTopIconSize(["#"+opanel]);
                     }
                 }
             }
         }
     );
+}
+
+function showHistory() {
+    
 }
 
 var layoutProcessor = function() {
@@ -43,7 +46,7 @@ var layoutProcessor = function() {
 
     function flashTrack(uri, album) {
         infobar.markCurrentTrack();
-        var thing = uri ? album : uri;
+        var thing = uri ?  uri : album;
         $('[name="'+thing+'"]').makeFlasher({flashtime: 0.5, repeats: 5});
         // The timeout is so that markCurrentTrack doesn't fuck it up - these often
         // have CSS transitions that affect the scrollbar size
@@ -113,7 +116,7 @@ var layoutProcessor = function() {
             $("#chooserbuttons").append($('<i>', {
                 onclick: "browser.switchsource('"+name+"')",
                 title: language.gettext(obj.text),
-                class: obj.icon+' topimg sep fixed',
+                class: obj.icon+' topimg sep expand',
                 id: "button_source"+name
             }));
         },
@@ -143,10 +146,6 @@ var layoutProcessor = function() {
                     $('#plmode').html(language.gettext('label_addingtracks')).fadeIn(500);
                 });
             }
-        },
-
-        maxPopupSize : function(winsize) {
-            return {width: winsize.x - 32, height: winsize.y - 32};
         },
 
         toggleAudioOutpts: function() {
@@ -179,21 +178,6 @@ var layoutProcessor = function() {
 
         playlistLoading: function() {
             infobar.notify(infobar.SMARTRADIO, language.gettext('label_smartsetup'));
-        },
-
-        setTopIconSize: function(panels) {
-            var imw = (parseInt($('.topimg').first().css('margin-left'))+parseInt($('.topimg').first().css('margin-right')));
-            panels.forEach( function(div) {
-                if ($(div).is(':visible')) {
-                    var icons = $(div+" .topimg");
-                    var numicons = icons.length;
-                    var mw = imw*numicons;
-                    var iw = Math.floor(($(div).width() - mw)/numicons);
-                    if (iw > 24) iw = 24;
-                    if (iw < 2) iw = 2;
-                    icons.css({width: iw+"px", height: iw+"px"});
-                }
-            });
         },
 
         scrollPlaylistToCurrentTrack: function() {
@@ -294,7 +278,6 @@ var layoutProcessor = function() {
             }
             var newwidth = ws.x - $('#infobar').offset().left;
             $('#infobar').css('width', newwidth+'px');
-            layoutProcessor.setTopIconSize(["#sourcescontrols", "#infopanecontrols"]);
             infobar.rejigTheText();
             browser.rePoint();
             $('.topdropmenu').fanoogleMenus();
@@ -306,10 +289,10 @@ var layoutProcessor = function() {
             layoutProcessor.sourceControl('albumlist');
             if (prefs.sortcollectionby == "artist" && $('i[name="aartist'+details.artistindex+'"]').isClosed()) {
                 debug.log("COLLECTION","Opening Menu","aartist"+details.artistindex);
-                doAlbumMenu(null, $('i[name="aartist'+details.artistindex+'"]'), false, function() {
+                doAlbumMenu(null, $('i[name="aartist'+details.artistindex+'"]'), function() {
                     if ($('i[name="aalbum'+details.albumindex+'"]').isClosed()) {
                         debug.log("COLLECTION","Opening Menu","aalbum"+details.albumindex);
-                        doAlbumMenu(null, $('i[name="aalbum'+details.albumindex+'"]'), false, function() {
+                        doAlbumMenu(null, $('i[name="aalbum'+details.albumindex+'"]'), function() {
                             flashTrack(details.trackuri, 'aalbum'+details.albumindex);
                         });
                     } else {
@@ -318,7 +301,7 @@ var layoutProcessor = function() {
                 });
             } else if ($('i[name="aalbum'+details.albumindex+'"]').isClosed()) {
                 debug.log("COLLECTION","Opening Menu","aalbum"+details.albumindex);
-                doAlbumMenu(null, $('i[name="aalbum'+details.albumindex+'"]'), false, function() {
+                doAlbumMenu(null, $('i[name="aalbum'+details.albumindex+'"]'), function() {
                     flashTrack(details.trackuri,'aalbum'+details.albumindex);
                 });
             } else {
@@ -400,17 +383,18 @@ var layoutProcessor = function() {
         postAlbumMenu: function(element) {
             debug.log("SKIN","Post Album Menu Thing",element.next());
             if (element.next().hasClass('smallcover')) {
+                var imgsrc = element.next().children('img').attr('src');
+                var aa = new albumart_translator(imgsrc);
                 if (element.isClosed()) {
+                    if (imgsrc) {
+                        element.next().children('img').attr('src', aa.getSize('small'));
+                    }
+                    element.next().css('width','50%');
                     element.next().css('width','');
                     element.next().children('img').css('width', '');
                 } else {
-                    var imgsrc = element.next().children('img').attr('src');
                     if (imgsrc) {
-                        var newsrc = imgsrc;
-                        newsrc = imgsrc.replace('albumart/small','albumart/asdownloaded');
-                        if (newsrc != imgsrc) {
-                            element.next().children('img').attr('src', newsrc);
-                        }
+                        element.next().children('img').attr('src', aa.getSize('asdownloaded'));
                     }
                     element.next().css('width','50%');
                     element.next().children('img').css('width', '100%');
@@ -545,8 +529,7 @@ var layoutProcessor = function() {
                 whiledragging: infobar.volumemoved,
                 orientation: "vertical"
             });
-            // $("#playlistbuttons").empty();
-            // $("#giblets").remove();
         }
+        
     }
 }();

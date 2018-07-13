@@ -30,25 +30,114 @@ If Mopidy is not on the same computer as the webserver, you probably need to set
     
 in your mopidy.conf
 
-## Web Proxy Configuration
+## Connection errors or other strange behaviour
 
-You can configure RompЯ to use a web proxy from the setup page. Even if you have configured this in your browser you still need to confiugure RompЯ to use it too.
+MPD and Mopidy both have a connection timeout parameter, after which time they will drop the connection between them and Rompr. This is seriously bad news for Rompr. You should make sure you increase it.
 
-![](images/proxysetup.png)
+### For Mopidy
+
+In mopidy.conf, your mpd section needs to contain
+
+    [mpd]
+    connection_timeout = 120
+    
+### For MPD
+
+Somewhere in mpd.conf
+
+    connection_timeout     "120"
+
+
+If you have a very large music collection, the higher the number the better. It is in seconds.
 
 ## Music Collection Fails To Build
 
 ### Very Large Collections
 
-You may fall foul of web server timeouts when trying to build very large music collections. You can hopefully fix this.
+You may fall foul of web server timeouts when trying to build very large music collections. You'll see something like this:
 
-Firstly, your php.ini needs to have a setting for max_execution_time. This is in seconds, so set it to something massive.
+![](images/timeout.png)
 
-If you're using Apache and you followed the Apache instructions on here, you can set this as a php_admin_value in rompr.conf
+RompR uses a value of 30 minutes by default, which is massive and should be big enough for most people, but in the case where it isn't:
 
-If you're using nginx you must edit your php.ini and restart php-fpm.
+The first thing to say is that if you see this message it is quite possible the update is still continuing but your browser has timed out the request. So, in case it is, do nothing with RompR, don't play any music, don't use the UI at all. You can try to see if the update is still going by using 'top' or something similar to look for CPU usage on your webserver. Don't do anything until it finishes. Or you can just wait.
 
-Secondly you need to allow the server to wait a long time for output. With nginx, this is the fastcgi_read_timeout parameter that is in the example configuration. For Apache you need to change the Timeout directive in your apache config file. Note this has to be globally for whole server, which is another good reason to use nginx :)
+To prevent it happening again.
+
+#### With Apache
+
+If you're using Apache and you followed the Apache instructions on here, just edit the value of
+
+    php_admin_value max_execution_time 1800
+    
+in the Apache configuration you created as part of the setup. The number is in seconds, 1800 is 30 minutes. Just increase the value to something huge.
+
+You also need to change the value of
+
+    Timeout 1800
+    
+which is in the same config file. Set it to the same value as the above parameter.
+
+#### With nginx
+
+If you're using nginx you must edit your php.ini, as described in the setup guide - adjust the value of
+
+    max_execution_time
+    
+to some massive number of seconds and restart php-fpm.
+
+You will also need to increase the value of
+
+    fastcgi_read_timeout 1800
+    
+parameter that is in the example configuration. Set this to the same value you set max_execution_time to.
+
+
+#### If it still doesn't work
+
+If, after increasing the values above you are still getting timeout errors, then you are probably suffering from browser timeouts. In this case the update process will still be running, you should close the browser window and wait for the process to complete.
+
+#### Things that affect the time the update takes
+
+Several factors can affect the time the update takes
+
+* Network speeed - if your MPD or Mopidy is on a different machine than your web server, or if you are using MySQL and your database is on a different machine than your webserver.
+* Using a UNIX socket for MySQL is generally slightly faster than using a port, althought this is only possible if your web server is on the same machine as your SQL server
+* The speed of the machine running your Apache server - including processor and disc
+
+## Web Proxy Configuration
+
+If you need to use a web proxy you will need to configure Rompr to use it. You can configure RompЯ to use a web proxy from the setup page. Even if you have configured this in your browser you still need to confiugure RompЯ to use it too.
+
+![](images/proxysetup.png)
+
+## Album Art not working
+
+If you're having trouble with album art not displaying, it might be that you haven't installed php-gd (it's one of the things the installation instructions asks you to install), or that your distribution's build of php-gd dosn't support many image types.
+
+In this case you can install imagemagick to be used as a fallback when gd doesn't work
+
+    sudo apt-get install imagemagick
+    
+or on macOS
+
+    brew install imagemagick
+    
+Versions of Rompr prior to 1.18 always used imagemagick, but 1.18 will use gd in preference if it is installed, because it is much, much faster
+
+## Reporting Bugs
+
+If you think you've found a bug, please report it at the [Issue Tracker](https://github.com/fatg3erman/RompR/issues), it helps to make Rompr better.
+
+Before reporting, make sure you know exactly how to reproduce the problem. Describe it in logical steps.
+
+It also helps a lot if you can provide the Debug Information available from the Plugins Menu:
+
+![](images/debuginfo.png)
+
+Use the 'Copy To Clipboard' button to copy all the info the clipboard in a nicely-formatted way, and then paste it into your bug report.
+
+If your bug is particularly complex you may be asked to provide a debug log. Or you can include one anyway, it all helps.
 
 ## Debug Logging
 

@@ -198,18 +198,8 @@
 .topimg {
     margin-right:4px;
     margin-left:4px;
-    height: 24px;
-    width:24px;
-    font-size:24px;
     margin-bottom:2px;
     cursor: pointer;
-    vertical-align:middle;
-}
-
-.smallicon {
-    padding:0px;
-    margin:4px;
-    height:16px;
     vertical-align:middle;
 }
 
@@ -229,21 +219,14 @@
     padding-left:16px;
 }
 
-.medicon {
-    padding:0px;
-    margin:2px;
-    height:24px;
-    width:24px;
-    font-size:24px;
-    vertical-align:middle;
-}
-
 .playlisticon {
     padding:0px;
     margin-right:4px;
     margin-bottom:2px;
     margin-top:2px;
     vertical-align:middle;
+    height: 12px;
+    width: 12px;
 }
 
 .collectionicon {
@@ -252,6 +235,8 @@
     margin-bottom:2px;
     margin-top:2px;
     vertical-align:middle;
+    width:16px;
+    height:16px;
 }
 
 .playlisticonr {
@@ -261,6 +246,8 @@
     margin-bottom:2px;
     margin-top:2px;
     vertical-align:middle;
+    height: 12px;
+    width: 12px;
 }
 
 .rating-icon-big {
@@ -280,7 +267,28 @@
 }
 
 .headercontainer {
-    max-height:36px;
+    height:90%;
+    box-sizing:border-box;
+}
+
+.background-left {
+    background-position: left !important;
+    max-height: 24px;
+}
+
+.background-right {
+    background-position: right !important;
+    max-height: 24px;
+}
+
+#sourcescontrols i, #chooserbuttons i, #playlistcontrols i {
+    max-width: 24px;
+}
+
+i.topdrop
+{
+    position: relative;
+    font-style: normal;
 }
 
 .dragmenu {

@@ -198,14 +198,14 @@ div.clickable.selected:hover
 {
     font-size:110%;
     text-shadow: 0 0 12px #cccccc;
-    transition:all 0.5s ease;
+    transition:font-size 0.5s ease, text-shadow 0.5s ease;
     color:#dddddd;
     background-color:rgba(255,255,255,0.1);
 }
 
 .playlistitem
 {
-    transition:all 0.5s ease;
+    transition:font-size 0.5s ease, text-shadow 0.5s ease;
 }
 
 .playlistcurrenttitle
@@ -491,4 +491,9 @@ th.tlheader
 
 .ratsoptions {
     border-top: 1px solid #444444;
+}
+
+.topbarplaycontrols {
+    border-left: 1px solid white;
+    border-right: 1px solid white;
 }

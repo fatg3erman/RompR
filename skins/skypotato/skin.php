@@ -5,16 +5,16 @@
 <div class="fullwidth containerbox" id="thetopbit">
     <div class="fixed">
         <div id="albumcover" class="fixed">
-            <img id="albumpicture" class="notexist" />
+            <img id="albumpicture" />
         </div>
     </div>
     <div id="groonburger" class="fixed containerbox vertical controlbutton-left">
 <?php
-        print '<i title="'.get_int_text('button_previous').'" class="fixed icon-fast-backward clickicon controlbutton-small lettuce"></i>';
-        print '<i title="'.get_int_text('button_play').'" class="fixed icon-play-circled clickicon controlbutton-main lettuce"></i>';
-        print '<i title="'.get_int_text('button_stop').'" class="fixed icon-stop-1 clickicon controlbutton-small lettuce"></i>';
-        print '<i title="'.get_int_text('button_stopafter').'" class="fixed icon-to-end-1 clickicon controlbutton-small lettuce"></i>';
-        print '<i title="'.get_int_text('button_next').'" class="fixed icon-fast-forward clickicon controlbutton-small lettuce"></i>';
+        print '<i title="'.get_int_text('button_previous').'" class="prev-button fixed icon-fast-backward clickicon controlbutton-small lettuce"></i>';
+        print '<i title="'.get_int_text('button_play').'" class="play-button fixed icon-play-circled clickicon controlbutton-main lettuce"></i>';
+        print '<i title="'.get_int_text('button_stop').'" class="stop-button fixed icon-stop-1 clickicon controlbutton-small lettuce"></i>';
+        print '<i title="'.get_int_text('button_stopafter').'" class="stopafter-button fixed icon-to-end-1 clickicon controlbutton-small lettuce"></i>';
+        print '<i title="'.get_int_text('button_next').'" class="next-button fixed icon-fast-forward clickicon controlbutton-small lettuce"></i>';
 ?>
     </div>
     <!-- <div class="expand"> -->
@@ -180,7 +180,7 @@ print '<i class="icon-menu topimg tooltip choose_specialplugins" title="'.get_in
     </div>
     </div>
     <div class="pref textcentre">
-    <button name="donkeykong" onclick="collectionHelper.checkCollection(true, false)">'.get_int_text('config_updatenow').'</button>
+    <button name="donkeykong">'.get_int_text('config_updatenow').'</button>
     </div>';
 ?>
     

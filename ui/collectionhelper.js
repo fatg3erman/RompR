@@ -6,25 +6,18 @@ var collectionHelper = function() {
     var update_load_timer_running = false;
     var returned_data = new Array();
     var update_timer = null;
+    var collection_load_timeout = 3600000;
 
     function scanFiles(cmd) {
         collectionHelper.prepareForLiftOff(language.gettext("label_updating"));
         collectionHelper.markWaitFileList(language.gettext("label_updating"));
         uiHelper.emptySearchResults();
-        debug.log("PLAYER","Scanning Files",cmd,prefs.player_backend,prefs.mopidy_scan_command);
-        if (prefs.player_backend == "mopidy" && prefs.mopidy_scan_command != '') {
-            debug.shout("PLAYER","Scanning Mopidy using external scan command");
-            $.getJSON("player/mopidy/mopidyscan.php?scan=yes", function() {
-                update_load_timer = setTimeout( pollAlbumList, 2000);
-                update_load_timer_running = true;
-            });
-        } else {
-            debug.shout("PLAYER","Scanning using",cmd);
-            player.controller.do_command_list([[cmd]], function() {
-                update_load_timer = setTimeout( pollAlbumList, 2000);
-                update_load_timer_running = true;
-            });
-        }
+        debug.log("PLAYER","Scanning Files",cmd,prefs.player_backend);
+        debug.shout("PLAYER","Scanning using",cmd);
+        player.controller.do_command_list([[cmd]], function() {
+            update_load_timer = setTimeout( pollAlbumList, 2000);
+            update_load_timer_running = true;
+        });
     }
 
     function pollAlbumList() {
@@ -32,11 +25,7 @@ var collectionHelper = function() {
             clearTimeout(update_load_timer);
             update_load_timer_running = false;
         }
-        if (prefs.player_backend == "mopidy" && prefs.mopidy_scan_command != '') {
-            $.getJSON("player/mopidy/mopidyscan.php?check=yes", checkPoll);
-        } else {
-            $.getJSON("player/mpd/postcommand.php", checkPoll);
-        }
+        $.getJSON("player/mpd/postcommand.php", checkPoll);
     }
 
     function checkPoll(data) {
@@ -60,20 +49,23 @@ var collectionHelper = function() {
             $.ajax({
                 type: "GET",
                 url: albums,
-                timeout: 800000,
+                timeout: collection_load_timeout,
                 dataType: "html",
                 success: function(data) {
                     clearTimeout(monitortimer);
                     $("#collection").html(data);
+                    player.collectionLoaded = true;
+                    player.updatingcollection = false;
                     if ($('#emptycollection').length > 0) {
+                        player.collection_is_empty = true;
                         if (!$('#collectionbuttons').is(':visible')) {
                             toggleCollectionButtons();
                         }
                         $('[name="donkeykong"]').makeFlasher({flashtime: 0.5, repeats: 3});
+                    } else {
+                        player.collection_is_empty = false;
                     }
                     data = null;
-                    player.collectionLoaded = true;
-                    player.updatingcollection = false;
                     if (albums.match(/rebuild/)) {
                         infobar.notify(infobar.NOTIFY,"Music Collection Updated");
                         collectionHelper.scootTheAlbums($("#collection"));
@@ -82,10 +74,17 @@ var collectionHelper = function() {
                 },
                 error: function(data) {
                     clearTimeout(monitortimer);
-                    $("#collection").html(
-                        '<p align="center"><b><font color="red">Failed To Generate Collection :</font>'+
-                        '</b><br>'+data.responseText+"<br>"+data.statusText+"</p>");
-                    debug.error("PLAYER","Failed to generate albums list",data);
+                    collectionHelper.disableCollectionUpdates();
+                    var html = '<p align="center"><b><font color="red">Failed To Generate Collection</font></b></p>';
+                    if (data.responseText) {
+                        html += '<p align="center">'+data.responseText+'</p>';
+                    }
+                    if (data.statusText) {
+                        html += '<p align="center">'+data.statusText+'</p>';
+                    }
+                    html += '<p align="center"><a href="https://fatg3erman.github.io/RompR/Troubleshooting#very-large-collections" target="_blank">Read The Troubleshooting Docs</a></p>';
+                    $("#collection").html(html);
+                    debug.error("PLAYER","Failed to generate collection",data);
                     infobar.notify(infobar.ERROR,"Music Collection Update Failed");
                     player.updatingcollection = false;
                 }
@@ -121,7 +120,7 @@ var collectionHelper = function() {
     
     function updateUIElements() {
         
-        if (dbQueue.outstandingRequests() > 0) {
+        if (dbQueue.queuelength() > 0) {
             debug.log("UI","Deferring updates due to outstanding requests");
             clearTimeout(update_timer);
             setTimeout(updateUIElements, 1000);
@@ -198,6 +197,21 @@ var collectionHelper = function() {
     }
         
     return {
+                
+        // For testing only
+        setCollectionLoadTimeout: function(v) {
+            collection_load_timeout = v;
+        },
+        
+        disableCollectionUpdates: function() {
+            $('button[name="donkeykong"]').unbind('click').css('opacity', '0.2');
+            $('button[name="dinkeyking"]').unbind('click').css('opacity', '0.2');
+        },
+        
+        enableCollectionUpdates: function() {
+            $('button[name="donkeykong"]').unbind('click').bind('click', function() { collectionHelper.checkCollection(true, false) }).css('opacity', '');
+            $('button[name="dinkeyking"]').unbind('click').bind('click', function() { collectionHelper.checkCollection(true, false) }).css('opacity', '');
+        },
 
         forceCollectionReload: function() {
             collection_status = 0;
@@ -227,11 +241,11 @@ var collectionHelper = function() {
             }
             var update = forceup;
             if (prefs.updateeverytime) {
-                debug.mark("GENERAL","Updating Collection due to preference");
+                debug.mark("COLLECTION","Updating Collection due to preference");
                 update = true;
             } else {
                 if (!prefs.hide_albumlist && collection_status == 1) {
-                    debug.mark("GENERAL","Updating Collection because it is out of date");
+                    debug.mark("COLLECTION","Updating Collection because it is out of date");
                     collection_status = 0;
                     update = true;
                 }
@@ -254,7 +268,7 @@ var collectionHelper = function() {
         scootTheAlbums: function(jq) {
             if (prefs.downloadart) {
                 $.each(jq.find("img.notexist"), function() {
-                    coverscraper.GetNewAlbumArt({imgkey: $(this).attr('name')});
+                    coverscraper.GetNewAlbumArt($(this));
                 });
             }
         },
@@ -264,7 +278,7 @@ var collectionHelper = function() {
             // Otherwise we would have to reload the entire collection panel every time,
             // which would cause any opened dropdowns to be mysteriously closed,
             // which would just look shit.
-            debug.trace("RATING PLUGIN","Update Display",rdata);
+            debug.trace("COLLECTION","Update Display",rdata);
             if (rdata) {
                 returned_data.push(rdata);
                 clearTimeout(update_timer);

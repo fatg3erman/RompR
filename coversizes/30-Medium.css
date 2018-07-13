@@ -1,20 +1,15 @@
 .smallcover
 {
-	width:44px;
+	width:48px;
 }
 
 .smallcover-svg {
-	height:44px;
+	height:48px;
 }
 
 img.notexist,img.notfound {
-	width:44px;
-	height:44px;
-}
-
-#sortable .smallcover
-{
-	width: 64px;
+	width:48px;
+	height:48px;
 }
 
 body.desktop .smallcover.svg-square.noindent

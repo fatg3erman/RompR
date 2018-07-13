@@ -16,6 +16,12 @@
     padding-right: 8px;
     padding-bottom: 8px;
     margin-top:8px;
+    transition: width 0.5s ease;
+}
+
+#browns {
+    transition: opacity 0.5s ease;
+    opacity: 0;
 }
 
 .albumcovers .infosection {
@@ -78,6 +84,16 @@ img#browns {
 
 .albumimg img {
     padding:8px;
+}
+
+.albumimg .covercontainer img {
+    width: 100px;
+    height:auto;
+}
+
+.albumimg .covercontainer img.notfound, .albumimg .covercontainer img.notexist {
+    width: 100px;
+    height: 100px;
 }
 
 #brian {

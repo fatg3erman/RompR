@@ -6,7 +6,7 @@ var aboutRompr = function() {
 
       open: function() {
             if (about == null) {
-      	      about = browser.registerExtraPlugin("about", "About RompЯ (version "+rompr_version+")", aboutRompr);
+      	         about = browser.registerExtraPlugin("about", "About RompЯ (version "+rompr_version+")", aboutRompr);
                   // randomly change the url to avoid the cache
                   $("#aboutfoldup").load("includes/begging.html?_="+Math.round(Math.random()*10000), function() {
                         about.slideToggle('fast', function() {
@@ -30,4 +30,4 @@ var aboutRompr = function() {
 
 }();
 
-pluginManager.addPlugin(language.gettext("button_about"), aboutRompr.open, null, null, 'icon-info-circled');
+pluginManager.addPlugin(language.gettext("button_about"), aboutRompr.open, null, null, true);

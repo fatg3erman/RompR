@@ -10,7 +10,19 @@ The Playlists panel shows you all your saved playlists. You can open each one (a
 
 ![](images/playlists1.png)
 
-The 'External URL' box allows you add a full URL to a playlist stored on the internet somewhere. This is best supported with mpd, where you can use it to play Soundcloud tracks (see the mpd documentation).
+## Using Remote Playlists
+
+The 'External URL' box allows you add a full URL to a playlist stored on the internet somewhere.
+
+The remotely stored playlist can be browsed and entries from it added to the Current Playlist, or the whole playlist can be loaded as if it were local.
+
+With mpd you can also use this to play Soundcloud tracks (see the mpd documentation).
+
+Playlists added this way can be renamed or deleted using the icons next to the playlist name.
+
+![](images/remoteplaylist.png)
+
+Playlists of all types are supported - PLS, M3U, M3U8, ASF, ASX, and XSPF
 
 ## Editing Your Saved Playlists
 
@@ -32,4 +44,4 @@ You can also save the Current Playlist as a new Saved Playlist by using the flop
 
 ![](images/playlists3.png)
 
-If you save a playliust with the same name as an existing one the existing one will be overwritten.
+If you save a playlist with the same name as an existing one the existing one will be overwritten.

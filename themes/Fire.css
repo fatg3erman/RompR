@@ -125,6 +125,26 @@ select
 =====================================================================
 */
 
+.desktop .selectholder {
+    background: #222 url('../newimages/blobdown3.svg') right 2px center no-repeat;
+}
+
+.desktop .selectholder:hover {
+    background: #222 url('../newimages/blobdown3-hi.svg') right 2px center no-repeat;
+}
+
+.combobox-entry {
+    background: #222 url('../newimages/blobdown3.svg') right 2px center no-repeat;
+}
+
+.combobox-entry:hover {
+    background: #222 url('../newimages/blobdown3-hi.svg') right 2px center no-repeat;
+}
+
+.desktop select {
+    color: white;
+}
+
 .controlbutton {
     color:#cccccc !important;
     text-shadow: 0 0 15px #bbbbbb !important;
@@ -232,16 +252,6 @@ tr.clickaddtrack:hover
     background-color:#e1e4ea;
 }
 
-.topimg
-{
-    opacity:0.8;
-}
-
-.topimg:not(.button-disabled):hover
-{
-    opacity:1;
-}
-
 .bsel
 {
     color:#ffffff;
@@ -293,7 +303,7 @@ div.topdropmenu
 
 .configtitle
 {
-    background-color:rgba(255,128,20,0.1);
+    background-color:rgba(255,128,20,0.2);
 }
 
 body.mobile .configtitle

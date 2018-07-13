@@ -104,7 +104,7 @@ var layoutProcessor = function() {
         addInfoSource: function(name, obj) {
             $("#chooserbuttons").append($('<i>', {
                 onclick: "browser.switchsource('"+name+"')",
-                class: obj.icon+' topimg fixed',
+                class: obj.icon+' topimg expand',
                 id: "button_source"+name
             }));
         },
@@ -128,10 +128,6 @@ var layoutProcessor = function() {
             if (!playlist.radioManager.isRunning()) {
                 infobar.notify(infobar.NOTIFY, language.gettext("label_addingtracks"));
             }
-        },
-
-        maxPopupSize: function(winsize) {
-            return {width: winsize.x - 16, height: winsize.y - 16};
         },
 
         hidePanel: function(panel, is_hidden, new_state) { },
@@ -162,11 +158,12 @@ var layoutProcessor = function() {
         },
 
         scrollPlaylistToCurrentTrack: function() {
-            if (prefs.scrolltocurrent && $('playlistcurrentitem').length > 0) {
-                $('#pscroller').scrollTo('.playlistcurrentitem',800,{offset: {top: -32}, easing: 'swing'});
+            if (prefs.scrolltocurrent && $('.playlistcurrentitem').length > 0) {
+                var offset = 0 - ($('#pscroller').outerHeight(true) / 2);
+                $('#pscroller').scrollTo(('.playlistcurrentitem'), 800, {offset: {top: offset}, easing: 'swing'});
             }
         },
-
+        
         playlistupdate: function(upcoming) {
 
         },
@@ -200,23 +197,7 @@ var layoutProcessor = function() {
             }
         },
 
-        setTopIconSize: function(panels) {
-            panels.forEach( function(div) {
-                if ($(div).is(':visible')) {
-                    var jq = $(div+' .topimg:not(.noshrink):visible');
-                    var imh = parseInt(jq.first().css('max-height'))
-                    var numicons = jq.length+1;
-                    var iw = Math.min(Math.floor(($(div).width()-16)/numicons), imh);
-                    jq.css({width: iw+"px", height: iw+"px", "font-size": iw+"px"});
-                    var cw = iw*numicons;
-                    var mar = Math.floor(((($(div).width()-16) - cw)/2)/numicons);
-                    jq.css({"margin-left": mar+"px", "margin-right": mar+"px"});
-                }
-            });
-        },
-        
         adjustLayout: function() {
-            layoutProcessor.setTopIconSize(['#headerbar', '#chooserbuttons']);
             infobar.updateWindowValues();
             var ws = getWindowSize();
             var newheight = ws.y-$("#headerbar").outerHeight(true);
@@ -281,6 +262,13 @@ var layoutProcessor = function() {
                 prefs.clickmode = 'single';
             }
             $(".dropdown").floatingMenu({ });
+            $('.topbarmenu').bind('click', function() {
+                $('.autohide:visible').not('#'+$(this).attr('name')).slideToggle('fast');
+                $('#'+$(this).attr('name')).slideToggle('fast');
+            });
+            $('.autohide').bind('click', function() {
+                $(this).slideToggle('fast');
+            });
             setControlClicks();
             $('.choose_nowplaying').click(function(){layoutProcessor.sourceControl('infobar')});
             $('.choose_albumlist').click(function(){layoutProcessor.sourceControl('albumlist')});
@@ -306,76 +294,21 @@ var layoutProcessor = function() {
                 whiledragging: infobar.volumemoved,
                 orientation: "horizontal"
             });
+        },
+        
+        postPlaylistLoad: function() {
+            $('#pscroller').find('.icon-cancel-circled').each(function() {
+                var d = $('<i>', {class: 'icon-updown playlisticonr fixed clickable clickicon rearrange_playlist'}).insertBefore($(this));
+            });
+        },
+        
+        getElementPlaylistOffset: function(element) {
+            return element.position().top;
         }
 
     }
 
 }();
-
-function popup(opts) {
-
-    var self = this;
-    var returnTo;
-    var contents;
-
-    var options = {
-        width: 100,
-        height: 100,
-        title: "Popup",
-        helplink: null,
-        xpos: null,
-        ypos : null,
-        id: null,
-        toggleable: false,
-        hasclosebutton: true
-    }
-
-    for (var i in opts) {
-        options[i] = opts[i];
-    }
-
-    this.create = function() {
-        $('#popupwindow').empty();
-        var titlebar = $('<div>', { class: "cheese" }).appendTo($("#popupwindow"));
-        var tit = $('<div>', { class: "configtitle textcentre"}).appendTo(titlebar)
-        tit.html('<b>'+options.title+'</b>');
-        if (options.hasclosebutton) {
-            tit.append('<i class="icon-cancel-circled playlisticonr clickicon tright"></i></div>');
-        }
-        if (options.helplink !== null) {
-            tit.append('<a href="'+options.helplink+'" target="_blank"><i class="icon-info-circled playlisticonr clickicon tright"></i></a>');
-        }
-        titlebar.find('.icon-cancel-circled').click( function() {self.close(false)});
-        contents = $('<div>',{class: 'popupcontents'}).appendTo($("#popupwindow"));
-        return contents;
-    }
-
-    this.open = function() {
-        $('#popupwindow').slideDown('fast');
-    }
-
-    this.close = function(callback) {
-        if (callback) {
-            callback();
-        }
-        $('#popupwindow').slideUp('fast');
-    }
-
-    this.addCloseButton = function(text, func) {
-        var button = $('<button>',{class: 'tright'}).appendTo(contents);
-        button.html(text);
-        button.click(function() { self.close(func) });
-    }
-
-    this.useAsCloseButton = function(elem, func) {
-        elem.click(function() { self.close(func) });
-    }
-
-    this.setContentsSize = function() {
-
-    }
-
-}
 
 // Dummy functions standing in for widgets we don't use in this version -
 // custom scroll bars, tipTip, and drag/drop stuff

@@ -409,3 +409,8 @@ tr.clickaddtrack:hover
 {
     background-color:rgba(0,0,0,0.3);
 }
+
+.topbarplaycontrols {
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}

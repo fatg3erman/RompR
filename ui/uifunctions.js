@@ -68,22 +68,22 @@ var pluginManager = function() {
             plugins[index].action();
         } else {
             debug.log("PLUGINS","Loading script",plugins[index].script,"for",plugins[index].label);
-            $.getScript(plugins[index].script).fail(function(data, settings, exception) {
+            $.getScript(plugins[index].script+'?version='+rompr_version).fail(function(data, settings, exception) {
                 debug.error("PLUGINS","Failed Loading Script",exception);
             });
         }
     }
 
     return {
-        addPlugin: function(label, action, setup, script, icon) {
-            debug.log("PLUGINS","Adding Plugin",label,icon);
-            plugins.push({label: label, action: action, setup: setup, script: script, icon: icon});
+        addPlugin: function(label, action, setup, script, onmenu) {
+            debug.log("PLUGINS","Adding Plugin",label,onmenu);
+            plugins.push({label: label, action: action, setup: setup, script: script, onmenu: onmenu});
         },
 
         doEarlyInit: function() {
             for (var i in plugins) {
                 if (plugins[i].setup) {
-                    if (!only_plugins_with_icons || plugins[i].icon) {
+                    if (!only_plugins_on_menu || plugins[i].menu) {
                         debug.log("PLUGINS","Setting up Plugin",plugins[i].label);
                         plugins[i].setup();
                     }
@@ -95,9 +95,8 @@ var pluginManager = function() {
             for (var i in plugins) {
                 if (plugins[i].action || plugins[i].script) {
                     debug.log("PLUGINS","Setting up Plugin",plugins[i].label);
-                    if (only_plugins_with_icons) {
-                        if (plugins[i].icon !== null) {
-                            $("#specialplugins .spicons").append('<i class="noshrink clickable clickicon topimg '+plugins[i].icon+'" name="'+i+'"></i>');
+                    if (only_plugins_on_menu) {
+                        if (plugins[i].onmenu) {
                             $("#specialplugins .sptext").append('<div class="backhi clickable clickicon noselection menuitem" name="'+i+'">'+plugins[i].label+'</div>');
                         }
                     } else {
@@ -255,6 +254,88 @@ var imagePopup = function() {
     }
 }();
 
+function albumart_translator(source) {
+    
+    // This should be kept in step with class baseAlbumImgae in imagefunctions.php
+    
+    // Given an album image of any size, return any other size
+    this.source = source;
+    this.getSize = function(size) {
+        if (/albumart\/small\//.test(this.source)) {
+            return this.source.replace('albumart/small/', 'albumart/'+size+'/');
+        } else if (/albumart\/medium\//.test(this.source)) {
+            return this.source.replace('albumart/medium/', 'albumart/'+size+'/');
+        } else if (/albumart\/asdownloaded\//.test(this.source)) {
+            return this.source.replace('albumart/asdownloaded/', 'albumart/'+size+'/');
+        } else {
+            return this.source.replace(/\&rompr_resize_size=.+/, '');
+        }
+    }
+    
+    // Get an image key
+    this.getKey = function(type, artist, album) {
+        switch (type) {
+            case 'stream':
+                artist = 'STREAM'
+                break;
+                
+            case 'podcast':
+                artist = 'podcast';
+                break;
+        }
+        return hex_md5(artist.toLowerCase()+album.toLowerCase());
+    }
+}
+
+function show_albumart_update_window() {
+    if (old_style_albumart == 0) {
+        return true;
+    }
+    var fnarkle = new popup({
+        css: {
+            width: 600,
+            height: 400
+        },
+        fitheight: true,
+        title: "Album Art Update",
+        hasclosebutton: false
+    });
+    var mywin = fnarkle.create();
+    mywin.append('<div id="artupdate" class="fullwdith"></div>');
+    $('#artupdate').append('<div class="pref textcentre">Your Album Art needs to be updated. This process has now started. You can close this window to pause the process and it will continue the next time you open Rompr. Until you have updated all your art Rompr may run slowly and album art may look wierd</div>');
+    $('#artupdate').append('<div id="albumart_update_bar" style="height:2em;width:100%"></div>');
+    $('#artupdate').append('<div class="pref textcentre"><button id="artclosebutton">Close</button></div>');
+    fnarkle.useAsCloseButton($('#artclosebutton'), stop_albumart_update);
+    $('#albumart_update_bar').rangechooser({
+        ends: ['max'],
+        startmax: 0,
+        range: 100
+    });
+    fnarkle.open();
+    fnarkle.setWindowToContentsSize();
+    $('.open_albumart').hide();
+    do_albumart_update();
+    return true;
+}
+
+function do_albumart_update() {
+    $.getJSON('update_albumart.php', function(data) {
+        $('#albumart_update_bar').rangechooser('setProgress', data.percent);
+        if (data.percent < 100 && albumart_update) {
+            setTimeout(do_albumart_update, 100);
+        } else {
+            $('#artclosebutton').click();
+        }
+    });
+}
+
+function stop_albumart_update() {
+    debug.log("UI", "Cancelling album art update");
+    $('.open_albumart').show();
+    albumart_update = false;
+    return true;
+}
+
 function togglePlaylistButtons() {
     layoutProcessor.preHorse();
     $("#playlistbuttons").slideToggle('fast', layoutProcessor.setPlaylistHeight);
@@ -281,9 +362,9 @@ function hidePanel(panel) {
 function doSomethingUseful(div,text) {
     var html = '<div class="containerbox bar">';
     if (typeof div == "string") {
-        html = '<div class="containerbox bar" id="spinner_'+div+'">';
+        html = '<div class="containerbox bar menuitem" id="spinner_'+div+'">';
     }
-    html += '<div class="fixed alignmid padleft">'+
+    html += '<div class="fixed alignmid">'+
         '<i class="icon-spin6 svg-square spinner"></i></div>';
     html += '<h3 class="expand ucfirst label">'+text+'</h3>';
     html += '</div>';
@@ -413,12 +494,16 @@ function showUpdateWindow() {
     if (mopidy_is_old) {
         alert(language.gettext("mopidy_tooold", [mopidy_min_version]));
     } else {
-        if (prefs.shownupdatewindow === true || compare_version_numbers(prefs.shownupdatewindow, rompr_version)) {
+        if (typeof(prefs.shownupdatewindow) != 'string' || compare_version_numbers(prefs.shownupdatewindow, rompr_version)) {
             var fnarkle = new popup({
-                width: 800,
-                height: 1100,
-                title: language.gettext("intro_title"),
-                hasclosebutton: false});
+                css: {
+                    width: 1200,
+                    height: 1600
+                },
+                fitheight: true,
+                title: 'RompЯ Version '+rompr_version,
+                hasclosebutton: false
+            });
             var mywin = fnarkle.create();
             mywin.append('<div id="begging"></div>');
             mywin.append('<div id="license"></div>');
@@ -426,7 +511,7 @@ function showUpdateWindow() {
             $('#begging').load('includes/begging.html', function() {
                 $('#license').load('includes/license.html', function(){
                     $('#about').load('includes/about.html', function() {
-                        fnarkle.addCloseButton('OK');
+                        fnarkle.addCloseButton('OK', show_albumart_update_window);
                         prefs.save({shownupdatewindow: rompr_version});
                         fnarkle.open();
                     });
@@ -442,10 +527,12 @@ function compare_version_numbers(ver1, ver2) {
     // We need to compare them as digits because as a string 10 < 9
     // The internet's collected wisdom says the only way to do it is to compare
     // digit by digit, so I came up with this.
-    // This even seems to work with 1.14.2Beta etc
     var ver1_split = ver1.split('.');
     var ver2_split = ver2.split('.');
     for (var i in ver1_split) {
+        if (prefs.dev_mode && ver2_split[i].length > 4) {
+            return false;
+        }
         if (i > ver2_split.length) {
             // ver1 has more digits than ver2.
             // If we got here then we must have already compared the other digits, therefore ver1 must be > ver2 ie. 1.14.1 vs 1.14
@@ -576,10 +663,40 @@ function doMopidyCollectionOptions() {
     }
 }
 
-function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
+function fileUploadThing(formData, options, success, fail) {
+    if (formData === null) {
+        $.ajax({
+            url: "getalbumcover.php",
+            type: "POST",
+            data: options,
+            cache:false,
+            success: success,
+            error: fail,
+        });
+    } else {
+        $.each(options, function(i, v) {
+            formData.append(i, v);
+        })
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'getalbumcover.php');
+        xhr.responseType = "json";
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                success(xhr.response);
+            } else {
+                fail();
+            }
+        };
+        xhr.send(formData);
+    }
+}
+
+function dropProcessor(evt, imgobj, coverscraper, success, fail) {
 
     evt.stopPropagation();
     evt.preventDefault();
+    var options = coverscraper.getImageSearchParams(imgobj);
+    var formData = new FormData();
     if (evt.dataTransfer.types) {
         for (var i in evt.dataTransfer.types) {
             type = evt.dataTransfer.types[i];
@@ -592,42 +709,14 @@ function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
                     if (srces && srces[1]) {
                         src = srces[1];
                         debug.log("ALBUMART","Image Source",src);
-                        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist');
+                        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').removeAttr('src');
                         if (src.match(/image\/.*;base64/)) {
                             debug.log("ALBUMART","Looks like Base64");
-                            // For some reason I no longer care about, doing this with jQuery.post doesn't work
-                            var formData = new FormData();
                             formData.append('base64data', src);
-                            formData.append('imgkey', imagekey);
-                            if (stream !== null) {
-                                formData.append('stream', stream);
-                            }
-                            var xhr = new XMLHttpRequest();
-                            xhr.open('POST', 'getalbumcover.php');
-                            xhr.responseType = "json";
-                            xhr.onload = function () {
-                                if (xhr.status === 200) {
-                                    success(xhr.response);
-                                } else {
-                                    fail();
-                                }
-                            };
-                            xhr.send(formData);
+                            fileUploadThing(formData, options, success, fail);
                         } else {
-                            var data = { imgkey: imagekey,
-                                        src: src
-                                };
-                            if (stream !== null) {
-                                data.stream = stream;
-                            }
-                            $.ajax({
-                                url: "getalbumcover.php",
-                                type: "POST",
-                                data: data,
-                                cache:false,
-                                success: success,
-                                error: fail,
-                            });
+                            options.source = src;
+                            fileUploadThing(null, options, success, fail);
                         }
                         return false;
                     }
@@ -637,25 +726,9 @@ function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
                     debug.log("ALBUMART","Found Files");
                     var files = evt.dataTransfer.files;
                     if (files[0]) {
-                        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist');
-                        // For some reason I no longer care about, doing this with jQuery.post doesn't work
-                        var formData = new FormData();
+                        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').removeAttr('src');
                         formData.append('ufile', files[0]);
-                        formData.append('imgkey', imagekey);
-                        if (stream !== null) {
-                            formData.append('stream', stream);
-                        }
-                        var xhr = new XMLHttpRequest();
-                        xhr.open('POST', 'getalbumcover.php');
-                        xhr.responseType = "json";
-                        xhr.onload = function () {
-                            if (xhr.status === 200) {
-                                success(xhr.response);
-                            } else {
-                                fail();
-                            }
-                        };
-                        xhr.send(formData);
+                        fileUploadThing(formData, options, success, fail);
                         return false;
                     }
                     break;
@@ -663,33 +736,21 @@ function dropProcessor(evt, imgobj, imagekey, stream, success, fail) {
 
         }
     }
-    // IF we get here, we didn't find anything. Let's try the basic text,
-    // which might give us something if we're lucky.
+    // IF we get here, we didn't find anything. Let's try the basic text, which might give us something if we're lucky.
     // Safari returns a plethora of MIME types, but none seem to be useful.
     var data = evt.dataTransfer.getData('Text');
     var src = data;
     debug.log("ALBUMART","Trying last resort methods",src);
-    if (src.match(/^http:\/\//)) {
+    if (src.match(/^https*:\/\//)) {
         debug.log("ALBUMART","Appears to be a URL");
+        imgobj.removeClass('nospin notexist notfound').addClass('spinner notexist').removeAttr('src');
         var u = src.match(/images.google.com.*imgurl=(.*?)&/)
         if (u && u[1]) {
             src = u[1];
             debug.log("ALBUMART","Found possible Google Image Result",src);
         }
-        var data = { imgkey: imagekey,
-                    src: src
-            };
-        if (stream !== null) {
-            data.stream = stream;
-        }
-        $.ajax({
-            url: "getalbumcover.php",
-            type: "POST",
-            data: data,
-            cache:false,
-            success: success,
-            error: fail,
-        });
+        options.source = src;
+        fileUploadThing(null, options, success, fail);
     }
     return false;
 }
@@ -722,4 +783,10 @@ function spotifyTrackListing(data) {
             '</div>';
     }
     return h;
+}
+
+function setWindowTitle(t) {
+    if (document.title != t) {
+        document.title = t;
+    }
 }

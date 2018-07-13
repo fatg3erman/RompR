@@ -41,6 +41,7 @@ if ($prefs['player_backend'] == '') {
 
 include("includes/functions.php");
 include("international.php");
+set_version_string();
 include("skins/".$skin."/ui_elements.php");
 //
 // See if there are any POST values from the setup screen
@@ -204,11 +205,6 @@ foreach ($skinrequires as $s) {
         print '<link rel="stylesheet" type="text/css" href="'.$s.'?version='.time().'" />'."\n";
     }
 }
-$css = glob('plugins/css/*.css');
-foreach ($css as $s) {
-    debuglog("Including Dynamic CSS ".$s,"INIT",6);
-    print '<link rel="stylesheet" type="text/css" href="'.$s.'?version='.time().'" />'."\n";
-}
 ?>
 <link rel="stylesheet" id="theme" type="text/css" />
 <link rel="stylesheet" id="fontsize" type="text/css" />
@@ -229,6 +225,7 @@ $scripts = array(
     "jquery/imagesloaded.pkgd.min.js",
     "jquery/masonry.pkgd.min.js",
     "includes/globals.js",
+    "ui/widgets.js",
     "ui/uihelper.js",
     "skins/".$skin."/skin.js",
     "player/mpd/controller.js",
@@ -240,7 +237,6 @@ $scripts = array(
     "ui/uifunctions.js",
     "ui/metahandlers.js",
     "ui/clickfunctions.js",
-    "ui/widgets.js",
     "ui/lastfm.js",
     "ui/nowplaying.js",
     "ui/infobar2.js",
@@ -251,12 +247,12 @@ $scripts = array(
 );
 foreach ($scripts as $i) {
     debuglog("Loading ".$i,"INIT",7);
-    print '<script type="text/javascript" src="'.$i.'?version='.ROMPR_VERSION.'"></script>'."\n";
+    print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
 $inc = glob("streamplugins/*.js");
 foreach($inc as $i) {
     debuglog("Loading ".$i,"INIT",7);
-    print '<script type="text/javascript" src="'.$i.'?version='.ROMPR_VERSION.'"></script>'."\n";
+    print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
 
 debuglog("Including skins/".$skin.'/skinvars.php',"LAYOUT",5);
@@ -266,33 +262,33 @@ include('includes/globals.php');
 $inc = glob("browser/helpers/*.js");
 foreach($inc as $i) {
     debuglog("Including Browser Helper ".$i,"INIT",7);
-    print '<script type="text/javascript" src="'.$i.'?version='.ROMPR_VERSION.'"></script>'."\n";
+    print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
 $inc = glob("browser/plugins/*.js");
 ksort($inc);
 foreach($inc as $i) {
     debuglog("Including Info Panel Plugin ".$i,"INIT",7);
-    print '<script type="text/javascript" src="'.$i.'?version='.ROMPR_VERSION.'"></script>'."\n";
+    print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
 if ($use_smartradio) {
     $inc = glob("radios/*.js");
     ksort($inc);
     foreach($inc as $i) {
         debuglog("Including Smart Radio Plugin ".$i,"INIT",7);
-        print '<script type="text/javascript" src="'.$i.'?version='.ROMPR_VERSION.'"></script>'."\n";
+        print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
     }
 }
 if ($use_plugins) {
     $inc = glob("plugins/*.js");
     foreach($inc as $i) {
         debuglog("Including Plugin ".$i,"INIT",7);
-        print '<script type="text/javascript" src="'.$i.'?version='.ROMPR_VERSION.'"></script>'."\n";
+        print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
     }
     if ($prefs['load_plugins_at_loadtime']) {
         $inc = glob("plugins/code/*.js");
         foreach($inc as $i) {
             debuglog("DEVELOPMENT MODE : Including Plugin ".$i,"INIT",2);
-            print '<script type="text/javascript" src="'.$i.'?version='.ROMPR_VERSION.'"></script>'."\n";
+            print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
         }
     }
 }
@@ -301,7 +297,7 @@ foreach ($skinrequires as $s) {
     $ext = strtolower(pathinfo($s, PATHINFO_EXTENSION));
     if ($ext == "js") {
         debuglog("Including Skin Requirement ".$s,"INIT",7);
-        print '<script type="text/javascript" src="'.$s.'?version='.ROMPR_VERSION.'"></script>'."\n";
+        print '<script type="text/javascript" src="'.$s.'?version='.$version_string.'"></script>'."\n";
     }
 }
 ?>

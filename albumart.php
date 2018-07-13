@@ -3,13 +3,15 @@ define('ROMPR_IS_LOADING', true);
 include ("includes/vars.php");
 include ("includes/functions.php");
 include ("international.php");
+include ('utils/imagefunctions.php');
 include ("backends/sql/backend.php");
-include("player/mpd/connection.php");
+include ("player/mpd/connection.php");
 set_time_limit(240);
 $oldmopidy = false;
 $small_plugin_icons = false;
-$only_plugins_with_icons = false;
+$only_plugins_on_menu = false;
 $skin = "desktop";
+set_version_string();
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -40,7 +42,6 @@ $scripts = array(
     "ui/language.js",
     "jquery/jquery-ui.min.js",
     "jquery/jquery.mCustomScrollbar.concat.min.js",
-    // "skins/desktop/skin.js",
     "includes/globals.js",
     "ui/uifunctions.js",
     "ui/metahandlers.js",
@@ -138,11 +139,11 @@ function do_covers_db_style() {
                                 $class = $class . " notexist";
                                 $albums_without_cover++;
                             }
-                            print '<input type="hidden" value="'.get_album_directory($album['Albumindex'], $album['AlbumUri']).'" />';
-                            print '<input type="hidden" value="'.rawurlencode($artist['Artistname']." ".munge_album_name($album['Albumname'])).'" />';
-                            print '<img class="'.$class.'" name="'.$album['ImgKey'].'" height="82px" width="82px" ';
+                            print '<input name="albumpath" type="hidden" value="'.get_album_directory($album['Albumindex'], $album['AlbumUri']).'" />';
+                            print '<input name="searchterm" type="hidden" value="'.rawurlencode($artist['Artistname']." ".munge_album_name($album['Albumname'])).'" />';
+                            print '<img class="'.$class.'" name="'.$album['ImgKey'].'"';
                             if ($src != "") {
-                                print 'src="'.$src.'" ';
+                                print ' src="'.$src.'" ';
                             }
                             print '/>';
 
@@ -173,15 +174,22 @@ function do_radio_stations() {
                     print '<div class="covercontainer">';
                     $class = "";
                     $src = "";
-                    if ($file['Image'] && $file['Image'] != 'newimages/icecast.svg') {
+                    if ($file['Image']) {
                         $src = $file['Image'];
                     } else {
                         $class = " notexist";
                         $albums_without_cover++;
                     }
-                    print '<input type="hidden" value="'.rawurlencode($file['StationName']).'" />';
-                    print '<img class="clickable clickicon clickalbumcover droppable'.$class.'" romprstream="'.get_stream_imgkey($file['Stationindex']).'" name="'.get_stream_imgkey($file['Stationindex']).'" height="82px" width="82px" src="'.$src.'" />';
-                    print '<div>'.$file['StationName'].'</div>';
+                    print '<input name="searchterm" type="hidden" value="'.rawurlencode($file['StationName']).'" />';
+                    print '<input name="artist" type="hidden" value="STREAM" />';
+                    print '<input name="album" type="hidden" value="'.rawurlencode($file['StationName']).'" />';
+                    $albumimage = new baseAlbumImage(array('artist' => 'STREAM', 'album' => $file['StationName']));
+                    print '<img class="clickable clickicon clickalbumcover droppable'.$class.'" name="'.$albumimage->get_image_key().'"';
+                    if ($src != "") {
+                        print ' src="'.$src.'" ';
+                    }
+                    print '/>';
+                    print '<div>'.htmlentities($file['StationName']).'</div>';
                     print '</div>';
                     print '</div>';
                     $count++;
@@ -207,7 +215,7 @@ function do_playlists() {
     if (array_key_exists('playlist', $playlists)) {
         print '<div class="cheesegrater" name="savedplaylists">';
             print '<div class="albumsection">';
-                print '<div class="tleft"><h2>Saved Playlists</h2></div><div class="tright rightpad"><button onclick="getNewAlbumArt(\'#album'.$count.'\')">'.get_int_text("albumart_getthese").'</button></div>';
+                print '<div class="tleft"><h2>Saved Playlists</h2></div>';
             print "</div>\n";
                 print '<div id="album'.$count.'" class="containerbox fullwidth bigholder wrap">';
                 sort($playlists['playlist'], SORT_STRING);
@@ -215,18 +223,22 @@ function do_playlists() {
                     print '<div class="fixed albumimg closet">';
                         print '<div class="covercontainer">';
                             $class = "";
-                            $artname = md5(htmlentities($pl));
-                            $src = "";
-                            if (file_exists('prefs/plimages/'.$artname.'.jpg')) {
-                                $src = 'prefs/plimages/'.$artname.'.jpg';
-                            } else {
+                            $albumimage = new baseAlbumImage(array('artist' => 'PLAYLIST', 'album' => $pl));
+                            $src = $albumimage->get_image_if_exists();
+                            if ($src === null) {
                                 $class = " plimage notfound";
+                                $src = '';
                                 $albums_without_cover++;
                             }
-
                             $plsearch = preg_replace('/ \(by .*?\)$/', '', $pl);
-                            print '<input type="hidden" value="'.rawurlencode($plsearch).'" />';
-                            print '<img class="clickable clickicon clickalbumcover droppable'.$class.'" romprstream="'.ROMPR_PLAYLIST_KEY.'" name="'.$artname.'" height="82px" width="82px" src="'.$src.'" />';
+                            print '<input name = "searchterm" type="hidden" value="'.rawurlencode($plsearch).'" />';
+                            print '<input name="artist" type="hidden" value="PLAYLIST" />';
+                            print '<input name="album" type="hidden" value="'.rawurlencode($pl).'" />';
+                            print '<img class="clickable clickicon clickalbumcover droppable playlistimage'.$class.'" name="'.$albumimage->get_image_key().'"';
+                            if ($src != "") {
+                                print ' src="'.$src.'" ';
+                            }
+                            print '/>';
                             print '<div>'.htmlentities($pl).'</div>';
                         print '</div>';
                     print '</div>';

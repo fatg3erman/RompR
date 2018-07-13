@@ -21,7 +21,7 @@ var artistRadio = function() {
 				debug.shout("ARTIST RADIO","Populating with",artist,artistname);
 				if (typeof(spotifyRadio) == 'undefined') {
 					debug.log("ARTIST RADIO","Loading Spotify Radio Tuner");
-					$.getScript('radios/code/spotifyRadio.js',function() {
+					$.getScript('radios/code/spotifyRadio.js?version='+rompr_version,function() {
 						artistRadio.actuallyGo(artist, numtracks)
 					});
 				} else {

@@ -1,15 +1,15 @@
 <div id="horse" class="fullwidth">
-<table width="100%"><tr><td align="left" style="width:17px">
+<table width="100%"><tr><td align="left" class="smallicon">
 <?php
 print '<i id="giblets" style="margin-left:4px" onclick="togglePlaylistButtons()" title="'.get_int_text('button_playlistcontrols').
-	'" class="icon-menu playlisticon clickicon lettuce"></i>';
+	'" class="icon-menu smallicon clickicon lettuce"></i>';
 ?>
 </td>
 <td align="left" id="pltracks"></td>
 <td align="right" id="pltime"></td>
-<td align="right" style="width:17px">
+<td align="right" class="smallicon">
 <?php
-print '<i title="'.get_int_text('button_clearplaylist').'" class="icon-trash playlisticon clickicon lettuce clear_playlist"></i>';
+print '<i title="'.get_int_text('button_clearplaylist').'" class="icon-trash smallicon clickicon lettuce clear_playlist"></i>';
 ?>
 </td>
 </tr>

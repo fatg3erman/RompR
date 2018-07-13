@@ -2,9 +2,9 @@
 
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
-define('ROMPR_IMAGE_VERSION', 2);
-define('ROMPR_SCHEMA_VERSION', 34);
-define('ROMPR_VERSION', '1.15');
+define('ROMPR_IMAGE_VERSION', 4);
+define('ROMPR_SCHEMA_VERSION', 44);
+define('ROMPR_VERSION', '1.19');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_PLAYLIST_KEY', 'IS_ROMPR_PLAYLIST_IMAGE');
@@ -25,7 +25,7 @@ define('DISPLAYMODE_UNLISTENED', 2);
 define('DISPLAYMODE_DOWNLOADEDNEW', 3);
 define('DISPLAYMODE_DOWNLOADED', 4);
 
-define('ROMPR_PODCAST_TABLE_VERSION', 2);
+define('ROMPR_PODCAST_TABLE_VERSION', 4);
 
 $connection = null;
 $is_connected = false;
@@ -56,7 +56,6 @@ $prefs = array(
     // This option for plugin debugging ONLY
     "load_plugins_at_loadtime" => false,
     "beets_server_location" => "",
-    "mopidy_scan_command" => "",
     "multihosts" => (object) array (
         'Default' => (object) array(
             'host' => 'localhost',
@@ -66,6 +65,8 @@ $prefs = array(
         )
     ),
     "currenthost" => 'Default',
+    'dev_mode' => false,
+    'live_mode' => false,
 
     // Things that could be set on a per-user basis but need to be known by the backend
     "mpd_host" => "localhost",
@@ -107,7 +108,7 @@ $prefs = array(
     "hide_podcastslist" => false,
     "hide_playlistslist" => false,
     "hidebrowser" => false,
-    "shownupdatewindow" => 0,
+    "shownupdatewindow" => '',
     "scrolltocurrent" => false,
     "alarmtime" => 43200,
     "alarmon" => false,
@@ -146,7 +147,27 @@ $prefs = array(
     "ratman_showletters" => false,
     "sleeptime" => 30,
     "sleepon" => false,
-    "advanced_search_open" => false
+    "advanced_search_open" => false,
+    "sortwishlistby" => 'artist',
+    "player_in_titlebar" => false,
+    "communityradiocountry" => 'united kingdom',
+	"communityradiolanguage" => '',
+	"communityradiotag" => '',
+	"communityradiolistby" => 'country',
+    "communityradioorderby" => 'name',
+    "browser_id" => null,
+    "playlistswipe" => true,
+    "podcastcontrolsvisible" => true,
+    "default_podcast_display_mode" => DISPLAYMODE_ALL,
+    "default_podcast_refresh_mode" => REFRESHOPTION_MONTHLY,
+    "default_podcast_sort_mode" => SORTMODE_NEWESTFIRST,
+    "podcast_mark_new_as_unlistened" => false,
+    "use_albumart_in_playlist" => true,
+    "podcast_sort_levels" => 4,
+    "podcast_sort_0" => 'Title',
+    "podcast_sort_1" => 'Artist',
+    "podcast_sort_2" => 'Category',
+    "podcast_sort_3" => 'new'
 );
 
 // Prefs that should not be exposed to the browser for security reasons
@@ -214,12 +235,6 @@ if ($skin !== null) {
     $skin = trim($skin);
 }
 
-if (is_dir('albumart/original')) {
-    // Re-arrange the saved album art
-    system('mv albumart/small albumart/not_used_anymore');
-    system('mv albumart/original albumart/small');
-}
-
 // ====================================================================
 
 function savePrefs() {
@@ -236,35 +251,35 @@ function savePrefs() {
 function loadPrefs() {
     global $prefs, $logger;
     if (file_exists('prefs/prefs.var')) {
-      $fp = fopen('prefs/prefs.var', 'r');
-      if($fp) {
-          if (flock($fp, LOCK_SH)) {
-              $sp = unserialize(fread($fp, 32768));
-              flock($fp, LOCK_UN);
-              fclose($fp);
-              if ($sp === false) {
-                  error_log("ERROR!              : COULD NOT LOAD PREFS");
-                  exit(1);
-              }
-              $prefs = array_replace($prefs, $sp);
+        $fp = fopen('prefs/prefs.var', 'r');
+        if($fp) {
+            if (flock($fp, LOCK_SH)) {
+                $sp = unserialize(fread($fp, 32768));
+                flock($fp, LOCK_UN);
+                fclose($fp);
+                if ($sp === false) {
+                    error_log("ERROR!              : COULD NOT LOAD PREFS");
+                    exit(1);
+                }
+                $prefs = array_replace($prefs, $sp);
 
-              foreach ($_COOKIE as $a => $v) {
-                  if (array_key_exists($a, $prefs)) {
-                      switch ($a) {
-                          case 'debug_enabled':
-                              $logger->setLevel($v);
-                              // Fall through to default
+                foreach ($_COOKIE as $a => $v) {
+                    if (array_key_exists($a, $prefs)) {
+                        switch ($a) {
+                            case 'debug_enabled':
+                                $logger->setLevel($v);
+                                // Fall through to default
 
-                          default:
-                              $prefs[$a] = $v;
-                              break;
+                            default:
+                                $prefs[$a] = $v;
+                                break;
 
-                      }
-                      if ($prefs['debug_enabled'] > 8) {
-                        error_log("COOKIE             : Pref ".$a." is set by Cookie  - Value : ".$v);
-                      }
-                  }
-              }
+                        }
+                        if ($prefs['debug_enabled'] > 8) {
+                            error_log("COOKIE             : Pref ".$a." is set by Cookie  - Value : ".$v);
+                        }
+                    }
+                }
 
           } else {
               error_log("ERROR!              : COULD NOT GET READ FILE LOCK ON PREFS FILE");

@@ -6,6 +6,7 @@ include ("includes/functions.php");
 include ("international.php");
 include ("backends/sql/backend.php");
 include ('utils/phpQuery.php');
+require_once ('utils/imagefunctions.php');
 
 debuglog("Doing User Radio Stuff","USERSTREAMS");
 
@@ -30,6 +31,8 @@ function do_radio_list() {
 
     foreach($playlists as $playlist) {
 
+        $albumimage = new albumImage(array('artist' => 'STREAM', 'album' => $playlist['StationName']));
+
         $html = albumHeader(array(
             'id' => 'nodrop',
             'Image' => $playlist['Image'],
@@ -39,7 +42,7 @@ function do_radio_list() {
             'Artistname' => null,
             'Albumname' => utf8_encode($playlist['StationName']),
             'why' => 'whynot',
-            'ImgKey' => get_stream_imgkey($playlist['Stationindex']),
+            'ImgKey' => $albumimage->get_image_key(),
             'streamuri' => $playlist['PlaylistUrl'],
             'streamname' => $playlist['StationName'],
             'streamimg' => $playlist['Image'],
@@ -50,12 +53,6 @@ function do_radio_list() {
         $out = addUserRadioButtons($html, $playlist['Stationindex'], $playlist['PlaylistUrl'], $playlist['StationName'], $playlist['Image']);
         print $out->html();
         
-
-        // print '<div class="clickable clickstream containerbox padright menuitem dropdown-container" name="'.$playlist['PlaylistUrl'].'" streamimg="'.$playlist['Image'].'" streamname="'.$playlist['StationName'].'">';
-        // print '<div class="smallcover fixed"><img class="smallcover" name="'.get_stream_imgkey($playlist['Stationindex']).'" src="'.$playlist['Image'].'" /></div>';
-        // print '<div class="expand stname" style="margin-left:4px">'.utf8_encode($playlist['StationName']).'</div>';
-        // print '<div class="fixed clickable clickradioremove clickicon" name="'.$playlist['Stationindex'].'"><i class="icon-cancel-circled playlisticon"></i></div>';
-        // print '</div>';
     }
 
 }

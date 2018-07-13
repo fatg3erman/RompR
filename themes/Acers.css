@@ -11,6 +11,28 @@ html, body.phone .dropmenu {
     background-attachment:fixed;
 }
 
+body.phone .dropmenu>div.clickable,
+body.phone .dropmenu>div.menuitem,
+body.phone #pluginplaylistholder .menuitem.clickable,
+body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
+    background-color:rgba(0,0,0,0.2);
+    background-clip:border-box;
+    margin-top: 4px;
+}
+
+body.phone .dropmenu>div {
+    background-color:rgba(0,0,0,0.2);
+}
+
+body.phone .mainpane .faveradio,
+body.phone .mainpane .radio,
+body.phone .mainpane .podcast,
+body.phone .mainpane .directory {
+    background-color:rgba(0,0,0,0.1);
+    background-clip:border-box;
+    margin-top: 4px;
+}
+
 body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input {
     color:#eeeeee;
 }
@@ -197,14 +219,6 @@ tr.clickaddtrack:hover {
     background-color:#e1e4ea;
 }
 
-.topimg {
-    opacity:0.8;
-}
-
-.topimg:not(.button-disabled):hover {
-    opacity:1;
-}
-
 .bsel {
     color:#ffffff;
     text-shadow:0 0 15px #ffffff;
@@ -238,15 +252,15 @@ tr.clickaddtrack:hover {
 */
 
 div.topdropmenu {
-    background-color:rgba(0,0,0,0.9);
+    background-color:rgba(30,30,30,0.9);
 }
 
 .configtitle {
-    background-color:rgba(50,50,50,0.8);
+    background-color:rgba(50,50,50,0.6);
 }
 
 body.mobile .configtitle {
-    width:95%;
+    width:100%;
     margin-left:auto;
     margin-right:auto;
 }
@@ -385,4 +399,8 @@ table.tracklist {
 .infosection h2
 {
     border-bottom:2px solid white;
+}
+
+.topbarplaycontrols {
+    background-color: rgba(0,0,0,0.2);
 }

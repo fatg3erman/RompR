@@ -18,10 +18,11 @@ right-hand border that overlaps the dropdown button
 */
 select {
     width:100%;
+    height:3em;
 }
 
 .selectholder {
-    height:2em;
+    height:3em;
 }
 
 /*
@@ -171,6 +172,19 @@ select {
 =====================================================================
 */
 
+div.topdropmenu {
+    z-index:10009;
+    box-sizing:border-box;
+    width:100%;
+    position:fixed;
+    right: 0;
+}
+
+div.topdropmenu.albumbitsmenu {
+    position: absolute;
+    top: 12px;
+}
+
 .chooser {
     margin-left:auto;
     margin-right:auto;
@@ -195,13 +209,18 @@ select {
 .topimg {
     margin-right:4px;
     margin-left:4px;
-    height: 34px;
-    width: 34px;
-    font-size:34px;
-    max-height: 34px;
     margin-bottom:2px;
     margin-top:4px;
     cursor: pointer;
+}
+
+.topdropmenu .topimg {
+    width:36px;
+    height:36px;
+}
+
+#narrowscreenicons {
+    padding-right: 24px;
 }
 
 .mobonly {
@@ -300,7 +319,7 @@ div.normalmenu {
 }
 
 div.rightmenu {
-    top:30px;
+    top:38px;
     right:0px;
 }
 
@@ -368,22 +387,6 @@ div.rightmenu {
     padding-left: 1em;
 }
 
-.smallicon {
-    padding:0px;
-    margin:4px;
-    height:20px;
-    vertical-align:middle;
-}
-
-.medicon {
-    padding:0px;
-    margin:2px;
-    height:24px;
-    width:24px;
-    font-size:24px;
-    vertical-align:middle;
-}
-
 .podicon {
     margin-top:4px;
     margin-bottom:4px;
@@ -418,6 +421,8 @@ div.rightmenu {
     vertical-align:middle;
     box-sizing:border-box;
     border:6px solid transparent;
+    height: 26px;
+    width: 26px;
 }
 
 .collectionicon {
@@ -426,6 +431,8 @@ div.rightmenu {
     margin-bottom:2px;
     margin-top:2px;
     vertical-align:middle;
+    width:20px;
+    height:20px
 }
 
 .playlisticonr {
@@ -436,7 +443,31 @@ div.rightmenu {
     margin-right:2px;
     vertical-align:middle;
     box-sizing:border-box;
-    border:6px solid transparent;
+    border:8px solid transparent;
+    width:32px;
+    height:32px;
+}
+
+#sortable .playlisticonr {
+    margin-right:4px;
+    width: 48px;
+}
+
+#collection .playlisticonr {
+    margin-right:4px;
+    width: 48px;
+}
+
+#sortable .track>div>div.clickable {
+    margin-right: 8px;
+}
+
+#sortable {
+    position: relative;
+}
+
+.playlistdown {
+    margin-right: 12px;
 }
 
 .npicon {
@@ -671,22 +702,19 @@ div.rightmenu {
         margin-bottom:1em;
         padding-bottom:0.5em;
     }
-    .sptext {
-        display:none;
-    }
 }
 
 @media screen and (min-width: 641px) {
     .cleft.narrowright {
         margin-left:1em;
     }
-    .spicons {
-        display:none;
-    }
-    .sptext {
-        white-space:nowrap;
-        padding-right:4px;
-    }
+}
+
+.sptext {
+    white-space:nowrap;
+    padding-right:4px;
+    text-align:right;
+    margin-right:24px;
 }
 
 @media screen and (max-height: 380px) and (orientation: portrait) {
@@ -824,13 +852,6 @@ div.rightmenu {
         width:100%;
     }
 
-    .topimg {
-        height: 36px;
-        width: 36px;
-        font-size: 36px;
-        max-height:36px;
-    }
-
     div.normalmenu {
         width:44px !important;
     }
@@ -861,7 +882,7 @@ div.rightmenu {
 
 @media screen and (min-width: 541px) {
     .onlynarrow {
-        display:none;
+        display:none !important;
     }
 }
 
@@ -869,4 +890,25 @@ div.rightmenu {
 {
     width:100%;
     box-sizing:border-box;
+}
+
+.headercontainer {
+    height:90%;
+    box-sizing: border-box;
+}
+
+.buttonbar {
+    height: 42px;
+}
+
+.onlyverywide {
+    padding-left:8px;
+    padding-right:8px;
+    box-sizing:border-box;
+}
+
+@media screen and (max-width: 799px) {
+    .onlyverywide {
+        display: none;
+    }
 }
