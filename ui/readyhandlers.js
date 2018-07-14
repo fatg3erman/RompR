@@ -83,15 +83,15 @@ $(document).ready(function(){
     }
 });
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('sw.js').then(function(registration) {
-      console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    }, function(err) {
-      console.log('ServiceWorker registration failed: ', err);
-    });
-  });
-}
+// if ('serviceWorker' in navigator) {
+//   window.addEventListener('load', function() {
+//     navigator.serviceWorker.register('sw.js').then(function(registration) {
+//       console.log('ServiceWorker registration successful with scope: ', registration.scope);
+//     }, function(err) {
+//       console.log('ServiceWorker registration failed: ', err);
+//     });
+//   });
+// }
 
 function cleanBackendCache() {
     if (player.updatingcollection || !player.collectionLoaded || player.collection_is_empty) {

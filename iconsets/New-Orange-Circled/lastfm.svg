@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="205.66005mm"
+   height="207.89409mm"
+   viewBox="0 0 205.66004 207.89409"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="lastfm.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1708"
+     inkscape:window-height="886"
+     id="namedview34"
+     showgrid="false"
+     inkscape:zoom="0.30035326"
+     inkscape:cx="388.64891"
+     inkscape:cy="392.87072"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg8" />
+  <defs
+     id="defs2">
+    <marker
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker8033"
+       style="overflow:visible">
+      <path
+         id="path8031"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#ff4500;stroke-opacity:1;fill:#ff4500;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(1.1) translate(1,0)" />
+    </marker>
+    <marker
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker7647"
+       style="overflow:visible">
+      <path
+         id="path7645"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#ff4500;stroke-opacity:1;fill:#ff4500;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(1.1) translate(1,0)" />
+    </marker>
+    <rect
+       height="512"
+       id="SVGID_1_"
+       width="512"
+       x="50"
+       y="140" />
+    <marker
+       orient="auto"
+       refX="0"
+       refY="0"
+       id="TriangleOutM">
+      <path
+         style="fill-rule:evenodd;stroke:#ff4500;stroke-width:1pt"
+         transform="scale(0.4,0.4)"
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         id="path3919" />
+    </marker>
+  </defs>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <ellipse
+     ry="94.947044"
+     rx="93.830025"
+     cy="103.94704"
+     cx="102.83002"
+     id="path815"
+     style="opacity:1;fill:none;fill-opacity:1;stroke:#ff4500;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <text
+     id="text9654"
+     y="83.539925"
+     x="93.738091"
+     style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#ff4500;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     xml:space="preserve"><tspan
+       style="stroke-width:0.26458332px;fill:#ff4500;fill-opacity:1"
+       y="92.903694"
+       x="93.738091"
+       id="tspan9652" /></text>
+  <g
+     transform="matrix(4.8504903,0,0,4.8504903,30.068954,31.18413)"
+     id="g14228"
+     style="fill:#ff4500;fill-opacity:1">
+    <g
+       id="g14172"
+       style="fill:#ff4500;fill-opacity:1">
+      <path
+         style="fill:#ff4500;fill-opacity:1"
+         d="m 28.016,8.843 c -1.433,1.827 -2.619,-0.546 -4.208,-0.526 -1.359,0.016 -2.522,0.775 -2.456,2.453 0.117,2.793 6.551,2.855 7.891,5.085 3.289,5.465 -4.921,10.204 -9.289,6.66 C 17.225,20.301 17.132,15.598 14.519,11.472 11.265,6.336 2.944,8.213 2.422,14.278 c -0.67,7.814 9.53,9.44 12.097,3.68 0.587,0.64 0.702,1.75 1.227,2.455 -5.004,6.503 -14.629,2.463 -15.601,-3.681 -1.682,-10.607 11.742,-13.714 16.3,-6.663 0.963,1.485 1.832,3.894 2.631,5.787 0.754,1.783 1.242,4.447 2.98,5.258 1.803,0.838 5.584,0.132 5.435,-2.805 -0.15,-2.97 -6.878,-3.024 -8.064,-5.609 -2.883,-6.281 7.825,-8.733 8.589,-3.857 z"
+         id="path14170" />
+    </g>
+    <g
+       id="g14174"
+       style="fill:#ff4500;fill-opacity:1" />
+    <g
+       id="g14176"
+       style="fill:#ff4500;fill-opacity:1" />
+    <g
+       id="g14178"
+       style="fill:#ff4500;fill-opacity:1" />
+    <g
+       id="g14180"
+       style="fill:#ff4500;fill-opacity:1" />
+    <g
+       id="g14182"
+       style="fill:#ff4500;fill-opacity:1" />
+    <g
+       id="g14184"
+       style="fill:#ff4500;fill-opacity:1" />
+    <g
+       id="g14186"
+       style="fill:#ff4500;fill-opacity:1" />
+    <g
+       id="g14188"
+       style="fill:#ff4500;fill-opacity:1" />
+    <g
+       id="g14190"
+       style="fill:#ff4500;fill-opacity:1" />
+    <g
+       id="g14192"
+       style="fill:#ff4500;fill-opacity:1" />
+    <g
+       id="g14194"
+       style="fill:#ff4500;fill-opacity:1" />
+    <g
+       id="g14196"
+       style="fill:#ff4500;fill-opacity:1" />
+    <g
+       id="g14198"
+       style="fill:#ff4500;fill-opacity:1" />
+    <g
+       id="g14200"
+       style="fill:#ff4500;fill-opacity:1" />
+    <g
+       id="g14202"
+       style="fill:#ff4500;fill-opacity:1" />
+  </g>
+  <style
+     id="style2"
+     type="text/css">
+	.st0{clip-path:url(#SVGID_2_);fill:#00AEEF;}
+</style>
+<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#ff4500;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#ff4500;fill-opacity:1}</style></svg>
