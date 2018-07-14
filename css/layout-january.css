@@ -61,7 +61,7 @@ hr {
     -webkit-margin-after:0px;
 }
 
-input {
+input, .filebutton {
     font-size:100%;
     width:100%;
     margin-bottom:4px;
@@ -70,6 +70,19 @@ input {
     padding-bottom:2px;
     padding-left:0px;
     padding-right:0px;
+}
+
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+.filebutton {
+	word-break: break-all;
 }
 
 input[type=checkbox], input[type=radio] {

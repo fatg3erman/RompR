@@ -139,13 +139,6 @@ function onlywithcovers() {
     } else {
         return false;
     }
-    // if ($(this).hasClass('notexist') || $(this).hasClass('notfound')) {
-    //     return false;
-    // }
-    // if ($(this).prop("naturalHeight") === 0 && $(this).prop("naturalWidth") === 0) {
-    //     return false;
-    // }
-    // return true;
 }
 
 function filterImages() {
@@ -157,14 +150,6 @@ function filterImages() {
     } else {
         return true;
     }
-    // if ($(this).hasClass("notexist") || $(this).hasClass("notfound")) {
-    //     return true;
-    // } else {
-    //     if ($(this).prop("naturalHeight") === 0 && $(this).prop("naturalWidth") === 0) {
-    //         return true;
-    //     }
-    // }
-    // return false;
 }
 
 // This comment is useless
@@ -188,6 +173,15 @@ function sections_without_missing_images() {
         return false;
     }
     return true;
+}
+
+function sections_with_missing_images() {
+    var ne = $(this).find('img.notexist');
+    var nf = $(this).find('img.notfound');
+    if (ne.length + nf.length > 0) {
+        return true;
+    }
+    return false;
 }
 
 $(document).ready(function () {
@@ -254,6 +248,9 @@ $(window).load(function () {
     $.each($(document).find("img").filter(filterImages), function() {
         count++;
         $(this).addClass("notexist");
+    });
+    $('.cheesegrater').filter(sections_with_missing_images).each(function() {
+        $(this).children('.albumsection').find('button').show();
     });
     $('#poobag').prop('checked', false);
     $('#dinkytoy').prop('checked', false);
@@ -357,13 +354,24 @@ var imageEditor = function() {
 
             $("#searchresultsholder").append($('<div>', {id: "searchresults", class: "clearfix fullwidth"}));
 
-            var uform =                 $('<form>', { id: 'uform', action: 'getalbumcover.php', method: 'post', enctype: 'multipart/form-data' }).appendTo($("#usearch"));
-            var fdiv =                  $('<div>', {class: "containerbox dropdown-container"}).appendTo(uform);
-            fdiv.append(                $('<input>', { id: 'uploadkey', type: 'hidden', name: 'key', value: '' }),
+            var fdiv =                  $('<div>', {class: "fullwidth"}).appendTo('#usearch');
+            var uform =                 $('<form>', { id: 'uform', action: 'getalbumcover.php', method: 'post', enctype: 'multipart/form-data' }).appendTo(fdiv);
+            uform.append(               $('<input>', { id: 'uploadkey', type: 'hidden', name: 'key', value: '' }),
                                         $('<input>', { id: 'uploadartist', type: 'hidden', name: 'artist', value: '' }),
                                         $('<input>', { id: 'uploadalbum', type: 'hidden', name: 'album', value: '' }),
-                                        $('<input>', { name: 'ufile', type: 'file', size: '80', class: 'expand inbrowser', style: "margin-left:8px" }),
-                                        $('<input>', { type: 'button', class: 'fixed', value: language.gettext("albumart_uploadbutton"), style: 'width:8em', onclick: "imageEditor.uploadFile()" }));
+                        );
+            var fb =                    $('<div>', {class: 'filebutton textcentre'}).appendTo(uform);
+            var inp =                   $('<input>', { name: 'ufile', type: 'file', id: 'ufile', class: 'inputfile'}).appendTo(fb);
+            inp.on('change', function() {
+                var filename = $(this).val().replace(/.*(\/|\\)/, '');
+                $(this).next().html(filename);
+                $(this).parent().next('input[type="button"]').fadeIn('fast');
+            });
+            var lab =                   $('<label>', { for: 'ufile' }).appendTo(fb);
+            lab.html(language.gettext('label_choosefile'));
+            var but =                   $('<input>', { type: 'button', class: 'invisible fixed', value: language.gettext("albumart_uploadbutton") }).appendTo(uform);
+            but.bind('click', imageEditor.uploadFile);
+            
             $("#usearch").append(      '<div class="holdingcell"><p>'+language.gettext("albumart_dragdrop")+'</p></div>');
 
             $("#editcontrols").append(  '<div id="g" class="tleft bleft clickable clickicon bmenu">'+language.gettext("albumart_googlesearch")+'</div>');

@@ -33,7 +33,7 @@ class commradioplugin {
             'expand' => true
         ));
         print '<div id="communityradiolist" class="dropmenu notfilled">';
-        print '<div class="textcentre">Loading...</div></div>';
+        print '<div class="configtitle textcentre"><b>'.get_int_text('label_loading').'</b></div></div>';
         print '</div>';
     }
     

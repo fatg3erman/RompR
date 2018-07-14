@@ -21,7 +21,7 @@ body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,textarea,input
     color:#dddddd;
 }
 
-button
+button, .filebutton
 {
     background-color:#202020 !important;
     border:1px solid #dedede;
@@ -31,7 +31,7 @@ button
     font-size:110%;
 }
 
-button:hover
+button:hover, .filebutton:hover
 {
     color:#ff4800;
     text-shadow: 0 0 15px #ff4800;
@@ -107,24 +107,6 @@ a:hover,a:active
 = General Classes
 =====================================================================
 */
-
-.controlbutton {
-    color:#cccccc !important;
-    text-shadow: 0 0 15px #bbbbbb !important;
-}
-
-.controlbutton-small {
-    color:#cccccc !important;
-    text-shadow: 0 0 15px #bbbbbb !important;
-}
-
-.controlbutton:hover {
-    color:#ffffff !important;
-}
-
-.controlbutton-small:hover {
-    color:#ffffff !important;
-}
 
 tr.draggable:not(.selected):hover {
     background-color:rgba(150,150,150,0.3);

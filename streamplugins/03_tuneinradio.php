@@ -22,7 +22,7 @@ class tuneinplugin {
             'class' => 'radio',
             'expand' => true
         ));
-        print '<div id="tuneinlist" class="dropmenu notfilled">Loading...</div>';
+        print '<div id="tuneinlist" class="dropmenu notfilled"><div class="configtitle textcentre"><b>'.get_int_text('label_loading').'</b></div></div>';
         print '</div>';
     }
     

@@ -23,22 +23,33 @@ Some themes use a background image
 
 ![](images/skytrails.png)
 
+### Custom Background Images
+
 If you use a theme with a background image, you can change the image to one of your own from the configuration panel
 
-![](images/uioptions.png)
+![](images/uioptions2.png)
 
-Use 'Browse' to select the image then click 'Upload'. To remove your image and revert to the default, click the x.
+Use 'Choose File(s)' to select the image then click 'Upload'.
 
-If you want your image to only be used in the browser you're currently using, select the option. Note that this button has no effect except when uploading images - you can't change an image to be spcific to one browser after it has been uploaded, you must first remove it then upload it again.
+![](images/uioptions3.png)
 
-### Using different images for different orientations
+To remove your image and revert to the default, click the x.
 
-Especially if you use a mobile device, you might want to use a different image for portrait (vertical) and landscape (horizontal) orientations. You can do this by preparing two images, the filenames must include the text '_portrait' for the portrait image, and '_landscape' for the landscape image. Eg.
+If you want your image to only be used in the browser you're currently using, select the option. Note that this button has no effect except when uploading images - you can't change an image to be specific to one browser after it has been uploaded, you must first remove it then upload it again.
 
-    mybackground_portrait.jpg
-    mybackground_landscape.jpg
-    
-Upload both of them one after the other. Or you can even just use one, and the default image will be used for the other orientation.
+#### Using Multiple Images
+
+You can upload as many images as you like, to use as a slideshow.
+
+![](images/uioptions4.png)
+
+The currently displayed image will be highlighted. If two images are highlighted, then one is landscape orientation, and one is portrait orientation (see next section)
+
+#### Using different images for different orientations
+
+If you upload multiple images, then images which are in portrait format (width < height) will only be used when the screen is also in portrait format, while images that are in landscape format (width > height) will only be used when the screen is in landscape format. In this way, if you use a mobile device, you can can have different images for different screen orientations. You can also have multiple portrait images and/or multiple landscape images and you will get a slideshow of the appropriate images for the screen orientation.
+
+If all of your images are the same orientation, they will be used for both landscape and portrait screens.
 
 ## Setting The Theme At Load Time
 

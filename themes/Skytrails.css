@@ -54,14 +54,14 @@ a:hover,a:active
     cursor:pointer;
 }
 
-button, input[type="button"]
+button, input[type="button"], .filebutton
 {
     color:#000000;
     background-color:rgba(255,255,255,0.5);
     border:1px solid #222222;
 }
 
-button:hover, input[type="button"]:hover
+button:hover, input[type="button"]:hover, .filebutton:hover
 {
     color:#ffffff;
     border:1px solid #ffffff;
@@ -127,34 +127,6 @@ select
 = General Classes
 =====================================================================
 */
-
-/*// Some stuff to pretty up the buttons when using the IconFont theme*/
-
-.controlbutton {
-    text-shadow: 0 0 30px #cccccc, 0 0 20px #ffffff !important;
-}
-
-.controlbutton-small {
-    text-shadow: 0 0 30px #cccccc, 0 0 20px #ffffff !important;
-}
-
-.controlbutton:before
-{
-    opacity:0.6;
-}
-
-.controlbutton-small:before
-{
-    opacity:0.6;
-}
-
-.controlbutton:hover::before {
-    opacity:1;
-}
-
-.controlbutton-small:hover::before {
-    opacity:1;
-}
 
 .mainpane
 {
@@ -395,13 +367,6 @@ body.mobile .configtitle
 #artistcoverslist
 {
     background-color:rgba(255,255,255,0.3);
-}
-
-.albumsection button, .albumcovers .infosection button
-{
-    background-image:none !important;
-    background-color:transparent !important;
-    border:0px none !important;
 }
 
 .highlighted {

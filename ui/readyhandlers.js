@@ -37,6 +37,17 @@ $(document).ready(function(){
     if (prefs.podcastcontrolsvisible) {
         $("#podcastbuttons").show();
     }
+    $('.inputfile').on('change', function() {
+        var filenames = $.map($(this).prop('files'), function(val) {
+            return val.name.replace(/.*(\/|\\)/, '')
+        });
+        if (filenames.length > 3) {
+            $(this).next().html(filenames.length + ' files selected');
+        } else {
+            $(this).next().html(filenames.join('<br />'));
+        }
+        $(this).parent().next('input[type="button"]').fadeIn('fast');
+    });
     showUpdateWindow();
     window.addEventListener("storage", onStorageChanged, false);
     bindPlaylistClicks();

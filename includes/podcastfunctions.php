@@ -172,7 +172,13 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null) {
             $time = 0;
             foreach ($hms as $s) {
                 $mf = array_shift($timefactors);
-                $time += ($s * $mf);
+                if (is_numeric($s)) {
+                    $time += ($s * $mf);
+                } else {
+                    debuglog("Non-numeric duration field encountered in podcast! - ".$track['Duration'],"PODCASTS",4);
+                    $time = 0;
+                    break;
+                }
             }
             $track['Duration'] = $time;
         }
@@ -895,14 +901,14 @@ function doPodcastHeader($y) {
     // phpQuery is something like 160K of extra code. Just to do this.
     // The fact that I'm willing to include it indicates just how crap php's DOMDocument is
     
-    // phpQuery barfs at out '&rompr_resize_size' because it's expecting an HTML entity after &
+    // phpQuery barfs at our '&rompr_resize_size' because it's expecting an HTML entity after &
     $html = preg_replace('/&rompr_/','&amp;rompr_', $html);
     $out = addPodcastCounts($html, $extra);
     $h = $out->html();
     $html = preg_replace('/&amp;rompr_/','&rompr_', $h);
     print $html;
     
-    print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu padright"><div class="textcentre">Loading...</div></div>';
+    print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu padright"><div class="configtitle textcentre"><b>'.get_int_text('label_loading').'</b></div></div>';
 }
 
 function removePodcast($podid) {

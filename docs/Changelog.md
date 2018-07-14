@@ -8,6 +8,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Album Art now supports transparency in PNG files, and SVG files will be saved and served as SVG
 * Much cleaner image handling, with automatic fallback to ImageMagick if image is not supported by GD
 * Fixed typo where podcast images did not get updated
+* You can now have a slideshow of custom background images, and landscape/portrait orientation is determined automatically
 
 ## Version 1.19
 

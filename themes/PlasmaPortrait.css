@@ -37,7 +37,7 @@ a:hover,a:active
     cursor:pointer;
 }
 
-button, input[type="button"]
+button, input[type="button"], .filebutton
 {
     color:#dddddd;
     background-color:transparent;
@@ -45,7 +45,7 @@ button, input[type="button"]
 }
 
 
-button:hover, input[type="button"]:hover
+button:hover, input[type="button"]:hover, .filebutton:hover
 {
     color:#ffffff;
     border:1px solid #ffffff;
@@ -118,40 +118,6 @@ select
 = General Classes
 =====================================================================
 */
-
-.controlbutton {
-    color:#cccccc !important;
-    text-shadow: 0 0 15px #bbbbbb 0 0 20px #999999 !important;
-}
-
-.controlbutton-small {
-    color:#cccccc !important;
-    text-shadow: 0 0 15px #bbbbbb, 0 0 20px #999999 !important;
-}
-
-.controlbutton:hover {
-    text-shadow: 0 0 15px #ffffff, 0 0 25px #cccccc !important;
-}
-
-.controlbutton-small:hover {
-    text-shadow: 0 0 15px #ffffff, 0 0 25px #cccccc !important;
-}
-
-.controlbutton::before {
-    opacity:0.9;
-}
-
-.controlbutton-small::before {
-    opacity:0.9;
-}
-
-.controlbutton:hover::before {
-    opacity:1;
-}
-
-.controlbutton-small:hover::before {
-    opacity:1;
-}
 
 .album2
 {
@@ -353,13 +319,6 @@ body.mobile .configtitle
 .tagholder_wide
 {
     background-color:rgba(0,0,0,0.6);
-}
-
-.albumsection button, .albumcovers .infosection button
-{
-    background-image:none !important;
-    background-color:transparent !important;
-    border:0px none !important;
 }
 
 .highlighted {

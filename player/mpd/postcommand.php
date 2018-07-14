@@ -32,12 +32,14 @@ if ($is_connected) {
             
             switch ($cmd[0]) {
                 case "addtoend":
+                    $slow_gstreamer_hack = true;
                     require_once("backends/sql/backend.php");
                     debuglog("Addtoend ".$cmd[1],"POSTCOMMAND");
                     $cmds = array_merge($cmds, playAlbumFromTrack($cmd[1]));
                     break;
                     
                 case 'playlisttoend':
+                    $slow_gstreamer_hack = true;
                     debuglog("Playing playlist ".$cmd[1]." from position ".$cmd[2]." to end","POSTCOMMAND");
                     $putinplaylistarray = true;
                     doCollection('listplaylistinfo "'.$cmd[1].'"');
@@ -48,12 +50,14 @@ if ($is_connected) {
                     break;
                                     
                 case "additem":
+                    $slow_gstreamer_hack = true;
                     require_once("backends/sql/backend.php");
                     debuglog("Adding Item ".$cmd[1],"POSTCOMMAND");
                     $cmds = array_merge($cmds, getItemsToAdd($cmd[1], null));
                     break;
 
                 case "addartist":
+                    $slow_gstreamer_hack = true;
                     require_once("backends/sql/backend.php");
                     debuglog("Getting tracks for Artist ".$cmd[1],"MPD");
                     doCollection('find "artist" "'.format_for_mpd($cmd[1]).'"',array("spotify"));
@@ -61,6 +65,7 @@ if ($is_connected) {
                     break;
 
                 case "loadstreamplaylist":
+                    $slow_gstreamer_hack = true;
                     require_once ("backends/sql/backend.php");
                     require_once ("player/".$prefs['player_backend']."/streamplaylisthandler.php");
                     require_once ("utils/getInternetPlaylist.php");
@@ -71,6 +76,7 @@ if ($is_connected) {
                     debuglog("  URL is ".$cmd[1],"POSTCOMMAND");
                     // First, see if we can just 'load' the remote playlist. This is better with MPD
                     // as it parses track names from the playlist
+                    $slow_gstreamer_hack = true;
                     if (check_track_load_command($cmd[1]) == 'load') {
                         debuglog("Loading remote playlist","POSTCOMMAND");
                         $cmds[] = join_command_string(array('load', $cmd[1]));
@@ -119,6 +125,7 @@ if ($is_connected) {
                 case "resume":
                     debuglog("Adding Track ".$cmd[1],"POSTCOMMAND");
                     debuglog("  .. and seeking position ".$cmd[3]." to ".$cmd[2],"POSTCOMMAND");
+                    $slow_gstreamer_hack = true;
                     $cmds[] = join_command_string(array('add', $cmd[1]));
                     $cmds[] = join_command_string(array('play', $cmd[3]));
                     $cmds[] = 'pause';
@@ -267,7 +274,7 @@ if ($is_connected) {
     }
 
 } else {
-    $s = (array_key_exists('player_backend', $prefs)) ? ucfirst($prefs['player_backend']).' ' : "";
+    $s = (array_key_exists('player_backend', $prefs)) ? ucfirst($prefs['player_backend']).' ' : "Player ";
     if ($prefs['unix_socket'] != "") {
         $mpd_status['error'] = "Unable to Connect to ".$s."server at\n".$prefs["unix_socket"];
     } else {

@@ -484,12 +484,16 @@
 
 div.normalmenu
 {
-    width:240px;
+    width:20vw;
+    max-width:360px;
+    min-width:240px;
 }
 
 div.widemenu
 {
-    width:420px;
+    width:40vw;
+    max-width:640px;
+    min-width:400px;
 }
 
 div.leftmenu
@@ -498,16 +502,10 @@ div.leftmenu
     left: 0px;
 }
 
-div.rightmenu.widemenu
+div.rightmenu
 {
     top:30px;
-    left:-400px;
-}
-
-div.rightmenu.normalmenu
-{
-    top:30px;
-    left:-228px;
+    right:-12px;
 }
 
 /*

@@ -26,7 +26,7 @@ class dirbleplugin {
             'class' => 'radio',
             'expand' => true
         ));
-        print '<div id="bbclist" class="dropmenu notfilled"><div class="textcentre">Loading...</div></div>';
+        print '<div id="bbclist" class="dropmenu notfilled"><div class="configtitle textcentre"><b>'.get_int_text('label_loading').'</b></div></div>';
         print '</div>';
     }
     

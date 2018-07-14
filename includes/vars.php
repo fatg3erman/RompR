@@ -195,7 +195,8 @@ $prefs = array(
     "podcast_sort_0" => 'Title',
     "podcast_sort_1" => 'Artist',
     "podcast_sort_2" => 'Category',
-    "podcast_sort_3" => 'new'
+    "podcast_sort_3" => 'new',
+    "bgimgparms" => (object) array('dummy' => 'baby')
 );
 
 // Prefs that should not be exposed to the browser for security reasons

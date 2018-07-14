@@ -650,7 +650,11 @@ $languages['en'] = array (
 	"label_publisher" => 'Publisher',
 	"label_category" => "Category",
 	"label_new_episodes" => "New Episodes",
-	"label_unlistened_episodes" => "Unlistened Episodes"
+	"label_unlistened_episodes" => "Unlistened Episodes",
+	"label_loading" => "Loading...",
+	"label_choosefile" => "Choose A File",
+	"label_choosefiles" => "Choose File(s)",
+	"label_changevery" => "Change Every",
 );
 
 ?>

@@ -13,6 +13,10 @@ function format_for_disc($filename) {
     return $filename;
 }
 
+function format_for_url($filename) {
+    return preg_replace('/#|&|\?|%|@|\+/', '_', $filename);
+}
+
 function format_tracknum($tracknum) {
     $matches = array();
     if (preg_match('/^\s*0*(\d+)/', $tracknum, $matches)) {
