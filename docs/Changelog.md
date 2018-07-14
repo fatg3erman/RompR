@@ -9,6 +9,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Much cleaner image handling, with automatic fallback to ImageMagick if image is not supported by GD
 * Fixed typo where podcast images did not get updated
 * You can now have a slideshow of custom background images, and landscape/portrait orientation is determined automatically
+* Add check for badly-formatted duration strings in podcast feeds
 
 ## Version 1.19
 

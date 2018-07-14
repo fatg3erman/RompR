@@ -9,7 +9,7 @@ include ("backends/sql/backend.php");
 include ("utils/phpQuery.php");
 require_once ("utils/imagefunctions.php");
 $used_images = array();
-
+$pl_error = false;
 if (array_key_exists('playlist', $_REQUEST)) {
     $pl = $_REQUEST['playlist'];
     do_playlist_tracks($pl,'icon-music', $_REQUEST['target']);
@@ -29,7 +29,7 @@ if (array_key_exists('playlist', $_REQUEST)) {
         }
     } else if (is_array($playlists) && array_key_exists('error', $playlists)) {
         // Prevent unwanted deletion of playlist images when there was an error getting the list
-        $used_images = glob('/prefs/plimages/*');
+        $pl_error = true;
     }
     $existingfiles = glob('prefs/userplaylists/*');
     foreach($existingfiles as $file) {
@@ -39,10 +39,12 @@ if (array_key_exists('playlist', $_REQUEST)) {
     sort($used_images);
     $imgs = glob('prefs/plimages/*');
     sort($imgs);
-    $unneeded = array_diff($imgs, $used_images);
-    foreach ($unneeded as $img) {
-        debuglog("Removing uneeded playlist image ".$img,"PLAYLISTS");
-        rrmdir($img);
+    if (!$pl_error) {
+        $unneeded = array_diff($imgs, $used_images);
+        foreach ($unneeded as $img) {
+            debuglog("Removing uneeded playlist image ".$img,"PLAYLISTS");
+            rrmdir($img);
+        }
     }
 }
 

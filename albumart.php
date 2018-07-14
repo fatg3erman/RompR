@@ -62,10 +62,26 @@ include ("includes/globals.php");
 <div class="infosection">
 <table width="100%">
 <?php
-print '<tr><td colspan="2"><h2>'.get_int_text("albumart_title").'</h2></td><td class="outer" align="right"><button id="doobag">'.get_int_text("albumart_findsmall").'</button></td><td class="outer" align="right"><button id="harold">'.get_int_text("albumart_getmissing").'</button></td></tr>';
-print '<tr><td class="outer" id="totaltext"></td><td colspan=""><div class="invisible" id="progress"></div></td><td class="outer styledinputs" align="right"><input type="checkbox" class="topcheck" id="dinkytoys"><label for="dinkytoys" onclick="toggleLocal()">Ignore Local Images</label></td>
-<td class="outer styledinputs" align="right"><input type="checkbox" class="topcheck" id="poobag"><label for="poobag" onclick="toggleScrolling()">Follow Progress</label></td></tr>';
-print '<tr><td class="outer" id="infotext"></td><td colspan="2" align="center"><div class="inner" id="status">'.get_int_text('label_loading').'</div></td><td class="outer" align="right"><button id="finklestein">'.get_int_text("albumart_onlyempty").'</button></td></tr>';
+print '<tr>
+        <td colspan="4"><h2>'.get_int_text("albumart_title").'</h2></td>
+        <td class="outer" align="right" colspan="1"><button id="finklestein">'.get_int_text("albumart_onlyempty").'</button></td>
+    </tr>';
+print '<tr>
+        <td class="outer" id="totaltext"></td>
+        <td colspan="3"><div class="invisible" id="progress"></div></td>
+        <td class="outer" align="right"><button id="harold">'.get_int_text("albumart_getmissing").'</button></td>
+    </tr>';
+// <td class="outer" align="right"><button id="doobag">'.get_int_text("albumart_findsmall").'</button></td>
+print '<tr>
+        <td class="outer" id="infotext"></td>
+        <td colspan="3" align="center"><div class="inner" id="status">'.get_int_text('label_loading').'</div></td>
+        <td class="outer styledinputs" align="right"><input type="checkbox" class="topcheck" id="dinkytoys"><label for="dinkytoys" onclick="toggleLocal()">Ignore Local Images</label></td>
+    </tr>';
+    
+print '<tr>
+        <td colspan="4"></td>
+        <td class="outer styledinputs" align="right"><input type="checkbox" class="topcheck" id="poobag"><label for="poobag" onclick="toggleScrolling()">Follow Progress</label></td>
+    </tr>';
 ?>
 </table>
 </div>
