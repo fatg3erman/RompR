@@ -1,9 +1,3 @@
-if('serviceWorker' in navigator) {
-  navigator.serviceWorker
-           .register('sw.js')
-           .then(function() { console.log('Service Worker Registered'); });
-}
-
 $(document).ready(function(){
     debug.log("INIT","Document Ready Event has fired");
     if (prefs.usertheme) {
@@ -88,6 +82,16 @@ $(document).ready(function(){
         prefs.save({browser_id: Date.now()});
     }
 });
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js').then(function(registration) {
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, function(err) {
+      console.log('ServiceWorker registration failed: ', err);
+    });
+  });
+}
 
 function cleanBackendCache() {
     if (player.updatingcollection || !player.collectionLoaded || player.collection_is_empty) {
