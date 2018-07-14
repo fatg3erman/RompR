@@ -180,12 +180,16 @@ debuglog("******++++++======------******------======++++++******","CREATING PAGE
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" /><link rel="shortcut icon" sizes="196x196" href="newimages/favicon-196.png" />
+<meta http-equiv="Expires" content="0" />
+<link rel="shortcut icon" sizes="196x196" href="newimages/favicon-196.png" />
 <link rel="shortcut icon" sizes="128x128" href="newimages/favicon-128.png" />
+<link rel="shortcut icon" sizes="64x64" href="newimages/favicon-64.png" />
+<link rel="shortcut icon" sizes="48x48" href="newimages/favicon-48.png" />
 <link rel="shortcut icon" sizes="16x16" href="newimages/favicon.ico" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
+<link rel="manifest" href="manifest.webmanifest">
 <?php
 print '<script type="application/json" name="translations">'."\n".json_encode($translations)."\n</script>\n";
 $safeprefs = array();
