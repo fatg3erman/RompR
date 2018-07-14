@@ -1,6 +1,8 @@
 {
   "name": "RompЯ",
+  "short_name": "RompЯ",
   "description": "A Beautiful, Feature-Rich Music Player",
+  "background_color": "black",
   "icons": [
     {
       "src": "newimages/favicon.ico",
@@ -28,6 +30,6 @@
       "type": "image/png",
     }
   ],
-  "start_url": "index.php",
-  "display": "standalone"
+  "start_url": "/index.php",
+  "display": "fullscreen"
 }
