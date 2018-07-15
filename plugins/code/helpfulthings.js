@@ -157,7 +157,7 @@ var helpfulThings = function() {
 		close: function() {
             nowplaying.notifyTrackChanges('helpfulthings', null);
 			if (doneonce) {
-				$('.helpfulholder').each(function() {
+				$('#hplfoldup .helpfulholder').each(function() {
 					debug.log(medebug,"Removing And Destroying",$(this).attr("id"));
 					$(this).prev().remove();
 					$(this).remove();

@@ -20,6 +20,10 @@ The 'Similar Artists' option allows you to delve deeper into Spotify. You'll get
 
 ![](images/infopanel2.png)
 
+The Track information section will give you suggested new tracks to listen to. if you have Mopidy-Spotify you can add them to the Current Playlist directly from here
+
+![](images/spotifyinfo2.png)
+
 ## Last.FM
 
 The Last.FM panel gives you any biographical information that can be found for the current Artist, Album, and Track on Last.FM.
