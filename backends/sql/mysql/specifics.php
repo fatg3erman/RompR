@@ -696,6 +696,39 @@ function sql_to_unixtime($s) {
 	return "UNIX_TIMESTAMP(".$s.")";
 }
 
+function track_date_check($range, $flag) {
+	if ($flag == 'b') {
+		return '';
+	}
+	switch ($range) {
+		case ADDED_ALL_TIME:
+			return '';
+			break;
+			
+		case ADDED_TODAY:
+			return 'AND DATE_SUB(CURDATE(), INTERVAL 1 DAY) <= DateAdded';
+			break;
+			
+		case ADDED_THIS_WEEK:
+			return 'AND DATE_SUB(CURDATE(), INTERVAL 7 DAY) <= DateAdded';
+			break;
+
+		case ADDED_THIS_MONTH:
+			return 'AND DATE_SUB(CURDATE(), INTERVAL 1 MONTH) <= DateAdded';
+			break;
+			
+		case ADDED_THIS_YEAR:
+			return 'AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= DateAdded';
+			break;
+		
+		default:
+			debuglog("ERROR! Unknown Collection Range ".$range,"SQL");
+			return '';
+			break;
+			
+	}
+}
+
 function create_conditional_triggers() {
 	generic_sql_query("CREATE TRIGGER track_insert_trigger AFTER INSERT ON Tracktable
 						FOR EACH ROW

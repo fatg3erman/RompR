@@ -930,4 +930,45 @@ function rrmdir($path) {
     }
     rmdir($path);
 }
+
+function collectionButtons() {
+    print '<div id="collectionbuttons" class="invisible">';
+    print '<div class="pref styledinputs">';
+    print '<input type="radio" class="topcheck savulon" name="sortcollectionby" value="artist" id="sortbyartist">
+    <label for="sortbyartist">'.ucfirst(get_int_text('label_artists')).'</label><br/>
+    <input type="radio" class="topcheck savulon" name="sortcollectionby" value="album" id="sortbyalbum">
+    <label for="sortbyalbum">'.ucfirst(get_int_text('label_albums')).'</label><br/>
+    <input type="radio" class="topcheck savulon" name="sortcollectionby" value="albumbyartist" id="sortbyalbumbyartist">
+    <label for="sortbyalbumbyartist">'.ucfirst(get_int_text('label_albumsbyartist')).'</label>
+    <div class="pref">
+    <input class="autoset toggle" type="checkbox" id="showartistbanners">
+    <label for="showartistbanners">'.get_int_text('config_showartistbanners').'</label>
+    </div>
+    </div>
+    <div class="pref styledinputs">
+    <input class="autoset toggle" type="checkbox" id="sortbydate">
+    <label for="sortbydate">'.get_int_text('config_sortbydate').'</label>
+    <div class="pref">
+    <input class="autoset toggle" type="checkbox" id="notvabydate">
+    <label for="notvabydate">'.get_int_text('config_notvabydate').'</label>
+    </div>
+    </div>
+    <div class="pref styledinputs">
+    <input type="radio" class="topcheck savulon" name="collectionrange" value="'.ADDED_ALL_TIME.'" id="collalltime">
+    <label for="collalltime">'.get_int_text('label_all_time').'</label><br/>
+    <input type="radio" class="topcheck savulon" name="collectionrange" value="'.ADDED_TODAY.'" id="colltoday">
+    <label for="colltoday">'.get_int_text('label_today').'</label><br/>
+    <input type="radio" class="topcheck savulon" name="collectionrange" value="'.ADDED_THIS_WEEK.'" id="collweek">
+    <label for="collweek">'.get_int_text('label_thisweek').'</label><br/>
+    <input type="radio" class="topcheck savulon" name="collectionrange" value="'.ADDED_THIS_MONTH.'" id="collmonth">
+    <label for="collmonth">'.get_int_text('label_thismonth').'</label><br/>
+    <input type="radio" class="topcheck savulon" name="collectionrange" value="'.ADDED_THIS_YEAR.'" id="collyear">
+    <label for="collyear">'.get_int_text('label_thisyear').'</label><br/>
+    </div>
+    <div class="pref textcentre">
+    <button name="donkeykong">'.get_int_text('config_updatenow').'</button>
+    </div>';
+    print '</div>';
+
+}
 ?>

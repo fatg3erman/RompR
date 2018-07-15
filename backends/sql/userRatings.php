@@ -331,8 +331,7 @@ function doPlaylist($playlist, $limit) {
 
 function doCollectionHeader() {
 	global $returninfo;
-	$returninfo['stats'] = alistheader(get_stat('ArtistCount'), get_stat('AlbumCount'),
-			get_stat('TrackCount'), format_time(get_stat('TotalTime')));
+	$returninfo['stats'] = collectionStats();
 }
 
 function check_backup_dir() {

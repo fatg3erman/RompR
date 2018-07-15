@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   width="205.66005mm"
+   height="207.89409mm"
+   viewBox="0 0 205.66004 207.89409"
+   version="1.1"
+   id="svg8">
+  <defs
+     id="defs2" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <ellipse
+     ry="94.947044"
+     rx="93.830025"
+     cy="103.94704"
+     cx="102.83002"
+     id="path815"
+     style="opacity:1;fill:none;fill-opacity:1;stroke:#3ED3D5;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <style
+     type="text/css"
+     id="style3111">
+	.st0{fill:#3ED3D5;}
+</style>
+  <style
+     type="text/css"
+     id="style2">
+	.st0{fill:none;}
+	.st1{fill:#F4481E;}
+	.st2{fill:url(#SVGID_1_);}
+	.st3{opacity:0.1;fill:#FFFFFF;enable-background:new    ;}
+	.st4{fill:#FFD119;}
+	.st5{fill:#FF8C00;}
+	.st6{fill:url(#SVGID_2_);}
+	.st7{fill:#FAFAFA;}
+	.st8{opacity:0.3;fill:#FFFFFF;enable-background:new    ;}
+</style>
+  <g
+     transform="matrix(5.9337552,0,0,5.9337552,45.325689,32.741281)"
+     id="g3708">
+    <g
+       id="g3647">
+      <g
+         id="g3637">
+        <path
+           d="m 3.713,23.015 c -0.34,0 -0.679,-0.091 -0.986,-0.273 C 2.133,22.39 1.778,21.767 1.778,21.076 V 2.924 C 1.778,2.233 2.133,1.61 2.727,1.258 3.322,0.906 4.039,0.894 4.644,1.226 l 16.573,9.076 c 0.63,0.345 1.006,0.98 1.006,1.698 0,0.718 -0.376,1.354 -1.006,1.698 L 4.644,22.774 c -0.294,0.16 -0.613,0.241 -0.931,0.241 z m 0,-21.028 C 3.548,1.987 3.384,2.031 3.236,2.119 2.948,2.289 2.777,2.59 2.777,2.924 v 18.151 c 0,0.334 0.171,0.635 0.459,0.806 0.288,0.169 0.634,0.175 0.927,0.016 l 16.573,-9.076 c 0.305,-0.167 0.487,-0.474 0.487,-0.821 0,-0.347 -0.182,-0.654 -0.487,-0.821 L 4.163,2.103 C 4.022,2.025 3.867,1.987 3.713,1.987 Z"
+           id="path3635" />
+      </g>
+      <g
+         id="g3641">
+        <path
+           d="m 16.777,15.5 c -0.125,0 -0.25,-0.046 -0.347,-0.14 L 2.93,2.36 C 2.731,2.168 2.725,1.852 2.917,1.653 3.109,1.454 3.427,1.449 3.624,1.639 l 13.5,13 c 0.199,0.192 0.205,0.508 0.014,0.707 -0.099,0.103 -0.23,0.154 -0.361,0.154 z"
+           id="path3639" />
+      </g>
+      <g
+         id="g3645">
+        <path
+           d="M 3.277,22.5 C 3.146,22.5 3.015,22.449 2.917,22.347 2.726,22.148 2.731,21.832 2.931,21.64 l 13.5,-13 c 0.198,-0.19 0.516,-0.186 0.707,0.014 0.191,0.199 0.186,0.515 -0.014,0.707 l -13.5,13 C 3.527,22.454 3.402,22.5 3.277,22.5 Z"
+           id="path3643" />
+      </g>
+    </g>
+    <g
+       id="g3649" />
+    <g
+       id="g3651" />
+    <g
+       id="g3653" />
+    <g
+       id="g3655" />
+    <g
+       id="g3657" />
+    <g
+       id="g3659" />
+    <g
+       id="g3661" />
+    <g
+       id="g3663" />
+    <g
+       id="g3665" />
+    <g
+       id="g3667" />
+    <g
+       id="g3669" />
+    <g
+       id="g3671" />
+    <g
+       id="g3673" />
+    <g
+       id="g3675" />
+    <g
+       id="g3677" />
+  </g>
+<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#3ED3D5;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#3ED3D5;fill-opacity:1}</style></svg>

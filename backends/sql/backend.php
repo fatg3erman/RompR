@@ -724,11 +724,19 @@ function albumartist_sort_query($flag) {
 	// have actual tracks (no album artists who appear only on the wishlist or who have only hidden tracks)
 	// Using GROUP BY is faster than using SELECT DISTINCT
 	// USING IN is faster than the double JOIN
+	global $prefs;
 	$sflag = ($flag == 'b') ? "AND isSearchResult > 0" : "AND isSearchResult < 2";
 	
-	$qstring = "SELECT Artistname, Artistindex FROM Artisttable AS a WHERE Artistindex IN
-				(SELECT AlbumArtistindex FROM Albumtable JOIN Tracktable USING (Albumindex)
-					WHERE Uri IS NOT NULL AND Hidden = 0 ".$sflag." GROUP BY AlbumArtistindex)
+	$qstring = "SELECT Artistname, Artistindex
+					FROM Artisttable AS a
+					WHERE
+					Artistindex IN
+						(SELECT AlbumArtistindex FROM Albumtable JOIN Tracktable USING (Albumindex)
+							WHERE Uri IS NOT NULL
+							AND Hidden = 0
+							".track_date_check($prefs['collectionrange'], $flag)."
+							".$sflag."
+							GROUP BY AlbumArtistindex)
 				ORDER BY ";
 	$qstring .= sort_artists_by_name();
 	return $qstring;
@@ -786,7 +794,7 @@ function album_sort_query($why, $what, $who) {
 	$qstring .= "Albumindex IN (SELECT Albumindex FROM Tracktable WHERE
 			Tracktable.Albumindex = Albumtable.Albumindex AND ";
 
-	$qstring .= "Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 ".$sflag.")";
+	$qstring .= "Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 ".track_date_check($prefs['collectionrange'], $why)." ".$sflag.")";
 	$qstring .= " ORDER BY ";
 	if ($prefs['sortcollectionby'] == "albumbyartist" && $who == "root") {
 		foreach ($prefs['artistsatstart'] as $a) {
@@ -907,6 +915,7 @@ function get_list_of_albums($aid) {
 }
 
 function get_album_tracks_from_database($index, $cmd, $flag) {
+	global $prefs;
 	$retarr = array();
 	$qstring = null;
 	$cmd = ($cmd === null) ? 'add' : $cmd;
@@ -955,7 +964,7 @@ function get_album_tracks_from_database($index, $cmd, $flag) {
 	}
 	debuglog("Getting Album Tracks for Albumindex ".$index,"MYSQL",7);
 	if ($qstring === null) {
-		$qstring = $action." Uri FROM Tracktable".$rflag." WHERE Albumindex = '".$index."' AND Uri IS NOT NULL AND Hidden = 0 ".$sflag." ORDER BY Disc, TrackNo";
+		$qstring = $action." Uri FROM Tracktable".$rflag." WHERE Albumindex = '".$index."' AND Uri IS NOT NULL AND Hidden = 0 ".track_date_check($prefs['collectionrange'], $flag)." ".$sflag." ORDER BY Disc, TrackNo";
 	}
 	$result = generic_sql_query($qstring);
 	foreach($result as $a) {
@@ -988,6 +997,7 @@ function get_artist_tracks_from_database($index, $cmd, $flag) {
 function do_tracks_from_database($why, $what, $whom, $fragment = false) {
 	// This function can accept multiple album ids ($whom can be an array)
 	// in which case it will combine them all into one 'virtual album' - see browse_album()
+	global $prefs;
 	$who = getArray($whom);
 	$wdb = implode($who, ', ');
     debuglog("Generating tracks for album(s) ".$wdb." from database","DUMPALBUMS",7);
@@ -997,7 +1007,7 @@ function do_tracks_from_database($why, $what, $whom, $fragment = false) {
 	$t = ($why == "b") ? "AND isSearchResult > 0" : "AND isSearchResult < 2";
 	$trackarr = generic_sql_query(
 		// This looks like a wierd way of doing it but the obvious way doesn't work with mysql
-		// due to table alises being used.
+		// due to table aliases being used.
 		"SELECT
 			".SQL_TAG_CONCAT." AS tags,
 			r.Rating AS rating,
@@ -1019,6 +1029,7 @@ function do_tracks_from_database($why, $what, $whom, $fragment = false) {
 			WHERE (".implode(' OR ', array_map('do_fiddle', $who)).")
 				AND uri IS NOT NULL
 				AND tr.Hidden = 0
+				".track_date_check($prefs['collectionrange'], $why)."
 				".$t."
 				AND tr.Artistindex = ta.Artistindex
 				AND al.Albumindex = tr.Albumindex
@@ -1237,24 +1248,16 @@ function find_podcast_track_from_url($url) {
 function update_track_stats() {
 	debuglog("Updating Track Stats","MYSQL",7);
 	$t = microtime(true);
-	$ac = generic_sql_query(
-		"SELECT COUNT(*) AS NumArtists FROM (SELECT AlbumArtistindex FROM Albumtable
-		INNER JOIN Tracktable USING (Albumindex) WHERE Uri IS NOT NULL
-		AND Hidden = 0 AND isSearchResult < 2 GROUP BY AlbumArtistindex) AS t", false, null, 'NumArtists', 0);
+	$ac = get_artist_count(ADDED_ALL_TIME);
 	update_stat('ArtistCount',$ac);
 
-	$ac = generic_sql_query(
-		"SELECT COUNT(*) AS NumAlbums FROM (SELECT Albumindex FROM Tracktable WHERE Uri IS NOT NULL
-		AND Hidden = 0 AND isSearchResult < 2 GROUP BY Albumindex) AS t", false, null, 'NumAlbums', 0);
+	$ac = get_album_count(ADDED_ALL_TIME);
 	update_stat('AlbumCount',$ac);
 
-	$ac = generic_sql_query("SELECT COUNT(*) AS NumTracks FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND isSearchResult < 2", false, null, 'NumTracks', 0);
+	$ac = get_track_count(ADDED_ALL_TIME);
 	update_stat('TrackCount',$ac);
 
-	$ac = generic_sql_query("SELECT SUM(Duration) AS TotalTime FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND isSearchResult < 2", false, null, 'TotalTime', 0);
-	if ($ac == '') {
-		$ac = 0;
-	}
+	$ac = get_duration_count(ADDED_ALL_TIME);
 	update_stat('TotalTime',$ac);
 	$at = microtime(true) - $t;
 	debuglog("Updating Track Stats took ".$at." seconds","BACKEND",8);
@@ -1266,6 +1269,34 @@ function update_stat($item, $value) {
 
 function get_stat($item) {
 	return simple_query('Value', 'Statstable', 'Item', $item, 0);
+}
+
+function get_artist_count($range) {
+	$ac = generic_sql_query(
+		"SELECT COUNT(*) AS NumArtists FROM (SELECT AlbumArtistindex FROM Albumtable
+		INNER JOIN Tracktable USING (Albumindex) WHERE Uri IS NOT NULL
+		AND Hidden = 0 AND isSearchResult < 2 ".track_date_check($range, 'a')." GROUP BY AlbumArtistindex) AS t", false, null, 'NumArtists', 0);
+	return $ac;
+}
+
+function get_album_count($range) {
+	$ac = generic_sql_query(
+		"SELECT COUNT(*) AS NumAlbums FROM (SELECT Albumindex FROM Tracktable WHERE Uri IS NOT NULL
+		AND Hidden = 0 AND isSearchResult < 2 ".track_date_check($range, 'a')." GROUP BY Albumindex) AS t", false, null, 'NumAlbums', 0);
+	return $ac;
+}
+
+function get_track_count($range) {
+	$ac = generic_sql_query("SELECT COUNT(*) AS NumTracks FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 ".track_date_check($range, 'a')." AND isSearchResult < 2", false, null, 'NumTracks', 0);
+	return $ac;
+}
+
+function get_duration_count($range) {
+	$ac = generic_sql_query("SELECT SUM(Duration) AS TotalTime FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 ".track_date_check($range, 'a')." AND isSearchResult < 2", false, null, 'TotalTime', 0);
+	if ($ac == '') {
+		$ac = 0;
+	}
+	return $ac;
 }
 
 function dumpAlbums($which) {
@@ -1287,7 +1318,7 @@ function dumpAlbums($which) {
     	case 'root':
 			print '<div class="sizer"></div>';
 	    	if ($why == 'a') {
-	    		collectionStats();
+	    		print collectionStats();
 	    	} else {
 	    		searchStats();
 	    	}
@@ -1326,9 +1357,22 @@ function dumpAlbums($which) {
 }
 
 function collectionStats() {
-    print '<div id="fothergill" class="brick brick_wide">';
-    print alistheader(get_stat('ArtistCount'), get_stat('AlbumCount'), get_stat('TrackCount'), format_time(get_stat('TotalTime')));
-    print '</div>';
+	global $prefs;
+    $html = '<div id="fothergill" class="brick brick_wide">';
+	if ($prefs['collectionrange'] == ADDED_ALL_TIME) {
+    	$html .= alistheader(get_stat('ArtistCount'),
+							get_stat('AlbumCount'),
+							get_stat('TrackCount'),
+							format_time(get_stat('TotalTime'))
+						);
+	} else {
+		$html .= alistheader(get_artist_count($prefs['collectionrange']),
+							get_album_count($prefs['collectionrange']),
+							get_track_count($prefs['collectionrange']),
+							format_time(get_duration_count($prefs['collectionrange'])));
+	}
+    $html .= '</div>';
+	return $html;
 }
 
 function searchStats() {

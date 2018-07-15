@@ -70,13 +70,17 @@ var prefs = function() {
         "playlistswipe",
         "podcastcontrolsvisible",
         "use_albumart_in_playlist",
-        "bgimgparms"
+        "bgimgparms",
+        "collectionrange"
     ];
     
     const cookiePrefs = [
         'skin',
         'currenthost',
-        'player_backend'
+        'player_backend',
+        "sortbydate",
+        "notvabydate",
+        "collectionrange"
     ];
 	
 	const jsonNode = document.querySelector("script[name='prefs']");
@@ -314,8 +318,11 @@ var prefs = function() {
             }
             
             for (var i in cookiePrefs) {
-                if (getCookie(cookiePrefs[i]) != '') {
-                    prefs[cookiePrefs[i]] = getCookie(cookiePrefs[i]);
+                var a = getCookie(cookiePrefs[i]);
+                if (a != '') {
+                    if (a === 'false') { a = false; }
+                    if (a === 'true' ) { a = true; }
+                    prefs[cookiePrefs[i]] = a;
                     if (prefs.debug_enabled > 7) {
                         console.log("PREFS      : "+cookiePrefs[i]+' = '+prefs[cookiePrefs[i]]);
                     }
@@ -346,7 +353,8 @@ var prefs = function() {
             for (var i in options) {
                 prefs[i] = options[i];
                 if (cookiePrefs.indexOf(i) > -1) {
-                    setCookie(i, options[i], 3650);
+                    var val = options[i];
+                    setCookie(i, val, 3650);
                 }
                 if (prefsInLocalStorage.indexOf(i) > -1) {
                     debug.log("PREFS", "Setting",i,"to",options[i],"in local storage");
@@ -465,6 +473,7 @@ var prefs = function() {
                     break;
 
                 case 'sortcollectionby':
+                case 'collectionrange':
                     callback = layoutProcessor.changeCollectionSortMode;
                     break;
 

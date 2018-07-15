@@ -15,19 +15,23 @@ var albumstolistento = function() {
     
     function gotListenLater(data) {
         spinner.remove();
-        holder.spotifyAlbumThing({
-            classes: 'brick tagholder2 selecotron',
-            itemselector: 'brick',
-            sub: 'album',
-            showbiogs: true,
-            maxwidth: maxwidth,
-            is_plugin: true,
-            imageclass: 'jalopy',
-            showlistenlater: false,
-            showremovebutton: true,
-            removecallback: albumstolistento.removeId,
-            data: data
-        });
+        if (data.length == 0) {
+            holder.append('<h3 align="center">'+language.gettext('no_albumtolistento')+'</h3>');
+        } else {
+            holder.spotifyAlbumThing({
+                classes: 'brick tagholder2 selecotron',
+                itemselector: 'brick',
+                sub: 'album',
+                showbiogs: true,
+                maxwidth: maxwidth,
+                is_plugin: true,
+                imageclass: 'jalopy',
+                showlistenlater: false,
+                showremovebutton: true,
+                removecallback: albumstolistento.removeId,
+                data: data
+            });
+        }
     }
     
     function makeHolder() {

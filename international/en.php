@@ -657,7 +657,13 @@ $languages['en'] = array (
 	"label_changevery" => "Change Every",
 	"label_albumstolistento" => "Albums To Listen To",
 	"no_albumtolistento" => "You can add any Spotify album to this list from the Info Panel, you can then come back and check them out at your leisure.",
-	"label_addedtolistenlater" => "Added To Albums To Listen To"
+	"label_addedtolistenlater" => "Added To Albums To Listen To",
+	"label_all_time" => "Entire Collection",
+	"label_today" => "Added Today",
+	"label_thisweek" => "Added This Week",
+	"label_thismonth" => "Added This Month",
+	"label_thisyear" => "Added This Year",
+	
 );
 
 ?>

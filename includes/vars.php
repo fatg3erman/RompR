@@ -27,6 +27,12 @@ define('DISPLAYMODE_DOWNLOADED', 4);
 
 define('ROMPR_PODCAST_TABLE_VERSION', 4);
 
+define('ADDED_ALL_TIME', 0);
+define('ADDED_TODAY', 1);
+define('ADDED_THIS_WEEK', 2);
+define('ADDED_THIS_MONTH', 3);
+define('ADDED_THIS_YEAR', 4);
+
 // Safe definitions for setups that do not have a full set of image support built in,
 // Otherwise we spam the server logs will udefined constant errors.
 if (!defined('IMAGETYPE_JPEG')) {
@@ -77,7 +83,6 @@ $prefs = array(
     "country_userset" => false,
     "debug_enabled" => 0,
     "custom_logfile" => "",
-    "player_backend" => "mpd",
     "cleanalbumimages" => true,
     "do_not_show_prefs" => false,
     // This option for plugin debugging ONLY
@@ -91,26 +96,29 @@ $prefs = array(
             'socket' => ''
         )
     ),
-    "currenthost" => 'Default',
     'dev_mode' => false,
     'live_mode' => false,
     'collection_load_timeout' => 3600000,
-
-    // Things that could be set on a per-user basis but need to be known by the backend
     "mpd_host" => "localhost",
     "mpd_port" => 6600,
     "mpd_password" => "",
     "unix_socket" => '',
-    "sortbydate" => false,
-    "notvabydate" => false,
+
+    // Things that could be set on a per-user basis but need to be known by the backend
     "displaycomposer" => true,
     "artistsatstart" => array("Various Artists","Soundtracks"),
     "nosortprefixes" => array("The"),
     "sortcollectionby" => "artist",
     "showartistbanners" => true,
-    "tradsearch" => false,
     "google_api_key" => '',
     "google_search_engine_id" => '',
+
+    // Things that are set as Cookies
+    "sortbydate" => false,
+    "notvabydate" => false,
+    "currenthost" => 'Default',
+    "player_backend" => "mpd",
+    "collectionrange" => ADDED_ALL_TIME,
 
     // These are currently saved in the backend, as the most likely scenario is one user
     // with multiple browsers. But what if it's multiple users?
@@ -119,6 +127,7 @@ $prefs = array(
     "autotagname" => "",
 
     // All of these are saved in the browser, so these are only defaults
+    "tradsearch" => false,
     "lastfm_scrobbling" => false,
     "lastfm_autocorrect" => false,
     "sourceshidden" => false,
@@ -300,6 +309,8 @@ function loadPrefs() {
                                 // Fall through to default
 
                             default:
+                                if ($v === 'false') { $v = false; }
+                                if ($v === 'true') { $v = true; }
                                 $prefs[$a] = $v;
                                 break;
 
