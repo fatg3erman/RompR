@@ -117,7 +117,7 @@ var wishlistViewer = function() {
 	}
 
 	function loadWishlist(display) {
-        $("#wishlistlist").load("albums.php?wishlist=1&sortby="+prefs.sortwishlistby, function() {
+        $("#wishlistlist").load("plugins/code/getwishlist.php?sortby="+prefs.sortwishlistby, function() {
 			$('[name="sortwishlistby"][value="'+prefs.sortwishlistby+'"]').prop('checked', true);
 			$('[name="sortwishlistby"]').on('click', reloadWishlist);
 			infobar.markCurrentTrack();

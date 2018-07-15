@@ -196,7 +196,7 @@ var info_spotify = function() {
                 debug.trace(medebug,parent.nowplayingindex,source,"is handling a click event");
                 if (element.hasClass('clickzoomimage')) {
                 	imagePopup.create(element, event, element.attr("src"));
-                } else if (element.hasClass('clickopenalbum') || element.hasClass('clickopenartist')) {
+                } else if (element.hasClass('clickspotifywidget')) {
                     findDisplayPanel(element);
                 } else if (element.hasClass('clickchooseposs')) {
                     var poss = element.attr("name");

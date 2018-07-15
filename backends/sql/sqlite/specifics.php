@@ -287,6 +287,16 @@ function check_sql_tables() {
 		return array(false, "Error While Checking WishlistSourcetable : ".$err);
 	}
 
+	if (generic_sql_query("CREATE TABLE IF NOT EXISTS AlbumsToListenTotable(".
+		"Listenindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+		"JsonData TEXT)", true))
+	{
+		debuglog("  AlbumsToListenTotabletable OK","MYSQL_CONNECT");
+	} else {
+		$err = $mysqlc->errorInfo()[2];
+		return array(false, "Error While Checking AlbumsToListenTotable : ".$err);
+	}
+
 	// Check schema version and update tables as necessary
 	$sv = simple_query('Value', 'Statstable', 'Item', 'SchemaVer', 0);
 	if ($sv == 0) {

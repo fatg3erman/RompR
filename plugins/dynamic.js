@@ -4,5 +4,6 @@ pluginManager.addPlugin(language.gettext("label_recentlyplayed"), null, null, 'p
 pluginManager.addPlugin(language.gettext("label_playlistmanager"), null, null, 'plugins/code/playlistmanager.js', true);
 pluginManager.addPlugin(language.gettext("config_tagrat"), null, null, 'plugins/code/ratingmanager.js', true);
 pluginManager.addPlugin(language.gettext("label_viewwishlist"), null, null, 'plugins/code/wishlistviewer.js', true);
+pluginManager.addPlugin(language.gettext("label_albumstolistento"), null, null, 'plugins/code/albumstolistento.js', true);
 pluginManager.addPlugin(language.gettext("label_metabackup"), null, null, 'plugins/code/metaBackup.js', true);
 pluginManager.addPlugin(language.gettext("label_opmlimporter"), null, null, 'plugins/code/opmlImporter.js', true);

@@ -14,7 +14,11 @@ The Last.FM stations are my attempt to recreate the old and much missed Last.FM 
 
 The Spotify stations are similar except they use your listening history from RompЯ along with Spotify's suggestions.
 
-Below the radio stations are several sections giving you suggestions of albums you might like. Again these are generated using your RompЯ listening history and Spotify's suggestions. You can add any of the albums to the Current Playlist if you have a Spotify subscription. If you open one of the album panels (using the triangle icon) then you will get a full track listing for the album and a biography of the artist. Any of the tracks can be added to the Current Playlist.
+Below the radio stations are several sections giving you suggestions of albums you might like. Again these are generated using your RompЯ listening history and Spotify's suggestions. If you open one of the album panels (using the triangle icon) then you will get a full track listing for the album and a biography of the artist. You can add any of the albums or tracks to the Current Playlist if you are using Mopidy with Spotify.
+
+The 'Headphones' icon will add the album to [Albums To Listen To](/RompR/Albums-To-Listen-To), from where you can come back and listen to the album at your leisure.
+
+The Musical Notes icon will add the album directly into your Music Collection.
 
 ## More Personalised Radio
 

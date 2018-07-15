@@ -242,6 +242,17 @@ function check_sql_tables() {
 		return array(false, "Error While Checking WishlistSourcetable : ".$err);
 	}
 
+	if (generic_sql_query("CREATE TABLE IF NOT EXISTS AlbumsToListenTotable(".
+		"Listenindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+		"JsonData TEXT, ".
+		"PRIMARY KEY (Listenindex)) ENGINE=InnoDB", true))
+	{
+		debuglog("  AlbumsToListenTotabletable OK","MYSQL_CONNECT");
+	} else {
+		$err = $mysqlc->errorInfo()[2];
+		return array(false, "Error While Checking AlbumsToListenTotable : ".$err);
+	}
+
 	if (!generic_sql_query("CREATE TABLE IF NOT EXISTS Statstable(Item CHAR(11), PRIMARY KEY(Item), Value INT UNSIGNED) ENGINE=InnoDB", true)) {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Statstable : ".$err);

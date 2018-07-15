@@ -145,7 +145,7 @@ var helpfulThings = function() {
 				playlist.radioManager.load('spotiMixRadio', '1year');
 			} else if (element.hasClass('clickrefreshalbums')) {
 				getRecommendationSeeds();
-            } else if (element.hasClass('clickopenalbum')) {
+            } else if (element.hasClass('clickspotifywidget')) {
             	var e = element;
             	while (!e.hasClass('helpfulholder')) {
             		e = e.parent();

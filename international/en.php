@@ -655,6 +655,9 @@ $languages['en'] = array (
 	"label_choosefile" => "Choose A File",
 	"label_choosefiles" => "Choose File(s)",
 	"label_changevery" => "Change Every",
+	"label_albumstolistento" => "Albums To Listen To",
+	"no_albumtolistento" => "You can add any Spotify album to this list from the Info Panel, you can then come back and check them out at your leisure.",
+	"label_addedtolistenlater" => "Added To Albums To Listen To"
 );
 
 ?>
