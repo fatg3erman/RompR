@@ -218,7 +218,9 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 
     this.clearCallbacks = function() {
         for (var j in formObjects) {
-            formObjects[j].cb = null;
+            if (formObjects[j].hasOwnProperty('cb')) {
+                formObjects[j].cb = null;
+            }
         }
     }
 

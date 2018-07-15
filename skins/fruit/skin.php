@@ -211,6 +211,7 @@ foreach($sp as $p) {
 }
 ?>
     </div>
+        
     <div id="podcastslist" class="invisible selecotron">
 <?php
 include("includes/podcasts.php");

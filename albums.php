@@ -185,7 +185,7 @@ function browse_album() {
     if (substr($albumlink, 0, 8) == 'podcast+') {
         require_once('includes/podcastfunctions.php');
         debuglog("Browsing For Podcast ".substr($albumlink, 9), "ALBUMS");
-        $podid = getNewPodcast(substr($albumlink, 8), 0);
+        $podid = getNewPodcast(substr($albumlink, 8), 0, false);
         debuglog("Ouputting Podcast ID ".$podid, "ALBUMS");
         outputPodcast($podid, false);
     } else {

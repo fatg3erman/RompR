@@ -486,6 +486,7 @@ var layoutProcessor = function() {
                 case 'pluginplaylistholder':
                     setSpotiLabelWidth();
                     break;
+                    
             }
         },
 

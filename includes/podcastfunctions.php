@@ -1,6 +1,6 @@
 <?php
 
-function parse_rss_feed($url, $id = false, $lastpubdate = null) {
+function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = true) {
     global $prefs;
     $url = preg_replace('#^itpc://#', 'http://', $url);
     $url = preg_replace('#^feed://#', 'http://', $url);
@@ -22,6 +22,8 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null) {
         file_put_contents('prefs/podcasts/'.$id.'/feed.xml', $d->get_data());
     }
     $feed = simplexml_load_string($d->get_data());
+    
+    debuglog("Parsing Feed ".$url,"PODCASTS");
 
     // Begin RSS Parse
     $podcast = array();
@@ -100,6 +102,8 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null) {
         $podcast['Artist'] = '';
     }
     
+    debuglog("  Artist is ".$podcast['Artist'],"PODCASTS");
+    
     // Category
     $cats = array();
     if ($m && $m->category) {
@@ -124,102 +128,106 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null) {
     // Tracks
     $podcast['tracks'] = array();
     $podcast['LastPubDate'] = null;
-    foreach($feed->channel->item as $item) {
-        $track = array();
+    if ($gettracks) {
+        foreach($feed->channel->item as $item) {
+            $track = array();
 
-        $m = $item->children('media', TRUE);
+            $m = $item->children('media', TRUE);
 
-        // Track URI
-        $uri = null;
-        if ($m && $m->content) {
-            foreach ($m->content as $c) {
-                if (preg_match('/audio/',(string) $c->attributes()->type)) {
-                    $uri = (string) $c->attributes()->url;
-                    break;
+            // Track Title
+            $track['Title'] = (string) $item->title;
+            debuglog("  Found track ".$track['Title'],"PODCASTS",8);
+
+            // Track URI
+            $uri = null;
+            if ($m && $m->content) {
+                foreach ($m->content as $c) {
+                    if (preg_match('/audio/',(string) $c->attributes()->type)) {
+                        $uri = (string) $c->attributes()->url;
+                        break;
+                    }
                 }
             }
-        }
-        if ($item->enclosure && $uri == null) {
-            $uri = (string) $item->enclosure->attributes()->url;
-        }
-        if ($item->link && $uri == null) {
-            $uri = (string) $item->link;
-        }
-
-        $track['Link'] = $uri;
-
-        if ($item->guid) {
-            $track['GUID'] = $item->guid;
-        } else {
-            $track['GUID'] = $uri;
-        }
-
-        // Track Duration
-        $track['Duration'] = 0;
-        if ($m && $m->content) {
-            if ($m->content[0]->attributes()->duration) {
-                $track['Duration'] = (string) $m->content[0]->attributes()->duration;
+            if ($item->enclosure && $uri == null) {
+                $uri = (string) $item->enclosure->attributes()->url;
             }
-        }
-        $m = $item->children('itunes', TRUE);
-        if ($track['Duration'] == 0 && $m && $m->duration) {
-            $track['Duration'] = (string) $m->duration;
-        }
-        if (preg_match('/:/', $track['Duration'])) {
-            $timesplit = explode(':', $track['Duration']);
-            $timefactors = array(1, 60, 3600, 86400);
-            $hms = array_reverse($timesplit);
-            $time = 0;
-            foreach ($hms as $s) {
-                $mf = array_shift($timefactors);
-                if (is_numeric($s)) {
-                    $time += ($s * $mf);
-                } else {
-                    debuglog("Non-numeric duration field encountered in podcast! - ".$track['Duration'],"PODCASTS",4);
-                    $time = 0;
-                    break;
+            if ($item->link && $uri == null) {
+                $uri = (string) $item->link;
+            }
+
+            $track['Link'] = $uri;
+            debuglog("    Track URI is ".$uri,"PODCASTS",8);
+
+            if ($item->guid) {
+                $track['GUID'] = $item->guid;
+            } else {
+                $track['GUID'] = $uri;
+            }
+
+            if ($uri == null) {
+                debuglog("Could Not Find URI for track!","PODCASTS",3);
+                debuglog("  Track Title is ".$track['Title'],"PODCASTS",3);
+                continue;
+            }
+
+            // Track Duration
+            $track['Duration'] = 0;
+            if ($m && $m->content) {
+                if ($m->content[0]->attributes()->duration) {
+                    $track['Duration'] = (string) $m->content[0]->attributes()->duration;
                 }
             }
-            $track['Duration'] = $time;
-        }
+            $m = $item->children('itunes', TRUE);
+            if ($track['Duration'] == 0 && $m && $m->duration) {
+                $track['Duration'] = (string) $m->duration;
+            }
+            if (preg_match('/:/', $track['Duration'])) {
+                $timesplit = explode(':', $track['Duration']);
+                $timefactors = array(1, 60, 3600, 86400);
+                $hms = array_reverse($timesplit);
+                $time = 0;
+                foreach ($hms as $s) {
+                    $mf = array_shift($timefactors);
+                    if (is_numeric($s)) {
+                        $time += ($s * $mf);
+                    } else {
+                        debuglog("Non-numeric duration field encountered in podcast! - ".$track['Duration'],"PODCASTS",4);
+                        $time = 0;
+                        break;
+                    }
+                }
+                $track['Duration'] = $time;
+            }
 
-        // Track Title
-        $track['Title'] = (string) $item->title;
+            // Track Author
+            if ($m && $m->author) {
+                $track['Artist'] = (string) $m->author;
+            } else {
+                $track['Artist'] = $podcast['Artist'];
+            }
 
-        // Track Author
-        if ($m && $m->author) {
-            $track['Artist'] = (string) $m->author;
-        } else {
-            $track['Artist'] = $podcast['Artist'];
-        }
+            // Track Publication Date
+            $t = strtotime((string) $item->pubDate);
+            if ($podcast['LastPubDate'] === null || $t > $podcast['LastPubDate']) {
+                $podcast['LastPubDate'] = $t;
+            }
+            $track['PubDate'] = $t;
+            if ($item->enclosure && $item->enclosure->attributes()) {
+                $track['FileSize'] = $item->enclosure->attributes()->length;
+            } else {
+                $track['FileSize'] = 0;
+            }
 
-        // Track Publication Date
-        $t = strtotime((string) $item->pubDate);
-        if ($podcast['LastPubDate'] === null || $t > $podcast['LastPubDate']) {
-            $podcast['LastPubDate'] = $t;
-        }
-        $track['PubDate'] = $t;
-        if ($item->enclosure && $item->enclosure->attributes()) {
-            $track['FileSize'] = $item->enclosure->attributes()->length;
-        } else {
-            $track['FileSize'] = 0;
-        }
+            if ($m && $m->summary) {
+                $track['Description'] = $m->summary;
+            } else {
+                $track['Description'] = $item->description;
+            }
 
-        if ($m && $m->summary) {
-            $track['Description'] = $m->summary;
-        } else {
-            $track['Description'] = $item->description;
+            $podcast['tracks'][] = $track;
         }
-
-        if ($uri == null) {
-            debuglog("Could Not Find URI for track!","PODCASTS",3);
-            debuglog("  Track Title is ".$track['Title'],"PODCASTS",3);
-            continue;
-        }
-
-        $podcast['tracks'][] = $track;
     }
-
+    
     if ($lastpubdate !== null) {
         if ($podcast['LastPubDate'] == $lastpubdate) {
             debuglog("Podcast has not been updated since last refresh","PODCASTS");
@@ -231,11 +239,11 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null) {
 
 }
 
-function getNewPodcast($url, $subbed = 1) {
+function getNewPodcast($url, $subbed = 1, $gettracks = true) {
     global $mysqlc, $prefs;
     debuglog("Getting podcast ".$url,"PODCASTS");
     $newpodid = null;
-    $podcast = parse_rss_feed($url);
+    $podcast = parse_rss_feed($url, false, null, $gettracks);
     $r = check_if_podcast_is_subscribed(array(  'feedUrl' => $podcast['FeedURL'],
                                                 'collectionName' => $podcast['Title'],
                                                 'artistName' => $podcast['Artist']));
