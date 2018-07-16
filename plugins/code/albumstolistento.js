@@ -43,7 +43,7 @@ var albumstolistento = function() {
         open: function() {
             if (atl == null) {
                 debug.log("LISTENLATER","Opening....");
-                atl = browser.registerExtraPlugin("atl", language.gettext("label_albumstolistento"), albumstolistento, null);
+                atl = browser.registerExtraPlugin("atl", language.gettext("label_albumstolistento"), albumstolistento, 'https://fatg3erman.github.io/RompR/Albums-To-Listen-To');
                 spinner = $('<div>').appendTo('#atlfoldup');
                 spinner.append('<i class="svq-square icon-spin6 spinner"></i>');
                 makeHolder();

@@ -86,7 +86,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 function doPodcastBase() {
     global $prefs;
     print '<div class="containerbox menuitem" style="padding-left:8px">';
-    print '<div class="fixed" style="padding-right:4px"><i onclick="podcasts.toggleButtons()" class="icon-menu playlisticon clickicon"></i></div>';
+    print '<div class="fixed" style="padding-right:4px"><i onclick="podcasts.toggleButtons()" class="icon-menu playlisticon clickicon tooltip" title="'.get_int_text('label_podcastcontrols').'"></i></div>';
     print '<div class="configtitle textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div></div>';
     print '<div id="podcastbuttons" class="invisible">';
 
@@ -107,7 +107,6 @@ function doPodcastBase() {
         get_int_text('label_new_episodes') => 'new',
         get_int_text('label_unlistened_episodes') => 'unlistened'
     );
-    
     
     print '<div class="containerbox menuitem noselection">';
     print '<i class="icon-toggle-closed mh menu fixed" name="podcastsortoptions"></i>';

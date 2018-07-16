@@ -13,8 +13,8 @@ var playlistManager = function() {
 		var t = decodeURIComponent(title);
 		html += '>'+'<tr class="tagh"><th colspan="2" align="center">'+t+'</th>';
 		if (!t.match(/ \(by /)) {
-			html += '<th width="20px"><i class="icon-floppy playlisticon clickicon infoclick plugclickable clickrenplaylist"></i></th>'+
-			'<th width="20px"><i class="icon-cancel-circled playlisticon clickicon infoclick plugclickable clickdelplaylist"></i></th>';
+			html += '<th width="20px"><i class="icon-floppy playlisticon clickicon infoclick plugclickable clickrenplaylist tooltip" title="'+language.gettext('label_renameplaylist')+'"></i></th>'+
+			'<th width="20px"><i class="icon-cancel-circled playlisticon clickicon infoclick plugclickable clickdelplaylist tooltip" title="'+language.gettext('label_deleteplaylist')+'"></i></th>';
 		}
 		html += '</tr>';
 		if (tracks.length == 0) {
@@ -147,6 +147,7 @@ var playlistManager = function() {
 	            browser.rePoint($("#playmunger"), {itemSelector: '.tagholder', percentPosition: true });
 	            infobar.markCurrentTrack();
 	            pmg.imagesLoaded(browser.rePoint);
+				pmg.find('.tooltip').tipTip({delay: 250, edgeOffset: 8});
             });
 		},
 

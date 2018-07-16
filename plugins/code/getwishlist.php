@@ -107,10 +107,10 @@ function getWishlist() {
             print '<div class="fixed playlistrow2 clickable infoclick plugclickable clickstream" name="'.$obj['SourceUri'].'" streamname="'.$obj['SourceName'].'" streamimg="'.$obj['SourceImage'].'">While Listening To : <b>'.$obj['SourceName'].'</b></div>';
         }
         print '</div>';
-        print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed"></i>';
+        print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed tooltip" title="'.get_int_text('label_searchtrack').'"></i>';
         print '<input type="hidden" value="'.$obj['title'].'" />';
         print '<input type="hidden" value="'.$obj['albumartist'].'" />';
-        print '<i class="icon-cancel-circled smallicon fixed clickicon clickremdb infoclick plugclickable"></i>';
+        print '<i class="icon-cancel-circled smallicon fixed clickicon clickremdb infoclick plugclickable tooltip" title="'.get_int_text('label_removefromwl').'"></i>';
         print '<input type="hidden" value="'.$obj['ttid'].'" />';
         print '</div>';
         print '</div>';

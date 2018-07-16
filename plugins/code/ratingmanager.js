@@ -27,7 +27,7 @@ var ratingManager = function() {
 		html += '<div class="expand filterinfo"></div>';
 		x.append(html);
 		if (sortby == "Tag") {
-			x.append('<i class="fixed icon-trash medicon infoclick plugclickable clickdeletetag"></i>');
+			x.append('<i class="fixed icon-trash medicon infoclick plugclickable clickdeletetag tooltip" title="'+language.gettext('lastfm_removetag')+'"></i>');
 		}
 		var b = $('<div>', {class: 'thebigholder fullwidth notthere', id: 'ratman_'+current_section, name: encodeURIComponent(section)}).appendTo(a);
 		current_section++;
@@ -36,6 +36,7 @@ var ratingManager = function() {
 				ondrop: ratingManager.dropped
 			});
 		}
+		x.find('.tooltip').tipTip({delay: 250, edgeOffset: 8});
 	}
 
 	function putTracksInSection(section, element) {
@@ -62,6 +63,7 @@ var ratingManager = function() {
 				dropper.removeClass('notthere');
 				infobar.markCurrentTrack();
 				updating_section = false;
+				dropper.find('.tooltip').tipTip({delay: 250, edgeOffset: 8});
 				checkSectionRefresh();
 			},
 			function() {
@@ -112,13 +114,13 @@ var ratingManager = function() {
 		if (data.AlbumArtist != data.Artistname) {
 			html += '<div class="fixed playlistrow2 artistname">'+data.Artistname+'</div>';
 		}
-		html += '<div class="fixed playlistrow2 trackrating"><i class="icon-'+data.Rating+'-stars rating-icon-small infoclick plugclickable clicksetrat"></i></div>';
+		html += '<div class="fixed playlistrow2 trackrating"><i class="icon-'+data.Rating+'-stars rating-icon-small infoclick plugclickable clicksetrat tooltip" title="'+language.gettext('label_clickrat')+'"></i></div>';
 		html += '<div class="carol fixed playlistrow2 tracktags">';
-		html += '<i class="fixed icon-plus infoclick plugclickable clickicon playlisticon clickaddtags"></i>';
+		html += '<i class="fixed icon-plus infoclick plugclickable clickicon playlisticon clickaddtags tooltip" title="'+language.gettext('label_clicktag')+'"></i>';
 		if (data.Tags && data.Tags != "No Tags") {
 			var tags = data.Tags.split(', ');
 			for (var i in tags) {
-				html += '<span class="tag">'+tags[i]+'<i class="icon-cancel-circled infoclick plugclickable clickicon tagremover playlisticon"></i></span> ';
+				html += '<span class="tag">'+tags[i]+'<i class="icon-cancel-circled infoclick plugclickable clickicon tagremover playlisticon tooltip" title="'+language.gettext('lastfm_removetag')+'"></i></span> ';
 			}
 		}
 		html += '</div>';

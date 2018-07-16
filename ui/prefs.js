@@ -231,8 +231,16 @@ var prefs = function() {
                 var n = $('<div>').appendTo('#cusbgname');
                 var c = $('<i>', {class: 'icon-cancel-circled clickicon collectionicon'}).appendTo(n);
                 var l = $('<span>', {class: 'bgimgname'}).appendTo(n);
-                var x = $('<input>', {class: 'bgimagefile', type: 'hidden', value: v}).appendTo(n);
-                l.html(v.replace(/.*(\\|\/)/, ''));
+                var z = $('<input>', {class: 'bgimagefile', type: 'hidden', value: v}).appendTo(n);
+                var nom = v.replace(/.*(\\|\/)/, '')+'&nbsp;'
+                if (x == 'landscape') {
+                    debug.trace('IMAGES',"Landscape Image",nom);
+                    nom += '&#x25AD;';
+                } else {
+                    debug.trace('IMAGES',"Portrait Image",nom);
+                    nom += '&#x25AF;';
+                }
+                l.html(nom);
                 c.bind('click', prefs.clearBgImage);
             });
         });

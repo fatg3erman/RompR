@@ -109,9 +109,9 @@ var playlist = function() {
             title.append('<div class="bumpad">'+self.artist+'</div><div class="bumpad">'+self.album+'</div>');
             
             var controls = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(inner)
-            controls.append('<div class="expand clickable clickicon clickremovealbum" name="'+self.index+'"><i class="icon-cancel-circled playlisticonr"></i></div>');
+            controls.append('<div class="expand clickable clickicon clickremovealbum" name="'+self.index+'"><i class="icon-cancel-circled playlisticonr tooltip" title="'+language.gettext('label_removefromplaylist')+'"></i></div>');
             if (tracks[0].metadata.album.uri && tracks[0].metadata.album.uri.substring(0,7) == "spotify") {
-                controls.append('<div class="fixed clickable clickicon clickaddwholealbum" name="'+self.index+'"><i class="icon-music playlisticonr"></i></div>');
+                controls.append('<div class="fixed clickable clickicon clickaddwholealbum" name="'+self.index+'"><i class="icon-music playlisticonr tooltip" title="'+language.gettext('label_addtocollection')+'"></i></div>');
             }
             
             var trackgroup = $('<div>', {class: 'trackgroup', name: self.index }).appendTo('#sortable');
@@ -153,7 +153,7 @@ var playlist = function() {
                 }
                 
                 trackDetails.append('<div class="tracktime tiny fixed">'+formatTimeString(tracks[trackpointer].duration)+'</div>');
-                trackOuter.append('<i class="icon-cancel-circled playlisticonr fixed clickable clickicon clickremovetrack" romprid="'+tracks[trackpointer].backendid+'"></i>');
+                trackOuter.append('<i class="icon-cancel-circled playlisticonr fixed clickable clickicon clickremovetrack tooltip" title="'+language.gettext('label_removefromplaylist')+'" romprid="'+tracks[trackpointer].backendid+'"></i>');
 
             }
         }
@@ -342,8 +342,8 @@ var playlist = function() {
             var title = $('<div>', {class: 'containerbox vertical expand'}).appendTo(albumDetails);
             title.append('<div class="bumpad">'+tracks[0].album+'</div>');
             var buttons = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(inner);
-            buttons.append('<div class="clickable clickicon clickremovealbum expand" name="'+self.index+'"><i class="icon-cancel-circled playlisticonr"></i></div>');
-            buttons.append('<div class="clickable clickicon clickaddfave fixed" name="'+self.index+'"><i class="icon-radio-tower playlisticonr"></i></div>');
+            buttons.append('<div class="clickable clickicon clickremovealbum expand" name="'+self.index+'"><i class="icon-cancel-circled playlisticonr tooltip" title="'+language.gettext('label_removefromplaylist')+'"></i></div>');
+            buttons.append('<div class="clickable clickicon clickaddfave fixed" name="'+self.index+'"><i class="icon-radio-tower playlisticonr tooltip" title="'+language.gettext('label_addtoradio')+'"></i></div>');
             
             var trackgroup = $('<div>', {class: 'trackgroup', name: self.index }).appendTo('#sortable');
             if (self.visible()) {
@@ -787,6 +787,8 @@ var playlist = function() {
             for (var i in tracklist) {
                 tracklist[i].presentYourself();
             }
+            
+            $('#sortable .tooltip').tipTip({delay: 250, edgeOffset: 8});
 
             if (finaltrack > -1) {
                 $("#pltracks").html((finaltrack+1).toString() +' '+language.gettext("label_tracks"));

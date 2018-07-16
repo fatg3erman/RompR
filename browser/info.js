@@ -89,22 +89,22 @@ var browser = function() {
             html += '<h2 class="expand">' + data.name + '</h2>';
         }
         html += '<div class="fixed alignmid">';
-        html += '<i class="icon-menu svg-square infoclick clickicon frog"></i>';
+        html += '<i class="icon-menu svg-square infoclick clickicon frog tooltip" title="'+language.gettext('label_hidepanel')+'"></i>';
         html += '</div>';
         if (data.help) {
-            html += '<div class="fixed alignmid"><a href="'+data.help+'" title="Help" target="_blank">'+
-                '<i class="icon-info-circled svg-square"></i></a></div>';
+            html += '<div class="fixed alignmid"><a href="'+data.help+'" target="_blank">'+
+                '<i class="icon-info-circled svg-square tooltip" title="'+language.gettext('label_gethelp')+'"></i></a></div>';
         }
         if (source) {
-            if (data.link === null) {
-                html += '<div class="fixed alignmid"><i class="'+sources[source].icon+' svg-square"></i></div>';
+            if (data.link) {
+                html += '<div class="fixed alignmid"><a href="'+data.link+'" target="_blank">'+
+                    '<i class="'+sources[source].icon+' svg-square tooltip" title="'+language.gettext("info_newtab")+'"></i></a></div>';
             } else {
-                html += '<div class="fixed alignmid"><a href="'+data.link+'" title="'+language.gettext("info_newtab")+'" target="_blank">'+
-                    '<i class="'+sources[source].icon+' svg-square"></i></a></div>';
+                html += '<div class="fixed alignmid"><i class="'+sources[source].icon+' svg-square"></i></div>';
             }
         }
         if (close) {
-            html += '<div class="fixed alignmid padright"><i class="icon-cancel-circled svg-square infoclick clickicon tadpole"></i></div>';
+            html += '<div class="fixed alignmid padright"><i class="icon-cancel-circled svg-square infoclick clickicon tadpole tooltip" title="'+language.gettext('label_closepanel')+'"></i></div>';
         }
         html += '</div>';
         html += '<div class="foldup" id="'+title+'foldup"';
@@ -307,7 +307,7 @@ var browser = function() {
                             $("#"+type+"information").show();
                         }
                         $("#"+type+"information").html(banner(data, (collection === null) ? type : collection.bannertitle(), panelclosed[type], source)+data.data);
-                        $("#"+type+"information").find("[title]").tipTip({delay:1000, edgeOffset: 8});
+                        $("#"+type+"information .tooltip").tipTip({delay:250, edgeOffset: 8});
                     } else {
                         $("#"+type+"information").html("");
                         if ($("#"+type+"information").is(':visible')) {

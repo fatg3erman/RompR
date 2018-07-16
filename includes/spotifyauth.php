@@ -12,7 +12,7 @@ function get_spotify_data($uri) {
 		));
 		if ($d->get_data_to_string()) {
 			$stuff = json_decode($d->get_data());
-			debuglog("Token is ".$stuff->{'access_token'}." expires in ".$stuff->{'expires_in'},"SPOTIFY");
+			debuglog("Token is ".$stuff->{'access_token'}." expires in ".$stuff->{'expires_in'},"SPOTIFY",9);
 			$prefs['spotify_token'] = $stuff->{'access_token'};
 			$prefs['spotify_token_expires'] = time() + $stuff->{'expires_in'};
 			savePrefs();

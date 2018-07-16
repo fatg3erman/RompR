@@ -663,7 +663,20 @@ $languages['en'] = array (
 	"label_thisweek" => "Added This Week",
 	"label_thismonth" => "Added This Month",
 	"label_thisyear" => "Added This Year",
-	
+	"label_deleteplaylist" => "Delete This Playlist",
+	"label_searchtrack" => "Search For This Track",
+	"label_removefromwl" => "Remove Track From Wishlist",
+	"label_clickrat" => "Click To Set Rating",
+	"label_clicktag" => "Click To Add Tags",
+	"label_gethelp" => "Click For Help",
+	"label_podcastcontrols" => "Podcast Search and Sort Controls",
+	"label_closepanel" => "Close this Panel",
+	"label_hidepanel" => "Hide This Panel",
+	"label_removefromplaylist" => "Remove From Playlist",
+	"label_addtolistenlater" => "Add To Albums To Listen To",
+	"label_removefromlistenlater" => "Remove From Albums To Listen To",
+	"label_addtocollection" => "Add Album To Music Collection",
+	"label_addtoradio" => "Add To Your Radio Stations"
 );
 
 ?>

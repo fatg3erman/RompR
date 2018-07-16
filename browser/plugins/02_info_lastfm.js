@@ -70,7 +70,7 @@ var info_lastfm = function() {
         html += '<td><i class="icon-cancel-circled playlisticon infoclick clickremovetag" title="'+language.gettext("lastfm_removetag")+'"></i></td>';
         $('table[name="'+table+'tagtable"]').append(html);
         $(".newtag").fadeIn('fast', function(){
-            $(this).find('[title]').tipTip({delay: 1000, edgeOffset: 8});
+            $(this).find('[title]').tipTip({delay: 250, edgeOffset: 8});
             $(this).removeClass('newtag');
         });
     }
@@ -170,7 +170,7 @@ var info_lastfm = function() {
                     html += '<tr><td>';
                     if (tracks[i]['@attr']) { html += tracks[i]['@attr'].rank+':'; }
                     html += '</td><td>'+tracks[i].name+'</td><td>'+formatTimeString(tracks[i].duration)+'</td>';
-                    html += '<td align="right"><a target="_blank" title="'+language.gettext("lastfm_viewtrack")+'" href="'+tracks[i].url+'"><i class="icon-lastfm-1 smallicon"></i></a></td><td align="right">';
+                    html += '<td align="right"><a target="_blank" href="'+tracks[i].url+'"><i class="icon-lastfm-1 smallicon tooltip" title="'+language.gettext("lastfm_viewtrack")+'"></i></a></td><td align="right">';
                     html += '</td></tr>';
                 }
             }
@@ -314,7 +314,7 @@ var info_lastfm = function() {
                     $('#lastfm').removeClass('notloved').addClass('notloved');
                 }
                 $('li[name="userloved"]').html(html);
-                $('li[name="userloved"]').find("[title]").tipTip({delay: 1000, edgeOffset: 8});
+                $('li[name="userloved"]').find("[title]").tipTip({delay: 250, edgeOffset: 8});
                 html = null;
             }
 

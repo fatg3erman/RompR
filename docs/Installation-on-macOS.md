@@ -123,6 +123,11 @@ This will open nano again. It may bring up an empty file, or it may bring up a f
 	        Header Set Cache-Control "no-cache, must-revalidate"
 	    </Directory>
 
+        <Directory /Users/YOURNAME/Sites/rompr/albumart/medium>
+	        Header Set Cache-Control "max-age=0, no-store"
+	        Header Set Cache-Control "no-cache, must-revalidate"
+	    </Directory>
+
 	    <Directory /Users/YOURNAME/Sites/rompr/albumart/asdownloaded>
 	        Header Set Cache-Control "max-age=0, no-store"
 	        Header Set Cache-Control "no-cache, must-revalidate"

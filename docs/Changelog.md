@@ -13,6 +13,8 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Orange and Cyan icon themes for better contrast against custom background images
 * Added 'Albums To Listen To' feature, to keep a record of Spotify albums you've seen but haven't had time to listen to
 * Added options to only display Collection tracks that were added within a specific time period, after I added something good to mine and then forgot what it was called :)
+* Added more tooltips as the number of control butons spirals upwards
+* The Discoverator now populates much more quickly
 
 ## Version 1.19
 

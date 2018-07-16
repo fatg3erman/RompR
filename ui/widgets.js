@@ -873,12 +873,12 @@ $.widget('rompr.spotifyAlbumThing', {
             appendto.append(html);
             var con = $('<div>', {class: 'tagh albumthing clearfix'}).appendTo(appendto);
             if (self.options.showlistenlater) {
-                con.append('<i class="tleft icon-headphones smallicon infoclick'+clickclass+' clickaddtolistenlater clickspotifywidget" name="'+i+'"></i>');
+                con.append('<i class="tleft icon-headphones smallicon infoclick'+clickclass+' clickaddtolistenlater clickspotifywidget tooltip" title="'+language.gettext('label_addtolistenlater')+'" name="'+i+'"></i>');
             } else if (self.options.showremovebutton) {
-                con.append('<i class="tleft icon-cancel-circled smallicon infoclick'+clickclass+' clickremovealbum clickspotifywidget" name="'+a.rompr_index+'"></i>');
+                con.append('<i class="tleft icon-cancel-circled smallicon infoclick'+clickclass+' clickremovealbum clickspotifywidget tooltip" title="'+language.gettext('label_removefromlistenlater')+'" name="'+a.rompr_index+'"></i>');
             }
             if (player.canPlay('spotify')) {
-                con.append('<i class="tright icon-music smallicon infoclick'+clickclass+' clickaddtocollection clickspotifywidget" name="'+i+'"></i>');
+                con.append('<i class="tright icon-music smallicon infoclick'+clickclass+' clickaddtocollection clickspotifywidget tooltip" title="'+language.gettext('label_addtocollection')+'" name="'+i+'"></i>');
             }
             y.append('<div class="tagh albumthing invisible" id="'+a.id+'"></div>');
             if (this.options.showbiogs) {
@@ -886,6 +886,7 @@ $.widget('rompr.spotifyAlbumThing', {
                 x.append('<span class="minwidthed" id="'+self.options.id+'bio_'+a.id+'"></span>');
             }
         }
+        this.element.find('.tooltip').tipTip({delay: 250, edgeOffset: 8});
         this.element.imagesLoaded(function() {
             if (self.options.itemselector !== null) {
                 browser.rePoint(self.element, {

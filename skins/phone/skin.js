@@ -683,7 +683,7 @@ var layoutProcessor = function() {
                 $('.menuitem[name="podcast_'+index+'"]').remove();
                 $('#podcast_'+index).remove();
                 $("#fruitbat").html(data);
-                $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+                $("#fruitbat .fridge").tipTip({delay: 250, edgeOffset: 8});
                 infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
                 podcasts.doNewCount();
                 layoutProcessor.postAlbumActions();

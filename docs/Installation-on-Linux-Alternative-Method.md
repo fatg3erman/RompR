@@ -124,6 +124,12 @@ So, create this file, note I've assumed the default apache root directory of /va
         Header set Expires 0
     </Directory>
 
+    <Directory /var/www/html/rompr/albumart/medium>
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires 0
+    </Directory>
+
     <Directory /var/www/html/rompr/albumart/asdownloaded>
         Header set Cache-Control "no-cache, no-store, must-revalidate"
         Header set Pragma "no-cache"

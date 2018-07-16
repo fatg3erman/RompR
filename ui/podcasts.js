@@ -171,7 +171,7 @@ var podcasts = function() {
 			target.html(html);
 		}
 		$('i[name="podcast_'+channel+'"]').stopSpinner();
-		target.find('.fridge').tipTip({edgeOffset: 8});
+		target.find('.fridge').tipTip({delay: 250, edgeOffset: 8});
 		target.find('.clearbox').click(makeSearchWork).hover(makeHoverWork).mousemove(makeHoverWork).keyup(onKeyUp);
 		target.find('input.resumepos').each(function() {
 			var pos = parseInt($(this).val());
@@ -211,7 +211,7 @@ var podcasts = function() {
 						callback(true);
 					} else {
 			            $("#fruitbat").html(data);
-			            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+			            $("#fruitbat .fridge").tipTip({delay: 250, edgeOffset: 8});
 			            infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
 			            podcasts.doNewCount();
 						$('#spinner_cocksausage').remove();
@@ -238,7 +238,7 @@ var podcasts = function() {
 		        data: {populate: 1 },
 		        success: function(data) {
 		            $("#fruitbat").html(data);
-		            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+		            $("#fruitbat .fridge").tipTip({delay: 250, edgeOffset: 8});
 		            podcasts.doNewCount();
 					layoutProcessor.postAlbumActions($('#fruitbat'));
 		        },
@@ -391,7 +391,7 @@ var podcasts = function() {
 		        data: {remove: name, populate: 1 },
 		        success: function(data) {
 		            $("#fruitbat").html(data);
-		            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+		            $("#fruitbat .fridge").tipTip({delay: 250, edgeOffset: 8});
 		            podcasts.doNewCount();
 					layoutProcessor.postAlbumActions();
 		        },
@@ -419,7 +419,7 @@ var podcasts = function() {
 		        success: function(data) {
 		            $("#podcast_search").html(data);
 		            $('#podcast_search').prepend('<div class="menuitem containerbox padright brick_wide sensiblebox"><div class="configtitle textcentre expand"><b>Search Results for &quot;'+term+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch fixed"></i></div>');
-		            $("#podcast_search").find('.fridge').tipTip({edgeOffset: 8});
+		            $("#podcast_search .fridge").tipTip({delay: 250, edgeOffset: 8});
 					$('#spinner_cocksausage').remove();
 					layoutProcessor.postAlbumActions($('#podcast_search'));
 		        },
