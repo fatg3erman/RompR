@@ -972,6 +972,10 @@ div.topdropmenu div {
 	opacity: 1 !important;
 }
 
+div.topdropmenu div.notenabled {
+	opacity: 0.2 !important;
+}
+
 div.topdropmenu.albumbitsmenu {
     top: 12px;
 }

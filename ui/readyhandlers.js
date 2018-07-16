@@ -1,5 +1,6 @@
 $(document).ready(function(){
     debug.log("INIT","Document Ready Event has fired");
+    get_geo_country();
     if (prefs.usertheme) {
         prefs.setTheme(prefs.usertheme);
     } else {
@@ -10,23 +11,10 @@ $(document).ready(function(){
     }
     infobar.createProgressBar();
     pluginManager.doEarlyInit();
-    var helplinks = {};
-    helplinks[language.gettext('button_local_music')] = 'https://fatg3erman.github.io/RompR/Music-Collection';
-    helplinks[language.gettext('label_searchfor')] = 'https://fatg3erman.github.io/RompR/Searching-For-Music';
-    helplinks[language.gettext('button_internet_radio')] = 'https://fatg3erman.github.io/RompR/Internet-Radio';
-    helplinks[language.gettext('label_podcasts')] = 'https://fatg3erman.github.io/RompR/Podcasts';
-    helplinks[language.gettext('label_pluginplaylists')] = 'https://fatg3erman.github.io/RompR/Personalised-Radio';
-    helplinks[language.gettext('label_lastfm')] = 'https://fatg3erman.github.io/RompR/LastFM';
-    helplinks[language.gettext('config_players')] = 'https://fatg3erman.github.io/RompR/Using-Multiple-Players';
-    for (var i in helplinks) {
-        debug.log("HELPLINKS","Appending Help Link For",i);
-        $('b:contains("'+i+'")').parent('.configtitle').not('.nohelp').append('<a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticonr tright tooltip" title="'+language.gettext('label_gethelp')+'"></i></a>');
-    }
+    createHelpLinks();
     player.controller.initialise();
     layoutProcessor.initialise();
     checkServerTimeOffset();
-    setTimeout(cleanBackendCache, 5000);
-    get_geo_country();
     $('.combobox').makeTagMenu({textboxextraclass: 'searchterm', textboxname: 'tag', labelhtml: '<div class="fixed searchlabel nohide"><b>'+language.gettext("label_tag")+'</b></div>', populatefunction: tagAdder.populateTagMenu});
     $('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add});
     browser.createButtons();
@@ -67,11 +55,6 @@ $(document).ready(function(){
     pluginManager.setupPlugins();
     setAvailableSearchOptions();
     layoutProcessor.adjustLayout();
-    if (prefs.auto_discovembobulate) {
-        setTimeout(function() {
-            pluginManager.autoOpen(language.gettext('button_infoyou'));
-        }, 1000);
-    }
     // Some debugging info, saved to the backend so we can see it
     prefs.save({test_width: $(window).width(), test_height: $(window).height()});
     coverscraper = new coverScraper(0, false, false, prefs.downloadart);
@@ -80,6 +63,12 @@ $(document).ready(function(){
     layoutProcessor.sourceControl(prefs.chooser);
     if (prefs.browser_id == null) {
         prefs.save({browser_id: Date.now()});
+    }
+    setTimeout(cleanBackendCache, 5000);
+    if (prefs.auto_discovembobulate) {
+        setTimeout(function() {
+            pluginManager.autoOpen(language.gettext('button_infoyou'));
+        }, 1000);
     }
 });
 
@@ -116,11 +105,26 @@ function get_geo_country() {
         $.getJSON("utils/getgeoip.php", function(result) {
             debug.shout("GET COUNTRY", 'Country:',result.country,'Code:',result.countryCode);
             if (result.country != 'ERROR') {
-                $("#lastfm_country_codeselector").val(result.country_code);
+                $("#lastfm_country_codeselector").val(result.countryCode);
                 prefs.save({lastfm_country_code: result.countryCode});
             } else {
                 debug.error("GET COUNTRY","Country code error",result);
             }
         });
+    }
+}
+
+function createHelpLinks() {
+    var helplinks = {};
+    helplinks[language.gettext('button_local_music')] = 'https://fatg3erman.github.io/RompR/Music-Collection';
+    helplinks[language.gettext('label_searchfor')] = 'https://fatg3erman.github.io/RompR/Searching-For-Music';
+    helplinks[language.gettext('button_internet_radio')] = 'https://fatg3erman.github.io/RompR/Internet-Radio';
+    helplinks[language.gettext('label_podcasts')] = 'https://fatg3erman.github.io/RompR/Podcasts';
+    helplinks[language.gettext('label_pluginplaylists')] = 'https://fatg3erman.github.io/RompR/Personalised-Radio';
+    helplinks[language.gettext('label_lastfm')] = 'https://fatg3erman.github.io/RompR/LastFM';
+    helplinks[language.gettext('config_players')] = 'https://fatg3erman.github.io/RompR/Using-Multiple-Players';
+    for (var i in helplinks) {
+        debug.log("HELPLINKS","Appending Help Link For",i);
+        $('b:contains("'+i+'")').parent('.configtitle').not('.nohelp').append('<a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticonr tright tooltip" title="'+language.gettext('label_gethelp')+'"></i></a>');
     }
 }

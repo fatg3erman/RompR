@@ -36,7 +36,7 @@ var ratingManager = function() {
 				ondrop: ratingManager.dropped
 			});
 		}
-		x.find('.tooltip').tipTip({delay: 250, edgeOffset: 8});
+		x.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
 	}
 
 	function putTracksInSection(section, element) {
@@ -63,7 +63,7 @@ var ratingManager = function() {
 				dropper.removeClass('notthere');
 				infobar.markCurrentTrack();
 				updating_section = false;
-				dropper.find('.tooltip').tipTip({delay: 250, edgeOffset: 8});
+				dropper.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
 				checkSectionRefresh();
 			},
 			function() {

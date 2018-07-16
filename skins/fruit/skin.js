@@ -123,7 +123,7 @@ var layoutProcessor = function() {
 
         setupInfoButtons: function() {
             $("#button_source"+prefs.infosource).addClass("currentbun");
-            $("#chooserbuttons .topimg").tipTip({delay: 250, edgeOffset: 8});
+            $("#chooserbuttons .topimg").tipTip({delay: 500, edgeOffset: 8});
         },
 
         goToBrowserPanel: function(panel) {
@@ -513,7 +513,7 @@ var layoutProcessor = function() {
             $('.clear_playlist').click(playlist.clear);
             $("#playlistname").parent().next('button').click(player.controller.savePlaylist);
 
-            $(".lettuce,.tooltip").tipTip({delay: 250, edgeOffset: 8});
+            $(".lettuce,.tooltip").tipTip({delay: 500, edgeOffset: 8});
 
             document.body.addEventListener('drop', function(e) {
                 e.preventDefault();

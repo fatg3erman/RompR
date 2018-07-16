@@ -147,7 +147,7 @@ var playlistManager = function() {
 	            browser.rePoint($("#playmunger"), {itemSelector: '.tagholder', percentPosition: true });
 	            infobar.markCurrentTrack();
 	            pmg.imagesLoaded(browser.rePoint);
-				pmg.find('.tooltip').tipTip({delay: 250, edgeOffset: 8});
+				pmg.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
             });
 		},
 

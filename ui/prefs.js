@@ -234,10 +234,10 @@ var prefs = function() {
                 var z = $('<input>', {class: 'bgimagefile', type: 'hidden', value: v}).appendTo(n);
                 var nom = v.replace(/.*(\\|\/)/, '')+'&nbsp;'
                 if (x == 'landscape') {
-                    debug.trace('IMAGES',"Landscape Image",nom);
+                    debug.debug('IMAGES',"Landscape Image",nom);
                     nom += '&#x25AD;';
                 } else {
-                    debug.trace('IMAGES',"Portrait Image",nom);
+                    debug.debug('IMAGES',"Portrait Image",nom);
                     nom += '&#x25AF;';
                 }
                 l.html(nom);
@@ -301,7 +301,7 @@ var prefs = function() {
             $('input.bgimagefile[value="'+backgroundImages.portrait[bgp.portrait]+'"]').prev().addClass('selected');
         }
         if (backgroundImages.portrait.length > 1 || backgroundImages.landscape.length > 1) {
-            debug.trace("PREFS","Setting Slideshow Timeout For",timeout/1000,"seconds");
+            debug.debug("PREFS","Setting Slideshow Timeout For",timeout/1000,"seconds");
             backgroundTimer = setTimeout(updateCustomBackground, timeout);
         }
     }
@@ -365,16 +365,16 @@ var prefs = function() {
                     setCookie(i, val, 3650);
                 }
                 if (prefsInLocalStorage.indexOf(i) > -1) {
-                    debug.log("PREFS", "Setting",i,"to",options[i],"in local storage");
+                    debug.trace("PREFS", "Setting",i,"to",options[i],"in local storage");
                     localStorage.setItem("prefs."+i, JSON.stringify(options[i]));
                 } else {
-                    debug.log("PREFS", "Setting",i,"to",options[i],"on backend");
+                    debug.trace("PREFS", "Setting",i,"to",options[i],"on backend");
                     prefsToSave[i] = options[i];
                     postSave = true;
                 }
             }
             if (postSave) {
-                debug.log("PREFS",JSON.stringify(prefsToSave),prefsToSave);
+                debug.trace("PREFS",JSON.stringify(prefsToSave),prefsToSave);
                 $.post('saveprefs.php', {prefs: JSON.stringify(prefsToSave)}, function() {
                     if (callback) {
                         callback();

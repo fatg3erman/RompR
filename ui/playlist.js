@@ -788,7 +788,7 @@ var playlist = function() {
                 tracklist[i].presentYourself();
             }
             
-            $('#sortable .tooltip').tipTip({delay: 250, edgeOffset: 8});
+            $('#sortable .tooltip').tipTip({delay: 500, edgeOffset: 8});
 
             if (finaltrack > -1) {
                 $("#pltracks").html((finaltrack+1).toString() +' '+language.gettext("label_tracks"));

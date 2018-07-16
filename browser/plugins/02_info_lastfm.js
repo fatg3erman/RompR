@@ -70,7 +70,7 @@ var info_lastfm = function() {
         html += '<td><i class="icon-cancel-circled playlisticon infoclick clickremovetag" title="'+language.gettext("lastfm_removetag")+'"></i></td>';
         $('table[name="'+table+'tagtable"]').append(html);
         $(".newtag").fadeIn('fast', function(){
-            $(this).find('[title]').tipTip({delay: 250, edgeOffset: 8});
+            $(this).find('[title]').tipTip({delay: 500, edgeOffset: 8});
             $(this).removeClass('newtag');
         });
     }
@@ -314,7 +314,7 @@ var info_lastfm = function() {
                     $('#lastfm').removeClass('notloved').addClass('notloved');
                 }
                 $('li[name="userloved"]').html(html);
-                $('li[name="userloved"]').find("[title]").tipTip({delay: 250, edgeOffset: 8});
+                $('li[name="userloved"]').find("[title]").tipTip({delay: 500, edgeOffset: 8});
                 html = null;
             }
 

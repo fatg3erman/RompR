@@ -809,7 +809,7 @@ $.widget('rompr.spotifyAlbumThing', {
         this.element.append('<div class="sizer"></div>');
         for (var i in this.options.data) {
             var a = this.options.data[i];
-            debug.log("SPOTIALBUM","Index is",i,"data is",a);
+            debug.debug("SPOTIALBUM","Index is",i,"data is",a);
             if (this.options.sub && a.hasOwnProperty(this.options.sub)) {
                 if (a.rompr_index) {
                     var b = a.rompr_index;
@@ -825,7 +825,7 @@ $.widget('rompr.spotifyAlbumThing', {
             var x = $('<div>', {class: this.options.classes+' clearfix albumwidget'}).appendTo(this.element);
             var img = '';
             if (a.images && a.images[0]) {
-                debug.log("SPOTIALBUM","Images",a.images);
+                debug.debug("SPOTIALBUM","Images",a.images);
                 img = 'getRemoteImage.php?url='+a.images[0].url
                 for (var j in a.images) {
                     if (a.images[j].width <= this.options.maxwidth) {
@@ -886,7 +886,7 @@ $.widget('rompr.spotifyAlbumThing', {
                 x.append('<span class="minwidthed" id="'+self.options.id+'bio_'+a.id+'"></span>');
             }
         }
-        this.element.find('.tooltip').tipTip({delay: 250, edgeOffset: 8});
+        this.element.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
         this.element.imagesLoaded(function() {
             if (self.options.itemselector !== null) {
                 browser.rePoint(self.element, {

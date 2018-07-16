@@ -226,7 +226,7 @@ div.topdropmenu
 
 .configtitle
 {
-    background-color:rgba(0,0,0,1);
+    background-color:rgba(200,0,0,0.2);
 }
 
 body.mobile .configtitle
