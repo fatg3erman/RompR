@@ -214,7 +214,7 @@ function LastFM(user) {
                         req = queue.shift();
                         debug.log("LASTFM", req.options.method,"request success");
                         if (data.error) {
-                            debug.warn("LASTFM","Last FM signed request failed with status",data.error.message);
+                            debug.blurt("LASTFM","Last FM signed request failed with status",data.error.message);
                             req.fail(data);
                         } else {
                             req.success(data);
@@ -234,7 +234,7 @@ function LastFM(user) {
                                 case 10:
                                 case 14:
                                 case 26:
-                                    debug.error("LASTFM","We are not autheticated. Logging Out");
+                                    debug.error("LASTFM","We are not authenticated. Logging Out");
                                     logout();
                                     req.fail(null);
                                     break;
@@ -291,6 +291,10 @@ function LastFM(user) {
                         }
                     },
                     error: function(xhr,status,err) {
+                        // NOTE. In the current implementation, we will NEVER get here, since getlfmdata
+                        // returns errors with a 200 status code and a JSON object containing an error message
+                        // We might want to look at that, but it will affect every single other plugin and have
+                        // possibly far-reaching consequences
                         throttle = setTimeout(lastfm.getRequest, throttleTime);
                         req = queue.shift();
                         debug.warn("LASTFM", "Get Request Failed",xhr.status,status,err);
