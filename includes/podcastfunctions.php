@@ -445,7 +445,7 @@ function refreshPodcast($podid) {
     }
     download_image($podcast['Image'], $podid, $podetails->Title);
     foreach ($podcast['tracks'] as $track) {
-        $trackid = sql_prepare_query(false, null, 'PODTrackindex' , null, "SELECT PODTrackindex FROM PodcastTracktable WHERE Title=? AND PODindex = ?", $track['Title'], $podid);
+        $trackid = sql_prepare_query(false, null, 'PODTrackindex' , null, "SELECT PODTrackindex FROM PodcastTracktable WHERE Guid=? AND PODindex = ?", $track['GUID'], $podid);
         if ($trackid !== null) {
             debuglog("  Found existing track ".$track['Title'],"PODCASTS");
             sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET JustUpdated=?, Duration=?, Link=? WHERE PODTrackindex=?",1,$track['Duration'], $track['Link'], $trackid);
