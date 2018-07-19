@@ -458,8 +458,20 @@ var imageEditor = function() {
                         if (data == null) {
                             imageEditor.showError("No Response!");
                         } else {
-                            var e = JSON.parse(data.responseText);
-                            imageEditor.showError(JSON.parse(e.error.message));
+                            var e = data.responseJSON;
+                            if (e.error) {
+                                if (typeof (e.error) == 'object') {
+                                    var t = '';
+                                    for (var i in e.error.errors) {
+                                        t += e.error.errors[i].message+' - '+e.error.errors[i].reason+'<br/>';
+                                    }
+                                    imageEditor.showError(t)
+                                } else {
+                                    imageEditor.showError(e.error)
+                                }
+                            } else {
+                                imageEditor.showError("No Response!");
+                            }
                         }
                     }
                 });
@@ -526,6 +538,7 @@ var imageEditor = function() {
         },
 
         showError: function(message) {
+            debug.log("IMAGEEDITOR","Error - ",message);
             $("#morebutton").remove();
             $("#searchresults").append('<h3>'+language.gettext("albumart_googleproblem")+' "'+message+'"</h3>');
         },

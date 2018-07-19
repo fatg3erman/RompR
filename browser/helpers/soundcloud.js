@@ -15,8 +15,9 @@ var soundcloud = function() {
 				url: 'browser/backends/getscdata.php',
 				data: {url: 'tracks/'+tracknum+'.json'},
 				success: callback,
-				error: function(data) { debug.warn("SOUNDCLOUD","SoundCloud Error",data);
-										callback(data);
+				error: function(xhr,status,err) {
+					debug.warn("SOUNDCLOUD","SoundCloud Error",xhr);
+					callback(xhr.responseJSON);
 				}
 			});
 		},
@@ -29,8 +30,9 @@ var soundcloud = function() {
 				url: 'browser/backends/getscdata.php',
 				data: {url: 'users/'+userid+'.json'},
 				success: callback,
-				error: function(data) { debug.warn("SOUNDCLOUD","SoundCloud Error",data);
-										callback(data);
+				error: function(xhr,status,err) {
+					debug.warn("SOUNDCLOUD","SoundCloud Error",xhr);
+					callback(xhr.responseJSON);
 				}
 			});
 		}

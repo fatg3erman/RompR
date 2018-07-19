@@ -19,7 +19,6 @@ var wikipedia = function() {
 		    $.ajax({
 		        type: "GET",
 		        url: url,
-		        contentType: "text/xml; charset=utf-8",
 		        dataType: "xml",
 		        success: successCallback,
 		        error: failCallback
@@ -35,7 +34,6 @@ var wikipedia = function() {
 		    $.ajax({
 		        type: "GET",
 		        url: url,
-		        contentType: "text/xml; charset=utf-8",
 		        dataType: "xml",
 				success: successCallback,
 		        error: failCallback
@@ -69,7 +67,6 @@ var wikipedia = function() {
 		    $.ajax({
 		        type: "GET",
 		        url: url,
-		        contentType: "text/xml; charset=utf-8",
 		        dataType: "xml",
 				success: successCallback,
 		        error: failCallback,

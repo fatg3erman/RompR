@@ -272,36 +272,33 @@ function LastFM(user) {
                             throttle = setTimeout(lastfm.getRequest, throttleTime);
                         }
                         req = queue.shift();
-                        if (data === null) {
-                            data = {error: language.gettext("lastfm_error")};
-                        }
-                        if (data.error) {
-                            if (req.reqid || req.reqid === 0) {
-                                req.fail(data, req.reqid);
-                            } else {
-                                req.fail(data);
-                            }
+                        debug.debug("LASTFM","Calling success callback");
+                        if (req.reqid || req.reqid === 0) {
+                            req.success(data, req.reqid);
                         } else {
-                            debug.debug("LASTFM","Calling success callback");
-                            if (req.reqid || req.reqid === 0) {
-                                req.success(data, req.reqid);
-                            } else {
-                                req.success(data);
-                            }
+                            req.success(data);
                         }
                     },
                     error: function(xhr,status,err) {
-                        // NOTE. In the current implementation, we will NEVER get here, since getlfmdata
-                        // returns errors with a 200 status code and a JSON object containing an error message
-                        // We might want to look at that, but it will affect every single other plugin and have
-                        // possibly far-reaching consequences
                         throttle = setTimeout(lastfm.getRequest, throttleTime);
                         req = queue.shift();
-                        debug.warn("LASTFM", "Get Request Failed",xhr.status,status,err);
+                        debug.warn("LASTFM", "Get Request Failed",xhr,status,err);
+                        var errormessage = language.gettext('lastfm_error');
+                        if (xhr.responseJSON) {
+                            var errorcode = xhr.responseJSON.error;
+                            var errortext = xhr.responseJSON.message;
+                            errormessage += '<br />'+errortext;
+                            if (errorcode == 29) {
+                                debug.warn("LASTFM","Rate Limit Exceeded. Slowing Down");
+                                self.setThrottling(throttleTime*2);
+                            }
+                        } else {
+                            errormessage += ' ('+xhr.status+' '+err+')';
+                        }
                         if (req.reqid || req.reqid === 0) {
                             req.fail(null, req.reqid);
                         } else {
-                            req.fail();
+                            req.fail({error: 1, message: errormessage});
                         }
                     }
                 });
@@ -405,7 +402,7 @@ function LastFM(user) {
                 options,
                 true,
                 callback,
-                function(data) { failcallback({ error: 1, message: language.gettext("label_notrackinfo")}) },
+                failcallback,
                 reqid
             );
         },
@@ -493,8 +490,7 @@ function LastFM(user) {
                 options,
                 true,
                 callback,
-                function() { failcallback({ error: 1,
-                                            message: language.gettext("label_noalbuminfo")}); }
+                failcallback
             );
         },
 
@@ -545,7 +541,7 @@ function LastFM(user) {
                 options,
                 true,
                 callback,
-                function() { failcallback({error: 1, message: language.gettext("label_noartistinfo")}); },
+                failcallback,
                 reqid
             );
         },
