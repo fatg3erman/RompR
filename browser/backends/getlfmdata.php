@@ -6,6 +6,6 @@ include ("international.php");
 
 $uri = rawurldecode($_REQUEST['uri']);
 $use_cache = $_REQUEST['use_cache'] == 'true' ? true : false;
-getCacheData($uri, 'lastfm', false, $use_cache);
+getCacheData($uri, 'lastfm', $use_cache);
 
 ?>

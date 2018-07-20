@@ -53,11 +53,11 @@ var musicbrainz = function() {
 		                    req.success(data);
 		                }
 		            },
-	                error: function(data) {
+	                error: function(xhr,status,err) {
 	                	throttle = setTimeout(musicbrainz.getrequest, 1500);
 	                	req = queue.shift();
-	                	debug.warn("MUSICBRAINZ","Request failed",req,data);
-	                	data = {error: language.gettext("musicbrainz_noinfo")}
+	                	debug.warn("MUSICBRAINZ","Request failed",req,xhr);
+	                	data = {error: language.gettext("musicbrainz_noinfo") + ' ('+xhr.status+' '+err+')'};
 	                	if (req.reqid != '') {
 	                		data.id = req.reqid;
 	                	}

@@ -3,9 +3,10 @@ var info_wikipedia = function() {
 	var me = "wikipedia";
 
 	function formatWiki(xml) {
-		var xml_node = $('api',xml);
+		var xml_node = $(xml);
        	var html = xml_node.find('parse > text').text();
        	var domain = xml_node.find('rompr > domain').text();
+		
        	var jq = $('<div>'+html+'</div>');
 
 		// Remove unwanted edit links

@@ -251,7 +251,6 @@ var info_discogs = function() {
 				self.track.populate();
             }
 
-
 			this.displayData = function() {
 				displaying = true;
 				self.artist.doBrowserUpdate();

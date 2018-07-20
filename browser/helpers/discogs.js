@@ -59,11 +59,11 @@ var discogs = function() {
 		                    req.success(data);
 		                }
 		            },
-	                error: function(data) {
+					error: function(xhr,status,err) {
 	                	throttle = setTimeout(discogs.getrequest, 1500);
 	                	req = queue.shift();
-	                	debug.warn("DISCOGS","Request failed",req,data);
-	                	data = {error: language.gettext("discogs_error")}
+	                	debug.warn("DISCOGS","Request failed",req,xhr);
+						data = {error: language.gettext("discogs_error") + ' ('+xhr.status+' '+err+')'};
 	                	if (req.reqid != '') {
 	                		data.id = req.reqid;
 	                	}
