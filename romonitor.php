@@ -8,7 +8,7 @@ include ("player/mpd/connection.php");
 include ("backends/sql/backend.php");
 include ("backends/sql/metadatafunctions.php");
 include ('includes/podcastfunctions.php');
-include ('utils/imagefunctions.php');
+require_once ('utils/imagefunctions.php');
 close_database();
 $trackbytrack = false;
 $current_id = -1;
