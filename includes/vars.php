@@ -252,11 +252,7 @@ if (!array_key_exists('currenthost', $_COOKIE)) {
     setcookie('currenthost',$prefs['currenthost'],time()+365*24*60*60*10,'/');
 }
 
-$cockspanner = $prefs['currenthost'];
-$prefs['mpd_host'] = $prefs['multihosts']->$cockspanner->host;
-$prefs['mpd_port'] = $prefs['multihosts']->$cockspanner->port;
-$prefs['mpd_password'] = $prefs['multihosts']->$cockspanner->password;
-$prefs['unix_socket'] = $prefs['multihosts']->$cockspanner->socket;
+set_player_connect_params();
 
 // NOTE. skin is NOT saved as a preference on the backend. It is set as a Cookie only.
 // This is because saving it once as a preference would change the default for ALL new devices
@@ -399,6 +395,15 @@ class debug_logger {
 function debuglog($text, $module = "JOHN WAYNE", $level = 7) {
     global $logger;
     $logger->log($text, $module, $level);
+}
+
+function set_player_connect_params() {
+	global $prefs;
+	$cockspanner = $prefs['currenthost'];
+	$prefs['mpd_host'] = $prefs['multihosts']->$cockspanner->host;
+	$prefs['mpd_port'] = $prefs['multihosts']->$cockspanner->port;
+	$prefs['mpd_password'] = $prefs['multihosts']->$cockspanner->password;
+	$prefs['unix_socket'] = $prefs['multihosts']->$cockspanner->socket;
 }
 
 ?>

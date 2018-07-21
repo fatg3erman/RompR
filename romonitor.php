@@ -1,7 +1,17 @@
 <?php
 include ("includes/vars.php");
-$skin = 'desktop';
 include ("includes/functions.php");
+$skin = 'desktop';
+$opts = getopt('', ['currenthost:', 'player_backend:']);
+if (is_array($opts)) {
+        foreach($opts as $key => $value) {
+	debuglog($key.' = '.$value,'ROMONITOR');
+        $prefs[$key] = $value;
+    }
+}
+set_player_connect_params();
+debuglog("Using Player ".$prefs['currenthost'].' of type '.$prefs['player_backend'],"ROMONITOR");
+
 include ("international.php");
 include ("collection/collection.php");
 include ("player/mpd/connection.php");
@@ -16,16 +26,6 @@ $current_song = array();
 $playcount_updated = false;
 $returninfo = array();
 $dummydata = array('dummy' => 'baby');
-
-$opts = getopt('', ['currenthost:', 'player_backend:']);
-if (is_array($opts)) {
-	foreach($opts as $key => $value) {
-        debuglog($key.' = '.$value,"ROMONITOR");
-        $prefs[$key] = $value;
-    }
-}
-
-debuglog("Using Player ".$prefs['currenthost'].' of type '.$prefs['player_backend'],"ROMONITOR");
 
 while (true) {
 
