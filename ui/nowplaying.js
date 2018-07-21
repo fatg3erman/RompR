@@ -352,14 +352,10 @@ var nowplaying = function() {
         		var rating = evt;
         		var index = findCurrentTrack();
         	} else {
-                var position = getPosition(evt);
-                var elem = $(evt.target);
-                var width = elem.width();
-                var offset = elem.offset();
-                var rating = Math.ceil(((position.x - offset.left - 6)/width) * 5);
+				var elem = $(evt.target);
+				var rating = ratingCalc(elem, evt);
                 var index = elem.next().val();
                 if (index == -1) index = findCurrentTrack();
-	            // The image will get updated anyway, but this makes it more responsive
 	            displayRating(evt.target, rating);
             }
 			if (index > 0) {

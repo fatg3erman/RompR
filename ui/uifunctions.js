@@ -791,3 +791,14 @@ function setWindowTitle(t) {
         document.title = t;
     }
 }
+
+function ratingCalc(element, event) {
+    var position = getPosition(event);
+    var width = element.width();
+    var starsleft = element.offset().left;
+    var rating = Math.ceil(((position.x - starsleft - 6)/width)*5);
+    if (element.hasClass('icon-'+rating+'-stars')) {
+        rating = 0;
+    }
+    return rating;
+}

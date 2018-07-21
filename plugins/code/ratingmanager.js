@@ -327,12 +327,9 @@ var ratingManager = function() {
 				element.parent().remove();
 				do_action(setdata, ratingManager.reloadRatList);
 			} else if (element.hasClass('clicksetrat')) {
+				var rating = ratingCalc(element, event);
 				var setstring = element.parent().parent().parent().parent().children('input').val();
 				var setdata = JSON.parse(decodeURIComponent(setstring));
-                var position = getPosition(event);
-				var width = element.width();
-				var starsleft = element.offset().left;
-				var rating = Math.ceil(((position.x - starsleft - 6)/width)*5);
 				var uri = decodeURIComponent(element.parent().parent().parent().parent().attr('name'));
 				setdata.uri = uri;
 				setdata.action = "set";
