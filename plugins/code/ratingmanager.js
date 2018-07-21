@@ -324,18 +324,8 @@ var ratingManager = function() {
 				setdata.action = 'remove';
 				setdata.attributes = [{attribute: "Tags", value: tag}];
 				debug.log("RATING MANAGER","Removing",tag,"from",setdata);
-				do_action(setdata, function() {
-					$('input.setdata').each(function() {
-						if ($(this).val() == setstring) {
-							$(this).parent().find('.carol').children('span').each(function() {
-								if ($(this).text() == tag) {
-									$(this).remove();
-								}
-							});
-						}
-					});
-					ratingManager.reloadRatList();
-				});
+				element.parent().remove();
+				do_action(setdata, ratingManager.reloadRatList);
 			} else if (element.hasClass('clicksetrat')) {
 				var setstring = element.parent().parent().parent().parent().children('input').val();
 				var setdata = JSON.parse(decodeURIComponent(setstring));
@@ -348,14 +338,8 @@ var ratingManager = function() {
 				setdata.action = "set";
 				setdata.attributes = [{attribute: "Rating", value: rating}];
 				debug.log("RATING MANAGER","Setting Rating to",rating,"on",setdata);
-				do_action(setdata, function() {
-					$('input.setdata').each(function() {
-						if ($(this).val() == setstring) {
-							$(this).parent().find('.trackrating').html('<i class="icon-'+rating+'-stars rating-icon-small infoclick plugclickable clicksetrat"></i>');
-						}
-					});
-					ratingManager.reloadRatList();
-				});
+				element.removeClass('icon-0-stars icon-1-stars icon-2-stars icon-3-stars icon-4-stars icon-5-stars').addClass('icon-'+rating+'-stars');
+				do_action(setdata, ratingManager.reloadRatList);
 			} else if (element.hasClass('clickaddtags')) {
 				tagAdder.show(event, null, ratingManager.addTags);
 			}
