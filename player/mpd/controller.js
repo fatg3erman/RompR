@@ -119,6 +119,7 @@ function playerController() {
     }
 
 	this.do_command_list = function(list, callback) {
+        // Note, if you call this with a callback, your callback MUST call player.controller.checkProgress
         $.ajax({
             type: 'POST',
             url: 'player/mpd/postcommand.php',
@@ -128,8 +129,7 @@ function playerController() {
             success: function(data) {
                 if (data) {
                     if (data.state) {
-                        player.status = data;
-                        // debug.trace("MPD","Status",player.status);
+                        player.status = cloneObject(data);
                         if (player.status.playlist !== plversion && !moving) {
                             debug.blurt("PLAYER","Player has marked playlist as changed");
                             playlist.repopulate();
@@ -140,11 +140,10 @@ function playerController() {
                 }
                 if (callback) {
                     callback();
-                    infobar.updateWindowValues();
                 } else {
                    self.checkProgress();
-                   infobar.updateWindowValues();
                 }
+                infobar.updateWindowValues();
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 debug.error("MPD","Command List Failed",list,textStatus,errorThrown);
@@ -162,6 +161,10 @@ function playerController() {
             }
         });
 	}
+    
+    function command_list_success(data) {
+        
+    }
 
     this.isConnected = function() {
         return true;
@@ -190,7 +193,7 @@ function playerController() {
             dataType: "xml",
             success: function() {
                 self.reloadPlaylists();
-                self.addTracks([{type: 'remoteplaylist', name: name}]);
+                self.addTracks([{type: 'remoteplaylist', name: name}], null, null);
             },
             error: function(data, status) {
                 playlist.repopulate();

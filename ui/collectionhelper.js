@@ -16,6 +16,7 @@ var collectionHelper = function() {
         player.controller.do_command_list([[cmd]], function() {
             update_load_timer = setTimeout( pollAlbumList, 2000);
             update_load_timer_running = true;
+            player.controller.checkProgress();
         });
     }
 

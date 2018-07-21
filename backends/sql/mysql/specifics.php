@@ -219,8 +219,7 @@ function check_sql_tables() {
 		"Stationindex INT UNSIGNED REFERENCES RadioStationtable(Stationindex), ".
 		"TrackUri TEXT, ".
 		"PrettyStream TEXT, ".
-		"PRIMARY KEY (Trackindex), ".
-		"FULLTEXT KEY TrackUri (TrackUri)) ENGINE=InnoDB", true))
+		"PRIMARY KEY (Trackindex)) ENGINE=InnoDB", true))
 	{
 		debuglog("  RadioTracktable OK","MYSQL_CONNECT");
 	} else {
@@ -233,8 +232,7 @@ function check_sql_tables() {
 		"SourceName VARCHAR(255), ".
 		"SourceImage VARCHAR(255), ".
 		"SourceUri TEXT, ".
-		"PRIMARY KEY (Sourceindex), ".
-		"FULLTEXT KEY SourceUri (SourceUri)) ENGINE=InnoDB", true))
+		"PRIMARY KEY (Sourceindex)) ENGINE=InnoDB", true))
 	{
 		debuglog("  WishlistSourcetable OK","MYSQL_CONNECT");
 	} else {

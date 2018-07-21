@@ -369,7 +369,7 @@ function get_rating_info($sortby, $value) {
 					JOIN Albumtable AS al USING (Albumindex)
 					JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-				WHERE r.Rating = ".$value." AND tr.isSearchResult < 2";
+				WHERE r.Rating = ".$value." AND tr.isSearchResult < 2 AND tr.Uri IS NOT NULL";
 				break;
 				
 			case 'Tag':
@@ -395,7 +395,7 @@ function get_rating_info($sortby, $value) {
 					JOIN Albumtable AS al USING (Albumindex)
 					JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-				WHERE tr.isSearchResult < 2 AND tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name = '".$value."')";
+				WHERE tr.isSearchResult < 2  AND tr.Uri IS NOT NULL AND tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name = '".$value."')";
 				break;
 										
 			case 'AlbumArtist':
@@ -421,7 +421,7 @@ function get_rating_info($sortby, $value) {
 			 		JOIN Albumtable AS al USING (Albumindex)
 			 		JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 			 		JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL) AND tr.isSearchResult < 2 AND a.Artistname = '".$value."'";
+			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL)  AND tr.Uri IS NOT NULL AND tr.isSearchResult < 2 AND a.Artistname = '".$value."'";
 				break;
 				
 			case 'Tags':
@@ -454,7 +454,7 @@ function get_rating_info($sortby, $value) {
 						$tags[$i] = "tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name='".$t."')";
 					}
 					$qstring .= implode(' AND ', $tags);
-					$qstring .= " AND tr.isSearchResult < 2";
+					$qstring .= " AND tr.isSearchResult < 2 AND tr.Uri IS NOT NULL";
 					break;
 	}
 	
