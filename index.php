@@ -189,7 +189,6 @@ debuglog("******++++++======------******------======++++++******","CREATING PAGE
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
-<link rel="manifest" href="manifest.webmanifest">
 <?php
 print '<script type="application/json" name="translations">'."\n".json_encode($translations)."\n</script>\n";
 $safeprefs = array();
