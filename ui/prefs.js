@@ -75,7 +75,6 @@ var prefs = function() {
     ];
     
     const cookiePrefs = [
-        'skin',
         'currenthost',
         'player_backend',
         "sortbydate",

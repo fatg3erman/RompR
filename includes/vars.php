@@ -232,6 +232,8 @@ if (defined('ROMPR_IS_LOADING')) {
     debuglog("******++++++======------******------======++++++******","INIT",2);
 }
 
+debuglog($_SERVER['REQUEST_URI'],"REQUEST",8);
+
 if (!property_exists($prefs['multihosts'], $prefs['currenthost'])) {
     debuglog($prefs['currenthost']." is not defined in the hosts defs. Falling back to Default","INIT",3);
     if (!property_exists($prefs['multihosts'], 'Default')) {
