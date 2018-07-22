@@ -232,7 +232,7 @@ if (defined('ROMPR_IS_LOADING')) {
     debuglog("******++++++======------******------======++++++******","INIT",2);
 }
 
-debuglog($_SERVER['REQUEST_URI'],"REQUEST",8);
+debuglog($_SERVER['REQUEST_URI'],"REQUEST",9);
 
 if (!property_exists($prefs['multihosts'], $prefs['currenthost'])) {
     debuglog($prefs['currenthost']." is not defined in the hosts defs. Falling back to Default","INIT",3);
@@ -314,7 +314,14 @@ function loadPrefs() {
 
                         }
                         if ($prefs['debug_enabled'] > 8) {
-                            error_log("COOKIE             : Pref ".$a." is set by Cookie  - Value : ".$v);
+                            $module = "COOKIEPREFS";
+                            $in = str_repeat(" ", 20 - strlen($module));
+                            $pid = getmypid();
+                            $in2 = str_repeat(" ", 8 - strlen($pid));
+                            $out = "Pref ".$a." is set by Cookie  - Value : ".$v;
+                            error_log($pid.$in2.$module.$in.": ".$out,0);
+                            
+                            // error_log("        COOKIE             : Pref ".$a." is set by Cookie  - Value : ".$v);
                         }
                     }
                 }
