@@ -7,7 +7,6 @@ define('ROMPR_SCHEMA_VERSION', 44);
 define('ROMPR_VERSION', '1.19');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
-define('ROMPR_PLAYLIST_KEY', 'IS_ROMPR_PLAYLIST_IMAGE');
 define('ROMPR_UNKNOWN_STREAM', "Unknown Internet Stream");
 
 define('REFRESHOPTION_NEVER', 0);
@@ -34,7 +33,8 @@ define('ADDED_THIS_MONTH', 3);
 define('ADDED_THIS_YEAR', 4);
 
 // Safe definitions for setups that do not have a full set of image support built in,
-// Otherwise we spam the server logs will udefined constant errors.
+// Otherwise we spam the server logs with udefined constant errors.
+// These are the MIMe types that make it compatible with imagemagick
 if (!defined('IMAGETYPE_JPEG')) {
     define('IMAGETYPE_JPEG', 'image/jpeg');
 }
@@ -320,8 +320,6 @@ function loadPrefs() {
                             $in2 = str_repeat(" ", 8 - strlen($pid));
                             $out = "Pref ".$a." is set by Cookie  - Value : ".$v;
                             error_log($pid.$in2.$module.$in.": ".$out,0);
-                            
-                            // error_log("        COOKIE             : Pref ".$a." is set by Cookie  - Value : ".$v);
                         }
                     }
                 }

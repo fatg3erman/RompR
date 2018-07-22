@@ -258,7 +258,7 @@ foreach($inc as $i) {
     print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
 
-debuglog("Including skins/".$skin.'/skinvars.php',"LAYOUT",5);
+debuglog("Including skins/".$skin.'/skinvars.php',"LAYOUT",7);
 include('skins/'.$skin.'/skinvars.php');
 include('includes/globals.php');
 
