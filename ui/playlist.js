@@ -980,8 +980,7 @@ var playlist = function() {
                         if (is_already_in_playlist !== false) {
                             player.controller.do_command_list([
                                 ['playid', is_already_in_playlist],
-                                ['pause'],
-                                ['seekid', is_already_in_playlist, $(element).next().val()]
+                                ['seekpodcast', is_already_in_playlist, $(element).next().val()]
                             ])
                         } else {
                             tracks.push({

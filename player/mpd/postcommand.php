@@ -10,7 +10,9 @@ $playlist_movefrom = null;
 $playlist_moveto = null;
 $playlist_moving_within = null;
 $playlist_tracksadded = 0;
-$slow_gstreamer_hack = false;
+$expected_state = null;
+$do_resume_seek = false;
+$do_resume_seek_id = false;
 
 if ($is_connected) {
 
@@ -32,14 +34,12 @@ if ($is_connected) {
             
             switch ($cmd[0]) {
                 case "addtoend":
-                    $slow_gstreamer_hack = true;
                     require_once("backends/sql/backend.php");
                     debuglog("Addtoend ".$cmd[1],"POSTCOMMAND");
                     $cmds = array_merge($cmds, playAlbumFromTrack($cmd[1]));
                     break;
                     
                 case 'playlisttoend':
-                    $slow_gstreamer_hack = true;
                     debuglog("Playing playlist ".$cmd[1]." from position ".$cmd[2]." to end","POSTCOMMAND");
                     $putinplaylistarray = true;
                     doCollection('listplaylistinfo "'.$cmd[1].'"');
@@ -50,14 +50,12 @@ if ($is_connected) {
                     break;
                                     
                 case "additem":
-                    $slow_gstreamer_hack = true;
                     require_once("backends/sql/backend.php");
                     debuglog("Adding Item ".$cmd[1],"POSTCOMMAND");
                     $cmds = array_merge($cmds, getItemsToAdd($cmd[1], null));
                     break;
 
                 case "addartist":
-                    $slow_gstreamer_hack = true;
                     require_once("backends/sql/backend.php");
                     debuglog("Getting tracks for Artist ".$cmd[1],"MPD");
                     doCollection('find "artist" "'.format_for_mpd($cmd[1]).'"',array("spotify"));
@@ -65,7 +63,6 @@ if ($is_connected) {
                     break;
 
                 case "loadstreamplaylist":
-                    $slow_gstreamer_hack = true;
                     require_once ("backends/sql/backend.php");
                     require_once ("player/".$prefs['player_backend']."/streamplaylisthandler.php");
                     require_once ("utils/getInternetPlaylist.php");
@@ -76,7 +73,6 @@ if ($is_connected) {
                     debuglog("  URL is ".$cmd[1],"POSTCOMMAND");
                     // First, see if we can just 'load' the remote playlist. This is better with MPD
                     // as it parses track names from the playlist
-                    $slow_gstreamer_hack = true;
                     if (check_track_load_command($cmd[1]) == 'load') {
                         debuglog("Loading remote playlist","POSTCOMMAND");
                         $cmds[] = join_command_string(array('load', $cmd[1]));
@@ -125,11 +121,15 @@ if ($is_connected) {
                 case "resume":
                     debuglog("Adding Track ".$cmd[1],"POSTCOMMAND");
                     debuglog("  .. and seeking position ".$cmd[3]." to ".$cmd[2],"POSTCOMMAND");
-                    $slow_gstreamer_hack = true;
                     $cmds[] = join_command_string(array('add', $cmd[1]));
                     $cmds[] = join_command_string(array('play', $cmd[3]));
-                    $cmds[] = 'pause';
-                    $cmds[] = join_command_string(array('seek', $cmd[3], $cmd[2]));
+                    $expected_state = 'play';
+                    $do_resume_seek = array($cmd[3], $cmd[2]);
+                    break;
+                    
+                case "seekpodcast":
+                    $expected_state = 'play';
+                    $do_resume_seek_id = array($cmd[1], $cmd[2]);
                     break;
 
                 case 'save':
@@ -144,12 +144,8 @@ if ($is_connected) {
 
                 case "play":
                 case "playid":
-                case "next":
-                case "previous":
-                    $slow_gstreamer_hack = true;
-                    $cmds[] = join_command_string($cmd);
-                    break;
-
+                    $expected_state = 'play';
+                    // Fall through
                 default:
                     $cmds[] = join_command_string($cmd);
                     break;
@@ -176,13 +172,26 @@ if ($is_connected) {
     $cmd_status = do_mpd_command_list($cmds);
 
     //
+    // Wait for the player to start playback if that's what it's supposed to be doing
+    //
+
+    wait_for_player_state($expected_state);
+
+    //
+    // Work around mopidy play/seek command list bug
+    //
+
+    if ($do_resume_seek !== false) {
+        do_mpd_command(join_command_string(array('seek', $do_resume_seek[0], $do_resume_seek[1])));
+    }
+    if ($do_resume_seek_id !== false) {
+        do_mpd_command(join_command_string(array('seekid', $do_resume_seek_id[0], $do_resume_seek_id[1])));
+    }
+
+    //
     // Query mpd's status
     //
 
-    if ($slow_gstreamer_hack && $prefs['player_backend'] == 'mopidy') {
-        debuglog("Sleeping....","POSTCOMMAND");
-        usleep(500000);
-    }
     $mpd_status = do_mpd_command ("status", true, false);
 
     //

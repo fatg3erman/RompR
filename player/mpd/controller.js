@@ -130,6 +130,7 @@ function playerController() {
                 if (data) {
                     debug.debug("PLAYER",data);
                     if (data.state) {
+                        // Clone the object so as not to leave this closure in memory
                         player.status = cloneObject(data);
                         if (player.status.playlist !== plversion && !moving) {
                             debug.blurt("PLAYER","Player has marked playlist as changed");
@@ -139,12 +140,7 @@ function playerController() {
                         infobar.setStartTime(player.status.elapsed);
                     }
                 }
-                if (callback) {
-                    callback();
-                } else {
-                   self.checkProgress();
-                }
-                infobar.updateWindowValues();
+                post_command_list(callback);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 debug.error("MPD","Command List Failed",list,textStatus,errorThrown);
@@ -152,19 +148,18 @@ function playerController() {
                 if (list.length > 0) {
                     infobar.notify(infobar.ERROR, "Failed sending commands to "+prefs.player_backend);
                 }
-                if (callback) {
-                    callback();
-                    infobar.updateWindowValues();
-                } else {
-                   self.checkProgress();
-                   infobar.updateWindowValues();
-                }
+                post_command_list(callback);
             }
         });
 	}
     
-    function command_list_success(data) {
-        
+    function post_command_list(callback) {
+        if (callback) {
+            callback();
+        } else {
+           self.checkProgress();
+        }
+        infobar.updateWindowValues();
     }
 
     this.isConnected = function() {

@@ -157,6 +157,9 @@ function onSourcesClicked(event) {
         event.stopImmediatePropagation();
         var n = clickedElement.attr('name').match('(.*)_(.*)');
         podcasts.channelAction(n[2],n[1]);
+    } else if (clickedElement.hasClass("podglobal")) {
+        event.stopImmediatePropagation();
+        podcasts.globalAction(clickedElement.attr('name'), clickedElement);
     } else if (clickedElement.hasClass("podtrackremove")) {
         event.stopImmediatePropagation();
         var n = clickedElement.attr('name');

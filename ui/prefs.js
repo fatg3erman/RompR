@@ -142,7 +142,7 @@ var prefs = function() {
                 debug.error("PREFS","Playlist transfer failed");
                 infobar.notify(infobar.ERROR,"Failed To Transfer Playlist!");
             }
-        })
+        });
     }
 
     function doTheSave() {

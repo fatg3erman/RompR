@@ -46,6 +46,18 @@ function do_mpd_command_list($cmds) {
     return $cmd_status;
 }
 
+function wait_for_player_state($expected_state) {
+    if ($expected_state !== null) {
+        $status = array('state' => 'arse');
+        $retries = 20;
+        while ($retries > 0 && $status['state'] != $expected_state) {
+            usleep(500000);
+            $retries--;
+            $status = do_mpd_command ("status", true, false);
+        }
+    }
+}
+
 function format_for_disc($filename) {
     $filename = str_replace("\\","_",$filename);
     $filename = str_replace("/","_",$filename);

@@ -662,7 +662,9 @@ $languages['en'] = array (
 	"button_logout" => "Logout",
 	"label_transferplaylist" => "Transfer Playlist To New Player?",
 	"label_yes" => "Yes",
-	"label_no" => "No"
+	"label_no" => "No",
+	"podcast_refresh_all" => "Refresh All Podcasts",
+	"label_global_controls" => "Global Controls"
 );
 
 ?>

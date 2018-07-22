@@ -633,15 +633,7 @@ function doPodcast($y, $do_searchbox) {
                 'clickable clickicon podremove fixed fridge" name="podremove_'.$pm.'"></i>';
         print '</div>';
 
-        $class = "marged whatdoicallthis toggledown";
-        if ((array_key_exists('channel', $_REQUEST) && $_REQUEST['channel'] == $pm) &&
-            array_key_exists('option', $_REQUEST)) {
-            // Don't rehide the config panel if we're choosing something from it
-            // $class .= " visible";
-        } else {
-            $class .= " invisible";
-        }
-        print '<div class="'.$class.'" id="podconf_'.$pm.'">';
+        print '<div class="marged whatdoicallthis toggledown invisible podconfigpanel" id="podconf_'.$pm.'">';
         print '<div class="containerbox vertical podoptions">';
         print '<div class="containerbox fixed dropdown-container"><div class="divlabel">'.
             get_int_text("podcast_display").'</div>';
@@ -812,7 +804,7 @@ function format_episode(&$y, &$item, $pm) {
     
     $pee = date(DATE_RFC2822, $item->PubDate);
     $pee = preg_replace('/ \+\d\d\d\d$/','',$pee);
-    print '<div class="whatdoicallthis padright containerbox menuitem notbold">';
+    print '<div class="whatdoicallthis padright containerbox dropdown-container podtitle notbold">';
     if ($y->HideDescriptions == 0) {
         $class = 'icon-toggle-open';
     } else {
@@ -934,7 +926,7 @@ function markAsListened($url) {
     foreach ($pods as $pod) {
         $podid = $pod->PODindex;
         debuglog("Marking ".$pod->PODTrackindex." from ".$podid." as listened","PODCASTS");
-        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened=1, New=0 WHERE PODTrackindex=?",$pod->PODTrackindex);
+        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened = 1, New = 0, Progress = 0 WHERE PODTrackindex=?",$pod->PODTrackindex);
     }
     return $podid;
 }
@@ -950,7 +942,7 @@ function deleteTrack($trackid, $channel) {
 
 function markKeyAsListened($trackid, $channel) {
     debuglog("Marking ".$trackid." from ".$channel." as listened","PODCASTS");
-    generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0 WHERE PODTrackindex = ".$trackid, true);
+    generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0, Progress = 0 WHERE PODTrackindex = ".$trackid, true);
     return $channel;
 }
 
@@ -998,14 +990,33 @@ function changeOption($option, $val, $channel) {
 }
 
 function markChannelAsListened($channel) {
-    generic_sql_query("UPDATE PodcastTracktable SET Listened=1, New=0 WHERE PODindex=".$channel, true);
+    generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0, Progress = 0 WHERE PODindex = ".$channel, true);
     return $channel;
+}
+
+function mark_all_episodes_listened() {
+    generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0, Progress = 0 WHERE PODindex IN (SELECT PODindex FROM Podcasttable WHERE Subscribed = 1)");
+    return false;
 }
 
 function undeleteFromChannel($channel) {
     generic_sql_query("UPDATE PodcastTracktable SET Downloaded=0 WHERE PODindex=".$channel." AND Deleted=1", true);
     generic_sql_query("UPDATE PodcastTracktable SET Deleted=0 WHERE PODindex=".$channel." AND Deleted=1", true);
     return $channel;
+}
+
+function undelete_all() {
+    generic_sql_query("UPDATE PodcastTracktable SET Downloaded = 0 WHERE PODindex IN (SELECT PODindex FROM Podcasttable WHERE Subscribed = 1) AND Deleted = 1", true);
+    generic_sql_query("UPDATE PodcastTracktable SET Deleted = 0 WHERE PODindex IN (SELECT PODindex FROM Podcasttable WHERE Subscribed = 1) AND Deleted = 1", true);
+    return false;
+}
+
+function remove_all_downloaded() {
+    $pods = glob('prefs/podcasts/*');
+    foreach ($pods as $channel) {
+        removeDownloaded(basename($channel));
+    }
+    return false;
 }
 
 function removeDownloaded($channel) {
@@ -1034,7 +1045,7 @@ function downloadTrack($key, $channel) {
         debuglog("  Failed to find URL for podcast","PODCASTS",3);
         return $channel;
     }
-    // The file size reported in the RSS is often VERY inaccurate.Probably based on raw audio prior to converting to MP3
+    // The file size reported in the RSS is often VERY inaccurate. Probably based on raw audio prior to converting to MP3
     // To make the progress bars look better in the GUI we attempt to read the actual filesize
     $filesize = getRemoteFilesize($url, $filesize);
     if (is_dir('prefs/podcasts/'.$channel.'/'.$key) || mkdir ('prefs/podcasts/'.$channel.'/'.$key, 0755, true)) {
@@ -1180,7 +1191,7 @@ function search_itunes($term) {
                 
                 // IMPORTANT NOTE. We do NOT set LastPubDate here, because that would prevent the podcasts from being refreshed
                 // if we subscribe to it. (If it hasn't been browsed then we need to refresh it to get all the episodes)
-                // LastPubDate will get set by refrteshPodcast if we subscribe
+                // LastPubDate will get set by refreshPodcast if we subscribe
                 
                 sql_prepare_query(true, null, null, null,
                     "INSERT INTO Podcasttable
@@ -1224,6 +1235,14 @@ function setPlaybackProgress($progress, $uri) {
         generic_sql_query("UPDATE PodcastTracktable SET Progress = ".$progress." WHERE PODTrackindex = ".$podcast->PODTrackindex);
     }
     return $podid;
+}
+
+function refresh_all_podcasts() {
+    $result = generic_sql_query("SELECT PODindex FROM Podcasttable WHERE Subscribed = 1", false, PDO::FETCH_OBJ);
+    foreach ($result as $obj) {
+        refreshPodcast($obj->PODindex);
+    }
+    return false;
 }
 
 ?>

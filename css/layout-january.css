@@ -672,6 +672,10 @@ button {
     font-weight:bold;
 }
 
+.podconfigpanel .divlabel {
+	width: 50%;
+}
+
 .topbox {
     padding-top:4px;
 }

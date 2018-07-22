@@ -15,7 +15,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Added options to only display Collection tracks that were added within a specific time period, after I added something good to mine and then forgot what it was called :)
 * Added more tooltips as the number of control butons spirals upwards
 * The Discoverator now populates much more quickly
-* Option to transfer playlist to new player when switching players
+* Option to transfer current playlist to new player when switching players
 
 ## Version 1.19
 

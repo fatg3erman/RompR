@@ -35,13 +35,7 @@ do_mpd_command_list($cmds);
 debuglog("  State is ".$mpd_status['state'],"TRANSFER");
 if (array_key_exists('state', $mpd_status) && $mpd_status['state'] == 'play') {
     do_mpd_command(join_command_string(array('play', $mpd_status['song'])));
-    $status = array('state' => 'stop');
-    $retries = 20;
-    while ($retries > 0 && $status['state'] != 'play') {
-        usleep(500000);
-        $retries--;
-        $status = do_mpd_command ("status", true, false);
-    }
+    wait_for_player_state('play');
     if ($tracks[$mpd_status['song']]['type'] != 'stream') {
         do_mpd_command(join_command_string(array('seek', $mpd_status['song'], intval($mpd_status['elapsed']))));
     }
