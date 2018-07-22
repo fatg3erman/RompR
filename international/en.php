@@ -659,7 +659,10 @@ $languages['en'] = array (
 	"label_removefromlistenlater" => "Remove From Albums To Listen To",
 	"label_addtocollection" => "Add Album To Music Collection",
 	"label_addtoradio" => "Add To Your Radio Stations",
-	"button_logout" => "Logout"
+	"button_logout" => "Logout",
+	"label_transferplaylist" => "Transfer Playlist To New Player?",
+	"label_yes" => "Yes",
+	"label_no" => "No"
 );
 
 ?>

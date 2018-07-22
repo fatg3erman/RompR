@@ -1,6 +1,7 @@
 var prefs = function() {
 
     var textSaveTimer = null;
+    var deferredPrefs = null;
 
     const prefsInLocalStorage = [
         "sourceshidden",
@@ -100,6 +101,48 @@ var prefs = function() {
         '30 Minutes': 1800000,
         'Hour': 3600000,
         'Day': 86400000
+    }
+    
+    function offerToTransferPlaylist() {
+        var fnarkle = new popup({
+            css: {
+                width: 300,
+                height: 200
+            },
+            title: language.gettext('label_transferplaylist'),
+            hasclosebutton: false
+        });
+        var mywin = fnarkle.create();
+        var d = $('<div>',{class: 'containerbox'}).appendTo(mywin);
+        var yes = $('<button>', {class: 'expand'}).appendTo(d);
+        var space = $('<div>', {class: 'fixed', style: 'width:3em'}).appendTo(d);
+        var no = $('<button>', {class: 'expand'}).appendTo(d);
+        yes.html(language.gettext('label_yes'));
+        no.html(language.gettext('label_no'));
+        fnarkle.useAsCloseButton(yes, transferPlaylist);
+        fnarkle.useAsCloseButton(no, dontTransferPlaylist);
+        fnarkle.open();
+        fnarkle.setWindowToContentsSize();
+    }
+    
+    function dontTransferPlaylist() {
+        prefs.save(deferredPrefs, reloadWindow);
+    }
+    
+    function transferPlaylist() {
+        debug.shout("PREFS","Transferring Playlist from",prefs.currenthost,"to",deferredPrefs.currenthost);
+        $.ajax({
+            type: 'POST',
+            url: 'player/transferplaylist.php',
+            data: JSON.stringify(deferredPrefs),
+            success: function() {
+                prefs.save(deferredPrefs, reloadWindow);
+            },
+            error: function() {
+                debug.error("PREFS","Playlist transfer failed");
+                infobar.notify(infobar.ERROR,"Failed To Transfer Playlist!");
+            }
+        })
     }
 
     function doTheSave() {
@@ -470,6 +513,7 @@ var prefs = function() {
         },
 
         toggleRadio: function(event) {
+            var defer = false;
             var prefobj = new Object;
             var prefname = $(event.target).attr("name");
             var prefsave = prefname.replace(/_duplicate\d+/, '');
@@ -492,11 +536,16 @@ var prefs = function() {
                     break;
 
                 case 'currenthost':
-                    callback = reloadWindow;
+                    defer = true;
+                    offerToTransferPlaylist();
                     break;
 
             }
-            prefs.save(prefobj, callback);
+            if (defer) {
+                deferredPrefs = cloneObject(prefobj);
+            } else {
+                prefs.save(prefobj, callback);
+            }
         },
 
         setPrefs: function() {

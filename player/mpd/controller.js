@@ -128,6 +128,7 @@ function playerController() {
             timeout: 30000,
             success: function(data) {
                 if (data) {
+                    debug.debug("PLAYER",data);
                     if (data.state) {
                         player.status = cloneObject(data);
                         if (player.status.playlist !== plversion && !moving) {

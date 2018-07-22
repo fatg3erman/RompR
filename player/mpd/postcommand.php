@@ -173,35 +173,7 @@ if ($is_connected) {
     // Send the command list to mpd
     //
 
-    $done = 0;
-    $cmd_status = null;
-    if (count($cmds) > 1) {
-        send_command("command_list_begin");
-        foreach ($cmds as $c) {
-            debuglog("Command List: ".$c,"POSTCOMMAND",6);
-            // Note. We don't use send_command because that closes and re-opens the connection
-            // if it fails to fputs, and that loses our command list status. Also if this fputs
-            // fails it means the connection has dropped anyway, so we're screwed whatever happens.
-            if ($c  == 'pause') {
-                do_mpd_command("command_list_end", true);
-                sleep(1);
-                send_command("command_list_begin");
-            } else {
-                fputs($connection, $c."\n");
-                $done++;
-            }
-            // Command lists have a maximum length, 50 seems to be the default
-            if ($done == 50) {
-                do_mpd_command("command_list_end", true);
-                send_command("command_list_begin");
-                $done = 0;
-            }
-        }
-        $cmd_status = do_mpd_command("command_list_end", true, false);
-    } else if (count($cmds) == 1) {
-        debuglog("Command : ".$cmds[0],"POSTCOMMAND",6);
-        $cmd_status = do_mpd_command($cmds[0], true, false);
-    }
+    $cmd_status = do_mpd_command_list($cmds);
 
     //
     // Query mpd's status
@@ -286,14 +258,6 @@ header('Content-Type: application/json');
 echo json_encode($mpd_status);
 
 close_mpd();
-
-function join_command_string($cmd) {
-    $c = $cmd[0];
-    for ($i = 1; $i < count($cmd); $i++) {
-        $c .= ' "'.format_for_mpd($cmd[$i]).'"';
-    }
-    return $c;
-}
 
 function check_playlist_add_move($cmd, $incvalue) {
     global $playlist_moving_within, $playlist_movefrom, $playlist_moveto, $playlist_tracksadded;
