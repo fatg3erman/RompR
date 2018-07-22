@@ -4,8 +4,8 @@ include ("includes/functions.php");
 $skin = 'desktop';
 $opts = getopt('', ['currenthost:', 'player_backend:']);
 if (is_array($opts)) {
-        foreach($opts as $key => $value) {
-	debuglog($key.' = '.$value,'ROMONITOR');
+    foreach($opts as $key => $value) {
+	    debuglog($key.' = '.$value,'ROMONITOR');
         $prefs[$key] = $value;
     }
 }
