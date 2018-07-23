@@ -37,6 +37,11 @@ To remove your image and revert to the default, click the x.
 
 If you want your image to only be used in the browser you're currently using, select the option. Note that this button has no effect except when uploading images - you can't change an image to be specific to one browser after it has been uploaded, you must first remove it then upload it again.
 
+You can choose how the image is displayed -
+
+* Centered will centre the image within the browser window, scaling the shortest dimension so the image fills the window
+* Top Left, etc will anchor the image by the spceicifed corner, scaling the shortest dimension so the image fills the window
+
 #### Using Multiple Images
 
 You can upload as many images as you like, to use as a slideshow.

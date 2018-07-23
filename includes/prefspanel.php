@@ -29,12 +29,19 @@ foreach($themes as $theme) {
 print '</select></div></div>';
 
 // Custom Background
-print '<div id="custombackground" class="pref containerbox">
-<div id="backimagelabel" class="divlabel">'.get_int_text('config_background').'
-<form id="backimageform" action="backimage.php" method="post" enctype="multipart/form-data">
+print '<div id="custombackground" class="pref">';
+
+print '<div class="containerbox dropdown-container">
+<i class="icon-menu smallicon clickicon fixed" onclick="prefs.openBgImageBox()"></i>
+<div class="expand"><b>'.get_int_text('config_background').'</b></div>
+</div>';
+
+print '<div id="custombgdropper" class="invisible">';
+
+print '<form id="backimageform" action="backimage.php" method="post" enctype="multipart/form-data">
 <input type="hidden" name="currbackground" value="" />
 <input type="hidden" name="browser_id" value="" />
-<div class="filebutton textcentre">
+<div class="filebutton textcentre" style="width:auto">
 <input type="file" name="imagefile[]" id="imagefile" class="inputfile" multiple="multiple">
 <label for="imagefile">'.get_int_text('label_choosefiles').'</label>
 </div>
@@ -42,10 +49,27 @@ print '<div id="custombackground" class="pref containerbox">
 <div class="styledinputs">
 <input type="checkbox" id="thisbrowseronly" name="thisbrowseronly" /><label for="thisbrowseronly">For this browser only</label>
 </div>
-</form>
+</form>';
+
+print '<div class="containerbox">';
+
+print '<div id="backimageposition" class="tiny styledinputs invisible divlabel">
+<div class="spacer"></div>
+<div class="textcentre"><b>Display Options</b></div>
+<div class="spacer"></div>
+<div><input type="radio" id="attach_centre" name="backgroundposition" value="center center" /><label for="attach_centre">'.get_int_text('label_centre').'</label></div>
+<div><input type="radio" id="attach_topleft" name="backgroundposition" value="top left" /><label for="attach_topleft">'.get_int_text('label_topleft').'</label></div>
+<div><input type="radio" id="attach_topright" name="backgroundposition" value="top right" /><label for="attach_topright">'.get_int_text('label_topright').'</label></div>
+<div><input type="radio" id="attach_bottomleft" name="backgroundposition" value="bottom left" /><label for="attach_bottomleft">'.get_int_text('label_bottomleft').'</label></div>
+<div><input type="radio" id="attach_bottomright" name="backgroundposition" value="bottom right" /><label for="attach_bottomright">'.get_int_text('label_bottomright').'</label></div>
+<div id="cusbgcontrols"></div>
 </div>
+
 <div class="selectholder-noselect">
 <div id="cusbgname" class="tiny styledinputs"></div>
+</div>
+
+</div>
 </div>
 </div>';
 

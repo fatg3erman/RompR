@@ -664,7 +664,12 @@ $languages['en'] = array (
 	"label_yes" => "Yes",
 	"label_no" => "No",
 	"podcast_refresh_all" => "Refresh All Podcasts",
-	"label_global_controls" => "Global Controls"
+	"label_global_controls" => "Global Controls",
+	"label_topleft" => "Top Left",
+	"label_topright" => "Top Right",
+	"label_bottomleft" => "Bottom Left",
+	"label_bottomright" => "Bottom Right",
+	"label_centre" => "Centered"
 );
 
 ?>

@@ -18,6 +18,12 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 			if (count($f) > 0) {
 				debuglog("Custom Background exists for ".$_REQUEST['getbackground'].'/'.$_REQUEST['browser_id'],"BACKIMAGE");
 				$output = analyze_bg_images($f, true);
+			} else {
+				$f = glob('prefs/userbackgrounds/'.$_REQUEST['getbackground'].'/*.*');
+				if (count($f) > 0) {
+					debuglog("Custom Background exists for ".$_REQUEST['getbackground'],"BACKIMAGE");
+					$output = analyze_bg_images($f, false);
+				}
 			}
 		} else {
 			$f = glob('prefs/userbackgrounds/'.$_REQUEST['getbackground'].'/*.*');
