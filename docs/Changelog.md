@@ -16,6 +16,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Added more tooltips as the number of control butons spirals upwards
 * The Discoverator now populates much more quickly
 * Option to transfer current playlist to new player when switching players
+* New Global Refresh, Mark as Listened, etc controls for podcasts
 
 ## Version 1.19
 

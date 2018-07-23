@@ -381,16 +381,24 @@ class albumImage extends baseAlbumImage {
     private function download_remote_file() {
         $download_file = 'prefs/temp/'.$this->key;
         $retval = $download_file;
-        $d = new url_downloader(array('url' => $this->source));
-        if ($d->get_data_to_file($download_file, true)) {
-            $content_type = $d->get_content_type();
-            if (substr($content_type,0,5) != 'image' && $content_type != 'application/octet-stream') {
-        		debuglog("  .. Content type is ".$content_type." - not an image file! ".$this->source,"ALBUMIMAGE");
+        if (preg_match('/^https*:/', $this->source) || preg_match('/^getRemoteImage.php/', $this->source)) {
+            $d = new url_downloader(array('url' => $this->source));
+            if ($d->get_data_to_file($download_file, true)) {
+                $content_type = $d->get_content_type();
+                if (substr($content_type,0,5) != 'image' && $content_type != 'application/octet-stream') {
+            		debuglog("  .. Content type is ".$content_type." - not an image file! ".$this->source,"ALBUMIMAGE");
+                    $retval = false;
+                }
+        	} else {
+                $retval = false;
+        	}
+        } else {
+            debuglog("  .. Copying apparent local file","ALBUMIMAGE");
+            if (!copy($this->source, $download_file)) {
+                debuglog("    .. File Copy Failed","ALBUMIMAGE");
                 $retval = false;
             }
-    	} else {
-            $retval = false;
-    	}
+        }
         return $retval;
     }
     

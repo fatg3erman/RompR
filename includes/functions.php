@@ -376,12 +376,13 @@ function get_images($dir_path) {
     debuglog("    Scanning : ".$dir_path,"GET_IMAGES");
     $globpath = preg_replace('/(\*|\?|\[)/', '[$1]', $dir_path);
     debuglog("      Glob Path is ".$globpath,"GET_IMAGES");
-    $files = glob($globpath."/*.{jpg,png,bmp,gif,jpeg,JPEG,JPG,BMP,GIF,PNG}", GLOB_BRACE);
-    foreach($files as $i => $f) {
-        $f = preg_replace('/%/', '%25', $f);
-        debuglog("        Found : ".get_base_url()."/".preg_replace('/ /', "%20", $f),"GET_IMAGES");
-        array_push($funkychicken, get_base_url()."/".preg_replace('/ /', "%20", $f));
-    }
+    // $files = glob($globpath."/*.{jpg,png,bmp,gif,jpeg,JPEG,JPG,BMP,GIF,PNG}", GLOB_BRACE);
+    // foreach($files as $i => $f) {
+    //     $f = preg_replace('/%/', '%25', $f);
+    //     debuglog("        Found : ".get_base_url()."/".preg_replace('/ /', "%20", $f),"GET_IMAGES");
+    //     array_push($funkychicken, get_base_url()."/".preg_replace('/ /', "%20", $f));
+    // }
+    $funkychicken = glob($globpath."/*.{jpg,png,bmp,gif,jpeg,JPEG,JPG,BMP,GIF,PNG}", GLOB_BRACE);
     debuglog("    Checking for embedded images","GET_IMAGES");
     $files = glob($globpath."/*.{mp3,MP3,mp4,MP4,flac,FLAC,ogg,OGG}", GLOB_BRACE);
     $testfile = array_shift($files);
@@ -396,7 +397,8 @@ function get_images($dir_path) {
                         debuglog("    .. found embedded front cover image","GET_IMAGES");
                         $filename = 'prefs/temp/'.md5($globpath);
                         file_put_contents($filename, $picture['data']);
-                        array_unshift($funkychicken, get_base_url()."/".preg_replace('/ /', "%20", $filename));
+                        // array_unshift($funkychicken, get_base_url()."/".preg_replace('/ /', "%20", $filename));
+                        array_unshift($funkychicken, $filename);
                     }
                 }
             }
