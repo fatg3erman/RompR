@@ -50,6 +50,8 @@ You can upload as many images as you like, to use as a slideshow.
 
 The currently displayed image will be highlighted. If two images are highlighted, then one is landscape orientation, and one is portrait orientation (see next section)
 
+You can also change the current background image by clicking on one of them.
+
 #### Using different images for different orientations
 
 If you upload multiple images, then images which are in portrait format (width < height) will only be used when the screen is also in portrait format, while images that are in landscape format (width > height) will only be used when the screen is in landscape format. In this way, if you use a mobile device, you can can have different images for different screen orientations. You can also have multiple portrait images and/or multiple landscape images and you will get a slideshow of the appropriate images for the screen orientation.

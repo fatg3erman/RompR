@@ -296,24 +296,50 @@ var prefs = function() {
             $('#backimageposition').hide();
         }
         $.each(images, function(x, p) {
+            if (p.length > 0) {
+                $('#cusbgname').append('<div class="spacer"></div>');
+                var q = $('<div>').appendTo('#cusbgname');
+                $('#cusbgname').append('<div class="spacer"></div>');
+                q.html('<b>'+p.length+' '+x.capitalize()+' Images</b>');
+            }
             $.each(p, function(i, v) {
                 var n = $('<div>').appendTo('#cusbgname');
                 var c = $('<i>', {class: 'icon-cancel-circled clickicon collectionicon'}).appendTo(n);
-                var l = $('<span>', {class: 'bgimgname'}).appendTo(n);
+                var l = $('<span>', {class: 'bgimgname', name: i}).appendTo(n);
                 var z = $('<input>', {class: 'bgimagefile', type: 'hidden', value: v}).appendTo(n);
                 var nom = v.replace(/.*(\\|\/)/, '')+'&nbsp;'
                 if (x == 'landscape') {
-                    debug.debug('IMAGES',"Landscape Image",nom);
+                    l.addClass('landscapeimage');
                     nom += '&#x25AD;';
                 } else {
-                    debug.debug('IMAGES',"Portrait Image",nom);
+                    l.addClass('portraitimage');
                     nom += '&#x25AF;';
                 }
                 l.html(nom);
+                l.bind('click', changeBgImage);
                 c.bind('click', prefs.clearBgImage);
             });
         });
         updateCustomBackground();
+    }
+    
+    function changeBgImage(event) {
+        var el = $(event.target);
+        var theme = prefs.theme;
+        if (prefs.usertheme) {
+            theme = prefs.usertheme;
+        }
+        var bgp = prefs.bgimgparms[theme];
+        if (el.hasClass('landscapeimage')) {
+            bgp.landscape = parseInt(el.attr('name'));
+        } else if (el.hasClass('portraitimage')) {
+            bgp.portrait = parseInt(el.attr('name'));
+        }
+        clearCustomBackground();
+        setBackgroundCss(bgp);
+        bgp.lastchange = Date.now();
+        setBackgroundTimer(bgp.timeout);
+        prefs.save({bgimgparms: prefs.bgimgparms});
     }
 
     function clearCustomBackground() {
@@ -373,6 +399,10 @@ var prefs = function() {
         if (bgp.landscape >= backgroundImages.landscape.length) { bgp.landscape = 0 }
         if (bgp.portrait >= backgroundImages.portrait.length) { bgp.portrait = 0 }
         setBackgroundCss(bgp);
+        setBackgroundTimer(timeout);
+    }
+    
+    function setBackgroundTimer(timeout) {
         if (backgroundImages.portrait.length > 1 || backgroundImages.landscape.length > 1) {
             debug.debug("PREFS","Setting Slideshow Timeout For",timeout/1000,"seconds");
             backgroundTimer = setTimeout(updateCustomBackground, timeout);

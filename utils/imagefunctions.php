@@ -99,7 +99,7 @@ class baseAlbumImage {
                 // Stream images may not be in the database
                 // BUT they may be present anyway, if a stream was added eg from a playlist
                 // of streams and coverscraper found one. So check, otherwise coverscraper
-                // will search for it every time the playlist repopulated.
+                // will search for it every time the playlist repopulates.
                 if ($this->check_if_image_already_downloaded()) {
                     return true;
                 }
@@ -124,13 +124,9 @@ class baseAlbumImage {
                     // of useful information.
                     switch ($domain) {
                         case 'bassdrive':
-                        // case 'dirble':
                         case 'internetarchive':
                         case 'oe1':
-                        // case 'podcast':
-                        // case 'radio-de':
                         case 'soundcloud':
-                        // case 'tunein':
                         case 'youtube':
                             $this->images = $this->image_paths_from_base_image('newimages/'.$domain.'-logo.svg');
                             break;
@@ -293,6 +289,17 @@ class albumImage extends baseAlbumImage {
                 break;
                 
         }
+    }
+    
+    public function set_default() {
+        if ($this->artist == "STREAM") {
+            // Set a default image for streams when we are doing an album art download
+            // otherwise they get searched for on every refresh of the playlist if they're
+            // not in the database and nothing gets found the first time.
+            $this->source = 'newimages/broadcast.svg';
+            return $this->download_image();
+        }
+        return false;
     }
 
     public function get_artist_for_search() {

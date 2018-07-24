@@ -100,8 +100,12 @@ var playlist = function() {
                 if (tracks[0].images.small) {
                     self.image.attr('src', tracks[0].images.small).appendTo(imgholder);
                 } else {
-                    self.image.addClass('notexist').appendTo(imgholder);
-                    self.getart();
+                    if (tracks[0].imgsearched == 0) {
+                        self.image.addClass('notexist').appendTo(imgholder);
+                        self.getart();
+                    } else {
+                        self.image.addClass('notfound').appendTo(imgholder);
+                    }
                 }
             }
             
@@ -332,9 +336,13 @@ var playlist = function() {
                 if (tracks[0].images.small) {
                     self.image.attr('src', tracks[0].images.small).appendTo(imgholder);
                 } else {
-                    self.image.addClass('notexist stream').appendTo(imgholder);
-                    if (tracks[0].album != rompr_unknown_stream) {
-                        self.getart();
+                    if (tracks[0].imgsearched == 0) {
+                        self.image.addClass('notexist stream').appendTo(imgholder);
+                        if (tracks[0].album != rompr_unknown_stream) {
+                            self.getart();
+                        }
+                    } else {
+                        self.image.addClass('notfound').appendTo(imgholder);
                     }
                 }
             }
