@@ -952,7 +952,21 @@ function get_album_tracks_from_database($index, $cmd, $flag) {
 
 		case "u":
 			// u - only tracks with tags or ratings
-			$qstring = "SELECT Uri, Disc, Trackno FROM Tracktable JOIN Ratingtable USING (TTindex) WHERE Albumindex = '".$index."' AND Uri IS NOT NULL AND Hidden = 0 AND isSearchResult <2 UNION SELECT Uri, Disc, TrackNo FROM Tracktable JOIN TagListtable USING (TTindex) WHERE Albumindex = '".$index."' AND Uri IS NOT NULL AND Hidden = 0 AND isSearchResult <2 ORDER BY Disc, TrackNo;";
+			$qstring = "SELECT Uri, Disc, Trackno FROM
+							Tracktable JOIN Ratingtable USING (TTindex)
+							WHERE Albumindex = '".$index.
+							"' AND Uri IS NOT NULL
+							AND Hidden = 0
+							AND isSearchResult <2"
+							.track_date_check($prefs['collectionrange'], $flag).
+						"UNION SELECT Uri, Disc, TrackNo FROM
+							Tracktable JOIN TagListtable USING (TTindex)
+							WHERE Albumindex = '".$index.
+							"' AND Uri IS NOT NULL
+							AND Hidden = 0
+							AND isSearchResult <2"
+							.track_date_check($prefs['collectionrange'], $flag).
+						"ORDER BY Disc, TrackNo;";
 			break;
 
 		default:
