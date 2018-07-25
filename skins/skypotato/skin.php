@@ -131,7 +131,7 @@ include ("includes/prefspanel.php");
 </div>
 
 <div id="bottompage" class="clearfix">
-    
+
 <div id="headerbar" class="noborder tleft">
     <div id="sourcescontrols">
 <?php
@@ -143,7 +143,8 @@ print '<i title="'.get_int_text('label_podcasts').'" class="icon-podcast-circled
 print '<i title="'.get_int_text('button_loadplaylist').'" class="icon-doc-text tooltip topimg choose_playlistslist"></i>';
 print '<i title="'.get_int_text('label_pluginplaylists').'" class="icon-wifi tooltip topimg choose_pluginplaylistslist"></i>';
 print '<i title="'.get_int_text('button_infopanel').'" class="icon-info-circled tooltip topimg choose_infopanel"></i>';
-print '<i class="icon-menu topimg tooltip choose_specialplugins" title="'.get_int_text('button_plugins').'"></i>';
+print '<i title="'.get_int_text('button_history').'" class="icon-versions tooltip topimg choose_history"></i>';
+print '<i title="'.get_int_text('button_plugins').'" class="icon-menu topimg tooltip choose_specialplugins"></i>';
 ?>
     </div>
 </div>
@@ -162,6 +163,8 @@ print '<i class="icon-menu topimg tooltip choose_specialplugins" title="'.get_in
     </div>
 
     <div id="specialplugins" class="invisible noborder"></div>
+
+    <div id="historypanel" class="invisible noborder"></div>
 
     <div id="searcher" class="invisible noborder">
 <?php
@@ -226,17 +229,10 @@ if ($prefs['player_backend'] == "mopidy") {
 <div class="clearfix containerbox vertical" id="pluginplaylists_crazy">
 </div>
 </div>
-    
+
     <div id="infoholder" class="collectionpanel invisible">
     <div id="infopanecontrols">
         <div id="chooserbuttons">
-<?php
-            print '<div class="topdrop fixed"><i class="icon-versions topimg tooltip" title="'.get_int_text('button_history').'"></i>';
-?>
-            <div class="topdropmenu dropshadow leftmenu widemenu" id="hpscr">
-                <div id="historypanel" class="clearfix"></div>
-            </div>
-            </div>
 <?php
         print '<i title="'.get_int_text('button_back').'" id="backbutton" class="icon-left-circled topimg tooltip button-disabled"></i>';
         print '<i title="'.get_int_text('button_forward').'" id="forwardbutton" class="icon-right-circled tooltip topimg button-disabled"></i>';

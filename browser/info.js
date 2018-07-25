@@ -128,7 +128,10 @@ var browser = function() {
     }
 
     function updateHistory() {
-
+        $('#historypanel').unbind('click').empty().html('<div class="configtitle textcentre"><b>'
+            +language.gettext("button_history")
+            +'</b><i class="icon-cancel-circled clickicon playlisticonr tright mobonly" onclick="showHistory()"></i></div>'
+        );
         if (displaypointer == 1) {
             $("#backbutton").unbind('click');
             $("#backbutton").addClass('button-disabled');
@@ -146,18 +149,18 @@ var browser = function() {
             $("#forwardbutton").removeClass('button-disabled');
         }
 
-        var html;
         var bits = ["artist","album","track"];
-        html = '<div class="configtitle textcentre"><b>'+language.gettext("button_history")+'</b><i class="icon-cancel-circled clickicon playlisticonr tright mobonly" onclick="showHistory()"></i></div>';
-        html += '<table class="histable" width="100%">';
+        var t = $('<table>', {class: 'histable', width: '100%'}).appendTo('#historypanel');
+
         for (var i = 1; i < history.length; i++) {
-            var clas="top";
+            var clas = "top clickable clickicon";
             if (i == displaypointer) {
                 clas = clas + " current";
             }
-            html += '<tr class="'+clas+'" onclick="browser.doHistory('+i+')">';
-            html += '<td><i class="'+sources[history[i].source].icon+' medicon"></i></td>';
-            html += '<td>';
+            var r = $('<tr>', {class: clas, name: i}).appendTo(t);
+            r.append('<td><i class="'+sources[history[i].source].icon+' medicon"></i></td>');
+            var td = $('<td>').appendTo(r);
+            var html = '';
             bits.forEach(function(n) {
                 if (history[i][n].collection) {
                     html += history[i][n].collection.bannername()+'<br />';
@@ -165,10 +168,9 @@ var browser = function() {
                     html += language.gettext("label_"+n)+' : '+history[i][n].name+'<br>';
                 }
             });
-            html += '</td></tr>';
+            td.html(html);
         }
-        html += '</table>';
-        $("#historypanel").html(html);
+        $('#historypanel').bind('click', browser.historyClicked);
     }
 
     function removeSection(section) {
@@ -182,7 +184,7 @@ var browser = function() {
             }
         });
     }
-    
+
     function openPlugins() {
         var c = 0;
         for (var i in extraPlugins) {
@@ -211,6 +213,16 @@ var browser = function() {
     }
 
     return {
+
+        historyClicked: function(event) {
+            var clickedRow = $(event.target);
+            while (!clickedRow.hasClass('clickable') && !clickedRow.is('#historypanel')) {
+                clickedRow = clickedRow.parent();
+            }
+            if (clickedRow.hasAttr('name')) {
+                browser.doHistory(clickedRow.attr('name'));
+            }
+        },
 
         areweatfront: function() {
             debug.log("BROWSER","displaypointer:",displaypointer,"historylength",history.length);

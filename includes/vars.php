@@ -34,7 +34,7 @@ define('ADDED_THIS_YEAR', 4);
 
 // Safe definitions for setups that do not have a full set of image support built in,
 // Otherwise we spam the server logs with udefined constant errors.
-// These are the MIMe types that make it compatible with imagemagick
+// These are the MIME types that make it compatible with imagemagick
 if (!defined('IMAGETYPE_JPEG')) {
     define('IMAGETYPE_JPEG', 'image/jpeg');
 }
@@ -232,7 +232,9 @@ if (defined('ROMPR_IS_LOADING')) {
     debuglog("******++++++======------******------======++++++******","INIT",2);
 }
 
-debuglog($_SERVER['REQUEST_URI'],"REQUEST",9);
+if (array_key_exists('REQUEST_URI', $_SERVER)) {
+    debuglog($_SERVER['REQUEST_URI'],"REQUEST",9);
+}
 
 if (!property_exists($prefs['multihosts'], $prefs['currenthost'])) {
     debuglog($prefs['currenthost']." is not defined in the hosts defs. Falling back to Default","INIT",3);

@@ -691,7 +691,7 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
             if (hl.length > 0) {
                 this.element.find('.'+this.options.addClassTo).first().append('<a href="'+hl.first().val()+'" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
             }
-            
+
         }
         if (self.options.handleshow) {
             this._parent = this.element.parent();
@@ -844,14 +844,14 @@ $.widget('rompr.spotifyAlbumThing', {
             var appendto;
             if (layoutProcessor.openOnImage) {
                 var t = $('<div>').appendTo(y);
-                t.append('<img class="'+this.options.imageclass+' menu infoclick'+clickclass+' clickopenalbum clickspotifywidget" src="'+img+'"  name="'+a.id+'"/>');
+                t.append('<img class="'+this.options.imageclass+' menu infoclick'+clickclass+' clickopenalbum clickspotifywidget" src="'+img+'"  name="'+self.options.id+'dropper_'+a.id+'"/>');
                 html = '<div class="tagh albumthing sponklick relpos">'+
                     '<span class="title-menu'+trackclass+' clicktrack" name="'+a.uri+'">';
                 appendto = t;
             } else {
                 y.append('<img class="'+this.options.imageclass+trackclass+' clicktrack" '+'src="'+img+'" name="'+a.uri+'"/>');
                 html = '<div class="tagh albumthing sponklick">'+
-                    '<i class="icon-toggle-closed menu infoclick'+clickclass+' clickopenalbum clickspotifywidget" name="'+a.id+'"></i>'+
+                    '<i class="icon-toggle-closed menu infoclick'+clickclass+' clickopenalbum clickspotifywidget" name="'+self.options.id+'dropper_'+a.id+'"></i>'+
                     '<span class="title-menu'+trackclass+' clicktrack" name="'+a.uri+'">';
                 appendto = y;
             }
@@ -880,7 +880,7 @@ $.widget('rompr.spotifyAlbumThing', {
             if (player.canPlay('spotify')) {
                 con.append('<i class="tright icon-music smallicon infoclick'+clickclass+' clickaddtocollection clickspotifywidget tooltip" title="'+language.gettext('label_addtocollection')+'" name="'+i+'"></i>');
             }
-            y.append('<div class="tagh albumthing invisible" id="'+a.id+'"></div>');
+            y.append('<div class="tagh albumthing invisible" id="'+self.options.id+'dropper_'+a.id+'"></div>');
             if (this.options.showbiogs) {
                 y.append('<input type="hidden" value="'+encodeURIComponent(concatenate_artist_names(an))+'" />');
                 x.append('<span class="minwidthed" id="'+self.options.id+'bio_'+a.id+'"></span>');
@@ -909,30 +909,37 @@ $.widget('rompr.spotifyAlbumThing', {
 
     handleClick: function(element) {
         var self = this;
-        var id = element.attr("name");
+        var id = element.attr("name").replace(self.options.id+'dropper_', '');
         if (element.hasClass('clickopenalbum')) {
-            var dropper = $('#'+id);
+            var dropper = $('#'+element.attr("name"));
+            debug.shout("SP","YES",id);
             if (element.isOpen()) {
+                debug.shout("SP","YES2");
                 self.element.find('#'+self.options.id+'bio_'+id).hide();
                 element.toggleClosed();
                 if (self.options.showbiogs) {
+                    debug.shout("SP","YES3");
                     dropper.parent().parent().removeClass('tagholder_wide dropshadow').addClass(self.options.swapclass);
                     dropper.parent().parent().children('.helpfulalbum').addClass('fullwidth');
                 }
                 dropper.hide();
                 browser.rePoint();
             } else {
+                debug.shout("SP","YES4");
                 element.toggleOpen();
                 if (dropper.hasClass("filled")) {
+                    debug.shout("SP","YES5");
                     self._openAlbum(dropper);
                     dropper.show();
                     browser.rePoint();
                 } else {
                     if (layoutProcessor.openOnImage) {
+                        debug.shout("SP","YES6");
                         element.parent().parent().makeSpinner();
                     } else {
                         element.makeSpinner();
                     }
+                    debug.shout("SP","YES7");
                     spotify.album.getInfo(id, $.proxy(self.spotifyAlbumResponse, self), self.spotiError, true);
                 }
             }
@@ -969,7 +976,7 @@ $.widget('rompr.spotifyAlbumThing', {
         if (self.options.showbiogs) {
             e.parent().parent().removeClass(self.options.swapclass).addClass('tagholder_wide dropshadow');
             e.parent().parent().children('.helpfulalbum').removeClass('fullwidth');
-            self.element.find('#'+self.options.id+'bio_'+e.attr('id')).show();
+            self.element.find('#'+self.options.id+'bio_'+e.attr('id').replace(self.options.id+'dropper_')).show();
             browser.rePoint();
             if (!e.hasClass('biogd')) {
                 var aname = decodeURIComponent(e.next().val());
@@ -978,7 +985,7 @@ $.widget('rompr.spotifyAlbumThing', {
                     lastfm.artist.getInfo({artist: decodeURIComponent(e.next().val())},
                         $.proxy(self.artistInfo, self),
                         $.proxy(self.lfmError, self),
-                        e.attr('id')
+                        e.attr('id').replace(self.options.id+'dropper_', '')
                     );
                 }
             }
@@ -992,7 +999,7 @@ $.widget('rompr.spotifyAlbumThing', {
         } else {
             $('[name="'+data.id+'"]').stopSpinner();
         }
-        var e = this.element.find("#"+data.id);
+        var e = $("#"+this.options.id+'dropper_'+data.id);
         e.show();
         this._openAlbum(e);
         e.addClass("filled").html(spotifyTrackListing(data));
@@ -1365,7 +1372,7 @@ function popup(opts) {
         win.floatingMenu({handleshow: false, handleclass: 'cheese', movecallback: self.moved });
         return contents;
     }
-    
+
     this.open = function() {
         win.css({display: 'block'});
         self.adjustCSS(true, true);
@@ -1385,12 +1392,12 @@ function popup(opts) {
             win.remove();
         }
     }
-    
+
     this.moved = function(pos) {
         options.css.top = pos.top;
         options.css.left = pos.left;
     }
-    
+
     this.adjustCSS = function(setleft, settop) {
         var contentheight = contents.outerHeight(true) + titlebar.outerHeight(true);
         if (options.fitheight) {
@@ -1407,7 +1414,7 @@ function popup(opts) {
                 case 'left':
                     options.css.left = Math.min(options.mousevent.clientX-8, w.x - options.css.width);
                     break;
-                    
+
                 case 'right':
                     options.css.right = Math.max(options.mousevent.clientX+8, options.css.width);
                     break;
@@ -1446,5 +1453,5 @@ function popup(opts) {
         self.adjustCSS(false, false);
         self.setCSS();
     }
-    
+
 }

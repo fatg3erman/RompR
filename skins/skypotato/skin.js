@@ -5,9 +5,9 @@
 // So be careful to test it.
 
 jQuery.fn.menuReveal = function(callback) {
-    
+
     // 'self' is the menu being opened, which will alresady have contents
-    
+
     var self = this;
     var id = this.attr('id');
     debug.trace("UI","Revealing",'#'+id);
@@ -36,7 +36,7 @@ jQuery.fn.menuReveal = function(callback) {
         p.find('.helpfulalbum.expand').removeClass('expand').addClass('fixed');
         this.detach().addClass('minwidthed2').appendTo(p);
     }
-    this.show('fast', function() {
+    this.show(0, function() {
         if (callback) callback.call(self);
         if (self.hasClass('containerbox')) {
             self.css('display', 'flex');
@@ -49,7 +49,7 @@ jQuery.fn.menuReveal = function(callback) {
 jQuery.fn.menuHide = function(callback) {
     var self = this;
     debug.trace('UI',"Menu Hide",self);
-    this.hide('fast', function() {
+    this.hide(0, function() {
         // Revert back to their default state so the open functions work
         debug.trace("UI","Hidden",self.parent());
         if (self.parent().hasClass('album')) {
@@ -132,7 +132,7 @@ jQuery.fn.stopSpinner = function() {
                 $(this).removeAttr("originalclass");
             }
         });
-    
+
     } else {
         this.removeClass('clickflash');
         return this;
@@ -156,7 +156,7 @@ jQuery.fn.animatePanel = function(options) {
 }
 
 function showHistory() {
-    
+
 }
 
 var layoutProcessor = function() {
@@ -179,31 +179,35 @@ var layoutProcessor = function() {
                 case'searcher':
                     setSearchLabelWidth();
                     break;
-                    
+
                 case 'pluginplaylistslist':
                     setSpotiLabelWidth();
                     layoutProcessor.adjustBoxSizes();
                     break;
-                    
+
                 case 'albumlist':
                     if (prefs.sortcollectionby != 'artist') {
                         layoutProcessor.adjustBoxSizes();
                     }
                     break;
-                    
+
                 case 'playlistslist':
                     layoutProcessor.adjustBoxSizes();
                     break;
-                    
+
                 case 'podcastslist':
                     fanooglePodcasts();
                     $('#infopane').mCustomScrollbar('scrollTo', '#podcastslist');
                     break;
-                    
+
+                case 'historypanel':
+                    $('#infoholder').show(0, browser.rePoint);
+                    break;
+
                 case 'infoholder':
                     browser.rePoint();
                     break;
-                    
+
                 case 'pluginholder':
                     browser.rePoint();
                     layoutProcessor.adjustBoxSizes();
@@ -219,7 +223,7 @@ var layoutProcessor = function() {
         }
         layoutProcessor.adjustBoxSizes();
     }
-    
+
     function setBottomPanelWidths() {
         var widths = getPanelWidths();
         $("#sources").css("width", widths.sources+"%");
@@ -243,7 +247,7 @@ var layoutProcessor = function() {
         $("#sources").animatePanel(widths);
         $("#infopane").animatePanel(widths);
     }
-    
+
     return {
 
         supportsDragDrop: true,
@@ -270,7 +274,7 @@ var layoutProcessor = function() {
                         $('#collection, #searchresultholder').unbind('click').unbind('dblclick');
                     }
                     break;
-                    
+
                 case 'album':
                 case 'albumbyartist':
                     if (!$('#collection').hasClass('containerbox')) {
@@ -289,7 +293,7 @@ var layoutProcessor = function() {
             }
             collectionHelper.forceCollectionReload();
         },
-        
+
         adjustBoxSizes: function() {
             debug.log("UI", "adjusting Box Sizes");
             $('.collectionpanel').adjustBoxSizes();
@@ -304,11 +308,11 @@ var layoutProcessor = function() {
         bindSourcesClicks: function() {
             $('#sources, #podcastslist, #playlistslist').bindPlayClicks();
         },
-        
+
         postAlbumActions: function(panel) {
             layoutProcessor.adjustBoxSizes();
         },
-        
+
         hackForSkinsThatModifyStuff: function(id) {
             $(id+'.holderthing').removeClass('holderthing').addClass('containerbox wrap');
         },
@@ -380,7 +384,7 @@ var layoutProcessor = function() {
 
         setPlaylistHeight: function() {
             var w = getWindowSize();
-            
+
         },
 
         playlistControlHotKey: function(button) {
@@ -421,7 +425,7 @@ var layoutProcessor = function() {
         },
 
         hideBrowser: function() {
-            
+
         },
 
         addCustomScrollBar: function(value) {
@@ -460,7 +464,7 @@ var layoutProcessor = function() {
                 debug.log("LAYOUT","Was asked to scroll collection to something non-existent",2);
             }
         },
-        
+
         expandInfo: function(side) {
             switch(side) {
                 case "left":
@@ -498,7 +502,7 @@ var layoutProcessor = function() {
                             layoutProcessor.expandInfo('left');
                         }
                         break;
-                        
+
                     case 'infoholder':
                     case 'pluginholder':
                     case 'podcastslist':
@@ -509,7 +513,14 @@ var layoutProcessor = function() {
                             layoutProcessor.expandInfo('left');
                         }
                         break;
-                        
+
+                    case 'historypanel':
+                        $('.collectionpanel').not('#infoholder').hide(0);
+                        if (prefs.sourceshidden) {
+                            layoutProcessor.expandInfo('left');
+                        }
+                        break;
+
                     default:
                         $('.collectionpanel').hide(0);
                         if (prefs.sourceshidden) {
@@ -556,12 +567,12 @@ var layoutProcessor = function() {
                     case 'artist':
                         layoutProcessor.scrollCollectionTo($('[name="aartist'+details.artistindex+'"]'));
                         break;
-                        
+
                     case 'album':
                     case 'albumbyartist':
                         layoutProcessor.scrollCollectionTo($('[name="aalbum'+details.albumindex+'"]'));
                         break;
-                        
+
                 }
             }
         },
@@ -647,10 +658,10 @@ var layoutProcessor = function() {
         },
 
         makeCollectionDropMenu: function(element, name) {
-            
+
             // Creates a nonexisted drop menu to hold contents.
             // 'element' is the PARENT menu element that has been clicked on.
-            
+
             if (element.hasClass('album') || element.hasClass('playlist')) {
                 // This is for an album clicked on in the album browser pane.
                 var x = $('#'+name);
@@ -673,7 +684,7 @@ var layoutProcessor = function() {
                     var t= ($('<div>', {id: name, class: 'indent containerbox wrap notfilled'})).insertAfter(element);
                 }
             } else if (element.hasClass('searchdir')) {
-                
+
             } else {
                 // This is for an artist clicked on in the artist list.
                 var t;
@@ -704,13 +715,13 @@ var layoutProcessor = function() {
                 case 'artist':
                     return $("#"+menutoopen).parent().parent().parent();
                     break;
-                    
+
                 default:
                     return $('[name="'+menutoopen+'"]').parent();
                     break;
             }
         },
-        
+
         setupPersonalRadio: function() {
             $('#pluginplaylistslist .menuitem').not('.dropdown').wrap('<div class="collectionitem fixed"></div>');
             $('#pluginplaylistslist .combobox-entry').parent().parent().parent().parent().addClass('brick_wide helpfulalbum');
@@ -722,12 +733,12 @@ var layoutProcessor = function() {
                 $(this).detach().addClass('helpfulalbum').appendTo(s);
             });
         },
-        
+
         setupPersonalRadioAdditions: function() {
             $('#pluginplaylistslist .crazyradio').addClass('vertical helpfulalbum').wrap('<div class="collectionitem fixed"></div>');
             layoutProcessor.adjustBoxSizes();
         },
-        
+
         initialise: function() {
             debug.log("SKIN","Initialising...");
             if (prefs.outputsvisible) {
@@ -808,6 +819,7 @@ var layoutProcessor = function() {
             $('.choose_pluginplaylistslist').click(function(){layoutProcessor.sourceControl('pluginplaylistslist')});
             $('.choose_specialplugins').click(function(){layoutProcessor.sourceControl('specialplugins')});
             $('.choose_infopanel').click(function(){layoutProcessor.sourceControl('infoholder')});
+            $('.choose_history').click(function(){layoutProcessor.sourceControl('historypanel')});
             $('.open_albumart').click(openAlbumArtManager);
             $('#love').click(nowplaying.love);
             $("#ratingimage").click(nowplaying.setRating);
@@ -835,17 +847,17 @@ var layoutProcessor = function() {
                 orientation: "vertical"
             });
         },
-        
+
         // Optional Additions
-        
+
         findAlbumDisplayer: function(key) {
             return $('.containerbox.wrap[name="'+key+'"]').parent();
         },
-        
+
         findArtistDisplayer: function(key) {
             return $('div.menu[name="'+key+'"]');
         },
-        
+
         insertAlbum: function(v) {
             var albumindex = v.id;
             $('#aalbum'+albumindex).html(v.tracklist);
@@ -856,7 +868,7 @@ var layoutProcessor = function() {
                     debug.log("Insert After",v.where);
                     $(v.html).insertAfter(uiHelper.findAlbumDisplayer(v.where));
                     break;
-        
+
                 case 'insertAtStart':
                     debug.log("Insert At Start",v.where);
                     $(v.html).insertAfter($('#'+v.where).find('.clickalbum.ninesix.tagholder_wide'));
@@ -868,7 +880,7 @@ var layoutProcessor = function() {
             }
             layoutProcessor.postAlbumActions();
         },
-        
+
         insertArtist: function(v) {
             switch (v.type) {
                 case 'insertAfter':
@@ -878,13 +890,13 @@ var layoutProcessor = function() {
                         case 'albumbyartist':
                             $(v.html).insertAfter(uiHelper.findAlbumDisplayer(v.where));
                             break;
-                            
+
                         case 'artist':
                             $(v.html).insertAfter(uiHelper.findArtistDisplayer(v.where));
                             break;
                     }
                     break;
-        
+
                 case 'insertAtStart':
                     debug.log("Insert At Start",v.where);
                     $(v.html).prependTo($('#'+v.where));
@@ -892,16 +904,16 @@ var layoutProcessor = function() {
             }
             layoutProcessor.postAlbumActions();
         },
-        
+
         emptySearchResults: function() {
             $('.collectionpanel.searcher').remove();
             $('#searchresultholder').empty();
         },
-        
+
         fixupArtistDiv(jq, name) {
             jq.addClass('containerbox wrap');
         },
-        
+
         postPodcastSubscribe: function(data, index) {
             $('.menu[name="podcast_'+index+'"]').parent().fadeOut('fast', function() {
                 $('.menu[name="podcast_'+index+'"]').parent().remove();
@@ -913,7 +925,7 @@ var layoutProcessor = function() {
                 layoutProcessor.postAlbumActions();
             });
         },
-        
+
         createPluginHolder: function(icon, title) {
             var d = $('<div>', {class: 'topdrop'}).prependTo('#righthandtop');
             var i = $('<i>', {class: 'tooltip', title: title}).appendTo(d);
@@ -921,6 +933,6 @@ var layoutProcessor = function() {
             i.addClass('smallpluginicon clickicon');
             return d;
         }
-        
+
     }
 }();
