@@ -2016,6 +2016,10 @@ table.ambox {
 	word-break: break-all;
 }
 
+.info-detail-layout ul {
+	word-break: normal;
+}
+
 .artistnamething {
     font-size:140%;
     line-height:1.1em;

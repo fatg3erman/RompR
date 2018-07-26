@@ -44,6 +44,23 @@ var info_spotify = function() {
         html += '<ul>';
         html += '<li>'+language.gettext("label_pop")+': '+data.popularity+'</li>';
 		html += '<li>'+language.gettext("lastfm_releasedate")+': '+data.release_date+'</li>';
+
+		if (player.canPlay('spotify')) {
+
+			html += '<li><div class="containerbox menuitem infoclick clickaddtolistenlater" style="padding-left:0px">'+
+	    		'<div class="fixed alignmid">'+
+	            '<i class="icon-headphones smallicon"></i></div>'+
+	    		'<div class="expand">'+language.gettext("label_addtolistenlater")+'</div>'+
+	            '</div></li>';
+
+			html += '<li><div class="containerbox menuitem infoclick clickaddtocollection" style="padding-left:0px">'+
+	    		'<div class="fixed alignmid">'+
+	            '<i class="icon-music smallicon"></i></div>'+
+	    		'<div class="expand">'+language.gettext("label_addtocollection")+'</div>'+
+	            '</div></li>';
+
+		}
+
         html += '</ul>';
 		html += '</div>';
 
@@ -222,6 +239,10 @@ var info_spotify = function() {
                 	$("#bumhole .bsel").removeClass("bsel");
                 	element.addClass("bsel");
                 	getArtists();
+				} else if (element.hasClass('clickaddtolistenlater')) {
+					metaHandlers.addToListenLater(albummeta.spotify.album);
+				} else if (element.hasClass('clickaddtocollection')) {
+					metaHandlers.fromSpotifyData.addAlbumTracksToCollection(albummeta.spotify.album, artistmeta.spotify.artist.name);
                 } else if (element.hasClass('clickstartradio')) {
                     playlist.radioManager.load("artistRadio", 'spotify:artist:'+artistmeta.spotify.id);
                 }  else if (element.hasClass('clickstartsingleradio')) {
@@ -339,6 +360,7 @@ var info_spotify = function() {
                                     break;
                                 }
                             }
+		                    img += '&rompr_resize_size=smallish';
                         } else {
                             img = 'newimages/spotify-icon.png';
                         }
@@ -354,7 +376,7 @@ var info_spotify = function() {
                     $('#helpful_tracks').imagesLoaded(doBlockLayout);
 
                 }
-                
+
                 function doBlockLayout() {
                     debug.shout(medebug,"Track Images Have Loaded");
                     browser.rePoint($('#helpful_tracks'),{ itemSelector: '.arsecandle', columnWidth: '.arsecandle', percentPosition: true});

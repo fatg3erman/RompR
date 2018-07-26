@@ -833,6 +833,11 @@ $.widget('rompr.spotifyAlbumThing', {
                         break;
                     }
                 }
+                if (self.options.showbiogs) {
+                    img += '&rompr_resize_size=medium';
+                } else {
+                    img += '&rompr_resize_size=smallish';
+                }
             } else {
                 img = 'newimages/spotify-icon.png';
             }
@@ -912,34 +917,27 @@ $.widget('rompr.spotifyAlbumThing', {
         var id = element.attr("name").replace(self.options.id+'dropper_', '');
         if (element.hasClass('clickopenalbum')) {
             var dropper = $('#'+element.attr("name"));
-            debug.shout("SP","YES",id);
             if (element.isOpen()) {
-                debug.shout("SP","YES2");
                 self.element.find('#'+self.options.id+'bio_'+id).hide();
                 element.toggleClosed();
                 if (self.options.showbiogs) {
-                    debug.shout("SP","YES3");
                     dropper.parent().parent().removeClass('tagholder_wide dropshadow').addClass(self.options.swapclass);
                     dropper.parent().parent().children('.helpfulalbum').addClass('fullwidth');
                 }
                 dropper.hide();
                 browser.rePoint();
             } else {
-                debug.shout("SP","YES4");
                 element.toggleOpen();
                 if (dropper.hasClass("filled")) {
-                    debug.shout("SP","YES5");
                     self._openAlbum(dropper);
                     dropper.show();
                     browser.rePoint();
                 } else {
                     if (layoutProcessor.openOnImage) {
-                        debug.shout("SP","YES6");
                         element.parent().parent().makeSpinner();
                     } else {
                         element.makeSpinner();
                     }
-                    debug.shout("SP","YES7");
                     spotify.album.getInfo(id, $.proxy(self.spotifyAlbumResponse, self), self.spotiError, true);
                 }
             }
@@ -1075,6 +1073,7 @@ $.widget('rompr.spotifyArtistThing', {
                         break;
                     }
                 }
+                img += '&rompr_resize_size=medium';
             } else {
                 img = 'newimages/artist-icon.png';
             }
@@ -1159,6 +1158,9 @@ $.widget('rompr.spotifyArtistThing', {
             }
         } else if (element.hasClass('clickopenalbum')) {
             $('#'+element.parent().parent().parent().parent().attr('id')).spotifyAlbumThing('handleClick', element);
+        } else if (element.hasClass('clickaddtolistenlater') ||
+                    element.hasClass('clickaddtocollection')) {
+            $('#'+element.parent().parent().parent().parent().parent().attr('id')).spotifyAlbumThing('handleClick', element);
         }
     },
 

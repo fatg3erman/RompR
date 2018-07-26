@@ -372,6 +372,11 @@ class albumImage extends baseAlbumImage {
                     $imagehandler->save($image, 75);
                     break;
 
+                case 'smallish':
+                    $imagehandler->resizeToWidth(260);
+                    $imagehandler->save($image, 70);
+                    break;
+
                 case 'medium':
                     $imagehandler->resizeToWidth(400);
                     $imagehandler->save($image, 70);
@@ -742,6 +747,11 @@ class gdImage {
             case 'small':
                 $this->resizeToWidth(100);
                 $this->save(null, 75);
+                break;
+
+            case 'smallish':
+                $this->resizeToWidth(250);
+                $this->save(null, 70);
                 break;
 
             case 'medium':
