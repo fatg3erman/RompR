@@ -81,11 +81,11 @@ var spotify = function() {
 
 		},
 
-		requestFail: function(data) {
+		requestFail: function(xhr,status,err) {
         	throttle = setTimeout(spotify.getrequest, 1500);
         	req = queue.shift();
-        	debug.warn("SPOTIFY","Request failed",req,data);
-        	data = {error: language.gettext("spotify_noinfo")}
+        	debug.warn("SPOTIFY","Request failed",req,xhr);
+        	data = {error: language.gettext("spotify_noinfo") + ' ('+xhr.status+' '+err+')'}
         	if (req.reqid != '') {
         		data.reqid = req.reqid;
         	}

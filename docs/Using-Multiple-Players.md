@@ -24,6 +24,14 @@ To select a player to use, just select it in the Configuration menu and that bro
 
 ![](images/players2.png)
 
+On the Phone and Tablet skins, you can also select players from the Volume Control dropdown
+
+![](images/players3.png)
+
+When switching players you will be given the option to transfer your Current Playlist to the new Player. Selecting 'Yes' will do this and playback will continue from the point where it left off.
+
+![](images/players4.png)
+
 ## Limitations
 
 * All players must be the same type - i.e all MPD or all Mopidy. This is because MPD and Mopidy use different and incompatible URI schemes for files.

@@ -33,7 +33,7 @@ input
     color:#000000;
 }
 
-button
+button, .filebutton
 {
     color:#000000;
     border: 1px solid #000000;
@@ -47,7 +47,7 @@ button
     border-top: 2px solid gray;
 }
 
-button:hover
+button:hover, .filebutton:hover
 {
     color:#ff4800;
     text-shadow: 0 0 15px #ff4800;

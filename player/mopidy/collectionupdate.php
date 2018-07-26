@@ -26,10 +26,14 @@ function musicCollectionSpotifyPlaylistHack($monitor) {
 	$playlists = do_mpd_command("listplaylists", true, true);
     if (is_array($playlists) && array_key_exists('playlist', $playlists)) {
         foreach ($playlists['playlist'] as $pl) {
-	    	debuglog("Scanning Playlist ".$pl,"COLLECTION",8);
-	        fwrite($monitor, "\nScanning Playlist ".$pl);
-	    	doMpdParse('listplaylistinfo "'.format_for_mpd($pl).'"', $dirs, array("spotify"));
-		    $collection->tracks_to_database();
+			if (preg_match('/\(by spotify\)/', $pl)) {
+				debuglog("Ignoring Playlist ".$pl,"COLLECTION",7);
+			} else {
+		    	debuglog("Scanning Playlist ".$pl,"COLLECTION",7);
+		        fwrite($monitor, "\nScanning Playlist ".$pl);
+		    	doMpdParse('listplaylistinfo "'.format_for_mpd($pl).'"', $dirs, array("spotify"));
+			    $collection->tracks_to_database();
+			}
 	    }
 	}
 }

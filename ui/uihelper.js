@@ -167,9 +167,9 @@ jQuery.fn.fanoogleMenus = function() {
         var nh = Math.min(avheight, conheight);
         $(this).css({height: nh+"px", "max-height":''});
         $(this).mCustomScrollbar("update");
-        if ($(this).attr("id") == "hpscr") {
-            $(this).mCustomScrollbar("scrollTo", '.current', {scrollInertia:0});
-        }
+        // if ($(this).attr("id") == "hpscr") {
+        //     $(this).mCustomScrollbar("scrollTo", '.current', {scrollInertia:0});
+        // }
     });
 }
 
@@ -219,7 +219,7 @@ jQuery.fn.removeBunnyEars = function() {
 var uiHelper = function() {
 
     return {
-    
+
         findAlbumDisplayer: function(key) {
             try {
                 return layoutProcessor.findAlbumDisplayer(key);
@@ -239,7 +239,7 @@ var uiHelper = function() {
                 return $('i[name="'+key+'"]').parent();
             }
         },
-        
+
         findArtistDisplayer: function(key) {
             try {
                 return layoutProcessor.findArtistDisplayer(key);
@@ -253,7 +253,7 @@ var uiHelper = function() {
                 }
             }
         },
-        
+
         insertAlbum: function(v) {
             try {
                 return layoutProcessor.insertAlbum(v);
@@ -275,7 +275,7 @@ var uiHelper = function() {
                         debug.log("Insert After",v.where);
                         $(v.html).insertAfter(uiHelper.findAlbumDisplayer(v.where));
                         break;
-            
+
                     case 'insertAtStart':
                         debug.log("Insert At Start",v.where);
                         $(v.html).prependTo($('#'+v.where));
@@ -289,7 +289,7 @@ var uiHelper = function() {
                 layoutProcessor.postAlbumActions();
             }
         },
-        
+
         insertArtist: function(v) {
             try {
                 return layoutProcessor.insertArtist(v);
@@ -302,13 +302,13 @@ var uiHelper = function() {
                             case 'albumbyartist':
                                 $(v.html).insertAfter(uiHelper.findAlbumDisplayer(v.where));
                                 break;
-                                
+
                             case 'artist':
                                 $(v.html).insertAfter(uiHelper.findArtistDisplayer(v.where));
                                 break;
                         }
                         break;
-            
+
                     case 'insertAtStart':
                         debug.log("Insert At Start",v.where);
                         $(v.html).prependTo($('#'+v.where));
@@ -316,7 +316,7 @@ var uiHelper = function() {
                 }
             }
         },
-        
+
         removeAlbum: function(key) {
             try {
                 return layoutProcessor.removeAlbum(key);
@@ -353,7 +353,7 @@ var uiHelper = function() {
 
             }
         },
-        
+
         emptySearchResults: function() {
             try {
                 return layoutProcessor.emptySearchResults();
@@ -361,63 +361,55 @@ var uiHelper = function() {
                 $('#searchresultholder').empty();
             }
         },
-        
+
         fixupArtistDiv: function(jq, name) {
             try {
                 return layoutProcessor.fixupArtistDiv(jq, name);
             } catch (err) {
-                
+
             }
         },
-        
+
         hackForSkinsThatModifyStuff: function(id) {
             try {
                 return layoutProcessor.hackForSkinsThatModifyStuff(id);
             } catch (err) {
-                
+
             }
         },
-        
+
         postPlaylistLoad: function() {
             try {
                 return layoutProcessor.postPlaylistLoad();
             } catch (err) {
-                
+
             }
         },
-        
+
         getElementPlaylistOffset: function(element) {
             try {
                 return layoutProcessor.getElementPlaylistOffset(element);
             } catch (err) {
-                
+
             }
         },
-        
+
         createPluginHolder: function(icon, title) {
             try {
                 return layoutProcessor.createPluginHolder(icon, title);
             } catch (err) {
-                var d = $('<div>', {class: 'topdrop'}).prependTo('#righthandtop');
-                var i = $('<i>', {class: 'tooltip', title: title}).appendTo(d);
-                i.addClass(icon);
-                if (small_plugin_icons) {
-                    i.addClass('smallpluginicon clickicon');
-                } else {
-                    i.addClass('topimg')
-                }
-                return d;
+                return false;
             }
         },
-        
+
         postAlbumMenu: function(element) {
             try {
                 return layoutProcessor.postAlbumMenu(element);
             } catch (err) {
-                
+
             }
         },
-        
+
         postPodcastSubscribe: function(data, index) {
             try {
                 return layoutProcessor.postPodcastSubscribe(data, index);
@@ -426,14 +418,14 @@ var uiHelper = function() {
                     $('i[name="podcast_'+index+'"]').parent().remove();
                     $('#podcast_'+index).remove();
                     $("#fruitbat").html(data);
-                    $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+                    $("#fruitbat .fridge").tipTip({delay: 500, edgeOffset: 8});
                     infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
                     podcasts.doNewCount();
                     layoutProcessor.postAlbumActions();
                 });
             }
         }
-            
+
     }
 
 }();

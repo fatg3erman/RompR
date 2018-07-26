@@ -48,21 +48,14 @@ a:hover,a:active
     background-color:rgba(0,0,0,0.2);
 }
 
-button, input[type="button"]
+button, input[type="button"], .filebutton
 {
     background-image: radial-gradient(circle farthest-side at center, yellow, orange, red);
     color:#000000;
     border:1px solid #000000;
 }
 
-.crackbaby button, .albumcovers .infosection button
-{
-    background-image:none !important;
-    background-color:transparent !important;
-    border:0px none !important;
-}
-
-button:hover, input[type="button"]:hover
+button:hover, input[type="button"]:hover, .filebutton:hover
 {
     color:#ffffff;
     text-shadow: 0 0 15px #ffffff;

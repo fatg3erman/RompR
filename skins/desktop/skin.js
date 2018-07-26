@@ -141,7 +141,7 @@ var layoutProcessor = function() {
 
         setupInfoButtons: function() {
             $("#button_source"+prefs.infosource).addClass("currentbun");
-            $("#chooserbuttons .topimg").tipTip({delay: 1000, edgeOffset: 8});
+            $("#chooserbuttons .topimg").tipTip({delay: 500, edgeOffset: 8});
         },
 
         goToBrowserPanel: function(panel) {
@@ -211,23 +211,20 @@ var layoutProcessor = function() {
         },
 
         scrollPlaylistToCurrentTrack: function() {
-            if (prefs.scrolltocurrent && $('.track[romprid="'+player.status.songid+
-                '"],.booger[romprid="'+player.status.songid+'"]').length > 0) {
-                $('#pscroller').mCustomScrollbar("stop");
-                $('#pscroller').mCustomScrollbar("update");
-                var pospixels = Math.round($('div.track[romprid="'+player.status.songid+
-                    '"],.booger[romprid="'+player.status.songid+'"]').position().top -
-                    ($("#sortable").parent().parent().height()/2));
-                if (pospixels < 0) { pospixels = 0 }
-                if (pospixels > $("#sortable").parent().height()) {
-                    pospixels = $("#sortable").parent().height();
+            if (prefs.scrolltocurrent) {
+                var scrollto = playlist.getCurrentTrackElement();;
+                if (scrollto.length > 0) {
+                    debug.log("LAYOUT","Scrolling Playlist To Song:",player.status.songid);
+                    $('#pscroller').mCustomScrollbar("stop");
+                    $('#pscroller').mCustomScrollbar("update");
+                    var pospixels = Math.round(scrollto.position().top - ($("#sortable").parent().parent().height()/2));
+                    pospixels = Math.min($("#sortable").parent().height(), Math.max(pospixels, 0));
+                    $('#pscroller').mCustomScrollbar(
+                        "scrollTo",
+                        pospixels,
+                        { scrollInertia: 0 }
+                    );
                 }
-                debug.log("LAYOUT","Scrolling Playlist To Song:",player.status.songid);
-                $('#pscroller').mCustomScrollbar(
-                    "scrollTo",
-                    pospixels,
-                    { scrollInertia: 0 }
-                );
             }
         },
 
@@ -404,7 +401,9 @@ var layoutProcessor = function() {
             setDraggable("#podcastslist");
             setDraggable("#somafmlist");
             setDraggable("#bbclist");
+            setDraggable("#communityradiolist");
             setDraggable("#icecastlist");
+            setDraggable("#tuneinlist");
             setDraggable('#artistinformation');
             setDraggable('#albuminformation');
             setDraggable('#storedplaylists');
@@ -485,7 +484,7 @@ var layoutProcessor = function() {
             $('.clear_playlist').click(playlist.clear);
             $("#playlistname").parent().next('button').click(player.controller.savePlaylist);
 
-            $(".lettuce,.tooltip").tipTip({delay: 1000, edgeOffset: 8});
+            $(".lettuce,.tooltip").tipTip({delay: 500, edgeOffset: 8});
 
             document.body.addEventListener('drop', function(e) {
                 e.preventDefault();

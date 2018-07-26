@@ -123,6 +123,10 @@ var communityRadioPlugin = {
             communityRadioPlugin.page--;
             clickedElement.unbind('click').makeSpinner();
             communityRadioPlugin.update();
+        } else if (clickedElement.hasClass('clickcommradiopager')) {
+            communityRadioPlugin.page = clickedElement.attr('name');
+            clickedElement.unbind('click').makeSpinner();
+            communityRadioPlugin.update();
         } else if (prefs.clickmode == "double") {
             if (clickedElement.hasClass("clickstream")) {
                 event.stopImmediatePropagation();

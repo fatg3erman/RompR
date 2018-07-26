@@ -11,9 +11,31 @@ function LastFM(user) {
     var throttle = null;
     var throttleTime = 1000;
 
+    function startlogin() {
+        self.login($('#configpanel input[name="lfmuser"]').val());
+    }
+
+    function logout() {
+        prefs.save({lastfm_session_key: ''});
+        logged_in = false;
+        uiLoginBind();
+    }
+
+    function uiLoginBind() {
+        if (!logged_in) {
+            $('.lastfmlogin-required').removeClass('notenabled').addClass('notenabled');
+            $('#lastfmloginbutton').unbind('click').bind('click', startlogin).html(language.gettext('config_loginbutton'));
+        } else {
+            $('.lastfmlogin-required').removeClass('notenabled');
+            $('#lastfmloginbutton').unbind('click').bind('click', logout).html(language.gettext('button_logout'));
+        }
+    }
+
     if (prefs.lastfm_session_key !== "" || typeof lastfm_session_key !== 'undefined') {
         logged_in = true;
     }
+
+    uiLoginBind();
 
     this.setThrottling = function(t) {
         throttleTime = Math.max(1000,t);
@@ -34,7 +56,7 @@ function LastFM(user) {
     this.isLoggedIn = function() {
         return logged_in;
     }
-
+    
     this.getLanguage = function() {
         switch (prefs.lastfmlang) {
             case "default":
@@ -60,12 +82,6 @@ function LastFM(user) {
         return username;
     }
     
-    this.startlogin = function() {
-        var user = $("#configpanel").find('input[name|="user"]').val();
-        self.login(user);
-        $("#configpanel").fadeOut(1000);
-    }
-
     this.login = function (user, pass) {
 
         username = user;
@@ -105,6 +121,7 @@ function LastFM(user) {
                                         '<button>'+language.gettext("lastfm_loginbutton")+'</button></a></td></tr>');
             $("#lfmlogintable").append('<tr><td>'+language.gettext("lastfm_login3")+'</td></tr>');
             lfmlog.addCloseButton('OK',lastfm.finishlogin);
+            lfmlog.setWindowToContentsSize();
             lfmlog.open();
         });
     }
@@ -126,6 +143,7 @@ function LastFM(user) {
                     lastfm_session_key: lastfm_session_key,
                     lastfm_user: username
                 });
+                uiLoginBind();
             },
             function(data) {
                 alert(language.gettext("lastfm_loginfailed"));
@@ -196,24 +214,49 @@ function LastFM(user) {
                         req = queue.shift();
                         debug.log("LASTFM", req.options.method,"request success");
                         if (data.error) {
-                            debug.warn("LASTFM","Last FM signed request failed with status",data.error.message);
+                            debug.blurt("LASTFM","Last FM signed request failed with status",data.error.message);
                             req.fail(data);
                         } else {
                             req.success(data);
                         }
                     },
                     error: function(xhr,status,err) {
-                        throttle = setTimeout(lastfm.getRequest, throttleTime);
                         req = queue.shift();
-                        debug.error("LASTFM",req.options.method,"request error",xhr,status,err);
-                        if (req.retries < 3) {
-                            debug.log("LASTFM","Retrying...");
-                            req.retries++;
-                            req.flag = false;
-                            queue.unshift(req);
-                        } else {
-                            req.fail(null);
+                        debug.error("LASTFM",req.options.method,"request error",status,err);
+                        if (xhr.responseJSON) {
+                            var errorcode = xhr.responseJSON.error;
+                            var errortext = xhr.responseJSON.message;
+                            debug.error("LASTFM", 'Error Code',errorcode,"Message",errortext);
+                            
+                            switch (errorcode) {
+                                case 4:
+                                case 9:
+                                case 10:
+                                case 14:
+                                case 26:
+                                    debug.error("LASTFM","We are not authenticated. Logging Out");
+                                    logout();
+                                    req.fail(null);
+                                    break;
+                                    
+                                case 29:
+                                    debug.warn("LASTFM","Rate Limit Exceeded. Slowing Down");
+                                    self.setThrottling(throttleTime*2);
+                                    // Fall through
+                                    
+                                default:
+                                    if (req.retries < 3) {
+                                        debug.log("LASTFM","Retrying...");
+                                        req.retries++;
+                                        req.flag = false;
+                                        queue.unshift(req);
+                                    } else {
+                                        req.fail(null);
+                                    }
+                                
+                           }
                         }
+                        throttle = setTimeout(lastfm.getRequest, throttleTime);
                     }
                 });
             } else {
@@ -229,32 +272,33 @@ function LastFM(user) {
                             throttle = setTimeout(lastfm.getRequest, throttleTime);
                         }
                         req = queue.shift();
-                        if (data === null) {
-                            data = {error: language.gettext("lastfm_error")};
-                        }
-                        if (data.error) {
-                            if (req.reqid || req.reqid === 0) {
-                                req.fail(data, req.reqid);
-                            } else {
-                                req.fail(data);
-                            }
+                        debug.debug("LASTFM","Calling success callback");
+                        if (req.reqid || req.reqid === 0) {
+                            req.success(data, req.reqid);
                         } else {
-                            debug.debug("LASTFM","Calling success callback");
-                            if (req.reqid || req.reqid === 0) {
-                                req.success(data, req.reqid);
-                            } else {
-                                req.success(data);
-                            }
+                            req.success(data);
                         }
                     },
                     error: function(xhr,status,err) {
                         throttle = setTimeout(lastfm.getRequest, throttleTime);
                         req = queue.shift();
-                        debug.warn("LASTFM", "Get Request Failed",xhr.status,status,err);
+                        debug.warn("LASTFM", "Get Request Failed",xhr,status,err);
+                        var errormessage = language.gettext('lastfm_error');
+                        if (xhr.responseJSON) {
+                            var errorcode = xhr.responseJSON.error;
+                            var errortext = xhr.responseJSON.message;
+                            errormessage += '<br />'+errortext;
+                            if (errorcode == 29) {
+                                debug.warn("LASTFM","Rate Limit Exceeded. Slowing Down");
+                                self.setThrottling(throttleTime*2);
+                            }
+                        } else {
+                            errormessage += ' ('+xhr.status+' '+err+')';
+                        }
                         if (req.reqid || req.reqid === 0) {
                             req.fail(null, req.reqid);
                         } else {
-                            req.fail();
+                            req.fail({error: 1, message: errormessage});
                         }
                     }
                 });
@@ -358,7 +402,7 @@ function LastFM(user) {
                 options,
                 true,
                 callback,
-                function(data) { failcallback({ error: 1, message: language.gettext("label_notrackinfo")}) },
+                failcallback,
                 reqid
             );
         },
@@ -446,8 +490,7 @@ function LastFM(user) {
                 options,
                 true,
                 callback,
-                function() { failcallback({ error: 1,
-                                            message: language.gettext("label_noalbuminfo")}); }
+                failcallback
             );
         },
 
@@ -498,7 +541,7 @@ function LastFM(user) {
                 options,
                 true,
                 callback,
-                function() { failcallback({error: 1, message: language.gettext("label_noartistinfo")}); },
+                failcallback,
                 reqid
             );
         },

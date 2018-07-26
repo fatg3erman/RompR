@@ -184,35 +184,8 @@ print '<i title="'.get_int_text('button_forward').'" id="forwardbutton" class="i
     print '<div class="fixed" style="padding-right:4px"><i onclick="toggleCollectionButtons()" title="'.get_int_text('button_collectioncontrols').'" class="icon-menu playlisticon clickicon lettuce"></i></div>';
     print '<div class="configtitle textcentre expand"><b>'.get_int_text('button_local_music').'</b></div>';
     print '</div>';
+    collectionButtons();
 ?>
-    <div id="collectionbuttons" class="invisible">
-<?php
-    print '<div class="pref styledinputs">';
-    print '<input type="radio" class="topcheck savulon" name="sortcollectionby" value="artist" id="sortbyartist">
-    <label for="sortbyartist">'.ucfirst(get_int_text('label_artists')).'</label><br/>
-    <input type="radio" class="topcheck savulon" name="sortcollectionby" value="album" id="sortbyalbum">
-    <label for="sortbyalbum">'.ucfirst(get_int_text('label_albums')).'</label><br/>
-    <input type="radio" class="topcheck savulon" name="sortcollectionby" value="albumbyartist" id="sortbyalbumbyartist">
-    <label for="sortbyalbumbyartist">'.ucfirst(get_int_text('label_albumsbyartist')).'</label>
-    <div class="pref">
-    <input class="autoset toggle" type="checkbox" id="showartistbanners">
-    <label for="showartistbanners">'.get_int_text('config_showartistbanners').'</label>
-    </div>
-    </div>
-    <div class="pref styledinputs">
-    <input class="autoset toggle" type="checkbox" id="sortbydate">
-    <label for="sortbydate">'.get_int_text('config_sortbydate').'</label>
-    <div class="pref">
-    <input class="autoset toggle" type="checkbox" id="notvabydate">
-    <label for="notvabydate">'.get_int_text('config_notvabydate').'</label>
-    </div>
-    </div>
-    <div class="pref textcentre">
-    <button name="donkeykong">'.get_int_text('config_updatenow').'</button>
-    </div>';
-?>
-    
-    </div>
     <div id="collection" class="noborder selecotron"></div>
     </div>
 
@@ -238,6 +211,7 @@ foreach($sp as $p) {
 }
 ?>
     </div>
+        
     <div id="podcastslist" class="invisible selecotron">
 <?php
 include("includes/podcasts.php");

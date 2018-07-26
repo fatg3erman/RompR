@@ -1,6 +1,5 @@
 <?php
 chdir('../..');
-set_time_limit(360);
 include ("includes/vars.php");
 include ("includes/functions.php");
 require_once ("utils/imagefunctions.php");
@@ -101,6 +100,20 @@ foreach($params as $p) {
 
 		case 'getrecommendationseeds';
 			$returninfo = get_recommendation_seeds($p['days'], $p['limit'], $p['top']);
+			break;
+			
+		case 'addtolistenlater':
+			addToListenLater($p['json']);
+			$returninfo = $dummydata;
+			break;
+			
+		case 'getlistenlater':
+			$returninfo = getListenLater();
+			break;
+
+		case 'removelistenlater':
+			removeListenLater($p['index']);
+			$returninfo = $dummydata;
 			break;
 
 		case 'get':
@@ -318,8 +331,7 @@ function doPlaylist($playlist, $limit) {
 
 function doCollectionHeader() {
 	global $returninfo;
-	$returninfo['stats'] = alistheader(get_stat('ArtistCount'), get_stat('AlbumCount'),
-			get_stat('TrackCount'), format_time(get_stat('TotalTime')));
+	$returninfo['stats'] = collectionStats();
 }
 
 function check_backup_dir() {
@@ -642,5 +654,42 @@ function get_fave_artists() {
 	return $artists;
 }
 
+function addToListenLater($album) {
+	$newid = spotifyAlbumId($album);
+	$result = generic_sql_query("SELECT * FROM AlbumsToListenToTable");
+	foreach ($result as $r) {
+		$d = json_decode($r['JsonData'], true);
+		$thisid = spotifyAlbumId($d);
+		if ($thisid == $newid) {
+			debuglog("Trying to add duplicate album to Listen Later","LISTENLATER");
+			return;
+		}
+	}
+	$d = json_encode($album);
+	sql_prepare_query(true, null, null, null, "INSERT INTO AlbumsToListenTotable (JsonData) VALUES (?)", $d);
+}
+
+function getListenLater() {
+	$result = generic_sql_query("SELECT * FROM AlbumsToListenToTable");
+	$retval =  array();
+	foreach ($result as $r) {
+		$d = json_decode($r['JsonData']);
+		$d->rompr_index = $r['Listenindex'];
+		$retval[] = $d;
+	}
+	return $retval;
+}
+
+function removeListenLater($id) {
+	generic_sql_query("DELETE FROM AlbumsToListenTotable WHERE Listenindex = ".$id, true);
+}
+
+function spotifyAlbumId($album) {
+	if (array_key_exists('album', $album)) {
+		return $album['album']['id'];
+	} else {
+		return $album['id'];
+	}
+}
 
 ?>

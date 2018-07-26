@@ -3,9 +3,8 @@
 // Nasty, hacky, but very effective way to convert the New-Dark-Circled icontheme into a different colour.
 // ONLY start with a CLEAN copy of New-Dark-Circled
 
-$dir = 'New-Light';
-$newcolour = '#ffffff';
-$newcolourshort = '#fff';
+$dir = 'New-Cyan-Circled';
+$newcolour = '#3ED3D5';
 $files = glob($dir.'/*.svg');
 
 foreach ($files as $file) {
@@ -19,8 +18,8 @@ foreach ($files as $file) {
     $hack = preg_replace('/fill:#010002/', 'fill:'.$newcolour, $hack);
     $hack = preg_replace('/fill:#020202/', 'fill:'.$newcolour, $hack);
     $hack = preg_replace('/fill:#333333/', 'fill:'.$newcolour, $hack);
-    $hack = preg_replace('/fill="#000"/', 'fill="'.$newcolourshort.'"', $hack);
-    $hack = preg_replace('/stroke="#000"/', 'stroke="'.$newcolourshort.'"', $hack);
+    $hack = preg_replace('/fill="#000"/', 'fill="'.$newcolour.'"', $hack);
+    $hack = preg_replace('/stroke="#000"/', 'stroke="'.$newcolour.'"', $hack);
     $hack = preg_replace('/(style="stroke-width:\d\.*\d*p*x*\%*)"/', '$1;fill:'.$newcolour.';fill-opacity:1"', $hack);
 
     $hack = preg_replace('/<\/svg>/', '<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:'.$newcolour.';fill-opacity:1}</style></svg>', $hack);

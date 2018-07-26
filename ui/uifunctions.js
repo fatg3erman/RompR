@@ -260,6 +260,7 @@ function albumart_translator(source) {
     
     // Given an album image of any size, return any other size
     this.source = source;
+    
     this.getSize = function(size) {
         if (/albumart\/small\//.test(this.source)) {
             return this.source.replace('albumart/small/', 'albumart/'+size+'/');
@@ -268,7 +269,7 @@ function albumart_translator(source) {
         } else if (/albumart\/asdownloaded\//.test(this.source)) {
             return this.source.replace('albumart/asdownloaded/', 'albumart/'+size+'/');
         } else {
-            return this.source.replace(/\&rompr_resize_size=.+/, '');
+            return this.source.replace(/\&rompr_resize_size=.+/, '&rompr_resize_size='+size);
         }
     }
     
@@ -789,4 +790,15 @@ function setWindowTitle(t) {
     if (document.title != t) {
         document.title = t;
     }
+}
+
+function ratingCalc(element, event) {
+    var position = getPosition(event);
+    var width = element.width();
+    var starsleft = element.offset().left;
+    var rating = Math.ceil(((position.x - starsleft - 6)/width)*5);
+    if (element.hasClass('icon-'+rating+'-stars')) {
+        rating = 0;
+    }
+    return rating;
 }

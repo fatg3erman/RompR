@@ -120,10 +120,10 @@ function faveFinder(returnall) {
                             
                         } else {
                             if (r.data.albumartist != "Various Artists") {
-                                if (compare_tracks_with_artist(r.data, req.data)) {
+                                if (compare_tracks_with_artist(req.data, r.data)) {
                                     // Exactly matching track and artist are preferred...
                                     best_matches.push(r.data);
-                                } else if (compare_tracks(r.data, req.data)) {
+                                } else if (compare_tracks(req.data, r.data)) {
                                     // .. over matching track title only ...
                                     medium_matches.push(r.data);
                                 } else {

@@ -5,7 +5,7 @@ include ("includes/functions.php");
 include ("international.php");
 $domain = "en";
 $userdomain = false;
-$mobile = (array_key_exists('layout', $_REQUEST) && $_REQUEST['layout'] == 'phone') ? true : false;
+$mobile = (array_key_exists('layout', $_REQUEST) && ($_REQUEST['layout'] == 'phone' || $_REQUEST['layout'] == 'tablet')) ? true : false;
 // Switch off error reporting prevents us from having to repeatedly check
 // that the objects we're foreaching on actually exist. Errors get dumped
 // to stdout and mess up the xml response. We don't wanna see them.
@@ -165,7 +165,7 @@ function get_wikipedia_page($page, $site, $langsearch) {
         $info = "";
         if ($mobile) {
             $info = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
-            $reformat = '<?xml version="1.0"?><api><parse><text xml:space="preserve">';
+            $reformat = '<?xml version="1.0" encoding="UTF-8"?><api><parse><text xml:space="preserve">';
             foreach($info->mobileview->sections->section as $section) {
                 $reformat .= htmlspecialchars($section, ENT_QUOTES);
             }
@@ -209,17 +209,17 @@ function join_responses($bits) {
         $d = $info->rompr->domain;
         $p = $info->rompr->page;
     }
-    $reformat = '<?xml version="1.0"?><api><parse><text xml:space="preserve">'.$t.'</text></parse><rompr><domain>'.$d.'</domain><page>'.$p.'</page></rompr></api>';
+    $reformat = '<?xml version="1.0" encoding="UTF-8"?><api><parse><text xml:space="preserve">'.$t.'</text></parse><rompr><domain>'.$d.'</domain><page>'.$p.'</page></rompr></api>';
     return $reformat;
 }
 
 function send_result($xml) {
-    header('Content-Type: text/xml; charset=utf-8');
+    header('Content-Type: text/xml');
     print $xml;
 }
 
 function send_failure($term) {
-    $xml = '<?xml version="1.0"?><api><parse><text xml:space="preserve">';
+    $xml = '<?xml version="1.0" encoding="UTF-8"?><api><parse><text xml:space="preserve">';
     $xml .= htmlspecialchars('<h3 align="center">', ENT_QUOTES).get_int_text("wiki_fail", array($term)).htmlspecialchars('</h3>', ENT_QUOTES);
     $xml .= '</text></parse>';
     $xml .= '<rompr><domain>null</domain><page>null</page></rompr></api>';
@@ -288,7 +288,7 @@ function wikipedia_get_list_of_suggestions($term) {
     debuglog("Getting list of suggestions for ".$term." from ".$domain.".wikipedia.org", "WIKIPEDIA");
     $xml = wikipedia_request('http://'.$domain.'.wikipedia.org/w/api.php?action=query&list=search&srsearch=' . rawurlencode($term) . '&srprop=score&format=xml');
     if ($xml != "") {
-        $html = '<?xml version="1.0"?><api><parse><text xml:space="preserve">';
+        $html = '<?xml version="1.0" encoding="UTF-8"?><api><parse><text xml:space="preserve">';
         $xml = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
 
         if (count($xml->query->search->p) == 0) {
@@ -376,7 +376,7 @@ function getArtistWiki($artist_name, $disambig) {
     return wikipedia_get_list_of_suggestions($artist_name);
 }
 
-function  wikipedia_artist_search($artist, $disambig) {
+function wikipedia_artist_search($artist, $disambig) {
 
     $page = null;
     if ($disambig != "") {

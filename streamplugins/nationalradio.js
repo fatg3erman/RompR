@@ -59,6 +59,8 @@ var nationalRadioPlugin = {
             page = element.parent().parent().children('input[name="prev"]').val();
         } else if (element.hasClass('clickradioforward')) {
             page = element.parent().parent().children('input[name="next"]').val();
+        } else if (element.hasClass('clickdirblepager')) {
+            page = element.attr('name');
         }
         var url = element.parent().parent().children('input[name="url"]').val();
         debug.log("RADIO","Getting page",page,"from",url);
@@ -74,6 +76,10 @@ var nationalRadioPlugin = {
             clickedElement.unbind('click').makeSpinner();
             nationalRadioPlugin.browseRadio(clickedElement);
         } else if (clickedElement.hasClass("clickradioforward")) {
+            event.stopImmediatePropagation();
+            clickedElement.unbind('click').makeSpinner();
+            nationalRadioPlugin.browseRadio(clickedElement);
+        } else if (clickedElement.hasClass("clickdirblepager")) {
             event.stopImmediatePropagation();
             clickedElement.unbind('click').makeSpinner();
             nationalRadioPlugin.browseRadio(clickedElement);

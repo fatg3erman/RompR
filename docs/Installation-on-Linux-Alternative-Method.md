@@ -70,7 +70,7 @@ We need to make sure Apache can find the stuff you've just downloaded. To do thi
 
 ### Install some packages
 
-`sudo apt-get install nginx php7.0-curl php7.0-mysql php7.0-gd php7.0-json php7.0-xml php7.0-mbstring`
+`sudo apt-get install nginx php7.0-curl php7.0-mysql php7.0-gd php7.0-json php7.0-xml php7.0-mbstring imagemagick`
 
 _Note the version numbers - 7.0 is current for Ubuntu 16.04 at the time of  writing but as times change it may become 7.1, etc. Amend the command as applicable_
 
@@ -119,6 +119,12 @@ So, create this file, note I've assumed the default apache root directory of /va
     </Directory>
 
     <Directory /var/www/html/rompr/albumart/small>
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires 0
+    </Directory>
+
+    <Directory /var/www/html/rompr/albumart/medium>
         Header set Cache-Control "no-cache, no-store, must-revalidate"
         Header set Pragma "no-cache"
         Header set Expires 0

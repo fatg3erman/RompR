@@ -28,7 +28,7 @@ var helpfulThings = function() {
 	function gotRecommendationSeeds(data) {
 		debug.log(medebug, "Got Seeds For Recommendations",data);
 		if (doneonce) {
-			$('.helpfulholder').spotifyAlbumThing('destroy');
+			$('#hplfoldup .helpfulholder').spotifyAlbumThing('destroy');
 			doneonce = false;
 		}
 		trackseeds = new Array();
@@ -47,7 +47,13 @@ var helpfulThings = function() {
 				}
 			}
 		}
-		helpfulThings.doStageTwo();
+		if (trackseeds.length == 0 && nonspotitracks.length == 0) {
+			$('#helpful_spinner').remove();
+			$('#hplfoldup').append('<div class="textunderline containerbox menuitem" style="padding-left:12px;margin-top:1em"><h3 class="fixed">'
+				+'Once RompЯ has gathered some data, it will show recommendations here. Play some music!</h3></div>');
+		} else {
+			helpfulThings.doStageTwo();
+		}
 	}
 
 	return {
@@ -145,7 +151,7 @@ var helpfulThings = function() {
 				playlist.radioManager.load('spotiMixRadio', '1year');
 			} else if (element.hasClass('clickrefreshalbums')) {
 				getRecommendationSeeds();
-            } else if (element.hasClass('clickopenalbum')) {
+            } else if (element.hasClass('clickspotifywidget')) {
             	var e = element;
             	while (!e.hasClass('helpfulholder')) {
             		e = e.parent();
@@ -157,7 +163,7 @@ var helpfulThings = function() {
 		close: function() {
             nowplaying.notifyTrackChanges('helpfulthings', null);
 			if (doneonce) {
-				$('.helpfulholder').each(function() {
+				$('#hplfoldup .helpfulholder').each(function() {
 					debug.log(medebug,"Removing And Destroying",$(this).attr("id"));
 					$(this).prev().remove();
 					$(this).remove();
@@ -181,14 +187,8 @@ var helpfulThings = function() {
 					},
 					helpfulThings.gotTrackResults
 				);
-			} else if (trackseeds.length > 0) {
-				helpfulThings.getMoreStuff();
-			} else {
-				$('#helpful_spinner').remove();
-				$('#hplfoldup').append('<div class="textunderline containerbox menuitem" style="padding-left:12px;margin-top:1em"><h3 class="fixed">'
-					+'Once RompЯ has gathered some data, it will show recommendations here. Play some music!</h3></div>');
 			}
-
+			helpfulThings.getMoreStuff();
 		},
 
 		gotTrackResults: function(data) {
@@ -215,7 +215,7 @@ var helpfulThings = function() {
 				}
 				params.seed_tracks = current_seed.id;
 				spotify.recommendations.getRecommendations(params, helpfulThings.gotTrackRecommendations, helpfulThings.spotiError);
-			} else {
+			} else if (nonspotitracks.length == 0) {
 				$('#helpful_spinner').remove();
 				setDraggable('.helpfulholder');
 				browser.rePoint();

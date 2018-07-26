@@ -29,21 +29,47 @@ foreach($themes as $theme) {
 print '</select></div></div>';
 
 // Custom Background
-print '<div id="custombackground" class="pref containerbox dropdown-container">
-<div class="divlabel">'.get_int_text('config_background').'
-<div id="cusbgname" class="tiny" style="font-weight:normal"></div>
-</div>
-<div class="selectholder-noselect">
-<form id="backimageform" action="backimage.php" method="post" enctype="multipart/form-data">
+print '<div id="custombackground" class="pref">';
+
+print '<div class="containerbox dropdown-container">
+<i class="icon-menu smallicon clickicon fixed" onclick="prefs.openBgImageBox()"></i>
+<div class="expand"><b>'.get_int_text('config_background').'</b></div>
+</div>';
+
+print '<div id="custombgdropper" class="invisible">';
+
+print '<form id="backimageform" action="backimage.php" method="post" enctype="multipart/form-data">
 <input type="hidden" name="currbackground" value="" />
 <input type="hidden" name="browser_id" value="" />
-<input type="file" name="imagefile" class="infowiki">
-<div class="pref styledinputs">
+<div class="filebutton textcentre" style="width:auto">
+<input type="file" name="imagefile[]" id="imagefile" class="inputfile" multiple="multiple">
+<label for="imagefile">'.get_int_text('label_choosefiles').'</label>
+</div>
+<input type="button" class="invisible" onclick="prefs.changeBackgroundImage()" value="'.get_int_text('albumart_uploadbutton').'">
+<div class="styledinputs">
 <input type="checkbox" id="thisbrowseronly" name="thisbrowseronly" /><label for="thisbrowseronly">For this browser only</label>
 </div>
-<input type="button" onclick="prefs.changeBackgroundImage()" value="'.get_int_text('albumart_uploadbutton').'">
-<i class="icon-cancel-circled clickicon collectionicon" onclick="prefs.clearBgImage()"></i>
-</form>
+</form>';
+
+print '<div class="containerbox">';
+
+print '<div id="backimageposition" class="tiny styledinputs invisible divlabel">
+<div class="spacer"></div>
+<div class="textcentre"><b>Display Options</b></div>
+<div class="spacer"></div>
+<div><input type="radio" id="attach_centre" name="backgroundposition" value="center center" /><label for="attach_centre">'.get_int_text('label_centre').'</label></div>
+<div><input type="radio" id="attach_topleft" name="backgroundposition" value="top left" /><label for="attach_topleft">'.get_int_text('label_topleft').'</label></div>
+<div><input type="radio" id="attach_topright" name="backgroundposition" value="top right" /><label for="attach_topright">'.get_int_text('label_topright').'</label></div>
+<div><input type="radio" id="attach_bottomleft" name="backgroundposition" value="bottom left" /><label for="attach_bottomleft">'.get_int_text('label_bottomleft').'</label></div>
+<div><input type="radio" id="attach_bottomright" name="backgroundposition" value="bottom right" /><label for="attach_bottomright">'.get_int_text('label_bottomright').'</label></div>
+<div id="cusbgcontrols"></div>
+</div>
+
+<div class="selectholder-noselect">
+<div id="cusbgname" class="tiny styledinputs"></div>
+</div>
+
+</div>
 </div>
 </div>';
 
@@ -145,10 +171,6 @@ print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="scrolltocurrent">
 <label for="scrolltocurrent">'.get_int_text('config_autoscroll').'</label>
 </div>';
-// print '<div class="pref styledinputs">
-// <input class="autoset toggle" type="checkbox" id="fullbiobydefault">
-// <label for="fullbiobydefault">'.get_int_text('config_fullbio').'</label>
-// </div>';
 if ($use_plugins) {
     print '<div class="pref styledinputs">
     <input class="autoset toggle" type="checkbox" id="auto_discovembobulate">
@@ -247,14 +269,7 @@ print '<div class="pref styledinputs">
 <div class="tiny">'.get_int_text('config_musicfolders').'</div>
 <input class="saveotron prefinput" id="music_directory_albumart" type="text" size="40" />
 </div>';
-print '<div class="tiny">If you want to use Google Images to get Album Art you need to sign up for an API Key. Please <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></div>';
-// print '<div class="pref"><b>'.get_int_text('config_google_credentials').'</b></div>
-// <div class="pref"><a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></div>';
-// print '<div class="pref"><b>Google API Key</b>
-// <input class="saveotron prefinput" id="google_api_key" type="text" size="120" /></div>
-// <div class="pref"><b>Google Search Engine ID</b>
-// <input class="saveotron prefinput" id="google_search_engine_id" type="text" size="120" /></div>';
-
+print '<div class="tiny">If you want to use Google Images to get Album Art you need to sign up for an API Key. <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></div>';
 
 print '<div class="textcentre configtitle">
 <i class="icon-podcast-circled medicon"></i><b>'.get_int_text('label_podcasts').'</b></div>';
@@ -271,7 +286,6 @@ $options =  '<option value="'.DISPLAYMODE_ALL.'">'.get_int_text("podcast_display
             '<option value="'.DISPLAYMODE_DOWNLOADEDNEW.'">'.get_int_text("podcast_display_downloadnew").'</option>'.
             '<option value="'.DISPLAYMODE_DOWNLOADED.'">'.get_int_text("podcast_display_downloaded").'</option>';
 print $options;
-// print preg_replace('/(<option value="'.$prefs['default_podcast_display_mode'].'")/', '$1 selected', $options);
 print '</select>';
 print '</div></div>';
 
@@ -284,7 +298,6 @@ $options =  '<option value="'.REFRESHOPTION_NEVER.'">'.get_int_text("podcast_ref
             '<option value="'.REFRESHOPTION_DAILY.'">'.get_int_text("podcast_refresh_daily").'</option>'.
             '<option value="'.REFRESHOPTION_WEEKLY.'">'.get_int_text("podcast_refresh_weekly").'</option>'.
             '<option value="'.REFRESHOPTION_MONTHLY.'">'.get_int_text("podcast_refresh_monthly").'</option>';
-// print preg_replace('/(<option value="'.$prefs['default_podcast_refresh_option'].'")/', '$1 selected', $options);
 print $options;
 print '</select>';
 print '</div></div>';
@@ -295,7 +308,6 @@ print '<div class="selectholder">';
 print '<select id="default_podcast_sort_modeselector" class="saveomatic">';
 $options =  '<option value="'.SORTMODE_NEWESTFIRST.'">'.get_int_text("podcast_newestfirst").'</option>'.
             '<option value="'.SORTMODE_OLDESTFIRST.'">'.get_int_text("podcast_oldestfirst").'</option>';
-// print preg_replace('/(<option value="'.$prefs['default_podcast_sort_mode'].'")/', '$1 selected', $options);
 print $options;
 print '</select>';
 print '</div></div>';
@@ -308,34 +320,36 @@ print '<div class="pref styledinputs">
 // Last.FM
 print '<div class="textcentre configtitle">
 <i class="icon-lastfm-1 medicon"></i><b>'.get_int_text('label_lastfm').'</b>
-</div><div class="pref">'.get_int_text('config_lastfmusername');
-print '<br/><div class="containerbox"><div class="expand">'.
-    '<input class="enter" name="user" type="text" size="30" value="'.$prefs['lastfm_user'].'"/>'.
-    '</div><button class="fixed" onclick="lastfm.startlogin()">'.get_int_text('config_loginbutton').
+</div>';
+
+print '<div class="pref styledinputs">
+<input class="autoset toggle" type="checkbox" id="lastfm_autocorrect">
+<label for="lastfm_autocorrect">'.get_int_text('config_autocorrect').'</label>
+</div>';
+
+print '<div class="pref">'.get_int_text('config_lastfmusername').'<br/><div class="containerbox"><div class="expand">'.
+    '<input class="enter" name="lfmuser" type="text" size="30" value="'.$prefs['lastfm_user'].'"/>'.
+    '</div><button id="lastfmloginbutton" class="fixed">'.get_int_text('config_loginbutton').
     '</button></div>';
 print '</div>';
-print '<div class="pref styledinputs">
+print '<div class="pref styledinputs lastfmlogin-required">
 <input class="autoset toggle" type="checkbox" id="lastfm_scrobbling">
 <label for="lastfm_scrobbling">'.get_int_text('config_scrobbling').'</label>
 </div>
-<div class="pref">'.get_int_text('config_scrobblepercent').'<br/>
+<div class="pref lastfmlogin-required">'.get_int_text('config_scrobblepercent').'<br/>
 <div id="scrobwrangler"></div>
 </div>
-<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="lastfm_autocorrect">
-<label for="lastfm_autocorrect">'.get_int_text('config_autocorrect').'</label>
-</div>
-<div class="pref">'.get_int_text('config_tagloved').'
+<div class="pref lastfmlogin-required">'.get_int_text('config_tagloved').'
 <input class="prefinput saveotron" id="autotagname" type="text" size="40" />
 </div>';
 
 // Tags and Ratings
-print '<div class="pref styledinputs">
+print '<div class="pref styledinputs lastfmlogin-required">
 <input class="autoset toggle" type="checkbox" id="synctags">
 <label for="synctags">'.get_int_text('config_synctags').'</label>';
 ?>
 </div>
-<div class="pref containerbox dropdown-container">
+<div class="pref containerbox dropdown-container lastfmlogin-required">
 <?php
 print '<div class="divlabel styledinputs"><input class="autoset toggle" type="checkbox" id="synclove">
 <label for="synclove">'.get_int_text('config_loveis').'</label></div>';

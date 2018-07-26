@@ -37,14 +37,14 @@ a:hover,a:active
     cursor:pointer;
 }
 
-button, input[type="button"]
+button, input[type="button"], .filebutton
 {
     color:#dddddd;
     background-color:transparent;
     border:1px solid #aaaaaa;
 }
 
-button:hover, input[type="button"]:hover
+button:hover, input[type="button"]:hover, .filebutton:hover
 {
     color:#ffffff;
     border:1px solid #ffffff;
@@ -107,40 +107,6 @@ select
 = General Classes
 =====================================================================
 */
-
-.controlbutton {
-    color:#440011 !important;
-    text-shadow: 0 0 15px #881155, 0 0 20px #cccccc !important;
-}
-
-.controlbutton-small {
-    color:#440011 !important;
-    text-shadow: 0 0 15px #881155, 0 0 20px #cccccc !important;
-}
-
-.controlbutton:hover {
-    color:#550022 !important;
-}
-
-.controlbutton-small:hover {
-    color:#550022 !important;
-}
-
-.controlbutton::before {
-    opacity:0.5;
-}
-
-.controlbutton-small::before {
-    opacity:0.5;
-}
-
-.controlbutton:hover::before {
-    opacity:0.8;
-}
-
-.controlbutton-small:hover::before {
-    opacity:0.8;
-}
 
 .album2
 {
@@ -351,13 +317,6 @@ body.mobile .configtitle
 = For Album Art Manager
 =====================================================================
 */
-
-.albumsection button, .albumcovers .infosection button
-{
-    background-image:none !important;
-    background-color:transparent !important;
-    border:0px none !important;
-}
 
 .highlighted {
     background-color:rgba(60,0,17,0.7) !important;

@@ -38,13 +38,13 @@ a:hover,a:active {
     cursor:pointer;
 }
 
-button, input[type="button"] {
+button, input[type="button"], .filebutton {
     color:#dddddd;
     background-color:transparent;
     border:1px solid #aaaaaa;
 }
 
-button:hover, input[type="button"]:hover {
+button:hover, input[type="button"]:hover, .filebutton:hover {
     color:#ffffff;
     border:1px solid #ffffff;
     text-shadow: 0 0 15px #ffffff;
@@ -301,12 +301,6 @@ body.mobile .configtitle {
 
 .highlighted {
     background-color:rgba(0,0,0,0.5) !important;
-}
-
-button {
-    background-image:none !important;
-    background-color:transparent !important;
-    border:0px none !important;
 }
 
 .albumcovers .infosection {

@@ -27,13 +27,13 @@ Create a file somewhere (anywhere) called romonitor.sh, based on the following t
     #!/bin/bash
 
     cd /PATH/TO/ROMPR
-    php ./romonitor.php --currenthost:Default --player_backend:mpd >/dev/null 2>&1 &
+    php ./romonitor.php --currenthost Default --player_backend mpd &
 
 You need to make some changes to that:
 
 * **/PATH/TO/ROMPR** is the full path to your RompЯ installation. Refer to the installation instructions for more details.
-* **currenthost:** should be followed by the name of one of the Players as displayed in your Configuration menu.
-* **player_backend:** should be followed by either mpd or mopidy, depending on the type of player.
+* **currenthost** should be followed by the name of one of the Players as displayed in your Configuration menu.
+* **player_backend** should be followed by either mpd or mopidy, depending on the type of player.
 
 Now you just need to run this script.
 
@@ -47,30 +47,21 @@ The script will exit immediately but it will leave the romonitor program running
     
 And you should see something like
 
-    bob       1336  0.0  1.0  63572 19572 ?        S    13:45   0:00 php ./romonitor.php --currenthost:Mopidy --player_backend:mopidy
+    bob       1336  0.0  1.0  63572 19572 ?        S    13:45   0:00 php ./romonitor.php --currenthost Mopidy --player_backend mopidy
     bob       2828  0.0  0.0   4696   804 pts/0    S+   14:02   0:00 grep --color=auto romonitor
 
 ### If you're using Multiple Players
 
-In the case where you're using [multiple players](/RompR/Using-Multiple-Players) you'll need to create a separate shell script for each player that you might access using a mobile device. These must run on the system where RompЯ is installed.
+In the case where you're using [multiple players](/RompR/Using-Multiple-Players) you'll need to create a separate line in the shell script for each player.
 
 ### Loading at startup
 
 To make sure romonitor gets loaded every time you boot, you can just add your shell script as a login program, using whatever method your choice of desktop environment provides to do that.
 
+### Troubleshooting
+
+If it's not working, first enable [debug logging](/RompR/Troubleshooting) to at least level 8 then restart romonitor. You'll see some output from it in the web server's error log (and your custom logifle if you're using one).
+
 ### What it doesn't do
 
 The other thing that requires the device to be awake is populating Personalised Radio stations. Currently the only solution to this is to wake your device up every so often. It doesn't have to be after every track; even if the Current Playlist runs out of tracks, waking your device will repopulate it.
-
-### Troubleshooting
-
-If it's not working you can run the php script direct from a terminal to see the error output. To make sure you see all the output, first enable [debug logging](/RompR/Troubleshooting) to at least level 7 and make sure you are not using a custom log file. Then go to a terminal and type
-
-    cd /PATH/TO/ROMPR
-    php ./romonitor.php --currenthost:Default --player_backend:mpd
-    
-(remembering to change the values as appropriate).
-
-You'll see any php error messages along with debug output from romonitor. If you're filing a bug you need to include this information.
-
-If you enable debug logging before you run romonitor via the shell script, you will see romonitor's debug output in your web server's error log (or your custom log file) but you won't see any PHP error messages, so running via the terminal is a good start.

@@ -6,6 +6,16 @@ The Music Collection is the reason RompЯ exists. It was designed to sort your m
 
 For mpd users. the Collection consists of your mpd library. For Mopidy users the Collection can be created from a combination of your Mopidy backends, and tracks can be added on the fly from Spotify, Soundcloud, and other online sources. With Mopidy it creates a complete list of all the music you listen to from any source, all sorted by artist and album, all in one place.
 
+You can choose to display the collection sorted by
+
+* Artist (in alphabetical order)
+* Album (in alphabetical or date order)
+* Albums (by Artist) displays all albums at once sorted first by Artist, then either alphabetically or by date
+
+You can choose not to apply Date Sorting to 'Various Artists' - where sorting albums alphabetically is almost always more useful.
+
+You can choose also to only display tracks and albums that were added within a specific time period (today, this week, this month, or this year)
+
 ## Tagging And Rating
 
 Tracks in the collection can be given a rating (from 1 to 5 stars) and arbitrary text tags. The tags and ratings will be shown in the Music Collection.

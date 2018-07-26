@@ -4,7 +4,6 @@ var podcasts = function() {
 	var downloadRunning = false;
 	var loaded = false;
 	var refreshtimer;
-	var podcast_refresh_timeout = 3600000;
 
 	function checkDownloadQueue() {
 		if (downloadRunning == false) {
@@ -172,7 +171,7 @@ var podcasts = function() {
 			target.html(html);
 		}
 		$('i[name="podcast_'+channel+'"]').stopSpinner();
-		target.find('.fridge').tipTip({edgeOffset: 8});
+		target.find('.fridge').tipTip({delay: 500, edgeOffset: 8});
 		target.find('.clearbox').click(makeSearchWork).hover(makeHoverWork).mousemove(makeHoverWork).keyup(onKeyUp);
 		target.find('input.resumepos').each(function() {
 			var pos = parseInt($(this).val());
@@ -190,7 +189,7 @@ var podcasts = function() {
 			bar.rangechooser({range: duration, startmax: pos/duration, interactive: false});
 		});
 		infobar.markCurrentTrack();
-		layoutProcessor.postAlbumActions();
+		layoutProcessor.postAlbumActions( $('#podcast_'+channel));
 	}
 
 	return {
@@ -212,7 +211,7 @@ var podcasts = function() {
 						callback(true);
 					} else {
 			            $("#fruitbat").html(data);
-			            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+			            $("#fruitbat .fridge").tipTip({delay: 500, edgeOffset: 8});
 			            infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
 			            podcasts.doNewCount();
 						$('#spinner_cocksausage').remove();
@@ -239,7 +238,7 @@ var podcasts = function() {
 		        data: {populate: 1 },
 		        success: function(data) {
 		            $("#fruitbat").html(data);
-		            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+		            $("#fruitbat .fridge").tipTip({delay: 500, edgeOffset: 8});
 		            podcasts.doNewCount();
 					layoutProcessor.postAlbumActions($('#fruitbat'));
 		        },
@@ -253,13 +252,17 @@ var podcasts = function() {
 			var target = $('#podcast_'+channel);
 			var uri = "includes/podcasts.php?populate=1&loadchannel="+channel;
 			var term = $('[name="podsearcher_'+channel+'"]').val();
+			var configvisible = target.find('.podconfigpanel').is(':visible');
 			if (typeof term !== 'undefined' && term != '') {
 				uri += '&searchterm='+encodeURIComponent(term);
 			}
 			$('i[name="podcast_'+channel+'"]').makeSpinner();
 			target.load(uri, function() {
+				if (configvisible) {
+					target.find('.podconfigpanel').show();
+				}
 				target.removeClass('loaded').addClass('loaded');
-				updatePodcastDropdown(channel,  null);
+				updatePodcastDropdown(channel, null);
 			});
 		},
 
@@ -355,7 +358,7 @@ var podcasts = function() {
 			$.ajax({
 				type: 'GET',
 				url: "includes/podcasts.php?populate=1&checkrefresh=1",
-				timeout: podcast_refresh_timeout,
+				timeout: prefs.collection_load_timeout,
 				dataType: 'JSON',
 				success: function(data) {
 					debug.log("PODCASTS","Refresh result",data);
@@ -392,7 +395,7 @@ var podcasts = function() {
 		        data: {remove: name, populate: 1 },
 		        success: function(data) {
 		            $("#fruitbat").html(data);
-		            $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+		            $("#fruitbat .fridge").tipTip({delay: 500, edgeOffset: 8});
 		            podcasts.doNewCount();
 					layoutProcessor.postAlbumActions();
 		        },
@@ -408,9 +411,9 @@ var podcasts = function() {
 		},
 		
 		search: function() {
-		    doSomethingUseful('cocksausage', language.gettext("label_searching"));
-			var term = $('#podcastsearch').val();
 			$('#podcast_search').empty();
+		    doSomethingUseful('podcast_search', language.gettext("label_searching"));
+			var term = $('#podcastsearch').val();
 		    $.ajax( {
 		        type: "GET",
 		        url: "includes/podcasts.php",
@@ -420,13 +423,12 @@ var podcasts = function() {
 		        success: function(data) {
 		            $("#podcast_search").html(data);
 		            $('#podcast_search').prepend('<div class="menuitem containerbox padright brick_wide sensiblebox"><div class="configtitle textcentre expand"><b>Search Results for &quot;'+term+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch fixed"></i></div>');
-		            $("#podcast_search").find('.fridge').tipTip({edgeOffset: 8});
-					$('#spinner_cocksausage').remove();
+		            $("#podcast_search .fridge").tipTip({delay: 500, edgeOffset: 8});
 					layoutProcessor.postAlbumActions($('#podcast_search'));
 		        },
 		        error: function(data, status, thing) {
 		            infobar.notify(infobar.ERROR, "Search Failed : "+data.responseText);
-		            $('#spinner_cocksausage').remove();
+		            $('#spinner_podcast_search').remove();
 		        }
 		    } );
 		},
@@ -469,6 +471,16 @@ var podcasts = function() {
 		storePlaybackProgress: function(track) {
 			podcastRequest({setprogress: track.progress, track: encodeURIComponent(track.uri)}, null);
 		},
+		
+		globalAction: function(thing, el) {
+			el.makeSpinner();
+			var options = new Object;
+			options[thing] = 1;
+			podcastRequest(options, function() {
+				el.stopSpinner();
+				podcasts.reloadList()
+			});
+		}
 
 	}
 

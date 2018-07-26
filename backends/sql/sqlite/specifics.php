@@ -287,6 +287,16 @@ function check_sql_tables() {
 		return array(false, "Error While Checking WishlistSourcetable : ".$err);
 	}
 
+	if (generic_sql_query("CREATE TABLE IF NOT EXISTS AlbumsToListenTotable(".
+		"Listenindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+		"JsonData TEXT)", true))
+	{
+		debuglog("  AlbumsToListenTotabletable OK","MYSQL_CONNECT");
+	} else {
+		$err = $mysqlc->errorInfo()[2];
+		return array(false, "Error While Checking AlbumsToListenTotable : ".$err);
+	}
+
 	// Check schema version and update tables as necessary
 	$sv = simple_query('Value', 'Statstable', 'Item', 'SchemaVer', 0);
 	if ($sv == 0) {
@@ -726,6 +736,39 @@ function sql_two_weeks_include($days) {
 
 function sql_to_unixtime($s) {
 	return "CAST(strftime('%s', ".$s.") AS INT)";
+}
+
+function track_date_check($range, $flag) {
+	if ($flag == 'b') {
+		return '';
+	}
+	switch ($range) {
+		case ADDED_ALL_TIME:
+			return '';
+			break;
+			
+		case ADDED_TODAY:
+			return "AND DATETIME('now', '-1 DAYS') <= DateAdded";
+			break;
+			
+		case ADDED_THIS_WEEK:
+			return "AND DATETIME('now', '-7 DAYS') <= DateAdded";
+			break;
+
+		case ADDED_THIS_MONTH:
+			return "AND DATETIME('now', '-1 MONTHS') <= DateAdded";
+			break;
+			
+		case ADDED_THIS_YEAR:
+			return "AND DATETIME('now', '-1 YEAR') <= DateAdded";
+			break;
+		
+		default:
+			debuglog("ERROR! Unknown Collection Range ".$range,"SQL");
+			return '';
+			break;
+			
+	}
 }
 
 function create_conditional_triggers() {

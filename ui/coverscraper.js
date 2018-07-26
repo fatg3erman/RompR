@@ -101,6 +101,14 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
         }
 
         image = formObjects.shift();
+        if (image.hasOwnProperty('cb') && image.cb === null) {
+            // Callbacks are nullified when the playlist repopulates, which means we don't need to
+            // look for these any more, as if they are still in the playlist they'll have been re-added to formObjects.
+            // Rather than do some horrid splicing of formObjects in clearCallbacks, just skip them here.
+            debug.trace("COVERSCRAPER","Skipping cleared playlist image");
+            doNextImage(500);
+            return false;
+        }
         imgparams = self.getImageSearchParams(image);
         imgparams.ignorelocal = ignorelocal;
         debug.log("COVERSCRAPER","Getting Cover for", imgparams.imgkey);
@@ -180,6 +188,9 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
             // Dont' do this if we're using the album art manager
             return false;
         }
+        // Although getalbumcover does return a default for streams, this is here
+        // mainly for the case where auto art download is disabled - this will set a
+        // sensible default for streams
         var def = null;
         if (imgparams.type) {
             switch (imgparams.type) {
@@ -218,7 +229,9 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 
     this.clearCallbacks = function() {
         for (var j in formObjects) {
-            formObjects[j].cb = null;
+            if (formObjects[j].hasOwnProperty('cb')) {
+                formObjects[j].cb = null;
+            }
         }
     }
 

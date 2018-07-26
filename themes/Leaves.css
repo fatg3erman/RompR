@@ -24,7 +24,7 @@ a:hover,a:active
     color:#ff4800;
 }
 
-button
+button, .filebutton
 {
     color:#eeeeee;
     background-image:url('veins.jpg');
@@ -32,12 +32,12 @@ button
     box-shadow: 0px 0px 20px rgba(150, 250, 50, 0.4);
 }
 
-button:active
+button:active, .filebutton:active
 {
     box-shadow:none;
 }
 
-button:hover
+button:hover, .filebutton:hover
 {
     color:#ff4800;
     box-shadow: 0px 0px 20px rgba(150, 250, 50, 1);
@@ -91,24 +91,6 @@ input.inbrowser, div.inbrowser
 = General Classes
 =====================================================================
 */
-
-.controlbutton {
-    color:#cccccc !important;
-    text-shadow: 0 0 15px #bbbbbb !important;
-}
-
-.controlbutton-small {
-    color:#cccccc !important;
-    text-shadow: 0 0 15px #bbbbbb !important;
-}
-
-.controlbutton:hover {
-    color:#ffffff !important;
-}
-
-.controlbutton-small:hover {
-    color:#ffffff !important;
-}
 
 .bordered
 {

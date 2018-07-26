@@ -39,7 +39,9 @@ if (!$albumimage->has_source()) {
         }
     }
 }
-
+if ($result === false) {
+    $result = $albumimage->set_default();
+}
 if ($result === false) {
     debuglog("No art was found. Try the Tate Modern","GETALBUMCOVER");
     $result = array();

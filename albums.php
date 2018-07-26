@@ -1,4 +1,3 @@
-
 <?php
 
 // Automatic Collection Updates can be performed using cURL:
@@ -12,8 +11,6 @@ include ("includes/vars.php");
 include ("includes/functions.php");
 require_once ("utils/imagefunctions.php");
 include ("international.php");
-
-set_time_limit(800);
 $error = 0;
 include("backends/sql/backend.php");
 
@@ -73,12 +70,6 @@ switch (true) {
         include ("collection/dbsearch.php");
         $doing_search = true;
         database_search();
-        break;
-
-    case array_key_exists('wishlist', $_REQUEST):
-        logit('wishlist');
-        //  For wishlist viewer
-        getWishlist();
         break;
 
     case array_key_exists('rebuild', $_REQUEST):
@@ -194,7 +185,7 @@ function browse_album() {
     if (substr($albumlink, 0, 8) == 'podcast+') {
         require_once('includes/podcastfunctions.php');
         debuglog("Browsing For Podcast ".substr($albumlink, 9), "ALBUMS");
-        $podid = getNewPodcast(substr($albumlink, 8), 0);
+        $podid = getNewPodcast(substr($albumlink, 8), 0, false);
         debuglog("Ouputting Podcast ID ".$podid, "ALBUMS");
         outputPodcast($podid, false);
     } else {

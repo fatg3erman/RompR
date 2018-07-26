@@ -1,6 +1,7 @@
 var prefs = function() {
 
     var textSaveTimer = null;
+    var deferredPrefs = null;
 
     const prefsInLocalStorage = [
         "sourceshidden",
@@ -69,18 +70,80 @@ var prefs = function() {
         "browser_id",
         "playlistswipe",
         "podcastcontrolsvisible",
-        "use_albumart_in_playlist"
+        "use_albumart_in_playlist",
+        "bgimgparms",
+        "collectionrange"
     ];
     
     const cookiePrefs = [
         'skin',
         'currenthost',
-        'player_backend'
+        'player_backend',
+        "sortbydate",
+        "notvabydate",
+        "collectionrange"
     ];
 	
 	const jsonNode = document.querySelector("script[name='prefs']");
   	const jsonText = jsonNode.textContent;
   	const tags = JSON.parse(jsonText);
+    
+    var backgroundImages;
+    var backgroundTimer;
+    
+    var timeouts = {
+        '10 Seconds': 10000,
+        '30 Seconds': 30000,
+        'Minute': 60000,
+        '5 Minutes': 300000,
+        '10 Minutes': 600000,
+        '20 Minutes': 1200000,
+        '30 Minutes': 1800000,
+        'Hour': 3600000,
+        'Day': 86400000
+    }
+    
+    function offerToTransferPlaylist() {
+        var fnarkle = new popup({
+            css: {
+                width: 300,
+                height: 200
+            },
+            title: language.gettext('label_transferplaylist'),
+            hasclosebutton: false
+        });
+        var mywin = fnarkle.create();
+        var d = $('<div>',{class: 'containerbox'}).appendTo(mywin);
+        var yes = $('<button>', {class: 'expand'}).appendTo(d);
+        var space = $('<div>', {class: 'fixed', style: 'width:3em'}).appendTo(d);
+        var no = $('<button>', {class: 'expand'}).appendTo(d);
+        yes.html(language.gettext('label_yes'));
+        no.html(language.gettext('label_no'));
+        fnarkle.useAsCloseButton(yes, transferPlaylist);
+        fnarkle.useAsCloseButton(no, dontTransferPlaylist);
+        fnarkle.open();
+        fnarkle.setWindowToContentsSize();
+    }
+    
+    function dontTransferPlaylist() {
+        prefs.save(deferredPrefs, reloadWindow);
+    }
+    
+    function transferPlaylist() {
+        debug.shout("PREFS","Transferring Playlist from",prefs.currenthost,"to",deferredPrefs.currenthost);
+        $.ajax({
+            type: 'POST',
+            url: 'player/transferplaylist.php',
+            data: JSON.stringify(deferredPrefs),
+            success: function() {
+                prefs.save(deferredPrefs, reloadWindow);
+            },
+            error: function() {
+                debug.error("PREFS","Playlist transfer failed");
+                infobar.notify(infobar.ERROR,"Failed To Transfer Playlist!");
+            }
+        });
+    }
 
     function doTheSave() {
         var felakuti = new Object;
@@ -133,38 +196,216 @@ var prefs = function() {
         prefs.save({scrobblepercent: e.max});
     }
 
+    function loadBackgroundImages(theme) {
+        $('#cusbgname').empty();
+        $('#cusbgcontrols').empty();
+        $('#backimageposition').hide();
+        $.getJSON('backimage.php?getbackground='+theme+'&browser_id='+prefs.browser_id, function(data) {
+            debug.log("PREFS","Custom Background Image",data);
+            if (data.images) {
+                if (typeof(prefs.bgimgparms[theme]) == 'undefined') {
+                    debug.trace("PREFS","Init bgimgparms for",prefs.theme);
+                    prefs.bgimgparms[theme] = {
+                        landscape: 0,
+                        portrait: 0,
+                        timeout: 60000,
+                        lastchange: Date.now(),
+                        random: false,
+                        position: 'top left'
+                    }
+                    prefs.save({bgimgparms: prefs.bgimgparms});
+                } else if (typeof(prefs.bgimgparms[theme].position) == 'undefined') {
+                    prefs.bgimgparms[theme].position = 'top left';
+                    prefs.save({bgimgparms: prefs.bgimgparms});
+                }
+                setCustombackground(data.images);
+                $('input[name="thisbrowseronly"]').prop('checked', data.thisbrowseronly);
+                $('input[name="backgroundposition"][value="'+prefs.bgimgparms[theme].position+'"]').prop('checked', true);
+                $('input[name="backgroundposition"]').unbind('click').bind('click', changeBackgroundPosition);
+            }
+        });
+    }
+    
+    function changeRandomMode() {
+        var theme = prefs.theme;
+        if (prefs.usertheme) {
+            theme = prefs.usertheme;
+        }
+        if (typeof(prefs.bgimgparms[theme].random) == 'undefined') {
+            prefs.bgimgparms[theme].random = false;
+        }
+        prefs.bgimgparms[theme].random = !prefs.bgimgparms[theme].random;
+        prefs.save({bgimgparms: prefs.bgimgparms});
+    }
+    
+    function changeBackgroundPosition() {
+        var theme = prefs.theme;
+        if (prefs.usertheme) {
+            theme = prefs.usertheme;
+        }
+        var bgp = prefs.bgimgparms[theme];
+        bgp.position = $('input[name="backgroundposition"]:checked').val();
+        prefs.save({bgimgparms: prefs.bgimgparms});
+        updateCustomBackground();
+    }
+    
+    function removeAllBackgroundImages() {
+        clearCustomBackground();
+        var theme = prefs.theme;
+        if (prefs.usertheme) {
+            theme = prefs.usertheme;
+        }
+        $.getJSON('backimage.php?clearallbackgrounds='+theme+'&browser_id='+prefs.browser_id, function(data) {
+            loadBackgroundImages(theme);
+        });
+    }
+
     function setCustombackground(images) {
+        clearTimeout(backgroundTimer);
         debug.log("UI","Setting Custom Background To",images);
+        backgroundImages = images;
+        if (images.landscape.length > 1 || images.portrait.length > 1) {
+            var jesus = $('<div>', {class: 'containerbox dropdown-container'}).appendTo('#cusbgcontrols');
+            jesus.append('<div class="divlabel">'+language.gettext('label_changevery')+'</div>');
+            var sh = $('<div>', {class: 'selectholder'}).appendTo(jesus);
+            var s = $('<select>').appendTo(sh);
+            $.each(timeouts, function(i, v){
+                s.append('<option value="'+v+'">'+i+'</option>');
+            });
+            s.val(prefs.bgimgparms[prefs.theme].timeout.toString());
+            s.on('change', function() {
+                prefs.bgimgparms[prefs.theme].timeout = parseInt(s.val());
+                prefs.save({bgimgparms: prefs.bgimgparms});
+                updateCustomBackground();
+            });
+            var gibbon = $('<div>').appendTo('#cusbgcontrols');
+            var ran = $('<input>', {type: 'checkbox', id: 'bgimagerandom'}).appendTo(gibbon);
+            var lab = $('<label>', {for: 'bgimagerandom'}).appendTo(gibbon);
+            lab.html('Random Order');
+            ran.prop('checked', prefs.bgimgparms[prefs.theme].random);
+            ran.bind('click', changeRandomMode);
+            
+            var orangutan = $('<div>').appendTo('#cusbgcontrols');
+            var rb = $('<button>').appendTo(orangutan);
+            rb.html('Remove All');
+            rb.bind('click', removeAllBackgroundImages);
+        }
+        if (images.landscape.length > 0 || images.portrait.length > 0) {
+            $('#backimageposition').show();
+        } else {
+            $('#backimageposition').hide();
+        }
+        $.each(images, function(x, p) {
+            if (p.length > 0) {
+                $('#cusbgname').append('<div class="spacer"></div>');
+                var q = $('<div>').appendTo('#cusbgname');
+                $('#cusbgname').append('<div class="spacer"></div>');
+                q.html('<b>'+p.length+' '+x.capitalize()+' Images</b>');
+            }
+            $.each(p, function(i, v) {
+                var n = $('<div>').appendTo('#cusbgname');
+                var c = $('<i>', {class: 'icon-cancel-circled clickicon collectionicon'}).appendTo(n);
+                var l = $('<span>', {class: 'bgimgname', name: i}).appendTo(n);
+                var z = $('<input>', {class: 'bgimagefile', type: 'hidden', value: v}).appendTo(n);
+                var nom = v.replace(/.*(\\|\/)/, '')+'&nbsp;'
+                if (x == 'landscape') {
+                    l.addClass('landscapeimage');
+                    nom += '&#x25AD;';
+                } else {
+                    l.addClass('portraitimage');
+                    nom += '&#x25AF;';
+                }
+                l.html(nom);
+                l.bind('click', changeBgImage);
+                c.bind('click', prefs.clearBgImage);
+            });
+        });
+        updateCustomBackground();
+    }
+    
+    function changeBgImage(event) {
+        var el = $(event.target);
+        var theme = prefs.theme;
+        if (prefs.usertheme) {
+            theme = prefs.usertheme;
+        }
+        var bgp = prefs.bgimgparms[theme];
+        if (el.hasClass('landscapeimage')) {
+            bgp.landscape = parseInt(el.attr('name'));
+        } else if (el.hasClass('portraitimage')) {
+            bgp.portrait = parseInt(el.attr('name'));
+        }
+        clearCustomBackground();
+        setBackgroundCss(bgp);
+        bgp.lastchange = Date.now();
+        setBackgroundTimer(bgp.timeout);
+        prefs.save({bgimgparms: prefs.bgimgparms});
+    }
+
+    function clearCustomBackground() {
         $('style[id="phoneback"]').remove();
         $('style[id="background"]').remove();
         $('style[id="phonebackl"]').remove();
         $('style[id="backgroundl"]').remove();
         $('style[id="phonebackp"]').remove();
         $('style[id="backgroundp"]').remove();
-        var cusname = new Array();
-        if (images != '') {
-            for (var i in images) {
-                if (images[i].match(/_landscape/)) {
-                    $('style[id="phonebackl"]').remove();
-                    $('style[id="backgroundl"]').remove();
-                    $('<style id="backgroundl">@media screen and (orientation: landscape) { html { background-image: url("'+images[i]+'?version='+rompr_version+'"); background-size: cover; background-repeat: no-repeat } }</style>').appendTo('head');
-                    $('<style id="phonebackl">@media screen and (orientation: landscape) { body.phone .dropmenu { background-image: url("'+images[i]+"?version="+rompr_version+'") } }</style>').appendTo('head');
-                } else if (images[i].match(/_portrait/)) {
-                    $('style[id="phonebackp"]').remove();
-                    $('style[id="backgroundp"]').remove();
-                    $('<style id="backgroundp">@media screen and (orientation: portrait) { html { background-image: url("'+images[i]+'?version='+rompr_version+'"); background-size: cover; background-repeat: no-repeat } }</style>').appendTo('head');
-                    $('<style id="phonebackp">@media screen and (orientation: portrait) { body.phone .dropmenu { background-image: url("'+images[i]+"?version="+rompr_version+'") } }</style>').appendTo('head');
-                } else {
-                    $('style[id="phoneback"]').remove();
-                    $('style[id="background"]').remove();
-                    $('<style id="background">html { background-image: url("'+images[i]+'?version='+rompr_version+'"); background-size: cover; background-repeat: no-repeat }</style>').appendTo('head');
-                    $('<style id="phoneback">body.phone .dropmenu { background-image: url("'+images[i]+"?version="+rompr_version+'") }</style>').appendTo('head');
-                }
-                cusname.push(images[i].split(/[\\/]/).pop());
-            }
-            $('#cusbgname').html(cusname.join(', '));
+        clearTimeout(backgroundTimer);
+    }
+    
+    function setBackgroundCss(bgp) {
+        if (backgroundImages.portrait.length == 0) {
+            $('<style id="background">html { background-image: url("'+backgroundImages.landscape[bgp.landscape]+'"); background-position: '+bgp.position+' }</style>').appendTo('head');
+            $('<style id="phoneback">body.phone .dropmenu { background-image: url("'+backgroundImages.landscape[bgp.landscape]+'"); background-position: '+bgp.position+' }</style>').appendTo('head');
+            $('span.bgimgname').removeClass('selected');
+            $('input.bgimagefile[value="'+backgroundImages.landscape[bgp.landscape]+'"]').prev().addClass('selected');
+        } else if (backgroundImages.landscape.length == 0) {
+            $('<style id="background">html { background-image: url("'+backgroundImages.portrait[bgp.portrait]+'"); background-position: '+bgp.position+' }</style>').appendTo('head');
+            $('<style id="phoneback">body.phone .dropmenu { background-image: url("'+backgroundImages.portrait[bgp.portrait]+'"); background-position: '+bgp.position+' }</style>').appendTo('head');
+            $('span.bgimgname').removeClass('selected');
+            $('input.bgimagefile[value="'+backgroundImages.portrait[bgp.portrait]+'"]').prev().addClass('selected');
         } else {
-            $('#cusbgname').html('');
+            $('<style id="backgroundl">@media screen and (orientation: landscape) { html { background-image: url("'+backgroundImages.landscape[bgp.landscape]+'"); background-position: '+bgp.position+' } }</style>').appendTo('head');
+            $('<style id="phonebackl">@media screen and (orientation: landscape) { body.phone .dropmenu { background-image: url("'+backgroundImages.landscape[bgp.landscape]+'"); background-position: '+bgp.position+' } }</style>').appendTo('head');
+            $('<style id="backgroundp">@media screen and (orientation: portrait) { html { background-image: url("'+backgroundImages.portrait[bgp.portrait]+'"); background-position: '+bgp.position+' } }</style>').appendTo('head');
+            $('<style id="phonebackp">@media screen and (orientation: portrait) { body.phone .dropmenu { background-image: url("'+backgroundImages.portrait[bgp.portrait]+'"); background-position: '+bgp.position+' } }</style>').appendTo('head');
+            $('span.bgimgname').removeClass('selected');
+            $('input.bgimagefile[value="'+backgroundImages.landscape[bgp.landscape]+'"]').prev().addClass('selected');
+            $('input.bgimagefile[value="'+backgroundImages.portrait[bgp.portrait]+'"]').prev().addClass('selected');
+        }
+    }
+
+    function updateCustomBackground() {
+        clearTimeout(backgroundTimer);
+        clearCustomBackground();
+        var theme = prefs.theme;
+        if (prefs.usertheme) {
+            theme = prefs.usertheme;
+        }
+        var bgp = prefs.bgimgparms[theme];
+        var timeout = bgp.timeout;
+        if (bgp.timeout + bgp.lastchange <= Date.now()) {
+            bgp.lastchange = Date.now();
+            if (bgp.random) {
+                bgp.landscape = Math.floor(Math.random() * backgroundImages.landscape.length);
+                bgp.portrait = Math.floor(Math.random() * backgroundImages.portrait.length);
+            } else {
+                bgp.landscape++;
+                bgp.portrait++;
+            }
+            prefs.save({bgimgparms: prefs.bgimgparms});
+        } else {
+            timeout = bgp.timeout + bgp.lastchange - Date.now();
+        }
+        if (bgp.landscape >= backgroundImages.landscape.length) { bgp.landscape = 0 }
+        if (bgp.portrait >= backgroundImages.portrait.length) { bgp.portrait = 0 }
+        setBackgroundCss(bgp);
+        setBackgroundTimer(timeout);
+    }
+    
+    function setBackgroundTimer(timeout) {
+        if (backgroundImages.portrait.length > 1 || backgroundImages.landscape.length > 1) {
+            debug.debug("PREFS","Setting Slideshow Timeout For",timeout/1000,"seconds");
+            backgroundTimer = setTimeout(updateCustomBackground, timeout);
         }
     }
 
@@ -188,8 +429,11 @@ var prefs = function() {
             }
             
             for (var i in cookiePrefs) {
-                if (getCookie(cookiePrefs[i]) != '') {
-                    prefs[cookiePrefs[i]] = getCookie(cookiePrefs[i]);
+                var a = getCookie(cookiePrefs[i]);
+                if (a != '') {
+                    if (a === 'false') { a = false; }
+                    if (a === 'true' ) { a = true; }
+                    prefs[cookiePrefs[i]] = a;
                     if (prefs.debug_enabled > 7) {
                         console.log("PREFS      : "+cookiePrefs[i]+' = '+prefs[cookiePrefs[i]]);
                     }
@@ -220,19 +464,20 @@ var prefs = function() {
             for (var i in options) {
                 prefs[i] = options[i];
                 if (cookiePrefs.indexOf(i) > -1) {
-                    setCookie(i, options[i], 3650);
+                    var val = options[i];
+                    setCookie(i, val, 3650);
                 }
                 if (prefsInLocalStorage.indexOf(i) > -1) {
-                    debug.log("PREFS", "Setting",i,"to",options[i],"in local storage");
+                    debug.trace("PREFS", "Setting",i,"to",options[i],"in local storage");
                     localStorage.setItem("prefs."+i, JSON.stringify(options[i]));
                 } else {
-                    debug.log("PREFS", "Setting",i,"to",options[i],"on backend");
+                    debug.trace("PREFS", "Setting",i,"to",options[i],"on backend");
                     prefsToSave[i] = options[i];
                     postSave = true;
                 }
             }
             if (postSave) {
-                debug.log("PREFS",JSON.stringify(prefsToSave),prefsToSave);
+                debug.trace("PREFS",JSON.stringify(prefsToSave),prefsToSave);
                 $.post('saveprefs.php', {prefs: JSON.stringify(prefsToSave)}, function() {
                     if (callback) {
                         callback();
@@ -328,6 +573,7 @@ var prefs = function() {
         },
 
         toggleRadio: function(event) {
+            var defer = false;
             var prefobj = new Object;
             var prefname = $(event.target).attr("name");
             var prefsave = prefname.replace(/_duplicate\d+/, '');
@@ -339,6 +585,7 @@ var prefs = function() {
                     break;
 
                 case 'sortcollectionby':
+                case 'collectionrange':
                     callback = layoutProcessor.changeCollectionSortMode;
                     break;
 
@@ -349,11 +596,16 @@ var prefs = function() {
                     break;
 
                 case 'currenthost':
-                    callback = reloadWindow;
+                    defer = true;
+                    offerToTransferPlaylist();
                     break;
 
             }
-            prefs.save(prefobj, callback);
+            if (defer) {
+                deferredPrefs = cloneObject(prefobj);
+            } else {
+                prefs.save(prefobj, callback);
+            }
         },
 
         setPrefs: function() {
@@ -463,7 +715,7 @@ var prefs = function() {
 
         setTheme: function(theme) {
             if (!theme) theme = prefs.theme;
-            setCustombackground('');
+            clearCustomBackground();
             // Use a different version every time to ensure the browser doesn't cache.
             // Browsers are funny about CSS.
             var t = Date.now();
@@ -473,13 +725,7 @@ var prefs = function() {
             $("#fontfamily").attr("href", "fonts/"+prefs.fontfamily+"?version="+t);
             $("#icontheme-theme").attr("href", "iconsets/"+prefs.icontheme+"/theme.css"+"?version="+t);
             $("#icontheme-adjustments").attr("href", "iconsets/"+prefs.icontheme+"/adjustments.css"+"?version="+t);
-            $.getJSON('backimage.php?getbackground='+theme+'&browser_id='+prefs.browser_id, function(data) {
-                if (data.images) {
-                    debug.log("PREFS","Custom Background Image",data.images);
-                    setCustombackground(data.images);
-                    $('input[name="thisbrowseronly"]').prop('checked', data.thisbrowseronly);
-                }
-            });
+            loadBackgroundImages(theme);
             prefs.rgbs = null;
             if (typeof(layoutProcessor) != 'undefined') {
                 setTimeout(prefs.postUIChange, 2000);
@@ -517,11 +763,24 @@ var prefs = function() {
             xhr.send(new FormData(formElement));
         },
 
-        clearBgImage: function() {
-            setCustombackground('');
-            $.getJSON('backimage.php?clearbackground='+prefs.theme+'&browser_id='+prefs.browser_id, function(data) {
-                $('[name=imagefile').val('');
+        clearBgImage: function(event) {
+            var clicked = $(event.target);
+            var image = clicked.next().next().val();
+            clicked.parent().remove();
+            clearCustomBackground();
+            $.getJSON('backimage.php?clearbackground='+image, function(data) {
+                $('[name=imagefile').next().html(language.gettext('label_choosefile'));
+                $('[name=imagefile').parent().next('input[type="button"]').fadeOut('fast');
+                if (prefs.usertheme) {
+                    loadBackgroundImages(prefs.usertheme);
+                } else {
+                    loadBackgroundImages(prefs.theme);
+                }
             });
+        },
+        
+        openBgImageBox: function() {
+            $('#custombgdropper').slideToggle('fast');
         },
         
         clickBindType: function() {

@@ -28,17 +28,17 @@ body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
     border-bottom: 1px solid rgba(60,60,60,0.4);
 }
 
-button, input[type="button"]
+button, input[type="button"], .filebutton
 {
-    background-color:#cccccc !important;
+    /* background-color:#cccccc !important; */
     border:1px solid #333333;
-    background-image:none !important;
+    /* background-image:none !important; */
     color:black;
     font-weight:normal;
     font-size:110%;
 }
 
-button:hover, input[type="button"]:hover
+button:hover, input[type="button"]:hover, .filebutton:hover
 {
     font-weight:bold;
     border:1px solid #666666;
@@ -152,24 +152,6 @@ body.desktop #thetopbit
 = General Classes
 =====================================================================
 */
-
-.controlbutton {
-    color:#000000 !important;
-    text-shadow: 0 0 8px #333333;
-}
-
-.controlbutton-small {
-    color:#000000 !important;
-    text-shadow: 0 0 8px #333333;
-}
-
-.controlbutton:hover {
-    color:#111111 !important;
-}
-
-.controlbutton-small:hover {
-    color:#111111 !important;
-}
 
 tr.draggable:not(.selected):hover {
     background-color:rgba(0,0,0,0.3);

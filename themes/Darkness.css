@@ -17,17 +17,17 @@ body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,textarea,input
     color:#dddddd;
 }
 
-button, input[type="button"]
+button, input[type="button"], .filebutton
 {
-    background-color:#202020 !important;
+    /* background-color:#202020 !important; */
     border:1px solid #dedede;
-    background-image:none !important;
+    /* background-image:none !important; */
     color:#dddddd;
     font-weight:bold;
     font-size:110%;
 }
 
-button:hover, input[type="button"]:hover
+button:hover, input[type="button"]:hover, .filebutton:hover
 {
     color:#ff4800;
     border:1px solid #ff4800;
@@ -116,24 +116,6 @@ a:hover,a:active
 = General Classes
 =====================================================================
 */
-
-.controlbutton {
-    color:#cccccc !important;
-    text-shadow: 0 0 15px #bbbbbb !important;
-}
-
-.controlbutton-small {
-    color:#cccccc !important;
-    text-shadow: 0 0 15px #bbbbbb !important;
-}
-
-.controlbutton:hover {
-    color:#fe6800 !important;
-}
-
-.controlbutton-small:hover {
-    color:#fe6800 !important;
-}
 
 tr.draggable:not(.selected):hover {
     background-color:rgba(150,150,150,0.3);

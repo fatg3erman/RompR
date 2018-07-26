@@ -60,7 +60,7 @@ Now go back to that terminal window and we'll set some permissions.
 
 ### nginx installation
 
-    brew install nginx
+    brew install nginx imagemagick
 
 ### nginx configuration
 

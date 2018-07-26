@@ -13,8 +13,8 @@ var playlistManager = function() {
 		var t = decodeURIComponent(title);
 		html += '>'+'<tr class="tagh"><th colspan="2" align="center">'+t+'</th>';
 		if (!t.match(/ \(by /)) {
-			html += '<th width="20px"><i class="icon-floppy playlisticon clickicon infoclick plugclickable clickrenplaylist"></i></th>'+
-			'<th width="20px"><i class="icon-cancel-circled playlisticon clickicon infoclick plugclickable clickdelplaylist"></i></th>';
+			html += '<th width="20px"><i class="icon-floppy playlisticon clickicon infoclick plugclickable clickrenplaylist tooltip" title="'+language.gettext('label_renameplaylist')+'"></i></th>'+
+			'<th width="20px"><i class="icon-cancel-circled playlisticon clickicon infoclick plugclickable clickdelplaylist tooltip" title="'+language.gettext('label_deleteplaylist')+'"></i></th>';
 		}
 		html += '</tr>';
 		if (tracks.length == 0) {
@@ -23,7 +23,12 @@ var playlistManager = function() {
 			html += '<tr class="sortable" name="dummy" romprpos="playmanitem_null"><td style="height:24px"></td></tr>';
 		} else {
 			for (var i in tracks) {
-				html += '<tr class="sortable draggable infoclick clickable clicktrack" name="'+tracks[i].Uri+'" romprpos="playmanitem_'+i+'"><td width="40px"><img class="smallcover';
+				if (tracks[i].Type == 'stream') {
+					html += '<tr class="sortable draggable infoclick clickable clickstream" name="'+tracks[i].Uri+'" streamname="'+tracks[i].Album+'" streamimg="'+tracks[i].Image+'" romprpos="playmanitem_'+i+'">';
+				} else {
+					html += '<tr class="sortable draggable infoclick clickable clicktrack" name="'+tracks[i].Uri+'" romprpos="playmanitem_'+i+'">';
+				}
+				html += '<td width="40px"><img class="smallcover';
 				if (tracks[i].Image) {
 					html += '" src="'+tracks[i].Image;
 				} else {
@@ -142,6 +147,7 @@ var playlistManager = function() {
 	            browser.rePoint($("#playmunger"), {itemSelector: '.tagholder', percentPosition: true });
 	            infobar.markCurrentTrack();
 	            pmg.imagesLoaded(browser.rePoint);
+				pmg.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
             });
 		},
 

@@ -608,6 +608,8 @@ function process_file($filedata) {
 
         case "podcast":
             $filedata['folder'] = $filedata['X-AlbumUri'];
+			// $filedata['AlbumArtist'] = "Podcasts";
+			// $filedata['Artist'] = "Podcasts";
 			if ($filedata['Artist'] !== null) {
 				$filedata['AlbumArtist'] = $filedata['Artist'];
 			}

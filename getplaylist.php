@@ -109,6 +109,7 @@ function doNewPlaylistFile(&$filedata) {
         "stream" => $filedata['stream'],
         "playlistpos" => $filedata['Pos'],
         "genre" => $filedata['Genre'],
+        "imgsearched" => $filedata['Searched'],
         "progress" => 0,
         "comment" => array_key_exists('Comment', $filedata) ? $filedata['Comment'] : '',
         "metadata" => array(

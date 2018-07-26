@@ -4,14 +4,18 @@ By default RompЯ will attempt to download album art for albums in your Collecti
 
 ![](images/albumart.png)
 
-This should be fairly self-explanatory. 'Get Missing Covers' will attempt to find covers for any albums that don't have one.
+This should be fairly self-explanatory.
 
-'Find Small Images' will attempt to filter out any images which are very small (because they look bad in the main window) and replace them with bigger versions. People who have been using RompЯ for some time might find this option useful as earlier versions used to default to smaller images. New users of RompЯ will never need to use this button.
+* 'Get Missing Covers' will attempt to find covers for any albums that don't have one.
+* 'Ignore Local Images' will force Rompr to download all album art fomr online sources, even if local images are available
+* 'Follow Progress' will make the display auto-scroll to the cover currently being downloaded
 
 To manually change the cover for an album you can:
 
 * Drag an image from your hard drive or another browser window directly onto the cover in the Album Art Manager.
 * Click on the image to open the image selector.
+
+![](images/albumart2.png)
 
 By default the image selector opens a Google Images search (but see below!). You can change the search term and click 'Search' to try something else. You can use 'File Upload' to select a local file. 'Google Search In New Tab' will open a new browser tab on Google Images with the current search term.
 
@@ -23,9 +27,9 @@ First, go to the Configuration panel and enter the full path to your music in th
 
 Now when RompЯ searches for album art it will use your local images in preference. If you have lots of local images for an album the image selector will allow you to choose between them.
 
-_Note: this setting only works if you're using MPD, or Mopidy;s local backend. Other mopidy backends that play local files (eg beets) will not work_
+_Note: this setting only works if you're using MPD, or Mopidy's local backend. Other mopidy backends that play local files (eg beets) will not work_
 
-### Archving Local Images
+### Archiving Local Images
 
 Once you've downloaded all the art for your Collection, you can archive the images for your local files if you have set the path correctly as above. This is a manual step and requires a terminal open on the PC where your webserver runs.
 

@@ -14,37 +14,24 @@ foreach ($_GET as $k => $v) {
 if (!$url) {
 	debuglog("Asked to download image but no URL given!","TOMATO",3);
     header("HTTP/1.1 404 Not Found");
-    exit(0);
 } else {
 	debuglog("Getting Remote Image ".$url,"TOMATO",7);
 	$outfile = 'prefs/imagecache/'.md5($url);
-	$files = glob($outfile.'_*');
-	if (count($files) == 1) {
-		$outfile = array_shift($files);
-	} else {
-		$outfile = download_image_file($url, $outfile);
-	}
-	$bits = explode('_', $outfile);
-	$content_type = rawurldecode(array_pop($bits));
-	debuglog("  .. Content Type is ".$content_type,"TOMATO",8);
-	if (substr($content_type,0,5) != 'image' && $content_type != 'application/octet-stream') {
-		debuglog("Not an image file! ".$url,"TOMATO",5);
-		send_backup_image();
-	} else {
-		if (extension_loaded('gd') && array_key_exists('rompr_resize_size', $_REQUEST)) {
-			$simpleimage = new SimpleImage($outfile);
-			if ($simpleimage->checkImage() === false) {
-				header('Content-type: '.$content_type);
-				readfile($outfile);
-			} else {
-				header('Content-type: image/jpeg');
-				$simpleimage->outputResizedFile($_REQUEST['rompr_resize_size']);
-			}
+	if (!file_exists($outfile)) {
+		if (download_image_file($url, $outfile)) {
+			output_file($outfile);
 		} else {
-			header('Content-type: '.$content_type);
-			readfile($outfile);
+			send_backup_image();
 		}
+	} else {
+		output_file($outfile);
 	}
+}
+
+function output_file($outfile) {
+	$imagehandler = new imageHandler($outfile);
+	$size = array_key_exists('rompr_resize_size', $_REQUEST) ? $_REQUEST['rompr_resize_size'] : 'asdownloaded';
+	$imagehandler->outputResizedFile($size);
 }
 
 function download_image_file($url, $outfile) {
@@ -54,15 +41,16 @@ function download_image_file($url, $outfile) {
 	if ($d->get_data_to_file($outfile, true)) {
 		debuglog("Cached Image ".$outfile,"TOMATO",9);
 		$content_type = $d->get_content_type();
-		debuglog("  ... Content Type is ".$content_type,"TOMATO", 9);
-		$fileplusmime = $outfile.'_'.rawurlencode($content_type);
-		rename($outfile, $fileplusmime);
-		return $fileplusmime;
+		debuglog("  ... Content Type is ".$content_type,"TOMATO", 8);
+		if (substr($content_type,0,5) != 'image' && $content_type != 'application/octet-stream') {
+			debuglog("      Not an image file! ".$url,"TOMATO",8);
+			unlink($outfile);
+			return false;
+		}
 	} else {
-		debuglog("Failed to download ".$url." - status was ".$d->get_status(),"TOMATO",5);
-		send_backup_image();
-		exit(0);
+		return false;
 	}
+	return true;
 }
 
 function send_backup_image() {

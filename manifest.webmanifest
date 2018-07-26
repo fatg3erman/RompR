@@ -1,0 +1,35 @@
+{
+  "name": "RompЯ",
+  "short_name": "RompЯ",
+  "description": "A Beautiful, Feature-Rich Music Player",
+  "background_color": "black",
+  "icons": [
+    {
+      "src": "newimages/favicon.ico",
+      "sizes": "16x16",
+      "type": "image/x-icon",
+    },
+    {
+      "src": "newimages/favicon-48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+    },
+    {
+      "src": "newimages/favicon-64.png",
+      "sizes": "64x64",
+      "type": "image/png",
+    },
+    {
+      "src": "newimages/favicon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+    },
+    {
+      "src": "newimages/favicon-196.png",
+      "sizes": "196x196",
+      "type": "image/png",
+    }
+  ],
+  "start_url": "index.php",
+  "display": "standalone"
+}

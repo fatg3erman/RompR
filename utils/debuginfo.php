@@ -40,6 +40,10 @@ print '<tr><td>fileinfo</td><td>'.phpversion('fileinfo').'</td></tr>';
 print '<tr><td>json</td><td>'.phpversion('json').'</td></tr>';
 print '<tr><td>SimpleXML</td><td>'.phpversion('SimpleXML').'</td></tr>';
 print '<tr><td>GD</td><td>'.phpversion('GD').'</td></tr>';
+if (extension_loaded('gd')) {
+    $gdinfo = gd_info();
+    print '<tr><td>GD Info</td><td>'.multi_implode($gdinfo).'</td></tr>';
+}
 $convert_path = find_executable('convert');
 if ($convert_path === false) {
     print '<tr><td>ImageMagick</td><td>Not Installed</td></tr>';

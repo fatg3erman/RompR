@@ -1,14 +1,24 @@
 <?php
 include ("includes/vars.php");
-$skin = 'desktop';
 include ("includes/functions.php");
+$skin = 'desktop';
+$opts = getopt('', ['currenthost:', 'player_backend:']);
+if (is_array($opts)) {
+    foreach($opts as $key => $value) {
+	    debuglog($key.' = '.$value,'ROMONITOR');
+        $prefs[$key] = $value;
+    }
+}
+set_player_connect_params();
+debuglog("Using Player ".$prefs['currenthost'].' of type '.$prefs['player_backend'],"ROMONITOR");
+
 include ("international.php");
 include ("collection/collection.php");
 include ("player/mpd/connection.php");
 include ("backends/sql/backend.php");
 include ("backends/sql/metadatafunctions.php");
 include ('includes/podcastfunctions.php');
-include ('utils/imagefunctions.php');
+require_once ('utils/imagefunctions.php');
 close_database();
 $trackbytrack = false;
 $current_id = -1;
@@ -17,45 +27,39 @@ $playcount_updated = false;
 $returninfo = array();
 $dummydata = array('dummy' => 'baby');
 
-$opts = getopt('', ['currenthost:', 'player_backend:']);
-if (is_array($opts)) {
-	foreach($opts as $key => $value) {
-        debuglog($key.' = '.$value,"ROMONITOR");
-        $prefs[$key] = $value;
-    }
-}
-
-debuglog("Using Player ".$prefs['currenthost'].' of type '.$prefs['player_backend'],"ROMONITOR");
-
 while (true) {
 
     @open_mpd_connection();
-    connect_to_database();
-    $mpd_status = do_mpd_command('status', true, false);
-    if (array_key_exists('songid', $mpd_status) && array_key_exists('elapsed', $mpd_status)) {
-        if ($current_id != $mpd_status['songid']) {
-            debuglog("Song has changed","ROMONITOR");
-            doCollection('currentsong', array(), false);
-            $current_id = $mpd_status['songid'];
-            $playcount_updated = false;
-			romprmetadata::get($current_song);
-            $current_playcount = array_key_exists('Playcount', $returninfo) ? $returninfo['Playcount'] : 0;
-			debuglog("Current Playcount is ".$current_playcount,"ROMONITOR",8);
-        }
-        $progress = $mpd_status['elapsed']/$current_song['duration'];
-        if ($current_song['type'] !== 'stream' && $progress > 0.6 && !$playcount_updated) {
-            debuglog("Updating Playcount for current song","ROMONITOR");
-            $current_song['attributes'] = array(array('attribute' => 'Playcount', 'value' => $current_playcount+1));
-            romprmetadata::inc($current_song);
-            if ($current_song['type'] == 'podcast') {
-                markAsListened($current_song['uri']);
+    if ($is_connected) {
+        connect_to_database();
+        $mpd_status = do_mpd_command('status', true, false);
+        if (array_key_exists('songid', $mpd_status) && array_key_exists('elapsed', $mpd_status)) {
+            if ($current_id != $mpd_status['songid']) {
+                debuglog("Song has changed","ROMONITOR");
+                doCollection('currentsong', array(), false);
+                $current_id = $mpd_status['songid'];
+                $playcount_updated = false;
+    			romprmetadata::get($current_song);
+                $current_playcount = array_key_exists('Playcount', $returninfo) ? $returninfo['Playcount'] : 0;
+    			debuglog("Current Playcount is ".$current_playcount,"ROMONITOR",8);
             }
-            $playcount_updated = true;
+            $progress = $mpd_status['elapsed']/$current_song['duration'];
+            if ($current_song['type'] !== 'stream' && $progress > 0.6 && !$playcount_updated) {
+                debuglog("Updating Playcount for current song","ROMONITOR");
+                $current_song['attributes'] = array(array('attribute' => 'Playcount', 'value' => $current_playcount+1));
+                romprmetadata::inc($current_song);
+                if ($current_song['type'] == 'podcast') {
+                    markAsListened($current_song['uri']);
+                }
+                $playcount_updated = true;
+            }
         }
+        close_database();
+        close_mpd();
+        sleep(10);
+    } else {
+        sleep(60);
     }
-    close_database();
-    close_mpd();
-    sleep(10);
 }
 
 function doNewPlaylistFile(&$filedata) {

@@ -9,15 +9,23 @@ var opmlImporter = function() {
         	if (opmlv == null) {
 	        	opmlv = browser.registerExtraPlugin("opmlv", language.gettext("label_opmlimporter"), opmlImporter, 'https://fatg3erman.github.io/RompR/OPML-Importer');
 				$('#opmlvfoldup').append(
-					'<div class="containerbox brick_wide">'+
+					'<div class="fullwidth brick_wide">'+
 					'<form id="opmluploader" action="plugins/code/opmluploader.php" method="post" enctype="multipart/form-data">'+
-					'<input class="expand infowiki" name="opmlfile" type="file" />'+
-					'<input class="fixed" id="opmlsubmit" value="Upload" type="button" />'+
+					'<div class="filebutton textcentre">'+
+					'<input class="inputfile" name="opmlfile" id="opmlfile" type="file" />'+
+					'<label for="opmlfile">'+language.gettext('label_choosefile')+'</label>'+
+					'</div>'+
+					'<input class="invisible" id="opmlsubmit" value="'+language.gettext("albumart_uploadbutton")+'" type="button" />'+
 					'</form>'+
 					'</div>'
 				);
 	            $('#opmlvfoldup').append('<div id="opmllist"></div>');
 				$('#opmlsubmit').bind('click', opmlImporter.uploadFile);
+				$('#opmlfile').on('change', function() {
+			        var filename = $(this).val().replace(/.*(\/|\\)/, '');
+			        $(this).next().html(filename);
+			        $(this).parent().next('input[type="button"]').fadeIn('fast');
+			    });
 				opmlv.slideToggle('fast', function() {
 					browser.goToPlugin("opmlv");
 				});

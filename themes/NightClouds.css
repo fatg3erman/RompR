@@ -78,21 +78,14 @@ a:hover,a:active
 
 /*-- divs used to create infobar layout --*/
 
-button, input[type="button"]
+button, input[type="button"], .filebutton
 {
     color:#dddddd;
     background-color:transparent;
     border:1px solid #aaaaaa;
 }
 
-.crackbaby button, .albumcovers .infosection button
-{
-    background-image:none !important;
-    background-color:transparent !important;
-    border:0px none !important;
-}
-
-button:hover, input[type="button"]:hover
+button:hover, input[type="button"]:hover, .filebutton:hover
 {
     color:#ffffff;
     border:1px solid #ffffff;
@@ -239,7 +232,7 @@ div.topdropmenu
 
 .configtitle
 {
-    background-color:rgba(0,0,0,1);
+    background-color:rgba(200,80,0,0.4);
 }
 
 body.mobile .configtitle

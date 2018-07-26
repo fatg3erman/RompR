@@ -131,7 +131,7 @@ include ("includes/prefspanel.php");
 </div>
 
 <div id="bottompage" class="clearfix">
-    
+
 <div id="headerbar" class="noborder tleft">
     <div id="sourcescontrols">
 <?php
@@ -143,7 +143,8 @@ print '<i title="'.get_int_text('label_podcasts').'" class="icon-podcast-circled
 print '<i title="'.get_int_text('button_loadplaylist').'" class="icon-doc-text tooltip topimg choose_playlistslist"></i>';
 print '<i title="'.get_int_text('label_pluginplaylists').'" class="icon-wifi tooltip topimg choose_pluginplaylistslist"></i>';
 print '<i title="'.get_int_text('button_infopanel').'" class="icon-info-circled tooltip topimg choose_infopanel"></i>';
-print '<i class="icon-menu topimg tooltip choose_specialplugins" title="'.get_int_text('button_plugins').'"></i>';
+print '<i title="'.get_int_text('button_history').'" class="icon-versions tooltip topimg choose_history"></i>';
+print '<i title="'.get_int_text('button_plugins').'" class="icon-menu topimg tooltip choose_specialplugins"></i>';
 ?>
     </div>
 </div>
@@ -156,39 +157,14 @@ print '<i class="icon-menu topimg tooltip choose_specialplugins" title="'.get_in
     print '<div class="fixed" style="padding-right:4px"><i onclick="toggleCollectionButtons()" title="'.get_int_text('button_collectioncontrols').'" class="icon-menu playlisticon clickicon lettuce"></i></div>';
     print '<div class="configtitle textcentre expand"><b>'.get_int_text('button_local_music').'</b></div>';
     print '</div>';
+    collectionButtons();
 ?>
-    <div id="collectionbuttons" class="invisible">
-<?php
-    print '<div class="pref styledinputs">';
-    print '<input type="radio" class="topcheck savulon" name="sortcollectionby" value="artist" id="sortbyartist">
-    <label for="sortbyartist">'.ucfirst(get_int_text('label_artists')).'</label><br/>
-    <input type="radio" class="topcheck savulon" name="sortcollectionby" value="album" id="sortbyalbum">
-    <label for="sortbyalbum">'.ucfirst(get_int_text('label_albums')).'</label><br/>
-    <input type="radio" class="topcheck savulon" name="sortcollectionby" value="albumbyartist" id="sortbyalbumbyartist">
-    <label for="sortbyalbumbyartist">'.ucfirst(get_int_text('label_albumsbyartist')).'</label>
-    <div class="pref">
-    <input class="autoset toggle" type="checkbox" id="showartistbanners">
-    <label for="showartistbanners">'.get_int_text('config_showartistbanners').'</label>
-    </div>
-    </div>
-    <div class="pref styledinputs">
-    <input class="autoset toggle" type="checkbox" id="sortbydate">
-    <label for="sortbydate">'.get_int_text('config_sortbydate').'</label>
-    <div class="pref">
-    <input class="autoset toggle" type="checkbox" id="notvabydate">
-    <label for="notvabydate">'.get_int_text('config_notvabydate').'</label>
-    </div>
-    </div>
-    <div class="pref textcentre">
-    <button name="donkeykong">'.get_int_text('config_updatenow').'</button>
-    </div>';
-?>
-    
-    </div>
     <div id="collection" class="noborder selecotron"></div>
     </div>
 
     <div id="specialplugins" class="invisible noborder"></div>
+
+    <div id="historypanel" class="invisible noborder"></div>
 
     <div id="searcher" class="invisible noborder">
 <?php
@@ -253,17 +229,10 @@ if ($prefs['player_backend'] == "mopidy") {
 <div class="clearfix containerbox vertical" id="pluginplaylists_crazy">
 </div>
 </div>
-    
+
     <div id="infoholder" class="collectionpanel invisible">
     <div id="infopanecontrols">
         <div id="chooserbuttons">
-<?php
-            print '<div class="topdrop fixed"><i class="icon-versions topimg tooltip" title="'.get_int_text('button_history').'"></i>';
-?>
-            <div class="topdropmenu dropshadow leftmenu widemenu" id="hpscr">
-                <div id="historypanel" class="clearfix"></div>
-            </div>
-            </div>
 <?php
         print '<i title="'.get_int_text('button_back').'" id="backbutton" class="icon-left-circled topimg tooltip button-disabled"></i>';
         print '<i title="'.get_int_text('button_forward').'" id="forwardbutton" class="icon-right-circled tooltip topimg button-disabled"></i>';

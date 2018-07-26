@@ -13,6 +13,7 @@ var playlist = function() {
     var retrytimer;
     var popmovetimer = null;
     var popmoveelement = null;
+    var popmovetimeout = 2000;
 
     // Minimal set of information - just what infobar requires to make sure
     // it blanks everything out
@@ -32,30 +33,6 @@ var playlist = function() {
 
     var currentTrack = emptyTrack;
 
-    function getDomainIcon(track, def) {
-        var s = track.location.split(':');
-        var d = s.shift();
-        switch (d) {
-            case "spotify":
-            case "gmusic":
-            case "youtube":
-            case "internetarchive":
-            case "soundcloud":
-            case "podcast":
-            case "dirble":
-                return '<i class="icon-'+d+'-circled playlisticon fixed"></i>';
-                break;
-                
-            case 'tunein':
-                return '<i class="icon-tunein playlisticon fixed"></i>';
-                break;
-        }
-        if (track.type == 'podcast') {
-            return '<i class="icon-podcast-circled playlisticon fixed"></i>';
-        }
-        return def;
-    }
-
     function addSearchDir(element) {
         var options = new Array();
         element.next().find('.clickable').each(function(index, elem){
@@ -69,413 +46,6 @@ var playlist = function() {
             }
         });
         return options;
-    }
-    
-    function Album(artist, album, index, rolledup) {
-
-        var self = this;
-        var tracks = [];
-        this.artist = artist;
-        this.album = album;
-        this.index = index;
-
-        this.newtrack = function (track) {
-            tracks.push(track);
-        }
-        
-        this.presentYourself = function() {
-            var holder = $('<div>', { name: self.index, romprid: tracks[0].backendid, class: 'item fullwidth sortable playlistalbum playlisttitle'}).appendTo('#sortable');
-            if (self.index == currentalbum) {
-                holder.removeClass('playlisttitle').addClass('playlistcurrenttitle');
-            }
-            
-            var inner = $('<div>', {class: 'containerbox'}).appendTo(holder);
-            var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'expand clickable clickplaylist containerbox'}).appendTo(inner);
-            
-            if (prefs.use_albumart_in_playlist) {
-                self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].key });
-                self.image.on('error', self.getart);
-                var imgholder = $('<div>', { class: 'smallcover fixed clickable clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
-                if (tracks[0].images.small) {
-                    self.image.attr('src', tracks[0].images.small).appendTo(imgholder);
-                } else {
-                    self.image.addClass('notexist').appendTo(imgholder);
-                    self.getart();
-                }
-            }
-            
-            var title = $('<div>', {class: 'containerbox vertical expand'}).appendTo(albumDetails);
-            title.append('<div class="bumpad">'+self.artist+'</div><div class="bumpad">'+self.album+'</div>');
-            
-            var controls = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(inner)
-            controls.append('<div class="expand clickable clickicon clickremovealbum" name="'+self.index+'"><i class="icon-cancel-circled playlisticonr"></i></div>');
-            if (tracks[0].metadata.album.uri && tracks[0].metadata.album.uri.substring(0,7) == "spotify") {
-                controls.append('<div class="fixed clickable clickicon clickaddwholealbum" name="'+self.index+'"><i class="icon-music playlisticonr"></i></div>');
-            }
-            
-            var trackgroup = $('<div>', {class: 'trackgroup', name: self.index }).appendTo('#sortable');
-            if (rolledup) {
-                trackgroup.addClass('invisible');
-            }
-            for (var trackpointer in tracks) {
-                var trackdiv = $('<div>', {name: tracks[trackpointer].playlistpos, romprid: tracks[trackpointer].backendid, class: 'track sortable fullwidth playlistitem menuitem'}).appendTo(trackgroup);
-                if (tracks[trackpointer].backendid == player.status.songid) {
-                    trackdiv.removeClass('playlistitem').addClass('playlistcurrentitem');
-                }
-                
-                var trackOuter = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(trackdiv);
-                var trackDetails = $('<div>', {class: 'expand clickable clickplaylist containerbox dropdown-container', romprid: tracks[trackpointer].backendid}).appendTo(trackOuter);
-                
-                if (tracks[trackpointer].tracknumber) {
-                    var trackNodiv = $('<div>', {class: 'tracknumber fixed'}).appendTo(trackDetails);
-                    if (tracks.length > 99 || tracks[trackpointer].tracknumber > 99) {
-                        trackNodiv.css('width', '3em');
-                    }
-                    trackNodiv.html(format_tracknum(tracks[trackpointer].tracknumber));
-                }
-                
-                trackDetails.append(getDomainIcon(tracks[trackpointer], ''));
-                
-                var trackinfo = $('<div>', {class: 'containerbox vertical expand'}).appendTo(trackDetails);
-                trackinfo.append('<div class="line">'+tracks[trackpointer].title+'</div>');
-                if ((tracks[trackpointer].albumartist != "" && tracks[trackpointer].albumartist != tracks[trackpointer].trackartist)) {
-                    trackinfo.append('<div class="line playlistrow2">'+tracks[trackpointer].trackartist+'</div>');
-                }
-                if (tracks[trackpointer].metadata.track.usermeta) {
-                    if (tracks[trackpointer].metadata.track.usermeta.Rating > 0) {
-                        trackinfo.append('<div class="fixed playlistrow2 trackrating"><i class="icon-'+tracks[trackpointer].metadata.track.usermeta.Rating+'-stars rating-icon-small"></i></div>');
-                    }
-                    var t = tracks[trackpointer].metadata.track.usermeta.Tags.join(', ');
-                    if (t != '') {
-                        trackinfo.append('<div class="fixed playlistrow2 tracktags"><i class="icon-tags playlisticon"></i>'+t+'</div>');
-                    }
-                }
-                
-                trackDetails.append('<div class="tracktime tiny fixed">'+formatTimeString(tracks[trackpointer].duration)+'</div>');
-                trackOuter.append('<i class="icon-cancel-circled playlisticonr fixed clickable clickicon clickremovetrack" romprid="'+tracks[trackpointer].backendid+'"></i>');
-
-            }
-        }
-
-        this.getart = function() {
-            coverscraper.GetNewAlbumArt({
-                artist:     tracks[0].albumartist,
-                album:      tracks[0].album,
-                mbid:       tracks[0].metadata.album.musicbrainz_id,
-                albumpath:  tracks[0].dir,
-                albumuri:   tracks[0].metadata.album.uri,
-                imgkey:     tracks[0].key,
-                type:       tracks[0].type,
-                cb:         self.updateImages
-            });
-        }
-
-        this.getFnackle = function() {
-            return { album: tracks[0].album,
-                     image: tracks[0].images.small,
-                     location: tracks[0].location,
-                     stream: tracks[0].stream,
-                     streamid: tracks[0].streamid
-            };
-        }
-
-        this.rollUp = function() {
-            $('.trackgroup[name="'+self.index+'"]').slideToggle('slow');
-            rolledup = !rolledup;
-            if (rolledup) {
-                playlist.rolledup[this.artist+this.album] = true;
-            } else {
-                playlist.rolledup[this.artist+this.album] = undefined;
-            }
-        }
-
-        this.updateImages = function(data) {
-            debug.log("PLAYLIST","Updating track images with",data);
-            for (var trackpointer in tracks) {
-                tracks[trackpointer].images = data;
-            }
-        }
-
-        this.getFirst = function() {
-            return parseInt(tracks[0].playlistpos);
-        }
-
-        this.getSize = function() {
-            return tracks.length;
-        }
-
-        this.isLast = function(id) {
-            if (id == tracks[tracks.length - 1].backendid) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        this.findcurrent = function(which) {
-            for(var i in tracks) {
-                if (tracks[i].backendid == which) {
-                    currentTrack = tracks[i];
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        this.findById = function(which) {
-            for(var i in tracks) {
-                if (tracks[i].backendid == which) {
-                    return i;
-                }
-            }
-            return false;
-        }
-        
-        this.findByUri = function(uri) {
-            for(var i in tracks) {
-                if (tracks[i].location == uri) {
-                    return tracks[i].backendid;
-                }
-            }
-            return false;
-        }
-
-        this.getByIndex = function(i) {
-            return tracks[i];
-        }
-
-        this.getTracks = function() {
-            return tracks;
-        }
-
-        this.getrest = function(id, arr) {
-            var i = 0;
-            if (id !== null) {
-                while (i < tracks.length && tracks[i].backendid != id) {
-                    i++;
-                }
-                i++;
-            }
-            while (i < tracks.length) {
-                arr.push(tracks[i]);
-                i++;
-            }
-        }
-
-        this.deleteSelf = function() {
-            var todelete = [];
-            $('.item[name="'+self.index+'"]').next().remove();
-            $('.item[name="'+self.index+'"]').remove();
-            for(var i in tracks) {
-                todelete.push(tracks[i].backendid);
-            }
-            player.controller.removeId(todelete)
-        }
-
-        this.previoustrackcommand = function() {
-            player.controller.previous();
-        }
-
-        this.nexttrackcommand = function() {
-            player.controller.next();
-        }
-
-        this.addToCollection = function() {
-            if (tracks[0].metadata.album.uri && tracks[0].metadata.album.uri.substring(0,14) == "spotify:album:") {
-                spotify.album.getInfo(tracks[0].metadata.album.uri.substring(14,tracks[0].metadata.album.uri.length),
-                function(data) {
-                    metaHandlers.fromSpotifyData.addAlbumTracksToCollection(data, tracks[0].albumartist)
-                },
-                function(data) {
-                    debug.fail("ADD ALBUM","Failed to add album",data);
-                    infobar.notify(infobar.ERROR, "Failed To Get Album Info From Spotify");
-                },
-                false);
-            } else {
-                debug.error("PLAYLIST","Trying to add non-spotify album to the collection!");
-            }
-        }
-
-        function format_tracknum(tracknum) {
-            var r = /^(\d+)/;
-            var result = r.exec(tracknum) || "";
-            return result[1] || "";
-        }
-
-    }
-
-    function Stream(index, album, rolledup) {
-        var self = this;
-        var tracks = [];
-        this.index = index;
-        var rolledup = rolledup;
-        this.album = album;
-
-        this.newtrack = function (track) {
-            tracks.push(track);
-        }
-
-        this.presentYourself = function() {
-            var header = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'item sortable fullwidth playlistalbum playlisttitle'}).appendTo('#sortable');
-            if (self.index == currentalbum) {
-                header.removeClass('playlisttitle').addClass('playlistcurrenttitle');
-            }
-
-            var inner = $('<div>', {class: 'containerbox'}).appendTo(header);
-            var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'expand clickable clickplaylist containerbox'}).appendTo(inner);
-            
-            if (prefs.use_albumart_in_playlist) {
-                self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].key });
-                self.image.on('error', self.getart);
-                var imgholder = $('<div>', { class: 'smallcover fixed clickable clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
-                if (tracks[0].images.small) {
-                    self.image.attr('src', tracks[0].images.small).appendTo(imgholder);
-                } else {
-                    self.image.addClass('notexist stream').appendTo(imgholder);
-                    if (tracks[0].album != rompr_unknown_stream) {
-                        self.getart();
-                    }
-                }
-            }
-            
-            var title = $('<div>', {class: 'containerbox vertical expand'}).appendTo(albumDetails);
-            title.append('<div class="bumpad">'+tracks[0].album+'</div>');
-            var buttons = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(inner);
-            buttons.append('<div class="clickable clickicon clickremovealbum expand" name="'+self.index+'"><i class="icon-cancel-circled playlisticonr"></i></div>');
-            buttons.append('<div class="clickable clickicon clickaddfave fixed" name="'+self.index+'"><i class="icon-radio-tower playlisticonr"></i></div>');
-            
-            var trackgroup = $('<div>', {class: 'trackgroup', name: self.index }).appendTo('#sortable');
-            if (self.visible()) {
-                trackgroup.addClass('invisible');
-            }
-            for (var trackpointer in tracks) {
-                var trackdiv = $('<div>', {name: tracks[trackpointer].playlistpos, romprid: tracks[trackpointer].backendid, class: 'booger clickable clickplaylist containerbox playlistitem menuitem'}).appendTo(trackgroup);
-                trackdiv.append(getDomainIcon(tracks[trackpointer], '<i class="icon-radio-tower playlisticon fixed"></i>'));
-                var h = $('<div>', {class: 'containerbox vertical expand' }).appendTo(trackdiv);
-                if (tracks[trackpointer].stream && tracks[trackpointer].stream != 'null') {
-                    h.append('<div class="playlistrow2 line">'+tracks[trackpointer].stream+'</div>');
-                }
-                h.append('<div class="tiny line">'+tracks[trackpointer].location+'</div>');
-            }
-        }
-
-        this.getFnackle = function() {
-            return { album: tracks[0].album,
-                     image: tracks[0].images.small,
-                     location: tracks[0].location,
-                     stream: tracks[0].stream,
-                     streamid: tracks[0].streamid
-            };
-        }
-
-        this.findById = function(which) {
-            for(var i in tracks) {
-                if (tracks[i].backendid == which) {
-                    return i;
-                }
-            }
-            return false;
-        }
-
-        this.getByIndex = function(i) {
-            return tracks[i];
-        }
-
-        this.getTracks = function() {
-            return tracks;
-        }
-
-        this.rollUp = function() {
-            $('.trackgroup[name="'+self.index+'"]').slideToggle('slow');
-            if (self.visible()) {
-                playlist.rolledup["StReAm"+this.album] = true;
-            } else {
-                playlist.rolledup["StReAm"+this.album] = undefined;
-            }
-            rolledup = !rolledup;
-        }
-
-        this.getFirst = function() {
-            return parseInt(tracks[0].playlistpos);
-        }
-
-        this.getSize = function() {
-            return tracks.length;
-        }
-
-        this.isLast = function(id) {
-            if (id == tracks[tracks.length - 1].backendid) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        this.findcurrent = function(which) {
-            for(var i in tracks) {
-                if (tracks[i].backendid == which) {
-                    currentTrack = tracks[i];
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        this.findByUri = function(uri) {
-            for(var i in tracks) {
-                if (tracks[i].location == uri) {
-                    return tracks[i].backendid;
-                }
-            }
-            return false;
-        }
-
-        this.getrest = function(id, arr) {
-
-        }
-
-        this.getart = function() {
-            coverscraper.GetNewAlbumArt({
-                artist:     'STREAM',
-                type:       'stream',
-                album:      tracks[0].album,
-                imgkey:     tracks[0].key,
-                cb:         self.updateImages
-            });
-        }
-
-        this.updateImages = function(data) {
-            debug.log("PLAYLIST","Updating track images with",data);
-            for (var trackpointer in tracks) {
-                tracks[trackpointer].images = data;
-            }
-        }
-
-        this.deleteSelf = function() {
-            var todelete = [];
-            for(var i in tracks) {
-                $('.booger[name="'+tracks[i].playlistpos+'"]').remove();
-                todelete.push(tracks[i].backendid);
-            }
-            $('.item[name="'+self.index+'"]').remove();
-            player.controller.removeId(todelete)
-        }
-
-        this.previoustrackcommand = function() {
-            player.controller.playByPosition(parseInt(tracks[0].playlistpos)-1);
-        }
-
-        this.nexttrackcommand = function() {
-            player.controller.playByPosition(parseInt(tracks[(tracks.length)-1].playlistpos)+1);
-        }
-
-        this.visible = function() {
-            if (self.album == rompr_unknown_stream) {
-                return !rolledup;
-            } else {
-                return rolledup;
-            }
-        }
     }
 
     function personalRadioManager() {
@@ -639,7 +209,7 @@ var playlist = function() {
                 html += '</div>';
                 return html;
             },
-            
+
             dropdownBox: function(station, name, icon, label, dropid) {
                 var html = '<div class="menuitem containerbox clickable clickicon '+station+'"';
                 if (name !== null) html += ' name="'+name+'"';
@@ -650,35 +220,29 @@ var playlist = function() {
                 html += '</div>';
                 html += '<div class="toggledown invisible" id="'+dropid+'"></div>';
                 return html;
-                
+
             },
-            
+
             textEntry: function(icon, label, id) {
                 var html = '<div class="menuitem containerbox fullwidth">';
-                
                 html += '<div class="smallcover svg-square fixed '+icon+'"></div>';
-                
                 html += '<div class="expand containerbox vertical">';
                 html += '<div class="fixed">'+label+'</div>';
-                
                 html += '<div class="containerbox fixed">';
                 html += '<div class="expand dropdown-holder"><input class="enter" id="'+id+'" type="text" /></div>';
                 html += '<button class="fixed alignmid" name="'+id+'">'+language.gettext('button_playradio')+'</button>';
                 html += '</div>';
-                
                 html += '</div>';
-                
                 html += '</div>';
-                
                 return html;
             }
         }
     }
 
     return {
-        
+
         rolledup: [],
-        
+
         radioManager: new personalRadioManager(),
 
         repopulate: function() {
@@ -705,8 +269,7 @@ var playlist = function() {
         },
 
         newXSPF: function(request_id, list) {
-            var item = null;
-            var count = 0;
+            var count = -1;
             var current_album = "";
             var current_artist = "";
             var current_type = "";
@@ -730,45 +293,39 @@ var playlist = function() {
             var totaltime = 0;
 
             for (var i in list) {
-                track = list[i];
-                track.duration = parseFloat(track.duration);
-                totaltime += track.duration;
-                var sortartist = (track.albumartist == "") ? track.trackartist : track.albumartist;
+                list[i].duration = parseFloat(list[i].duration);
+                totaltime += list[i].duration;
+                var sortartist = (list[i].albumartist == "") ? list[i].trackartist : list[i].albumartist;
                 if ((sortartist.toLowerCase() != current_artist.toLowerCase()) ||
-                    track.album.toLowerCase() != current_album.toLowerCase() ||
-                    track.type != current_type)
+                    list[i].album.toLowerCase() != current_album.toLowerCase() ||
+                    list[i].type != current_type)
                 {
-                    current_type = track.type;
+                    current_type = list[i].type;
                     current_artist = sortartist;
-                    current_album = track.album;
-                    switch (track.type) {
+                    current_album = list[i].album;
+                    count++;
+                    switch (list[i].type) {
                         case "local":
-                            var hidden = (playlist.rolledup[sortartist+track.album]) ? true : false;
-                            item = new Album(sortartist, track.album, count, hidden);
-                            tracklist[count] = item;
-                            count++;
+                            var hidden = (playlist.rolledup[sortartist+list[i].album]) ? true : false;
+                            tracklist[count] = new Album(sortartist, list[i].album, count, hidden);
                             break;
                         case "stream":
                             // Streams are hidden by default - hence we use the opposite logic for the flag
-                            var hidden = (playlist.rolledup["StReAm"+track.album]) ? false : true;
-                            item = new Stream(count, track.album, hidden);
-                            tracklist[count] = item;
-                            count++;
+                            var hidden = (playlist.rolledup["StReAm"+list[i].album]) ? false : true;
+                            tracklist[count] = new Stream(count, list[i].album, hidden);
                             break;
                         default:
-                            item = new Album(sortartist, track.album, count);
-                            tracklist[count] = item;
-                            count++;
+                            tracklist[count] = new Album(sortartist, list[i].album, count);
                             break;
 
                     }
                 }
-                item.newtrack(track);
-                if (track.backendid == player.status.songid) {
-                    currentalbum = count - 1;
-                    currentTrack.playlistpos = track.playlistpos;
+                tracklist[count].newtrack(list[i]);
+                if (list[i].backendid == player.status.songid) {
+                    currentalbum = count;
+                    currentTrack.playlistpos = list[i].playlistpos;
                 }
-                finaltrack = parseInt(track.playlistpos);
+                finaltrack = parseInt(list[i].playlistpos);
 
             }
 
@@ -786,6 +343,8 @@ var playlist = function() {
             for (var i in tracklist) {
                 tracklist[i].presentYourself();
             }
+
+            $('#sortable .tooltip').tipTip({delay: 500, edgeOffset: 8});
 
             if (finaltrack > -1) {
                 $("#pltracks").html((finaltrack+1).toString() +' '+language.gettext("label_tracks"));
@@ -841,6 +400,7 @@ var playlist = function() {
         draggedToEmpty: function(event, ui) {
             debug.log("PLAYLIST","Something was dropped on the empty playlist area",event,ui);
             playlist.addItems($('.selected').filter(removeOpenItems), parseInt(finaltrack)+1);
+            doSomethingUseful('waiter', language.gettext('label_incoming'));
         },
 
         dragstopped: function(event, ui) {
@@ -851,7 +411,7 @@ var playlist = function() {
             var moveto  = (function getMoveTo(i) {
                 if (i !== null) {
                     debug.log("PLAYLIST", "Finding Next Item In List",i.next(),i.parent());
-                    if (i.next().hasClass('track')) {
+                    if (i.next().hasClass('track') || i.next().hasClass('booger')) {
                         debug.log("PLAYLIST","Next Item Is Track");
                         return parseInt(i.next().attr("name"));
                     }
@@ -976,8 +536,7 @@ var playlist = function() {
                         if (is_already_in_playlist !== false) {
                             player.controller.do_command_list([
                                 ['playid', is_already_in_playlist],
-                                ['pause'],
-                                ['seekid', is_already_in_playlist, $(element).next().val()]
+                                ['seekpodcast', is_already_in_playlist, $(element).next().val()]
                             ])
                         } else {
                             tracks.push({
@@ -1023,7 +582,7 @@ var playlist = function() {
                 $("#crossfade_duration").val(player.status.xfade);
             }
         },
-    
+
         preventControlClicks: function(t) {
             if (t) {
                 $('#random').click(player.controller.toggleRandom).parent().removeClass('thin');
@@ -1060,11 +619,11 @@ var playlist = function() {
                 return null;
             }
         },
-        
+
         getfinaltrack: function() {
             return finaltrack;
         },
-        
+
         checkPodcastProgress: function() {
             if (currentTrack.type == "podcast") {
                 var durationfraction = currentTrack.progress/currentTrack.duration;
@@ -1087,7 +646,9 @@ var playlist = function() {
                 $('.track[romprid="'+backendid+'"],.booger[romprid="'+backendid+'"]').removeClass('playlistitem').addClass('playlistcurrentitem');
                 if (backendid && tracklist.length > 0) {
                     for(var i in tracklist) {
-                        if (tracklist[i].findcurrent(backendid)) {
+                        var c = tracklist[i].findcurrent(backendid);
+                        if (c !== false) {
+                            currentTrack = c;
                             if (currentalbum != i) {
                                 currentalbum = i;
                                 $(".playlistcurrenttitle").removeClass('playlistcurrenttitle').addClass('playlisttitle');
@@ -1100,7 +661,7 @@ var playlist = function() {
                     currentTrack = emptyTrack;
                 }
                 playlist.radioManager.repopulate();
-                nowplaying.newTrack(currentTrack, force);
+                nowplaying.newTrack(playlist.getCurrentTrack(), force);
             }
             playlist.doUpcomingCrap();
             clearTimeout(pscrolltimer);
@@ -1161,8 +722,7 @@ var playlist = function() {
         },
 
         getCurrentTrack: function() {
-            var temp = cloneObject(currentTrack);
-            return temp;
+            return cloneObject(currentTrack);
         },
 
         setCurrent: function(items) {
@@ -1179,7 +739,7 @@ var playlist = function() {
                 }
             }
         },
-        
+
         findIdByUri: function(uri) {
             for (var i in tracklist) {
                 if (tracklist[i].findByUri(uri) !== false) {
@@ -1194,11 +754,39 @@ var playlist = function() {
             debug.log("PLAYLIST","Getting Tracks For",i);
             return tracklist[i].getTracks();
         },
-        
+
+        getCurrentAlbum: function() {
+            return currentalbum;
+        },
+
+        getDomainIcon: function(track, def) {
+            var s = track.location.split(':');
+            var d = s.shift();
+            switch (d) {
+                case "spotify":
+                case "gmusic":
+                case "youtube":
+                case "internetarchive":
+                case "soundcloud":
+                case "podcast":
+                case "dirble":
+                    return '<i class="icon-'+d+'-circled playlisticon fixed"></i>';
+                    break;
+
+                case 'tunein':
+                    return '<i class="icon-tunein playlisticon fixed"></i>';
+                    break;
+            }
+            if (track.type == 'podcast') {
+                return '<i class="icon-podcast-circled playlisticon fixed"></i>';
+            }
+            return def;
+        },
+
         // Functions for moving things around by clicking icons
         // To be honest, if I hadn't decided to do trackgroups in the playlist
         // this would be a fuck of a lot easier. But then trackgroups simplify other things, so....
-        
+
         moveTrackUp: function(element, event) {
             clearTimeout(popmovetimer);
             popmoveelement = element;
@@ -1207,18 +795,9 @@ var playlist = function() {
             if (element.hasClass('item')) {
                 tracks = element.next();
             }
-            var cheese = element.prev();
-            if (cheese.length == 0) {
-                if (element.parent().hasClass('trackgroup')) {
-                    cheese = element.parent().prev().prev();
-                    if (cheese.length > 0) {
-                        element.detach().insertBefore(cheese.children().last());
-                    }
-                }
-            } else if (cheese.hasClass('track')) {
-                element.detach().insertBefore(cheese);
-            } else if (cheese.hasClass('trackgroup')) {
-                element.detach().insertBefore(cheese.children().last());
+            var p = element.findPreviousPlaylistElement();
+            if (p.length > 0) {
+                element.detach().insertBefore(p);
             }
             if (tracks !== null) {
                 tracks.detach().insertAfter(element);
@@ -1226,9 +805,9 @@ var playlist = function() {
             var offsetnow = uiHelper.getElementPlaylistOffset(element);
             var scrollnow = $('#pscroller').scrollTop();
             $('#pscroller').scrollTop(scrollnow+offsetnow-startoffset);
-            popmovetimer = setTimeout(playlist.doPopMove, 1500);
+            popmovetimer = setTimeout(playlist.doPopMove, popmovetimeout);
         },
-        
+
         moveTrackDown: function(element, event) {
             clearTimeout(popmovetimer);
             popmoveelement = element;
@@ -1237,31 +816,9 @@ var playlist = function() {
             if (element.hasClass('item')) {
                 tracks = element.next();
             }
-            var cheese = element.next();
-            if (cheese.length == 0) {
-                if (element.parent().hasClass('trackgroup')) {
-                    cheese = element.parent().next().next();
-                    if (cheese.length > 0) {
-                        element.detach().insertAfter(cheese.children().first());
-                    }
-                }
-            } else if (cheese.hasClass('track')) {
-                element.detach().insertAfter(cheese);
-            } else if (cheese.hasClass('trackgroup')) {
-                // This will be its own trackgroup
-                cheese = cheese.next();
-                if (cheese.hasClass('track')) {
-                    element.detach().insertAfter(cheese);
-                } else if (cheese.hasClass('item')) {
-                    element.detach().insertAfter(cheese.next().children().first());
-                } else if (cheese.length == 0) {
-                    if (element.parent().hasClass('trackgroup')) {
-                        cheese = element.parent().next().next();
-                        if (cheese.length > 0) {
-                            element.detach().insertAfter(cheese.children().first());
-                        }
-                    }
-                }
+            var n = element.findNextPlaylistElement();
+            if (n.length > 0) {
+                element.detach().insertAfter(n);
             }
             if (tracks !== null) {
                 tracks.detach().insertAfter(element);
@@ -1269,19 +826,476 @@ var playlist = function() {
             var offsetnow = uiHelper.getElementPlaylistOffset(element);
             var scrollnow = $('#pscroller').scrollTop();
             $('#pscroller').scrollTop(scrollnow+offsetnow-startoffset);
-            popmovetimer = setTimeout(playlist.doPopMove, 1500);
+            popmovetimer = setTimeout(playlist.doPopMove, popmovetimeout);
         },
-        
+
         doPopMove: function() {
             if (popmoveelement !== null) {
-                if (popmoveelement.hasClass('item')){
+                if (popmoveelement.hasClass('item')) {
                     popmoveelement.next().remove();
                 }
                 playlist.dragstopped(null, popmoveelement);
                 popmoveelement = null;
             }
+        },
+
+        getCurrentTrackElement: function() {
+            var scrollto = $('#sortable .playlistcurrentitem');
+            if (!scrollto.is(':visible')) {
+                scrollto = scrollto.parent().prev();
+            }
+            return scrollto;
         }
-        
+
     }
 
 }();
+
+function Album(artist, album, index, rolledup) {
+
+    var self = this;
+    var tracks = [];
+    this.artist = artist;
+    this.album = album;
+    this.index = index;
+
+    this.newtrack = function (track) {
+        tracks.push(track);
+    }
+
+    this.presentYourself = function() {
+        var holder = $('<div>', { name: self.index, romprid: tracks[0].backendid, class: 'item fullwidth sortable playlistalbum playlisttitle'}).appendTo('#sortable');
+        if (self.index == playlist.getCurrentAlbum()) {
+            holder.removeClass('playlisttitle').addClass('playlistcurrenttitle');
+        }
+
+        var inner = $('<div>', {class: 'containerbox'}).appendTo(holder);
+        var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'expand clickable clickplaylist containerbox'}).appendTo(inner);
+
+        if (prefs.use_albumart_in_playlist) {
+            self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].key });
+            self.image.on('error', self.getart);
+            var imgholder = $('<div>', { class: 'smallcover fixed clickable clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
+            if (tracks[0].images.small) {
+                self.image.attr('src', tracks[0].images.small).appendTo(imgholder);
+            } else {
+                if (tracks[0].imgsearched == 0) {
+                    self.image.addClass('notexist').appendTo(imgholder);
+                    self.getart();
+                } else {
+                    self.image.addClass('notfound').appendTo(imgholder);
+                }
+            }
+        }
+
+        var title = $('<div>', {class: 'containerbox vertical expand'}).appendTo(albumDetails);
+        title.append('<div class="bumpad">'+self.artist+'</div><div class="bumpad">'+self.album+'</div>');
+
+        var controls = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(inner)
+        controls.append('<div class="expand clickable clickicon clickremovealbum" name="'+self.index+'"><i class="icon-cancel-circled playlisticonr tooltip" title="'+language.gettext('label_removefromplaylist')+'"></i></div>');
+        if (tracks[0].metadata.album.uri && tracks[0].metadata.album.uri.substring(0,7) == "spotify") {
+            controls.append('<div class="fixed clickable clickicon clickaddwholealbum" name="'+self.index+'"><i class="icon-music playlisticonr tooltip" title="'+language.gettext('label_addtocollection')+'"></i></div>');
+        }
+
+        var trackgroup = $('<div>', {class: 'trackgroup', name: self.index }).appendTo('#sortable');
+        if (rolledup) {
+            trackgroup.addClass('invisible');
+        }
+        for (var trackpointer in tracks) {
+            var trackdiv = $('<div>', {name: tracks[trackpointer].playlistpos, romprid: tracks[trackpointer].backendid, class: 'track sortable fullwidth playlistitem menuitem'}).appendTo(trackgroup);
+            if (tracks[trackpointer].backendid == player.status.songid) {
+                trackdiv.removeClass('playlistitem').addClass('playlistcurrentitem');
+            }
+
+            var trackOuter = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(trackdiv);
+            var trackDetails = $('<div>', {class: 'expand clickable clickplaylist containerbox dropdown-container', romprid: tracks[trackpointer].backendid}).appendTo(trackOuter);
+
+            if (tracks[trackpointer].tracknumber) {
+                var trackNodiv = $('<div>', {class: 'tracknumber fixed'}).appendTo(trackDetails);
+                if (tracks.length > 99 || tracks[trackpointer].tracknumber > 99) {
+                    trackNodiv.css('width', '3em');
+                }
+                trackNodiv.html(format_tracknum(tracks[trackpointer].tracknumber));
+            }
+
+            trackDetails.append(playlist.getDomainIcon(tracks[trackpointer], ''));
+
+            var trackinfo = $('<div>', {class: 'containerbox vertical expand'}).appendTo(trackDetails);
+            trackinfo.append('<div class="line">'+tracks[trackpointer].title+'</div>');
+            if ((tracks[trackpointer].albumartist != "" && tracks[trackpointer].albumartist != tracks[trackpointer].trackartist)) {
+                trackinfo.append('<div class="line playlistrow2">'+tracks[trackpointer].trackartist+'</div>');
+            }
+            if (tracks[trackpointer].metadata.track.usermeta) {
+                if (tracks[trackpointer].metadata.track.usermeta.Rating > 0) {
+                    trackinfo.append('<div class="fixed playlistrow2 trackrating"><i class="icon-'+tracks[trackpointer].metadata.track.usermeta.Rating+'-stars rating-icon-small"></i></div>');
+                }
+                var t = tracks[trackpointer].metadata.track.usermeta.Tags.join(', ');
+                if (t != '') {
+                    trackinfo.append('<div class="fixed playlistrow2 tracktags"><i class="icon-tags playlisticon"></i>'+t+'</div>');
+                }
+            }
+
+            trackDetails.append('<div class="tracktime tiny fixed">'+formatTimeString(tracks[trackpointer].duration)+'</div>');
+            trackOuter.append('<i class="icon-cancel-circled playlisticonr fixed clickable clickicon clickremovetrack tooltip" title="'+language.gettext('label_removefromplaylist')+'" romprid="'+tracks[trackpointer].backendid+'"></i>');
+
+        }
+    }
+
+    this.getart = function() {
+        coverscraper.GetNewAlbumArt({
+            artist:     tracks[0].albumartist,
+            album:      tracks[0].album,
+            mbid:       tracks[0].metadata.album.musicbrainz_id,
+            albumpath:  tracks[0].dir,
+            albumuri:   tracks[0].metadata.album.uri,
+            imgkey:     tracks[0].key,
+            type:       tracks[0].type,
+            cb:         self.updateImages
+        });
+    }
+
+    this.getFnackle = function() {
+        return { album: tracks[0].album,
+                 image: tracks[0].images.small,
+                 location: tracks[0].location,
+                 stream: tracks[0].stream,
+                 streamid: tracks[0].streamid
+        };
+    }
+
+    this.rollUp = function() {
+        $('.trackgroup[name="'+self.index+'"]').slideToggle('slow');
+        rolledup = !rolledup;
+        if (rolledup) {
+            playlist.rolledup[this.artist+this.album] = true;
+        } else {
+            playlist.rolledup[this.artist+this.album] = undefined;
+        }
+    }
+
+    this.updateImages = function(data) {
+        debug.log("PLAYLIST","Updating track images with",data);
+        for (var trackpointer in tracks) {
+            tracks[trackpointer].images = data;
+        }
+    }
+
+    this.getFirst = function() {
+        return parseInt(tracks[0].playlistpos);
+    }
+
+    this.getSize = function() {
+        return tracks.length;
+    }
+
+    this.isLast = function(id) {
+        if (id == tracks[tracks.length - 1].backendid) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    this.findcurrent = function(which) {
+        for(var i in tracks) {
+            if (tracks[i].backendid == which) {
+                return tracks[i];
+            }
+        }
+        return false;
+    }
+
+    this.findById = function(which) {
+        for(var i in tracks) {
+            if (tracks[i].backendid == which) {
+                return i;
+            }
+        }
+        return false;
+    }
+
+    this.findByUri = function(uri) {
+        for(var i in tracks) {
+            if (tracks[i].location == uri) {
+                return tracks[i].backendid;
+            }
+        }
+        return false;
+    }
+
+    this.getByIndex = function(i) {
+        return tracks[i];
+    }
+
+    this.getTracks = function() {
+        return tracks;
+    }
+
+    this.getrest = function(id, arr) {
+        var i = 0;
+        if (id !== null) {
+            while (i < tracks.length && tracks[i].backendid != id) {
+                i++;
+            }
+            i++;
+        }
+        while (i < tracks.length) {
+            arr.push(tracks[i]);
+            i++;
+        }
+    }
+
+    this.deleteSelf = function() {
+        var todelete = [];
+        $('.item[name="'+self.index+'"]').next().remove();
+        $('.item[name="'+self.index+'"]').remove();
+        for(var i in tracks) {
+            todelete.push(tracks[i].backendid);
+        }
+        player.controller.removeId(todelete)
+    }
+
+    this.previoustrackcommand = function() {
+        player.controller.previous();
+    }
+
+    this.nexttrackcommand = function() {
+        player.controller.next();
+    }
+
+    this.addToCollection = function() {
+        if (tracks[0].metadata.album.uri && tracks[0].metadata.album.uri.substring(0,14) == "spotify:album:") {
+            spotify.album.getInfo(tracks[0].metadata.album.uri.substring(14,tracks[0].metadata.album.uri.length),
+            function(data) {
+                metaHandlers.fromSpotifyData.addAlbumTracksToCollection(data, tracks[0].albumartist)
+            },
+            function(data) {
+                debug.fail("ADD ALBUM","Failed to add album",data);
+                infobar.notify(infobar.ERROR, "Failed To Get Album Info From Spotify");
+            },
+            false);
+        } else {
+            debug.error("PLAYLIST","Trying to add non-spotify album to the collection!");
+        }
+    }
+
+    function format_tracknum(tracknum) {
+        var r = /^(\d+)/;
+        var result = r.exec(tracknum) || "";
+        return result[1] || "";
+    }
+
+}
+
+function Stream(index, album, rolledup) {
+    var self = this;
+    var tracks = [];
+    this.index = index;
+    var rolledup = rolledup;
+    this.album = album;
+
+    this.newtrack = function (track) {
+        tracks.push(track);
+    }
+
+    this.presentYourself = function() {
+        var header = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'item sortable fullwidth playlistalbum playlisttitle'}).appendTo('#sortable');
+        if (self.index == playlist.getCurrentAlbum()) {
+            header.removeClass('playlisttitle').addClass('playlistcurrenttitle');
+        }
+
+        var inner = $('<div>', {class: 'containerbox'}).appendTo(header);
+        var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'expand clickable clickplaylist containerbox'}).appendTo(inner);
+
+        if (prefs.use_albumart_in_playlist) {
+            self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].key });
+            self.image.on('error', self.getart);
+            var imgholder = $('<div>', { class: 'smallcover fixed clickable clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
+            if (tracks[0].images.small) {
+                self.image.attr('src', tracks[0].images.small).appendTo(imgholder);
+            } else {
+                if (tracks[0].imgsearched == 0) {
+                    self.image.addClass('notexist stream').appendTo(imgholder);
+                    if (tracks[0].album != rompr_unknown_stream) {
+                        self.getart();
+                    }
+                } else {
+                    self.image.addClass('notfound').appendTo(imgholder);
+                }
+            }
+        }
+
+        var title = $('<div>', {class: 'containerbox vertical expand'}).appendTo(albumDetails);
+        title.append('<div class="bumpad">'+tracks[0].album+'</div>');
+        var buttons = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(inner);
+        buttons.append('<div class="clickable clickicon clickremovealbum expand" name="'+self.index+'"><i class="icon-cancel-circled playlisticonr tooltip" title="'+language.gettext('label_removefromplaylist')+'"></i></div>');
+        buttons.append('<div class="clickable clickicon clickaddfave fixed" name="'+self.index+'"><i class="icon-radio-tower playlisticonr tooltip" title="'+language.gettext('label_addtoradio')+'"></i></div>');
+
+        var trackgroup = $('<div>', {class: 'trackgroup', name: self.index }).appendTo('#sortable');
+        if (self.visible()) {
+            trackgroup.addClass('invisible');
+        }
+        for (var trackpointer in tracks) {
+            var trackdiv = $('<div>', {name: tracks[trackpointer].playlistpos, romprid: tracks[trackpointer].backendid, class: 'booger clickable clickplaylist containerbox playlistitem menuitem'}).appendTo(trackgroup);
+            trackdiv.append(playlist.getDomainIcon(tracks[trackpointer], '<i class="icon-radio-tower playlisticon fixed"></i>'));
+            var h = $('<div>', {class: 'containerbox vertical expand' }).appendTo(trackdiv);
+            if (tracks[trackpointer].stream && tracks[trackpointer].stream != 'null') {
+                h.append('<div class="playlistrow2 line">'+tracks[trackpointer].stream+'</div>');
+            }
+            h.append('<div class="tiny line">'+tracks[trackpointer].location+'</div>');
+        }
+    }
+
+    this.getFnackle = function() {
+        return { album: tracks[0].album,
+                 image: tracks[0].images.small,
+                 location: tracks[0].location,
+                 stream: tracks[0].stream,
+                 streamid: tracks[0].streamid
+        };
+    }
+
+    this.findById = function(which) {
+        for(var i in tracks) {
+            if (tracks[i].backendid == which) {
+                return i;
+            }
+        }
+        return false;
+    }
+
+    this.getByIndex = function(i) {
+        return tracks[i];
+    }
+
+    this.getTracks = function() {
+        return tracks;
+    }
+
+    this.rollUp = function() {
+        $('.trackgroup[name="'+self.index+'"]').slideToggle('slow');
+        if (self.visible()) {
+            playlist.rolledup["StReAm"+this.album] = true;
+        } else {
+            playlist.rolledup["StReAm"+this.album] = undefined;
+        }
+        rolledup = !rolledup;
+    }
+
+    this.getFirst = function() {
+        return parseInt(tracks[0].playlistpos);
+    }
+
+    this.getSize = function() {
+        return tracks.length;
+    }
+
+    this.isLast = function(id) {
+        if (id == tracks[tracks.length - 1].backendid) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    this.findcurrent = function(which) {
+        for(var i in tracks) {
+            if (tracks[i].backendid == which) {
+                return tracks[i];
+            }
+        }
+        return false;
+    }
+
+    this.findByUri = function(uri) {
+        for(var i in tracks) {
+            if (tracks[i].location == uri) {
+                return tracks[i].backendid;
+            }
+        }
+        return false;
+    }
+
+    this.getrest = function(id, arr) {
+
+    }
+
+    this.getart = function() {
+        coverscraper.GetNewAlbumArt({
+            artist:     'STREAM',
+            type:       'stream',
+            album:      tracks[0].album,
+            imgkey:     tracks[0].key,
+            cb:         self.updateImages
+        });
+    }
+
+    this.updateImages = function(data) {
+        debug.log("PLAYLIST","Updating track images with",data);
+        for (var trackpointer in tracks) {
+            tracks[trackpointer].images = data;
+        }
+    }
+
+    this.deleteSelf = function() {
+        var todelete = [];
+        for(var i in tracks) {
+            $('.booger[name="'+tracks[i].playlistpos+'"]').remove();
+            todelete.push(tracks[i].backendid);
+        }
+        $('.item[name="'+self.index+'"]').remove();
+        player.controller.removeId(todelete)
+    }
+
+    this.previoustrackcommand = function() {
+        player.controller.playByPosition(parseInt(tracks[0].playlistpos)-1);
+    }
+
+    this.nexttrackcommand = function() {
+        player.controller.playByPosition(parseInt(tracks[(tracks.length)-1].playlistpos)+1);
+    }
+
+    this.visible = function() {
+        if (self.album == rompr_unknown_stream) {
+            return !rolledup;
+        } else {
+            return rolledup;
+        }
+    }
+}
+
+jQuery.fn.findNextPlaylistElement = function() {
+    var next = $(this).next();
+    while (next.length > 0 && !next.is(':visible')) {
+        next = next.next();
+    }
+    if (next.length == 0 && $(this).parent().hasClass('trackgroup')) {
+        next = $(this).parent().next();
+    }
+    if (next.hasClass('item')) {
+        if (next.next().is(':hidden')) {
+            next = next.next();
+        } else {
+            next = next.next().children().first();
+        }
+    }
+    return next;
+}
+
+jQuery.fn.findPreviousPlaylistElement = function() {
+    var prev = $(this).prev();
+    while (prev.length >0 && !prev.is(':visible')) {
+        prev = prev.prev();
+    }
+    if (prev.length == 0 && $(this).parent().hasClass('trackgroup')) {
+        prev = $(this).parent().prev().prev();
+    }
+    if (prev.hasClass('trackgroup')) {
+        if (prev.is(':hidden')) {
+            prev = prev.prev();
+        } else {
+            prev = prev.children().last();
+        }
+    }
+    return prev;
+}

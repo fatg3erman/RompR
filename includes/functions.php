@@ -4,6 +4,59 @@ function format_for_mpd($term) {
     return trim($term);
 }
 
+function join_command_string($cmd) {
+    $c = $cmd[0];
+    for ($i = 1; $i < count($cmd); $i++) {
+        $c .= ' "'.format_for_mpd($cmd[$i]).'"';
+    }
+    return $c;
+}
+
+function do_mpd_command_list($cmds) {
+    global $connection;
+    $done = 0;
+    $cmd_status = null;
+    if (count($cmds) > 1) {
+        send_command("command_list_begin");
+        foreach ($cmds as $c) {
+            debuglog("Command List: ".$c,"POSTCOMMAND",6);
+            // Note. We don't use send_command because that closes and re-opens the connection
+            // if it fails to fputs, and that loses our command list status. Also if this fputs
+            // fails it means the connection has dropped anyway, so we're screwed whatever happens.
+            if ($c  == 'pause') {
+                do_mpd_command("command_list_end", true);
+                sleep(1);
+                send_command("command_list_begin");
+            } else {
+                fputs($connection, $c."\n");
+                $done++;
+            }
+            // Command lists have a maximum length, 50 seems to be the default
+            if ($done == 50) {
+                do_mpd_command("command_list_end", true);
+                send_command("command_list_begin");
+                $done = 0;
+            }
+        }
+        $cmd_status = do_mpd_command("command_list_end", true, false);
+    } else if (count($cmds) == 1) {
+        debuglog("Command : ".$cmds[0],"POSTCOMMAND",6);
+        $cmd_status = do_mpd_command($cmds[0], true, false);
+    }
+    return $cmd_status;
+}
+
+function wait_for_player_state($expected_state) {
+    if ($expected_state !== null) {
+        $status = array('state' => 'arse');
+        $retries = 20;
+        while ($retries > 0 && $status['state'] != $expected_state) {
+            usleep(500000);
+            $retries--;
+            $status = do_mpd_command ("status", true, false);
+        }
+    }
+}
 
 function format_for_disc($filename) {
     $filename = str_replace("\\","_",$filename);
@@ -11,6 +64,10 @@ function format_for_disc($filename) {
     $filename = str_replace("'","_",$filename);
     $filename = str_replace('"',"_",$filename);
     return $filename;
+}
+
+function format_for_url($filename) {
+    return preg_replace('/#|&|\?|%|@|\+/', '_', $filename);
 }
 
 function format_tracknum($tracknum) {
@@ -66,7 +123,9 @@ class url_downloader {
         $this->ch = curl_init();
         curl_setopt($this->ch, CURLOPT_URL, $this->options['url']);
         curl_setopt($this->ch, CURLOPT_ENCODING, '');
-        curl_setopt($this->ch, CURLOPT_USERAGENT, $this->options['useragent']);
+        if ($this->options['useragent']) {
+            curl_setopt($this->ch, CURLOPT_USERAGENT, $this->options['useragent']);
+        }
         curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($this->ch, CURLOPT_TIMEOUT, $this->options['timeout']);
         curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, $this->options['connection_timeout']);
@@ -248,10 +307,6 @@ function alistheader($nart, $nalb, $ntra, $tim) {
 }
 
 function get_base_url() {
-
-    // I found this function on CleverLogic:
-    // http://www.cleverlogic.net/tutorials/how-dynamically-get-your-sites-main-or-base-url
-
     /* First we need to get the protocol the website is using */
     $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"], 0, 5)) == 'https://' ? 'https://' : 'http://';
 
@@ -278,15 +333,16 @@ function get_base_url() {
     /* Returns localhost OR mysite.com */
     $host = $_SERVER['HTTP_HOST'];
 
+    // This handles the case where we're getting http://mypc.local/rompr/utils/something.php
+    $directory = preg_replace('#/utils$#', '', $directory);
+    $directory = preg_replace('#/streamplugins$#', '', $directory);
+    $directory = preg_replace('#/includes$#', '', $directory);
     /*
      * Returns:
      * http://localhost/mysite
      * OR
      * https://mysite.com
      */
-    $directory = preg_replace('#/utils$#', '', $directory);
-    $directory = preg_replace('#/streamplugins$#', '', $directory);
-    $directory = preg_replace('#/includes$#', '', $directory);
     return $protocol . $host . $directory;
 }
 
@@ -320,12 +376,13 @@ function get_images($dir_path) {
     debuglog("    Scanning : ".$dir_path,"GET_IMAGES");
     $globpath = preg_replace('/(\*|\?|\[)/', '[$1]', $dir_path);
     debuglog("      Glob Path is ".$globpath,"GET_IMAGES");
-    $files = glob($globpath."/*.{jpg,png,bmp,gif,jpeg,JPEG,JPG,BMP,GIF,PNG}", GLOB_BRACE);
-    foreach($files as $i => $f) {
-        $f = preg_replace('/%/', '%25', $f);
-        debuglog("        Found : ".get_base_url()."/".preg_replace('/ /', "%20", $f),"GET_IMAGES");
-        array_push($funkychicken, get_base_url()."/".preg_replace('/ /', "%20", $f));
-    }
+    // $files = glob($globpath."/*.{jpg,png,bmp,gif,jpeg,JPEG,JPG,BMP,GIF,PNG}", GLOB_BRACE);
+    // foreach($files as $i => $f) {
+    //     $f = preg_replace('/%/', '%25', $f);
+    //     debuglog("        Found : ".get_base_url()."/".preg_replace('/ /', "%20", $f),"GET_IMAGES");
+    //     array_push($funkychicken, get_base_url()."/".preg_replace('/ /', "%20", $f));
+    // }
+    $funkychicken = glob($globpath."/*.{jpg,png,bmp,gif,jpeg,JPEG,JPG,BMP,GIF,PNG}", GLOB_BRACE);
     debuglog("    Checking for embedded images","GET_IMAGES");
     $files = glob($globpath."/*.{mp3,MP3,mp4,MP4,flac,FLAC,ogg,OGG}", GLOB_BRACE);
     $testfile = array_shift($files);
@@ -340,7 +397,8 @@ function get_images($dir_path) {
                         debuglog("    .. found embedded front cover image","GET_IMAGES");
                         $filename = 'prefs/temp/'.md5($globpath);
                         file_put_contents($filename, $picture['data']);
-                        array_unshift($funkychicken, get_base_url()."/".preg_replace('/ /', "%20", $filename));
+                        // array_unshift($funkychicken, get_base_url()."/".preg_replace('/ /', "%20", $filename));
+                        array_unshift($funkychicken, $filename);
                     }
                 }
             }
@@ -389,61 +447,6 @@ function get_browser_language() {
     } else {
         return 'en';
     }
-}
-
-function getDomain($d) {
-    if ($d === null || $d == "") {
-        return "local";
-    }
-    $d = urldecode($d);
-    $pos = strpos($d, ":");
-    $a = substr($d,0,$pos);
-    if ($a == "") {
-        return "local";
-    }
-    $s = substr($d,$pos+3,15);
-    if ($s == "api.soundcloud.") {
-        return "soundcloud";
-    }
-    if ($a == 'http' || $a == 'https') {
-        if (strpos($d, 'vk.me') !== false) {
-    		return 'vkontakte';
-    	} else if (strpos($d, 'oe1:archive') !== false) {
-    		return 'oe1';
-    	} else if (strpos($d, 'http://leftasrain.com') !== false) {
-    		return 'leftasrain';
-    	} else if (strpos($d, 'archives.bassdrivearchive.com') !== false ||
-                    strpos($d, 'bassdrive.com') !== false) {
-            return 'bassdrive';
-        }
-    }
-    return strtok($a, ' ');
-}
-
-function domainIcon($d, $c) {
-    $h = '';
-    switch($d) {
-        case "spotify":
-        case "gmusic":
-        case "youtube":
-        case "internetarchive":
-        case "soundcloud":
-        case "podcast":
-        case "dirble":
-            $h = '<i class="icon-'.$d.'-circled '.$c.' fixed"></i>';
-            break;
-
-        case "tunein":
-            $h = '<i class="icon-tunein '.$c.' fixed"></i>';
-            break;
-        
-        case "radio-de":
-        case "bassdrive":
-            $h = '<div class="'.$c.' fixed"><img class="imgfill" src="newimages/'.$d.'-logo.svg" /></div>';
-            break;
-
-    }
-    return $h;
 }
 
 function getStreamFolder($url) {
@@ -627,9 +630,8 @@ function domainCheck($default, $domain) {
         case 'vkontakte':
         case 'internetarchive':
         case 'podcast':
-        case 'podcast http:':
-        case 'podcast https:':
         case 'dirble':
+        case 'youtube':
             return 'icon-'.$domain.'-circled';
             break;
             
@@ -645,6 +647,89 @@ function domainCheck($default, $domain) {
     
 }
 
+function getDomain($d) {
+    if ($d === null || $d == "") {
+        return "local";
+    }
+    $d = urldecode($d);
+    $pos = strpos($d, ":");
+    $a = substr($d,0,$pos);
+    if ($a == "") {
+        return "local";
+    }
+    $s = substr($d,$pos+3,15);
+    if ($s == "api.soundcloud.") {
+        return "soundcloud";
+    }
+    if ($a == 'http' || $a == 'https') {
+        if (strpos($d, 'vk.me') !== false) {
+    		return 'vkontakte';
+    	} else if (strpos($d, 'oe1:archive') !== false) {
+    		return 'oe1';
+    	} else if (strpos($d, 'http://leftasrain.com') !== false) {
+    		return 'leftasrain';
+    	} else if (strpos($d, 'archives.bassdrivearchive.com') !== false ||
+                    strpos($d, 'bassdrive.com') !== false) {
+            return 'bassdrive';
+        }
+    }
+    return strtok($a, ' ');
+}
+
+function domainIcon($d, $c) {
+    $h = '';
+    switch($d) {
+        case "spotify":
+        case "gmusic":
+        case "youtube":
+        case "internetarchive":
+        case "soundcloud":
+        case "podcast":
+        case "dirble":
+        case "tunein":
+            $h = '<i class="'.domainCheck('icon-music', $d).' '.$c.' fixed"></i>';
+            break;
+
+        case "radio-de":
+        case "bassdrive":
+            $h = '<div class="'.$c.' fixed"><img class="imgfill" src="newimages/'.$d.'-logo.svg" /></div>';
+            break;
+
+    }
+    return $h;
+}
+
+function domainHtml($uri) {
+    $h = domainIcon(getDomain($uri), 'collectionicon');
+    if ($h == '') {
+        if (strtolower(pathinfo($uri, PATHINFO_EXTENSION)) == "cue") {
+            $h = '<i class="icon-doc-text collectionicon fixed"></i>';
+        }
+    }
+    return $h;
+}
+
+function artistNameHtml($obj) {
+    global $prefs;
+    $h = '';
+    if ($prefs['sortcollectionby'] == 'albumbyartist' && $obj['Artistname']) {
+        $h .= '<div class="expand">'.$obj['Albumname'];
+        $h .= '<br><span class="notbold">'.$obj['Artistname'].'</span>';
+        if ($obj['Year'] && $prefs['sortbydate']) {
+            $h .= ' <span class="notbold">('.$obj['Year'].')</span>';
+        }
+    } else {
+        $h .= '<div class="expand">'.$obj['Albumname'];
+        if ($obj['Year'] && $prefs['sortbydate']) {
+            $h .= ' <span class="notbold">('.$obj['Year'].')</span>';
+        }
+        if ($obj['Artistname']) {
+            $h .= '<br><span class="notbold">'.$obj['Artistname'].'</span>';
+        }
+    }
+    return $h;
+}
+
 function checkComposerGenre($genre, $pref) {
     $gl = strtolower($genre);
     foreach ($pref as $g) {
@@ -653,115 +738,6 @@ function checkComposerGenre($genre, $pref) {
         }
     }
     return false;
-}
-
-function getWishlist() {
-
-    global $mysqlc, $divtype, $prefs;
-    if ($mysqlc === null) {
-        connect_to_database();
-    }
-
-    $qstring = "SELECT
-        IFNULL(r.Rating, 0) AS rating,
-        ".SQL_TAG_CONCAT." AS tags,
-        tr.TTindex AS ttid,
-        tr.Title AS title,
-        tr.Duration AS time,
-        tr.Albumindex AS albumindex,
-        a.Artistname AS albumartist,
-        tr.DateAdded AS DateAdded,
-        ws.SourceName AS SourceName,
-        ws.SourceImage AS SourceImage,
-        ws.SourceUri AS SourceUri
-        FROM
-        Tracktable AS tr
-        LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
-        LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
-        LEFT JOIN Tagtable AS t USING (Tagindex)
-        LEFT JOIN WishlistSourcetable AS ws USING (Sourceindex)
-        JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
-        WHERE
-        tr.Uri IS NULL AND tr.Hidden = 0
-        GROUP BY ttid
-        ORDER BY ";
-
-    switch ($_REQUEST['sortby']) {
-        case 'artist':
-            foreach ($prefs['artistsatstart'] as $a) {
-                $qstring .= "CASE WHEN LOWER(albumartist) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
-            }
-            if (count($prefs['nosortprefixes']) > 0) {
-                $qstring .= "(CASE ";
-                foreach($prefs['nosortprefixes'] AS $p) {
-                    $phpisshitsometimes = strlen($p)+2;
-                    $qstring .= "WHEN LOWER(albumartist) LIKE '".strtolower($p)." %' THEN LOWER(SUBSTR(albumartist,".
-                        $phpisshitsometimes.")) ";
-                }
-                $qstring .= "ELSE LOWER(albumartist) END)";
-            } else {
-                $qstring .= "LOWER(albumartist)";
-            }
-            $qstring .= ", DateAdded, SourceName";
-            break;
-            
-        case 'date':
-            $qstring .= "DateAdded, SourceName";
-            break;
-            
-        case 'station':
-            $qstring .= 'SourceName, DateAdded';
-            break;
-            
-        default:
-            $qstring .= "rating, DateAdded";
-            break;
-        
-    }
-
-    $result = generic_sql_query($qstring);
-    if (count($result) > 0) {
-        print '<div class="containerbox padright noselection"><button class="fixed infoclick plugclickable clickclearwishlist">Clear Wishlist</button><div class="expand"></div></div>';
-        print '<div class="configtitle brick_wide">Sort By</div>';
-        print '<div class="containerbox padright noselection">';
-        print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_artist" class="topcheck savulon" type="radio" name="sortwishlistby" value="artist"><label for="wishlist_sort_artist">'.get_int_text('label_artist').'</label></div>';
-        print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_date" class="topcheck savulon" type="radio" name="sortwishlistby" value="date"><label for="wishlist_sort_date">'.get_int_text('label_dateadded').'</label></div>';
-        print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_station" class="topcheck savulon" type="radio" name="sortwishlistby" value="station"><label for="wishlist_sort_station">'.get_int_text('label_radiostation').'</label></div>';
-        print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_rating" class="topcheck savulon" type="radio" name="sortwishlistby" value="rating"><label for="wishlist_sort_rating">'.get_int_text('label_rating').'</label></div>';
-        print '</div>';
-    }
-    foreach ($result as $obj) {
-        debuglog("Found Track ".$obj['title']." by ".$obj['albumartist'],"WISHLIST");
-
-        print '<div class="containerbox vertical" id="walbum'.$obj['albumindex'].'">';
-        print '<div class="containerbox fixed">';
-        if ($obj['SourceImage']) {
-            print '<div class="smallcover fixed"><img class="smallcover" src="'.$obj['SourceImage'].'" /></div>';
-        }
-        print '<div class="expand containerbox vertical">';
-        print '<div class="fixed tracktitle"><b>'.$obj['title'].'</b></div>';
-        print '<div class="fixed playlistrow2 trackartist">'.$obj['albumartist'].'</div>';
-        if ($obj['rating'] > 0) {
-            print '<div class="fixed playlistrow2 trackrating"><i class="icon-'.$obj['rating'].'-stars rating-icon-small nopointer"></i></div>';
-        }
-        if ($obj['tags']) {
-            print '<div class="fixed playlistrow2 tracktags"><i class="icon-tags collectionicon"></i>'.$obj['tags'].'</div>';
-        }
-        print '</div>';
-        print '<div class="expand containerbox vertical">';
-        print '<div class="fixed playlistrow2">Added On : '.date('r', strtotime($obj['DateAdded'])).'</div>';
-        if ($obj['SourceUri']) {
-            print '<div class="fixed playlistrow2 clickable infoclick plugclickable clickstream" name="'.$obj['SourceUri'].'" streamname="'.$obj['SourceName'].'" streamimg="'.$obj['SourceImage'].'">While Listening To : <b>'.$obj['SourceName'].'</b></div>';
-        }
-        print '</div>';
-        print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed"></i>';
-        print '<input type="hidden" value="'.$obj['title'].'" />';
-        print '<input type="hidden" value="'.$obj['albumartist'].'" />';
-        print '<i class="icon-cancel-circled smallicon fixed clickicon clickremdb infoclick plugclickable"></i>';
-        print '<input type="hidden" value="'.$obj['ttid'].'" />';
-        print '</div>';
-        print '</div>';
-    }
 }
 
 function get_player_ip() {
@@ -783,7 +759,7 @@ function get_player_ip() {
     return $pip;
 }
 
-function getCacheData($uri, $cache, $returndata = false, $use_cache = true) {
+function getCacheData($uri, $cache, $use_cache = true) {
 
     $me = strtoupper($cache);
     debuglog("Getting ".$uri, $me);
@@ -792,23 +768,25 @@ function getCacheData($uri, $cache, $returndata = false, $use_cache = true) {
     }
     $options = array(
         'url' => $uri,
-        'send_cache_headers' => !$returndata,
+        'send_cache_headers' => true,
         'cache' => $use_cache ? $cache : null,
         'return_data' => true
     );
     $d = new url_downloader($options);
     if ($d->get_data_to_file()) {
-        if ($returndata) {
-            return json_decode($d->get_data());
-        } else {
-            print $d->get_data();
-        }
+        print $d->get_data();
     } else {
-        $a = array( 'error' => get_int_text($cache."_error"));
-        if ($returndata) {
-            return $a;
+        if ($d->get_status() > 0) {
+            $header = $d->get_status().' '.http_status_code_string($d->get_status());
+            debuglog("HTTP ERROR ".$header,"CACHE",6);
         } else {
-            print json_encode($a);
+            $header = '500 '.http_status_code_string(500);
+        }
+        header('HTTP/1.1 '.$header);
+        if ($d->get_data() != '') {
+            print $d->get_data();
+        } else {
+            print json_encode(array('error' => $header));
         }
     }
 }
@@ -1008,5 +986,124 @@ function rrmdir($path) {
         }
     }
     rmdir($path);
+}
+
+function collectionButtons() {
+    print '<div id="collectionbuttons" class="invisible">';
+    print '<div class="pref styledinputs">';
+    print '<input type="radio" class="topcheck savulon" name="sortcollectionby" value="artist" id="sortbyartist">
+    <label for="sortbyartist">'.ucfirst(get_int_text('label_artists')).'</label><br/>
+    <input type="radio" class="topcheck savulon" name="sortcollectionby" value="album" id="sortbyalbum">
+    <label for="sortbyalbum">'.ucfirst(get_int_text('label_albums')).'</label><br/>
+    <input type="radio" class="topcheck savulon" name="sortcollectionby" value="albumbyartist" id="sortbyalbumbyartist">
+    <label for="sortbyalbumbyartist">'.ucfirst(get_int_text('label_albumsbyartist')).'</label>
+    <div class="pref">
+    <input class="autoset toggle" type="checkbox" id="showartistbanners">
+    <label for="showartistbanners">'.get_int_text('config_showartistbanners').'</label>
+    </div>
+    </div>
+    <div class="pref styledinputs">
+    <input class="autoset toggle" type="checkbox" id="sortbydate">
+    <label for="sortbydate">'.get_int_text('config_sortbydate').'</label>
+    <div class="pref">
+    <input class="autoset toggle" type="checkbox" id="notvabydate">
+    <label for="notvabydate">'.get_int_text('config_notvabydate').'</label>
+    </div>
+    </div>
+    <div class="pref styledinputs">
+    <input type="radio" class="topcheck savulon" name="collectionrange" value="'.ADDED_ALL_TIME.'" id="collalltime">
+    <label for="collalltime">'.get_int_text('label_all_time').'</label><br/>
+    <input type="radio" class="topcheck savulon" name="collectionrange" value="'.ADDED_TODAY.'" id="colltoday">
+    <label for="colltoday">'.get_int_text('label_today').'</label><br/>
+    <input type="radio" class="topcheck savulon" name="collectionrange" value="'.ADDED_THIS_WEEK.'" id="collweek">
+    <label for="collweek">'.get_int_text('label_thisweek').'</label><br/>
+    <input type="radio" class="topcheck savulon" name="collectionrange" value="'.ADDED_THIS_MONTH.'" id="collmonth">
+    <label for="collmonth">'.get_int_text('label_thismonth').'</label><br/>
+    <input type="radio" class="topcheck savulon" name="collectionrange" value="'.ADDED_THIS_YEAR.'" id="collyear">
+    <label for="collyear">'.get_int_text('label_thisyear').'</label><br/>
+    </div>
+    <div class="pref textcentre">
+    <button name="donkeykong">'.get_int_text('config_updatenow').'</button>
+    </div>';
+    print '</div>';
+
+}
+
+function http_status_code_string($code)
+{
+	// Source: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+
+	switch( $code )
+	{
+		// 1xx Informational
+		case 100: $string = 'Continue'; break;
+		case 101: $string = 'Switching Protocols'; break;
+		case 102: $string = 'Processing'; break; // WebDAV
+		case 122: $string = 'Request-URI too long'; break; // Microsoft
+
+		// 2xx Success
+		case 200: $string = 'OK'; break;
+		case 201: $string = 'Created'; break;
+		case 202: $string = 'Accepted'; break;
+		case 203: $string = 'Non-Authoritative Information'; break; // HTTP/1.1
+		case 204: $string = 'No Content'; break;
+		case 205: $string = 'Reset Content'; break;
+		case 206: $string = 'Partial Content'; break;
+		case 207: $string = 'Multi-Status'; break; // WebDAV
+
+		// 3xx Redirection
+		case 300: $string = 'Multiple Choices'; break;
+		case 301: $string = 'Moved Permanently'; break;
+		case 302: $string = 'Found'; break;
+		case 303: $string = 'See Other'; break; //HTTP/1.1
+		case 304: $string = 'Not Modified'; break;
+		case 305: $string = 'Use Proxy'; break; // HTTP/1.1
+		case 306: $string = 'Switch Proxy'; break; // Depreciated
+		case 307: $string = 'Temporary Redirect'; break; // HTTP/1.1
+
+		// 4xx Client Error
+		case 400: $string = 'Bad Request'; break;
+		case 401: $string = 'Unauthorized'; break;
+		case 402: $string = 'Payment Required'; break;
+		case 403: $string = 'Forbidden'; break;
+		case 404: $string = 'Not Found'; break;
+		case 405: $string = 'Method Not Allowed'; break;
+		case 406: $string = 'Not Acceptable'; break;
+		case 407: $string = 'Proxy Authentication Required'; break;
+		case 408: $string = 'Request Timeout'; break;
+		case 409: $string = 'Conflict'; break;
+		case 410: $string = 'Gone'; break;
+		case 411: $string = 'Length Required'; break;
+		case 412: $string = 'Precondition Failed'; break;
+		case 413: $string = 'Request Entity Too Large'; break;
+		case 414: $string = 'Request-URI Too Long'; break;
+		case 415: $string = 'Unsupported Media Type'; break;
+		case 416: $string = 'Requested Range Not Satisfiable'; break;
+		case 417: $string = 'Expectation Failed'; break;
+		case 422: $string = 'Unprocessable Entity'; break; // WebDAV
+		case 423: $string = 'Locked'; break; // WebDAV
+		case 424: $string = 'Failed Dependency'; break; // WebDAV
+		case 425: $string = 'Unordered Collection'; break; // WebDAV
+		case 426: $string = 'Upgrade Required'; break;
+		case 449: $string = 'Retry With'; break; // Microsoft
+		case 450: $string = 'Blocked'; break; // Microsoft
+
+		// 5xx Server Error
+		case 500: $string = 'Internal Server Error'; break;
+		case 501: $string = 'Not Implemented'; break;
+		case 502: $string = 'Bad Gateway'; break;
+		case 503: $string = 'Service Unavailable'; break;
+		case 504: $string = 'Gateway Timeout'; break;
+		case 505: $string = 'HTTP Version Not Supported'; break;
+		case 506: $string = 'Variant Also Negotiates'; break;
+		case 507: $string = 'Insufficient Storage'; break; // WebDAV
+		case 509: $string = 'Bandwidth Limit Exceeded'; break; // Apache
+		case 510: $string = 'Not Extended'; break;
+
+		// Unknown code:
+		default: $string = 'Unknown';  break;
+	}
+
+	return $string;
 }
 ?>

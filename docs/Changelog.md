@@ -3,9 +3,24 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.20
+
+* Album Art now supports transparency in PNG files, and SVG files will be saved and served as SVG
+* Much cleaner image handling, with automatic fallback to ImageMagick if image is not supported by GD
+* Fixed typo where podcast images did not get updated
+* You can now have a slideshow of custom background images, and landscape/portrait orientation is determined automatically
+* Add check for badly-formatted duration strings in podcast feeds
+* Orange and Cyan icon themes for better contrast against custom background images
+* Added 'Albums To Listen To' feature, to keep a record of Spotify albums you've seen but haven't had time to listen to
+* Added options to only display Collection tracks that were added within a specific time period, after I added something good to mine and then forgot what it was called :)
+* Added more tooltips as the number of control butons spirals upwards
+* The Discoverator now populates much more quickly
+* Option to transfer current playlist to new player when switching players
+* New Global Refresh, Mark as Listened, etc controls for podcasts
+
 ## Version 1.19
 
-* Fixed bug where plugins menu didn't wokr in Tablet skin
+* Fixed bug where plugins menu didn't work in Tablet skin
 * Added two new icon themes
 * Some code refactoring and minor UI bugfixing
 * Added swipe and long press options to phone skin to allow tracks to be removed from and re-ordered within the Current Playlist

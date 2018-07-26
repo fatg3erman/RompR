@@ -61,7 +61,7 @@ hr {
     -webkit-margin-after:0px;
 }
 
-input {
+input, .filebutton {
     font-size:100%;
     width:100%;
     margin-bottom:4px;
@@ -72,12 +72,25 @@ input {
     padding-right:0px;
 }
 
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+.filebutton {
+	word-break: break-all;
+}
+
 input[type=checkbox], input[type=radio] {
     width:auto;
 }
 
 input[type=text] {
-    padding: 0px 2px;
+    /* padding: 0px 2px; */
     height: 2em;
     border: 0px none;
     border-radius: 0 0;
@@ -659,6 +672,10 @@ button {
     font-weight:bold;
 }
 
+.podconfigpanel .divlabel {
+	width: 50%;
+}
+
 .topbox {
     padding-top:4px;
 }
@@ -849,7 +866,7 @@ td.fil {
 .popupwindow {
     position:absolute;
     display:none;
-    z-index:1001;
+    z-index:20001;
     overflow-y: hidden;
 	overflow-x: hidden;
 	transition: opacity 0.3s ease;
@@ -957,6 +974,10 @@ div.topdropmenu
 
 div.topdropmenu div {
 	opacity: 1 !important;
+}
+
+div.topdropmenu div.notenabled {
+	opacity: 0.2 !important;
 }
 
 div.topdropmenu.albumbitsmenu {
@@ -1993,6 +2014,10 @@ table.ambox {
 
 .info-detail-layout {
 	word-break: break-all;
+}
+
+.info-detail-layout ul {
+	word-break: normal;
 }
 
 .artistnamething {

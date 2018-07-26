@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 205.66004 207.89409"
+   height="207.89409mm"
+   width="205.66005mm"
+   sodipodi:docname="aac-audio.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1308"
+     inkscape:window-height="905"
+     id="namedview15"
+     showgrid="false"
+     inkscape:zoom="0.8495273"
+     inkscape:cx="388.64891"
+     inkscape:cy="392.87072"
+     inkscape:window-x="983"
+     inkscape:window-y="293"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg8" />
+  <defs
+     id="defs2">
+    <marker
+       style="overflow:visible"
+       id="marker8033"
+       refX="0.0"
+       refY="0.0"
+       orient="auto">
+      <path
+         transform="scale(1.1) translate(1,0)"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#ff4500;stroke-opacity:1;fill:#ff4500;fill-opacity:1"
+         id="path8031" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker7647"
+       refX="0.0"
+       refY="0.0"
+       orient="auto">
+      <path
+         transform="scale(1.1) translate(1,0)"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#ff4500;stroke-opacity:1;fill:#ff4500;fill-opacity:1"
+         id="path7645" />
+    </marker>
+  </defs>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <ellipse
+     style="opacity:1;fill:none;fill-opacity:1;stroke:#ff4500;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="path815"
+     cx="102.83002"
+     cy="103.94704"
+     rx="93.830025"
+     ry="94.947044" />
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#ff4500;stroke-width:4.68378019"
+     d="M 64.855163,137.30112 C 47.169601,115.64036 41.729014,102.50282 41.729014,81.457754 c 0,-27.75443 11.649589,-39.851408 41.104488,-42.683063 29.652758,-2.850682 68.936288,6.181294 77.101218,17.726909 5.11827,7.237507 4.53901,7.756466 -5.10153,4.570513 C 86.351204,38.440563 60.346597,47.372496 64.689043,92.03438 c 1.660772,17.0809 6.01789,26.82431 18.760464,41.95223 16.237511,19.27707 16.360901,19.70422 5.692403,19.70422 -6.657853,0 -16.116602,-6.38316 -24.286747,-16.38971 z m 36.739477,6.44089 C 95.594011,138.27018 87.330124,125.5988 83.230434,115.58341 67.885164,78.095417 93.16989,53.044233 136.69491,62.612774 c 27.80678,6.113053 35.18124,17.310286 8.40613,12.76374 -26.50558,-4.5008 -39.85837,-0.421634 -45.485142,13.895339 -5.640417,14.351657 -0.45947,31.865307 14.954082,50.550757 13.80177,16.73152 4.24175,19.61929 -12.97534,3.9194 z m 23.23808,-7.8771 c -23.68938,-31.27776 -15.7126,-54.611582 17.71602,-51.823308 l 18.80968,1.568924 1.28631,34.040154 1.2863,34.04015 h -12.7986 c -9.20453,0 -16.58995,-5.00582 -26.29971,-17.82592 z"
+     id="path9040"
+     sodipodi:nodetypes="ssssssssscssssscsscccss" />
+<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#ff4500;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#ff4500;fill-opacity:1}</style></svg>

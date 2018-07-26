@@ -219,8 +219,7 @@ function check_sql_tables() {
 		"Stationindex INT UNSIGNED REFERENCES RadioStationtable(Stationindex), ".
 		"TrackUri TEXT, ".
 		"PrettyStream TEXT, ".
-		"PRIMARY KEY (Trackindex), ".
-		"FULLTEXT KEY TrackUri (TrackUri)) ENGINE=InnoDB", true))
+		"PRIMARY KEY (Trackindex)) ENGINE=InnoDB", true))
 	{
 		debuglog("  RadioTracktable OK","MYSQL_CONNECT");
 	} else {
@@ -233,13 +232,23 @@ function check_sql_tables() {
 		"SourceName VARCHAR(255), ".
 		"SourceImage VARCHAR(255), ".
 		"SourceUri TEXT, ".
-		"PRIMARY KEY (Sourceindex), ".
-		"FULLTEXT KEY SourceUri (SourceUri)) ENGINE=InnoDB", true))
+		"PRIMARY KEY (Sourceindex)) ENGINE=InnoDB", true))
 	{
 		debuglog("  WishlistSourcetable OK","MYSQL_CONNECT");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking WishlistSourcetable : ".$err);
+	}
+
+	if (generic_sql_query("CREATE TABLE IF NOT EXISTS AlbumsToListenTotable(".
+		"Listenindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+		"JsonData TEXT, ".
+		"PRIMARY KEY (Listenindex)) ENGINE=InnoDB", true))
+	{
+		debuglog("  AlbumsToListenTotabletable OK","MYSQL_CONNECT");
+	} else {
+		$err = $mysqlc->errorInfo()[2];
+		return array(false, "Error While Checking AlbumsToListenTotable : ".$err);
 	}
 
 	if (!generic_sql_query("CREATE TABLE IF NOT EXISTS Statstable(Item CHAR(11), PRIMARY KEY(Item), Value INT UNSIGNED) ENGINE=InnoDB", true)) {
@@ -683,6 +692,39 @@ function sql_two_weeks_include($days) {
 
 function sql_to_unixtime($s) {
 	return "UNIX_TIMESTAMP(".$s.")";
+}
+
+function track_date_check($range, $flag) {
+	if ($flag == 'b') {
+		return '';
+	}
+	switch ($range) {
+		case ADDED_ALL_TIME:
+			return '';
+			break;
+			
+		case ADDED_TODAY:
+			return 'AND DATE_SUB(CURDATE(), INTERVAL 1 DAY) <= DateAdded';
+			break;
+			
+		case ADDED_THIS_WEEK:
+			return 'AND DATE_SUB(CURDATE(), INTERVAL 7 DAY) <= DateAdded';
+			break;
+
+		case ADDED_THIS_MONTH:
+			return 'AND DATE_SUB(CURDATE(), INTERVAL 1 MONTH) <= DateAdded';
+			break;
+			
+		case ADDED_THIS_YEAR:
+			return 'AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= DateAdded';
+			break;
+		
+		default:
+			debuglog("ERROR! Unknown Collection Range ".$range,"SQL");
+			return '';
+			break;
+			
+	}
 }
 
 function create_conditional_triggers() {

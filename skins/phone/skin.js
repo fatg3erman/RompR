@@ -1,4 +1,6 @@
 jQuery.fn.menuReveal = function(callback) {
+    debug.log("UI", "Revealing",$(this).attr('id'));
+    var self = this;
     if (this.hasClass('toggledown')) {
         if (callback) {
             this.slideToggle('fast',callback);
@@ -7,16 +9,21 @@ jQuery.fn.menuReveal = function(callback) {
         }
     } else {
         this.findParentScroller().saveScrollPos();
-        if (callback) {
-            this.show(0, callback);
-        } else {
-            this.show();
-        }
+        this.show(0, function() {
+            var i = self.find('.album_menu_image');
+            if (i.length > 0) {
+                i.attr('src', i.attr('asrc'));
+            }
+            if (callback) {
+                callback();
+            }
+        });
     }
     return this;
 }
 
 jQuery.fn.menuHide = function(callback) {
+    debug.log("UI", "Hiding",$(this).attr('id'));
     var self = this;
     if (this.hasClass('toggledown')) {
         if (callback) {
@@ -32,6 +39,10 @@ jQuery.fn.menuHide = function(callback) {
             self.findParentScroller().restoreScrollPos();
             if (self.hasClass('removeable')) {
                 self.remove();
+            } else {
+                debug.log("UI", "Hiding Image",$(this).attr('id'));
+                var i = self.find('.album_menu_image');
+                i.removeAttr('src');
             }
         });
     }
@@ -88,7 +99,6 @@ jQuery.fn.stopSpinner = function() {
                 $(this).removeAttr("originalclass");
             }
         });
-    
     } else {
         this.removeClass('clickflash');
         return this;
@@ -367,8 +377,14 @@ var layoutProcessor = function() {
             $('.mainpane').not('#infobar').not('#playlistm').not('#prefsm').not('#infopane').bindPlayClicks();
         },
 
-        postAlbumActions: function() {
-
+        postAlbumActions: function(menu) {
+            if (menu && menu.is(':visible')) {
+                var i = menu.find('.album_menu_image');
+                if (i.length > 0) {
+                    debug.log("UI", "Image has source",i.attr('src'),'asrc',i.attr('asrc'));
+                    i.attr('src', i.attr('asrc'));
+                }
+            }
         },
 
         afterHistory: function() {
@@ -433,9 +449,10 @@ var layoutProcessor = function() {
         },
 
         scrollPlaylistToCurrentTrack: function() {
-            if (prefs.scrolltocurrent && $('.playlistcurrentitem').length > 0) {
+            var scrollto = playlist.getCurrentTrackElement();
+            if (prefs.scrolltocurrent && scrollto.length > 0) {
                 var offset = 0 - ($('#pscroller').outerHeight(true) / 2);
-                $('#pscroller').scrollTo($('.playlistcurrentitem'), 800, {offset: {top: offset}, easing: 'swing'});
+                $('#pscroller').scrollTo(scrollto, 800, {offset: {top: offset}, easing: 'swing'});
             }
         },
 
@@ -469,6 +486,7 @@ var layoutProcessor = function() {
                 case 'pluginplaylistholder':
                     setSpotiLabelWidth();
                     break;
+                    
             }
         },
 
@@ -665,7 +683,7 @@ var layoutProcessor = function() {
                 $('.menuitem[name="podcast_'+index+'"]').remove();
                 $('#podcast_'+index).remove();
                 $("#fruitbat").html(data);
-                $("#fruitbat").find('.fridge').tipTip({edgeOffset: 8});
+                $("#fruitbat .fridge").tipTip({delay: 500, edgeOffset: 8});
                 infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
                 podcasts.doNewCount();
                 layoutProcessor.postAlbumActions();

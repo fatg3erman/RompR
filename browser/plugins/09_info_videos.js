@@ -61,7 +61,7 @@ var info_videos = function() {
 				url: 'browser/backends/google.php',
 				data: {uri: encodeURIComponent("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q="+encodeURIComponent(term+' Band')+"&key="+prefs.google_api_key)},
 				success: callback,
-				error: function(data) {
+				error: function(xhr,status,err) {
 					debug.error("VIDEOS PLUGIN","Youtube search failed",data);
 					callback({error: data});
 				}

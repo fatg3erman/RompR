@@ -29,7 +29,7 @@ a:hover,a:active
     cursor:pointer;
 }
 
-button, input[type="button"]
+button, input[type="button"], .filebutton
 {
     background-image: linear-gradient(#999999, #cccccc, #999999);
     color:#ee3700;
@@ -379,13 +379,7 @@ body.mobile .configtitle
 =====================================================================
 */
 
-.albumsection button, .albumcovers .infosection button
-{
-    background-image:none !important;
-    background-color:transparent !important;
-}
-
-button:hover, input[type="button"]:hover
+button:hover, input[type="button"]:hover, .filebutton:hover
 {
     color:#ff4800;
     text-shadow: 0 0 15px #ff4800;

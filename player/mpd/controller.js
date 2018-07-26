@@ -119,6 +119,7 @@ function playerController() {
     }
 
 	this.do_command_list = function(list, callback) {
+        // Note, if you call this with a callback, your callback MUST call player.controller.checkProgress
         $.ajax({
             type: 'POST',
             url: 'player/mpd/postcommand.php',
@@ -127,9 +128,10 @@ function playerController() {
             timeout: 30000,
             success: function(data) {
                 if (data) {
+                    debug.debug("PLAYER",data);
                     if (data.state) {
-                        player.status = data;
-                        // debug.trace("MPD","Status",player.status);
+                        // Clone the object so as not to leave this closure in memory
+                        player.status = cloneObject(data);
                         if (player.status.playlist !== plversion && !moving) {
                             debug.blurt("PLAYER","Player has marked playlist as changed");
                             playlist.repopulate();
@@ -138,13 +140,7 @@ function playerController() {
                         infobar.setStartTime(player.status.elapsed);
                     }
                 }
-                if (callback) {
-                    callback();
-                    infobar.updateWindowValues();
-                } else {
-                   self.checkProgress();
-                   infobar.updateWindowValues();
-                }
+                post_command_list(callback);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 debug.error("MPD","Command List Failed",list,textStatus,errorThrown);
@@ -152,16 +148,19 @@ function playerController() {
                 if (list.length > 0) {
                     infobar.notify(infobar.ERROR, "Failed sending commands to "+prefs.player_backend);
                 }
-                if (callback) {
-                    callback();
-                    infobar.updateWindowValues();
-                } else {
-                   self.checkProgress();
-                   infobar.updateWindowValues();
-                }
+                post_command_list(callback);
             }
         });
 	}
+    
+    function post_command_list(callback) {
+        if (callback) {
+            callback();
+        } else {
+           self.checkProgress();
+        }
+        infobar.updateWindowValues();
+    }
 
     this.isConnected = function() {
         return true;
@@ -190,7 +189,7 @@ function playerController() {
             dataType: "xml",
             success: function() {
                 self.reloadPlaylists();
-                self.addTracks([{type: 'remoteplaylist', name: name}]);
+                self.addTracks([{type: 'remoteplaylist', name: name}], null, null);
             },
             error: function(data, status) {
                 playlist.repopulate();
@@ -309,7 +308,8 @@ function playerController() {
     }
 
 	this.clearPlaylist = function() {
-	    self.do_command_list([['clear']]);
+        // Mopidy does not like removing tracks while they're playing
+	    self.do_command_list([['stop'], ['clear']]);
 	}
 
 	this.savePlaylist = function() {

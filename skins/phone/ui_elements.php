@@ -97,47 +97,16 @@ function albumHeader($obj) {
         $h .= '<div class="menu containerbox menuitem '.$obj['class'].'" name="'.$obj['id'].'">';
     }
 
-    $i = $obj['Image'];
     $h .= '<div class="smallcover fixed">';
-    $extra = (array_key_exists('userplaylist', $obj)) ? ' plimage' : '';
-    if (!$obj['Image'] && $obj['Searched'] != 1) {
-        $h .= '<img class="smallcover fixed notexist'.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
-    } else  if (!$obj['Image'] && $obj['Searched'] == 1) {
-        $h .= '<img class="smallcover fixed notfound'.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
-    } else {
-        if (substr($i,0, 14) == 'getRemoteImage') {
-            $i .= '&rompr_resize_size=small';
-        }
-        $h .= '<img class="smallcover fixed'.$extra.'" name="'.$obj['ImgKey'].'" src="'.$i.'" />'."\n";
-    }
+    $albumimage = new baseAlbumImage(array('baseimage' => $obj['Image']));
+    $h .= $albumimage->html_for_image($obj, 'smallcover fixed', 'small');
     $h .= '</div>';
 
-    if ($obj['AlbumUri']) {
-        $d = getDomain($obj['AlbumUri']);
-        $d = preg_replace('/\+.*/','', $d);
-        $h .= domainIcon($d, 'collectionicon');
-        if (strtolower(pathinfo($obj['AlbumUri'], PATHINFO_EXTENSION)) == "cue") {
-            $h .= '<i class="icon-doc-text playlisticon fixed"></i>';
-        }
-    }
+    $h .= domainHtml($obj['AlbumUri']);
 
-    if ($prefs['sortcollectionby'] == 'albumbyartist' && $obj['Artistname']) {
-        $h .= '<div class="expand">'.$obj['Albumname'];
-        $h .= '<br><span class="notbold">'.$obj['Artistname'].'</span>';
-        if ($obj['Year'] && $prefs['sortbydate']) {
-            $h .= ' <span class="notbold">('.$obj['Year'].')</span>';
-        }
-        $h .= '</div>';
-    } else {
-        $h .= '<div class="expand">'.$obj['Albumname'];
-        if ($obj['Year'] && $prefs['sortbydate']) {
-            $h .= ' <span class="notbold">('.$obj['Year'].')</span>';
-        }
-        if ($obj['Artistname']) {
-            $h .= '<br><span class="notbold">'.$obj['Artistname'].'</span>';
-        }
-        $h .= '</div>';
-    }
+    $h .= artistNameHtml($obj);
+
+    $h .= '</div>';
     $h .= '</div>';
     return $h;
 }
@@ -158,7 +127,7 @@ function trackControlHeader($why, $what, $who, $dets) {
     foreach ($dets as $det) {
         $albumimage = new baseAlbumImage(array('baseimage' => $det['Image']));
         $images = $albumimage->get_images();
-        $html .= '<div class="album-menu-header"><img class="album_menu_image" src="'.$images['asdownloaded'].'" /></div>';
+        $html .= '<div class="album-menu-header"><img class="album_menu_image" asrc="'.$images['asdownloaded'].'" /></div>';
         if ($why != '') {
             $html .= '<div class="textcentre ninesix playlistrow2">'.get_int_text('label_play_options').'</div>';
             $html .= '<div class="containerbox wrap album-play-controls">';

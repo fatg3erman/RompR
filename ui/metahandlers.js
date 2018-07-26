@@ -227,6 +227,26 @@ var metaHandlers = function() {
 			} else {
 				dbQueue.request([{action: action}], success, fail);
 			}
+		},
+		
+		addToListenLater: function(album) {
+			var data = {
+				action: 'addtolistenlater',
+				json: album
+			}
+			dbQueue.request(
+				[data],
+				function() {
+					debug.log("METAHANDLERS","Album Added To Listen Later");
+					infobar.notify(infobar.NOTIFY, language.gettext('label_addedtolistenlater'));
+					if (typeof(albumstolistento) != 'undefined') {
+						albumstolistento.update();
+					}
+				},
+				function() {
+					debug.error("METAHANDLERS","Tailed To Add Album To Listen Later");
+				}
+			)
 		}
 
 	}

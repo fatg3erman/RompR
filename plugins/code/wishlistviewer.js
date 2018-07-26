@@ -117,12 +117,13 @@ var wishlistViewer = function() {
 	}
 
 	function loadWishlist(display) {
-        $("#wishlistlist").load("albums.php?wishlist=1&sortby="+prefs.sortwishlistby, function() {
+        $("#wishlistlist").load("plugins/code/getwishlist.php?sortby="+prefs.sortwishlistby, function() {
 			$('[name="sortwishlistby"][value="'+prefs.sortwishlistby+'"]').prop('checked', true);
 			$('[name="sortwishlistby"]').on('click', reloadWishlist);
 			infobar.markCurrentTrack();
             if (display && !wlv.is(':visible')) {
 	            wlv.slideToggle('fast', function() {
+					wlv.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
 		        	browser.goToPlugin("wlv");
 	            });
 	        }

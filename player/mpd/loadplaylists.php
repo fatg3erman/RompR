@@ -9,7 +9,7 @@ include ("backends/sql/backend.php");
 include ("utils/phpQuery.php");
 require_once ("utils/imagefunctions.php");
 $used_images = array();
-
+$pl_error = false;
 if (array_key_exists('playlist', $_REQUEST)) {
     $pl = $_REQUEST['playlist'];
     do_playlist_tracks($pl,'icon-music', $_REQUEST['target']);
@@ -27,6 +27,9 @@ if (array_key_exists('playlist', $_REQUEST)) {
             add_playlist(rawurlencode($pl), htmlentities($pl), 'icon-doc-text', 'clickloadplaylist', true, $c, false, null);
             $c++;
         }
+    } else if (is_array($playlists) && array_key_exists('error', $playlists)) {
+        // Prevent unwanted deletion of playlist images when there was an error getting the list
+        $pl_error = true;
     }
     $existingfiles = glob('prefs/userplaylists/*');
     foreach($existingfiles as $file) {
@@ -36,10 +39,12 @@ if (array_key_exists('playlist', $_REQUEST)) {
     sort($used_images);
     $imgs = glob('prefs/plimages/*');
     sort($imgs);
-    $unneeded = array_diff($imgs, $used_images);
-    foreach ($unneeded as $img) {
-        debuglog("Removing uneeded playlist image ".$img,"PLAYLISTS");
-        rrmdir($img);
+    if (!$pl_error) {
+        $unneeded = array_diff($imgs, $used_images);
+        foreach ($unneeded as $img) {
+            debuglog("Removing uneeded playlist image ".$img,"PLAYLISTS");
+            rrmdir($img);
+        }
     }
 }
 
@@ -140,7 +145,10 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
         case 'clickloaduserplaylist':
             $albumimage = new albumImage(array('artist' => "PLAYLIST", 'album' => $name));
             $image = $albumimage->get_image_if_exists();
-            $used_images[] = dirname($albumimage->basepath);
+            $i = dirname($albumimage->basepath);
+            if (!in_array($i, $used_images)) {
+                $used_images[] = $i;
+            }
             $html = albumHeader(array(
                 'id' => 'pholder_'.md5($name),
                 'Image' => $image,

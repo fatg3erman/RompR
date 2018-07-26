@@ -34,6 +34,7 @@ $mpd_file_model = array (
     'ImageForPlaylist' => null,
     'ImgKey' => null,
     'StreamIndex' => null,
+    'Searched' => 0,
     // Never send null in any musicbrainz id as it prevents plugins from
     // waiting on lastfm to find one
     'MUSICBRAINZ_ALBUMID' => '',

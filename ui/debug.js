@@ -4,7 +4,7 @@ window.debug = (function() {
 	var ignoring = new Array();
 	var highlighting = new Array();
 	var colours =  new Array();
-	var focuson = null;
+	var focuson = new Array();
 	var log_colours = {
 		1: "#FF0000",
 		2: "#FFDD00",
@@ -32,7 +32,8 @@ window.debug = (function() {
 
 		if (loglevel > level) return;
 		var module = args.shift();
-		if (ignoring[module] || (focuson !== null && focuson != module)) return;
+		if (ignoring[module]) return;
+		if (focuson.length > 0 && focuson.indexOf(module) == -1) return;
 		var css = (colours[module]) ? 'color:'+colours[module] : 'color:'+log_colours[loglevel];
 		if (highlighting[module]) {
 			css += ";font-weight:bold";
@@ -126,8 +127,17 @@ window.debug = (function() {
 			highlighting[module] = true;
 		},
 
-		focus: function(module) {
-			focuson = module;
+		focuson: function(module) {
+			if (focuson.indexOf(module) == -1) {
+				focuson.push(module);
+			}
+		},
+		
+		focusoff: function(module) {
+			var index = focuson.indexOf(module);
+			if (index > -1) {
+				focuson.splice(index, 1);
+			}
 		},
 
 		setcolour: function(module, colour) {

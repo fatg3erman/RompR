@@ -7,7 +7,6 @@ define('ROMPR_SCHEMA_VERSION', 44);
 define('ROMPR_VERSION', '1.19');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
-define('ROMPR_PLAYLIST_KEY', 'IS_ROMPR_PLAYLIST_IMAGE');
 define('ROMPR_UNKNOWN_STREAM', "Unknown Internet Stream");
 
 define('REFRESHOPTION_NEVER', 0);
@@ -26,6 +25,40 @@ define('DISPLAYMODE_DOWNLOADEDNEW', 3);
 define('DISPLAYMODE_DOWNLOADED', 4);
 
 define('ROMPR_PODCAST_TABLE_VERSION', 4);
+
+define('ADDED_ALL_TIME', 0);
+define('ADDED_TODAY', 1);
+define('ADDED_THIS_WEEK', 2);
+define('ADDED_THIS_MONTH', 3);
+define('ADDED_THIS_YEAR', 4);
+
+// Safe definitions for setups that do not have a full set of image support built in,
+// Otherwise we spam the server logs with udefined constant errors.
+// These are the MIME types that make it compatible with imagemagick
+if (!defined('IMAGETYPE_JPEG')) {
+    define('IMAGETYPE_JPEG', 'image/jpeg');
+}
+if (!defined('IMAGETYPE_GIF')) {
+    define('IMAGETYPE_GIF', 'image/gif');
+}
+if (!defined('IMAGETYPE_PNG')) {
+    define('IMAGETYPE_PNG', 'image/png');
+}
+if (!defined('IMAGETYPE_WBMP')) {
+    define('IMAGETYPE_WBMP', 'image/wbmp');
+}
+if (!defined('IMAGETYPE_XBM')) {
+    define('IMAGETYPE_XBM', 'image/xbm');
+}
+if (!defined('IMAGETYPE_WEBP')) {
+    define('IMAGETYPE_WEBP', 'image/webp');
+}
+if (!defined('IMAGETYPE_BMP')) {
+    define('IMAGETYPE_BMP', 'image/bmp');
+}
+if (!defined('IMAGETYPE_SVG')) {
+    define('IMAGETYPE_SVG', 'image/svg+xml');
+}
 
 $connection = null;
 $is_connected = false;
@@ -50,7 +83,6 @@ $prefs = array(
     "country_userset" => false,
     "debug_enabled" => 0,
     "custom_logfile" => "",
-    "player_backend" => "mpd",
     "cleanalbumimages" => true,
     "do_not_show_prefs" => false,
     // This option for plugin debugging ONLY
@@ -64,25 +96,29 @@ $prefs = array(
             'socket' => ''
         )
     ),
-    "currenthost" => 'Default',
     'dev_mode' => false,
     'live_mode' => false,
-
-    // Things that could be set on a per-user basis but need to be known by the backend
+    'collection_load_timeout' => 3600000,
     "mpd_host" => "localhost",
     "mpd_port" => 6600,
     "mpd_password" => "",
     "unix_socket" => '',
-    "sortbydate" => false,
-    "notvabydate" => false,
+
+    // Things that could be set on a per-user basis but need to be known by the backend
     "displaycomposer" => true,
     "artistsatstart" => array("Various Artists","Soundtracks"),
     "nosortprefixes" => array("The"),
     "sortcollectionby" => "artist",
     "showartistbanners" => true,
-    "tradsearch" => false,
     "google_api_key" => '',
     "google_search_engine_id" => '',
+
+    // Things that are set as Cookies
+    "sortbydate" => false,
+    "notvabydate" => false,
+    "currenthost" => 'Default',
+    "player_backend" => "mpd",
+    "collectionrange" => ADDED_ALL_TIME,
 
     // These are currently saved in the backend, as the most likely scenario is one user
     // with multiple browsers. But what if it's multiple users?
@@ -91,6 +127,7 @@ $prefs = array(
     "autotagname" => "",
 
     // All of these are saved in the browser, so these are only defaults
+    "tradsearch" => false,
     "lastfm_scrobbling" => false,
     "lastfm_autocorrect" => false,
     "sourceshidden" => false,
@@ -167,7 +204,8 @@ $prefs = array(
     "podcast_sort_0" => 'Title',
     "podcast_sort_1" => 'Artist',
     "podcast_sort_2" => 'Category',
-    "podcast_sort_3" => 'new'
+    "podcast_sort_3" => 'new',
+    "bgimgparms" => (object) array('dummy' => 'baby')
 );
 
 // Prefs that should not be exposed to the browser for security reasons
@@ -194,6 +232,10 @@ if (defined('ROMPR_IS_LOADING')) {
     debuglog("******++++++======------******------======++++++******","INIT",2);
 }
 
+if (array_key_exists('REQUEST_URI', $_SERVER)) {
+    debuglog($_SERVER['REQUEST_URI'],"REQUEST",9);
+}
+
 if (!property_exists($prefs['multihosts'], $prefs['currenthost'])) {
     debuglog($prefs['currenthost']." is not defined in the hosts defs. Falling back to Default","INIT",3);
     if (!property_exists($prefs['multihosts'], 'Default')) {
@@ -214,11 +256,7 @@ if (!array_key_exists('currenthost', $_COOKIE)) {
     setcookie('currenthost',$prefs['currenthost'],time()+365*24*60*60*10,'/');
 }
 
-$cockspanner = $prefs['currenthost'];
-$prefs['mpd_host'] = $prefs['multihosts']->$cockspanner->host;
-$prefs['mpd_port'] = $prefs['multihosts']->$cockspanner->port;
-$prefs['mpd_password'] = $prefs['multihosts']->$cockspanner->password;
-$prefs['unix_socket'] = $prefs['multihosts']->$cockspanner->socket;
+set_player_connect_params();
 
 // NOTE. skin is NOT saved as a preference on the backend. It is set as a Cookie only.
 // This is because saving it once as a preference would change the default for ALL new devices
@@ -271,12 +309,19 @@ function loadPrefs() {
                                 // Fall through to default
 
                             default:
+                                if ($v === 'false') { $v = false; }
+                                if ($v === 'true') { $v = true; }
                                 $prefs[$a] = $v;
                                 break;
 
                         }
                         if ($prefs['debug_enabled'] > 8) {
-                            error_log("COOKIE             : Pref ".$a." is set by Cookie  - Value : ".$v);
+                            $module = "COOKIEPREFS";
+                            $in = str_repeat(" ", 20 - strlen($module));
+                            $pid = getmypid();
+                            $in2 = str_repeat(" ", 8 - strlen($pid));
+                            $out = "Pref ".$a." is set by Cookie  - Value : ".$v;
+                            error_log($pid.$in2.$module.$in.": ".$out,0);
                         }
                     }
                 }
@@ -359,6 +404,15 @@ class debug_logger {
 function debuglog($text, $module = "JOHN WAYNE", $level = 7) {
     global $logger;
     $logger->log($text, $module, $level);
+}
+
+function set_player_connect_params() {
+	global $prefs;
+	$cockspanner = $prefs['currenthost'];
+	$prefs['mpd_host'] = $prefs['multihosts']->$cockspanner->host;
+	$prefs['mpd_port'] = $prefs['multihosts']->$cockspanner->port;
+	$prefs['mpd_password'] = $prefs['multihosts']->$cockspanner->password;
+	$prefs['unix_socket'] = $prefs['multihosts']->$cockspanner->socket;
 }
 
 ?>

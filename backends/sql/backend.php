@@ -80,7 +80,7 @@ function create_new_track(&$data) {
 			return null;
 		}
 	}
-	
+
 	$data['sourceindex'] = null;
 	if ($data['uri'] === null && array_key_exists('streamuri', $data) && $data['streamuri'] !== null) {
 		$data['sourceindex'] = check_radio_source($data);
@@ -277,19 +277,19 @@ function list_tags() {
 }
 
 function get_rating_headers($sortby) {
-		
+
 	$ratings = array();
-		
+
 	switch ($sortby) {
-		
+
 		case 'Rating':
 			$ratings = generic_sql_query("SELECT Rating AS Name, COUNT(TTindex) AS NumTracks FROM Ratingtable GROUP BY Rating ORDER BY Rating");
 			break;
-			
+
 		case 'Tag':
 			$ratings = generic_sql_query('SELECT Name, COUNT(TTindex) AS NumTracks FROM Tagtable JOIN TagListtable USING (Tagindex) GROUP BY Name ORDER BY Name');
 			break;
-			
+
 		case 'AlbumArtist':
 			// It's actually Track Artist, but sod changing it now.
 			$qstring = "SELECT DISTINCT Artistname AS Name, COUNT(DISTINCT TTindex) AS NumTracks
@@ -304,7 +304,7 @@ function get_rating_headers($sortby) {
 			$qstring .= sort_artists_by_name();
 			$ratings = generic_sql_query($qstring);
 			break;
-			
+
 		case 'Tags':
 			$ratings = generic_sql_query("SELECT DISTINCT ".SQL_TAG_CONCAT." AS Name, 0 AS NumTracks FROM
 											(SELECT Tagindex, TTindex FROM TagListtable ORDER BY Tagindex) AS tagorder
@@ -312,11 +312,11 @@ function get_rating_headers($sortby) {
 											GROUP BY TTindex
 											ORDER By Name");
 			break;
-			
+
 		default:
 			$ratings = array('INTERNAL ERROR!');
 			break;
-		
+
 	}
 
 	return $ratings;
@@ -340,7 +340,7 @@ function sortletter_mangler() {
 }
 
 function get_rating_info($sortby, $value) {
-	
+
 	global $prefs;
 
 	// Tuned SQL queries for each type, for speed, otherwise it's unuseable
@@ -360,7 +360,7 @@ function get_rating_info($sortby, $value) {
 				al.Albumname,
 				al.Image, ";
 			$qstring .= sortletter_mangler();
-		
+
 			$qstring .= " FROM
 					Ratingtable AS r
 					JOIN Tracktable AS tr ON tr.TTindex = r.TTindex
@@ -369,9 +369,9 @@ function get_rating_info($sortby, $value) {
 					JOIN Albumtable AS al USING (Albumindex)
 					JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-				WHERE r.Rating = ".$value." AND tr.isSearchResult < 2";
+				WHERE r.Rating = ".$value." AND tr.isSearchResult < 2 AND tr.Uri IS NOT NULL";
 				break;
-				
+
 			case 'Tag':
 				$qstring = "SELECT
 					IFNULL(r.Rating, 0) AS Rating,
@@ -386,7 +386,7 @@ function get_rating_info($sortby, $value) {
 					al.Albumname,
 					al.Image, ";
 				$qstring .= sortletter_mangler();
-			
+
 				$qstring .= " FROM
 					Tracktable AS tr
 					LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
@@ -395,9 +395,9 @@ function get_rating_info($sortby, $value) {
 					JOIN Albumtable AS al USING (Albumindex)
 					JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-				WHERE tr.isSearchResult < 2 AND tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name = '".$value."')";
+				WHERE tr.isSearchResult < 2  AND tr.Uri IS NOT NULL AND tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name = '".$value."')";
 				break;
-										
+
 			case 'AlbumArtist':
 				// It's actually Track Artist, but sod changing it now.
 				$qstring = "SELECT
@@ -412,7 +412,7 @@ function get_rating_info($sortby, $value) {
 			 		aa.Artistname AS AlbumArtist,
 			 		al.Albumname,
 			 		al.Image ";
-			
+
 			 	$qstring .= " FROM
 			 		Tracktable AS tr
 			 		LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
@@ -421,9 +421,9 @@ function get_rating_info($sortby, $value) {
 			 		JOIN Albumtable AS al USING (Albumindex)
 			 		JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 			 		JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL) AND tr.isSearchResult < 2 AND a.Artistname = '".$value."'";
+			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL)  AND tr.Uri IS NOT NULL AND tr.isSearchResult < 2 AND a.Artistname = '".$value."'";
 				break;
-				
+
 			case 'Tags':
 				$qstring = "SELECT
 					IFNULL(r.Rating, 0) AS Rating,
@@ -439,7 +439,7 @@ function get_rating_info($sortby, $value) {
 					COUNT(tr.TTindex) AS count,
 					al.Image, ";
 				$qstring .= sortletter_mangler();
-			
+
 				$qstring .= " FROM
 					TagListtable AS tl
 					JOIN Tracktable AS tr USING (TTindex)
@@ -454,14 +454,14 @@ function get_rating_info($sortby, $value) {
 						$tags[$i] = "tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name='".$t."')";
 					}
 					$qstring .= implode(' AND ', $tags);
-					$qstring .= " AND tr.isSearchResult < 2";
+					$qstring .= " AND tr.isSearchResult < 2 AND tr.Uri IS NOT NULL";
 					break;
 	}
-	
+
 	$qstring .= " GROUP BY tr.TTindex ORDER BY ";
 	$qstring .= sort_artists_by_name();
 	$qstring .= ", al.Albumname, tr.TrackNo";
-	
+
 	$t =  microtime(true);
 	$ratings =  generic_sql_query($qstring);
 	$took = microtime(true) - $t;
@@ -480,7 +480,7 @@ function get_rating_info($sortby, $value) {
 	}
 
 	return $ratings;
-	
+
 }
 
 function clear_wishlist() {
@@ -533,7 +533,7 @@ function get_all_data($ttid) {
 function get_extra_track_info(&$filedata) {
 	$data = array();;
 	$result = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
-		'SELECT Uri, TTindex, Disc, Artistname AS AlbumArtist, Albumtable.Image AS "X-AlbumImage", ImgKey AS ImgKey, mbid AS MUSICBRAINZ_ALBUMID
+		'SELECT Uri, TTindex, Disc, Artistname AS AlbumArtist, Albumtable.Image AS "X-AlbumImage", ImgKey AS ImgKey, mbid AS MUSICBRAINZ_ALBUMID, Searched
 			FROM
 				Tracktable
 				JOIN Albumtable USING (Albumindex)
@@ -560,7 +560,7 @@ function get_extra_track_info(&$filedata) {
 function get_imagesearch_info($key) {
 
 	// Used by getalbumcover.php to get album and artist names etc based on an Image Key
-	
+
 	$retval = array('artist' => null, 'album' => null, 'mbid' => null, 'albumpath' => null, 'albumuri' => null);
 	$result = generic_sql_query(
 		"SELECT DISTINCT
@@ -724,11 +724,19 @@ function albumartist_sort_query($flag) {
 	// have actual tracks (no album artists who appear only on the wishlist or who have only hidden tracks)
 	// Using GROUP BY is faster than using SELECT DISTINCT
 	// USING IN is faster than the double JOIN
+	global $prefs;
 	$sflag = ($flag == 'b') ? "AND isSearchResult > 0" : "AND isSearchResult < 2";
-	
-	$qstring = "SELECT Artistname, Artistindex FROM Artisttable AS a WHERE Artistindex IN
-				(SELECT AlbumArtistindex FROM Albumtable JOIN Tracktable USING (Albumindex)
-					WHERE Uri IS NOT NULL AND Hidden = 0 ".$sflag." GROUP BY AlbumArtistindex)
+
+	$qstring = "SELECT Artistname, Artistindex
+					FROM Artisttable AS a
+					WHERE
+					Artistindex IN
+						(SELECT AlbumArtistindex FROM Albumtable JOIN Tracktable USING (Albumindex)
+							WHERE Uri IS NOT NULL
+							AND Hidden = 0
+							".track_date_check($prefs['collectionrange'], $flag)."
+							".$sflag."
+							GROUP BY AlbumArtistindex)
 				ORDER BY ";
 	$qstring .= sort_artists_by_name();
 	return $qstring;
@@ -786,7 +794,7 @@ function album_sort_query($why, $what, $who) {
 	$qstring .= "Albumindex IN (SELECT Albumindex FROM Tracktable WHERE
 			Tracktable.Albumindex = Albumtable.Albumindex AND ";
 
-	$qstring .= "Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 ".$sflag.")";
+	$qstring .= "Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 ".track_date_check($prefs['collectionrange'], $why)." ".$sflag.")";
 	$qstring .= " ORDER BY ";
 	if ($prefs['sortcollectionby'] == "albumbyartist" && $who == "root") {
 		foreach ($prefs['artistsatstart'] as $a) {
@@ -848,12 +856,12 @@ function do_albums_from_database($why, $what, $who, $fragment = false, $use_arti
 
 	$qstring = album_sort_query($why, $what, $who);
 	debuglog("Query String Is ".$qstring,"COLLECTION",9);
-	
+
 	$count = 0;
 	$currart = "";
 	$currban = "";
 	$result = generic_sql_query($qstring);
-	if ($do_controlheader) {
+	if ($do_controlheader && count($result) > 0) {
 		print albumControlHeader($fragment, $why, $what, $who, $result[0]['Artistname']);
 	}
 	foreach ($result as $obj) {
@@ -907,6 +915,7 @@ function get_list_of_albums($aid) {
 }
 
 function get_album_tracks_from_database($index, $cmd, $flag) {
+	global $prefs;
 	$retarr = array();
 	$qstring = null;
 	$cmd = ($cmd === null) ? 'add' : $cmd;
@@ -943,7 +952,21 @@ function get_album_tracks_from_database($index, $cmd, $flag) {
 
 		case "u":
 			// u - only tracks with tags or ratings
-			$qstring = "SELECT Uri, Disc, Trackno FROM Tracktable JOIN Ratingtable USING (TTindex) WHERE Albumindex = '".$index."' AND Uri IS NOT NULL AND Hidden = 0 AND isSearchResult <2 UNION SELECT Uri, Disc, TrackNo FROM Tracktable JOIN TagListtable USING (TTindex) WHERE Albumindex = '".$index."' AND Uri IS NOT NULL AND Hidden = 0 AND isSearchResult <2 ORDER BY Disc, TrackNo;";
+			$qstring = "SELECT Uri, Disc, Trackno FROM
+							Tracktable JOIN Ratingtable USING (TTindex)
+							WHERE Albumindex = '".$index.
+							"' AND Uri IS NOT NULL
+							AND Hidden = 0
+							AND isSearchResult <2"
+							.track_date_check($prefs['collectionrange'], $flag).
+						"UNION SELECT Uri, Disc, TrackNo FROM
+							Tracktable JOIN TagListtable USING (TTindex)
+							WHERE Albumindex = '".$index.
+							"' AND Uri IS NOT NULL
+							AND Hidden = 0
+							AND isSearchResult <2"
+							.track_date_check($prefs['collectionrange'], $flag).
+						"ORDER BY Disc, TrackNo;";
 			break;
 
 		default:
@@ -955,7 +978,7 @@ function get_album_tracks_from_database($index, $cmd, $flag) {
 	}
 	debuglog("Getting Album Tracks for Albumindex ".$index,"MYSQL",7);
 	if ($qstring === null) {
-		$qstring = $action." Uri FROM Tracktable".$rflag." WHERE Albumindex = '".$index."' AND Uri IS NOT NULL AND Hidden = 0 ".$sflag." ORDER BY Disc, TrackNo";
+		$qstring = $action." Uri FROM Tracktable".$rflag." WHERE Albumindex = '".$index."' AND Uri IS NOT NULL AND Hidden = 0 ".track_date_check($prefs['collectionrange'], $flag)." ".$sflag." ORDER BY Disc, TrackNo";
 	}
 	$result = generic_sql_query($qstring);
 	foreach($result as $a) {
@@ -988,6 +1011,7 @@ function get_artist_tracks_from_database($index, $cmd, $flag) {
 function do_tracks_from_database($why, $what, $whom, $fragment = false) {
 	// This function can accept multiple album ids ($whom can be an array)
 	// in which case it will combine them all into one 'virtual album' - see browse_album()
+	global $prefs;
 	$who = getArray($whom);
 	$wdb = implode($who, ', ');
     debuglog("Generating tracks for album(s) ".$wdb." from database","DUMPALBUMS",7);
@@ -997,7 +1021,7 @@ function do_tracks_from_database($why, $what, $whom, $fragment = false) {
 	$t = ($why == "b") ? "AND isSearchResult > 0" : "AND isSearchResult < 2";
 	$trackarr = generic_sql_query(
 		// This looks like a wierd way of doing it but the obvious way doesn't work with mysql
-		// due to table alises being used.
+		// due to table aliases being used.
 		"SELECT
 			".SQL_TAG_CONCAT." AS tags,
 			r.Rating AS rating,
@@ -1019,6 +1043,7 @@ function do_tracks_from_database($why, $what, $whom, $fragment = false) {
 			WHERE (".implode(' OR ', array_map('do_fiddle', $who)).")
 				AND uri IS NOT NULL
 				AND tr.Hidden = 0
+				".track_date_check($prefs['collectionrange'], $why)."
 				".$t."
 				AND tr.Artistindex = ta.Artistindex
 				AND al.Albumindex = tr.Albumindex
@@ -1199,7 +1224,8 @@ function update_stream_image($stream, $image) {
 	sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET Image = ? WHERE StationName = ?",$image,$stream);
 }
 
-function update_podcast_image($image, $podid) {
+function update_podcast_image($podid, $image) {
+	debuglog("Setting Image to ".$image." for podid ".$podid,"PODCASTS");
 	sql_prepare_query(true, null, null, null, 'UPDATE Podcasttable SET Image = ? WHERE PODindex = ?',$image, $podid);
 }
 
@@ -1236,24 +1262,16 @@ function find_podcast_track_from_url($url) {
 function update_track_stats() {
 	debuglog("Updating Track Stats","MYSQL",7);
 	$t = microtime(true);
-	$ac = generic_sql_query(
-		"SELECT COUNT(*) AS NumArtists FROM (SELECT AlbumArtistindex FROM Albumtable
-		INNER JOIN Tracktable USING (Albumindex) WHERE Uri IS NOT NULL
-		AND Hidden = 0 AND isSearchResult < 2 GROUP BY AlbumArtistindex) AS t", false, null, 'NumArtists', 0);
+	$ac = get_artist_count(ADDED_ALL_TIME);
 	update_stat('ArtistCount',$ac);
 
-	$ac = generic_sql_query(
-		"SELECT COUNT(*) AS NumAlbums FROM (SELECT Albumindex FROM Tracktable WHERE Uri IS NOT NULL
-		AND Hidden = 0 AND isSearchResult < 2 GROUP BY Albumindex) AS t", false, null, 'NumAlbums', 0);
+	$ac = get_album_count(ADDED_ALL_TIME);
 	update_stat('AlbumCount',$ac);
 
-	$ac = generic_sql_query("SELECT COUNT(*) AS NumTracks FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND isSearchResult < 2", false, null, 'NumTracks', 0);
+	$ac = get_track_count(ADDED_ALL_TIME);
 	update_stat('TrackCount',$ac);
 
-	$ac = generic_sql_query("SELECT SUM(Duration) AS TotalTime FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND isSearchResult < 2", false, null, 'TotalTime', 0);
-	if ($ac == '') {
-		$ac = 0;
-	}
+	$ac = get_duration_count(ADDED_ALL_TIME);
 	update_stat('TotalTime',$ac);
 	$at = microtime(true) - $t;
 	debuglog("Updating Track Stats took ".$at." seconds","BACKEND",8);
@@ -1265,6 +1283,34 @@ function update_stat($item, $value) {
 
 function get_stat($item) {
 	return simple_query('Value', 'Statstable', 'Item', $item, 0);
+}
+
+function get_artist_count($range) {
+	$ac = generic_sql_query(
+		"SELECT COUNT(*) AS NumArtists FROM (SELECT AlbumArtistindex FROM Albumtable
+		INNER JOIN Tracktable USING (Albumindex) WHERE Uri IS NOT NULL
+		AND Hidden = 0 AND isSearchResult < 2 ".track_date_check($range, 'a')." GROUP BY AlbumArtistindex) AS t", false, null, 'NumArtists', 0);
+	return $ac;
+}
+
+function get_album_count($range) {
+	$ac = generic_sql_query(
+		"SELECT COUNT(*) AS NumAlbums FROM (SELECT Albumindex FROM Tracktable WHERE Uri IS NOT NULL
+		AND Hidden = 0 AND isSearchResult < 2 ".track_date_check($range, 'a')." GROUP BY Albumindex) AS t", false, null, 'NumAlbums', 0);
+	return $ac;
+}
+
+function get_track_count($range) {
+	$ac = generic_sql_query("SELECT COUNT(*) AS NumTracks FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 ".track_date_check($range, 'a')." AND isSearchResult < 2", false, null, 'NumTracks', 0);
+	return $ac;
+}
+
+function get_duration_count($range) {
+	$ac = generic_sql_query("SELECT SUM(Duration) AS TotalTime FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 ".track_date_check($range, 'a')." AND isSearchResult < 2", false, null, 'TotalTime', 0);
+	if ($ac == '') {
+		$ac = 0;
+	}
+	return $ac;
 }
 
 function dumpAlbums($which) {
@@ -1286,7 +1332,7 @@ function dumpAlbums($which) {
     	case 'root':
 			print '<div class="sizer"></div>';
 	    	if ($why == 'a') {
-	    		collectionStats();
+	    		print collectionStats();
 	    	} else {
 	    		searchStats();
 	    	}
@@ -1325,9 +1371,22 @@ function dumpAlbums($which) {
 }
 
 function collectionStats() {
-    print '<div id="fothergill" class="brick brick_wide">';
-    print alistheader(get_stat('ArtistCount'), get_stat('AlbumCount'), get_stat('TrackCount'), format_time(get_stat('TotalTime')));
-    print '</div>';
+	global $prefs;
+    $html = '<div id="fothergill" class="brick brick_wide">';
+	if ($prefs['collectionrange'] == ADDED_ALL_TIME) {
+    	$html .= alistheader(get_stat('ArtistCount'),
+							get_stat('AlbumCount'),
+							get_stat('TrackCount'),
+							format_time(get_stat('TotalTime'))
+						);
+	} else {
+		$html .= alistheader(get_artist_count($prefs['collectionrange']),
+							get_album_count($prefs['collectionrange']),
+							get_track_count($prefs['collectionrange']),
+							format_time(get_duration_count($prefs['collectionrange'])));
+	}
+    $html .= '</div>';
+	return $html;
 }
 
 function searchStats() {
@@ -1651,7 +1710,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
     // When doing a search, we MUST NOT change lastmodified of any track, because this will cause
     // user-added tracks to get a lastmodified date, and lastmodified == NULL
     // is how we detect user-added tracks and prevent them being deleted on collection updates
-	
+
 	// Note the use of === to detect LastModified, because == doesn't tell the difference between 0 and null
 	//  - so if we have a manually added track and the add a collection track over it from a backend that doesn't
 	//  give us LastModified (eg Spotify-Web), we don't update lastModified and the track remains manually added.
