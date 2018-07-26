@@ -80,7 +80,7 @@ function create_new_track(&$data) {
 			return null;
 		}
 	}
-	
+
 	$data['sourceindex'] = null;
 	if ($data['uri'] === null && array_key_exists('streamuri', $data) && $data['streamuri'] !== null) {
 		$data['sourceindex'] = check_radio_source($data);
@@ -277,19 +277,19 @@ function list_tags() {
 }
 
 function get_rating_headers($sortby) {
-		
+
 	$ratings = array();
-		
+
 	switch ($sortby) {
-		
+
 		case 'Rating':
 			$ratings = generic_sql_query("SELECT Rating AS Name, COUNT(TTindex) AS NumTracks FROM Ratingtable GROUP BY Rating ORDER BY Rating");
 			break;
-			
+
 		case 'Tag':
 			$ratings = generic_sql_query('SELECT Name, COUNT(TTindex) AS NumTracks FROM Tagtable JOIN TagListtable USING (Tagindex) GROUP BY Name ORDER BY Name');
 			break;
-			
+
 		case 'AlbumArtist':
 			// It's actually Track Artist, but sod changing it now.
 			$qstring = "SELECT DISTINCT Artistname AS Name, COUNT(DISTINCT TTindex) AS NumTracks
@@ -304,7 +304,7 @@ function get_rating_headers($sortby) {
 			$qstring .= sort_artists_by_name();
 			$ratings = generic_sql_query($qstring);
 			break;
-			
+
 		case 'Tags':
 			$ratings = generic_sql_query("SELECT DISTINCT ".SQL_TAG_CONCAT." AS Name, 0 AS NumTracks FROM
 											(SELECT Tagindex, TTindex FROM TagListtable ORDER BY Tagindex) AS tagorder
@@ -312,11 +312,11 @@ function get_rating_headers($sortby) {
 											GROUP BY TTindex
 											ORDER By Name");
 			break;
-			
+
 		default:
 			$ratings = array('INTERNAL ERROR!');
 			break;
-		
+
 	}
 
 	return $ratings;
@@ -340,7 +340,7 @@ function sortletter_mangler() {
 }
 
 function get_rating_info($sortby, $value) {
-	
+
 	global $prefs;
 
 	// Tuned SQL queries for each type, for speed, otherwise it's unuseable
@@ -360,7 +360,7 @@ function get_rating_info($sortby, $value) {
 				al.Albumname,
 				al.Image, ";
 			$qstring .= sortletter_mangler();
-		
+
 			$qstring .= " FROM
 					Ratingtable AS r
 					JOIN Tracktable AS tr ON tr.TTindex = r.TTindex
@@ -371,7 +371,7 @@ function get_rating_info($sortby, $value) {
 					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
 				WHERE r.Rating = ".$value." AND tr.isSearchResult < 2 AND tr.Uri IS NOT NULL";
 				break;
-				
+
 			case 'Tag':
 				$qstring = "SELECT
 					IFNULL(r.Rating, 0) AS Rating,
@@ -386,7 +386,7 @@ function get_rating_info($sortby, $value) {
 					al.Albumname,
 					al.Image, ";
 				$qstring .= sortletter_mangler();
-			
+
 				$qstring .= " FROM
 					Tracktable AS tr
 					LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
@@ -397,7 +397,7 @@ function get_rating_info($sortby, $value) {
 					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
 				WHERE tr.isSearchResult < 2  AND tr.Uri IS NOT NULL AND tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name = '".$value."')";
 				break;
-										
+
 			case 'AlbumArtist':
 				// It's actually Track Artist, but sod changing it now.
 				$qstring = "SELECT
@@ -412,7 +412,7 @@ function get_rating_info($sortby, $value) {
 			 		aa.Artistname AS AlbumArtist,
 			 		al.Albumname,
 			 		al.Image ";
-			
+
 			 	$qstring .= " FROM
 			 		Tracktable AS tr
 			 		LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
@@ -423,7 +423,7 @@ function get_rating_info($sortby, $value) {
 			 		JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
 			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL)  AND tr.Uri IS NOT NULL AND tr.isSearchResult < 2 AND a.Artistname = '".$value."'";
 				break;
-				
+
 			case 'Tags':
 				$qstring = "SELECT
 					IFNULL(r.Rating, 0) AS Rating,
@@ -439,7 +439,7 @@ function get_rating_info($sortby, $value) {
 					COUNT(tr.TTindex) AS count,
 					al.Image, ";
 				$qstring .= sortletter_mangler();
-			
+
 				$qstring .= " FROM
 					TagListtable AS tl
 					JOIN Tracktable AS tr USING (TTindex)
@@ -457,11 +457,11 @@ function get_rating_info($sortby, $value) {
 					$qstring .= " AND tr.isSearchResult < 2 AND tr.Uri IS NOT NULL";
 					break;
 	}
-	
+
 	$qstring .= " GROUP BY tr.TTindex ORDER BY ";
 	$qstring .= sort_artists_by_name();
 	$qstring .= ", al.Albumname, tr.TrackNo";
-	
+
 	$t =  microtime(true);
 	$ratings =  generic_sql_query($qstring);
 	$took = microtime(true) - $t;
@@ -480,7 +480,7 @@ function get_rating_info($sortby, $value) {
 	}
 
 	return $ratings;
-	
+
 }
 
 function clear_wishlist() {
@@ -560,7 +560,7 @@ function get_extra_track_info(&$filedata) {
 function get_imagesearch_info($key) {
 
 	// Used by getalbumcover.php to get album and artist names etc based on an Image Key
-	
+
 	$retval = array('artist' => null, 'album' => null, 'mbid' => null, 'albumpath' => null, 'albumuri' => null);
 	$result = generic_sql_query(
 		"SELECT DISTINCT
@@ -726,7 +726,7 @@ function albumartist_sort_query($flag) {
 	// USING IN is faster than the double JOIN
 	global $prefs;
 	$sflag = ($flag == 'b') ? "AND isSearchResult > 0" : "AND isSearchResult < 2";
-	
+
 	$qstring = "SELECT Artistname, Artistindex
 					FROM Artisttable AS a
 					WHERE
@@ -856,12 +856,12 @@ function do_albums_from_database($why, $what, $who, $fragment = false, $use_arti
 
 	$qstring = album_sort_query($why, $what, $who);
 	debuglog("Query String Is ".$qstring,"COLLECTION",9);
-	
+
 	$count = 0;
 	$currart = "";
 	$currban = "";
 	$result = generic_sql_query($qstring);
-	if ($do_controlheader) {
+	if ($do_controlheader && count($result) > 0) {
 		print albumControlHeader($fragment, $why, $what, $who, $result[0]['Artistname']);
 	}
 	foreach ($result as $obj) {
@@ -1710,7 +1710,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
     // When doing a search, we MUST NOT change lastmodified of any track, because this will cause
     // user-added tracks to get a lastmodified date, and lastmodified == NULL
     // is how we detect user-added tracks and prevent them being deleted on collection updates
-	
+
 	// Note the use of === to detect LastModified, because == doesn't tell the difference between 0 and null
 	//  - so if we have a manually added track and the add a collection track over it from a backend that doesn't
 	//  give us LastModified (eg Spotify-Web), we don't update lastModified and the track remains manually added.

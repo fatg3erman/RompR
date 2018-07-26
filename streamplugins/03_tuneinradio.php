@@ -1,7 +1,7 @@
 <?php
 
 class tuneinplugin {
-    
+
     public function __construct() {
         $this->url = 'http://opml.radiotime.com/';
         $this->title = '';
@@ -25,7 +25,7 @@ class tuneinplugin {
         print '<div id="tuneinlist" class="dropmenu notfilled"><div class="configtitle textcentre"><b>'.get_int_text('label_loading').'</b></div></div>';
         print '</div>';
     }
-    
+
     public function parseParams() {
         if (array_key_exists('url', $_REQUEST)) {
             $this->url = $_REQUEST['url'];
@@ -36,7 +36,7 @@ class tuneinplugin {
             if (array_key_exists('search', $_REQUEST)) {
                 print 'value="'.$_REQUEST['search'].'" ';
             }
-            print '/></div><button class="fixed tuneinsearchbutton" name="sonicthehedgehog">'.get_int_text('button_search').'</button></div></div>';
+            print '/></div><button class="fixed tuneinsearchbutton searchbutton iconbutton" name="sonicthehedgehog"></button></div></div>';
         }
         if (array_key_exists('title', $_REQUEST)) {
             $this->title = $_REQUEST['title'];
@@ -47,7 +47,7 @@ class tuneinplugin {
             $this->url .= 'Search.ashx?query='.urlencode($_REQUEST['search']);
         }
     }
-    
+
     public function getUrl() {
         debuglog("Getting URL ".$this->url,"TUNEIN");
         $d = new url_downloader(array('url' => $this->url));
@@ -65,37 +65,37 @@ class tuneinplugin {
             $att = $o->attributes();
             debuglog("  Text is ".$att['text'].", type is ".$att['type'], "TUNEIN",8);
             switch ($att['type']) {
-                
+
                 case '':
                     print '<div class="configtitle textcentre brick_wide">';
                     print '<div class="expand">'.$att['text'].'</div>';
                     print '</div>';
                     $this->parse_tree($o, $title);
                     break;
-                
+
                 case 'link':
                     printRadioDirectory($att);
                     break;
-                    
+
                 case 'audio':
                     switch ($att['item']) {
                         case 'station':
                             $sname = $att['text'];
                             $year = 'Radio Station';
                             break;
-                            
+
                         case 'topic':
                             $sname = $title;
                             $year = 'Podcast Episode';
                             break;
-                          
+
                         default:
                             $sname = $title;
                             $year = ucfirst($att['item']);
                             break;
-                            
+
                     }
-                    
+
                     print albumHeader(array(
                         'id' => 'nodrop',
                         'Image' => 'getRemoteImage.php?url='.$att['image'],
@@ -112,12 +112,12 @@ class tuneinplugin {
                         'class' => 'radiochannel'
                     ));
                     break;
-                    
+
             }
         }
-        
+
     }
-    
+
 }
 
 if (array_key_exists('populate', $_REQUEST)) {
@@ -128,11 +128,11 @@ if (array_key_exists('populate', $_REQUEST)) {
     include ("includes/functions.php");
     include ("international.php");
     include ("skins/".$skin."/ui_elements.php");
-    
+
     $tunein = new tuneinplugin();
     $tunein->parseParams();
     $tunein->getUrl();
-            
+
 } else {
 
     $tunein = new tuneinplugin();

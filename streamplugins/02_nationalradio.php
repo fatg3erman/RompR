@@ -1,7 +1,7 @@
 <?php
 
 class dirbleplugin {
-        
+
     public function __construct() {
         global $prefs;
         $this->base_url = 'http://api.dirble.com/v2/';
@@ -10,7 +10,7 @@ class dirbleplugin {
         $this->page = 1;
         $this->searchterm = '';
     }
-    
+
     public function doHeader() {
         print '<div id="nationalradio">';
         print albumHeader(array(
@@ -29,7 +29,7 @@ class dirbleplugin {
         print '<div id="bbclist" class="dropmenu notfilled"><div class="configtitle textcentre"><b>'.get_int_text('label_loading').'</b></div></div>';
         print '</div>';
     }
-    
+
     public function parseParams() {
         if (array_key_exists('country', $_REQUEST)) {
             $this->to_get = $this->base_url.$_REQUEST['country'].'/stations';
@@ -47,7 +47,7 @@ class dirbleplugin {
         }
         debuglog("Country Is ".$this->country,"DIRBLE");
     }
-    
+
     public function doDropdownHeader() {
         $countries = array();
         $categories = array();
@@ -61,7 +61,7 @@ class dirbleplugin {
             $countries[$station['name']] = 'countries/'.$station['country_code'];
         }
         ksort($countries);
-        
+
         $json = $this->get_from_dirble($this->base_url.'categories/tree');
         foreach ($json['json'] as $station) {
             $categories[$station['title']] = 'category/'.$station['id'];
@@ -94,10 +94,10 @@ class dirbleplugin {
         if ($this->searchterm) {
             print 'value="'.$this->searchterm.'" ';
         }
-        print '/></div><button class="fixed dirblesearch" name="bumfeatures">'.get_int_text('button_search').'</button></div></div>';
-        
+        print '/></div><button class="fixed dirblesearch searchbutton iconbutton" name="bumfeatures"></button></div></div>';
+
     }
-    
+
     public function doStations() {
         $json = array('json' => array());
         if ($this->to_get) {
@@ -114,9 +114,9 @@ class dirbleplugin {
         }
         $this->do_page_buttons($json, true);
         print '</div>';
-        
+
     }
-    
+
     // -- Private Functions -- //
 
     private function doStation($station, $count) {
@@ -156,7 +156,7 @@ class dirbleplugin {
             print '<div id="radio_'.$count.'" class="dropmenu">';
 
             trackControlHeader('','','radio_'.$count, array(array('Image' => $image)));
-            
+
             print '<div class="containerbox rowspacer"></div>';
             print '<div class="containerbox expand ninesix indent padright"><b>Listen:</b></div>';
 
@@ -169,7 +169,7 @@ class dirbleplugin {
                 print '</div>';
                 print '</div>';
             }
-            
+
             print '<div class="containerbox rowspacer"></div>';
 
             if (array_key_exists('website', $station) && $station['website'] != '') {
@@ -206,7 +206,7 @@ class dirbleplugin {
             print '</div>';
         }
     }
-        
+
     private function get_from_dirble($url, $page = 1) {
         debuglog("Getting ".$url,"DIRBLE");
         $token = "9dc8c8f09575129e9289717a9b8377658906b460";
@@ -279,7 +279,7 @@ class dirbleplugin {
             $class = ($json['nextpage'] == 0) ? ' button-disabled' : ' clickable clickicon clickradioforward';
             print '<i class="fixed icon-right-circled medicon'.$class.'"></i>';
             print '</div>';
-            
+
             $page = $json['prevpage']+1;
             $firstpage = max(1, $page-5);
             $lastpage = min($firstpage+9, round(($json['total']/$json['perpage']), 0, PHP_ROUND_HALF_DOWN)+1);
@@ -292,7 +292,7 @@ class dirbleplugin {
                 print '" name="'.$p.'">'.$p.'</div>';
             }
             print '</div>';
-            
+
             print '<input type="hidden" name="url" value="'.$json['url'].'" />';
             print '<input type="hidden" name="next" value="'.$json['nextpage'].'" />';
             print '<input type="hidden" name="prev" value="'.$json['prevpage'].'" />';
@@ -316,7 +316,7 @@ class dirbleplugin {
         }
         return $ss;
     }
-    
+
     private function check_for_playlist($streams) {
         foreach ($streams as $s) {
             if (audioClass($s['content_type']) == 'icon-doc-text') {
@@ -326,7 +326,7 @@ class dirbleplugin {
         }
         return $streams[0]['stream'];
     }
-    
+
     private function get_categories($station) {
         $cat = array();
         foreach ($station['categories'] as $c) {
@@ -353,7 +353,7 @@ if (array_key_exists('populate', $_REQUEST)) {
     include("includes/functions.php");
     include("international.php");
     include("skins/".$skin."/ui_elements.php");
-    
+
     $dirble = new dirbleplugin();
     $dirble->parseParams();
     if ($_REQUEST['populate'] != 3) {

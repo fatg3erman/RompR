@@ -11,10 +11,10 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
         debuglog("Failed to get ".$url,"PODCASTS",2);
         exit;
     }
-        
+
     // For debugging
     file_put_contents('prefs/temp/feed.xml', $d->get_data());
-    
+
     if ($id) {
         if (!is_dir('prefs/podcasts/'.$id)) {
             mkdir('prefs/podcasts/'.$id, 0755);
@@ -22,7 +22,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
         file_put_contents('prefs/podcasts/'.$id.'/feed.xml', $d->get_data());
     }
     $feed = simplexml_load_string($d->get_data());
-    
+
     debuglog("Parsing Feed ".$url,"PODCASTS");
 
     // Begin RSS Parse
@@ -101,9 +101,9 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
     } else {
         $podcast['Artist'] = '';
     }
-    
+
     debuglog("  Artist is ".$podcast['Artist'],"PODCASTS");
-    
+
     // Category
     $cats = array();
     if ($m && $m->category) {
@@ -227,7 +227,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
             $podcast['tracks'][] = $track;
         }
     }
-    
+
     if ($lastpubdate !== null) {
         if ($podcast['LastPubDate'] == $lastpubdate) {
             debuglog("Podcast has not been updated since last refresh","PODCASTS");
@@ -256,9 +256,9 @@ function getNewPodcast($url, $subbed = 1, $gettracks = true) {
         exit(0);
     }
     debuglog("Adding New Podcast ".$podcast['Title'],"PODCASTS");
-    
+
     $lastupdate = calculate_best_update_time($podcast);
-    
+
     if (sql_prepare_query(true, null, null, null,
         "INSERT INTO Podcasttable
         (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, SortMode, DisplayMode, DaysLive, Description, Version, Subscribed, LastPubDate, Category)
@@ -306,10 +306,10 @@ function getNewPodcast($url, $subbed = 1, $gettracks = true) {
 }
 
 function calculate_best_update_time($podcast) {
-    
+
     // Note: this returns a value for LastUpdate, since that is what refresh is based on.
     // The purpose of this is try to get the refresh in sync with the podcast's publication date.
-    
+
     if ($podcast['LastPubDate'] === null) {
         debuglog($podcast['Title']." last pub date is null","PODCASTS");
         return time();
@@ -320,7 +320,7 @@ function calculate_best_update_time($podcast) {
         case REFRESHOPTION_DAILY:
             return time();
             break;
-            
+
     }
     debuglog("Working out best update time for ".$podcast['Title'],"PODCASTS");
     $dt = new DateTime(date('c', $podcast['LastPubDate']));
@@ -328,46 +328,46 @@ function calculate_best_update_time($podcast) {
     debuglog("  Podcast Refresh interval is ".$podcast['RefreshOption'],"PODCASTS");
     while ($dt->getTimestamp() < time()) {
         switch ($podcast['RefreshOption']) {
-                
+
             case REFRESHOPTION_WEEKLY:
                 $dt->modify('+1 week');
                 break;
-                
+
             case REFRESHOPTION_MONTHLY:
                 $dt->modify('+1 month');
                 break;
-                
+
             default:
                 debuglog("  Unknown refresh option for podcast ID ".$podcast['podid'], "PODCASTS");
                 return time();
                 break;
         }
-            
+
     }
     debuglog("  Worked out update time based on pubDate and RefreshOption: ".$dt->format('r').' ('.$dt->getTImestamp().')',"PODCASTS");
     debuglog("  Give it an hour's grace","PODCASTS");
     $dt->modify('+1 hour');
-    
+
     switch ($podcast['RefreshOption']) {
-            
+
         case REFRESHOPTION_WEEKLY:
             $dt->modify('-1 week');
             break;
-            
+
         case REFRESHOPTION_MONTHLY:
             $dt->modify('-1 month');
             break;
-            
+
     }
-    
+
     debuglog("  Therefore setting lastupdate to: ".$dt->format('r').' ('.$dt->getTImestamp().')',"PODCASTS");
 
     return $dt->getTimestamp();
-    
+
 }
 
 function download_image($url, $podid, $title) {
-    
+
     $albumimage = new albumImage(array(
         'artist' => 'PODCAST',
         'albumpath' => $podid,
@@ -540,12 +540,12 @@ function upgrade_podcast($podid, $podetails, $podcast) {
                 generic_sql_query("UPDATE Podcasttable SET Version = 2 WHERE PODindex = ".$podid, true);
                 $v++;
                 break;
-                
+
             case 2:
                 // This will have been done by the function below
                 $v++;
                 break;
-                
+
             case 3:
                 debuglog("Updating Podcast ".$podetails->Title." to version 4","PODCASTS");
                 sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Version = ?, Category = ? WHERE PODindex = ?", 4, $podcast['Category'], $podid);
@@ -576,7 +576,7 @@ function upgrade_podcasts_to_version() {
                     generic_sql_query("UPDATE Podcasttable SET LastUpdate = ".$podcast['LastUpdate'].", LastPubDate = ".$podcast['LastPubDate'].", Version = 3 WHERE PODindex = ".$podcast['PODindex']);
                     $v++;
                     break;
-                    
+
                 case 3;
                     // Upgrade to version 4 can only happen after feed has been re-parsed
                     $v++;
@@ -739,7 +739,7 @@ function doPodcast($y, $do_searchbox) {
         if (array_key_exists('searchterm', $_REQUEST)) {
             print 'value="'.urldecode($_REQUEST['searchterm']).'" ';
         }
-        print '/></div><button class="fixed" onclick="podcasts.searchinpodcast('.$y->PODindex.')">'.get_int_text('button_search').'</button></div>';
+        print '/></div><button class="fixed searchbutton" onclick="podcasts.searchinpodcast('.$y->PODindex.')"></button></div>';
     }
     print '<div class="clearfix bumpad"></div>';
     if (array_key_exists('searchterm', $_REQUEST)) {
@@ -796,12 +796,12 @@ function format_episode(&$y, &$item, $pm) {
     print '<div class="podtitle expand">'.htmlspecialchars(html_entity_decode($item->Title)).'</div>';
     print '<i class="fixed icon-no-response-playbutton podicon"></i>';
     print '</div>';
-    
+
     if ($item->Progress > 0) {
         print '<input type="hidden" class="resumepos" value="'.$item->Progress.'" />';
         print '<input type="hidden" class="length" value="'.$item->Duration.'" />';
     }
-    
+
     $pee = date(DATE_RFC2822, $item->PubDate);
     $pee = preg_replace('/ \+\d\d\d\d$/','',$pee);
     print '<div class="whatdoicallthis padright containerbox dropdown-container podtitle notbold">';
@@ -853,14 +853,14 @@ function format_episode(&$y, &$item, $pm) {
 }
 
 function doPodcastHeader($y) {
-    
+
     $i = getDomain($y->Image);
     if ($i == "http" || $i == "https") {
         $img = "getRemoteImage.php?url=".$y->Image;
     } else {
         $img = $y->Image;
     }
-        
+
     $aname = htmlspecialchars(html_entity_decode($y->Artist));
     if ($y->Category) {
         $aname .= '<br /><span class="playlistrow2">'.htmlspecialchars($y->Category).'</span>';
@@ -878,7 +878,7 @@ function doPodcastHeader($y) {
         'ImgKey' => 'none',
         'class' => 'podcast'
     ));
-    
+
     $extra = '<div class="fixed">';
     if ($y ->Subscribed == 1) {
         $uc = get_podcast_counts($y->PODindex);
@@ -897,17 +897,17 @@ function doPodcastHeader($y) {
         $extra .= '<i class="clickicon clickable clickpodsubscribe icon-rss podicon fridge" title="Subscribe to this podcast"></i><input type="hidden" value="'.$y->PODindex.'" />';
     }
     $extra .= '</div>';
-    
+
     // phpQuery is something like 160K of extra code. Just to do this.
     // The fact that I'm willing to include it indicates just how crap php's DOMDocument is
-    
+
     // phpQuery barfs at our '&rompr_resize_size' because it's expecting an HTML entity after &
     $html = preg_replace('/&rompr_/','&amp;rompr_', $html);
     $out = addPodcastCounts($html, $extra);
     $h = $out->html();
     $html = preg_replace('/&amp;rompr_/','&rompr_', $h);
     print $html;
-    
+
     print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu padright"><div class="configtitle textcentre"><b>'.get_int_text('label_loading').'</b></div></div>';
 }
 
@@ -1188,11 +1188,11 @@ function search_itunes($term) {
                     $img = 'newimages/podcast-logo.svg';
                 }
                 debuglog("Search found podcast : ".$podcast['collectionName'], "PODCASTS");
-                
+
                 // IMPORTANT NOTE. We do NOT set LastPubDate here, because that would prevent the podcasts from being refreshed
                 // if we subscribe to it. (If it hasn't been browsed then we need to refresh it to get all the episodes)
                 // LastPubDate will get set by refreshPodcast if we subscribe
-                
+
                 sql_prepare_query(true, null, null, null,
                     "INSERT INTO Podcasttable
                     (FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, SortMode, DisplayMode, DaysLive, Description, Version, Subscribed, Category)

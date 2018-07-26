@@ -85,7 +85,7 @@ function doDbCollection($terms, $domains, $resultstype) {
 		$qstring .= "al.Year = ? ";
 	}
 
-	if ($domains !== null) {
+	if (is_array($domains)) {
 		$qstring .= "AND (";
 		$domainterms = array();
 		foreach ($domains as $dom) {

@@ -175,3 +175,26 @@ img.plimage.notfound
     background-repeat: no-repeat;
     background-size: contain;
 }
+
+button.iconbutton {
+    height:2em;
+    width:2em;
+    background-size: contain;
+    background-position:center;
+    border: none !important;
+    opacity: 0.8;
+    background-color:transparent;
+}
+
+button.iconbutton:hover {
+    opacity: 1;
+}
+
+button.searchbutton {
+    background-image: url('system-search.svg');
+}
+
+button.rssbutton {
+    background-image: url('rss.svg');
+}
+

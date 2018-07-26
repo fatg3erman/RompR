@@ -101,9 +101,9 @@ function doPodcastBase() {
     print '<div id="cocksausage">';
     print '<div class="containerbox indent"><div class="expand">'.get_int_text("podcast_entrybox").'</div></div>';
     print '<div class="containerbox indent"><div class="expand"><input class="enter" id="podcastsinput" type="text" /></div>';
-    print '<button class="fixed" onclick="podcasts.doPodcast(\'podcastsinput\')">'.get_int_text("label_retrieve").'</button></div>';
+    print '<button class="fixed iconbutton rssbutton" onclick="podcasts.doPodcast(\'podcastsinput\')"></button></div>';
     print '</div>';
-    
+
     print '<div class="spacer"></div>';
 
     print '<div class="containerbox dropdown-container indent noselection">';
@@ -131,7 +131,7 @@ function doPodcastBase() {
         get_int_text('label_new_episodes') => 'new',
         get_int_text('label_unlistened_episodes') => 'unlistened'
     );
-    
+
     print '<div class="containerbox indent"><b>'.get_int_text('label_sortby').'</b></div>';
 
     for ($count = 0; $count < $prefs['podcast_sort_levels']; $count++) {
@@ -156,12 +156,12 @@ function doPodcastBase() {
 
     print '<div class="containerbox indent"><div class="expand">'.get_int_text("label_searchfor").' (iTunes)</div></div>';
     print '<div class="containerbox indent"><div class="expand"><input class="enter" id="podcastsearch" type="text" /></div>';
-    print '<button class="fixed" onclick="podcasts.search()">'.get_int_text("button_search").'</button></div>';
+    print '<button class="fixed searchbutton iconbutton" onclick="podcasts.search()"></button></div>';
 
     print '<div class="fullwidth noselection clearfix"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon padright" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
     print '<div id="podcast_search" class="fullwidth noselection padright"></div>';
     print '</div>';
-    
+
     print '<div class="menuitem configtitle textcentre brick_wide sensiblebox" style="margin-left:8px;margin-top:1em;margin-bottom:1em"><b>Subscribed Podcasts</b></div>';
 }
 

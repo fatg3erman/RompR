@@ -1,13 +1,13 @@
 <?php
 
 class commradioplugin {
-    
+
     public function __construct() {
         $this->pagination = 50;
         $this->searchterms = array('name', 'country', 'state', 'language', 'tag');
         $this->page = 0;
     }
-    
+
     public function parseParams() {
         $this->page = $_REQUEST['page'];
         $this->country = array_key_exists('country', $_REQUEST) ? $_REQUEST['country'] : '';
@@ -36,12 +36,12 @@ class commradioplugin {
         print '<div class="configtitle textcentre"><b>'.get_int_text('label_loading').'</b></div></div>';
         print '</div>';
     }
-    
+
     public function doDropdownHeader() {
         directoryControlHeader('communityradiolist', get_int_text('label_communityradio'));
 
         print '<div class="configtitle textcentre brick_wide">List By:</div>';
-        
+
         $d = new url_downloader(array('url' => 'http://www.radio-browser.info/webservice/json/countries'));
         if ($d->get_data_to_string()) {
             $countries = json_decode($d->get_data(), true);
@@ -59,9 +59,9 @@ class commradioplugin {
             $tags = json_decode($d->get_data(), true);
             $this->makeSelector($tags, 'tag', $this->tag);
         }
-        
+
         print '<div class="configtitle textcentre brick_wide">Search All Stations:</div>';
-        print '<div class="padright">';
+        print '<div class="padright fullwidth">';
         foreach ($this->searchterms as $term) {
             print '<div class="containerbox dropdown-container brick_wide fullwidth" name="'.$term.'">';
             print '<div class="fixed comm-search-label"><span class="cslt"><b>'.ucfirst($term).'</b></span></div>';
@@ -72,10 +72,10 @@ class commradioplugin {
         }
         print '<div class="containerbox">';
         print '<div class="expand"></div>';
-        print '<button class="fixed" name="commradiosearch">'.get_int_text('button_search').'</button>';
+        print '<button class="fixed searchbutton iconbutton" name="commradiosearch"></button>';
         print '</div>';
         print '</div>';
-        
+
         print '<div class="configtitle textcentre brick_wide">Order By:</div>';
         foreach (array('name', 'country', 'language', 'state', 'tags', 'votes', 'bitrate') as $o) {
             print '<div class="styledinputs">';
@@ -89,9 +89,9 @@ class commradioplugin {
         }
 
         print '<div id="communitystations" class="fullwidth padright holderthing">';
-        
+
     }
-    
+
     public function doRequest() {
         $url = '';
         switch ($this->listby) {
@@ -109,7 +109,7 @@ class commradioplugin {
                 $url = 'http://www.radio-browser.info/webservice/json/stations/bytagexact/'.rawurlencode($this->tag).'?';
                 print '<div class="configtitle textcentre brick_wide"><b>Tag - '.ucwords($this->tag).'</b></div>';
                 break;
-                
+
             case 'search':
                 $url = 'http://www.radio-browser.info/webservice/json/stations/search?';
                 $ourterms = array();
@@ -122,9 +122,9 @@ class commradioplugin {
                 $url .= implode('&', $ourterms).'&';
                 break;
         }
-        
+
         $url .= 'order='.$this->order;
-        
+
         switch ($this->order) {
             case 'bitrate':
             case 'votes':
@@ -147,11 +147,11 @@ class commradioplugin {
         }
 
     }
-    
+
     public function closeDropdown() {
         print '</div>';
     }
-    
+
     // -- Private Functions -- //
 
     private function doStation($station, $index) {
@@ -188,7 +188,7 @@ class commradioplugin {
             print '</a>';
         }
         print '</div>';
-        
+
     }
 
     private function makeSelector($json, $which, $setting) {
@@ -208,7 +208,7 @@ class commradioplugin {
         print '</div>';
         print '</div>';
     }
-        
+
     private function comm_radio_make_list_button($which) {
         print '<div class="fixed styledinputs commradiolistby">';
         print '<span class="cclb">';
@@ -246,7 +246,7 @@ class commradioplugin {
         $class = ((($page+1) * $per_page) >= $count || $count < $per_page) ? ' button-disabled' : ' clickable clickicon clickcommradioforward';
         print '<i class="fixed icon-right-circled medicon'.$class.'"></i>';
         print '</div>';
-        
+
         $firstpage = max(0, $page-5);
         $lastpage = min($firstpage+10, round(($count/$per_page), 0, PHP_ROUND_HALF_DOWN)+1);
         print '<div class="textcentre brick_wide containerbox wrap menuitem">';
@@ -258,7 +258,7 @@ class commradioplugin {
             print '" name="'.$p.'">'.($p+1).'</div>';
         }
         print '</div>';
-        
+
         print '</div>';
     }
 
@@ -276,7 +276,7 @@ class commradioplugin {
             'favicon' => null,
             'homepage' => null
         );
-        
+
         $result = array_merge($blank_station, $station);
         if ($result['state'] && $result['country']) {
             $result['state'] .= ', ';
@@ -293,11 +293,11 @@ class commradioplugin {
         }
         return $result;
     }
-    
+
 }
 
 if (array_key_exists('populate', $_REQUEST)) {
-    
+
     chdir('..');
 
     include ("includes/vars.php");
@@ -308,14 +308,14 @@ if (array_key_exists('populate', $_REQUEST)) {
     foreach ($_REQUEST as $i => $r) {
         debuglog($i ." : ".$r,"COMMRADIO");
     }
-    
+
     $commradio = new commradioplugin();
     $commradio->parseParams();
-    
+
     if ($_REQUEST['populate'] == 1) {
         $commradio->doDropdownHeader();
     }
-    
+
     $commradio->doRequest();
 
     if ($_REQUEST['populate'] == 1) {
@@ -326,7 +326,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 
     $commradio = new commradioplugin();
     $commradio->doHeader();
-    
+
 }
 
 ?>

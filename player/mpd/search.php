@@ -26,8 +26,7 @@ print '</div>';
 <div class="containerbox">
     <div class="expand"></div>
 <?php
-print '<button style="margin-right:4px" class="fixed" onclick="player.controller.search(\'find\')">'.get_int_text("button_findexact").'</button>';
-print '<button style="margin-right:4px" class="fixed" onclick="player.controller.search(\'search\')">'.get_int_text("button_search").'</button>';
+print '<button class="searchbutton iconbutton" style="margin-right:4px" class="fixed" onclick="player.controller.search(\'search\')"></button>';
 ?>
 </div>
 </div>

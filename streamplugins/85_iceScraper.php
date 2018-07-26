@@ -30,13 +30,12 @@ if (array_key_exists('populate', $_REQUEST)) {
 	debuglog("Page Title Is ".$page_title,"ICESCRAPER");
 	$count = 0;
 	directoryControlHeader('icecastlist', get_int_text('label_icecast'));
-	print '<div class="containerbox brick_wide"><div class="expand"><b>'.get_int_text("label_searchfor").'</b></div></div>';
 	print '<div class="containerbox brick_wide"><div class="expand"><input class="enter" name="searchfor" type="text"';
 	if (array_key_exists("searchfor", $_REQUEST)) {
 		print ' value="'.$_REQUEST['searchfor'].'"';
 	}
 	print ' /></div>';
-	print '<button class="fixed" name="cornwallis">'.get_int_text("button_search").'</button></div>';
+	print '<button class="fixed searchbutton iconbutton" name="cornwallis"></button></div>';
 
 	print '<div class="configtitle textcentre brick_wide"><b>'.$page_title.'</b></div>';
 	foreach ($list as $server) {
@@ -68,7 +67,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 				}
 			}
 		}
-		
+
 		if ($listenlink != '') {
 			print albumHeader(array(
                 'id' => 'icecast_'.$count,
@@ -107,7 +106,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 		}
 		$count++;
 	}
-	
+
 	$pager = $doc->find('ul.pager')->children('li');
 	print '<div class="containerbox wrap brick_wide configtitle textcentre">';
 	foreach ($pager as $page) {
@@ -115,7 +114,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 		print '<div class="clickable clickicon clickicepager expand" name="/search'.$link.'">'.pq($page)->children('a')->text().'</div>';
 	}
 	print '</div>';
-	
+
 } else {
 	print '<div id="icecastplugin">';
 	print albumHeader(array(

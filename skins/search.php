@@ -43,7 +43,7 @@ print '<div class="fixed searchlabel nohide"><span class="slt"><b>'.get_int_text
 </div>';
 
 
-print '<div class="containerbox menuitem noselection">';
+print '<div class="containerbox dropdown-container">';
 print '<i class="icon-toggle-closed mh menu fixed" name="advsearchoptions"></i>';
 print '<div class="expand">Advanced Options...</div>';
 print '</div>';
@@ -59,4 +59,10 @@ print '<div id="advsearchoptions" class="toggledown invisible marged">';
     <label for="resultsastree">'.ucfirst(get_int_text('label_resultstree')).'</label>
     </div>
     </div>';
+
+    print '<div class="containerbox">
+        <div class="expand"></div>
+        <button style="margin-right:4px" class="fixed" onclick="player.controller.search(\'find\')">'.get_int_text("button_findexact").'</button>
+        </div>';
+
 ?>
