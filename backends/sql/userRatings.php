@@ -38,7 +38,7 @@ $params = json_decode(file_get_contents('php://input'), true);
 foreach($params as $p) {
 
 	romprmetadata::sanitise_data($p);
-	
+
 	debuglog("Doing action ".strtoupper($p['action']), "USERRATING", 7);
 	foreach ($p as $i => $v) {
 		if ($i != 'action' && $v) {
@@ -101,12 +101,12 @@ foreach($params as $p) {
 		case 'getrecommendationseeds';
 			$returninfo = get_recommendation_seeds($p['days'], $p['limit'], $p['top']);
 			break;
-			
+
 		case 'addtolistenlater':
 			addToListenLater($p['json']);
 			$returninfo = $dummydata;
 			break;
-			
+
 		case 'getlistenlater':
 			$returninfo = getListenLater();
 			break;
@@ -656,7 +656,7 @@ function get_fave_artists() {
 
 function addToListenLater($album) {
 	$newid = spotifyAlbumId($album);
-	$result = generic_sql_query("SELECT * FROM AlbumsToListenToTable");
+	$result = generic_sql_query("SELECT * FROM AlbumsToListenTotable");
 	foreach ($result as $r) {
 		$d = json_decode($r['JsonData'], true);
 		$thisid = spotifyAlbumId($d);
@@ -670,7 +670,7 @@ function addToListenLater($album) {
 }
 
 function getListenLater() {
-	$result = generic_sql_query("SELECT * FROM AlbumsToListenToTable");
+	$result = generic_sql_query("SELECT * FROM AlbumsToListenTotable");
 	$retval =  array();
 	foreach ($result as $r) {
 		$d = json_decode($r['JsonData']);

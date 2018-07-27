@@ -75,7 +75,7 @@ function playerController() {
         clearProgressTimer();
         progresstimer = setTimeout(callback, timeout);
     }
-    
+
     function initialised(data) {
         for(var i =0; i < data.length; i++) {
             var h = data[i].replace(/\:\/\/$/,'');
@@ -152,7 +152,7 @@ function playerController() {
             }
         });
 	}
-    
+
     function post_command_list(callback) {
         if (callback) {
             callback();
@@ -375,12 +375,22 @@ function playerController() {
 
 	this.playId = function(id) {
         playlist.checkPodcastProgress();
-        self.do_command_list([["playid",id]]);
+        if (player.status.state != 'stop' && playlist.getCurrent('type') == 'stream' && prefs.player_backend == 'mopidy') {
+            // Workaround mopidy bug where streams need to be stopped before you do anything.
+            self.do_command_list([['stop'], ["playid",id]]);
+        } else {
+            self.do_command_list([["playid",id]]);
+        }
 	}
 
 	this.playByPosition = function(pos) {
         playlist.checkPodcastProgress();
-        self.do_command_list([["play",pos.toString()]]);
+        if (player.status.state != 'stop' && playlist.getCurrent('type') == 'stream' && prefs.player_backend == 'mopidy') {
+            // Workaround mopidy bug where streams need to be stopped before you do anything.
+            self.do_command_list([['stop'], ["play",pos.toString()]]);
+        } else {
+            self.do_command_list([["play",pos.toString()]]);
+        }
 	}
 
 	this.volume = function(volume, callback) {
@@ -479,6 +489,7 @@ function playerController() {
 		// Note : playpos will only be set if at_pos isn't, because at_pos is only set when dragging to the playlist
         if (prefs.cdplayermode && at_pos === null) {
             cmdlist.unshift(["clear"]);
+            cmdlist.unshift(["stop"]);
             if (abitofahack) {
                 // Don't add the play command if we're doing a resume,
                 // because postcommand.php will add it and this will override it

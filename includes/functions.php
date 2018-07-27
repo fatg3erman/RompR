@@ -23,14 +23,8 @@ function do_mpd_command_list($cmds) {
             // Note. We don't use send_command because that closes and re-opens the connection
             // if it fails to fputs, and that loses our command list status. Also if this fputs
             // fails it means the connection has dropped anyway, so we're screwed whatever happens.
-            if ($c  == 'pause') {
-                do_mpd_command("command_list_end", true);
-                sleep(1);
-                send_command("command_list_begin");
-            } else {
-                fputs($connection, $c."\n");
-                $done++;
-            }
+            fputs($connection, $c."\n");
+            $done++;
             // Command lists have a maximum length, 50 seems to be the default
             if ($done == 50) {
                 do_mpd_command("command_list_end", true);
@@ -48,9 +42,9 @@ function do_mpd_command_list($cmds) {
 
 function wait_for_player_state($expected_state) {
     if ($expected_state !== null) {
-        $status = array('state' => 'arse');
+        $status = do_mpd_command ("status", true, false);
         $retries = 20;
-        while ($retries > 0 && $status['state'] != $expected_state) {
+        while ($retries > 0 && array_key_exists('state', $status) && $status['state'] != $expected_state) {
             usleep(500000);
             $retries--;
             $status = do_mpd_command ("status", true, false);
@@ -96,7 +90,7 @@ function format_text($d) {
 }
 
 class url_downloader {
-    
+
     private $default_options = array(
         'useragent' => ROMPR_IDSTRING,
         'timeout' => 120,
@@ -108,7 +102,7 @@ class url_downloader {
         'return_data' => false,
         'send_cache_headers' => false
     );
-    
+
     private $ch;
     private $headerarray = array();
     private $headerlen = 0;
@@ -116,7 +110,7 @@ class url_downloader {
     private $content_type;
     private $info;
     private $status;
-    
+
     public function __construct($options) {
         global $prefs;
         $this->options = array_merge($this->default_options, $options);
@@ -149,7 +143,7 @@ class url_downloader {
             curl_setopt($this->ch, CURLOPT_POSTFIELDS, $fields_string);
         }
     }
-    
+
     public function get_data_to_string() {
         debuglog("Downloading ".$this->options['url'],"URL_DOWNLOADER");
         if ($this->options['send_cache_headers']) {
@@ -173,7 +167,7 @@ class url_downloader {
         $this->content = curl_exec($this->ch);
         return $this->get_final_info();
     }
-    
+
     public function get_data_to_file($file = null, $binary = false) {
         if ($file === null && $this->options['cache'] === null) {
             debuglog("  No file or cache dir for request, returning data as string","URL_DOWNLOADER");
@@ -204,7 +198,7 @@ class url_downloader {
             return $this->get_final_info();
         }
     }
-    
+
     private function check_cache($file) {
         if (file_exists($file)) {
             if ($this->options['send_cache_headers']) {
@@ -218,7 +212,7 @@ class url_downloader {
             return false;
         }
     }
-    
+
     private function get_final_info() {
         $this->status = curl_getinfo($this->ch, CURLINFO_RESPONSE_CODE);
         $this->content_type = curl_getinfo($this->ch, CURLINFO_CONTENT_TYPE);
@@ -232,15 +226,15 @@ class url_downloader {
             return false;
         }
     }
-    
+
     public function get_data() {
         return substr($this->content, $this->headerlen);
     }
-    
+
     public function get_headers() {
         return $this->headerarray;
     }
-    
+
     public function get_header($h) {
         if (array_key_exists($h, $this->headerarray)) {
             return $this->headerarray[$h];
@@ -248,15 +242,15 @@ class url_downloader {
             return false;
         }
     }
-    
+
     public function get_status() {
         return $this->status;
     }
-    
+
     public function get_info() {
         return $this->info;
     }
-    
+
     public function get_content_type() {
         return $this->content_type;
     }
@@ -634,17 +628,17 @@ function domainCheck($default, $domain) {
         case 'youtube':
             return 'icon-'.$domain.'-circled';
             break;
-            
+
         case 'tunein':
             return 'icon-tunein';
             break;
-            
+
         default:
             return $default;
             break;
-        
+
     }
-    
+
 }
 
 function getDomain($d) {
