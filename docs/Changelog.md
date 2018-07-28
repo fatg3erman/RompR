@@ -17,6 +17,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * The Discoverator now populates much more quickly
 * Option to transfer current playlist to new player when switching players
 * New Global Refresh, Mark as Listened, etc controls for podcasts
+* Upgrade to jQuery 3, which might make some older browsers no longer work
 
 ## Version 1.19
 

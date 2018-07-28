@@ -213,7 +213,7 @@ div.clickable.selected:hover
 
 .popupwindow
 {
-    background-image: linear-gradient(#000000, #050505);
+    background-image: linear-gradient(#050505, #0b0b0b);
     border-left:1px solid #666666;
     border-bottom:1px solid #000000;
     border-right:1px solid #000000;

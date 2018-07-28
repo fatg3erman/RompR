@@ -30,7 +30,7 @@ print '<link rel="stylesheet" type="text/css" href="css/albumart.css?version=?'.
 <link rel="stylesheet" id="fontfamily" type="text/css" />
 <link rel="stylesheet" id="icontheme-theme" type="text/css" />
 <link rel="stylesheet" id="icontheme-adjustments" type="text/css" />
-<link type="text/css" href="css/jquery.mCustomScrollbar.min-3.1.5.css" rel="stylesheet" />
+<link type="text/css" href="css/jquery.mCustomScrollbar.css" rel="stylesheet" />
 <?php
 $scripts = array(
     "jquery/jquery-3.2.1.min.js",

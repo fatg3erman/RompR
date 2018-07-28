@@ -14,7 +14,6 @@ body {
     overflow:hidden;
     -webkit-font-smoothing: subpixel-antialiased;
     -moz-osx-font-smoothing: auto;
-    font-smooth:always;
 	-webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
@@ -2017,6 +2016,14 @@ table.ambox {
 }
 
 .info-detail-layout ul {
+	word-break: normal;
+}
+
+.info-detail-layout tr td:nth-child(1) {
+	word-break: normal;
+}
+
+.info-detail-layout tr th:nth-child(1) {
 	word-break: normal;
 }
 
