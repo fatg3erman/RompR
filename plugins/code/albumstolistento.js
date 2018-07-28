@@ -1,18 +1,18 @@
 var albumstolistento = function() {
-    
+
     var atl = null;
     var maxwidth = 640;
     var holder;
     var spinner;
-    
+
     function getListenLater() {
         metaHandlers.genericAction('getlistenlater', gotListenLater, notGotListenLater);
     }
-    
+
     function notGotListenLater() {
         debug.error("LISTENLATER","Failed to get list");
     }
-    
+
     function gotListenLater(data) {
         spinner.remove();
         if (data.length == 0) {
@@ -31,15 +31,16 @@ var albumstolistento = function() {
                 removecallback: albumstolistento.removeId,
                 data: data
             });
+            setDraggable('#atlfoldup');
         }
     }
-    
+
     function makeHolder() {
         holder = $('<div>', {id: 'albumstolistento', class: 'holdingcell masonified2 helpfulholder noselection'}).appendTo('#atlfoldup');
     }
-    
+
     return {
-        
+
         open: function() {
             if (atl == null) {
                 debug.log("LISTENLATER","Opening....");
@@ -55,24 +56,24 @@ var albumstolistento = function() {
                 browser.goToPlugin('atl');
             }
         },
-        
+
         close: function() {
             holder.remove();
             atl = null;
         },
-        
+
         handleClick: function(element, event) {
 			if (element.hasClass('clickspotifywidget')) {
             	holder.spotifyAlbumThing('handleClick', element);
         	}
 		},
-        
+
         update: function() {
             holder.remove();
             makeHolder();
             getListenLater();
         },
-        
+
         removeId: function(id) {
             metaHandlers.genericAction([{action: 'removelistenlater', index: id}], function() {
                 debug.log("LISTENLATER", "Listen Later ID",id,"removed");
@@ -80,9 +81,9 @@ var albumstolistento = function() {
                 debug.error("LISTENLATER", "Failed To Remove ID",id);
             });
         }
-        
+
     }
-    
+
 }();
 
 pluginManager.setAction(language.gettext("label_albumstolistento"), albumstolistento.open);

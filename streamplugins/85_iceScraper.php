@@ -92,7 +92,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 			print '<div class="containerbox rowspacer"></div>';
 			print '<div class="indent">'.$listeners.'</div>';
 			print '<div class="containerbox rowspacer"></div>';
-			print '<div class="stream-description clickable clickstream draggable indent" name="'.$listenlink.'" streamname="'.$server_name.'" streamimg="">';
+			print '<div class="stream-description clickable clickstream playable draggable indent" name="'.$listenlink.'" streamname="'.$server_name.'" streamimg="">';
 			print '<b>Listen</b> '.$format;
 			print '</div>';
 			print '<div class="containerbox rowspacer"></div>';

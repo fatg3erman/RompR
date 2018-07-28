@@ -35,27 +35,10 @@ var tuneinRadioPlugin = {
             } else {
                 doMenu(null, clickedElement);
             }
-        // } else if (clickedElement.hasClass('tuneinsearchbox')) {
-        //     event.preventDefault();
-        //     event.stopPropagation();
-        //     var position = getPosition(event);
-        //     var elemright = $('[name="tuneinsearcher"]').width() + $('[name="tuneinsearcher"]').offset().left;
-        //     if (position.x > elemright - 24) {
-        //         $('[name="tuneinsearcher"]').val("");
-        //         $('#tuneinlist').empty().addClass('notfilled');
-        //         tuneinRadioPlugin.loadBigRadio();
-        //     }
         } else if (clickedElement.hasClass("tuneinsearchbutton")) {
             tuneinRadioPlugin.search();
         } else if (clickedElement.hasClass("menu")) {
             doMenu(event, clickedElement);
-        } else if (prefs.clickmode == "double") {
-            if (clickedElement.hasClass("clickstream")) {
-                event.stopImmediatePropagation();
-                trackSelect(event, clickedElement);
-            }
-        } else if (prefs.clickmode == "single") {
-            onSourcesDoubleClicked(event);
         }
 
     },
@@ -84,4 +67,4 @@ var tuneinRadioPlugin = {
 }
 
 menuOpeners['tuneinlist'] = tuneinRadioPlugin.loadBigRadio;
-clickRegistry.addClickHandlers('#tuneinlist', tuneinRadioPlugin.handleClick, onSourcesDoubleClicked);
+clickRegistry.addClickHandlers('#tuneinlist', tuneinRadioPlugin.handleClick);

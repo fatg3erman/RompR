@@ -102,11 +102,11 @@ var ratingManager = function() {
 				var aa = new albumart_translator(src);
 				c.append('<img class="jalopy jalopy200" src="'+aa.getSize('medium')+'" />');
 			}
-			c.append('<div class="tagh albumthing sponclick clickable infoclick draggable clickalbum" name="'+hex_md5(tit)+'">'+tit+'</div>');
+			c.append('<div class="tagh albumthing sponclick clickable infoclick draggable clickalbum playable" name="'+hex_md5(tit)+'">'+tit+'</div>');
 			current_albumholder = $('<div>', {class: "minwidthed2 expand", id: hex_md5(tit)}).appendTo(b);
 		}
 		var setdata = encodeURIComponent(JSON.stringify({title: data.Title, artist: data.Artistname, trackno: data.TrackNo, album: data.Albumname, albumartist: data.AlbumArtist}));
-		var html = '<div class="ntu infoclick clickable draggable clicktrack fullwidth" name="'+encodeURIComponent(data.Uri)+'">';
+		var html = '<div class="ntu clickable draggable clicktrack playable fullwidth" name="'+encodeURIComponent(data.Uri)+'">';
 		html += '<div class="containerbox line">';
 		html += '<div class="tracknumber fixed">'+data.TrackNo+'</div>';
 		html += '<div class="expand containerbox vertical">';

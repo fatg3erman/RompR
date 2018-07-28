@@ -171,7 +171,7 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
         case "clicktrack":
             print '<input type="hidden" value="'.$pl.'" />';
             print '<input type="hidden" value="'.$count.'" />';
-            print '<div class="containerbox menuitem draggable clickable '.$class.' playlisttrack" name="'.$link.'">';
+            print '<div class="containerbox menuitem draggable playable clickable '.$class.' playlisttrack" name="'.$link.'">';
             print '<i class="'.$icon.' fixed collectionicon"></i>';
             print '<div class="expand">'.$name.'</div>';
             if ($delete) {
@@ -182,7 +182,7 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
             break;
 
         case "clickcue":
-            print '<div class="containerbox meunitem draggable clickable '.$class.'" name="'.$link.'">';
+            print '<div class="containerbox meunitem draggable playable clickable '.$class.'" name="'.$link.'">';
             print '<i class="'.$icon.' fixed collectionicon"></i>';
             print '<div class="expand">'.$name.'</div>';
             print '</div>';

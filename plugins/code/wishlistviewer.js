@@ -162,8 +162,6 @@ var wishlistViewer = function() {
 				clearWishlist();
 			} else if (element.hasClass('dropchoices')) {
 				$('#wlchoices_'+element.attr('name')).slideToggle('fast');
-			} else if (element.hasClass('clickstream')) {
-				onSourcesDoubleClicked(event);
 			}
 		},
 

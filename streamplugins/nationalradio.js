@@ -86,24 +86,8 @@ var nationalRadioPlugin = {
         } else if (clickedElement.hasClass("clicksearchmore")) {
             event.stopImmediatePropagation();
             nationalRadioPlugin.searchRadioMore(clickedElement);
-        // } else if (clickedElement.hasClass('searchdirble')) {
-        //     event.preventDefault();
-        //     event.stopPropagation();
-        //     var position = getPosition(event);
-        //     var elemright = $('[name="radiosearcher"]').width() + $('[name="radiosearcher"]').offset().left;
-        //     if (position.x > elemright - 24) {
-        //         $('[name="radiosearcher"]').val("");
-        //         nationalRadioPlugin.changeradiocountry();
-        //     }
         } else if (clickedElement.hasClass('dirblesearch')) {
-                nationalRadioPlugin.searchBigRadio();
-        } else if (prefs.clickmode == "double") {
-            if (clickedElement.hasClass("clickstream")) {
-                event.stopImmediatePropagation();
-                trackSelect(event, clickedElement);
-            }
-        } else if (prefs.clickmode == "single") {
-            onSourcesDoubleClicked(event);
+            nationalRadioPlugin.searchBigRadio();
         }
 
     }
@@ -111,4 +95,4 @@ var nationalRadioPlugin = {
 }
 
 menuOpeners['bbclist'] = nationalRadioPlugin.loadBigRadio;
-clickRegistry.addClickHandlers('#bbclist', nationalRadioPlugin.handleClick, onSourcesDoubleClicked);
+clickRegistry.addClickHandlers('#bbclist', nationalRadioPlugin.handleClick);

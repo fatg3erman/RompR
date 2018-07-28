@@ -13,7 +13,7 @@ foreach ($result as $obj) {
 		$date = $thisdate;
 		print '<tr class="tagh datetag"><th colspan="3">'.$date.'</th></tr>';
 	}
-	print '<tr class="infoclick draggable clickable clicktrack spacerboogie" name="'.rawurlencode($obj->Uri).'">';
+	print '<tr class="draggable clickable clicktrack playable spacerboogie" name="'.rawurlencode($obj->Uri).'">';
 	print '<td width="40px"><img class="smallcover';
 	if ($obj->Image) {
 		print '" src="'.$obj->Image;

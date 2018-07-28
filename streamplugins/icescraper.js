@@ -33,17 +33,10 @@ var icecastPlugin = {
             doMenu(event, clickedElement);
         } else if (clickedElement.hasClass("clickicepager")) {
             icecastPlugin.refreshMyDrink(clickedElement.attr('name'));
-        } else if (prefs.clickmode == "double") {
-            if (clickedElement.hasClass("clickstream")) {
-                event.stopImmediatePropagation();
-                trackSelect(event, clickedElement);
-            }
-        } else if (prefs.clickmode == "single") {
-            onSourcesDoubleClicked(event);
         }
     }
 
 }
 
 menuOpeners['icecastlist'] = icecastPlugin.refreshMyDrink;
-clickRegistry.addClickHandlers('#icecastlist', icecastPlugin.handleClick, onSourcesDoubleClicked);
+clickRegistry.addClickHandlers('#icecastlist', icecastPlugin.handleClick);

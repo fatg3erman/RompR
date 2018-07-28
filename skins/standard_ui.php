@@ -18,9 +18,9 @@ function albumTrack($data) {
 
     // Outer container
     if ($data['uri'] == null) {
-        print '<div class="clickable '.$class.' ninesix draggable indent containerbox padright" name="'.$data['ttid'].'">';
+        print '<div class="playable clickable '.$class.' ninesix draggable indent containerbox padright" name="'.$data['ttid'].'">';
     } else {
-        print '<div class="clickable '.$class.' ninesix draggable indent containerbox padright" name="'.rawurlencode($data['uri']).'">';
+        print '<div class="playable clickable '.$class.' ninesix draggable indent containerbox padright" name="'.rawurlencode($data['uri']).'">';
     }
 
     // Track Number
@@ -72,7 +72,7 @@ function albumTrack($data) {
 
 function artistHeader($id, $name) {
     global $divtype;
-    $h = '<div class="clickable clickalbum draggable containerbox menuitem '.$divtype.'" name="'.$id.'">';
+    $h = '<div class="clickable clickalbum playable draggable containerbox menuitem '.$divtype.'" name="'.$id.'">';
     $h .= '<i class="icon-toggle-closed menu mh fixed artist" name="'.$id.'"></i>';
     $h .= '<div class="expand">'.$name.'</div>';
     $h .= '</div>';
@@ -92,19 +92,19 @@ function albumHeader($obj) {
     } else if ($obj['AlbumUri']) {
         $albumuri = rawurlencode($obj['AlbumUri']);
         if (preg_match('/spotify%3Aartist%3A/', $albumuri)) {
-            $h .= '<div class="clickable clickartist draggable containerbox menuitem" name="'.preg_replace('/'.get_int_text('label_allartist').'/', '', $obj['Albumname']).'">';
+            $h .= '<div class="clickable clickartist playable draggable containerbox menuitem" name="'.preg_replace('/'.get_int_text('label_allartist').'/', '', $obj['Albumname']).'">';
         } else if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
             debuglog("Cue Sheet found for album ".$obj['Albumname'],"FUNCTIONS");
             $h .= '<div class="clickable clickcue draggable containerbox menuitem" name="'.$albumuri.'">';
         } else {
-            $h .= '<div class="clickable clicktrack draggable containerbox menuitem" name="'.$albumuri.'">';
+            $h .= '<div class="clickable clicktrack playable draggable containerbox menuitem" name="'.$albumuri.'">';
         }
     } else if (array_key_exists('streamuri', $obj)) {
-        $h .= '<div class="clickable clickstream draggable containerbox menuitem" name="'.$obj['streamuri'].'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
+        $h .= '<div class="clickable clickstream playable draggable containerbox menuitem" name="'.$obj['streamuri'].'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
     } else if (array_key_exists('userplaylist', $obj)) {
         $h .= '<div class="clickable '.$obj['userplaylist'].' draggable containerbox menuitem" name="'.$obj['plpath'].'">';
     } else {
-        $h .= '<div class="clickable clickalbum draggable containerbox menuitem" name="'.$obj['id'].'">';
+        $h .= '<div class="clickable clickalbum playable draggable containerbox menuitem" name="'.$obj['id'].'">';
     }
     if (array_key_exists('plpath', $obj)) {
         $h .= '<input type="hidden" name="dirpath" value="'.$obj['plpath'].'" />';
@@ -149,8 +149,8 @@ function trackControlHeader($why, $what, $who, $dets) {
 }
 
 function printDirectoryItem($fullpath, $displayname, $prefix, $dircount, $printcontainer = false) {
-    $c = ($printcontainer) ? "searchdir" : "directory";
-    print '<div class="clickable '.$c.' clickalbum draggable containerbox menuitem" name="'.$prefix.$dircount.'">';
+    $c = ($printcontainer) ? "searchdir playable" : "directory";
+    print '<div class="clickable '.$c.' clickalbum playable draggable containerbox menuitem" name="'.$prefix.$dircount.'">';
     print '<input type="hidden" name="dirpath" value="'.rawurlencode($fullpath).'" />';
     print '<i class="icon-toggle-closed menu mh fixed '.$c.'" name="'.$prefix.$dircount.'"></i>';
     print '<i class="icon-folder-open-empty fixed collectionicon"></i>';
@@ -162,7 +162,7 @@ function printDirectoryItem($fullpath, $displayname, $prefix, $dircount, $printc
 }
 
 function directoryControlHeader($prefix) {
-    
+
 }
 
 function printRadioDirectory($att) {
@@ -178,7 +178,7 @@ function printRadioDirectory($att) {
 }
 
 function playlistPlayHeader($name) {
-    
+
 }
 
 function addPodcastCounts($html, $extra) {

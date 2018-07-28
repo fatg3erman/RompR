@@ -1,9 +1,9 @@
 <?php
 
 class somafmplugin {
-    
+
     public function __construct() {
-        
+
     }
 
     public function doHeader() {
@@ -54,7 +54,7 @@ class somafmplugin {
 
     private function format_listenlink($c, $p, $label) {
         $img = $this->getimage($c);
-        print '<div class="clickable clickstream draggable indent containerbox padright menuitem" name="'.(string) $p.'" streamimg="'.$img.'" streamname="'.$c->title.'">';
+        print '<div class="clickable clickstream playable draggable indent containerbox padright menuitem" name="'.(string) $p.'" streamimg="'.$img.'" streamname="'.$c->title.'">';
         print '<i class="'.audioClass($p[0]['format']).' collectionicon fixed"></i>';
         print '<div class="expand">'.$label.'&nbsp';
         switch ($p[0]['format']) {
@@ -70,12 +70,12 @@ class somafmplugin {
             default:
                 print 'Unknown Format';
                 break;
-    
+
         }
         print '</div>';
         print '</div>';
     }
-    
+
     private function doAllStations($content) {
         debuglog("Loaded Soma FM channels list","SOMAFM");
         $x = simplexml_load_string($content);
@@ -85,7 +85,7 @@ class somafmplugin {
             $count++;
         }
     }
-    
+
     private function doChannel($count, $channel) {
         debuglog("Channel : ".$channel->title,"SOMAFM");
         if ($channel->highestpls) {
@@ -93,7 +93,7 @@ class somafmplugin {
         } else {
             $pls = (string) $channel->fastpls[0];
         }
-        
+
         print albumHeader(array(
             'id' => 'somafm_'.$count,
             'Image' => $this->getimage($channel),
@@ -109,7 +109,7 @@ class somafmplugin {
             'streamimg' => $this->getimage($channel),
             'class' => 'radiochannel'
         ));
-        
+
         print '<div id="somafm_'.$count.'" class="dropmenu">';
         trackControlHeader('','','somafm_'.$count, array(array('Image' => $this->getimage($channel))));
         if ($channel->description) {
@@ -120,7 +120,7 @@ class somafmplugin {
             print '<div class="expand">'.$channel->listeners.' '.trim(get_int_text("lastfm_listeners"),':').'</div>';
             print '</div>';
         }
-        
+
         print '<div class="containerbox rowspacer"></div>';
         print '<div class="containerbox expand ninesix indent padright"><b>Listen:</b></div>';
 
@@ -162,7 +162,7 @@ if (array_key_exists('populate', $_REQUEST)) {
     include ("includes/functions.php");
     include ("international.php");
     include ("skins/".$skin."/ui_elements.php");
-    
+
     $soma = new somafmplugin();
     $soma->doStationList();
 

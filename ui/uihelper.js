@@ -71,12 +71,10 @@ jQuery.fn.stopSpinner = function() {
 }
 
 jQuery.fn.bindPlayClicks = function() {
-    return this.each(function() {
-        $(this).off('click', onSourcesClicked).off('dblclick', onSourcesDoubleClicked).on('click', onSourcesClicked);
-        if (prefs.clickmode == 'double') {
-            $(this).on('dblclick', onSourcesDoubleClicked);
-        }
+    this.each(function() {
+        $(this).off('click', onSourcesClicked).on('click', onSourcesClicked);
     });
+    return this;
 }
 
 jQuery.fn.makeTagMenu = function(options) {

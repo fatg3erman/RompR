@@ -18,9 +18,9 @@ function albumTrack($data) {
 
     // Outer container
     if ($data['uri'] == null) {
-        print '<div class="clickable '.$class.' ninesix draggable indent containerbox padright calign" name="'.$data['ttid'].'">';
+        print '<div class="playable clickable '.$class.' ninesix draggable indent containerbox padright calign" name="'.$data['ttid'].'">';
     } else {
-        print '<div class="clickable '.$class.' ninesix draggable indent containerbox padright calign" name="'.rawurlencode($data['uri']).'">';
+        print '<div class="playable clickable '.$class.' ninesix draggable indent containerbox padright calign" name="'.rawurlencode($data['uri']).'">';
     }
 
     // Track Number
@@ -89,7 +89,7 @@ function albumHeader($obj) {
     if ($obj['id'] == 'nodrop') {
         // Hacky at the moment, we only use nodrop for streams but here there is no checking
         // because I'm lazy.
-        $h .= '<div class="clickable clickstream clickicon containerbox menuitem '.$obj['class'].'" name="'.$obj['streamuri'].'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
+        $h .= '<div class="clickable clickstream playable clickicon containerbox menuitem '.$obj['class'].'" name="'.$obj['streamuri'].'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
     } else {
         if (array_key_exists('plpath', $obj)) {
             $h .= '<input type="hidden" name="dirpath" value="'.$obj['plpath'].'" />';
@@ -118,7 +118,7 @@ function albumControlHeader($fragment, $why, $what, $who, $artist) {
     $html = '<div class="menu backmenu" name="'.$why.'artist'.$who.'">';
     $html .='</div>';
     $html .= '<div class="configtitle textcentre"><b>'.$artist.'</b></div>';
-    $html .= '<div class="textcentre clickable clickalbum ninesix noselect" name="'.$why.'artist'.$who.'">'.get_int_text('label_play_all').'</div>';
+    $html .= '<div class="textcentre clickable clickalbum playable ninesix noselect" name="'.$why.'artist'.$who.'">'.get_int_text('label_play_all').'</div>';
     return $html;
 }
 
@@ -136,16 +136,16 @@ function trackControlHeader($why, $what, $who, $dets) {
                 if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
                     $html .= '<div class="icon-no-response-playbutton smallicon expand clickable clickcue noselect" name="'.$albumuri.'"></div>';
                 } else {
-                    $html .= '<div class="icon-no-response-playbutton smallicon expand clickable clicktrack noselect" name="'.$albumuri.'"></div>';
-                    $html .= '<div class="icon-music smallicon expand clickable clickalbum noselect" name="'.$why.'album'.$who.'"></div>';
+                    $html .= '<div class="icon-no-response-playbutton smallicon expand clickable clicktrack playable noselect" name="'.$albumuri.'"></div>';
+                    $html .= '<div class="icon-music smallicon expand clickable clickalbum playable noselect" name="'.$why.'album'.$who.'"></div>';
 }
             } else {
-                $html .= '<div class="icon-no-response-playbutton smallicon expand clickable clickalbum noselect" name="'.$why.'album'.$who.'"></div>';
+                $html .= '<div class="icon-no-response-playbutton smallicon expand clickable clickalbum playable noselect" name="'.$why.'album'.$who.'"></div>';
             }
-            $html .= '<div class="icon-single-star smallicon expand clickable clickicon clickable clickalbum noselect" name="ralbum'.$who.'"></div>';
-            $html .= '<div class="icon-tags smallicon expand clickable clickicon clickable clickalbum noselect" name="talbum'.$who.'"></div>';
-            $html .= '<div class="icon-ratandtag smallicon expand clickable clickicon clickable clickalbum noselect" name="yalbum'.$who.'"></div>';
-            $html .= '<div class="icon-ratortag smallicon expand clickable clickicon clickable clickalbum noselect" name="ualbum'.$who.'"></div>';
+            $html .= '<div class="icon-single-star smallicon expand clickable clickicon clickable clickalbum playable noselect" name="ralbum'.$who.'"></div>';
+            $html .= '<div class="icon-tags smallicon expand clickable clickicon clickable clickalbum playable noselect" name="talbum'.$who.'"></div>';
+            $html .= '<div class="icon-ratandtag smallicon expand clickable clickicon clickable clickalbum playable noselect" name="yalbum'.$who.'"></div>';
+            $html .= '<div class="icon-ratortag smallicon expand clickable clickicon clickable clickalbum playable noselect" name="ualbum'.$who.'"></div>';
             $html .= '</div>';
             $html .= '<div class="textcentre ninesix playlistrow2">'.ucfirst(get_int_text('label_tracks')).'</div>';
         }
@@ -154,7 +154,7 @@ function trackControlHeader($why, $what, $who, $dets) {
 }
 
 function printDirectoryItem($fullpath, $displayname, $prefix, $dircount, $printcontainer = false) {
-    $c = ($printcontainer) ? "searchdir" : "directory";
+    $c = ($printcontainer) ? "searchdir playable" : "directory";
     print '<input type="hidden" name="dirpath" value="'.rawurlencode($fullpath).'" />';
     print '<div class="'.$c.' menu containerbox menuitem" name="'.$prefix.$dircount.'">';
     print '<i class="icon-folder-open-empty fixed collectionitem"></i>';
@@ -184,7 +184,7 @@ function printRadioDirectory($att) {
 }
 
 function playlistPlayHeader($name) {
-    print '<div class="textcentre clickable clickloadplaylist ninesix" name="'.$name.'">'.get_int_text('label_play_all');
+    print '<div class="textcentre clickable clickloadplaylist playable ninesix" name="'.$name.'">'.get_int_text('label_play_all');
     print '<input type="hidden" name="dirpath" value="'.$name.'" />';
     print '</div>';
 }

@@ -19,7 +19,7 @@ define('ROMPR_MIN_TRACKS_TO_DETERMINE_COMPILATION', 3);
 define('ROMPR_MIN_NOT_COMPILATION_THRESHOLD', 0.6);
 
 class musicCollection {
-	
+
 	public function __construct() {
 		$this->albums = array();
 		$this->filter_duplicates = false;
@@ -61,7 +61,7 @@ class musicCollection {
         $this->albums = array();
         $cp_time += microtime(true) - $cstart;
     }
-	
+
 	public function get_albumartist_by_folder($f) {
 		foreach ($this->albums as $album) {
 			if ($album->folder == $f) {
@@ -71,7 +71,7 @@ class musicCollection {
 		}
 		return null;
 	}
-	
+
 	public function filter_duplicate_tracks() {
 		$this->filter_duplicates = true;
 	}
@@ -198,7 +198,7 @@ class album {
     public function getKey() {
         return $this->key;
     }
-	
+
     public function getImage($size) {
 		$albumimage = new baseAlbumImage(array(
 			'baseimage' => ($this->image) ? $this->image : '',
@@ -323,7 +323,7 @@ class album {
 
         return $numdiscs;
     }
-	
+
 	public function checkForDuplicate($t) {
 		foreach ($this->tracks as $track) {
 			if ($t->tags['file'] == $track->tags['file']) {
@@ -504,7 +504,7 @@ function process_file($filedata) {
     // Pre-process the file data
 
     $mytime = microtime(true);
-	
+
     if ($dbterms['tags'] !== null || $dbterms['rating'] !== null) {
         // If this is a search and we have tags or ratings to search for, check them here.
         if (check_url_against_database($filedata['file'], $dbterms['tags'], $dbterms['rating']) == false) {
@@ -519,7 +519,7 @@ function process_file($filedata) {
         debuglog("Ignoring unloaded track ".$filedata['file'],"COLLECTION",9);
         return false;
     }
-    
+
     $filedata['domain'] = getDomain($filedata['file']);
 	$unmopfile = unmopify_file($filedata['file']);
 
@@ -528,13 +528,13 @@ function process_file($filedata) {
     } else {
         $filedata['Track'] = format_tracknum(ltrim($filedata['Track'], '0'));
     }
-	
+
     // cue sheet link (mpd only). We're only doing CUE sheets, not M3U
     if ($filedata['X-AlbumUri'] === null && strtolower(pathinfo($filedata['playlist'], PATHINFO_EXTENSION)) == "cue") {
         $filedata['X-AlbumUri'] = $filedata['playlist'];
         debuglog("Found CUE sheet for album ".$filedata['Album'],"COLLECTION");
     }
-	
+
     // Disc Number
     if ($filedata['Disc'] != null) {
         $filedata['Disc'] = format_tracknum(ltrim($filedata['Disc'], '0'));
@@ -550,7 +550,7 @@ function process_file($filedata) {
         $filedata['Disc'] = 0;
         $filedata['Track'] = 0;
     }
-	
+
     switch($filedata['domain']) {
 
 		case 'local':
@@ -662,7 +662,7 @@ function process_file($filedata) {
 		// After each directory we empty the collection data structures which saves enormously on memory.
         // This means we don't catch the very few edge cases where someone might have incompletely
         // tagged files spread across multiple directories, but that's so unlikely I doubt it'll ever happen.
-        
+
 		// But one place it might happen is during search, where we can't assume tracks will come in album order
 		// (especially from Spotify etc). So when doing a search we don't do album-by-album.
 

@@ -57,19 +57,19 @@ function getWishlist() {
             }
             $qstring .= ", DateAdded, SourceName";
             break;
-            
+
         case 'date':
             $qstring .= "DateAdded, SourceName";
             break;
-            
+
         case 'station':
             $qstring .= 'SourceName, DateAdded';
             break;
-            
+
         default:
             $qstring .= "rating, DateAdded";
             break;
-        
+
     }
 
     $result = generic_sql_query($qstring);
@@ -104,7 +104,7 @@ function getWishlist() {
         print '<div class="expand containerbox vertical">';
         print '<div class="fixed playlistrow2">Added On : '.date('r', strtotime($obj['DateAdded'])).'</div>';
         if ($obj['SourceUri']) {
-            print '<div class="fixed playlistrow2 clickable infoclick plugclickable clickstream" name="'.$obj['SourceUri'].'" streamname="'.$obj['SourceName'].'" streamimg="'.$obj['SourceImage'].'">While Listening To : <b>'.$obj['SourceName'].'</b></div>';
+            print '<div class="fixed playlistrow2 clickable playable clickstream" name="'.$obj['SourceUri'].'" streamname="'.$obj['SourceName'].'" streamimg="'.$obj['SourceImage'].'">While Listening To : <b>'.$obj['SourceName'].'</b></div>';
         }
         print '</div>';
         print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed tooltip" title="'.get_int_text('label_searchtrack').'"></i>';

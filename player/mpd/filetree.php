@@ -88,7 +88,7 @@ function printFileSearch($tree, $fcount) {
 function printFileItem($displayname, $fullpath, $time) {
     global $prefs;
     $ext = strtolower(pathinfo($fullpath, PATHINFO_EXTENSION));
-    print '<div class="clickable clicktrack ninesix draggable indent containerbox padright line brick_wide" name="'.
+    print '<div class="clickable clicktrack playable ninesix draggable indent containerbox padright line brick_wide" name="'.
         rawurlencode($fullpath).'">';
     print '<i class="'.audioClass($ext, getDomain($fullpath)).' fixed collectionicon"></i>';
     print '<div class="expand">'.$displayname.'</div>';
@@ -99,7 +99,7 @@ function printFileItem($displayname, $fullpath, $time) {
 }
 
 function printPlaylistItem($displayname, $fullpath) {
-    print '<div class="clickable clickcue ninesix draggable indent containerbox padright line" name="'.
+    print '<div class="clickable clickcue playable ninesix draggable indent containerbox padright line" name="'.
         rawurlencode($fullpath).'">';
     print '<i class="icon-doc-text fixed collectionitem"></i>';
     print '<div class="expand">'.$displayname.'</div>';
@@ -146,11 +146,11 @@ class mpdlistthing {
             $filedata['file_display_name'] =
                 preg_replace('/Album: /','',$filedata['file_display_name']);
             $decodedpath = preg_replace('/podcast\+http:\/\//','podcast/',$decodedpath);
-        
+
         } else if (preg_match('/:artist:/', $decodedpath)) {
             $filedata['file_display_name'] = concatenate_artist_names($filedata['Artist']);
             $decodedpath = preg_replace('/(.+?):(.+?):/','$1/$2/',$decodedpath);
-        
+
         } else if (preg_match('/:album:/', $decodedpath)) {
             $matches = array();
             $a = preg_match('/(.*?):(.*?):(.*)/',$decodedpath,$matches);
@@ -160,11 +160,11 @@ class mpdlistthing {
             $decodedpath = $matches[1]."/".$matches[2]."/".
                 concatenate_artist_names($filedata['AlbumArtist'])."/".$matches[3];
             $filedata['file_display_name'] = $filedata['Album'];
-        
+
         } else if (preg_match('/local:track:/', $decodedpath)) {
             $filedata['file_display_name'] = basename($decodedpath);
             $decodedpath = preg_replace('/:track:/','/',$decodedpath);
-        
+
         } else if (preg_match('/:track:/', $decodedpath)) {
             $matches = array();
             $a = preg_match('/(.*?):(.*?):(.*)/',$decodedpath,$matches);
@@ -172,22 +172,22 @@ class mpdlistthing {
                 concatenate_artist_names($filedata['Artist'])."/".
                 $filedata['Album']."/".$matches[3];
             $filedata['file_display_name'] = $filedata['Title'];
-        
+
         } else if (preg_match('/soundcloud:song\//', $decodedpath)) {
             $filedata['file_display_name'] = (array_key_exists('Title', $filedata)) ?
                 $filedata['Title'] : basename($decodedpath);
             $decodedpath = preg_replace('/soundcloud:song/','soundcloud/'.
                 concatenate_artist_names($filedata['Artist']),$decodedpath);
-        
+
         } else if (preg_match('/^internetarchive:/', $decodedpath)) {
             $filedata['file_display_name'] = $filedata['Album'];
             $decodedpath = preg_replace('/internetarchive:/','internetarchive/',$decodedpath);
-        
+
         } else if (preg_match('/youtube:video\//', $decodedpath)) {
             $filedata['file_display_name'] = (array_key_exists('Title', $filedata)) ?
                 $filedata['Title'] : basename($decodedpath);
             $decodedpath = preg_replace('/youtube:video/','youtube',$decodedpath);
-        
+
         } else if (preg_match('/tunein:station/', $decodedpath)) {
             $filedata['file_display_name'] = (array_key_exists('Album', $filedata)) ?
                 $filedata['Album'] : basename($decodedpath);

@@ -68,7 +68,7 @@ function print_playlists_as_json() {
                     }
                 }
     	        $pls[rawurlencode($name)][] = array(
-    	        	'Uri' => $link,
+    	        	'Uri' => rawurlencode($link),
     	        	'Title' => $track->tags['Title'],
     	            "Album" => $track->tags['Album'],
         	        "Artist" => $track->get_artist_string(),

@@ -359,14 +359,6 @@ var browser = function() {
                 removeSection(source);
             } else if (element.hasClass('plugclickable')) {
                 extraPlugins[source].parent.handleClick(element, event);
-            } else if (element.hasClass('clickalbum')) {
-                albumSelect(event, element);
-            } else if (element.hasClass('draggable')) {
-                if (prefs.clickmode == "double") {
-                    trackSelect(event, element);
-                } else {
-                    playlist.addItems(element, null);
-                }
             } else if (element.hasClass('clickartistchoose')) {
                 nowplaying.switchArtist(history[displaypointer].source, element.next().val());
             } else {
@@ -476,8 +468,7 @@ var browser = function() {
             displayer.html(banner(opts, id, false, false, true));
             panelclosed[id] = false;
             displayer.off('click');
-            displayer.on('click', onBrowserClicked);
-            displayer.on('dblclick', onBrowserDoubleClicked);
+            displayer.on('click', '.infoclick', onBrowserClicked);
             extraPlugins[id] = { div: displayer, parent: parent };
             return displayer;
         },

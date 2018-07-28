@@ -168,7 +168,7 @@ var podcasts = function() {
 			var thething = $(
 				'<div>',
 				{
-					class: 'containerbox fullwidth playlistrow2 dropdown-container podcastresume clickable clickicon',
+					class: 'containerbox fullwidth playlistrow2 dropdown-container podcastresume playable clickable clickicon',
 					name: $(this).prev().attr('name')
 				}
 			).insertBefore($(this));

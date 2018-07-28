@@ -784,7 +784,7 @@ function spotifyTrackListing(data) {
     var h = '';
     for(var i in data.tracks.items) {
         if (player.canPlay('spotify')) {
-            h += '<div class="infoclick draggable clickable clicktrack fullwidth" name="'+encodeURIComponent(data.tracks.items[i].uri)+'">';
+            h += '<div class="playable draggable clickable clicktrack fullwidth" name="'+encodeURIComponent(data.tracks.items[i].uri)+'">';
         } else {
             h += '<div class="fullwidth">';
         }

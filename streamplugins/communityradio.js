@@ -127,16 +127,9 @@ var communityRadioPlugin = {
             communityRadioPlugin.page = clickedElement.attr('name');
             clickedElement.off('click').makeSpinner();
             communityRadioPlugin.update();
-        } else if (prefs.clickmode == "double") {
-            if (clickedElement.hasClass("clickstream")) {
-                event.stopImmediatePropagation();
-                trackSelect(event, clickedElement);
-            }
-        } else if (prefs.clickmode == "single") {
-            onSourcesDoubleClicked(event);
         }
     }
 }
 
 menuOpeners['communityradiolist'] = communityRadioPlugin.loadBigRadio;
-clickRegistry.addClickHandlers('#communityradiolist', communityRadioPlugin.handleClick, onSourcesDoubleClicked);
+clickRegistry.addClickHandlers('#communityradiolist', communityRadioPlugin.handleClick);

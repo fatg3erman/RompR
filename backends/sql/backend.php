@@ -1057,7 +1057,7 @@ function do_tracks_from_database($why, $what, $whom, $fragment = false) {
 	foreach ($trackarr as $arr) {
 		if ($numdiscs > 1 && $arr['disc'] != $currdisc && $arr['disc'] > 0) {
             $currdisc = $arr['disc'];
-            print '<div class="clickable clickdisc draggable discnumber indent">'.ucfirst(strtolower(get_int_text("musicbrainz_disc"))).' '.$currdisc.'</div>';
+            print '<div class="clickable clickdisc playable draggable discnumber indent">'.ucfirst(strtolower(get_int_text("musicbrainz_disc"))).' '.$currdisc.'</div>';
 		}
 		if ($currdisc > 0) {
             $arr['discclass'] = ' disc'.$currdisc;

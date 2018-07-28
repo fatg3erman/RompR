@@ -24,9 +24,9 @@ var playlistManager = function() {
 		} else {
 			for (var i in tracks) {
 				if (tracks[i].Type == 'stream') {
-					html += '<tr class="sortable draggable infoclick clickable clickstream" name="'+tracks[i].Uri+'" streamname="'+tracks[i].Album+'" streamimg="'+tracks[i].Image+'" romprpos="playmanitem_'+i+'">';
+					html += '<tr class="sortable draggable clickable clickstream playable" name="'+tracks[i].Uri+'" streamname="'+tracks[i].Album+'" streamimg="'+tracks[i].Image+'" romprpos="playmanitem_'+i+'">';
 				} else {
-					html += '<tr class="sortable draggable infoclick clickable clicktrack" name="'+tracks[i].Uri+'" romprpos="playmanitem_'+i+'">';
+					html += '<tr class="sortable draggable clickable clicktrack playable" name="'+tracks[i].Uri+'" romprpos="playmanitem_'+i+'">';
 				}
 				html += '<td width="40px"><img class="smallcover';
 				if (tracks[i].Image) {

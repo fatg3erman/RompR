@@ -841,7 +841,7 @@ $.widget('rompr.spotifyAlbumThing', {
                 img = 'newimages/spotify-icon.png';
             }
             var clickclass = (this.options.is_plugin) ? ' plugclickable' : '';
-            var trackclass = (player.canPlay('spotify')) ? ' infoclick clickable draggable' : '';
+            var trackclass = (player.canPlay('spotify')) ? ' playable clickable draggable' : '';
             var cx = (this.options.showbiogs) ? ' tleft' : '';
             var y = $('<div>', {class: 'helpfulalbum fullwidth notthere'+cx}).appendTo(x);
             var html;
@@ -1077,7 +1077,7 @@ $.widget('rompr.spotifyArtistThing', {
                 img = 'newimages/artist-icon.png';
             }
             var clickclass = (this.options.is_plugin) ? ' plugclickable' : '';
-            var trackclass = (player.canPlay('spotify')) ? ' infoclick clickable draggable' : '';
+            var trackclass = (player.canPlay('spotify')) ? ' playable clickable draggable' : '';
             var y = $('<div>', {class: 'helpfulalbum fullwidth tleft notthere'}).appendTo(x);
             var html;
             var appendto;

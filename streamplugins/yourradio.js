@@ -90,13 +90,6 @@ var yourRadioPlugin = {
 	    } else if (clickedElement.hasClass("clickradioremove")) {
 	        event.stopImmediatePropagation();
 	        yourRadioPlugin.removeUserStream(clickedElement.attr("name"));
-	    } else if (prefs.clickmode == "double") {
-	        if (clickedElement.hasClass("clickstream") || clickedElement.hasClass("clicktrack")) {
-	            event.stopImmediatePropagation();
-	            trackSelect(event, clickedElement);
-	        }
-	    } else if (prefs.clickmode == "single") {
-	        onSourcesDoubleClicked(event);
 	    }
 
 	}
@@ -104,4 +97,4 @@ var yourRadioPlugin = {
 }
 
 menuOpeners['yourradiolist'] = yourRadioPlugin.loadStations;
-clickRegistry.addClickHandlers('#anaconda', yourRadioPlugin.handleClick, onSourcesDoubleClicked);
+clickRegistry.addClickHandlers('#anaconda', yourRadioPlugin.handleClick);
