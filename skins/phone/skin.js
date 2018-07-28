@@ -683,7 +683,6 @@ var layoutProcessor = function() {
                 $('.menuitem[name="podcast_'+index+'"]').remove();
                 $('#podcast_'+index).remove();
                 $("#fruitbat").html(data);
-                $("#fruitbat .fridge").tipTip({delay: 500, edgeOffset: 8});
                 infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
                 podcasts.doNewCount();
                 layoutProcessor.postAlbumActions();
@@ -696,10 +695,6 @@ var layoutProcessor = function() {
 
 // Dummy functions standing in for widgets we don't use in this version -
 // custom scroll bars, tipTip, and drag/drop stuff
-jQuery.fn.tipTip = function() {
-    return this;
-}
-
 jQuery.fn.acceptDroppedTracks = function() {
     return this;
 }

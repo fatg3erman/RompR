@@ -21,11 +21,14 @@ $(document).ready(function(){
     setClickHandlers();
     setChooserButtons();
     player.defs.replacePlayerOptions();
-    $(".toggle").on('click', prefs.togglePref);
-    $(".saveotron").on('keyup', prefs.saveTextBoxes);
-    $(".saveomatic").on('change', prefs.saveSelectBoxes);
-    $(".savulon").on('click', prefs.toggleRadio);
-    $(".clickreplaygain").on('click', player.controller.replayGain);
+    // Checkbox and Radio buttons sadly can't be handled by delegated events
+    // because a lot of them are in floatingMenus, which are handled by jQueryUI
+    // which stops the events from proagating;
+    $('.toggle').on('click', prefs.togglePref);
+    $('.savulon').on('click', prefs.toggleRadio);
+    $(document).on('keyup', ".saveotron", prefs.saveTextBoxes);
+    $(document).on('change', ".saveomatic", prefs.saveSelectBoxes);
+    $('.clickreplaygain').on('click', player.controller.replayGain);
     playlist.preventControlClicks(true);
     prefs.setPrefs();
     if (prefs.playlistcontrolsvisible) {
@@ -37,17 +40,6 @@ $(document).ready(function(){
     if (prefs.podcastcontrolsvisible) {
         $("#podcastbuttons").show();
     }
-    $('.inputfile').on('change', function() {
-        var filenames = $.map($(this).prop('files'), function(val) {
-            return val.name.replace(/.*(\/|\\)/, '')
-        });
-        if (filenames.length > 3) {
-            $(this).next().html(filenames.length + ' files selected');
-        } else {
-            $(this).next().html(filenames.join('<br />'));
-        }
-        $(this).parent().next('input[type="button"]').fadeIn('fast');
-    });
     showUpdateWindow();
     window.addEventListener("storage", onStorageChanged, false);
     bindPlaylistClicks();
@@ -70,6 +62,27 @@ $(document).ready(function(){
             pluginManager.autoOpen(language.gettext('button_infoyou'));
         }, 1000);
     }
+    $(document).on('mouseenter', '.clearbox', makeHoverWork);
+    $(document).on('mouseleave', '.clearbox', makeHoverWork);
+    $(document).on('mousemove', '.clearbox', makeHoverWork);
+    $(document).on('click', '.clearbox.enter', makeClearWork);
+    $(document).on('mouseenter', '.combobox-entry', makeHoverWork);
+    $(document).on('mouseleave', '.combobox-entry', makeHoverWork);
+    $(document).on('mousemove', '.combobox-entry', makeHoverWork);
+    $(document).on('keyup', '.enter', onKeyUp);
+    $(document).on('change', '.inputfile', function() {
+        var filenames = $.map($(this).prop('files'), function(val) {
+            return val.name.replace(/.*(\/|\\)/, '')
+        });
+        if (filenames.length > 3) {
+            $(this).next().html(filenames.length + ' files selected');
+        } else {
+            $(this).next().html(filenames.join('<br />'));
+        }
+        $(this).parent().next('input[type="button"]').fadeIn('fast');
+    });
+    $(document).on('mouseenter', '.tooltip', makeToolTip);
+    $(document).on('mouseleave', '.tooltip', stopToolTip);
 });
 
 function cleanBackendCache() {

@@ -8,15 +8,15 @@
             <div id="buttons" class="fixed">
 <?php
                 print '<i title="'.get_int_text('button_previous').
-                    '" class="prev-button icon-fast-backward clickicon controlbutton-small lettuce"></i>';
+                    '" class="prev-button icon-fast-backward clickicon controlbutton-small tooltip"></i>';
                 print '<i title="'.get_int_text('button_play').
-                    '" class="play-button icon-play-circled shiftleft clickicon controlbutton lettuce"></i>';
+                    '" class="play-button icon-play-circled shiftleft clickicon controlbutton tooltip"></i>';
                 print '<i title="'.get_int_text('button_stop').
-                    '" class="stop-button icon-stop-1 shiftleft2 clickicon controlbutton-small lettuce"></i>';
+                    '" class="stop-button icon-stop-1 shiftleft2 clickicon controlbutton-small tooltip"></i>';
                 print '<i title="'.get_int_text('button_stopafter').
-                    '" class="stopafter-button icon-to-end-1 shiftleft3 clickicon controlbutton-small lettuce"></i>';
+                    '" class="stopafter-button icon-to-end-1 shiftleft3 clickicon controlbutton-small tooltip"></i>';
                 print '<i title="'.get_int_text('button_next').
-                    '" class="next-button icon-fast-forward shiftleft4 clickicon controlbutton-small lettuce"></i>';
+                    '" class="next-button icon-fast-forward shiftleft4 clickicon controlbutton-small tooltip"></i>';
 ?>
             </div>
             <div id="progress" class="fixed"></div>
@@ -29,7 +29,7 @@
         <div class="infobarlayout bordered containerbox vertical">
 <?php
             print '<div title="'.get_int_text('button_volume').
-                '" id="volumecontrol" class="lettuce expand containerbox vertical"><div id="volume" class="expand"></div></div>';
+                '" id="volumecontrol" class="tooltip expand containerbox vertical"><div id="volume" class="expand"></div></div>';
             include('player/mpd/outputs.php');
             if (count($outputdata) == 1) {
                 // There's only one output so we'll treat it like a Mute button
@@ -72,7 +72,7 @@
                 <div id="subscribe" class="invisible topstats">
                     <?php
                     print '<i title="'.get_int_text('button_subscribe').
-                        '" class="icon-rss npicon clickicon lettuce"></i>';
+                        '" class="icon-rss npicon clickicon tooltip"></i>';
                     ?>
                     <input type="hidden" id="nppodiput" value="" />
                 </div>
@@ -83,7 +83,7 @@
                 <div id="lastfm" class="invisible topstats">
                     <?php
                     print '<i title="'.get_int_text('button_love').
-                        '" class="icon-heart npicon clickicon lettuce" id="love"></i>';
+                        '" class="icon-heart npicon clickicon tooltip" id="love"></i>';
                     ?>
                 </div>
                 <div id="playcount" class="topstats"></div>
@@ -162,7 +162,7 @@ print '<i class="icon-floppy topimg tooltip topdrop expand" title="'.get_int_tex
 <?php
 print '<div class="configtitle textcentre"><b>'.get_int_text('button_saveplaylist').'</b></div>';
 print '<div class="containerbox"><div class="expand">
-<input class="enter" id="playlistname" type="text" size="200"/></div>';
+<input class="enter clearbox" id="playlistname" type="text" size="200"/></div>';
 print '<button class="fixed">'.get_int_text('button_save').'</button></div>';
 ?>
 </div>
@@ -178,7 +178,7 @@ print '<button class="fixed">'.get_int_text('button_save').'</button></div>';
     <div id="albumlist" class="invisible noborder">
 <?php
     print '<div class="menuitem containerbox" style="padding-left:8px">';
-    print '<div class="fixed" style="padding-right:4px"><i onclick="toggleCollectionButtons()" title="'.get_int_text('button_collectioncontrols').'" class="icon-menu playlisticon clickicon lettuce"></i></div>';
+    print '<div class="fixed" style="padding-right:4px"><i onclick="toggleCollectionButtons()" title="'.get_int_text('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip"></i></div>';
     print '<div class="configtitle textcentre expand"><b>'.get_int_text('button_local_music').'</b></div>';
     print '</div>';
     collectionButtons();

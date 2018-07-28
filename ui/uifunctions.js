@@ -325,7 +325,7 @@ function do_albumart_update() {
         if (data.percent < 100 && albumart_update) {
             setTimeout(do_albumart_update, 100);
         } else {
-            $('#artclosebutton').click();
+            $('#artclosebutton').trigger('click');
         }
     });
 }
@@ -590,13 +590,25 @@ function calcPercentWidth(element, childSelector, targetWidth, parentWidth) {
 function makeHoverWork(ev) {
     ev.preventDefault();
     ev.stopPropagation();
-    var jq = $(ev.target);
+    var jq = $(this);
     var position = getPosition(ev);
     var elemright = jq.width() + jq.offset().left;
     if (position.x > elemright - 14) {
         jq.css('cursor','pointer');
     } else {
         jq.css('cursor','auto');
+    }
+}
+
+function makeClearWork(ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    var position = getPosition(ev);
+    var jq = $(this);
+    var elemright = jq.width() + jq.offset().left;
+    if (position.x > elemright - 24) {
+        jq.val("");
+        fakeClickOnInput(jq);
     }
 }
 

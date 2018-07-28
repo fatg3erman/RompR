@@ -239,10 +239,14 @@ $(document).ready(function () {
     $('.droppable').on('dragover', dragOver);
     $('.droppable').on('dragleave', dragLeave);
     $('.droppable').on('drop', handleDrop);
+    $(document).on('mouseenter', '.clearbox', makeHoverWork);
+    $(document).on('mouseleave', '.clearbox', makeHoverWork);
+    $(document).on('mousemove', '.clearbox', makeHoverWork);
+    $(document).on('click', '.clearbox.enter', makeClearWork);
 
 });
 
-$(window).load(function () {
+$(window).on('load', function () {
     debug.log("ALBUMART","Document has loaded");
     var count = 0;
     $.each($(document).find("img").filter(filterImages), function() {
@@ -385,7 +389,7 @@ var imageEditor = function() {
 
             $("#"+current).addClass("bsel");
 
-            $("#brian").append('<div class="containerbox"><div class="expand"><input type="text" id="searchphrase" /></div><button class="fixed" onclick="imageEditor.research()">Search</button></div>');
+            $("#brian").append('<div class="containerbox"><div class="expand"><input class="enter clearbox" type="text" id="searchphrase" /></div><button class="fixed" onclick="imageEditor.research()">Search</button></div>');
 
             $("#searchphrase").val(phrase);
 
@@ -674,4 +678,8 @@ function toggleLocal() {
         debug.log("COVERS","Ignoring Local Images");
         coverscraper.toggleLocal(true);
     }
+}
+
+function fakeClickOnInput() {
+
 }

@@ -617,20 +617,20 @@ function doPodcast($y, $do_searchbox) {
     if ($y->Subscribed == 1) {
         print '<div class="containerbox bumpad">';
         print '<i title="'.get_int_text("podcast_configure").'" class="icon-cog-alt podicon clickable '.
-            'clickicon podconf fixed fridge" name="podconf_'.$pm.'"></i>';
+            'clickicon podconf fixed tooltip" name="podconf_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_refresh").'" class="icon-refresh podicon podaction clickable '.
-            'clickicon fixed fridge" name="refresh_'.$pm.'"></i>';
+            'clickicon fixed tooltip" name="refresh_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_download_all").'" class="icon-download podicon '.
-            'clickable clickicon podgroupload fixed fridge" name="podgroupload_'.$pm.'"></i>';
+            'clickable clickicon podgroupload fixed tooltip" name="podgroupload_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_mark_all").'" class="icon-headphones podicon podaction '.
-            'clickable clickicon fixed fridge" name="channellistened_'.$pm.'"></i>';
+            'clickable clickicon fixed tooltip" name="channellistened_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_undelete").'" class="icon-trash podicon podaction oneeighty '.
-            'clickable clickicon fixed fridge" name="channelundelete_'.$pm.'"></i>';
+            'clickable clickicon fixed tooltip" name="channelundelete_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_removedownloaded").'" class="icon-download podicon podaction oneeighty '.
-            'clickable clickicon fixed fridge" name="removedownloaded_'.$pm.'"></i>';
+            'clickable clickicon fixed tooltip" name="removedownloaded_'.$pm.'"></i>';
         print '<div class="expand"></div>';
         print '<i title="'.get_int_text("podcast_delete").'" class="icon-cancel-circled podicon '.
-                'clickable clickicon podremove fixed fridge" name="podremove_'.$pm.'"></i>';
+                'clickable clickicon podremove fixed tooltip" name="podremove_'.$pm.'"></i>';
         print '</div>';
 
         print '<div class="marged whatdoicallthis toggledown invisible podconfigpanel" id="podconf_'.$pm.'">';
@@ -665,7 +665,7 @@ function doPodcast($y, $do_searchbox) {
             get_int_text("podcast_expire").'</div>';
         print '<div class="selectholder">';
         print '<select title="'.get_int_text("podcast_expire_tooltip").
-            '" name="DaysToKeep" class="fridge" onchange="podcasts.changeOption(event)">';
+            '" name="DaysToKeep" class="tooltip" onchange="podcasts.changeOption(event)">';
         $options =  '<option value="0">'.get_int_text("podcast_expire_never").'</option>'.
                     '<option value="7">'.get_int_text("podcast_expire_week").'</option>'.
                     '<option value="14">'.get_int_text("podcast_expire_2week").'</option>'.
@@ -681,7 +681,7 @@ function doPodcast($y, $do_searchbox) {
             get_int_text("podcast_keep").'</div>';
         print '<div class="selectholder">';
         print '<select title="'.get_int_text("podcast_keep_tooltip").
-            '" name="NumToKeep" class="fridge" onchange="podcasts.changeOption(event)">';
+            '" name="NumToKeep" class="tooltip" onchange="podcasts.changeOption(event)">';
         $options =  '<option value="0">'.get_int_text("podcast_keep_0").'</option>'.
                     '<option value="1">1</option>'.
                     '<option value="5">5</option>'.
@@ -711,7 +711,7 @@ function doPodcast($y, $do_searchbox) {
         if ($y->KeepDownloaded == 1) {
             print ' checked';
         }
-        print '><label for="podkd" class="fridge" title="'.get_int_text("podcast_kd_tooltip").
+        print '><label for="podkd" class="tooltip" title="'.get_int_text("podcast_kd_tooltip").
             '" name="KeepDownloaded" onclick="podcasts.changeOption(event)">'.
             get_int_text("podcast_keep_downloaded").'</label></div>';
 
@@ -787,10 +787,10 @@ function format_episode(&$y, &$item, $pm) {
     if ($y->Subscribed == 1) {
         if ($item->New == 1) {
             print '<i title="'.get_int_text("podcast_tooltip_new").
-                '" class="icon-sun fixed newpodicon fridge"></i>';
+                '" class="icon-sun fixed newpodicon tooltip"></i>';
         } else if ($item->Listened == 0) {
             print '<i title="'.get_int_text("podcast_tooltip_notnew").
-                '" class="icon-unlistened fixed oldpodicon fridge"></i>';
+                '" class="icon-unlistened fixed oldpodicon tooltip"></i>';
         }
     }
     print '<div class="podtitle expand">'.htmlspecialchars(html_entity_decode($item->Title)).'</div>';
@@ -830,7 +830,7 @@ function format_episode(&$y, &$item, $pm) {
     if ($y->Subscribed == 1) {
         print '<div class="clearfix" name="podcontrols_'.$pm.'">';
         if ($item->Downloaded == 1) {
-            print '<i class="icon-floppy podicon tleft fridge" title="'.
+            print '<i class="icon-floppy podicon tleft tooltip" title="'.
                 get_int_text("podcast_tooltip_downloaded").'"></i>';
         } else {
             if ($item->New == 1) {
@@ -838,14 +838,14 @@ function format_episode(&$y, &$item, $pm) {
             } else {
                 $extraclass = '';
             }
-            print '<i class="icon-download podicon clickable clickicon tleft poddownload'.$extraclass.' fridge" title="'.
+            print '<i class="icon-download podicon clickable clickicon tleft poddownload'.$extraclass.' tooltip" title="'.
                 get_int_text("podcast_tooltip_download").'" name="poddownload_'.$item->PODTrackindex.'"></i>';
         }
         if ($item->Listened == 0) {
-            print '<i class="icon-headphones podicon clickable clickicon tleft podmarklistened fridge" title="'.
+            print '<i class="icon-headphones podicon clickable clickicon tleft podmarklistened tooltip" title="'.
                 get_int_text("podcast_tooltip_mark").'" name="podmarklistened_'.$item->PODTrackindex.'"></i>';
         }
-        print '<i class="icon-cancel-circled podicon clickable clickicon tright podtrackremove fridge" title="'.
+        print '<i class="icon-cancel-circled podicon clickable clickicon tright podtrackremove tooltip" title="'.
             get_int_text("podcast_tooltip_delepisode").'" name="podtrackremove_'.$item->PODTrackindex.'" ></i>';
         print '</div>';
     }
@@ -894,7 +894,7 @@ function doPodcastHeader($y) {
             $extra .= '<span></span>';
         }
     } else {
-        $extra .= '<i class="clickicon clickable clickpodsubscribe icon-rss podicon fridge" title="Subscribe to this podcast"></i><input type="hidden" value="'.$y->PODindex.'" />';
+        $extra .= '<i class="clickicon clickable clickpodsubscribe icon-rss podicon tooltip" title="Subscribe to this podcast"></i><input type="hidden" value="'.$y->PODindex.'" />';
     }
     $extra .= '</div>';
 

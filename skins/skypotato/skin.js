@@ -325,14 +325,14 @@ var layoutProcessor = function() {
             $("#chooserbuttons").append($('<i>', {
                 onclick: "browser.switchsource('"+name+"')",
                 title: language.gettext(obj.text),
-                class: obj.icon+' topimg sep fixed',
+                class: obj.icon+' topimg sep fixed tooltip',
                 id: "button_source"+name
             }));
         },
 
         setupInfoButtons: function() {
             $("#button_source"+prefs.infosource).addClass("currentbun");
-            $("#chooserbuttons .topimg").tipTip({delay: 500, edgeOffset: 8});
+            // $("#chooserbuttons .topimg").tipTip({delay: 500, edgeOffset: 8});
         },
 
         goToBrowserPanel: function(panel) {
@@ -391,7 +391,7 @@ var layoutProcessor = function() {
             if (!$("#playlistbuttons").is(':visible')) {
                 togglePlaylistButtons()
             }
-            $("#"+button).click();
+            $("#"+button).trigger('click');
         },
 
         updateInfopaneScrollbars: function() {
@@ -792,7 +792,7 @@ var layoutProcessor = function() {
 
             $(".stayopen").on('click', function(ev) {ev.stopPropagation() });
 
-            $(".enter").on('keyup',  onKeyUp );
+            // $(".enter").on('keyup',  onKeyUp );
             $.each(my_scrollers,
                 function( index, value ) {
                 layoutProcessor.addCustomScrollBar(value);
@@ -828,7 +828,7 @@ var layoutProcessor = function() {
             $('.clear_playlist').on('click', playlist.clear);
             $("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
 
-            $(".lettuce,.tooltip").tipTip({delay: 500, edgeOffset: 8});
+            // $(".tooltip,.tooltip").tipTip({delay: 500, edgeOffset: 8});
 
             document.body.addEventListener('drop', function(e) {
                 e.preventDefault();
@@ -875,7 +875,7 @@ var layoutProcessor = function() {
                     break;
             }
             if (dropdown) {
-                uiHelper.findAlbumDisplayer('aalbum'+albumindex).find('.menu').click();
+                uiHelper.findAlbumDisplayer('aalbum'+albumindex).find('.menu').trigger('click');
                 infobar.markCurrentTrack();
             }
             layoutProcessor.postAlbumActions();
@@ -919,7 +919,7 @@ var layoutProcessor = function() {
                 $('.menu[name="podcast_'+index+'"]').parent().remove();
                 $('#podcast_'+index).remove();
                 $("#fruitbat").html(data);
-                $("#fruitbat .fridge").tipTip({delay: 500, edgeOffset: 8});
+                // $("#fruitbat .tooltip").tipTip({delay: 500, edgeOffset: 8});
                 infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
                 podcasts.doNewCount();
                 layoutProcessor.postAlbumActions();

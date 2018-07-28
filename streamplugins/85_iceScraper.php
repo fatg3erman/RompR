@@ -30,7 +30,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 	debuglog("Page Title Is ".$page_title,"ICESCRAPER");
 	$count = 0;
 	directoryControlHeader('icecastlist', get_int_text('label_icecast'));
-	print '<div class="containerbox brick_wide"><div class="expand"><input class="enter" name="searchfor" type="text"';
+	print '<div class="containerbox brick_wide"><div class="expand"><input class="enter clearbox" name="searchfor" type="text"';
 	if (array_key_exists("searchfor", $_REQUEST)) {
 		print ' value="'.$_REQUEST['searchfor'].'"';
 	}

@@ -71,10 +71,10 @@ var info_lastfm = function() {
 
     function appendTag(table, name, url) {
         var html = '<tr class="newtag invisible"><td><a href="'+url+'" target="_blank">'+name+'</a></td>';
-        html += '<td><i class="icon-cancel-circled playlisticon infoclick clickremovetag" title="'+language.gettext("lastfm_removetag")+'"></i></td>';
+        html += '<td><i class="icon-cancel-circled playlisticon infoclick clickremovetag tooltip" title="'+language.gettext("lastfm_removetag")+'"></i></td>';
         $('table[name="'+table+'tagtable"]').append(html);
         $(".newtag").fadeIn('fast', function(){
-            $(this).find('[title]').tipTip({delay: 500, edgeOffset: 8});
+            // $(this).find('[title]').tipTip({delay: 500, edgeOffset: 8});
             $(this).removeClass('newtag');
         });
     }
@@ -310,15 +310,15 @@ var info_lastfm = function() {
                 var html = "";
                 if (flag) {
                     html += '<b>'+language.gettext("lastfm_loved")+':</b> '+language.gettext("label_yes");
-                    html = html+'&nbsp;&nbsp;&nbsp;<i title="'+language.gettext("lastfm_unlove")+'" class="icon-heart-broken smallicon infoclick clickunlove"></i>';
+                    html = html+'&nbsp;&nbsp;&nbsp;<i title="'+language.gettext("lastfm_unlove")+'" class="icon-heart-broken smallicon infoclick clickunlove tooltip"></i>';
                     $('#lastfm').removeClass('notloved');
                 } else {
                     html += '<li><b>'+language.gettext("lastfm_loved")+':</b> '+language.gettext("label_no");
-                    html = html+'&nbsp;&nbsp;&nbsp;<i title="'+language.gettext("lastfm_lovethis")+'" class="icon-heart smallicon infoclick clicklove"></i>';
+                    html = html+'&nbsp;&nbsp;&nbsp;<i title="'+language.gettext("lastfm_lovethis")+'" class="icon-heart smallicon infoclick clicklove tooltip"></i>';
                     $('#lastfm').removeClass('notloved').addClass('notloved');
                 }
                 $('li[name="userloved"]').html(html);
-                $('li[name="userloved"]').find("[title]").tipTip({delay: 500, edgeOffset: 8});
+                // $('li[name="userloved"]').find("[title]").tipTip({delay: 500, edgeOffset: 8});
                 html = null;
             }
 
@@ -392,7 +392,7 @@ var info_lastfm = function() {
 
                             if (accepted && lastfm.isLoggedIn() && !lfmdata.error()) {
                                 self.artist.getUserTags();
-                                $("#artistinformation .enter").on('keyup',  onKeyUp );
+                                // $("#artistinformation .enter").on('keyup', onKeyUp );
                             }
 
 						}
@@ -546,7 +546,7 @@ var info_lastfm = function() {
 
                             if (accepted && lastfm.isLoggedIn() && !lfmdata.error()) {
                                 self.album.getUserTags();
-                                $("#albuminformation .enter").on('keyup',  onKeyUp );
+                                // $("#albuminformation .enter").on('keyup',  onKeyUp );
                             }
                         }
                     },
@@ -676,7 +676,7 @@ var info_lastfm = function() {
                             if (accepted && lastfm.isLoggedIn() && !lfmdata.error()) {
                                 self.track.getUserTags();
                                 doUserLoved(lfmdata.userloved());
-                                $("#trackinformation .enter").on('keyup',  onKeyUp );
+                                // $("#trackinformation .enter").on('keyup',  onKeyUp );
                             }
                         }
                     },

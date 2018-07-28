@@ -124,6 +124,9 @@ function playerController() {
             type: 'POST',
             url: 'player/mpd/postcommand.php',
             data: JSON.stringify(list),
+            // contentType of false prevents jQuery from re-encoding our data, where it
+            // converts %20 to +, which seems to be a bug in jQuery 3.0
+            contentType: false,
             dataType: 'json',
             timeout: 30000,
             success: function(data) {
@@ -180,6 +183,9 @@ function playerController() {
 	}
 
     this.loadPlaylistURL = function(name) {
+        if (name == '') {
+            return false;
+        }
         var data = {url: encodeURIComponent(name)};
         $.ajax({
             type: "GET",
@@ -246,11 +252,14 @@ function playerController() {
         var mywin = fnarkle.create();
         var d = $('<div>',{class: 'containerbox'}).appendTo(mywin);
         var e = $('<div>',{class: 'expand'}).appendTo(d);
-        var i = $('<input>',{class: 'enter', id: 'newplname', type: 'text', size: '200'}).appendTo(e).on('keyup', onKeyUp);
+
+        // var i = $('<input>',{class: 'enter', id: 'newplname', type: 'text', size: '200'}).appendTo(e).on('keyup', onKeyUp);
+        var i = $('<input>',{class: 'enter', id: 'newplname', type: 'text', size: '200'}).appendTo(e);
+
         var b = $('<button>',{class: 'fixed'}).appendTo(d);
         b.html('Rename');
         fnarkle.useAsCloseButton(b, callback);
-        b.on('keyup', onKeyUp);
+        // b.on('keyup', onKeyUp);
         fnarkle.open();
     }
 
@@ -316,7 +325,9 @@ function playerController() {
 
 	    var name = $("#playlistname").val();
 	    debug.log("GENERAL","Save Playlist",name);
-	    if (name.indexOf("/") >= 0 || name.indexOf("\\") >= 0) {
+        if (name == '') {
+            return false;
+        } else if (name.indexOf("/") >= 0 || name.indexOf("\\") >= 0) {
 	        infobar.notify(infobar.ERROR, language.gettext("error_playlistname"));
 	    } else {
 	        self.do_command_list([["save", name]], function() {

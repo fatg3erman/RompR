@@ -24,7 +24,7 @@ printOutputCheckboxes();
 ?>
             <div class="pref styledinputs" name="playerdefs">
             </div>
-            
+
         </div>
         <div id="specialplugins" class="topdropmenu rightmenu autohide">
             <div class="sptext"></div>
@@ -114,7 +114,7 @@ printOutputCheckboxes();
     print '<div class="menuitem containerbox">';
     print '<div class="fixed" style="padding-right:4px"><i onclick="toggleCollectionButtons()" '.
         'title="'.get_int_text('button_collectioncontrols').
-        '" class="icon-menu playlisticon clickicon lettuce"></i></div>';
+        '" class="icon-menu playlisticon clickicon tooltip"></i></div>';
     print '<div class="configtitle textcentre expand"><b>'.get_int_text('button_local_music').'</b></div>';
     print '</div>';
     collectionButtons();
@@ -212,7 +212,7 @@ if ($prefs['player_backend'] == "mopidy") {
     print '<div class="configtitle textcentre"><b>'.get_int_text('button_saveplaylist').'</b></div>';
 ?>
     <div class="pref containerbox dropdown-container"><div class="fixed padright">
-        </div><div class="expand"><input id="playlistname" type="text" size="200"/></div>
+    </div><div class="expand"><input class="enter clearbox" id="playlistname" type="text" size="200"/></div>
 <?php
         print '<button class="fixed">'.get_int_text('button_save').'</button>';
 ?>

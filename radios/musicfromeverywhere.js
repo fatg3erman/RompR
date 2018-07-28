@@ -7,9 +7,12 @@ var genreRadio = function() {
             // Genre (Music from Everywhere)
             //
             $('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-wifi', language.gettext('label_genre'), 'genre_radio'));
-            $('#genre_radio').on('keyup', onKeyUp);
+            // $('#genre_radio').on('keyup', onKeyUp);
             $('button[name="genre_radio"]').on('click', function() {
-                playlist.radioManager.load('genreRadio', $('#genre_radio').val());
+                var v = $('#genre_radio').val();
+                if (v != '') {
+                    playlist.radioManager.load('genreRadio', v);
+                }
             });
         }
     }
@@ -44,9 +47,12 @@ var singleArtistRadio = function() {
             // Tracks By Artist (Music from Everywhere)
             //
             $('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-artist', language.gettext('label_singleartistradio'), 'singart_radio'));
-            $('#singart_radio').on('keyup', onKeyUp);
+            // $('#singart_radio').on('keyup', onKeyUp);
             $('button[name="singart_radio"]').on('click', function() {
-                playlist.radioManager.load('singleArtistRadio', $('#singart_radio').val());
+                var v = $('#singart_radio').val();
+                if (v != '') {
+                    playlist.radioManager.load('singleArtistRadio', v);
+                }
             });
         }
     }

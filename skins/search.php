@@ -19,7 +19,7 @@ if ($prefs['tradsearch']) {
 foreach ($sterms as $label => $term) {
     print '<div class="containerbox dropdown-container searchitem" name="'.$term.'">';
 	print '<div class="fixed searchlabel"><span class="slt"><b>'.ucwords(strtolower(get_int_text($label))).'</b></span></div>';
-    print '<div class="expand"><input class="searchterm enter" name="'.$term.'" type="text" /></div>';
+    print '<div class="expand"><input class="searchterm enter clearbox" name="'.$term.'" type="text" /></div>';
     print '</div>';
 }
 

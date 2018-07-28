@@ -36,7 +36,7 @@ var ratingManager = function() {
 				ondrop: ratingManager.dropped
 			});
 		}
-		x.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
+		// x.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
 	}
 
 	function putTracksInSection(section, element) {
@@ -63,7 +63,7 @@ var ratingManager = function() {
 				dropper.removeClass('notthere');
 				infobar.markCurrentTrack();
 				updating_section = false;
-				dropper.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
+				// dropper.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
 				checkSectionRefresh();
 			},
 			function() {
@@ -216,7 +216,7 @@ var ratingManager = function() {
 
     			$("#rmgfoldup").append('<div class="containerbox padright noselection ratinstr" name="ratman_dragTag">'+
         			'<div class="expand">'+
-            		'<input class="enter inbrowser" name="newtagnameinput" type="text" />'+
+            		'<input class="enter inbrowser clearbox" name="newtagnameinput" type="text" />'+
         			'</div>'+
 					'<button class="fixed" onclick="ratingManager.createTag()">'+language.gettext("button_createtag")+'</button>'+
     				'</div>');
@@ -236,26 +236,26 @@ var ratingManager = function() {
 	        	$("#rmgfoldup").append('<div class="containerbox padright" name="ratman_loading"><h3>Loading List....</h3></div>');
 
 			    $("#rmgfoldup").append('<div class="noselection fullwidth masonified" id="ratmunger"></div>');
-			    $('[name="filterinput"]').on('click', function(ev){
-		            ev.preventDefault();
-		            ev.stopPropagation();
-		            var position = getPosition(ev);
-		            var elemright = $('[name="filterinput"]').width() + $('[name="filterinput"]').offset().left;
-		            if (position.x > elemright - 24) {
-		            	$('[name="filterinput"]').val("");
-						debug.log("RATMAN","Filtering");
-		            	ratingManager.filter();
-		            }
-			    });
-			    $('[name="filterinput"]').on('mouseenter',makeHoverWork);
-			    $('[name="filterinput"]').on('mousemove', makeHoverWork);
+			    // $('[name="filterinput"]').on('click', function(ev){
+		        //     ev.preventDefault();
+		        //     ev.stopPropagation();
+		        //     var position = getPosition(ev);
+		        //     var elemright = $('[name="filterinput"]').width() + $('[name="filterinput"]').offset().left;
+		        //     if (position.x > elemright - 24) {
+		        //     	$('[name="filterinput"]').val("");
+				// 		debug.log("RATMAN","Filtering");
+		        //     	ratingManager.filter();
+		        //     }
+			    // });
+			    // $('[name="filterinput"]').on('mouseenter',makeHoverWork);
+			    // $('[name="filterinput"]').on('mousemove', makeHoverWork);
 				$('.ratinstr').hide();
 				rmg.show();
 				$('[name="ratman_sortby"][value="'+prefs.ratman_sortby+'"]').prop('checked', true);
 	            $('#ratman_showletters').prop('checked', prefs.ratman_showletters ? true : false );
 	        	browser.goToPlugin("rmg");
 			    ratingManager.reloadEntireRatList();
-	            $('#rmgfoldup .enter').on('keyup', onKeyUp);
+	            // $('#rmgfoldup .enter').on('keyup', onKeyUp);
 	            $('[name="ratman_sortby"]').on('click', ratingManager.reloadEntireRatList );
 	            $('#ratman_showletters').on('click', ratingManager.reloadEntireRatList );
 	        } else {
@@ -440,11 +440,13 @@ var ratingManager = function() {
 
 		createTag: function() {
 			var name = $('[name=newtagnameinput]').val();
-			if ($('.thebigholder[name="'+name+'"]').length > 0) {
-				infobar.notify(infobar.ERROR, "That tag already exists");
-			} else {
-				name = name.replace(/\s*,\s*/, ', ');
-				startNewSection(name, name, 0, true);
+			if (name != '') {
+				if ($('.thebigholder[name="'+name+'"]').length > 0) {
+					infobar.notify(infobar.ERROR, "That tag already exists");
+				} else {
+					name = name.replace(/\s*,\s*/, ', ');
+					startNewSection(name, name, 0, true);
+				}
 			}
 		}
 	}

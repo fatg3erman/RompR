@@ -56,9 +56,12 @@ var artistRadio = function() {
                 // Artists Similar To (Music From Spotify)
                 //
                 $('#pluginplaylists_spotify').append(playlist.radioManager.textEntry('icon-spotify-circled', language.gettext('label_simar_radio'), 'simar_radio'));
-                $('#simar_radio').on('keyup', onKeyUp);
+                // $('#simar_radio').on('keyup', onKeyUp);
                 $('button[name="simar_radio"]').on('click', function() {
-                    playlist.radioManager.load('artistRadio', $('#simar_radio').val());
+                    var v = $('#simar_radio').val();
+                    if (v != '') {
+                        playlist.radioManager.load('artistRadio', v);
+                    }
                 });
             }
         }

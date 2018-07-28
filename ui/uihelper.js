@@ -72,7 +72,7 @@ jQuery.fn.stopSpinner = function() {
 
 jQuery.fn.bindPlayClicks = function() {
     return this.each(function() {
-        $(this).off('click').off('dblclick').on('click', onSourcesClicked);
+        $(this).off('click', onSourcesClicked).off('dblclick', onSourcesDoubleClicked).on('click', onSourcesClicked);
         if (prefs.clickmode == 'double') {
             $(this).on('dblclick', onSourcesDoubleClicked);
         }
@@ -123,8 +123,8 @@ jQuery.fn.makeTagMenu = function(options) {
             autoUpdateTimeout: 500,
         }
         });
-        textbox.on('mouseenter', makeHoverWork);
-        textbox.on('mousemove', makeHoverWork);
+        // textbox.on('mouseenter', makeHoverWork);
+        // textbox.on('mousemove', makeHoverWork);
         textbox.on('click', function(ev) {
             ev.preventDefault();
             ev.stopPropagation();
@@ -418,7 +418,7 @@ var uiHelper = function() {
                     $('i[name="podcast_'+index+'"]').parent().remove();
                     $('#podcast_'+index).remove();
                     $("#fruitbat").html(data);
-                    $("#fruitbat .fridge").tipTip({delay: 500, edgeOffset: 8});
+                    // $("#fruitbat .tooltip").tipTip({delay: 500, edgeOffset: 8});
                     infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
                     podcasts.doNewCount();
                     layoutProcessor.postAlbumActions();

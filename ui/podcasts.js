@@ -90,18 +90,6 @@ var podcasts = function() {
 		}
 	}
 
-	function makeSearchWork(event) {
-		event.preventDefault();
-		event.stopPropagation();
-		var position = getPosition(event);
-		var elemright = $(event.target).width() + $(event.target).offset().left;
-		if (position.x > elemright - 24) {
-			$(event.target).val("");
-			var thing = $(event.target).attr('name').replace(/podsearcher_/,'');
-			podcasts.searchinpodcast(thing);
-		}
-	}
-
 	function putPodCount(element, num, numl) {
 		debug.log("PODCASTS","Updating counts",element,num,numl);
 		var indicator = $(element);
@@ -171,8 +159,8 @@ var podcasts = function() {
 			target.html(html);
 		}
 		$('i[name="podcast_'+channel+'"]').stopSpinner();
-		target.find('.fridge').tipTip({delay: 500, edgeOffset: 8});
-		target.find('.clearbox').on('click', makeSearchWork).on('mouseenter',makeHoverWork).on('mousemove', makeHoverWork).on('keyup', onKeyUp);
+		// target.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
+		// target.find('.clearbox').on('click', podcasts.makeSearchWork).on('mouseenter',makeHoverWork).on('mousemove', makeHoverWork).on('keyup', onKeyUp);
 		target.find('input.resumepos').each(function() {
 			var pos = parseInt($(this).val());
 			var duration = parseInt($(this).next().val());
@@ -211,7 +199,7 @@ var podcasts = function() {
 						callback(true);
 					} else {
 			            $("#fruitbat").html(data);
-			            $("#fruitbat .fridge").tipTip({delay: 500, edgeOffset: 8});
+			            // $("#fruitbat .tooltip").tipTip({delay: 500, edgeOffset: 8});
 			            infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
 			            podcasts.doNewCount();
 						$('#spinner_cocksausage').remove();
@@ -238,7 +226,7 @@ var podcasts = function() {
 		        data: {populate: 1 },
 		        success: function(data) {
 		            $("#fruitbat").html(data);
-		            $("#fruitbat .fridge").tipTip({delay: 500, edgeOffset: 8});
+		            // $("#fruitbat .tooltip").tipTip({delay: 500, edgeOffset: 8});
 		            podcasts.doNewCount();
 					layoutProcessor.postAlbumActions($('#fruitbat'));
 		        },
@@ -250,6 +238,7 @@ var podcasts = function() {
 
 		loadPodcast: function(channel) {
 			var target = $('#podcast_'+channel);
+			debug.log("PODCASTS","Loading Podcast",target);
 			var uri = "includes/podcasts.php?populate=1&loadchannel="+channel;
 			var term = $('[name="podsearcher_'+channel+'"]').val();
 			var configvisible = target.find('.podconfigpanel').is(':visible');
@@ -274,7 +263,9 @@ var podcasts = function() {
 
 		doPodcast: function(input) {
 		    var url = $("#"+input).val();
-		    podcasts.getPodcast(url);
+			if (url != '') {
+		    	podcasts.getPodcast(url);
+			}
 		},
 
 		handleDrop: function() {
@@ -310,7 +301,7 @@ var podcasts = function() {
 		},
 
 		downloadPodcastChannel: function(channel) {
-            $("#podcast_"+channel).find('.poddownload').click();
+            $("#podcast_"+channel).find('.poddownload').trigger('click');
 		},
 
 		checkMarkPodcastAsListened: function(file) {
@@ -395,7 +386,7 @@ var podcasts = function() {
 		        data: {remove: name, populate: 1 },
 		        success: function(data) {
 		            $("#fruitbat").html(data);
-		            $("#fruitbat .fridge").tipTip({delay: 500, edgeOffset: 8});
+		            // $("#fruitbat .tooltip").tipTip({delay: 500, edgeOffset: 8});
 		            podcasts.doNewCount();
 					layoutProcessor.postAlbumActions();
 		        },
@@ -412,8 +403,11 @@ var podcasts = function() {
 
 		search: function() {
 			$('#podcast_search').empty();
-		    doSomethingUseful('podcast_search', language.gettext("label_searching"));
 			var term = $('#podcastsearch').val();
+			if (term == '') {
+				return true;
+			}
+		    doSomethingUseful('podcast_search', language.gettext("label_searching"));
 		    $.ajax( {
 		        type: "GET",
 		        url: "includes/podcasts.php",
@@ -423,7 +417,7 @@ var podcasts = function() {
 		        success: function(data) {
 		            $("#podcast_search").html(data);
 		            $('#podcast_search').prepend('<div class="menuitem containerbox padright brick_wide sensiblebox"><div class="configtitle textcentre expand"><b>Search Results for &quot;'+term+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch fixed"></i></div>');
-		            $("#podcast_search .fridge").tipTip({delay: 500, edgeOffset: 8});
+		            // $("#podcast_search .tooltip").tipTip({delay: 500, edgeOffset: 8});
 					layoutProcessor.postAlbumActions($('#podcast_search'));
 		        },
 		        error: function(data, status, thing) {
@@ -480,6 +474,18 @@ var podcasts = function() {
 				el.stopSpinner();
 				podcasts.reloadList()
 			});
+		},
+
+		makeSearchWork: function(event) {
+			event.preventDefault();
+			event.stopPropagation();
+			var position = getPosition(event);
+			var elemright = $(event.target).width() + $(event.target).offset().left;
+			if (position.x > elemright - 24) {
+				$(event.target).val("");
+				var thing = $(event.target).attr('name').replace(/podsearcher_/,'');
+				podcasts.searchinpodcast(thing);
+			}
 		}
 
 	}

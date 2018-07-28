@@ -489,9 +489,16 @@ var prefs = function() {
         },
 
         togglePref: function(event) {
+            debug.log("PREFS","Toggling",event);
             var prefobj = new Object;
-            var prefname = $(event.target).attr("id");
-            prefobj[prefname] = $("#"+prefname).is(":checked");
+            var prefname = $(this).attr("id");
+            if (event === null) {
+                // Event will be null if we've called into this through
+                // $.proxy - like we have to in a floatingMenu.
+                prefobj[prefname] = !$(this).is(":checked");
+            } else {
+                prefobj[prefname] = $(this).is(":checked");
+            }
             var callback = null;
             switch (prefname) {
                 case 'downloadart':
@@ -575,7 +582,7 @@ var prefs = function() {
         toggleRadio: function(event) {
             var defer = false;
             var prefobj = new Object;
-            var prefname = $(event.target).attr("name");
+            var prefname = $(this).attr("name");
             var prefsave = prefname.replace(/_duplicate\d+/, '');
             prefobj[prefsave] = $('[name='+prefname+']:checked').val();
             var callback = null;

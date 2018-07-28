@@ -100,7 +100,7 @@ function doPodcastBase() {
 
     print '<div id="cocksausage">';
     print '<div class="containerbox indent"><div class="expand">'.get_int_text("podcast_entrybox").'</div></div>';
-    print '<div class="containerbox indent"><div class="expand"><input class="enter" id="podcastsinput" type="text" /></div>';
+    print '<div class="containerbox indent"><div class="expand"><input class="enter clearbox" id="podcastsinput" type="text" /></div>';
     print '<button class="fixed iconbutton rssbutton" onclick="podcasts.doPodcast(\'podcastsinput\')"></button></div>';
     print '</div>';
 
@@ -116,10 +116,10 @@ function doPodcastBase() {
     print '<div class="spacer"></div>';
 
     print '<div class="containerbox indent bumpad">';
-    print '<i class="icon-refresh smallicon clickable clickicon fixed lettuce podglobal" name="refreshall" title="'.get_int_text('podcast_refresh_all').'"></i>';
-    print '<i class="icon-headphones smallicon clickable clickicon fixed lettuce podglobal" name="markalllistened" title="'.get_int_text('podcast_mark_all').'"></i>';
-    print '<i class="icon-trash oneeighty smallicon clickable clickicon fixed lettuce podglobal" name="undeleteall" title="'.get_int_text('podcast_undelete').'"></i>';
-    print '<i class="icon-download oneeighty smallicon clickable clickicon fixed lettuce podglobal" name="removealldownloaded" title="'.get_int_text('podcast_removedownloaded').'"></i>';
+    print '<i class="icon-refresh smallicon clickable clickicon fixed tooltip podglobal" name="refreshall" title="'.get_int_text('podcast_refresh_all').'"></i>';
+    print '<i class="icon-headphones smallicon clickable clickicon fixed tooltip podglobal" name="markalllistened" title="'.get_int_text('podcast_mark_all').'"></i>';
+    print '<i class="icon-trash oneeighty smallicon clickable clickicon fixed tooltip podglobal" name="undeleteall" title="'.get_int_text('podcast_undelete').'"></i>';
+    print '<i class="icon-download oneeighty smallicon clickable clickicon fixed tooltip podglobal" name="removealldownloaded" title="'.get_int_text('podcast_removedownloaded').'"></i>';
     print '</div>';
 
     print '<div class="spacer"></div>';
@@ -155,7 +155,7 @@ function doPodcastBase() {
     print '<div class="spacer"></div>';
 
     print '<div class="containerbox indent"><div class="expand">'.get_int_text("label_searchfor").' (iTunes)</div></div>';
-    print '<div class="containerbox indent"><div class="expand"><input class="enter" id="podcastsearch" type="text" /></div>';
+    print '<div class="containerbox indent"><div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" /></div>';
     print '<button class="fixed searchbutton iconbutton" onclick="podcasts.search()"></button></div>';
 
     print '<div class="fullwidth noselection clearfix"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon padright" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';

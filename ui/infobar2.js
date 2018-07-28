@@ -644,14 +644,18 @@ var infobar = function() {
             $('#notifications').empty().html(html);
             html = null;
             clearTimeout(notifytimer);
-            $('#notifications').slideDown('slow');
+            if ($('#notifications').is(':hidden')) {
+                $('#notifications').slideToggle('slow');
+            }
             if (type !== infobar.PERMERROR && type !== infobar.PERMNOTIFY) {
                 notifytimer = setTimeout(this.removenotify, 5000);
             }
         },
 
         removenotify: function() {
-            $('#notifications').slideUp('slow');
+            if ($('#notifications').is(':visible')) {
+                $('#notifications').slideToggle('slow');
+            }
         },
 
         createProgressBar: function() {

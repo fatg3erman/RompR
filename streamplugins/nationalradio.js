@@ -13,9 +13,9 @@ var nationalRadioPlugin = {
     },
 
     setTheThing: function() {
-        $('[name="radiosearcher"]').on('mouseenter',makeHoverWork);
-        $('[name="radiosearcher"]').on('mousemove', makeHoverWork);
-        $('[name="radiosearcher"]').on('keyup', onKeyUp);
+        // $('[name="radiosearcher"]').on('mouseenter',makeHoverWork);
+        // $('[name="radiosearcher"]').on('mousemove', makeHoverWork);
+        // $('[name="radiosearcher"]').on('keyup', onKeyUp);
     },
 
     changeradiocountry: function() {
@@ -86,15 +86,15 @@ var nationalRadioPlugin = {
         } else if (clickedElement.hasClass("clicksearchmore")) {
             event.stopImmediatePropagation();
             nationalRadioPlugin.searchRadioMore(clickedElement);
-        } else if (clickedElement.hasClass('searchdirble')) {
-            event.preventDefault();
-            event.stopPropagation();
-            var position = getPosition(event);
-            var elemright = $('[name="radiosearcher"]').width() + $('[name="radiosearcher"]').offset().left;
-            if (position.x > elemright - 24) {
-                $('[name="radiosearcher"]').val("");
-                nationalRadioPlugin.changeradiocountry();
-            }
+        // } else if (clickedElement.hasClass('searchdirble')) {
+        //     event.preventDefault();
+        //     event.stopPropagation();
+        //     var position = getPosition(event);
+        //     var elemright = $('[name="radiosearcher"]').width() + $('[name="radiosearcher"]').offset().left;
+        //     if (position.x > elemright - 24) {
+        //         $('[name="radiosearcher"]').val("");
+        //         nationalRadioPlugin.changeradiocountry();
+        //     }
         } else if (clickedElement.hasClass('dirblesearch')) {
                 nationalRadioPlugin.searchBigRadio();
         } else if (prefs.clickmode == "double") {

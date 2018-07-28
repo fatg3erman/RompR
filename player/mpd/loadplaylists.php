@@ -200,8 +200,12 @@ function do_playlist_header() {
     print '<div class="configtitle textcentre brick_wide"><b>'.get_int_text('button_loadplaylist').'</b></div>';
     print '<div class="containerbox dropdown-container fullwidth brick_wide">';
     print '<div class="fixed padright padleft"><span class="alignmid">External URL</span></div>';
+
+    // print '<div class="expand dropdown-holder">
+    //     <input class="enter" id="godfreybiggins" type="text" onkeyup="onKeyUp(event)" /></div>';
     print '<div class="expand dropdown-holder">
-        <input class="enter" id="godfreybiggins" type="text" onkeyup="onKeyUp(event)" /></div>';
+        <input class="enter clearbox" id="godfreybiggins" type="text" /></div>';
+
     print '<button class="fixed alignmid" '.
         'onclick="player.controller.loadPlaylistURL($(\'#godfreybiggins\').val())">Play</button>';
     print '</div>';

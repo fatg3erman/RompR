@@ -313,10 +313,6 @@ var layoutProcessor = function() {
 
 // Dummy functions standing in for widgets we don't use in this version -
 // custom scroll bars, tipTip, and drag/drop stuff
-jQuery.fn.tipTip = function() {
-    return this;
-}
-
 jQuery.fn.acceptDroppedTracks = function() {
     return this;
 }

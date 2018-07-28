@@ -123,13 +123,13 @@ var wishlistViewer = function() {
 			infobar.markCurrentTrack();
             if (display && !wlv.is(':visible')) {
 	            wlv.slideToggle('fast', function() {
-					wlv.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
+					// wlv.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
 		        	browser.goToPlugin("wlv");
 	            });
 	        }
         });
 	}
-	
+
 	function reloadWishlist() {
 		prefs.save({sortwishlistby: $('[name="sortwishlistby"]:checked').val()});
 		loadWishlist(false);
@@ -204,7 +204,7 @@ var wishlistViewer = function() {
 			trackDiv.find('.invisible').first().fadeIn('fast');
 
 		},
-		
+
 		update: function() {
 			if (wlv !== null) {
 				loadWishlist(false);

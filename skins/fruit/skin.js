@@ -116,14 +116,14 @@ var layoutProcessor = function() {
             $("#chooserbuttons").append($('<i>', {
                 onclick: "browser.switchsource('"+name+"')",
                 title: language.gettext(obj.text),
-                class: obj.icon+' topimg sep expand',
+                class: obj.icon+' topimg sep expand tooltip',
                 id: "button_source"+name
             }));
         },
 
         setupInfoButtons: function() {
             $("#button_source"+prefs.infosource).addClass("currentbun");
-            $("#chooserbuttons .topimg").tipTip({delay: 500, edgeOffset: 8});
+            // $("#chooserbuttons .topimg").tipTip({delay: 500, edgeOffset: 8});
         },
 
         goToBrowserPanel: function(panel) {
@@ -169,7 +169,7 @@ var layoutProcessor = function() {
             if (!$("#playlistbuttons").is(':visible')) {
                 togglePlaylistButtons()
             }
-            $("#"+button).click();
+            $("#"+button).tirgger('click');
         },
 
         updateInfopaneScrollbars: function() {
@@ -477,7 +477,7 @@ var layoutProcessor = function() {
 
             $(".stayopen").on('click', function(ev) {ev.stopPropagation() });
 
-            $(".enter").on('keyup',  onKeyUp );
+            // $(".enter").on('keyup',  onKeyUp );
             $.each(my_scrollers,
                 function( index, value ) {
                 layoutProcessor.addCustomScrollBar(value);
@@ -511,7 +511,7 @@ var layoutProcessor = function() {
             $('.clear_playlist').on('click', playlist.clear);
             $("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
 
-            $(".lettuce,.tooltip").tipTip({delay: 500, edgeOffset: 8});
+            // $(".tooltip,.tooltip").tipTip({delay: 500, edgeOffset: 8});
 
             document.body.addEventListener('drop', function(e) {
                 e.preventDefault();

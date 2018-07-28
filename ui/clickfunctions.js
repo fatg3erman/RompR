@@ -193,9 +193,7 @@ function onSourcesClicked(event) {
             $('[name="'+id+'"]').removeClass('selected');
             clickedElement.parent().parent().remove();
     } else if (prefs.clickmode == "double") {
-        if ((clickedElement.hasClass("clickalbum") && !clickedElement.hasClass('noselect')) ||
-            clickedElement.hasClass("clickloadplaylist") ||
-            clickedElement.hasClass("clickloaduserplaylist")) {
+        if (clickedElement.hasClass("clickalbum") && !clickedElement.hasClass('noselect')) {
             event.stopImmediatePropagation();
             albumSelect(event, clickedElement);
         } else if (clickedElement.hasClass("clickdisc")) {
@@ -321,6 +319,7 @@ function doMenu(event, element) {
 }
 
 function getMenuType(m) {
+    debug.log("MENUTYPE",m);
     var i = m.indexOf('_');
     if (i !== -1) {
         return m.substr(0, i);
@@ -483,13 +482,19 @@ function setDraggable(selector) {
 }
 
 function onKeyUp(e) {
+    e.stopPropagation();
+    e.preventDefault();
     if (e.keyCode == 13) {
         debug.log("KEYUP","Enter was pressed");
-        if ($(e.target).next("button").length > 0) {
-            $(e.target).next("button").click();
-        } else {
-            $(e.target).parent().siblings("button").click();
-        }
+        fakeClickOnInput($(e.target));
+    }
+}
+
+function fakeClickOnInput(jq) {
+    if (jq.next("button").length > 0) {
+        jq.next("button").trigger('click');
+    } else {
+        jq.parent().siblings("button").trigger('click');
     }
 }
 
@@ -694,12 +699,16 @@ function amendAlbumDetails(e, element) {
     var d = $('<div>',{class: 'containerbox dropdown-container'}).appendTo(mywin);
     d.append('<div class="fixed padright" style="width:'+width+'">'+language.gettext('label_albumartist')+'</div>');
     var e = $('<div>',{class: 'expand'}).appendTo(d);
-    var i = $('<input>',{class: 'enter', id: 'amendname'+albumindex, type: 'text', size: '200'}).appendTo(e).on('keyup', onKeyUp);
+
+    // var i = $('<input>',{class: 'enter', id: 'amendname'+albumindex, type: 'text', size: '200'}).appendTo(e).on('keyup', onKeyUp);
+    var i = $('<input>',{class: 'enter', id: 'amendname'+albumindex, type: 'text', size: '200'}).appendTo(e);
 
     d = $('<div>',{class: 'containerbox dropdown-container'}).appendTo(mywin);
     d.append('<div class="fixed padright" style="width:'+width+'">'+language.gettext('info_year')+'</div>');
     e = $('<div>',{class: 'expand'}).appendTo(d);
-    i = $('<input>',{class: 'enter', id: 'amenddate'+albumindex, type: 'text', size: '200'}).appendTo(e).on('keyup', onKeyUp);
+
+    // i = $('<input>',{class: 'enter', id: 'amenddate'+albumindex, type: 'text', size: '200'}).appendTo(e).on('keyup', onKeyUp);
+    i = $('<input>',{class: 'enter', id: 'amenddate'+albumindex, type: 'text', size: '200'}).appendTo(e);
 
     var b = $('<button>',{class: 'fixed'}).appendTo(d);
     b.html(language.gettext('button_save'));

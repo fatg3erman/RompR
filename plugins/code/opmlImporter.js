@@ -21,11 +21,11 @@ var opmlImporter = function() {
 				);
 	            $('#opmlvfoldup').append('<div id="opmllist"></div>');
 				$('#opmlsubmit').on('click', opmlImporter.uploadFile);
-				$('#opmlfile').on('change', function() {
-			        var filename = $(this).val().replace(/.*(\/|\\)/, '');
-			        $(this).next().html(filename);
-			        $(this).parent().next('input[type="button"]').fadeIn('fast');
-			    });
+				// $('#opmlfile').on('change', function() {
+			    //     var filename = $(this).val().replace(/.*(\/|\\)/, '');
+			    //     $(this).next().html(filename);
+			    //     $(this).parent().next('input[type="button"]').fadeIn('fast');
+			    // });
 				opmlv.slideToggle('fast', function() {
 					browser.goToPlugin("opmlv");
 				});

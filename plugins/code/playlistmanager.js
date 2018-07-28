@@ -107,14 +107,14 @@ var playlistManager = function() {
 
     			$("#pmgfoldup").append('<div class="containerbox padright noselection">'+
         			'<div class="expand">'+
-            		'<input class="enter inbrowser" name="newplaylistnameinput" type="text" />'+
+            		'<input class="enter inbrowser clearbox" name="newplaylistnameinput" type="text" />'+
         			'</div>'+
 					'<button class="fixed" onclick="playlistManager.createPlaylist()">'+language.gettext("button_createplaylist")+'</button>'+
     				'</div>');
 
 			    $("#pmgfoldup").append('<div class="noselection fullwidth masonified" id="playmunger"></div>');
 			    getAllPlaylists();
-	            $('#pmgfoldup .enter').on('keyup', onKeyUp);
+	            // $('#pmgfoldup .enter').on('keyup', onKeyUp);
 	        } else {
 	        	browser.goToPlugin("pmg");
 	        }
@@ -147,7 +147,7 @@ var playlistManager = function() {
 	            browser.rePoint($("#playmunger"), {itemSelector: '.tagholder', percentPosition: true });
 	            infobar.markCurrentTrack();
 	            pmg.imagesLoaded(browser.rePoint);
-				pmg.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
+				// pmg.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
             });
 		},
 
@@ -269,7 +269,6 @@ var playlistManager = function() {
 			// of an empty playlist?
 			var n = $('[name=newplaylistnameinput]').val();
 			if (n == '') {
-				infobar.notify(infobar.ERROR, "You must enter a name for the playlist");
 				return false;
 			}
 			var playlist = rawurlencode(n);

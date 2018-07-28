@@ -16,7 +16,7 @@ var player = function() {
 
         function addNewPlayerRow() {
             $("#playertable").append('<tr class="hostdef" name="New">'+
-                '<td><input type="text" size="30" name="name" value="New"/></td>'+
+                '<td><input type="text" size="30" name="name" class="notspecial" value="New"/></td>'+
                 '<td><input type="text" size="30" name="host" value=""/></td>'+
                 '<td><input type="text" size="30" name="port" value=""/></td>'+
                 '<td><input type="text" size="30" name="password" value=""/></td>'+
@@ -24,8 +24,7 @@ var player = function() {
                 '<td><i class="icon-cancel-circled smallicon clickicon clickremhost"></i></td>'+
                 '</tr>'
             );
-            $('.clickremhost').off('click');
-            $('.clickremhost').on('click', removePlayerDef);
+            $('.clickremhost').off('click').on('click', removePlayerDef);
         }
 
         function updatePlayerChoices() {

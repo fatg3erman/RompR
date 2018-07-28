@@ -96,11 +96,14 @@ var crazyRadioManager = function() {
             var mywin = fnarkle.create();
             var d = $('<div>',{class: 'containerbox'}).appendTo(mywin);
             var e = $('<div>',{class: 'expand'}).appendTo(d);
-            var i = $('<input>',{class: 'enter', id: 'scplname', type: 'text', size: '200'}).appendTo(e).on('keyup', onKeyUp);
+
+            // var i = $('<input>',{class: 'enter', id: 'scplname', type: 'text', size: '200'}).appendTo(e).on('keyup', onKeyUp);
+            var i = $('<input>',{class: 'enter', id: 'scplname', type: 'text', size: '200'}).appendTo(e);
+
             var b = $('<button>',{class: 'fixed'}).appendTo(d);
             b.html(language.gettext('button_save'));
             fnarkle.useAsCloseButton(b, crazyRadioManager.actuallySaveCrazyRadioSettings);
-            b.on('keyup', onKeyUp);
+            // b.on('keyup', onKeyUp);
             fnarkle.open();
         }
 

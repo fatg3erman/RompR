@@ -12,9 +12,9 @@ var tuneinRadioPlugin = {
     },
 
     setTheThing: function() {
-        $('[name="tuneinsearcher"]').on('mouseenter',makeHoverWork);
-        $('[name="tuneinsearcher"]').on('mousemove', makeHoverWork);
-        $('[name="tuneinsearcher"]').on('keyup', onKeyUp);
+        // $('[name="tuneinsearcher"]').on('mouseenter',makeHoverWork);
+        // $('[name="tuneinsearcher"]').on('mousemove', makeHoverWork);
+        // $('[name="tuneinsearcher"]').on('keyup', onKeyUp);
         layoutProcessor.postAlbumActions();
     },
 
@@ -35,16 +35,16 @@ var tuneinRadioPlugin = {
             } else {
                 doMenu(null, clickedElement);
             }
-        } else if (clickedElement.hasClass('tuneinsearchbox')) {
-            event.preventDefault();
-            event.stopPropagation();
-            var position = getPosition(event);
-            var elemright = $('[name="tuneinsearcher"]').width() + $('[name="tuneinsearcher"]').offset().left;
-            if (position.x > elemright - 24) {
-                $('[name="tuneinsearcher"]').val("");
-                $('#tuneinlist').empty().addClass('notfilled');
-                tuneinRadioPlugin.loadBigRadio();
-            }
+        // } else if (clickedElement.hasClass('tuneinsearchbox')) {
+        //     event.preventDefault();
+        //     event.stopPropagation();
+        //     var position = getPosition(event);
+        //     var elemright = $('[name="tuneinsearcher"]').width() + $('[name="tuneinsearcher"]').offset().left;
+        //     if (position.x > elemright - 24) {
+        //         $('[name="tuneinsearcher"]').val("");
+        //         $('#tuneinlist').empty().addClass('notfilled');
+        //         tuneinRadioPlugin.loadBigRadio();
+        //     }
         } else if (clickedElement.hasClass("tuneinsearchbutton")) {
             tuneinRadioPlugin.search();
         } else if (clickedElement.hasClass("menu")) {
@@ -68,12 +68,17 @@ var tuneinRadioPlugin = {
 
     search: function() {
         var term = $('[name="tuneinsearcher"]').val();
-        debug.log("TUNEIN","Searching For",term);
-        $('i[name="tuneinlist"]').makeSpinner();
-        $("#tuneinlist").load("streamplugins/03_tuneinradio.php?populate=2&search="+encodeURIComponent(term), function() {
-            $('i[name="tuneinlist"]').stopSpinner();
-            tuneinRadioPlugin.setTheThing();
-        });
+        if (term == '') {
+            $('#tuneinlist').empty().addClass('notfilled');
+            tuneinRadioPlugin.loadBigRadio();
+        } else {
+            debug.log("TUNEIN","Searching For",term);
+            $('i[name="tuneinlist"]').makeSpinner();
+            $("#tuneinlist").load("streamplugins/03_tuneinradio.php?populate=2&search="+encodeURIComponent(term), function() {
+                $('i[name="tuneinlist"]').stopSpinner();
+                tuneinRadioPlugin.setTheThing();
+            });
+        }
     }
 
 }

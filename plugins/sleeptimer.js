@@ -79,7 +79,7 @@ var sleepTimer = function() {
 		},
 
 		fakeClick: function() {
-			$('#sleepon').click();
+			$('#sleepon').trigger('click');
 		},
 
 		volRamp: function() {

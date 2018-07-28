@@ -161,11 +161,15 @@ var shortcuts = function() {
         },
 
         action: function(ev) {
-            var key = getHotkeyString(ev);
-            for (var i in hotkeys) {
-                if (hotkeys[i] == key) {
-                    bindings[i]();
-                    break;
+            if ($(ev.target).is('input')) {
+                debug.trace("HOTKEYS","Ignoring key event in input");
+            } else {
+                var key = getHotkeyString(ev);
+                for (var i in hotkeys) {
+                    if (hotkeys[i] == key) {
+                        bindings[i]();
+                        break;
+                    }
                 }
             }
         },
@@ -188,8 +192,8 @@ var shortcuts = function() {
             }
             $(".buttonchange").on('keydown', shortcuts.change );
             $('.buttonchange').on('click',  shortcuts.remove );
-            $('.buttonchange').on('mouseenter',makeHoverWork);
-            $('.buttonchange').on('mousemove', makeHoverWork);
+            // $('.buttonchange').on('mouseenter',makeHoverWork);
+            // $('.buttonchange').on('mousemove', makeHoverWork);
             fnarkle.open();
         },
 

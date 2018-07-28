@@ -75,10 +75,12 @@ var yourRadioPlugin = {
 	},
 
 	loadSuppliedStation: function() {
-	    var el = new Array();
-	    el.push($('<div>', {class: 'invisible clickstream', name: $("#yourradioinput").val(), supply: 'user'}));
-	    playlist.addItems(el, null);
-	    el[0].remove();
+		if ($("#yourradioinput").val() != '') {
+		    var el = new Array();
+		    el.push($('<div>', {class: 'invisible clickstream', name: $("#yourradioinput").val(), supply: 'user'}));
+		    playlist.addItems(el, null);
+		    el[0].remove();
+		}
 	},
 
 	handleClick: function(event) {

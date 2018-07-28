@@ -229,7 +229,7 @@ var playlist = function() {
                 html += '<div class="expand containerbox vertical">';
                 html += '<div class="fixed">'+label+'</div>';
                 html += '<div class="containerbox fixed">';
-                html += '<div class="expand dropdown-holder"><input class="enter" id="'+id+'" type="text" /></div>';
+                html += '<div class="expand dropdown-holder"><input class="enter clearbox" id="'+id+'" type="text" /></div>';
                 html += '<button class="fixed alignmid" name="'+id+'">'+language.gettext('button_playradio')+'</button>';
                 html += '</div>';
                 html += '</div>';
@@ -344,7 +344,7 @@ var playlist = function() {
                 tracklist[i].presentYourself();
             }
 
-            $('#sortable .tooltip').tipTip({delay: 500, edgeOffset: 8});
+            // $('#sortable .tooltip').tipTip({delay: 500, edgeOffset: 8});
 
             if (finaltrack > -1) {
                 $("#pltracks").html((finaltrack+1).toString() +' '+language.gettext("label_tracks"));
