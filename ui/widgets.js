@@ -71,7 +71,6 @@ $.widget("rompr.trackdragger", $.ui.mouse, {
         this.dragging = true;
         if (!clickedElement.hasClass("selected")) {
             if (clickedElement.hasClass("clickalbum") ||
-                clickedElement.hasClass('clickalbumname') ||
                 clickedElement.hasClass("clickloadplaylist")) {
                 albumSelect(event, clickedElement);
             } else if (clickedElement.hasClass('clickdisc')) {
@@ -880,7 +879,7 @@ $.widget('rompr.spotifyAlbumThing', {
             if (self.options.showlistenlater) {
                 con.append('<i class="tleft icon-headphones smallicon infoclick'+clickclass+' clickaddtolistenlater clickspotifywidget tooltip" title="'+language.gettext('label_addtolistenlater')+'" name="'+i+'"></i>');
             } else if (self.options.showremovebutton) {
-                con.append('<i class="tleft icon-cancel-circled smallicon infoclick'+clickclass+' clickremovealbum clickspotifywidget tooltip" title="'+language.gettext('label_removefromlistenlater')+'" name="'+a.rompr_index+'"></i>');
+                con.append('<i class="tleft icon-cancel-circled smallicon infoclick'+clickclass+' clickremovefromll clickspotifywidget tooltip" title="'+language.gettext('label_removefromlistenlater')+'" name="'+a.rompr_index+'"></i>');
             }
             if (player.canPlay('spotify')) {
                 con.append('<i class="tright icon-music smallicon infoclick'+clickclass+' clickaddtocollection clickspotifywidget tooltip" title="'+language.gettext('label_addtocollection')+'" name="'+i+'"></i>');
@@ -944,7 +943,7 @@ $.widget('rompr.spotifyAlbumThing', {
         } else if (element.hasClass('clickaddtolistenlater')) {
             debug.trace("SPALBUMTHING","Add To Listen Later",self.options.data[id]);
             metaHandlers.addToListenLater(self.options.data[id]);
-        } else if (element.hasClass('clickremovealbum')) {
+        } else if (element.hasClass('clickremovefromll')) {
             while (!(element.hasClass('albumwidget'))) {
                 element = element.parent();
             }

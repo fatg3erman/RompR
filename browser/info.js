@@ -359,7 +359,7 @@ var browser = function() {
                 removeSection(source);
             } else if (element.hasClass('plugclickable')) {
                 extraPlugins[source].parent.handleClick(element, event);
-            } else if (element.hasClass('clickalbumname')) {
+            } else if (element.hasClass('clickalbum')) {
                 albumSelect(event, element);
             } else if (element.hasClass('draggable')) {
                 if (prefs.clickmode == "double") {

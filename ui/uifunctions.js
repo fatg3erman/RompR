@@ -561,7 +561,7 @@ function removeOpenItems(index) {
         $(this).hasClass('clickstream')) {
         return true;
     }
-    if (!$(this).hasClass('clickalbumname') && $("#"+$(this).attr('name')).length == 0) {
+    if ($("#"+$(this).attr('name')).length == 0) {
         return true;
     } else if ($("#"+$(this).attr('name')).hasClass('notfilled')) {
         return true;

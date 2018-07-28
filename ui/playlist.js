@@ -518,13 +518,13 @@ var playlist = function() {
                             type: 'remoteplaylist',
                             name: decodeURIComponent($(element).children('input[name="dirpath"]').val())
                         });
-                    } else if ($(element).hasClass('clickalbumname')) {
-                        $(element).next().children('.clicktrack').each(function() {
-                            tracks.push({
-                                type: 'uri',
-                                name: decodeURIComponent($(this).attr('name'))
-                            });
-                        });
+                    // } else if ($(element).hasClass('clickalbumname')) {
+                    //     $(element).parent().next().children('.clicktrack').each(function() {
+                    //         tracks.push({
+                    //             type: 'uri',
+                    //             name: decodeURIComponent($(this).attr('name'))
+                    //         });
+                    //     });
                     } else if ($(element).hasClass('playlisttrack') && prefs.cdplayermode) {
                         tracks.push({
                             type: 'playlisttoend',

@@ -533,7 +533,7 @@ function checkMetaKeys(event, element) {
 
 function albumSelect(event, element) {
     var is_currently_selected = checkMetaKeys(event, element);
-    var div_to_select = element.hasClass('clickalbumname') ? element.next() : $('#'+element.attr("name"));
+    var div_to_select = $('#'+element.attr("name"));
     debug.log("GENERAL","Albumselect Looking for div",div_to_select,is_currently_selected);
     if (is_currently_selected) {
         element.removeClass("selected");
