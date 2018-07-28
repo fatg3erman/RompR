@@ -95,7 +95,7 @@ var collectionHelper = function() {
             $("#filecollection").load(files);
         }
     }
-    
+
     function checkUpdateMonitor() {
         $.ajax({
             type: "GET",
@@ -116,16 +116,16 @@ var collectionHelper = function() {
             }
         });
     }
-    
+
     function updateUIElements() {
-        
+
         if (dbQueue.queuelength() > 0) {
             debug.log("UI","Deferring updates due to outstanding requests");
             clearTimeout(update_timer);
             setTimeout(updateUIElements, 1000);
             return;
         }
-        
+
         returned_data.forEach(function(rdata, index) {
 
             if (rdata && rdata.hasOwnProperty('deletedalbums')) {
@@ -186,44 +186,44 @@ var collectionHelper = function() {
                 // statistics box at the top of the collection
                 $("#fothergill").html(rdata.stats);
             }
-        
+
             returned_data[index] = null;
-        
+
         });
 
         collectionHelper.scootTheAlbums($("#collection"));
 
     }
-        
+
     return {
-                
+
         disableCollectionUpdates: function() {
-            $('button[name="donkeykong"]').unbind('click').css('opacity', '0.2');
-            $('button[name="dinkeyking"]').unbind('click').css('opacity', '0.2');
+            $('button[name="donkeykong"]').off('click').css('opacity', '0.2');
+            $('button[name="dinkeyking"]').off('click').css('opacity', '0.2');
         },
-        
+
         enableCollectionUpdates: function() {
-            $('button[name="donkeykong"]').unbind('click').bind('click', function() { collectionHelper.checkCollection(true, false) }).css('opacity', '');
-            $('button[name="dinkeyking"]').unbind('click').bind('click', function() { collectionHelper.checkCollection(true, false) }).css('opacity', '');
+            $('button[name="donkeykong"]').off('click').on('click', function() { collectionHelper.checkCollection(true, false) }).css('opacity', '');
+            $('button[name="dinkeyking"]').off('click').on('click', function() { collectionHelper.checkCollection(true, false) }).css('opacity', '');
         },
 
         forceCollectionReload: function() {
             collection_status = 0;
             collectionHelper.checkCollection(false, false);
         },
-    
+
         prepareForLiftOff: function(text) {
             infobar.notify(infobar.PERMNOTIFY,text);
             $("#collection").empty();
             doSomethingUseful('collection', text);
             var x = $('<div>',{ id: 'updatemonitor', class: 'tiny', style: 'padding-left:1em;margin-right:1em'}).insertAfter($('#spinner_collection'));
         },
-        
+
         markWaitFileList: function(text) {
             $("#filecollection").empty();
             doSomethingUseful("filecollection", text);
         },
-        
+
         collectionKey: function(w) {
             return w+prefs.sortcollectionby+'root';
         },
@@ -258,7 +258,7 @@ var collectionHelper = function() {
                 }
             }
         },
-        
+
         scootTheAlbums: function(jq) {
             if (prefs.downloadart) {
                 debug.log("COLLECTION", "Scooting albums in",jq.attr('id'));
@@ -267,7 +267,7 @@ var collectionHelper = function() {
                 });
             }
         },
-        
+
         updateCollectionDisplay: function(rdata) {
             // rdata contains HTML fragments to insert into the collection
             // Otherwise we would have to reload the entire collection panel every time,
@@ -280,7 +280,7 @@ var collectionHelper = function() {
                 setTimeout(updateUIElements, 1000);
             }
         }
-            
+
     }
 
 }();

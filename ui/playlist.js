@@ -589,9 +589,9 @@ var playlist = function() {
                 $('#repeat').click(player.controller.toggleRepeat).parent().removeClass('thin');
                 $('#consume').click(player.controller.toggleConsume).parent().removeClass('thin');
             } else {
-                $('#random').unbind('click').parent().addClass('thin');
-                $('#repeat').unbind('click').parent().addClass('thin');
-                $('#consume').unbind('click').parent().addClass('thin');
+                $('#random').off('click').parent().addClass('thin');
+                $('#repeat').off('click').parent().addClass('thin');
+                $('#consume').off('click').parent().addClass('thin');
             }
         },
 

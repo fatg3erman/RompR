@@ -1,5 +1,5 @@
 var communityRadioPlugin = {
-    
+
     page: 0,
     searching: false,
 
@@ -17,7 +17,7 @@ var communityRadioPlugin = {
             );
         }
     },
-    
+
     update: function() {
         $('i[name="communityradiolist"]').makeSpinner();
         $('#communitystations').load(communityRadioPlugin.getUri(2),
@@ -28,7 +28,7 @@ var communityRadioPlugin = {
             }
         );
     },
-    
+
     getUri: function(p) {
         var uri;
         if (communityRadioPlugin.searching) {
@@ -51,13 +51,13 @@ var communityRadioPlugin = {
                 '&page='+communityRadioPlugin.page;
         }
         return encodeURI(uri);
-        
+
     },
-    
+
     setTheThing: function() {
-        $('input[name="commradiolistby"]').bind('click', communityRadioPlugin.changeListBy);
-        $('input[name="commradioorderby"]').bind('click', communityRadioPlugin.changeOrderBy);
-        $('button[name="commradiosearch"]').bind('click', communityRadioPlugin.search);
+        $('input[name="commradiolistby"]').on('click', communityRadioPlugin.changeListBy);
+        $('input[name="commradioorderby"]').on('click', communityRadioPlugin.changeOrderBy);
+        $('button[name="commradiosearch"]').on('click', communityRadioPlugin.search);
         $('#communityradiolist select').on('change', communityRadioPlugin.changeOption);
         var w = 0;
         $.each($(".cslt"), function() {
@@ -75,9 +75,9 @@ var communityRadioPlugin = {
         });
         w += 8;
         $(".commradiolistby").css("width", w+"px");
-        
+
     },
-    
+
     changeOption: function() {
         var n = $(this).attr('id');
         var pref = Array();
@@ -87,7 +87,7 @@ var communityRadioPlugin = {
         $('input#commradiolistby'+listby).prop('checked', true);
         communityRadioPlugin.changeListBy();
     },
-    
+
     changeListBy: function() {
         var listby = $('input[name="commradiolistby"]:checked').val();
         prefs.save({communityradiolistby: listby});
@@ -103,7 +103,7 @@ var communityRadioPlugin = {
         communityRadioPlugin.page = 0;
         communityRadioPlugin.update();
     },
-    
+
     search: function() {
         communityRadioPlugin.searching = true;
         communityRadioPlugin.page = 0;
@@ -117,15 +117,15 @@ var communityRadioPlugin = {
             doMenu(event, clickedElement);
         } else if (clickedElement.hasClass('clickcommradioforward')) {
             communityRadioPlugin.page++;
-            clickedElement.unbind('click').makeSpinner();
+            clickedElement.off('click').makeSpinner();
             communityRadioPlugin.update();
         } else if (clickedElement.hasClass('clickcommradioback')) {
             communityRadioPlugin.page--;
-            clickedElement.unbind('click').makeSpinner();
+            clickedElement.off('click').makeSpinner();
             communityRadioPlugin.update();
         } else if (clickedElement.hasClass('clickcommradiopager')) {
             communityRadioPlugin.page = clickedElement.attr('name');
-            clickedElement.unbind('click').makeSpinner();
+            clickedElement.off('click').makeSpinner();
             communityRadioPlugin.update();
         } else if (prefs.clickmode == "double") {
             if (clickedElement.hasClass("clickstream")) {

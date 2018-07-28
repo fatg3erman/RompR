@@ -132,11 +132,7 @@ var shortcuts = function() {
     }
 
     function unbind() {
-        for (var i in hotkeys) {
-            if (hotkeys[i] !== "" && bindings[i]) {
-                $(window).unbind('keydown', bindings[i]);
-            }
-        }
+        $(window).off('keydown', shortcuts.action);
     }
 
     function getHotkeyString(event) {
@@ -160,9 +156,16 @@ var shortcuts = function() {
                 if (localStorage.getItem('hotkeys.'+i) !== null) {
                     hotkeys[i] = localStorage.getItem('hotkeys.'+i);
                 }
-                if (hotkeys[i] !== "" && bindings[i]) {
-                    debug.log("SHORTCUTS","Binding Key",hotkeys[i],"For",i);
-                    $(window).bind('keydown', hotkeys[i], bindings[i]);
+            }
+            $(window).on('keydown', shortcuts.action);
+        },
+
+        action: function(ev) {
+            var key = getHotkeyString(ev);
+            for (var i in hotkeys) {
+                if (hotkeys[i] == key) {
+                    bindings[i]();
+                    break;
                 }
             }
         },

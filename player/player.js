@@ -24,7 +24,7 @@ var player = function() {
                 '<td><i class="icon-cancel-circled smallicon clickicon clickremhost"></i></td>'+
                 '</tr>'
             );
-            $('.clickremhost').unbind('click');
+            $('.clickremhost').off('click');
             $('.clickremhost').click(removePlayerDef);
         }
 
@@ -43,12 +43,12 @@ var player = function() {
                         temp[$(this).attr('name')] = $(this).val();
                     }
                 });
-        
+
                 if (newhosts.hasOwnProperty(newname)) {
                     infobar.notify(infobar.ERROR, "You cannot have two players with the same name");
                     error = true;
                 }
-        
+
                 newhosts[newname] = temp;
                 if (currentname == prefs.currenthost) {
                     if (newname != currentname) {
@@ -80,7 +80,7 @@ var player = function() {
             }
             return true;
         }
-        
+
         this.edit = function() {
             $("#configpanel").slideToggle('fast');
             playerpu = new popup({
@@ -114,22 +114,22 @@ var player = function() {
             var c = $('<button>',{class: "tright"}).appendTo(buttons);
             c.html(language.gettext('button_cancel'));
             playerpu.useAsCloseButton(c, false);
-        
+
             var d = $('<button>',{class: "tright"}).appendTo(buttons);
             d.html(language.gettext('button_OK'));
             playerpu.useAsCloseButton(d, updatePlayerChoices);
-        
-            $('.clickremhost').unbind('click');
+
+            $('.clickremhost').off('click');
             $('.clickremhost').click(removePlayerDef);
-            
+
             $(document).on('keyup', 'input.notspecial', function() {
                 debug.log("ENTER","Value Changed");
                 this.value = this.value.replace(/[\*&\+\s<>\[\]:;,\.\(\)]/g, '');
             });
-        
+
             playerpu.open();
         }
-        
+
         this.replacePlayerOptions = function() {
             $('[name="playerdefs"]').each(function(index) {
                 $(this).empty();
@@ -168,13 +168,13 @@ var player = function() {
         urischemes: new Object(),
 
         collectionLoaded: false,
-        
+
         updatingcollection: false,
-        
+
         collection_is_empty: true,
 
         controller: new playerController(),
-        
+
         defs: new playerEditor(),
 
         canPlay: function(urischeme) {
@@ -189,7 +189,7 @@ var player = function() {
                 this.controller.seek(to);
             }
         },
-        
+
     }
 
 }();

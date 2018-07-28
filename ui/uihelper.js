@@ -72,9 +72,9 @@ jQuery.fn.stopSpinner = function() {
 
 jQuery.fn.bindPlayClicks = function() {
     return this.each(function() {
-        $(this).unbind('click').unbind('dblclick').bind('click', onSourcesClicked);
+        $(this).off('click').off('dblclick').on('click', onSourcesClicked);
         if (prefs.clickmode == 'double') {
-            $(this).bind('dblclick', onSourcesDoubleClicked);
+            $(this).on('dblclick', onSourcesDoubleClicked);
         }
     });
 }

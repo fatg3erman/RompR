@@ -74,7 +74,7 @@ var prefs = function() {
         "bgimgparms",
         "collectionrange"
     ];
-    
+
     const cookiePrefs = [
         'skin',
         'currenthost',
@@ -83,14 +83,14 @@ var prefs = function() {
         "notvabydate",
         "collectionrange"
     ];
-	
+
 	const jsonNode = document.querySelector("script[name='prefs']");
   	const jsonText = jsonNode.textContent;
   	const tags = JSON.parse(jsonText);
-    
+
     var backgroundImages;
     var backgroundTimer;
-    
+
     var timeouts = {
         '10 Seconds': 10000,
         '30 Seconds': 30000,
@@ -102,7 +102,7 @@ var prefs = function() {
         'Hour': 3600000,
         'Day': 86400000
     }
-    
+
     function offerToTransferPlaylist() {
         var fnarkle = new popup({
             css: {
@@ -124,11 +124,11 @@ var prefs = function() {
         fnarkle.open();
         fnarkle.setWindowToContentsSize();
     }
-    
+
     function dontTransferPlaylist() {
         prefs.save(deferredPrefs, reloadWindow);
     }
-    
+
     function transferPlaylist() {
         debug.shout("PREFS","Transferring Playlist from",prefs.currenthost,"to",deferredPrefs.currenthost);
         $.ajax({
@@ -191,7 +191,7 @@ var prefs = function() {
         });
         prefs.save(felakuti, callback);
     }
-    
+
     function setscrob(e) {
         prefs.save({scrobblepercent: e.max});
     }
@@ -221,11 +221,11 @@ var prefs = function() {
                 setCustombackground(data.images);
                 $('input[name="thisbrowseronly"]').prop('checked', data.thisbrowseronly);
                 $('input[name="backgroundposition"][value="'+prefs.bgimgparms[theme].position+'"]').prop('checked', true);
-                $('input[name="backgroundposition"]').unbind('click').bind('click', changeBackgroundPosition);
+                $('input[name="backgroundposition"]').off('click').on('click', changeBackgroundPosition);
             }
         });
     }
-    
+
     function changeRandomMode() {
         var theme = prefs.theme;
         if (prefs.usertheme) {
@@ -237,7 +237,7 @@ var prefs = function() {
         prefs.bgimgparms[theme].random = !prefs.bgimgparms[theme].random;
         prefs.save({bgimgparms: prefs.bgimgparms});
     }
-    
+
     function changeBackgroundPosition() {
         var theme = prefs.theme;
         if (prefs.usertheme) {
@@ -248,7 +248,7 @@ var prefs = function() {
         prefs.save({bgimgparms: prefs.bgimgparms});
         updateCustomBackground();
     }
-    
+
     function removeAllBackgroundImages() {
         clearCustomBackground();
         var theme = prefs.theme;
@@ -283,12 +283,12 @@ var prefs = function() {
             var lab = $('<label>', {for: 'bgimagerandom'}).appendTo(gibbon);
             lab.html('Random Order');
             ran.prop('checked', prefs.bgimgparms[prefs.theme].random);
-            ran.bind('click', changeRandomMode);
-            
+            ran.on('click', changeRandomMode);
+
             var orangutan = $('<div>').appendTo('#cusbgcontrols');
             var rb = $('<button>').appendTo(orangutan);
             rb.html('Remove All');
-            rb.bind('click', removeAllBackgroundImages);
+            rb.on('click', removeAllBackgroundImages);
         }
         if (images.landscape.length > 0 || images.portrait.length > 0) {
             $('#backimageposition').show();
@@ -316,13 +316,13 @@ var prefs = function() {
                     nom += '&#x25AF;';
                 }
                 l.html(nom);
-                l.bind('click', changeBgImage);
-                c.bind('click', prefs.clearBgImage);
+                l.on('click', changeBgImage);
+                c.on('click', prefs.clearBgImage);
             });
         });
         updateCustomBackground();
     }
-    
+
     function changeBgImage(event) {
         var el = $(event.target);
         var theme = prefs.theme;
@@ -351,7 +351,7 @@ var prefs = function() {
         $('style[id="backgroundp"]').remove();
         clearTimeout(backgroundTimer);
     }
-    
+
     function setBackgroundCss(bgp) {
         if (backgroundImages.portrait.length == 0) {
             $('<style id="background">html { background-image: url("'+backgroundImages.landscape[bgp.landscape]+'"); background-position: '+bgp.position+' }</style>').appendTo('head');
@@ -401,7 +401,7 @@ var prefs = function() {
         setBackgroundCss(bgp);
         setBackgroundTimer(timeout);
     }
-    
+
     function setBackgroundTimer(timeout) {
         if (backgroundImages.portrait.length > 1 || backgroundImages.landscape.length > 1) {
             debug.debug("PREFS","Setting Slideshow Timeout For",timeout/1000,"seconds");
@@ -427,7 +427,7 @@ var prefs = function() {
                     prefs[p] = tags[p];
                 }
             }
-            
+
             for (var i in cookiePrefs) {
                 var a = getCookie(cookiePrefs[i]);
                 if (a != '') {
@@ -439,11 +439,11 @@ var prefs = function() {
                     }
                 }
             }
-            
+
             if (prefs.icontheme == 'IconFont') {
                 prefs.icontheme = 'Colourful';
             }
-            
+
         },
 
         checkSet: function(key) {
@@ -487,7 +487,7 @@ var prefs = function() {
                 callback();
             }
         },
-        
+
         togglePref: function(event) {
             var prefobj = new Object;
             var prefname = $(event.target).attr("id");
@@ -554,15 +554,15 @@ var prefs = function() {
                 case "sleepon":
                     callback = sleepTimer.toggle;
                     break;
-                    
+
                 case 'player_in_titlebar':
                     callback = infobar.forceTitleUpdate;
                     break;
-                    
+
                 case "playlistswipe":
                     callback = reloadWindow;
                     break;
-                    
+
                 case "use_albumart_in_playlist":
                     callback = playlist.repopulate;
                     break;
@@ -690,7 +690,7 @@ var prefs = function() {
                     $("#albumcoversize").attr({href: "coversizes/"+$("#coversizeselector").val()});
                     setTimeout(browser.rePoint, 1000);
                     break;
-                    
+
                 case 'podcast_sort_0':
                 case 'podcast_sort_1':
                 case 'podcast_sort_2':
@@ -731,7 +731,7 @@ var prefs = function() {
                 setTimeout(prefs.postUIChange, 2000);
             }
         },
-        
+
         postUIChange: function() {
             $('.rangechooser').rangechooser('fill');
             if (typeof charts !== 'undefined') {
@@ -743,7 +743,7 @@ var prefs = function() {
             infobar.biggerize();
             browser.rePoint();
         },
-        
+
         changeBackgroundImage: function() {
             $('[name="currbackground"]').val(prefs.theme);
             $('[name="browser_id"]').val(prefs.browser_id);
@@ -778,11 +778,11 @@ var prefs = function() {
                 }
             });
         },
-        
+
         openBgImageBox: function() {
             $('#custombgdropper').slideToggle('fast');
         },
-        
+
         clickBindType: function() {
             return prefs.clickmode == 'double' ? 'dblclick' : 'click';
         },

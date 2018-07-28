@@ -51,7 +51,7 @@ $(document).ready(function(){
     showUpdateWindow();
     window.addEventListener("storage", onStorageChanged, false);
     bindPlaylistClicks();
-    $(window).bind('resize', layoutProcessor.adjustLayout);
+    $(window).on('resize', layoutProcessor.adjustLayout);
     pluginManager.setupPlugins();
     setAvailableSearchOptions();
     layoutProcessor.adjustLayout();

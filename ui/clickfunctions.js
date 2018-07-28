@@ -19,11 +19,11 @@ var clickRegistry = function() {
 
         unbindClicks: function() {
             for (var i in clickHandlers) {
-                $(clickHandlers[i].source).unbind('click');
-                $(clickHandlers[i].source).unbind('dblclick');
+                $(clickHandlers[i].source).off('click');
+                $(clickHandlers[i].source).off('dblclick');
             }
         },
-        
+
         reset: function() {
             clickRegistry.unbindClicks();
             clickRegistry.bindClicks();
@@ -40,10 +40,10 @@ function setClickHandlers() {
     clickRegistry.unbindClicks();
     clickRegistry.bindClicks();
 
-    $('.infotext').unbind('click');
+    $('.infotext').off('click');
     $('.infotext').click(onBrowserClicked);
 
-    $('.infotext').unbind('dblclick');
+    $('.infotext').off('dblclick');
     $('.infotext').dblclick(onBrowserDoubleClicked);
 
     collectionHelper.enableCollectionUpdates();
@@ -51,20 +51,20 @@ function setClickHandlers() {
 }
 
 function bindPlaylistClicks() {
-    $("#sortable").unbind('click');
-    $("#sortable").bind('click', onPlaylistClicked);
+    $("#sortable").off('click');
+    $("#sortable").on('click', onPlaylistClicked);
 }
 
 function unbindPlaylistClicks() {
-    $("#sortable").unbind('click');
+    $("#sortable").off('click');
 }
 
 function setControlClicks() {
-    $('i.prev-button').bind('click', playlist.previous);
-    $('i.play-button').bind('click', infobar.playbutton.clicked);
-    $('i.stop-button').bind('click', player.controller.stop);
-    $('i.stopafter-button').bind('click', playlist.stopafter);
-    $('i.next-button').bind('click', playlist.next);
+    $('i.prev-button').on('click', playlist.previous);
+    $('i.play-button').on('click', infobar.playbutton.clicked);
+    $('i.stop-button').on('click', player.controller.stop);
+    $('i.stopafter-button').on('click', playlist.stopafter);
+    $('i.next-button').on('click', playlist.next);
 }
 
 function onBrowserClicked(event) {

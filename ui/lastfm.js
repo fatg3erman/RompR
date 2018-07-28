@@ -24,10 +24,10 @@ function LastFM(user) {
     function uiLoginBind() {
         if (!logged_in) {
             $('.lastfmlogin-required').removeClass('notenabled').addClass('notenabled');
-            $('#lastfmloginbutton').unbind('click').bind('click', startlogin).html(language.gettext('config_loginbutton'));
+            $('#lastfmloginbutton').off('click').on('click', startlogin).html(language.gettext('config_loginbutton'));
         } else {
             $('.lastfmlogin-required').removeClass('notenabled');
-            $('#lastfmloginbutton').unbind('click').bind('click', logout).html(language.gettext('button_logout'));
+            $('#lastfmloginbutton').off('click').on('click', logout).html(language.gettext('button_logout'));
         }
     }
 
@@ -56,7 +56,7 @@ function LastFM(user) {
     this.isLoggedIn = function() {
         return logged_in;
     }
-    
+
     this.getLanguage = function() {
         switch (prefs.lastfmlang) {
             case "default":
@@ -81,7 +81,7 @@ function LastFM(user) {
     this.username = function() {
         return username;
     }
-    
+
     this.login = function (user, pass) {
 
         username = user;
@@ -227,7 +227,7 @@ function LastFM(user) {
                             var errorcode = xhr.responseJSON.error;
                             var errortext = xhr.responseJSON.message;
                             debug.error("LASTFM", 'Error Code',errorcode,"Message",errortext);
-                            
+
                             switch (errorcode) {
                                 case 4:
                                 case 9:
@@ -238,12 +238,12 @@ function LastFM(user) {
                                     logout();
                                     req.fail(null);
                                     break;
-                                    
+
                                 case 29:
                                     debug.warn("LASTFM","Rate Limit Exceeded. Slowing Down");
                                     self.setThrottling(throttleTime*2);
                                     // Fall through
-                                    
+
                                 default:
                                     if (req.retries < 3) {
                                         debug.log("LASTFM","Retrying...");
@@ -253,7 +253,7 @@ function LastFM(user) {
                                     } else {
                                         req.fail(null);
                                     }
-                                
+
                            }
                         }
                         throttle = setTimeout(lastfm.getRequest, throttleTime);

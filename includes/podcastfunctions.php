@@ -739,7 +739,7 @@ function doPodcast($y, $do_searchbox) {
         if (array_key_exists('searchterm', $_REQUEST)) {
             print 'value="'.urldecode($_REQUEST['searchterm']).'" ';
         }
-        print '/></div><button class="fixed searchbutton" onclick="podcasts.searchinpodcast('.$y->PODindex.')"></button></div>';
+        print '/></div><button class="fixed searchbutton iconbutton" onclick="podcasts.searchinpodcast('.$y->PODindex.')"></button></div>';
     }
     print '<div class="clearfix bumpad"></div>';
     if (array_key_exists('searchterm', $_REQUEST)) {

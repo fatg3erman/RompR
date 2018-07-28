@@ -271,7 +271,7 @@ var layoutProcessor = function() {
                             .removeClass('containerbox wrap collectionpanel').css('display', '')
                             .addClass('noborder')
                             .appendTo($('#searcher'));
-                        $('#collection, #searchresultholder').unbind('click').unbind('dblclick');
+                        $('#collection, #searchresultholder').off('click').off('dblclick');
                     }
                     break;
 

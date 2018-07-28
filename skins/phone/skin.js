@@ -198,7 +198,7 @@ jQuery.fn.fanoogleMenus = function() {
    and uses the touchend event instead of a timer to make the action happen */
 
 jQuery.fn.playlistTouchWipe = function(settings) {
-        
+
     var config = {
         min_move_x: 20,
         min_move_y: 20,
@@ -224,7 +224,7 @@ jQuery.fn.playlistTouchWipe = function(settings) {
         var starttime = 0;
         var longpresstimer = null;
         var pressing = false;
-  
+
         function cancelTouch() {
             clearTimeout(longpresstimer);
             this.removeEventListener('touchmove', onTouchMove);
@@ -258,7 +258,7 @@ jQuery.fn.playlistTouchWipe = function(settings) {
                 }
             }
         }
-        
+
         function doAction() {
             var dxFinal, dyFinal;
             cancelTouch();
@@ -289,7 +289,7 @@ jQuery.fn.playlistTouchWipe = function(settings) {
                 var y = e.touches[0].pageY;
                 var dx = startX - x;
                 var dy = startY - y;
-                                
+
                 if (Math.abs(dx) >= config.min_move_x) {
                     if (config.preventDefaultEventsX) {
                         e.preventDefault();
@@ -305,7 +305,7 @@ jQuery.fn.playlistTouchWipe = function(settings) {
                 }
             }
         }
-        
+
         function longPress() {
             debug.log("TOUCHWIPE","Long Press");
             pressing = true;
@@ -351,7 +351,7 @@ var layoutProcessor = function() {
             return true;
         }
     }
-    
+
     function doSwipeCss() {
         if (prefs.playlistswipe) {
             $('<style id="playlist_swipe">#sortable .playlisticonr.icon-cancel-circled { display: none }</style>').appendTo('head');
@@ -359,7 +359,7 @@ var layoutProcessor = function() {
             $('style[id="playlist_swipe"]').remove();
         }
     }
-    
+
     return {
 
         supportsDragDrop: false,
@@ -461,7 +461,7 @@ var layoutProcessor = function() {
         },
 
         addCustomScrollBar: function(value) {
-        
+
         },
 
         sourceControl: function(source) {
@@ -482,11 +482,11 @@ var layoutProcessor = function() {
                 case'searchpane':
                     setSearchLabelWidth();
                     break;
-                    
+
                 case 'pluginplaylistholder':
                     setSpotiLabelWidth();
                     break;
-                    
+
             }
         },
 
@@ -518,11 +518,11 @@ var layoutProcessor = function() {
                     case 'artist':
                         $('#albumlist').scrollTo($('[name="aartist'+d.artistindex+'"]'));
                         break;
-                        
+
                     default:
                         $('#albumlist').scrollTo($('[name="aalbum'+d.albumindex+'"]'));
                         break;
-                        
+
                 }
             }
         },
@@ -537,7 +537,7 @@ var layoutProcessor = function() {
         setRadioModeHeader: function(html) {
             $("#plmode").html(html);
         },
-        
+
         makeCollectionDropMenu: function(element, name) {
             var x = $('#'+name);
             // If the dropdown doesn't exist then create it
@@ -556,7 +556,7 @@ var layoutProcessor = function() {
                 var t = $('<div>', {id: name, class: c+ec}).insertAfter(element);
             }
         },
-        
+
         getArtistDestinationDiv: function(menutoopen) {
             if (prefs.sortcollectionby == "artist") {
                 return $('.menu[name="'+menutoopen+'"]').parent();
@@ -571,11 +571,11 @@ var layoutProcessor = function() {
                 prefs.clickmode = 'single';
             }
             $(".dropdown").floatingMenu({ });
-            $('.topbarmenu').bind('click', function() {
+            $('.topbarmenu').on('click', function() {
                 $('.autohide:visible').not('#'+$(this).attr('name')).slideToggle('fast');
                 $('#'+$(this).attr('name')).slideToggle('fast');
             });
-            $('.autohide').bind('click', function() {
+            $('.autohide').on('click', function() {
                 $(this).slideToggle('fast');
             });
             setControlClicks();
@@ -609,11 +609,11 @@ var layoutProcessor = function() {
         findAlbumDisplayer: function(key) {
             return $('.containerbox.album[name="'+key+'"]');
         },
-        
+
         findArtistDisplayer: function(key) {
             return $('div.menu[name="'+key+'"]');
         },
-        
+
         insertAlbum: function(v) {
             var albumindex = v.id;
             $('#aalbum'+albumindex).html(v.tracklist);
@@ -623,20 +623,20 @@ var layoutProcessor = function() {
                     debug.log("Insert After",v.where);
                     $(v.html).insertAfter(layoutProcessor.findAlbumDisplayer(v.where));
                     break;
-        
+
                 case 'insertAtStart':
                     debug.log("Insert At Start",v.where);
                     $(v.html).insertAfter($('#'+v.where).find('div.clickalbum[name="'+v.where+'"]'));
                     break;
             }
         },
-        
+
         removeAlbum: function(key) {
             $('#'+key).findParentScroller().restoreScrollPos();
             $('#'+key).remove();
             layoutProcessor.findAlbumDisplayer(key).remove();
         },
-        
+
         removeArtist: function(key) {
             switch (prefs.sortcollectionby) {
                 case 'artist':
@@ -644,21 +644,21 @@ var layoutProcessor = function() {
                     $('#aartist'+key).remove();
                     layoutProcessor.findArtistDisplayer('aartist'+key).remove();
                     break;
-                    
+
                 case 'albumbyartist':
                     $('#aartist'+key).remove();
                     break;
-                    
+
             }
-            
+
         },
-        
+
         fixupArtistDiv: function(jq, name) {
             if (prefs.sortcollectionby != 'artist') {
                 jq.find('.menu.backmenu').attr('name', name);
             }
         },
-        
+
         getElementPlaylistOffset: function(element) {
             var top = element.position().top;
             if (element.parent().hasClass('trackgroup')) {
@@ -666,7 +666,7 @@ var layoutProcessor = function() {
             }
             return top;
         },
-        
+
         postPlaylistLoad: function() {
             if (prefs.playlistswipe) {
                 $('#sortable .track').playlistTouchWipe({});
@@ -677,7 +677,7 @@ var layoutProcessor = function() {
                 });
             }
         },
-        
+
         postPodcastSubscribe: function(data, index) {
             $('.menuitem[name="podcast_'+index+'"]').fadeOut('fast', function() {
                 $('.menuitem[name="podcast_'+index+'"]').remove();
@@ -689,7 +689,7 @@ var layoutProcessor = function() {
                 layoutProcessor.postAlbumActions();
             });
         }
-        
+
     }
 
 }();

@@ -128,21 +128,19 @@ var browser = function() {
     }
 
     function updateHistory() {
-        $('#historypanel').unbind('click').empty().html('<div class="configtitle textcentre"><b>'
+        $('#historypanel').off('click').empty().html('<div class="configtitle textcentre"><b>'
             +language.gettext("button_history")
             +'</b><i class="icon-cancel-circled clickicon playlisticonr tright mobonly" onclick="showHistory()"></i></div>'
         );
         if (displaypointer == 1) {
-            $("#backbutton").unbind('click');
-            $("#backbutton").addClass('button-disabled');
+            $("#backbutton").off('click').addClass('button-disabled');
         }
         if (displaypointer > 1 && $("#backbutton").hasClass('button-disabled')) {
             $("#backbutton").click( browser.back );
             $("#backbutton").removeClass('button-disabled');
         }
         if (displaypointer == (history.length)-1) {
-            $("#forwardbutton").unbind('click');
-            $("#forwardbutton").addClass('button-disabled');
+            $("#forwardbutton").off('click').addClass('button-disabled');
         }
         if (displaypointer < (history.length)-1 && $("#forwardbutton").hasClass('button-disabled')) {
             $("#forwardbutton").click( browser.forward );
@@ -170,7 +168,7 @@ var browser = function() {
             });
             td.html(html);
         }
-        $('#historypanel').bind('click', browser.historyClicked);
+        $('#historypanel').on('click', browser.historyClicked);
     }
 
     function removeSection(section) {
@@ -477,7 +475,7 @@ var browser = function() {
             }
             displayer.html(banner(opts, id, false, false, true));
             panelclosed[id] = false;
-            displayer.unbind('click');
+            displayer.off('click');
             displayer.click(onBrowserClicked);
             displayer.dblclick(onBrowserDoubleClicked);
             extraPlugins[id] = { div: displayer, parent: parent };

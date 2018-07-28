@@ -20,7 +20,7 @@ var opmlImporter = function() {
 					'</div>'
 				);
 	            $('#opmlvfoldup').append('<div id="opmllist"></div>');
-				$('#opmlsubmit').bind('click', opmlImporter.uploadFile);
+				$('#opmlsubmit').on('click', opmlImporter.uploadFile);
 				$('#opmlfile').on('change', function() {
 			        var filename = $(this).val().replace(/.*(\/|\\)/, '');
 			        $(this).next().html(filename);
@@ -42,7 +42,7 @@ var opmlImporter = function() {
 		close: function() {
 			opmlv = null;
 		},
-		
+
 		uploadFile: function() {
 			var formElement = document.getElementById('opmluploader');
             var xhr = new XMLHttpRequest();
@@ -57,7 +57,7 @@ var opmlImporter = function() {
             };
             xhr.send(new FormData(formElement));
 		},
-		
+
 		gotData: function(data) {
 			debug.log("OPML IMPORTER", "File Parsed",data);
 			var html = '';
@@ -88,31 +88,31 @@ var opmlImporter = function() {
 			}
 			html += '</table>';
 			$('#opmllist').html(html);
-			$('[name="opml_selectall"]').bind('click', opmlImporter.selectAll);
-			$('[name="opml_selectnone"]').bind('click', opmlImporter.selectNone);
-			$('[name="opml_import"]').bind('click', opmlImporter.Import);
+			$('[name="opml_selectall"]').on('click', opmlImporter.selectAll);
+			$('[name="opml_selectnone"]').on('click', opmlImporter.selectNone);
+			$('[name="opml_import"]').on('click', opmlImporter.Import);
 			opmlImporter.selectAll();
 		},
-		
+
 		selectAll: function() {
 			$('#opmllist input[type="checkbox"]').prop('checked', true);
 		},
-		
+
 		selectNone: function() {
 			$('#opmllist input[type="checkbox"]').prop('checked', false);
 		},
-		
+
 		Import: function() {
-			$('[name="opml_import"]').unbind('click');
+			$('[name="opml_import"]').off('click');
 			var s = $('#opmllist input[type="checkbox"]:checked');
 			if (s.length > 0) {
 				opmlImporter.subscribeToNext(s.first());
 			} else {
-				$('[name="opml_import"]').bind('click', opmlImporter.Import);
+				$('[name="opml_import"]').on('click', opmlImporter.Import);
 				podcasts.reloadList();
 			}
 		},
-		
+
 		subscribeToNext: function(c) {
 			var feedUrl = c.prev().val();
 			var s = $('<i>', {class: 'icon-spin6 spinner smallicon'}).insertBefore(c);

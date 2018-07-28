@@ -370,8 +370,8 @@ var imageEditor = function() {
             var lab =                   $('<label>', { for: 'ufile' }).appendTo(fb);
             lab.html(language.gettext('label_choosefile'));
             var but =                   $('<input>', { type: 'button', class: 'invisible fixed', value: language.gettext("albumart_uploadbutton") }).appendTo(uform);
-            but.bind('click', imageEditor.uploadFile);
-            
+            but.on('click', imageEditor.uploadFile);
+
             $("#usearch").append(      '<div class="holdingcell"><p>'+language.gettext("albumart_dragdrop")+'</p></div>');
 
             $("#editcontrols").append(  '<div id="g" class="tleft bleft clickable clickicon bmenu">'+language.gettext("albumart_googlesearch")+'</div>');
@@ -398,7 +398,7 @@ var imageEditor = function() {
             if (path && path != '.') {
                 $.getJSON("utils/findLocalImages.php?path="+path, imageEditor.gotLocalImages)
             }
-            
+
             var searchparams = coverscraper.getImageSearchParams(imgobj);
             $('input#uploadkey').val(searchparams.key);
             $('input#uploadartist').val(searchparams.artist);

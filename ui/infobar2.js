@@ -355,9 +355,9 @@ var infobar = function() {
                 if (!$('#albumpicture').hasClass('clickicon')) {
                     $('#albumpicture').addClass('clickicon');
                 }
-                $('#albumpicture').unbind('click').bind('click', infobar.albumImage.displayOriginalImage);
+                $('#albumpicture').off('click').on('click', infobar.albumImage.displayOriginalImage);
             }
-            
+
             aImg.onerror = function() {
                 debug.trace("ALBUMPICTURE","Image Failed To Load",$(this).attr("src"));
                 $('img[name="'+$(this).attr('name')+'"]').addClass("notfound");
@@ -515,7 +515,7 @@ var infobar = function() {
                 $('[name="'+trackinfo.location+'"]').not('.playlistcurrentitem').not('.podcastresume').addClass('playlistcurrentitem');
             }
         },
-        
+
         forceTitleUpdate: function() {
             setTheText(trackinfo);
         },

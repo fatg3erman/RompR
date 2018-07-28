@@ -19,7 +19,7 @@ body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,textarea,input
 
 button, input[type="button"], .filebutton
 {
-    /* background-color:#202020 !important; */
+    background-color:#202020;
     border:1px solid #dedede;
     /* background-image:none !important; */
     color:#dddddd;

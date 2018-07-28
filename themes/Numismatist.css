@@ -30,7 +30,7 @@ body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
 
 button, input[type="button"], .filebutton
 {
-    /* background-color:#cccccc !important; */
+    background-color:#cccccc;
     border:1px solid #333333;
     /* background-image:none !important; */
     color:black;

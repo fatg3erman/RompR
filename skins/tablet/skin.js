@@ -164,13 +164,13 @@ var layoutProcessor = function() {
                 $('#pscroller').scrollTo(scrollto, 800, {offset: {top: offset}, easing: 'swing'});
             }
         },
-        
+
         playlistupdate: function(upcoming) {
 
         },
 
         addCustomScrollBar: function(value) {
-        
+
         },
 
         sourceControl: function(source) {
@@ -191,7 +191,7 @@ var layoutProcessor = function() {
                 case'searchpane':
                     setSearchLabelWidth();
                     break;
-                    
+
                 case 'pluginplaylistholder':
                     setSpotiLabelWidth();
                     break;
@@ -248,7 +248,7 @@ var layoutProcessor = function() {
                 var t = $('<div>', {id: name, class: c}).insertAfter(element.parent());
             }
         },
-        
+
         getArtistDestinationDiv: function(menutoopen) {
             if (prefs.sortcollectionby == "artist") {
                 return $("#"+menutoopen).parent();
@@ -263,11 +263,11 @@ var layoutProcessor = function() {
                 prefs.clickmode = 'single';
             }
             $(".dropdown").floatingMenu({ });
-            $('.topbarmenu').bind('click', function() {
+            $('.topbarmenu').on('click', function() {
                 $('.autohide:visible').not('#'+$(this).attr('name')).slideToggle('fast');
                 $('#'+$(this).attr('name')).slideToggle('fast');
             });
-            $('.autohide').bind('click', function() {
+            $('.autohide').on('click', function() {
                 $(this).slideToggle('fast');
             });
             setControlClicks();
@@ -296,13 +296,13 @@ var layoutProcessor = function() {
                 orientation: "horizontal"
             });
         },
-        
+
         postPlaylistLoad: function() {
             $('#pscroller').find('.icon-cancel-circled').each(function() {
                 var d = $('<i>', {class: 'icon-updown playlisticonr fixed clickable clickicon rearrange_playlist'}).insertBefore($(this));
             });
         },
-        
+
         getElementPlaylistOffset: function(element) {
             return element.position().top;
         }
