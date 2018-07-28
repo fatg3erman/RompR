@@ -132,6 +132,7 @@ function onSourcesClicked(event) {
         amendAlbumDetails(event, clickedElement);
     } else if (clickedElement.hasClass("fakedouble")) {
         onSourcesDoubleClicked(event);
+        clickedElement.parent().remove();
     } else if (clickedElement.hasClass('clickdeleteplaylist')) {
         event.stopImmediatePropagation();
         player.controller.deletePlaylist(clickedElement.next().val());
@@ -228,9 +229,6 @@ function onSourcesDoubleClicked(event) {
         event.stopImmediatePropagation();
         discSelect(event, clickedElement);
         playlist.addItems($('.selected'),null);
-    }
-    if (clickedElement.hasClass('fakedouble' && clickedElement.hasClass('backhi'))) {
-        clickedElement.parent().remove();
     }
 }
 

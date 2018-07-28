@@ -134,18 +134,18 @@ function trackControlHeader($why, $what, $who, $dets) {
             if ($det['AlbumUri']) {
                 $albumuri = rawurlencode($det['AlbumUri']);
                 if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
-                    $html .= '<div class="icon-no-response-playbutton smallicon expand clickable clickcue fakedouble noselect" name="'.$albumuri.'"></div>';
+                    $html .= '<div class="icon-no-response-playbutton smallicon expand clickable clickcue noselect" name="'.$albumuri.'"></div>';
                 } else {
-                    $html .= '<div class="icon-no-response-playbutton smallicon expand clickable clicktrack fakedouble noselect" name="'.$albumuri.'"></div>';
+                    $html .= '<div class="icon-no-response-playbutton smallicon expand clickable clicktrack noselect" name="'.$albumuri.'"></div>';
                     $html .= '<div class="icon-music smallicon expand clickable clickalbum noselect" name="'.$why.'album'.$who.'"></div>';
 }
             } else {
-                $html .= '<div class="icon-no-response-playbutton smallicon expand clickable clickalbum fakedouble noselect" name="'.$why.'album'.$who.'"></div>';
+                $html .= '<div class="icon-no-response-playbutton smallicon expand clickable clickalbum noselect" name="'.$why.'album'.$who.'"></div>';
             }
-            $html .= '<div class="icon-single-star smallicon expand clickable clickicon clickable clickalbum fakedouble noselect" name="ralbum'.$who.'"></div>';
-            $html .= '<div class="icon-tags smallicon expand clickable clickicon clickable clickalbum fakedouble noselect" name="talbum'.$who.'"></div>';
-            $html .= '<div class="icon-ratandtag smallicon expand clickable clickicon clickable clickalbum fakedouble noselect" name="yalbum'.$who.'"></div>';
-            $html .= '<div class="icon-ratortag smallicon expand clickable clickicon clickable clickalbum fakedouble noselect" name="ualbum'.$who.'"></div>';
+            $html .= '<div class="icon-single-star smallicon expand clickable clickicon clickable clickalbum noselect" name="ralbum'.$who.'"></div>';
+            $html .= '<div class="icon-tags smallicon expand clickable clickicon clickable clickalbum noselect" name="talbum'.$who.'"></div>';
+            $html .= '<div class="icon-ratandtag smallicon expand clickable clickicon clickable clickalbum noselect" name="yalbum'.$who.'"></div>';
+            $html .= '<div class="icon-ratortag smallicon expand clickable clickicon clickable clickalbum noselect" name="ualbum'.$who.'"></div>';
             $html .= '</div>';
             $html .= '<div class="textcentre ninesix playlistrow2">'.ucfirst(get_int_text('label_tracks')).'</div>';
         }
