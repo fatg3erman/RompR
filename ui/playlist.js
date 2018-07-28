@@ -110,7 +110,7 @@ var playlist = function() {
                             }
                     });
                     $("#radiodomains").find('input.topcheck').each(function() {
-                        $(this).click(function() {
+                        $(this).on('click', function() {
                             prefs.save({mopidy_radio_domains: $("#radiodomains").makeDomainChooser("getSelection")});
                         });
                     });
@@ -548,6 +548,8 @@ var playlist = function() {
                             moveto = null;
                         }
                     } else {
+                        debug.log("WAAAAH!",uri);
+                        debug.log("WAAAAH!",decodeURIComponent(uri));
                         tracks.push({ type: "uri",
                                         name: decodeURIComponent(uri)});
                     }
@@ -585,9 +587,9 @@ var playlist = function() {
 
         preventControlClicks: function(t) {
             if (t) {
-                $('#random').click(player.controller.toggleRandom).parent().removeClass('thin');
-                $('#repeat').click(player.controller.toggleRepeat).parent().removeClass('thin');
-                $('#consume').click(player.controller.toggleConsume).parent().removeClass('thin');
+                $('#random').on('click', player.controller.toggleRandom).parent().removeClass('thin');
+                $('#repeat').on('click', player.controller.toggleRepeat).parent().removeClass('thin');
+                $('#consume').on('click', player.controller.toggleConsume).parent().removeClass('thin');
             } else {
                 $('#random').off('click').parent().addClass('thin');
                 $('#repeat').off('click').parent().addClass('thin');

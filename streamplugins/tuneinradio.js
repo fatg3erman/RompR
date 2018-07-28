@@ -12,12 +12,12 @@ var tuneinRadioPlugin = {
     },
 
     setTheThing: function() {
-        $('[name="tuneinsearcher"]').hover(makeHoverWork);
-        $('[name="tuneinsearcher"]').mousemove(makeHoverWork);
-        $('[name="tuneinsearcher"]').keyup(onKeyUp);
+        $('[name="tuneinsearcher"]').on('mouseenter',makeHoverWork);
+        $('[name="tuneinsearcher"]').on('mousemove', makeHoverWork);
+        $('[name="tuneinsearcher"]').on('keyup', onKeyUp);
         layoutProcessor.postAlbumActions();
     },
-    
+
     handleClick: function(event) {
         var clickedElement = findClickableElement(event);
         if (clickedElement.hasClass("browse")) {
@@ -59,13 +59,13 @@ var tuneinRadioPlugin = {
         }
 
     },
-    
+
     browse: function(url, title, target, callback) {
         $("#"+target).load("streamplugins/03_tuneinradio.php?populate=2&url="+url+'&title='+title+'&target='+target, function() {
             callback();
         });
     },
-    
+
     search: function() {
         var term = $('[name="tuneinsearcher"]').val();
         debug.log("TUNEIN","Searching For",term);

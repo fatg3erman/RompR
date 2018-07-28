@@ -5,7 +5,7 @@ var yourRadioPlugin = {
 	        $('i[name="yourradiolist"]').makeSpinner();
 			$('#yourradiostations').load('utils/userstreams.php?populate', function() {
 	            $('i[name="yourradiolist"]').stopSpinner();
-			    $('[name="spikemilligan"]').click(yourRadioPlugin.loadSuppliedStation);
+			    $('[name="spikemilligan"]').on('click', yourRadioPlugin.loadSuppliedStation);
 		    	$("#anaconda").on("drop", yourRadioPlugin.handleDropRadio);
 				layoutProcessor.postAlbumActions();
 				if (layoutProcessor.sortFaveRadios) {

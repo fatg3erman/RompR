@@ -89,7 +89,7 @@ var podcasts = function() {
 		    $('i[name="poddownload_'+track+'"]').makeSpinner();
 		}
 	}
-	
+
 	function makeSearchWork(event) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -164,7 +164,7 @@ var podcasts = function() {
 	        }
 	    });
 	}
-	
+
 	function updatePodcastDropdown(channel, html) {
 		var target = $('#podcast_'+channel);
 		if (html !== null) {
@@ -172,7 +172,7 @@ var podcasts = function() {
 		}
 		$('i[name="podcast_'+channel+'"]').stopSpinner();
 		target.find('.fridge').tipTip({delay: 500, edgeOffset: 8});
-		target.find('.clearbox').click(makeSearchWork).hover(makeHoverWork).mousemove(makeHoverWork).keyup(onKeyUp);
+		target.find('.clearbox').on('click', makeSearchWork).on('mouseenter',makeHoverWork).on('mousemove', makeHoverWork).on('keyup', onKeyUp);
 		target.find('input.resumepos').each(function() {
 			var pos = parseInt($(this).val());
 			var duration = parseInt($(this).next().val());
@@ -228,7 +228,7 @@ var podcasts = function() {
 		        }
 		    } );
 		},
-		
+
 		reloadList: function() {
 			$.ajax( {
 		        type: "GET",
@@ -409,7 +409,7 @@ var podcasts = function() {
 			clearTimeout(refreshtimer);
 			refreshtimer = setTimeout(podcasts.checkRefresh, 10000);
 		},
-		
+
 		search: function() {
 			$('#podcast_search').empty();
 		    doSomethingUseful('podcast_search', language.gettext("label_searching"));
@@ -460,18 +460,18 @@ var podcasts = function() {
 			$('#podcast_search').empty();
 			layoutProcessor.postAlbumActions();
 		},
-		
+
 		toggleButtons: function() {
 			$("#podcastbuttons").slideToggle('fast');
 		    var p = !prefs.podcastcontrolsvisible;
 		    prefs.save({ podcastcontrolsvisible: p });
 		    return false;
 		},
-		
+
 		storePlaybackProgress: function(track) {
 			podcastRequest({setprogress: track.progress, track: encodeURIComponent(track.uri)}, null);
 		},
-		
+
 		globalAction: function(thing, el) {
 			el.makeSpinner();
 			var options = new Object;

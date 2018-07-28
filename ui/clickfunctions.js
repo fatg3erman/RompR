@@ -10,9 +10,9 @@ var clickRegistry = function() {
         bindClicks: function() {
             for (var i in clickHandlers) {
                 debug.log("UI","Binding Click Handlers for ",clickHandlers[i].source);
-                $(clickHandlers[i].source).click(clickHandlers[i].single);
+                $(clickHandlers[i].source).on('click', clickHandlers[i].single);
                 if (prefs.clickmode == 'double') {
-                    $(clickHandlers[i].source).dblclick(clickHandlers[i].dbl);
+                    $(clickHandlers[i].source).on('dblclick', clickHandlers[i].dbl);
                 }
             }
         },
@@ -41,10 +41,10 @@ function setClickHandlers() {
     clickRegistry.bindClicks();
 
     $('.infotext').off('click');
-    $('.infotext').click(onBrowserClicked);
+    $('.infotext').on('click', onBrowserClicked);
 
     $('.infotext').off('dblclick');
-    $('.infotext').dblclick(onBrowserDoubleClicked);
+    $('.infotext').on('dblclick', onBrowserDoubleClicked);
 
     collectionHelper.enableCollectionUpdates();
 
@@ -68,9 +68,10 @@ function setControlClicks() {
 }
 
 function onBrowserClicked(event) {
+    debug.log("BROWSER","Click Event",event);
     var clickedElement = findClickableBrowserElement(event);
     if (clickedElement.hasClass("infoclick")) {
-        var parentElement = $(event.currentTarget.id).selector;
+        var parentElement = $(event.currentTarget).attr('id');
         var source = parentElement.replace('information', '');
         debug.log("BROWSER","A click has occurred in",parentElement,source);
         event.preventDefault();
@@ -693,12 +694,12 @@ function amendAlbumDetails(e, element) {
     var d = $('<div>',{class: 'containerbox dropdown-container'}).appendTo(mywin);
     d.append('<div class="fixed padright" style="width:'+width+'">'+language.gettext('label_albumartist')+'</div>');
     var e = $('<div>',{class: 'expand'}).appendTo(d);
-    var i = $('<input>',{class: 'enter', id: 'amendname'+albumindex, type: 'text', size: '200'}).appendTo(e).keyup(onKeyUp);
+    var i = $('<input>',{class: 'enter', id: 'amendname'+albumindex, type: 'text', size: '200'}).appendTo(e).on('keyup', onKeyUp);
 
     d = $('<div>',{class: 'containerbox dropdown-container'}).appendTo(mywin);
     d.append('<div class="fixed padright" style="width:'+width+'">'+language.gettext('info_year')+'</div>');
     e = $('<div>',{class: 'expand'}).appendTo(d);
-    i = $('<input>',{class: 'enter', id: 'amenddate'+albumindex, type: 'text', size: '200'}).appendTo(e).keyup(onKeyUp);
+    i = $('<input>',{class: 'enter', id: 'amenddate'+albumindex, type: 'text', size: '200'}).appendTo(e).on('keyup', onKeyUp);
 
     var b = $('<button>',{class: 'fixed'}).appendTo(d);
     b.html(language.gettext('button_save'));

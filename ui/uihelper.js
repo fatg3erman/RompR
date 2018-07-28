@@ -106,7 +106,7 @@ jQuery.fn.makeTagMenu = function(options) {
                 style: "margin-left: 8px"}).appendTo($(this));
             submitbutton.html(settings.buttontext);
             if (settings.buttonfunc) {
-                submitbutton.click(function() {
+                submitbutton.on('click', function() {
                     settings.buttonfunc(textbox.val());
                 });
             }
@@ -123,9 +123,9 @@ jQuery.fn.makeTagMenu = function(options) {
             autoUpdateTimeout: 500,
         }
         });
-        textbox.hover(makeHoverWork);
-        textbox.mousemove(makeHoverWork);
-        textbox.click(function(ev) {
+        textbox.on('mouseenter', makeHoverWork);
+        textbox.on('mousemove', makeHoverWork);
+        textbox.on('click', function(ev) {
             ev.preventDefault();
             ev.stopPropagation();
             var position = getPosition(ev);
@@ -139,7 +139,7 @@ jQuery.fn.makeTagMenu = function(options) {
                         for (var i in data) {
                             var d = $('<div>', {class: "backhi"}).appendTo(menucontents);
                             d.html(data[i]);
-                            d.click(function() {
+                            d.on('click', function() {
                                 var cv = textbox.val();
                                 if (cv != "") {
                                     cv += ",";

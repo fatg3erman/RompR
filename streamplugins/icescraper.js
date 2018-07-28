@@ -16,8 +16,8 @@ var icecastPlugin = {
 
     spaghetti: function() {
     	$('i[name="icecastlist"]').stopSpinner();
-        $('[name="searchfor"]').keyup(onKeyUp);
-        $('[name="cornwallis"]').click(icecastPlugin.iceSearch);
+        $('[name="searchfor"]').on('keyup', onKeyUp);
+        $('[name="cornwallis"]').on('click', icecastPlugin.iceSearch);
         $("#icecastlist").removeClass('notfilled');
         layoutProcessor.postAlbumActions();
     },

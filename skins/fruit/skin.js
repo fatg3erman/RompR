@@ -26,7 +26,7 @@ jQuery.fn.animatePanel = function(options) {
 }
 
 function showHistory() {
-    
+
 }
 
 var layoutProcessor = function() {
@@ -37,7 +37,7 @@ var layoutProcessor = function() {
                 case'searcher':
                     setSearchLabelWidth();
                     break;
-                    
+
                 case 'pluginplaylistslist':
                     setSpotiLabelWidth();
             }
@@ -162,7 +162,7 @@ var layoutProcessor = function() {
 
         setPlaylistHeight: function() {
             var w = getWindowSize();
-            
+
         },
 
         playlistControlHotKey: function(button) {
@@ -203,7 +203,7 @@ var layoutProcessor = function() {
         },
 
         hideBrowser: function() {
-            
+
         },
 
         addCustomScrollBar: function(value) {
@@ -238,7 +238,7 @@ var layoutProcessor = function() {
                 debug.log("LAYOUT","Was asked to scroll collection to something non-existent",2);
             }
         },
-        
+
         expandInfo: function(side) {
             switch(side) {
                 case "left":
@@ -416,7 +416,7 @@ var layoutProcessor = function() {
                 var t = $('<div>', {id: name, class: c}).insertAfter(element.parent());
             }
         },
-        
+
         getArtistDestinationDiv: function(menutoopen) {
             if (prefs.sortcollectionby == "artist") {
                 return $("#"+menutoopen).parent();
@@ -462,8 +462,6 @@ var layoutProcessor = function() {
                 coveredby: '#sortable'
             });
 
-            // $('#upcontents').click(onPlaylistClicked);
-
             animatePanels();
 
             $(".topdropmenu").floatingMenu({
@@ -477,9 +475,9 @@ var layoutProcessor = function() {
                 handleshow: false
             });
 
-            $(".stayopen").click(function(ev) {ev.stopPropagation() });
+            $(".stayopen").on('click', function(ev) {ev.stopPropagation() });
 
-            $(".enter").keyup( onKeyUp );
+            $(".enter").on('keyup',  onKeyUp );
             $.each(my_scrollers,
                 function( index, value ) {
                 layoutProcessor.addCustomScrollBar(value);
@@ -492,26 +490,26 @@ var layoutProcessor = function() {
             });
 
             shortcuts.load();
-            $("#collectionsearcher input").keyup( function(event) {
+            $("#collectionsearcher input").on('keyup',  function(event) {
                 if (event.keyCode == 13) {
                     player.controller.search('search');
                 }
             } );
             setControlClicks();
-            $('.choose_albumlist').click(function(){layoutProcessor.sourceControl('albumlist')});
-            $('.choose_searcher').click(function(){layoutProcessor.sourceControl('searcher')});
-            $('.choose_filelist').click(function(){layoutProcessor.sourceControl('filelist')});
-            $('.choose_radiolist').click(function(){layoutProcessor.sourceControl('radiolist')});
-            $('.choose_podcastslist').click(function(){layoutProcessor.sourceControl('podcastslist')});
-            $('.choose_playlistslist').click(function(){layoutProcessor.sourceControl('playlistslist')});
-            $('.choose_pluginplaylistslist').click(function(){layoutProcessor.sourceControl('pluginplaylistslist')});
-            $('.open_albumart').click(openAlbumArtManager);
-            $('#love').click(nowplaying.love);
-            $("#ratingimage").click(nowplaying.setRating);
-            $('.icon-rss.npicon').click(function(){podcasts.doPodcast('nppodiput')});
-            $('#expandleft').click(function(){layoutProcessor.expandInfo('left')});
-            $('.clear_playlist').click(playlist.clear);
-            $("#playlistname").parent().next('button').click(player.controller.savePlaylist);
+            $('.choose_albumlist').on('click', function(){layoutProcessor.sourceControl('albumlist')});
+            $('.choose_searcher').on('click', function(){layoutProcessor.sourceControl('searcher')});
+            $('.choose_filelist').on('click', function(){layoutProcessor.sourceControl('filelist')});
+            $('.choose_radiolist').on('click', function(){layoutProcessor.sourceControl('radiolist')});
+            $('.choose_podcastslist').on('click', function(){layoutProcessor.sourceControl('podcastslist')});
+            $('.choose_playlistslist').on('click', function(){layoutProcessor.sourceControl('playlistslist')});
+            $('.choose_pluginplaylistslist').on('click', function(){layoutProcessor.sourceControl('pluginplaylistslist')});
+            $('.open_albumart').on('click', openAlbumArtManager);
+            $('#love').on('click', nowplaying.love);
+            $("#ratingimage").on('click', nowplaying.setRating);
+            $('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodiput')});
+            $('#expandleft').on('click', function(){layoutProcessor.expandInfo('left')});
+            $('.clear_playlist').on('click', playlist.clear);
+            $("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
 
             $(".lettuce,.tooltip").tipTip({delay: 500, edgeOffset: 8});
 
@@ -522,7 +520,7 @@ var layoutProcessor = function() {
             $('#albumcover').on('dragover', infobar.albumImage.dragOver);
             $('#albumcover').on('dragleave', infobar.albumImage.dragLeave);
             $("#albumcover").on('drop', infobar.albumImage.handleDrop);
-            $("#tracktimess").click(layoutProcessor.toggleRemainTime);
+            $("#tracktimess").on('click', layoutProcessor.toggleRemainTime);
             $('#plmode').detach().appendTo('#amontobin').addClass('tright');
             $("#volume").rangechooser({
                 range: 100,
@@ -540,6 +538,6 @@ var layoutProcessor = function() {
             i.addClass('smallpluginicon clickicon');
             return d;
         }
-        
+
     }
 }();

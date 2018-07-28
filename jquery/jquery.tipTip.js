@@ -68,18 +68,14 @@
 				var timeout = false;
 
 				if(opts.activation == "hover"){
-					org_elem.hover(function(){
-						active_tiptip();
-					}, function(){
+					org_elem.on('mouseenter', active_tiptip).on('mouseleave', function(){
 						if(!opts.keepAlive){
 							deactive_tiptip();
 						}
 					});
-					org_elem.click(function(){
-						deactive_tiptip();
-					});
+					org_elem.on('click', deactive_tiptip );
 					if(opts.keepAlive){
-						tiptip_holder.hover(function(){}, function(){
+						tiptip_holder.off('mouseenter').on('mouseleave', function(){
 							deactive_tiptip();
 						});
 					}

@@ -246,11 +246,11 @@ function playerController() {
         var mywin = fnarkle.create();
         var d = $('<div>',{class: 'containerbox'}).appendTo(mywin);
         var e = $('<div>',{class: 'expand'}).appendTo(d);
-        var i = $('<input>',{class: 'enter', id: 'newplname', type: 'text', size: '200'}).appendTo(e).keyup(onKeyUp);
+        var i = $('<input>',{class: 'enter', id: 'newplname', type: 'text', size: '200'}).appendTo(e).on('keyup', onKeyUp);
         var b = $('<button>',{class: 'fixed'}).appendTo(d);
         b.html('Rename');
         fnarkle.useAsCloseButton(b, callback);
-        b.keyup(onKeyUp);
+        b.on('keyup', onKeyUp);
         fnarkle.open();
     }
 

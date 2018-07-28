@@ -695,8 +695,8 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
         }
         if (self.options.handleshow) {
             this._parent = this.element.parent();
-            this.element.find('.closemenu').click($.proxy(self.toggleMenu, self));
-            this._parent.click(function(event) {
+            this.element.find('.closemenu').on('click', $.proxy(self.toggleMenu, self));
+            this._parent.on('click', function(event) {
                 debug.log("FRUITBAT",event);
                 if (!event.target.className.match('progressbar')) {
                     $.proxy(self.toggleMenu, self)();
@@ -993,9 +993,9 @@ $.widget('rompr.spotifyAlbumThing', {
 
     spotifyAlbumResponse: function(data) {
         if (layoutProcessor.openOnImage) {
-            $('[name="'+data.id+'"]').parent().parent().stopSpinner();
+            $('[name="'+this.options.id+'dropper_'+data.id+'"]').parent().parent().stopSpinner();
         } else {
-            $('[name="'+data.id+'"]').stopSpinner();
+            $('[name="'+this.options.id+'dropper_'+data.id+'"]').stopSpinner();
         }
         var e = $("#"+this.options.id+'dropper_'+data.id);
         e.show();
@@ -1370,7 +1370,7 @@ function popup(opts) {
         }
         contentholder = $('<div>', {class: 'popupcontentholder expand'}).appendTo(container);
         contents = $('<div>',{class: 'popupcontents clearfix'}).appendTo(contentholder);
-        titlebar.find('.icon-cancel-circled').click( function() {self.close(false)});
+        titlebar.find('.icon-cancel-circled').on('click',  function() {self.close(false)});
         win.floatingMenu({handleshow: false, handleclass: 'cheese', movecallback: self.moved });
         return contents;
     }
@@ -1443,12 +1443,12 @@ function popup(opts) {
         var button = $('<button>',{class: 'tright'}).appendTo(contents);
         button.html(text);
         options.closecallbacks[text] = callback;
-        button.click(self.close);
+        button.on('click', self.close);
     }
 
     this.useAsCloseButton = function(elem, callback) {
         options.closecallbacks[elem.html()] = callback;
-        elem.click(self.close);
+        elem.on('click', self.close);
     }
 
     this.setWindowToContentsSize = function() {

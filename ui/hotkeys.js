@@ -186,10 +186,10 @@ var shortcuts = function() {
             for (var i in hotkeys) {
                 $("#keybindtable").append('<tr><td width="50%" align="right">'+language.gettext(i).initcaps()+'</td><td>'+format_keyinput(i, hotkeys[i])+'</td></tr>');
             }
-            $(".buttonchange").keydown( shortcuts.change );
-            $('.buttonchange').click( shortcuts.remove );
-            $('.buttonchange').hover(makeHoverWork);
-            $('.buttonchange').mousemove(makeHoverWork);
+            $(".buttonchange").on('keydown', shortcuts.change );
+            $('.buttonchange').on('click',  shortcuts.remove );
+            $('.buttonchange').on('mouseenter',makeHoverWork);
+            $('.buttonchange').on('mousemove', makeHoverWork);
             fnarkle.open();
         },
 
@@ -236,3 +236,4 @@ var shortcuts = function() {
     }
 
 }();
+

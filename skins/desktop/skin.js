@@ -28,7 +28,7 @@ jQuery.fn.animatePanel = function(options) {
 }
 
 function showHistory() {
-    
+
 }
 
 var layoutProcessor = function() {
@@ -39,7 +39,7 @@ var layoutProcessor = function() {
                 case'searcher':
                     setSearchLabelWidth();
                     break;
-                    
+
                 case 'pluginplaylistslist':
                     setSpotiLabelWidth();
             }
@@ -366,7 +366,7 @@ var layoutProcessor = function() {
         setRadioModeHeader: function(html) {
             $("#plmode").html(html);
         },
-        
+
         makeCollectionDropMenu: function(element, name) {
             var x = $('#'+name);
             // If the dropdown doesn't exist then create it
@@ -441,9 +441,9 @@ var layoutProcessor = function() {
                 handleshow: false
             });
 
-            $(".stayopen").click(function(ev) {ev.stopPropagation() });
+            $(".stayopen").on('click', function(ev) {ev.stopPropagation() });
 
-            $(".enter").keyup( onKeyUp );
+            $(".enter").on('keyup',  onKeyUp );
             $.each(my_scrollers,
                 function( index, value ) {
                 layoutProcessor.addCustomScrollBar(value);
@@ -462,27 +462,27 @@ var layoutProcessor = function() {
             });
 
             shortcuts.load();
-            $("#collectionsearcher input").keyup( function(event) {
+            $("#collectionsearcher input").on('keyup',  function(event) {
                 if (event.keyCode == 13) {
                     player.controller.search('search');
                 }
             } );
             setControlClicks();
-            $('.choose_albumlist').click(function(){layoutProcessor.sourceControl('albumlist')});
-            $('.choose_searcher').click(function(){layoutProcessor.sourceControl('searcher')});
-            $('.choose_filelist').click(function(){layoutProcessor.sourceControl('filelist')});
-            $('.choose_radiolist').click(function(){layoutProcessor.sourceControl('radiolist')});
-            $('.choose_podcastslist').click(function(){layoutProcessor.sourceControl('podcastslist')});
-            $('.choose_playlistslist').click(function(){layoutProcessor.sourceControl('playlistslist')});
-            $('.choose_pluginplaylistslist').click(function(){layoutProcessor.sourceControl('pluginplaylistslist')});
-            $('.open_albumart').click(openAlbumArtManager);
-            $('#love').click(nowplaying.love);
-            $("#ratingimage").click(nowplaying.setRating);
-            $('.icon-rss.npicon').click(function(){podcasts.doPodcast('nppodiput')});
-            $('#expandleft').click(function(){layoutProcessor.expandInfo('left')});
-            $('#expandright').click(function(){layoutProcessor.expandInfo('right')});
-            $('.clear_playlist').click(playlist.clear);
-            $("#playlistname").parent().next('button').click(player.controller.savePlaylist);
+            $('.choose_albumlist').on('click', function(){layoutProcessor.sourceControl('albumlist')});
+            $('.choose_searcher').on('click', function(){layoutProcessor.sourceControl('searcher')});
+            $('.choose_filelist').on('click', function(){layoutProcessor.sourceControl('filelist')});
+            $('.choose_radiolist').on('click', function(){layoutProcessor.sourceControl('radiolist')});
+            $('.choose_podcastslist').on('click', function(){layoutProcessor.sourceControl('podcastslist')});
+            $('.choose_playlistslist').on('click', function(){layoutProcessor.sourceControl('playlistslist')});
+            $('.choose_pluginplaylistslist').on('click', function(){layoutProcessor.sourceControl('pluginplaylistslist')});
+            $('.open_albumart').on('click', openAlbumArtManager);
+            $('#love').on('click', nowplaying.love);
+            $("#ratingimage").on('click', nowplaying.setRating);
+            $('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodiput')});
+            $('#expandleft').on('click', function(){layoutProcessor.expandInfo('left')});
+            $('#expandright').on('click', function(){layoutProcessor.expandInfo('right')});
+            $('.clear_playlist').on('click', playlist.clear);
+            $("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
 
             $(".lettuce,.tooltip").tipTip({delay: 500, edgeOffset: 8});
 
@@ -501,7 +501,7 @@ var layoutProcessor = function() {
                 orientation: "vertical"
             });
         },
-        
+
         createPluginHolder: function(icon, title) {
             var i = $('<i>', {class: 'topimg tooltip topdrop expand', title: title}).insertAfter('#rightspacer');
             i.addClass(icon);

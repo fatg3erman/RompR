@@ -218,12 +218,12 @@ foreach ($skinrequires as $s) {
 <?php
 debuglog("Reconfiguring the Forward Deflector Array","INIT",6);
 $scripts = array(
-    "jquery/jquery-2.1.4.min.js",
-    "jquery/jquery-migrate-1.2.1.js",
+    "jquery/jquery-3.2.1.min.js",
+    "jquery/jquery-migrate-3.0.1.js",
     "ui/functions.js",
     "ui/prefs.js",
     "ui/language.js",
-    "jquery/jquery-ui.min.js",
+    "jquery/jquery-ui.min-19.1.18.js",
     "jshash-2.2/md5-min.js",
     "jquery/imagesloaded.pkgd.min.js",
     "jquery/masonry.pkgd.min.js",

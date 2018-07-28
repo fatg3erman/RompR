@@ -21,7 +21,7 @@ var crazyRadioManager = function() {
         }
         $.get('radios/crazymanager.php?action=remove&index='+i, crazyRadioManager.refreshCrazyList);
     }
-    
+
     return {
 
         loadSavedCrazies: function() {
@@ -49,7 +49,7 @@ var crazyRadioManager = function() {
                 });
             }, 'json');
         },
-        
+
         refreshCrazyList: function() {
             $('.crazyradio').each(function() {
                 if ($(this).parent().hasClass('collectionitem')) {
@@ -96,16 +96,16 @@ var crazyRadioManager = function() {
             var mywin = fnarkle.create();
             var d = $('<div>',{class: 'containerbox'}).appendTo(mywin);
             var e = $('<div>',{class: 'expand'}).appendTo(d);
-            var i = $('<input>',{class: 'enter', id: 'scplname', type: 'text', size: '200'}).appendTo(e).keyup(onKeyUp);
+            var i = $('<input>',{class: 'enter', id: 'scplname', type: 'text', size: '200'}).appendTo(e).on('keyup', onKeyUp);
             var b = $('<button>',{class: 'fixed'}).appendTo(d);
             b.html(language.gettext('button_save'));
             fnarkle.useAsCloseButton(b, crazyRadioManager.actuallySaveCrazyRadioSettings);
-            b.keyup(onKeyUp);
+            b.on('keyup', onKeyUp);
             fnarkle.open();
         }
-        
+
     }
-    
+
 }();
 
 var spotiCrazyRadio = function() {

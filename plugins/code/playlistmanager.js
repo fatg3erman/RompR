@@ -114,7 +114,7 @@ var playlistManager = function() {
 
 			    $("#pmgfoldup").append('<div class="noselection fullwidth masonified" id="playmunger"></div>');
 			    getAllPlaylists();
-	            $('#pmgfoldup .enter').keyup(onKeyUp);
+	            $('#pmgfoldup .enter').on('keyup', onKeyUp);
 	        } else {
 	        	browser.goToPlugin("pmg");
 	        }

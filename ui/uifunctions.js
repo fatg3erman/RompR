@@ -33,7 +33,7 @@ var tagAdder = function() {
             }
             tagAdder.close();
         },
-        
+
         populateTagMenu: function(callback) {
             metaHandlers.genericAction(
                 'gettags',
@@ -53,7 +53,7 @@ var pluginManager = function() {
     // The setup function will be called as soon as all the page scripts have loaded,
     // before the layout is initialised. If a plugin wishes to add icons to the layout,
     // or hotkeys, it should do it here.
-    
+
     // If an action function is provided the plugin's label will be added to the dropdown list
     // above the info panel and the action function will be called when the label is clicked.
 
@@ -104,7 +104,7 @@ var pluginManager = function() {
                     }
                 }
             }
-            $("#specialplugins").find(".clickicon").click(function() {
+            $("#specialplugins").find(".clickicon").on('click', function() {
                 var index = parseInt($(this).attr('name'));
                 openPlugin(index);
             });
@@ -255,12 +255,12 @@ var imagePopup = function() {
 }();
 
 function albumart_translator(source) {
-    
+
     // This should be kept in step with class baseAlbumImgae in imagefunctions.php
-    
+
     // Given an album image of any size, return any other size
     this.source = source;
-    
+
     this.getSize = function(size) {
         if (/albumart\/small\//.test(this.source)) {
             return this.source.replace('albumart/small/', 'albumart/'+size+'/');
@@ -272,14 +272,14 @@ function albumart_translator(source) {
             return this.source.replace(/\&rompr_resize_size=.+/, '&rompr_resize_size='+size);
         }
     }
-    
+
     // Get an image key
     this.getKey = function(type, artist, album) {
         switch (type) {
             case 'stream':
                 artist = 'STREAM'
                 break;
-                
+
             case 'podcast':
                 artist = 'podcast';
                 break;
@@ -409,7 +409,7 @@ function getrgbs(percent,min) {
     if (typeof percent != "number") {
         percent = parseFloat(percent);
     }
-    
+
     if (typeof min != "number") {
         min = parseFloat(min);
     }
@@ -605,7 +605,7 @@ function checkSearchDomains() {
         default_domains: prefs.mopidy_search_domains,
     });
     $("#mopidysearchdomains").find('input.topcheck').each(function() {
-        $(this).click(function() {
+        $(this).on('click', function() {
             prefs.save({mopidy_search_domains: $("#mopidysearchdomains").makeDomainChooser("getSelection")});
         });
     });
@@ -646,12 +646,12 @@ function doMopidyCollectionOptions() {
                     '<label for="mopcol_'+i+j+'">'+domains[i][j].label+'</label>'+
                     '<input type="hidden" name="'+domains[i][j].dir+'" />'+
                     '</div>';
-                                        
+
                 $("#mopidycollectionoptions").append(fum);
             }
         }
     }
-    $('.mopocol').click(function() {
+    $('.mopocol').on('click', function() {
         var opts = new Array();
         $('.mopocol:checked').each(function() {
             opts.push($(this).next().next().attr('name'));
@@ -755,7 +755,7 @@ function dropProcessor(evt, imgobj, coverscraper, success, fail) {
     }
     return false;
 }
- 
+
 function makeProgressOfString(stats) {
     if (stats.progressString != "" && stats.durationString != "") {
         $("#playbackTime").html(stats.progressString + " " + frequentLabels.of + " " + stats.durationString);

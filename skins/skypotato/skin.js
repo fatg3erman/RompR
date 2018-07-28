@@ -790,9 +790,9 @@ var layoutProcessor = function() {
                 handleshow: false
             });
 
-            $(".stayopen").click(function(ev) {ev.stopPropagation() });
+            $(".stayopen").on('click', function(ev) {ev.stopPropagation() });
 
-            $(".enter").keyup( onKeyUp );
+            $(".enter").on('keyup',  onKeyUp );
             $.each(my_scrollers,
                 function( index, value ) {
                 layoutProcessor.addCustomScrollBar(value);
@@ -804,29 +804,29 @@ var layoutProcessor = function() {
             });
 
             shortcuts.load();
-            $("#collectionsearcher input").keyup( function(event) {
+            $("#collectionsearcher input").on('keyup',  function(event) {
                 if (event.keyCode == 13) {
                     player.controller.search('search');
                 }
             } );
             setControlClicks();
-            $('.choose_albumlist').click(function(){layoutProcessor.sourceControl('albumlist')});
-            $('.choose_searcher').click(function(){layoutProcessor.sourceControl('searcher')});
-            $('.choose_filelist').click(function(){layoutProcessor.sourceControl('filelist')});
-            $('.choose_radiolist').click(function(){layoutProcessor.sourceControl('radiolist')});
-            $('.choose_podcastslist').click(function(){layoutProcessor.sourceControl('podcastslist')});
-            $('.choose_playlistslist').click(function(){layoutProcessor.sourceControl('playlistslist')});
-            $('.choose_pluginplaylistslist').click(function(){layoutProcessor.sourceControl('pluginplaylistslist')});
-            $('.choose_specialplugins').click(function(){layoutProcessor.sourceControl('specialplugins')});
-            $('.choose_infopanel').click(function(){layoutProcessor.sourceControl('infoholder')});
-            $('.choose_history').click(function(){layoutProcessor.sourceControl('historypanel')});
-            $('.open_albumart').click(openAlbumArtManager);
-            $('#love').click(nowplaying.love);
-            $("#ratingimage").click(nowplaying.setRating);
-            $('.icon-rss.npicon').click(function(){podcasts.doPodcast('nppodiput')});
-            $('#expandleft').click(function(){layoutProcessor.expandInfo('left')});
-            $('.clear_playlist').click(playlist.clear);
-            $("#playlistname").parent().next('button').click(player.controller.savePlaylist);
+            $('.choose_albumlist').on('click', function(){layoutProcessor.sourceControl('albumlist')});
+            $('.choose_searcher').on('click', function(){layoutProcessor.sourceControl('searcher')});
+            $('.choose_filelist').on('click', function(){layoutProcessor.sourceControl('filelist')});
+            $('.choose_radiolist').on('click', function(){layoutProcessor.sourceControl('radiolist')});
+            $('.choose_podcastslist').on('click', function(){layoutProcessor.sourceControl('podcastslist')});
+            $('.choose_playlistslist').on('click', function(){layoutProcessor.sourceControl('playlistslist')});
+            $('.choose_pluginplaylistslist').on('click', function(){layoutProcessor.sourceControl('pluginplaylistslist')});
+            $('.choose_specialplugins').on('click', function(){layoutProcessor.sourceControl('specialplugins')});
+            $('.choose_infopanel').on('click', function(){layoutProcessor.sourceControl('infoholder')});
+            $('.choose_history').on('click', function(){layoutProcessor.sourceControl('historypanel')});
+            $('.open_albumart').on('click', openAlbumArtManager);
+            $('#love').on('click', nowplaying.love);
+            $("#ratingimage").on('click', nowplaying.setRating);
+            $('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodiput')});
+            $('#expandleft').on('click', function(){layoutProcessor.expandInfo('left')});
+            $('.clear_playlist').on('click', playlist.clear);
+            $("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
 
             $(".lettuce,.tooltip").tipTip({delay: 500, edgeOffset: 8});
 
@@ -837,7 +837,7 @@ var layoutProcessor = function() {
             $('#albumcover').on('dragover', infobar.albumImage.dragOver);
             $('#albumcover').on('dragleave', infobar.albumImage.dragLeave);
             $("#albumcover").on('drop', infobar.albumImage.handleDrop);
-            $("#tracktimess").click(layoutProcessor.toggleRemainTime);
+            $("#tracktimess").on('click', layoutProcessor.toggleRemainTime);
             $('#plmode').detach().appendTo('#amontobin').addClass('tright');
             $("#volume").rangechooser({
                 range: 100,

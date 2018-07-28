@@ -38,9 +38,9 @@ var info_ratings = function() {
                             '<i class="icon-cancel-circled clickicon tagremover playlisticon" '+
                             'onclick="nowplaying.removeTag(event)" style="display:none"></i></span> ');
                     }
-                    $("#dbtags .tag").hover( function() {
+                    $("#dbtags .tag").on('mouseenter', function() {
                         $(this).children().show();
-                    }, function() {
+                    }).on('mouseleave', function() {
                         $(this).children().hide();
                     });
                     layoutProcessor.adjustLayout();
@@ -81,7 +81,7 @@ var info_ratings = function() {
 				}
 				update_wishlist = false;
             }
-            
+
             function setFail(rdata) {
                 debug.warn("RATING PLUGIN","Failure");
                 // infobar.notify(infobar.ERROR,"Failed! Have you read the Wiki?");

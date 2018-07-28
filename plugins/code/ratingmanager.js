@@ -45,7 +45,7 @@ var ratingManager = function() {
 		var dropper = $('.thebigholder[name="'+section+'"]');
 		dropper.prev().children('.clickopensection').makeSpinner();
 		if (dropper.hasClass('notthere')) {
-			
+
 		} else {
 			dropper.addClass('notthere').empty();
 		}
@@ -171,14 +171,14 @@ var ratingManager = function() {
 	function update_rest_of_ui() {
     	nowplaying.refreshUserMeta();
 	}
-	
+
 	function refreshSection(section) {
 		if (to_refresh.indexOf(section) == -1 && !($('.thebigholder[name="'+section+'"]').hasClass('notthere'))) {
 			to_refresh.push(section);
 		}
 		checkSectionRefresh();
 	}
-	
+
 	function checkSectionRefresh() {
 		if (!updating_section) {
 			var section = to_refresh.shift();
@@ -187,7 +187,7 @@ var ratingManager = function() {
 			}
 		}
 	}
-	
+
 	function updateCount(section, count) {
 		$('.thebigholder[name="'+section+'"]').prev().find('.ratcount').html('('+count+' tracks)');
 	}
@@ -236,7 +236,7 @@ var ratingManager = function() {
 	        	$("#rmgfoldup").append('<div class="containerbox padright" name="ratman_loading"><h3>Loading List....</h3></div>');
 
 			    $("#rmgfoldup").append('<div class="noselection fullwidth masonified" id="ratmunger"></div>');
-			    $('[name="filterinput"]').click(function(ev){
+			    $('[name="filterinput"]').on('click', function(ev){
 		            ev.preventDefault();
 		            ev.stopPropagation();
 		            var position = getPosition(ev);
@@ -247,15 +247,15 @@ var ratingManager = function() {
 		            	ratingManager.filter();
 		            }
 			    });
-			    $('[name="filterinput"]').hover(makeHoverWork);
-			    $('[name="filterinput"]').mousemove(makeHoverWork);
+			    $('[name="filterinput"]').on('mouseenter',makeHoverWork);
+			    $('[name="filterinput"]').on('mousemove', makeHoverWork);
 				$('.ratinstr').hide();
 				rmg.show();
 				$('[name="ratman_sortby"][value="'+prefs.ratman_sortby+'"]').prop('checked', true);
 	            $('#ratman_showletters').prop('checked', prefs.ratman_showletters ? true : false );
 	        	browser.goToPlugin("rmg");
 			    ratingManager.reloadEntireRatList();
-	            $('#rmgfoldup .enter').keyup(onKeyUp);
+	            $('#rmgfoldup .enter').on('keyup', onKeyUp);
 	            $('[name="ratman_sortby"]').on('click', ratingManager.reloadEntireRatList );
 	            $('#ratman_showletters').on('click', ratingManager.reloadEntireRatList );
 	        } else {
@@ -383,7 +383,7 @@ var ratingManager = function() {
             	}
             );
 		},
-		
+
 		reloadEntireRatList: function() {
 			$('.ratinstr').hide();
 			$('[name="ratman_loading"]').show();

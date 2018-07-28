@@ -13,9 +13,9 @@ var nationalRadioPlugin = {
     },
 
     setTheThing: function() {
-        $('[name="radiosearcher"]').hover(makeHoverWork);
-        $('[name="radiosearcher"]').mousemove(makeHoverWork);
-        $('[name="radiosearcher"]').keyup(onKeyUp);
+        $('[name="radiosearcher"]').on('mouseenter',makeHoverWork);
+        $('[name="radiosearcher"]').on('mousemove', makeHoverWork);
+        $('[name="radiosearcher"]').on('keyup', onKeyUp);
     },
 
     changeradiocountry: function() {

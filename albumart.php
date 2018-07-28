@@ -30,16 +30,16 @@ print '<link rel="stylesheet" type="text/css" href="css/albumart.css?version=?'.
 <link rel="stylesheet" id="fontfamily" type="text/css" />
 <link rel="stylesheet" id="icontheme-theme" type="text/css" />
 <link rel="stylesheet" id="icontheme-adjustments" type="text/css" />
-<link type="text/css" href="css/jquery.mCustomScrollbar.css" rel="stylesheet" />
+<link type="text/css" href="css/jquery.mCustomScrollbar.min-3.1.5.css" rel="stylesheet" />
 <?php
 $scripts = array(
-    "jquery/jquery-2.1.4.min.js",
-    "jquery/jquery-migrate-1.2.1.js",
+    "jquery/jquery-3.2.1.min.js",
+    "jquery/jquery-migrate-3.0.1.js",
     "ui/functions.js",
     "ui/prefs.js",
     "ui/language.js",
-    "jquery/jquery-ui.min.js",
-    "jquery/jquery.mCustomScrollbar.concat.min.js",
+    "jquery/jquery-ui.min-19.1.18.js",
+    "jquery/jquery.mCustomScrollbar.concat.min-3.1.5.js",
     "includes/globals.js",
     "ui/uifunctions.js",
     "ui/metahandlers.js",
@@ -76,7 +76,7 @@ print '<tr>
         <td colspan="3" align="center"><div class="inner" id="status">'.get_int_text('label_loading').'</div></td>
         <td class="outer styledinputs" align="right"><input type="checkbox" class="topcheck" id="dinkytoys"><label for="dinkytoys" onclick="toggleLocal()">Ignore Local Images</label></td>
     </tr>';
-    
+
 print '<tr>
         <td colspan="4"></td>
         <td class="outer styledinputs" align="right"><input type="checkbox" class="topcheck" id="poobag"><label for="poobag" onclick="toggleScrolling()">Follow Progress</label></td>
@@ -217,7 +217,7 @@ function do_playlists() {
 
     global $count;
     global $albums_without_cover;
-    
+
     $playlists = do_mpd_command("listplaylists", true, true);
     if (!is_array($playlists)) {
         $playlists = array();

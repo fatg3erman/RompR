@@ -392,7 +392,7 @@ var info_lastfm = function() {
 
                             if (accepted && lastfm.isLoggedIn() && !lfmdata.error()) {
                                 self.artist.getUserTags();
-                                $("#artistinformation .enter").keyup( onKeyUp );
+                                $("#artistinformation .enter").on('keyup',  onKeyUp );
                             }
 
 						}
@@ -483,7 +483,7 @@ var info_lastfm = function() {
 								lastfm.artist.getInfo({  artist: albummeta.name },
 	                                                this.lfmArtistResponseHandler,
 	                                                this.lfmArtistResponseHandler );
-								
+
 							} else {
 	                            lastfm.album.getInfo({  artist: getSearchArtist(),
 	                                                    album: albummeta.name},
@@ -518,7 +518,7 @@ var info_lastfm = function() {
                         self.track.populate();
                         self.album.doBrowserUpdate();
                     },
-					
+
 					lfmArtistResponseHandler: function(data) {
 						debug.trace(medebug,"Got Album/Artist Info for",albummeta.name);
                         debug.trace(medebug, data);
@@ -546,7 +546,7 @@ var info_lastfm = function() {
 
                             if (accepted && lastfm.isLoggedIn() && !lfmdata.error()) {
                                 self.album.getUserTags();
-                                $("#albuminformation .enter").keyup( onKeyUp );
+                                $("#albuminformation .enter").on('keyup',  onKeyUp );
                             }
                         }
                     },
@@ -676,7 +676,7 @@ var info_lastfm = function() {
                             if (accepted && lastfm.isLoggedIn() && !lfmdata.error()) {
                                 self.track.getUserTags();
                                 doUserLoved(lfmdata.userloved());
-                                $("#trackinformation .enter").keyup( onKeyUp );
+                                $("#trackinformation .enter").on('keyup',  onKeyUp );
                             }
                         }
                     },
@@ -787,7 +787,7 @@ var info_lastfm = function() {
 }();
 
 function lfmDataExtractor(data) {
-	
+
 	this.getCheckedData = function(subtype) {
 		debug.debug("LASTFM", "Checking Data");
 		var r;
@@ -813,7 +813,7 @@ function lfmDataExtractor(data) {
             return false;
         }
     }
-	
+
 	this.errorcode = function() {
 		if (data && data.error) {
 			return data.error;

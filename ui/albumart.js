@@ -198,9 +198,9 @@ $(document).ready(function () {
     progress = $('#progress');
     progress.rangechooser({range: 100, startmax: 0, interactive: false});
     $(window).on('resize', wobbleMyBottom );
-    $("#harold").click( start );
-    $("#doobag").click( getsmall );
-    $("#finklestein").click( boogerbenson );
+    $("#harold").on('click',  start );
+    $("#doobag").on('click',  getsmall );
+    $("#finklestein").on('click',  boogerbenson );
     wobblebottom = $('#wobblebottom');
     wobbleMyBottom();
     $('#artistcoverslist').mCustomScrollbar({
@@ -234,7 +234,7 @@ $(document).ready(function () {
     document.body.addEventListener('drop', function(e) {
         e.preventDefault();
     }, false);
-    wobblebottom.click(onWobblebottomClicked);
+    wobblebottom.on('click', onWobblebottomClicked);
     $('.droppable').on('dragenter', dragEnter);
     $('.droppable').on('dragover', dragOver);
     $('.droppable').on('dragleave', dragLeave);
@@ -403,7 +403,7 @@ var imageEditor = function() {
             $('input#uploadkey').val(searchparams.key);
             $('input#uploadartist').val(searchparams.artist);
             $('input#uploadalbum').val(searchparams.album);
-            $('#searchphrase').keyup(imageEditor.bumblefuck);
+            $('#searchphrase').on('keyup', imageEditor.bumblefuck);
             wobbleMyBottom();
             $('#coverslist').mCustomScrollbar('scrollTo', currparent.parent().parent().prev());
         },

@@ -25,13 +25,13 @@ jQuery.fn.makeTagMenu = function(options) {
                 style: "margin-left: 8px"}).appendTo($(this));
             submitbutton.html(settings.buttontext);
             if (settings.buttonfunc) {
-                submitbutton.click(function() {
+                submitbutton.on('click', function() {
                     settings.buttonfunc(textbox.val());
                 });
             }
         }
 
-        dropbutton.click(function(ev) {
+        dropbutton.on('click', function(ev) {
             ev.preventDefault();
             ev.stopPropagation();
             if (dropbox.is(':visible')) {
@@ -42,7 +42,7 @@ jQuery.fn.makeTagMenu = function(options) {
                     for (var i in data) {
                         var d = $('<div>', {class: "backhi"}).appendTo(menucontents);
                         d.html(data[i]);
-                        d.click(function() {
+                        d.on('click', function() {
                             var cv = textbox.val();
                             if (cv != "") {
                                 cv += ",";
@@ -271,23 +271,23 @@ var layoutProcessor = function() {
                 $(this).slideToggle('fast');
             });
             setControlClicks();
-            $('.choose_nowplaying').click(function(){layoutProcessor.sourceControl('infobar')});
-            $('.choose_albumlist').click(function(){layoutProcessor.sourceControl('albumlist')});
-            $('.choose_searcher').click(function(){layoutProcessor.sourceControl('searchpane')});
-            $('.choose_filelist').click(function(){layoutProcessor.sourceControl('filelist')});
-            $('.choose_radiolist').click(function(){layoutProcessor.sourceControl('radiolist')});
-            $('.choose_podcastslist').click(function(){layoutProcessor.sourceControl('podcastslist')});
-            $('.choose_infopanel').click(function(){layoutProcessor.sourceControl('infopane')});
-            $('.choose_playlistman').click(function(){layoutProcessor.sourceControl('playlistman')});
-            $('.choose_pluginplaylists').click(function(){layoutProcessor.sourceControl('pluginplaylistholder')});
-            $('.choose_prefs').click(function(){layoutProcessor.sourceControl('prefsm')});
-            $('#choose_history').click(showHistory);
-            $('.icon-rss.npicon').click(function(){podcasts.doPodcast('nppodiput')});
-            $('#love').click(nowplaying.love);
-            $('.choose_playlist').click(function(){layoutProcessor.sourceControl('playlistm')});
-            $("#ratingimage").click(nowplaying.setRating);
-            $("#playlistname").parent().next('button').click(player.controller.savePlaylist);
-            $('.clear_playlist').click(playlist.clear);
+            $('.choose_nowplaying').on('click', function(){layoutProcessor.sourceControl('infobar')});
+            $('.choose_albumlist').on('click', function(){layoutProcessor.sourceControl('albumlist')});
+            $('.choose_searcher').on('click', function(){layoutProcessor.sourceControl('searchpane')});
+            $('.choose_filelist').on('click', function(){layoutProcessor.sourceControl('filelist')});
+            $('.choose_radiolist').on('click', function(){layoutProcessor.sourceControl('radiolist')});
+            $('.choose_podcastslist').on('click', function(){layoutProcessor.sourceControl('podcastslist')});
+            $('.choose_infopanel').on('click', function(){layoutProcessor.sourceControl('infopane')});
+            $('.choose_playlistman').on('click', function(){layoutProcessor.sourceControl('playlistman')});
+            $('.choose_pluginplaylists').on('click', function(){layoutProcessor.sourceControl('pluginplaylistholder')});
+            $('.choose_prefs').on('click', function(){layoutProcessor.sourceControl('prefsm')});
+            $('#choose_history').on('click', showHistory);
+            $('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodiput')});
+            $('#love').on('click', nowplaying.love);
+            $('.choose_playlist').on('click', function(){layoutProcessor.sourceControl('playlistm')});
+            $("#ratingimage").on('click', nowplaying.setRating);
+            $("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
+            $('.clear_playlist').on('click', playlist.clear);
             $("#volume").rangechooser({
                 range: 100,
                 ends: ['max'],

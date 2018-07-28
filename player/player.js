@@ -25,7 +25,7 @@ var player = function() {
                 '</tr>'
             );
             $('.clickremhost').off('click');
-            $('.clickremhost').click(removePlayerDef);
+            $('.clickremhost').on('click', removePlayerDef);
         }
 
         function updatePlayerChoices() {
@@ -76,7 +76,7 @@ var player = function() {
                 prefs.save({multihosts: newhosts});
                 self.replacePlayerOptions();
                 prefs.setPrefs();
-                $('[name="playerdefs"] > .savulon').click(prefs.toggleRadio);
+                $('[name="playerdefs"] > .savulon').on('click', prefs.toggleRadio);
             }
             return true;
         }
@@ -107,7 +107,7 @@ var player = function() {
             }
             var buttons = $('<div>',{class: "pref clearfix"}).appendTo(mywin);
             var add = $('<i>',{class: "icon-plus smallicon clickicon tleft"}).appendTo(buttons);
-            add.click(function() {
+            add.on('click', function() {
                 addNewPlayerRow();
                 playerpu.setWindowToContentsSize();
             });
@@ -120,7 +120,7 @@ var player = function() {
             playerpu.useAsCloseButton(d, updatePlayerChoices);
 
             $('.clickremhost').off('click');
-            $('.clickremhost').click(removePlayerDef);
+            $('.clickremhost').on('click', removePlayerDef);
 
             $(document).on('keyup', 'input.notspecial', function() {
                 debug.log("ENTER","Value Changed");

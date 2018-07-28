@@ -136,14 +136,14 @@ var browser = function() {
             $("#backbutton").off('click').addClass('button-disabled');
         }
         if (displaypointer > 1 && $("#backbutton").hasClass('button-disabled')) {
-            $("#backbutton").click( browser.back );
+            $("#backbutton").on('click', browser.back );
             $("#backbutton").removeClass('button-disabled');
         }
         if (displaypointer == (history.length)-1) {
             $("#forwardbutton").off('click').addClass('button-disabled');
         }
         if (displaypointer < (history.length)-1 && $("#forwardbutton").hasClass('button-disabled')) {
-            $("#forwardbutton").click( browser.forward );
+            $("#forwardbutton").on('click', browser.forward );
             $("#forwardbutton").removeClass('button-disabled');
         }
 
@@ -476,8 +476,8 @@ var browser = function() {
             displayer.html(banner(opts, id, false, false, true));
             panelclosed[id] = false;
             displayer.off('click');
-            displayer.click(onBrowserClicked);
-            displayer.dblclick(onBrowserDoubleClicked);
+            displayer.on('click', onBrowserClicked);
+            displayer.on('dblclick', onBrowserDoubleClicked);
             extraPlugins[id] = { div: displayer, parent: parent };
             return displayer;
         },

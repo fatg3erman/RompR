@@ -21,11 +21,11 @@ $(document).ready(function(){
     setClickHandlers();
     setChooserButtons();
     player.defs.replacePlayerOptions();
-    $(".toggle").click(prefs.togglePref);
-    $(".saveotron").keyup(prefs.saveTextBoxes);
-    $(".saveomatic").change(prefs.saveSelectBoxes);
-    $(".savulon").click(prefs.toggleRadio);
-    $(".clickreplaygain").click(player.controller.replayGain);
+    $(".toggle").on('click', prefs.togglePref);
+    $(".saveotron").on('keyup', prefs.saveTextBoxes);
+    $(".saveomatic").on('change', prefs.saveSelectBoxes);
+    $(".savulon").on('click', prefs.toggleRadio);
+    $(".clickreplaygain").on('click', player.controller.replayGain);
     playlist.preventControlClicks(true);
     prefs.setPrefs();
     if (prefs.playlistcontrolsvisible) {
