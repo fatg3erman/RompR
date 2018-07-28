@@ -141,7 +141,7 @@ button {
 .desktop .selectholder {
     background:#fff url('../newimages/blobdown2.svg') right 2px center no-repeat;
     overflow:hidden;
-    width:50%;
+    width:58%;
     margin-top:4px;
     margin-bottom:4px;
     padding-left:2px;
@@ -158,7 +158,7 @@ button {
 }
 
 .selectholder-noselect {
-    width:50%;
+    width:58%;
     margin-top:4px;
     margin-bottom:4px;
     padding-left:2px;
@@ -929,7 +929,7 @@ td.fil {
 }
 
 .prefinput {
-    width: 95%;
+    width: 100%;
 }
 
 .slt {
