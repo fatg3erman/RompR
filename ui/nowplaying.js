@@ -108,6 +108,7 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 	}
 
 	this.remlfmtags = function(tags) {
+		debug.log("NOWPLAYING","Removing Last.FM tags",tags);
 		collections['lastfm'].track.removetags(tags);
 	}
 
@@ -435,7 +436,7 @@ var nowplaying = function() {
 				history[i].refreshUserMeta();
 			}
 		},
-		
+
 		doDeferredRequests: function() {
 			clearTimeout(deftimer);
 			if (deferred.length > 0) {
@@ -447,7 +448,7 @@ var nowplaying = function() {
 				deftimer = setTimeout(nowplaying.doDeferredRequests, 1000);
 			}
 		},
-		
+
 		getCurrentCollection(index) {
 			if (!index) index = findCurrentTrack();
 			debug.log("NOWPLAYING", history[index]);

@@ -159,8 +159,6 @@ var podcasts = function() {
 			target.html(html);
 		}
 		$('i[name="podcast_'+channel+'"]').stopSpinner();
-		// target.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
-		// target.find('.clearbox').on('click', podcasts.makeSearchWork).on('mouseenter',makeHoverWork).on('mousemove', makeHoverWork).on('keyup', onKeyUp);
 		target.find('input.resumepos').each(function() {
 			var pos = parseInt($(this).val());
 			var duration = parseInt($(this).next().val());
@@ -168,7 +166,7 @@ var podcasts = function() {
 			var thething = $(
 				'<div>',
 				{
-					class: 'containerbox fullwidth playlistrow2 dropdown-container podcastresume playable clickable clickicon',
+					class: 'containerbox fullwidth playlistrow2 dropdown-container podcastresume playable ',
 					name: $(this).prev().attr('name')
 				}
 			).insertBefore($(this));
@@ -416,7 +414,7 @@ var podcasts = function() {
 		        data: {search: encodeURIComponent(term), populate: 1 },
 		        success: function(data) {
 		            $("#podcast_search").html(data);
-		            $('#podcast_search').prepend('<div class="menuitem containerbox padright brick_wide sensiblebox"><div class="configtitle textcentre expand"><b>Search Results for &quot;'+term+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch fixed"></i></div>');
+		            $('#podcast_search').prepend('<div class="menuitem containerbox padright brick_wide sensiblebox"><div class="configtitle textcentre expand"><b>Search Results for &quot;'+term+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch podcast fixed"></i></div>');
 		            // $("#podcast_search .tooltip").tipTip({delay: 500, edgeOffset: 8});
 					layoutProcessor.postAlbumActions($('#podcast_search'));
 		        },
@@ -486,6 +484,38 @@ var podcasts = function() {
 				var thing = $(event.target).attr('name').replace(/podsearcher_/,'');
 				podcasts.searchinpodcast(thing);
 			}
+		},
+
+		handleClick: function (event, clickedElement) {
+			if (clickedElement.hasClass("podremove")) {
+		        var n = clickedElement.attr('name');
+		        podcasts.removePodcast(n.replace(/podremove_/, ''));
+		    } else if (clickedElement.hasClass("podaction")) {
+		        var n = clickedElement.attr('name').match('(.*)_(.*)');
+		        podcasts.channelAction(n[2],n[1]);
+		    } else if (clickedElement.hasClass("podglobal")) {
+		        podcasts.globalAction(clickedElement.attr('name'), clickedElement);
+		    } else if (clickedElement.hasClass("podtrackremove")) {
+		        var n = clickedElement.attr('name');
+		        var m = clickedElement.parent().attr('name');
+		        podcasts.removePodcastTrack(n.replace(/podtrackremove_/, ''), m.replace(/podcontrols_/,''));
+		    } else if (clickedElement.hasClass("clickpodsubscribe")) {
+		        var index = clickedElement.next().val();
+		        podcasts.subscribe(index, clickedElement);
+		    } else if (clickedElement.hasClass("removepodsearch")) {
+		        podcasts.removeSearch();
+		    } else if (clickedElement.hasClass("poddownload")) {
+		        var n = clickedElement.attr('name');
+		        var m = clickedElement.parent().attr('name');
+		        podcasts.downloadPodcast(n.replace(/poddownload_/, ''), m.replace(/podcontrols_/,''));
+		    } else if (clickedElement.hasClass("podgroupload")) {
+		        var n = clickedElement.attr('name');
+		        podcasts.downloadPodcastChannel(n.replace(/podgroupload_/, ''));
+		    } else if (clickedElement.hasClass("podmarklistened")) {
+		        event.stopImmediatePropagation();
+		        var m = clickedElement.parent().attr('name');
+		        podcasts.markEpisodeAsListened(n.replace(/podmarklistened_/, ''), m.replace(/podcontrols_/,''));
+			}
 		}
 
 	}
@@ -494,4 +524,5 @@ var podcasts = function() {
 
 $('#podcastsinput').on('drop', podcasts.handleDrop)
 menuOpeners['podcast'] = podcasts.loadPodcast;
+clickRegistry.addClickHandlers('podcast', podcasts.handleClick);
 podcasts.doInitialRefresh();

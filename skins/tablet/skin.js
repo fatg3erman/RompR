@@ -88,10 +88,6 @@ var layoutProcessor = function() {
             collectionHelper.forceCollectionReload();
         },
 
-        bindSourcesClicks: function() {
-            $('.mainpane').not('#infobar').not('#playlistm').not('#prefsm').not('#infopane').bindPlayClicks();
-        },
-
         postAlbumActions: function() {
 
         },
@@ -299,7 +295,7 @@ var layoutProcessor = function() {
 
         postPlaylistLoad: function() {
             $('#pscroller').find('.icon-cancel-circled').each(function() {
-                var d = $('<i>', {class: 'icon-updown playlisticonr fixed clickable clickicon rearrange_playlist'}).insertBefore($(this));
+                var d = $('<i>', {class: 'icon-updown playlisticonr fixed clickplaylist clickicon rearrange_playlist'}).insertBefore($(this));
             });
         },
 

@@ -70,13 +70,6 @@ jQuery.fn.stopSpinner = function() {
     });
 }
 
-jQuery.fn.bindPlayClicks = function() {
-    this.each(function() {
-        $(this).off('click', onSourcesClicked).on('click', onSourcesClicked);
-    });
-    return this;
-}
-
 jQuery.fn.makeTagMenu = function(options) {
     var settings = $.extend({
         textboxname: "",
@@ -157,18 +150,18 @@ jQuery.fn.makeTagMenu = function(options) {
 }
 
 jQuery.fn.fanoogleMenus = function() {
-    return this.each( function() {
-        var top = $(this).children().first().children('.mCSB_container').offset().top;
-        var conheight = $(this).children().first().children('.mCSB_container').height();
-        var ws = getWindowSize();
-        var avheight = ws.y - top;
-        var nh = Math.min(avheight, conheight);
-        $(this).css({height: nh+"px", "max-height":''});
-        $(this).mCustomScrollbar("update");
-        // if ($(this).attr("id") == "hpscr") {
-        //     $(this).mCustomScrollbar("scrollTo", '.current', {scrollInertia:0});
-        // }
+    this.each( function() {
+        if ($(this).is(':visible')) {
+            var top = $(this).children().first().children('.mCSB_container').offset().top;
+            var conheight = $(this).children().first().children('.mCSB_container').height();
+            var ws = getWindowSize();
+            var avheight = ws.y - top;
+            var nh = Math.min(avheight, conheight);
+            $(this).css({height: nh+"px"});
+            $(this).mCustomScrollbar("update");
+        }
     });
+    return this;
 }
 
 jQuery.fn.addBunnyEars = function() {
@@ -177,9 +170,9 @@ jQuery.fn.addBunnyEars = function() {
             $(this).removeBunnyEars();
         } else {
             var w = $(this).outerWidth(true);
-            var up = $('<div>', { class: 'playlistup containerbox clickable'}).prependTo($(this));
+            var up = $('<div>', { class: 'playlistup containerbox clickplaylist'}).prependTo($(this));
             up.html('<i class="icon-increase medicon expand"></i>').css('width', w+'px');
-            var down = $('<div>', { class: 'playlistdown containerbox clickable'}).appendTo($(this));
+            var down = $('<div>', { class: 'playlistdown containerbox clickplaylist'}).appendTo($(this));
             down.html('<i class="icon-decrease medicon expand"></i>').css('width', w+'px');
             $(this).addClass('highlighted');
             if ($(this).hasClass('item')) {

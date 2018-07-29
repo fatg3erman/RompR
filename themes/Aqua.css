@@ -12,7 +12,7 @@ body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,textarea,input {
     color:#000000;
 }
 
-body.phone .dropmenu>div.clickable,
+body.phone .dropmenu>div.playable,
 body.phone .dropmenu>div.menuitem,
 body.phone .mainpane .radio,
 body.phone .mainpane .faveradio,
@@ -21,7 +21,7 @@ body.phone .mainpane .directory {
     border-top: 1px solid rgba(60,60,60,0.1);
 }
 
-body.phone #pluginplaylistholder .menuitem.clickable,
+body.phone #pluginplaylistholder .menuitem.clickicon,
 body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
     border-bottom: 1px solid rgba(60,60,60,0.1);
 }
@@ -138,11 +138,11 @@ select {
     background-color:rgba(225,228,234,0.75);
 }
 
-div.clickable:hover, .infoclick:hover {
+.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
     color:#3875d7;
 }
 
-div.clickable.selected:hover {
+.playable.selected:hover, tr.playable.selected:hover>td {
     color:#000000;
 }
 
@@ -185,10 +185,6 @@ table.histable tr:hover {
 
 tr.clickaddtrack:hover {
     background-color:#e1e4ea;
-}
-
-tr.draggable:not(.selected):hover {
-    background-color:rgba(150,150,150,0.3);
 }
 
 .tagholder table tr th {

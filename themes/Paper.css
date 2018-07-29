@@ -95,10 +95,6 @@ input.inbrowser, div.inbrowser {
 =====================================================================
 */
 
-tr.draggable:not(.selected):hover {
-    background-color:rgba(150,150,150,0.3);
-}
-
 .bordered {
     border-top:1px solid #dddddd;
     border-left:1px solid #dddddd;
@@ -112,11 +108,11 @@ tr.draggable:not(.selected):hover {
     background-color:rgba(150,150,150,0.2);
 }
 
-div.clickable:not(.selected):hover {
+.playable:not(.selected):hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:not(.selected):hover>td {
     background-color:rgba(220,220,220,0.7);
 }
 
-div.clickable.selected:hover {
+.playable.selected:hover, tr.playable.selected:hover>td {
     color:#dddddd;
 }
 

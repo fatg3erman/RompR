@@ -1,7 +1,7 @@
 // This skin works by taking what is basically a default layout
 // and jQuery-ing it to feck to move things around.
 
-// The biggest problem with this skin is that if we change stuff in the UI, itnusually fucks it up.
+// The biggest problem with this skin is that if we change stuff in the UI, it usually fucks it up.
 // So be careful to test it.
 
 jQuery.fn.menuReveal = function(callback) {
@@ -25,8 +25,6 @@ jQuery.fn.menuReveal = function(callback) {
         if (self.hasClass('dropmenu')) {
             self.find('.holderthing').removeClass('holderthing').addClass('containerbox wrap');
             self.detach().removeClass('dropmenu').addClass('collectionpanel radiolist containerbox wrap noselection').insertBefore($('#infoholder'));
-            self.bindPlayClicks();
-            clickRegistry.reset();
             setDraggable('#'+id);
         }
         self.removeClass('closed');
@@ -288,7 +286,6 @@ var layoutProcessor = function() {
                             .addClass('containerbox wrap collectionpanel').css('display', '')
                             .insertBefore($('#infoholder'));
                     }
-                    $('#collection, #searchresultholder').bindPlayClicks();
                     break;
             }
             collectionHelper.forceCollectionReload();
@@ -303,10 +300,6 @@ var layoutProcessor = function() {
             $('#infopane #searchresultholder').adjustBoxSizes();
             $('#storedplaylists:visible').adjustBoxSizes();
             $('#pluginplaylistslist:visible').adjustBoxSizes();
-        },
-
-        bindSourcesClicks: function() {
-            $('#sources, #podcastslist, #playlistslist').bindPlayClicks();
         },
 
         postAlbumActions: function(panel) {
@@ -383,8 +376,7 @@ var layoutProcessor = function() {
         },
 
         setPlaylistHeight: function() {
-            var w = getWindowSize();
-
+            $('#phacker').fanoogleMenus();
         },
 
         playlistControlHotKey: function(button) {
@@ -543,11 +535,6 @@ var layoutProcessor = function() {
             // Height of the bottom pane (chooser, info, playlist container)
             var newheight = ws.y - $("#bottompage").offset().top;
             $("#bottompage").css("height", newheight+"px");
-            if (newheight < 540) {
-                $('.topdropmenu').css('height',newheight+"px");
-            } else {
-                $('.topdropmenu').css('height', "");
-            }
             var newwidth = ws.x - $('#infobar').offset().left;
             $('#infobar').css('width', newwidth+'px');
             infobar.rejigTheText();
@@ -678,7 +665,6 @@ var layoutProcessor = function() {
                     $('#filelist .highlighted').removeClass('highlighted');
                     element.addClass('highlighted');
                     var t = $('<div>', {id: name, class: 'collectionpanel filelist containerbox wrap noselection notfilled'}).insertBefore($('#infoholder'));
-                    t.bindPlayClicks();
                     setDraggable('#'+name);
                 } else {
                     var t= ($('<div>', {id: name, class: 'indent containerbox wrap notfilled'})).insertAfter(element);
@@ -694,14 +680,12 @@ var layoutProcessor = function() {
                     $('#collection .highlighted').removeClass('highlighted');
                     if (x.length == 0) {
                         t = $('<div>', {id: name, class: 'collectionpanel albumlist containerbox wrap noselection notfilled'}).insertBefore($('#infoholder'));
-                        t.bindPlayClicks();
                     }
                 } else {
                     $('.collectionpanel.searcher').remove();
                     $('#searchresultholder .highlighted').removeClass('highlighted');
                     if (x.length == 0) {
                         t = $('<div>', {id: name, class: 'collectionpanel searcher containerbox wrap noselection notfilled'}).insertBefore($('#infoholder'));
-                        t.bindPlayClicks();
                     }
                 }
                 $('.collectionpanel').hide(0);

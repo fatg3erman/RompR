@@ -107,7 +107,7 @@ function doPodcastBase() {
     print '<div class="spacer"></div>';
 
     print '<div class="containerbox dropdown-container indent noselection">';
-    print '<i class="icon-toggle-closed mh menu fixed" name="podcastsortoptions"></i>';
+    print '<i class="icon-toggle-closed mh menu fixed openmenu" name="podcastsortoptions"></i>';
     print '<div class="expand"><b>'.get_int_text('label_global_controls').'</b></div>';
     print '</div>';
 
@@ -116,10 +116,10 @@ function doPodcastBase() {
     print '<div class="spacer"></div>';
 
     print '<div class="containerbox indent bumpad">';
-    print '<i class="icon-refresh smallicon clickable clickicon fixed tooltip podglobal" name="refreshall" title="'.get_int_text('podcast_refresh_all').'"></i>';
-    print '<i class="icon-headphones smallicon clickable clickicon fixed tooltip podglobal" name="markalllistened" title="'.get_int_text('podcast_mark_all').'"></i>';
-    print '<i class="icon-trash oneeighty smallicon clickable clickicon fixed tooltip podglobal" name="undeleteall" title="'.get_int_text('podcast_undelete').'"></i>';
-    print '<i class="icon-download oneeighty smallicon clickable clickicon fixed tooltip podglobal" name="removealldownloaded" title="'.get_int_text('podcast_removedownloaded').'"></i>';
+    print '<i class="icon-refresh smallicon clickable clickicon fixed tooltip podcast podglobal" name="refreshall" title="'.get_int_text('podcast_refresh_all').'"></i>';
+    print '<i class="icon-headphones smallicon clickable clickicon fixed tooltip podcast podglobal" name="markalllistened" title="'.get_int_text('podcast_mark_all').'"></i>';
+    print '<i class="icon-trash oneeighty smallicon clickable clickicon fixed tooltip podcast podglobal" name="undeleteall" title="'.get_int_text('podcast_undelete').'"></i>';
+    print '<i class="icon-download oneeighty smallicon clickable clickicon fixed tooltip podcast podglobal" name="removealldownloaded" title="'.get_int_text('podcast_removedownloaded').'"></i>';
     print '</div>';
 
     print '<div class="spacer"></div>';

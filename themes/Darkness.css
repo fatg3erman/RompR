@@ -8,7 +8,7 @@ html, body.phone .dropmenu {
     background-color:#181818;
 }
 
-body.phone .dropmenu div.clickable, body.phone .dropmenu div.menu {
+body.phone .dropmenu div.playable, body.phone .dropmenu div.menu {
     background-color: rgba(100,100,100,0.1);
 }
 
@@ -117,10 +117,6 @@ a:hover,a:active
 =====================================================================
 */
 
-tr.draggable:not(.selected):hover {
-    background-color:rgba(150,150,150,0.3);
-}
-
 .bordered
 {
     border-left:1px solid #000000;
@@ -149,13 +145,11 @@ a.album:hover,a.album:active
     color:#ff4800;
 }
 
-div.clickable:hover, .infoclick:hover
-{
+.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
     color:#ff4800;
 }
 
-div.clickable.selected:hover
-{
+.playable.selected:hover, tr.playable.selected:hover>td {
     color:#dddddd;
 }
 
@@ -168,20 +162,21 @@ div.clickable.selected:hover
 {
     font-size:110%;
     text-shadow: 0 0 15px #ffffff;
-    /*transition:all 0.5s;*/
     transition:font-size 0.5s ease, text-shadow 0.5s ease;
     color:#ffffff;
 }
 
-.playlistitem
+.playlistitem, .playlistalbum
 {
     transition:font-size 0.5s ease, text-shadow 0.5s ease;
 }
 
 .playlistcurrenttitle
 {
-    font-size:125%
-    text-shadow 0 0 20px #ffffff;
+    font-size: 125%;
+    text-shadow: 0 0 20px #ffffff;
+    color:#ffffff;
+    transition:font-size 0.5s ease, text-shadow 0.5s ease;
 }
 
 .item

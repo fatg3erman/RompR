@@ -392,7 +392,6 @@ var info_lastfm = function() {
 
                             if (accepted && lastfm.isLoggedIn() && !lfmdata.error()) {
                                 self.artist.getUserTags();
-                                // $("#artistinformation .enter").on('keyup', onKeyUp );
                             }
 
 						}

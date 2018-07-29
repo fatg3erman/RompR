@@ -373,10 +373,6 @@ var layoutProcessor = function() {
             collectionHelper.forceCollectionReload();
         },
 
-        bindSourcesClicks: function() {
-            $('.mainpane').not('#infobar').not('#playlistm').not('#prefsm').not('#infopane').bindPlayClicks();
-        },
-
         postAlbumActions: function(menu) {
             if (menu && menu.is(':visible')) {
                 var i = menu.find('.album_menu_image');
@@ -673,7 +669,7 @@ var layoutProcessor = function() {
                 $('#sortable .item').playlistTouchWipe({});
             } else {
                 $('#pscroller').find('.icon-cancel-circled').each(function() {
-                    var d = $('<i>', {class: 'icon-updown playlisticonr fixed clickable clickicon rearrange_playlist'}).insertBefore($(this));
+                    var d = $('<i>', {class: 'icon-updown playlisticonr fixed clickplaylist clickicon rearrange_playlist'}).insertBefore($(this));
                 });
             }
         },

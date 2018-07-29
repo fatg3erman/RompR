@@ -9,16 +9,8 @@ var somaFmPlugin = {
 				layoutProcessor.postAlbumActions();
 	        });
 		}
-	},
-
-    handleClick: function(event) {
-        var clickedElement = findClickableElement(event);
-        if (clickedElement.hasClass("menu")) {
-            doMenu(event, clickedElement);
-        }
-    }
+	}
 
 }
 
 menuOpeners['somafmlist'] = somaFmPlugin.loadSomaFM;
-clickRegistry.addClickHandlers('#somafmplugin', somaFmPlugin.handleClick);

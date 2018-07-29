@@ -18,8 +18,7 @@ var tuneinRadioPlugin = {
         layoutProcessor.postAlbumActions();
     },
 
-    handleClick: function(event) {
-        var clickedElement = findClickableElement(event);
+    handleClick: function(event, clickedElement) {
         if (clickedElement.hasClass("browse")) {
             event.stopImmediatePropagation();
             if (clickedElement.isClosed()) {
@@ -37,8 +36,6 @@ var tuneinRadioPlugin = {
             }
         } else if (clickedElement.hasClass("tuneinsearchbutton")) {
             tuneinRadioPlugin.search();
-        } else if (clickedElement.hasClass("menu")) {
-            doMenu(event, clickedElement);
         }
 
     },
@@ -67,4 +64,4 @@ var tuneinRadioPlugin = {
 }
 
 menuOpeners['tuneinlist'] = tuneinRadioPlugin.loadBigRadio;
-clickRegistry.addClickHandlers('#tuneinlist', tuneinRadioPlugin.handleClick);
+clickRegistry.addClickHandlers('tunein', tuneinRadioPlugin.handleClick);

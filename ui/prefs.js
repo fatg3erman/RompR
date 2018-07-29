@@ -588,7 +588,7 @@ var prefs = function() {
             var callback = null;
             switch(prefsave) {
                 case 'clickmode':
-                    callback = setClickHandlers;
+                    callback = setPlayClickHandlers;
                     break;
 
                 case 'sortcollectionby':

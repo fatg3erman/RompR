@@ -162,7 +162,7 @@ class dirbleplugin {
 
             foreach ($streams as $s) {
                 debuglog("Content type ".$s['content_type']." and uri ".$s['stream'],"DIRBLE");
-                print '<div class="clickable clickstream playable draggable indent containerbox padright menuitem" name="'.trim($s['stream']).'" streamname="'.trim($station['name']).'" streamimg="'.$streamimage.'">';
+                print '<div class="clickstream playable draggable indent containerbox padright menuitem" name="'.trim($s['stream']).'" streamname="'.trim($station['name']).'" streamimg="'.$streamimage.'">';
                 print '<i class="'.audioClass($s['content_type']).' smallicon fixed"></i>';
                 print '<div class="expand">';
                 print $this->get_speed($s['bitrate']);
@@ -273,19 +273,19 @@ class dirbleplugin {
     private function do_page_buttons($json, $is_bottom) {
         if ($json['total'] > 0) {
             print '<div class="fullwidth"><div class="containerbox padright noselection menuitem">';
-            $class = ($json['prevpage'] == 0) ? ' button-disabled' : ' clickable clickicon clickradioback';
+            $class = ($json['prevpage'] == 0) ? ' button-disabled' : ' clickable clickicon natradio clickradioback';
             print '<i class="fixed icon-left-circled medicon'.$class.'"></i>';
             print '<div class="expand textcentre">Showing '.$json['first'].' to '.$json['num'].' of '.$json['total'].'</div>';
-            $class = ($json['nextpage'] == 0) ? ' button-disabled' : ' clickable clickicon clickradioforward';
+            $class = ($json['nextpage'] == 0) ? ' button-disabled' : ' clickable clickicon natradio clickradioforward';
             print '<i class="fixed icon-right-circled medicon'.$class.'"></i>';
             print '</div>';
 
             $page = $json['prevpage']+1;
-            $firstpage = max(1, $page-5);
+            $firstpage = max(1, $page-4);
             $lastpage = min($firstpage+9, round(($json['total']/$json['perpage']), 0, PHP_ROUND_HALF_DOWN)+1);
             print '<div class="textcentre brick_wide containerbox wrap menuitem">';
             for ($p = $firstpage; $p < $lastpage; $p++) {
-                print '<div class="clickable clickicon clickdirblepager expand';
+                print '<div class="clickable clickicon natradio clickdirblepager expand';
                 if ($p == $page) {
                     print ' highlighted';
                 }
@@ -299,7 +299,7 @@ class dirbleplugin {
             print '</div>';
         } else if ($is_bottom && $json['spage'] > 0) {
             print '<div class="fullwidth"><div class="containerbox padright noselection fullwidth menuitem">';
-            print '<div class="expand textcentre clickable clickicon clicksearchmore">Show More Results...</div>';
+            print '<div class="expand textcentre clickable natradio clickicon clicksearchmore">Show More Results...</div>';
             print '</div>';
             print '<input type="hidden" name="spage" value="'.$json['spage'].'" />';
             print '<input type="hidden" name="term" value="'.rawurlencode($json['term']).'" />';

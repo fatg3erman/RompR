@@ -35,7 +35,7 @@ var playlist = function() {
 
     function addSearchDir(element) {
         var options = new Array();
-        element.next().find('.clickable').each(function(index, elem){
+        element.next().find('.playable').each(function(index, elem){
             if ($(elem).hasClass('searchdir')) {
                 options.concat(addSearchDir($(elem)));
             } else {
@@ -201,7 +201,7 @@ var playlist = function() {
             },
 
             standardBox: function(station, name, icon, label) {
-                var html = '<div class="menuitem containerbox clickable clickicon '+station+'"';
+                var html = '<div class="menuitem containerbox clickicon '+station+'"';
                 if (name !== null) html += ' name="'+name+'"';
                 html += '>';
                 html += '<div class="smallcover svg-square fixed '+icon+'"></div>';
@@ -211,10 +211,10 @@ var playlist = function() {
             },
 
             dropdownBox: function(station, name, icon, label, dropid) {
-                var html = '<div class="menuitem containerbox clickable clickicon '+station+'"';
+                var html = '<div class="menuitem containerbox clickicon '+station+'"';
                 if (name !== null) html += ' name="'+name+'"';
                 html += '>';
-                html += '<i class="icon-toggle-closed menu mh fixed" name="'+dropid+'"></i>';
+                html += '<i class="icon-toggle-closed menu openmenu mh fixed" name="'+dropid+'"></i>';
                 html += '<div class="smallcover svg-square noindent fixed '+icon+'"></div>';
                 html += '<div class="expand">'+label+'</div>';
                 html += '</div>';
@@ -395,6 +395,30 @@ var playlist = function() {
         clear: function() {
             playlist.radioManager.stop();
             player.controller.clearPlaylist();
+        },
+
+        handleClick: function(event) {
+            event.stopImmediatePropagation();
+            var clickedElement = $(this);
+            if (clickedElement.hasClass("playid")) {
+                player.controller.playId(clickedElement.attr("romprid"));
+            } else if (clickedElement.hasClass("clickremovetrack")) {
+                playlist.delete(clickedElement.attr("romprid"));
+            } else if (clickedElement.hasClass("clickremovealbum")) {
+                playlist.deleteGroup(clickedElement.attr("name"));
+            } else if (clickedElement.hasClass("clickaddwholealbum")) {
+                playlist.addAlbumToCollection(clickedElement.attr("name"));
+            } else if (clickedElement.hasClass("clickrollup")) {
+                playlist.hideItem(clickedElement.attr("romprname"));
+            } else if (clickedElement.hasClass("clickaddfave")) {
+                playlist.addFavourite(clickedElement.attr("name"));
+            } else if (clickedElement.hasClass("playlistup")) {
+                playlist.moveTrackUp(clickedElement.findPlParent(), event);
+            } else if (clickedElement.hasClass("playlistdown")) {
+                playlist.moveTrackDown(clickedElement.findPlParent(), event);
+            } else if (clickedElement.hasClass('rearrange_playlist')) {
+                clickedElement.findPlParent().addBunnyEars();
+            }
         },
 
         draggedToEmpty: function(event, ui) {
@@ -865,12 +889,12 @@ function Album(artist, album, index, rolledup) {
         }
 
         var inner = $('<div>', {class: 'containerbox'}).appendTo(holder);
-        var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'expand clickable clickplaylist containerbox'}).appendTo(inner);
+        var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'expand clickplaylist playid containerbox'}).appendTo(inner);
 
         if (prefs.use_albumart_in_playlist) {
             self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].key });
             self.image.on('error', self.getart);
-            var imgholder = $('<div>', { class: 'smallcover fixed clickable clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
+            var imgholder = $('<div>', { class: 'smallcover fixed clickplaylist clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
             if (tracks[0].images.small) {
                 self.image.attr('src', tracks[0].images.small).appendTo(imgholder);
             } else {
@@ -887,9 +911,9 @@ function Album(artist, album, index, rolledup) {
         title.append('<div class="bumpad">'+self.artist+'</div><div class="bumpad">'+self.album+'</div>');
 
         var controls = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(inner)
-        controls.append('<div class="expand clickable clickicon clickremovealbum" name="'+self.index+'"><i class="icon-cancel-circled playlisticonr tooltip" title="'+language.gettext('label_removefromplaylist')+'"></i></div>');
+        controls.append('<div class="expand clickplaylist clickicon clickremovealbum" name="'+self.index+'"><i class="icon-cancel-circled playlisticonr tooltip" title="'+language.gettext('label_removefromplaylist')+'"></i></div>');
         if (tracks[0].metadata.album.uri && tracks[0].metadata.album.uri.substring(0,7) == "spotify") {
-            controls.append('<div class="fixed clickable clickicon clickaddwholealbum" name="'+self.index+'"><i class="icon-music playlisticonr tooltip" title="'+language.gettext('label_addtocollection')+'"></i></div>');
+            controls.append('<div class="fixed clickplaylist clickicon clickaddwholealbum" name="'+self.index+'"><i class="icon-music playlisticonr tooltip" title="'+language.gettext('label_addtocollection')+'"></i></div>');
         }
 
         var trackgroup = $('<div>', {class: 'trackgroup', name: self.index }).appendTo('#sortable');
@@ -903,7 +927,7 @@ function Album(artist, album, index, rolledup) {
             }
 
             var trackOuter = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(trackdiv);
-            var trackDetails = $('<div>', {class: 'expand clickable clickplaylist containerbox dropdown-container', romprid: tracks[trackpointer].backendid}).appendTo(trackOuter);
+            var trackDetails = $('<div>', {class: 'expand playid clickplaylist containerbox dropdown-container', romprid: tracks[trackpointer].backendid}).appendTo(trackOuter);
 
             if (tracks[trackpointer].tracknumber) {
                 var trackNodiv = $('<div>', {class: 'tracknumber fixed'}).appendTo(trackDetails);
@@ -931,7 +955,7 @@ function Album(artist, album, index, rolledup) {
             }
 
             trackDetails.append('<div class="tracktime tiny fixed">'+formatTimeString(tracks[trackpointer].duration)+'</div>');
-            trackOuter.append('<i class="icon-cancel-circled playlisticonr fixed clickable clickicon clickremovetrack tooltip" title="'+language.gettext('label_removefromplaylist')+'" romprid="'+tracks[trackpointer].backendid+'"></i>');
+            trackOuter.append('<i class="icon-cancel-circled playlisticonr fixed clickplaylist clickicon clickremovetrack tooltip" title="'+language.gettext('label_removefromplaylist')+'" romprid="'+tracks[trackpointer].backendid+'"></i>');
 
         }
     }
@@ -1100,12 +1124,12 @@ function Stream(index, album, rolledup) {
         }
 
         var inner = $('<div>', {class: 'containerbox'}).appendTo(header);
-        var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'expand clickable clickplaylist containerbox'}).appendTo(inner);
+        var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'expand playid clickplaylist containerbox'}).appendTo(inner);
 
         if (prefs.use_albumart_in_playlist) {
             self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].key });
             self.image.on('error', self.getart);
-            var imgholder = $('<div>', { class: 'smallcover fixed clickable clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
+            var imgholder = $('<div>', { class: 'smallcover fixed clickplaylist clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
             if (tracks[0].images.small) {
                 self.image.attr('src', tracks[0].images.small).appendTo(imgholder);
             } else {
@@ -1123,15 +1147,15 @@ function Stream(index, album, rolledup) {
         var title = $('<div>', {class: 'containerbox vertical expand'}).appendTo(albumDetails);
         title.append('<div class="bumpad">'+tracks[0].album+'</div>');
         var buttons = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(inner);
-        buttons.append('<div class="clickable clickicon clickremovealbum expand" name="'+self.index+'"><i class="icon-cancel-circled playlisticonr tooltip" title="'+language.gettext('label_removefromplaylist')+'"></i></div>');
-        buttons.append('<div class="clickable clickicon clickaddfave fixed" name="'+self.index+'"><i class="icon-radio-tower playlisticonr tooltip" title="'+language.gettext('label_addtoradio')+'"></i></div>');
+        buttons.append('<div class="clickplaylist clickicon clickremovealbum expand" name="'+self.index+'"><i class="icon-cancel-circled playlisticonr tooltip" title="'+language.gettext('label_removefromplaylist')+'"></i></div>');
+        buttons.append('<div class="clickplaylist clickicon clickaddfave fixed" name="'+self.index+'"><i class="icon-radio-tower playlisticonr tooltip" title="'+language.gettext('label_addtoradio')+'"></i></div>');
 
         var trackgroup = $('<div>', {class: 'trackgroup', name: self.index }).appendTo('#sortable');
         if (self.visible()) {
             trackgroup.addClass('invisible');
         }
         for (var trackpointer in tracks) {
-            var trackdiv = $('<div>', {name: tracks[trackpointer].playlistpos, romprid: tracks[trackpointer].backendid, class: 'booger clickable clickplaylist containerbox playlistitem menuitem'}).appendTo(trackgroup);
+            var trackdiv = $('<div>', {name: tracks[trackpointer].playlistpos, romprid: tracks[trackpointer].backendid, class: 'booger playid clickplaylist containerbox playlistitem menuitem'}).appendTo(trackgroup);
             trackdiv.append(playlist.getDomainIcon(tracks[trackpointer], '<i class="icon-radio-tower playlisticon fixed"></i>'));
             var h = $('<div>', {class: 'containerbox vertical expand' }).appendTo(trackdiv);
             if (tracks[trackpointer].stream && tracks[trackpointer].stream != 'null') {

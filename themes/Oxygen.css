@@ -129,13 +129,11 @@ a.album:hover,a.album:active
     border-left:1px solid #444444;
 }
 
-div.clickable:hover
-{
+.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
     color:#ff4800;
 }
 
-div.clickable.selected:hover
-{
+.playable.selected:hover, tr.playable.selected:hover>td {
     color:#dddddd;
 }
 

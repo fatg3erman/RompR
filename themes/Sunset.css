@@ -6,9 +6,9 @@ html, body.phone .dropmenu
     background-attachment:fixed;
 }
 
-body.phone .dropmenu>div.clickable,
+body.phone .dropmenu>div.playable,
 body.phone .dropmenu>div.menuitem,
-body.phone #pluginplaylistholder .menuitem.clickable,
+body.phone #pluginplaylistholder .menuitem.clickicon,
 body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
     background-color:rgba(0,0,0,0.2);
     background-clip:border-box;
@@ -149,15 +149,13 @@ a.album:hover,a.album:active
     border-left:1px solid white;
 }
 
-div.clickable:hover, .infoclick:hover
-{
+.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
     text-shadow: 0 0 15px #ffffff;
     color:#ffffff;
     cursor:pointer;
 }
 
-div.clickable.selected:hover
-{
+.playable.selected:hover, tr.playable.selected:hover>td {
     color:#ffffff;
 }
 
@@ -339,7 +337,6 @@ table.histable tr
 }
 
 .backhi:hover {
-    font-size:105%;
     text-shadow: 0 0 15px #ffffff;
     color:#ff4800;
     cursor:pointer;

@@ -100,10 +100,6 @@ var layoutProcessor = function() {
             collectionHelper.forceCollectionReload();
         },
 
-        bindSourcesClicks: function() {
-            $("#sources").bindPlayClicks();
-        },
-
         postAlbumActions: function() {
 
         },
@@ -161,8 +157,7 @@ var layoutProcessor = function() {
         },
 
         setPlaylistHeight: function() {
-            var w = getWindowSize();
-
+            $('#phacker').fanoogleMenus();
         },
 
         playlistControlHotKey: function(button) {
@@ -271,11 +266,6 @@ var layoutProcessor = function() {
             // Height of the bottom pane (chooser, info, playlist container)
             var newheight = ws.y - $("#bottompage").offset().top;
             $("#bottompage").css("height", newheight+"px");
-            if (newheight < 540) {
-                $('.topdropmenu').css('height',newheight+"px");
-            } else {
-                $('.topdropmenu').css('height', "");
-            }
             var newwidth = ws.x - $('#infobar').offset().left;
             $('#infobar').css('width', newwidth+'px');
             infobar.rejigTheText();

@@ -83,11 +83,8 @@ var yourRadioPlugin = {
 		}
 	},
 
-	handleClick: function(event) {
-        var clickedElement = findClickableElement(event);
-	    if (clickedElement.hasClass("menu")) {
-	        doMenu(event, clickedElement);
-	    } else if (clickedElement.hasClass("clickradioremove")) {
+	handleClick: function(event, clickedElement) {
+		if (clickedElement.hasClass("clickradioremove")) {
 	        event.stopImmediatePropagation();
 	        yourRadioPlugin.removeUserStream(clickedElement.attr("name"));
 	    }
@@ -97,4 +94,4 @@ var yourRadioPlugin = {
 }
 
 menuOpeners['yourradiolist'] = yourRadioPlugin.loadStations;
-clickRegistry.addClickHandlers('#anaconda', yourRadioPlugin.handleClick);
+clickRegistry.addClickHandlers('yourradio', yourRadioPlugin.handleClick);

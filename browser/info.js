@@ -317,7 +317,6 @@ var browser = function() {
                             $("#"+type+"information").show();
                         }
                         $("#"+type+"information").html(banner(data, (collection === null) ? type : collection.bannertitle(), panelclosed[type], source)+data.data);
-                        // $("#"+type+"information .tooltip").tipTip({delay:250, edgeOffset: 8});
                     } else {
                         $("#"+type+"information").empty();
                         if ($("#"+type+"information").is(':visible')) {

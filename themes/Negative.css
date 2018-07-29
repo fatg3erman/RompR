@@ -127,10 +127,6 @@ body.desktop #thetopbit
 =====================================================================
 */
 
-tr.draggable:not(.selected):hover {
-    background-color:rgba(0,0,0,0.3);
-}
-
 .bordered
 {
     border-left:1px solid #bbbbbb;
@@ -159,14 +155,12 @@ a.album:hover,a.album:active
     color:#333333;
 }
 
-div.clickable:hover, .infoclick:hover
-{
-    text-shadow: 0 0 12px #333333;
+.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
+    text-shadow: 0 0 8px #ffffff;
 }
 
-div.clickable.selected:hover
-{
-    text-shadow: 0 0 12px #333333;
+.playable.selected:hover, tr.playable.selected:hover>td {
+    text-shadow: 0 0 8px #ffffff;
 }
 
 .selected
@@ -181,15 +175,16 @@ div.clickable.selected:hover
     background-color:rgba(0,0,0,0.1);
 }
 
-.playlistitem
+.playlistitem, .playlistalbum
 {
     transition:font-size 0.5s ease, text-shadow 0.5s ease;
 }
 
-.currenttitle
+.playlistcurrenttitle
 {
     font-size:125%
     background-color:rgba(0,0,0,0.1);
+    transition:font-size 0.5s ease, text-shadow 0.5s ease;
 }
 
 .item

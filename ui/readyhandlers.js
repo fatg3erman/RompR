@@ -18,7 +18,8 @@ $(document).ready(function(){
     $('.combobox').makeTagMenu({textboxextraclass: 'searchterm', textboxname: 'tag', labelhtml: '<div class="fixed searchlabel nohide"><b>'+language.gettext("label_tag")+'</b></div>', populatefunction: tagAdder.populateTagMenu});
     $('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add});
     browser.createButtons();
-    setClickHandlers();
+    setPlayClickHandlers();
+    bindClickHandlers();
     setChooserButtons();
     player.defs.replacePlayerOptions();
     // Checkbox and Radio buttons sadly can't be handled by delegated events

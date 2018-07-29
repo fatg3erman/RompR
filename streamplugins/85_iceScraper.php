@@ -92,7 +92,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 			print '<div class="containerbox rowspacer"></div>';
 			print '<div class="indent">'.$listeners.'</div>';
 			print '<div class="containerbox rowspacer"></div>';
-			print '<div class="stream-description clickable clickstream playable draggable indent" name="'.$listenlink.'" streamname="'.$server_name.'" streamimg="">';
+			print '<div class="stream-description clickable icescraper clickstream playable draggable indent" name="'.$listenlink.'" streamname="'.$server_name.'" streamimg="">';
 			print '<b>Listen</b> '.$format;
 			print '</div>';
 			print '<div class="containerbox rowspacer"></div>';
@@ -111,7 +111,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 	print '<div class="containerbox wrap brick_wide configtitle textcentre">';
 	foreach ($pager as $page) {
 		$link = pq($page)->children('a')->attr('href');
-		print '<div class="clickable clickicon clickicepager expand" name="/search'.$link.'">'.pq($page)->children('a')->text().'</div>';
+		print '<div class="clickable icescraper clickicon clickicepager expand" name="/search'.$link.'">'.pq($page)->children('a')->text().'</div>';
 	}
 	print '</div>';
 

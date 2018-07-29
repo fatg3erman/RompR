@@ -345,16 +345,20 @@ button {
 	vertical-align:middle;
 }
 
-.clickable {
-    cursor:default;
-}
-
 .clickicon {
     cursor:pointer;
 }
 
 .infoclick {
     cursor:pointer;
+}
+
+.playable {
+	cursor: pointer;
+}
+
+.clickplaylist {
+	cursor: pointer;
 }
 
 .invisible {
@@ -852,10 +856,6 @@ div.item {
     font-size:80%;
     margin-right:4px;
     margin-left:2px;
-}
-
-.draggable {
-    cursor:default;
 }
 
 td.fil {

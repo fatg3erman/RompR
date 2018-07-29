@@ -64,7 +64,12 @@ $.widget("rompr.trackdragger", $.ui.mouse, {
     },
 
     _mouseStart: function(event) {
-        var clickedElement = findClickableElement(event);
+        var clickedElement = function(e) {
+            while (!e.hasClass('draggable') && !e.is('body')) {
+                e = e.parent();
+            }
+            return e;
+        }($(event.target));
         if (!clickedElement.hasClass('draggable')) {
             return false;
         }
@@ -112,7 +117,7 @@ $.widget("rompr.trackdragger", $.ui.mouse, {
             if ($(this).acceptDroppedTracks('checkMouseOver', event)) {
                 // DON'T Break out of the each loop, as it prevents checkMouseOver
                 // from removing the 'highlighted' class from things we've previously dragged over
-                // if they would be the nxt one in the loop.
+                // if they would be the next one in the loop.
                 // return false;
             }
         });
@@ -688,7 +693,8 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
                 .append('<i class="icon-cancel-circled playlisticonr tright clickicon closemenu"></i>');
             var hl = this.element.find('input.helplink');
             if (hl.length > 0) {
-                this.element.find('.'+this.options.addClassTo).first().append('<a href="'+hl.first().val()+'" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
+                this.element.find('.'+this.options.addClassTo).first()
+                    .append('<a href="'+hl.first().val()+'" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
             }
 
         }
@@ -777,6 +783,7 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 // DO NOT use fancy effects eg fades or slidetoggle or any of that
 // on things where masonry is in use, as they fuck up Masonry's size
 // calculations big time. Just use hide() and show()
+// Spent many hours seeking this out, so tkae note!
 
 // The parent container on which this is called ought to have an id attribute
 // as it's used to separate things if there are more than one of these
@@ -821,39 +828,32 @@ $.widget('rompr.spotifyAlbumThing', {
                 continue;
             }
             ids.push(a.id);
+
+            // Create the HTML for the album
             var x = $('<div>', {class: this.options.classes+' clearfix albumwidget'}).appendTo(this.element);
-            var img = '';
-            if (a.images && a.images[0]) {
-                debug.debug("SPOTIALBUM","Images",a.images);
-                img = 'getRemoteImage.php?url='+a.images[0].url
-                for (var j in a.images) {
-                    if (a.images[j].width <= this.options.maxwidth) {
-                        img = 'getRemoteImage.php?url='+a.images[j].url;
-                        break;
-                    }
-                }
-                if (self.options.showbiogs) {
-                    img += '&rompr_resize_size=medium';
-                } else {
-                    img += '&rompr_resize_size=smallish';
-                }
-            } else {
-                img = 'newimages/spotify-icon.png';
-            }
+
             var clickclass = (this.options.is_plugin) ? ' plugclickable' : '';
-            var trackclass = (player.canPlay('spotify')) ? ' playable clickable draggable' : '';
+            var trackclass = (player.canPlay('spotify')) ? ' playable draggable' : '';
             var cx = (this.options.showbiogs) ? ' tleft' : '';
             var y = $('<div>', {class: 'helpfulalbum fullwidth notthere'+cx}).appendTo(x);
+
             var html;
             var appendto;
             if (layoutProcessor.openOnImage) {
-                var t = $('<div>').appendTo(y);
-                t.append('<img class="'+this.options.imageclass+' menu infoclick'+clickclass+' clickopenalbum clickspotifywidget" src="'+img+'"  name="'+self.options.id+'dropper_'+a.id+'"/>');
+                appendto = $('<div>').appendTo(y);
+                appendto.append($('<img>', {
+                    class: this.options.imageclass+clickclass+' menu infoclick clickopenalbum clickspotifywidget',
+                    src: self._getImage(a),
+                    name: self.options.id+'dropper_'+a.id
+                }));
                 html = '<div class="tagh albumthing sponklick relpos">'+
                     '<span class="title-menu'+trackclass+' clicktrack" name="'+a.uri+'">';
-                appendto = t;
             } else {
-                y.append('<img class="'+this.options.imageclass+trackclass+' clicktrack" '+'src="'+img+'" name="'+a.uri+'"/>');
+                y.append($('<img>', {
+                    class: this.options.imageclass+trackclass+' clicktrack',
+                    src: self._getImage(a),
+                    name: a.uri
+                }));
                 html = '<div class="tagh albumthing sponklick">'+
                     '<i class="icon-toggle-closed menu infoclick'+clickclass+' clickopenalbum clickspotifywidget" name="'+self.options.id+'dropper_'+a.id+'"></i>'+
                     '<span class="title-menu'+trackclass+' clicktrack" name="'+a.uri+'">';
@@ -877,20 +877,40 @@ $.widget('rompr.spotifyAlbumThing', {
             appendto.append(html);
             var con = $('<div>', {class: 'tagh albumthing clearfix'}).appendTo(appendto);
             if (self.options.showlistenlater) {
-                con.append('<i class="tleft icon-headphones smallicon infoclick'+clickclass+' clickaddtolistenlater clickspotifywidget tooltip" title="'+language.gettext('label_addtolistenlater')+'" name="'+i+'"></i>');
+                con.append($('<i>', {
+                    class: 'tleft icon-headphones smallicon infoclick'+clickclass+' clickaddtolistenlater clickspotifywidget tooltip',
+                    title: language.gettext('label_addtolistenlater'),
+                    name: i
+                }));
             } else if (self.options.showremovebutton) {
-                con.append('<i class="tleft icon-cancel-circled smallicon infoclick'+clickclass+' clickremovefromll clickspotifywidget tooltip" title="'+language.gettext('label_removefromlistenlater')+'" name="'+a.rompr_index+'"></i>');
+                con.append($('<i>', {
+                    class: 'tleft icon-cancel-circled smallicon infoclick'+clickclass+' clickremovefromll clickspotifywidget tooltip',
+                    title: language.gettext('label_removefromlistenlater'),
+                    name: a.rompr_index
+                }));
             }
             if (player.canPlay('spotify')) {
-                con.append('<i class="tright icon-music smallicon infoclick'+clickclass+' clickaddtocollection clickspotifywidget tooltip" title="'+language.gettext('label_addtocollection')+'" name="'+i+'"></i>');
+                con.append($('<i>', {
+                    class: 'tright icon-music smallicon infoclick'+clickclass+' clickaddtocollection clickspotifywidget tooltip',
+                    title: language.gettext('label_addtocollection'),
+                    name: i
+                }));
             }
-            y.append('<div class="tagh albumthing invisible" id="'+self.options.id+'dropper_'+a.id+'"></div>');
+            y.append($('<div>', {
+                class: 'tagh albumthing invisible',
+                id: self.options.id+'dropper_'+a.id
+            }));
             if (this.options.showbiogs) {
-                y.append('<input type="hidden" value="'+encodeURIComponent(concatenate_artist_names(an))+'" />');
-                x.append('<span class="minwidthed" id="'+self.options.id+'bio_'+a.id+'"></span>');
+                y.append($('<input>', {
+                    type: 'hidden',
+                    value: encodeURIComponent(concatenate_artist_names(an))
+                }));
+                x.append($('<span>', {
+                    class: 'minwidthed',
+                    id: self.options.id+'bio_'+a.id
+                }));
             }
         }
-        // this.element.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
         this.element.imagesLoaded(function() {
             if (self.options.itemselector !== null) {
                 browser.rePoint(self.element, {
@@ -1024,6 +1044,27 @@ $.widget('rompr.spotifyAlbumThing', {
 
     lfmError: function(data, reqid) {
         this.element.find('#'+this.options.id+'bio_'+reqid).html(language.gettext('label_noartistinfo'));
+    },
+
+    _getImage: function(a) {
+        var self = this;
+        var img = 'newimages/spotify-icon.png';
+        if (a.images && a.images[0]) {
+            debug.debug("SPOTIALBUM","Images",a.images);
+            var img = 'getRemoteImage.php?url='+a.images[0].url
+            for (var j in a.images) {
+                if (a.images[j].width <= this.options.maxwidth) {
+                    img = 'getRemoteImage.php?url='+a.images[j].url;
+                    break;
+                }
+            }
+            if (self.options.showbiogs) {
+                img += '&rompr_resize_size=medium';
+            } else {
+                img += '&rompr_resize_size=smallish';
+            }
+        }
+        return img;
     },
 
     _destroy: function() {
@@ -1268,17 +1309,6 @@ $.widget("rompr.makeDomainChooser", {
     _create: function() {
         var self = this;
         this.options.holder = $('<div>', {class: 'containerbox wrap'}).appendTo(this.element);
-        // var p = this.options.default_domains;
-        // // p.reverse();
-        // for (var i in p) {
-        //     if (player.canPlay(p[i])) {
-        //         var makeunique = $("[id^='"+p[i]+"_import_domain']").length+1;
-        //         var id = p[i]+'_import_domain_'+makeunique;
-        //         this.options.holder.append('<div class="fixed brianblessed styledinputs">'+
-        //             '<input type="checkbox" class="topcheck" id="'+id+'"><label for="'+id+'">'+
-        //             p[i].capitalize()+'</label></div>');
-        //     }
-        // }
         for (var i in player.urischemes) {
             if (!this.options.sources_not_to_choose.hasOwnProperty(i)) {
                 var makeunique = $("[id^='"+i+"_import_domain']").length+1;

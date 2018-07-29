@@ -118,15 +118,13 @@ a:hover,a:active
     margin-bottom: 2px;
 }
 
-div.clickable:hover, .infoclick:hover
-{
+.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
     text-shadow: 0 0 15px #ffffff;
     color:#ffffff;
     cursor:pointer;
 }
 
-div.clickable.selected:hover
-{
+.playable.selected:hover, tr.playable.selected:hover>td {
     color:#ffffff;
 }
 
@@ -149,7 +147,7 @@ div.clickable.selected:hover
     padding-left:8px;
 }
 
-.playlistitem
+.playlistitem, .playlistalbum
 {
     transition:font-size 0.3s ease, text-shadow 0.3s ease;
 }
@@ -160,6 +158,7 @@ div.clickable.selected:hover
     font-weight:bold;
     color:#eeeeee;
     background-color:rgba(0,0,0,0.2);
+    transition:font-size 0.3s ease, text-shadow 0.3s ease;
 }
 
 .playlisttitle{
@@ -194,7 +193,6 @@ table.histable tr
 }
 
 .backhi:hover {
-    font-size:105%;
     text-shadow: 0 0 15px #ffffff;
     color:#ff4800;
     cursor:pointer;

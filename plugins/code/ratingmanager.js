@@ -36,7 +36,6 @@ var ratingManager = function() {
 				ondrop: ratingManager.dropped
 			});
 		}
-		// x.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
 	}
 
 	function putTracksInSection(section, element) {
@@ -63,7 +62,6 @@ var ratingManager = function() {
 				dropper.removeClass('notthere');
 				infobar.markCurrentTrack();
 				updating_section = false;
-				// dropper.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
 				checkSectionRefresh();
 			},
 			function() {
@@ -102,11 +100,11 @@ var ratingManager = function() {
 				var aa = new albumart_translator(src);
 				c.append('<img class="jalopy jalopy200" src="'+aa.getSize('medium')+'" />');
 			}
-			c.append('<div class="tagh albumthing sponclick clickable infoclick draggable clickalbum playable" name="'+hex_md5(tit)+'">'+tit+'</div>');
+			c.append('<div class="tagh albumthing sponclick infoclick draggable clickalbum playable" name="'+hex_md5(tit)+'">'+tit+'</div>');
 			current_albumholder = $('<div>', {class: "minwidthed2 expand", id: hex_md5(tit)}).appendTo(b);
 		}
 		var setdata = encodeURIComponent(JSON.stringify({title: data.Title, artist: data.Artistname, trackno: data.TrackNo, album: data.Albumname, albumartist: data.AlbumArtist}));
-		var html = '<div class="ntu clickable draggable clicktrack playable fullwidth" name="'+encodeURIComponent(data.Uri)+'">';
+		var html = '<div class="ntu draggable clicktrack playable fullwidth" name="'+encodeURIComponent(data.Uri)+'">';
 		html += '<div class="containerbox line">';
 		html += '<div class="tracknumber fixed">'+data.TrackNo+'</div>';
 		html += '<div class="expand containerbox vertical">';
@@ -127,7 +125,6 @@ var ratingManager = function() {
 		html += '</div>';
 		html += '<div class="fixed playlistrow2 tracktime">'+formatTimeString(data.Duration)+'</div>';
 		html += '</div>';
-		// html += '<div class="containerbox line"><i class="fixed icon-plus infoclick plugclickable clickicon playlisticon clickaddtags"></i></div>';
 		html += '<input type="hidden" class="setdata" value="'+setdata+'" />';
 		html += '</div>';
 		current_albumholder.append(html);
@@ -236,26 +233,12 @@ var ratingManager = function() {
 	        	$("#rmgfoldup").append('<div class="containerbox padright" name="ratman_loading"><h3>Loading List....</h3></div>');
 
 			    $("#rmgfoldup").append('<div class="noselection fullwidth masonified" id="ratmunger"></div>');
-			    // $('[name="filterinput"]').on('click', function(ev){
-		        //     ev.preventDefault();
-		        //     ev.stopPropagation();
-		        //     var position = getPosition(ev);
-		        //     var elemright = $('[name="filterinput"]').width() + $('[name="filterinput"]').offset().left;
-		        //     if (position.x > elemright - 24) {
-		        //     	$('[name="filterinput"]').val("");
-				// 		debug.log("RATMAN","Filtering");
-		        //     	ratingManager.filter();
-		        //     }
-			    // });
-			    // $('[name="filterinput"]').on('mouseenter',makeHoverWork);
-			    // $('[name="filterinput"]').on('mousemove', makeHoverWork);
 				$('.ratinstr').hide();
 				rmg.show();
 				$('[name="ratman_sortby"][value="'+prefs.ratman_sortby+'"]').prop('checked', true);
 	            $('#ratman_showletters').prop('checked', prefs.ratman_showletters ? true : false );
 	        	browser.goToPlugin("rmg");
 			    ratingManager.reloadEntireRatList();
-	            // $('#rmgfoldup .enter').on('keyup', onKeyUp);
 	            $('[name="ratman_sortby"]').on('click', ratingManager.reloadEntireRatList );
 	            $('#ratman_showletters').on('click', ratingManager.reloadEntireRatList );
 	        } else {

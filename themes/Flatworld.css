@@ -90,13 +90,11 @@ a.album:hover,a.album:active
     color:#ff4800;
 }
 
-div.clickable:hover
-{
+.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
     color:#ff4800;
 }
 
-div.clickable.selected:hover
-{
+.playable.selected:hover, tr.playable.selected:hover>td {
     color:#dddddd;
 }
 

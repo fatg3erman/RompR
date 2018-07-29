@@ -123,14 +123,11 @@ select
     border-radius:0.5em !important;
 }
 
-div.clickable:hover, .infoclick:hover
-{
+.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
     text-shadow: 0 0 15px #ff4800;
-    cursor:pointer;
 }
 
-div.clickable.selected:hover
-{
+.playable.selected:hover, tr.playable.selected:hover>td {
     color:#000000;
 }
 
@@ -195,7 +192,6 @@ table.histable tr
 }
 
 .backhi:hover {
-    font-size:105%;
     text-shadow: 0 0 15px #ff4800;
     cursor:pointer;
     transition:all 0.1s;

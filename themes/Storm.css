@@ -5,9 +5,9 @@ html, body.phone .dropmenu {
     background-attachment:fixed;
 }
 
-body.phone .dropmenu>div.clickable,
+body.phone .dropmenu>div.playable,
 body.phone .dropmenu>div.menuitem,
-body.phone #pluginplaylistholder .menuitem.clickable,
+body.phone #pluginplaylistholder .menuitem.clickicon,
 body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
     background-color:rgba(0,0,0,0.3);
     background-clip:border-box;
@@ -326,7 +326,6 @@ table.histable tr
 }
 
 .backhi:hover {
-    font-size:105%;
     text-shadow: 0 0 15px #ffffff;
     color:#ff4800;
     cursor:pointer;

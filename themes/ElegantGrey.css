@@ -127,26 +127,12 @@ body.desktop #headerbar
 =====================================================================
 */
 
-tr.draggable:not(.selected):hover {
-    background-color:rgba(150,150,150,0.3);
-}
-
 .bordered
 {
     border-left:1px solid #222222;
     border-bottom:1px solid #292929;
     border-right:1px solid #292929;
     border-top:1px solid #222222;
-}
-
-.album1
-{
-    /*background-color:rgba(200,200,200,0.1);*/
-}
-
-.album2
-{
-    /*background-color:rgba(200,200,200,0.2);*/
 }
 
 a.album:visited
@@ -159,16 +145,9 @@ a.album:hover,a.album:active
     color:#ffffff;
 }
 
-div.clickable:hover, .infoclick:hover
-{
+.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
     color:#ffffff;
-    text-shadow: 0 0 8px #cccccc;
-}
-
-div.clickable.selected:hover
-{
-    color:#ffffff;
-    text-shadow: 0 0 8px #cccccc;
+    text-shadow: 0 0 8px #aaaaaa;
 }
 
 .selected
@@ -190,10 +169,17 @@ div.clickable.selected:hover
     transition:font-size 0.5s ease, text-shadow 0.5s ease;
 }
 
+.playlistalbum
+{
+    transition:font-size 0.5s ease, text-shadow 0.5s ease;
+}
+
 .playlistcurrenttitle
 {
     font-size:125%;
     text-shadow: 0 0 12px #cccccc;
+    background-color:rgba(255,255,255,0.1);
+    transition:font-size 0.5s ease, text-shadow 0.5s ease;
 }
 
 .item

@@ -14,7 +14,7 @@ body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol
     color:#111111;
 }
 
-body.phone .dropmenu>div.clickable,
+body.phone .dropmenu>div.playable,
 body.phone .dropmenu>div.menuitem,
 body.phone .mainpane .radio,
 body.phone .mainpane .faveradio,
@@ -23,7 +23,7 @@ body.phone .mainpane .directory {
     border-top: 1px solid rgba(60,60,60,0.4);
 }
 
-body.phone #pluginplaylistholder .menuitem.clickable,
+body.phone #pluginplaylistholder .menuitem.clickicon,
 body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
     border-bottom: 1px solid rgba(60,60,60,0.4);
 }
@@ -153,10 +153,6 @@ body.desktop #thetopbit
 =====================================================================
 */
 
-tr.draggable:not(.selected):hover {
-    background-color:rgba(0,0,0,0.3);
-}
-
 .bordered
 {
     border-left:1px solid #bbbbbb;
@@ -185,17 +181,15 @@ a.album:hover,a.album:active
     color:#333333;
 }
 
-div.clickable:hover, .infoclick:hover
-{
+.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
     text-shadow: 0 0 10px #ffffff;
 }
 
-.playlistitem:hover, div.clickstream:hover
-{
+.playable.selected:hover, tr.playable.selected:hover>td {
     background-color:rgba(0,0,0,0.1);
 }
 
-div.clickable.selected:hover
+div.playable.selected:hover
 {
     text-shadow: 0 0 12px #333333;
 }
@@ -211,14 +205,15 @@ div.clickable.selected:hover
     transition:font-size 0.5s ease, text-shadow 0.5s ease;
 }
 
-.playlistitem
+.playlistitem, .playlistalbum
 {
     transition:font-size 0.5s ease, text-shadow 0.5s ease;
 }
 
-.currenttitle
+.playlistcurrenttitle
 {
     font-size:125%
+    transition:font-size 0.5s ease, text-shadow 0.5s ease;
 }
 
 .item

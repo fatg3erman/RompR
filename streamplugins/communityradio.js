@@ -110,12 +110,9 @@ var communityRadioPlugin = {
         communityRadioPlugin.update();
     },
 
-    handleClick: function(event) {
+    handleClick: function(event, clickedElement) {
         debug.log("COMM RADIO", "Handling Click");
-        var clickedElement = findClickableElement(event);
-        if (clickedElement.hasClass("menu")) {
-            doMenu(event, clickedElement);
-        } else if (clickedElement.hasClass('clickcommradioforward')) {
+        if (clickedElement.hasClass('clickcommradioforward')) {
             communityRadioPlugin.page++;
             clickedElement.off('click').makeSpinner();
             communityRadioPlugin.update();
@@ -132,4 +129,4 @@ var communityRadioPlugin = {
 }
 
 menuOpeners['communityradiolist'] = communityRadioPlugin.loadBigRadio;
-clickRegistry.addClickHandlers('#communityradiolist', communityRadioPlugin.handleClick);
+clickRegistry.addClickHandlers('commradio', communityRadioPlugin.handleClick);

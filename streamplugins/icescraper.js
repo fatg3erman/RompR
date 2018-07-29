@@ -27,11 +27,8 @@ var icecastPlugin = {
         $("#icecastlist").load("streamplugins/85_iceScraper.php?populate=1&searchfor="+encodeURIComponent($('input[name="searchfor"]').val()), icecastPlugin.spaghetti);
     },
 
-    handleClick: function(event) {
-        var clickedElement = findClickableElement(event);
-        if (clickedElement.hasClass("menu")) {
-            doMenu(event, clickedElement);
-        } else if (clickedElement.hasClass("clickicepager")) {
+    handleClick: function(event, clickedElement) {
+        if (clickedElement.hasClass("clickicepager")) {
             icecastPlugin.refreshMyDrink(clickedElement.attr('name'));
         }
     }
@@ -39,4 +36,4 @@ var icecastPlugin = {
 }
 
 menuOpeners['icecastlist'] = icecastPlugin.refreshMyDrink;
-clickRegistry.addClickHandlers('#icecastlist', icecastPlugin.handleClick);
+clickRegistry.addClickHandlers('icescraper', icecastPlugin.handleClick);

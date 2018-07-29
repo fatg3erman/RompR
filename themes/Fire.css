@@ -150,15 +150,13 @@ select
     background-color:rgba(0,0,0,0.1);
 }
 
-div.clickable:hover, .infoclick:hover
-{
+.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
     text-shadow: 0 0 15px #ffffff;
     color:#ffffff;
     cursor:pointer;
 }
 
-div.clickable.selected:hover
-{
+.playable.selected:hover, tr.playable.selected:hover>td {
     color:#ffffff;
 }
 
@@ -176,7 +174,7 @@ div.clickable.selected:hover
     transition:font-size 0.2s ease, text-shadow 0.2s ease, background-color 0.2s ease;
 }
 
-.playlistitem
+.playlistitem, .playlistalbum
 {
     transition:font-size 0.3s ease, text-shadow 0.3s ease, background-color 0.2s ease;
 }
@@ -187,6 +185,7 @@ div.clickable.selected:hover
     text-shadow: 0px 0px 20px #cccccc;
     font-weight:bold;
     color:#eeeeee;
+    transition:font-size 0.2s ease, text-shadow 0.2s ease, background-color 0.2s ease;
 }
 
 .inbrowser
@@ -217,7 +216,6 @@ table.histable tr
 }
 
 .backhi:hover {
-    font-size:105%;
     text-shadow: 0 0 15px #ffffff;
     color:#ff4800;
     cursor:pointer;

@@ -67,11 +67,8 @@ var nationalRadioPlugin = {
         nationalRadioPlugin.loadBigRadioHtml('populate=1&country='+prefs.newradiocountry+'&page='+page+'&url='+encodeURIComponent(url));
     },
 
-    handleClick: function(event) {
-        var clickedElement = findClickableElement(event);
-        if (clickedElement.hasClass("menu")) {
-            doMenu(event, clickedElement);
-        } else if (clickedElement.hasClass("clickradioback")) {
+    handleClick: function(event, clickedElement) {
+        if (clickedElement.hasClass("clickradioback")) {
             event.stopImmediatePropagation();
             clickedElement.off('click').makeSpinner();
             nationalRadioPlugin.browseRadio(clickedElement);
@@ -95,4 +92,4 @@ var nationalRadioPlugin = {
 }
 
 menuOpeners['bbclist'] = nationalRadioPlugin.loadBigRadio;
-clickRegistry.addClickHandlers('#bbclist', nationalRadioPlugin.handleClick);
+clickRegistry.addClickHandlers('natradio', nationalRadioPlugin.handleClick);

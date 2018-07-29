@@ -36,7 +36,7 @@ class tuneinplugin {
             if (array_key_exists('search', $_REQUEST)) {
                 print 'value="'.$_REQUEST['search'].'" ';
             }
-            print '/></div><button class="fixed tuneinsearchbutton searchbutton iconbutton" name="sonicthehedgehog"></button></div></div>';
+            print '/></div><button class="fixed tuneinsearchbutton searchbutton iconbutton clickable tunein"></button></div></div>';
         }
         if (array_key_exists('title', $_REQUEST)) {
             $this->title = $_REQUEST['title'];

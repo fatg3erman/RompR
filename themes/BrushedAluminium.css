@@ -82,10 +82,6 @@ input.inbrowser, div.inbrowser {
     border-top:1px solid #aaaaaa;
 }
 
-tr.draggable:not(.selected):hover {
-    background-color:rgba(150,150,150,0.3);
-}
-
 .album1 {
     background-image:url('../newimages/silver2.jpg');
 }
@@ -94,11 +90,11 @@ tr.draggable:not(.selected):hover {
     background-image:url('../newimages/silver1.jpg');
 }
 
-div.clickable:hover {
+.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
     color:#ff4800;
 }
 
-div.clickable.selected:hover {
+.playable.selected:hover, tr.playable.selected:hover>td {
     color:#dddddd;
 }
 

@@ -117,10 +117,6 @@ var layoutProcessor = function() {
             collectionHelper.forceCollectionReload();
         },
 
-        bindSourcesClicks: function() {
-            $("#sources").bindPlayClicks();
-        },
-
         postAlbumActions: function() {
 
         },
@@ -322,11 +318,6 @@ var layoutProcessor = function() {
             // Height of the bottom pane (chooser, info, playlist container)
             var newheight = ws.y - $("#bottompage").offset().top;
             $("#bottompage").css("height", newheight+"px");
-            if (newheight < 540) {
-                $('.topdropmenu').css('height',newheight+"px");
-            } else {
-                $('.topdropmenu').css('height', "");
-            }
             layoutProcessor.setPlaylistHeight();
             infobar.rejigTheText();
             browser.rePoint();

@@ -173,7 +173,7 @@ class commradioplugin {
         print '<div id="communityradio_'.$index.'" class="dropmenu">';
         trackControlHeader('','','communityradio_'.$index, array(array('Image' => $this->comm_radio_get_image($station))));
         print '<div class="containerbox expand ninesix indent padright"><b>Listen:</b></div>';
-        print '<div class="clickable clickstream playable draggable indent containerbox padright menuitem" name="'.$station['playurl'].'" streamimg="'.$this->comm_radio_get_stream_image($station).'" streamname="'.$station['name'].'">';
+        print '<div class="clickstream playable draggable indent containerbox padright menuitem" name="'.$station['playurl'].'" streamimg="'.$this->comm_radio_get_stream_image($station).'" streamname="'.$station['name'].'">';
         print '<i class="'.audioClass($station['codec']).' smallicon fixed"></i>';
         print '<div class="expand">'.$station['bitrate'].'kbps &nbsp'.$station['codec'].'</div>';
         print '</div>';
@@ -240,18 +240,18 @@ class commradioplugin {
 
     private function comm_radio_do_page_buttons($page, $count, $per_page) {
         print '<div class="fullwidth brick_wide"><div class="containerbox padright noselection menuitem">';
-        $class = ($page == 0) ? ' button-disabled' : ' clickable clickicon clickcommradioback';
+        $class = ($page == 0) ? ' button-disabled' : ' clickable clickicon commradio clickcommradioback';
         print '<i class="fixed icon-left-circled medicon'.$class.'"></i>';
         print '<div class="expand textcentre">Showing '.($page*$per_page+1).' to '.min(array(($page*$per_page+$per_page), $count)).' of '.$count.'</div>';
-        $class = ((($page+1) * $per_page) >= $count || $count < $per_page) ? ' button-disabled' : ' clickable clickicon clickcommradioforward';
+        $class = ((($page+1) * $per_page) >= $count || $count < $per_page) ? ' button-disabled' : ' clickable commradio clickicon clickcommradioforward';
         print '<i class="fixed icon-right-circled medicon'.$class.'"></i>';
         print '</div>';
 
-        $firstpage = max(0, $page-5);
-        $lastpage = min($firstpage+10, round(($count/$per_page), 0, PHP_ROUND_HALF_DOWN)+1);
+        $firstpage = max(0, $page-4);
+        $lastpage = min($firstpage+9, round(($count/$per_page), 0, PHP_ROUND_HALF_DOWN));
         print '<div class="textcentre brick_wide containerbox wrap menuitem">';
         for ($p = $firstpage; $p < $lastpage; $p++) {
-            print '<div class="clickable clickicon clickcommradiopager expand';
+            print '<div class="clickable commradio clickicon clickcommradiopager expand';
             if ($p == $page) {
                 print ' highlighted';
             }

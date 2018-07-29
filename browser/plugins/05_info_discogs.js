@@ -14,11 +14,11 @@ var info_discogs = function() {
 					u = 'http://'+u;
 				}
 				if (u.match(/wikipedia/i)) {
-					html += '<li><i class="icon-wikipedia smallicon menu padright"></i><a href="'+u+'" target="_blank">Wikipedia ('+d[1]+')</a></li>';
+					html += '<li><i class="icon-wikipedia smallicon padright"></i><a href="'+u+'" target="_blank">Wikipedia ('+d[1]+')</a></li>';
 				} else if (u.match(/facebook/i)) {
 					html += '<li><i class="icon-facebook-logo smallicon padright"></i><a href="'+u+'" target="_blank">Facebook</a></li>';
 				} else {
-					html += '<li><i class="icon-noicon smallicon menu padright"></i><a href="'+u+'" target="_blank">'+d[1]+'</a></li>';
+					html += '<li><i class="icon-noicon smallicon padright"></i><a href="'+u+'" target="_blank">'+d[1]+'</a></li>';
 				}
 			}
 		}

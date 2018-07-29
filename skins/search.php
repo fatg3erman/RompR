@@ -44,7 +44,7 @@ print '<div class="fixed searchlabel nohide"><span class="slt"><b>'.get_int_text
 
 
 print '<div class="containerbox dropdown-container">';
-print '<i class="icon-toggle-closed mh menu fixed" name="advsearchoptions"></i>';
+print '<i class="icon-toggle-closed mh menu openmenu fixed" name="advsearchoptions"></i>';
 print '<div class="expand">Advanced Options...</div>';
 print '</div>';
 

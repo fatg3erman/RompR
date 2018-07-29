@@ -7,37 +7,26 @@ var clickRegistry = function() {
             clickHandlers.push({source: source, single: single});
         },
 
-        bindClicks: function() {
+        farmClick: function(event, clickedElement) {
             for (var i in clickHandlers) {
-                debug.log("UI","Binding Click Handlers for ",clickHandlers[i].source);
-                $(clickHandlers[i].source).on('click', clickHandlers[i].single);
+                if (clickedElement.hasClass(clickHandlers[i].source)) {
+                    clickHandlers[i].single(event, clickedElement);
+                    break;
+                }
             }
-        },
-
-        unbindClicks: function() {
-            for (var i in clickHandlers) {
-                $(clickHandlers[i].source).off('click', clickHandlers[i].single);
-            }
-        },
-
-        reset: function() {
-            clickRegistry.unbindClicks();
-            clickRegistry.bindClicks();
         }
+
     }
 }();
 
-function setClickHandlers() {
+/*
 
-    // Set up all our click event listeners
+    Itemss which are playable (i.e can be added to the playlist) should have a class of 'playable'
+    and NOT 'clickable'. Other attributes on those items should be set as per playlist.addItems
 
-    layoutProcessor.bindSourcesClicks();
+*/
 
-    clickRegistry.unbindClicks();
-    clickRegistry.bindClicks();
-
-    $('.infotext').off('click', '.infoclick', onBrowserClicked);
-    $('.infotext').on('click', '.infoclick',  onBrowserClicked);
+function setPlayClickHandlers() {
 
     $(document).off('click', '.playable').off('dblclick', '.playable');
     if (prefs.clickmode == 'double') {
@@ -48,12 +37,60 @@ function setClickHandlers() {
     }
 
     collectionHelper.enableCollectionUpdates();
+}
+
+/*
+
+    Items which should respond to clicks in the main UI should have a class of 'clickable'
+        These are passed in the first instance to onSourcesClicked
+        Plugins can provide their own single click handler by adding an extra 'pluginclass' to the items
+        and calling clickRegistry.addClickHandlers('pluginclass', handlerFunction).
+        handlerFunction takes 2 parameters - the event and the clicked element
+
+    Items for where the click should open a dropdown menu should have a class of 'openmenu'
+    and NOT 'clickable'. The item's name attribute should be the id attribute of the dropdown panel
+        Plugins can provide a callback function to populate the dropdown panel
+        menuOpeners['id attribute (no hash)'] = populateFunction
+        Note there are special built-in attributes for many of the dropdowns - eg album, artist, directory etc
+        which are handled by specific functions. Don't use these attributes.
+
+    Info panel info plugins should use 'infoclick' and NOT 'clickable'. The info panel will pass these clicks
+        through to the appropriate artist, album, or track child of the info collection
+
+    Info Panel extra plugins should use 'infoclick plugclickable' and NOT 'clickable'. The info panel will
+        pass these through to the plugin's handleClick method.
+
+    Playable items in the Info panel should just use 'playable' and none of the other attributes
+
+*/
+
+function bindClickHandlers() {
+
+    // Set up all our click event listeners
+
+    $('.infotext').on('click', '.infoclick',  onBrowserClicked);
+
+    $(document).on('click', '.openmenu.artist, .openmenu.album', function(event) {
+        doAlbumMenu(event, $(this), null);
+    });
+
+    $(document).on('click', '.openmenu.searchdir, .openmenu.directory, .openmenu.playlist, .openmenu.userplaylist', function(event) {
+        doFileMenu(event, $(this));
+    });
+
+    $(document).on('click', '.openmenu:not(.artist):not(.album):not(.searchdir):not(.directory):not(.playlist):not(.userplaylist)', function(event) {
+        doMenu(event, $(this));
+    });
+
+    $(document).on('click', '.clickable', function(event) {
+        onSourcesClicked(event, $(this));
+    });
 
 }
 
 function bindPlaylistClicks() {
     $("#sortable").off('click');
-    $("#sortable").on('click', onPlaylistClicked);
+    $("#sortable").on('click', '.clickplaylist', playlist.handleClick);
 }
 
 function unbindPlaylistClicks() {
@@ -79,107 +116,46 @@ function onBrowserClicked(event) {
     return false;
 }
 
-function onSourcesClicked(event) {
-    var clickedElement = findClickableElement(event);
+function onSourcesClicked(event, clickedElement) {
+    event.stopImmediatePropagation();
     debug.log('UI','Clicked On',clickedElement);
-    if (clickedElement.hasClass("menu") || clickedElement.hasClass("podconf")) {
-        if (clickedElement.hasClass('searchdir') ||
-            clickedElement.hasClass('directory') ||
-            clickedElement.hasClass('playlist') ||
-            clickedElement.hasClass('userplaylist')) {
-            doFileMenu(event, clickedElement);
-        } else if (clickedElement.hasClass('album') || clickedElement.hasClass('artist')) {
-            doAlbumMenu(event, clickedElement, null);
-        } else {
-            doMenu(event, clickedElement);
-        }
-    } else if (clickedElement.hasClass("clickremdb")) {
-        event.stopImmediatePropagation();
+    if (clickedElement.hasClass("clickremdb")) {
         metaHandlers.fromUiElement.removeTrackFromDb(clickedElement);
     } else if (clickedElement.hasClass("clickalbummenu")) {
-        event.stopImmediatePropagation();
         makeAlbumMenu(event, clickedElement);
     } else if (clickedElement.hasClass("amendalbum")) {
-        event.stopImmediatePropagation();
         amendAlbumDetails(event, clickedElement);
     } else if (clickedElement.hasClass("fakedouble")) {
         playPlayable.call(clickedElement, event);
         clickedElement.parent().remove();
     } else if (clickedElement.hasClass('clickdeleteplaylist')) {
-        event.stopImmediatePropagation();
         player.controller.deletePlaylist(clickedElement.next().val());
     } else if (clickedElement.hasClass('clickdeleteuserplaylist')) {
-        event.stopImmediatePropagation();
         player.controller.deleteUserPlaylist(clickedElement.next().val());
     } else if (clickedElement.hasClass('clickrenameplaylist')) {
-        event.stopImmediatePropagation();
         player.controller.renamePlaylist(clickedElement.next().val(), event, player.controller.doRenamePlaylist);
     } else if (clickedElement.hasClass('clickrenameuserplaylist')) {
-        event.stopImmediatePropagation();
         player.controller.renamePlaylist(clickedElement.next().val(), event, player.controller.doRenameUserPlaylist);
     } else if (clickedElement.hasClass('clickdeleteplaylisttrack')) {
-        event.stopImmediatePropagation();
         player.controller.deletePlaylistTrack(
             clickedElement.next().val(),
             clickedElement.attr('name'),
             false);
-    } else if (clickedElement.hasClass("podremove")) {
-        event.stopImmediatePropagation();
-        var n = clickedElement.attr('name');
-        podcasts.removePodcast(n.replace(/podremove_/, ''));
-    } else if (clickedElement.hasClass("podaction")) {
-        event.stopImmediatePropagation();
-        var n = clickedElement.attr('name').match('(.*)_(.*)');
-        podcasts.channelAction(n[2],n[1]);
-    } else if (clickedElement.hasClass("podglobal")) {
-        event.stopImmediatePropagation();
-        podcasts.globalAction(clickedElement.attr('name'), clickedElement);
-    } else if (clickedElement.hasClass("podtrackremove")) {
-        event.stopImmediatePropagation();
-        var n = clickedElement.attr('name');
-        var m = clickedElement.parent().attr('name');
-        podcasts.removePodcastTrack(n.replace(/podtrackremove_/, ''), m.replace(/podcontrols_/,''));
-    } else if (clickedElement.hasClass("clickpodsubscribe")) {
-        event.stopImmediatePropagation();
-        var index = clickedElement.next().val();
-        podcasts.subscribe(index, clickedElement);
-    } else if (clickedElement.hasClass("removepodsearch")) {
-        event.stopImmediatePropagation();
-        podcasts.removeSearch();
-    } else if (clickedElement.hasClass("poddownload")) {
-        event.stopImmediatePropagation();
-        var n = clickedElement.attr('name');
-        var m = clickedElement.parent().attr('name');
-        podcasts.downloadPodcast(n.replace(/poddownload_/, ''), m.replace(/podcontrols_/,''));
-    } else if (clickedElement.hasClass("podgroupload")) {
-        event.stopImmediatePropagation();
-        var n = clickedElement.attr('name');
-        podcasts.downloadPodcastChannel(n.replace(/podgroupload_/, ''));
-    } else if (clickedElement.hasClass("podmarklistened")) {
-        event.stopImmediatePropagation();
-        var n = clickedElement.attr('name');
-        var m = clickedElement.parent().attr('name');
-        podcasts.markEpisodeAsListened(n.replace(/podmarklistened_/, ''), m.replace(/podcontrols_/,''));
-    } else if (clickedElement.hasClass('closepanel')) {
-        event.stopImmediatePropagation();
-        var id = clickedElement.parent().parent().attr('id');
-        $('[name="'+id+'"]').removeClass('selected');
-        clickedElement.parent().parent().remove();
+    } else {
+        clickRegistry.farmClick(event, clickedElement);
     }
 }
 
 function selectPlayable(event) {
+    event.stopImmediatePropagation();
     var clickedElement = $(this);
     if (clickedElement.hasClass("clickalbum") && !clickedElement.hasClass('noselect')) {
-        event.stopImmediatePropagation();
         albumSelect(event, clickedElement);
     } else if (clickedElement.hasClass("clickdisc")) {
-        event.stopImmediatePropagation();
         discSelect(event, clickedElement);
     } else if (clickedElement.hasClass("clicktrack") ||
                 clickedElement.hasClass("clickcue") ||
                 clickedElement.hasClass("clickstream")) {
-        event.stopImmediatePropagation();
         trackSelect(event, clickedElement);
     }
 }
@@ -195,62 +171,12 @@ function playPlayable(event) {
     }
 }
 
-function onPlaylistClicked(event) {
-    var clickedElement = findClickableElement(event);
-    if (clickedElement.hasClass("clickplaylist")) {
-        event.stopImmediatePropagation();
-        player.controller.playId(clickedElement.attr("romprid"));
-    } else if (clickedElement.hasClass("clickremovetrack")) {
-        event.stopImmediatePropagation();
-        playlist.delete(clickedElement.attr("romprid"));
-    } else if (clickedElement.hasClass("clickremovealbum")) {
-        event.stopImmediatePropagation();
-        playlist.deleteGroup(clickedElement.attr("name"));
-    } else if (clickedElement.hasClass("clickaddwholealbum")) {
-        event.stopImmediatePropagation();
-        playlist.addAlbumToCollection(clickedElement.attr("name"));
-    } else if (clickedElement.hasClass("clickrollup")) {
-        event.stopImmediatePropagation();
-        playlist.hideItem(clickedElement.attr("romprname"));
-    } else if (clickedElement.hasClass("clickaddfave")) {
-        event.stopImmediatePropagation();
-        playlist.addFavourite(clickedElement.attr("name"));
-    } else if (clickedElement.hasClass("playlistup")) {
-        event.stopImmediatePropagation();
-        playlist.moveTrackUp(clickedElement.findPlParent(), event);
-    } else if (clickedElement.hasClass("playlistdown")) {
-        event.stopImmediatePropagation();
-        playlist.moveTrackDown(clickedElement.findPlParent(), event);
-    } else if (clickedElement.hasClass('rearrange_playlist')) {
-        clickedElement.findPlParent().addBunnyEars();
-    }
-}
-
 jQuery.fn.findPlParent = function() {
     var el = $(this).parent();
     while (!el.hasClass('track') && !el.hasClass('item') && !el.hasClass('booger')) {
         el = el.parent();
     }
     return el;
-}
-
-function findClickableElement(event) {
-
-    var clickedElement = $(event.target);
-    // Search upwards through the parent elements to find the clickable object
-    while (!clickedElement.hasClass("clickable") &&
-            !clickedElement.hasClass("menu") &&
-            !clickedElement.hasClass("mainpane") &&
-            !clickedElement.hasClass("topdropmenu") &&
-            clickedElement.prop("id") != "sources" &&
-            clickedElement.prop("id") != "sortable" &&
-            clickedElement.prop("id") != "bottompage" &&
-            !(clickedElement.is(':button')) &&
-            !(clickedElement.is(':input'))
-        ) {
-        clickedElement = clickedElement.parent();
-    }
-    return clickedElement;
 }
 
 function doMenu(event, element) {
@@ -501,14 +427,14 @@ function albumSelect(event, element) {
     if (is_currently_selected) {
         element.removeClass("selected");
         last_selected_element = element;
-        div_to_select.find(".clickable").filter(noActionButtons).each(function() {
+        div_to_select.find(".playable").filter(noActionButtons).each(function() {
             $(this).removeClass("selected");
             last_selected_element = $(this);
         });
     } else {
         element.addClass("selected");
         last_selected_element = element;
-        div_to_select.find(".clickable").filter(noActionButtons).each(function() {
+        div_to_select.find(".playable").filter(noActionButtons).each(function() {
             $(this).addClass("selected");
             last_selected_element = $(this);
         });
@@ -532,11 +458,6 @@ function discSelect(event, element) {
 }
 
 function noActionButtons(i) {
-    if ($(this).hasClass('clickdeleteplaylisttrack') ||
-        $(this).hasClass('clickremdb') ||
-        $(this).hasClass('clickalbummenu')) {
-        return false;
-    }
     // Don't select child tracks of albums that have URIs
     if ($(this).hasClass('clicktrack') && $(this).hasClass('ninesix') &&
         $(this).parent().prev().hasClass('clicktrack')) {
@@ -559,13 +480,6 @@ function trackSelect(event, element) {
 
 }
 
-function checkNotSmallIcon() {
-    if ($(this).hasClass('playlisticonr') || $(this).hasClass('podicon') || $(this).hasClass('noselect')) {
-        return false;
-    }
-    return true;
-}
-
 function selectRange(first, last) {
     debug.log("GENERAL","Selecting a range between:",first.attr("name")," and ",last.attr("name"));
 
@@ -581,7 +495,7 @@ function selectRange(first, last) {
 
     var target = null;
     var done = false;
-    $.each(it.find('.clickable').filter(checkNotSmallIcon), function() {
+    $.each(it.find('.playable').not('.noselect'), function() {
         if ($(this).attr("name") == first.attr("name") && target === null) {
             target = last;
         }
@@ -621,17 +535,35 @@ function makeAlbumMenu(e, element) {
     $('.albumbitsmenu').remove();
     var d = $('<div>', {class:'topdropmenu dropshadow rightmenu normalmenu albumbitsmenu'});
     if ($(element).hasClass('clickamendalbum')) {
-        d.append('<div class="backhi clickable clickicon noselection menuitem amendalbum" name="'+$(element).attr('name')+'">'+language.gettext('label_amendalbum')+'</div>');
+        d.append($('<div>', {
+            class: 'backhi clickable menuitem amendalbum',
+            name: $(element).attr('name')
+        }).html(language.gettext('label_amendalbum')));
     }
     if ($(element).hasClass('clickalbumoptions')) {
-        d.append('<div class="backhi clickable clickicon noselection menuitem clicktrack fakedouble" name="'+$(element).parent().attr('name')+'">'+language.gettext('label_play_whole_album')+'</div>');
-        d.append('<div class="backhi clickable clickicon noselection menuitem clickalbum playable fakedouble" name="aalbum'+$(element).attr('name')+'">'+language.gettext('label_from_collection')+'</div>');
+        var cl = 'backhi clickable menuitem clicktrack fakedouble '
+        d.append($('<div>', {
+            class: cl+'clicktrack',
+            name: $(element).parent().attr('name')
+        }).html(language.gettext('label_play_whole_album')));
+        d.append($('<div>', {
+            class: cl+'clickalbum',
+            name: 'aalbum'+$(element).attr('name')
+        }).html(language.gettext('label_from_collection')));
     }
     if ($(element).hasClass('clickratedtracks')) {
-        d.append('<div class="backhi clickable clickicon noselection menuitem clickalbum playable fakedouble" name="ralbum'+$(element).attr('name')+'">'+language.gettext('label_with_ratings')+'</div>');
-        d.append('<div class="backhi clickable clickicon noselection menuitem clickalbum playable fakedouble" name="talbum'+$(element).attr('name')+'">'+language.gettext('label_with_tags')+'</div>');
-        d.append('<div class="backhi clickable clickicon noselection menuitem clickalbum playable fakedouble" name="yalbum'+$(element).attr('name')+'">'+language.gettext('label_with_tagandrat')+'</div>');
-        d.append('<div class="backhi clickable clickicon noselection menuitem clickalbum playable fakedouble" name="ualbum'+$(element).attr('name')+'">'+language.gettext('label_with_tagorrat')+'</div>');
+        var opts = {
+            r: language.gettext('label_with_ratings'),
+            t: language.gettext('label_with_tags'),
+            y: language.gettext('label_with_tagandrat'),
+            u: language.gettext('label_with_tagorrat')
+        }
+        $.each(opts, function(i, v) {
+            d.append($('<div>', {
+                class: 'backhi clickable menuitem clickalbum fakedouble',
+                name: i+'album'+$(element).attr('name')
+            }).html(v))
+        });
     }
     d.appendTo($(element));
     d.slideToggle('fast');
@@ -660,15 +592,11 @@ function amendAlbumDetails(e, element) {
     var d = $('<div>',{class: 'containerbox dropdown-container'}).appendTo(mywin);
     d.append('<div class="fixed padright" style="width:'+width+'">'+language.gettext('label_albumartist')+'</div>');
     var e = $('<div>',{class: 'expand'}).appendTo(d);
-
-    // var i = $('<input>',{class: 'enter', id: 'amendname'+albumindex, type: 'text', size: '200'}).appendTo(e).on('keyup', onKeyUp);
     var i = $('<input>',{class: 'enter', id: 'amendname'+albumindex, type: 'text', size: '200'}).appendTo(e);
 
     d = $('<div>',{class: 'containerbox dropdown-container'}).appendTo(mywin);
     d.append('<div class="fixed padright" style="width:'+width+'">'+language.gettext('info_year')+'</div>');
     e = $('<div>',{class: 'expand'}).appendTo(d);
-
-    // i = $('<input>',{class: 'enter', id: 'amenddate'+albumindex, type: 'text', size: '200'}).appendTo(e).on('keyup', onKeyUp);
     i = $('<input>',{class: 'enter', id: 'amenddate'+albumindex, type: 'text', size: '200'}).appendTo(e);
 
     var b = $('<button>',{class: 'fixed'}).appendTo(d);

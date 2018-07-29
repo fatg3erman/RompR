@@ -107,13 +107,11 @@ input.inbrowser, div.inbrowser
     background-color:rgba(250,250,250,0.2);
 }
 
-div.clickable:hover
-{
+.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
     color:#ff4800;
 }
 
-div.clickable.selected:hover
-{
+.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
     color:#dddddd;
 }
 
