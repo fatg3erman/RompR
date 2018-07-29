@@ -719,7 +719,7 @@ var layoutProcessor = function() {
         },
 
         setupPersonalRadioAdditions: function() {
-            $('#pluginplaylistslist .crazyradio').addClass('vertical helpfulalbum').wrap('<div class="collectionitem fixed"></div>');
+            $('#pluginplaylistslist [name^="spotiCrazyRadio"]').addClass('vertical helpfulalbum').wrap('<div class="collectionitem fixed"></div>');
             layoutProcessor.adjustBoxSizes();
         },
 

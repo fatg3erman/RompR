@@ -519,7 +519,9 @@ function playerController() {
 			if (at_pos === 0 || at_pos) {
                 moving = false;
 				self.move(pl, player.status.playlistlength - pl, at_pos);
-			}
+			} else {
+                self.checkProgress();
+            }
 		});
 	}
 

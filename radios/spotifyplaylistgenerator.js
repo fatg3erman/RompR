@@ -2,26 +2,6 @@ var crazyRadioManager = function() {
 
     var crazySettings = new Array();
 
-    function loadCrazy(i) {
-        debug.log("LOAD CRAZY","Loading",crazySettings[i]);
-        $('[name="spotigenres"]').val(crazySettings[i].genres);
-        $('.spotiradioslider').each(function() {
-            var attribute = $(this).attr('name');
-            $(this).rangechooser("setRange",crazySettings[i][attribute]);
-        });
-        playlist.radioManager.load('spotiCrazyRadio');
-    }
-
-    function removeCrazy(i) {
-        debug.log("CRAZY BUGGER","Removing",i);
-        if ($('.crazyradio[name="'+i+'"]').parent().hasClass('collectionitem')) {
-            $('.crazyradio[name="'+i+'"]').parent().remove();
-        } else {
-            $('.crazyradio[name="'+i+'"]').remove();
-        }
-        $.get('radios/crazymanager.php?action=remove&index='+i, crazyRadioManager.refreshCrazyList);
-    }
-
     return {
 
         loadSavedCrazies: function() {
@@ -29,21 +9,16 @@ var crazyRadioManager = function() {
             $.get('radios/crazymanager.php?action=get', function(data) {
                 debug.log("CRAZY RADIO","Saved Data",data);
                 crazySettings = data;
-                var html;
                 for (var i in crazySettings) {
-                    var html = $(playlist.radioManager.standardBox('crazyradio', i, 'icon-spotify-circled', crazySettings[i].playlistname));
-                    html.append(
+                    var crazy = playlist.radioManager.standardBox('spotiCrazyRadio', i, 'icon-spotify-circled', crazySettings[i].playlistname).appendTo("#pluginplaylists_spotify");
+                    crazy.append(
                         '<div class="fixed">'+
-                        '<i class="icon-cancel-circled collectionicon clickicon clickremcrazy" name="'+i+'"></i>'+
+                        '<i class="icon-cancel-circled collectionicon clickable crazyradio clickremcrazy" name="'+i+'"></i>'+
                         '</div>'
                     );
-                    $("#pluginplaylists_spotify").append(html);
                 }
                 layoutProcessor.adjustLayout();
                 uiHelper.setupPersonalRadioAdditions();
-                $('.crazyradio').on('dblclick', function(evt) {
-                    loadCrazy($(evt.delegateTarget).attr('name'));
-                });
                 $('.clickremcrazy').on('click', function(evt) {
                     removeCrazy($(evt.delegateTarget).attr('name'));
                 });
@@ -59,6 +34,29 @@ var crazyRadioManager = function() {
                 }
             });
             crazyRadioManager.loadSavedCrazies();
+        },
+
+        load: function(i) {
+            debug.log("LOAD CRAZY","Loading",crazySettings[i]);
+            $('[name="spotigenres"]').val(crazySettings[i].genres);
+            $('.spotiradioslider').each(function() {
+                var attribute = $(this).attr('name');
+                $(this).rangechooser("setRange",crazySettings[i][attribute]);
+            });
+            playlist.radioManager.load('spotiCrazyRadio');
+        },
+
+        handleClick: function(event, clickedElement) {
+            if (clickedElement.hasClass('clickremcrazy')) {
+                var i = clickedElement.attr('name');
+                debug.log("CRAZY BUGGER","Removing",i);
+                if ($('.crazyradio[name="'+i+'"]').parent().hasClass('collectionitem')) {
+                    $('.crazyradio[name="'+i+'"]').parent().remove();
+                } else {
+                    $('.crazyradio[name="'+i+'"]').remove();
+                }
+                $.get('radios/crazymanager.php?action=remove&index='+i, crazyRadioManager.refreshCrazyList);
+            }
         },
 
         actuallySaveCrazyRadioSettings: function() {
@@ -96,14 +94,10 @@ var crazyRadioManager = function() {
             var mywin = fnarkle.create();
             var d = $('<div>',{class: 'containerbox'}).appendTo(mywin);
             var e = $('<div>',{class: 'expand'}).appendTo(d);
-
-            // var i = $('<input>',{class: 'enter', id: 'scplname', type: 'text', size: '200'}).appendTo(e).on('keyup', onKeyUp);
             var i = $('<input>',{class: 'enter', id: 'scplname', type: 'text', size: '200'}).appendTo(e);
-
             var b = $('<button>',{class: 'fixed'}).appendTo(d);
             b.html(language.gettext('button_save'));
             fnarkle.useAsCloseButton(b, crazyRadioManager.actuallySaveCrazyRadioSettings);
-            // b.on('keyup', onKeyUp);
             fnarkle.open();
         }
 
@@ -196,3 +190,4 @@ var spotiCrazyRadio = function() {
 }();
 
 playlist.radioManager.register("spotiCrazyRadio", spotiCrazyRadio, 'radios/code/spotiCrazyRadio.js');
+clickRegistry.addClickHandlers('crazyradio', crazyRadioManager.handleClick);

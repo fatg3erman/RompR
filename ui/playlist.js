@@ -200,27 +200,49 @@ var playlist = function() {
                 return (mode !== null);
             },
 
-            standardBox: function(station, name, icon, label) {
-                var html = '<div class="menuitem containerbox clickicon '+station+'"';
-                if (name !== null) html += ' name="'+name+'"';
-                html += '>';
-                html += '<div class="smallcover svg-square fixed '+icon+'"></div>';
-                html += '<div class="expand">'+label+'</div>';
-                html += '</div>';
-                return html;
+            loadFromUiElement: function(element) {
+                var params = element.attr('name').split('+');
+                switch (params[0]) {
+                    case 'spotiCrazyRadio':
+                        crazyRadioManager.load(params[1]);
+                        break;
+
+                    default:
+                        playlist.radioManager.load(params[0], params[1] ? params[1] : null);
+                        break;
+
+                }
             },
 
-            dropdownBox: function(station, name, icon, label, dropid) {
-                var html = '<div class="menuitem containerbox clickicon '+station+'"';
-                if (name !== null) html += ' name="'+name+'"';
-                html += '>';
-                html += '<i class="icon-toggle-closed menu openmenu mh fixed" name="'+dropid+'"></i>';
-                html += '<div class="smallcover svg-square noindent fixed '+icon+'"></div>';
-                html += '<div class="expand">'+label+'</div>';
-                html += '</div>';
-                html += '<div class="toggledown invisible" id="'+dropid+'"></div>';
-                return html;
+            standardBox: function(station, param, icon, label) {
+                var container = $('<div>', {
+                    class: 'menuitem containerbox playable smartradio',
+                    name: station + (param ? '+'+param : '')
+                });
+                container.append('<div class="smallcover svg-square fixed '+icon+'"></div>');
+                container.append('<div class="expand">'+label+'</div>');
+                return container;
+            },
 
+            dropdownHeader: function(station, param, icon, label, dropid) {
+                var container = $('<div>', {
+                    class: 'menuitem containerbox playable smartradio',
+                    name: station + (param ? '+'+param : '')
+                });
+                container.append($('<i>', {
+                    class: 'icon-toggle-closed menu openmenu mh fixed',
+                    name: dropid
+                }));
+                container.append('<div class="smallcover svg-square noindent fixed '+icon+'"></div>');
+                container.append('<div class="expand">'+label+'</div>');
+                return container;
+            },
+
+            dropdownHolder: function(id) {
+                return $('<div>', {
+                    class: 'toggledown invisible',
+                    id: id
+                });
             },
 
             textEntry: function(icon, label, id) {
@@ -548,6 +570,8 @@ var playlist = function() {
                             playlist: $(element).prev().prev().val(),
                             frompos: $(element).prev().val()
                         });
+                    } else if ($(element).hasClass('smartradio')) {
+                        playlist.radioManager.loadFromUiElement($(element));
                     } else if ($(element).hasClass('podcastresume')) {
                         var is_already_in_playlist = playlist.findIdByUri(uri);
                         if (is_already_in_playlist !== false) {
@@ -565,8 +589,6 @@ var playlist = function() {
                             moveto = null;
                         }
                     } else {
-                        debug.log("WAAAAH!",uri);
-                        debug.log("WAAAAH!",decodeURIComponent(uri));
                         tracks.push({ type: "uri",
                                         name: decodeURIComponent(uri)});
                     }
@@ -604,13 +626,13 @@ var playlist = function() {
 
         preventControlClicks: function(t) {
             if (t) {
-                $('#random').on('click', player.controller.toggleRandom).parent().removeClass('thin');
-                $('#repeat').on('click', player.controller.toggleRepeat).parent().removeClass('thin');
-                $('#consume').on('click', player.controller.toggleConsume).parent().removeClass('thin');
+                $('#random').on('click', player.controller.toggleRandom).parent().removeClass('notenabled');
+                $('#repeat').on('click', player.controller.toggleRepeat).parent().removeClass('notenabled');
+                $('#consume').on('click', player.controller.toggleConsume).parent().removeClass('notenabled');
             } else {
-                $('#random').off('click').parent().addClass('thin');
-                $('#repeat').off('click').parent().addClass('thin');
-                $('#consume').off('click').parent().addClass('thin');
+                $('#random').off('click').parent().addClass('notenabled');
+                $('#repeat').off('click').parent().addClass('notenabled');
+                $('#consume').off('click').parent().addClass('notenabled');
             }
         },
 

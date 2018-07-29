@@ -8,9 +8,9 @@ var starRadios = function() {
             // 1 star etc
             //
             for (var i = 1; i <= 5; i++) {
-                $('#pluginplaylists').append(playlist.radioManager.standardBox('starradios', i+'stars', 'icon-'+i+'-stars', language.gettext('playlist_xstar', [i])));
+                $('#pluginplaylists').append(playlist.radioManager.standardBox('starRadios', i+'stars', 'icon-'+i+'-stars', language.gettext('playlist_xstar', [i])));
             }
-			
+
 			//
             // Tag
             //
@@ -27,22 +27,18 @@ var starRadios = function() {
             //
             // All Tracks at random
             //
-            $('#pluginplaylists').append(playlist.radioManager.standardBox('starradios', 'allrandom', 'icon-allrandom', language.gettext('label_allrandom')));
+            $('#pluginplaylists').append(playlist.radioManager.standardBox('starRadios', 'allrandom', 'icon-allrandom', language.gettext('label_allrandom')));
 
             //
             // Never Played Tracks
             //
-            $('#pluginplaylists').append(playlist.radioManager.standardBox('starradios', 'neverplayed', 'icon-neverplayed', language.gettext('label_neverplayed')));
+            $('#pluginplaylists').append(playlist.radioManager.standardBox('starRadios', 'neverplayed', 'icon-neverplayed', language.gettext('label_neverplayed')));
 
             //
             // Recently Played Tracks
             //
-            $('#pluginplaylists').append(playlist.radioManager.standardBox('starradios', 'recentlyplayed', 'icon-recentlyplayed', language.gettext('label_recentlyplayed')));
+            $('#pluginplaylists').append(playlist.radioManager.standardBox('starRadios', 'recentlyplayed', 'icon-recentlyplayed', language.gettext('label_recentlyplayed')));
 
-            $('.starradios').on(prefs.clickBindType(), function(evt) {
-                evt.stopPropagation();
-                playlist.radioManager.load('starRadios', $(evt.delegateTarget).attr('name'));
-            });
         },
 
         tagPopulate: function() {
@@ -62,11 +58,6 @@ var recentlyaddedtracks = function() {
             //
             $('#pluginplaylists').append(playlist.radioManager.standardBox('recentlyaddedradio', 'random', 'icon-recentlyplayed', language.gettext('label_recentlyadded_random')));
             $('#pluginplaylists').append(playlist.radioManager.standardBox('recentlyaddedradio', 'byalbum', 'icon-recentlyplayed', language.gettext('label_recentlyadded_byalbum')));
-
-            $('.recentlyaddedradio').on(prefs.clickBindType(), function(evt) {
-                evt.stopPropagation();
-                playlist.radioManager.load('recentlyaddedtracks', $(evt.delegateTarget).attr('name'));
-            });
         }
     }
 }();
@@ -80,11 +71,7 @@ var mostPlayed = function() {
             //
             // Favourite Tracks
             //
-            $('#pluginplaylists').append(playlist.radioManager.standardBox('mostplayedradio', null, 'icon-music', language.gettext('label_mostplayed')));
-            $('.mostplayedradio').on(prefs.clickBindType(), function(evt) {
-                evt.stopPropagation();
-                playlist.radioManager.load('mostPlayed', null);
-            });
+            $('#pluginplaylists').append(playlist.radioManager.standardBox('mostPlayed', null, 'icon-music', language.gettext('label_mostplayed')));
         }
     }
 }();
@@ -98,11 +85,7 @@ var faveAlbums = function() {
             //
             // Favourite Albums
             //
-            $('#pluginplaylists').append(playlist.radioManager.standardBox('favealbumradio', null, 'icon-music', language.gettext('label_favealbums')));
-            $('.favealbumradio').on(prefs.clickBindType(), function(evt) {
-                evt.stopPropagation();
-                playlist.radioManager.load('faveAlbums', null);
-            });
+            $('#pluginplaylists').append(playlist.radioManager.standardBox('faveAlbums', null, 'icon-music', language.gettext('label_favealbums')));
         }
     }
 }();

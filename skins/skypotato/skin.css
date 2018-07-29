@@ -558,7 +558,7 @@ div.rightmenu
         margin-top:6px !important;
         margin-left:4px !important;
     }
-    
+
     .controlbutton-main
     {
         width:32px !important;
@@ -683,6 +683,14 @@ div.rightmenu
 #pluginplaylistslist .collectionitem .helpfulalbum {
     padding-top:4px;
     padding-bottom:4px;
+}
+
+div.helpfulalbum>div.tagh.albumthing {
+    max-width: 400px;
+}
+
+div.helpfulalbum>div.tagh.albumthing.jalopy200 {
+    max-width: 200px;
 }
 
 #pluginplaylistslist .collectionitem .menuitem {

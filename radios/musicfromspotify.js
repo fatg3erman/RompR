@@ -9,14 +9,10 @@ var spotiMixRadio = function() {
                 // Spotify Swim
                 // Spotify Surprise!
                 //
-                $('#pluginplaylists_spotify').append(playlist.radioManager.standardBox('spotimixradio', '7day', 'icon-spotify-circled', language.gettext('label_spotify_mix')));
-                $('#pluginplaylists_spotify').append(playlist.radioManager.standardBox('spotimixradio', '1year', 'icon-spotify-circled', language.gettext('label_spotify_dj')));
-                $('#pluginplaylists_spotify').append(playlist.radioManager.standardBox('spotimixradio', 'surprise', 'icon-spotify-circled', language.gettext('label_spottery_lottery')));
+                $('#pluginplaylists_spotify').append(playlist.radioManager.standardBox('spotiMixRadio', '7day', 'icon-spotify-circled', language.gettext('label_spotify_mix')));
+                $('#pluginplaylists_spotify').append(playlist.radioManager.standardBox('spotiMixRadio', '1year', 'icon-spotify-circled', language.gettext('label_spotify_dj')));
+                $('#pluginplaylists_spotify').append(playlist.radioManager.standardBox('spotiMixRadio', 'surprise', 'icon-spotify-circled', language.gettext('label_spottery_lottery')));
 
-                $('.spotimixradio').on(prefs.clickBindType(), function(evt) {
-                    evt.stopPropagation();
-                    playlist.radioManager.load('spotiMixRadio', $(evt.delegateTarget).attr('name'));
-                });
             }
         }
 
@@ -34,12 +30,7 @@ var mixRadio = function() {
                 //
                 // Favourite Artists and Related Artists (Music from Spotify)
                 //
-                $('#pluginplaylists_spotify').append(playlist.radioManager.standardBox('mixradio', null, 'icon-artist', language.gettext('label_radio_mix')));
-                $('.mixradio').on(prefs.clickBindType(), function(evt) {
-                    evt.stopPropagation();
-                    playlist.radioManager.load('mixRadio', null);
-                });
-
+                $('#pluginplaylists_spotify').append(playlist.radioManager.standardBox('mixRadio', null, 'icon-artist', language.gettext('label_radio_mix')));
             }
         }
     }
@@ -56,7 +47,6 @@ var artistRadio = function() {
                 // Artists Similar To (Music From Spotify)
                 //
                 $('#pluginplaylists_spotify').append(playlist.radioManager.textEntry('icon-spotify-circled', language.gettext('label_simar_radio'), 'simar_radio'));
-                // $('#simar_radio').on('keyup', onKeyUp);
                 $('button[name="simar_radio"]').on('click', function() {
                     var v = $('#simar_radio').val();
                     if (v != '') {

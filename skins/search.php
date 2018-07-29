@@ -60,9 +60,9 @@ print '<div id="advsearchoptions" class="toggledown invisible marged">';
     </div>
     </div>';
 
-    print '<div class="containerbox">
-        <div class="expand"></div>
-        <button style="margin-right:4px" class="fixed" onclick="player.controller.search(\'find\')">'.get_int_text("button_findexact").'</button>
-        </div>';
+    // print '<div class="containerbox">
+    //     <div class="expand"></div>
+    //     <button style="margin-right:4px" class="fixed" onclick="player.controller.search(\'find\')">'.get_int_text("button_findexact").'</button>
+    //     </div>';
 
 ?>

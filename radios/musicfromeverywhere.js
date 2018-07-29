@@ -7,7 +7,6 @@ var genreRadio = function() {
             // Genre (Music from Everywhere)
             //
             $('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-wifi', language.gettext('label_genre'), 'genre_radio'));
-            // $('#genre_radio').on('keyup', onKeyUp);
             $('button[name="genre_radio"]').on('click', function() {
                 var v = $('#genre_radio').val();
                 if (v != '') {
@@ -26,11 +25,7 @@ var faveArtistRadio = function() {
             //
             // Favourite Artists (Music from Everywhere)
             //
-            $('#pluginplaylists_everywhere').append(playlist.radioManager.standardBox('fartistradio', null, 'icon-artist', language.gettext('label_radio_fartist')));
-            $('.fartistradio').on(prefs.clickBindType(), function(evt) {
-                evt.stopPropagation();
-                playlist.radioManager.load('faveArtistRadio', null);
-            });
+            $('#pluginplaylists_everywhere').append(playlist.radioManager.standardBox('faveArtistRadio', null, 'icon-artist', language.gettext('label_radio_fartist')));
         }
     }
 }();
@@ -47,7 +42,6 @@ var singleArtistRadio = function() {
             // Tracks By Artist (Music from Everywhere)
             //
             $('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-artist', language.gettext('label_singleartistradio'), 'singart_radio'));
-            // $('#singart_radio').on('keyup', onKeyUp);
             $('button[name="singart_radio"]').on('click', function() {
                 var v = $('#singart_radio').val();
                 if (v != '') {
@@ -69,15 +63,12 @@ var lastFMArtistRadio = function() {
                 //
                 // Last.FM Lucky Dip (Music from Everywhere)
                 //
-                $("#pluginplaylists_everywhere").append(playlist.radioManager.dropdownBox('lfmartistradio', '7day', 'icon-lastfm-1', language.gettext('label_lastfm_mix'), 'lastfm_mix'));
-                $('#lastfm_mix').append(playlist.radioManager.standardBox('lfmartistradio dropdown', '7day', 'icon-lastfm-1', 'Weekly Dip'));
-                $('#lastfm_mix').append(playlist.radioManager.standardBox('lfmartistradio dropdown', '1month', 'icon-lastfm-1', 'Monthly Dip'));
-                $('#lastfm_mix').append(playlist.radioManager.standardBox('lfmartistradio dropdown', '12month', 'icon-lastfm-1', 'Yearly Dip'));
-                $('#lastfm_mix').append(playlist.radioManager.standardBox('lfmartistradio dropdown', 'overall', 'icon-lastfm-1', 'All Time Dip'));
-                $('.lfmartistradio').on(prefs.clickBindType(), function(evt) {
-                    evt.stopPropagation();
-                    playlist.radioManager.load('lastFMArtistRadio', $(evt.delegateTarget).attr('name'));
-                });
+                var header = playlist.radioManager.dropdownHeader('lastFMArtistRadio', '7day', 'icon-lastfm-1', language.gettext('label_lastfm_mix'), 'lastfm_mix').appendTo("#pluginplaylists_everywhere");
+                var holder = playlist.radioManager.dropdownHolder('lastfm_mix').insertAfter(header);
+                holder.append(playlist.radioManager.standardBox('lastFMArtistRadio', '7day', 'icon-lastfm-1', 'Weekly Dip').addClass('dropdown'));
+                holder.append(playlist.radioManager.standardBox('lastFMArtistRadio', '1month', 'icon-lastfm-1', 'Monthly Dip').addClass('dropdown'));
+                holder.append(playlist.radioManager.standardBox('lastFMArtistRadio', '12month', 'icon-lastfm-1', 'Yearly Dip').addClass('dropdown'));
+                holder.append(playlist.radioManager.standardBox('lastFMArtistRadio', 'overall', 'icon-lastfm-1', 'All Time Dip').addClass('dropdown'));
             }
         }
     }
@@ -93,15 +84,12 @@ var lastFMTrackRadio = function() {
                 //
                 // Last.FM Mix Radio (Music from Everywhere)
                 //
-                $("#pluginplaylists_everywhere").append(playlist.radioManager.dropdownBox('lfmtrackradio', '7day', 'icon-lastfm-1', language.gettext('label_lastfm_track'), 'lastfm_track'));
-                $('#lastfm_track').append(playlist.radioManager.standardBox('lfmtrackradio dropdown', '7day', 'icon-lastfm-1', 'Daily Mix'));
-                $('#lastfm_track').append(playlist.radioManager.standardBox('lfmtrackradio dropdown', '1month', 'icon-lastfm-1', 'Monthly Mix'));
-                $('#lastfm_track').append(playlist.radioManager.standardBox('lfmtrackradio dropdown', '12month', 'icon-lastfm-1', 'Yearly Mix'));
-                $('#lastfm_track').append(playlist.radioManager.standardBox('lfmtrackradio dropdown', 'overall', 'icon-lastfm-1', 'All Time Mix'));
-                $('.lfmtrackradio').on(prefs.clickBindType(), function(evt) {
-                    evt.stopPropagation();
-                    playlist.radioManager.load('lastFMTrackRadio', $(evt.delegateTarget).attr('name'));
-                });
+                var header = playlist.radioManager.dropdownHeader('lastFMArtistRadio', '7day', 'icon-lastfm-1', language.gettext('label_lastfm_track'), 'lastfm_track').appendTo("#pluginplaylists_everywhere");
+                var holder = playlist.radioManager.dropdownHolder('lastfm_track').insertAfter(header);
+                holder.append(playlist.radioManager.standardBox('lastFMArtistRadio', '7day', 'icon-lastfm-1', 'Daily Mix').addClass('dropdown'));
+                holder.append(playlist.radioManager.standardBox('lastFMArtistRadio', '1month', 'icon-lastfm-1', 'Monthly Mix').addClass('dropdown'));
+                holder.append(playlist.radioManager.standardBox('lastFMArtistRadio', '12month', 'icon-lastfm-1', 'Yearly Mix').addClass('dropdown'));
+                holder.append(playlist.radioManager.standardBox('lastFMArtistRadio', 'overall', 'icon-lastfm-1', 'All Time Mix').addClass('dropdown'));
             }
         }
     }

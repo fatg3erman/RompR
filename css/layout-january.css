@@ -971,6 +971,11 @@ div.topdropmenu
     padding:4px;
 }
 
+.thin
+{
+    opacity: 0.3 !important;
+}
+
 div.topdropmenu div {
 	opacity: 1 !important;
 }
@@ -1881,11 +1886,6 @@ table.ambox {
 .brianblessed
 {
     margin-right:1em;
-}
-
-.thin
-{
-    opacity: 0.3;
 }
 
 [id^="pluginplaylists"] .textunderline
