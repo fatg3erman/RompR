@@ -166,7 +166,7 @@ var playlist = function() {
                 // that call into this function to handle all the cases we need to handle
                 // but we only want to act on one of them.
                 clearTimeout(rptimer);
-                rptimer = setTimeout(actuallyRepopulate, 2000);
+                rptimer = setTimeout(actuallyRepopulate, 1000);
             },
 
             stop: function() {
@@ -365,8 +365,6 @@ var playlist = function() {
             for (var i in tracklist) {
                 tracklist[i].presentYourself();
             }
-
-            // $('#sortable .tooltip').tipTip({delay: 500, edgeOffset: 8});
 
             if (finaltrack > -1) {
                 $("#pltracks").html((finaltrack+1).toString() +' '+language.gettext("label_tracks"));

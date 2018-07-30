@@ -61,13 +61,14 @@ jQuery.fn.makeSpinner = function() {
 }
 
 jQuery.fn.stopSpinner = function() {
-    return this.each(function() {
+    this.each(function() {
         $(this).removeClass('icon-spin6 spinner');
         if ($(this).attr("originalclass")) {
             $(this).addClass($(this).attr("originalclass"));
             $(this).removeAttr("originalclass");
         }
     });
+    return this;
 }
 
 jQuery.fn.makeTagMenu = function(options) {
@@ -409,7 +410,6 @@ var uiHelper = function() {
                     $('i[name="podcast_'+index+'"]').parent().remove();
                     $('#podcast_'+index).remove();
                     $("#fruitbat").html(data);
-                    // $("#fruitbat .tooltip").tipTip({delay: 500, edgeOffset: 8});
                     infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
                     podcasts.doNewCount();
                     layoutProcessor.postAlbumActions();

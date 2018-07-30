@@ -123,7 +123,7 @@ jQuery.fn.makeSpinner = function() {
 
 jQuery.fn.stopSpinner = function() {
     if (this.hasClass('spinner')) {
-        return this.each(function() {
+        this.each(function() {
             $(this).removeClass('icon-spin6 spinner');
             if ($(this).attr("originalclass")) {
                 $(this).addClass($(this).attr("originalclass"));
@@ -133,8 +133,8 @@ jQuery.fn.stopSpinner = function() {
 
     } else {
         this.removeClass('clickflash');
-        return this;
     }
+    return this;
 }
 
 jQuery.fn.adjustBoxSizes = function() {
@@ -325,7 +325,6 @@ var layoutProcessor = function() {
 
         setupInfoButtons: function() {
             $("#button_source"+prefs.infosource).addClass("currentbun");
-            // $("#chooserbuttons .topimg").tipTip({delay: 500, edgeOffset: 8});
         },
 
         goToBrowserPanel: function(panel) {
@@ -805,14 +804,11 @@ var layoutProcessor = function() {
             $('.choose_infopanel').on('click', function(){layoutProcessor.sourceControl('infoholder')});
             $('.choose_history').on('click', function(){layoutProcessor.sourceControl('historypanel')});
             $('.open_albumart').on('click', openAlbumArtManager);
-            $('#love').on('click', nowplaying.love);
             $("#ratingimage").on('click', nowplaying.setRating);
             $('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodiput')});
             $('#expandleft').on('click', function(){layoutProcessor.expandInfo('left')});
             $('.clear_playlist').on('click', playlist.clear);
             $("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
-
-            // $(".tooltip,.tooltip").tipTip({delay: 500, edgeOffset: 8});
 
             document.body.addEventListener('drop', function(e) {
                 e.preventDefault();
@@ -903,7 +899,6 @@ var layoutProcessor = function() {
                 $('.menu[name="podcast_'+index+'"]').parent().remove();
                 $('#podcast_'+index).remove();
                 $("#fruitbat").html(data);
-                // $("#fruitbat .tooltip").tipTip({delay: 500, edgeOffset: 8});
                 infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
                 podcasts.doNewCount();
                 layoutProcessor.postAlbumActions();

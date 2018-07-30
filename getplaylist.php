@@ -128,6 +128,12 @@ function doNewPlaylistFile(&$filedata) {
         )
     );
 
+    if ($filedata['X-AlbumUri'] && getDomain($filedata['X-AlbumUri']) == 'spotify') {
+        $info['metadata']['album']['spotify'] = array(
+            'id' => substr($filedata['X-AlbumUri'], 14)
+        );
+    }
+
     $foundartists = array();
 
     // All kinds of places we get artist names from:

@@ -18,7 +18,8 @@ function get_spotify_data($uri) {
 			savePrefs();
 		} else {
 			debuglog("Getting credentials FAILED!" ,"SPOTIFY");
-			return array(false, null, "Bad Credentials");
+			$stuff = json_decode($d->get_data());
+			return array(false, $stuff->{'error_description'}, $d->get_status());
 		}
 	}
 
@@ -30,7 +31,8 @@ function get_spotify_data($uri) {
 	if ($d->get_data_to_string()) {
 		return array(true, $d->get_data(), '200');
 	} else {
-		return array(false, null, $d->get_status());
+		$stuff = json_decode($d->get_data());
+		return array(false, $stuff->{'error'}->{'message'}, $stuff->{'error'}->{'status'});
 	}
 
 }

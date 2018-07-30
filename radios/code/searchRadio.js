@@ -43,12 +43,10 @@ function searchRadio() {
 					tracks.push({type: 'uri', name: data[j].uri});
 				}
 			}
-			if (tracks.length > 0) {
-				tracks = tracks.sort(randomsort);
-				debug.log("SEARCHRADIO ARTIST","Got",tracks.length,"tracks for",name);
-				if (self.sending > 0) {
-					myself.sendATrack();
-				}
+			tracks = tracks.sort(randomsort);
+			debug.log("SEARCHRADIO ARTIST","Got",tracks.length,"tracks for",name);
+			if (self.sending > 0) {
+				myself.sendATrack();
 			}
 		}
 

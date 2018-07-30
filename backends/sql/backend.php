@@ -545,6 +545,28 @@ function get_extra_track_info(&$filedata) {
 	);
 	foreach ($result as $tinfo) {
 		if ($tinfo['Uri'] == $filedata['file']) {
+			debuglog("Found Track In Collection","EXTRAINFO");
+			$data = array_filter($tinfo, function($v) {
+				if ($v === null || $v == '') {
+					return false;
+				}
+				return true;
+			});
+			break;
+		}
+	}
+	if (count($data) == 0) {
+		$result = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
+			'SELECT Albumtable.Image AS "X-AlbumImage", ImgKey AS ImgKey, mbid AS MUSICBRAINZ_ALBUMID, Searched
+				FROM
+					Albumtable
+					JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+					WHERE Albumname = ?
+					AND Artistname = ?',
+				$filedata['Album'], concatenate_artist_names($filedata['AlbumArtist'])
+		);
+		foreach ($result as $tinfo) {
+			debuglog("Found Album In Collection","EXTRAINFO");
 			$data = array_filter($tinfo, function($v) {
 				if ($v === null || $v == '') {
 					return false;

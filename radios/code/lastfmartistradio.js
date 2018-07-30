@@ -1,12 +1,11 @@
 var lastFMArtistRadio = function() {
-	
+
 	var populating = false;
 	var tuner;
 	var fartists;
 	var currpage = 1;
 	var totalpages = 1;
 	var started;
-	var simtimer;
 	var minplays;
 	var param = null;
 
@@ -88,7 +87,6 @@ var lastFMArtistRadio = function() {
 			fartists = new Array();
 			populating = true;
 			started = false;
-			lastfm.setThrottling(1500);
 			getTopArtists(1);
 		},
 
@@ -104,7 +102,6 @@ var lastFMArtistRadio = function() {
 		},
 
 		stop: function() {
-			lastfm.setThrottling(500);
 			populating = false;
 			param = null;
 			if (tuner) {
@@ -136,8 +133,7 @@ var lastFMArtistRadio = function() {
 						if (!started) {
 							started = true;
 							tuner.startSending();
-							clearTimeout(simtimer);
-							simtimer = setTimeout(getNextSimilars, 1000);
+							getNextSimilars();
 						}
 					}
 				}
@@ -158,16 +154,14 @@ var lastFMArtistRadio = function() {
 					}
 				}
 				if (populating) {
-					clearTimeout(simtimer);
-					simtimer = setTimeout(getNextSimilars, 1000);
+					getNextSimilars();
 				}
 			}
 		},
 
 		gotNoSimilar: function() {
 			if (populating) {
-				clearTimeout(simtimer);
-				simtimer = setTimeout(getNextSimilars, 1000);
+				getNextSimilars();
 			}
 		}
 

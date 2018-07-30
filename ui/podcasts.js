@@ -197,7 +197,6 @@ var podcasts = function() {
 						callback(true);
 					} else {
 			            $("#fruitbat").html(data);
-			            // $("#fruitbat .tooltip").tipTip({delay: 500, edgeOffset: 8});
 			            infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
 			            podcasts.doNewCount();
 						$('#spinner_cocksausage').remove();
@@ -224,7 +223,6 @@ var podcasts = function() {
 		        data: {populate: 1 },
 		        success: function(data) {
 		            $("#fruitbat").html(data);
-		            // $("#fruitbat .tooltip").tipTip({delay: 500, edgeOffset: 8});
 		            podcasts.doNewCount();
 					layoutProcessor.postAlbumActions($('#fruitbat'));
 		        },
@@ -384,7 +382,6 @@ var podcasts = function() {
 		        data: {remove: name, populate: 1 },
 		        success: function(data) {
 		            $("#fruitbat").html(data);
-		            // $("#fruitbat .tooltip").tipTip({delay: 500, edgeOffset: 8});
 		            podcasts.doNewCount();
 					layoutProcessor.postAlbumActions();
 		        },
@@ -415,7 +412,6 @@ var podcasts = function() {
 		        success: function(data) {
 		            $("#podcast_search").html(data);
 		            $('#podcast_search').prepend('<div class="menuitem containerbox padright brick_wide sensiblebox"><div class="configtitle textcentre expand"><b>Search Results for &quot;'+term+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch podcast fixed"></i></div>');
-		            // $("#podcast_search .tooltip").tipTip({delay: 500, edgeOffset: 8});
 					layoutProcessor.postAlbumActions($('#podcast_search'));
 		        },
 		        error: function(data, status, thing) {

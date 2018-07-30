@@ -467,8 +467,8 @@ var browser = function() {
             displayer.html(banner(opts, id, false, false, true));
             panelclosed[id] = false;
             displayer.off('click');
-            displayer.on('click', '.infoclick', onBrowserClicked);
             extraPlugins[id] = { div: displayer, parent: parent };
+            displayer.on('click', '.infoclick', onBrowserClicked);
             return displayer;
         },
 

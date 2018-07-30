@@ -938,7 +938,7 @@ function update_stream_images($schemaver) {
 function empty_modified_cache_dirs($schemaver) {
     switch ($schemaver) {
         case 44:
-            foreach(array('allmusic', 'lyrics') as $d) {
+            foreach(array('allmusic', 'lyrics', 'lastfm') as $d) {
                 rrmdir('prefs/jsoncache/'.$d);
                 mkdir('prefs/jsoncache/'.$d, 0755);
             }
@@ -1100,4 +1100,5 @@ function http_status_code_string($code)
 
 	return $string;
 }
+
 ?>

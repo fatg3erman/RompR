@@ -137,7 +137,6 @@ var layoutProcessor = function() {
 
         setupInfoButtons: function() {
             $("#button_source"+prefs.infosource).addClass("currentbun");
-            // $("#chooserbuttons .topimg").tipTip({delay: 500, edgeOffset: 8});
         },
 
         goToBrowserPanel: function(panel) {
@@ -467,16 +466,12 @@ var layoutProcessor = function() {
             $('.choose_playlistslist').on('click', function(){layoutProcessor.sourceControl('playlistslist')});
             $('.choose_pluginplaylistslist').on('click', function(){layoutProcessor.sourceControl('pluginplaylistslist')});
             $('.open_albumart').on('click', openAlbumArtManager);
-            $('#love').on('click', nowplaying.love);
             $("#ratingimage").on('click', nowplaying.setRating);
             $('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodiput')});
             $('#expandleft').on('click', function(){layoutProcessor.expandInfo('left')});
             $('#expandright').on('click', function(){layoutProcessor.expandInfo('right')});
             $('.clear_playlist').on('click', playlist.clear);
             $("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
-
-            // $(".tooltip,.tooltip").tipTip({delay: 500, edgeOffset: 8});
-
             document.body.addEventListener('drop', function(e) {
                 e.preventDefault();
             }, false);

@@ -405,9 +405,21 @@ var info_spotify = function() {
 			            }
                     },
 
-                    spotifyError: function() {
-                    	debug.error(medebug, "Spotify Error!");
+                    spotifyError: function(data) {
+                    	debug.warn(medebug, "Spotify Error!", data);
+						data.name = parent.playlistinfo.title;
+						data.external_urls = {spotify: ''};
+						trackmeta.spotify.track = data;
+						if (albummeta.spotify === undefined) {
+							albummeta.spotify = {};
+						}
+						self.track.doBrowserUpdate()
+						self.artist.populate();
                     },
+
+					spotifyRecError: function(data) {
+						debug.warn(medebug,"Error getting track reccomendations",data);
+					},
 
                     doBrowserUpdate: function() {
                         var accepted = false;
@@ -430,7 +442,7 @@ var info_spotify = function() {
 			                						}
 							);
 				        }
-                        if (accepted) {
+                        if (accepted && !trackmeta.spotify.track.error) {
                             if (trackmeta.spotify.recommendations) {
                                 doRecommendations(trackmeta.spotify.recommendations);
                             } else {
@@ -439,7 +451,7 @@ var info_spotify = function() {
                                     params.market = prefs.lastfm_country_code;
                                 }
                                 params.seed_tracks = trackmeta.spotify.id;
-                                spotify.recommendations.getRecommendations(params, gotTrackRecommendations, self.track.spotifyError);
+                                spotify.recommendations.getRecommendations(params, gotTrackRecommendations, self.track.spotifyRecError);
                             }
                         }
                     }
@@ -459,7 +471,7 @@ var info_spotify = function() {
 				return {
 
 					populate: function() {
-                        if (albummeta.spotify === undefined || albummeta.spotify.album === undefined) {
+                        if (albummeta.spotify === undefined || albummeta.spotify.album === undefined ) {
 				        	if (parent.playlistinfo.location.substring(0,8) !== 'spotify:') {
 				        		self.album.doBrowserUpdate();
 				        	} else {
@@ -468,8 +480,12 @@ var info_spotify = function() {
 			            }
 			        },
 
-                    spotifyError: function() {
+                    spotifyError: function(data) {
                     	debug.error(medebug, "Spotify Error!");
+						data.name = parent.playlistinfo.album;
+						data.external_urls = {spotify: ''};
+						albummeta.spotify.album = data;
+						self.album.doBrowserUpdate();
                     },
 
                     doBrowserUpdate: function() {
@@ -596,8 +612,13 @@ var info_spotify = function() {
 				        }
 			        },
 
-                    spotifyError: function() {
+                    spotifyError: function(data) {
                     	debug.error(medebug, "Spotify Error!");
+						data.external_urls = {spotify: ''};
+						data.name = artistmeta.name;
+						artistmeta.spotify.artist = data;
+						self.artist.doBrowserUpdate();
+						self.album.populate();
                     },
 
                     tryForAllmusicBio: function() {

@@ -123,7 +123,6 @@ var wishlistViewer = function() {
 			infobar.markCurrentTrack();
             if (display && !wlv.is(':visible')) {
 	            wlv.slideToggle('fast', function() {
-					// wlv.find('.tooltip').tipTip({delay: 500, edgeOffset: 8});
 		        	browser.goToPlugin("wlv");
 	            });
 	        }

@@ -279,7 +279,6 @@ var layoutProcessor = function() {
             $('.choose_prefs').on('click', function(){layoutProcessor.sourceControl('prefsm')});
             $('#choose_history').on('click', showHistory);
             $('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodiput')});
-            $('#love').on('click', nowplaying.love);
             $('.choose_playlist').on('click', function(){layoutProcessor.sourceControl('playlistm')});
             $("#ratingimage").on('click', nowplaying.setRating);
             $("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
@@ -308,7 +307,7 @@ var layoutProcessor = function() {
 }();
 
 // Dummy functions standing in for widgets we don't use in this version -
-// custom scroll bars, tipTip, and drag/drop stuff
+// custom scroll bars, and drag/drop stuff
 jQuery.fn.acceptDroppedTracks = function() {
     return this;
 }

@@ -74,7 +74,6 @@ var info_lastfm = function() {
         html += '<td><i class="icon-cancel-circled playlisticon infoclick clickremovetag tooltip" title="'+language.gettext("lastfm_removetag")+'"></i></td>';
         $('table[name="'+table+'tagtable"]').append(html);
         $(".newtag").fadeIn('fast', function(){
-            // $(this).find('[title]').tipTip({delay: 500, edgeOffset: 8});
             $(this).removeClass('newtag');
         });
     }
@@ -218,7 +217,10 @@ var info_lastfm = function() {
             var displaying = false;
 
             this.populate = function() {
+				$('#love').addClass('notloved').makeSpinner();
                 self.artist.populate();
+				self.album.populate();
+				self.track.populate();
             }
 
             this.displayData = function() {
@@ -229,6 +231,7 @@ var info_lastfm = function() {
             }
 
             this.stopDisplaying = function() {
+				$('#love').stopSpinner();
                 displaying = false;
             }
 
@@ -307,19 +310,27 @@ var info_lastfm = function() {
             }
 
             function doUserLoved(flag) {
-                var html = "";
+                var li = $('li[name="userloved"]');
+				li.empty();
                 if (flag) {
-                    html += '<b>'+language.gettext("lastfm_loved")+':</b> '+language.gettext("label_yes");
-                    html = html+'&nbsp;&nbsp;&nbsp;<i title="'+language.gettext("lastfm_unlove")+'" class="icon-heart-broken smallicon infoclick clickunlove tooltip"></i>';
-                    $('#lastfm').removeClass('notloved');
+					li.append($('<b>').html(language.gettext("lastfm_loved")+': ')).append(language.gettext("label_yes")+'&nbsp;&nbsp;&nbsp;')
+					li.append($('<i>', {
+						title: language.gettext("lastfm_unlove"),
+						class: "icon-heart-broken smallicon infoclick clickunlove tooltip"
+					}));
+					if (displaying) {
+                    	$('#love').removeClass('notloved').attr('title', language.gettext("lastfm_unlove")).off('click').on('click', nowplaying.unlove).stopSpinner();
+					}
                 } else {
-                    html += '<li><b>'+language.gettext("lastfm_loved")+':</b> '+language.gettext("label_no");
-                    html = html+'&nbsp;&nbsp;&nbsp;<i title="'+language.gettext("lastfm_lovethis")+'" class="icon-heart smallicon infoclick clicklove tooltip"></i>';
-                    $('#lastfm').removeClass('notloved').addClass('notloved');
+					li.append($('<b>').html(language.gettext("lastfm_loved")+': ')).append(language.gettext("label_no")+'&nbsp;&nbsp;&nbsp;')
+					li.append($('<i>', {
+						title: language.gettext("lastfm_lovethis"),
+						class: "icon-heart smallicon infoclick clickunlove tooltip notloved"
+					}));
+					if (displaying) {
+                    	$('#love').removeClass('notloved').addClass('notloved').attr('title', language.gettext("lastfm_lovethis")).off('click').on('click', nowplaying.love).stopSpinner();
+					}
                 }
-                $('li[name="userloved"]').html(html);
-                // $('li[name="userloved"]').find("[title]").tipTip({delay: 500, edgeOffset: 8});
-                html = null;
             }
 
             function getSearchArtist() {
@@ -352,7 +363,6 @@ var info_lastfm = function() {
     						);
                         } else {
                             debug.trace(medebug,parent.nowplayingindex,"artist is already populated",artistmeta.name);
-                            self.album.populate();
                         }
 					},
 
@@ -371,7 +381,6 @@ var info_lastfm = function() {
 		                	debug.log(medebug,parent.nowplayingindex,"has found a musicbrainz artist ID",mbid);
 		                	artistmeta.musicbrainz_id = mbid;
 		                }
-                        self.album.populate();
 		                self.artist.doBrowserUpdate();
 		            },
 
@@ -491,7 +500,6 @@ var info_lastfm = function() {
 							}
                         } else {
                             debug.trace(medebug,"Album is already populated",albummeta.name);
-                            self.track.populate();
                         }
 
                     },
@@ -514,7 +522,6 @@ var info_lastfm = function() {
                             }
                             albummeta.musicbrainz_id = mbid;
                         }
-                        self.track.populate();
                         self.album.doBrowserUpdate();
                     },
 
@@ -524,7 +531,6 @@ var info_lastfm = function() {
 						var de = new lfmDataExtractor(data);
 						albummeta.lastfm = de.getCheckedData('artist');
 						albummeta.musicbrainz_id = null;
-						self.track.populate();
                         self.album.doBrowserUpdate();
 					},
 
@@ -545,7 +551,6 @@ var info_lastfm = function() {
 
                             if (accepted && lastfm.isLoggedIn() && !lfmdata.error()) {
                                 self.album.getUserTags();
-                                // $("#albuminformation .enter").on('keyup',  onKeyUp );
                             }
                         }
                     },
@@ -675,7 +680,6 @@ var info_lastfm = function() {
                             if (accepted && lastfm.isLoggedIn() && !lfmdata.error()) {
                                 self.track.getUserTags();
                                 doUserLoved(lfmdata.userloved());
-                                // $("#trackinformation .enter").on('keyup',  onKeyUp );
                             }
                         }
                     },
@@ -754,6 +758,12 @@ var info_lastfm = function() {
                     unlove: function(callback) {
                         lastfm.track.unlove({ track: self.track.name(), artist: self.artist.name() }, self.track.donelove);
                     },
+
+					unloveifloved: function() {
+						if (trackmeta.lastfm.track.userloved = 1) {
+							self.track.unlove();
+						}
+					},
 
                     donelove: function(loved) {
                         if (loved) {

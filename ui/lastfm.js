@@ -6,10 +6,10 @@ function LastFM(user) {
     var username = user;
     var token = "";
     var self=this;
-    var lovebanshown = false;
     var queue = new Array();
     var throttle = null;
-    var throttleTime = 1000;
+    var throttleTime = 500;
+    var backofftimer;
 
     function startlogin() {
         self.login($('#configpanel input[name="lfmuser"]').val());
@@ -37,20 +37,22 @@ function LastFM(user) {
 
     uiLoginBind();
 
-    this.setThrottling = function(t) {
-        throttleTime = Math.max(1000,t);
+    function speedBackUp() {
+        throttleTime = 500;
+    }
+
+    function setThrottling(t) {
+        clearTimeout(backofftimer);
+        throttleTime = t;
+        backofftimer = setTimeout(speedBackUp, 90000);
     }
 
     this.showloveban = function(flag) {
-        if (logged_in && lovebanshown != flag) {
-            lovebanshown = flag;
-            if (lovebanshown) {
-                $("#lastfm").fadeIn('fast');
-            } else {
-                $("#lastfm").fadeOut('fast');
-            }
+        if (logged_in && flag) {
+            $("#lastfm").fadeIn('fast');
+        } else {
+            $("#lastfm").fadeOut('fast');
         }
-        $('#lastfm').removeClass('notloved').addClass('notloved');
     }
 
     this.isLoggedIn = function() {
@@ -95,7 +97,7 @@ function LastFM(user) {
         it = it+lastfm_secret;
         options.api_sig = hex_md5(it);
         options.format = 'json';
-        var url = "http://ws.audioscrobbler.com/2.0/";
+        var url = "https://ws.audioscrobbler.com/2.0/";
         var adder = "?";
         var keys = getKeys(options);
         for(var key in keys) {
@@ -178,7 +180,7 @@ function LastFM(user) {
 
     function LastFMGetRequest(options, cache, success, fail, reqid) {
         options.format = "json";
-        var url = "http://ws.audioscrobbler.com/2.0/";
+        var url = "https://ws.audioscrobbler.com/2.0/";
         var adder = "?";
         var keys = getKeys(options);
         for(var key in keys) {
@@ -205,7 +207,7 @@ function LastFM(user) {
                 debug.log("LASTFM", "Handling POST request via queue");
                 $.ajax({
                     method: "POST",
-                    url: "http://ws.audioscrobbler.com/2.0/",
+                    url: "https://ws.audioscrobbler.com/2.0/",
                     data: req.options,
                     dataType: 'json',
                     timeout: 5000,
@@ -241,7 +243,7 @@ function LastFM(user) {
 
                                 case 29:
                                     debug.warn("LASTFM","Rate Limit Exceeded. Slowing Down");
-                                    self.setThrottling(throttleTime*2);
+                                    setThrottling(throttleTime*2);
                                     // Fall through
 
                                 default:
@@ -290,7 +292,7 @@ function LastFM(user) {
                             errormessage += '<br />'+errortext;
                             if (errorcode == 29) {
                                 debug.warn("LASTFM","Rate Limit Exceeded. Slowing Down");
-                                self.setThrottling(throttleTime*2);
+                                setThrottling(throttleTime*2);
                             }
                         } else {
                             errormessage += ' ('+xhr.status+' '+err+')';
@@ -393,6 +395,8 @@ function LastFM(user) {
         },
 
         getInfo : function(options, callback, failcallback, reqid) {
+            // If we're logged in to Last.FM we don't use the cache for this request
+            // because it contains 'userloved', which we might update
             if (username != "") { options.username = username; }
             addGetOptions(options, "track.getInfo");
             if (self.getLanguage()) {
@@ -400,7 +404,7 @@ function LastFM(user) {
             }
             LastFMGetRequest(
                 options,
-                true,
+                !logged_in,
                 callback,
                 failcallback,
                 reqid
@@ -412,7 +416,7 @@ function LastFM(user) {
             addGetOptions(options, "track.getTags");
             LastFMGetRequest(
                 options,
-                false,
+                !logged_in,
                 callback,
                 failcallback,
                 reqid
@@ -500,7 +504,7 @@ function LastFM(user) {
             debug.mark("LASTFM","album.getTags",options);
             LastFMGetRequest(
                 options,
-                false,
+                !logged_in,
                 callback,
                 failcallback
             );
@@ -551,7 +555,7 @@ function LastFM(user) {
             addGetOptions(options, "artist.getTags");
             LastFMGetRequest(
                 options,
-                false,
+                !logged_in,
                 callback,
                 failcallback
             );

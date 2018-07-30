@@ -19,7 +19,8 @@ if (file_exists($filename)) {
         header("Pragma: Not Cached");
         print $content;
     } else {
-        $r = array('error' => 'Status Code '.$status);
+        header('HTTP/1.1 '.$status.' '.http_status_code_string($status));
+        $r = array('error' => $status, 'message' => $content);
 		print json_encode($r);
     }
 }

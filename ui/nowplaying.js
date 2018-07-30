@@ -103,6 +103,22 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 		}
 	}
 
+	this.unlove = function() {
+		if (collections['lastfm'] === undefined) {
+			debug.error("TRACKDATA","Asked to Love but there is no lastfm collection!");
+		} else {
+			collections['lastfm'].track.unlove();
+		}
+	}
+
+	this.unloveifloved = function() {
+		if (collections['lastfm'] === undefined) {
+			debug.error("TRACKDATA","Asked to Love but there is no lastfm collection!");
+		} else {
+			collections['lastfm'].track.unloveifloved();
+		}
+	}
+
 	this.addlfmtags = function(tags) {
 		collections['lastfm'].track.addtags(tags);
 	}
@@ -362,11 +378,12 @@ var nowplaying = function() {
 			if (index > 0) {
 	            debug.log("NOWPLAYING", "Setting Rating to",rating,"on index",index);
 				history[index].setMeta('set', 'Rating', rating.toString());
-				if (prefs.synclove && lastfm.isLoggedIn() && rating >= prefs.synclovevalue) {
-					history[index].love();
-					if (index == currenttrack) {
-		            	$("#love").makeFlasher({flashtime:2, repeats: 1});
-		            }
+				if (prefs.synclove && lastfm.isLoggedIn()) {
+					if (rating >= prefs.synclovevalue) {
+						history[index].love();
+					} else {
+						history[index].unloveifloved();
+					}
 				}
 			}
         },
@@ -416,10 +433,18 @@ var nowplaying = function() {
 		love: function() {
 			if (lastfm.isLoggedIn()) {
 				history[findCurrentTrack()].love();
-	            $("#love").makeFlasher({flashtime:2, repeats: 1});
+				if (prefs.synclove) {
+					history[findCurrentTrack()].setMeta('set', 'Rating', prefs.synclovevalue);
+				}
 			}
-			if (prefs.synclove) {
-				history[findCurrentTrack()].setMeta('set', 'Rating', prefs.synclovevalue);
+		},
+
+		unlove: function() {
+			if (lastfm.isLoggedIn()) {
+				history[findCurrentTrack()].unlove();
+				if (prefs.synclove) {
+					history[findCurrentTrack()].setMeta('set', 'Rating', 0);
+				}
 			}
 		},
 

@@ -168,14 +168,14 @@ function tryLastFM($albumimage) {
     $sa = $albumimage->get_artist_for_search();
     if ($sa == '') {
         debuglog("  Trying last.FM for ".$al,"GETALBUMCOVER");
-        $xml = loadXML('lastfm', "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&album=".rawurlencode($al)."&autocorrect=1");
+        $xml = loadXML('lastfm', "https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&album=".rawurlencode($al)."&autocorrect=1");
     } else if ($sa == 'Podcast') {
         debuglog("  Trying last.FM for ".$al,"GETALBUMCOVER");
         // Last.FM sometimes works for podcasts if you use Artist
-        $xml = loadXML('lastfm', "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&artist=".rawurlencode($al)."&autocorrect=1");
+        $xml = loadXML('lastfm', "https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&artist=".rawurlencode($al)."&autocorrect=1");
     } else {
         debuglog("  Trying last.FM for ".$sa." ".$al,"GETALBUMCOVER");
-        $xml = loadXML('lastfm', "http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&album=".rawurlencode($al)."&artist=".rawurlencode($sa)."&autocorrect=1");
+        $xml = loadXML('lastfm', "https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&album=".rawurlencode($al)."&artist=".rawurlencode($sa)."&autocorrect=1");
     }
     if ($xml === false) {
         debuglog("    Received error response from Last.FM","GETALBUMCOVER");

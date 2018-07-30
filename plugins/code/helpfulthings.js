@@ -66,7 +66,7 @@ var helpfulThings = function() {
 			    $('#hplfoldup').append('<div id="helpful_radio" class="containerbox wrap mixcontainer"></div>');
 
 			    if ((player.canPlay('spotify') || player.canPlay('gmusic')) && lastfm.isLoggedIn()) {
-			    	var html = '<div class="fixed infosection containerbox mixbox infoclick plugclickable clickmixradio">';
+			    	var html = '<div class="fixed infosection containerbox mixbox playable smartradio" name="lastFMTrackRadio+1month">';
 			    	html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
 			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_dailymix")+'</b><br/>';
 			    	html += "A playlist just for you, a mix of tracks you know and new music you might love. Powered by Last.FM";
@@ -79,7 +79,7 @@ var helpfulThings = function() {
 					}
 			    	html += '</div></div>';
 
-			    	html += '<div class="fixed infosection containerbox mixbox infoclick plugclickable clickartradio">';
+			    	html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="lastFMArtistRadio+6month">';
 			    	html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
 			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_luckydip")+'</b><br/>';
 			    	html += "A radio station just for you, playing a wider range of music by artists you know and artists you don't yet love. Powered by Last.FM";
@@ -92,13 +92,13 @@ var helpfulThings = function() {
 					}
 			    	html += '</div></div>';
 			    } else if ((player.canPlay('spotify') || player.canPlay('gmusic')) && !lastfm.isLoggedIn()) {
-			    	var html = '<div class="fixed infosection containerbox mixbox infoclick plugclickable clickmixradio">';
+			    	var html = '<div class="fixed infosection containerbox mixbox">';
 			    	html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
 			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_startshere")+'</b><br/>';
 			    	html += "Log in to Last.FM and start scrobbling. Rompr can then delight you with new music you're going to love!</div>";
 			    	html += '</div>';
 			    } else if (!player.canPlay('spotify') && !player.canPlay('gmusic')) {
-			    	var html = '<div class="fixed infosection containerbox mixbox infoclick plugclickable clickmixradio">';
+			    	var html = '<div class="fixed infosection containerbox mixbox">';
 			    	html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
 			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_getspotify")+'</b><br/>';
 			    	html += "Use Mopidy with a Spotify Premium subscription or a Google Play Music subscription, and start scrobbbling to Last.FM so RompЯ can delight you with new music you're going to love!</div>";
@@ -106,13 +106,13 @@ var helpfulThings = function() {
 			    }
 
 			    if (player.canPlay('spotify')) {
-			    	html += '<div class="fixed infosection containerbox mixbox infoclick plugclickable clickspotmixradio">';
+			    	html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="spotiMixRadio+7day">';
 			    	html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
 			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext('label_spotify_mix')+'</b><br/>';
 			    	html += "A radio station of suggestions based on your recent listening. Powered by RompЯ and Spotify</div>";
 			    	html += '</div>';
 
-			    	html += '<div class="fixed infosection containerbox mixbox infoclick plugclickable clickspotdjradio">';
+			    	html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="spotiMixRadio+1year">';
 			    	html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
 			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext('label_spotify_dj')+'</b><br/>';
 			    	html += "Scanning the vastness of Spotify. Powered by RompЯ and Spotify</div>";
@@ -137,19 +137,7 @@ var helpfulThings = function() {
 		},
 
 		handleClick: function(element, event) {
-			if (element.hasClass('clickmixradio')) {
-				playlist.radioManager.stop();
-				playlist.radioManager.load('lastFMTrackRadio', '1month');
-			} else if (element.hasClass('clickartradio')) {
-				playlist.radioManager.stop();
-				playlist.radioManager.load('lastFMArtistRadio', '6month');
-			} else if (element.hasClass('clickspotmixradio')) {
-				playlist.radioManager.stop();
-				playlist.radioManager.load('spotiMixRadio', '7day');
-			} else if (element.hasClass('clickspotdjradio')) {
-				playlist.radioManager.stop();
-				playlist.radioManager.load('spotiMixRadio', '1year');
-			} else if (element.hasClass('clickrefreshalbums')) {
+			if (element.hasClass('clickrefreshalbums')) {
 				getRecommendationSeeds();
             } else if (element.hasClass('clickspotifywidget')) {
             	var e = element;
@@ -250,6 +238,11 @@ var helpfulThings = function() {
 				imageclass: 'jalopy',
 				data: data.tracks
 			});
+		},
+
+		spotiError: function() {
+			debug.warn("HELPFULTHINGS","Spotify Error");
+			helpfulthigs.getMoreStuff();
 		}
 
 	}

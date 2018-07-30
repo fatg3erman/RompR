@@ -112,7 +112,7 @@ var lastFMTrackRadio = function() {
 			topTracks[index].sendATrack();
 		}
 	}
-	
+
 	return {
 
 		populate: function(p, numtracks) {
@@ -125,7 +125,6 @@ var lastFMTrackRadio = function() {
 				tosend = numtracks;
 				populating = true;
 				started = false;
-				lastfm.setThrottling(1500);
 				getTopTracks(1);
 			}
 		},
@@ -168,7 +167,6 @@ var lastFMTrackRadio = function() {
 
 		stop: function() {
 			populating = false;
-			lastfm.setThrottling(500);
 			param = null;
 		},
 

@@ -226,7 +226,7 @@ function check_sql_tables() {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking RadioTracktable : ".$err);
 	}
-	
+
 	if (generic_sql_query("CREATE TABLE IF NOT EXISTS WishlistSourcetable(".
 		"Sourceindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
 		"SourceName VARCHAR(255), ".
@@ -568,7 +568,7 @@ function check_sql_tables() {
 				create_conditional_triggers();
 				generic_sql_query("UPDATE Statstable SET Value = 33 WHERE Item = 'SchemaVer'", true);
 				break;
-			
+
 			case 33:
 				debuglog("Updating FROM Schema version 33 TO Schema version 34","SQL");
 				generic_sql_query("ALTER TABLE Albumtable ADD ImgVersion INT UNSIGNED DEFAULT ".ROMPR_IMAGE_VERSION, true);
@@ -585,7 +585,7 @@ function check_sql_tables() {
 			case 35:
 				generic_sql_query("UPDATE Statstable SET Value = 36 WHERE Item = 'SchemaVer'", true);
 				break;
-				
+
 			case 36:
 				debuglog("Updating FROM Schema version 35 TO Schema version 37","SQL");
 				$localpods = generic_sql_query("SELECT PODTrackindex, PODindex, LocalFilename FROM PodcastTracktable WHERE LocalFilename IS NOT NULL");
@@ -641,7 +641,7 @@ function check_sql_tables() {
 				empty_modified_cache_dirs(44);
 				generic_sql_query("UPDATE Statstable SET Value = 44 WHERE Item = 'SchemaVer'", true);
 				break;
-				
+
 		}
 		$sv++;
 	}
@@ -702,11 +702,11 @@ function track_date_check($range, $flag) {
 		case ADDED_ALL_TIME:
 			return '';
 			break;
-			
+
 		case ADDED_TODAY:
 			return 'AND DATE_SUB(CURDATE(), INTERVAL 1 DAY) <= DateAdded';
 			break;
-			
+
 		case ADDED_THIS_WEEK:
 			return 'AND DATE_SUB(CURDATE(), INTERVAL 7 DAY) <= DateAdded';
 			break;
@@ -714,16 +714,16 @@ function track_date_check($range, $flag) {
 		case ADDED_THIS_MONTH:
 			return 'AND DATE_SUB(CURDATE(), INTERVAL 1 MONTH) <= DateAdded';
 			break;
-			
+
 		case ADDED_THIS_YEAR:
 			return 'AND DATE_SUB(CURDATE(), INTERVAL 1 YEAR) <= DateAdded';
 			break;
-		
+
 		default:
 			debuglog("ERROR! Unknown Collection Range ".$range,"SQL");
 			return '';
 			break;
-			
+
 	}
 }
 
