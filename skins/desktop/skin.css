@@ -211,7 +211,6 @@
     margin-right:4px;
     height:20px;
     width:20px;
-    font-size:20px;
     vertical-align:middle;
 }
 
@@ -253,7 +252,6 @@
 .rating-icon-big {
     height: 20px;
     width: 100px;
-    font-size:20px;
     cursor: pointer;
     vertical-align:middle;
 }
@@ -261,7 +259,6 @@
 .rating-icon-small {
     height: 14px;
     width: 70px;
-    font-size:14px;
     cursor: pointer;
     vertical-align:middle;
 }
@@ -331,7 +328,6 @@ i.topdrop
 .menu {
     width:14px;
     height: 14px;
-    font-size:18px;
     vertical-align:middle;
     cursor:pointer;
 }
@@ -442,7 +438,6 @@ div.rightmenu
     margin:2px;
     height:16px;
     width:16px;
-    font-size:16px;
     vertical-align:middle;
 }
 
@@ -516,5 +511,4 @@ div.rightmenu
 {
     width: 250px;
     height: 250px;
-    font-size:250px;
 }

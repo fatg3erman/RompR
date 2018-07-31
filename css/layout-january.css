@@ -731,7 +731,6 @@ div.item div.containerbox.vertical.expand {
 .svg-square {
     width:32px;
     height:32px;
-    font-size:32px;
     vertical-align:middle;
     margin-right:8px;
 }
@@ -1420,14 +1419,12 @@ div.lyrics p {
 .newpodicon {
     height:24px;
     width:24px;
-    font-size:24px;
     margin-top:2px;
 }
 
 .oldpodicon {
     height:20px;
     width:20px;
-    font-size:20px;
     margin-top:2px;
 }
 

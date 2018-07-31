@@ -481,14 +481,12 @@ div.rightmenu {
     margin-right:4px;
     height:26px;
     width:26px;
-    font-size:26px;
     vertical-align:middle;
 }
 
 .rating-icon-big {
     height: 34px;
     width: 140px;
-    font-size:34px;
     line-height:1em;
     padding-bottom:4px;
     cursor: pointer;
@@ -498,7 +496,6 @@ div.rightmenu {
 .rating-icon-small {
     height: 14px;
     width: 70px;
-    font-size:14px;
     cursor: pointer;
     vertical-align:middle;
 
@@ -633,12 +630,10 @@ div.rightmenu {
     .controlbutton {
         width:38px !important;
         height:38px !important;
-        font-size:38px !important;
     }
     .controlbutton-small {
         width:32px !important;
         height:32px !important;
-        font-size:32px !important;
     }
 }
 
