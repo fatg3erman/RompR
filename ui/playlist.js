@@ -119,6 +119,9 @@ var playlist = function() {
             },
 
             load: function(which, param) {
+                if (prefs.debug_enabled) {
+                    infobar.notify(infobar.LONGNOTIFY, 'WARNING! Running Personal Radio with debugging enabled may crash your browser!');
+                }
                 debug.mark("RADIO MANAGER","Loading Smart",which,param);
                 if (mode == which && (!param || param == prefs.radioparam)) {
                     debug.log("RADIO MANAGER", " .. that radio is already playing");
@@ -283,8 +286,9 @@ var playlist = function() {
 
         updateFailure: function(jqxhr, response, error) {
             debug.error("PLAYLIST","Got notified that an update FAILED",error,response,jqxhr);
-            infobar.notify(infobar.PERMERROR, language.gettext("label_playlisterror"));
-            update_error = true;
+            if (update_error === false) {
+                update_error = infobar.notify(infobar.PERMERROR, language.gettext("label_playlisterror"));
+            }
             clearTimeout(retrytimer);
             last_reqid = reqid;
             retrytimer = setTimeout(playlist.repopulate, 2000);
@@ -304,8 +308,8 @@ var playlist = function() {
 
             last_reqid = reqid;
 
-            if (update_error) {
-                infobar.removenotify();
+            if (update_error !== false) {
+                infobar.removenotify(update_error);
                 update_error = false;
             }
             debug.log("PLAYLIST","Got Playlist from Apache",list);

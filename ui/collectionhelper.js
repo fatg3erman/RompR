@@ -6,6 +6,7 @@ var collectionHelper = function() {
     var update_load_timer_running = false;
     var returned_data = new Array();
     var update_timer = null;
+    var notify = false;
 
     function scanFiles(cmd) {
         collectionHelper.prepareForLiftOff(language.gettext("label_updating"));
@@ -67,6 +68,10 @@ var collectionHelper = function() {
                     data = null;
                     if (albums.match(/rebuild/)) {
                         infobar.notify(infobar.NOTIFY,"Music Collection Updated");
+                        if (notify !== false) {
+                            infobar.removenotify(notify);
+                            notify = false;
+                        }
                         collectionHelper.scootTheAlbums($("#collection"));
                     }
                     layoutProcessor.postAlbumActions($('#collection'));
@@ -85,6 +90,10 @@ var collectionHelper = function() {
                     $("#collection").html(html);
                     debug.error("PLAYER","Failed to generate collection",data);
                     infobar.notify(infobar.ERROR,"Music Collection Update Failed");
+                    if (notify !== false) {
+                        infobar.removenotify(notify);
+                        notify = false;
+                    }
                     player.updatingcollection = false;
                 }
             });
@@ -213,7 +222,7 @@ var collectionHelper = function() {
         },
 
         prepareForLiftOff: function(text) {
-            infobar.notify(infobar.PERMNOTIFY,text);
+            notify = infobar.notify(infobar.PERMNOTIFY,text);
             $("#collection").empty();
             doSomethingUseful('collection', text);
             var x = $('<div>',{ id: 'updatemonitor', class: 'tiny', style: 'padding-left:1em;margin-right:1em'}).insertAfter($('#spinner_collection'));

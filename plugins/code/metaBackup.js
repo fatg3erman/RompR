@@ -1,5 +1,5 @@
 var metaBackup = function() {
-	
+
 	var mbb = null;
 
 	function getBackupData() {
@@ -21,7 +21,6 @@ var metaBackup = function() {
         		debug.log("BACKUPS","Success");
         		if (thing == 'restore') {
         			collectionHelper.forceCollectionReload();
-        			infobar.removenotify();
         		}
         		getBackupData();
         	},

@@ -1,6 +1,5 @@
 var infobar = function() {
 
-    var notifytimer = null;
     var mousepos;
     var sliderclamps = 0;
     var vtimer = null;
@@ -16,6 +15,7 @@ var infobar = function() {
     var canvas = null;
     var context = null;
     var singling = false;
+    var notifycounter = 0;
 
     function scrobble() {
         if (!scrobbled) {
@@ -165,6 +165,7 @@ var infobar = function() {
         PERMERROR: 2,
         PERMNOTIFY: 3,
         SMARTRADIO: 4,
+        LONGNOTIFY: 5,
 
         biggerize: function(numlines) {
 
@@ -480,10 +481,10 @@ var infobar = function() {
                         state = s;
                         switch (state) {
                             case "play":
-                                $(".icon-play-circled:not(.choose_nowplaying)").removeClass("icon-play-circled").addClass("icon-pause-circled");
+                                $(".icon-play-circled").removeClass("icon-play-circled").addClass("icon-pause-circled");
                                 break;
                             default:
-                                $(".icon-pause-circled:not(.choose_nowplaying)").removeClass("icon-pause-circled").addClass("icon-play-circled");
+                                $(".icon-pause-circled").removeClass("icon-pause-circled").addClass("icon-play-circled");
                                 break;
                         }
                     }
@@ -632,29 +633,62 @@ var infobar = function() {
         },
 
         notify: function(type, message) {
-            var html = '<div class="containerbox menuitem">';
-            if (type == infobar.NOTIFY || type == infobar.PERMNOTIFY) {
-                html += '<div class="fixed"><i class="icon-info-circled svg-square"></i></div>';
-            } else if (type == infobar.ERROR || type == infobar.PERMERROR) {
-                html += '<div class="fixed"><i class="icon-attention-1 svg-square"></i></div>';
-            } else if (type == infobar.SMARTRADIO) {
-                html += '<div class="fixed"><i class="icon-wifi svg-square"></i></div>';
+            var div = $('<div>', {
+                class: 'containerbox menuitem notification new',
+                id: 'notify_'+notifycounter
+            }).appendTo('#notifications');
+            var icon = $('<div>', {class: 'fixed'}).appendTo(div);
+            switch (type) {
+                case infobar.NOTIFY:
+                case infobar.PERMNOTIFY:
+                case infobar.LONGNOTIFY:
+                    icon.append($('<i>', {
+                        class: 'icon-info-circled svg-square'
+                    }));
+                    break;
+
+                case infobar.ERROR:
+                case infobar.PERMERROR:
+                    icon.append($('<i>', {
+                        class: 'icon-attention-1 svg-square'
+                    }));
+                    break;
+
+                case infobar.SMARTRADIO:
+                    icon.append($('<i>', {
+                        class: 'icon-wifi svg-square'
+                    }));
+                    break;
             }
-            html += '<div class="expand indent">'+message+'</div></div>';
-            $('#notifications').empty().html(html);
-            html = null;
-            clearTimeout(notifytimer);
+            div.append($('<div>', {
+                class: 'expand indent'
+            }).html(message));
             if ($('#notifications').is(':hidden')) {
                 $('#notifications').slideToggle('slow');
             }
+            div.removeClass('new');
             if (type !== infobar.PERMERROR && type !== infobar.PERMNOTIFY) {
-                notifytimer = setTimeout(this.removenotify, 5000);
+                setTimeout($.proxy(infobar.removenotify, div, notifycounter), type == infobar.LONGNOTIFY ? 10000 : 5000);
             }
+            notifycounter++;
+            return notifycounter-1;
         },
 
-        removenotify: function() {
-            if ($('#notifications').is(':visible')) {
-                $('#notifications').slideToggle('slow');
+        removenotify: function(data) {
+            if ($('#notifications>div').length == 1) {
+                debug.log("INFOBAR","Removing single notification");
+                if ($('#notifications').is(':visible')) {
+                    $('#notifications').slideToggle('slow', function() {
+                        $('#notifications').empty();
+                    });
+                } else {
+                    $('#notifications').empty();
+                }
+            } else {
+                debug.log("INFOBAR","Removing notification", data);
+                $('#notify_'+data).fadeOut('slow', function() {
+                    $('#notify_'+data).remove();
+                });
             }
         },
 

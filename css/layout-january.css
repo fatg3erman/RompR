@@ -980,7 +980,7 @@ div.topdropmenu div {
 	opacity: 1 !important;
 }
 
-div.topdropmenu div.notenabled {
+div.topdropmenu div.notenabled, div.togglecontainer.notenabled {
 	opacity: 0.2 !important;
 }
 
@@ -2135,3 +2135,15 @@ table.fileinfotable tr td:nth-child(2) {
 	margin-top: 0.5em;
 	margin-bottom: 0.5em;
 }
+
+div.notification {
+	opacity: 1;
+	transition: opacity 0.5s ease;
+}
+
+div.notification.new {
+	opacity: 0 !important;
+	transition: opacity 0.5s ease;
+}
+
+
