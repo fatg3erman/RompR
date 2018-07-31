@@ -35,7 +35,7 @@ printOutputCheckboxes();
             <i class="noshrink icon-info-circled topimg choose_infopanel tright"></i>
             <i class="noshrink choose_prefs icon-cog-alt topimg tright"></i>
         </div>
-        <i class="icon-play-circled topimg choose_nowplaying expand"></i>
+        <i class="icon-no-response-playbutton topimg choose_nowplaying expand"></i>
         <i class="icon-music topimg choose_albumlist expand"></i>
         <i class="icon-search topimg choose_searcher expand"></i>
         <i class="icon-folder-open-empty onlywide topimg choose_filelist expand"></i>

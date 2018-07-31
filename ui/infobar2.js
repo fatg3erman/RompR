@@ -17,6 +17,9 @@ var infobar = function() {
     var singling = false;
     var notifycounter = 0;
 
+    const INVISIBLE_SPACE = '##!##';
+    var re = new RegExp(INVISIBLE_SPACE+'(.*?)'+INVISIBLE_SPACE, 'g');
+
     function scrobble() {
         if (!scrobbled) {
             debug.trace("INFOBAR","Track is not scrobbled");
@@ -62,7 +65,7 @@ var infobar = function() {
         setWindowTitle(stuff.doctitle);
         npinfo = stuff.textbits
         debug.log("INFOBAR","Now Playing Info",npinfo);
-        infobar.biggerize(2);
+        infobar.biggerize();
     }
 
     function mungeTrackInfo(info) {
@@ -121,42 +124,63 @@ var infobar = function() {
 
     }
 
-    function getWidth(text, fontsize) {
-
-        if (canvas == null) {
-            canvas = document.createElement("canvas");
-            context = canvas.getContext("2d");
-        }
+    function textMeasurer(maxwidth) {
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('2d');
         var font = $("#nowplaying").css("font-family");
-        context.font = "bold "+fontsize+"px "+font;
-        var metrics = context.measureText(text);
-        return metrics.width;
+
+        this.return_fontsize = function(text, startsize) {
+            context.font = "bold "+startsize+"px "+font;
+            var metrics = context.measureText(text.replace(re, '$1'));
+            var factor = Math.min(1, maxwidth/metrics.width);
+            return Math.floor(startsize*factor);
+        }
     }
 
-    function checkLines(lines, maxwidth) {
+    function getLines(lines) {
+
+        var numlines = lines.length;
+        var tm = new textMeasurer(lines[0].maxwidth);
+
+        if (npinfo.title) {
+            lines[0].text = npinfo.title;
+        } else if (npinfo.album) {
+            lines[0].text = npinfo.album;
+        }
+
+        switch (numlines) {
+            case 2:
+                if (npinfo.artist && npinfo.album) {
+                    lines[1].text = INVISIBLE_SPACE+frequentLabels.by+INVISIBLE_SPACE+" "+npinfo.artist+" "
+                        +INVISIBLE_SPACE+frequentLabels.on+INVISIBLE_SPACE+" "+npinfo.album;
+                } else if (npinfo.stream) {
+                    lines[1].text = npinfo.stream;
+                } else if (npinfo.album && npinfo.title) {
+                    lines[1].text = INVISIBLE_SPACE+frequentLabels.on+INVISIBLE_SPACE+" "+npinfo.album;
+                }
+                break;
+
+            case 3:
+                lines[1].text = INVISIBLE_SPACE+frequentLabels.by+INVISIBLE_SPACE+" "+npinfo.artist;
+                lines[2].text = INVISIBLE_SPACE+frequentLabels.on+INVISIBLE_SPACE+" "+npinfo.album;
+                break;
+
+            default:
+                debug.warn("INFOBAR","Invalid numlines",numlines);
+                break;
+
+        }
+
+        var avfs = 0;
         for (var i in lines) {
-            if (lines[i].width > maxwidth) return true;
+            lines[i].fontsize = tm.return_fontsize(lines[i].text, lines[i].fontsize);
+            if (i > 0) {
+                avfs += lines[i].fontsize;
+            }
         }
-    }
 
-    function splitLongLine(lines, tosplit) {
-        var middle = Math.floor(lines[tosplit].text.length / 2);
-        var before = lines[tosplit].text.lastIndexOf(', ', middle);
-        var after = lines[tosplit].text.indexOf(', ', middle + 1);
+        return avfs/(numlines-1);
 
-        if (before == -1 || (after != -1 && middle - before >= after - middle)) {
-            middle = after;
-        } else {
-            middle = before;
-        }
-        var retval = lines[tosplit].text.substr(middle + 1);
-        var spliggo = lines[tosplit].text.substr(0, middle)+",";
-        if (spliggo.length < 6) {
-            return null;
-        } else {
-            lines[tosplit].text = spliggo;
-            return retval;
-        }
     }
 
     return {
@@ -167,173 +191,77 @@ var infobar = function() {
         SMARTRADIO: 4,
         LONGNOTIFY: 5,
 
-        biggerize: function(numlines) {
+        biggerize: function() {
 
-            // Fit the nowplaying text in the panel, always trying to make the best use of the available height
-            // We adjust by checking width, since we don't wrap lines as that causes hell with the layout
             if (Object.keys(npinfo).length == 0 || $("#nptext").is(':hidden') || $("#infobar").is(':hidden')) {
                 debug.log("INFOBAR","Not biggerizing because", Object.keys(npinfo).length, $("#nptext").is(':hidden'), $("#infobar").is(':hidden'));
                 $("#nptext").html("");
                 return;
             }
-            debug.debug("INFOBAR","Biggerizing",npinfo,numlines);
-            // Start by trying with two lines:
-            // Track Name
-            // by Artist on Album
-            if (!numlines) numlines = 2;
-            var maxlines =  (npinfo.artist && npinfo.album && npinfo.title) ? 3 : 2;
+            debug.debug("INFOBAR","Biggerizing",npinfo);
+
             var parent = $("#nptext").parent();
             var maxheight = parent.height();
-            var splittext = null;
-            var maxwidth = parent.width() - 8;
-            // debug.trace("INFOBAR","Maxwidth is",maxwidth);
-            if (maxwidth <= 8) {
+            var maxwidth = parent.width();
+            $("#nptext").empty();
+            if (maxwidth <= 24) {
                 debug.warn("INFOBAR", "Insufficient Space for text");
-                $("#nptext").html("");
                 return;
             }
-            var lines = [
-                {weight: (numlines == 2 ? 62 : 46), width: maxwidth+1, text: " "},
-                {weight: (numlines == 2 ? 38 : 26), width: maxwidth+1, text: " "}
+
+            /*
+                Figure out the best way to fit the text into the available height.
+                We work out start sizes based on the height of the container (first line bigger, subsequent lines smaller)
+                then adjust the sizes so the width of each line fits the container width,
+                and choose to use either 2 or three lines depending on which one
+                produces the largest average font size for the lines with smaller text
+            */
+
+            var two_lines = [
+                {fontsize: Math.floor(maxheight*0.60*0.6666), maxwidth: maxwidth, text: " "},
+                {fontsize: Math.floor(maxheight*0.40*0.6666), maxwidth: maxwidth, text: " "}
             ];
 
-            if (npinfo.title) {
-                lines[0].text = npinfo.title;
-            } else if (npinfo.album) {
-                lines[0].text = npinfo.album;
+            var two_lines_av_size = getLines(two_lines);
+            var three_lines_av_size = 0;
+
+            if (npinfo.artist && npinfo.album && npinfo.title) {
+                var three_lines = [
+                    {fontsize: Math.floor(maxheight*0.48*0.6666), maxwidth: maxwidth, text: " "},
+                    {fontsize: Math.floor(maxheight*0.26*0.6666), maxwidth: maxwidth, text: " "},
+                    {fontsize: Math.floor(maxheight*0.26*0.6666), maxwidth: maxwidth, text: " "}
+                ]
+                three_lines_av_size = getLines(three_lines);
             }
 
-            switch (numlines) {
-                case 2:
-                    if (npinfo.artist && npinfo.album) {
-                        lines[1].text = frequentLabels.by+" "+npinfo.artist+" "+frequentLabels.on+" "+npinfo.album;
-                    } else if (npinfo.stream) {
-                        lines[0].weight = 65;
-                        lines[1].weight = 35;
-                        lines[1].text = npinfo.stream;
-                    } else if (npinfo.album && npinfo.title) {
-                        lines[1].text = frequentLabels.on+" "+npinfo.album;
-                    }
-                    if (lines[1].text == " ") {
-                        lines.pop();
-                        lines[0].weight = 100;
-                    }
-                    break;
-
-                case 3:
-                    lines.push({weight: 26, width: maxwidth+1, text: " "});
-                    lines[1].text = frequentLabels.by+" "+npinfo.artist;
-                    lines[2].text = frequentLabels.on+" "+npinfo.album;
-                    if (lines[1].text.length >= lines[2].text.length*2) {
-                        splittext = splitLongLine(lines,1);
-                    }
-                    break;
-
-                default:
-                    debug.warn("INFOBAR","Invalid numlines",numlines);
-                    break;
-
-            }
-
-            var totalheight = 0;
-            while( checkLines(lines, maxwidth) ) {
-                var factor = 100;
-                totalheight = 0;
-                for (var i in lines) {
-                    var f = maxwidth/lines[i].width;
-                    if (f < factor) factor = f;
-                }
-                for (var i in lines) {
-                    lines[i].weight = lines[i].weight * factor;
-                    // The 0.6666 comes in because the font height is 2/3rds of the line height,
-                    // or to put it another way the line height is 1.5x the font height
-                    lines[i].height = Math.round((maxheight/100)*lines[i].weight*0.6666);
-                    if (i == 0 || numlines == 2 || splittext == null) {
-                        lines[i].width = getWidth(lines[i].text, lines[i].height);
-                    } else {
-                        if (i == 1) {
-                            lines[i].width = getWidth(lines[i].text, lines[i].height);
-                        } else {
-                            lines[i].width = getWidth(splittext+" "+lines[2].text, lines[i].height);
-                        }
-                    }
-                    totalheight += Math.round(lines[i].height*1.5);
-                }
-            }
-
-            // If this leaves enough space to split it into 3 lines, do that
-            // Track Name
-            // by Artist
-            // on Album
-            if (numlines < maxlines && totalheight < (maxheight - Math.round(lines[1].height*1.5))) {
-                infobar.biggerize(numlines+1);
-                return;
-            }
-
-            // Now, if there's still vertical space, we can make the title bigger.
-            // Making one of the other two lines bigger looks bad
-            if (totalheight < maxheight) {
-                lines[0].height = Math.round(lines[0].height*(maxheight/totalheight));
-                lines[0].width = getWidth(lines[0].text, lines[0].height);
-                if (lines[0].width > maxwidth) {
-                    lines[0].height = Math.round(lines[0].height*(maxwidth/lines[0].width));
-                    lines[0].width = getWidth(lines[0].text, lines[0].height);
-                }
-            }
-
-            // Min line neight is 7 pixels. This isn't completely safe but it'll just run off the edge if it's too long
-            totalheight = 0;
-            for (var i in lines) {
-                if (lines[i].height < 7) {
-                    lines[i].height = 7;
-                }
-                totalheight += Math.round(lines[i].height*1.5);
-            }
-
-            // Now adjust the text so it has appropriate italic and bold markup.
-            // We measured it all in bold, because canvas doesn't support html tags,
-            // but normal-italic is usally around the same width as bold.
-            lines[0].text = '<b>'+lines[0].text+'</b>';
-            if (numlines == 2) {
-                if (npinfo.artist && npinfo.album) {
-                    lines[1].text = '<i>'+frequentLabels.by+"</i> <b>"+npinfo.artist+"</b> <i>"+frequentLabels.on+"</i> <b>"+npinfo.album+'</b>';
-                } else if (npinfo.stream) {
-                    lines[1].text = '<i>'+npinfo.stream+'</i>';
-                } else if (npinfo.album && npinfo.title) {
-                    lines[1].text = "<i>"+frequentLabels.on+"</i> <b>"+npinfo.album+'</b>';
-                }
-            } else {
-                if (splittext) {
-                    var n = [{text: npinfo.artist}];
-                    splittext = splitLongLine(n,0);
-                    lines[1].text = '<i>'+frequentLabels.by+"</i> <b>"+n[0].text+'</b>';
-                    lines[2].text = '<b>'+splittext+'</b> <i>'+frequentLabels.on+"</i> <b>"+npinfo.album+'</b>';
-                } else {
-                    lines[1].text = '<i>'+frequentLabels.by+"</i> <b>"+npinfo.artist+'</b>';
-                    lines[2].text = '<i>'+frequentLabels.on+"</i> <b>"+npinfo.album+'</b>';
-                }
+            output_lines = two_lines;
+            if (three_lines_av_size > two_lines_av_size) {
+                output_lines = three_lines;
             }
 
             var html = "";
-            for (var i in lines) {
-                html += '<span style="font-size:'+lines[i].height+'px;line-height:'+Math.round(lines[i].height*1.5)+'px">'+lines[i].text+'</span>';
-                if (i < lines.length-1) {
-                    html += '<br />';
+            if (output_lines[0] != ' ') {
+                var totalheight = 0;
+                for (var i in output_lines) {
+                    var lineheight = Math.floor(output_lines[i].fontsize*1.5);
+                    totalheight += lineheight;
+                    $('#nptext').append($('<span>', {style: 'font-size:'+output_lines[i].fontsize+'px;line-height:'+lineheight+'px'})
+                        .html(output_lines[i].text.replace(re, '<i>$1</i>')));
+                    if (i < output_lines.length-1) {
+                        $('#nptext').append('<br />');
+                    }
+                }
+
+                var top = Math.max(0, Math.floor((maxheight - totalheight)/2));
+                $("#nptext").css("padding-top", top+"px");
+
+                // Make sure the line spacing caused by the <br> is consistent
+                if (output_lines[1]) {
+                    $("#nptext").css("font-size", output_lines[1].fontsize+"px");
+                } else {
+                    $("#nptext").css("font-size", output_lines[0].fontsize+"px");
                 }
             }
-
-            var top = Math.floor((maxheight - totalheight)/2);
-            if (top < 0) top = 0;
-            $("#nptext").css("padding-top", top+"px");
-
-            // Make sure the line spacing caused by the <br> is consistent
-            if (lines[1]) {
-                $("#nptext").css("font-size", lines[1].height+"px");
-            } else {
-                $("#nptext").css("font-size", lines[0].height+"px");
-            }
-            debug.debug("INFOBAR","Biggerized",numlines);
-            $("#nptext").empty().html(html);
         },
 
         rejigTheText: function() {
@@ -374,7 +302,7 @@ var infobar = function() {
                     if (data.images === null) {
                         // null means playlist.emptytrack. Set the source to a file that doesn't exist
                         // and let the onerror handler do the stuff. Then if we start playing the same
-                        // album sa previously again the simage src will change and the image will be re-displayed.
+                        // album again the image src will change and the image will be re-displayed.
                         aImg.src = notafile;
                     } else if (data.images.asdownloaded == "") {
                         // No album image was supplied

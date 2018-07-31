@@ -614,6 +614,14 @@ button {
     overflow:hidden;
 }
 
+#nptext>span {
+	font-weight:bold;
+}
+
+#nptext>span>i {
+	font-weight:normal;
+}
+
 /*
 =====================================================================
 = General Classes
