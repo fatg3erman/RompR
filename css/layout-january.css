@@ -616,7 +616,6 @@ button {
 
 #nptext {
 	opacity: 0;
-	line-height:120%;
 }
 
 #nptext.ready {
@@ -635,14 +634,17 @@ button {
 
 #nptext>p.line0 {
 	font-size:100%;
+	line-height:125%;
 }
 
 #nptext>p.line1 {
 	font-size:75%;
+	line-height:125%;
 }
 
 #nptext>p.line2 {
 	font-size:75%;
+	line-height:125%;
 }
 
 #nptext.calculating {

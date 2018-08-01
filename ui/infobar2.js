@@ -12,12 +12,8 @@ var infobar = function() {
     var markedaslistened = false;
     var fontsize = 8;
     var ftimer = null;
-    var canvas = null;
-    var context = null;
     var singling = false;
     var notifycounter = 0;
-
-    var re = /<i>(.*?)<\/i>/g;
 
     function scrobble() {
         if (!scrobbled) {
@@ -63,7 +59,7 @@ var infobar = function() {
         var stuff = mungeTrackInfo(info);
         setWindowTitle(stuff.doctitle);
         npinfo = stuff.textbits
-        debug.log("INFOBAR","Now Playing Info",npinfo);
+        debug.debug("INFOBAR","Now Playing Info",npinfo);
         infobar.biggerize();
     }
 
@@ -145,11 +141,9 @@ var infobar = function() {
             case 3:
                 lines = [
                     {text: " "},
-                    {text: " "},
-                    {text: " "}
+                    {text: '<i>'+frequentLabels.by+'</i>'+" "+npinfo.artist},
+                    {text: '<i>'+frequentLabels.on+'</i>'+" "+npinfo.album}
                 ]
-                lines[1].text = '<i>'+frequentLabels.by+'</i>'+" "+npinfo.artist;
-                lines[2].text = '<i>'+frequentLabels.on+'</i>'+" "+npinfo.album;
                 break;
 
         }
@@ -168,9 +162,6 @@ var infobar = function() {
         nptext.empty();
         for (var i in output_lines) {
             nptext.append($('<p>', {class: 'line'+i}).html(output_lines[i].text));
-            // if (i < output_lines.length-1) {
-            //     nptext.append('<br />');
-            // }
         }
     }
 
@@ -195,17 +186,18 @@ var infobar = function() {
             var parent = nptext.parent();
             var maxheight = parent.height();
 
-            var fontsize = (maxheight/1.75)/1.2;
+            // Start with a font size that will fill the height if no text wraps
+            var fontsize = Math.floor((maxheight/1.75)/1.25);
             var two_lines = getLines(2);
 
-            nptext.empty().css('font-size', fontsize).removeClass('ready').addClass('calculating');
+            nptext.empty().css('font-size', fontsize+'px').css('padding-top', '0px').removeClass('ready').addClass('calculating');
 
             if (two_lines[0] != ' ') {
                 put_text_in_area(two_lines, nptext);
 
                 while (nptext.outerHeight(true) > maxheight) {
                     fontsize -= 1;
-                    nptext.css('font-size', fontsize);
+                    nptext.css('font-size', fontsize+'px');
                 }
 
                 if (npinfo.title && npinfo.album && npinfo.artist) {
@@ -226,7 +218,7 @@ var infobar = function() {
 
                 }
 
-                var top = Math.max(0, Math.floor((maxheight - nptext.outerHeight(true))/2));
+                var top = Math.max(0, Math.floor((maxheight - nptext.height())/2));
                 nptext.css("padding-top", top+"px").removeClass('calculating').addClass('ready');
 
             }
