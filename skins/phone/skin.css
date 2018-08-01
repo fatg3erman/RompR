@@ -87,7 +87,7 @@ div {
 }
 
 #nowplaying {
-    white-space:nowrap;
+    /* white-space:nowrap; */
     margin:auto;
     padding:4px;
 }

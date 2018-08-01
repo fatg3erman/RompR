@@ -46,7 +46,7 @@
     font-size:8pt;
     padding-top:0px;
     padding-bottom:0px;
-    white-space:nowrap;
+    /* white-space:nowrap; */
     height:60px;
     width:100%;
     overflow:hidden;

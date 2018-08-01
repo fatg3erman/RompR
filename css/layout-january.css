@@ -614,12 +614,39 @@ button {
     overflow:hidden;
 }
 
-#nptext>span {
-	font-weight:bold;
+#nptext {
+	opacity: 0;
+	line-height:120%;
 }
 
-#nptext>span>i {
+#nptext.ready {
+	opacity: 1;
+}
+
+#nptext>p {
+	font-weight:bold;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+#nptext>p>i {
 	font-weight:normal;
+}
+
+#nptext>p.line0 {
+	font-size:100%;
+}
+
+#nptext>p.line1 {
+	font-size:75%;
+}
+
+#nptext>p.line2 {
+	font-size:75%;
+}
+
+#nptext.calculating {
+	opacity: 0;
 }
 
 /*

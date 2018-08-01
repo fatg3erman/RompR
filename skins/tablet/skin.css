@@ -79,7 +79,7 @@ select {
 }
 
 #nowplaying {
-    white-space:nowrap;
+    /* white-space:nowrap; */
     margin:auto;
     width:95%;
 }

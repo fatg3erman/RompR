@@ -17,8 +17,7 @@ var infobar = function() {
     var singling = false;
     var notifycounter = 0;
 
-    const INVISIBLE_SPACE = '##!##';
-    var re = new RegExp(INVISIBLE_SPACE+'(.*?)'+INVISIBLE_SPACE, 'g');
+    var re = /<i>(.*?)<\/i>/g;
 
     function scrobble() {
         if (!scrobbled) {
@@ -124,23 +123,36 @@ var infobar = function() {
 
     }
 
-    function textMeasurer(maxwidth) {
-        var canvas = document.createElement('canvas');
-        var context = canvas.getContext('2d');
-        var font = $("#nowplaying").css("font-family");
+    function getLines(numlines) {
 
-        this.return_fontsize = function(text, startsize) {
-            context.font = "bold "+startsize+"px "+font;
-            var metrics = context.measureText(text.replace(re, '$1'));
-            var factor = Math.min(1, maxwidth/metrics.width);
-            return Math.floor(startsize*factor);
+        var lines;
+        switch (numlines) {
+            case 2:
+                lines = [
+                    {text: " "},
+                    {text: " "}
+                ];
+                if (npinfo.artist && npinfo.album) {
+                    lines[1].text = '<i>'+frequentLabels.by+'</i>'+' '+npinfo.artist+" "
+                        +'<i>'+frequentLabels.on+'</i>'+" "+npinfo.album;
+                } else if (npinfo.stream) {
+                    lines[1].text = npinfo.stream;
+                } else if (npinfo.album && npinfo.title) {
+                    lines[1].text = '<i>'+frequentLabels.on+'</i>'+" "+npinfo.album;
+                }
+                break;
+
+            case 3:
+                lines = [
+                    {text: " "},
+                    {text: " "},
+                    {text: " "}
+                ]
+                lines[1].text = '<i>'+frequentLabels.by+'</i>'+" "+npinfo.artist;
+                lines[2].text = '<i>'+frequentLabels.on+'</i>'+" "+npinfo.album;
+                break;
+
         }
-    }
-
-    function getLines(lines) {
-
-        var numlines = lines.length;
-        var tm = new textMeasurer(lines[0].maxwidth);
 
         if (npinfo.title) {
             lines[0].text = npinfo.title;
@@ -148,39 +160,18 @@ var infobar = function() {
             lines[0].text = npinfo.album;
         }
 
-        switch (numlines) {
-            case 2:
-                if (npinfo.artist && npinfo.album) {
-                    lines[1].text = INVISIBLE_SPACE+frequentLabels.by+INVISIBLE_SPACE+" "+npinfo.artist+" "
-                        +INVISIBLE_SPACE+frequentLabels.on+INVISIBLE_SPACE+" "+npinfo.album;
-                } else if (npinfo.stream) {
-                    lines[1].text = npinfo.stream;
-                } else if (npinfo.album && npinfo.title) {
-                    lines[1].text = INVISIBLE_SPACE+frequentLabels.on+INVISIBLE_SPACE+" "+npinfo.album;
-                }
-                break;
+        return lines;
 
-            case 3:
-                lines[1].text = INVISIBLE_SPACE+frequentLabels.by+INVISIBLE_SPACE+" "+npinfo.artist;
-                lines[2].text = INVISIBLE_SPACE+frequentLabels.on+INVISIBLE_SPACE+" "+npinfo.album;
-                break;
+    }
 
-            default:
-                debug.warn("INFOBAR","Invalid numlines",numlines);
-                break;
-
+    function put_text_in_area(output_lines, nptext) {
+        nptext.empty();
+        for (var i in output_lines) {
+            nptext.append($('<p>', {class: 'line'+i}).html(output_lines[i].text));
+            // if (i < output_lines.length-1) {
+            //     nptext.append('<br />');
+            // }
         }
-
-        var avfs = 0;
-        for (var i in lines) {
-            lines[i].fontsize = tm.return_fontsize(lines[i].text, lines[i].fontsize);
-            if (i > 0) {
-                avfs += lines[i].fontsize;
-            }
-        }
-
-        return avfs/(numlines-1);
-
     }
 
     return {
@@ -200,67 +191,44 @@ var infobar = function() {
             }
             debug.debug("INFOBAR","Biggerizing",npinfo);
 
-            var parent = $("#nptext").parent();
+            var nptext = $('#nptext');
+            var parent = nptext.parent();
             var maxheight = parent.height();
-            var maxwidth = parent.width();
-            $("#nptext").empty();
-            if (maxwidth <= 24) {
-                debug.warn("INFOBAR", "Insufficient Space for text");
-                return;
-            }
 
-            /*
-                Figure out the best way to fit the text into the available height.
-                We work out start sizes based on the height of the container (first line bigger, subsequent lines smaller)
-                then adjust the sizes so the width of each line fits the container width,
-                and choose to use either 2 or three lines depending on which one
-                produces the largest average font size for the lines with smaller text
-            */
+            var fontsize = (maxheight/1.75)/1.2;
+            var two_lines = getLines(2);
 
-            var two_lines = [
-                {fontsize: Math.floor(maxheight*0.60*0.6666), maxwidth: maxwidth, text: " "},
-                {fontsize: Math.floor(maxheight*0.40*0.6666), maxwidth: maxwidth, text: " "}
-            ];
+            nptext.empty().css('font-size', fontsize).removeClass('ready').addClass('calculating');
 
-            var two_lines_av_size = getLines(two_lines);
-            var three_lines_av_size = 0;
+            if (two_lines[0] != ' ') {
+                put_text_in_area(two_lines, nptext);
 
-            if (npinfo.artist && npinfo.album && npinfo.title) {
-                var three_lines = [
-                    {fontsize: Math.floor(maxheight*0.48*0.6666), maxwidth: maxwidth, text: " "},
-                    {fontsize: Math.floor(maxheight*0.26*0.6666), maxwidth: maxwidth, text: " "},
-                    {fontsize: Math.floor(maxheight*0.26*0.6666), maxwidth: maxwidth, text: " "}
-                ]
-                three_lines_av_size = getLines(three_lines);
-            }
+                while (nptext.outerHeight(true) > maxheight) {
+                    fontsize -= 1;
+                    nptext.css('font-size', fontsize);
+                }
 
-            output_lines = two_lines;
-            if (three_lines_av_size > two_lines_av_size) {
-                output_lines = three_lines;
-            }
-
-            var html = "";
-            if (output_lines[0] != ' ') {
-                var totalheight = 0;
-                for (var i in output_lines) {
-                    var lineheight = Math.floor(output_lines[i].fontsize*1.5);
-                    totalheight += lineheight;
-                    $('#nptext').append($('<span>', {style: 'font-size:'+output_lines[i].fontsize+'px;line-height:'+lineheight+'px'})
-                        .html(output_lines[i].text.replace(re, '<i>$1</i>')));
-                    if (i < output_lines.length-1) {
-                        $('#nptext').append('<br />');
+                if (npinfo.title && npinfo.album && npinfo.artist) {
+                    /* Does it still fit if we use 3 lines -  this is because
+                        Title
+                        by Artist
+                        on Album Has A Name
+                    Looks better than
+                        Title
+                        by Artist on Album Has
+                        A Name
+                    */
+                    var three_lines = getLines(3);
+                    put_text_in_area(three_lines, nptext);
+                    if (nptext.outerHeight(true) > maxheight) {
+                        put_text_in_area(two_lines, nptext);
                     }
+
                 }
 
-                var top = Math.max(0, Math.floor((maxheight - totalheight)/2));
-                $("#nptext").css("padding-top", top+"px");
+                var top = Math.max(0, Math.floor((maxheight - nptext.outerHeight(true))/2));
+                nptext.css("padding-top", top+"px").removeClass('calculating').addClass('ready');
 
-                // Make sure the line spacing caused by the <br> is consistent
-                if (output_lines[1]) {
-                    $("#nptext").css("font-size", output_lines[1].fontsize+"px");
-                } else {
-                    $("#nptext").css("font-size", output_lines[0].fontsize+"px");
-                }
             }
         },
 
