@@ -195,6 +195,9 @@ var infobar = function() {
             if (two_lines[0] != ' ') {
                 put_text_in_area(two_lines, nptext);
 
+                // We can't simply calculate the font size based on the difference in height,
+                // because we've got text wrapping onto multiple lines and we don't know how that will
+                // change when we adjust the font size
                 while (nptext.outerHeight(true) > maxheight) {
                     fontsize -= 1;
                     nptext.css('font-size', fontsize+'px');

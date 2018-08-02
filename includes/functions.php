@@ -1101,4 +1101,37 @@ function http_status_code_string($code)
 	return $string;
 }
 
+function check_slave_actions($cmds) {
+    global $prefs;
+    //
+    // Re-check all add and playlistadd commands if we're using a Mopidy File Backend Slave
+    //
+    if ($prefs['mopidy_slave']) {
+        foreach ($cmds as $key => $cmd) {
+            // add "local:track:
+            // playlistadd "local:track:
+            if (substr($cmd, 0, 17) == 'add "local:track:' ||
+                substr($cmd, 0,25 ) == 'playlistadd "local:track:') {
+                $cmds[$key] = swap_local_for_file($cmd);
+            }
+
+        }
+    }
+    return $cmds;
+}
+
+function swap_local_for_file($string) {
+    // url encode the album art directory
+    global $prefs;
+    $path = implode("/", array_map("rawurlencode", explode("/", $prefs['music_directory_albumart'])));
+    debuglog('Replacing with '.$path,'MOPIDYSLAVE');
+    return preg_replace('#local:track:#', 'file://'.$path.'/', $string);
+}
+
+function swap_file_for_local($string) {
+    global $prefs;
+    $path = 'file://'.implode("/", array_map("rawurlencode", explode("/", $prefs['music_directory_albumart']))).'/';
+    return preg_replace('#'.$path.'#', 'local:track:', $string);
+}
+
 ?>

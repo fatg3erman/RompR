@@ -27,6 +27,7 @@ $prefs['currenthost'] = $json['currenthost'];
 set_player_connect_params();
 debuglog("  Opening Connection To ".$prefs['currenthost']);
 @open_mpd_connection();
+$cmds = check_slave_actions($cmds);
 do_mpd_command_list($cmds);
 
 // Work around Mopidy bug where it doesn't update the 'state' variable properly

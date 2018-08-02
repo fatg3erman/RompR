@@ -3,7 +3,7 @@
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 44);
+define('ROMPR_SCHEMA_VERSION', 45);
 define('ROMPR_VERSION', '1.19');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
@@ -93,7 +93,8 @@ $prefs = array(
             'host' => 'localhost',
             'port' => '6600',
             'password' => '',
-            'socket' => ''
+            'socket' => '',
+            'mopidy_slave' => false
         )
     ),
     'dev_mode' => false,
@@ -243,7 +244,8 @@ if (!property_exists($prefs['multihosts'], $prefs['currenthost'])) {
         'host' => 'localhost',
         'port' => 6600,
         'password' => '',
-        'socket' => ''
+        'socket' => '',
+        'mopidy_slave' => false
         );
     }
     $prefs['currenthost'] = 'Default';
@@ -338,6 +340,7 @@ function loadPrefs() {
 }
 
 function set_music_directory($dir) {
+    $prefs['music_directory_albumart'] = rtrim($dir, '/');
     debuglog("Creating Album Art SymLink to ".$dir,"SAVEPREFS");
     if (is_link("prefs/MusicFolders")) {
         system ("unlink prefs/MusicFolders");
@@ -413,6 +416,25 @@ function set_player_connect_params() {
 	$prefs['mpd_port'] = $prefs['multihosts']->$cockspanner->port;
 	$prefs['mpd_password'] = $prefs['multihosts']->$cockspanner->password;
 	$prefs['unix_socket'] = $prefs['multihosts']->$cockspanner->socket;
+    if (property_exists($prefs['multihosts']->$cockspanner, 'mopidy_slave')) {
+        $prefs['mopidy_slave'] = $prefs['multihosts']->$cockspanner->mopidy_slave;
+    } else {
+        // Catch the case where we haven't yet upgraded the player defs
+        $prefs['mopidy_slave'] = false;
+    }
+}
+
+function upgrade_host_defs($ver) {
+    global $prefs;
+    foreach ($prefs['multihosts'] as $key => $value) {
+        switch ($ver) {
+            case 45:
+                $prefs['multihosts']->{$key}->mopidy_slave = false;
+                break;
+        }
+    }
+    savePrefs();
+    set_player_connect_params();
 }
 
 ?>

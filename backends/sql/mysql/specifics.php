@@ -642,6 +642,12 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 44 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 44:
+				debuglog("Updating FROM Schema version 44 TO Schema version 45","SQL");
+				upgrade_host_defs(45);
+				generic_sql_query("UPDATE Statstable SET Value = 45 WHERE Item = 'SchemaVer'", true);
+				break;
+
 		}
 		$sv++;
 	}

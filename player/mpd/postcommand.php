@@ -29,16 +29,16 @@ if ($is_connected) {
     if ($json) {
 
         foreach ($json as $cmd) {
-            
+
             debuglog("RAW command : ".implode(' ', $cmd),"POSTCOMMAND",9);
-            
+
             switch ($cmd[0]) {
                 case "addtoend":
                     require_once("backends/sql/backend.php");
                     debuglog("Addtoend ".$cmd[1],"POSTCOMMAND");
                     $cmds = array_merge($cmds, playAlbumFromTrack($cmd[1]));
                     break;
-                    
+
                 case 'playlisttoend':
                     debuglog("Playing playlist ".$cmd[1]." from position ".$cmd[2]." to end","POSTCOMMAND");
                     $putinplaylistarray = true;
@@ -48,7 +48,7 @@ if ($is_connected) {
                         $cmds[] = 'add "'.$url.'"';
                     }
                     break;
-                                    
+
                 case "additem":
                     require_once("backends/sql/backend.php");
                     debuglog("Adding Item ".$cmd[1],"POSTCOMMAND");
@@ -68,7 +68,7 @@ if ($is_connected) {
                     require_once ("utils/getInternetPlaylist.php");
                     $cmds = array_merge($cmds, load_internet_playlist($cmd[1], $cmd[2], $cmd[3]));
                     break;
-                    
+
                 case "addremoteplaylist":
                     debuglog("  URL is ".$cmd[1],"POSTCOMMAND");
                     // First, see if we can just 'load' the remote playlist. This is better with MPD
@@ -117,7 +117,7 @@ if ($is_connected) {
                     $thing = array('searchaddpl',$cmd[1],'base',$cmd[2]);
                     $cmds[] = join_command_string($thing);
                     break;
-                    
+
                 case "resume":
                     debuglog("Adding Track ".$cmd[1],"POSTCOMMAND");
                     debuglog("  .. and seeking position ".$cmd[3]." to ".$cmd[2],"POSTCOMMAND");
@@ -126,7 +126,7 @@ if ($is_connected) {
                     $expected_state = 'play';
                     $do_resume_seek = array($cmd[3], $cmd[2]);
                     break;
-                    
+
                 case "seekpodcast":
                     $expected_state = 'play';
                     $do_resume_seek_id = array($cmd[1], $cmd[2]);
@@ -164,6 +164,8 @@ if ($is_connected) {
         $playlist_movefrom++;
         $playlist_tracksadded--;
     }
+
+    $cmds = check_slave_actions($cmds);
 
     //
     // Send the command list to mpd
@@ -291,7 +293,7 @@ function check_track_load_command($uri) {
         case 'asx':
             return 'load';
             break;
-            
+
         default:
             if (preg_match('#www\.radio-browser\.info/webservice/v2/m3u#', $uri)) {
                 return 'load';

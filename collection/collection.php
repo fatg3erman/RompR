@@ -478,11 +478,17 @@ function artist_from_path($p, $f) {
     return $a;
 }
 
-function unmopify_file($file) {
+function unmopify_file(&$filedata) {
+	global $prefs;
+	if ($prefs['mopidy_slave'] && $filedata['domain'] == 'file' && $filedata['Pos'] !== null) {
+		// Convert file:// to local: uris in playlist
+		$filedata['file'] = swap_file_for_local($filedata['file']);
+		$filedata['domain'] = 'local';
+	}
 	// eg local:track:some/uri/of/a/file
 	// We want the path, not the domain or type
 	// This is much faster than using a regexp
-	$cock = explode(':', $file);
+	$cock = explode(':', $filedata['file']);
     if (count($cock) > 1) {
         $file = array_pop($cock);
     }
@@ -521,7 +527,7 @@ function process_file($filedata) {
     }
 
     $filedata['domain'] = getDomain($filedata['file']);
-	$unmopfile = unmopify_file($filedata['file']);
+	$unmopfile = unmopify_file($filedata);
 
 	if ($filedata['Track'] == null) {
         $filedata['Track'] = format_tracknum(basename(rawurldecode($filedata['file'])));

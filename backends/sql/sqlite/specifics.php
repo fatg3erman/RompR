@@ -551,7 +551,7 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Albumtable SET ImgVersion = 1",true);
 				generic_sql_query("UPDATE Statstable SET Value = 34 WHERE Item = 'SchemaVer'", true);
 				break;
-				
+
 			case 34:
 				debuglog("Updating FROM Schema version 34 TO Schema version 35","SQL");
 				generic_sql_query("ALTER TABLE Tracktable ADD COLUMN Sourceindex INTEGER DEFAULT NULL", true);
@@ -561,7 +561,7 @@ function check_sql_tables() {
 			case 35:
 				generic_sql_query("UPDATE Statstable SET Value = 36 WHERE Item = 'SchemaVer'", true);
 				break;
-				
+
 			case 36:
 				debuglog("Updating FROM Schema version 35 TO Schema version 37","SQL");
 				$localpods = generic_sql_query("SELECT PODTrackindex, PODindex, LocalFilename FROM PodcastTracktable WHERE LocalFilename IS NOT NULL");
@@ -645,7 +645,7 @@ function check_sql_tables() {
 				generic_sql_query("ALTER TABLE Podcasttable_New RENAME TO Podcasttable", true);
 				generic_sql_query("UPDATE Statstable SET Value = 41 WHERE Item = 'SchemaVer'", true);
 				break;
-				
+
 			case 41:
 				debuglog("Updating FROM Schema version 41 TO Schema version 42","SQL");
 				generic_sql_query("CREATE TABLE IF NOT EXISTS PodcastTracktable_New(".
@@ -685,6 +685,12 @@ function check_sql_tables() {
 				debuglog("Updating FROM Schema version 43 TO Schema version 44","SQL");
 				empty_modified_cache_dirs(44);
 				generic_sql_query("UPDATE Statstable SET Value = 44 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 44:
+				debuglog("Updating FROM Schema version 44 TO Schema version 45","SQL");
+				upgrade_host_defs(45);
+				generic_sql_query("UPDATE Statstable SET Value = 45 WHERE Item = 'SchemaVer'", true);
 				break;
 
 		}
@@ -746,11 +752,11 @@ function track_date_check($range, $flag) {
 		case ADDED_ALL_TIME:
 			return '';
 			break;
-			
+
 		case ADDED_TODAY:
 			return "AND DATETIME('now', '-1 DAYS') <= DateAdded";
 			break;
-			
+
 		case ADDED_THIS_WEEK:
 			return "AND DATETIME('now', '-7 DAYS') <= DateAdded";
 			break;
@@ -758,16 +764,16 @@ function track_date_check($range, $flag) {
 		case ADDED_THIS_MONTH:
 			return "AND DATETIME('now', '-1 MONTHS') <= DateAdded";
 			break;
-			
+
 		case ADDED_THIS_YEAR:
 			return "AND DATETIME('now', '-1 YEAR') <= DateAdded";
 			break;
-		
+
 		default:
 			debuglog("ERROR! Unknown Collection Range ".$range,"SQL");
 			return '';
 			break;
-			
+
 	}
 }
 

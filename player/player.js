@@ -4,6 +4,7 @@ var player = function() {
 
         var self = this;
         var playerpu;
+        var numhosts;
 
         function removePlayerDef(event) {
             if (decodeURIComponent($(event.target).parent().parent().attr('name')) == prefs.currenthost) {
@@ -21,9 +22,11 @@ var player = function() {
                 '<td><input type="text" size="30" name="port" value=""/></td>'+
                 '<td><input type="text" size="30" name="password" value=""/></td>'+
                 '<td><input type="text" size="30" name="socket" value=""/></td>'+
+                '<td align="center"><div class="styledinputs"><input type="checkbox" name="mopidy_slave" id="mopidy_slave_'+numhosts+'" /><label for="mopidy_slave_'+numhosts+'">&nbsp;</label></div></td>'+
                 '<td><i class="icon-cancel-circled smallicon clickicon clickremhost"></i></td>'+
                 '</tr>'
             );
+            numhosts++;
             $('.clickremhost').off('click').on('click', removePlayerDef);
         }
 
@@ -39,7 +42,11 @@ var player = function() {
                     if ($(this).attr('name') == 'name') {
                         newname = $(this).val();
                     } else {
-                        temp[$(this).attr('name')] = $(this).val();
+                        if ($(this).attr('type') == 'checkbox') {
+                            temp[$(this).attr('name')] = $(this).is(':checked');
+                        } else {
+                            temp[$(this).attr('name')] = $(this).val();
+                        }
                     }
                 });
 
@@ -91,8 +98,9 @@ var player = function() {
                 title: language.gettext('config_players'),
                 helplink: "https://fatg3erman.github.io/RompR/Using-Multiple-Players"});
             var mywin = playerpu.create();
+            numhosts = 0;
             mywin.append('<table align="center" cellpadding="2" id="playertable" width="96%"></table>');
-            $("#playertable").append('<tr><th>NAME</th><th>HOST</th><th>PORT</th><th>PASSWORD</th><th>UNIX SOCKET</th></tr>');
+            $("#playertable").append('<tr><th>NAME</th><th>HOST</th><th>PORT</th><th>PASSWORD</th><th>UNIX SOCKET</th><th>SLAVE</th></tr>');
             for (var i in prefs.multihosts) {
                 $("#playertable").append('<tr class="hostdef" name="'+escape(i)+'">'+
                     '<td><input type="text" size="30" name="name" class="notspecial" value="'+i+'"/></td>'+
@@ -100,9 +108,12 @@ var player = function() {
                     '<td><input type="text" size="30" name="port" value="'+prefs.multihosts[i]['port']+'"/></td>'+
                     '<td><input type="text" size="30" name="password" value="'+prefs.multihosts[i]['password']+'"/></td>'+
                     '<td><input type="text" size="30" name="socket" value="'+prefs.multihosts[i]['socket']+'"/></td>'+
+                    '<td align="center"><div class="styledinputs"><input type="checkbox" name="mopidy_slave" id="mopidy_slave_'+numhosts+'" /><label for="mopidy_slave_'+numhosts+'">&nbsp;</label></div></td>'+
                     '<td><i class="icon-cancel-circled smallicon clickicon clickremhost"></i></td>'+
                     '</tr>'
                 );
+                $('#mopidy_slave_'+numhosts).prop('checked', prefs.multihosts[i]['mopidy_slave']);
+                numhosts++;
             }
             var buttons = $('<div>',{class: "pref clearfix"}).appendTo(mywin);
             var add = $('<i>',{class: "icon-plus smallicon clickicon tleft"}).appendTo(buttons);
@@ -120,11 +131,6 @@ var player = function() {
 
             $('.clickremhost').off('click');
             $('.clickremhost').on('click', removePlayerDef);
-
-            $(document).on('keyup', 'input.notspecial', function() {
-                debug.log("ENTER","Value Changed");
-                this.value = this.value.replace(/[\*&\+\s<>\[\]:;,\.\(\)]/g, '');
-            });
 
             playerpu.open();
         }

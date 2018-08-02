@@ -84,6 +84,10 @@ $(document).ready(function(){
     });
     $(document).on('mouseenter', '.tooltip', makeToolTip);
     $(document).on('mouseleave', '.tooltip', stopToolTip);
+    $(document).on('keyup', 'input.notspecial', function() {
+        debug.log("ENTER","Value Changed");
+        this.value = this.value.replace(/[\*&\+\s<>\[\]:;,\.\(\)]/g, '');
+    });
 });
 
 function cleanBackendCache() {
