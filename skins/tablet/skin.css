@@ -90,12 +90,12 @@ select {
 
 #subscribe {
     float:left;
-    margin-left:4px;
+    margin-left:12px;
 }
 
 #lastfm {
     float:left;
-    margin-left:24px;
+    margin-left:12px;
     line-height:34px;
     height:34px;
 }
@@ -103,8 +103,8 @@ select {
 #playcount {
     padding-top:0px;
     padding-left:8px;
-    margin-left:20px;
-    margin-right:20px;
+    margin-left:12px;
+    margin-right:12px;
     overflow:hidden;
     opacity:0.9;
     font-size:8pt;
@@ -478,7 +478,7 @@ div.rightmenu {
     margin-top:0px;
     margin-left:0px;
     margin-bottom:0px;
-    margin-right:4px;
+    margin-right:0px;
     height:26px;
     width:26px;
     vertical-align:middle;

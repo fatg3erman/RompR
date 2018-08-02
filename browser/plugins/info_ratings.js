@@ -35,14 +35,8 @@ var info_ratings = function() {
                         'onclick="tagAdder.show(event)" style="margin-left:2px;margin-top:0px;margin-right:1em;"></i>');
                     for(var i = 0; i < trackmeta.usermeta.Tags.length; i++) {
                         $("#dbtags").append('<span class="tag">'+trackmeta.usermeta.Tags[i]+
-                            '<i class="icon-cancel-circled clickicon tagremover playlisticon" '+
-                            'onclick="nowplaying.removeTag(event)" style="display:none"></i></span> ');
+                            '<i class="icon-cancel-circled clickicon tagremover playlisticon" style="display:none"></i></span> ');
                     }
-                    $("#dbtags .tag").on('mouseenter', function() {
-                        $(this).children().show();
-                    }).on('mouseleave', function() {
-                        $(this).children().hide();
-                    });
                     layoutProcessor.adjustLayout();
                 }
                 // Make sure the browser updates the file info display

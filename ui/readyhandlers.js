@@ -88,6 +88,14 @@ $(document).ready(function(){
         debug.log("ENTER","Value Changed");
         this.value = this.value.replace(/[\*&\+\s<>\[\]:;,\.\(\)]/g, '');
     });
+    $(document).on('mouseenter', "#dbtags>.tag", function() {
+        $(this).children('i').show();
+    })
+    $(document).on('mouseleave', "#dbtags>.tag", function() {
+        $(this).children('i').hide();
+    });
+    $(document).on('click', '.tagremover:not(.plugclickable)', nowplaying.removeTag);
+
 });
 
 function cleanBackendCache() {

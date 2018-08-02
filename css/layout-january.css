@@ -1170,6 +1170,10 @@ table.histable tr.current {
     margin-bottom:0.75em;
 }
 
+div.info-box-expand>.underline:nth-child(1) {
+	margin-top:0;
+}
+
 .textunderline {
     margin-top:8px;
     padding-bottom:2px;
@@ -2043,22 +2047,6 @@ table.ambox {
     line-height:1.1em;
     font-weight:bold;
     margin-bottom:0.5em;
-}
-
-.info-detail-layout {
-	word-break: break-all;
-}
-
-.info-detail-layout ul {
-	word-break: normal;
-}
-
-.info-detail-layout tr td:nth-child(1) {
-	word-break: normal;
-}
-
-.info-detail-layout tr th:nth-child(1) {
-	word-break: normal;
 }
 
 .artistnamething {

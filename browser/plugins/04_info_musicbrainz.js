@@ -314,7 +314,7 @@ var info_musicbrainz = function() {
 		if (data) {
 			for (var i in data.images) {
 				html += '<div class="infoclick clickzoomimage">';
-				html += '<img style="margin:1em" src="getRemoteImage.php?url='+data.images[i].thumbnails.small+'" />';
+				html += '<img style="max-width:220px" src="getRemoteImage.php?url='+data.images[i].thumbnails.small+'" />';
 				html += '</div>';
 				html += '<input type="hidden" value="getRemoteImage.php?url='+data.images[i].image+'" />';
 			}
@@ -618,6 +618,14 @@ var info_musicbrainz = function() {
 
 		        var html = '<div class="containerbox info-detail-layout">';
 		    	html += '<div class="info-box-fixed info-box-list info-border-right">';
+
+				if (data['cover-art-archive'].artwork == true) {
+					debug.trace(medebug,"There is cover art available");
+				    html += '<ul id="coverart">';
+				    html += getCoverArt();
+				    html += '</ul><br />';
+				}
+
 		        html += '<ul><li>'+data.disambiguation+'</li></ul>';
 		        html += '<ul><li><b>'+language.gettext("musicbrainz_status")+': </b>';
 		        if (data.status) {
@@ -695,12 +703,6 @@ var info_musicbrainz = function() {
     			html += '</table>';
 		        html += '</div>';
 		        html += '</div>';
-		        if (data['cover-art-archive'].artwork == true) {
-		        	debug.trace(medebug,"There is cover art available");
-			        html += '<div class="cleft info-box-fixed" id="coverart">';
-			        html += getCoverArt();
-			        html += '</div>';
-			    }
 		        html += '</div>';
 		        return html;
 	        }

@@ -49,9 +49,9 @@ function LastFM(user) {
 
     this.showloveban = function(flag) {
         if (logged_in && flag) {
-            $("#lastfm").fadeIn('fast');
+            $("#lastfm").show();
         } else {
-            $("#lastfm").fadeOut('fast');
+            $("#lastfm").hide();
         }
     }
 

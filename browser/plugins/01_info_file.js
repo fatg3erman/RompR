@@ -268,7 +268,7 @@ var info_file = function() {
                     html += '<tr><td style="vertical-align:top">'+language.gettext("musicbrainz_tags")+'<i class="icon-plus infoclick smallicon clickaddtags"></i></td><td>';
                     for(var i = 0; i < trackmeta.usermeta.Tags.length; i++) {
                         if (trackmeta.usermeta.Tags[i] != '') {
-                            html += '<span class="tag">'+trackmeta.usermeta.Tags[i]+'<i class="icon-cancel-circled clickicon tagremover playlisticon" onclick="nowplaying.removeTag(event)"></i></span> ';
+                            html += '<span class="tag">'+trackmeta.usermeta.Tags[i]+'<i class="icon-cancel-circled clickicon tagremover playlisticon"></i></span> ';
                         }
                     }
                     html += '</td></tr>';
