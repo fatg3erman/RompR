@@ -1111,8 +1111,27 @@ function check_slave_actions($cmds) {
             // add "local:track:
             // playlistadd "local:track:
             if (substr($cmd, 0, 17) == 'add "local:track:' ||
-                substr($cmd, 0,25 ) == 'playlistadd "local:track:') {
+                substr($cmd, 0,25) == 'playlistadd "local:track:') {
                 $cmds[$key] = swap_local_for_file($cmd);
+            }
+
+        }
+    }
+    return $cmds;
+}
+
+function check_reverse_slave_actions($cmds) {
+    global $prefs;
+    //
+    // Re-check all add and playlistadd commands if we're using a Mopidy File Backend Slave
+    //
+    if ($prefs['mopidy_slave']) {
+        foreach ($cmds as $key => $cmd) {
+            // add "local:track:
+            // playlistadd "local:track:
+            if (substr($cmd, 0, 12) == 'add "file://' ||
+                substr($cmd, 0,20) == 'playlistadd "file://') {
+                $cmds[$key] = swap_file_for_local($cmd);
             }
 
         }

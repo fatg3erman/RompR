@@ -22,12 +22,17 @@ $cmds[] = 'clear';
 foreach ($tracks as $track) {
     array_push($cmds, join_command_string(array('add', $track['uri'])));
 }
+$convert_slave = $prefs['mopidy_slave'];
 
 $prefs['currenthost'] = $json['currenthost'];
 set_player_connect_params();
 debuglog("  Opening Connection To ".$prefs['currenthost']);
 @open_mpd_connection();
-$cmds = check_slave_actions($cmds);
+if ($convert_slave && !$prefs['mopidy_slave']) {
+    $cmds = check_reverse_slave_actions($cmds);
+} else if (!$convert_slave && $prefs['mopidy_slave']) {
+    $cmds = check_slave_actions($cmds);
+}
 do_mpd_command_list($cmds);
 
 // Work around Mopidy bug where it doesn't update the 'state' variable properly
