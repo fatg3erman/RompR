@@ -188,15 +188,18 @@ var playlistManager = function() {
 		dropped: function(event, ui) {
 	        event.stopImmediatePropagation();
 	        var tracks = new Array();
-	        var playlist = ui.parent().parent().parent().children('input').first().val();
+	        var which_playlist = ui.parent().parent().parent().children('input').first().val();
 	        $.each($('.selected').filter(removeOpenItems), function (index, element) {
 	        	if ($(element).hasClass('directory')) {
 	        		var uri = decodeURIComponent($(element).children('input').first().attr('name'));
-	        		debug.log("PLAYLISTMANAGER","Dragged Directory",uri,"to",playlist);
+	        		debug.log("PLAYLISTMANAGER","Dragged Directory",uri,"to",which_playlist);
 	        		tracks.push({dir: uri});
+				} else if (element.hasAttribute('romprid')) {
+					var playlistinfo = playlist.getId($(element).attr('romprid'));
+					tracks.push({uri: playlistinfo.location});
 	        	} else {
 		        	var uri = decodeURIComponent($(element).attr("name"));
-		        	debug.log("PLAYLISTMANAGER","Dragged",uri,"to",playlist);
+		        	debug.log("PLAYLISTMANAGER","Dragged",uri,"to",which_playlist);
 		        	tracks.push({uri: uri});
 		        }
 	        });
@@ -216,8 +219,8 @@ var playlistManager = function() {
 	        }
 	        if (tracks.length > 0) {
 	        	debug.log("PLAYLISTMANAGER","Dragged to position",moveto);
-		        player.controller.addTracksToPlaylist(playlist,tracks,moveto,playlistlength,function() {
-		        	reloadPlaylist(playlist);
+		        player.controller.addTracksToPlaylist(which_playlist,tracks,moveto,playlistlength,function() {
+		        	reloadPlaylist(which_playlist);
 		        	player.controller.checkProgress();
 		        	player.controller.reloadPlaylists();
 		        });

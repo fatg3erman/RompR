@@ -11,7 +11,7 @@ var metaHandlers = function() {
 	    debug.error("ADD ALBUM","Failure",rdata,JSON.parse(rdata.responseText));
 	    infobar.notify(infobar.ERROR,"Failed To Add Track!");
 	}
-	
+
 	function getPostData(playlistinfo) {
 	    var data = {};
 	    if (playlistinfo.title) {
@@ -228,7 +228,7 @@ var metaHandlers = function() {
 				dbQueue.request([{action: action}], success, fail);
 			}
 		},
-		
+
 		addToListenLater: function(album) {
 			var data = {
 				action: 'addtolistenlater',
@@ -261,12 +261,12 @@ var dbQueue = function() {
 	var throttle = null;
 	var cleanuptimer = null;
 	var cleanuprequired = false;
-	
+
 	// Cleanup cleans the database but it also updates the track stats
 	var actions_requiring_cleanup = [
 		'add', 'set', 'remove', 'amendalbum', 'deletetag', 'delete', 'deletewl', 'clearwishlist'
 	];
-	
+
 	return {
 
 		request: function(data, success, fail) {
@@ -303,6 +303,7 @@ var dbQueue = function() {
 				    $.ajax({
 				        url: "backends/sql/userRatings.php",
 				        type: "POST",
+						contentType: false,
 				        data: JSON.stringify(req.data),
 				        dataType: 'json',
 				        success: function(data) {
@@ -343,15 +344,15 @@ var dbQueue = function() {
 				dbQueue.request([{action: 'cleanup'}], dbQueue.cleanupComplete, dbQueue.cleanupFailed);
 			}
 		},
-		
+
 		cleanupComplete: function(data) {
 			collectionHelper.updateCollectionDisplay(data);
 			cleanuprequired = false;
 		},
-		
+
 		cleanupFailed: function(data) {
 			debug.fail("DB QUEUE","Cleanup Failed");
 		}
-		
+
 	}
 }();

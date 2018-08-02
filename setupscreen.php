@@ -17,7 +17,7 @@ print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 <link rel="stylesheet" type="text/css" href="iconsets/Modern-Dark/theme.css" />
 <link rel="stylesheet" type="text/css" href="iconsets/Modern-Dark/adjustments.css" />
 <link rel="stylesheet" type="text/css" href="sizes/02-Normal.css" />
-<script type="text/javascript" src="jquery/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="jquery/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="jquery/jquery-migrate-3.0.1.js"></script>
 <script type="text/javascript" src="utils/setupbits.js"></script>
 <style>

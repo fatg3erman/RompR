@@ -33,7 +33,7 @@ print '<link rel="stylesheet" type="text/css" href="css/albumart.css?version=?'.
 <link type="text/css" href="css/jquery.mCustomScrollbar.css" rel="stylesheet" />
 <?php
 $scripts = array(
-    "jquery/jquery-3.2.1.min.js",
+    "jquery/jquery-3.3.1.min.js",
     "jquery/jquery-migrate-3.0.1.js",
     "ui/functions.js",
     "ui/prefs.js",

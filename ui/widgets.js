@@ -399,6 +399,7 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
                 } else {
                     this.original.insertAfter(this.dragged_original_after);
                 }
+                $('.selected').removeClass('selected');
                 this.original.addClass('selected');
                 if (this.helper) {
                     this.helper.detach();
