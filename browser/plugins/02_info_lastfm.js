@@ -760,7 +760,7 @@ var info_lastfm = function() {
                     },
 
 					unloveifloved: function() {
-						if (trackmeta.lastfm.track.userloved = 1) {
+						if (trackmeta.lastfm.track.userloved == 1) {
 							self.track.unlove();
 						}
 					},
