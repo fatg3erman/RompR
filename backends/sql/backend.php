@@ -3,6 +3,7 @@
 include ("backends/sql/connect.php");
 require_once ("skins/".$skin."/ui_elements.php");
 connect_to_database();
+$collection_type = get_collection_type();
 $find_track = null;
 $update_track = null;
 $transaction_open = false;
@@ -1340,17 +1341,6 @@ function set_collection_type() {
 		generic_sql_query('UPDATE Statstable SET Value = '.COLLECTION_TYPE_MPD.' WHERE Item = CollType');
 	} else {
 		generic_sql_query('UPDATE Statstable SET Value = '.COLLECTION_TYPE_MOPIDY.' WHERE Item = CollType');
-	}
-}
-
-function get_collection_type() {
-	$c = simple_query('Value', 'Statstable', 'Item', 'CollType', null);
-	if ($c == COLLECTION_TYPE_MPD) {
-		return 'mpd';
-	} else if ($c == COLLECTION_TYPE_MOPIDY) {
-		return 'mopidy';
-	} else {
-		return 'unknown';
 	}
 }
 

@@ -479,11 +479,20 @@ function artist_from_path($p, $f) {
 }
 
 function unmopify_file(&$filedata) {
-	global $prefs;
-	if ($prefs['mopidy_slave'] && $filedata['domain'] == 'file' && $filedata['Pos'] !== null) {
-		// Convert file:// to local: uris in playlist
-		$filedata['file'] = swap_file_for_local($filedata['file']);
-		$filedata['domain'] = 'local';
+	global $prefs, $collection_type;
+	if ($filedata['Pos'] !== null) {
+		// Convert URIs for different player types to be appropriate for the collection
+		// but only when we're getting the playlist
+		if ($prefs['mopidy_slave'] && $filedata['domain'] == 'file') {
+			$filedata['file'] = swap_file_for_local($filedata['file']);
+			$filedata['domain'] = 'local';
+		}
+		if ($collection_type == 'mopidy' && $prefs['player_backend'] == 'mpd') {
+			$filedata['file'] = mpd_to_mopidy($filedata['file']);
+		}
+		if ($collection_type == 'mpd' && $prefs['player_backend'] == 'mopidy') {
+			$filedata['file'] = mopidy_to_mpd($filedata['file']);
+		}
 	}
 	// eg local:track:some/uri/of/a/file
 	// We want the path, not the domain or type

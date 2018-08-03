@@ -56,8 +56,8 @@ var recentlyaddedtracks = function() {
             //
             // Recently Added Tracks
             //
-            $('#pluginplaylists').append(playlist.radioManager.standardBox('recentlyaddedradio', 'random', 'icon-recentlyplayed', language.gettext('label_recentlyadded_random')));
-            $('#pluginplaylists').append(playlist.radioManager.standardBox('recentlyaddedradio', 'byalbum', 'icon-recentlyplayed', language.gettext('label_recentlyadded_byalbum')));
+            $('#pluginplaylists').append(playlist.radioManager.standardBox('recentlyaddedtracks', 'random', 'icon-recentlyplayed', language.gettext('label_recentlyadded_random')));
+            $('#pluginplaylists').append(playlist.radioManager.standardBox('recentlyaddedtracks', 'byalbum', 'icon-recentlyplayed', language.gettext('label_recentlyadded_byalbum')));
         }
     }
 }();

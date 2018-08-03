@@ -254,6 +254,7 @@ function preparePlaylist() {
 }
 
 function doPlaylist($playlist, $limit) {
+	global $prefs,$collection_type;
 	debuglog("Loading Playlist ".$playlist,"RATINGS");
 	$sqlstring = "";
 	$tags = null;
@@ -303,8 +304,9 @@ function doPlaylist($playlist, $limit) {
 		default:
 			if (preg_match('/tag\+(.*)/', $playlist, $matches)) {
 				$taglist = explode(',', $matches[1]);
-				$sqlstring = "SELECT DISTINCT TTindex FROM Tracktable JOIN TagListtable USING
-					(TTindex) JOIN Tagtable USING (Tagindex) WHERE (";
+				$sqlstring = 'SELECT DISTINCT TTindex FROM Tracktable JOIN TagListtable USING (TTindex) JOIN Tagtable USING (Tagindex) WHERE ';
+				// Concatenate this bracket here otherwise Atom's syntax colouring goes haywire
+				$sqlstring .= '(';
 				$tags = array();
 				foreach ($taglist as $i => $tag) {
 					debuglog("Getting tag playlist for ".$tag,"PLAYLISTS",6);
@@ -320,6 +322,9 @@ function doPlaylist($playlist, $limit) {
 				debuglog("Unrecognised playlist ".$playlist,"PLAYLISTS", 4);
 			}
 			break;
+	}
+	if ($collection_type == 'mopidy' && $prefs['player_backend'] == 'mpd') {
+		$sqlstring .= ' AND Uri LIKE "local:%"';
 	}
 	$uris = getAllURIs($sqlstring, $limit, $tags, $random);
 	$json = array();

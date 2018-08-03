@@ -297,4 +297,15 @@ function create_update_triggers() {
 
 }
 
+function get_collection_type() {
+	$c = simple_query('Value', 'Statstable', 'Item', 'CollType', null);
+	if ($c == COLLECTION_TYPE_MPD) {
+		return 'mpd';
+	} else if ($c == COLLECTION_TYPE_MOPIDY) {
+		return 'mopidy';
+	} else {
+		return 'unknown';
+	}
+}
+
 ?>

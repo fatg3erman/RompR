@@ -95,7 +95,10 @@ $(document).ready(function(){
         $(this).children('i').hide();
     });
     $(document).on('click', '.tagremover:not(.plugclickable)', nowplaying.removeTag);
-
+    if (prefs.mopidy_slave || collection_type != prefs.player_backend) {
+        $('[name="donkeykong"]').remove();
+        $('[name="dinkeyking"]').remove();
+    }
 });
 
 function cleanBackendCache() {

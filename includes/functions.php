@@ -1107,7 +1107,7 @@ function check_slave_actions($cmds) {
     // Re-check all add and playlistadd commands if we're using a Mopidy File Backend Slave
     //
     if ($prefs['mopidy_slave']) {
-        debuglog("Translating tracks for Mopidy Slave","MOPIDY",7);
+        debuglog("Translating tracks for Mopidy Slave","MOPIDY",9);
         foreach ($cmds as $key => $cmd) {
             // add "local:track:
             // playlistadd "local:track:
@@ -1127,7 +1127,7 @@ function check_reverse_slave_actions($cmds) {
     // Re-check all add and playlistadd commands if we're using a Mopidy File Backend Slave
     //
     foreach ($cmds as $key => $cmd) {
-        debuglog("Translating tracks from Mopidy Slave","MOPIDY",7);
+        debuglog("Translating tracks from Mopidy Slave","MOPIDY",9);
         // add "local:track:
         // playlistadd "local:track:
         if (substr($cmd, 0, 12) == 'add "file://' ||
@@ -1145,22 +1145,32 @@ function check_player_type_actions($cmds, $collection_type) {
 
     global $prefs;
     if ($prefs['player_backend'] != $collection_type) {
-        debuglog("Translating Track Uris from ".$collection_type.' to '.$prefs['player_backend'], "PLAYER", 7);
+        debuglog("Translating Track Uris from ".$collection_type.' to '.$prefs['player_backend'], "PLAYER", 9);
         foreach ($cmds as $key => $cmd) {
             if (substr($cmd, 0, 4) == 'add ') {
                 if ($collection_type == 'mopidy') {
-                    $cmds[$key] = rawurldecode(preg_replace('#local:track:#', '', $cmd));
+                    $cmds[$key] = mopidy_to_mpd($cmd);
                 } else {
-                    $path = implode("/", array_map("rawurlencode", explode("/", $prefs['music_directory_albumart'])));
                     $file = trim(substr($cmd, 4), '" ');
-                    $newfile = implode("/", array_map("rawurlencode", explode("/", $file)));
-                    $cmds[$key] = 'add file://'.$path.'/'.$newfile;
+                    $cmds[$key] = 'add '.mpd_to_mopidy($file);
                 }
             }
         }
     }
     return $cmds;
 
+}
+
+function mopidy_to_mpd($file) {
+    return rawurldecode(preg_replace('#local:track:#', '', $file));
+}
+
+function mpd_to_mopidy($file) {
+    if (substr($file, 0, 5) != 'http:' && substr($file, 0, 6) != 'https:') {
+        return 'local:track:'.implode("/", array_map("rawurlencode", explode("/", $file)));
+    } else {
+        return $file;
+    }
 }
 
 function swap_local_for_file($string) {

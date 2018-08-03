@@ -11,6 +11,7 @@ print "const browserLanguage = '".$browser_language."';\n";
 print "const mopidy_min_version = '".ROMPR_MOPIDY_MIN_VERSION."';\n";
 print "const player_ip = '".get_player_ip()."';\n";
 print "const rompr_unknown_stream = '".ROMPR_UNKNOWN_STREAM."';\n";
+print "const collection_type = '".$collection_type."';\n";
 if ($oldmopidy) {
     print "const mopidy_is_old = true;\n";
 } else {

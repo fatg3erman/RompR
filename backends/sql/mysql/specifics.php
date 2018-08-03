@@ -688,11 +688,21 @@ function hide_played_tracks() {
 }
 
 function sql_recent_tracks() {
-	return "SELECT Uri FROM Tracktable WHERE (DATE_SUB(CURDATE(),INTERVAL 30 DAY) <= DateAdded) AND Hidden = 0 AND isSearchResult < 2 AND Uri IS NOT NULL ORDER BY RAND()";
+	global $collection_type, $prefs;
+	$qstring = "SELECT Uri FROM Tracktable WHERE (DATE_SUB(CURDATE(),INTERVAL 360 DAY) <= DateAdded) AND Hidden = 0 AND isSearchResult < 2 AND Uri IS NOT NULL";
+	if ($collection_type == 'mopidy' && $prefs['player_backend'] == 'mpd') {
+		$qstring .= ' AND Uri LIKE "local:%"';
+	}
+	return $qstring." ORDER BY RAND()";
 }
 
 function sql_recent_albums() {
-	return "SELECT Uri, Albumindex, TrackNo FROM Tracktable WHERE DATE_SUB(CURDATE(),INTERVAL 30 DAY) <= DateAdded AND Hidden = 0 AND isSearchResult < 2 AND Uri IS NOT NULL";
+	global $collection_type, $prefs;
+	$qstring = "SELECT Uri, Albumindex, TrackNo FROM Tracktable WHERE DATE_SUB(CURDATE(),INTERVAL 30 DAY) <= DateAdded AND Hidden = 0 AND isSearchResult < 2 AND Uri IS NOT NULL";
+	if ($collection_type == 'mopidy' && $prefs['player_backend'] == 'mpd') {
+		$qstring .= ' AND Uri LIKE "local:%"';
+	}
+	return $qstring;
 }
 
 function sql_recently_played() {
@@ -700,7 +710,8 @@ function sql_recently_played() {
 }
 
 function recently_played_playlist() {
-	return "SELECT TTindex FROM Playcounttable AS Tracktable WHERE DATE_SUB(CURDATE(),INTERVAL 14 DAY) <= LastPlayed AND LastPlayed IS NOT NULL";
+	$qstring = "SELECT TTindex FROM Playcounttable JOIN Tracktable USING (TTindex) WHERE DATE_SUB(CURDATE(),INTERVAL 14 DAY) <= LastPlayed AND LastPlayed IS NOT NULL";
+	return $qstring;
 }
 
 function sql_two_weeks() {

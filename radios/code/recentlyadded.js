@@ -15,6 +15,7 @@ var recentlyaddedtracks = function() {
         $.ajax({
             type: "POST",
             dataType: "json",
+			contentType: false,
             url: "radios/recentlyadded.php?mode="+mode,
             success: function(data) {
                 if (data && data.length > 0) {

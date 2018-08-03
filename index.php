@@ -142,6 +142,8 @@ if ($result == false) {
     sql_init_fail($message);
 }
 
+$collection_type = get_collection_type();
+
 if (array_key_exists('theme', $_REQUEST) && file_exists('themes/'.$_REQUEST['theme'].'.css')) {
     debuglog("Setting theme from request to ".$_REQUEST['theme'],"INIT",5);
     $prefs['usertheme'] = $_REQUEST['theme'].'.css';

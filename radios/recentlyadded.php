@@ -13,6 +13,7 @@ $qstring = "";
 if ($mode == "random") {
 	$result = generic_sql_query(sql_recent_tracks());
 	foreach ($result as $t) {
+		debuglog("URI : ".$t['Uri'], "RECENT_RANDOM");
 		array_push($uris, $t['Uri']);
 	}
 } else {
@@ -35,6 +36,7 @@ if ($mode == "random") {
 	foreach($albums as $a) {
 		ksort($a);
 		foreach ($a as $t) {
+			debuglog("URI : ".$t, "RECENT_ALBUM");
 			array_push($uris, $t);
 		}
 	}

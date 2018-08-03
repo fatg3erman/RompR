@@ -8,9 +8,9 @@ include ("backends/sql/backend.php");
 debuglog("Populating Favourite Album Radio", "FAVEALBUMS");
 
 $uris = array();
-$qstring = "";
 
-generic_sql_query("CREATE TEMPORARY TABLE alplaytable AS SELECT SUM(Playcount) AS playtotal,
+generic_sql_query("CREATE TEMPORARY TABLE alplaytable AS
+	SELECT SUM(Playcount) AS playtotal,
 	Albumindex
 	FROM (SELECT Playcount, Albumindex FROM Playcounttable JOIN Tracktable USING (TTindex)
 	WHERE Playcount > 3) AS derived GROUP BY Albumindex ORDER BY ".SQL_RANDOM_SORT, true);
@@ -20,8 +20,14 @@ $albums = array();
 $uris = array();
 $avgplays = generic_sql_query("SELECT AVG(playtotal) AS plavg FROM alplaytable", false, null, 'plavg', 0);
 
-$result = generic_sql_query("SELECT Uri, TrackNo, Albumindex FROM Tracktable JOIN alplaytable
-	USING (Albumindex) WHERE playtotal > ".$avgplays." AND Uri IS NOT NULL AND Hidden = 0", false, PDO::FETCH_OBJ);
+$qstring = "SELECT Uri, TrackNo, Albumindex FROM Tracktable JOIN alplaytable
+	USING (Albumindex) WHERE playtotal > ".$avgplays." AND Uri IS NOT NULL AND Hidden = 0";
+
+if ($collection_type == 'mopidy' && $prefs['player_backend'] == 'mpd') {
+	$qstring .= ' AND Uri LIKE "local:%"';
+}
+
+$result = generic_sql_query($qstring, false, PDO::FETCH_OBJ);
 foreach ($result as $obj) {
 	if (!array_key_exists($obj->Albumindex, $albums)) {
 		$albums[$obj->Albumindex] = array($obj->TrackNo => $obj->Uri);
