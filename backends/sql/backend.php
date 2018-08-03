@@ -1335,6 +1335,25 @@ function get_duration_count($range) {
 	return $ac;
 }
 
+function set_collection_type() {
+	if ($prefs['player_backend'] == 'mpd') {
+		generic_sql_query('UPDATE Statstable SET Value = '.COLLECTION_TYPE_MPD.' WHERE Item = CollType');
+	} else {
+		generic_sql_query('UPDATE Statstable SET Value = '.COLLECTION_TYPE_MOPIDY.' WHERE Item = CollType');
+	}
+}
+
+function get_collection_type() {
+	$c = simple_query('Value', 'Statstable', 'Item', 'CollType', null);
+	if ($c == COLLECTION_TYPE_MPD) {
+		return 'mpd';
+	} else if ($c == COLLECTION_TYPE_MOPIDY) {
+		return 'mopidy';
+	} else {
+		return 'unknown';
+	}
+}
+
 function dumpAlbums($which) {
 
     global $divtype, $prefs;

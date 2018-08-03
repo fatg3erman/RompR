@@ -29,10 +29,6 @@ if (file_exists('skins/'.$skin.'/skin.requires')) {
     }
 }
 
-// SVN had composergenrename as a string but it's now an array
-if (!is_array($prefs['composergenrename'])) {
-    $prefs['composergenrename'] = array($prefs['composergenrename']);
-}
 // Workaround bug where this wasn't initialised to a value, meaning an error could be thrown
 // on the first inclusion of connection.php
 if ($prefs['player_backend'] == '') {
@@ -43,6 +39,7 @@ include("includes/functions.php");
 include("international.php");
 set_version_string();
 include("skins/".$skin."/ui_elements.php");
+
 //
 // See if there are any POST values from the setup screen
 //
@@ -60,15 +57,19 @@ if (array_key_exists('mpd_host', $_POST)) {
         $prefs[$i] = $value;
     }
     setcookie('currenthost',$prefs['currenthost'],time()+365*24*60*60*10,'/');
-    // So, er seemingly PHP7 can't do $prefs['multihosts']->$prefs['currenthost']->host;
-    // although PHP5 could do it just fine. PHP7 barfs with 'Array to string conversion'
-    $cockspanner = $prefs['currenthost'];
-    $prefs['multihosts']->$cockspanner = (object) array(
+    $prefs['multihosts']->{$prefs['currenthost']} = (object) array(
             'host' => $prefs['mpd_host'],
             'port' => $prefs['mpd_port'],
             'password' => $prefs['mpd_password'],
             'socket' => $prefs['unix_socket']
     );
+    if (property_exists($prefs['multihosts']->{$prefs['currenthost']}, 'mopidy_slave')) {
+        $prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave = $prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave;
+    } else {
+        // Catch the case where we haven't yet upgraded the player defs
+        $prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave = false;
+    }
+
     $logger->setLevel($prefs['debug_enabled']);
     savePrefs();
 }
@@ -103,23 +104,10 @@ if (!$is_connected) {
     }
 }
 
-// Let's do a test to see if we're running mpd or mopidy
-$oldmopidy = false;
-debuglog("Probing Player Type....","INIT",4);
-$r = do_mpd_command('tagtypes', true, true);
-if (is_array($r) && array_key_exists('tagtype', $r)) {
-    if (in_array('X-AlbumUri', $r['tagtype'])) {
-        debuglog("    ....tagtypes test says we're running Mopidy","INIT",4);
-        $prefs['player_backend'] = "mopidy";
-    } else {
-        debuglog("    ....tagtypes test says we're running MPD","INIT",4);
-        $prefs['player_backend'] = "mpd";
-    }
-} else {
-    debuglog("WARNING! No output for 'tagtypes' - probably an old version of Mopidy. RompЯ may not function correctly","INIT",2);
-    $prefs['player_backend'] = "mopidy";
-    $oldmopidy = true;
-}
+//
+// Probe to see which type of Player we're using
+//
+probe_player_type();
 setcookie('player_backend',$prefs['player_backend'],time()+365*24*60*60*10,'/');
 
 if ($prefs['unix_socket'] != '') {
@@ -135,11 +123,6 @@ close_mpd();
 //
 // See if we can use the SQL backend
 //
-
-// XML backend no longer supported. Force switch to SQLite.
-if (array_key_exists('collection_type', $prefs) && $prefs['collection_type'] == "xml") {
-    $prefs['collection_type'] = "sqlite";
-}
 
 include( "backends/sql/connect.php");
 if (array_key_exists('collection_type', $prefs)) {

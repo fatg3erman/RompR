@@ -30,7 +30,7 @@ function close_database() {
 }
 
 function check_sql_tables() {
-	global $mysqlc;
+	global $mysqlc, $prefs;
 
 	if (generic_sql_query("CREATE TABLE IF NOT EXISTS Tracktable(".
 		"TTindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
@@ -307,6 +307,11 @@ function check_sql_tables() {
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('TrackCount', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('TotalTime', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('SchemaVer', '".ROMPR_SCHEMA_VERSION."')", true);
+		if ($prefs['player_backend'] == 'mpd') {
+			generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('CollType', '".COLLECTION_TYPE_MPD."')", true);
+		} else {
+			generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('CollType', '".COLLECTION_TYPE_MOPIDY."')", true);
+		}
 		$sv = ROMPR_SCHEMA_VERSION;
 		debuglog("Statstable populated", "SQLITE_CONNECT");
 		create_update_triggers();
@@ -691,6 +696,16 @@ function check_sql_tables() {
 				debuglog("Updating FROM Schema version 44 TO Schema version 45","SQL");
 				upgrade_host_defs(45);
 				generic_sql_query("UPDATE Statstable SET Value = 45 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 45:
+				debuglog("Updating FROM Schema version 45 TO Schema version 46","SQL");
+				if ($prefs['player_backend'] == 'mpd') {
+					generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('CollType', '".COLLECTION_TYPE_MPD."')", true);
+				} else {
+					generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('CollType', '".COLLECTION_TYPE_MOPIDY."')", true);
+				}
+				generic_sql_query("UPDATE Statstable SET Value = 46 WHERE Item = 'SchemaVer'", true);
 				break;
 
 		}

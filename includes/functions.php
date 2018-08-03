@@ -1107,6 +1107,7 @@ function check_slave_actions($cmds) {
     // Re-check all add and playlistadd commands if we're using a Mopidy File Backend Slave
     //
     if ($prefs['mopidy_slave']) {
+        debuglog("Translating tracks for Mopidy Slave","MOPIDY",7);
         foreach ($cmds as $key => $cmd) {
             // add "local:track:
             // playlistadd "local:track:
@@ -1126,6 +1127,7 @@ function check_reverse_slave_actions($cmds) {
     // Re-check all add and playlistadd commands if we're using a Mopidy File Backend Slave
     //
     foreach ($cmds as $key => $cmd) {
+        debuglog("Translating tracks from Mopidy Slave","MOPIDY",7);
         // add "local:track:
         // playlistadd "local:track:
         if (substr($cmd, 0, 12) == 'add "file://' ||
@@ -1135,6 +1137,30 @@ function check_reverse_slave_actions($cmds) {
 
     }
     return $cmds;
+}
+
+function check_player_type_actions($cmds, $collection_type) {
+
+    // Experimental translation to and from MPD/Mopidy Local URIs
+
+    global $prefs;
+    if ($prefs['player_backend'] != $collection_type) {
+        debuglog("Translating Track Uris from ".$collection_type.' to '.$prefs['player_backend'], "PLAYER", 7);
+        foreach ($cmds as $key => $cmd) {
+            if (substr($cmd, 0, 4) == 'add ') {
+                if ($collection_type == 'mopidy') {
+                    $cmds[$key] = rawurldecode(preg_replace('#local:track:#', '', $cmd));
+                } else {
+                    $path = implode("/", array_map("rawurlencode", explode("/", $prefs['music_directory_albumart'])));
+                    $file = trim(substr($cmd, 4), '" ');
+                    $newfile = implode("/", array_map("rawurlencode", explode("/", $file)));
+                    $cmds[$key] = 'add file://'.$path.'/'.$newfile;
+                }
+            }
+        }
+    }
+    return $cmds;
+
 }
 
 function swap_local_for_file($string) {
@@ -1149,6 +1175,26 @@ function swap_file_for_local($string) {
     global $prefs;
     $path = 'file://'.implode("/", array_map("rawurlencode", explode("/", $prefs['music_directory_albumart']))).'/';
     return preg_replace('#'.$path.'#', 'local:track:', $string);
+}
+
+function probe_player_type() {
+    global $oldmopidy, $prefs;
+    $oldmopidy = false;
+    debuglog("Probing Player Type....","INIT",4);
+    $r = do_mpd_command('tagtypes', true, true);
+    if (is_array($r) && array_key_exists('tagtype', $r)) {
+        if (in_array('X-AlbumUri', $r['tagtype'])) {
+            debuglog("    ....tagtypes test says we're running Mopidy","INIT",4);
+            $prefs['player_backend'] = "mopidy";
+        } else {
+            debuglog("    ....tagtypes test says we're running MPD","INIT",4);
+            $prefs['player_backend'] = "mpd";
+        }
+    } else {
+        debuglog("WARNING! No output for 'tagtypes' - probably an old version of Mopidy. RompЯ may not function correctly","INIT",2);
+        $prefs['player_backend'] = "mopidy";
+        $oldmopidy = true;
+    }
 }
 
 ?>

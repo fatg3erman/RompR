@@ -491,7 +491,9 @@ function unmopify_file(&$filedata) {
 	$cock = explode(':', $filedata['file']);
     if (count($cock) > 1) {
         $file = array_pop($cock);
-    }
+    } else {
+		$file = $filedata['file'];
+	}
 	return $file;
 }
 

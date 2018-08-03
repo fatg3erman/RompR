@@ -10,5 +10,5 @@ foreach($p as $key => $value) {
     }
 }
 savePrefs();
+header('HTTP/1.1 204 No Content');
 ?>
-<html></html>

@@ -4,7 +4,7 @@ include ("includes/vars.php");
 include ("includes/functions.php");
 include ("player/mpd/connection.php");
 include ("collection/collection.php");
-
+include ('backends/sql/backend.php');
 $mpd_status = array();
 $playlist_movefrom = null;
 $playlist_moveto = null;
@@ -13,6 +13,7 @@ $playlist_tracksadded = 0;
 $expected_state = null;
 $do_resume_seek = false;
 $do_resume_seek_id = false;
+$collection_type = get_collection_type();
 
 if ($is_connected) {
 
@@ -34,7 +35,6 @@ if ($is_connected) {
 
             switch ($cmd[0]) {
                 case "addtoend":
-                    require_once("backends/sql/backend.php");
                     debuglog("Addtoend ".$cmd[1],"POSTCOMMAND");
                     $cmds = array_merge($cmds, playAlbumFromTrack($cmd[1]));
                     break;
@@ -50,20 +50,17 @@ if ($is_connected) {
                     break;
 
                 case "additem":
-                    require_once("backends/sql/backend.php");
                     debuglog("Adding Item ".$cmd[1],"POSTCOMMAND");
                     $cmds = array_merge($cmds, getItemsToAdd($cmd[1], null));
                     break;
 
                 case "addartist":
-                    require_once("backends/sql/backend.php");
                     debuglog("Getting tracks for Artist ".$cmd[1],"MPD");
                     doCollection('find "artist" "'.format_for_mpd($cmd[1]).'"',array("spotify"));
                     $cmds = array_merge($cmds, $collection->getAllTracks("add"));
                     break;
 
                 case "loadstreamplaylist":
-                    require_once ("backends/sql/backend.php");
                     require_once ("player/".$prefs['player_backend']."/streamplaylisthandler.php");
                     require_once ("utils/getInternetPlaylist.php");
                     $cmds = array_merge($cmds, load_internet_playlist($cmd[1], $cmd[2], $cmd[3]));
@@ -102,7 +99,6 @@ if ($is_connected) {
                     break;
 
                 case "playlistadd":
-                    require_once("backends/sql/backend.php");
                     if (preg_match('/[ab]album\d+|[ab]artist\d+/', $cmd[2])) {
                         $lengthnow = count($cmds);
                         $cmds = array_merge($cmds, getItemsToAdd($cmd[2], $cmd[0].' "'.format_for_mpd($cmd[1]).'"'));
@@ -166,6 +162,8 @@ if ($is_connected) {
     }
 
     $cmds = check_slave_actions($cmds);
+
+    $cmds = check_player_type_actions($cmds, $collection_type);
 
     //
     // Send the command list to mpd

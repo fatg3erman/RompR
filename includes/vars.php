@@ -3,7 +3,7 @@
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 45);
+define('ROMPR_SCHEMA_VERSION', 46);
 define('ROMPR_VERSION', '1.19');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
@@ -31,6 +31,9 @@ define('ADDED_TODAY', 1);
 define('ADDED_THIS_WEEK', 2);
 define('ADDED_THIS_MONTH', 3);
 define('ADDED_THIS_YEAR', 4);
+
+define('COLLECTION_TYPE_MPD', 0);
+define('COLLECTION_TYPE_MOPIDY', 1);
 
 // Safe definitions for setups that do not have a full set of image support built in,
 // Otherwise we spam the server logs with udefined constant errors.
@@ -411,13 +414,12 @@ function debuglog($text, $module = "JOHN WAYNE", $level = 7) {
 
 function set_player_connect_params() {
 	global $prefs;
-	$cockspanner = $prefs['currenthost'];
-	$prefs['mpd_host'] = $prefs['multihosts']->$cockspanner->host;
-	$prefs['mpd_port'] = $prefs['multihosts']->$cockspanner->port;
-	$prefs['mpd_password'] = $prefs['multihosts']->$cockspanner->password;
-	$prefs['unix_socket'] = $prefs['multihosts']->$cockspanner->socket;
-    if (property_exists($prefs['multihosts']->$cockspanner, 'mopidy_slave')) {
-        $prefs['mopidy_slave'] = $prefs['multihosts']->$cockspanner->mopidy_slave;
+	$prefs['mpd_host'] = $prefs['multihosts']->{$prefs['currenthost']}->host;
+	$prefs['mpd_port'] = $prefs['multihosts']->{$prefs['currenthost']}->port;
+	$prefs['mpd_password'] = $prefs['multihosts']->{$prefs['currenthost']}->password;
+	$prefs['unix_socket'] = $prefs['multihosts']->{$prefs['currenthost']}->socket;
+    if (property_exists($prefs['multihosts']->{$prefs['currenthost']}, 'mopidy_slave')) {
+        $prefs['mopidy_slave'] = $prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave;
     } else {
         // Catch the case where we haven't yet upgraded the player defs
         $prefs['mopidy_slave'] = false;
