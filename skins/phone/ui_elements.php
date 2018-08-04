@@ -184,6 +184,12 @@ function printRadioDirectory($att) {
 }
 
 function playlistPlayHeader($name) {
+    $albumimage = new albumImage(array('artist' => "PLAYLIST", 'album' => $name));
+    $image = $albumimage->get_image_if_exists();
+    if ($image) {
+        $images = $albumimage->get_images();
+        print '<div class="album-menu-header"><img class="album_menu_image" asrc="'.$images['asdownloaded'].'" /></div>';
+    }
     print '<div class="textcentre clickloadplaylist playable ninesix" name="'.$name.'">'.get_int_text('label_play_all');
     print '<input type="hidden" name="dirpath" value="'.$name.'" />';
     print '</div>';
