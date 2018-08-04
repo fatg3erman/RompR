@@ -68,13 +68,13 @@ var collectionHelper = function() {
                     data = null;
                     if (albums.match(/rebuild/)) {
                         infobar.notify(infobar.NOTIFY,"Music Collection Updated");
-                        if (notify !== false) {
-                            infobar.removenotify(notify);
-                            notify = false;
-                        }
                         collectionHelper.scootTheAlbums($("#collection"));
                     }
                     layoutProcessor.postAlbumActions($('#collection'));
+                    if (notify !== false) {
+                        infobar.removenotify(notify);
+                        notify = false;
+                    }
                 },
                 error: function(data) {
                     clearTimeout(monitortimer);

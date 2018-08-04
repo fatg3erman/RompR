@@ -22,6 +22,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Partial, experimental, support for using mixed player types (MPD and Mopidy) as Players.
 * Several UI improvements to click handling and tooltips to reduce memory footprint and CPU usage
 * Updated Russian translation by Паша
+* Fix bug where restoring a metadata backup screwed up the Wishlist
 
 ## Version 1.19
 

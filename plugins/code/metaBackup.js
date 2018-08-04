@@ -1,6 +1,8 @@
 var metaBackup = function() {
 
 	var mbb = null;
+	var monitortimer = null;
+	var progressDiv;
 
 	function getBackupData() {
 		metaHandlers.genericAction(
@@ -18,21 +20,45 @@ var metaBackup = function() {
 		metaHandlers.genericAction(
 			[{action: 'backup'+thing, which: what}],
         	function(data) {
+				clearTimeout(monitortimer);
         		debug.log("BACKUPS","Success");
         		if (thing == 'restore') {
         			collectionHelper.forceCollectionReload();
         		}
+				progressDiv.empty();
         		getBackupData();
         	},
         	function() {
+				clearTimeout(monitortimer);
         		infobar.notify(infobar.ERROR, "Failed to "+thing+' backup');
         		if (thing == 'restore') {
         			collectionHelper.forceCollectionReload();
         		}
+				progressDiv.empty();
         		getBackupData();
         	},
         );
+		if (thing == 'restore') {
+			setTimeout(monitorRestore, 250);
+		}
+	}
 
+	function monitorRestore() {
+		clearTimeout(monitortimer);
+		$.ajax({
+            type: "GET",
+            url: 'utils/checkrestoreprogress.php',
+            dataType: 'json',
+            success: function(data) {
+                debug.debug("UPDATE",data);
+                progressDiv.html(data.current);
+                monitortimer = setTimeout(monitorRestore, 250);
+            },
+            error: function(data) {
+                debug.log("UPDATE","ERROR",data);
+				monitortimer = setTimeout(monitorRestore, 250);
+            }
+        });
 	}
 
 	return {
@@ -41,10 +67,14 @@ var metaBackup = function() {
 			if (mbb === null) {
 	        	mbb = browser.registerExtraPlugin("mbb", language.gettext("label_metabackup"), metaBackup, 'https://fatg3erman.github.io/RompR/Backing-Up-Your-Metadata');
     			$("#mbbfoldup").append('<div class="padright noselection" style="text-align:center">'+
-					'<button class="fixed" onclick="metaBackup.create()">'+language.gettext("button_backup")+'</button>'+
+					'<button id="createbackup" class="fixed">'+language.gettext("button_backup")+'</button>'+
+					'<div class="svg-square invisible fixed" id="backupspinner"></div>'+
     				'</div>');
 
+				progressDiv = $('<div>', {class: 'padright', style: 'text-align:center'}).appendTo('#mbbfoldup');
+
 			    $("#mbbfoldup").append('<div class="noselection fullwidth" id="mbbmunger"></div>');
+				$('#createbackup').on('click', metaBackup.create);
 			    getBackupData();
 			} else {
 				browser.goToPlugin("mbb");
@@ -82,13 +112,19 @@ var metaBackup = function() {
 		},
 
 		create: function() {
+			$('#createbackup').off('click').hide();
+			$('#backupspinner').css('display', 'inline-block').makeSpinner();
 			metaHandlers.genericAction(
 				'metabackup',
 				function(data) {
             		infobar.notify(infobar.NOTIFY, "Backup Created");
             		getBackupData();
+					$('#backupspinner').stopSpinner().hide();
+					$('#createbackup').show().on('click', metaBackup.create);
             	},
             	function() {
+					$('#backupspinner').stopSpinner().css('display', 'none');
+					$('#createbackup').show().on('click', metaBackup.create);
             		infobar.notify(infobar.ERROR, "Failed to get Backup info");
             		mbb.slideToggle('fast');
             	}

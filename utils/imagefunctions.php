@@ -582,9 +582,14 @@ class gdImage {
         set_error_handler('gdImage::gd_handle_error', E_ALL);
 
         $this->filename = $filename;
-        $image_info = getimagesize($filename);
-        $image_type = $image_info[2];
         $imgtypes = imagetypes();
+        try {
+            $image_info = getimagesize($filename);
+            $image_type = $image_info[2];
+        } catch (Exception $e) {
+            debuglog("  GD threw an error when handling this image","GD-IMAGE",5);
+            $image_type = false;
+        }
 
         // We're being very careful here to check that the image is of a supported type
         // without throwing any errors. Belt and braces, since different PHP-GD installations
@@ -599,7 +604,7 @@ class gdImage {
         // This list contains all the image types that GD might be able to read, currently.
 
         // In the outside chance that an error occurs on a supported image type - sometimes libpng throws a fatal wobbler on some images -
-        // the error handler catches it and we call back to Imagemagick
+        // the error handler catches it and we fall back to Imagemagick
 
         switch ($image_type) {
             case IMAGETYPE_JPEG:

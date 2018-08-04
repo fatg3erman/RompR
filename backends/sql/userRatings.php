@@ -405,36 +405,46 @@ function removeBackup($which) {
 
 function restoreBackup($backup) {
 	global $prefs;
+	if (file_exists('prefs/backupmonitor')) {
+		unlink('prefs/backupmonitor');
+	}
+	$monitor = fopen('prefs/backupmonitor', 'w');
 	if (file_exists('prefs/databackups/'.$backup.'/tracks.json')) {
 		debuglog("Restoring Manually Added Tracks",4,"BACKUPS");
 		$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/tracks.json'), true);
-		foreach ($tracks as $trackdata) {
+		foreach ($tracks as $i => $trackdata) {
 			romprmetadata::sanitise_data($trackdata);
 			romprmetadata::add($trackdata, false);
+			$progress = round(($i/count($tracks))*100);
+			fwrite($monitor, "\n<b>Restoring Manually Added Tracks : </b>".$progress."%");
 		}
 	}
 	if (file_exists('prefs/databackups/'.$backup.'/ratings.json')) {
 		debuglog("Restoring Ratings",4,"BACKUPS");
 		$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/ratings.json'), true);
-		foreach ($tracks as $trackdata) {
+		foreach ($tracks as $i => $trackdata) {
 			romprmetadata::sanitise_data($trackdata);
 			$trackdata['attributes'] = array(array('attribute' => 'Rating', 'value' => $trackdata['rating']));
-			romprmetadata::set($trackdata);
+			romprmetadata::set($trackdata, true);
+			$progress = round(($i/count($tracks))*100);
+			fwrite($monitor, "\n<b>Restoring Ratings : </b>".$progress."%");
 		}
 	}
 	if (file_exists('prefs/databackups/'.$backup.'/tags.json')) {
 		debuglog("Restoring Tags",4,"BACKUPS");
 		$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/tags.json'), true);
-		foreach ($tracks as $trackdata) {
+		foreach ($tracks as $i => $trackdata) {
 			romprmetadata::sanitise_data($trackdata);
 			$trackdata['attributes'] = array(array('attribute' => 'Tags', 'value' => explode(',',$trackdata['tag'])));
-			romprmetadata::set($trackdata);
+			romprmetadata::set($trackdata, true);
+			$progress = round(($i/count($tracks))*100);
+			fwrite($monitor, "\n<b>Restoring Tags : </b>".$progress."%");
 		}
 	}
 	if (file_exists('prefs/databackups/'.$backup.'/playcounts.json')) {
 		debuglog("Restoring Playcounts",4,"BACKUPS");
 		$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/playcounts.json'), true);
-		foreach ($tracks as $trackdata) {
+		foreach ($tracks as $i => $trackdata) {
 			romprmetadata::sanitise_data($trackdata);
 			$trackdata['attributes'] = array(array('attribute' => 'Playcount', 'value' => $trackdata['playcount']));
 			if (!array_key_exists('lastplayed', $trackdata)) {
@@ -442,8 +452,11 @@ function restoreBackup($backup) {
 				$trackdata['lastplayed'] = null;
 			}
 			romprmetadata::inc($trackdata);
+			$progress = round(($i/count($tracks))*100);
+			fwrite($monitor, "\n<b>Restoring Playcounts : </b>".$progress."%");
 		}
 	}
+	fwrite($monitor, "\n<b>Cleaning Up...</b>");
 	// Now... we may have restored data on tracks that were previously local and now aren't there any more.
 	// If they're local tracks that have been removed, then we don't want them or care about their data
 	if ($prefs['player_backend'] == "mpd") {
@@ -453,6 +466,7 @@ function restoreBackup($backup) {
 	}
 	remove_cruft();
 	update_track_stats();
+	fclose($monitor);
 }
 
 function get_manually_added_tracks() {
