@@ -43,15 +43,17 @@ while (true) {
                 $current_playcount = array_key_exists('Playcount', $returninfo) ? $returninfo['Playcount'] : 0;
     			debuglog("Current Playcount is ".$current_playcount,"ROMONITOR",8);
             }
-            $progress = $mpd_status['elapsed']/$current_song['duration'];
-            if ($current_song['type'] !== 'stream' && $progress > 0.6 && !$playcount_updated) {
-                debuglog("Updating Playcount for current song","ROMONITOR");
-                $current_song['attributes'] = array(array('attribute' => 'Playcount', 'value' => $current_playcount+1));
-                romprmetadata::inc($current_song);
-                if ($current_song['type'] == 'podcast') {
-                    markAsListened($current_song['uri']);
+            if ($current_song['duration']) {
+                $progress = $mpd_status['elapsed']/$current_song['duration'];
+                if ($current_song['type'] !== 'stream' && $progress > 0.6 && !$playcount_updated) {
+                    debuglog("Updating Playcount for current song","ROMONITOR");
+                    $current_song['attributes'] = array(array('attribute' => 'Playcount', 'value' => $current_playcount+1));
+                    romprmetadata::inc($current_song);
+                    if ($current_song['type'] == 'podcast') {
+                        markAsListened($current_song['uri']);
+                    }
+                    $playcount_updated = true;
                 }
-                $playcount_updated = true;
             }
         }
         close_database();
@@ -103,7 +105,7 @@ function doNewPlaylistFile(&$filedata) {
         "image" => $images['small'],
         "albumuri" => $filedata['X-AlbumUri'],
     );
-    
+
     romprmetadata::sanitise_data($current_song);
 }
 
