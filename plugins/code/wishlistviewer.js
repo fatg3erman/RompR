@@ -84,27 +84,6 @@ var wishlistViewer = function() {
 		trawler.findThisOne(databits[reqid].data[databits[reqid].index], wishlistViewer.updateDatabase);
 	}
 
-	function chooseNew(clickedElement) {
-		var key = clickedElement.parent().attr("id");
-		key = key.replace(/wlchoices_/, "");
-		var index = clickedElement.attr("name");
-		clickedElement.html(trawler.trackHtml(databits[key].data[databits[key].index]), false);
-		clickedElement.attr("name", databits[key].index);
-		databits[key].index = index;
-		var html = trawler.trackHtml(databits[key].data[index], false) +
-		'<br /><span class="clickicon tiny plugclickable dropchoices infoclick" name="'+key+'"> '+
-			language.gettext("label_moreresults", [(databits[key].data.length - 1)]) + '</span></div>';
-		$("#wltrackfound"+key).html(html);
-	}
-
-	function importRow(element) {
-		var clickedElement = element.prev().attr("id");
-		debug.log("WISHLIST","Import row",clickedElement);
-		var key = parseInt(clickedElement.replace('wltrackfound',''));
-		debug.log("WISHLIST","Importing",databits[key], databits[key].data[databits[key].index]);
-		doSqlStuff(databits[key], databits[key].data[databits[key].index], false);
-	}
-
 	function doSqlStuff(parentdata, data, callback) {
 		data.action = 'add';
 		data.attributes = parentdata.attributes;
@@ -132,6 +111,20 @@ var wishlistViewer = function() {
 	function reloadWishlist() {
 		prefs.save({sortwishlistby: $('[name="sortwishlistby"]:checked').val()});
 		loadWishlist(false);
+	}
+
+	function chooseNew(clickedElement) {
+		var key = clickedElement.attr('romprkey');
+		$('#wlsearch_'+key).find('.importbutton, .playbutton').fadeOut('fast');
+		clickedElement.next().fadeIn('fast');
+		clickedElement.prev().fadeIn('fast');
+	}
+
+	function importRow(element) {
+		var key = element.parent().prev().attr("romprkey");
+		var index = element.parent().prev().attr('romprindex');
+		debug.log("WISHLIST","Importing",databits[key], databits[key].data[index]);
+		doSqlStuff(databits[key], databits[key].data[index], false);
 	}
 
 	return {
@@ -170,36 +163,28 @@ var wishlistViewer = function() {
 
 		updateDatabase: function(results) {
 			debug.log("WISHLIST","Found A Track",results);
-			var data = results[0];
-			databits[data.reqid].index = 0;
-			databits[data.reqid].data = results;
-			var element = $('.wlsch_'+data.reqid);
+			databits[results[0].reqid].index = 0;
+			databits[results[0].reqid].data = results;
+			var element = $('.wlsch_'+results[0].reqid);
 			var trackDiv = element.parent().parent();
-			var html;
-			var choicesDiv;
-			if (data.uri) {
-				temphtml = trawler.trackHtml(data, false);
-				if (results.length > 1) {
-					temphtml += '<br /><span class="clickicon tiny plugclickable dropchoices infoclick" name="'+data.key+'"> '+
-								language.gettext("label_moreresults", [(results.length - 1)]) +
-								'</span>';
-					choicesDiv = $('<div>', {id: 'wlchoices_'+data.key, class: "invisible ninesix indent padright"});
-					for (var i = 1; i < results.length; i++) {
-						choicesDiv.append('<div class="backhi plugclickable infoclick choosenew" name="'+i+'" style="margin-bottom:4px">'+
-											trawler.trackHtml(results[i], false))+'</div>';
-					}
+			var resultsDiv = $('<div>', {id: 'wlsearch_'+results[0].key, class: 'toggledown'}).appendTo(trackDiv);
+			if (results.length > 0 && results[0].uri) {
+				var dropper = $("<div>", {class: 'containerbox fixed'}).insertBefore(resultsDiv);
+				dropper.append('<i class="openmenu icon-menu clickicon fixed collectionicon" name="wlsearch_'+results[0].reqid+'"></i>');
+				for (var i = 0; i < results.length; i++) {
+					var data = results[i];
+					var firstTrack = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(resultsDiv);
+					var trackDetails = $('<div>', {romprindex: i, romprkey: data.reqid, class: 'backhi plugclickable infoclick choosenew ninesix indent padright expand'}).html(trawler.trackHtml(data, false)).appendTo(firstTrack);
+					firstTrack.append('<div class="fixed invisible importbutton"><button class="plugclickable infoclick importrow">Import</button></div>');
+					firstTrack.prepend('<div class="fixed invisible playbutton"><i class="icon-no-response-playbutton clickicon playable collectionicon" name="'+data.uri+'"></i></div>');
 				}
-				html = '<div class="containerbox expand"><div id="wltrackfound'+data.key+'" class="indent expand invisible">'+temphtml+'</div>'+'<button class="fixed plugclickable infoclick importrow">Import</button></div>';
 			} else {
-				html = '<div id="wltrackfound'+data.key+'" class="expand invisible"><b><i>'+language.gettext("label_notfound")+'</i></b></div>';
+				resultsDiv.append('<div class="expand"><b><i>'+language.gettext("label_notfound")+'</i></b></div>');
 			}
-			trackDiv.append(html);
-			if (choicesDiv) {
-				trackDiv.append(choicesDiv);
-			}
-			element.removeClass('wlsch_'+data.reqid).stopSpinner().remove();
-			trackDiv.find('.invisible').first().fadeIn('fast');
-
+			element.removeClass('wlsch_'+results[0].reqid).stopSpinner().remove();
+			// resultsDiv.find('.invisible').first().fadeIn('fast');
+			resultsDiv.find('.invisible.importbutton').first().fadeIn('fast');
+			resultsDiv.find('.invisible.playbutton').first().fadeIn('fast');
 		},
 
 		update: function() {

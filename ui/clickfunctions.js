@@ -48,7 +48,8 @@ function setPlayClickHandlers() {
         handlerFunction takes 2 parameters - the event and the clicked element
 
     Items for where the click should open a dropdown menu should have a class of 'openmenu'
-    and NOT 'clickable'. The item's name attribute should be the id attribute of the dropdown panel
+    and NOT 'clickable'. The item's name attribute should be the id attribute of the dropdown panel,
+    which should have a class of 'toggledown'
         Plugins can provide a callback function to populate the dropdown panel
         menuOpeners['id attribute (no hash)'] = populateFunction
         Note there are special built-in attributes for many of the dropdowns - eg album, artist, directory etc

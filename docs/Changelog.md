@@ -18,6 +18,10 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Option to transfer current playlist to new player when switching players
 * New Global Refresh, Mark as Listened, etc controls for podcasts
 * Upgrade to jQuery 3, which might make some older browsers no longer work
+* Added Slave mode for Mopidy Players so you only need to have one 'Master' Mopidy Player and all the others can still play local tracks using the file backend without the need to have a local files database on all of them
+* Partial, experimental, support for using mixed player types (MPD and Mopidy) as Players.
+* Several UI improvements to click handling and tooltips to reduce memory footprint and CPU usage
+* Updated Russian translation by Паша
 
 ## Version 1.19
 

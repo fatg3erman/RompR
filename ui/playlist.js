@@ -222,7 +222,7 @@ var playlist = function() {
                     class: 'menuitem containerbox playable smartradio',
                     name: station + (param ? '+'+param : '')
                 });
-                container.append('<div class="smallcover svg-square fixed '+icon+'"></div>');
+                container.append('<div class="svg-square fixed '+icon+'"></div>');
                 container.append('<div class="expand">'+label+'</div>');
                 return container;
             },
@@ -236,7 +236,7 @@ var playlist = function() {
                     class: 'icon-toggle-closed menu openmenu mh fixed',
                     name: dropid
                 }));
-                container.append('<div class="smallcover svg-square noindent fixed '+icon+'"></div>');
+                container.append('<div class="svg-square noindent fixed '+icon+'"></div>');
                 container.append('<div class="expand">'+label+'</div>');
                 return container;
             },
@@ -250,7 +250,7 @@ var playlist = function() {
 
             textEntry: function(icon, label, id) {
                 var html = '<div class="menuitem containerbox fullwidth">';
-                html += '<div class="smallcover svg-square fixed '+icon+'"></div>';
+                html += '<div class="svg-square fixed '+icon+'"></div>';
                 html += '<div class="expand containerbox vertical">';
                 html += '<div class="fixed">'+label+'</div>';
                 html += '<div class="containerbox fixed">';

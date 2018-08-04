@@ -587,7 +587,8 @@ var infobar = function() {
             $("#progress").rangechooser({
                 ends: ['max'],
                 onstop: infobar.seek,
-                startmax: 0
+                startmax: 0,
+                animate: true
             });
         },
 

@@ -13,9 +13,9 @@ function faveFinder(returnall) {
     // There's currently no way to change these for tracks that are rated from radio stations
     // which means that these are the only domains that will be searched, but this is better
     // than including podcasts and radio stations, which we'll never want
-    
+
     // I'm also not including SoundCloud because it produces far too many false positives
-    
+
     if (prefs.player_backend == 'mopidy') {
         priority = ["gmusic", "spotify", "beets", "beetslocal", "local"];
     }
@@ -98,7 +98,7 @@ function faveFinder(returnall) {
         }
         var req = queue[0];
         debug.trace("FAVEFINDER","Raw Results for",req,data);
-        
+
         var results = new Array();
         var best_matches = new Array();
         var medium_matches = new Array();
@@ -117,7 +117,7 @@ function faveFinder(returnall) {
                         }
 
                         if (r.data.title == null && r.data.artist == null) {
-                            
+
                         } else {
                             if (r.data.albumartist != "Various Artists") {
                                 if (compare_tracks_with_artist(req.data, r.data)) {
@@ -210,6 +210,7 @@ function faveFinder(returnall) {
 
     this.trackHtml = function(data, breaks) {
         var html = "";
+        // html += '<i class="icon-no-response-playbutton clickicon playable collectionicon" name="'+data.uri+'"></i>';
         var u = data.uri;
         if (u.match(/spotify:/)) {
             html += '<i class="icon-spotify-circled collectionicon"></i>';
@@ -237,7 +238,7 @@ function faveFinder(returnall) {
     this.setCheckDb = function(d) {
         checkdb = d;
     }
-    
+
     this.setExact = function(e) {
         exact = e;
     }

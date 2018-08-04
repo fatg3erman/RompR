@@ -10,14 +10,10 @@ The wishlist Viewer show the tracks in your Wishlist along with the ratings and 
 
 For mpd users, the Wishlist is an *aide-memoire* only.
 
-For mopidy users who are running other internet-based backends (eg Soundcloud, Internet Archive, YouTube) the Wishlist allows you to search those too. Click the Magnifying Glass icon next to the track you want to search for. RompЯ will search, using Mopidy and all its backends, and come back with a list of suggestions. The one that most closely matches the title and artist will be displayed.
+For mopidy users who are running other internet-based backends (eg Soundcloud, Internet Archive, YouTube) the Wishlist allows you to search those too. Click the Magnifying Glass icon next to the track you want to search for. RompЯ will search, using Mopidy and all its backends, and come back with a list of suggestions. The one that most closely matches the title and artist will be at the top, with an 'Import' button on the right and a 'Play' button on the left.
 
 ![](images/wishlist2.png)
 
-If that's the correct track, click the Import button. If RompЯ found more than one possibility, it will display '+3 more' (or whatever number). Clicking on that will expand the entry to show all the possible matches returned by the Mopidy search
-
-![](images/wishlist3.png)
-
-To select a different result, just click on it. It will then be moved up to the head of the list next to the Import button. Clicking Import will then add that track to your Collection.
+If you want to listen to that track you can play it by clicking the Play button. To reveal the Play and Import buttons for a different result, just click on that result. Once you've found the right one, just click the Import button to add it to the Music Collection.
 
 To remove a track from the wishlist, just click the x. The 'Clear Wishlist' button will remove all tracks from the Wishlist.

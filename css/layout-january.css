@@ -666,6 +666,11 @@ button {
     height:1em;
     margin-right:auto;
     margin-left:auto;
+	background-repeat:no-repeat;
+}
+
+.progressbar.animated {
+	transition: background-position 1s linear;
 }
 
 .progressbar_v {

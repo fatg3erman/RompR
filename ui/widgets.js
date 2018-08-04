@@ -527,7 +527,8 @@ $.widget("rompr.rangechooser", $.ui.mouse, {
         orientation: 'horizontal',
         startmin: 0,
         startmax: 1,
-        interactive: true
+        interactive: true,
+        animate: false
     },
 
     _create: function() {
@@ -548,6 +549,9 @@ $.widget("rompr.rangechooser", $.ui.mouse, {
 
 
         }
+        // if (this.options.animate) {
+        //     this.element.addClass('animated');
+        // }
         this.min = this.options.startmin;
         this.max = this.options.startmax;
         if (this.options.interactive) {
@@ -607,8 +611,12 @@ $.widget("rompr.rangechooser", $.ui.mouse, {
     },
 
     fill: function() {
-        var rgbs = getrgbs(this.max*100,this.min*100);
         var gradients = new Array();
+        // if (this.options.animate) {
+        //     var rgbs = getrgbs(100,0);
+        // } else {
+            var rgbs = getrgbs(this.max*100,this.min*100);
+        // }
         if (this.max == this.min || isNaN(this.min) || isNaN(this.max)) {
             gradients.push('transparent');
         } else if (this.options.orientation == "horizontal") {
@@ -619,6 +627,14 @@ $.widget("rompr.rangechooser", $.ui.mouse, {
         for (var i in gradients) {
             this.element.css("background", gradients[i]);
         }
+        // if (this.options.animate) {
+        //     if (this.max == this.min || isNaN(this.min) || isNaN(this.max) || this.max == 0) {
+        //         var pos = 0;
+        //     } else {
+        //         var pos = (this.element.width()*this.max)-this.element.width();
+        //     }
+        //     this.element.css({'background-position-x': pos+'px', 'background-repeat': 'no-repeat'});
+        // }
     },
 
     dragWhich: function(event) {

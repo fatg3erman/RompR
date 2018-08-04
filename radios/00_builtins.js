@@ -18,7 +18,7 @@ var starRadios = function() {
             var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
                 appendTo(a).makeTagMenu({
                 textboxname: 'cynthia',
-                labelhtml: '<i class="smallcover icon-tags svg-square"></i>',
+                labelhtml: '<i class="icon-tags svg-square"></i>',
                 populatefunction: tagAdder.populateTagMenu,
                 buttontext: language.gettext('button_playradio'),
                 buttonfunc: starRadios.tagPopulate
