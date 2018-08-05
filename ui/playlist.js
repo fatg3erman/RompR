@@ -243,7 +243,7 @@ var playlist = function() {
 
             dropdownHolder: function(id) {
                 return $('<div>', {
-                    class: 'toggledown invisible',
+                    class: 'toggledown invisible expand',
                     id: id
                 });
             },

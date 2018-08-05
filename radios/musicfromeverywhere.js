@@ -64,7 +64,7 @@ var lastFMArtistRadio = function() {
                 // Last.FM Lucky Dip (Music from Everywhere)
                 //
                 var header = playlist.radioManager.dropdownHeader('lastFMArtistRadio', '7day', 'icon-lastfm-1', language.gettext('label_lastfm_mix'), 'lastfm_mix').appendTo("#pluginplaylists_everywhere");
-                var holder = playlist.radioManager.dropdownHolder('lastfm_mix').insertAfter(header);
+                var holder = playlist.radioManager.dropdownHolder('lastfm_mix').appendTo(header);
                 holder.append(playlist.radioManager.standardBox('lastFMArtistRadio', '7day', 'icon-lastfm-1', 'Weekly Dip').addClass('dropdown'));
                 holder.append(playlist.radioManager.standardBox('lastFMArtistRadio', '1month', 'icon-lastfm-1', 'Monthly Dip').addClass('dropdown'));
                 holder.append(playlist.radioManager.standardBox('lastFMArtistRadio', '12month', 'icon-lastfm-1', 'Yearly Dip').addClass('dropdown'));
@@ -85,7 +85,7 @@ var lastFMTrackRadio = function() {
                 // Last.FM Mix Radio (Music from Everywhere)
                 //
                 var header = playlist.radioManager.dropdownHeader('lastFMTrackRadio', '7day', 'icon-lastfm-1', language.gettext('label_lastfm_track'), 'lastfm_track').appendTo("#pluginplaylists_everywhere");
-                var holder = playlist.radioManager.dropdownHolder('lastfm_track').insertAfter(header);
+                var holder = playlist.radioManager.dropdownHolder('lastfm_track').appendTo(header);
                 holder.append(playlist.radioManager.standardBox('lastFMTrackRadio', '7day', 'icon-lastfm-1', 'Daily Mix').addClass('dropdown'));
                 holder.append(playlist.radioManager.standardBox('lastFMTrackRadio', '1month', 'icon-lastfm-1', 'Monthly Mix').addClass('dropdown'));
                 holder.append(playlist.radioManager.standardBox('lastFMTrackRadio', '12month', 'icon-lastfm-1', 'Yearly Mix').addClass('dropdown'));

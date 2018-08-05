@@ -668,6 +668,10 @@ div.rightmenu
     border: 4px solid transparent;
 }
 
+.collectionitem.fixed.selecotron>.containerbox.wrap {
+    height: 100%;
+}
+
 #pluginplaylistslist .collectionitem.brick_wide {
     margin-bottom:4px;
 }
@@ -687,6 +691,7 @@ div.helpfulalbum>div.tagh.albumthing.jalopy200 {
 
 #pluginplaylistslist .collectionitem .menuitem {
     padding-left:0px;
+    height:100%;
 }
 
 #pluginplaylistslist .collectionitem .menuitem.vertical .svg-square {
