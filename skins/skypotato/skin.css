@@ -672,6 +672,10 @@ div.rightmenu
     height: 100%;
 }
 
+.collectionitem.fixed.selecotron>.containerbox.openmenu {
+    height: 100%;
+}
+
 #pluginplaylistslist .collectionitem.brick_wide {
     margin-bottom:4px;
 }
