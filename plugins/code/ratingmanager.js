@@ -101,7 +101,7 @@ var ratingManager = function() {
 				c.append('<img class="jalopy jalopy200" src="'+aa.getSize('medium')+'" />');
 			}
 			c.append('<div class="tagh albumthing sponclick jalopy200">'+tit+'</div>');
-			current_albumholder = $('<div>', {class: "minwidthed2 expand"}).appendTo(b);
+			current_albumholder = $('<div>', {class: "expand"}).appendTo(b);
 		}
 		var setdata = encodeURIComponent(JSON.stringify({title: data.Title, artist: data.Artistname, trackno: data.TrackNo, album: data.Albumname, albumartist: data.AlbumArtist}));
 		var html = '<div class="ntu draggable clicktrack playable fullwidth" name="'+encodeURIComponent(data.Uri)+'">';

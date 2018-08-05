@@ -668,12 +668,28 @@ div.rightmenu
     border: 4px solid transparent;
 }
 
-.collectionitem.fixed.selecotron>.containerbox.wrap {
+.collectionitem.fixed.selecotron:not(.tagholder_wide)>.containerbox.wrap {
     height: 100%;
 }
 
-.collectionitem.fixed.selecotron>.containerbox.openmenu {
+.collectionitem.fixed.selecotron:not(.tagholder_wide)>.containerbox.openmenu {
     height: 100%;
+}
+
+#podcastslist .tagholder_wide>.minwidthed2:before
+{
+    content:"";
+    width: 20em;
+    display:block;
+    overflow:hidden;
+}
+
+.collectionitem.fixed.selecotron.tagholder_wide>.radiochannel+.minwidthed2:before
+{
+    content:"";
+    width: 20em;
+    display:block;
+    overflow:hidden;
 }
 
 #pluginplaylistslist .collectionitem.brick_wide {

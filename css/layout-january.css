@@ -452,13 +452,6 @@ button {
     overflow:hidden;
 }
 
-.minwidthed2:before
-{
-    content:"";
-    width: 20em;
-    display:block;
-    overflow:hidden;
-}
 .sensiblebox {
 	box-sizing: border-box;
 }
