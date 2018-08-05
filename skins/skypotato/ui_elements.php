@@ -197,7 +197,7 @@ function playlistPlayHeader($name) {
 function addPodcastCounts($html, $extra) {
     $out = phpQuery::newDocument($html);
     $out->find('.containerbox.wrap')->removeClass('wrap')->addClass('vertical');
-    $extra = '<div class="helpfulalbum fixed">'.$extra.'</div>';
+    $extra = '<div class="helpfulalbum fixed podcastcounts">'.$extra.'</div>';
     $out->find('.containerbox.vertical')->append($extra);
     return $out;
 }

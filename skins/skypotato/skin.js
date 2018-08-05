@@ -62,7 +62,7 @@ jQuery.fn.menuHide = function(callback) {
             self.parent().parent().find('.containerbox.wrap').children('.minwidthed2').remove();
         } else if (self.prev().hasClass('podcast')) {
             self.parent().find('.containerbox.vertical').removeClass('tleft bumpad');
-            self.parent().find('.helpfulalbum.fixed').removeClass('fixed').addClass('expand');
+            self.parent().find('.helpfulalbum.fixed').not('.podcastcounts').removeClass('fixed').addClass('expand');
             self.parent().removeClass('tagholder_wide dropshadow');
             self.removeClass('minwidthed2');
         } else if (self.prev().hasClass('radiochannel')) {
@@ -154,7 +154,7 @@ jQuery.fn.animatePanel = function(options) {
 }
 
 function showHistory() {
-
+    layoutProcessor.sourceControl('infoholder');
 }
 
 var layoutProcessor = function() {
