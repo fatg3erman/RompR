@@ -395,6 +395,10 @@ if ($collection_type == "mopidy" && $prefs['player_backend'] == 'mopidy') {
     print '<div class="pref">'.get_int_text('config_beetsserver').'
     <input class="prefinput saveotron" id="beets_server_location" type="text" size="40" />
     </div>';
+
+    print '<div class="pref styledinputs">
+    <input class="autoset toggle" type="checkbox" id="preferlocalfiles">
+    <label for="preferlocalfiles">'.get_int_text('config_preferlocal').'</label></div>';
 }
 
 if ($collection_type == $prefs['player_backend']) {

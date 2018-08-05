@@ -601,12 +601,12 @@ $languages['en'] = array (
 	"config_beetsserver" => "Location of Beets Server (ip.address:port)",
 	"config_players" => 'Players',
 	"button_edit_players" => 'Edit Players',
-	
+
 	"label_play_all" => "Play All",
 	"label_play_options" => "Play Options",
 	"label_last_played" => "Last Played:",
 	"label_station_website" => "Station Website",
-	
+
 	"label_play_whole_album" => "Play Whole Album",
 	"label_from_collection" => "Play Only Tracks From Collection",
 	"label_with_ratings" => "Play Only Tracks With Ratings",
@@ -669,7 +669,8 @@ $languages['en'] = array (
 	"label_topright" => "Top Right",
 	"label_bottomleft" => "Bottom Left",
 	"label_bottomright" => "Bottom Right",
-	"label_centre" => "Centered"
+	"label_centre" => "Centered",
+	"config_preferlocal" => "Prefer Local Music to Internet Sources"
 );
 
 ?>

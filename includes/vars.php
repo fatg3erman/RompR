@@ -81,6 +81,7 @@ $prefs = array(
     "sortbycomposer" => false,
     "composergenre" => false,
     "composergenrename" => array("Classical"),
+    "preferlocalfiles" => false,
     "mopidy_collection_folders" => array("Spotify Playlists","Local media","SoundCloud/Liked"),
     "lastfm_country_code" => "GB",
     "country_userset" => false,

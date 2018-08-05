@@ -163,16 +163,18 @@ function check_album(&$data) {
 	//		Checks for the existence of an album and creates it if necessary
 	//		Returns: Albumindex
 
-	global $prefs;
+	global $prefs, $trackbytrack, $doing_search;
 	$index = null;
 	$year = null;
 	$img = null;
+	$mbid = null;
 	$result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
 		"SELECT
 			Albumindex,
 			Year,
 			Image,
-			AlbumUri
+			AlbumUri,
+			mbid
 		FROM
 			Albumtable
 		WHERE
@@ -180,12 +182,44 @@ function check_album(&$data) {
 			AND AlbumArtistindex = ?
 			AND Domain = ?", $data['album'], $data['albumai'], $data['domain']);
 	$obj = array_shift($result);
+
+	if ($prefs['preferlocalfiles'] && $trackbytrack && !$doing_search && $data['domain'] == 'local' && !$obj) {
+		// Does the album exist on a different, non-local, domain? The checks above ensure we only do this
+		// during a collection update
+		$result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
+			"SELECT
+				Albumindex,
+				Year,
+				Image,
+				AlbumUri,
+				mbid,
+				Domain
+			FROM
+				Albumtable
+			WHERE
+				LOWER(Albumname) = LOWER(?)
+				AND AlbumArtistindex = ?", $data['album'], $data['albumai']);
+		$obj = array_shift($result);
+		if ($obj) {
+			debuglog("Album ".$data['album']." was found on domain ".$obj->Domain.". Changing to local","MYSQL", 7);
+			$index = $obj->Albumindex;
+			if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET AlbumUri=NULL, Domain=?, justUpdated=? WHERE Albumindex=?", 'local', 1, $index)) {
+				$obj->AlbumUri = null;
+				debuglog("   ...Success","MYSQL",9);
+			} else {
+				debuglog("   Album ".$data['album']." update FAILED","MYSQL",3);
+				return false;
+			}
+		}
+	}
+
 	if ($obj) {
 		$index = $obj->Albumindex;
 		$year = best_value($obj->Year, $data['date']);
 		$img  = best_value($obj->Image, $data['image']);
 		$uri  = best_value($obj->AlbumUri, $data['albumuri']);
-		if ($year != $obj->Year || $img != $obj->Image || $uri != $obj->AlbumUri) {
+		$mbid  = best_value($obj->mbid, $data['ambid']);
+		if ($year != $obj->Year || $img != $obj->Image || $uri != $obj->AlbumUri || $mbid != $obj->mbid) {
 
 			if ($prefs['debug_enabled'] > 6) {
 				debuglog("Updating Details For Album ".$data['album']." (index ".$index.")" ,"MYSQL",7);
@@ -195,9 +229,11 @@ function check_album(&$data) {
 				debuglog("  New Image : ".$img,"MYSQL",7);
 				debuglog("  Old Uri  : ".$obj->AlbumUri,"MYSQL",7);
 				debuglog("  New Uri  : ".$uri,"MYSQL",7);
+				debuglog("  Old MBID  : ".$obj->mbid,"MYSQL",7);
+				debuglog("  New MBID  : ".$mbid,"MYSQL",7);
 			}
 
-			if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Year=?, Image=?, AlbumUri=?, justUpdated=1 WHERE Albumindex=?",$year, $img, $uri, $index)) {
+			if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Year=?, Image=?, AlbumUri=?, mbid=?, justUpdated=1 WHERE Albumindex=?",$year, $img, $uri, $mbid, $index)) {
 				debuglog("   ...Success","MYSQL",9);
 			} else {
 				debuglog("   Album ".$data['album']." update FAILED","MYSQL",3);
