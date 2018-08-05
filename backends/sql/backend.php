@@ -1779,7 +1779,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
     // is how we detect user-added tracks and prevent them being deleted on collection updates
 
 	// Note the use of === to detect LastModified, because == doesn't tell the difference between 0 and null
-	//  - so if we have a manually added track and the add a collection track over it from a backend that doesn't
+	//  - so if we have a manually added track and then add a collection track over it from a backend that doesn't
 	//  give us LastModified (eg Spotify-Web), we don't update lastModified and the track remains manually added.
 
     if ($ttid) {
@@ -1802,7 +1802,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 		    	if ($hidden != 0) debuglog("    It is hidden","MYSQL",7);
 		    	if ($trackobj->tags['file'] != $uri) {
 		    		debuglog("    Uri has changed from : ".$uri,"MYSQL",7);
-		    		debuglog("                      to : ".$trackobj->tags['file'],7);
+		    		debuglog("                      to : ".$trackobj->tags['file'],"MYSQL",7);
 		    	}
 		    }
 

@@ -36,19 +36,24 @@ function output_file($outfile) {
 
 function download_image_file($url, $outfile) {
 
-	debuglog("  ... Downloading it", "TOMATO",8);
-	$d = new url_downloader(array('url' => $url));
-	if ($d->get_data_to_file($outfile, true)) {
-		debuglog("Cached Image ".$outfile,"TOMATO",9);
-		$content_type = $d->get_content_type();
-		debuglog("  ... Content Type is ".$content_type,"TOMATO", 8);
-		if (substr($content_type,0,5) != 'image' && $content_type != 'application/octet-stream') {
-			debuglog("      Not an image file! ".$url,"TOMATO",8);
-			unlink($outfile);
+	if (substr($url, 0, 10) == 'data:image') {
+		debuglog("  ... Decoding Base64 Data", "TOMATO",8);
+		create_image_from_base64($url, $outfile);
+	} else {
+		debuglog("  ... Downloading it", "TOMATO",8);
+		$d = new url_downloader(array('url' => $url));
+		if ($d->get_data_to_file($outfile, true)) {
+			debuglog("Cached Image ".$outfile,"TOMATO",9);
+			$content_type = $d->get_content_type();
+			debuglog("  ... Content Type is ".$content_type,"TOMATO", 8);
+			if (substr($content_type,0,5) != 'image' && $content_type != 'application/octet-stream') {
+				debuglog("      Not an image file! ".$url,"TOMATO",8);
+				unlink($outfile);
+				return false;
+			}
+		} else {
 			return false;
 		}
-	} else {
-		return false;
 	}
 	return true;
 }

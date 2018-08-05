@@ -224,7 +224,11 @@ class commradioplugin {
 
     private function comm_radio_get_image($station) {
         if ($station['favicon']) {
-            return 'getRemoteImage.php?url='.$station['favicon'].'&rompr_backup_type=stream';
+            if (substr($station['favicon'], 0, 10) == 'data:image') {
+                return $station['favicon'];
+            } else {
+                return 'getRemoteImage.php?url='.$station['favicon'].'&rompr_backup_type=stream';
+            }
         } else {
             return 'newimages/broadcast.svg';
         }
@@ -232,7 +236,12 @@ class commradioplugin {
 
     private function comm_radio_get_stream_image($station) {
         if ($station['favicon']) {
-            return 'getRemoteImage.php?url='.$station['favicon'];
+            if (substr($station['favicon'], 0, 10) == 'data:image') {
+                // Sadly we can't handle base64 data as a stream image in this way. The URLs are too long
+                return '';
+            } else {
+                return 'getRemoteImage.php?url='.$station['favicon'];
+            }
         } else {
             return '';
         }

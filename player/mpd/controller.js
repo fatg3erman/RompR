@@ -386,22 +386,12 @@ function playerController() {
 
 	this.playId = function(id) {
         playlist.checkPodcastProgress();
-        if (player.status.state != 'stop' && playlist.getCurrent('type') == 'stream' && prefs.player_backend == 'mopidy') {
-            // Workaround mopidy bug where streams need to be stopped before you do anything.
-            self.do_command_list([['stop'], ["playid",id]]);
-        } else {
-            self.do_command_list([["playid",id]]);
-        }
+        self.do_command_list([["playid",id]]);
 	}
 
 	this.playByPosition = function(pos) {
         playlist.checkPodcastProgress();
-        if (player.status.state != 'stop' && playlist.getCurrent('type') == 'stream' && prefs.player_backend == 'mopidy') {
-            // Workaround mopidy bug where streams need to be stopped before you do anything.
-            self.do_command_list([['stop'], ["play",pos.toString()]]);
-        } else {
-            self.do_command_list([["play",pos.toString()]]);
-        }
+        self.do_command_list([["play",pos.toString()]]);
 	}
 
 	this.volume = function(volume, callback) {

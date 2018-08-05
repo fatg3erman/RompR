@@ -420,12 +420,16 @@ class albumImage extends baseAlbumImage {
 
     private function save_base64_data() {
         debuglog("  Saving base64 data","ALBUMIMAGE");
-        $image = explode('base64,',$this->base64data);
         $download_file = 'prefs/temp/'.$this->key;
-        file_put_contents($download_file, base64_decode($image[1]));
+        create_image_from_base64($this->base64data, $download_file);
         return $download_file;
     }
 
+}
+
+function create_image_from_base64($base64, $download_file) {
+    $image = explode('base64,',$base64);
+    file_put_contents($download_file, base64_decode($image[1]));
 }
 
 function artist_for_image($type, $artist) {
