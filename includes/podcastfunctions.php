@@ -4,11 +4,12 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
     global $prefs;
     $url = preg_replace('#^itpc://#', 'http://', $url);
     $url = preg_replace('#^feed://#', 'http://', $url);
+    debuglog("Parsing Feed ".$url,"PARSE_RSS");
     $d = new url_downloader(array('url' => $url));
     if (!$d->get_data_to_string()) {
         header('HTTP/1.0 404 Not Found');
         print "Feed Not Found";
-        debuglog("Failed to get ".$url,"PODCASTS",2);
+        debuglog("  Failed to Download ".$url,"PARSE_RSS",2);
         exit;
     }
 
@@ -23,7 +24,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
     }
     $feed = simplexml_load_string($d->get_data());
 
-    debuglog("Parsing Feed ".$url,"PODCASTS");
+    debuglog("  Our LastPubDate is ".$lastpubdate,"PARSE_RSS");
 
     // Begin RSS Parse
     $podcast = array();
@@ -84,11 +85,13 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
     // Image
     if ($feed->channel->image) {
         $podcast['Image'] = html_entity_decode($feed->channel->image->url);
-        debuglog("Image is ".$podcast['Image'],"PODCASTS");
+        debuglog("  Image is ".$podcast['Image'],"PARSE_RSS");
     } else if ($m && $m->image) {
         $podcast['Image'] = $m->image[0]->attributes()->href;
+        debuglog("  Image is ".$podcast['Image'],"PARSE_RSS");
     } else {
         $podcast['Image'] = "newimages/podcast-logo.svg";
+        debuglog("  No Image Found","PARSE_RSS");
     }
     if (preg_match('#^/#', $podcast['Image'])) {
         // Image link with a relative URL. Duh.
@@ -102,7 +105,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
         $podcast['Artist'] = '';
     }
 
-    debuglog("  Artist is ".$podcast['Artist'],"PODCASTS");
+    debuglog("  Artist is ".$podcast['Artist'],"PARSE_RSS");
 
     // Category
     $cats = array();
@@ -117,7 +120,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
     $spaz = array_diff($cats, array('Podcasts'));
     natsort($spaz);
     $podcast['Category'] = implode(', ', $spaz);
-    debuglog("  Category is ".$podcast['Category'],"PODCASTS");
+    debuglog("  Category is ".$podcast['Category'],"PARSE_RSS");
 
     // Title
     $podcast['Title'] = (string) $feed->channel->title;
@@ -127,7 +130,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 
     // Tracks
     $podcast['tracks'] = array();
-    $podcast['LastPubDate'] = null;
+    $podcast['LastPubDate'] = $lastpubdate;
     if ($gettracks) {
         foreach($feed->channel->item as $item) {
             $track = array();
@@ -136,7 +139,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 
             // Track Title
             $track['Title'] = (string) $item->title;
-            debuglog("  Found track ".$track['Title'],"PODCASTS",8);
+            debuglog("  Found track ".$track['Title'],"PARSE_RSS",8);
 
             // Track URI
             $uri = null;
@@ -156,7 +159,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
             }
 
             $track['Link'] = $uri;
-            debuglog("    Track URI is ".$uri,"PODCASTS",8);
+            debuglog("    Track URI is ".$uri,"PARSE_RSS",8);
 
             if ($item->guid) {
                 $track['GUID'] = $item->guid;
@@ -165,8 +168,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
             }
 
             if ($uri == null) {
-                debuglog("Could Not Find URI for track!","PODCASTS",3);
-                debuglog("  Track Title is ".$track['Title'],"PODCASTS",3);
+                debuglog("    Could Not Find URI for track!","PARSE_RSS",3);
                 continue;
             }
 
@@ -191,7 +193,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
                     if (is_numeric($s)) {
                         $time += ($s * $mf);
                     } else {
-                        debuglog("Non-numeric duration field encountered in podcast! - ".$track['Duration'],"PODCASTS",4);
+                        debuglog("    Non-numeric duration field encountered in podcast! - ".$track['Duration'],"PARSE_RSS",4);
                         $time = 0;
                         break;
                     }
@@ -208,7 +210,13 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 
             // Track Publication Date
             $t = strtotime((string) $item->pubDate);
-            if ($podcast['LastPubDate'] === null || $t > $podcast['LastPubDate']) {
+            debuglog('    Track PubDate is '.(string) $item->pubDate.' ('.$t.')','PARSE_RSS');
+            if ($t === false) {
+                debuglog("      ERROR - Could not parse episode Publication Date","PARSE_RSS");
+            } else if ($t > $podcast['LastPubDate']) {
+                debuglog("      This is a new episode","PARSE_RSS");
+            }
+            if ($t === false || $podcast['LastPubDate'] === null || $t > $podcast['LastPubDate']) {
                 $podcast['LastPubDate'] = $t;
             }
             $track['PubDate'] = $t;
@@ -229,8 +237,8 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
     }
 
     if ($lastpubdate !== null) {
-        if ($podcast['LastPubDate'] == $lastpubdate) {
-            debuglog("Podcast has not been updated since last refresh","PODCASTS");
+        if ($podcast['LastPubDate'] !== false && $podcast['LastPubDate'] == $lastpubdate) {
+            debuglog("Podcast has not been updated since last refresh","PARSE_RSS");
             return false;
         }
     }
@@ -391,6 +399,7 @@ function check_podcast_upgrade($podetails, $podid, $podcast) {
 
 function refreshPodcast($podid) {
     global $prefs;
+    debuglog('---------------------------------------------------','PODCASTS');
     debuglog("Refreshing podcast ".$podid,"PODCASTS");
     $result = generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$podid, false, PDO::FETCH_OBJ);
     if (count($result) > 0) {

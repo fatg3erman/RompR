@@ -266,7 +266,7 @@ var infobar = function() {
                         // null means playlist.emptytrack. Set the source to a file that doesn't exist
                         // and let the onerror handler do the stuff. Then if we start playing the same
                         // album again the image src will change and the image will be re-displayed.
-                        infobar.albumImage.setKey('none');
+                        infobar.albumImage.setKey('notrack');
                         aImg.src = notafile;
                     } else if (data.images.asdownloaded == "") {
                         // No album image was supplied
