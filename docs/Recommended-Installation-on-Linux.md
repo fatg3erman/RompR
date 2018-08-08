@@ -20,7 +20,7 @@ In mopidy.conf, your mpd section needs to contain
 
     [mpd]
     connection_timeout = 120
-    
+
 ### For MPD
 
 Somewhere in mpd.conf
@@ -62,7 +62,7 @@ And then we need to give nginx permission to write to them. We can do this by ch
 
 ### Install some packages
 
-`sudo apt-get install nginx php7.0-curl php7.0-mysql php7.0-gd php7.0-json php7.0-xml php7.0-mbstring imagemagick`
+`sudo apt-get install nginx php7.0-curl php7.0-sqlite php7.0-gd php7.0-json php7.0-xml php7.0-mbstring php7.0-fpm imagemagick`
 
 _Note the version numbers - 7.1 is current at the time of  writing but as times change it may become 7.2,etc. On Ubuntu 16.04 I think it is 7.0. Amend the command as applicable_
 
@@ -75,17 +75,17 @@ _Note. This sets RompЯ as the default site on your machine. For most people thi
 Nginx comes set up with a default web site, which we don't want to use. You used to be able to just delete it but now we can't do that as it causes errors. So first we will edit the existing default config, since we don't want it to be the default
 
     sudo nano /etc/nginx/sites-available/default
-    
+
 Find the lines
 
     listen 80 default_server;
     listen [::]:80 default_server;
-    
+
 and change them to
 
     listen 80;
     listen [::]:80;
-    
+
 _Explnanation: The reason we want to set rompr as the default site on the machine is so we can easily access it from any device just by typing the machine's IP address into the browser_
 
 
@@ -140,7 +140,7 @@ On the computer where nginx is running you can use
 and just add the line
 
     127.0.0.1        www.myrompr.net
-    
+
 On any other device you will have to edit /etc/hosts but you will need to use the full IP address of the computer running the nginx server. On devices where this is not possible - eg a mobile device - you can just enter the IP address of the machine running nginx into your browser to access RompЯ, because we have set RompЯ as the default site.
 
 _Those of you who want to be clever and know how to edit hostname and DNS mapping on your router can do that, you will then not need RompЯ to be the default site and you will not need to edit the existing default config. Just remove default_server from the rompr configuration above and set server_name appopriately. If you didn't understand that, then ignore this paragraph._

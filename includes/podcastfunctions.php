@@ -426,6 +426,15 @@ function refreshPodcast($podid) {
                 )
             ),
             $podid);
+        $albumimage = new baseAlbumImage(array(
+            'artist' => 'PODCAST',
+            'albumpath' => $podid,
+            'album' => $podetails->Title
+        ));
+        if ($albumimage->get_image_if_exists() === null) {
+            debuglog("Replacing missing podcast image","PODCASTS");
+            download_image($podcast['Image'], $podid, $podetails->Title);
+        }
         // Still check to keep (days to keep still needs to be honoured)
         if (check_tokeep($podetails, $podid) || $prefs['podcast_mark_new_as_unlistened']) {
             return $podid;

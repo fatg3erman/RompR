@@ -34,12 +34,16 @@ And now link this file so mysql can find it
 
 Note that the default MySQL settings I've encountered on several distributions make MySQL significantly slower than SQLite for RompЯ, unless you have an extremely large music collection (hundreds of thousands of tracks). Setting these parameters restores the balance. Somewhat.
 
+## Install PHP MySQL Library
+
+    sudo apt-get install php7.0-mysql
+
 ## Configure RompЯ
 
 Point your web browser at
 
     http://your.rompr.installation/?setup
-    
+
 and choose the Full Database option, entering the usernames and passwords as appropriate.
 
 ![](images/collectionsetup.png)
