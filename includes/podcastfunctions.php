@@ -133,7 +133,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
         ));
         if ($albumimage->get_image_if_exists() === null) {
             debuglog("Replacing missing podcast image","PODCASTS");
-            download_image($podcast['Image'], $podid, $podcast['Title']);
+            download_image($podcast['Image'], $id, $podcast['Title']);
         }
     }
 
