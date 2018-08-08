@@ -125,6 +125,18 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
     // Title
     $podcast['Title'] = (string) $feed->channel->title;
 
+    if ($id !== false) {
+        $albumimage = new baseAlbumImage(array(
+            'artist' => 'PODCAST',
+            'albumpath' => $id,
+            'album' => $podcast['Title']
+        ));
+        if ($albumimage->get_image_if_exists() === null) {
+            debuglog("Replacing missing podcast image","PODCASTS");
+            download_image($podcast['Image'], $podid, $podcast['Title']);
+        }
+    }
+
     // Description
     $podcast['Description'] = (string) $feed->channel->description;
 
@@ -426,15 +438,6 @@ function refreshPodcast($podid) {
                 )
             ),
             $podid);
-        $albumimage = new baseAlbumImage(array(
-            'artist' => 'PODCAST',
-            'albumpath' => $podid,
-            'album' => $podetails->Title
-        ));
-        if ($albumimage->get_image_if_exists() === null) {
-            debuglog("Replacing missing podcast image","PODCASTS");
-            download_image($podcast['Image'], $podid, $podetails->Title);
-        }
         // Still check to keep (days to keep still needs to be honoured)
         if (check_tokeep($podetails, $podid) || $prefs['podcast_mark_new_as_unlistened']) {
             return $podid;
