@@ -161,6 +161,12 @@ var infobar = function() {
     function put_text_in_area(output_lines, nptext) {
         nptext.empty();
         for (var i in output_lines) {
+            // Just in case we have a long line with no spaces, insert some zero-width spaces
+            // after -, _, or & to permit text wrapping
+            var spaceCount = (output_lines[i].text.split(" ").length - 1);
+            if (spaceCount <= 0) {
+                output_lines[i].text = output_lines[i].text.replace(/(_|&amp;|-)/g, '$&\u200B');
+            }
             nptext.append($('<p>', {class: 'line'+i}).html(output_lines[i].text));
         }
     }
@@ -185,7 +191,8 @@ var infobar = function() {
             var nptext = $('#nptext');
             var parent = nptext.parent();
             var maxheight = parent.height();
-            var maxwidth = parent.width();
+            var ws = getWindowSize();
+            var maxwidth = ws.x-20;
 
             // Start with a font size that will fill the height if no text wraps
             var fontsize = Math.floor((maxheight/1.75)/1.25);
@@ -198,9 +205,8 @@ var infobar = function() {
 
                 // We can't simply calculate the font size based on the difference in height,
                 // because we've got text wrapping onto multiple lines and we don't know how that will
-                // change when we adjust the font size. Also, although wrapping is on it only wraps on
-                // whitespace, so we need to check the width too in case we have a line that doesn't wrap
-                while (nptext.outerHeight(true) > maxheight || nptext.outerWidth(true) > maxwidth) {
+                // change when we adjust the font size.
+                while (fontsize > 4 && (nptext.outerHeight(true) > maxheight)) {
                     fontsize -= 1;
                     nptext.css('font-size', fontsize+'px');
                 }
