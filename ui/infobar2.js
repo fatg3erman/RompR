@@ -191,8 +191,6 @@ var infobar = function() {
             var nptext = $('#nptext');
             var parent = nptext.parent();
             var maxheight = parent.height();
-            var ws = getWindowSize();
-            var maxwidth = ws.x-20;
 
             // Start with a font size that will fill the height if no text wraps
             var fontsize = Math.floor((maxheight/1.75)/1.25);
