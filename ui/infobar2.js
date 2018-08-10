@@ -185,6 +185,7 @@ var infobar = function() {
             var nptext = $('#nptext');
             var parent = nptext.parent();
             var maxheight = parent.height();
+            var maxwidth = parent.width();
 
             // Start with a font size that will fill the height if no text wraps
             var fontsize = Math.floor((maxheight/1.75)/1.25);
@@ -197,8 +198,9 @@ var infobar = function() {
 
                 // We can't simply calculate the font size based on the difference in height,
                 // because we've got text wrapping onto multiple lines and we don't know how that will
-                // change when we adjust the font size
-                while (nptext.outerHeight(true) > maxheight) {
+                // change when we adjust the font size. Also, although wrapping is on it only wraps on
+                // whitespace, so we need to check the width too in case we have a line that doesn't wrap
+                while (nptext.outerHeight(true) > maxheight || nptext.outerWidth(true) > maxwidth) {
                     fontsize -= 1;
                     nptext.css('font-size', fontsize+'px');
                 }
