@@ -4,7 +4,7 @@ define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
 define('ROMPR_IMAGE_VERSION', 4);
 define('ROMPR_SCHEMA_VERSION', 46);
-define('ROMPR_VERSION', '1.19');
+define('ROMPR_VERSION', '1.20');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_UNKNOWN_STREAM', "Unknown Internet Stream");
@@ -242,18 +242,13 @@ if (array_key_exists('REQUEST_URI', $_SERVER)) {
 }
 
 if (!property_exists($prefs['multihosts'], $prefs['currenthost'])) {
-    debuglog($prefs['currenthost']." is not defined in the hosts defs. Falling back to Default","INIT",3);
-    if (!property_exists($prefs['multihosts'], 'Default')) {
-        $prefs['multihosts']->Default = (object) array(
-        'host' => 'localhost',
-        'port' => 6600,
-        'password' => '',
-        'socket' => '',
-        'mopidy_slave' => false
-        );
+    debuglog($prefs['currenthost']." is not defined in the hosts defs.","INIT",3);
+    foreach ($prefs['multihosts'] as $key => $obj) {
+        debuglog("  Using host ".$key,"INIT",3);
+        $prefs['currenthost'] = $key;
+        setcookie('currenthost',$prefs['currenthost'],time()+365*24*60*60*10,'/');
+        break;
     }
-    $prefs['currenthost'] = 'Default';
-    setcookie('currenthost',$prefs['currenthost'],time()+365*24*60*60*10,'/');
 }
 
 debuglog("Using MPD Host ".$prefs['currenthost'],"INIT",9);

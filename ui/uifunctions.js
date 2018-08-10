@@ -506,9 +506,11 @@ function showUpdateWindow() {
                 hasclosebutton: false
             });
             var mywin = fnarkle.create();
+            mywin.append('<div id="version"></div>');
             mywin.append('<div id="begging"></div>');
             mywin.append('<div id="license"></div>');
             mywin.append('<div id="about"></div>');
+            $('#version').load('utils/versioninfo.php');
             $('#begging').load('includes/begging.html', function() {
                 $('#license').load('includes/license.html', function(){
                     $('#about').load('includes/about.html', function() {
