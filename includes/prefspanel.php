@@ -376,42 +376,45 @@ print '<div class="pref"><b>'.get_int_text('config_nosortprefixes').'
 <input class="saveotron prefinput arraypref" id="nosortprefixes" type="text" size="128" />
 </b></div>';
 
-if ($collection_type == $prefs['player_backend']) {
-    print '<div class="pref styledinputs">
-        <div class="clearfix">
-            <div class="tleft">
-                <input class="autoset toggle" type="checkbox" id="updateeverytime"><label for="updateeverytime">'.get_int_text('config_updateonstart').'</label>
-            </div>';
-    print '<button class="tright" name="donkeykong">'.get_int_text('config_updatenow').'</button>';
-    if ($prefs['player_backend'] == "mpd") {
-        print '<button class="tright" name="dinkeyking"">'.get_int_text('config_rescan').'</button>';
+if ($prefs['mopidy_slave'] == false) {
+
+    if ($collection_type == $prefs['player_backend']) {
+        print '<div class="pref styledinputs">
+            <div class="clearfix">
+                <div class="tleft">
+                    <input class="autoset toggle" type="checkbox" id="updateeverytime"><label for="updateeverytime">'.get_int_text('config_updateonstart').'</label>
+                </div>';
+        print '<button class="tright" name="donkeykong">'.get_int_text('config_updatenow').'</button>';
+        if ($prefs['player_backend'] == "mpd") {
+            print '<button class="tright" name="dinkeyking"">'.get_int_text('config_rescan').'</button>';
+        }
+        print '</div></div>';
     }
-    print '</div></div>';
-}
 
-if ($collection_type == "mopidy" && $prefs['player_backend'] == 'mopidy') {
-    print '<div class="pref" id="mopidycollectionoptions">'.
-    '<b>'.get_int_text('config_collectionfolders').'</b></div>';
-    print '<div class="pref">'.get_int_text('config_beetsserver').'
-    <input class="prefinput saveotron" id="beets_server_location" type="text" size="40" />
-    </div>';
+    if ($collection_type == "mopidy" && $prefs['player_backend'] == 'mopidy') {
+        print '<div class="pref" id="mopidycollectionoptions">'.
+        '<b>'.get_int_text('config_collectionfolders').'</b></div>';
+        print '<div class="pref">'.get_int_text('config_beetsserver').'
+        <input class="prefinput saveotron" id="beets_server_location" type="text" size="40" />
+        </div>';
 
-    print '<div class="pref styledinputs">
-    <input class="autoset toggle" type="checkbox" id="preferlocalfiles">
-    <label for="preferlocalfiles">'.get_int_text('config_preferlocal').'</label></div>';
-}
+        print '<div class="pref styledinputs">
+        <input class="autoset toggle" type="checkbox" id="preferlocalfiles">
+        <label for="preferlocalfiles">'.get_int_text('config_preferlocal').'</label></div>';
+    }
 
-if ($collection_type == $prefs['player_backend']) {
-    print '<div class="pref styledinputs">
-    <input class="autoset toggle" type="checkbox" id="sortbycomposer">
-    <label for="sortbycomposer">'.get_int_text('config_sortbycomposer').'</label>
-    </div>';
-    print '<div class="pref indent styledinputs">
-    <input class="autoset toggle" type="checkbox" id="composergenre">
-    <label for="composergenre">'.get_int_text('config_composergenre').'</label>
-    </div>';
-    print '<div class="pref indent">
-    <input class="saveotron prefinput arraypref" id="composergenrename" type="text" size="40" />
-    </div>';
+    if ($collection_type == $prefs['player_backend']) {
+        print '<div class="pref styledinputs">
+        <input class="autoset toggle" type="checkbox" id="sortbycomposer">
+        <label for="sortbycomposer">'.get_int_text('config_sortbycomposer').'</label>
+        </div>';
+        print '<div class="pref indent styledinputs">
+        <input class="autoset toggle" type="checkbox" id="composergenre">
+        <label for="composergenre">'.get_int_text('config_composergenre').'</label>
+        </div>';
+        print '<div class="pref indent">
+        <input class="saveotron prefinput arraypref" id="composergenrename" type="text" size="40" />
+        </div>';
+    }
 }
 ?>
