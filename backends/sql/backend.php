@@ -1016,14 +1016,14 @@ function get_album_tracks_from_database($index, $cmd, $flag) {
 							WHERE Albumindex = '".$index.
 							"' AND Uri IS NOT NULL
 							AND Hidden = 0
-							AND isSearchResult <2"
+							AND isSearchResult <2 "
 							.track_date_check($prefs['collectionrange'], $flag).
 						"UNION SELECT Uri, Disc, TrackNo FROM
 							Tracktable JOIN TagListtable USING (TTindex)
 							WHERE Albumindex = '".$index.
 							"' AND Uri IS NOT NULL
 							AND Hidden = 0
-							AND isSearchResult <2"
+							AND isSearchResult <2 "
 							.track_date_check($prefs['collectionrange'], $flag).
 						"ORDER BY Disc, TrackNo;";
 			break;
