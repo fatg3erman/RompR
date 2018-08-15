@@ -502,13 +502,13 @@ var podcasts = function() {
 		        podcasts.removeSearch();
 		    } else if (clickedElement.hasClass("poddownload")) {
 		        var n = clickedElement.attr('name');
-		        var m = clickedElement.parent().attr('name');
+		        var m = clickedElement.attr('name');
 		        podcasts.downloadPodcast(n.replace(/poddownload_/, ''), m.replace(/podcontrols_/,''));
 		    } else if (clickedElement.hasClass("podgroupload")) {
 		        var n = clickedElement.attr('name');
 		        podcasts.downloadPodcastChannel(n.replace(/podgroupload_/, ''));
 		    } else if (clickedElement.hasClass("podmarklistened")) {
-		        event.stopImmediatePropagation();
+				var n = clickedElement.attr('name');
 		        var m = clickedElement.parent().attr('name');
 		        podcasts.markEpisodeAsListened(n.replace(/podmarklistened_/, ''), m.replace(/podcontrols_/,''));
 			}

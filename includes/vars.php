@@ -353,6 +353,8 @@ class debug_logger {
         $this->outfile = $outfile;
         $this->loglevel = intval($level);
         $this->debug_colours = array(
+            # light red
+            0 => 91,
             # red
             1 => 31,
             # yellow
@@ -361,16 +363,16 @@ class debug_logger {
             3 => 35,
             # cyan
             4 => 36,
-            # white
+            # lihgt grey
             5 => 37,
-            # white
-            6 => 37,
+            # light yellow
+            6 => 93,
             # green
             7 => 32,
-            # blue
-            8 => 34,
-            # dim
-            9 => 2
+            # white
+            8 => 97,
+            # light blue
+            9 => 94
         );
     }
 
@@ -380,18 +382,12 @@ class debug_logger {
         $pid = getmypid();
         $in2 = str_repeat(" ", 8 - strlen($pid));
         if ($this->outfile != "") {
-
             // Two options here - either colour by level
             // $col = $this->debug_colours[$level];
-
             // or attempt to have different processes in different colours.
             // This helps to keep track of things when multiple concurrent things are happening at once.
-            $col = ($pid % 10) + 30;
-            if ($col == 30) { $col = 91; }
-            if ($col == 38) { $col = 92; }
-            if ($col == 39) { $col = 94; }
-
-            error_log(strftime('%T').' : '.$in2.$pid." : \033[".$col."m".$module.$in.$out."\033[0m\n",3,$this->outfile);
+            $col = $this->debug_colours[$pid % 10];
+            error_log("\033[90m".strftime('%T').' : '.$in2.$pid." : \033[".$col."m".$module.$in.$out."\033[0m\n",3,$this->outfile);
         } else {
             error_log($pid.$in2.$module.$in.": ".$out,0);
         }
