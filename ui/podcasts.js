@@ -502,7 +502,7 @@ var podcasts = function() {
 		        podcasts.removeSearch();
 		    } else if (clickedElement.hasClass("poddownload")) {
 		        var n = clickedElement.attr('name');
-		        var m = clickedElement.attr('name');
+		        var m = clickedElement.parent().attr('name');
 		        podcasts.downloadPodcast(n.replace(/poddownload_/, ''), m.replace(/podcontrols_/,''));
 		    } else if (clickedElement.hasClass("podgroupload")) {
 		        var n = clickedElement.attr('name');
