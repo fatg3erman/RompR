@@ -4,7 +4,7 @@
 
 ### MPD/Mopidy Addresses and Ports
 
-In the case where your mpd/mopidy server is not running on the same PC as your apache server, or you need a password for mpd, or you'd like to use a unix-domain socket to communicate with mpd, point your browser at:
+In the case where your mpd/mopidy server is not running on the same PC as your webserver, or you need a password for mpd, or you'd like to use a unix-domain socket to communicate with mpd, point your browser at:
 
     http:/ip.of.your.rompr.installation/?setup
 
@@ -27,7 +27,7 @@ If Mopidy is not on the same computer as the webserver, you probably need to set
 
     [mpd]
     hostname = 0.0.0.0
-    
+
 in your mopidy.conf
 
 ## Connection errors or other strange behaviour
@@ -40,7 +40,7 @@ In mopidy.conf, your mpd section needs to contain
 
     [mpd]
     connection_timeout = 120
-    
+
 ### For MPD
 
 Somewhere in mpd.conf
@@ -69,13 +69,13 @@ To prevent it happening again.
 If you're using Apache and you followed the Apache instructions on here, just edit the value of
 
     php_admin_value max_execution_time 1800
-    
+
 in the Apache configuration you created as part of the setup. The number is in seconds, 1800 is 30 minutes. Just increase the value to something huge.
 
 You also need to change the value of
 
     Timeout 1800
-    
+
 which is in the same config file. Set it to the same value as the above parameter.
 
 #### With nginx
@@ -83,13 +83,13 @@ which is in the same config file. Set it to the same value as the above paramete
 If you're using nginx you must edit your php.ini, as described in the setup guide - adjust the value of
 
     max_execution_time
-    
+
 to some massive number of seconds and restart php-fpm.
 
 You will also need to increase the value of
 
     fastcgi_read_timeout 1800
-    
+
 parameter that is in the example configuration. Set this to the same value you set max_execution_time to.
 
 
@@ -118,11 +118,11 @@ If you're having trouble with album art not displaying, it might be that you hav
 In this case you can install imagemagick to be used as a fallback when gd doesn't work
 
     sudo apt-get install imagemagick
-    
+
 or on macOS
 
     brew install imagemagick
-    
+
 Versions of Rompr prior to 1.18 always used imagemagick, but 1.18 will use gd in preference if it is installed, because it is much, much faster
 
 ## Reporting Bugs
@@ -150,11 +150,11 @@ If you're reporting a bug, adding a debug log is very helpful. Level 7 is usuall
 By default the debug log is the web server's error log - eg
 
     /var/log/apache2/error.log
-    
+
 or
 
     /var/log/nginx/error_log
-    
+
 (Names and locations may vary depending on your distribution)
 
 If you're reporting a bug then this is the most useful type of log to send as it contains RompЯ's log trace as well as any PHP error messages.
@@ -164,7 +164,17 @@ The option to use a custom log file makes rompr's trace look neater when you're 
 As web server error logs can get massive, the suggested method for creating a log for bug reporting is to enable debug logging first then open a terminal and then do
 
     tail -f /var/log/apache2/error.log > logtrace.txt
-  
+
 from a terminal. (Change the file you're tail-ing depending on your webserver) Reproduce the bug and then hit Control-C in the terminal and use the contents of logtrace.txt in your bug report.
 
 As well as the webserver error log, RompЯ will also output a debug trace to the web browser's error console. This could be useful in certain circumstances for reporting bugs but it's mainly intended for development purposes.
+
+### Enabling from the Console
+
+You can enable debug logging without going to the setup page, from your browser's Javascript console. Issue the command
+
+    prefs.save({'debug_logging': level});
+
+where 'level' is the debug level from 0 to 9. Level 0 switches logging off.
+
+**NOTE: Debug Logging will slow Rompr down and especially may crash your browser if left enabled for long periods**

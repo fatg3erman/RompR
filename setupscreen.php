@@ -66,7 +66,7 @@ if ($prefs['cleanalbumimages']) {
     print " checked";
 }
 print '><label for="cli">Clean ununsed album art on startup</label></div>';
-print '<p class="tiny">You almost certainly want to kep this enabled</p>';
+print '<p class="tiny">You almost certainly want to keep this enabled</p>';
 
 print '<div class="styledinputs"><input id="dsp" type="checkbox" name="do_not_show_prefs" ';
 if ($prefs['do_not_show_prefs']) {
