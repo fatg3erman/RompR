@@ -4,7 +4,11 @@ By default, RompЯ uses SQLite for its database. This option requires no setup a
 
 If you would like to use a MySQL server instead - perhaps because you're already running one - then you can do so.
 
-## Create mysql database
+## Install MySQL
+
+    sudo apt-get install mysql
+
+## Create MySQL Database
 
 You must create the RompЯ database before you start. You will need your mysql root password.
 
@@ -15,7 +19,19 @@ You must create the RompЯ database before you start. You will need your mysql r
     FLUSH PRIVILEGES;
     quit;
 
+**On Raspberry Pi** with Raspbian you need to use
+
+    sudo mysql -uroot -p
+
+and then enter your login password (for sudo) and then hit Enter when asked for a mysql password.
+
 Those commands set up the RompЯ database using a default username and password. Note that any usernames and passwords you put in will be stored by RompЯ in plain text, so don't use anything important.
+
+In the above example, the username is 'rompr' and the password is 'romprdbpass'. I suggest you change these to something else as thse are obviously published on the internet.
+
+If your mysql server runs on a different machine than your webserver, you need to use
+
+    GRANT ALL ON romprdb.* TO rompr@ip.address.of.webserver IDENTIFIED BY 'romprdbpass';
 
 ## Tweak MySQL
 
@@ -44,6 +60,6 @@ Point your web browser at
 
     http://your.rompr.installation/?setup
 
-and choose the Full Database option, entering the usernames and passwords as appropriate.
+and choose the Full Database option, entering the username, password, and database name you used above as appropriate. The usual value for port is 3306. The example image below uses a UNIX socket, which is configurable in your mysql config. A UNIX socket is slightly faster but does mean that your webserver must run on the same machine as your mysql server.
 
 ![](images/collectionsetup.png)
