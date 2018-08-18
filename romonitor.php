@@ -84,8 +84,8 @@ while (true) {
         }
     }
     close_mpd();
-    debuglog("Player connection failed - retrying in 60 seconds","ROMONITOR");
-    sleep(60);
+    debuglog("Player connection failed - retrying in 10 seconds","ROMONITOR");
+    sleep(10);
 }
 
 function doNewPlaylistFile(&$filedata) {
