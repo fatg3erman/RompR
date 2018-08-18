@@ -37,6 +37,7 @@ function open_mpd_connection() {
             }
         }
     }
+    return $is_connected;
 }
 
 function getline($connection) {
