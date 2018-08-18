@@ -438,10 +438,12 @@ var infobar = function() {
                 $("#stars").fadeIn('fast');
                 $("#dbtags").fadeIn('fast');
                 $("#playcount").fadeIn('fast');
+                lastfm.showloveban(true);
             } else {
                 $("#stars").fadeOut('fast');
                 $("#dbtags").fadeOut('fast');
                 $("#playcount").fadeOut('fast');
+                lastfm.showloveban(false);
             }
             if (info.location != "") {
                 var f = info.location.match(/^podcast[\:|\+](http.*?)\#/);
@@ -457,6 +459,7 @@ var infobar = function() {
                 $("#dbtags").fadeOut('fast');
                 $("#playcount").fadeOut('fast');
                 $("#subscribe").fadeOut('fast');
+                lastfm.showloveban(false);
             } else {
                 infobar.albumImage.setKey(info.key);
             }

@@ -14,6 +14,8 @@ $expected_state = null;
 $do_resume_seek = false;
 $do_resume_seek_id = false;
 $collection_type = get_collection_type();
+$moveallto = null;
+$current_playlist_length = 0;
 
 if ($is_connected) {
 
@@ -109,6 +111,14 @@ if ($is_connected) {
                     }
                     break;
 
+                case "moveallto":
+                    $moveallto = $cmd[1];
+                    $temp_status = do_mpd_command ("status", true, false);
+                    if (array_key_exists('playlistlength', $temp_status)) {
+                        $current_playlist_length = $temp_status['playlistlength'];
+                    }
+                    break;
+
                 case "playlistadddir":
                     $thing = array('searchaddpl',$cmd[1],'base',$cmd[2]);
                     $cmds[] = join_command_string($thing);
@@ -170,6 +180,17 @@ if ($is_connected) {
     //
 
     $cmd_status = do_mpd_command_list($cmds);
+
+    //
+    // If we added tracks to the playlist, move them into position if we need to
+    //
+
+    if ($moveallto !== null) {
+        debuglog("Moving Tracks into position","MPD");
+        $temp_status = do_mpd_command ("status", true, false);
+        $new_playlist_length = $temp_status['playlistlength'];
+        do_mpd_command(join_command_string(array('move', $current_playlist_length.':'.$new_playlist_length, $moveallto)));
+    }
 
     //
     // Wait for the player to start playback if that's what it's supposed to be doing
