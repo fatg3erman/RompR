@@ -419,6 +419,17 @@ var layoutProcessor = function() {
 
         hidePanel: function(panel, is_hidden, new_state) { },
 
+        panelMapping: function() {
+            return {
+                "albumlist": 'albumlist',
+                "filelist": 'filelist',
+                "radiolist": 'radiolist',
+                "podcastslist": 'podcastslist',
+                "playlistslist": 'playlistman',
+                "pluginplaylistslist": 'pluginplaylists'
+            }
+        },
+
         setTagAdderPosition: function(position) {
 
         },
@@ -503,7 +514,7 @@ var layoutProcessor = function() {
             // gets an inlive css style of display: inline set sometime after page load
             // on a narrow screen. Non of the other onlywides do. Can't figure it out
             // so just clear it here.
-            $('.choose_filelist').css('display','');
+            // $('.choose_filelist').css('display','');
         },
 
         displayCollectionInsert: function(d) {

@@ -377,14 +377,14 @@ function doSomethingUseful(div,text) {
 }
 
 function setChooserButtons() {
-    var s = ["albumlist", "filelist", "radiolist", "podcastslist", "playlistslist", "pluginplaylistslist"];
-    for (var i in s) {
-        if (prefs["hide_"+s[i]]) {
-            $(".choose_"+s[i]).fadeOut('fast');
+    var s = uiHelper.panelMapping();
+    $.each(s, function(key, value) {
+        if (prefs["hide_"+key]) {
+            $(".choose_"+value).fadeOut('fast');
         } else {
-            $(".choose_"+s[i]).fadeIn('fast');
+            $(".choose_"+value).fadeIn('fast');
         }
-    }
+    });
     layoutProcessor.adjustLayout();
 }
 

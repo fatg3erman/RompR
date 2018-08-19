@@ -415,6 +415,21 @@ var uiHelper = function() {
                     layoutProcessor.postAlbumActions();
                 });
             }
+        },
+
+        panelMapping: function() {
+            try {
+                return layoutProcessor.panelMapping();
+            } catch(err) {
+                return {
+                    "albumlist": 'albumlist',
+                    "filelist": 'filelist',
+                    "radiolist": 'radiolist',
+                    "podcastslist": 'podcastslist',
+                    "playlistslist": 'playlistslist',
+                    "pluginplaylistslist": 'pluginplaylistslist'
+                }
+            }
         }
 
     }

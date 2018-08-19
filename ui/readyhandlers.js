@@ -63,13 +63,7 @@ $(document).ready(function(){
             pluginManager.autoOpen(language.gettext('button_infoyou'));
         }, 1000);
     }
-    $(document).on('mouseenter', '.clearbox', makeHoverWork);
-    $(document).on('mouseleave', '.clearbox', makeHoverWork);
-    $(document).on('mousemove', '.clearbox', makeHoverWork);
     $(document).on('click', '.clearbox.enter', makeClearWork);
-    $(document).on('mouseenter', '.combobox-entry', makeHoverWork);
-    $(document).on('mouseleave', '.combobox-entry', makeHoverWork);
-    $(document).on('mousemove', '.combobox-entry', makeHoverWork);
     $(document).on('keyup', '.enter', onKeyUp);
     $(document).on('change', '.inputfile', function() {
         var filenames = $.map($(this).prop('files'), function(val) {
@@ -82,8 +76,6 @@ $(document).ready(function(){
         }
         $(this).parent().next('input[type="button"]').fadeIn('fast');
     });
-    $(document).on('mouseenter', '.tooltip', makeToolTip);
-    $(document).on('mouseleave', '.tooltip', stopToolTip);
     $(document).on('keyup', 'input.notspecial', function() {
         debug.log("ENTER","Value Changed");
         this.value = this.value.replace(/[\*&\+\s<>\[\]:;,\.\(\)]/g, '');
