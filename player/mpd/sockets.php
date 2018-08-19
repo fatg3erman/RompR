@@ -14,7 +14,7 @@ function open_mpd_connection() {
 
     if(isset($connection) && is_resource($connection)) {
         $is_connected = true;
-        stream_set_timeout($connection, 65535);
+        stream_set_timeout($connection, 300);
         stream_set_blocking($connection, true);
         while(!feof($connection)) {
             $gt = fgets($connection, 1024);
