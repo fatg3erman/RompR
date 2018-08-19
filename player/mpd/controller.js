@@ -250,14 +250,10 @@ function playerController() {
         var mywin = fnarkle.create();
         var d = $('<div>',{class: 'containerbox'}).appendTo(mywin);
         var e = $('<div>',{class: 'expand'}).appendTo(d);
-
-        // var i = $('<input>',{class: 'enter', id: 'newplname', type: 'text', size: '200'}).appendTo(e).on('keyup', onKeyUp);
         var i = $('<input>',{class: 'enter', id: 'newplname', type: 'text', size: '200'}).appendTo(e);
-
         var b = $('<button>',{class: 'fixed'}).appendTo(d);
         b.html('Rename');
         fnarkle.useAsCloseButton(b, callback);
-        // b.on('keyup', onKeyUp);
         fnarkle.open();
     }
 
@@ -320,7 +316,6 @@ function playerController() {
 	}
 
 	this.savePlaylist = function() {
-
 	    var name = $("#playlistname").val();
 	    debug.log("GENERAL","Save Playlist",name);
         if (name == '') {

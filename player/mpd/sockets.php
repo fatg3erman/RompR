@@ -113,7 +113,7 @@ function do_mpd_command($command, $return_array = false, $force_array_results = 
                         if (array_key_exists('timed_out', $sdata) && $sdata['timed_out']) {
                             $var[1] = 'Timed Out';
                         }
-                        debuglog("Error for '".$command."'' : ".$var[1],"MPD",1);
+                        debuglog("Error for '".$command."' : ".$var[1],"MPD",1);
                         if ($return_array == true) {
                             $retarr['error'] = $var[1];
                         } else {
