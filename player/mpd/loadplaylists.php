@@ -43,7 +43,11 @@ if (array_key_exists('playlist', $_REQUEST)) {
         $unneeded = array_diff($imgs, $used_images);
         foreach ($unneeded as $img) {
             debuglog("Removing uneeded playlist image ".$img,"PLAYLISTS");
-            rrmdir($img);
+            if (is_dir($img)) {
+                rrmdir($img);
+            } else {
+                @unlink($img);
+            }
         }
     }
 }
