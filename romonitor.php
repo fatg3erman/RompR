@@ -67,10 +67,6 @@ while (true) {
         while (true) {
             $idle_status = do_mpd_command("idle player", true, false);
             if (array_key_exists('error', $idle_status) && $idle_status['error'] == 'Timed Out') {
-                // There is a 5 minute timeout on the read from the MPD. Testing with Mopidy on Pi Zero W showed that if there
-                // is a connection error on the Pi caused by WiFi overloading (it happens sometimes to me) then fgets does not
-                // return an error but Mopidy does not output anything to the connection. So the connection stays open but nothing
-                // is read from it. So we let it time out every 5 minutes, just in case.
                 debuglog($prefs['currenthost'].' - '."idle command timed out, looping back","ROMONITOR",8);
                 close_mpd();
                 open_mpd_connection();
