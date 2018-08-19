@@ -77,8 +77,7 @@ function send_command($command) {
         $b = @fputs($connection, $command."\n");
         if (!$b || $b < $l) {
             debuglog("Socket Write Error for ".$command." - Retrying","LEMSIP",2);
-            @fclose($connection);
-            $is_connected = false;
+            close_mpd();
             usleep(500000);
             @open_mpd_connection();
             $retries--;
@@ -110,6 +109,10 @@ function do_mpd_command($command, $return_array = false, $force_array_results = 
                         break;
                     }
                     if ($var[0] == false) {
+                        $sdata = stream_get_meta_data($connection);
+                        if (array_key_exists('timed_out', $sdata) && $sdata['timed_out']) {
+                            $var[1] = 'Timed Out';
+                        }
                         debuglog("Error for '".$command."'' : ".$var[1],"MPD",1);
                         if ($return_array == true) {
                             $retarr['error'] = $var[1];
