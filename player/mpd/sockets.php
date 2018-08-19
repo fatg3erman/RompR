@@ -14,6 +14,8 @@ function open_mpd_connection() {
 
     if(isset($connection) && is_resource($connection)) {
         $is_connected = true;
+        stream_set_timeout($connection, 65535);
+        stream_set_blocking($connection, true);
         while(!feof($connection)) {
             $gt = fgets($connection, 1024);
             if (parse_mpd_var($gt))
@@ -147,12 +149,11 @@ function do_mpd_command($command, $return_array = false, $force_array_results = 
 }
 
 function close_mpd() {
-    global $is_connected, $connection;
-    if ($is_connected) {
-        @fputs($connection, "close\n");
-        fclose($connection);
-        $is_connected = false;
-    }
+    global $connection, $is_connected;
+    // @fputs($connection, 'close'."\n");
+    // getline($connection);
+    @fclose($connection);
+    $is_connected = false;
 }
 
 ?>

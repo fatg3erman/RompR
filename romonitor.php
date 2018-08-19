@@ -38,9 +38,9 @@ $dummydata = array('dummy' => 'baby');
 // the track so repeated increments just keep setting it to the same value
 
 while (true) {
+    debuglog($prefs['currenthost'].' - '."Connecting To ".$prefs['mpd_host'].":".$prefs['mpd_port'],"ROMONITOR");
     @open_mpd_connection();
     while ($is_connected) {
-        debuglog("Connected To ".$prefs['mpd_host'].":".$prefs['mpd_port'],"ROMONITOR");
         $mpd_status = do_mpd_command('status', true, false);
         if (array_key_exists('error', $mpd_status)) {
             break;
@@ -50,13 +50,13 @@ while (true) {
             doCollection('currentsong', array(), false);
             if (array_key_exists('duration', $current_song) && $current_song['duration'] > 0 && $current_song['type'] !== 'stream') {
                 if ($mpd_status['songid'] != $current_id) {
-                    debuglog("Track has changed","ROMONITOR");
+                    debuglog($prefs['currenthost'].' - '."Track has changed","ROMONITOR");
                     $current_id = $mpd_status['songid'];
                     romprmetadata::get($current_song);
                     $current_playcount = array_key_exists('Playcount', $returninfo) ? $returninfo['Playcount'] : 0;
-                    debuglog("Current ID is ".$current_id,"ROMONITOR",8);
-                    debuglog("Duration Is ".$current_song['duration'],"ROMONITOR",8);
-                    debuglog("Current Playcount is ".$current_playcount,"ROMONITOR",8);
+                    debuglog($prefs['currenthost'].' - '."Current ID is ".$current_id,"ROMONITOR",8);
+                    debuglog($prefs['currenthost'].' - '."Duration Is ".$current_song['duration'],"ROMONITOR",8);
+                    debuglog($prefs['currenthost'].' - '."Current Playcount is ".$current_playcount,"ROMONITOR",8);
                 }
             } else {
                 $current_id = -1;
@@ -69,22 +69,22 @@ while (true) {
             break;
         }
         if (array_key_exists('changed', $idle_status) && $current_id != -1) {
-            debuglog("Player State Has Changed","ROMONITOR");
+            debuglog($prefs['currenthost'].' - '."Player State Has Changed","ROMONITOR");
             $elapsed = time() - $read_time + $mpd_status['elapsed'];
             $fraction_played = $elapsed/$current_song['duration'];
             if ($fraction_played > 0.9) {
-                debuglog("Played more than 90% of song. Incrementing playcount","ROMONITOR");
+                debuglog($prefs['currenthost'].' - '."Played more than 90% of song. Incrementing playcount","ROMONITOR");
                 $current_song['attributes'] = array(array('attribute' => 'Playcount', 'value' => $current_playcount+1));
                 romprmetadata::inc($current_song);
                 if ($current_song['type'] == 'podcast') {
-                    debuglog("Marking podcast episode as listened","ROMONITOR");
+                    debuglog($prefs['currenthost'].' - '."Marking podcast episode as listened","ROMONITOR");
                     markAsListened($current_song['uri']);
                 }
             }
         }
     }
     close_mpd();
-    debuglog("Player connection failed - retrying in 1 seconds","ROMONITOR");
+    debuglog($prefs['currenthost'].' - '."Player connection failed - retrying in 1 seconds","ROMONITOR");
     sleep(1);
 }
 
