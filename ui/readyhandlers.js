@@ -24,7 +24,7 @@ $(document).ready(function(){
     player.defs.replacePlayerOptions();
     // Checkbox and Radio buttons sadly can't be handled by delegated events
     // because a lot of them are in floatingMenus, which are handled by jQueryUI
-    // which stops the events from proagating;
+    // which stops the events from propagating;
     $('.toggle').on('click', prefs.togglePref);
     $('.savulon').on('click', prefs.toggleRadio);
     $(document).on('keyup', ".saveotron", prefs.saveTextBoxes);
@@ -77,7 +77,6 @@ $(document).ready(function(){
         $(this).parent().next('input[type="button"]').fadeIn('fast');
     });
     $(document).on('keyup', 'input.notspecial', function() {
-        debug.log("ENTER","Value Changed");
         this.value = this.value.replace(/[\*&\+\s<>\[\]:;,\.\(\)]/g, '');
     });
     $(document).on('mouseenter', "#dbtags>.tag", function() {

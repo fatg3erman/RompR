@@ -95,8 +95,10 @@ function do_mpd_command($command, $return_array = false, $force_array_results = 
     if ($is_connected) {
 
         debuglog("MPD Command ".$command,"MPD",9);
-
-        $success = send_command($command);
+        $success = true;
+        if ($command != '') {
+            $success = send_command($command);
+        }
         if ($success) {
             while(!feof($connection)) {
                 $var = parse_mpd_var(fgets($connection, 1024));

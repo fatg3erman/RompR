@@ -64,12 +64,12 @@ while (true) {
         } else {
             $current_id = -1;
         }
+        $command = 'idle player';
         while (true) {
-            $idle_status = do_mpd_command("idle player", true, false);
+            $idle_status = do_mpd_command($command, true, false);
             if (array_key_exists('error', $idle_status) && $idle_status['error'] == 'Timed Out') {
-                debuglog($prefs['currenthost'].' - '."idle command timed out, looping back","ROMONITOR",8);
-                close_mpd();
-                open_mpd_connection();
+                debuglog($prefs['currenthost'].' - '."idle command timed out, looping back","ROMONITOR",9);
+                $command = '';
                 continue;
             } else if (array_key_exists('error', $idle_status)) {
                 break 2;
@@ -93,7 +93,7 @@ while (true) {
         }
     }
     close_mpd();
-    debuglog($prefs['currenthost'].' - '."Player connection timeout - retrying in 10 seconds","ROMONITOR");
+    debuglog($prefs['currenthost'].' - '."Player connection dropped - retrying in 10 seconds","ROMONITOR");
     sleep(10);
 }
 
