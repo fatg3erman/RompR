@@ -11,3 +11,13 @@ Please see the [New Project Homepage](https://fatg3erman.github.io/RompR/)
 ![](docs/images/rompr-1.png)
 
 ![](docs/images/rompr-on-a-phone.png)
+
+### What people are saying about RompЯ
+
+* “Best interface to mpd / mopidy ever. A real must!”
+* “Best browser based frontend to mpd I've ever seen!! Thank you!”
+* “Rompr is a wonderful web based interface client to mpd.”
+* “Great Project! I use it everyday already. I hope for VK-support soon. Thanks!”
+* “I tired now a fiew clients to control my mopidy server running on Raspberry. rompr is far the best one, easy to install, very fast, good design and useful features.”
+* “This application is amazing and easy to setup. I love it.”
+* “Wow! Great stuff! I was searching for something like that for months!”
