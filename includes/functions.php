@@ -947,8 +947,9 @@ function empty_modified_cache_dirs($schemaver) {
 }
 
 function getRemoteFilesize($url, $default) {
-    $context = stream_context_create(array('http' => array('method' => 'HEAD')));
-    $head = array_change_key_case(get_headers($url, 1, $context));
+    $def_options = stream_context_get_options(stream_context_get_default());
+    stream_context_set_default(array('http' => array('method' => 'HEAD')));
+    $head = array_change_key_case(get_headers($url, 1));
     // content-length of download (in bytes), read from Content-Length: field
     $clen = isset($head['content-length']) ? $head['content-length'] : 0;
     $cstring = $clen;
@@ -961,6 +962,7 @@ function getRemoteFilesize($url, $default) {
             }
         }
     }
+    stream_context_set_default($def_options);
     if ($cstring !== 0) {
         debuglog("  Read file size remotely as ".$cstring,"FUNCTIONS",8);
         return $cstring;
