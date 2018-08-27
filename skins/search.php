@@ -5,16 +5,6 @@
 ?>
 </div>
 
-<div class="containerbox">
-<?php
-if ($prefs['tradsearch']) {
-    print '<i>'.get_int_text("label_multiterms").'</i>';
-} else {
-    print '<i>'.get_int_text("label_tradsearch_header").'</i>';
-}
-?>
-</div>
-
 <?php
 foreach ($sterms as $label => $term) {
     print '<div class="containerbox dropdown-container searchitem" name="'.$term.'">';

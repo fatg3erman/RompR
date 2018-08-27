@@ -649,7 +649,6 @@ function playerController() {
 
 	this.postLoadActions = function() {
 		self.checkProgress();
-        playlist.radioManager.repopulate();
         if (thenowplayinghack) {
             // The Now PLaying Hack is so that when we switch the option for
             // 'display composer/performer in nowplaying', we can first reload the
