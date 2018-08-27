@@ -20,7 +20,7 @@ function connect_to_database() {
 		$mysqlc = new PDO($dsn, $prefs['mysql_user'], $prefs['mysql_password']);
 		debuglog("Connected to MySQL","SQL_CONNECT",9);
 		generic_sql_query("SET NAMES utf8", true);
-		generic_sql_query('SET SESSION sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"', true);
+		generic_sql_query('SET SESSION sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"', true);
 	} catch (Exception $e) {
 		debuglog("Database connect failure - ".$e,"SQL_CONNECT",1);
 		sql_init_fail($e->getMessage());

@@ -52,7 +52,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
             infotext.html(albums_without_cover+" "+language.gettext("albumart_nocovercount"));
         }
     }
-    
+
     this.toggleScrolling = function(s) {
         scrolling = s;
     }
@@ -119,7 +119,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
             var percent = ((numAlbums - formObjects.length)/numAlbums)*100;
             progress.rangechooser('setProgress', percent.toFixed(2));
             if (scrolling) {
-                $('#coverslist').mCustomScrollbar("scrollTo",$('img[name="'+imgparams.imgkey+'"]').parent().parent().parent());
+                $('#coverslist').mCustomScrollbar("scrollTo",$('img[name="'+imgparams.imgkey+'"]'));
             }
          }
 
@@ -182,7 +182,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
         }
         doNextImage(delaytime);
     }
-    
+
     function setDefaultImage(imgparams) {
         if (sendUpdates) {
             // Dont' do this if we're using the album art manager
@@ -197,7 +197,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
                 case 'stream':
                     def = 'newimages/broadcast.svg';
                     break;
-                    
+
                 case 'podcast':
                     def = 'newimages/podcast-logo.svg';
                     break;
@@ -207,7 +207,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
                 case 'STREAM':
                     def = 'newimages/broadcast.svg';
                     break;
-                    
+
                 case 'PODCAST':
                     def = 'newimages/podcast-logo.svg';
                     break;
