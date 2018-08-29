@@ -20,12 +20,15 @@ var opmlImporter = function() {
 					'</div>'
 				);
 	            $('#opmlvfoldup').append('<div id="opmllist"></div>');
+				$('#opmlvfoldup').append('<h2>OPML Export</h2>')
+				$('#opmlvfoldup').append(
+					'<div class="fullwidth brick_wide">'+
+					'<a href="plugins/code/opmlexport.php" download="podcasts.opml">'+
+					'<button>Export Podcasts As OPML</button>'+
+					'</a>'+
+					'</div>'
+				);
 				$('#opmlsubmit').on('click', opmlImporter.uploadFile);
-				// $('#opmlfile').on('change', function() {
-			    //     var filename = $(this).val().replace(/.*(\/|\\)/, '');
-			    //     $(this).next().html(filename);
-			    //     $(this).parent().next('input[type="button"]').fadeIn('fast');
-			    // });
 				opmlv.slideToggle('fast', function() {
 					browser.goToPlugin("opmlv");
 				});

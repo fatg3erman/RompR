@@ -17,3 +17,7 @@ You will see the list of podcasts that are in the OPML file. Next to each name i
 Any podcast to which you are already subscribed in RompR will have a tick next to it. All others will have a checkbox. If there are any podcasts you don't want to import into RompR, un-select the checkbox. Click 'Import Selected' to import all the checked podcasts into RompR.
 
 Imports via the OPML importer will honor the default settings set in the [Podcasts panel](/RompR/Podcasts)
+
+## Exporting your Rompr subscriptions as OPML
+
+You can use the OPML Importer panel to export your podcast subscriptions as OPML - to import into another program, or as a backup just in case. Just click the 'Export Podcasts As OPML' button.
