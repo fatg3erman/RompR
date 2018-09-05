@@ -26,6 +26,7 @@ $current_song = array();
 $playcount_updated = false;
 $returninfo = array();
 $dummydata = array('dummy' => 'baby');
+close_database();
 
 // Using the IDLE subsystem of MPD and mopidy reduces repeated connections, which helps a lot
 
@@ -46,6 +47,7 @@ while (true) {
             break;
         }
         if (array_key_exists('songid', $mpd_status) && array_key_exists('elapsed', $mpd_status)) {
+            connect_to_database();
             $read_time = time();
             doCollection('currentsong', array(), false);
             if (array_key_exists('duration', $current_song) && $current_song['duration'] > 0 && $current_song['type'] !== 'stream') {
@@ -61,6 +63,7 @@ while (true) {
             } else {
                 $current_id = -1;
             }
+            close_database();
         } else {
             $current_id = -1;
         }
@@ -78,6 +81,7 @@ while (true) {
             }
         }
         if (array_key_exists('changed', $idle_status) && $current_id != -1) {
+            connect_to_database();
             debuglog($prefs['currenthost'].' - '."Player State Has Changed","ROMONITOR");
             $elapsed = time() - $read_time + $mpd_status['elapsed'];
             $fraction_played = $elapsed/$current_song['duration'];
@@ -90,6 +94,7 @@ while (true) {
                     markAsListened($current_song['uri']);
                 }
             }
+            close_database();
         }
     }
     close_mpd();
