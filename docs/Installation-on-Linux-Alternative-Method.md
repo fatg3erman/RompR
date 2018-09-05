@@ -70,11 +70,7 @@ We need to make sure Apache can find the stuff you've just downloaded. To do thi
 
 ### Install some packages
 
-`sudo apt-get install nginx php7.0-curl php7.0-sqlite php7.0-gd php7.0-json php7.0-xml php7.0-mbstring imagemagick`
-
-_Note the version numbers - 7.0 is current for Ubuntu 16.04 at the time of  writing but as times change it may become 7.1, etc. Amend the command as applicable_
-
-_If you want to use SQLite instead of mysql, substitute php7.0-sqlite3 for php7.0-mysql_
+`sudo apt-get install apache2 php-curl php-mysql php-gd php-json php-xml php-mbstring imagemagick`
 
 
 ### Enable some Apache modules
@@ -142,29 +138,7 @@ Now symlink that file so that Apache can find it
 
 ### Create mysql database
 
-Now we'll create the mysql database for RompЯ. You will need to know your mysql root password. If you've installed the standard mythbuntu install, this will be your login password.
-
-    mysql -uroot -p
-    CREATE DATABASE romprdb CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-    USE romprdb;
-    GRANT ALL ON romprdb.* TO rompr@localhost IDENTIFIED BY 'romprdbpass';
-    FLUSH PRIVILEGES;
-    quit;
-
-Those commands set up the RompЯ database using a default username and password. Note that any usernames and passwords you put in will be stored by RompЯ in plain text, so don't use anything important.
-
-We also want to set some configuration values for mysql to increase performance. Create another file somewhere, like we did for the Apache configuration file, called rompr-tweaks.cnf (note it MUST end in .cnf or it will be ignored). Put the following in it
-
-    [mysqld]  
-    query_cache_limit       = 16M
-    query_cache_size        = 64M
-    innodb_buffer_pool_size = 64M
-    innodb_flush_log_at_trx_commit = 0
-
-And now link this file so mysql can find it
-
-    sudo ln -s /PATH/TO/ROMPR-TWEAKS /etc/mysql/conf.d/rompr-tweaks.cnf
-    sudo ln -s /PATH/TO/ROMPR-TWEAKS /etc/mysql/mysql.conf.d/rompr-tweaks.cnf
+Now we'll create the mysql database for RompЯ. You need to read [Using a MySQL Database](/RompR/Using-a-MySQL-server)
 
 ### Finally....
 

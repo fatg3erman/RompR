@@ -62,9 +62,7 @@ And then we need to give nginx permission to write to them. We can do this by ch
 
 ### Install some packages
 
-`sudo apt-get install nginx php7.0-curl php7.0-sqlite php7.0-gd php7.0-json php7.0-xml php7.0-mbstring php7.0-fpm imagemagick`
-
-_Note the version numbers - 7.1 is current at the time of  writing but as times change it may become 7.2,etc. On Ubuntu 16.04 I think it is 7.0. Amend the command as applicable_
+    sudo apt-get install nginx php-curl php-sqlite3 php-gd php-json php-xml php-mbstring php-fpm imagemagick
 
 ### Create nginx configuration
 
@@ -93,7 +91,17 @@ Then we will create the rompr config and set that to be the default
 
     sudo nano /etc/nginx/sites-available/rompr
 
-Paste in the following lines, remembering to change /PATH/TO/ROMPR as above, and edit the 7.1 if appropriate.
+Paste in the following lines, remembering to change /PATH/TO/ROMPR as above.
+Also there is a version number in there : php7.1-fpm.sock - the 7.1 will change depending on the version of PHP installed on your system. You should have noticed the version number when you installed the packages above. If you didn't, you'll have to figure it out by doing:
+
+    apt-cache policy php-fpm
+
+and you'll get something that looks like
+
+    php-fpm:
+        Installed: 7.0.30-0+deb9u1
+
+There's a 7.0 in there, so I'd use php7.0-fpm.sock
 
     server {
 
@@ -147,7 +155,7 @@ _Those of you who want to be clever and know how to edit hostname and DNS mappin
 
 ### Edit PHP configuration
 
-We need to edit the PHP configuration file.
+We need to edit the PHP configuration file. Again, note that there's a version number in this path which you'll need to make sure is correct
 
     sudo nano /etc/php/7.1/fpm/php.ini
 
