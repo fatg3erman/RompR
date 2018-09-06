@@ -42,10 +42,10 @@ print '<form id="backimageform" action="backimage.php" method="post" enctype="mu
 <input type="hidden" name="currbackground" value="" />
 <input type="hidden" name="browser_id" value="" />
 <div class="filebutton textcentre" style="width:auto">
-<input type="file" name="imagefile[]" id="imagefile" class="inputfile" multiple="multiple">
+<input type="file" name="imagefile[]" id="imagefile" class="inputfile" multiple="multiple" />
 <label for="imagefile">'.get_int_text('label_choosefiles').'</label>
 </div>
-<input type="button" class="invisible" onclick="prefs.changeBackgroundImage()" value="'.get_int_text('albumart_uploadbutton').'">
+<input type="button" class="invisible" onclick="prefs.changeBackgroundImage()" value="'.get_int_text('albumart_uploadbutton').'" />
 <div class="styledinputs">
 <input type="checkbox" id="thisbrowseronly" name="thisbrowseronly" /><label for="thisbrowseronly">For this browser only</label>
 </div>
@@ -127,7 +127,7 @@ print '</div>';
 print '<div class="pref tright"><button onclick="player.defs.edit()">'.get_int_text('button_edit_players').'</button></div>';
 print '</div>';
 print '<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="player_in_titlebar">
+<input class="autoset toggle" type="checkbox" id="player_in_titlebar" />
 <label for="player_in_titlebar">'.get_int_text('config_playerintitlebar').'</label>
 </div>';
 print '</div>';
@@ -135,32 +135,32 @@ print '</div>';
 // Sources Panel Hiding
 print '<div class="textcentre configtitle"><b>'.get_int_text('settings_panels').'</b></div>';
 print '<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="hide_albumlist">
+<input class="autoset toggle" type="checkbox" id="hide_albumlist" />
 <label for="hide_albumlist">'.get_int_text('config_hidealbumlist').'</label>
 </div>';
 print '<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="hide_filelist">
+<input class="autoset toggle" type="checkbox" id="hide_filelist" />
 <label for="hide_filelist">'.get_int_text('config_hidefileslist').'</label>
 </div>';
 print '<div class="pref styledinputs">';
-print '<input class="autoset toggle" type="checkbox" id="hide_radiolist">
+print '<input class="autoset toggle" type="checkbox" id="hide_radiolist" />
 <label for="hide_radiolist">'.get_int_text('config_hideradio').'</label>
 </div>';
 print '<div class="pref styledinputs">';
-print '<input class="autoset toggle" type="checkbox" id="hide_podcastslist">
+print '<input class="autoset toggle" type="checkbox" id="hide_podcastslist" />
 <label for="hide_podcastslist">'.get_int_text('config_hidepodcasts').'</label>
 </div>';
 print '<div class="pref styledinputs">';
-print '<input class="autoset toggle" type="checkbox" id="hide_playlistslist">
+print '<input class="autoset toggle" type="checkbox" id="hide_playlistslist" />
 <label for="hide_playlistslist">'.get_int_text('config_hideplaylistslist').'</label>
 </div>';
 print '<div class="pref styledinputs">';
-print '<input class="autoset toggle" type="checkbox" id="hide_pluginplaylistslist">
+print '<input class="autoset toggle" type="checkbox" id="hide_pluginplaylistslist" />
 <label for="hide_pluginplaylistslist">'.get_int_text('config_hidepluginplaylistslist').'</label>
 </div>';
 if ($skin == "desktop") {
 print '<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="hidebrowser">
+<input class="autoset toggle" type="checkbox" id="hidebrowser" />
 <label for="hidebrowser">'.get_int_text('config_hidebrowser').'</label>
 </div>';
 }
@@ -168,33 +168,33 @@ print '<div class="pref styledinputs">
 // Interface
 print '<div class="textcentre configtitle"><b>'.get_int_text('settings_interface').'</b></div>';
 print '<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="scrolltocurrent">
+<input class="autoset toggle" type="checkbox" id="scrolltocurrent" />
 <label for="scrolltocurrent">'.get_int_text('config_autoscroll').'</label>
 </div>';
 if ($use_plugins) {
     print '<div class="pref styledinputs">
-    <input class="autoset toggle" type="checkbox" id="auto_discovembobulate">
+    <input class="autoset toggle" type="checkbox" id="auto_discovembobulate" />
     <label for="auto_discovembobulate">'.get_int_text('config_discovembobulate').'</label>
     </div>';
 }
 print '<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="displaycomposer">
+<input class="autoset toggle" type="checkbox" id="displaycomposer" />
 <label for="displaycomposer">'.get_int_text('config_displaycomposer').'</label>
 </div>';
 print '<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="use_albumart_in_playlist">
+<input class="autoset toggle" type="checkbox" id="use_albumart_in_playlist" />
 <label for="use_albumart_in_playlist">'.get_int_text('config_albumartinplaylist').'</label>
 </div>';
 
 // Click Policy
 print '<div class="pref styledinputs">';
-print '<input type="radio" class="topcheck savulon" name="clickmode" value="double" id="clickd">
+print '<input type="radio" class="topcheck savulon" name="clickmode" value="double" id="clickd" />
 <label for="clickd">'.get_int_text('config_doubleclick').'</label><br/>
-<input type="radio" class="topcheck savulon" name="clickmode" value="single" id="clicks">
+<input type="radio" class="topcheck savulon" name="clickmode" value="single" id="clicks" />
 <label for="clicks">'.get_int_text('config_singleclick').'</label><br>
 </div>';
 print '<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="cdplayermode">
+<input class="autoset toggle" type="checkbox" id="cdplayermode" />
 <label for="cdplayermode">'.get_int_text('config_cdplayermode').'</label>
 </div>';
 if ($skin != "phone") {
@@ -205,7 +205,7 @@ print '<div class="pref textcentre"><button onclick="shortcuts.edit()">'.
     get_int_text('config_editshortcuts').'</button></div>'."\n";
 } else {
     print '<div class="pref styledinputs">
-    <input class="autoset toggle" type="checkbox" id="playlistswipe">
+    <input class="autoset toggle" type="checkbox" id="playlistswipe" />
     <label for="playlistswipe">'.get_int_text('config_playlistswipe').'</label>
     </div>';
 }
@@ -214,7 +214,7 @@ print '<div class="pref containerbox dropdown-container">
     <div class="fixed" style="margin-right:2em">'.
     get_int_text('config_crossfade').
     '</div>
-    <input class="saveotron fixed" style="width:4em" id="crossfade_duration" type="text" size="3"/>
+    <input class="saveotron fixed" style="width:4em" id="crossfade_duration" type="text" size="3" />
     </div>';
 }
 
@@ -237,13 +237,13 @@ print '</select></div></div>';
 
 print '<div class="pref styledinputs">
 <b>'.get_int_text("config_lastfmlang").'</b><br/>
-<input type="radio" class="topcheck savulon" name="lastfmlang" value="default" id="langdefault">
+<input type="radio" class="topcheck savulon" name="lastfmlang" value="default" id="langdefault" />
 <label for="langdefault">'.get_int_text('config_lastfmdefault').'</label><br/>
-<input type="radio" class="topcheck savulon" name="lastfmlang" value="interface" id="langint">
+<input type="radio" class="topcheck savulon" name="lastfmlang" value="interface" id="langint" />
 <label for="langint">'.get_int_text('config_lastfminterface').'</label><br/>
-<input type="radio" class="topcheck savulon" name="lastfmlang" value="browser" id="langbr">
+<input type="radio" class="topcheck savulon" name="lastfmlang" value="browser" id="langbr" />
 <label for="langbr">'.get_int_text('config_lastfmbrowser').'</label><br/>
-<input type="radio" class="topcheck savulon" name="lastfmlang" value="user" id="languser">
+<input type="radio" class="topcheck savulon" name="lastfmlang" value="user" id="languser" />
 <label for="languser">'.get_int_text('config_lastfmlanguser').
 '</label><input class="saveotron" id="user_lang" style="width:4em;margin-left:1em" type="text" size="4" /><br/>
 <div class="tiny">'.get_int_text('config_langinfo').'</div>
@@ -262,7 +262,7 @@ print '</select></div></div>';
 // Album Art
 print '<div class="textcentre configtitle"><b>'.get_int_text('albumart_title').'</b></div>';
 print '<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="downloadart">
+<input class="autoset toggle" type="checkbox" id="downloadart" />
 <label for="downloadart">'.get_int_text('config_autocovers').'</label>
 </div>
 <div class="pref">
@@ -313,7 +313,7 @@ print '</select>';
 print '</div></div>';
 
 print '<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="podcast_mark_new_as_unlistened">
+<input class="autoset toggle" type="checkbox" id="podcast_mark_new_as_unlistened" />
 <label for="podcast_mark_new_as_unlistened">'.get_int_text('config_marknewasunlistened').'</label>
 </div>';
 
@@ -323,8 +323,13 @@ print '<div class="textcentre configtitle">
 </div>';
 
 print '<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="lastfm_autocorrect">
+<input class="autoset toggle" type="checkbox" id="lastfm_autocorrect" />
 <label for="lastfm_autocorrect">'.get_int_text('config_autocorrect').'</label>
+</div>';
+
+print '<div class="pref styledinputs">
+<input class="autoset toggle" type="checkbox" id="sync_lastfm_playcounts" />
+<label for="sync_lastfm_playcounts">'.get_int_text('config_lastfm_playcounts').'</label>
 </div>';
 
 print '<div class="pref">'.get_int_text('config_lastfmusername').'<br/><div class="containerbox"><div class="expand">'.
@@ -333,7 +338,7 @@ print '<div class="pref">'.get_int_text('config_lastfmusername').'<br/><div clas
     '</button></div>';
 print '</div>';
 print '<div class="pref styledinputs lastfmlogin-required">
-<input class="autoset toggle" type="checkbox" id="lastfm_scrobbling">
+<input class="autoset toggle" type="checkbox" id="lastfm_scrobbling" />
 <label for="lastfm_scrobbling">'.get_int_text('config_scrobbling').'</label>
 </div>
 <div class="pref lastfmlogin-required">'.get_int_text('config_scrobblepercent').'<br/>
@@ -345,13 +350,13 @@ print '<div class="pref styledinputs lastfmlogin-required">
 
 // Tags and Ratings
 print '<div class="pref styledinputs lastfmlogin-required">
-<input class="autoset toggle" type="checkbox" id="synctags">
+<input class="autoset toggle" type="checkbox" id="synctags" />
 <label for="synctags">'.get_int_text('config_synctags').'</label>';
 ?>
 </div>
 <div class="pref containerbox dropdown-container lastfmlogin-required">
 <?php
-print '<div class="divlabel styledinputs"><input class="autoset toggle" type="checkbox" id="synclove">
+print '<div class="divlabel styledinputs"><input class="autoset toggle" type="checkbox" id="synclove" />
 <label for="synclove">'.get_int_text('config_loveis').'</label></div>';
 ?>
 <div class="selectholder"><select id="synclovevalueselector" class="saveomatic">
@@ -382,7 +387,7 @@ if ($prefs['mopidy_slave'] == false) {
         print '<div class="pref styledinputs">
             <div class="clearfix">
                 <div class="tleft">
-                    <input class="autoset toggle" type="checkbox" id="updateeverytime"><label for="updateeverytime">'.get_int_text('config_updateonstart').'</label>
+                    <input class="autoset toggle" type="checkbox" id="updateeverytime" /><label for="updateeverytime">'.get_int_text('config_updateonstart').'</label>
                 </div>';
         print '<button class="tright" name="donkeykong">'.get_int_text('config_updatenow').'</button>';
         if ($prefs['player_backend'] == "mpd") {
@@ -399,17 +404,17 @@ if ($prefs['mopidy_slave'] == false) {
         </div>';
 
         print '<div class="pref styledinputs">
-        <input class="autoset toggle" type="checkbox" id="preferlocalfiles">
+        <input class="autoset toggle" type="checkbox" id="preferlocalfiles" />
         <label for="preferlocalfiles">'.get_int_text('config_preferlocal').'</label></div>';
     }
 
     if ($collection_type == $prefs['player_backend']) {
         print '<div class="pref styledinputs">
-        <input class="autoset toggle" type="checkbox" id="sortbycomposer">
+        <input class="autoset toggle" type="checkbox" id="sortbycomposer" />
         <label for="sortbycomposer">'.get_int_text('config_sortbycomposer').'</label>
         </div>';
         print '<div class="pref indent styledinputs">
-        <input class="autoset toggle" type="checkbox" id="composergenre">
+        <input class="autoset toggle" type="checkbox" id="composergenre" />
         <label for="composergenre">'.get_int_text('config_composergenre').'</label>
         </div>';
         print '<div class="pref indent">

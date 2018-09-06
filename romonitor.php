@@ -87,8 +87,14 @@ while (true) {
             $fraction_played = $elapsed/$current_song['duration'];
             if ($fraction_played > 0.9) {
                 debuglog($prefs['currenthost'].' - '."Played more than 90% of song. Incrementing playcount","ROMONITOR");
-                $current_song['attributes'] = array(array('attribute' => 'Playcount', 'value' => $current_playcount+1));
-                romprmetadata::inc($current_song);
+                romprmetadata::get($current_song);
+                $now_playcount = array_key_exists('Playcount', $returninfo) ? $returninfo['Playcount'] : 0;
+                if ($now_playcount > $current_playcount) {
+                    debuglog($prefs['currenthost'].' - '."Current playcount is bigger than ours, doing nothing","ROMONITOR");
+                } else {
+                    $current_song['attributes'] = array(array('attribute' => 'Playcount', 'value' => $current_playcount+1));
+                    romprmetadata::inc($current_song);
+                }
                 if ($current_song['type'] == 'podcast') {
                     debuglog($prefs['currenthost'].' - '."Marking podcast episode as listened","ROMONITOR");
                     markAsListened($current_song['uri']);

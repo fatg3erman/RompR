@@ -117,6 +117,7 @@ $prefs = array(
     "showartistbanners" => true,
     "google_api_key" => '',
     "google_search_engine_id" => '',
+    "sync_lastm_playcounts" => false,
 
     // Things that are set as Cookies
     "sortbydate" => false,
