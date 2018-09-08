@@ -131,7 +131,7 @@ var infobar = function() {
                 if (npinfo.artist && npinfo.album) {
                     lines[1].text = '<i>'+frequentLabels.by+'</i>'+' '+npinfo.artist+" "
                         +'<i>'+frequentLabels.on+'</i>'+" "+npinfo.album;
-                } else if (npinfo.stream) {
+                } else if (npinfo.stream && npinfo.stream != 'No Title') {
                     lines[1].text = npinfo.stream;
                 } else if (npinfo.album && npinfo.title) {
                     lines[1].text = '<i>'+frequentLabels.on+'</i>'+" "+npinfo.album;

@@ -93,8 +93,8 @@ var info_ratings = function() {
 				if (!prefs.sync_lastfm_playcounts) {
 					return;
 				}
-				if (trackmeta.usermeta === undefined) {
-					debug.error("RATINGS PLUGIN","Got LFM updates before database data");
+				if (trackmeta.usermeta === undefined || trackmeta.usermeta === null) {
+					debug.warn("RATINGS PLUGIN","Got LFM updates before database data");
 					return;
 				}
 				var changed = false;
