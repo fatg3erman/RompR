@@ -398,7 +398,7 @@ function getrgbs(percent,min) {
         var match = regexp.exec(c);
         // If no style is set it comes back as 0,0,0 so we must catch that
         // if you want black progress bars use 1,1,1
-        if (match[1] && match[2] && match[3] && (match[1]+match[2]+match[3] > 0)) {
+        if (match && match[1] && match[2] && match[3] && (match[1]+match[2]+match[3] > 0)) {
             colours = {r: match[1], g: match[2], b: match[3]};
             prefs.rgbs = colours;
         }
