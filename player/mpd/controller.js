@@ -11,7 +11,6 @@ function playerController() {
     var oldplname;
     var thenowplayinghack = false;
     var lastsearchcmd = "search";
-    var moving = false;
 
     function updateStreamInfo() {
 
@@ -135,7 +134,7 @@ function playerController() {
                     if (data.state) {
                         // Clone the object so as not to leave this closure in memory
                         player.status = cloneObject(data);
-                        if (player.status.playlist !== plversion && !moving) {
+                        if (player.status.playlist !== plversion) {
                             debug.blurt("PLAYER","Player has marked playlist as changed");
                             playlist.repopulate();
                         }
@@ -147,7 +146,6 @@ function playerController() {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 debug.error("MPD","Command List Failed",list,textStatus,errorThrown);
-                moving = false;
                 if (list.length > 0) {
                     infobar.notify(infobar.ERROR, "Failed sending commands to "+prefs.player_backend);
                 }
@@ -252,14 +250,10 @@ function playerController() {
         var mywin = fnarkle.create();
         var d = $('<div>',{class: 'containerbox'}).appendTo(mywin);
         var e = $('<div>',{class: 'expand'}).appendTo(d);
-
-        // var i = $('<input>',{class: 'enter', id: 'newplname', type: 'text', size: '200'}).appendTo(e).on('keyup', onKeyUp);
         var i = $('<input>',{class: 'enter', id: 'newplname', type: 'text', size: '200'}).appendTo(e);
-
         var b = $('<button>',{class: 'fixed'}).appendTo(d);
         b.html('Rename');
         fnarkle.useAsCloseButton(b, callback);
-        // b.on('keyup', onKeyUp);
         fnarkle.open();
     }
 
@@ -322,7 +316,6 @@ function playerController() {
 	}
 
 	this.savePlaylist = function() {
-
 	    var name = $("#playlistname").val();
 	    debug.log("GENERAL","Save Playlist",name);
         if (name == '') {
@@ -451,7 +444,6 @@ function playerController() {
         layoutProcessor.notifyAddTracks();
 		debug.log("MPD","Adding Tracks",tracks,playpos,at_pos);
 		var cmdlist = [];
-		var pl = player.status.playlistlength;
 		$.each(tracks, function(i,v) {
 			switch (v.type) {
 				case "uri":
@@ -500,19 +492,9 @@ function playerController() {
 			cmdlist.push(['play', playpos.toString()]);
 		}
         if (at_pos === 0 || at_pos) {
-            moving = true;
+            cmdlist.push(['moveallto', at_pos]);
         }
-		self.do_command_list(cmdlist, function() {
-            // We don't insert tracks at a specific position because we don't always
-            // know how many tracks are in each 'item' or 'playlist'. Hence we add them
-            // to the end and then move them.
-			if (at_pos === 0 || at_pos) {
-                moving = false;
-				self.move(pl, player.status.playlistlength - pl, at_pos);
-			} else {
-                self.checkProgress();
-            }
-		});
+		self.do_command_list(cmdlist);
 	}
 
 	this.move = function(first, num, moveto) {
@@ -667,7 +649,6 @@ function playerController() {
 
 	this.postLoadActions = function() {
 		self.checkProgress();
-        playlist.radioManager.repopulate();
         if (thenowplayinghack) {
             // The Now PLaying Hack is so that when we switch the option for
             // 'display composer/performer in nowplaying', we can first reload the

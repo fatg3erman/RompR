@@ -4,7 +4,7 @@ define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
 define('ROMPR_IMAGE_VERSION', 4);
 define('ROMPR_SCHEMA_VERSION', 46);
-define('ROMPR_VERSION', '1.21');
+define('ROMPR_VERSION', '1.22');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_UNKNOWN_STREAM', "Unknown Internet Stream");
@@ -117,6 +117,7 @@ $prefs = array(
     "showartistbanners" => true,
     "google_api_key" => '',
     "google_search_engine_id" => '',
+    "sync_lastfm_playcounts" => false,
 
     // Things that are set as Cookies
     "sortbydate" => false,

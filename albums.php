@@ -15,7 +15,7 @@ $error = 0;
 include("backends/sql/backend.php");
 
 debuglog("======================================================================","TIMINGS",4);
-debuglog("== Starting Backend Collection Malarkey","TIMINGS",4);
+# debuglog("== Starting Backend Collection Malarkey","TIMINGS",4);
 $initmem = memory_get_usage();
 debuglog("Memory Used is ".$initmem,"COLLECTION",4);
 $now2 = time();
@@ -87,13 +87,13 @@ switch (true) {
 
 }
 
-if (isset($parse_time)) {
-    debuglog("== Time Spent Reading Socket Data                      : ".$parse_time,"TIMTINGS",4);
-    debuglog("== Time Spent Parsing Socket Data                      : ".$rtime,"TIMTINGS",4);
-    debuglog("== Time Spent Checking/Writing to Database             : ".$db_time,"TIMTINGS",4);
-    debuglog("== Time Spent Putting Stuff into Collection Structures : ".$coll_time,"TIMTINGS",4);
-    debuglog("== Time Spent Sorting Collection Structures            : ".$cp_time,"TIMTINGS",4);
-}
+// if (isset($parse_time)) {
+//     debuglog("== Time Spent Reading Socket Data                      : ".$parse_time,"TIMTINGS",4);
+//     debuglog("== Time Spent Parsing Socket Data                      : ".$rtime,"TIMTINGS",4);
+//     debuglog("== Time Spent Checking/Writing to Database             : ".$db_time,"TIMTINGS",4);
+//     debuglog("== Time Spent Putting Stuff into Collection Structures : ".$coll_time,"TIMTINGS",4);
+//     debuglog("== Time Spent Sorting Collection Structures            : ".$cp_time,"TIMTINGS",4);
+// }
 
 debuglog("== Collection Update And Send took ".format_time(time() - $now2),"TIMINGS",4);
 $peakmem = memory_get_peak_usage();
@@ -131,7 +131,7 @@ function mpd_search() {
             case 'rating':
                 $dbterms[$key] = $term;
                 break;
-        
+
             case 'any':
                 // This makes a search term of 'Madness My Girl' into
                 // search any Madness any My any Girl
@@ -144,13 +144,13 @@ function mpd_search() {
                     }
                 }
                 break;
-        
+
             default:
                 foreach ($term as $t) {
                     $cmd .= " ".$key.' "'.format_for_mpd(html_entity_decode(trim($t))).'"';
                 }
                 break;
-        
+
         }
     }
     debuglog("Search command : ".$cmd,"MPD SEARCH");
@@ -238,10 +238,10 @@ function raw_search() {
         debuglog("Search command : ".$cmd,"MPD SEARCH");
         $doing_search = true;
         doCollection($cmd, $domains);
-        
+
         // For backends that don't support multiple parameters (Google Play)
         // This'll return nothing for Spotify, so it's OK. It might help SoundCloud too.
-        
+
         $cmd = $_REQUEST['command'].' any ';
         $parms = array();
         if (array_key_exists('artist', $_REQUEST['rawterms'])) {
@@ -257,7 +257,7 @@ function raw_search() {
             $collection->filter_duplicate_tracks();
             doCollection($cmd, $domains, false);
         }
-        
+
     }
     print json_encode($collection->tracks_as_array());
 }

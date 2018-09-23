@@ -3,6 +3,14 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.22
+
+* Fix bug where podcast download wasn't working if you had PHP older than 7.1
+* A few minor UI tweaks
+* Romonitor now uses a different and more reliable mthod of detecting track changes. You will need to restart romonitor after you install this version.
+* Fix bug where on phones you needed to tap some of the icons twice
+* Add option to use Last.FM Playcounts to keep devices in sync
+
 ## Version 1.20
 
 * Album Art now supports transparency in PNG files, and SVG files will be saved and served as SVG

@@ -685,9 +685,11 @@ $.widget("rompr.rangechooser", $.ui.mouse, {
 
     setProgress: function(p) {
         var malarkey = {min: 0, max: p / this.options.range}
-        this.min = malarkey.min;
-        this.max = malarkey.max;
-        this.fill();
+        if (malarkey.max != this.max) {
+            this.min = 0;
+            this.max = malarkey.max;
+            this.fill();
+        }
     }
 
 });

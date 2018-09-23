@@ -392,6 +392,7 @@ var playlist = function() {
                 playlist.waiting();
             }
             player.controller.postLoadActions();
+            playlist.radioManager.repopulate();
             uiHelper.postPlaylistLoad();
         },
 

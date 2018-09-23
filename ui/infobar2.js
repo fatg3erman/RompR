@@ -132,7 +132,9 @@ var infobar = function() {
                     lines[1].text = '<i>'+frequentLabels.by+'</i>'+' '+npinfo.artist+" "
                         +'<i>'+frequentLabels.on+'</i>'+" "+npinfo.album;
                 } else if (npinfo.stream) {
-                    lines[1].text = npinfo.stream;
+                    if (npinfo.stream != 'No Title') {
+                        lines[1].text = npinfo.stream;
+                    }
                 } else if (npinfo.album && npinfo.title) {
                     lines[1].text = '<i>'+frequentLabels.on+'</i>'+" "+npinfo.album;
                 }
@@ -438,10 +440,12 @@ var infobar = function() {
                 $("#stars").fadeIn('fast');
                 $("#dbtags").fadeIn('fast');
                 $("#playcount").fadeIn('fast');
+                lastfm.showloveban(true);
             } else {
                 $("#stars").fadeOut('fast');
                 $("#dbtags").fadeOut('fast');
                 $("#playcount").fadeOut('fast');
+                lastfm.showloveban(false);
             }
             if (info.location != "") {
                 var f = info.location.match(/^podcast[\:|\+](http.*?)\#/);
@@ -457,6 +461,7 @@ var infobar = function() {
                 $("#dbtags").fadeOut('fast');
                 $("#playcount").fadeOut('fast');
                 $("#subscribe").fadeOut('fast');
+                lastfm.showloveban(false);
             } else {
                 infobar.albumImage.setKey(info.key);
             }

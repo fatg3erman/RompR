@@ -164,7 +164,7 @@ print '<p class=tiny>Rompr debug output will be sent to this file, but PHP error
  already exist, and you should ensure it gets rotated as it will get large</p>';
 print '<p><input type="text" style="width:90%" name="custom_logfile" value="'.
     $prefs['custom_logfile'].'" /></p>';
-print '<p><input type="submit" value="OK" /></p>';
+print '<p><button style="width:50%" type="submit">OK</button></p>';
 print'    </form>
     </div>
 </body>

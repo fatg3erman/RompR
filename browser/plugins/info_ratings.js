@@ -89,6 +89,31 @@ var info_ratings = function() {
 			this.stopDisplaying = function() {
 			}
 
+			this.updateMeta = function(updates) {
+				if (!prefs.sync_lastfm_playcounts) {
+					return;
+				}
+				if (trackmeta.usermeta === undefined || trackmeta.usermeta === null) {
+					debug.warn("RATINGS PLUGIN","Got LFM updates before database data");
+					return;
+				}
+				var changed = false;
+				$.each(updates, function(i, v) {
+					switch (i) {
+						case 'Playcount':
+							if (parseInt(trackmeta.usermeta[i]) < parseInt(v)) {
+								debug.log("RATINGS PLUGIN","Update :",i,"is now",v);
+								trackmeta.usermeta[i] = v;
+								changed = true;
+							} else {
+								debug.log("RATINGS PLUGIN","Not using update for",i,"as",v,"is less than",trackmeta.usermeta[i]);
+							}
+							break;
+					}
+				});
+				if (changed) doThingsWithData();
+			}
+
             this.refresh = function() {
                 trackmeta.usermeta = undefined;
                 self.populate();

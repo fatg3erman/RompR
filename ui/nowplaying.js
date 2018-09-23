@@ -145,6 +145,11 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 		collections['ratings'].refresh();
 	}
 
+	this.lastFMMetadata = function(updates) {
+		debug.log("NOWPLAYING",self.nowplayingindex," got updates from Last.FM",updates);
+		collections['ratings'].updateMeta(updates);
+	}
+
 	// Create the data collections we need
 
 	this.populate = function(source, isartistswitch) {
@@ -355,6 +360,10 @@ var nowplaying = function() {
 					infobar.setLastFMCorrections(updates);
 				}
 			}
+		},
+
+		setMetadataFromLastFM(index, updates) {
+			history[index].lastFMMetadata(updates);
 		},
 
 		progressUpdate: function(percent) {

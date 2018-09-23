@@ -809,7 +809,6 @@ var layoutProcessor = function() {
             $('#expandleft').on('click', function(){layoutProcessor.expandInfo('left')});
             $('.clear_playlist').on('click', playlist.clear);
             $("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
-
             document.body.addEventListener('drop', function(e) {
                 e.preventDefault();
             }, false);
@@ -818,6 +817,14 @@ var layoutProcessor = function() {
             $('#albumcover').on('dragleave', infobar.albumImage.dragLeave);
             $("#albumcover").on('drop', infobar.albumImage.handleDrop);
             $("#tracktimess").on('click', layoutProcessor.toggleRemainTime);
+            $(document).on('mouseenter', '.clearbox', makeHoverWork);
+            $(document).on('mouseleave', '.clearbox', makeHoverWork);
+            $(document).on('mousemove', '.clearbox', makeHoverWork);
+            $(document).on('mouseenter', '.combobox-entry', makeHoverWork);
+            $(document).on('mouseleave', '.combobox-entry', makeHoverWork);
+            $(document).on('mousemove', '.combobox-entry', makeHoverWork);
+            $(document).on('mouseenter', '.tooltip', makeToolTip);
+            $(document).on('mouseleave', '.tooltip', stopToolTip);
             $('#plmode').detach().appendTo('#amontobin').addClass('tright');
             $("#volume").rangechooser({
                 range: 100,

@@ -173,7 +173,7 @@ As well as the webserver error log, RompЯ will also output a debug trace to the
 
 You can enable debug logging without going to the setup page, from your browser's Javascript console. Issue the command
 
-    prefs.save({'debug_logging': level});
+    debug.setLevel(level);
 
 where 'level' is the debug level from 0 to 9. Level 0 switches logging off.
 

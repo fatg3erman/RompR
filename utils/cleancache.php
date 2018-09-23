@@ -116,7 +116,7 @@ if ($mysqlc) {
             sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Searched = ?, Image = ? WHERE Albumindex = ?", $searched, $image, $obj->Albumindex);
         }
     }
-    
+
     debuglog("Checking for orphaned Wishlist Sources","CACHE CLEANER");
     generic_sql_query("DELETE FROM WishlistSourcetable WHERE Sourceindex NOT IN (SELECT DISTINCT Sourceindex FROM Tracktable WHERE Sourceindex IS NOT NULL)");
 

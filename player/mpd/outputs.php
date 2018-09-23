@@ -3,7 +3,6 @@ $outputdata = array();
 @open_mpd_connection();
 if ($is_connected) {
     $outputs = do_mpd_command("outputs", true);
-    close_mpd($connection);
     foreach ($outputs as $i => $n) {
         if (is_array($n)) {
             foreach ($n as $a => $b) {
@@ -16,7 +15,7 @@ if ($is_connected) {
         }
     }
 }
-close_mpd($connection);
+close_mpd();
 
 function printOutputCheckboxes() {
     global $outputdata;

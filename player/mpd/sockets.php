@@ -14,6 +14,8 @@ function open_mpd_connection() {
 
     if(isset($connection) && is_resource($connection)) {
         $is_connected = true;
+        stream_set_timeout($connection, 65535);
+        stream_set_blocking($connection, true);
         while(!feof($connection)) {
             $gt = fgets($connection, 1024);
             if (parse_mpd_var($gt))
@@ -37,6 +39,7 @@ function open_mpd_connection() {
             }
         }
     }
+    return $is_connected;
 }
 
 function getline($connection) {
@@ -74,8 +77,7 @@ function send_command($command) {
         $b = @fputs($connection, $command."\n");
         if (!$b || $b < $l) {
             debuglog("Socket Write Error for ".$command." - Retrying","LEMSIP",2);
-            @fclose($connection);
-            $is_connected = false;
+            close_mpd();
             usleep(500000);
             @open_mpd_connection();
             $retries--;
@@ -93,8 +95,10 @@ function do_mpd_command($command, $return_array = false, $force_array_results = 
     if ($is_connected) {
 
         debuglog("MPD Command ".$command,"MPD",9);
-
-        $success = send_command($command);
+        $success = true;
+        if ($command != '') {
+            $success = send_command($command);
+        }
         if ($success) {
             while(!feof($connection)) {
                 $var = parse_mpd_var(fgets($connection, 1024));
@@ -107,7 +111,11 @@ function do_mpd_command($command, $return_array = false, $force_array_results = 
                         break;
                     }
                     if ($var[0] == false) {
-                        debuglog("Error for '".$command."'' : ".$var[1],"MPD",1);
+                        $sdata = stream_get_meta_data($connection);
+                        if (array_key_exists('timed_out', $sdata) && $sdata['timed_out']) {
+                            $var[1] = 'Timed Out';
+                        }
+                        debuglog("Error for '".$command."' : ".$var[1],"MPD",1);
                         if ($return_array == true) {
                             $retarr['error'] = $var[1];
                         } else {
@@ -146,12 +154,11 @@ function do_mpd_command($command, $return_array = false, $force_array_results = 
 }
 
 function close_mpd() {
-    global $is_connected, $connection;
-    if ($is_connected) {
-        @fputs($connection, "close\n");
-        fclose($connection);
-        $is_connected = false;
-    }
+    global $connection, $is_connected;
+    // @fputs($connection, 'close'."\n");
+    // getline($connection);
+    @fclose($connection);
+    $is_connected = false;
 }
 
 ?>

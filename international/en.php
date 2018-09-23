@@ -670,7 +670,8 @@ $languages['en'] = array (
 	"label_bottomleft" => "Bottom Left",
 	"label_bottomright" => "Bottom Right",
 	"label_centre" => "Centered",
-	"config_preferlocal" => "Prefer Local Music to Internet Sources"
+	"config_preferlocal" => "Prefer Local Music to Internet Sources",
+	"config_lastfm_playcounts" => "Use Last.FM Playcounts"
 );
 
 ?>

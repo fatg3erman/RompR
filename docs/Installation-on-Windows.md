@@ -1,6 +1,6 @@
 # How To Install RompЯ on Windows
 
-The installation on Windows is slightly more complex than on Linux or macOS, you can only use MPD, and it isn't as fast or as responsive, but it does work. Also Rompr doesn't work in IE or Edge, so you'll need to install Chrome or Firefox.
+The installation on Windows is slightly more complex than on Linux or macOS, you can only use MPD, and it isn't as fast or as responsive, but it does work. Rompr doesn't work in IE but it might work in Edge.
 
 There are many possible ways to do this. This page describes the one I've tried on Windows 10.
 

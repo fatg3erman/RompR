@@ -74,8 +74,10 @@ function aADownloadFinished() {
         $("#harold").html("Get Missing Covers");
     }
     $("#status").html("");
-    progress.fadeOut('slow');
-    progress.rangechooser('setProgress', 0);
+    if (progress) {
+        progress.fadeOut('slow');
+        progress.rangechooser('setProgress', 0);
+    }
 }
 
 function onWobblebottomClicked(event) {
@@ -192,7 +194,6 @@ $(document).ready(function () {
     } else {
         prefs.setTheme(prefs.theme);
     }
-    coverscraper = new coverScraper(1, true, true, true);
     $("#fontsize").attr({href: "sizes/"+prefs.fontsize});
     $("#fontfamily").attr({href: "fonts/"+prefs.fontfamily});
     progress = $('#progress');
@@ -248,6 +249,7 @@ $(document).ready(function () {
 
 $(window).on('load', function () {
     debug.log("ALBUMART","Document has loaded");
+    coverscraper = new coverScraper(1, true, true, true);
     var count = 0;
     $.each($(document).find("img").filter(filterImages), function() {
         count++;

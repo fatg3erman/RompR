@@ -350,6 +350,11 @@ var info_lastfm = function() {
                 }
             }
 
+			function sendMetadataUpdates(de) {
+				var lfmdata = new lfmDataExtractor(trackmeta.lastfm.track);
+				nowplaying.setMetadataFromLastFM(parent.nowplayingindex, {Playcount: lfmdata.userplaycount()});
+			}
+
 			this.artist = function() {
 
                 return {
@@ -659,6 +664,7 @@ var info_lastfm = function() {
                             trackmeta.musicbrainz_id = mbid;
                         }
                         sendLastFMCorrections();
+						sendMetadataUpdates();
                         self.track.doBrowserUpdate();
                     },
 
