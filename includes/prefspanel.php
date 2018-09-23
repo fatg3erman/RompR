@@ -391,7 +391,7 @@ if ($prefs['mopidy_slave'] == false) {
                 </div>';
         print '<button class="tright" name="donkeykong">'.get_int_text('config_updatenow').'</button>';
         if ($prefs['player_backend'] == "mpd") {
-            print '<button class="tright" name="dinkeyking"">'.get_int_text('config_rescan').'</button>';
+            print '<button class="tright" name="dinkeyking">'.get_int_text('config_rescan').'</button>';
         }
         print '</div></div>';
     }
