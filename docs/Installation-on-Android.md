@@ -8,3 +8,5 @@ You need to make one slight tweak to the setup:
 
 You should note that Rompr requires a fair amount of storage space for its cache, so you should install or symlink it as appropriate to wherever on your device has the most available storage.
 
+Decent way to make use of an old phone.
+
