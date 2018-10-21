@@ -1057,7 +1057,7 @@ function downloadTrack($key, $channel) {
     debuglog("Downloading ".$key." from ".$channel,"PODCASTS");
     $url = null;
     $filesize = 0;
-    $result = generic_sql_query("SELECT Link, FileSize FROM PodcastTracktable WHERE PODTrackindex = ".$key, false, PDO::FETCH_OBJ);
+    $result = generic_sql_query("SELECT Link, FileSize FROM PodcastTracktable WHERE PODTrackindex = " . intval($key), false, PDO::FETCH_OBJ);
     foreach ($result as $obj) {
         $url = $obj->Link;
         $filesize = $obj->FileSize;
@@ -1090,7 +1090,7 @@ function downloadTrack($key, $channel) {
             sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?", 1, '/prefs/podcasts/'.$channel.'/'.$key.'/'.$filename, $key);
         } else {
             header('HTTP/1.0 404 Not Found');
-            system ('rm -fR prefs/podcasts/'.$channel.'/'.$key);
+            system (escapeshellarg('rm -fR prefs/podcasts/'.$channel.'/'.$key));
         }
     } else {
         debuglog('Failed to create directory prefs/podcasts/'.$channel.'/'.$key,"PODCASTS",2);

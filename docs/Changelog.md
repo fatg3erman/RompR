@@ -3,6 +3,10 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.23
+* Fix bug where 'Use LastFM Playcounts' would reset Playcounts to zero if the response from Last.FM arrived before the response from the database, as seems to happen a lot on Windows.
+* Fix 3 security vulnerabilties as found my kmille.
+
 ## Version 1.22
 
 * Fix bug where podcast download wasn't working if you had PHP older than 7.1

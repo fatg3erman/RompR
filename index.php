@@ -14,7 +14,7 @@ if ($skin === null) {
 debuglog("Using skin : ".$skin,"INIT",6);
 
 if (!is_dir('skins/'.$skin)) {
-    print '<h3>Skin '.$skin.' does not exist!</h3>';
+    print '<h3>Skin '.htmlspecialchars($skin).' does not exist!</h3>';
     exit(0);
 }
 

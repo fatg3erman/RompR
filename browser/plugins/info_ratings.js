@@ -15,9 +15,26 @@ var info_ratings = function() {
 
 			var self = this;
 			var displaying = false;
+			var lfmupdates = null;
 
             function doThingsWithData() {
                 if (parent.isCurrentTrack() && trackmeta.usermeta) {
+
+					if (prefs.sync_lastfm_playcounts && lfmupdates !== null) {
+						$.each(lfmupdates, function(i, v) {
+							switch (i) {
+								case 'Playcount':
+									if (parseInt(trackmeta.usermeta[i]) < parseInt(v)) {
+										debug.log("RATINGS PLUGIN","Update :",i,"is now",v);
+										trackmeta.usermeta[i] = v;
+									} else {
+										debug.log("RATINGS PLUGIN","Not using update for",i,"as",v,"is less than",trackmeta.usermeta[i]);
+									}
+									break;
+							}
+						});
+					}
+
                     if (trackmeta.usermeta.Playcount && trackmeta.usermeta.Playcount > 0) {
                         $("#playcount").html("<b>PLAYS :</b>&nbsp;"+trackmeta.usermeta.Playcount);
                         if (typeof charts != 'undefined') {
@@ -90,28 +107,8 @@ var info_ratings = function() {
 			}
 
 			this.updateMeta = function(updates) {
-				if (!prefs.sync_lastfm_playcounts) {
-					return;
-				}
-				if (trackmeta.usermeta === undefined || trackmeta.usermeta === null) {
-					debug.warn("RATINGS PLUGIN","Got LFM updates before database data");
-					return;
-				}
-				var changed = false;
-				$.each(updates, function(i, v) {
-					switch (i) {
-						case 'Playcount':
-							if (parseInt(trackmeta.usermeta[i]) < parseInt(v)) {
-								debug.log("RATINGS PLUGIN","Update :",i,"is now",v);
-								trackmeta.usermeta[i] = v;
-								changed = true;
-							} else {
-								debug.log("RATINGS PLUGIN","Not using update for",i,"as",v,"is less than",trackmeta.usermeta[i]);
-							}
-							break;
-					}
-				});
-				if (changed) doThingsWithData();
+				lfmupdates = updates;
+				doThingsWithData();
 			}
 
             this.refresh = function() {
