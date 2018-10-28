@@ -4,7 +4,7 @@ var lfmImporter = function() {
     var offset = 0;
     var alloffset = 0;
     var alldata = new Array();
-    var limit = 20;
+    var limit = 50;
     var row;
 
     function getNextChunk() {
@@ -49,7 +49,7 @@ var lfmImporter = function() {
     }
 
     function getNextRow() {
-        var data = alldata[alloffset];
+        var data = cloneObject(alldata[alloffset]);
         lastfm.track.getInfo( { artist: data.Albumartist, track: data.Title },
                                 lfmResponseHandler,
                                 lfmResponseHandler,
@@ -70,9 +70,9 @@ var lfmImporter = function() {
             debug.mark("LFMIMPORTER","Incrementing Playcount for",alldata[reqid].TTindex,"to",de.userplaycount());
             var playlistinfo = {type: 'local', location: ''};
             $.each(row.children('td.playlistinfo'), function() {
-                playlistinfo[$(this).attr('name')] = $(this).html();
+                playlistinfo[$(this).attr('name')] = htmlspecialchars_decode($(this).html());
             });
-            debug.debug("LFMIMPORTER","Using data",playlistinfo);
+            debug.trace("LFMIMPORTER","Using data",playlistinfo);
             metaHandlers.fromPlaylistInfo.setMeta(playlistinfo, 'inc', [{attribute: 'Playcount', value: de.userplaycount()}], setSuccess, setFail);
         } else {
             row.children('td[name="tick"]').html('<i class="icon-block collectionicon"></i>');
