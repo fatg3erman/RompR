@@ -43,10 +43,10 @@ var metaHandlers = function() {
 	            data.albumartist = playlistinfo.trackartist;
 	        }
 	    }
-	    if (playlistinfo.metadata.album.uri) {
+	    if (playlistinfo.metadata && playlistinfo.metadata.album.uri) {
 	        data.albumuri = playlistinfo.metadata.album.uri;
 	    }
-	    if (playlistinfo.type != "stream" && playlistinfo.images.small) {
+	    if (playlistinfo.type != "stream" && playlistinfo.images && playlistinfo.images.small) {
 	        data.image = playlistinfo.images.small;
 	    }
 	    if ((playlistinfo.type == "local" || playlistinfo.type == "podcast") && playlistinfo.album) {

@@ -2166,4 +2166,21 @@ div.notification.new {
 	transition: opacity 0.5s ease;
 }
 
+#lfmitable {
+	max-width:95%;
+	margin:auto;
+	border-collapse: collapse;
+}
 
+#lfmitable tr td, #lfmitable tr th  {
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+}
+
+#lfmitable tr td:nth-child(7){
+	text-align:center;
+}
+
+#lfmitable tr td:nth-child(8){
+	text-align:center;
+}
