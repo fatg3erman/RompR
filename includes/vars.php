@@ -118,6 +118,9 @@ $prefs = array(
     "google_api_key" => '',
     "google_search_engine_id" => '',
     "sync_lastfm_playcounts" => false,
+    "sync_lastfm_at_start" => false,
+    "last_lastfm_synctime" => time(),
+    "lfm_importer_start_offset" => 0,
 
     // Things that are set as Cookies
     "sortbydate" => false,
@@ -327,7 +330,6 @@ function loadPrefs() {
                         }
                     }
                 }
-
           } else {
               error_log("ERROR!              : COULD NOT GET READ FILE LOCK ON PREFS FILE");
               exit(1);

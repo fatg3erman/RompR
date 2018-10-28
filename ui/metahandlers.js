@@ -221,6 +221,34 @@ var metaHandlers = function() {
 			}
 		},
 
+		fromLastFMData: {
+				getMeta: function(data, success, fail) {
+					var track = metaHandlers.fromLastFMData.mapData(data, 'get', false);
+					dbQueue.request([track], success, fail);
+				},
+
+				setMeta: function(data, action, attributes, success, fail) {
+					var track = metaHandlers.fromLastFMData.mapData(data, action, attributes);
+					dbQueue.request([track], success, fail);
+				},
+
+				mapData: function(data, action, attributes) {
+					var track = {action: action};
+					track.title = data.name;
+					if (data.album) {
+						track.album = data.album['#text'];
+					}
+					if (data.artist) {
+						track.artist = data.artist.name;
+						track.albumartist = data.artist.name;
+					}
+					if (attributes) {
+						track.attributes = attributes;
+					}
+					return track;
+				}
+		},
+
 		genericAction: function(action, success, fail) {
 			if (typeof action == "object") {
 				dbQueue.request(action, success, fail);

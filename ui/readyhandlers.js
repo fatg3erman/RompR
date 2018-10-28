@@ -90,6 +90,9 @@ $(document).ready(function(){
         $('[name="donkeykong"]').remove();
         $('[name="dinkeyking"]').remove();
     }
+    if (prefs.sync_lastfm_at_start) {
+        syncLastFMPlaycounts.start();
+    }
 });
 
 function cleanBackendCache() {

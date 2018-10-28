@@ -672,7 +672,10 @@ $languages['en'] = array (
 	"label_centre" => "Centered",
 	"config_preferlocal" => "Prefer Local Music to Internet Sources",
 	"config_lastfm_playcounts" => "Use Last.FM Playcounts",
-	"label_lfm_playcountimporter" => "Last.FM Playcount Importer"
+	"config_sync_lastfm_playcounts" => "Synchronise Last.FM Playcounts At Start",
+	"label_lfm_playcountimporter" => "Last.FM Playcount Importer",
+	"label_mustlogintolfm" => "You must be logged in to Last.FM to use this feature",
+	"label_lfm_syncing" => "Syncing Last.FM Playcounts"
 );
 
 ?>

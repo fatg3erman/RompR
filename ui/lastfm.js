@@ -636,7 +636,21 @@ function LastFM(user) {
                 failcallback,
                 1
             )
+        },
+
+        getRecentTracks: function(options, callback, failcallback) {
+            options.user = username;
+            options.extended = 1;
+            addGetOptions(options, "user.getRecentTracks");
+            LastFMGetRequest(
+                options,
+                true,
+                callback,
+                failcallback,
+                1
+            )
         }
+
     }
 
     this.library = {

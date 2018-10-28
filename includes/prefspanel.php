@@ -332,6 +332,11 @@ print '<div class="pref styledinputs">
 <label for="sync_lastfm_playcounts">'.get_int_text('config_lastfm_playcounts').'</label>
 </div>';
 
+print '<div class="pref styledinputs">
+<input class="autoset toggle" type="checkbox" id="sync_lastfm_at_start" />
+<label for="sync_lastfm_at_start">'.get_int_text('config_sync_lastfm_playcounts').'</label>
+</div>';
+
 print '<div class="pref">'.get_int_text('config_lastfmusername').'<br/><div class="containerbox"><div class="expand">'.
     '<input class="enter" name="lfmuser" type="text" size="30" value="'.$prefs['lastfm_user'].'"/>'.
     '</div><button id="lastfmloginbutton" class="fixed">'.get_int_text('config_loginbutton').

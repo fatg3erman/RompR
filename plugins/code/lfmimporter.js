@@ -1,11 +1,14 @@
 var lfmImporter = function() {
 
 	var lfmi = null;
-    var offset = 0;
+    var offset = prefs.lfm_importer_start_offset;
     var alloffset = 0;
     var alldata = new Array();
-    var limit = 50;
+    var limit = 25;
     var row;
+	var tracksdone = 0;
+	var totaltracks;
+	var starttime;
 
     function getNextChunk() {
         $.ajax({
@@ -23,7 +26,10 @@ var lfmImporter = function() {
     }
 
     function putTracks(data) {
+		alldata = data;
+		alloffset = 0;
         if (data.length > 0) {
+			$('#lfmitable tr:not(:first-child)').remove();
             debug.log("LFMIMPORTER","Got data",data);
             for (var i in data) {
                 var tr = $('<tr>', {name: data[i].TTindex}).appendTo('#lfmitable');
@@ -36,7 +42,6 @@ var lfmImporter = function() {
                 tr.append('<td class="underline" name="playcount">'+data[i].Playcount+'</td>');
                 tr.append('<td class="underline" name="lastfmplaycount"></td>');
                 tr.append('<td class="underline" name="tick"></td>');
-                alldata.push(data[i]);
             }
             if (!lfmi.is(':visible')) {
                 lfmi.slideToggle('fast');
@@ -56,7 +61,6 @@ var lfmImporter = function() {
                                 alloffset);
 
         alloffset++;
-
     }
 
     function lfmResponseHandler(data, reqid) {
@@ -93,6 +97,11 @@ var lfmImporter = function() {
     }
 
     function doNext() {
+		tracksdone++;
+		$('#lfmiprogress').rangechooser("setRange", {min: 0, max: tracksdone});
+		var elapsed = Date.now() - starttime;
+		var remaining = (elapsed/tracksdone) * (totaltracks - tracksdone);
+		$('#lfmiinfo').html('Done '+tracksdone+' of '+totaltracks+'. Elapsed : '+formatTimeString(elapsed/1000)+', Remaining : '+formatTimeString(remaining/1000));
         if (alloffset < alldata.length) {
             getNextRow();
         } else {
@@ -100,15 +109,44 @@ var lfmImporter = function() {
         }
     }
 
+	function getTotalTracks() {
+		$.ajax({
+        	url: 'plugins/code/lfmimporter.php',
+        	type: "POST",
+        	data: {action: 'gettotal'},
+        	dataType: 'json',
+        	success: function(data) {
+				totaltracks = data.total;
+				$("#lfmiprogress").rangechooser({
+					range: data.total,
+					interactive: false,
+	                startmax: 0,
+	            });
+				starttime = Date.now();
+				getNextChunk();
+        	},
+        	error: function() {
+        		infobar.notify(infobar.ERROR, "Failed to fetch data!");
+        	}
+        });
+	}
+
 	return {
 
 		open: function() {
 
         	if (lfmi == null) {
 	        	lfmi = browser.registerExtraPlugin("lfmi", language.gettext("label_lfm_playcountimporter"), lfmImporter, 'https://fatg3erman.github.io/RompR/Using-Saved-Playlists#editing-your-saved-playlists');
-			    $("#lfmifoldup").append('<div class="noselection fullwidth" id="lfmimunger"></div>').append('<table id="lfmitable"></table>');
-                $('#lfmitable').append('<tr><th>Artist</th><th>Album</th><th>Title</th>th class="invisible"></th><th class="invisible"></th><th class="invisible"></th><th>Playcount</th><th>Last.FM Playcount</th><th></th></tr>');
-			    getNextChunk();
+			    $("#lfmifoldup").append('<div class="noselection fullwidth" id="lfmimunger"></div>');
+				$("#lfmimunger").append('<div style="height:1em;max-width:80%;margin:auto" id="lfmiprogress"></div>');
+				$("#lfmimunger").append('<div style="padding:4px;max-width:80%;margin:auto;text-align:center;font-size:80%;margin-bottom:1em" id="lfmiinfo"></div>');
+				$("#lfmimunger").append('<table id="lfmitable"></table>');
+				if (lastfm.isLoggedIn()) {
+                	$('#lfmitable').append('<tr><th>Artist</th><th>Album</th><th>Title</th>th class="invisible"></th><th class="invisible"></th><th class="invisible"></th><th>Playcount</th><th>Last.FM Playcount</th><th></th></tr>');
+					getTotalTracks();
+				} else {
+					$('#lfmmunger').append('<h3>'+language.gettext('label_mustlogintolfm')+'</h3>');
+				}
 	        } else {
 	        	browser.goToPlugin("lfmi");
 	        }
@@ -122,6 +160,7 @@ var lfmImporter = function() {
 			offset = 0;
             alldata = new Array();
             alloffset = 0;
+			tracksdone = 0;
 		}
 
 	}
