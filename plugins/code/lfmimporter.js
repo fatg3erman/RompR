@@ -6,7 +6,7 @@ var lfmImporter = function() {
     var alldata = new Array();
     var limit = 25;
     var row;
-	var tracksdone = 0;
+	var tracksdone = prefs.lfm_importer_start_offset;
 	var totaltracks;
 	var starttime;
 
