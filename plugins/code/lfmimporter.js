@@ -6,7 +6,7 @@ var lfmImporter = function() {
     var alldata = new Array();
     var limit = 25;
     var row;
-	var tracksdone = prefs.lfm_importer_start_offset;
+	var tracksdone = 0;
 	var totaltracks;
 	var starttime;
 
@@ -100,8 +100,8 @@ var lfmImporter = function() {
 		tracksdone++;
 		$('#lfmiprogress').rangechooser("setRange", {min: 0, max: tracksdone});
 		var elapsed = Date.now() - starttime;
-		var remaining = (elapsed/tracksdone) * (totaltracks - tracksdone);
-		$('#lfmiinfo').html('Done '+tracksdone+' of '+totaltracks+'. Elapsed : '+formatTimeString(elapsed/1000)+', Remaining : '+formatTimeString(remaining/1000));
+		var remaining = (elapsed/tracksdone) * (totaltracks - tracksdone - prefs.lfm_importer_start_offset);
+		$('#lfmiinfo').html('Done '+(tracksdone+prefs.lfm_importer_start_offset)+' of '+totaltracks+'. Elapsed : '+formatTimeString(elapsed/1000)+', Remaining : '+formatTimeString(remaining/1000));
         if (alloffset < alldata.length) {
             getNextRow();
         } else {
