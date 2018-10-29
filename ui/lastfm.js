@@ -644,7 +644,7 @@ function LastFM(user) {
             addGetOptions(options, "user.getRecentTracks");
             LastFMGetRequest(
                 options,
-                true,
+                false,
                 callback,
                 failcallback,
                 1

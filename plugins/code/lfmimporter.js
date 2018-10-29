@@ -98,7 +98,7 @@ var lfmImporter = function() {
 
     function doNext() {
 		tracksdone++;
-		$('#lfmiprogress').rangechooser("setRange", {min: 0, max: tracksdone});
+		$('#lfmiprogress').rangechooser("setRange", {min: 0, max: tracksdone+prefs.lfm_importer_start_offset});
 		var elapsed = Date.now() - starttime;
 		var remaining = (elapsed/tracksdone) * (totaltracks - tracksdone - prefs.lfm_importer_start_offset);
 		$('#lfmiinfo').html('Done '+(tracksdone+prefs.lfm_importer_start_offset)+' of '+totaltracks+'. Elapsed : '+formatTimeString(elapsed/1000)+', Remaining : '+formatTimeString(remaining/1000));

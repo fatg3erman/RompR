@@ -819,7 +819,7 @@ function ratingCalc(element, event) {
 
 var syncLastFMPlaycounts = function() {
 
-    var limit = 10;
+    var limit = 100;
     var page = 1;
     var totaltracks = 0;
     var totalpages = 0;
@@ -855,7 +855,11 @@ var syncLastFMPlaycounts = function() {
 
     function gotMetaData(data) {
         debug.log("LASTFMSYNC","Got Metadata",data);
-        currentplaycount = parseInt(data.Playcount);
+        if (data.Playcount) {
+            currentplaycount = parseInt(data.Playcount);
+        } else {
+            currentplaycount = 0;
+        }
         lastfm.track.getInfo({artist: currenttrack.artist.name, track: currenttrack.name},
             gotLFMData,
             failedMetaData
@@ -868,11 +872,12 @@ var syncLastFMPlaycounts = function() {
     }
 
     function gotLFMData(data) {
+        debug.trace("LASTFMSYNC","Got track data from LastFM",data);
         var de = new lfmDataExtractor(data.track);
         var trackdata = de.getCheckedData('track');
         de = new lfmDataExtractor(trackdata);
         debug.trace("LASTFMSYNC","Playcount for",currenttrack.name,"is", currentplaycount, de.userplaycount());
-        if (de.userplaycount() > currentplaycount) {
+        if (!currentplaycount || de.userplaycount() > currentplaycount) {
             metaHandlers.fromLastFMData.setMeta(currenttrack, 'inc', [{attribute: 'Playcount', value: de.userplaycount()}], doneItAll, failedMetaData);
         } else {
             doneItAll();
@@ -899,6 +904,7 @@ var syncLastFMPlaycounts = function() {
                 debug.log("LASTFMSYNC","Last.FM is not logged in");
                 return;
             }
+            debug.log("LASTFMSYNC","Getting recent tracks since ",prefs.last_lastfm_synctime);
             lastfm.user.getRecentTracks(
                 {
                     limit: limit,

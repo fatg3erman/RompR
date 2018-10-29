@@ -153,7 +153,7 @@ if (array_key_exists('theme', $_REQUEST) && file_exists('themes/'.$_REQUEST['the
 // Do some initialisation and cleanup of the Apache backend
 //
 include ("includes/firstrun.php");
-
+debuglog("Last Last.FM Sync Time is ".$prefs['last_lastfm_synctime'].", ".date('r', $prefs['last_lastfm_synctime']),"INIT", 6);
 debuglog("Initialisation done. Let's Boogie!", "INIT",9);
 debuglog("******++++++======------******------======++++++******","CREATING PAGE",3);
 
