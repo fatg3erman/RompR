@@ -4,7 +4,7 @@ define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
 define('ROMPR_IMAGE_VERSION', 4);
 define('ROMPR_SCHEMA_VERSION', 46);
-define('ROMPR_VERSION', '1.23');
+define('ROMPR_VERSION', '1.24');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_UNKNOWN_STREAM', "Unknown Internet Stream");
@@ -121,6 +121,7 @@ $prefs = array(
     "sync_lastfm_at_start" => false,
     "last_lastfm_synctime" => time(),
     "lfm_importer_start_offset" => 0,
+    "lfm_importer_last_import" => 0,
 
     // Things that are set as Cookies
     "sortbydate" => false,

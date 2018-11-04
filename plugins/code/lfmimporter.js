@@ -43,9 +43,6 @@ var lfmImporter = function() {
                 tr.append('<td class="underline" name="lastfmplaycount"></td>');
                 tr.append('<td class="underline" name="tick"></td>');
             }
-            if (!lfmi.is(':visible')) {
-                lfmi.slideToggle('fast');
-            }
             offset += limit;
             getNextRow();
         } else {
@@ -117,13 +114,21 @@ var lfmImporter = function() {
         	dataType: 'json',
         	success: function(data) {
 				totaltracks = data.total;
-				$("#lfmiprogress").rangechooser({
-					range: data.total,
-					interactive: false,
-	                startmax: 0,
-	            });
-				starttime = Date.now();
-				getNextChunk();
+				if (totaltracks > 0) {
+					$("#lfmiprogress").rangechooser({
+						range: data.total,
+						interactive: false,
+		                startmax: 0,
+		            });
+					starttime = Date.now();
+					getNextChunk();
+				} else {
+					$('#lfmitable').remove();
+					$('#lfmimunger').append('<div class="textcentre fullwidth"><h3>'+language.gettext('label_lfm_nonew', [new Date(prefs.lfm_importer_last_import * 1000).toLocaleString()])+'</h3></div>');
+				}
+				if (!lfmi.is(':visible')) {
+	                lfmi.slideToggle('fast');
+	            }
         	},
         	error: function() {
         		infobar.notify(infobar.ERROR, "Failed to fetch data!");

@@ -25,6 +25,8 @@ if (array_key_exists('populate', $_REQUEST)) {
         removePodcast($_REQUEST['remove']);
     } else if (array_key_exists('listened', $_REQUEST)) {
         $podid = array(markAsListened(rawurldecode($_REQUEST['listened'])));
+    } else if (array_key_exists('checklistened', $_REQUEST)) {
+        $podid = array(checkListened(rawurldecode($_REQUEST['title']), rawurldecode($_REQUEST['album']), rawurldecode($_REQUEST['artist'])));
     } else if (array_key_exists('removetrack', $_REQUEST)) {
         $podid = array(deleteTrack($_REQUEST['removetrack'], $_REQUEST['channel']));
     } else if (array_key_exists('downloadtrack', $_REQUEST)) {

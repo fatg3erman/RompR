@@ -304,6 +304,15 @@ var podcasts = function() {
 			podcastRequest({listened: encodeURIComponent(file), populate: 1}, null);
 		},
 
+		checkForEpisode: function(track) {
+			$.each(track, function(i, v) {
+				track[i] = encodeURIComponent(v);
+			});
+			track.checklistened = 1;
+			track.populate = 1;
+			podcastRequest(track, null);
+		},
+
 		doNewCount: function() {
 			$.getJSON("includes/podcasts.php?populate=1&getcounts=1", function(data) {
 				$.each(data, function(index, value) {

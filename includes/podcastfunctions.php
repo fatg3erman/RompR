@@ -1266,4 +1266,25 @@ function refresh_all_podcasts() {
     return false;
 }
 
+function checkListened($title, $album, $artist) {
+    debuglog("Checking for Podcast ".$album." ".$title,"PODCASTS", 7);
+    $podid = false;
+    $pods = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
+        "SELECT PODindex, PODTrackindex FROM Podcasttable JOIN PodcastTracktable USING (PODindex)
+        WHERE
+        -- Podcasttable.Artist = ? AND
+        Podcasttable.Title = ? AND
+        PodcastTracktable.Title = ?",
+        // $artist,
+        $album,
+        $title);
+    foreach ($pods as $pod) {
+        $podid = $pod->PODindex;
+        debuglog("Marking ".$pod->PODTrackindex." from ".$podid." as listened","PODCASTS");
+        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened = 1, New = 0, Progress = 0 WHERE PODTrackindex=?",$pod->PODTrackindex);
+    }
+    return $podid;
+
+}
+
 ?>

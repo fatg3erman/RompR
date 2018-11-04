@@ -20,6 +20,7 @@ switch ($_REQUEST['action']) {
 }
 
 function get_chunk_of_data($offset, $limit) {
+	global $prefs;
 
 	$arse = generic_sql_query("SELECT
 		TTindex,
@@ -35,10 +36,16 @@ function get_chunk_of_data($offset, $limit) {
 		JOIN Artisttable AS aa ON (Albumtable.AlbumArtistindex = aa.Artistindex)
 		JOIN Artisttable AS ta ON (Tracktable.Artistindex = ta.Artistindex)
 		LEFT JOIN Playcounttable USING (TTindex)
-		WHERE isSearchResult !=2
-		ORDER BY aa.Artistname, Albumname, Disc ASC, TrackNo ASC LIMIT ".$offset.", ".$limit);
+		WHERE isSearchResult != 2 AND ".
+		sql_to_unixtime('DateAdded')." > ".$prefs['lfm_importer_last_import'].
+		" ORDER BY aa.Artistname, Albumname, Disc ASC, TrackNo ASC LIMIT ".$offset.", ".$limit);
 
 	debuglog("Got ".count($arse)." rows", "LFMIMPORTER");
+	if (count($arse) == 0) {
+		debuglog("Updating LastFM Import time","LFMIMPORTER");
+		$prefs['lfm_importer_last_import'] = time();
+		savePrefs();
+	}
 
 	header('Content-Type: application/json; charset=utf-8');
 	print json_encode($arse);
@@ -47,6 +54,8 @@ function get_chunk_of_data($offset, $limit) {
 
 function get_total_tracks() {
 
+	global $prefs;
+
 	$arse = generic_sql_query("SELECT
 		COUNT(TTindex) AS total
 		FROM
@@ -54,7 +63,9 @@ function get_total_tracks() {
 		JOIN Artisttable AS aa ON (Albumtable.AlbumArtistindex = aa.Artistindex)
 		JOIN Artisttable AS ta ON (Tracktable.Artistindex = ta.Artistindex)
 		LEFT JOIN Playcounttable USING (TTindex)
-		WHERE isSearchResult !=2");
+		WHERE isSearchResult != 2 AND ".
+		sql_to_unixtime('DateAdded')." > ".$prefs['lfm_importer_last_import']
+	);
 
 	debuglog("Got ".count($arse)." rows", "LFMIMPORTER");
 	header('Content-Type: application/json; charset=utf-8');
