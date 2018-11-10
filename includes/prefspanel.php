@@ -269,7 +269,7 @@ print '<div class="pref styledinputs">
 <div class="tiny">'.get_int_text('config_musicfolders').'</div>
 <input class="saveotron prefinput" id="music_directory_albumart" type="text" size="40" />
 </div>';
-print '<div class="tiny">If you want to use Google Images to get Album Art you need to sign up for an API Key. <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></div>';
+print '<div class="pref"><div class="tiny">If you want to use Google Images to get Album Art you need to sign up for an API Key. <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></div></div>';
 
 print '<div class="textcentre configtitle">
 <i class="icon-podcast-circled medicon"></i><b>'.get_int_text('label_podcasts').'</b></div>';
@@ -322,26 +322,27 @@ print '<div class="textcentre configtitle">
 <i class="icon-lastfm-1 medicon"></i><b>'.get_int_text('label_lastfm').'</b>
 </div>';
 
-print '<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="lastfm_autocorrect" />
-<label for="lastfm_autocorrect">'.get_int_text('config_autocorrect').'</label>
-</div>';
-
-print '<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="sync_lastfm_playcounts" />
-<label for="sync_lastfm_playcounts">'.get_int_text('config_lastfm_playcounts').'</label>
-</div>';
-
-print '<div class="pref styledinputs">
-<input class="autoset toggle" type="checkbox" id="sync_lastfm_at_start" />
-<label for="sync_lastfm_at_start">'.get_int_text('config_sync_lastfm_playcounts').'</label>
-</div>';
-
 print '<div class="pref">'.get_int_text('config_lastfmusername').'<br/><div class="containerbox"><div class="expand">'.
     '<input class="enter" name="lfmuser" type="text" size="30" value="'.$prefs['lastfm_user'].'"/>'.
     '</div><button id="lastfmloginbutton" class="fixed">'.get_int_text('config_loginbutton').
     '</button></div>';
 print '</div>';
+
+print '<div class="pref styledinputs">
+<input class="autoset toggle" type="checkbox" id="lastfm_autocorrect" />
+<label for="lastfm_autocorrect">'.get_int_text('config_autocorrect').'</label>
+</div>';
+
+print '<div class="pref styledinputs lastfmlogin-required">
+<input class="autoset toggle" type="checkbox" id="sync_lastfm_playcounts" />
+<label for="sync_lastfm_playcounts">'.get_int_text('config_lastfm_playcounts').'</label>
+</div>';
+
+print '<div class="pref styledinputs lastfmlogin-required">
+<input class="autoset toggle" type="checkbox" id="sync_lastfm_at_start" />
+<label for="sync_lastfm_at_start">'.get_int_text('config_sync_lastfm_playcounts').'</label>
+</div>';
+
 print '<div class="pref styledinputs lastfmlogin-required">
 <input class="autoset toggle" type="checkbox" id="lastfm_scrobbling" />
 <label for="lastfm_scrobbling">'.get_int_text('config_scrobbling').'</label>

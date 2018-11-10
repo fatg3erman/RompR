@@ -28,7 +28,7 @@ var infobar = function() {
                                     album: (lfminfo.album === undefined) ? trackinfo.album : lfminfo.album
                     };
                     options.chosenByUser = (trackinfo.type == 'local' && !playlist.radioManager.isRunning()) ? 1 : 0;
-                     if (trackinfo.albumartist && trackinfo.albumartist != "" && trackinfo.albumartist.toLowerCase() != trackinfo.trackartist.toLowerCase()) {
+                    if (trackinfo.albumartist && trackinfo.albumartist != "" && trackinfo.albumartist.toLowerCase() != trackinfo.trackartist.toLowerCase()) {
                          options.albumArtist = trackinfo.albumartist;
                      }
                     debug.log("INFOBAR","Scrobbling", options);

@@ -233,7 +233,8 @@ var metaHandlers = function() {
 					// Hackety hack
 					// As this is currently only for incrementing playcounts from Last.FM
 					// We use the data to also check if it's a podcast episode we need to mark as listened
-					podcasts.checkForEpisode(track);
+					// Note use of CloneObject, because podcasts urlencodes the content
+					podcasts.checkForEpisode(cloneObject(track));
 				},
 
 				mapData: function(data, action, attributes) {
@@ -246,9 +247,13 @@ var metaHandlers = function() {
 						track.artist = data.artist.name;
 						track.albumartist = data.artist.name;
 					}
+					if (data.date) {
+						track.lastplayed = data.date.uts;
+					}
 					if (attributes) {
 						track.attributes = attributes;
 					}
+					debug.log("DBQUEUE", "LFM Mapped Data is",track);
 					return track;
 				}
 		},
@@ -279,6 +284,18 @@ var metaHandlers = function() {
 					debug.error("METAHANDLERS","Tailed To Add Album To Listen Later");
 				}
 			)
+		},
+
+		resetSyncCounts: function() {
+			metaHandlers.genericAction('resetallsyncdata', metaHandlers.genericSuccess, metaHandlers.genericFail);
+		},
+
+		genericSuccess: function() {
+
+		},
+
+		genericFail: function() {
+
 		}
 
 	}

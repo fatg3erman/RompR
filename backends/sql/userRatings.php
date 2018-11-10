@@ -129,6 +129,8 @@ foreach($params as $p) {
 		case 'getcharts':
 		case 'clearwishlist':
 		case 'setalbummbid':
+		case 'syncinc':
+		case 'resetallsyncdata':
 			romprmetadata::{$p['action']}($p);
 			break;
 
@@ -464,6 +466,7 @@ function restoreBackup($backup) {
 	} else {
 		generic_sql_query("DELETE FROM Tracktable WHERE Uri LIKE 'local:%' AND LastModified IS NULL AND Hidden = 0", true);
 	}
+	romprmetadata::resetallsyncdata();
 	remove_cruft();
 	update_track_stats();
 	fclose($monitor);

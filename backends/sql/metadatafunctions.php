@@ -166,22 +166,84 @@ class romprmetadata {
 			$ttids[0] = create_new_track($data);
 		}
 
-		$lp = -1;
-		if (array_key_exists('lastplayed', $data)) {
-			debuglog("Setting LastPlayed from supplied data","USERRATING");
-			$lp = $data['lastplayed'];
-		}
+		romprmetadata::checkLastPlayed($data);
 
 		if (count($ttids) > 0) {
 			foreach ($ttids as $ttid) {
 				debuglog("Doing an INCREMENT action - Found TTID ".$ttid,"USERRATING",9);
 				foreach ($data['attributes'] as $pair) {
 					debuglog("(Increment) Setting ".$pair["attribute"]." to ".$pair["value"]." on ".$ttid,"USERRATING",6);
-					romprmetadata::increment_value($ttid, $pair["attribute"], $pair["value"], $lp);
+					romprmetadata::increment_value($ttid, $pair["attribute"], $pair["value"], $data['lastplayed']);
 				}
 				$returninfo['metadata'] = get_all_data($ttid);
 			}
 		}
+		return $ttids;
+	}
+
+	private static function checkLastPlayed(&$data) {
+		if (array_key_exists('lastplayed', $data)) {
+			if (is_numeric($data['lastplayed'])) {
+				// Convert timestamp from LastFM into MySQL TIMESTAMP format
+				$data['lastplayed'] = date('Y-m-d H:i:s', $data['lastplayed']);
+			}
+		} else {
+			$data['lastplayed'] = date('Y-m-d H:i:s');
+		}
+	}
+
+	public static function syncinc($data) {
+		global $returninfo;
+		if ($data['artist'] === null ||
+			$data['title'] === null ||
+			$data['attributes'] == null) {
+			debuglog("Something is not set","USERRATING",2);
+			header('HTTP/1.1 400 Bad Request');
+			print json_encode(array('error' => 'Artist or Title or Attributes not set'));
+			exit(0);
+		}
+
+		$ttids = romprmetadata::find_item($data, forcedUriOnly(false,getDomain($data['uri'])));
+		if (count($ttids) == 0) {
+			$ttids = romprmetadata::inc($data);
+			romprmetadata::resetSyncCounts($ttids);
+			return true;
+		}
+
+		romprmetadata::checkLastPlayed($data);
+		foreach ($ttids as $ttid) {
+			debuglog("Doing a SYNC action on TTID ".$ttid,"USERRATING", 7);
+			$rowcount = generic_sql_query("UPDATE Playcounttable SET SyncCount = SyncCount - 1, LastPlayed = '".$data['lastplayed']."' WHERE TTindex = ".$ttid." AND SyncCount > 0",
+				false, null, null, null, true);
+			if ($rowcount > 0) {
+				debuglog("  Decremented sync counter for this track", "USERRATING", 7);
+			} else {
+				$rowcount = generic_sql_query("UPDATE Playcounttable SET Playcount = Playcount + 1, LastPlayed = '".$data['lastplayed']."' WHERE TTindex = ".$ttid,
+					false, null, null, null, true);
+				if ($rowcount > 0) {
+					debuglog("  Incremented Playcount for this track", "USERRATING", 7);
+					// At this point, SyncCount must have been zero but the update will have incremented it again,
+					// because of the trigger. resetSyncCounts takes care of this;
+				} else {
+					debuglog("  Track not found in Playcounttable", "USERRATING", 7);
+					$metadata = get_all_data($ttid);
+					romprmetadata::increment_value($ttid, 'Playcount', $metadata['Playcount'] + 1, $data['lastplayed']);
+					// At this point, SyncCount must have been zero but the update will have incremented it again,
+					// because of the trigger. resetSyncCounts takes care of this;
+				}
+				romprmetadata::resetSyncCounts(array($ttid));
+			}
+		}
+	}
+
+	public static function resetSyncCounts($ttids) {
+		foreach ($ttids as $ttid) {
+			generic_sql_query("UPDATE Playcounttable SET SyncCount = 0 WHERE TTindex = ".$ttid);
+		}
+	}
+
+	public static function resetallsyncdata() {
+		generic_sql_query('UPDATE Playcounttable SET SyncCount = 0 WHERE TTindex > 0', true);
 	}
 
 	public static function remove($data) {
@@ -486,20 +548,11 @@ class romprmetadata {
 		// that changed because multiple rompr instances cause multiple increments
 
 		debuglog("(Increment) Setting ".$attribute." to ".$value." for TTID ".$ttid, "MYSQL",9);
-		if ($lp === -1) {
-			if (sql_prepare_query(true, null, null, null, "REPLACE INTO ".$attribute."table (TTindex, ".$attribute.", LastPlayed) VALUES (?, ?, CURRENT_TIMESTAMP)", $ttid, $value)) {
-				debuglog(" .. success","MYSQL",8);
-			} else {
-				debuglog("FAILED (Increment) Setting ".$attribute." to ".$value." for TTID ".$ttid, "MYSQL",2);
-				return false;
-			}
+		if (sql_prepare_query(true, null, null, null, "REPLACE INTO ".$attribute."table (TTindex, ".$attribute.", LastPlayed) VALUES (?, ?, ?)", $ttid, $value, $lp)) {
+			debuglog(" .. success","MYSQL",8);
 		} else {
-			if (sql_prepare_query(true, null, null, null, "REPLACE INTO ".$attribute."table (TTindex, ".$attribute.", LastPlayed) VALUES (?, ?, ?)", $ttid, $value, $lp)) {
-				debuglog(" .. success","MYSQL",8);
-			} else {
-				debuglog("FAILED (Increment) Setting ".$attribute." to ".$value." for TTID ".$ttid, "MYSQL",2);
-				return false;
-			}
+			debuglog("FAILED (Increment) Setting ".$attribute." to ".$value." for TTID ".$ttid, "MYSQL",2);
+			return false;
 		}
 		return true;
 

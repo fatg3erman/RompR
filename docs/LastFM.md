@@ -14,7 +14,7 @@ Note that if you run RompЯ on a device such as a phone, you should read [this](
 
 You can use Last.FM to auto-correct artist names on tracks that are playing if you like. This helps ensure more consistent scrobbles.
 
-Enabling 'Use LastFM Playcounts' will mean that, as you play tracks, Rompr will get your playcounts from Last.FM and update the playcounts in your Music Collection. So you can keep different devices in sync that way. It will only use the Last.FM playcounts if they are bigger than the ones stored in your collection.
+There are a few options that allow you to use Scrobbles to synchronise your Playcounts when you play music on various devices. These are described under [Keeping Playcounts In Sync](/RompR/Keeping-Playcounts-In-Sync)
 
 If you enter some text into 'Tag Loved Tracks With', then when you click the 'Love' button for a track that tag will automatically be added to it.
 

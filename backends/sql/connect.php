@@ -57,7 +57,7 @@ function show_sql_error($text = "    MYSQL Error: ", $stmt = null) {
 // Queries
 //
 
-function generic_sql_query($qstring, $return_boolean = false, $return_type = PDO::FETCH_ASSOC, $return_value = null, $value_default = null ) {
+function generic_sql_query($qstring, $return_boolean = false, $return_type = PDO::FETCH_ASSOC, $return_value = null, $value_default = null, $return_rowcount = false ) {
 	global $mysqlc;
 	debuglog($qstring,"SQL_QUERY",9);
 	$retval = true;
@@ -68,6 +68,8 @@ function generic_sql_query($qstring, $return_boolean = false, $return_type = PDO
 			$retval = ($arr) ? $arr[$return_value] : $value_default;
 		} else if ($return_boolean) {
 			$retval = true;
+		} else if ($return_rowcount) {
+			return $result->rowCount();
 		} else {
 			$retval = $result->fetchAll($return_type);
 		}

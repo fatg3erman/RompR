@@ -47,6 +47,7 @@ var lfmImporter = function() {
             getNextRow();
         } else {
             debug.log("LFMIMPORTER","Got all data");
+			metaHandlers.resetSyncCounts();
         }
     }
 
@@ -126,9 +127,6 @@ var lfmImporter = function() {
 					$('#lfmitable').remove();
 					$('#lfmimunger').append('<div class="textcentre fullwidth"><h3>'+language.gettext('label_lfm_nonew', [new Date(prefs.lfm_importer_last_import * 1000).toLocaleString()])+'</h3></div>');
 				}
-				if (!lfmi.is(':visible')) {
-	                lfmi.slideToggle('fast');
-	            }
         	},
         	error: function() {
         		infobar.notify(infobar.ERROR, "Failed to fetch data!");
@@ -150,8 +148,9 @@ var lfmImporter = function() {
                 	$('#lfmitable').append('<tr><th>Artist</th><th>Album</th><th>Title</th>th class="invisible"></th><th class="invisible"></th><th class="invisible"></th><th>Playcount</th><th>Last.FM Playcount</th><th></th></tr>');
 					getTotalTracks();
 				} else {
-					$('#lfmmunger').append('<h3>'+language.gettext('label_mustlogintolfm')+'</h3>');
+					$('#lfmimunger').append('<div  class="textcentre"><h3>'+language.gettext('label_mustlogintolfm')+'</h3></div>');
 				}
+				lfmi.slideToggle('fast');
 	        } else {
 	        	browser.goToPlugin("lfmi");
 	        }

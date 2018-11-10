@@ -133,6 +133,7 @@ function check_sql_tables() {
 	if (generic_sql_query("CREATE TABLE IF NOT EXISTS Playcounttable(".
 		"TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex), ".
 		"Playcount INT UNSIGNED NOT NULL, ".
+		"SyncCount INT UNSIGNED DEFAULT 0, ".
 		"LastPlayed TIMESTAMP, ".
 		"PRIMARY KEY (TTindex)) ENGINE=InnoDB", true))
 	{
@@ -274,6 +275,7 @@ function check_sql_tables() {
 		debuglog("Statstable populated", "MYSQL_CONNECT");
 		create_update_triggers();
 		create_conditional_triggers();
+		create_playcount_triggers();
 	}
 
 	if ($sv > ROMPR_SCHEMA_VERSION) {
@@ -663,6 +665,13 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 46 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 46:
+				debuglog("Updating FROM Schema version 46 TO Schema version 47","SQL");
+				generic_sql_query("ALTER TABLE Playcounttable ADD SyncCount INT UNSIGNED DEFAULT 0", true);
+				generic_sql_query("UPDATE Statstable SET Value = 47 WHERE Item = 'SchemaVer'", true);
+				create_playcount_triggers();
+				break;
+
 		}
 		$sv++;
 	}
@@ -777,6 +786,24 @@ function create_conditional_triggers() {
 							UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = NEW.Albumindex;
 							UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = OLD.Albumindex;
 						END IF;
+						END;", true);
+
+}
+
+function create_playcount_triggers() {
+	generic_sql_query("CREATE TRIGGER syncupdatetrigger BEFORE UPDATE ON Playcounttable
+						FOR EACH ROW
+						BEGIN
+							IF (NEW.Playcount > OLD.Playcount)
+							THEN
+								SET NEW.SyncCount = OLD.SyncCount + 1;
+							END IF;
+						END;", true);
+
+	generic_sql_query("CREATE TRIGGER syncinserttrigger BEFORE INSERT ON Playcounttable
+						FOR EACH ROW
+						BEGIN
+							SET NEW.SyncCount = 1;
 						END;", true);
 
 }

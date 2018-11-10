@@ -64,6 +64,7 @@ We also want to set some configuration values for mysql to increase performance.
     default_authentication_plugin = mysql_native_password
     innodb_buffer_pool_size = 256M
     innodb_flush_log_at_trx_commit = 0
+    skip-log-bin
 
 And now link this file so mysql can find it
 
@@ -71,6 +72,8 @@ And now link this file so mysql can find it
     sudo ln -s /PATH/TO/ROMPR-TWEAKS /etc/mysql/mysql.conf.d/rompr-tweaks.cnf
 
 Note that the default MySQL settings I've encountered on several distributions make MySQL significantly slower than SQLite for RompЯ, unless you have an extremely large music collection (hundreds of thousands of tracks). Setting these parameters restores the balance. Somewhat.
+
+*NOTE* skip-log-bin is ESSENTIAL on mysql 8 or later.
 
 ## Install PHP MySQL Library
 
