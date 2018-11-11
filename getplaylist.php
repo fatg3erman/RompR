@@ -63,14 +63,17 @@ function doNewPlaylistFile(&$filedata) {
     // We can't return NULL in the JSON data for some reason that escapes me
     if ($t === null) $t = "";
     $albumartist = format_sortartist($filedata);
+
     // Bloody spotify often returns album artist = A & B but track artists 'B' and 'A'.
     // This screws up the playcount stats. They're also not consistent with
     // capitalisation of articles in Album Artists
     $tartist = format_artist($filedata['Artist'],'');
+
     $tartistr = '';
     if (is_array($filedata['Artist'])) {
         $tartistr = format_artist(array_reverse($filedata['Artist']),'');
     }
+
     if (strtolower($tartistr) == strtolower($albumartist)) {
         $filedata['Artist'] = array_reverse($filedata['Artist']);
         $tartist = $tartistr;

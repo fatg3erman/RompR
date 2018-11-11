@@ -244,8 +244,18 @@ var metaHandlers = function() {
 						track.album = data.album['#text'];
 					}
 					if (data.artist) {
-						track.artist = data.artist.name;
-						track.albumartist = data.artist.name;
+						var a = data.artist.name;
+						// Join multiple names together so they match what our backend does
+						// Mopidy-Scrobbler has a habit of using commas to separate multiple artists
+						if (!a.match(/ & /)) {
+							// Don't do this if it's already got an '&' in it, as this could be one
+							// of our Scrobbles, or just something else
+							track.artist = concatenate_artist_names(a.split(', '));
+							debug.log("DBQUEUE","Concatenated artist names to",track.artist);
+						} else {
+							track.artist = a;
+						}
+						track.albumartist = track.artist;
 					}
 					if (data.date) {
 						track.lastplayed = data.date.uts;
