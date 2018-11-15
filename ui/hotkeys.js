@@ -118,7 +118,11 @@ var shortcuts = function() {
                     button_togglesources: function() { layoutProcessor.expandInfo('left') },
                     button_toggleplaylist: function() { layoutProcessor.expandInfo('right') },
                     config_hidebrowser: function() { $("#hidebrowser").prop("checked", !$("#hidebrowser").is(':checked')); prefs.save({hidebrowser: $("#hidebrowser").is(':checked')}, hideBrowser) },
-                    button_updatecollection: function(){ collectionHelper.checkCollection(true, false) },
+                    button_updatecollection: function() {
+                        if (!prefs.mopidy_slave) {
+                            collectionHelper.checkCollection(true, false);
+                        }
+                    },
                     button_nextsource: function() { browser.nextSource(1) }
     };
 

@@ -57,18 +57,18 @@ if (array_key_exists('mpd_host', $_POST)) {
         $prefs[$i] = $value;
     }
     setcookie('currenthost',$prefs['currenthost'],time()+365*24*60*60*10,'/');
+
+    $mopidy_slave = false;
+    if (property_exists($prefs['multihosts']->{$prefs['currenthost']}, 'mopidy_slave')) {
+        $mopidy_slave = $prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave;
+    }
     $prefs['multihosts']->{$prefs['currenthost']} = (object) array(
             'host' => $prefs['mpd_host'],
             'port' => $prefs['mpd_port'],
             'password' => $prefs['mpd_password'],
-            'socket' => $prefs['unix_socket']
+            'socket' => $prefs['unix_socket'],
+            'mopidy_slave' => $mopidy_slave
     );
-    if (property_exists($prefs['multihosts']->{$prefs['currenthost']}, 'mopidy_slave')) {
-        $prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave = $prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave;
-    } else {
-        // Catch the case where we haven't yet upgraded the player defs
-        $prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave = false;
-    }
 
     $logger->setLevel($prefs['debug_enabled']);
     savePrefs();
