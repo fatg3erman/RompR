@@ -4,7 +4,7 @@ RompR keeps Playcounts for everything you play through it. But most people don't
 
 You can use [Last.FM](/RompR/LastFM).
 
-The first thing you need is a Last.FM account. Then you need to make sure you are Scrobbling from every device you use to listen to music. You can get Last.FM Scrobblers for most devices. For Spotify you don't eeven need an app, you just enable Spotify Scrobbling in your LastFM Account.
+The first thing you need is a Last.FM account. Then you need to make sure you are Scrobbling from every device you use to listen to music. You can get Last.FM Scrobblers for most devices. For Spotify you don't even need an app, you just enable Spotify Scrobbling in your LastFM Account.
 
 In your RompR setup you need to Log In to Last.FM and make sure you're scrobbling tracks from there too, or if you access RompR from a phone or tablet I reccomend you read [RompR and Mobiles](/RompR/Rompr-And-Mobiles)
 

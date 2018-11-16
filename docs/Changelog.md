@@ -3,6 +3,11 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.24
+* Fix bug where 'Slave' status of a player was lost if bthat player was selected on the setup screen
+* Fix bug where Collection could be updated by a hotkey press even when the current player was a Slave
+* Add Last.FM Playcount Importer and Scrobble Sync options so you can use Last.FM to sync your playcounts across devices. Read [this](/RompR/Keeping-Playcounts-In-Sync)
+
 ## Version 1.23
 * Fix bug where 'Use LastFM Playcounts' would reset Playcounts to zero if the response from Last.FM arrived before the response from the database, as seems to happen a lot on Windows.
 * Fix 3 security vulnerabilties as found my kmille.
