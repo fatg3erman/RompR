@@ -4,7 +4,7 @@ This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
 ## Version 1.24
-* Fix bug where 'Slave' status of a player was lost if bthat player was selected on the setup screen
+* Fix bug where 'Slave' status of a player was lost if that player was selected on the setup screen
 * Fix bug where Collection could be updated by a hotkey press even when the current player was a Slave
 * Add Last.FM Playcount Importer and Scrobble Sync options so you can use Last.FM to sync your playcounts across devices. Read [this](/RompR/Keeping-Playcounts-In-Sync)
 
@@ -16,7 +16,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 
 * Fix bug where podcast download wasn't working if you had PHP older than 7.1
 * A few minor UI tweaks
-* Romonitor now uses a different and more reliable mthod of detecting track changes. You will need to restart romonitor after you install this version.
+* Romonitor now uses a different and more reliable method of detecting track changes. You will need to restart romonitor after you install this version.
 * Fix bug where on phones you needed to tap some of the icons twice
 * Add option to use Last.FM Playcounts to keep devices in sync
 

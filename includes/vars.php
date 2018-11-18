@@ -215,7 +215,8 @@ $prefs = array(
     "podcast_sort_1" => 'Artist',
     "podcast_sort_2" => 'Category',
     "podcast_sort_3" => 'new',
-    "bgimgparms" => (object) array('dummy' => 'baby')
+    "bgimgparms" => (object) array('dummy' => 'baby'),
+    "smartradio_chunksize" => 5
 );
 
 // Prefs that should not be exposed to the browser for security reasons

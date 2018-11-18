@@ -54,7 +54,6 @@ var playlist = function() {
         var mode = null;
         var radios = new Object();
         var oldconsume = null;
-        var chunksize = 5;
         var rptimer = null;
         var startplaybackfrom = null;
         var populating = false;
@@ -65,10 +64,10 @@ var playlist = function() {
                 // Don't do anything if we're waiting on playlist updates
                 var fromend = playlist.getfinaltrack()+1 - currentTrack.playlistpos;
                 populating = false;
-                debug.log("RADIO MANAGER","Repopulate Check : Final Track :",playlist.getfinaltrack()+1,"Fromend :",fromend,"Chunksize :",chunksize,"Mode :",mode);
-                if (fromend < chunksize && mode) {
+                debug.log("RADIO MANAGER","Repopulate Check : Final Track :",playlist.getfinaltrack()+1,"Fromend :",fromend,"Chunksize :",prefs.smartradio_chunksize,"Mode :",mode);
+                if (fromend < prefs.smartradio_chunksize && mode) {
                     playlist.waiting();
-                    radios[mode].func.populate(prefs.radioparam, chunksize - fromend);
+                    radios[mode].func.populate(prefs.radioparam, prefs.smartradio_chunksize - fromend);
                 }
             }
         }
@@ -119,7 +118,7 @@ var playlist = function() {
             },
 
             load: function(which, param) {
-                if (prefs.debug_enabled) {
+                if (prefs.debug_enabled > 0) {
                     infobar.notify(infobar.LONGNOTIFY, 'WARNING! Running Personal Radio with debugging enabled may crash your browser!');
                 }
                 debug.mark("RADIO MANAGER","Loading Smart",which,param);

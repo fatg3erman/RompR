@@ -218,6 +218,12 @@ print '<div class="pref containerbox dropdown-container">
     </div>';
 }
 
+// Smart Radio
+print '<div class="textcentre configtitle"><b>'.get_int_text('label_pluginplaylists').'</b></div>';
+print '<div class="pref styledinputs">'.get_int_text('config_smart_chunksize').
+    '<input class="saveotron" id="smartradio_chunksize" style="width:4em;margin-left:1em" type="text" size="4" />
+    </div>';
+
 // Biography and Language
 print '<div class="textcentre ucfirst configtitle"><b>'.get_int_text('settings_language').'</b></div>';
 

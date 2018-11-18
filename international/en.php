@@ -676,7 +676,8 @@ $languages['en'] = array (
 	"label_lfm_playcountimporter" => "Last.FM Playcount Importer",
 	"label_mustlogintolfm" => "You must be logged in to Last.FM to use this feature",
 	"label_lfm_syncing" => "Syncing Last.FM Playcounts",
-	"label_lfm_nonew" => "No new tracks have been added to the Music Collection since the last import on %s"
+	"label_lfm_nonew" => "No new tracks have been added to the Music Collection since the last import on %s",
+	"config_smart_chunksize" => "Number of upcoming tracks to display"
 );
 
 ?>
