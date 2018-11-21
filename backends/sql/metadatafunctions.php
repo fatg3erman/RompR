@@ -211,6 +211,7 @@ class romprmetadata {
 		}
 
 		romprmetadata::checkLastPlayed($data);
+		debuglog("LastPlayed is ".$data['lastplayed'],"METADATA");
 		foreach ($ttids as $ttid) {
 			debuglog("Doing a SYNC action on TTID ".$ttid,"USERRATING", 7);
 			$rowcount = generic_sql_query("UPDATE Playcounttable SET SyncCount = SyncCount - 1, LastPlayed = '".$data['lastplayed']."' WHERE TTindex = ".$ttid." AND SyncCount > 0",
