@@ -239,7 +239,7 @@ class romprmetadata {
 
 	public static function resetSyncCounts($ttids) {
 		foreach ($ttids as $ttid) {
-			generic_sql_query("UPDATE Playcounttable SET SyncCount = 0 WHERE TTindex = ".$ttid);
+			generic_sql_query("UPDATE Playcounttable SET SyncCount = 0 WHERE TTindex = ".$ttid, true);
 		}
 	}
 

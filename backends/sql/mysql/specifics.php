@@ -672,6 +672,14 @@ function check_sql_tables() {
 				create_playcount_triggers();
 				break;
 
+			case 47:
+				debuglog("Updating FROM Schema version 47 TO Schema version 48","SQL");
+				// Some versions had a default value and an on update for LastPlayed, which is WRONG and fucks things up
+				generic_sql_query("ALTER TABLE Playcounttable ALTER LastPlayed DROP DEFAULT", true);
+				generic_sql_query("ALTER TABLE Playcounttable CHANGE LastPlayed LastPlayed TIMESTAMP", true);
+				generic_sql_query("UPDATE Statstable SET Value = 48 WHERE Item = 'SchemaVer'", true);
+				break;
+
 		}
 		$sv++;
 	}

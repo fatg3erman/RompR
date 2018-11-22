@@ -717,6 +717,11 @@ function check_sql_tables() {
 				create_playcount_triggers();
 				break;
 
+			case 47:
+				debuglog("Updating FROM Schema version 47 TO Schema version 48","SQL");
+				generic_sql_query("UPDATE Statstable SET Value = 48 WHERE Item = 'SchemaVer'", true);
+				break;
+
 		}
 		$sv++;
 	}

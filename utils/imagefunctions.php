@@ -33,9 +33,11 @@ class baseAlbumImage {
         if (array_key_exists("ufile", $_FILES)) {
             $this->file = $_FILES['ufile']['name'];
         }
-        if (preg_match('/\d+/', $this->mbid) && !preg_match('/-/', $this->mbid)) {
-            debuglog(" Supplied MBID of ".$mbid." looks more like a Discogs ID", "ALBUMIMAGE");
-            $this->mbid = null;
+        if ($this->mbid !== null) {
+            if (preg_match('/\d+/', $this->mbid) && !preg_match('/-/', $this->mbid)) {
+                debuglog(" Supplied MBID of ".$mbid." looks more like a Discogs ID", "ALBUMIMAGE");
+                $this->mbid = null;
+            }
         }
         if ($prefs['player_backend'] == 'mopidy') {
             $this->albumpath = urldecode($this->albumpath);
