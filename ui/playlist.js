@@ -53,35 +53,21 @@ var playlist = function() {
         var self = this;
         var mode = null;
         var radios = new Object();
-        var oldconsume = null;
+        var oldconsume = 0;
         var rptimer = null;
         var startplaybackfrom = null;
-        var populating = false;
 
         function actuallyRepopulate() {
             debug.log("RADIO MANAGER","Repopulate Timer Has Fired");
-            if (reqid == last_reqid) {
+            if (reqid == last_reqid && mode) {
                 // Don't do anything if we're waiting on playlist updates
                 var fromend = playlist.getfinaltrack()+1 - currentTrack.playlistpos;
-                populating = false;
                 debug.log("RADIO MANAGER","Repopulate Check : Final Track :",playlist.getfinaltrack()+1,"Fromend :",fromend,"Chunksize :",prefs.smartradio_chunksize,"Mode :",mode);
-                if (fromend < prefs.smartradio_chunksize && mode) {
+                if (fromend < prefs.smartradio_chunksize) {
                     playlist.waiting();
                     radios[mode].func.populate(prefs.radioparam, prefs.smartradio_chunksize - fromend);
                 }
             }
-        }
-
-        function befuddle(originalstate) {
-            debug.log("RADIO MANAGER","Beffuddling",originalstate);
-            oldconsume = originalstate;
-            playlist.preventControlClicks(false);
-        }
-
-        function unbefuddle() {
-            debug.log("RADIO MANAGER","Un-Beffuddling");
-            playlist.preventControlClicks(true);
-            oldconsume = null;
         }
 
         return {
@@ -119,13 +105,16 @@ var playlist = function() {
 
             load: function(which, param) {
                 if (prefs.debug_enabled > 0) {
-                    infobar.notify(infobar.LONGNOTIFY, 'WARNING! Running Personal Radio with debugging enabled may crash your browser!');
+                    infobar.notify(infobar.LONGNOTIFY, language.gettext('warning_smart_debug'));
                 }
                 debug.mark("RADIO MANAGER","Loading Smart",which,param);
                 if (mode == which && (!param || param == prefs.radioparam)) {
                     debug.log("RADIO MANAGER", " .. that radio is already playing");
                     infobar.notify(infobar.NOTIFY,"That is already playing. Stop it first if you want to change it");
                     return false;
+                }
+                if (!mode) {
+                    oldconsume = player.status.consume;
                 }
                 if ((mode && mode != which) || (mode && param && param != prefs.radioparam)) {
                     debug.log("RADIO MANAGER","Monkey Wigglers");
@@ -134,10 +123,9 @@ var playlist = function() {
                 mode = which;
                 prefs.save({radiomode: mode, radioparam: param});
                 layoutProcessor.playlistLoading();
+                playlist.preventControlClicks(false);
                 player.controller.takeBackControl();
-                player.controller.checkConsume(1, befuddle);
-                populating = true;
-                startplaybackfrom = (player.status.state == 'play') ? null : 0;
+                startplaybackfrom = 0;
                 if (radios[mode].script) {
                     debug.shout("RADIO MANAGER","Loading Script",radios[mode].script,"for",mode);
                     $.getScript(radios[mode].script+'?version='+rompr_version)
@@ -145,8 +133,7 @@ var playlist = function() {
                         .fail(function(data,thing,wotsit) {
                             debug.error("RADIO MANAGER","Failed to Load Script",wotsit);
                             mode = null;
-                            populating = false;
-                            player.controller.checkConsume(oldconsume, unbefuddle);
+                            player.controller.checkConsume(oldconsume);
                             playlist.repopulate();
                             infobar.notify(infobar.ERROR,"Something Went Badly Wrong");
                         });
@@ -156,6 +143,9 @@ var playlist = function() {
             },
 
             playbackStartPos: function() {
+                // startplaybackfrom is set to 0 when we first start a new radio. This makes the radio populate
+                // functions start playback when the first populate. After that it's set to null, because otherwise
+                // the user can stop playback, we repopulate, and playback starts again.
                 var a = startplaybackfrom;
                 startplaybackfrom = null;
                 return a;
@@ -176,11 +166,9 @@ var playlist = function() {
                     radios[mode].func.stop();
                 }
                 mode = null;
-                populating = false;
                 playlist.repopulate();
-                if (oldconsume !== null) {
-                    player.controller.checkConsume(oldconsume, unbefuddle);
-                }
+                player.controller.checkConsume(oldconsume);
+                playlist.preventControlClicks(true);
             },
 
             setHeader: function() {
@@ -192,10 +180,6 @@ var playlist = function() {
                     }
                 }
                 layoutProcessor.setRadioModeHeader(html);
-            },
-
-            isPopulating: function() {
-                return populating;
             },
 
             isRunning: function() {
@@ -387,9 +371,6 @@ var playlist = function() {
                 playlist.doUpcomingCrap();
             }
             playlist.radioManager.setHeader();
-            if (playlist.radioManager.isPopulating()) {
-                playlist.waiting();
-            }
             player.controller.postLoadActions();
             playlist.radioManager.repopulate();
             uiHelper.postPlaylistLoad();

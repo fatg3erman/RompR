@@ -428,15 +428,13 @@ function playerController() {
 	    self.do_command_list([["consume",new_value]]);
 	}
 
-    this.checkConsume = function(state, callback) {
-        debug.log("PLAYER","Checking Consume",state,callback);
-        var c = player.status.consume;
+    this.checkConsume = function(state) {
+        debug.log("PLAYER","Checking Consume",state);
         self.do_command_list([["consume",state]]);
-        if (callback) callback(c);
     }
 
     this.takeBackControl = function(v) {
-        self.do_command_list([["repeat",0],["random", 0]]);
+        self.do_command_list([["repeat",0],["random", 0],["consume", 1]]);
     }
 
 	this.addTracks = function(tracks, playpos, at_pos) {

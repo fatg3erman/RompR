@@ -677,7 +677,8 @@ $languages['en'] = array (
 	"label_mustlogintolfm" => "You must be logged in to Last.FM to use this feature",
 	"label_lfm_syncing" => "Syncing Last.FM Playcounts",
 	"label_lfm_nonew" => "No new tracks have been added to the Music Collection since the last import on %s",
-	"config_smart_chunksize" => "Number of upcoming tracks to display"
+	"config_smart_chunksize" => "Number of upcoming tracks to display",
+	"warning_smart_debug" => "WARNING! Running Personal Radio with debugging enabled may crash your browser!"
 );
 
 ?>
