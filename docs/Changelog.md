@@ -8,6 +8,11 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Fix bug where Collection could be updated by a hotkey press even when the current player was a Slave
 * Add Last.FM Playcount Importer and Scrobble Sync options so you can use Last.FM to sync your playcounts across devices. Read [this](/RompR/Keeping-Playcounts-In-Sync)
 * There is now a setting for the number of tracks to pre-load when playing Personalised Radio
+* Personalised Radio settings are remembered when you refresh the browser, so you can switch away from RompR and come back to it without losing that setting.
+* Current Personalised Radio settings are now visible to all browsers connected to the player, not just the one you started it from, so it can be stopped or changed from any browser.
+* If the browser that started a Personalised Radio station is closed, any other browser can take over populating it
+* romonitor can now populate [certain Personalised Radio stations](/RompR/RompR-And-Mobiles), meaning no browser is required once they have been started
+* Fix romonitor bug where if you shut down romonitor it did not close its connection to the player, which would leave Mopidy in a state where it didn't respond to idle commands and so romonitor would not work when you restarted it
 
 ## Version 1.23
 * Fix bug where 'Use LastFM Playcounts' would reset Playcounts to zero if the response from Last.FM arrived before the response from the database, as seems to happen a lot on Windows.

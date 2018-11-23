@@ -1,10 +1,11 @@
 var spotiCrazyRadio = function() {
-	
+
 	var populated = false;
 	var tuner;
 	var tags;
 	var tagarray;
 	var params = {};
+	var index = null;
 
 	function populateTuner(numtracks) {
 		var sods = tagarray.splice(0,5);
@@ -15,6 +16,7 @@ var spotiCrazyRadio = function() {
 	return {
 
 		populate: function(p, numtracks) {
+			index = p;
 			if (typeof(spotifyRecommendationsRadio) == 'undefined') {
 				debug.log("CRAZY RADIO","Loading Spotify Radio Tuner");
 				$.getScript('radios/code/spotifyrecommendationsradio.js?version='+rompr_version,function() {
@@ -27,6 +29,7 @@ var spotiCrazyRadio = function() {
 
 		actuallyGo: function(numtracks) {
 			if (!populated) {
+				crazyRadioManager.load(index);
 				tags = $('[name="spotigenres"]').val();
 				tagarray = tags.split(',')
 				populated = true;

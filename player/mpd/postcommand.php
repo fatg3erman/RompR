@@ -284,6 +284,12 @@ if ($is_connected) {
     }
 }
 
+$player =  $_COOKIE['currenthost'];
+$mpd_status['radiomode'] = $prefs['multihosts']->{$player}->radioparams->radiomode;
+$mpd_status['radioparam'] = $prefs['multihosts']->{$player}->radioparams->radioparam;
+$mpd_status['radiomaster'] = $prefs['multihosts']->{$player}->radioparams->radiomaster;
+$mpd_status['radioconsume'] = $prefs['multihosts']->{$player}->radioparams->radioconsume;
+
 header('Content-Type: application/json');
 echo json_encode($mpd_status);
 

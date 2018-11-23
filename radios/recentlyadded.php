@@ -4,17 +4,21 @@ include ("includes/vars.php");
 include ("includes/functions.php");
 include ("international.php");
 include ("backends/sql/backend.php");
+include ("backends/sql/metadatafunctions.php");
 
 $mode = $_REQUEST['mode'];
-debuglog("Populating Recently Added Sorted By ".$mode, "RECENTLY ADDED");
+debuglog("Populating Recently Added Sorted By ".$mode, "RECENTLY ADDED",6);
 
-$uris = array();
+preparePlaylist();
+preparePlTrackTable();
+
 $qstring = "";
-if ($mode == "random") {
+$count = 0;
+if ($mode == "recentlyadded_random") {
 	$result = generic_sql_query(sql_recent_tracks());
 	foreach ($result as $t) {
-		debuglog("URI : ".$t['Uri'], "RECENT_RANDOM");
-		array_push($uris, $t['Uri']);
+		generic_sql_query("INSERT INTO pltracktable (TTindex) VALUES (".$t['TTindex'].")");
+		$count++;
 	}
 } else {
 	// This rather cumbersome code gives us albums in a random order but tracks in order.
@@ -23,12 +27,12 @@ if ($mode == "random") {
 	$result = generic_sql_query(sql_recent_albums(), false, PDO::FETCH_OBJ);
 	foreach ($result as $obj) {
 		if (!array_key_exists($obj->Albumindex, $albums)) {
-			$albums[$obj->Albumindex] = array($obj->TrackNo => $obj->Uri);
+			$albums[$obj->Albumindex] = array($obj->TrackNo => $obj->TTindex);
 		} else {
 			if (array_key_exists($obj->TrackNo, $albums[$obj->Albumindex])) {
-				array_push($albums[$obj->Albumindex], $obj->Uri);
+				array_push($albums[$obj->Albumindex], $obj->TTindex);
 			} else {
-				$albums[$obj->Albumindex][$obj->TrackNo] = $obj->Uri;
+				$albums[$obj->Albumindex][$obj->TrackNo] = $obj->TTindex;
 			}
 		}
 	}
@@ -36,12 +40,12 @@ if ($mode == "random") {
 	foreach($albums as $a) {
 		ksort($a);
 		foreach ($a as $t) {
-			debuglog("URI : ".$t, "RECENT_ALBUM");
-			array_push($uris, $t);
+			generic_sql_query("INSERT INTO pltracktable (TTindex) VALUES (".$t.")");
+			$count++;
 		}
 	}
 }
 
-print json_encode($uris);
+print json_encode(array('total' => $count));
 
 ?>

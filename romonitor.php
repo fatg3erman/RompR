@@ -9,6 +9,8 @@ if (is_array($opts)) {
         $prefs[$key] = $value;
     }
 }
+$currenthost_save = $prefs['currenthost'];
+$player_backend_save = $prefs['player_backend'];
 set_player_connect_params();
 debuglog("Using Player ".$prefs['currenthost'].' of type '.$prefs['player_backend'],"ROMONITOR");
 
@@ -26,8 +28,9 @@ $current_song = array();
 $playcount_updated = false;
 $returninfo = array();
 $dummydata = array('dummy' => 'baby');
+$browser_id = 'romonitor'.getmypid().time();
 close_database();
-
+register_shutdown_function('close_mpd');
 // Using the IDLE subsystem of MPD and mopidy reduces repeated connections, which helps a lot
 
 // We use 'elapsed' and a time measurement to make sure we only incrememnt playcounts if
@@ -82,23 +85,58 @@ while (true) {
         }
         if (array_key_exists('changed', $idle_status) && $current_id != -1) {
             connect_to_database();
-            debuglog($prefs['currenthost'].' - '."Player State Has Changed","ROMONITOR");
+            debuglog($prefs['currenthost'].' - '."Player State Has Changed","ROMONITOR",7);
             $elapsed = time() - $read_time + $mpd_status['elapsed'];
             $fraction_played = $elapsed/$current_song['duration'];
             if ($fraction_played > 0.9) {
-                debuglog($prefs['currenthost'].' - '."Played more than 90% of song. Incrementing playcount","ROMONITOR");
+                debuglog($prefs['currenthost'].' - '."Played more than 90% of song. Incrementing playcount","ROMONITOR",7);
                 romprmetadata::get($current_song);
                 $now_playcount = array_key_exists('Playcount', $returninfo) ? $returninfo['Playcount'] : 0;
                 if ($now_playcount > $current_playcount) {
-                    debuglog($prefs['currenthost'].' - '."Current playcount is bigger than ours, doing nothing","ROMONITOR");
+                    debuglog($prefs['currenthost'].' - '."Current playcount is bigger than ours, doing nothing","ROMONITOR",7);
                 } else {
                     $current_song['attributes'] = array(array('attribute' => 'Playcount', 'value' => $current_playcount+1));
                     romprmetadata::inc($current_song);
                 }
                 if ($current_song['type'] == 'podcast') {
-                    debuglog($prefs['currenthost'].' - '."Marking podcast episode as listened","ROMONITOR");
+                    debuglog($prefs['currenthost'].' - '."Marking podcast episode as listened","ROMONITOR",8);
                     markAsListened($current_song['uri']);
                 }
+            }
+
+            loadPrefs();
+            $prefs['currenthost'] = $currenthost_save;
+            $prefs['player_backend'] = $player_backend_save;
+            $player = $prefs['currenthost'];
+            $radiomode = $prefs['multihosts']->{$player}->radioparams->radiomode;
+            $radioparam = $prefs['multihosts']->{$player}->radioparams->radioparam;
+            $radiomaster = $prefs['multihosts']->{$player}->radioparams->radiomaster;
+            $playlistlength = $mpd_status['playlistlength'];
+            debuglog("PLaylist length is ".$playlistlength,"ROMONITOR",9);
+            switch ($radiomode) {
+                case 'starRadios':
+                case 'mostPlayed':
+                case 'faveAlbums':
+                case 'recentlyaddedtracks':
+                    debuglog("Checking Smart Radio Mode","ROMONITOR");
+                    if ($playlistlength < 3 && $radiomaster != $browser_id) {
+                        $radiomaster = $browser_id;
+                        debuglog("Smart Radio Master has gone away. Taking Over","ROMONITOR",5);
+                        $prefs['multihosts']->{$player}->radioparams->radiomaster = $browser_id;
+                        savePrefs();
+                    }
+                    $tracksneeded = $prefs['smartradio_chunksize'] - $playlistlength  + 1;
+                    if ($radiomaster == $browser_id) {
+                        debuglog("Adding ".$tracksneeded." from ".$radiomode,"ROMONITOR",6);
+                        $tracks = doPlaylist($radioparam, $tracksneeded);
+                        $cmds = array();
+                        foreach ($tracks as $track) {
+                            $cmds[] = join_command_string(array('add', $track['name']));
+                        }
+                        do_mpd_command_list($cmds);
+                    }
+                    break;
+
             }
             close_database();
         }

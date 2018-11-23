@@ -250,92 +250,6 @@ function album_trackcount($albumindex) {
 			AND Uri IS NOT NULL", false, null, 'num', 0);
 }
 
-function preparePlaylist() {
-	generic_sql_query("DROP TABLE IF EXISTS pltable", true);
-	generic_sql_query("CREATE TABLE pltable(TTindex INT UNSIGNED NOT NULL UNIQUE)", true);
-}
-
-function doPlaylist($playlist, $limit) {
-	global $prefs,$collection_type;
-	debuglog("Loading Playlist ".$playlist,"RATINGS");
-	$sqlstring = "";
-	$tags = null;
-	$random = true;
-	switch($playlist) {
-		case "1stars":
-			$sqlstring = "SELECT TTindex FROM Tracktable JOIN Ratingtable USING (TTindex) WHERE Uri
-				IS NOT NULL AND Hidden=0 AND isSearchResult < 2 AND Rating > 0";
-			break;
-		case "2stars":
-			$sqlstring = "SELECT TTindex FROM Tracktable JOIN Ratingtable USING (TTindex) WHERE Uri
-				IS NOT NULL AND Hidden=0 AND isSearchResult < 2 AND Rating > 1";
-			break;
-		case "3stars":
-			$sqlstring = "SELECT TTindex FROM Tracktable JOIN Ratingtable USING (TTindex) WHERE Uri
-				IS NOT NULL AND Hidden=0 AND isSearchResult < 2 AND Rating > 2";
-			break;
-		case "4stars":
-			$sqlstring = "SELECT TTindex FROM Tracktable JOIN Ratingtable USING (TTindex) WHERE Uri
-				IS NOT NULL AND Hidden=0 AND isSearchResult < 2 AND Rating > 3";
-			break;
-		case "5stars":
-			$sqlstring = "SELECT TTindex FROM Tracktable JOIN Ratingtable USING (TTindex) WHERE Uri
-				IS NOT NULL AND Hidden=0 AND isSearchResult < 2 AND Rating > 4";
-			break;
-		case "mostplayed":
-			// Used to be tracks with above average playcount, now also includes any rated tracks.
-			// Still called mostplayed :)
-			$avgplays = getAveragePlays();
-			$sqlstring = "SELECT TTindex FROM Tracktable JOIN Playcounttable USING (TTindex)
-				LEFT JOIN Ratingtable USING (TTindex) WHERE Uri IS NOT NULL AND Hidden = 0 AND
-				isSearchResult < 2 AND (Playcount > ".$avgplays." OR Rating IS NOT NULL)";
-			break;
-		case "allrandom":
-			$sqlstring = "SELECT TTindex FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND
-				isSearchResult < 2";
-			break;
-		case "neverplayed":
-			// LEFT JOIN (used here and above) means that the right-hand side of the JOIN will be
-			// NULL if TTindex doesn't exist on that side. Very handy.
-			$sqlstring = "SELECT Tracktable.TTindex FROM Tracktable LEFT JOIN Playcounttable ON
-				Tracktable.TTindex = Playcounttable.TTindex WHERE Playcounttable.TTindex IS NULL";
-			break;
-		case "recentlyplayed":
-			$sqlstring = recently_played_playlist();
-			break;
-		default:
-			if (preg_match('/tag\+(.*)/', $playlist, $matches)) {
-				$taglist = explode(',', $matches[1]);
-				$sqlstring = 'SELECT DISTINCT TTindex FROM Tracktable JOIN TagListtable USING (TTindex) JOIN Tagtable USING (Tagindex) WHERE ';
-				// Concatenate this bracket here otherwise Atom's syntax colouring goes haywire
-				$sqlstring .= '(';
-				$tags = array();
-				foreach ($taglist as $i => $tag) {
-					debuglog("Getting tag playlist for ".$tag,"PLAYLISTS",6);
-					$tags[] = trim($tag);
-					if ($i > 0) {
-						$sqlstring .= " OR ";
-					}
-					$sqlstring .=  "Tagtable.Name = ?";
-				}
-				$sqlstring .= ") AND Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 AND
-					Tracktable.isSearchResult < 2 ";
-			} else {
-				debuglog("Unrecognised playlist ".$playlist,"PLAYLISTS", 4);
-			}
-			break;
-	}
-	if ($collection_type == 'mopidy' && $prefs['player_backend'] == 'mpd') {
-		$sqlstring .= ' AND Uri LIKE "local:%"';
-	}
-	$uris = getAllURIs($sqlstring, $limit, $tags, $random);
-	$json = array();
-	foreach ($uris as $u) {
-		$json[] = array( 'type' => 'uri', 'name' => $u);
-	}
-	return $json;
-}
-
 function doCollectionHeader() {
 	global $returninfo;
 	$returninfo['stats'] = collectionStats();
@@ -583,39 +497,6 @@ function get_tags() {
 		GROUP BY tr.TTindex");
 }
 
-function getAllURIs($sqlstring, $limit, $tags, $random = true) {
-
-	// Get all track URIs using a supplied SQL string. For playlist generators
-	$uris = array();
-	$tries = 0;
-	do {
-		if ($tries == 1) {
-			debuglog("No URIs found. Resetting history table","SMART PLAYLIST",5);
-			preparePlaylist();
-		}
-		generic_sql_query("CREATE TEMPORARY TABLE IF NOT EXISTS pltemptable(TTindex INT UNSIGNED NOT NULL UNIQUE)", true);
-		theBabyDumper($sqlstring, $limit, $tags, $random);
-		$uris = sql_get_column("SELECT Uri FROM Tracktable WHERE TTindex IN (SELECT TTindex FROM pltemptable)", 'Uri');
-		$tries++;
-	} while (count($uris) == 0 && $tries < 2);
-	generic_sql_query("INSERT INTO pltable (TTindex) SELECT TTindex FROM pltemptable", true);
-	return $uris;
-}
-
-function theBabyDumper($sqlstring, $limit, $tags, $random) {
-	debuglog("Selector is ".$sqlstring,"SMART PLAYLIST",6);
-	$rndstr = $random ? " ORDER BY ".SQL_RANDOM_SORT : " ORDER BY Albumindex, TrackNo";
-	if ($tags) {
-		sql_prepare_query(true, null, null, null,
-			"INSERT INTO pltemptable(TTindex) ".$sqlstring.
-			" AND NOT Tracktable.TTindex IN (SELECT TTindex FROM pltable)".$rndstr." LIMIT ".$limit, $tags);
-	} else {
-		generic_sql_query(
-			"INSERT INTO pltemptable(TTindex) ".$sqlstring.
-			" AND NOT Tracktable.TTindex IN (SELECT TTindex FROM pltable)".$rndstr." LIMIT ".$limit, true);
-	}
-}
-
 function get_recommendation_seeds($days, $limit, $top) {
 
 	// 1. Get a list of tracks played in the last $days days, sorted by their OVERALL popularity
@@ -649,11 +530,6 @@ function get_recommendation_seeds($days, $limit, $top) {
 	// 4. Randomise that list and return the first $top.
 	shuffle($resultset);
 	return array_slice($resultset,0,$top);
-}
-
-function getAveragePlays() {
-	$avgplays = simple_query('avg(Playcount)', 'Playcounttable', null, null, 0);
-	return round($avgplays, 0, PHP_ROUND_HALF_DOWN);
 }
 
 function get_fave_artists() {

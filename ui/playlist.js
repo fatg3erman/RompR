@@ -52,29 +52,92 @@ var playlist = function() {
 
         var self = this;
         var mode = null;
+        var param = null;
         var radios = new Object();
-        var oldconsume = 0;
         var rptimer = null;
         var startplaybackfrom = null;
 
         function actuallyRepopulate() {
             debug.log("RADIO MANAGER","Repopulate Timer Has Fired");
-            if (reqid == last_reqid && mode) {
+            debug.log("RADIO MANAGER","mode is",mode);
+            debug.log("RADIO MANAGER","prefs.radiomode is",prefs.radiomode);
+            debug.log("RADIO MANAGER","prefs.radioparam is",prefs.radioparam);
+            debug.log("RADIO MANAGER","prefs.browser_id is",prefs.browser_id);
+            debug.log("RADIO MANAGER","prefs.radiomaster is",prefs.radiomaster);
+
+            if ((mode && mode != prefs.radiomode) || (mode && param && param != prefs.radioparam)) {
+                radios[mode].func.stop();
+            }
+
+            param = prefs.radioparam;
+
+            if (prefs.radiomode != mode) {
+                mode = prefs.radiomode;
+                if (mode) {
+                    playlist.preventControlClicks(false);
+                    player.controller.takeBackControl();
+                    if (radios[mode].script && radios[mode].loaded == false) {
+                        debug.shout("RADIO MANAGER","Loading Script",radios[mode].script,"for",mode);
+                        $.getScript(radios[mode].script+'?version='+rompr_version)
+                            .done(function() {
+                                radios[mode].loaded = true;
+                                actuallyActuallyRepopulate();
+                            })
+                            .fail(function(data,thing,wotsit) {
+                                debug.error("RADIO MANAGER","Failed to Load Script",wotsit);
+                                mode = null;
+                                player.controller.checkConsume(prefs.radioconsume);
+                                playlist.repopulate();
+                                infobar.notify(infobar.ERROR,"Something Went Badly Wrong");
+                            });
+                    } else {
+                        actuallyActuallyRepopulate();
+                    }
+                } else {
+                    player.controller.checkConsume(prefs.radioconsume);
+                    playlist.preventControlClicks(true);
+                    setHeader();
+                }
+            } else {
+                actuallyActuallyRepopulate();
+            }
+        }
+
+        function actuallyActuallyRepopulate() {
+            setHeader();
+            var fromend = playlist.getfinaltrack()+1 - currentTrack.playlistpos;
+            var tracksneeded = prefs.smartradio_chunksize - fromend;
+            if (tracksneeded > 1 && prefs.radiomaster != prefs.browser_id) {
+                debug.mark("RADIO MANAGER","Looks like master has gone away. Taking over");
+                prefs.save({radiomaster: prefs.browser_id});
+            }
+            debug.log("RADIO MANAGER","Repopulate Check : Final Track :",playlist.getfinaltrack()+1,"Fromend :",fromend,"Chunksize :",prefs.smartradio_chunksize,"Mode :",mode);
+            if (reqid == last_reqid && mode && prefs.radiomaster == prefs.browser_id) {
                 // Don't do anything if we're waiting on playlist updates
-                var fromend = playlist.getfinaltrack()+1 - currentTrack.playlistpos;
-                debug.log("RADIO MANAGER","Repopulate Check : Final Track :",playlist.getfinaltrack()+1,"Fromend :",fromend,"Chunksize :",prefs.smartradio_chunksize,"Mode :",mode);
+                debug.shout("RADIO MANAGER","Repopulating");
                 if (fromend < prefs.smartradio_chunksize) {
                     playlist.waiting();
-                    radios[mode].func.populate(prefs.radioparam, prefs.smartradio_chunksize - fromend);
+                    radios[mode].func.populate(prefs.radioparam, tracksneeded);
                 }
             }
+        }
+
+        function setHeader() {
+            var html = '';
+            if (mode && radios[mode].func.modeHtml) {
+                var x = radios[mode].func.modeHtml(prefs.radioparam);
+                if (x) {
+                    html = x + '<i class="icon-cancel-circled playlisticon clickicon" style="margin-left:8px" onclick="playlist.radioManager.stop()"></i>';
+                }
+            }
+            layoutProcessor.setRadioModeHeader(html);
         }
 
         return {
 
             register: function(name, fn, script) {
                 debug.log("RADIO MANAGER","Registering Plugin",name);
-                radios[name] = {func: fn, script: script};
+                radios[name] = {func: fn, script: script, loaded: false};
             },
 
             init: function() {
@@ -107,39 +170,12 @@ var playlist = function() {
                 if (prefs.debug_enabled > 0) {
                     infobar.notify(infobar.LONGNOTIFY, language.gettext('warning_smart_debug'));
                 }
-                debug.mark("RADIO MANAGER","Loading Smart",which,param);
-                if (mode == which && (!param || param == prefs.radioparam)) {
-                    debug.log("RADIO MANAGER", " .. that radio is already playing");
-                    infobar.notify(infobar.NOTIFY,"That is already playing. Stop it first if you want to change it");
-                    return false;
-                }
                 if (!mode) {
-                    oldconsume = player.status.consume;
+                    prefs.save({radioconsume: player.status.consume});
                 }
-                if ((mode && mode != which) || (mode && param && param != prefs.radioparam)) {
-                    debug.log("RADIO MANAGER","Monkey Wigglers");
-                    radios[mode].func.stop();
-                }
-                mode = which;
-                prefs.save({radiomode: mode, radioparam: param});
                 layoutProcessor.playlistLoading();
-                playlist.preventControlClicks(false);
-                player.controller.takeBackControl();
+                prefs.save({radiomode: which, radioparam: param, radiomaster: prefs.browser_id}, player.controller.clearPlaylist);
                 startplaybackfrom = 0;
-                if (radios[mode].script) {
-                    debug.shout("RADIO MANAGER","Loading Script",radios[mode].script,"for",mode);
-                    $.getScript(radios[mode].script+'?version='+rompr_version)
-                        .done(player.controller.clearPlaylist)
-                        .fail(function(data,thing,wotsit) {
-                            debug.error("RADIO MANAGER","Failed to Load Script",wotsit);
-                            mode = null;
-                            player.controller.checkConsume(oldconsume);
-                            playlist.repopulate();
-                            infobar.notify(infobar.ERROR,"Something Went Badly Wrong");
-                        });
-                } else {
-                    player.controller.clearPlaylist();
-                }
             },
 
             playbackStartPos: function() {
@@ -162,24 +198,9 @@ var playlist = function() {
             },
 
             stop: function() {
-                if (mode) {
-                    radios[mode].func.stop();
-                }
-                mode = null;
+                prefs.save({radiomode: null, radioparam: null});
+                layoutProcessor.setRadioModeHeader('');
                 playlist.repopulate();
-                player.controller.checkConsume(oldconsume);
-                playlist.preventControlClicks(true);
-            },
-
-            setHeader: function() {
-                var html = '';
-                if (mode) {
-                    var x = radios[mode].func.modeHtml(prefs.radioparam);
-                    if (x) {
-                        html = x + '<i class="icon-cancel-circled playlisticon clickicon" style="margin-left:8px" onclick="playlist.radioManager.stop()"></i>';
-                    }
-                }
-                layoutProcessor.setRadioModeHeader(html);
             },
 
             isRunning: function() {
@@ -188,16 +209,7 @@ var playlist = function() {
 
             loadFromUiElement: function(element) {
                 var params = element.attr('name').split('+');
-                switch (params[0]) {
-                    case 'spotiCrazyRadio':
-                        crazyRadioManager.load(params[1]);
-                        break;
-
-                    default:
-                        playlist.radioManager.load(params[0], params[1] ? params[1] : null);
-                        break;
-
-                }
+                playlist.radioManager.load(params[0], params[1] ? params[1] : null);
             },
 
             standardBox: function(station, param, icon, label) {
@@ -370,7 +382,6 @@ var playlist = function() {
             } else {
                 playlist.doUpcomingCrap();
             }
-            playlist.radioManager.setHeader();
             player.controller.postLoadActions();
             playlist.radioManager.repopulate();
             uiHelper.postPlaylistLoad();

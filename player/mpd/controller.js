@@ -134,6 +134,10 @@ function playerController() {
                     if (data.state) {
                         // Clone the object so as not to leave this closure in memory
                         player.status = cloneObject(data);
+                        prefs.radiomode = player.status.radiomode;
+                        prefs.radioparam = player.status.radioparam;
+                        prefs.radiomaster = player.status.radiomaster;
+                        prefs.radioconsume = player.status.radioconsume;
                         if (player.status.playlist !== plversion) {
                             debug.blurt("PLAYER","Player has marked playlist as changed");
                             playlist.repopulate();

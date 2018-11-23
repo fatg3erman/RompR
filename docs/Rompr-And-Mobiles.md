@@ -40,11 +40,11 @@ Now you just need to run this script.
     cd /directory/where/you/put/romonitor.sh
     chmod +x romonitor.sh
     ./romonitor.sh
-    
+
 The script will exit immediately but it will leave the romonitor program running. You can check by typing
 
     ps aux | grep romonitor
-    
+
 And you should see something like
 
     bob       1336  0.0  1.0  63572 19572 ?        S    13:45   0:00 php ./romonitor.php --currenthost Mopidy --player_backend mopidy
@@ -62,6 +62,19 @@ To make sure romonitor gets loaded every time you boot, you can just add your sh
 
 If it's not working, first enable [debug logging](/RompR/Troubleshooting) to at least level 8 then restart romonitor. You'll see some output from it in the web server's error log (and your custom logifle if you're using one).
 
-### What it doesn't do
+### Personalised Radio Stations
 
-The other thing that requires the device to be awake is populating Personalised Radio stations. Currently the only solution to this is to wake your device up every so often. It doesn't have to be after every track; even if the Current Playlist runs out of tracks, waking your device will repopulate it.
+The other thing that requires the device to be awake is populating Personalised Radio stations. romonitor can take over this work for *some* of the Personalised Radio stations, meaning you can start one of these playing from a browser and romonitor will keep it running if you close the browser.
+
+Currently the list of Personalised Radio stations supported by romonitor is
+
+* All Ratings Radios
+* Tags Radio
+* All Tracks At Random
+* Never Played Tracks
+* Recently Played Tracks
+* Favourite Tracks
+* Favourite Albums
+* Recently Added Tracks
+* Recently Added Albums
+

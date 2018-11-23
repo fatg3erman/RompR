@@ -56,8 +56,8 @@ var recentlyaddedtracks = function() {
             //
             // Recently Added Tracks
             //
-            $('#pluginplaylists').append(playlist.radioManager.standardBox('recentlyaddedtracks', 'random', 'icon-recentlyplayed', language.gettext('label_recentlyadded_random')));
-            $('#pluginplaylists').append(playlist.radioManager.standardBox('recentlyaddedtracks', 'byalbum', 'icon-recentlyplayed', language.gettext('label_recentlyadded_byalbum')));
+            $('#pluginplaylists').append(playlist.radioManager.standardBox('recentlyaddedtracks', 'recentlyadded_random', 'icon-recentlyplayed', language.gettext('label_recentlyadded_random')));
+            $('#pluginplaylists').append(playlist.radioManager.standardBox('recentlyaddedtracks', 'recentlyadded_byalbum', 'icon-recentlyplayed', language.gettext('label_recentlyadded_byalbum')));
         }
     }
 }();
@@ -71,7 +71,7 @@ var mostPlayed = function() {
             //
             // Favourite Tracks
             //
-            $('#pluginplaylists').append(playlist.radioManager.standardBox('mostPlayed', null, 'icon-music', language.gettext('label_mostplayed')));
+            $('#pluginplaylists').append(playlist.radioManager.standardBox('mostPlayed', 'mostplayed', 'icon-music', language.gettext('label_mostplayed')));
         }
     }
 }();
@@ -85,12 +85,12 @@ var faveAlbums = function() {
             //
             // Favourite Albums
             //
-            $('#pluginplaylists').append(playlist.radioManager.standardBox('faveAlbums', null, 'icon-music', language.gettext('label_favealbums')));
+            $('#pluginplaylists').append(playlist.radioManager.standardBox('faveAlbums', 'favealbums', 'icon-music', language.gettext('label_favealbums')));
         }
     }
 }();
 
 playlist.radioManager.register("starRadios", starRadios, 'radios/code/starRadios.js');
-playlist.radioManager.register("recentlyaddedtracks", recentlyaddedtracks, 'radios/code/recentlyadded.js');
 playlist.radioManager.register("mostPlayed", mostPlayed, 'radios/code/mostplayed.js');
 playlist.radioManager.register("faveAlbums", faveAlbums, 'radios/code/favealbums.js');
+playlist.radioManager.register("recentlyaddedtracks", recentlyaddedtracks, 'radios/code/recentlyadded.js');

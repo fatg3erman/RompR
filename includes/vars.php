@@ -3,7 +3,7 @@
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 48);
+define('ROMPR_SCHEMA_VERSION', 49);
 define('ROMPR_VERSION', '1.24');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
@@ -98,7 +98,13 @@ $prefs = array(
             'port' => '6600',
             'password' => '',
             'socket' => '',
-            'mopidy_slave' => false
+            'mopidy_slave' => false,
+            'radioparams' => (object) array (
+                "radiomode" => "",
+                "radioparam" => "",
+                "radiomaster" => "",
+                "radioconsume" => 0
+            )
         )
     ),
     'dev_mode' => false,
@@ -108,6 +114,7 @@ $prefs = array(
     "mpd_port" => 6600,
     "mpd_password" => "",
     "unix_socket" => '',
+    "smartradio_chunksize" => 5,
 
     // Things that could be set on a per-user basis but need to be known by the backend
     "displaycomposer" => true,
@@ -167,8 +174,6 @@ $prefs = array(
     "synctags" => false,
     "synclove" => false,
     "synclovevalue" => "5",
-    "radiomode" => "",
-    "radioparam" => "",
     "theme" => "Numismatist.css",
     "icontheme" => "Modern-Dark",
     "coversize" => "40-Large.css",
@@ -215,8 +220,7 @@ $prefs = array(
     "podcast_sort_1" => 'Artist',
     "podcast_sort_2" => 'Category',
     "podcast_sort_3" => 'new',
-    "bgimgparms" => (object) array('dummy' => 'baby'),
-    "smartradio_chunksize" => 5
+    "bgimgparms" => (object) array('dummy' => 'baby')
 );
 
 // Prefs that should not be exposed to the browser for security reasons
@@ -396,7 +400,6 @@ class debug_logger {
         } else {
             error_log($pid.$in2.$module.$in.": ".$out,0);
         }
-
     }
 
     public function setLevel($level) {
@@ -430,6 +433,16 @@ function upgrade_host_defs($ver) {
             case 45:
                 $prefs['multihosts']->{$key}->mopidy_slave = false;
                 break;
+
+            case 49:
+                $prefs['multihosts']->{$key}->radioparams = (object) array (
+                    "radiomode" => "",
+                    "radioparam" => "",
+                    "radiomaster" => "",
+                    "radioconsume" => 0
+                );
+                break;
+
         }
     }
     savePrefs();

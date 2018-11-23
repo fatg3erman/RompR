@@ -36,14 +36,21 @@ var crazyRadioManager = function() {
             crazyRadioManager.loadSavedCrazies();
         },
 
+        go: function() {
+            // Dummy param Date.now() to make sure radioManager stops the previous
+            // one if we've changed genres.
+            playlist.radioManager.load('spotiCrazyRadio', Date.now());
+        },
+
         load: function(i) {
-            debug.log("LOAD CRAZY","Loading",crazySettings[i]);
-            $('[name="spotigenres"]').val(crazySettings[i].genres);
-            $('.spotiradioslider').each(function() {
-                var attribute = $(this).attr('name');
-                $(this).rangechooser("setRange",crazySettings[i][attribute]);
-            });
-            playlist.radioManager.load('spotiCrazyRadio');
+            if (crazySettings.hasOwnProperty(i)) {
+                debug.log("LOAD CRAZY","Loading",crazySettings[i]);
+                $('[name="spotigenres"]').val(crazySettings[i].genres);
+                $('.spotiradioslider').each(function() {
+                    var attribute = $(this).attr('name');
+                    $(this).rangechooser("setRange",crazySettings[i][attribute]);
+                });
+            }
         },
 
         handleClick: function(event, clickedElement) {
@@ -178,7 +185,7 @@ var spotiCrazyRadio = function() {
                 html += '<button class="fixed alignmid" '+
                     'onclick="crazyRadioManager.saveCrazyRadioSettings(event)">Save These Settings</button>';
                 html += '<button class="fixed alignmid" '+
-                    'onclick="playlist.radioManager.load(\'spotiCrazyRadio\')">'+
+                    'onclick="crazyRadioManager.go()">'+
                     language.gettext('button_playradio')+'</button>';
                 html += '</div>';
                 $("#pluginplaylists_crazy").append(html);

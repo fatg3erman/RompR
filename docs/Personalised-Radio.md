@@ -14,8 +14,16 @@ When you start one of these stations playing, 5 tracks will be added to the Curr
 
 You can skip, pause, stop, etc as normal. When a track has finished it will be removed from the Playlist and a new one will be added. You can add tracks to the end of the playlist (or any other position) and re-order the playlist as normal. New tracks will only be added automatically when there are less than 5.
 
-To stop the dynamic playlist generation and return to normal mode, either click the x next to the header, clear the playlist, or refresh the browser window.
+To stop the dynamic playlist generation and return to normal mode, either click the x next to the header or clear the playlist.
+
+## Number of Upcoming Tracks
+
+By default, 5 upcoming tracks will be displayed. You can change this number from the Prefs Panel
+
+![](images/upcomingtracks.png)
 
 ## Mobile Devices
 
 When using a mobile device to run RompЯ, you should understand that the browser must be open for new tracks to keep being added. If the device sleeps (screen turns off) then the playlist will stop updating until you wake the device.
+
+One way around this is to run [romonitor](/RompR/Rompr-And-Mobiles), which is capable of repopulating some of the Personalised Radio stations by itself.

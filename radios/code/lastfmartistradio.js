@@ -119,12 +119,10 @@ var lastFMArtistRadio = function() {
 					for (var i in data.topartists.artist) {
 						if (data.topartists.artist[i].playcount >= minplays) {
 							fartists.push(data.topartists.artist[i].name);
+							tuner.newArtist(data.topartists.artist[i].name);
 						} else {
 							debug.mark("LASTFM MIX RADIO","Ignoring Artist",data.topartists.artist[i].name,"because it only has",data.topartists.artist[i].playcount,"plays");
 						}
-					}
-					for (var i in fartists) {
-						tuner.newArtist(fartists[i]);
 					}
 					if (populating) {
 						if (currpage < totalpages) {

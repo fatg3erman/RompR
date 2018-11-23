@@ -680,6 +680,12 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 48 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 48:
+				debuglog("Updating FROM Schema version 48 TO Schema version 49","SQL");
+				upgrade_host_defs(49);
+				generic_sql_query("UPDATE Statstable SET Value = 49 WHERE Item = 'SchemaVer'", true);
+				break;
+
 		}
 		$sv++;
 	}
@@ -706,7 +712,7 @@ function hide_played_tracks() {
 
 function sql_recent_tracks() {
 	global $collection_type, $prefs;
-	$qstring = "SELECT Uri FROM Tracktable WHERE (DATE_SUB(CURDATE(),INTERVAL 360 DAY) <= DateAdded) AND Hidden = 0 AND isSearchResult < 2 AND Uri IS NOT NULL";
+	$qstring = "SELECT TTindex FROM Tracktable WHERE (DATE_SUB(CURDATE(),INTERVAL 60 DAY) <= DateAdded) AND Hidden = 0 AND isSearchResult < 2 AND Uri IS NOT NULL";
 	if ($collection_type == 'mopidy' && $prefs['player_backend'] == 'mpd') {
 		$qstring .= ' AND Uri LIKE "local:%"';
 	}
@@ -715,7 +721,7 @@ function sql_recent_tracks() {
 
 function sql_recent_albums() {
 	global $collection_type, $prefs;
-	$qstring = "SELECT Uri, Albumindex, TrackNo FROM Tracktable WHERE DATE_SUB(CURDATE(),INTERVAL 30 DAY) <= DateAdded AND Hidden = 0 AND isSearchResult < 2 AND Uri IS NOT NULL";
+	$qstring = "SELECT TTindex, Albumindex, TrackNo FROM Tracktable WHERE DATE_SUB(CURDATE(),INTERVAL 60 DAY) <= DateAdded AND Hidden = 0 AND isSearchResult < 2 AND Uri IS NOT NULL";
 	if ($collection_type == 'mopidy' && $prefs['player_backend'] == 'mpd') {
 		$qstring .= ' AND Uri LIKE "local:%"';
 	}

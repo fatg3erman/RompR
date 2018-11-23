@@ -1,26 +1,19 @@
 var faveAlbums = function() {
 
     var running = false;
-    var populating = false;
-    var tracks = new Array();
+    var populated = false;
     var tracksneeded = 0;
 
     function getTracks() {
-        if (populating) {
-            debug.warn("FAVEALBUMS", "Asked to populate but already doing so!")
-            return false;
-        }
-        populating = true;
         $.ajax({
             type: "POST",
             dataType: "json",
             url: "radios/favealbums.php",
             success: function(data) {
-                if (data && data.length > 0) {
+                if (data && data.total > 0) {
                     debug.trace("FAVEALBUMS","Got tracks",data);
+                    populated = true;
                     running = true;
-                    populating = false;
-                    tracks = data;
                     addTracks();
                 } else {
                     infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
@@ -30,7 +23,7 @@ var faveAlbums = function() {
             fail: function() {
                 infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
                 playlist.radioManager.stop();
-                populating = false;
+                populated = false;
             }
         });
 
@@ -38,16 +31,11 @@ var faveAlbums = function() {
 
     function addTracks() {
         if (running) {
-            var t = new Array();
-            while (tracksneeded > 0 && tracks.length > 0) {
-                t.push({type: 'uri', name: tracks.shift()});
-                tracksneeded--;
-            }
-            if (t.length > 0) {
-                player.controller.addTracks(t, playlist.radioManager.playbackStartPos(), null);
-            } else {
-                playlist.radioManager.stop();
-            }
+            metaHandlers.genericAction(
+                [{ action: 'repopulate', playlist: 'favealbums', numtracks: tracksneeded }],
+                faveAlbums.gotTracks,
+                faveAlbums.Fail
+            );
         }
     }
 
@@ -56,7 +44,7 @@ var faveAlbums = function() {
 		populate: function(s, numtracks) {
             tracksneeded += (numtracks - tracksneeded);
             debug.shout("FAVEALBUMS", "Populating");
-            if (tracks.length == 0) {
+            if (!populated) {
                 getTracks();
             } else {
                 addTracks();
@@ -70,9 +58,28 @@ var faveAlbums = function() {
 
         stop: function() {
             running = false;
-            tracks = new Array();
+            populated = false;
+        },
+
+        gotTracks: function(data) {
+            if (data.length > 0) {
+                debug.log("SMARTPLAYLIST","Got tracks",data);
+				player.controller.addTracks(data,  playlist.radioManager.playbackStartPos(), null);
+            } else {
+                debug.warn("SMARTPLAYLIST","Got NO tracks",data);
+                infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
+                playlist.radioManager.stop();
+                running = false;
+            }
+        },
+
+        Fail: function() {
+            infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
+            playlist.radioManager.stop();
+            populated = false;
+            running = false;
         }
-        
+
 	}
 
 }();
