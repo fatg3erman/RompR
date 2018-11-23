@@ -67,7 +67,13 @@ if (array_key_exists('mpd_host', $_POST)) {
             'port' => $prefs['mpd_port'],
             'password' => $prefs['mpd_password'],
             'socket' => $prefs['unix_socket'],
-            'mopidy_slave' => $mopidy_slave
+            'mopidy_slave' => $mopidy_slave,
+            'radioparams' => (object) array (
+                "radiomode" => "",
+                "radioparam" => "",
+                "radiomaster" => "",
+                "radioconsume" => 0
+            )
     );
 
     $logger->setLevel($prefs['debug_enabled']);
