@@ -42,7 +42,7 @@ var starRadios = function() {
         },
 
         tagPopulate: function() {
-            playlist.radioManager.load('starRadios', $('[name="cynthia"]').val());
+            playlist.radioManager.load('starRadios', 'tag+'+$('[name="cynthia"]').val());
         }
 	}
 }();

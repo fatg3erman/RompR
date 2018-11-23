@@ -23,25 +23,9 @@ var starRadios = function() {
 		populate: function(param, numtracks) {
             debug.log("STARRADIOS","Populate Called with",param,numtracks,"selected is",selected);
             var whattodo = "repopulate";
-            if (param !== selected && selected !== 'tag+'+param) {
+            if (param !== selected ) {
                 whattodo = "getplaylist";
-                switch(param) {
-                    case '1stars':
-                    case '2stars':
-                    case '3stars':
-                    case '4stars':
-                    case '5stars':
-                    case 'neverplayed':
-                    case 'allrandom':
-                    case 'recentlyplayed':
-                        selected = param;
-                        break;
-
-                    default:
-                        selected = 'tag+'+param;
-                        break;
-                }
-
+				selected = param;
             }
             running = true;
 			getSmartPlaylistTracks(whattodo, selected, numtracks);
@@ -55,7 +39,7 @@ var starRadios = function() {
                 return '<i class="icon-'+param+' modeimg"/></i><span class="modespan">'+
                     language.gettext('label_'+param)+'</span>';
             } else {
-                return '<i class="icon-tags modeimg"/><span class="modespan">'+param+'</span>';
+                return '<i class="icon-tags modeimg"/><span class="modespan">'+param.replace(/^tag\+/, '')+'</span>';
             }
         },
 
