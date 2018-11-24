@@ -1,5 +1,8 @@
 <?php
 define('ROMPR_IS_LOADING', true);
+if (file_exists('prefs/prefs.var')) {
+    chmod('prefs/prefs.var', 0777);
+}
 include("includes/vars.php");
 
 //
