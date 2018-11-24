@@ -17,7 +17,9 @@ function albumTrack($data) {
     $class .= $data['discclass'];
 
     // Outer container
-    if ($data['uri'] == null) {
+    if ($data['playable'] == 1 or $data['playable'] == 3) {
+        print '<div class="unplayable ninesix indent containerbox padright calign">';
+    } else if ($data['uri'] == null) {
         print '<div class="playable '.$class.' ninesix draggable indent containerbox padright calign" name="'.$data['ttid'].'">';
     } else {
         print '<div class="playable '.$class.' ninesix draggable indent containerbox padright calign" name="'.rawurlencode($data['uri']).'">';

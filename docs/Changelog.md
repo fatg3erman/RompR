@@ -13,6 +13,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * If the browser that started a Personalised Radio station is closed, any other browser can take over populating it
 * romonitor can now populate [certain Personalised Radio stations](/RompR/RompR-And-Mobiles), meaning no browser is required once they have been started
 * Fix romonitor bug where if you shut down romonitor it did not close its connection to the player, which would leave Mopidy in a state where it didn't respond to idle commands and so romonitor would not work when you restarted it
+* Add Spotify Link Checker, to scan the Collection for tracks which have been removed by Spotify and mark them as unplayable.
 
 ## Version 1.23
 * Fix bug where 'Use LastFM Playcounts' would reset Playcounts to zero if the response from Last.FM arrived before the response from the database, as seems to happen a lot on Windows.

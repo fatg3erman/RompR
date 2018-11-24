@@ -926,7 +926,7 @@ var spotifyLinkChecker = function() {
 
     function gotLinkToCheck(data) {
         if (data.length > 0) {
-            debug.trace('SPOTICHECKER',"Got next tracks to check", data);
+            debug.debug('SPOTICHECKER',"Got next tracks to check", data);
             tracks = data;
             var ids = new Array();
             for (var i in data) {
@@ -944,24 +944,25 @@ var spotifyLinkChecker = function() {
     }
 
     function gotSpotiResponse(response) {
-        debug.debug("SPOTICHECKER","Response from Spotify",response);
+        debug.trace("SPOTICHECKER","Response from Spotify",response);
         var callback = spotifyLinkChecker.setTimer;
         var update_info = new Array();
         for (var i = 0; i < tracks.length; i++) {
             track = response.tracks[i];
             if (track) {
                 if (track.is_playable) {
-                    debug.trace("SPOTICHECKER", "Track is playable");
-                    update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: track.uri, status: 2});
-                } else {
-                    debug.blurt("SPOTICHECKER", "Track is NOT playable", track.album.name, track.name);
-                    if (track.restrictions) {
-                        debug.mark("SPOTICHECKER", "Track restrictions :",track.restrictions.reason)
-                    }
+                    uri = track.uri;
+                    debug.debug("SPOTICHECKER", "Track is playable");
                     if (track.linked_from) {
-                        debug.mark("SPOTICHECKER", "Track was linked from",track.linked_from);
-                    } else {
-                        debug.mark("SPOTICHECKER", "Track has no linked_from either. Bloody Spotify");
+                        debug.mark("SPOTICHECKER", "Track was relinked",track);
+                        // callback = doneOK;
+                        uri = track.linked_from.uri;
+                    }
+                    update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: uri, status: 2});
+                } else {
+                    debug.mark("SPOTICHECKER", "Track is NOT playable", track.album.name, track.name);
+                    if (track.restrictions) {
+                        debug.blurt("SPOTICHECKER", "Track restrictions :",track.restrictions.reason)
                     }
                     // callback = doneOK;
                     update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: track.uri, status: 3});
@@ -1003,6 +1004,8 @@ var spotifyLinkChecker = function() {
                     debug.mark("SPOTICHECKER","Link Checker Restarting");
                     updateNextRunTime();
                     metaHandlers.genericAction('resetlinkcheck', spotifyLinkChecker.setTimer, goneTitsUp);
+                } else {
+                    debug.mark("SPOTICHECKER","Link Checker Not Starting Yet");
                 }
             }
         }

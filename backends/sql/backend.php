@@ -990,21 +990,21 @@ function get_album_tracks_from_database($index, $cmd, $flag) {
 		case "r":
 			// r - only tracks with ratings
 			$action = "SELECT";
-			$sflag = "AND isSearchResult < 2";
+			$sflag = "AND isSearchResult < 2 AND (LinkChecked = 0 OR LinkChecked = 2)";
 			$rflag = " JOIN Ratingtable USING (TTindex)";
 			break;
 
 		case "t":
 			// t - only tracks with tags
 			$action = "SELECT DISTINCT";
-			$sflag = "AND isSearchResult < 2";
+			$sflag = "AND isSearchResult < 2 AND (LinkChecked = 0 OR LinkChecked = 2)";
 			$rflag = " JOIN TagListtable USING (TTindex)";
 			break;
 
 		case "y":
 			// y = only tracks with tags and ratings
 			$action = "SELECT DISTINCT";
-			$sflag = "AND isSearchResult < 2";
+			$sflag = "AND isSearchResult < 2 AND (LinkChecked = 0 OR LinkChecked = 2)";
 			$rflag = " JOIN Ratingtable USING (TTindex)";
 			$rflag .= " JOIN TagListtable USING (TTindex)";
 			break;
@@ -1016,6 +1016,7 @@ function get_album_tracks_from_database($index, $cmd, $flag) {
 							WHERE Albumindex = '".$index.
 							"' AND Uri IS NOT NULL
 							AND Hidden = 0
+							AND (LinkChecked = 0 OR LinkChecked = 2)
 							AND isSearchResult <2 "
 							.track_date_check($prefs['collectionrange'], $flag).
 						"UNION SELECT Uri, Disc, TrackNo FROM
@@ -1023,6 +1024,7 @@ function get_album_tracks_from_database($index, $cmd, $flag) {
 							WHERE Albumindex = '".$index.
 							"' AND Uri IS NOT NULL
 							AND Hidden = 0
+							AND (LinkChecked = 0 OR LinkChecked = 2)
 							AND isSearchResult <2 "
 							.track_date_check($prefs['collectionrange'], $flag).
 						"ORDER BY Disc, TrackNo;";
@@ -1091,6 +1093,7 @@ function do_tracks_from_database($why, $what, $whom, $fragment = false) {
 			tr.LastModified AS lm,
 			tr.Disc AS disc,
 			tr.Uri AS uri,
+			tr.LinkChecked AS playable,
 			ta.Artistname AS artist,
 			tr.Artistindex AS trackartistindex,
 			al.AlbumArtistindex AS albumartistindex
@@ -1605,7 +1608,7 @@ function prepare_findtracks() {
 	}
 
 	if ($update_track = sql_prepare_query_later(
-		"UPDATE Tracktable SET Trackno=?, Duration=?, Disc=?, LastModified=?, Uri=?, Albumindex=?, isSearchResult=?, Hidden=0, justAdded=1 WHERE TTindex=?")) {
+		"UPDATE Tracktable SET LinkChecked=0, Trackno=?, Duration=?, Disc=?, LastModified=?, Uri=?, Albumindex=?, isSearchResult=?, Hidden=0, justAdded=1 WHERE TTindex=?")) {
 	} else {
 		show_sql_error();
         exit(1);

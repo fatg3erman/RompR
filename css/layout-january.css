@@ -2184,3 +2184,7 @@ div.notification.new {
 #lfmitable tr td:nth-child(8){
 	text-align:center;
 }
+
+div.unplayable {
+	opacity: 0.5;
+}
