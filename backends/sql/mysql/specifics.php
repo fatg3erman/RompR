@@ -50,6 +50,7 @@ function check_sql_tables() {
 		"isSearchResult TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"justAdded TINYINT(1) UNSIGNED DEFAULT 1, ".
 		"Sourceindex INT UNSIGNED DEFAULT NULL, ".
+		"LinkChecked TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"INDEX(Albumindex), ".
 		"INDEX(Title), ".
 		"INDEX(TrackNo)) ENGINE=InnoDB", true))
@@ -684,6 +685,12 @@ function check_sql_tables() {
 				debuglog("Updating FROM Schema version 48 TO Schema version 49","SQL");
 				upgrade_host_defs(49);
 				generic_sql_query("UPDATE Statstable SET Value = 49 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 49:
+				debuglog("Updating FROM Schema version 49 TO Schema version 50","SQL");
+				generic_sql_query("ALTER TABLE Tracktable ADD LinkChecked TINYINT(1) UNSIGNED DEFAULT 0", true);
+				generic_sql_query("UPDATE Statstable SET Value = 50 WHERE Item = 'SchemaVer'", true);
 				break;
 
 		}

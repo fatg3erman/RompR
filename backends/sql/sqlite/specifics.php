@@ -46,6 +46,7 @@ function check_sql_tables() {
 		"DateAdded TIMESTAMP DEFAULT CURRENT_TIMESTAMP, ".
 		"isSearchResult TINYINT(1) DEFAULT 0, ".
 		"Sourceindex INTEGER DEFAULT NULL, ".
+		"LinkChecked TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"justAdded TINYINT(1) DEFAULT 1)", true))
 	{
 		debuglog("  Tracktable OK","SQLITE_CONNECT");
@@ -726,6 +727,12 @@ function check_sql_tables() {
 				debuglog("Updating FROM Schema version 48 TO Schema version 49","SQL");
 				upgrade_host_defs(49);
 				generic_sql_query("UPDATE Statstable SET Value = 49 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 49:
+				debuglog("Updating FROM Schema version 49 TO Schema version 50","SQL");
+				generic_sql_query("ALTER TABLE Tracktable ADD COLUMN LinkChecked TINYINT(1) UNSIGNED DEFAULT 0", true);
+				generic_sql_query("UPDATE Statstable SET Value = 50 WHERE Item = 'SchemaVer'", true);
 				break;
 
 		}

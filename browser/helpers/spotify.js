@@ -127,6 +127,20 @@ var spotify = function() {
 			getInfo: function(id, success, fail, prio) {
 				var url = baseURL + '/v1/tracks/' + id;
 				spotify.request('', url, success, fail, prio);
+			},
+
+			checkLinking: function(id, success, fail, prio) {
+				var url = baseURL + '/v1/tracks/' + id + '?market='+prefs.lastfm_country_code;
+				spotify.request('', url, success, fail, prio);
+			}
+
+		},
+
+		tracks: {
+
+			checkLinking: function(ids, success, fail, prio) {
+				var url = baseURL + '/v1/tracks?ids='+ids.join(',')+'&market='+prefs.lastfm_country_code;
+				spotify.request('', url, success, fail, prio);
 			}
 
 		},

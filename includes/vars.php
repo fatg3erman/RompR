@@ -3,7 +3,7 @@
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 49);
+define('ROMPR_SCHEMA_VERSION', 50);
 define('ROMPR_VERSION', '1.24');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
@@ -115,6 +115,10 @@ $prefs = array(
     "mpd_password" => "",
     "unix_socket" => '',
     "smartradio_chunksize" => 5,
+    "linkchecker_nextrun" => 0,
+    "linkchecker_isrunning" => false,
+    "linkchecker_frequency" => 604800000,
+    "linkchecker_polltime" => 5000,
 
     // Things that could be set on a per-user basis but need to be known by the backend
     "displaycomposer" => true,

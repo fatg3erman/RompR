@@ -813,6 +813,7 @@ function doPlaylist($playlist, $limit) {
 			}
 			break;
 	}
+	$sqlstring .= ' AND (LinkChecked = 0 OR LinkChecked = 2)';
 	if ($collection_type == 'mopidy' && $prefs['player_backend'] == 'mpd') {
 		$sqlstring .= ' AND Uri LIKE "local:%"';
 	}

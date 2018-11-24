@@ -915,4 +915,100 @@ var syncLastFMPlaycounts = function() {
 
 }();
 
+var spotifyLinkChecker = function() {
+
+    var timer = null;
+    var tracks;
+
+    function getNextUriToCheck() {
+        metaHandlers.genericAction('getlinktocheck', gotLinkToCheck, goneTitsUp);
+    }
+
+    function gotLinkToCheck(data) {
+        if (data.length > 0) {
+            debug.trace('SPOTICHECKER',"Got next tracks to check", data);
+            tracks = data;
+            var ids = new Array();
+            for (var i in data) {
+                ids.push(data[i].Uri.replace(/spotify:track:/, ''));
+            }
+            spotify.tracks.checkLinking(ids, gotSpotiResponse, gotNoSpotiResponse, false);
+        } else {
+            debug.mark("SPOTICHECKER","No more tracks to check");
+            prefs.save({linkchecker_isrunning: false});
+        }
+    }
+
+    function goneTitsUp(data) {
+        debug.error('SPOTICHECKER',"Nothing", data);
+    }
+
+    function gotSpotiResponse(response) {
+        debug.debug("SPOTICHECKER","Response from Spotify",response);
+        var callback = spotifyLinkChecker.setTimer;
+        var update_info = new Array();
+        for (var i = 0; i < tracks.length; i++) {
+            track = response.tracks[i];
+            if (track) {
+                if (track.is_playable) {
+                    debug.trace("SPOTICHECKER", "Track is playable");
+                    update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: track.uri, status: 2});
+                } else {
+                    debug.blurt("SPOTICHECKER", "Track is NOT playable", track.album.name, track.name);
+                    if (track.restrictions) {
+                        debug.mark("SPOTICHECKER", "Track restrictions :",track.restrictions.reason)
+                    }
+                    if (track.linked_from) {
+                        debug.mark("SPOTICHECKER", "Track was linked from",track.linked_from);
+                    } else {
+                        debug.mark("SPOTICHECKER", "Track has no linked_from either. Bloody Spotify");
+                    }
+                    // callback = doneOK;
+                    update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: track.uri, status: 3});
+                }
+            } else {
+                debug.warn("SPOTICHECKER","No data from Spotify for TTindex",tracks[i]['TTindex'])
+                update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: track.uri, status: 3});
+            }
+        }
+        metaHandlers.genericAction(update_info, callback, goneTitsUp);
+    }
+
+    function doneOK(data) {
+        debug.log("SPOTICHECKER","Link Checked OK");
+    }
+
+    function gotNoSpotiResponse(data) {
+        debug.error("SPOTICHECKER","Error Response from Spotify",data);
+    }
+
+    function updateNextRunTime() {
+        prefs.save({linkchecker_nextrun: Date.now() + prefs.linkchecker_frequency, linkchecker_isrunning: true});
+    }
+
+    return {
+
+        setTimer: function() {
+            clearTimeout(timer);
+            timer = setTimeout(getNextUriToCheck, prefs.linkchecker_polltime);
+        },
+
+        initialise: function() {
+            if (prefs.linkchecker_isrunning) {
+                debug.mark("SPOTICHECKER","Link Checker Continuing");
+                updateNextRunTime();
+                spotifyLinkChecker.setTimer();
+            } else {
+                if (Date.now() > prefs.linkchecker_nextrun) {
+                    debug.mark("SPOTICHECKER","Link Checker Restarting");
+                    updateNextRunTime();
+                    metaHandlers.genericAction('resetlinkcheck', spotifyLinkChecker.setTimer, goneTitsUp);
+                }
+            }
+        }
+
+    }
+
+}();
+
 

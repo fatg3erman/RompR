@@ -28,7 +28,6 @@ $current_song = array();
 $playcount_updated = false;
 $returninfo = array();
 $dummydata = array('dummy' => 'baby');
-$browser_id = 'romonitor'.getmypid().time();
 close_database();
 register_shutdown_function('close_mpd');
 // Using the IDLE subsystem of MPD and mopidy reduces repeated connections, which helps a lot
@@ -110,7 +109,6 @@ while (true) {
             $player = $prefs['currenthost'];
             $radiomode = $prefs['multihosts']->{$player}->radioparams->radiomode;
             $radioparam = $prefs['multihosts']->{$player}->radioparams->radioparam;
-            $radiomaster = $prefs['multihosts']->{$player}->radioparams->radiomaster;
             $playlistlength = $mpd_status['playlistlength'];
             debuglog("PLaylist length is ".$playlistlength,"ROMONITOR",9);
             switch ($radiomode) {
@@ -119,14 +117,14 @@ while (true) {
                 case 'faveAlbums':
                 case 'recentlyaddedtracks':
                     debuglog("Checking Smart Radio Mode","ROMONITOR");
-                    if ($playlistlength < 3 && $radiomaster != $browser_id) {
-                        $radiomaster = $browser_id;
+                    if ($playlistlength < 3) {
+                        // Note : We never actually take over, just keep an eye and top it up if
+                        // it starts to run out. This way any browser can easily take back control
+                        // Also, taking over would require us to have write access to prefs.var which is
+                        // problematic on some systems, especially if something like SELinux is enabled
                         debuglog("Smart Radio Master has gone away. Taking Over","ROMONITOR",5);
-                        $prefs['multihosts']->{$player}->radioparams->radiomaster = $browser_id;
-                        savePrefs();
-                    }
-                    $tracksneeded = $prefs['smartradio_chunksize'] - $playlistlength  + 1;
-                    if ($radiomaster == $browser_id) {
+                        $radiomaster = $browser_id;
+                        $tracksneeded = $prefs['smartradio_chunksize'] - $playlistlength  + 1;
                         debuglog("Adding ".$tracksneeded." from ".$radiomode,"ROMONITOR",6);
                         $tracks = doPlaylist($radioparam, $tracksneeded);
                         $cmds = array();

@@ -116,6 +116,20 @@ foreach($params as $p) {
 			$returninfo = $dummydata;
 			break;
 
+		case 'getlinktocheck':
+			$returninfo = getLinkToCheck();
+			break;
+
+		case 'updatelinkcheck':
+			updateCheckedLink($p['ttindex'], $p['uri'], $p['status']);
+			$returninfo = $dummydata;
+			break;
+
+		case 'resetlinkcheck':
+			resetLinkCheck();
+			$returninfo = $dummydata;
+			break;
+
 		case 'get':
 		case 'inc':
 		case "add":
@@ -588,6 +602,26 @@ function spotifyAlbumId($album) {
 	} else {
 		return $album['id'];
 	}
+}
+
+function getLinkToCheck() {
+	// LinkChecked:
+	// 0 = Not Checked, Assumed Playable or Playable at last check
+	// 1 = Not Checked, Unplayable at last check
+	// 2 = Checked, Playabale
+	// 3 = Checked, Unplayable
+	return generic_sql_query("SELECT TTindex, Uri, LinkChecked FROM Tracktable WHERE Uri LIKE 'spotify:%' AND Hidden = 0 AND isSearchResult < 2 AND LinkChecked < 2 ORDER BY TTindex ASC LIMIT 25");
+}
+
+function updateCheckedLink($ttindex, $uri, $status) {
+	debuglog("Updating Link Check For TTindex ".$ttindex." ".$uri ,"METADATA", 7);
+	sql_prepare_query(true, null, null, null,
+		"UPDATE Tracktable SET LinkChecked = ?, Uri = ? WHERE TTindex = ?", $status, $uri, $ttindex);
+}
+
+function resetLinkCheck() {
+	generic_sql_query("UPDATE Tracktable SET LinkChecked = 0 WHERE LinkChecked = 2");
+	generic_sql_query("UPDATE Tracktable SET LinkChecked = 1 WHERE LinkChecked = 3");
 }
 
 ?>
