@@ -310,6 +310,7 @@ var info_lastfm = function() {
             }
 
             function doUserLoved(flag) {
+				debug.mark("LASTFM","Doing UserLoved With Flgas at",flag);
                 var li = $('li[name="userloved"]');
 				li.empty();
                 if (flag) {
@@ -325,7 +326,7 @@ var info_lastfm = function() {
 					li.append($('<b>').html(language.gettext("lastfm_loved")+': ')).append(language.gettext("label_no")+'&nbsp;&nbsp;&nbsp;')
 					li.append($('<i>', {
 						title: language.gettext("lastfm_lovethis"),
-						class: "icon-heart smallicon infoclick clickunlove tooltip notloved"
+						class: "icon-heart smallicon infoclick clicklove tooltip notloved"
 					}));
 					if (displaying) {
                     	$('#love').removeClass('notloved').addClass('notloved').attr('title', language.gettext("lastfm_lovethis")).off('click').on('click', nowplaying.love).stopSpinner();
