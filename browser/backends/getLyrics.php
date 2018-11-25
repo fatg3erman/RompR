@@ -5,16 +5,18 @@ include ("includes/functions.php");
 include ("international.php");
 include ("getid3/getid3.php");
 
-$fname = rawurldecode($_REQUEST['file']);
+$fname = $_POST['file'];
 $fname = preg_replace('/local:track:/','',$fname);
 $fname = preg_replace('#file://#','',$fname);
 $fname = 'prefs/MusicFolders/'.$fname;
+$artist = $_POST['artist'];
+$song = $_POST['song'];
 
 $getID3 = new getID3;
 $output = null;
 debuglog("Looking for lyrics in ".$fname,"LYRICS");
-debuglog("  Artist is ".$_REQUEST['artist'],"LYRICS");
-debuglog("  Song is ".$_REQUEST['song'],"LYRICS");
+debuglog("  Artist is ".$artist,"LYRICS");
+debuglog("  Song is ".$artist,"LYRICS");
 
 if (file_exists($fname)) {
 	debuglog("File Exists ".$fname,"LYRICS");
@@ -35,7 +37,7 @@ if (file_exists($fname)) {
 }
 
 if ($output == null) {
-	$uri = "http://lyrics.wikia.com/api.php?func=getSong&artist=".urlencode($_REQUEST['artist'])."&song=".urlencode($_REQUEST['song'])."&fmt=xml";
+	$uri = "http://lyrics.wikia.com/api.php?func=getSong&artist=".urlencode($artist)."&song=".urlencode($song)."&fmt=xml";
 	debuglog("Trying ".$uri,"LYRICS");
 	$d = new url_downloader(array(
 		'url' => $uri,
@@ -45,9 +47,9 @@ if ($output == null) {
 	if ($d->get_data_to_file()) {
 		$l = simplexml_load_string($d->get_data());
 		if ($l->url) {
-			debuglog("  Now Getting ".$l->url,"LYRICS");
+			debuglog("  Now Getting ".html_entity_decode($l->url),"LYRICS");
 			$d2 = new url_downloader(array(
-				'url' => $l->url,
+				'url' => html_entity_decode($l->url),
 				'cache' => 'lyrics',
 				'return_data' => true
 			));

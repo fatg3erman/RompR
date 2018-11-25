@@ -10,7 +10,7 @@ var soundcloud = function() {
 			var tracknum = a[1];
 			debug.log("SOUNDCLOUD","Getting soundcloud info for track",tracknum);
 			$.ajax({
-				method: 'GET',
+				method: 'POST',
 				dataType: 'json',
 				url: 'browser/backends/getscdata.php',
 				data: {url: 'tracks/'+tracknum+'.json'},
@@ -25,7 +25,7 @@ var soundcloud = function() {
 		getUserInfo: function(userid, callback) {
 			debug.log("SOUNDCLOUD","Getting soundcloud info for user",userid);
 			$.ajax({
-				method: 'GET',
+				method: 'POST',
 				dataType: 'json',
 				url: 'browser/backends/getscdata.php',
 				data: {url: 'users/'+userid+'.json'},

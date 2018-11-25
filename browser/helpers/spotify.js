@@ -16,14 +16,14 @@ var spotify = function() {
 
 	return {
 
-		request: function(reqid, url, success, fail, prio) {
+		request: function(reqid, url, success, fail, prio, cache) {
 
 			if (prio && queue.length > 1) {
-				queue.splice(1, 0, {flag: false, reqid: reqid, url: url, success: success, fail: fail } );
+				queue.splice(1, 0, {flag: false, reqid: reqid, url: url, success: success, fail: fail, cache: cache } );
 			} else {
-				queue.push( {flag: false, reqid: reqid, url: url, success: success, fail: fail } );
+				queue.push( {flag: false, reqid: reqid, url: url, success: success, fail: fail, cache: cache } );
 			}
-			debug.debug("SPOTIFY","New request",url,throttle,queue.length);
+			debug.debug("SPOTIFY","New request",url,throttle,queue.length,cache);
 			if (throttle == null && queue.length == 1) {
 				spotify.getrequest();
 			}
@@ -112,8 +112,13 @@ var spotify = function() {
 				queue[0].flag = true;
 				debug.debug("SPOTIFY","Taking next request from queue",req.url);
 	            getit = $.ajax({
+					type: 'POST',
+					url: "browser/backends/getspdata.php",
 	                dataType: "json",
-	                url: "browser/backends/getspdata.php?uri="+encodeURIComponent(req.url),
+					data: {
+						url: req.url,
+						cache: req.cache
+					},
 	                success: spotify.requestSuccess,
 	                error: spotify.requestFail
 	            });
@@ -126,12 +131,12 @@ var spotify = function() {
 
 			getInfo: function(id, success, fail, prio) {
 				var url = baseURL + '/v1/tracks/' + id;
-				spotify.request('', url, success, fail, prio);
+				spotify.request('', url, success, fail, prio, true);
 			},
 
 			checkLinking: function(id, success, fail, prio) {
 				var url = baseURL + '/v1/tracks/' + id + '?market='+prefs.lastfm_country_code;
-				spotify.request('', url, success, fail, prio);
+				spotify.request('', url, success, fail, prio, false);
 			}
 
 		},
@@ -140,7 +145,7 @@ var spotify = function() {
 
 			checkLinking: function(ids, success, fail, prio) {
 				var url = baseURL + '/v1/tracks?ids='+ids.join(',')+'&market='+prefs.lastfm_country_code;
-				spotify.request('', url, success, fail, prio);
+				spotify.request('', url, success, fail, prio, false);
 			}
 
 		},
@@ -149,12 +154,12 @@ var spotify = function() {
 
 			getInfo: function(id, success, fail, prio) {
 				var url = baseURL + '/v1/albums/' + id;
-				spotify.request(id, url, success, fail, prio);
+				spotify.request(id, url, success, fail, prio, true);
 			},
 
 			getMultiInfo: function(ids, success, fail, prio) {
 				var url = baseURL + '/v1/albums/?ids=' + ids.join();
-				spotify.request('', url, success, fail, prio);
+				spotify.request('', url, success, fail, prio, true);
 			}
 
 		},
@@ -163,27 +168,27 @@ var spotify = function() {
 
 			getInfo: function(id, success, fail, prio) {
 				var url = baseURL + '/v1/artists/' + id;
-				spotify.request('', url, success, fail, prio);
+				spotify.request('', url, success, fail, prio, true);
 			},
 
 			getRelatedArtists: function(id, success, fail, prio) {
 				var url = baseURL + '/v1/artists/' + id + '/related-artists'
-				spotify.request('', url, success, fail, prio);
+				spotify.request('', url, success, fail, prio, true);
 			},
 
 			getTopTracks: function(id, success, fail, prio) {
 				var url = baseURL + '/v1/artists/' + id + '/top-tracks'
-				spotify.request('', url, success, fail, prio);
+				spotify.request('', url, success, fail, prio, true);
 			},
 
 			getAlbums: function(id, types, success, fail, prio) {
 				var url = baseURL + '/v1/artists/'+id+'/albums?album_type='+types+'&market='+prefs.lastfm_country_code+'&limit=50';
-				spotify.request(id, url, success, fail, prio);
+				spotify.request(id, url, success, fail, prio, true);
 			},
 
 			search: function(name, success, fail, prio) {
 				var url = baseURL + '/v1/search?q='+name.replace(/&|%|@|:|\+|'|\\|\*|"|\?|\//g,'').replace(/\s+/g,'+')+'&type=artist';
-				spotify.request('', url, success, fail, prio);
+				spotify.request('', url, success, fail, prio, true);
 			}
 
 		},
@@ -192,7 +197,7 @@ var spotify = function() {
 
 			getGenreSeeds: function(success, fail) {
 				var url = baseURL + '/v1/recommendations/available-genre-seeds';
-				spotify.request('', url, success, fail, true);
+				spotify.request('', url, success, fail, true, true);
 			},
 
 			getRecommendations: function(param, success, fail) {
@@ -202,7 +207,7 @@ var spotify = function() {
 				}
 				var paramstring = p.join('&');
 				var url = baseURL + '/v1/recommendations?'+paramstring;
-				spotify.request('', url, success, fail, false);
+				spotify.request('', url, success, fail, false, false);
 			}
 
 		}

@@ -634,7 +634,7 @@ var info_spotify = function() {
                             debug.shout(medebug,"No Allmusic artist bio link found");
                         } else {
                             debug.shout(medebug,"Getting allmusic bio from",artistmeta.allmusic.artistlink);
-                          $.get('browser/backends/getambio.php?url='+artistmeta.allmusic.artistlink)
+                          $.post('browser/backends/getambio.php', {url: artistmeta.allmusic.artistlink})
                              .done( function(data) {
                                 debug.log(medebug,"Got Allmusic Bio");
                                 if (displaying) $("#artistbio").html(data);

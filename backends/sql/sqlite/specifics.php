@@ -735,6 +735,11 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 50 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 50:
+				debuglog("Updating FROM Schema version 50 TO Schema version 51","SQL");
+				generic_sql_query("UPDATE Statstable SET Value = 51 WHERE Item = 'SchemaVer'", true);
+				break;
+
 		}
 		$sv++;
 	}
@@ -859,6 +864,54 @@ function create_playcount_triggers() {
 						FOR EACH ROW
 						BEGIN
 							UPDATE Playcounttable SET SyncCount = 1 WHERE TTindex = NEW.TTindex;
+						END;", true);
+
+}
+
+function create_update_triggers() {
+
+	debuglog("Creating Triggers for update operation","SQLITE",6);
+
+	generic_sql_query("CREATE TRIGGER rating_update_trigger AFTER UPDATE ON Ratingtable
+						FOR EACH ROW
+						BEGIN
+						UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
+						UPDATE Tracktable SET Hidden = 0, justAdded = 1 WHERE Hidden = 1 AND TTindex = NEW.TTindex;
+						UPDATE Tracktable SET isSearchResult = 1, LastModified = NULL, justAdded = 1 WHERE isSearchResult > 1 AND TTindex = NEW.TTindex;
+						END;", true);
+
+	generic_sql_query("CREATE TRIGGER rating_insert_trigger AFTER INSERT ON Ratingtable
+						FOR EACH ROW
+						BEGIN
+						UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
+						UPDATE Tracktable SET Hidden = 0, justAdded = 1 WHERE Hidden = 1 AND TTindex = NEW.TTindex;
+						UPDATE Tracktable SET isSearchResult = 1, LastModified = NULL, justAdded = 1 WHERE isSearchResult > 1 AND TTindex = NEW.TTindex;
+						END;", true);
+
+	generic_sql_query("CREATE TRIGGER tag_delete_trigger AFTER DELETE ON Tagtable
+						FOR EACH ROW
+						BEGIN
+						DELETE FROM TagListtable WHERE Tagindex = OLD.Tagindex;
+						END;", true);
+
+	generic_sql_query("CREATE TRIGGER tag_insert_trigger AFTER INSERT ON TagListtable
+						FOR EACH ROW
+						BEGIN
+						UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
+						UPDATE Tracktable SET Hidden = 0, justAdded = 1 WHERE Hidden = 1 AND TTindex = NEW.TTindex;
+						UPDATE Tracktable SET isSearchResult = 1, LastModified = NULL, justAdded = 1 WHERE isSearchResult > 1 AND TTindex = NEW.TTindex;
+						END;", true);
+
+	generic_sql_query("CREATE TRIGGER tag_remove_trigger AFTER DELETE ON TagListtable
+						FOR EACH ROW
+						BEGIN
+						UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = OLD.TTindex);
+						END;", true);
+
+	generic_sql_query("CREATE TRIGGER track_delete_trigger AFTER DELETE ON Tracktable
+						FOR EACH ROW
+						BEGIN
+						UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = OLD.Albumindex;
 						END;", true);
 
 }

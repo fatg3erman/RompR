@@ -5,10 +5,12 @@ include ("includes/functions.php");
 include ("international.php");
 include ("includes/spotifyauth.php");
 
-$uri = rawurldecode($_REQUEST['uri']);
+$uri = $_POST['url'];
+$cache = $_POST['cache'];
 debuglog("Downloading ".$uri,"SPOTIFY");
+debuglog("  Cache is ".$cache,"SPOTIFY");
 $filename = 'prefs/jsoncache/spotify/'.md5($uri);
-if (file_exists($filename)) {
+if ($cache == 'true' && file_exists($filename)) {
     debuglog("Returning cached data","SPOTIFY");
     header("Pragma: From Cache");
     print file_get_contents($filename);

@@ -11,14 +11,12 @@ var wikipedia = function() {
 		},
 
 		search: function(terms, successCallback, failCallback) {
-			var url = "browser/backends/info_wikipedia.php?";
-			for (var i in terms) {
-				url = url + i+'='+encodeURIComponent(terms[i])+"&";
-			}
-			url = url + "lang="+wikipedia.getLanguage()+"&layout="+skin;
+			terms.lang = wikipedia.getLanguage();
+			terms.layout = skin;
 		    $.ajax({
-		        type: "GET",
-		        url: url,
+		        type: "POST",
+		        url: "browser/backends/info_wikipedia.php",
+				data: terms,
 		        dataType: "xml",
 		        success: successCallback,
 		        error: failCallback
@@ -26,14 +24,12 @@ var wikipedia = function() {
 		},
 
 		getFullUri: function(terms, successCallback, failCallback) {
-			var url = "browser/backends/info_wikipedia.php?";
-			for (var i in terms) {
-				url = url + i+'='+encodeURIComponent(terms[i])+"&";
-			}
-			url = url + "lang="+wikipedia.getLanguage()+"&layout="+skin;
+			terms.lang = wikipedia.getLanguage();
+			terms.layout = skin;
 		    $.ajax({
-		        type: "GET",
-		        url: url,
+		        type: "POST",
+				url: "browser/backends/info_wikipedia.php",
+				data: terms,
 		        dataType: "xml",
 				success: successCallback,
 		        error: failCallback
@@ -63,10 +59,10 @@ var wikipedia = function() {
 		getWiki: function(link, successCallback, failCallback) {
 			$("#infopane").css({cursor:'wait'});
 			$("#infopane a").css({cursor:'wait'});
-			var url = "browser/backends/info_wikipedia.php?wiki="+link+"&layout="+skin;
 		    $.ajax({
-		        type: "GET",
-		        url: url,
+		        type: "POST",
+		        url: "browser/backends/info_wikipedia.php",
+				data: {wiki: link, layout: skin},
 		        dataType: "xml",
 				success: successCallback,
 		        error: failCallback,

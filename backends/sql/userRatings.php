@@ -608,7 +608,7 @@ function getLinkToCheck() {
 	// LinkChecked:
 	// 0 = Not Checked, Assumed Playable or Playable at last check
 	// 1 = Not Checked, Unplayable at last check
-	// 2 = Checked, Playabale
+	// 2 = Checked, Playable
 	// 3 = Checked, Unplayable
 	return generic_sql_query("SELECT TTindex, Uri, LinkChecked FROM Tracktable WHERE Uri LIKE 'spotify:%' AND Hidden = 0 AND isSearchResult < 2 AND LinkChecked < 2 ORDER BY TTindex ASC LIMIT 25");
 }

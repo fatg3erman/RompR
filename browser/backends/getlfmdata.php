@@ -4,8 +4,16 @@ include ("includes/vars.php");
 include ("includes/functions.php");
 include ("international.php");
 
-$uri = rawurldecode($_REQUEST['uri']);
-$use_cache = $_REQUEST['use_cache'] == 'true' ? true : false;
-getCacheData($uri, 'lastfm', $use_cache);
+$use_cache = $_POST['cache'] == 'true' ? true : false;
+$params = array();
+foreach ($_POST as $k => $v) {
+    if ($k != 'cache') {
+        $params[] = $k.'='.rawurlencode($v);
+    }
+}
 
+$url = "https://ws.audioscrobbler.com/2.0/?";
+$url .= implode('&', $params);
+debuglog("Getting URL ".$url, "LASTFM",8);
+getCacheData($url, 'lastfm', $use_cache);
 ?>

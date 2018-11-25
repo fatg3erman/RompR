@@ -7,10 +7,10 @@ var musicbrainz = function() {
 
 	return {
 
-		request: function(reqid, url, success, fail) {
+		request: function(reqid, data, success, fail) {
 
-			queue.push( {flag: false, reqid: reqid, url: url, success: success, fail: fail } );
-			debug.debug("MUSICBRAINZ","New request",url);
+			queue.push( {flag: false, reqid: reqid, data: data, success: success, fail: fail } );
+			debug.debug("MUSICBRAINZ","New request",data.url);
 			if (throttle == null && queue.length == 1) {
 				musicbrainz.getrequest();
 			}
@@ -28,10 +28,12 @@ var musicbrainz = function() {
             		return;
             	}
 				queue[0].flag = true;
-				debug.debug("MUSICBRAINZ","Taking next request from queue",req.url);
+				debug.debug("MUSICBRAINZ","Taking next request from queue",req.data);
 	            var getit = $.ajax({
+					method: 'POST',
+					url: "browser/backends/getmbdata.php",
+					data: req.data,
 	                dataType: "json",
-	                url: "browser/backends/getmbdata.php?uri="+encodeURIComponent(req.url),
 	                success: function(data) {
 	                	var c = getit.getResponseHeader('Pragma');
 	                	debug.debug("MUSICBRAINZ","Request success",c,data);
@@ -72,19 +74,28 @@ var musicbrainz = function() {
 		artist: {
 
 			getInfo: function(mbid, success, fail) {
-
-				var url = baseURL+'artist/'+mbid+'?inc=aliases+tags+ratings+release-groups+artist-rels+label-rels+url-rels+release-group-rels+annotation&fmt=json';
-				musicbrainz.request('', url, success, fail);
+				var data = {
+					url: baseURL+'artist/'+mbid,
+					inc: 'aliases+tags+ratings+release-groups+artist-rels+label-rels+url-rels+release-group-rels+annotation',
+					fmt: 'json'
+				};
+				musicbrainz.request('', data, success, fail);
 
 			},
 
 			getReleases: function(mbid, reqid, success, fail) {
-
 				var result = { id: reqid };
 				result['release-groups'] = new Array();
 				(function getAllReleaseGroups() {
-					var url = baseURL+'release-group?artist='+mbid+'&limit=100&fmt=json&inc=artist-credits+tags+ratings+url-rels+annotation&offset='+result['release-groups'].length;
-					musicbrainz.request(reqid, url, function(data) {
+					var data = {
+						url: baseURL+'release-group',
+						artist: mbid,
+						limit: 100,
+						fmt: 'json',
+						inc: 'artist-credits+tags+ratings+url-rels+annotation',
+						offset: result['release-groups'].length
+					};
+					musicbrainz.request(reqid, data, function(data) {
 						debug.debug("MUSICBRAINZ","Release group data:",data);
 						if (data.error) {
 							if (result['release-groups'].length > 0) {
@@ -113,14 +124,18 @@ var musicbrainz = function() {
 		album: {
 
 			getInfo: function(mbid, success, fail) {
-				var url = baseURL+'release/'+mbid+'?inc=annotation+tags+ratings+artists+labels+recordings+release-groups+artist-credits+url-rels+release-group-rels+recording-rels+artist-rels&fmt=json';
-				musicbrainz.request('', url, success, fail);
+				var data = {
+					url: baseURL+'release/'+mbid,
+					inc: 'annotation+tags+ratings+artists+labels+recordings+release-groups+artist-credits+url-rels+release-group-rels+recording-rels+artist-rels',
+					fmt: 'json'
+				};
+				musicbrainz.request('', data, success, fail);
 
 			},
 
 			getCoverArt: function(id, success, fail) {
-				var url = coverURL + id + "/";
-				musicbrainz.request('', url, success, fail);
+				var data = {url: coverURL + id + "/" };
+				musicbrainz.request('', data, success, fail);
 			},
 
 		},
@@ -128,27 +143,39 @@ var musicbrainz = function() {
 		releasegroup: {
 
 			getInfo: function(mbid, reqid, success, fail) {
-				var url = baseURL+'release-group/'+mbid+'?inc=artists+releases+artist-rels+label-rels+url-rels&fmt=json';
-				musicbrainz.request(reqid, url, success, fail);
+				var data = {
+					url: baseURL+'release-group/'+mbid,
+					inc: 'artists+releases+artist-rels+label-rels+url-rels',
+					fmt: 'json'
+				};
+				musicbrainz.request(reqid, data, success, fail);
 			}
 		},
 
 		track: {
 
 			getInfo: function(mbid, success, fail) {
-				var url = baseURL+'recording/'+mbid+'?inc=annotation+tags+ratings+releases+url-rels+work-rels+release-rels+release-group-rels+artist-rels+label-rels+recording-rels&fmt=json';
+				var data = {
+					url: baseURL+'recording/'+mbid,
+					inc: 'annotation+tags+ratings+releases+url-rels+work-rels+release-rels+release-group-rels+artist-rels+label-rels+recording-rels',
+					fmt: 'json'
+				};
 				var result = {};
 				// For a track, although there might be some good stuff in the recording data, what we really want
 				// is the associated work, if there is one, because that's where the wiki and discogs links will probably be.
-				musicbrainz.request('', url,
+				musicbrainz.request('', data,
 					function(data) {
 						result.recording = data;
 						debug.debug("MUSICBRAINZ","Scanning recording for work data");
 						for (var i in data.relations) {
 							if (data.relations[i].work) {
 								debug.debug("MUSICBRAINZ","Found work data",data.relations[i].work.id);
-								url = baseURL+'work/'+data.relations[i].work.id+'?inc=annotation+tags+ratings+url-rels+artist-rels&fmt=json';
-								musicbrainz.request('', url,
+								var newdata = {
+									url: baseURL+'work/'+data.relations[i].work.id,
+									inc: 'annotation+tags+ratings+url-rels+artist-rels',
+									fmt: 'json'
+								};
+								musicbrainz.request('', newdata,
 									function(workdata) {
 										debug.debug("MUSICBRAINZ","Got work data",workdata);
 										result.work = workdata;

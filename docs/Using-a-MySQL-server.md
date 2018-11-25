@@ -26,7 +26,7 @@ You must create the RompЯ database before you start. You will need your mysql r
     mysql -uroot -p
     CREATE DATABASE romprdb CHARACTER SET utf8 COLLATE utf8_unicode_ci;
     USE romprdb;
-    CREATE USER 'rompr' IDENTIFIED WITH mysql_native_password BY 'romprdbpass';    
+    CREATE USER 'rompr'@'%' IDENTIFIED WITH mysql_native_password BY 'romprdbpass';    
     GRANT ALL ON romprdb.* TO rompr;
     FLUSH PRIVILEGES;
     quit;

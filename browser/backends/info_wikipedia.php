@@ -5,34 +5,34 @@ include ("includes/functions.php");
 include ("international.php");
 $domain = "en";
 $userdomain = false;
-$mobile = (array_key_exists('layout', $_REQUEST) && ($_REQUEST['layout'] == 'phone' || $_REQUEST['layout'] == 'tablet')) ? true : false;
+$mobile = (array_key_exists('layout', $_POST) && ($_POST['layout'] == 'phone' || $_POST['layout'] == 'tablet')) ? true : false;
 // Switch off error reporting prevents us from having to repeatedly check
 // that the objects we're foreaching on actually exist. Errors get dumped
 // to stdout and mess up the xml response. We don't wanna see them.
 // Remember to switch this off if debugging this script.
 error_reporting(0);
 
-if (array_key_exists("lang", $_REQUEST)) {
-    $domain = $_REQUEST["lang"];
+if (array_key_exists("lang", $_POST)) {
+    $domain = $_POST["lang"];
 }
 debuglog("Using Language ".$domain,"WIKIPEDIA");
 
-if(array_key_exists("wiki", $_REQUEST)) {
+if (array_key_exists("wiki", $_POST)) {
     // An intra-wiki link from a page we're displaying
-    $a = preg_match('#(.*?)/(.*)#', rawurldecode($_REQUEST['wiki']), $matches);
+    $a = preg_match('#(.*?)/(.*)#', $_POST['wiki'], $matches);
     send_result(get_wikipedia_page( $matches[2], $matches[1].".wikipedia.org", false ));
 
-} else if(array_key_exists("uri", $_REQUEST)) {
+} else if (array_key_exists("uri", $_POST)) {
     // Full URI to get - eg this will be a link found from musicbrainz
-    $uri = rawurldecode($_REQUEST['uri']);
+    $uri = $_POST['uri'];
     debuglog("URI request ".$uri,"WIKIPEDIA");
     $a = preg_match('#https*://(.*?)/#', $uri, $matches);
     $xml_response = get_wikipedia_page(basename($uri), $matches[1], true);
     if ($userdomain == false) {
         // Found a page, but not in the user's chosen domain
-        if (array_key_exists('term', $_REQUEST)) {
+        if (array_key_exists('term', $_POST)) {
             debuglog("Page was retreieved but not in user's chosen language. Checking via a search","WIKIPEDIA");
-            $upage = wikipedia_find_exact($_REQUEST['term'], $domain);
+            $upage = wikipedia_find_exact($_POST['term'], $domain);
             if ($upage != '') {
                 $xml_response = $upage;
             }
@@ -40,31 +40,31 @@ if(array_key_exists("wiki", $_REQUEST)) {
     }
     send_result($xml_response);
 
-} else if (array_key_exists("artist", $_REQUEST)) {
+} else if (array_key_exists("artist", $_POST)) {
     // Search for an artist
-    $xml_response = getArtistWiki(rawurldecode($_REQUEST['artist']), rawurldecode($_REQUEST['disambiguation']));
+    $xml_response = getArtistWiki($_POST['artist'], $_POST['disambiguation']);
     if ($xml_response == null) {
-        send_failure(rawurldecode($_REQUEST['artist']));
+        send_failure($_POST['artist']);
     } else {
         send_result($xml_response);
     }
 
-} else if (array_key_exists("album", $_REQUEST)) {
+} else if (array_key_exists("album", $_POST)) {
     // Search for an album
-    debuglog("Doing album ".$_REQUEST['album'],"WIKIPEDIA");
-    $xml_response = getAlbumWiki(rawurldecode($_REQUEST['album']), rawurldecode($_REQUEST['albumartist']));
+    debuglog("Doing album ".$_POST['album'],"WIKIPEDIA");
+    $xml_response = getAlbumWiki($_POST['album'], $_POST['albumartist']);
     if ($xml_response == null) {
-        send_failure(rawurldecode($_REQUEST['album']));
+        send_failure($_POST['album']);
     } else {
         send_result($xml_response);
     }
 
-} else if (array_key_exists("track", $_REQUEST)) {
+} else if (array_key_exists("track", $_POST)) {
     // Search for a track
-    debuglog("Doing track ".$_REQUEST['track'],"WIKIPEDIA");
-    $xml_response = getTrackWiki(rawurldecode($_REQUEST['track']), rawurldecode($_REQUEST['trackartist']));
+    debuglog("Doing track ".$_POST['track'],"WIKIPEDIA");
+    $xml_response = getTrackWiki($_POST['track'], $_POST['trackartist']);
     if ($xml_response == null) {
-        send_failure(rawurldecode($_REQUEST['track']));
+        send_failure($_POST['track']);
     } else {
         send_result($xml_response);
     }

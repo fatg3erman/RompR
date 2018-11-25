@@ -180,17 +180,26 @@ function LastFM(user) {
 
     function LastFMGetRequest(options, cache, success, fail, reqid) {
         options.format = "json";
-        var url = "https://ws.audioscrobbler.com/2.0/";
-        var adder = "?";
-        var keys = getKeys(options);
-        for(var key in keys) {
-            url=url+adder+keys[key]+"="+encodeURIComponent(options[keys[key]]);
-            adder = "&";
-        }
-        queue.push({url: url, success: success, fail: fail, flag: false, cache: cache, reqid: reqid, retries: 0});
+        options.cache = cache;
+        queue.push({url: options, success: success, fail: fail, flag: false, cache: cache, reqid: reqid, retries: 0});
         if (throttle == null && queue.length == 1) {
             lastfm.getRequest();
         }
+    }
+
+    function addGetOptions(options, method) {
+        options.api_key = lastfm_api_key;
+        options.autocorrect = prefs.lastfm_autocorrect ? 1 : 0;
+        options.method = method;
+    }
+
+    var getKeys = function(obj) {
+        var keys = [];
+        for(var key in obj){
+            keys.push(key);
+        }
+        keys.sort();
+        return keys;
     }
 
     this.getRequest = function() {
@@ -263,8 +272,10 @@ function LastFM(user) {
                 });
             } else {
                 var getit = $.ajax({
+                    method: 'POST',
+                    url: 'browser/backends/getlfmdata.php',
+                    data: req.url,
                     dataType: 'json',
-                    url: 'browser/backends/getlfmdata.php?use_cache='+req.cache+'&uri='+encodeURIComponent(req.url),
                     success: function(data) {
                         var c = getit.getResponseHeader('Pragma');
                         debug.debug("LASTFM","Request success",c,data);
@@ -333,24 +344,6 @@ function LastFM(user) {
         if (throttle == null && queue.length == 1) {
             lastfm.getRequest();
         }
-    }
-
-    var getKeys = function(obj) {
-        var keys = [];
-        for(var key in obj){
-            keys.push(key);
-        }
-        keys.sort();
-        return keys;
-    }
-
-    function addGetOptions(options, method) {
-        for(var i in options) {
-            options[i] = encodeURIComponent(options[i]);
-        }
-        options.api_key = lastfm_api_key;
-        options.autocorrect = prefs.lastfm_autocorrect ? 1 : 0;
-        options.method = method;
     }
 
     function addSetOptions(options, method) {

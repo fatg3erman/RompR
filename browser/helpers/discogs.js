@@ -6,10 +6,10 @@ var discogs = function() {
 
 	return {
 
-		request: function(reqid, url, success, fail) {
+		request: function(reqid, data, success, fail) {
 
-			queue.push( {flag: false, reqid: reqid, url: url, success: success, fail: fail } );
-			debug.debug("DISCOGS","New request",url,"throttle is",throttle,"length is",queue.length);
+			queue.push( {flag: false, reqid: reqid, data: data, success: success, fail: fail } );
+			debug.debug("DISCOGS","New request",data.url,"throttle is",throttle,"length is",queue.length);
 			if (throttle == null && queue.length == 1) {
 				discogs.getrequest();
 			}
@@ -23,15 +23,16 @@ var discogs = function() {
 
             if (req !== undefined) {
             	if (req.flag) {
-            		debug.error("DISCOGS","Request just pulled from queue is already being handled",req.url);
+            		debug.error("DISCOGS","Request just pulled from queue is already being handled",req.data.url);
             		return;
             	}
 				queue[0].flag = true;
-				debug.debug("DISCOGS","Taking next request from queue",req.url);
+				debug.debug("DISCOGS","Taking next request from queue",req.data);
 	            var getit = $.ajax({
+					method: 'POST',
+					url: "browser/backends/getdidata.php",
+					data: req.data,
 	                dataType: "json",
-	                url: "browser/backends/getdidata.php?uri="+encodeURIComponent(req.url),
-
 		            success: function(data) {
 	                	var c = getit.getResponseHeader('Pragma');
 		            	debug.debug("DISCOGS", "Request Success",c,data);
@@ -78,19 +79,28 @@ var discogs = function() {
 		artist: {
 
 			search: function(name, success, fail) {
-				var url = baseURL+'database/search?type=artist&q='+name;
-				discogs.request('', url, success, fail);
+				var data = {
+					url: baseURL+'database/search',
+					type: 'artist',
+					q: name
+				}
+				discogs.request('', data, success, fail);
 			},
 
 			getInfo: function(reqid, id, success, fail) {
-				var url = baseURL+'artists/'+id;
-				discogs.request(reqid, url, success, fail);
+				var data = {url: baseURL+'artists/'+id};
+				discogs.request(reqid, data, success, fail);
 			},
 
 			getReleases: function(name, page, reqid, success, fail) {
 				debug.log("DISCOGS","Get Artist Releases",name,page);
-				var url = baseURL+'artists/'+name+'/releases?per_page=25&page='+page;
-				discogs.request(reqid, url, success, fail);
+				var data = {
+					url: baseURL+'artists/'+name+'/releases',
+					per_page: 25,
+					page: page
+
+				};
+				discogs.request(reqid, data, success, fail);
 			}
 		},
 
@@ -98,13 +108,17 @@ var discogs = function() {
 
 			getInfo: function(reqid, id, success, fail) {
 				// NOTE id must be either release/id or master/id
-				var url = baseURL+id+'?';
-				discogs.request(reqid, url, success, fail);
+				var data = {url: baseURL+id+'?'};
+				discogs.request(reqid, data, success, fail);
 			},
 
 			search: function(term, success, fail) {
-				var url = baseURL+'database/search?type=master&q='+term;
-				discogs.request('', url, success, fail);
+				var data = {
+					url: baseURL+'database/search',
+					type: 'master',
+					q: term
+				};
+				discogs.request('', data, success, fail);
 			}
 
 		},
@@ -113,13 +127,17 @@ var discogs = function() {
 
 			getInfo: function(reqid, id, success, fail) {
 				// NOTE id must be either release/id or master/id
-				var url = baseURL+id+'?';
-				discogs.request(reqid, url, success, fail);
+				var data = {url: baseURL+id+'?'};
+				discogs.request(reqid, data, success, fail);
 			},
 
 			search: function(term, success, fail) {
-				var url = baseURL+'database/search?type=master&q='+term;
-				discogs.request('', url, success, fail);
+				var data = {
+					url: baseURL+'database/search',
+					type: 'master',
+					q: term
+				};
+				discogs.request('', data, success, fail);
 			}
 
 		}

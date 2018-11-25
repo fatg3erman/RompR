@@ -969,7 +969,7 @@ var spotifyLinkChecker = function() {
                 }
             } else {
                 debug.warn("SPOTICHECKER","No data from Spotify for TTindex",tracks[i]['TTindex'])
-                update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: track.uri, status: 3});
+                update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: tracks[i]['Uri'], status: 3});
             }
         }
         metaHandlers.genericAction(update_info, callback, goneTitsUp);
