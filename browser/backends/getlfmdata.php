@@ -14,6 +14,5 @@ foreach ($_POST as $k => $v) {
 
 $url = "https://ws.audioscrobbler.com/2.0/?";
 $url .= implode('&', $params);
-debuglog("Getting URL ".$url, "LASTFM",8);
 getCacheData($url, 'lastfm', $use_cache);
 ?>

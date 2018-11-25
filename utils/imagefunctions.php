@@ -588,6 +588,7 @@ class gdImage {
         set_error_handler('gdImage::gd_handle_error', E_ALL);
 
         $this->filename = $filename;
+        debuglog("Checking File ".$filename,"GD-IMAGE");
         $imgtypes = imagetypes();
         try {
             $image_info = getimagesize($filename);
