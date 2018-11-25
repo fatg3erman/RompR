@@ -142,13 +142,7 @@ class url_downloader {
             curl_setopt($this->ch, CURLOPT_POST, count($this->options['postfields']));
             curl_setopt($this->ch, CURLOPT_POSTFIELDS, $fields_string);
         }
-    }
 
-    public function get_data_to_string() {
-        debuglog("Downloading ".$this->options['url'],"URL_DOWNLOADER");
-        if ($this->options['send_cache_headers']) {
-            header("Pragma: Not Cached");
-        }
         curl_setopt($this->ch, CURLOPT_HEADER, true);
         curl_setopt($this->ch, CURLOPT_HEADERFUNCTION, function($curl, $header)
             {
@@ -160,9 +154,19 @@ class url_downloader {
 
                 $name = ($header[0]);
                 $this->headerarray[$name] = trim($header[1]);
+                debuglog($name.' = '.trim($header[1]), "HEADERS", 9);
                 return $len;
             }
         );
+
+    }
+
+    public function get_data_to_string() {
+        debuglog("Downloading ".$this->options['url'],"URL_DOWNLOADER");
+        if ($this->options['send_cache_headers']) {
+            header("Pragma: Not Cached");
+        }
+
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, 1);
         $this->content = curl_exec($this->ch);
         return $this->get_final_info();
