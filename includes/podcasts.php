@@ -97,8 +97,21 @@ function doPodcastBase() {
     global $prefs;
     print '<div class="containerbox menuitem" style="padding-left:8px">';
     print '<div class="fixed" style="padding-right:4px"><i onclick="podcasts.toggleButtons()" class="icon-menu playlisticon clickicon tooltip" title="'.get_int_text('label_podcastcontrols').'"></i></div>';
-    print '<div class="configtitle textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div></div>';
+    print '<div class="configtitle textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div>';
+    print '</div>';
+
+    print '<div class="containerbox indent"><div class="expand">'.get_int_text("label_searchfor").' (iTunes)</div></div>';
+    print '<div class="containerbox indent">';
+    print '<div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" /></div>';
+    print '<button class="fixed searchbutton iconbutton" onclick="podcasts.search()"></button>';
+    print '</div>';
+
+    print '<div class="fullwidth noselection clearfix"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon padright" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
+    print '<div id="podcast_search" class="fullwidth noselection padright"></div>';
+
     print '<div id="podcastbuttons" class="invisible">';
+
+    print '<div class="spacer"></div>';
 
     print '<div id="cocksausage">';
     print '<div class="containerbox indent"><div class="expand">'.get_int_text("podcast_entrybox").'</div></div>';
@@ -153,16 +166,9 @@ function doPodcastBase() {
         }
     }
     print '</div>';
+    print '</div>';
 
     print '<div class="spacer"></div>';
-
-    print '<div class="containerbox indent"><div class="expand">'.get_int_text("label_searchfor").' (iTunes)</div></div>';
-    print '<div class="containerbox indent"><div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" /></div>';
-    print '<button class="fixed searchbutton iconbutton" onclick="podcasts.search()"></button></div>';
-
-    print '<div class="fullwidth noselection clearfix"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon padright" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
-    print '<div id="podcast_search" class="fullwidth noselection padright"></div>';
-    print '</div>';
 
     print '<div class="menuitem configtitle textcentre brick_wide sensiblebox" style="margin-left:8px;margin-top:1em;margin-bottom:1em"><b>Subscribed Podcasts</b></div>';
 }

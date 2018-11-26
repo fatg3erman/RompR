@@ -167,7 +167,7 @@ $languages['en'] = array (
 	"podcast_rss_error" => "Failed to download RSS feed",
 	"podcast_remove_error" => "Failed to delete podcast",
 	"podcast_general_error" => "Operation failed :(",
-	"podcast_entrybox" => "Enter a URL of a podcast RSS feed in this box, or drag its icon there",
+	"podcast_entrybox" => "Subscribe to RSS feed:",
 	// Podcast tooltips
 	"podcast_delete" => "Delete this Podcast",
 	"podcast_configure" => "Configure this Podcast",
