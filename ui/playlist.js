@@ -51,7 +51,7 @@ var playlist = function() {
     function personalRadioManager() {
 
         var self = this;
-        var mode = null;
+        var mode = '';
         var param = null;
         var radios = new Object();
         var rptimer = null;
@@ -198,13 +198,13 @@ var playlist = function() {
             },
 
             stop: function() {
-                prefs.save({radiomode: null, radioparam: null});
+                prefs.save({radiomode: '', radioparam: null});
                 layoutProcessor.setRadioModeHeader('');
                 playlist.repopulate();
             },
 
             isRunning: function() {
-                return (mode !== null);
+                return (mode != '');
             },
 
             loadFromUiElement: function(element) {
