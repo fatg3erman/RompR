@@ -1,0 +1,5 @@
+@import url("https://fonts.googleapis.com/css?family=Fahkwang:400,400i,700,700i&amp;subset=latin-ext,thai,vietnamese");
+body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input,button,select,option
+{
+	font-family: "Fahkwang", sans-serif;
+}

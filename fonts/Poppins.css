@@ -1,0 +1,5 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins:400,400i,700,700i&amp;subset=devanagari,latin-ext");
+body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input,button,select,option
+{
+	font-family: "Poppins", sans-serif;
+}

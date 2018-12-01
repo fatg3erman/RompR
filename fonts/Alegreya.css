@@ -1,0 +1,5 @@
+@import url("https://fonts.googleapis.com/css?family=Alegreya:400,400i,700,700i&amp;subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese");
+body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input,button,select,option
+{
+	font-family: "Alegreya", sans-serif;
+}
