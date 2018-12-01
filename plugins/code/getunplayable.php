@@ -21,7 +21,7 @@ $qstring = "SELECT
 	LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
 	LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
 	LEFT JOIN Tagtable AS t USING (Tagindex)
-    LEFT JOIN Playcounttable AS P ON tr.TTindex = p.TTindex
+    LEFT JOIN Playcounttable AS p ON tr.TTindex = p.TTindex
     JOIN Artisttable AS ta USING (Artistindex)
     JOIN Albumtable USING (Albumindex)
     JOIN Artisttable AS aa ON (Albumtable.AlbumArtistindex = aa.Artistindex)
