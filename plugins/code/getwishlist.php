@@ -86,7 +86,7 @@ function getWishlist() {
     foreach ($result as $obj) {
         debuglog("Found Track ".$obj['title']." by ".$obj['albumartist'],"WISHLIST");
 
-        print '<div class="containerbox vertical" id="walbum'.$obj['albumindex'].'">';
+        print '<div class="containerbox vertical robotlove" id="walbum'.$obj['albumindex'].'">';
         print '<div class="containerbox fixed">';
         if ($obj['SourceImage']) {
             print '<div class="smallcover fixed"><img class="smallcover" src="'.$obj['SourceImage'].'" /></div>';

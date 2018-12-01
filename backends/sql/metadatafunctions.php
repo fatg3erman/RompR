@@ -346,6 +346,10 @@ class romprmetadata {
 		romprmetadata::delete_track($data['wltrack']);
 	}
 
+	public static function deleteid($data) {
+		romprmetadata::delete_track($data['ttid']);
+	}
+
 	public static function getcharts($data) {
 		global $returninfo;
 		$returninfo['Artists'] = get_artist_charts();

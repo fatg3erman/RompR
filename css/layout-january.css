@@ -2188,3 +2188,7 @@ div.notification.new {
 div.unplayable {
 	opacity: 0.4;
 }
+
+.robotlove {
+	margin-bottom: 8px;
+}

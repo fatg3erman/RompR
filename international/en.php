@@ -678,7 +678,10 @@ $languages['en'] = array (
 	"label_lfm_syncing" => "Syncing Last.FM Playcounts",
 	"label_lfm_nonew" => "No new tracks have been added to the Music Collection since the last import on %s",
 	"config_smart_chunksize" => "Number of upcoming tracks to display",
-	"warning_smart_debug" => "WARNING! Running Personal Radio with debugging enabled may crash your browser!"
+	"warning_smart_debug" => "WARNING! Running Personal Radio with debugging enabled may crash your browser!",
+	"label_unplayabletracks" => "Unplayable Tracks",
+	"label_no_unplayable" => "There are no unplayable tracks in your Collection",
+	"label_removefromcol" => "Remove From Collection",
 );
 
 ?>
