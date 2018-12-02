@@ -68,6 +68,18 @@ var player = function() {
                     }
                 }
             });
+            for (var i in newhosts) {
+                if (prefs.multihosts.hasOwnProperty(i)) {
+                    newhosts[i].radioparams = prefs.multihosts[i].radioparams;
+                } else {
+                    newhosts[i].radioparams = {
+                        radiomode: '',
+                        radioparam: '',
+                        radiomaster: '',
+                        radioconsume: 0
+                    }
+                }
+            }
             if (error) {
                 return false;
             }
