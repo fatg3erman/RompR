@@ -69,7 +69,7 @@ var player = function() {
                 }
             });
             for (var i in newhosts) {
-                if (prefs.multihosts.hasOwnProperty(i)) {
+                if (prefs.multihosts.hasOwnProperty(i) && prefs.multihosts[i].hasOwnProperty('radioparams')) {
                     newhosts[i].radioparams = prefs.multihosts[i].radioparams;
                 } else {
                     newhosts[i].radioparams = {
