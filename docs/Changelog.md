@@ -11,7 +11,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Personalised Radio settings are remembered when you refresh the browser, so you can switch away from RompR and come back to it without losing that setting.
 * Current Personalised Radio settings are now visible to all browsers connected to the player, not just the one you started it from, so it can be stopped or changed from any browser.
 * If the browser that started a Personalised Radio station is closed, any other browser can take over populating it
-* romonitor can now populate [certain Personalised Radio stations](/RompR/RompR-And-Mobiles), meaning no browser is required once they have been started
+* romonitor can now populate [certain Personalised Radio stations](/RompR/Rompr-And-Mobiles), meaning no browser is required once they have been started
 * Fix romonitor bug where if you shut down romonitor it did not close its connection to the player, which would leave Mopidy in a state where it didn't respond to idle commands and so romonitor would not work when you restarted it
 * Add Spotify Track Checker, to scan the Collection for tracks which have been removed by Spotify and mark them as unplayable.
 * Add a plugin to view unplayable tracks and search for replacements
