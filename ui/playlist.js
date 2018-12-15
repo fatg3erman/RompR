@@ -202,12 +202,11 @@ var playlist = function() {
                 if (mode) {
                     radios[mode].func.stop();
                 }
-                prefs.save({radiomode: '', radioparam: null}, callback);
                 if (!callback) {
+                    callback = playlist.repopulate;
                     layoutProcessor.setRadioModeHeader('');
-                    debug.log("RADIO MANAGER","RepopulatÍing Playlist");
-                    playlist.repopulate();
                 }
+                prefs.save({radiomode: '', radioparam: null}, callback);
             },
 
             isRunning: function() {
