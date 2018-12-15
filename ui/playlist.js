@@ -114,8 +114,8 @@ var playlist = function() {
             debug.log("RADIO MANAGER","Repopulate Check : Final Track :",playlist.getfinaltrack()+1,"Fromend :",fromend,"Chunksize :",prefs.smartradio_chunksize,"Mode :",mode);
             if (reqid == last_reqid && mode && prefs.radiomaster == prefs.browser_id) {
                 // Don't do anything if we're waiting on playlist updates
-                debug.shout("RADIO MANAGER","Repopulating");
                 if (fromend < prefs.smartradio_chunksize) {
+                    debug.shout("RADIO MANAGER","Repopulating");
                     playlist.waiting();
                     radios[mode].func.populate(prefs.radioparam, tracksneeded);
                 }
@@ -197,10 +197,17 @@ var playlist = function() {
                 rptimer = setTimeout(actuallyRepopulate, 1000);
             },
 
-            stop: function() {
-                prefs.save({radiomode: '', radioparam: null});
-                layoutProcessor.setRadioModeHeader('');
-                playlist.repopulate();
+            stop: function(callback) {
+                debug.log("RADIO MANAGER","Stopping");
+                if (mode) {
+                    radios[mode].func.stop();
+                }
+                prefs.save({radiomode: '', radioparam: null}, callback);
+                if (!callback) {
+                    layoutProcessor.setRadioModeHeader('');
+                    debug.log("RADIO MANAGER","RepopulatÍing Playlist");
+                    playlist.repopulate();
+                }
             },
 
             isRunning: function() {
@@ -409,8 +416,8 @@ var playlist = function() {
         },
 
         clear: function() {
-            playlist.radioManager.stop();
-            player.controller.clearPlaylist();
+            debug.log("PLAYLIST","Stopping Radio Manager");
+            playlist.radioManager.stop(player.controller.clearPlaylist);
         },
 
         handleClick: function(event) {

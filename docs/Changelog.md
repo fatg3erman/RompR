@@ -3,6 +3,10 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.25
+* Bugfix: SmartRadio with CD Player Mode on would add entire albums
+* Bugfix: Clearing playlist with Smart Radio playing would clear then repopulate the playlist due to a race condition
+
 ## Version 1.24
 * Fix bug where 'Slave' status of a player was lost if that player was selected on the setup screen
 * Fix bug where Collection could be updated by a hotkey press even when the current player was a Slave

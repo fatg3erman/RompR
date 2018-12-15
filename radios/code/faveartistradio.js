@@ -21,13 +21,13 @@ var faveArtistRadio = function() {
                 } else {
 	                infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
                 	debug.warn("FAVE ARTIST RADIO", "Got no artists", data);
-                    playlist.radioManager.stop();
+                    playlist.radioManager.stop(null);
                 }
             },
             function() {
             	debug.error("FAVE ARTIST RADIO", "Failed to get artists", data);
                 infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
-                playlist.radioManager.stop();
+                playlist.radioManager.stop(null);
             }
         );
 	}

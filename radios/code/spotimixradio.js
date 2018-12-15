@@ -1,5 +1,5 @@
 var spotiMixRadio = function() {
-	
+
 	var populated = false;
 	var tuner;
 	var trackseeds;
@@ -77,7 +77,7 @@ var spotiMixRadio = function() {
 		        	function() {
 		        		debug.error(medebug,"Error Getting Seeds");
 		        		infobar.notify(infobar.ERROR,"Sorry, something went wrong");
-		        		playlist.radioManager.stop();
+		        		playlist.radioManager.stop(null);
 		        	}
 		        );
 			} else {
@@ -132,7 +132,7 @@ var spotiMixRadio = function() {
 				populateTuner(5);
 			} else {
 				infobar.notify(infobar.ERROR, "Insufficient Data To Get Recommendations. Play Some More Music!");
-        		playlist.radioManager.stop();
+        		playlist.radioManager.stop(null);
 			}
 		},
 

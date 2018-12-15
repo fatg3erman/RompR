@@ -19,13 +19,13 @@ var mostPlayed = function() {
                     populating = false;
                     player.controller.addTracks(data, playlist.radioManager.playbackStartPos(), null);
                 } else {
-                    playlist.radioManager.stop();
+                    playlist.radioManager.stop(null);
                 }
             },
             function() {
                 debug.error("MOST PLAYED","Database fail");
                 infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
-                playlist.radioManager.stop();
+                playlist.radioManager.stop(null);
                 populating = false;
             }
         );

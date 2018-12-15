@@ -19,12 +19,12 @@ var recentlyaddedtracks = function() {
                     addTracks();
                 } else {
                     infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
-                    playlist.radioManager.stop();
+                    playlist.radioManager.stop(null);
                 }
             },
             fail: function() {
                 infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
-                playlist.radioManager.stop();
+                playlist.radioManager.stop(null);
                 populated = false;
             }
         });
@@ -72,14 +72,14 @@ var recentlyaddedtracks = function() {
             } else {
                 debug.warn("SMARTPLAYLIST","Got NO tracks",data);
                 infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
-                playlist.radioManager.stop();
+                playlist.radioManager.stop(null);
                 running = false;
             }
         },
 
         Fail: function() {
             infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
-            playlist.radioManager.stop();
+            playlist.radioManager.stop(null);
             populated = false;
             running = false;
         }

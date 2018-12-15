@@ -28,13 +28,13 @@ var mixRadio = function() {
                 } else {
 	                infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
                 	debug.warn("MIX RADIO", "No Fave Artists Returned", data);
-                    playlist.radioManager.stop();
+                    playlist.radioManager.stop(null);
                 }
             },
             function(data) {
             	debug.error("MIX RADIO", "Failed to get artists", data);
                 infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
-                playlist.radioManager.stop();
+                playlist.radioManager.stop(null);
             }
         );
 	}

@@ -44,7 +44,7 @@ var spotiCrazyRadio = function() {
 					populateTuner(5);
 				} else {
 	        		infobar.notify(infobar.ERROR,"Please Choose Some Genres");
-	        		playlist.radioManager.stop();
+	        		playlist.radioManager.stop(null);
 				}
 			} else {
 				if (tagarray.length > 0) {

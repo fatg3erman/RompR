@@ -138,7 +138,7 @@ var lastFMArtistRadio = function() {
 			} else {
 				if (currpage == 1) {
 					infobar.notify(infobar.ERROR, "Got no data from Last.FM");
-					playlist.radioManager.stop();
+					playlist.radioManager.stop(null);
 				}
 			}
 		},

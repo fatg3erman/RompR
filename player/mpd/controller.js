@@ -449,7 +449,7 @@ function playerController() {
 		$.each(tracks, function(i,v) {
 			switch (v.type) {
 				case "uri":
-                    if (prefs.cdplayermode && at_pos === null) {
+                    if (prefs.cdplayermode && at_pos === null && !playlist.radioManager.isRunning()) {
                         cmdlist.push(['addtoend', v.name]);
                     } else {
     				    cmdlist.push(['add',v.name]);
@@ -482,7 +482,7 @@ function playerController() {
     		}
 		});
 		// Note : playpos will only be set if at_pos isn't, because at_pos is only set when dragging to the playlist
-        if (prefs.cdplayermode && at_pos === null) {
+        if (prefs.cdplayermode && at_pos === null && !playlist.radioManager.isRunning()) {
             cmdlist.unshift(["clear"]);
             cmdlist.unshift(["stop"]);
             if (abitofahack) {
