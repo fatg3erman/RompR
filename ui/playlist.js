@@ -199,13 +199,9 @@ var playlist = function() {
 
             stop: function(callback) {
                 debug.log("RADIO MANAGER","Stopping");
-                if (mode) {
-                    radios[mode].func.stop();
-                }
-                if (!callback) {
-                    callback = playlist.repopulate;
-                    layoutProcessor.setRadioModeHeader('');
-                }
+                // Not stricly ncessary, but does make the UI more responsive
+                layoutProcessor.setRadioModeHeader('');
+                callback = (callback || playlist.repopulate);
                 prefs.save({radiomode: '', radioparam: null}, callback);
             },
 

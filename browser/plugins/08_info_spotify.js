@@ -517,8 +517,9 @@ var info_spotify = function() {
 
 			this.artist = function() {
 
-                var triedWithoutBrackets = false;
+                var triedWithoutBrackets = 0;
                 var retries = 10;
+				var searchingfor = artistmeta.name;
 
                 function spotifyResponse(data) {
                     debug.trace(medebug, "Got Spotify Artist Data");
@@ -540,17 +541,7 @@ var info_spotify = function() {
 
                 function searchResponse(data) {
                     debug.trace(medebug,"Got Spotify Search Data",data);
-                    var m = data.artists.href.match(/\?query=(.+?)\&/);
-                    var match;
-                    // if (m && m[1]) {
-                    //     match = decodeURIComponent(m[1]);
-                    //     match = match.replace(/\+/g,' ');
-                    //     debug.trace(medebug,"We searched for : ",match);
-                    //     match = match.toLowerCase();
-                    // } else {
-                        // debug.warn(medebug, "Unable to match href for search artist name");
-                        match = artistmeta.name.toLowerCase();
-                    // }
+                    var match = searchingfor.toLowerCase();
                     artistmeta.spotify.possibilities = new Array();
                     for (var i in data.artists.items) {
                         if (data.artists.items[i].name.toLowerCase() == match) {
@@ -563,11 +554,21 @@ var info_spotify = function() {
                             });
                         }
                     }
+					if (artistmeta.spotify.possibilities.length == 0 && data.artists.items.length == 1) {
+						// only one match returned, it wasn't an exact match, but use it anyway
+						artistmeta.spotify.possibilities.push({
+                            name: data.artists.items[0].name,
+                            id: data.artists.items[0].id,
+                            image: (data.artists.items[0].images &&
+                                data.artists.items[0].images.length > 0) ?
+                            data.artists.items[0].images[data.artists.items[0].images.length-1].url : null
+                        });
+					}
                     if (artistmeta.spotify.possibilities.length > 0) {
                         artistmeta.spotify.currentposs = 0;
                         artistmeta.spotify.id = artistmeta.spotify.possibilities[0].id;
                         artistmeta.spotify.showing = "albums";
-                    }
+					}
                     if (artistmeta.spotify.id === undefined) {
                         searchFail();
                     } else {
@@ -577,23 +578,42 @@ var info_spotify = function() {
 
                 function searchFail() {
                     debug.trace("SPOTIFY PLUGIN","Couldn't find anything for",artistmeta.name);
-                    if (!triedWithoutBrackets) {
-                        triedWithoutBrackets = true;
-                        var test = artistmeta.name.replace(/ \(+.+?\)+$/, '');
-                        if (test != artistmeta.name) {
-                            debug.trace("SPOTIFY PLUGIN","Searching instead for",test);
-                            search(test);
-                            return;
-                        }
-                    }
-                    artistmeta.spotify = { artist: {    error: '<h3 align="center">'+
-                                                            language.gettext("label_noartistinfo")+
-                                                            '</h3>',
-                                                        name: artistmeta.name,
-                                                        external_urls: { spotify: '' }
-                                                    }
-                                        };
-                    self.artist.doBrowserUpdate();
+					var test;
+					switch (triedWithoutBrackets) {
+						case 0:
+							triedWithoutBrackets = 1;
+	                        test = artistmeta.name.replace(/ \(+.+?\)+$/, '');
+	                        if (test != artistmeta.name) {
+								searchingfor = test;
+	                            debug.trace("SPOTIFY PLUGIN","Searching instead for",test);
+	                            search(test);
+								return;
+							}
+							// Fall Through
+
+						case 1:
+							triedWithoutBrackets = 2;
+							test = artistmeta.name.split(/ & | and /)[0];
+							if (test != artistmeta.name) {
+								searchingfor = test;
+								debug.trace("SPOTIFY PLUGIN","Searching instead for",test);
+								search(test);
+								return;
+							}
+							// Fall Through
+
+						default:
+							artistmeta.spotify = { artist: {    error: '<h3 align="center">'+
+		                                                            language.gettext("label_noartistinfo")+
+		                                                            '</h3>',
+		                                                        name: artistmeta.name,
+		                                                        external_urls: { spotify: '' }
+		                                                    }
+		                                        };
+		                    self.artist.doBrowserUpdate();
+							break;
+
+					}
                 }
 
 				return {
