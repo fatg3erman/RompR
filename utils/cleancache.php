@@ -79,7 +79,7 @@ if ($mysqlc) {
                 // $count = sql_prepare_query(false, null, 'acount', 0, "SELECT COUNT(Albumindex) AS acount FROM Albumtable WHERE Image = ? AND Albumindex IN (SELECT DISTINCT Albumindex FROM Tracktable WHERE Hidden = 0 AND isSearchResult < 2 AND URI IS NOT NULL)", $image);
                 $count = sql_prepare_query(false, null, 'acount', 0, "SELECT COUNT(Albumindex) AS acount FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Image = ? AND Hidden = 0 AND isSearchResult < 2 AND URI IS NOT NULL", $image);
                 if ($count < 1) {
-                    debuglog("  Removing Unused Album image ".$image,"CACHE CLEANER");
+                    debuglog("  Removing Unused Album image ".$image,"CACHE CLEANER", 6);
                     $albumimage = new baseAlbumImage(array('baseimage' => $image));
                     array_map('unlink', $albumimage->get_images());
                 }
