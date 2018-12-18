@@ -69,13 +69,15 @@ if ($mysqlc) {
 
     if ($prefs['cleanalbumimages']) {
         $now = time();
+        // TODO: This is too slow
         debuglog("Checking albumart folder for unneeded images","CACHE CLEANER");
         $files = glob('albumart/small/*.*');
         foreach ($files as $image) {
             // Remove images for hidden tracks and search results. The missing check below will reset the db entries for those albums
             // Keep everything for 24 hours regardless, we might be using it in a playlist or something
             if (filemtime($image) < time()-86400) {
-                $count = sql_prepare_query(false, null, 'acount', 0, "SELECT COUNT(Albumindex) AS acount FROM Albumtable WHERE Image = ? AND Albumindex IN (SELECT DISTINCT Albumindex FROM Tracktable WHERE Hidden = 0 AND isSearchResult < 2 AND URI IS NOT NULL)", $image);
+                // $count = sql_prepare_query(false, null, 'acount', 0, "SELECT COUNT(Albumindex) AS acount FROM Albumtable WHERE Image = ? AND Albumindex IN (SELECT DISTINCT Albumindex FROM Tracktable WHERE Hidden = 0 AND isSearchResult < 2 AND URI IS NOT NULL)", $image);
+                $count = sql_prepare_query(false, null, 'acount', 0, "SELECT COUNT(Albumindex) AS acount FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Image = ? AND Hidden = 0 AND isSearchResult < 2 AND URI IS NOT NULL", $image);
                 if ($count < 1) {
                     debuglog("  Removing Unused Album image ".$image,"CACHE CLEANER");
                     $albumimage = new baseAlbumImage(array('baseimage' => $image));
@@ -142,7 +144,7 @@ if ($mysqlc) {
         debuglog("== Database Optimisation took ".format_time(time() - $now),"CACHE CLEANER",4);
     }
 
-    debuglog("Cache Cleaning Is Complete","CACHE CLEANER");
+    debuglog("Cache Cleaning Is Complete","CACHE CLEANER", 6);
 
 }
 
