@@ -45,6 +45,7 @@ debuglog("Cache has been cleaned","CACHE CLEANER");
 
 if ($mysqlc) {
 
+    $now = time();
     debuglog("Checking database for hidden album art","CACHE CLEANER");
     // Note the final line checking that image isn't in use by another album
     // it's an edge case where we have the album local but we also somehow have a spotify or whatever
@@ -63,8 +64,11 @@ if ($mysqlc) {
             generic_sql_query("UPDATE Albumtable SET Image = NULL, Searched = 0 WHERE Albumindex = ".$obj->Albumindex, true);
         }
     }
+    debuglog("== Check For Hidden Album Art took ".format_time(time() - $now),"CACHE CLEANER",4);
+
 
     if ($prefs['cleanalbumimages']) {
+        $now = time();
         debuglog("Checking albumart folder for unneeded images","CACHE CLEANER");
         $files = glob('albumart/small/*.*');
         foreach ($files as $image) {
@@ -79,8 +83,10 @@ if ($mysqlc) {
                 }
             }
         }
+        debuglog("== Check For Unneeded Images took ".format_time(time() - $now),"CACHE CLEANER",4);
 
         debuglog("Checking for orphaned radio station images","CACHE CLEANER");
+        $now = time();
         $files = glob('prefs/userstreams/*');
         foreach ($files as $image) {
             $count = generic_sql_query("SELECT COUNT(Stationindex) AS acount FROM RadioStationtable WHERE Image LIKE '".$image."%'", false, null, 'acount', 0);
@@ -89,8 +95,10 @@ if ($mysqlc) {
                 rrmdir($image);
             }
         }
+        debuglog("== Check For Orphaned Radio Station Images took ".format_time(time() - $now),"CACHE CLEANER",4);
 
         debuglog("Checking for orphaned podcast data","CACHE CLEANER");
+        $now = time();
         $files = glob('prefs/podcasts/*');
         $pods = sql_get_column("SELECT PODindex FROM Podcasttable", 'PODindex');
         foreach ($files as $file) {
@@ -99,9 +107,11 @@ if ($mysqlc) {
                 rrmdir($file);
             }
         }
+        debuglog("== Check For Orphaned Podcast Data took ".format_time(time() - $now),"CACHE CLEANER",4);
     }
 
     debuglog("Checking database for missing album art","CACHE CLEANER");
+    $now = time();
     $result = generic_sql_query("SELECT Albumindex, Albumname, Image, Domain FROM Albumtable WHERE Image NOT LIKE 'getRemoteImage%'", false, PDO::FETCH_OBJ);
     foreach ($result as $obj) {
         if ($obj->Image != '' && !file_exists($obj->Image)) {
@@ -116,15 +126,20 @@ if ($mysqlc) {
             sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Searched = ?, Image = ? WHERE Albumindex = ?", $searched, $image, $obj->Albumindex);
         }
     }
+    debuglog("== Check For Missing Album Art took ".format_time(time() - $now),"CACHE CLEANER",4);
 
     debuglog("Checking for orphaned Wishlist Sources","CACHE CLEANER");
+    $now = time();
     generic_sql_query("DELETE FROM WishlistSourcetable WHERE Sourceindex NOT IN (SELECT DISTINCT Sourceindex FROM Tracktable WHERE Sourceindex IS NOT NULL)");
+    debuglog("== Check For Orphaned Wishlist Sources took ".format_time(time() - $now),"CACHE CLEANER",4);
 
     // Compact the database
     if ($prefs['collection_type'] == 'sqlite') {
         debuglog("Vacuuming Database","CACHE CLEANER");
+        $now = time();
         generic_sql_query("VACUUM", true);
         generic_sql_query("PRAGMA optimize", true);
+        debuglog("== Database Optimisation took ".format_time(time() - $now),"CACHE CLEANER",4);
     }
 
     debuglog("Cache Cleaning Is Complete","CACHE CLEANER");
