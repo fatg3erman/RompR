@@ -456,7 +456,7 @@ function refreshPodcast($podid) {
             $podid);
         sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET New=?, JustUpdated=?, Listened = 0 WHERE PODindex=?", 1, 0, $podid);
     } else {
-        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET New=?, JustUpdated=? WHERE PODindex=?", 0, 0, $podid);
+        sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET JustUpdated=? WHERE PODindex=?", 0, $podid);
         sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Description=?, LastUpdate=?, DaysLive=?, LastPubDate=? WHERE PODindex=?",
             $podcast['Description'],
             calculate_best_update_time($podcast),
