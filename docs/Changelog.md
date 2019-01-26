@@ -8,6 +8,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Bugfix: SmartRadio with CD Player Mode on would add entire albums
 * Bugfix: Clearing playlist with Smart Radio playing would clear then repopulate the playlist due to a race condition
 * Spotify Info Panel is now more likely to find a match for the artist
+* The process that cleans the backend cache is now 8 times faster
 
 ## Version 1.24
 
