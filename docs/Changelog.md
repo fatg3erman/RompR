@@ -3,6 +3,10 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.26
+
+* The setting for 'Ignore These prefixes When Sorting Artists' is now applied to Podcast Title and Publisher as well.
+
 ## Version 1.25
 
 * Bugfix: SmartRadio with CD Player Mode on would add entire albums
