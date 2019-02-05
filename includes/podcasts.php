@@ -185,7 +185,18 @@ function doPodcastList($subscribed) {
         if ($prefs['podcast_sort_'.$i] == 'new' || $prefs['podcast_sort_'.$i] == 'unlistened') {
             $sortarray[] = ' '.$prefs['podcast_sort_'.$i].' DESC';
         } else {
-            $sortarray[] = ' '.$prefs['podcast_sort_'.$i].' ASC';
+            if (count($prefs['nosortprefixes']) > 0) {
+    			$qqstring = "(CASE ";
+    			foreach($prefs['nosortprefixes'] AS $p) {
+    				$phpisshitsometimes = strlen($p)+2;
+    				$qqstring .= "WHEN LOWER(Podcasttable.".$prefs['podcast_sort_'.$i].") LIKE '".strtolower($p).
+    					" %' THEN LOWER(SUBSTR(Podcasttable.".$prefs['podcast_sort_'.$i].",".$phpisshitsometimes.")) ";
+    			}
+    			$qqstring .= "ELSE LOWER(Podcasttable.".$prefs['podcast_sort_'.$i].") END) ASC";
+                $sortarray[] = $qqstring;
+    		} else {
+                $sortarray[] = ' Podcasttable.'.$prefs['podcast_sort_'.$i].' ASC';
+            }
         }
     }
     $qstring .= implode(', ', $sortarray);
