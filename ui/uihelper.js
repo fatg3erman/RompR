@@ -252,16 +252,16 @@ var uiHelper = function() {
             } catch (err) {
                 var albumindex = v.id;
                 var reinsert = false;
-                $('#aalbum'+albumindex).html(v.tracklist);
-                // This may look slightly messy but re-insertgin the dropdown instead
+                $('#'+v.why+'album'+albumindex).html(v.tracklist);
+                // This may look slightly messy but re-inserting the dropdown instead
                 // of just removing it re-opening it is much cleaner from a user
                 // experience perspective.
-                var dropdown = $('#aalbum'+albumindex);
+                var dropdown = $('#'+v.why+'album'+albumindex);
                 if (dropdown.is(':visible')) {
                     reinsert = true;
                     dropdown.detach().html(v.tracklist);
                 }
-                uiHelper.findAlbumParent('aalbum'+albumindex).remove();
+                uiHelper.findAlbumParent(v.why+'album'+albumindex).remove();
                 switch (v.type) {
                     case 'insertAfter':
                         debug.log("Insert After",v.where);
@@ -274,10 +274,11 @@ var uiHelper = function() {
                         break;
                 }
                 if (reinsert) {
-                    uiHelper.findAlbumDisplayer('aalbum'+albumindex).find('.menu').toggleOpen();
-                    dropdown.insertAfter(uiHelper.findAlbumDisplayer('aalbum'+albumindex));
+                    uiHelper.findAlbumDisplayer(v.why+'album'+albumindex).find('.menu').toggleOpen();
+                    dropdown.insertAfter(uiHelper.findAlbumDisplayer(v.why+'album'+albumindex));
                     infobar.markCurrentTrack();
                 }
+                uiHelper.makeResumeBar(dropdown);
                 layoutProcessor.postAlbumActions();
             }
         },
@@ -426,12 +427,43 @@ var uiHelper = function() {
                     "filelist": 'filelist',
                     "radiolist": 'radiolist',
                     "podcastslist": 'podcastslist',
+                    "audiobooklist": 'audiobooklist',
                     "playlistslist": 'playlistslist',
                     "pluginplaylistslist": 'pluginplaylistslist'
                 }
             }
-        }
+        },
 
+        makeResumeBar: function(target) {
+            try {
+                layoutProcessor.makeResumeBar(target);
+            } catch(err) {
+                target.find('input.resumepos').each(function() {
+        			var pos = parseInt($(this).val());
+        			var duration = parseInt($(this).next().val());
+        			debug.log("PODCASTS", "Episode has a progress bar",pos,duration);
+        			var thething = $(
+        				'<div>',
+        				{
+        					class: 'containerbox fullwidth playlistrow2 dropdown-container podcastresume playable ',
+        					name: $(this).prev().attr('name')
+        				}
+        			).insertBefore($(this));
+        			thething.append('<div class="fixed padright">'+language.gettext('label_resume')+'</div>');
+        			var bar = $('<div>', {class: 'expand', style: "height: 0.5em"}).appendTo(thething);
+        			bar.rangechooser({range: duration, startmax: pos/duration, interactive: false});
+        		});
+
+            }
+        },
+
+        setupCollectionDisplay: function() {
+            try {
+                layoutProcessor.setupCollectionDisplay();
+            } catch (err) {
+
+            }
+        }
     }
 
 }();

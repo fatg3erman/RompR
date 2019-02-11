@@ -192,8 +192,8 @@ function prepare_returninfo() {
 					break;
 
 				case 'albumbyartist':
-					debuglog("    Creating Artist Banner","USERRATINGS",7);
 					if ($prefs['showartistbanners']) {
+						debuglog("    Creating Artist Banner","USERRATINGS",7);
 						$returninfo['modifiedartists'][] = do_artist_banner('a','album',$mod['AlbumArtistindex']);
 					}
 					break;
@@ -202,7 +202,7 @@ function prepare_returninfo() {
 	}
 
 	$at = microtime(true) - $t;
-	debuglog(" -- Finding removed artists took ".$at." seconds","BACKEND",8);
+	debuglog(" -- Finding modified artists took ".$at." seconds","BACKEND",8);
 
 	$t = microtime(true);
 	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
@@ -212,22 +212,23 @@ function prepare_returninfo() {
 			$returninfo['deletedalbums'][] = $mod['Albumindex'];
 		} else {
 			debuglog("  Album ".$mod['Albumindex']." was modified","USERRATINGS",6);
+			$prefix = check_album_is_album($mod['Albumindex']);
 			switch ($prefs['sortcollectionby']) {
 				case 'album':
 				case 'albumbyartist':
-					$r = do_albums_from_database('a', 'album', 'root', $mod['Albumindex'], false, false);
+					$r = do_albums_from_database($prefix, 'album', 'root', $mod['Albumindex'], false, false);
 					break;
 
 				case 'artist':
-					$r = do_albums_from_database('a', 'album', $mod['AlbumArtistindex'], $mod['Albumindex'], false, false);
+					$r = do_albums_from_database($prefix, 'album', $mod['AlbumArtistindex'], $mod['Albumindex'], false, false);
 					break;
 			}
-			$r['tracklist'] = do_tracks_from_database('a', 'album', $mod['Albumindex'], true);
+			$r['tracklist'] = do_tracks_from_database($prefix, 'album', $mod['Albumindex'], true);
 			$returninfo['modifiedalbums'][] = $r;
 		}
 	}
 	$at = microtime(true) - $t;
-	debuglog(" -- Finding removed albums took ".$at." seconds","BACKEND",8);
+	debuglog(" -- Finding modified albums took ".$at." seconds","BACKEND",8);
 
 	$t = microtime(true);
 	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex, Uri, TTindex FROM Tracktable JOIN Albumtable USING (Albumindex) WHERE justAdded = 1 AND Hidden = 0');
@@ -237,6 +238,17 @@ function prepare_returninfo() {
 	}
 	$at = microtime(true) - $t;
 	debuglog(" -- Finding added tracks took ".$at." seconds","BACKEND",8);
+}
+
+function check_album_is_album($albumindex) {
+	// See if the album is an album or an audiobook
+	$c = simple_query('COUNT(TTindex)', 'Tracktable', 'isAudiobook = 1 AND Albumindex', $albumindex, 0);
+	if ($c > 0) {
+		debuglog("    This is an audiobook",'USERRATINGS', 7);
+		return 'z';
+	} else {
+		return 'a';
+	}
 }
 
 function artist_albumcount($artistindex) {

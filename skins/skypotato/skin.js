@@ -184,6 +184,7 @@ var layoutProcessor = function() {
                     break;
 
                 case 'albumlist':
+                case 'audiobooklist':
                     if (prefs.sortcollectionby != 'artist') {
                         layoutProcessor.adjustBoxSizes();
                     }
@@ -254,9 +255,10 @@ var layoutProcessor = function() {
         sortFaveRadios: false,
         openOnImage: true,
 
-        changeCollectionSortMode: function() {
+        setupCollectionDisplay: function() {
             $('.collectionpanel.albumlist').remove();
             $('.collectionpanel.searcher').remove();
+            $('.collectionpanel.audiobooklist').remove();
             switch (prefs.sortcollectionby) {
                 case 'artist':
                     if ($('#collection').hasClass('containerbox')) {
@@ -269,7 +271,11 @@ var layoutProcessor = function() {
                             .removeClass('containerbox wrap collectionpanel').css('display', '')
                             .addClass('noborder')
                             .appendTo($('#searcher'));
-                        $('#collection, #searchresultholder').off('click').off('dblclick');
+                        $('#audiobooks').detach().empty()
+                            .removeClass('containerbox wrap collectionpanel').css('display', '')
+                            .addClass('noborder')
+                            .appendTo($('#audiobooklist'));
+                        $('#collection, #searchresultholder, #audiobooks').off('click').off('dblclick');
                     }
                     break;
 
@@ -285,9 +291,17 @@ var layoutProcessor = function() {
                             .removeClass('noborder')
                             .addClass('containerbox wrap collectionpanel').css('display', '')
                             .insertBefore($('#infoholder'));
+                        $('#audiobooks').empty().detach()
+                            .removeClass('noborder')
+                            .addClass('containerbox wrap collectionpanel').css('display', '')
+                            .insertBefore($('#infoholder'));
                     }
                     break;
             }
+        },
+
+        changeCollectionSortMode: function() {
+            layoutProcessor.setupCollectionDisplay();
             collectionHelper.forceCollectionReload();
         },
 
@@ -355,7 +369,7 @@ var layoutProcessor = function() {
             if (is_hidden != new_state) {
                 if (new_state && prefs.chooser == panel) {
                     $("#"+panel).fadeOut('fast');
-                    var s = ["albumlist", "specialplugins", "searcher", "filelist", "radiolist", "playlistslist", "podcastslist", "pluginplaylistslist"];
+                    var s = ["albumlist", "specialplugins", "searcher", "filelist", "radiolist", "audiobooklist", "playlistslist", "podcastslist", "pluginplaylistslist"];
                     for (var i in s) {
                         if (s[i] != panel && !prefs["hide_"+s[i]]) {
                             layoutProcessor.sourceControl(s[i]);
@@ -489,6 +503,14 @@ var layoutProcessor = function() {
                     case 'searcher':
                         $('.collectionpanel').hide(0);
                         $('#infopane #searchresultholder').show(0);
+                        if (prefs.sourceshidden) {
+                            layoutProcessor.expandInfo('left');
+                        }
+                        break;
+
+                    case 'audiobooklist':
+                        $('.collectionpanel').hide(0);
+                        $('#infopane #audiobooks').show(0);
                         if (prefs.sourceshidden) {
                             layoutProcessor.expandInfo('left');
                         }
@@ -680,6 +702,12 @@ var layoutProcessor = function() {
                     if (x.length == 0) {
                         t = $('<div>', {id: name, class: 'collectionpanel albumlist containerbox wrap noselection notfilled'}).insertBefore($('#infoholder'));
                     }
+                } else if (element.parent().prop('id') == 'audiobooks') {
+                    $('.collectionpanel.audiobooklist').remove();
+                    $('#audiobooks .highlighted').removeClass('highlighted');
+                    if (x.length == 0) {
+                        t = $('<div>', {id: name, class: 'collectionpanel audiobooklist containerbox wrap noselection notfilled'}).insertBefore($('#infoholder'));
+                    }
                 } else {
                     $('.collectionpanel.searcher').remove();
                     $('#searchresultholder .highlighted').removeClass('highlighted');
@@ -732,6 +760,7 @@ var layoutProcessor = function() {
             setDraggable('#filecollection');
             setDraggable('#searchresultholder');
             setDraggable("#podcastslist");
+            setDraggable("#audiobooks");
             setDraggable("#somafmlist");
             setDraggable("#bbclist");
             setDraggable("#communityradiolist");
@@ -798,6 +827,7 @@ var layoutProcessor = function() {
             $('.choose_filelist').on('click', function(){layoutProcessor.sourceControl('filelist')});
             $('.choose_radiolist').on('click', function(){layoutProcessor.sourceControl('radiolist')});
             $('.choose_podcastslist').on('click', function(){layoutProcessor.sourceControl('podcastslist')});
+            $('.choose_audiobooklist').on('click', function(){layoutProcessor.sourceControl('audiobooklist')});
             $('.choose_playlistslist').on('click', function(){layoutProcessor.sourceControl('playlistslist')});
             $('.choose_pluginplaylistslist').on('click', function(){layoutProcessor.sourceControl('pluginplaylistslist')});
             $('.choose_specialplugins').on('click', function(){layoutProcessor.sourceControl('specialplugins')});
@@ -848,8 +878,8 @@ var layoutProcessor = function() {
         insertAlbum: function(v) {
             var albumindex = v.id;
             $('#aalbum'+albumindex).html(v.tracklist);
-            var dropdown = $('#aalbum'+albumindex).is(':visible');
-            uiHelper.findAlbumDisplayer('aalbum'+albumindex).remove();
+            var dropdown = $('#'+v.why+'album'+albumindex).is(':visible');
+            uiHelper.findAlbumDisplayer(v.why+'album'+albumindex).remove();
             switch (v.type) {
                 case 'insertAfter':
                     debug.log("Insert After",v.where);
@@ -862,7 +892,7 @@ var layoutProcessor = function() {
                     break;
             }
             if (dropdown) {
-                uiHelper.findAlbumDisplayer('aalbum'+albumindex).find('.menu').trigger('click');
+                uiHelper.findAlbumDisplayer(v.why+'album'+albumindex).find('.menu').trigger('click');
                 infobar.markCurrentTrack();
             }
             layoutProcessor.postAlbumActions();

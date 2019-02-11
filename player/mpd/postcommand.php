@@ -127,7 +127,7 @@ if ($is_connected) {
                 case "resume":
                     debuglog("Adding Track ".$cmd[1],"POSTCOMMAND");
                     debuglog("  .. and seeking position ".$cmd[3]." to ".$cmd[2],"POSTCOMMAND");
-                    $cmds[] = join_command_string(array('add', $cmd[1]));
+                    $cmds[] = join_command_string(array('add', rawurldecode($cmd[1])));
                     $cmds[] = join_command_string(array('play', $cmd[3]));
                     $expected_state = 'play';
                     $do_resume_seek = array($cmd[3], $cmd[2]);

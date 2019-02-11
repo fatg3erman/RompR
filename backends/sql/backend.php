@@ -90,11 +90,11 @@ function create_new_track(&$data) {
 	if (sql_prepare_query(true, null, null, null,
 		"INSERT INTO
 			Tracktable
-			(Title, Albumindex, Trackno, Duration, Artistindex, Disc, Uri, LastModified, Hidden, isSearchResult, Sourceindex)
+			(Title, Albumindex, Trackno, Duration, Artistindex, Disc, Uri, LastModified, Hidden, isSearchResult, Sourceindex, isAudiobook)
 			VALUES
-			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		$data['title'], $data['albumindex'], $data['trackno'], $data['duration'], $data['trackai'],
-		$data['disc'], $data['uri'], $data['lastmodified'], $data['hidden'], $data['searchflag'], $data['sourceindex']))
+		$data['disc'], $data['uri'], $data['lastmodified'], $data['hidden'], $data['searchflag'], $data['sourceindex'], $data['isaudiobook']))
 	{
 		return $mysqlc->lastInsertId();
 	}
@@ -784,7 +784,25 @@ function albumartist_sort_query($flag) {
 	// Using GROUP BY is faster than using SELECT DISTINCT
 	// USING IN is faster than the double JOIN
 	global $prefs;
-	$sflag = ($flag == 'b') ? "AND isSearchResult > 0" : "AND isSearchResult < 2";
+	switch ($flag) {
+		case 'a':
+			$sflag = "AND isSearchResult < 2 AND isAudiobook = 0";
+			break;
+
+		case 'b':
+			$sflag = "AND isSearchResult > 0 AND isAudiobook = 0";
+			break;
+
+		case 'z':
+			$sflag = "AND isSearchResult < 2 AND isAudiobook = 1";
+			break;
+
+		case 'c':
+			// Special case for album art manager
+			$sflag = "AND isSearchResult < 2";
+			break;
+
+	}
 
 	$qstring = "SELECT Artistname, Artistindex
 					FROM Artisttable AS a
@@ -837,12 +855,13 @@ function do_artists_from_database($why, $what, $who) {
 }
 
 function get_list_of_artists() {
-	return generic_sql_query(albumartist_sort_query("a"));
+	return generic_sql_query(albumartist_sort_query("c"));
 }
 
 function album_sort_query($why, $what, $who) {
 	global $prefs;
 	$sflag = ($why == "b") ? "AND Tracktable.isSearchResult > 0" : "AND Tracktable.isSearchResult < 2";
+	$sflag .= ($why == 'z') ? " AND Tracktable.isAudiobook = 1" : " AND Tracktable.isAudiobook = 0";
 
 	$qstring = "SELECT Albumtable.*, Artisttable.Artistname FROM Albumtable JOIN Artisttable ON
 			(Albumtable.AlbumArtistindex = Artisttable.Artistindex) WHERE ";
@@ -904,6 +923,7 @@ function do_artist_banner($why, $what, $who) {
 function do_albums_from_database($why, $what, $who, $fragment = false, $use_artistindex = false, $force_artistname = false, $do_controlheader = true) {
 	global $prefs;
 	$singleheader = array();
+	$singleheader['why'] = $why;
 	if ($prefs['sortcollectionby'] == "artist") {
 		$singleheader['type'] = 'insertAtStart';
 		$singleheader['where'] = $why.'artist'.$who;
@@ -936,7 +956,7 @@ function do_albums_from_database($why, $what, $who, $fragment = false, $use_arti
 			print albumHeader($obj);
 		} else {
 			if ($obj['Albumindex'] != $fragment) {
-				$singleheader['where'] = 'aalbum'.$obj['Albumindex'];
+				$singleheader['where'] = $why.'album'.$obj['Albumindex'];
 				$singleheader['type'] = 'insertAfter';
 			} else {
 				$singleheader['html'] = albumHeader($obj);
@@ -1030,10 +1050,17 @@ function get_album_tracks_from_database($index, $cmd, $flag) {
 						"ORDER BY Disc, TrackNo;";
 			break;
 
+		case "z":
+			// z - Audiobooks
+			$action = "SELECT";
+			$sflag = "AND isSearchResult < 2 AND isAudiobook = 1";
+			$rflag = "";
+			break;
+
 		default:
 			// anything else - tracks from collection
 			$action = "SELECT";
-			$sflag = "AND isSearchResult < 2";
+			$sflag = "AND isSearchResult < 2 AND isAudiobook = 0";
 			$rflag = "";
 			break;
 	}
@@ -1086,6 +1113,7 @@ function do_tracks_from_database($why, $what, $whom, $fragment = false) {
 		"SELECT
 			".SQL_TAG_CONCAT." AS tags,
 			r.Rating AS rating,
+			pr.Progress AS progress,
 			tr.TTindex AS ttid,
 			tr.Title AS title,
 			tr.TrackNo AS trackno,
@@ -1102,6 +1130,7 @@ function do_tracks_from_database($why, $what, $whom, $fragment = false) {
 			LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
 			LEFT JOIN Tagtable AS t USING (Tagindex)
 			LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
+			LEFT JOIN Progresstable AS pr ON tr.TTindex = pr.TTindex
 			WHERE (".implode(' OR ', array_map('do_fiddle', $who)).")
 				AND uri IS NOT NULL
 				AND tr.Hidden = 0
@@ -1324,16 +1353,16 @@ function find_podcast_track_from_url($url) {
 function update_track_stats() {
 	debuglog("Updating Track Stats","MYSQL",7);
 	$t = microtime(true);
-	$ac = get_artist_count(ADDED_ALL_TIME);
+	$ac = get_artist_count(ADDED_ALL_TIME, 0);
 	update_stat('ArtistCount',$ac);
 
-	$ac = get_album_count(ADDED_ALL_TIME);
+	$ac = get_album_count(ADDED_ALL_TIME, 0);
 	update_stat('AlbumCount',$ac);
 
-	$ac = get_track_count(ADDED_ALL_TIME);
+	$ac = get_track_count(ADDED_ALL_TIME, 0);
 	update_stat('TrackCount',$ac);
 
-	$ac = get_duration_count(ADDED_ALL_TIME);
+	$ac = get_duration_count(ADDED_ALL_TIME, 0);
 	update_stat('TotalTime',$ac);
 	$at = microtime(true) - $t;
 	debuglog("Updating Track Stats took ".$at." seconds","BACKEND",8);
@@ -1347,28 +1376,28 @@ function get_stat($item) {
 	return simple_query('Value', 'Statstable', 'Item', $item, 0);
 }
 
-function get_artist_count($range) {
+function get_artist_count($range, $iab) {
 	$ac = generic_sql_query(
 		"SELECT COUNT(*) AS NumArtists FROM (SELECT AlbumArtistindex FROM Albumtable
 		INNER JOIN Tracktable USING (Albumindex) WHERE Uri IS NOT NULL
-		AND Hidden = 0 AND isSearchResult < 2 ".track_date_check($range, 'a')." GROUP BY AlbumArtistindex) AS t", false, null, 'NumArtists', 0);
+		AND Hidden = 0 AND isSearchResult < 2 AND isAudiobook = ".$iab." ".track_date_check($range, 'a')." GROUP BY AlbumArtistindex) AS t", false, null, 'NumArtists', 0);
 	return $ac;
 }
 
-function get_album_count($range) {
+function get_album_count($range, $iab) {
 	$ac = generic_sql_query(
 		"SELECT COUNT(*) AS NumAlbums FROM (SELECT Albumindex FROM Tracktable WHERE Uri IS NOT NULL
-		AND Hidden = 0 AND isSearchResult < 2 ".track_date_check($range, 'a')." GROUP BY Albumindex) AS t", false, null, 'NumAlbums', 0);
+		AND Hidden = 0 AND isSearchResult < 2 AND isAudiobook = ".$iab." ".track_date_check($range, 'a')." GROUP BY Albumindex) AS t", false, null, 'NumAlbums', 0);
 	return $ac;
 }
 
-function get_track_count($range) {
-	$ac = generic_sql_query("SELECT COUNT(*) AS NumTracks FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 ".track_date_check($range, 'a')." AND isSearchResult < 2", false, null, 'NumTracks', 0);
+function get_track_count($range, $iab) {
+	$ac = generic_sql_query("SELECT COUNT(*) AS NumTracks FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND isAudiobook = ".$iab." ".track_date_check($range, 'a')." AND isSearchResult < 2", false, null, 'NumTracks', 0);
 	return $ac;
 }
 
-function get_duration_count($range) {
-	$ac = generic_sql_query("SELECT SUM(Duration) AS TotalTime FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 ".track_date_check($range, 'a')." AND isSearchResult < 2", false, null, 'TotalTime', 0);
+function get_duration_count($range, $iab) {
+	$ac = generic_sql_query("SELECT SUM(Duration) AS TotalTime FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND isAudiobook = ".$iab." ".track_date_check($range, 'a')." AND isSearchResult < 2", false, null, 'TotalTime', 0);
 	if ($ac == '') {
 		$ac = 0;
 	}
@@ -1387,7 +1416,7 @@ function dumpAlbums($which) {
 
     global $divtype, $prefs;
 
-    $a = preg_match('/(a|b)(.*?)(\d+|root)/', $which, $matches);
+    $a = preg_match('/(a|b|z)(.*?)(\d+|root)/', $which, $matches);
 	if (!$a) {
 		print '<h3>'.get_int_text("label_general_error").'</h3>';
 		debuglog('Artist dump failed - regexp failed to match '.$which,"DUMPALBUMS",3);
@@ -1401,11 +1430,20 @@ function dumpAlbums($which) {
     switch ($who) {
     	case 'root':
 			print '<div class="sizer"></div>';
-	    	if ($why == 'a') {
-	    		print collectionStats();
-	    	} else {
-	    		searchStats();
-	    	}
+			switch ($why) {
+				case 'a':
+					print collectionStats();
+					break;
+
+				case 'b':
+					searchStats();
+					break;
+
+				case 'z':
+					print audiobookStats();
+					break;
+
+			}
         	$divtype = "album1";
         	switch ($what) {
         		case 'artist':
@@ -1419,10 +1457,14 @@ function dumpAlbums($which) {
 
         	}
 	        if ($count == 0) {
-	        	if ($why == 'a') {
-	        		emptyCollectionDisplay();
-	        	} else {
-		        	emptySearchDisplay();
+				switch ($why) {
+	        	 	case 'a':
+	        			emptyCollectionDisplay();
+						break;
+
+					case 'b':
+		        		emptySearchDisplay();
+						break;
 	        	}
 	        }
 	        break;
@@ -1450,12 +1492,23 @@ function collectionStats() {
 							format_time(get_stat('TotalTime'))
 						);
 	} else {
-		$html .= alistheader(get_artist_count($prefs['collectionrange']),
-							get_album_count($prefs['collectionrange']),
-							get_track_count($prefs['collectionrange']),
-							format_time(get_duration_count($prefs['collectionrange'])));
+		$html .= alistheader(get_artist_count($prefs['collectionrange'], 0),
+							get_album_count($prefs['collectionrange'], 0),
+							get_track_count($prefs['collectionrange'], 0),
+							format_time(get_duration_count($prefs['collectionrange'], 0)));
 	}
     $html .= '</div>';
+	return $html;
+}
+
+function audiobookStats() {
+	global $prefs;
+	$html = '<div class="brick brick_wide">';
+	$html .= alistheader(get_artist_count($prefs['collectionrange'], 1),
+						get_album_count($prefs['collectionrange'], 1),
+						get_track_count($prefs['collectionrange'], 1),
+						format_time(get_duration_count($prefs['collectionrange'], 1)));
+	$html .= "</div>";
 	return $html;
 }
 
@@ -1485,7 +1538,7 @@ function searchStats() {
 }
 
 function getItemsToAdd($which, $cmd = null) {
-    $a = preg_match('/(a|b|r|t|y|u)(.*?)(\d+|root)/', $which, $matches);
+    $a = preg_match('/(a|b|r|t|y|u|z)(.*?)(\d+|root)/', $which, $matches);
     if (!$a) {
         debuglog('Regexp failed to match '.$which,"GETITEMSTOADD",3);
         return array();
@@ -1601,14 +1654,14 @@ function prepareCollectionUpdate() {
 function prepare_findtracks() {
 	global $find_track, $update_track;
 	if ($find_track = sql_prepare_query_later(
-		"SELECT TTindex, Disc, LastModified, Hidden, isSearchResult, Uri FROM Tracktable WHERE Title=? AND ((Albumindex=? AND TrackNo=? AND Disc=?) OR (Artistindex=? AND Uri IS NULL))")) {
+		"SELECT TTindex, Disc, LastModified, Hidden, isSearchResult, Uri, isAudiobook FROM Tracktable WHERE Title=? AND ((Albumindex=? AND TrackNo=? AND Disc=?) OR (Artistindex=? AND Uri IS NULL))")) {
 	} else {
 		show_sql_error();
         exit(1);
 	}
 
 	if ($update_track = sql_prepare_query_later(
-		"UPDATE Tracktable SET LinkChecked=0, Trackno=?, Duration=?, Disc=?, LastModified=?, Uri=?, Albumindex=?, isSearchResult=?, Hidden=0, justAdded=1 WHERE TTindex=?")) {
+		"UPDATE Tracktable SET LinkChecked=0, Trackno=?, Duration=?, Disc=?, LastModified=?, Uri=?, Albumindex=?, isSearchResult=?, isAudiobook=?, Hidden=0, justAdded=1 WHERE TTindex=?")) {
 	} else {
 		show_sql_error();
         exit(1);
@@ -1743,6 +1796,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
     $disc = 0;
     $uri = null;
     $issearchresult = 0;
+	$isaudiobook = 0;
 
     // Why are we not checking by URI? That should be unique, right?
     // Well, er. no. They're not.
@@ -1767,6 +1821,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
     		$disc = $obj->Disc;
     		$issearchresult = $obj->isSearchResult;
     		$uri = $obj->Uri;
+			$isaudiobook = $obj->isAudiobook;
     		break;
     	}
     } else {
@@ -1790,6 +1845,8 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
     		($doing_search && $issearchresult == 0) ||
     		($trackobj->tags['Disc'] != $disc && $trackobj->tags['Disc'] !== '') ||
     		$hidden != 0 ||
+			($trackobj->tags['type'] == 'audiobook' && $isaudiobook == 0) ||
+			($trackobj->tags['type'] != 'audiobook' && $isaudiobook == 1) ||
     		$trackobj->tags['file'] != $uri) {
 
     		//
@@ -1803,6 +1860,8 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 		    	if (!$doing_search && $lastmodified !== $trackobj->tags['Last-Modified']) debuglog("    LastModified has changed: We have ".$lastmodified." but track has ".$trackobj->tags['Last-Modified'],"MYSQL",7);
 		    	if ($disc != $trackobj->tags['Disc']) debuglog("    Disc Number has changed: We have ".$disc." but track has ".$trackobj->tags['Disc'],"MYSQL",7);
 		    	if ($hidden != 0) debuglog("    It is hidden","MYSQL",7);
+				if ($trackobj->tags['type'] == 'audiobook' && $isaudiobook == 0) debuglog("    It needs to be marked as an Auidiobook", "MYSQL");
+				if ($trackobj->tags['type'] != 'audiobook' && $isaudiobook == 1) debuglog("    It needs to be un-marked as an Audiobook", "MYSQL");
 		    	if ($trackobj->tags['file'] != $uri) {
 		    		debuglog("    Uri has changed from : ".$uri,"MYSQL",7);
 		    		debuglog("                      to : ".$trackobj->tags['file'],"MYSQL",7);
@@ -1825,9 +1884,9 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 	    		debuglog("    It needs to be marked as a search result : Value ".$newsearchresult,"MYSQL",7);
 	    		$newlastmodified = $lastmodified;
 	    	}
-
+			$newisaudiobook = $trackobj->tags['type'] == 'audiobook' ? 1 : 0;
 			if ($update_track->execute(array($trackobj->tags['Track'], $trackobj->tags['Time'], $trackobj->tags['Disc'],
-					$newlastmodified, $trackobj->tags['file'], $albumindex,	$newsearchresult, $ttid))) {
+					$newlastmodified, $trackobj->tags['file'], $albumindex,	$newsearchresult, $newisaudiobook, $ttid))) {
 				$numdone++;
 			} else {
 				show_sql_error();
@@ -1872,7 +1931,8 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
             'ambid' => null,
             'domain' => null,
             'hidden' => 0,
-            'searchflag' => $sflag
+            'searchflag' => $sflag,
+			'isaudiobook' => $trackobj->tags['type'] == 'audiobook' ? 1 : 0
         );
         $ttid = create_new_track($params);
         $numdone++;

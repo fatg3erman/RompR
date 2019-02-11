@@ -34,18 +34,19 @@ var collectionHelper = function() {
             update_load_timer = setTimeout( pollAlbumList, 1000);
             update_load_timer_running = true;
         } else {
-            if (prefs.hide_filelist && !prefs.hide_albumlist) {
-                loadCollection('albums.php?rebuild=yes&dump='+collectionHelper.collectionKey('a'), null);
-            } else if (prefs.hidealbumlist && !prefs.hide_filelist) {
-                loadCollection(null, 'dirbrowser.php');
-            } else if (!prefs.hidealbumlist && !prefs.hide_filelist) {
-                loadCollection('albums.php?rebuild=yes&dump='+collectionHelper.collectionKey('a'), 'dirbrowser.php');
-            }
+            loadCollection(true);
+            loadFileBrowser();
         }
     }
 
-    function loadCollection(albums, files) {
-        if (albums != null) {
+    function loadCollection(rescan) {
+        if (!prefs.hide_albumlist) {
+            var albums = 'albums.php?';
+            if (rescan) {
+                albums += 'rebuild=yes&dump='+collectionHelper.collectionKey('a');
+            } else {
+                albums += 'item='+collectionHelper.collectionKey('a');
+            }
             debug.log("GENERAL","Loading Collection from URL",albums);
             $.ajax({
                 type: "GET",
@@ -75,6 +76,7 @@ var collectionHelper = function() {
                         infobar.removenotify(notify);
                         notify = false;
                     }
+                    loadAudiobooks();
                 },
                 error: function(data) {
                     clearTimeout(monitortimer);
@@ -98,11 +100,25 @@ var collectionHelper = function() {
                 }
             });
             monitortimer = setTimeout(checkUpdateMonitor,monitorduration);
+        } else {
+            loadAudiobooks();
         }
-        if (files != null) {
-            debug.log("GENERAL","Loading File Browser from URL",files);
-            $("#filecollection").load(files);
+    }
+
+    function loadAudiobooks() {
+        if (prefs.hide_audiobooklist) {
+            return false;
         }
+        $('#audiobooks').load('albums.php?item='+collectionHelper.collectionKey('z'));
+    }
+
+    function loadFileBrowser() {
+        if (prefs.hide_filelist) {
+            return false;
+        }
+        var files = 'dirbrowser.php';
+        debug.log("GENERAL","Loading File Browser from URL",files);
+        $("#filecollection").load(files);
     }
 
     function checkUpdateMonitor() {
@@ -206,6 +222,24 @@ var collectionHelper = function() {
 
     return {
 
+        rejigDoodahs: function(panel, visible) {
+            if (visible) {
+                switch (panel) {
+                    case 'albumlist':
+                        loadCollection(false);
+                        break;
+
+                    case 'filelist':
+                        loadFileBrowser();
+                        break;
+
+                    case 'audiobooklist':
+                        loadAudiobooks();
+                        break;
+                }
+            }
+        },
+
         disableCollectionUpdates: function() {
             $('button[name="donkeykong"]').off('click').css('opacity', '0.2');
             $('button[name="dinkeyking"]').off('click').css('opacity', '0.2');
@@ -217,6 +251,7 @@ var collectionHelper = function() {
         },
 
         forceCollectionReload: function() {
+            debug.log("COLLECTION", "Forcing Collection reload");
             collection_status = 0;
             collectionHelper.checkCollection(false, false);
         },
@@ -238,6 +273,7 @@ var collectionHelper = function() {
         },
 
         checkCollection: function(forceup, rescan) {
+            debug.log("COLLECTION", "checking collection. collection_status is",collection_status);
             if (forceup && player.updatingcollection) {
                 infobar.notify(infobar.ERROR, "Already Updating Collection!");
                 return;
@@ -258,13 +294,8 @@ var collectionHelper = function() {
                 $("#searchresultholder").html('');
                 scanFiles(rescan ? 'rescan' : 'update');
             } else {
-                if (prefs.hide_filelist && !prefs.hide_albumlist) {
-                    loadCollection('albums.php?item='+collectionHelper.collectionKey('a'), null);
-                } else if (prefs.hide_albumlist && !prefs.hide_filelist) {
-                    loadCollection(null, 'dirbrowser.php');
-                } else if (!prefs.hide_albumlist && !prefs.hide_filelist) {
-                    loadCollection('albums.php?item='+collectionHelper.collectionKey('a'), 'dirbrowser.php');
-                }
+                loadCollection(false);
+                loadFileBrowser();
             }
         },
 

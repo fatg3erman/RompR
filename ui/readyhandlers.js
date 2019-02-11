@@ -52,7 +52,7 @@ $(document).ready(function(){
     prefs.save({test_width: $(window).width(), test_height: $(window).height()});
     coverscraper = new coverScraper(0, false, false, prefs.downloadart);
     lastfm = new LastFM(prefs.lastfm_user);
-    layoutProcessor.changeCollectionSortMode();
+    uiHelper.setupCollectionDisplay();
     layoutProcessor.sourceControl(prefs.chooser);
     if (prefs.browser_id == null) {
         prefs.save({browser_id: Date.now()});
@@ -134,6 +134,7 @@ function createHelpLinks() {
     helplinks[language.gettext('label_searchfor')] = 'https://fatg3erman.github.io/RompR/Searching-For-Music';
     helplinks[language.gettext('button_internet_radio')] = 'https://fatg3erman.github.io/RompR/Internet-Radio';
     helplinks[language.gettext('label_podcasts')] = 'https://fatg3erman.github.io/RompR/Podcasts';
+    helplinks[language.gettext('label_audiobooks')] = 'https://fatg3erman.github.io/RompR/Audiobooks';
     helplinks[language.gettext('label_pluginplaylists')] = 'https://fatg3erman.github.io/RompR/Personalised-Radio';
     helplinks[language.gettext('label_lastfm')] = 'https://fatg3erman.github.io/RompR/LastFM';
     helplinks[language.gettext('config_players')] = 'https://fatg3erman.github.io/RompR/Using-Multiple-Players';

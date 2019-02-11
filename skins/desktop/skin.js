@@ -173,7 +173,7 @@ var layoutProcessor = function() {
             if (is_hidden != new_state) {
                 if (new_state && prefs.chooser == panel) {
                     $("#"+panel).fadeOut('fast');
-                    var s = ["albumlist", "searcher", "filelist", "radiolist", "podcastslist", "playlistslist", "pluginplaylistslist"];
+                    var s = ["albumlist", "searcher", "filelist", "radiolist", "audiobooklist", "podcastslist", "playlistslist", "pluginplaylistslist"];
                     for (var i in s) {
                         if (s[i] != panel && !prefs["hide_"+s[i]]) {
                             layoutProcessor.sourceControl(s[i]);
@@ -389,6 +389,7 @@ var layoutProcessor = function() {
             setDraggable('#filecollection');
             setDraggable('#searchresultholder');
             setDraggable("#podcastslist");
+            setDraggable("#audiobooks");
             setDraggable("#somafmlist");
             setDraggable("#bbclist");
             setDraggable("#communityradiolist");
@@ -462,6 +463,7 @@ var layoutProcessor = function() {
             $('.choose_filelist').on('click', function(){layoutProcessor.sourceControl('filelist')});
             $('.choose_radiolist').on('click', function(){layoutProcessor.sourceControl('radiolist')});
             $('.choose_podcastslist').on('click', function(){layoutProcessor.sourceControl('podcastslist')});
+            $('.choose_audiobooklist').on('click', function(){layoutProcessor.sourceControl('audiobooklist')});
             $('.choose_playlistslist').on('click', function(){layoutProcessor.sourceControl('playlistslist')});
             $('.choose_pluginplaylistslist').on('click', function(){layoutProcessor.sourceControl('pluginplaylistslist')});
             $('.open_albumart').on('click', openAlbumArtManager);

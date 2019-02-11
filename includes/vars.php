@@ -3,7 +3,7 @@
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 51);
+define('ROMPR_SCHEMA_VERSION', 53);
 define('ROMPR_VERSION', '1.26');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
@@ -119,6 +119,7 @@ $prefs = array(
     "linkchecker_isrunning" => false,
     "linkchecker_frequency" => 604800000,
     "linkchecker_polltime" => 5000,
+    "audiobook_directory" => '',
 
     // Things that could be set on a per-user basis but need to be known by the backend
     "displaycomposer" => true,
@@ -165,6 +166,7 @@ $prefs = array(
     "hide_radiolist" => false,
     "hide_podcastslist" => false,
     "hide_playlistslist" => false,
+    "hide_audiobooklist" => false,
     "hidebrowser" => false,
     "shownupdatewindow" => '',
     "scrolltocurrent" => false,

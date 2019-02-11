@@ -248,6 +248,7 @@ function doAlbumMenu(event, element, callback) {
                     } else if (self.find('input.expandartist').length > 0) {
                         getAllTracksForArtist(element, menutoopen)
                     }
+                    uiHelper.makeResumeBar(self);
                 });
             });
         } else {

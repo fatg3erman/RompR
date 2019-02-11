@@ -569,7 +569,7 @@ var playlist = function() {
                     } else if ($(element).hasClass('smartradio')) {
                         playlist.radioManager.loadFromUiElement($(element));
                     } else if ($(element).hasClass('podcastresume')) {
-                        var is_already_in_playlist = playlist.findIdByUri(uri);
+                        var is_already_in_playlist = playlist.findIdByUri(decodeURIComponent(uri));
                         if (is_already_in_playlist !== false) {
                             player.controller.do_command_list([
                                 ['playid', is_already_in_playlist],
@@ -662,10 +662,16 @@ var playlist = function() {
         },
 
         checkPodcastProgress: function() {
-            if (currentTrack.type == "podcast") {
-                var durationfraction = currentTrack.progress/currentTrack.duration;
-                var progresstostore = (durationfraction > 0.05 && durationfraction < 0.98) ? currentTrack.progress : 0;
-                podcasts.storePlaybackProgress({uri: currentTrack.location, progress: Math.round(progresstostore)});
+            if (player.status.state == 'play' || player.status.state == 'pause') {
+                if (currentTrack.type == "podcast") {
+                    var durationfraction = currentTrack.progress/currentTrack.duration;
+                    var progresstostore = (durationfraction > 0.05 && durationfraction < 0.98) ? currentTrack.progress : 0;
+                    podcasts.storePlaybackProgress({uri: currentTrack.location, progress: Math.round(progresstostore)});
+                } else if (currentTrack.type == 'audiobook') {
+                    var durationfraction = currentTrack.progress/currentTrack.duration;
+                    var progresstostore = (durationfraction > 0.05 && durationfraction < 0.98) ? currentTrack.progress : 0;
+                    nowplaying.storePlaybackProgress(Math.round(progresstostore), null);
+                }
             }
         },
 

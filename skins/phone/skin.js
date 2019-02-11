@@ -424,6 +424,7 @@ var layoutProcessor = function() {
                 "albumlist": 'albumlist',
                 "filelist": 'filelist',
                 "radiolist": 'radiolist',
+                "audiobooklist": "audiobooklist",
                 "podcastslist": 'podcastslist',
                 "playlistslist": 'playlistman',
                 "pluginplaylistslist": 'pluginplaylists'
@@ -592,6 +593,7 @@ var layoutProcessor = function() {
             $('.choose_filelist').on('click', function(){layoutProcessor.sourceControl('filelist')});
             $('.choose_radiolist').on('click', function(){layoutProcessor.sourceControl('radiolist')});
             $('.choose_podcastslist').on('click', function(){layoutProcessor.sourceControl('podcastslist')});
+            $('.choose_audiobooklist').on('click', function(){layoutProcessor.sourceControl('audiobooklist')});
             $('.choose_infopanel').on('click', function(){layoutProcessor.sourceControl('infopane')});
             $('.choose_playlistman').on('click', function(){layoutProcessor.sourceControl('playlistman')});
             $('.choose_pluginplaylists').on('click', function(){layoutProcessor.sourceControl('pluginplaylistholder')});
@@ -622,8 +624,12 @@ var layoutProcessor = function() {
 
         insertAlbum: function(v) {
             var albumindex = v.id;
-            $('#aalbum'+albumindex).html(v.tracklist);
-            layoutProcessor.findAlbumDisplayer('aalbum'+albumindex).remove();
+            var displayer = $('#'+v.why+'album'+albumindex);
+            var image = displayer.children('.album-menu-header').detach();
+            displayer.html(v.tracklist);
+            image.insertAfter(displayer.children('.backmenu'));
+            uiHelper.makeResumeBar(displayer);
+            layoutProcessor.findAlbumDisplayer(v.why+'album'+albumindex).remove();
             switch (v.type) {
                 case 'insertAfter':
                     debug.log("Insert After",v.where);
@@ -656,7 +662,6 @@ var layoutProcessor = function() {
                     break;
 
             }
-
         },
 
         fixupArtistDiv: function(jq, name) {

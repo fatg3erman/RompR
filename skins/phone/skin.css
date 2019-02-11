@@ -175,6 +175,22 @@ div {
 {
     z-index: 15000;
 }
+
+#audiobooks .podcastresume>.fixed
+{
+    padding-left: 32px;
+}
+
+#audiobooks .podcastresume>.expand
+{
+    margin-right: 4px;
+}
+
+#audiobooks .podcastresume
+{
+    border-top: none !important;
+}
+
 /*
 =====================================================================
 = General Classes

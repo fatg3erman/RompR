@@ -207,6 +207,11 @@
     line-height:22px;
 }
 
+div[id^=zalbum] .podcastresume>.fixed
+{
+    padding-left: 24px;
+}
+
 /*
 =====================================================================
 = General Classes

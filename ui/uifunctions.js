@@ -358,6 +358,7 @@ function hidePanel(panel) {
     debug.log("GENERAL","Hide Panel",panel,is_hidden,new_state);
     layoutProcessor.hidePanel(panel, is_hidden, new_state);
     setChooserButtons();
+    collectionHelper.rejigDoodahs(panel, is_hidden);
 }
 
 function doSomethingUseful(div,text) {

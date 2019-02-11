@@ -212,6 +212,10 @@ function checkCollectionStatus() {
 	}
 }
 
+function whatTheFuck() {
+	return "1";
+}
+
 function checkAlbumArt() {
 	$oa =  generic_sql_query("SELECT COUNT(ImgVersion) AS NumOldAlbums FROM Albumtable WHERE Image LIKE 'albumart/small/%' AND ImgVersion < ".ROMPR_IMAGE_VERSION, false, null, 'NumOldAlbums', 0);
 	debuglog("There are ".$oa." albums with old-style album art","INIT");

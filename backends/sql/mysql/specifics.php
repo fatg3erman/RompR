@@ -51,6 +51,7 @@ function check_sql_tables() {
 		"justAdded TINYINT(1) UNSIGNED DEFAULT 1, ".
 		"Sourceindex INT UNSIGNED DEFAULT NULL, ".
 		"LinkChecked TINYINT(1) UNSIGNED DEFAULT 0, ".
+		"isAudiobook TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"INDEX(Albumindex), ".
 		"INDEX(Title), ".
 		"INDEX(TrackNo)) ENGINE=InnoDB", true))
@@ -107,6 +108,17 @@ function check_sql_tables() {
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Ratingtable : ".$err);
+	}
+
+	if (generic_sql_query("CREATE TABLE IF NOT EXISTS Progresstable(".
+		"TTindex INT UNSIGNED, ".
+		"PRIMARY KEY(TTindex), ".
+		"Progress INT UNSIGNED) ENGINE=InnoDB", true))
+	{
+		debuglog("  Progresstable OK","MYSQL_CONNECT");
+	} else {
+		$err = $mysqlc->errorInfo()[2];
+		return array(false, "Error While Checking Progresstable : ".$err);
 	}
 
 	if (generic_sql_query("CREATE TABLE IF NOT EXISTS Tagtable(".
@@ -709,6 +721,18 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 51 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 51:
+				debuglog("Updating FROM Schema version 51 TO Schema version 52","SQL");
+				generic_sql_query("ALTER TABLE Tracktable ADD isAudiobook TINYINT(1) UNSIGNED DEFAULT 0", true);
+				generic_sql_query("UPDATE Statstable SET Value = 52 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 52:
+				debuglog("Updating FROM Schema version 52 TO Schema version 53","SQL");
+				create_progress_triggers();
+				generic_sql_query("UPDATE Statstable SET Value = 53 WHERE Item = 'SchemaVer'", true);
+				break;
+
 		}
 		$sv++;
 	}
@@ -735,7 +759,7 @@ function hide_played_tracks() {
 
 function sql_recent_tracks() {
 	global $collection_type, $prefs;
-	$qstring = "SELECT TTindex FROM Tracktable WHERE (DATE_SUB(CURDATE(),INTERVAL 60 DAY) <= DateAdded) AND Hidden = 0 AND isSearchResult < 2 AND Uri IS NOT NULL";
+	$qstring = "SELECT TTindex FROM Tracktable WHERE (DATE_SUB(CURDATE(),INTERVAL 60 DAY) <= DateAdded) AND Hidden = 0 AND isSearchResult < 2 AND isAudiobook = 0 AND Uri IS NOT NULL";
 	if ($collection_type == 'mopidy' && $prefs['player_backend'] == 'mpd') {
 		$qstring .= ' AND Uri LIKE "local:%"';
 	}
@@ -744,7 +768,7 @@ function sql_recent_tracks() {
 
 function sql_recent_albums() {
 	global $collection_type, $prefs;
-	$qstring = "SELECT TTindex, Albumindex, TrackNo FROM Tracktable WHERE DATE_SUB(CURDATE(),INTERVAL 60 DAY) <= DateAdded AND Hidden = 0 AND isSearchResult < 2 AND Uri IS NOT NULL";
+	$qstring = "SELECT TTindex, Albumindex, TrackNo FROM Tracktable WHERE DATE_SUB(CURDATE(),INTERVAL 60 DAY) <= DateAdded AND Hidden = 0 AND isSearchResult < 2 AND isAudiobook = 0 AND Uri IS NOT NULL";
 	if ($collection_type == 'mopidy' && $prefs['player_backend'] == 'mpd') {
 		$qstring .= ' AND Uri LIKE "local:%"';
 	}
@@ -756,7 +780,7 @@ function sql_recently_played() {
 }
 
 function recently_played_playlist() {
-	$qstring = "SELECT TTindex FROM Playcounttable JOIN Tracktable USING (TTindex) WHERE DATE_SUB(CURDATE(),INTERVAL 14 DAY) <= LastPlayed AND LastPlayed IS NOT NULL";
+	$qstring = "SELECT TTindex FROM Playcounttable JOIN Tracktable USING (TTindex) WHERE DATE_SUB(CURDATE(),INTERVAL 14 DAY) <= LastPlayed AND LastPlayed IS NOT NULL AND isAudiobook = 0 AND Hidden = 0";
 	return $qstring;
 }
 
@@ -886,6 +910,23 @@ function create_update_triggers() {
 	generic_sql_query("CREATE TRIGGER track_delete_trigger AFTER DELETE ON Tracktable
 						FOR EACH ROW
 						UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = OLD.Albumindex;", true);
+
+}
+
+function create_progress_triggers() {
+
+	generic_sql_query("CREATE TRIGGER progress_update_trigger AFTER UPDATE ON Progresstable
+						FOR EACH ROW
+						BEGIN
+						UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
+						END;", true);
+
+	generic_sql_query("CREATE TRIGGER progress_insert_trigger AFTER INSERT ON Progresstable
+						FOR EACH ROW
+						BEGIN
+						UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
+						END;", true);
+
 
 }
 

@@ -159,21 +159,7 @@ var podcasts = function() {
 			target.html(html);
 		}
 		$('i[name="podcast_'+channel+'"]').stopSpinner();
-		target.find('input.resumepos').each(function() {
-			var pos = parseInt($(this).val());
-			var duration = parseInt($(this).next().val());
-			debug.log("PODCASTS", "Episode has a progress bar",pos,duration);
-			var thething = $(
-				'<div>',
-				{
-					class: 'containerbox fullwidth playlistrow2 dropdown-container podcastresume playable ',
-					name: $(this).prev().attr('name')
-				}
-			).insertBefore($(this));
-			thething.append('<div class="fixed padright">'+language.gettext('label_resume')+'</div>');
-			var bar = $('<div>', {class: 'expand', style: "height: 0.5em"}).appendTo(thething);
-			bar.rangechooser({range: duration, startmax: pos/duration, interactive: false});
-		});
+		uiHelper.makeResumeBar(target);
 		infobar.markCurrentTrack();
 		layoutProcessor.postAlbumActions( $('#podcast_'+channel));
 	}

@@ -397,6 +397,14 @@ var nowplaying = function() {
 			}
         },
 
+		storePlaybackProgress: function(progress, index) {
+			if (index === null) {
+				index = findCurrentTrack();
+			}
+			debug.log("NOWPLAYING","Setting Playback Progress on",index,"to", progress);
+			history[index].setMeta('set', 'Progress', progress);
+		},
+
         addTrackToCollection: function(evt, index) {
         	history[index].setMeta('set', 'Rating', '0');
         },

@@ -69,6 +69,10 @@ function albumTrack($data) {
     }
 
     print '</div>';
+    if ($data['progress'] > 0) {
+        print '<input type="hidden" class="resumepos" value="'.$data['progress'].'" />';
+        print '<input type="hidden" class="length" value="'.$data['time'].'" />';
+    }
 
     return 0;
 }

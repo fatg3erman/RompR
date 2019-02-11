@@ -17,6 +17,7 @@ var prefs = function() {
         "hide_filelist",
         "hide_radiolist",
         "hide_playlistslist",
+        "hide_audiobooklist",
         "hidebrowser",
         "shownupdatewindow",
         "scrolltocurrent",
@@ -519,6 +520,10 @@ var prefs = function() {
 
                 case 'hide_podcastslist':
                     callback = function() { hidePanel('podcastslist') }
+                    break;
+
+                case 'hide_audiobooklist':
+                    callback = function() { hidePanel('audiobooklist') }
                     break;
 
                 case 'hide_playlistslist':

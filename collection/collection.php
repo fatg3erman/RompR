@@ -576,6 +576,13 @@ function process_file($filedata) {
             $filedata['X-AlbumUri'] = null;
 			check_undefined_tags($filedata, $unmopfile);
 			$filedata['folder'] = dirname($unmopfile);
+			if ($prefs['audiobook_directory'] != '') {
+				$f = rawurldecode($filedata['folder']);
+				if (strpos($f, $prefs['audiobook_directory']) === 0) {
+					debuglog("  This is an audiobook","COLLECTION");
+					$filedata['type'] = 'audiobook';
+				}
+			}
             break;
 
 		case 'http':

@@ -163,6 +163,16 @@
     display:none;
 }
 
+#audiobooks .podcastresume>.fixed
+{
+    padding-left: 24px;
+}
+
+#audiobooks .podcastresume>.expand
+{
+    margin-right: 4px;
+}
+
 /*
 =====================================================================
 = General Classes

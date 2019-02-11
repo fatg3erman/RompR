@@ -31,6 +31,7 @@ printOutputCheckboxes();
         </div>
         <div id="narrowscreenicons" class="topdropmenu rightmenu autohide clearfix">
             <i class="noshrink icon-folder-open-empty topimg choose_filelist tright"></i>
+            <i class="noshrink choose_audiobooklist icon-audiobook topimg tright"></i>
             <i class="noshrink choose_playlistman icon-doc-text topimg tright"></i>
             <i class="noshrink icon-info-circled topimg choose_infopanel tright"></i>
             <i class="noshrink choose_prefs icon-cog-alt topimg tright"></i>
@@ -41,6 +42,7 @@ printOutputCheckboxes();
         <i class="icon-folder-open-empty onlywide topimg choose_filelist expand"></i>
         <i class="icon-radio-tower topimg choose_radiolist expand"></i>
         <i class="icon-podcast-circled topimg choose_podcastslist expand"></i>
+        <i class="choose_audiobooklist onlywide icon-audiobook topimg expand"></i>
         <i class="choose_playlistman onlywide icon-doc-text topimg expand"></i>
         <i class="choose_pluginplaylists icon-wifi topimg expand"></i>
         <div class="onlyverywide containerbox expandabit topbarplaycontrols">
@@ -171,6 +173,13 @@ include($p);
 <?php
 include("includes/podcasts.php");
 ?>
+</div>
+
+<div id="audiobooklist" class="scroller mainpane invisible pright">
+    <?php
+            print '<div class="configtitle textcentre"><b>'.get_int_text('label_audiobooks').'</b></div>';
+    ?>
+    <div id="audiobooks" class="noborder selecotron"></div>
 </div>
 
 <?php

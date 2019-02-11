@@ -23,6 +23,7 @@ class romprmetadata {
 						'streamuri',
 						'type',
 						'ambid',
+						'isaudiobook',
 						'attributes',
 						'imagekey',
 						'which',
@@ -32,7 +33,7 @@ class romprmetadata {
 				$data[$key] = null;
 			}
 		}
-		foreach (array( 'trackno', 'duration') as $key) {
+		foreach (array( 'trackno', 'duration', 'isaudiobook') as $key) {
 			if ($data[$key] == null) {
 				$data[$key] = 0;
 			}
@@ -782,19 +783,23 @@ function doPlaylist($playlist, $limit) {
 				LEFT JOIN Ratingtable USING (TTindex) WHERE Uri IS NOT NULL AND Hidden = 0 AND
 				isSearchResult < 2 AND (Playcount > ".$avgplays." OR Rating IS NOT NULL)";
 			break;
+
 		case "allrandom":
 			$sqlstring = "SELECT TTindex FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND
 				isSearchResult < 2";
 			break;
+
 		case "neverplayed":
 			// LEFT JOIN (used here and above) means that the right-hand side of the JOIN will be
 			// NULL if TTindex doesn't exist on that side. Very handy.
 			$sqlstring = "SELECT Tracktable.TTindex FROM Tracktable LEFT JOIN Playcounttable ON
 				Tracktable.TTindex = Playcounttable.TTindex WHERE Playcounttable.TTindex IS NULL";
 			break;
+
 		case "recentlyplayed":
 			$sqlstring = recently_played_playlist();
 			break;
+
 		default:
 			if (preg_match('/tag\+(.*)/', $playlist, $matches)) {
 				$taglist = explode(',', $matches[1]);
@@ -817,7 +822,7 @@ function doPlaylist($playlist, $limit) {
 			}
 			break;
 	}
-	$sqlstring .= ' AND (LinkChecked = 0 OR LinkChecked = 2)';
+	$sqlstring .= ' AND (LinkChecked = 0 OR LinkChecked = 2) AND isAudiobook = 0';
 	if ($collection_type == 'mopidy' && $prefs['player_backend'] == 'mpd') {
 		$sqlstring .= ' AND Uri LIKE "local:%"';
 	}

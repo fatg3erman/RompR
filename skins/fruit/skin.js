@@ -423,6 +423,7 @@ var layoutProcessor = function() {
             setDraggable('#filecollection');
             setDraggable('#searchresultholder');
             setDraggable("#podcastslist");
+            setDraggable("#audiobooks");
             setDraggable("#somafmlist");
             setDraggable("#bbclist");
             setDraggable("#communityradiolist");
@@ -490,6 +491,7 @@ var layoutProcessor = function() {
             $('.choose_filelist').on('click', function(){layoutProcessor.sourceControl('filelist')});
             $('.choose_radiolist').on('click', function(){layoutProcessor.sourceControl('radiolist')});
             $('.choose_podcastslist').on('click', function(){layoutProcessor.sourceControl('podcastslist')});
+            $('.choose_audiobooklist').on('click', function(){layoutProcessor.sourceControl('audiobooklist')});
             $('.choose_playlistslist').on('click', function(){layoutProcessor.sourceControl('playlistslist')});
             $('.choose_pluginplaylistslist').on('click', function(){layoutProcessor.sourceControl('pluginplaylistslist')});
             $('.open_albumart').on('click', openAlbumArtManager);

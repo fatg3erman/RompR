@@ -140,6 +140,7 @@ print '<i title="'.get_int_text('button_searchmusic').'" class="icon-search topi
 print '<i title="'.get_int_text('button_file_browser').'" class="icon-folder-open-empty tooltip topimg choose_filelist"></i>';
 print '<i title="'.get_int_text('button_internet_radio').'" class="icon-radio-tower tooltip topimg choose_radiolist"></i>';
 print '<i title="'.get_int_text('label_podcasts').'" class="icon-podcast-circled tooltip topimg choose_podcastslist"></i>';
+print '<i title="'.get_int_text('label_audiobooks').'" class="icon-audiobook tooltip topimg choose_audiobooklist expand"></i>';
 print '<i title="'.get_int_text('button_loadplaylist').'" class="icon-doc-text tooltip topimg choose_playlistslist"></i>';
 print '<i title="'.get_int_text('label_pluginplaylists').'" class="icon-wifi tooltip topimg choose_pluginplaylistslist"></i>';
 print '<i title="'.get_int_text('button_infopanel').'" class="icon-info-circled tooltip topimg choose_infopanel"></i>';
@@ -160,6 +161,13 @@ print '<i title="'.get_int_text('button_plugins').'" class="icon-menu topimg too
     collectionButtons();
 ?>
     <div id="collection" class="noborder selecotron"></div>
+    </div>
+
+    <div id="audiobooklist" class="invisible noborder">
+        <?php
+                print '<div class="configtitle textcentre"><b>'.get_int_text('label_audiobooks').'</b></div>';
+        ?>
+        <div id="audiobooks" class="noborder selecotron"></div>
     </div>
 
     <div id="specialplugins" class="invisible noborder"></div>

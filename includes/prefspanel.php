@@ -151,6 +151,10 @@ print '<input class="autoset toggle" type="checkbox" id="hide_podcastslist" />
 <label for="hide_podcastslist">'.get_int_text('config_hidepodcasts').'</label>
 </div>';
 print '<div class="pref styledinputs">';
+print '<input class="autoset toggle" type="checkbox" id="hide_audiobooklist" />
+<label for="hide_audiobooklist">'.get_int_text('config_hideaudiobooks').'</label>
+</div>';
+print '<div class="pref styledinputs">';
 print '<input class="autoset toggle" type="checkbox" id="hide_playlistslist" />
 <label for="hide_playlistslist">'.get_int_text('config_hideplaylistslist').'</label>
 </div>';
@@ -218,12 +222,6 @@ print '<div class="pref containerbox dropdown-container">
     </div>';
 }
 
-// Smart Radio
-print '<div class="textcentre configtitle"><b>'.get_int_text('label_pluginplaylists').'</b></div>';
-print '<div class="pref styledinputs">'.get_int_text('config_smart_chunksize').
-    '<input class="saveotron" id="smartradio_chunksize" style="width:4em;margin-left:1em" type="text" size="4" />
-    </div>';
-
 // Biography and Language
 print '<div class="textcentre ucfirst configtitle"><b>'.get_int_text('settings_language').'</b></div>';
 
@@ -266,7 +264,7 @@ foreach($x->CountryEntry as $i => $c) {
 print '</select></div></div>';
 
 // Album Art
-print '<div class="textcentre configtitle"><b>'.get_int_text('albumart_title').'</b></div>';
+print '<div class="textcentre configtitle"><i class="icon-cd medicon"></i><b>'.get_int_text('albumart_title').'</b></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="downloadart" />
 <label for="downloadart">'.get_int_text('config_autocovers').'</label>
@@ -277,6 +275,20 @@ print '<div class="pref styledinputs">
 </div>';
 print '<div class="pref"><div class="tiny">If you want to use Google Images to get Album Art you need to sign up for an API Key. <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></div></div>';
 
+
+// Smart Radio
+print '<div class="textcentre configtitle"><i class="icon-wifi medicon"></i><b>'.get_int_text('label_pluginplaylists').'</b></div>';
+print '<div class="pref styledinputs">'.get_int_text('config_smart_chunksize').
+    '<input class="saveotron" id="smartradio_chunksize" style="width:4em;margin-left:1em" type="text" size="4" />
+    </div>';
+
+// Audiobooks
+print '<div class="textcentre configtitle"><i class="icon-audiobook medicon"></i><b>'.get_int_text('label_audiobooks').'</b></div>';
+print '<div class="pref">'.get_int_text('config_audiobook_directory').'
+<input class="prefinput saveotron" id="audiobook_directory" type="text" size="40" />
+</div>';
+
+// Podcasts
 print '<div class="textcentre configtitle">
 <i class="icon-podcast-circled medicon"></i><b>'.get_int_text('label_podcasts').'</b></div>';
 
@@ -383,7 +395,6 @@ print '</select>
 
 // Collection Options
 print '<div class="textcentre ucfirst configtitle"><i class="icon-music medicon"></i><b>'.get_int_text('button_local_music').'</b></div>';
-print '<div class="tiny textcentre" style="margin-bottom:1em">These options affect everyone who uses this installation of RompЯ</div>';
 
 // Album Sorting
 print '<div class="pref"><b>'.get_int_text('config_artistfirst').'

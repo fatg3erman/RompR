@@ -103,6 +103,7 @@ print '<i title="'.get_int_text('button_searchmusic').'" class="icon-search topi
 print '<i title="'.get_int_text('button_file_browser').'" class="icon-folder-open-empty tooltip topimg choose_filelist expand"></i>';
 print '<i title="'.get_int_text('button_internet_radio').'" class="icon-radio-tower tooltip topimg choose_radiolist expand"></i>';
 print '<i title="'.get_int_text('label_podcasts').'" class="icon-podcast-circled tooltip topimg choose_podcastslist expand"></i>';
+print '<i title="'.get_int_text('label_audiobooks').'" class="icon-audiobook tooltip topimg choose_audiobooklist expand"></i>';
 print '<i title="'.get_int_text('button_loadplaylist').'" class="icon-doc-text tooltip topimg choose_playlistslist expand"></i>';
 print '<i title="'.get_int_text('label_pluginplaylists').'" class="icon-wifi tooltip topimg choose_pluginplaylistslist expand"></i>';
 ?>
@@ -199,7 +200,7 @@ include("player/".$prefs['player_backend']."/search.php");
 
     <div id="radiolist" class="invisible">
 <?php
-    print '<div class="configtitle textcentre"><b>'.get_int_text('button_internet_radio').'</b></div>';
+    print '<div class="configtitle textcentre" style="margin-left:8px"><b>'.get_int_text('button_internet_radio').'</b></div>';
 ?>
 <?php
 $sp = glob("streamplugins/*.php");
@@ -212,6 +213,12 @@ foreach($sp as $p) {
 <?php
 include("includes/podcasts.php");
 ?>
+    </div>
+    <div id="audiobooklist" class="invisible noborder">
+<?php
+        print '<div class="configtitle textcentre" style="margin-left:8px"><b>'.get_int_text('label_audiobooks').'</b></div>';
+?>
+        <div id="audiobooks" class="noborder selecotron"></div>
     </div>
     <div id="playlistslist" class="invisible">
         <div id="storedplaylists" class="noborder selecotron"></div>

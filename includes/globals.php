@@ -1,6 +1,7 @@
 <script language="javascript">
 <?php
 print "var collection_status = ".checkCollectionStatus().";\n";
+print "var what_the_fuck = ".whatTheFuck().";\n";
 print "var old_style_albumart = ".checkAlbumArt().";\n";
 print "var interfaceLanguage = '".$interface_language."';\n";
 print "prefs.skin = '".$skin."';\n";
