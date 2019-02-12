@@ -412,7 +412,7 @@ var infobar = function() {
 
         markCurrentTrack: function() {
             if (trackinfo.location) {
-                $('[name="'+rawurlencode(trackinfo.location)+'"]').not('.playlistcurrentitem').addClass('playlistcurrentitem');
+                $('[name="'+rawurlencode(trackinfo.location)+'"]').not('.playlistcurrentitem').not('.podcastresume').addClass('playlistcurrentitem');
                 $('[name="'+trackinfo.location+'"]').not('.playlistcurrentitem').not('.podcastresume').addClass('playlistcurrentitem');
             }
         },
