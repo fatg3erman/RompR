@@ -6,6 +6,8 @@ Note that some versions listed here may be unreleased, I use version number incr
 ## Version 1.26
 
 * The setting for 'Ignore These prefixes When Sorting Artists' is now applied to Podcast Title and Publisher as well.
+* [Spoken Word](/RompR/Spoken-Word) support - for things like Audiobooks where you don't want them to be in your 'Music' Collection.
+* A few small bugfixes
 
 ## Version 1.25
 

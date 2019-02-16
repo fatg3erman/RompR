@@ -682,9 +682,9 @@ $languages['en'] = array (
 	"label_unplayabletracks" => "Unplayable Tracks",
 	"label_no_unplayable" => "There are no unplayable tracks in your Collection",
 	"label_removefromcol" => "Remove From Collection",
-	"label_audiobooks" => "Audiobooks",
-	"config_hideaudiobooks" => "Hide Audiobooks",
-	"config_audiobook_directory" => "Directory Containing Audiobooks"
+	"label_audiobooks" => "Spoken Word",
+	"config_hideaudiobooks" => "Hide Spoken Word",
+	"config_audiobook_directory" => "Directory Containing Spoken Word Files"
 );
 
 ?>
