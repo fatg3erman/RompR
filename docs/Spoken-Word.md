@@ -29,4 +29,4 @@ Once you've done this you will need to Update your Music Collection. Mopidy user
 There are two advantages of storing Spoken Word items this way:
 
 * Spoken Word files will not be included in any Personalised Radio, irrespective of what tags or ratings they have
-* You will get a 'Resume Bar' if you Stop a Spoken Word track part way through, just like with Podcasts - this means you can come back later and carry on where you left off.
+* You will get a 'Resume Bar' if you stop a Spoken Word track part way through, just like with Podcasts - this means you can come back later and carry on where you left off.

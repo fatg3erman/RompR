@@ -10,7 +10,7 @@ RompЯ allows you to customise the interface with different options:
 ## Themes
 
 ![](images/appearance.png)
-
+Í
 This is Numismatist, the default theme, using the 'Modern-Dark' icons
 
 ![](images/numismatist.png)
@@ -21,7 +21,7 @@ And this is Darkness, using the 'Modern-Light' icons
 
 Some themes use a background image
 
-![](images/skytrails.png)
+![](images/fire.png)
 
 ### Custom Background Images
 
@@ -63,7 +63,7 @@ If all of your images are the same orientation, they will be used for both lands
 You may specify a theme in the URL in your browser. Just point your browser at
 
     http://ip.address.of.rompr/?theme=ThemeName
-    
+
 where 'ThemeName' is one of the suppplied themes.
 
 ## Making Your Own Theme
@@ -71,5 +71,5 @@ where 'ThemeName' is one of the suppplied themes.
 You can make your own theme if you know some CSS. Just take a copy of one of the existing ones from
 
     rompr/themes
-    
+
 and edit the values. Give yours a different name, refresh the browser window, and you can select it from the menu.
