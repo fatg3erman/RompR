@@ -310,6 +310,19 @@ function check_sql_tables() {
 		return array(false, "Error While Checking AlbumsToListenTotable : ".$err);
 	}
 
+	if (generic_sql_query("CREATE TABLE IF NOT EXISTS BackgroundImageTable(".
+		"BgImageIndex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+		"Skin VARCHAR(255), ".
+		"BrowserID VARCHAR(20) DEFAULT NULL, ".
+		"Filename VARCHAR(255), ".
+		"Orientation TINYINT(2))", true))
+	{
+		debuglog("  BackgounrdImageTable OK","MYSQL_CONNECT");
+	} else {
+		$err = $mysqlc->errorInfo()[2];
+		return array(false, "Error While Checking BackgroundImageTable : ".$err);
+	}
+
 	// Check schema version and update tables as necessary
 	$sv = simple_query('Value', 'Statstable', 'Item', 'SchemaVer', 0);
 	if ($sv == 0) {
@@ -763,6 +776,12 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 53 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 53:
+				debuglog("Updating FROM Schema version 53 TO Schema version 54","SQL");
+				require_once ('utils/backgroundimages.php');
+				first_upgrade_of_user_backgrounds();
+				generic_sql_query("UPDATE Statstable SET Value = 54 WHERE Item = 'SchemaVer'", true);
+				break;
 		}
 		$sv++;
 	}

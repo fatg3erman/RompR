@@ -3,7 +3,7 @@
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 53);
+define('ROMPR_SCHEMA_VERSION', 54);
 define('ROMPR_VERSION', '1.26');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
@@ -62,6 +62,9 @@ if (!defined('IMAGETYPE_BMP')) {
 if (!defined('IMAGETYPE_SVG')) {
     define('IMAGETYPE_SVG', 'image/svg+xml');
 }
+
+define('ORIENTATION_PORTRAIT', 0);
+define('ORIENTATION_LANDSCAPE', 1);
 
 $connection = null;
 $is_connected = false;

@@ -265,6 +265,22 @@ function check_sql_tables() {
 		return array(false, "Error While Checking AlbumsToListenTotable : ".$err);
 	}
 
+	if (generic_sql_query("CREATE TABLE IF NOT EXISTS BackgroundImageTable(".
+		"BgImageIndex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+		"Skin VARCHAR(255), ".
+		"BrowserID VARCHAR(20) DEFAULT NULL, ".
+		"Filename VARCHAR(255), ".
+		"Orientation TINYINT(2), ".
+		"PRIMARY KEY (BgImageIndex), ".
+		"INDEX (Skin), ".
+		"INDEX (BrowserID)Í) ENGINE=InnoDB", true))
+	{
+		debuglog("  BackgounrdImageTable OK","MYSQL_CONNECT");
+	} else {
+		$err = $mysqlc->errorInfo()[2];
+		return array(false, "Error While Checking BackgroundImageTable : ".$err);
+	}
+
 	if (!generic_sql_query("CREATE TABLE IF NOT EXISTS Statstable(Item CHAR(11), PRIMARY KEY(Item), Value INT UNSIGNED) ENGINE=InnoDB", true)) {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Statstable : ".$err);
@@ -731,6 +747,13 @@ function check_sql_tables() {
 				debuglog("Updating FROM Schema version 52 TO Schema version 53","SQL");
 				create_progress_triggers();
 				generic_sql_query("UPDATE Statstable SET Value = 53 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 53:
+				debuglog("Updating FROM Schema version 53 TO Schema version 54","SQL");
+				require_once ('utils/backgroundimages.php');
+				first_upgrade_of_user_backgrounds();
+				generic_sql_query("UPDATE Statstable SET Value = 54 WHERE Item = 'SchemaVer'", true);
 				break;
 
 		}
