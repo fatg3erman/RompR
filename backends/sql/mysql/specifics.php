@@ -273,7 +273,7 @@ function check_sql_tables() {
 		"Orientation TINYINT(2), ".
 		"PRIMARY KEY (BgImageIndex), ".
 		"INDEX (Skin), ".
-		"INDEX (BrowserID)Í) ENGINE=InnoDB", true))
+		"INDEX (BrowserID)) ENGINE=InnoDB", true))
 	{
 		debuglog("  BackgounrdImageTable OK","MYSQL_CONNECT");
 	} else {
