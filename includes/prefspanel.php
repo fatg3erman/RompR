@@ -45,7 +45,8 @@ print '<form id="backimageform" action="backimage.php" method="post" enctype="mu
 <input type="file" name="imagefile[]" id="imagefile" class="inputfile" multiple="multiple" />
 <label for="imagefile">'.get_int_text('label_choosefiles').'</label>
 </div>
-<input type="button" class="invisible" onclick="prefs.changeBackgroundImage()" value="'.get_int_text('albumart_uploadbutton').'" />
+<input type="button" class="invisible" id="bgfileuploadbutton" onclick="prefs.changeBackgroundImage()" value="'.get_int_text('albumart_uploadbutton').'" />
+<div class="textcenter invisible"><i class="icon-spin6 medicon" id="bguploadspinner"></i></div>
 <div class="styledinputs">
 <input type="checkbox" id="thisbrowseronly" name="thisbrowseronly" /><label for="thisbrowseronly">For this browser only</label>
 </div>

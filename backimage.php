@@ -75,9 +75,14 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 			mkdir('prefs/userbackgrounds/'.$base, 0755, true);
 		}
 		$file = 'prefs/userbackgrounds/'.$base.'/'.$fname;
-		rename($download_file, $file);
-		$orientation = analyze_background_image($file);
-		sql_prepare_query(true, null, null, null, 'INSERT INTO BackgroundImageTable (Skin, BrowserID, Filename, Orientation) VALUES (?, ?, ?, ?)', $skin, $browserid, $file, $orientation);
+		if (file_exists($file)) {
+			debuglog('Image '.$file.' already exists', 'BACKIMAGE');
+			unlink($download_file);
+		} else {
+			rename($download_file, $file);
+			$orientation = analyze_background_image($file);
+			sql_prepare_query(true, null, null, null, 'INSERT INTO BackgroundImageTable (Skin, BrowserID, Filename, Orientation) VALUES (?, ?, ?, ?)', $skin, $browserid, $file, $orientation);
+		}
 	}
 }
 

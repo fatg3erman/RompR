@@ -757,6 +757,8 @@ var prefs = function() {
         },
 
         changeBackgroundImage: function() {
+            $('#bgfileuploadbutton').fadeOut('fast');
+            $('#bguploadspinner').addClass('spinner').parent().fadeIn('fast');
             $('[name="currbackground"]').val(prefs.theme);
             $('[name="browser_id"]').val(prefs.browser_id);
             var formElement = document.getElementById('backimageform');
@@ -767,9 +769,11 @@ var prefs = function() {
                 if (xhr.status === 200) {
                     debug.log("BIMAGE", xhr.response);
                     prefs.setTheme();
+                    $('#bguploadspinner').removeClass('spinner').parent().fadeOut('fast');
                 } else {
                     debug.fail("BIMAGE", "FAILED");
                     infobar.notify(infobar.ERROR, "Failed To Upload Image");
+                    $('#bguploadspinner').removeClass('spinner').parent().fadeOut('fast');
                 }
             };
             xhr.send(new FormData(formElement));
