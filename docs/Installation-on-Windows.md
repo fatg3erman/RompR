@@ -146,9 +146,10 @@ And the following as C:/Bitnami/wampstack-7.1.21-0/apps/rompr/conf/httpd-app.con
           php_admin_value upload_tmp_dir  C:/Bitnami/wampstack-7.1.21-0/apps/rompr/htdocs/prefs/temp
           php_admin_value open_basedir none
           php_admin_value memory_limit 128M
-          php_admin_value post_max_size 32M
+          php_admin_value post_max_size 256M
           php_admin_value upload_max_filesize 32M
-          php_admin_value max_execution_time 1800
+          php_admin_value max_file_uploads = 50                
+          php_admin_value max_execution_time 1800         
         </IfModule>
 
     </Directory>

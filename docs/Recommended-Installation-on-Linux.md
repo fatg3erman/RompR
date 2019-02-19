@@ -113,6 +113,8 @@ There's a 7.0 in there, so I'd use php7.0-fpm.sock
 
         server_name www.myrompr.net;
 
+        client_max_body_size 256M;
+
         # This section can be copied into an existing default setup
         location / {
             allow all;
@@ -164,6 +166,11 @@ Now find and modify (or add in if they're not there) the following parameters. C
     allow_url_fopen = On
     memory_limit = 128M
     max_execution_time = 1800
+    post_max_size = 256M
+    upload_max_filesize = 8M
+    max_file_uploads = 50
+
+Note that the last three settings are only really needed for supporting uploading large numbers of [Custom Background Images](/RompR/Theming), but adding them in doesn't do any harm.
 
 ### That's all the configuring. Let's get everything running
 
