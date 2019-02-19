@@ -57,7 +57,7 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 
 } else {
 
-	if (!array_key_exists('currbackgruond', $_REQUEST) || !array_key_exists('imagefile', $_FILES)) {
+	if (!array_key_exists('currbackground', $_REQUEST) || !array_key_exists('imagefile', $_FILES)) {
 		if (isset($_SERVER["CONTENT_LENGTH"])) {
 			if ($_SERVER["CONTENT_LENGTH"] > ((int) ini_get('post_max_size')*1024*1024)) {
 				debuglog('Content Length Error','BACKIMAGE');
