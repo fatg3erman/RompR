@@ -68,7 +68,7 @@ var collectionHelper = function() {
                     }
                     data = null;
                     if (albums.match(/rebuild/)) {
-                        infobar.notify(infobar.NOTIFY,"Music Collection Updated");
+                        infobar.notify(language.gettext('label_updatedone'));
                         collectionHelper.scootTheAlbums($("#collection"));
                     }
                     layoutProcessor.postAlbumActions($('#collection'));
@@ -91,7 +91,7 @@ var collectionHelper = function() {
                     html += '<p align="center"><a href="https://fatg3erman.github.io/RompR/Troubleshooting#very-large-collections" target="_blank">Read The Troubleshooting Docs</a></p>';
                     $("#collection").html(html);
                     debug.error("PLAYER","Failed to generate collection",data);
-                    infobar.notify(infobar.ERROR,"Music Collection Update Failed");
+                    infobar.error('error_collectionupdate');
                     if (notify !== false) {
                         infobar.removenotify(notify);
                         notify = false;
@@ -257,7 +257,7 @@ var collectionHelper = function() {
         },
 
         prepareForLiftOff: function(text) {
-            notify = infobar.notify(infobar.PERMNOTIFY,text);
+            notify = infobar.permnotify(text);
             $("#collection").empty();
             doSomethingUseful('collection', text);
             var x = $('<div>',{ id: 'updatemonitor', class: 'tiny', style: 'padding-left:1em;margin-right:1em'}).insertAfter($('#spinner_collection'));
@@ -275,7 +275,7 @@ var collectionHelper = function() {
         checkCollection: function(forceup, rescan) {
             debug.log("COLLECTION", "checking collection. collection_status is",collection_status);
             if (forceup && player.updatingcollection) {
-                infobar.notify(infobar.ERROR, "Already Updating Collection!");
+                infobar.error(language.gettext('error_nocol'));
                 return;
             }
             var update = forceup;

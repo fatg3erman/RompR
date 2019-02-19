@@ -104,7 +104,7 @@ function playerController() {
             success: initialised,
             error: function(data) {
                 debug.error("MPD","Failed to get URL Handlers",data);
-                infobar.notify(infobar.PERMERROR, "Could not get a respone from the player!");
+                infobar.permerror(language.gettext('error_noplayer'));
             }
         });
     }
@@ -113,7 +113,7 @@ function playerController() {
         debug.mark("MPD","Player is ready");
         var t = "Connected to "+getCookie('currenthost')+" ("+prefs.player_backend.capitalize() +
             " at " + player_ip + ")";
-        infobar.notify(infobar.NOTIFY, t);
+        infobar.notify(t);
         self.reloadPlaylists();
     }
 
@@ -151,7 +151,7 @@ function playerController() {
             error: function(jqXHR, textStatus, errorThrown) {
                 debug.error("MPD","Command List Failed",list,textStatus,errorThrown);
                 if (list.length > 0) {
-                    infobar.notify(infobar.ERROR, "Failed sending commands to "+prefs.player_backend);
+                    infobar.error(language.gettext('error_sendingcommands', [prefs.player_backend]));
                 }
                 post_command_list(callback);
             }
@@ -325,14 +325,14 @@ function playerController() {
         if (name == '') {
             return false;
         } else if (name.indexOf("/") >= 0 || name.indexOf("\\") >= 0) {
-	        infobar.notify(infobar.ERROR, language.gettext("error_playlistname"));
+	        infobar.error(language.gettext("error_playlistname"));
 	    } else {
 	        self.do_command_list([["save", name]], function() {
 	            self.reloadPlaylists();
                 if (typeof(playlistManager) != "undefined") {
                     playlistManager.reloadAll();
                 }
-	            infobar.notify(infobar.NOTIFY, language.gettext("label_savedpl", [name]));
+	            infobar.notify(language.gettext("label_savedpl", [name]));
                 $("#plsaver").slideToggle('fast');
                 self.checkProgress();
 	        });
@@ -559,7 +559,7 @@ function playerController() {
 
     this.search = function(command) {
         if (player.updatingcollection) {
-            infobar.notify(infobar.NOTIFY,"Cannot Search while updating collection");
+            infobar.notify(language.gettext('error_nosearchnow'));
             return false;
         }
         var terms = {};
@@ -625,7 +625,7 @@ function playerController() {
 
     this.rawsearch = function(terms, sources, exact, callback, checkdb) {
         if (player.updatingcollection) {
-            infobar.notify(infobar.NOTIFY,"Cannot Search while updating collection");
+            infobar.notify(language.gettext('error_nosearchnow'));
             callback([]);
         }
         $.ajax({

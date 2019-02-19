@@ -43,7 +43,7 @@ var spotiCrazyRadio = function() {
 				if (tagarray.length > 0) {
 					populateTuner(5);
 				} else {
-	        		infobar.notify(infobar.ERROR,"Please Choose Some Genres");
+	        		infobar.error(language.gettext('error_nogenres'));
 	        		playlist.radioManager.stop(null);
 				}
 			} else {

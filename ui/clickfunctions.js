@@ -631,7 +631,7 @@ function actuallyAmendAlbumDetails(albumindex) {
         },
         function(rdata) {
             debug.warn("RATING PLUGIN","Failure");
-            infobar.notify(infobar.ERROR,"Failed! Internal Error");
+            infobar.error(language.gettext('label_general_error'));
         }
     );
     return true;

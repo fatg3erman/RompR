@@ -57,14 +57,14 @@ var starRadios = function() {
 				}
             } else {
                 debug.warn("SMARTPLAYLIST","Got NO tracks",data);
-                infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
+                infobar.notify(language.gettext('label_gotnotracks'));
                 playlist.radioManager.stop(null);
                 running = false;
             }
         },
 
         Fail: function() {
-            infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
+            infobar.notify(language.gettext('label_gotnotracks'));
             playlist.radioManager.stop(null);
             populating = false;
             running = false;

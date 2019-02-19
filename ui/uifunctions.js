@@ -875,7 +875,7 @@ var syncLastFMPlaycounts = function() {
                 totaltracks = parseInt(data.recenttracks["@attr"].total);
                 if (data.recenttracks.track && data.recenttracks.track.length > 0) {
                     if (notify === null) {
-                        notify = infobar.notify(infobar.PERMNOTIFY,
+                        notify = infobar.permnotify(
                             '<div class="fullwidth">'+language.gettext('label_lfm_syncing')+'</div>'+
                             '<div class="fullwidth" id="lfmsyncprogress" style="height:0.8em"></div>'
                         );

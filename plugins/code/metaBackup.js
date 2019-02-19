@@ -9,7 +9,7 @@ var metaBackup = function() {
 			'getbackupdata',
 			metaBackup.doMainLayout,
 			function() {
-        		infobar.notify(infobar.ERROR, "Failed to get Backup info");
+        		infobar.error(language.gettext('label_general_error'));
         		mbb.slideToggle('fast');
         	}
         );
@@ -30,7 +30,7 @@ var metaBackup = function() {
         	},
         	function() {
 				clearTimeout(monitortimer);
-        		infobar.notify(infobar.ERROR, "Failed to "+thing+' backup');
+        		infobar.error(language.gettext('error_backupfail', [thing]));
         		if (thing == 'restore') {
         			collectionHelper.forceCollectionReload();
         		}
@@ -117,7 +117,7 @@ var metaBackup = function() {
 			metaHandlers.genericAction(
 				'metabackup',
 				function(data) {
-            		infobar.notify(infobar.NOTIFY, "Backup Created");
+            		infobar.notify(language.gettext('label_backupcreated'));
             		getBackupData();
 					$('#backupspinner').stopSpinner().hide();
 					$('#createbackup').show().on('click', metaBackup.create);
@@ -125,7 +125,7 @@ var metaBackup = function() {
             	function() {
 					$('#backupspinner').stopSpinner().css('display', 'none');
 					$('#createbackup').show().on('click', metaBackup.create);
-            		infobar.notify(infobar.ERROR, "Failed to get Backup info");
+            		infobar.error(language.gettext('label_general_error'));
             		mbb.slideToggle('fast');
             	}
             );

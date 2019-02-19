@@ -84,7 +84,7 @@ var info_ratings = function() {
                     doThingsWithData();
                     collectionHelper.updateCollectionDisplay(rdata);
                     if (!rdata.hasOwnProperty('addedtracks')) {
-                        infobar.notify(infobar.NOTIFY,"That track is already in the collection");
+                        infobar.error(language.gettext('error_trackexists'));
                     }
                 }
 				if (update_wishlist && typeof(wishlistViewer) != 'undefined') {
@@ -95,7 +95,7 @@ var info_ratings = function() {
 
             function setFail(rdata) {
                 debug.warn("RATING PLUGIN","Failure");
-                // infobar.notify(infobar.ERROR,"Failed! Have you read the Wiki?");
+                // infobar.error("Failed! Have you read the Wiki?");
                 doThingsWithData();
             }
 
@@ -138,7 +138,7 @@ var info_ratings = function() {
             this.setMeta = function(action, type, value) {
                 debug.log("RATINGS PLUGIN",parent.nowplayingindex,"Doing",action,type,value);
                 if (parent.playlistinfo.type == 'stream') {
-                    infobar.notify(infobar.NOTIFY,language.gettext('label_searching'));
+                    infobar.notify(language.gettext('label_searching'));
                     trackFinder.findThisOne(metaHandlers.fromPlaylistInfo.mapData(parent.playlistinfo, action, [{attribute: type, value: value}]),
                         self.updateDatabase
                     );
@@ -167,7 +167,7 @@ var info_ratings = function() {
             this.updateDatabase = function(data) {
                 debug.log("RATINGS","Update Database Function Called",data);
                 if (!data.uri) {
-                    infobar.notify(infobar.NOTIFY,language.gettext("label_addtow"));
+                    infobar.notify(language.gettext("label_addtow"));
 					update_wishlist = true;
                 }
                 dbQueue.request([data], findSuccess, setFail);

@@ -68,7 +68,7 @@ var charts = function() {
 		},
 
 		firstLoadFail: function(data) {
-    		infobar.notify(infobar.ERROR, "Failed to get Charts list");
+    		infobar.error(language.gettext('label_general_error'));
     		cha.slideToggle('fast');
         },
 

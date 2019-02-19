@@ -41,7 +41,7 @@ var yourRadioPlugin = {
             .done( function(data) {
                 $('#yourradiostations').html(data);
 				layoutProcessor.postAlbumActions();
-                infobar.notify(infobar.NOTIFY,"Added To Your Radio Stations");
+                infobar.notify(language.gettext('label_addedradio'));
             });
 	},
 
@@ -53,7 +53,7 @@ var yourRadioPlugin = {
             })
             .fail( function() {
 	            playlist.repopulate();
-	            infobar.notify(infobar.ERROR, language.gettext("label_general_error"));
+	            infobar.error(language.gettext("label_general_error"));
             });
 	},
 

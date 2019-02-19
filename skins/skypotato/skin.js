@@ -404,7 +404,7 @@ var layoutProcessor = function() {
         },
 
         playlistLoading: function() {
-            infobar.notify(infobar.SMARTRADIO, language.gettext('label_smartsetup'));
+            infobar.smartradio(language.gettext('label_smartsetup'));
         },
 
         scrollPlaylistToCurrentTrack: function() {
@@ -567,7 +567,7 @@ var layoutProcessor = function() {
 
         displayCollectionInsert: function(details) {
             debug.log("UI","Displaying Collection Insert",details);
-            infobar.notify(infobar.NOTIFY,"Added track to Collection");
+            infobar.notify(language.gettext('label_addedtocol'));
             infobar.markCurrentTrack();
             if (prefs.chooser == 'albumlist') {
                 layoutProcessor.postAlbumActions();
@@ -936,7 +936,7 @@ var layoutProcessor = function() {
                 $('.menu[name="podcast_'+index+'"]').parent().remove();
                 $('#podcast_'+index).remove();
                 $("#fruitbat").html(data);
-                infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
+                infobar.notify(language.gettext('label_subscribed'));
                 podcasts.doNewCount();
                 layoutProcessor.postAlbumActions();
             });

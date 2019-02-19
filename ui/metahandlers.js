@@ -9,7 +9,7 @@ var metaHandlers = function() {
 
 	function didntAddATrack(rdata) {
 	    debug.error("ADD ALBUM","Failure",rdata,JSON.parse(rdata.responseText));
-	    infobar.notify(infobar.ERROR,"Failed To Add Track!");
+	    infobar.error(language.gettext('label_general_error'));
 	}
 
 	function getPostData(playlistinfo) {
@@ -134,7 +134,7 @@ var metaHandlers = function() {
 			        },
 			        function(data) {
 			            debug.warn("DROPPLUGIN","Failed to set attributes for",track,data);
-			            infobar.notify(infobar.ERROR, "Failed To Set Attributes");
+			            infobar.error(language.gettext('label_general_error'));
 			        }
 			    );
 			},
@@ -164,7 +164,7 @@ var metaHandlers = function() {
 			    var thisIsMessy = new Array();
 			    if (data.tracks && data.tracks.items) {
 			        debug.log("AAAGH","Adding Album From",data);
-			        infobar.notify(infobar.NOTIFY, "Adding Album To Collection");
+			        infobar.notify(language.gettext('label_addingalbum'));
 			        for (var i in data.tracks.items) {
 			            var track = {};
 			            track.title = data.tracks.items[i].name;
@@ -193,7 +193,7 @@ var metaHandlers = function() {
 			        }
 			    } else {
 			        debug.fail("SPOTIFY","Failed to add album - no tracks",data);
-			        infobar.notify(infobar.ERROR, "Failed To Add Album To Collection");
+			        infobar.error(language.gettext('label_general_error'));
 			    }
 			}
 
@@ -285,7 +285,7 @@ var metaHandlers = function() {
 				[data],
 				function() {
 					debug.log("METAHANDLERS","Album Added To Listen Later");
-					infobar.notify(infobar.NOTIFY, language.gettext('label_addedtolistenlater'));
+					infobar.notify(language.gettext('label_addedtolistenlater'));
 					if (typeof(albumstolistento) != 'undefined') {
 						albumstolistento.update();
 					}

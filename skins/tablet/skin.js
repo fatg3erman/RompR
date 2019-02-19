@@ -122,7 +122,7 @@ var layoutProcessor = function() {
 
         notifyAddTracks: function() {
             if (!playlist.radioManager.isRunning()) {
-                infobar.notify(infobar.NOTIFY, language.gettext("label_addingtracks"));
+                infobar.notify(language.gettext("label_addingtracks"));
             }
         },
 
@@ -153,7 +153,7 @@ var layoutProcessor = function() {
         },
 
         playlistLoading: function() {
-            infobar.notify(infobar.SMARTRADIO, "Preparing. Please Wait A Moment....");
+            infobar.smartradio(language.gettext('label_preparing'));
         },
 
         preHorse: function() {
@@ -227,7 +227,7 @@ var layoutProcessor = function() {
         },
 
         displayCollectionInsert: function(d) {
-            infobar.notify(infobar.NOTIFY,"Added track to Collection");
+            infobar.notify(language.gettext('label_addedtocol'));
             infobar.markCurrentTrack();
         },
 

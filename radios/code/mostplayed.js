@@ -24,7 +24,7 @@ var mostPlayed = function() {
             },
             function() {
                 debug.error("MOST PLAYED","Database fail");
-                infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
+                infobar.notify(language.gettext('label_gotnotracks'));
                 playlist.radioManager.stop(null);
                 populating = false;
             }

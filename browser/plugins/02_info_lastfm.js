@@ -278,7 +278,7 @@ var info_lastfm = function() {
 
             this.tagAddFailed = function(type, tags) {
                 $("#tagadd"+type).stopSpinner();
-                infobar.notify(infobar.ERROR, language.gettext("lastfm_tagerror"));
+                infobar.error(language.gettext("lastfm_tagerror"));
                 debug.warn(medebug,"Failed to modify tags",type,tags);
             }
 

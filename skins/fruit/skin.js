@@ -171,7 +171,7 @@ var layoutProcessor = function() {
         },
 
         playlistLoading: function() {
-            infobar.notify(infobar.SMARTRADIO, language.gettext('label_smartsetup'));
+            infobar.smartradio(language.gettext('label_smartsetup'));
         },
 
         scrollPlaylistToCurrentTrack: function() {

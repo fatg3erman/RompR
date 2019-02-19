@@ -173,13 +173,27 @@ var infobar = function() {
         }
     }
 
+    function doNotification(message, icontype) {
+        notifycounter++;
+        var div = $('<div>', {
+            class: 'containerbox menuitem notification new',
+            id: 'notify_'+notifycounter
+        }).appendTo('#notifications');
+        var icon = $('<div>', {class: 'fixed'}).appendTo(div);
+        icon.append($('<i>', {
+            class: icontype+' svg-square'
+        }));
+        div.append($('<div>', {
+            class: 'expand indent'
+        }).html(message));
+        if ($('#notifications').is(':hidden')) {
+            $('#notifications').slideToggle('slow');
+        }
+        div.removeClass('new');
+        return div;
+    }
+
     return {
-        NOTIFY: 0,
-        ERROR: 1,
-        PERMERROR: 2,
-        PERMNOTIFY: 3,
-        SMARTRADIO: 4,
-        LONGNOTIFY: 5,
 
         biggerize: function() {
 
@@ -352,7 +366,7 @@ var infobar = function() {
                 uploadfail: function() {
                     $('#albumpicture').removeClass('spinner').addClass('nospin').removeAttr('name');
                     aImg.src = current_image;
-                    infobar.notify(infobar.ERROR, "Image Upload Failed!");
+                    infobar.error(language.gettext('error_imageupload'));
                 }
 
             }
@@ -405,7 +419,7 @@ var infobar = function() {
                 singling = true;
             }
             if (player.status.error && player.status.error != null) {
-                infobar.notify(infobar.ERROR, language.gettext("label_playererror")+": "+player.status.error);
+                infobar.error(language.gettext("label_playererror")+": "+player.status.error);
                 playlist.repopulate();
             }
         },
@@ -535,46 +549,38 @@ var infobar = function() {
             }
         },
 
-        notify: function(type, message) {
-            var div = $('<div>', {
-                class: 'containerbox menuitem notification new',
-                id: 'notify_'+notifycounter
-            }).appendTo('#notifications');
-            var icon = $('<div>', {class: 'fixed'}).appendTo(div);
-            switch (type) {
-                case infobar.NOTIFY:
-                case infobar.PERMNOTIFY:
-                case infobar.LONGNOTIFY:
-                    icon.append($('<i>', {
-                        class: 'icon-info-circled svg-square'
-                    }));
-                    break;
+        notify: function(message) {
+            var div = doNotification(message, 'icon-info-circled');
+            setTimeout($.proxy(infobar.removenotify, div, notifycounter), 5000);
+            return notifycounter;
+        },
 
-                case infobar.ERROR:
-                case infobar.PERMERROR:
-                    icon.append($('<i>', {
-                        class: 'icon-attention-1 svg-square'
-                    }));
-                    break;
+        longnotify: function(message) {
+            var div = doNotification(message, 'icon-info-circled');
+            setTimeout($.proxy(infobar.removenotify, div, notifycounter), 10000);
+            return notifycounter;
+        },
 
-                case infobar.SMARTRADIO:
-                    icon.append($('<i>', {
-                        class: 'icon-wifi svg-square'
-                    }));
-                    break;
-            }
-            div.append($('<div>', {
-                class: 'expand indent'
-            }).html(message));
-            if ($('#notifications').is(':hidden')) {
-                $('#notifications').slideToggle('slow');
-            }
-            div.removeClass('new');
-            if (type !== infobar.PERMERROR && type !== infobar.PERMNOTIFY) {
-                setTimeout($.proxy(infobar.removenotify, div, notifycounter), type == infobar.LONGNOTIFY ? 10000 : 5000);
-            }
-            notifycounter++;
-            return notifycounter-1;
+        error: function(message) {
+            var div = doNotification(message, 'icon-attention-1');
+            setTimeout($.proxy(infobar.removenotify, div, notifycounter), 5000);
+            return notifycounter;
+        },
+
+        permerror: function(message) {
+            doNotification(message, 'icon-attention-1');
+            return notifycounter;
+        },
+
+        permnotify: function(message) {
+            doNotification(message, 'icon-info-circled');
+            return notifycounter;
+        },
+
+        smartradio: function(message) {
+            var div = doNotification(message, 'icon-wifi');
+            setTimeout($.proxy(infobar.removenotify, div, notifycounter), 5000);
+            return notifycounter;
         },
 
         removenotify: function(data) {

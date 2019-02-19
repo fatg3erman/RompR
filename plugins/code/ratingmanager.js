@@ -65,7 +65,7 @@ var ratingManager = function() {
 				checkSectionRefresh();
 			},
 			function() {
-				infobar.notify(infobar.ERROR, "Failed to get data!");
+				infobar.error(language.gettext('label_general_error'));
 				rmg.slideToggle('fast');
 			}
 		);
@@ -160,7 +160,7 @@ var ratingManager = function() {
 				update_rest_of_ui();
 			},
 			function() {
-				infobar.notify(infobar.ERROR, "Oh dear, that didn't work");
+				infobar.error(language.gettext('label_general_error'));
 			}
 		);
 	}
@@ -361,7 +361,7 @@ var ratingManager = function() {
 					checkSectionRefresh();
             	},
             	function() {
-            		infobar.notify(infobar.ERROR, "Failed to get data!");
+            		infobar.error(language.gettext('label_general_error'));
             		rmg.slideToggle('fast');
             	}
             );
@@ -425,7 +425,7 @@ var ratingManager = function() {
 			var name = $('[name=newtagnameinput]').val();
 			if (name != '') {
 				if ($('.thebigholder[name="'+name+'"]').length > 0) {
-					infobar.notify(infobar.ERROR, "That tag already exists");
+					infobar.error(language.gettext('error_tagexists'));
 				} else {
 					name = name.replace(/\s*,\s*/, ', ');
 					startNewSection(name, name, 0, true);

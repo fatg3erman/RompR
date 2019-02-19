@@ -13,7 +13,7 @@ var wishlistViewer = function() {
 	       	collectionHelper.updateCollectionDisplay,
 	        function() {
 	            debug.log("DB TRACKS", "Failed to remove track");
-	            infobar.notify(infobar.ERROR, "Failed to remove track!");
+	            infobar.error(language.gettext('label_general_error'));
 	        }
 	    );
 		trackDiv.fadeOut('fast');
@@ -28,7 +28,7 @@ var wishlistViewer = function() {
 			},
 			function() {
 				debug.log("DB TRACKS","Failed to clear wishlist for some reason");
-				infobar.notify(infobar.ERROR, "Failed. Sorry.");
+				infobar.error(language.gettext('label_general_error'));
 			}
 		);
 	}
@@ -89,7 +89,7 @@ var wishlistViewer = function() {
 		data.attributes = parentdata.attributes;
 		dbQueue.request([data], collectionHelper.updateCollectionDisplay,
             function(rdata) {
-	            infobar.notify(infobar.ERROR,"Track Import Failed");
+	            infobar.error(language.gettext('label_general_error'));
 	            debug.warn("WISHLIST","Failure");
             }
 		);

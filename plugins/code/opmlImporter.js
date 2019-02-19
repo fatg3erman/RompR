@@ -20,11 +20,11 @@ var opmlImporter = function() {
 					'</div>'
 				);
 	            $('#opmlvfoldup').append('<div id="opmllist"></div>');
-				$('#opmlvfoldup').append('<h2>OPML Export</h2>')
+				$('#opmlvfoldup').append('<h2>'+language.gettext('label_opmlexp')+'</h2>')
 				$('#opmlvfoldup').append(
 					'<div class="fullwidth brick_wide">'+
 					'<a href="plugins/code/opmlexport.php" download="podcasts.opml">'+
-					'<button>Export Podcasts As OPML</button>'+
+					'<button>'+language.gettext('button_opmlexp')+'</button>'+
 					'</a>'+
 					'</div>'
 				);
@@ -55,7 +55,7 @@ var opmlImporter = function() {
                 if (xhr.status === 200) {
 					opmlImporter.gotData(xhr.response);
                 } else {
-                    infobar.notify(infobar.ERROR, "Failed To Upload OPML FIle");
+                    infobar.error(language.gettext('label_general_error'));
                 }
             };
             xhr.send(new FormData(formElement));
@@ -64,12 +64,12 @@ var opmlImporter = function() {
 		gotData: function(data) {
 			debug.log("OPML IMPORTER", "File Parsed",data);
 			var html = '';
-			html += '<div class="configtitle textcentre brick_wide">OPML Import</div>';
+			html += '<div class="configtitle textcentre brick_wide">'+language.gettext('label_opmlimporter')+'</div>';
 			html += '<div class="containerbox fullwidth">';
-			html += '<button class="fixed" name="opml_selectall">Select All</button>';
-			html += '<button class="fixed" name="opml_selectnone">Select None</button>';
+			html += '<button class="fixed" name="opml_selectall">'+language.gettext('button_selectall')+'</button>';
+			html += '<button class="fixed" name="opml_selectnone">'+language.gettext('button_selectnone')+'</button>';
 			html += '<div class="expand"></div>';
-			html += '<button class="fixed" name="opml_import">Import Selected</button>';
+			html += '<button class="fixed" name="opml_import">'+language.gettext('button_import')+'</button>';
 			html += '</div>';
 			html += '<table width="100%">';
 			for (var i in data) {

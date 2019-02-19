@@ -75,7 +75,7 @@ var sleepTimer = function() {
 				debug.log("SLEEP","User Volume is",uservol,"increment step is",volinc);
 				ramptimer = setTimeout(sleepTimer.volRamp, 1000);
 			}
-			infobar.notify(infobar.NOTIFY,'Sleep Timer Engaged');
+			infobar.notify(language.gettext('label_sleepon'));
 		},
 
 		fakeClick: function() {

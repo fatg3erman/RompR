@@ -72,7 +72,7 @@ var playlistManager = function() {
 	            infobar.markCurrentTrack();
         	},
         	error: function() {
-        		infobar.notify(infobar.ERROR, "Failed to remove track");
+        		infobar.error(language.gettext('label_general_error'));
         	}
         });
 
@@ -86,7 +86,7 @@ var playlistManager = function() {
         	dataType: 'json',
         	success: playlistManager.doMainLayout,
         	error: function() {
-        		infobar.notify(infobar.ERROR, "Failed to get Playlists");
+        		infobar.error(language.gettext('label_general_error'));
         		pmg.slideToggle('fast');
         	}
         });

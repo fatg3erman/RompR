@@ -73,7 +73,7 @@ var genreRadio = function() {
 
 		fail: function() {
 			debug.error("GENRE RADIO","Well, that didn't work");
-            infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
+            infobar.notify(language.gettext('label_gotnotracks'));
             playlist.radioManager.stop(null);
 		},
 

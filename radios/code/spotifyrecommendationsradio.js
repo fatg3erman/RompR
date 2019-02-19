@@ -19,7 +19,7 @@ function spotifyRecommendationsRadio() {
 
 	this.spotiError = function(data) {
 		debug.warn("SPOTIFY RECC","Error!",data);
-		infobar.notify(infobar.ERROR,"Couldn't find any tracks!");
+		infobar.error(language.gettext('label_gotnotracks'));
         playlist.radioManager.stop(null);
 	}
 
@@ -33,7 +33,7 @@ function spotifyRecommendationsRadio() {
             player.controller.addTracks(t, playlist.radioManager.playbackStartPos(), null);
         } else {
         	debug.warn("SPOTIFY RECC","Out of Tracks!");
-        	infobar.notify(infobar.NOTIFY,'<i class="icon-spotify-circled modeimg"/></i>There are no tracks left to play');
+        	infobar.notify('<i class="icon-spotify-circled modeimg"/></i>'+language.gettext('label_outoftracks'));
             playlist.radioManager.stop(null);
         }
 	}
@@ -49,7 +49,7 @@ function spotifyRecommendationsRadio() {
 			tracks.sort(randomsort);
 			self.sendTracks(numtracks);
 		} else {
-			infobar.notify(infobar.ERROR,"Couldn't find any tracks!");
+			infobar.error(language.gettext('label_gotnotracks'));
             playlist.radioManager.stop(null);
 		}
 	}

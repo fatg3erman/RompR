@@ -207,7 +207,7 @@ var shortcuts = function() {
             var key = getHotkeyString(ev);
             for (var name in hotkeys) {
                 if (hotkeys[name] == key) {
-                    infobar.notify(infobar.ERROR, "Key '"+key+"' is already used by '"+language.gettext(name)+"'");
+                    infobar.error(language.gettext('error_dupkey', [key, language.gettext(name)]));
                     return false;
                 }
             }

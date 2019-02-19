@@ -66,7 +66,7 @@ var podcasts = function() {
 	                }
 	            },
 	            error: function() {
-	                infobar.notify(infobar.ERROR, "Something went wrong checking the download progress!");
+	                infobar.error(language.gettext('error_dlpfail'));
 	            }
 	        });
 	    }
@@ -75,7 +75,7 @@ var podcasts = function() {
 	        running = false;
 	        clearTimeout(timer);
 			if (error) {
-				progressdiv.replaceWith('<div class="fullwidth">Download Failed</div>');
+				progressdiv.replaceWith('<div class="fullwidth">'+language.gettext('error_dlfailed')+'</div>');
 			}
 	    }
 
@@ -145,7 +145,7 @@ var podcasts = function() {
 	        },
 	        error: function(data, status) {
 	            debug.error("PODCASTS", "Podcast Request Failed:",options,data,status);
-	            infobar.notify(infobar.ERROR,language.gettext("label_general_error"));
+	            infobar.error(language.gettext("label_general_error"));
 				if (callback !== null) {
 	            	callback();
 	            }
@@ -169,7 +169,7 @@ var podcasts = function() {
 		getPodcast: function(url, callback) {
 		    debug.log("PODCAST","Getting podcast",url);
 			if (!callback) {
-			    infobar.notify(infobar.NOTIFY, "Subscribing to Podcast....")
+			    infobar.notify(language.gettext('label_subscribing'))
 			    doSomethingUseful('cocksausage', language.gettext("label_downloading"));
 			}
 		    $.ajax( {
@@ -183,7 +183,7 @@ var podcasts = function() {
 						callback(true);
 					} else {
 			            $("#fruitbat").html(data);
-			            infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
+						infobar.notify(language.gettext('label_subscribed'));
 			            podcasts.doNewCount();
 						$('#spinner_cocksausage').remove();
 						layoutProcessor.postAlbumActions($('#fruitbat'));
@@ -193,7 +193,7 @@ var podcasts = function() {
 					if (callback) {
 						callback(false);
 					} else {
-		            	infobar.notify(infobar.ERROR, "Failed to Subscribe to Podcast : "+data.responseText);
+		            	infobar.error(language.gettext('error_subfail', [data.responseText]));
 		            	$('#spinner_cocksausage').remove();
 					}
 		        }
@@ -213,7 +213,7 @@ var podcasts = function() {
 					layoutProcessor.postAlbumActions($('#fruitbat'));
 		        },
 		        error: function(data, status, thing) {
-	            	infobar.notify(infobar.ERROR, "Failed to load podcasts list : "+data.responseText);
+					infobar.error(language.gettext('error_plfail', [data.responseText]));
 		        }
 		    });
 		},
@@ -362,7 +362,7 @@ var podcasts = function() {
 				},
 				error: function() {
 					debug.error("PODCASTS","Refresh Failed");
-					infobar.notify(infobar.ERROR, "Podcast Refresh Failed");
+					infobar.error(language.gettext('error_refreshfail'));
 				}
 			})
 		},
@@ -381,7 +381,7 @@ var podcasts = function() {
 					layoutProcessor.postAlbumActions();
 		        },
 		        error: function(data, status) {
-		            infobar.notify(infobar.ERROR, language.gettext("podcast_remove_error"));
+		            infobar.error(language.gettext("podcast_remove_error"));
 		        }
 		    } );
 		},
@@ -410,7 +410,7 @@ var podcasts = function() {
 					layoutProcessor.postAlbumActions($('#podcast_search'));
 		        },
 		        error: function(data, status, thing) {
-		            infobar.notify(infobar.ERROR, "Search Failed : "+data.responseText);
+					infobar.error(language.gettext('error_searchfail', [data.responseText]));
 		            $('#spinner_podcast_search').remove();
 		        }
 		    } );
@@ -433,7 +433,7 @@ var podcasts = function() {
 					uiHelper.postPodcastSubscribe(data, index);
 				},
 		        error: function(data, status, thing) {
-		            infobar.notify(infobar.ERROR, "Subscribe Failed : "+data.responseText);
+					infobar.error(language.gettext('error_subfail', [data.responseText]));
 		            $('#spinner_cocksausage').remove();
 		        }
 		    } );

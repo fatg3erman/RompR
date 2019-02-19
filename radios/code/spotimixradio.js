@@ -76,7 +76,7 @@ var spotiMixRadio = function() {
 		        	},
 		        	function() {
 		        		debug.error(medebug,"Error Getting Seeds");
-		        		infobar.notify(infobar.ERROR,"Sorry, something went wrong");
+		        		infobar.error(language.gettext('label_general_error'));
 		        		playlist.radioManager.stop(null);
 		        	}
 		        );
@@ -131,7 +131,7 @@ var spotiMixRadio = function() {
 			} else if (trackseeds.length > 0) {
 				populateTuner(5);
 			} else {
-				infobar.notify(infobar.ERROR, "Insufficient Data To Get Recommendations. Play Some More Music!");
+				infobar.error(language.gettext('error_norec'));
         		playlist.radioManager.stop(null);
 			}
 		},

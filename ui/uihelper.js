@@ -411,7 +411,7 @@ var uiHelper = function() {
                     $('i[name="podcast_'+index+'"]').parent().remove();
                     $('#podcast_'+index).remove();
                     $("#fruitbat").html(data);
-                    infobar.notify(infobar.NOTIFY, "Subscribed to Podcast");
+                    infobar.notify(language.gettext('label_subscribed'));
                     podcasts.doNewCount();
                     layoutProcessor.postAlbumActions();
                 });

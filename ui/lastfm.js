@@ -361,11 +361,11 @@ function LastFM(user) {
                 LastFMSignedRequest(
                     options,
                     function() {
-                        infobar.notify(infobar.NOTIFY, language.gettext("label_loved")+" "+options.track);
+                        infobar.notify(language.gettext("label_loved")+" "+options.track);
                         callback(true);
                     },
                     function() {
-                        infobar.notify(infobar.ERROR, language.gettext("label_lovefailed"));
+                        infobar.error(language.gettext("label_lovefailed"));
                     }
                 );
             }
@@ -377,11 +377,11 @@ function LastFM(user) {
                 LastFMSignedRequest(
                     options,
                     function() {
-                        infobar.notify(infobar.NOTIFY, language.gettext("label_unloved")+" "+options.track);
+                        infobar.notify(language.gettext("label_unloved")+" "+options.track);
                         callback(false);
                     },
                     function() {
-                        infobar.notify(infobar.ERROR, language.gettext("label_unlovefailed"));
+                        infobar.error(language.gettext("label_unlovefailed"));
                     }
                 );
             }
@@ -466,7 +466,7 @@ function LastFM(user) {
                 LastFMSignedRequest(
                     options,
                     function() {  },
-                    function() { infobar.notify(infobar.ERROR, language.gettext("label_scrobblefailed")+" "+options.track) }
+                    function() { infobar.error(language.gettext("label_scrobblefailed")+" "+options.track) }
                 );
             }
         },

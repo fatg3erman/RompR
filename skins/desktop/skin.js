@@ -202,7 +202,7 @@ var layoutProcessor = function() {
         },
 
         playlistLoading: function() {
-            infobar.notify(infobar.SMARTRADIO, "Preparing. Please Wait A Moment....");
+            infobar.smartradio(language.gettext('label_preparing'));
         },
 
         scrollPlaylistToCurrentTrack: function() {

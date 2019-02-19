@@ -19,7 +19,7 @@ var recentlyPlayed = function() {
 	            		recentlyPlayed.doMainLayout(data);
 	            	},
 	            	error: function() {
-	            		infobar.notify(infobar.ERROR, "Failed to get List");
+	            		infobar.error(language.gettext('label_general_error'));
 	            		rpl.slideToggle('fast');
 	            	}
 	            });

@@ -93,7 +93,7 @@ var alarm = function() {
 					player.controller.play();
 				}
 			}
-			infobar.notify(infobar.NOTIFY,'<i class="icon-alarm-on bigalarm"></i>');
+			infobar.notify('<i class="icon-alarm-on bigalarm"></i>');
 			alarm.setAlarm();
 		},
 
@@ -115,10 +115,10 @@ var alarm = function() {
 				clearTimeout(alarmtimer);
 				player.controller.pause();
 				snoozing = false;
-				infobar.notify(infobar.NOTIFY, "Snooze OFF");
+				infobar.notify(language.gettext('label_snoozeoff'));
 				$("#alarmclock").stopFlasher();
 				alarm.setAlarm();
-				$("#freddibnah").text('Snooze...');
+				$("#freddibnah").text(language.gettext('label_snooze'));
 			} else {
 				if (player.status.state == "play") {
 					debug.log("ALARM","Snoozing");
@@ -132,8 +132,8 @@ var alarm = function() {
 					$("#alarmclock").makeFlasher({flashtime: 10, repeats: prefs.alarm_snoozetime*6});
 					snoozing = true;
 					debug.log("ALARM","Alarm will go off in",prefs.alarm_snoozetime,"minutes");
-					infobar.notify(infobar.NOTIFY, "Snoozing....");
-					$("#freddibnah").text('UnSnooze...');
+					infobar.notify(language.gettext('label_snoozeon'));
+					$("#freddibnah").text(language.gettext('label_unsnooze'));
 				}
 			}
 		},
@@ -165,7 +165,7 @@ var alarm = function() {
 			html += '</tr>';
 			html += '<tr><td colspan="2">'+language.gettext('config_ramptime')+'</td><td><input class="saveotron prefinput" id="alarm_ramptime" type="text" size="2" /></td></tr>';
 			html += '<tr><td colspan="2">'+language.gettext('config_snoozetime')+'</td><td><input class="saveotron prefinput" id="alarm_snoozetime" type="text" size="2" /></td></tr>';
-			html += '<tr><td colspan="3" align="center" colspan="2"><button id="freddibnah" onclick="alarm.snooze()">Snooze...</button></td></tr>';
+			html += '<tr><td colspan="3" align="center" colspan="2"><button id="freddibnah" onclick="alarm.snooze()">'+language.gettext('label_snooze')+'</button></td></tr>';
 			html += '</table>';
 			html += '</div>';
 			holder.html(html);

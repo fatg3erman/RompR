@@ -141,7 +141,7 @@ var prefs = function() {
             },
             error: function() {
                 debug.error("PREFS","Playlist transfer failed");
-                infobar.notify(infobar.ERROR,"Failed To Transfer Playlist!");
+                infobar.error(language.gettext('error_trfailed'));
             }
         });
     }
@@ -775,12 +775,12 @@ var prefs = function() {
 
                     case 400:
                         debug.fail("BIMAGE", "FAILED");
-                        infobar.notify(infobar.ERROR, "Too many images, or image file too big");
+                        infobar.error(language.gettext('error_toomanyimages'));
                         // Fall Through
 
                     default:
                         debug.fail("BIMAGE", "FAILED");
-                        infobar.notify(infobar.ERROR, "Failed To Upload Image");
+                        infobar.error(language.gettext('error_imageupload'));
                         $('#bguploadspinner').removeClass('spinner').parent().fadeOut('fast');
 
                 }

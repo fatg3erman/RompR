@@ -82,7 +82,7 @@ var crazyRadioManager = function() {
                 data: JSON.stringify(settings),
                 success: crazyRadioManager.refreshCrazyList,
                 error: function() {
-                    infobar.notify(infobar.ERROR,"Couldn't save it. Sorry, something went wrong");
+                    infobar.error(language.gettext('label_general_error'));
                 }
             });
             return true;

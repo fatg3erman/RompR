@@ -1044,7 +1044,7 @@ $.widget('rompr.spotifyAlbumThing', {
     },
 
     spotiError: function(data) {
-        infobar.notify(infobar.ERROR, "Error Getting Data From Spotify");
+        infobar.error(language.gettext('label_general_error'));
     },
 
     artistInfo: function(data, reqid) {
@@ -1246,7 +1246,7 @@ $.widget('rompr.spotifyArtistThing', {
     },
 
     spotiError: function(data) {
-        infobar.notify(infobar.ERROR, "Error Getting Data From Spotify");
+        infobar.error(language.gettext('label_general_error'));
         debug.error("MONKEYBALLS", "Spotify Error", data);
     },
 

@@ -88,7 +88,7 @@ var playlist = function() {
                                 mode = null;
                                 player.controller.checkConsume(prefs.radioconsume);
                                 playlist.repopulate();
-                                infobar.notify(infobar.ERROR,"Something Went Badly Wrong");
+                                infobar.error(language.gettext('label_general_error'));
                             });
                     } else {
                         actuallyActuallyRepopulate();
@@ -168,7 +168,7 @@ var playlist = function() {
 
             load: function(which, param) {
                 if (prefs.debug_enabled > 0) {
-                    infobar.notify(infobar.LONGNOTIFY, language.gettext('warning_smart_debug'));
+                    infobar.longnotify(language.gettext('warning_smart_debug'));
                 }
                 if (!mode) {
                     prefs.save({radioconsume: player.status.consume});
@@ -284,7 +284,7 @@ var playlist = function() {
         updateFailure: function(jqxhr, response, error) {
             debug.error("PLAYLIST","Got notified that an update FAILED",error,response,jqxhr);
             if (update_error === false) {
-                update_error = infobar.notify(infobar.PERMERROR, language.gettext("label_playlisterror"));
+                update_error = infobar.permerror(language.gettext("label_playlisterror"));
             }
             clearTimeout(retrytimer);
             last_reqid = reqid;
@@ -722,7 +722,7 @@ var playlist = function() {
 
         stopafter: function() {
             if (currentTrack.type == "stream") {
-                infobar.notify(infobar.ERROR, language.gettext("label_notforradio"));
+                infobar.error(language.gettext("label_notforradio"));
             } else if (player.status.state == "play") {
                 if (player.status.single == 0) {
                     player.controller.stopafter();
@@ -750,7 +750,7 @@ var playlist = function() {
         },
 
         addAlbumToCollection: function(index) {
-            infobar.notify(infobar.NOTIFY, "Adding Album To Collection");
+            infobar.notify(language.gettext('label_addingalbum'));
             tracklist[index].addToCollection();
         },
 
@@ -1114,7 +1114,7 @@ function Album(artist, album, index, rolledup) {
             },
             function(data) {
                 debug.fail("ADD ALBUM","Failed to add album",data);
-                infobar.notify(infobar.ERROR, "Failed To Get Album Info From Spotify");
+                infobar.error(language.gettext('label_general_error'));
             },
             false);
         } else {

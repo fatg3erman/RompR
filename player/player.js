@@ -8,7 +8,7 @@ var player = function() {
 
         function removePlayerDef(event) {
             if (decodeURIComponent($(event.target).parent().parent().attr('name')) == prefs.currenthost) {
-                infobar.notify(infobar.ERROR, "You cannot delete the player you're currently using");
+                infobar.error(language.gettext('error_cantdeleteplayer'));
             } else {
                 $(event.target).parent().parent().remove();
                 playerpu.setWindowToContentsSize();
@@ -51,7 +51,7 @@ var player = function() {
                 });
 
                 if (newhosts.hasOwnProperty(newname)) {
-                    infobar.notify(infobar.ERROR, "You cannot have two players with the same name");
+                    infobar.error(language.gettext('error_duplicateplayer'));
                     error = true;
                 }
 

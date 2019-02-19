@@ -20,7 +20,7 @@ var lfmImporter = function() {
         		putTracks(data);
         	},
         	error: function() {
-        		infobar.notify(infobar.ERROR, "Failed to fetch data!");
+        		infobar.error(language.gettext('label_general_error'));
         	}
         });
     }
@@ -99,7 +99,7 @@ var lfmImporter = function() {
 		$('#lfmiprogress').rangechooser("setRange", {min: 0, max: tracksdone+prefs.lfm_importer_start_offset});
 		var elapsed = Date.now() - starttime;
 		var remaining = (elapsed/tracksdone) * (totaltracks - tracksdone - prefs.lfm_importer_start_offset);
-		$('#lfmiinfo').html('Done '+(tracksdone+prefs.lfm_importer_start_offset)+' of '+totaltracks+'. Elapsed : '+formatTimeString(elapsed/1000)+', Remaining : '+formatTimeString(remaining/1000));
+		$('#lfmiinfo').html(language.gettext('importer_status', [tracksdone+prefs.lfm_importer_start_offset, totaltracks, formatTimeString(elapsed/1000), formatTimeString(remaining/1000)]));
         if (alloffset < alldata.length) {
             getNextRow();
         } else {
@@ -129,7 +129,7 @@ var lfmImporter = function() {
 				}
         	},
         	error: function() {
-        		infobar.notify(infobar.ERROR, "Failed to fetch data!");
+        		infobar.error(language.gettext('label_general_error'));
         	}
         });
 	}
@@ -145,7 +145,7 @@ var lfmImporter = function() {
 				$("#lfmimunger").append('<div style="padding:4px;max-width:80%;margin:auto;text-align:center;font-size:80%;margin-bottom:1em" id="lfmiinfo"></div>');
 				$("#lfmimunger").append('<table id="lfmitable"></table>');
 				if (lastfm.isLoggedIn()) {
-                	$('#lfmitable').append('<tr><th>Artist</th><th>Album</th><th>Title</th>th class="invisible"></th><th class="invisible"></th><th class="invisible"></th><th>Playcount</th><th>Last.FM Playcount</th><th></th></tr>');
+                	$('#lfmitable').append('<tr><th>Artist</th><th>'+language.gettext('label_album')+'</th><th>'+language.gettext('label_track')+'</th>th class="invisible"></th><th class="invisible"></th><th class="invisible"></th><th>'+language.gettext('label_playcount')+'</th><th>'+language.gettext('label_lfm_playcount')+'</th><th></th></tr>');
 					getTotalTracks();
 				} else {
 					$('#lfmimunger').append('<div  class="textcentre"><h3>'+language.gettext('label_mustlogintolfm')+'</h3></div>');

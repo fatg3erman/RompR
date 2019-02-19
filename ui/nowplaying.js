@@ -346,7 +346,7 @@ var nowplaying = function() {
 			if (history[npindex] !== undefined) {
 				history[npindex].populate(source, true);
 			} else {
-				infobar.notify(infobar.NOTIFY, "Browser history has been truncated - artist cannot be displayed");
+				infobar.notify(language.gettext('error_truncated'));
 			}
 		},
 

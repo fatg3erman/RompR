@@ -323,7 +323,7 @@ var info_discogs = function() {
 								}
 							},
 							function(data) {
-								infobar.notify(infobar.ERROR, "Could not find link!");
+								infobar.error(language.gettext('label_general_error'));
 							}
 						);
 					}

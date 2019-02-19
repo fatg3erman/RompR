@@ -88,7 +88,7 @@ var artistRadio = function() {
 
 		fail: function(data) {
             debug.error("ARTIST RADIO","Failed to create playlist",data);
-            infobar.notify(infobar.NOTIFY,language.gettext('label_gotnotracks'));
+            infobar.notify(language.gettext('label_gotnotracks'));
             playlist.radioManager.stop(null);
 		}
 
