@@ -57,6 +57,20 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 
 } else {
 
+	if (!array_key_exists('currbackgruond', $_REQUEST) || !array_key_exists('imagefile', $_FILES)) {
+		if (isset($_SERVER["CONTENT_LENGTH"])) {
+			if ($_SERVER["CONTENT_LENGTH"] > ((int) ini_get('post_max_size')*1024*1024)) {
+				debuglog('Content Length Error','BACKIMAGE');
+				header("HTTP/1.1 400 Bad Request", 'BACKIMAGE');
+				ob_flush();
+				exit(0);
+			}
+		}
+		debuglog('Some kind of upload error', 'BACKIMAGE');
+		header("HTTP/1.1 500 Internal Server Error");
+		ob_flush();
+		exit(0);
+	}
 	$skin = $_REQUEST['currbackground'];
 	$base = $skin;
 	$browserid = null;
@@ -105,6 +119,7 @@ function delete_files($path, $expr = '*.*') {
 }
 
 function make_files_useful($arr) {
+	$new = array();
     foreach ($arr as $key => $all) {
         foreach ($all as $i => $val) {
             $new[$i][$key] = $val;
