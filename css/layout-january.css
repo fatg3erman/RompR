@@ -2192,3 +2192,21 @@ div.unplayable {
 .robotlove {
 	margin-bottom: 8px;
 }
+
+.altablebit {
+	text-align: right;
+	padding-right: 1em;
+}
+
+.disabledbuttons {
+	opacity: 0.3;
+}
+
+.alarmbutton {
+    width: 120px;
+    height: 120px;
+}
+
+.alarmdropempty {
+	height: 100px;
+}

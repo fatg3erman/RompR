@@ -559,17 +559,28 @@ function removeOpenItems(index) {
     // Filter out artist and album items whose dropdowns have been populated -
     // In these cases the individual tracks will exist and will be selected
     // (and might only have partial selections even if the header is selected)
-    if ($(this).hasClass('clicktrack') ||
-        $(this).hasClass('clickcue') ||
-        $(this).hasClass('clickstream')) {
+    var self = $(this);
+    if (self.hasClass('clicktrack') ||
+        self.hasClass('clickcue') ||
+        self.hasClass('clickstream')) {
         return true;
     }
-    if ($("#"+$(this).attr('name')).length == 0) {
+    var element = self.hasClass('clickloadplaylist') ? $('#'+self.children('i.menu').first().attr('name')) : $("#"+self.attr('name'));
+    if (element.length == 0) {
         return true;
-    } else if ($("#"+$(this).attr('name')).hasClass('notfilled')) {
+    } else if (element.hasClass('notfilled')) {
         return true;
     } else {
         return false;
+    }
+}
+
+function onlyAlbums(index) {
+    var self = $(this);
+    if (self.hasClass('clicktrack') && self.parent().prev().hasClass('selected')) {
+        return false;
+    } else {
+        return true;
     }
 }
 

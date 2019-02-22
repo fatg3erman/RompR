@@ -75,16 +75,7 @@ $.widget("rompr.trackdragger", $.ui.mouse, {
         }
         this.dragging = true;
         if (!clickedElement.hasClass("selected")) {
-            if (clickedElement.hasClass("clickalbum") ||
-                clickedElement.hasClass("clickloadplaylist")) {
-                albumSelect(event, clickedElement);
-            } else if (clickedElement.hasClass('clickdisc')) {
-                discSelect(event, clickedElement);
-            } else if (clickedElement.hasClass("clicktrack") ||
-                        clickedElement.hasClass("clickcue") ||
-                        clickedElement.hasClass('clickstream')) {
-                trackSelect(event, clickedElement);
-            }
+            $.proxy(selectPlayable, clickedElement, event).call();
         }
         this.dragger = $('<div>', {id: 'dragger', class: 'draggable dragsort containerbox vertical dropshadow'}).appendTo('body');
         this.dragger.css('width', $('.selected').first().css('width'));

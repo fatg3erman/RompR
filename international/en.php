@@ -706,10 +706,6 @@ $languages['en'] = array (
 	"error_trfailed" => "Failed to Transfer Playlist",
 	"error_trackexists" => "That track is already in the collection",
 	"error_nosearchnow" => "Cannot Search while updating collection",
-	"label_snoozeoff" => 'Snooze OFF',
-	"label_snoozeon" => 'Snoozing...',
-	"label_snooze" => "Snooze...",
-	"label_unsnooze" => "UnSnooze...",
 	"label_backupcreated" => "Backup Created",
 	"label_sleepon" => "Sleep Timer Enabled",
 	"label_outoftracks" => "There are no tracks left to play",
@@ -739,7 +735,17 @@ $languages['en'] = array (
 	"button_opmlexp" => "Export Podcasts As OPML",
 	"button_selectall" => "Select All",
 	"button_selectnone" => "Select None",
-	"button_import" => "Import Selected"
+	"button_import" => "Import Selected",
+	"label_onlyspotify" => "This panel is only applicable if your player can play Spotify",
+	"label_monday" => "Monday",
+	"label_tuesday" => "Tuesday",
+	"label_wednesday" => "Wednesday",
+	"label_thursday" => "Thursday",
+	"label_friday" => "Friday",
+	"label_saturday" => "Saturday",
+	"label_sunday" => "Sunday",
+	"label_alarm_play_specific" => "Play This Item",
+	"label_alarm_to_play" => "Drop Item Here"
 );
 
 ?>

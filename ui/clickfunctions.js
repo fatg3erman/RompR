@@ -100,10 +100,20 @@ function unbindPlaylistClicks() {
 
 function setControlClicks() {
     $('i.prev-button').on('click', playlist.previous);
+    $('i.next-button').on('click', playlist.next);
+    setPlayClicks();
+}
+
+function setPlayClicks() {
     $('i.play-button').on('click', infobar.playbutton.clicked);
     $('i.stop-button').on('click', player.controller.stop);
     $('i.stopafter-button').on('click', playlist.stopafter);
-    $('i.next-button').on('click', playlist.next);
+}
+
+function offPlayClicks() {
+    $('i.play-button').off('click', infobar.playbutton.clicked);
+    $('i.stop-button').off('click', player.controller.stop);
+    $('i.stopafter-button').off('click', playlist.stopafter);
 }
 
 function onBrowserClicked(event) {
@@ -150,7 +160,7 @@ function onSourcesClicked(event, clickedElement) {
 function selectPlayable(event) {
     event.stopImmediatePropagation();
     var clickedElement = $(this);
-    if (clickedElement.hasClass("clickalbum") && !clickedElement.hasClass('noselect')) {
+    if ((clickedElement.hasClass("clickalbum") || clickedElement.hasClass('clickloadplaylist')) && !clickedElement.hasClass('noselect')) {
         albumSelect(event, clickedElement);
     } else if (clickedElement.hasClass("clickdisc")) {
         discSelect(event, clickedElement);
@@ -424,7 +434,11 @@ function checkMetaKeys(event, element) {
 
 function albumSelect(event, element) {
     var is_currently_selected = checkMetaKeys(event, element);
-    var div_to_select = $('#'+element.attr("name"));
+    if (element.hasClass('clickloadplaylist')) {
+        var div_to_select = $('#'+element.children('i.menu').first().attr('name'));
+    } else {
+        var div_to_select = $('#'+element.attr("name"));
+    }
     debug.log("GENERAL","Albumselect Looking for div",div_to_select,is_currently_selected);
     if (is_currently_selected) {
         element.removeClass("selected");

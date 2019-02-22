@@ -28,7 +28,7 @@ var unplayabletracks = function() {
         if (player.canPlay('spotify')) {
             holder.load('plugins/code/getunplayable.php');
         } else {
-            holder.html('<h3>This panel is only applicable if your player can play Spotify</h3>');
+            holder.html('<h3>'+language.gettext('label_onlyspotify')+'</h3>');
         }
     }
 

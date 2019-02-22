@@ -229,7 +229,17 @@ $prefs = array(
     "podcast_sort_1" => 'Artist',
     "podcast_sort_2" => 'Category',
     "podcast_sort_3" => 'new',
-    "bgimgparms" => (object) array('dummy' => 'baby')
+    "bgimgparms" => (object) array('dummy' => 'baby'),
+    "alarmrepeat" => false,
+    "alarmrepeat_monday" => false,
+    "alarmrepeat_tuesday" => false,
+    "alarmrepeat_wednesday" => false,
+    "alarmrepeat_thursday" => false,
+    "alarmrepeat_friday" => false,
+    "alarmrepeat_saturday" => false,
+    "alarmrepeat_sunday" => false,
+    "alarmplayitem" => false,
+    "alarm_itemtoplay" => ''
 );
 
 // Prefs that should not be exposed to the browser for security reasons

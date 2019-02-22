@@ -11,6 +11,7 @@ function playerController() {
     var oldplname;
     var thenowplayinghack = false;
     var lastsearchcmd = "search";
+    var stateChangeCallbacks = new Array();
 
     function updateStreamInfo() {
 
@@ -144,6 +145,7 @@ function playerController() {
                         }
                         plversion = player.status.playlist;
                         infobar.setStartTime(player.status.elapsed);
+                        checkStateChange();
                     }
                 }
                 post_command_list(callback);
@@ -169,6 +171,19 @@ function playerController() {
 
     this.isConnected = function() {
         return true;
+    }
+
+    this.addStateChangeCallback = function(sc) {
+        stateChangeCallbacks.push(sc);
+    }
+
+    function checkStateChange() {
+        for (var i = 0; i < stateChangeCallbacks.length ; i++) {
+            if (stateChangeCallbacks[i].state == player.status.state) {
+                stateChangeCallbacks[i].callback();
+                stateChangeCallbacks.splice(i, 1);
+            }
+        }
     }
 
 	this.reloadPlaylists = function() {
@@ -314,9 +329,9 @@ function playerController() {
         }
     }
 
-	this.clearPlaylist = function() {
+	this.clearPlaylist = function(callback) {
         // Mopidy does not like removing tracks while they're playing
-	    self.do_command_list([['stop'], ['clear']]);
+	    self.do_command_list([['stop'], ['clear']], callback);
 	}
 
 	this.savePlaylist = function() {
@@ -616,7 +631,6 @@ function playerController() {
                     }
             });
         }
-
     }
 
     this.reSearch = function() {

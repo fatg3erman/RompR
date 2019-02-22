@@ -73,7 +73,16 @@ var prefs = function() {
         "podcastcontrolsvisible",
         "use_albumart_in_playlist",
         "bgimgparms",
-        "collectionrange"
+        "collectionrange",
+        "alarmrepeat",
+        "alarmrepeat_monday",
+        "alarmrepeat_tuesday",
+        "alarmrepeat_wednesday",
+        "alarmrepeat_thursday",
+        "alarmrepeat_friday",
+        "alarmrepeat_saturday",
+        "alarmrepeat_sunday",
+        "thisisatest"
     ];
 
     const cookiePrefs = [
@@ -560,6 +569,14 @@ var prefs = function() {
                     break;
 
                 case "alarmon":
+                case "alarmrepeat":
+                case "alarmrepeat_monday":
+                case "alarmrepeat_tuesday":
+                case "alarmrepeat_wednesday":
+                case "alarmrepeat_thursday":
+                case "alarmrepeat_friday":
+                case "alarmrepeat_saturday":
+                case "alarmrepeat_sunday":
                     callback = alarm.toggle;
                     break;
 

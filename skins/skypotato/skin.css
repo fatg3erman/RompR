@@ -616,12 +616,6 @@ div.rightmenu
 =====================================================================
 */
 
-.bigalarm
-{
-    width: 250px;
-    height: 250px;
-}
-
 @-webkit-keyframes clickflash {
      0%{
           background-color: rgba(255,255,255,0.7);
