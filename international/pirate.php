@@ -482,7 +482,6 @@ $languages['pirate'] = array (
 	"config_sortoptions" => "Collection Sorting Options",
 	"button_skipforward" => "Skip Forwards",
 	"button_skipbackward" => "Skip Backwards",
-	"button_alarmsnooze" => "Alarm Snooze",
 	"config_snoozetime" => "Snooze Time (Mins)",
 	"config_ramptime" => "Fade Time (Secs)",
 	"button_rateone" => "Rate 1 Star",

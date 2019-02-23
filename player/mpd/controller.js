@@ -174,14 +174,20 @@ function playerController() {
     }
 
     this.addStateChangeCallback = function(sc) {
-        stateChangeCallbacks.push(sc);
+        if (player.status.state == sc.state) {
+            sc.callback();
+        } else {
+            stateChangeCallbacks.push(sc);
+        }
     }
 
     function checkStateChange() {
+
         for (var i = 0; i < stateChangeCallbacks.length ; i++) {
             if (stateChangeCallbacks[i].state == player.status.state) {
                 stateChangeCallbacks[i].callback();
                 stateChangeCallbacks.splice(i, 1);
+                i--;
             }
         }
     }

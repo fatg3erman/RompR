@@ -505,7 +505,6 @@ $languages['it'] = array (
 	"config_sortoptions" => "Opzioni di Ordinamento della Collezione",
 	"button_skipforward" => "Salta Avanti",
 	"button_skipbackward" => "Salta Indietro",
-	"button_alarmsnooze" => "Sveglia Sonnellino",
 	"config_snoozetime" => "Durata sonnellino (Min)",
 	"config_ramptime" => "Durata dissolvenza (Sec)",
 	"button_rateone" => "Valuta 1 Stella",

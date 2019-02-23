@@ -1025,5 +1025,3 @@ var spotifyLinkChecker = function() {
     }
 
 }();
-
-

@@ -82,7 +82,8 @@ var prefs = function() {
         "alarmrepeat_friday",
         "alarmrepeat_saturday",
         "alarmrepeat_sunday",
-        "thisisatest"
+        "alarmplayitem",
+        "alarm_itemtoplay"
     ];
 
     const cookiePrefs = [

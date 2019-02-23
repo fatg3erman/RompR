@@ -504,7 +504,6 @@ $languages['en'] = array (
 	"config_sortoptions" => "Collection Sorting Options",
 	"button_skipforward" => "Skip Forwards",
 	"button_skipbackward" => "Skip Backwards",
-	"button_alarmsnooze" => "Alarm Snooze",
 	"config_snoozetime" => "Snooze Time (Mins)",
 	"config_ramptime" => "Fade Time (Secs)",
 	"button_rateone" => "Rate 1 Star",
@@ -744,7 +743,7 @@ $languages['en'] = array (
 	"label_friday" => "Friday",
 	"label_saturday" => "Saturday",
 	"label_sunday" => "Sunday",
-	"label_alarm_play_specific" => "Play This Item",
+	"label_alarm_play_specific" => "Play This Item :",
 	"label_alarm_to_play" => "Drop Item Here"
 );
 

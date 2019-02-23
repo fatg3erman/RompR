@@ -8,27 +8,27 @@
 $langname['ru'] = "Русский";
 
 $languages['ru'] = array (
-	
+
 	// The Sources Chooser Button tooltips
 	"button_local_music" => "Музыкальная Коллекция",
 	"button_file_browser" => "Файл Браузер",
 	"button_internet_radio" => "Интернет Радио Станции",
 	"button_albumart" => "Album Art Менеджер",
-	
+
 	// Tooltips for Buttons across the top of the information panel
 	"button_togglesources" => "Панель Переключить источники",
 	"button_back" => "Предидущая",
 	"button_history" => "История",
 	"button_forward" => "Следующая",
 	"button_toggleplaylist" => "Переключить плейлист",
-	
+
 	// Tooltips for playlist buttons
 	"button_alarm" => "Будильник",
 	"button_prefs" => "RompЯ Настройки",
 	"button_clearplaylist" => "Очистить плейлист",
 	"button_loadplaylist" => "Загрузить сохраненный плейлист",
 	"button_saveplaylist" => "Сохранить плейлист",
-	
+
 	// Tooltips for playback controls
 	"button_previous" => "Предыдущий трек",
 	"button_play" => "Пуск/Пауза",
@@ -39,7 +39,7 @@ $languages['ru'] = array (
 	"button_ban" => "Запретить этот трек",
 	"button_volume" => "Перетащите, чтобы изменить громкость",
 	"button_closewindow" => "Закрыть окно",
-	
+
 	// Configuration menu entries
 	"config_language" => "ЯЗЫК",
 	"config_theme" => "ТЕМА",
@@ -81,11 +81,11 @@ $languages['ru'] = array (
 	"config_fontname" => "РАЗМЕР",
 	"config_alarm_on" => "Включить Будильник",
 	"config_showartistbanners" => "Показать Баннеры Артистов",
-	
+
 	// Various buttons for the playlist dropdowns
 	"button_imsure" => "Я уверен в этом",
 	"button_save" => "Сохранить",
-	
+
 	// General Labels and buttons in the main layout
 	"label_lastfm" => "Last.FM",
 	"button_searchmusic" => "Искать Музыку",
@@ -111,7 +111,7 @@ $languages['ru'] = array (
 	"error_playlistname" => "Имя плейлиста не может содержать косые черты",
 	"label_savedpl" => "Список воспроизведения сохранен как %s",
 	"label_loadingstations" => "Загрузка станции...",
-	
+
 	// Search Forms
 	"label_searchfor" => "Искать",
 	"label_searching" => "Поиск...",
@@ -119,7 +119,7 @@ $languages['ru'] = array (
 	"label_searchresults" => "Результаты Поиска",
 	"label_multiterms" => "Несколько вариантов поиска можно использовать сразу",
 	"label_limitsearch" => "Поиск конкретных бэкэндов",
-	
+
 	// General multipurpose labels
 	"label_tracks" => "треки",
 	"label_albums" => "альбомы",
@@ -151,7 +151,7 @@ $languages['ru'] = array (
 	"label_noartists" => "Не нашли лучших артистов",
 	"mopidy_tooold" => "Ваша версия Mopidy слишком старая. Обновите версию %s или выше",
 	"button_playradio" => "Пуск",
-	
+
 	// Playlist and Now Playing
 	"label_waitingforstation" => "Ожидание информации о станции...",
 	"label_notforradio" => "Не поддерживается для радиопотоков",
@@ -162,7 +162,7 @@ $languages['ru'] = array (
 	"label_on" => "на",
 	// Now playing - 1:45 of 6:50
 	"label_of" => "из",
-	
+
 	// Podcasts
 	"podcast_rss_error" => "Не удалось загрузить RSS-канал",
 	"podcast_remove_error" => "Не удалось удалить подкаст",
@@ -217,14 +217,14 @@ $languages['ru'] = array (
 	"podcast_expired" => "Этот эпизод истек",
 	// eg 2 days left to listen
 	"podcast_timeleft" => "%s левый, чтобы слушать",
-	
+
 	// Soma FM Chooser Panel
 	"label_soma" => "Soma.FM - это радиостанция, поддерживаемая без рекламы, из Сан-Франциско",
 	"label_soma_beg" => "Пожалуйста, подумайте о поддержке Soma.FM, если вам нравятся эти станции",
-	
+
 	// Your radio stations
 	"label_radioinput" => "Введите URL-адрес интернет-станции в этом поле или перетащите его кнопку воспроизведения сюда",
-	
+
 	//Album Art Manager
 	"albumart_title" => "Обложки альбомов",
 	"albumart_getmissing" => "Получить пропущенные обложки",
@@ -248,7 +248,7 @@ $languages['ru'] = array (
 	"albumart_nocollection" => "Создайте свою музыкальную коллекцию, прежде чем пытаться загружать обложки",
 	"albumart_nocovercount" => "альбомы без обложки",
 	"albumart_getting" => "Получение",
-	
+
 	// Setup page (rompr/?setup)
 	"setup_connectfail" => "Rompr не смог подключиться к серверу mpd или mopidy",
 	"setup_connecterror" => "При общении с вашим сервером в mpd или mopidy произошла ошибка: ",
@@ -259,7 +259,7 @@ $languages['ru'] = array (
 	"setup_leaveblank" => "Оставьте их пустыми, если не знаете, что они вам нужны",
 	"setup_password" => "Пароль",
 	"setup_unixsocket" => "UNIX-domain сокет",
-	
+
 	// Intro Window
 	"intro_title" => "Информация об этой версии",
 	"intro_welcome" => "Добро пожаловать в RompeR версия",
@@ -270,7 +270,7 @@ $languages['ru'] = array (
 	"intro_mopidy" => "ВАЖНАЯ информация для пользователей Mopidy",
 	"intro_mopidywiki" => "Если вы используете Mopidy, пожалуйста, прочитайте Wiki",
 	"intro_mopidyversion" => "Вы должны использовать Mopidy %s или выше",
-	
+
 	// Last.FM
 	"lastfm_loginwindow" => "Войти в Last.FM",
 	"lastfm_login1" => "Нажмите кнопку ниже, чтобы открыть сайт Last.FM на новой вкладке. Введите данные для входа в Last.FM, если необходимо, затем предоставите RompЯ разрешение на доступ к вашей учетной записи",
@@ -286,11 +286,11 @@ $languages['ru'] = array (
 	"label_banfailed" => "Failed To Ban",
 	"label_scrobbled" => "Scrobbled",
 	"label_scrobblefailed" => "Failed to scrobble",
-	
+
 	// Info Panel
 	"info_gettinginfo" => "Получение информации...",
 	"info_newtab" => "Просмотреть в новой вкладке",
-	
+
 	// File Info panel
 	"button_fileinfo" => "Панель информации (информация о файле)",
 	"info_file" => "Файл:",
@@ -310,7 +310,7 @@ $languages['ru'] = array (
 	"info_disctitle" => "Название диска:",
 	"info_encoder" => "Энкодер:",
 	"info_year" => "Год:",
-	
+
 	// Last.FM Info Panel
 	"button_infolastfm" => "Панель информации (Last.FM)",
 	"label_notrackinfo" => "Не удалось найти информацию об этом треке",
@@ -333,14 +333,14 @@ $languages['ru'] = array (
 	"lastfm_lovethis" => "Love This Track",
 	"lastfm_unlove" => "Unlove This Track",
 	"lastfm_notfound" => "%s Не найдено",
-	
+
 	// Lyrics info panel
 	"button_lyrics" => "Панель информации (Текст песни)",
 	"lyrics_lyrics" => "Текст песни",
 	"lyrics_nonefound" => "Никаких текстов не найдено",
 	"lyrics_info" => "Чтобы использовать средство просмотра текстов, вам необходимо убедиться, что ваши локальные файлы отмечены лирикой",
 	"lyrics_nopath" => "Чтобы использовать средство просмотра текстов, вам необходимо убедиться, что ваши локальные файлы отмечены лирикой и задайте путь музыки в настройках",
-	
+
 	// For Discogs/Musicbrainz release tables. LABEL in this context means record label
 	// These are all section headers and so should all be UPPER CASE, unless there's a good linguistic
 	// reason not to do that
@@ -349,7 +349,7 @@ $languages['ru'] = array (
 	"title_type" => "ТИП",
 	"title_label" => "МЕТКА",
 	"label_pages" => "СТРАНИЦЫ",
-	
+
 	// For discogs/musicbrains album info. discogs_companies means the companies involved in producing the album
 	// These are all section headers and so should all be UPPER CASE, unless there's a good linguistic
 	// reason not to do that
@@ -366,14 +366,14 @@ $languages['ru'] = array (
 	"discogs_bandmembers" => "УЧАСТНИКИ ГРУППЫ",
 	"discogs_memberof" => "ЧЛЕН ГРУППЫ",
 	"discogs_discography" => "%s ДИСКОГРАФИЯ",
-	
+
 	// Discogs info panel
 	"button_discogs" => "Панель информации (Discogs)",
 	"discogs_error" => "Discogs ничего не обнаружил",
 	"discogs_nonsense" => "Не удалось получить разумный ответ от Discogs",
 	"discogs_noalbum" => "Не удалось найти этот альбом на Discogs",
 	"discogs_notrack" => "Не удалось найти этот трек в Discogs",
-	
+
 	// Musicbrainz info panel
 	"button_musicbrainz" => "Панель информации (Musicbrainz)",
 	"musicbrainz_error" => "Не получил ответа от MusicBrainz",
@@ -405,7 +405,7 @@ $languages['ru'] = array (
 	"musicbrainz_date" => "ДАТА",
 	"musicbrainz_country" => "СТРАНА",
 	"musicbrainz_disc" => "ДИСК",
-	
+
 	// SoundCloud info panel
 	"button_soundcloud" => "Панель информации (SoundCloud)",
 	"soundcloud_trackinfo" => "Информация о треке",
@@ -423,25 +423,25 @@ $languages['ru'] = array (
 	"soundcloud_city" => "Город",
 	"soundcloud_website" => "Посетите вебсайт",
 	"soundcloud_not" => "Эта панель будет отображать только информацию о музыке из SoundCloud",
-	
+
 	// Wikipedia Info Panel
 	"button_wikipedia" => "Панель информации (Wikipedia)",
 	"wiki_nothing" => "Не получил ничего от Википедии",
 	"wiki_fail" => "Википедия не могла найти ничего, что связано с '%s'",
 	"wiki_suggest" => "Wikipedia не удалось найти ни одной страницы '%s'",
 	"wiki_suggest2" => "Вот некоторые предложения, которые он придумал",
-	
+
 	// Keybindings editor
 	"title_keybindings" => "Горячие клавиши",
 	"button_volup" => "Прибавить звук",
 	"button_voldown" => "Убавить звук",
-	
+
 	// Extras for mobile version
 	"button_playlist" => "Плейлист",
 	"button_playman" => "Редактировать Плейлисы",
 	"button_mob_history" => "Панель информации История",
 	"label_streamradio" => "Местное и Национальное Радио",
-	
+
 	// Various Plugins, Rating, and Tagging
 	"stars" => "звёзд",
 	"star" => "звезда",
@@ -464,11 +464,11 @@ $languages['ru'] = array (
 	"label_tagmanagertop" => "Перетащить из музыкальной коллекции или списка воспроизведения для добавления меток в дорожки",
 	"label_ratingmanagertop" => "Перетащить из музыкальной коллекции или списка воспроизведения для добавления оценок треков",
 	"button_createtag" => "СОЗДАТЬ ТЕГ",
-	
+
 	//New in 0.52
 	"config_alarm_ramp" => "Fade In",
 	"label_retrieve" => "Retrieve",
-	
+
 	// New in 0.60
 	"spotify_error" => "Нет ответа от Spotify",
 	"spotify_noinfo" => "Не удалось получить информацию от Spotify",
@@ -504,7 +504,6 @@ $languages['ru'] = array (
 	"config_sortoptions" => "Параметры сортировки коллекции",
 	"button_skipforward" => "Пропустить вперед",
 	"button_skipbackward" => "Пропустить назад",
-	"button_alarmsnooze" => "Отключение будильника",
 	"config_snoozetime" => "Отложить время (Минут)",
 	"config_ramptime" => "Время затихания (Секунд)",
 	"button_rateone" => "Оценка 1 Звезда",
@@ -522,7 +521,7 @@ $languages['ru'] = array (
 	"podcast_newestfirst" => "Сначала новые",
 	"podcast_oldestfirst" => "Сначала старые",
 	"podcast_hidedescriptions" => "Скрыть описания",
-	
+
 	// New in 0.64/0.65/0.70
 	"label_metabackup" => "Резервное копирование метаданных",
 	"button_backup" => "Создать резервную копию",
@@ -548,31 +547,31 @@ $languages['ru'] = array (
 	"config_background" => "ФОНОВОЕ ИЗОБРАЖЕНИЕ",
 	"lastfm_error" => "Не удалось найти информацию на Last.FM",
 	"config_skin" => "СКИН",
-	
+
 	// New in 0.71
 	"label_albumsbyartist" => "Альбомы (по исполнителю)",
 	"config_wheelspeed" => "Скорость прокрутки колесика мыши",
 	"label_searchcollectiononly" => "Искать только в Музыкальной коллекции",
-	
+
 	"label_lastfm_mix" => "Last FM Lucky Dip",
 	"label_lastfm_track" => "Last.FM Mix Радио",
 	"label_lastfm_choose" => "Основы Last.FM Рекомендации по вашему прослушиванию:",
 	"label_radio_recommend" => "Рекомендации, основанные на этом %s",
 	"label_amendalbum" => "Изменить информацию об альбоме",
-	
+
 	//CHANGED in 0.60
 	"config_country" => "СТРАНА (для Last.FM и Spotify)",
 	"setup_labeladdresses" => "Если возникли проблемы с подключением, попробуйте использовать IP-адрес вместо «localhost»",
 	"setup_ipaddress" => "Mopidy или mpd сервер",
-	
+
 	"config_cdplayermode" => "Режим CD Player (не записывает треки в очередь, запускает альбом с выбранного трека)",
-	
+
 	"label_recentlyplayed" => "Недавно прослушанные треки",
 	"label_simar_radio" => "Артисты, похожие на",
-	
+
 	"label_tradsearch_header" => "Тип Все, что вы ищете",
 	"label_tradsearch" => "Использовать традиционный поиск с несколькими терминами",
-	
+
 	"played_never" => "Этот трек никогда не слушали",
 	"played_once" => "Этот трек был прослушан один раз",
 	"played_twice" => "Этот трек был прослушан дважды",
@@ -601,12 +600,12 @@ $languages['ru'] = array (
 	"config_beetsserver" => "Расположение сервера Beets (ip.address:port)",
 	"config_players" => 'Плеер',
 	"button_edit_players" => 'Изменить Плеер',
-	
+
 	"label_play_all" => "Играть Всё",
 	"label_play_options" => "Параметры воспроизведения",
 	"label_last_played" => "Последний проигранный:",
 	"label_station_website" => "Сайт станции",
-	
+
 	"label_play_whole_album" => "Воспроизвести весь альбом",
 	"label_from_collection" => "Воспроизвести только треки из коллекции",
 	"label_with_ratings" => "Воспроизвести только треки с рейтингами",

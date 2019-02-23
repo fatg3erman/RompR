@@ -77,7 +77,7 @@ var alarm = function() {
 				alarm.setAlarm();
 			} else {
 				if (prefs.alarmon) {
-					$('#alarmonbutton').click();
+					$('#alarmonbutton').trigger('click');
 				}
 			}
 		},
@@ -141,14 +141,15 @@ var alarm = function() {
 			debug.log("ALARM","WAKEY WAKEY!");
 			if (player.status.state != "play") {
 				if (prefs.alarmramp) {
+					player.controller.addStateChangeCallback({state: 'play', callback: alarm.volRamp});
 					if (snoozing) {
 						player.controller.play();
 					} else {
 						uservol = parseInt(player.status.volume);
+						volinc = uservol/prefs.alarm_ramptime;
+						debug.log("ALARM","User Volume is",uservol,"increment step is",volinc);
 						player.controller.volume(0, alarm.startItOff);
 					}
-					volinc = uservol/prefs.alarm_ramptime;
-					debug.log("ALARM","User Volume is",uservol,"increment step is",volinc);
 				} else {
 					alarm.startItOff();
 				}
@@ -163,9 +164,21 @@ var alarm = function() {
 			offPlayClicks();
 			$('i.play-button').on('click', alarm.snooze);
 		    $('i.stop-button').on('click', alarm.snooze);
-			player.controller.addStateChangeCallback({state: 'play', callback: alarm.volRamp});
 			if (prefs.alarmplayitem) {
-				playlist.addItems($('#alarmdropper').children(), null);
+				var items = $('#alarmdropper').children();
+				// For neatness - don't keep putting radio stations back in the playlist, it's silly.
+				// For other items well it'd be nice but we can't cover all eventualities
+				if (items.length == 1 && items.first().hasClass('clickstream')) {
+					var is_already_there = playlist.findIdByUri(decodeURIComponent(items.first().attr('name')));
+					if (is_already_there !== false) {
+						debug.log('ALARM', 'Alarm Item is already in playlist');
+						player.controller.do_command_list([
+							['playid', is_already_there]
+						]);
+						return true;
+					}
+				}
+				playlist.addItems(items, null);
 			} else {
 				player.controller.play();
 			}
@@ -174,7 +187,7 @@ var alarm = function() {
 		volRamp: function() {
 			clearTimeout(ramptimer);
 			var v = parseInt(player.status.volume) + volinc;
-			debug.log("ALARM","Setting volume to",v,player.status.volume,volinc);
+			debug.trace("ALARM","Setting volume to",v,player.status.volume,volinc);
 			if (v >= uservol) {
 				player.controller.volume(uservol);
 			} else {
@@ -276,7 +289,6 @@ var alarm = function() {
 			alarm.setBoxes();
 			alarm.setButton();
 			alarm.setAlarm();
-			shortcuts.add('button_alarmsnooze', alarm.snooze, "B");
 			$('#doalarmrepeat').on('click', alarm.doAlarmRepeat);
 			$('#doalarmplayitem').on('click', alarm.doAlarmPlayItem);
 			if (!prefs.alarmrepeat) {

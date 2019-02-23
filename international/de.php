@@ -510,7 +510,6 @@ $languages['de'] = array (
         "config_sortoptions" => "Sortierkriterien für die Sammlung",
         "button_skipforward" => "Nach vorne Springen",
         "button_skipbackward" => "Zurück Springen",
-        "button_alarmsnooze" => "Schlummertaste",
         "config_snoozetime" => "Schlummern (Minuten)",
         "config_ramptime" => "Einblenden (Sekunden)",
         "button_rateone" => "Bewertung 1 Stern",
