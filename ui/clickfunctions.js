@@ -52,6 +52,9 @@ function setPlayClickHandlers() {
     which should have a class of 'toggledown'
         Plugins can provide a callback function to populate the dropdown panel
         menuOpeners['id attribute (no hash)'] = populateFunction
+        or if you have id attributes like 'something_1' and 'something_2' then menuOpeners['something'] will
+        call the function with the numeric part of the id attribute as a parameter.
+        menuClosers[] is also a thing
         Note there are special built-in attributes for many of the dropdowns - eg album, artist, directory etc
         which are handled by specific functions. Don't use these attributes.
 
@@ -196,7 +199,7 @@ function doMenu(event, element) {
         event.stopImmediatePropagation();
     }
     var menutoopen = element.attr("name");
-    debug.trace("UI","Doing Menu",menutoopen);
+    debug.log("UI","Doing Menu",menutoopen);
     if (element.isClosed()) {
         element.toggleOpen();
         if (menuOpeners[menutoopen]) {
@@ -208,16 +211,23 @@ function doMenu(event, element) {
     } else {
         element.toggleClosed();
         $('#'+menutoopen).menuHide();
+        if (menuClosers[menutoopen]) {
+            menuClosers[menutoopen]();
+        } else if (menuClosers[getMenuType(menutoopen)]) {
+            menuClosers[getMenuType(menutoopen)](getMenuIndex(menutoopen));
+        }
     }
     uiHelper.postAlbumMenu(element);
     if (menutoopen == 'advsearchoptions') {
         prefs.save({advanced_search_open: element.isOpen()});
     }
+    if (menutoopen.match(/alarmpanel/)) {
+        setTimeout(alarmclock.whatAHack, 400);
+    }
     return false;
 }
 
 function getMenuType(m) {
-    debug.log("MENUTYPE",m);
     var i = m.indexOf('_');
     if (i !== -1) {
         return m.substr(0, i);

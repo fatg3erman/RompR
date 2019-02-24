@@ -21,8 +21,6 @@ var prefs = function() {
         "hidebrowser",
         "shownupdatewindow",
         "scrolltocurrent",
-        "alarmtime",
-        "alarmon",
         "alarm_ramptime",
         "alarm_snoozetime",
         "lastfmlang",
@@ -30,7 +28,6 @@ var prefs = function() {
         "synctags",
         "synclove",
         "synclovevalue",
-        "alarmramp",
         "theme",
         "icontheme",
         "coversize",
@@ -74,16 +71,7 @@ var prefs = function() {
         "use_albumart_in_playlist",
         "bgimgparms",
         "collectionrange",
-        "alarmrepeat",
-        "alarmrepeat_monday",
-        "alarmrepeat_tuesday",
-        "alarmrepeat_wednesday",
-        "alarmrepeat_thursday",
-        "alarmrepeat_friday",
-        "alarmrepeat_saturday",
-        "alarmrepeat_sunday",
-        "alarmplayitem",
-        "alarm_itemtoplay"
+        "alarms"
     ];
 
     const cookiePrefs = [
@@ -454,7 +442,6 @@ var prefs = function() {
             if (prefs.icontheme == 'IconFont') {
                 prefs.icontheme = 'Colourful';
             }
-
         },
 
         checkSet: function(key) {
@@ -569,18 +556,18 @@ var prefs = function() {
                     callback = layoutProcessor.changeCollectionSortMode;
                     break;
 
-                case "alarmon":
-                case "alarmrepeat":
-                case "alarmrepeat_monday":
-                case "alarmrepeat_tuesday":
-                case "alarmrepeat_wednesday":
-                case "alarmrepeat_thursday":
-                case "alarmrepeat_friday":
-                case "alarmrepeat_saturday":
-                case "alarmrepeat_sunday":
-                    callback = alarm.toggle;
-                    break;
-
+                // case "alarmon":
+                // case "alarmrepeat":
+                // case "alarmrepeat_monday":
+                // case "alarmrepeat_tuesday":
+                // case "alarmrepeat_wednesday":
+                // case "alarmrepeat_thursday":
+                // case "alarmrepeat_friday":
+                // case "alarmrepeat_saturday":
+                // case "alarmrepeat_sunday":
+                //     callback = alarm.toggle;
+                //     break;
+                //
                 case "sleepon":
                     callback = sleepTimer.toggle;
                     break;

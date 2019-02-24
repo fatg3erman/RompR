@@ -100,7 +100,7 @@ var sleepTimer = function() {
 		},
 
 		setup: function() {
-			var d = uiHelper.createPluginHolder('icon-sleep', language.gettext('button_sleep'));
+			var d = uiHelper.createPluginHolder('icon-sleep', language.gettext('button_sleep'), 'sleeptimer_icon');
 			if (d === false) {
 				return false;
 			}

@@ -736,15 +736,15 @@ $languages['en'] = array (
 	"button_selectnone" => "Select None",
 	"button_import" => "Import Selected",
 	"label_onlyspotify" => "This panel is only applicable if your player can play Spotify",
-	"label_monday" => "Monday",
-	"label_tuesday" => "Tuesday",
-	"label_wednesday" => "Wednesday",
-	"label_thursday" => "Thursday",
-	"label_friday" => "Friday",
-	"label_saturday" => "Saturday",
-	"label_sunday" => "Sunday",
+	// NOTE: Sunday MUST be first
+	"label_daylabels" => array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"),
 	"label_alarm_play_specific" => "Play This Item :",
-	"label_alarm_to_play" => "Drop Item Here"
+	"label_alarm_to_play" => "Drop Item Here",
+	"label_every_day" => "Every Day",
+	"label_every_wday" => "Every Weekday",
+	"label_every_wend" => "Every Weekend",
+	"label_new_alarm" => "Create New Alarm...",
+	"label_delete_alarm" => "Delete This Alarm"
 );
 
 ?>

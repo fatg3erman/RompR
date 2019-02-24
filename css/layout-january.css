@@ -674,10 +674,10 @@ button {
 }
 
 .alarmnumbers {
-    font-size:300%;
+    font-size:250%;
     font-weight:bold;
-    line-height:0.7em;
-    padding-bottom:0.2em;
+    /* line-height:0.7em;
+    padding-bottom:0.2em; */
 }
 
 .pref {
@@ -1010,7 +1010,7 @@ div.topdropmenu
     opacity: 0.3 !important;
 }
 
-div.topdropmenu div {
+div.topdropmenu div:not(.canbefaded) {
 	opacity: 1 !important;
 }
 
@@ -2198,10 +2198,6 @@ div.unplayable {
 	padding-right: 1em;
 }
 
-.disabledbuttons {
-	opacity: 0.3;
-}
-
 .alarmbutton {
     width: 120px;
     height: 120px;
@@ -2209,4 +2205,16 @@ div.unplayable {
 
 .alarmdropempty {
 	height: 100px;
+}
+
+.giveitsomespace {
+	margin-left: 4px;
+}
+
+.toomanyclasses {
+	margin-top: 4px;
+}
+
+.newalarmholder {
+	height: 3em;
 }

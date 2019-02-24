@@ -387,9 +387,9 @@ var uiHelper = function() {
             }
         },
 
-        createPluginHolder: function(icon, title) {
+        createPluginHolder: function(icon, title, id) {
             try {
-                return layoutProcessor.createPluginHolder(icon, title);
+                return layoutProcessor.createPluginHolder(icon, title, id);
             } catch (err) {
                 return false;
             }

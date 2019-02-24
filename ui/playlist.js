@@ -648,7 +648,7 @@ var playlist = function() {
         },
 
         playFromEnd: function() {
-            if (player.status.state == "stop") {
+            if (player.status.state != "play") {
                 debug.trace("PLAYLIST","Playfromend",finaltrack+1);
                 return finaltrack+1;
             } else {

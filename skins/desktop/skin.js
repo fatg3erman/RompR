@@ -432,7 +432,7 @@ var layoutProcessor = function() {
                 handleshow: false
             });
 
-            $(".stayopen").on('click', function(ev) {ev.stopPropagation() });
+            $(".stayopen").not('.dontstealmyclicks').on('click', function(ev) {ev.stopPropagation() });
 
             $.each(my_scrollers,
                 function( index, value ) {
@@ -497,8 +497,8 @@ var layoutProcessor = function() {
             });
         },
 
-        createPluginHolder: function(icon, title) {
-            var i = $('<i>', {class: 'topimg tooltip topdrop expand', title: title}).insertAfter('#rightspacer');
+        createPluginHolder: function(icon, title, id) {
+            var i = $('<i>', {class: 'topimg tooltip topdrop expand', title: title, id: id}).insertAfter('#rightspacer');
             i.addClass(icon);
             return i;
         }

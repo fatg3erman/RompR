@@ -1,35 +1,215 @@
-var alarm = function() {
+var alarmclock = function() {
 
 	var inctimer = null;
 	var inctime = 500;
 	var incamount = null;
-	var alarmtime = parseInt(prefs.alarmtime);
+	var incindex = null;
 	var alarmtimer = null;
+	var currentalarm = null;
 	var uservol = 100;
 	var volinc = 1;
 	var ramptimer = null;
 	var notification = null;
 	var snoozing = false;
+	var alarminprogress = false;
+	var topofwindow = null;
+
+	function fillWindow() {
+		var key = topofwindow;
+		for (var a in prefs.alarms) {
+			key = createAlarmHeader(key, prefs.alarms[a], a);
+			key = createAlarmDropdown(key, prefs.alarms[a], a);
+		}
+	}
+
+	function createNewAlarmBox(holder) {
+		var container = $('<div>', {class: 'containerbox menuitem newalarmholder'}).appendTo(holder);
+		$('<i>', {class: "mh menu fixed icon-plus createnewalarm"}).appendTo(container);
+		$('<div>', {class: 'expand'}).html(language.gettext('label_new_alarm')).appendTo(container);
+	}
+
+	function createAlarmHeader(holder, alarm, index) {
+		var container = $('<div>', {class: 'containerbox menuitem cheesemaster'}).insertAfter(holder);
+		$('<i>', {class: "mh menu openmenu fixed icon-toggle-closed", name: 'alarmpanel_'+index}).appendTo(container);
+		var info = $("<div>", {class: 'expand containerbox vertical'}).appendTo(container)
+
+		var lego = $('<div>', {class: 'fixed containerbox menuitem'}).appendTo(info);
+		var controls_hours = $('<div>', {class: 'fixed containerbox vertical'}).appendTo(lego);
+		$('<div>', {class: 'fixed alarmnumbers', id: 'alarm_time_'+index}).appendTo(lego);
+		var controls_minutes = $('<div>', {class: 'fixed containerbox vertical giveitsomespace'}).appendTo(lego);
+
+		$('<i>', {class: 'playlisticon clickicon icon-increase expand timespinner', id: 'alarmhoursup_'+index}).appendTo(controls_hours);
+		$('<i>', {class: 'playlisticon clickicon icon-decrease expand timespinner', id: 'alarmhoursdown_'+index}).appendTo(controls_hours);
+		$('<i>', {class: 'playlisticon clickicon icon-increase expand timespinner', id: 'alarmminsup_'+index}).appendTo(controls_minutes);
+		$('<i>', {class: 'playlisticon clickicon icon-decrease expand timespinner', id: 'alarmminsdown_'+index}).appendTo(controls_minutes);
+
+		$('<div>', {class: 'fixed playlistrow2 menuitem', id: 'alarm_desc_'+index}).appendTo(info).css({'font-weight': 'normal'});
+
+		var cbdiv = $('<div>', {class: 'styledinputs fixed'}).appendTo(container);
+		$('<input>', {type: 'checkbox', id: 'alarmon_'+index}).appendTo(cbdiv);
+		$('<label>', {for: 'alarmon_'+index, class: 'alarmclock', style: 'display:inline'}).appendTo(cbdiv);
+		$('#alarmon_'+index).prop('checked', alarm.alarmon);
+		update_timebox(index);
+		update_descbox(index);
+		alarmclock.hideControls(index);
+		return container;
+	}
+
+	function update_timebox(index) {
+		var alarm = prefs.alarms[index];
+		var mins = (alarm.alarmtime/60)%60;
+		var hours = alarm.alarmtime/3600;
+		$('#alarm_time_'+index).html(zeroPad(parseInt(hours.toString()), 2)+':'+zeroPad(parseInt(mins.toString()), 2));
+	}
+
+	function update_descbox(index) {
+		var alarm = prefs.alarms[index];
+		var descbox = $('#alarm_desc_'+index);
+		var days = language.gettext('label_daylabels');
+		if (alarm.alarmrepeat) {
+			if (alarm.repeatdays[0] && alarm.repeatdays[1] && alarm.repeatdays[2] && alarm.repeatdays[3] && alarm.repeatdays[4] && alarm.repeatdays[5] && alarm.repeatdays[6]) {
+				descbox.html(language.gettext('label_every_day'));
+			} else if (alarm.repeatdays[1] && alarm.repeatdays[2] && alarm.repeatdays[3] && alarm.repeatdays[4] && alarm.repeatdays[5] && !alarm.repeatdays[0] && !alarm.repeatdays[6]) {
+				descbox.html(language.gettext('label_every_wday'));
+			} else if (!alarm.repeatdays[1] && !alarm.repeatdays[2] && !alarm.repeatdays[3] && !alarm.repeatdays[4] && !alarm.repeatdays[4] && alarm.repeatdays[0] && alarm.repeatdays[6]) {
+				descbox.html(language.gettext('label_every_wend'));
+			} else {
+				var dy = new Array();
+				for (var d in alarm.repeatdays) {
+					if (alarm.repeatdays[d]) {
+						dy.push(days[d]);
+					}
+				}
+				descbox.html(dy.join(', '));
+			}
+		}
+	}
+
+	function createAlarmDropdown(holder, alarm, index) {
+		var container = $('<div>', {id: 'alarmpanel_'+index, class: 'toggledown invisible cheesemaster'}).insertAfter(holder);
+
+		var twatt = $('<div>', {class: 'containerbox'}).appendTo(container);
+		$('<i>', {class: "mh menu fixed icon-cancel-circled deletealarm", id: 'deletealarm_'+index}).appendTo(twatt);
+		$('<div>', {class: 'expand'}).html(language.gettext('label_delete_alarm')).appendTo(twatt);
+		twatt.css({'margin-left': '4px', 'margin-bottom': '4px'});
+
+		makeACheckbox('alarmramp_'+index, language.gettext('config_alarm_ramp'), container, alarm.alarmramp, false);
+		makeACheckbox('alarmrepeat_'+index, language.gettext('button_repeat'), container, alarm.alarmrepeat, true);
+		var reps =  $('<div>', {class: 'indent canbefaded'}).appendTo(container);
+		var days = language.gettext('label_daylabels');
+		for (var i in alarm.repeatdays) {
+			makeACheckbox('repeatdays_'+index+'_'+i, days[i], reps, alarm.repeatdays[i], false);
+		}
+		buttonOpacity(reps, alarm.alarmrepeat);
+		makeACheckbox('alarmplayitem_'+index, language.gettext('label_alarm_play_specific'), container, alarm.alarmplayitem, true);
+		var alarmdropper = $('<div>', {id: 'alarmdropper_'+index, class: 'alarmdropempty canbefaded'}).appendTo(container);
+		if (alarm.alarm_itemtoplay == '') {
+			alarmdropper.html('<div class="containerbox menuitem" style="height:100%"><div class="expand textcentre">'+language.gettext('label_alarm_to_play')+'</div></div>');
+		} else {
+			putAlarmDropPlayItem(alarm, alarmdropper);
+		}
+		buttonOpacity(alarmdropper, alarm.alarmplayitem);
+		alarmdropper.acceptDroppedTracks({ ondrop: alarmclock.dropped });
+		return container;
+	}
+
+	function makeACheckbox(id, label, container, ischecked, isspaced) {
+		var cls = isspaced ? 'toomanyclasses styledinputs' : 'styledinputs';
+		var pd = $('<div>', {class: cls}).appendTo(container);
+		var c = $('<input>', {type: 'checkbox', id: id}).appendTo(pd);
+		var l = $('<label>', {for: id, class: 'alarmclock'}).appendTo(pd);
+		l.html(label);
+		c.prop('checked', ischecked);
+	}
+
+	function buttonOpacity(div, full) {
+		if (full) {
+			div.css({opacity: '1'});
+		} else {
+			div.css({opacity: '0.3'});
+		}
+	}
+
+	function putAlarmDropPlayItem(alarm, dropper) {
+		dropper.empty().removeClass('alarmdropempty').html(alarm.alarm_itemtoplay.replace(/\\"/g, '"'));
+	}
 
 	return {
 
-		startInc: function(amount) {
-			debug.log("ALARM","startInc",amount);
-			incamount = amount;
+		whatAHack: function() {
+			$('#alarmpanel').fanoogleMenus();
+		},
+
+		showControls: function(index) {
+			$('#alarm_time_'+index).prev().fadeIn('fast');
+			$('#alarm_time_'+index).next().fadeIn('fast');
+		},
+
+		hideControls: function(index) {
+			$('#alarm_time_'+index).prev().hide();
+			$('#alarm_time_'+index).next().hide();
+		},
+
+		checkboxClicked: function(event, element) {
+			event.stopImmediatePropagation();
+			var box = element.prev();
+			var cb = box.attr('id').split('_');
+			var param = cb[0];
+			var index = cb[1];
+			if (cb.length == 3) {
+				var subindex = cb[2];
+				debug.log('ALARM',param,index,subindex, !box.is(':checked'));
+				prefs.alarms[index][param][subindex] = !box.is(':checked');
+				switch (param) {
+					case 'repeatdays':
+						update_descbox(index);
+						break;
+				}
+			} else {
+				debug.log('ALARM',param,index,!box.is(':checked'));
+				prefs.alarms[index][param] = !box.is(':checked');
+				switch (param) {
+					case 'alarmrepeat':
+					case 'alarmplayitem':
+						buttonOpacity(element.parent().next(), !box.is(':checked'));
+						break;
+				}
+			}
+			prefs.save({alarms: prefs.alarms});
+			alarmclock.setAlarm();
+		},
+
+		startInc: function(element) {
+			var cb = element.attr('id').split('_');
+			incindex = cb[1];
+			switch (cb[0]) {
+				case 'alarmhoursup':
+					incamount = 3600;
+					break;
+				case 'alarmhoursdown':
+					incamount = -3600;
+					break;
+				case 'alarmminsup':
+					incamount = 60;
+					break;
+				case 'alarmminsdown':
+					incamount = -60;
+					break;
+			}
 			inctime = 500;
-			alarm.runIncrement();
+			alarmclock.runIncrement();
 		},
 
 		runIncrement: function() {
 			clearTimeout(inctimer);
-			alarmtime += incamount;
-			if (alarmtime > 86340) {
-				alarmtime = alarmtime - 86400;
-			} else if (alarmtime < 0) {
-				alarmtime = 86400 + alarmtime;
+			prefs.alarms[incindex].alarmtime += incamount;
+			if (prefs.alarms[incindex].alarmtime > 86340) {
+				prefs.alarms[incindex].alarmtime = prefs.alarms[incindex].alarmtime - 86400;
+			} else if (prefs.alarms[incindex].alarmtime < 0) {
+				prefs.alarms[incindex].alarmtime = 86400 + prefs.alarms[incindex].alarmtime;
 			}
-			alarm.setBoxes();
-	        inctimer = setTimeout(alarm.runIncrement, inctime);
+			update_timebox(incindex)
+	        inctimer = setTimeout(alarmclock.runIncrement, inctime);
 	        inctime -= 50;
 	        if (inctime < 50) {
 	        	inctime = 50;
@@ -38,134 +218,131 @@ var alarm = function() {
 
 		stopInc: function() {
 			clearTimeout(inctimer);
-			prefs.save({alarmtime: alarmtime});
-			alarm.setAlarm();
+			prefs.save({alarms: prefs.alarms});
+			alarmclock.setAlarm();
 		},
 
-		setBoxes: function() {
-	        var mins = (alarmtime/60)%60;
-	        var hours = alarmtime/3600;
-	        $("#alarmhours").html(zeroPad(parseInt(hours.toString()), 2));
-	        $("#alarmmins").html(zeroPad(parseInt(mins.toString()), 2));
-		},
-
-		toggle: function() {
-			alarm.setButton();
-			alarm.setAlarm();
-		},
-
-		setButton: function() {
-			if (prefs.alarmon) {
-				$("#alarmclock").removeClass("icon-alarm icon-alarm-on").addClass("icon-alarm-on");
+		volRamp: function() {
+			clearTimeout(ramptimer);
+			var v = parseInt(player.status.volume) + volinc;
+			debug.trace("ALARM","Setting volume to",v,player.status.volume,volinc);
+			if (v >= uservol) {
+				player.controller.volume(uservol);
 			} else {
-				$("#alarmclock").removeClass("icon-alarm icon-alarm-on").addClass("icon-alarm");
-				if (notification !== null) {
-					infobar.removenotify(notification);
-					notification = null;
-				}
+				player.controller.volume(Math.round(v));
+				ramptimer = setTimeout(alarmclock.volRamp, 1000);
 			}
 		},
 
 		disable: function() {
-			$('i.play-button').off('click', alarm.snooze);
-		    $('i.stop-button').off('click', alarm.snooze);
+			var alarm = prefs.alarms[currentalarm];
+			if (!alarm.alarmrepeat) {
+				alarm.alarmon = false;
+				prefs.save({alarms: prefs.alarms});
+				$('#alarmon_'+currentalarm).prop('checked', false);
+			}
+			$('i.play-button').off('click', alarmclock.snooze);
+		    $('i.stop-button').off('click', alarmclock.snooze);
 			setPlayClicks();
 			infobar.removenotify(notification);
 			notification = null;
 			snoozing = false;
-			if (prefs.alarmrepeat) {
-				alarm.setAlarm();
-			} else {
-				if (prefs.alarmon) {
-					$('#alarmonbutton').trigger('click');
-				}
-			}
+			alarminprogress = false;
+			alarmclock.setAlarm();
 		},
 
 		setAlarm: function() {
 			clearTimeout(alarmtimer);
-			if (prefs.alarmon) {
-				var d = new Date();
-				var currentTime = d.getSeconds() + (d.getMinutes() * 60) + (d.getHours() * 3600);
-				debug.log("ALARM", "Current Time Is",currentTime);
-				var t;
-				if (!prefs.alarmrepeat) {
-					if (alarmtime > currentTime) {
-						t = alarmtime - currentTime;
+			if (alarminprogress) {
+				return false;
+			}
+			currentalarm = null;
+			var alarmtime = 86400*7;
+			var d = new Date();
+			var currentTime = d.getSeconds() + (d.getMinutes() * 60) + (d.getHours() * 3600);
+			debug.log("ALARM", "Current Time Is",currentTime);
+			for (var i in prefs.alarms) {
+				var alarm = prefs.alarms[i];
+				if (alarm.alarmon) {
+					var t;
+					if (!alarm.alarmrepeat) {
+						if (alarm.alarmtime > currentTime) {
+							t = alarm.alarmtime - currentTime;
+						} else {
+							t = 86400 - (currentTime - alarm.alarmtime);
+						}
 					} else {
-						t = 86400 - (currentTime - alarmtime);
-					}
-				} else {
-					// Calculate number of seconds until next alarm time
-					var today = d.getDay();
-					var repeats = [
-						prefs.alarmrepeat_sunday,
-						prefs.alarmrepeat_monday,
-						prefs.alarmrepeat_tuesday,
-						prefs.alarmrepeat_wednesday,
-						prefs.alarmrepeat_thursday,
-						prefs.alarmrepeat_friday,
-						prefs.alarmrepeat_saturday
-					];
-					if (repeats[today] && alarmtime > currentTime) {
-						debug.log('ALARM','Alarm is set for later today');
-						t = alarmtime - currentTime;
-					} else {
-						today++;
-						var daycounter = 1;
-						var daytimer = 0;
-						while (!repeats[today] && daycounter < 8) {
+						// Calculate number of seconds until next alarm time
+						var today = d.getDay();
+						if (alarm.repeatdays[today] && alarm.alarmtime > currentTime) {
+							debug.log('ALARM','Alarm',i,'is set for later today');
+							t = alarm.alarmtime - currentTime;
+						} else {
 							today++;
-							daycounter++;
-							if (today > 6) {
-								today = 0
+							var daycounter = 1;
+							var daytimer = 0;
+							while (!alarm.repeatdays[today] && daycounter < 8) {
+								today++;
+								daycounter++;
+								if (today > 6) {
+									today = 0
+								}
 							}
+							debug.log('ALARM','Found next repeat day is day',today);
+							debug.log('ALARM',daycounter,currentTime,alarmtime);
+							t = (daycounter*86400) - (currentTime - alarm.alarmtime);
 						}
-						debug.log('ALARM','Found next repeat day is day',today);
-						if (daycounter == 8) {
-							debug.warn('ALARM','Appears repeat was set but no days selected');
-							return false;
-						}
-						debug.log('ALARM',daycounter,currentTime,alarmtime);
-						t = (daycounter*86400) - (currentTime - alarmtime);
+					}
+					if (t < alarmtime) {
+						alarmtime = t;
+						currentalarm = i;
 					}
 				}
-				debug.log("ALARM","Alarm will go off in",t,"seconds");
-				alarmtimer = setTimeout(alarm.Ding, t*1000);
+			}
+			if (currentalarm !== null) {
+				debug.log("ALARM","Alarm",currentalarm,"will go off in",alarmtime,"seconds");
+				alarmtimer = setTimeout(alarmclock.Ding, alarmtime*1000);
+				$("#alarmclock_icon").removeClass("icon-alarm icon-alarm-on").addClass("icon-alarm-on");
 			} else {
-				debug.log("ALARM","Alarm Disabled");
+				$("#alarmclock_icon").removeClass("icon-alarm icon-alarm-on").addClass("icon-alarm");
+			}
+			if (notification !== null) {
+				infobar.removenotify(notification);
+				notification = null;
 			}
 		},
 
 		Ding: function() {
-			debug.log("ALARM","WAKEY WAKEY!");
+			alarminprogress = true;
+			var alarm = prefs.alarms[currentalarm];
 			if (player.status.state != "play") {
-				if (prefs.alarmramp) {
-					player.controller.addStateChangeCallback({state: 'play', callback: alarm.volRamp});
+				if (alarm.alarmramp) {
+					player.controller.addStateChangeCallback({state: 'play', callback: alarmclock.volRamp});
 					if (snoozing) {
 						player.controller.play();
 					} else {
 						uservol = parseInt(player.status.volume);
 						volinc = uservol/prefs.alarm_ramptime;
 						debug.log("ALARM","User Volume is",uservol,"increment step is",volinc);
-						player.controller.volume(0, alarm.startItOff);
+						player.controller.volume(0, alarmclock.startItOff);
 					}
 				} else {
-					alarm.startItOff();
+					alarmclock.startItOff();
 				}
 			}
 			snoozing = false;
 			if (notification == null) {
-				notification = infobar.permnotify('<div class="containerbox"><i class="icon-alarm-on alarmbutton fixed"></i><div class="expand"></div><i class="icon-sleep alarmbutton fixed"></i></div>');
+				notification = infobar.permnotify('<div class="containerbox"><i class="icon-alarm-on alarmbutton fixed clickicon"></i><div class="expand"></div></div>');
 			}
 		},
 
 		startItOff: function() {
 			offPlayClicks();
-			$('i.play-button').on('click', alarm.snooze);
-		    $('i.stop-button').on('click', alarm.snooze);
-			if (prefs.alarmplayitem) {
-				var items = $('#alarmdropper').children();
+			$('i.play-button').on('click', alarmclock.snooze);
+		    $('i.stop-button').on('click', alarmclock.snooze);
+			var alarm = prefs.alarms[currentalarm];
+			if (alarm.alarmplayitem) {
+				var items = $('#alarmdropper_'+currentalarm).children();
 				// For neatness - don't keep putting radio stations back in the playlist, it's silly.
 				// For other items well it'd be nice but we can't cover all eventualities
 				if (items.length == 1 && items.first().hasClass('clickstream')) {
@@ -184,18 +361,6 @@ var alarm = function() {
 			}
 		},
 
-		volRamp: function() {
-			clearTimeout(ramptimer);
-			var v = parseInt(player.status.volume) + volinc;
-			debug.trace("ALARM","Setting volume to",v,player.status.volume,volinc);
-			if (v >= uservol) {
-				player.controller.volume(uservol);
-			} else {
-				player.controller.volume(Math.round(v));
-				ramptimer = setTimeout(alarm.volRamp, 1000);
-			}
-		},
-
 		snooze: function() {
 			debug.log("ALARM","Snoozing");
 			clearTimeout(alarmtimer);
@@ -205,110 +370,122 @@ var alarm = function() {
 			if (player.status.state == "play") {
 				player.controller.pause();
 			}
-			alarmtimer = setTimeout(alarm.Ding, prefs.alarm_snoozetime*60000);
+			alarmtimer = setTimeout(alarmclock.Ding, prefs.alarm_snoozetime*60000);
 			$('.icon-sleep.alarmbutton').makeFlasher({flashtime: 10, repeats: prefs.alarm_snoozetime*6});
 			debug.log("ALARM","Alarm will go off in",prefs.alarm_snoozetime,"minutes");
-		},
-
-		doAlarmRepeat: function() {
-			if ($('#alarmrepeatoptions').hasClass('disabledbuttons')) {
-				$('#alarmrepeatoptions').removeClass('disabledbuttons');
-			} else {
-				$('#alarmrepeatoptions').addClass('disabledbuttons');
-			}
-		},
-
-		doAlarmPlayItem: function() {
-			if ($('#smeary').hasClass('disabledbuttons')) {
-				$('#smeary').removeClass('disabledbuttons');
-			} else {
-				$('#smeary').addClass('disabledbuttons');
-			}
 		},
 
 		dropped: function(event, element) {
 			if (event) {
                 event.stopImmediatePropagation();
             }
-			debug.log("ALARM", "Dropped",$('.selected').filter(removeOpenItems));
-			$('#alarmdropper').empty().removeClass('alarmdropempty');
-			$('.selected').filter(onlyAlbums).clone().appendTo('#alarmdropper');
+			debug.log("ALARM", "Dropped",element.attr('id'));
+			var cb = element.attr('id').split('_');
+			var index = cb[1];
+			var items = $('.selected').filter(onlyAlbums).removeClass('selected').clone().wrapAll('<div></div>').parent();
 			$('.selected').removeClass('selected');
-			$('#alarmdropper').find('.menu').remove();
-			$('#alarmdropper').find('.icon-menu').remove();
-			var s = $('#alarmdropper').html();
-			prefs.save({alarm_itemtoplay: s});
+			items.find('.menu').remove();
+			items.find('.icon-menu').remove();
+			prefs.alarms[index].alarm_itemtoplay = items.html();
+			prefs.save({alarms: prefs.alarms});
+			putAlarmDropPlayItem(prefs.alarms[index], element);
 			$('#alarmpanel').fanoogleMenus();
 		},
 
+		newAlarm: function() {
+			var key = $('#alarmpanel').find('.toggledown').last();
+			if (key.length == 0) {
+				key = topofwindow;
+			}
+			var i = prefs.alarms.length;
+			prefs.alarms[i] = {
+				alarmtime: 43200,
+				alarmon: false,
+				alarmramp: false,
+				alarmrepeat: false,
+				repeatdays: [false, false, false, false, false, false, false],
+				alarmplayitem: false,
+				alarm_itemtoplay: ''
+			}
+			prefs.save({alarms: prefs.alarms});
+			key = createAlarmHeader(key, prefs.alarms[i], i);
+			key = createAlarmDropdown(key, prefs.alarms[i], i);
+			$('#alarmpanel').fanoogleMenus();
+		},
+
+		deleteAlarm: function(event, element) {
+			var cb = element.attr('id').split('_');
+			var index = cb[1];
+			debug.log('ALARM','Deleting Alarm',index);
+			prefs.alarms.splice(index, 1);
+			prefs.save({alarms: prefs.alarms});
+			$('.cheesemaster').remove();
+			fillWindow();
+			$('#alarmpanel').fanoogleMenus();
+			alarmclock.setAlarm();
+		},
+
 		setup: function() {
-			var d = uiHelper.createPluginHolder('icon-alarm', language.gettext('button_alarm'));
+			var d = uiHelper.createPluginHolder('icon-alarm', language.gettext('button_alarm'), 'alarmclock_icon');
 			if (d === false) {
 				return false;
 			}
-			var holder = $('<div>', {class: 'topdropmenu dropshadow rightmenu normalmenu stayopen', id: 'alarmpanel'}).appendTo(d);
-			var html = '<div class="textcentre configtitle"><b>'+language.gettext('button_alarm')+'</b></div>'+
-				'<input type="hidden" class="helplink" value="https://fatg3erman.github.io/RompR/Alarm-And-Sleep" />'+
-				'<div class="noselection">'+
-				'<table align="center"><tr>'+
-				'<td align="center"><i class="icon-increase smallicon clickicon" onmousedown="alarm.startInc(3600)" onmouseup="alarm.stopInc()" onmouseout="alarm.stopInc()"></i></td>'+
-				'<td width="2%"></td><td align="center"><i class="icon-increase smallicon clickicon" onmousedown="alarm.startInc(60)" onmouseup="alarm.stopInc()" onmouseout="alarm.stopInc()" /></i></td>'+
-				'</tr><tr>'+
-				'<td align="center" class="alarmnumbers" id="alarmhours">12</td><td align="center" width="2%" class="alarmnumbers">:</td>'+
-				'<td align="center" class="alarmnumbers" id="alarmmins">00</td></tr><tr>'+
-				'<td align="center"><i class="icon-decrease smallicon clickicon" onmousedown="alarm.startInc(-3600)" onmouseup="alarm.stopInc()" onmouseout="alarm.stopInc()" /></td>'+
-				'<td width="2%"></td><td align="center"><i class="icon-decrease smallicon clickicon" onmousedown="alarm.startInc(-60)" onmouseup="alarm.stopInc()" onmouseout="alarm.stopInc()" /></td>'+
-				'</tr></table>';
-			html += '<table width="98%">';
+			var holder = $('<div>', {class: 'topdropmenu dropshadow rightmenu normalmenu stayopen dontstealmyclicks', id: 'alarmpanel'}).appendTo(d);
+			holder.append('<div class="textcentre configtitle"><b>'+language.gettext('button_alarm')+'</b></div>');
+			topofwindow = $('<input>', {type: "hidden", class: "helplink", value: "https://fatg3erman.github.io/RompR/Alarm-And-Sleep"}).appendTo(holder);
+			fillWindow();
+			createNewAlarmBox(holder);
 
-			html += '<tr><td><div class="styledinputs"><input type="checkbox" class="autoset toggle" id="alarmon"><label for="alarmon" id="alarmonbutton">'+language.gettext('config_alarm_on')+'</label></div></td></tr>'+
-					'<tr><td><div class="styledinputs"><input type="checkbox" class="autoset toggle" id="alarmramp"><label for="alarmramp">'+language.gettext('config_alarm_ramp')+'</label></div></td></tr>'
-
-			html += '<tr><td><div class="styledinputs"><input type="checkbox" class="autoset toggle" id="alarmrepeat"><label id="doalarmrepeat" for="alarmrepeat">'+language.gettext('button_repeat')+'</label></div></td></tr>';
-			html += '<tr><td id="alarmrepeatoptions">';
-			html += '<div class="styledinputs indent"><input type="checkbox" class="autoset toggle" id="alarmrepeat_monday"><label for="alarmrepeat_monday">'+language.gettext('label_monday')+'</label></div>';
-			html += '<div class="styledinputs indent"><input type="checkbox" class="autoset toggle" id="alarmrepeat_tuesday"><label for="alarmrepeat_tuesday">'+language.gettext('label_tuesday')+'</label></div>';
-			html += '<div class="styledinputs indent"><input type="checkbox" class="autoset toggle" id="alarmrepeat_wednesday"><label for="alarmrepeat_wednesday">'+language.gettext('label_wednesday')+'</label></div>';
-			html += '<div class="styledinputs indent"><input type="checkbox" class="autoset toggle" id="alarmrepeat_thursday"><label for="alarmrepeat_thursday">'+language.gettext('label_thursday')+'</label></div>';
-			html += '<div class="styledinputs indent"><input type="checkbox" class="autoset toggle" id="alarmrepeat_friday"><label for="alarmrepeat_friday">'+language.gettext('label_friday')+'</label></div>';
-			html += '<div class="styledinputs indent"><input type="checkbox" class="autoset toggle" id="alarmrepeat_saturday"><label for="alarmrepeat_saturday">'+language.gettext('label_saturday')+'</label></div>';
-			html += '<div class="styledinputs indent"><input type="checkbox" class="autoset toggle" id="alarmrepeat_sunday"><label for="alarmrepeat_sunday">'+language.gettext('label_sunday')+'</label></div>';
-			html += '</td></tr>';
-
-			html += '<tr><td><div class="styledinputs"><input type="checkbox" class="autoset toggle" id="alarmplayitem"><label id="doalarmplayitem" for="alarmplayitem">'+language.gettext('label_alarm_play_specific')+'</label></div></td></tr>';
-			html += '<tr><td id="smeary"><div id="alarmdropper"><div class="containerbox menuitem" style="height:100%"><div class="expand textcentre">'+language.gettext('label_alarm_to_play')+'</div></div></div></td></tr>';
-
-			html += '<tr><td><div class="podcastitem"></div></td></tr>';
-			html += '</table>';
-			html += '<table width="98%">';
+			var html = '<table width="98%">';
+			html += '<tr><td colspan="2"><div class="podcastitem"></div></td></tr>';
 			html += '<tr><td class="altablebit">'+language.gettext('config_ramptime')+'</td><td><input class="saveotron prefinput" id="alarm_ramptime" type="text" size="2" /></td></tr>';
 			html += '<tr><td class="altablebit">'+language.gettext('config_snoozetime')+'</td><td><input class="saveotron prefinput" id="alarm_snoozetime" type="text" size="2" /></td></tr>';
 			html += '</table>';
-			html += '</div>';
-			holder.html(html);
-			alarm.setBoxes();
-			alarm.setButton();
-			alarm.setAlarm();
-			$('#doalarmrepeat').on('click', alarm.doAlarmRepeat);
-			$('#doalarmplayitem').on('click', alarm.doAlarmPlayItem);
-			if (!prefs.alarmrepeat) {
-				$('#alarmrepeatoptions').addClass('disabledbuttons');
-			}
-			if (!prefs.alarmplayitem) {
-				$('#smeary').addClass('disabledbuttons');
-			}
-			$(document).on('click', '.icon-alarm-on.alarmbutton', alarm.disable);
-			$(document).on('click', '.icon-sleep.alarmbutton', alarm.snooze);
-			$('#alarmdropper').acceptDroppedTracks({ ondrop: alarm.dropped });
-			if (prefs.alarm_itemtoplay != '') {
-				$('#alarmdropper').html(prefs.alarm_itemtoplay.replace(/\\"/g, '"'));
-			} else {
-				$('#alarmdropper').addClass('alarmdropempty')
-			}
+			holder.append(html);
+
+			menuOpeners['alarmpanel'] = alarmclock.showControls;
+			menuClosers['alarmpanel'] = alarmclock.hideControls;
+
+			$('#alarmpanel').on('click', function(event) {
+				// We need to use a single click event handler for the whole panel:
+				// We must prevent propagation of clicks anywhere on the panel, otherwise it will close
+				// But we obvioously need to react to clicks on checkboxes (because we're handling those, not the generic prefs mechanism)
+				event.stopPropagation();
+				var element = $(event.target);
+				if (element.is('label') && element.hasClass('alarmclock')) {
+					alarmclock.checkboxClicked(event, element);
+				} else if (element.hasClass('openmenu')) {
+					doMenu(event, element);
+				} else if (element.hasClass('createnewalarm')) {
+					alarmclock.newAlarm();
+				} else if (element.hasClass('deletealarm')) {
+					alarmclock.deleteAlarm(event, element);
+				}
+			});
+
+			$('#alarmpanel').on('mousedown', function(event) {
+				var element = $(event.target);
+				if (element.hasClass('timespinner')) {
+					event.stopPropagation();
+					alarmclock.startInc(element);
+				}
+			});
+
+			$('#alarmpanel').on('mouseup', function(event) {
+				var element = $(event.target);
+				if (element.hasClass('timespinner')) {
+					event.stopPropagation();
+					alarmclock.stopInc();
+				}
+			});
+
+			$(document).on('click', '.icon-alarm-on.alarmbutton', alarmclock.disable);
+
+			alarmclock.setAlarm();
 		}
 
 	}
 
 }();
 
-pluginManager.addPlugin("Alarm Clock", null, alarm.setup, null, false);
+pluginManager.addPlugin("Alarm Clock", null, alarmclock.setup, null, false);

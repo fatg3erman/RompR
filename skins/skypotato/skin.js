@@ -802,7 +802,7 @@ var layoutProcessor = function() {
                 handleshow: false
             });
 
-            $(".stayopen").on('click', function(ev) {ev.stopPropagation() });
+            $(".stayopen").not('.dontstealmyclicks').on('click', function(ev) {ev.stopPropagation() });
 
             // $(".enter").on('keyup',  onKeyUp );
             $.each(my_scrollers,
@@ -942,9 +942,9 @@ var layoutProcessor = function() {
             });
         },
 
-        createPluginHolder: function(icon, title) {
+        createPluginHolder: function(icon, title, id) {
             var d = $('<div>', {class: 'topdrop'}).prependTo('#righthandtop');
-            var i = $('<i>', {class: 'tooltip', title: title}).appendTo(d);
+            var i = $('<i>', {class: 'tooltip', title: title, id: id}).appendTo(d);
             i.addClass(icon);
             i.addClass('smallpluginicon clickicon');
             return d;
