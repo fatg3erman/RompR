@@ -29,25 +29,52 @@ var alarmclock = function() {
 	}
 
 	function createAlarmHeader(holder, alarm, index) {
-		var container = $('<div>', {class: 'containerbox menuitem cheesemaster'}).insertAfter(holder);
-		$('<i>', {class: "mh menu openmenu fixed icon-toggle-closed", name: 'alarmpanel_'+index}).appendTo(container);
-		var info = $("<div>", {class: 'expand containerbox vertical'}).appendTo(container)
+		// var container = $('<div>', {class: 'containerbox menuitem cheesemaster'}).insertAfter(holder);
+		// $('<i>', {class: "mh menu openmenu fixed icon-toggle-closed", name: 'alarmpanel_'+index}).appendTo(container);
+		// var info = $("<div>", {class: 'expand containerbox vertical'}).appendTo(container)
+		//
+		// var lego = $('<div>', {class: 'fixed containerbox menuitem'}).appendTo(info);
+		// var controls_hours = $('<div>', {class: 'fixed containerbox vertical'}).appendTo(lego);
+		// $('<div>', {class: 'fixed alarmnumbers', id: 'alarm_time_'+index}).appendTo(lego);
+		// var controls_minutes = $('<div>', {class: 'fixed containerbox vertical giveitsomespace'}).appendTo(lego);
+		//
+		// $('<i>', {class: 'playlisticon clickicon icon-increase expand timespinner', id: 'alarmhoursup_'+index}).appendTo(controls_hours);
+		// $('<i>', {class: 'playlisticon clickicon icon-decrease expand timespinner', id: 'alarmhoursdown_'+index}).appendTo(controls_hours);
+		// $('<i>', {class: 'playlisticon clickicon icon-increase expand timespinner', id: 'alarmminsup_'+index}).appendTo(controls_minutes);
+		// $('<i>', {class: 'playlisticon clickicon icon-decrease expand timespinner', id: 'alarmminsdown_'+index}).appendTo(controls_minutes);
+		//
+		// $('<div>', {class: 'fixed playlistrow2 menuitem', id: 'alarm_desc_'+index}).appendTo(info).css({'font-weight': 'normal'});
+		//
+		// var cbdiv = $('<div>', {class: 'styledinputs fixed'}).appendTo(container);
+		// $('<input>', {type: 'checkbox', id: 'alarmon_'+index}).appendTo(cbdiv);
+		// $('<label>', {for: 'alarmon_'+index, class: 'alarmclock', style: 'display:inline'}).appendTo(cbdiv);
 
-		var lego = $('<div>', {class: 'fixed containerbox menuitem'}).appendTo(info);
-		var controls_hours = $('<div>', {class: 'fixed containerbox vertical'}).appendTo(lego);
-		$('<div>', {class: 'fixed alarmnumbers', id: 'alarm_time_'+index}).appendTo(lego);
-		var controls_minutes = $('<div>', {class: 'fixed containerbox vertical giveitsomespace'}).appendTo(lego);
+		var container = $('<div>', {class: 'menuitem cheesemaster'}).insertAfter(holder);
+		// var frederick = $('<div>', {class: 'fixed'}).appendTo(container);
+		var lego = $('<table width="100%">').appendTo(container);
+		var row1 = $('<tr>').appendTo(lego);
+		var opener = $('<td rowspan="2">').appendTo(row1);
+		$('<i>', {class: "mh menu openmenu fixed icon-toggle-closed", name: 'alarmpanel_'+index}).appendTo(opener);
+		var hoursup = $('<td>', {class: 'timespinholder'}).appendTo(row1);
+		var froggy = $('<td rowspan="2">').appendTo(row1);
+		$('<div>', {class: 'alarmnumbers', id: 'alarm_time_'+index}).appendTo(froggy);
+		var minsup = $('<td>', {class: 'timespinholder'}).appendTo(row1);
+		var onbutton = $('<td rowspan="2" width="99%" align="right">').appendTo(row1);
+		var ondiv = $('<div>', {class: 'styledinputs'}).appendTo(onbutton);
+		var row2 = $('<tr>').appendTo(lego);
+		var hoursdown = $('<td>', {class: 'timespinholder'}).appendTo(row2);
+		var minsdown = $('<td>', {class: 'timespinholder'}).appendTo(row2);
 
-		$('<i>', {class: 'playlisticon clickicon icon-increase expand timespinner', id: 'alarmhoursup_'+index}).appendTo(controls_hours);
-		$('<i>', {class: 'playlisticon clickicon icon-decrease expand timespinner', id: 'alarmhoursdown_'+index}).appendTo(controls_hours);
-		$('<i>', {class: 'playlisticon clickicon icon-increase expand timespinner', id: 'alarmminsup_'+index}).appendTo(controls_minutes);
-		$('<i>', {class: 'playlisticon clickicon icon-decrease expand timespinner', id: 'alarmminsdown_'+index}).appendTo(controls_minutes);
+		$('<i>', {class: 'playlisticon clickicon icon-increase expand timespinner', id: 'alarmhoursup_'+index}).appendTo(hoursup);
+		$('<i>', {class: 'playlisticon clickicon icon-decrease expand timespinner', id: 'alarmhoursdown_'+index}).appendTo(hoursdown);
+		$('<i>', {class: 'playlisticonr clickicon icon-increase expand timespinner', id: 'alarmminsup_'+index}).appendTo(minsup);
+		$('<i>', {class: 'playlisticonr clickicon icon-decrease expand timespinner', id: 'alarmminsdown_'+index}).appendTo(minsdown);
 
-		$('<div>', {class: 'fixed playlistrow2 menuitem', id: 'alarm_desc_'+index}).appendTo(info).css({'font-weight': 'normal'});
+		$('<input>', {type: 'checkbox', id: 'alarmon_'+index}).appendTo(ondiv);
+		$('<label>', {for: 'alarmon_'+index, class: 'alarmclock', style: 'display:inline'}).appendTo(ondiv);
 
-		var cbdiv = $('<div>', {class: 'styledinputs fixed'}).appendTo(container);
-		$('<input>', {type: 'checkbox', id: 'alarmon_'+index}).appendTo(cbdiv);
-		$('<label>', {for: 'alarmon_'+index, class: 'alarmclock', style: 'display:inline'}).appendTo(cbdiv);
+		$('<div>', {class: 'fixed playlistrow2 menuitem fullwidth', id: 'alarm_desc_'+index}).appendTo(container).css({'font-weight': 'normal'});
+
 		$('#alarmon_'+index).prop('checked', alarm.alarmon);
 		update_timebox(index);
 		update_descbox(index);
@@ -141,13 +168,17 @@ var alarmclock = function() {
 		},
 
 		showControls: function(index) {
-			$('#alarm_time_'+index).prev().fadeIn('fast');
-			$('#alarm_time_'+index).next().fadeIn('fast');
+			$('#alarmhoursup_'+index).fadeIn('fast');
+			$('#alarmhoursdown_'+index).fadeIn('fast');
+			$('#alarmminsup_'+index).fadeIn('fast');
+			$('#alarmminsdown_'+index).fadeIn('fast');
 		},
 
 		hideControls: function(index) {
-			$('#alarm_time_'+index).prev().hide();
-			$('#alarm_time_'+index).next().hide();
+			$('#alarmhoursup_'+index).hide();
+			$('#alarmhoursdown_'+index).hide();
+			$('#alarmminsup_'+index).hide();
+			$('#alarmminsdown_'+index).hide();
 		},
 
 		checkboxClicked: function(event, element) {

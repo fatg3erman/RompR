@@ -153,6 +153,9 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
             if (!in_array($i, $used_images)) {
                 $used_images[] = $i;
             }
+            if ($image === null && $name == 'Discover Weekly (by spotify)') {
+                $image = 'newimages/discoverweekly.jpg';
+            }
             $html = albumHeader(array(
                 'id' => 'pholder_'.md5($name),
                 'Image' => $image,
