@@ -422,6 +422,7 @@ var layoutProcessor = function() {
         panelMapping: function() {
             return {
                 "albumlist": 'albumlist',
+                "searcher": 'searcher',
                 "filelist": 'filelist',
                 "radiolist": 'radiolist',
                 "audiobooklist": "audiobooklist",

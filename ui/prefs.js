@@ -18,6 +18,7 @@ var prefs = function() {
         "hide_radiolist",
         "hide_playlistslist",
         "hide_audiobooklist",
+        "hide_searcher",
         "hidebrowser",
         "shownupdatewindow",
         "scrolltocurrent",
@@ -507,6 +508,10 @@ var prefs = function() {
                     callback = function() { hidePanel('albumlist') }
                     break;
 
+                case 'hide_searcher':
+                    callback = function() { hidePanel('searcher') }
+                    break;
+
                 case 'hide_filelist':
                     callback = function() { hidePanel('filelist') }
                     break;
@@ -556,18 +561,6 @@ var prefs = function() {
                     callback = layoutProcessor.changeCollectionSortMode;
                     break;
 
-                // case "alarmon":
-                // case "alarmrepeat":
-                // case "alarmrepeat_monday":
-                // case "alarmrepeat_tuesday":
-                // case "alarmrepeat_wednesday":
-                // case "alarmrepeat_thursday":
-                // case "alarmrepeat_friday":
-                // case "alarmrepeat_saturday":
-                // case "alarmrepeat_sunday":
-                //     callback = alarm.toggle;
-                //     break;
-                //
                 case "sleepon":
                     callback = sleepTimer.toggle;
                     break;

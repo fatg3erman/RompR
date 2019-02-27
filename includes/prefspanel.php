@@ -140,6 +140,10 @@ print '<div class="pref styledinputs">
 <label for="hide_albumlist">'.get_int_text('config_hidealbumlist').'</label>
 </div>';
 print '<div class="pref styledinputs">
+<input class="autoset toggle" type="checkbox" id="hide_searcher" />
+<label for="hide_searcher">'.get_int_text('config_hidesearcher').'</label>
+</div>';
+print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="hide_filelist" />
 <label for="hide_filelist">'.get_int_text('config_hidefileslist').'</label>
 </div>';

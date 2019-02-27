@@ -424,6 +424,7 @@ var uiHelper = function() {
             } catch(err) {
                 return {
                     "albumlist": 'albumlist',
+                    "searcher": 'searcher',
                     "filelist": 'filelist',
                     "radiolist": 'radiolist',
                     "podcastslist": 'podcastslist',

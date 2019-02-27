@@ -170,6 +170,7 @@ $prefs = array(
     "hide_podcastslist" => false,
     "hide_playlistslist" => false,
     "hide_audiobooklist" => false,
+    "hide_searcher" => false,
     "hidebrowser" => false,
     "shownupdatewindow" => '',
     "scrolltocurrent" => false,

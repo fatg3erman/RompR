@@ -744,7 +744,8 @@ $languages['en'] = array (
 	"label_every_wday" => "Every Weekday",
 	"label_every_wend" => "Every Weekend",
 	"label_new_alarm" => "Create New Alarm...",
-	"label_delete_alarm" => "Delete This Alarm"
+	"label_delete_alarm" => "Delete This Alarm",
+	"config_hidesearcher" => "Hide Search Panel"
 );
 
 ?>
