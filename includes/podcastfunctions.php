@@ -14,7 +14,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
     }
 
     // For debugging
-    file_put_contents('prefs/temp/feed.xml', $d->get_data());
+    // file_put_contents('prefs/temp/feed.xml', $d->get_data());
 
     if ($id) {
         if (!is_dir('prefs/podcasts/'.$id)) {
@@ -125,17 +125,17 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
     // Title
     $podcast['Title'] = (string) $feed->channel->title;
 
-    if ($id !== false) {
-        $albumimage = new baseAlbumImage(array(
-            'artist' => 'PODCAST',
-            'albumpath' => $id,
-            'album' => $podcast['Title']
-        ));
-        if ($albumimage->get_image_if_exists() === null) {
-            debuglog("Replacing missing podcast image","PODCASTS");
-            download_image($podcast['Image'], $id, $podcast['Title']);
-        }
-    }
+    // if ($id !== false) {
+    //     $albumimage = new baseAlbumImage(array(
+    //         'artist' => 'PODCAST',
+    //         'albumpath' => $id,
+    //         'album' => $podcast['Title']
+    //     ));
+    //     if ($albumimage->get_image_if_exists() === null) {
+    //         debuglog("Replacing missing podcast image","PODCASTS");
+    //         download_image($podcast['Image'], $id, $podcast['Title']);
+    //     }
+    // }
 
     // Description
     $podcast['Description'] = (string) $feed->channel->description;
@@ -394,8 +394,10 @@ function download_image($url, $podid, $title) {
         'album' => $title,
         'source' => $url
     ));
-    $albumimage->download_image();
-    $albumimage->update_image_database();
+    if ($albumimage->get_image_if_exists() === null) {
+        $albumimage->download_image();
+        $albumimage->update_image_database();
+    }
 
 }
 
@@ -527,7 +529,7 @@ function check_tokeep($podetails, $podid) {
                     $qstring .= " AND Downloaded=0";
                 }
                 $qstring .= " ORDER BY PubDate ASC LIMIT ".$getrid;
-                $pods = sql_get_column($qstring, 'PODTrackindex');
+                $pods = sql_get_column($qstring, 0);
                 foreach ($pods as $i) {
                     debuglog("  Removing Track ".$i,"PODCASTS");
                     generic_sql_query("UPDATE PodcastTracktable SET Deleted=1 WHERE PODTrackindex=".$i, true);

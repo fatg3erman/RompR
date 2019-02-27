@@ -846,7 +846,7 @@ function getAllURIs($sqlstring, $limit, $tags, $random = true) {
 		}
 		generic_sql_query("CREATE TEMPORARY TABLE IF NOT EXISTS pltemptable(TTindex INT UNSIGNED NOT NULL UNIQUE)", true);
 		theBabyDumper($sqlstring, $limit, $tags, $random);
-		$uris = sql_get_column("SELECT Uri FROM Tracktable WHERE TTindex IN (SELECT TTindex FROM pltemptable)", 'Uri');
+		$uris = sql_get_column("SELECT Uri FROM Tracktable WHERE TTindex IN (SELECT TTindex FROM pltemptable)", 0);
 		$tries++;
 	} while (count($uris) == 0 && $tries < 2);
 	generic_sql_query("INSERT INTO pltable (TTindex) SELECT TTindex FROM pltemptable", true);

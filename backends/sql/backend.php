@@ -1236,11 +1236,11 @@ function get_track_charts($limit = 40) {
 }
 
 function find_justadded_artists() {
-	return sql_get_column("SELECT DISTINCT AlbumArtistindex FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE justAdded = 1", 'AlbumArtistindex');
+	return sql_get_column("SELECT DISTINCT AlbumArtistindex FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE justAdded = 1", 0);
 }
 
 function find_justadded_albums() {
-	return sql_get_column("SELECT DISTINCT Albumindex FROM Tracktable WHERE justAdded = 1", 'Albumindex');
+	return sql_get_column("SELECT DISTINCT Albumindex FROM Tracktable WHERE justAdded = 1", 0);
 }
 
 function get_user_radio_streams() {

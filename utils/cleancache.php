@@ -76,7 +76,6 @@ if ($mysqlc) {
             // Remove images for hidden tracks and search results. The missing check below will reset the db entries for those albums
             // Keep everything for 24 hours regardless, we might be using it in a playlist or something
             if (filemtime($image) < time()-86400) {
-                // $count = sql_prepare_query(false, null, 'acount', 0, "SELECT COUNT(Albumindex) AS acount FROM Albumtable WHERE Image = ? AND Albumindex IN (SELECT DISTINCT Albumindex FROM Tracktable WHERE Hidden = 0 AND isSearchResult < 2 AND URI IS NOT NULL)", $image);
                 $count = sql_prepare_query(false, null, 'acount', 0, "SELECT COUNT(Albumindex) AS acount FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Image = ? AND Hidden = 0 AND isSearchResult < 2 AND URI IS NOT NULL", $image);
                 if ($count < 1) {
                     debuglog("  Removing Unused Album image ".$image,"CACHE CLEANER", 6);
@@ -102,7 +101,7 @@ if ($mysqlc) {
         debuglog("Checking for orphaned podcast data","CACHE CLEANER");
         $now = time();
         $files = glob('prefs/podcasts/*');
-        $pods = sql_get_column("SELECT PODindex FROM Podcasttable", 'PODindex');
+        $pods = sql_get_column("SELECT PODindex FROM Podcasttable", 0);
         foreach ($files as $file) {
             if (!in_array(basename($file), $pods)) {
                 debuglog("  Removing orphaned podcast directory ".$file,"CACHE CLEANER");
