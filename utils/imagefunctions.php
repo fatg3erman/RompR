@@ -63,12 +63,12 @@ class baseAlbumImage {
     }
 
     public function get_image_if_exists() {
-        foreach (array('png', 'svg', 'jpg') as $ext) {
-            $this->change_file_extension($ext);
+        // foreach (array('png', 'svg', 'jpg') as $ext) {
+        //     $this->change_file_extension($ext);
             if ($this->image_exists($this->images['small'])) {
                 return $this->images['small'];
             }
-        }
+        // }
         return null;
     }
 
