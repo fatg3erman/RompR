@@ -86,7 +86,6 @@ var sleepTimer = function() {
 			clearTimeout(ramptimer);
 			var v = parseInt(player.status.volume) - volinc;
 			if (v <= 0) {
-				player.controller.volume(0);
 				player.controller.pause();
 				player.controller.volume(uservol);
 				if (prefs.sleepon) {

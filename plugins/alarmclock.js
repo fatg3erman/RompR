@@ -13,6 +13,7 @@ var alarmclock = function() {
 	var snoozing = false;
 	var alarminprogress = false;
 	var topofwindow = null;
+	var waitingforwake = false;
 
 	function fillWindow() {
 		var key = topofwindow;
@@ -29,28 +30,7 @@ var alarmclock = function() {
 	}
 
 	function createAlarmHeader(holder, alarm, index) {
-		// var container = $('<div>', {class: 'containerbox menuitem cheesemaster'}).insertAfter(holder);
-		// $('<i>', {class: "mh menu openmenu fixed icon-toggle-closed", name: 'alarmpanel_'+index}).appendTo(container);
-		// var info = $("<div>", {class: 'expand containerbox vertical'}).appendTo(container)
-		//
-		// var lego = $('<div>', {class: 'fixed containerbox menuitem'}).appendTo(info);
-		// var controls_hours = $('<div>', {class: 'fixed containerbox vertical'}).appendTo(lego);
-		// $('<div>', {class: 'fixed alarmnumbers', id: 'alarm_time_'+index}).appendTo(lego);
-		// var controls_minutes = $('<div>', {class: 'fixed containerbox vertical giveitsomespace'}).appendTo(lego);
-		//
-		// $('<i>', {class: 'playlisticon clickicon icon-increase expand timespinner', id: 'alarmhoursup_'+index}).appendTo(controls_hours);
-		// $('<i>', {class: 'playlisticon clickicon icon-decrease expand timespinner', id: 'alarmhoursdown_'+index}).appendTo(controls_hours);
-		// $('<i>', {class: 'playlisticon clickicon icon-increase expand timespinner', id: 'alarmminsup_'+index}).appendTo(controls_minutes);
-		// $('<i>', {class: 'playlisticon clickicon icon-decrease expand timespinner', id: 'alarmminsdown_'+index}).appendTo(controls_minutes);
-		//
-		// $('<div>', {class: 'fixed playlistrow2 menuitem', id: 'alarm_desc_'+index}).appendTo(info).css({'font-weight': 'normal'});
-		//
-		// var cbdiv = $('<div>', {class: 'styledinputs fixed'}).appendTo(container);
-		// $('<input>', {type: 'checkbox', id: 'alarmon_'+index}).appendTo(cbdiv);
-		// $('<label>', {for: 'alarmon_'+index, class: 'alarmclock', style: 'display:inline'}).appendTo(cbdiv);
-
 		var container = $('<div>', {class: 'menuitem cheesemaster'}).insertAfter(holder);
-		// var frederick = $('<div>', {class: 'fixed'}).appendTo(container);
 		var lego = $('<table width="100%">').appendTo(container);
 		var row1 = $('<tr>').appendTo(lego);
 		var opener = $('<td rowspan="2">').appendTo(row1);
@@ -334,8 +314,17 @@ var alarmclock = function() {
 				debug.log("ALARM","Alarm",currentalarm,"will go off in",alarmtime,"seconds");
 				alarmtimer = setTimeout(alarmclock.Ding, alarmtime*1000);
 				$("#alarmclock_icon").removeClass("icon-alarm icon-alarm-on").addClass("icon-alarm-on");
+				if (!waitingforwake) {
+					// try to re-set the alarm if we wake from sleep
+					window.addEventListener('online', alarmclock.setAlarm);
+					waitingforwake = true;
+				}
 			} else {
 				$("#alarmclock_icon").removeClass("icon-alarm icon-alarm-on").addClass("icon-alarm");
+				if (waitingforwake) {
+					window.removeEventListener('online', alarmclock.setAlarm);
+					waitingforwake = false;
+				}
 			}
 			if (notification !== null) {
 				infobar.removenotify(notification);
