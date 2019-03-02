@@ -130,11 +130,11 @@ var playlistManager = function() {
 					items: '.sortable',
 					outsidedrop: playlistManager.dropped,
 					insidedrop: playlistManager.dragstopped,
-					scroll: true,
-					allowdragout: true,
-					scrollparent: '#infopane',
-					scrollspeed: 80,
-					scrollzone: 120
+					scroll: false,
+					allowdragout: true
+					// scrollparent: '#infopane',
+					// scrollspeed: 80,
+					// scrollzone: 20
 				});
 				holders[i].acceptDroppedTracks({
 					scroll: true,

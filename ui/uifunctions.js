@@ -565,7 +565,7 @@ function removeOpenItems(index) {
         self.hasClass('clickstream')) {
         return true;
     }
-    var element = self.hasClass('clickloadplaylist') ? $('#'+self.children('i.menu').first().attr('name')) : $("#"+self.attr('name'));
+    var element = (self.hasClass('clickloadplaylist') || self.hasClass('clickloaduserplaylist')) ? $('#'+self.children('i.menu').first().attr('name')) : $("#"+self.attr('name'));
     if (element.length == 0) {
         return true;
     } else if (element.hasClass('notfilled')) {

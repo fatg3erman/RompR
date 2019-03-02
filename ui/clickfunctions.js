@@ -163,7 +163,8 @@ function onSourcesClicked(event, clickedElement) {
 function selectPlayable(event) {
     event.stopImmediatePropagation();
     var clickedElement = $(this);
-    if ((clickedElement.hasClass("clickalbum") || clickedElement.hasClass('clickloadplaylist')) && !clickedElement.hasClass('noselect')) {
+    if ((clickedElement.hasClass("clickalbum") || clickedElement.hasClass('clickloadplaylist') || clickedElement.hasClass('clickloaduserplaylist'))
+        && !clickedElement.hasClass('noselect')) {
         albumSelect(event, clickedElement);
     } else if (clickedElement.hasClass("clickdisc")) {
         discSelect(event, clickedElement);
@@ -444,7 +445,7 @@ function checkMetaKeys(event, element) {
 
 function albumSelect(event, element) {
     var is_currently_selected = checkMetaKeys(event, element);
-    if (element.hasClass('clickloadplaylist')) {
+    if (element.hasClass('clickloadplaylist') || element.hasClass('clickloaduserplaylist')) {
         var div_to_select = $('#'+element.children('i.menu').first().attr('name'));
     } else {
         var div_to_select = $('#'+element.attr("name"));

@@ -142,7 +142,6 @@ var podcasts = function() {
 	        data: options,
 			contentType: 'application/json',
 	        success: function(data) {
-				debug.log('PODCASTS','Request Success',data);
 				checkForUpdatedPodcasts(data);
 				podcasts.doNewCount();
 	            if (callback !== null) {
