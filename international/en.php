@@ -745,7 +745,8 @@ $languages['en'] = array (
 	"label_every_wend" => "Every Weekend",
 	"label_new_alarm" => "Create New Alarm...",
 	"label_delete_alarm" => "Delete This Alarm",
-	"config_hidesearcher" => "Hide Search Panel"
+	"config_hidesearcher" => "Hide Search Panel",
+	"label_refreshinprogress" => "Podcasts are already being refreshed. Try again later"
 );
 
 ?>

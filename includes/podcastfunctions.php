@@ -413,6 +413,7 @@ function check_podcast_upgrade($podetails, $podid, $podcast) {
 
 function refreshPodcast($podid) {
     global $prefs;
+    check_refresh_pid();
     debuglog('---------------------------------------------------','PODCASTS');
     debuglog("Refreshing podcast ".$podid,"PODCASTS");
     $result = generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$podid, false, PDO::FETCH_OBJ);
@@ -488,6 +489,7 @@ function refreshPodcast($podid) {
         }
     }
     check_tokeep($podetails, $podid);
+    clear_refresh_pid();
     return $podid;
 }
 
@@ -1127,6 +1129,7 @@ function get_all_counts() {
 }
 
 function check_podcast_refresh() {
+    check_refresh_pid();
     $tocheck = array();
     $nextupdate_seconds = 2119200;
     $result = generic_sql_query("SELECT PODindex, LastUpdate, RefreshOption FROM Podcasttable WHERE RefreshOption > 0 AND Subscribed = 1", false, PDO::FETCH_OBJ);
@@ -1180,6 +1183,7 @@ function check_podcast_refresh() {
     }
     debuglog('Next update is required in '.$nextupdate_seconds.' seconds',"PODCASTS");
     $updated['nextupdate'] = $nextupdate_seconds;
+    clear_refresh_pid();
     return $updated;
 }
 
@@ -1261,10 +1265,12 @@ function setPlaybackProgress($progress, $uri) {
 }
 
 function refresh_all_podcasts() {
+    check_refresh_pid();
     $result = generic_sql_query("SELECT PODindex FROM Podcasttable WHERE Subscribed = 1", false, PDO::FETCH_OBJ);
     foreach ($result as $obj) {
         refreshPodcast($obj->PODindex);
     }
+    clear_refresh_pid();
     return false;
 }
 
@@ -1287,6 +1293,25 @@ function checkListened($title, $album, $artist) {
     }
     return $podid;
 
+}
+
+function check_refresh_pid() {
+    // $pid = getmypid();
+    // $rpid = simple_query('Value', 'Statstable', 'Item', 'PodUpPid', null);
+    // if ($rpid === null) {
+    //     debuglog('ERROR - Podcast Update PID returned null!','PODCASTS',1);
+    //     header('HTTP/1.1 500 Internal Server Error');
+    //     exit(0);
+    // } else if ($rpid != 0) {
+    //     debuglog('Attempting multiple simultaneous podcast refreshes','PODCASTS',6);
+    //     header('HTTP/1.1 412 Precondition Failed');
+    //     exit(0);
+    // }
+    // generic_sql_query("UPDATE Statstable SET Value = '.$pid.' WHERE Item = 'PodUpPid'");
+}
+
+function clear_refresh_pid() {
+    // generic_sql_query("UPDATE Statstable SET Value = 0 WHERE Item = 'PodUpPid'");
 }
 
 ?>

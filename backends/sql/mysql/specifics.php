@@ -756,6 +756,12 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 54 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 54:
+				debuglog("Updating FROM Schema version 54 TO Schema version 55","SQL");
+				generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('PodUpPid', 0)", true);
+				generic_sql_query("UPDATE Statstable SET Value = 55 WHERE Item = 'SchemaVer'", true);
+				break;
+
 		}
 		$sv++;
 	}

@@ -2,8 +2,8 @@ var podcasts = function() {
 
 	var downloadQueue = new Array();
 	var downloadRunning = false;
-	var loaded = false;
 	var refreshtimer;
+	var newcounts = {}
 
 	function checkDownloadQueue() {
 		if (downloadRunning == false) {
@@ -114,6 +114,18 @@ var podcasts = function() {
 		}
 	}
 
+	function checkForUpdatedPodcasts(data) {
+		debug.log('PODCASTS', 'Checking for updated podcasts in',data);
+		if (data && data.length > 0) {
+			$.each(data, function(index, value) {
+				if ($('#podcast_'+value).hasClass('loaded')) {
+					debug.log("PODCASTS","Podcast",value,"was updated and is loaded - reloading it");
+					podcasts.loadPodcast(value);
+				}
+			});
+		}
+	}
+
 	function podcastRequest(options, callback) {
 		debug.log("PODCASTS","Sending request",options);
 		options.populate = 1;
@@ -130,26 +142,24 @@ var podcasts = function() {
 	        data: options,
 			contentType: 'application/json',
 	        success: function(data) {
-				if (data && data.length > 0) {
-					$.each(data, function(index, value) {
-						if (!($('#podcast_'+value).is(':empty'))) {
-							debug.log("PODCASTS","Podcast",value,"was updated and is loaded - reloading it");
-							podcasts.loadPodcast(value);
-						}
-					});
-					podcasts.doNewCount();
-				}
+				debug.log('PODCASTS','Request Success',data);
+				checkForUpdatedPodcasts(data);
+				podcasts.doNewCount();
 	            if (callback !== null) {
 	            	callback();
 	            }
 	        },
-	        error: function(data, status) {
-	            debug.error("PODCASTS", "Podcast Request Failed:",options,data,status);
-	            infobar.error(language.gettext("label_general_error"));
+			error: function(data,status) {
+				debug.error("PODCASTS", "Podcast Request Failed:",data,options);
+				if (data.status == 412) {
+					infobar.error(language.gettext('label_refreshinprogress'));
+				} else {
+					infobar.error(language.gettext("label_general_error"));
+				}
 				if (callback !== null) {
 	            	callback();
 	            }
-	        }
+			}
 	    });
 	}
 
@@ -301,16 +311,40 @@ var podcasts = function() {
 
 		doNewCount: function() {
 			$.getJSON("includes/podcasts.php?populate=1&getcounts=1", function(data) {
+				debug.shout('PODCASTS','Got New Counts',data);
+				newcounts = data;
 				$.each(data, function(index, value) {
-					var element;
 					if (index == 'totals') {
-						element = '#total_unlistened_podcasts';
+						// element = '#total_unlistened_podcasts';
 					} else {
-						element = '#podnumber_'+index;
+						putPodCount('#podnumber_'+index, value.new, value.unlistened)
 					}
-					putPodCount(element, value.new, value.unlistened)
 				});
 				layoutProcessor.postAlbumActions();
+			});
+		},
+
+		checkIfSomeoneElseHasUpdatedStuff: function() {
+			var isnewpodcast = false;
+			var to_reload = new Array();
+			$.getJSON("includes/podcasts.php?populate=1&getcounts=1", function(data) {
+				$.each(data, function(index, value) {
+					if (!newcounts.hasOwnProperty(index)) {
+						debug.shout('PODCASTS', 'A new podcast has been subscribed to by somebody else');
+						isnewpodcast = true;
+					}  else if (newcounts[index].new != value.new || newcounts[index].unlistened != value.unlistened) {
+						if (index != 'totals') {
+							debug.shout('PODCASTS', 'Podcast',index,'was updated by someobody else');
+							to_reload.push(index);
+						}
+					}
+				});
+				if (isnewpodcast) {
+					podcasts.reloadList();
+				} else {
+					checkForUpdatedPodcasts(to_reload);
+				}
+				podcasts.doInitialRefresh();
 			});
 		},
 
@@ -318,10 +352,14 @@ var podcasts = function() {
 			var element = $(event.target);
 			var elementType = element[0].tagName;
 			var options = {option: element.attr("name")};
+			var callback = null;
 			debug.log("PODCASTS","Option:",element,elementType);
 			switch(elementType) {
 				case "SELECT":
 					options.val = element.val();
+					if (options.option == 'RefreshOption') {
+						callback = podcasts.checkRefresh;
+					}
 					break;
 				case "LABEL":
 					options.val = !element.prev().is(':checked');
@@ -332,7 +370,7 @@ var podcasts = function() {
 			}
 			var channel = element.attr('id');
 			options.channel = channel.replace(/podconf_/,'');
-			podcastRequest(options, null);
+			podcastRequest(options, callback);
 		},
 
 		checkRefresh: function() {
@@ -344,25 +382,22 @@ var podcasts = function() {
 				dataType: 'JSON',
 				success: function(data) {
 					debug.log("PODCASTS","Refresh result",data);
-					if (data.updated && data.updated.length > 0) {
-						if (loaded) {
-							$.each(data.updated, function(index, value){
-								if (!($('#podcast_'+value).hasClass('loaded'))) {
-									debug.log("PODCASTS","Podcast",value,"was refreshed and is loaded - reloading it");
-									podcasts.loadPodcast(value);
-								}
-							});
-						}
-						podcasts.doNewCount();
-					}
+					checkForUpdatedPodcasts(data.updated);
+					podcasts.doNewCount();
 					if (data.nextupdate) {
 						debug.log("PODCASTS","Setting next podcast refresh for",data.nextupdate,'seconds');
 						refreshtimer = setTimeout(podcasts.checkRefresh, data.nextupdate*1000);
 					}
 				},
-				error: function() {
-					debug.error("PODCASTS","Refresh Failed");
-					infobar.error(language.gettext('error_refreshfail'));
+				error: function(data,status,thing) {
+					debug.error("PODCASTS","Refresh Failed",data.status);
+					if (data.status == 412) {
+						// infobar.error(language.gettext('label_refreshinprogress'));
+						podcasts.doInitialRefresh();
+					} else {
+						// podcasts.doInitialRefresh();
+						infobar.error(language.gettext('error_refreshfail'));
+					}
 				}
 			})
 		},
@@ -517,3 +552,5 @@ $('#podcastsinput').on('drop', podcasts.handleDrop)
 menuOpeners['podcast'] = podcasts.loadPodcast;
 clickRegistry.addClickHandlers('podcast', podcasts.handleClick);
 podcasts.doInitialRefresh();
+window.addEventListener('online', podcasts.checkIfSomeoneElseHasUpdatedStuff);
+
