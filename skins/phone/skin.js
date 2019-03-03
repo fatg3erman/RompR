@@ -613,6 +613,7 @@ var layoutProcessor = function() {
                 orientation: "horizontal"
             });
             doSwipeCss();
+            $(document).on('click', '.clickaddtoplaylist', addToPlaylist.close);
         },
 
         findAlbumDisplayer: function(key) {
@@ -718,3 +719,14 @@ jQuery.fn.sortableTrackList = function() {
 jQuery.fn.trackDragger = function() {
     return this;
 }
+
+var addToPlaylist = function() {
+    return {
+        open: function() {
+            $('#pladddropdown').slideDown('fast');
+        },
+        close: function() {
+            $('#pladddropdown').slideUp('fast');
+        }
+    }
+}();

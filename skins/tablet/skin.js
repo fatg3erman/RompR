@@ -304,6 +304,7 @@ var layoutProcessor = function() {
                 whiledragging: infobar.volumemoved,
                 orientation: "horizontal"
             });
+            $(document).on('click', '.clickaddtoplaylist', addToPlaylist.close);
         },
 
         postPlaylistLoad: function() {
@@ -333,3 +334,14 @@ jQuery.fn.sortableTrackList = function() {
 jQuery.fn.trackDragger = function() {
     return this;
 }
+
+var addToPlaylist = function() {
+    return {
+        open: function() {
+            $('#pladddropdown').slideDown('fast');
+        },
+        close: function() {
+            $('#pladddropdown').slideUp('fast');
+        }
+    }
+}();

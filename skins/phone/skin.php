@@ -98,6 +98,9 @@ printOutputCheckboxes();
                 <i id="ratingimage" class="icon-0-stars rating-icon-big"></i>
                 <input type="hidden" value="-1" />
             </div>
+            <div id="addtoplaylist" class="invisible" onclick="addToPlaylist.open()">
+                <i class="icon-doc-text npicon clickicon"></i>
+            </div>
             <div id="lastfm" class="invisible">
                 <i class="icon-heart npicon clickicon" id="love"></i>
             </div>
@@ -254,3 +257,12 @@ print get_int_text("lastfm_addtags").'</b><i class="icon-cancel-circled clickico
     </div>
     <div class="containerbox padright dropdown-container tagaddbox"></div>
 </div>
+
+<div id="pladddropdown" class="topdropmenu dropmenu">
+    <?php
+    print '<div class="configtitle textcentre moveable" style="padding-top:4px"><b>'.get_int_text('button_addtoplaylist').'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="addToPlaylist.close()"></i></div>';
+        ?>
+    <div id="addtoplaylistmenu" class="clearfix">
+    </div>
+</div>
+

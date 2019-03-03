@@ -11,6 +11,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Loading of Custom Background Images is now much faster
 * Big changes to the [Alarm Clock](/RompR/Alarm-And-Sleep). You can now have multiple alarms, they can be set to repeat on specific days of the week, and can play a specific item - an album, radio station, playlist, or whatever you like. If you've been using the alarm clock, you should read the docs as everything has changed.
 * The Search Panel can now be hidden, just like all the other sources panels.
+* A new icon in the Now Playing area to let you add the current track to one of your Saved Playlists
 
 ## Version 1.25
 

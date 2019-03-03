@@ -204,6 +204,9 @@ function playerController() {
             for (var i in openplaylists) {
                 $('i.menu.openmenu.playlist.icon-toggle-closed[name="'+openplaylists[i]+'"]').click();
             }
+            if (openplaylists.length > 0) {
+                infobar.markCurrentTrack();
+            }
             $('#addtoplaylistmenu').load('player/mpd/loadplaylists.php?addtoplaylistmenu');
         });
 	}
