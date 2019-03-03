@@ -154,10 +154,11 @@ var playlistManager = function() {
 			if (element.hasClass('clickremplay')) {
 		        var list = element.parent().parent().parent().parent().parent().children('input').first().val();
 		        var pos = element.attr('name');
+				element.makeSpinner();
 		        debug.log("PLAYLISTMANAGER","Removing Track",pos,"from playlist",list);
 		        player.controller.deletePlaylistTrack(list,pos, function() {
-		        	reloadPlaylist(list);
-		        	player.controller.reloadPlaylists();
+					player.controller.reloadPlaylists();
+					reloadPlaylist(list);
 		        });
 			} else if (element.hasClass('clickdelplaylist')) {
 		        var list = element.parent().parent().parent().parent().prev().val();
@@ -220,9 +221,9 @@ var playlistManager = function() {
 	        if (tracks.length > 0) {
 	        	debug.log("PLAYLISTMANAGER","Dragged to position",moveto);
 		        player.controller.addTracksToPlaylist(which_playlist,tracks,moveto,playlistlength,function() {
-		        	reloadPlaylist(which_playlist);
-		        	player.controller.checkProgress();
-		        	player.controller.reloadPlaylists();
+					player.controller.reloadPlaylists();
+					player.controller.checkProgress();
+					reloadPlaylist(which_playlist);
 		        });
 		    }
 		},

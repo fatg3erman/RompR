@@ -16,6 +16,17 @@ if (array_key_exists('playlist', $_REQUEST)) {
 } else if (array_key_exists('userplaylist', $_REQUEST)) {
     $pl = $_REQUEST['userplaylist'];
     do_user_playlist_tracks($pl,'icon-music', $_REQUEST['target']);
+} else if (array_key_exists('addtoplaylistmenu', $_REQUEST)) {
+    $playlists = do_mpd_command("listplaylists", true, true);
+    if (is_array($playlists) && array_key_exists('playlist', $playlists)) {
+        usort($playlists['playlist'], "plsort");
+        foreach ($playlists['playlist'] as $pl) {
+            print '<div class="containerbox backhi clickicon menuitem clickaddtoplaylist" name="'.rawurlencode($pl).'">';
+            print '<i class="fixed collectionicon icon-doc-text"></i>';
+            print '<div class="expand">'.htmlentities($pl).'</div>';
+            print '</div>';
+        }
+    }
 } else {
     do_playlist_header();
     $playlists = do_mpd_command("listplaylists", true, true);

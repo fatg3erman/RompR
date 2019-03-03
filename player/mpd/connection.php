@@ -86,7 +86,7 @@ function doMpdParse($command, &$dirs, $domains) {
 
     $pstart = microtime(true);
 
-    while(!feof($connection) && $parts) {
+    while(is_resource($connection) && !feof($connection) && $parts) {
         $parts = getline($connection);
         if (is_array($parts)) {
             switch ($parts[0]) {
@@ -111,7 +111,7 @@ function doMpdParse($command, &$dirs, $domains) {
                     $filedata = $mpd_file_model;
                     $filedata[$parts[0]] = $parts[1];
                     break;
-                    
+
                 case 'X-AlbumUri':
                     // Mopidy-beets is using SEMICOLONS in its URI schemes.
                     // Surely a typo, but we need to work around it by not splitting the string

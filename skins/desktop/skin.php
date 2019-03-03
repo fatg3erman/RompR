@@ -76,6 +76,20 @@
                     ?>
                     <input type="hidden" id="nppodiput" value="" />
                 </div>
+                <div id="addtoplaylist" class="invisible topstats">
+                    <?php
+                    print '<i title="'.get_int_text('button_addtoplaylist').
+                        '" class="icon-doc-text npicon clickicon tooltip topdrop">';
+                    ?>
+                    <div class="topdropmenu dropshadow leftmenu normalmenu useasfixed">
+                        <?php
+                        print '<div class="configtitle textcentre"><b>'.get_int_text('button_addtoplaylist').'</b></div>';
+                        ?>
+                        <div id="addtoplaylistmenu" class="clearfix">
+                        </div>
+                    </div>
+                    </i>
+                </div>
                 <div id="stars" class="invisible topstats">
                     <i id="ratingimage" class="icon-0-stars rating-icon-big"></i>
                     <input type="hidden" value="-1" />

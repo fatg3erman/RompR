@@ -193,10 +193,18 @@ function playerController() {
     }
 
 	this.reloadPlaylists = function() {
+        var openplaylists = [];
+        $('#storedplaylists').find('i.menu.openmenu.playlist.icon-toggle-open').each(function() {
+            openplaylists.push($(this).attr('name'));
+        })
         $.get("player/mpd/loadplaylists.php", function(data) {
             $("#storedplaylists").html(data);
             layoutProcessor.postAlbumActions();
             $('b:contains("'+language.gettext('button_loadplaylist')+'")').parent('.configtitle').append('<a href="https://fatg3erman.github.io/RompR/Using-Saved-Playlists" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
+            for (var i in openplaylists) {
+                $('i.menu.openmenu.playlist.icon-toggle-closed[name="'+openplaylists[i]+'"]').click();
+            }
+            $('#addtoplaylistmenu').load('player/mpd/loadplaylists.php?addtoplaylistmenu');
         });
 	}
 
@@ -326,13 +334,13 @@ function playerController() {
 
     this.checkReloadPlaylists = function() {
         if (openpl !== null) {
-            var string = browsePlaylist(openpl, 'pholder_'+openpl);
-            $('#pholder_'+openpl).load(string);
-            openpl = null;
+            var string = browsePlaylist(encodeURIComponent(openpl), 'pholder_'+hex_md5(openpl));
+            $('#pholder_'+hex_md5(openpl)).load(string);
         }
         if (typeof(playlistManager) != 'undefined') {
-            playlistManager.checkToUpdateTheThing(openpl);
+            playlistManager.checkToUpdateTheThing(encodeURIComponent(openpl));
         }
+        openpl = null;
     }
 
 	this.clearPlaylist = function(callback) {

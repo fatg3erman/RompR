@@ -311,27 +311,31 @@ var info_lastfm = function() {
 
             function doUserLoved(flag) {
 				debug.mark("LASTFM","Doing UserLoved With Flgas at",flag);
-                var li = $('li[name="userloved"]');
-				li.empty();
-                if (flag) {
-					li.append($('<b>').html(language.gettext("lastfm_loved")+': ')).append(language.gettext("label_yes")+'&nbsp;&nbsp;&nbsp;')
-					li.append($('<i>', {
-						title: language.gettext("lastfm_unlove"),
-						class: "icon-heart-broken smallicon infoclick clickunlove tooltip"
-					}));
-					if (displaying) {
-                    	$('#love').removeClass('notloved').attr('title', language.gettext("lastfm_unlove")).off('click').on('click', nowplaying.unlove).stopSpinner();
+				if (parent.isCurrentTrack()) {
+					$('#love').stopSpinner();
+					if (flag) {
+						$('#love').removeClass('notloved').attr('title', language.gettext("lastfm_unlove")).off('click').on('click', nowplaying.unlove);
+					} else {
+						$('#love').removeClass('notloved').addClass('notloved').attr('title', language.gettext("lastfm_lovethis")).off('click').on('click', nowplaying.love);
 					}
-                } else {
-					li.append($('<b>').html(language.gettext("lastfm_loved")+': ')).append(language.gettext("label_no")+'&nbsp;&nbsp;&nbsp;')
-					li.append($('<i>', {
-						title: language.gettext("lastfm_lovethis"),
-						class: "icon-heart smallicon infoclick clicklove tooltip notloved"
-					}));
-					if (displaying) {
-                    	$('#love').removeClass('notloved').addClass('notloved').attr('title', language.gettext("lastfm_lovethis")).off('click').on('click', nowplaying.love).stopSpinner();
-					}
-                }
+				}
+				if (displaying) {
+					var li = $('li[name="userloved"]');
+					li.empty();
+	                if (flag) {
+						li.append($('<b>').html(language.gettext("lastfm_loved")+': ')).append(language.gettext("label_yes")+'&nbsp;&nbsp;&nbsp;')
+						li.append($('<i>', {
+							title: language.gettext("lastfm_unlove"),
+							class: "icon-heart-broken smallicon infoclick clickunlove tooltip"
+						}));
+	                } else {
+						li.append($('<b>').html(language.gettext("lastfm_loved")+': ')).append(language.gettext("label_no")+'&nbsp;&nbsp;&nbsp;')
+						li.append($('<i>', {
+							title: language.gettext("lastfm_lovethis"),
+							class: "icon-heart smallicon infoclick clicklove tooltip notloved"
+						}));
+	                }
+				}
             }
 
             function getSearchArtist() {
@@ -686,9 +690,12 @@ var info_lastfm = function() {
 
                             if (accepted && lastfm.isLoggedIn() && !lfmdata.error()) {
                                 self.track.getUserTags();
-                                doUserLoved(lfmdata.userloved());
-                            }
+							}
                         }
+						if (trackmeta.lastfm !== undefined) {
+							var lfmdata = new lfmDataExtractor(trackmeta.lastfm.track);
+							doUserLoved(lfmdata.userloved());
+						}
                     },
 
                     name: function() {
@@ -782,7 +789,7 @@ var info_lastfm = function() {
                                     parent.setMeta('set', 'Tags', [prefs.autotagname]);
                                 }
                             }
-                            if (displaying) { doUserLoved(true) }
+                            doUserLoved(true)
                         } else {
                             trackmeta.lastfm.track.userloved = 0;
                             if (prefs.autotagname != '') {
@@ -791,7 +798,7 @@ var info_lastfm = function() {
                                     parent.setMeta('remove', 'Tags', prefs.autotagname);
                                 }
                             }
-                            if (displaying) { doUserLoved(false) }
+                            doUserLoved(false)
                         }
                     }
 

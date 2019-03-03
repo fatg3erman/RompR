@@ -781,6 +781,14 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
                     $(this).slideToggle('fast');
                 }
             });
+            if (this.element.hasClass('useasfixed')) {
+                var top = parseInt(this.element.parent().offset().top) + this.element.parent().outerHeight(true);
+                this.element.css({
+                    top: top+'px',
+                    left: this.element.parent().offset().left+'px'
+                });
+                this.element.detach().appendTo('body');
+            }
             this.element.slideToggle('fast', function() {
                 $(this).fanoogleMenus();
             });

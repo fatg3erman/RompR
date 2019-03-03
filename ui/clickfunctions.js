@@ -90,6 +90,10 @@ function bindClickHandlers() {
         onSourcesClicked(event, $(this));
     });
 
+    $(document).on('click', '.clickaddtoplaylist', function(event) {
+        infobar.addToPlaylist($(this));
+    });
+
 }
 
 function bindPlaylistClicks() {

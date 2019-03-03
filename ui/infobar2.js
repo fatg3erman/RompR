@@ -470,11 +470,17 @@ var infobar = function() {
                     $("#subscribe").fadeOut('fast');
                 }
             }
+            if (info.type != 'stream') {
+                $("#addtoplaylist").fadeIn('fast');
+            } else {
+                $("#saddtoplaylist").fadeOut('fast');
+            }
             if (info.backendid === -1) {
                 $("#stars").fadeOut('fast');
                 $("#dbtags").fadeOut('fast');
                 $("#playcount").fadeOut('fast');
                 $("#subscribe").fadeOut('fast');
+                $("#addtoplaylist").fadeOut('fast');
                 lastfm.showloveban(false);
             } else {
                 infobar.albumImage.setKey(info.key);
@@ -636,6 +642,22 @@ var infobar = function() {
                 remainString: '-'+formatTimeString(remain)
             });
             nowplaying.progressUpdate(percent);
+        },
+
+        addToPlaylist: function(element) {
+            player.controller.addTracksToPlaylist(
+                element.attr('name'),
+                [{uri: trackinfo.location}],
+                null,
+                0,
+                function() {
+                    player.controller.reloadPlaylists();
+                    player.controller.checkProgress();
+                    if (typeof(playlistManager) != 'undefined') {
+                        playlistManager.checkToUpdateTheThing(element.attr('name'));
+                    }
+                }
+            )
         }
     }
 
