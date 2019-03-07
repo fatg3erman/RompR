@@ -21,10 +21,12 @@ if (array_key_exists('playlist', $_REQUEST)) {
     if (is_array($playlists) && array_key_exists('playlist', $playlists)) {
         usort($playlists['playlist'], "plsort");
         foreach ($playlists['playlist'] as $pl) {
-            print '<div class="containerbox backhi clickicon menuitem clickaddtoplaylist" name="'.rawurlencode($pl).'">';
-            print '<i class="fixed collectionicon icon-doc-text"></i>';
-            print '<div class="expand">'.htmlentities($pl).'</div>';
-            print '</div>';
+            if (allow_track_deletion($pl)) {
+                print '<div class="containerbox backhi clickicon menuitem clickaddtoplaylist" name="'.rawurlencode($pl).'">';
+                print '<i class="fixed collectionicon icon-doc-text"></i>';
+                print '<div class="expand">'.htmlentities($pl).'</div>';
+                print '</div>';
+            }
         }
     }
 } else {
@@ -76,7 +78,7 @@ function plsort($a, $b) {
 function do_playlist_tracks($pl, $icon, $target) {
     global $putinplaylistarray, $playlist;
     directoryControlHeader($target, $pl);
-    playlistPlayHeader($pl);
+    playlistPlayHeader($pl, $pl);
     if ($pl == '[Radio Streams]') {
         $streams = do_mpd_command('listplaylistinfo "'.$pl.'"', true);
         if (is_array($streams) && array_key_exists('file', $streams)) {
@@ -124,9 +126,26 @@ function do_user_playlist_tracks($pl, $icon, $target) {
     // which is what we want.
     require_once ("player/mpd/streamplaylisthandler.php");
     require_once ("utils/getInternetPlaylist.php");
+
+    // Real bugger this one.
+    // HACK ALERT
+    // We've got a URL, but to get the playlist title and image we need the name of the playlist
+    // Just gonna have to read all the user playlists until we find the right one.
+    $snookcocker = glob('prefs/userplaylists/*');
+    $pl_name = $pl;
+    foreach ($snookcocker as $file) {
+        $lines = file($file);
+        foreach ($lines as $line) {
+            if (trim($line) == $pl) {
+                $pl_name = basename($file);
+                break 2;
+            }
+        }
+    }
+
     $tracks = load_internet_playlist($pl, '', '', true);
-    directoryControlHeader($target, $pl);
-    playlistPlayHeader($pl);
+    directoryControlHeader($target, $pl_name);
+    playlistPlayHeader($pl, $pl_name);
     foreach ($tracks as $c => $track) {
         add_playlist(
             rawurlencode($track['TrackUri']),
@@ -163,9 +182,6 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
             $i = dirname($albumimage->basepath);
             if (!in_array($i, $used_images)) {
                 $used_images[] = $i;
-            }
-            if ($image === null && $name == 'Discover Weekly (by spotify)') {
-                $image = 'newimages/discoverweekly.jpg';
             }
             $html = albumHeader(array(
                 'id' => 'pholder_'.md5($name),

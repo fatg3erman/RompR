@@ -195,7 +195,7 @@ function printRadioDirectory($att) {
     print '<div id="tunein_'.$name.'" class="invisible indent containerbox wrap fullwidth"></div>';
 }
 
-function playlistPlayHeader($name) {
+function playlistPlayHeader($name, $text) {
     print '<div class="textcentre clickloadplaylist playable ninesix" name="'.$name.'">'.get_int_text('label_play_all');
     print '<input type="hidden" name="dirpath" value="'.$name.'" />';
     print '</div>';

@@ -55,7 +55,7 @@ jQuery.fn.menuHide = function(callback) {
             self.parent().parent().removeClass('tagholder_wide dropshadow');
             self.parent().parent().find('.helpfulalbum.fixed').removeClass('fixed').addClass('expand');
             self.parent().parent().find('.containerbox.wrap').children('.minwidthed2').remove();
-        } else if (self.parent().hasClass('playlist')) {
+        } else if (self.parent().hasClass('playlist') || self.parent().hasClass('userplaylist')) {
             debug.log("UI","Hiding playlist");
             self.parent().parent().removeClass('tagholder_wide dropshadow');
             self.parent().parent().find('.helpfulalbum.fixed').removeClass('fixed').addClass('expand');
@@ -670,7 +670,7 @@ var layoutProcessor = function() {
             // Creates a nonexisted drop menu to hold contents.
             // 'element' is the PARENT menu element that has been clicked on.
 
-            if (element.hasClass('album') || element.hasClass('playlist')) {
+            if (element.hasClass('album') || element.hasClass('playlist') || element.hasClass('userplaylist')) {
                 // This is for an album clicked on in the album browser pane.
                 var x = $('#'+name);
                 element.parent().addClass('tagholder_wide dropshadow');

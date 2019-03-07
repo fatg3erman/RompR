@@ -69,6 +69,12 @@ class baseAlbumImage {
                 return $this->images['small'];
             }
         }
+        if ($this->artist == 'PLAYLIST' && $this->album == 'Discover Weekly (by spotify)') {
+            $this->images['small'] = 'newimages/discoverweekly.jpg';
+            $this->images['medium'] = 'newimages/discoverweekly.jpg';
+            $this->images['asdownloaded'] = 'newimages/discoverweekly.jpg';
+            return 'newimages/discoverweekly.jpg';
+        }
         return null;
     }
 

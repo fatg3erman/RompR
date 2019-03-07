@@ -145,7 +145,7 @@ function trackControlHeader($why, $what, $who, $dets) {
                 } else {
                     $html .= '<div class="icon-no-response-playbutton smallicon expand clicktrack playable noselect" name="'.$albumuri.'"></div>';
                     $html .= '<div class="icon-music smallicon expand clickalbum playable noselect" name="'.$why.'album'.$who.'"></div>';
-}
+                }
             } else {
                 $html .= '<div class="icon-no-response-playbutton smallicon expand clickalbum playable noselect" name="'.$why.'album'.$who.'"></div>';
             }
@@ -190,8 +190,9 @@ function printRadioDirectory($att) {
     print '<div id="tunein_'.$name.'" class="dropmenu"></div>';
 }
 
-function playlistPlayHeader($name) {
-    $albumimage = new albumImage(array('artist' => "PLAYLIST", 'album' => $name));
+function playlistPlayHeader($name, $text) {
+    debuglog('Getting image for playlist '.$name,'UI');
+    $albumimage = new albumImage(array('artist' => "PLAYLIST", 'album' => $text));
     $image = $albumimage->get_image_if_exists();
     if ($image) {
         $images = $albumimage->get_images();

@@ -184,7 +184,7 @@ function printRadioDirectory($att) {
     print '<div id="tunein_'.$name.'" class="dropmenu"></div>';
 }
 
-function playlistPlayHeader($name) {
+function playlistPlayHeader($name, $text) {
 
 }
 

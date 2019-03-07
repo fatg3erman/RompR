@@ -116,6 +116,8 @@ var metaHandlers = function() {
 			            t.attributes = attributes;
 			            tracks.push(t);
 			            $(element).removeClass('selected');
+					} else if ($(element).hasClass('playlisttrack') || $(element).hasClass('clickloadplaylist') || $(element).hasClass('clickloaduserplaylist')) {
+						infobar.notify("Sorry, you can't add tracks from playlists");
 			        } else {
 			            tracks.push({
 			                uri: uri,
@@ -127,16 +129,18 @@ var metaHandlers = function() {
 			            });
 			        }
 			    });
-				dbQueue.request(tracks,
-					function(rdata) {
-			            collectionHelper.updateCollectionDisplay(rdata);
-			            fn(name);
-			        },
-			        function(data) {
-			            debug.warn("DROPPLUGIN","Failed to set attributes for",track,data);
-			            infobar.error(language.gettext('label_general_error'));
-			        }
-			    );
+				if (tracks.length > 0) {
+					dbQueue.request(tracks,
+						function(rdata) {
+				            collectionHelper.updateCollectionDisplay(rdata);
+				            fn(name);
+				        },
+				        function(data) {
+				            debug.warn("DROPPLUGIN","Failed to set attributes for",track,data);
+				            infobar.error(language.gettext('label_general_error'));
+				        }
+				    );
+				}
 			},
 
 			removeTrackFromDb: function(element) {
