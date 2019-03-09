@@ -493,35 +493,31 @@ function displayRating(where, what) {
 }
 
 function showUpdateWindow() {
-    if (mopidy_is_old) {
-        alert(language.gettext("mopidy_tooold", [mopidy_min_version]));
-    } else {
-        if (typeof(prefs.shownupdatewindow) != 'string' || compare_version_numbers(prefs.shownupdatewindow, rompr_version)) {
-            var fnarkle = new popup({
-                css: {
-                    width: 1200,
-                    height: 1600
-                },
-                fitheight: true,
-                title: 'RompЯ Version '+rompr_version,
-                hasclosebutton: false
-            });
-            var mywin = fnarkle.create();
-            mywin.append('<div id="version"></div>');
-            mywin.append('<div id="begging"></div>');
-            mywin.append('<div id="license"></div>');
-            mywin.append('<div id="about"></div>');
-            $('#version').load('utils/versioninfo.php');
-            $('#begging').load('includes/begging.html', function() {
-                $('#license').load('includes/license.html', function(){
-                    $('#about').load('includes/about.html', function() {
-                        fnarkle.addCloseButton('OK', show_albumart_update_window);
-                        prefs.save({shownupdatewindow: rompr_version});
-                        fnarkle.open();
-                    });
+    if (typeof(prefs.shownupdatewindow) != 'string' || compare_version_numbers(prefs.shownupdatewindow, rompr_version)) {
+        var fnarkle = new popup({
+            css: {
+                width: 1200,
+                height: 1600
+            },
+            fitheight: true,
+            title: 'RompЯ Version '+rompr_version,
+            hasclosebutton: false
+        });
+        var mywin = fnarkle.create();
+        mywin.append('<div id="version"></div>');
+        mywin.append('<div id="begging"></div>');
+        mywin.append('<div id="license"></div>');
+        mywin.append('<div id="about"></div>');
+        $('#version').load('utils/versioninfo.php');
+        $('#begging').load('includes/begging.html', function() {
+            $('#license').load('includes/license.html', function(){
+                $('#about').load('includes/about.html', function() {
+                    fnarkle.addCloseButton('OK', show_albumart_update_window);
+                    prefs.save({shownupdatewindow: rompr_version});
+                    fnarkle.open();
                 });
             });
-        }
+        });
     }
 }
 

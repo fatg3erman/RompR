@@ -742,14 +742,16 @@ function get_player_ip() {
     debuglog("Server Address is ".$_SERVER['SERVER_ADDR'],"INIT",7);
     // REMOTE_ADDR is the address of the machine running the browser
     debuglog("Remote Address is ".$_SERVER['REMOTE_ADDR'],"INIT",7);
-    debuglog("Prefs for mpd host is ".$prefs['mpd_host'],"INIT",7);
+    debuglog("Prefs for mpd host is ".$prefs['multihosts']->{$prefs['currenthost']}->host,"INIT",7);
     $pip = '';
     if ($prefs['unix_socket'] != '') {
         $pip = $_SERVER['HTTP_HOST'];
-    } else if ($prefs['mpd_host'] == "localhost" || $prefs['mpd_host'] == "127.0.0.1" || $prefs['mpd_host'] == '::1') {
-        $pip = $_SERVER['HTTP_HOST'] . ':' . $prefs['mpd_port'];
+    } else if ( $prefs['multihosts']->{$prefs['currenthost']}->host == "localhost" ||
+                $prefs['multihosts']->{$prefs['currenthost']}->host == "127.0.0.1" ||
+                $prefs['multihosts']->{$prefs['currenthost']}->host == '::1') {
+        $pip = $_SERVER['HTTP_HOST'] . ':' . $prefs['multihosts']->{$prefs['currenthost']}->port;
     } else {
-        $pip = $prefs['mpd_host'] . ':' . $prefs['mpd_port'];
+        $pip = $prefs['multihosts']->{$prefs['currenthost']}->host . ':' . $prefs['multihosts']->{$prefs['currenthost']}->port;
     }
     debuglog("Displaying Player IP as: ".$pip,"INIT",7);
     return $pip;
@@ -1189,26 +1191,6 @@ function swap_file_for_local($string) {
     global $prefs;
     $path = 'file://'.implode("/", array_map("rawurlencode", explode("/", $prefs['music_directory_albumart']))).'/';
     return preg_replace('#'.$path.'#', 'local:track:', $string);
-}
-
-function probe_player_type() {
-    global $oldmopidy, $prefs;
-    $oldmopidy = false;
-    debuglog("Probing Player Type....","INIT",4);
-    $r = do_mpd_command('tagtypes', true, true);
-    if (is_array($r) && array_key_exists('tagtype', $r)) {
-        if (in_array('X-AlbumUri', $r['tagtype'])) {
-            debuglog("    ....tagtypes test says we're running Mopidy","INIT",4);
-            $prefs['player_backend'] = "mopidy";
-        } else {
-            debuglog("    ....tagtypes test says we're running MPD","INIT",4);
-            $prefs['player_backend'] = "mpd";
-        }
-    } else {
-        debuglog("WARNING! No output for 'tagtypes' - probably an old version of Mopidy. RompЯ may not function correctly","INIT",2);
-        $prefs['player_backend'] = "mopidy";
-        $oldmopidy = true;
-    }
 }
 
 ?>

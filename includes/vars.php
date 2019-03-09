@@ -113,10 +113,6 @@ $prefs = array(
     'dev_mode' => false,
     'live_mode' => false,
     'collection_load_timeout' => 3600000,
-    "mpd_host" => "localhost",
-    "mpd_port" => 6600,
-    "mpd_password" => "",
-    "unix_socket" => '',
     "smartradio_chunksize" => 5,
     "linkchecker_nextrun" => 0,
     "linkchecker_isrunning" => false,
@@ -142,7 +138,7 @@ $prefs = array(
     "sortbydate" => false,
     "notvabydate" => false,
     "currenthost" => 'Default',
-    "player_backend" => "mpd",
+    "player_backend" => "none",
     "collectionrange" => ADDED_ALL_TIME,
 
     // These are currently saved in the backend, as the most likely scenario is one user
@@ -275,8 +271,6 @@ if (!array_key_exists('currenthost', $_COOKIE)) {
     setcookie('currenthost',$prefs['currenthost'],time()+365*24*60*60*10,'/');
 }
 
-set_player_connect_params();
-
 // NOTE. skin is NOT saved as a preference on the backend. It is set as a Cookie only.
 // This is because saving it once as a preference would change the default for ALL new devices
 // and we want to allow devices to intelligently select a default skin using checkwindowsize.php
@@ -319,6 +313,7 @@ function loadPrefs() {
                     exit(1);
                 }
                 $prefs = array_replace($prefs, $sp);
+                $prefs['player_backend'] = 'none';
 
                 foreach ($_COOKIE as $a => $v) {
                     if (array_key_exists($a, $prefs)) {
@@ -420,20 +415,6 @@ function debuglog($text, $module = "JOHN WAYNE", $level = 7) {
     $logger->log($text, $module, $level);
 }
 
-function set_player_connect_params() {
-	global $prefs;
-	$prefs['mpd_host'] = $prefs['multihosts']->{$prefs['currenthost']}->host;
-	$prefs['mpd_port'] = $prefs['multihosts']->{$prefs['currenthost']}->port;
-	$prefs['mpd_password'] = $prefs['multihosts']->{$prefs['currenthost']}->password;
-	$prefs['unix_socket'] = $prefs['multihosts']->{$prefs['currenthost']}->socket;
-    if (property_exists($prefs['multihosts']->{$prefs['currenthost']}, 'mopidy_slave')) {
-        $prefs['mopidy_slave'] = $prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave;
-    } else {
-        // Catch the case where we haven't yet upgraded the player defs
-        $prefs['mopidy_slave'] = false;
-    }
-}
-
 function upgrade_host_defs($ver) {
     global $prefs;
     foreach ($prefs['multihosts'] as $key => $value) {
@@ -454,7 +435,6 @@ function upgrade_host_defs($ver) {
         }
     }
     savePrefs();
-    set_player_connect_params();
 }
 
 ?>

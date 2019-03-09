@@ -2,7 +2,7 @@
 chdir('../..');
 include ("includes/vars.php");
 include ("includes/functions.php");
-include("international.php");
+include ("international.php");
 include ("player/mpd/connection.php");
 
 $handlers = do_mpd_command('urlhandlers', true);

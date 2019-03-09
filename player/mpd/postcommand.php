@@ -1,10 +1,10 @@
 <?php
 chdir('../..');
-include ("includes/vars.php");
-include ("includes/functions.php");
-include ("player/mpd/connection.php");
-include ("collection/collection.php");
-include ('backends/sql/backend.php');
+require_once ("includes/vars.php");
+require_once ("includes/functions.php");
+require_once ("player/".$prefs['player_backend']."/player.php");
+require_once ("collection/collection.php");
+require_once ('backends/sql/backend.php');
 $mpd_status = array();
 $playlist_movefrom = null;
 $playlist_moveto = null;
@@ -16,8 +16,9 @@ $do_resume_seek_id = false;
 $collection_type = get_collection_type();
 $moveallto = null;
 $current_playlist_length = 0;
+$player = new $PLAYER_TYPE();
 
-if ($is_connected) {
+if ($player->is_connected()) {
 
     $cmd_status = true;
 
@@ -276,19 +277,14 @@ if ($is_connected) {
     }
 
 } else {
-    $s = (array_key_exists('player_backend', $prefs)) ? ucfirst($prefs['player_backend']).' ' : "Player ";
-    if ($prefs['unix_socket'] != "") {
-        $mpd_status['error'] = "Unable to Connect to ".$s."server at\n".$prefs["unix_socket"];
-    } else {
-        $mpd_status['error'] = "Unable to Connect to ".$s."server at\n".$prefs["mpd_host"].":".$prefs["mpd_port"];
-    }
+    $mpd_status['error'] = "Unable to Connect to ".$prefs['currenthost'];
 }
 
-$player =  $_COOKIE['currenthost'];
-$mpd_status['radiomode'] = $prefs['multihosts']->{$player}->radioparams->radiomode;
-$mpd_status['radioparam'] = $prefs['multihosts']->{$player}->radioparams->radioparam;
-$mpd_status['radiomaster'] = $prefs['multihosts']->{$player}->radioparams->radiomaster;
-$mpd_status['radioconsume'] = $prefs['multihosts']->{$player}->radioparams->radioconsume;
+$p = $prefs['currenthost'];
+$mpd_status['radiomode'] = $prefs['multihosts']->{$p}->radioparams->radiomode;
+$mpd_status['radioparam'] = $prefs['multihosts']->{$p}->radioparams->radioparam;
+$mpd_status['radiomaster'] = $prefs['multihosts']->{$p}->radioparams->radiomaster;
+$mpd_status['radioconsume'] = $prefs['multihosts']->{$p}->radioparams->radioconsume;
 
 header('Content-Type: application/json');
 echo json_encode($mpd_status);
@@ -305,28 +301,5 @@ function check_playlist_add_move($cmd, $incvalue) {
     }
 }
 
-function check_track_load_command($uri) {
-    global $prefs;
-    if ($prefs['player_backend'] == 'mopidy') {
-        return 'add';
-    }
-    $ext = strtolower(pathinfo($uri, PATHINFO_EXTENSION));
-    switch ($ext) {
-        case 'm3u':
-        case 'm3u8':
-        case 'asf':
-        case 'asx':
-            return 'load';
-            break;
-
-        default:
-            if (preg_match('#www\.radio-browser\.info/webservice/v2/m3u#', $uri)) {
-                return 'load';
-            } else {
-                return 'add';
-            }
-            break;
-    }
-}
 
 ?>

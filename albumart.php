@@ -6,7 +6,6 @@ include ("international.php");
 include ('utils/imagefunctions.php');
 include ("backends/sql/backend.php");
 include ("player/mpd/connection.php");
-$oldmopidy = false;
 $only_plugins_on_menu = false;
 $skin = "desktop";
 set_version_string();

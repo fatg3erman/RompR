@@ -1,6 +1,6 @@
 <?php
 define('ROMPR_IS_LOADING', true);
-include("includes/vars.php");
+require_once ("includes/vars.php");
 
 //
 // Check to see if this is a mobile browser
@@ -29,16 +29,10 @@ if (file_exists('skins/'.$skin.'/skin.requires')) {
     }
 }
 
-// Workaround bug where this wasn't initialised to a value, meaning an error could be thrown
-// on the first inclusion of connection.php
-if ($prefs['player_backend'] == '') {
-    $prefs['player_backend'] = 'mpd';
-}
-
-include("includes/functions.php");
-include("international.php");
+require_once ("includes/functions.php");
+require_once ("international.php");
 set_version_string();
-include("skins/".$skin."/ui_elements.php");
+require_once ("skins/".$skin."/ui_elements.php");
 
 //
 // See if there are any POST values from the setup screen
@@ -93,39 +87,29 @@ if (array_key_exists('setup', $_REQUEST)) {
     exit();
 }
 
-include("player/mpd/connection.php");
-if (!$is_connected) {
-    debuglog("MPD Connection Failed","INIT",1);
-    $title = get_int_text("setup_connectfail");
-    include("setupscreen.php");
-    exit();
-} else {
-    $mpd_status = do_mpd_command("status", true);
-    if (array_key_exists('error', $mpd_status)) {
-        debuglog("MPD Password Failed or other status failure","INIT",1);
-        close_mpd();
-        $title = get_int_text("setup_connecterror").$mpd_status['error'];
-        include("setupscreen.php");
-        exit();
+require_once ('player/mpdinterface.php');
+if ($prefs['player_backend'] == 'none') {
+    $player = new base_mpd_player();
+    if ($player->is_connected()) {
+        $mpd_status = $player->get_status();
+        if (array_key_exists('error', $mpd_status)) {
+            debuglog("MPD Password Failed or other status failure","INIT",1);
+            connect_fail("setup_connecterror").$mpd_status['error']);
+        }
+    } else {
+        debuglog("MPD Connection Failure","INIT",1);
+        connect_fail(get_int_text("setup_connectfail"));
     }
-}
 
-//
-// Probe to see which type of Player we're using
-//
-probe_player_type();
-setcookie('player_backend',$prefs['player_backend'],time()+365*24*60*60*10,'/');
-
-if ($prefs['unix_socket'] != '') {
-    // If we're connected by a local socket we can read the music directory
-    $arse = do_mpd_command('config', true);
-    if (array_key_exists('music_directory', $arse)) {
-        set_music_directory($arse['music_directory']);
+    if ($prefs['unix_socket'] != '') {
+        // If we're connected by a local socket we can read the music directory
+        $arse = $player->get_config();
+        if (array_key_exists('music_directory', $arse)) {
+            set_music_directory($arse['music_directory']);
+        }
     }
+    $player->close_mpd_connection();
 }
-
-close_mpd();
-
 //
 // See if we can use the SQL backend
 //
@@ -307,4 +291,13 @@ include('skins/'.$skin.'/skin.php');
 </html>
 <?php
 debuglog("******++++++======------******------======++++++******","INIT FINISHED",2);
+
+function connect_fail($t) {
+    global $title;
+    debuglog("MPD Connection Failed","INIT",1);
+    $title = $t;
+    include("setupscreen.php");
+    exit();
+}
+
 ?>

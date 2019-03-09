@@ -126,6 +126,7 @@ var prefs = function() {
     }
 
     function dontTransferPlaylist() {
+        setCookie('player_backend', 'none', 0);
         prefs.save(deferredPrefs, reloadWindow);
     }
 
@@ -136,6 +137,7 @@ var prefs = function() {
             url: 'player/transferplaylist.php',
             data: JSON.stringify(deferredPrefs),
             success: function() {
+                setCookie('player_backend', 'none', 0);
                 prefs.save(deferredPrefs, reloadWindow);
             },
             error: function() {
