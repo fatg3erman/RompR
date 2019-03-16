@@ -612,7 +612,7 @@ function process_file($filedata) {
 
         case "youtube":
             $filedata['folder'] = $filedata['file'];
-            $filedata['Artist'] = munge_youtube_track_into_artist($filedata['Title']);
+            $filedata['Artist'] = ($filedata['Artist'] == null) ? munge_youtube_track_into_artist($filedata['Title']) : $filedata['Artist'];
             $filedata['Album'] = munge_youtube_track_into_album($filedata['Title']);
             $filedata['Title'] = munge_youtube_track_into_title($filedata['Title']);
             $filedata['AlbumArtist'] = $filedata['Artist'];
