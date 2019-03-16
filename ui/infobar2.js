@@ -628,7 +628,7 @@ var infobar = function() {
                 scrobble();
             }
             if (!markedaslistened && percent >= 95 && playlist.getCurrent('type') == 'podcast') {
-                podcasts.checkMarkPodcastAsListened(playlist.getCurrent('location'));
+                podcasts.checkMarkPodcastAsListened(playlist.getCurrent('file'));
                 markedaslistened = true;
             }
             $("#progress").rangechooser("setRange", {min: 0, max: progress});

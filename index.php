@@ -87,7 +87,7 @@ if (array_key_exists('setup', $_REQUEST)) {
     exit();
 }
 
-require_once ('player/mpdinterface.php');
+require_once ('player/mpd/mpdinterface.php');
 if ($prefs['player_backend'] == 'none') {
     $player = new base_mpd_player();
     if ($player->is_connected()) {
@@ -101,12 +101,10 @@ if ($prefs['player_backend'] == 'none') {
         connect_fail(get_int_text("setup_connectfail"));
     }
 
-    if ($prefs['unix_socket'] != '') {
-        // If we're connected by a local socket we can read the music directory
-        $arse = $player->get_config();
-        if (array_key_exists('music_directory', $arse)) {
-            set_music_directory($arse['music_directory']);
-        }
+    // If we're connected by a local socket we can read the music directory
+    $arse = $player->get_config();
+    if (array_key_exists('music_directory', $arse)) {
+        set_music_directory($arse['music_directory']);
     }
     $player->close_mpd_connection();
 }
@@ -125,14 +123,21 @@ if (!$mysqlc) {
     sql_init_fail("No Database Connection Was Possible");
 }
 
+// This is for backwards compatability.
+// We now set $prefs['collection_player'] (which is the player type the collection is built under)
+// The first time we successfully connect to a player through probe_player_type - which ordinarily
+// will be on first run. For people upgrading from pervious versions, they'll have it in the database
+// so we need to check that.
+$c = simple_query('Value', 'Statstable', 'Item', 'CollType', null);
+if ($c !== null) {
+    $prefs['collection_player'] = $c;
+}
 savePrefs();
 
 list($result, $message) = check_sql_tables();
 if ($result == false) {
     sql_init_fail($message);
 }
-
-$collection_type = get_collection_type();
 
 if (array_key_exists('theme', $_REQUEST) && file_exists('themes/'.$_REQUEST['theme'].'.css')) {
     debuglog("Setting theme from request to ".$_REQUEST['theme'],"INIT",5);

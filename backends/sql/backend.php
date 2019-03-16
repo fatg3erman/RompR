@@ -3,7 +3,6 @@
 include ("backends/sql/connect.php");
 require_once ("skins/".$skin."/ui_elements.php");
 connect_to_database();
-$collection_type = get_collection_type();
 $find_track = null;
 $update_track = null;
 $transaction_open = false;
@@ -570,11 +569,12 @@ function get_all_data($ttid) {
 function get_extra_track_info(&$filedata) {
 	$data = array();;
 	$result = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
-		'SELECT Uri, TTindex, Disc, Artistname AS AlbumArtist, Albumtable.Image AS "X-AlbumImage", ImgKey AS ImgKey, mbid AS MUSICBRAINZ_ALBUMID, Searched
+		'SELECT Uri, TTindex, Disc, Artistname AS AlbumArtist, Albumtable.Image AS "X-AlbumImage", mbid AS MUSICBRAINZ_ALBUMID, Searched, IFNULL(Playcount, 0) AS Playcount
 			FROM
 				Tracktable
 				JOIN Albumtable USING (Albumindex)
 				JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+				LEFT JOIN Playcounttable USING (TTindex)
 				WHERE Title = ?
 				AND TrackNo = ?
 				AND Albumname = ?',
@@ -594,7 +594,7 @@ function get_extra_track_info(&$filedata) {
 	}
 	if (count($data) == 0) {
 		$result = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
-			'SELECT Albumtable.Image AS "X-AlbumImage", ImgKey AS ImgKey, mbid AS MUSICBRAINZ_ALBUMID, Searched
+			'SELECT Albumtable.Image AS "X-AlbumImage", mbid AS MUSICBRAINZ_ALBUMID, Searched
 				FROM
 					Albumtable
 					JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
@@ -1402,14 +1402,6 @@ function get_duration_count($range, $iab) {
 		$ac = 0;
 	}
 	return $ac;
-}
-
-function set_collection_type() {
-	if ($prefs['player_backend'] == 'mpd') {
-		generic_sql_query('UPDATE Statstable SET Value = '.COLLECTION_TYPE_MPD.' WHERE Item = CollType');
-	} else {
-		generic_sql_query('UPDATE Statstable SET Value = '.COLLECTION_TYPE_MOPIDY.' WHERE Item = CollType');
-	}
 }
 
 function dumpAlbums($which) {

@@ -1,8 +1,9 @@
 <?php
+require_once ("player/".$prefs['player_backend']."/player.php");
 $outputdata = array();
-@open_mpd_connection();
-if ($is_connected) {
-    $outputs = do_mpd_command("outputs", true);
+$player = new $PLAYER_TYPE();
+if ($player->is_connected()) {
+    $outputs = $player->get_outputs();
     foreach ($outputs as $i => $n) {
         if (is_array($n)) {
             foreach ($n as $a => $b) {
@@ -15,7 +16,7 @@ if ($is_connected) {
         }
     }
 }
-close_mpd();
+$player = null;
 
 function printOutputCheckboxes() {
     global $outputdata;

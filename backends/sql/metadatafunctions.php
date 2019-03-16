@@ -370,7 +370,9 @@ class romprmetadata {
 	// Private Functions
 
 	static function geturisfordir($data) {
-		$uris = getDirItems($data['uri']);
+		global $PLAYER_TYPE;
+		$player = new $PLAYER_TYPE();
+		$uris = $player->get_uris_for_directory($data['uri']);
 		$ttids = array();
 		foreach ($uris as $uri) {
 			$t = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null, "SELECT TTindex FROM Tracktable WHERE Uri = ?", $uri);
@@ -737,7 +739,7 @@ function preparePlTrackTable() {
 }
 
 function doPlaylist($playlist, $limit) {
-	global $prefs,$collection_type;
+	global $prefs;
 	debuglog("Loading Playlist ".$playlist,"RATINGS");
 	$sqlstring = "";
 	$tags = null;
@@ -823,7 +825,7 @@ function doPlaylist($playlist, $limit) {
 			break;
 	}
 	$sqlstring .= ' AND (LinkChecked = 0 OR LinkChecked = 2) AND isAudiobook = 0';
-	if ($collection_type == 'mopidy' && $prefs['player_backend'] == 'mpd') {
+	if ($prefs['collection_player'] == 'mopidy' && $prefs['player_backend'] == 'mpd') {
 		$sqlstring .= ' AND Uri LIKE "local:%"';
 	}
 	$uris = getAllURIs($sqlstring, $limit, $tags, $random);

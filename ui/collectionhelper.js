@@ -279,11 +279,11 @@ var collectionHelper = function() {
                 return;
             }
             var update = forceup;
-            if (prefs.updateeverytime && prefs.player_backend == collection_type) {
+            if (prefs.updateeverytime && prefs.player_backend == prefs.collection_player) {
                 debug.mark("COLLECTION","Updating Collection due to preference");
                 update = true;
             } else {
-                if (!prefs.hide_albumlist && collection_status == 1 && prefs.player_backend == collection_type) {
+                if (!prefs.hide_albumlist && collection_status == 1 && prefs.player_backend == prefs.collection_player) {
                     debug.mark("COLLECTION","Updating Collection because it is out of date");
                     collection_status = 0;
                     update = true;

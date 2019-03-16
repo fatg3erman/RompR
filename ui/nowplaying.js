@@ -235,15 +235,15 @@ var nowplaying = function() {
 		newTrack: function(playlistinfo, force) {
 
 			debug.debug("NOWPLAYING","New Info",playlistinfo);
-			if (currentbackendid == playlistinfo.backendid && force !== true) {
+			if (currentbackendid == playlistinfo.Id && force !== true) {
 				return;
 			}
 			infobar.setNowPlayingInfo(playlistinfo);
-			if (playlistinfo.backendid == -1) {
+			if (playlistinfo.Id== -1) {
 				debug.log("NOWPLAYING","Empty Track");
 				return;
 			}
-			currentbackendid = playlistinfo.backendid;
+			currentbackendid = playlistinfo.Id;
 	        debug.mark("NOWPLAYING","New Track:",playlistinfo);
 	        for (var i in to_notify) {
 	        	if (to_notify[i] !== null) {
@@ -292,7 +292,7 @@ var nowplaying = function() {
 				            		fa = true;
 				            	}
 			            		if (!ft && playlistinfo.metadata.track.name == history[j].playlistinfo.metadata.track.name &&
-			            			playlistinfo.tracknumber == history[j].playlistinfo.tracknumber) {
+			            			playlistinfo.Track == history[j].playlistinfo.Track) {
 				            		debug.trace("NOWPLAYING","Using track info from",j);
 			            			playlistinfo.metadata.track = history[j].playlistinfo.metadata.track;
 			            			ft = true;
@@ -353,7 +353,7 @@ var nowplaying = function() {
 		setLastFMCorrections: function(index, updates) {
 			debug.log("NOWPLAYING","Recieved last.fm corrections for index",index);
 			if (index == currenttrack) {
-		    	var t = history[findCurrentTrack()].playlistinfo.location;
+		    	var t = history[findCurrentTrack()].playlistinfo.file;
             	if (t.substring(0,11) == 'soundcloud:') {
             		debug.log("NOWPLAYING","Not sending LastFM Updates because this track is from soundcloud");
             	} else {

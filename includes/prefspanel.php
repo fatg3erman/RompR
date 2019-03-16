@@ -411,7 +411,7 @@ print '<div class="pref"><b>'.get_int_text('config_nosortprefixes').'
 
 if ($prefs['mopidy_slave'] == false) {
 
-    if ($collection_type == $prefs['player_backend']) {
+    if ($prefs['collection_player'] == $prefs['player_backend']) {
         print '<div class="pref styledinputs">
             <div class="clearfix">
                 <div class="tleft">
@@ -424,7 +424,7 @@ if ($prefs['mopidy_slave'] == false) {
         print '</div></div>';
     }
 
-    if ($collection_type == "mopidy" && $prefs['player_backend'] == 'mopidy') {
+    if ($prefs['collection_player'] == "mopidy" && $prefs['player_backend'] == 'mopidy') {
         print '<div class="pref" id="mopidycollectionoptions">'.
         '<b>'.get_int_text('config_collectionfolders').'</b></div>';
         print '<div class="pref">'.get_int_text('config_beetsserver').'
@@ -436,7 +436,7 @@ if ($prefs['mopidy_slave'] == false) {
         <label for="preferlocalfiles">'.get_int_text('config_preferlocal').'</label></div>';
     }
 
-    if ($collection_type == $prefs['player_backend']) {
+    if ($prefs['collection_player'] == $prefs['player_backend']) {
         print '<div class="pref styledinputs">
         <input class="autoset toggle" type="checkbox" id="sortbycomposer" />
         <label for="sortbycomposer">'.get_int_text('config_sortbycomposer').'</label>

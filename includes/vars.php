@@ -1,5 +1,10 @@
 <?php
 
+$dtz = ini_get('date.timezone');
+if (!$dtz) {
+    date_default_timezone_set('UTC');
+}
+
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
 define('ROMPR_IMAGE_VERSION', 4);
@@ -32,9 +37,6 @@ define('ADDED_THIS_WEEK', 2);
 define('ADDED_THIS_MONTH', 3);
 define('ADDED_THIS_YEAR', 4);
 
-define('COLLECTION_TYPE_MPD', 0);
-define('COLLECTION_TYPE_MOPIDY', 1);
-
 // Safe definitions for setups that do not have a full set of image support built in,
 // Otherwise we spam the server logs with udefined constant errors.
 // These are the MIME types that make it compatible with imagemagick
@@ -66,8 +68,80 @@ if (!defined('IMAGETYPE_SVG')) {
 define('ORIENTATION_PORTRAIT', 0);
 define('ORIENTATION_LANDSCAPE', 1);
 
-$connection = null;
-$is_connected = false;
+define('MPD_FILE_MODEL', array (
+        'file' => null,
+        'domain' => 'local',
+        'type' => 'local',
+        'station' => null,
+        'stream' => null,
+        'folder' => null,
+        'Title' => null,
+        'Album' => null,
+        'Artist' => null,
+        'Track' => null,
+        'Name' => null,
+        'AlbumArtist' => null,
+        'Time' => 0,
+        'X-AlbumUri' => null,
+        'playlist' => '',
+        'X-AlbumImage' => null,
+        'Date' => null,
+        'Last-Modified' => '0',
+        'Disc' => null,
+        'Composer' => null,
+        'Performer' => null,
+        'Genre' => null,
+        'ImgKey' => null,
+        'StreamIndex' => null,
+        'Searched' => 0,
+        'Playcount' => 0,
+        'Comment' => '',
+        // Never send null in any musicbrainz id as it prevents plugins from
+        // waiting on lastfm to find one
+        'MUSICBRAINZ_ALBUMID' => '',
+        'MUSICBRAINZ_ARTISTID' => array(''),
+        'MUSICBRAINZ_ALBUMARTISTID' => '',
+        'MUSICBRAINZ_TRACKID' => '',
+        'Id' => null,
+        'Pos' => null
+    )
+);
+
+define('MPD_ARRAY_PARAMS', array(
+        "Artist",
+        "AlbumArtist",
+        "Composer",
+        "Performer",
+        "MUSICBRAINZ_ARTISTID",
+    );
+);
+
+// Rompr's internal file model is a merge of the MPD_FILE_MODEL and ROMPR_FILE_MODEL
+// it is created in class playlistCollection
+
+define('ROMPR_FILE_MODEL', array(
+        "progress" => 0,
+        "year" => '',
+        "albumartist" => '',
+        "trackartist" => '',
+        "images" => '',
+        "metadata" => array(
+            "iscomposer" => 'false',
+            "artists" => array(),
+            "album" => array(
+                "name" => '',
+                "artist" => '',
+                "musicbrainz_id" => '',
+                "uri" => null
+            ),
+            "track" => array(
+                "name" => '',
+                "musicbrainz_id" => '',
+            ),
+        )
+    )
+);
+
 $mysqlc = null;
 
 $prefs = array(
@@ -119,6 +193,7 @@ $prefs = array(
     "linkchecker_frequency" => 604800000,
     "linkchecker_polltime" => 5000,
     "audiobook_directory" => '',
+    "collection_player" => null,
 
     // Things that could be set on a per-user basis but need to be known by the backend
     "displaycomposer" => true,

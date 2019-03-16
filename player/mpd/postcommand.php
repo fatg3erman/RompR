@@ -13,7 +13,6 @@ $playlist_tracksadded = 0;
 $expected_state = null;
 $do_resume_seek = false;
 $do_resume_seek_id = false;
-$collection_type = get_collection_type();
 $moveallto = null;
 $current_playlist_length = 0;
 $player = new $PLAYER_TYPE();
@@ -44,11 +43,12 @@ if ($player->is_connected()) {
 
                 case 'playlisttoend':
                     debuglog("Playing playlist ".$cmd[1]." from position ".$cmd[2]." to end","POSTCOMMAND");
-                    $putinplaylistarray = true;
-                    doCollection('listplaylistinfo "'.$cmd[1].'"');
-                    for ($c = $cmd[2]; $c < count($playlist); $c++) {
-                        list($class, $url) = $playlist[$c]->get_checked_url();
-                        $cmds[] = 'add "'.$url.'"';
+                    foreach($player->get_stored_playlist_tracks($cmd[1], $cmd[2]) as list($class, $uri, $filedata)) {
+                        if ($class == 'clicktrack') {
+                            $cmds[] = 'add "'.$uri.'"';
+                        } else {
+                            $cmds[] = 'load "'.$uri.'"';
+                        }
                     }
                     break;
 
@@ -59,8 +59,7 @@ if ($player->is_connected()) {
 
                 case "addartist":
                     debuglog("Getting tracks for Artist ".$cmd[1],"MPD");
-                    doCollection('find "artist" "'.format_for_mpd($cmd[1]).'"',array("spotify"));
-                    $cmds = array_merge($cmds, $collection->getAllTracks("add"));
+                    $cmds = array_merge($cmds, $player->get_tracks_for_spotify_artist($cmd[1]));
                     break;
 
                 case "loadstreamplaylist":
@@ -114,7 +113,7 @@ if ($player->is_connected()) {
 
                 case "moveallto":
                     $moveallto = $cmd[1];
-                    $temp_status = do_mpd_command ("status", true, false);
+                    $temp_status = $player->get_status();
                     if (array_key_exists('playlistlength', $temp_status)) {
                         $current_playlist_length = $temp_status['playlistlength'];
                     }
@@ -172,15 +171,11 @@ if ($player->is_connected()) {
         $playlist_tracksadded--;
     }
 
-    $cmds = check_slave_actions($cmds);
-
-    $cmds = check_player_type_actions($cmds, $collection_type);
-
     //
     // Send the command list to mpd
     //
 
-    $cmd_status = do_mpd_command_list($cmds);
+    $cmd_status = $player->do_command_list($cmds);
 
     //
     // If we added tracks to the playlist, move them into position if we need to
@@ -188,33 +183,33 @@ if ($player->is_connected()) {
 
     if ($moveallto !== null) {
         debuglog("Moving Tracks into position","MPD");
-        $temp_status = do_mpd_command ("status", true, false);
+        $temp_status = $player->get_status();
         $new_playlist_length = $temp_status['playlistlength'];
-        do_mpd_command(join_command_string(array('move', $current_playlist_length.':'.$new_playlist_length, $moveallto)));
+        $player->do_command_list(array(join_command_string(array('move', $current_playlist_length.':'.$new_playlist_length, $moveallto))));
     }
 
     //
     // Wait for the player to start playback if that's what it's supposed to be doing
     //
 
-    wait_for_player_state($expected_state);
+    $player->wait_for_state($expected_state);
 
     //
     // Work around mopidy play/seek command list bug
     //
 
     if ($do_resume_seek !== false) {
-        do_mpd_command(join_command_string(array('seek', $do_resume_seek[0], $do_resume_seek[1])));
+        $player->do_command_list(array(join_command_string(array('seek', $do_resume_seek[0], $do_resume_seek[1]))));
     }
     if ($do_resume_seek_id !== false) {
-        do_mpd_command(join_command_string(array('seekid', $do_resume_seek_id[0], $do_resume_seek_id[1])));
+        $player->do_command_list(array(join_command_string(array('seekid', $do_resume_seek_id[0], $do_resume_seek_id[1]))));
     }
 
     //
     // Query mpd's status
     //
 
-    $mpd_status = do_mpd_command ("status", true, false);
+    $mpd_status = $player->get_status();
 
     //
     // If we got an error from the command list and NOT from 'status',
@@ -228,25 +223,18 @@ if ($player->is_connected()) {
 
     //
     // Add current song and replay gain status to mpd_status
+    // We use currentsong for streams. It is NOT merged with database data as the playlist data is
+    // so should not be used for metadata at any other point except for filename.
     //
 
     if (array_key_exists('song', $mpd_status) && !array_key_exists('error', $mpd_status)) {
-        $songinfo = array();
-        $songinfo = do_mpd_command('currentsong', true, false);
+        $songinfo = $player->get_current_song();
         if (is_array($songinfo)) {
             $mpd_status = array_merge($mpd_status, $songinfo);
         }
     }
 
-    if ($prefs['player_backend'] == 'mpd') {
-        $arse = array();
-        $arse = do_mpd_command('replay_gain_status', true, false);
-        if (array_key_exists('error', $arse)) {
-            unset($arse['error']);
-            send_command('clearerror');
-        }
-        $mpd_status = array_merge($mpd_status, $arse);
-    }
+    $mpd_status = array_merge($mpd_status, $player->get_replay_gain_state());
 
     //
     // Clear any player error now we've caught it
@@ -254,7 +242,7 @@ if ($player->is_connected()) {
 
     if (array_key_exists('error', $mpd_status)) {
         debuglog("Clearing Player Error ".$mpd_status['error'],"MPD",7);
-        send_command("clearerror");
+        $player->clear_error();
     }
 
     //
@@ -264,7 +252,7 @@ if ($player->is_connected()) {
     if (array_key_exists('single', $mpd_status) && $mpd_status['single'] == 1 && array_key_exists('state', $mpd_status) &&
             ($mpd_status['state'] == "pause" || $mpd_status['state'] == "stop")) {
         debuglog("Cancelling Single Mode","MPD",9);
-        send_command('single "0"');
+        $player->cancel_single_quietly();
         $mpd_status['single'] = 0;
     }
 
@@ -288,8 +276,6 @@ $mpd_status['radioconsume'] = $prefs['multihosts']->{$p}->radioparams->radiocons
 
 header('Content-Type: application/json');
 echo json_encode($mpd_status);
-
-close_mpd();
 
 function check_playlist_add_move($cmd, $incvalue) {
     global $playlist_moving_within, $playlist_movefrom, $playlist_moveto, $playlist_tracksadded;

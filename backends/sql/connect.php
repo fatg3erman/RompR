@@ -212,10 +212,6 @@ function checkCollectionStatus() {
 	}
 }
 
-function whatTheFuck() {
-	return "1";
-}
-
 function checkAlbumArt() {
 	$oa =  generic_sql_query("SELECT COUNT(ImgVersion) AS NumOldAlbums FROM Albumtable WHERE Image LIKE 'albumart/small/%' AND ImgVersion < ".ROMPR_IMAGE_VERSION, false, null, 'NumOldAlbums', 0);
 	debuglog("There are ".$oa." albums with old-style album art","INIT");
@@ -253,17 +249,6 @@ function close_transaction() {
     } else {
 		debuglog("WARNING! close_transaction called when transaction not open!","BACKEND",3);
     }
-}
-
-function get_collection_type() {
-	$c = simple_query('Value', 'Statstable', 'Item', 'CollType', null);
-	if ($c == COLLECTION_TYPE_MPD) {
-		return 'mpd';
-	} else if ($c == COLLECTION_TYPE_MOPIDY) {
-		return 'mopidy';
-	} else {
-		return 'unknown';
-	}
 }
 
 ?>

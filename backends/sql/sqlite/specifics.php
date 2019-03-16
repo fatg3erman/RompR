@@ -333,11 +333,6 @@ function check_sql_tables() {
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('TrackCount', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('TotalTime', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('SchemaVer', '".ROMPR_SCHEMA_VERSION."')", true);
-		if ($prefs['player_backend'] == 'mpd') {
-			generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('CollType', '".COLLECTION_TYPE_MPD."')", true);
-		} else {
-			generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('CollType', '".COLLECTION_TYPE_MOPIDY."')", true);
-		}
 		$sv = ROMPR_SCHEMA_VERSION;
 		debuglog("Statstable populated", "SQLITE_CONNECT");
 		create_update_triggers();
@@ -727,11 +722,6 @@ function check_sql_tables() {
 
 			case 45:
 				debuglog("Updating FROM Schema version 45 TO Schema version 46","SQL");
-				if ($prefs['player_backend'] == 'mpd') {
-					generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('CollType', '".COLLECTION_TYPE_MPD."')", true);
-				} else {
-					generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('CollType', '".COLLECTION_TYPE_MOPIDY."')", true);
-				}
 				generic_sql_query("UPDATE Statstable SET Value = 46 WHERE Item = 'SchemaVer'", true);
 				break;
 
@@ -813,18 +803,18 @@ function hide_played_tracks() {
 }
 
 function sql_recent_tracks() {
-	global $collection_type, $prefs;
+	global $prefs;
 	$qstring = "SELECT TTindex FROM Tracktable WHERE DATETIME('now', '-2 MONTH') <= DATETIME(DateAdded) AND Hidden = 0 AND isSearchResult < 2 AND isAudiobook = 0 AND Uri IS NOT NULL";
-	if ($collection_type == 'mopidy' && $prefs['player_backend'] == 'mpd') {
+	if ($prefs['collection_player'] == 'mopidy' && $prefs['player_backend'] == 'mpd') {
 		$qstring .= ' AND Uri LIKE "local:%"';
 	}
 	return $qstring . " ORDER BY RANDOM()";
 }
 
 function sql_recent_albums() {
-	global $collection_type, $prefs;
+	global $prefs;
 	$qstring = "SELECT TTindex, Albumindex, TrackNo FROM Tracktable WHERE DATETIME('now', '-2 MONTH') <= DATETIME(DateAdded) AND Hidden = 0 AND isSearchResult < 2 AND isAudiobook = 0 AND Uri IS NOT NULL";
-	if ($collection_type == 'mopidy' && $prefs['player_backend'] == 'mpd') {
+	if ($prefs['collection_player'] == 'mopidy' && $prefs['player_backend'] == 'mpd') {
 		$qstring .= ' AND Uri LIKE "local:%"';
 	}
 	return $qstring;

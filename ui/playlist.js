@@ -20,13 +20,13 @@ var playlist = function() {
     // playlistpos is for radioManager
     // backendid must not be undefined
     var emptyTrack = {
-        album: "",
+        Album: "",
         trackartist: "",
-        location: "",
-        title: "",
+        file: "",
+        Title: "",
         type: "",
-        playlistpos: 0,
-        backendid: -1,
+        Pos: 0,
+        Id: -1,
         progress: 0,
         images: null
     };
@@ -316,39 +316,39 @@ var playlist = function() {
             var totaltime = 0;
 
             for (var i in list) {
-                list[i].duration = parseFloat(list[i].duration);
-                totaltime += list[i].duration;
+                list[i].Time = parseFloat(list[i].Time);
+                totaltime += list[i].Time;
                 var sortartist = (list[i].albumartist == "") ? list[i].trackartist : list[i].albumartist;
                 if ((sortartist.toLowerCase() != current_artist.toLowerCase()) ||
-                    list[i].album.toLowerCase() != current_album.toLowerCase() ||
+                    list[i].Album.toLowerCase() != current_album.toLowerCase() ||
                     list[i].type != current_type)
                 {
                     current_type = list[i].type;
                     current_artist = sortartist;
-                    current_album = list[i].album;
+                    current_album = list[i].Album;
                     count++;
                     switch (list[i].type) {
                         case "local":
-                            var hidden = (playlist.rolledup[sortartist+list[i].album]) ? true : false;
-                            tracklist[count] = new Album(sortartist, list[i].album, count, hidden);
+                            var hidden = (playlist.rolledup[sortartist+list[i].Album]) ? true : false;
+                            tracklist[count] = new Album(sortartist, list[i].Album, count, hidden);
                             break;
                         case "stream":
                             // Streams are hidden by default - hence we use the opposite logic for the flag
-                            var hidden = (playlist.rolledup["StReAm"+list[i].album]) ? false : true;
-                            tracklist[count] = new Stream(count, list[i].album, hidden);
+                            var hidden = (playlist.rolledup["StReAm"+list[i].Album]) ? false : true;
+                            tracklist[count] = new Stream(count, list[i].Album, hidden);
                             break;
                         default:
-                            tracklist[count] = new Album(sortartist, list[i].album, count);
+                            tracklist[count] = new Album(sortartist, list[i].Album, count);
                             break;
 
                     }
                 }
                 tracklist[count].newtrack(list[i]);
-                if (list[i].backendid == player.status.songid) {
+                if (list[i].Id == player.status.songid) {
                     currentalbum = count;
-                    currentTrack.playlistpos = list[i].playlistpos;
+                    currentTrack.Pos = list[i].Pos;
                 }
-                finaltrack = parseInt(list[i].playlistpos);
+                finaltrack = parseInt(list[i].Pos);
 
             }
 
@@ -393,7 +393,7 @@ var playlist = function() {
             var upcoming = new Array();
             debug.shout("PLAYLIST","Doing Upcoming Crap",currentalbum);
             if (currentalbum >= 0 && player.status.random == 0) {
-                tracklist[currentalbum].getrest(currentTrack.backendid, upcoming);
+                tracklist[currentalbum].getrest(currentTrack.Id, upcoming);
                 var i = parseInt(currentalbum)+1;
                 while (i < tracklist.length) {
                     tracklist[i].getrest(null, upcoming);
@@ -681,9 +681,9 @@ var playlist = function() {
                 lookforcurrenttrack = backendid;
                 return;
             }
-            var force = (currentTrack.backendid == -1) ? true : false;
+            var force = (currentTrack.Id == -1) ? true : false;
             lookforcurrenttrack = false;
-            if (backendid != currentTrack.backendid) {
+            if (backendid != currentTrack.Id) {
                 debug.log("PLAYLIST","Looking For Current Track",backendid);
                 $("#pscroller .playlistcurrentitem").removeClass('playlistcurrentitem').addClass('playlistitem');
                 $('.track[romprid="'+backendid+'"],.booger[romprid="'+backendid+'"]').removeClass('playlistitem').addClass('playlistcurrentitem');
@@ -755,7 +755,7 @@ var playlist = function() {
         },
 
         addFavourite: function(index) {
-            debug.log("PLAYLIST","Adding Fave Station, index",index, tracklist[index].album);
+            debug.log("PLAYLIST","Adding Fave Station, index",index, tracklist[index].Album);
             var data = tracklist[index].getFnackle();
             yourRadioPlugin.addFave(data);
         },
@@ -907,22 +907,22 @@ function Album(artist, album, index, rolledup) {
     }
 
     this.presentYourself = function() {
-        var holder = $('<div>', { name: self.index, romprid: tracks[0].backendid, class: 'item fullwidth sortable playlistalbum playlisttitle'}).appendTo('#sortable');
+        var holder = $('<div>', { name: self.index, romprid: tracks[0].Id, class: 'item fullwidth sortable playlistalbum playlisttitle'}).appendTo('#sortable');
         if (self.index == playlist.getCurrentAlbum()) {
             holder.removeClass('playlisttitle').addClass('playlistcurrenttitle');
         }
 
         var inner = $('<div>', {class: 'containerbox'}).appendTo(holder);
-        var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'expand clickplaylist playid containerbox'}).appendTo(inner);
+        var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].Id, class: 'expand clickplaylist playid containerbox'}).appendTo(inner);
 
         if (prefs.use_albumart_in_playlist) {
-            self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].key });
+            self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].ImgKey });
             self.image.on('error', self.getart);
             var imgholder = $('<div>', { class: 'smallcover fixed clickplaylist clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
             if (tracks[0].images.small) {
                 self.image.attr('src', tracks[0].images.small).appendTo(imgholder);
             } else {
-                if (tracks[0].imgsearched == 0) {
+                if (tracks[0].Searched == 0) {
                     self.image.addClass('notexist').appendTo(imgholder);
                     self.getart();
                 } else {
@@ -945,26 +945,26 @@ function Album(artist, album, index, rolledup) {
             trackgroup.addClass('invisible');
         }
         for (var trackpointer in tracks) {
-            var trackdiv = $('<div>', {name: tracks[trackpointer].playlistpos, romprid: tracks[trackpointer].backendid, class: 'track sortable fullwidth playlistitem menuitem'}).appendTo(trackgroup);
-            if (tracks[trackpointer].backendid == player.status.songid) {
+            var trackdiv = $('<div>', {name: tracks[trackpointer].Pos, romprid: tracks[trackpointer].Id, class: 'track sortable fullwidth playlistitem menuitem'}).appendTo(trackgroup);
+            if (tracks[trackpointer].Id == player.status.songid) {
                 trackdiv.removeClass('playlistitem').addClass('playlistcurrentitem');
             }
 
             var trackOuter = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(trackdiv);
-            var trackDetails = $('<div>', {class: 'expand playid clickplaylist containerbox dropdown-container', romprid: tracks[trackpointer].backendid}).appendTo(trackOuter);
+            var trackDetails = $('<div>', {class: 'expand playid clickplaylist containerbox dropdown-container', romprid: tracks[trackpointer].Id}).appendTo(trackOuter);
 
-            if (tracks[trackpointer].tracknumber) {
+            if (tracks[trackpointer].Track) {
                 var trackNodiv = $('<div>', {class: 'tracknumber fixed'}).appendTo(trackDetails);
-                if (tracks.length > 99 || tracks[trackpointer].tracknumber > 99) {
+                if (tracks.length > 99 || tracks[trackpointer].Track > 99) {
                     trackNodiv.css('width', '3em');
                 }
-                trackNodiv.html(format_tracknum(tracks[trackpointer].tracknumber));
+                trackNodiv.html(format_tracknum(tracks[trackpointer].Track));
             }
 
             trackDetails.append(playlist.getDomainIcon(tracks[trackpointer], ''));
 
             var trackinfo = $('<div>', {class: 'containerbox vertical expand'}).appendTo(trackDetails);
-            trackinfo.append('<div class="line">'+tracks[trackpointer].title+'</div>');
+            trackinfo.append('<div class="line">'+tracks[trackpointer].Title+'</div>');
             if ((tracks[trackpointer].albumartist != "" && tracks[trackpointer].albumartist != tracks[trackpointer].trackartist)) {
                 trackinfo.append('<div class="line playlistrow2">'+tracks[trackpointer].trackartist+'</div>');
             }
@@ -978,8 +978,8 @@ function Album(artist, album, index, rolledup) {
                 }
             }
 
-            trackDetails.append('<div class="tracktime tiny fixed">'+formatTimeString(tracks[trackpointer].duration)+'</div>');
-            trackOuter.append('<i class="icon-cancel-circled playlisticonr fixed clickplaylist clickicon clickremovetrack tooltip" title="'+language.gettext('label_removefromplaylist')+'" romprid="'+tracks[trackpointer].backendid+'"></i>');
+            trackDetails.append('<div class="tracktime tiny fixed">'+formatTimeString(tracks[trackpointer].Time)+'</div>');
+            trackOuter.append('<i class="icon-cancel-circled playlisticonr fixed clickplaylist clickicon clickremovetrack tooltip" title="'+language.gettext('label_removefromplaylist')+'" romprid="'+tracks[trackpointer].Id+'"></i>');
 
         }
     }
@@ -987,22 +987,22 @@ function Album(artist, album, index, rolledup) {
     this.getart = function() {
         coverscraper.GetNewAlbumArt({
             artist:     tracks[0].albumartist,
-            album:      tracks[0].album,
+            album:      tracks[0].Album,
             mbid:       tracks[0].metadata.album.musicbrainz_id,
-            albumpath:  tracks[0].dir,
+            albumpath:  tracks[0].folder,
             albumuri:   tracks[0].metadata.album.uri,
-            imgkey:     tracks[0].key,
+            imgkey:     tracks[0].ImgKey,
             type:       tracks[0].type,
             cb:         self.updateImages
         });
     }
 
     this.getFnackle = function() {
-        return { album: tracks[0].album,
+        return { album: tracks[0].Album,
                  image: tracks[0].images.small,
-                 location: tracks[0].location,
+                 location: tracks[0].file,
                  stream: tracks[0].stream,
-                 streamid: tracks[0].streamid
+                 streamid: tracks[0].StreamIndex
         };
     }
 
@@ -1024,7 +1024,7 @@ function Album(artist, album, index, rolledup) {
     }
 
     this.getFirst = function() {
-        return parseInt(tracks[0].playlistpos);
+        return parseInt(tracks[0].Pos);
     }
 
     this.getSize = function() {
@@ -1032,7 +1032,7 @@ function Album(artist, album, index, rolledup) {
     }
 
     this.isLast = function(id) {
-        if (id == tracks[tracks.length - 1].backendid) {
+        if (id == tracks[tracks.length - 1].Id) {
             return true;
         } else {
             return false;
@@ -1041,7 +1041,7 @@ function Album(artist, album, index, rolledup) {
 
     this.findcurrent = function(which) {
         for(var i in tracks) {
-            if (tracks[i].backendid == which) {
+            if (tracks[i].Id == which) {
                 return tracks[i];
             }
         }
@@ -1050,7 +1050,7 @@ function Album(artist, album, index, rolledup) {
 
     this.findById = function(which) {
         for(var i in tracks) {
-            if (tracks[i].backendid == which) {
+            if (tracks[i].Id == which) {
                 return i;
             }
         }
@@ -1059,8 +1059,8 @@ function Album(artist, album, index, rolledup) {
 
     this.findByUri = function(uri) {
         for(var i in tracks) {
-            if (tracks[i].location == uri) {
-                return tracks[i].backendid;
+            if (tracks[i].file == uri) {
+                return tracks[i].Id;
             }
         }
         return false;
@@ -1077,7 +1077,7 @@ function Album(artist, album, index, rolledup) {
     this.getrest = function(id, arr) {
         var i = 0;
         if (id !== null) {
-            while (i < tracks.length && tracks[i].backendid != id) {
+            while (i < tracks.length && tracks[i].Id != id) {
                 i++;
             }
             i++;
@@ -1093,7 +1093,7 @@ function Album(artist, album, index, rolledup) {
         $('.item[name="'+self.index+'"]').next().remove();
         $('.item[name="'+self.index+'"]').remove();
         for(var i in tracks) {
-            todelete.push(tracks[i].backendid);
+            todelete.push(tracks[i].Id);
         }
         player.controller.removeId(todelete)
     }
@@ -1142,22 +1142,22 @@ function Stream(index, album, rolledup) {
     }
 
     this.presentYourself = function() {
-        var header = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'item sortable fullwidth playlistalbum playlisttitle'}).appendTo('#sortable');
+        var header = $('<div>', {name: self.index, romprid: tracks[0].Id, class: 'item sortable fullwidth playlistalbum playlisttitle'}).appendTo('#sortable');
         if (self.index == playlist.getCurrentAlbum()) {
             header.removeClass('playlisttitle').addClass('playlistcurrenttitle');
         }
 
         var inner = $('<div>', {class: 'containerbox'}).appendTo(header);
-        var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].backendid, class: 'expand playid clickplaylist containerbox'}).appendTo(inner);
+        var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].Id, class: 'expand playid clickplaylist containerbox'}).appendTo(inner);
 
         if (prefs.use_albumart_in_playlist) {
-            self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].key });
+            self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].ImgKey });
             self.image.on('error', self.getart);
             var imgholder = $('<div>', { class: 'smallcover fixed clickplaylist clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
             if (tracks[0].images.small) {
                 self.image.attr('src', tracks[0].images.small).appendTo(imgholder);
             } else {
-                if (tracks[0].imgsearched == 0) {
+                if (tracks[0].Searched == 0) {
                     self.image.addClass('notexist stream').appendTo(imgholder);
                     if (tracks[0].album != rompr_unknown_stream) {
                         self.getart();
@@ -1169,7 +1169,7 @@ function Stream(index, album, rolledup) {
         }
 
         var title = $('<div>', {class: 'containerbox vertical expand'}).appendTo(albumDetails);
-        title.append('<div class="bumpad">'+tracks[0].album+'</div>');
+        title.append('<div class="bumpad">'+tracks[0].Album+'</div>');
         var buttons = $('<div>', {class: 'containerbox vertical fixed'}).appendTo(inner);
         buttons.append('<div class="clickplaylist clickicon clickremovealbum expand" name="'+self.index+'"><i class="icon-cancel-circled playlisticonr tooltip" title="'+language.gettext('label_removefromplaylist')+'"></i></div>');
         buttons.append('<div class="clickplaylist clickicon clickaddfave fixed" name="'+self.index+'"><i class="icon-radio-tower playlisticonr tooltip" title="'+language.gettext('label_addtoradio')+'"></i></div>');
@@ -1179,28 +1179,28 @@ function Stream(index, album, rolledup) {
             trackgroup.addClass('invisible');
         }
         for (var trackpointer in tracks) {
-            var trackdiv = $('<div>', {name: tracks[trackpointer].playlistpos, romprid: tracks[trackpointer].backendid, class: 'booger playid clickplaylist containerbox playlistitem menuitem'}).appendTo(trackgroup);
+            var trackdiv = $('<div>', {name: tracks[trackpointer].Pos, romprid: tracks[trackpointer].Id, class: 'booger playid clickplaylist containerbox playlistitem menuitem'}).appendTo(trackgroup);
             trackdiv.append(playlist.getDomainIcon(tracks[trackpointer], '<i class="icon-radio-tower playlisticon fixed"></i>'));
             var h = $('<div>', {class: 'containerbox vertical expand' }).appendTo(trackdiv);
             if (tracks[trackpointer].stream && tracks[trackpointer].stream != 'null') {
                 h.append('<div class="playlistrow2 line">'+tracks[trackpointer].stream+'</div>');
             }
-            h.append('<div class="tiny line">'+tracks[trackpointer].location+'</div>');
+            h.append('<div class="tiny line">'+tracks[trackpointer].file+'</div>');
         }
     }
 
     this.getFnackle = function() {
-        return { album: tracks[0].album,
+        return { album: tracks[0].Album,
                  image: tracks[0].images.small,
-                 location: tracks[0].location,
+                 location: tracks[0].file,
                  stream: tracks[0].stream,
-                 streamid: tracks[0].streamid
+                 streamid: tracks[0].StreamIndex
         };
     }
 
     this.findById = function(which) {
         for(var i in tracks) {
-            if (tracks[i].backendid == which) {
+            if (tracks[i].Id == which) {
                 return i;
             }
         }
@@ -1226,7 +1226,7 @@ function Stream(index, album, rolledup) {
     }
 
     this.getFirst = function() {
-        return parseInt(tracks[0].playlistpos);
+        return parseInt(tracks[0].Pos);
     }
 
     this.getSize = function() {
@@ -1234,7 +1234,7 @@ function Stream(index, album, rolledup) {
     }
 
     this.isLast = function(id) {
-        if (id == tracks[tracks.length - 1].backendid) {
+        if (id == tracks[tracks.length - 1].Id) {
             return true;
         } else {
             return false;
@@ -1243,7 +1243,7 @@ function Stream(index, album, rolledup) {
 
     this.findcurrent = function(which) {
         for(var i in tracks) {
-            if (tracks[i].backendid == which) {
+            if (tracks[i].Id == which) {
                 return tracks[i];
             }
         }
@@ -1252,8 +1252,8 @@ function Stream(index, album, rolledup) {
 
     this.findByUri = function(uri) {
         for(var i in tracks) {
-            if (tracks[i].location == uri) {
-                return tracks[i].backendid;
+            if (tracks[i].file == uri) {
+                return tracks[i].Id;
             }
         }
         return false;
@@ -1267,8 +1267,8 @@ function Stream(index, album, rolledup) {
         coverscraper.GetNewAlbumArt({
             artist:     'STREAM',
             type:       'stream',
-            album:      tracks[0].album,
-            imgkey:     tracks[0].key,
+            album:      tracks[0].Album,
+            imgkey:     tracks[0].ImgKey,
             cb:         self.updateImages
         });
     }
@@ -1283,19 +1283,19 @@ function Stream(index, album, rolledup) {
     this.deleteSelf = function() {
         var todelete = [];
         for(var i in tracks) {
-            $('.booger[name="'+tracks[i].playlistpos+'"]').remove();
-            todelete.push(tracks[i].backendid);
+            $('.booger[name="'+tracks[i].Pos+'"]').remove();
+            todelete.push(tracks[i].Id);
         }
         $('.item[name="'+self.index+'"]').remove();
         player.controller.removeId(todelete)
     }
 
     this.previoustrackcommand = function() {
-        player.controller.playByPosition(parseInt(tracks[0].playlistpos)-1);
+        player.controller.playByPosition(parseInt(tracks[0].Pos)-1);
     }
 
     this.nexttrackcommand = function() {
-        player.controller.playByPosition(parseInt(tracks[(tracks.length)-1].playlistpos)+1);
+        player.controller.playByPosition(parseInt(tracks[(tracks.length)-1].Pos)+1);
     }
 
     this.visible = function() {

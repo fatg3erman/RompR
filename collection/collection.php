@@ -1,17 +1,13 @@
 <?php
 
-include ("player/".$prefs['player_backend']."/streamhandler.php");
 require_once ("includes/spotifyauth.php");
 
 $numtracks = 0;
 $numalbums = 0;
 $numartists = 0;
 $totaltime = 0;
-$playlist = array();
-$putinplaylistarray = false;
 $count = 1;
 $divtype = "album1";
-$collection = null;
 $dbterms = array( 'tags' => null, 'rating' => null );
 $trackbytrack = false;
 
@@ -25,22 +21,29 @@ class musicCollection {
 		$this->filter_duplicates = false;
 	}
 
-	public function newTrack(&$track) {
+	public function newTrack(&$filedata) {
 
-		global $playlist, $prefs, $putinplaylistarray;
+		global $trackbytrack, $doing_search;
 
-		$albumkey = md5($track->tags['folder'].strtolower($track->tags['Album']).strtolower($track->get_sort_artist(true)));
-		if (array_key_exists($albumkey, $this->albums)) {
-			if (!$this->filter_duplicates || !$this->albums[$albumkey]->checkForDuplicate($track)) {
-				$this->albums[$albumkey]->newTrack($track);
-			}
+		if ($doing_search) {
+			// If we're doing a search, we check to see if that track is in the database
+			// because the user might have set the AlbumArtist to something different
+			$filedata = array_replace($filedata, get_extra_track_info($filedata));
+	    }
+
+		$track = new track($filedata);
+		if ($trackbytrack && $filedata['AlbumArtist'] && $filedata['Disc'] !== null) {
+			do_track_by_track( $track );
 		} else {
-			$this->albums[$albumkey] = new album($track);
+			$albumkey = md5($track->tags['folder'].strtolower($track->tags['Album']).strtolower($track->get_sort_artist(true)));
+			if (array_key_exists($albumkey, $this->albums)) {
+				if (!$this->filter_duplicates || !$this->albums[$albumkey]->checkForDuplicate($track)) {
+					$this->albums[$albumkey]->newTrack($track);
+				}
+			} else {
+				$this->albums[$albumkey] = new album($track);
+			}
 		}
-
-        if ($putinplaylistarray) {
-            $playlist[] = $track;
-        }
 
 	}
 
@@ -53,13 +56,10 @@ class musicCollection {
     }
 
     public function tracks_to_database() {
-        global $cp_time;
-        $cstart = microtime(true);
         foreach ($this->albums as $album) {
             $this->do_artist_database_stuff($album);
         }
         $this->albums = array();
-        $cp_time += microtime(true) - $cstart;
     }
 
 	public function get_albumartist_by_folder($f) {
@@ -339,14 +339,16 @@ class album {
             debuglog("  ... Setting artist to ".$candidate,"COLLECTION",5);
             $this->artist = $candidate;
         }
-
     }
 
 }
 
 class track {
+
+	public $tags;
+
     public function __construct(&$filedata) {
-        $this->tags = $filedata;
+        $this->tags = array_replace($this->tags, $filedata);
     }
 
     public function updateDiscNo($disc) {
@@ -361,344 +363,6 @@ class track {
         return format_sortartist($this->tags, $return_albumartist);
     }
 
-    public function get_checked_url() {
-        global $prefs;
-        $matches = array();
-        if ($prefs['player_backend'] == 'mpd' &&
-            preg_match("/api\.soundcloud\.com\/tracks\/(\d+)\//", $this->tags['file'], $matches)) {
-            return array('clickcue', "soundcloud://track/".$matches[1]);
-        } else {
-            return array('clicktrack', $this->tags['file']);
-        }
-    }
-
-    public function get_artist_track_title() {
-        if ($this->tags['Album'] == ROMPR_UNKNOWN_STREAM) {
-            return $this->tags['file'];
-        } else {
-            if ($this->tags['type'] == "stream") {
-                return $this->tags['Album'];
-            } else {
-                return htmlentities($this->tags['Title']).'<br/><span class="playlistrow2">'.htmlentities($this->get_artist_string()).'</span>';
-            }
-        }
-    }
-}
-
-function format_artist($artist, $empty = null) {
-    $a = concatenate_artist_names($artist);
-    if ($a != '.' && $a != "") {
-        return $a;
-    } else {
-        return $empty;
-    }
-}
-
-function format_sortartist($tags, $return_albumartist = false) {
-    global $prefs;
-    $sortartist = null;
-    if ($prefs['sortbycomposer'] && $tags['Composer'] !== null) {
-        if ($prefs['composergenre'] && $tags['Genre'] &&
-            checkComposerGenre($tags['Genre'], $prefs['composergenrename'])) {
-                $sortartist = $tags['Composer'];
-        } else if (!$prefs['composergenre']) {
-            $sortartist = $tags['Composer'];
-        }
-    }
-    if ($sortartist == null) {
-        if ($return_albumartist || $tags['AlbumArtist'] != null) {
-            $sortartist = $tags['AlbumArtist'];
-        } else if ($tags['Artist'] != null) {
-            $sortartist = $tags['Artist'];
-        } else if ($tags['station'] != null) {
-            $sortartist = $tags['station'];
-        }
-    }
-    $sortartist = concatenate_artist_names($sortartist);
-    //Some discogs tags have 'Various' instead of 'Various Artists'
-    if ($sortartist == "Various") {
-        $sortartist = "Various Artists";
-    }
-    return $sortartist;
-}
-
-function munge_youtube_track_into_artist($t) {
-    // Risky, but mopidy-youtube doesn't return artists (for obvious reasons)
-    if (preg_match('/^(.*?)\s*[-|\|+]\s*/', $t, $matches)) {
-        if ($matches[1] !== "") {
-            return array($matches[1]);
-        } else {
-            return array("Youtube");
-        }
-    } else {
-        return array("Youtube");
-    }
-}
-
-function munge_youtube_track_into_album($t) {
-    // Even riskier, but mopidy-youtube doesn't return albums except 'Youtube' (for obvious reasons)
-    if (preg_match('/^.*?\s*[-|\|+]\s*(.*?)\s+[-|\|+]\s+/', $t, $matches)) {
-        if ($matches[1] !== "") {
-            return $matches[1];
-        }
-    }
-
-    if (preg_match('/^.*?\s*[-|\|+]\s*(.*?)\s+[\(|\[]*full album[\)|\]]*/i', $t, $matches)) {
-        if ($matches[1] !== "") {
-            return $matches[1];
-        }
-    }
-
-    return "Youtube";
-
-}
-
-function munge_youtube_track_into_title($t) {
-    // Risky as fuck!
-    if (preg_match('/^.*?\s*[-|\|+]\s*.*?\s+[-|\|+]\s+(.*?)$/', $t, $matches)) {
-        return $matches[1];
-    } else {
-        return $t;
-    }
-}
-
-function album_from_path($p) {
-    $a = rawurldecode(basename(dirname($p)));
-    if ($a == ".") {
-        $a = '';
-    }
-    return $a;
-}
-
-function artist_from_path($p, $f) {
-    $a = rawurldecode(basename(dirname(dirname($p))));
-    if ($a == "." || $a == "" || $a == " & ") {
-        $a = ucfirst(getDomain(urldecode($f)));
-    }
-    return $a;
-}
-
-function unmopify_file(&$filedata) {
-	global $prefs, $collection_type;
-	if ($filedata['Pos'] !== null) {
-		// Convert URIs for different player types to be appropriate for the collection
-		// but only when we're getting the playlist
-		if ($prefs['mopidy_slave'] && $filedata['domain'] == 'file') {
-			$filedata['file'] = swap_file_for_local($filedata['file']);
-			$filedata['domain'] = 'local';
-		}
-		if ($collection_type == 'mopidy' && $prefs['player_backend'] == 'mpd') {
-			$filedata['file'] = mpd_to_mopidy($filedata['file']);
-		}
-		if ($collection_type == 'mpd' && $prefs['player_backend'] == 'mopidy') {
-			$filedata['file'] = mopidy_to_mpd($filedata['file']);
-		}
-	}
-	// eg local:track:some/uri/of/a/file
-	// We want the path, not the domain or type
-	// This is much faster than using a regexp
-	$cock = explode(':', $filedata['file']);
-    if (count($cock) > 1) {
-        $file = array_pop($cock);
-    } else {
-		$file = $filedata['file'];
-	}
-	return $file;
-}
-
-function check_undefined_tags(&$filedata, $unmopfile) {
-	if ($filedata['Title'] == null) $filedata['Title'] = rawurldecode(basename($filedata['file']));
-	if ($filedata['Album'] == null) $filedata['Album'] = album_from_path($unmopfile);
-	if ($filedata['Artist'] == null) $filedata['Artist'] = array(artist_from_path($unmopfile, $filedata['file']));
-}
-
-function process_file($filedata) {
-
-    global $numtracks, $totaltime, $prefs, $dbterms, $collection, $trackbytrack, $doing_search;
-
-    global $db_time, $coll_time, $rtime;
-
-    // Pre-process the file data
-
-    $mytime = microtime(true);
-
-    if ($dbterms['tags'] !== null || $dbterms['rating'] !== null) {
-        // If this is a search and we have tags or ratings to search for, check them here.
-        if (check_url_against_database($filedata['file'], $dbterms['tags'], $dbterms['rating']) == false) {
-            return false;
-        }
-    }
-   if (strpos($filedata['Title'], "[unplayable]") === 0) {
-        debuglog("Ignoring unplayable track ".$filedata['file'],"COLLECTION",9);
-        return false;
-    }
-    if (strpos($filedata['Title'], "[loading]") === 0) {
-        debuglog("Ignoring unloaded track ".$filedata['file'],"COLLECTION",9);
-        return false;
-    }
-
-    $filedata['domain'] = getDomain($filedata['file']);
-	$unmopfile = unmopify_file($filedata);
-
-	if ($filedata['Track'] == null) {
-        $filedata['Track'] = format_tracknum(basename(rawurldecode($filedata['file'])));
-    } else {
-        $filedata['Track'] = format_tracknum(ltrim($filedata['Track'], '0'));
-    }
-
-    // cue sheet link (mpd only). We're only doing CUE sheets, not M3U
-    if ($filedata['X-AlbumUri'] === null && strtolower(pathinfo($filedata['playlist'], PATHINFO_EXTENSION)) == "cue") {
-        $filedata['X-AlbumUri'] = $filedata['playlist'];
-        debuglog("Found CUE sheet for album ".$filedata['Album'],"COLLECTION");
-    }
-
-    // Disc Number
-    if ($filedata['Disc'] != null) {
-        $filedata['Disc'] = format_tracknum(ltrim($filedata['Disc'], '0'));
-    }
-
-    if (strpos($filedata['file'], ':artist:') !== false) {
-        $filedata['X-AlbumUri'] = $filedata['file'];
-        $filedata['Album'] = get_int_text("label_allartist").concatenate_artist_names($filedata['Artist']);
-        $filedata['Disc'] = 0;
-        $filedata['Track'] = 0;
-    } else if (strpos($filedata['file'], ':album:') !== false) {
-        $filedata['X-AlbumUri'] = $filedata['file'];
-        $filedata['Disc'] = 0;
-        $filedata['Track'] = 0;
-    }
-
-    switch($filedata['domain']) {
-
-		case 'local':
-            // mopidy-local-sqlite sets album URIs for local albums, but sometimes it gets it very wrong
-			// We don't need Album URIs for local tracks, since we can already add an entire album
-            $filedata['X-AlbumUri'] = null;
-			check_undefined_tags($filedata, $unmopfile);
-			$filedata['folder'] = dirname($unmopfile);
-			if ($prefs['audiobook_directory'] != '') {
-				$f = rawurldecode($filedata['folder']);
-				if (strpos($f, $prefs['audiobook_directory']) === 0) {
-					debuglog("  This is an audiobook","COLLECTION");
-					$filedata['type'] = 'audiobook';
-				}
-			}
-            break;
-
-		case 'http':
-		case 'https':
-		case 'mms':
-		case 'mmsh':
-		case 'mmst':
-		case 'mmsu':
-		case 'gopher':
-		case 'rtp':
-		case 'rtsp':
-		case 'rtmp':
-		case 'rtmpt':
-		case 'rtmps':
-		case 'dirble':
-		case 'tunein':
-		case 'radio-de':
-		case 'audioaddict':
-		case 'oe1':
-		case 'bassdrive':
-			preprocess_stream($filedata);
-			break;
-
-        case "soundcloud":
-			preprocess_soundcloud($filedata);
-            break;
-
-        case "youtube":
-            $filedata['folder'] = $filedata['file'];
-            $filedata['Artist'] = munge_youtube_track_into_artist($filedata['Title']);
-            $filedata['Album'] = munge_youtube_track_into_album($filedata['Title']);
-            $filedata['Title'] = munge_youtube_track_into_title($filedata['Title']);
-            $filedata['AlbumArtist'] = $filedata['Artist'];
-            $filedata['X-AlbumUri'] = $filedata['file'];
-            break;
-
-        case "spotify":
-            $filedata['folder'] = $filedata['X-AlbumUri'];
-            break;
-
-        case "internetarchive":
-			check_undefined_tags($filedata, $unmopfile);
-            $filedata['X-AlbumUri'] = $filedata['file'];
-            $filedata['folder'] = $filedata['file'];
-            $filedata['AlbumArtist'] = "Internet Archive";
-            break;
-
-        case "podcast":
-            $filedata['folder'] = $filedata['X-AlbumUri'];
-			// $filedata['AlbumArtist'] = "Podcasts";
-			// $filedata['Artist'] = "Podcasts";
-			if ($filedata['Artist'] !== null) {
-				$filedata['AlbumArtist'] = $filedata['Artist'];
-			}
-			if ($filedata['AlbumArtist'] === null) {
-                $filedata['AlbumArtist'] = array("Podcasts");
-			}
-            if (is_array($filedata['Artist']) &&
-				($filedata['Artist'][0] == "http" ||
-				$filedata['Artist'][0] == "https" ||
-                $filedata['Artist'][0] == "ftp" ||
-				$filedata['Artist'][0] == "file" ||
-                substr($filedata['Artist'][0],0,7) == "podcast")) {
-                $filedata['Artist'] = $filedata['AlbumArtist'];
-            }
-			$filedata['type'] = 'podcast';
-            break;
-
-        default:
-			check_undefined_tags($filedata, $unmopfile);
-            $filedata['folder'] = dirname($unmopfile);
-            break;
-    }
-
-    $rtime += microtime(true) - $mytime;
-
-    if ($doing_search) {
-		// If we're doing a search, we check to see if that track is in the database
-		// because the user might have set the AlbumArtist to something different
-        $tstart = microtime(true);
-		$filedata = array_replace($filedata, get_extra_track_info($filedata));
-        $db_time += microtime(true) - $tstart;
-    }
-
-    if ($filedata['Pos'] !== null) {
-        // Playlist track. Swerve the collectioniser and use the database
-        $tstart = microtime(true);
-		$filedata = array_replace($filedata, get_extra_track_info($filedata));
-        $db_time += microtime(true) - $tstart;
-        $cstart = microtime(true);
-        doNewPlaylistFile($filedata);
-        $coll_time += microtime(true) - $cstart;
-    } else if ($trackbytrack && $filedata['AlbumArtist'] && $filedata['Disc'] !== null) {
-        // We have a track with full info and so we can insert it directly into the database.
-        $tstart = microtime(true);
-        do_track_by_track( new track($filedata) );
-        $db_time += microtime(true) - $tstart;
-    } else  {
-        // Tracks without full info end up in the collection data structures.
-        // During a collection update we sort the tracks album-by-album - i.e. after each directory is scanned.
-		// After each directory we empty the collection data structures which saves enormously on memory.
-        // This means we don't catch the very few edge cases where someone might have incompletely
-        // tagged files spread across multiple directories, but that's so unlikely I doubt it'll ever happen.
-
-		// But one place it might happen is during search, where we can't assume tracks will come in album order
-		// (especially from Spotify etc). So when doing a search we don't do album-by-album.
-
-        $cstart = microtime(true);
-        if ($filedata['Disc'] === null) $filedata['Disc'] = 1;
-        $t = new track($filedata);
-        $collection->newTrack( $t );
-        $coll_time += microtime(true) - $cstart;
-    }
-
-    $numtracks++;
-    $totaltime += $filedata['Time'];
 }
 
 ?>

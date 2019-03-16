@@ -24,7 +24,7 @@ $avgplays = generic_sql_query("SELECT AVG(playtotal) AS plavg FROM alplaytable",
 $qstring = "SELECT TTindex, TrackNo, Albumindex FROM Tracktable JOIN alplaytable
 	USING (Albumindex) WHERE playtotal > ".$avgplays." AND Uri IS NOT NULL AND Hidden = 0 AND isAudiobook = 0";
 
-if ($collection_type == 'mopidy' && $prefs['player_backend'] == 'mpd') {
+if ($prefs['collection_player'] == 'mopidy' && $prefs['player_backend'] == 'mpd') {
 	$qstring .= ' AND Uri LIKE "local:%"';
 }
 

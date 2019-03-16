@@ -1,16 +1,13 @@
 <?php
 chdir('../..');
-include ("includes/vars.php");
-include ("includes/functions.php");
+require_once ("includes/vars.php");
+require_once ("includes/functions.php");
 require_once ("utils/imagefunctions.php");
-include ("international.php");
+require_once ("international.php");
 debuglog("--------------------------START---------------------","USERRATING",4);
-include ("backends/sql/backend.php");
-include ("backends/sql/metadatafunctions.php");
-$start = time();
-include("player/mpd/connection.php");
-$took = time() - $start;
-debuglog("Connected to player in ".$took." seconds", "USERRATING",8);
+require_once ("backends/sql/backend.php");
+require_once ("backends/sql/metadatafunctions.php");
+require_once ("player/".$prefs['player_backend']."/player.php");
 
 $error = 0;
 $count = 1;

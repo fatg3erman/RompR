@@ -12,46 +12,6 @@ function join_command_string($cmd) {
     return $c;
 }
 
-function do_mpd_command_list($cmds) {
-    global $connection;
-    $done = 0;
-    $cmd_status = null;
-    if (count($cmds) > 1) {
-        send_command("command_list_begin");
-        foreach ($cmds as $c) {
-            debuglog("Command List: ".$c,"POSTCOMMAND",6);
-            // Note. We don't use send_command because that closes and re-opens the connection
-            // if it fails to fputs, and that loses our command list status. Also if this fputs
-            // fails it means the connection has dropped anyway, so we're screwed whatever happens.
-            fputs($connection, $c."\n");
-            $done++;
-            // Command lists have a maximum length, 50 seems to be the default
-            if ($done == 50) {
-                do_mpd_command("command_list_end", true);
-                send_command("command_list_begin");
-                $done = 0;
-            }
-        }
-        $cmd_status = do_mpd_command("command_list_end", true, false);
-    } else if (count($cmds) == 1) {
-        debuglog("Command : ".$cmds[0],"POSTCOMMAND",6);
-        $cmd_status = do_mpd_command($cmds[0], true, false);
-    }
-    return $cmd_status;
-}
-
-function wait_for_player_state($expected_state) {
-    if ($expected_state !== null) {
-        $status = do_mpd_command ("status", true, false);
-        $retries = 20;
-        while ($retries > 0 && array_key_exists('state', $status) && $status['state'] != $expected_state) {
-            usleep(500000);
-            $retries--;
-            $status = do_mpd_command ("status", true, false);
-        }
-    }
-}
-
 function format_for_disc($filename) {
     $filename = str_replace("\\","_",$filename);
     $filename = str_replace("/","_",$filename);
@@ -1107,90 +1067,51 @@ function http_status_code_string($code)
 	return $string;
 }
 
-function check_slave_actions($cmds) {
-    global $prefs;
-    //
-    // Re-check all add and playlistadd commands if we're using a Mopidy File Backend Slave
-    //
-    if ($prefs['mopidy_slave']) {
-        debuglog("Translating tracks for Mopidy Slave","MOPIDY",9);
-        foreach ($cmds as $key => $cmd) {
-            // add "local:track:
-            // playlistadd "local:track:
-            if (substr($cmd, 0, 17) == 'add "local:track:' ||
-                substr($cmd, 0,25) == 'playlistadd "local:track:') {
-                $cmds[$key] = swap_local_for_file($cmd);
-            }
-
-        }
-    }
-    return $cmds;
-}
-
-function check_reverse_slave_actions($cmds) {
-    global $prefs;
-    //
-    // Re-check all add and playlistadd commands if we're using a Mopidy File Backend Slave
-    //
-    foreach ($cmds as $key => $cmd) {
-        debuglog("Translating tracks from Mopidy Slave","MOPIDY",9);
-        // add "local:track:
-        // playlistadd "local:track:
-        if (substr($cmd, 0, 12) == 'add "file://' ||
-            substr($cmd, 0,20) == 'playlistadd "file://') {
-            $cmds[$key] = swap_file_for_local($cmd);
-        }
-
-    }
-    return $cmds;
-}
-
-function check_player_type_actions($cmds, $collection_type) {
-
-    // Experimental translation to and from MPD/Mopidy Local URIs
-
-    global $prefs;
-    if ($prefs['player_backend'] != $collection_type) {
-        debuglog("Translating Track Uris from ".$collection_type.' to '.$prefs['player_backend'], "PLAYER", 9);
-        foreach ($cmds as $key => $cmd) {
-            if (substr($cmd, 0, 4) == 'add ') {
-                if ($collection_type == 'mopidy') {
-                    $cmds[$key] = mopidy_to_mpd($cmd);
-                } else {
-                    $file = trim(substr($cmd, 4), '" ');
-                    $cmds[$key] = 'add '.mpd_to_mopidy($file);
-                }
-            }
-        }
-    }
-    return $cmds;
-
-}
-
-function mopidy_to_mpd($file) {
-    return rawurldecode(preg_replace('#local:track:#', '', $file));
-}
-
-function mpd_to_mopidy($file) {
-    if (substr($file, 0, 5) != 'http:' && substr($file, 0, 6) != 'https:') {
-        return 'local:track:'.implode("/", array_map("rawurlencode", explode("/", $file)));
+function format_artist($artist, $empty = null) {
+    $a = concatenate_artist_names($artist);
+    if ($a != '.' && $a != "") {
+        return $a;
     } else {
-        return $file;
+        return $empty;
     }
 }
 
-function swap_local_for_file($string) {
-    // url encode the album art directory
+function format_sortartist($tags, $return_albumartist = false) {
     global $prefs;
-    $path = implode("/", array_map("rawurlencode", explode("/", $prefs['music_directory_albumart'])));
-    debuglog('Replacing with '.$path,'MOPIDYSLAVE');
-    return preg_replace('#local:track:#', 'file://'.$path.'/', $string);
+    $sortartist = null;
+    if ($prefs['sortbycomposer'] && $tags['Composer'] !== null) {
+        if ($prefs['composergenre'] && $tags['Genre'] &&
+            checkComposerGenre($tags['Genre'], $prefs['composergenrename'])) {
+                $sortartist = $tags['Composer'];
+        } else if (!$prefs['composergenre']) {
+            $sortartist = $tags['Composer'];
+        }
+    }
+    if ($sortartist == null) {
+        if ($return_albumartist || $tags['AlbumArtist'] != null) {
+            $sortartist = $tags['AlbumArtist'];
+        } else if ($tags['Artist'] != null) {
+            $sortartist = $tags['Artist'];
+        } else if ($tags['station'] != null) {
+            $sortartist = $tags['station'];
+        }
+    }
+    $sortartist = concatenate_artist_names($sortartist);
+    //Some discogs tags have 'Various' instead of 'Various Artists'
+    if ($sortartist == "Various") {
+        $sortartist = "Various Artists";
+    }
+    return $sortartist;
 }
 
-function swap_file_for_local($string) {
-    global $prefs;
-    $path = 'file://'.implode("/", array_map("rawurlencode", explode("/", $prefs['music_directory_albumart']))).'/';
-    return preg_replace('#'.$path.'#', 'local:track:', $string);
+function sort_playlists($a, $b) {
+    if ($a == "Discover Weekly (by spotify)") {
+        return -1;
+    }
+    if ($b == "Discover Weekly (by spotify)") {
+        return 1;
+    }
+    return (strtolower($a) < strtolower($b)) ? -1 : 1;
 }
 
 ?>
