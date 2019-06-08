@@ -44,6 +44,7 @@ class base_mpd_player {
                 $this->is_slave = false;
             }
         }
+        debuglog("Creating Player for ".$this->ip.':'.$this->port,'MPDPLAYER',8);
         $this->open_mpd_connection();
         if ($player_type !== null) {
             $this->player_type = $player_type;
@@ -63,7 +64,6 @@ class base_mpd_player {
     }
 
     public function open_mpd_connection() {
-        debuglog("Creating Player Connection to ".$this->ip.':'.$this->port,'MPDPLAYER',6);
         if ($this->is_connected()) {
             return true;
         }
