@@ -63,6 +63,7 @@ class base_mpd_player {
     }
 
     public function open_mpd_connection() {
+        debuglog("Creating Player Connection to ".$this->ip.':'.$this->port,'MPDPLAYER',6);
         if ($this->is_connected()) {
             return true;
         }
@@ -594,7 +595,7 @@ class base_mpd_player {
         return $collection->getAllTracks('add');
     }
 
-    private function translate_commnads_for_slave(&$cmds) {
+    private function translate_commands_for_slave(&$cmds) {
         //
         // Re-check all add and playlistadd commands if we're using a Mopidy File Backend Slave
         //

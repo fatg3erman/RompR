@@ -41,7 +41,7 @@ register_shutdown_function('close_mpd');
 // the track so repeated increments just keep setting it to the same value
 
 while (true) {
-    debuglog($prefs['currenthost'].' - '."Connecting To ".$prefs['mpd_host'].":".$prefs['mpd_port'],"ROMONITOR");
+    // debuglog($prefs['currenthost'].' - '."Connecting To ".$prefs['mpd_host'].":".$prefs['mpd_port'],"ROMONITOR");
     $player->open_mpd_connection();
     while ($player->is_connected()) {
         $mpd_status = $player->get_status();
