@@ -94,7 +94,7 @@ if ($prefs['player_backend'] == 'none') {
         $mpd_status = $player->get_status();
         if (array_key_exists('error', $mpd_status)) {
             debuglog("MPD Password Failed or other status failure","INIT",1);
-            connect_fail("setup_connecterror").$mpd_status['error']);
+            connect_fail(get_int_txt("setup_connecterror").$mpd_status['error']);
         }
     } else {
         debuglog("MPD Connection Failure","INIT",1);
@@ -130,7 +130,16 @@ if (!$mysqlc) {
 // so we need to check that.
 $c = simple_query('Value', 'Statstable', 'Item', 'CollType', null);
 if ($c !== null) {
-    $prefs['collection_player'] = $c;
+    switch ($c) {
+        case 1:
+            $prefs['collection_player'] = 'mopidy';
+            break;
+
+        default:
+            $prefs['collection_player'] = 'mpd';
+            break;
+
+    }
 }
 savePrefs();
 

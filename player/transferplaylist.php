@@ -49,7 +49,7 @@ $player->close_mpd_connection();
 // Probe the type of the new player
 $target = $prefs['multihosts']->{$json['currenthost']};
 $prefs['player_backend'] = 'none';
-$target_player = new mpd_base_player(
+$target_player = new base_mpd_player(
     $target->host, $target->port, $target->socket, $target->password, null, $target->mopidy_slave
 );
 // probe_player_type has now set $prefs['player_backend']

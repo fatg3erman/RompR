@@ -46,7 +46,6 @@ foreach($params as $p) {
 			}
 		}
 	}
-	// debuglog("  Action is \n".multi_implode($p,", "),"USERRATING",9);
 
 	switch ($p['action']) {
 
@@ -164,7 +163,6 @@ if (count($returninfo) == 0 || array_key_exists('metadata', $returninfo)) {
 }
 print json_encode($returninfo);
 close_transaction();
-close_mpd();
 
 debuglog("---------------------------END----------------------","USERRATING",4);
 

@@ -1727,54 +1727,33 @@ function do_track_by_track($trackobject) {
 	static $current_albumlink= null;
 	static $albumobj = null;
 
-	static $albumindex = null;
-	static $albumartistindex = null;
+	if ($trackobject === null) {
+		if ($albumobj !== null) {
+			$albumobj->check_database();
+			$albumobj = null;
+		}
+		return true;
+	}
 
 	$artistname = $trackobject->get_sort_artist();
 
-	if ($current_albumartist != $artistname) {
-		$albumartistindex = check_artist($artistname);
-	}
-    if ($albumartistindex == null) {
-    	debuglog("ERROR! Checked artist ".$artistname." and index is still null!","MYSQL_TBT",1);
-        return false;
-    }
-
-    if ($current_albumartist != $artistname || $current_album != $trackobject->tags['Album'] ||
-    		$current_domain != $trackobject->tags['domain'] ||
-    		($trackobject->tags['X-AlbumUri'] != null && $trackobject->tags['X-AlbumUri'] != $current_albumlink)) {
-
+    if ($albumobj === null ||
+		$current_albumartist != $artistname ||
+		$current_album != $trackobject->tags['Album'] ||
+    	$current_domain != $trackobject->tags['domain'] ||
+    	($trackobject->tags['X-AlbumUri'] != null && $trackobject->tags['X-AlbumUri'] != $current_albumlink)) {
+		if ($albumobj !== null) {
+			$albumobj->check_database();
+		}
     	$albumobj = new album($trackobject);
-    	$params = array(
-            'album' => $albumobj->name,
-            'albumai' => $albumartistindex,
-            'albumuri' => $albumobj->uri,
-            'image' => $albumobj->getImage('small'),
-            'date' => $albumobj->getDate(),
-            'searched' => "0",
-            'imagekey' => $albumobj->getKey(),
-            'ambid' => $albumobj->musicbrainz_albumid,
-            'domain' => $albumobj->domain);
-        $albumindex = check_album($params, false);
-
-        if ($albumindex == null) {
-        	debuglog("ERROR! Album index for ".$albumobj->name." is still null!","MYSQL_TBT",1);
-    		return false;
-        }
     } else {
-    	$albumobj->newTrack($trackobject, true);
+    	$albumobj->newTrack($trackobject);
     }
 
     $current_albumartist = $artistname;
     $current_album = $albumobj->name;
     $current_domain = $albumobj->domain;
     $current_albumlink = $albumobj->uri;
-
-	foreach ($albumobj->tracks as $trackobj) {
-		// The album we've just created must only have one track, but this makes sure we use the track object
-		// that is part of the album. This MAY be important due to various assumptions
-		check_and_update_track($trackobj, $albumindex, $albumartistindex, $artistname);
-	}
 
 }
 

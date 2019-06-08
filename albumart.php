@@ -1,11 +1,11 @@
 <?php
 define('ROMPR_IS_LOADING', true);
-include ("includes/vars.php");
-include ("includes/functions.php");
-include ("international.php");
-include ('utils/imagefunctions.php');
-include ("backends/sql/backend.php");
-include ("player/mpd/connection.php");
+require_once ("includes/vars.php");
+require_once ("includes/functions.php");
+require_once ("international.php");
+require_once ('utils/imagefunctions.php');
+require_once ("backends/sql/backend.php");
+require_once ("player/".$prefs['player_backend']."/player.php");
 $only_plugins_on_menu = false;
 $skin = "desktop";
 set_version_string();
@@ -216,50 +216,52 @@ function do_playlists() {
 
     global $count;
     global $albums_without_cover;
+    global $PLAYER_TYPE;
+    debuglog('Player type is '.$PLAYER_TYPE,'PLAYLISTART');
+    $player = new $PLAYER_TYPE();
 
-    $playlists = do_mpd_command("listplaylists", true, true);
+    $playlists = $player->get_stored_playlists(false);
     if (!is_array($playlists)) {
         $playlists = array();
     }
     $plfiles = glob('prefs/userplaylists/*');
     foreach ($plfiles as $f) {
-        $playlists['playlist'][] = basename($f);
+        $playlists[] = basename($f);
     }
-    if (array_key_exists('playlist', $playlists)) {
-        print '<div class="cheesegrater" name="savedplaylists">';
-            print '<div class="albumsection">';
-                print '<div class="tleft"><h2>Saved Playlists</h2></div>';
-            print "</div>\n";
-                print '<div id="album'.$count.'" class="containerbox fullwidth bigholder wrap">';
-                sort($playlists['playlist'], SORT_STRING);
-                foreach ($playlists['playlist'] as $pl) {
-                    print '<div class="fixed albumimg closet">';
-                        print '<div class="covercontainer">';
-                            $class = "";
-                            $albumimage = new baseAlbumImage(array('artist' => 'PLAYLIST', 'album' => $pl));
-                            $src = $albumimage->get_image_if_exists();
-                            if ($src === null) {
-                                $class = " plimage notfound";
-                                $src = '';
-                                $albums_without_cover++;
-                            }
-                            $plsearch = preg_replace('/ \(by .*?\)$/', '', $pl);
-                            print '<input name = "searchterm" type="hidden" value="'.rawurlencode($plsearch).'" />';
-                            print '<input name="artist" type="hidden" value="PLAYLIST" />';
-                            print '<input name="album" type="hidden" value="'.rawurlencode($pl).'" />';
-                            print '<img class="clickable clickicon clickalbumcover droppable playlistimage'.$class.'" name="'.$albumimage->get_image_key().'"';
-                            if ($src != "") {
-                                print ' src="'.$src.'" ';
-                            }
-                            print '/>';
-                            print '<div>'.htmlentities($pl).'</div>';
-                        print '</div>';
-                    print '</div>';
-                    $count++;
-                }
-                print "</div>\n";
+    print '<div class="cheesegrater" name="savedplaylists">';
+        print '<div class="albumsection">';
+            print '<div class="tleft"><h2>Saved Playlists</h2></div>';
         print "</div>\n";
-    }
+            print '<div id="album'.$count.'" class="containerbox fullwidth bigholder wrap">';
+            sort($playlists, SORT_STRING);
+            foreach ($playlists as $pl) {
+                debuglog('Playlist '.$pl,'PLAYLISTART');
+                print '<div class="fixed albumimg closet">';
+                    print '<div class="covercontainer">';
+                        $class = "";
+                        $albumimage = new baseAlbumImage(array('artist' => 'PLAYLIST', 'album' => $pl));
+                        $src = $albumimage->get_image_if_exists();
+                        if ($src === null) {
+                            $class = " plimage notfound";
+                            $src = '';
+                            $albums_without_cover++;
+                        }
+                        $plsearch = preg_replace('/ \(by .*?\)$/', '', $pl);
+                        print '<input name = "searchterm" type="hidden" value="'.rawurlencode($plsearch).'" />';
+                        print '<input name="artist" type="hidden" value="PLAYLIST" />';
+                        print '<input name="album" type="hidden" value="'.rawurlencode($pl).'" />';
+                        print '<img class="clickable clickicon clickalbumcover droppable playlistimage'.$class.'" name="'.$albumimage->get_image_key().'"';
+                        if ($src != "") {
+                            print ' src="'.$src.'" ';
+                        }
+                        print '/>';
+                        print '<div>'.htmlentities($pl).'</div>';
+                    print '</div>';
+                print '</div>';
+                $count++;
+            }
+        print "</div>\n";
+    print "</div>\n";
 
 }
 

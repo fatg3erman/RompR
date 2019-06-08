@@ -290,7 +290,8 @@ class romprmetadata {
 		}
 		$ttids = romprmetadata::find_item($data, forcedUriOnly(false, getDomain($data['uri'])));
 		if (count($ttids) > 0) {
-			$returninfo = get_all_data(array_shift($ttids));
+			$ttid = array_shift($ttids);
+			$returninfo = get_all_data($ttid);
 		} else {
 			$returninfo = $nodata;
 		}

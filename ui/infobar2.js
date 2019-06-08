@@ -3,7 +3,7 @@ var infobar = function() {
     var mousepos;
     var sliderclamps = 0;
     var vtimer = null;
-    var trackinfo = {};
+    var playlistinfo = {};
     var lfminfo = {};
     var npinfo = {};
     var starttime = 0;
@@ -20,16 +20,16 @@ var infobar = function() {
             debug.trace("INFOBAR","Track is not scrobbled");
             scrobbled = true;
             if (lastfm.isLoggedIn()) {
-                if (trackinfo.title != "" && trackinfo.trackartist != "") {
+                if (playlistinfo.Title != "" && playlistinfo.trackartist != "") {
                     var options = {
                                     timestamp: parseInt(starttime.toString()),
-                                    track: (lfminfo.title === undefined) ? trackinfo.title : lfminfo.title,
-                                    artist: (lfminfo.trackartist === undefined) ? trackinfo.trackartist : lfminfo.trackartist,
-                                    album: (lfminfo.album === undefined) ? trackinfo.album : lfminfo.album
+                                    track: (lfminfo.title === undefined) ? playlistinfo.Title : lfminfo.title,
+                                    artist: (lfminfo.trackartist === undefined) ? playlistinfo.trackartist : lfminfo.trackartist,
+                                    album: (lfminfo.album === undefined) ? playlistinfo.Album : lfminfo.album
                     };
-                    options.chosenByUser = (trackinfo.type == 'local' && !playlist.radioManager.isRunning()) ? 1 : 0;
-                    if (trackinfo.albumartist && trackinfo.albumartist != "" && trackinfo.albumartist.toLowerCase() != trackinfo.trackartist.toLowerCase()) {
-                         options.albumArtist = trackinfo.albumartist;
+                    options.chosenByUser = (playlistinfo.type == 'local' && !playlist.radioManager.isRunning()) ? 1 : 0;
+                    if (playlistinfo.albumartist && playlistinfo.albumartist != "" && playlistinfo.albumartist.toLowerCase() != playlistinfo.trackartist.toLowerCase()) {
+                         options.albumArtist = playlistinfo.albumartist;
                      }
                     debug.log("INFOBAR","Scrobbling", options);
                     lastfm.track.scrobble( options );
@@ -42,11 +42,11 @@ var infobar = function() {
 
     function updateNowPlaying() {
         if (!nowplaying_updated && lastfm.isLoggedIn()) {
-            if (trackinfo.title != "" && trackinfo.type && trackinfo.type != "stream") {
+            if (playlistinfo.Title != "" && playlistinfo.type && playlistinfo.type != "stream") {
                 var opts = {
-                    track: (lfminfo.title === undefined) ? trackinfo.title : lfminfo.title,
-                    artist: (lfminfo.trackartist === undefined) ? trackinfo.trackartist : lfminfo.trackartist,
-                    album: (lfminfo.album === undefined) ? trackinfo.album : lfminfo.album
+                    track: (lfminfo.title === undefined) ? playlistinfo.Title : lfminfo.title,
+                    artist: (lfminfo.trackartist === undefined) ? playlistinfo.trackartist : lfminfo.trackartist,
+                    album: (lfminfo.album === undefined) ? playlistinfo.Album : lfminfo.album
                 };
                 debug.trace("INFOBAR","is updating nowplaying",opts);
                 lastfm.track.updateNowPlaying(opts);
@@ -56,20 +56,20 @@ var infobar = function() {
     }
 
     function setTheText(info) {
-        var stuff = mungeTrackInfo(info);
+        var stuff = mungeplaylistinfo(info);
         setWindowTitle(stuff.doctitle);
         npinfo = stuff.textbits
         debug.debug("INFOBAR","Now Playing Info",npinfo);
         infobar.biggerize();
     }
 
-    function mungeTrackInfo(info) {
+    function mungeplaylistinfo(info) {
         var npinfo = {};
         var doctitle = "RompЯ";
         debug.log("INFOBAR", "Doing Track Things",info);
-        if (info.title != "") {
-            npinfo.title = info.title;
-            doctitle = info.title;
+        if (info.Title != "") {
+            npinfo.Title = info.Title;
+            doctitle = info.Title;
         }
         var s = info.trackartist;
         if (info.type != "stream" || s != "") {
@@ -104,11 +104,11 @@ var infobar = function() {
             }
         }
         if (s != "") {
-            npinfo.artist = s;
+            npinfo.Artist = s;
             doctitle = doctitle + " : " + s;
         }
-        if (info.album) {
-            npinfo.album = info.album;
+        if (info.Album) {
+            npinfo.Album = info.Album;
         }
         npinfo.stream = info.stream;
         if (prefs.player_in_titlebar) {
@@ -128,32 +128,32 @@ var infobar = function() {
                     {text: " "},
                     {text: " "}
                 ];
-                if (npinfo.artist && npinfo.album) {
-                    lines[1].text = '<i>'+frequentLabels.by+'</i>'+' '+npinfo.artist+" "
-                        +'<i>'+frequentLabels.on+'</i>'+" "+npinfo.album;
+                if (npinfo.Artist && npinfo.Album) {
+                    lines[1].text = '<i>'+frequentLabels.by+'</i>'+' '+npinfo.Artist+" "
+                        +'<i>'+frequentLabels.on+'</i>'+" "+npinfo.Album;
                 } else if (npinfo.stream) {
                     if (npinfo.stream != 'No Title') {
                         lines[1].text = npinfo.stream;
                     }
-                } else if (npinfo.album && npinfo.title) {
-                    lines[1].text = '<i>'+frequentLabels.on+'</i>'+" "+npinfo.album;
+                } else if (npinfo.Album && npinfo.Title) {
+                    lines[1].text = '<i>'+frequentLabels.on+'</i>'+" "+npinfo.Album;
                 }
                 break;
 
             case 3:
                 lines = [
                     {text: " "},
-                    {text: '<i>'+frequentLabels.by+'</i>'+" "+npinfo.artist},
-                    {text: '<i>'+frequentLabels.on+'</i>'+" "+npinfo.album}
+                    {text: '<i>'+frequentLabels.by+'</i>'+" "+npinfo.Artist},
+                    {text: '<i>'+frequentLabels.on+'</i>'+" "+npinfo.Album}
                 ]
                 break;
 
         }
 
-        if (npinfo.title) {
-            lines[0].text = npinfo.title;
-        } else if (npinfo.album) {
-            lines[0].text = npinfo.album;
+        if (npinfo.Title) {
+            lines[0].text = npinfo.Title;
+        } else if (npinfo.Album) {
+            lines[0].text = npinfo.Album;
         }
 
         return lines;
@@ -225,7 +225,7 @@ var infobar = function() {
                     nptext.css('font-size', fontsize+'px');
                 }
 
-                if (npinfo.title && npinfo.album && npinfo.artist) {
+                if (npinfo.Title && npinfo.Album && npinfo.Artist) {
                     /* Does it still fit if we use 3 lines -  this is because
                         Title
                         by Artist
@@ -425,32 +425,32 @@ var infobar = function() {
         },
 
         markCurrentTrack: function() {
-            if (trackinfo.location) {
-                $('[name="'+rawurlencode(trackinfo.location)+'"]').not('.playlistcurrentitem').not('.podcastresume').addClass('playlistcurrentitem');
-                $('[name="'+trackinfo.location+'"]').not('.playlistcurrentitem').not('.podcastresume').addClass('playlistcurrentitem');
+            if (playlistinfo.file) {
+                $('[name="'+rawurlencode(playlistinfo.file)+'"]').not('.playlistcurrentitem').not('.podcastresume').addClass('playlistcurrentitem');
+                $('[name="'+playlistinfo.file+'"]').not('.playlistcurrentitem').not('.podcastresume').addClass('playlistcurrentitem');
             }
         },
 
         forceTitleUpdate: function() {
-            setTheText(trackinfo);
+            setTheText(playlistinfo);
         },
 
         setNowPlayingInfo: function(info) {
             //Now playing info
             debug.trace("INFOBAR","NPinfo",info);
-            if (trackinfo.location) {
-                $('[name="'+rawurlencode(trackinfo.location)+'"]').removeClass('playlistcurrentitem');
-                $('[name="'+trackinfo.location+'"]').removeClass('playlistcurrentitem');
+            if (playlistinfo.file) {
+                $('[name="'+rawurlencode(playlistinfo.file)+'"]').removeClass('playlistcurrentitem');
+                $('[name="'+playlistinfo.file+'"]').removeClass('playlistcurrentitem');
             }
-            trackinfo = info;
+            playlistinfo = info;
             infobar.markCurrentTrack();
             lfminfo = {};
             scrobbled = false;
             nowplaying_updated = false;
-            $("#progress").rangechooser("setOptions", {range: info.duration})
+            $("#progress").rangechooser("setOptions", {range: info.Time})
             setTheText(info);
-            lastfm.showloveban((info.title != ""));
-            if (info.title != "" && info.trackartist != "") {
+            lastfm.showloveban((info.Title != ""));
+            if (info.Title != "" && info.trackartist != "") {
                 $("#stars").fadeIn('fast');
                 $("#dbtags").fadeIn('fast');
                 $("#playcount").fadeIn('fast');
@@ -461,8 +461,8 @@ var infobar = function() {
                 $("#playcount").fadeOut('fast');
                 lastfm.showloveban(false);
             }
-            if (info.location != "") {
-                var f = info.location.match(/^podcast[\:|\+](http.*?)\#/);
+            if (info.file != "") {
+                var f = info.file.match(/^podcast[\:|\+](http.*?)\#/);
                 if (f && f[1]) {
                     $("#nppodiput").val(f[1]);
                     $("#subscribe").fadeIn('fast');
@@ -475,7 +475,7 @@ var infobar = function() {
             } else {
                 $("#saddtoplaylist").fadeOut('fast');
             }
-            if (info.backendid === -1) {
+            if (info.Id === -1) {
                 $("#stars").fadeOut('fast');
                 $("#dbtags").fadeOut('fast');
                 $("#playcount").fadeOut('fast');
@@ -496,7 +496,7 @@ var infobar = function() {
 
         setLastFMCorrections: function(info) {
             lfminfo = info;
-            if (prefs.lastfm_autocorrect && trackinfo.metadata.iscomposer == 'false' && trackinfo.type != "stream" && trackinfo.type != "podcast") {
+            if (prefs.lastfm_autocorrect && playlistinfo.metadata.iscomposer == 'false' && playlistinfo.type != "stream" && playlistinfo.type != "podcast") {
                 setTheText(info);
             }
             infobar.albumImage.setSecondarySource(info);
@@ -511,7 +511,7 @@ var infobar = function() {
         },
 
         seek: function(e) {
-            if (trackinfo.type != "stream") {
+            if (playlistinfo.type != "stream") {
                 player.controller.seek(e.max);
             }
         },
@@ -647,7 +647,7 @@ var infobar = function() {
         addToPlaylist: function(element) {
             player.controller.addTracksToPlaylist(
                 element.attr('name'),
-                [{uri: trackinfo.location}],
+                [{uri: playlistinfo.file}],
                 null,
                 0,
                 function() {

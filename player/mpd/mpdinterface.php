@@ -2,7 +2,7 @@
 
 class base_mpd_player {
 
-    private $connection;
+    protected $connection;
     private $ip;
     private $port;
     private $socket;
@@ -62,7 +62,7 @@ class base_mpd_player {
         }
     }
 
-    private function open_mpd_connection() {
+    public function open_mpd_connection() {
         if ($this->is_connected()) {
             return true;
         }
@@ -341,7 +341,7 @@ class base_mpd_player {
         }
         $filedata['unmopfile'] = $this->unmopify_file($filedata);
 
-        if ($filedata['Track'] == null) {
+        if ($filedata['Track'] == 0) {
             $filedata['Track'] = format_tracknum(basename(rawurldecode($filedata['file'])));
         } else {
             $filedata['Track'] = format_tracknum(ltrim($filedata['Track'], '0'));
@@ -357,6 +357,8 @@ class base_mpd_player {
         if ($filedata['Disc'] != null) {
             $filedata['Disc'] = format_tracknum(ltrim($filedata['Disc'], '0'));
         }
+
+        $filedata['year'] = getYear($filedata['Date']);
 
         $this->player_specific_fixups($filedata);
 
@@ -432,9 +434,9 @@ class base_mpd_player {
         }
     }
 
-    public function clear_error() [
+    public function clear_error() {
         $this->send_command('clearerror');
-    ]
+    }
 
     public function get_current_song() {
         return $this->do_mpd_command('currentsong', true, false);
@@ -468,6 +470,14 @@ class base_mpd_player {
         $this->send_command('single 0');
     }
 
+    public function get_idle_status() {
+        return $this->do_mpd_command('idle player', true, false);
+    }
+
+    public function dummy_command() {
+        return $this->do_mpd_command('', true, false);
+    }
+
     public function get_playlist(&$collection) {
         $dirs = array();
         foreach ($this->parse_list_output('playlistinfo', $dirs, false) as $filedata) {
@@ -475,6 +485,17 @@ class base_mpd_player {
             $filedata = array_replace($filedata, get_extra_track_info($filedata));
             yield $collection->doNewPlaylistFile($filedata);
         }
+    }
+
+    public function get_currentsong_as_playlist(&$collection) {
+        $dirs = array();
+        $retval = array();
+        foreach ($this->parse_list_output('currentsong', $dirs, false) as $filedata) {
+            // Check the database for extra track info
+            $filedata = array_replace($filedata, get_extra_track_info($filedata));
+            $retval = $collection->doNewPlaylistFile($filedata);
+        }
+        return $retval;
     }
 
     public function populate_collection($cmd, $domains, &$collection) {
@@ -538,7 +559,8 @@ class base_mpd_player {
         $retval = array();
         $playlists = $this->do_mpd_command('listplaylists', true, true);
         if (array_key_exists('playlist', $playlists)) {
-            $retval = usort($playlists['playlist'], 'sort_playlists');
+            $retval = $playlists['playlist'];
+            usort($retval, 'sort_playlists');
             if ($only_personal) {
                 $retval = array_filter($retval, 'is_personal_playlist');
             }

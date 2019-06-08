@@ -82,12 +82,16 @@ var sleepTimer = function() {
 			$('#sleepon').trigger('click');
 		},
 
+		resetVolume: function() {
+			player.controller.volume(uservol);
+		},
+
 		volRamp: function() {
 			clearTimeout(ramptimer);
 			var v = parseInt(player.status.volume) - volinc;
 			if (v <= 0) {
-				player.controller.pause();
-				player.controller.volume(uservol);
+				player.controller.stop();
+				setTimeout(sleepTimer.resetVolume, 2000);
 				if (prefs.sleepon) {
 					sleepTimer.fakeClick();
 				}

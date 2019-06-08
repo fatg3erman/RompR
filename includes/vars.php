@@ -78,7 +78,7 @@ define('MPD_FILE_MODEL', array (
         'Title' => null,
         'Album' => null,
         'Artist' => null,
-        'Track' => null,
+        'Track' => 0,
         'Name' => null,
         'AlbumArtist' => null,
         'Time' => 0,
@@ -103,7 +103,14 @@ define('MPD_FILE_MODEL', array (
         'MUSICBRAINZ_ALBUMARTISTID' => '',
         'MUSICBRAINZ_TRACKID' => '',
         'Id' => null,
-        'Pos' => null
+        'Pos' => null,
+        'ttindex' => null,
+        'trackartist_index' => null,
+        'albumartist_index' => null,
+        'album_index' => null,
+        'searchflag' => 0,
+        'hidden' => 0,
+        'isaudiobook' => 0
     )
 );
 
@@ -113,15 +120,15 @@ define('MPD_ARRAY_PARAMS', array(
         "Composer",
         "Performer",
         "MUSICBRAINZ_ARTISTID",
-    );
+    )
 );
 
-// Rompr's internal file model is a merge of the MPD_FILE_MODEL and ROMPR_FILE_MODEL
+// Rompr's internal file model used in the Javascript side is a merge of the MPD_FILE_MODEL and ROMPR_FILE_MODEL
 // it is created in class playlistCollection
 
 define('ROMPR_FILE_MODEL', array(
         "progress" => 0,
-        "year" => '',
+        "year" => null,
         "albumartist" => '',
         "trackartist" => '',
         "images" => '',

@@ -53,6 +53,8 @@ if (array_key_exists('playlist', $_REQUEST)) {
                 @unlink($img);
             }
         }
+    } else {
+        debuglog('Error when loading saved playlists','LOADPLAYLISTS');
     }
 }
 
@@ -74,7 +76,7 @@ function do_playlist_tracks($pl, $icon, $target) {
                 case "youtube":
                 case "spotify":
                 case "gmusic":
-                    $icon = "icon-".$d."-circled";
+                    $icon = "icon-".$filedata['domain']."-circled";
                     break;
 
                 default;

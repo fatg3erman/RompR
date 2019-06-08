@@ -1,6 +1,6 @@
 <?php
 
-class fileCollector extends mpd_base_player {
+class fileCollector extends base_mpd_player {
 
     public function doFileBrowse($path, $prefix) {
     	debuglog("Browsing ".$path,"DIRBROWSER");

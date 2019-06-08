@@ -58,7 +58,7 @@ class mopidyPlayer extends base_mpd_player {
     		// Check to see if 'Local media/Albums' is browseable and use that instead if it is.
     		// Using Local media/Folders causes every file to be re-scanned every time we update
     		// the collection, which takes ages and also includes m3u and pls stuff that we don't want
-    		$r = do_mpd_command('lsinfo "'.$dir.'/Albums"', false, false);
+    		$r = $this->do_mpd_command('lsinfo "'.$dir.'/Albums"', false, false);
     		if ($r === false) {
     			return $dir;
     		} else {
@@ -355,7 +355,7 @@ class mopidyPlayer extends base_mpd_player {
 
     }
 
-    private function get_checked_url($url) {
+    public function get_checked_url($url) {
         return array('clicktrack', $url);
     }
 

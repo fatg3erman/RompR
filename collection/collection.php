@@ -56,8 +56,11 @@ class musicCollection {
     }
 
     public function tracks_to_database() {
+		// Fluch the previous albumobj from track_by_track
+		do_track_by_track(null);
         foreach ($this->albums as $album) {
-            $this->do_artist_database_stuff($album);
+			$album->sortTracks();
+			$album->check_database();
         }
         $this->albums = array();
     }
@@ -112,38 +115,6 @@ class musicCollection {
         return $results;
     }
 
-    private function do_artist_database_stuff(&$album) {
-
-        $album->sortTracks();
-        $artistname = $album->artist;
-        $artistindex = check_artist($artistname);
-        if ($artistindex == null) {
-            debuglog("ERROR! Checked artist ".$artistname." and index is still null!","MYSQL",1);
-            return false;
-        }
-        $params = array(
-            'album' => $album->name,
-            'albumai' => $artistindex,
-            'albumuri' => $album->uri,
-            'image' => $album->getImage('small'),
-            'date' => $album->getDate(),
-            'searched' => "0",
-            'imagekey' => $album->getKey(),
-            'ambid' => $album->musicbrainz_albumid,
-            'domain' => $album->domain);
-        $albumindex = check_album($params);
-
-        if ($albumindex == null) {
-            debuglog("ERROR! Album index for ".$album->name." is still null!","MYSQL",1);
-            return false;
-        }
-
-        foreach($album->tracks as $trackobj) {
-            check_and_update_track($trackobj, $albumindex, $artistindex, $artistname);
-        }
-
-    }
-
 }
 
 class album {
@@ -152,6 +123,8 @@ class album {
 		global $numalbums;
 		$numalbums++;
 		$this->tracks = array($track);
+		// Sets album artist to composer (if set and required) or albumartist but NOT trackartist
+		// therefore may still be null at this point.
 		$this->artist = $track->get_sort_artist(true);
 		$this->name = trim($track->tags['Album']);
 		$this->folder = $track->tags['folder'];
@@ -164,14 +137,12 @@ class album {
 		$this->numOfDiscs = $track->tags['Disc'];
 		$this->numOfTrackOnes = $track->tags['Track'] == 1 ? 1 : 0;
         $this->domain = $track->tags['domain'];
+		$this->albumartistindex = null;
+		$this->albumindex = null;
 	}
 
-	public function newTrack(&$track, $clear = false) {
-		if ($clear) {
-			$this->tracks = array($track);
-		} else {
-			$this->tracks[] = $track;
-		}
+	public function newTrack(&$track) {
+		$this->tracks[] = $track;
 		if ($this->artist == null) {
 			$this->artist = $track->get_sort_artist(true);
 		}
@@ -193,6 +164,29 @@ class album {
         if ($this->uri == null) {
             $this->uri = $track->tags['X-AlbumUri'];
         }
+	}
+
+	public function check_database() {
+		if ($this->albumartistindex == null) {
+			$this->albumartistindex = check_artist($this->artist);
+		}
+		if ($this->albumindex == null) {
+			$album = array(
+				'album' => $this->name,
+	            'albumai' => $this->albumartistindex,
+	            'albumuri' => $this->uri,
+	            'image' => $this->getImage('small'),
+	            'date' => $this->getDate(),
+	            'searched' => "0",
+	            'imagekey' => $this->getKey(),
+	            'ambid' => $this->musicbrainz_albumid,
+	            'domain' => $this->domain
+			);
+			$this->albumindex = check_album($album);
+		}
+		foreach ($this->tracks as $trackobj) {
+			check_and_update_track($trackobj, $this->albumindex, $this->albumartistindex, $this->artist);
+		}
 	}
 
     public function getKey() {
@@ -308,7 +302,7 @@ class album {
                 }
             }
             $discs[$discno][$track_no] = $ob;
-            $ob->updateDiscNo($discno);
+            $ob->updateTrackInfo(array('Disc' => $discno));
             $number++;
         }
         $numdiscs = count($discs);
@@ -348,11 +342,11 @@ class track {
 	public $tags;
 
     public function __construct(&$filedata) {
-        $this->tags = array_replace($this->tags, $filedata);
+        $this->tags = $filedata;
     }
 
-    public function updateDiscNo($disc) {
-        $this->tags['Disc'] = $disc;
+    public function updateTrackInfo($info) {
+        $this->tags = array_replace($this->tags, $info);
     }
 
     public function get_artist_string() {

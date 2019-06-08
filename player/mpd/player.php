@@ -1,7 +1,7 @@
 <?php
 require_once ('player/mpd/mpdinterface.php');
 $PLAYER_TYPE = 'mpdPlayer';
-class mpdPlayer extends mpd_base_player {
+class mpdPlayer extends base_mpd_player {
 
     public function check_track_load_command($uri) {
         $ext = strtolower(pathinfo($uri, PATHINFO_EXTENSION));
@@ -221,7 +221,7 @@ class mpdPlayer extends mpd_base_player {
 
     }
 
-    private function get_checked_url($url) {
+    public function get_checked_url($url) {
         $matches = array();
         if (preg_match("/api\.soundcloud\.com\/tracks\/(\d+)\//", $url, $matches)) {
             return array('clickcue', "soundcloud://track/".$matches[1]);

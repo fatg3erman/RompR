@@ -803,7 +803,7 @@ var playlist = function() {
         },
 
         getDomainIcon: function(track, def) {
-            var s = track.location.split(':');
+            var s = track.file.split(':');
             var d = s.shift();
             switch (d) {
                 case "spotify":

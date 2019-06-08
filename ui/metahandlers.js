@@ -14,28 +14,28 @@ var metaHandlers = function() {
 
 	function getPostData(playlistinfo) {
 	    var data = {};
-	    if (playlistinfo.title) {
-	        data.title = playlistinfo.title;
+	    if (playlistinfo.Title) {
+	        data.title = playlistinfo.Title;
 	    }
 	    if (playlistinfo.trackartist) {
 	        data.artist = playlistinfo.trackartist;
 	    }
-	    if (playlistinfo.tracknumber) {
-	        data.trackno = playlistinfo.tracknumber;
+	    if (playlistinfo.Track) {
+	        data.trackno = playlistinfo.Track;
 	    }
-	    if (playlistinfo.duration) {
-	        data.duration = playlistinfo.duration;
+	    if (playlistinfo.Time) {
+	        data.duration = playlistinfo.Time;
 	    } else {
 	        data.duration = 0;
 	    }
 		if (playlistinfo.type) {
 			data.type = playlistinfo.type;
 		}
-	    if (playlistinfo.disc) {
-	        data.disc = playlistinfo.disc;
+	    if (playlistinfo.Disc) {
+	        data.disc = playlistinfo.Disc;
 	    }
 	    if (playlistinfo.albumartist
-	        && playlistinfo.album != "SoundCloud"
+	        && playlistinfo.Album != "SoundCloud"
 	        && playlistinfo.type != "stream") {
 	        data.albumartist = playlistinfo.albumartist;
 	    } else {
@@ -49,23 +49,23 @@ var metaHandlers = function() {
 	    if (playlistinfo.type != "stream" && playlistinfo.images && playlistinfo.images.small) {
 	        data.image = playlistinfo.images.small;
 	    }
-	    if ((playlistinfo.type == "local" || playlistinfo.type == "podcast") && playlistinfo.album) {
-	        data.album = playlistinfo.album;
+	    if ((playlistinfo.type == "local" || playlistinfo.type == "podcast") && playlistinfo.Album) {
+	        data.album = playlistinfo.Album;
 	    }
 	    if (playlistinfo.type == "local" || playlistinfo.type == "podcast") {
-	        if (playlistinfo.location.match(/api\.soundcloud\.com\/tracks\/(\d+)\//) && prefs.player_backend == "mpd") {
-	            var sc = playlistinfo.location.match(/api\.soundcloud\.com\/tracks\/(\d+)\//);
+	        if (playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//) && prefs.player_backend == "mpd") {
+	            var sc = playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//);
 	            data.uri = "soundcloud://track/"+sc[1];
 	        } else {
-	            data.uri = playlistinfo.location;
+	            data.uri = playlistinfo.file;
 	        }
 	    } else if (playlistinfo.type == "stream") {
-			data.streamname = playlistinfo.album;
+			data.streamname = playlistinfo.Album;
 			data.streamimage = playlistinfo.images.small;
-			data.streamuri = playlistinfo.location;
+			data.streamuri = playlistinfo.file;
 		}
-	    if (playlistinfo.date) {
-	        data.date = playlistinfo.date;
+	    if (playlistinfo.year) {
+	        data.date = playlistinfo.year;
 	    } else {
 	        data.date = 0;
 	    }
