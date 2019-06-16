@@ -57,7 +57,7 @@ print '<input type="text" name="mpd_port" value="'.$prefs['multihosts']->{$prefs
 print '<p>'.get_int_text("setup_password").'<br>';
 print '<input type="text" name="mpd_password" value="'.$prefs['multihosts']->{$prefs['currenthost']}->password.'" /></p>';
 print '<p>'.get_int_text("setup_unixsocket").'<br>';
-print '<input type="text" name="unix_socket" value="'.$$prefs['multihosts']->{$prefs['currenthost']}->socket.'" /></p>';
+print '<input type="text" name="unix_socket" value="'.$prefs['multihosts']->{$prefs['currenthost']}->socket.'" /></p>';
 
 print '<hr class="dingleberry" />';
 print '<h3>'.get_int_text("label_generalsettings").'</h3>';

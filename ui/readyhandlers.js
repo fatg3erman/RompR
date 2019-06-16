@@ -120,7 +120,7 @@ function get_geo_country() {
             debug.shout("GET COUNTRY", 'Country:',result.country,'Code:',result.countryCode);
             if (result.country != 'ERROR') {
                 $("#lastfm_country_codeselector").val(result.countryCode);
-                prefs.save({lastfm_country_code: result.countryCode});
+                prefs.save({lastfm_country_code: result.countryCode, country_userset: true});
             } else {
                 debug.error("GET COUNTRY","Country code error",result);
             }
