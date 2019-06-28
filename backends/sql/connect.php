@@ -251,10 +251,10 @@ function close_transaction() {
     }
 }
 
-function saveCollectionType($type) {
+function saveCollectionPlayer($type) {
 	global $prefs;
 	debuglog('Setting Collection Type to '.$type,'COLLECTION');
-	switch ($c) {
+	switch ($type) {
 		case 'mopidy':
 			debuglog('Setting collection type to mopidy','COLLECTION');
 			$this->sql_prepare_query(true, null, null, null,

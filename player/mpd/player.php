@@ -37,7 +37,7 @@ class mpdPlayer extends base_mpd_player {
             }
     	    $collection->tracks_to_database();
         }
-        saveCollectionType('mpd');
+        saveCollectionPlayer('mpd');
         fwrite($monitor, "\nUpdating Database");
         fclose($monitor);
     }

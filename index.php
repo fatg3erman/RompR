@@ -132,7 +132,7 @@ if (array_key_exists('theme', $_REQUEST) && file_exists('themes/'.$_REQUEST['the
     debuglog("Setting theme from request to ".$_REQUEST['theme'],"INIT",5);
     $prefs['usertheme'] = $_REQUEST['theme'].'.css';
 }
-
+savePrefs();
 //
 // Do some initialisation and cleanup of the Apache backend
 //
