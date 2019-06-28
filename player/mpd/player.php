@@ -37,8 +37,7 @@ class mpdPlayer extends base_mpd_player {
             }
     	    $collection->tracks_to_database();
         }
-        $prefs['collection_player'] = 'mpd';
-        savePrefs();
+        saveCollectionType('mpd');
         fwrite($monitor, "\nUpdating Database");
         fclose($monitor);
     }
@@ -81,8 +80,8 @@ class mpdPlayer extends base_mpd_player {
     			$this->check_undefined_tags($filedata);
                 $filedata['folder'] = dirname($filedata['unmopfile']);
                 break;
+        }
     }
-
 
     private function preprocess_stream(&$filedata) {
 
@@ -231,7 +230,7 @@ class mpdPlayer extends base_mpd_player {
     }
 
     public function get_replay_gain_state() {
-        $arse = do_mpd_command('replay_gain_status', true, false);
+        $arse = $this->do_mpd_command('replay_gain_status', true, false);
         if (array_key_exists('error', $arse)) {
             unset($arse['error']);
             $this->send_command('clearerror');

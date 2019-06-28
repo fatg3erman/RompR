@@ -123,26 +123,6 @@ if (!$mysqlc) {
     sql_init_fail("No Database Connection Was Possible");
 }
 
-// This is for backwards compatability.
-// We now set $prefs['collection_player'] (which is the player type the collection is built under)
-// The first time we successfully connect to a player through probe_player_type - which ordinarily
-// will be on first run. For people upgrading from pervious versions, they'll have it in the database
-// so we need to check that.
-$c = simple_query('Value', 'Statstable', 'Item', 'CollType', null);
-if ($c !== null) {
-    switch ($c) {
-        case 1:
-            $prefs['collection_player'] = 'mopidy';
-            break;
-
-        default:
-            $prefs['collection_player'] = 'mpd';
-            break;
-
-    }
-}
-savePrefs();
-
 list($result, $message) = check_sql_tables();
 if ($result == false) {
     sql_init_fail($message);

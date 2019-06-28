@@ -25,8 +25,7 @@ class mopidyPlayer extends base_mpd_player {
     	    	$collection->tracks_to_database();
     	    }
         }
-        $prefs['collection_player'] = 'mopidy';
-        savePrefs();
+        saveCollectionType('mopidy');
         fwrite($monitor, "\nUpdating Database");
         fclose($monitor);
     }

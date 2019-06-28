@@ -18,6 +18,7 @@ function connect_to_database() {
 		generic_sql_query('PRAGMA cache_size=-4000', true);
 		generic_sql_query('PRAGMA synchronous=OFF', true);
 		generic_sql_query('PRAGMA threads=4', true);
+		readCollectionPlayer();
 	} catch (Exception $e) {
 		debuglog("Couldn't Connect To SQLite - ".$e,"MYSQL",1);
 		sql_init_fail($e->getMessage());

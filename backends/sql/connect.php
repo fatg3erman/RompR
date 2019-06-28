@@ -251,4 +251,50 @@ function close_transaction() {
     }
 }
 
+function saveCollectionType($type) {
+	global $prefs;
+	debuglog('Setting Collection Type to '.$type,'COLLECTION');
+	switch ($c) {
+		case 'mopidy':
+			debuglog('Setting collection type to mopidy','COLLECTION');
+			$this->sql_prepare_query(true, null, null, null,
+				"UPDATE Statstable SET Value = ? WHERE Item = 'CollType'", 1);
+			$prefs['collection_player'] = 'mopidy';
+			break;
+
+		case 'mpd':
+			debuglog('Setting collection type to mpd','COLLECTION');
+			$this->sql_prepare_query(true, null, null, null,
+				"UPDATE Statstable SET Value = ? WHERE Item = 'CollType'", 0);
+			$prefs['collection_player'] = 'mpd';
+			break;
+	}
+	savePrefs();
+}
+
+function readCollectionPlayer() {
+	global $prefs;
+	$c = simple_query('Value', 'Statstable', 'Item', 'CollType', 999);
+    switch ($c) {
+		case 999:
+			debuglog('Collection type from database is not set','COLLECTION');
+			debuglog('Prefs collection_player is currently '.$prefs['collection_player'],'COLLECTION');
+			$prefs['collection_player'] = null;
+			break;
+
+        case 1:
+			debuglog('Collection type from database is mopidy','COLLECTION');
+            $prefs['collection_player'] = 'mopidy';
+            break;
+
+        case 0:
+			debuglog('Collection type from database is mpd','COLLECTION');
+            $prefs['collection_player'] = 'mpd';
+            break;
+    }
+	savePrefs();
+	return $c;
+}
+
+
 ?>

@@ -86,7 +86,7 @@ $(document).ready(function(){
         $(this).children('i').hide();
     });
     $(document).on('click', '.tagremover:not(.plugclickable)', nowplaying.removeTag);
-    if (prefs.mopidy_slave || prefs.collection_player != prefs.player_backend) {
+    if (prefs.mopidy_slave || (prefs.collection_player != prefs.player_backend && prefs.collection_player != null)) {
         $('[name="donkeykong"]').remove();
         $('[name="dinkeyking"]').remove();
     }

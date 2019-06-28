@@ -620,7 +620,7 @@ class base_mpd_player {
             if (substr($cmd, 0, 4) == 'add ') {
                 if ($prefs['collection_player']== 'mopidy') {
                     $cmds[$key] = $this->mopidy_to_mpd($cmd);
-                } else {
+                } else if ($prefs['collection_player']== 'mpd'){
                     $file = trim(substr($cmd, 4), '" ');
                     $cmds[$key] = 'add '.$this0>mpd_to_mopidy($file);
                 }
@@ -673,9 +673,6 @@ class base_mpd_player {
         }
         setcookie('player_backend',$retval,time()+365*24*60*60*10,'/');
         $prefs['player_backend'] = $retval;
-        if ($prefs['collection_player'] === null) {
-            $prefs['collection_player'] = $retval;
-        }
         return $retval;
     }
 

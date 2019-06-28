@@ -704,7 +704,7 @@ function get_player_ip() {
     debuglog("Remote Address is ".$_SERVER['REMOTE_ADDR'],"INIT",7);
     debuglog("Prefs for mpd host is ".$prefs['multihosts']->{$prefs['currenthost']}->host,"INIT",7);
     $pip = '';
-    if ($prefs['unix_socket'] != '') {
+    if ($prefs['multihosts']->{$prefs['currenthost']}->socket != '') {
         $pip = $_SERVER['HTTP_HOST'];
     } else if ( $prefs['multihosts']->{$prefs['currenthost']}->host == "localhost" ||
                 $prefs['multihosts']->{$prefs['currenthost']}->host == "127.0.0.1" ||

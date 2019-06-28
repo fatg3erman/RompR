@@ -409,9 +409,9 @@ print '<div class="pref"><b>'.get_int_text('config_nosortprefixes').'
 <input class="saveotron prefinput arraypref" id="nosortprefixes" type="text" size="128" />
 </b></div>';
 
-if ($prefs['mopidy_slave'] == false) {
+if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave == false) {
 
-    if ($prefs['collection_player'] == $prefs['player_backend']) {
+    if ($prefs['collection_player'] == $prefs['player_backend'] || $prefs['collection_player'] == null) {
         print '<div class="pref styledinputs">
             <div class="clearfix">
                 <div class="tleft">
