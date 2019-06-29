@@ -55,6 +55,8 @@ $target_player = new base_mpd_player(
 // probe_player_type has now set $prefs['player_backend']
 $target_player->close_mpd_connection();
 
+$prefs['currenthost'] = $json['currenthost'];
+savePrefs();
 // Connect properly to the new player
 require_once ("player/".$prefs['player_backend']."/player.php");
 $target_player = new $PLAYER_TYPE();

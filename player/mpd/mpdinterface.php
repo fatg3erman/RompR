@@ -44,7 +44,7 @@ class base_mpd_player {
                 $this->is_slave = false;
             }
         }
-        debuglog("Creating Player for ".$this->ip.':'.$this->port,'MPDPLAYER',8);
+        debuglog("Creating Player for ".$this->ip.':'.$this->port,'MPDPLAYER',9);
         $this->open_mpd_connection();
         if ($player_type !== null) {
             $this->player_type = $player_type;
@@ -556,6 +556,7 @@ class base_mpd_player {
     }
 
     public function get_stored_playlists($only_personal = false) {
+        global $PLAYER_TYPE;
         $this->playlist_error = false;
         $retval = array();
         $playlists = $this->do_mpd_command('listplaylists', true, true);
@@ -563,7 +564,7 @@ class base_mpd_player {
             $retval = $playlists['playlist'];
             usort($retval, 'sort_playlists');
             if ($only_personal) {
-                $retval = array_filter($retval, 'is_personal_playlist');
+                $retval = array_filter($retval, $PLAYER_TYPE.'::is_personal_playlist');
             }
         } else if (array_key_exists('error', $playlists)) {
             // We frequently get an error getting stored playlists - especially from mopidy

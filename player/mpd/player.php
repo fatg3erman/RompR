@@ -238,12 +238,11 @@ class mpdPlayer extends base_mpd_player {
         return $arse;
     }
 
-}
+    public static function is_personal_playlist($pl) {
+        return true;
+    }
 
-function is_personal_playlist($pl) {
-    return true;
 }
-
 
 
 ?>

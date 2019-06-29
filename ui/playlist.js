@@ -663,13 +663,11 @@ var playlist = function() {
 
         checkPodcastProgress: function() {
             if (player.status.state == 'play' || player.status.state == 'pause') {
+                var durationfraction = currentTrack.progress/currentTrack.Time;
+                var progresstostore = (durationfraction > 0.05 && durationfraction < 0.98) ? currentTrack.progress : 0;
                 if (currentTrack.type == "podcast") {
-                    var durationfraction = currentTrack.progress/currentTrack.duration;
-                    var progresstostore = (durationfraction > 0.05 && durationfraction < 0.98) ? currentTrack.progress : 0;
-                    podcasts.storePlaybackProgress({uri: currentTrack.location, progress: Math.round(progresstostore)});
+                    podcasts.storePlaybackProgress({uri: currentTrack.file, progress: Math.round(progresstostore)});
                 } else if (currentTrack.type == 'audiobook') {
-                    var durationfraction = currentTrack.progress/currentTrack.duration;
-                    var progresstostore = (durationfraction > 0.05 && durationfraction < 0.98) ? currentTrack.progress : 0;
                     nowplaying.storePlaybackProgress(Math.round(progresstostore), null);
                 }
             }
@@ -750,7 +748,6 @@ var playlist = function() {
         },
 
         addAlbumToCollection: function(index) {
-            infobar.notify(language.gettext('label_addingalbum'));
             tracklist[index].addToCollection();
         },
 
@@ -1107,6 +1104,7 @@ function Album(artist, album, index, rolledup) {
     }
 
     this.addToCollection = function() {
+        debug.log("PLAYLIST","Adding album to collection");
         if (tracks[0].metadata.album.uri && tracks[0].metadata.album.uri.substring(0,14) == "spotify:album:") {
             spotify.album.getInfo(tracks[0].metadata.album.uri.substring(14,tracks[0].metadata.album.uri.length),
             function(data) {

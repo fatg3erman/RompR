@@ -277,18 +277,18 @@ function readCollectionPlayer() {
 	$c = simple_query('Value', 'Statstable', 'Item', 'CollType', 999);
     switch ($c) {
 		case 999:
-			debuglog('Collection type from database is not set','COLLECTION');
+			debuglog('Collection type from database is not set','COLLECTION', 9);
 			debuglog('Prefs collection_player is currently '.$prefs['collection_player'],'COLLECTION');
 			$prefs['collection_player'] = null;
 			break;
 
         case 1:
-			debuglog('Collection type from database is mopidy','COLLECTION');
+			debuglog('Collection type from database is mopidy','COLLECTION', 9);
             $prefs['collection_player'] = 'mopidy';
             break;
 
         case 0:
-			debuglog('Collection type from database is mpd','COLLECTION');
+			debuglog('Collection type from database is mpd','COLLECTION', 9);
             $prefs['collection_player'] = 'mpd';
             break;
     }

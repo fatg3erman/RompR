@@ -556,6 +556,7 @@ var infobar = function() {
         },
 
         notify: function(message) {
+            debug.trace("INFOBAR","Creating notification",message);
             var div = doNotification(message, 'icon-info-circled');
             setTimeout($.proxy(infobar.removenotify, div, notifycounter), 5000);
             return notifycounter;

@@ -83,7 +83,7 @@ function do_playlist_tracks($pl, $icon, $target) {
                     $icon = "icon-music";
                     break;
             }
-            add_playlist(rawurlencode($uri), get_artist_track_title($filedata), $icon, $class, is_personal_playlist($pl), $c, false, $pl);
+            add_playlist(rawurlencode($uri), get_artist_track_title($filedata), $icon, $class, $PLAYER_TYPE::is_personal_playlist($pl), $c, false, $pl);
             $c++;
         }
     }

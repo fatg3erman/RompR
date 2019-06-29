@@ -362,14 +362,14 @@ class mopidyPlayer extends base_mpd_player {
         return array();
     }
 
-}
-
-function is_personal_playlist($pl) {
-    if (preg_match('/ \(by/i', $pl)) {
-        // Don't permit deletion of tracks from other peple's playlists (Spotify)
-        return false;
+    public static function is_personal_playlist($pl) {
+        if (preg_match('/ \(by/i', $pl)) {
+            // Don't permit deletion of tracks from other peple's playlists (Spotify)
+            return false;
+        }
+        return true;
     }
-    return true;
+
 }
 
 ?>
