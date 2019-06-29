@@ -196,15 +196,19 @@ function tryLastFM($albumimage) {
             return "";
         }
 
-        foreach ($xml->album->image as $i => $image) {
-            $attrs = $image->attributes();
-            if ($image) { $pic = $image; }
-            $s = array_search($attrs['size'], $sizeorder);
-            if ($s > $cs) {
-                debuglog("    Image ".$attrs['size']." '".$image."'","GETALBUMCOVER");
-                $retval = $image;
-                $cs = $s;
+        try {
+            foreach ($xml->album->image as $i => $image) {
+                $attrs = $image->attributes();
+                if ($image) { $pic = $image; }
+                $s = array_search($attrs['size'], $sizeorder);
+                if ($s > $cs) {
+                    debuglog("    Image ".$attrs['size']." '".$image."'","GETALBUMCOVER");
+                    $retval = $image;
+                    $cs = $s;
+                }
             }
+        } catch (Exception $e) {
+            debuglog("    Last.FM response was total monkeys","GETALBUMCOVER");
         }
         if ($retval == "") {
             $retval = $pic;

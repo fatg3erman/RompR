@@ -368,6 +368,7 @@ if ($skin !== null) {
     $skin = trim($skin);
 }
 
+$romonitor_hack = true;
 // ====================================================================
 
 function savePrefs() {

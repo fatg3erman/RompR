@@ -1,5 +1,6 @@
 <?php
 define('ROMPR_IS_LOADING', true);
+
 require_once ("includes/vars.php");
 
 //
@@ -287,7 +288,7 @@ include('skins/'.$skin.'/skin.php');
 debuglog("******++++++======------******------======++++++******","INIT FINISHED",2);
 
 function connect_fail($t) {
-    global $title;
+    global $title, $prefs;
     debuglog("MPD Connection Failed","INIT",1);
     $title = $t;
     include("setupscreen.php");

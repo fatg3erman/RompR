@@ -292,7 +292,7 @@ var nowplaying = function() {
 				            		fa = true;
 				            	}
 			            		if (!ft && playlistinfo.metadata.track.name == history[j].playlistinfo.metadata.track.name &&
-			            			playlistinfo.Track == history[j].playlistinfo.Track) {
+			            			playlistinfo.Title == history[j].playlistinfo.Title) {
 				            		debug.trace("NOWPLAYING","Using track info from",j);
 			            			playlistinfo.metadata.track = history[j].playlistinfo.metadata.track;
 			            			ft = true;

@@ -2,7 +2,7 @@
 
 include ("backends/sql/connect.php");
 require_once ("skins/".$skin."/ui_elements.php");
-connect_to_database();
+connect_to_database($romonitor_hack);
 $find_track = null;
 $update_track = null;
 $transaction_open = false;

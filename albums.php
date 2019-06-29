@@ -58,7 +58,6 @@ switch (true) {
         require_once ("collection/dbsearch.php");
         $doing_search = true;
         raw_search();
-        close_mpd();
         break;
 
     case array_key_exists('terms', $_REQUEST):

@@ -44,7 +44,7 @@ class base_mpd_player {
                 $this->is_slave = false;
             }
         }
-        debuglog("Creating Player for ".$this->ip.':'.$this->port,'MPDPLAYER',9);
+        debuglog("Creating Player for ".$this->ip.':'.$this->port,'MPDPLAYER',8);
         $this->open_mpd_connection();
         if ($player_type !== null) {
             $this->player_type = $player_type;
@@ -68,9 +68,9 @@ class base_mpd_player {
             return true;
         }
         if ($this->socket != "") {
-            $this->connection = stream_socket_client('unix://'.$this->socket);
+            $this->connection = @stream_socket_client('unix://'.$this->socket);
         } else {
-            $this->connection = stream_socket_client('tcp://'.$this->ip.':'.$this->port);
+            $this->connection = @stream_socket_client('tcp://'.$this->ip.':'.$this->port);
         }
 
         if($this->is_connected()) {
@@ -560,13 +560,13 @@ class base_mpd_player {
         $this->playlist_error = false;
         $retval = array();
         $playlists = $this->do_mpd_command('listplaylists', true, true);
-        if (array_key_exists('playlist', $playlists)) {
+        if (is_array($playlists) && array_key_exists('playlist', $playlists)) {
             $retval = $playlists['playlist'];
             usort($retval, 'sort_playlists');
             if ($only_personal) {
                 $retval = array_filter($retval, $PLAYER_TYPE.'::is_personal_playlist');
             }
-        } else if (array_key_exists('error', $playlists)) {
+        } else if (is_array($playlists) && array_key_exists('error', $playlists)) {
             // We frequently get an error getting stored playlists - especially from mopidy
             // This flag is set so that loadplaylists.php doesn't remove all our stored playlist
             // images in the event of that happening.
@@ -600,12 +600,12 @@ class base_mpd_player {
         //
         // Re-check all add and playlistadd commands if we're using a Mopidy File Backend Slave
         //
-        debuglog("Translating tracks for Mopidy Slave","MOPIDY",8);
         foreach ($cmds as $key => $cmd) {
             // add "local:track:
             // playlistadd "local:track:
             if (substr($cmd, 0, 17) == 'add "local:track:' ||
                 substr($cmd, 0,25) == 'playlistadd "local:track:') {
+                debuglog("Translating tracks for Mopidy Slave","MOPIDY",8);
                 $cmds[$key] = $this->swap_local_for_file($cmd);
             }
         }
@@ -616,9 +616,9 @@ class base_mpd_player {
         // Experimental translation to and from MPD/Mopidy Local URIs
         //
         global $prefs;
-        debuglog("Translating Track Uris from ".$prefs['collection_player'].' to '.$this->player_type, "PLAYER", 8);
         foreach ($cmds as $key => $cmd) {
             if (substr($cmd, 0, 4) == 'add ') {
+                debuglog("Translating Track Uris from ".$prefs['collection_player'].' to '.$this->player_type, "PLAYER", 8);
                 if ($prefs['collection_player']== 'mopidy') {
                     $cmds[$key] = $this->mopidy_to_mpd($cmd);
                 } else if ($prefs['collection_player']== 'mpd'){
@@ -657,23 +657,25 @@ class base_mpd_player {
 
     private function probe_player_type() {
         global $prefs;
-        debuglog("Probing Player Type....","INIT",4);
-        $r = $this->do_mpd_command('tagtypes', true, true);
         $retval = false;
-        if (is_array($r) && array_key_exists('tagtype', $r)) {
-            if (in_array('X-AlbumUri', $r['tagtype'])) {
-                debuglog("    ....tagtypes test says we're running Mopidy. Setting cookie","INIT",4);
-                $retval = "mopidy";
+        if ($this->is_connected()) {
+            debuglog("Probing Player Type....","INIT",4);
+            $r = $this->do_mpd_command('tagtypes', true, true);
+            if (is_array($r) && array_key_exists('tagtype', $r)) {
+                if (in_array('X-AlbumUri', $r['tagtype'])) {
+                    debuglog("    ....tagtypes test says we're running Mopidy. Setting cookie","INIT",4);
+                    $retval = "mopidy";
+                } else {
+                    debuglog("    ....tagtypes test says we're running MPD. Setting cookie","INIT",4);
+                    $retval = "mpd";
+                }
             } else {
-                debuglog("    ....tagtypes test says we're running MPD. Setting cookie","INIT",4);
-                $retval = "mpd";
+                debuglog("WARNING! No output for 'tagtypes' - probably an old version of Mopidy. RompЯ may not function correctly","INIT",2);
+                $retval =  "mopidy";
             }
-        } else {
-            debuglog("WARNING! No output for 'tagtypes' - probably an old version of Mopidy. RompЯ may not function correctly","INIT",2);
-            $retval =  "mopidy";
+            setcookie('player_backend',$retval,time()+365*24*60*60*10,'/');
+            $prefs['player_backend'] = $retval;
         }
-        setcookie('player_backend',$retval,time()+365*24*60*60*10,'/');
-        $prefs['player_backend'] = $retval;
         return $retval;
     }
 

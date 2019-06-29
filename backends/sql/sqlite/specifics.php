@@ -3,7 +3,7 @@
 define('SQL_RANDOM_SORT', 'RANDOM()');
 define('SQL_TAG_CONCAT', "GROUP_CONCAT(t.Name,', ') ");
 
-function connect_to_database() {
+function connect_to_database($sp = true) {
 	global $mysqlc, $prefs;
 	if ($mysqlc !== null) {
 		debuglog("AWOOOGA! ATTEMPTING MULTIPLE DATABASE CONNECTIONS!","SQLITE",1);
@@ -18,7 +18,7 @@ function connect_to_database() {
 		generic_sql_query('PRAGMA cache_size=-4000', true);
 		generic_sql_query('PRAGMA synchronous=OFF', true);
 		generic_sql_query('PRAGMA threads=4', true);
-		readCollectionPlayer();
+		readCollectionPlayer($sp);
 	} catch (Exception $e) {
 		debuglog("Couldn't Connect To SQLite - ".$e,"MYSQL",1);
 		sql_init_fail($e->getMessage());
@@ -333,6 +333,7 @@ function check_sql_tables() {
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('AlbumCount', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('TrackCount', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('TotalTime', '0')", true);
+		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('CollType', '999')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('SchemaVer', '".ROMPR_SCHEMA_VERSION."')", true);
 		$sv = ROMPR_SCHEMA_VERSION;
 		debuglog("Statstable populated", "SQLITE_CONNECT");

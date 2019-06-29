@@ -24,6 +24,7 @@ function playerController() {
         // - I fixed that bug once but it got broke again
 
         if (playlist.getCurrent('type') == "stream") {
+            debug.trace('STREAMHANDLER','Playlist:',playlist.getCurrent('Title'),playlist.getCurrent('Album'),playlist.getCurrent('trackartist'));
             var temp = playlist.getCurrentTrack();
             if (player.status.Title) {
                 var parts = player.status.Title.split(" - ");
@@ -31,12 +32,12 @@ function playerController() {
                     temp.trackartist = parts.shift();
                     temp.Title = parts.join(" - ");
                     temp.metadata.artists = [{name: temp.trackartist, musicbrainz_id: ""}];
-                    temp.metadata.track = {name: temp.title, musicbrainz_id: ""};
+                    temp.metadata.track = {name: temp.Title, musicbrainz_id: ""};
                 } else if (player.status.Title && player.status.Artist) {
                     temp.trackartist = player.status.Artist;
                     temp.Title = player.status.Title;
                     temp.metadata.artists = [{name: temp.trackartist, musicbrainz_id: ""}];
-                    temp.metadata.track = {name: temp.title, musicbrainz_id: ""};
+                    temp.metadata.track = {name: temp.Title, musicbrainz_id: ""};
                 }
             }
             if (player.status.Name && !player.status.Name.match(/^\//) && temp.Album == rompr_unknown_stream) {
@@ -46,7 +47,7 @@ function playerController() {
                 temp.Album = player.status.Name;
                 temp.metadata.album = {name: temp.Album, musicbrainz_id: ""};
             }
-
+            debug.trace('STREAMHANDLER','Current:',temp.Title,temp.Album,temp.trackartist);
             if (playlist.getCurrent('Title') != temp.Title ||
                 playlist.getCurrent('Album') != temp.Album ||
                 playlist.getCurrent('trackartist') != temp.trackartist)
@@ -54,7 +55,7 @@ function playerController() {
                 debug.log("STREAMHANDLER","Detected change of track",temp);
                 var aa = new albumart_translator('');
                 temp.key = aa.getKey('stream', '', temp.Album);
-                playlist.setCurrent({Title: temp.Aitle, Album: temp.Album, trackartist: temp.trackartist });
+                playlist.setCurrent({Title: temp.Title, Album: temp.Album, trackartist: temp.trackartist });
                 nowplaying.newTrack(temp, true);
             }
         }

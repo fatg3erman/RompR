@@ -9,6 +9,7 @@ if (is_array($opts)) {
         $prefs[$key] = $value;
     }
 }
+$romonitor_hack = false;
 debuglog("Using Player ".$prefs['currenthost'].' of type '.$prefs['player_backend'],"ROMONITOR");
 require_once ("international.php");
 require_once ("collection/collection.php");
@@ -48,7 +49,7 @@ while (true) {
             break;
         }
         if (array_key_exists('songid', $mpd_status) && array_key_exists('elapsed', $mpd_status)) {
-            connect_to_database();
+            connect_to_database(false);
             $read_time = time();
             $collection = new playlistCollection();
             // map_tags will be uneccesary once romprmetadata starts using ROMMPR_FILE_MODEL, ony sanitise_data will be required then
@@ -88,7 +89,7 @@ while (true) {
             }
         }
         if (array_key_exists('changed', $idle_status) && $current_id != -1) {
-            connect_to_database();
+            connect_to_database(false);
             debuglog($prefs['currenthost'].' - '."Player State Has Changed","ROMONITOR",7);
             $elapsed = time() - $read_time + $mpd_status['elapsed'];
             $fraction_played = $elapsed/$current_song['duration'];

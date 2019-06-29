@@ -28,9 +28,9 @@ function probe_database() {
 		$mysqlc = null;
 	}
 	if ($mysqlc == null) {
-		debuglog("Attempting to use SQLite Database",4);
+		debuglog("Attempting to use SQLite Database",'SQL_CONNECT',4);
 		try {
-			$dsn = "sqlite:prefs/collection_mpd.sq3";
+			$dsn = "sqlite:prefs/collection_".$prefs['player_backend'].".sq3";
 			$mysqlc = new PDO($dsn);
 			debuglog("Connected to SQLite","MYSQL");
 			$prefs['collection_type'] = 'sqlite';
@@ -257,14 +257,14 @@ function saveCollectionPlayer($type) {
 	switch ($type) {
 		case 'mopidy':
 			debuglog('Setting collection type to mopidy','COLLECTION');
-			$this->sql_prepare_query(true, null, null, null,
+			sql_prepare_query(true, null, null, null,
 				"UPDATE Statstable SET Value = ? WHERE Item = 'CollType'", 1);
 			$prefs['collection_player'] = 'mopidy';
 			break;
 
 		case 'mpd':
 			debuglog('Setting collection type to mpd','COLLECTION');
-			$this->sql_prepare_query(true, null, null, null,
+			sql_prepare_query(true, null, null, null,
 				"UPDATE Statstable SET Value = ? WHERE Item = 'CollType'", 0);
 			$prefs['collection_player'] = 'mpd';
 			break;
@@ -272,27 +272,29 @@ function saveCollectionPlayer($type) {
 	savePrefs();
 }
 
-function readCollectionPlayer() {
+function readCollectionPlayer($sp = treu) {
 	global $prefs;
 	$c = simple_query('Value', 'Statstable', 'Item', 'CollType', 999);
     switch ($c) {
 		case 999:
-			debuglog('Collection type from database is not set','COLLECTION', 9);
-			debuglog('Prefs collection_player is currently '.$prefs['collection_player'],'COLLECTION');
+			debuglog('Collection type from database is not set','COLLECTION', 8);
+			debuglog('Prefs collection_player is currently '.$prefs['collection_player'],'COLLECTION',8);
 			$prefs['collection_player'] = null;
 			break;
 
         case 1:
-			debuglog('Collection type from database is mopidy','COLLECTION', 9);
+			debuglog('Collection type from database is mopidy','COLLECTION', 8);
             $prefs['collection_player'] = 'mopidy';
             break;
 
         case 0:
-			debuglog('Collection type from database is mpd','COLLECTION', 9);
+			debuglog('Collection type from database is mpd','COLLECTION', 8);
             $prefs['collection_player'] = 'mpd';
             break;
     }
-	savePrefs();
+	if ($sp) {
+		savePrefs();
+	}
 	return $c;
 }
 
