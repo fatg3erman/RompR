@@ -747,7 +747,10 @@ $languages['en'] = array (
 	"label_delete_alarm" => "Delete This Alarm",
 	"config_hidesearcher" => "Hide Search Panel",
 	"label_refreshinprogress" => "Podcasts are already being refreshed. Try again later",
-	"button_addtoplaylist" => "Add To Saved Playlist..."
+	"button_addtoplaylist" => "Add To Saved Playlist...",
+	"config_snapcast" => "Snapcast",
+	"config_snapcast_server" => "Snapcast Server",
+	"config_snapcast_port" => "Port"
 );
 
 ?>

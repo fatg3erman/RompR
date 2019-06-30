@@ -190,6 +190,19 @@ jQuery.fn.fanoogleMenus = function() {
     return this;
 }
 
+jQuery.fn.fanoogleTopMenus = function() {
+    this.each(function() {
+        $(this).css({height: ''});
+        var top = $(this).offset().top;
+        var height = $(this).outerHeight(true);
+        var ws = getWindowSize();
+        debug.log('FANOOGLE',$(this).attr('id'), top, height, ws.y);
+        var nh = Math.min(height, ws.y - top);
+        $(this).css({height: nh+'px'});
+    });
+    return this;
+}
+
 /* Touchwipe for playlist only, based on the more general jquery touchwipe */
 /*! jquery.touchwipe - v1.3.0 - 2015-01-08
 * Copyright (c) 2015 Josh Stafford; Licensed MIT */
@@ -512,11 +525,7 @@ var layoutProcessor = function() {
             }
             layoutProcessor.setPlaylistHeight();
             browser.rePoint();
-            // Very very wierd thing happeneing, where this button, and only this button
-            // gets an inlive css style of display: inline set sometime after page load
-            // on a narrow screen. Non of the other onlywides do. Can't figure it out
-            // so just clear it here.
-            // $('.choose_filelist').css('display','');
+            $('.topdropmenu:visible').fanoogleTopMenus();
         },
 
         displayCollectionInsert: function(d) {
@@ -582,7 +591,9 @@ var layoutProcessor = function() {
             $(".dropdown").floatingMenu({ });
             $('.topbarmenu').on('click', function() {
                 $('.autohide:visible').not('#'+$(this).attr('name')).slideToggle('fast');
-                $('#'+$(this).attr('name')).slideToggle('fast');
+                $('#'+$(this).attr('name')).slideToggle('fast', function() {
+                    $(this).fanoogleTopMenus();
+                });
             });
             $('.autohide').on('click', function() {
                 $(this).slideToggle('fast');
@@ -605,12 +616,9 @@ var layoutProcessor = function() {
             $("#ratingimage").on('click', nowplaying.setRating);
             $("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
             $('.clear_playlist').on('click', playlist.clear);
-            $("#volume").rangechooser({
-                range: 100,
-                ends: ['max'],
-                onstop: infobar.volumeend,
-                whiledragging: infobar.volumemoved,
-                orientation: "horizontal"
+            $('#volume').volumeControl({
+                orientation: 'horizontal',
+                command: player.controller.volume
             });
             doSwipeCss();
             $(document).on('click', '.clickaddtoplaylist', addToPlaylist.close);

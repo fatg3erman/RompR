@@ -95,6 +95,12 @@ input[type=text] {
     border-radius: 0 0;
 }
 
+input.snapclientname[type=text] {
+    /* padding: 0px 2px; */
+    height: 1.5em !important;
+	background-color: transparent !important;
+}
+
 .desktop select {
     width:100%;
     background-color:transparent;
@@ -2217,4 +2223,28 @@ div.unplayable {
 
 .newalarmholder {
 	height: 3em;
+}
+
+.snapcastgroup {
+	margin-bottom: 0.5em;
+}
+
+.snapgrouptitle {
+	margin-bottom: 0.25em;
+	background-color: rgba(0,0,0,0.1);
+	padding: 2px;
+}
+
+.snapcastclient {
+	width: 97%;
+	margin-left: auto;
+}
+
+.snapclientname {
+	font-weight: bold;
+	font-size: 120%;
+}
+
+.snapclienthost {
+	font-size: 85%
 }

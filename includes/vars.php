@@ -201,6 +201,8 @@ $prefs = array(
     "linkchecker_polltime" => 5000,
     "audiobook_directory" => '',
     "collection_player" => null,
+    "snapcast_server" => '',
+    "snapcast_port" => '1705',
 
     // Things that could be set on a per-user basis but need to be known by the backend
     "displaycomposer" => true,

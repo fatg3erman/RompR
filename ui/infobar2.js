@@ -1,8 +1,5 @@
 var infobar = function() {
 
-    var mousepos;
-    var sliderclamps = 0;
-    var vtimer = null;
     var playlistinfo = {};
     var lfminfo = {};
     var npinfo = {};
@@ -407,7 +404,7 @@ var infobar = function() {
         }(),
 
         updateWindowValues: function() {
-            $("#volume").rangechooser("setProgress", player.status.volume);
+            $("#volume").volumeControl("displayVolume", player.status.volume);
             infobar.playbutton.setState(player.status.state);
             playlist.setButtons();
             if (player.status.single == 0 && singling) {
@@ -516,33 +513,6 @@ var infobar = function() {
             }
         },
 
-        volumemoved: function(v) {
-            if (sliderclamps == 0) {
-                // Double interlock to prevent hammering mpd:
-                // We don't send another volume request until two things happen:
-                // 1. The previous volume command returns
-                // 2. The timer expires
-                sliderclamps = 2;
-                if (v.max != player.status.volume) {
-                    debug.log("INFOBAR","Setting volume",v.max);
-                    player.controller.volume(v.max, infobar.releaseTheClamps);
-                    clearTimeout(vtimer);
-                    vtimer = setTimeout(infobar.releaseTheClamps, 500);
-                }
-            }
-        },
-
-        volumeend: function(v) {
-            clearTimeout(vtimer);
-            sliderclamps = 0;
-            debug.log("INFOBAR","Setting volume",v.max);
-            player.controller.volume(v.max, infobar.releaseTheClamps);
-        },
-
-        releaseTheClamps: function() {
-            sliderclamps--;
-        },
-
         volumeKey: function(inc) {
             var volume = parseInt(player.status.volume);
             debug.trace("INFOBAR","Volume key with volume on",volume);
@@ -550,7 +520,7 @@ var infobar = function() {
             if (volume > 100) { volume = 100 };
             if (volume < 0) { volume = 0 };
             if (player.controller.volume(volume)) {
-                $("#volume").rangechooser("setRange", {min: 0, max: volume});
+                $("#volume").volumeControl("displayVolume", volume);
                 prefs.save({volume: parseInt(volume.toString())});
             }
         },

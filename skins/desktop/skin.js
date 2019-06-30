@@ -488,12 +488,9 @@ var layoutProcessor = function() {
             $(document).on('mousemove', '.combobox-entry', makeHoverWork);
             $(document).on('mouseenter', '.tooltip', makeToolTip);
             $(document).on('mouseleave', '.tooltip', stopToolTip);
-            $("#volume").rangechooser({
-                range: 100,
-                ends: ['max'],
-                onstop: infobar.volumeend,
-                whiledragging: infobar.volumemoved,
-                orientation: "vertical"
+            $('#volume').volumeControl({
+                orientation: 'vertical',
+                command: player.controller.volume
             });
         },
 

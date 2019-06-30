@@ -7,7 +7,7 @@ class base_mpd_player {
     private $port;
     private $socket;
     private $password;
-    private $player_type;
+    protected $player_type;
     private $is_slave;
     public $playlist_error;
 

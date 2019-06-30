@@ -25,6 +25,12 @@ printOutputCheckboxes();
             <div class="pref styledinputs" name="playerdefs">
             </div>
 
+<?php
+            print '<div class="configtitle textcentre nohelp invisible" id="snapheader"><b>Snapcast</b></div>';
+?>
+            <div class="pref" id="snapcastgroups">
+            </div>
+
         </div>
         <div id="specialplugins" class="topdropmenu rightmenu autohide">
             <div class="sptext"></div>

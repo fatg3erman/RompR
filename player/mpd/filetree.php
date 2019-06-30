@@ -61,7 +61,6 @@ class fileCollector extends base_mpd_player {
     private function getFormatName($filedata) {
         if ($this->player_type == "mopidy" && !preg_match('/local:track:/', $filedata['file'])) {
             if (array_key_exists('Title', $filedata) && array_key_exists('Artist', $filedata)) {
-
                 return concatenate_artist_names(array_unique(explode(';',$filedata['Artist']))).' - '.$filedata['Title'];
             }
             if (array_key_exists('Title', $filedata)) {

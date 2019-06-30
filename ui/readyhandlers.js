@@ -94,6 +94,7 @@ $(document).ready(function(){
         syncLastFMPlaycounts.start();
     }
     spotifyLinkChecker.initialise();
+    snapcast.updateStatus();
 });
 
 function cleanBackendCache() {

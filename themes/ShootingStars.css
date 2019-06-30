@@ -81,6 +81,10 @@ select
     color:#000000;
 }
 
+input.snapclientname[type=text] {
+    color: #dddddd;
+}
+
 #notifications
 {
     background-color:rgba(0,0,0,0.9);

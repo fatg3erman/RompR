@@ -1610,3 +1610,54 @@ function stopToolTip() {
     clearTimeout(tooltipTimer);
     $('#tiptip_holder').fadeOut('fast');
 }
+
+$.widget('rompr.volumeControl', {
+
+    vtimer: null,
+    sliderclamps: 0,
+
+    options: {
+        orientation: 'vertical',
+        command: null
+    },
+
+    _create: function() {
+        this.element.rangechooser({
+            range: 100,
+            ends: ['max'],
+            onstop: $.proxy(this.onstop, this),
+            whiledragging: $.proxy(this.whiledragging, this),
+            orientation: this.options.orientation
+        });
+    },
+
+    onstop: function(v) {
+        clearTimeout(this.vtimer);
+        this.sliderclamps = 0;
+        debug.log("VOLUMECONTROL","Setting volume",v.max);
+        this.options.command(v.max);
+    },
+
+    releaseTheClamps: function() {
+        this.sliderclamps--;
+    },
+
+    whiledragging: function(v) {
+        if (this.sliderclamps == 0) {
+            // Double interlock to prevent hammering mpd:
+            // We don't send another volume request until two things happen:
+            // 1. The previous volume command returns
+            // 2. The timer expires
+            this.sliderclamps = 2;
+            debug.log("VOLUMECONTROL2","Setting volume",v.max);
+            this.options.command(v.max, $.proxy(this.releaseTheClamps, this));
+            clearTimeout(this.vtimer);
+            this.vtimer = setTimeout($.proxy(this.releaseTheClamps, this), 500);
+        }
+    },
+
+    displayVolume: function(v) {
+        this.element.rangechooser("setRange", {min: 0, max: v});
+    }
+
+});

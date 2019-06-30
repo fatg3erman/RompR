@@ -56,6 +56,10 @@ input
     color:#181818;
 }
 
+input.snapclientname[type=text] {
+    color: #ffffff;
+}
+
 select
 {
     color:#000000;

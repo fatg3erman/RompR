@@ -216,7 +216,8 @@ $scripts = array(
     "ui/coverscraper.js",
     "ui/favefinder.js",
     "ui/podcasts.js",
-    "browser/info.js"
+    "browser/info.js",
+    "snapcast/snapcast.js"
 );
 foreach ($scripts as $i) {
     debuglog("Loading ".$i,"INIT",7);

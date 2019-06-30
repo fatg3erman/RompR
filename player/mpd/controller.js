@@ -24,7 +24,7 @@ function playerController() {
         // - I fixed that bug once but it got broke again
 
         if (playlist.getCurrent('type') == "stream") {
-            debug.trace('STREAMHANDLER','Playlist:',playlist.getCurrent('Title'),playlist.getCurrent('Album'),playlist.getCurrent('trackartist'));
+            // debug.trace('STREAMHANDLER','Playlist:',playlist.getCurrent('Title'),playlist.getCurrent('Album'),playlist.getCurrent('trackartist'));
             var temp = playlist.getCurrentTrack();
             if (player.status.Title) {
                 var parts = player.status.Title.split(" - ");
@@ -47,7 +47,7 @@ function playerController() {
                 temp.Album = player.status.Name;
                 temp.metadata.album = {name: temp.Album, musicbrainz_id: ""};
             }
-            debug.trace('STREAMHANDLER','Current:',temp.Title,temp.Album,temp.trackartist);
+            // debug.trace('STREAMHANDLER','Current:',temp.Title,temp.Album,temp.trackartist);
             if (playlist.getCurrent('Title') != temp.Title ||
                 playlist.getCurrent('Album') != temp.Album ||
                 playlist.getCurrent('trackartist') != temp.trackartist)

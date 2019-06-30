@@ -41,6 +41,10 @@ input[type="submit"]
     color: #dddddd;
 }
 
+input.snapclientname[type=text] {
+    color: #ffffff;
+}
+
 a:link {
     color:orange;
 }

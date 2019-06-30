@@ -518,12 +518,9 @@ var layoutProcessor = function() {
             $(document).on('mouseenter', '.tooltip', makeToolTip);
             $(document).on('mouseleave', '.tooltip', stopToolTip);
             $('#plmode').detach().appendTo('#amontobin').addClass('tright');
-            $("#volume").rangechooser({
-                range: 100,
-                ends: ['max'],
-                onstop: infobar.volumeend,
-                whiledragging: infobar.volumemoved,
-                orientation: "vertical"
+            $('#volume').volumeControl({
+                orientation: 'vertical',
+                command: player.controller.volume
             });
         },
 

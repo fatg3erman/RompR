@@ -753,6 +753,12 @@ div.rightmenu {
     }
 }
 
+@media screen and (max-width: 420px) {
+    .fixed.snapclienthost {
+        display: none;
+    }
+}
+
 @media screen and (max-width: 640px) {
     .info-detail-layout {
         -webkit-box-orient:vertical;
