@@ -156,6 +156,16 @@ var snapcast = function() {
             }, snapcast.updateStatus);
         },
 
+        setClientLatency: function(id, latency) {
+            snapcastRequest({
+                method: "Client.SetLatency",
+                params: {
+                    id: id,
+                    latency: parseInt(latency)
+                }
+            }, snapcast.updateStatus);
+        },
+
         setStream: function(group, stream) {
             snapcastRequest({
                 method: "Group.SetStream",
@@ -306,7 +316,9 @@ function snapcastClient() {
     var muted;
     var vc;
     var namesavetimer = null;
+    var latencysavetimer = null;
     var groupmenu;
+    var grouplist;
     var groupid;
 
     this.initialise = function(parentdiv) {
@@ -324,6 +336,10 @@ function snapcastClient() {
             command: self.setVolume
         });
         groupmenu = $('<div>', {class: 'toggledown invisible'}).insertAfter(title);
+        var j = $('<div>', {class: "containerbox dropdown-container"}).appendTo(groupmenu);
+        j.append('<div class="fixed padright">Latency</div>');
+        var k = $('<input>', {type: 'text', class: 'expand tag', name: "latency"}).appendTo(j).on('keyup', self.changeLatency);
+        grouplist = $('<div>').appendTo(groupmenu);
     }
 
     this.removeSelf = function() {
@@ -355,6 +371,7 @@ function snapcastClient() {
             volume.volumeControl("displayVolume", data.config.volume.percent);
             var icon = data.config.volume.muted ? 'icon-output-mute' : 'icon-output';
             holder.find('i[name="clientmuted"]').removeClass('icon-output icon-output-mute').addClass(icon);
+            holder.find('input[name="latency"]').val(data.config.latency);
             vc.removeClass('invisible');
         } else if (!vc.hasClass('invisible')) {
             vc.addClass('invisible');
@@ -385,15 +402,24 @@ function snapcastClient() {
         snapcast.setClientName(id, holder.find('input[name="clientname"]').val());
     }
 
+    this.changeLatency = function() {
+        clearTimeout(latencysavetimer);
+        latencysavetimer = setTimeout(self.saveLatencyChange, 1000);
+    }
+
+    this.saveLatencyChange = function() {
+        snapcast.setClientLatency(id, holder.find('input[name="latency"]').val());
+    }
+
     this.setGroup = function() {
-        groupmenu.empty();
+        grouplist.empty();
         var g = snapcast.getAllGroups();
         if (g.length > 1) {
-            var a = $('<div>', {class: 'menuitem textcentre'}).appendTo(groupmenu);
+            var a = $('<div>', {class: 'menuitem textcentre'}).appendTo(grouplist);
             a.html('Change Group');
             for (var i in g) {
                 if (g[i].id != groupid) {
-                    var d = $('<div>', {class: 'backhi clickitem', name: g[i].id}).appendTo(groupmenu).on('click', self.changeGroup);
+                    var d = $('<div>', {class: 'backhi clickitem', name: g[i].id}).appendTo(grouplist).on('click', self.changeGroup);
                     var h = 'Group '+g[i].index;
                     if (g[i].name) {
                         h += ' ('+g[i].name+')';

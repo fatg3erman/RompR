@@ -17,8 +17,8 @@ If your Snapcast server has multiple streams, you can assign a stream to a group
 
 ![](images/snapcast2.png)
 
-## Assigning Clients to Groups
+## Assigning Clients to Groups and Setting Client Latency
 
-To move a client to a different group, use the hamburger menu next to the Client
+To move a client to a different group or set its latency, use the hamburger menu next to the Client
 
-![](images/snapcast3.png)
+![](images/snapcast4.png)
