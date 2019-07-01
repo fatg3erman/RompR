@@ -754,7 +754,7 @@ div.rightmenu {
 }
 
 @media screen and (max-width: 420px) {
-    .fixed.snapclienthost {
+    .notnarrow.snapclienthost {
         display: none;
     }
 }

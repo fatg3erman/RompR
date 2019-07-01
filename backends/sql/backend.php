@@ -1272,6 +1272,8 @@ function check_radio_station($playlisturl, $stationname, $image) {
 			debuglog("Created new radio station with index ".$index,"RADIO");
 		}
 	} else {
+		sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET StationName = ?, Image = ? WHERE Stationindex = ?",
+			trim($stationname), trim($image), $index);
 		debuglog("Found radio station with index ".$index,"RADIO");
 	}
 	return $index;
@@ -1280,10 +1282,17 @@ function check_radio_station($playlisturl, $stationname, $image) {
 function check_radio_tracks($stationid, $tracks) {
 	generic_sql_query("DELETE FROM RadioTracktable WHERE Stationindex = ".$stationid, true);
 	foreach ($tracks as $track) {
-		debuglog("  Adding New Track ".$track['TrackUri'],"RADIO");
-		sql_prepare_query(true, null, null, null, "INSERT INTO RadioTracktable (Stationindex, TrackUri, PrettyStream) VALUES (?, ?, ?)",
-							$stationid, trim($track['TrackUri']), trim($track['PrettyStream']));
+		$index = sql_prepare_query(false, null, 'Stationindex', false, "SELECT Stationindex FROM RadioTracktable WHERE TrackUri = ?", trim($track['TrackUri']));
+		if ($index !== false) {
+			debuglog("  Track already exists for stationindex ".$index);
+			$stationid = $index;
+		} else {
+			debuglog("  Adding New Track ".$track['TrackUri']." to station ".$stationid,"RADIO");
+			sql_prepare_query(true, null, null, null, "INSERT INTO RadioTracktable (Stationindex, TrackUri, PrettyStream) VALUES (?, ?, ?)",
+								$stationid, trim($track['TrackUri']), trim($track['PrettyStream']));
+		}
 	}
+	return $stationid;
 }
 
 function add_fave_station($info) {
@@ -1293,7 +1302,7 @@ function add_fave_station($info) {
 		return true;
 	}
 	$stationindex = check_radio_station($info['location'],$info['album'],$info['image']);
-	check_radio_tracks($stationindex, array(array('TrackUri' => $info['location'], 'PrettyStream' => $info['stream'])));
+	$stationindex = check_radio_tracks($stationindex, array(array('TrackUri' => $info['location'], 'PrettyStream' => $info['stream'])));
 	generic_sql_query("UPDATE RadioStationtable SET IsFave = 1 WHERE Stationindex = ".$stationindex, true);
 }
 
