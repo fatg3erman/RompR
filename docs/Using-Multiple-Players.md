@@ -4,6 +4,10 @@ RompЯ supports using multiple players, which can be on different computers. You
 
 All the players can be used simultaneously, but they will not play in sync. The idea is that a person in one room can use one player and a person in another room can use a different player. All the players share the same Music Collection so Playcounts, Podcasts, Tags, Ratings, etc are shared across all of them.
 
+## Multiroom Audio
+
+If you want to have multiroom audio with all rooms playing the same music, in sync, then RompЯ has full support for controlling [Snapcast](/RompR/Snapcast)
+
 ## Defining Players
 
 You can add new players from the configuration menu. This opens a dialog box.

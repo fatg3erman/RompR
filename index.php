@@ -89,26 +89,23 @@ if (array_key_exists('setup', $_REQUEST)) {
 }
 
 require_once ('player/mpd/mpdinterface.php');
-if ($prefs['player_backend'] == 'none') {
-    $player = new base_mpd_player();
-    if ($player->is_connected()) {
-        $mpd_status = $player->get_status();
-        if (array_key_exists('error', $mpd_status)) {
-            debuglog("MPD Password Failed or other status failure","INIT",1);
-            connect_fail(get_int_txt("setup_connecterror").$mpd_status['error']);
-        }
-    } else {
-        debuglog("MPD Connection Failure","INIT",1);
-        connect_fail(get_int_text("setup_connectfail"));
+$player = new base_mpd_player();
+if ($player->is_connected()) {
+    $mpd_status = $player->get_status();
+    if (array_key_exists('error', $mpd_status)) {
+        debuglog("MPD Password Failed or other status failure","INIT",1);
+        connect_fail(get_int_txt("setup_connecterror").$mpd_status['error']);
     }
-
-    // If we're connected by a local socket we can read the music directory
-    $arse = $player->get_config();
-    if (array_key_exists('music_directory', $arse)) {
-        set_music_directory($arse['music_directory']);
-    }
-    $player->close_mpd_connection();
+} else {
+    debuglog("MPD Connection Failure","INIT",1);
+    connect_fail(get_int_text("setup_connectfail"));
 }
+// If we're connected by a local socket we can read the music directory
+$arse = $player->get_config();
+if (array_key_exists('music_directory', $arse)) {
+    set_music_directory($arse['music_directory']);
+}
+$player->close_mpd_connection();
 //
 // See if we can use the SQL backend
 //

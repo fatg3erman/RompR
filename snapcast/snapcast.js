@@ -7,6 +7,7 @@ var snapcast = function() {
     var ew = null;
 
     function snapcastRequest(parms, callback) {
+        clearTimeout(updatetimer);
         parms.id = id;
         parms.jsonrpc = "2.0";
         id++;
@@ -33,7 +34,6 @@ var snapcast = function() {
 
     return {
         updateStatus: function() {
-            clearTimeout(updatetimer);
             if (prefs.snapcast_server != '' && prefs.snapcast_port != '') {
                 snapcastRequest({
                     method: "Server.GetStatus"
@@ -98,8 +98,19 @@ var snapcast = function() {
             return 'Unknown Stream';
         },
 
+        getAllStreams: function() {
+            return streams;
+        },
+
+        getAllGroups: function() {
+            var retval = new Array();
+            for (var i in groups) {
+                retval.push(groups[i].getInfo());
+            }
+            return retval;
+        },
+
         setClientVolume: function(id, volume, muted) {
-            clearTimeout(updatetimer);
             snapcastRequest({
                 method: "Client.SetVolume",
                 params: {
@@ -113,7 +124,6 @@ var snapcast = function() {
         },
 
         setGroupMute: function(id, muted) {
-            clearTimeout(updatetimer);
             snapcastRequest({
                 method: "Group.SetMute",
                 params: {
@@ -124,7 +134,6 @@ var snapcast = function() {
         },
 
         deleteClient: function(id) {
-            clearTimeout(updatetimer);
             snapcastRequest({
                 method: "Server.DeleteClient",
                 params: {
@@ -134,7 +143,6 @@ var snapcast = function() {
         },
 
         setClientName: function(id, name) {
-            clearTimeout(updatetimer);
             snapcastRequest({
                 method: "Client.SetName",
                 params: {
@@ -142,6 +150,29 @@ var snapcast = function() {
                     name: name
                 }
             }, snapcast.updateStatus);
+        },
+
+        setStream: function(group, stream) {
+            snapcastRequest({
+                method: "Group.SetStream",
+                params: {
+                    id: group,
+                    stream_id: stream
+                }
+            }, snapcast.updateStatus);
+        },
+
+        addClientToGroup: function(client, group) {
+            var groupindex = findGroup(groups, group);
+            var clients = groups[groupindex].getClients();
+            clients.push(client);
+            snapcastRequest({
+                method: "Group.SetClients",
+                params: {
+                    clients: clients,
+                    id: group
+                }
+            }, snapcast.gotStatus);
         }
     }
 
@@ -154,6 +185,9 @@ function snapcastGroup() {
     var holder;
     var id = '';
     var muted;
+    var streammenu;
+    var ind;
+    var name;
 
     function findClient(arr, id) {
         for (var i in arr) {
@@ -169,7 +203,9 @@ function snapcastGroup() {
         var title = $('<div>', {class: 'containerbox snapgrouptitle dropdown-container'}).appendTo(holder);
         title.append('<div class="fixed tag" name="groupname"></div>');
         title.append('<div class="expand tag textcentre" name="groupstream"></div>');
-        var m = $('<i>', {class: "playlisticonr fixed", name: "groupmuted"}).appendTo(title).on('click', self.setMute);
+        var m = $('<i>', {class: "playlisticonr fixed icon-menu"}).appendTo(title).on('click', self.setStream);
+        m = $('<i>', {class: "playlisticonr fixed", name: "groupmuted"}).appendTo(title).on('click', self.setMute);
+        streammenu = $('<div>', {class: 'toggledown invisible'}).insertAfter(title);
     }
 
     this.removeSelf = function() {
@@ -181,8 +217,10 @@ function snapcastGroup() {
     }
 
     this.update = function(index, data) {
+        ind = index;
         id = data.id;
         muted = data.muted;
+        name = data.name;
         var g = 'Group '+index;
         if (data.name) {
             g += ' ('+data.name+')';
@@ -200,11 +238,11 @@ function snapcastGroup() {
                 var g = new snapcastClient();
                 newclients.push(g);
                 g.initialise(holder);
-                g.update(i, data.clients[i]);
+                g.update(id, data.clients[i]);
             } else {
                 debug.log('SNAPCAST','Updating client',data.clients[i].id);
                 newclients.push(clients[client_exists]);
-                clients[client_exists].update(i, data.clients[i]);
+                clients[client_exists].update(id, data.clients[i]);
             }
         }
         // Find removed groups
@@ -221,6 +259,37 @@ function snapcastGroup() {
     this.setMute = function() {
         snapcast.setGroupMute(id, !muted);
     }
+
+    this.setStream = function() {
+        streammenu.empty();
+        var s = snapcast.getAllStreams();
+        var a = $('<div>', {class: 'menuitem textcentre'}).appendTo(streammenu);
+        a.html('Change Stream');
+        for (var i in s) {
+            var d = $('<div>', {class: 'backhi clickitem', name: s[i].id}).appendTo(streammenu).on('click', self.changeStream);
+            d.html(snapcast.streamInfo(s[i].id));
+        }
+        streammenu.slideToggle('fast');
+    }
+
+    this.changeStream = function(e) {
+        var streamid = $(this).attr('name');
+        debug.log('SNAPCAST', 'Group',id,'changing stream to',streamid);
+        snapcast.setStream(id, streamid);
+        streammenu.slideToggle('fast');
+    }
+
+    this.getInfo = function() {
+        return {index: ind, id: id, name: name};
+    }
+
+    this.getClients = function() {
+        var retval = new Array();
+        for (var i in clients) {
+            retval.push(clients[i].getId());
+        }
+        return retval;
+    }
 }
 
 function snapcastClient() {
@@ -233,12 +302,15 @@ function snapcastClient() {
     var muted;
     var vc;
     var namesavetimer = null;
+    var groupmenu;
+    var groupid;
 
     this.initialise = function(parentdiv) {
         holder = $('<div>', {class: 'snapcastclient'}).appendTo(parentdiv);
         var title = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(holder);
         var n = $('<input>', {type: "text", class: "expand tag snapclientname", name: "clientname"}).appendTo(title).on('keyup', self.changeName);
         title.append('<div class="fixed snapclienthost" name="clienthost"></div>');
+        var m = $('<i>', {class: "playlisticonr fixed icon-menu"}).appendTo(title).on('click', self.setGroup);
         var rb = $('<i>', {class: "fixed playlisticonr icon-cancel-circled"}).appendTo(title).on('click', self.deleteClient);
         vc = $('<div>', {class: 'containerbox dropdown-container invisible'}).appendTo(holder);
         volume = $('<div>', {class: 'expand snapclienthost'}).appendTo(vc);
@@ -247,6 +319,7 @@ function snapcastClient() {
             orientation: 'horizontal',
             command: self.setVolume
         });
+        groupmenu = $('<div>', {class: 'toggledown invisible'}).insertAfter(title);
     }
 
     this.removeSelf = function() {
@@ -258,6 +331,7 @@ function snapcastClient() {
     }
 
     this.update = function(index, data) {
+        groupid = index;
         id = data.id;
         muted = data.config.volume.muted;
         volumepc = data.config.volume.percent;
@@ -269,9 +343,6 @@ function snapcastClient() {
         }
         if (!data.connected) {
             g += ' (Not Connected)';
-            holder.find('div[name="clientname"]').removeClass('snapclientname');
-        } else {
-            holder.find('div[name="clientname"]').removeClass('snapclientname').addClass('snapclientname');
         }
         var h = '('+data.host.name+' - '+data.host.os+')';
         holder.find('input[name="clientname"]').val(g);
@@ -308,6 +379,33 @@ function snapcastClient() {
 
     this.saveNameChange = function() {
         snapcast.setClientName(id, holder.find('input[name="clientname"]').val());
+    }
+
+    this.setGroup = function() {
+        groupmenu.empty();
+        var g = snapcast.getAllGroups();
+        if (g.length > 1) {
+            var a = $('<div>', {class: 'menuitem textcentre'}).appendTo(groupmenu);
+            a.html('Change Group');
+            for (var i in g) {
+                if (g[i].id != groupid) {
+                    var d = $('<div>', {class: 'backhi clickitem', name: g[i].id}).appendTo(groupmenu).on('click', self.changeGroup);
+                    var h = 'Group '+g[i].index;
+                    if (g[i].name) {
+                        h += ' ('+g[i].name+')';
+                    }
+                    d.html(h);
+                }
+            }
+            groupmenu.slideToggle('fast');
+        }
+    }
+
+    this.changeGroup = function(e) {
+        var groupid = $(this).attr('name');
+        debug.log('SNAPCAST', 'Client',id,'changing group to',groupid);
+        snapcast.addClientToGroup(id, groupid);
+        groupmenu.slideToggle('fast');
     }
 
 }

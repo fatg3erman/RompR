@@ -65,7 +65,7 @@ class snapcast {
 
 $server = new snapcast($prefs['snapcast_server'], $prefs['snapcast_port']);
 $json = file_get_contents("php://input");
-debuglog("JSON IS ".$json,"SNAPCAST");
+debuglog("JSON is ".$json,"SNAPCAST");
 $output = $server->do_command($json);
 header('Content-Type: application/json; charset=utf-8');
 print $output;
