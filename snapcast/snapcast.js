@@ -4,13 +4,14 @@ var snapcast = function() {
     var streams = new Array();
     var updatetimer = null;
     var id = 0;
+    var lastid = 0;
     var ew = null;
 
     function snapcastRequest(parms, callback) {
         clearTimeout(updatetimer);
+        id++;
         parms.id = id;
         parms.jsonrpc = "2.0";
-        id++;
         $.ajax({
             type: 'POST',
             url: 'snapcast/snapapi.php',
@@ -44,19 +45,20 @@ var snapcast = function() {
 
         gotStatus: function(data) {
             clearTimeout(updatetimer);
-            if (data.hasOwnProperty('error')) {
+            debug.log("SNAPCAST", "Server Status", data);
+            if (data.hasOwnProperty('error') && lastid != id) {
                 if (ew === null) {
                     ew = $('<div>', {class: "fullwidth textcentre", style: "padding:4px"}).insertBefore('#snapcastgroups');
                     $('#snapcastgroups').addClass('canbefaded').css({opacity: '0.4'});
                 }
                 ew.html('<b>'+data.error+'</b>');
-            } else {
+            } else if (data.hasOwnProperty('id') && parseInt(data.id) == id) {
+                lastid = id;
                 if (ew !== null) {
                     ew.remove();
                     ew = null;
                     $('#snapcastgroups').removeClass('canbefaded').css({opacity: ''});
                 }
-                debug.log("SNAPCAST", "Server Status", data);
                 streams = data.result.server.streams;
                 var newgroups = new Array();
                 for (var i in data.result.server.groups) {
@@ -82,6 +84,8 @@ var snapcast = function() {
                     }
                 }
                 groups = newgroups;
+            } else {
+                debug.shout('SNAPCAST','Got response with id',data.id,'expecting',id);
             }
             updatetimer = setTimeout(snapcast.updateStatus, 60000);
         },
@@ -309,7 +313,7 @@ function snapcastClient() {
         holder = $('<div>', {class: 'snapcastclient'}).appendTo(parentdiv);
         var title = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(holder);
         var n = $('<input>', {type: "text", class: "expand tag snapclientname", name: "clientname"}).appendTo(title).on('keyup', self.changeName);
-        title.append('<div class="fixed snapclienthost" name="clienthost"></div>');
+        title.append('<div class="expand snapclienthost" name="clienthost"></div>');
         var m = $('<i>', {class: "playlisticonr fixed icon-menu"}).appendTo(title).on('click', self.setGroup);
         var rb = $('<i>', {class: "fixed playlisticonr icon-cancel-circled"}).appendTo(title).on('click', self.deleteClient);
         vc = $('<div>', {class: 'containerbox dropdown-container invisible'}).appendTo(holder);

@@ -189,6 +189,14 @@ var prefs = function() {
                         callback = reloadWindow;
                     }
                     break;
+
+                case 'snapcast_server':
+                case 'snapcast_port':
+                    if (felakuti.snapcast_server != prefs.snapcast_server ||
+                        felakuti.snapcast_port != prefs.snapcast_port) {
+                        callback = snapcast.updateStatus;
+                    }
+                    break;
             }
         });
         prefs.save(felakuti, callback);
