@@ -673,6 +673,10 @@ var prefs = function() {
 
             switch(prefname) {
                 case "skin":
+                    // Because some skins require the info panel
+                    prefobj.hidebrowser = false;
+                    prefobj.sourceswidthpercent = 25;
+                    prefobj.playlistwidthpercent = 25;
                     callback = reloadWindow;
                     break;
 
