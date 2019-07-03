@@ -63,7 +63,7 @@ class tuneinplugin {
 
         foreach ($node->outline as $o) {
             $att = $o->attributes();
-            logger::log("TUNEIN", "  Text is ".$att['text'].", type is ".$att['type']);
+            logger::trace("TUNEIN", "  Text is",$att['text'],", type is",$att['type']);
             switch ($att['type']) {
 
                 case '':

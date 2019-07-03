@@ -107,7 +107,7 @@ class url_downloader {
     }
 
     public function get_data_to_string() {
-        logger::mark("URL_DOWNLOADER", "Downloading ".$this->options['url']);
+        logger::trace("URL_DOWNLOADER", "Downloading ".$this->options['url']);
         if ($this->options['send_cache_headers']) {
             header("Pragma: Not Cached");
         }
@@ -142,7 +142,7 @@ class url_downloader {
             $this->content = file_get_contents($file);
             return true;
         } else {
-            logger::mark("URL_DOWNLOADER", "Downloading",$this->options['url'],"to",$file);
+            logger::trace("URL_DOWNLOADER", "Downloading",$this->options['url'],"to",$file);
             if (file_exists($file)) {
                 unlink ($file);
             }
