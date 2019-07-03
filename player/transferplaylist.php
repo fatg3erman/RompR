@@ -17,7 +17,7 @@ class transferCollection {
     }
 
     public function doNewPlaylistFile(&$filedata) {
-        debuglog("    Track ".$filedata['Pos']." ".$filedata['type']." ".$filedata['file'], "TRANSFER");
+        logger::log("TRANSFER", "    Track ".$filedata['Pos']." ".$filedata['type']." ".$filedata['file']);
         array_push($this->tracks, array('type' => $filedata['type'], 'uri' => $filedata['file']));
         return true;
     }
@@ -35,7 +35,7 @@ class transferCollection {
 }
 
 $json = json_decode(file_get_contents("php://input"), true);
-debuglog("Transferring Playlist From ".$prefs['currenthost']." to ".$json['currenthost'], "TRANSFER", 5);
+logger::shout("TRANSFER", "Transferring Playlist From",$prefs['currenthost'],"to",$json['currenthost']);
 // Read the playlist from the current player
 $player = new $PLAYER_TYPE();
 $mpd_status = $player->get_status();
@@ -70,7 +70,7 @@ $target_player->do_command_list($cmds);
 
 // Work around Mopidy bug where it doesn't update the 'state' variable properly
 // after a seek and so doing all this in one command list doesn't work
-debuglog("  State is ".$mpd_status['state'],"TRANSFER");
+logger::log("TRANSFER", "  State is ".$mpd_status['state']);
 if (array_key_exists('state', $mpd_status) && $mpd_status['state'] == 'play') {
     $target_player->do_command_list(array(join_command_string(array('play', $mpd_status['song']))));
     $target_player->wait_for_state('play');

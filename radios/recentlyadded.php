@@ -7,7 +7,7 @@ include ("backends/sql/backend.php");
 include ("backends/sql/metadatafunctions.php");
 
 $mode = $_REQUEST['mode'];
-debuglog("Populating Recently Added Sorted By ".$mode, "RECENTLY ADDED",6);
+logger::log("RECENTLY ADDED", "Populating Recently Added Sorted By ".$mode);
 
 preparePlaylist();
 preparePlTrackTable();

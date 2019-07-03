@@ -208,7 +208,7 @@ function doPodcastList($subscribed) {
 }
 
 function handle_error($errno, $errstr, $errfile, $errline) {
-    debuglog("Error ".$errno." ".$errstr." in ".$errfile." at line ".$errline,"PODCASTS");
+    logger::error("PODCASTS", "Error",$errno,$errstr,"in",$errfile,"at line",$errline);
     header('HTTP/1.1 400 Bad Request');
     exit(0);
 }

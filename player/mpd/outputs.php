@@ -7,11 +7,11 @@ if ($player->is_connected()) {
     foreach ($outputs as $i => $n) {
         if (is_array($n)) {
             foreach ($n as $a => $b) {
-                debuglog($i." - ".$b.":".$a,"AUDIO OUTPUT");
+                logger::trace("AUDIO OUTPUT", $i,"-",$b.":".$a);
                 $outputdata[$a][$i] = $b;
             }
         } else {
-            debuglog($i." - ".$n,"AUDIO OUTPUT");
+            logger::trace("AUDIO OUTPUT", $i,"-",$n);
             $outputdata[0][$i] = $n;
         }
     }

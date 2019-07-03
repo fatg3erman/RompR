@@ -32,7 +32,7 @@ function get_bio_link($url) {
             $links = $e->GetElementsByTagName('a');
             for ($i = 0; $i < $links->length; $i++) {
                 $link = $links->item($i)->getAttribute('href');
-                debuglog("Found Bio Link ".$link,"AMBIO");
+                logger::log("AMBIO", "Found Bio Link",$link);
             }
             return 'http://www.allmusic.com'.$link;
         } else {
@@ -44,7 +44,7 @@ function get_bio_link($url) {
 }
 
 function get_allmusic_page($url) {
-    debuglog("Getting allmusic Page ".$url,"AMBIO");
+    logger::log("AMBIO", "Getting allmusic Page",$url);
     $r = '<p></p>';
     $d = new url_downloader(array(
         'url' => $url,
@@ -58,7 +58,7 @@ function get_allmusic_page($url) {
         foreach ($els as $el) {
             $a = $el->getAttribute('itemprop');
             if ($a == 'reviewBody') {
-                debuglog("Found Review Body","AMBIO");
+                logger::trace("AMBIO", "Found Review Body");
                 $r = $el->nodeValue;
             }
         }

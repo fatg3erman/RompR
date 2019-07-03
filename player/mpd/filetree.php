@@ -3,7 +3,7 @@
 class fileCollector extends base_mpd_player {
 
     public function doFileBrowse($path, $prefix) {
-    	debuglog("Browsing ".$path,"DIRBROWSER");
+    	logger::mark("DIRBROWSER", "Browsing",$path);
     	$parts = true;
         $foundfile = false;
         $filedata = array();

@@ -5,12 +5,12 @@ $skin = 'desktop';
 $opts = getopt('', ['currenthost:', 'player_backend:']);
 if (is_array($opts)) {
     foreach($opts as $key => $value) {
-	    debuglog($key.' = '.$value,'ROMONITOR');
+	    logger::log("ROMONITOR", $key,'=',$value);
         $prefs[$key] = $value;
     }
 }
 $romonitor_hack = false;
-debuglog("Using Player ".$prefs['currenthost'].' of type '.$prefs['player_backend'],"ROMONITOR");
+logger::log("ROMONITOR", "Using Player ".$prefs['currenthost'].' of type '.$prefs['player_backend']);
 require_once ("international.php");
 require_once ("collection/collection.php");
 require_once ("collection/playlistcollection.php");
@@ -56,13 +56,13 @@ while (true) {
             $current_song = map_tags($player->get_currentsong_as_playlist($collection));
             if (array_key_exists('duration', $current_song) && $current_song['duration'] > 0 && $current_song['type'] !== 'stream') {
                 if ($mpd_status['songid'] != $current_id) {
-                    debuglog($prefs['currenthost'].' - '."Track has changed","ROMONITOR");
+                    logger::log("ROMONITOR", $prefs['currenthost'],'-',"Track has changed");
                     $current_id = $mpd_status['songid'];
                     romprmetadata::get($current_song);
                     $current_playcount = array_key_exists('Playcount', $returninfo) ? $returninfo['Playcount'] : 0;
-                    debuglog($prefs['currenthost'].' - '."Current ID is ".$current_id,"ROMONITOR",8);
-                    debuglog($prefs['currenthost'].' - '."Duration Is ".$current_song['duration'],"ROMONITOR",8);
-                    debuglog($prefs['currenthost'].' - '."Current Playcount is ".$current_playcount,"ROMONITOR",8);
+                    logger::trace("ROMONITOR", $prefs['currenthost'],"- Current ID is",$current_id);
+                    logger::trace("ROMONITOR", $prefs['currenthost'],"- Duration is",$current_song['duration']);
+                    logger::trace("ROMONITOR", $prefs['currenthost'],"- Current Playcount is",$current_playcount);
                 }
             } else {
                 $current_id = -1;
@@ -79,7 +79,7 @@ while (true) {
                 $idle_status = $player->get_idle_status();
             }
             if (array_key_exists('error', $idle_status) && $idle_status['error'] == 'Timed Out') {
-                debuglog($prefs['currenthost'].' - '."idle command timed out, looping back","ROMONITOR",9);
+                logger::debug("ROMONITOR", $prefs['currenthost'],"- idle command timed out, looping back");
                 $timedout = true;
                 continue;
             } else if (array_key_exists('error', $idle_status)) {
@@ -90,21 +90,21 @@ while (true) {
         }
         if (array_key_exists('changed', $idle_status) && $current_id != -1) {
             connect_to_database(false);
-            debuglog($prefs['currenthost'].' - '."Player State Has Changed","ROMONITOR",7);
+            logger::log("ROMONITOR", $prefs['currenthost'],"- Player State Has Changed");
             $elapsed = time() - $read_time + $mpd_status['elapsed'];
             $fraction_played = $elapsed/$current_song['duration'];
             if ($fraction_played > 0.9) {
-                debuglog($prefs['currenthost'].' - '."Played more than 90% of song. Incrementing playcount","ROMONITOR",7);
+                logger::log("ROMONITOR", $prefs['currenthost'],"- Played more than 90% of song. Incrementing playcount");
                 romprmetadata::get($current_song);
                 $now_playcount = array_key_exists('Playcount', $returninfo) ? $returninfo['Playcount'] : 0;
                 if ($now_playcount > $current_playcount) {
-                    debuglog($prefs['currenthost'].' - '."Current playcount is bigger than ours, doing nothing","ROMONITOR",7);
+                    logger::log("ROMONITOR", $prefs['currenthost'],"- Current playcount is bigger than ours, doing nothing");
                 } else {
                     $current_song['attributes'] = array(array('attribute' => 'Playcount', 'value' => $current_playcount+1));
                     romprmetadata::inc($current_song);
                 }
                 if ($current_song['type'] == 'podcast') {
-                    debuglog($prefs['currenthost'].' - '."Marking podcast episode as listened","ROMONITOR",8);
+                    logger::log("ROMONITOR", $prefs['currenthost'],"- Marking podcast episode as listened");
                     markAsListened($current_song['uri']);
                 }
             }
@@ -115,22 +115,22 @@ while (true) {
             $radiomode = $prefs['multihosts']->{$prefs['currenthost']}->radioparams->radiomode;
             $radioparam = $prefs['multihosts']->{$prefs['currenthost']}->radioparams->radioparam;
             $playlistlength = $mpd_status['playlistlength'];
-            debuglog("PLaylist length is ".$playlistlength,"ROMONITOR",9);
+            logger::log("ROMONITOR", "PLaylist length is ".$playlistlength);
             switch ($radiomode) {
                 case 'starRadios':
                 case 'mostPlayed':
                 case 'faveAlbums':
                 case 'recentlyaddedtracks':
-                    debuglog("Checking Smart Radio Mode","ROMONITOR");
+                    logger::log("ROMONITOR", "Checking Smart Radio Mode");
                     if ($playlistlength < 3) {
                         // Note : We never actually take over, just keep an eye and top it up if
                         // it starts to run out. This way any browser can easily take back control
                         // Also, taking over would require us to have write access to prefs.var which is
                         // problematic on some systems, especially if something like SELinux is enabled
-                        debuglog("Smart Radio Master has gone away. Taking Over","ROMONITOR",5);
+                        logger::log("ROMONITOR", "Smart Radio Master has gone away. Taking Over");
                         $radiomaster = $browser_id;
                         $tracksneeded = $prefs['smartradio_chunksize'] - $playlistlength  + 1;
-                        debuglog("Adding ".$tracksneeded." from ".$radiomode,"ROMONITOR",6);
+                        logger::log("ROMONITOR", "Adding ".$tracksneeded." from ".$radiomode);
                         $tracks = doPlaylist($radioparam, $tracksneeded);
                         $cmds = array();
                         foreach ($tracks as $track) {
@@ -144,7 +144,7 @@ while (true) {
         }
     }
     close_mpd();
-    debuglog($prefs['currenthost'].' - '."Player connection dropped - retrying in 10 seconds","ROMONITOR");
+    logger::log("ROMONITOR", $prefs['currenthost'],"- Player connection dropped - retrying in 10 seconds");
     sleep(10);
 }
 

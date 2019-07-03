@@ -16,7 +16,7 @@ foreach ($r as $obj) {
 		if ($size['width'] > -1) {
 			if ($size['height'] < 300) {
 				// Should catch all the old small images we downloaded from Last.FM
-				debuglog("Image ".$obj->Image." is too small : ".$size['width'].'x'.$size['height'], "ALBUMART");
+				logger::log("ALBUMART", "Image ".$obj->Image." is too small : ".$size['width'].'x'.$size['height']);
 				array_push($results, $obj->ImgKey);
 			}
 		}

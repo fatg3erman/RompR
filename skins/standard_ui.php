@@ -101,7 +101,7 @@ function albumHeader($obj) {
         if (preg_match('/spotify%3Aartist%3A/', $albumuri)) {
             $h .= '<div class="clickartist playable draggable containerbox menuitem" name="'.preg_replace('/'.get_int_text('label_allartist').'/', '', $obj['Albumname']).'">';
         } else if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
-            debuglog("Cue Sheet found for album ".$obj['Albumname'],"FUNCTIONS");
+            logger::log("FUNCTIONS", "Cue Sheet found for album ".$obj['Albumname']);
             $h .= '<div class="clickcue playable draggable containerbox menuitem" name="'.$albumuri.'">';
         } else {
             $h .= '<div class="clicktrack playable draggable containerbox menuitem" name="'.$albumuri.'">';

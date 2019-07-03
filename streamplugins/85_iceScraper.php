@@ -17,17 +17,17 @@ if (array_key_exists('populate', $_REQUEST)) {
 			$getstr = $getstr . "&page=" . $_REQUEST['page'];
 		}
 	} else if (array_key_exists('searchfor', $_REQUEST) && $_REQUEST['searchfor'] != '') {
-		debuglog("Searching For ".$_REQUEST['searchfor'],"ICESCRAPER");
+		logger::log("ICESCRAPER", "Searching For ".$_REQUEST['searchfor']);
 		$getstr = $getstr . "search?search=" . $_REQUEST['searchfor'];
 	}
-	debuglog("Getting ".$getstr,"ICESCRAPER");
+	logger::log("ICESCRAPER", "Getting ".$getstr);
 	$d = new url_downloader(array('url' => $getstr));
 	$d->get_data_to_string();
 	$icecast_shitty_page = preg_replace('/<\?xml.*?\?>/', '', $d->get_data());
 	$doc = phpQuery::newDocument($icecast_shitty_page);
 	$list = $doc->find('table.servers-list')->find('tr');
 	$page_title = $doc->find('#content')->children('h2')->text();
-	debuglog("Page Title Is ".$page_title,"ICESCRAPER");
+	logger::log("ICESCRAPER", "Page Title Is ".$page_title);
 	$count = 0;
 	directoryControlHeader('icecastlist', get_int_text('label_icecast'));
 	print '<div class="containerbox brick_wide"><div class="expand"><input class="enter clearbox" name="searchfor" type="text"';
@@ -43,7 +43,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 		$server_name = pq($server)->find('.stream-name')->children('.name')->children('a');
 		$server_web_link = $server_name->attr('href');
 		$server_name = $server_name->text();
-		debuglog("Server Name Is ".$server_name,"ICESCRAPER");
+		logger::log("ICESCRAPER", "Server Name Is ".$server_name);
 		$server_description = munge_ice_text(pq($server)->find('.stream-description')->text());
 		$stream_tags = array();
 		$stream_tags_section = pq($server)->find('.stream-tags')->find('li');

@@ -7,11 +7,11 @@ include ("includes/spotifyauth.php");
 
 $uri = $_POST['url'];
 $cache = array_key_exists('cache', $_POST) ? true : false;
-debuglog("Downloading ".$uri,"SPOTIFY");
-debuglog("  Cache is ".$cache,"SPOTIFY");
+logger::mark("SPOTIFY", "Downloading",$uri);
+logger::trace("SPOTIFY", "  Cache is",$cache);
 $filename = 'prefs/jsoncache/spotify/'.md5($uri);
 if ($cache && file_exists($filename)) {
-    debuglog("Returning cached data","SPOTIFY");
+    logger::log("SPOTIFY", "Returning cached data");
     header("Pragma: From Cache");
     print file_get_contents($filename);
 } else {

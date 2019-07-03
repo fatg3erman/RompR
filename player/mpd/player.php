@@ -25,7 +25,7 @@ class mpdPlayer extends base_mpd_player {
 
     public function musicCollectionUpdate() {
         global $prefs;
-        debuglog("Starting Music Collection Update", "MPD",4);
+        logger::mark("MPD", "Starting Music Collection Update");
         $collection = new musicCollection();
     	$monitor = fopen('prefs/monitor','w');
         $dirs = array("/");
@@ -130,7 +130,7 @@ class mpdPlayer extends base_mpd_player {
 
         $result = find_podcast_track_from_url($url);
         foreach ($result as $obj) {
-            debuglog("Found PODCAST ".$obj->title,"STREAMHANDLER");
+            logger::log("STREAMHANDLER", "Found PODCAST ".$obj->title);
             return array(
                 ($obj->title == '') ? $filedata['Title'] : $obj->title,
                 $obj->duration,
@@ -150,20 +150,20 @@ class mpdPlayer extends base_mpd_player {
 
         $result = find_radio_track_from_url($url);
         foreach ($result as $obj) {
-            debuglog("Found Radio Station ".$obj->StationName,"STREAMHANDLER");
+            logger::log("STREAMHANDLER", "Found Radio Station ".$obj->StationName);
             // Munge munge munge to make it looks pretty
             if ($obj->StationName != '') {
-                debuglog("  Setting Album from database ".$obj->StationName,"STREAMHANDLER");
+                logger::log("STREAMHANDLER", "  Setting Album from database ".$obj->StationName);
                 $album = $obj->StationName;
             } else if ($filedata['Name'] && strpos($filedata['Name'], ' ') !== false) {
-                debuglog("  Setting Album from Name ".$filedata['Name'],"STREAMHANDLER");
+                logger::log("STREAMHANDLER", "  Setting Album from Name ".$filedata['Name']);
                 $album = $filedata['Name'];
             } else if ($filedata['Name'] == null && $filedata['Title'] != null && $filedata['Artist'] == null && $filedata['Album'] == null && strpos($filedata['Title'], ' ') !== false) {
-                debuglog("  Setting Album from Title ".$filedata['Title'],"STREAMHANDLER");
+                logger::log("STREAMHANDLER", "  Setting Album from Title ".$filedata['Title']);
                 $album = $filedata['Title'];
                 $filedata['Title'] = null;
             } else {
-                debuglog("  No information to set Album field","STREAMHANDLER");
+                logger::log("STREAMHANDLER", "  No information to set Album field");
                 $album = ROMPR_UNKNOWN_STREAM;
             }
             return array (
@@ -183,23 +183,23 @@ class mpdPlayer extends base_mpd_player {
             );
         }
 
-        debuglog("Stream Track ".$filedata['file']." from ".$filedata['domain']." was not found in stored library","STREAMHANDLER",5);
+        logger::fail("STREAMHANDLER", "Stream Track",$filedata['file'],"from",$filedata['domain'],"was not found indatabase");
 
         if ($filedata['Name']) {
-            debuglog("  Setting Album from Name ".$filedata['Name'],"STREAMHANDLER");
+            logger::log("STREAMHANDLER", "  Setting Album from Name ".$filedata['Name']);
             $album = $filedata['Name'];
             if ($filedata['Pos'] !== null) {
                 update_radio_station_name(array('streamid' => null,'uri' => $filedata['file'], 'name' => $album));
             }
         } else if ($filedata['Name'] == null && $filedata['Title'] != null && $filedata['Artist'] == null && $filedata['Album'] == null) {
-            debuglog("  Setting Album from Title ".$filedata['Title'],"STREAMHANDLER");
+            logger::log("STREAMHANDLER", "  Setting Album from Title ".$filedata['Title']);
             $album = $filedata['Title'];
             $filedata['Title'] = null;
             if ($filedata['Pos'] !== null) {
                 update_radio_station_name(array('streamid' => null,'uri' => $filedata['file'], 'name' => $album));
             }
         } else {
-            debuglog("  No information to set Album field","STREAMHANDLER");
+            logger::log("STREAMHANDLER", "  No information to set Album field");
             $album = ROMPR_UNKNOWN_STREAM;
         }
         return array(
@@ -243,6 +243,5 @@ class mpdPlayer extends base_mpd_player {
     }
 
 }
-
 
 ?>

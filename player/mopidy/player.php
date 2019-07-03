@@ -9,7 +9,7 @@ class mopidyPlayer extends base_mpd_player {
 
     function musicCollectionUpdate() {
     	global $prefs;
-        debuglog("Starting Music Collection Update", "MOPIDY",4);
+        logger::blurt("MOPIDY", "Starting Music Collection Update");
         $collection = new musicCollection();
     	$monitor = fopen('prefs/monitor','w');
         $dirs = $prefs['mopidy_collection_folders'];
@@ -37,9 +37,9 @@ class mopidyPlayer extends base_mpd_player {
             $collection = new musicCollection();
             foreach ($playlists['playlist'] as $pl) {
     			if (preg_match('/\(by spotify\)/', $pl)) {
-    				debuglog("Ignoring Playlist ".$pl,"COLLECTION",7);
+    				logger::log("COLLECTION", "Ignoring Playlist ".$pl);
     			} else {
-    		    	debuglog("Scanning Playlist ".$pl,"COLLECTION",7);
+    		    	logger::log("COLLECTION", "Scanning Playlist ".$pl);
     				fwrite($monitor, "\n<b>".get_int_text('label_scanningp', array($pl))."</b>");
                     foreach ($this->parse_list_output('listplaylistinfo "'.format_for_mpd($pl).'"', $dirs, false) as $filedata) {
                         $collection->newTrack($filedata);
@@ -260,7 +260,7 @@ class mopidyPlayer extends base_mpd_player {
 
         $result = find_podcast_track_from_url($url);
         foreach ($result as $obj) {
-            debuglog("Found PODCAST ".$obj->title,"STREAMHANDLER");
+            logger::log("STREAMHANDLER", "Found PODCAST",$obj->title);
             return array(
                 ($obj->title == '') ? $filedata['Title'] : $obj->title,
                 // Mopidy's estimate of the duration is frequently more accurate than that supplied in the RSS
@@ -281,21 +281,21 @@ class mopidyPlayer extends base_mpd_player {
 
         $result = find_radio_track_from_url($url);
         foreach ($result as $obj) {
-            debuglog("Found Radio Station ".$obj->StationName,"STREAMHANDLER");
+            logger::log("STREAMHANDLER", "Found Radio Station ".$obj->StationName);
             // Munge munge munge to make it looks pretty
             if ($obj->StationName != '') {
-                debuglog("  Setting Album name from database ".$obj->StationName,"STREAMHANDLER");
+                logger::log("STREAMHANDLER", "  Setting Album name from database ".$obj->StationName);
                 $album = $obj->StationName;
             } else if ($filedata['Name'] && $filedata['Name'] != 'no name' && strpos($filedata['Name'], ' ') !== false) {
-                debuglog("  Setting Album from Name ".$filedata['Name'],"STREAMHANDLER");
+                logger::log("STREAMHANDLER", "  Setting Album from Name ".$filedata['Name']);
                 $album = $filedata['Name'];
             } else if ($filedata['Name'] == null && $filedata['Title'] != null && $filedata['Title'] != 'no name' &&
                 $filedata['Artist'] == null && $filedata['Album'] == null && strpos($filedata['Title'], ' ') !== false) {
-                debuglog("  Setting Album from Title ".$filedata['Title'],"STREAMHANDLER");
+                logger::log("STREAMHANDLER", "  Setting Album from Title ".$filedata['Title']);
                 $album = $filedata['Title'];
                 $filedata['Title'] = null;
             } else {
-                debuglog("  No information to set Album field","STREAMHANDLER");
+                logger::log("STREAMHANDLER", "  No information to set Album field");
                 $album = ROMPR_UNKNOWN_STREAM;
             }
             return array (
@@ -315,25 +315,25 @@ class mopidyPlayer extends base_mpd_player {
             );
         }
 
-        debuglog("Stream Track ".$filedata['file']." from ".$filedata['domain']." was not found in stored library","STREAMHANDLER",5);
+        logger::fail("STREAMHANDLER", "Stream Track",$filedata['file'],"from",$filedata['domain'],"was not found in database");
 
         if ($filedata['Album']) {
             $album = $filedata['Album'];
         } else if ($filedata['Name']) {
-            debuglog("  Setting Album from Name ".$filedata['Name'],"STREAMHANDLER");
+            logger::log("STREAMHANDLER", "  Setting Album from Name ".$filedata['Name']);
             $album = $filedata['Name'];
             if ($filedata['Pos'] !== null) {
                 update_radio_station_name(array('streamid' => null,'uri' => $filedata['file'], 'name' => $album));
             }
         } else if ($filedata['Name'] == null && $filedata['Title'] != null && $filedata['Artist'] == null && $filedata['Album'] == null) {
-            debuglog("  Setting Album from Title ".$filedata['Title'],"STREAMHANDLER");
+            logger::log("STREAMHANDLER", "  Setting Album from Title ".$filedata['Title']);
             $album = $filedata['Title'];
             $filedata['Title'] = null;
             if ($filedata['Pos'] !== null) {
                 update_radio_station_name(array('streamid' => null,'uri' => $filedata['file'], 'name' => $album));
             }
         } else {
-            debuglog("  No information to set Album field","STREAMHANDLER");
+            logger::log("STREAMHANDLER", "  No information to set Album field");
             $album = ROMPR_UNKNOWN_STREAM;
         }
         return array(

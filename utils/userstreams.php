@@ -8,7 +8,7 @@ include ("backends/sql/backend.php");
 include ('utils/phpQuery.php');
 require_once ('utils/imagefunctions.php');
 
-debuglog("Doing User Radio Stuff","USERSTREAMS");
+logger::log("USERSTREAMS", "Doing User Radio Stuff");
 
 if (array_key_exists('populate', $_REQUEST)) {
     do_radio_list();
@@ -49,10 +49,10 @@ function do_radio_list() {
             'class' => 'faveradio',
             'expand' => true
         ));
-        
+
         $out = addUserRadioButtons($html, $playlist['Stationindex'], $playlist['PlaylistUrl'], $playlist['StationName'], $playlist['Image']);
         print $out->html();
-        
+
     }
 
 }

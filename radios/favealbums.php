@@ -6,7 +6,7 @@ include ("international.php");
 include ("backends/sql/backend.php");
 include ("backends/sql/metadatafunctions.php");
 
-debuglog("Populating Favourite Album Radio", "FAVEALBUMS");
+logger::log("FAVEALBUMS", "Populating Favourite Album Radio");
 
 preparePlaylist();
 preparePlTrackTable();

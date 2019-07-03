@@ -14,9 +14,9 @@ require_once ("international.php");
 require_once ("backends/sql/backend.php");
 $error = 0;
 
-debuglog("======================================================================","TIMINGS",4);
+logger::trace("TIMINGS", "======================================================================");
 $initmem = memory_get_usage();
-debuglog("Memory Used is ".$initmem,"COLLECTION",4);
+logger::trace("COLLECTION", "Memory Used is ".$initmem);
 $now2 = time();
 
 switch (true) {
@@ -52,7 +52,7 @@ switch (true) {
         // Handle an mpd-style search request requiring tl_track format results
         // Note that raw_search uses the collection models but not the database
         // hence $trackbytrack must be false
-        debuglog("Doing RAW search","MPD SEARCH",7);
+        logger::log("MPD SEARCH", "Doing RAW search");
         require_once ("player/".$prefs['player_backend']."/player.php");
         require_once ("collection/collection.php");
         require_once ("collection/dbsearch.php");
@@ -80,30 +80,26 @@ switch (true) {
         break;
 
     default:
-        debuglog("Couldn't figure out what to do!","ALBUMS",1);
+        logger::fail("ALBUMS", "Couldn't figure out what to do!");
         break;
 
 }
 
-debuglog("== Collection Update And Send took ".format_time(time() - $now2),"TIMINGS",4);
+logger::trace("TIMINGS", "== Collection Update And Send took ".format_time(time() - $now2));
 $peakmem = memory_get_peak_usage();
 $ourmem = $peakmem - $initmem;
-debuglog("Peak Memory Used Was ".number_format($peakmem)." bytes  - meaning we used ".number_format($ourmem)." bytes.","COLLECTION",4);
-debuglog("======================================================================","TIMINGS",4);
+logger::trace("TIMINGS", "Peak Memory Used Was ".number_format($peakmem)." bytes  - meaning we used ".number_format($ourmem)." bytes.");
+logger::trace("TIMINGS", "======================================================================");
 
 function logit($key) {
-    if (is_array($_REQUEST[$key])) {
-        debuglog("Request is : ".$key.' : '.multi_implode($_REQUEST[$key], ", "), "COLLECTION",8);
-    } else {
-        debuglog("Request is ".$key."=".$_REQUEST[$key],"COLLECTION",8);
-    }
+    logger::log("COLLECTION", "Request is",$key,"=",$_REQUEST[$key]);
 }
 
 function checkDomains($d) {
     if (array_key_exists('domains', $d)) {
         return $d['domains'];
     }
-    debuglog("No search domains in use","SEARCH");
+    logger::debug("SEARCH", "No search domains in use");
     return false;
 }
 
@@ -143,7 +139,7 @@ function mpd_search() {
 
         }
     }
-    debuglog("Search command : ".$cmd,"MPD SEARCH");
+    logger::log("MPD SEARCH", "Search command : ".$cmd);
     if ($_REQUEST['resultstype'] == "tree") {
         require_once ("player/mpd/filetree.php");
         require_once ("skins/".$skin."/ui_elements.php");
@@ -167,7 +163,7 @@ function browse_album() {
     $a = preg_match('/(a|b)(.*?)(\d+|root)/', $_REQUEST['browsealbum'], $matches);
     if (!$a) {
         print '<h3>'.get_int_text("label_general_error").'</h3>';
-        debuglog('Browse Album Failed - regexp failed to match '.$_REQUEST['browsealbum'],"DUMPALBUMS",3);
+        logger::error("DUMPALBUMS", "Browse Album Failed - regexp failed to match", $_REQUEST['browsealbum']);
         return false;
     }
     $why = $matches[1];
@@ -176,9 +172,9 @@ function browse_album() {
     $albumlink = get_albumlink($who);
     if (substr($albumlink, 0, 8) == 'podcast+') {
         require_once ('includes/podcastfunctions.php');
-        debuglog("Browsing For Podcast ".substr($albumlink, 9), "ALBUMS");
+        logger::log("ALBUMS", "Browsing For Podcast ".substr($albumlink, 9));
         $podid = getNewPodcast(substr($albumlink, 8), 0, false);
-        debuglog("Ouputting Podcast ID ".$podid, "ALBUMS");
+        logger::trace("ALBUMS", "Ouputting Podcast ID ".$podid);
         outputPodcast($podid, false);
     } else {
         if (preg_match('/^.+?:artist:/', $albumlink)) {
@@ -187,7 +183,7 @@ function browse_album() {
         $player = new $PLAYER_TYPE();
         $collection = new musicCollection();
         $cmd = 'find file "'.$albumlink.'"';
-        debuglog("Doing Album Browse : ".$cmd,"MPD");
+        logger::log("MPD", "Doing Album Browse : ".$cmd);
         prepareCollectionUpdate();
         $player->populate_collection($cmd, false, $collection);
         $collection->tracks_to_database(true);
@@ -215,12 +211,12 @@ function raw_search() {
     $domains = checkDomains($_REQUEST);
     $collection = new musicCollection();
     $found = 0;
-    debuglog("checkdb is ".$_REQUEST['checkdb'],"MPD SEARCH",4);
+    logger::trace("MPD SEARCH", "checkdb is ".$_REQUEST['checkdb']);
     if ($_REQUEST['checkdb'] !== 'false') {
-        debuglog(" ... checking database first ", "MPD SEARCH", 7);
+        logger::trace("MPD SEARCH", " ... checking database first ");
         $found = doDbCollection($_REQUEST['rawterms'], $domains, "RAW", $collection);
         if ($found > 0) {
-            debuglog("  ... found ".$found." matches in database", "MPD SEARCH", 6);
+            logger::log("MPD SEARCH", "  ... found ".$found." matches in database");
         }
     }
     if ($found == 0) {
@@ -228,7 +224,7 @@ function raw_search() {
         foreach ($_REQUEST['rawterms'] as $key => $term) {
             $cmd .= " ".$key.' "'.format_for_mpd(html_entity_decode($term[0])).'"';
         }
-        debuglog("Search command : ".$cmd,"MPD SEARCH");
+        logger::log("MPD SEARCH", "Search command : ".$cmd);
         $doing_search = true;
         $player = new $PLAYER_TYPE();
         $player->populate_collection($cmd, $domains, $collection);
@@ -246,7 +242,7 @@ function raw_search() {
         }
         if (count($parms) > 0) {
             $cmd .= '"'.implode(' ',$parms).'"';
-            debuglog("Search command : ".$cmd,"MPD SEARCH");
+            logger::log("MPD SEARCH", "Search command : ".$cmd);
             $doing_search = true;
             $collection->filter_duplicate_tracks();
             $player->populate_collection($cmd, $domains, $collection);

@@ -6,13 +6,13 @@ define('SQL_TAG_CONCAT', "GROUP_CONCAT(t.Name,', ') ");
 function connect_to_database($sp = true) {
 	global $mysqlc, $prefs;
 	if ($mysqlc !== null) {
-		debuglog("AWOOOGA! ATTEMPTING MULTIPLE DATABASE CONNECTIONS!","SQLITE",1);
+		logger::error("SQLITE", "AWOOOGA! ATTEMPTING MULTIPLE DATABASE CONNECTIONS!");
 		return;
 	}
 	try {
 		$dsn = "sqlite:prefs/collection_".$prefs['player_backend'].".sq3";
 		$mysqlc = new PDO($dsn);
-		debuglog("Connected to SQLite","MYSQL",9);
+		logger::debug("MYSQL", "Connected to SQLite");
 		// This increases performance
 		generic_sql_query('PRAGMA journal_mode=DELETE', true);
 		generic_sql_query('PRAGMA cache_size=-4000', true);
@@ -20,7 +20,7 @@ function connect_to_database($sp = true) {
 		generic_sql_query('PRAGMA threads=4', true);
 		readCollectionPlayer($sp);
 	} catch (Exception $e) {
-		debuglog("Couldn't Connect To SQLite - ".$e,"MYSQL",1);
+		logger::error("MYSQL", "Couldn't Connect To SQLite - ".$e);
 		sql_init_fail($e->getMessage());
 	}
 }
@@ -51,7 +51,7 @@ function check_sql_tables() {
 		"isAudiobook TINYINT(1) DEFAULT 0, ".
 		"justAdded TINYINT(1) DEFAULT 1)", true))
 	{
-		debuglog("  Tracktable OK","SQLITE_CONNECT");
+		logger::log("SQLITE_CONNECT", "  Tracktable OK");
 		if (generic_sql_query("CREATE INDEX IF NOT EXISTS ai ON Tracktable (Albumindex)", true)) {
 		} else {
 			$err = $mysqlc->errorInfo()[2];
@@ -91,7 +91,7 @@ function check_sql_tables() {
 		"Image VARCHAR(255), ".
 		"justUpdated TINYINT(1) DEFAULT 0)", true))
 	{
-		debuglog("  Albumtable OK","SQLITE_CONNECT");
+		logger::log("SQLITE_CONNECT", "  Albumtable OK");
 		if (generic_sql_query("CREATE INDEX IF NOT EXISTS ni ON Albumtable (Albumname)", true)) {
 		} else {
 			$err = $mysqlc->errorInfo()[2];
@@ -121,7 +121,7 @@ function check_sql_tables() {
 		"Artistindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 		"Artistname VARCHAR(255))", true))
 	{
-		debuglog("  Artisttable OK","SQLITE_CONNECT");
+		logger::log("SQLITE_CONNECT", "  Artisttable OK");
 		if (generic_sql_query("CREATE INDEX IF NOT EXISTS ni ON Artisttable (Artistname)", true)) {
 		} else {
 			$err = $mysqlc->errorInfo()[2];
@@ -136,7 +136,7 @@ function check_sql_tables() {
 		"TTindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 		"Rating TINYINT(1))", true))
 	{
-		debuglog("  Ratingtable OK","SQLITE_CONNECT");
+		logger::log("SQLITE_CONNECT", "  Ratingtable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Ratingtable : ".$err);
@@ -146,7 +146,7 @@ function check_sql_tables() {
 		"TTindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 		"Progress INTEGER)", true))
 	{
-		debuglog("  Progresstable OK","SQLITE_CONNECT");
+		logger::log("SQLITE_CONNECT", "  Progresstable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Progresstable : ".$err);
@@ -156,7 +156,7 @@ function check_sql_tables() {
 		"Tagindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 		"Name VARCHAR(255))", true))
 	{
-		debuglog("  Tagtable OK","SQLITE_CONNECT");
+		logger::log("SQLITE_CONNECT", "  Tagtable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Tagtable : ".$err);
@@ -167,7 +167,7 @@ function check_sql_tables() {
 		"TTindex INTEGER NOT NULL REFERENCES Tracktable(TTindex), ".
 		"PRIMARY KEY (Tagindex, TTindex))", true))
 	{
-		debuglog("  TagListtable OK","SQLITE_CONNECT");
+		logger::log("SQLITE_CONNECT", "  TagListtable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking TagListtable : ".$err);
@@ -179,7 +179,7 @@ function check_sql_tables() {
 		"SyncCount INT UNSIGNED DEFAULT 0, ".
 		"LastPlayed TIMESTAMP DEFAULT NULL)", true))
 	{
-		debuglog("  Playcounttable OK","SQLITE_CONNECT");
+		logger::log("SQLITE_CONNECT", "  Playcounttable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Playcounttable : ".$err);
@@ -212,7 +212,7 @@ function check_sql_tables() {
 		"LastPubDate INTEGER DEFAULT NULL, ".
 		"Category VARCHAR(255))", true))
 	{
-		debuglog("  Podcasttable OK","SQLITE_CONNECT");
+		logger::log("SQLITE_CONNECT", "  Podcasttable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Podcasttable : ".$err);
@@ -237,7 +237,7 @@ function check_sql_tables() {
 		"Progress INTEGER DEFAULT 0, ".
 		"Deleted TINYINT(1) DEFAULT 0)", true))
 	{
-		debuglog("  PodcastTracktable OK","SQLITE_CONNECT");
+		logger::log("SQLITE_CONNECT", "  PodcastTracktable OK");
 		if (generic_sql_query("CREATE INDEX IF NOT EXISTS ptt ON PodcastTracktable (Title)", true)) {
 		} else {
 			$err = $mysqlc->errorInfo()[2];
@@ -256,7 +256,7 @@ function check_sql_tables() {
 		"PlaylistUrl TEXT, ".
 		"Image VARCHAR(255))", true))
 	{
-		debuglog("  RadioStationtable OK","SQLITE_CONNECT");
+		logger::log("SQLITE_CONNECT", "  RadioStationtable OK");
 		if (generic_sql_query("CREATE INDEX IF NOT EXISTS ui ON RadioStationtable (PlaylistUrl)", true)) {
 		} else {
 			$err = $mysqlc->errorInfo()[2];
@@ -273,7 +273,7 @@ function check_sql_tables() {
 		"TrackUri TEXT, ".
 		"PrettyStream TEXT)", true))
 	{
-		debuglog("  RadioTracktable OK","SQLITE_CONNECT");
+		logger::log("SQLITE_CONNECT", "  RadioTracktable OK");
 		if (generic_sql_query("CREATE INDEX IF NOT EXISTS uri ON RadioTracktable (TrackUri)", true)) {
 		} else {
 			$err = $mysqlc->errorInfo()[2];
@@ -290,7 +290,7 @@ function check_sql_tables() {
 		"SourceImage VARCHAR(255), ".
 		"SourceUri TEXT)", true))
 	{
-		debuglog("  WishlistSourcetable OK","SQLITE_CONNECT");
+		logger::log("SQLITE_CONNECT", "  WishlistSourcetable OK");
 		if (generic_sql_query("CREATE INDEX IF NOT EXISTS suri ON WishlistSourcetable (SourceUri)", true)) {
 		} else {
 			$err = $mysqlc->errorInfo()[2];
@@ -305,7 +305,7 @@ function check_sql_tables() {
 		"Listenindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 		"JsonData TEXT)", true))
 	{
-		debuglog("  AlbumsToListenTotabletable OK","MYSQL_CONNECT");
+		logger::log("MYSQL_CONNECT", "  AlbumsToListenTotabletable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking AlbumsToListenTotable : ".$err);
@@ -318,7 +318,7 @@ function check_sql_tables() {
 		"Filename VARCHAR(255), ".
 		"Orientation TINYINT(2))", true))
 	{
-		debuglog("  BackgounrdImageTable OK","MYSQL_CONNECT");
+		logger::log("MYSQL_CONNECT", "  BackgounrdImageTable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking BackgroundImageTable : ".$err);
@@ -327,7 +327,7 @@ function check_sql_tables() {
 	// Check schema version and update tables as necessary
 	$sv = simple_query('Value', 'Statstable', 'Item', 'SchemaVer', 0);
 	if ($sv == 0) {
-		debuglog("No Schema Version Found - initialising table","SQLITE_CONNECT");
+		logger::log("SQLITE_CONNECT", "No Schema Version Found - initialising table");
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('ListVersion', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('ArtistCount', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('AlbumCount', '0')", true);
@@ -336,39 +336,39 @@ function check_sql_tables() {
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('CollType', '999')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('SchemaVer', '".ROMPR_SCHEMA_VERSION."')", true);
 		$sv = ROMPR_SCHEMA_VERSION;
-		debuglog("Statstable populated", "SQLITE_CONNECT");
+		logger::log("SQLITE_CONNECT", "Statstable populated");
 		create_update_triggers();
 		create_conditional_triggers();
 		create_playcount_triggers();
 	}
 
 	if ($sv > ROMPR_SCHEMA_VERSION) {
-		debuglog("Schema Mismatch! We are version ".ROMPR_SCHEMA_VERSION." but database is version ".$sv,"SQLITE_CONNECT");
+		logger::log("SQLITE_CONNECT", "Schema Mismatch! We are version ".ROMPR_SCHEMA_VERSION." but database is version ".$sv);
 		return array(false, "Your database has version number ".$sv." but this version of rompr only handles version ".ROMPR_SCHEMA_VERSION);
 	}
 
 	while ($sv < ROMPR_SCHEMA_VERSION) {
 		switch ($sv) {
 			case 0:
-				debuglog("BIG ERROR! No Schema Version found!!","SQL");
+				logger::log("SQL", "BIG ERROR! No Schema Version found!!");
 				return array(false, "Database Error - could not read schema version. Cannot continue.");
 				break;
 
 			case 11:
-				debuglog("Updating FROM Schema version 11 TO Scheme version 12","SQL");
+				logger::log("SQL", "Updating FROM Schema version 11 TO Scheme version 12");
 				generic_sql_query("ALTER TABLE Tracktable ADD isSearchResult TINYINT(1) DEFAULT 0", true);
 				generic_sql_query("UPDATE Statstable SET Value = 12 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 12;
-				debuglog("Updating FROM Schema version 12 TO Scheme version 13","SQL");
+				logger::log("SQL", "Updating FROM Schema version 12 TO Scheme version 13");
 				// First attempt didn't work
 				generic_sql_query("UPDATE Statstable SET Value = 13 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 13:
 				// SQLite doesn't let you rename or remove a column. Holy Shitting heck.
-				debuglog("Updating FROM Schema version 13 TO Schema version 14","SQL");
+				logger::log("SQL", "Updating FROM Schema version 13 TO Schema version 14");
 				generic_sql_query("CREATE TABLE Albumtable_New(".
 					"Albumindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 					"Albumname VARCHAR(255), ".
@@ -394,7 +394,7 @@ function check_sql_tables() {
 
 			case 14:
 				// SQLite doesn't let you rename or remove a column. Holy Shitting heck.
-				debuglog("Updating FROM Schema version 14 TO Schema version 15","SQL");
+				logger::log("SQL", "Updating FROM Schema version 14 TO Schema version 15");
 				generic_sql_query("CREATE TABLE Tracktable_New(".
 					"TTindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 					"Title VARCHAR(255), ".
@@ -422,28 +422,28 @@ function check_sql_tables() {
 				break;
 
 			case 15:
-				debuglog("Updating FROM Schema version 15 TO Schema version 16","SQL");
+				logger::log("SQL", "Updating FROM Schema version 15 TO Schema version 16");
 				albumImageBuggery();
 				generic_sql_query("UPDATE Statstable SET Value = 16 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 16:
 				//Nothing to do here
-				debuglog("Updating FROM Schema version 16 TO Schema version 17","SQL");
+				logger::log("SQL", "Updating FROM Schema version 16 TO Schema version 17");
 				generic_sql_query("UPDATE Statstable SET Value = 17 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 17:
-				debuglog("Updating FROM Schema version 17 TO Schema version 18","SQL");
+				logger::log("SQL", "Updating FROM Schema version 17 TO Schema version 18");
 				include("utils/podcastupgrade.php");
 				generic_sql_query("UPDATE Statstable SET Value = 18 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 18:
-				debuglog("Updating FROM Schema version 18 TO Schema version 19","SQL");
+				logger::log("SQL", "Updating FROM Schema version 18 TO Schema version 19");
 				$result = generic_sql_query('SELECT Tracktable.Uri AS uri, Tracktable.TTindex, Tracktable.Title AS ttit, Albumtable.*, Trackimagetable.Image AS ti FROM Tracktable JOIN Albumtable USING (Albumindex) LEFT JOIN Trackimagetable USING (TTindex) WHERE Tracktable.Uri LIKE "soundcloud:%"', false, PDO::FETCH_OBJ);
 				foreach ($result as $obj) {
-					debuglog("  Creating new Album ".$obj->ttit." Image ".$obj->ti,"SQL");
+					logger::log("SQL", "  Creating new Album ".$obj->ttit." Image ".$obj->ti);
 					$ti = $obj->ti;
 					if (preg_match('/^http/', $ti)) {
 						$ti = 'getRemoteImage.php?url='.$ti;
@@ -456,20 +456,20 @@ function check_sql_tables() {
 							$obj->ttit, $obj->AlbumArtistindex, $obj->uri, $obj->Year, $obj->Searched, $obj->ImgKey, $obj->mbid, $obj->Domain, $ti
 						)) {
 							$retval = $mysqlc->lastInsertId();
-							debuglog("    .. success, Albumindex ".$retval,"SQL");
+							logger::log("SQL", "    .. success, Albumindex ".$retval);
 							generic_sql_query("UPDATE Tracktable SET Albumindex = ".$retval." WHERE TTindex = ".$obj->TTindex, true);
 					} else {
-						debuglog("    .. ERROR!","SQL");
+						logger::log("SQL", "    .. ERROR!");
 					}
 				}
 				generic_sql_query("UPDATE Statstable SET Value = 19 WHERE Item = 'SchemaVer'");
 				break;
 
 			case 19:
-				debuglog("Updating FROM Schema version 19 TO Schema version 20","SQL");
+				logger::log("SQL", "Updating FROM Schema version 19 TO Schema version 20");
 				$result = generic_sql_query('SELECT Tracktable.Uri AS uri, Tracktable.TTindex, Tracktable.Title AS ttit, Albumtable.*, Trackimagetable.Image AS ti FROM Tracktable JOIN Albumtable USING (Albumindex) LEFT JOIN Trackimagetable USING (TTindex) WHERE Tracktable.Uri LIKE "youtube:%"', false, PDO::FETCH_OBJ);
 				foreach ($result as $obj) {
-					debuglog("  Creating new Album ".$obj->ttit." Image ".$obj->ti,"SQL");
+					logger::log("SQL", "  Creating new Album ".$obj->ttit." Image ".$obj->ti);
 					$ti = $obj->ti;
 					if (preg_match('/^http/', $ti)) {
 						$ti = 'getRemoteImage.php?url='.$ti;
@@ -482,29 +482,29 @@ function check_sql_tables() {
 							$obj->ttit, $obj->AlbumArtistindex, $obj->uri, $obj->Year, $obj->Searched, $obj->ImgKey, $obj->mbid, $obj->Domain, $ti
 						)) {
 							$retval = $mysqlc->lastInsertId();
-							debuglog("    .. success, Albumindex ".$retval,"SQL");
+							logger::log("SQL", "    .. success, Albumindex ".$retval);
 							generic_sql_query("UPDATE Tracktable SET Albumindex = ".$retval." WHERE TTindex = ".$obj->TTindex, true);
 					} else {
-						debuglog("    .. ERROR!","SQL");
+						logger::log("SQL", "    .. ERROR!");
 					}
 				}
 				generic_sql_query("UPDATE Statstable SET Value = 20 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 20:
-				debuglog("Updating FROM Schema version 20 TO Schema version 21","SQL");
+				logger::log("SQL", "Updating FROM Schema version 20 TO Schema version 21");
 				generic_sql_query("DROP TABLE Trackimagetable", true);
 				generic_sql_query("UPDATE Statstable SET Value = 21 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 21:
-				debuglog("Updating FROM Schema version 21 TO Schema version 22","SQL");
+				logger::log("SQL", "Updating FROM Schema version 21 TO Schema version 22");
 				generic_sql_query("ALTER TABLE Playcounttable ADD COLUMN LastPlayed TIMESTAMP DEFAULT NULL", true);
 				generic_sql_query("UPDATE Statstable SET Value = 22 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 22:
-				debuglog("Updating FROM Schema version 22 TO Schema version 23","SQL");
+				logger::log("SQL", "Updating FROM Schema version 22 TO Schema version 23");
 				generic_sql_query("ALTER TABLE Podcasttable ADD COLUMN Version TINYINT(2)", true);
 				generic_sql_query("ALTER TABLE PodcastTracktable ADD COLUMN Guid VARCHAR(2000)", true);
 				generic_sql_query("ALTER TABLE PodcastTracktable ADD COLUMN Localfilename VARCHAR(255)", true);
@@ -513,61 +513,61 @@ function check_sql_tables() {
 				break;
 
 			case 23:
-				debuglog("Updating FROM Schema version 23 TO Schema version 24","SQL");
+				logger::log("SQL", "Updating FROM Schema version 23 TO Schema version 24");
 				generic_sql_query("DROP TRIGGER IF EXISTS updatetime", true);
 				generic_sql_query("UPDATE Statstable SET Value = 24 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 24:
-				debuglog("Updating FROM Schema version 24 TO Schema version 25","SQL");
+				logger::log("SQL", "Updating FROM Schema version 24 TO Schema version 25");
 				// Nothing to do here
 				generic_sql_query("UPDATE Statstable SET Value = 25 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 25:
-				debuglog("Updating FROM Schema version 25 TO Schema version 26","SQL");
+				logger::log("SQL", "Updating FROM Schema version 25 TO Schema version 26");
 				generic_sql_query("ALTER TABLE Tracktable ADD justAdded TINYINT(1) DEFAULT 1", true);
 				generic_sql_query("UPDATE Statstable SET Value = 26 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 26:
-				debuglog("Updating FROM Schema version 26 TO Schema version 27","SQL");
+				logger::log("SQL", "Updating FROM Schema version 26 TO Schema version 27");
 				generic_sql_query("ALTER TABLE Albumtable ADD justUpdated TINYINT(1) DEFAULT 1", true);
 				generic_sql_query("UPDATE Statstable SET Value = 27 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 27:
-				debuglog("Updating FROM Schema version 27 TO Schema version 28","SQL");
+				logger::log("SQL", "Updating FROM Schema version 27 TO Schema version 28");
 				rejig_wishlist_tracks();
 				generic_sql_query("UPDATE Statstable SET Value = 28 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 28:
-				debuglog("Updating FROM Schema version 28 TO Schema version 29","SQL");
+				logger::log("SQL", "Updating FROM Schema version 28 TO Schema version 29");
 				create_update_triggers();
 				generic_sql_query("UPDATE Statstable SET Value = 29 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 29:
-				debuglog("Updating FROM Schema version 29 TO Schema version 30","SQL");
+				logger::log("SQL", "Updating FROM Schema version 29 TO Schema version 30");
 				include('utils/radioupgrade.php');
 				generic_sql_query("UPDATE Statstable SET Value = 30 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 30:
-				debuglog("Updating FROM Schema version 30 TO Schema version 31","SQL");
+				logger::log("SQL", "Updating FROM Schema version 30 TO Schema version 31");
 				// No need to do anything here
 				generic_sql_query("UPDATE Statstable SET Value = 31 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 31:
-				debuglog("Updating FROM Schema version 31 TO Schema version 32","SQL");
+				logger::log("SQL", "Updating FROM Schema version 31 TO Schema version 32");
 				generic_sql_query("ALTER TABLE Podcasttable ADD Subscribed TINYINT(1) NOT NULL DEFAULT 1", true);
 				generic_sql_query("UPDATE Statstable SET Value = 32 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 32:
-				debuglog("Updating FROM Schema version 32 TO Schema version 33","SQL");
+				logger::log("SQL", "Updating FROM Schema version 32 TO Schema version 33");
 				generic_sql_query("DROP TRIGGER IF EXISTS track_insert_trigger", true);
 				generic_sql_query("DROP TRIGGER IF EXISTS track_update_trigger", true);
 				create_conditional_triggers();
@@ -575,14 +575,14 @@ function check_sql_tables() {
 				break;
 
 			case 33:
-				debuglog("Updating FROM Schema version 33 TO Schema version 34","SQL");
+				logger::log("SQL", "Updating FROM Schema version 33 TO Schema version 34");
 				generic_sql_query("ALTER TABLE Albumtable ADD COLUMN ImgVersion INTEGER DEFAULT ".ROMPR_IMAGE_VERSION, true);
 				generic_sql_query("UPDATE Albumtable SET ImgVersion = 1",true);
 				generic_sql_query("UPDATE Statstable SET Value = 34 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 34:
-				debuglog("Updating FROM Schema version 34 TO Schema version 35","SQL");
+				logger::log("SQL", "Updating FROM Schema version 34 TO Schema version 35");
 				generic_sql_query("ALTER TABLE Tracktable ADD COLUMN Sourceindex INTEGER DEFAULT NULL", true);
 				generic_sql_query("UPDATE Statstable SET Value = 35 WHERE Item = 'SchemaVer'", true);
 				break;
@@ -592,7 +592,7 @@ function check_sql_tables() {
 				break;
 
 			case 36:
-				debuglog("Updating FROM Schema version 35 TO Schema version 37","SQL");
+				logger::log("SQL", "Updating FROM Schema version 35 TO Schema version 37");
 				$localpods = generic_sql_query("SELECT PODTrackindex, PODindex, LocalFilename FROM PodcastTracktable WHERE LocalFilename IS NOT NULL");
 				foreach ($localpods as $pod) {
 					sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET LocalFilename = ? WHERE PODTrackindex = ?", '/prefs/podcasts/'.$pod['PODindex'].'/'.$pod['PODTrackindex'].'/'.$pod['LocalFilename'], $pod['PODTrackindex']);
@@ -601,7 +601,7 @@ function check_sql_tables() {
 				break;
 
 			case 37:
-				debuglog("Updating FROM Schema version 37 TO Schema version 38","SQL");
+				logger::log("SQL", "Updating FROM Schema version 37 TO Schema version 38");
 				generic_sql_query("CREATE TABLE IF NOT EXISTS Albumtable_New(".
 					"Albumindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 					"Albumname VARCHAR(255), ".
@@ -628,7 +628,7 @@ function check_sql_tables() {
 				break;
 
 			case 38:
-				debuglog("Updating FROM Schema version 38 TO Schema version 39","SQL");
+				logger::log("SQL", "Updating FROM Schema version 38 TO Schema version 39");
 				generic_sql_query("ALTER TABLE Podcasttable ADD LastPubDate INTEGER DEFAULT NULL", true);
 				require_once('includes/podcastfunctions.php');
 				upgrade_podcasts_to_version();
@@ -636,7 +636,7 @@ function check_sql_tables() {
 				break;
 
 			case 39:
-				debuglog("Updating FROM Schema version 39 TO Schema version 40","SQL");
+				logger::log("SQL", "Updating FROM Schema version 39 TO Schema version 40");
 				// Takes too long. It'll happen when they get refreshed anyway.
 				// require_once('includes/podcastfunctions.php');
 				// upgrade_podcast_images();
@@ -644,7 +644,7 @@ function check_sql_tables() {
 				break;
 
 			case 40:
-				debuglog("Updating FROM Schema version 40 TO Schema version 41","SQL");
+				logger::log("SQL", "Updating FROM Schema version 40 TO Schema version 41");
 				generic_sql_query("CREATE TABLE IF NOT EXISTS Podcasttable_New(".
 					"PODindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 					"FeedURL TEXT, ".
@@ -676,7 +676,7 @@ function check_sql_tables() {
 				break;
 
 			case 41:
-				debuglog("Updating FROM Schema version 41 TO Schema version 42","SQL");
+				logger::log("SQL", "Updating FROM Schema version 41 TO Schema version 42");
 				generic_sql_query("CREATE TABLE IF NOT EXISTS PodcastTracktable_New(".
 					"PODTrackindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 					"JustUpdated TINYINT(1), ".
@@ -705,78 +705,78 @@ function check_sql_tables() {
 				break;
 
 			case 42:
-				debuglog("Updating FROM Schema version 42 TO Schema version 43","SQL");
+				logger::log("SQL", "Updating FROM Schema version 42 TO Schema version 43");
 				update_stream_images(43);
 				generic_sql_query("UPDATE Statstable SET Value = 43 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 43:
-				debuglog("Updating FROM Schema version 43 TO Schema version 44","SQL");
+				logger::log("SQL", "Updating FROM Schema version 43 TO Schema version 44");
 				empty_modified_cache_dirs(44);
 				generic_sql_query("UPDATE Statstable SET Value = 44 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 44:
-				debuglog("Updating FROM Schema version 44 TO Schema version 45","SQL");
+				logger::log("SQL", "Updating FROM Schema version 44 TO Schema version 45");
 				upgrade_host_defs(45);
 				generic_sql_query("UPDATE Statstable SET Value = 45 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 45:
-				debuglog("Updating FROM Schema version 45 TO Schema version 46","SQL");
+				logger::log("SQL", "Updating FROM Schema version 45 TO Schema version 46");
 				generic_sql_query("UPDATE Statstable SET Value = 46 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 46:
-				debuglog("Updating FROM Schema version 46 TO Schema version 47","SQL");
+				logger::log("SQL", "Updating FROM Schema version 46 TO Schema version 47");
 				generic_sql_query("ALTER TABLE Playcounttable ADD COLUMN SyncCount INT UNSIGNED DEFAULT 0", true);
 				generic_sql_query("UPDATE Statstable SET Value = 47 WHERE Item = 'SchemaVer'", true);
 				create_playcount_triggers();
 				break;
 
 			case 47:
-				debuglog("Updating FROM Schema version 47 TO Schema version 48","SQL");
+				logger::log("SQL", "Updating FROM Schema version 47 TO Schema version 48");
 				generic_sql_query("UPDATE Statstable SET Value = 48 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 48:
-				debuglog("Updating FROM Schema version 48 TO Schema version 49","SQL");
+				logger::log("SQL", "Updating FROM Schema version 48 TO Schema version 49");
 				upgrade_host_defs(49);
 				generic_sql_query("UPDATE Statstable SET Value = 49 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 49:
-				debuglog("Updating FROM Schema version 49 TO Schema version 50","SQL");
+				logger::log("SQL", "Updating FROM Schema version 49 TO Schema version 50");
 				generic_sql_query("ALTER TABLE Tracktable ADD COLUMN LinkChecked TINYINT(1) DEFAULT 0", true);
 				generic_sql_query("UPDATE Statstable SET Value = 50 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 50:
-				debuglog("Updating FROM Schema version 50 TO Schema version 51","SQL");
+				logger::log("SQL", "Updating FROM Schema version 50 TO Schema version 51");
 				generic_sql_query("UPDATE Statstable SET Value = 51 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 51:
-				debuglog("Updating FROM Schema version 51 TO Schema version 52","SQL");
+				logger::log("SQL", "Updating FROM Schema version 51 TO Schema version 52");
 				generic_sql_query("ALTER TABLE Tracktable ADD COLUMN isAudiobook TINYINT(1) DEFAULT 0", true);
 				generic_sql_query("UPDATE Statstable SET Value = 52 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 52:
-				debuglog("Updating FROM Schema version 52 TO Schema version 53","SQL");
+				logger::log("SQL", "Updating FROM Schema version 52 TO Schema version 53");
 				create_progress_triggers();
 				generic_sql_query("UPDATE Statstable SET Value = 53 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 53:
-				debuglog("Updating FROM Schema version 53 TO Schema version 54","SQL");
+				logger::log("SQL", "Updating FROM Schema version 53 TO Schema version 54");
 				require_once ('utils/backgroundimages.php');
 				first_upgrade_of_user_backgrounds();
 				generic_sql_query("UPDATE Statstable SET Value = 54 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 54:
-				debuglog("Updating FROM Schema version 54 TO Schema version 55","SQL");
+				logger::log("SQL", "Updating FROM Schema version 54 TO Schema version 55");
 				generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('PodUpPid', 0)", true);
 				generic_sql_query("UPDATE Statstable SET Value = 55 WHERE Item = 'SchemaVer'", true);
 				break;
@@ -869,7 +869,7 @@ function track_date_check($range, $flag) {
 			break;
 
 		default:
-			debuglog("ERROR! Unknown Collection Range ".$range,"SQL");
+			logger::error("SQL", "ERROR! Unknown Collection Range ".$range);
 			return '';
 			break;
 
@@ -911,7 +911,7 @@ function create_playcount_triggers() {
 
 function create_update_triggers() {
 
-	debuglog("Creating Triggers for update operation","SQLITE",6);
+	logger::trace("SQLITE", "Creating Triggers for update operation");
 
 	generic_sql_query("CREATE TRIGGER rating_update_trigger AFTER UPDATE ON Ratingtable
 						FOR EACH ROW

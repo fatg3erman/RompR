@@ -7,12 +7,12 @@ include ("backends/sql/backend.php");
 include ("includes/spotifyauth.php");
 include ("getid3/getid3.php");
 
-debuglog("------- Searching For Album Art --------","GETALBUMCOVER");
+logger::shout("GETALBUMCOVER", "------- Searching For Album Art --------");
 foreach ($_REQUEST as $k => $v) {
     if ($k == 'base64data') {
-        debuglog(' Present', ' '.$k ,7);
+        logger::log("GETALBUMCOVER", "Base64 Data", $k);
     } else {
-        debuglog(' '.$v, ' '.$k ,7);
+        logger::log("GETALBUMCOVER", $v, $k);
     }
 }
 
@@ -43,19 +43,20 @@ if ($result === false) {
     $result = $albumimage->set_default();
 }
 if ($result === false) {
-    debuglog("No art was found. Try the Tate Modern","GETALBUMCOVER");
+    logger::shout("GETALBUMCOVER", "No art was found. Try the Tate Modern");
     $result = array();
 }
 $albumimage->update_image_database();
 $result['delaytime'] = $delaytime;
 header('Content-Type: application/json; charset=utf-8');
 print json_encode($result);
-debuglog("--------------------------------------------","GETALBUMCOVER");
+logger::shout("GETALBUMCOVER", "--------------------------------------------");
 ob_flush();
 
 function tryLocal($albumimage) {
     global $ignore_local;
     global $delaytime;
+    logger::mark("GETALBUMCOVER", "  Checking for local images");
     $covernames = array("cover", "albumart", "thumb", "albumartsmall", "front");
     if ($albumimage->albumpath == "" || $albumimage->albumpath == "." || $albumimage->albumpath === null || $ignore_local) {
         return "";
@@ -66,7 +67,7 @@ function tryLocal($albumimage) {
         if (array_key_exists('extension', $info)) {
             $file_name = strtolower(rawurldecode(html_entity_decode(basename($file,'.'.$info['extension']))));
             if ($file_name == $albumimage->get_image_key()) {
-                debuglog("    Returning archived image","GETALBUMCOVER");
+                logger::log("GETALBUMCOVER", "    Returning archived image");
                 return $file;
             }
         }
@@ -77,7 +78,7 @@ function tryLocal($albumimage) {
             $file_name = strtolower(rawurldecode(html_entity_decode(basename($file,'.'.$info['extension']))));
             if ($file_name == strtolower($albumimage->artist." - ".$albumimage->album) ||
                 $file_name == strtolower($albumimage->album)) {
-                debuglog("    Returning file matching album name","GETALBUMCOVER");
+                logger::log("GETALBUMCOVER", "    Returning file matching album name");
                 return $file;
             }
         }
@@ -88,14 +89,14 @@ function tryLocal($albumimage) {
             if (array_key_exists('extension', $info)) {
                 $file_name = strtolower(rawurldecode(html_entity_decode(basename($file,'.'.$info['extension']))));
                 if ($file_name == $name) {
-                    debuglog("    Returning ".$file,"GETALBUMCOVER");
+                    logger::log("GETALBUMCOVER", "    Returning ".$file);
                     return $file;
                 }
             }
         }
     }
     if (count($files) > 1) {
-        debuglog("    Returning ".$files[0],"GETALBUMCOVER");
+        logger::log("GETALBUMCOVER", "    Returning ".$files[0]);
         $delaytime = 1;
         return $files[0];
     }
@@ -108,7 +109,7 @@ function trySpotify($albumimage) {
         return "";
     }
     $image = "";
-    debuglog("  Trying Spotify for ".$albumimage->albumuri,"GETALBUMCOVER");
+    logger::mark("GETALBUMCOVER", "  Trying Spotify for ".$albumimage->albumuri);
 
     // php strict prevents me from doing end(explode()) because
     // only variables can be passed by reference. Stupid php.
@@ -116,7 +117,7 @@ function trySpotify($albumimage) {
     $spiffy = end($spaffy);
     $boop = $spaffy[1];
     $url = 'https://api.spotify.com/v1/'.$boop.'s/'.$spiffy;
-    debuglog("      Getting ".$url,"GETALBUMCOVER");
+    logger::log("GETALBUMCOVER", "      Getting ".$url);
     list($success, $content, $status) = get_spotify_data($url);
 
     if ($success) {
@@ -127,15 +128,15 @@ function trySpotify($albumimage) {
                 if ($img->width > $width) {
                     $width = $img->width;
                     $image = $img->url;
-                    debuglog("  Found image with width ".$width,"GETALBUMCOVER");
-                    debuglog("  URL is ".$image,"GETALBUMCOVER");
+                    logger::log("GETALBUMCOVER", "  Found image with width ".$width);
+                    logger::log("GETALBUMCOVER", "  URL is ".$image);
                 }
             }
         } else {
-            debuglog("    No Spotify Data Found","GETALBUMCOVER");
+            logger::log("GETALBUMCOVER", "    No Spotify Data Found");
         }
     } else {
-        debuglog("    Spotify API data not retrieved","GETALBUMCOVER");
+        logger::warn("GETALBUMCOVER", "    Spotify API data not retrieved");
     }
     $delaytime = 1000;
     if ($image == "" && $boop == 'artist') {
@@ -144,7 +145,7 @@ function trySpotify($albumimage) {
         $o = array( 'small' => $image, 'medium' => $image, 'asdownloaded' => $image, 'delaytime' => $delaytime);
         header('Content-Type: application/json; charset=utf-8');
         print json_encode($o);
-        debuglog("--------------------------------------------","GETALBUMCOVER");
+        logger::shout("GETALBUMCOVER", "--------------------------------------------");
         ob_flush();
         exit(0);
     }
@@ -167,29 +168,29 @@ function tryLastFM($albumimage) {
 
     $sa = $albumimage->get_artist_for_search();
     if ($sa == '') {
-        debuglog("  Trying last.FM for ".$al,"GETALBUMCOVER");
+        logger::mark("GETALBUMCOVER", "  Trying last.FM for ".$al);
         $xml = loadXML('lastfm', "https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&album=".rawurlencode($al)."&autocorrect=1");
     } else if ($sa == 'Podcast') {
-        debuglog("  Trying last.FM for ".$al,"GETALBUMCOVER");
+        logger::mark("GETALBUMCOVER", "  Trying last.FM for ".$al);
         // Last.FM sometimes works for podcasts if you use Artist
         $xml = loadXML('lastfm', "https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&artist=".rawurlencode($al)."&autocorrect=1");
     } else {
-        debuglog("  Trying last.FM for ".$sa." ".$al,"GETALBUMCOVER");
+        logger::mark("GETALBUMCOVER", "  Trying last.FM for ".$sa." ".$al);
         $xml = loadXML('lastfm', "https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&album=".rawurlencode($al)."&artist=".rawurlencode($sa)."&autocorrect=1");
     }
     if ($xml === false) {
-        debuglog("    Received error response from Last.FM","GETALBUMCOVER");
+        logger::fail("GETALBUMCOVER", "    Received error response from Last.FM");
         $tried_lastfm_once = true;
         return "";
     } else {
         if ($albumimage->mbid === null && $xml->album->mbid) {
             $albumimage->mbid = (string) $xml->album->mbid;
-            debuglog("      Last.FM gave us the MBID of '".$albumimage->mbid."'","GETALBUMCOVER");
+            logger::log("GETALBUMCOVER", "      Last.FM gave us the MBID of '".$albumimage->mbid."'");
             if ($mysqlc) {
                 if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET mbid = ? WHERE ImgKey = ? AND mbid IS NULL", $albumimage->mbid, $albumimage->get_image_key())) {
-                    debuglog("        Updated collection with new MBID","GETALBUMCOVER");
+                    logger::trace("GETALBUMCOVER", "        Updated collection with new MBID");
                 } else {
-                    debuglog("        Failed trying to update collection with new MBID","GETALBUMCOVER");
+                    logger::fail("GETALBUMCOVER", "        Failed trying to update collection with new MBID");
                 }
             }
             // return nothing here so we can try musicbrainz first
@@ -202,22 +203,22 @@ function tryLastFM($albumimage) {
                 if ($image) { $pic = $image; }
                 $s = array_search($attrs['size'], $sizeorder);
                 if ($s > $cs) {
-                    debuglog("    Image ".$attrs['size']." '".$image."'","GETALBUMCOVER");
+                    logger::trace("GETALBUMCOVER", "    Image ".$attrs['size']." '".$image."'");
                     $retval = $image;
                     $cs = $s;
                 }
             }
         } catch (Exception $e) {
-            debuglog("    Last.FM response was total monkeys","GETALBUMCOVER");
+            logger::fail("GETALBUMCOVER", "    Last.FM response was total monkeys");
         }
         if ($retval == "") {
             $retval = $pic;
         }
     }
     if ($retval != "") {
-        debuglog("    Last.FM gave us ".$retval,"GETALBUMCOVER");
+        logger::log("GETALBUMCOVER", "    Last.FM gave us ".$retval);
     } else {
-        debuglog("    No cover found on Last.FM","GETALBUMCOVER");
+        logger::log("GETALBUMCOVER", "    No cover found on Last.FM");
     }
     $delaytime = 1000;
     $tried_lastfm_once = true;
@@ -235,10 +236,10 @@ function tryGoogle($albumimage) {
         $sa = trim($albumimage->get_artist_for_search());
         $ma = munge_album_name($albumimage->album);
         if ($sa == '') {
-            debuglog("  Trying Google for ".$ma,"GETALBUMCOVER");
+            logger::mark("GETALBUMCOVER", "  Trying Google for",$ma);
             $uri = $nureek."&q=".urlencode($ma);
         } else {
-            debuglog("  Trying Google for ".$sa." ".$ma,"GETALBUMCOVER");
+            logger::log("GETALBUMCOVER", "  Trying Google for",$sa,$ma);
             $uri = $nureek."&q=".urlencode($sa.' '.$ma);
         }
         $d = new url_downloader(array(
@@ -254,14 +255,14 @@ function tryGoogle($albumimage) {
                 break;
             }
         } else if (array_key_exists('error', $json)) {
-            debuglog("    Error response from Google : ".$json['error']['errors'][0]['reason'],"GETALBUMCOVER");
+            logger::fail("GETALBUMCOVER", "    Error response from Google : ".$json['error']['errors'][0]['reason']);
         }
         if ($retval != '') {
-            debuglog("    Found image ".$retval." from Google","GETALBUMCOVER");
+            logger::log("GETALBUMCOVER", "    Found image ".$retval." from Google");
             $delaytime = 1000;
         }
     } else {
-        debuglog("  Not trying Google because no API Key or Search Engine ID","GETALBUMCOVER");
+        logger::mark("GETALBUMCOVER", "  Not trying Google because no API Key or Search Engine ID");
     }
     return $retval;
 }
@@ -274,7 +275,7 @@ function tryMusicBrainz($albumimage) {
     }
     $retval = "";
     // Let's get some information from musicbrainz about this album
-    debuglog("  Getting MusicBrainz release info for ".$albumimage->mbid,"GETALBUMCOVER");
+    logger::mark("GETALBUMCOVER", "  Getting MusicBrainz release info for ".$albumimage->mbid);
     $url = 'http://musicbrainz.org/ws/2/release/'.$albumimage->mbid.'?inc=release-groups';
     $d = new url_downloader(array(
         'url' => $url,
@@ -285,11 +286,11 @@ function tryMusicBrainz($albumimage) {
         $x = simplexml_load_string($d->get_data(), 'SimpleXMLElement', LIBXML_NOCDATA);
         if ($x->{'release'}->{'cover-art-archive'}->{'artwork'} == "true" &&
             $x->{'release'}->{'cover-art-archive'}->{'front'} == "true") {
-            debuglog("    Musicbrainz has artwork for this release", "GETALBUMCOVER");
+            logger::log("GETALBUMCOVER", "    Musicbrainz has artwork for this release");
             $retval = "http://coverartarchive.org/release/".$albumimage->mbid."/front";
         }
     } else {
-        debuglog("    Status code ".$d->get_status()." from Musicbrainz","GETALBUMCOVER");
+        logger::fail("GETALBUMCOVER", "    Status code ".$d->get_status()." from Musicbrainz");
     }
     return $retval;
 

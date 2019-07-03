@@ -48,7 +48,7 @@ $scripts = array(
     "ui/albumart.js"
 );
 foreach ($scripts as $i) {
-    debuglog("Loading ".$i,"INIT",8);
+    logger::mark("INIT", "Loading ".$i);
     print '<script type="text/javascript" src="'.$i.'?version='.ROMPR_VERSION.'"></script>'."\n";
 }
 include ("includes/globals.php");
@@ -217,7 +217,7 @@ function do_playlists() {
     global $count;
     global $albums_without_cover;
     global $PLAYER_TYPE;
-    debuglog('Player type is '.$PLAYER_TYPE,'PLAYLISTART');
+    logger::log("PLAYLISTART", "Player type is", $PLAYER_TYPE);
     $player = new $PLAYER_TYPE();
 
     $playlists = $player->get_stored_playlists(false);
@@ -235,7 +235,7 @@ function do_playlists() {
             print '<div id="album'.$count.'" class="containerbox fullwidth bigholder wrap">';
             sort($playlists, SORT_STRING);
             foreach ($playlists as $pl) {
-                debuglog('Playlist '.$pl,'PLAYLISTART');
+                logger::log("PLAYLISTART", "Playlist",$pl);
                 print '<div class="fixed albumimg closet">';
                     print '<div class="covercontainer">';
                         $class = "";

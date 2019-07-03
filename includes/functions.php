@@ -107,7 +107,7 @@ class url_downloader {
     }
 
     public function get_data_to_string() {
-        debuglog("Downloading ".$this->options['url'],"URL_DOWNLOADER");
+        logger::mark("URL_DOWNLOADER", "Downloading ".$this->options['url']);
         if ($this->options['send_cache_headers']) {
             header("Pragma: Not Cached");
         }
@@ -132,17 +132,17 @@ class url_downloader {
 
     public function get_data_to_file($file = null, $binary = false) {
         if ($file === null && $this->options['cache'] === null) {
-            debuglog("  No file or cache dir for request, returning data as string","URL_DOWNLOADER");
+            logger::trace("URL_DOWNLOADER", "  No file or cache dir for request, returning data as string");
             return $this->get_data_to_string();
         } else if ($this->options['cache'] !== null) {
             $file = 'prefs/jsoncache/'.$this->options['cache'].'/'.md5($this->options['url']);
         }
         if ($this->options['cache'] !== null && $this->check_cache($file)) {
-            debuglog("Returning cached data ".$file,"URL_DOWNLOADER");
+            logger::log("URL_DOWNLOADER", "Returning cached data ".$file);
             $this->content = file_get_contents($file);
             return true;
         } else {
-            debuglog("Downloading ".$this->options['url']." to ".$file,"URL_DOWNLOADER");
+            logger::mark("URL_DOWNLOADER", "Downloading",$this->options['url'],"to",$file);
             if (file_exists($file)) {
                 unlink ($file);
             }
@@ -181,10 +181,10 @@ class url_downloader {
         $this->info = curl_getinfo($this->ch);
         curl_close($this->ch);
         if ($this->get_status() == '200') {
-            debuglog("  ..  Download Success","URL_DOWNLOADER");
+            logger::trace("URL_DOWNLOADER", "  ..  Download Success");
             return true;
         } else {
-            debuglog("  ..  Download Failed With Status Code ".$this->get_status(),"URL_DOWNLOADER");
+            logger::warn("URL_DOWNLOADER", "  ..  Download Failed With Status Code",$this->get_status());
             return false;
         }
     }
@@ -303,7 +303,7 @@ function get_base_url() {
 }
 
 function scan_for_images($albumpath) {
-    debuglog("Album Path Is ".$albumpath, "LOCAL IMAGE SCAN");
+    logger::log("LOCAL IMAGE SCAN", "Album Path Is ".$albumpath);
     $result = array();
     if (is_dir("prefs/MusicFolders") && $albumpath != ".") {
         $albumpath = munge_filepath($albumpath);
@@ -329,17 +329,11 @@ function get_images($dir_path) {
 
     $funkychicken = array();
     $a = basename($dir_path);
-    debuglog("    Scanning : ".$dir_path,"GET_IMAGES");
+    logger::log("GET_IMAGES", "    Scanning :",$dir_path);
     $globpath = preg_replace('/(\*|\?|\[)/', '[$1]', $dir_path);
-    debuglog("      Glob Path is ".$globpath,"GET_IMAGES");
-    // $files = glob($globpath."/*.{jpg,png,bmp,gif,jpeg,JPEG,JPG,BMP,GIF,PNG}", GLOB_BRACE);
-    // foreach($files as $i => $f) {
-    //     $f = preg_replace('/%/', '%25', $f);
-    //     debuglog("        Found : ".get_base_url()."/".preg_replace('/ /', "%20", $f),"GET_IMAGES");
-    //     array_push($funkychicken, get_base_url()."/".preg_replace('/ /', "%20", $f));
-    // }
+    logger::debug("GET_IMAGES", "      Glob Path is",$globpath);
     $funkychicken = glob($globpath."/*.{jpg,png,bmp,gif,jpeg,JPEG,JPG,BMP,GIF,PNG}", GLOB_BRACE);
-    debuglog("    Checking for embedded images","GET_IMAGES");
+    logger::log("GET_IMAGES", "    Checking for embedded images");
     $files = glob($globpath."/*.{mp3,MP3,mp4,MP4,flac,FLAC,ogg,OGG}", GLOB_BRACE);
     $testfile = array_shift($files);
     if ($testfile) {
@@ -350,10 +344,9 @@ function get_images($dir_path) {
             foreach ($tags['comments']['picture'] as $picture) {
                 if (array_key_exists('picturetype', $picture)) {
                     if ($picture['picturetype'] == 'Cover (front)') {
-                        debuglog("    .. found embedded front cover image","GET_IMAGES");
+                        logger::log("GET_IMAGES", "    .. found embedded front cover image");
                         $filename = 'prefs/temp/'.md5($globpath);
                         file_put_contents($filename, $picture['data']);
-                        // array_unshift($funkychicken, get_base_url()."/".preg_replace('/ /', "%20", $filename));
                         array_unshift($funkychicken, $filename);
                     }
                 }
@@ -377,7 +370,7 @@ function find_executable($prog) {
 
     // Test to see if $prog is on the path and then try Homebrew and MacPorts paths until we find it
     // returns boolean false if the program is not found
-    debuglog("    Looking for executable program ".$prog,"BITS",9);
+    logger::debug("BITS", "    Looking for executable program ",$prog);
     $paths_to_try = array('', '/usr/local/bin/', '/opt/local/bin/', '/usr/bin/', './');
     $retval = false;
     foreach ($paths_to_try as $c) {
@@ -388,9 +381,9 @@ function find_executable($prog) {
         }
     }
     if ($retval === false) {
-        debuglog("      Program ".$prog." Not Found!","BITS",2);
+        logger::debug("BITS", "      Program ".$prog." Not Found!");
     } else {
-        debuglog("      program is ".$retval.$prog,"BITS",9);
+        logger::debug("BITS", "      program is ".$retval.$prog);
     }
     return $retval;
 
@@ -699,10 +692,10 @@ function checkComposerGenre($genre, $pref) {
 function get_player_ip() {
     global $prefs;
     // SERVER_ADDR reflects the address typed into the browser
-    debuglog("Server Address is ".$_SERVER['SERVER_ADDR'],"INIT",7);
+    logger::log("INIT", "Server Address is ".$_SERVER['SERVER_ADDR']);
     // REMOTE_ADDR is the address of the machine running the browser
-    debuglog("Remote Address is ".$_SERVER['REMOTE_ADDR'],"INIT",7);
-    debuglog("Prefs for mpd host is ".$prefs['multihosts']->{$prefs['currenthost']}->host,"INIT",7);
+    logger::log("INIT", "Remote Address is ".$_SERVER['REMOTE_ADDR']);
+    logger::log("INIT", "Prefs for mpd host is ".$prefs['multihosts']->{$prefs['currenthost']}->host);
     $pip = '';
     if ($prefs['multihosts']->{$prefs['currenthost']}->socket != '') {
         $pip = $_SERVER['HTTP_HOST'];
@@ -713,16 +706,16 @@ function get_player_ip() {
     } else {
         $pip = $prefs['multihosts']->{$prefs['currenthost']}->host . ':' . $prefs['multihosts']->{$prefs['currenthost']}->port;
     }
-    debuglog("Displaying Player IP as: ".$pip,"INIT",7);
+    logger::log("INIT", "Displaying Player IP as: ".$pip);
     return $pip;
 }
 
 function getCacheData($uri, $cache, $use_cache = true) {
 
     $me = strtoupper($cache);
-    debuglog("Getting ".$uri, $me);
+    logger::log("GET CACHE DATA", "Getting",$uri);
     if ($use_cache == false) {
-        debuglog("  Not using cache for this request","CACHE");
+        logger::trace("GET CACHE DATA", "  Not using cache for this request");
     }
     $options = array(
         'url' => $uri,
@@ -736,7 +729,7 @@ function getCacheData($uri, $cache, $use_cache = true) {
     } else {
         if ($d->get_status() > 0) {
             $header = $d->get_status().' '.http_status_code_string($d->get_status());
-            debuglog("HTTP ERROR ".$header,"CACHE",6);
+            logger::fail("GET CACHE DATA", "HTTP ERROR",$header);
         } else {
             $header = '500 '.http_status_code_string(500);
         }
@@ -751,13 +744,13 @@ function getCacheData($uri, $cache, $use_cache = true) {
 
 function get_user_file($src, $fname, $tmpname) {
     global $error;
-    debuglog("  Uploading ".$src." ".$fname." ".$tmpname,"GETALBUMCOVER");
+    logger::log("GETALBUMCOVER", "  Uploading ".$src." ".$fname." ".$tmpname);
     $download_file = "prefs/temp/".$fname;
-    debuglog("Checking Temp File ".$tmpname,"GETALBUMCOVER");
+    logger::log("GETALBUMCOVER", "Checking Temp File ".$tmpname);
     if (move_uploaded_file($tmpname, $download_file)) {
-        debuglog("    File ".$src." is valid, and was successfully uploaded.","GETALBUMCOVER");
+        logger::log("GETALBUMCOVER", "    File ".$src." is valid, and was successfully uploaded.");
     } else {
-        debuglog("    Possible file upload attack!","GETALBUMCOVER");
+        logger::warn("GETALBUMCOVER", "    Possible file upload attack!");
         header('HTTP/1.0 403 Forbidden');
         ob_flush();
         exit(0);
@@ -791,30 +784,10 @@ function rejig_wishlist_tracks() {
             'rompr_wishlist_'.microtime(true), $obj['Artistindex'], null, 0, 0, null, null, 'local', null)) {
 
             $albumindex = $mysqlc->lastInsertId();
-            debuglog("    Created Album with Albumindex ".$albumindex,"MYSQL",7);
+            logger::log("MYSQL", "    Created Album with Albumindex ".$albumindex);
             generic_sql_query("UPDATE Tracktable SET Albumindex = ".$albumindex." WHERE TTindex = ".$obj['TTindex'], true);
         }
     }
-}
-
-function multi_implode($array, $glue = ', ') {
-    $ret = '';
-
-    if (!is_array($array)) {
-        return $array;
-    }
-
-    foreach ($array as $key => $item) {
-        if (is_array($item)) {
-            $ret .= $key . '=[' . multi_implode($item, $glue) . ']' . $glue;
-        } else {
-            $ret .= $key . '=' . $item . $glue;
-        }
-    }
-
-    $ret = substr($ret, 0, 0-strlen($glue));
-
-    return $ret;
 }
 
 function emptyCollectionDisplay() {
@@ -828,13 +801,6 @@ function emptySearchDisplay() {
     print '<div class="pref textcentre">
     <p>No Results</p>
     </div>';
-}
-
-function debug_format($dbg) {
-    if (is_array($dbg)) {
-        $dbg = implode($dbg, ", ");
-    }
-    return $dbg;
 }
 
 function format_bytes($size, $precision = 1)
@@ -877,9 +843,9 @@ function update_stream_images($schemaver) {
         case 43:
             $stations = generic_sql_query("SELECT Stationindex, StationName, Image FROM RadioStationtable WHERE Image LIKE 'prefs/userstreams/STREAM_%'");
             foreach ($stations as $station) {
-                debuglog("  Updating Image For Station ".$station['StationName'], "BACKEND");
+                logger::log("BACKEND", "  Updating Image For Station ".$station['StationName']);
                 if (file_exists($station['Image'])) {
-                    debuglog("    Image is ".$station['StationName'], "BACKEND");
+                    logger::log("BACKEND", "    Image is ".$station['StationName']);
                     $src = get_base_url().'/'.$station['Image'];
                     $albumimage = new albumImage(array('artist' => "STREAM", 'album' => $station['StationName'], 'source' => $src));
                     if ($albumimage->download_image()) {
@@ -889,7 +855,7 @@ function update_stream_images($schemaver) {
                         sql_prepare_query(true, null, null, null, "UPDATE WishlistSourcetable SET Image = ? WHERE Image = ?",$images['small'],$station['Image']);
                         unlink($station['Image']);
                     } else {
-                        debuglog("  Image Upgrade Failed!","BACKEND");
+                        logger::warn("BACKEND", "  Image Upgrade Failed!");
                     }
                 } else {
                     generic_sql_query("UPDATE RadioStationtable SET IMAGE = NULL WHERE Stationindex = ".$station['Stationindex']);
@@ -918,7 +884,7 @@ function getRemoteFilesize($url, $default) {
     $clen = isset($head['content-length']) ? $head['content-length'] : 0;
     $cstring = $clen;
     if (is_array($clen)) {
-        debuglog("Content Length is an array ".PHP_EOL.print_r($clen, true),"FUNCTIONS", 9);
+        logger::log("FUNCTIONS", "Content Length is an array ".PHP_EOL.print_r($clen, true));
         $cstring = 0;
         foreach ($clen as $l) {
             if ($l > $cstring) {
@@ -928,10 +894,10 @@ function getRemoteFilesize($url, $default) {
     }
     stream_context_set_default($def_options);
     if ($cstring !== 0) {
-        debuglog("  Read file size remotely as ".$cstring,"FUNCTIONS",8);
+        logger::log("FUNCTIONS", "  Read file size remotely as ".$cstring);
         return $cstring;
     } else {
-        debuglog("  Couldn't read filesize remotely. Using default value of ".$default,"FUNCTIONS",8);
+        logger::log("FUNCTIONS", "  Couldn't read filesize remotely. Using default value of ".$default);
         return $default;
     }
 }

@@ -162,7 +162,7 @@ class playlistCollection {
             $astring = implode(', ',$artists);
             $newartists = explode(',', $astring);
             if (count($newartists) == count($mbids)) {
-                debuglog("GETPLAYLIST","Trying splitting comma-separated artist string",8);
+                logger::trace("Trying splitting comma-separated artist string", "GETPLAYLIST");
                 // In case AlbumArtist has that format too
                 $this->artist_not_found_yet($astring);
                 $artists = $newartists;

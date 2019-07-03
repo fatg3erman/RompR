@@ -31,6 +31,6 @@ foreach ($player->get_playlist($collection) as $info) {
 };
 print ']';
 ob_flush();
-debuglog("Playlist Output Is Done","GETPLAYLIST");
+logger::trace("GETPLAYLIST", "Playlist Output Is Done");
 
 ?>

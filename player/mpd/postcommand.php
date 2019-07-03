@@ -33,16 +33,16 @@ if ($player->is_connected()) {
 
         foreach ($json as $cmd) {
 
-            debuglog("RAW command : ".implode(' ', $cmd),"POSTCOMMAND",9);
+            logger::trace("POSTCOMMAND", "RAW command : ".implode(' ', $cmd));
 
             switch ($cmd[0]) {
                 case "addtoend":
-                    debuglog("Addtoend ".$cmd[1],"POSTCOMMAND");
+                    logger::trace("POSTCOMMAND", "Addtoend ".$cmd[1]);
                     $cmds = array_merge($cmds, playAlbumFromTrack($cmd[1]));
                     break;
 
                 case 'playlisttoend':
-                    debuglog("Playing playlist ".$cmd[1]." from position ".$cmd[2]." to end","POSTCOMMAND");
+                    logger::trace("POSTCOMMAND", "Playing playlist ".$cmd[1]." from position ".$cmd[2]." to end");
                     foreach($player->get_stored_playlist_tracks($cmd[1], $cmd[2]) as list($class, $uri, $filedata)) {
                         if ($class == 'clicktrack') {
                             $cmds[] = 'add "'.$uri.'"';
@@ -53,12 +53,12 @@ if ($player->is_connected()) {
                     break;
 
                 case "additem":
-                    debuglog("Adding Item ".$cmd[1],"POSTCOMMAND");
+                    logger::trace("POSTCOMMAND", "Adding Item ".$cmd[1]);
                     $cmds = array_merge($cmds, getItemsToAdd($cmd[1], null));
                     break;
 
                 case "addartist":
-                    debuglog("Getting tracks for Artist ".$cmd[1],"MPD");
+                    logger::trace("MPD", "Getting tracks for Artist ".$cmd[1]);
                     $cmds = array_merge($cmds, $player->get_tracks_for_spotify_artist($cmd[1]));
                     break;
 
@@ -69,11 +69,11 @@ if ($player->is_connected()) {
                     break;
 
                 case "addremoteplaylist":
-                    debuglog("  URL is ".$cmd[1],"POSTCOMMAND");
+                    logger::log("POSTCOMMAND", "Remote Playlist URL is",$cmd[1]);
                     // First, see if we can just 'load' the remote playlist. This is better with MPD
                     // as it parses track names from the playlist
                     if (check_track_load_command($cmd[1]) == 'load') {
-                        debuglog("Loading remote playlist","POSTCOMMAND");
+                        logger::log("POSTCOMMAND", "Loading remote playlist");
                         $cmds[] = join_command_string(array('load', $cmd[1]));
                     } else {
                         // Always use the MPD version of the stream playlist handler, since that parses
@@ -82,7 +82,7 @@ if ($player->is_connected()) {
                         // and 'add' only adds the first track. As user remtote playlists can have multiple types of
                         // thing in them, including streams, we need to 'add' every track - unless we're using mpd and
                         // the 'track' is a playlist we need to load..... Crikey.
-                        debuglog("Adding remote playlist (track by track)","POSTCOMMAND");
+                        logger::log("POSTCOMMAND", "Adding remote playlist (track by track)");
                         require_once ("player/mpd/streamplaylisthandler.php");
                         require_once ("utils/getInternetPlaylist.php");
                         $tracks = load_internet_playlist($cmd[1], '', '', true);
@@ -125,8 +125,8 @@ if ($player->is_connected()) {
                     break;
 
                 case "resume":
-                    debuglog("Adding Track ".$cmd[1],"POSTCOMMAND");
-                    debuglog("  .. and seeking position ".$cmd[3]." to ".$cmd[2],"POSTCOMMAND");
+                    logger::log("POSTCOMMAND", "Adding Track ".$cmd[1]);
+                    logger::log("POSTCOMMAND", "  .. and seeking position ".$cmd[3]." to ".$cmd[2]);
                     $cmds[] = join_command_string(array('add', rawurldecode($cmd[1])));
                     $cmds[] = join_command_string(array('play', $cmd[3]));
                     $expected_state = 'play';
@@ -182,7 +182,7 @@ if ($player->is_connected()) {
     //
 
     if ($moveallto !== null) {
-        debuglog("Moving Tracks into position","MPD");
+        logger::trace("MPD", "Moving Tracks into position");
         $temp_status = $player->get_status();
         $new_playlist_length = $temp_status['playlistlength'];
         $player->do_command_list(array(join_command_string(array('move', $current_playlist_length.':'.$new_playlist_length, $moveallto))));
@@ -217,7 +217,7 @@ if ($player->is_connected()) {
     //
 
     if (is_array($cmd_status) && !array_key_exists('error', $mpd_status) && array_key_exists('error', $cmd_status)) {
-        debuglog("Command List Error ".$cmd_status['error'],"POSTCOMMAND",1);
+        logger::warn("POSTCOMMAND", "Command List Error",$cmd_status['error']);
         $mpd_status = array_merge($mpd_status, $cmd_status);
     }
 
@@ -241,7 +241,7 @@ if ($player->is_connected()) {
     //
 
     if (array_key_exists('error', $mpd_status)) {
-        debuglog("Clearing Player Error ".$mpd_status['error'],"MPD",7);
+        logger::log("MPD", "Clearing Player Error ".$mpd_status['error']);
         $player->clear_error();
     }
 
@@ -251,7 +251,7 @@ if ($player->is_connected()) {
 
     if (array_key_exists('single', $mpd_status) && $mpd_status['single'] == 1 && array_key_exists('state', $mpd_status) &&
             ($mpd_status['state'] == "pause" || $mpd_status['state'] == "stop")) {
-        debuglog("Cancelling Single Mode","MPD",9);
+        logger::trace("MPD", "Cancelling Single Mode");
         $player->cancel_single_quietly();
         $mpd_status['single'] = 0;
     }

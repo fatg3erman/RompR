@@ -68,7 +68,7 @@ class musicCollection {
 	public function get_albumartist_by_folder($f) {
 		foreach ($this->albums as $album) {
 			if ($album->folder == $f) {
-				debuglog("   Found albumartist by folder ".$album->artist,"COLLECTION");
+				logger::trace("COLLECTION", "   Found albumartist by folder",$album->artist);
 				return $album->artist;
 			}
 		}
@@ -82,7 +82,7 @@ class musicCollection {
     public function tracks_as_array() {
         $results = array();
         foreach($this->albums as $album) {
-			debuglog("Doing Album ".$album->name,"COLLECTION");
+			logger::log("COLLECTION", "Doing Album",$album->name);
             $album->sortTracks();
             foreach($album->tracks as $trackobj) {
                 $track = array(
@@ -98,12 +98,12 @@ class musicCollection {
                     "duration" => $trackobj->tags['Time'],
                     "date" => $album->datestamp
                 );
-				debuglog("Title - ".$trackobj->tags['Title'],"COLLECTION");
+				logger::log("COLLECTION", "Title - ".$trackobj->tags['Title']);
                 // A lot of code that depends on this was written to handle mopidy model search results.
                 // The above is not mopidy model, so friggicate it into just such a thing
                 $d = getDomain($track['uri']);
 				if (!array_key_exists($d, $results)) {
-					debuglog("Creating Results Set For ".$d,"COLLECTION",8);
+					logger::log("COLLECTION", "Creating Results Set For ".$d);
                     $results[$d] = array(
                         "tracks" => array(),
                         "uri" => $d.':bodgehack'
@@ -243,9 +243,9 @@ class album {
         // as is the case with many mopidy backends
 
         if ($this->artist == null) {
-            debuglog("Finding AlbumArtist for album ".$this->name,"COLLECTION",5);
+            logger::mark("COLLECTION", "Finding AlbumArtist for album ".$this->name);
             if (count($this->tracks) < ROMPR_MIN_TRACKS_TO_DETERMINE_COMPILATION) {
-                debuglog("  Album ".$this->name." has too few tracks to determine album artist","COLLECTION",5);
+                logger::log("COLLECTION", "  Album ".$this->name." has too few tracks to determine album artist");
                 $this->decideOnArtist($this->tracks[0]->get_sort_artist());
             } else {
                 $artists = array();
@@ -260,12 +260,12 @@ class album {
                 rsort($q);
                 $candidate_artist = $q[0];
                 $fraction = $artists[$candidate_artist]/count($this->tracks);
-                debuglog("  Artist ".$candidate_artist." has ".$artists[$candidate_artist]." tracks out of ".count($this->tracks),"COLLECTION",5);
+                logger::log("COLLECTION", "  Artist ".$candidate_artist." has ".$artists[$candidate_artist]." tracks out of ".count($this->tracks));
                 if ($fraction > ROMPR_MIN_NOT_COMPILATION_THRESHOLD) {
-                    debuglog("    ... which is good enough. Album ".$this->name." is by ".$candidate_artist,"COLLECTION",5);
+                    logger::log("COLLECTION", "    ... which is good enough. Album ".$this->name." is by ".$candidate_artist);
                     $this->artist = $candidate_artist;
                 } else {
-                    debuglog("   ... which is not enough","COLLECTION",5);
+                    logger::log("COLLECTION", "   ... which is not enough");
                     $this->decideOnArtist("Various Artists");
                 }
             }
@@ -321,7 +321,7 @@ class album {
 	public function checkForDuplicate($t) {
 		foreach ($this->tracks as $track) {
 			if ($t->tags['file'] == $track->tags['file']) {
-				debuglog("Filtering Duplicate Track ".$t->tags['file'],"COLLECTION",7);
+				logger::trace("COLLECTION", "Filtering Duplicate Track ".$t->tags['file']);
 				return true;
 			}
 		}
@@ -330,7 +330,7 @@ class album {
 
     private function decideOnArtist($candidate) {
         if ($this->artist == null) {
-            debuglog("  ... Setting artist to ".$candidate,"COLLECTION",5);
+            logger::log("COLLECTION", "  ... Setting artist to ".$candidate);
             $this->artist = $candidate;
         }
     }

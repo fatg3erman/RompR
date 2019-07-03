@@ -4,7 +4,7 @@ require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 require_once ("utils/imagefunctions.php");
 require_once ("international.php");
-debuglog("--------------------------START---------------------","USERRATING",4);
+logger::blurt("USERRATING", "--------------------------START---------------------");
 require_once ("backends/sql/backend.php");
 require_once ("backends/sql/metadatafunctions.php");
 require_once ("player/".$prefs['player_backend']."/player.php");
@@ -17,7 +17,7 @@ $download_file = "";
 $dummydata = array('dummy' => 'baby');
 
 if ($mysqlc == null) {
-	debuglog("Can't Do ratings stuff as no SQL connection!","RATINGS",1);
+	logger::error("RATINGS", "Can't Do ratings stuff as no SQL connection!");
 	header('HTTP/1.0 403 Forbidden');
 	exit(0);
 }
@@ -26,7 +26,7 @@ $start = time();
 open_transaction();
 create_foundtracks();
 $took = time() - $start;
-debuglog("Creating FoundTracks took ".$took." seconds", "USERRATING",8);
+logger::debug("TIMINGS", "Creating FoundTracks took ".$took." seconds");
 
 $params = json_decode(file_get_contents('php://input'), true);
 
@@ -36,14 +36,10 @@ foreach($params as $p) {
 
 	romprmetadata::sanitise_data($p);
 
-	debuglog("Doing action ".strtoupper($p['action']), "USERRATING", 7);
+	logger::mark("USERRATING", "Doing action",strtoupper($p['action']));
 	foreach ($p as $i => $v) {
 		if ($i != 'action' && $v) {
-			if (is_array($v)) {
-				debuglog(' Array - '.multi_implode($v,', '), ' '.$i,8);
-			} else {
-				debuglog(' '.$v, ' '.$i,8);
-			}
+			logger::log("  Parameter", $i,':',$v);
 		}
 	}
 
@@ -146,7 +142,7 @@ foreach($params as $p) {
 			break;
 
 		default:
-			debuglog("Unknown Request ".$p['action'],"USERRATINGS",2);
+			logger::fail("USERRATINGS", "Unknown Request",$p['action']);
 			header('HTTP/1.1 400 Bad Request');
 			break;
 
@@ -164,31 +160,31 @@ if (count($returninfo) == 0 || array_key_exists('metadata', $returninfo)) {
 print json_encode($returninfo);
 close_transaction();
 
-debuglog("---------------------------END----------------------","USERRATING",4);
+logger::blurt("USERRATING", "---------------------------END----------------------");
 
 function prepare_returninfo() {
-	debuglog("Preparing Return Info","USERRATINGS",6);
+	logger::log("USERRATINGS", "Preparing Return Info");
 	global $returninfo, $prefs;
 	$t = microtime(true);
 	$result = generic_sql_query('SELECT DISTINCT AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
 	foreach ($result as $mod) {
 		if (artist_albumcount($mod['AlbumArtistindex']) == 0) {
 			$returninfo['deletedartists'][] = $mod['AlbumArtistindex'];
-			debuglog("  Artist ".$mod['AlbumArtistindex']." has no visible albums","USERRATINGS",6);
+			logger::mark("USERRATINGS", "  Artist ".$mod['AlbumArtistindex']." has no visible albums");
 		} else {
-			debuglog("  Artist ".$mod['AlbumArtistindex']." has modified albums","USERRATINGS",6);
+			logger::mark("USERRATINGS", "  Artist ".$mod['AlbumArtistindex']." has modified albums");
 			switch ($prefs['sortcollectionby']) {
 				case 'album':
 					break;
 
 				case 'artist':
-					debuglog("    Creating Artist Header","USERRATINGS",7);
+					logger::trace("USERRATINGS", "    Creating Artist Header");
 					$returninfo['modifiedartists'][] = do_artists_from_database('a', $prefs['sortcollectionby'], $mod['AlbumArtistindex']);
 					break;
 
 				case 'albumbyartist':
 					if ($prefs['showartistbanners']) {
-						debuglog("    Creating Artist Banner","USERRATINGS",7);
+						logger::trace("USERRATINGS", "    Creating Artist Banner");
 						$returninfo['modifiedartists'][] = do_artist_banner('a','album',$mod['AlbumArtistindex']);
 					}
 					break;
@@ -197,16 +193,16 @@ function prepare_returninfo() {
 	}
 
 	$at = microtime(true) - $t;
-	debuglog(" -- Finding modified artists took ".$at." seconds","BACKEND",8);
+	logger::debug("TIMINGS", " -- Finding modified artists took ".$at." seconds");
 
 	$t = microtime(true);
 	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
 	foreach ($result as $mod) {
 		if (album_trackcount($mod['Albumindex']) == 0) {
-			debuglog("  Album ".$mod['Albumindex']." has no visible tracks","USERRATINGS",6);
+			logger::mark("USERRATINGS", "  Album ".$mod['Albumindex']." has no visible tracks");
 			$returninfo['deletedalbums'][] = $mod['Albumindex'];
 		} else {
-			debuglog("  Album ".$mod['Albumindex']." was modified","USERRATINGS",6);
+			logger::mark("USERRATINGS", "  Album ".$mod['Albumindex']." was modified");
 			$prefix = check_album_is_album($mod['Albumindex']);
 			switch ($prefs['sortcollectionby']) {
 				case 'album':
@@ -223,23 +219,23 @@ function prepare_returninfo() {
 		}
 	}
 	$at = microtime(true) - $t;
-	debuglog(" -- Finding modified albums took ".$at." seconds","BACKEND",8);
+	logger::debug("TIMINGS", " -- Finding modified albums took ".$at." seconds");
 
 	$t = microtime(true);
 	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex, Uri, TTindex FROM Tracktable JOIN Albumtable USING (Albumindex) WHERE justAdded = 1 AND Hidden = 0');
 	foreach ($result as $mod) {
-		debuglog("  New Track in album ".$mod['Albumindex'].' has TTindex '.$mod['TTindex'],"USERRATING");
+		logger::log("USERRATING", "  New Track in album ".$mod['Albumindex'].' has TTindex '.$mod['TTindex']);
 		$returninfo['addedtracks'][] = array('artistindex' => $mod['AlbumArtistindex'], 'albumindex' => $mod['Albumindex'], 'trackuri' => rawurlencode($mod['Uri']));
 	}
 	$at = microtime(true) - $t;
-	debuglog(" -- Finding added tracks took ".$at." seconds","BACKEND",8);
+	logger::debug("TIMINGS", " -- Finding added tracks took ".$at." seconds");
 }
 
 function check_album_is_album($albumindex) {
 	// See if the album is an album or an audiobook
 	$c = simple_query('COUNT(TTindex)', 'Tracktable', 'isAudiobook = 1 AND Albumindex', $albumindex, 0);
 	if ($c > 0) {
-		debuglog("    This is an audiobook",'USERRATINGS', 7);
+		logger::trace("USERRATINGS", "    This is an audiobook");
 		return 'z';
 	} else {
 		return 'a';
@@ -294,19 +290,19 @@ function backup_unrecoverable_data() {
 
 	$dirname = check_backup_dir();
 
-	debuglog("Backing up manually added tracks","BACKEND",5);
+	logger::log("BACKEND", "Backing up manually added tracks");
 	$tracks = get_manually_added_tracks();
 	file_put_contents($dirname.'/tracks.json',json_encode($tracks));
 
-	debuglog("Backing up ratings","BACKEND",5);
+	logger::log("BACKEND", "Backing up ratings");
 	$tracks = get_ratings();
 	file_put_contents($dirname.'/ratings.json',json_encode($tracks));
 
-	debuglog("Backing up Playcounts","BACKEND",5);
+	logger::log("BACKEND", "Backing up Playcounts");
 	$tracks = get_playcounts();
 	file_put_contents($dirname.'/playcounts.json',json_encode($tracks));
 
-	debuglog("Backing up Tags","BACKEND",5);
+	logger::log("BACKEND", "Backing up Tags");
 	$tracks = get_tags();
 	file_put_contents($dirname.'/tags.json',json_encode($tracks));
 
@@ -348,7 +344,7 @@ function restoreBackup($backup) {
 	}
 	$monitor = fopen('prefs/backupmonitor', 'w');
 	if (file_exists('prefs/databackups/'.$backup.'/tracks.json')) {
-		debuglog("Restoring Manually Added Tracks",4,"BACKUPS");
+		logger::mark("BACKUPS", "Restoring Manually Added Tracks");
 		$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/tracks.json'), true);
 		foreach ($tracks as $i => $trackdata) {
 			romprmetadata::sanitise_data($trackdata);
@@ -358,7 +354,7 @@ function restoreBackup($backup) {
 		}
 	}
 	if (file_exists('prefs/databackups/'.$backup.'/ratings.json')) {
-		debuglog("Restoring Ratings",4,"BACKUPS");
+		logger::mark("BACKUPS", "Restoring Ratings");
 		$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/ratings.json'), true);
 		foreach ($tracks as $i => $trackdata) {
 			romprmetadata::sanitise_data($trackdata);
@@ -369,7 +365,7 @@ function restoreBackup($backup) {
 		}
 	}
 	if (file_exists('prefs/databackups/'.$backup.'/tags.json')) {
-		debuglog("Restoring Tags",4,"BACKUPS");
+		logger::mark("BACKUPS", "Restoring Tags");
 		$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/tags.json'), true);
 		foreach ($tracks as $i => $trackdata) {
 			romprmetadata::sanitise_data($trackdata);
@@ -380,7 +376,7 @@ function restoreBackup($backup) {
 		}
 	}
 	if (file_exists('prefs/databackups/'.$backup.'/playcounts.json')) {
-		debuglog("Restoring Playcounts",4,"BACKUPS");
+		logger::mark("BACKUPS", "Restoring Playcounts");
 		$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/playcounts.json'), true);
 		foreach ($tracks as $i => $trackdata) {
 			romprmetadata::sanitise_data($trackdata);
@@ -568,7 +564,7 @@ function get_fave_artists() {
 		derived GROUP BY Artistindex) AS alias JOIN Artisttable USING (Artistindex) WHERE
 		playtot > (SELECT AVG(playtotal) FROM aplaytable) ORDER BY ".SQL_RANDOM_SORT, false, PDO::FETCH_OBJ);
 	foreach ($result as $obj) {
-		debuglog("Artist : ".$obj->Artistname,"FAVEARTISTS");
+		logger::log("FAVEARTISTS", "Artist :",$obj->Artistname);
 		$artists[] = array( 'name' => $obj->Artistname, 'plays' => $obj->playtot);
 	}
 	return $artists;
@@ -581,7 +577,7 @@ function addToListenLater($album) {
 		$d = json_decode($r['JsonData'], true);
 		$thisid = spotifyAlbumId($d);
 		if ($thisid == $newid) {
-			debuglog("Trying to add duplicate album to Listen Later","LISTENLATER");
+			logger::warn("LISTENLATER", "Trying to add duplicate album to Listen Later");
 			return;
 		}
 	}
@@ -622,7 +618,7 @@ function getLinkToCheck() {
 }
 
 function updateCheckedLink($ttindex, $uri, $status) {
-	debuglog("Updating Link Check For TTindex ".$ttindex." ".$uri ,"METADATA", 7);
+	logger::log("METADATA", "Updating Link Check For TTindex",$ttindex,$uri);
 	sql_prepare_query(true, null, null, null,
 		"UPDATE Tracktable SET LinkChecked = ?, Uri = ? WHERE TTindex = ?", $status, $uri, $ttindex);
 }

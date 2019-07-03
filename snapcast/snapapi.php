@@ -23,14 +23,14 @@ class snapcast {
         if ($this->is_connected()) {
             return true;
         }
-        debuglog("Connecting to ".$this->ip.':'.$this->port,"SNAPCAST");
+        logger::trace("SNAPCAST", "Connecting to ".$this->ip.':'.$this->port);
         $this->connection = @stream_socket_client('tcp://'.$this->ip.':'.$this->port);
         if ($this->is_connected()) {
             stream_set_timeout($this->connection, 65535);
             stream_set_blocking($this->connection, true);
             return true;
         }
-        debuglog('Snapcast connection failed', "SNAPCAST");
+        logger::warn("SNAPCAST", "Snapcast connection failed");
         return false;
     }
 
@@ -46,7 +46,7 @@ class snapcast {
 
     public function do_command($json) {
         if ($this->open_connection()) {
-            debuglog("Sending ",$json,"SNAPCAST");
+            logger::trace("SNAPCAST", "Sending ",$json);
             // For some reason, fputs strips the final } off the string
             fputs($this->connection, $json."}\n", strlen($json)+2);
             $got = fgets($this->connection);
@@ -65,8 +65,8 @@ class snapcast {
 
 $server = new snapcast($prefs['snapcast_server'], $prefs['snapcast_port']);
 $json = file_get_contents("php://input");
-debuglog("JSON is ".$json,"SNAPCAST");
 $output = $server->do_command($json);
+logger::debug("SNAPCAST", "Output is",$output);
 header('Content-Type: application/json; charset=utf-8');
 print $output;
 ?>

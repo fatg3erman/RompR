@@ -31,7 +31,7 @@ if (array_key_exists('playlist', $_REQUEST)) {
     $c = 0;
     $player = new $PLAYER_TYPE();
     foreach ($player->get_stored_playlists(false) as $pl) {
-        debuglog("Adding Playlist : ".$pl,"MPD PLAYLISTS",8);
+        logger::log("MPD PLAYLISTS", "Adding Playlist : ".$pl);
         add_playlist(rawurlencode($pl), htmlentities($pl), 'icon-doc-text', 'clickloadplaylist', true, $c, false, null);
         $c++;
     }
@@ -46,7 +46,7 @@ if (array_key_exists('playlist', $_REQUEST)) {
         sort($imgs);
         $unneeded = array_diff($imgs, $used_images);
         foreach ($unneeded as $img) {
-            debuglog("Removing uneeded playlist image ".$img,"PLAYLISTS");
+            logger::log("PLAYLISTS", "Removing uneeded playlist image",$img);
             if (is_dir($img)) {
                 rrmdir($img);
             } else {
@@ -54,7 +54,7 @@ if (array_key_exists('playlist', $_REQUEST)) {
             }
         }
     } else {
-        debuglog('Error when loading saved playlists','LOADPLAYLISTS');
+        logger::fail("LOADPLAYLISTS", "Error when loading saved playlists");
     }
 }
 
@@ -102,7 +102,7 @@ function get_artist_track_title($filedata) {
 }
 
 function do_user_playlist_tracks($pl, $icon, $target) {
-    debuglog("Downloading remote playlist ".$pl,"USERPLAYLISTS");
+    logger::mark("USERPLAYLISTS", "Downloading remote playlist",$pl);
     // Use the MPD version of the playlist parser, since that parses all tracks,
     // which is what we want.
     require_once ("player/mpd/streamplaylisthandler.php");
@@ -192,7 +192,7 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
             break;
 
         default:
-            debuglog("ERROR! Not permitted type passed to add_playlist", "MPD_PLAYLISTS",2);
+            logger::error("MPD PLAYLISTS", "ERROR! Not permitted type passed to add_playlist",$class);
             break;
 
 

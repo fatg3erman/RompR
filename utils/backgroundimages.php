@@ -10,7 +10,7 @@ function first_upgrade_of_user_backgrounds() {
 }
 
 function analyze_background_folder($folder, $is_browser) {
-    debuglog('Analysing '.$folder,'USERBACKGROUNDS');
+    logger::log("USERBACKGROUNDS", "Analysing",$folder);
     if ($is_browser) {
         $browserid = basename($folder);
         $skin = basename(dirname($folder));
@@ -37,10 +37,10 @@ function analyze_background_image($image) {
 	$size = $ih->get_image_dimensions();
     $retval = false;
 	if ($size['width'] > $size['height']) {
-        debuglog("  Landscape Image ".$image,"BACKIMAGE",8);
+        logger::log("BACKIMAGE", "  Landscape Image ".$image);
         $retval = ORIENTATION_LANDSCAPE;
 	} else {
-		debuglog("  Portrait Image ".$image,"BACKIMAGE",8);
+		logger::log("BACKIMAGE", "  Portrait Image ".$image);
         $retval = ORIENTATION_PORTRAIT;
 	}
 	$ih->destroy();

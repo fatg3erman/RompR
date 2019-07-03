@@ -10,7 +10,8 @@ include("includes/functions.php");
 require_once("utils/imagefunctions.php");
 include("backends/sql/backend.php");
 
-debuglog("Checking Cache","CACHE CLEANER");
+logger::shout("CACHE CLEANER", "-----------------------------------------------------------------------");
+logger::blurt("CACHE CLEANER", "Checking Cache");
 
 // DO NOT REDUCE the values for musicbrainz or discogs
 // - we have to follow their API rules and as we don't check
@@ -41,12 +42,13 @@ clean_cache_dir('prefs/imagecache/', 648000);
 clean_cache_dir('albumart/', 1);
 // Clean the temp directory
 clean_cache_dir('prefs/temp/', 1);
-debuglog("Cache has been cleaned","CACHE CLEANER");
+logger::shout("CACHE CLEANER", "Cache has been cleaned");
 
 if ($mysqlc) {
 
     $now = time();
-    debuglog("Checking database for hidden album art","CACHE CLEANER");
+    logger::shout("CACHE CLEANER", "Tidying Database");
+    logger::mark("CACHE CLEANER", "Checking database for hidden album art");
     // Note the final line checking that image isn't in use by another album
     // it's an edge case where we have the album local but we also somehow have a spotify or whatever
     // version with hidden tracks
@@ -60,17 +62,17 @@ if ($mysqlc) {
             Image NOT IN (SELECT Image FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Hidden = 0)", false, PDO::FETCH_OBJ);
     foreach ($result as $obj) {
         if (preg_match('#^albumart/small/#', $obj->Image)) {
-            debuglog("Removing image for hidden album ".$obj->Albumname." ".$obj->Image,"CACHE CLEANER");
+            logger::log("CACHE CLEANER", "Removing image for hidden album",$obj->Albumname,$obj->Image);
             generic_sql_query("UPDATE Albumtable SET Image = NULL, Searched = 0 WHERE Albumindex = ".$obj->Albumindex, true);
         }
     }
-    debuglog("== Check For Hidden Album Art took ".format_time(time() - $now),"CACHE CLEANER",4);
+    logger::debug("CACHE CLEANER", "== Check For Hidden Album Art took ".format_time(time() - $now));
 
 
     if ($prefs['cleanalbumimages']) {
         $now = time();
         // TODO: This is too slow
-        debuglog("Checking albumart folder for unneeded images","CACHE CLEANER");
+        logger::mark("CACHE CLEANER", "Checking albumart folder for unneeded images");
         $files = glob('albumart/small/*.*');
         foreach ($files as $image) {
             // Remove images for hidden tracks and search results. The missing check below will reset the db entries for those albums
@@ -78,45 +80,45 @@ if ($mysqlc) {
             if (filemtime($image) < time()-86400) {
                 $count = sql_prepare_query(false, null, 'acount', 0, "SELECT COUNT(Albumindex) AS acount FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE Image = ? AND Hidden = 0 AND isSearchResult < 2 AND URI IS NOT NULL", $image);
                 if ($count < 1) {
-                    debuglog("  Removing Unused Album image ".$image,"CACHE CLEANER", 6);
+                    logger::log("CACHE CLEANER", "  Removing Unused Album image ",$image);
                     $albumimage = new baseAlbumImage(array('baseimage' => $image));
                     array_map('unlink', $albumimage->get_images());
                 }
             }
         }
-        debuglog("== Check For Unneeded Images took ".format_time(time() - $now),"CACHE CLEANER",4);
+        logger::debug("CACHE CLEANER", "== Check For Unneeded Images took ".format_time(time() - $now));
 
-        debuglog("Checking for orphaned radio station images","CACHE CLEANER");
+        logger::mark("CACHE CLEANER", "Checking for orphaned radio station images");
         $now = time();
         $files = glob('prefs/userstreams/*');
         foreach ($files as $image) {
             $count = generic_sql_query("SELECT COUNT(Stationindex) AS acount FROM RadioStationtable WHERE Image LIKE '".$image."%'", false, null, 'acount', 0);
             if ($count < 1) {
-                debuglog("  Removing orphaned radio station image ".$image,"CACHE CLEANER");
+                logger::log("CACHE CLEANER", "  Removing orphaned radio station image",$image);
                 rrmdir($image);
             }
         }
-        debuglog("== Check For Orphaned Radio Station Images took ".format_time(time() - $now),"CACHE CLEANER",4);
+        logger::debug("CACHE CLEANER", "== Check For Orphaned Radio Station Images took ".format_time(time() - $now));
 
-        debuglog("Checking for orphaned podcast data","CACHE CLEANER");
+        logger::mark("CACHE CLEANER", "Checking for orphaned podcast data");
         $now = time();
         $files = glob('prefs/podcasts/*');
         $pods = sql_get_column("SELECT PODindex FROM Podcasttable", 0);
         foreach ($files as $file) {
             if (!in_array(basename($file), $pods)) {
-                debuglog("  Removing orphaned podcast directory ".$file,"CACHE CLEANER");
+                logger::log("CACHE CLEANER", "  Removing orphaned podcast directory",$file);
                 rrmdir($file);
             }
         }
-        debuglog("== Check For Orphaned Podcast Data took ".format_time(time() - $now),"CACHE CLEANER",4);
+        logger::debug("CACHE CLEANER", "== Check For Orphaned Podcast Data took ".format_time(time() - $now));
     }
 
-    debuglog("Checking database for missing album art","CACHE CLEANER");
+    logger::mark("CACHE CLEANER", "Checking database for missing album art");
     $now = time();
     $result = generic_sql_query("SELECT Albumindex, Albumname, Image, Domain FROM Albumtable WHERE Image NOT LIKE 'getRemoteImage%'", false, PDO::FETCH_OBJ);
     foreach ($result as $obj) {
         if ($obj->Image != '' && !file_exists($obj->Image)) {
-            debuglog($obj->Albumname." has missing image ".$obj->Image,"CACHE CLEANER");
+            logger::log("CACHE CLEANER", $obj->Albumname,"has missing image",$obj->Image);
             if (file_exists("newimages/".$obj->Domain."-logo.svg")) {
                 $image = "newimages/".$obj->Domain."-logo.svg";
                 $searched = 1;
@@ -127,35 +129,37 @@ if ($mysqlc) {
             sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Searched = ?, Image = ? WHERE Albumindex = ?", $searched, $image, $obj->Albumindex);
         }
     }
-    debuglog("== Check For Missing Album Art took ".format_time(time() - $now),"CACHE CLEANER",4);
+    logger::debug("CACHE CLEANER", "== Check For Missing Album Art took ".format_time(time() - $now));
 
-    debuglog("Checking for orphaned Wishlist Sources","CACHE CLEANER");
+    logger::mark("CACHE CLEANER", "Checking for orphaned Wishlist Sources");
     $now = time();
     generic_sql_query("DELETE FROM WishlistSourcetable WHERE Sourceindex NOT IN (SELECT DISTINCT Sourceindex FROM Tracktable WHERE Sourceindex IS NOT NULL)");
-    debuglog("== Check For Orphaned Wishlist Sources took ".format_time(time() - $now),"CACHE CLEANER",4);
+    logger::debug("CACHE CLEANER", "== Check For Orphaned Wishlist Sources took ".format_time(time() - $now));
 
     // Compact the database
     if ($prefs['collection_type'] == 'sqlite') {
-        debuglog("Vacuuming Database","CACHE CLEANER");
+        logger::mark("CACHE CLEANER", "Vacuuming Database");
         $now = time();
         generic_sql_query("VACUUM", true);
         generic_sql_query("PRAGMA optimize", true);
-        debuglog("== Database Optimisation took ".format_time(time() - $now),"CACHE CLEANER",4);
+        logger::debug("CACHE CLEANER", "== Database Optimisation took ".format_time(time() - $now));
     }
 
-    debuglog("Cache Cleaning Is Complete","CACHE CLEANER", 6);
+    logger::shout("CACHE CLEANER", "Database Tidying Is Complete");
 
 }
 
+logger::shout("CACHE CLEANER", "-----------------------------------------------------------------------");
+
 function clean_cache_dir($dir, $time) {
 
-    debuglog("Cache Cleaner is running on ".$dir,"CACHE CLEANER");
+    logger::log("CACHE CLEANER", "Cache Cleaner is running on ".$dir);
     $cache = glob($dir."*");
     $now = time();
     foreach($cache as $file) {
         if (!is_dir($file)) {
             if($now - filemtime($file) > $time) {
-                debuglog("Removing file ".$file,"CACHE CLEANER",4);
+                logger::log("CACHE CLEANER", "Removing file ".$file);
                 @unlink ($file);
             }
         }

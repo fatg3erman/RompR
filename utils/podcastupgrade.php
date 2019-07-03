@@ -4,7 +4,7 @@ $pods = glob("prefs/podcasts/*");
 foreach($pods as $pod) {
     if (is_dir($pod)) {
         if (file_exists($pod.'/info.xml')) {
-        	debuglog("Importing Podcast ".$pod,"SCHEMA_18",5);
+        	logger::log("SCHEMA_18", "Importing Podcast ".$pod);
             $x = simplexml_load_file($pod.'/info.xml');
             $feedurl = htmlspecialchars_decode($x->feedurl);
             $lastupdate = $x->lastupdate;
@@ -28,7 +28,7 @@ foreach($pods as $pod) {
             		$refreshoption = REFRESHOPTION_MONTHLY;
             		break;
             	default:
-            		debuglog("  Unknown Refresh option".$x->refreshoption,"SCHEMA_18",5);
+            		logger::log("SCHEMA_18", "  Unknown Refresh option".$x->refreshoption);
             		$refreshoption = REFRESHOPTION_NEVER;
             		break;
             }
@@ -40,7 +40,7 @@ foreach($pods as $pod) {
             		$sortmode = SORTMODE_OLDESTFIRST;
             		break;
             	default:
-            		debuglog("  Unknown Sortmode option".$x->sortmode,"SCHEMA_18",5);
+            		logger::log("SCHEMA_18", "  Unknown Sortmode option".$x->sortmode);
             		$sortmode = SORTMODE_NEWESTFIRST;
             		break;
             }
@@ -62,7 +62,7 @@ foreach($pods as $pod) {
             		$displaymode = DISPLAYMODE_DOWNLOADED;
             		break;
             	default:
-            		debuglog("  Unknown Displaymode option".$x->displaymode,"SCHEMA_18",5);
+            		logger::log("SCHEMA_18", "  Unknown Displaymode option".$x->displaymode);
             		$displaymode = DISPLAYMODE_ALL;
             		break;
             }
@@ -109,36 +109,36 @@ foreach($pods as $pod) {
 		            	(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		            	$newpodid, $title, $artist, $duration, $pubdate, $filesize, $description, $link, $origlink, $downloaded, $listened, $new, $deleted))
 		            {
-		            	debuglog("  Imported Track ".$title,"SCHEMA_18",6);
+		            	logger::log("SCHEMA_18", "  Imported Track ".$title);
     	            	$newtrackid = $mysqlc->lastInsertId();
     	            	if (is_dir($pod.'/'.$key)) {
-    	            		debuglog("  Renaming ".$pod.'/'.$key." to ".$pod.'/'.$newtrackid,"SCHEMA_18",6);
+    	            		logger::log("SCHEMA_18", "  Renaming ".$pod.'/'.$key." to ".$pod.'/'.$newtrackid);
     	            		rename($pod.'/'.$key, $pod.'/'.$newtrackid);
     	            		if ($origlink != "NO_ORIGINAL_LINK") {
     	            			$fname = basename($link);
     	            			$newname = get_base_url().'/prefs/podcasts/'.$newpodid.'/'.$newtrackid.'/'.$fname;
     	            			if (sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Link=? WHERE PODTrackindex=?",$newname,$newtrackid)) {
-    	            				debuglog("    Updated local link for ".$fname,"SCHEMA_18",6);
+    	            				logger::log("SCHEMA_18", "    Updated local link for ".$fname);
     	            			} else {
-    	            				debuglog("ERROR updating local link for ".$fname,"SCHEMA_18",2);
+    	            				logger::log("SCHEMA_18", "ERROR updating local link for ".$fname);
     	            			}
     	            		}
     	            	}
 
 		            } else {
-		            	debuglog("  ERROR importing track ".$title,"SCHEMA_18", 2);
+		            	logger::log("SCHEMA_18", "  ERROR importing track ".$title);
 		            }
             	}
             } else {
-            	debuglog("ERROR Inserting Podcast ".$title." into database!","SCHEMA_18",2);
+            	logger::log("SCHEMA_18", "ERROR Inserting Podcast ".$title." into database!");
             }
             unlink($pod.'/info.xml');
             if (preg_match('#^prefs/podcasts#', $image)) {
             	$image = 'prefs/podcasts/'.$newpodid.'/'.basename($image);
     			if (sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Image=? WHERE PODindex=?",$image,$newpodid)) {
-    				debuglog("    Updated image link","SCHEMA_18",6);
+    				logger::log("SCHEMA_18", "    Updated image link");
     			} else {
-    				debuglog("ERROR updating image link","SCHEMA_18",2);
+    				logger::log("SCHEMA_18", "ERROR updating image link");
     			}
             }
             rename($pod, "prefs/podcasts/".$newpodid);

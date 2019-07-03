@@ -44,7 +44,7 @@ class base_mpd_player {
                 $this->is_slave = false;
             }
         }
-        debuglog("Creating Player for ".$this->ip.':'.$this->port,'MPDPLAYER',8);
+        logger::trace("MPDPLAYER", "Creating Player for",$this->ip.':'.$this->port);
         $this->open_mpd_connection();
         if ($player_type !== null) {
             $this->player_type = $player_type;
@@ -143,7 +143,7 @@ class base_mpd_player {
         do {
             $b = @fputs($this->connection, $command."\n");
             if (!$b || $b < $l) {
-                debuglog("Socket Write Error for ".$command." - Retrying","LEMSIP",2);
+                logger::warn("MPD", "Socket Write Error for",$command,"- Retrying");
                 $this->close_mpd_connection();
                 usleep(500000);
                 $this->open_mpd_connection();
@@ -160,7 +160,7 @@ class base_mpd_player {
         $retarr = array();
         if ($this->is_connected()) {
 
-            debuglog("MPD Command ".$command,"MPD",9);
+            logger::debug("MPD", "MPD Command",$command);
             $success = true;
             if ($command != '') {
                 $success = $this->send_command($command);
@@ -181,7 +181,7 @@ class base_mpd_player {
                             if (array_key_exists('timed_out', $sdata) && $sdata['timed_out']) {
                                 $var[1] = 'Timed Out';
                             }
-                            debuglog("Error for '".$command."' : ".$var[1],"MPD",1);
+                            logger::warn("MPD", "Error for'",$command,"':",$var[1]);
                             if ($return_array == true) {
                                 $retarr['error'] = $var[1];
                             } else {
@@ -208,7 +208,7 @@ class base_mpd_player {
                     }
                 }
             } else {
-                debuglog("Failure to fput command ".$command,"MPD",2);
+                logger::error("MPD", "Failure to fput command",$command);
                 $retarr['error'] = "There was an error communicating with ".ucfirst($this->player_type)."! (could not write to socket)";
             }
         }
@@ -229,7 +229,7 @@ class base_mpd_player {
         if (count($cmds) > 1) {
             $this->send_command("command_list_begin");
             foreach ($cmds as $c) {
-                debuglog("Command List: ".$c,"POSTCOMMAND",6);
+                logger::trace("POSTCOMMAND", "Command List:",$c);
                 // Note. We don't use send_command because that closes and re-opens the connection
                 // if it fails to fputs, and that loses our command list status. Also if this fputs
                 // fails it means the connection has dropped anyway, so we're screwed whatever happens.
@@ -244,7 +244,7 @@ class base_mpd_player {
             }
             $cmd_status = $this->do_mpd_command("command_list_end", true, false);
         } else if (count($cmds) == 1) {
-            debuglog("Command : ".$cmds[0],"POSTCOMMAND",6);
+            logger::trace("POSTCOMMAND", "Command :",$cmds[0]);
             $cmd_status = $this->do_mpd_command($cmds[0], true, false);
         }
         return $cmd_status;
@@ -255,7 +255,7 @@ class base_mpd_player {
         // Generator Function for parsing MPD output for 'list...info', 'search ...' etc type commands
         // Returns MPD_FILE_MODEL
 
-        debuglog("MPD Parse ".$command,"MPD",8);
+        logger::trace("MPD", "MPD Parse",$command);
 
         $success = $this->send_command($command);
         $filedata = MPD_FILE_MODEL;
@@ -333,11 +333,11 @@ class base_mpd_player {
             }
         }
        if (strpos($filedata['Title'], "[unplayable]") === 0) {
-            debuglog("Ignoring unplayable track ".$filedata['file'],"COLLECTION",9);
+            logger::log("COLLECTION", "Ignoring unplayable track ".$filedata['file']);
             return false;
         }
         if (strpos($filedata['Title'], "[loading]") === 0) {
-            debuglog("Ignoring unloaded track ".$filedata['file'],"COLLECTION",9);
+            logger::log("COLLECTION", "Ignoring unloaded track ".$filedata['file']);
             return false;
         }
         $filedata['unmopfile'] = $this->unmopify_file($filedata);
@@ -351,7 +351,7 @@ class base_mpd_player {
         // cue sheet link (mpd only). We're only doing CUE sheets, not M3U
         if ($filedata['X-AlbumUri'] === null && strtolower(pathinfo($filedata['playlist'], PATHINFO_EXTENSION)) == "cue") {
             $filedata['X-AlbumUri'] = $filedata['playlist'];
-            debuglog("Found CUE sheet for album ".$filedata['Album'],"COLLECTION");
+            logger::mark("COLLECTION", "Found CUE sheet for album ".$filedata['Album']);
         }
 
         // Disc Number
@@ -507,7 +507,7 @@ class base_mpd_player {
     }
 
     public function get_uris_for_directory($path) {
-        debuglog("Getting Directory Items For ".$path,"PLAYER",5);
+        logger::log("PLAYER", "Getting Directory Items For",$path);
         $items = array();
         $parts = true;
         $lines = array();
@@ -518,7 +518,7 @@ class base_mpd_player {
         while(!feof($connection) && $parts) {
             $parts = $this->getline($connection);
             if ($parts === false) {
-                debuglog("Got OK or ACK from MPD","PLAYER",8);
+                logger::debug("PLAYER", "Got OK or ACK from MPD");
             } else {
                 $lines[] = $parts;
             }
@@ -605,7 +605,7 @@ class base_mpd_player {
             // playlistadd "local:track:
             if (substr($cmd, 0, 17) == 'add "local:track:' ||
                 substr($cmd, 0,25) == 'playlistadd "local:track:') {
-                debuglog("Translating tracks for Mopidy Slave","MOPIDY",8);
+                logger::log("MOPIDY", "Translating tracks for Mopidy Slave");
                 $cmds[$key] = $this->swap_local_for_file($cmd);
             }
         }
@@ -618,7 +618,7 @@ class base_mpd_player {
         global $prefs;
         foreach ($cmds as $key => $cmd) {
             if (substr($cmd, 0, 4) == 'add ') {
-                debuglog("Translating Track Uris from ".$prefs['collection_player'].' to '.$this->player_type, "PLAYER", 8);
+                logger::log("PLAYER", "Translating Track Uris from",$prefs['collection_player'],'to',$this->player_type);
                 if ($prefs['collection_player']== 'mopidy') {
                     $cmds[$key] = $this->mopidy_to_mpd($cmd);
                 } else if ($prefs['collection_player']== 'mpd'){
@@ -645,7 +645,7 @@ class base_mpd_player {
         // url encode the album art directory
         global $prefs;
         $path = implode("/", array_map("rawurlencode", explode("/", $prefs['music_directory_albumart'])));
-        debuglog('Replacing with '.$path,'MOPIDYSLAVE');
+        logger::log("MOPIDYSLAVE", "Replacing with",$path);
         return preg_replace('#local:track:#', 'file://'.$path.'/', $string);
     }
 
@@ -659,18 +659,18 @@ class base_mpd_player {
         global $prefs;
         $retval = false;
         if ($this->is_connected()) {
-            debuglog("Probing Player Type....","INIT",4);
+            logger::shout("INIT", "Probing Player Type....");
             $r = $this->do_mpd_command('tagtypes', true, true);
             if (is_array($r) && array_key_exists('tagtype', $r)) {
                 if (in_array('X-AlbumUri', $r['tagtype'])) {
-                    debuglog("    ....tagtypes test says we're running Mopidy. Setting cookie","INIT",4);
+                    logger::mark("INIT", "    ....tagtypes test says we're running Mopidy. Setting cookie");
                     $retval = "mopidy";
                 } else {
-                    debuglog("    ....tagtypes test says we're running MPD. Setting cookie","INIT",4);
+                    logger::mark("INIT", "    ....tagtypes test says we're running MPD. Setting cookie");
                     $retval = "mpd";
                 }
             } else {
-                debuglog("WARNING! No output for 'tagtypes' - probably an old version of Mopidy. RompЯ may not function correctly","INIT",2);
+                logger::mark("INIT", "WARNING! No output for 'tagtypes' - probably an old version of Mopidy. RompЯ may not function correctly");
                 $retval =  "mopidy";
             }
             setcookie('player_backend',$retval,time()+365*24*60*60*10,'/');

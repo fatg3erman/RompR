@@ -329,27 +329,26 @@ $private_prefs = array(
 // ====================================================================
 // Load Saved Preferences
 loadPrefs();
-$logger = new debug_logger($prefs['custom_logfile'], $prefs['debug_enabled']);
 
 if (defined('ROMPR_IS_LOADING')) {
-    debuglog("******++++++======------******------======++++++******","INIT",2);
+    logger::log("INIT", "******++++++======------******------======++++++******");
 }
 
 if (array_key_exists('REQUEST_URI', $_SERVER)) {
-    debuglog($_SERVER['REQUEST_URI'],"REQUEST",9);
+    logger::debug("REQUEST", $_SERVER['REQUEST_URI']);
 }
 
 if (!property_exists($prefs['multihosts'], $prefs['currenthost'])) {
-    debuglog($prefs['currenthost']." is not defined in the hosts defs.","INIT",3);
+    logger::warn("INIT", $prefs['currenthost'],"is not defined in the hosts defs");
     foreach ($prefs['multihosts'] as $key => $obj) {
-        debuglog("  Using host ".$key,"INIT",3);
+        logger::log("INIT", "  Using host ".$key);
         $prefs['currenthost'] = $key;
         setcookie('currenthost',$prefs['currenthost'],time()+365*24*60*60*10,'/');
         break;
     }
 }
 
-debuglog("Using MPD Host ".$prefs['currenthost'],"INIT",9);
+logger::debug("INIT", "Using MPD Host ".$prefs['currenthost']);
 
 if (!array_key_exists('currenthost', $_COOKIE)) {
     setcookie('currenthost',$prefs['currenthost'],time()+365*24*60*60*10,'/');
@@ -361,10 +360,10 @@ if (!array_key_exists('currenthost', $_COOKIE)) {
 $skin = null;
 if(array_key_exists('skin', $_REQUEST)) {
     $skin = $_REQUEST['skin'];
-    debuglog("Request asked for skin: ".$skin,"INIT",9);
+    logger::log("INIT", "Request asked for skin: ".$skin);
 } else if (array_key_exists('skin', $_COOKIE)) {
     $skin = $_COOKIE['skin'];
-    debuglog("Using skin as set by Cookie: ".$skin,"INIT",9);
+    logger::debug("INIT", "Using skin as set by Cookie: ".$skin);
 }
 if ($skin !== null) {
     $skin = trim($skin);
@@ -385,7 +384,7 @@ function savePrefs() {
 }
 
 function loadPrefs() {
-    global $prefs, $logger;
+    global $prefs;
     if (file_exists('prefs/prefs.var')) {
         $fp = fopen('prefs/prefs.var', 'r');
         if($fp) {
@@ -394,41 +393,30 @@ function loadPrefs() {
                 flock($fp, LOCK_UN);
                 fclose($fp);
                 if ($sp === false) {
+                    print '<h1>Fatal Error - Could not open the preferences file</h1>';
                     error_log("ERROR!              : COULD NOT LOAD PREFS");
                     exit(1);
                 }
                 $prefs = array_replace($prefs, $sp);
                 $prefs['player_backend'] = 'none';
+                logger::setLevel($prefs['debug_enabled']);
+                logger::setOutfile($prefs['custom_logfile']);
 
                 foreach ($_COOKIE as $a => $v) {
                     if (array_key_exists($a, $prefs)) {
-                        switch ($a) {
-                            case 'debug_enabled':
-                                $logger->setLevel($v);
-                                // Fall through to default
-
-                            default:
-                                if ($v === 'false') { $v = false; }
-                                if ($v === 'true') { $v = true; }
-                                $prefs[$a] = $v;
-                                break;
-
-                        }
-                        if ($prefs['debug_enabled'] > 8) {
-                            $module = "COOKIEPREFS";
-                            $in = str_repeat(" ", 20 - strlen($module));
-                            $pid = getmypid();
-                            $in2 = str_repeat(" ", 8 - strlen($pid));
-                            $out = "Pref ".$a." is set by Cookie  - Value : ".$v;
-                            error_log($pid.$in2.$module.$in.": ".$out,0);
-                        }
+                        if ($v === 'false') { $v = false; }
+                        if ($v === 'true') { $v = true; }
+                        $prefs[$a] = $v;
+                        logger::debug('COOKIEPREFS',"Pref",$a,"is set by Cookie - Value :",$v);
                     }
                 }
           } else {
+              print '<h1>Fatal Error - Could not open the preferences file</h1>';
               error_log("ERROR!              : COULD NOT GET READ FILE LOCK ON PREFS FILE");
               exit(1);
           }
       } else {
+          print '<h1>Fatal Error - Could not open the preferences file</h1>';
           error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE");
           exit(1);
       }
@@ -437,68 +425,130 @@ function loadPrefs() {
 
 function set_music_directory($dir) {
     $prefs['music_directory_albumart'] = rtrim($dir, '/');
-    debuglog("Creating Album Art SymLink to ".$dir,"SAVEPREFS");
+    logger::log("SAVEPREFS", "Creating Album Art SymLink to ".$dir);
     if (is_link("prefs/MusicFolders")) {
         system ("unlink prefs/MusicFolders");
     }
     system ('ln -s "'.$dir.'" prefs/MusicFolders');
 }
 
-class debug_logger {
+class logger {
 
-    public function __construct($outfile, $level = 8) {
-        $this->outfile = $outfile;
-        $this->loglevel = intval($level);
-        $this->debug_colours = array(
-            # light red
-            0 => 91,
-            # red
-            1 => 31,
-            # yellow
-            2 => 33,
-            # magenta
-            3 => 35,
-            # cyan
-            4 => 36,
-            # lihgt grey
-            5 => 37,
-            # light yellow
-            6 => 93,
-            # green
-            7 => 32,
-            # white
-            8 => 97,
-            # light blue
-            9 => 94
-        );
+    private static $outfile;
+    private static $loglevel = 8;
+    private static $debug_colours = array(
+        # light red
+        0 => 91,
+        # red
+        1 => 31,
+        # yellow
+        2 => 33,
+        # magenta
+        3 => 35,
+        # cyan
+        4 => 36,
+        # lihgt grey
+        5 => 37,
+        # light yellow
+        6 => 93,
+        # green
+        7 => 32,
+        # white
+        8 => 97,
+        # light blue
+        9 => 94
+    );
+
+    public static function setLevel($level) {
+        self::$loglevel = intval($level);
     }
 
-    public function log($out, $module, $level) {
-        if ($level > $this->loglevel || $level > 9 || $level < 1) return;
+    public static function setOutfile($file) {
+        self::$outfile  = $file;
+    }
+
+    private static function dothelogging($level, $parms) {
+        if ($level > self::$loglevel || $level > 9 || $level < 1) return;
+        $module = array_shift($parms);
         $in = str_repeat(" ", 20 - strlen($module));
         $pid = getmypid();
         $in2 = str_repeat(" ", 8 - strlen($pid));
-        if ($this->outfile != "") {
+        array_walk($parms, 'logger::un_array');
+        $out = implode(' ', $parms);
+        if (self::$outfile != "") {
             // Two options here - either colour by level
             // $col = $this->debug_colours[$level];
             // or attempt to have different processes in different colours.
             // This helps to keep track of things when multiple concurrent things are happening at once.
-            $col = $this->debug_colours[$pid % 10];
-            error_log("\033[90m".strftime('%T').' : '.$in2.$pid." : \033[".$col."m".$module.$in.$out."\033[0m\n",3,$this->outfile);
+            $col = self::$debug_colours[$pid % 10];
+            error_log("\033[90m".strftime('%T').' : '.$in2.$pid." : \033[".$col."m".$module.$in.$out."\033[0m\n",3,self::$outfile);
         } else {
             error_log($pid.$in2.$module.$in.": ".$out,0);
         }
     }
 
-    public function setLevel($level) {
-        $this->loglevel = intval($level);
+    public static function un_array(&$a, $i) {
+        if (is_array($a)) {
+            $a = multi_implode($a);
+        }
     }
+
+    // Level 9
+    public static function debug() {
+        $parms = func_get_args();
+        logger::dothelogging(9, $parms);
+    }
+
+    // Level 8
+    public static function trace() {
+        $parms = func_get_args();
+        logger::dothelogging(8, $parms);
+    }
+
+    // Level 7
+    public static function log() {
+        $parms = func_get_args();
+        logger::dothelogging(7, $parms);
+    }
+
+    // Level 6
+    public static function mark() {
+        $parms = func_get_args();
+        logger::dothelogging(6, $parms);
+    }
+
+    // Level 5
+    public static function shout() {
+        $parms = func_get_args();
+        logger::dothelogging(5, $parms);
+    }
+
+    // Level 4
+    public static function blurt() {
+        $parms = func_get_args();
+        logger::dothelogging(4, $parms);
+    }
+
+    // Level 3
+    public static function fail() {
+        $parms = func_get_args();
+        logger::dothelogging(3, $parms);
+    }
+
+    // Level 2
+    public static function warn() {
+        $parms = func_get_args();
+        logger::dothelogging(2, $parms);
+    }
+
+    // Level 1
+    public static function error() {
+        $parms = func_get_args();
+        logger::dothelogging(1, $parms);
+    }
+
 }
 
-function debuglog($text, $module = "JOHN WAYNE", $level = 7) {
-    global $logger;
-    $logger->log($text, $module, $level);
-}
 
 function upgrade_host_defs($ver) {
     global $prefs;
@@ -520,6 +570,26 @@ function upgrade_host_defs($ver) {
         }
     }
     savePrefs();
+}
+
+function multi_implode($array, $glue = ', ') {
+    $ret = '';
+
+    if (!is_array($array)) {
+        return $array;
+    }
+
+    foreach ($array as $key => $item) {
+        if (is_array($item)) {
+            $ret .= $key . '=[' . multi_implode($item, $glue) . ']' . $glue;
+        } else {
+            $ret .= $key . '=' . $item . $glue;
+        }
+    }
+
+    $ret = substr($ret, 0, 0-strlen($glue));
+
+    return $ret;
 }
 
 ?>
