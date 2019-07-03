@@ -188,45 +188,34 @@ class m3uFile {
 		$this->station = $station;
 		$this->image = $image;
 		$this->tracks = array();
-		$prettystream = '';
+		$this->prettystream = '';
+		$this->url_to_add = $url;
 
 		$parts = explode(PHP_EOL, $data);
 		foreach ($parts as $line) {
 			if (preg_match('/#EXTINF:(.*?),(.*?)$/', $line, $matches)) {
-				$prettystream = $matches[2];
+				$this->prettystream = $matches[2];
 			} else if (preg_match('/^\#/', $line) || preg_match('/^\s*$/', $line)) {
 
 			} else {
-				$this->tracks[] = array('TrackUri' => trim($line), 'PrettyStream' => $prettystream);
+				$this->tracks[] = array('TrackUri' => trim($line), 'PrettyStream' => $this->prettystream);
 			}
 		}
-}
+	}
 
 	public function updateDatabase() {
 		$stationid = check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			check_radio_tracks($stationid, array(array('TrackUri' => $this->url, 'PrettyStream' => '')));
+			check_radio_tracks($stationid, array(array('TrackUri' => $this->url_to_add, 'PrettyStream' => $this->prettystream)));
 		} else {
 			logger::error("RADIO", "ERROR! Null station ID!");
 		}
 	}
 
 	public function getTracksToAdd() {
-		return array('add "'.format_for_mpd(htmlspecialchars_decode($this->url)).'"');
+		return array('add "'.format_for_mpd(htmlspecialchars_decode($this->url_to_add)).'"');
 	}
 
-	public function get_first_track() {
-		$return = $this->tracks[0]['TrackUri'];
-		foreach ($this->tracks as $track) {
-			$ext = pathinfo($track['TrackUri'], PATHINFO_EXTENSION);
-			if ($ext == 'pls' || $ext == 'm3u' || $ext == 'xspf' || $ext == 'asx') {
-				$return = $track['TrackUri'];
-				break;
-			}
-		}
-		logger::trace("RADIO PLAYLIST", "  Checking ".$return);
-		return $return;
-	}
 }
 
 // [Reference]

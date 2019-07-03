@@ -198,14 +198,16 @@ function tryLastFM($albumimage) {
         }
 
         try {
-            foreach ($xml->album->image as $i => $image) {
-                $attrs = $image->attributes();
-                if ($image) { $pic = $image; }
-                $s = array_search($attrs['size'], $sizeorder);
-                if ($s > $cs) {
-                    logger::trace("GETALBUMCOVER", "    Image ".$attrs['size']." '".$image."'");
-                    $retval = $image;
-                    $cs = $s;
+            if (is_array($xml->album)) {
+                foreach ($xml->album->image as $i => $image) {
+                    $attrs = $image->attributes();
+                    if ($image) { $pic = $image; }
+                    $s = array_search($attrs['size'], $sizeorder);
+                    if ($s > $cs) {
+                        logger::trace("GETALBUMCOVER", "    Image ".$attrs['size']." '".$image."'");
+                        $retval = $image;
+                        $cs = $s;
+                    }
                 }
             }
         } catch (Exception $e) {

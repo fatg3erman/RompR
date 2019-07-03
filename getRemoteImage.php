@@ -43,7 +43,7 @@ function download_image_file($url, $outfile) {
 		logger::trace("TOMATO", "  ... Downloading it");
 		$d = new url_downloader(array('url' => $url));
 		if ($d->get_data_to_file($outfile, true)) {
-			logger::log("trace", "Cached Image ".$outfile);
+			logger::trace("TOMATO", "Cached Image ".$outfile);
 			$content_type = $d->get_content_type();
 			logger::trace("TOMATO", "  ... Content Type is ".$content_type);
 			if (substr($content_type,0,5) != 'image' && $content_type != 'application/octet-stream') {

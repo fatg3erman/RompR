@@ -15,22 +15,15 @@ function load_internet_playlist($url, $image, $station, $return_tracks = false) 
 
 	$playlist = download_internet_playlist($url, $image, $station);
 	if ($playlist !== false) {
-		if (preg_match('/opml\.radiotime\.com/', $url)) {
-			logger::log("RADIO_PLAYLIST", "Checking actual stream from radiotime Tune API");
-			$playlist = download_internet_playlist($playlist->get_first_track(), $image, $station);
-		}
-		if ($playlist !== false) {
-			if ($return_tracks) {
-				return $playlist->tracks;
-			} else {
-				$playlist->updateDatabase();
-				return $playlist->getTracksToAdd();
-			}
+		if ($return_tracks) {
+			return $playlist->tracks;
 		} else {
-			return array();
+			$playlist->updateDatabase();
+			return $playlist->getTracksToAdd();
 		}
+	} else {
+		return array();
 	}
-
 }
 
 function download_internet_playlist($url, $image, $station) {

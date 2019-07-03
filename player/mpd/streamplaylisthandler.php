@@ -190,6 +190,8 @@ class m3uFile {
 		$this->image = $image;
 		$this->tracks = array();
 		$prettystream = '';
+		$this->url_to_add = $url;
+		$this->secondary = null;
 
 		$parts = explode(PHP_EOL, $data);
 		foreach ($parts as $line) {
@@ -201,6 +203,14 @@ class m3uFile {
 				$this->tracks[] = array('TrackUri' => trim($line), 'PrettyStream' => $prettystream);
 			}
 		}
+
+		if (preg_match('/opml\.radiotime\.com/', $url)) {
+			logger::mark("RADIO PLAYLIST", "This is a radiotime tune api, Checking returned playlist");
+			$this->url_to_add = $this->get_first_track();
+			$this->secondary = download_internet_playlist($this->url_to_add, null, null);
+			$this->tracks = $this->secondary->tracks;
+		}
+
 	}
 
 	public function updateDatabase() {
@@ -215,7 +225,11 @@ class m3uFile {
 	}
 
 	public function getTracksToAdd() {
-		return array('load "'.format_for_mpd(htmlspecialchars_decode($this->url)).'"');
+		if ($this->secondary !== null) {
+			return $this->secondary->getTracksToAdd();
+		} else {
+			return array('load "'.format_for_mpd(htmlspecialchars_decode($this->url_to_add)).'"');
+		}
 	}
 
 	public function get_first_track() {
@@ -227,7 +241,7 @@ class m3uFile {
 				break;
 			}
 		}
-		logger::trace("RADIO_PLAYLIST", "  Checking ".$return);
+		logger::log("RADIO_PLAYLIST", "  First Track Is ".$return);
 		return $return;
 	}
 }
