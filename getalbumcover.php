@@ -10,9 +10,9 @@ include ("getid3/getid3.php");
 logger::shout("GETALBUMCOVER", "------- Searching For Album Art --------");
 foreach ($_REQUEST as $k => $v) {
     if ($k == 'base64data') {
-        logger::log("GETALBUMCOVER", "Base64 Data", $k);
+        logger::log("GETALBUMCOVER", "We have base64 dataa");
     } else {
-        logger::log("GETALBUMCOVER", $v, $k);
+        logger::log("GETALBUMCOVER", $k, '=', $v);
     }
 }
 
@@ -169,49 +169,47 @@ function tryLastFM($albumimage) {
     $sa = $albumimage->get_artist_for_search();
     if ($sa == '') {
         logger::mark("GETALBUMCOVER", "  Trying last.FM for ".$al);
-        $xml = loadXML('lastfm', "https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&album=".rawurlencode($al)."&autocorrect=1");
+        $json = loadJSON('lastfm', "https://ws.audioscrobbler.com/2.0/?album=".rawurlencode($al)."&api_key=15f7532dff0b8d84635c757f9f18aaa3&autocorrect=0&method=album.getinfo&format=json");
     } else if ($sa == 'Podcast') {
         logger::mark("GETALBUMCOVER", "  Trying last.FM for ".$al);
         // Last.FM sometimes works for podcasts if you use Artist
-        $xml = loadXML('lastfm', "https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&artist=".rawurlencode($al)."&autocorrect=1");
+        $json = loadJSON('lastfm', "https://ws.audioscrobbler.com/2.0/?artist=".rawurlencode($al)."&method=album.getinfo&autocorrect=0&api_key=15f7532dff0b8d84635c757f9f18aaa3&format=json");
     } else {
         logger::mark("GETALBUMCOVER", "  Trying last.FM for ".$sa." ".$al);
-        $xml = loadXML('lastfm', "https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=15f7532dff0b8d84635c757f9f18aaa3&album=".rawurlencode($al)."&artist=".rawurlencode($sa)."&autocorrect=1");
+        $json = loadJSON('lastfm', "https://ws.audioscrobbler.com/2.0/?artist=".rawurlencode($sa)."&album=".rawurlencode($al)."&api_key=15f7532dff0b8d84635c757f9f18aaa3&autocorrect=0&method=album.getinfo&format=json");
     }
-    if ($xml === false) {
+    if ($json === false) {
         logger::fail("GETALBUMCOVER", "    Received error response from Last.FM");
         $tried_lastfm_once = true;
         return "";
     } else {
-        if ($albumimage->mbid === null && $xml->album->mbid) {
-            $albumimage->mbid = (string) $xml->album->mbid;
-            logger::log("GETALBUMCOVER", "      Last.FM gave us the MBID of '".$albumimage->mbid."'");
-            if ($mysqlc) {
-                if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET mbid = ? WHERE ImgKey = ? AND mbid IS NULL", $albumimage->mbid, $albumimage->get_image_key())) {
-                    logger::trace("GETALBUMCOVER", "        Updated collection with new MBID");
-                } else {
-                    logger::fail("GETALBUMCOVER", "        Failed trying to update collection with new MBID");
+        if (property_exists($json, 'album')) {
+            if (property_exists($json->album, 'mbid') && $albumimage->mbid === null && $json->album->mbid) {
+                $albumimage->mbid = (string) $json->album->mbid;
+                logger::log("GETALBUMCOVER", "      Last.FM gave us the MBID of '".$albumimage->mbid."'");
+                if ($mysqlc) {
+                    if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET mbid = ? WHERE ImgKey = ? AND mbid IS NULL", $albumimage->mbid, $albumimage->get_image_key())) {
+                        logger::trace("GETALBUMCOVER", "        Updated collection with new MBID");
+                    } else {
+                        logger::fail("GETALBUMCOVER", "        Failed trying to update collection with new MBID");
+                    }
                 }
+                // return nothing here so we can try musicbrainz first
+                return "";
             }
-            // return nothing here so we can try musicbrainz first
-            return "";
-        }
 
-        try {
-            if (is_array($xml->album)) {
-                foreach ($xml->album->image as $i => $image) {
-                    $attrs = $image->attributes();
-                    if ($image) { $pic = $image; }
-                    $s = array_search($attrs['size'], $sizeorder);
+            if (property_exists($json->album, 'image')) {
+                foreach ($json->album->image as $image) {
+                    if ($image->{'#text'}) { $pic = $image->{'#text'}; }
+                    $s = array_search($image->size, $sizeorder);
                     if ($s > $cs) {
-                        logger::trace("GETALBUMCOVER", "    Image ".$attrs['size']." '".$image."'");
-                        $retval = $image;
+                        logger::trace("GETALBUMCOVER", "    Image ".$image->size." '".$image->{'#text'}."'");
+                        $retval = $image->{'#text'};
                         $cs = $s;
                     }
                 }
             }
-        } catch (Exception $e) {
-            logger::fail("GETALBUMCOVER", "    Last.FM response was total monkeys");
+
         }
         if ($retval == "") {
             $retval = $pic;
@@ -298,14 +296,14 @@ function tryMusicBrainz($albumimage) {
 
 }
 
-function loadXML($domain, $path) {
+function loadJSON($domain, $path) {
     $d = new url_downloader(array(
         'url' => $path,
         'cache' => $domain,
         'return_data' => true
     ));
     if ($d->get_data_to_file()) {
-        return simplexml_load_string($d->get_data());
+        return json_decode($d->get_data());
     } else {
         return false;
     }
