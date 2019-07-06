@@ -2236,8 +2236,7 @@ div.unplayable {
 }
 
 .snapcastclient {
-	width: 97%;
-	margin-left: auto;
+	padding-bottom:1em;
 }
 
 .snapclientname {

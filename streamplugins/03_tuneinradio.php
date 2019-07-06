@@ -49,12 +49,12 @@ class tuneinplugin {
     }
 
     public function getUrl() {
-        logger::log("TUNEIN", "Getting URL",$this->url);
+        logger::mark("TUNEIN", "Getting URL",$this->url);
         $d = new url_downloader(array('url' => $this->url));
         if ($d->get_data_to_string()) {
             $x = simplexml_load_string($d->get_data());
             $v = (string) $x['version'];
-            logger::trace("TUNEIN", "OPML version is ".$v);
+            logger::debug("TUNEIN", "OPML version is ".$v);
             $this->parse_tree($x->body, $this->title);
         }
     }
@@ -63,7 +63,7 @@ class tuneinplugin {
 
         foreach ($node->outline as $o) {
             $att = $o->attributes();
-            logger::log("TUNEIN", "  Text is",$att['text'],", type is",$att['type']);
+            logger::trace("TUNEIN", "  Text is",$att['text'],", type is",$att['type']);
             switch ($att['type']) {
 
                 case '':

@@ -316,7 +316,6 @@ function snapcastClient() {
     var muted;
     var vc;
     var namesavetimer = null;
-    var latencysavetimer = null;
     var groupmenu;
     var grouplist;
     var groupid;
@@ -337,8 +336,10 @@ function snapcastClient() {
         });
         groupmenu = $('<div>', {class: 'toggledown invisible'}).insertAfter(title);
         var j = $('<div>', {class: "containerbox dropdown-container"}).appendTo(groupmenu);
-        j.append('<div class="fixed padright">Latency</div>');
-        var k = $('<input>', {type: 'text', class: 'expand tag', name: "latency"}).appendTo(j).on('keyup', self.changeLatency);
+        var k = $('<div>', {class: "expand"}).appendTo(j);
+        k = $('<div>', {class: 'fixed padright'}).appendTo(j).html('Latency');
+        k = $('<input>', {type: 'text', class: 'fixed', name: "latency", size: "6", style: "width:6em"}).appendTo(j);
+        k = $('<button>', {class: "fixed"}).appendTo(j).html('Set Latency').on("click", self.changeLatency);
         grouplist = $('<div>').appendTo(groupmenu);
     }
 
@@ -395,7 +396,7 @@ function snapcastClient() {
 
     this.changeName = function() {
         clearTimeout(namesavetimer);
-        namesavetimer = setTimeout(self.saveNameChange, 1000);
+        namesavetimer = setTimeout(self.saveNameChange, 2000);
     }
 
     this.saveNameChange = function() {
@@ -403,11 +404,6 @@ function snapcastClient() {
     }
 
     this.changeLatency = function() {
-        clearTimeout(latencysavetimer);
-        latencysavetimer = setTimeout(self.saveLatencyChange, 1000);
-    }
-
-    this.saveLatencyChange = function() {
         snapcast.setClientLatency(id, holder.find('input[name="latency"]').val());
     }
 

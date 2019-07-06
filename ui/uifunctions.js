@@ -963,7 +963,6 @@ var spotifyLinkChecker = function() {
                     debug.debug("SPOTICHECKER", "Track is playable");
                     if (track.linked_from) {
                         debug.mark("SPOTICHECKER", "Track was relinked",track);
-                        // callback = doneOK;
                         uri = track.linked_from.uri;
                     }
                     update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: uri, status: 2});
@@ -972,7 +971,6 @@ var spotifyLinkChecker = function() {
                     if (track.restrictions) {
                         debug.blurt("SPOTICHECKER", "Track restrictions :",track.restrictions.reason)
                     }
-                    // callback = doneOK;
                     update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: track.uri, status: 3});
                 }
             } else {
