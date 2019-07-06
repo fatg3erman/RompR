@@ -362,7 +362,7 @@ var nowplaying = function() {
 			}
 		},
 
-		setMetadataFromLastFM(index, updates) {
+		setMetadataFromLastFM: function(index, updates) {
 			history[index].lastFMMetadata(updates);
 		},
 
@@ -491,7 +491,7 @@ var nowplaying = function() {
 			}
 		},
 
-		getCurrentCollection(index) {
+		getCurrentCollection: function(index) {
 			if (!index) index = findCurrentTrack();
 			debug.log("NOWPLAYING", history[index]);
 		}

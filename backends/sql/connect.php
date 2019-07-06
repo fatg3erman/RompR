@@ -62,7 +62,7 @@ function generic_sql_query($qstring, $return_boolean = false, $return_type = PDO
 	global $mysqlc;
 	logger::debug("GENERIC_SQL", $qstring);
 	$retval = true;
-	if (($result = $mysqlc->query($qstring)) !== false) {
+	if (($result = @$mysqlc->query($qstring)) !== false) {
 		logger::debug("GENERIC_SQL", "Done : ".($result->rowCount())." rows affected");
 		if ($return_value !== null) {
 			$arr = $result->fetch(PDO::FETCH_ASSOC);

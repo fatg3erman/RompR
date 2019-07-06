@@ -1009,7 +1009,7 @@ var spotifyLinkChecker = function() {
                 spotifyLinkChecker.setTimer();
             } else {
                 if (Date.now() > prefs.linkchecker_nextrun) {
-                    debug.mark("SPOTICHECKER","Link Checker Restarting");
+                    debug.mark("SPOTICHECKER","Link Checker Restarting",Daten.now(),prefs.linkchecker_netrun);
                     updateNextRunTime();
                     metaHandlers.genericAction('resetlinkcheck', spotifyLinkChecker.setTimer, goneTitsUp);
                 } else {

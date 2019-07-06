@@ -9,6 +9,7 @@ class dirbleplugin {
         $this->country = $prefs['newradiocountry'];
         $this->page = 1;
         $this->searchterm = '';
+        $this->last_status = '200';
     }
 
     public function doHeader() {
@@ -54,7 +55,18 @@ class dirbleplugin {
         directoryControlHeader('bbclist', get_int_text('label_streamradio'));
         $json = $this->get_from_dirble($this->base_url.'countries');
         if (count($json['json']) == 0) {
-            print '<div class="configttitle textcentre brick_wide"><h3>Got no response from Dirble!</h3></div>"';
+            print '<div class="configttitle textcentre brick_wide"><h3>';
+            switch ($this->last_status) {
+                case '521':
+                    print 'Dirble server is down';
+                    break;
+
+                default:
+                    print 'Got no response from Dirble!';
+                    break;
+
+            }
+            print '</h3></div>';
             exit(0);
         }
         foreach ($json['json'] as $station) {
@@ -237,6 +249,7 @@ class dirbleplugin {
             $result['num'] = $result['first'] + count($result['json']) - 1;
             logger::trace("DIRBLE", "Showing",$result['first'],"to",$result['num'],"of",$result['total']);
         }
+        $this->last_status = $d->get_status();
         return $result;
     }
 

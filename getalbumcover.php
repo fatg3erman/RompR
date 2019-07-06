@@ -10,7 +10,7 @@ include ("getid3/getid3.php");
 logger::shout("GETALBUMCOVER", "------- Searching For Album Art --------");
 foreach ($_REQUEST as $k => $v) {
     if ($k == 'base64data') {
-        logger::log("GETALBUMCOVER", "We have base64 dataa");
+        logger::log("GETALBUMCOVER", "We have base64 data");
     } else {
         logger::log("GETALBUMCOVER", $k, '=', $v);
     }
@@ -19,7 +19,6 @@ foreach ($_REQUEST as $k => $v) {
 $albumimage = new albumImage($_REQUEST);
 $delaytime = 1;
 $ignore_local = (array_key_exists('ignorelocal', $_REQUEST) && $_REQUEST['ignorelocal'] == 'true') ? true : false;
-$tried_lastfm_once = false;
 
 if ($albumimage->mbid != "") {
     $searchfunctions = array( 'tryLocal', 'trySpotify', 'tryMusicBrainz', 'tryLastFM', 'tryGoogle' );
@@ -154,9 +153,9 @@ function trySpotify($albumimage) {
 
 function tryLastFM($albumimage) {
 
-    global $delaytime;
-    global $mysqlc;
-    global $tried_lastfm_once;
+    global $delaytime, $mysqlc;
+    static $tried_lastfm_once = false;
+
     if ($tried_lastfm_once) { return ""; }
     $retval = "";
     $pic = "";

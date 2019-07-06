@@ -105,7 +105,10 @@ var playlist = function() {
 
         function actuallyActuallyRepopulate() {
             setHeader();
-            var fromend = playlist.getfinaltrack()+1 - currentTrack.playlistpos;
+            var fromend = playlist.getfinaltrack()+1;
+            if (currentTrack.playlistpos) {
+                fromend -= currentTrack.playlistpos;
+            }
             var tracksneeded = prefs.smartradio_chunksize - fromend;
             if (tracksneeded > 1 && prefs.radiomaster != prefs.browser_id) {
                 debug.mark("RADIO MANAGER","Looks like master has gone away. Taking over");
