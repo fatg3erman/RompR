@@ -9,7 +9,7 @@ body
 
 }
 
-body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol
+body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,input,select
 {
     color:#dddddd;
 }
@@ -31,17 +31,43 @@ button:hover, input[type="button"]:hover, .filebutton:hover
     transition: all 0.5s ease;
 }
 
-input
-{
-    color:#000000;
+.desktop .selectholder {
+    background:rgba(200,200,200,0.05) url('../newimages/blobdown2.svg') right 2px center no-repeat;
 }
 
-input[type="submit"]
-{
-    color: #dddddd;
+.desktop .selectholder:hover {
+    background:rgba(200,200,200,0.05) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
 }
 
-input.snapclientname[type=text] {
+.combobox-entry:hover {
+    background:rgba(200,200,200,0.05) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
+}
+
+.combobox-entry {
+    background:rgba(200,200,200,0.05) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+}
+
+.clearbox {
+    background:rgba(200,200,200,0.05) url('../newimages/edit-delete.svg') right 2px center no-repeat;
+    background-size:12px 12px;
+}
+
+input[type="text"] {
+    background-color: rgba(200,200,200,0.05);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:hover {
+    background-color: rgba(200,200,200,0.1);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:focus {
+    transition: border-bottom 0.5s ease;
+    border-bottom: 1px solid #bbbbbb;
+}
+
+select:hover {
     color: #ffffff;
 }
 
@@ -189,11 +215,6 @@ a.album:hover,a.album:active
 .item
 {
     border-top:1px solid #444444;
-}
-
-.inbrowser
-{
-    color:#000000;
 }
 
 .stleft

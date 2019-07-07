@@ -7,7 +7,9 @@ Note that some versions listed here may be unreleased, I use version number incr
 
 * Major re-write of a lot of the backend code to streamline it and make it faster
 * [Snapcast](/RopmR/Snapcast) support
-* Various bugfixes
+* Album Art download from Last.FM was broken, has now been fixed
+* The Last.FM info panel will no longer show images for artists. Sadly, Last.FM seems to be in a downward spiral and their API is providing images that no longer exist. There is nothing I can do about this. For now, I've left the placeholders for the images and if the API gets fixed (very unlikely) they'll start to appear again.
+* Various minor bugfixes
 
 ## Version 1.26
 
