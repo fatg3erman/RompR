@@ -458,14 +458,15 @@ class logger {
         # light blue
         9 => 94
     );
+
     private static $debug_names = array(
         1 => 'ERROR',
-        2 => 'WARN',
-        3 => 'FAIL',
+        2 => 'WARN ',
+        3 => 'FAIL ',
         4 => 'BLURT',
         5 => 'SHOUT',
-        6 => 'MARK',
-        7 => 'LOG',
+        6 => 'MARK ',
+        7 => 'LOG  ',
         8 => 'TRACE',
         9 => 'DEBUG'
     );
@@ -479,12 +480,14 @@ class logger {
     }
 
     private static function dothelogging($level, $parms) {
-        if ($level > self::$loglevel || $level > 9 || $level < 1) return;
+        if ($level > self::$loglevel || $level < 1) return;
         $module = array_shift($parms);
-        $in = str_repeat(" ", 20 - strlen($module));
+        if (strlen($module) > 18) {
+            $in = ' ';
+        } else {
+            $in = str_repeat(" ", 18 - strlen($module));
+        }
         $pid = getmypid();
-        $in2 = str_repeat(" ", 6 - strlen($pid));
-        $in3 = str_repeat(" ", 6 - strlen(self::$debug_names[$level]));
         array_walk($parms, 'logger::un_array');
         $out = implode(' ', $parms);
         if (self::$outfile != "") {
@@ -493,9 +496,9 @@ class logger {
             // or attempt to have different processes in different colours.
             // This helps to keep track of things when multiple concurrent things are happening at once.
             $col = self::$debug_colours[$pid % 10];
-            error_log("\033[90m".strftime('%T').' '.$in2.$pid.$in3.self::$debug_names[$level]." : \033[".$col."m".$module.$in.$out."\033[0m\n",3,self::$outfile);
+            error_log("\033[90m".strftime('%T').' : '.self::$debug_names[$level]." : \033[".$col."m".$module.$in.$out."\033[0m\n",3,self::$outfile);
         } else {
-            error_log($pid.$in2.$module.$in.": ".$out,0);
+            error_log(self::$debug_names[$level].' : '.$module.$in.": ".$out,0);
         }
     }
 
@@ -561,7 +564,6 @@ class logger {
 
 }
 
-
 function upgrade_host_defs($ver) {
     global $prefs;
     foreach ($prefs['multihosts'] as $key => $value) {
@@ -585,12 +587,10 @@ function upgrade_host_defs($ver) {
 }
 
 function multi_implode($array, $glue = ', ') {
-    $ret = '';
-
     if (!is_array($array)) {
         return $array;
     }
-
+    $ret = '';
     foreach ($array as $key => $item) {
         if (is_array($item)) {
             $ret .= $key . '=[' . multi_implode($item, $glue) . ']' . $glue;
@@ -598,9 +598,7 @@ function multi_implode($array, $glue = ', ') {
             $ret .= $key . '=' . $item . $glue;
         }
     }
-
     $ret = substr($ret, 0, 0-strlen($glue));
-
     return $ret;
 }
 

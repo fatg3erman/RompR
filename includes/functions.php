@@ -884,7 +884,7 @@ function getRemoteFilesize($url, $default) {
     $clen = isset($head['content-length']) ? $head['content-length'] : 0;
     $cstring = $clen;
     if (is_array($clen)) {
-        logger::log("FUNCTIONS", "Content Length is an array ".PHP_EOL.print_r($clen, true));
+        logger::log("REMOTEFILESIZE", "Content Length is an array ", $clen);
         $cstring = 0;
         foreach ($clen as $l) {
             if ($l > $cstring) {
@@ -894,10 +894,10 @@ function getRemoteFilesize($url, $default) {
     }
     stream_context_set_default($def_options);
     if ($cstring !== 0) {
-        logger::log("FUNCTIONS", "  Read file size remotely as ".$cstring);
+        logger::log("REMOTEFILESIZE", "  Read file size remotely as ".$cstring);
         return $cstring;
     } else {
-        logger::log("FUNCTIONS", "  Couldn't read filesize remotely. Using default value of ".$default);
+        logger::log("REMOTEFILESIZE", "  Couldn't read filesize remotely. Using default value of ".$default);
         return $default;
     }
 }
