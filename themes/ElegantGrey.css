@@ -9,8 +9,12 @@ body
 
 }
 
-body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,input,select
+body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,input
 {
+    color:#dddddd;
+}
+
+.desktop select {
     color:#dddddd;
 }
 
