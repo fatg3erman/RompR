@@ -14,15 +14,10 @@ body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,input
     color:#dddddd;
 }
 
-.desktop select {
-    color:#dddddd;
-}
-
 button, input[type="button"], .filebutton
 {
-    background-color:#202020;
-    border:1px solid #dedede;
-    /* background-image:none !important; */
+    background-color:#000000;
+    border:none;
     color:#dddddd;
     font-weight:bold;
     font-size:110%;
@@ -30,9 +25,12 @@ button, input[type="button"], .filebutton
 
 button:hover, input[type="button"]:hover, .filebutton:hover
 {
+    background-color:#222222;
     color:#ffffff;
-    border:1px solid #ffffff;
-    transition: all 0.5s ease;
+}
+
+.desktop select {
+    color:#dddddd;
 }
 
 .desktop .selectholder {
@@ -71,7 +69,7 @@ input[type="text"]:focus {
     border-bottom: 1px solid #bbbbbb;
 }
 
-select:hover {
+.desktop select:hover {
     color: #ffffff;
 }
 
@@ -324,7 +322,7 @@ div.topdropmenu
 
 .configtitle
 {
-    background-image: linear-gradient(#000000, #050505);
+    background-color:rgba(255,255,255,0.2);
 }
 
 /*

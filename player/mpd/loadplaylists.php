@@ -200,7 +200,6 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
 }
 
 function do_playlist_header() {
-    print '<div class="configtitle textcentre brick_wide"><b>'.get_int_text('button_loadplaylist').'</b></div>';
     print '<div class="containerbox dropdown-container fullwidth brick_wide">';
     print '<div class="fixed padright padleft"><span class="alignmid">External URL</span></div>';
 

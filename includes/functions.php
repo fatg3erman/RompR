@@ -897,7 +897,7 @@ function getRemoteFilesize($url, $default) {
         logger::log("REMOTEFILESIZE", "  Read file size remotely as ".$cstring);
         return $cstring;
     } else {
-        logger::log("REMOTEFILESIZE", "  Couldn't read filesize remotely. Using default value of ".$default);
+        logger::log("FUNCTIONS", "  Couldn't read filesize remotely. Using default value of ".$default);
         return $default;
     }
 }

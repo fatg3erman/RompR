@@ -95,11 +95,6 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 function doPodcastBase() {
     global $prefs;
-    print '<div class="containerbox menuitem" style="padding-left:8px">';
-    print '<div class="fixed" style="padding-right:4px"><i onclick="podcasts.toggleButtons()" class="icon-menu playlisticon clickicon tooltip" title="'.get_int_text('label_podcastcontrols').'"></i></div>';
-    print '<div class="configtitle textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div>';
-    print '</div>';
-
     print '<div class="containerbox indent"><div class="expand">'.get_int_text("label_searchfor").' (iTunes)</div></div>';
     print '<div class="containerbox indent">';
     print '<div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" /></div>';

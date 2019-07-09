@@ -28,7 +28,7 @@ body.phone .mainpane .faveradio,
 body.phone .mainpane .radio,
 body.phone .mainpane .podcast,
 body.phone .mainpane .directory {
-    background-color:rgba(0,0,0,0.1);
+    background-color:rgba(0,0,0,0.3);
     background-clip:border-box;
     margin-top: 4px;
 }
@@ -62,26 +62,63 @@ a:hover,a:active {
 
 button, input[type="button"], .filebutton {
     color:#dddddd;
-    background-color:transparent;
-    border:1px solid #aaaaaa;
+    background-color:rgba(206,37,214,0.2);
+    border: 1px solid transparent;
+    /* border:1px solid #aaaaaa; */
 }
 
 button:hover, input[type="button"]:hover, .filebutton:hover {
     color:#ffffff;
-    border:1px solid #ffffff;
-    text-shadow: 0 0 15px #ffffff;
-}
-
-input {
-    color:#181818;
-}
-
-input.snapclientname[type=text] {
-    color: #ffffff;
+    border:1px solid #555555;
+    text-shadow: 0 0 12px #777777;
 }
 
 select {
     color:#000000;
+}
+
+.desktop select {
+    color:#dddddd;
+}
+
+.desktop .selectholder {
+    background:rgba(0,0,0,0.3) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+}
+
+.desktop .selectholder:hover {
+    background:rgba(0,0,0,0.3) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
+}
+
+.combobox-entry:hover {
+    background:rgba(0,0,0,0.3) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
+}
+
+.combobox-entry {
+    background:rgba(0,0,0,0.3) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+}
+
+.clearbox {
+    background:rgba(0,0,0,0.3) url('../newimages/edit-delete.svg') right 2px center no-repeat;
+    background-size:12px 12px;
+}
+
+input[type="text"] {
+    background-color: rgba(0,0,0,0.3);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:hover {
+    background-color: rgba(0,0,0,0.2);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:focus {
+    transition: border-bottom 0.5s ease;
+    border-bottom: 1px solid #bbbbbb;
+}
+
+.desktop select:hover {
+    color: #ffffff;
 }
 
 /*
@@ -168,15 +205,11 @@ select {
     text-shadow: 0px 0px 20px #cccccc;
     font-weight:bold;
     color:#eeeeee;
-    background-color:rgba(0,0,0,0.1);
+    background-color:rgba(0,0,0,0.3);
 }
 
 .playlisttitle {
-    background-color:rgba(0,0,0,0.1);
-}
-
-.inbrowser {
-    color:#000000;
+    background-color:rgba(0,0,0,0.3);
 }
 
 .stleft {
@@ -254,7 +287,7 @@ div.topdropmenu {
 }
 
 .configtitle {
-    background-color:rgba(50,50,50,0.6);
+    background-color:rgba(206,37,214,0.4);
 }
 
 body.mobile .configtitle {
