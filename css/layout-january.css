@@ -101,7 +101,7 @@ input.snapclientname[type=text] {
 	background-color: transparent !important;
 }
 
-.desktop select {
+select {
     width:100%;
     background-color:transparent;
     border:0px none;
@@ -144,7 +144,7 @@ button {
     display:none;
 }
 
-.desktop .selectholder {
+.selectholder {
     background:#fff url('../newimages/blobdown2.svg') right 2px center no-repeat;
     overflow:hidden;
     width:58%;
