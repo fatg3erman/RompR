@@ -40,8 +40,8 @@ button, .filebutton
 
 button:hover, .filebutton:hover
 {
-    color:#ff4800;
-    border: 1px solid #ff4800;
+    color:#000000;
+    border: 1px solid white;
 }
 
 select
@@ -52,6 +52,44 @@ select
 #custombackground
 {
     display:none;
+}
+
+.desktop .selectholder {
+    background:rgba(0,0,0,0) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+}
+
+.desktop .selectholder:hover {
+    background:rgba(0,0,0,0) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
+}
+
+.combobox-entry:hover {
+    background:rgba(0,0,0,0) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
+}
+
+.combobox-entry {
+    background:rgba(0,0,0,0) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+}
+
+.clearbox {
+    background:rgba(0,0,0,0) url('../newimages/edit-delete.svg') right 2px center no-repeat;
+    background-size:12px 12px;
+}
+
+input[type="text"] {
+    background-color: rgba(0,0,0,0);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:focus {
+    border-bottom: 1px solid #eeeeee;
+}
+
+.configtitle {
+    border-bottom: 1px solid #888888;
+}
+
+.drop-box {
+    background-color: rgba(0,0,0,0.01);
 }
 
 #infopane

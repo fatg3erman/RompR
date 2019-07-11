@@ -231,11 +231,6 @@ tr.clickaddtrack:hover
     text-shadow: 0 0 8px #333333;
 }
 
-.drop-box
-{
-    background-image: linear-gradient(#dcdcdc, #999999);
-}
-
 .bsel
 {
     text-shadow: 0 0 8px #333333;

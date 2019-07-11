@@ -3,12 +3,22 @@
 = Standard HTML Elements
 =====================================================================
 */
+@media screen and (orientation: landscape) {
+    html, body.phone .dropmenu {
+        background-image:url("plasma.jpg");
+        background-size:cover;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+    }
+}
 
-html, body.phone .dropmenu {
-    background-image:url("plasma.jpg");
-    background-size:cover;
-    background-repeat:no-repeat;
-    background-attachment:fixed;
+@media screen and (orientation: portrait) {
+    html, body.phone .dropmenu {
+        background-image:url("plasma_portrait.jpg");
+        background-size:cover;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+    }
 }
 
 body.phone .dropmenu>div {
@@ -98,6 +108,11 @@ input[type="text"]:focus {
 
 .desktop select:hover {
     color: #ffffff;
+}
+
+.drop-box {
+    background-color:rgba(100,0,80,0.6);
+    color:white;
 }
 
 /*

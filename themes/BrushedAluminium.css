@@ -39,6 +39,45 @@ input.inbrowser, div.inbrowser {
     border: 1px solid #888888;
 }
 
+.desktop .selectholder {
+    background:rgba(0,0,0,0.1) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+}
+
+.desktop .selectholder:hover {
+    background:rgba(0,0,0,0.2) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
+}
+
+.combobox-entry:hover {
+    background:rgba(0,0,0,0.2) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
+}
+
+.combobox-entry {
+    background:rgba(0,0,0,0.1) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+}
+
+.clearbox {
+    background:rgba(0,0,0,0.1) url('../newimages/edit-delete.svg') right 2px center no-repeat;
+    background-size:12px 12px;
+}
+
+input[type="text"] {
+    background-color: rgba(0,0,0,0.1);
+}
+
+input[type="text"]:hover {
+    background-color: rgba(0,0,0,0.2);
+}
+
+input[type="text"]:focus {
+    transition: border-bottom 0.5s ease;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.drop-box {
+    background-color: rgba(0,0,0,0.2);
+    color:white;
+}
+
 /*
 =====================================================================
 = Specific Elements By ID
@@ -193,7 +232,8 @@ div.topdropmenu {
 }
 
 .configtitle {
-    background-color:rgba(0,0,0,0.2);
+    background-color:rgba(0,0,0,0.5);
+    color:white;
 }
 
 /*

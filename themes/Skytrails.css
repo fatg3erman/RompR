@@ -68,20 +68,59 @@ button:hover, input[type="button"]:hover, .filebutton:hover
     text-shadow: 0 0 15px #ffffff;
 }
 
-input
-{
-    color:#181818;
-}
-
-input.snapclientname[type=text] {
-    color: #ffffff;
-}
-
-select
-{
+select {
     color:#000000;
 }
 
+.desktop select {
+    color:#dddddd;
+}
+
+.desktop .selectholder {
+    background:rgba(0,0,0,0.3) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+}
+
+.desktop .selectholder:hover {
+    background:rgba(0,0,0,0.3) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
+}
+
+.combobox-entry:hover {
+    background:rgba(0,0,0,0.3) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
+}
+
+.combobox-entry {
+    background:rgba(0,0,0,0.3) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+}
+
+.clearbox {
+    background:rgba(0,0,0,0.3) url('../newimages/edit-delete.svg') right 2px center no-repeat;
+    background-size:12px 12px;
+}
+
+input[type="text"] {
+    background-color: rgba(0,0,0,0.3);
+    border-bottom: 1px solid #555555;
+    color: #ffffff;
+}
+
+input[type="text"]:hover {
+    background-color: rgba(0,0,0,0.2);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:focus {
+    transition: border-bottom 0.5s ease;
+    border-bottom: 1px solid #bbbbbb;
+}
+
+.desktop select:hover {
+    color: #ffffff;
+}
+
+.drop-box {
+    background-color: rgba(0,0,0,0.4);
+    color:white;
+}
 
 /*
 =====================================================================
@@ -187,11 +226,6 @@ select
 
 .playlisttitle{
     background-color:rgba(255,255,255,0.2);
-}
-
-.inbrowser
-{
-    color:#000000;
 }
 
 .stleft

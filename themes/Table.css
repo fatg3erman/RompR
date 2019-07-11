@@ -1,7 +1,19 @@
-html, body.phone .dropmenu {
-    background-image:url("table.jpg");
-    background-size:cover;
-    background-repeat:no-repeat;
+@media screen and (orientation: landscape) {
+    html, body.phone .dropmenu {
+        background-image:url("table.jpg");
+        background-size:cover;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+    }
+}
+
+@media screen and (orientation: portrait) {
+    html, body.phone .dropmenu {
+        background-image:url("table_portrait.jpg");
+        background-size:cover;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+    }
 }
 
 #sources, #artistcoverslist, #infobar.coloured, #headerbar, #thetopbit
@@ -42,6 +54,10 @@ html, body.phone .dropmenu {
 #artistbio
 {
     padding:4px;
+}
+
+#pset {
+    background-color: rgba(121, 105, 89, 0);
 }
 
 body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input
@@ -86,18 +102,58 @@ button:hover, input[type="button"]:hover, .filebutton:hover
     text-shadow: 0 0 15px #ffffff;
 }
 
-input
-{
-    color:#181818;
+select {
+    color:#000000;
 }
 
-input.snapclientname[type=text] {
+.desktop select {
+    color:#dddddd;
+}
+
+.desktop .selectholder {
+    background:rgba(0,0,0,0.5) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+}
+
+.desktop .selectholder:hover {
+    background:rgba(0,0,0,0.5) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
+}
+
+.combobox-entry:hover {
+    background:rgba(0,0,0,0.5) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
+}
+
+.combobox-entry {
+    background:rgba(0,0,0,0.5) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+}
+
+.clearbox {
+    background:rgba(0,0,0,0.5) url('../newimages/edit-delete.svg') right 2px center no-repeat;
+    background-size:12px 12px;
+}
+
+input[type="text"] {
+    background-color: rgba(0,0,0,0.5);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:hover {
+    background-color: rgba(0,0,0,0.6);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:focus {
+    background-color: rgba(0,0,0,0.6);
+    transition: border-bottom 0.5s ease;
+    border-bottom: 1px solid #bbbbbb;
+}
+
+.desktop select:hover {
     color: #ffffff;
 }
 
-select
-{
-    color:#000000;
+.drop-box {
+    background-color: rgba(0,0,0,0.6);
+    color:white;
 }
 
 #notifications
@@ -170,11 +226,6 @@ a.album:hover,a.album:active
     background-color:rgba(0,0,0,0.1);
 }
 
-.inbrowser
-{
-    color:#000000;
-}
-
 /*-- For Wikipedia and Last.FM pages --*/
 
 .stleft
@@ -223,12 +274,12 @@ a.album:hover,a.album:active
 
 div.topdropmenu
 {
-    background-color:rgba(0,0,0,0.9);
+    background-color:rgba(135,123,110,0.8);
 }
 
 .configtitle
 {
-    background-color:rgba(200,0,0,0.2);
+    background-color:rgba(145,44,64,0.9);
 }
 
 body.mobile .configtitle

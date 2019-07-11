@@ -104,6 +104,11 @@ input[type="text"]:focus {
     color: #ffffff;
 }
 
+.drop-box {
+    background-color: rgba(0,0,0,0.5);
+    color:white;
+}
+
 /*
 =====================================================================
 = Specific Elements By ID

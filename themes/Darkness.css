@@ -104,6 +104,11 @@ input[type="text"]:focus {
     color: #ffffff;
 }
 
+.drop-box {
+    background-color: rgba(0,0,0,0.2);
+    color:white;
+}
+
 /*
 =====================================================================
 = Specific Elements By ID
@@ -264,12 +269,6 @@ tr.clickaddtrack:hover
     background-color:#353535;
 }
 
-.drop-box
-{
-    background-color:#fefefe;
-    color:#090909;
-}
-
 .bsel
 {
     color:#ff4800;
@@ -322,6 +321,7 @@ div.topdropmenu
 .configtitle
 {
     background-color:#252525;
+    border-bottom: 1px solid #555555;
 }
 
 /*
