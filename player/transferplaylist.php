@@ -29,7 +29,7 @@ class transferCollection {
     }
 
     public function get_track_type($index) {
-        return $tracks[$index]['type'];
+        return $this->tracks[$index]['type'];
     }
 
 }
