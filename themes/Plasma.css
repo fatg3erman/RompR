@@ -166,6 +166,10 @@ input[type="text"]:focus {
     background-color:#ffffff;
 }
 
+#pset {
+    background-color: rgba(202, 69, 156, 0);
+}
+
 /*
 =====================================================================
 = General Classes

@@ -126,6 +126,10 @@ input[type="text"]:focus {
     color:white;
 }
 
+#pset {
+    background-color: rgba(124, 109, 58, 0);
+}
+
 /*
 =====================================================================
 = Specific Elements By ID
@@ -292,7 +296,7 @@ div.topdropmenu {
 }
 
 .configtitle {
-    background-color:rgba(206,37,214,0.4);
+    background-color:rgba(138,45,90,0.4);
 }
 
 body.mobile .configtitle {

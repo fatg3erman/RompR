@@ -145,6 +145,10 @@ input[type="text"]:focus {
     background-color:rgba(60,0,17,0.7);
 }
 
+#pset {
+    background-color: rgba(79, 71, 93, 0);
+}
+
 /*
 =====================================================================
 = General Classes
@@ -278,12 +282,12 @@ tr.clickaddtrack:hover
 
 div.topdropmenu
 {
-    background-color:rgba(60,0,17,0.9);
+    background-color:rgba(53,37,48,0.9);
 }
 
 .configtitle
 {
-    background-color:rgba(0,0,0,0.5);
+    background-color:rgba(144,91,77,0.5);
 }
 
 body.mobile .configtitle

@@ -100,6 +100,10 @@ input[type="text"]:focus {
     color: #ffffff;
 }
 
+#pset {
+    background-color: rgba(202, 69, 156, 0);
+}
+
 /*
 =====================================================================
 = Specific Elements By ID

@@ -78,6 +78,10 @@ input[type="text"]:focus {
     color:white;
 }
 
+#pset {
+    background-color: rgba(201, 201, 201, 0);
+}
+
 /*
 =====================================================================
 = Specific Elements By ID

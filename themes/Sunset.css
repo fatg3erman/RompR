@@ -191,6 +191,10 @@ a.album:hover,a.album:active
     border-left:1px solid white;
 }
 
+#pset {
+    background-color: rgba(169, 92, 41, 0);
+}
+
 .playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
     text-shadow: 0 0 15px #ffffff;
     color:#ffffff;

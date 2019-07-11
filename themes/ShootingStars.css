@@ -136,6 +136,10 @@ a.album:hover,a.album:active
     cursor:pointer;
 }
 
+#pset {
+    background-color: rgba(2, 23, 40, 0);
+}
+
 #filemenu
 {
     border-left:1px solid white;

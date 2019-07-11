@@ -109,6 +109,10 @@ input[type="text"]:focus {
     color:white;
 }
 
+#pset {
+    background-color: rgba(162, 72, 84, 0);
+}
+
 /*
 =====================================================================
 = Specific Elements By ID
@@ -315,7 +319,7 @@ tr.clickaddtrack:hover
 
 div.topdropmenu
 {
-    background-color:rgba(65,65,85,0.9);
+    background-color:rgba(1,133,215,0.9);
     color:white;
 }
 
@@ -326,7 +330,7 @@ div.topdropmenu td
 
 .configtitle
 {
-    background-image:linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.2));
+    background-color: rgba(162, 72, 84, 0.7);
 }
 
 body.mobile .configtitle

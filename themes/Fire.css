@@ -119,6 +119,10 @@ select
     background-color:rgba(0,0,0,0.3);
 }
 
+#pset {
+    background-color: rgba(147, 61, 24, 0);
+}
+
 /*
 =====================================================================
 = General Classes

@@ -116,6 +116,10 @@ select
     background-color:rgba(0,0,0,0.9);
 }
 
+#pset {
+    background-color: rgba(23, 38, 77, 0);
+}
+
 a.album:visited
 {
     color:#220000;
