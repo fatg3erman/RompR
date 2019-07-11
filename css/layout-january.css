@@ -171,7 +171,7 @@ button {
     margin-left:1em;
 }
 
-.desktop .selectholder:hover {
+.selectholder:hover {
     background:#fff url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
 }
 
