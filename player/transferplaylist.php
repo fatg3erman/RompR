@@ -56,7 +56,7 @@ $target_player = new base_mpd_player(
 $target_player->close_mpd_connection();
 
 $prefs['currenthost'] = $json['currenthost'];
-savePrefs();
+setcookie('currenthost',$prefs['currenthost'], time()+365*24*60*60*10,'/');
 // Connect properly to the new player
 require_once ("player/".$prefs['player_backend']."/player.php");
 $target_player = new $PLAYER_TYPE();
