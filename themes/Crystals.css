@@ -51,12 +51,7 @@ button:hover, input[type="button"]:hover, .filebutton:hover
     text-shadow: 0 0 15px #ffffff;
 }
 
-select
-{
-    color:#000000;
-}
-
-.desktop select {
+select {
     color:#dddddd;
 }
 
@@ -64,11 +59,11 @@ input {
     color: #dddddd;
 }
 
-.desktop .selectholder {
+.selectholder {
     background:rgba(0,0,0,0.4) url('../newimages/blobdown2.svg') right 2px center no-repeat;
 }
 
-.desktop .selectholder:hover {
+.selectholder:hover {
     background:rgba(0,0,0,0.4) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
 }
 
@@ -100,7 +95,7 @@ input[type="text"]:focus {
     border-bottom: 1px solid #bbbbbb;
 }
 
-.desktop select:hover {
+select:hover {
     color: #ffffff;
 }
 

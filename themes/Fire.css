@@ -59,13 +59,8 @@ input
 
 input[type="text"] {
     color: white;
-    background-color: #222;
+    background-color: rgba(20,20,20,0.5);
     border: 1px solid #444;
-}
-
-select
-{
-    color:#000000;
 }
 
 /*
@@ -129,23 +124,23 @@ select
 =====================================================================
 */
 
-.desktop .selectholder {
-    background: #222 url('../newimages/blobdown3.svg') right 2px center no-repeat;
+.selectholder {
+    background: rgba(20,20,20,0.5) url('../newimages/blobdown3.svg') right 2px center no-repeat;
 }
 
-.desktop .selectholder:hover {
-    background: #222 url('../newimages/blobdown3-hi.svg') right 2px center no-repeat;
+.selectholder:hover {
+    background: rgba(20,20,20,0.5) url('../newimages/blobdown3-hi.svg') right 2px center no-repeat;
 }
 
 .combobox-entry {
-    background: #222 url('../newimages/blobdown3.svg') right 2px center no-repeat;
+    background: rgba(20,20,20,0.5) url('../newimages/blobdown3.svg') right 2px center no-repeat;
 }
 
 .combobox-entry:hover {
-    background: #222 url('../newimages/blobdown3-hi.svg') right 2px center no-repeat;
+    background: rgba(20,20,20,0.5) url('../newimages/blobdown3-hi.svg') right 2px center no-repeat;
 }
 
-.desktop select {
+select {
     color: white;
 }
 

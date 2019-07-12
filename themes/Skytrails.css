@@ -71,11 +71,11 @@ select {
     color:#000000;
 }
 
-.desktop .selectholder {
+.selectholder {
     background:rgba(255,255,255,0.3) url('../newimages/blobdown2.svg') right 2px center no-repeat;
 }
 
-.desktop .selectholder:hover {
+.selectholder:hover {
     background:rgba(255,255,255,0.4) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
 }
 

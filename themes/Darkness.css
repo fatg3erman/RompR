@@ -55,18 +55,15 @@ a:hover,a:active
 }
 
 select {
-    color:#000000;
-}
-
-.desktop select {
     color:#dddddd;
 }
 
-.desktop .selectholder {
+.selectholder {
     background:rgba(0,0,0,0.3) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+    border: 1px solid #555555;
 }
 
-.desktop .selectholder:hover {
+.selectholder:hover {
     background:rgba(0,0,0,0.3) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
 }
 
@@ -100,7 +97,7 @@ input[type="text"]:focus {
     border-top: 1px solid #555555;
 }
 
-.desktop select:hover {
+select:hover {
     color: #ffffff;
 }
 

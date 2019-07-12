@@ -12,16 +12,16 @@ h2 {
     font-size:120%;
 }
 
-/*Awful hack because the styled select boxes only seem to
-register clicks on their borders. This gives them a big fat
-right-hand border that overlaps the dropdown button
-*/
 select {
     width:100%;
     height:3em;
 }
 
 .selectholder {
+    height:3em;
+}
+
+input[type="text"] {
     height:3em;
 }
 

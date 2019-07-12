@@ -39,11 +39,11 @@ input.inbrowser, div.inbrowser {
     border: 1px solid #888888;
 }
 
-.desktop .selectholder {
+.selectholder {
     background:rgba(0,0,0,0.1) url('../newimages/blobdown2.svg') right 2px center no-repeat;
 }
 
-.desktop .selectholder:hover {
+.selectholder:hover {
     background:rgba(0,0,0,0.2) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
 }
 

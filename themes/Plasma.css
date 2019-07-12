@@ -102,7 +102,7 @@ input[type="text"]:focus {
     border-bottom: 1px solid #bbbbbb;
 }
 
-.desktop select:hover {
+select:hover {
     color: #ffffff;
 }
 
