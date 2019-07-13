@@ -125,7 +125,7 @@ a:hover,a:active
 
 .progressbar_v
 {
-    width:auto;
+    /* width:auto; */
     border-radius:5px;
 }
 

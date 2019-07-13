@@ -6,6 +6,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 ## Version 1.30
 
 * Major re-write of a lot of the backend code to streamline it and make it faster
+* The default SQLite database now uses a single collection file called collection.sq3. In older releases, it would be called collection_mopidy.sq3 or collection_mpd.sq3 depending on your player type. This meant that if you had multiple players of different types you were not sharing the same collection between them all. The first time you open RompR 1.30, your collection will be upgraded to the new name. If you previously had two collections, the one that is selected will be the one that was most recently updated. Backups of the old files will be kept in prefs/oldcollections.
 * [Snapcast](/RopmR/Snapcast) support
 * Album Art download from Last.FM was broken, has now been fixed
 * The Last.FM info panel will no longer show images for artists. Sadly, Last.FM seems to be in a downward spiral and their API is providing images that no longer exist. There is nothing I can do about this. For now, I've left the placeholders for the images and if the API gets fixed (very unlikely) they'll start to appear again.

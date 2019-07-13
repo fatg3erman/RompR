@@ -118,8 +118,13 @@ select:hover {
     color:white;
 }
 
+/* reddish-purple */
 #pset {
-    background-color: rgba(124, 109, 58, 0);
+    background-color: rgba(142, 57, 109, 0);
+}
+/* yellowy-brown */
+#pmaxset {
+    background-color: rgba(151, 139, 106, 0);
 }
 
 /*

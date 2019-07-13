@@ -120,6 +120,9 @@ body.desktop #thetopbit
 #pset {
     background-color: rgba(150, 150, 150, 0);
 }
+#pmaxset {
+    background-color: rgba(255, 255, 255, 0);
+}
 
 /*
 =====================================================================

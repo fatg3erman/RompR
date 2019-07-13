@@ -31,7 +31,7 @@ function probe_database() {
 	if ($mysqlc == null) {
 		logger::log("SQL_CONNECT", "Attempting to use SQLite Database");
 		try {
-			$dsn = "sqlite:prefs/collection_".$prefs['player_backend'].".sq3";
+			$dsn = "sqlite:prefs/collection.sq3";
 			$mysqlc = new PDO($dsn);
 			logger::mark("MYSQL", "Connected to SQLite");
 			$prefs['collection_type'] = 'sqlite';

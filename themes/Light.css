@@ -76,6 +76,9 @@ input.inbrowser, div.inbrowser
 #pset {
     background-color: rgba(150, 150, 150, 0);
 }
+#pmaxset {
+    background-color: rgba(180, 180, 180, 0);
+}
 
 #notifications
 {

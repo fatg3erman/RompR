@@ -144,6 +144,11 @@ button {
     display:none;
 }
 
+#pmaxset {
+    position:absolute;
+    display:none;
+}
+
 .selectholder {
     background:#fff url('../newimages/blobdown2.svg') right 2px center no-repeat;
     overflow:hidden;
@@ -500,6 +505,10 @@ button {
 = Specific Elements By ID
 =====================================================================
 */
+
+#amontobin {
+    font-size:8pt;
+}
 
 #collectionsearcher {
     padding-left:8px;

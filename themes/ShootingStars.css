@@ -135,6 +135,9 @@ a.album:hover,a.album:active
 #pset {
     background-color: rgba(2, 23, 40, 0);
 }
+#pmaxset {
+    background-color: rgba(200, 200, 200, 0);
+}
 
 #filemenu
 {

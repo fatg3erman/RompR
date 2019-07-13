@@ -44,11 +44,12 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 
 } else if (array_key_exists('clearallbackgrounds', $_REQUEST)) {
 
+	// Remove these here, just in case the folder has been deleted for some reason
+	sql_prepare_query(true, null, null, null, 'DELETE FROM BackgroundImageTable WHERE Skin = ? AND BrowserID = ?', $_REQUEST['clearallbackgrounds'], $_REQUEST['browser_id']);
 	if (is_dir('prefs/userbackgrounds/'.$_REQUEST['clearallbackgrounds'].'/'.$_REQUEST['browser_id'])) {
 		logger::log("BACKIMAGE", "Removing All Backgrounds For ".$_REQUEST['clearallbackgrounds'].'/'.$_REQUEST['browser_id']);
 		delete_files('prefs/userbackgrounds/'.$_REQUEST['clearallbackgrounds'].'/'.$_REQUEST['browser_id']);
 		check_empty_directory('prefs/userbackgrounds/'.$_REQUEST['clearallbackgrounds'].'/'.$_REQUEST['browser_id']);
-		sql_prepare_query(true, null, null, null, 'DELETE FROM BackgroundImageTable WHERE Skin = ? AND BrowserID = ?', $_REQUEST['clearallbackgrounds'], $_REQUEST['browser_id']);
 	} else if (is_dir('prefs/userbackgrounds/'.$_REQUEST['clearallbackgrounds'])) {
 		logger::log("BACKIMAGE", "Removing All Backgrounds For ".$_REQUEST['clearallbackgrounds']);
 		delete_files('prefs/userbackgrounds/'.$_REQUEST['clearallbackgrounds']);

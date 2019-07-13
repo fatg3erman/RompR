@@ -137,12 +137,12 @@ var prefs = function() {
             url: 'player/transferplaylist.php',
             data: JSON.stringify(deferredPrefs),
             success: function() {
-                setCookie('player_backend', 'none', 0);
                 prefs.save(deferredPrefs, reloadWindow);
             },
-            error: function() {
-                debug.error("PREFS","Playlist transfer failed");
-                infobar.error(language.gettext('error_trfailed'));
+            error: function(data) {
+                debug.error("PREFS","Playlist transfer failed",data);
+                infobar.error(language.gettext('error_trfailed')+'<br>'+data.responseText);
+                prefs.setPrefs();
             }
         });
     }
@@ -194,7 +194,11 @@ var prefs = function() {
                 case 'snapcast_port':
                     if (felakuti.snapcast_server != prefs.snapcast_server ||
                         felakuti.snapcast_port != prefs.snapcast_port) {
-                        callback = snapcast.updateStatus;
+                            if (felakuti.snapcast_server == '') {
+                                snapcast.clearEverything();
+                            } else {
+                                callback = snapcast.updateStatus;
+                            }
                     }
                     break;
             }
@@ -739,10 +743,24 @@ var prefs = function() {
 
         setTheme: function(theme) {
             if (!theme) theme = prefs.theme;
+            // These 2 themes were removed
+            if (theme == 'PlasmaPortrait.css') {
+                theme = 'Plasma.css';
+                $("#themeselector").val(theme);
+                prefs.save({theme: 'Plasma.css'});
+            }
+            if (theme == 'Storm.css') {
+                theme = 'Mountains.css';
+                $("#themeselector").val(theme);
+                prefs.save({theme: 'Mountains.css'});
+            }
             clearCustomBackground();
             // Use a different version every time to ensure the browser doesn't cache.
             // Browsers are funny about CSS.
             var t = Date.now();
+            $('#theme').on('load', prefs.updateProgressBarColours);
+            $('#fontsize').on('load', prefs.fontChange);
+            $('#fontfamily').on('load', prefs.fontChange);
             $("#theme").attr("href", "themes/"+theme+"?version="+t);
             $("#albumcoversize").attr("href", "coversizes/"+prefs.coversize+"?version="+t);
             $("#fontsize").attr("href", "sizes/"+prefs.fontsize+"?version="+t);
@@ -750,21 +768,28 @@ var prefs = function() {
             $("#icontheme-theme").attr("href", "iconsets/"+prefs.icontheme+"/theme.css"+"?version="+t);
             $("#icontheme-adjustments").attr("href", "iconsets/"+prefs.icontheme+"/adjustments.css"+"?version="+t);
             loadBackgroundImages(theme);
-            prefs.rgbs = null;
-            if (typeof(layoutProcessor) != 'undefined') {
-                setTimeout(prefs.postUIChange, 2000);
-            }
+            setTimeout(prefs.postUIChange, 2000);
         },
 
-        postUIChange: function() {
+        updateProgressBarColours: function() {
+            prefs.rgbs = null;
+            prefs.maxrgbs = null;
             $('.rangechooser').rangechooser('fill');
-            if (typeof charts !== 'undefined') {
-                charts.reloadAll();
-            }
-            layoutProcessor.adjustLayout();
+        },
+
+        fontChange: function() {
             setSearchLabelWidth();
             setSpotiLabelWidth();
             infobar.biggerize();
+        },
+
+        postUIChange: function() {
+            if (typeof charts !== 'undefined') {
+                charts.reloadAll();
+            }
+            if (typeof(layoutProcessor) != 'undefined') {
+                layoutProcessor.adjustLayout();
+            }
             browser.rePoint();
         },
 

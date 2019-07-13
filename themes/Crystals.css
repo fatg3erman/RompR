@@ -105,7 +105,10 @@ select:hover {
 }
 
 #pset {
-    background-color: rgba(162, 72, 84, 0);
+    background-color: rgba(156, 70, 81, 0);
+}
+#pmaxset {
+    background-color: rgba(187, 240, 254, 0);
 }
 
 /*

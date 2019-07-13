@@ -194,6 +194,13 @@ var snapcast = function() {
                     id: group
                 }
             }, snapcast.gotStatus);
+        },
+
+        clearEverything: function() {
+            clearTimeout(updatetimer);
+            streams = [];
+            groups = [];
+            $('#snapcastgroups').empty();
         }
     }
 

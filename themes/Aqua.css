@@ -71,6 +71,10 @@ select {
     background-color: rgba(192, 208, 231, 0);
 }
 
+#pmaxset {
+    background-color: rgba(232, 235, 240, 0);
+}
+
 #custombackground {
     display:none;
 }

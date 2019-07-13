@@ -163,6 +163,9 @@ select:hover {
 }
 
 #pset {
+    background-color: rgba(44, 0, 51, 0);
+}
+#pmaxset {
     background-color: rgba(202, 69, 156, 0);
 }
 

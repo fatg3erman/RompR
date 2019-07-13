@@ -39,8 +39,8 @@ require_once ("skins/".$skin."/ui_elements.php");
 // See if there are any POST values from the setup screen
 //
 
-if (array_key_exists('mpd_host', $_POST)) {
-    foreach (array('cleanalbumimages', 'do_not_show_prefs') as $p) {
+if (array_key_exists('currenthost', $_POST)) {
+    foreach (array('cleanalbumimages', 'do_not_show_prefs', 'separate_collections') as $p) {
         if (array_key_exists($p, $_POST)) {
             $_POST[$p] = true;
         } else {
@@ -71,7 +71,27 @@ if (array_key_exists('mpd_host', $_POST)) {
             )
     );
     savePrefs();
-    loadprefs();
+}
+
+$collections = glob('prefs/collection_{mpd,mopidy}.sq3', GLOB_BRACE);
+if (count($collections) > 0) {
+    logger::blurt('UPGRADE', 'Old-style twin sqlite collections found');
+    @mkdir('prefs/oldcollections');
+    $time = 0;
+    $newest = null;
+    foreach ($collections as $file) {
+        print $file."\n";
+        if (filemtime($file) > $time) {
+            $newest = $file;
+            $time = filemtime($file);
+        }
+    }
+    logger::mark('UPGRADE', "Newest file is",$newest);
+    copy($newest, 'prefs/collection.sq3');
+    foreach ($collections as $file) {
+        logger::log('UPGRADE', 'Moving',$file,'to','prefs/oldcollections/'.basename($file));
+        rename($file, 'prefs/oldcollections/'.basename($file));
+    }
 }
 
 logger::debug("INIT", $_SERVER['SCRIPT_FILENAME']);
@@ -88,6 +108,12 @@ if (array_key_exists('setup', $_REQUEST)) {
 }
 
 require_once ('player/mpd/mpdinterface.php');
+logger::mark('INIT','Attempting to connect to player',$prefs['currenthost']);
+if (array_key_exists('player_backend', $_COOKIE)) {
+    logger::mark('INIT','Player backend cookie is',$_COOKIE['player_backend']);
+} else {
+    logger::mark('INIT','Player backend cookie is not set');
+}
 $player = new base_mpd_player();
 if ($player->is_connected()) {
     $mpd_status = $player->get_status();

@@ -103,7 +103,9 @@ class base_mpd_player {
     }
 
     public function close_mpd_connection() {
-        stream_socket_shutdown($this->connection, STREAM_SHUT_RDWR);
+        if ($this->is_connected()) {
+            stream_socket_shutdown($this->connection, STREAM_SHUT_RDWR);
+        }
     }
 
     public function is_connected() {
@@ -623,7 +625,7 @@ class base_mpd_player {
                     $cmds[$key] = $this->mopidy_to_mpd($cmd);
                 } else if ($prefs['collection_player']== 'mpd'){
                     $file = trim(substr($cmd, 4), '" ');
-                    $cmds[$key] = 'add '.$this0>mpd_to_mopidy($file);
+                    $cmds[$key] = 'add '.$this->mpd_to_mopidy($file);
                 }
             }
         }
@@ -659,18 +661,18 @@ class base_mpd_player {
         global $prefs;
         $retval = false;
         if ($this->is_connected()) {
-            logger::shout("INIT", "Probing Player Type....");
+            logger::shout("MPDPLAYER", "Probing Player Type....");
             $r = $this->do_mpd_command('tagtypes', true, true);
             if (is_array($r) && array_key_exists('tagtype', $r)) {
                 if (in_array('X-AlbumUri', $r['tagtype'])) {
-                    logger::mark("INIT", "    ....tagtypes test says we're running Mopidy. Setting cookie");
+                    logger::mark("MPDPLAYER", "    ....tagtypes test says we're running Mopidy. Setting cookie");
                     $retval = "mopidy";
                 } else {
-                    logger::mark("INIT", "    ....tagtypes test says we're running MPD. Setting cookie");
+                    logger::mark("MPDPLAYER", "    ....tagtypes test says we're running MPD. Setting cookie");
                     $retval = "mpd";
                 }
             } else {
-                logger::mark("INIT", "WARNING! No output for 'tagtypes' - probably an old version of Mopidy. RompЯ may not function correctly");
+                logger::mark("MPDPLAYER", "WARNING! No output for 'tagtypes' - probably an old version of Mopidy. RompЯ may not function correctly");
                 $retval =  "mopidy";
             }
             setcookie('player_backend',$retval,time()+365*24*60*60*10,'/');

@@ -19,6 +19,7 @@ $root_level_dirs = array(
 	'prefs/databackups',
 	'prefs/userstreams',
 	'prefs/temp',
+	'prefs/oldcollections',
 	'albumart/asdownloaded',
 	'albumart/small',
 	'albumart/medium'

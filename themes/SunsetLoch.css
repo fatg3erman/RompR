@@ -119,6 +119,9 @@ select
 #pset {
     background-color: rgba(23, 38, 77, 0);
 }
+#pmaxset {
+    background-color: rgba(155, 172, 227, 0);
+}
 
 a.album:visited
 {

@@ -57,6 +57,9 @@
 }
 
 #pset {
+    background-color: rgba(54, 61, 64, 0);
+}
+#pmaxset {
     background-color: rgba(121, 105, 89, 0);
 }
 

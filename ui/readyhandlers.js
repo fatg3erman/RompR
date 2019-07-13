@@ -1,13 +1,13 @@
 $(document).ready(function(){
     debug.log("INIT","Document Ready Event has fired");
     get_geo_country();
+    if (prefs.do_not_show_prefs) {
+        $('.choose_prefs').remove();
+    }
     if (prefs.usertheme) {
         prefs.setTheme(prefs.usertheme);
     } else {
         prefs.setTheme(prefs.theme);
-    }
-    if (prefs.do_not_show_prefs) {
-        $('.choose_prefs').remove();
     }
     infobar.createProgressBar();
     pluginManager.doEarlyInit();

@@ -1,5 +1,6 @@
 <body class="mobile phone">
 <div id="pset" class="invisible"></div>
+<div id="pmaxset" class="invisible"></div>
 <div id="notifications"></div>
 <div id="headerbar" class="noborder fullwidth containerbox">
     <div id="sourcescontrols" class="expand center containerbox noborder">
