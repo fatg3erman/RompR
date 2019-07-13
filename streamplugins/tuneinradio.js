@@ -12,9 +12,6 @@ var tuneinRadioPlugin = {
     },
 
     setTheThing: function() {
-        // $('[name="tuneinsearcher"]').on('mouseenter',makeHoverWork);
-        // $('[name="tuneinsearcher"]').on('mousemove', makeHoverWork);
-        // $('[name="tuneinsearcher"]').on('keyup', onKeyUp);
         layoutProcessor.postAlbumActions();
     },
 

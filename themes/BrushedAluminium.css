@@ -6,7 +6,7 @@
 
 html, body.phone .dropmenu {
     color:#000000;
-    background-image:url('../newimages/silver1.jpg');
+    background-image:url('newimages/silver1.jpg');
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -40,24 +40,11 @@ input.inbrowser, div.inbrowser {
 }
 
 .selectholder {
-    background:rgba(0,0,0,0.1) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+    background-color:rgba(0,0,0,0.1);
 }
 
 .selectholder:hover {
-    background:rgba(0,0,0,0.2) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
-}
-
-.combobox-entry:hover {
-    background:rgba(0,0,0,0.2) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
-}
-
-.combobox-entry {
-    background:rgba(0,0,0,0.1) url('../newimages/blobdown2.svg') right 2px center no-repeat;
-}
-
-.clearbox {
-    background:rgba(0,0,0,0.1) url('../newimages/edit-delete.svg') right 2px center no-repeat;
-    background-size:12px 12px;
+    background-color:rgba(0,0,0,0.2);
 }
 
 input[type="text"] {
@@ -96,7 +83,7 @@ input[type="text"]:focus {
 }
 
 #notifications {
-    background-image:url('../newimages/silver2.jpg');;
+    background-image:url('newimages/silver2.jpg');;
 }
 
 #wikipopup {
@@ -129,11 +116,11 @@ input[type="text"]:focus {
 }
 
 .album1 {
-    background-image:url('../newimages/silver2.jpg');
+    background-image:url('newimages/silver2.jpg');
 }
 
 .album2 {
-    background-image:url('../newimages/silver1.jpg');
+    background-image:url('newimages/silver1.jpg');
 }
 
 .playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
@@ -182,11 +169,11 @@ table.histable tr:hover {
 }
 
 tr.clickaddtrack:hover {
-    background-image:url('../newimages/silver1.jpg');
+    background-image:url('newimages/silver1.jpg');
 }
 
 .tagholder table tr th {
-    background-image:url('../newimages/silver1.jpg');
+    background-image:url('newimages/silver1.jpg');
     border-bottom:1px solid #000000;
 }
 
@@ -231,7 +218,7 @@ tr.clickaddtrack:hover {
 */
 
 div.topdropmenu {
-    background-image:url('../newimages/silver2.jpg');;
+    background-image:url('newimages/silver2.jpg');;
     border-left:1px solid #ffffff;
     border-bottom:1px solid #555555;
     border-right:1px solid #555555;
@@ -318,11 +305,11 @@ div.topdropmenu {
 {
     border-bottom: none !important;
     margin-bottom:-4px;
-    background-image:url('../newimages/silver2.jpg');
+    background-image:url('newimages/silver2.jpg');
 }
 
 #imageeditor {
-    background-image:url('../newimages/silver2.jpg');
+    background-image:url('newimages/silver2.jpg');
 }
 
 /*

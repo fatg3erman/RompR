@@ -5,7 +5,7 @@
 */
 @media screen and (orientation: landscape) {
     html, body.phone .dropmenu {
-        background-image:url("plasma.jpg");
+        background-image:url("themes/plasma.jpg");
         background-size:cover;
         background-repeat:no-repeat;
         background-attachment:fixed;
@@ -14,7 +14,7 @@
 
 @media screen and (orientation: portrait) {
     html, body.phone .dropmenu {
-        background-image:url("plasma_portrait.jpg");
+        background-image:url("themes/plasma_portrait.jpg");
         background-size:cover;
         background-repeat:no-repeat;
         background-attachment:fixed;
@@ -67,24 +67,11 @@ select {
 }
 
 .selectholder {
-    background:rgba(0,0,0,0.5) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+    background-color:rgba(0,0,0,0.5);
 }
 
 .selectholder:hover {
-    background:rgba(0,0,0,0.5) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
-}
-
-.combobox-entry:hover {
-    background:rgba(0,0,0,0.5) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
-}
-
-.combobox-entry {
-    background:rgba(0,0,0,0.5) url('../newimages/blobdown2.svg') right 2px center no-repeat;
-}
-
-.clearbox {
-    background:rgba(0,0,0,0.5) url('../newimages/edit-delete.svg') right 2px center no-repeat;
-    background-size:12px 12px;
+    background-color:rgba(0,0,0,0.2);
 }
 
 input[type="text"] {

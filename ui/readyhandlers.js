@@ -4,11 +4,7 @@ $(document).ready(function(){
     if (prefs.do_not_show_prefs) {
         $('.choose_prefs').remove();
     }
-    if (prefs.usertheme) {
-        prefs.setTheme(prefs.usertheme);
-    } else {
-        prefs.setTheme(prefs.theme);
-    }
+    prefs.setTheme(prefs.theme);
     infobar.createProgressBar();
     pluginManager.doEarlyInit();
     createHelpLinks();

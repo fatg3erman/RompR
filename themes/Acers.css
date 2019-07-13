@@ -5,7 +5,7 @@
 */
 
 html, body.phone .dropmenu {
-    background-image:url("acers2.jpg");
+    background-image:url("themes/acers2.jpg");
     background-size:cover;
     background-repeat:no-repeat;
     background-attachment:fixed;
@@ -74,24 +74,11 @@ button:hover, input[type="button"]:hover, .filebutton:hover {
 }
 
 .selectholder {
-    background:rgba(0,0,0,0.3) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+    background-color:rgba(0,0,0,0.3);
 }
 
 .selectholder:hover {
-    background:rgba(0,0,0,0.3) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
-}
-
-.combobox-entry:hover {
-    background:rgba(0,0,0,0.3) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
-}
-
-.combobox-entry {
-    background:rgba(0,0,0,0.3) url('../newimages/blobdown2.svg') right 2px center no-repeat;
-}
-
-.clearbox {
-    background:rgba(0,0,0,0.3) url('../newimages/edit-delete.svg') right 2px center no-repeat;
-    background-size:12px 12px;
+    background-color:rgba(0,0,0,0.2);
 }
 
 input[type="text"] {
@@ -110,7 +97,7 @@ input[type="text"]:focus {
 }
 
 select:hover {
-    color: #ffffff;
+    color:#ffffff;
 }
 
 .drop-box {

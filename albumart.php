@@ -25,10 +25,6 @@ print '<link rel="stylesheet" type="text/css" href="skins/desktop/skin.css?versi
 print '<link rel="stylesheet" type="text/css" href="css/albumart.css?version=?'.ROMPR_VERSION.'" />'."\n";
 ?>
 <link rel="stylesheet" id="theme" type="text/css" />
-<link rel="stylesheet" id="fontsize" type="text/css" />
-<link rel="stylesheet" id="fontfamily" type="text/css" />
-<link rel="stylesheet" id="icontheme-theme" type="text/css" />
-<link rel="stylesheet" id="icontheme-adjustments" type="text/css" />
 <link type="text/css" href="css/jquery.mCustomScrollbar.css" rel="stylesheet" />
 <?php
 $scripts = array(

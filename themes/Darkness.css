@@ -58,26 +58,17 @@ select {
     color:#dddddd;
 }
 
+select:hover {
+    color:#ffffff;
+}
+
 .selectholder {
-    background:rgba(0,0,0,0.3) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+    background-color:rgba(0,0,0,0.3);
     border: 1px solid #555555;
 }
 
 .selectholder:hover {
-    background:rgba(0,0,0,0.3) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
-}
-
-.combobox-entry:hover {
-    background:rgba(0,0,0,0.3) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
-}
-
-.combobox-entry {
-    background:rgba(0,0,0,0.3) url('../newimages/blobdown2.svg') right 2px center no-repeat;
-}
-
-.clearbox {
-    background:rgba(0,0,0,0.3) url('../newimages/edit-delete.svg') right 2px center no-repeat;
-    background-size:12px 12px;
+    background-color:rgba(0,0,0,0.2);
 }
 
 input[type="text"] {
@@ -95,10 +86,6 @@ input[type="text"]:focus {
     transition: border-top 0.5s ease;
     border-bottom: 1px solid #bbbbbb;
     border-top: 1px solid #555555;
-}
-
-select:hover {
-    color: #ffffff;
 }
 
 .drop-box {

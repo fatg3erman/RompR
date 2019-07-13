@@ -33,25 +33,16 @@ select {
     color:#dddddd;
 }
 
+select:hover {
+    color:#ffffff;
+}
+
 .selectholder {
-    background:rgba(200,200,200,0.05) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+    background-color:rgba(200,200,200,0.05);
 }
 
 .selectholder:hover {
-    background:rgba(200,200,200,0.05) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
-}
-
-.combobox-entry:hover {
-    background:rgba(200,200,200,0.05) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
-}
-
-.combobox-entry {
-    background:rgba(200,200,200,0.05) url('../newimages/blobdown2.svg') right 2px center no-repeat;
-}
-
-.clearbox {
-    background:rgba(200,200,200,0.05) url('../newimages/edit-delete.svg') right 2px center no-repeat;
-    background-size:12px 12px;
+    background-color:rgba(200,200,200,0.1);
 }
 
 input[type="text"] {
@@ -67,10 +58,6 @@ input[type="text"]:hover {
 input[type="text"]:focus {
     transition: border-bottom 0.5s ease;
     border-bottom: 1px solid #bbbbbb;
-}
-
-select:hover {
-    color: #ffffff;
 }
 
 a:link {

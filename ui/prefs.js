@@ -241,23 +241,15 @@ var prefs = function() {
     }
 
     function changeRandomMode() {
-        var theme = prefs.theme;
-        if (prefs.usertheme) {
-            theme = prefs.usertheme;
+        if (typeof(prefs.bgimgparms[prefs.theme].random) == 'undefined') {
+            prefs.bgimgparms[prefs.theme].random = false;
         }
-        if (typeof(prefs.bgimgparms[theme].random) == 'undefined') {
-            prefs.bgimgparms[theme].random = false;
-        }
-        prefs.bgimgparms[theme].random = !prefs.bgimgparms[theme].random;
+        prefs.bgimgparms[prefs.theme].random = !prefs.bgimgparms[prefs.theme].random;
         prefs.save({bgimgparms: prefs.bgimgparms});
     }
 
     function changeBackgroundPosition() {
-        var theme = prefs.theme;
-        if (prefs.usertheme) {
-            theme = prefs.usertheme;
-        }
-        var bgp = prefs.bgimgparms[theme];
+        var bgp = prefs.bgimgparms[prefs.theme];
         bgp.position = $('input[name="backgroundposition"]:checked').val();
         prefs.save({bgimgparms: prefs.bgimgparms});
         updateCustomBackground();
@@ -265,12 +257,8 @@ var prefs = function() {
 
     function removeAllBackgroundImages() {
         clearCustomBackground();
-        var theme = prefs.theme;
-        if (prefs.usertheme) {
-            theme = prefs.usertheme;
-        }
-        $.getJSON('backimage.php?clearallbackgrounds='+theme+'&browser_id='+prefs.browser_id, function(data) {
-            loadBackgroundImages(theme);
+        $.getJSON('backimage.php?clearallbackgrounds='+pefs.theme+'&browser_id='+prefs.browser_id, function(data) {
+            loadBackgroundImages(prefs.theme);
         });
     }
 
@@ -339,11 +327,7 @@ var prefs = function() {
 
     function changeBgImage(event) {
         var el = $(event.target);
-        var theme = prefs.theme;
-        if (prefs.usertheme) {
-            theme = prefs.usertheme;
-        }
-        var bgp = prefs.bgimgparms[theme];
+        var bgp = prefs.bgimgparms[prefs.theme];
         if (el.hasClass('landscapeimage')) {
             bgp.landscape = parseInt(el.attr('name'));
         } else if (el.hasClass('portraitimage')) {
@@ -391,11 +375,7 @@ var prefs = function() {
     function updateCustomBackground() {
         clearTimeout(backgroundTimer);
         clearCustomBackground();
-        var theme = prefs.theme;
-        if (prefs.usertheme) {
-            theme = prefs.usertheme;
-        }
-        var bgp = prefs.bgimgparms[theme];
+        var bgp = prefs.bgimgparms[prefs.theme];
         var timeout = bgp.timeout;
         if (bgp.timeout + bgp.lastchange <= Date.now()) {
             bgp.lastchange = Date.now();
@@ -685,38 +665,15 @@ var prefs = function() {
                     break;
 
                 case "theme":
-                    prefs.setTheme($("#themeselector").val());
-                    setTimeout(layoutProcessor.adjustLayout, 1000);
-                    setTimeout(layoutProcessor.themeChange, 1000);
-                    break;
-
                 case "icontheme":
-                    $("#icontheme-theme").attr("href", "iconsets/"+$("#iconthemeselector").val()+"/theme.css");
-                    $("#icontheme-adjustments").attr("href","iconsets/"+$("#iconthemeselector").val()+"/adjustments.css");
-                    setTimeout(layoutProcessor.adjustLayout, 1000);
-                    break;
-
                 case "fontsize":
-                    $("#fontsize").attr({href: "sizes/"+$("#fontsizeselector").val()});
-                    setTimeout(setSearchLabelWidth, 1000);
-                    setTimeout(setSpotiLabelWidth, 1000);
-                    setTimeout(infobar.biggerize, 1000);
-                    break;
-
                 case "fontfamily":
-                    $("#fontfamily").attr({href: "fonts/"+$("#fontfamilyselector").val()});
-                    setTimeout(setSearchLabelWidth, 1000);
-                    setTimeout(setSpotiLabelWidth, 1000);
-                    setTimeout(infobar.biggerize, 1000);
+                case "coversize":
+                    callback = prefs.setTheme;
                     break;
 
                 case "lastfm_country_code":
                     prefobj.country_userset = true;
-                    break;
-
-                case "coversize":
-                    $("#albumcoversize").attr({href: "coversizes/"+$("#coversizeselector").val()});
-                    setTimeout(browser.rePoint, 1000);
                     break;
 
                 case 'podcast_sort_0':
@@ -758,38 +715,27 @@ var prefs = function() {
             // Use a different version every time to ensure the browser doesn't cache.
             // Browsers are funny about CSS.
             var t = Date.now();
-            $('#theme').on('load', prefs.updateProgressBarColours);
-            $('#fontsize').on('load', prefs.fontChange);
-            $('#fontfamily').on('load', prefs.fontChange);
-            $("#theme").attr("href", "themes/"+theme+"?version="+t);
-            $("#albumcoversize").attr("href", "coversizes/"+prefs.coversize+"?version="+t);
-            $("#fontsize").attr("href", "sizes/"+prefs.fontsize+"?version="+t);
-            $("#fontfamily").attr("href", "fonts/"+prefs.fontfamily+"?version="+t);
-            $("#icontheme-theme").attr("href", "iconsets/"+prefs.icontheme+"/theme.css"+"?version="+t);
-            $("#icontheme-adjustments").attr("href", "iconsets/"+prefs.icontheme+"/adjustments.css"+"?version="+t);
+            $('#theme').off('load');
+            $('#theme').on('load', prefs.postUIChange);
+            $("#theme").attr("href", "gettheme.php?version="+t
+                +'&theme='+theme+'&fontsize='+prefs.fontsize+'&fontfamily='+prefs.fontfamily
+                +'&coversize='+prefs.coversize+'&icontheme='+prefs.icontheme);
             loadBackgroundImages(theme);
-            setTimeout(prefs.postUIChange, 2000);
-        },
-
-        updateProgressBarColours: function() {
-            prefs.rgbs = null;
-            prefs.maxrgbs = null;
-            $('.rangechooser').rangechooser('fill');
-        },
-
-        fontChange: function() {
-            setSearchLabelWidth();
-            setSpotiLabelWidth();
-            infobar.biggerize();
         },
 
         postUIChange: function() {
+            prefs.rgbs = null;
+            prefs.maxrgbs = null;
+            $('.rangechooser').rangechooser('fill');
             if (typeof charts !== 'undefined') {
                 charts.reloadAll();
             }
             if (typeof(layoutProcessor) != 'undefined') {
                 layoutProcessor.adjustLayout();
             }
+            setSearchLabelWidth();
+            setSpotiLabelWidth();
+            infobar.biggerize();
             browser.rePoint();
         },
 
@@ -833,11 +779,7 @@ var prefs = function() {
             $.getJSON('backimage.php?clearbackground='+image, function(data) {
                 $('[name=imagefile').next().html(language.gettext('label_choosefile'));
                 $('[name=imagefile').parent().next('input[type="button"]').fadeOut('fast');
-                if (prefs.usertheme) {
-                    loadBackgroundImages(prefs.usertheme);
-                } else {
-                    loadBackgroundImages(prefs.theme);
-                }
+                loadBackgroundImages(prefs.theme);
             });
         },
 

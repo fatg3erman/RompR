@@ -5,7 +5,7 @@
 */
 
 html, body.phone .dropmenu {
-    background-image:url("skytrailscrop.jpg");
+    background-image:url("themes/skytrailscrop.jpg");
     background-size:cover;
     background-repeat:no-repeat;
     background-attachment:fixed;
@@ -72,24 +72,11 @@ select {
 }
 
 .selectholder {
-    background:rgba(255,255,255,0.3) url('../newimages/blobdown2.svg') right 2px center no-repeat;
+    background-color:rgba(255,255,255,0.3);
 }
 
 .selectholder:hover {
-    background:rgba(255,255,255,0.4) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
-}
-
-.combobox-entry:hover {
-    background:rgba(255,255,255,0.3) url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
-}
-
-.combobox-entry {
-    background:rgba(255,255,255,0.3) url('../newimages/blobdown2.svg') right 2px center no-repeat;
-}
-
-.clearbox {
-    background:rgba(255,255,255,0.3) url('../newimages/edit-delete.svg') right 2px center no-repeat;
-    background-size:12px 12px;
+    background-color:rgba(255,255,255,0.4);
 }
 
 input[type="text"] {

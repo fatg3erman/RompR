@@ -196,8 +196,6 @@ var shortcuts = function() {
             }
             $(".buttonchange").on('keydown', shortcuts.change );
             $('.buttonchange').on('click',  shortcuts.remove );
-            // $('.buttonchange').on('mouseenter',makeHoverWork);
-            // $('.buttonchange').on('mousemove', makeHoverWork);
             fnarkle.open();
         },
 

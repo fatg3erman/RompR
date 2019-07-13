@@ -80,7 +80,6 @@ if (count($collections) > 0) {
     $time = 0;
     $newest = null;
     foreach ($collections as $file) {
-        print $file."\n";
         if (filemtime($file) > $time) {
             $newest = $file;
             $time = filemtime($file);
@@ -151,10 +150,6 @@ if ($result == false) {
     sql_init_fail($message);
 }
 
-if (array_key_exists('theme', $_REQUEST) && file_exists('themes/'.$_REQUEST['theme'].'.css')) {
-    logger::mark("INIT", "Setting theme from request to ".$_REQUEST['theme']);
-    $prefs['usertheme'] = $_REQUEST['theme'].'.css';
-}
 savePrefs();
 //
 // Do some initialisation and cleanup of the Apache backend
@@ -202,11 +197,6 @@ foreach ($skinrequires as $s) {
 }
 ?>
 <link rel="stylesheet" id="theme" type="text/css" />
-<link rel="stylesheet" id="fontsize" type="text/css" />
-<link rel="stylesheet" id="fontfamily" type="text/css" />
-<link rel="stylesheet" id="icontheme-theme" type="text/css" />
-<link rel="stylesheet" id="icontheme-adjustments" type="text/css" />
-<link rel="stylesheet" id="albumcoversize" type="text/css" />
 <?php
 logger::mark("INIT", "Reconfiguring the Forward Deflector Array");
 $scripts = array(

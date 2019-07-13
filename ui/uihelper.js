@@ -115,14 +115,16 @@ jQuery.fn.makeTagMenu = function(options) {
             autoUpdateTimeout: 500,
         }
         });
-        // textbox.on('mouseenter', makeHoverWork);
-        // textbox.on('mousemove', makeHoverWork);
         textbox.on('click', function(ev) {
             ev.preventDefault();
             ev.stopPropagation();
             var position = getPosition(ev);
+            // This function relies on the fact that the size of the background image
+            // that provides the icon we want to click on is 50% of the height of the element,
+            // as defined in the icon theme css
             var elemright = textbox.width() + textbox.offset().left;
-            if (position.x > elemright - 24) {
+            var elh = textbox.height()/2+2;
+            if (position.x > elemright - elh) {
                 if (dropbox.is(':visible')) {
                     dropbox.slideToggle('fast');
                 } else {

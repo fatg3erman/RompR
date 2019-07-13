@@ -6,7 +6,7 @@
 
 html, body.phone .dropmenu {
     color:#000000;
-    background-image:url('Paper1.jpg');
+    background-image:url('themes/Paper1.jpg');
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -72,17 +72,17 @@ input.inbrowser, div.inbrowser {
 }
 
 #notifications {
-    background-image:url('oldpaper.jpg');
+    background-image:url('themes/oldpaper.jpg');
     box-shadow:  7px 7px 5px rgba(50, 50, 50, 0.6);
     opacity:0.8;
 }
 
 #wikipopup {
-    background-image:url('oldpaper.jpg');
+    background-image:url('themes/oldpaper.jpg');
 }
 
 #tagadder {
-    background-image:url('oldpaper.jpg');
+    background-image:url('themes/oldpaper.jpg');
 }
 
 #dragger {
@@ -133,7 +133,7 @@ input.inbrowser, div.inbrowser {
 }
 
 .popupwindow {
-    background-image:url('vellum-seamless-repeating-white.jpg');
+    background-image:url('themes/vellum-seamless-repeating-white.jpg');
     border-top:1px solid #dddddd;
     border-left:1px solid #dddddd;
 }
@@ -148,11 +148,11 @@ table.histable tr:hover {
 }
 
 tr.clickaddtrack:hover {
-    background-image:url('oldpaper.jpg');
+    background-image:url('themes/oldpaper.jpg');
 }
 
 .tagholder table tr th {
-    background-image:url('oldpaper.jpg');
+    background-image:url('themes/oldpaper.jpg');
     border-bottom:1px solid #000000;
 }
 
@@ -196,14 +196,14 @@ tr.clickaddtrack:hover {
 */
 
 div.topdropmenu {
-    background-image:url('oldpaper.jpg');
+    background-image:url('themes/oldpaper.jpg');
     border-bottom:1px solid #555555;
     border-right:1px solid #555555;
     border-top:none;
 }
 
 .configtitle {
-    background-image:url('tanpaper.jpg');
+    background-image:url('themes/tanpaper.jpg');
     box-shadow:  3px 3px 2px rgba(50, 50, 50, 0.5);
     margin-bottom:8px;
 }
@@ -215,13 +215,13 @@ div.topdropmenu {
 */
 
 .infosection {
-    background-image:url('tanpaper.jpg');
+    background-image:url('themes/tanpaper.jpg');
     box-shadow:  3px 3px 2px rgba(50, 50, 50, 0.5);
     margin-bottom:8px;
 }
 
 .albumcovers .infosection {
-    background-image:url('Paper1.jpg');
+    background-image:url('themes/Paper1.jpg');
 }
 
 /*
@@ -262,12 +262,12 @@ div.topdropmenu {
 */
 
 .albumsection {
-    background-image:url('oldpaper.jpg');
+    background-image:url('themes/oldpaper.jpg');
     box-shadow: 7px 7px 5px rgba(50, 50, 50, 0.6);
 }
 
 .infowiki {
-    background-image:url('vellum-seamless-repeating-white.jpg');
+    background-image:url('themes/vellum-seamless-repeating-white.jpg');
 }
 
 .highlighted {
@@ -282,11 +282,11 @@ div.topdropmenu {
 {
     border-bottom: none !important;
     margin-bottom:-4px;
-    background-image:url('Paper1.jpg');
+    background-image:url('themes/Paper1.jpg');
 }
 
 #imageeditor {
-    background-image:url('Paper1.jpg');
+    background-image:url('themes/Paper1.jpg');
 }
 
 
@@ -298,12 +298,12 @@ div.topdropmenu {
 }
 
 #artistcoverslist {
-    background-image:url('Paper1.jpg');
+    background-image:url('themes/Paper1.jpg');
     box-shadow:         7px 7px 5px rgba(50, 50, 50, 0.6);
 }
 
 #coverslist {
-    background-image:url('vellum-seamless-repeating-white.jpg');
+    background-image:url('themes/vellum-seamless-repeating-white.jpg');
     box-sizing:border-box;
     border-left:2px solid black;
 }

@@ -609,12 +609,16 @@ function calcPercentWidth(element, childSelector, targetWidth, parentWidth) {
 }
 
 function makeHoverWork(ev) {
+    // This function relies on the fact that the size of the background image
+    // that provides the icon we want to click on is 50% of the height of the element,
+    // as defined in the icon theme css
     ev.preventDefault();
     ev.stopPropagation();
     var jq = $(this);
+    var elh = jq.height()/2+2;
     var position = getPosition(ev);
     var elemright = jq.width() + jq.offset().left;
-    if (position.x > elemright - 14) {
+    if (position.x > elemright - elh) {
         jq.css('cursor','pointer');
     } else {
         jq.css('cursor','auto');
@@ -622,12 +626,16 @@ function makeHoverWork(ev) {
 }
 
 function makeClearWork(ev) {
+    // This function relies on the fact that the size of the background image
+    // that provides the icon we want to click on is 50% of the height of the element,
+    // as defined in the icon theme css
     ev.preventDefault();
     ev.stopPropagation();
     var position = getPosition(ev);
     var jq = $(this);
+    var elh = jq.height()/2+2;
     var elemright = jq.width() + jq.offset().left;
-    if (position.x > elemright - 24) {
+    if (position.x > elemright - elh) {
         jq.val("");
         fakeClickOnInput(jq);
     }

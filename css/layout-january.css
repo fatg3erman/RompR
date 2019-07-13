@@ -93,6 +93,11 @@ input[type=text] {
     height: 2em;
     border: 0px none;
     border-radius: 0 0;
+	background-color: white;
+}
+
+.selectholder {
+	background-color:white;
 }
 
 input.snapclientname[type=text] {
@@ -150,7 +155,6 @@ button {
 }
 
 .selectholder {
-    background:#fff url('../newimages/blobdown2.svg') right 2px center no-repeat;
     overflow:hidden;
     width:58%;
     margin-top:4px;
@@ -176,25 +180,7 @@ button {
     margin-left:1em;
 }
 
-.selectholder:hover {
-    background:#fff url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
-}
-
-.combobox-entry:hover {
-    background:#fff url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
-}
-
-.combobox-entry {
-    background:#fff url('../newimages/blobdown2.svg') right 2px center no-repeat;
-}
-
-.clearbox {
-    background:#fff url('../newimages/edit-delete.svg') right 2px center no-repeat;
-    background-size:12px 12px;
-}
-
 .combo-button {
-    background-image: url('../newimages/blobdown2.svg');
     background-size:contain;
     background-position: center;
     background-repeat:no-repeat;

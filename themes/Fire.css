@@ -5,7 +5,7 @@
 */
 
 html, body.phone .dropmenu {
-    background-image:url("fire.jpg");
+    background-image:url("themes/fire.jpg");
     background-size:cover;
     background-repeat:no-repeat;
     background-attachment:fixed;
@@ -125,19 +125,11 @@ input[type="text"] {
 */
 
 .selectholder {
-    background: rgba(20,20,20,0.5) url('../newimages/blobdown3.svg') right 2px center no-repeat;
+    background-color: rgba(20,20,20,0.5);
 }
 
 .selectholder:hover {
-    background: rgba(20,20,20,0.5) url('../newimages/blobdown3-hi.svg') right 2px center no-repeat;
-}
-
-.combobox-entry {
-    background: rgba(20,20,20,0.5) url('../newimages/blobdown3.svg') right 2px center no-repeat;
-}
-
-.combobox-entry:hover {
-    background: rgba(20,20,20,0.5) url('../newimages/blobdown3-hi.svg') right 2px center no-repeat;
+    background-color: rgba(20,20,20,0.5);
 }
 
 select {
