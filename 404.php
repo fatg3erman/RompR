@@ -3,7 +3,7 @@ include('includes/vars.php');
 include("includes/functions.php");
 $base_url = get_base_url();
 $request = $_SERVER['REQUEST_URI'];
-
+logger::log('REDIRECT','Uri is',$_SERVER['REQUEST_URI']);
 if (preg_match('#prefs/userstreams/.*\.jpg#', $request)) {
     $redirect = $base_url.'/newimages/broadcast.svg';
     logger::log("404", "Request for missing userstream image. Redirecting to ".$redirect);
