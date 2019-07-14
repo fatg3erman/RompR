@@ -7,6 +7,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="205.66005mm"
@@ -17,7 +18,50 @@
    inkscape:version="0.92.2 5c3e80d, 2017-08-06"
    sodipodi:docname="media-playback-start.svg">
   <defs
-     id="defs2" />
+     id="defs2">
+    <linearGradient
+       id="linearGradient833"
+       inkscape:collect="always">
+      <stop
+         id="stop829"
+         offset="0"
+         style="stop-color:#CA91BE;stop-opacity:1;" />
+      <stop
+         id="stop831"
+         offset="1"
+         style="stop-color:#BA3E91;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient823">
+      <stop
+         style="stop-color:#CA91BE;stop-opacity:1;"
+         offset="0"
+         id="stop819" />
+      <stop
+         style="stop-color:#BA3E91;stop-opacity:1"
+         offset="1"
+         id="stop821" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient833"
+       id="linearGradient825"
+       x1="108.06378"
+       y1="46.401775"
+       x2="111.20405"
+       y2="253.16217"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient823"
+       id="linearGradient827"
+       x1="108.06378"
+       y1="46.401775"
+       x2="111.20405"
+       y2="253.16217"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -26,7 +70,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.35"
-     inkscape:cx="-655.5729"
+     inkscape:cx="-1169.8586"
      inkscape:cy="400.01354"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -54,7 +98,7 @@
      id="layer1"
      transform="translate(-4.4983063,-46.776161)">
     <ellipse
-       style="opacity:1;fill:none;fill-opacity:1;stroke:#BA3E91;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:none;fill-opacity:1;stroke:url(#linearGradient825);stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path815"
        cx="107.32833"
        cy="150.72321"
@@ -62,7 +106,7 @@
        ry="94.947044" />
     <path
        sodipodi:type="star"
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#BA3E91;stroke-width:15.45344353;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:url(#linearGradient827);stroke-width:15.45344353;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path4508"
        sodipodi:sides="3"
        sodipodi:cx="106.66233"
@@ -78,4 +122,10 @@
        inkscape:transform-center-x="-15.987542"
        inkscape:transform-center-y="-0.64900738" />
   </g>
-<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#BA3E91;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#BA3E91;fill-opacity:1}</style></svg>
+  <style
+     id="stylebodge1"
+     type="text/css">[id^=&quot;polygon&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+  <style
+     id="stylebodge2"
+     type="text/css">[id^=&quot;path&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+</svg>

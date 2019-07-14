@@ -5,6 +5,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg2"
@@ -14,7 +15,38 @@
    sodipodi:docname="wma-audio.svg"
    inkscape:version="0.92.2 5c3e80d, 2017-08-06">
   <defs
-     id="defs11" />
+     id="defs11">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient836">
+      <stop
+         style="stop-color:#CA91BE;stop-opacity:1"
+         offset="0"
+         id="stop832" />
+      <stop
+         style="stop-color:#BA3E91;stop-opacity:1"
+         offset="1"
+         id="stop834" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient836"
+       id="linearGradient838"
+       x1="75"
+       y1="5"
+       x2="75"
+       y2="145"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient836"
+       id="linearGradient846"
+       x1="75"
+       y1="5"
+       x2="75"
+       y2="145"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -29,10 +61,10 @@
      id="namedview9"
      showgrid="false"
      inkscape:zoom="1.5733333"
-     inkscape:cx="75"
-     inkscape:cy="75"
-     inkscape:window-x="875"
-     inkscape:window-y="225"
+     inkscape:cx="-39.406781"
+     inkscape:cy="74.999998"
+     inkscape:window-x="510"
+     inkscape:window-y="266"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <metadata
@@ -47,24 +79,34 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <path
-     d="m 145,75 h -14.0625 c 0,30.89731 -25.04019,55.9375 -55.9375,55.9375 V 145 c 38.65993,0 70,-31.34007 70,-70 z"
-     id="path2861"
-     style="fill:#BA3E91;fill-opacity:1;stroke:none" />
-  <path
-     d="m 75,19.0625 c 30.89731,0 55.9375,25.040194 55.9375,55.9375 H 145 C 145,36.340068 113.65993,5 75,5 Z"
-     id="path2866"
-     style="fill:#BA3E91;fill-opacity:1;stroke:none" />
-  <path
-     d="m 5,75 c 0,38.65993 31.340068,70 70,70 V 130.9375 C 44.102694,130.9375 19.0625,105.89731 19.0625,75 Z"
-     id="path2864"
-     style="fill:#BA3E91;fill-opacity:1;stroke:none" />
-  <path
-     d="M 5,75 H 19.0625 C 19.0625,44.102694 44.102694,19.0625 75,19.0625 V 5 C 36.340068,5 5,36.340068 5,75 Z"
-     id="path2844"
-     style="fill:#BA3E91;fill-opacity:1;stroke:none" />
+  <g
+     id="g822"
+     style="stroke:none;fill-opacity:1;fill:url(#linearGradient838)">
+    <path
+       style="fill:url(#linearGradient838);fill-opacity:1;stroke:none"
+       id="path2861"
+       d="m 145,75 h -14.0625 c 0,30.89731 -25.04019,55.9375 -55.9375,55.9375 V 145 c 38.65993,0 70,-31.34007 70,-70 z" />
+    <path
+       style="fill:url(#linearGradient838);fill-opacity:1;stroke:none"
+       id="path2866"
+       d="m 75,19.0625 c 30.89731,0 55.9375,25.040194 55.9375,55.9375 H 145 C 145,36.340068 113.65993,5 75,5 Z" />
+    <path
+       style="fill:url(#linearGradient838);fill-opacity:1;stroke:none"
+       id="path2864"
+       d="m 5,75 c 0,38.65993 31.340068,70 70,70 V 130.9375 C 44.102694,130.9375 19.0625,105.89731 19.0625,75 Z" />
+    <path
+       style="fill:url(#linearGradient838);fill-opacity:1;stroke:none"
+       id="path2844"
+       d="M 5,75 H 19.0625 C 19.0625,44.102694 44.102694,19.0625 75,19.0625 V 5 C 36.340068,5 5,36.340068 5,75 Z" />
+  </g>
   <path
      d="m 55.56688,44.15144 c -2.1268,0.13338 -3.97262,2.10227 -3.96866,4.23324 v 53.23295 c 0.004,1.48609 0.8547,2.94108 2.14793,3.6732 1.29324,0.73212 2.97862,0.71291 4.25484,-0.0485 l 44.76648,-26.61648 c 1.25373,-0.74628 2.06818,-2.17891 2.06818,-3.63794 0,-1.45903 -0.81445,-2.89166 -2.06818,-3.63794 L 58.00099,44.75994 c -0.72572,-0.44077 -1.58635,-0.65593 -2.43411,-0.60852 z"
      id="path2868"
-     style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:'Andale Mono';-inkscape-font-specification:'Andale Mono';text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-anchor:start;display:inline;overflow:visible;visibility:visible;fill:#BA3E91;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:10;marker:none;enable-background:accumulate" />
-<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#BA3E91;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#BA3E91;fill-opacity:1}</style></svg>
+     style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:'Andale Mono';-inkscape-font-specification:'Andale Mono';text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-anchor:start;display:inline;overflow:visible;visibility:visible;fill:url(#linearGradient846);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:10;marker:none;enable-background:accumulate" />
+  <style
+     id="stylebodge1"
+     type="text/css">[id^=&quot;polygon&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+  <style
+     id="stylebodge2"
+     type="text/css">[id^=&quot;path&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+</svg>

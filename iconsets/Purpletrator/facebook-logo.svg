@@ -5,13 +5,69 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="205.66005mm"
    height="207.89409mm"
    viewBox="0 0 205.66004 207.89409"
    version="1.1"
-   id="svg8">
+   id="svg8"
+   sodipodi:docname="facebook-logo.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1915"
+     inkscape:window-height="942"
+     id="namedview27"
+     showgrid="false"
+     inkscape:zoom="0.30035326"
+     inkscape:cx="388.64891"
+     inkscape:cy="392.87072"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg8" />
   <defs
-     id="defs2" />
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient849">
+      <stop
+         style="stop-color:#CA91BE;stop-opacity:1;"
+         offset="0"
+         id="stop845" />
+      <stop
+         style="stop-color:#BA3E91;stop-opacity:1"
+         offset="1"
+         id="stop847" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient849"
+       id="linearGradient851"
+       x1="101.30431"
+       y1="-0.88090974"
+       x2="103.47481"
+       y2="208.77498"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient849"
+       id="linearGradient859"
+       x1="246.23062"
+       y1="-136.87071"
+       x2="252.45174"
+       y2="648.87073"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -20,7 +76,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -30,50 +86,74 @@
      cy="103.94704"
      cx="102.83002"
      id="path815"
-     style="opacity:1;fill:none;fill-opacity:1;stroke:#BA3E91;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+     style="opacity:1;fill:none;fill-opacity:1;stroke:url(#linearGradient851);stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   <style
      type="text/css"
      id="style3111">
-	.st0{fill:#BA3E91;}
+	.st0{fill:#CA91BE;}
 </style>
   <g
      transform="matrix(0.26458332,0,0,0.26458332,35.09669,36.213709)"
-     id="g3404">
+     id="g3404"
+     style="fill-opacity:1;fill:url(#linearGradient859)">
     <g
-       id="g3348">
+       id="g3348"
+       style="fill-opacity:1.0;fill:url(#linearGradient859)">
       <path
          d="M 296.296,512 H 200.36 V 256 h -64 v -88.225 l 64,-0.029 -0.104,-51.976 C 200.256,43.794 219.773,0 304.556,0 h 70.588 v 88.242 h -44.115 c -33.016,0 -34.604,12.328 -34.604,35.342 l -0.131,44.162 H 375.64 L 366.286,255.971 296.36,256 Z"
-         id="path3346" />
+         id="path3346"
+         style="fill-opacity:1.0;fill:url(#linearGradient859)" />
     </g>
     <g
-       id="g3350" />
+       id="g3350"
+       style="fill-opacity:1.0;fill:url(#linearGradient859)" />
     <g
-       id="g3352" />
+       id="g3352"
+       style="fill-opacity:1.0;fill:url(#linearGradient859)" />
     <g
-       id="g3354" />
+       id="g3354"
+       style="fill-opacity:1.0;fill:url(#linearGradient859)" />
     <g
-       id="g3356" />
+       id="g3356"
+       style="fill-opacity:1.0;fill:url(#linearGradient859)" />
     <g
-       id="g3358" />
+       id="g3358"
+       style="fill-opacity:1.0;fill:url(#linearGradient859)" />
     <g
-       id="g3360" />
+       id="g3360"
+       style="fill-opacity:1.0;fill:url(#linearGradient859)" />
     <g
-       id="g3362" />
+       id="g3362"
+       style="fill-opacity:1.0;fill:url(#linearGradient859)" />
     <g
-       id="g3364" />
+       id="g3364"
+       style="fill-opacity:1.0;fill:url(#linearGradient859)" />
     <g
-       id="g3366" />
+       id="g3366"
+       style="fill-opacity:1.0;fill:url(#linearGradient859)" />
     <g
-       id="g3368" />
+       id="g3368"
+       style="fill-opacity:1.0;fill:url(#linearGradient859)" />
     <g
-       id="g3370" />
+       id="g3370"
+       style="fill-opacity:1.0;fill:url(#linearGradient859)" />
     <g
-       id="g3372" />
+       id="g3372"
+       style="fill-opacity:1.0;fill:url(#linearGradient859)" />
     <g
-       id="g3374" />
+       id="g3374"
+       style="fill-opacity:1.0;fill:url(#linearGradient859)" />
     <g
-       id="g3376" />
+       id="g3376"
+       style="fill-opacity:1.0;fill:url(#linearGradient859)" />
     <g
-       id="g3378" />
+       id="g3378"
+       style="fill-opacity:1.0;fill:url(#linearGradient859)" />
   </g>
-<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#BA3E91;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#BA3E91;fill-opacity:1}</style></svg>
+  <style
+     id="stylebodge1"
+     type="text/css">[id^=&quot;polygon&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+  <style
+     id="stylebodge2"
+     type="text/css">[id^=&quot;path&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+</svg>

@@ -29,7 +29,7 @@
      id="namedview11"
      showgrid="false"
      inkscape:zoom="0.30035326"
-     inkscape:cx="-271.89806"
+     inkscape:cx="-210.6454"
      inkscape:cy="392.87072"
      inkscape:window-x="546"
      inkscape:window-y="191"
@@ -38,20 +38,53 @@
   <defs
      id="defs2">
     <linearGradient
-       id="linearGradient825"
+       id="linearGradient852"
        inkscape:collect="always">
       <stop
-         id="stop821"
+         id="stop848"
          offset="0"
-         style="stop-color:#ba3e91;stop-opacity:1" />
+         style="stop-color:#CA91BE;stop-opacity:1" />
       <stop
-         id="stop823"
+         id="stop850"
          offset="1"
-         style="stop-color:#ba3e91;stop-opacity:0" />
+         style="stop-color:#BA3E91;stop-opacity:0;" />
     </linearGradient>
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient825"
+       id="linearGradient840">
+      <stop
+         style="stop-color:#BA3E91;stop-opacity:1;"
+         offset="0"
+         id="stop836" />
+      <stop
+         style="stop-color:#BA3E91;stop-opacity:0;"
+         offset="1"
+         id="stop838" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient822">
+      <stop
+         style="stop-color:#CA91BE;stop-opacity:1;"
+         offset="0"
+         id="stop818" />
+      <stop
+         style="stop-color:#BA3E91;stop-opacity:1"
+         offset="1"
+         id="stop820" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient822"
+       id="linearGradient824"
+       x1="102.18522"
+       y1="1.7618116"
+       x2="101.713"
+       y2="207.01317"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient840"
        id="linearGradient842"
        x1="-363.37588"
        y1="63.856414"
@@ -61,14 +94,14 @@
        gradientTransform="translate(391.12276,41.402634)" />
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient825"
+       xlink:href="#linearGradient852"
        id="linearGradient846"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(-1,0,0,1,-183.22869,41.402636)"
-       x1="-363.37589"
-       y1="63.856415"
+       x1="-363.37588"
+       y1="63.856414"
        x2="-210.95685"
-       y2="63.856415" />
+       y2="63.856414" />
   </defs>
   <metadata
      id="metadata5">
@@ -88,13 +121,13 @@
      cy="103.94704"
      cx="102.83002"
      id="path815"
-     style="opacity:1;fill:none;fill-opacity:1;stroke:#ba3e91;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+     style="opacity:1;fill:none;fill-opacity:1;stroke:url(#linearGradient824);stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   <style
      id="stylebodge1"
-     type="text/css">[id^=&quot;polygon&quot;]{fill:#FFF663;fill-opacity:1}</style>
+     type="text/css">[id^=&quot;polygon&quot;]{fill:#CA91BE;fill-opacity:1}</style>
   <style
      id="stylebodge2"
-     type="text/css">[id^=&quot;path&quot;]{fill:#FFF663;fill-opacity:1}</style>
+     type="text/css">[id^=&quot;path&quot;]{fill:#CA91BE;fill-opacity:1}</style>
   <path
      style="opacity:1;fill:url(#linearGradient842);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.64583325;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      d="M 178.82415,135.6597 H 29.069928 V 74.877106"
@@ -106,5 +139,5 @@
      inkscape:connector-curvature="0"
      id="path844"
      d="M 29.06992,135.6597 H 178.82415 V 74.877108"
-     style="opacity:1;fill:url(#linearGradient846);fill-opacity:1.0;fill-rule:nonzero;stroke:none;stroke-width:2.64583325;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+     style="opacity:1;fill:url(#linearGradient846);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.64583325;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
 </svg>

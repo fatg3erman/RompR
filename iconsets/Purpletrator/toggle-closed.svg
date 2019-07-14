@@ -5,13 +5,50 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="205.66005mm"
    height="207.89409mm"
    viewBox="0 0 205.66004 207.89409"
    version="1.1"
-   id="svg8">
+   id="svg8"
+   sodipodi:docname="toggle-closed.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1484"
+     inkscape:window-height="882"
+     id="namedview77"
+     showgrid="false"
+     inkscape:zoom="0.30035326"
+     inkscape:cx="388.64891"
+     inkscape:cy="392.87072"
+     inkscape:window-x="664"
+     inkscape:window-y="262"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg8" />
   <defs
      id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient888">
+      <stop
+         style="stop-color:#BA3E91;stop-opacity:1;"
+         offset="0"
+         id="stop884" />
+      <stop
+         style="stop-color:#CA91BE;stop-opacity:1"
+         offset="1"
+         id="stop886" />
+    </linearGradient>
     <linearGradient
        gradientUnits="userSpaceOnUse"
        x1="30.06"
@@ -282,6 +319,25 @@
          in2="fbSourceGraphic"
          operator="in" />
     </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient888"
+       id="linearGradient892"
+       gradientUnits="userSpaceOnUse"
+       x1="-7.6293945e-06"
+       y1="103.94704"
+       x2="205.66004"
+       y2="103.94704"
+       gradientTransform="translate(-206.77706,-1.11702)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient888"
+       id="linearGradient904"
+       x1="103.67299"
+       y1="208.77498"
+       x2="102.75122"
+       y2="-2.6139251e-06"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <metadata
      id="metadata5">
@@ -291,14 +347,14 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <style
      type="text/css"
      id="style3111">
-	.st0{fill:#BA3E91;}
+	.st0{fill:#CA91BE;}
 </style>
   <style
      type="text/css"
@@ -358,19 +414,23 @@
   <g
      transform="matrix(0.26458332,0,0,0.26458332,229.5367,39.400622)"
      id="g5163" />
-  <g
-     transform="rotate(-90,102.83002,103.94704)"
-     id="g5339">
-    <ellipse
-       style="opacity:1;fill:none;fill-opacity:1;stroke:#BA3E91;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path815"
-       cx="102.83002"
-       cy="103.94704"
-       rx="93.830025"
-       ry="94.947044" />
-    <path
-       d="M 108.57731,177.223 170.10064,70.597145 c 2.51785,-4.378887 -0.65682,-9.852492 -5.69253,-9.852492 H 41.251949 c -5.035716,0 -8.21041,5.473605 -5.69255,9.852492 L 97.082735,177.223 c 2.627339,4.37886 8.976725,4.37886 11.494575,0 z"
-       id="path3"
-       style="stroke-width:1.09472132;fill:#BA3E91;fill-opacity:1" />
-  </g>
-<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#BA3E91;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#BA3E91;fill-opacity:1}</style></svg>
+  <ellipse
+     ry="94.947044"
+     rx="93.830025"
+     cy="102.83002"
+     cx="-103.94704"
+     id="path815"
+     style="opacity:1;fill:none;fill-opacity:1;stroke:url(#linearGradient892);stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     transform="rotate(-90)" />
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:url(#linearGradient904);fill-opacity:1;stroke:none;stroke-width:1.09472132"
+     id="path3"
+     d="M 176.10598,98.19975 69.480125,36.67642 c -4.378887,-2.51785 -9.852492,0.65682 -9.852492,5.69253 l 0,123.15616 c 0,5.03572 5.473605,8.21041 9.852492,5.69255 L 176.10598,109.69433 c 4.37886,-2.62734 4.37886,-8.97673 0,-11.49458 z" />
+  <style
+     id="stylebodge1"
+     type="text/css">[id^=&quot;polygon&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+  <style
+     id="stylebodge2"
+     type="text/css">[id^=&quot;path&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+</svg>

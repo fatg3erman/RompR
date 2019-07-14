@@ -29,7 +29,7 @@
      id="namedview11"
      showgrid="false"
      inkscape:zoom="0.30035326"
-     inkscape:cx="-1437.5341"
+     inkscape:cx="-222.29835"
      inkscape:cy="392.87072"
      inkscape:window-x="546"
      inkscape:window-y="191"
@@ -41,14 +41,23 @@
        inkscape:collect="always"
        id="linearGradient822">
       <stop
-         style="stop-color:#fff663;stop-opacity:1;"
+         style="stop-color:#CA91BE;stop-opacity:1;"
          offset="0"
          id="stop818" />
       <stop
-         style="stop-color:#fb8626;stop-opacity:1"
+         style="stop-color:#BA3E91;stop-opacity:1"
          offset="1"
          id="stop820" />
     </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient822"
+       id="linearGradient824"
+       x1="102.18522"
+       y1="1.7618116"
+       x2="101.713"
+       y2="207.01317"
+       gradientUnits="userSpaceOnUse" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient822"
@@ -58,6 +67,16 @@
        x2="178.82414"
        y2="105.2684"
        gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient822"
+       id="linearGradient919"
+       x1="99.276337"
+       y1="-2.6139251e-06"
+       x2="100.21736"
+       y2="207.01317"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-4.1087329)" />
   </defs>
   <metadata
      id="metadata5">
@@ -67,7 +86,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -77,13 +96,13 @@
      cy="103.94704"
      cx="102.83002"
      id="path815"
-     style="opacity:1;fill:none;fill-opacity:1;stroke:#ba3e91;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+     style="opacity:1;fill:none;fill-opacity:1;stroke:url(#linearGradient824);stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   <style
      id="stylebodge1"
-     type="text/css">[id^=&quot;polygon&quot;]{fill:#FFF663;fill-opacity:1}</style>
+     type="text/css">[id^=&quot;polygon&quot;]{fill:#CA91BE;fill-opacity:1}</style>
   <style
      id="stylebodge2"
-     type="text/css">[id^=&quot;path&quot;]{fill:#FFF663;fill-opacity:1}</style>
+     type="text/css">[id^=&quot;path&quot;]{fill:#CA91BE;fill-opacity:1}</style>
   <path
      style="opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:url(#linearGradient868);stroke-width:2.64583325;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      d="M 29.069928,135.6597 Z"
@@ -91,7 +110,7 @@
      inkscape:connector-curvature="0"
      sodipodi:nodetypes="cc" />
   <path
-     style="opacity:1;fill:#ba3e91;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3.0770061;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     style="opacity:1;fill:url(#linearGradient919);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3.0770061;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      id="path911"
      sodipodi:type="arc"
      sodipodi:cx="103.53622"

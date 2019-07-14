@@ -7,6 +7,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="205.66005mm"
@@ -18,6 +19,18 @@
    sodipodi:docname="folder.svg">
   <defs
      id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient971">
+      <stop
+         style="stop-color:#CA91BE;stop-opacity:1;"
+         offset="0"
+         id="stop967" />
+      <stop
+         style="stop-color:#BA3E91;stop-opacity:1"
+         offset="1"
+         id="stop969" />
+    </linearGradient>
     <inkscape:path-effect
        effect="bspline"
        id="path-effect9125"
@@ -58,7 +71,7 @@
        inkscape:isstock="true">
       <path
          id="path8031"
-         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#BA3E91;stroke-opacity:1;fill:#BA3E91;fill-opacity:1"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#CA91BE;stroke-opacity:1;fill:#CA91BE;fill-opacity:1"
          d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
          transform="scale(1.1) translate(1,0)" />
     </marker>
@@ -82,7 +95,7 @@
        inkscape:isstock="true">
       <path
          id="path7645"
-         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#BA3E91;stroke-opacity:1;fill:#BA3E91;fill-opacity:1"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#CA91BE;stroke-opacity:1;fill:#CA91BE;fill-opacity:1"
          d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
          transform="scale(1.1) translate(1,0)" />
     </marker>
@@ -148,7 +161,7 @@
        refY="0"
        id="TriangleOutM">
       <path
-         style="fill-rule:evenodd;stroke:#BA3E91;stroke-width:1pt"
+         style="fill-rule:evenodd;stroke:#CA91BE;stroke-width:1pt"
          inkscape:connector-curvature="0"
          transform="scale(0.4,0.4)"
          d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
@@ -588,6 +601,24 @@
          in="fbSourceGraphic"
          id="feColorMatrix3230" />
     </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient971"
+       id="linearGradient973"
+       x1="107.30783"
+       y1="47.15773"
+       x2="110.37264"
+       y2="254.66666"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient971"
+       id="linearGradient989"
+       x1="249.60371"
+       y1="-111.9676"
+       x2="252.33705"
+       y2="620.65442"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -597,7 +628,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
-     inkscape:cx="258.71281"
+     inkscape:cx="1.5699529"
      inkscape:cy="342.87069"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -616,7 +647,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -626,7 +657,7 @@
      id="layer1"
      transform="translate(-4.4983063,-46.776161)">
     <ellipse
-       style="opacity:1;fill:none;fill-opacity:1;stroke:#BA3E91;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:none;fill-opacity:1;stroke:url(#linearGradient973);stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path815"
        cx="107.32833"
        cy="150.72321"
@@ -634,7 +665,7 @@
        ry="94.947044" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#BA3E91;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#CA91BE;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="98.236397"
        y="130.31609"
        id="text9654"><tspan
@@ -642,51 +673,69 @@
          id="tspan9652"
          x="98.236397"
          y="139.67986"
-         style="stroke-width:0.26458332px;fill:#BA3E91;fill-opacity:1" /></text>
+         style="stroke-width:0.26458332px;fill:#CA91BE;fill-opacity:1" /></text>
     <g
        id="g13594"
-       transform="matrix(0.28014593,0,0,0.28014593,35.88607,79.280951)">
+       transform="matrix(0.28014593,0,0,0.28014593,35.88607,79.280951)"
+       style="stroke:none;fill-opacity:1;fill:url(#linearGradient989)">
       <g
-         id="g13537">
+         id="g13537"
+         style="stroke:none;fill-opacity:1.0;fill:url(#linearGradient989)">
         <g
-           id="g13535">
+           id="g13535"
+           style="stroke:none;fill-opacity:1.0;fill:url(#linearGradient989)">
           <path
              id="path13533"
              d="m 490.499,202.018 h -27 v -54 c 0,-11 -9,-20 -20,-20 h -195 l -26,-42 c -4,-6 -9,-10 -16,-10 h -145 c -11,0 -19,9 -19,20 v 106 h -22 c -12,0 -23,11 -20,24 l 42,192 c 2,9 10,16 19,16 h 382 c 9,0 18,-6 20,-15 l 46,-193 c 3,-13 -7,-24 -19,-24 z m -408.999,-87 h 113 l 26,43 c 4,6 10,9 17,9 h 187 v 35 h -343 z m 346.999,279 h -351 l -33,-153 h 421 z"
-             style="fill:#BA3E91"
+             style="fill:url(#linearGradient989);stroke:none;fill-opacity:1.0"
              inkscape:connector-curvature="0" />
         </g>
       </g>
       <g
-         id="g13539" />
+         id="g13539"
+         style="stroke:none;fill-opacity:1.0;fill:url(#linearGradient989)" />
       <g
-         id="g13541" />
+         id="g13541"
+         style="stroke:none;fill-opacity:1.0;fill:url(#linearGradient989)" />
       <g
-         id="g13543" />
+         id="g13543"
+         style="stroke:none;fill-opacity:1.0;fill:url(#linearGradient989)" />
       <g
-         id="g13545" />
+         id="g13545"
+         style="stroke:none;fill-opacity:1.0;fill:url(#linearGradient989)" />
       <g
-         id="g13547" />
+         id="g13547"
+         style="stroke:none;fill-opacity:1.0;fill:url(#linearGradient989)" />
       <g
-         id="g13549" />
+         id="g13549"
+         style="stroke:none;fill-opacity:1.0;fill:url(#linearGradient989)" />
       <g
-         id="g13551" />
+         id="g13551"
+         style="stroke:none;fill-opacity:1.0;fill:url(#linearGradient989)" />
       <g
-         id="g13553" />
+         id="g13553"
+         style="stroke:none;fill-opacity:1.0;fill:url(#linearGradient989)" />
       <g
-         id="g13555" />
+         id="g13555"
+         style="stroke:none;fill-opacity:1.0;fill:url(#linearGradient989)" />
       <g
-         id="g13557" />
+         id="g13557"
+         style="stroke:none;fill-opacity:1.0;fill:url(#linearGradient989)" />
       <g
-         id="g13559" />
+         id="g13559"
+         style="stroke:none;fill-opacity:1.0;fill:url(#linearGradient989)" />
       <g
-         id="g13561" />
+         id="g13561"
+         style="stroke:none;fill-opacity:1.0;fill:url(#linearGradient989)" />
       <g
-         id="g13563" />
+         id="g13563"
+         style="stroke:none;fill-opacity:1.0;fill:url(#linearGradient989)" />
       <g
-         id="g13565" />
+         id="g13565"
+         style="stroke:none;fill-opacity:1.0;fill:url(#linearGradient989)" />
       <g
-         id="g13567" />
+         id="g13567"
+         style="stroke:none;fill-opacity:1.0;fill:url(#linearGradient989)" />
     </g>
   </g>
   <style
@@ -694,4 +743,10 @@
      type="text/css">
 	.st0{clip-path:url(#SVGID_2_);fill:#00AEEF;}
 </style>
-<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#BA3E91;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#BA3E91;fill-opacity:1}</style></svg>
+  <style
+     id="stylebodge1"
+     type="text/css">[id^=&quot;polygon&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+  <style
+     id="stylebodge2"
+     type="text/css">[id^=&quot;path&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+</svg>

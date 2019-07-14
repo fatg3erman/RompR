@@ -5,13 +5,50 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="205.66005mm"
    height="207.89409mm"
    viewBox="0 0 205.66004 207.89409"
    version="1.1"
-   id="svg8">
+   id="svg8"
+   sodipodi:docname="singlestar.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1564"
+     inkscape:window-height="805"
+     id="namedview61"
+     showgrid="false"
+     inkscape:zoom="0.30035326"
+     inkscape:cx="388.64891"
+     inkscape:cy="392.87072"
+     inkscape:window-x="671"
+     inkscape:window-y="180"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg8" />
   <defs
      id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient875">
+      <stop
+         style="stop-color:#CA91BE;stop-opacity:1;"
+         offset="0"
+         id="stop871" />
+      <stop
+         style="stop-color:#BA3E91;stop-opacity:1"
+         offset="1"
+         id="stop873" />
+    </linearGradient>
     <linearGradient
        gradientUnits="userSpaceOnUse"
        x1="30.06"
@@ -282,6 +319,24 @@
          in2="fbSourceGraphic"
          operator="in" />
     </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient875"
+       id="linearGradient877"
+       x1="104.82794"
+       y1="0.8809045"
+       x2="106.99844"
+       y2="207.89407"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient875"
+       id="linearGradient885"
+       x1="98.632126"
+       y1="1.645769"
+       x2="102.0005"
+       y2="209.53984"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <metadata
      id="metadata5">
@@ -291,7 +346,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -301,11 +356,11 @@
      cy="103.94704"
      cx="102.83002"
      id="path815"
-     style="opacity:1;fill:none;fill-opacity:1;stroke:#BA3E91;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+     style="opacity:1;fill:none;fill-opacity:1;stroke:url(#linearGradient877);stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   <style
      type="text/css"
      id="style3111">
-	.st0{fill:#BA3E91;}
+	.st0{fill:#CA91BE;}
 </style>
   <style
      type="text/css"
@@ -324,5 +379,11 @@
      id="path3817"
      d="M 145.15504,163.27423 102.38603,135.16357 59.244406,162.94339 72.762644,113.58075 33.010502,81.134878 84.134183,78.737429 102.70766,30.905619 120.7851,78.787267 172.01721,81.671026 132.06637,113.66 Z"
      stroke-miterlimit="4"
-     style="fill:#BA3E91;fill-rule:evenodd;stroke:#BA3E91;stroke-width:2.32664585;stroke-miterlimit:4;stroke-dasharray:none" />
-<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#BA3E91;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#BA3E91;fill-opacity:1}</style></svg>
+     style="fill:url(#linearGradient885);fill-rule:evenodd;stroke:#CA91BE;stroke-width:2.32664585;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1" />
+  <style
+     id="stylebodge1"
+     type="text/css">[id^=&quot;polygon&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+  <style
+     id="stylebodge2"
+     type="text/css">[id^=&quot;path&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+</svg>

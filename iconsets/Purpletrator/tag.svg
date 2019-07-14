@@ -5,13 +5,50 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="205.66005mm"
    height="207.89409mm"
    viewBox="0 0 205.66004 207.89409"
    version="1.1"
-   id="svg8">
+   id="svg8"
+   sodipodi:docname="tag.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1297"
+     inkscape:window-height="868"
+     id="namedview61"
+     showgrid="false"
+     inkscape:zoom="0.30035326"
+     inkscape:cx="388.64891"
+     inkscape:cy="392.87072"
+     inkscape:window-x="775"
+     inkscape:window-y="241"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg8" />
   <defs
      id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient875">
+      <stop
+         style="stop-color:#CA91BE;stop-opacity:1;"
+         offset="0"
+         id="stop871" />
+      <stop
+         style="stop-color:#BA3E91;stop-opacity:1"
+         offset="1"
+         id="stop873" />
+    </linearGradient>
     <linearGradient
        gradientUnits="userSpaceOnUse"
        x1="30.06"
@@ -282,6 +319,24 @@
          in2="fbSourceGraphic"
          operator="in" />
     </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient875"
+       id="linearGradient877"
+       x1="95.137962"
+       y1="-2.6139251e-06"
+       x2="97.308456"
+       y2="205.25136"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient875"
+       id="linearGradient885"
+       x1="99.136887"
+       y1="1.8548039"
+       x2="98.774376"
+       y2="208.86798"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <metadata
      id="metadata5">
@@ -291,7 +346,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -301,11 +356,11 @@
      cy="103.94704"
      cx="102.83002"
      id="path815"
-     style="opacity:1;fill:none;fill-opacity:1;stroke:#BA3E91;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+     style="opacity:1;fill:none;fill-opacity:1;stroke:url(#linearGradient877);stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   <style
      type="text/css"
      id="style3111">
-	.st0{fill:#BA3E91;}
+	.st0{fill:#CA91BE;}
 </style>
   <style
      type="text/css"
@@ -321,7 +376,13 @@
 	.st8{opacity:0.3;fill:#FFFFFF;enable-background:new    ;}
 </style>
   <path
-     style="stroke-width:0.24876761;fill:#BA3E91;fill-opacity:1"
+     style="stroke-width:0.24876761;fill:url(#linearGradient885);fill-opacity:1"
      d="m 146.71183,48.283712 h -35.89244 c -6.58066,0 -15.771375,3.80689 -20.424324,8.45984 L 34.796749,112.34186 c -4.652949,4.65296 -4.652949,12.26724 0,16.92018 l 42.901218,42.90072 c 4.65295,4.6532 12.266979,4.6532 16.919929,0 l 55.598324,-55.59807 c 4.65294,-4.6532 8.45984,-13.84416 8.45984,-20.424309 v -35.89244 c 0,-6.5804 -5.38408,-11.964229 -11.96423,-11.964229 z m -15.89774,39.802817 c -6.59483,0 -11.94085,-5.346015 -11.94085,-11.940845 0,-6.594829 5.34602,-11.940844 11.94085,-11.940844 6.59482,0 11.94084,5.346015 11.94084,11.940844 0,6.59483 -5.34602,11.940845 -11.94084,11.940845 z"
      id="path4409" />
-<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#BA3E91;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#BA3E91;fill-opacity:1}</style></svg>
+  <style
+     id="stylebodge1"
+     type="text/css">[id^=&quot;polygon&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+  <style
+     id="stylebodge2"
+     type="text/css">[id^=&quot;path&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+</svg>

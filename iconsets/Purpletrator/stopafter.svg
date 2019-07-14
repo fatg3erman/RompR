@@ -5,6 +5,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg8"
@@ -23,19 +24,41 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="952"
-     inkscape:window-height="666"
+     inkscape:window-width="1474"
+     inkscape:window-height="839"
      id="namedview1453"
      showgrid="false"
      inkscape:zoom="0.30035326"
-     inkscape:cx="388.64891"
+     inkscape:cx="-210.6454"
      inkscape:cy="392.87072"
      inkscape:window-x="297"
      inkscape:window-y="137"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg8" />
   <defs
-     id="defs2" />
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient828">
+      <stop
+         style="stop-color:#BA3E91;stop-opacity:1;"
+         offset="0"
+         id="stop824" />
+      <stop
+         style="stop-color:#CA91BE;stop-opacity:1"
+         offset="1"
+         id="stop826" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient828"
+       id="linearGradient830"
+       x1="103.94703"
+       y1="209.65588"
+       x2="103.47481"
+       y2="1.7618116"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -48,23 +71,33 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <ellipse
-     style="opacity:1;fill:none;fill-opacity:1;stroke:#BA3E91;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     id="path815"
-     cx="102.83002"
-     cy="103.94704"
-     rx="93.830025"
-     ry="94.947044" />
-  <path
-     inkscape:connector-curvature="0"
-     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#BA3E91;stroke-width:10.79699993;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     id="path4508"
-     d="M 111.08858,105.62287 49.701004,149.85083 51.075333,58.28518 Z" />
-  <rect
-     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#BA3E91;stroke-width:10.76045132;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     id="rect6594"
-     width="31.745495"
-     height="102.04906"
-     x="120.57665"
-     y="52.922516" />
-<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#BA3E91;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#BA3E91;fill-opacity:1}</style></svg>
+  <g
+     id="g822"
+     style="stroke:url(#linearGradient830)">
+    <ellipse
+       ry="94.947044"
+       rx="93.830025"
+       cy="103.94704"
+       cx="102.83002"
+       id="path815"
+       style="opacity:1;fill:none;fill-opacity:1;stroke:url(#linearGradient830);stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       d="M 111.08858,105.62287 49.701004,149.85083 51.075333,58.28518 Z"
+       id="path4508"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:url(#linearGradient830);stroke-width:10.79699993;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:connector-curvature="0" />
+    <rect
+       y="52.922516"
+       x="120.57665"
+       height="102.04906"
+       width="31.745495"
+       id="rect6594"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:url(#linearGradient830);stroke-width:10.76045132;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  </g>
+  <style
+     id="stylebodge1"
+     type="text/css">[id^=&quot;polygon&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+  <style
+     id="stylebodge2"
+     type="text/css">[id^=&quot;path&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+</svg>

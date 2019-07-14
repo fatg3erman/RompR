@@ -5,13 +5,50 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="205.66005mm"
    height="207.89409mm"
    viewBox="0 0 205.66004 207.89409"
    version="1.1"
-   id="svg8">
+   id="svg8"
+   sodipodi:docname="spinner.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1556"
+     inkscape:window-height="856"
+     id="namedview97"
+     showgrid="false"
+     inkscape:zoom="0.30035326"
+     inkscape:cx="388.64891"
+     inkscape:cy="392.87072"
+     inkscape:window-x="725"
+     inkscape:window-y="261"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg8" />
   <defs
      id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient908">
+      <stop
+         style="stop-color:#CA91BE;stop-opacity:1;"
+         offset="0"
+         id="stop904" />
+      <stop
+         style="stop-color:#BA3E91;stop-opacity:1"
+         offset="1"
+         id="stop906" />
+    </linearGradient>
     <linearGradient
        gradientUnits="userSpaceOnUse"
        x1="30.06"
@@ -282,6 +319,24 @@
          in2="fbSourceGraphic"
          operator="in" />
     </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient908"
+       id="linearGradient910"
+       x1="-1.5256965"
+       y1="82.569153"
+       x2="-208.13019"
+       y2="85.211876"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient908"
+       id="linearGradient918"
+       x1="287.32251"
+       y1="-97.960312"
+       x2="275.86301"
+       y2="681.12231"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <metadata
      id="metadata5">
@@ -291,14 +346,14 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <style
      type="text/css"
      id="style3111">
-	.st0{fill:#BA3E91;}
+	.st0{fill:#CA91BE;}
 </style>
   <style
      type="text/css"
@@ -365,57 +420,85 @@
      cy="102.83002"
      cx="-103.94704"
      id="path815"
-     style="opacity:1;fill:none;fill-opacity:1;stroke:#BA3E91;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+     style="opacity:1;fill:none;fill-opacity:1;stroke:url(#linearGradient910);stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   <g
      transform="matrix(0.26458332,0,0,0.26458332,25.682551,26.79957)"
-     id="g5702">
+     id="g5702"
+     style="fill-opacity:1;fill:url(#linearGradient918)">
     <g
-       id="g5642">
+       id="g5642"
+       style="fill-opacity:1.0;fill:url(#linearGradient918)">
       <g
-         id="g5640">
+         id="g5640"
+         style="fill-opacity:1.0;fill:url(#linearGradient918)">
         <polygon
            points="0.993,278.965 256.711,278.965 279.958,255.742 279.958,116.211 163.722,116.211 0.993,255.742 "
-           id="polygon5632" />
+           id="polygon5632"
+           style="fill-opacity:1.0;fill:url(#linearGradient918)" />
         <polygon
            points="279.958,583.162 279.958,327.42 256.711,304.197 117.228,304.197 117.228,420.409 256.711,583.162 "
-           id="polygon5634" />
+           id="polygon5634"
+           style="fill-opacity:1.0;fill:url(#linearGradient918)" />
         <polygon
            points="303.689,0 303.689,255.742 326.936,278.989 466.418,278.989 466.418,162.754 326.936,0 "
-           id="polygon5636" />
+           id="polygon5636"
+           style="fill-opacity:1.0;fill:url(#linearGradient918)" />
         <polygon
            points="582.169,304.197 326.427,304.197 303.205,327.42 303.205,466.927 419.44,466.927 582.169,327.42 "
-           id="polygon5638" />
+           id="polygon5638"
+           style="fill-opacity:1.0;fill:url(#linearGradient918)" />
       </g>
     </g>
     <g
-       id="g5644" />
+       id="g5644"
+       style="fill-opacity:1.0;fill:url(#linearGradient918)" />
     <g
-       id="g5646" />
+       id="g5646"
+       style="fill-opacity:1.0;fill:url(#linearGradient918)" />
     <g
-       id="g5648" />
+       id="g5648"
+       style="fill-opacity:1.0;fill:url(#linearGradient918)" />
     <g
-       id="g5650" />
+       id="g5650"
+       style="fill-opacity:1.0;fill:url(#linearGradient918)" />
     <g
-       id="g5652" />
+       id="g5652"
+       style="fill-opacity:1.0;fill:url(#linearGradient918)" />
     <g
-       id="g5654" />
+       id="g5654"
+       style="fill-opacity:1.0;fill:url(#linearGradient918)" />
     <g
-       id="g5656" />
+       id="g5656"
+       style="fill-opacity:1.0;fill:url(#linearGradient918)" />
     <g
-       id="g5658" />
+       id="g5658"
+       style="fill-opacity:1.0;fill:url(#linearGradient918)" />
     <g
-       id="g5660" />
+       id="g5660"
+       style="fill-opacity:1.0;fill:url(#linearGradient918)" />
     <g
-       id="g5662" />
+       id="g5662"
+       style="fill-opacity:1.0;fill:url(#linearGradient918)" />
     <g
-       id="g5664" />
+       id="g5664"
+       style="fill-opacity:1.0;fill:url(#linearGradient918)" />
     <g
-       id="g5666" />
+       id="g5666"
+       style="fill-opacity:1.0;fill:url(#linearGradient918)" />
     <g
-       id="g5668" />
+       id="g5668"
+       style="fill-opacity:1.0;fill:url(#linearGradient918)" />
     <g
-       id="g5670" />
+       id="g5670"
+       style="fill-opacity:1.0;fill:url(#linearGradient918)" />
     <g
-       id="g5672" />
+       id="g5672"
+       style="fill-opacity:1.0;fill:url(#linearGradient918)" />
   </g>
-<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#BA3E91;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#BA3E91;fill-opacity:1}</style></svg>
+  <style
+     id="stylebodge1"
+     type="text/css">[id^=&quot;polygon&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+  <style
+     id="stylebodge2"
+     type="text/css">[id^=&quot;path&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+</svg>

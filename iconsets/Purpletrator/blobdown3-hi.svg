@@ -5,6 +5,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
@@ -22,8 +23,8 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1177"
-     inkscape:window-height="846"
+     inkscape:window-width="1765"
+     inkscape:window-height="865"
      id="namedview8"
      showgrid="false"
      fit-margin-top="0"
@@ -31,14 +32,36 @@
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:zoom="16.857143"
-     inkscape:cx="-3.0468772"
+     inkscape:cx="-6.5219002"
      inkscape:cy="7.631314"
      inkscape:window-x="135"
      inkscape:window-y="358"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <defs
-     id="defs11" />
+     id="defs11">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient823">
+      <stop
+         style="stop-color:#CA91BE;stop-opacity:1;"
+         offset="0"
+         id="stop819" />
+      <stop
+         style="stop-color:#BA3E91;stop-opacity:1"
+         offset="1"
+         id="stop821" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient823"
+       id="linearGradient825"
+       x1="7.7118645"
+       y1="0.09727966"
+       x2="7.8471007"
+       y2="15.28372"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -52,7 +75,7 @@
     </rdf:RDF>
   </metadata>
   <path
-     style="fill:none;fill-opacity:1;stroke:#BA3E91;stroke-width:1.26199996;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     style="fill:none;fill-opacity:1;stroke:url(#linearGradient825);stroke-width:1.26199996;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      d="m 14.631355,7.6311776 c 0,3.8659764 -3.134015,7.0001784 -7.0001774,7.0001784 -3.8659762,0 -7.00017762,-3.134016 -7.00017762,-7.0001784 0,-3.8659762 3.13401542,-7.00017762 7.00017762,-7.00017762 3.8659764,0 7.0001774,3.13401532 7.0001774,7.00017762 z"
      id="path2985"
      inkscape:connector-curvature="0" />
@@ -70,4 +93,10 @@
        id="path2994"
        inkscape:connector-curvature="0" />
   </g>
-<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#BA3E91;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#BA3E91;fill-opacity:1}</style></svg>
+  <style
+     id="stylebodge1"
+     type="text/css">[id^=&quot;polygon&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+  <style
+     id="stylebodge2"
+     type="text/css">[id^=&quot;path&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+</svg>

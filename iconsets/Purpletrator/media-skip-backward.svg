@@ -5,6 +5,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg8"
@@ -28,14 +29,36 @@
      id="namedview5620"
      showgrid="false"
      inkscape:zoom="0.30035326"
-     inkscape:cx="388.64891"
+     inkscape:cx="-210.6454"
      inkscape:cy="392.87072"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-x="489"
+     inkscape:window-y="135"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg8" />
   <defs
-     id="defs2" />
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient840">
+      <stop
+         style="stop-color:#CA91BE;stop-opacity:1"
+         offset="0"
+         id="stop836" />
+      <stop
+         style="stop-color:#BA3E91;stop-opacity:1"
+         offset="1"
+         id="stop838" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient840"
+       id="linearGradient842"
+       x1="101.30431"
+       y1="-2.6139251e-06"
+       x2="99.95118"
+       y2="206.13226"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -48,22 +71,32 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <ellipse
-     style="opacity:1;fill:none;fill-opacity:1;stroke:#BA3E91;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     id="path815"
-     cx="-102.83002"
-     cy="103.94704"
-     rx="93.830025"
-     ry="94.947044"
-     transform="scale(-1,1)" />
-  <path
-     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#BA3E91;stroke-width:12.34098625;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     id="path4508"
-     d="m 75.76316,105.62287 80.19588,44.22796 -1.79541,-91.565651 z"
-     inkscape:connector-curvature="0" />
-  <path
-     d="m 33.42983,105.62287 80.19588,44.22796 -1.7954,-91.565651 z"
-     id="path4619"
-     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#BA3E91;stroke-width:12.34098625;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     inkscape:connector-curvature="0" />
-<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#BA3E91;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#BA3E91;fill-opacity:1}</style></svg>
+  <g
+     id="g834"
+     style="stroke:url(#linearGradient842)">
+    <ellipse
+       transform="scale(-1,1)"
+       ry="94.947044"
+       rx="93.830025"
+       cy="103.94704"
+       cx="-102.83002"
+       id="path815"
+       style="opacity:1;fill:none;fill-opacity:1;stroke:url(#linearGradient842);stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       inkscape:connector-curvature="0"
+       d="m 75.76316,105.62287 80.19588,44.22796 -1.79541,-91.565651 z"
+       id="path4508"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:url(#linearGradient842);stroke-width:12.34098625;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       inkscape:connector-curvature="0"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:url(#linearGradient842);stroke-width:12.34098625;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path4619"
+       d="m 33.42983,105.62287 80.19588,44.22796 -1.7954,-91.565651 z" />
+  </g>
+  <style
+     id="stylebodge1"
+     type="text/css">[id^=&quot;polygon&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+  <style
+     id="stylebodge2"
+     type="text/css">[id^=&quot;path&quot;]{fill:#CA91BE;fill-opacity:1}</style>
+</svg>
