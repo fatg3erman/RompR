@@ -129,6 +129,15 @@
 .icon-toggle-on { background-image: url('iconsets/Fiery/togglebutton-new2-on.svg') }
 .icon-toggle-off { background-image: url('iconsets/Fiery/togglebutton-new2-off.svg') }
 
+.icon-random.flow-on { background-image: url('iconsets/Fiery/shuffle.svg') }
+.icon-random.flow-off { background-image: url('iconsets/Fiery/shuffle_off.svg') }
+.icon-crossfade.flow-on { background-image: url('iconsets/Fiery/crossfade.svg') }
+.icon-crossfade.flow-off { background-image: url('iconsets/Fiery/crossfade_off.svg') }
+.icon-repeat.flow-on { background-image: url('iconsets/Fiery/refresh.svg') }
+.icon-repeat.flow-off { background-image: url('iconsets/Fiery/refresh_off.svg') }
+.icon-consume.flow-on { background-image: url('iconsets/Fiery/consume.svg') }
+.icon-consume.flow-off { background-image: url('iconsets/Fiery/consume_off.svg') }
+
 .icon-allrandom { background-image: url('iconsets/Fiery/shuffle.svg') }
 .icon-neverplayed { background-image: url('iconsets/Fiery/neverheard.svg') }
 .icon-recentlyplayed { background-image: url('iconsets/Fiery/calendar.svg') }

@@ -129,6 +129,15 @@
 .icon-toggle-on { background-image: url('iconsets/New-Dark-Circled/togglebutton-new2-on.svg') }
 .icon-toggle-off { background-image: url('iconsets/New-Dark-Circled/togglebutton-new2-off.svg') }
 
+.icon-random.flow-on { background-image: url('iconsets/New-Dark-Circled/shuffle.svg') }
+.icon-random.flow-off { background-image: url('iconsets/New-Dark-Circled/shuffle_off.svg') }
+.icon-crossfade.flow-on { background-image: url('iconsets/New-Dark-Circled/crossfade.svg') }
+.icon-crossfade.flow-off { background-image: url('iconsets/New-Dark-Circled/crossfade_off.svg') }
+.icon-repeat.flow-on { background-image: url('iconsets/New-Dark-Circled/refresh.svg') }
+.icon-repeat.flow-off { background-image: url('iconsets/New-Dark-Circled/refresh_off.svg') }
+.icon-consume.flow-on { background-image: url('iconsets/New-Dark-Circled/consume.svg') }
+.icon-consume.flow-off { background-image: url('iconsets/New-Dark-Circled/consume_off.svg') }
+
 .icon-allrandom { background-image: url('iconsets/New-Dark-Circled/shuffle.svg') }
 .icon-neverplayed { background-image: url('iconsets/New-Dark-Circled/neverheard.svg') }
 .icon-recentlyplayed { background-image: url('iconsets/New-Dark-Circled/calendar.svg') }

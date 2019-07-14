@@ -602,10 +602,11 @@ var playlist = function() {
         },
 
         setButtons: function() {
-            c = (player.status.xfade === undefined || player.status.xfade === null || player.status.xfade == 0) ? "off" : "on";
-            $("#crossfade").switchToggle(c);
+            var c = (player.status.xfade === undefined || player.status.xfade === null || player.status.xfade == 0) ? "off" : "on";
+            $("#crossfade").flowToggle(c);
             $.each(['random', 'repeat', 'consume'], function(i,v) {
-                $("#"+v).switchToggle(player.status[v]);
+                c = player.status[v] == 0 ? 'off' : 'on';
+                $("#"+v).flowToggle(c);
             });
             if (player.status.replay_gain_mode) {
                 $.each(["off","track","album","auto"], function(i,v) {
@@ -625,13 +626,17 @@ var playlist = function() {
 
         preventControlClicks: function(t) {
             if (t) {
-                $('#random').on('click', player.controller.toggleRandom).parent().removeClass('notenabled');
-                $('#repeat').on('click', player.controller.toggleRepeat).parent().removeClass('notenabled');
-                $('#consume').on('click', player.controller.toggleConsume).parent().removeClass('notenabled');
+                $('#random').on('click', player.controller.toggleRandom);
+                $('#repeat').on('click', player.controller.toggleRepeat);
+                $('#consume').on('click', player.controller.toggleConsume);
+                $('#crossfade').on('click', player.controller.toggleCrossfade);
+                $('#flowcontrols').removeClass('notenabled');
             } else {
-                $('#random').off('click').parent().addClass('notenabled');
-                $('#repeat').off('click').parent().addClass('notenabled');
-                $('#consume').off('click').parent().addClass('notenabled');
+                $('#random').off('click').addClass('notenabled');
+                $('#repeat').off('click').addClass('notenabled');
+                $('#consume').off('click').addClass('notenabled');
+                $('#crossfade').off('click').addClass('notenabled');
+                $('#flowcontrols').removeClass('notenabled').addClass('notenabled');
             }
         },
 

@@ -3,13 +3,11 @@
 // Nasty, hacky, but very effective way to convert the New-Dark-Circled icontheme into a different colour.
 // ONLY start with a CLEAN copy of New-Dark-Circled
 
-$dir = 'Fiery';
+$dir = 'Temp';
 # cyan
 # $newcolour = '#3ED3D5';
 # white
 # $newcolour = '#FFFFFF';
-# orange
-$newcolours = array('#FFF663');
 $files = glob($dir.'/*.svg');
 
 foreach ($files as $file) {

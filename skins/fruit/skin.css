@@ -206,6 +206,15 @@
     margin-right: 4px;
 }
 
+#flowcontrols {
+    height: 36px;
+}
+
+#flowcontrols i {
+    max-height: 24px;
+    margin-top:4px;
+}
+
 /*
 =====================================================================
 = General Classes

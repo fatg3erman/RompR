@@ -124,6 +124,15 @@
 .icon-toggle-on { background-image: url('iconsets/Colourful/togglebutton-new2-on.svg') }
 .icon-toggle-off { background-image: url('iconsets/Colourful/togglebutton-new2-off.svg') }
 
+.icon-random.flow-on { background-image: url('iconsets/Colourful/random.svg') }
+.icon-random.flow-off { background-image: url('iconsets/Colourful/random_off.svg') }
+.icon-crossfade.flow-on { background-image: url('iconsets/Colourful/crossfade.svg') }
+.icon-crossfade.flow-off { background-image: url('iconsets/Colourful/crossfade_off.svg') }
+.icon-repeat.flow-on { background-image: url('iconsets/Colourful/refresh.svg') }
+.icon-repeat.flow-off { background-image: url('iconsets/Colourful/refresh_off.svg') }
+.icon-consume.flow-on { background-image: url('iconsets/Colourful/consume.svg') }
+.icon-consume.flow-off { background-image: url('iconsets/Colourful/consume_off.svg') }
+
 .icon-allrandom { background-image: url('iconsets/Colourful/shuffle.png') }
 .icon-neverplayed { background-image: url('iconsets/Colourful/neverheard.png') }
 .icon-recentlyplayed { background-image: url('iconsets/Colourful/calendar.svg') }

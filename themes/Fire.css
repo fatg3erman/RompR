@@ -4,11 +4,22 @@
 =====================================================================
 */
 
-html, body.phone .dropmenu {
-    background-image:url("themes/fire.jpg");
-    background-size:cover;
-    background-repeat:no-repeat;
-    background-attachment:fixed;
+@media screen and (orientation: landscape) {
+    html, body.phone .dropmenu {
+        background-image:url("themes/fire.jpg");
+        background-size:cover;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+    }
+}
+
+@media screen and (orientation: portrait) {
+    html, body.phone .dropmenu {
+        background-image:url("themes/fire-portrait.jpg");
+        background-size:cover;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+    }
 }
 
 body.phone .dropmenu>div {
@@ -116,6 +127,10 @@ input[type="text"] {
 
 #pset {
     background-color: rgba(147, 61, 24, 0);
+}
+
+#pmaxset {
+    background-color: rgba(255, 238, 95, 0);
 }
 
 /*

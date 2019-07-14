@@ -49,6 +49,12 @@ jQuery.fn.switchToggle = function(state) {
     });
 }
 
+jQuery.fn.flowToggle = function(state) {
+    return this.each(function() {
+        $(this).removeClass("flow-on flow-off").addClass('flow-'+state);
+    });
+}
+
 $.widget("rompr.trackdragger", $.ui.mouse, {
     options: {
 

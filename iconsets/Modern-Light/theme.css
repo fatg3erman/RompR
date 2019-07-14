@@ -118,6 +118,15 @@
 .icon-toggle-on { background-image: url('iconsets/Modern-Light/togglebutton-new2-on.svg') }
 .icon-toggle-off { background-image: url('iconsets/Modern-Light/togglebutton-new2-off.svg') }
 
+.icon-random.flow-on { background-image: url('iconsets/Modern-Light/random.svg') }
+.icon-random.flow-off { background-image: url('iconsets/Modern-Light/random_off.svg') }
+.icon-crossfade.flow-on { background-image: url('iconsets/Modern-Light/crossfade.svg') }
+.icon-crossfade.flow-off { background-image: url('iconsets/Modern-Light/crossfade_off.svg') }
+.icon-repeat.flow-on { background-image: url('iconsets/Modern-Light/refresh.svg') }
+.icon-repeat.flow-off { background-image: url('iconsets/Modern-Light/refresh_off.svg') }
+.icon-consume.flow-on { background-image: url('iconsets/Modern-Light/consume.svg') }
+.icon-consume.flow-off { background-image: url('iconsets/Modern-Light/consume_off.svg') }
+
 .icon-allrandom { background-image: url('iconsets/Modern-Light/shuffle.png') }
 .icon-neverplayed { background-image: url('iconsets/Modern-Light/neverheard.png') }
 .icon-recentlyplayed { background-image: url('iconsets/Modern-Light/calendar.svg') }
