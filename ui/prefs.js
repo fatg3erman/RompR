@@ -2,6 +2,7 @@ var prefs = function() {
 
     var textSaveTimer = null;
     var deferredPrefs = null;
+    var uichangetimer = null;
 
     const prefsInLocalStorage = [
         "sourceshidden",
@@ -699,6 +700,7 @@ var prefs = function() {
         },
 
         setTheme: function(theme) {
+            clearTimeout(uichangetimer);
             if (!theme) theme = prefs.theme;
             // These 2 themes were removed
             if (theme == 'PlasmaPortrait.css') {
@@ -716,6 +718,9 @@ var prefs = function() {
             // Browsers are funny about CSS.
             var t = Date.now();
             $('#theme').off('load');
+            // Some browsers don't fire a load event on the theme element,
+            // so fudge it with a timer, just in case
+            uichangetimer = setTimeout(prefs.postUIChange, 3000);
             $('#theme').on('load', prefs.postUIChange);
             $("#theme").attr("href", "gettheme.php?version="+t
                 +'&theme='+theme+'&fontsize='+prefs.fontsize+'&fontfamily='+prefs.fontfamily
@@ -724,6 +729,9 @@ var prefs = function() {
         },
 
         postUIChange: function() {
+            clearTimeout(uichangetimer);
+            debug.mark('PREFS','Post UI Change actions');
+            $('#theme').off('load');
             prefs.rgbs = null;
             prefs.maxrgbs = null;
             $('.rangechooser').rangechooser('fill');
