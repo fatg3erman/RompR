@@ -9,7 +9,7 @@ $dir = 'Fiery';
 # white
 # $newcolour = '#FFFFFF';
 # orange
-$newcolours = array('#FDC947', '#FFF663', '#FB8626');
+$newcolours = array('#FFF663');
 $files = glob($dir.'/*.svg');
 
 foreach ($files as $file) {

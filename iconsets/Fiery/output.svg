@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="205.66005mm"
+   height="207.89409mm"
+   viewBox="0 0 205.66004 207.89409"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="output.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1127"
+     inkscape:window-height="714"
+     id="namedview30"
+     showgrid="false"
+     inkscape:zoom="0.30035326"
+     inkscape:cx="388.64891"
+     inkscape:cy="392.87072"
+     inkscape:window-x="779"
+     inkscape:window-y="256"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg8" />
+  <defs
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient852">
+      <stop
+         style="stop-color:#fff663;stop-opacity:1;"
+         offset="0"
+         id="stop848" />
+      <stop
+         style="stop-color:#fb8626;stop-opacity:1"
+         offset="1"
+         id="stop850" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient852"
+       id="linearGradient854"
+       x1="103.94703"
+       y1="0.8809045"
+       x2="102.5939"
+       y2="207.89407"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient852"
+       id="linearGradient862"
+       x1="259.69421"
+       y1="-134.53241"
+       x2="253.65294"
+       y2="644.55023"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <ellipse
+     ry="94.947044"
+     rx="93.830025"
+     cy="103.94704"
+     cx="102.83002"
+     id="path815"
+     style="opacity:1;fill:none;fill-opacity:1;stroke:url(#linearGradient854);stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <g
+     transform="matrix(0.26458332,0,0,0.26458332,35.358929,36.475939)"
+     id="g2129"
+     style="fill-opacity:1;fill:url(#linearGradient862)">
+    <g
+       id="g2069"
+       style="fill-opacity:1.0;fill:url(#linearGradient862)">
+      <g
+         id="g2067"
+         style="fill-opacity:1.0;fill:url(#linearGradient862)">
+        <path
+           style="fill:url(#linearGradient862);fill-opacity:1.0"
+           d="m 186,29.084 -110,110 H 21 c -12,0 -21,10 -21,22 v 188 c 0,12 9,22 21,22 h 55 l 110,110 c 4,4 9,6 15,6 13,0 21,-11 21,-22 v -421 c 0,-17 -22,-29 -36,-15 z m -6,385 -80,-80 c -4,-4 -9,-6 -15,-6 H 43 v -146 h 42 c 6,0 11,-2 15,-6 l 80,-80 z"
+           id="path2059" />
+        <path
+           style="fill:url(#linearGradient862);fill-opacity:1.0"
+           d="m 294,162.084 c -8,-9 -21,-10 -30,-2 -9,8 -10,21 -2,30 2,3 58,66 0,130 -13,14 -1,35 16,35 6,0 12,-2 16,-7 66,-74 29,-154 0,-186 z"
+           id="path2061" />
+        <path
+           style="fill:url(#linearGradient862);fill-opacity:1.0"
+           d="m 361,102.084 c -8,-9 -21,-9 -30,-1 -9,8 -9,21 -1,30 5,5 110,125 0,248 -13,14 -1,36 16,36 6,0 11,-3 15,-8 135,-151 1,-303 0,-305 z"
+           id="path2063" />
+        <path
+           style="fill:url(#linearGradient862);fill-opacity:1.0"
+           d="m 498,180.084 c -22,-72 -64,-120 -66,-122 -8,-9 -21,-10 -30,-2 -9,8 -10,21 -2,30 0,0 38,43 57,106 25,83 6,161 -57,231 -13,14 -1,36 16,36 6,0 12,-2 16,-7 91,-102 86,-204 66,-272 z"
+           id="path2065" />
+      </g>
+    </g>
+    <g
+       id="g2071"
+       style="fill-opacity:1.0;fill:url(#linearGradient862)" />
+    <g
+       id="g2073"
+       style="fill-opacity:1.0;fill:url(#linearGradient862)" />
+    <g
+       id="g2075"
+       style="fill-opacity:1.0;fill:url(#linearGradient862)" />
+    <g
+       id="g2077"
+       style="fill-opacity:1.0;fill:url(#linearGradient862)" />
+    <g
+       id="g2079"
+       style="fill-opacity:1.0;fill:url(#linearGradient862)" />
+    <g
+       id="g2081"
+       style="fill-opacity:1.0;fill:url(#linearGradient862)" />
+    <g
+       id="g2083"
+       style="fill-opacity:1.0;fill:url(#linearGradient862)" />
+    <g
+       id="g2085"
+       style="fill-opacity:1.0;fill:url(#linearGradient862)" />
+    <g
+       id="g2087"
+       style="fill-opacity:1.0;fill:url(#linearGradient862)" />
+    <g
+       id="g2089"
+       style="fill-opacity:1.0;fill:url(#linearGradient862)" />
+    <g
+       id="g2091"
+       style="fill-opacity:1.0;fill:url(#linearGradient862)" />
+    <g
+       id="g2093"
+       style="fill-opacity:1.0;fill:url(#linearGradient862)" />
+    <g
+       id="g2095"
+       style="fill-opacity:1.0;fill:url(#linearGradient862)" />
+    <g
+       id="g2097"
+       style="fill-opacity:1.0;fill:url(#linearGradient862)" />
+    <g
+       id="g2099"
+       style="fill-opacity:1.0;fill:url(#linearGradient862)" />
+  </g>
+  <style
+     id="stylebodge1"
+     type="text/css">[id^=&quot;polygon&quot;]{fill:#FFF663;fill-opacity:1}</style>
+  <style
+     id="stylebodge2"
+     type="text/css">[id^=&quot;path&quot;]{fill:#FFF663;fill-opacity:1}</style>
+</svg>
