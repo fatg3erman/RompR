@@ -554,7 +554,7 @@ function get_all_data($ttid) {
 	);
 	if (count($result) > 0) {
 		$data = array_shift($result);
-		$data['Tags'] = explode(', ', $data['Tags']);
+		$data['Tags'] = ($data['Tags'] == '') ? array() : explode(', ', $data['Tags']);
 		if ($data['LastTime'] != null && $data['LastTime'] != 0 && $data['LastTime'] != '0') {
 			$data['Last'] = $data['LastTime'];
 		}

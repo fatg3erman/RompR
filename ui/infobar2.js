@@ -192,7 +192,13 @@ var infobar = function() {
 
     return {
 
+        rejigTheText: function() {
+            clearTimeout(ftimer);
+            ftimer = setTimeout(infobar.biggerize, 500);
+        },
+
         biggerize: function() {
+            clearTimeout(ftimer);
 
             if (Object.keys(npinfo).length == 0 || $("#nptext").is(':hidden') || $("#infobar").is(':hidden')) {
                 debug.log("INFOBAR","Not biggerizing because", Object.keys(npinfo).length, $("#nptext").is(':hidden'), $("#infobar").is(':hidden'));
@@ -244,11 +250,6 @@ var infobar = function() {
                 nptext.css("padding-top", top+"px").removeClass('calculating').addClass('ready');
 
             }
-        },
-
-        rejigTheText: function() {
-            clearTimeout(ftimer);
-            ftimer = setTimeout(infobar.biggerize, 500);
         },
 
         albumImage: function() {
@@ -450,11 +451,13 @@ var infobar = function() {
             if (info.Title != "" && info.trackartist != "") {
                 $("#stars").fadeIn('fast');
                 $("#dbtags").fadeIn('fast');
+                $("#ptagadd").fadeIn('fast');
                 $("#playcount").fadeIn('fast');
                 lastfm.showloveban(true);
             } else {
                 $("#stars").fadeOut('fast');
                 $("#dbtags").fadeOut('fast');
+                $("#ptagadd").fadeOut('fast');
                 $("#playcount").fadeOut('fast');
                 lastfm.showloveban(false);
             }
@@ -478,6 +481,7 @@ var infobar = function() {
                 $("#playcount").fadeOut('fast');
                 $("#subscribe").fadeOut('fast');
                 $("#addtoplaylist").fadeOut('fast');
+                $("#ptagadd").fadeOut('fast');
                 lastfm.showloveban(false);
             } else {
                 infobar.albumImage.setKey(info.key);

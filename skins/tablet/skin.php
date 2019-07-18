@@ -70,32 +70,9 @@ printOutputCheckboxes();
 
 <div id="loadsawrappers">
 
-<div id="infobar" class="mainpane invisible pleft pright">
+<div id="infobar" class="mainpane invisible">
     <div id="toomanywrappers">
-        <div id="geoffreyboycott" class="fullwidth">
-            <div id="albumcover"><img id="albumpicture" /></div>
-            <div id="cssisshit">
-                <div id="buttonholder" class="containerbox vertical">
-                    <div id="buttons" class="fixed">
-        <?php
-                        print '<i title="'.get_int_text('button_previous').
-                            '" class="prev-button icon-fast-backward clickicon controlbutton-small"></i>';
-                        print '<i title="'.get_int_text('button_play').
-                            '" class="play-button icon-play-circled shiftleft clickicon controlbutton"></i>';
-                        print '<i title="'.get_int_text('button_stop').
-                            '" class="stop-button icon-stop-1 shiftleft2 clickicon controlbutton-small"></i>';
-                        print '<i title="'.get_int_text('button_stopafter').
-                            '" class="stopafter-button icon-to-end-1 shiftleft3 clickicon controlbutton-small"></i>';
-                        print '<i title="'.get_int_text('button_next').
-                            '" class="next-button icon-fast-forward shiftleft4 clickicon controlbutton-small"></i>';
-        ?>
-                    </div>
-                    <div id="progress" class="fixed"></div>
-                    <div id="playbackTime" class="fixed">
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div id="albumcover"><img id="albumpicture" /></div>
         <div id="amontobin" class="clearfix">
             <div id="subscribe" class="invisible">
                 <i class="icon-rss npicon clickicon"></i>
@@ -111,12 +88,35 @@ printOutputCheckboxes();
             <div id="lastfm" class="invisible">
                 <i class="icon-heart npicon clickicon" id="love"></i>
             </div>
-            <div id="playcount"></div>
+            <div id="ptagadd" class="invisible">
+                <i class="icon-plus npicon clickicon" onclick="tagAdder.show(event)"></i>
+            </div>
             <div id="dbtags" class="invisible">
             </div>
         </div>
         <div id="nowplaying">
             <div id="nptext"></div>
+        </div>
+    </div>
+    <div id="cssisshit">
+        <div id="buttonholder" class="containerbox vertical">
+            <div id="buttons" class="fixed">
+<?php
+                print '<i title="'.get_int_text('button_previous').
+                    '" class="prev-button icon-fast-backward clickicon controlbutton-small"></i>';
+                print '<i title="'.get_int_text('button_play').
+                    '" class="play-button icon-play-circled shiftleft clickicon controlbutton"></i>';
+                print '<i title="'.get_int_text('button_stop').
+                    '" class="stop-button icon-stop-1 shiftleft2 clickicon controlbutton-small"></i>';
+                print '<i title="'.get_int_text('button_stopafter').
+                    '" class="stopafter-button icon-to-end-1 shiftleft3 clickicon controlbutton-small"></i>';
+                print '<i title="'.get_int_text('button_next').
+                    '" class="next-button icon-fast-forward shiftleft4 clickicon controlbutton-small"></i>';
+?>
+            </div>
+            <div id="progress" class="fixed"></div>
+            <div id="playbackTime" class="fixed">
+            </div>
         </div>
     </div>
 </div>

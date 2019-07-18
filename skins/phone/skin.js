@@ -487,16 +487,29 @@ var layoutProcessor = function() {
         },
 
         sourceControl: function(source) {
+            // hacky - set an irrelevant css parameter as a flag so we change behaviour
+            var layoutflag = parseInt($('.choose_playlist').css('font-weight'));
+            if ((source == 'playlistm' || source == 'infobar') && prefs.chooser != 'infopane' && layoutflag == 1000) {
+                return;
+            }
             if (source == 'infopane') {
                 $('#infobar').css('display', 'none');
+                if (layoutflag == 1000) {
+                    $('#playlistm').css('display', 'none');
+                }
             } else {
                 $('#infobar').css('display', '');
+                if (layoutflag == 1000) {
+                    $('#playlistm').css('display', '');
+                }
             }
-            if (source == "playlistm" && $('.choose_playlist').css('font-weight') == '900') {
-                // hacky - set an irrelevant css parameter as a flag so we change behaviour
+            if (source == "playlistm" && layoutflag >= 900) {
                 source = "infobar";
             }
             $('.mainpane:not(.invisible):not(#'+source+')').addClass('invisible');
+            if (layoutflag == 1000) {
+                $('#playlistm').removeClass('invisible');
+            }
             $('#'+source).removeClass('invisible');
             prefs.save({chooser: source});
             layoutProcessor.adjustLayout();
@@ -515,17 +528,29 @@ var layoutProcessor = function() {
         adjustLayout: function() {
             infobar.updateWindowValues();
             var ws = getWindowSize();
-            var newheight = ws.y-$("#headerbar").outerHeight(true);
-            var v = newheight - 32;
-            $("#loadsawrappers").css({height: newheight+"px"});
-            if ($('#nowplaying').offset().top > 0) {
-                var t = $('#toomanywrappers').height() - $('#nowplaying').offset().top + $("#headerbar").outerHeight(true);
-                $("#nowplaying").css({height: t+"px"});
+            var hh = $("#headerbar").outerHeight(true);
+            var mainheight = ws.y - hh;
+            $("#loadsawrappers").css({height: mainheight+"px"});
+            var infoheight = $('#infobar').outerHeight(true) - $('#cssisshit').outerHeight(true);
+            $('#toomanywrappers').css({height: infoheight+"px"});
+            var np = $('#nowplaying');
+            var nptop = np.offset().top;
+            if (nptop > 0) {
+                var t = infoheight - nptop + hh;
+                np.css({height: t+"px"});
                 infobar.rejigTheText();
             }
             layoutProcessor.setPlaylistHeight();
             browser.rePoint();
             $('.topdropmenu:visible').fanoogleTopMenus();
+            if ($('.choose_playlist').css('font-weight') == '1000' && $('.mainpane:visible').not('#infobar').length == 0) {
+                layoutProcessor.sourceControl('albumlist');
+            }
+
+        },
+
+        showTagButton: function() {
+            return false;
         },
 
         displayCollectionInsert: function(d) {

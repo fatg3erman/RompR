@@ -48,8 +48,7 @@ a:hover,a:active
 }
 
 button, input[type="button"], .filebutton
-{
-    color:#dddddd;
+{    color:#dddddd;
     background-color:rgba(0,0,0,0.5);
     border:1px solid transparent;
 }

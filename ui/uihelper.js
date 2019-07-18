@@ -466,6 +466,14 @@ var uiHelper = function() {
             } catch (err) {
 
             }
+        },
+
+        showTagButton: function() {
+            try {
+                return layoutProcessor.showTagButton();
+            } catch (err) {
+                return true;
+            }
         }
     }
 
