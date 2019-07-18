@@ -52,7 +52,7 @@ div {
 }
 
 #albumpicture {
-    object-fit:scale-down;
+    object-fit:contain;
 }
 
 #volumecontrol {
@@ -944,6 +944,7 @@ div.rightmenu {
         height: 100%;
         width: auto;
         margin-right:8px;
+        max-width:60vh;
     }
 
     #nowplaying {
