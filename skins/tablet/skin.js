@@ -236,10 +236,10 @@ var layoutProcessor = function() {
 
         adjustLayout: function() {
             infobar.updateWindowValues();
-            var ws = getWindowSize();
+            // var ws = getWindowSize();
             var hh = $("#headerbar").outerHeight(true);
-            var mainheight = ws.y - hh;
-            $("#loadsawrappers").css({height: mainheight+"px"});
+            // var mainheight = ws.y - hh;
+            // $("#loadsawrappers").css({height: mainheight+"px"});
             var infoheight = $('#infobar').outerHeight(true) - $('#cssisshit').outerHeight(true);
             $('#toomanywrappers').css({height: infoheight+"px"});
             var np = $('#nowplaying');
@@ -247,7 +247,7 @@ var layoutProcessor = function() {
             if (nptop > 0) {
                 var t = infoheight - nptop + hh;
                 np.css({height: t+"px"});
-                infobar.rejigTheText();
+                infobar.biggerize();
             }
             layoutProcessor.setPlaylistHeight();
             browser.rePoint();

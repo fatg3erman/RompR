@@ -717,7 +717,6 @@ var prefs = function() {
             // Use a different version every time to ensure the browser doesn't cache.
             // Browsers are funny about CSS.
             var t = Date.now();
-            // $('#theme').off('load');
             // Some browsers (Chrome, Safari) don't fire a load event on the theme element unless we delete and re-create it
             // Even then we have a fudge timer, just in case
             uichangetimer = setTimeout(prefs.postUIChange, 3000);
@@ -725,10 +724,6 @@ var prefs = function() {
             $('<link>', {id: 'theme', rel: 'stylesheet', type: 'text/css', href: "gettheme.php?version="+t
                 +'&theme='+theme+'&fontsize='+prefs.fontsize+'&fontfamily='+prefs.fontfamily
                 +'&coversize='+prefs.coversize+'&icontheme='+prefs.icontheme}).on('load', prefs.postUIChange).appendTo('head');
-            // $('#theme').on('load', prefs.postUIChange);
-            // $("#theme").attr("href", "gettheme.php?version="+t
-            //     +'&theme='+theme+'&fontsize='+prefs.fontsize+'&fontfamily='+prefs.fontfamily
-            //     +'&coversize='+prefs.coversize+'&icontheme='+prefs.icontheme);
             loadBackgroundImages(theme);
         },
 

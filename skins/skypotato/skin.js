@@ -558,7 +558,7 @@ var layoutProcessor = function() {
             $("#bottompage").css("height", newheight+"px");
             var newwidth = ws.x - $('#infobar').offset().left;
             $('#infobar').css('width', newwidth+'px');
-            infobar.rejigTheText();
+            infobar.biggerize();
             browser.rePoint();
             $('.topdropmenu').fanoogleMenus();
             setBottomPanelWidths();

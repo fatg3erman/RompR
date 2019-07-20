@@ -91,7 +91,8 @@ $(document).ready(function(){
     }
     spotifyLinkChecker.initialise();
     snapcast.updateStatus();
-    setTimeout(infobar.rejigTheText, 750);
+    // Just in case;
+    setTimeout(infobar.rejigTheText, 500);
 });
 
 function cleanBackendCache() {

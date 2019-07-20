@@ -40,15 +40,18 @@ div {
     -webkit-overflow-scrolling: touch;
 }
 
-#loadsawrappers {
-    width: 100%;
-    overflow:hidden;
-}
-
 #headerbar {
+    border:none;
     height:40px;
     padding:0px;
     margin:0px;
+}
+
+/* Note this includes 40px for headerbar. Keep them synced */
+#loadsawrappers {
+    height: calc(100vh - 40px);
+    width: 100%;
+    overflow:hidden;
 }
 
 #albumpicture {

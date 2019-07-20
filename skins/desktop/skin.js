@@ -318,7 +318,7 @@ var layoutProcessor = function() {
             var newheight = ws.y - $("#bottompage").offset().top;
             $("#bottompage").css("height", newheight+"px");
             layoutProcessor.setPlaylistHeight();
-            infobar.rejigTheText();
+            infobar.biggerize();
             browser.rePoint();
             $('.topdropmenu').fanoogleMenus();
         },
