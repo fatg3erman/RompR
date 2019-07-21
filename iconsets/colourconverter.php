@@ -3,7 +3,7 @@
 // Nasty, hacky, but very effective way to convert the New-Dark-Circled icontheme into a different colour.
 // ONLY start with a CLEAN copy of New-Dark-Circled
 
-$dir = 'Greydient';
+$dir = 'BlackHole';
 # cyan
 # $newcolour = '#3ED3D5';
 # white
@@ -29,9 +29,14 @@ foreach ($files as $file) {
     // $hack = preg_replace('/<\/svg>/', '<style id="stylebodge2" type="text/css">[id^="path"]{fill:'.$newcolour.';fill-opacity:1}</style></svg>', $hack);
 
     // These lines convert the gradient as used in Fiery
-    $hack = preg_replace('/#fff663/i', '#DDDDDD', $hack);
-    $hack = preg_replace('/#fb8626/i', '#333333', $hack);
-    $hack = preg_replace('/#fb8a26/i', '#333333', $hack);
+    // $hack = preg_replace('/#fff663/i', '#DDDDDD', $hack);
+    // $hack = preg_replace('/#fb8626/i', '#333333', $hack);
+    // $hack = preg_replace('/#fb8a26/i', '#333333', $hack);
+
+    // These lines convert the gradient as used in Sunset.
+    // Don't forget to edit (or remove) the #pset and #pmaxset in theme.css
+    $hack = preg_replace('/#fff94b/i', '#000000', $hack);
+    $hack = preg_replace('/#c8451f/i', '#bbbbbb', $hack);
 
 
     file_put_contents($file, $hack);

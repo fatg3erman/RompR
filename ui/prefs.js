@@ -258,7 +258,7 @@ var prefs = function() {
 
     function removeAllBackgroundImages() {
         clearCustomBackground();
-        $.getJSON('backimage.php?clearallbackgrounds='+pefs.theme+'&browser_id='+prefs.browser_id, function(data) {
+        $.getJSON('backimage.php?clearallbackgrounds='+prefs.theme+'&browser_id='+prefs.browser_id, function(data) {
             loadBackgroundImages(prefs.theme);
         });
     }
@@ -822,3 +822,4 @@ if (localStorage.getItem("prefs.prefversion") == null) {
     localStorage.setItem('prefs.prefversion', JSON.stringify(2));
 }
 prefs.theme = prefs.theme.replace('_1080p','');
+prefs.fontfamily = prefs.fontfamily.replace('_', ' ');

@@ -6,6 +6,8 @@ $theme = array_key_exists('theme', $_REQUEST) ? $_REQUEST['theme'] : 'Numismatis
 $fontsize = array_key_exists('fontsize', $_REQUEST) ? $_REQUEST['fontsize'] : '02-Normal.css';
 $coversize = array_key_exists('coversize', $_REQUEST) ? $_REQUEST['coversize'] : '40-Large.css';
 $icontheme = array_key_exists('icontheme', $_REQUEST) ? $_REQUEST['icontheme'] : 'New-Dark-Circled';
+// For older-style requests before we could have spaces
+$fontfamily = preg_replace('/_/', ' ', $fontfamily);
 logger::log('THEME','Theme       :',$theme);
 logger::log('THEME','Font        :',$fontfamily);
 logger::log('THEME','Font Size   :',$fontsize);
