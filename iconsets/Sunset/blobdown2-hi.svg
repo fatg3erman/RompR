@@ -26,15 +26,15 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1448"
-     inkscape:window-height="946"
+     inkscape:window-width="1825"
+     inkscape:window-height="974"
      id="namedview14"
      showgrid="false"
      inkscape:zoom="16.857143"
-     inkscape:cx="-2.1672202"
-     inkscape:cy="7.0000001"
-     inkscape:window-x="654"
-     inkscape:window-y="166"
+     inkscape:cx="-6.7627119"
+     inkscape:cy="16.158475"
+     inkscape:window-x="138"
+     inkscape:window-y="171"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <defs
@@ -92,17 +92,7 @@
        fy="7.0001001"
        r="7.0002"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(2.4491112,0,0,1,-10.143489,0)" />
-    <filter
-       inkscape:collect="always"
-       style="color-interpolation-filters:sRGB"
-       id="filter857">
-      <feBlend
-         inkscape:collect="always"
-         mode="overlay"
-         in2="BackgroundImage"
-         id="feBlend859" />
-    </filter>
+       gradientTransform="matrix(-2.9066682,-0.025423,0.00874611,-0.99996175,27.284673,14.177888)" />
   </defs>
   <metadata
      id="metadata7">
@@ -112,7 +102,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -122,20 +112,14 @@
      d="m14,7.0001c0,3.866-3.134,7.0002-7.0002,7.0002-3.866,0-7.0002-3.134-7.0002-7.0002,0-3.866,3.134-7.0002,7.0002-7.0002,3.866,0,7.0002,3.134,7.0002,7.0002z"
      style="fill-opacity:1;fill:url(#radialGradient827)" />
   <g
-     id="text2987"
-     style="letter-spacing:0px;word-spacing:0px;filter:url(#filter857);fill-opacity:1;fill:#fff94b"
-     line-height="125%"
-     transform="matrix(0.41985291,0,0,-0.56308545,-65.349602,362.37988)"
-     font-family="Sans"
-     font-size="40px"
-     filter="url(#filter3971)"
-     font-weight="normal"
-     font-style="normal"
-     fill="#ff4800">
+     aria-label="V"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:'PingFang SC';-inkscape-font-specification:'PingFang SC';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     id="text828"
+     transform="matrix(0.45770796,0,0,0.19408442,-0.2614205,10.899798)">
     <path
-       id="path2994"
-       fill="#ff4800"
-       d="m174.24,623.18,10.605,10.879-3.9258,0-8.5938-7.7148-8.5938,7.7148-3.9258,0,10.605-10.879,3.8281,0"
-       style="fill-opacity:1;fill:#fff94b" />
+       d="M 3.2847459,-21.144746 13.844746,7.4152541 h 4.04 l 10.56,-28.5600001 h -3.6 l -8.92,25.0000001 h -0.12 L 6.8847459,-21.144746 Z"
+       id="path830"
+       inkscape:connector-curvature="0"
+       style="fill:#ffffff;fill-opacity:1" />
   </g>
 </svg>

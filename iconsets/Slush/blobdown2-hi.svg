@@ -26,15 +26,15 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1448"
-     inkscape:window-height="946"
+     inkscape:window-width="1791"
+     inkscape:window-height="967"
      id="namedview14"
      showgrid="false"
      inkscape:zoom="16.857143"
-     inkscape:cx="-2.1672202"
-     inkscape:cy="7.0000001"
-     inkscape:window-x="654"
-     inkscape:window-y="166"
+     inkscape:cx="-12.993491"
+     inkscape:cy="7.0000002"
+     inkscape:window-x="207"
+     inkscape:window-y="194"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <defs
@@ -96,12 +96,12 @@
     <filter
        inkscape:collect="always"
        style="color-interpolation-filters:sRGB"
-       id="filter857">
+       id="filter1156">
       <feBlend
          inkscape:collect="always"
          mode="overlay"
          in2="BackgroundImage"
-         id="feBlend859" />
+         id="feBlend1158" />
     </filter>
   </defs>
   <metadata
@@ -123,7 +123,7 @@
      style="fill-opacity:1;fill:url(#radialGradient827)" />
   <g
      id="text2987"
-     style="letter-spacing:0px;word-spacing:0px;filter:url(#filter857);fill-opacity:1;fill:#ffffff"
+     style="letter-spacing:0px;word-spacing:0px;fill-opacity:1;fill:#ffffff;filter:url(#filter1156)"
      line-height="125%"
      transform="matrix(0.41985291,0,0,-0.56308545,-65.349602,362.37988)"
      font-family="Sans"
@@ -136,6 +136,6 @@
        id="path2994"
        fill="#ff4800"
        d="m174.24,623.18,10.605,10.879-3.9258,0-8.5938-7.7148-8.5938,7.7148-3.9258,0,10.605-10.879,3.8281,0"
-       style="fill-opacity:1;fill:#ffffff" />
+       style="fill-opacity:1;fill:#ffffff;" />
   </g>
 </svg>
