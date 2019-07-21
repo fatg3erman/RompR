@@ -23,8 +23,8 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="781"
-     inkscape:window-height="480"
+     inkscape:window-width="1493"
+     inkscape:window-height="1005"
      id="namedview17"
      showgrid="false"
      fit-margin-top="0"
@@ -32,10 +32,10 @@
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:zoom="2.0966596"
-     inkscape:cx="56.213784"
+     inkscape:cx="66.173609"
      inkscape:cy="56.665217"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-x="587"
+     inkscape:window-y="127"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg3065" />
   <defs
@@ -74,7 +74,7 @@
        fx="56.19582"
        cy="56.286121"
        cx="56.19582"
-       gradientTransform="matrix(2.1646714,9.5069774e-5,-9.9867763e-5,2.2734924,-65.444042,-71.685288)"
+       gradientTransform="matrix(3.0594697,1.3436824e-4,-1.4114955e-4,3.2132734,-124.29276,-124.22205)"
        gradientUnits="userSpaceOnUse"
        id="radialGradient855"
        xlink:href="#linearGradient851" />
@@ -84,10 +84,21 @@
        fx="56.19582"
        cy="56.286121"
        cx="56.19582"
-       gradientTransform="matrix(2.1646714,9.5069774e-5,-9.9867763e-5,2.2734924,-65.444042,-71.685288)"
+       gradientTransform="matrix(3.0594697,1.3436824e-4,-1.4114955e-4,3.2132734,-115.70768,-124.22205)"
        gradientUnits="userSpaceOnUse"
        id="radialGradient857"
        xlink:href="#linearGradient851" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient851"
+       id="radialGradient835"
+       cx="51.921242"
+       cy="56.648197"
+       fx="51.921242"
+       fy="56.648197"
+       r="30.483997"
+       gradientTransform="matrix(8.0876332,0.0382907,-0.00763953,1.6135972,-367.56595,-36.747281)"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <metadata
      id="metadata3070">
@@ -97,7 +108,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -107,18 +118,18 @@
      id="path13"
      inkscape:connector-curvature="0" />
   <g
-     transform="matrix(1.4133645,0,0,1.4133645,-23.211393,-22.904606)"
-     style="fill:url(#radialGradient853);fill-opacity:1;stroke:none"
-     id="g845">
+     id="g827"
+     transform="translate(4.2978671)"
+     style="fill-opacity:1;fill:url(#radialGradient835)">
     <path
        id="path15"
-       d="m 63.59032,27.89462 h 17.211 v 56.783 h -17.211 z"
-       style="fill:url(#radialGradient855);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.93142003"
+       d="M 58.079823,16.52066 H 82.405239 V 96.775736 H 58.079823 Z"
+       style="fill:url(#radialGradient835);fill-opacity:1.0;fill-rule:evenodd;stroke:none;stroke-width:1.31643605"
        inkscape:connector-curvature="0" />
     <path
        id="path17"
-       d="m 31.59032,27.89462 h 17.211 v 56.783 h -17.211 z"
-       style="fill:url(#radialGradient857);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.93142003"
+       d="M 21.437244,16.52066 H 45.76266 V 96.775736 H 21.437244 Z"
+       style="fill:url(#radialGradient835);fill-opacity:1.0;fill-rule:evenodd;stroke:none;stroke-width:1.31643605"
        inkscape:connector-curvature="0" />
   </g>
 </svg>

@@ -23,15 +23,15 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1318"
-     inkscape:window-height="762"
+     inkscape:window-width="1679"
+     inkscape:window-height="816"
      id="namedview21"
      showgrid="false"
      inkscape:zoom="2.0827188"
-     inkscape:cx="56.219109"
-     inkscape:cy="56.656712"
-     inkscape:window-x="720"
-     inkscape:window-y="329"
+     inkscape:cx="-24.418614"
+     inkscape:cy="56.656711"
+     inkscape:window-x="540"
+     inkscape:window-y="288"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg3144" />
   <defs
@@ -114,7 +114,7 @@
        fx="56.187778"
        fy="56.179764"
        r="39.41774"
-       gradientTransform="matrix(2.7517198,0.02472263,-0.02802903,3.1197377,-96.850582,-120.47547)"
+       gradientTransform="matrix(6.1374183,0.06888392,-0.03501382,3.1196671,-286.69305,-122.95283)"
        gradientUnits="userSpaceOnUse" />
   </defs>
   <metadata

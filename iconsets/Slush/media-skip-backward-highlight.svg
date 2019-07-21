@@ -28,8 +28,8 @@
      id="namedview18"
      showgrid="false"
      inkscape:zoom="2.0827188"
-     inkscape:cx="56.219109"
-     inkscape:cy="56.656712"
+     inkscape:cx="27.293824"
+     inkscape:cy="56.656711"
      inkscape:window-x="860"
      inkscape:window-y="284"
      inkscape:window-maximized="0"
@@ -84,6 +84,17 @@
        gradientUnits="userSpaceOnUse"
        id="radialGradient908"
        xlink:href="#linearGradient902" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient902"
+       id="radialGradient835"
+       cx="29.618401"
+       cy="55.709705"
+       fx="29.618401"
+       fy="55.709705"
+       r="39.911682"
+       gradientTransform="matrix(-4.5579988,0.04662525,-0.01819616,-1.7788265,246.50488,154.37364)"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <metadata
      id="metadata3149">
@@ -93,7 +104,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -102,14 +113,18 @@
      style="fill:none;fill-rule:evenodd;stroke:#aaaaaa;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      d="m 110.49054,56.656707 a 54.272429,54.272509 0 1 1 -108.54286,0 54.272429,54.272509 0 1 1 108.54286,0 z"
      id="path51" />
-  <path
-     id="path55"
-     d="M 42.320107,56.493376 65.973092,42.683232 89.623673,28.876277 89.756315,56.263899 89.888955,83.651522 66.102938,70.071247 Z"
-     style="fill:url(#radialGradient906);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.28233919;stroke-opacity:0.18256998"
-     inkscape:connector-curvature="0" />
-  <path
-     id="path57"
-     d="M 10.06559,57.279001 33.718575,43.468857 57.369157,29.661901 57.501798,57.049524 57.634439,84.437147 33.84842,70.856871 Z"
-     style="fill:url(#radialGradient908);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.28233919;stroke-opacity:0.18256998"
-     inkscape:connector-curvature="0" />
+  <g
+     id="g827"
+     style="fill-opacity:1;fill:url(#radialGradient835)">
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:url(#radialGradient835);fill-opacity:1.0;fill-rule:evenodd;stroke:none;stroke-width:0.28233919;stroke-opacity:0.18256998"
+       d="M 42.320107,56.493376 65.973092,42.683232 89.623673,28.876277 89.756315,56.263899 89.888955,83.651522 66.102938,70.071247 Z"
+       id="path55" />
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:url(#radialGradient835);fill-opacity:1.0;fill-rule:evenodd;stroke:none;stroke-width:0.28233919;stroke-opacity:0.18256998"
+       d="M 10.06559,57.279001 33.718575,43.468857 57.369157,29.661901 57.501798,57.049524 57.634439,84.437147 33.84842,70.856871 Z"
+       id="path57" />
+  </g>
 </svg>

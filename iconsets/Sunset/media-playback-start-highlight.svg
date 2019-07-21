@@ -6,10 +6,34 @@
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
    width="112.43822"
    height="113.31342"
-   id="svg3144">
+   id="svg3144"
+   sodipodi:docname="media-playback-start-highlight.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1756"
+     inkscape:window-height="958"
+     id="namedview13"
+     showgrid="false"
+     inkscape:zoom="2.0827188"
+     inkscape:cx="56.219109"
+     inkscape:cy="56.656712"
+     inkscape:window-x="501"
+     inkscape:window-y="132"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg3144" />
   <defs
      id="defs3146">
     <linearGradient
@@ -32,7 +56,7 @@
     </filter>
     <radialGradient
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(2.7772073,0.03484138,-0.02921521,2.3287476,-93.723968,-75.643231)"
+       gradientTransform="matrix(8.8915887,0.00271704,-7.8452764e-4,2.5677738,-426.57693,-87.148864)"
        r="30.154209"
        fy="55.417065"
        fx="54.180038"
@@ -49,7 +73,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>

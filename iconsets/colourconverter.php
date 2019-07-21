@@ -3,7 +3,7 @@
 // Nasty, hacky, but very effective way to convert the New-Dark-Circled icontheme into a different colour.
 // ONLY start with a CLEAN copy of New-Dark-Circled
 
-$dir = 'BlackHole';
+$dir = 'Slush-Dark';
 # cyan
 # $newcolour = '#3ED3D5';
 # white
@@ -35,8 +35,8 @@ foreach ($files as $file) {
 
     // These lines convert the gradient as used in Sunset.
     // Don't forget to edit (or remove) the #pset and #pmaxset in theme.css
-    $hack = preg_replace('/#fff94b/i', '#000000', $hack);
-    $hack = preg_replace('/#c8451f/i', '#bbbbbb', $hack);
+    $hack = preg_replace('/#fff94b/i', '#000099', $hack);
+    $hack = preg_replace('/#c8451f/i', '#000000', $hack);
 
 
     file_put_contents($file, $hack);
