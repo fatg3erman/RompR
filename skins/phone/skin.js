@@ -487,6 +487,7 @@ var layoutProcessor = function() {
         },
 
         sourceControl: function(source) {
+            debug.shout('LAYOUT','Switching source to',source);
             // hacky - set an irrelevant css parameter as a flag so we change behaviour
             var layoutflag = parseInt($('.choose_playlist').css('font-weight'));
             if ((source == 'playlistm' || source == 'infobar') && prefs.chooser != 'infopane' && layoutflag == 1000) {
@@ -533,20 +534,22 @@ var layoutProcessor = function() {
             // $("#loadsawrappers").css({height: mainheight+"px"});
             var infoheight = $('#infobar').outerHeight(true) - $('#cssisshit').outerHeight(true);
             $('#toomanywrappers').css({height: infoheight+"px"});
+            layoutProcessor.setPlaylistHeight();
+            browser.rePoint();
+            $('.topdropmenu:visible').fanoogleTopMenus();
+            if ($('.choose_playlist').css('font-weight') == '1000'
+                && $('.mainpane:visible').not('#infobar').length == 0
+                && (prefs.chooser == 'playlistm' || prefs.chooser == 'infobar')) {
+                layoutProcessor.sourceControl('albumlist');
+            }
             var np = $('#nowplaying');
             var nptop = np.offset().top;
             if (nptop > 0) {
                 var t = infoheight - nptop + hh;
                 np.css({height: t+"px"});
+                debug.mark('LAYOUT', 'Calling biggerize');
                 infobar.biggerize();
             }
-            layoutProcessor.setPlaylistHeight();
-            browser.rePoint();
-            $('.topdropmenu:visible').fanoogleTopMenus();
-            if ($('.choose_playlist').css('font-weight') == '1000' && $('.mainpane:visible').not('#infobar').length == 0) {
-                layoutProcessor.sourceControl('albumlist');
-            }
-
         },
 
         showTagButton: function() {

@@ -742,7 +742,6 @@ var prefs = function() {
             }
             setSearchLabelWidth();
             setSpotiLabelWidth();
-            infobar.biggerize();
             browser.rePoint();
         },
 

@@ -199,7 +199,7 @@ var infobar = function() {
         },
 
         biggerize: function() {
-            debug.log('INFOBAR','biggerizing');
+            debug.mark('INFOBAR','biggerizing');
             clearTimeout(ftimer);
 
             if (Object.keys(npinfo).length == 0 || $("#nptext").is(':hidden') || $("#infobar").is(':hidden')) {
@@ -217,7 +217,7 @@ var infobar = function() {
             var fontsize = Math.floor((maxheight/1.75)/1.25);
             var two_lines = getLines(2);
 
-            nptext.empty().css('font-size', fontsize+'px').css('padding-top', '0px').removeClass('ready').addClass('calculating');
+            nptext.empty().css('font-size', fontsize+'px').css('padding-top', '0px').removeClass('ready').removeClass('calculating').addClass('calculating');
 
             if (two_lines[0] != ' ') {
                 put_text_in_area(two_lines, nptext);
@@ -261,10 +261,9 @@ var infobar = function() {
             const notafile = "newimages/thisdosntexist.png";
 
             aImg.onload = function() {
-                debug.trace("ALBUMPICTURE","Image Loaded",$(this).attr("src"));
+                debug.mark("ALBUMPICTURE","Image Loaded",$(this).attr("src"));
                 $('#albumpicture').attr("src", $(this).attr("src")).fadeIn('fast', function() {
                     layoutProcessor.adjustLayout();
-                    infobar.biggerize();
                 });
                 if (!$('#albumpicture').hasClass('clickicon')) {
                     $('#albumpicture').addClass('clickicon');
@@ -303,7 +302,7 @@ var infobar = function() {
                     if (data.key === undefined || data.key == aImg.getAttribute('name')) {
                         debug.log("ALBUMPICTURE","Secondary Source is being set to ",data.image,aImg);
                         if (data.image != "" && data.image !== null && (aImg.src.match(noimage) !== null || aImg.src.match(notafile) !== null)) {
-                            debug.trace("ALBUMPICTURE","  OK, the criteria have been met");
+                            debug.log("ALBUMPICTURE","  OK, the criteria have been met");
                             aImg.src = data.image;
                         }
                     }

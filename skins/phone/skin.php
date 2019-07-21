@@ -97,7 +97,7 @@ printOutputCheckboxes();
             </div>
         </div>
         <div id="nowplaying">
-            <div id="nptext"></div>
+            <div id="nptext" class="calculating"></div>
         </div>
     </div>
     <div id="cssisshit">

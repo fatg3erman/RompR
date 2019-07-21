@@ -252,7 +252,9 @@ var layoutProcessor = function() {
             layoutProcessor.setPlaylistHeight();
             browser.rePoint();
             $('.topdropmenu:visible').fanoogleTopMenus();
-            if ($('.choose_playlist').css('font-weight') == '1000' && $('.mainpane:visible').not('#infobar').length == 0) {
+            if ($('.choose_playlist').css('font-weight') == '1000'
+                && $('.mainpane:visible').not('#infobar').length == 0
+                && (prefs.chooser == 'playlistm' || prefs.chooser == 'infobar')) {
                 layoutProcessor.sourceControl('albumlist');
             }
 
