@@ -26,7 +26,7 @@ body.phone .dropmenu>div {
 
 body.phone .mainpane .faveradio,
 body.phone .mainpane .radio,
-body.phone .mainpane .podcast,
+body.phone .mainpane .podcast:not(.podicon):not(.podglobal),
 body.phone .mainpane .directory {
     background-color:rgba(0,0,0,0.3);
     background-clip:border-box;

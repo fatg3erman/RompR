@@ -759,7 +759,7 @@ function doPodcast($y, $do_searchbox) {
         print '</div>';
     }
     if ($do_searchbox) {
-        print '<div class="containerbox noselection"><div class="expand">
+        print '<div class="containerbox noselection dropdown-container"><div class="expand">
             <input class="enter clearbox" name="podsearcher_'.$y->PODindex.'" type="text" ';
         if (array_key_exists('searchterm', $_REQUEST)) {
             print 'value="'.urldecode($_REQUEST['searchterm']).'" ';

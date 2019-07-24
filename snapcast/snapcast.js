@@ -339,7 +339,8 @@ function snapcastClient() {
         var title = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(holder);
         var n = $('<input>', {type: "text", class: "expand tag snapclientname", name: "clientname"}).appendTo(title);
         var but = $('<button>', {class: 'fixed'}).appendTo(title).html(language.gettext('label_update')).on('click', self.changeName);
-        title.append('<div class="expand snapclienthost notnarrow" name="clienthost"></div>');
+        var client = $('<div>', {class: 'containerbox'}).appendTo(holder);
+        client.append('<div class="expand snapclienthost" name="clienthost"></div>');
         var m = $('<i>', {class: "podicon fixed icon-menu clickicon"}).appendTo(title).on('click', self.setGroup);
         var rb = $('<i>', {class: "fixed podicon icon-cancel-circled clickicon"}).appendTo(title).on('click', self.deleteClient);
         vc = $('<div>', {class: 'containerbox dropdown-container invisible'}).appendTo(holder);
