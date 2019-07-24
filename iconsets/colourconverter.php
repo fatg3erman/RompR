@@ -33,10 +33,10 @@ foreach ($files as $file) {
     // $hack = preg_replace('/#fb8626/i', '#333333', $hack);
     // $hack = preg_replace('/#fb8a26/i', '#333333', $hack);
 
-    // These lines convert the gradient as used in Sunset.
+    // These lines convert the gradient as used in Slush-Dark.
     // Don't forget to edit (or remove) the #pset and #pmaxset in theme.css
-    $hack = preg_replace('/#fff94b/i', '#000099', $hack);
-    $hack = preg_replace('/#c8451f/i', '#000000', $hack);
+    $hack = preg_replace('/#656565/i', '#654321', $hack);
+    $hack = preg_replace('/#000000/i', '#123456', $hack);
 
 
     file_put_contents($file, $hack);

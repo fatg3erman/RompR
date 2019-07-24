@@ -17,7 +17,7 @@
       <stop
          id="stop829"
          offset="0"
-         style="stop-color:#000099;stop-opacity:1" />
+         style="stop-color:#656565;stop-opacity:1" />
       <stop
          id="stop831"
          offset="1"
@@ -100,7 +100,7 @@
       <stop
          id="stop864"
          offset="1"
-         style="stop-color:#000099;stop-opacity:1" />
+         style="stop-color:#656565;stop-opacity:1" />
     </linearGradient>
     <filter
        style="color-interpolation-filters:sRGB"
