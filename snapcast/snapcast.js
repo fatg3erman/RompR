@@ -329,7 +329,6 @@ function snapcastClient() {
     var volumepc;
     var muted;
     var vc;
-    var namesavetimer = null;
     var groupmenu;
     var grouplist;
     var groupid;
@@ -338,7 +337,8 @@ function snapcastClient() {
     this.initialise = function(parentdiv) {
         holder = $('<div>', {class: 'snapcastclient'}).appendTo(parentdiv);
         var title = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(holder);
-        var n = $('<input>', {type: "text", class: "expand tag snapclientname", name: "clientname"}).appendTo(title).on('keyup', self.changeName);
+        var n = $('<input>', {type: "text", class: "expand tag snapclientname", name: "clientname"}).appendTo(title);
+        var but = $('<button>', {class: 'fixed'}).appendTo(title).html(language.gettext('label_update')).on('click', self.changeName);
         title.append('<div class="expand snapclienthost notnarrow" name="clienthost"></div>');
         var m = $('<i>', {class: "podicon fixed icon-menu clickicon"}).appendTo(title).on('click', self.setGroup);
         var rb = $('<i>', {class: "fixed podicon icon-cancel-circled clickicon"}).appendTo(title).on('click', self.deleteClient);
@@ -410,11 +410,6 @@ function snapcastClient() {
     }
 
     this.changeName = function() {
-        clearTimeout(namesavetimer);
-        namesavetimer = setTimeout(self.saveNameChange, 2000);
-    }
-
-    this.saveNameChange = function() {
         snapcast.setClientName(id, holder.find('input[name="clientname"]').val());
     }
 

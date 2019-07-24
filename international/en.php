@@ -756,7 +756,8 @@ $languages['en'] = array (
 	"snapcast_changegroup" => "Change Group",
 	"snapcast_latency" => "Latency ",
 	"snapcast_setlatency" => "Set Latency",
-	"snapcast_notconnected" => "(Not Connected)"
+	"snapcast_notconnected" => "(Not Connected)",
+	"label_update" => "Update"
 );
 
 ?>
