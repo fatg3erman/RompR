@@ -95,7 +95,7 @@ var alarmclock = function() {
 	function createAlarmDropdown(holder, alarm, index) {
 		var container = $('<div>', {id: 'alarmpanel_'+index, class: 'toggledown invisible cheesemaster'}).insertAfter(holder);
 
-		var twatt = $('<div>', {class: 'containerbox'}).appendTo(container);
+		var twatt = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(container);
 		$('<i>', {class: "mh menu fixed icon-cancel-circled deletealarm", id: 'deletealarm_'+index}).appendTo(twatt);
 		$('<div>', {class: 'expand'}).html(language.gettext('label_delete_alarm')).appendTo(twatt);
 		twatt.css({'margin-left': '4px', 'margin-bottom': '4px'});
@@ -446,11 +446,12 @@ var alarmclock = function() {
 		},
 
 		setup: function() {
-			var d = uiHelper.createPluginHolder('icon-alarm', language.gettext('button_alarm'), 'alarmclock_icon');
+			var d = uiHelper.createPluginHolder('icon-alarm', language.gettext('button_alarm'), 'alarmclock_icon', 'alarmpanel');
 			if (d === false) {
 				return false;
 			}
-			var holder = $('<div>', {class: 'topdropmenu dropshadow rightmenu normalmenu stayopen dontstealmyclicks', id: 'alarmpanel'}).appendTo(d);
+			var holder = uiHelper.makeDropHolder('alarmpanel', d, true);
+			// var holder = $('<div>', {class: 'topdropmenu dropshadow rightmenu normalmenu stayopen dontstealmyclicks', id: 'alarmpanel'}).appendTo(d);
 			holder.append('<div class="textcentre configtitle"><b>'+language.gettext('button_alarm')+'</b></div>');
 			topofwindow = $('<input>', {type: "hidden", class: "helplink", value: "https://fatg3erman.github.io/RompR/Alarm-And-Sleep"}).appendTo(holder);
 			fillWindow();

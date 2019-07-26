@@ -389,11 +389,23 @@ var uiHelper = function() {
             }
         },
 
-        createPluginHolder: function(icon, title, id) {
+        createPluginHolder: function(icon, title, id, panel) {
             try {
-                return layoutProcessor.createPluginHolder(icon, title, id);
+                return layoutProcessor.createPluginHolder(icon, title, id, panel);
             } catch (err) {
                 return false;
+            }
+        },
+
+        makeDropHolder: function(name, d, dontsteal) {
+            try {
+                return layoutProcessor.makeDropHolder(name);
+            } catch (err) {
+                var c = 'topdropmenu dropshadow rightmenu normalmenu stayopen';
+                if (dontsteal) {
+                    c += ' dontstealmyclicks';
+                }
+                return $('<div>', {class: c, id: name}).appendTo(d);
             }
         },
 

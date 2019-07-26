@@ -494,7 +494,7 @@ var layoutProcessor = function() {
             });
         },
 
-        createPluginHolder: function(icon, title, id) {
+        createPluginHolder: function(icon, title, id, panel) {
             var i = $('<i>', {class: 'topimg tooltip topdrop expand', title: title, id: id}).insertAfter('#rightspacer');
             i.addClass(icon);
             return i;

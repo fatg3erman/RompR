@@ -351,6 +351,15 @@ var layoutProcessor = function() {
 
         getElementPlaylistOffset: function(element) {
             return element.position().top;
+        },
+
+        createPluginHolder: function(icon, title, id, panel) {
+            $('<i>', {class: 'onlywide topimg expand '+icon}).insertBefore('i[name="specialplugins"]').on('click', function() {layoutProcessor.sourceControl(panel)});
+            return $('<i>', {class: 'noshrink topimg tright '+icon}).appendTo('#narrowscreenicons').on('click', function() {layoutProcessor.sourceControl(panel)});
+        },
+
+        makeDropHolder: function(name) {
+            return $('<div>', {class: 'scroller mainpane invisible pright', id: name}).insertBefore('#playlistm');
         }
 
     }
@@ -370,6 +379,14 @@ jQuery.fn.sortableTrackList = function() {
 jQuery.fn.trackDragger = function() {
     return this;
 }
+
+var shortcuts = function() {
+    return {
+        add: function(a,b,c) {
+
+        }
+    }
+}();
 
 var addToPlaylist = function() {
     return {

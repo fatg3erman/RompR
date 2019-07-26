@@ -939,7 +939,7 @@ var layoutProcessor = function() {
             });
         },
 
-        createPluginHolder: function(icon, title, id) {
+        createPluginHolder: function(icon, title, id, panel) {
             var d = $('<div>', {class: 'topdrop'}).prependTo('#righthandtop');
             var i = $('<i>', {class: 'tooltip', title: title, id: id}).appendTo(d);
             i.addClass(icon);
