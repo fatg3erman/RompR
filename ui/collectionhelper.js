@@ -32,26 +32,74 @@ var collectionHelper = function() {
             update_load_timer = setTimeout( pollAlbumList, 1000);
         } else {
             debug.log('GENERAL','Collection update is complete');
-            loadCollection(true);
+            refreshCollection();
             loadFileBrowser();
         }
     }
 
-    function loadCollection(rescan) {
-        if (!prefs.hide_albumlist) {
-            var albums = 'albums.php?';
-            if (rescan) {
-                albums += 'rebuild=yes&dump='+collectionHelper.collectionKey('a');
-            } else {
-                albums += 'item='+collectionHelper.collectionKey('a');
+    function refreshCollection() {
+        // Collection updates are done completely asynchronously. All this does is start it off, it does not wait for
+        // it to complete, since browsers retry automatically after some time (2 minutes seems to be the norm)
+        // and there's no way to stop that.
+        // We rely on the update monitor to keep polling the server until it gets 'RompR Is Done'
+        // at which point it will load the collection.
+        debug.mark('GENERAL', 'Initiating Collection Rebuild');
+        var albums = 'albums.php?rebuild=yes';
+        $.ajax({
+            type: "GET",
+            url: albums,
+            timeout: prefs.collection_load_timeout,
+            dataType: "html",
+            cache: false
+        })
+        .done(function() {
+            debug.mark('GENERAL','Collection Rebuild has Started');
+            monitortimer = setTimeout(checkUpdateMonitor,monitorduration);
+        })
+        .fail(function() {
+            debug.error('GENERAL','Collection Rebuild Did Not Work!');
+            infobar.error('error_collectionupdate');
+            loadCollection();
+        });
+    }
+
+    function checkUpdateMonitor() {
+        $.ajax({
+            type: "GET",
+            url: 'utils/checkupdateprogress.php',
+            dataType: 'json',
+            success: function(data) {
+                debug.trace("UPDATE",data);
+                if (data.current == 'RompR Is Done') {
+                    debug.mark('GENERAL', 'Collection Update Finished');
+                    infobar.notify(language.gettext('label_updatedone'));
+                    infobar.removenotify(notify);
+                    loadCollection();
+                } else {
+                    $('#updatemonitor').html(data.current);
+                    if (player.updatingcollection) {
+                        monitortimer = setTimeout(checkUpdateMonitor,monitorduration);
+                    }
+                }
+            },
+            error: function(data) {
+                debug.log("UPDATE","ERROR",data);
+                if (player.updatingcollection) {
+                    monitortimer = setTimeout(checkUpdateMonitor,monitorduration);
+                }
             }
-            debug.log("GENERAL","Loading Collection from URL",albums,'with timeout',prefs.collection_load_timeout);
+        });
+    }
+
+    function loadCollection() {
+        if (!prefs.hide_albumlist) {
+            var albums = 'albums.php?item='+collectionHelper.collectionKey('a');
+            debug.log("GENERAL","Loading Collection from URL",albums);
             $.ajax({
                 type: "GET",
                 url: albums,
                 timeout: prefs.collection_load_timeout,
                 dataType: "html",
-                headers: {Expect: "100-continue"},
                 cache: false
             })
             .done(function(data) {
@@ -67,10 +115,7 @@ var collectionHelper = function() {
                     player.collection_is_empty = false;
                 }
                 data = null;
-                if (albums.match(/rebuild/)) {
-                    infobar.notify(language.gettext('label_updatedone'));
-                    collectionHelper.scootTheAlbums($("#collection"));
-                }
+                collectionHelper.scootTheAlbums($("#collection"));
                 layoutProcessor.postAlbumActions($('#collection'));
                 loadAudiobooks();
             })
@@ -90,14 +135,8 @@ var collectionHelper = function() {
             })
             .always(function() {
                 debug.log('GENERAL','In always callback');
-                clearTimeout(monitortimer);
-                if (notify !== false) {
-                    infobar.removenotify(notify);
-                    notify = false;
-                }
                 player.updatingcollection = false;
             });
-            monitortimer = setTimeout(checkUpdateMonitor,monitorduration);
         } else {
             loadAudiobooks();
         }
@@ -117,27 +156,6 @@ var collectionHelper = function() {
         var files = 'dirbrowser.php';
         debug.log("GENERAL","Loading File Browser from URL",files);
         $("#filecollection").load(files);
-    }
-
-    function checkUpdateMonitor() {
-        $.ajax({
-            type: "GET",
-            url: 'utils/checkupdateprogress.php',
-            dataType: 'json',
-            success: function(data) {
-                debug.debug("UPDATE",data);
-                $('#updatemonitor').html(data.current);
-                if (player.updatingcollection) {
-                    monitortimer = setTimeout(checkUpdateMonitor,monitorduration);
-                }
-            },
-            error: function(data) {
-                debug.log("UPDATE","ERROR",data);
-                if (player.updatingcollection) {
-                    monitortimer = setTimeout(checkUpdateMonitor,monitorduration);
-                }
-            }
-        });
     }
 
     function updateUIElements() {
@@ -224,7 +242,7 @@ var collectionHelper = function() {
             if (visible) {
                 switch (panel) {
                     case 'albumlist':
-                        loadCollection(false);
+                        loadCollection();
                         break;
 
                     case 'filelist':
@@ -301,7 +319,7 @@ var collectionHelper = function() {
                 $("#searchresultholder").html('');
                 scanFiles(rescan ? 'rescan' : 'update');
             } else {
-                loadCollection(false);
+                loadCollection();
                 loadFileBrowser();
             }
         },

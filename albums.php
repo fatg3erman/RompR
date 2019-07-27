@@ -272,18 +272,29 @@ function database_search() {
 
 function update_collection() {
     global $PLAYER_TYPE;
+
+    // Send some dummy data back to the browser, then close the connection
+    // so that the browser doesn't time out and retry
+    ob_end_clean();
+    header("Connection: close");
+    ignore_user_abort(true); // just to be safe
+    ob_start();
+    print('<html></html>');
+    $size = ob_get_length();
+    header("Content-Length: $size");
+    ob_end_flush(); // Strange behaviour, will not work
+    flush(); // Unless both are called !
+
+    // Browser is now happy. Now we can do our work in peace.
     cleanSearchTables();
     prepareCollectionUpdate();
     $player = new $PLAYER_TYPE();
     $player->musicCollectionUpdate();
     tidy_database();
     remove_findtracks();
-    $whattodump = (array_key_exists('dump', $_REQUEST)) ? $_REQUEST['dump'] : false;
-    if ($whattodump === false) {
-        print '<html></html>';
-    } else {
-        dumpAlbums($whattodump);
-    }
+    // Add a marker to the monitor file to say we've finished
+    $player->collectionUpdateDone();
+
 }
 
 ?>

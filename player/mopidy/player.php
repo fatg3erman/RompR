@@ -3,6 +3,8 @@ require_once ('player/mpd/mpdinterface.php');
 $PLAYER_TYPE = 'mopidyPlayer';
 class mopidyPlayer extends base_mpd_player {
 
+    private $monitor;
+
     public function check_track_load_command($uri) {
         return 'add';
     }
@@ -11,14 +13,14 @@ class mopidyPlayer extends base_mpd_player {
     	global $prefs;
         logger::blurt("MOPIDY", "Starting Music Collection Update");
         $collection = new musicCollection();
-    	$monitor = fopen('prefs/monitor','w');
+    	$this->monitor = fopen('prefs/monitor','w');
         $dirs = $prefs['mopidy_collection_folders'];
         while (count($dirs) > 0) {
             $dir = array_shift($dirs);
             if ($dir == "Spotify Playlists") {
-            	$this->musicCollectionSpotifyPlaylistHack($monitor);
+            	$this->musicCollectionSpotifyPlaylistHack();
             } else {
-    			fwrite($monitor, "\n<b>".get_int_text('label_scanningf', array($dir))."</b><br />".get_int_text('label_fremaining', array(count($dirs))));
+    			fwrite($this->monitor, "\n<b>".get_int_text('label_scanningf', array($dir))."</b><br />".get_int_text('label_fremaining', array(count($dirs))));
                 foreach ($this->parse_list_output('lsinfo "'.format_for_mpd($this->local_media_check($dir)).'"', $dirs, false) as $filedata) {
                     $collection->newTrack($filedata);
                 }
@@ -26,11 +28,10 @@ class mopidyPlayer extends base_mpd_player {
     	    }
         }
         saveCollectionPlayer('mopidy');
-        fwrite($monitor, "\nUpdating Database");
-        fclose($monitor);
+        fwrite($this->monitor, "\nUpdating Database");
     }
 
-    private function musicCollectionSpotifyPlaylistHack($monitor) {
+    private function musicCollectionSpotifyPlaylistHack() {
     	$dirs = array();
     	$playlists = $this->do_mpd_command("listplaylists", true, true);
         if (is_array($playlists) && array_key_exists('playlist', $playlists)) {
@@ -40,7 +41,7 @@ class mopidyPlayer extends base_mpd_player {
     				logger::log("COLLECTION", "Ignoring Playlist ".$pl);
     			} else {
     		    	logger::log("COLLECTION", "Scanning Playlist ".$pl);
-    				fwrite($monitor, "\n<b>".get_int_text('label_scanningp', array($pl))."</b>");
+    				fwrite($this->monitor, "\n<b>".get_int_text('label_scanningp', array($pl))."</b>");
                     foreach ($this->parse_list_output('listplaylistinfo "'.format_for_mpd($pl).'"', $dirs, false) as $filedata) {
                         $collection->newTrack($filedata);
                     }
@@ -48,6 +49,11 @@ class mopidyPlayer extends base_mpd_player {
     			}
     	    }
     	}
+    }
+
+    public function collectionUpdateDone() {
+        fwrite($this->monitor, "\nRompR Is Done");
+        fclose($this->monitor);
     }
 
     private function local_media_check($dir) {

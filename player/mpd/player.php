@@ -3,6 +3,8 @@ require_once ('player/mpd/mpdinterface.php');
 $PLAYER_TYPE = 'mpdPlayer';
 class mpdPlayer extends base_mpd_player {
 
+    private $monitor;
+
     public function check_track_load_command($uri) {
         $ext = strtolower(pathinfo($uri, PATHINFO_EXTENSION));
         switch ($ext) {
@@ -27,19 +29,23 @@ class mpdPlayer extends base_mpd_player {
         global $prefs;
         logger::mark("MPD", "Starting Music Collection Update");
         $collection = new musicCollection();
-    	$monitor = fopen('prefs/monitor','w');
+    	$this->monitor = fopen('prefs/monitor','w');
         $dirs = array("/");
         while (count($dirs) > 0) {
             $dir = array_shift($dirs);
-            fwrite($monitor, "\n<b>".get_int_text('label_scanningf', array($dir))."</b><br />".get_int_text('label_fremaining', array(count($dirs))));
+            fwrite($this->monitor, "\n<b>".get_int_text('label_scanningf', array($dir))."</b><br />".get_int_text('label_fremaining', array(count($dirs))));
             foreach ($this->parse_list_output('lsinfo "'.format_for_mpd($dir).'"', $dirs, false) as $filedata) {
                 $collection->newTrack($filedata);
             }
     	    $collection->tracks_to_database();
         }
         saveCollectionPlayer('mpd');
-        fwrite($monitor, "\nUpdating Database");
-        fclose($monitor);
+        fwrite($this->monitor, "\nUpdating Database");
+    }
+
+    public function collectionUpdateDone() {
+        fwrite($this->monitor, "\nRompR Is Done");
+        fclose($this->monitor);
     }
 
     protected function player_specific_fixups(&$filedata) {
