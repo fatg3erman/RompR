@@ -45,58 +45,56 @@ var collectionHelper = function() {
             } else {
                 albums += 'item='+collectionHelper.collectionKey('a');
             }
-            debug.log("GENERAL","Loading Collection from URL",albums);
+            debug.log("GENERAL","Loading Collection from URL",albums,'with timeout',prefs.collection_load_timeout);
             $.ajax({
                 type: "GET",
                 url: albums,
                 timeout: prefs.collection_load_timeout,
                 dataType: "html",
-                success: function(data) {
-                    debug.log('GENERAL','Collection Loaded');
-                    clearTimeout(monitortimer);
-                    $("#collection").html(data);
-                    player.collectionLoaded = true;
-                    player.updatingcollection = false;
-                    if ($('#emptycollection').length > 0) {
-                        player.collection_is_empty = true;
-                        $('#collectionbuttons').show();
-                        prefs.save({ collectioncontrolsvisible: true });
-                        $('[name="donkeykong"]').makeFlasher({flashtime: 0.5, repeats: 3});
-                    } else {
-                        player.collection_is_empty = false;
-                    }
-                    data = null;
-                    if (albums.match(/rebuild/)) {
-                        infobar.notify(language.gettext('label_updatedone'));
-                        collectionHelper.scootTheAlbums($("#collection"));
-                    }
-                    layoutProcessor.postAlbumActions($('#collection'));
-                    if (notify !== false) {
-                        infobar.removenotify(notify);
-                        notify = false;
-                    }
-                    loadAudiobooks();
-                },
-                error: function(data) {
-                    clearTimeout(monitortimer);
-                    collectionHelper.disableCollectionUpdates();
-                    var html = '<p align="center"><b><font color="red">Failed To Generate Collection</font></b></p>';
-                    if (data.responseText) {
-                        html += '<p align="center">'+data.responseText+'</p>';
-                    }
-                    if (data.statusText) {
-                        html += '<p align="center">'+data.statusText+'</p>';
-                    }
-                    html += '<p align="center"><a href="https://fatg3erman.github.io/RompR/Troubleshooting#very-large-collections" target="_blank">Read The Troubleshooting Docs</a></p>';
-                    $("#collection").html(html);
-                    debug.error("PLAYER","Failed to generate collection",data);
-                    infobar.error('error_collectionupdate');
-                    if (notify !== false) {
-                        infobar.removenotify(notify);
-                        notify = false;
-                    }
-                    player.updatingcollection = false;
+                cache: false
+            })
+            .done(function(data) {
+                debug.log('GENERAL','Collection Loaded');
+                $("#collection").html(data);
+                player.collectionLoaded = true;
+                if ($('#emptycollection').length > 0) {
+                    player.collection_is_empty = true;
+                    $('#collectionbuttons').show();
+                    prefs.save({ collectioncontrolsvisible: true });
+                    $('[name="donkeykong"]').makeFlasher({flashtime: 0.5, repeats: 3});
+                } else {
+                    player.collection_is_empty = false;
                 }
+                data = null;
+                if (albums.match(/rebuild/)) {
+                    infobar.notify(language.gettext('label_updatedone'));
+                    collectionHelper.scootTheAlbums($("#collection"));
+                }
+                layoutProcessor.postAlbumActions($('#collection'));
+                loadAudiobooks();
+            })
+            .fail(function(data) {
+                collectionHelper.disableCollectionUpdates();
+                var html = '<p align="center"><b><font color="red">Failed To Generate Collection</font></b></p>';
+                if (data.responseText) {
+                    html += '<p align="center">'+data.responseText+'</p>';
+                }
+                if (data.statusText) {
+                    html += '<p align="center">'+data.statusText+'</p>';
+                }
+                html += '<p align="center"><a href="https://fatg3erman.github.io/RompR/Troubleshooting#very-large-collections" target="_blank">Read The Troubleshooting Docs</a></p>';
+                $("#collection").html(html);
+                debug.error("PLAYER","Failed to generate collection",data);
+                infobar.error('error_collectionupdate');
+            })
+            .always(function() {
+                debug.log('GENERAL','In always callback');
+                clearTimeout(monitortimer);
+                if (notify !== false) {
+                    infobar.removenotify(notify);
+                    notify = false;
+                }
+                player.updatingcollection = false;
             });
             monitortimer = setTimeout(checkUpdateMonitor,monitorduration);
         } else {
