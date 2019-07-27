@@ -12,6 +12,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * The Last.FM info panel will no longer show images for artists. Sadly, Last.FM seems to be in a downward spiral and their API is providing images that no longer exist. There is nothing I can do about this. For now, I've left the placeholders for the images and if the API gets fixed (very unlikely) they'll start to appear again.
 * Multitudinous new icon themes
 * Some changes to the layout of the Phone and Tablet skins. Large tablets will now display the Now Playing, Playlist, and Media Chooser panels simultaneously when in Landscape orientation.
+* Alarm Clock and Sleep Timer now supported on the Tablet skin. Note that they still won't work if your tablet sleeps, but the tablet skin is quite good for small laptop screens so that's what this is intended for.
 * Various minor bugfixes
 
 ## Version 1.26
