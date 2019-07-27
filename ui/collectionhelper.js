@@ -241,7 +241,7 @@ var collectionHelper = function() {
 
         doUpdateCollection: function() {
             collectionHelper.checkCollection(true, false);
-        }
+        },
 
         doURescanCollection: function() {
             collectionHelper.checkCollection(true, true);
