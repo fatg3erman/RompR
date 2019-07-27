@@ -275,15 +275,32 @@ function update_collection() {
 
     // Send some dummy data back to the browser, then close the connection
     // so that the browser doesn't time out and retry
-    ob_end_clean();
-    header("Connection: close");
-    ignore_user_abort(true); // just to be safe
-    ob_start();
-    print('<html></html>');
-    $size = ob_get_length();
-    header("Content-Length: $size");
-    ob_end_flush(); // Strange behaviour, will not work
-    flush(); // Unless both are called !
+    $sapi_type = php_sapi_name();
+    if (preg_match('/fpm/', $sapi_type) || preg_match('/fcgi/', $sapi_type)) {
+        logger::mark('COLLECTION', 'Closing Request The FastCGI Way');
+        print('<html></html>');
+        fastcgi_finish_request();
+    } else {
+        logger::mark('COLLECTION', 'Closing Request The Apache Way');
+        ob_end_clean();
+        ignore_user_abort(true); // just to be safe
+        ob_start();
+        print('<html></html>');
+        $size = ob_get_length();
+        header("Content-Length: $size");
+        header("Content-Encoding: none");
+        header("Connection: close");
+        ob_end_flush(); // Strange behaviour, will not work
+        ob_flush();
+        flush(); // Unless both are called !
+        if (ob_get_contents()) {
+            ob_end_clean();
+        }
+    }
+
+    if (session_id()) {
+        session_write_close();
+    }
 
     // Browser is now happy. Now we can do our work in peace.
     cleanSearchTables();
