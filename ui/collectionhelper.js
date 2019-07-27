@@ -3,12 +3,12 @@ var collectionHelper = function() {
     var monitortimer = null;
     var monitorduration = 1000;
     var update_load_timer = null;
-    var update_load_timer_running = false;
     var returned_data = new Array();
     var update_timer = null;
     var notify = false;
 
     function scanFiles(cmd) {
+        debug.log('GENERAL','Scanning Files');
         collectionHelper.prepareForLiftOff(language.gettext("label_updating"));
         collectionHelper.markWaitFileList(language.gettext("label_updating"));
         uiHelper.emptySearchResults();
@@ -16,24 +16,22 @@ var collectionHelper = function() {
         debug.shout("PLAYER","Scanning using",cmd);
         player.controller.do_command_list([[cmd]], function() {
             update_load_timer = setTimeout( pollAlbumList, 2000);
-            update_load_timer_running = true;
             player.controller.checkProgress();
         });
     }
 
     function pollAlbumList() {
-        if(update_load_timer_running) {
-            clearTimeout(update_load_timer);
-            update_load_timer_running = false;
-        }
+        clearTimeout(update_load_timer);
+        debug.log('GENERAL','Polling Collection Rebuild')
         $.getJSON("player/mpd/postcommand.php", checkPoll);
     }
 
     function checkPoll(data) {
         if (data.updating_db) {
+            debug.log('GENERAL','Still updating collection');
             update_load_timer = setTimeout( pollAlbumList, 1000);
-            update_load_timer_running = true;
         } else {
+            debug.log('GENERAL','Collection update is complete');
             loadCollection(true);
             loadFileBrowser();
         }
@@ -54,6 +52,7 @@ var collectionHelper = function() {
                 timeout: prefs.collection_load_timeout,
                 dataType: "html",
                 success: function(data) {
+                    debug.log('GENERAL','Collection Loaded');
                     clearTimeout(monitortimer);
                     $("#collection").html(data);
                     player.collectionLoaded = true;
@@ -240,14 +239,22 @@ var collectionHelper = function() {
             }
         },
 
+        doUpdateCollection: function() {
+            collectionHelper.checkCollection(true, false);
+        }
+
+        doURescanCollection: function() {
+            collectionHelper.checkCollection(true, true);
+        },
+
         disableCollectionUpdates: function() {
             $('button[name="donkeykong"]').off('click').css('opacity', '0.2');
             $('button[name="dinkeyking"]').off('click').css('opacity', '0.2');
         },
 
         enableCollectionUpdates: function() {
-            $('button[name="donkeykong"]').off('click').on('click', function() { collectionHelper.checkCollection(true, false) }).css('opacity', '');
-            $('button[name="dinkeyking"]').off('click').on('click', function() { collectionHelper.checkCollection(true, false) }).css('opacity', '');
+            $('button[name="donkeykong"]').off('click').on('click', collectionHelper.doUpdateCollection).css('opacity', '');
+            $('button[name="dinkeyking"]').off('click').on('click', collectionHelper.doRescanCollection).css('opacity', '');
         },
 
         forceCollectionReload: function() {
@@ -290,6 +297,7 @@ var collectionHelper = function() {
                 }
             }
             if (update) {
+                debug.log('GENERAL','We are going to update the collection');
                 player.updatingcollection = true;
                 $("#searchresultholder").html('');
                 scanFiles(rescan ? 'rescan' : 'update');
