@@ -534,6 +534,10 @@ var layoutProcessor = function() {
             $("#loadsawrappers").css({height: mainheight+"px"});
             var infoheight = $('#infobar').outerHeight(true) - $('#cssisshit').outerHeight(true);
             $('#toomanywrappers').css({height: infoheight+"px"});
+            // Work around crappy iOS Safari bug where it updates width css before height
+            // and therefore doesn't get the album picture size right
+            $('#albumpicture').css('width', '0px');
+            $('#albumpicture').css('width', '');
             layoutProcessor.setPlaylistHeight();
             browser.rePoint();
             $('.topdropmenu:visible').fanoogleTopMenus();
