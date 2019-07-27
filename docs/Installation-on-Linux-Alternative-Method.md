@@ -109,7 +109,7 @@ So, create this file, note I've assumed the default apache root directory of /va
             php_admin_value memory_limit 128M
             php_admin_value post_max_size 256M
             php_admin_value upload_max_filesize 32M
-            php_admin_value max_file_uploads = 50                
+            php_admin_value max_file_uploads 50                
             php_admin_value max_execution_time 1800         
         </IfModule>
 

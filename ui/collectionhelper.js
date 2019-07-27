@@ -51,6 +51,7 @@ var collectionHelper = function() {
                 url: albums,
                 timeout: prefs.collection_load_timeout,
                 dataType: "html",
+                headers: {Expect: "100-continue"},
                 cache: false
             })
             .done(function(data) {

@@ -112,7 +112,7 @@ This will open nano again. It may bring up an empty file, or it may bring up a f
     		    php_admin_value memory_limit 128M
                 php_admin_value post_max_size 256M
                 php_admin_value upload_max_filesize 32M
-                php_admin_value max_file_uploads = 50                
+                php_admin_value max_file_uploads 50                
                 php_admin_value max_execution_time 1800         
 		    </IfModule>
 
