@@ -94,6 +94,7 @@
 #gronky {
     margin-left:8px;
     margin-right:8px;
+    font-size:8pt;
 }
 
 #amontobin {
@@ -203,6 +204,15 @@
 #audiobooks .podcastresume>.expand
 {
     margin-right: 4px;
+}
+
+#flowcontrols {
+    height: 36px;
+}
+
+#flowcontrols i {
+    max-height: 24px;
+    margin-top:4px;
 }
 
 /*

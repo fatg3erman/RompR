@@ -1,10 +1,4 @@
 
-<div class="containerbox">
-<?php
-    print '<div class="configtitle textcentre expand"><b>'.get_int_text('label_searchfor').'</b></div>';
-?>
-</div>
-
 <?php
 foreach ($sterms as $label => $term) {
     print '<div class="containerbox dropdown-container searchitem" name="'.$term.'">';

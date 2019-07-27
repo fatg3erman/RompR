@@ -11,31 +11,32 @@ function probe_database() {
 	// the database type. This does mean we get some duplicate code but this is
 	// so much better for the user.
 	global $mysqlc, $prefs;
-	debuglog("Attempting to connect to MYSQL Server","SQL_CONNECT",4);
+	logger::mark("SQL_CONNECT", "Probing Database Type");
+	logger::log("SQL_CONNECT", "Attempting to connect to MYSQL Server");
 	try {
 		if (is_numeric($prefs['mysql_port'])) {
-			debuglog("Connecting using hostname and port","SQL_CONNECT",5);
+			logger::trace("SQL_CONNECT", "Connecting using hostname and port");
 			$dsn = "mysql:host=".$prefs['mysql_host'].";port=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'];
 		} else {
-			debuglog("Connecting using unix socket","SQL_CONNECT",5);
+			logger::trace("SQL_CONNECT", "Connecting using unix socket");
 			$dsn = "mysql:unix_socket=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'];
 		}
 		$mysqlc = new PDO($dsn, $prefs['mysql_user'], $prefs['mysql_password']);
-		debuglog("Connected to MySQL","SQL_CONNECT",5);
+		logger::mark("SQL_CONNECT", "Connected to MySQL");
 		$prefs['collection_type'] = 'mysql';
 	} catch (Exception $e) {
-		debuglog("Couldn't connect to MySQL - ".$e,"SQL_CONNECT",3);
+		logger::warn("SQL_CONNECT", "Couldn't connect to MySQL - ".$e);
 		$mysqlc = null;
 	}
 	if ($mysqlc == null) {
-		debuglog("Attempting to use SQLite Database",4);
+		logger::log("SQL_CONNECT", "Attempting to use SQLite Database");
 		try {
-			$dsn = "sqlite:prefs/collection_mpd.sq3";
+			$dsn = "sqlite:prefs/collection.sq3";
 			$mysqlc = new PDO($dsn);
-			debuglog("Connected to SQLite","MYSQL");
+			logger::mark("MYSQL", "Connected to SQLite");
 			$prefs['collection_type'] = 'sqlite';
 		} catch (Exception $e) {
-			debuglog("Couldn't use SQLite Either - ".$e,"MYSQL",3);
+			logger::fail("MYSQL", "Couldn't use SQLite Either - ".$e);
 			$mysqlc = null;
 		}
 	}
@@ -45,11 +46,11 @@ function probe_database() {
 // Initialisation
 //
 
-function show_sql_error($text = "    MYSQL Error: ", $stmt = null) {
+function show_sql_error($text = "", $stmt = null) {
 	global $mysqlc;
-	debuglog($text." : ".$mysqlc->errorInfo()[1]." : ".$mysqlc->errorInfo()[2],"MYSQL",1);
+	logger::error("MYSQL ERROR", $text,":",$mysqlc->errorInfo()[1],":",$mysqlc->errorInfo()[2]);
 	if ($stmt !== null) {
-		debuglog($text." : ".$stmt->errorInfo()[1]." : ".$stmt->errorInfo()[2],"MYSQL",1);
+		logger::error("STMT ERROR", $text,":",$stmt->errorInfo()[1],":",$stmt->errorInfo()[2]);
 	}
 }
 
@@ -59,10 +60,10 @@ function show_sql_error($text = "    MYSQL Error: ", $stmt = null) {
 
 function generic_sql_query($qstring, $return_boolean = false, $return_type = PDO::FETCH_ASSOC, $return_value = null, $value_default = null, $return_rowcount = false ) {
 	global $mysqlc;
-	debuglog($qstring,"SQL_QUERY",9);
+	logger::debug("GENERIC_SQL", $qstring);
 	$retval = true;
-	if (($result = $mysqlc->query($qstring)) !== false) {
-		debuglog("Done : ".($result->rowCount())." rows affected","SQL_QUERY",9);
+	if (($result = @$mysqlc->query($qstring)) !== false) {
+		logger::debug("GENERIC_SQL", "Done : ".($result->rowCount())." rows affected");
 		if ($return_value !== null) {
 			$arr = $result->fetch(PDO::FETCH_ASSOC);
 			$retval = ($arr) ? $arr[$return_value] : $value_default;
@@ -74,7 +75,7 @@ function generic_sql_query($qstring, $return_boolean = false, $return_type = PDO
 			$retval = $result->fetchAll($return_type);
 		}
 	} else {
-		debuglog("Command Failed : ".$qstring,"SQL_QUERY",2);
+		logger::warn("GENERIC_SQL", "Command Failed :",$qstring);
 		show_sql_error();
 		if ($return_value !== null) {
 			$retval = $value_default;
@@ -90,7 +91,7 @@ function generic_sql_query($qstring, $return_boolean = false, $return_type = PDO
 
 function sql_get_column($qstring, $column) {
 	global $mysqlc;
-	debuglog("Get column ".$column." from ".$qstring,"SQL_QUERY",9);
+	logger::debug("SQL_GET_COLUMN", "Get column",$column,"from",$qstring);
 	$retval = array();
 	if (($result = $mysqlc->query($qstring)) !== false) {
 		$retval = $result->fetchAll(PDO::FETCH_COLUMN, $column);
@@ -126,6 +127,7 @@ function sql_prepare_query() {
 
 	global $mysqlc;
 	$allargs = func_get_args();
+	logger::debug("SQL_PREPARE",$allargs);
 	$return_boolean = $allargs[0];
 	$return_type = $allargs[1];
 	$return_value = $allargs[2];
@@ -153,10 +155,9 @@ function sql_prepare_query() {
 			$stmt = null;
 			return $retval;
 		} else {
-			show_sql_error("SQL Statement Error : ",$stmt);
+			show_sql_error("SQL Statement Error for",$stmt);
 		}
 	} else {
-		debuglog("Query prep error ".$query,"MYSQL",2);
 		show_sql_error();
 	}
 	if ($return_value !== null) {
@@ -174,7 +175,7 @@ function sql_prepare_query_later($query) {
 	global $mysqlc;
 	$stmt = $mysqlc->prepare($query);
 	if ($stmt === FALSE) {
-		show_sql_error("Query Prep Error For ".$query,2);
+		show_sql_error();
 	}
 	return $stmt;
 }
@@ -199,26 +200,22 @@ function dbg_params($string,$data) {
 function checkCollectionStatus() {
 	$lv = generic_sql_query("SELECT Value FROM Statstable WHERE Item = 'ListVersion'", false, null, 'Value', null);
 	if ($lv == ROMPR_COLLECTION_VERSION) {
-		debuglog("Collection version is correct","MYSQL",8);
+		logger::log("MYSQL", "Collection version is correct");
 		return "0";
 	} else {
 		if ($lv > 0) {
-			debuglog("Collection version is outdated - ".$lv, "MYSQL",4);
+			logger::warn("MYSQL", "Collection version is outdated - ".$lv);
 			return "1";
 		} else {
-			debuglog("Collection has not been built".$lv, "MYSQL",7);
+			logger::shout("MYSQL", "Collection has not been built".$lv);
 			return "2";
 		}
 	}
 }
 
-function whatTheFuck() {
-	return "1";
-}
-
 function checkAlbumArt() {
 	$oa =  generic_sql_query("SELECT COUNT(ImgVersion) AS NumOldAlbums FROM Albumtable WHERE Image LIKE 'albumart/small/%' AND ImgVersion < ".ROMPR_IMAGE_VERSION, false, null, 'NumOldAlbums', 0);
-	debuglog("There are ".$oa." albums with old-style album art","INIT");
+	logger::log("INIT", "There are ".$oa." albums with old-style album art");
 	return $oa;
 }
 
@@ -239,7 +236,7 @@ function check_transaction() {
 			open_transaction();
 		}
 	} else {
-		debuglog("WARNING! check_transaction called when transaction not open!","BACKEND",3);
+		logger::warn("BACKEND", "WARNING! check_transaction called when transaction not open!");
 	}
 }
 
@@ -251,19 +248,54 @@ function close_transaction() {
     		$numdone = 0;
     	}
     } else {
-		debuglog("WARNING! close_transaction called when transaction not open!","BACKEND",3);
+		logger::warn("BACKEND", "WARNING! close_transaction called when transaction not open!");
     }
 }
 
-function get_collection_type() {
-	$c = simple_query('Value', 'Statstable', 'Item', 'CollType', null);
-	if ($c == COLLECTION_TYPE_MPD) {
-		return 'mpd';
-	} else if ($c == COLLECTION_TYPE_MOPIDY) {
-		return 'mopidy';
-	} else {
-		return 'unknown';
+function saveCollectionPlayer($type) {
+	global $prefs;
+	logger::mark("COLLECTION", "Setting Collection Type to",$type);
+	switch ($type) {
+		case 'mopidy':
+			sql_prepare_query(true, null, null, null,
+				"UPDATE Statstable SET Value = ? WHERE Item = 'CollType'", 1);
+			$prefs['collection_player'] = 'mopidy';
+			break;
+
+		case 'mpd':
+			sql_prepare_query(true, null, null, null,
+				"UPDATE Statstable SET Value = ? WHERE Item = 'CollType'", 0);
+			$prefs['collection_player'] = 'mpd';
+			break;
 	}
+	savePrefs();
 }
+
+function readCollectionPlayer($sp = treu) {
+	global $prefs;
+	$c = simple_query('Value', 'Statstable', 'Item', 'CollType', 999);
+    switch ($c) {
+		case 999:
+			logger::trace("COLLECTION", "Collection type from database is not set");
+			logger::trace("COLLECTION", "Prefs collection_player is currently",$prefs['collection_player']);
+			$prefs['collection_player'] = null;
+			break;
+
+        case 1:
+			logger::debug("COLLECTION", "Collection type from database is mopidy");
+            $prefs['collection_player'] = 'mopidy';
+            break;
+
+        case 0:
+		logger::debug("COLLECTION", "Collection type from database is mpd");
+            $prefs['collection_player'] = 'mpd';
+            break;
+    }
+	if ($sp) {
+		savePrefs();
+	}
+	return $c;
+}
+
 
 ?>

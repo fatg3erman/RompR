@@ -7,17 +7,16 @@
 // You can also use eg -b "debug_enabled=8;currenthost=MPD;player_backend=mpd"
 // to get more debug info in the webserver error log.
 
-include ("includes/vars.php");
-include ("includes/functions.php");
+require_once ("includes/vars.php");
+require_once ("includes/functions.php");
 require_once ("utils/imagefunctions.php");
-include ("international.php");
+require_once ("international.php");
+require_once ("backends/sql/backend.php");
 $error = 0;
-include("backends/sql/backend.php");
 
-debuglog("======================================================================","TIMINGS",4);
-# debuglog("== Starting Backend Collection Malarkey","TIMINGS",4);
+logger::trace("TIMINGS", "======================================================================");
 $initmem = memory_get_usage();
-debuglog("Memory Used is ".$initmem,"COLLECTION",4);
+logger::trace("COLLECTION", "Memory Used is ".$initmem);
 $now2 = time();
 
 switch (true) {
@@ -31,8 +30,8 @@ switch (true) {
     case array_key_exists('mpdsearch', $_REQUEST):
         logit('mpdsearch');
         // Handle an mpd-style search request
-        include ("player/mpd/connection.php");
-        include ("collection/collection.php");
+        require_once ("player/".$prefs['player_backend']."/player.php");
+        require_once ("collection/collection.php");
         $trackbytrack = true;
         $doing_search = true;
         mpd_search();
@@ -41,8 +40,8 @@ switch (true) {
     case array_key_exists('browsealbum', $_REQUEST):
         logit('browsealbum');
         // Populate a spotify album in mopidy's search results - as spotify doesn't return all tracks
-        include ("player/mpd/connection.php");
-        include ("collection/collection.php");
+        require_once ("player/".$prefs['player_backend']."/player.php");
+        require_once ("collection/collection.php");
         $trackbytrack = true;
         $doing_search = true;
         browse_album();
@@ -53,21 +52,20 @@ switch (true) {
         // Handle an mpd-style search request requiring tl_track format results
         // Note that raw_search uses the collection models but not the database
         // hence $trackbytrack must be false
-        debuglog("Doing RAW search","MPD SEARCH",7);
-        include ("player/mpd/connection.php");
-        include ("collection/collection.php");
-        include ("collection/dbsearch.php");
+        logger::log("MPD SEARCH", "Doing RAW search");
+        require_once ("player/".$prefs['player_backend']."/player.php");
+        require_once ("collection/collection.php");
+        require_once ("collection/dbsearch.php");
         $doing_search = true;
         raw_search();
-        close_mpd();
         break;
 
     case array_key_exists('terms', $_REQUEST):
         logit('terms');
         // SQL database search request
-        include ("player/mpd/connection.php");
-        include ("collection/collection.php");
-        include ("collection/dbsearch.php");
+        require_once ("player/".$prefs['player_backend']."/player.php");
+        require_once ("collection/collection.php");
+        require_once ("collection/dbsearch.php");
         $doing_search = true;
         database_search();
         break;
@@ -75,52 +73,40 @@ switch (true) {
     case array_key_exists('rebuild', $_REQUEST):
         logit('rebuild');
         // This is a request to rebuild the music collection
-        include ("player/mpd/connection.php");
-        include ("collection/collection.php");
+        require_once ("player/".$prefs['player_backend']."/player.php");
+        require_once ("collection/collection.php");
         $trackbytrack = true;
         update_collection();
         break;
 
     default:
-        debuglog("Couldn't figure out what to do!","ALBUMS",1);
+        logger::fail("ALBUMS", "Couldn't figure out what to do!");
         break;
 
 }
 
-// if (isset($parse_time)) {
-//     debuglog("== Time Spent Reading Socket Data                      : ".$parse_time,"TIMTINGS",4);
-//     debuglog("== Time Spent Parsing Socket Data                      : ".$rtime,"TIMTINGS",4);
-//     debuglog("== Time Spent Checking/Writing to Database             : ".$db_time,"TIMTINGS",4);
-//     debuglog("== Time Spent Putting Stuff into Collection Structures : ".$coll_time,"TIMTINGS",4);
-//     debuglog("== Time Spent Sorting Collection Structures            : ".$cp_time,"TIMTINGS",4);
-// }
-
-debuglog("== Collection Update And Send took ".format_time(time() - $now2),"TIMINGS",4);
+logger::trace("TIMINGS", "== Collection Update And Send took ".format_time(time() - $now2));
 $peakmem = memory_get_peak_usage();
 $ourmem = $peakmem - $initmem;
-debuglog("Peak Memory Used Was ".number_format($peakmem)." bytes  - meaning we used ".number_format($ourmem)." bytes.","COLLECTION",4);
-debuglog("======================================================================","TIMINGS",4);
+logger::trace("TIMINGS", "Peak Memory Used Was ".number_format($peakmem)." bytes  - meaning we used ".number_format($ourmem)." bytes.");
+logger::trace("TIMINGS", "======================================================================");
 
 function logit($key) {
-    if (is_array($_REQUEST[$key])) {
-        debuglog("Request is : ".$key.' : '.multi_implode($_REQUEST[$key], ", "), "COLLECTION",8);
-    } else {
-        debuglog("Request is ".$key."=".$_REQUEST[$key],"COLLECTION",8);
-    }
+    logger::log("COLLECTION", "Request is",$key,"=",$_REQUEST[$key]);
 }
 
 function checkDomains($d) {
     if (array_key_exists('domains', $d)) {
         return $d['domains'];
     }
-    debuglog("No search domains in use","SEARCH");
+    logger::debug("SEARCH", "No search domains in use");
     return false;
 }
 
 function mpd_search() {
-    global $collection, $dbterms, $skin;
+    global $dbterms, $skin, $PLAYER_TYPE;
     // If we're searching for tags or ratings it would seem sensible to only search the database
-    // HOWEVER - we could be searching for genre of performer or composer - which will not match in the database
+    // HOWEVER - we could be searching for genre or performer or composer - which will not match in the database
     // For those cases ONLY, controller.js will call into this instead of database_search, and we set $dbterms
     // to make the collection check everything it finds against the database
     $cmd = $_REQUEST['command'];
@@ -153,29 +139,31 @@ function mpd_search() {
 
         }
     }
-    debuglog("Search command : ".$cmd,"MPD SEARCH");
+    logger::log("MPD SEARCH", "Search command : ".$cmd);
     if ($_REQUEST['resultstype'] == "tree") {
-        include ("player/mpd/filetree.php");
+        require_once ("player/mpd/filetree.php");
         require_once ("skins/".$skin."/ui_elements.php");
-        doFileSearch($cmd, $domains);
+        $player = new fileCollector();
+        $player->doFileSearch($cmd, $domains);
     } else {
         cleanSearchTables();
         prepareCollectionUpdate();
-        doCollection($cmd, $domains);
+        $collection = new musicCollection();
+        $player = new $PLAYER_TYPE();
+        $player->populate_collection($cmd, $domains, $collection);
         $collection->tracks_to_database();
         close_transaction();
         dumpAlbums($_REQUEST['dump']);
         remove_findtracks();
     }
-    close_mpd();
 }
 
 function browse_album() {
-    global $collection, $skin;
+    global $PLAYER_TYPE, $skin;
     $a = preg_match('/(a|b)(.*?)(\d+|root)/', $_REQUEST['browsealbum'], $matches);
     if (!$a) {
         print '<h3>'.get_int_text("label_general_error").'</h3>';
-        debuglog('Browse Album Failed - regexp failed to match '.$_REQUEST['browsealbum'],"DUMPALBUMS",3);
+        logger::error("DUMPALBUMS", "Browse Album Failed - regexp failed to match", $_REQUEST['browsealbum']);
         return false;
     }
     $why = $matches[1];
@@ -183,19 +171,21 @@ function browse_album() {
     $who = $matches[3];
     $albumlink = get_albumlink($who);
     if (substr($albumlink, 0, 8) == 'podcast+') {
-        require_once('includes/podcastfunctions.php');
-        debuglog("Browsing For Podcast ".substr($albumlink, 9), "ALBUMS");
+        require_once ('includes/podcastfunctions.php');
+        logger::log("ALBUMS", "Browsing For Podcast ".substr($albumlink, 9));
         $podid = getNewPodcast(substr($albumlink, 8), 0, false);
-        debuglog("Ouputting Podcast ID ".$podid, "ALBUMS");
+        logger::trace("ALBUMS", "Ouputting Podcast ID ".$podid);
         outputPodcast($podid, false);
     } else {
         if (preg_match('/^.+?:artist:/', $albumlink)) {
             remove_album_from_database($who);
         }
+        $player = new $PLAYER_TYPE();
+        $collection = new musicCollection();
         $cmd = 'find file "'.$albumlink.'"';
-        debuglog("Doing Album Browse : ".$cmd,"MPD");
+        logger::log("MPD", "Doing Album Browse : ".$cmd);
         prepareCollectionUpdate();
-        doCollection($cmd, false);
+        $player->populate_collection($cmd, false, $collection);
         $collection->tracks_to_database(true);
         close_transaction();
         remove_findtracks();
@@ -214,20 +204,19 @@ function browse_album() {
             }
         }
     }
-    close_mpd();
 }
 
 function raw_search() {
-    global $collection, $doing_search;
+    global $PLAYER_TYPE, $doing_search;
     $domains = checkDomains($_REQUEST);
+    $collection = new musicCollection();
     $found = 0;
-    debuglog("checkdb is ".$_REQUEST['checkdb'],"MPD SEARCH",4);
+    logger::trace("MPD SEARCH", "checkdb is ".$_REQUEST['checkdb']);
     if ($_REQUEST['checkdb'] !== 'false') {
-        $collection = new musicCollection();
-        debuglog(" ... checking database first ", "MPD SEARCH", 7);
-        $found = doDbCollection($_REQUEST['rawterms'], $domains, "RAW");
+        logger::trace("MPD SEARCH", " ... checking database first ");
+        $found = doDbCollection($_REQUEST['rawterms'], $domains, "RAW", $collection);
         if ($found > 0) {
-            debuglog("  ... found ".$found." matches in database", "MPD SEARCH", 6);
+            logger::log("MPD SEARCH", "  ... found ".$found." matches in database");
         }
     }
     if ($found == 0) {
@@ -235,9 +224,10 @@ function raw_search() {
         foreach ($_REQUEST['rawterms'] as $key => $term) {
             $cmd .= " ".$key.' "'.format_for_mpd(html_entity_decode($term[0])).'"';
         }
-        debuglog("Search command : ".$cmd,"MPD SEARCH");
+        logger::log("MPD SEARCH", "Search command : ".$cmd);
         $doing_search = true;
-        doCollection($cmd, $domains);
+        $player = new $PLAYER_TYPE();
+        $player->populate_collection($cmd, $domains, $collection);
 
         // For backends that don't support multiple parameters (Google Play)
         // This'll return nothing for Spotify, so it's OK. It might help SoundCloud too.
@@ -252,10 +242,10 @@ function raw_search() {
         }
         if (count($parms) > 0) {
             $cmd .= '"'.implode(' ',$parms).'"';
-            debuglog("Search command : ".$cmd,"MPD SEARCH");
+            logger::log("MPD SEARCH", "Search command : ".$cmd);
             $doing_search = true;
             $collection->filter_duplicate_tracks();
-            doCollection($cmd, $domains, false);
+            $player->populate_collection($cmd, $domains, $collection);
         }
 
     }
@@ -263,7 +253,7 @@ function raw_search() {
 }
 
 function database_search() {
-    global $tree;
+    $tree = null;
     $domains = checkDomains($_REQUEST);
     if ($_REQUEST['resultstype'] == "tree") {
         $tree = new mpdlistthing(null);
@@ -271,22 +261,21 @@ function database_search() {
         cleanSearchTables();
         open_transaction();
      }
-    $fcount = doDbCollection($_REQUEST['terms'], $domains, $_REQUEST['resultstype']);
+    $fcount = doDbCollection($_REQUEST['terms'], $domains, $_REQUEST['resultstype'], $tree);
     if ($_REQUEST['resultstype'] == "tree") {
         printFileSearch($tree, $fcount);
     } else {
         close_transaction();
         dumpAlbums($_REQUEST['dump']);
     }
-    close_mpd();
 }
 
 function update_collection() {
-    global $collection;
+    global $PLAYER_TYPE;
     cleanSearchTables();
     prepareCollectionUpdate();
-    musicCollectionUpdate();
-    $collection->tracks_to_database();
+    $player = new $PLAYER_TYPE();
+    $player->musicCollectionUpdate();
     tidy_database();
     remove_findtracks();
     $whattodump = (array_key_exists('dump', $_REQUEST)) ? $_REQUEST['dump'] : false;
@@ -295,7 +284,6 @@ function update_collection() {
     } else {
         dumpAlbums($whattodump);
     }
-    close_mpd();
 }
 
 ?>

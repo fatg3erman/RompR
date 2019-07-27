@@ -2,6 +2,7 @@ var prefs = function() {
 
     var textSaveTimer = null;
     var deferredPrefs = null;
+    var uichangetimer = null;
 
     const prefsInLocalStorage = [
         "sourceshidden",
@@ -126,6 +127,7 @@ var prefs = function() {
     }
 
     function dontTransferPlaylist() {
+        setCookie('player_backend', 'none', 0);
         prefs.save(deferredPrefs, reloadWindow);
     }
 
@@ -138,9 +140,10 @@ var prefs = function() {
             success: function() {
                 prefs.save(deferredPrefs, reloadWindow);
             },
-            error: function() {
-                debug.error("PREFS","Playlist transfer failed");
-                infobar.error(language.gettext('error_trfailed'));
+            error: function(data) {
+                debug.error("PREFS","Playlist transfer failed",data);
+                infobar.error(language.gettext('error_trfailed')+'<br>'+data.responseText);
+                prefs.setPrefs();
             }
         });
     }
@@ -187,6 +190,18 @@ var prefs = function() {
                         callback = reloadWindow;
                     }
                     break;
+
+                case 'snapcast_server':
+                case 'snapcast_port':
+                    if (felakuti.snapcast_server != prefs.snapcast_server ||
+                        felakuti.snapcast_port != prefs.snapcast_port) {
+                            if (felakuti.snapcast_server == '') {
+                                snapcast.clearEverything();
+                            } else {
+                                callback = snapcast.updateStatus;
+                            }
+                    }
+                    break;
             }
         });
         prefs.save(felakuti, callback);
@@ -227,23 +242,15 @@ var prefs = function() {
     }
 
     function changeRandomMode() {
-        var theme = prefs.theme;
-        if (prefs.usertheme) {
-            theme = prefs.usertheme;
+        if (typeof(prefs.bgimgparms[prefs.theme].random) == 'undefined') {
+            prefs.bgimgparms[prefs.theme].random = false;
         }
-        if (typeof(prefs.bgimgparms[theme].random) == 'undefined') {
-            prefs.bgimgparms[theme].random = false;
-        }
-        prefs.bgimgparms[theme].random = !prefs.bgimgparms[theme].random;
+        prefs.bgimgparms[prefs.theme].random = !prefs.bgimgparms[prefs.theme].random;
         prefs.save({bgimgparms: prefs.bgimgparms});
     }
 
     function changeBackgroundPosition() {
-        var theme = prefs.theme;
-        if (prefs.usertheme) {
-            theme = prefs.usertheme;
-        }
-        var bgp = prefs.bgimgparms[theme];
+        var bgp = prefs.bgimgparms[prefs.theme];
         bgp.position = $('input[name="backgroundposition"]:checked').val();
         prefs.save({bgimgparms: prefs.bgimgparms});
         updateCustomBackground();
@@ -251,12 +258,8 @@ var prefs = function() {
 
     function removeAllBackgroundImages() {
         clearCustomBackground();
-        var theme = prefs.theme;
-        if (prefs.usertheme) {
-            theme = prefs.usertheme;
-        }
-        $.getJSON('backimage.php?clearallbackgrounds='+theme+'&browser_id='+prefs.browser_id, function(data) {
-            loadBackgroundImages(theme);
+        $.getJSON('backimage.php?clearallbackgrounds='+prefs.theme+'&browser_id='+prefs.browser_id, function(data) {
+            loadBackgroundImages(prefs.theme);
         });
     }
 
@@ -325,11 +328,7 @@ var prefs = function() {
 
     function changeBgImage(event) {
         var el = $(event.target);
-        var theme = prefs.theme;
-        if (prefs.usertheme) {
-            theme = prefs.usertheme;
-        }
-        var bgp = prefs.bgimgparms[theme];
+        var bgp = prefs.bgimgparms[prefs.theme];
         if (el.hasClass('landscapeimage')) {
             bgp.landscape = parseInt(el.attr('name'));
         } else if (el.hasClass('portraitimage')) {
@@ -377,11 +376,7 @@ var prefs = function() {
     function updateCustomBackground() {
         clearTimeout(backgroundTimer);
         clearCustomBackground();
-        var theme = prefs.theme;
-        if (prefs.usertheme) {
-            theme = prefs.usertheme;
-        }
-        var bgp = prefs.bgimgparms[theme];
+        var bgp = prefs.bgimgparms[prefs.theme];
         var timeout = bgp.timeout;
         if (bgp.timeout + bgp.lastchange <= Date.now()) {
             bgp.lastchange = Date.now();
@@ -663,42 +658,23 @@ var prefs = function() {
 
             switch(prefname) {
                 case "skin":
+                    // Because some skins require the info panel
+                    prefobj.hidebrowser = false;
+                    prefobj.sourceswidthpercent = 25;
+                    prefobj.playlistwidthpercent = 25;
                     callback = reloadWindow;
                     break;
 
                 case "theme":
-                    prefs.setTheme($("#themeselector").val());
-                    setTimeout(layoutProcessor.adjustLayout, 1000);
-                    setTimeout(layoutProcessor.themeChange, 1000);
-                    break;
-
                 case "icontheme":
-                    $("#icontheme-theme").attr("href", "iconsets/"+$("#iconthemeselector").val()+"/theme.css");
-                    $("#icontheme-adjustments").attr("href","iconsets/"+$("#iconthemeselector").val()+"/adjustments.css");
-                    setTimeout(layoutProcessor.adjustLayout, 1000);
-                    break;
-
                 case "fontsize":
-                    $("#fontsize").attr({href: "sizes/"+$("#fontsizeselector").val()});
-                    setTimeout(setSearchLabelWidth, 1000);
-                    setTimeout(setSpotiLabelWidth, 1000);
-                    setTimeout(infobar.biggerize, 1000);
-                    break;
-
                 case "fontfamily":
-                    $("#fontfamily").attr({href: "fonts/"+$("#fontfamilyselector").val()});
-                    setTimeout(setSearchLabelWidth, 1000);
-                    setTimeout(setSpotiLabelWidth, 1000);
-                    setTimeout(infobar.biggerize, 1000);
+                case "coversize":
+                    callback = prefs.setTheme;
                     break;
 
                 case "lastfm_country_code":
                     prefobj.country_userset = true;
-                    break;
-
-                case "coversize":
-                    $("#albumcoversize").attr({href: "coversizes/"+$("#coversizeselector").val()});
-                    setTimeout(browser.rePoint, 1000);
                     break;
 
                 case 'podcast_sort_0':
@@ -724,33 +700,48 @@ var prefs = function() {
         },
 
         setTheme: function(theme) {
+            clearTimeout(uichangetimer);
             if (!theme) theme = prefs.theme;
+            // These 2 themes were removed
+            if (theme == 'PlasmaPortrait.css') {
+                theme = 'Plasma.css';
+                $("#themeselector").val(theme);
+                prefs.save({theme: 'Plasma.css'});
+            }
+            if (theme == 'Storm.css') {
+                theme = 'Mountains.css';
+                $("#themeselector").val(theme);
+                prefs.save({theme: 'Mountains.css'});
+            }
             clearCustomBackground();
             // Use a different version every time to ensure the browser doesn't cache.
             // Browsers are funny about CSS.
             var t = Date.now();
-            $("#theme").attr("href", "themes/"+theme+"?version="+t);
-            $("#albumcoversize").attr("href", "coversizes/"+prefs.coversize+"?version="+t);
-            $("#fontsize").attr("href", "sizes/"+prefs.fontsize+"?version="+t);
-            $("#fontfamily").attr("href", "fonts/"+prefs.fontfamily+"?version="+t);
-            $("#icontheme-theme").attr("href", "iconsets/"+prefs.icontheme+"/theme.css"+"?version="+t);
-            $("#icontheme-adjustments").attr("href", "iconsets/"+prefs.icontheme+"/adjustments.css"+"?version="+t);
+            // Some browsers (Chrome, Safari) don't fire a load event on the theme element unless we delete and re-create it
+            // Even then we have a fudge timer, just in case
+            uichangetimer = setTimeout(prefs.postUIChange, 3000);
+            $('#theme').remove();
+            $('<link>', {id: 'theme', rel: 'stylesheet', type: 'text/css', href: "gettheme.php?version="+t
+                +'&theme='+theme+'&fontsize='+prefs.fontsize+'&fontfamily='+prefs.fontfamily
+                +'&coversize='+prefs.coversize+'&icontheme='+prefs.icontheme}).on('load', prefs.postUIChange).appendTo('head');
             loadBackgroundImages(theme);
-            prefs.rgbs = null;
-            if (typeof(layoutProcessor) != 'undefined') {
-                setTimeout(prefs.postUIChange, 2000);
-            }
         },
 
         postUIChange: function() {
+            clearTimeout(uichangetimer);
+            debug.mark('PREFS','Post UI Change actions');
+            $('#theme').off('load');
+            prefs.rgbs = null;
+            prefs.maxrgbs = null;
             $('.rangechooser').rangechooser('fill');
             if (typeof charts !== 'undefined') {
                 charts.reloadAll();
             }
-            layoutProcessor.adjustLayout();
+            if (typeof(layoutProcessor) != 'undefined') {
+                layoutProcessor.adjustLayout();
+            }
             setSearchLabelWidth();
             setSpotiLabelWidth();
-            infobar.biggerize();
             browser.rePoint();
         },
 
@@ -794,11 +785,7 @@ var prefs = function() {
             $.getJSON('backimage.php?clearbackground='+image, function(data) {
                 $('[name=imagefile').next().html(language.gettext('label_choosefile'));
                 $('[name=imagefile').parent().next('input[type="button"]').fadeOut('fast');
-                if (prefs.usertheme) {
-                    loadBackgroundImages(prefs.usertheme);
-                } else {
-                    loadBackgroundImages(prefs.theme);
-                }
+                loadBackgroundImages(prefs.theme);
             });
         },
 
@@ -834,3 +821,4 @@ if (localStorage.getItem("prefs.prefversion") == null) {
     localStorage.setItem('prefs.prefversion', JSON.stringify(2));
 }
 prefs.theme = prefs.theme.replace('_1080p','');
+prefs.fontfamily = prefs.fontfamily.replace('_', ' ');

@@ -389,44 +389,55 @@ function setChooserButtons() {
     layoutProcessor.adjustLayout();
 }
 
+function parsePsetCss(item, dflt) {
+    // Save looking these up every time, it's quite slow
+    var c = $(item).css('background-color');
+    var regexp = /rgba\((\d+),\s*(\d+),\s*(\d+),\s*(\d+)\)/;
+    var match = regexp.exec(c);
+    // If no style is set it comes back as 0,0,0 so we must catch that
+    // if you want black progress bars use 1,1,1
+    if (match && match[1] && match[2] && match[3] && (parseInt(match[1])+parseInt(match[2])+parseInt(match[3]) > 0)) {
+        return {r: parseInt(match[1]), g: parseInt(match[2]), b: parseInt(match[3])};
+    } else {
+        return dflt;
+    }
+}
+
 function getrgbs(percent,min) {
 
-    var colours = {r: 155, g: 75, b: 0};
+    var mincolours = {r: 100, g: 50, b: 1};
+    var maxcolours = {r: 255, g: 75, b: 1};
     if (prefs.rgbs == null) {
-        // Save looking these up every time, it's quite slow
-        var c = $('#pset').css('background-color');
-        var regexp = /rgba\((\d+),\s*(\d+),\s*(\d+),\s*(\d+)\)/;
-        var match = regexp.exec(c);
-        // If no style is set it comes back as 0,0,0 so we must catch that
-        // if you want black progress bars use 1,1,1
-        if (match && match[1] && match[2] && match[3] && (match[1]+match[2]+match[3] > 0)) {
-            colours = {r: match[1], g: match[2], b: match[3]};
-            prefs.rgbs = colours;
-        }
+        mincolours = parsePsetCss('#pset', mincolours);
+        prefs.rgbs = mincolours;
+        maxcolours = parsePsetCss('#pmaxset', maxcolours);
+        prefs.maxrgbs = maxcolours;
     } else {
-        colours = prefs.rgbs;
+        mincolours = prefs.rgbs;
+        maxcolours = prefs.maxrgbs;
     }
-
     if (typeof percent != "number") {
         percent = parseFloat(percent);
     }
-
     if (typeof min != "number") {
         min = parseFloat(min);
     }
-
     percent = Math.min(percent, 100);
     min = Math.max(min, 0);
-    var highr = Math.min(255, Math.round(colours.r + percent));
-    var highg = Math.min(255, Math.round(colours.g + percent));
-    var highb = Math.min(255, Math.round(colours.b + percent));
-    var lowr = Math.round(colours.r + min);
-    var lowg = Math.round(colours.g + min);
-    var lowb = Math.round(colours.b + min);
+    var maxfraction = percent/100;
+    var minfraction = min/100;
+    var variance = {r: maxcolours.r - mincolours.r, g: maxcolours.g - mincolours.g, b: maxcolours.b - mincolours.b};
+    var lowr = Math.round(mincolours.r + variance.r*minfraction);
+    var lowg = Math.round(mincolours.g + variance.g*minfraction);
+    var lowb = Math.round(mincolours.b + variance.b*minfraction);
+    var highr = Math.round(mincolours.r + variance.r*maxfraction);
+    var highg = Math.round(mincolours.g + variance.g*maxfraction);
+    var highb = Math.round(mincolours.b + variance.b*maxfraction);
+    // debug.log('COLOURS','dr',variance.r,'dg',variance.g,'db',variance.b,'lowr',lowr,'lowg',lowg,'lowb',lowb,'highr',highr,'highg',highg,'highb',highb,'minf',minfraction,'maxf',maxfraction);
     var lowalpha = 0.8;
     var highalpha = 1;
     if (min == 0) {
-        return "rgba("+colours.r+","+colours.g+","+colours.b+","+lowalpha+") 0%,rgba("+highr+","+highg+","+highb+","+highalpha+") "+percent+
+        return "rgba("+lowr+","+lowg+","+lowb+","+lowalpha+") 0%,rgba("+highr+","+highg+","+highb+","+highalpha+") "+percent+
             "%,rgba(0,0,0,0.1) "+percent+"%,rgba(0,0,0,0.1) 100%)";
     } else {
         return "rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.1) "+min+"%, rgba("+lowr+","+lowg+","+lowb+","+lowalpha+") "+min+"%,"+
@@ -493,35 +504,31 @@ function displayRating(where, what) {
 }
 
 function showUpdateWindow() {
-    if (mopidy_is_old) {
-        alert(language.gettext("mopidy_tooold", [mopidy_min_version]));
-    } else {
-        if (typeof(prefs.shownupdatewindow) != 'string' || compare_version_numbers(prefs.shownupdatewindow, rompr_version)) {
-            var fnarkle = new popup({
-                css: {
-                    width: 1200,
-                    height: 1600
-                },
-                fitheight: true,
-                title: 'RompЯ Version '+rompr_version,
-                hasclosebutton: false
-            });
-            var mywin = fnarkle.create();
-            mywin.append('<div id="version"></div>');
-            mywin.append('<div id="begging"></div>');
-            mywin.append('<div id="license"></div>');
-            mywin.append('<div id="about"></div>');
-            $('#version').load('utils/versioninfo.php');
-            $('#begging').load('includes/begging.html', function() {
-                $('#license').load('includes/license.html', function(){
-                    $('#about').load('includes/about.html', function() {
-                        fnarkle.addCloseButton('OK', show_albumart_update_window);
-                        prefs.save({shownupdatewindow: rompr_version});
-                        fnarkle.open();
-                    });
+    if (typeof(prefs.shownupdatewindow) != 'string' || compare_version_numbers(prefs.shownupdatewindow, rompr_version)) {
+        var fnarkle = new popup({
+            css: {
+                width: 1200,
+                height: 1600
+            },
+            fitheight: true,
+            title: 'RompЯ Version '+rompr_version,
+            hasclosebutton: false
+        });
+        var mywin = fnarkle.create();
+        mywin.append('<div id="version"></div>');
+        mywin.append('<div id="begging"></div>');
+        mywin.append('<div id="license"></div>');
+        mywin.append('<div id="about"></div>');
+        $('#version').load('utils/versioninfo.php');
+        $('#begging').load('includes/begging.html', function() {
+            $('#license').load('includes/license.html', function(){
+                $('#about').load('includes/about.html', function() {
+                    fnarkle.addCloseButton('OK', show_albumart_update_window);
+                    prefs.save({shownupdatewindow: rompr_version});
+                    fnarkle.open();
                 });
             });
-        }
+        });
     }
 }
 
@@ -602,12 +609,16 @@ function calcPercentWidth(element, childSelector, targetWidth, parentWidth) {
 }
 
 function makeHoverWork(ev) {
+    // This function relies on the fact that the size of the background image
+    // that provides the icon we want to click on is 50% of the height of the element,
+    // as defined in the icon theme css
     ev.preventDefault();
     ev.stopPropagation();
     var jq = $(this);
+    var elh = jq.height()/2+2;
     var position = getPosition(ev);
     var elemright = jq.width() + jq.offset().left;
-    if (position.x > elemright - 14) {
+    if (position.x > elemright - elh) {
         jq.css('cursor','pointer');
     } else {
         jq.css('cursor','auto');
@@ -615,12 +626,16 @@ function makeHoverWork(ev) {
 }
 
 function makeClearWork(ev) {
+    // This function relies on the fact that the size of the background image
+    // that provides the icon we want to click on is 50% of the height of the element,
+    // as defined in the icon theme css
     ev.preventDefault();
     ev.stopPropagation();
     var position = getPosition(ev);
     var jq = $(this);
+    var elh = jq.height()/2+2;
     var elemright = jq.width() + jq.offset().left;
-    if (position.x > elemright - 24) {
+    if (position.x > elemright - elh) {
         jq.val("");
         fakeClickOnInput(jq);
     }
@@ -967,7 +982,6 @@ var spotifyLinkChecker = function() {
                     debug.debug("SPOTICHECKER", "Track is playable");
                     if (track.linked_from) {
                         debug.mark("SPOTICHECKER", "Track was relinked",track);
-                        // callback = doneOK;
                         uri = track.linked_from.uri;
                     }
                     update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: uri, status: 2});
@@ -976,7 +990,6 @@ var spotifyLinkChecker = function() {
                     if (track.restrictions) {
                         debug.blurt("SPOTICHECKER", "Track restrictions :",track.restrictions.reason)
                     }
-                    // callback = doneOK;
                     update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: track.uri, status: 3});
                 }
             } else {
@@ -1013,7 +1026,7 @@ var spotifyLinkChecker = function() {
                 spotifyLinkChecker.setTimer();
             } else {
                 if (Date.now() > prefs.linkchecker_nextrun) {
-                    debug.mark("SPOTICHECKER","Link Checker Restarting");
+                    debug.mark("SPOTICHECKER","Link Checker Restarting",Date.now(),prefs.linkchecker_nextrun);
                     updateNextRunTime();
                     metaHandlers.genericAction('resetlinkcheck', spotifyLinkChecker.setTimer, goneTitsUp);
                 } else {

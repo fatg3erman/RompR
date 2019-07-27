@@ -93,9 +93,20 @@ input[type=text] {
     height: 2em;
     border: 0px none;
     border-radius: 0 0;
+	background-color: white;
 }
 
-.desktop select {
+.selectholder {
+	background-color:white;
+}
+
+input.snapclientname[type=text] {
+    /* padding: 0px 2px; */
+    height: 1.5em !important;
+	background-color: transparent !important;
+}
+
+select {
     width:100%;
     background-color:transparent;
     border:0px none;
@@ -138,8 +149,12 @@ button {
     display:none;
 }
 
-.desktop .selectholder {
-    background:#fff url('../newimages/blobdown2.svg') right 2px center no-repeat;
+#pmaxset {
+    position:absolute;
+    display:none;
+}
+
+.selectholder {
     overflow:hidden;
     width:58%;
     margin-top:4px;
@@ -165,25 +180,7 @@ button {
     margin-left:1em;
 }
 
-.desktop .selectholder:hover {
-    background:#fff url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
-}
-
-.combobox-entry:hover {
-    background:#fff url('../newimages/blobdown2-hi.svg') right 2px center no-repeat;
-}
-
-.combobox-entry {
-    background:#fff url('../newimages/blobdown2.svg') right 2px center no-repeat;
-}
-
-.clearbox {
-    background:#fff url('../newimages/edit-delete.svg') right 2px center no-repeat;
-    background-size:12px 12px;
-}
-
 .combo-button {
-    background-image: url('../newimages/blobdown2.svg');
     background-size:contain;
     background-position: center;
     background-repeat:no-repeat;
@@ -494,6 +491,10 @@ button {
 = Specific Elements By ID
 =====================================================================
 */
+
+#amontobin {
+    font-size:8pt;
+}
 
 #collectionsearcher {
     padding-left:8px;
@@ -1014,7 +1015,7 @@ div.topdropmenu div:not(.canbefaded) {
 	opacity: 1 !important;
 }
 
-div.topdropmenu div.notenabled, div.togglecontainer.notenabled {
+div.topdropmenu div.notenabled, div.togglecontainer.notenabled, div#flowcontrols.notenabled {
 	opacity: 0.2 !important;
 }
 
@@ -2217,4 +2218,27 @@ div.unplayable {
 
 .newalarmholder {
 	height: 3em;
+}
+
+.snapcastgroup {
+	margin-bottom: 0.5em;
+}
+
+.snapgrouptitle {
+	margin-bottom: 0.25em;
+	background-color: rgba(0,0,0,0.1);
+	padding: 2px;
+}
+
+.snapcastclient {
+	padding-bottom:1em;
+}
+
+.snapclientname {
+	font-weight: bold;
+	font-size: 120%;
+}
+
+.snapclienthost {
+	font-size: 85%
 }

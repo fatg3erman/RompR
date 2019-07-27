@@ -35,7 +35,7 @@ class baseAlbumImage {
         }
         if ($this->mbid !== null) {
             if (preg_match('/\d+/', $this->mbid) && !preg_match('/-/', $this->mbid)) {
-                debuglog(" Supplied MBID of ".$mbid." looks more like a Discogs ID", "ALBUMIMAGE");
+                logger::log("ALBUMIMAGE", " Supplied MBID of ".$mbid." looks more like a Discogs ID");
                 $this->mbid = null;
             }
         }
@@ -58,7 +58,7 @@ class baseAlbumImage {
     }
 
     private function image_exists($image) {
-        debuglog("Checking for existence of file ".$image,"ALBUMIMAGE");
+        logger::trace("ALBUMIMAGE", "Checking for existence of file ".$image);
         return file_exists($image);
     }
 
@@ -85,7 +85,7 @@ class baseAlbumImage {
     private function check_if_image_already_downloaded() {
         $checkimages = $this->image_info_from_album_info();
         if ($this->image_exists($checkimages['small'])) {
-            debuglog("  ..  File exists","ALBUMIMAGE");
+            logger::trace("ALBUMIMAGE", "  ..  File exists");
             $this->images = $checkimages;
             return true;
         } else {
@@ -333,14 +333,14 @@ class albumImage extends baseAlbumImage {
     public function change_name($new_name) {
         switch ($this->artist) {
             case 'PLAYLIST':
-                debuglog("Playlist name changing from ".$this->album." to ".$new_name,"FUCKINGHELL");
+                logger::log("FUCKINGHELL", "Playlist name changing from ".$this->album." to ".$new_name);
                 if (file_exists($this->images['small'])) {
                     $oldbasepath = dirname($this->basepath);
                     $oldkey = $this->key;
                     $this->album = $new_name;
                     $this->images = $this->image_info_from_album_info();
                     $newbasepath = dirname($this->basepath);
-                    debuglog("Renaming Playlist Image from ".$oldbasepath." to ".$newbasepath,"ALBUMIMAGE");
+                    logger::log("ALBUMIMAGE", "Renaming Playlist Image from ".$oldbasepath." to ".$newbasepath);
                     rename($oldbasepath, $newbasepath);
                     foreach ($this->images as $image) {
                         $oldimage = dirname($image).'/'.$oldkey.'.jpg';
@@ -375,7 +375,7 @@ class albumImage extends baseAlbumImage {
             if (!is_dir($dir)) {
                 mkdir($dir, 0755, true);
             }
-            debuglog("  Creating file ".$image,"ALBUMIMAGE");
+            logger::log("ALBUMIMAGE", "  Creating file ".$image);
             switch ($size) {
                 case 'small':
                     $imagehandler->resizeToWidth(100);
@@ -412,16 +412,16 @@ class albumImage extends baseAlbumImage {
             if ($d->get_data_to_file($download_file, true)) {
                 $content_type = $d->get_content_type();
                 if (substr($content_type,0,5) != 'image' && $content_type != 'application/octet-stream') {
-            		debuglog("  .. Content type is ".$content_type." - not an image file! ".$this->source,"ALBUMIMAGE");
+            		logger::warn("ALBUMIMAGE", "  .. Content type is ".$content_type." - not an image file! ".$this->source);
                     $retval = false;
                 }
         	} else {
                 $retval = false;
         	}
         } else {
-            debuglog("  .. Copying apparent local file","ALBUMIMAGE");
+            logger::log("ALBUMIMAGE", "  .. Copying apparent local file");
             if (!copy($this->source, $download_file)) {
-                debuglog("    .. File Copy Failed","ALBUMIMAGE");
+                logger::fail("ALBUMIMAGE", "    .. File Copy Failed");
                 $retval = false;
             }
         }
@@ -429,7 +429,7 @@ class albumImage extends baseAlbumImage {
     }
 
     private function save_base64_data() {
-        debuglog("  Saving base64 data","ALBUMIMAGE");
+        logger::log("ALBUMIMAGE", "  Saving base64 data");
         $download_file = 'prefs/temp/'.$this->key;
         create_image_from_base64($this->base64data, $download_file);
         return $download_file;
@@ -519,16 +519,16 @@ class imageMagickImage {
     }
 
     public function checkImage() {
-        debuglog("  Image type is ".$this->image_type,"IMAGEMAGICK");
+        logger::log("IMAGEMAGICK", "  Image type is ".$this->image_type);
         return $this->image_type;
     }
 
     public function save($filename, $compression) {
         if ($this->image_type == IMAGETYPE_SVG) {
-            debuglog("  Copying SVG file instead of converting","IMAGEMAGICK");
+            logger::log("IMAGEMAGICK", "  Copying SVG file instead of converting");
             copy($this->filename, $filename);
         } else if ($this->convert_path === false) {
-            debuglog("WARNING! ImageMagick not installed","IMAGEMAGICK",2);
+            logger::warn("IMAGEMAGICK", "WARNING! ImageMagick not installed");
             copy($this->filename, $filename);
         } else {
             if ($this->image_type == IMAGETYPE_PNG) {
@@ -540,10 +540,10 @@ class imageMagickImage {
                 $params .= ' -resize '.$this->resize_to;
             }
             $cmd = 'convert "'.$this->filename.'"'.$params.' "'.$filename.'" 2>&1';
-            debuglog("  Command is ".$cmd,"IMAGEMAGICK",8);
+            logger::trace("IMAGEMAGICK", "  Command is ".$cmd);
             $r = exec($this->convert_path.$cmd, $o, $ret);
-            debuglog("    Final line of output was ".$r,"IMAGEMAGICK",8);
-            debuglog("    Return Value was ".$ret,"IMAGEMAGICK",8);
+            logger::trace("IMAGEMAGICK", "    Final line of output was ".$r);
+            logger::trace("IMAGEMAGICK", "    Return Value was ".$ret);
             // No point trying a copy file fallback, as if ImageMagick can't handle it it's shite.
         }
     }
@@ -586,7 +586,7 @@ class gdImage {
     private $filename;
 
     public static function gd_handle_error($errno, $errstr, $errfile, $errline) {
-        debuglog("Error ".$errno." ".$errstr." in ".$errfile." at line ".$errline,"GD_IMAGE");
+        logger::warn("GD_IMAGE", "Error",$errno,$errstr,"in",$errfile,"at line",$errline);
         throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
         return true;
     }
@@ -596,13 +596,13 @@ class gdImage {
         set_error_handler('gdImage::gd_handle_error', E_ALL);
 
         $this->filename = $filename;
-        debuglog("Checking File ".$filename,"GD-IMAGE");
+        logger::log("GD-IMAGE", "Checking File ".$filename);
         $imgtypes = imagetypes();
         try {
             $image_info = getimagesize($filename);
             $image_type = $image_info[2];
         } catch (Exception $e) {
-            debuglog("  GD threw an error when handling this image","GD-IMAGE",5);
+            logger::warn("GD-IMAGE", "  GD threw an error when handling",$filename);
             $image_type = false;
         }
 
@@ -623,12 +623,12 @@ class gdImage {
 
         switch ($image_type) {
             case IMAGETYPE_JPEG:
-                debuglog("Image type is JPEG","GD-IMAGE");
+                logger::trace("GD-IMAGE", "Image type is JPEG");
                 if (defined('IMG_JPG') && ($imgtypes && IMG_JPG) && function_exists('imagecreatefromjpeg') && function_exists('imagejpeg')) {
                     try {
                         $this->image = imagecreatefromjpeg($filename);
                     } catch (Exception $e) {
-                        debuglog("  GD threw an error when handling this image","GD-IMAGE",5);
+                        logger::warn("GD-IMAGE", "  GD threw an error when handling",$filename);
                         $image_type = false;
                     }
                 } else {
@@ -637,12 +637,12 @@ class gdImage {
                 break;
 
             case IMAGETYPE_GIF:
-                debuglog("Image type is GIF","GD-IMAGE");
+                logger::trace("GD-IMAGE", "Image type is GIF");
                 if (defined('IMG_GIF') && ($imgtypes && IMG_GIF) && function_exists('imagecreatefromgif')) {
                     try {
                         $this->image = imagecreatefromgif($filename);
                     } catch (Exception $e) {
-                        debuglog("  GD threw an error when handling this image","GD-IMAGE",5);
+                        logger::warn("GD-IMAGE", "  GD threw an error when handling",$filename);
                         $image_type = false;
                     }
                 } else {
@@ -651,12 +651,12 @@ class gdImage {
                 break;
 
             case IMAGETYPE_PNG:
-                debuglog("Image type is PNG","GD-IMAGE");
+                logger::trace("GD-IMAGE", "Image type is PNG");
                 if (defined('IMG_PNG') && ($imgtypes && IMG_PNG) && function_exists('imagecreatefrompng') && function_exists('imagepng')) {
                     try {
                         $this->image = imagecreatefrompng($filename);
                     } catch (Exception $e) {
-                        debuglog("  GD threw an error when handling this image","GD-IMAGE",5);
+                        logger::warn("GD-IMAGE", "  GD threw an error when handling",$filename);
                         $image_type = false;
                     }
                 } else {
@@ -665,12 +665,12 @@ class gdImage {
                 break;
 
             case IMAGETYPE_WBMP:
-                debuglog("Image type is WBMP","GD-IMAGE");
+                logger::trace("GD-IMAGE", "Image type is WBMP");
                 if (defined('IMG_WBMP') && ($imgtypes && IMG_WBMP) && function_exists('imagecreatefromwbmp')) {
                     try {
                         $this->image = imagecreatefromwbmp($filename);
                     } catch (Exception $e) {
-                        debuglog("  GD threw an error when handling this image","GD-IMAGE",5);
+                        logger::warn("GD-IMAGE", "  GD threw an error when handling",$filename);
                         $image_type = false;
                     }
                 } else {
@@ -679,12 +679,12 @@ class gdImage {
                 break;
 
             case IMAGETYPE_XBM:
-                debuglog("Image type is XBM","GD-IMAGE");
+                logger::trace("GD-IMAGE", "Image type is XBM");
                 if (defined('IMG_XPM') && ($imgtypes && IMG_XPM) && function_exists('imagecreatefromxbm')) {
                     try {
                         $this->image = imagecreatefromxbm($filename);
                     } catch (Exception $e) {
-                        debuglog("  GD threw an error when handling this image","GD-IMAGE",5);
+                        logger::warn("GD-IMAGE", "  GD threw an error when handling",$filename);
                         $image_type = false;
                     }
                 } else {
@@ -693,12 +693,12 @@ class gdImage {
                 break;
 
             case IMAGETYPE_WEBP:
-                debuglog("Image type is WEBP","GD-IMAGE");
+                logger::trace("GD-IMAGE", "Image type is WEBP");
                 if (defined('IMG_WEBP') && ($imgtypes && IMG_WEBP) && function_exists('imagecreatefromwebp')) {
                     try {
                         $this->image = imagecreatefromwebp($filename);
                     } catch (Exception $e) {
-                        debuglog("  GD threw an error when handling this image","GD-IMAGE",5);
+                        logger::log("GD-IMAGE", "  GD threw an error when handling",$filename);
                         $image_type = false;
                     }
                 } else {
@@ -707,12 +707,12 @@ class gdImage {
                 break;
 
             case IMAGETYPE_BMP:
-                debuglog("Image type is BMP","GD-IMAGE");
+                logger::trace("GD-IMAGE", "Image type is BMP");
                 if (defined('IMG_BMP') && ($imgtypes && IMG_BMP) && function_exists('imagecreatefrombmp')) {
                     try {
                         $this->image = imagecreatefrombmp($filename);
                     } catch (Exception $e) {
-                        debuglog("  GD threw an error when handling this image","GD-IMAGE",5);
+                        logger::log("GD-IMAGE", "  GD threw an error when handling",$filename);
                         $image_type = false;
                     }
                 } else {
@@ -735,7 +735,7 @@ class gdImage {
 
     public function checkImage() {
         if ($this->image_type === false) {
-            debuglog("  Unsupported Image Type", "GD-IMAGE");
+            logger::warn("GD-IMAGE", "  Unsupported Image Type");
         }
         return $this->image_type;
     }
@@ -757,10 +757,10 @@ class gdImage {
 
     public function outputResizedFile($size) {
         if ($this->image_type == IMAGETYPE_PNG) {
-            debuglog("  Outputting PNG file of size ".$size,"GD-IMAGE");
+            logger::trace("GD-IMAGE", "  Outputting PNG file of size",$size);
             header('Content-type: image/png');
         } else {
-            debuglog("  Outputting JPEG file of size ".$size,"GD-IMAGE");
+            logger::trace("GD-IMAGE", "  Outputting JPEG file of size",$size);
             header('Content-type: image/jpeg');
         }
         switch ($size) {

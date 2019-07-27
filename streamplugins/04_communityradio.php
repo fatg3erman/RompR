@@ -315,7 +315,7 @@ if (array_key_exists('populate', $_REQUEST)) {
     include ("skins/".$skin."/ui_elements.php");
 
     foreach ($_REQUEST as $i => $r) {
-        debuglog($i ." : ".$r,"COMMRADIO");
+        logger::log("COMMRADIO", $i,":",$r);
     }
 
     $commradio = new commradioplugin();

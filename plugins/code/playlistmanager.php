@@ -3,8 +3,7 @@ chdir('../..');
 
 include ("includes/vars.php");
 include ("includes/functions.php");
-include ("collection/collection.php");
-include ("player/mpd/connection.php");
+require_once ("player/".$prefs['player_backend']."/player.php");
 include ("backends/sql/backend.php");
 require_once ("utils/imagefunctions.php");
 
@@ -17,71 +16,64 @@ switch ($_REQUEST['action']) {
 }
 
 function print_playlists_as_json() {
-	global $putinplaylistarray, $playlist, $prefs;
-    $playlists = do_mpd_command("listplaylists", true, true);
-    $pls = array();
-    $putinplaylistarray = true;
-    if (is_array($playlists) && array_key_exists('playlist', $playlists)) {
-        foreach ($playlists['playlist'] as $name) {
-        	$playlist = array();
-        	$pls[rawurlencode($name)] = array();
-            doCollection('listplaylistinfo "'.$name.'"');
-			$albumimage = new baseAlbumImage(array('artist' => "PLAYLIST", 'album' => $name));
-            $c = 0;
-			$plimage = $albumimage->get_image_if_exists();
-            foreach($playlist as $track) {
-				$usealbumimage = $albumimage;
-                list($flag, $link) = $track->get_checked_url();
-                $albumartist = format_sortartist($track->tags);
-				debuglog('AlbumArtist Is '.$albumartist,"PLAYLISTS");
-                $image = $plimage;
+	global $PLAYER_TYPE;
+	$player = new $PLAYER_TYPE();
+	$pls = array();
+	foreach ($player->get_stored_playlists(true) as $name) {
+    	$pls[rawurlencode($name)] = array();
+		$albumimage = new baseAlbumImage(array('artist' => "PLAYLIST", 'album' => $name));
+		$c = 0;
+		$plimage = $albumimage->get_image_if_exists();
+		foreach ($player->get_stored_playlist_tracks($name, 0) as list($flag, $link, $filedata)) {
+			$usealbumimage = $albumimage;
+            $albumartist = format_sortartist($filedata);
+            $image = $plimage;
+            $result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
+                    "SELECT Image FROM
+                    Albumtable JOIN Artisttable ON
+                    (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
+                    WHERE Albumname = ? AND Artistname = ?", $filedata['Album'], $albumartist);
+            foreach ($result as $obj) {
+                $image = $obj->Image;
+				$usealbumimage = new baseAlbumImage(array('artist' => $albumartist, 'album' => $filedata['Album']));
+				break;
+            }
+            if ($image == $plimage) {
                 $result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
-                        "SELECT Image FROM
-                        Albumtable JOIN Artisttable ON
-                        (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
-                        WHERE Albumname = ? AND Artistname = ?", $track->tags['Album'], $albumartist);
+                        "SELECT Image, Artistname FROM
+                        Tracktable JOIN Albumtable USING (Albumindex)
+						JOIN Artisttable ON (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
+                        WHERE Albumname = ? AND Title = ?", $tfiledata['Album'], $filedata['Title']);
                 foreach ($result as $obj) {
                     $image = $obj->Image;
-					$usealbumimage = new baseAlbumImage(array('artist' => $albumartist, 'album' => $track->tags['Album']));
+					$usealbumimage = new baseAlbumImage(array('artist' => $obj->Artistname, 'album' => $filedata['Album']));
 					break;
                 }
-                if ($image == $plimage) {
-                    $result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
-                            "SELECT Image, Artistname FROM
-                            Tracktable JOIN Albumtable USING (Albumindex)
-							JOIN Artisttable ON (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
-                            WHERE Albumname = ? AND Title = ?", $track->tags['Album'], $track->tags['Title']);
-                    foreach ($result as $obj) {
-                        $image = $obj->Image;
-						$usealbumimage = new baseAlbumImage(array('artist' => $obj->Artistname, 'album' => $track->tags['Album']));
-						break;
-                    }
+            }
+			if ($image == $plimage && $filedata['type'] == 'stream') {
+                $result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
+                        "SELECT Image FROM RadioStationtable
+                        WHERE StationName = ?", $filedata['Album']);
+                foreach ($result as $obj) {
+                    $image = $obj->Image;
+					$usealbumimage = new baseAlbumImage(array('artist' => 'STREAM', 'album' => $filedata['Album']));
+					break;
                 }
-				if ($image == $plimage) {
-                    $result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
-                            "SELECT Image FROM RadioStationtable
-                            WHERE StationName = ?", $track->tags['Album']);
-                    foreach ($result as $obj) {
-                        $image = $obj->Image;
-						$usealbumimage = new baseAlbumImage(array('artist' => 'STREAM', 'album' => $track->tags['Album']));
-						break;
-                    }
-                }
-    	        $pls[rawurlencode($name)][] = array(
-    	        	'Uri' => rawurlencode($link),
-    	        	'Title' => $track->tags['Title'],
-    	            "Album" => $track->tags['Album'],
-        	        "Artist" => $track->get_artist_string(),
-    	        	'albumartist' => $albumartist,
-    	        	'duration' => $track->tags['Time'],
-    	        	'Image' => $image,
-    	        	'key' => $usealbumimage->get_image_key(),
-    	        	'pos' => $c,
-    	        	'plimage' => $plimage,
-                    'Type' => $track->tags['type']
-    	        );
-    	        $c++;
-    	    }
+            }
+	        $pls[rawurlencode($name)][] = array(
+	        	'Uri' => rawurlencode($link),
+	        	'Title' => $filedata['Title'],
+	            "Album" => $filedata['Album'],
+    	        "Artist" => format_artist($filedata['Artist']),
+	        	'albumartist' => $albumartist,
+	        	'duration' => $filedata['Time'],
+	        	'Image' => $image,
+	        	'key' => $usealbumimage->get_image_key(),
+	        	'pos' => $c,
+	        	'plimage' => $plimage,
+                'Type' => $filedata['type']
+	        );
+	        $c++;
         }
     }
 

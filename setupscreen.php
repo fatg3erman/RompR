@@ -1,6 +1,6 @@
 <?php
 $skin = 'desktop';
-debuglog("Displaying Setup Screen","SETUP");
+logger::log("SETUP", "Displaying Setup Screen");
 print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
@@ -13,10 +13,7 @@ print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 <link rel="stylesheet" type="text/css" href="css/layout-january.css" />
 <link rel="stylesheet" type="text/css" href="skins/'.$skin.'/skin.css?version='.ROMPR_VERSION.'" />
 <link rel="shortcut icon" href="newimages/favicon.ico" />
-<link rel="stylesheet" type="text/css" href="themes/Numismatist.css" />
-<link rel="stylesheet" type="text/css" href="iconsets/Modern-Dark/theme.css" />
-<link rel="stylesheet" type="text/css" href="iconsets/Modern-Dark/adjustments.css" />
-<link rel="stylesheet" type="text/css" href="sizes/02-Normal.css" />
+<link rel="stylesheet" type="text/css" href="gettheme.php" />
 <script type="text/javascript" src="jquery/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="jquery/jquery-migrate-3.0.1.js"></script>
 <script type="text/javascript" src="utils/setupbits.js"></script>
@@ -51,13 +48,13 @@ foreach ($prefs['multihosts'] as $host => $def) {
 }
 
 print '<p>'.get_int_text("setup_ipaddress").'<br>';
-print '<input type="text" name="mpd_host" value="'.$prefs['mpd_host'].'" /></p>';
+print '<input type="text" name="mpd_host" value="'.$prefs['multihosts']->{$prefs['currenthost']}->host.'" /></p>';
 print '<p>'.get_int_text("setup_port").'<br>';
-print '<input type="text" name="mpd_port" value="'.$prefs['mpd_port'].'" /></p>';
+print '<input type="text" name="mpd_port" value="'.$prefs['multihosts']->{$prefs['currenthost']}->port.'" /></p>';
 print '<p>'.get_int_text("setup_password").'<br>';
-print '<input type="text" name="mpd_password" value="'.$prefs['mpd_password'].'" /></p>';
+print '<input type="text" name="mpd_password" value="'.$prefs['multihosts']->{$prefs['currenthost']}->password.'" /></p>';
 print '<p>'.get_int_text("setup_unixsocket").'<br>';
-print '<input type="text" name="unix_socket" value="'.$prefs['unix_socket'].'" /></p>';
+print '<input type="text" name="unix_socket" value="'.$prefs['multihosts']->{$prefs['currenthost']}->socket.'" /></p>';
 
 print '<hr class="dingleberry" />';
 print '<h3>'.get_int_text("label_generalsettings").'</h3>';

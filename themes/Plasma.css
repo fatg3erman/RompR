@@ -3,12 +3,22 @@
 = Standard HTML Elements
 =====================================================================
 */
+@media screen and (orientation: landscape) {
+    html, body.phone .dropmenu {
+        background-image:url("themes/plasma.jpg");
+        background-size:cover;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+    }
+}
 
-html, body.phone .dropmenu {
-    background-image:url("plasma.jpg");
-    background-size:cover;
-    background-repeat:no-repeat;
-    background-attachment:fixed;
+@media screen and (orientation: portrait) {
+    html, body.phone .dropmenu {
+        background-image:url("themes/plasma_portrait.jpg");
+        background-size:cover;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+    }
 }
 
 body.phone .dropmenu>div {
@@ -38,28 +48,53 @@ a:hover,a:active
 }
 
 button, input[type="button"], .filebutton
-{
-    color:#dddddd;
-    background-color:transparent;
-    border:1px solid #aaaaaa;
+{    color:#dddddd;
+    background-color:rgba(0,0,0,0.5);
+    border:1px solid transparent;
 }
 
 
 button:hover, input[type="button"]:hover, .filebutton:hover
 {
     color:#ffffff;
-    border:1px solid #ffffff;
-    text-shadow: 0 0 15px #ffffff;
+    background-color:rgba(0,0,0,0.7);
+    border:1px solid #444444;
 }
 
-input
-{
-    color:#181818;
+select {
+    color:#dddddd;
 }
 
-select
-{
-    color:#000000;
+.selectholder {
+    background-color:rgba(0,0,0,0.5);
+}
+
+.selectholder:hover {
+    background-color:rgba(0,0,0,0.2);
+}
+
+input[type="text"] {
+    background-color: rgba(0,0,0,0.5);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:hover {
+    background-color: rgba(0,0,0,0.2);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:focus {
+    transition: border-bottom 0.5s ease;
+    border-bottom: 1px solid #bbbbbb;
+}
+
+select:hover {
+    color: #ffffff;
+}
+
+.drop-box {
+    background-color:rgba(100,0,80,0.6);
+    color:white;
 }
 
 /*
@@ -111,6 +146,13 @@ select
 #imagecontainer
 {
     background-color:#ffffff;
+}
+
+#pset {
+    background-color: rgba(186, 62, 145, 0);
+}
+#pmaxset {
+    background-color: rgba(202, 145, 190, 0);
 }
 
 /*
@@ -283,11 +325,6 @@ body.mobile .configtitle
 .infowiki
 {
     color:white;
-}
-
-.inbrowser
-{
-    color:#000000;
 }
 
 .infosection

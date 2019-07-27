@@ -12,16 +12,16 @@ h2 {
     font-size:120%;
 }
 
-/*Awful hack because the styled select boxes only seem to
-register clicks on their borders. This gives them a big fat
-right-hand border that overlaps the dropdown button
-*/
 select {
     width:100%;
     height:3em;
 }
 
 .selectholder {
+    height:3em;
+}
+
+input[type="text"] {
     height:3em;
 }
 
@@ -40,15 +40,22 @@ div {
     -webkit-overflow-scrolling: touch;
 }
 
-#loadsawrappers {
-    width: 100%;
-    overflow:hidden;
-}
-
 #headerbar {
     height:40px;
     padding:0px;
     margin:0px;
+    border:none;
+}
+
+/* Note this includes 40px for headerbar. Keep them synced */
+#loadsawrappers {
+    height: calc(100vh - 40px);
+    width: 100%;
+    overflow:hidden;
+}
+
+#albumpicture {
+    object-fit:contain;
 }
 
 #historypanel, #tagadder {
@@ -86,6 +93,10 @@ div {
     text-align:center;
 }
 
+#amontobin {
+    overflow:hidden;
+}
+
 #nowplaying {
     /* white-space:nowrap; */
     margin:auto;
@@ -96,40 +107,26 @@ div {
     text-align:center;
 }
 
-#subscribe {
-    float:left;
-    margin-left:12px;
-}
-
-#lastfm, #addtoplaylist{
+#lastfm, #addtoplaylist, #ptagadd, #subscribe {
     float:right;
-    margin-left:8px;
-    margin-right:8px;
+    margin-left:6px;
+    margin-right:6px;
     line-height:34px;
     height:34px;
 }
 
-#playcount {
-    padding-top:0px;
-    padding-left:8px;
-    margin-left:12px;
-    margin-right:12px;
-    overflow:hidden;
-    opacity:0.9;
-    font-size:8pt;
-    height:34px;
-    line-height:34px;
-    float:left;
+.playspan {
+    margin-right: 1em;
 }
 
 #dbtags {
+    clear: both;
+    margin-top:4px;
     padding-top:0px;
-    padding-left:8px;
     overflow:hidden;
     opacity:0.9;
     font-size:8pt;
-    line-height:34px;
-    float:left;
+    line-height:12pt;
 }
 
 #scrobwrangler {
@@ -138,11 +135,10 @@ div {
 }
 
 #stars {
-    float: left;
     margin-top:0px;
     margin-right:2px;
-    margin-left:4px;
     padding-top:0px;
+    margin-left:6px;
 }
 
 #controls {
@@ -190,6 +186,21 @@ div {
 {
     border-top: none !important;
 }
+
+#flowcontrols {
+    height: 36px;
+}
+
+#flowcontrols i {
+    max-height: 24px;
+    margin-top:4px;
+}
+
+#toomanywrappers {
+    height: 100%;
+    width: 100%;
+}
+
 
 /*
 =====================================================================
@@ -593,11 +604,6 @@ div.rightmenu {
     max-width:35%;
 }
 
-#toomanywrappers {
-    height: 100%;
-    width: 100%;
-}
-
 .pleft
 {
     padding-left:8px;
@@ -619,325 +625,6 @@ div.rightmenu {
     box-sizing:border-box;
     padding:8px;
     overflow-y:scroll !important;
-}
-
-/*
-=====================================================================
-= Responsive Layout
-=====================================================================
-*/
-
-#albumpicture {
-    width:100%;
-    height:100%;
-    object-fit:scale-down;
-}
-
-@media screen and (max-width:639px) and (orientation: landscape) {
-
-    .mainpane {
-        width: 100%;
-        height: 100%;
-    }
-    #playlistm {
-        width: 100%;
-        height: 100%;
-    }
-
-    #albumcover {
-        height:60vh;
-        width:100%;
-        max-width:100vw;
-        margin-left:auto;
-        margin-right:auto;
-    }
-}
-
-@media screen and (min-width:640px) and (orientation: landscape) {
-
-    .mainpane {
-        width: 50%;
-        float:left;
-        height: 100%;
-    }
-    #playlistm {
-        width: 50%;
-        float:left;
-        height: 100%;
-    }
-
-    #infobar {
-        display:block;
-    }
-
-    #infopane {
-        width:100%;
-    }
-
-    #albumcover {
-        height:50vh;
-        max-height:45vw;
-        width:100%;
-        margin-left:auto;
-        margin-right:auto;
-    }
-}
-
-@media screen and (max-width: 350px) and (orientation: landscape) {
-    #albumcover {
-        height:100px !important;
-        width:100px !important;
-    }
-
-}
-
-@media screen and (max-width: 440px) and (orientation: landscape) {
-    .controlbutton {
-        width:38px !important;
-        height:38px !important;
-    }
-    .controlbutton-small {
-        width:32px !important;
-        height:32px !important;
-    }
-}
-
-@media screen and (max-height: 378px) and (max-width: 639px) and (orientation: landscape) {
-
-    #albumcover {
-        width:60vh;
-        float:left;
-        margin-left:4px;
-    }
-
-    #cssisshit {
-        overflow:auto;
-    }
-
-    #mobileplaylistcontrols
-    {
-        display:none;
-    }
-
-}
-
-@media screen and (max-height:378px) and (min-width: 640px) and (orientation: landscape) {
-    #albumcover {
-        height:28vh;
-    }
-}
-
-@media screen and (min-height: 768px) and (orientation: landscape) {
-    #albumcover {
-        height:65vh;
-    }
-}
-
-@media screen and (max-height: 699px) and (orientation: portrait) {
-
-    #playlistm {
-        width:100%;
-        height:100%;
-    }
-    .mainpane {
-        width: 100%;
-        height: 100%;
-    }
-
-    #albumcover {
-        height:50vh;
-        width:100%;
-        max-width:100vw;
-        margin-left:auto;
-        margin-right:auto;
-    }
-}
-
-@media screen and (max-width: 640px) {
-    .info-detail-layout {
-        -webkit-box-orient:vertical;
-        flex-direction: column;
-    }
-    .info-box-expand.info-border-right {
-        margin-bottom:1em;
-        padding-bottom:0.5em;
-    }
-}
-
-@media screen and (min-width: 641px) {
-    .cleft.narrowright {
-        margin-left:1em;
-    }
-}
-
-@media screen and (max-height: 380px) and (orientation: portrait) {
-    #albumcover {
-        height:30vh;
-    }
-}
-
-@media screen and (min-height:381px) and (max-height: 480px) and (orientation: portrait) {
-    #albumcover {
-        height:45vh;
-    }
-}
-
-@media screen and (min-height: 700px) and (orientation: portrait) {
-
-    .mainpane {
-        width: 100%;
-        height: 100%;
-    }
-
-    #infobar {
-        height: 50%;
-        width: 100%;
-    }
-
-    #playlistm {
-        height:50%;
-        width:100%;
-    }
-
-    .choose_playlist {
-/*        This is here so the layoutProcessor knows we're in tall portrait mode
-        and it should choose infobar instead
-*/
-        font-weight:900;
-    }
-    #albumcover {
-        height:25vh;
-        width:100%;
-        max-width:100vw;
-        margin-left:auto;
-        margin-right:auto;
-    }
-}
-
-@media screen and (max-height: 378px) and (orientation: portrait) {
-
-    #cssisshit {
-        width:100%;
-    }
-
-}
-
-@media screen and (max-height: 378px) {
-    #progress {
-        font-size:6pt;
-        margin-top:4px;
-    }
-}
-
-@media screen and (min-height: 379px) and  (max-height: 700px) {
-
-    #progress {
-        font-size:7pt;
-        margin-top:4px;
-    }
-
-}
-
-@media screen and (min-height: 701px) and (max-height: 1023px) {
-
-    #progress {
-        font-size:8pt;
-        margin-top:4px;
-    }
-
-}
-
-@media screen and (max-height: 999px) {
-    #geoffreyboycott {
-        padding-top:2px;
-    }
-
-/*    #cssisshit {
-        width:100%;
-    }
-*/}
-
-@media screen and (min-height: 780px) and (min-width: 601px) and (orientation: portrait) {
-
-    #cssisshit {
-        overflow: auto;
-        margin-top:2em;
-    }
-
-    #albumcover {
-        width:50vw;
-        height:35vh;
-        float:left;
-        margin-left:4px;
-    }
-
-    #amontobin {
-        /* text-align:center; */
-        margin-top: 1em;
-    }
-
-    #amontobin div {
-        /* float:none; */
-        margin-top:0.25em;
-        /* font-size:110%; */
-    }
-
-}
-
-@media screen and (min-height: 1000px) {
-
-    #geoffreyboycott {
-        padding-top:2px;
-    }
-
-    #progress {
-        font-size:8pt;
-        margin-top:4px;
-    }
-
-    #headerbar {
-        height:42px;
-        padding:0px;
-        margin:0px;
-    }
-
-    #bottompage {
-        top:42px;
-        width:100%;
-    }
-
-    div.normalmenu {
-        width:44px !important;
-    }
-
-    div.rightmenu {
-        top:44px !important;
-        right:0px;
-    }
-}
-
-@media screen and (max-width: 540px) {
-    .stleft
-    {
-        float:none;
-        width:auto;
-        max-width:95%;
-        clear:both;
-        border-right:none !important;
-        border-bottom: 1px solid #dddddd !important;
-    }
-}
-
-@media screen and (max-width: 540px) {
-    .onlywide {
-        display:none !important;
-    }
-}
-
-@media screen and (min-width: 541px) {
-    .onlynarrow {
-        display:none !important;
-    }
 }
 
 .setupdiv
@@ -1039,8 +726,410 @@ img.jalopy200 {
     box-sizing:border-box;
 }
 
+/*
+=====================================================================
+= Responsive Layout - General
+=====================================================================
+*/
+
+@media screen and (max-width: 420px) {
+    .notnarrow.snapclienthost {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .info-detail-layout {
+        -webkit-box-orient:vertical;
+        flex-direction: column;
+    }
+    .info-box-expand.info-border-right {
+        margin-bottom:1em;
+        padding-bottom:0.5em;
+    }
+}
+
+@media screen and (min-width: 641px) {
+    .cleft.narrowright {
+        margin-left:1em;
+    }
+}
+
+@media screen and (max-width: 540px) {
+    .onlywide {
+        display:none !important;
+    }
+}
+
+@media screen and (min-width: 541px) {
+    .onlynarrow {
+        display:none !important;
+    }
+}
+
 @media screen and (max-width: 799px) {
     .onlyverywide {
         display: none;
     }
+}
+
+@media screen and (max-width: 540px) {
+    .stleft
+    {
+        float:none;
+        width:auto;
+        max-width:95%;
+        clear:both;
+        border-right:none !important;
+        border-bottom: 1px solid #dddddd !important;
+    }
+}
+
+/*
+=====================================================================
+= Responsive Layout - Portrait, playlist on separate panel
+=====================================================================
+*/
+
+@media screen and (max-height: 699px) and (orientation: portrait) {
+
+    #playlistm {
+        width:100%;
+        height:100%;
+    }
+
+    .mainpane {
+        width: 100%;
+        height: 100%;
+    }
+
+    #albumcover {
+        text-align: center;
+        overflow:hidden;
+    }
+
+    #albumpicture {
+        width: 85%;
+        max-width: 60vh;
+    }
+
+    #dbtags {
+        float: left;
+        margin-left:6px;
+        margin-right:6px;
+    }
+
+    #stars {
+        float:left;
+    }
+
+}
+
+/* == Tweaks for specific sizes */
+
+@media screen and (max-height: 480px) and (orientation: portrait) {
+    /* iPhone 4 screen height */
+    #albumpicture {
+        max-width:50vh;
+    }
+}
+
+@media screen and (max-width: 360px) and (max-height: 699px) and (orientation: portrait) {
+    #albumpicture {
+        width:98%;
+    }
+}
+
+@media screen and (min-height: 640px) and (max-height: 699px) and (orientation: portrait) {
+    #albumpicture {
+        width: 98%;
+    }
+}
+
+/*
+=====================================================================
+= Responsive Layout - Portrait, playlist on now playing screen
+= Changes at 700px high
+=====================================================================
+*/
+
+@media screen and (min-height: 700px) and (orientation: portrait) {
+
+    .mainpane {
+        width: 100%;
+        height: 100%;
+    }
+
+    #infobar {
+        height: 50%;
+        width: 100%;
+    }
+
+    #toomanywrappers {
+        overflow: hidden;
+    }
+
+    #playlistm {
+        height:50%;
+        width:100%;
+    }
+
+    .choose_playlist {
+/*      This is here so the layoutProcessor knows we're in tall portrait mode
+        and it should choose infobar instead */
+        font-weight:900;
+    }
+
+}
+
+@media screen and (min-height: 700px) and (max-width: 420px) and (orientation: portrait) {
+    /* Narrow screens - nowplaying under album picture */
+    #albumcover {
+        text-align: center;
+        overflow:hidden;
+    }
+
+    #albumpicture {
+        width: 85%;
+        max-width: 22vh;
+        height: auto;
+    }
+
+    #dbtags {
+        float: left;
+        margin-left:6px;
+        margin-right:6px;
+    }
+
+    #stars {
+        float:left;
+    }
+}
+
+@media screen and (min-height: 700px) and (min-width: 421px) and (orientation: portrait) {
+    /* Wider screens - nowplaying next to album picture */
+    #albumcover {
+        float: left;
+        height:100%;
+    }
+
+    #albumpicture {
+        height: 100%;
+        width: auto;
+        margin-right:8px;
+    }
+
+    #nowplaying {
+        padding-right: 8px;
+    }
+
+    #nptext {
+        text-align:right;
+    }
+
+    #amontobin {
+        text-align: right;
+    }
+
+    #lastfm, #addtoplaylist, #ptagadd, #subscribe {
+        margin-bottom: 4px;
+    }
+
+}
+
+/*
+=====================================================================
+= Responsive Layout - Landscape, playlist on separate panel
+= Essentially the same as portrait with min-height 700 and min-width 421
+=====================================================================
+*/
+
+@media screen and (max-width:639px) and (orientation: landscape) {
+
+    .mainpane {
+        width: 100%;
+        height: 100%;
+    }
+
+    #albumpicture {
+        height: 100%;
+        width: auto;
+        margin-right:8px;
+    }
+
+    #playlistm {
+        width: 100%;
+        height: 100%;
+    }
+
+    #albumcover {
+        float: left;
+        height:100%;
+    }
+
+    #nowplaying {
+        padding-right: 8px;
+    }
+
+    #amontobin {
+        text-align: right;
+    }
+
+    #lastfm, #addtoplaylist, #ptagadd, #subscribe, #stars {
+        margin-bottom: 8px;
+    }
+
+    #stars {
+        float: right;
+    }
+}
+
+/*
+=====================================================================
+= Responsive Layout - Landscape, chooser next to nowplaying
+= Switches at 640px wide
+=====================================================================
+*/
+
+@media screen and (min-width:640px) and (orientation: landscape) {
+    .mainpane {
+        width: 50%;
+        float:left;
+        height: 100%;
+    }
+
+    #playlistm {
+        width: 50%;
+        float:left;
+        height: 100%;
+    }
+
+    #infobar {
+        display:block;
+    }
+
+    #infopane {
+        width:100%;
+    }
+}
+
+/* 3 Modes for info pane to make best use of available space */
+
+@media screen and (min-width:640px) and (orientation: landscape) {
+    /* Standard - info pane looks like small portrait mode */
+    #albumcover {
+        text-align: center;
+        overflow:hidden;
+    }
+
+    #albumpicture {
+        width: 85%;
+        max-width: 40vh;
+    }
+
+    #dbtags {
+        float: left;
+        margin-left:6px;
+        margin-right:6px;
+    }
+
+    #stars {
+        float:left;
+    }
+}
+
+@media screen and (min-width:810px) and (max-height: 540px) and (orientation: landscape) {
+    /* Wider - info pane looks like wide portrait mode up to 540px high*/
+    /* ie nowplaying is next to album image - can't have album image very big
+        with a screen of this height so there's loads of wasted space to the sides */
+    #albumcover {
+        float: left;
+        height:100%;
+    }
+
+    #albumpicture {
+        height: 100%;
+        width: auto;
+        margin-right:8px;
+        max-width:60vh;
+    }
+
+    #nowplaying {
+        padding-right: 8px;
+    }
+
+    #nptext {
+        text-align:right;
+    }
+
+    #amontobin {
+        text-align: right;
+    }
+
+    #lastfm, #addtoplaylist, #ptagadd, #subscribe {
+        margin-bottom: 4px;
+    }
+
+    #stars, #dbtags {
+        float: none;
+    }
+
+}
+
+@media screen and (min-width:640px) and (min-height: 541px) and (orientation: landscape) {
+    /* at 540 px high it reverts to being like small portrait mode */
+    #albumpicture {
+        max-width:60vh
+    }
+}
+
+@media screen and (min-width:1024px) and (min-height: 768px) and (orientation: landscape) {
+    /* Big screens - combination of everything - nowplaying and playlist together, chooser on right hand side */
+    #infobar {
+        height: 50%;
+    }
+
+    #albumcover {
+        float: left;
+        height:100%;
+    }
+
+    #albumpicture {
+        height: 100%;
+        width: auto;
+        margin-right:8px;
+    }
+
+    #nowplaying {
+        padding-right: 8px;
+    }
+
+    #nptext {
+        text-align:right;
+    }
+
+    #amontobin {
+        text-align: right;
+    }
+
+    #lastfm, #addtoplaylist, #ptagadd, #subscribe {
+        margin-bottom: 4px;
+    }
+
+    #stars, #dbtags {
+        float: none;
+    }
+
+    .choose_playlist {
+/*      This is here so the layoutProcessor knows we're in tall portrait mode
+        and it should choose infobar instead */
+        font-weight:1000;
+    }
+
+    #playlistm {
+        position: absolute;
+        height: calc(50% - 20px);
+        top: calc(50% + 20px);
+    }
+
 }

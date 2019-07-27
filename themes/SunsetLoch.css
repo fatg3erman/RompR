@@ -1,5 +1,5 @@
 html, body.phone .dropmenu {
-    background-image:url("sunset_loch.jpg");
+    background-image:url("themes/sunset_loch.jpg");
     background-size:cover;
     background-repeat:no-repeat;
     background-attachment:fixed;
@@ -102,6 +102,10 @@ input
     color:#181818;
 }
 
+input.snapclientname[type=text] {
+    color: #ffffff;
+}
+
 select
 {
     color:#000000;
@@ -110,6 +114,13 @@ select
 #notifications
 {
     background-color:rgba(0,0,0,0.9);
+}
+
+#pset {
+    background-color: rgba(23, 38, 77, 0);
+}
+#pmaxset {
+    background-color: rgba(155, 172, 227, 0);
 }
 
 a.album:visited

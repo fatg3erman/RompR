@@ -1,10 +1,10 @@
 <?php
 include ("includes/vars.php");
-debuglog("Saving prefs","SAVEPREFS");
+logger::log("SAVEPREFS", "Saving prefs");
 $p = json_decode($_POST['prefs']);
 $player =  $_COOKIE['currenthost'];
 foreach($p as $key => $value) {
-    debuglog('  '.$key." = ".print_r($value, true),"SAVEPREFS");
+    logger::log("SAVEPREFS", ' ',$key,"=",$value);
     switch ($key) {
         case "radiomode":
         case "radioparam":

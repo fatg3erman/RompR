@@ -15,7 +15,7 @@ if ($interface_language != "en") {
 		include ('international/'.$interface_language.'.php');
 		$translations = array_merge($languages['en'], $languages[$interface_language]);
 	} else {
-		debuglog("Translation ".$interface_language." does not exist","INTERNATIONAL");
+		logger::error("INTERNATIONAL", "Translation ".$interface_language." does not exist");
 		$interface_language = "en";
 	}
 }
@@ -29,7 +29,7 @@ function get_int_text($key, $sub = null) {
 			return htmlspecialchars($translations[$key], ENT_QUOTES);
 		}
 	} else {
-		debuglog("ERROR! Translation key ".$key." not found!", "INTERNATIONAL");
+		logger::error("INTERNATIONAL", "ERROR! Translation key ".$key." not found!");
 		return "UNKNOWN KEY";
 	}
 }

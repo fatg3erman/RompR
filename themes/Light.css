@@ -73,6 +73,13 @@ input.inbrowser, div.inbrowser
     background-color:#f8f8f8;
 }
 
+#pset {
+    background-color: rgba(150, 150, 150, 0);
+}
+#pmaxset {
+    background-color: rgba(180, 180, 180, 0);
+}
+
 #notifications
 {
     background-color:#e7e7e7;

@@ -1,10 +1,15 @@
 <?php
 
+$dtz = ini_get('date.timezone');
+if (!$dtz) {
+    date_default_timezone_set('UTC');
+}
+
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 3);
 define('ROMPR_IMAGE_VERSION', 4);
 define('ROMPR_SCHEMA_VERSION', 55);
-define('ROMPR_VERSION', '1.26');
+define('ROMPR_VERSION', '1.30');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_UNKNOWN_STREAM', "Unknown Internet Stream");
@@ -31,9 +36,6 @@ define('ADDED_TODAY', 1);
 define('ADDED_THIS_WEEK', 2);
 define('ADDED_THIS_MONTH', 3);
 define('ADDED_THIS_YEAR', 4);
-
-define('COLLECTION_TYPE_MPD', 0);
-define('COLLECTION_TYPE_MOPIDY', 1);
 
 // Safe definitions for setups that do not have a full set of image support built in,
 // Otherwise we spam the server logs with udefined constant errors.
@@ -66,8 +68,87 @@ if (!defined('IMAGETYPE_SVG')) {
 define('ORIENTATION_PORTRAIT', 0);
 define('ORIENTATION_LANDSCAPE', 1);
 
-$connection = null;
-$is_connected = false;
+define('MPD_FILE_MODEL', array (
+        'file' => null,
+        'domain' => 'local',
+        'type' => 'local',
+        'station' => null,
+        'stream' => null,
+        'folder' => null,
+        'Title' => null,
+        'Album' => null,
+        'Artist' => null,
+        'Track' => 0,
+        'Name' => null,
+        'AlbumArtist' => null,
+        'Time' => 0,
+        'X-AlbumUri' => null,
+        'playlist' => '',
+        'X-AlbumImage' => null,
+        'Date' => null,
+        'Last-Modified' => '0',
+        'Disc' => null,
+        'Composer' => null,
+        'Performer' => null,
+        'Genre' => null,
+        'ImgKey' => null,
+        'StreamIndex' => null,
+        'Searched' => 0,
+        'Playcount' => 0,
+        'Comment' => '',
+        // Never send null in any musicbrainz id as it prevents plugins from
+        // waiting on lastfm to find one
+        'MUSICBRAINZ_ALBUMID' => '',
+        'MUSICBRAINZ_ARTISTID' => array(''),
+        'MUSICBRAINZ_ALBUMARTISTID' => '',
+        'MUSICBRAINZ_TRACKID' => '',
+        'Id' => null,
+        'Pos' => null,
+        'ttindex' => null,
+        'trackartist_index' => null,
+        'albumartist_index' => null,
+        'album_index' => null,
+        'searchflag' => 0,
+        'hidden' => 0,
+        'isaudiobook' => 0
+    )
+);
+
+define('MPD_ARRAY_PARAMS', array(
+        "Artist",
+        "AlbumArtist",
+        "Composer",
+        "Performer",
+        "MUSICBRAINZ_ARTISTID",
+    )
+);
+
+// Rompr's internal file model used in the Javascript side is a merge of the MPD_FILE_MODEL and ROMPR_FILE_MODEL
+// it is created in class playlistCollection
+
+define('ROMPR_FILE_MODEL', array(
+        "progress" => 0,
+        "year" => null,
+        "albumartist" => '',
+        "trackartist" => '',
+        "images" => '',
+        "metadata" => array(
+            "iscomposer" => 'false',
+            "artists" => array(),
+            "album" => array(
+                "name" => '',
+                "artist" => '',
+                "musicbrainz_id" => '',
+                "uri" => null
+            ),
+            "track" => array(
+                "name" => '',
+                "musicbrainz_id" => '',
+            ),
+        )
+    )
+);
+
 $mysqlc = null;
 
 $prefs = array(
@@ -113,16 +194,15 @@ $prefs = array(
     'dev_mode' => false,
     'live_mode' => false,
     'collection_load_timeout' => 3600000,
-    "mpd_host" => "localhost",
-    "mpd_port" => 6600,
-    "mpd_password" => "",
-    "unix_socket" => '',
     "smartradio_chunksize" => 5,
     "linkchecker_nextrun" => 0,
     "linkchecker_isrunning" => false,
     "linkchecker_frequency" => 604800000,
     "linkchecker_polltime" => 5000,
     "audiobook_directory" => '',
+    "collection_player" => null,
+    "snapcast_server" => '',
+    "snapcast_port" => '1705',
 
     // Things that could be set on a per-user basis but need to be known by the backend
     "displaycomposer" => true,
@@ -142,7 +222,7 @@ $prefs = array(
     "sortbydate" => false,
     "notvabydate" => false,
     "currenthost" => 'Default',
-    "player_backend" => "mpd",
+    "player_backend" => "none",
     "collectionrange" => ADDED_ALL_TIME,
 
     // These are currently saved in the backend, as the most likely scenario is one user
@@ -159,8 +239,8 @@ $prefs = array(
     "playlisthidden" => false,
     "infosource" => "lastfm",
     "playlistcontrolsvisible" => false,
-    "sourceswidthpercent" => 22,
-    "playlistwidthpercent" => 22,
+    "sourceswidthpercent" => 25,
+    "playlistwidthpercent" => 25,
     "downloadart" => true,
     "clickmode" => "double",
     "chooser" => "albumlist",
@@ -249,33 +329,30 @@ $private_prefs = array(
 // ====================================================================
 // Load Saved Preferences
 loadPrefs();
-$logger = new debug_logger($prefs['custom_logfile'], $prefs['debug_enabled']);
 
 if (defined('ROMPR_IS_LOADING')) {
-    debuglog("******++++++======------******------======++++++******","INIT",2);
+    logger::log("INIT", "******++++++======------******------======++++++******");
 }
 
 if (array_key_exists('REQUEST_URI', $_SERVER)) {
-    debuglog($_SERVER['REQUEST_URI'],"REQUEST",9);
+    logger::debug("REQUEST", $_SERVER['REQUEST_URI']);
 }
 
 if (!property_exists($prefs['multihosts'], $prefs['currenthost'])) {
-    debuglog($prefs['currenthost']." is not defined in the hosts defs.","INIT",3);
+    logger::warn("INIT", $prefs['currenthost'],"is not defined in the hosts defs");
     foreach ($prefs['multihosts'] as $key => $obj) {
-        debuglog("  Using host ".$key,"INIT",3);
+        logger::log("INIT", "  Using host ".$key);
         $prefs['currenthost'] = $key;
         setcookie('currenthost',$prefs['currenthost'],time()+365*24*60*60*10,'/');
         break;
     }
 }
 
-debuglog("Using MPD Host ".$prefs['currenthost'],"INIT",9);
+logger::debug("INIT", "Using MPD Host ".$prefs['currenthost']);
 
 if (!array_key_exists('currenthost', $_COOKIE)) {
     setcookie('currenthost',$prefs['currenthost'],time()+365*24*60*60*10,'/');
 }
-
-set_player_connect_params();
 
 // NOTE. skin is NOT saved as a preference on the backend. It is set as a Cookie only.
 // This is because saving it once as a preference would change the default for ALL new devices
@@ -283,15 +360,16 @@ set_player_connect_params();
 $skin = null;
 if(array_key_exists('skin', $_REQUEST)) {
     $skin = $_REQUEST['skin'];
-    debuglog("Request asked for skin: ".$skin,"INIT",9);
+    logger::log("INIT", "Request asked for skin: ".$skin);
 } else if (array_key_exists('skin', $_COOKIE)) {
     $skin = $_COOKIE['skin'];
-    debuglog("Using skin as set by Cookie: ".$skin,"INIT",9);
+    logger::debug("INIT", "Using skin as set by Cookie: ".$skin);
 }
 if ($skin !== null) {
     $skin = trim($skin);
 }
 
+$romonitor_hack = true;
 // ====================================================================
 
 function savePrefs() {
@@ -306,7 +384,7 @@ function savePrefs() {
 }
 
 function loadPrefs() {
-    global $prefs, $logger;
+    global $prefs;
     if (file_exists('prefs/prefs.var')) {
         $fp = fopen('prefs/prefs.var', 'r');
         if($fp) {
@@ -315,40 +393,30 @@ function loadPrefs() {
                 flock($fp, LOCK_UN);
                 fclose($fp);
                 if ($sp === false) {
+                    print '<h1>Fatal Error - Could not open the preferences file</h1>';
                     error_log("ERROR!              : COULD NOT LOAD PREFS");
                     exit(1);
                 }
                 $prefs = array_replace($prefs, $sp);
+                $prefs['player_backend'] = 'none';
+                logger::setLevel($prefs['debug_enabled']);
+                logger::setOutfile($prefs['custom_logfile']);
 
                 foreach ($_COOKIE as $a => $v) {
                     if (array_key_exists($a, $prefs)) {
-                        switch ($a) {
-                            case 'debug_enabled':
-                                $logger->setLevel($v);
-                                // Fall through to default
-
-                            default:
-                                if ($v === 'false') { $v = false; }
-                                if ($v === 'true') { $v = true; }
-                                $prefs[$a] = $v;
-                                break;
-
-                        }
-                        if ($prefs['debug_enabled'] > 8) {
-                            $module = "COOKIEPREFS";
-                            $in = str_repeat(" ", 20 - strlen($module));
-                            $pid = getmypid();
-                            $in2 = str_repeat(" ", 8 - strlen($pid));
-                            $out = "Pref ".$a." is set by Cookie  - Value : ".$v;
-                            error_log($pid.$in2.$module.$in.": ".$out,0);
-                        }
+                        if ($v === 'false') { $v = false; }
+                        if ($v === 'true') { $v = true; }
+                        $prefs[$a] = $v;
+                        logger::debug('COOKIEPREFS',"Pref",$a,"is set by Cookie - Value :",$v);
                     }
                 }
           } else {
+              print '<h1>Fatal Error - Could not open the preferences file</h1>';
               error_log("ERROR!              : COULD NOT GET READ FILE LOCK ON PREFS FILE");
               exit(1);
           }
       } else {
+          print '<h1>Fatal Error - Could not open the preferences file</h1>';
           error_log("ERROR!              : COULD NOT GET HANDLE FOR PREFS FILE");
           exit(1);
       }
@@ -357,81 +425,143 @@ function loadPrefs() {
 
 function set_music_directory($dir) {
     $prefs['music_directory_albumart'] = rtrim($dir, '/');
-    debuglog("Creating Album Art SymLink to ".$dir,"SAVEPREFS");
+    logger::log("SAVEPREFS", "Creating Album Art SymLink to ".$dir);
     if (is_link("prefs/MusicFolders")) {
         system ("unlink prefs/MusicFolders");
     }
     system ('ln -s "'.$dir.'" prefs/MusicFolders');
 }
 
-class debug_logger {
+class logger {
 
-    public function __construct($outfile, $level = 8) {
-        $this->outfile = $outfile;
-        $this->loglevel = intval($level);
-        $this->debug_colours = array(
-            # light red
-            0 => 91,
-            # red
-            1 => 31,
-            # yellow
-            2 => 33,
-            # magenta
-            3 => 35,
-            # cyan
-            4 => 36,
-            # lihgt grey
-            5 => 37,
-            # light yellow
-            6 => 93,
-            # green
-            7 => 32,
-            # white
-            8 => 97,
-            # light blue
-            9 => 94
-        );
+    private static $outfile;
+    private static $loglevel = 8;
+    private static $debug_colours = array(
+        # light red
+        0 => 91,
+        # red
+        1 => 31,
+        # yellow
+        2 => 33,
+        # magenta
+        3 => 35,
+        # cyan
+        4 => 36,
+        # lihgt grey
+        5 => 37,
+        # light yellow
+        6 => 93,
+        # green
+        7 => 32,
+        # white
+        8 => 97,
+        # light blue
+        9 => 94
+    );
+
+    private static $debug_names = array(
+        1 => 'ERROR',
+        2 => 'WARN ',
+        3 => 'FAIL ',
+        4 => 'BLURT',
+        5 => 'SHOUT',
+        6 => 'MARK ',
+        7 => 'LOG  ',
+        8 => 'TRACE',
+        9 => 'DEBUG'
+    );
+
+    public static function setLevel($level) {
+        self::$loglevel = intval($level);
     }
 
-    public function log($out, $module, $level) {
-        if ($level > $this->loglevel || $level > 9 || $level < 1) return;
-        $in = str_repeat(" ", 20 - strlen($module));
+    public static function setOutfile($file) {
+        self::$outfile  = $file;
+    }
+
+    private static function dothelogging($level, $parms) {
+        if ($level > self::$loglevel || $level < 1) return;
+        $module = array_shift($parms);
+        if (strlen($module) > 18) {
+            $in = ' ';
+        } else {
+            $in = str_repeat(" ", 18 - strlen($module));
+        }
         $pid = getmypid();
-        $in2 = str_repeat(" ", 8 - strlen($pid));
-        if ($this->outfile != "") {
+        array_walk($parms, 'logger::un_array');
+        $out = implode(' ', $parms);
+        if (self::$outfile != "") {
             // Two options here - either colour by level
-            // $col = $this->debug_colours[$level];
+            // $col = self::$debug_colours[$level];
             // or attempt to have different processes in different colours.
             // This helps to keep track of things when multiple concurrent things are happening at once.
-            $col = $this->debug_colours[$pid % 10];
-            error_log("\033[90m".strftime('%T').' : '.$in2.$pid." : \033[".$col."m".$module.$in.$out."\033[0m\n",3,$this->outfile);
+            $col = self::$debug_colours[$pid % 10];
+            error_log("\033[90m".strftime('%T').' : '.self::$debug_names[$level]." : \033[".$col."m".$module.$in.$out."\033[0m\n",3,self::$outfile);
         } else {
-            error_log($pid.$in2.$module.$in.": ".$out,0);
+            error_log(self::$debug_names[$level].' : '.$module.$in.": ".$out,0);
         }
     }
 
-    public function setLevel($level) {
-        $this->loglevel = intval($level);
+    public static function un_array(&$a, $i) {
+        if (is_array($a)) {
+            $a = multi_implode($a);
+        }
     }
-}
 
-function debuglog($text, $module = "JOHN WAYNE", $level = 7) {
-    global $logger;
-    $logger->log($text, $module, $level);
-}
-
-function set_player_connect_params() {
-	global $prefs;
-	$prefs['mpd_host'] = $prefs['multihosts']->{$prefs['currenthost']}->host;
-	$prefs['mpd_port'] = $prefs['multihosts']->{$prefs['currenthost']}->port;
-	$prefs['mpd_password'] = $prefs['multihosts']->{$prefs['currenthost']}->password;
-	$prefs['unix_socket'] = $prefs['multihosts']->{$prefs['currenthost']}->socket;
-    if (property_exists($prefs['multihosts']->{$prefs['currenthost']}, 'mopidy_slave')) {
-        $prefs['mopidy_slave'] = $prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave;
-    } else {
-        // Catch the case where we haven't yet upgraded the player defs
-        $prefs['mopidy_slave'] = false;
+    // Level 9
+    public static function debug() {
+        $parms = func_get_args();
+        logger::dothelogging(9, $parms);
     }
+
+    // Level 8
+    public static function trace() {
+        $parms = func_get_args();
+        logger::dothelogging(8, $parms);
+    }
+
+    // Level 7
+    public static function log() {
+        $parms = func_get_args();
+        logger::dothelogging(7, $parms);
+    }
+
+    // Level 6
+    public static function mark() {
+        $parms = func_get_args();
+        logger::dothelogging(6, $parms);
+    }
+
+    // Level 5
+    public static function shout() {
+        $parms = func_get_args();
+        logger::dothelogging(5, $parms);
+    }
+
+    // Level 4
+    public static function blurt() {
+        $parms = func_get_args();
+        logger::dothelogging(4, $parms);
+    }
+
+    // Level 3
+    public static function fail() {
+        $parms = func_get_args();
+        logger::dothelogging(3, $parms);
+    }
+
+    // Level 2
+    public static function warn() {
+        $parms = func_get_args();
+        logger::dothelogging(2, $parms);
+    }
+
+    // Level 1
+    public static function error() {
+        $parms = func_get_args();
+        logger::dothelogging(1, $parms);
+    }
+
 }
 
 function upgrade_host_defs($ver) {
@@ -454,7 +584,22 @@ function upgrade_host_defs($ver) {
         }
     }
     savePrefs();
-    set_player_connect_params();
+}
+
+function multi_implode($array, $glue = ', ') {
+    if (!is_array($array)) {
+        return $array;
+    }
+    $ret = '';
+    foreach ($array as $key => $item) {
+        if (is_array($item)) {
+            $ret .= $key . '=[' . multi_implode($item, $glue) . ']' . $glue;
+        } else {
+            $ret .= $key . '=' . $item . $glue;
+        }
+    }
+    $ret = substr($ret, 0, 0-strlen($glue));
+    return $ret;
 }
 
 ?>

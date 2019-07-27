@@ -4,6 +4,10 @@ RompЯ supports using multiple players, which can be on different computers. You
 
 All the players can be used simultaneously, but they will not play in sync. The idea is that a person in one room can use one player and a person in another room can use a different player. All the players share the same Music Collection so Playcounts, Podcasts, Tags, Ratings, etc are shared across all of them.
 
+## Multiroom Audio
+
+If you want to have multiroom audio with all rooms playing the same music, in sync, then RompЯ has full support for controlling [Snapcast](/RompR/Snapcast)
+
 ## Defining Players
 
 You can add new players from the configuration menu. This opens a dialog box.
@@ -34,7 +38,6 @@ When switching players you will be given the option to transfer your Current Pla
 
 ## Limitations
 
-* All players must be the same type - i.e all MPD or all Mopidy. This is because MPD and Mopidy use different and incompatible URI schemes for files. There is experimental support for mixing player types - see [here](#using-different -player-types)
 * Do NOT try to control multiple players from multiple tabs in the same browser. I cannot stop this or detect it and it WILL result in data corruption.
 * If you're [logged in to Last.FM](/RonpR/LastFM), the same Last.FM user is used across all Players.
 
@@ -88,7 +91,6 @@ With this configuration, all your data is kept in sync and all Players can play 
 
 There is now some support for mixing Mopidy and MPD. You can have some players as MPD and some as Mopidy but there are several caveats:
 
-* This ONLY works if you are [using MySQL](/RompR/Using-a-MySQL-server). SQLite uses separate databases for MPD and Mopidy so tags, playcounts, ratings, podcasts, and radio stations will not be shared between your players if you use SQLite.
 * You can only update your Music Collection when you are using the same type of player that was used to create it.
 * You must be using Mopidy's 'local' (or 'local-sqlite') backend for your local files. Using 'file' is not supported.
 * Obviously, attempting to add tracks from spotify, gmusic, etc to MPD will not work.

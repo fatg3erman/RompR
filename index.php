@@ -1,17 +1,18 @@
 <?php
 define('ROMPR_IS_LOADING', true);
-include("includes/vars.php");
+
+require_once ("includes/vars.php");
 
 //
 // Check to see if this is a mobile browser
 //
 if ($skin === null) {
-   debuglog("Detecting window size to decide which skin to use....","INIT",4);
+   logger::blurt("INIT", "Detecting window size to decide which skin to use....");
    include('checkwindowsize.php');
    exit(0);
 }
 
-debuglog("Using skin : ".$skin,"INIT",6);
+logger::debug("INIT", "Using skin : ".$skin);
 
 if (!is_dir('skins/'.$skin)) {
     print '<h3>Skin '.htmlspecialchars($skin).' does not exist!</h3>';
@@ -20,7 +21,7 @@ if (!is_dir('skins/'.$skin)) {
 
 $skinrequires = array();
 if (file_exists('skins/'.$skin.'/skin.requires')) {
-    debuglog("Loading Skin Requirements File","INIT",9);
+    logger::log("INIT", "Loading Skin Requirements File");
     $requires = file('skins/'.$skin.'/skin.requires');
     foreach ($requires as $r) {
         if (substr($r,0,1) != '#') {
@@ -29,23 +30,17 @@ if (file_exists('skins/'.$skin.'/skin.requires')) {
     }
 }
 
-// Workaround bug where this wasn't initialised to a value, meaning an error could be thrown
-// on the first inclusion of connection.php
-if ($prefs['player_backend'] == '') {
-    $prefs['player_backend'] = 'mpd';
-}
-
-include("includes/functions.php");
-include("international.php");
+require_once ("includes/functions.php");
+require_once ("international.php");
 set_version_string();
-include("skins/".$skin."/ui_elements.php");
+require_once ("skins/".$skin."/ui_elements.php");
 
 //
 // See if there are any POST values from the setup screen
 //
 
-if (array_key_exists('mpd_host', $_POST)) {
-    foreach (array('cleanalbumimages', 'do_not_show_prefs') as $p) {
+if (array_key_exists('currenthost', $_POST)) {
+    foreach (array('cleanalbumimages', 'do_not_show_prefs', 'separate_collections') as $p) {
         if (array_key_exists($p, $_POST)) {
             $_POST[$p] = true;
         } else {
@@ -53,7 +48,7 @@ if (array_key_exists('mpd_host', $_POST)) {
         }
     }
     foreach ($_POST as $i => $value) {
-        debuglog("Setting Pref ".$i." to ".$value,"INIT", 3);
+        logger::mark("INIT", "Setting Pref ".$i." to ".$value);
         $prefs[$i] = $value;
     }
     setcookie('currenthost',$prefs['currenthost'],time()+365*24*60*60*10,'/');
@@ -75,13 +70,31 @@ if (array_key_exists('mpd_host', $_POST)) {
                 "radioconsume" => 0
             )
     );
-
-    $logger->setLevel($prefs['debug_enabled']);
     savePrefs();
 }
 
-debuglog($_SERVER['SCRIPT_FILENAME'],"INIT",9);
-debuglog($_SERVER['PHP_SELF'],"INIT",9);
+$collections = glob('prefs/collection_{mpd,mopidy}.sq3', GLOB_BRACE);
+if (count($collections) > 0) {
+    logger::blurt('UPGRADE', 'Old-style twin sqlite collections found');
+    @mkdir('prefs/oldcollections');
+    $time = 0;
+    $newest = null;
+    foreach ($collections as $file) {
+        if (filemtime($file) > $time) {
+            $newest = $file;
+            $time = filemtime($file);
+        }
+    }
+    logger::mark('UPGRADE', "Newest file is",$newest);
+    copy($newest, 'prefs/collection.sq3');
+    foreach ($collections as $file) {
+        logger::log('UPGRADE', 'Moving',$file,'to','prefs/oldcollections/'.basename($file));
+        rename($file, 'prefs/oldcollections/'.basename($file));
+    }
+}
+
+logger::debug("INIT", $_SERVER['SCRIPT_FILENAME']);
+logger::debug("INIT", $_SERVER['PHP_SELF']);
 
 //
 // Has the user asked for the setup screen?
@@ -93,39 +106,30 @@ if (array_key_exists('setup', $_REQUEST)) {
     exit();
 }
 
-include("player/mpd/connection.php");
-if (!$is_connected) {
-    debuglog("MPD Connection Failed","INIT",1);
-    $title = get_int_text("setup_connectfail");
-    include("setupscreen.php");
-    exit();
+require_once ('player/mpd/mpdinterface.php');
+logger::mark('INIT','Attempting to connect to player',$prefs['currenthost']);
+if (array_key_exists('player_backend', $_COOKIE)) {
+    logger::mark('INIT','Player backend cookie is',$_COOKIE['player_backend']);
 } else {
-    $mpd_status = do_mpd_command("status", true);
+    logger::mark('INIT','Player backend cookie is not set');
+}
+$player = new base_mpd_player();
+if ($player->is_connected()) {
+    $mpd_status = $player->get_status();
     if (array_key_exists('error', $mpd_status)) {
-        debuglog("MPD Password Failed or other status failure","INIT",1);
-        close_mpd();
-        $title = get_int_text("setup_connecterror").$mpd_status['error'];
-        include("setupscreen.php");
-        exit();
+        logger::fail("INIT", "MPD Password Failed or other status failure");
+        connect_fail(get_int_txt("setup_connecterror").$mpd_status['error']);
     }
+} else {
+    logger::error("INIT", "MPD Connection Failure");
+    connect_fail(get_int_text("setup_connectfail"));
 }
-
-//
-// Probe to see which type of Player we're using
-//
-probe_player_type();
-setcookie('player_backend',$prefs['player_backend'],time()+365*24*60*60*10,'/');
-
-if ($prefs['unix_socket'] != '') {
-    // If we're connected by a local socket we can read the music directory
-    $arse = do_mpd_command('config', true);
-    if (array_key_exists('music_directory', $arse)) {
-        set_music_directory($arse['music_directory']);
-    }
+// If we're connected by a local socket we can read the music directory
+$arse = $player->get_config();
+if (array_key_exists('music_directory', $arse)) {
+    set_music_directory($arse['music_directory']);
 }
-
-close_mpd();
-
+$player->close_mpd_connection();
 //
 // See if we can use the SQL backend
 //
@@ -141,27 +145,19 @@ if (!$mysqlc) {
     sql_init_fail("No Database Connection Was Possible");
 }
 
-savePrefs();
-
 list($result, $message) = check_sql_tables();
 if ($result == false) {
     sql_init_fail($message);
 }
 
-$collection_type = get_collection_type();
-
-if (array_key_exists('theme', $_REQUEST) && file_exists('themes/'.$_REQUEST['theme'].'.css')) {
-    debuglog("Setting theme from request to ".$_REQUEST['theme'],"INIT",5);
-    $prefs['usertheme'] = $_REQUEST['theme'].'.css';
-}
-
+savePrefs();
 //
 // Do some initialisation and cleanup of the Apache backend
 //
 include ("includes/firstrun.php");
-debuglog("Last Last.FM Sync Time is ".$prefs['last_lastfm_synctime'].", ".date('r', $prefs['last_lastfm_synctime']),"INIT", 6);
-debuglog("Initialisation done. Let's Boogie!", "INIT",9);
-debuglog("******++++++======------******------======++++++******","CREATING PAGE",3);
+logger::trace("INIT", "Last Last.FM Sync Time is ".$prefs['last_lastfm_synctime'].", ".date('r', $prefs['last_lastfm_synctime']));
+logger::log("INIT", "Initialisation done. Let's Boogie!");
+logger::shout("CREATING PAGE", "******++++++======------******------======++++++******");
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -195,19 +191,14 @@ foreach ($skinrequires as $s) {
     $s = trim($s);
     $ext = strtolower(pathinfo($s, PATHINFO_EXTENSION));
     if ($ext == "css") {
-        debuglog("Including Skin Requirement ".$s,"INIT",6);
+        logger::mark("INIT", "Including Skin Requirement ".$s);
         print '<link rel="stylesheet" type="text/css" href="'.$s.'?version='.time().'" />'."\n";
     }
 }
 ?>
 <link rel="stylesheet" id="theme" type="text/css" />
-<link rel="stylesheet" id="fontsize" type="text/css" />
-<link rel="stylesheet" id="fontfamily" type="text/css" />
-<link rel="stylesheet" id="icontheme-theme" type="text/css" />
-<link rel="stylesheet" id="icontheme-adjustments" type="text/css" />
-<link rel="stylesheet" id="albumcoversize" type="text/css" />
 <?php
-debuglog("Reconfiguring the Forward Deflector Array","INIT",6);
+logger::mark("INIT", "Reconfiguring the Forward Deflector Array");
 $scripts = array(
     "jquery/jquery-3.3.1.min.js",
     "jquery/jquery-migrate-3.0.1.js",
@@ -237,51 +228,52 @@ $scripts = array(
     "ui/coverscraper.js",
     "ui/favefinder.js",
     "ui/podcasts.js",
-    "browser/info.js"
+    "browser/info.js",
+    "snapcast/snapcast.js"
 );
 foreach ($scripts as $i) {
-    debuglog("Loading ".$i,"INIT",7);
+    logger::log("INIT", "Loading ".$i);
     print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
 $inc = glob("streamplugins/*.js");
 foreach($inc as $i) {
-    debuglog("Loading ".$i,"INIT",7);
+    logger::log("INIT", "Loading ".$i);
     print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
 
-debuglog("Including skins/".$skin.'/skinvars.php',"LAYOUT",7);
+logger::log("LAYOUT", "Including skins/".$skin.'/skinvars.php');
 include('skins/'.$skin.'/skinvars.php');
 include('includes/globals.php');
 
 $inc = glob("browser/helpers/*.js");
 foreach($inc as $i) {
-    debuglog("Including Browser Helper ".$i,"INIT",7);
+    logger::log("INIT", "Including Browser Helper ".$i);
     print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
 $inc = glob("browser/plugins/*.js");
 ksort($inc);
 foreach($inc as $i) {
-    debuglog("Including Info Panel Plugin ".$i,"INIT",7);
+    logger::log("INIT", "Including Info Panel Plugin ".$i);
     print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
 if ($use_smartradio) {
     $inc = glob("radios/*.js");
     ksort($inc);
     foreach($inc as $i) {
-        debuglog("Including Smart Radio Plugin ".$i,"INIT",7);
+        logger::log("INIT", "Including Smart Radio Plugin ".$i);
         print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
     }
 }
 if ($use_plugins) {
     $inc = glob("plugins/*.js");
     foreach($inc as $i) {
-        debuglog("Including Plugin ".$i,"INIT",7);
+        logger::log("INIT", "Including Plugin ".$i);
         print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
     }
     if ($prefs['load_plugins_at_loadtime']) {
         $inc = glob("plugins/code/*.js");
         foreach($inc as $i) {
-            debuglog("DEVELOPMENT MODE : Including Plugin ".$i,"INIT",2);
+            logger::log("INIT", "DEVELOPMENT MODE : Including Plugin ".$i);
             print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
         }
     }
@@ -290,7 +282,7 @@ foreach ($skinrequires as $s) {
     $s = trim($s);
     $ext = strtolower(pathinfo($s, PATHINFO_EXTENSION));
     if ($ext == "js") {
-        debuglog("Including Skin Requirement ".$s,"INIT",7);
+        logger::log("INIT", "Including Skin Requirement ".$s);
         print '<script type="text/javascript" src="'.$s.'?version='.$version_string.'"></script>'."\n";
     }
 }
@@ -299,12 +291,21 @@ foreach ($skinrequires as $s) {
 </head>
 
 <?php
-debuglog("Including skins/".$skin.'/skin.php',"LAYOUT",7);
+logger::log("LAYOUT", "Including skins/".$skin.'/skin.php');
 include('skins/'.$skin.'/skin.php');
 ?>
 
 </body>
 </html>
 <?php
-debuglog("******++++++======------******------======++++++******","INIT FINISHED",2);
+logger::shout("INIT FINISHED", "******++++++======------******------======++++++******");
+
+function connect_fail($t) {
+    global $title, $prefs;
+    logger::fail("INIT", "MPD Connection Failed");
+    $title = $t;
+    include("setupscreen.php");
+    exit();
+}
+
 ?>

@@ -1,5 +1,5 @@
 html, body.phone .dropmenu {
-    background-image:url("shootingstars.jpg");
+    background-image:url("themes/shootingstars.jpg");
     background-size:cover;
     background-repeat:no-repeat;
     background-attachment:fixed;
@@ -60,25 +60,46 @@ a:hover,a:active
 button, input[type="button"], .filebutton
 {
     color:#dddddd;
-    background-color:transparent;
-    border:1px solid #aaaaaa;
+    background-color:rgba(200,200,200,0.3);
+    border:none;
 }
 
 button:hover, input[type="button"]:hover, .filebutton:hover
 {
     color:#ffffff;
-    border:1px solid #ffffff;
-    text-shadow: 0 0 15px #ffffff;
+    background-color:rgba(200,200,200,0.5);
 }
 
-input
-{
-    color:#181818;
+select {
+    color:white;
 }
 
-select
-{
-    color:#000000;
+.selectholder {
+    background-color:rgba(200,200,200,0.2);
+}
+
+.selectholder:hover {
+    background-color:rgba(200,200,200,0.2);
+}
+
+input[type="text"] {
+    background-color: rgba(200,200,200,0.2);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:hover {
+    background-color: rgba(200,200,200,0.2);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:focus {
+    transition: border-bottom 0.5s ease;
+    border-bottom: 1px solid #bbbbbb;
+}
+
+.drop-box {
+    background-color:rgba(6,29,47,0.9);
+    color:white;
 }
 
 #notifications
@@ -96,6 +117,13 @@ a.album:hover,a.album:active
     text-shadow: 0 0 15px #ffffff;
     color:#ffffff;
     cursor:pointer;
+}
+
+#pset {
+    background-color: rgba(2, 23, 40, 0);
+}
+#pmaxset {
+    background-color: rgba(200, 200, 200, 0);
 }
 
 #filemenu
@@ -151,11 +179,6 @@ a.album:hover,a.album:active
     background-color:rgba(0,0,0,0.2);
 }
 
-.inbrowser
-{
-    color:#000000;
-}
-
 /*-- For Wikipedia and Last.FM pages --*/
 
 .stleft
@@ -209,7 +232,7 @@ div.topdropmenu
 
 .configtitle
 {
-    background-image:linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.3));
+    background-color:rgba(6,29,47,0.9);
 }
 
 body.mobile .configtitle

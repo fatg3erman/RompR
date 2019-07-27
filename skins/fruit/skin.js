@@ -267,7 +267,7 @@ var layoutProcessor = function() {
             $("#bottompage").css("height", newheight+"px");
             var newwidth = ws.x - $('#infobar').offset().left;
             $('#infobar').css('width', newwidth+'px');
-            infobar.rejigTheText();
+            infobar.biggerize();
             browser.rePoint();
             $('.topdropmenu').fanoogleMenus();
         },
@@ -518,16 +518,13 @@ var layoutProcessor = function() {
             $(document).on('mouseenter', '.tooltip', makeToolTip);
             $(document).on('mouseleave', '.tooltip', stopToolTip);
             $('#plmode').detach().appendTo('#amontobin').addClass('tright');
-            $("#volume").rangechooser({
-                range: 100,
-                ends: ['max'],
-                onstop: infobar.volumeend,
-                whiledragging: infobar.volumemoved,
-                orientation: "vertical"
+            $('#volume').volumeControl({
+                orientation: 'vertical',
+                command: player.controller.volume
             });
         },
 
-        createPluginHolder: function(icon, title, id) {
+        createPluginHolder: function(icon, title, id, panel) {
             var d = $('<div>', {class: 'topdrop'}).prependTo('#righthandtop');
             var i = $('<i>', {class: 'tooltip', title: title, id: id}).appendTo(d);
             i.addClass(icon);

@@ -9,16 +9,15 @@ body
 
 }
 
-body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol
+body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,input
 {
     color:#dddddd;
 }
 
 button, input[type="button"], .filebutton
 {
-    background-color:#202020;
-    border:1px solid #dedede;
-    /* background-image:none !important; */
+    background-color:#000000;
+    border:none;
     color:#dddddd;
     font-weight:bold;
     font-size:110%;
@@ -26,19 +25,39 @@ button, input[type="button"], .filebutton
 
 button:hover, input[type="button"]:hover, .filebutton:hover
 {
+    background-color:#222222;
     color:#ffffff;
-    border:1px solid #ffffff;
-    transition: all 0.5s ease;
 }
 
-input
-{
-    color:#000000;
+select {
+    color:#dddddd;
 }
 
-input[type="submit"]
-{
-    color: #dddddd;
+select:hover {
+    color:#ffffff;
+}
+
+.selectholder {
+    background-color:rgba(200,200,200,0.05);
+}
+
+.selectholder:hover {
+    background-color:rgba(200,200,200,0.1);
+}
+
+input[type="text"] {
+    background-color: rgba(200,200,200,0.05);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:hover {
+    background-color: rgba(200,200,200,0.1);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:focus {
+    transition: border-bottom 0.5s ease;
+    border-bottom: 1px solid #bbbbbb;
 }
 
 a:link {
@@ -86,6 +105,9 @@ body.desktop #headerbar
 
 #pset {
     background-color: rgba(150, 150, 150, 0);
+}
+#pmaxset {
+    background-color: rgba(255, 255, 255, 0);
 }
 
 #custombackground
@@ -185,11 +207,6 @@ a.album:hover,a.album:active
 .item
 {
     border-top:1px solid #444444;
-}
-
-.inbrowser
-{
-    color:#000000;
 }
 
 .stleft
@@ -295,7 +312,7 @@ div.topdropmenu
 
 .configtitle
 {
-    background-image: linear-gradient(#000000, #050505);
+    background-color:rgba(255,255,255,0.2);
 }
 
 /*

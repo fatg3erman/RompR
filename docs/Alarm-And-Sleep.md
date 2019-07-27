@@ -44,7 +44,7 @@ At this point:
 
 * The alarm clock runs *in your browser*. If you close the browser, or if your PC goes to sleep, the alarm *will not go off*.
 * The alarm will play on whichever [Player](/RompR/Using-Multiple-Players) the browser is currently connected to.
-* Alarm clock is not supported on the Phone or Tablet skins, since there's no way to prevent phones and tablets from sleeping.
+* Alarm clock is not supported on the Phone skin, since there's no way to prevent phones from sleeping. It is supported in the Tablet skin, but only because that's the skin I like to use on my laptop.
 
 # Sleep Timer
 
@@ -56,4 +56,4 @@ Set the number of minutes, and click ON. You can also specify a keyboard shortcu
 
 When it activates, the sleep timer will slowly fade the music out before it pauses.
 
-The sleep timer also is not available on the Phone skin.
+The Sleep Timer is not supported on the Phone skin, since there's no way to prevent phones from sleeping. It is supported in the Tablet skin, but only because that's the skin I like to use on my laptop.

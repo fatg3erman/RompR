@@ -1,8 +1,8 @@
 <?php
 chdir('..');
-include("includes/vars.php");
-include("includes/functions.php");
-include("player/mpd/sockets.php");
+require_once ("includes/vars.php");
+require_once ("includes/functions.php");
+require_once ("player/".$prefs['player_backend']."/player.php");
 set_version_string();
 print '<table id="debuginfotable" width="100%">';
 print '<tr><th colspan="2">Backend Info</th></tr>';
@@ -77,61 +77,49 @@ foreach ($php_values as $v) {
     print '<tr><td>'.$v.'</td><td>'.multi_implode($t).'</td></tr>';
 }
 
+$player = new $PLAYER_TYPE();
 print '<tr><th colspan="2">Player Information</th></tr>';
-@open_mpd_connection();
-if ($is_connected) {
+if ($player->is_connected()) {
     print '<tr><td>Connection Status</td><td>Connection Successful</td></tr>';
-    if ($prefs['player_backend'] == 'mpd') {
-        if ($prefs['unix_socket'] != '') {
-            $config = do_mpd_command('config', true);
-            if (is_array($config)) {
-                foreach ($config as $c => $v) {
-                    print '<tr><td>'.$c.'</td><td>'.multi_implode($v).'</td></tr>';
-                }
-            } else {
-                // print '<tr><td>Config</td><td>'.$config.'</td></tr>';
-            }
-        }
-        $tagtypes = do_mpd_command('tagtypes', true);
-        if (is_array($tagtypes)) {
-            foreach ($tagtypes as $c => $v) {
-                print '<tr><td>'.$c.'</td><td>'.implode(', ', $v).'</td></tr>';
-            }
-        } else {
-            // print '<tr><td>Tagtypes</td><td>'.$tagtypes.'</td></tr>';
+
+    $config = $player->get_config();
+    foreach ($config as $c => $v) {
+        print '<tr><td>'.$c.'</td><td>'.multi_implode($v).'</td></tr>';
+    }
+
+    $tagtypes = $player->get_tagtypes();
+    if (is_array($tagtypes)) {
+        foreach ($tagtypes as $c => $v) {
+            print '<tr><td>'.$c.'</td><td>'.implode(', ', $v).'</td></tr>';
         }
     }
-    $commands = do_mpd_command('commands', true);
+
+    $commands = $player->get_commands();
     if (is_array($commands)) {
         foreach ($commands as $c => $v) {
             print '<tr><td>Commands</td><td>'.implode(', ', $v).'</td></tr>';
         }
-    } else {
-        // print '<tr><td>Commands</td><td>'.$commands.'</td></tr>';
     }
-    $commands = do_mpd_command('notcommands', true);
+
+    $commands = $player->get_notcommands();
     if (is_array($commands)) {
         foreach ($commands as $c => $v) {
             print '<tr><td>Not Commands</td><td>'.implode(', ', $v).'</td></tr>';
         }
-    } else {
-        // print '<tr><td>Not Commands</td><td>'.$commands.'</td></tr>';
     }
-    $commands = do_mpd_command('urlhandlers', true);
-    if (is_array($commands)) {
+
+    $commands = $player->get_uri_handlers();
+    if (count($commands) > 0) {
         foreach ($commands as $c => $v) {
             print '<tr><td>URL Handlers</td><td>'.implode(', ', $v).'</td></tr>';
         }
-    } else {
-        // print '<tr><td>URL Handlers</td><td>'.$commands.'</td></tr>';
     }
-    $commands = do_mpd_command('decoders', true);
+
+    $commands = $player->get_decoders();
     if (is_array($commands)) {
         foreach ($commands as $c => $v) {
             print '<tr><td>'.$c.'</td><td>'.implode(', ', $v).'</td></tr>';
         }
-    } else {
-        // print '<tr><td>Decoders</td><td>'.$commands.'</td></tr>';
     }
 } else {
     print '<tr><td>Connection Status</td><td>Connection Failed</td></tr>';

@@ -79,7 +79,7 @@ var info_soundcloud = function() {
             return "";
         }
     }
-	
+
 	return {
 		getRequirements: function(parent) {
 			return [];
@@ -193,9 +193,9 @@ var info_soundcloud = function() {
 		            	}
 		            	if (trackmeta.soundcloud === undefined) {
 		            		trackmeta.soundcloud = {};
-			            	var t = parent.playlistinfo.location;
+			            	var t = parent.playlistinfo.file;
 			            	if (t.substring(0,11) == 'soundcloud:') {
-		                		soundcloud.getTrackInfo(parent.playlistinfo.location, self.track.scResponseHandler);
+		                		soundcloud.getTrackInfo(parent.playlistinfo.file, self.track.scResponseHandler);
 		                	} else if (t.match(/api\.soundcloud\.com\/tracks\/(\d+)\//)) {
 		                		var sc = t.match(/api\.soundcloud\.com\/tracks\/(\d+)\//);
 		                		soundcloud.getTrackInfo(sc[1], self.track.scResponseHandler);

@@ -77,7 +77,7 @@ class somafmplugin {
     }
 
     private function doAllStations($content) {
-        debuglog("Loaded Soma FM channels list","SOMAFM");
+        logger::trace("SOMAFM", "Loaded Soma FM channels list");
         $x = simplexml_load_string($content);
         $count = 0;
         foreach ($x->channel as $channel) {
@@ -87,7 +87,7 @@ class somafmplugin {
     }
 
     private function doChannel($count, $channel) {
-        debuglog("Channel : ".$channel->title,"SOMAFM");
+        logger::log("SOMAFM", "Channel :",$channel->title);
         if ($channel->highestpls) {
             $pls = (string) $channel->highestpls;
         } else {

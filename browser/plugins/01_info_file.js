@@ -3,8 +3,9 @@ var info_file = function() {
 	var me = "file";
 
     function podComment(parent) {
-        if (parent.playlistinfo.type == 'podcast' && parent.playlistinfo.comment) {
-            return '<div class="brick tagholder_wode tagholder"><table class="fileinfotable" style="width:100%"><tr><th>'+language.gettext("info_comment").replace(':','')+'</th></tr><tr><td class="notbold">'+parent.playlistinfo.comment+'</td></tr></table></div>';
+        if (parent.playlistinfo.type == 'podcast' && parent.playlistinfo.Comment) {
+            return '<div class="brick tagholder_wode tagholder"><table class="fileinfotable" style="width:100%"><tr><th>'+
+			language.gettext("info_comment").replace(':','')+'</th></tr><tr><td class="notbold">'+parent.playlistinfo.Comment+'</td></tr></table></div>';
         }
         return '';
     }
@@ -170,7 +171,7 @@ var info_file = function() {
 
 			this.populate = function() {
                 if (trackmeta.fileinfo === undefined) {
-    				var file = parent.playlistinfo.location;
+    				var file = parent.playlistinfo.file;
     				var m = file.match(/^beets:library:track(:|;)(\d+)/)
     		        if (m && m[2] && prefs.beets_server_location != '') {
     		        	debug.trace("FILE PLUGIN","File is from beets server",m[2]);

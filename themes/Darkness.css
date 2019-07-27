@@ -34,11 +34,6 @@ button:hover, input[type="button"]:hover, .filebutton:hover
     text-shadow: 0 0 15px #ff4800;
 }
 
-input
-{
-    color:#181818;
-}
-
 input[type="submit"]
 {
     color: #ffffff;
@@ -57,6 +52,45 @@ a:visited
 a:hover,a:active
 {
     color:#ff4800;
+}
+
+select {
+    color:#dddddd;
+}
+
+select:hover {
+    color:#ffffff;
+}
+
+.selectholder {
+    background-color:rgba(0,0,0,0.3);
+    border: 1px solid #555555;
+}
+
+.selectholder:hover {
+    background-color:rgba(0,0,0,0.2);
+}
+
+input[type="text"] {
+    background-color: rgba(0,0,0,0.3);
+    border-bottom: 1px solid #555555;
+    border-top: 1px solid #232323;
+}
+
+input[type="text"]:hover {
+    background-color: rgba(0,0,0,0.2);
+}
+
+input[type="text"]:focus {
+    transition: border-bottom 0.5s ease;
+    transition: border-top 0.5s ease;
+    border-bottom: 1px solid #bbbbbb;
+    border-top: 1px solid #555555;
+}
+
+.drop-box {
+    background-color: rgba(0,0,0,0.2);
+    color:white;
 }
 
 /*
@@ -184,11 +218,6 @@ a.album:hover,a.album:active
     border-top:1px solid #cccccc;
 }
 
-.inbrowser
-{
-    color:#000000;
-}
-
 .stleft
 {
     border-right:1px solid #aaaaaa;
@@ -222,12 +251,6 @@ table.histable tr:hover {
 tr.clickaddtrack:hover
 {
     background-color:#353535;
-}
-
-.drop-box
-{
-    background-color:#fefefe;
-    color:#090909;
 }
 
 .bsel
@@ -282,6 +305,7 @@ div.topdropmenu
 .configtitle
 {
     background-color:#252525;
+    border-bottom: 1px solid #555555;
 }
 
 /*

@@ -9,7 +9,7 @@ body
 
 }
 
-body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol
+body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,input,select
 {
     color:#111111;
 }
@@ -18,7 +18,7 @@ body.phone .dropmenu>div.playable,
 body.phone .dropmenu>div.menuitem,
 body.phone .mainpane .radio,
 body.phone .mainpane .faveradio,
-body.phone .mainpane .podcast,
+body.phone .mainpane .podcast:not(.podicon):not(.podglobal),
 body.phone .mainpane .directory {
     border-top: 1px solid rgba(60,60,60,0.4);
 }
@@ -30,23 +30,17 @@ body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
 
 button, input[type="button"], .filebutton
 {
-    background-color:#cccccc;
-    border:1px solid #333333;
-    /* background-image:none !important; */
-    color:black;
+    background-color:#dddddd;
+    border:none;
+    color:#444444;
     font-weight:normal;
     font-size:110%;
 }
 
 button:hover, input[type="button"]:hover, .filebutton:hover
 {
-    font-weight:bold;
-    border:1px solid #666666;
-}
-
-input
-{
-    color:#000000;
+    color:black;
+    background-color:#eeeeee;
 }
 
 input[type="submit"]
@@ -64,6 +58,27 @@ a:visited {
 
 a:hover,a:active {
     color:#ff4800;
+}
+
+.selectholder {
+    background-color:rgba(0,0,0,0.05);
+}
+
+.selectholder:hover {
+    background-color:rgba(0,0,0,0.03);
+}
+
+input[type="text"] {
+    background-color: rgba(0,0,0,0.05);
+}
+
+input[type="text"]:hover, input.snapclientname[type="text"]:hover {
+    background-color: rgba(0,0,0,0.03) !important;
+}
+
+input[type="text"]:focus {
+    transition: border-bottom 0.5s ease;
+    border-bottom: 1px solid #bbbbbb;
 }
 
 /*
@@ -112,6 +127,9 @@ body.desktop #thetopbit
 
 #pset {
     background-color: rgba(200, 200, 200, 0);
+}
+#pmaxset {
+    background-color: rgba(255, 255, 255, 0);
 }
 
 #custombackground
@@ -221,11 +239,6 @@ div.playable.selected:hover
     border-top:1px solid #222222;
 }
 
-.inbrowser
-{
-    color:#000000;
-}
-
 .stleft
 {
     border-right:1px solid #444444;
@@ -262,7 +275,7 @@ tr.clickaddtrack:hover
 
 .drop-box
 {
-    background-image: linear-gradient(#ededed, #bbbbbb);
+    background-color: rgba(0,0,0,0.05);
 }
 
 .bsel
@@ -322,6 +335,7 @@ div.topdropmenu
 .configtitle
 {
     border-bottom:1px solid #111111;
+    background-color: rgba(255,255,255,0.2);
 }
 
 /*

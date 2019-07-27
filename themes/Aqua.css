@@ -16,7 +16,7 @@ body.phone .dropmenu>div.playable,
 body.phone .dropmenu>div.menuitem,
 body.phone .mainpane .radio,
 body.phone .mainpane .faveradio,
-body.phone .mainpane .podcast,
+body.phone .mainpane .podcast:not(.podicon):not(.podglobal),
 body.phone .mainpane .directory {
     border-top: 1px solid rgba(60,60,60,0.1);
 }
@@ -69,6 +69,10 @@ select {
 */
 #pset {
     background-color: rgba(192, 208, 231, 0);
+}
+
+#pmaxset {
+    background-color: rgba(232, 235, 240, 0);
 }
 
 #custombackground {

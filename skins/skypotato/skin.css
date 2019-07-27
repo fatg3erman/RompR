@@ -94,6 +94,7 @@
 #gronky {
     margin-left:8px;
     margin-right:8px;
+    font-size:8pt;
 }
 
 #amontobin {
@@ -210,6 +211,15 @@
 div[id^=zalbum] .podcastresume>.fixed
 {
     padding-left: 24px;
+}
+
+#flowcontrols {
+    height: 36px;
+}
+
+#flowcontrols i {
+    max-height: 24px;
+    margin-top:4px;
 }
 
 /*

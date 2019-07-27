@@ -125,7 +125,7 @@ var spotiCrazyRadio = function() {
                 $("#pluginplaylists_crazy").append('<div class="textcentre textunderline"><b>Create Your Own Spotify Playlist Generator</b></div>');
                 $("#pluginplaylists_crazy").append('<div class="textcentre">Enter some Genres, set the parameters, and click Play.<br>You can drag both ends of the sliders to set a range.</div>');
 
-                var a = $('<div>', {class: "containerbox", style: "margin-right:8px"}).appendTo("#pluginplaylists_crazy");
+                var a = $('<div>', {class: "containerbox menuitem spacer", style: "margin-right:8px"}).appendTo("#pluginplaylists_crazy");
                 var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
                     appendTo(a).makeTagMenu({
                     textboxname: 'spotigenres',
@@ -133,7 +133,7 @@ var spotiCrazyRadio = function() {
                     populatefunction: populateSpotiTagMenu
                 });
 
-                var html = '<div class="containerbox dropdown-container spacer">';
+                var html = '<div class="containerbox dropdown-container spacer menuitem">';
                 html += '<div class="fixed padright spl"><span class="bacon alignmid">Energy</span></div>';
                 html += '<div class="expand dropdown-holder" id="energyo">';
                 html += '</div>';
@@ -141,7 +141,7 @@ var spotiCrazyRadio = function() {
                 $("#pluginplaylists_crazy").append(html);
                 var b = $('<div name="energy" class="spotiradioslider"></div>').appendTo("#energyo").rangechooser();
 
-                var html = '<div class="containerbox dropdown-container spacer">';
+                var html = '<div class="containerbox dropdown-container spacer menuitem">';
                 html += '<div class="fixed padright spl"><span class="bacon alignmid">Danceability</span></div>';
                 html += '<div class="expand dropdown-holder" id="danceo">';
                 html += '</div>';
@@ -149,7 +149,7 @@ var spotiCrazyRadio = function() {
                 $("#pluginplaylists_crazy").append(html);
                 var b = $('<div name="danceability" class="spotiradioslider"></div>').appendTo("#danceo").rangechooser();
 
-                var html = '<div class="containerbox dropdown-container spacer">';
+                var html = '<div class="containerbox dropdown-container spacer menuitem">';
                 html += '<div class="fixed padright spl"><span class="bacon alignmid">Happiness</span></div>';
                 html += '<div class="expand dropdown-holder" id="happyo">';
                 html += '</div>';
@@ -157,7 +157,7 @@ var spotiCrazyRadio = function() {
                 $("#pluginplaylists_crazy").append(html);
                 var b = $('<div name="valence" class="spotiradioslider"></div>').appendTo("#happyo").rangechooser();
 
-                var html = '<div class="containerbox dropdown-container spacer">';
+                var html = '<div class="containerbox dropdown-container spacer menuitem">';
                 html += '<div class="fixed padright spl"><span class="bacon alignmid">Instrumentalness</span></div>';
                 html += '<div class="expand dropdown-holder" id="instro">';
                 html += '</div>';
@@ -165,7 +165,7 @@ var spotiCrazyRadio = function() {
                 $("#pluginplaylists_crazy").append(html);
                 var b = $('<div name="instrumentalness" class="spotiradioslider"></div>').appendTo("#instro").rangechooser();
 
-                var html = '<div class="containerbox dropdown-container spacer">';
+                var html = '<div class="containerbox dropdown-container spacer menuitem">';
                 html += '<div class="fixed padright spl"><span class="bacon alignmid">Acousticness</span></div>';
                 html += '<div class="expand dropdown-holder" id="acko">';
                 html += '</div>';
@@ -173,7 +173,7 @@ var spotiCrazyRadio = function() {
                 $("#pluginplaylists_crazy").append(html);
                 var b = $('<div name="acousticness" class="spotiradioslider"></div>').appendTo("#acko").rangechooser();
 
-                var html = '<div class="containerbox dropdown-container spacer">';
+                var html = '<div class="containerbox dropdown-container spacer menuitem">';
                 html += '<div class="fixed padright spl"><span class="bacon alignmid">BPM</span></div>';
                 html += '<div class="expand dropdown-holder" id="tempoo">';
                 html += '</div>';
@@ -181,7 +181,7 @@ var spotiCrazyRadio = function() {
                 $("#pluginplaylists_crazy").append(html);
                 var b = $('<div name="tempo" class="spotiradioslider"></div>').appendTo("#tempoo").rangechooser({range: 250});
 
-                html = '<div class="containerbox dropdown-container spacer" class="bacon"><div class="expand"></div>';
+                html = '<div class="containerbox dropdown-container spacer menuitem" class="bacon"><div class="expand"></div>';
                 html += '<button class="fixed alignmid" '+
                     'onclick="crazyRadioManager.saveCrazyRadioSettings(event)">Save These Settings</button>';
                 html += '<button class="fixed alignmid" '+

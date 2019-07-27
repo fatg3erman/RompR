@@ -62,6 +62,19 @@ jQuery.fn.fanoogleMenus = function() {
     return this;
 }
 
+jQuery.fn.fanoogleTopMenus = function() {
+    this.each(function() {
+        $(this).css({height: ''});
+        var top = $(this).offset().top;
+        var height = $(this).outerHeight(true);
+        var ws = getWindowSize();
+        debug.log('FANOOGLE',$(this).attr('id'), top, height, ws.y);
+        var nh = Math.min(height, ws.y - top);
+        $(this).css({height: nh+'px'});
+    });
+    return this;
+}
+
 function showHistory() {
     $('#historypanel').slideToggle('fast');
 }
@@ -183,16 +196,29 @@ var layoutProcessor = function() {
         },
 
         sourceControl: function(source) {
+            // hacky - set an irrelevant css parameter as a flag so we change behaviour
+            var layoutflag = parseInt($('.choose_playlist').css('font-weight'));
+            if ((source == 'playlistm' || source == 'infobar') && prefs.chooser != 'infopane' && layoutflag == 1000) {
+                return;
+            }
             if (source == 'infopane') {
                 $('#infobar').css('display', 'none');
+                if (layoutflag == 1000) {
+                    $('#playlistm').css('display', 'none');
+                }
             } else {
                 $('#infobar').css('display', '');
+                if (layoutflag == 1000) {
+                    $('#playlistm').css('display', '');
+                }
             }
-            if (source == "playlistm" && $('.choose_playlist').css('font-weight') == '900') {
-                // hacky - set an irrelevant css parameter as a flag so we change behaviour
+            if (source == "playlistm" && layoutflag >= 900) {
                 source = "infobar";
             }
             $('.mainpane:not(.invisible):not(#'+source+')').addClass('invisible');
+            if (layoutflag == 1000) {
+                $('#playlistm').removeClass('invisible');
+            }
             $('#'+source).removeClass('invisible');
             prefs.save({chooser: source});
             layoutProcessor.adjustLayout();
@@ -204,27 +230,38 @@ var layoutProcessor = function() {
                 case 'pluginplaylistholder':
                     setSpotiLabelWidth();
                     break;
+
             }
         },
 
         adjustLayout: function() {
             infobar.updateWindowValues();
-            var ws = getWindowSize();
-            var newheight = ws.y-$("#headerbar").outerHeight(true);
-            var v = newheight - 32;
-            $("#loadsawrappers").css({height: newheight+"px"});
-            if ($('#nowplaying').offset().top > 0) {
-                var t = $('#toomanywrappers').height() - $('#nowplaying').offset().top + $("#headerbar").outerHeight(true);
-                $("#nowplaying").css({height: t+"px"});
-                infobar.rejigTheText();
+            // var ws = getWindowSize();
+            var hh = $("#headerbar").outerHeight(true);
+            // var mainheight = ws.y - hh;
+            // $("#loadsawrappers").css({height: mainheight+"px"});
+            var infoheight = $('#infobar').outerHeight(true) - $('#cssisshit').outerHeight(true);
+            $('#toomanywrappers').css({height: infoheight+"px"});
+            var np = $('#nowplaying');
+            var nptop = np.offset().top;
+            if (nptop > 0) {
+                var t = infoheight - nptop + hh;
+                np.css({height: t+"px"});
+                infobar.biggerize();
             }
             layoutProcessor.setPlaylistHeight();
             browser.rePoint();
-            // Very very wierd thing happeneing, where this button, and only this button
-            // gets an inlive css style of display: inline set sometime after page load
-            // on a narrow screen. Non of the other onlywides do. Can't figure it out
-            // so just clear it here.
-            // $('.choose_filelist').css('display','');
+            $('.topdropmenu:visible').fanoogleTopMenus();
+            if ($('.choose_playlist').css('font-weight') == '1000'
+                && $('.mainpane:visible').not('#infobar').length == 0
+                && (prefs.chooser == 'playlistm' || prefs.chooser == 'infobar')) {
+                layoutProcessor.sourceControl('albumlist');
+            }
+
+        },
+
+        showTagButton: function() {
+            return false;
         },
 
         displayCollectionInsert: function(d) {
@@ -274,7 +311,9 @@ var layoutProcessor = function() {
             $(".dropdown").floatingMenu({ });
             $('.topbarmenu').on('click', function() {
                 $('.autohide:visible').not('#'+$(this).attr('name')).slideToggle('fast');
-                $('#'+$(this).attr('name')).slideToggle('fast');
+                $('#'+$(this).attr('name')).slideToggle('fast', function() {
+                    $(this).fanoogleTopMenus();
+                });
             });
             $('.autohide').on('click', function() {
                 $(this).slideToggle('fast');
@@ -297,12 +336,9 @@ var layoutProcessor = function() {
             $("#ratingimage").on('click', nowplaying.setRating);
             $("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
             $('.clear_playlist').on('click', playlist.clear);
-            $("#volume").rangechooser({
-                range: 100,
-                ends: ['max'],
-                onstop: infobar.volumeend,
-                whiledragging: infobar.volumemoved,
-                orientation: "horizontal"
+            $('#volume').volumeControl({
+                orientation: 'horizontal',
+                command: player.controller.volume
             });
             $(document).on('click', '.clickaddtoplaylist', addToPlaylist.close);
         },
@@ -315,6 +351,15 @@ var layoutProcessor = function() {
 
         getElementPlaylistOffset: function(element) {
             return element.position().top;
+        },
+
+        createPluginHolder: function(icon, title, id, panel) {
+            $('<i>', {class: 'onlywide topimg expand '+icon}).insertBefore('i[name="specialplugins"]').on('click', function() {layoutProcessor.sourceControl(panel)});
+            return $('<i>', {class: 'noshrink topimg tright '+icon}).appendTo('#narrowscreenicons').on('click', function() {layoutProcessor.sourceControl(panel)});
+        },
+
+        makeDropHolder: function(name) {
+            return $('<div>', {class: 'scroller mainpane invisible pright', id: name}).insertBefore('#playlistm');
         }
 
     }
@@ -334,6 +379,14 @@ jQuery.fn.sortableTrackList = function() {
 jQuery.fn.trackDragger = function() {
     return this;
 }
+
+var shortcuts = function() {
+    return {
+        add: function(a,b,c) {
+
+        }
+    }
+}();
 
 var addToPlaylist = function() {
     return {

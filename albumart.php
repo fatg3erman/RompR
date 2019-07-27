@@ -1,12 +1,11 @@
 <?php
 define('ROMPR_IS_LOADING', true);
-include ("includes/vars.php");
-include ("includes/functions.php");
-include ("international.php");
-include ('utils/imagefunctions.php');
-include ("backends/sql/backend.php");
-include ("player/mpd/connection.php");
-$oldmopidy = false;
+require_once ("includes/vars.php");
+require_once ("includes/functions.php");
+require_once ("international.php");
+require_once ('utils/imagefunctions.php');
+require_once ("backends/sql/backend.php");
+require_once ("player/".$prefs['player_backend']."/player.php");
 $only_plugins_on_menu = false;
 $skin = "desktop";
 set_version_string();
@@ -26,10 +25,6 @@ print '<link rel="stylesheet" type="text/css" href="skins/desktop/skin.css?versi
 print '<link rel="stylesheet" type="text/css" href="css/albumart.css?version=?'.ROMPR_VERSION.'" />'."\n";
 ?>
 <link rel="stylesheet" id="theme" type="text/css" />
-<link rel="stylesheet" id="fontsize" type="text/css" />
-<link rel="stylesheet" id="fontfamily" type="text/css" />
-<link rel="stylesheet" id="icontheme-theme" type="text/css" />
-<link rel="stylesheet" id="icontheme-adjustments" type="text/css" />
 <link type="text/css" href="css/jquery.mCustomScrollbar.css" rel="stylesheet" />
 <?php
 $scripts = array(
@@ -49,7 +44,7 @@ $scripts = array(
     "ui/albumart.js"
 );
 foreach ($scripts as $i) {
-    debuglog("Loading ".$i,"INIT",8);
+    logger::mark("INIT", "Loading ".$i);
     print '<script type="text/javascript" src="'.$i.'?version='.ROMPR_VERSION.'"></script>'."\n";
 }
 include ("includes/globals.php");
@@ -57,6 +52,7 @@ include ("includes/globals.php");
 </head>
 <body class="desktop">
 <div id="pset" class="invisible"></div>
+<div id="pmaxset" class="invisible"></div>
 <div class="albumcovers">
 <div class="infosection">
 <table width="100%">
@@ -217,50 +213,52 @@ function do_playlists() {
 
     global $count;
     global $albums_without_cover;
+    global $PLAYER_TYPE;
+    logger::log("PLAYLISTART", "Player type is", $PLAYER_TYPE);
+    $player = new $PLAYER_TYPE();
 
-    $playlists = do_mpd_command("listplaylists", true, true);
+    $playlists = $player->get_stored_playlists(false);
     if (!is_array($playlists)) {
         $playlists = array();
     }
     $plfiles = glob('prefs/userplaylists/*');
     foreach ($plfiles as $f) {
-        $playlists['playlist'][] = basename($f);
+        $playlists[] = basename($f);
     }
-    if (array_key_exists('playlist', $playlists)) {
-        print '<div class="cheesegrater" name="savedplaylists">';
-            print '<div class="albumsection">';
-                print '<div class="tleft"><h2>Saved Playlists</h2></div>';
-            print "</div>\n";
-                print '<div id="album'.$count.'" class="containerbox fullwidth bigholder wrap">';
-                sort($playlists['playlist'], SORT_STRING);
-                foreach ($playlists['playlist'] as $pl) {
-                    print '<div class="fixed albumimg closet">';
-                        print '<div class="covercontainer">';
-                            $class = "";
-                            $albumimage = new baseAlbumImage(array('artist' => 'PLAYLIST', 'album' => $pl));
-                            $src = $albumimage->get_image_if_exists();
-                            if ($src === null) {
-                                $class = " plimage notfound";
-                                $src = '';
-                                $albums_without_cover++;
-                            }
-                            $plsearch = preg_replace('/ \(by .*?\)$/', '', $pl);
-                            print '<input name = "searchterm" type="hidden" value="'.rawurlencode($plsearch).'" />';
-                            print '<input name="artist" type="hidden" value="PLAYLIST" />';
-                            print '<input name="album" type="hidden" value="'.rawurlencode($pl).'" />';
-                            print '<img class="clickable clickicon clickalbumcover droppable playlistimage'.$class.'" name="'.$albumimage->get_image_key().'"';
-                            if ($src != "") {
-                                print ' src="'.$src.'" ';
-                            }
-                            print '/>';
-                            print '<div>'.htmlentities($pl).'</div>';
-                        print '</div>';
-                    print '</div>';
-                    $count++;
-                }
-                print "</div>\n";
+    print '<div class="cheesegrater" name="savedplaylists">';
+        print '<div class="albumsection">';
+            print '<div class="tleft"><h2>Saved Playlists</h2></div>';
         print "</div>\n";
-    }
+            print '<div id="album'.$count.'" class="containerbox fullwidth bigholder wrap">';
+            sort($playlists, SORT_STRING);
+            foreach ($playlists as $pl) {
+                logger::log("PLAYLISTART", "Playlist",$pl);
+                print '<div class="fixed albumimg closet">';
+                    print '<div class="covercontainer">';
+                        $class = "";
+                        $albumimage = new baseAlbumImage(array('artist' => 'PLAYLIST', 'album' => $pl));
+                        $src = $albumimage->get_image_if_exists();
+                        if ($src === null) {
+                            $class = " plimage notfound";
+                            $src = '';
+                            $albums_without_cover++;
+                        }
+                        $plsearch = preg_replace('/ \(by .*?\)$/', '', $pl);
+                        print '<input name = "searchterm" type="hidden" value="'.rawurlencode($plsearch).'" />';
+                        print '<input name="artist" type="hidden" value="PLAYLIST" />';
+                        print '<input name="album" type="hidden" value="'.rawurlencode($pl).'" />';
+                        print '<img class="clickable clickicon clickalbumcover droppable playlistimage'.$class.'" name="'.$albumimage->get_image_key().'"';
+                        if ($src != "") {
+                            print ' src="'.$src.'" ';
+                        }
+                        print '/>';
+                        print '<div>'.htmlentities($pl).'</div>';
+                    print '</div>';
+                print '</div>';
+                $count++;
+            }
+        print "</div>\n";
+    print "</div>\n";
 
 }
 

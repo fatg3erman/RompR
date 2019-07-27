@@ -1,5 +1,6 @@
 <body class="mobile phone">
 <div id="pset" class="invisible"></div>
+<div id="pmaxset" class="invisible"></div>
 <div id="notifications"></div>
 <div id="headerbar" class="noborder fullwidth containerbox">
     <div id="sourcescontrols" class="expand center containerbox noborder">
@@ -23,6 +24,12 @@ printOutputCheckboxes();
             print '<div class="configtitle textcentre nohelp"><b>'.get_int_text('config_players').'</b></div>';
 ?>
             <div class="pref styledinputs" name="playerdefs">
+            </div>
+
+<?php
+            print '<div class="configtitle textcentre nohelp invisible" id="snapheader"><b>Snapcast</b></div>';
+?>
+            <div class="pref" id="snapcastgroups">
             </div>
 
         </div>
@@ -65,38 +72,17 @@ printOutputCheckboxes();
 
 <div id="infobar" class="mainpane invisible">
     <div id="toomanywrappers">
-        <div id="geoffreyboycott" class="fullwidth">
-            <div id="albumcover"><img id="albumpicture" /></div>
-            <div id="cssisshit">
-                <div id="buttonholder" class="containerbox vertical">
-                    <div id="buttons" class="fixed">
-        <?php
-                        print '<i title="'.get_int_text('button_previous').
-                            '" class="prev-button icon-fast-backward clickicon controlbutton-small"></i>';
-                        print '<i title="'.get_int_text('button_play').
-                            '" class="play-button icon-play-circled shiftleft clickicon controlbutton"></i>';
-                        print '<i title="'.get_int_text('button_stop').
-                            '" class="stop-button icon-stop-1 shiftleft2 clickicon controlbutton-small"></i>';
-                        print '<i title="'.get_int_text('button_stopafter').
-                            '" class="stopafter-button icon-to-end-1 shiftleft3 clickicon controlbutton-small"></i>';
-                        print '<i title="'.get_int_text('button_next').
-                            '" class="next-button icon-fast-forward shiftleft4 clickicon controlbutton-small"></i>';
-        ?>
-                    </div>
-                    <div id="progress" class="fixed"></div>
-                    <div id="playbackTime" class="fixed">
-                    </div>
-                </div>
-            </div>
+        <div id="albumcover">
+            <img id="albumpicture" />
         </div>
         <div id="amontobin" class="clearfix">
-            <div id="subscribe" class="invisible">
-                <i class="icon-rss npicon clickicon"></i>
-                <input type="hidden" id="nppodiput" value="" />
-            </div>
             <div id="stars" class="invisible">
                 <i id="ratingimage" class="icon-0-stars rating-icon-big"></i>
                 <input type="hidden" value="-1" />
+            </div>
+            <div id="subscribe" class="invisible">
+                <i class="icon-rss npicon clickicon"></i>
+                <input type="hidden" id="nppodiput" value="" />
             </div>
             <div id="addtoplaylist" class="invisible" onclick="addToPlaylist.open()">
                 <i class="icon-doc-text npicon clickicon"></i>
@@ -104,23 +90,44 @@ printOutputCheckboxes();
             <div id="lastfm" class="invisible">
                 <i class="icon-heart npicon clickicon" id="love"></i>
             </div>
-            <div id="playcount"></div>
+            <div id="ptagadd" class="invisible">
+                <i class="icon-plus npicon clickicon" onclick="tagAdder.show(event)"></i>
+            </div>
             <div id="dbtags" class="invisible">
             </div>
         </div>
         <div id="nowplaying">
-            <div id="nptext"></div>
+            <div id="nptext" class="calculating"></div>
+        </div>
+    </div>
+    <div id="cssisshit">
+        <div id="buttonholder" class="containerbox vertical">
+            <div id="buttons" class="fixed">
+<?php
+                print '<i title="'.get_int_text('button_previous').
+                    '" class="prev-button icon-fast-backward clickicon controlbutton-small"></i>';
+                print '<i title="'.get_int_text('button_play').
+                    '" class="play-button icon-play-circled shiftleft clickicon controlbutton"></i>';
+                print '<i title="'.get_int_text('button_stop').
+                    '" class="stop-button icon-stop-1 shiftleft2 clickicon controlbutton-small"></i>';
+                print '<i title="'.get_int_text('button_stopafter').
+                    '" class="stopafter-button icon-to-end-1 shiftleft3 clickicon controlbutton-small"></i>';
+                print '<i title="'.get_int_text('button_next').
+                    '" class="next-button icon-fast-forward shiftleft4 clickicon controlbutton-small"></i>';
+?>
+            </div>
+            <div id="progress" class="fixed"></div>
+            <div id="playbackTime" class="fixed">
+            </div>
         </div>
     </div>
 </div>
 
 <div id="albumlist" class="scroller mainpane invisible pright">
 <?php
-    print '<div class="menuitem containerbox">';
-    print '<div class="fixed" style="padding-right:4px"><i onclick="toggleCollectionButtons()" '.
-        'title="'.get_int_text('button_collectioncontrols').
-        '" class="icon-menu playlisticon clickicon tooltip"></i></div>';
-    print '<div class="configtitle textcentre expand"><b>'.get_int_text('button_local_music').'</b></div>';
+    print '<div class="menuitem containerbox configtitle">';
+    print '<i onclick="toggleCollectionButtons()" title="'.get_int_text('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip fixed"></i>';
+    print '<div class="textcentre expand"><b>'.get_int_text('button_local_music').'</b></div>';
     print '</div>';
     collectionButtons();
 ?>
@@ -130,6 +137,11 @@ printOutputCheckboxes();
 
 <div id='searchpane' class="scroller mainpane invisible pright">
 <div id="search" class="noborder">
+<div class="menuitem containerbox configtitle">
+<?php
+    print '<div class="textcentre expand"><b>'.get_int_text('label_searchfor').'</b></div>';
+?>
+</div>
 <?php
 include("player/".$prefs['player_backend']."/search.php");
 ?>
@@ -138,6 +150,11 @@ include("player/".$prefs['player_backend']."/search.php");
 </div>
 
 <div id="filelist" class="scroller mainpane invisible pright">
+    <div class="menuitem containerbox configtitle">
+<?php
+    print '<div class="textcentre expand"><b>'.get_int_text('button_file_browser').'</b></div>';
+?>
+    </div>
     <div id="filecollection" class="noborder selecotron"></div>
 </div>
 
@@ -160,10 +177,11 @@ include("player/".$prefs['player_backend']."/search.php");
 </div>
 
 <div id="radiolist" class="scroller mainpane invisible pright">
+    <div class="menuitem containerbox configtitle">
 <?php
-    print '<div class="containerbox"><div class="configtitle textcentre expand"><b>'.get_int_text('button_internet_radio').'</b></div></div>';
+print '<div class="expand textcentre"><b>'.get_int_text('button_internet_radio').'</b></div>';
 ?>
-
+    </div>
 <?php
 $sp = glob("streamplugins/*.php");
 foreach($sp as $p) {
@@ -174,14 +192,20 @@ include($p);
 
 <div id="podcastslist" class="scroller mainpane invisible pright">
 <?php
+print '<div class="configtitle containerbox menuitem">';
+print '<i onclick="podcasts.toggleButtons()" class="icon-menu playlisticon clickicon tooltip fixed" title="'.get_int_text('label_podcastcontrols').'"></i>';
+print '<div class="textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div>';
+print '</div>';
 include("includes/podcasts.php");
 ?>
 </div>
 
 <div id="audiobooklist" class="scroller mainpane invisible pright">
-    <?php
-            print '<div class="configtitle textcentre"><b>'.get_int_text('label_audiobooks').'</b></div>';
-    ?>
+    <div class="menuitem containerbox configtitle">
+<?php
+    print '<div class="textcentre expand"><b>'.get_int_text('label_audiobooks').'</b></div>';
+?>
+    </div>
     <div id="audiobooks" class="noborder selecotron"></div>
 </div>
 
@@ -190,7 +214,9 @@ if ($use_smartradio) {
 ?>
 <div id="pluginplaylistholder" class="scroller mainpane invisible pright">
 <?php
-print '<div class="configtitle textcentre"><b>'.get_int_text('label_pluginplaylists').'</b></div>';
+print '<div class="menuitem containerbox configtitle">';
+print '<div class="expand textcentre"><b>'.get_int_text('label_pluginplaylists').'</b></div>';
+print '</div>';
 ?>
 <?php
 if ($prefs['player_backend'] == "mopidy") {
@@ -221,12 +247,17 @@ if ($prefs['player_backend'] == "mopidy") {
 
 <div id="playlistman" class="scroller mainpane invisible pright">
 <?php
-    print '<div class="configtitle textcentre"><b>'.get_int_text('button_saveplaylist').'</b></div>';
+    print '<div class="configtitle textcentre" style="margin-top:8px"><b>'.get_int_text('button_saveplaylist').'</b></div>';
 ?>
-    <div class="pref containerbox dropdown-container"><div class="fixed padright">
+    <div class="pref containerbox dropdown-container" style="margin-left:16px"><div class="fixed padright">
     </div><div class="expand"><input class="enter clearbox" id="playlistname" type="text" size="200"/></div>
 <?php
         print '<button class="fixed">'.get_int_text('button_save').'</button>';
+?>
+    </div>
+    <div class="menuitem containerbox configtitle">
+<?php
+    print '<div class="expand textcentre"><b>'.get_int_text('button_loadplaylist').'</b></div>';
 ?>
     </div>
     <div class="pref">

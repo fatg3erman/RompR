@@ -5,7 +5,7 @@
 */
 
 html, body.phone .dropmenu {
-    background-image:url("skytrailscrop.jpg");
+    background-image:url("themes/skytrailscrop.jpg");
     background-size:cover;
     background-repeat:no-repeat;
     background-attachment:fixed;
@@ -26,7 +26,7 @@ body.phone .dropmenu>div {
 
 body.phone .mainpane .faveradio,
 body.phone .mainpane .radio,
-body.phone .mainpane .podcast,
+body.phone .mainpane .podcast:not(.podicon):not(.podglobal),
 body.phone .mainpane .directory {
     background-color:rgba(255,255,255,0.3);
     background-clip:border-box;
@@ -63,21 +63,40 @@ button, input[type="button"], .filebutton
 
 button:hover, input[type="button"]:hover, .filebutton:hover
 {
-    color:#ffffff;
-    border:1px solid #ffffff;
-    text-shadow: 0 0 15px #ffffff;
+    border:1px solid #bbbbbb;
+    background-color:rgba(255,255,255,0.7);
 }
 
-input
-{
-    color:#181818;
-}
-
-select
-{
+select {
     color:#000000;
 }
 
+.selectholder {
+    background-color:rgba(255,255,255,0.3);
+}
+
+.selectholder:hover {
+    background-color:rgba(255,255,255,0.4);
+}
+
+input[type="text"] {
+    background-color: rgba(255,255,255,0.3);
+    border-bottom: 1px solid #bbbbbb;
+}
+
+input[type="text"]:hover {
+    background-color: rgba(255,255,255,0.4);
+    border-bottom: 1px solid #bbbbbb;
+}
+
+input[type="text"]:focus {
+    transition: border-bottom 0.5s ease;
+    border-bottom: 1px solid #555555;
+}
+
+.drop-box {
+    background-color: rgba(255,255,255,0.4);
+}
 
 /*
 =====================================================================
@@ -120,6 +139,13 @@ select
 #dragger
 {
     background-color:rgba(0,0,0,0.3);
+}
+
+#pset {
+    background-color: rgba(155, 187, 222, 0);
+}
+#pmaxset {
+    background-color: rgba(252, 189, 104, 0);
 }
 
 /*
@@ -183,11 +209,6 @@ select
 
 .playlisttitle{
     background-color:rgba(255,255,255,0.2);
-}
-
-.inbrowser
-{
-    color:#000000;
 }
 
 .stleft
@@ -280,8 +301,7 @@ tr.clickaddtrack:hover
 
 div.topdropmenu
 {
-    background-color:rgba(65,65,85,0.9);
-    color:white;
+    background-color:rgba(135,180,222,0.9);
 }
 
 div.topdropmenu td
@@ -291,7 +311,7 @@ div.topdropmenu td
 
 .configtitle
 {
-    background-image:linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.2));
+    background-color:rgba(255,255,255,0.5);
 }
 
 body.mobile .configtitle

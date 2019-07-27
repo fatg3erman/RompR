@@ -61,8 +61,10 @@ var player = function() {
                         debug.log("Current Player renamed to "+newname,"PLAYERS");
                         reloadNeeded = newname;
                     }
-                    if (temp.host != prefs.mpd_host || temp.port != prefs.mpd_port
-                        || temp.socket != prefs.unix_socket || temp.password != prefs.mpd_password) {
+                    if (temp.host != prefs.multihosts[prefs.currenthost].host ||
+                        temp.port != prefs.multihosts[prefs.currenthost].port||
+                        temp.socket != prefs.multihosts[prefs.currenthost].socket ||
+                        temp.password != prefs.multihosts[prefs.currenthost].password) {
                         debug.log("Current Player connection details changed","PLAYERS");
                         reloadNeeded = newname;
                     }

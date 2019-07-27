@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   id="svg3065"
+   height="113.31342"
+   width="112.43822"
+   version="1.1">
+  <defs
+     id="defs3067">
+    <linearGradient
+       id="linearGradient851">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1"
+         offset="0"
+         id="stop847" />
+      <stop
+         style="stop-color:#aaaaaa;stop-opacity:1"
+         offset="1"
+         id="stop849" />
+    </linearGradient>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       id="filter3316">
+      <feGaussianBlur
+         id="feGaussianBlur7"
+         stdDeviation=".58672" />
+    </filter>
+    <radialGradient
+       xlink:href="#linearGradient851"
+       id="radialGradient853"
+       cx="56.19582"
+       cy="56.286121"
+       fx="56.19582"
+       fy="56.286121"
+       r="25.071211"
+       gradientTransform="matrix(1.5317376,2.4002302e-4,-2.4237421e-4,1.5467159,-29.867786,-30.786006)"
+       gradientUnits="userSpaceOnUse" />
+    <radialGradient
+       xlink:href="#linearGradient851"
+       id="radialGradient855"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(3.0594697,1.3436824e-4,-1.4114955e-4,3.2132734,-126.67751,-124.22205)"
+       cx="56.19582"
+       cy="56.286121"
+       fx="56.19582"
+       fy="56.286121"
+       r="25.071211" />
+    <radialGradient
+       xlink:href="#linearGradient851"
+       id="radialGradient857"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(3.0594697,1.3436824e-4,-1.4114955e-4,3.2132734,-115.70768,-124.22205)"
+       cx="56.19582"
+       cy="56.286121"
+       fx="56.19582"
+       fy="56.286121"
+       r="25.071211" />
+    <radialGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(6.210397,-0.05948297,0.03807371,3.975135,-266.47436,-165.51853)"
+       r="29.291624"
+       fy="56.648197"
+       fx="50.72887"
+       cy="56.648197"
+       cx="50.72887"
+       id="radialGradient835"
+       xlink:href="#linearGradient851" />
+  </defs>
+  <metadata
+     id="metadata3070">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     id="path13"
+     d="m 110.49054,56.656707 a 54.272429,54.272509 0 1 1 -108.54286,0 54.272429,54.272509 0 1 1 108.54286,0 z"
+     style="fill:none;fill-rule:evenodd;stroke:#aaaaaa;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <g
+     style="stroke:url(#radialGradient835)"
+     transform="translate(5.4902396)"
+     id="g827">
+    <path
+       style="fill:url(#radialGradient855);fill-opacity:1;fill-rule:evenodd;stroke:url(#radialGradient835);stroke-width:1.31643605"
+       d="M 55.695078,16.52066 H 80.020494 V 96.775736 H 55.695078 Z"
+       id="path15" />
+    <path
+       style="fill:url(#radialGradient857);fill-opacity:1;fill-rule:evenodd;stroke:url(#radialGradient835);stroke-width:1.31643605"
+       d="M 21.437244,16.52066 H 45.76266 V 96.775736 H 21.437244 Z"
+       id="path17" />
+  </g>
+</svg>

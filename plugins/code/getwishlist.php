@@ -84,7 +84,7 @@ function getWishlist() {
         print '</div>';
     }
     foreach ($result as $obj) {
-        debuglog("Found Track ".$obj['title']." by ".$obj['albumartist'],"WISHLIST");
+        logger::log("WISHLIST", "Found Track",$obj['title'],"by",$obj['albumartist']);
 
         print '<div class="containerbox vertical robotlove" id="walbum'.$obj['albumindex'].'">';
         print '<div class="containerbox fixed">';

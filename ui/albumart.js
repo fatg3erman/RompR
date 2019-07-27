@@ -189,13 +189,9 @@ function sections_with_missing_images() {
 $(document).ready(function () {
 
     debug.log("ALBUMART","Document is ready");
-    if (prefs.usertheme) {
-        prefs.setTheme(prefs.usertheme);
-    } else {
-        prefs.setTheme(prefs.theme);
-    }
-    $("#fontsize").attr({href: "sizes/"+prefs.fontsize});
-    $("#fontfamily").attr({href: "fonts/"+prefs.fontfamily});
+    prefs.rgbs = null;
+    prefs.maxrgbs = null;
+    prefs.setTheme(prefs.theme);
     progress = $('#progress');
     progress.rangechooser({range: 100, startmax: 0, interactive: false});
     $(window).on('resize', wobbleMyBottom );

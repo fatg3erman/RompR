@@ -8,115 +8,153 @@
 
 .button-disabled { opacity: 0.1 }
 
-.icon-play-circled { background-image :url('media-playback-start.svg') }
-.playdiv { background-image :url('media-playback-start.svg') }
-.icon-play-circled:hover { background-image :url('media-playback-start-highlight.svg') }
-.icon-pause-circled { background-image :url('media-playback-pause.svg') }
-.icon-pause-circled:hover { background-image :url('media-playback-pause-highlight.svg') }
-.icon-fast-backward { background-image :url('media-skip-backward.svg') }
-.icon-fast-backward:hover { background-image :url('media-skip-backward-highlight.svg') }
-.icon-fast-forward { background-image :url('media-skip-forward.svg') }
-.icon-fast-forward:hover { background-image :url('media-skip-forward-highlight.svg') }
-.icon-stop-1 { background-image :url('media-playback-stop.svg') }
-.icon-stop-1:hover { background-image :url('media-playback-stop-highlight.svg') }
-.icon-to-end-1 { background-image :url('stopafter.svg') }
-.icon-to-end-1:hover { background-image :url('stopafter-highlight.svg') }
+.clearbox {
+    background-image: url('iconsets/Modern-Dark/edit-delete.svg');
+    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
+    background-size: auto 50%;
+    background-position: right 2px center;
+    background-repeat: no-repeat;
+}
 
-.icon-music { background-image: url('collection.svg') }
-.icon-search { background-image: url('system-search.svg') }
-.icon-folder-open-empty { background-image: url('folder.svg') }
-.icon-radio-tower { background-image: url('broadcast-new.svg') }
-.icon-cd { background-image: url('cd_case.svg') }
-.icon-resize-horizontal { background-image: url('resize.svg') }
-.icon-angle-double-left { background-image:url('arrow-left-double.svg') }
-.icon-angle-double-right { background-image:url('arrow-right-double.svg') }
-.icon-menu { background-image: url('pushbutton.svg') }
-.icon-versions { background-image: url('history.svg') }
-.icon-left-circled { background-image: url('backbutton.svg') }
-.icon-right-circled { background-image: url('forwardbutton.svg') }
-.icon-cog-alt { background-image: url('preferences.svg') }
-.icon-trash { background-image: url('edit-clear-list.svg') }
-.icon-wifi { background-image: url('smartradio.svg') }
-.icon-doc-text { background-image: url('playlist.svg') }
-.icon-floppy { background-image: url('document-save.svg') }
-.icon-cancel-circled { background-image: url('edit-delete.svg') }
+.combobox-entry, .selectholder {
+    background-image: url('iconsets/Modern-Dark/blobdown2.svg');
+    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
+    background-size: auto 50%;
+    background-position: right 2px center;
+    background-repeat: no-repeat;
+}
+
+.combobox-entry:hover, .selectholder:hover {
+    background-image: url('iconsets/Modern-Dark/blobdown2-hi.svg');
+    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
+    background-size: auto 50%;
+    background-position: right 2px center;
+    background-repeat: no-repeat;
+}
+
+.combo-button {
+    background-image: url('iconsets/Modern-Dark/blobdown2.svg');
+}
+
+.icon-play-circled { background-image :url('iconsets/Modern-Dark/media-playback-start.svg') }
+.playdiv { background-image :url('iconsets/Modern-Dark/media-playback-start.svg') }
+.icon-play-circled:hover { background-image :url('iconsets/Modern-Dark/media-playback-start-highlight.svg') }
+.icon-pause-circled { background-image :url('iconsets/Modern-Dark/media-playback-pause.svg') }
+.icon-pause-circled:hover { background-image :url('iconsets/Modern-Dark/media-playback-pause-highlight.svg') }
+.icon-fast-backward { background-image :url('iconsets/Modern-Dark/media-skip-backward.svg') }
+.icon-fast-backward:hover { background-image :url('iconsets/Modern-Dark/media-skip-backward-highlight.svg') }
+.icon-fast-forward { background-image :url('iconsets/Modern-Dark/media-skip-forward.svg') }
+.icon-fast-forward:hover { background-image :url('iconsets/Modern-Dark/media-skip-forward-highlight.svg') }
+.icon-stop-1 { background-image :url('iconsets/Modern-Dark/media-playback-stop.svg') }
+.icon-stop-1:hover { background-image :url('iconsets/Modern-Dark/media-playback-stop-highlight.svg') }
+.icon-to-end-1 { background-image :url('iconsets/Modern-Dark/stopafter.svg') }
+.icon-to-end-1:hover { background-image :url('iconsets/Modern-Dark/stopafter-highlight.svg') }
+
+.icon-music { background-image: url('iconsets/Modern-Dark/collection.svg') }
+.icon-search { background-image: url('iconsets/Modern-Dark/system-search.svg') }
+.icon-folder-open-empty { background-image: url('iconsets/Modern-Dark/folder.svg') }
+.icon-radio-tower { background-image: url('iconsets/Modern-Dark/broadcast-new.svg') }
+.icon-cd { background-image: url('iconsets/Modern-Dark/cd_case.svg') }
+.icon-resize-horizontal { background-image: url('iconsets/Modern-Dark/resize.svg') }
+.icon-angle-double-left { background-image:url('iconsets/Modern-Dark/arrow-left-double.svg') }
+.icon-angle-double-right { background-image:url('iconsets/Modern-Dark/arrow-right-double.svg') }
+.icon-menu { background-image: url('iconsets/Modern-Dark/pushbutton.svg') }
+.icon-versions { background-image: url('iconsets/Modern-Dark/history.svg') }
+.icon-left-circled { background-image: url('iconsets/Modern-Dark/backbutton.svg') }
+.icon-right-circled { background-image: url('iconsets/Modern-Dark/forwardbutton.svg') }
+.icon-cog-alt { background-image: url('iconsets/Modern-Dark/preferences.svg') }
+.icon-trash { background-image: url('iconsets/Modern-Dark/edit-clear-list.svg') }
+.icon-wifi { background-image: url('iconsets/Modern-Dark/smartradio.svg') }
+.icon-doc-text { background-image: url('iconsets/Modern-Dark/playlist.svg') }
+.icon-floppy { background-image: url('iconsets/Modern-Dark/document-save.svg') }
+.icon-cancel-circled { background-image: url('iconsets/Modern-Dark/edit-delete.svg') }
 .icon-plus {
-	background-image: url('add.svg');
+	background-image: url('iconsets/Modern-Dark/add.svg');
   	opacity:0.7;
 }
-.icon-alarm { background-image: url('alarmclock_false.svg') }
-.icon-alarm-on { background-image: url('alarmclock_true.svg') }
-.icon-sleep { background-image: url('sleep.png') }
-.icon-library { background-image: url('file.svg') }
-.icon-lastfm-1 { background-image: url('lastfm.svg') }
-.icon-wikipedia { background-image: url('wikipedia-logo.svg') }
-.icon-musicbrainz {	background-image: url('musicbrainz_logo.svg') }
-.icon-discogs {	background-image: url('discogs-logo.svg') }
-.icon-doc-text-1 { background-image: url('lyrics.svg') }
-.icon-soundcloud-circled { background-image: url( 'soundcloud-logo.svg') }
-.icon-youtube-circled { background-image: url('youtube-logo.svg') }
-.icon-gmusic-circled { background-image: url('gmusic-logo.svg') }
-.icon-spotify-circled { background-image: url('spotify-logo.svg') }
-.icon-vkontakte-circled { background-image: url('vkontakte-logo.svg') }
-.icon-podcast-circled { background-image: url('podcast-logo.svg') }
-.icon-audiobook { background-image: url('audiobook.svg') }
-.icon-internetarchive-circled { background-image: url('internetarchive-logo.svg') }
-.icon-increase { background-image: url('arrow-increase.svg') }
-.icon-decrease { background-image: url('arrow-decrease.svg') }
-.icon-attention-1 { background-image: url('dialog-error.svg') }
-.icon-info-circled { background-image: url('dialog-information.svg') }
-.icon-download { background-image: url('download-icon.svg') }
-.icon-sun { background-image: url('icon-new.svg') }
-.icon-headphones { background-image: url('headphones.svg') }
-.icon-unlistened { background-image: url('headphones.svg') }
-.icon-block { background-image: url('lastfm-ban.svg') }
-.icon-heart { background-image: url('lastfm-love.svg') }
-.icon-heart-broken { background-image: url('lastfm-unlove.svg') }
-.icon-refresh { background-image: url('refresh.svg') }
-.icon-dirble-circled { background-image: url('dirble-logo.svg') }
-.icon-tunein { background-image: url('../../newimages/tunein-logo.svg') }
-.icon-no-response-playbutton { background-image :url('media-playback-start.svg') }
-.icon-tags { background-image: url('tag.svg') }
-.icon-volume-up { background-image: url('volume.svg') }
-.icon-toggle-open { background-image: url('toggle-open.svg') }
-.icon-toggle-closed { background-image: url('toggle-closed.svg') }
-.icon-spin6 { background-image: url('spinner.svg') }
-.icon-output { background-image: url('output.svg') }
-.icon-output-mute { background-image: url('output_mute.svg') }
-.icon-sliders { background-image: url('sliders.svg') }
-.icon-0-stars { background-image: url('0stars.svg') }
-.icon-1-stars { background-image: url('1stars.svg') }
-.icon-2-stars { background-image: url('2stars.svg') }
-.icon-3-stars { background-image: url('3stars.svg') }
-.icon-4-stars { background-image: url('4stars.svg') }
-.icon-5-stars { background-image: url('5stars.svg') }
-.icon-single-star { background-image: url('singlestar.svg') }
-.icon-ratandtag { background-image: url('ratandtag.svg') }
-.icon-ratortag { background-image: url('ratortag.svg') }
-.icon-toggle-on { background-image: url('togglebutton-new2-on.svg') }
-.icon-toggle-off { background-image: url('togglebutton-new2-off.svg') }
+.icon-alarm { background-image: url('iconsets/Modern-Dark/alarmclock_false.svg') }
+.icon-alarm-on { background-image: url('iconsets/Modern-Dark/alarmclock_true.svg') }
+.icon-sleep { background-image: url('iconsets/Modern-Dark/sleep.png') }
+.icon-library { background-image: url('iconsets/Modern-Dark/file.svg') }
+.icon-lastfm-1 { background-image: url('iconsets/Modern-Dark/lastfm.svg') }
+.icon-wikipedia { background-image: url('iconsets/Modern-Dark/wikipedia-logo.svg') }
+.icon-musicbrainz {	background-image: url('iconsets/Modern-Dark/musicbrainz_logo.svg') }
+.icon-discogs {	background-image: url('iconsets/Modern-Dark/discogs-logo.svg') }
+.icon-doc-text-1 { background-image: url('iconsets/Modern-Dark/lyrics.svg') }
+.icon-soundcloud-circled { background-image: url('iconsets/Modern-Dark/soundcloud-logo.svg') }
+.icon-youtube-circled { background-image: url('iconsets/Modern-Dark/youtube-logo.svg') }
+.icon-gmusic-circled { background-image: url('iconsets/Modern-Dark/gmusic-logo.svg') }
+.icon-spotify-circled { background-image: url('iconsets/Modern-Dark/spotify-logo.svg') }
+.icon-vkontakte-circled { background-image: url('iconsets/Modern-Dark/vkontakte-logo.svg') }
+.icon-podcast-circled { background-image: url('iconsets/Modern-Dark/podcast-logo.svg') }
+.icon-audiobook { background-image: url('iconsets/Modern-Dark/audiobook.svg') }
+.icon-internetarchive-circled { background-image: url('iconsets/Modern-Dark/internetarchive-logo.svg') }
+.icon-increase { background-image: url('iconsets/Modern-Dark/arrow-increase.svg') }
+.icon-decrease { background-image: url('iconsets/Modern-Dark/arrow-decrease.svg') }
+.icon-attention-1 { background-image: url('iconsets/Modern-Dark/dialog-error.svg') }
+.icon-info-circled { background-image: url('iconsets/Modern-Dark/dialog-information.svg') }
+.icon-download { background-image: url('iconsets/Modern-Dark/download-icon.svg') }
+.icon-sun { background-image: url('iconsets/Modern-Dark/icon-new.svg') }
+.icon-headphones { background-image: url('iconsets/Modern-Dark/headphones.svg') }
+.icon-unlistened { background-image: url('iconsets/Modern-Dark/headphones.svg') }
+.icon-block { background-image: url('iconsets/Modern-Dark/lastfm-ban.svg') }
+.icon-heart { background-image: url('iconsets/Modern-Dark/lastfm-love.svg') }
+.icon-heart-broken { background-image: url('iconsets/Modern-Dark/lastfm-unlove.svg') }
+.icon-refresh { background-image: url('iconsets/Modern-Dark/refresh.svg') }
+.icon-dirble-circled { background-image: url('iconsets/Modern-Dark/dirble-logo.svg') }
+.icon-tunein { background-image: url('iconsets/Modern-Dark/../../newimages/tunein-logo.svg') }
+.icon-no-response-playbutton { background-image :url('iconsets/Modern-Dark/media-playback-start.svg') }
+.icon-tags { background-image: url('iconsets/Modern-Dark/tag.svg') }
+.icon-volume-up { background-image: url('iconsets/Modern-Dark/volume.svg') }
+.icon-toggle-open { background-image: url('iconsets/Modern-Dark/toggle-open.svg') }
+.icon-toggle-closed { background-image: url('iconsets/Modern-Dark/toggle-closed.svg') }
+.icon-spin6 { background-image: url('iconsets/Modern-Dark/spinner.svg') }
+.icon-output { background-image: url('iconsets/Modern-Dark/output.svg') }
+.icon-output-mute { background-image: url('iconsets/Modern-Dark/output_mute.svg') }
+.icon-sliders { background-image: url('iconsets/Modern-Dark/sliders.svg') }
+.icon-0-stars { background-image: url('iconsets/Modern-Dark/0stars.svg') }
+.icon-1-stars { background-image: url('iconsets/Modern-Dark/1stars.svg') }
+.icon-2-stars { background-image: url('iconsets/Modern-Dark/2stars.svg') }
+.icon-3-stars { background-image: url('iconsets/Modern-Dark/3stars.svg') }
+.icon-4-stars { background-image: url('iconsets/Modern-Dark/4stars.svg') }
+.icon-5-stars { background-image: url('iconsets/Modern-Dark/5stars.svg') }
+.icon-single-star { background-image: url('iconsets/Modern-Dark/singlestar.svg') }
+.icon-ratandtag { background-image: url('iconsets/Modern-Dark/ratandtag.svg') }
+.icon-ratortag { background-image: url('iconsets/Modern-Dark/ratortag.svg') }
+.icon-toggle-on { background-image: url('iconsets/Modern-Dark/togglebutton-new2-on.svg') }
+.icon-toggle-off { background-image: url('iconsets/Modern-Dark/togglebutton-new2-off.svg') }
 
-.icon-allrandom { background-image: url('shuffle.png') }
-.icon-neverplayed { background-image: url('neverheard.png') }
-.icon-recentlyplayed { background-image: url('calendar.svg') }
-.icon-artist { background-image: url('artist-icon.png') }
-.icon-mp3-audio { background-image: url('mp3-audio.svg') }
-.icon-aac-audio { background-image: url('aac-audio.svg') }
-.icon-flac-audio { background-image: url('flac-audio.svg') }
-.icon-wma-audio { background-image: url('wma-audio.svg') }
-.icon-ogg-audio { background-image: url('ogg-audio.svg') }
-.icon-explicit { background-image: url('parental-advisory.svg') }
-.icon-expand-up { background-image: url('expand-up.svg') }
-.icon-rss { background-image: url('rss.svg') }
-.icon-tick { background-image: url('tick.svg') }
-.icon-video { background-image: url('movie-1.svg') }
-.icon-bbc-logo { background-image: url('bbc-logo.svg') }
-.icon-imdb-logo { background-image: url('imdb-logo.svg') }
-.icon-facebook-logo { background-image: url('facebook-logo.svg') }
-.icon-twitter-logo { background-image: url('twitter-logo.svg') }
-.icon-www { background-image: url('world-wide-web.svg') }
-.icon-allmusic { background-image: url('allmusic-logo.svg') }
-.icon-updown { background-image: url('arrow-updown.svg') }
+.icon-random.flow-on { background-image: url('iconsets/Modern-Dark/random.svg') }
+.icon-random.flow-off { background-image: url('iconsets/Modern-Dark/random_off.svg') }
+.icon-crossfade.flow-on { background-image: url('iconsets/Modern-Dark/crossfade.svg') }
+.icon-crossfade.flow-off { background-image: url('iconsets/Modern-Dark/crossfade_off.svg') }
+.icon-repeat.flow-on { background-image: url('iconsets/Modern-Dark/refresh.svg') }
+.icon-repeat.flow-off { background-image: url('iconsets/Modern-Dark/refresh_off.svg') }
+.icon-consume.flow-on { background-image: url('iconsets/Modern-Dark/consume.svg') }
+.icon-consume.flow-off { background-image: url('iconsets/Modern-Dark/consume_off.svg') }
+
+.icon-allrandom { background-image: url('iconsets/Modern-Dark/shuffle.png') }
+.icon-neverplayed { background-image: url('iconsets/Modern-Dark/neverheard.png') }
+.icon-recentlyplayed { background-image: url('iconsets/Modern-Dark/calendar.svg') }
+.icon-artist { background-image: url('iconsets/Modern-Dark/artist-icon.png') }
+.icon-mp3-audio { background-image: url('iconsets/Modern-Dark/mp3-audio.svg') }
+.icon-aac-audio { background-image: url('iconsets/Modern-Dark/aac-audio.svg') }
+.icon-flac-audio { background-image: url('iconsets/Modern-Dark/flac-audio.svg') }
+.icon-wma-audio { background-image: url('iconsets/Modern-Dark/wma-audio.svg') }
+.icon-ogg-audio { background-image: url('iconsets/Modern-Dark/ogg-audio.svg') }
+.icon-explicit { background-image: url('iconsets/Modern-Dark/parental-advisory.svg') }
+.icon-expand-up { background-image: url('iconsets/Modern-Dark/expand-up.svg') }
+.icon-rss { background-image: url('iconsets/Modern-Dark/rss.svg') }
+.icon-tick { background-image: url('iconsets/Modern-Dark/tick.svg') }
+.icon-video { background-image: url('iconsets/Modern-Dark/movie-1.svg') }
+.icon-bbc-logo { background-image: url('iconsets/Modern-Dark/bbc-logo.svg') }
+.icon-imdb-logo { background-image: url('iconsets/Modern-Dark/imdb-logo.svg') }
+.icon-facebook-logo { background-image: url('iconsets/Modern-Dark/facebook-logo.svg') }
+.icon-twitter-logo { background-image: url('iconsets/Modern-Dark/twitter-logo.svg') }
+.icon-www { background-image: url('iconsets/Modern-Dark/world-wide-web.svg') }
+.icon-allmusic { background-image: url('iconsets/Modern-Dark/allmusic-logo.svg') }
+.icon-updown { background-image: url('iconsets/Modern-Dark/arrow-updown.svg') }
+.icon-snapcast { background-image: url('iconsets/Modern-Dark/../../newimages/snapcast.png') }
 
 .styledinputs label
 {
@@ -146,7 +184,7 @@
     position:absolute;
     left:0;
     /* bottom:0.2em; */
-    background-image: url('togglebutton-new2-off.svg');
+    background-image: url('iconsets/Modern-Dark/togglebutton-new2-off.svg');
  	background-size:contain;
 	background-position: center;
 	background-repeat:no-repeat;
@@ -154,12 +192,12 @@
 
 .styledinputs input:checked + label:before
 {
-    background-image: url('togglebutton-new2-on.svg') !important;
+    background-image: url('iconsets/Modern-Dark/togglebutton-new2-on.svg') !important;
 }
 
 img.notexist,img.notfound
 {
-    background-image: url('compact-disc.svg');
+    background-image: url('iconsets/Modern-Dark/compact-disc.svg');
     background-size:contain;
     display:inline-block;
     background-position:center;
@@ -168,17 +206,17 @@ img.notexist,img.notfound
 
 img.stream.notfound, img.stream.notexist
 {
-    background-image: url('broadcast-new.svg');
+    background-image: url('iconsets/Modern-Dark/broadcast-new.svg');
 }
 
 img.plimage.notfound
 {
-    background-image: url('playlist.svg');
+    background-image: url('iconsets/Modern-Dark/playlist.svg');
 }
 
 .backmenu
 {
-    background-image: url('arrow-left-double.svg');
+    background-image: url('iconsets/Modern-Dark/arrow-left-double.svg');
     background-repeat: no-repeat;
     background-size: contain;
 }
@@ -198,10 +236,10 @@ button.iconbutton:hover {
 }
 
 button.searchbutton {
-    background-image: url('system-search.svg');
+    background-image: url('iconsets/Modern-Dark/system-search.svg');
 }
 
 button.rssbutton {
-    background-image: url('rss.svg');
+    background-image: url('iconsets/Modern-Dark/rss.svg');
 }
 

@@ -2,8 +2,7 @@
 
 include ("backends/sql/connect.php");
 require_once ("skins/".$skin."/ui_elements.php");
-connect_to_database();
-$collection_type = get_collection_type();
+connect_to_database($romonitor_hack);
 $find_track = null;
 $update_track = null;
 $transaction_open = false;
@@ -66,7 +65,7 @@ function create_new_track(&$data) {
 	}
 
 	if ($data['albumai'] == null || $data['trackai'] == null) {
-		debuglog("Trying to create new track but failed to get an artist index","MYSQL",2);
+		logger::fail("MYSQL", "Trying to create new track but failed to get an artist index");
 		return null;
 	}
 
@@ -77,7 +76,7 @@ function create_new_track(&$data) {
 		}
 		$data['albumindex'] = check_album($data);
 		if ($data['albumindex'] == null) {
-			debuglog("Trying to create new track but failed to get an album index","MYSQL",2);
+			logger::fail("MYSQL", "Trying to create new track but failed to get an album index");
 			return null;
 		}
 	}
@@ -105,7 +104,7 @@ function check_radio_source($data) {
 	global $mysqlc;
 	$index = simple_query('Sourceindex', 'WishlistSourcetable', 'SourceUri', $data['streamuri'], null);
 	if ($index === null) {
-		debuglog("Creating Wishlist Source ".$data['streamname'],"SQL");
+		logger::log("SQL", "Creating Wishlist Source",$data['streamname']);
 		if (sql_prepare_query(true, null, null, null,
 		"INSERT INTO WishlistSourcetable (SourceName, SourceImage, SourceUri) VALUES (?, ?, ?)",
 		$data['streamname'], $data['streamimage'], $data['streamuri']))
@@ -139,7 +138,7 @@ function create_new_artist($artist) {
 	$retval = null;
 	if (sql_prepare_query(true, null, null, null, "INSERT INTO Artisttable (Artistname) VALUES (?)", $artist)) {
 		$retval = $mysqlc->lastInsertId();
-		debuglog("Created artist ".$artist." with Artistindex ".$retval,"MYSQL",7);
+		logger::trace("MYSQL", "Created artist",$artist,"with Artistindex",$retval);
 	}
 	return $retval;
 }
@@ -201,13 +200,13 @@ function check_album(&$data) {
 				AND AlbumArtistindex = ?", $data['album'], $data['albumai']);
 		$obj = array_shift($result);
 		if ($obj) {
-			debuglog("Album ".$data['album']." was found on domain ".$obj->Domain.". Changing to local","MYSQL", 7);
+			logger::log("MYSQL", "Album ".$data['album']." was found on domain ".$obj->Domain.". Changing to local");
 			$index = $obj->Albumindex;
 			if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET AlbumUri=NULL, Domain=?, justUpdated=? WHERE Albumindex=?", 'local', 1, $index)) {
 				$obj->AlbumUri = null;
-				debuglog("   ...Success","MYSQL",9);
+				logger::debug("MYSQL", "   ...Success");
 			} else {
-				debuglog("   Album ".$data['album']." update FAILED","MYSQL",3);
+				logger::fail("MYSQL", "   Album ".$data['album']." update FAILED");
 				return false;
 			}
 		}
@@ -222,21 +221,21 @@ function check_album(&$data) {
 		if ($year != $obj->Year || $img != $obj->Image || $uri != $obj->AlbumUri || $mbid != $obj->mbid) {
 
 			if ($prefs['debug_enabled'] > 6) {
-				debuglog("Updating Details For Album ".$data['album']." (index ".$index.")" ,"MYSQL",7);
-				debuglog("  Old Date  : ".$obj->Year,"MYSQL",7);
-				debuglog("  New Date  : ".$year,"MYSQL",7);
-				debuglog("  Old Image : ".$obj->Image,"MYSQL",7);
-				debuglog("  New Image : ".$img,"MYSQL",7);
-				debuglog("  Old Uri  : ".$obj->AlbumUri,"MYSQL",7);
-				debuglog("  New Uri  : ".$uri,"MYSQL",7);
-				debuglog("  Old MBID  : ".$obj->mbid,"MYSQL",7);
-				debuglog("  New MBID  : ".$mbid,"MYSQL",7);
+				logger::log("BACKEND", "Updating Details For Album ".$data['album']." (index ".$index.")" );
+				logger::log("BACKEND", "  Old Date  : ".$obj->Year);
+				logger::log("BACKEND", "  New Date  : ".$year);
+				logger::log("BACKEND", "  Old Image : ".$obj->Image);
+				logger::log("BACKEND", "  New Image : ".$img);
+				logger::log("BACKEND", "  Old Uri  : ".$obj->AlbumUri);
+				logger::log("BACKEND", "  New Uri  : ".$uri);
+				logger::log("BACKEND", "  Old MBID  : ".$obj->mbid);
+				logger::log("BACKEND", "  New MBID  : ".$mbid);
 			}
 
 			if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Year=?, Image=?, AlbumUri=?, mbid=?, justUpdated=1 WHERE Albumindex=?",$year, $img, $uri, $mbid, $index)) {
-				debuglog("   ...Success","MYSQL",9);
+				logger::debug("BACKEND", "   ...Success");
 			} else {
-				debuglog("   Album ".$data['album']." update FAILED","MYSQL",3);
+				logger::fail("BACKEND", "   Album ".$data['album']." update FAILED");
 				return false;
 			}
 		}
@@ -266,7 +265,7 @@ function create_new_album($data) {
 			(?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		$data['album'], $data['albumai'], $data['albumuri'], $data['date'], $im['searched'], $data['imagekey'], $data['ambid'], $data['domain'], $im['image'])) {
 		$retval = $mysqlc->lastInsertId();
-		debuglog("Created Album ".$data['album']." with Albumindex ".$retval,"MYSQL",7);
+		logger::log("BACKEND", "Created Album ".$data['album']." with Albumindex ".$retval);
 	}
 	return $retval;
 }
@@ -287,16 +286,13 @@ function remove_ttid($ttid) {
 	// If it's a search result, it must be a manually added track (we can't delete collection tracks)
 	// and we might still need it in the search, so set it to a 2 instead of deleting it.
 
-	debuglog("Removing track ".$ttid,"MYSQL",5);
-	$t = time();
+	logger::log("BACKEND", "Removing track ".$ttid);
 	$result = false;
 	if (generic_sql_query("DELETE FROM Tracktable WHERE isSearchResult != 1 AND TTindex = '".$ttid."'",true)) {
 		if (generic_sql_query("UPDATE Tracktable SET isSearchResult = 2 WHERE isSearchResult = 1 AND TTindex = '".$ttid."'", true)) {
 			$result = true;;
 		}
 	}
-	$to = time() - $t;
-	debuglog("Removing track took ".$to." seconds","MYSQL",8);
 	return $result;
 }
 
@@ -502,7 +498,7 @@ function get_rating_info($sortby, $value) {
 	$t =  microtime(true);
 	$ratings =  generic_sql_query($qstring);
 	$took = microtime(true) - $t;
-	debuglog(" :: Getting rating data took ".$took." seconds","SQL");
+	logger::debug("TIMINGS", " :: Getting rating data took ".$took." seconds");
 	// Our query for Tags (Tag List) will get eg if we're looking for 'tag1' it'll get tracks with 'tag1' and 'tag2'
 	// So we check how many tags there are in each result and only use the ones that match the number of tags we're looking for
 	if ($sortby == 'Tags') {
@@ -558,7 +554,7 @@ function get_all_data($ttid) {
 	);
 	if (count($result) > 0) {
 		$data = array_shift($result);
-		$data['Tags'] = explode(', ', $data['Tags']);
+		$data['Tags'] = ($data['Tags'] == '') ? array() : explode(', ', $data['Tags']);
 		if ($data['LastTime'] != null && $data['LastTime'] != 0 && $data['LastTime'] != '0') {
 			$data['Last'] = $data['LastTime'];
 		}
@@ -570,11 +566,12 @@ function get_all_data($ttid) {
 function get_extra_track_info(&$filedata) {
 	$data = array();;
 	$result = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
-		'SELECT Uri, TTindex, Disc, Artistname AS AlbumArtist, Albumtable.Image AS "X-AlbumImage", ImgKey AS ImgKey, mbid AS MUSICBRAINZ_ALBUMID, Searched
+		'SELECT Uri, TTindex, Disc, Artistname AS AlbumArtist, Albumtable.Image AS "X-AlbumImage", mbid AS MUSICBRAINZ_ALBUMID, Searched, IFNULL(Playcount, 0) AS Playcount
 			FROM
 				Tracktable
 				JOIN Albumtable USING (Albumindex)
 				JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+				LEFT JOIN Playcounttable USING (TTindex)
 				WHERE Title = ?
 				AND TrackNo = ?
 				AND Albumname = ?',
@@ -582,7 +579,7 @@ function get_extra_track_info(&$filedata) {
 	);
 	foreach ($result as $tinfo) {
 		if ($tinfo['Uri'] == $filedata['file']) {
-			debuglog("Found Track In Collection","EXTRAINFO");
+			logger::trace("EXTRAINFO", "Found Track In Collection");
 			$data = array_filter($tinfo, function($v) {
 				if ($v === null || $v == '') {
 					return false;
@@ -594,7 +591,7 @@ function get_extra_track_info(&$filedata) {
 	}
 	if (count($data) == 0) {
 		$result = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
-			'SELECT Albumtable.Image AS "X-AlbumImage", ImgKey AS ImgKey, mbid AS MUSICBRAINZ_ALBUMID, Searched
+			'SELECT Albumtable.Image AS "X-AlbumImage", mbid AS MUSICBRAINZ_ALBUMID, Searched
 				FROM
 					Albumtable
 					JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
@@ -603,7 +600,7 @@ function get_extra_track_info(&$filedata) {
 				$filedata['Album'], concatenate_artist_names($filedata['AlbumArtist'])
 		);
 		foreach ($result as $tinfo) {
-			debuglog("Found Album In Collection","EXTRAINFO");
+			logger::trace("EXTRAINFO", "Found Album In Collection");
 			$data = array_filter($tinfo, function($v) {
 				if ($v === null || $v == '') {
 					return false;
@@ -653,7 +650,7 @@ function get_imagesearch_info($key) {
 		if ($retval['albumuri'] == null || $retval['albumuri'] == "") {
 			$retval['albumuri'] = $obj->AlbumUri;
 		}
-		debuglog("Found album ".$retval['album']." in collection","GETALBUMCOVER",6);
+		logger::log("GETALBUMCOVER", "Found album",$retval['album'],",in collection");
 	}
 
 	$result = generic_sql_query(
@@ -688,7 +685,7 @@ function get_imagesearch_info($key) {
 		if ($retval['albumuri'] == null || $retval['albumuri'] == "") {
 			$retval['albumuri'] = $obj->AlbumUri;
 		}
-		debuglog("Found album ".$retval['album']." in search results or hidden tracks","GETALBUMCOVER",6);
+		logger::log("GETALBUMCOVER", "Found album",$retval['album'],"in search results or hidden tracks");
 	}
 	return $retval;
 }
@@ -708,7 +705,7 @@ function get_album_directory($albumindex, $uri) {
 			$retval = preg_replace('#^local:track:#', '', $retval);
 			$retval = preg_replace('#^file://#', '', $retval);
 			$retval = preg_replace('#^beetslocal:\d+:'.$prefs['music_directory_albumart'].'/#', '', $retval);
-			debuglog("Got album directory using track Uri - ".$retval,"SQL",9);
+			logger::log("SQL", "Got album directory using track Uri :",$retval);
 		}
 	}
 	return $retval;
@@ -717,9 +714,9 @@ function get_album_directory($albumindex, $uri) {
 function update_image_db($key, $found, $imagefile) {
 	$val = ($found) ? $imagefile : null;
 	if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Image = ?, Searched = 1 WHERE ImgKey = ?", $val, $key)) {
-		debuglog("    Database Image URL Updated","MYSQL",8);
+		logger::log("MYSQL", "    Database Image URL Updated");
 	} else {
-		debuglog("    Failed To Update Database Image URL","MYSQL",2);
+		logger::fail("MYSQL", "    Failed To Update Database Image URL",$val,$key);
 	}
 }
 
@@ -737,7 +734,7 @@ function track_is_searchresult($ttid) {
 function track_is_wishlist($ttid) {
 	$u = simple_query('Uri', 'Tracktable', 'TTindex', $ttid, '');
 	if ($u === null) {
-		debuglog("Track ".$ttid." is wishlist. Discarding","USERRATING");
+		logger::mark("USERRATING", "Track",$ttid,"is wishlist. Discarding");
 		generic_sql_query("DELETE FROM Playcounttable WHERE TTindex=".$ttid, true);
 		generic_sql_query("DELETE FROM Tracktable WHERE TTindex=".$ttid, true);
 		return true;
@@ -749,7 +746,7 @@ function check_for_wishlist_track(&$data) {
 	$result = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null, "SELECT TTindex FROM Tracktable JOIN Artisttable USING (Artistindex)
 									WHERE Artistname=? AND Title=? AND Uri IS NULL",$data['artist'],$data['title']);
 	foreach ($result as $obj) {
-		debuglog("Wishlist Track ".$obj['TTindex']." matches the one we're adding","USERRATING",7);
+		logger::mark("USERRATING", "Wishlist Track",$obj['TTindex'],"matches the one we're adding");
 		$meta = get_all_data($obj['TTindex']);
 		$data['attributes'] = array();
 		$data['attributes'][] = array('attribute' => 'Rating', 'value' => $meta['Rating']);
@@ -822,14 +819,14 @@ function albumartist_sort_query($flag) {
 function do_artists_from_database($why, $what, $who) {
 	global $divtype;
 	$singleheader = array();
-	debuglog("Generating artist ".$why.$what.$who." from database","DUMPALBUMS",7);
+	logger::trace("DUMPALBUMS", "Generating artist",$why.$what.$who,"from database");
 	$singleheader['type'] = 'insertAfter';
 	$singleheader['where'] = 'fothergill';
 	$count = 0;
 	$t = microtime(true);
 	$result = generic_sql_query(albumartist_sort_query($why), false, PDO::FETCH_ASSOC);
 	$at = microtime(true) - $t;
-	debuglog(" -- Album Artist SQL query took ".$at." seconds","SQL",8);
+	logger::debug("TIMINGS", " -- Album Artist SQL query took ".$at." seconds");
 	$t = microtime(true);
 	foreach($result as $obj) {
 		if ($who == "root") {
@@ -843,14 +840,14 @@ function do_artists_from_database($why, $what, $who) {
 				$singleheader['html'] = artistHeader($why.$what.$obj['Artistindex'], $obj['Artistname']);
 				$singleheader['id'] = $who;
 				$at = microtime(true) - $t;
-				debuglog(" -- Generating Artist Header took ".$at." seconds","SQL",8);
+				logger::debug("TIMINGS", " -- Generating Artist Header took ".$at." seconds");
 				return $singleheader;
 			}
 		}
 		$divtype = ($divtype == "album1") ? "album2" : "album1";
 	}
 	$at = microtime(true) - $t;
-	debuglog(" -- Generating Artist List took ".$at." seconds","SQL",8);
+	logger::debug("TIMINGS", " -- Generating Artist List took ".$at." seconds");
 	return $count;
 }
 
@@ -903,7 +900,7 @@ function album_sort_query($why, $what, $who) {
 }
 
 function do_artist_banner($why, $what, $who) {
-	debuglog("Creating Banner ".$why." ".$what." ".$who,"SQL");
+	logger::debug("BACKEND", "Creating Banner ".$why." ".$what." ".$who);
 	$singleheader['type'] = 'insertAfter';
 	$singleheader['where'] = 'fothergill';
 	$qstring = album_sort_query($why, $what, 'root');
@@ -931,10 +928,10 @@ function do_albums_from_database($why, $what, $who, $fragment = false, $use_arti
 		$singleheader['type'] = 'insertAfter';
 		$singleheader['where'] = 'fothergill';
 	}
-	debuglog("Generating albums for ".$why.$what.$who." from database","DUMPALBUMS",7);
+	logger::log("DUMPALBUMS", "Generating albums for",$why.$what.$who,"from database");
 
 	$qstring = album_sort_query($why, $what, $who);
-	debuglog("Query String Is ".$qstring,"COLLECTION",9);
+	logger::debug("DUMPALBUMS", "Query String Is ".$qstring);
 
 	$count = 0;
 	$currart = "";
@@ -968,7 +965,7 @@ function do_albums_from_database($why, $what, $who, $fragment = false, $use_arti
 		$currban = $artistbanner;
 		$count++;
 	}
-	debuglog("... Found ".$count." albums", "COLLECTION");
+	logger::log("DUMPALBUMS", "... Found ".$count." albums");
 	if ($count == 0 && !($why == 'a' && $who == 'root')) {
 		noAlbumsHeader();
 	}
@@ -1064,7 +1061,7 @@ function get_album_tracks_from_database($index, $cmd, $flag) {
 			$rflag = "";
 			break;
 	}
-	debuglog("Getting Album Tracks for Albumindex ".$index,"MYSQL",7);
+	logger::log("GET TRACKS", "Getting Album Tracks for Albumindex",$index);
 	if ($qstring === null) {
 		$qstring = $action." Uri FROM Tracktable".$rflag." WHERE Albumindex = '".$index."' AND Uri IS NOT NULL AND Hidden = 0 ".track_date_check($prefs['collectionrange'], $flag)." ".$sflag." ORDER BY Disc, TrackNo";
 	}
@@ -1078,7 +1075,7 @@ function get_album_tracks_from_database($index, $cmd, $flag) {
 function get_artist_tracks_from_database($index, $cmd, $flag) {
 	global $prefs;
 	$retarr = array();
-	debuglog("Getting Tracks for AlbumArtist ".$index,"MYSQL",7);
+	logger::log("GET TRACKS", "Getting Tracks for AlbumArtist",$index);
 	$qstring = "SELECT Albumindex FROM Albumtable JOIN Artisttable ON
 		(Albumtable.AlbumArtistindex = Artisttable.Artistindex) WHERE AlbumArtistindex = ".$index." ORDER BY";
 	if ($prefs['sortbydate']) {
@@ -1101,8 +1098,7 @@ function do_tracks_from_database($why, $what, $whom, $fragment = false) {
 	// in which case it will combine them all into one 'virtual album' - see browse_album()
 	global $prefs;
 	$who = getArray($whom);
-	$wdb = implode($who, ', ');
-    debuglog("Generating tracks for album(s) ".$wdb." from database","DUMPALBUMS",7);
+    logger::log("GET TRACKS", "Generating tracks for album(s)",$who,"from database");
 	if ($fragment) {
 		ob_start();
 	}
@@ -1159,10 +1155,10 @@ function do_tracks_from_database($why, $what, $whom, $fragment = false) {
 		$tracktype = albumTrack($arr);
 	}
 	if ($tracktype == 1) {
-		debuglog("Album ".$wdb." has no tracks, just an artist link","SQL",6);
+		logger::mark("GET TRACKS", "Album",$who,"has no tracks, just an artist link");
 		print '<input type="hidden" class="expandartist"/>';
 	} else if ($tracktype == 2) {
-		debuglog("Album ".$wdb." has no tracks, just an album link","SQL",6);
+		logger::mark("GET TRACKS", "Album",$who,"has no tracks, just an album link");
 		print '<input type="hidden" class="expandalbum"/>';
 	}
 	if ($fragment) {
@@ -1262,17 +1258,19 @@ function check_radio_station($playlisturl, $stationname, $image) {
 	$index = null;
 	$index = sql_prepare_query(false, null, 'Stationindex', false, "SELECT Stationindex FROM RadioStationtable WHERE PlaylistUrl = ?", $playlisturl);
 	if ($index === false) {
-		debuglog("Adding New Radio Station : ","RADIO");
-		debuglog("  Name  : ".$stationname,"RADIO");
-		debuglog("  Image : ".$image,"RADIO");
-		debuglog("  URL   : ".$playlisturl,"RADIO");
+		logger::shout("RADIO", "Adding New Radio Station");
+		logger::mark("RADIO", "  Name  :",$stationname);
+		logger::mark("RADIO", "  Image :",$image);
+		logger::mark("RADIO", "  URL   :",$playlisturl);
 		if (sql_prepare_query(true, null, null, null, "INSERT INTO RadioStationtable (IsFave, StationName, PlaylistUrl, Image) VALUES (?, ?, ?, ?)",
 								0, trim($stationname), trim($playlisturl), trim($image))) {
 			$index = $mysqlc->lastInsertId();
-			debuglog("Created new radio station with index ".$index,"RADIO");
+			logger::log("RADIO", "Created new radio station with index ".$index);
 		}
 	} else {
-		debuglog("Found radio station with index ".$index,"RADIO");
+		sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET StationName = ?, Image = ? WHERE Stationindex = ?",
+			trim($stationname), trim($image), $index);
+		logger::shout("RADIO", "Found radio station",$stationname,"with index",$index);
 	}
 	return $index;
 }
@@ -1280,26 +1278,33 @@ function check_radio_station($playlisturl, $stationname, $image) {
 function check_radio_tracks($stationid, $tracks) {
 	generic_sql_query("DELETE FROM RadioTracktable WHERE Stationindex = ".$stationid, true);
 	foreach ($tracks as $track) {
-		debuglog("  Adding New Track ".$track['TrackUri'],"RADIO");
-		sql_prepare_query(true, null, null, null, "INSERT INTO RadioTracktable (Stationindex, TrackUri, PrettyStream) VALUES (?, ?, ?)",
-							$stationid, trim($track['TrackUri']), trim($track['PrettyStream']));
+		$index = sql_prepare_query(false, null, 'Stationindex', false, "SELECT Stationindex FROM RadioTracktable WHERE TrackUri = ?", trim($track['TrackUri']));
+		if ($index !== false) {
+			logger::log("RADIO", "  Track already exists for stationindex",$index);
+			$stationid = $index;
+		} else {
+			logger::mark("RADIO", "  Adding New Track",$track['TrackUri'],"to station",$stationid);
+			sql_prepare_query(true, null, null, null, "INSERT INTO RadioTracktable (Stationindex, TrackUri, PrettyStream) VALUES (?, ?, ?)",
+								$stationid, trim($track['TrackUri']), trim($track['PrettyStream']));
+		}
 	}
+	return $stationid;
 }
 
 function add_fave_station($info) {
 	if (array_key_exists('streamid', $info) && $info['streamid']) {
-		debuglog("Updating StationIndex ".$info['streamid']." to be fave","RADIO");
+		logger::shout("RADIO", "Updating StationIndex",$info['streamid'],"to be fave");
 		generic_sql_query("UPDATE RadioStationtable SET IsFave = 1 WHERE Stationindex = ".$info['streamid'], true);
 		return true;
 	}
 	$stationindex = check_radio_station($info['location'],$info['album'],$info['image']);
-	check_radio_tracks($stationindex, array(array('TrackUri' => $info['location'], 'PrettyStream' => $info['stream'])));
+	$stationindex = check_radio_tracks($stationindex, array(array('TrackUri' => $info['location'], 'PrettyStream' => $info['stream'])));
 	generic_sql_query("UPDATE RadioStationtable SET IsFave = 1 WHERE Stationindex = ".$stationindex, true);
 }
 
 function update_radio_station_name($info) {
 	if ($info['streamid']) {
-		debuglog("Updating Stationindex ".$info['streamid'].' with new name '.$info['name']);
+		logger::shout("RADIO", "Updating Stationindex",$info['streamid'],"with new name",$info['name']);
 		sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET StationName = ? WHERE Stationindex = ?",$info['name'],$info['streamid']);
 	} else {
 		$stationid = check_radio_station($info['uri'], $info['name'], '');
@@ -1316,7 +1321,7 @@ function update_stream_image($stream, $image) {
 }
 
 function update_podcast_image($podid, $image) {
-	debuglog("Setting Image to ".$image." for podid ".$podid,"PODCASTS");
+	logger::log("PODCASTS", "Setting Image to",$image,"for podid",$podid);
 	sql_prepare_query(true, null, null, null, 'UPDATE Podcasttable SET Image = ? WHERE PODindex = ?',$image, $podid);
 }
 
@@ -1351,7 +1356,7 @@ function find_podcast_track_from_url($url) {
 //
 
 function update_track_stats() {
-	debuglog("Updating Track Stats","MYSQL",7);
+	logger::log("BACKEND", "Updating Track Stats");
 	$t = microtime(true);
 	$ac = get_artist_count(ADDED_ALL_TIME, 0);
 	update_stat('ArtistCount',$ac);
@@ -1365,7 +1370,7 @@ function update_track_stats() {
 	$ac = get_duration_count(ADDED_ALL_TIME, 0);
 	update_stat('TotalTime',$ac);
 	$at = microtime(true) - $t;
-	debuglog("Updating Track Stats took ".$at." seconds","BACKEND",8);
+	logger::debug("TIMINGS", "Updating Track Stats took ".$at." seconds");
 }
 
 function update_stat($item, $value) {
@@ -1404,14 +1409,6 @@ function get_duration_count($range, $iab) {
 	return $ac;
 }
 
-function set_collection_type() {
-	if ($prefs['player_backend'] == 'mpd') {
-		generic_sql_query('UPDATE Statstable SET Value = '.COLLECTION_TYPE_MPD.' WHERE Item = CollType');
-	} else {
-		generic_sql_query('UPDATE Statstable SET Value = '.COLLECTION_TYPE_MOPIDY.' WHERE Item = CollType');
-	}
-}
-
 function dumpAlbums($which) {
 
     global $divtype, $prefs;
@@ -1419,7 +1416,7 @@ function dumpAlbums($which) {
     $a = preg_match('/(a|b|z)(.*?)(\d+|root)/', $which, $matches);
 	if (!$a) {
 		print '<h3>'.get_int_text("label_general_error").'</h3>';
-		debuglog('Artist dump failed - regexp failed to match '.$which,"DUMPALBUMS",3);
+		logger::fail("DUMPALBUMS", "Artist dump failed - regexp failed to match",$which);
 		return false;
 	}
     $why = $matches[1];
@@ -1540,7 +1537,7 @@ function searchStats() {
 function getItemsToAdd($which, $cmd = null) {
     $a = preg_match('/(a|b|r|t|y|u|z)(.*?)(\d+|root)/', $which, $matches);
     if (!$a) {
-        debuglog('Regexp failed to match '.$which,"GETITEMSTOADD",3);
+        logger::fail("GETITEMSTOADD", "Regexp failed to match",$which);
         return array();
     }
     $why = $matches[1];
@@ -1556,7 +1553,7 @@ function getItemsToAdd($which, $cmd = null) {
     		break;
 
     	default:
-	        debuglog('Unknown type '.$which,"GETITEMSTOADD",3);
+	        logger::fail("GETITEMSTOADD", "Unknown type",$which);
 	        return array();
 	        break;
     }
@@ -1609,7 +1606,7 @@ function check_url_against_database($url, $itags, $rating) {
 function cleanSearchTables() {
 	// Clean up the database tables before performing a new search or updating the collection
 
-	debuglog("Cleaning Search Results","MYSQL",6);
+	logger::trace("MYSQL", "Cleaning Search Results");
 	// Any track that was previously hidden needs to be re-hidden
 	generic_sql_query("UPDATE Tracktable SET Hidden = 1, isSearchResult = 0 WHERE isSearchResult = 3", true);
 
@@ -1676,16 +1673,16 @@ function remove_findtracks() {
 
 function tidy_database() {
     // Find tracks that have been removed
-    debuglog("Starting Cruft Removal","TIMINGS",4);
+    logger::debug("TIMINGS", "Starting Cruft Removal");
     $now = time();
-    debuglog("Finding tracks that have been deleted","MYSQL",7);
+    logger::trace("MYSQL", "Finding tracks that have been deleted");
     generic_sql_query("DELETE FROM Tracktable WHERE LastModified IS NOT NULL AND Hidden = 0 AND justAdded = 0", true);
     remove_cruft();
 	update_stat('ListVersion',ROMPR_COLLECTION_VERSION);
 	update_track_stats();
 	$dur = format_time(time() - $now);
-	debuglog("Cruft Removal Took ".$dur,"TIMINGS",4);
-    debuglog("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~","TIMINGS",4);
+	logger::debug("TIMINGS", "Cruft Removal Took ".$dur);
+    logger::debug("TIMINGS", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 	close_transaction();
 }
 
@@ -1698,19 +1695,19 @@ function create_foundtracks() {
 }
 
 function remove_cruft() {
-    debuglog("Removing orphaned albums","MYSQL",6);
+    logger::log("MYSQL", "Removing orphaned albums");
 	$t = microtime(true);
     generic_sql_query("DELETE FROM Albumtable WHERE Albumindex NOT IN (SELECT DISTINCT Albumindex FROM Tracktable)", true);
 	$at = microtime(true) - $t;
-	debuglog(" -- Removing orphaned albums took ".$at." seconds","BACKEND",6);
+	logger::debug("TIMINGS", " -- Removing orphaned albums took ".$at." seconds");
 
-    debuglog("Removing orphaned artists","MYSQL",6);
+    logger::log("MYSQL", "Removing orphaned artists");
 	$t = microtime(true);
     delete_orphaned_artists();
 	$at = microtime(true) - $t;
-	debuglog(" -- Removing orphaned artists took ".$at." seconds","BACKEND",6);
+	logger::debug("TIMINGS", " -- Removing orphaned artists took ".$at." seconds");
 
-    debuglog("Tidying Metadata","MYSQL",6);
+    logger::log("MYSQL", "Tidying Metadata");
 	$t = microtime(true);
     generic_sql_query("DELETE FROM Ratingtable WHERE Rating = '0'", true);
 	generic_sql_query("DELETE FROM Ratingtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable WHERE Hidden = 0)", true);
@@ -1721,7 +1718,7 @@ function remove_cruft() {
 	generic_sql_query("DELETE FROM Playcounttable WHERE Playcount = '0'", true);
 	generic_sql_query("DELETE FROM Playcounttable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
 	$at = microtime(true) - $t;
-	debuglog(" -- Tidying metadata took ".$at." seconds","BACKEND",6);
+	logger::debug("TIMINGS", " -- Tidying metadata took ".$at." seconds");
 }
 
 function do_track_by_track($trackobject) {
@@ -1735,54 +1732,33 @@ function do_track_by_track($trackobject) {
 	static $current_albumlink= null;
 	static $albumobj = null;
 
-	static $albumindex = null;
-	static $albumartistindex = null;
+	if ($trackobject === null) {
+		if ($albumobj !== null) {
+			$albumobj->check_database();
+			$albumobj = null;
+		}
+		return true;
+	}
 
 	$artistname = $trackobject->get_sort_artist();
 
-	if ($current_albumartist != $artistname) {
-		$albumartistindex = check_artist($artistname);
-	}
-    if ($albumartistindex == null) {
-    	debuglog("ERROR! Checked artist ".$artistname." and index is still null!","MYSQL_TBT",1);
-        return false;
-    }
-
-    if ($current_albumartist != $artistname || $current_album != $trackobject->tags['Album'] ||
-    		$current_domain != $trackobject->tags['domain'] ||
-    		($trackobject->tags['X-AlbumUri'] != null && $trackobject->tags['X-AlbumUri'] != $current_albumlink)) {
-
+    if ($albumobj === null ||
+		$current_albumartist != $artistname ||
+		$current_album != $trackobject->tags['Album'] ||
+    	$current_domain != $trackobject->tags['domain'] ||
+    	($trackobject->tags['X-AlbumUri'] != null && $trackobject->tags['X-AlbumUri'] != $current_albumlink)) {
+		if ($albumobj !== null) {
+			$albumobj->check_database();
+		}
     	$albumobj = new album($trackobject);
-    	$params = array(
-            'album' => $albumobj->name,
-            'albumai' => $albumartistindex,
-            'albumuri' => $albumobj->uri,
-            'image' => $albumobj->getImage('small'),
-            'date' => $albumobj->getDate(),
-            'searched' => "0",
-            'imagekey' => $albumobj->getKey(),
-            'ambid' => $albumobj->musicbrainz_albumid,
-            'domain' => $albumobj->domain);
-        $albumindex = check_album($params, false);
-
-        if ($albumindex == null) {
-        	debuglog("ERROR! Album index for ".$albumobj->name." is still null!","MYSQL_TBT",1);
-    		return false;
-        }
     } else {
-    	$albumobj->newTrack($trackobject, true);
+    	$albumobj->newTrack($trackobject);
     }
 
     $current_albumartist = $artistname;
     $current_album = $albumobj->name;
     $current_domain = $albumobj->domain;
     $current_albumlink = $albumobj->uri;
-
-	foreach ($albumobj->tracks as $trackobj) {
-		// The album we've just created must only have one track, but this makes sure we use the track object
-		// that is part of the album. This MAY be important due to various assumptions
-		check_and_update_track($trackobj, $albumindex, $albumartistindex, $artistname);
-	}
 
 }
 
@@ -1854,17 +1830,18 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
     		//
 
     		if ($prefs['debug_enabled'] > 6) {
-		    	debuglog("  Updating track with ttid $ttid because :","MYSQL",7);
-		    	if (!$doing_search && $lastmodified === null) debuglog("    LastModified is not set in the database","MYSQL",7);
-				if (!$doing_search && $trackobj->tags['Last-Modified'] === null) debuglog("    TrackObj LastModified is NULL too!","MYSQL",7);
-		    	if (!$doing_search && $lastmodified !== $trackobj->tags['Last-Modified']) debuglog("    LastModified has changed: We have ".$lastmodified." but track has ".$trackobj->tags['Last-Modified'],"MYSQL",7);
-		    	if ($disc != $trackobj->tags['Disc']) debuglog("    Disc Number has changed: We have ".$disc." but track has ".$trackobj->tags['Disc'],"MYSQL",7);
-		    	if ($hidden != 0) debuglog("    It is hidden","MYSQL",7);
-				if ($trackobj->tags['type'] == 'audiobook' && $isaudiobook == 0) debuglog("    It needs to be marked as an Auidiobook", "MYSQL");
-				if ($trackobj->tags['type'] != 'audiobook' && $isaudiobook == 1) debuglog("    It needs to be un-marked as an Audiobook", "MYSQL");
+		    	logger::log("MYSQL", "  Updating track with ttid $ttid because :");
+
+		    	if (!$doing_search && $lastmodified === null) 								logger::log("MYSQL", "    LastModified is not set in the database");
+				if (!$doing_search && $trackobj->tags['Last-Modified'] === null) 			logger::log("MYSQL", "    TrackObj LastModified is NULL too!");
+		    	if (!$doing_search && $lastmodified !== $trackobj->tags['Last-Modified']) 	logger::log("MYSQL", "    LastModified has changed: We have ".$lastmodified." but track has ".$trackobj->tags['Last-Modified']);
+		    	if ($disc != $trackobj->tags['Disc']) 										logger::log("MYSQL", "    Disc Number has changed: We have ".$disc." but track has ".$trackobj->tags['Disc']);
+		    	if ($hidden != 0) 															logger::log("MYSQL", "    It is hidden");
+				if ($trackobj->tags['type'] == 'audiobook' && $isaudiobook == 0) 			logger::log("MYSQL", "    It needs to be marked as an Auidiobook");
+				if ($trackobj->tags['type'] != 'audiobook' && $isaudiobook == 1) 			logger::log("MYSQL", "    It needs to be un-marked as an Audiobook");
 		    	if ($trackobj->tags['file'] != $uri) {
-		    		debuglog("    Uri has changed from : ".$uri,"MYSQL",7);
-		    		debuglog("                      to : ".$trackobj->tags['file'],"MYSQL",7);
+		    		logger::log("MYSQL", "    Uri has changed from : ".$uri);
+		    		logger::log("MYSQL", "                      to : ".$trackobj->tags['file']);
 		    	}
 		    }
 
@@ -1881,7 +1858,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 	    	$newlastmodified = $trackobj->tags['Last-Modified'];
 	    	if ($issearchresult == 0 && $doing_search) {
 	    		$newsearchresult = ($hidden != 0) ? 3 : 1;
-	    		debuglog("    It needs to be marked as a search result : Value ".$newsearchresult,"MYSQL",7);
+	    		logger::log("MYSQL", "    It needs to be marked as a search result : Value ".$newsearchresult);
 	    		$newlastmodified = $lastmodified;
 	    	}
 			$newisaudiobook = $trackobj->tags['type'] == 'audiobook' ? 1 : 0;
@@ -1904,7 +1881,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 	        }
 	    }
         if ($trackartistindex == null) {
-        	debuglog("ERROR! Trackartistindex is still null!","MYSQL_TBT",1);
+        	logger::error("MYSQL_TBT", "ERROR! Trackartistindex is still null!");
             return false;
         }
 
@@ -1939,18 +1916,18 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 	}
 	check_transaction();
     if ($ttid == null) {
-    	debuglog("ERROR! No ttid for track ".$trackobj->tags['file'],"MYSQL",1);
-    	debuglog("Parameters were : ","MYSQL",3);
-    	debuglog("  Title            : ".$trackobj->tags['Title'],"MYSQL",3);
-    	debuglog("  Track            : ".$trackobj->tags['Track'],"MYSQL",3);
-    	debuglog("  Time             : ".$trackobj->tags['Time'],"MYSQL",3);
-    	debuglog("  file             : ".$trackobj->tags['file'],"MYSQL",3);
-    	debuglog("  trackartistindex : ".$trackartistindex,"MYSQL",3);
-    	debuglog("  artistindex      : ".$artistindex,"MYSQL",3);
-    	debuglog("  albumindex       : ".$albumindex,"MYSQL",3);
-    	debuglog("  Last-Modified    : ".$trackobj->tags['Last-Modified'],"MYSQL",3);
-    	debuglog("  Disc             : ".$trackobj->tags['Disc'],"MYSQL",3);
-    	debuglog("  sflag            : ".$sflag,"MYSQL",3);
+    	logger::error("MYSQL", "ERROR! No ttid for track ".$trackobj->tags['file']);
+    	logger::error("MYSQL", "Parameters were : ");
+    	logger::error("MYSQL", "  Title            : ".$trackobj->tags['Title']);
+    	logger::error("MYSQL", "  Track            : ".$trackobj->tags['Track']);
+    	logger::error("MYSQL", "  Time             : ".$trackobj->tags['Time']);
+    	logger::error("MYSQL", "  file             : ".$trackobj->tags['file']);
+    	logger::error("MYSQL", "  trackartistindex : ".$trackartistindex);
+    	logger::error("MYSQL", "  artistindex      : ".$artistindex);
+    	logger::error("MYSQL", "  albumindex       : ".$albumindex);
+    	logger::error("MYSQL", "  Last-Modified    : ".$trackobj->tags['Last-Modified']);
+    	logger::error("MYSQL", "  Disc             : ".$trackobj->tags['Disc']);
+    	logger::error("MYSQL", "  sflag            : ".$sflag);
     }
 }
 

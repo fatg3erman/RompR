@@ -76,6 +76,10 @@ select
     color:#000000;
 }
 
+#pset {
+    background-color: rgba(255, 22, 0, 0);
+}
+
 #notifications
 {
     background-image: radial-gradient(circle farthest-side at top left, yellow, orange, red);

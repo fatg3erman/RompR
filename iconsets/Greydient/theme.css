@@ -1,0 +1,249 @@
+
+ [class^="icon-"], [class*=" icon-"] {
+ 	background-size:contain;
+	background-position: center;
+	background-repeat:no-repeat;
+	display:inline-block;
+}
+
+[class^="icon-"]:not(.button-disabled):hover, [class*=" icon-"]:not(.button-disabled):hover {
+    opacity: 1;
+    background-color: rgba(255,173,0,0.07);
+}
+
+.clearbox {
+    background-image: url('iconsets/Greydient/edit-delete.svg');
+    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
+    background-size: auto 50%;
+    background-position: right 2px center;
+    background-repeat: no-repeat;
+}
+
+.combobox-entry, .selectholder {
+    background-image: url('iconsets/Greydient/blobdown3.svg');
+    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
+    background-size: auto 50%;
+    background-position: right 2px center;
+    background-repeat: no-repeat;
+}
+
+.combobox-entry:hover, .selectholder:hover {
+    background-image: url('iconsets/Greydient/blobdown3-hi.svg');
+    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
+    background-size: auto 50%;
+    background-position: right 2px center;
+    background-repeat: no-repeat;
+}
+
+.combo-button {
+    background-image: url('iconsets/Greydient/blobdown3.svg');
+}
+
+.button-disabled { opacity: 0.1 }
+
+.icon-play-circled { background-image :url('iconsets/Greydient/media-playback-start.svg') }
+.playdiv { background-image :url('iconsets/Greydient/media-playback-start.svg') }
+.icon-play-circled:hover { background-image :url('iconsets/Greydient/media-playback-start-highlight.svg') }
+.icon-pause-circled { background-image :url('iconsets/Greydient/media-playback-pause.svg') }
+.icon-pause-circled:hover { background-image :url('iconsets/Greydient/media-playback-pause-highlight.svg') }
+.icon-fast-backward { background-image :url('iconsets/Greydient/media-skip-backward.svg') }
+.icon-fast-backward:hover { background-image :url('iconsets/Greydient/media-skip-backward-highlight.svg') }
+.icon-fast-forward { background-image :url('iconsets/Greydient/media-skip-forward.svg') }
+.icon-fast-forward:hover { background-image :url('iconsets/Greydient/media-skip-forward-highlight.svg') }
+.icon-stop-1 { background-image :url('iconsets/Greydient/media-playback-stop.svg') }
+.icon-stop-1:hover { background-image :url('iconsets/Greydient/media-playback-stop-highlight.svg') }
+.icon-to-end-1 { background-image :url('iconsets/Greydient/stopafter.svg') }
+.icon-to-end-1:hover { background-image :url('iconsets/Greydient/stopafter-highlight.svg') }
+
+.icon-music { background-image: url('iconsets/Greydient/collection.svg') }
+.icon-search { background-image: url('iconsets/Greydient/system-search.svg') }
+.icon-folder-open-empty { background-image: url('iconsets/Greydient/folder.svg') }
+.icon-radio-tower { background-image: url('iconsets/Greydient/broadcast-new.svg') }
+.icon-cd { background-image: url('iconsets/Greydient/cd_case.svg') }
+.icon-resize-horizontal { background-image: url('iconsets/Greydient/resize.svg') }
+.icon-angle-double-left { background-image:url('iconsets/Greydient/arrow-left-double.svg') }
+.icon-angle-double-right { background-image:url('iconsets/Greydient/arrow-right-double.svg') }
+.icon-menu { background-image: url('iconsets/Greydient/pushbutton.svg') }
+.icon-versions { background-image: url('iconsets/Greydient/history.svg') }
+.icon-left-circled { background-image: url('iconsets/Greydient/backbutton.svg') }
+.icon-right-circled { background-image: url('iconsets/Greydient/forwardbutton.svg') }
+.icon-cog-alt { background-image: url('iconsets/Greydient/preferences.svg') }
+.icon-trash { background-image: url('iconsets/Greydient/edit-clear-list.svg') }
+.icon-wifi { background-image: url('iconsets/Greydient/smartradio.svg') }
+.icon-doc-text { background-image: url('iconsets/Greydient/playlist.svg') }
+.icon-floppy { background-image: url('iconsets/Greydient/document-save.svg') }
+.icon-cancel-circled { background-image: url('iconsets/Greydient/edit-delete.svg') }
+.icon-plus {
+	background-image: url('iconsets/Greydient/add.svg');
+  	opacity:0.7;
+}
+.icon-alarm { background-image: url('iconsets/Greydient/alarmclock_false.svg') }
+.icon-alarm-on { background-image: url('iconsets/Greydient/alarmclock_true.svg') }
+.icon-sleep { background-image: url('iconsets/Greydient/sleep.svg') }
+.icon-library { background-image: url('iconsets/Greydient/file.svg') }
+.icon-lastfm-1 { background-image: url('iconsets/Greydient/lastfm.svg') }
+.icon-wikipedia { background-image: url('iconsets/Greydient/wikipedia-logo.svg') }
+.icon-musicbrainz {	background-image: url('iconsets/Greydient/musicbrainz_logo.svg') }
+.icon-discogs {	background-image: url('iconsets/Greydient/discogs-logo.svg') }
+.icon-doc-text-1 { background-image: url('iconsets/Greydient/lyrics.svg') }
+.icon-soundcloud-circled { background-image: url('iconsets/Greydient/soundcloud-logo.svg') }
+.icon-youtube-circled { background-image: url('iconsets/Greydient/youtube-logo.svg') }
+.icon-gmusic-circled { background-image: url('iconsets/Greydient/gmusic-logo.svg') }
+.icon-spotify-circled { background-image: url('iconsets/Greydient/spotify-logo.svg') }
+.icon-vkontakte-circled { background-image: url('iconsets/Greydient/vkontakte-logo.svg') }
+.icon-podcast-circled { background-image: url('iconsets/Greydient/podcast-logo.svg') }
+.icon-audiobook { background-image: url('iconsets/Greydient/audiobook.svg') }
+.icon-internetarchive-circled { background-image: url('iconsets/Greydient/internetarchive-logo.svg') }
+.icon-increase { background-image: url('iconsets/Greydient/arrow-increase.svg') }
+.icon-decrease { background-image: url('iconsets/Greydient/arrow-decrease.svg') }
+.icon-attention-1 { background-image: url('iconsets/Greydient/dialog-error.svg') }
+.icon-info-circled { background-image: url('iconsets/Greydient/dialog-information.svg') }
+.icon-download { background-image: url('iconsets/Greydient/download-icon.svg') }
+.icon-sun { background-image: url('iconsets/Greydient/icon-new.svg') }
+.icon-headphones { background-image: url('iconsets/Greydient/headphones.svg') }
+.icon-unlistened { background-image: url('iconsets/Greydient/headphones.svg') }
+.icon-block { background-image: url('iconsets/Greydient/lastfm-ban.svg') }
+.icon-heart { background-image: url('iconsets/Greydient/lastfm-love.svg') }
+.icon-heart-broken { background-image: url('iconsets/Greydient/lastfm-unlove.svg') }
+.icon-refresh { background-image: url('iconsets/Greydient/refresh.svg') }
+.icon-dirble-circled { background-image: url('iconsets/Greydient/dirble-logo.svg') }
+.icon-tunein { background-image: url('iconsets/Greydient/../../newimages/tunein-logo.svg') }
+.icon-no-response-playbutton { background-image :url('iconsets/Greydient/media-playback-start.svg') }
+.icon-tags { background-image: url('iconsets/Greydient/tag.svg') }
+.icon-volume-up { background-image: url('iconsets/Greydient/volume.svg') }
+.icon-toggle-open { background-image: url('iconsets/Greydient/toggle-open.svg') }
+.icon-toggle-closed { background-image: url('iconsets/Greydient/toggle-closed.svg') }
+.icon-spin6 { background-image: url('iconsets/Greydient/spinner.svg') }
+.icon-output { background-image: url('iconsets/Greydient/output.svg') }
+.icon-output-mute { background-image: url('iconsets/Greydient/output_mute.svg') }
+.icon-sliders { background-image: url('iconsets/Greydient/sliders.svg') }
+.icon-0-stars { background-image: url('iconsets/Greydient/0stars.svg') }
+.icon-1-stars { background-image: url('iconsets/Greydient/1stars.svg') }
+.icon-2-stars { background-image: url('iconsets/Greydient/2stars.svg') }
+.icon-3-stars { background-image: url('iconsets/Greydient/3stars.svg') }
+.icon-4-stars { background-image: url('iconsets/Greydient/4stars.svg') }
+.icon-5-stars { background-image: url('iconsets/Greydient/5stars.svg') }
+.icon-single-star { background-image: url('iconsets/Greydient/singlestar.svg') }
+.icon-ratandtag { background-image: url('iconsets/Greydient/ratandtag.svg') }
+.icon-ratortag { background-image: url('iconsets/Greydient/ratortag.svg') }
+.icon-toggle-on { background-image: url('iconsets/Greydient/togglebutton-new2-on.svg') }
+.icon-toggle-off { background-image: url('iconsets/Greydient/togglebutton-new2-off.svg') }
+
+.icon-random.flow-on { background-image: url('iconsets/Greydient/shuffle.svg') }
+.icon-random.flow-off { background-image: url('iconsets/Greydient/shuffle_off.svg') }
+.icon-crossfade.flow-on { background-image: url('iconsets/Greydient/crossfade.svg') }
+.icon-crossfade.flow-off { background-image: url('iconsets/Greydient/crossfade_off.svg') }
+.icon-repeat.flow-on { background-image: url('iconsets/Greydient/refresh.svg') }
+.icon-repeat.flow-off { background-image: url('iconsets/Greydient/refresh_off.svg') }
+.icon-consume.flow-on { background-image: url('iconsets/Greydient/consume.svg') }
+.icon-consume.flow-off { background-image: url('iconsets/Greydient/consume_off.svg') }
+
+.icon-allrandom { background-image: url('iconsets/Greydient/shuffle.svg') }
+.icon-neverplayed { background-image: url('iconsets/Greydient/neverheard.svg') }
+.icon-recentlyplayed { background-image: url('iconsets/Greydient/calendar.svg') }
+.icon-artist { background-image: url('iconsets/Greydient/artist-icon.svg') }
+.icon-mp3-audio { background-image: url('iconsets/Greydient/mp3-audio.svg') }
+.icon-aac-audio { background-image: url('iconsets/Greydient/aac-audio.svg') }
+.icon-flac-audio { background-image: url('iconsets/Greydient/flac-audio.svg') }
+.icon-wma-audio { background-image: url('iconsets/Greydient/wma-audio.svg') }
+.icon-ogg-audio { background-image: url('iconsets/Greydient/ogg-audio.svg') }
+.icon-explicit { background-image: url('iconsets/Greydient/parental-advisory.svg') }
+.icon-expand-up { background-image: url('iconsets/Greydient/expand-up.svg') }
+.icon-rss { background-image: url('iconsets/Greydient/rss.svg') }
+.icon-tick { background-image: url('iconsets/Greydient/tick.svg') }
+.icon-video { background-image: url('iconsets/Greydient/movie-1.svg') }
+.icon-bbc-logo { background-image: url('iconsets/Greydient/bbc-logo.svg') }
+.icon-imdb-logo { background-image: url('iconsets/Greydient/imdb-logo.svg') }
+.icon-facebook-logo { background-image: url('iconsets/Greydient/facebook-logo.svg') }
+.icon-twitter-logo { background-image: url('iconsets/Greydient/twitter-logo.svg') }
+.icon-www { background-image: url('iconsets/Greydient/world-wide-web.svg') }
+.icon-allmusic { background-image: url('iconsets/Greydient/allmusic-logo.svg') }
+.icon-updown { background-image: url('iconsets/Greydient/arrow-updown.svg') }
+.icon-snapcast { background-image: url('iconsets/Greydient/../../newimages/snapcast.png') }
+
+.styledinputs label
+{
+    display:inline-block;
+    cursor:pointer;
+    position:relative;
+    padding-left:2em;
+    line-height:1.5em;
+}
+
+.styledinputs input[type=radio]
+{
+    display:none;
+}
+
+.styledinputs input[type=checkbox]
+{
+    display:none;
+}
+
+.styledinputs label:before
+{
+    content:"";
+    display:inline-block;
+    width:1.5em;
+    height:1.5em;
+    position:absolute;
+    left:0;
+    background-image: url('iconsets/Greydient/togglebutton-new2-off.svg');
+    background-size: auto 80%;
+	background-position: center;
+	background-repeat:no-repeat;
+}
+
+.styledinputs input:checked + label:before
+{
+    background-image: url('iconsets/Greydient/togglebutton-new2-on.svg') !important;
+}
+
+img.notexist,img.notfound
+{
+    background-image: url('iconsets/Greydient/compact-disc.svg');
+    background-size:contain;
+    display:inline-block;
+    background-position: center;
+	background-repeat:no-repeat;
+}
+
+img.stream.notfound, img.stream.notexist
+{
+    background-image: url('iconsets/Greydient/broadcast-new.svg');
+}
+
+img.plimage.notfound
+{
+    background-image: url('iconsets/Greydient/playlist.svg');
+}
+
+.backmenu
+{
+    background-image: url('iconsets/Greydient/arrow-left-double.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+button.iconbutton {
+    height:2em;
+    width:2em;
+    background-size: contain;
+    background-position:center;
+    border: none !important;
+    opacity: 0.8;
+    background-color:transparent;
+}
+
+button.iconbutton:hover {
+    opacity: 1;
+}
+
+button.searchbutton {
+    background-image: url('iconsets/Greydient/system-search.svg');
+}
+
+button.rssbutton {
+    background-image: url('iconsets/Greydient/rss.svg');
+}
+

@@ -40,8 +40,8 @@ button, .filebutton
 
 button:hover, .filebutton:hover
 {
-    color:#ff4800;
-    border: 1px solid #ff4800;
+    color:#000000;
+    border: 1px solid white;
 }
 
 select
@@ -52,6 +52,38 @@ select
 #custombackground
 {
     display:none;
+}
+
+.selectholder {
+    background-color:rgba(0,0,0,0);
+}
+
+.selectholder:hover {
+    background-color:rgba(0,0,0,0);
+}
+
+input[type="text"] {
+    background-color: rgba(0,0,0,0);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:focus {
+    border-bottom: 1px solid #eeeeee;
+}
+
+.configtitle {
+    border-bottom: 1px solid #888888;
+}
+
+.drop-box {
+    background-color: rgba(0,0,0,0.01);
+}
+
+#pset {
+    background-color: rgba(255, 255, 255, 0);
+}
+#pmaxset {
+    background-color: rgba(255, 255, 255, 0);
 }
 
 #infopane

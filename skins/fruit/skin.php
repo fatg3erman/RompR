@@ -1,5 +1,6 @@
 <body class="desktop">
 <div id="pset" class="invisible"></div>
+<div id="pmaxset" class="invisible"></div>
 <div id="notifications"></div>
 
 <div class="fullwidth containerbox" id="thetopbit">
@@ -195,9 +196,9 @@ print '<i title="'.get_int_text('button_forward').'" id="forwardbutton" class="i
 
     <div id="albumlist" class="invisible noborder">
 <?php
-    print '<div class="menuitem containerbox" style="padding-left:8px">';
-    print '<div class="fixed" style="padding-right:4px"><i onclick="toggleCollectionButtons()" title="'.get_int_text('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip"></i></div>';
-    print '<div class="configtitle textcentre expand"><b>'.get_int_text('button_local_music').'</b></div>';
+    print '<div class="menuitem containerbox configtitle">';
+    print '<i onclick="toggleCollectionButtons()" title="'.get_int_text('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip fixed"></i>';
+    print '<div class="textcentre expand"><b>'.get_int_text('button_local_music').'</b></div>';
     print '</div>';
     collectionButtons();
 ?>
@@ -205,6 +206,11 @@ print '<i title="'.get_int_text('button_forward').'" id="forwardbutton" class="i
     </div>
 
     <div id="searcher" class="invisible noborder">
+    <div class="menuitem containerbox configtitle">
+    <?php
+        print '<div class="textcentre expand"><b>'.get_int_text('label_searchfor').'</b></div>';
+    ?>
+    </div>
 <?php
 include("player/".$prefs['player_backend']."/search.php");
 ?>
@@ -212,13 +218,20 @@ include("player/".$prefs['player_backend']."/search.php");
     </div>
 
     <div id="filelist" class="invisible">
+        <div class="menuitem containerbox configtitle">
+<?php
+        print '<div class="textcentre expand"><b>'.get_int_text('button_file_browser').'</b></div>';
+?>
+        </div>
     <div id="filecollection" class="noborder selecotron"></div>
     </div>
 
     <div id="radiolist" class="invisible">
+        <div class="menuitem containerbox configtitle">
 <?php
-    print '<div class="configtitle textcentre"><b>'.get_int_text('button_internet_radio').'</b></div>';
+    print '<div class="expand textcentre"><b>'.get_int_text('button_internet_radio').'</b></div>';
 ?>
+        </div>
 <?php
 $sp = glob("streamplugins/*.php");
 foreach($sp as $p) {
@@ -229,28 +242,41 @@ foreach($sp as $p) {
 
     <div id="podcastslist" class="invisible selecotron">
 <?php
+print '<div class="configtitle containerbox menuitem">';
+print '<i onclick="podcasts.toggleButtons()" class="icon-menu playlisticon clickicon tooltip fixed" title="'.get_int_text('label_podcastcontrols').'"></i>';
+print '<div class="textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div>';
+print '</div>';
 include("includes/podcasts.php");
 ?>
     </div>
     <div id="audiobooklist" class="invisible noborder">
-        <?php
-                print '<div class="configtitle textcentre"><b>'.get_int_text('label_audiobooks').'</b></div>';
-        ?>
+        <div class="menuitem containerbox configtitle">
+<?php
+        print '<div class="textcentre expand"><b>'.get_int_text('label_audiobooks').'</b></div>';
+?>
+        </div>
         <div id="audiobooks" class="noborder selecotron"></div>
     </div>
     <div id="playlistslist" class="invisible">
+        <div class="menuitem containerbox configtitle">
+<?php
+        print '<div class="expand textcentre"><b>'.get_int_text('button_loadplaylist').'</b></div>';
+?>
+        </div>
         <div id="storedplaylists" class="noborder selecotron"></div>
     </div>
 
-    <div id="pluginplaylistslist" class="invisible padleft noselection">
+    <div id="pluginplaylistslist" class="invisible noselection">
 <?php
-print '<div class="configtitle textcentre"><b>'.get_int_text('label_pluginplaylists').'</b></div>';
+print '<div class="menuitem containerbox configtitle">';
+print '<div class="expand textcentre"><b>'.get_int_text('label_pluginplaylists').'</b></div>';
+print '</div>';
 
 if ($prefs['player_backend'] == "mopidy") {
     print '<div class="textcentre textunderline"><b>Music From Your Collection</b></div>';
 }
 ?>
-<div class="fullwidth" id="pluginplaylists"></div>
+<div class="fullwidth padleft" id="pluginplaylists"></div>
 
 
 <?php

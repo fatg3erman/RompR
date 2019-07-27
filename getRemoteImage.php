@@ -12,10 +12,10 @@ foreach ($_GET as $k => $v) {
 }
 
 if (!$url) {
-	debuglog("Asked to download image but no URL given!","TOMATO",3);
+	logger::error("GETREMOTEIMAGE", "Asked to download image but no URL given!");
     header("HTTP/1.1 404 Not Found");
 } else {
-	debuglog("Getting Remote Image ".$url,"TOMATO",7);
+	logger::log("GETREMOTEIMAGE", "Getting Remote Image ".$url);
 	$outfile = 'prefs/imagecache/'.md5($url);
 	if (!file_exists($outfile)) {
 		if (download_image_file($url, $outfile)) {
@@ -37,17 +37,17 @@ function output_file($outfile) {
 function download_image_file($url, $outfile) {
 
 	if (substr($url, 0, 10) == 'data:image') {
-		debuglog("  ... Decoding Base64 Data", "TOMATO",8);
+		logger::trace("GETREMOTEIMAGE", "  ... Decoding Base64 Data");
 		create_image_from_base64($url, $outfile);
 	} else {
-		debuglog("  ... Downloading it", "TOMATO",8);
+		logger::trace("GETREMOTEIMAGE", "  ... Downloading it");
 		$d = new url_downloader(array('url' => $url));
 		if ($d->get_data_to_file($outfile, true)) {
-			debuglog("Cached Image ".$outfile,"TOMATO",9);
+			logger::trace("GETREMOTEIMAGE", "Cached Image ".$outfile);
 			$content_type = $d->get_content_type();
-			debuglog("  ... Content Type is ".$content_type,"TOMATO", 8);
+			logger::trace("GETREMOTEIMAGE", "  ... Content Type is ".$content_type);
 			if (substr($content_type,0,5) != 'image' && $content_type != 'application/octet-stream') {
-				debuglog("      Not an image file! ".$url,"TOMATO",8);
+				logger::warn("GETREMOTEIMAGE", "      Not an image file! ",$url);
 				unlink($outfile);
 				return false;
 			}
@@ -62,6 +62,7 @@ function send_backup_image() {
 	if (array_key_exists('rompr_backup_type', $_REQUEST)) {
 		switch ($_REQUEST['rompr_backup_type']) {
 			case 'stream':
+				logger::log("GETREMOTEIMAGE","Sending backup image for stream");
 				header('Content-type: image/svg+xml');
 				readfile('newimages/broadcast.svg');
 				break;

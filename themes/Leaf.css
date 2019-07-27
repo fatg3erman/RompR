@@ -5,7 +5,7 @@
 */
 
 html, body.phone .dropmenu {
-    background-image:url("leaf.jpg");
+    background-image:url("themes/leaf.jpg");
     background-size:cover;
     background-repeat:no-repeat;
     background-attachment:fixed;
@@ -33,6 +33,10 @@ button:hover, input[type="button"]:hover, .filebutton:hover
 input
 {
     color:#181818;
+}
+
+input.snapclientname[type=text] {
+    color: #ffffff;
 }
 
 select
@@ -100,6 +104,13 @@ a:hover,a:active
 #dragger
 {
     background-color:rgba(0,0,0,0.5);
+}
+
+#pset {
+    background-color: rgba(77, 80, 17, 0);
+}
+#pmaxset {
+    background-color: rgba(136, 142, 30, 0);
 }
 
 /*

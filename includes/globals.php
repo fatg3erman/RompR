@@ -1,7 +1,6 @@
 <script language="javascript">
 <?php
 print "var collection_status = ".checkCollectionStatus().";\n";
-print "var what_the_fuck = ".whatTheFuck().";\n";
 print "var old_style_albumart = ".checkAlbumArt().";\n";
 print "var interfaceLanguage = '".$interface_language."';\n";
 print "prefs.skin = '".$skin."';\n";
@@ -12,13 +11,6 @@ print "const browserLanguage = '".$browser_language."';\n";
 print "const mopidy_min_version = '".ROMPR_MOPIDY_MIN_VERSION."';\n";
 print "const player_ip = '".get_player_ip()."';\n";
 print "const rompr_unknown_stream = '".ROMPR_UNKNOWN_STREAM."';\n";
-print "const collection_type = '".$collection_type."';\n";
-if ($oldmopidy) {
-    print "const mopidy_is_old = true;\n";
-} else {
-    print "const mopidy_is_old = false;\n";
-}
-
 // Three translation keys are needed so regularly it makes sense to
 // have them as static variables, instead of looking them up every time
 print "const frequentLabels = {\n";

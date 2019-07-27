@@ -38,31 +38,25 @@ You can also make a backup copy of your entire database - this will back up your
 
 The database file resides at
 
-    rompr/prefs/collection_mopidy.sq3
-
-or
-
-    rompr/prefs/collection_mpd.sq3
-
-depending on the type of player you use.
+    rompr/prefs/collection.sq3
 
 You can simply make a copy of this file. Note that you probably won't have write permission for the prefs directory, so for any file operations you will need to use sudo
 
-    sudo cp collection_mopidy.sq3 collection_mopidy_backup.sq3
+    sudo cp collection.sq3 collection_backup.sq3
 
 ### Restoring The Backup
 
 Simply replace your old database with your backup copy. It is very important that you also set the ownership of the new file to be the same as the old one. To find out what this is, first do
 
-    ls -l collection_mopidy.sq3
-    -rw-r--r--  1 _www  staff  4734976 18 Jun 17:35 collection_mopidy.sq3
+    ls -l collection.sq3
+    -rw-r--r--  1 _www  staff  4734976 18 Jun 17:35 collection.sq3
 
 In this example the file is owned by the user _www and the group staff, so to replace it with your backup do
 
-    sudo rm collection_mopidy.sq3
-    sudo cp collection_mopidy_backup.sq3 collection_mopidy.sq3
-    sudo chown _www collection_mopidy.sq3
-    sudo chgrp staff collection_mopidy.sq3
+    sudo rm collection.sq3
+    sudo cp collection_backup.sq3 collection.sq3
+    sudo chown _www collection.sq3
+    sudo chgrp staff collection.sq3
 
 These commands, in order do the following:
 

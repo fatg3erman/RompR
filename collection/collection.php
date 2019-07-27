@@ -1,17 +1,13 @@
 <?php
 
-include ("player/".$prefs['player_backend']."/streamhandler.php");
 require_once ("includes/spotifyauth.php");
 
 $numtracks = 0;
 $numalbums = 0;
 $numartists = 0;
 $totaltime = 0;
-$playlist = array();
-$putinplaylistarray = false;
 $count = 1;
 $divtype = "album1";
-$collection = null;
 $dbterms = array( 'tags' => null, 'rating' => null );
 $trackbytrack = false;
 
@@ -25,22 +21,29 @@ class musicCollection {
 		$this->filter_duplicates = false;
 	}
 
-	public function newTrack(&$track) {
+	public function newTrack(&$filedata) {
 
-		global $playlist, $prefs, $putinplaylistarray;
+		global $trackbytrack, $doing_search;
 
-		$albumkey = md5($track->tags['folder'].strtolower($track->tags['Album']).strtolower($track->get_sort_artist(true)));
-		if (array_key_exists($albumkey, $this->albums)) {
-			if (!$this->filter_duplicates || !$this->albums[$albumkey]->checkForDuplicate($track)) {
-				$this->albums[$albumkey]->newTrack($track);
-			}
+		if ($doing_search) {
+			// If we're doing a search, we check to see if that track is in the database
+			// because the user might have set the AlbumArtist to something different
+			$filedata = array_replace($filedata, get_extra_track_info($filedata));
+	    }
+
+		$track = new track($filedata);
+		if ($trackbytrack && $filedata['AlbumArtist'] && $filedata['Disc'] !== null) {
+			do_track_by_track( $track );
 		} else {
-			$this->albums[$albumkey] = new album($track);
+			$albumkey = md5($track->tags['folder'].strtolower($track->tags['Album']).strtolower($track->get_sort_artist(true)));
+			if (array_key_exists($albumkey, $this->albums)) {
+				if (!$this->filter_duplicates || !$this->albums[$albumkey]->checkForDuplicate($track)) {
+					$this->albums[$albumkey]->newTrack($track);
+				}
+			} else {
+				$this->albums[$albumkey] = new album($track);
+			}
 		}
-
-        if ($putinplaylistarray) {
-            $playlist[] = $track;
-        }
 
 	}
 
@@ -53,19 +56,19 @@ class musicCollection {
     }
 
     public function tracks_to_database() {
-        global $cp_time;
-        $cstart = microtime(true);
+		// Fluch the previous albumobj from track_by_track
+		do_track_by_track(null);
         foreach ($this->albums as $album) {
-            $this->do_artist_database_stuff($album);
+			$album->sortTracks();
+			$album->check_database();
         }
         $this->albums = array();
-        $cp_time += microtime(true) - $cstart;
     }
 
 	public function get_albumartist_by_folder($f) {
 		foreach ($this->albums as $album) {
 			if ($album->folder == $f) {
-				debuglog("   Found albumartist by folder ".$album->artist,"COLLECTION");
+				logger::trace("COLLECTION", "   Found albumartist by folder",$album->artist);
 				return $album->artist;
 			}
 		}
@@ -79,7 +82,7 @@ class musicCollection {
     public function tracks_as_array() {
         $results = array();
         foreach($this->albums as $album) {
-			debuglog("Doing Album ".$album->name,"COLLECTION");
+			logger::log("COLLECTION", "Doing Album",$album->name);
             $album->sortTracks();
             foreach($album->tracks as $trackobj) {
                 $track = array(
@@ -95,12 +98,12 @@ class musicCollection {
                     "duration" => $trackobj->tags['Time'],
                     "date" => $album->datestamp
                 );
-				debuglog("Title - ".$trackobj->tags['Title'],"COLLECTION");
+				logger::log("COLLECTION", "Title - ".$trackobj->tags['Title']);
                 // A lot of code that depends on this was written to handle mopidy model search results.
                 // The above is not mopidy model, so friggicate it into just such a thing
                 $d = getDomain($track['uri']);
 				if (!array_key_exists($d, $results)) {
-					debuglog("Creating Results Set For ".$d,"COLLECTION",8);
+					logger::log("COLLECTION", "Creating Results Set For ".$d);
                     $results[$d] = array(
                         "tracks" => array(),
                         "uri" => $d.':bodgehack'
@@ -112,38 +115,6 @@ class musicCollection {
         return $results;
     }
 
-    private function do_artist_database_stuff(&$album) {
-
-        $album->sortTracks();
-        $artistname = $album->artist;
-        $artistindex = check_artist($artistname);
-        if ($artistindex == null) {
-            debuglog("ERROR! Checked artist ".$artistname." and index is still null!","MYSQL",1);
-            return false;
-        }
-        $params = array(
-            'album' => $album->name,
-            'albumai' => $artistindex,
-            'albumuri' => $album->uri,
-            'image' => $album->getImage('small'),
-            'date' => $album->getDate(),
-            'searched' => "0",
-            'imagekey' => $album->getKey(),
-            'ambid' => $album->musicbrainz_albumid,
-            'domain' => $album->domain);
-        $albumindex = check_album($params);
-
-        if ($albumindex == null) {
-            debuglog("ERROR! Album index for ".$album->name." is still null!","MYSQL",1);
-            return false;
-        }
-
-        foreach($album->tracks as $trackobj) {
-            check_and_update_track($trackobj, $albumindex, $artistindex, $artistname);
-        }
-
-    }
-
 }
 
 class album {
@@ -152,6 +123,8 @@ class album {
 		global $numalbums;
 		$numalbums++;
 		$this->tracks = array($track);
+		// Sets album artist to composer (if set and required) or albumartist but NOT trackartist
+		// therefore may still be null at this point.
 		$this->artist = $track->get_sort_artist(true);
 		$this->name = trim($track->tags['Album']);
 		$this->folder = $track->tags['folder'];
@@ -164,14 +137,12 @@ class album {
 		$this->numOfDiscs = $track->tags['Disc'];
 		$this->numOfTrackOnes = $track->tags['Track'] == 1 ? 1 : 0;
         $this->domain = $track->tags['domain'];
+		$this->albumartistindex = null;
+		$this->albumindex = null;
 	}
 
-	public function newTrack(&$track, $clear = false) {
-		if ($clear) {
-			$this->tracks = array($track);
-		} else {
-			$this->tracks[] = $track;
-		}
+	public function newTrack(&$track) {
+		$this->tracks[] = $track;
 		if ($this->artist == null) {
 			$this->artist = $track->get_sort_artist(true);
 		}
@@ -193,6 +164,29 @@ class album {
         if ($this->uri == null) {
             $this->uri = $track->tags['X-AlbumUri'];
         }
+	}
+
+	public function check_database() {
+		if ($this->albumartistindex == null) {
+			$this->albumartistindex = check_artist($this->artist);
+		}
+		if ($this->albumindex == null) {
+			$album = array(
+				'album' => $this->name,
+	            'albumai' => $this->albumartistindex,
+	            'albumuri' => $this->uri,
+	            'image' => $this->getImage('small'),
+	            'date' => $this->getDate(),
+	            'searched' => "0",
+	            'imagekey' => $this->getKey(),
+	            'ambid' => $this->musicbrainz_albumid,
+	            'domain' => $this->domain
+			);
+			$this->albumindex = check_album($album);
+		}
+		foreach ($this->tracks as $trackobj) {
+			check_and_update_track($trackobj, $this->albumindex, $this->albumartistindex, $this->artist);
+		}
 	}
 
     public function getKey() {
@@ -249,9 +243,9 @@ class album {
         // as is the case with many mopidy backends
 
         if ($this->artist == null) {
-            debuglog("Finding AlbumArtist for album ".$this->name,"COLLECTION",5);
+            logger::mark("COLLECTION", "Finding AlbumArtist for album ".$this->name);
             if (count($this->tracks) < ROMPR_MIN_TRACKS_TO_DETERMINE_COMPILATION) {
-                debuglog("  Album ".$this->name." has too few tracks to determine album artist","COLLECTION",5);
+                logger::log("COLLECTION", "  Album ".$this->name." has too few tracks to determine album artist");
                 $this->decideOnArtist($this->tracks[0]->get_sort_artist());
             } else {
                 $artists = array();
@@ -266,12 +260,12 @@ class album {
                 rsort($q);
                 $candidate_artist = $q[0];
                 $fraction = $artists[$candidate_artist]/count($this->tracks);
-                debuglog("  Artist ".$candidate_artist." has ".$artists[$candidate_artist]." tracks out of ".count($this->tracks),"COLLECTION",5);
+                logger::log("COLLECTION", "  Artist ".$candidate_artist." has ".$artists[$candidate_artist]." tracks out of ".count($this->tracks));
                 if ($fraction > ROMPR_MIN_NOT_COMPILATION_THRESHOLD) {
-                    debuglog("    ... which is good enough. Album ".$this->name." is by ".$candidate_artist,"COLLECTION",5);
+                    logger::log("COLLECTION", "    ... which is good enough. Album ".$this->name." is by ".$candidate_artist);
                     $this->artist = $candidate_artist;
                 } else {
-                    debuglog("   ... which is not enough","COLLECTION",5);
+                    logger::log("COLLECTION", "   ... which is not enough");
                     $this->decideOnArtist("Various Artists");
                 }
             }
@@ -308,7 +302,7 @@ class album {
                 }
             }
             $discs[$discno][$track_no] = $ob;
-            $ob->updateDiscNo($discno);
+            $ob->updateTrackInfo(array('Disc' => $discno));
             $number++;
         }
         $numdiscs = count($discs);
@@ -327,7 +321,7 @@ class album {
 	public function checkForDuplicate($t) {
 		foreach ($this->tracks as $track) {
 			if ($t->tags['file'] == $track->tags['file']) {
-				debuglog("Filtering Duplicate Track ".$t->tags['file'],"COLLECTION",7);
+				logger::trace("COLLECTION", "Filtering Duplicate Track ".$t->tags['file']);
 				return true;
 			}
 		}
@@ -336,21 +330,23 @@ class album {
 
     private function decideOnArtist($candidate) {
         if ($this->artist == null) {
-            debuglog("  ... Setting artist to ".$candidate,"COLLECTION",5);
+            logger::log("COLLECTION", "  ... Setting artist to ".$candidate);
             $this->artist = $candidate;
         }
-
     }
 
 }
 
 class track {
+
+	public $tags;
+
     public function __construct(&$filedata) {
         $this->tags = $filedata;
     }
 
-    public function updateDiscNo($disc) {
-        $this->tags['Disc'] = $disc;
+    public function updateTrackInfo($info) {
+        $this->tags = array_replace($this->tags, $info);
     }
 
     public function get_artist_string() {
@@ -361,6 +357,7 @@ class track {
         return format_sortartist($this->tags, $return_albumartist);
     }
 
+<<<<<<< HEAD
     public function get_checked_url() {
         global $prefs;
         $matches = array();
@@ -699,6 +696,8 @@ function process_file($filedata) {
 
     $numtracks++;
     $totaltime += $filedata['Time'];
+=======
+>>>>>>> big_refactor
 }
 
 ?>

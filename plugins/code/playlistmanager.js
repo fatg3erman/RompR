@@ -197,7 +197,7 @@ var playlistManager = function() {
 	        		tracks.push({dir: uri});
 				} else if (element.hasAttribute('romprid')) {
 					var playlistinfo = playlist.getId($(element).attr('romprid'));
-					tracks.push({uri: playlistinfo.location});
+					tracks.push({uri: playlistinfo.file});
 	        	} else {
 		        	var uri = decodeURIComponent($(element).attr("name"));
 		        	debug.log("PLAYLISTMANAGER","Dragged",uri,"to",which_playlist);

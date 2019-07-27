@@ -115,14 +115,16 @@ jQuery.fn.makeTagMenu = function(options) {
             autoUpdateTimeout: 500,
         }
         });
-        // textbox.on('mouseenter', makeHoverWork);
-        // textbox.on('mousemove', makeHoverWork);
         textbox.on('click', function(ev) {
             ev.preventDefault();
             ev.stopPropagation();
             var position = getPosition(ev);
+            // This function relies on the fact that the size of the background image
+            // that provides the icon we want to click on is 50% of the height of the element,
+            // as defined in the icon theme css
             var elemright = textbox.width() + textbox.offset().left;
-            if (position.x > elemright - 24) {
+            var elh = textbox.height()/2+2;
+            if (position.x > elemright - elh) {
                 if (dropbox.is(':visible')) {
                     dropbox.slideToggle('fast');
                 } else {
@@ -387,11 +389,23 @@ var uiHelper = function() {
             }
         },
 
-        createPluginHolder: function(icon, title, id) {
+        createPluginHolder: function(icon, title, id, panel) {
             try {
-                return layoutProcessor.createPluginHolder(icon, title, id);
+                return layoutProcessor.createPluginHolder(icon, title, id, panel);
             } catch (err) {
                 return false;
+            }
+        },
+
+        makeDropHolder: function(name, d, dontsteal) {
+            try {
+                return layoutProcessor.makeDropHolder(name);
+            } catch (err) {
+                var c = 'topdropmenu dropshadow rightmenu normalmenu stayopen';
+                if (dontsteal) {
+                    c += ' dontstealmyclicks';
+                }
+                return $('<div>', {class: c, id: name}).appendTo(d);
             }
         },
 
@@ -463,6 +477,14 @@ var uiHelper = function() {
                 layoutProcessor.setupCollectionDisplay();
             } catch (err) {
 
+            }
+        },
+
+        showTagButton: function() {
+            try {
+                return layoutProcessor.showTagButton();
+            } catch (err) {
+                return true;
             }
         }
     }

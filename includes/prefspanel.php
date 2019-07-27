@@ -3,7 +3,7 @@
 // There may appear to be a lot of unnecessary divs wrapping around things here
 // but it makes it work in Safari. DO NOT CHANGE IT!
 
-print '<div class="textcentre configtitle"><b>'.get_int_text('settings_appearance').'</b></div>';
+print '<div class="textcentre configtitle"><i class="medicon"></i><b>'.get_int_text('settings_appearance').'</b></div>';
 
 // Skin
 
@@ -120,7 +120,7 @@ foreach($themes as $theme) {
 print '</select></div></div>';
 
 // Players
-print '<div class="textcentre configtitle"><b>'.get_int_text('config_players').'</b></div>';
+print '<div class="textcentre configtitle"><i class="medicon"></i><b>'.get_int_text('config_players').'</b></div>';
 print '<div class="fullwidth">';
 print '<div class="clearfix">';
 print '<div class="pref styledinputs tleft" name="playerdefs">';
@@ -133,8 +133,23 @@ print '<div class="pref styledinputs">
 </div>';
 print '</div>';
 
+// Snapcast
+print '<div class="textcentre configtitle"><i class="icon-snapcast medicon"></i><b>'.get_int_text('config_snapcast').'</b></div>';
+print '<div class="fullwidth">';
+if (!$snapcast_in_volume) {
+    print '<div class="pref" id="snapcastgroups">';
+    print '</div>';
+}
+print '<div class="pref styledinputs containerbox dropdown-container">';
+print '<div class="fixed" style="margin-right:1em">'.get_int_text('config_snapcast_server').'</div>';
+print '<input class="saveotron expand" id="snapcast_server" type="text" />';
+print '<div class="fixed"style="margin-right:1em;margin-left:1em">'.get_int_text('config_snapcast_port').'</div>';
+print '<input class="saveotron" id="snapcast_port" style="width:4em" type="text" size="4" />';
+print '</div>';
+print '</div>';
+
 // Sources Panel Hiding
-print '<div class="textcentre configtitle"><b>'.get_int_text('settings_panels').'</b></div>';
+print '<div class="textcentre configtitle"><i class="medicon"></i><b>'.get_int_text('settings_panels').'</b></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="hide_albumlist" />
 <label for="hide_albumlist">'.get_int_text('config_hidealbumlist').'</label>
@@ -175,7 +190,7 @@ print '<div class="pref styledinputs">
 }
 
 // Interface
-print '<div class="textcentre configtitle"><b>'.get_int_text('settings_interface').'</b></div>';
+print '<div class="textcentre configtitle"><i class="medicon"></i><b>'.get_int_text('settings_interface').'</b></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="scrolltocurrent" />
 <label for="scrolltocurrent">'.get_int_text('config_autoscroll').'</label>
@@ -228,7 +243,7 @@ print '<div class="pref containerbox dropdown-container">
 }
 
 // Biography and Language
-print '<div class="textcentre ucfirst configtitle"><b>'.get_int_text('settings_language').'</b></div>';
+print '<div class="textcentre ucfirst configtitle"><i class="medicon"></i><b>'.get_int_text('settings_language').'</b></div>';
 
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
 get_int_text('settings_interface').
@@ -409,9 +424,9 @@ print '<div class="pref"><b>'.get_int_text('config_nosortprefixes').'
 <input class="saveotron prefinput arraypref" id="nosortprefixes" type="text" size="128" />
 </b></div>';
 
-if ($prefs['mopidy_slave'] == false) {
+if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave == false) {
 
-    if ($collection_type == $prefs['player_backend']) {
+    if ($prefs['collection_player'] == $prefs['player_backend'] || $prefs['collection_player'] == null) {
         print '<div class="pref styledinputs">
             <div class="clearfix">
                 <div class="tleft">
@@ -424,7 +439,7 @@ if ($prefs['mopidy_slave'] == false) {
         print '</div></div>';
     }
 
-    if ($collection_type == "mopidy" && $prefs['player_backend'] == 'mopidy') {
+    if ($prefs['collection_player'] == "mopidy" && $prefs['player_backend'] == 'mopidy') {
         print '<div class="pref" id="mopidycollectionoptions">'.
         '<b>'.get_int_text('config_collectionfolders').'</b></div>';
         print '<div class="pref">'.get_int_text('config_beetsserver').'
@@ -436,7 +451,7 @@ if ($prefs['mopidy_slave'] == false) {
         <label for="preferlocalfiles">'.get_int_text('config_preferlocal').'</label></div>';
     }
 
-    if ($collection_type == $prefs['player_backend']) {
+    if ($prefs['collection_player'] == $prefs['player_backend']) {
         print '<div class="pref styledinputs">
         <input class="autoset toggle" type="checkbox" id="sortbycomposer" />
         <label for="sortbycomposer">'.get_int_text('config_sortbycomposer').'</label>

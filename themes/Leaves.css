@@ -6,7 +6,7 @@
 
 html, body.phone .dropmenu {
     color:#eeeeee;
-    background-image:url('leaftile.jpg');
+    background-image:url('themes/leaftile.jpg');
 }
 
 a:link
@@ -27,7 +27,7 @@ a:hover,a:active
 button, .filebutton
 {
     color:#eeeeee;
-    background-image:url('veins.jpg');
+    background-image:url('themes/veins.jpg');
     border:none;
     box-shadow: 0px 0px 20px rgba(150, 250, 50, 0.4);
 }
@@ -48,6 +48,10 @@ input.inbrowser, div.inbrowser
     border: 1px solid #888888;
 }
 
+input.snapclientname[type=text] {
+    color: #ffffff;
+}
+
 /*
 =====================================================================
 = Specific Elements By ID
@@ -61,14 +65,14 @@ input.inbrowser, div.inbrowser
 
 #notifications
 {
-    background-image:url('veins.jpg');
+    background-image:url('themes/veins.jpg');
     box-shadow: 4px 4px 12px rgba(150, 250, 50, 0.4);
     opacity:0.8;
 }
 
 #wikipopup
 {
-    background-image:url('leaves2.jpg');
+    background-image:url('themes/leaves2.jpg');
 }
 
 #imagecontainer
@@ -78,7 +82,7 @@ input.inbrowser, div.inbrowser
 
 #tagadder
 {
-    background-image:url('leaves2.jpg');
+    background-image:url('themes/leaves2.jpg');
 }
 
 #dragger
@@ -141,7 +145,7 @@ input.inbrowser, div.inbrowser
 
 .popupwindow
 {
-    background-image:url('leaves2.jpg');
+    background-image:url('themes/leaves2.jpg');
     border-bottom:2px solid #555555;
     border-right:2px solid #555555;
 }
@@ -157,7 +161,7 @@ table.histable tr:hover {
 
 tr.clickaddtrack:hover
 {
-    background-image:url('leaves2.jpg');
+    background-image:url('themes/leaves2.jpg');
 }
 
 .bsel
@@ -204,7 +208,7 @@ tr.clickaddtrack:hover
 
 div.topdropmenu
 {
-    background-image:url('leaves2.jpg');
+    background-image:url('themes/leaves2.jpg');
     border-bottom:1px solid #555555;
     border-right:1px solid #555555;
     border-top:none;
@@ -212,7 +216,7 @@ div.topdropmenu
 
 .configtitle
 {
-    background-image:url('veins.jpg');
+    background-image:url('themes/veins.jpg');
     box-shadow:  0px 0px 8px rgba(250, 520, 250, 0.6);
     margin-bottom:8px;
 }
@@ -225,18 +229,18 @@ div.topdropmenu
 
 .infosection
 {
-    background-image:url('veins.jpg');
+    background-image:url('themes/veins.jpg');
     box-shadow: 0px 0px 12px rgba(150, 250, 50, 0.4);
     margin-bottom:8px;
 }
 
 .infowiki
 {
-    background-image:url('leaves2.jpg');
+    background-image:url('themes/leaves2.jpg');
 }
 
 .tagholder table tr th {
-    background-image:url('veins.jpg');
+    background-image:url('themes/veins.jpg');
     border-bottom:1px solid #eeeeee;
 }
 
@@ -259,13 +263,13 @@ div.topdropmenu
 
 .albumsection
 {
-    background-image:url('veins.jpg');
+    background-image:url('themes/veins.jpg');
     box-shadow: 0px 0px 12px rgba(150, 250, 50, 0.4);
 }
 
 .albumcovers .infosection
 {
-    background-image:url('leaftile.jpg');
+    background-image:url('themes/leaftile.jpg');
 }
 
 .highlighted {
@@ -291,13 +295,13 @@ div.topdropmenu
 
 #artistcoverslist
 {
-    background-image:url('leaftile.jpg');
+    background-image:url('themes/leaftile.jpg');
     box-shadow: 7px 7px 5px rgba(50, 50, 50, 0.6);
 }
 
 #coverslist
 {
-    background-image:url('leaves2.jpg');
+    background-image:url('themes/leaves2.jpg');
 }
 
 /*

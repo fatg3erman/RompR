@@ -1,5 +1,5 @@
 html, body.phone .dropmenu {
-    background-image:url("nightclouds.jpg");
+    background-image:url("themes/nightclouds.jpg");
     background-size:cover;
     background-repeat:no-repeat;
     background-attachment:fixed;
@@ -92,14 +92,40 @@ button:hover, input[type="button"]:hover, .filebutton:hover
     text-shadow: 0 0 15px #ffffff;
 }
 
-input
-{
-    color:#181818;
+select {
+    color:#dddddd;
 }
 
-select
-{
-    color:#000000;
+.selectholder {
+    background-color:rgba(200,200,200,0.15);
+}
+
+.selectholder:hover {
+    background-color:rgba(200,200,200,0.2);
+}
+
+input[type="text"] {
+    background-color: rgba(200,200,200,0.15);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:hover {
+    background-color: rgba(200,200,200,0.2);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:focus {
+    transition: border-bottom 0.5s ease;
+    border-bottom: 1px solid #bbbbbb;
+}
+
+select:hover {
+    color: #ffffff;
+}
+
+.drop-box {
+    background-color: rgba(200,200,200,0.3);
+    color:white;
 }
 
 #notifications
@@ -122,6 +148,10 @@ a.album:hover,a.album:active
 #filemenu
 {
     border-left:1px solid white;
+}
+
+#pset {
+    background-color: rgba(73, 47, 24, 0);
 }
 
 .playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
@@ -171,11 +201,6 @@ a.album:hover,a.album:active
 
 .playlisttitle{
     background-color:rgba(0,0,0,0.2);
-}
-
-.inbrowser
-{
-    color:#000000;
 }
 
 /*-- For Wikipedia and Last.FM pages --*/

@@ -9,6 +9,7 @@ class dirbleplugin {
         $this->country = $prefs['newradiocountry'];
         $this->page = 1;
         $this->searchterm = '';
+        $this->last_status = '200';
     }
 
     public function doHeader() {
@@ -45,7 +46,7 @@ class dirbleplugin {
             $this->to_get = null;
             $this->searchterm = rawurldecode($_REQUEST['search']);
         }
-        debuglog("Country Is ".$this->country,"DIRBLE");
+        logger::trace("DIRBLE", "Country Is ".$this->country);
     }
 
     public function doDropdownHeader() {
@@ -54,7 +55,18 @@ class dirbleplugin {
         directoryControlHeader('bbclist', get_int_text('label_streamradio'));
         $json = $this->get_from_dirble($this->base_url.'countries');
         if (count($json['json']) == 0) {
-            print '<div class="configttitle textcentre brick_wide"><h3>Got no response from Dirble!</h3></div>"';
+            print '<div class="configttitle textcentre brick_wide"><h3>';
+            switch ($this->last_status) {
+                case '521':
+                    print 'Dirble server is down';
+                    break;
+
+                default:
+                    print 'Got no response from Dirble!';
+                    break;
+
+            }
+            print '</h3></div>';
             exit(0);
         }
         foreach ($json['json'] as $station) {
@@ -122,7 +134,7 @@ class dirbleplugin {
     private function doStation($station, $count) {
         $streams = $this->check_streams($station['streams']);
         if (count($streams) > 0) {
-            debuglog("Station ".$station['name'].' '.count($station['streams']).' streams',"RADIO");
+            logger::log("DIRBLE", "Station",$station['name'],'has',count($station['streams']),'streams');
             $image = null;
             $streamimage = '';
             if ($station['image']['url']) {
@@ -161,7 +173,7 @@ class dirbleplugin {
             print '<div class="containerbox expand ninesix indent padright"><b>Listen:</b></div>';
 
             foreach ($streams as $s) {
-                debuglog("Content type ".$s['content_type']." and uri ".$s['stream'],"DIRBLE");
+                logger::log("DIRBLE", "Content type ".$s['content_type']." and uri ".$s['stream']);
                 print '<div class="clickstream playable draggable indent containerbox padright menuitem" name="'.trim($s['stream']).'" streamname="'.trim($station['name']).'" streamimg="'.$streamimage.'">';
                 print '<i class="'.audioClass($s['content_type']).' smallicon fixed"></i>';
                 print '<div class="expand">';
@@ -208,7 +220,7 @@ class dirbleplugin {
     }
 
     private function get_from_dirble($url, $page = 1) {
-        debuglog("Getting ".$url,"DIRBLE");
+        logger::log("DIRBLE", "Getting",$url);
         $token = "9dc8c8f09575129e9289717a9b8377658906b460";
         $per_page = 30;
         $result = array('url' => $url,
@@ -224,24 +236,25 @@ class dirbleplugin {
         if ($d->get_data_to_string()) {
             $result['json'] = array_merge($result['json'], json_decode($d->get_data(), true));
             if (($p = $d->get_header('X-Page')) !== false) {
-                debuglog("  Got Page ".$p,"DIRBLE");
+                logger::trace("DIRBLE", "  Got Page ".$p);
             }
             if (($p = $d->get_header('X-Total')) !== false) {
-                debuglog("  Total Stations ".$p,"DIRBLE");
+                logger::trace("DIRBLE", "  Total Stations ".$p);
                 $result['total'] = $p;
             }
             if (($p = $d->get_header('X-Next-Page')) !== false) {
-                debuglog("  Next Page ".$p,"DIRBLE");
+                logger::trace("DIRBLE", "  Next Page ".$p);
                 $result['nextpage'] = $p;
             }
             $result['num'] = $result['first'] + count($result['json']) - 1;
-            debuglog('Showing '.$result['first'].' to '.$result['num'].' of '.$result['total'],"DIRBLE");
+            logger::trace("DIRBLE", "Showing",$result['first'],"to",$result['num'],"of",$result['total']);
         }
+        $this->last_status = $d->get_status();
         return $result;
     }
 
     private function dirble_search($term, $page, $country) {
-        debuglog("Searching For ".$term." in ".$country,"RADIO");
+        logger::log("DRIBLE", "Searching For",$term,"in country",$country);
         $token = "9dc8c8f09575129e9289717a9b8377658906b460";
         $per_page = 30;
         $result = array('url' => '',
@@ -320,7 +333,7 @@ class dirbleplugin {
     private function check_for_playlist($streams) {
         foreach ($streams as $s) {
             if (audioClass($s['content_type']) == 'icon-doc-text') {
-                debuglog("   Using Playlist ".$s['stream'],"DIRBLE");
+                logger::log("DIRBLE", "   Using Playlist ".$s['stream']);
                 return $s['stream'];
             }
         }

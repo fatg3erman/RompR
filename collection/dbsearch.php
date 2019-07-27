@@ -1,8 +1,8 @@
 <?php
 
-require_once('player/mpd/filetree.php');
+require_once ('player/mpd/filetree.php');
 
-function doDbCollection($terms, $domains, $resultstype) {
+function doDbCollection($terms, $domains, $resultstype, &$collection) {
 
 	// This can actually be used to search the database for title, album, artist, anything, rating, and tag
 	// But it isn't because we let Mopidy/MPD search for anything they support because otherwise we
@@ -11,10 +11,6 @@ function doDbCollection($terms, $domains, $resultstype) {
 	// It's still used for searches where we're only looking for tags and/or ratings in conjunction with
 	// any of the above terms, because mopidy often returns incomplete search results.
 
-	global $mysqlc, $tree, $collection, $mpd_file_model;
-	if ($mysqlc === null) {
-		connect_to_database();
-	}
 	$parameters = array();
 	$qstring = "SELECT t.*, al.*, a1.*, a2.Artistname AS AlbumArtistName ";
 	if (array_key_exists('rating', $terms)) {
@@ -96,13 +92,10 @@ function doDbCollection($terms, $domains, $resultstype) {
 		$qstring .= ")";
 	}
 
-	debuglog("SQL Search String is ".$qstring,"SEARCH");
-	foreach ($parameters as $i => $param) {
-		debuglog("  Parameter ".$i."  '".$param.'"',"SEARCH");
-	}
-	$fcount = 0;
+	logger::log("DB SEARCH", "Parameters", $parameters);
 
 	$result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, $qstring, $parameters);
+	$fcount = count($result);
 	foreach ($result as $obj) {
 		$filedata = array(
 			'Artist' => array($obj->Artistname),
@@ -111,27 +104,21 @@ function doDbCollection($terms, $domains, $resultstype) {
 			'file' => $obj->Uri,
 			'Title' => $obj->Title,
 			'Track' => $obj->TrackNo,
-			'Image' => $obj->Image,
+			'X-AlbumImage' => $obj->Image,
 			'Time' => $obj->Duration,
-			'AlbumUri' => $obj->AlbumUri,
+			'X-AlbumUri' => $obj->AlbumUri,
 			'Date' => $obj->Year,
 			'Last-Modified' => $obj->LastModified
 		);
+		$filedata = array_merge(MPD_FILE_MODEL, $filedata);
+		logger::log("DB SEARCH", "Found :",$obj->Title,$obj->Uri);
 		if ($resultstype == "tree") {
-            $tree->newItem($filedata);
+            $collection->newItem($filedata);
 		} else if ($resultstype == "RAW") {
-			debuglog("Found : ".$obj->Title." ".$obj->Uri,"DB RAW SEARCH");
-			$fdata = $mpd_file_model;
-			foreach ($filedata as $i => $v) {
-				$fdata[$i] = $v;
-			}
-			$t = new track($fdata);
-	        $collection->newTrack( $t );
+			$collection->newTrack($filedata);
 		} else {
-			debuglog('Updating isSearchResult for TTindex '.$obj->TTindex,"DBSEARCH",8);
 			generic_sql_query("UPDATE Tracktable SET isSearchResult = 1 WHERE TTindex = ".$obj->TTindex, true);
 		}
-		$fcount++;
 	}
 
 	return $fcount;

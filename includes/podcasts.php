@@ -95,13 +95,8 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 function doPodcastBase() {
     global $prefs;
-    print '<div class="containerbox menuitem" style="padding-left:8px">';
-    print '<div class="fixed" style="padding-right:4px"><i onclick="podcasts.toggleButtons()" class="icon-menu playlisticon clickicon tooltip" title="'.get_int_text('label_podcastcontrols').'"></i></div>';
-    print '<div class="configtitle textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div>';
-    print '</div>';
-
     print '<div class="containerbox indent"><div class="expand">'.get_int_text("label_searchfor").' (iTunes)</div></div>';
-    print '<div class="containerbox indent">';
+    print '<div class="containerbox indent dropdown-container">';
     print '<div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" /></div>';
     print '<button class="fixed searchbutton iconbutton" onclick="podcasts.search()"></button>';
     print '</div>';
@@ -115,7 +110,7 @@ function doPodcastBase() {
 
     print '<div id="cocksausage">';
     print '<div class="containerbox indent"><div class="expand">'.get_int_text("podcast_entrybox").'</div></div>';
-    print '<div class="containerbox indent"><div class="expand"><input class="enter clearbox" id="podcastsinput" type="text" /></div>';
+    print '<div class="containerbox indent dropdown-container"><div class="expand"><input class="enter clearbox" id="podcastsinput" type="text" /></div>';
     print '<button class="fixed iconbutton rssbutton" onclick="podcasts.doPodcast(\'podcastsinput\')"></button></div>';
     print '</div>';
 
@@ -208,7 +203,7 @@ function doPodcastList($subscribed) {
 }
 
 function handle_error($errno, $errstr, $errfile, $errline) {
-    debuglog("Error ".$errno." ".$errstr." in ".$errfile." at line ".$errline,"PODCASTS");
+    logger::error("PODCASTS", "Error",$errno,$errstr,"in",$errfile,"at line",$errline);
     header('HTTP/1.1 400 Bad Request');
     exit(0);
 }

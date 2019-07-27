@@ -390,13 +390,13 @@ var info_spotify = function() {
 
 					populate: function() {
                         if (trackmeta.spotify === undefined || artistmeta.spotify.id === undefined) {
-                        	if (parent.playlistinfo.location.substring(0,8) !== 'spotify:') {
+                        	if (parent.playlistinfo.file.substring(0,8) !== 'spotify:') {
 				        		self.track.doBrowserUpdate()
 				        		self.artist.populate();
 				        		self.album.populate();
 				        	} else {
 			            		if (trackmeta.spotify === undefined) {
-			            			trackmeta.spotify = {id: parent.playlistinfo.location.substr(14, parent.playlistinfo.location.length) };
+			            			trackmeta.spotify = {id: parent.playlistinfo.file.substr(14, parent.playlistinfo.file.length) };
 			            		}
 		                		spotify.track.getInfo(trackmeta.spotify.id, spotifyResponse, self.track.spotifyError, true);
 		                	}
@@ -407,7 +407,7 @@ var info_spotify = function() {
 
                     spotifyError: function(data) {
                     	debug.warn(medebug, "Spotify Error!", data);
-						data.name = parent.playlistinfo.title;
+						data.name = parent.playlistinfo.Title;
 						data.external_urls = {spotify: ''};
 						trackmeta.spotify.track = data;
 						if (albummeta.spotify === undefined) {
@@ -435,7 +435,7 @@ var info_spotify = function() {
                                   data: getTrackHTML(trackmeta.spotify.track)
                                 }
                             );
-                        } else if (parent.playlistinfo.location.substring(0,8) !== 'spotify:') {
+                        } else if (parent.playlistinfo.file.substring(0,8) !== 'spotify:') {
 			                browser.Update(null, 'track', me, parent.nowplayingindex, { name: "",
 			                    					link: "",
 			                    					data: null
@@ -472,7 +472,7 @@ var info_spotify = function() {
 
 					populate: function() {
                         if (albummeta.spotify === undefined || albummeta.spotify.album === undefined ) {
-				        	if (parent.playlistinfo.location.substring(0,8) !== 'spotify:') {
+				        	if (parent.playlistinfo.file.substring(0,8) !== 'spotify:') {
 				        		self.album.doBrowserUpdate();
 				        	} else {
 	                			spotify.album.getInfo(albummeta.spotify.id, spotifyResponse, self.album.spotifyError, true);
@@ -482,7 +482,7 @@ var info_spotify = function() {
 
                     spotifyError: function(data) {
                     	debug.error(medebug, "Spotify Error!");
-						data.name = parent.playlistinfo.album;
+						data.name = parent.playlistinfo.Album;
 						data.external_urls = {spotify: ''};
 						albummeta.spotify.album = data;
 						self.album.doBrowserUpdate();
@@ -501,7 +501,7 @@ var info_spotify = function() {
                                   data: getAlbumHTML(albummeta.spotify.album)
                                 }
                             );
-                        } else if (parent.playlistinfo.location.substring(0,8) !== 'spotify:') {
+                        } else if (parent.playlistinfo.file.substring(0,8) !== 'spotify:') {
 			                browser.Update(null, 'album', me, parent.nowplayingindex, { name: "",
 			                    					link: "",
 			                    					data: null

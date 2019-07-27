@@ -1,21 +1,22 @@
 <?php
+require_once ("player/".$prefs['player_backend']."/player.php");
 $outputdata = array();
-@open_mpd_connection();
-if ($is_connected) {
-    $outputs = do_mpd_command("outputs", true);
+$player = new $PLAYER_TYPE();
+if ($player->is_connected()) {
+    $outputs = $player->get_outputs();
     foreach ($outputs as $i => $n) {
         if (is_array($n)) {
             foreach ($n as $a => $b) {
-                debuglog($i." - ".$b.":".$a,"AUDIO OUTPUT");
+                logger::trace("AUDIO OUTPUT", $i,"-",$b.":".$a);
                 $outputdata[$a][$i] = $b;
             }
         } else {
-            debuglog($i." - ".$n,"AUDIO OUTPUT");
+            logger::trace("AUDIO OUTPUT", $i,"-",$n);
             $outputdata[0][$i] = $n;
         }
     }
 }
-close_mpd();
+$player = null;
 
 function printOutputCheckboxes() {
     global $outputdata;

@@ -14,12 +14,12 @@ $song = $_POST['song'];
 
 $getID3 = new getID3;
 $output = null;
-debuglog("Looking for lyrics in ".$fname,"LYRICS");
-debuglog("  Artist is ".$artist,"LYRICS");
-debuglog("  Song is ".$artist,"LYRICS");
+logger::mark("LYRICS", "Looking for lyrics in",$fname);
+logger::log("LYRICS", "  Artist is",$artist);
+logger::log("LYRICS", "  Song is",$artist);
 
 if (file_exists($fname)) {
-	debuglog("File Exists ".$fname,"LYRICS");
+	logger::log("LYRICS", "    File Exists");
 	$tags = $getID3->analyze($fname);
 	getid3_lib::CopyTagsToComments($tags);
 
@@ -38,7 +38,7 @@ if (file_exists($fname)) {
 
 if ($output == null) {
 	$uri = "http://lyrics.wikia.com/api.php?func=getSong&artist=".urlencode($artist)."&song=".urlencode($song)."&fmt=xml";
-	debuglog("Trying ".$uri,"LYRICS");
+	logger::mark("LYRICS", "Trying",$uri);
 	$d = new url_downloader(array(
 		'url' => $uri,
 		'cache' => 'lyrics',
@@ -47,7 +47,7 @@ if ($output == null) {
 	if ($d->get_data_to_file()) {
 		$l = simplexml_load_string($d->get_data());
 		if ($l->url) {
-			debuglog("  Now Getting ".html_entity_decode($l->url),"LYRICS");
+			logger::log("LYRICS", "  Now Getting",html_entity_decode($l->url));
 			$d2 = new url_downloader(array(
 				'url' => html_entity_decode($l->url),
 				'cache' => 'lyrics',
@@ -59,15 +59,15 @@ if ($output == null) {
 				} else if (preg_match('/\<div class=\'lyricbox\'\>(.*?)\<div class=\'lyricsbreak\'\>/', $d2->get_data(), $matches)) {
 					$output = html_entity_decode($matches[1]);
 				} else {
-					debuglog("    Could Not Find Lyrics","LYRICS");
+					logger::mark("LYRICS", "    Could Not Find Lyrics");
 				}
 			}
 		} else {
-			debuglog("  Nope, nothing there","LYRICS");
+			logger::mark("LYRICS", "  Nope, nothing there");
 		}
 	}
 } else {
-	debuglog("  Got lyrics from file","LYRICS");
+	logger::mark("LYRICS", "  Got lyrics from file");
 }
 
 if ($output == null) {

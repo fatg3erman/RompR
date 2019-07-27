@@ -62,7 +62,7 @@ var lastFMTrackRadio = function() {
 		this.gotSimilar = function(data) {
 			debug.log("LASTFM TRACK RADIO","Got Similar Tracks For",track,artist,data);
 			self.populated = true;
-			if (data.similartracks.track) {
+			if (data.similartracks && data.similartracks.track) {
 				for (var i in data.similartracks.track) {
 					if (data.similartracks.track[i].name && data.similartracks.track[i].artist) {
 						tracks.push({

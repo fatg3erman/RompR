@@ -4,11 +4,22 @@
 =====================================================================
 */
 
-html, body.phone .dropmenu {
-    background-image:url("fire.jpg");
-    background-size:cover;
-    background-repeat:no-repeat;
-    background-attachment:fixed;
+@media screen and (orientation: landscape) {
+    html, body.phone .dropmenu {
+        background-image:url("themes/fire.jpg");
+        background-size:cover;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+    }
+}
+
+@media screen and (orientation: portrait) {
+    html, body.phone .dropmenu {
+        background-image:url("themes/fire-portrait.jpg");
+        background-size:cover;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+    }
 }
 
 body.phone .dropmenu>div {
@@ -59,13 +70,8 @@ input
 
 input[type="text"] {
     color: white;
-    background-color: #222;
+    background-color: rgba(20,20,20,0.5);
     border: 1px solid #444;
-}
-
-select
-{
-    color:#000000;
 }
 
 /*
@@ -119,30 +125,35 @@ select
     background-color:rgba(0,0,0,0.3);
 }
 
+#pset {
+    background-color: rgba(147, 61, 24, 0);
+}
+
+#pmaxset {
+    background-color: rgba(255, 238, 95, 0);
+}
+
 /*
 =====================================================================
 = General Classes
 =====================================================================
 */
 
-.desktop .selectholder {
-    background: #222 url('../newimages/blobdown3.svg') right 2px center no-repeat;
+.selectholder {
+    background-color: rgba(20,20,20,0.5);
 }
 
-.desktop .selectholder:hover {
-    background: #222 url('../newimages/blobdown3-hi.svg') right 2px center no-repeat;
+.selectholder:hover {
+    background-color: rgba(20,20,20,0.5);
 }
 
-.combobox-entry {
-    background: #222 url('../newimages/blobdown3.svg') right 2px center no-repeat;
-}
-
-.combobox-entry:hover {
-    background: #222 url('../newimages/blobdown3-hi.svg') right 2px center no-repeat;
-}
-
-.desktop select {
+select {
     color: white;
+}
+
+.drop-box {
+    background-color: #222;
+    color:white;
 }
 
 .album2

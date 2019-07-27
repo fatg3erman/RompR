@@ -5,7 +5,7 @@
 */
 
 html, body.phone .dropmenu {
-    background-image:url("acers2.jpg");
+    background-image:url("themes/acers2.jpg");
     background-size:cover;
     background-repeat:no-repeat;
     background-attachment:fixed;
@@ -26,14 +26,14 @@ body.phone .dropmenu>div {
 
 body.phone .mainpane .faveradio,
 body.phone .mainpane .radio,
-body.phone .mainpane .podcast,
+body.phone .mainpane .podcast:not(.podicon):not(.podglobal),
 body.phone .mainpane .directory {
-    background-color:rgba(0,0,0,0.1);
+    background-color:rgba(0,0,0,0.3);
     background-clip:border-box;
     margin-top: 4px;
 }
 
-body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input {
+body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input,select {
     color:#eeeeee;
 }
 
@@ -62,22 +62,56 @@ a:hover,a:active {
 
 button, input[type="button"], .filebutton {
     color:#dddddd;
-    background-color:transparent;
-    border:1px solid #aaaaaa;
+    background-color:rgba(206,37,214,0.2);
+    border: 1px solid transparent;
+    /* border:1px solid #aaaaaa; */
 }
 
 button:hover, input[type="button"]:hover, .filebutton:hover {
     color:#ffffff;
-    border:1px solid #ffffff;
-    text-shadow: 0 0 15px #ffffff;
+    border:1px solid #555555;
+    text-shadow: 0 0 12px #777777;
 }
 
-input {
-    color:#181818;
+.selectholder {
+    background-color:rgba(0,0,0,0.3);
 }
 
-select {
-    color:#000000;
+.selectholder:hover {
+    background-color:rgba(0,0,0,0.2);
+}
+
+input[type="text"] {
+    background-color: rgba(0,0,0,0.3);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:hover {
+    background-color: rgba(0,0,0,0.2);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:focus {
+    transition: border-bottom 0.5s ease;
+    border-bottom: 1px solid #bbbbbb;
+}
+
+select:hover {
+    color:#ffffff;
+}
+
+.drop-box {
+    background-color: rgba(0,0,0,0.4);
+    color:white;
+}
+
+/* reddish-purple */
+#pset {
+    background-color: rgba(142, 57, 109, 0);
+}
+/* yellowy-brown */
+#pmaxset {
+    background-color: rgba(151, 139, 106, 0);
 }
 
 /*
@@ -164,15 +198,11 @@ select {
     text-shadow: 0px 0px 20px #cccccc;
     font-weight:bold;
     color:#eeeeee;
-    background-color:rgba(0,0,0,0.1);
+    background-color:rgba(0,0,0,0.3);
 }
 
 .playlisttitle {
-    background-color:rgba(0,0,0,0.1);
-}
-
-.inbrowser {
-    color:#000000;
+    background-color:rgba(0,0,0,0.3);
 }
 
 .stleft {
@@ -250,7 +280,7 @@ div.topdropmenu {
 }
 
 .configtitle {
-    background-color:rgba(50,50,50,0.6);
+    background-color:rgba(138,45,90,0.4);
 }
 
 body.mobile .configtitle {

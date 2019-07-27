@@ -1,19 +1,9 @@
 <?php
 chdir('../..');
-include ("includes/vars.php");
-include ("includes/functions.php");
-include("international.php");
-include ("player/mpd/connection.php");
-
-$handlers = do_mpd_command('urlhandlers', true);
-if (is_array($handlers)) {
-	if (array_key_exists('handler', $handlers)) {
-		print json_encode($handlers['handler']);
-	} else {
-		print json_encode(array());
-	}
-} else {
-	print json_encode(array());
-}
-close_mpd();
+require_once ("includes/vars.php");
+require_once ("includes/functions.php");
+require_once ("international.php");
+require_once ("player/".$prefs['player_backend']."/player.php");
+$player = new $PLAYER_TYPE();
+print json_encode($player->get_uri_handlers());
 ?>

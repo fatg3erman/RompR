@@ -56,6 +56,10 @@ input.inbrowser, div.inbrowser
     border: 1px solid #888888;
 }
 
+input.snapclientname[type=text] {
+    color: #ffffff;
+}
+
 #notifications
 {
     background-color:#181850;

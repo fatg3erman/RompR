@@ -24,37 +24,38 @@ function playerController() {
         // - I fixed that bug once but it got broke again
 
         if (playlist.getCurrent('type') == "stream") {
+            // debug.trace('STREAMHANDLER','Playlist:',playlist.getCurrent('Title'),playlist.getCurrent('Album'),playlist.getCurrent('trackartist'));
             var temp = playlist.getCurrentTrack();
             if (player.status.Title) {
                 var parts = player.status.Title.split(" - ");
                 if (parts[0] && parts[1]) {
                     temp.trackartist = parts.shift();
-                    temp.title = parts.join(" - ");
+                    temp.Title = parts.join(" - ");
                     temp.metadata.artists = [{name: temp.trackartist, musicbrainz_id: ""}];
-                    temp.metadata.track = {name: temp.title, musicbrainz_id: ""};
+                    temp.metadata.track = {name: temp.Title, musicbrainz_id: ""};
                 } else if (player.status.Title && player.status.Artist) {
                     temp.trackartist = player.status.Artist;
-                    temp.title = player.status.Title;
+                    temp.Title = player.status.Title;
                     temp.metadata.artists = [{name: temp.trackartist, musicbrainz_id: ""}];
-                    temp.metadata.track = {name: temp.title, musicbrainz_id: ""};
+                    temp.metadata.track = {name: temp.Title, musicbrainz_id: ""};
                 }
             }
-            if (player.status.Name && !player.status.Name.match(/^\//) && temp.album == rompr_unknown_stream) {
+            if (player.status.Name && !player.status.Name.match(/^\//) && temp.Album == rompr_unknown_stream) {
                 // NOTE: 'Name' is returned by MPD - it's the station name as read from the station's stream metadata
                 debug.shout('STREAMHANDLER',"Checking For Stream Name Update");
-                checkForUpdateToUnknownStream(playlist.getCurrent('streamid'), player.status.Name);
-                temp.album = player.status.Name;
-                temp.metadata.album = {name: temp.album, musicbrainz_id: ""};
+                checkForUpdateToUnknownStream(playlist.getCurrent('StreamIndex'), player.status.Name);
+                temp.Album = player.status.Name;
+                temp.metadata.album = {name: temp.Album, musicbrainz_id: ""};
             }
-
-            if (playlist.getCurrent('title') != temp.title ||
-                playlist.getCurrent('album') != temp.album ||
+            // debug.trace('STREAMHANDLER','Current:',temp.Title,temp.Album,temp.trackartist);
+            if (playlist.getCurrent('Title') != temp.Title ||
+                playlist.getCurrent('Album') != temp.Album ||
                 playlist.getCurrent('trackartist') != temp.trackartist)
             {
                 debug.log("STREAMHANDLER","Detected change of track",temp);
                 var aa = new albumart_translator('');
-                temp.key = aa.getKey('stream', '', temp.album);
-                playlist.setCurrent({title: temp.title, album: temp.album, trackartist: temp.trackartist });
+                temp.key = aa.getKey('stream', '', temp.Album);
+                playlist.setCurrent({Title: temp.Title, Album: temp.Album, trackartist: temp.trackartist });
                 nowplaying.newTrack(temp, true);
             }
         }
@@ -63,11 +64,11 @@ function playerController() {
     function checkForUpdateToUnknownStream(streamid, name) {
         // If our playlist for this station has 'Unknown Internet Stream' as the
         // station name, let's see if we can update it from the metadata.
-        debug.log("STREAMHANDLER","Checking For Update to Stream",streamid,name, location);
-        var m = playlist.getCurrent('album');
+        debug.log("STREAMHANDLER","Checking For Update to Stream",streamid,name, name);
+        var m = playlist.getCurrent('Album');
         if (m.match(/^Unknown Internet Stream/)) {
             debug.shout("PLAYLIST","Updating Stream",name);
-            yourRadioPlugin.updateStreamName(streamid, name, playlist.getCurrent('location'), playlist.repopulate);
+            yourRadioPlugin.updateStreamName(streamid, name, playlist.getCurrent('file'), playlist.repopulate);
         }
     }
 
@@ -182,7 +183,6 @@ function playerController() {
     }
 
     function checkStateChange() {
-
         for (var i = 0; i < stateChangeCallbacks.length ; i++) {
             if (stateChangeCallbacks[i].state == player.status.state) {
                 stateChangeCallbacks[i].callback();
@@ -716,7 +716,7 @@ function playerController() {
 
         var progress = infobar.progress();
         playlist.setCurrent({progress: progress});
-        var duration = playlist.getCurrent('duration') || 0;
+        var duration = playlist.getCurrent('Time') || 0;
         infobar.setProgress(progress,duration);
 
         if (player.status.state == "play") {

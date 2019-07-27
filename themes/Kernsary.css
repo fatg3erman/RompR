@@ -5,7 +5,7 @@
 */
 
 html, body.phone .dropmenu {
-    background-image:url("kernsary.jpg");
+    background-image:url("themes/kernsary.jpg");
     background-size:cover;
     background-repeat:no-repeat;
     background-attachment:fixed;
@@ -40,25 +40,51 @@ a:hover,a:active
 button, input[type="button"], .filebutton
 {
     color:#dddddd;
-    background-color:transparent;
-    border:1px solid #aaaaaa;
+    background-color:rgba(0,0,0,0.5);
+    border:1px solid transparent;
 }
 
 button:hover, input[type="button"]:hover, .filebutton:hover
 {
     color:#ffffff;
-    border:1px solid #ffffff;
-    text-shadow: 0 0 15px #ffffff;
+    background-color:rgba(0,0,0,0.7);
+    border:1px solid #222222;
 }
 
-input
-{
-    color:#181818;
+select {
+    color:#dddddd;
 }
 
-select
-{
-    color:#000000;
+.selectholder {
+    background-color:rgba(0,0,0,0.3);
+}
+
+.selectholder:hover {
+    background-color:rgba(0,0,0,0.2);
+}
+
+input[type="text"] {
+    background-color: rgba(0,0,0,0.3);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:hover {
+    background-color: rgba(0,0,0,0.2);
+    border-bottom: 1px solid #555555;
+}
+
+input[type="text"]:focus {
+    transition: border-bottom 0.5s ease;
+    border-bottom: 1px solid #bbbbbb;
+}
+
+select:hover {
+    color: #ffffff;
+}
+
+.drop-box {
+    background-color: rgba(0,0,0,0.4);
+    color:white;
 }
 
 /*
@@ -100,6 +126,13 @@ select
 #dragger
 {
     background-color:rgba(60,0,17,0.7);
+}
+
+#pset {
+    background-color: rgba(79, 71, 93, 0);
+}
+#pmaxset {
+    background-color: rgba(151, 87, 40, 0);
 }
 
 /*
@@ -149,11 +182,6 @@ select
     font-weight:bold;
     color:#eeeeee;
     transition:font-size 0.2s ease, text-shadow 0.2s ease, background-color 0.2s ease;
-}
-
-.inbrowser
-{
-    color:#000000;
 }
 
 .stleft
@@ -240,12 +268,12 @@ tr.clickaddtrack:hover
 
 div.topdropmenu
 {
-    background-color:rgba(60,0,17,0.7);
+    background-color:rgba(53,37,48,0.9);
 }
 
 .configtitle
 {
-    background-color:rgba(70,0,25,0.8);
+    background-color:rgba(144,91,77,0.5);
 }
 
 body.mobile .configtitle

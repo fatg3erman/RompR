@@ -1,14 +1,10 @@
 $(document).ready(function(){
     debug.log("INIT","Document Ready Event has fired");
     get_geo_country();
-    if (prefs.usertheme) {
-        prefs.setTheme(prefs.usertheme);
-    } else {
-        prefs.setTheme(prefs.theme);
-    }
     if (prefs.do_not_show_prefs) {
         $('.choose_prefs').remove();
     }
+    prefs.setTheme(prefs.theme);
     infobar.createProgressBar();
     pluginManager.doEarlyInit();
     createHelpLinks();
@@ -86,7 +82,7 @@ $(document).ready(function(){
         $(this).children('i').hide();
     });
     $(document).on('click', '.tagremover:not(.plugclickable)', nowplaying.removeTag);
-    if (prefs.mopidy_slave || collection_type != prefs.player_backend) {
+    if (prefs.mopidy_slave || (prefs.collection_player != prefs.player_backend && prefs.collection_player != null)) {
         $('[name="donkeykong"]').remove();
         $('[name="dinkeyking"]').remove();
     }
@@ -94,6 +90,9 @@ $(document).ready(function(){
         syncLastFMPlaycounts.start();
     }
     spotifyLinkChecker.initialise();
+    snapcast.updateStatus();
+    // Just in case;
+    // setTimeout(infobar.rejigTheText, 500);
 });
 
 function cleanBackendCache() {
@@ -120,7 +119,7 @@ function get_geo_country() {
             debug.shout("GET COUNTRY", 'Country:',result.country,'Code:',result.countryCode);
             if (result.country != 'ERROR') {
                 $("#lastfm_country_codeselector").val(result.countryCode);
-                prefs.save({lastfm_country_code: result.countryCode});
+                prefs.save({lastfm_country_code: result.countryCode, country_userset: true});
             } else {
                 debug.error("GET COUNTRY","Country code error",result);
             }
@@ -138,8 +137,17 @@ function createHelpLinks() {
     helplinks[language.gettext('label_pluginplaylists')] = 'https://fatg3erman.github.io/RompR/Personalised-Radio';
     helplinks[language.gettext('label_lastfm')] = 'https://fatg3erman.github.io/RompR/LastFM';
     helplinks[language.gettext('config_players')] = 'https://fatg3erman.github.io/RompR/Using-Multiple-Players';
+    helplinks[language.gettext('config_snapcast')] = 'https://fatg3erman.github.io/RompR/Snapcast';
+
     for (var i in helplinks) {
         debug.log("HELPLINKS","Appending Help Link For",i);
-        $('b:contains("'+i+'")').parent('.configtitle').not('.nohelp').append('<a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticonr tright tooltip" title="'+language.gettext('label_gethelp')+'"></i></a>');
+        $('b:contains("'+i+'")').each(function() {
+            if ($(this).parent().hasClass('configtitle') && !$(this).parent().hasClass('nohelp')) {
+                $(this).parent().append('<a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticonr tright tooltip" title="'+language.gettext('label_gethelp')+'"></i></a>');
+            } else if ($(this).parent().parent().hasClass('configtitle') && $(this).parent().parent().hasClass('containerbox')) {
+                $(this).parent().parent().append('<div class="fixed"><a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticonr tright tooltip" title="'+language.gettext('label_gethelp')+'"></i></a></div>');
+            }
+        });
+        // $('b:contains("'+i+'")').parent('.configtitle').not('.nohelp').append('<a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticonr tright tooltip" title="'+language.gettext('label_gethelp')+'"></i></a>');
     }
 }

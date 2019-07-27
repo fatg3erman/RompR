@@ -6,7 +6,7 @@ include ("utils/backgroundimages.php");
 include ("backends/sql/backend.php");
 
 foreach($_REQUEST as $i => $r) {
-	debuglog($i.' = '.$r,"BACKIMAGE");
+	logger::log("BACKIMAGE", $i,'=',$r);
 }
 
 $retval = array();
@@ -16,14 +16,14 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 	$images = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null, 'SELECT * FROM BackgroundImageTable WHERE Skin = ? AND BrowserID = ?', $_REQUEST['getbackground'], $_REQUEST['browser_id']);
 	$thisbrowseronly = true;
 	if (count($images) == 0) {
-		debuglog("No Custom Backgrounds Exist for ".$_REQUEST['getbackground'].' '.$_REQUEST['browser_id'],'BACKIMAGE');
+		logger::log("BACKIMAGE", "No Custom Backgrounds Exist for",$_REQUEST['getbackground'],$_REQUEST['browser_id']);
 		$images = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null, 'SELECT * FROM BackgroundImageTable WHERE Skin = ? AND BrowserID IS NULL', $_REQUEST['getbackground']);
 		$thisbrowseronly = false;
 	} else {
-		debuglog("Custom Backgrounds Exist for ".$_REQUEST['getbackground'].' '.$_REQUEST['browser_id'],'BACKIMAGE');
+		logger::log("BACKIMAGE", "Custom Backgrounds Exist for",$_REQUEST['getbackground'],$_REQUEST['browser_id']);
 	}
 	if (count($images) > 0) {
-		debuglog("Custom Backgrounds Exist for ".$_REQUEST['getbackground'],'BACKIMAGE');
+		logger::log("BACKIMAGE", "Custom Backgrounds Exist for",$_REQUEST['getbackground']);
 		$retval = array('images' => array('portrait' => array(), 'landscape' => array()), 'thisbrowseronly' => $thisbrowseronly);
 		foreach ($images as $image) {
 			if ($image['Orientation'] == ORIENTATION_PORTRAIT) {
@@ -44,13 +44,14 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 
 } else if (array_key_exists('clearallbackgrounds', $_REQUEST)) {
 
+	// Remove these here, just in case the folder has been deleted for some reason
+	sql_prepare_query(true, null, null, null, 'DELETE FROM BackgroundImageTable WHERE Skin = ? AND BrowserID = ?', $_REQUEST['clearallbackgrounds'], $_REQUEST['browser_id']);
 	if (is_dir('prefs/userbackgrounds/'.$_REQUEST['clearallbackgrounds'].'/'.$_REQUEST['browser_id'])) {
-		debuglog("Removing All Backgrounds For ".$_REQUEST['clearallbackgrounds'].'/'.$_REQUEST['browser_id'],"BACKIMAGE");
+		logger::log("BACKIMAGE", "Removing All Backgrounds For ".$_REQUEST['clearallbackgrounds'].'/'.$_REQUEST['browser_id']);
 		delete_files('prefs/userbackgrounds/'.$_REQUEST['clearallbackgrounds'].'/'.$_REQUEST['browser_id']);
 		check_empty_directory('prefs/userbackgrounds/'.$_REQUEST['clearallbackgrounds'].'/'.$_REQUEST['browser_id']);
-		sql_prepare_query(true, null, null, null, 'DELETE FROM BackgroundImageTable WHERE Skin = ? AND BrowserID = ?', $_REQUEST['clearallbackgrounds'], $_REQUEST['browser_id']);
 	} else if (is_dir('prefs/userbackgrounds/'.$_REQUEST['clearallbackgrounds'])) {
-		debuglog("Removing All Backgrounds For ".$_REQUEST['clearallbackgrounds'],"BACKIMAGE");
+		logger::log("BACKIMAGE", "Removing All Backgrounds For ".$_REQUEST['clearallbackgrounds']);
 		delete_files('prefs/userbackgrounds/'.$_REQUEST['clearallbackgrounds']);
 		sql_prepare_query(true, null, null, null, 'DELETE FROM BackgroundImageTable WHERE Skin = ? AND BrowserID IS NULL', $_REQUEST['clearallbackgrounds']);
 	}
@@ -60,13 +61,13 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 	if (!array_key_exists('currbackground', $_REQUEST) || !array_key_exists('imagefile', $_FILES)) {
 		if (isset($_SERVER["CONTENT_LENGTH"])) {
 			if ($_SERVER["CONTENT_LENGTH"] > ((int) ini_get('post_max_size')*1024*1024)) {
-				debuglog('Content Length Error','BACKIMAGE');
+				logger::warn("BACKIMAGE", "Content Length Error");
 				header("HTTP/1.1 400 Bad Request", 'BACKIMAGE');
 				ob_flush();
 				exit(0);
 			}
 		}
-		debuglog('Some kind of upload error', 'BACKIMAGE');
+		logger::warn("BACKIMAGE", "Some kind of upload error");
 		header("HTTP/1.1 500 Internal Server Error");
 		ob_flush();
 		exit(0);
@@ -82,7 +83,7 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 	$files = make_files_useful($_FILES['imagefile']);
 	foreach ($files as $filedata) {
 		$file = $filedata['name'];
-		debuglog("Uploading File ".$file,"BACKIMAGE");
+		logger::log("BACKIMAGE", "Uploading File ".$file);
 		$fname = format_for_url(format_for_disc(basename($file)));
 		$download_file = get_user_file($file, $fname, $filedata['tmp_name']);
 		if (!is_dir('prefs/userbackgrounds/'.$base)) {
@@ -90,7 +91,7 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 		}
 		$file = 'prefs/userbackgrounds/'.$base.'/'.$fname;
 		if (file_exists($file)) {
-			debuglog('Image '.$file.' already exists', 'BACKIMAGE');
+			logger::trace("BACKIMAGE", "Image",$file,"already exists");
 			unlink($download_file);
 		} else {
 			rename($download_file, $file);
