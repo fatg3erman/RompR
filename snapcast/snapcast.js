@@ -15,12 +15,12 @@ var snapcast = function() {
         $.ajax({
             type: 'POST',
             url: 'snapcast/snapapi.php',
-            data: JSON.stringify(parms),
-            success: callback,
-            error: function(jqXHR, textStatus, errorThrown) {
-                debug.error("SNAPCAST","Command Failed",parms,textStatus,errorThrown);
-                callback({error: language.gettext('snapcast_notthere')});
-            }
+            data: JSON.stringify(parms)
+        })
+        .done(callback)
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            debug.error("SNAPCAST","Command Failed",parms,textStatus,errorThrown);
+            callback({error: language.gettext('snapcast_notthere')});
         })
     }
 

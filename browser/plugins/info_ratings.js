@@ -19,7 +19,6 @@ var info_ratings = function() {
 
             function doThingsWithData() {
                 if (parent.isCurrentTrack() && trackmeta.usermeta) {
-
 					if (prefs.sync_lastfm_playcounts && lfmupdates !== null) {
 						$.each(lfmupdates, function(i, v) {
 							switch (i) {

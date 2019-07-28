@@ -136,15 +136,15 @@ var prefs = function() {
         $.ajax({
             type: 'POST',
             url: 'player/transferplaylist.php',
-            data: JSON.stringify(deferredPrefs),
-            success: function() {
-                prefs.save(deferredPrefs, reloadWindow);
-            },
-            error: function(data) {
-                debug.error("PREFS","Playlist transfer failed",data);
-                infobar.error(language.gettext('error_trfailed')+'<br>'+data.responseText);
-                prefs.setPrefs();
-            }
+            data: JSON.stringify(deferredPrefs)
+        })
+        .done(function() {
+            prefs.save(deferredPrefs, reloadWindow);
+        })
+        .fail(function(data) {
+            debug.error("PREFS","Playlist transfer failed",data);
+            infobar.error(language.gettext('error_trfailed')+'<br>'+data.responseText);
+            prefs.setPrefs();
         });
     }
 

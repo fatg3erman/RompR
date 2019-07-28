@@ -102,12 +102,12 @@ function playerController() {
         $.ajax({
             type: 'GET',
             url: 'player/mpd/geturlhandlers.php',
-            dataType: 'json',
-            success: initialised,
-            error: function(data) {
-                debug.error("MPD","Failed to get URL Handlers",data);
-                infobar.permerror(language.gettext('error_noplayer'));
-            }
+            dataType: 'json'
+        })
+        .done(initialised)
+        .fail(function(data) {
+            debug.error("MPD","Failed to get URL Handlers",data);
+            infobar.permerror(language.gettext('error_noplayer'));
         });
     }
 
@@ -129,35 +129,35 @@ function playerController() {
             // converts %20 to +, which seems to be a bug in jQuery 3.0
             contentType: false,
             dataType: 'json',
-            timeout: 30000,
-            success: function(data) {
-                if (data) {
-                    debug.debug("PLAYER",data);
-                    if (data.state) {
-                        // Clone the object so as not to leave this closure in memory
-                        player.status = cloneObject(data);
-                        prefs.radiomode = player.status.radiomode;
-                        prefs.radioparam = player.status.radioparam;
-                        prefs.radiomaster = player.status.radiomaster;
-                        prefs.radioconsume = player.status.radioconsume;
-                        if (player.status.playlist !== plversion) {
-                            debug.blurt("PLAYER","Player has marked playlist as changed");
-                            playlist.repopulate();
-                        }
+            timeout: 30000
+        })
+        .done(function(data) {
+            if (data) {
+                debug.debug("PLAYER",data);
+                if (data.state) {
+                    // Clone the object so as not to leave this closure in memory
+                    player.status = cloneObject(data);
+                    ['radiomode', 'radioparam', 'radiomaster', 'radioconsume'].forEach(function(e) {
+                        prefs[e] = player.status[e];
+                    });
+                    if (player.status.playlist !== plversion) {
+                        debug.blurt("PLAYER","Player has marked playlist as changed");
                         plversion = player.status.playlist;
-                        infobar.setStartTime(player.status.elapsed);
-                        checkStateChange();
+                        playlist.repopulate();
                     }
+                    infobar.setStartTime(player.status.elapsed);
+                    checkStateChange();
                 }
-                post_command_list(callback);
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                debug.error("MPD","Command List Failed",list,textStatus,errorThrown);
-                if (list.length > 0) {
-                    infobar.error(language.gettext('error_sendingcommands', [prefs.player_backend]));
-                }
-                post_command_list(callback);
             }
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            debug.error("MPD","Command List Failed",list,textStatus,errorThrown);
+            if (list.length > 0) {
+                infobar.error(language.gettext('error_sendingcommands', [prefs.player_backend]));
+            }
+        })
+        .always(function() {
+            post_command_list(callback);
         });
 	}
 
@@ -226,15 +226,15 @@ function playerController() {
             url: "utils/getUserPlaylist.php",
             cache: false,
             data: data,
-            dataType: "xml",
-            success: function() {
-                self.reloadPlaylists();
-                self.addTracks([{type: 'remoteplaylist', name: name}], null, null);
-            },
-            error: function(data, status) {
-                playlist.repopulate();
-                debug.error("MPD","Failed to save user playlist URL");
-            }
+            dataType: "xml"
+        })
+        .done(function() {
+            self.reloadPlaylists();
+            self.addTracks([{type: 'remoteplaylist', name: name}], null, null);
+        })
+        .fail(function(data, status) {
+            playlist.repopulate();
+            debug.error("MPD","Failed to save user playlist URL");
         });
         return false;
     }
@@ -257,17 +257,17 @@ function playerController() {
     this.deleteUserPlaylist = function(name) {
         openpl = null;
         var data = {del: encodeURIComponent(name)};
-        $.ajax( {
+        $.ajax({
             type: "GET",
             url: "utils/getUserPlaylist.php",
             cache: false,
             data: data,
-            dataType: "xml",
-            success: self.reloadPlaylists,
-            error: function(data, status) {
-                debug.error("MPD","Failed to delete user playlist",name);
-            }
-        } );
+            dataType: "xml"
+        })
+        .done(self.reloadPlaylists)
+        .fail(function(data, status) {
+            debug.error("MPD","Failed to delete user playlist",name);
+        });
     }
 
     this.renamePlaylist = function(name, e, callback) {
@@ -310,20 +310,20 @@ function playerController() {
         var data = {rename: encodeURIComponent(oldplname),
                     newname: encodeURIComponent($("#newplname").val())
         };
-        $.ajax( {
+        $.ajax({
             type: "GET",
             url: "utils/getUserPlaylist.php",
             cache: false,
             data: data,
-            dataType: "xml",
-            success: function(data) {
-                layoutProcessor.postAlbumActions();
-                self.reloadPlaylists();
-            },
-            error: function(data, status) {
-                debug.error("MPD","Failed to rename user playlist",name);
-            }
-        } );
+            dataType: "xml"
+        })
+        .done(function(data) {
+            layoutProcessor.postAlbumActions();
+            self.reloadPlaylists();
+        })
+        .fail(function(data, status) {
+            debug.error("MPD","Failed to rename user playlist",name);
+        });
         return true;
     }
 
@@ -377,12 +377,12 @@ function playerController() {
             type: "GET",
             url: "getplaylist.php",
             cache: false,
-            dataType: "json",
-            success: function(data) {
-                playlist.newXSPF(reqid, data);
-            },
-            error: playlist.updateFailure
-        });
+            dataType: "json"
+        })
+        .done(function(data) {
+            playlist.newXSPF(reqid, data);
+        })
+        .fail(playlist.updateFailure);
 	}
 
 	this.play = function() {
@@ -637,15 +637,15 @@ function playerController() {
                 st.mpdsearch = terms;
             }
             $.ajax({
-                    type: "POST",
-                    url: "albums.php",
-                    data: st,
-                    success: function(data) {
-                        $("#searchresultholder").html(data);
-                        collectionHelper.scootTheAlbums($("#searchresultholder"));
-                        layoutProcessor.postAlbumActions();
-                        data = null;
-                    }
+                type: "POST",
+                url: "albums.php",
+                data: st
+            })
+            .done(function(data) {
+                $("#searchresultholder").html(data);
+                collectionHelper.scootTheAlbums($("#searchresultholder"));
+                layoutProcessor.postAlbumActions();
+                data = null;
             });
         }
     }
@@ -660,23 +660,22 @@ function playerController() {
             callback([]);
         }
         $.ajax({
-                type: "POST",
-                url: "albums.php",
-                dataType: 'json',
-                data: {
-                    rawterms: terms,
-                    domains: sources,
-                    command: exact ? "find" : "search",
-                    checkdb: checkdb
-                },
-                success: function(data) {
-                    callback(data);
-                    data = null;
-                },
-                error: function(data) {
-                    callback([]);
-                    data = null;
-                }
+            type: "POST",
+            url: "albums.php",
+            dataType: 'json',
+            data: {
+                rawterms: terms,
+                domains: sources,
+                command: exact ? "find" : "search",
+                checkdb: checkdb
+            }
+        })
+        .done(function(data) {
+            callback(data);
+            data = null;
+        })
+        .fail(function() {
+            callback([]);
         });
     }
 

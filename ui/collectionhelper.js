@@ -61,9 +61,10 @@ var collectionHelper = function() {
             debug.error('GENERAL','Collection Rebuild Did Not Work!',data);
             var msg = language.gettext('error_collectionupdate');
             if (data.responseText) {
-                msg += ' '+data.responseText;
+                msg += ' - '+data.responseText;
             }
             infobar.error(msg);
+            infobar.removenotify(notify);
             loadCollection();
         });
     }

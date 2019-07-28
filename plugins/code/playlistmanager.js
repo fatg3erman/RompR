@@ -65,15 +65,15 @@ var playlistManager = function() {
         	url: 'plugins/code/playlistmanager.php',
         	type: "POST",
         	data: {action: 'getlist'},
-        	dataType: 'json',
-        	success: function(data) {
-        		putTracks(holders[list], data[list], list);
-        		browser.rePoint();
-	            infobar.markCurrentTrack();
-        	},
-        	error: function() {
-        		infobar.error(language.gettext('label_general_error'));
-        	}
+        	dataType: 'json'
+		})
+        .done(function(data) {
+    		putTracks(holders[list], data[list], list);
+			browser.rePoint();
+            infobar.markCurrentTrack();
+    	})
+        .fail(function() {
+    		infobar.error(language.gettext('label_general_error'));
         });
 
 	}
@@ -83,12 +83,12 @@ var playlistManager = function() {
         	url: 'plugins/code/playlistmanager.php',
         	type: "POST",
         	data: {action: 'getlist'},
-        	dataType: 'json',
-        	success: playlistManager.doMainLayout,
-        	error: function() {
-        		infobar.error(language.gettext('label_general_error'));
-        		pmg.slideToggle('fast');
-        	}
+        	dataType: 'json'
+		})
+        .done(playlistManager.doMainLayout)
+        .fail(function() {
+    		infobar.error(language.gettext('label_general_error'));
+    		pmg.slideToggle('fast');
         });
 	}
 

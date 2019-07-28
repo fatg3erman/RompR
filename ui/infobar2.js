@@ -199,7 +199,6 @@ var infobar = function() {
         },
 
         biggerize: function() {
-            debug.mark('INFOBAR','biggerizing');
             clearTimeout(ftimer);
 
             if (Object.keys(npinfo).length == 0 || $("#nptext").is(':hidden') || $("#infobar").is(':hidden')) {
@@ -272,7 +271,7 @@ var infobar = function() {
             }
 
             aImg.onerror = function() {
-                debug.trace("ALBUMPICTURE","Image Failed To Load",$(this).attr("src"));
+                debug.warn("ALBUMPICTURE","Image Failed To Load",$(this).attr("src"));
                 $('img[name="'+$(this).attr('name')+'"]').addClass("notfound");
                 $('#albumpicture').fadeOut('fast',layoutProcessor.adjustLayout);
             }
@@ -280,7 +279,7 @@ var infobar = function() {
             return {
                 setSource: function(data) {
                     debug.trace("ALBUMPICTURE","New source",data,"current is",aImg.src);
-                    if (data.key && data.key != aImg.name) {
+                    if (data.ImgKey && data.ImgKey != aImg.name) {
                         return false;
                     }
                     if (data.images === null) {
@@ -316,7 +315,6 @@ var infobar = function() {
                 },
 
                 displayOriginalImage: function(event) {
-                    debug.log("ALBUMNPICTURE","Display Original Image");
                     imagePopup.create($(event.target), event, aImg.src);
                 },
 
@@ -485,7 +483,7 @@ var infobar = function() {
                 $("#ptagadd").fadeOut('fast');
                 lastfm.showloveban(false);
             } else {
-                infobar.albumImage.setKey(info.key);
+                infobar.albumImage.setKey(info.ImgKey);
             }
             infobar.albumImage.setSource(info);
             layoutProcessor.adjustLayout();

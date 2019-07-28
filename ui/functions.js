@@ -225,7 +225,7 @@ function update_ui_images(key, images) {
     $('img[name="'+key+'"]').not('.jalopy').attr("src", images.small);
     $('img[name="'+key+'"].jalopy').attr("src", images.medium);
     if (typeof(infobar) != 'undefined') {
-        infobar.albumImage.setSource({images: images, key: key});
+        infobar.albumImage.setSource({images: images, ImgKey: key});
     }
 }
 

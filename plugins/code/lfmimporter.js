@@ -15,13 +15,11 @@ var lfmImporter = function() {
         	url: 'plugins/code/lfmimporter.php',
         	type: "POST",
         	data: {action: 'getchunk', offset: offset, limit: limit},
-        	dataType: 'json',
-        	success: function(data) {
-        		putTracks(data);
-        	},
-        	error: function() {
-        		infobar.error(language.gettext('label_general_error'));
-        	}
+        	dataType: 'json'
+		})
+        .done(putTracks)
+        .fail(function() {
+    		infobar.error(language.gettext('label_general_error'));
         });
     }
 
@@ -112,25 +110,25 @@ var lfmImporter = function() {
         	url: 'plugins/code/lfmimporter.php',
         	type: "POST",
         	data: {action: 'gettotal'},
-        	dataType: 'json',
-        	success: function(data) {
-				totaltracks = data.total;
-				if (totaltracks > 0) {
-					$("#lfmiprogress").rangechooser({
-						range: data.total,
-						interactive: false,
-		                startmax: 0,
-		            });
-					starttime = Date.now();
-					getNextChunk();
-				} else {
-					$('#lfmitable').remove();
-					$('#lfmimunger').append('<div class="textcentre fullwidth"><h3>'+language.gettext('label_lfm_nonew', [new Date(prefs.lfm_importer_last_import * 1000).toLocaleString()])+'</h3></div>');
-				}
-        	},
-        	error: function() {
-        		infobar.error(language.gettext('label_general_error'));
-        	}
+        	dataType: 'json'
+		})
+        .done(function(data) {
+			totaltracks = data.total;
+			if (totaltracks > 0) {
+				$("#lfmiprogress").rangechooser({
+					range: data.total,
+					interactive: false,
+	                startmax: 0,
+	            });
+				starttime = Date.now();
+				getNextChunk();
+			} else {
+				$('#lfmitable').remove();
+				$('#lfmimunger').append('<div class="textcentre fullwidth"><h3>'+language.gettext('label_lfm_nonew', [new Date(prefs.lfm_importer_last_import * 1000).toLocaleString()])+'</h3></div>');
+			}
+    	})
+        .fail(function() {
+    		infobar.error(language.gettext('label_general_error'));
         });
 	}
 

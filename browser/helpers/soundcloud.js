@@ -13,12 +13,12 @@ var soundcloud = function() {
 				method: 'POST',
 				dataType: 'json',
 				url: 'browser/backends/getscdata.php',
-				data: {url: 'tracks/'+tracknum+'.json'},
-				success: callback,
-				error: function(xhr,status,err) {
-					debug.warn("SOUNDCLOUD","SoundCloud Error",xhr);
-					callback(xhr.responseJSON);
-				}
+				data: {url: 'tracks/'+tracknum+'.json'}
+			})
+			.done(callback)
+			.fail(function(xhr,status,err) {
+				debug.warn("SOUNDCLOUD","SoundCloud Error",xhr);
+				callback(xhr.responseJSON);
 			});
 		},
 
@@ -28,12 +28,12 @@ var soundcloud = function() {
 				method: 'POST',
 				dataType: 'json',
 				url: 'browser/backends/getscdata.php',
-				data: {url: 'users/'+userid+'.json'},
-				success: callback,
-				error: function(xhr,status,err) {
-					debug.warn("SOUNDCLOUD","SoundCloud Error",xhr);
-					callback(xhr.responseJSON);
-				}
+				data: {url: 'users/'+userid+'.json'}
+			})
+			.done(callback)
+			.fail(function(xhr,status,err) {
+				debug.warn("SOUNDCLOUD","SoundCloud Error",xhr);
+				callback(xhr.responseJSON);
 			});
 		}
 	}

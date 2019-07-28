@@ -48,16 +48,16 @@ var metaBackup = function() {
 		$.ajax({
             type: "GET",
             url: 'utils/checkrestoreprogress.php',
-            dataType: 'json',
-            success: function(data) {
-                debug.debug("UPDATE",data);
-                progressDiv.html(data.current);
-                monitortimer = setTimeout(monitorRestore, 250);
-            },
-            error: function(data) {
-                debug.log("UPDATE","ERROR",data);
-				monitortimer = setTimeout(monitorRestore, 250);
-            }
+            dataType: 'json'
+		})
+        .done(function(data) {
+            debug.debug("UPDATE",data);
+            progressDiv.html(data.current);
+            monitortimer = setTimeout(monitorRestore, 250);
+        })
+        .fail(function(data) {
+            debug.log("UPDATE","ERROR",data);
+			monitortimer = setTimeout(monitorRestore, 250);
         });
 	}
 

@@ -13,15 +13,15 @@ var recentlyPlayed = function() {
 			    $("#rplfoldup").append('<div class="noselection fullwidth tagholder" id="rplmunger"></div>');
 	            $.ajax({
 	            	url: 'backends/sql/recentlyplayed.php',
-	            	type: "POST",
-	            	success: function(data) {
-            			setDraggable('#rplfoldup');
-	            		recentlyPlayed.doMainLayout(data);
-	            	},
-	            	error: function() {
-	            		infobar.error(language.gettext('label_general_error'));
-	            		rpl.slideToggle('fast');
-	            	}
+	            	type: "POST"
+				})
+	            .done(function(data) {
+        			setDraggable('#rplfoldup');
+            		recentlyPlayed.doMainLayout(data);
+            	})
+	            .fail(function() {
+            		infobar.error(language.gettext('label_general_error'));
+            		rpl.slideToggle('fast');
 	            });
 	        } else {
 	        	browser.goToPlugin("rpl");
@@ -40,13 +40,13 @@ var recentlyPlayed = function() {
 		reloadAll: function() {
             $.ajax({
             	url: 'backends/sql/recentlyplayed.php',
-            	type: "POST",
-            	success: function(data) {
-					$('#rplmunger').html(data);
-            	},
-            	error: function() {
-            		debug.error("RECENTLY PLAYED","Error reloading list");
-            	}
+            	type: "POST"
+			})
+            .done(function(data) {
+				$('#rplmunger').html(data);
+        	})
+            .fail(function() {
+        		debug.error("RECENTLY PLAYED","Error reloading list");
             });
 	    },
 

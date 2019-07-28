@@ -60,10 +60,10 @@ var playlist = function() {
         function actuallyRepopulate() {
             debug.log("RADIO MANAGER","Repopulate Timer Has Fired");
             debug.log("RADIO MANAGER","mode is",mode);
-            debug.log("RADIO MANAGER","prefs.radiomode is",prefs.radiomode);
-            debug.log("RADIO MANAGER","prefs.radioparam is",prefs.radioparam);
-            debug.log("RADIO MANAGER","prefs.browser_id is",prefs.browser_id);
-            debug.log("RADIO MANAGER","prefs.radiomaster is",prefs.radiomaster);
+            debug.trace("RADIO MANAGER","prefs.radiomode is",prefs.radiomode);
+            debug.trace("RADIO MANAGER","prefs.radioparam is",prefs.radioparam);
+            debug.trace("RADIO MANAGER","prefs.browser_id is",prefs.browser_id);
+            debug.trace("RADIO MANAGER","prefs.radiomaster is",prefs.radiomaster);
 
             if ((mode && mode != prefs.radiomode) || (mode && param && param != prefs.radioparam)) {
                 radios[mode].func.stop();
@@ -191,7 +191,7 @@ var playlist = function() {
             },
 
             repopulate: function() {
-                debug.log("RADIO MANAGER","Setting Repopulate Timer");
+                debug.debug("RADIO MANAGER","Setting Repopulate Timer");
                 // The timer is a mechanism to stop us repeatedly calling this when
                 // lots of asynchronous stuff is happening at once. There are several routes
                 // that call into this function to handle all the cases we need to handle
@@ -394,7 +394,7 @@ var playlist = function() {
 
         doUpcomingCrap: function() {
             var upcoming = new Array();
-            debug.shout("PLAYLIST","Doing Upcoming Crap",currentalbum);
+            debug.trace("PLAYLIST","Doing Upcoming Crap",currentalbum);
             if (currentalbum >= 0 && player.status.random == 0) {
                 tracklist[currentalbum].getrest(currentTrack.Id, upcoming);
                 var i = parseInt(currentalbum)+1;
@@ -449,35 +449,35 @@ var playlist = function() {
         },
 
         dragstopped: function(event, ui) {
-            debug.log("PLAYLIST","Drag Stopped",event,ui);
+            debug.trace("PLAYLIST","Drag Stopped",event,ui);
             if (event) {
                 event.stopImmediatePropagation();
             }
             var moveto  = (function getMoveTo(i) {
                 if (i !== null) {
-                    debug.log("PLAYLIST", "Finding Next Item In List",i.next(),i.parent());
+                    debug.trace("PLAYLIST", "Finding Next Item In List",i.next(),i.parent());
                     if (i.next().hasClass('track') || i.next().hasClass('booger')) {
-                        debug.log("PLAYLIST","Next Item Is Track");
+                        debug.trace("PLAYLIST","Next Item Is Track");
                         return parseInt(i.next().attr("name"));
                     }
                     if (i.next().hasClass('trackgroup') && i.next().is(':hidden')) {
-                        debug.log("PLAYLIST","Next Item is hidden trackgroup");
+                        debug.trace("PLAYLIST","Next Item is hidden trackgroup");
                         // Need to account for these - you can't see them so it
                         // looks like you're dragging to the next item below it therfore
                         // that's how we must behave
                         return getMoveTo(i.next());
                     }
                     if (i.next().hasClass('item') || i.next().hasClass('trackgroup')) {
-                        debug.log("PLAYLIST","Next Item Is Item or Trackgroup",
+                        debug.trace("PLAYLIST","Next Item Is Item or Trackgroup",
                             parseInt(i.next().attr("name")),
                             tracklist[parseInt(i.next().attr("name"))].getFirst());
                         return tracklist[parseInt(i.next().attr("name"))].getFirst();
                     }
                     if (i.parent().hasClass('trackgroup')) {
-                        debug.log("PLAYLIST","Parent Item is Trackgroup");
+                        debug.trace("PLAYLIST","Parent Item is Trackgroup");
                         return getMoveTo(i.parent());
                     }
-                    debug.log("PLAYLIST","Dropped at end?");
+                    debug.trace("PLAYLIST","Dropped at end?");
                 }
                 return (parseInt(finaltrack))+1;
             })(ui);
@@ -646,7 +646,6 @@ var playlist = function() {
         },
 
         waiting: function() {
-            debug.log("PLAYLIST","Adding Incoming Bar");
             $("#waiter").empty();
             doSomethingUseful('waiter', language.gettext("label_incoming"));
         },
@@ -1022,7 +1021,7 @@ function Album(artist, album, index, rolledup) {
     }
 
     this.updateImages = function(data) {
-        debug.log("PLAYLIST","Updating track images with",data);
+        debug.debug("PLAYLIST","Updating track images with",data);
         for (var trackpointer in tracks) {
             tracks[trackpointer].images = data;
         }
@@ -1280,7 +1279,7 @@ function Stream(index, album, rolledup) {
     }
 
     this.updateImages = function(data) {
-        debug.log("PLAYLIST","Updating track images with",data);
+        debug.trace("PLAYLIST","Updating track images with",data);
         for (var trackpointer in tracks) {
             tracks[trackpointer].images = data;
         }

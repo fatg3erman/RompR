@@ -79,11 +79,11 @@ var crazyRadioManager = function() {
             $.ajax({
                 type: 'POST',
                 url: 'radios/crazymanager.php?action=save',
-                data: JSON.stringify(settings),
-                success: crazyRadioManager.refreshCrazyList,
-                error: function() {
-                    infobar.error(language.gettext('label_general_error'));
-                }
+                data: JSON.stringify(settings)
+            })
+            .done(crazyRadioManager.refreshCrazyList)
+            .fail(function() {
+                infobar.error(language.gettext('label_general_error'));
             });
             return true;
         },

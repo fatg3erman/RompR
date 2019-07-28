@@ -368,29 +368,29 @@ var dbQueue = function() {
 				        type: "POST",
 						contentType: false,
 				        data: JSON.stringify(req.data),
-				        dataType: 'json',
-				        success: function(data) {
-							req = queue.shift();
-				        	debug.trace("DB QUEUE","Request Success",req,data);
-							for (var i in req.data) {
-								if (actions_requiring_cleanup.indexOf(req.data[i].action) > -1) {
-									debug.log("DB QUEUE","Setting cleanup flag for",req.data[i].action,"request");
-									cleanuprequired = true;
-								}
+				        dataType: 'json'
+					})
+				    .done(function(data) {
+						req = queue.shift();
+			        	debug.trace("DB QUEUE","Request Success",req,data);
+						for (var i in req.data) {
+							if (actions_requiring_cleanup.indexOf(req.data[i].action) > -1) {
+								debug.log("DB QUEUE","Setting cleanup flag for",req.data[i].action,"request");
+								cleanuprequired = true;
 							}
-				        	if (req.success) {
-				        		req.success(data);
-				        	}
-				        	throttle = setTimeout(dbQueue.dorequest, 1);
-				        },
-				        error: function(data) {
-		                	req = queue.shift();
-				        	debug.fail("DB QUEUE","Request Failed",req,data);
-				        	if (req.fail) {
-				        		req.fail(data);
-				        	}
-				        	throttle = setTimeout(dbQueue.dorequest, 1);
-				        }
+						}
+			        	if (req.success) {
+			        		req.success(data);
+			        	}
+			        	throttle = setTimeout(dbQueue.dorequest, 1);
+			        })
+				    .fail(function(data) {
+	                	req = queue.shift();
+			        	debug.fail("DB QUEUE","Request Failed",req,data);
+			        	if (req.fail) {
+			        		req.fail(data);
+			        	}
+			        	throttle = setTimeout(dbQueue.dorequest, 1);
 				    });
 		        } else {
 	            	throttle = null;

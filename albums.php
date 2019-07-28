@@ -273,6 +273,8 @@ function database_search() {
 function update_collection() {
     global $PLAYER_TYPE;
 
+    // Check that an update is not currently in progress
+    // and create the update lock if not
     if (collectionUpdateRunning()) {
         header('HTTP/1.1 500 Internal Server Error');
         print get_int_text('error_nocol');
@@ -321,6 +323,7 @@ function update_collection() {
     remove_findtracks();
     // Add a marker to the monitor file to say we've finished
     $player->collectionUpdateDone();
+    // Clear the update lock
     clearUpdateLock();
 
 }

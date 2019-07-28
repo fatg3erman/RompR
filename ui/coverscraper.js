@@ -145,7 +145,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
     // Hello
 
     function gotImage(data) {
-        debug.log("COVERSCRAPER","Result Is", data);
+        debug.trace("COVERSCRAPER","Result Is", data);
         stopAnimation();
         if (data.small) {
             self.updateInfo(1);
@@ -166,7 +166,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
    function finaliseImage(data) {
         update_ui_images(imgparams.imgkey, data);
         if (typeof (imgparams.cb) == 'function') {
-            debug.log("COVERSCRAPER","calling back for",imgparams.imgkey,data);
+            debug.trace("COVERSCRAPER","calling back for",imgparams.imgkey,data);
             imgparams.cb(data);
         }
     }
@@ -241,7 +241,7 @@ function sendLocalStorageEvent(key, data) {
     if (data && data.small) {
         localStorage.setItem("albumimg_"+key, JSON.stringify(data));
     }
-    debug.log("COVERSCRAPER","Sending local storage event",key);
+    debug.trace("COVERSCRAPER","Sending local storage event",key);
     // Event only fires when the key value actually CHANGES
     localStorage.setItem("key", "Blerugh");
     localStorage.setItem("key", key);

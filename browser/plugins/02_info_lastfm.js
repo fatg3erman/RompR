@@ -50,7 +50,7 @@ var info_lastfm = function() {
     function findTag(name, taglist) {
         for(var i in taglist) {
             if (name == taglist[i].name) {
-                debug.trace("FINDTAG", "Found tag",name);
+                debug.debug("FINDTAG", "Found tag",name);
                 return true;
             }
         }
@@ -62,7 +62,7 @@ var info_lastfm = function() {
         table.find('tr').each( function() {
             var n = $(this).find('a').text();
             if (n.toLowerCase() == name.toLowerCase()) {
-                debug.trace("FINDTAG 2",'Found Tag',name);
+                debug.debug("FINDTAG 2",'Found Tag',name);
                 retval = true;
             }
         });
@@ -161,7 +161,7 @@ var info_lastfm = function() {
         }
         html += '<p class="minwidthed">'+lastfm.formatBio(lfmdata.bio())+'</p>';
         var tracks = lfmdata.tracklisting();
-        debug.log(medebug,"Track Listing",tracks);
+        debug.trace(medebug,"Track Listing",tracks);
         if (tracks && tracks.length > 0) {
             var dh = false;
             for(var i in tracks) {
@@ -310,7 +310,7 @@ var info_lastfm = function() {
             }
 
             function doUserLoved(flag) {
-				debug.mark("LASTFM","Doing UserLoved With Flgas at",flag);
+				debug.log("LASTFM","Doing UserLoved With Flags at",flag);
 				if (parent.isCurrentTrack()) {
 					$('#love').stopSpinner();
 					if (flag) {
@@ -458,7 +458,7 @@ var info_lastfm = function() {
 
                     somethingfailed: function(data) {
                         $("#tagaddartist").stopSpinner();
-                        debug.log(medebug,"Something went wrong getting artist user tags",data);
+                        debug.warn(medebug,"Something went wrong getting artist user tags",data);
                     },
 
                     gotUserTags: function(data) {
@@ -516,7 +516,7 @@ var info_lastfm = function() {
 
                     lfmResponseHandler: function(data) {
                         debug.trace(medebug,"Got Album Info for",albummeta.name);
-                        debug.trace(medebug, data);
+                        debug.debug(medebug, data);
 						var de = new lfmDataExtractor(data);
 						albummeta.lastfm = de.getCheckedData('album');
                         if (albummeta.musicbrainz_id == "") {
@@ -527,7 +527,7 @@ var info_lastfm = function() {
                                 mbid = null;
                             }
                             if (mbid !== null) {
-                                debug.trace(medebug,parent.nowplayingindex,"has found a musicbrainz album ID",mbid);
+                                debug.log(medebug,parent.nowplayingindex,"has found a musicbrainz album ID",mbid);
                                 nowplaying.updateAlbumMBID(parent.nowplayingindex,mbid);
                             }
                             albummeta.musicbrainz_id = mbid;
@@ -537,7 +537,7 @@ var info_lastfm = function() {
 
 					lfmArtistResponseHandler: function(data) {
 						debug.trace(medebug,"Got Album/Artist Info for",albummeta.name);
-                        debug.trace(medebug, data);
+                        debug.debug(medebug, data);
 						var de = new lfmDataExtractor(data);
 						albummeta.lastfm = de.getCheckedData('artist');
 						albummeta.musicbrainz_id = null;
@@ -605,7 +605,7 @@ var info_lastfm = function() {
 
                     somethingfailed: function(data) {
                         $("#tagaddalbum").stopSpinner();
-                        debug.log(medebug,"Something went wrong getting album user tags",data);
+                        debug.warn(medebug,"Something went wrong getting album user tags",data);
                     },
 
                     gotUserTags: function(data) {
@@ -655,7 +655,7 @@ var info_lastfm = function() {
 
                     lfmResponseHandler: function(data) {
                         debug.trace(medebug,parent.nowplayingindex,"Got Track Info for",trackmeta.name);
-                        debug.trace(medebug, data);
+                        debug.debug(medebug, data);
 						var de = new lfmDataExtractor(data);
 						trackmeta.lastfm = de.getCheckedData('track');
                         if (trackmeta.musicbrainz_id == "") {
@@ -731,7 +731,7 @@ var info_lastfm = function() {
 
                     somethingfailed: function(data) {
                         $("#tagaddtrack").stopSpinner();
-                        debug.log(medebug,"Something went wrong getting track user tags",data);
+                        debug.warn(medebug,"Something went wrong getting track user tags",data);
                     },
 
                     gotUserTags: function(data) {

@@ -711,10 +711,10 @@ function fileUploadThing(formData, options, success, fail) {
             url: "getalbumcover.php",
             type: "POST",
             data: options,
-            cache:false,
-            success: success,
-            error: fail,
-        });
+            cache:false
+        })
+        .done(success)
+        .fail(fail);
     } else {
         $.each(options, function(i, v) {
             formData.append(i, v);

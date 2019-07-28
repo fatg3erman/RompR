@@ -219,100 +219,100 @@ function LastFM(user) {
                     url: "https://ws.audioscrobbler.com/2.0/",
                     data: req.options,
                     dataType: 'json',
-                    timeout: 5000,
-                    success: function(data) {
-                        throttle = setTimeout(lastfm.getRequest, throttleTime);
-                        req = queue.shift();
-                        debug.log("LASTFM", req.options.method,"request success");
-                        if (data.error) {
-                            debug.blurt("LASTFM","Last FM signed request failed with status",data.error.message);
-                            req.fail(data);
-                        } else {
-                            req.success(data);
-                        }
-                    },
-                    error: function(xhr,status,err) {
-                        req = queue.shift();
-                        debug.error("LASTFM",req.options.method,"request error",status,err);
-                        if (xhr.responseJSON) {
-                            var errorcode = xhr.responseJSON.error;
-                            var errortext = xhr.responseJSON.message;
-                            debug.error("LASTFM", 'Error Code',errorcode,"Message",errortext);
-
-                            switch (errorcode) {
-                                case 4:
-                                case 9:
-                                case 10:
-                                case 14:
-                                case 26:
-                                    debug.error("LASTFM","We are not authenticated. Logging Out");
-                                    logout();
-                                    req.fail(null);
-                                    break;
-
-                                case 29:
-                                    debug.warn("LASTFM","Rate Limit Exceeded. Slowing Down");
-                                    setThrottling(throttleTime*2);
-                                    // Fall through
-
-                                default:
-                                    if (req.retries < 3) {
-                                        debug.log("LASTFM","Retrying...");
-                                        req.retries++;
-                                        req.flag = false;
-                                        queue.unshift(req);
-                                    } else {
-                                        req.fail(null);
-                                    }
-
-                           }
-                        }
-                        throttle = setTimeout(lastfm.getRequest, throttleTime);
+                    timeout: 5000
+                })
+                .done(function(data) {
+                    throttle = setTimeout(lastfm.getRequest, throttleTime);
+                    req = queue.shift();
+                    debug.log("LASTFM", req.options.method,"request success");
+                    if (data.error) {
+                        debug.blurt("LASTFM","Last FM signed request failed with status",data.error.message);
+                        req.fail(data);
+                    } else {
+                        req.success(data);
                     }
+                })
+                .fail(function(xhr,status,err) {
+                    req = queue.shift();
+                    debug.error("LASTFM",req.options.method,"request error",status,err);
+                    if (xhr.responseJSON) {
+                        var errorcode = xhr.responseJSON.error;
+                        var errortext = xhr.responseJSON.message;
+                        debug.error("LASTFM", 'Error Code',errorcode,"Message",errortext);
+
+                        switch (errorcode) {
+                            case 4:
+                            case 9:
+                            case 10:
+                            case 14:
+                            case 26:
+                                debug.error("LASTFM","We are not authenticated. Logging Out");
+                                logout();
+                                req.fail(null);
+                                break;
+
+                            case 29:
+                                debug.warn("LASTFM","Rate Limit Exceeded. Slowing Down");
+                                setThrottling(throttleTime*2);
+                                // Fall through
+
+                            default:
+                                if (req.retries < 3) {
+                                    debug.log("LASTFM","Retrying...");
+                                    req.retries++;
+                                    req.flag = false;
+                                    queue.unshift(req);
+                                } else {
+                                    req.fail(null);
+                                }
+
+                       }
+                    }
+                    throttle = setTimeout(lastfm.getRequest, throttleTime);
                 });
             } else {
                 var getit = $.ajax({
                     method: 'POST',
                     url: 'browser/backends/getlfmdata.php',
                     data: req.url,
-                    dataType: 'json',
-                    success: function(data) {
-                        var c = getit.getResponseHeader('Pragma');
-                        debug.debug("LASTFM","Request success",c,data);
-                        if (c == "From Cache") {
-                            throttle = setTimeout(lastfm.getRequest, 100);
-                        } else {
-                            throttle = setTimeout(lastfm.getRequest, throttleTime);
-                        }
-                        req = queue.shift();
-                        debug.debug("LASTFM","Calling success callback");
-                        if (req.reqid || req.reqid === 0) {
-                            req.success(data, req.reqid);
-                        } else {
-                            req.success(data);
-                        }
-                    },
-                    error: function(xhr,status,err) {
+                    dataType: 'json'
+                })
+                .done(function(data) {
+                    var c = getit.getResponseHeader('Pragma');
+                    debug.debug("LASTFM","Request success",c,data);
+                    if (c == "From Cache") {
+                        throttle = setTimeout(lastfm.getRequest, 100);
+                    } else {
                         throttle = setTimeout(lastfm.getRequest, throttleTime);
-                        req = queue.shift();
-                        debug.warn("LASTFM", "Get Request Failed",xhr,status,err);
-                        var errormessage = language.gettext('lastfm_error');
-                        if (xhr.responseJSON) {
-                            var errorcode = xhr.responseJSON.error;
-                            var errortext = xhr.responseJSON.message;
-                            errormessage += '<br />'+errortext;
-                            if (errorcode == 29) {
-                                debug.warn("LASTFM","Rate Limit Exceeded. Slowing Down");
-                                setThrottling(throttleTime*2);
-                            }
-                        } else {
-                            errormessage += ' ('+xhr.status+' '+err+')';
+                    }
+                    req = queue.shift();
+                    debug.debug("LASTFM","Calling success callback");
+                    if (req.reqid || req.reqid === 0) {
+                        req.success(data, req.reqid);
+                    } else {
+                        req.success(data);
+                    }
+                })
+                .fail(function(xhr,status,err) {
+                    throttle = setTimeout(lastfm.getRequest, throttleTime);
+                    req = queue.shift();
+                    debug.warn("LASTFM", "Get Request Failed",xhr,status,err);
+                    var errormessage = language.gettext('lastfm_error');
+                    if (xhr.responseJSON) {
+                        var errorcode = xhr.responseJSON.error;
+                        var errortext = xhr.responseJSON.message;
+                        errormessage += '<br />'+errortext;
+                        if (errorcode == 29) {
+                            debug.warn("LASTFM","Rate Limit Exceeded. Slowing Down");
+                            setThrottling(throttleTime*2);
                         }
-                        if (req.reqid || req.reqid === 0) {
-                            req.fail(null, req.reqid);
-                        } else {
-                            req.fail({error: 1, message: errormessage});
-                        }
+                    } else {
+                        errormessage += ' ('+xhr.status+' '+err+')';
+                    }
+                    if (req.reqid || req.reqid === 0) {
+                        req.fail(null, req.reqid);
+                    } else {
+                        req.fail({error: 1, message: errormessage});
                     }
                 });
             }

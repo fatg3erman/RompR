@@ -42,8 +42,7 @@ var mixRadio = function() {
 	function searchForNextArtist() {
 		idhunting++;
 		if (idhunting < fartists.length) {
-			debug.shout("MIX RADIO","Searching for spotify ID for",idhunting,fartists.length,
-				fartists[idhunting].name);
+			debug.shout("MIX RADIO","Searching for spotify ID for",idhunting,fartists.length,fartists[idhunting].name);
 			spotify.artist.search(fartists[idhunting].name, mixRadio.gotArtists,
 				mixRadio.lookupFail);
 		}
@@ -104,16 +103,14 @@ var mixRadio = function() {
         		check: {
 	        		for (var j in tuner.artists) {
 	        			if (tuner.artists[j].getName() == data.artists.items[i].name) {
-	        				debug.shout("MIX RADIO", "Ignoring artist",data.artists.items[i].name,
-	        					"because it already exists");
+	        				debug.shout("MIX RADIO", "Ignoring artist",data.artists.items[i].name,"because it already exists");
 	        				found = true;
 	        				break check;
 	        			}
 	        		}
 	        		if (data.artists.items[i].name.toLowerCase() ==
 	        				fartists[idhunting].name.toLowerCase()) {
-	        			debug.shout("MIX RADIO","Found Spotify ID for artist",
-	        				idhunting,fartists[idhunting].name);
+	        			debug.shout("MIX RADIO","Found Spotify ID for artist",idhunting,fartists[idhunting].name);
 	        			tuner.newArtist(data.artists.items[i].name, data.artists.items[i].id, true);
 	    				found = true;
 	    				if (!going) {

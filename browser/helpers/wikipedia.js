@@ -17,10 +17,10 @@ var wikipedia = function() {
 		        type: "POST",
 		        url: "browser/backends/info_wikipedia.php",
 				data: terms,
-		        dataType: "xml",
-		        success: successCallback,
-		        error: failCallback
-		    });
+		        dataType: "xml"
+			})
+		    .done(successCallback)
+		    .fail(failCallback);
 		},
 
 		getFullUri: function(terms, successCallback, failCallback) {
@@ -30,10 +30,10 @@ var wikipedia = function() {
 		        type: "POST",
 				url: "browser/backends/info_wikipedia.php",
 				data: terms,
-		        dataType: "xml",
-				success: successCallback,
-		        error: failCallback
-		    });
+		        dataType: "xml"
+			})
+		    .done(successCallback)
+		    .fail(failCallback);
 		},
 
 		wikiMediaPopup: function(element, event) {
@@ -63,13 +63,13 @@ var wikipedia = function() {
 		        type: "POST",
 		        url: "browser/backends/info_wikipedia.php",
 				data: {wiki: link, layout: skin},
-		        dataType: "xml",
-				success: successCallback,
-		        error: failCallback,
-		        complete: function() {
-					$("#infopane").css({cursor:'auto'});
-					$("#infopane a").css({cursor:'auto'});
-		        }
+		        dataType: "xml"
+			})
+		    .done(successCallback)
+		    .fail(failCallback)
+		    .always(function() {
+				$("#infopane").css({cursor:'auto'});
+				$("#infopane a").css({cursor:'auto'});
 		    });
 		},
 	}

@@ -48,19 +48,19 @@ function getsmall() {
         type: 'GET',
         url: 'utils/findsmallimages.php',
         dataType: 'json',
-        timeout: 300000,
-        success: function(data) {
-            $('#doobag').stopFlasher().css('opacity', '0');
-            debug.log("SMALL IMAGES","Got List!",data);
-            for (var i in data) {
-                $('img[name="'+data[i]+'"]').removeAttr('src').addClass('notexist');
-            }
-            coverscraper.reset($('.notexist:not(.notfound)').length + $('.notfound:not(.notexist)').length);
-        },
-        error: function() {
-            $('#doobag').html("FAILED!").stopFlasher();
-            debug.error("SMALL IMAGES","Big Wet Balls");
+        timeout: 300000
+    })
+    .done(function(data) {
+        $('#doobag').stopFlasher().css('opacity', '0');
+        debug.log("SMALL IMAGES","Got List!",data);
+        for (var i in data) {
+            $('img[name="'+data[i]+'"]').removeAttr('src').addClass('notexist');
         }
+        coverscraper.reset($('.notexist:not(.notfound)').length + $('.notfound:not(.notexist)').length);
+    })
+    .fail(function() {
+        $('#doobag').html("FAILED!").stopFlasher();
+        debug.error("SMALL IMAGES","Big Wet Balls");
     });
 }
 
@@ -453,27 +453,27 @@ var imageEditor = function() {
                     type: "POST",
                     dataType: "json",
                     url: 'browser/backends/google.php',
-                    data: {uri: encodeURIComponent(nureek+"&q="+encodeURIComponent(searchfor)+"&start="+start)},
-                    success: imageEditor.googleSearchComplete,
-                    error: function(data) {
-                        debug.log("IMAGEEDITOR","IT'S ALL GONE HORRIBLY WRONG",data);
-                        if (data == null) {
-                            imageEditor.showError("No Response!");
-                        } else {
-                            var e = data.responseJSON;
-                            if (e.error) {
-                                if (typeof (e.error) == 'object') {
-                                    var t = '';
-                                    for (var i in e.error.errors) {
-                                        t += e.error.errors[i].message+' - '+e.error.errors[i].reason+'<br/>';
-                                    }
-                                    imageEditor.showError(t)
-                                } else {
-                                    imageEditor.showError(e.error)
+                    data: {uri: encodeURIComponent(nureek+"&q="+encodeURIComponent(searchfor)+"&start="+start)}
+                })
+                .done(imageEditor.googleSearchComplete)
+                .fail(function(data) {
+                    debug.log("IMAGEEDITOR","IT'S ALL GONE HORRIBLY WRONG",data);
+                    if (data == null) {
+                        imageEditor.showError("No Response!");
+                    } else {
+                        var e = data.responseJSON;
+                        if (e.error) {
+                            if (typeof (e.error) == 'object') {
+                                var t = '';
+                                for (var i in e.error.errors) {
+                                    t += e.error.errors[i].message+' - '+e.error.errors[i].reason+'<br/>';
                                 }
+                                imageEditor.showError(t)
                             } else {
-                                imageEditor.showError("No Response!");
+                                imageEditor.showError(e.error)
                             }
+                        } else {
+                            imageEditor.showError("No Response!");
                         }
                     }
                 });
@@ -617,10 +617,10 @@ function updateImage(url, index) {
         url: "getalbumcover.php",
         type: "POST",
         data: options,
-        cache:false,
-        success: uploadComplete,
-        error: searchFail
-    });
+        cache:false
+    })
+    .done(uploadComplete)
+    .fail(searchFail);
 }
 
 function startAnimation() {

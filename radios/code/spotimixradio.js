@@ -7,6 +7,7 @@ var spotiMixRadio = function() {
 	var medebug = "SPOTIMIXRADIO";
 	var param;
 	var trackfinder = new faveFinder(false);
+	var wantedtracks = 0;
 	trackfinder.setCheckDb(false);
 	trackfinder.setExact(true);
 	trackfinder.setPriorities(['spotify']);
@@ -38,6 +39,7 @@ var spotiMixRadio = function() {
 
 		actuallyGo: function(numtracks) {
 			if (!populated) {
+				wantedtracks = numtracks;
 				trackseeds = new Array();
 				nonspotitracks = new Array();
 				tuner = new spotifyRecommendationsRadio();
@@ -112,6 +114,7 @@ var spotiMixRadio = function() {
 
 		stop: function() {
 			populated = false;
+			wantedtracks = 0;
 		},
 
 		doStageTwo: function() {
@@ -128,11 +131,10 @@ var spotiMixRadio = function() {
 					},
 					spotiMixRadio.gotTrackResults
 				);
-			} else if (trackseeds.length > 0) {
-				populateTuner(5);
-			} else {
-				infobar.error(language.gettext('error_norec'));
-        		playlist.radioManager.stop(null);
+			}
+			if (trackseeds.length > 0 && wantedtracks > 0) {
+				populateTuner(wantedtracks);
+				wantedtracks = 0;
 			}
 		},
 

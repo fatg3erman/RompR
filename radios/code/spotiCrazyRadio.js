@@ -41,7 +41,7 @@ var spotiCrazyRadio = function() {
 				});
 				tuner = new spotifyRecommendationsRadio();
 				if (tagarray.length > 0) {
-					populateTuner(5);
+					populateTuner(parseInt(prefs.smartradio_chunksize));
 				} else {
 	        		infobar.error(language.gettext('error_nogenres'));
 	        		playlist.radioManager.stop(null);

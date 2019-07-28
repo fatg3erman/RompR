@@ -1,4 +1,6 @@
 <?php
+// Reads the last line of the monitor file without loading the whole thing
+// into memory (important on low memory systems with large collections)
 chdir('..');
 $LastLine = "Preparing...";
 if (file_exists('prefs/monitor')) {

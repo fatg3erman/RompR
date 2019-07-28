@@ -10,23 +10,23 @@ var recentlyaddedtracks = function() {
             type: "POST",
             dataType: "json",
 			contentType: false,
-            url: "radios/recentlyadded.php?mode="+mode,
-            success: function(data) {
-                if (data && data.total > 0) {
-                    debug.trace("SMARTPLAYLIST","Got tracks",data);
-					populated = true;
-                    running = true;
-                    addTracks();
-                } else {
-                    infobar.notify(language.gettext('label_gotnotracks'));
-                    playlist.radioManager.stop(null);
-                }
-            },
-            fail: function() {
+            url: "radios/recentlyadded.php?mode="+mode
+		})
+        .done(function(data) {
+            if (data && data.total > 0) {
+                debug.trace("SMARTPLAYLIST","Got tracks",data);
+				populated = true;
+                running = true;
+                addTracks();
+            } else {
                 infobar.notify(language.gettext('label_gotnotracks'));
                 playlist.radioManager.stop(null);
-                populated = false;
             }
+        })
+        .fail(function() {
+            infobar.notify(language.gettext('label_gotnotracks'));
+            playlist.radioManager.stop(null);
+            populated = false;
         });
 
 	}

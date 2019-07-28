@@ -118,10 +118,10 @@ var spotify = function() {
 					data: {
 						url: req.url,
 						cache: req.cache
-					},
-	                success: spotify.requestSuccess,
-	                error: spotify.requestFail
-	            });
+					}
+				})
+	            .done(spotify.requestSuccess)
+	            .fail(spotify.requestFail);
 	        } else {
             	throttle = null;
 	        }

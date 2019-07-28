@@ -295,18 +295,18 @@ function getAllTracksForAlbum(element, menutoopen) {
     element.makeSpinner();
     $.ajax({
         type: 'GET',
-        url: 'albums.php?browsealbum='+menutoopen,
-        success: function(data) {
-            debug.log("CLICKFUNCTIONS", "Got data. Inserting it into ",menutoopen);
-            element.stopSpinner();
-            infobar.markCurrentTrack();
-            $("#"+menutoopen).html(data);
-            collectionHelper.scootTheAlbums($("#"+menutoopen));
-        },
-        error: function(data) {
-            debug.error("CLICKFUNCTIONS", "Got NO data for ",menutoopen);
-            element.stopSpinner();
-        }
+        url: 'albums.php?browsealbum='+menutoopen
+    })
+    .done(function(data) {
+        debug.log("CLICKFUNCTIONS", "Got data. Inserting it into ",menutoopen);
+        element.stopSpinner();
+        infobar.markCurrentTrack();
+        $("#"+menutoopen).html(data);
+        collectionHelper.scootTheAlbums($("#"+menutoopen));
+    })
+    .fail(function(data) {
+        debug.error("CLICKFUNCTIONS", "Got NO data for ",menutoopen);
+        element.stopSpinner();
     });
 }
 
@@ -315,20 +315,20 @@ function getAllTracksForArtist(element, menutoopen) {
     element.makeSpinner();
     $.ajax({
         type: 'GET',
-        url: 'albums.php?browsealbum='+menutoopen,
-        success: function(data) {
-            element.stopSpinner();
-            var spunk = layoutProcessor.getArtistDestinationDiv(menutoopen);
-            spunk.html(data);
-            layoutProcessor.postAlbumActions();
-            collectionHelper.scootTheAlbums(spunk);
-            infobar.markCurrentTrack();
-            uiHelper.fixupArtistDiv(spunk, menutoopen);
-            layoutProcessor.postAlbumActions();
-        },
-        error: function(data) {
-            element.stopSpinner();
-        }
+        url: 'albums.php?browsealbum='+menutoopen
+    })
+    .done(function(data) {
+        element.stopSpinner();
+        var spunk = layoutProcessor.getArtistDestinationDiv(menutoopen);
+        spunk.html(data);
+        layoutProcessor.postAlbumActions();
+        collectionHelper.scootTheAlbums(spunk);
+        infobar.markCurrentTrack();
+        uiHelper.fixupArtistDiv(spunk, menutoopen);
+        layoutProcessor.postAlbumActions();
+    })
+    .fail(function(data) {
+        element.stopSpinner();
     });
 }
 
@@ -546,15 +546,15 @@ function checkServerTimeOffset() {
     $.ajax({
         type: "GET",
         url: "utils/checkServerTime.php",
-        dataType: "json",
-        success: function(data) {
-            var time = Math.round(Date.now() / 1000);
-            serverTimeOffset = time - data.time;
-            debug.log("TIMECHECK","Browser Time is",time,". Server Time is",data.time,". Difference is",serverTimeOffset);
-        },
-        error: function(data) {
-            debug.error("TIMECHECK","Failed to read server time");
-        }
+        dataType: "json"
+    })
+    .done(function(data) {
+        var time = Math.round(Date.now() / 1000);
+        serverTimeOffset = time - data.time;
+        debug.log("TIMECHECK","Browser Time is",time,". Server Time is",data.time,". Difference is",serverTimeOffset);
+    })
+    .fail(function(data) {
+        debug.error("TIMECHECK","Failed to read server time");
     });
 }
 

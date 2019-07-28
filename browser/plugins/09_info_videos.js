@@ -59,15 +59,15 @@ var info_videos = function() {
 				type: "POST",
 				dataType: "json",
 				url: 'browser/backends/google.php',
-				data: {uri: encodeURIComponent("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q="+encodeURIComponent(term+' Band')+"&key="+prefs.google_api_key)},
-				success: callback,
-				error: function(xhr,status,err) {
-					debug.error("VIDEOS PLUGIN","Youtube search failed",xhr);
-					if (xhr.responseJSON.error.message) {
-						callback({error: xhr.responseJSON.error.message});
-					} else {
-						callback({error: err});
-					}
+				data: {uri: encodeURIComponent("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q="+encodeURIComponent(term+' Band')+"&key="+prefs.google_api_key)}
+			})
+			.done(callback)
+			.fail(function(xhr,status,err) {
+				debug.error("VIDEOS PLUGIN","Youtube search failed",xhr);
+				if (xhr.responseJSON.error.message) {
+					callback({error: xhr.responseJSON.error.message});
+				} else {
+					callback({error: err});
 				}
 			});
 		} else {
