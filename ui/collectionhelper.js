@@ -9,6 +9,7 @@ var collectionHelper = function() {
 
     function scanFiles(cmd) {
         debug.log('GENERAL','Scanning Files');
+        collectionHelper.disableCollectionUpdates();
         collectionHelper.prepareForLiftOff(language.gettext("label_updating"));
         collectionHelper.markWaitFileList(language.gettext("label_updating"));
         uiHelper.emptySearchResults();
@@ -31,7 +32,7 @@ var collectionHelper = function() {
             debug.log('GENERAL','Still updating collection');
             update_load_timer = setTimeout( pollAlbumList, 1000);
         } else {
-            debug.log('GENERAL','Collection update is complete');
+            debug.log('GENERAL','Player rescan is complete');
             refreshCollection();
             loadFileBrowser();
         }
@@ -53,12 +54,16 @@ var collectionHelper = function() {
             cache: false
         })
         .done(function() {
-            debug.mark('GENERAL','Collection Rebuild has Started');
+            debug.mark('GENERAL','Collection Rebuild has Started. Polling From Here.');
             monitortimer = setTimeout(checkUpdateMonitor,monitorduration);
         })
-        .fail(function() {
-            debug.error('GENERAL','Collection Rebuild Did Not Work!');
-            infobar.error('error_collectionupdate');
+        .fail(function(data) {
+            debug.error('GENERAL','Collection Rebuild Did Not Work!',data);
+            var msg = language.gettext('error_collectionupdate');
+            if (data.responseText) {
+                msg += ' '+data.responseText;
+            }
+            infobar.error(msg);
             loadCollection();
         });
     }
@@ -68,25 +73,25 @@ var collectionHelper = function() {
             type: "GET",
             url: 'utils/checkupdateprogress.php',
             dataType: 'json',
-            success: function(data) {
-                debug.trace("UPDATE",data);
-                if (data.current == 'RompR Is Done') {
-                    debug.mark('GENERAL', 'Collection Update Finished');
-                    infobar.notify(language.gettext('label_updatedone'));
-                    infobar.removenotify(notify);
-                    loadCollection();
-                } else {
-                    $('#updatemonitor').html(data.current);
-                    if (player.updatingcollection) {
-                        monitortimer = setTimeout(checkUpdateMonitor,monitorduration);
-                    }
-                }
-            },
-            error: function(data) {
-                debug.log("UPDATE","ERROR",data);
+        })
+        .done(function(data) {
+            debug.trace("UPDATE",data);
+            if (data.current == 'RompR Is Done') {
+                debug.mark('GENERAL', 'Collection Update Finished');
+                infobar.notify(language.gettext('label_updatedone'));
+                infobar.removenotify(notify);
+                loadCollection();
+            } else {
+                $('#updatemonitor').html(data.current);
                 if (player.updatingcollection) {
                     monitortimer = setTimeout(checkUpdateMonitor,monitorduration);
                 }
+            }
+        })
+        .fail(function(data) {
+            debug.log("UPDATE","ERROR",data);
+            if (player.updatingcollection) {
+                monitortimer = setTimeout(checkUpdateMonitor,monitorduration);
             }
         });
     }
@@ -117,6 +122,7 @@ var collectionHelper = function() {
                 data = null;
                 collectionHelper.scootTheAlbums($("#collection"));
                 layoutProcessor.postAlbumActions($('#collection'));
+                collectionHelper.enableCollectionUpdates();
                 loadAudiobooks();
             })
             .fail(function(data) {
@@ -131,7 +137,7 @@ var collectionHelper = function() {
                 html += '<p align="center"><a href="https://fatg3erman.github.io/RompR/Troubleshooting#very-large-collections" target="_blank">Read The Troubleshooting Docs</a></p>';
                 $("#collection").html(html);
                 debug.error("PLAYER","Failed to generate collection",data);
-                infobar.error('error_collectionupdate');
+                infobar.error(language.gettext('error_collectionupdate'));
             })
             .always(function() {
                 debug.log('GENERAL','In always callback');

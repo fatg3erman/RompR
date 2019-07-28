@@ -13,6 +13,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Multitudinous new icon themes
 * Some changes to the layout of the Phone and Tablet skins. Large tablets will now display the Now Playing, Playlist, and Media Chooser panels simultaneously when in Landscape orientation.
 * Alarm Clock and Sleep Timer now supported on the Tablet skin. Note that they still won't work if your tablet sleeps, but the tablet skin is quite good for small laptop screens so that's what this is intended for.
+* Quite a lot of work has gone into preventing browsers from timing out on long collection updates. Did you know that browsers automatically retry if something takes more than 2 minutes? I didn't, but I do now. Crikey, it's annoying. So I've made some changes that will hopefully prevent this from being a problem. If you see your Collection Update just keep looping round and round, close your browser, restart your web server, then try again and send me a debug log at level 8.
 * Various minor bugfixes
 
 ## Version 1.26

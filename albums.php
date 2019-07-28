@@ -273,9 +273,19 @@ function database_search() {
 function update_collection() {
     global $PLAYER_TYPE;
 
+    if (collectionUpdateRunning()) {
+        header('HTTP/1.1 500 Internal Server Error');
+        print get_int_text('error_nocol');
+        exit(0);
+    }
+
+    if (file_exists('prefs/monitor')) {
+        unlink('prefs/monitor');
+    }
     // Send some dummy data back to the browser, then close the connection
     // so that the browser doesn't time out and retry
     $sapi_type = php_sapi_name();
+    logger::log('COLLECTION','SAPI Name is',$sapi_type);
     if (preg_match('/fpm/', $sapi_type) || preg_match('/fcgi/', $sapi_type)) {
         logger::mark('COLLECTION', 'Closing Request The FastCGI Way');
         print('<html></html>');
@@ -290,9 +300,9 @@ function update_collection() {
         header("Content-Length: $size");
         header("Content-Encoding: none");
         header("Connection: close");
-        ob_end_flush(); // Strange behaviour, will not work
+        ob_end_flush();
         ob_flush();
-        flush(); // Unless both are called !
+        flush();
         if (ob_get_contents()) {
             ob_end_clean();
         }
@@ -311,6 +321,7 @@ function update_collection() {
     remove_findtracks();
     // Add a marker to the monitor file to say we've finished
     $player->collectionUpdateDone();
+    clearUpdateLock();
 
 }
 

@@ -1,7 +1,8 @@
 <?php
 chdir('..');
-$LastLine = "";
+$LastLine = "Preparing...";
 if (file_exists('prefs/monitor')) {
+	$LastLine = '';
 	if ($fp = fopen('prefs/monitor', 'r')) {
 		fseek($fp, -1, SEEK_END);
 		$pos = ftell($fp);

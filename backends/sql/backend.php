@@ -1642,6 +1642,27 @@ function cleanSearchTables() {
 // Stuff to do with creating the database from a music collection (collection.php)
 //
 
+function collectionUpdateRunning() {
+	$cur = simple_query('Value', 'Statstable', 'Item', 'Updating', null);
+	switch ($cur) {
+		case null:
+			logger::error('COLLECTION', 'ERROR! Got null response to update lock check');
+			return true;
+
+		case '0':
+			generic_sql_query("UPDATE Statstable SET Value = 1 WHERE Item = 'Updating'", true);
+			return false;
+
+		case '1':
+			logger::warn('COLLECTION', 'Multiple collection updates attempted');
+			return true;
+	}
+}
+
+function clearUpdateLock() {
+	generic_sql_query("UPDATE Statstable SET Value = 0 WHERE Item = 'Updating'", true);
+}
+
 function prepareCollectionUpdate() {
 	create_foundtracks();
 	prepare_findtracks();

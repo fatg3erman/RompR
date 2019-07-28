@@ -782,6 +782,13 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 55 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 55:
+				logger::log("SQL", "Updating FROM Schema version 55 TO Schema version 56");
+				generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('Updating', '0')", true);
+				generic_sql_query("UPDATE Statstable SET Value = 56 WHERE Item = 'SchemaVer'", true);
+				break;
+
+
 		}
 		$sv++;
 	}
