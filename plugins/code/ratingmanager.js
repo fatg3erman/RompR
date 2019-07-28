@@ -23,6 +23,8 @@ var ratingManager = function() {
 		html += '<span class="fixed rattitle">'+title+'</span>';
 		if (numtracks > 0) {
 			html += '<span class="fixed ninesix indent ratcount">('+numtracks+' '+language.gettext('label_tracks')+')</span>';
+		} else {
+			html += '<span class="fixed ninesix indent ratcount"></span>';
 		}
 		html += '<div class="expand filterinfo"></div>';
 		x.append(html);
