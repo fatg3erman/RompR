@@ -12,7 +12,6 @@ switch ($_REQUEST['action']) {
 		print json_encode($results);
 		break;
 
-
 	case 'remove':
 		$index = $_REQUEST['index'];
 		$files = glob('../prefs/crazyplaylists/*.json');

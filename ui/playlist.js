@@ -149,7 +149,7 @@ var playlist = function() {
                     radios[i].func.setup();
                 }
                 if (prefs.player_backend == "mopidy") {
-                    $("#radiodomains").makeDomainChooser({
+                    $("#radiodomains").addClass('tiny').makeDomainChooser({
                         default_domains: prefs.mopidy_radio_domains,
                         sources_not_to_choose: {
                                     bassdrive: 1,

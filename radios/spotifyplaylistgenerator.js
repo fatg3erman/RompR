@@ -123,7 +123,7 @@ var spotiCrazyRadio = function() {
                 // Spotify Playlist Generator
                 //
                 $("#pluginplaylists_crazy").append('<div class="textcentre textunderline"><b>Create Your Own Spotify Playlist Generator</b></div>');
-                $("#pluginplaylists_crazy").append('<div class="textcentre">Enter some Genres, set the parameters, and click Play.<br>You can drag both ends of the sliders to set a range.</div>');
+                $("#pluginplaylists_crazy").append('<div class="textcentre tiny">Enter some Genres, set the parameters, and click Play.<br>You can drag both ends of the sliders to set a range.</div>');
 
                 var a = $('<div>', {class: "containerbox menuitem spacer", style: "margin-right:8px"}).appendTo("#pluginplaylists_crazy");
                 var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
