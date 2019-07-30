@@ -98,7 +98,7 @@ var lastFMArtistRadio = function() {
 		},
 
 		modeHtml: function(p) {
-			return '<i class="icon-lastfm-1 modeimg"/></i><span class="modespan">'+language.gettext('label_lastfm_mix')+'</span>';
+			return '<i class="icon-lastfm-1 modeimg"/></i><span class="modespan">'+language.gettext('label_lastfm_dip_'+p)+'</span>';
 		},
 
 		stop: function() {
@@ -145,10 +145,12 @@ var lastFMArtistRadio = function() {
 
 		gotASimilar: function(data) {
 			if (tuner) {
-				debug.mark("LASTFM MIX RADIO","Got Similar Artists For",data.similarartists['@attr'].artist);
-				if (data.similarartists.artist) {
-					for (var i in data.similarartists.artist) {
-						tuner.newArtist(data.similarartists.artist[i].name);
+				if (data.similarartists) {
+					debug.mark("LASTFM MIX RADIO","Got Similar Artists For",data.similarartists['@attr'].artist);
+					if (data.similarartists.artist) {
+						for (var i in data.similarartists.artist) {
+							tuner.newArtist(data.similarartists.artist[i].name);
+						}
 					}
 				}
 				if (populating) {

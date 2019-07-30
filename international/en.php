@@ -554,8 +554,6 @@ $languages['en'] = array (
 	"label_searchcollectiononly" => "Search Only in Music Collection",
 
 	"label_lastfm_mix" => "Last FM Lucky Dip",
-	"label_lastfm_track" => "Last.FM Mix Radio",
-	"label_lastfm_choose" => "Base Last.FM Recommendations On Your Listening Over:",
 	"label_radio_recommend" => "Recommendations based on this %s",
 	"label_amendalbum" => "Amend Album Details",
 
@@ -757,7 +755,15 @@ $languages['en'] = array (
 	"snapcast_latency" => "Latency ",
 	"snapcast_setlatency" => "Set Latency",
 	"snapcast_notconnected" => "(Not Connected)",
-	"label_update" => "Update"
+	"label_update" => "Update",
+	"label_lastfm_mix_7day" => "Last.FM Daily Mix",
+	"label_lastfm_mix_1month" => "Last.FM Monthly Mix",
+	"label_lastfm_mix_12month" => "Last.FM Yearly Mix",
+	"label_lastfm_mix_overall" => "Last.FM All Time Mix",
+	"label_lastfm_dip_7day" => "Last.FM Recommends",
+	"label_lastfm_dip_1month" => "Last.FM Lucky Dip",
+	"label_lastfm_dip_12month" => "Last.FM Review of the Year",
+	"label_lastfm_dip_overall" => "Last.FM Nostalgia Trip"
 );
 
 ?>

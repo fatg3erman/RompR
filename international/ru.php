@@ -554,8 +554,6 @@ $languages['ru'] = array (
 	"label_searchcollectiononly" => "Искать только в Музыкальной коллекции",
 
 	"label_lastfm_mix" => "Last FM Lucky Dip",
-	"label_lastfm_track" => "Last.FM Mix Радио",
-	"label_lastfm_choose" => "Основы Last.FM Рекомендации по вашему прослушиванию:",
 	"label_radio_recommend" => "Рекомендации, основанные на этом %s",
 	"label_amendalbum" => "Изменить информацию об альбоме",
 
@@ -612,7 +610,7 @@ $languages['ru'] = array (
 	"label_with_tags" => "Воспроизвести только треки с тегами",
 	"label_with_tagandrat" => "Играть только треки с тегами и рейтингами",
 	"label_with_tagorrat" => "Воспроизвести только треки с тегами или рейтингами",
-        "config_google_credentials" => "Google API Credentials",
+    "config_google_credentials" => "Google API Credentials",
 	"config_read_the_docs" => "Пожалуйста, прочтите документацию",
 	"label_dateadded" => "Дата Добавлена",
 	"label_radiostation" => "Радио Станция",

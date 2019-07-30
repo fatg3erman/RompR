@@ -171,7 +171,7 @@ var lastFMTrackRadio = function() {
 		},
 
 		modeHtml: function(p) {
-			return '<i class="icon-lastfm-1 modeimg"/></i><span class="modespan">'+language.gettext('label_lastfm_track')+'</span>';
+			return '<i class="icon-lastfm-1 modeimg"/></i><span class="modespan">'+language.gettext('label_lastfm_mix_'+p)+'</span>';
 		},
 
 	}

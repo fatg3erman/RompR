@@ -526,13 +526,13 @@ function get_recommendation_seeds($days, $limit, $top) {
 		" AND Uri IS NOT NULL GROUP BY Artistindex ORDER BY playtotal DESC LIMIT ".$limit);
 
 	// 2. Get a list of recently played tracks, ignoring popularity
-	$result = generic_sql_query(
-		"SELECT 0 AS playtotal, Artistname, Title, Uri
-		FROM Playcounttable JOIN Tracktable USING (TTindex)
-		JOIN Artisttable USING (Artistindex)
-		WHERE ".sql_two_weeks_include(intval($days/2)).
-		" AND Uri IS NOT NULL GROUP BY Artistindex ORDER BY ".SQL_RANDOM_SORT." LIMIT ".intval($limit/2));
-	$resultset = array_merge($resultset, $result);
+	// $result = generic_sql_query(
+	// 	"SELECT 0 AS playtotal, Artistname, Title, Uri
+	// 	FROM Playcounttable JOIN Tracktable USING (TTindex)
+	// 	JOIN Artisttable USING (Artistindex)
+	// 	WHERE ".sql_two_weeks_include(intval($days/2)).
+	// 	" AND Uri IS NOT NULL GROUP BY Artistindex ORDER BY ".SQL_RANDOM_SORT." LIMIT ".intval($limit/2));
+	// $resultset = array_merge($resultset, $result);
 
 	// 3. Get the top tracks overall
 	$tracks = get_track_charts(intval($limit/2));

@@ -739,6 +739,7 @@ var layoutProcessor = function() {
             $('#pluginplaylistslist .enter').not('.combobox-entry').parent().parent().parent().parent().parent().addClass('brick_wide helpfulalbum');
             $('#pluginplaylistslist .collectionitem').not('.brick_wide').children('.menuitem.containerbox').addClass('vertical helpfulalbum');
             $('#pluginplaylistslist .collectionitem i.icon-toggle-closed').parent().removeClass('vertical');
+            $('#pluginplaylistslist div[class$="-stars"]').removeClass('svg-square').addClass('rating-icon-big').css('height', '32px');
             $('#pluginplaylistslist .toggledown').each(function() {
                 var s = $(this).prev();
                 $(this).detach().addClass('helpfulalbum').appendTo(s);
