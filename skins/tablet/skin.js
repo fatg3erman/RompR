@@ -14,7 +14,16 @@ jQuery.fn.makeTagMenu = function(options) {
         if (settings.textboxextraclass) {
             tbc = tbc + " "+settings.textboxextraclass;
         }
-        $(this).append(settings.labelhtml);
+        if ($(this).is('td')) {
+            $(this).prev().html(settings.labelhtml);
+            var wrapper = $('<div>', {class: 'containerbox dropdown-container'}).appendTo($(this));
+            var holder = $('<div>', { class: "expand"}).appendTo(wrapper);
+            var dropbutton = $('<i>', { class: 'fixed combo-button'}).appendTo(wrapper);
+        } else {
+            $(this).append(settings.labelhtml);
+            var holder = $('<div>', { class: "expand"}).appendTo($(this));
+            var dropbutton = $('<i>', { class: 'fixed combo-button'}).appendTo($(this));
+        }
         var holder = $('<div>', { class: "expand"}).appendTo($(this));
         var dropbutton = $('<i>', { class: 'fixed combo-button'}).appendTo($(this));
         var textbox = $('<input>', { type: "text", class: tbc, name: settings.textboxname }).appendTo(holder);
