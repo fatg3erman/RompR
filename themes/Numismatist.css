@@ -126,13 +126,13 @@ body.desktop #thetopbit
 }
 
 #pset {
-    background-color: rgba(150, 150, 150, 0.99);
+    background-color: rgba(150, 150, 150, 0.75);
 }
 #pmaxset {
-    background-color: rgba(220, 220, 220, 0.99);
+    background-color: rgba(220, 220, 220, 0.75);
 }
 #pbgset {
-    background-color: rgba(240, 240, 240, 0.99);
+    background-color: rgba(240, 240, 240, 0.75);
 }
 
 #custombackground
