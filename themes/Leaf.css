@@ -107,10 +107,10 @@ a:hover,a:active
 }
 
 #pset {
-    background-color: rgba(77, 80, 17, 0);
+    background-color: rgba(77, 80, 17, 0.99);
 }
 #pmaxset {
-    background-color: rgba(136, 142, 30, 0);
+    background-color: rgba(136, 142, 30, 0.99);
 }
 
 /*

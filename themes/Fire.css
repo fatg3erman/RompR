@@ -126,11 +126,11 @@ input[type="text"] {
 }
 
 #pset {
-    background-color: rgba(147, 61, 24, 0);
+    background-color: rgba(147, 61, 24, 0.99);
 }
 
 #pmaxset {
-    background-color: rgba(255, 238, 95, 0);
+    background-color: rgba(255, 238, 95, 0.99);
 }
 
 /*

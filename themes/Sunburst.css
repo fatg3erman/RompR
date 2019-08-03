@@ -77,7 +77,7 @@ select
 }
 
 #pset {
-    background-color: rgba(255, 22, 0, 0);
+    background-color: rgba(255, 22, 0, 0.99);
 }
 
 #notifications

@@ -391,13 +391,17 @@ function setChooserButtons() {
 
 function parsePsetCss(item, dflt) {
     // Save looking these up every time, it's quite slow
+    // Note that if aplha is set to 1, it doesn't come back. So use 0.99
     var c = $(item).css('background-color');
-    var regexp = /rgba\((\d+),\s*(\d+),\s*(\d+),\s*(\d+)\)/;
+    var regexp = /rgba\((\d+),\s*(\d+),\s*(\d+),\s*(.*)\s*\)/;
     var match = regexp.exec(c);
     // If no style is set it comes back as 0,0,0 so we must catch that
     // if you want black progress bars use 1,1,1
-    if (match && match[1] && match[2] && match[3] && (parseInt(match[1])+parseInt(match[2])+parseInt(match[3]) > 0)) {
-        return {r: parseInt(match[1]), g: parseInt(match[2]), b: parseInt(match[3])};
+    if (match && match[1] && match[2] && match[3] && match[4] && (parseInt(match[1])+parseInt(match[2])+parseInt(match[3]) > 0)) {
+        if (match[4] == '0.99') {
+            match[4] = 1;
+        }
+        return {r: parseInt(match[1]), g: parseInt(match[2]), b: parseInt(match[3]), a: match[4]};
     } else {
         return dflt;
     }
@@ -405,16 +409,20 @@ function parsePsetCss(item, dflt) {
 
 function getrgbs(percent,min) {
 
-    var mincolours = {r: 100, g: 50, b: 1};
-    var maxcolours = {r: 255, g: 75, b: 1};
+    var mincolours = {r: 100, g: 50, b: 1, a: 1};
+    var maxcolours = {r: 255, g: 75, b: 1, a: 1};
+    var bgdcolours = {r: 0,   g: 0,  b: 0, a: 0};
     if (prefs.rgbs == null) {
         mincolours = parsePsetCss('#pset', mincolours);
         prefs.rgbs = mincolours;
         maxcolours = parsePsetCss('#pmaxset', maxcolours);
         prefs.maxrgbs = maxcolours;
+        bgdcolours = parsePsetCss('#pbgset', bgdcolours);
+        prefs.bgdrgbs = bgdcolours;
     } else {
         mincolours = prefs.rgbs;
         maxcolours = prefs.maxrgbs;
+        bgdcolours = prefs.bgdrgbs;
     }
     if (typeof percent != "number") {
         percent = parseFloat(percent);
@@ -434,15 +442,20 @@ function getrgbs(percent,min) {
     var highg = Math.round(mincolours.g + variance.g*maxfraction);
     var highb = Math.round(mincolours.b + variance.b*maxfraction);
     // debug.log('COLOURS','dr',variance.r,'dg',variance.g,'db',variance.b,'lowr',lowr,'lowg',lowg,'lowb',lowb,'highr',highr,'highg',highg,'highb',highb,'minf',minfraction,'maxf',maxfraction);
-    var lowalpha = 0.8;
-    var highalpha = 1;
+    var bgd = "rgba("+bgdcolours.r+","+bgdcolours.g+","+bgdcolours.b+", "+bgdcolours.a+")";
+    var lowalpha = mincolours.a;
+    var highalpha = maxcolours.a;
     if (min == 0) {
-        return "rgba("+lowr+","+lowg+","+lowb+","+lowalpha+") 0%,rgba("+highr+","+highg+","+highb+","+highalpha+") "+percent+
-            "%,rgba(0,0,0,0.1) "+percent+"%,rgba(0,0,0,0.1) 100%)";
+        return  "rgba("+lowr+","+lowg+","+lowb+","+lowalpha+") 0%,"+
+                "rgba("+highr+","+highg+","+highb+","+highalpha+") "+percent+"%,"+
+                bgd+" "+percent+"%,"+bgd+" 100%)";
     } else {
-        return "rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.1) "+min+"%, rgba("+lowr+","+lowg+","+lowb+","+lowalpha+") "+min+"%,"+
-                "rgba("+highr+","+highg+","+highb+","+highalpha+") "+percent+
-                "%,rgba(0,0,0,0.1) "+percent+"%,rgba(0,0,0,0.1) 100%)";
+        return  bgd+" 0%, "+
+                bgd+" "+min+"%, "+
+                "rgba("+lowr+","+lowg+","+lowb+","+lowalpha+") "+min+"%,"+
+                "rgba("+highr+","+highg+","+highb+","+highalpha+") "+percent+"%,"+
+                bgd+" "+percent+"%,"+
+                bgd+" 100%)";
     }
 
 }

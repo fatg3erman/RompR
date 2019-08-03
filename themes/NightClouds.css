@@ -151,7 +151,7 @@ a.album:hover,a.album:active
 }
 
 #pset {
-    background-color: rgba(73, 47, 24, 0);
+    background-color: rgba(73, 47, 24, 0.99);
 }
 
 .playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {

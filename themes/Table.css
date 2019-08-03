@@ -57,10 +57,10 @@
 }
 
 #pset {
-    background-color: rgba(54, 61, 64, 0);
+    background-color: rgba(54, 61, 64, 0.99);
 }
 #pmaxset {
-    background-color: rgba(121, 105, 89, 0);
+    background-color: rgba(121, 105, 89, 0.99);
 }
 
 body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input

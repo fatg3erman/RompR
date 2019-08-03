@@ -142,10 +142,10 @@ input[type="text"]:focus {
 }
 
 #pset {
-    background-color: rgba(155, 187, 222, 0);
+    background-color: rgba(155, 187, 222, 0.99);
 }
 #pmaxset {
-    background-color: rgba(252, 189, 104, 0);
+    background-color: rgba(252, 189, 104, 0.99);
 }
 
 /*

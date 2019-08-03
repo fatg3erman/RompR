@@ -120,10 +120,10 @@ a.album:hover,a.album:active
 }
 
 #pset {
-    background-color: rgba(2, 23, 40, 0);
+    background-color: rgba(2, 23, 40, 0.99);
 }
 #pmaxset {
-    background-color: rgba(200, 200, 200, 0);
+    background-color: rgba(200, 200, 200, 0.99);
 }
 
 #filemenu

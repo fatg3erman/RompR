@@ -117,10 +117,10 @@ select
 }
 
 #pset {
-    background-color: rgba(23, 38, 77, 0);
+    background-color: rgba(23, 38, 77, 0.99);
 }
 #pmaxset {
-    background-color: rgba(155, 172, 227, 0);
+    background-color: rgba(155, 172, 227, 0.99);
 }
 
 a.album:visited

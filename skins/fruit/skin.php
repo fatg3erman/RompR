@@ -1,6 +1,7 @@
 <body class="desktop">
 <div id="pset" class="invisible"></div>
 <div id="pmaxset" class="invisible"></div>
+<div id="pbgset" class="invisible"></div>
 <div id="notifications"></div>
 
 <div class="fullwidth containerbox" id="thetopbit">

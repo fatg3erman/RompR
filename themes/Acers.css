@@ -107,11 +107,11 @@ select:hover {
 
 /* reddish-purple */
 #pset {
-    background-color: rgba(142, 57, 109, 0);
+    background-color: rgba(142, 57, 109, 0.99);
 }
 /* yellowy-brown */
 #pmaxset {
-    background-color: rgba(151, 139, 106, 0);
+    background-color: rgba(151, 139, 106, 0.99);
 }
 
 /*

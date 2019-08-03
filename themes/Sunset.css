@@ -171,10 +171,10 @@ a.album:hover,a.album:active
 }
 
 #pset {
-    background-color: rgba(139, 32, 23, 0);
+    background-color: rgba(139, 32, 23, 0.99);
 }
 #pmaxset {
-    background-color: rgba(173, 100, 44, 0);
+    background-color: rgba(173, 100, 44, 0.99);
 }
 
 .playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {

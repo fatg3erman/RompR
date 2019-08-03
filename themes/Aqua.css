@@ -68,11 +68,11 @@ select {
 =====================================================================
 */
 #pset {
-    background-color: rgba(192, 208, 231, 0);
+    background-color: rgba(192, 208, 231, 0.99);
 }
 
 #pmaxset {
-    background-color: rgba(232, 235, 240, 0);
+    background-color: rgba(232, 235, 240, 0.99);
 }
 
 #custombackground {
