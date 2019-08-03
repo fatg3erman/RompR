@@ -1,11 +1,13 @@
 
 <?php
+print '<table>';
 foreach ($sterms as $label => $term) {
-    print '<div class="containerbox dropdown-container searchitem" name="'.$term.'">';
-	print '<div class="fixed searchlabel"><span class="slt"><b>'.ucwords(strtolower(get_int_text($label))).'</b></span></div>';
-    print '<div class="expand"><input class="searchterm enter clearbox" name="'.$term.'" type="text" /></div>';
-    print '</div>';
+    print '<tr class="searchitem" name="'.$term.'">';
+    print '<td class="searchlabel slt"><b>'.ucwords(strtolower(get_int_text($label))).'</td>';
+    print '<td width="100%"><input class="searchterm enter clearbox" name="'.$term.'" type="text" /></td>';
+    print '</tr>';
 }
+print '</table>'
 
 ?>
 <div class="containerbox dropdown-container combobox">
@@ -33,7 +35,6 @@ print '<div class="expand">Advanced Options...</div>';
 print '</div>';
 
 print '<div id="advsearchoptions" class="toggledown invisible marged">';
-
     print '<div class="styledinputs">';
     print '<div class="containerbox padright" style="margin-top:0.5em;margin-bottom:0.5em"><b>'.get_int_text('label_displayresultsas').'</b></div>';
     print '<div class="marged">';
@@ -43,10 +44,4 @@ print '<div id="advsearchoptions" class="toggledown invisible marged">';
     <label for="resultsastree">'.ucfirst(get_int_text('label_resultstree')).'</label>
     </div>
     </div>';
-
-    // print '<div class="containerbox">
-    //     <div class="expand"></div>
-    //     <button style="margin-right:4px" class="fixed" onclick="player.controller.search(\'find\')">'.get_int_text("button_findexact").'</button>
-    //     </div>';
-
 ?>

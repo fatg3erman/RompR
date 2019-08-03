@@ -114,6 +114,13 @@ var crazyRadioManager = function() {
 
 var spotiCrazyRadio = function() {
 
+    function addParameter(name, table) {
+        var row = $('<tr>', {class: 'ucfirst'}).appendTo(table);
+        row.append('<td><b>'+name+'</b></td>');
+        var h = $('<td>', {width: '100%'}).appendTo(row);
+        var s = $('<div>', {name: name, class: 'spotiradioslider'}).appendTo(h).rangechooser();
+    }
+
     return {
 
         setup: function() {
@@ -133,53 +140,10 @@ var spotiCrazyRadio = function() {
                     populatefunction: populateSpotiTagMenu
                 });
 
-                var html = '<div class="containerbox dropdown-container spacer menuitem">';
-                html += '<div class="fixed padright spl"><span class="bacon alignmid">Energy</span></div>';
-                html += '<div class="expand dropdown-holder" id="energyo">';
-                html += '</div>';
-                html += '</div>';
-                $("#pluginplaylists_crazy").append(html);
-                var b = $('<div name="energy" class="spotiradioslider"></div>').appendTo("#energyo").rangechooser();
-
-                var html = '<div class="containerbox dropdown-container spacer menuitem">';
-                html += '<div class="fixed padright spl"><span class="bacon alignmid">Danceability</span></div>';
-                html += '<div class="expand dropdown-holder" id="danceo">';
-                html += '</div>';
-                html += '</div>';
-                $("#pluginplaylists_crazy").append(html);
-                var b = $('<div name="danceability" class="spotiradioslider"></div>').appendTo("#danceo").rangechooser();
-
-                var html = '<div class="containerbox dropdown-container spacer menuitem">';
-                html += '<div class="fixed padright spl"><span class="bacon alignmid">Happiness</span></div>';
-                html += '<div class="expand dropdown-holder" id="happyo">';
-                html += '</div>';
-                html += '</div>';
-                $("#pluginplaylists_crazy").append(html);
-                var b = $('<div name="valence" class="spotiradioslider"></div>').appendTo("#happyo").rangechooser();
-
-                var html = '<div class="containerbox dropdown-container spacer menuitem">';
-                html += '<div class="fixed padright spl"><span class="bacon alignmid">Instrumentalness</span></div>';
-                html += '<div class="expand dropdown-holder" id="instro">';
-                html += '</div>';
-                html += '</div>';
-                $("#pluginplaylists_crazy").append(html);
-                var b = $('<div name="instrumentalness" class="spotiradioslider"></div>').appendTo("#instro").rangechooser();
-
-                var html = '<div class="containerbox dropdown-container spacer menuitem">';
-                html += '<div class="fixed padright spl"><span class="bacon alignmid">Acousticness</span></div>';
-                html += '<div class="expand dropdown-holder" id="acko">';
-                html += '</div>';
-                html += '</div>';
-                $("#pluginplaylists_crazy").append(html);
-                var b = $('<div name="acousticness" class="spotiradioslider"></div>').appendTo("#acko").rangechooser();
-
-                var html = '<div class="containerbox dropdown-container spacer menuitem">';
-                html += '<div class="fixed padright spl"><span class="bacon alignmid">BPM</span></div>';
-                html += '<div class="expand dropdown-holder" id="tempoo">';
-                html += '</div>';
-                html += '</div>';
-                $("#pluginplaylists_crazy").append(html);
-                var b = $('<div name="tempo" class="spotiradioslider"></div>').appendTo("#tempoo").rangechooser({range: 250});
+                var table = $('<table>').appendTo('#pluginplaylists_crazy');
+                ['energy', 'danceability', 'valence', 'instrumentalness', 'acousticness', 'tempo'].forEach(function(i) {
+                    addParameter(i, table)
+                });
 
                 html = '<div class="containerbox dropdown-container spacer menuitem" class="bacon"><div class="expand"></div>';
                 html += '<button class="fixed alignmid" '+

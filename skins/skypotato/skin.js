@@ -174,12 +174,7 @@ var layoutProcessor = function() {
                 layoutProcessor.adjustBoxSizes();
             });
             switch (source) {
-                case'searcher':
-                    setSearchLabelWidth();
-                    break;
-
                 case 'pluginplaylistslist':
-                    setSpotiLabelWidth();
                     layoutProcessor.adjustBoxSizes();
                     break;
 

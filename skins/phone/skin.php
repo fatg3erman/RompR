@@ -236,7 +236,7 @@ if ($prefs['player_backend'] == "mopidy") {
 <?php
 if ($prefs['player_backend'] == "mopidy") {
     print '<div class="textcentre textunderline"><b>Music From Everywhere</b></div>';
-    print '<div id="radiodomains" class="pref"><b>Play From These Sources:</b></div>';
+    print '<div id="radiodomains" class="pref" style="padding-left:8px"><b>Play From These Sources:</b></div>';
 }
 ?>
 <div class="fullwidth" id="pluginplaylists_everywhere"></div>

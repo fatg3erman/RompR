@@ -415,14 +415,14 @@ function fakeClickOnInput(jq) {
 function setAvailableSearchOptions() {
     if (!prefs.tradsearch) {
         $('.searchitem').not('[name="any"]').fadeOut('fast').find('input').val('');
-        $('.searchlabel').not('.nohide').hide(0, setSearchLabelWidth);
+        $('.searchlabel').not('.nohide').hide(0);
     } else if (prefs.searchcollectiononly) {
         $('.searchitem').not(':visible').not('[name="genre"]').not('[name="composer"]').not('[name="performer"]').fadeIn('fast');
         $('.searchitem[name="genre"]:visible,.searchitem[name="composer"]:visible,.searchitem[name="performer"]:visible').fadeOut('fast').find('input').val('');
-        $('.searchlabel').show(0, setSearchLabelWidth);
+        $('.searchlabel').show(0);
     } else {
         $('.searchitem').not(':visible').fadeIn('fast');
-        $('.searchlabel').show(0, setSearchLabelWidth);
+        $('.searchlabel').show(0);
     }
 }
 

@@ -32,16 +32,7 @@ function showHistory() {
 var layoutProcessor = function() {
 
     function showPanel(source) {
-        $('#'+source).fadeIn('fast', function() {
-            switch (source) {
-                case'searcher':
-                    setSearchLabelWidth();
-                    break;
-
-                case 'pluginplaylistslist':
-                    setSpotiLabelWidth();
-            }
-        });
+        $('#'+source).fadeIn('fast');
     }
 
     function flashTrack(uri, album) {

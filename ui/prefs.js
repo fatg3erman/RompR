@@ -740,8 +740,13 @@ var prefs = function() {
             if (typeof(layoutProcessor) != 'undefined') {
                 layoutProcessor.adjustLayout();
             }
-            setSearchLabelWidth();
-            setSpotiLabelWidth();
+            if (prefs.advanced_search_open) {
+                $("#advsearchoptions").show();
+                $('[name="advsearchoptions"]').toggleOpen();
+            } else {
+                $("#advsearchoptions").hide();
+                $('[name="advsearchoptions"]').toggleClosed();
+            }
             browser.rePoint();
         },
 

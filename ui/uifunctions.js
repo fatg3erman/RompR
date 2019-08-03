@@ -472,43 +472,6 @@ function populateSpotiTagMenu(callback) {
     );
 }
 
-function setSearchLabelWidth() {
-    debug.trace("UI","Setting Search Label Widths");
-    var w = 0;
-    $.each($(".slt:visible"), function() {
-        if ($(this).width() > w) {
-            w = $(this).width();
-        }
-    });
-    w += 8;
-    $(".searchlabel:visible").css("width", w+"px");
-    $(".searchlabel").not(':visible').css("width", "0px");
-    // if (prefs.search_limit_limitsearch) {
-    //     $("#mopidysearchdomains").show();
-    // } else {
-    //     $("#mopidysearchdomains").hide();
-    // }
-    if (prefs.advanced_search_open) {
-        $("#advsearchoptions").show();
-        $('[name="advsearchoptions"]').toggleOpen();
-    } else {
-        $("#advsearchoptions").hide();
-        $('[name="advsearchoptions"]').toggleClosed();
-    }
-}
-
-function setSpotiLabelWidth() {
-    debug.trace("UI","Setting Spotify Label Widths");
-    var w = 0;
-    $.each($(".bacon"), function() {
-        if ($(this).width() > w) {
-            w = $(this).width();
-        }
-    });
-    w += 8;
-    $(".spl").css("width", w+"px");
-}
-
 function displayRating(where, what) {
     $(where).removeClass("icon-0-stars icon-1-stars icon-2-stars icon-3-stars icon-4-stars icon-5-stars");
     if (what !== false) {

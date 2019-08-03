@@ -514,16 +514,6 @@ var layoutProcessor = function() {
             $('#'+source).removeClass('invisible');
             prefs.save({chooser: source});
             layoutProcessor.adjustLayout();
-            switch (source) {
-                case'searchpane':
-                    setSearchLabelWidth();
-                    break;
-
-                case 'pluginplaylistholder':
-                    setSpotiLabelWidth();
-                    break;
-
-            }
         },
 
         adjustLayout: function() {
