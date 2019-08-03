@@ -87,7 +87,11 @@ jQuery.fn.makeTagMenu = function(options) {
         if (settings.textboxextraclass) {
             tbc = tbc + " "+settings.textboxextraclass;
         }
-        $(this).append(settings.labelhtml);
+        if ($(this).is('td')) {
+            $(this).prev().html(settings.labelhtml);
+        } else {
+            $(this).append(settings.labelhtml);
+        }
         var holder = $('<div>', { class: "expand"}).appendTo($(this));
         var textbox = $('<input>', { type: "text", class: tbc, name: settings.textboxname }).
             appendTo(holder);
