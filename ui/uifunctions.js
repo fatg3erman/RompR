@@ -470,11 +470,11 @@ function setSearchLabelWidth() {
     w += 8;
     $(".searchlabel:visible").css("width", w+"px");
     $(".searchlabel").not(':visible').css("width", "0px");
-    if (prefs.search_limit_limitsearch) {
-        $("#mopidysearchdomains").show();
-    } else {
-        $("#mopidysearchdomains").hide();
-    }
+    // if (prefs.search_limit_limitsearch) {
+    //     $("#mopidysearchdomains").show();
+    // } else {
+    //     $("#mopidysearchdomains").hide();
+    // }
     if (prefs.advanced_search_open) {
         $("#advsearchoptions").show();
         $('[name="advsearchoptions"]').toggleOpen();

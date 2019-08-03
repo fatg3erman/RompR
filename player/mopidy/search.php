@@ -23,10 +23,10 @@ print '<input class="autoset toggle" type="checkbox" id="searchcollectiononly">
 print '</div>';
 
 print '<div id="searchdomaincontrol" class="podoptions containerbox padright dropdown-container styledinputs" style="padding-top:4px">';
-print '<input class="autoset toggle openmenu" type="checkbox" id="search_limit_limitsearch" name="mopidysearchdomains"><label for="search_limit_limitsearch">'.get_int_text("label_limitsearch").'</label>';
+print '<input class="autoset toggle" type="checkbox" id="search_limit_limitsearch"><label for="search_limit_limitsearch">'.get_int_text("label_limitsearch").'</label>';
 print '</div>';
 
-print '<div class="toggledown marged styledinputs" id="mopidysearchdomains" style="margin-top:4px">';
+print '<div class="marged styledinputs tiny" id="mopidysearchdomains" style="margin-top:4px">';
 print '</div>';
 
 print '</div>';
