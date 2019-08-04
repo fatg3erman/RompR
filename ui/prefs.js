@@ -231,6 +231,7 @@ var prefs = function() {
     }
 
     function loadBackgroundImages(theme) {
+        clearTimeout(backgroundTimer);
         $('#cusbgname').empty();
         $('#cusbgcontrols').empty();
         $('#backimageposition').hide();
