@@ -53,7 +53,7 @@ var alarmclock = function() {
 		$('<input>', {type: 'checkbox', id: 'alarmon_'+index}).appendTo(ondiv);
 		$('<label>', {for: 'alarmon_'+index, class: 'alarmclock', style: 'display:inline'}).appendTo(ondiv);
 
-		$('<div>', {class: 'fixed playlistrow2 menuitem fullwidth', id: 'alarm_desc_'+index}).appendTo(container).css({'font-weight': 'normal'});
+		$('<div>', {class: 'fixed playlistrow2 menuitem fullwidth alarmdescription', id: 'alarm_desc_'+index}).appendTo(container).css({'font-weight': 'normal'});
 
 		$('#alarmon_'+index).prop('checked', alarm.alarmon);
 		update_timebox(index);
@@ -89,6 +89,8 @@ var alarmclock = function() {
 				}
 				descbox.html(dy.join(', '));
 			}
+		} else {
+			descbox.html('');
 		}
 	}
 
@@ -181,6 +183,8 @@ var alarmclock = function() {
 				prefs.alarms[index][param] = !box.is(':checked');
 				switch (param) {
 					case 'alarmrepeat':
+						update_descbox(index);
+						// fall through
 					case 'alarmplayitem':
 						buttonOpacity(element.parent().next(), !box.is(':checked'));
 						break;
@@ -451,7 +455,6 @@ var alarmclock = function() {
 				return false;
 			}
 			var holder = uiHelper.makeDropHolder('alarmpanel', d, true);
-			// var holder = $('<div>', {class: 'topdropmenu dropshadow rightmenu normalmenu stayopen dontstealmyclicks', id: 'alarmpanel'}).appendTo(d);
 			holder.append('<div class="textcentre configtitle"><b>'+language.gettext('button_alarm')+'</b></div>');
 			topofwindow = $('<input>', {type: "hidden", class: "helplink", value: "https://fatg3erman.github.io/RompR/Alarm-And-Sleep"}).appendTo(holder);
 			fillWindow();

@@ -2243,3 +2243,8 @@ div.unplayable {
 .snapclienthost {
 	font-size: 85%
 }
+
+.alarmdescription {
+	line-height: 1em;
+	height:1.2em;
+}

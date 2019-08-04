@@ -305,12 +305,6 @@ tr.clickaddtrack:hover
 div.topdropmenu
 {
     background-color:rgba(1,133,215,0.9);
-    color:white;
-}
-
-div.topdropmenu td
-{
-    color:white;
 }
 
 .configtitle
