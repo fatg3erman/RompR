@@ -261,9 +261,10 @@ var infobar = function() {
 
             aImg.onload = function() {
                 debug.mark("ALBUMPICTURE","Image Loaded",$(this).attr("src"));
-                $('#albumpicture').attr("src", $(this).attr("src")).fadeIn('fast', function() {
-                    setTimeout(layoutProcessor.adjustLayout, 500);
-                });
+                $('#albumpicture').attr("src", $(this).attr("src"));
+                // $('#albumpicture').attr("src", $(this).attr("src")).fadeIn('fast', function() {
+                //     setTimeout(layoutProcessor.adjustLayout, 500);
+                // });
                 if (!$('#albumpicture').hasClass('clickicon')) {
                     $('#albumpicture').addClass('clickicon');
                 }

@@ -1,6 +1,20 @@
+function rendered() {
+    debug.log('ALBUMPICTURE', 'Rendered');
+    $('#albumpicture').fadeIn('fast');
+    layoutProcessor.adjustLayout();
+}
+
+function startRender() {
+    debug.log('ALBUMPICTURE', 'Start Render');
+    requestAnimationFrame(rendered);
+}
+
 $(document).ready(function(){
     debug.log("INIT","Document Ready Event has fired");
-    $('#albumpicture').fadeOut(0);
+    $('#albumpicture').on('load', function() {
+        debug.log('ALBUMPICTURE', 'Load event fired');
+        requestAnimationFrame(startRender);
+    });
     get_geo_country();
     if (prefs.do_not_show_prefs) {
         $('.choose_prefs').remove();
