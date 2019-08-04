@@ -545,6 +545,7 @@ var layoutProcessor = function() {
             }
             var np = $('#nowplaying');
             var nptop = np.offset().top;
+            debug.mark('LAYOUT', 'nptop is',nptop);
             if (nptop > 0) {
                 var t = infoheight - nptop + hh;
                 np.css({height: t+"px"});
