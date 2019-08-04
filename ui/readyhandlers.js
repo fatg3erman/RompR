@@ -1,5 +1,6 @@
 $(document).ready(function(){
     debug.log("INIT","Document Ready Event has fired");
+    $('#albumpicture').fadeOut(0);
     get_geo_country();
     if (prefs.do_not_show_prefs) {
         $('.choose_prefs').remove();

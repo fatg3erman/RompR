@@ -74,7 +74,7 @@ printOutputCheckboxes();
 <div id="infobar" class="mainpane invisible">
     <div id="toomanywrappers">
         <div id="albumcover">
-            <img id="albumpicture" style="opacity:0"/>
+            <img id="albumpicture" />
         </div>
         <div id="amontobin" class="clearfix">
             <div id="stars" class="invisible">
