@@ -112,7 +112,7 @@ var prefs = function() {
         bgImagesLoaded++;
         if (bgImagesLoaded == 2) {
             var bgp = prefs.bgimgparms[prefs.theme];
-            clearCustomBackground();
+            // clearCustomBackground();
             setBackgroundCss(bgp);
             bgp.lastchange = Date.now();
             prefs.save({bgimgparms: prefs.bgimgparms});
@@ -362,6 +362,7 @@ var prefs = function() {
     }
 
     function clearCustomBackground() {
+        debug.log('PREFS', 'Clearing Custom background');
         $('style[id="phoneback"]').remove();
         $('style[id="background"]').remove();
         $('style[id="phonebackl"]').remove();
@@ -371,21 +372,38 @@ var prefs = function() {
     }
 
     function setBackgroundCss(bgp) {
+        // Trying to reduce flickering using all kinds of stuff - pre-load images, update (not remove/recreate) the css
+        ['background', 'phoneback', 'backgroundl', 'phonebackl', 'backgroundp', 'phonebackp'].forEach(function(i) {
+            if ($('style[id="'+i+'"]').length == 0) {
+                debug.log('PREFS', 'Creating background style', i);
+                $('<style>', {id: i}).appendTo('head');
+            }
+        });
         if (backgroundImages.portrait.length == 0) {
-            $('<style id="background">html { background-image: url("'+backgroundImages.landscape[bgp.landscape]+'"); background-position: '+bgp.position+' }</style>').appendTo('head');
-            $('<style id="phoneback">body.phone .dropmenu { background-image: url("'+backgroundImages.landscape[bgp.landscape]+'"); background-position: '+bgp.position+' }</style>').appendTo('head');
+            $('style[id="background"]').html('html { background-image: url("'+backgroundImages.landscape[bgp.landscape]+'"); background-position: '+bgp.position+' }');
+            $('style[id="phoneback"]').html('body.phone .dropmenu { background-image: url("'+backgroundImages.landscape[bgp.landscape]+'"); background-position: '+bgp.position+' }');
+            $('style[id="backgroundl"]').html('');
+            $('style[id="phonebackl"]').html('');
+            $('style[id="backgroundp"]').html('');
+            $('style[id="phonebackp"]').html('');
             $('span.bgimgname').removeClass('selected');
             $('input.bgimagefile[value="'+backgroundImages.landscape[bgp.landscape]+'"]').prev().addClass('selected');
         } else if (backgroundImages.landscape.length == 0) {
-            $('<style id="background">html { background-image: url("'+backgroundImages.portrait[bgp.portrait]+'"); background-position: '+bgp.position+' }</style>').appendTo('head');
-            $('<style id="phoneback">body.phone .dropmenu { background-image: url("'+backgroundImages.portrait[bgp.portrait]+'"); background-position: '+bgp.position+' }</style>').appendTo('head');
+            $('style[id="background"]').html('html { background-image: url("'+backgroundImages.portrait[bgp.portrait]+'"); background-position: '+bgp.position+' }');
+            $('style[id="phoneback"]').html('body.phone .dropmenu { background-image: url("'+backgroundImages.portrait[bgp.portrait]+'"); background-position: '+bgp.position+' }');
+            $('style[id="backgroundl"]').html('');
+            $('style[id="phonebackl"]').html('');
+            $('style[id="backgroundp"]').html('');
+            $('style[id="phonebackp"]').html('');
             $('span.bgimgname').removeClass('selected');
             $('input.bgimagefile[value="'+backgroundImages.portrait[bgp.portrait]+'"]').prev().addClass('selected');
         } else {
-            $('<style id="backgroundl">@media screen and (orientation: landscape) { html { background-image: url("'+backgroundImages.landscape[bgp.landscape]+'"); background-position: '+bgp.position+' } }</style>').appendTo('head');
-            $('<style id="phonebackl">@media screen and (orientation: landscape) { body.phone .dropmenu { background-image: url("'+backgroundImages.landscape[bgp.landscape]+'"); background-position: '+bgp.position+' } }</style>').appendTo('head');
-            $('<style id="backgroundp">@media screen and (orientation: portrait) { html { background-image: url("'+backgroundImages.portrait[bgp.portrait]+'"); background-position: '+bgp.position+' } }</style>').appendTo('head');
-            $('<style id="phonebackp">@media screen and (orientation: portrait) { body.phone .dropmenu { background-image: url("'+backgroundImages.portrait[bgp.portrait]+'"); background-position: '+bgp.position+' } }</style>').appendTo('head');
+            $('style[id="backgroundl"]').html('@media screen and (orientation: landscape) { html { background-image: url("'+backgroundImages.landscape[bgp.landscape]+'"); background-position: '+bgp.position+' } }');
+            $('style[id="phonebackl"]').html('@media screen and (orientation: landscape) { body.phone .dropmenu { background-image: url("'+backgroundImages.landscape[bgp.landscape]+'"); background-position: '+bgp.position+' } }');
+            $('style[id="backgroundp"]').html('@media screen and (orientation: portrait) { html { background-image: url("'+backgroundImages.portrait[bgp.portrait]+'"); background-position: '+bgp.position+' } }');
+            $('style[id="phonebackp"]').html('@media screen and (orientation: portrait) { body.phone .dropmenu { background-image: url("'+backgroundImages.portrait[bgp.portrait]+'"); background-position: '+bgp.position+' } }');
+            $('style[id="background"]').html('');
+            $('style[id="phoneback"]').html('');
             $('span.bgimgname').removeClass('selected');
             $('input.bgimagefile[value="'+backgroundImages.landscape[bgp.landscape]+'"]').prev().addClass('selected');
             $('input.bgimagefile[value="'+backgroundImages.portrait[bgp.portrait]+'"]').prev().addClass('selected');
