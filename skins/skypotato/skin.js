@@ -758,7 +758,6 @@ var layoutProcessor = function() {
             setDraggable("#podcastslist");
             setDraggable("#audiobooks");
             setDraggable("#somafmlist");
-            setDraggable("#bbclist");
             setDraggable("#communityradiolist");
             setDraggable("#icecastlist");
             setDraggable("#tuneinlist");

@@ -6,6 +6,7 @@
 function rendered() {
     debug.log('ALBUMPICTURE', 'Rendered');
     $('#albumpicture').fadeIn('fast');
+    $('#albumpicture').removeClass('clickicon').addClass('clickicon').off('click').on('click', infobar.albumImage.displayOriginalImage);
     layoutProcessor.adjustLayout();
 }
 

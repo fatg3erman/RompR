@@ -262,10 +262,6 @@ var infobar = function() {
             aImg.onload = function() {
                 debug.mark("ALBUMPICTURE","Image Loaded",$(this).attr("src"));
                 $('#albumpicture').attr("src", $(this).attr("src"));
-                if (!$('#albumpicture').hasClass('clickicon')) {
-                    $('#albumpicture').addClass('clickicon');
-                }
-                $('#albumpicture').off('click').on('click', infobar.albumImage.displayOriginalImage);
             }
 
             aImg.onerror = function() {
@@ -470,7 +466,7 @@ var infobar = function() {
             if (info.type != 'stream') {
                 $("#addtoplaylist").fadeIn('fast');
             } else {
-                $("#saddtoplaylist").fadeOut('fast');
+                $("#addtoplaylist").fadeOut('fast');
             }
             if (info.Id === -1) {
                 $("#stars").fadeOut('fast');

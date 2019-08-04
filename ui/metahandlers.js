@@ -165,6 +165,7 @@ var metaHandlers = function() {
 		fromSpotifyData: {
 
 			addAlbumTracksToCollection: function(data, albumartist) {
+				debug.mark('AAGH','Adding an album');
 			    var thisIsMessy = new Array();
 			    if (data.tracks && data.tracks.items) {
 			        debug.log("AAAGH","Adding Album From",data);

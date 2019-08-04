@@ -18,18 +18,6 @@ This is a list of Favourite radio stations. It can be re-ordered by dragging ite
 
 You'll be given a list of stations. You can play a station's highest quality stream just by double-clicking the station name. Opening up the station will give you more information as well as choice of streams in order of quality (highest quality first, lowest bandwidth last).
 
-## Local and National Radio
-
-This section uses the Dirble online radio directory to search thousands of radio stations.
-
-![](images/natradio.png)
-
-From the dropdown menu at the top you can select a country or genre.
-
-The Search panel will search for the terms you enter *within the country or genre*.
-
-As with Soma FM, you can play a station just by double-clicking the station name. Opening up the station will give you more information as well as choice of streams.
-
 ## TuneIn Radio Directory
 
 This is a directory of international radio stations and podcasts.
