@@ -107,22 +107,6 @@ var prefs = function() {
         'Day': 86400000
     }
 
-    function bgImageLoaded() {
-        debug.trace('PREFS', 'background Image Loaded');
-        bgImagesLoaded++;
-        if (bgImagesLoaded == 2) {
-            var bgp = prefs.bgimgparms[prefs.theme];
-            // clearCustomBackground();
-            setBackgroundCss(bgp);
-            bgp.lastchange = Date.now();
-            prefs.save({bgimgparms: prefs.bgimgparms});
-            setBackgroundTimer(bgp.timeout);
-        }
-    }
-
-    portraitImage.onload = bgImageLoaded;
-    landscapeImage.onload = bgImageLoaded;
-
     function offerToTransferPlaylist() {
         var fnarkle = new popup({
             css: {
@@ -273,7 +257,7 @@ var prefs = function() {
         var bgp = prefs.bgimgparms[prefs.theme];
         bgp.position = $('input[name="backgroundposition"]:checked').val();
         prefs.save({bgimgparms: prefs.bgimgparms});
-        updateCustomBackground();
+        updateCustomBackground(false);
     }
 
     function removeAllBackgroundImages() {
@@ -299,7 +283,7 @@ var prefs = function() {
             s.on('change', function() {
                 prefs.bgimgparms[prefs.theme].timeout = parseInt(s.val());
                 prefs.save({bgimgparms: prefs.bgimgparms});
-                updateCustomBackground();
+                updateCustomBackground(false);
             });
             var gibbon = $('<div>').appendTo('#cusbgcontrols');
             var ran = $('<input>', {type: 'checkbox', id: 'bgimagerandom'}).appendTo(gibbon);
@@ -343,12 +327,13 @@ var prefs = function() {
                 c.on('click', prefs.clearBgImage);
             });
         });
-        updateCustomBackground();
+        updateCustomBackground(false);
     }
 
     function changeBgImage(event) {
         var el = $(event.target);
         var bgp = prefs.bgimgparms[prefs.theme];
+        bgp.lastchange = Date.now();
         if (el.hasClass('landscapeimage')) {
             bgp.landscape = parseInt(el.attr('name'));
             bgImagesLoaded = 1;
@@ -410,10 +395,10 @@ var prefs = function() {
         }
     }
 
-    function updateCustomBackground() {
+    function updateCustomBackground(force) {
         clearTimeout(backgroundTimer);
         var bgp = prefs.bgimgparms[prefs.theme];
-        if (bgp.timeout + bgp.lastchange <= Date.now()) {
+        if (force || bgp.timeout + bgp.lastchange <= Date.now()) {
             if (bgp.random) {
                 bgp.landscape = Math.floor(Math.random() * backgroundImages.landscape.length);
                 bgp.portrait = Math.floor(Math.random() * backgroundImages.portrait.length);
@@ -421,9 +406,8 @@ var prefs = function() {
                 bgp.landscape++;
                 bgp.portrait++;
             }
+            bgp.lastchange = Date.now();
             prefs.save({bgimgparms: prefs.bgimgparms});
-        } else {
-            timeout = bgp.timeout + bgp.lastchange - Date.now();
         }
         if (bgp.landscape >= backgroundImages.landscape.length) { bgp.landscape = 0 }
         if (bgp.portrait >= backgroundImages.portrait.length) { bgp.portrait = 0 }
@@ -446,6 +430,28 @@ var prefs = function() {
             backgroundTimer = setTimeout(updateCustomBackground, timeout);
         }
     }
+
+    function bgImageLoaded() {
+        debug.trace('PREFS', 'background Image Loaded');
+        bgImagesLoaded++;
+        if (bgImagesLoaded == 2) {
+            var bgp = prefs.bgimgparms[prefs.theme];
+            setBackgroundCss(bgp);
+            prefs.save({bgimgparms: prefs.bgimgparms});
+            var timeout = Math.max(0, (bgp.timeout + bgp.lastchange - Date.now()));
+            setBackgroundTimer(timeout);
+        }
+    }
+
+    function bgImageError() {
+        debug.warn('PREFS', 'Background image failed to load');
+        updateCustomBackground(true);
+    }
+
+    portraitImage.onload = bgImageLoaded;
+    landscapeImage.onload = bgImageLoaded;
+    portraitImage.onerror = bgImageError;
+    landscapeImage.onerror = bgImageError;
 
     return {
         loadPrefs: function() {
