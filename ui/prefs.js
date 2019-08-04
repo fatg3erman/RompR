@@ -91,6 +91,9 @@ var prefs = function() {
 
     var backgroundImages;
     var backgroundTimer;
+    var portraitImage = new Image();
+    var landscapeImage = new Image();
+    var bgImagesLoaded = 0;
 
     var timeouts = {
         '10 Seconds': 10000,
@@ -103,6 +106,22 @@ var prefs = function() {
         'Hour': 3600000,
         'Day': 86400000
     }
+
+    function bgImageLoaded() {
+        debug.trace('PREFS', 'background Image Loaded');
+        bgImagesLoaded++;
+        if (bgImagesLoaded == 2) {
+            var bgp = prefs.bgimgparms[prefs.theme];
+            clearCustomBackground();
+            setBackgroundCss(bgp);
+            bgp.lastchange = Date.now();
+            prefs.save({bgimgparms: prefs.bgimgparms});
+            setBackgroundTimer(bgp.timeout);
+        }
+    }
+
+    portraitImage.onload = bgImageLoaded;
+    landscapeImage.onload = bgImageLoaded;
 
     function offerToTransferPlaylist() {
         var fnarkle = new popup({
@@ -313,10 +332,10 @@ var prefs = function() {
                 var nom = v.replace(/.*(\\|\/)/, '')+'&nbsp;'
                 if (x == 'landscape') {
                     l.addClass('landscapeimage');
-                    nom += '&#x25AD;';
+                    // nom += '&#x25AD;';
                 } else {
                     l.addClass('portraitimage');
-                    nom += '&#x25AF;';
+                    // nom += '&#x25AF;';
                 }
                 l.html(nom);
                 l.on('click', changeBgImage);
@@ -331,13 +350,13 @@ var prefs = function() {
         var bgp = prefs.bgimgparms[prefs.theme];
         if (el.hasClass('landscapeimage')) {
             bgp.landscape = parseInt(el.attr('name'));
+            bgImagesLoaded = 1;
+            landscapeImage.src = backgroundImages.landscape[bgp.landscape];
         } else if (el.hasClass('portraitimage')) {
             bgp.portrait = parseInt(el.attr('name'));
+            bgImagesLoaded = 1;
+            portraitImage.src = backgroundImages.portrait[bgp.landscape];
         }
-        clearCustomBackground();
-        setBackgroundCss(bgp);
-        bgp.lastchange = Date.now();
-        setBackgroundTimer(bgp.timeout);
         prefs.save({bgimgparms: prefs.bgimgparms});
     }
 
@@ -348,7 +367,6 @@ var prefs = function() {
         $('style[id="backgroundl"]').remove();
         $('style[id="phonebackp"]').remove();
         $('style[id="backgroundp"]').remove();
-        clearTimeout(backgroundTimer);
     }
 
     function setBackgroundCss(bgp) {
@@ -375,11 +393,8 @@ var prefs = function() {
 
     function updateCustomBackground() {
         clearTimeout(backgroundTimer);
-        clearCustomBackground();
         var bgp = prefs.bgimgparms[prefs.theme];
-        var timeout = bgp.timeout;
         if (bgp.timeout + bgp.lastchange <= Date.now()) {
-            bgp.lastchange = Date.now();
             if (bgp.random) {
                 bgp.landscape = Math.floor(Math.random() * backgroundImages.landscape.length);
                 bgp.portrait = Math.floor(Math.random() * backgroundImages.portrait.length);
@@ -393,8 +408,17 @@ var prefs = function() {
         }
         if (bgp.landscape >= backgroundImages.landscape.length) { bgp.landscape = 0 }
         if (bgp.portrait >= backgroundImages.portrait.length) { bgp.portrait = 0 }
-        setBackgroundCss(bgp);
-        setBackgroundTimer(timeout);
+        bgImagesLoaded = 0;
+        if (backgroundImages.portrait.length == 0) {
+            bgImagesLoaded++;
+            landscapeImage.src = backgroundImages.landscape[bgp.landscape];
+        } else if (backgroundImages.landscape.length == 0) {
+            bgImagesLoaded++;
+            portraitImage.src = backgroundImages.portrait[bgp.landscape];
+        } else {
+            landscapeImage.src = backgroundImages.landscape[bgp.landscape];
+            portraitImage.src = backgroundImages.portrait[bgp.landscape];
+        }
     }
 
     function setBackgroundTimer(timeout) {

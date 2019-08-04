@@ -310,7 +310,7 @@ var podcasts = function() {
 
 		doNewCount: function() {
 			$.getJSON("includes/podcasts.php?populate=1&getcounts=1", function(data) {
-				debug.log('PODCASTS','Got New Counts',data);
+				debug.trace('PODCASTS','Got New Counts',data);
 				newcounts = data;
 				$.each(data, function(index, value) {
 					if (index == 'totals') {
