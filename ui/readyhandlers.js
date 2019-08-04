@@ -1,3 +1,8 @@
+// We need a way to detect when the album image has finished *rendering*
+// - on mobile devices this can be some time after the image has loaded
+// and that fucks up the biggerizing of the nowplaying text
+// This method seems to work, called from the albumpicture's onload event
+// and is less clunky than just using some random setTimeou
 function rendered() {
     debug.log('ALBUMPICTURE', 'Rendered');
     $('#albumpicture').fadeIn('fast');
@@ -9,12 +14,42 @@ function startRender() {
     requestAnimationFrame(rendered);
 }
 
+function albumImageLoaded() {
+    debug.log('ALBUMPICTURE', 'Load event fired');
+    requestAnimationFrame(startRender);
+}
+
+function autoDiscovembobulate() {
+    pluginManager.autoOpen(language.gettext('button_infoyou'));
+}
+
+function inputFIleChanged() {
+    var filenames = $.map($(this).prop('files'), function(val) {
+        return val.name.replace(/.*(\/|\\)/, '')
+    });
+    if (filenames.length > 3) {
+        $(this).next().html(filenames.length + ' files selected');
+    } else {
+        $(this).next().html(filenames.join('<br />'));
+    }
+    $(this).parent().next('input[type="button"]').fadeIn('fast');
+}
+
+function filterSpecialChars() {
+    this.value = this.value.replace(/[\*&\+\s<>\[\]:;,\.\(\)]/g, '')
+}
+
+function showTagRemover() {
+    $(this).children('i').show();
+}
+
+function hideTagRemover() {
+    $(this).children('i').hide();
+}
+
 $(document).ready(function(){
     debug.log("INIT","Document Ready Event has fired");
-    $('#albumpicture').on('load', function() {
-        debug.log('ALBUMPICTURE', 'Load event fired');
-        requestAnimationFrame(startRender);
-    });
+    $('#albumpicture').on('load', albumImageLoaded);
     get_geo_country();
     if (prefs.do_not_show_prefs) {
         $('.choose_prefs').remove();
@@ -26,7 +61,6 @@ $(document).ready(function(){
     player.controller.initialise();
     layoutProcessor.initialise();
     checkServerTimeOffset();
-    // $('.combobox').makeTagMenu({textboxextraclass: 'searchterm', textboxname: 'tag', labelhtml: '<div class="fixed searchlabel nohide"><b>'+language.gettext("label_tag")+'</b></div>', populatefunction: tagAdder.populateTagMenu});
     $('.combobox').makeTagMenu({textboxextraclass: 'searchterm', textboxname: 'tag', labelhtml: '<b>'+language.gettext("label_tag")+'</b>', populatefunction: tagAdder.populateTagMenu});
     $('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add});
     browser.createButtons();
@@ -71,32 +105,14 @@ $(document).ready(function(){
     }
     setTimeout(cleanBackendCache, 5000);
     if (prefs.auto_discovembobulate) {
-        setTimeout(function() {
-            pluginManager.autoOpen(language.gettext('button_infoyou'));
-        }, 1000);
+        setTimeout(autoDiscovembobulate , 1000);
     }
     $(document).on('click', '.clearbox.enter', makeClearWork);
     $(document).on('keyup', '.enter', onKeyUp);
-    $(document).on('change', '.inputfile', function() {
-        var filenames = $.map($(this).prop('files'), function(val) {
-            return val.name.replace(/.*(\/|\\)/, '')
-        });
-        if (filenames.length > 3) {
-            $(this).next().html(filenames.length + ' files selected');
-        } else {
-            $(this).next().html(filenames.join('<br />'));
-        }
-        $(this).parent().next('input[type="button"]').fadeIn('fast');
-    });
-    $(document).on('keyup', 'input.notspecial', function() {
-        this.value = this.value.replace(/[\*&\+\s<>\[\]:;,\.\(\)]/g, '');
-    });
-    $(document).on('mouseenter', "#dbtags>.tag", function() {
-        $(this).children('i').show();
-    })
-    $(document).on('mouseleave', "#dbtags>.tag", function() {
-        $(this).children('i').hide();
-    });
+    $(document).on('change', '.inputfile', inputFIleChanged);
+    $(document).on('keyup', 'input.notspecial', filterSpecialChars);
+    $(document).on('mouseenter', "#dbtags>.tag", showTagRemover);
+    $(document).on('mouseleave', "#dbtags>.tag", hideTagRemover);
     $(document).on('click', '.tagremover:not(.plugclickable)', nowplaying.removeTag);
     if (prefs.mopidy_slave || (prefs.collection_player != prefs.player_backend && prefs.collection_player != null)) {
         $('[name="donkeykong"]').remove();
@@ -107,8 +123,6 @@ $(document).ready(function(){
     }
     spotifyLinkChecker.initialise();
     snapcast.updateStatus();
-    // Just in case;
-    // setTimeout(infobar.rejigTheText, 500);
 });
 
 function cleanBackendCache() {
