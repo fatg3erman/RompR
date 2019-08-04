@@ -108,6 +108,10 @@ select:hover {
     background-color:rgba(0,0,0,0.2);
 }
 
+body.mobile #headerbar {
+    background-color:rgba(0,0,0,0.6);
+}
+
 #playlist
 {
     background-color:rgba(0,0,0,0.2);

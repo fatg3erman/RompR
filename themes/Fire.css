@@ -85,6 +85,10 @@ input[type="text"] {
     background-color:rgba(0,0,0,0.3);
 }
 
+body.mobile #headerbar {
+    background-color:rgba(0,0,0,0.6);
+}
+
 #sources, .mainpane, #playlist
 {
     background-color:rgba(0,0,0,0.1);

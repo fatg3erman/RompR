@@ -1,8 +1,8 @@
 // We need a way to detect when the album image has finished *rendering*
 // - on mobile devices this can be some time after the image has loaded
-// and that fucks up the biggerizing of the nowplaying text
+// and that fucks up the biggerizing of the nowplaying text.
 // This method seems to work, called from the albumpicture's onload event
-// and is less clunky than just using some random setTimeou
+// and is less clunky than just using some random setTimeout
 function rendered() {
     debug.log('ALBUMPICTURE', 'Rendered');
     $('#albumpicture').fadeIn('fast');
