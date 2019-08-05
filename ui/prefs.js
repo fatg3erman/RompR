@@ -444,7 +444,8 @@ var prefs = function() {
     }
 
     function bgImageError() {
-        debug.warn('PREFS', 'Background image failed to load');
+        var bgp = prefs.bgimgparms[prefs.theme];
+        debug.warn('PREFS', 'Background image failed to load', bgp.landscape,bgp.portrait,backgroundImages.landscape.length,backgroundImages.portrait.length,portraitImage.src,landscapeImage.src);
         updateCustomBackground(true);
     }
 
