@@ -147,13 +147,15 @@ jQuery.fn.makeTagMenu = function(options) {
             var wrapper = $('<div>', {class: 'containerbox dropdown-container'}).appendTo($(this));
             var holder = $('<div>', { class: "expand"}).appendTo(wrapper);
             var dropbutton = $('<i>', { class: 'fixed combo-button'}).appendTo(wrapper);
+            var textbox = $('<input>', { type: "text", class: tbc, name: settings.textboxname }).appendTo(holder);
+            var dropbox = $('<div>', {class: "drop-box tagmenu dropshadow"}).appendTo($(this));
         } else {
             $(this).append(settings.labelhtml);
             var holder = $('<div>', { class: "expand"}).appendTo($(this));
             var dropbutton = $('<i>', { class: 'fixed combo-button'}).appendTo($(this));
+            var textbox = $('<input>', { type: "text", class: tbc, name: settings.textboxname }).appendTo(holder);
+            var dropbox = $('<div>', {class: "drop-box tagmenu dropshadow"}).insertAfter($(this));
         }
-        var textbox = $('<input>', { type: "text", class: tbc, name: settings.textboxname }).appendTo(holder);
-        var dropbox = $('<div>', {class: "drop-box tagmenu dropshadow"}).appendTo(holder);
         var menucontents = $('<div>', {class: "tagmenu-contents"}).appendTo(dropbox);
         if (settings.buttontext !== null) {
             var submitbutton = $('<button>', {class: "fixed"+settings.buttonclass,

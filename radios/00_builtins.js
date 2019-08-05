@@ -14,7 +14,7 @@ var starRadios = function() {
 			//
             // Tag
             //
-            var a = $('<div>', {class: "menuitem containerbox fullwidth"}).appendTo('#pluginplaylists');
+            var a = $('<div>', {class: "menuitem fullwidth"}).appendTo('#pluginplaylists');
             var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
                 appendTo(a).makeTagMenu({
                 textboxname: 'cynthia',
