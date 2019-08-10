@@ -2,80 +2,8 @@ var info_videos = function() {
 
 	var me = "videos";
 
-	function getVideosHtml(data) {
-		if (data.release && data.release.data.videos) {
-			return doVideos(mungeDiscogsData(data.release.data.videos));
-		} else if (data.master && data.master.data.videos) {
-			return doVideos(mungeDiscogsData(data.master.data.videos));
-		} else {
-			return '<h3 align="center">No Videos Found</h3>';
-		}
-	}
-
-	function mungeDiscogsData(videos) {
-		debug.trace("VIDEOS PLUGIN","Doing Videos From Discogs Data",videos);
-		var ids = new Array();
-		for (var i in videos) {
-			var u = videos[i].uri;
-			if (videos[i].embed == true && u.match(/youtube\.com/)) {
-				var d = u.match(/http:\/\/www\.youtube\.com\/watch\?v=(.+)$/);
-				if (d && d[1]) {
-					ids.push(d[1]);
-				}
-			}
-		}
-		return ids;
-	}
-
-	function getVideosFromYoutube(searchresult) {
-		if (searchresult.items) {
-			var ids = new Array();
-			for (var i in searchresult.items) {
-				ids.push(searchresult.items[i].id.videoId);
-			}
-			return doVideos(ids);
-		} else if (searchresult.error) {
-			return searchresult.error;
-		} else {
-			return '<h3 align="center">No Videos Found</h3>';
-		}
-	}
-
-	function doVideos(videos) {
-		var html = '';
-		if (videos.length == 0) {
-			return '<h3 align="center">No Videos Found</h3>';
-		}
-		for (var i in videos) {
-			html += '<div class="video"><iframe class="youtubevid" src="http://www.youtube.com/embed/'+videos[i]+'"></iframe></div>';
-		}
-		return html;
-	}
-
-	function searchYoutube(term, callback) {
-		if (prefs.google_api_key != '') {
-			debug.trace("VIDEOS","Searching Youtube for",term);
-			$.ajax({
-				type: "POST",
-				dataType: "json",
-				url: 'browser/backends/google.php',
-				data: {uri: encodeURIComponent("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q="+encodeURIComponent(term+' Band')+"&key="+prefs.google_api_key)}
-			})
-			.done(callback)
-			.fail(function(xhr,status,err) {
-				debug.error("VIDEOS PLUGIN","Youtube search failed",xhr);
-				if (xhr.responseJSON.error.message) {
-					callback({error: xhr.responseJSON.error.message});
-				} else {
-					callback({error: err});
-				}
-			});
-		} else {
-			callback({error: '<b>You need to create a Google API key to use Youtube Videos. See <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">The Documentation</a></b>'});
-		}
-	}
-
 	return {
+
 		getRequirements: function(parent) {
 			return ['discogs'];
 		},
@@ -86,26 +14,66 @@ var info_videos = function() {
 
 			var self = this;
 			var displaying = false;
-			if (artistmeta.videos === undefined) {
-				artistmeta.videos = {};
+			var ids = [];
+			var retrytimer;
+
+			function mungeDiscogsData(videos) {
+				debug.trace("VIDEOS PLUGIN","Doing Videos From Discogs Data",videos);
+				for (var i in videos) {
+					var u = videos[i].uri;
+					if (videos[i].embed == true && u.match(/youtube\.com/)) {
+						var d = u.match(/\/\/www\.youtube\.com\/watch\?v=(.+)$/);
+						if (d && d[1] && ids.indexOf(d[1]) == -1) {
+							ids.push(d[1]);
+						}
+					}
+				}
 			}
 
-			function artistSearchYoutubeDone(data) {
-				debug.trace("VIDEOS","Got artist search data",data);
-				artistmeta.videos.youtube = data;
-				self.artist.doBrowserUpdate();
+			function doVideos() {
+				var html = '';
+				if (ids.length == 0) {
+					return '<h3 align="center">No Videos Found</h3>';
+				}
+				for (var i in ids) {
+					html += '<div class="video"><iframe class="youtubevid" src="http://www.youtube.com/embed/'+ids[i]+'"></iframe></div>';
+				}
+				return html;
+			}
+
+			function getVideosHtml() {
+				if (albummeta.discogs.album.master && parent.playlistinfo.type != 'stream') {
+					debug.debug('VIDEOS', 'Doing videos from album master');
+					mungeDiscogsData(albummeta.discogs.album.master.data.videos);
+				}
+				if (albummeta.discogs.album.release && parent.playlistinfo.type != 'stream') {
+					debug.debug('VIDEOS', 'Doing videos from album release');
+					mungeDiscogsData(albummeta.discogs.album.release.data.videos);
+				}
+				if (trackmeta.discogs.track.master) {
+					debug.debug('VIDEOS', 'Doing videos from track master');
+					mungeDiscogsData(trackmeta.discogs.track.master.data.videos);
+				}
+				if (trackmeta.discogs.track.release) {
+					debug.debug('VIDEOS', 'Doing videos from track release');
+					mungeDiscogsData(trackmeta.discogs.track.release.data.videos);
+				}
+				return doVideos();
 			}
 
 			this.populate = function() {
-				self.album.populate();
-				self.artist.populate();
+				self.track.populate();
 			}
 
 			this.displayData = function() {
 				displaying = true;
-				self.artist.doBrowserUpdate();
-				self.album.doBrowserUpdate();
-                browser.Update(null, 'track', me, parent.nowplayingindex, { name: "",
+				self.track.doBrowserUpdate();
+				browser.Update(null, 'album', me, parent.nowplayingindex, { name: "",
+                    					link: "",
+                    					data: null
+                						}
+				);
+                browser.Update(null, 'artist', me, parent.nowplayingindex, { name: "",
                     					link: "",
                     					data: null
                 						}
@@ -114,53 +82,35 @@ var info_videos = function() {
 
 			this.stopDisplaying = function() {
 				displaying = false;
+				clearTimeout(retrytimer);
 			}
 
-			this.album = function() {
-
+			this.track = function() {
 				return {
 					populate: function() {
-						if (albummeta.discogs.album.error === undefined &&
-							albummeta.discogs.album.master === undefined &&
-							albummeta.discogs.album.release === undefined) {
+						debug.trace('VIDEOS','album master', albummeta.discogs.album.master);
+						debug.trace('VIDEOS','track master', trackmeta.discogs.track.master);
+						debug.trace('VIDEOS','album error', albummeta.discogs.album.error);
+						debug.trace('VIDEOS','track error', trackmeta.discogs.track.error);
+						if ((trackmeta.discogs.track.master && albummeta.discogs.album.master) ||
+							(trackmeta.discogs.track.master && albummeta.discogs.album.error)  ||
+							(trackmeta.discogs.track.error  && albummeta.discogs.album.master) ||
+							(trackmeta.discogs.track.error  && albummeta.discogs.album.error)) {
+							self.track.doBrowserUpdate();
+						} else {
 							debug.trace("VIDEOS PLUGIN",parent.nowplayingindex,"No data yet, trying again in 1 second");
-							setTimeout(self.album.populate, 1000);
-							return;
+							retrytimer = setTimeout(self.track.populate, 2000);
 						}
-						self.album.doBrowserUpdate();
 				    },
 
 					doBrowserUpdate: function() {
-						if (displaying && albummeta.discogs.album !== undefined &&
-								(albummeta.discogs.album.error !== undefined ||
-								albummeta.discogs.album.master !== undefined ||
-								albummeta.discogs.album.release !== undefined)) {
-							debug.mark("VIDEOS PLUGIN",parent.nowplayingindex,"album was asked to display");
-			                browser.Update(null, 'album', me, parent.nowplayingindex, { name: albummeta.name,
+						if (displaying && albummeta.discogs.album !== undefined && trackmeta.discogs.track !== undefined &&
+								(albummeta.discogs.album.error !== undefined ||	albummeta.discogs.album.master !== undefined) &&
+								(trackmeta.discogs.track.error !== undefined ||	trackmeta.discogs.track.master !== undefined)) {
+							debug.mark("VIDEOS PLUGIN",parent.nowplayingindex,"track was asked to display");
+			                browser.Update(null, 'track', me, parent.nowplayingindex, { name: artistmeta.name+' / '+trackmeta.name,
 			                    					link: "",
-			                    					data: getVideosHtml(albummeta.discogs.album)
-			                						}
-							);
-						}
-					}
-				}
-			}();
-
-			this.artist = function() {
-				return {
-					populate: function() {
-						if (artistmeta.videos.youtube === undefined) {
-							searchYoutube(artistmeta.name, artistSearchYoutubeDone);
-						} else {
-							self.artist.doBrowserUpdate();
-						}
-					},
-
-					doBrowserUpdate: function() {
-						if (displaying && artistmeta.videos.youtube !== undefined) {
-			                browser.Update(null, 'artist', me, parent.nowplayingindex, { name: artistmeta.name,
-			                    					link: "",
-			                    					data: getVideosFromYoutube(artistmeta.videos.youtube)
+			                    					data: getVideosHtml()
 			                						}
 							);
 						}

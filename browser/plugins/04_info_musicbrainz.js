@@ -986,7 +986,13 @@ var info_musicbrainz = function() {
 						if (displaying && albummeta.musicbrainz.album !== undefined) {
 							debug.trace(medebug,parent.nowplayingindex,"album was asked to display");
 							var up = null;
-							if (albummeta.musicbrainz.album.error) {
+							if (parent.playlistinfo.type == 'stream') {
+								browser.Update(null, 'album', me, parent.nowplayingindex, { name: "",
+				                    					link: "",
+				                    					data: null
+				                						}
+								);
+							} else if (albummeta.musicbrainz.album.error) {
 								up = { name: albummeta.name,
 									   link: null,
 									   data: '<h3 align="center">'+albummeta.musicbrainz.album.error+'</h3>'}

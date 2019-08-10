@@ -9,7 +9,8 @@ Note that some versions listed here may be unreleased, I use version number incr
 * The default SQLite database now uses a single collection file called collection.sq3. In older releases, it would be called collection_mopidy.sq3 or collection_mpd.sq3 depending on your player type. This meant that if you had multiple players of different types you were not sharing the same collection between them all. The first time you open RompR 1.30, your collection will be upgraded to the new name. If you previously had two collections, the one that is selected will be the one that was most recently updated. Backups of the old files will be kept in prefs/oldcollections.
 * [Snapcast](/RopmR/Snapcast) support
 * Album Art download from Last.FM was broken, has now been fixed
-* The Last.FM info panel will no longer show images for artists. Sadly, Last.FM seems to be in a downward spiral and their API is providing images that no longer exist. There is nothing I can do about this. For now, I've left the placeholders for the images and if the API gets fixed (very unlikely) they'll start to appear again.
+* Last.FM Info panel will display artist images again, but not for 'Similar Artists', Last.FM have removed all artist image functionality.
+* Done quite a lot of work on the Discogs Info panel to include images and a search that actually works and is quite accurate. This also makes the Videos panel work a lot better and get more accurate matches.
 * Multitudinous new icon themes
 * Some changes to the layout of the Phone and Tablet skins. Large tablets will now display the Now Playing, Playlist, and Media Chooser panels simultaneously when in Landscape orientation.
 * Alarm Clock and Sleep Timer now supported on the Tablet skin. Note that they still won't work if your tablet sleeps, but the tablet skin is quite good for small laptop screens so that's what this is intended for.

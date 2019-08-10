@@ -7,6 +7,7 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 	this.nowplayingindex = nowplayingindex;
 	this.artistindex = artistindex;
 	this.populated = false;
+	this.hasbeenstarted = new Array();
 
 	this.isCurrentTrack = function() {
 		return nowplaying.isThisCurrent(self.currenttrack);
@@ -22,8 +23,10 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 		debug.trace("TRACKDATA",self.nowplayingindex,"Starting collection",source);
 		var requirements = (nowplaying.getPlugin(source)).getRequirements(self);
 		for (var i in requirements) {
-			if (collections[requirements[i]] === undefined) {
+			// Prevent infinite recursion when plugins depend on each other
+			if (self.hasbeenstarted.indexOf(requirements[i]) == -1) {
 				debug.trace("TRACKDATA",self.nowplayingindex,"Starting collection",source,"requirement",requirements[i]);
+				self.hasbeenstarted.push(requirements[i]);
 				startSource(requirements[i]);
 			}
 		}

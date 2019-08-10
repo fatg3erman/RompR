@@ -13,7 +13,7 @@ include("backends/sql/backend.php");
 logger::shout("CACHE CLEANER", "-----------------------------------------------------------------------");
 logger::blurt("CACHE CLEANER", "Checking Cache");
 
-// DO NOT REDUCE the values for musicbrainz or discogs
+// DO NOT REDUCE the values for musicbrainz
 // - we have to follow their API rules and as we don't check
 // expiry headers at all we need to keep everything for a month
 // otherwise they will ban us. Don't spoil it for everyone.
@@ -22,8 +22,8 @@ logger::blurt("CACHE CLEANER", "Checking Cache");
 clean_cache_dir('prefs/jsoncache/musicbrainz/', 2592000);
 // One Month
 clean_cache_dir('prefs/jsoncache/allmusic/', 2592000);
-// One Month
-clean_cache_dir('prefs/jsoncache/discogs/', 2592000);
+// One Week
+clean_cache_dir('prefs/jsoncache/discogs/', 604800);
 // One Month
 clean_cache_dir('prefs/jsoncache/wikipedia/', 2592000);
 // One Month
@@ -37,7 +37,7 @@ clean_cache_dir('prefs/jsoncache/google/', 2592000);
 // Six Months - after all, lyrics are small and don't change
 clean_cache_dir('prefs/jsoncache/lyrics/', 15552000);
 // One week (or it can get REALLY big)
-clean_cache_dir('prefs/imagecache/', 648000);
+clean_cache_dir('prefs/imagecache/', 604800);
 // Clean the albumart temporary upload directory
 clean_cache_dir('albumart/', 1);
 // Clean the temp directory

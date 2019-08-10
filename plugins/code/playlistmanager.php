@@ -43,7 +43,7 @@ function print_playlists_as_json() {
                         "SELECT Image, Artistname FROM
                         Tracktable JOIN Albumtable USING (Albumindex)
 						JOIN Artisttable ON (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
-                        WHERE Albumname = ? AND Title = ?", $tfiledata['Album'], $filedata['Title']);
+                        WHERE Albumname = ? AND Title = ?", $filedata['Album'], $filedata['Title']);
                 foreach ($result as $obj) {
                     $image = $obj->Image;
 					$usealbumimage = new baseAlbumImage(array('artist' => $obj->Artistname, 'album' => $filedata['Album']));

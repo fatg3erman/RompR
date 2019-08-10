@@ -602,8 +602,18 @@ div.rightmenu {
     margin-bottom:2em;
 }
 
-.cshrinker {
-    max-width:35%;
+@media screen and (orientation: landscape) {
+    .cshrinker {
+        max-height: calc(100vh - 40px);
+        width: auto;
+    }
+}
+
+@media screen and (orientation: portrait) {
+    .cshrinker {
+        max-width:100%;
+        height: auto;
+    }
 }
 
 .pleft
@@ -728,6 +738,13 @@ img.jalopy200 {
     box-sizing:border-box;
 }
 
+.info-box-expand {
+    -webkit-box-flex:1.0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+}
+
 /*
 =====================================================================
 = Responsive Layout - General
@@ -744,6 +761,12 @@ img.jalopy200 {
     .info-detail-layout {
         -webkit-box-orient:vertical;
         flex-direction: column;
+    }
+    .info-box-expand.stumpy {
+        padding-left:0px;
+    }
+    .info-box-fixed.info-border-right {
+        padding-left:0px;
     }
     .info-box-expand.info-border-right {
         margin-bottom:1em;

@@ -93,13 +93,6 @@ var info_lastfm = function() {
 
         html += '</div><div class="statsbox">';
 
-        var imageurl = lfmdata.image("mega");
-        if (imageurl != '') {
-            html +=  '<img class="stright standout'
-            html += ' infoclick clickzoomimage cshrinker';
-            html += '" src="getRemoteImage.php?url=' + imageurl + '" />';
-            html += '<input type="hidden" value="getRemoteImage.php?url='+imageurl+'" />';
-        }
         html +=  '<div id="artistbio" class="minwidthed">';
         html += lastfm.formatBio(lfmdata.bio(), lfmdata.url());
         html += '</div></div>';
@@ -112,12 +105,6 @@ var info_lastfm = function() {
             for(var i in similies) {
                 html += '<div class="simar">';
                 html += '<table><tr><td align="center">';
-                var mi = lfmdata.similarimage(i, "medium");
-                var bi = lfmdata.similarimage(i, "mega");
-                if (!bi) bi = mi;
-                if (mi) {
-                    html += '<img class="infoclick clickzoomimage" src="getRemoteImage.php?url='+lfmdata.similarimage(i, "medium")+'"><input type="hidden" value="getRemoteImage.php?url='+lfmdata.similarimage(i, "mega")+'" />';
-                }
                 html += '</td></tr>';
                 html += '<tr><td align="center"><a href="'+similies[i].url+'" target="_blank">'+similies[i].name+'</a></td></tr>';
                 html += '</table>';
@@ -149,7 +136,7 @@ var info_lastfm = function() {
             if (bigurl && bigurl != imageurl) {
                 html += ' infoclick clickzoomimage';
             }
-            html += '" src="getRemoteImage.php?url=' + imageurl + '" />';
+            html += ' cshrinker" src="getRemoteImage.php?url=' + imageurl + '" />';
             if (bigurl && bigurl != imageurl) {
                 html += '<input type="hidden" value="getRemoteImage.php?url='+bigurl+'" />';
             }
@@ -206,7 +193,7 @@ var info_lastfm = function() {
 
 	return {
         getRequirements: function(parent) {
-            return [];
+            return ['musicbrainz'];
         },
 
 		collection: function(parent, artistmeta, albummeta, trackmeta) {
@@ -362,6 +349,8 @@ var info_lastfm = function() {
 
 			this.artist = function() {
 
+				var retries = 10;
+
                 return {
 
 					populate: function() {
@@ -394,6 +383,33 @@ var info_lastfm = function() {
 		                self.artist.doBrowserUpdate();
 		            },
 
+					tryForAllmusicImage: function() {
+                        if (typeof artistmeta.allmusic == 'undefined' || typeof artistmeta.allmusic.artistlink === 'undefined') {
+                            debug.shout(medebug,"Allmusic artist link not back yet");
+                            retries--;
+                            if (retries > 0) {
+                                setTimeout(self.artist.tryForAllmusicImage, 2000);
+                            } else {
+                                debug.shout(medebug,"Artist giving up waiting for musicbrainz");
+                            }
+                        } else if (artistmeta.allmusic.artistlink === null) {
+                            debug.shout(medebug,"No Allmusic artist bio link found");
+                        } else {
+                            debug.shout(medebug,"Getting allmusic bio from",artistmeta.allmusic.artistlink);
+                            $.post('browser/backends/getamimage.php', {url: artistmeta.allmusic.artistlink})
+                             .done( function(data) {
+                                debug.log(medebug,"Got Allmusic Image", data);
+                                if (displaying) {
+									var image = $('<img>', {class: "stright standout infoclick clickzoomimage cshrinker", src: "getRemoteImage.php?url="+data}).insertBefore('#artistbio');
+									var input = $('<input>', {type: "hidden", value: "getRemoteImage.php?url="+data});
+								};
+                             })
+                             .fail( function() {
+                                debug.log(medebug,"Didn't Get Allmusic Image");
+                             });
+                        }
+                    },
+
 					doBrowserUpdate: function() {
 						if (displaying && artistmeta.lastfm !== undefined) {
                             debug.trace(medebug,parent.nowplayingindex,"artist was asked to display");
@@ -411,6 +427,7 @@ var info_lastfm = function() {
 
                             if (accepted && lastfm.isLoggedIn() && !lfmdata.error()) {
                                 self.artist.getUserTags();
+								self.artist.tryForAllmusicImage();
                             }
 
 						}

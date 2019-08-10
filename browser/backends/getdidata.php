@@ -11,9 +11,12 @@ foreach ($_POST as $k => $v) {
         $params[] = $k.'='.rawurlencode($v);
     }
 }
+$params[] = 'key=qmBviLdmIHhnxXkzWLHR';
+$params[] = 'secret=KAtjSjsJJlfQjdCXUrnbyXAltXDfelaV';
 if (count($params) > 0) {
     $uri .= "?".implode('&', $params);
 }
+
 getCacheData($uri, 'discogs');
 
 ?>

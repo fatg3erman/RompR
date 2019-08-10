@@ -1,6 +1,6 @@
 var discogs = function() {
 
-	var baseURL = 'http://api.discogs.com/';
+	var baseURL = 'https://api.discogs.com/';
 	var queue = new Array();
 	var throttle = null;
 
@@ -98,7 +98,6 @@ var discogs = function() {
 					url: baseURL+'artists/'+name+'/releases',
 					per_page: 25,
 					page: page
-
 				};
 				discogs.request(reqid, data, success, fail);
 			}
@@ -107,16 +106,17 @@ var discogs = function() {
 		album: {
 
 			getInfo: function(reqid, id, success, fail) {
-				// NOTE id must be either release/id or master/id
-				var data = {url: baseURL+id+'?'};
+				// NOTE id must be either releases/id or masters/id
+				var data = {url: baseURL+id};
 				discogs.request(reqid, data, success, fail);
 			},
 
-			search: function(term, success, fail) {
+			search: function(artist, album, success, fail) {
 				var data = {
 					url: baseURL+'database/search',
 					type: 'master',
-					q: term
+					artist: artist,
+					release_title: album
 				};
 				discogs.request('', data, success, fail);
 			}
@@ -126,16 +126,17 @@ var discogs = function() {
 		track: {
 
 			getInfo: function(reqid, id, success, fail) {
-				// NOTE id must be either release/id or master/id
-				var data = {url: baseURL+id+'?'};
+				// NOTE id must be either releases/id or masters/id
+				var data = {url: baseURL+id};
 				discogs.request(reqid, data, success, fail);
 			},
 
-			search: function(term, success, fail) {
+			search: function(artist, track, success, fail) {
 				var data = {
 					url: baseURL+'database/search',
-					type: 'master',
-					q: term
+					type: 'release',
+					artist: artist,
+					track: track
 				};
 				discogs.request('', data, success, fail);
 			}
