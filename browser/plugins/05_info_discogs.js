@@ -79,7 +79,7 @@ var info_discogs = function() {
         	}
         	html += '</span></div>';
         	html += '<div class="mbbox"><table class="padded" width="100%">';
-        	html += '<tr><th><th><th>'+language.gettext("title_year")+'</th><th>'+language.gettext("title_title")+'</th><th>'
+        	html += '<tr><th></th><th>'+language.gettext("title_year")+'</th><th>'+language.gettext("title_title")+'</th><th>'
         				+language.getUCtext("label_artist")+'</th><th>'+language.gettext("title_type")+'</th><th>'+language.gettext("title_label")+'</th></tr>';
         	for (var i in data.data.releases) {
         		html += '<tr>';
@@ -312,7 +312,7 @@ var info_discogs = function() {
 					var id = element.attr('name');
 					var expandingframe = element.parent().parent().parent().parent();
 					var content = expandingframe.html();
-					content=content.replace(/<i class="icon-expand-up.*?>/, '');
+					content=content.replace(/<i class="icon-expand-up.*?\/i>/, '');
 					var pos = expandingframe.offset();
 					var target = $("#artistfoldup").length == 0 ? "discogs" : "artist";
 					var targetpos = $("#"+target+"foldup").offset();
@@ -492,7 +492,7 @@ var info_discogs = function() {
 		        return p;
 			}
 
-			function getAlbumHTML(data) {
+			function getAlbumHTML(data, order) {
 				debug.log(medebug,"Creating HTML from release/master data",data);
 
 				if (data.error && data.master === undefined && data.release === undefined) {
@@ -502,15 +502,22 @@ var info_discogs = function() {
 		        var html = '<div class="containerbox info-detail-layout">';
 
 		    	html += '<div class="info-box-fixed info-box-list info-border-right">';
-				if (data.master) {
-					html += getStyles(data.master.data.styles);
-					html += getGenres(data.master.data.genres);
-				} else {
-					html += getStyles(data.release.data.styles);
-					html += getGenres(data.release.data.genres);
+
+				for (var i in order) {
+					if (data[order[i]] && data[order[i]].data.styles && data[order[i]].data.styles.length > 0) {
+						html += getStyles(data[order[i]].data.styles);
+						break;
+					}
 				}
 
-				if (data.release) {
+				for (var i in order) {
+					if (data[order[i]] && data[order[i]].data.genres && data[order[i]].data.genres.length > 0) {
+						html += getGenres(data[order[i]].data.genres);
+						break;
+					}
+				}
+
+				if (data.release && data.release.data.companies && data.release.data.companies.length > 0) {
 					html += '<br><ul><li><b>'+language.gettext("discogs_companies")+'</b></li>';
 					for (var i in data.release.data.companies) {
 						html += '<li>'+data.release.data.companies[i].entity_type_name+
@@ -525,13 +532,14 @@ var info_discogs = function() {
 		    	html += '<div class="info-box-expand stumpy">';
 
 				var image = null;
-				if (data.master && data.master.data.images) {
-					image = getBestImage(data.master.data.images);
+				for (var i in order) {
+					if (data[order[i]] && data[order[i]].data.images) {
+						image = getBestImage(data[order[i]].data.images);
+						if (image !== null) {
+							break;
+						}
+					}
 				}
-				if (image === null && data.release && data.release.data.images) {
-					image = getBestImage(data.release.data.images);
-				}
-
 				if (image !== null) {
 					html += '<img class="standout infoclick clickzoomimage cshrinker stright" src="getRemoteImage.php?url='+image+'" />';
 					html += '<input type="hidden" value="getRemoteImage.php?url='+image+'" />';
@@ -554,10 +562,11 @@ var info_discogs = function() {
 					}
 				}
 
-				if (data.master) {
-					html += getTracklist(data.master.data.tracklist)
-				} else {
-					html += getTracklist(data.release.data.tracklist)
+				for (var i in order) {
+					if (data[order[i]] && data[order[i]].data.tracklist && data[order[i]].data.tracklist.length > 0) {
+						html += getTracklist(data[order[i]].data.tracklist);
+						break;
+					}
 				}
 
 				html += '</div>';
@@ -571,7 +580,7 @@ var info_discogs = function() {
 				}
 				debug.trace(medebug, "Creating Artist HTML",data);
 		        var html = '<div class="containerbox info-detail-layout">';
-		    	html += '<div class="info-box-fixed info-box-list info-border-right">';
+		    		html += '<div class="info-box-fixed info-box-list info-border-right">';
 
 			    if (data.data.realname && data.data.realname != "") {
 			        html += '<br><ul><li><b>'+language.gettext("discogs_realname")+'</b> '+data.data.realname+'</li>';
@@ -598,49 +607,47 @@ var info_discogs = function() {
 			        html += getURLs(data.data.urls);
 			        html += '</ul>';
 			    }
-			    html += '</div>';
+			    	html += '</div>';
 
-	        	html += '<div class="info-box-expand stumpy">';
+	        		html += '<div class="info-box-expand stumpy">';
 
-		        html += '<div class="holdingcell">';
-				var image = null;
-				if (data.data.images) {
-					image = getBestImage(data.data.images);
+		        		html += '<div class="holdingcell">';
+						var image = null;
+						if (data.data.images) {
+							image = getBestImage(data.data.images);
+						}
+						if (image !== null) {
+							html += '<img class="standout infoclick clickzoomimage cshrinker stright" src="getRemoteImage.php?url='+image+'" />';
+							html += '<input type="hidden" value="getRemoteImage.php?url='+image+'" />';
+						}
+
+				        if (expand) {
+							html += '<i class="icon-expand-up medicon clickexpandbox infoclick tleft" name="'+data.data.id+'"></i>';
+						}
+
+				        if (data.data.profile) {
+					        var p = formatNotes(data.data.profile);
+					        html += '<p>'+p+'</p>';
+					    }
+					    html += '</div>';
+
+					html += '</div>';
+
+		        html += '</div>';
+				if (data.data.members && data.data.members.length > 0) {
+					html += '<div class="mbbox underline"><b>'+language.gettext("discogs_bandmembers")+'</b></div>';
+					html += doMembers(data.data.members);
 				}
-				if (image !== null) {
-					html += '<img class="standout infoclick clickzoomimage cshrinker stright" src="getRemoteImage.php?url='+image+'" />';
-					html += '<input type="hidden" value="getRemoteImage.php?url='+image+'" />';
+
+				if (data.data.groups && data.data.groups.length > 0) {
+					html += '<div class="mbbox underline"><b>'+language.gettext("discogs_memberof")+'</b></div>';
+					html += doMembers(data.data.groups);
 				}
-
-		        if (expand) {
-					html += '<i class="icon-expand-up medicon clickexpandbox infoclick tleft" name="'+data.data.id+'"></i>';
-				}
-
-		        if (data.data.profile) {
-			        var p = formatNotes(data.data.profile);
-			        html += '<p>'+p+'</p>';
-			    }
-			    html += '</div>';
-
-			    if (data.data.members && data.data.members.length > 0) {
-		        	html += '<div class="mbbox underline"><b>'+language.gettext("discogs_bandmembers")+'</b></div>';
-		        	html += doMembers(data.data.members);
-			    }
-
-			    if (data.data.groups && data.data.groups.length > 0) {
-		        	html += '<div class="mbbox underline"><b>'+language.gettext("discogs_memberof")+'</b></div>';
-		        	html += doMembers(data.data.groups);
-			    }
-
 				html += '<div class="mbbox underline">';
-			    html += '<i class="icon-toggle-closed menu infoclick clickdodiscography" name="'+data.data.id+'"></i>';
-			    html += '<span class="title-menu">'+language.gettext("discogs_discography", [data.data.name.toUpperCase()])+'</span></div>';
-			    html += '<div name="discography_'+data.data.id+'" class="invisible">';
-			    html += '</div>';
-
-		        html += '</div>';
-
-		        html += '</div>';
+				html += '<i class="icon-toggle-closed menu infoclick clickdodiscography" name="'+data.data.id+'"></i>';
+				html += '<span class="title-menu">'+language.gettext("discogs_discography", [data.data.name.toUpperCase()])+'</span></div>';
+				html += '<div name="discography_'+data.data.id+'" class="invisible">';
+				html += '</div>';
 		        return html;
 			}
 
@@ -777,8 +784,8 @@ var info_discogs = function() {
 					extraResponseHandler: function(data) {
 						debug.mark(medebug,parent.nowplayingindex,"got extra artist data for",data.id,data);
 						if (data) {
-							artistmeta.discogs['artist_'+data.id] = data;
-							putArtistData(artistmeta.discogs['artist_'+data.id], data.id);
+							artistmeta.discogs[data.id] = data;
+							putArtistData(artistmeta.discogs[data.id], data.id);
 						}
 					},
 
@@ -1029,7 +1036,7 @@ var info_discogs = function() {
 									{
 										name: albummeta.name,
 										link: (albummeta.discogs.album.master === undefined) ? null : albummeta.discogs.album.master.data.uri,
-										data: getAlbumHTML(albummeta.discogs.album)
+										data: getAlbumHTML(albummeta.discogs.album, ['master', 'release'])
 									}
 								);
 							}
@@ -1111,7 +1118,8 @@ var info_discogs = function() {
 							var best = 0;
 							find_best: {
 								for (var i in data.data.results) {
-									if (data.data.results[i].format && data.data.results[i].master_url) {
+									if (data.data.results[i].format && data.data.results[i].resource_url && data.data.results[i].title.toLowerCase() == artistmeta.name.toLowerCase()+' - '+trackmeta.name.toLowerCase()) {
+										debug.log(medebug,'Found Artist - Title match');
 										for (var j in data.data.results[i].format) {
 											if (data.data.results[i].format[j] == 'Single') {
 												best = i;
@@ -1121,7 +1129,7 @@ var info_discogs = function() {
 									}
 								}
 							}
-							trackmeta.discogs.tracklink = (data.data.results[best].master_url) === null ? data.data.results[best].resource_url : data.data.results[best].master_url;
+							trackmeta.discogs.tracklink = data.data.results[best].resource_url;
 							debug.log(medebug,'Using track search result', best, trackmeta.discogs.tracklink);
 						}
 						self.track.populate();
@@ -1134,7 +1142,7 @@ var info_discogs = function() {
 							// want the master release info. (Links that come to us from musicbrainz could be either master or release).
 							// We will only display when we have the master info. Since we can't go back from master to release
 							// then if we got a master link from musicbrainz that's all we're ever going to get.
-							trackmmeta.discogs.album.release = data;
+							trackmeta.discogs.track.release = data;
 							discogs.track.getInfo(
 								'',
 								'masters/'+data.data.master_id,
@@ -1184,7 +1192,7 @@ var info_discogs = function() {
 								{
 									name: trackmeta.name,
 									link: (trackmeta.discogs.track.master === undefined) ? null : trackmeta.discogs.track.master.data.uri,
-									data: getAlbumHTML(trackmeta.discogs.track)
+									data: getAlbumHTML(trackmeta.discogs.track, ['master', 'release'])
 								}
 							);
 						}
