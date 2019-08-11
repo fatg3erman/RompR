@@ -100,7 +100,9 @@ var info_spotify = function() {
                 if (artistmeta.spotify.possibilities[i].image) {
                     h += '<img class="spotpossimg title-menu" src="getRemoteImage.php?url='+
                         artistmeta.spotify.possibilities[i].image+'" />';
-                }
+				} else {
+					h += '<img class="spotpossimg title-menu" src="newimages/artist-icon.png" />';
+				}
                 h += '<span class="spotpossname">'+artistmeta.spotify.possibilities[i].name+'</span>';
                 h += '</div>';
             }
@@ -550,7 +552,7 @@ var info_spotify = function() {
                                 id: data.artists.items[i].id,
                                 image: (data.artists.items[i].images &&
                                     data.artists.items[i].images.length > 0) ?
-                                data.artists.items[i].images[data.artists.items[i].images.length-1].url : null
+                                		data.artists.items[i].images[data.artists.items[i].images.length-1].url : null
                             });
                         }
                     }

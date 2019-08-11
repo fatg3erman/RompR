@@ -9,7 +9,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * The default SQLite database now uses a single collection file called collection.sq3. In older releases, it would be called collection_mopidy.sq3 or collection_mpd.sq3 depending on your player type. This meant that if you had multiple players of different types you were not sharing the same collection between them all. The first time you open RompR 1.30, your collection will be upgraded to the new name. If you previously had two collections, the one that is selected will be the one that was most recently updated. Backups of the old files will be kept in prefs/oldcollections.
 * [Snapcast](/RopmR/Snapcast) support
 * Album Art download from Last.FM was broken, has now been fixed
-* Last.FM Info panel will display artist images again, but not for 'Similar Artists', Last.FM have removed all artist image functionality.
+* Last.FM Info panel will display artist images again, but not for 'Similar Artists', and only in certain circumstances. Last.FM have removed all artist image functionality.
 * Done quite a lot of work on the Discogs Info panel to include images and a search that actually works and is quite accurate. This also makes the Videos panel work a lot better and get more accurate matches.
 * Multitudinous new icon themes
 * Some changes to the layout of the Phone and Tablet skins. Large tablets will now display the Now Playing, Playlist, and Media Chooser panels simultaneously when in Landscape orientation.

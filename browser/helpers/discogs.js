@@ -114,7 +114,7 @@ var discogs = function() {
 			search: function(artist, album, success, fail) {
 				var data = {
 					url: baseURL+'database/search',
-					type: 'master',
+					type: 'release',
 					artist: artist,
 					release_title: album
 				};
@@ -141,8 +141,16 @@ var discogs = function() {
 				discogs.request('', data, success, fail);
 			}
 
-		}
+		},
 
+		label: {
+
+			getInfo: function(reqid, id, success, fail) {
+				// NOTE id must be either releases/id or masters/id
+				var data = {url: baseURL+'labels/'+id};
+				discogs.request(reqid, data, success, fail);
+			}
+		}
 
 	}
 

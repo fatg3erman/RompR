@@ -450,6 +450,14 @@ button {
     overflow:hidden;
 }
 
+.minwidthed3:before
+{
+    content:"";
+    width: 20em;
+    display:block;
+    overflow:hidden;
+}
+
 .sensiblebox {
 	box-sizing: border-box;
 }
