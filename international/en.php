@@ -763,7 +763,8 @@ $languages['en'] = array (
 	"label_lastfm_dip_7day" => "Last.FM Recommends",
 	"label_lastfm_dip_1month" => "Last.FM Lucky Dip",
 	"label_lastfm_dip_12month" => "Last.FM Review of the Year",
-	"label_lastfm_dip_overall" => "Last.FM Nostalgia Trip"
+	"label_lastfm_dip_overall" => "Last.FM Nostalgia Trip",
+	"config_alarm_stopafter" => "Stop After (mins)"
 );
 
 ?>

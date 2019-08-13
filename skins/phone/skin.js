@@ -504,12 +504,12 @@ var layoutProcessor = function() {
             }
             if (source == 'infopane') {
                 $('#infobar').css('display', 'none');
-                if (layoutflag == 1000) {
+                if (layoutflag >= 900) {
                     $('#playlistm').css('display', 'none');
                 }
             } else {
                 $('#infobar').css('display', '');
-                if (layoutflag == 1000) {
+                if (layoutflag >= 900) {
                     $('#playlistm').css('display', '');
                 }
             }
@@ -517,7 +517,7 @@ var layoutProcessor = function() {
                 source = "infobar";
             }
             $('.mainpane:not(.invisible):not(#'+source+')').addClass('invisible');
-            if (layoutflag == 1000) {
+            if (layoutflag >= 900) {
                 $('#playlistm').removeClass('invisible');
             }
             $('#'+source).removeClass('invisible');

@@ -14,6 +14,8 @@ var alarmclock = function() {
 	var alarminprogress = false;
 	var topofwindow = null;
 	var waitingforwake = false;
+	var autostoptimer;
+	var autosavetimer;
 
 	function fillWindow() {
 		var key = topofwindow;
@@ -103,6 +105,12 @@ var alarmclock = function() {
 		twatt.css({'margin-left': '4px', 'margin-bottom': '4px'});
 
 		makeACheckbox('alarmramp_'+index, language.gettext('config_alarm_ramp'), container, alarm.alarmramp, false);
+
+		var twott = $("<div>", {class: 'containerbox dropdown-container'}).appendTo(container);
+		var twitt = $('<div>', {class: 'fixed'}).appendTo(twott);
+		makeACheckbox('alarmstopafter_'+index, language.gettext('config_alarm_stopafter'), twitt, alarm.alarmstopafter, false);
+		$('<input>', {type: 'text', class: 'expand alarmclock', id: 'alarmstopmins_'+index, style: 'margin-left:1em'}).val(alarm.alarmstopmins).appendTo(twott);
+
 		makeACheckbox('alarmrepeat_'+index, language.gettext('button_repeat'), container, alarm.alarmrepeat, true);
 		var reps =  $('<div>', {class: 'indent canbefaded'}).appendTo(container);
 		var days = language.gettext('label_daylabels');
@@ -194,6 +202,24 @@ var alarmclock = function() {
 			alarmclock.setAlarm();
 		},
 
+
+		inputChanged: function(event) {
+			clearTimeout(autosavetimer);
+			var element = $(this);
+			var cb = element.attr('id').split('_');
+			var param = cb[0];
+			var index = cb[1];
+			var val = parseFloat(element.val());
+			debug.log('ALARMCLOCK', 'Setting',param,'of alarm',index,'to',val);
+			prefs.alarms[index][param] = val;
+			autosavetimer = setTimeout(alarmclock.saveAlarms, 1000);
+		},
+
+		saveAlarms: function() {
+			prefs.save({alarms: prefs.alarms});
+
+		},
+
 		startInc: function(element) {
 			var cb = element.attr('id').split('_');
 			incindex = cb[1];
@@ -278,6 +304,11 @@ var alarmclock = function() {
 			debug.log("ALARM", "Current Time Is",currentTime);
 			for (var i in prefs.alarms) {
 				var alarm = prefs.alarms[i];
+				if (typeof alarm.alarmstopmins == 'undefined') {
+					alarm.alarmstopmins = 60;
+					alarm.alarmstopafter = false;
+					prefs.save({alarms: prefs.alarms});
+				}
 				if (alarm.alarmon) {
 					var t;
 					if (!alarm.alarmrepeat) {
@@ -362,9 +393,14 @@ var alarmclock = function() {
 
 		startItOff: function() {
 			offPlayClicks();
+			clearTimeout(autostoptimer);
 			$('i.play-button').on('click', alarmclock.snooze);
 		    $('i.stop-button').on('click', alarmclock.snooze);
 			var alarm = prefs.alarms[currentalarm];
+			if (alarm.alarmstopafter) {
+				debug.mark('ALARMCLOCK', 'Alarm will auto-stop in',alarm.alarmstopmins,'minutes');
+				autostoptimer = setTimeout(alarmclock.autoStop, alarm.alarmstopmins*60000);
+			}
 			if (alarm.alarmplayitem) {
 				var items = $('#alarmdropper_'+currentalarm).children();
 				// For neatness - don't keep putting radio stations back in the playlist, it's silly.
@@ -383,6 +419,11 @@ var alarmclock = function() {
 			} else {
 				player.controller.play();
 			}
+		},
+
+		autoStop: function() {
+			alarmclock.disable();
+			player.controller.stop();
 		},
 
 		snooze: function() {
@@ -426,6 +467,8 @@ var alarmclock = function() {
 				alarmtime: 43200,
 				alarmon: false,
 				alarmramp: false,
+				alarmstopafter: false,
+				alarmstopmins: 60,
 				alarmrepeat: false,
 				repeatdays: [false, false, false, false, false, false, false],
 				alarmplayitem: false,
@@ -502,6 +545,8 @@ var alarmclock = function() {
 					alarmclock.stopInc();
 				}
 			});
+
+			$('#alarmpanel').on('keyup', 'input.alarmclock', alarmclock.inputChanged);
 
 			$(document).on('click', '.icon-alarm-on.alarmbutton', alarmclock.disable);
 
