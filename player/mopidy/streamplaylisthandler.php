@@ -180,6 +180,7 @@ class xspfFile {
 // #EXTM3U
 // #EXTINF:duration,Artist - Album
 
+// This works when Mopidy's unwrapper works, which it doesn't always.
 class m3uFile {
 
 	public function __construct($data, $url, $station, $image) {

@@ -14,11 +14,13 @@ To create an alarm, click the + next to 'Create New Alarm' ...
 
 ... and then click the triangle to edit the new alarm
 
-![](images/alarmclock3.png)
+![](images/alarmclock3a.png)
 
 * You can change the time with the up/down arrows. To enable the alarm, use the button on the right.
 
 * Fade In makes the volume slowly ramp up over the number of seconds specified by 'Fade Time' at the bottom of the panel
+
+* Stop After makes the alarm automatically stop after the specified number of minutes
 
 * REPEAT means the alarm will automatically go off at the set time on the specified days. If you do not enable REPEAT then the alarm will go off once, at the specified time, and then disable itself.
 
@@ -26,7 +28,7 @@ To create an alarm, click the + next to 'Create New Alarm' ...
 
 Here's an example alarm that wakes me up for work every weekday morning by playing Radio 2
 
-![](images/alarmclock4.png)
+![](images/alarmclock4a.png)
 
 ## Cancelling Alarms and Snoozing
 
