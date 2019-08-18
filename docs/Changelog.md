@@ -3,6 +3,10 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.31
+
+* Fix a bug where the collection couldn't be updated on clean installations.
+
 ## Version 1.30
 
 * Major re-write of a lot of the backend code to streamline it and make it faster
