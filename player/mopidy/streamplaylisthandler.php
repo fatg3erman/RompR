@@ -93,7 +93,7 @@ class asxFile {
 		$this->prettystream = ($xml->COPYRIGHT != null && $xml->COPYRIGHT != '') ? $xml->COPYRIGHT : "";
 	}
 
-public function updateDatabase() {
+	public function updateDatabase() {
 		logger::log("RADIO_PLAYLIST", "  ASX File ".$this->url.", ".$this->station);
 		$stationid = check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {

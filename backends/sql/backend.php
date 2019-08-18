@@ -1646,9 +1646,7 @@ function collectionUpdateRunning() {
 	$cur = simple_query('Value', 'Statstable', 'Item', 'Updating', null);
 	switch ($cur) {
 		case null:
-			logger::error('COLLECTION', 'ERROR! Got null response to update lock check');
-			return true;
-
+			logger::warn('COLLECTION', 'Got null response to update lock check');
 		case '0':
 			generic_sql_query("UPDATE Statstable SET Value = 1 WHERE Item = 'Updating'", true);
 			return false;
