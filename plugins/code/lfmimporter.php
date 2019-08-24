@@ -4,7 +4,6 @@ chdir('../..');
 include ("includes/vars.php");
 include ("includes/functions.php");
 include ("collection/collection.php");
-include ("player/mpd/connection.php");
 include ("backends/sql/backend.php");
 
 switch ($_REQUEST['action']) {

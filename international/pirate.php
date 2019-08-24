@@ -200,7 +200,7 @@ $languages['pirate'] = array (
 	"label_soma_beg" => "Arrr! He be a good man, if ye likes him, gi 'im some dubloons",
 
 	// Your radio stations
-	"label_radioinput" => "T' magic scroll fer the music must be placed 'ere",
+	"label_radioinput" => "T' magic scroll",
 
 	//Album Art Manager
 	"albumart_title" => "Ye Valuable Paintings",

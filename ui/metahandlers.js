@@ -52,17 +52,19 @@ var metaHandlers = function() {
 	    if ((playlistinfo.type == "local" || playlistinfo.type == "podcast") && playlistinfo.Album) {
 	        data.album = playlistinfo.Album;
 	    }
-	    if (playlistinfo.type == "local" || playlistinfo.type == "podcast") {
-	        if (playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//) && prefs.player_backend == "mpd") {
-	            var sc = playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//);
-	            data.uri = "soundcloud://track/"+sc[1];
-	        } else {
-	            data.uri = playlistinfo.file;
-	        }
-	    } else if (playlistinfo.type == "stream") {
-			data.streamname = playlistinfo.Album;
-			data.streamimage = playlistinfo.images.small;
-			data.streamuri = playlistinfo.file;
+		if (playlistinfo.file) {
+		    if (playlistinfo.type == "local" || playlistinfo.type == "podcast") {
+		        if (playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//) && prefs.player_backend == "mpd") {
+		            var sc = playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//);
+		            data.uri = "soundcloud://track/"+sc[1];
+		        } else {
+		            data.uri = playlistinfo.file;
+		        }
+		    } else if (playlistinfo.type == "stream") {
+				data.streamname = playlistinfo.Album;
+				data.streamimage = playlistinfo.images.small;
+				data.streamuri = playlistinfo.file;
+			}
 		}
 	    if (playlistinfo.year) {
 	        data.date = playlistinfo.year;

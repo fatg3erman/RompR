@@ -210,7 +210,7 @@ $languages['fr'] = array (
 	"label_soma_beg" => "Donations bienvenues, si vous aimez ces stations",
 
 	// Your radio stations
-	"label_radioinput" => "Entrez l'URL d'une station internet ici, ou déposez son bouton Play ici",
+	"label_radioinput" => "Entrez l'URL",
 
 	//Album Art Manager
 	"albumart_title" => "Pochettes de Disques",

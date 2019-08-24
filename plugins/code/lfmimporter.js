@@ -32,11 +32,11 @@ var lfmImporter = function() {
             for (var i in data) {
                 var tr = $('<tr>', {name: data[i].TTindex}).appendTo('#lfmitable');
                 tr.append('<td class="playlistinfo underline" name="albumartist">'+data[i].Albumartist+'</td>');
-                tr.append('<td class="playlistinfo underline" name="album">'+data[i].Albumname+'</td>');
-                tr.append('<td class="playlistinfo underline" name="title">'+data[i].Title+'</td>');
+                tr.append('<td class="playlistinfo underline" name="Album">'+data[i].Albumname+'</td>');
+                tr.append('<td class="playlistinfo underline" name="Title">'+data[i].Title+'</td>');
                 tr.append('<td class="playlistinfo invisible" name="trackartist">'+data[i].Trackartist+'</td>');
-                tr.append('<td class="playlistinfo invisible" name="tracknumber">'+data[i].TrackNo+'</td>');
-                tr.append('<td class="playlistinfo invisible" name="disc">'+data[i].Disc+'</td>');
+                tr.append('<td class="playlistinfo invisible" name="Track">'+data[i].TrackNo+'</td>');
+                tr.append('<td class="playlistinfo invisible" name="Disc">'+data[i].Disc+'</td>');
                 tr.append('<td class="underline" name="playcount">'+data[i].Playcount+'</td>');
                 tr.append('<td class="underline" name="lastfmplaycount"></td>');
                 tr.append('<td class="underline" name="tick"></td>');

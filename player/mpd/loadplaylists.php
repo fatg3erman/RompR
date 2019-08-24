@@ -201,10 +201,10 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
 
 function do_playlist_header() {
     print '<div class="containerbox dropdown-container fullwidth brick_wide">';
-    print '<div class="fixed padright padleft"><span class="alignmid">External URL</span></div>';
+    // print '<div class="fixed padright padleft"><span class="alignmid">External URL</span></div>';
 
-    print '<div class="expand dropdown-holder">
-        <input class="enter clearbox" id="godfreybiggins" type="text" /></div>';
+    print '<div class="expand dropdown-holder padleft">
+        <input class="enter clearbox" id="godfreybiggins" type="text" placeholder="URL" /></div>';
 
     print '<button class="fixed alignmid" '.
         'onclick="player.controller.loadPlaylistURL($(\'#godfreybiggins\').val())">Play</button>';

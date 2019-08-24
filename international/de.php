@@ -225,7 +225,7 @@ $languages['de'] = array (
 	"label_soma_beg" => "Bitte überlegen Sie sich, ob Sie diesen Sender unterstützen wollen, falls Ihnen die Sendungen gefallen",
 
 	// Your radio stations
-	"label_radioinput" => "Geben Sie die URL eines Internetsenders ein oder ziehen Sie den Abspielbutton des Senders hierhin",
+	"label_radioinput" => "Geben Sie die URL",
 
 	//Album Art Manager
 	"albumart_title" => "Album Art",

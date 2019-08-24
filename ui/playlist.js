@@ -251,13 +251,13 @@ var playlist = function() {
             textEntry: function(icon, label, id) {
                 var html = '<div class="menuitem containerbox fullwidth">';
                 html += '<div class="svg-square fixed '+icon+'"></div>';
-                html += '<div class="expand containerbox vertical">';
-                html += '<div class="fixed">'+label+'</div>';
-                html += '<div class="containerbox fixed">';
-                html += '<div class="expand dropdown-holder"><input class="enter clearbox" id="'+id+'" type="text" /></div>';
+                // html += '<div class="expand containerbox vertical">';
+                // html += '<div class="fixed">'+label+'</div>';
+                // html += '<div class="containerbox fixed">';
+                html += '<div class="expand dropdown-holder"><input class="enter clearbox" id="'+id+'" type="text" placeholder="'+label+'" /></div>';
                 html += '<button class="fixed alignmid" name="'+id+'">'+language.gettext('button_playradio')+'</button>';
-                html += '</div>';
-                html += '</div>';
+                // html += '</div>';
+                // html += '</div>';
                 html += '</div>';
                 return html;
             }

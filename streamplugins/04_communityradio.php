@@ -38,6 +38,7 @@ class commradioplugin {
     }
 
     public function doDropdownHeader() {
+        global $prefs;
         directoryControlHeader('communityradiolist', get_int_text('label_communityradio'));
 
         print '<div class="configtitle textcentre brick_wide">List By:</div>';
@@ -77,16 +78,19 @@ class commradioplugin {
         print '</div>';
 
         print '<div class="configtitle textcentre brick_wide">Order By:</div>';
+        print '<div class="fullwidth padright brick_wide containerbox dropdown-container">';
+        print '<div class="selectholder expand">';
+        print '<select id="commradioorderby">';
         foreach (array('name', 'country', 'language', 'state', 'tags', 'votes', 'bitrate') as $o) {
-            print '<div class="styledinputs">';
-            print '<input id="commradioorderby'.$o.'" class="topcheck" name="commradioorderby" value="'.$o.'" type="radio"';
-            if ($this->order == $o) {
-                print ' checked';
+            print '<option value="'.$o.'"';
+            if ($o == $this->order) {
+                print ' selected';
             }
-            print ' />';
-            print '<label for="commradioorderby'.$o.'">'.ucfirst($o).'&nbsp;&nbsp;</label>';
-            print '</div>';
+            print '>'.ucfirst($o).'</option>';
         }
+        print '</select>';
+        print '</div>';
+        print '</div>';
 
         print '<div id="communitystations" class="fullwidth padright holderthing">';
 
@@ -195,7 +199,7 @@ class commradioplugin {
         print '<div class="fullwidth padright brick_wide containerbox dropdown-container" style="margin-bottom:0px">';
         $this->comm_radio_make_list_button($which);
         print '<div class="selectholder expand">';
-        print '<select id="communityradio'.$which.'">';
+        print '<select class="comradiolistby" id="communityradio'.$which.'">';
         foreach ($json as $thing) {
             $val = strtolower($thing['value']);
             print '<option value="'.$val.'"';

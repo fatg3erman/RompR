@@ -223,7 +223,7 @@ $languages['en'] = array (
 	"label_soma_beg" => "Please consider supporting Soma.FM if you like these stations",
 
 	// Your radio stations
-	"label_radioinput" => "Enter a URL of an internet station in this box, or drag its Play button there",
+	"label_radioinput" => "Enter a URL",
 
 	//Album Art Manager
 	"albumart_title" => "Album Art",

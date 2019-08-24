@@ -56,9 +56,9 @@ var communityRadioPlugin = {
 
     setTheThing: function() {
         $('input[name="commradiolistby"]').on('click', communityRadioPlugin.changeListBy);
-        $('input[name="commradioorderby"]').on('click', communityRadioPlugin.changeOrderBy);
+        $('select[id="commradioorderby"]').on('change', communityRadioPlugin.changeOrderBy);
         $('button[name="commradiosearch"]').on('click', communityRadioPlugin.search);
-        $('#communityradiolist select').on('change', communityRadioPlugin.changeOption);
+        $('#communityradiolist select.comradiolistby').on('change', communityRadioPlugin.changeOption);
         var w = 0;
         $.each($(".cslt"), function() {
             if ($(this).width() > w) {
@@ -98,7 +98,7 @@ var communityRadioPlugin = {
     },
 
     changeOrderBy: function() {
-        var orderby = $('input[name="commradioorderby"]:checked').val();
+        var orderby = $('select[id="commradioorderby"]').val();
         prefs.save({communityradioorderby: orderby});
         communityRadioPlugin.page = 0;
         communityRadioPlugin.update();

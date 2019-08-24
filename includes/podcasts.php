@@ -95,9 +95,9 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 function doPodcastBase() {
     global $prefs;
-    print '<div class="containerbox indent"><div class="expand">'.get_int_text("label_searchfor").' (iTunes)</div></div>';
+    // print '<div class="containerbox indent"><div class="expand">'.get_int_text("label_searchfor").' (iTunes)</div></div>';
     print '<div class="containerbox indent dropdown-container">';
-    print '<div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" /></div>';
+    print '<div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" placeholder="'.get_int_text('label_searchfor').' (iTunes)" /></div>';
     print '<button class="fixed searchbutton iconbutton" onclick="podcasts.search()"></button>';
     print '</div>';
 
@@ -109,8 +109,8 @@ function doPodcastBase() {
     print '<div class="spacer"></div>';
 
     print '<div id="cocksausage">';
-    print '<div class="containerbox indent"><div class="expand">'.get_int_text("podcast_entrybox").'</div></div>';
-    print '<div class="containerbox indent dropdown-container"><div class="expand"><input class="enter clearbox" id="podcastsinput" type="text" /></div>';
+    // print '<div class="containerbox indent"><div class="expand">'.get_int_text("podcast_entrybox").'</div></div>';
+    print '<div class="containerbox indent dropdown-container"><div class="expand"><input class="enter clearbox" id="podcastsinput" type="text" placeholder="'.get_int_text("podcast_entrybox").'" /></div>';
     print '<button class="fixed iconbutton rssbutton" onclick="podcasts.doPodcast(\'podcastsinput\')"></button></div>';
     print '</div>';
 
