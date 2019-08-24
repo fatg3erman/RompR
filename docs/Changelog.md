@@ -6,6 +6,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 ## Version 1.32
 
 * Fix last.FM Playcount importer
+* Fix a small bug in Imagemagick image handling of SVG images
 
 ## Version 1.31
 

@@ -111,7 +111,11 @@ if ($player->is_connected()) {
     $commands = $player->get_uri_handlers();
     if (count($commands) > 0) {
         foreach ($commands as $c => $v) {
-            print '<tr><td>URL Handlers</td><td>'.implode(', ', $v).'</td></tr>';
+            if (is_array($v)) {
+                print '<tr><td>URL Handlers</td><td>'.implode(', ', $v).'</td></tr>';
+            } else {
+                print '<tr><td>URL Handlers</td><td>'.$v.'</td></tr>';
+            }
         }
     }
 

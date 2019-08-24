@@ -1964,6 +1964,7 @@ table.ambox {
     max-width:400px;
     transition: opacity 0.5s ease;
     opacity: 1;
+	object-fit: scale-down;
 }
 
 .jalopy120

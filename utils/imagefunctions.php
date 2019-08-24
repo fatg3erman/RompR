@@ -464,6 +464,7 @@ class imageHandler {
         if (extension_loaded('gd')) {
             $this->image = new gdImage($filename);
             if ($this->image->checkImage() === false) {
+                logger::log('IMAGEHANDLER', 'Switching to ImageMagick');
                 $this->image = new imageMagickImage($filename);
             }
         } else {
@@ -512,6 +513,10 @@ class imageMagickImage {
         $this->filename = $filename;
         $this->convert_path = find_executable('convert');
         $this->image_type = mime_content_type($this->filename);
+        logger::log('IMAGEMAGICK', 'Image Type is "'.$this->image_type.'"');
+        if ($this->image_type == 'text/plain') {
+            $this->image_type = IMAGETYPE_SVG;
+        }
     }
 
     public function reset() {
@@ -519,7 +524,7 @@ class imageMagickImage {
     }
 
     public function checkImage() {
-        logger::log("IMAGEMAGICK", "  Image type is ".$this->image_type);
+        logger::log("IMAGEMAGICK", "  Imageis type is ".$this->image_type);
         return $this->image_type;
     }
 
@@ -601,6 +606,7 @@ class gdImage {
         try {
             $image_info = getimagesize($filename);
             $image_type = $image_info[2];
+            logger::log("GD-IMAGE", "Image Type is ".$image_type);
         } catch (Exception $e) {
             logger::warn("GD-IMAGE", "  GD threw an error when handling",$filename);
             $image_type = false;
