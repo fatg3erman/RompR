@@ -185,9 +185,16 @@ function playerController() {
     function checkStateChange() {
         for (var i = 0; i < stateChangeCallbacks.length ; i++) {
             if (stateChangeCallbacks[i].state == player.status.state) {
-                stateChangeCallbacks[i].callback();
-                stateChangeCallbacks.splice(i, 1);
-                i--;
+                // If we're looking for a state change to play, check that elapsed > 5. This works around Mopidy's
+                // buffering issue where playback can take a long time to start with streams and ends up starting a
+                // long time after we've started ramping the alarm clock volume
+                debug.log('PLAYER', 'State Change Check. State is',player.status.state,'Elapsed is',player.status.elapsed);
+                if (player.status.state != 'play' || player.status.elapsed > 5) {
+                    debug.mark('PLAYER', 'Calling state change callback for state',player.status.state);
+                    stateChangeCallbacks[i].callback();
+                    stateChangeCallbacks.splice(i, 1);
+                    i--;
+                }
             }
         }
     }
@@ -607,7 +614,7 @@ function playerController() {
             }
         });
         if ($('[name="searchrating"]').val() != "") {
-            terms['rating'] = $('[name="searchrating"]').val();
+            terms['rating'] = $('[name="searchrating"]').val();x
             termcount++;
         }
         var domains = new Array();
