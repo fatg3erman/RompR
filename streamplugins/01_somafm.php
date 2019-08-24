@@ -10,7 +10,7 @@ class somafmplugin {
         print '<div id="somafmplugin">';
         print albumHeader(array(
             'id' => 'somafmlist',
-            'Image' => 'newimages/somafmlogo.gif',
+            'Image' => 'newimages/somafmlogo.svg',
             'Searched' => 1,
             'AlbumUri' => null,
             'Year' => null,
