@@ -70,7 +70,7 @@ We need to make sure Apache can find the stuff you've just downloaded. To do thi
 
 ### Install some packages
 
-`sudo apt-get install apache2 php-curl php-mysql php-gd php-json php-xml php-mbstring imagemagick`
+    sudo apt-get install apache2 php-curl php-mysql php-gd php-json php-xml php-mbstring imagemagick
 
 
 ### Enable some Apache modules

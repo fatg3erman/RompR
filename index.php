@@ -118,7 +118,7 @@ if ($player->is_connected()) {
     $mpd_status = $player->get_status();
     if (array_key_exists('error', $mpd_status)) {
         logger::fail("INIT", "MPD Password Failed or other status failure");
-        connect_fail(get_int_txt("setup_connecterror").$mpd_status['error']);
+        connect_fail(get_int_text("setup_connecterror").$mpd_status['error']);
     }
 } else {
     logger::error("INIT", "MPD Connection Failure");

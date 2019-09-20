@@ -64,6 +64,7 @@ And then we need to give nginx permission to write to them. We can do this by ch
 
     sudo apt-get install nginx php-curl php-sqlite3 php-gd php-json php-xml php-mbstring php-fpm imagemagick
 
+
 ### Create nginx configuration
 
 We're going to create RompЯ as a standalone website which will be accessible through the address www.myrompr.net
