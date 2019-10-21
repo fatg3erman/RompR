@@ -52,7 +52,7 @@ while (true) {
             connect_to_database(false);
             $read_time = time();
             $collection = new playlistCollection();
-            // map_tags will be uneccesary once romprmetadata starts using ROMMPR_FILE_MODEL, ony sanitise_data will be required then
+            // map_tags will be uneccesary once romprmetadata starts using ROMPR_FILE_MODEL, ony sanitise_data will be required then
             $current_song = map_tags($player->get_currentsong_as_playlist($collection));
             if (array_key_exists('duration', $current_song) && $current_song['duration'] > 0 && $current_song['type'] !== 'stream') {
                 if ($mpd_status['songid'] != $current_id) {
@@ -79,7 +79,7 @@ while (true) {
                 $idle_status = $player->get_idle_status();
             }
             if (array_key_exists('error', $idle_status) && $idle_status['error'] == 'Timed Out') {
-                logger::debug("ROMONITOR", $prefs['currenthost'],"- idle command timed out, looping back");
+                logger::trace("ROMONITOR", $prefs['currenthost'],"- idle command timed out, looping back");
                 $timedout = true;
                 continue;
             } else if (array_key_exists('error', $idle_status)) {
