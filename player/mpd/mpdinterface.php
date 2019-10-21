@@ -305,6 +305,12 @@ class base_mpd_player {
                         $filedata[$parts[0]] = $parts[1];
                         break;
 
+                    case 'X-AlbumImage':
+                        // We can't cope with multiple images, so treat them specially
+                        $ims = explode(';',$parts[1]);
+                        $filedata[$parts[0]] = $ims[0];
+                        break;
+
                     default:
                         if (in_array($parts[0], MPD_ARRAY_PARAMS)) {
                             $filedata[$parts[0]] = array_unique(explode(';',$parts[1]));

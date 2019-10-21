@@ -589,7 +589,7 @@ function get_extra_track_info(&$filedata) {
 			break;
 		}
 	}
-	if (count($data) == 0) {
+	if (count($data) == 0 && !($filedata['Album'] == 'Youtube' && $filedata['X-AlbumImage'] !== null)) {
 		$result = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
 			'SELECT Albumtable.Image AS "X-AlbumImage", mbid AS MUSICBRAINZ_ALBUMID, Searched
 				FROM
