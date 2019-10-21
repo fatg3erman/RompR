@@ -319,7 +319,8 @@ var playlist = function() {
                 var sortartist = (list[i].albumartist == "") ? list[i].trackartist : list[i].albumartist;
                 if ((sortartist.toLowerCase() != current_artist.toLowerCase()) ||
                     list[i].Album.toLowerCase() != current_album.toLowerCase() ||
-                    list[i].type != current_type)
+                    list[i].type != current_type ||
+                    list[i].Album == 'Youtube')
                 {
                     current_type = list[i].type;
                     current_artist = sortartist;
