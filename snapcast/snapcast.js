@@ -90,12 +90,14 @@ var snapcast = function() {
             updatetimer = setTimeout(snapcast.updateStatus, 60000);
         },
 
-        streamInfo: function(streamid) {
+        streamInfo: function(streamid, showformat) {
             for (var i in streams) {
                 if (streams[i].id == streamid) {
-                    var h = streams[i].status.capitalize()+' ';
-                    h += streams[i].meta.STREAM;
-                    h += ' <span class="snapclienthost">('+streams[i].uri.query.codec+' '+streams[i].uri.query.sampleformat+')</span>';
+                    var h = streams[i].meta.STREAM;
+                    h += ' ('+streams[i].status.capitalize()+')';
+                    if (showformat) {
+                        h += ' <span class="snapclienthost">('+streams[i].uri.query.codec+' '+streams[i].uri.query.sampleformat+')</span>';
+                    }
                     return h;
                 }
             }
@@ -201,7 +203,17 @@ var snapcast = function() {
             streams = [];
             groups = [];
             $('#snapcastgroups').empty();
+        },
+
+        clearUpdateTimer() {
+            clearTimeout(updatetimer);
+        },
+
+        setUpdateTimer() {
+            clearTimeout(updatetimer);
+            updatetimer = setTimeout(snapcast.updateStatus, 60000);
         }
+
     }
 
 }();
@@ -254,7 +266,7 @@ function snapcastGroup() {
             g += ' ('+data.name+')';
         }
         holder.find('div[name="groupname"]').html(g);
-        holder.find('div[name="groupstream"]').html(snapcast.streamInfo(data.stream_id));
+        holder.find('div[name="groupstream"]').html(snapcast.streamInfo(data.stream_id, false));
         var icon = data.muted ? 'icon-output-mute' : 'icon-output';
         holder.find('i[name="groupmuted"]').removeClass('icon-output icon-output-mute').addClass(icon);
 
@@ -294,8 +306,8 @@ function snapcastGroup() {
         var a = $('<div>', {class: 'menuitem textcentre'}).appendTo(streammenu);
         a.html('Change Stream');
         for (var i in s) {
-            var d = $('<div>', {class: 'backhi clickitem', name: s[i].id}).appendTo(streammenu).on('click', self.changeStream);
-            d.html(snapcast.streamInfo(s[i].id));
+            var d = $('<div>', {class: 'backhi clickitem textcentre', name: s[i].id}).appendTo(streammenu).on('click', self.changeStream);
+            d.html(snapcast.streamInfo(s[i].id, true));
         }
         streammenu.slideToggle('fast');
     }
@@ -333,18 +345,18 @@ function snapcastClient() {
     var grouplist;
     var groupid;
     var connected;
+    var changeNameTimer;
 
     this.initialise = function(parentdiv) {
         holder = $('<div>', {class: 'snapcastclient'}).appendTo(parentdiv);
         var title = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(holder);
         var n = $('<input>', {type: "text", class: "expand tag snapclientname", name: "clientname"}).appendTo(title);
-        var but = $('<button>', {class: 'fixed'}).appendTo(title).html(language.gettext('label_update')).on('click', self.changeName);
+        $('<div>', {class: 'fixed tag', name: 'notcon'}).appendTo(title);
         var client = $('<div>', {class: 'containerbox'}).appendTo(holder);
-        client.append('<div class="expand snapclienthost" name="clienthost"></div>');
         var m = $('<i>', {class: "podicon fixed icon-menu clickicon"}).appendTo(title).on('click', self.setGroup);
         var rb = $('<i>', {class: "fixed podicon icon-cancel-circled clickicon"}).appendTo(title).on('click', self.deleteClient);
         vc = $('<div>', {class: 'containerbox dropdown-container invisible'}).appendTo(holder);
-        volume = $('<div>', {class: 'expand snapclienthost'}).appendTo(vc);
+        volume = $('<div>', {class: 'expand playlistrow2'}).appendTo(vc);
         var m = $('<i>', {class: "podicon fixed clickicon", name :"clientmuted"}).appendTo(vc).on('click', self.setMute);
         volume.volumeControl({
             orientation: 'horizontal',
@@ -352,11 +364,13 @@ function snapcastClient() {
         });
         groupmenu = $('<div>', {class: 'toggledown invisible'}).insertAfter(title);
         var j = $('<div>', {class: "containerbox dropdown-container"}).appendTo(groupmenu);
+        j.append('<div class="expand playlistrow2" name="clienthost"></div>');
         var k = $('<div>', {class: "expand"}).appendTo(j);
         k = $('<div>', {class: 'fixed padright'}).appendTo(j).html(language.gettext('snapcast_latency'));
         k = $('<input>', {type: 'text', class: 'fixed', name: "latency", size: "6", style: "width:6em"}).appendTo(j);
         k = $('<button>', {class: "fixed"}).appendTo(j).html(language.gettext('snapcast_setlatency')).on("click", self.changeLatency);
         grouplist = $('<div>').appendTo(groupmenu);
+        n.on('keyup', self.keyUp);
     }
 
     this.removeSelf = function() {
@@ -365,6 +379,12 @@ function snapcastClient() {
 
     this.getId = function() {
         return id;
+    }
+
+    this.keyUp = function() {
+        clearTimeout(changeNameTimer);
+        snapcast.clearUpdateTimer();
+        changeNameTimer = setTimeout(self.changeName, 2500);
     }
 
     this.update = function(index, data) {
@@ -381,6 +401,7 @@ function snapcastClient() {
         }
         holder.find('input[name="clientname"]').val(g);
         if (data.connected) {
+            holder.find('div[name="notcon"]').html('');
             holder.find('div[name="clienthost"]').html('('+data.host.name+' - '+data.host.os+')');
             volume.volumeControl("displayVolume", data.config.volume.percent);
             var icon = data.config.volume.muted ? 'icon-output-mute' : 'icon-output';
@@ -388,7 +409,7 @@ function snapcastClient() {
             holder.find('input[name="latency"]').val(data.config.latency);
             vc.removeClass('invisible');
         } else {
-            holder.find('div[name="clienthost"]').html('<span class="tag">'+language.gettext('snapcast_notconnected')+'</span>');
+            holder.find('div[name="notcon"]').html(language.gettext('snapcast_notconnected'));
             if (!vc.hasClass('invisible')) {
                 vc.addClass('invisible');
             }
@@ -427,7 +448,7 @@ function snapcastClient() {
                 a.html(language.gettext('snapcast_changegroup'));
                 for (var i in g) {
                     if (g[i].id != groupid) {
-                        var d = $('<div>', {class: 'backhi clickitem', name: g[i].id}).appendTo(grouplist).on('click', self.changeGroup);
+                        var d = $('<div>', {class: 'backhi clickitem textcentre', name: g[i].id}).appendTo(grouplist).on('click', self.changeGroup);
                         var h = language.gettext('snapcast_group')+g[i].index;
                         if (g[i].name) {
                             h += ' ('+g[i].name+')';

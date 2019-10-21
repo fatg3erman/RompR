@@ -191,6 +191,24 @@ var layoutProcessor = function() {
 
         },
 
+        hidePanel: function(panel, is_hidden, new_state) {
+            if (is_hidden != new_state) {
+                if (new_state && prefs.chooser == panel) {
+                    $("#"+panel).fadeOut('fast');
+                    var s = ["albumlist", "searcher", "filelist", "radiolist", "audiobooklist", "podcastslist", "playlistslist", "pluginplaylistslist"];
+                    for (var i in s) {
+                        if (s[i] != panel && !prefs["hide_"+s[i]]) {
+                            layoutProcessor.sourceControl(s[i]);
+                            break;
+                        }
+                    }
+                }
+                if (!new_state && prefs.chooser == panel) {
+                    $("#"+panel).fadeIn('fast');
+                }
+            }
+        },
+
         addCustomScrollBar: function(value) {
             $(value).mCustomScrollbar({
                 theme: "light-thick",

@@ -3,6 +3,11 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.33
+
+* Fix Panel hiding not working in Fruit skin
+* Make the Snapcast controls look neater
+
 ## Version 1.32
 
 * Fix last.FM Playcount importer
