@@ -130,7 +130,7 @@ class mopidyPlayer extends base_mpd_player {
 
             case "youtube":
                 $filedata['folder'] = $filedata['file'];
-                $filedata['Artist'] = ($filedata['Artist'] == null) ? munge_youtube_track_into_artist($filedata['Title']) : $filedata['Artist'];
+                $filedata['Artist'] = ($filedata['Artist'] == null) ? $this->munge_youtube_track_into_artist($filedata['Title']) : $filedata['Artist'];
                 $filedata['Album'] = $this->munge_youtube_track_into_album($filedata['Title']);
                 $filedata['Title'] = $this->munge_youtube_track_into_title($filedata['Title']);
                 $filedata['AlbumArtist'] = $filedata['Artist'];
