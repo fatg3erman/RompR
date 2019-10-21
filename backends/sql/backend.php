@@ -1346,9 +1346,9 @@ function find_podcast_track_from_url($url) {
 									Podcasttable.Image AS image
 									FROM PodcastTracktable JOIN Podcasttable USING (PODindex)
 									WHERE PodcastTracktable.Link=?
-									OR PodcastTracktable.Localfilename=?",
+									OR ? LIKE LIKE CONCAT('%', PodcastTracktable.Localfilename)",
 									$url,
-									preg_replace('#http://.*?/#', '/', $url));
+									$url);
 }
 
 //
