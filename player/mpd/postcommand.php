@@ -72,7 +72,7 @@ if ($player->is_connected()) {
                     logger::log("POSTCOMMAND", "Remote Playlist URL is",$cmd[1]);
                     // First, see if we can just 'load' the remote playlist. This is better with MPD
                     // as it parses track names from the playlist
-                    if ($this->check_track_load_command($cmd[1]) == 'load') {
+                    if ($player->check_track_load_command($cmd[1]) == 'load') {
                         logger::log("POSTCOMMAND", "Loading remote playlist");
                         $cmds[] = join_command_string(array('load', $cmd[1]));
                     } else {
@@ -87,7 +87,7 @@ if ($player->is_connected()) {
                         require_once ("utils/getInternetPlaylist.php");
                         $tracks = load_internet_playlist($cmd[1], '', '', true);
                         foreach ($tracks as $track) {
-                            $cmd = $this->check_track_load_command($track['TrackUri']);
+                            $cmd = $player->check_track_load_command($track['TrackUri']);
                             $cmds[] = join_command_string(array($cmd, $track['TrackUri']));
                         }
                     }
