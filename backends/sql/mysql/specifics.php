@@ -777,6 +777,10 @@ function delete_oldtracks() {
 	// generic_sql_query("DELETE Tracktable FROM Tracktable JOIN Playcounttable USING (TTindex) WHERE Hidden = 1 AND DATE_SUB(CURDATE(), INTERVAL 6 MONTH) > DateAdded AND Playcount < 2", true);
 }
 
+function mb4_bodge() {
+	return 'SET NAMES utf8mb4;';
+}
+
 function delete_orphaned_artists() {
 	generic_sql_query("DROP TABLE IF EXISTS Croft", true);
 	generic_sql_query("DROP TABLE IF EXISTS Cruft", true);

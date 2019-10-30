@@ -788,6 +788,10 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 56 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 56:
+				generic_sql_query("UPDATE Statstable SET Value = 57 WHERE Item = 'SchemaVer'", true);
+				break;
+
 
 		}
 		$sv++;
@@ -800,6 +804,10 @@ function delete_oldtracks() {
 	// generic_sql_query("DROP TABLE IF EXISTS OldTracks", true);
 	// generic_sql_query("CREATE TEMPORARY TABLE OldTracks AS SELECT TTindex FROM Tracktable JOIN Playcounttable USING (TTindex) WHERE Hidden = 1 AND DATETIME('now', '-6 MONTH') > DateAdded AND Playcount < 2", true);
 	// generic_sql_query("DELETE FROM Tracktable WHERE TTindex IN (SELECT TTindex FROM OldTracks)", true);
+}
+
+function mb4_bodge() {
+	return '';
 }
 
 function delete_orphaned_artists() {
