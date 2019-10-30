@@ -478,7 +478,7 @@ function refreshPodcast($podid) {
             logger::log('PODCASTS', 'Description is',$track['Description']);
 
             if (sql_prepare_query(true, null, null, null,
-                "INSERT INTO PodcastTracktable
+                "SET NAMES utf8mb4;INSERT INTO PodcastTracktable
                 (JustUpdated, PODindex, Title, Artist, Duration, PubDate, FileSize, Description, Link, Guid, New)
                 VALUES
                 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
