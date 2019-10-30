@@ -72,7 +72,7 @@ $languages['pirate'] = array (
 	"config_scrobblepercent" => "Afore ye scrobble, pipe this much shanty",
 	"config_autocorrect" => "Ye red ball corrects ye",
 	"config_tagloved" => "Ye beautys be marked wi'",
-	"config_country" => "YER LUBBER (for t' red ball)",
+	"config_country" => "YER LUBBER (for t' green ball)",
 
 	// Various buttons for the playlist dropdowns
 	"button_imsure" => "Arrrrrrrrrr!",

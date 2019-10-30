@@ -5,9 +5,6 @@ function spotifyRecommendationsRadio() {
 
 	this.populate = function(params, numtracks) {
 		params.limit = 100;
-		if (prefs.lastfm_country_code) {
-			params.market = prefs.lastfm_country_code;
-		}
 		debug.log("SPOTIFY RECC","Getting recommendations",params);
 		spotify.recommendations.getRecommendations(params,
 			function(data) {

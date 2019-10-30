@@ -1,7 +1,7 @@
 function LastFM(user) {
 
-    var lastfm_api_key = "15f7532dff0b8d84635c757f9f18aaa3";
-    var lastfm_secret="3ddf4cb9937e015ca4f30296a918a2b0";
+    var lak = null;
+    var lfms = null;
     var logged_in = false;
     var username = user;
     var token = "";
@@ -36,6 +36,19 @@ function LastFM(user) {
     }
 
     uiLoginBind();
+
+    $.ajax({
+        method: 'GET',
+        url: 'includes/strings.php',
+        dataType: 'json'
+    })
+    .done(function(data) {
+        lak = data.k;
+        lfms = data.s;
+    })
+    .fail(function(xhr,status,err) {
+        debug.warn("LASTFM", "Big Setup Failure",xhr,status,err);
+    });
 
     function speedBackUp() {
         throttleTime = 500;
@@ -87,14 +100,14 @@ function LastFM(user) {
     this.login = function (user, pass) {
 
         username = user;
-        var options = {api_key: lastfm_api_key, method: "auth.getToken"};
+        var options = {api_key: lak, method: "auth.getToken"};
         var keys = getKeys(options);
         var it = "";
 
         for(var key in keys) {
             it = it+keys[key]+options[keys[key]];
         }
-        it = it+lastfm_secret;
+        it = it+lfms;
         options.api_sig = hex_md5(it);
         options.format = 'json';
         var url = "https://ws.audioscrobbler.com/2.0/";
@@ -119,7 +132,7 @@ function LastFM(user) {
             mywin.append('<table align="center" cellpadding="2" id="lfmlogintable" width="90%"></table>');
             $("#lfmlogintable").append('<tr><td>'+language.gettext("lastfm_login1")+'</td></tr>');
             $("#lfmlogintable").append('<tr><td>'+language.gettext("lastfm_login2")+'</td></tr>');
-            $("#lfmlogintable").append('<tr><td align="center"><a href="http://www.last.fm/api/auth/?api_key='+lastfm_api_key+'&token='+token+'" target="_blank">'+
+            $("#lfmlogintable").append('<tr><td align="center"><a href="http://www.last.fm/api/auth/?api_key='+lak+'&token='+token+'" target="_blank">'+
                                         '<button>'+language.gettext("lastfm_loginbutton")+'</button></a></td></tr>');
             $("#lfmlogintable").append('<tr><td>'+language.gettext("lastfm_login3")+'</td></tr>');
             lfmlog.addCloseButton('OK',lastfm.finishlogin);
@@ -134,7 +147,7 @@ function LastFM(user) {
             {
                 token: token,
                 format: 'json',
-                api_key: lastfm_api_key,
+                api_key: lak,
                 method: "auth.getSession"
             },
             function(data) {
@@ -188,7 +201,7 @@ function LastFM(user) {
     }
 
     function addGetOptions(options, method) {
-        options.api_key = lastfm_api_key;
+        options.api_key = lak;
         options.autocorrect = prefs.lastfm_autocorrect ? 1 : 0;
         options.method = method;
     }
@@ -210,6 +223,11 @@ function LastFM(user) {
                 debug.trace("LASTFM","Request pulled from queue is already being handled!")
                 return;
             }
+        	if (lak === null) {
+        		debug.error('LASTFM', 'Fatal Error');
+        		req.fail(null);
+        		return;
+        	}
             queue[0].flag = true;
             debug.trace("LASTFM","Taking next request from queue",req.url);
             if (req.url == "POST") {
@@ -331,7 +349,7 @@ function LastFM(user) {
                 it = it+keys[key]+options[keys[key]];
             }
         }
-        it = it+lastfm_secret;
+        it = it+lfms;
         options.api_sig = hex_md5(it);
         queue.push({
             url: "POST",
@@ -348,7 +366,7 @@ function LastFM(user) {
 
     function addSetOptions(options, method) {
         options.format = 'json';
-        options.api_key = lastfm_api_key;
+        options.api_key = lak;
         options.sk = prefs.lastfm_session_key;
         options.method = method;
     }

@@ -7,6 +7,8 @@ Note that some versions listed here may be unreleased, I use version number incr
 
 * Fix Panel hiding not working in Fruit skin
 * Make the Snapcast controls look neater
+* Fix some bugs relating to loading playlists
+* Make Mopidy-Youtube handling work better
 
 ## Version 1.32
 

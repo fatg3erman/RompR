@@ -248,12 +248,12 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
         }
     }
 
-    if ($lastpubdate !== null) {
-        if ($podcast['LastPubDate'] !== false && $podcast['LastPubDate'] == $lastpubdate) {
-            logger::mark("PARSE_RSS", "Podcast has not been updated since last refresh");
-            return false;
-        }
-    }
+    // if ($lastpubdate !== null) {
+    //     if ($podcast['LastPubDate'] !== false && $podcast['LastPubDate'] == $lastpubdate) {
+    //         logger::mark("PARSE_RSS", "Podcast has not been updated since last refresh");
+    //         return false;
+    //     }
+    // }
 
     return $podcast;
 

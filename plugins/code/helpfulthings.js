@@ -193,9 +193,6 @@ var helpfulThings = function() {
 			if (trackseeds.length > 0) {
 				current_seed = trackseeds.shift();
 				var params = { limit: 8 }
-				if (prefs.lastfm_country_code) {
-					params.market = prefs.lastfm_country_code;
-				}
 				params.seed_tracks = current_seed.id;
 				spotify.recommendations.getRecommendations(params, helpfulThings.gotTrackRecommendations, helpfulThings.spotiError);
 			} else if (nonspotitracks.length == 0) {

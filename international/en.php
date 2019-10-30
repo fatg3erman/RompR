@@ -558,7 +558,7 @@ $languages['en'] = array (
 	"label_amendalbum" => "Amend Album Details",
 
 	//CHANGED in 0.60
-	"config_country" => "COUNTRY (for Last.FM and Spotify)",
+	"config_country" => "COUNTRY (for Spotify)",
 	"setup_labeladdresses" => "If you are having connection issues, try using an IP address instead of 'localhost'",
 	"setup_ipaddress" => "Mopidy or mpd server",
 

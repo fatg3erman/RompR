@@ -18,6 +18,8 @@ The remotely stored playlist can be browsed and entries from it added to the Cur
 
 With mpd you can also use this to play Soundcloud tracks (see the mpd documentation).
 
+With Mopidy and Mopidy-Youtube you can play YouTube tracks this way. Just enter yt: followed by the URL of the video.
+
 Playlists added this way can be renamed or deleted using the icons next to the playlist name.
 
 ![](images/remoteplaylist.png)

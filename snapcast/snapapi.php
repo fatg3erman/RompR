@@ -34,7 +34,7 @@ class snapcast {
         return false;
     }
 
-    private function close_connection() {
+    public function close_connection() {
         if ($this->is_connected()) {
             stream_socket_shutdown($this->connection, STREAM_SHUT_RDWR);
         }
@@ -48,13 +48,12 @@ class snapcast {
         if ($this->open_connection()) {
             logger::trace("SNAPCAST", "Sending ",$json);
             // For some reason, fputs strips the final } off the string
-            fputs($this->connection, $json."}\n", strlen($json)+2);
+            fputs($this->connection, $json."}\n");
             $got = fgets($this->connection);
             return $got;
         } else {
             return $this->errorjson('Could not connect to snapcast server');
         }
-        $this->close_connection();
     }
 
     private function errorjson($msg) {
@@ -69,4 +68,5 @@ $output = $server->do_command($json);
 logger::debug("SNAPCAST", "Output is",$output);
 header('Content-Type: application/json; charset=utf-8');
 print $output;
+$server->close_connection();
 ?>

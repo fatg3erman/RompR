@@ -524,7 +524,7 @@ $languages['it'] = array (
 	"podcast_hidedescriptions" => "Nascondi Descrizioni",
 
 	//CHANGED in 0.60
-	"config_country" => "NAZIONE (per Last.FM e Spotify)",
+	"config_country" => "NAZIONE (per potify)",
 	"setup_labeladdresses" => "Se hai dei problemi di connessione, prova a usare un indirizzo IP al posto di 'localhost'",
 	"setup_ipaddress" => "Server Mopidy o mpd",
 

@@ -182,7 +182,10 @@ var spotify = function() {
 			},
 
 			getAlbums: function(id, types, success, fail, prio) {
-				var url = baseURL + '/v1/artists/'+id+'/albums?album_type='+types+'&market='+prefs.lastfm_country_code+'&limit=50';
+				var url = baseURL + '/v1/artists/'+id+'/albums?album_type='+types+'&limit=50';
+				if (prefs.lastfm_country_code) {
+					url += '&market='+prefs.lastfm_country_code;
+				}
 				spotify.request(id, url, success, fail, prio, true);
 			},
 
@@ -202,6 +205,9 @@ var spotify = function() {
 
 			getRecommendations: function(param, success, fail) {
 				var p = new Array();
+				if (prefs.lastfm_country_code) {
+					param.market = prefs.lastfm_country_code;
+				}
 				for (var i in param) {
 					p.push(i+'='+encodeURIComponent(param[i]));
 				}

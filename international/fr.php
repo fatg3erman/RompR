@@ -72,7 +72,7 @@ $languages['fr'] = array (
 	"config_scrobblepercent" => "Pourcentage de pistes à jouer avec de scrobbler",
 	"config_autocorrect" => "Auto-correction Last.FM Activée",
 	"config_tagloved" => "Tagguer Pistes Aimées Avec:",
-	"config_country" => "PAYS (pour Last.FM)",
+	"config_country" => "PAYS (pour Spotify)",
 
 	// Various buttons for the playlist dropdowns
 	"button_imsure" => "Je Suis Sûr",

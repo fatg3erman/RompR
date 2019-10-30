@@ -449,9 +449,6 @@ var info_spotify = function() {
                                 doRecommendations(trackmeta.spotify.recommendations);
                             } else {
                                 var params = { limit: 8 }
-                                if (prefs.lastfm_country_code) {
-                                    params.market = prefs.lastfm_country_code;
-                                }
                                 params.seed_tracks = trackmeta.spotify.id;
                                 spotify.recommendations.getRecommendations(params, gotTrackRecommendations, self.track.spotifyRecError);
                             }
