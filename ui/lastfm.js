@@ -37,14 +37,19 @@ function LastFM(user) {
 
     uiLoginBind();
 
+    debug.mark('LASTFM', 'Doing the wrangling');
     $.ajax({
         method: 'GET',
         url: 'includes/strings.php',
         dataType: 'json'
     })
     .done(function(data) {
+        debug.mark('LASTFM', 'Done the wrangling',data);
         lak = data.k;
         lfms = data.s;
+        if (prefs.sync_lastfm_at_start) {
+            syncLastFMPlaycounts.start();
+        }
     })
     .fail(function(xhr,status,err) {
         debug.warn("LASTFM", "Big Setup Failure",xhr,status,err);
@@ -225,7 +230,7 @@ function LastFM(user) {
             }
         	if (lak === null) {
         		debug.error('LASTFM', 'Fatal Error');
-        		req.fail(null);
+                throttle = setTimeout(lastfm.getRequest, throttleTime);
         		return;
         	}
             queue[0].flag = true;
