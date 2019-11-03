@@ -1,10 +1,14 @@
 # Installing on macOS with nginx webserver
 
-This is an alternative method to install RompЯ on macOS which uses the nginx webserver instead of the built in Apache server.
+This is an alternative method to install RompЯ on macOS which uses the nginx webserver instead of the built in Apache server. This method installs everything from Homebrew, which should future-proof it better against Apple removing stuff from macOS in the future.
+
+## Install Homebrew
+
+[Homebrew](https://brew.sh/)
 
 ## Installing a player
 
-You'll need either MPD or Mopidy
+You'll need either MPD or Mopidy. However as at time of writing Mopidy installation is not working on macOS at all.
 
 ### Install Mopidy...
 
@@ -14,33 +18,7 @@ Then go [here](https://discourse.mopidy.com/t/cant-run-mopidy-on-fresh-brew-inst
 
 ### ... or install MPD
 
-First install [Homebrew](https://brew.sh/)
-
-Then
-
     brew install mpd --with-opus --with-libmss
-
-### Player Connection Timeout
-    
-There is one thing you should adjust in the configuration for MPD and Mopidy
-    
-MPD and Mopidy both have a connection timeout parameter, after which time they will drop the connection between them and Rompr. This is seriously bad news for Rompr. You should make sure you increase it.
-    
-### For Mopidy
-    
-In mopidy.conf, your mpd section needs to contain
-    
-    [mpd]
-    connection_timeout = 120
-        
-### For MPD
-    
-Somewhere in mpd.conf
-    
-    connection_timeout     "120"
-    
-    
-If you have a very large music collection, the higher the numbeer the better. It is in seconds.
 
 ## Install Rompr
 
@@ -129,10 +107,9 @@ Again hit ctrl-X and the answer Y to save that file.
 
 ### PHP installation
 
-    brew tap homebrew/homebrew-php
-    brew install php72
+    brew install php@7.2
 
-Note: the '72' refers to the version number of PHP - in this case version 7.2. This was current at the time of writing but it may change in the future. 'brew search php' will give you a long list of stuff with various version numbers, probably 54, 55, 70, 72, and upwards. I'd suggest using 72 as I know it works, but if there's a newer version that should be OK too.
+Note: the '7.2' refers to the version number of PHP - in this case version 7.2. This was current at the time of writing but it may change in the future. 'brew search php' will give you a long list of stuff with various version numbers, probably 70, 72, and upwards. I'd suggest using 72 as I know it works, but if there's a newer version that should be OK too.
 
 ### PHP configuration
 
@@ -170,7 +147,7 @@ On other devices you can either add an entry to their hosts file for the IP addr
 
 ## Start Everything
 
-    sudo brew services start homebrew/php/php72
+    sudo brew services start php72
     sudo brew services start nginx
 
 ## And We're Done
