@@ -117,11 +117,11 @@ function doPodcastBase() {
     print '<div class="spacer"></div>';
 
     print '<div class="containerbox dropdown-container indent noselection">';
-    print '<i class="icon-toggle-closed mh menu fixed openmenu" name="podcastsortoptions"></i>';
+    // print '<i class="icon-toggle-closed mh menu fixed openmenu" name="podcastsortoptions"></i>';
     print '<div class="expand"><b>'.get_int_text('label_global_controls').'</b></div>';
     print '</div>';
 
-    print '<div id="podcastsortoptions" class="toggledown invisible marged">';
+    // print '<div id="podcastsortoptions" class="toggledown invisible marged">';
 
     print '<div class="spacer"></div>';
 
@@ -161,7 +161,7 @@ function doPodcastBase() {
         }
     }
     print '</div>';
-    print '</div>';
+    // print '</div>';
 
     print '<div class="spacer"></div>';
 
