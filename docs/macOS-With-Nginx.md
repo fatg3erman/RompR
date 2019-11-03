@@ -12,7 +12,7 @@ You'll need either MPD or Mopidy. However as at time of writing Mopidy installat
 
 ### Install Mopidy...
 
-The instructions on mopidy's website no longer work, so first install [Homebrew](https://brew.sh/)
+The instructions on Mopidy's website [Mopidy](https://docs.mopidy.com/en/latest/installation/osx/) don't currently work.
 
 Then go [here](https://discourse.mopidy.com/t/cant-run-mopidy-on-fresh-brew-install-getting-python-framework-error/2343/2)
 
