@@ -433,10 +433,11 @@ if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave == false) {
                     <input class="autoset toggle" type="checkbox" id="updateeverytime" /><label for="updateeverytime">'.get_int_text('config_updateonstart').'</label>
                 </div>';
         print '<button class="tright" name="donkeykong">'.get_int_text('config_updatenow').'</button>';
-        if ($prefs['player_backend'] == "mpd") {
-            print '<button class="tright" name="dinkeyking">'.get_int_text('config_rescan').'</button>';
+        print '</div>';
+        if ($prefs['player_backend'] == "mpd" && $prefs['collection_player'] !== null) {
+            print '<div class="clearfix"><button class="tright" name="dinkeyking">'.get_int_text('config_rescan').'</button></div>';
         }
-        print '</div></div>';
+        print '</div>';
     }
 
     if ($prefs['collection_player'] == "mopidy" && $prefs['player_backend'] == 'mopidy') {
@@ -451,7 +452,7 @@ if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave == false) {
         <label for="preferlocalfiles">'.get_int_text('config_preferlocal').'</label></div>';
     }
 
-    if ($prefs['collection_player'] == $prefs['player_backend']) {
+    if ($prefs['collection_player'] == $prefs['player_backend'] || $prefs['collection_player'] == null) {
         print '<div class="pref styledinputs">
         <input class="autoset toggle" type="checkbox" id="sortbycomposer" />
         <label for="sortbycomposer">'.get_int_text('config_sortbycomposer').'</label>
