@@ -18,7 +18,7 @@ Then go [here](https://discourse.mopidy.com/t/cant-run-mopidy-on-fresh-brew-inst
 
 ### ... or install MPD
 
-    brew install mpd --with-opus --with-libmss
+    brew install mpd 
 
 ## Install Rompr
 
