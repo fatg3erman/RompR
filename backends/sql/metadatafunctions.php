@@ -236,6 +236,16 @@ class romprmetadata {
 				romprmetadata::resetSyncCounts(array($ttid));
 			}
 		}
+
+		// Let's just see if it's a podcast track and mark it as listened.
+		// This won't always work, as scrobbles are often not what's in the RSS feed, but we can but do our best
+		sql_prepare_query(true, null, null, null, 
+			"UPDATE PodcastTrackTable SET Listened = ? WHERE Title = ? AND Artist = ?",
+			1,
+			$data['title'],
+			$data['artist']
+		);
+
 	}
 
 	public static function resetSyncCounts($ttids) {
