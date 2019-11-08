@@ -505,6 +505,8 @@ class logger {
     public static function un_array(&$a, $i) {
         if (is_array($a)) {
             $a = multi_implode($a);
+        } else if (is_object($a)) {
+            $a = print_r($a, true);
         }
     }
 
