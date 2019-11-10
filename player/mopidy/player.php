@@ -130,9 +130,9 @@ class mopidyPlayer extends base_mpd_player {
 
             case "youtube":
                 $filedata['folder'] = $filedata['file'];
-                $filedata['Artist'] = ($filedata['Artist'] == null) ? $this->munge_youtube_track_into_artist($filedata['Title']) : $filedata['Artist'];
-                $filedata['Album'] = $this->munge_youtube_track_into_album($filedata['Title']);
-                $filedata['Title'] = $this->munge_youtube_track_into_title($filedata['Title']);
+                $filedata['Artist'] = ($filedata['Artist'] == null) ? 'YouTube' : $filedata['Artist'];
+                $filedata['Album'] = 'YouTube';
+                // $filedata['Title'] = $this->munge_youtube_track_into_title($filedata['Title']);
                 $filedata['AlbumArtist'] = $filedata['Artist'];
                 $filedata['X-AlbumUri'] = $filedata['file'];
                 break;
@@ -173,46 +173,6 @@ class mopidyPlayer extends base_mpd_player {
                 break;
         }
 
-    }
-
-    private function munge_youtube_track_into_artist($t) {
-        // Risky, but mopidy-youtube doesn't return artists (for obvious reasons)
-        if (preg_match('/^(.*?)\s*[-|\|+]\s*/', $t, $matches)) {
-            if ($matches[1] !== "") {
-                return array($matches[1]);
-            } else {
-                return array("Youtube");
-            }
-        } else {
-            return array("Youtube");
-        }
-    }
-
-    private function munge_youtube_track_into_album($t) {
-        // Even riskier, but mopidy-youtube doesn't return albums except 'Youtube' (for obvious reasons)
-        if (preg_match('/^.*?\s*[-|\|+]\s*(.*?)\s+[-|\|+]\s+/', $t, $matches)) {
-            if ($matches[1] !== "") {
-                return $matches[1];
-            }
-        }
-
-        if (preg_match('/^.*?\s*[-|\|+]\s*(.*?)\s+[\(|\[]*full album[\)|\]]*/i', $t, $matches)) {
-            if ($matches[1] !== "") {
-                return $matches[1];
-            }
-        }
-
-        return "Youtube";
-
-    }
-
-    private function munge_youtube_track_into_title($t) {
-        // Risky as fuck!
-        if (preg_match('/^.*?\s*[-|\|+]\s*.*?\s+[-|\|+]\s+(.*?)$/', $t, $matches)) {
-            return $matches[1];
-        } else {
-            return $t;
-        }
     }
 
     private function preprocess_stream(&$filedata) {

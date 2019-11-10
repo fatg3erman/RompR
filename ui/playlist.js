@@ -320,7 +320,7 @@ var playlist = function() {
                 if ((sortartist.toLowerCase() != current_artist.toLowerCase()) ||
                     list[i].Album.toLowerCase() != current_album.toLowerCase() ||
                     list[i].type != current_type ||
-                    list[i].Album == 'Youtube')
+                    list[i].Album == 'YouTube')
                 {
                     current_type = list[i].type;
                     current_artist = sortartist;

@@ -491,7 +491,7 @@ class base_mpd_player {
         $dirs = array();
         foreach ($this->parse_list_output('playlistinfo', $dirs, false) as $filedata) {
             // Check the database for extra track info
-            $filedata = array_replace($filedata, get_extra_track_info($filedata));
+            $filedata = array_replace($filedata, get_extra_track_info($filedata, true));
             yield $collection->doNewPlaylistFile($filedata);
         }
     }
@@ -501,7 +501,7 @@ class base_mpd_player {
         $retval = array();
         foreach ($this->parse_list_output('currentsong', $dirs, false) as $filedata) {
             // Check the database for extra track info
-            $filedata = array_replace($filedata, get_extra_track_info($filedata));
+            $filedata = array_replace($filedata, get_extra_track_info($filedata, true));
             $retval = $collection->doNewPlaylistFile($filedata);
         }
         return $retval;

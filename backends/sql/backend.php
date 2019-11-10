@@ -563,7 +563,7 @@ function get_all_data($ttid) {
 }
 
 // Looking up this way is hugely faster than looking up by Uri
-function get_extra_track_info(&$filedata) {
+function get_extra_track_info(&$filedata, $use_player_image) {
 	$data = array();;
 	$result = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
 		'SELECT Uri, TTindex, Disc, Artistname AS AlbumArtist, Albumtable.Image AS "X-AlbumImage", mbid AS MUSICBRAINZ_ALBUMID, Searched, IFNULL(Playcount, 0) AS Playcount
@@ -610,7 +610,7 @@ function get_extra_track_info(&$filedata) {
 			break;
 		}
 	}
-	if ($filedata['Album'] == 'Youtube' && $filedata['X-AlbumImage'] !== null) {
+	if ($use_player_image && $filedata['Album'] == 'YouTube' && $filedata['X-AlbumImage'] !== null) {
 		$data['X-AlbumImage'] = $filedata['X-AlbumImage'];
 	}
 	return $data;

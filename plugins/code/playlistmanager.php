@@ -22,29 +22,34 @@ function print_playlists_as_json() {
 	foreach ($player->get_stored_playlists(true) as $name) {
     	$pls[rawurlencode($name)] = array();
 		$albumimage = new baseAlbumImage(array('artist' => "PLAYLIST", 'album' => $name));
+		logger::log('PLAYLISTS', 'Doing Playlist '.$name);
 		$c = 0;
 		$plimage = $albumimage->get_image_if_exists();
 		foreach ($player->get_stored_playlist_tracks($name, 0) as list($flag, $link, $filedata)) {
 			$usealbumimage = $albumimage;
             $albumartist = format_sortartist($filedata);
             $image = $plimage;
+            logger::log('PLAYLISTS', '  Checking Image '.$filedata['Album'].' '.$albumartist);
             $result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
                     "SELECT Image FROM
                     Albumtable JOIN Artisttable ON
                     (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
-                    WHERE Albumname = ? AND Artistname = ?", $filedata['Album'], $albumartist);
+                    WHERE LOWER(Albumname) = LOWER(?) AND Artistname = ?", $filedata['Album'], $albumartist);
             foreach ($result as $obj) {
+            	logger::log('PLAYLISTS', '    Got '.$obj->Image);
                 $image = $obj->Image;
 				$usealbumimage = new baseAlbumImage(array('artist' => $albumartist, 'album' => $filedata['Album']));
 				break;
             }
             if ($image == $plimage) {
+	            logger::log('PLAYLISTS', '  Checking Image '.$filedata['Album'].' '.$filedata['Title']);
                 $result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
                         "SELECT Image, Artistname FROM
                         Tracktable JOIN Albumtable USING (Albumindex)
 						JOIN Artisttable ON (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
                         WHERE Albumname = ? AND Title = ?", $filedata['Album'], $filedata['Title']);
                 foreach ($result as $obj) {
+	            	logger::log('PLAYLISTS', '    Got '.$obj->Image);
                     $image = $obj->Image;
 					$usealbumimage = new baseAlbumImage(array('artist' => $obj->Artistname, 'album' => $filedata['Album']));
 					break;
