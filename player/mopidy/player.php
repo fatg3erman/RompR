@@ -125,14 +125,8 @@ class mopidyPlayer extends base_mpd_player {
     			break;
 
             case "soundcloud":
-    			$this->preprocess_soundcloud($filedata);
-                break;
-
             case "youtube":
-                $filedata['folder'] = $filedata['file'];
-                $filedata['Artist'] = ($filedata['Artist'] == null) ? 'YouTube' : $filedata['Artist'];
-                $filedata['Album'] = 'YouTube';
-                $filedata['AlbumArtist'] = $filedata['Artist'];
+    			$this->preprocess_soundcloud($filedata);
                 break;
 
             case "spotify":

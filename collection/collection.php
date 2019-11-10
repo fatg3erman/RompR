@@ -28,7 +28,7 @@ class musicCollection {
 		if ($doing_search) {
 			// If we're doing a search, we check to see if that track is in the database
 			// because the user might have set the AlbumArtist to something different
-			$filedata = array_replace($filedata, get_extra_track_info($filedata, false));
+			$filedata = array_replace($filedata, get_extra_track_info($filedata));
 	    }
 
 		$track = new track($filedata);

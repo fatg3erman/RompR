@@ -570,7 +570,7 @@ function get_all_data($ttid) {
 }
 
 // Looking up this way is hugely faster than looking up by Uri
-function get_extra_track_info(&$filedata, $use_player_image) {
+function get_extra_track_info(&$filedata) {
 	$data = array();;
 	$result = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
 		'SELECT Uri, TTindex, Disc, Artistname AS AlbumArtist, Albumtable.Image AS "X-AlbumImage", mbid AS MUSICBRAINZ_ALBUMID, Searched, IFNULL(Playcount, 0) AS Playcount
@@ -618,16 +618,13 @@ function get_extra_track_info(&$filedata, $use_player_image) {
 		}
 	}
 
-	if ($filedata['Album'] == 'YouTube' && $data['AlbumArtist'] !== null) {
+	if ($filedata['domain'] == 'youtube' && array_key_exists('AlbumArtist', $data)) {
 		// Workaround a mopidy-youtube bug where sometimes it reports incorrect Artist info
 		// if the item being added to the queue is not the result of a search. In this case we will
 		// (almost) always have AlbumArtist info, so use that and it'll then stay consistent with the collection
 		$data['Artist'] = $data['AlbumArtist'];
 	}
 
-	if ($use_player_image && $filedata['Album'] == 'YouTube' && $filedata['X-AlbumImage'] !== null) {
-		$data['X-AlbumImage'] = $filedata['X-AlbumImage'];
-	}
 	return $data;
 }
 
