@@ -80,6 +80,7 @@ var metaHandlers = function() {
 
 			doMeta: function(action, name, attributes, fn) {
 			    var tracks = new Array();
+			    debug.log('DROPPLUGIN', 'In doMeta');
 			    $.each($('.selected').filter(removeOpenItems), function (index, element) {
 			        var uri = unescapeHtml(decodeURIComponent($(element).attr("name")));
 			        debug.log("DROPPLUGIN","Dragged",uri,"to",name);

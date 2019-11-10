@@ -4,6 +4,7 @@ var ratingManager = function() {
 	var sortby;
 	var loaded = false;
 	var current_album = null;
+	var current_artist = null;
 	var current_albumholder = null;
 	var current_letter = '';
 	var to_refresh = new Array();
@@ -56,6 +57,7 @@ var ratingManager = function() {
 				debug.trace("RATMAN","Got Tracks",tracks);
 				current_letter = '';
 				current_album = '';
+				current_artist = '';
 				for (var i in tracks) {
 					putNewAlbumTrack(dropper, tracks[i]);
 				}
@@ -77,8 +79,9 @@ var ratingManager = function() {
 		if (filterTrack(data)) {
 			return false;
 		}
-		if (data.Albumname != current_album) {
+		if (data.Albumname != current_album || (data.Albumname == 'YouTube' && data.Artistname != current_artist)) {
 			current_album = data.Albumname;
+			current_artist = data.Artistname;
 			if (sortby == 'AlbumArtist') {
 				var tit = '<b class="artistnamething">'+data.Albumname+'</b>';
 				if (data.AlbumArtist != data.Artistname) {
@@ -90,7 +93,7 @@ var ratingManager = function() {
 				var tit = '<b class="artistnamething">'+data.AlbumArtist+'</b><br><b>'+data.Albumname+'</b>';
 				var nl = data.SortLetter;
 			}
-			if (prefs.ratman_showletters && nl != current_letter) {
+			if (nl != current_letter) {
 				holder.append('<div class="brick_wide highlighted fullwidth letterholder">'+nl+'</div>');
 				current_letter = nl;
 			}
@@ -220,10 +223,10 @@ var ratingManager = function() {
 					'<button class="fixed" onclick="ratingManager.createTag()">'+language.gettext("button_createtag")+'</button>'+
     				'</div>');
 
-	        	$("#rmgfoldup").append('<div class="containerbox padright wrap ratsoptions">'+
-	        		'<div class="fixed"><b>Display Options :&nbsp; </b></div>'+
-	        		'<div class="fixed brianblessed styledinputs"><input type="checkbox" class="topcheck" id="ratman_showletters"><label for="ratman_showletters">Show Letter Headers</label></div>'+
-	        		'</div>');
+	        	// $("#rmgfoldup").append('<div class="containerbox padright wrap ratsoptions">'+
+	        	// 	'<div class="fixed"><b>Display Options :&nbsp; </b></div>'+
+	        	// 	'<div class="fixed brianblessed styledinputs"><input type="checkbox" class="topcheck" id="ratman_showletters"><label for="ratman_showletters">Show Letter Headers</label></div>'+
+	        	// 	'</div>');
 
     			$("#rmgfoldup").append('<div class="containerbox padright noselection ratsoptions">'+
         			'<div class="expand">'+
@@ -238,11 +241,9 @@ var ratingManager = function() {
 				$('.ratinstr').hide();
 				rmg.show();
 				$('[name="ratman_sortby"][value="'+prefs.ratman_sortby+'"]').prop('checked', true);
-	            $('#ratman_showletters').prop('checked', prefs.ratman_showletters ? true : false );
 	        	browser.goToPlugin("rmg");
 			    ratingManager.reloadEntireRatList();
 	            $('[name="ratman_sortby"]').on('click', ratingManager.reloadEntireRatList );
-	            $('#ratman_showletters').on('click', ratingManager.reloadEntireRatList );
 	        } else {
 	        	browser.goToPlugin("rmg");
 	        }
@@ -373,7 +374,7 @@ var ratingManager = function() {
 			$('.ratinstr').hide();
 			$('[name="ratman_loading"]').show();
 		    sortby = $('[name="ratman_sortby"]:checked').val();
-		    prefs.save({ratman_sortby: sortby, ratman_showletters: $('#ratman_showletters').is(':checked')});
+		    prefs.save({ratman_sortby: sortby});
 	    	$('#ratmunger').empty();
 			ratingManager.reloadRatList();
 		},

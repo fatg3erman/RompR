@@ -347,14 +347,16 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
     _mouseStart: function(event) {
         debug.log("SORTABLE","Mouse Start",event);
         var dragged = this._findDraggable(event);
-        if (dragged.prev().length == 0) {
-            this.dragged_original_before = dragged.next();
-            this.dragged_original_after = false;
+        if (dragged.prev().length > 0) {
+            this.dragged_original_pos = dragged.prev();
+            this.dragged_original_type = 'after';
+        } else if (dragged.next().length > 0) {
+            this.dragged_original_pos = dragged.next();
+            this.dragged_original_type = 'before';
         } else {
-            this.dragged_original_before = false;
-            this.dragged_original_after = dragged.prev();
+            this.dragged_original_pos = dragged.parent();
+            this.dragged_original_type = 'into';
         }
-        this.dragged_original_pos = dragged.prev();
         if (this.dragger) this.dragger.remove();
         this.dragger = dragged.clone().appendTo('body');
         this.dragger.find('.icon-cancel-circled').remove();
@@ -382,19 +384,34 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 
     _mouseDrag: function(event) {
         clearTimeout(this._scrollcheck);
+        // if (this.draggingout && event.pageX < this.bbox.right && event.pageX > this.bbox.left) {
+        //     debug.log('STR', 'Dragged Back In');
+        //     this.dragging = true;
+        //     this.draggingout = false;
+        // }
         if (this.dragging) {
             if ((event.pageX > this.bbox.right || event.pageX < this.bbox.left) &&
                 this.options.allowdragout)
             {
+                debug.log('STR', 'Dragged Out');
                 clearTimeout(this._scrollcheck);
                 this.dragging = false;
                 this.draggingout = true;
                 var pos = {top: event.pageY - 12, left: event.pageX - this.drag_x_offset};
                 this.dragger.css({top: pos.top+"px", left: pos.left+"px"});
-                if (!this.dragged_original_after) {
-                    this.original.insertBefore(this.dragged_original_before);
-                } else {
-                    this.original.insertAfter(this.dragged_original_after);
+                switch (this.dragged_original_type) {
+                    case 'before':
+                        this.original.insertBefore(this.dragged_original_pos);
+                        break;
+
+                    case 'after':
+                        this.original.insertAfter(this.dragged_original_pos);
+                        break;
+
+                    case 'into':
+                        this.original.appendTo(this.dragged_original_pos);
+                        break;
+
                 }
                 $('.selected').removeClass('selected');
                 this.original.addClass('selected');

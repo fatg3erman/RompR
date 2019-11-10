@@ -283,7 +283,6 @@ $prefs = array(
     "cdplayermode" => false,
     "auto_discovembobulate" => false,
     "ratman_sortby" => 'Rating',
-    "ratman_showletters" => false,
     "sleeptime" => 30,
     "sleepon" => false,
     "advanced_search_open" => false,

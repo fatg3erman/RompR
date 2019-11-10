@@ -4,6 +4,10 @@ var playlistManager = function() {
 	var holders = new Array();
 
 	function putTracks(holder, tracks, title) {
+		if (!tracks) {
+			debug.warn('PLAYLISTMANAGER', 'Tracks are not defined. Probably Mopidy being a bit shit again.');
+			return false;
+		}
 		var html = '<input type="hidden" value="'+title+'">';
 		html += '<table class="plmantable" align="center"';
 		if (tracks.length > 0 && tracks[0].plimage != "") {

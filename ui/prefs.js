@@ -54,7 +54,6 @@ var prefs = function() {
         "cdplayermode",
         "auto_discovembobulate",
         "ratman_sortby",
-        "ratman_showletters",
         "sleeptime",
         "sleepon",
         "advanced_search_open",
