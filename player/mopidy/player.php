@@ -132,9 +132,7 @@ class mopidyPlayer extends base_mpd_player {
                 $filedata['folder'] = $filedata['file'];
                 $filedata['Artist'] = ($filedata['Artist'] == null) ? 'YouTube' : $filedata['Artist'];
                 $filedata['Album'] = 'YouTube';
-                // $filedata['Title'] = $this->munge_youtube_track_into_title($filedata['Title']);
                 $filedata['AlbumArtist'] = $filedata['Artist'];
-                $filedata['X-AlbumUri'] = $filedata['file'];
                 break;
 
             case "spotify":

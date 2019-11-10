@@ -138,6 +138,7 @@ foreach($params as $p) {
 		case 'syncinc':
 		case 'resetallsyncdata':
 		case 'deleteid':
+		case 'setasaudiobook':
 			romprmetadata::{$p['action']}($p);
 			break;
 
@@ -252,6 +253,7 @@ function artist_albumcount($artistindex) {
 			AlbumArtistindex = ".$artistindex.
 			" AND Hidden = 0
 			AND isSearchResult < 2
+			AND isAudiobook = 0
 			AND Uri IS NOT NULL", false, null, 'num', 0);
 }
 
@@ -265,6 +267,7 @@ function album_trackcount($albumindex) {
 			Albumindex = ".$albumindex.
 			" AND Hidden = 0
 			AND isSearchResult < 2
+			AND isAudiobook = 0
 			AND Uri IS NOT NULL", false, null, 'num', 0);
 }
 

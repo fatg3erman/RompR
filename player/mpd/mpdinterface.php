@@ -44,7 +44,7 @@ class base_mpd_player {
                 $this->is_slave = false;
             }
         }
-        logger::trace("MPDPLAYER", "Creating Player for",$this->ip.':'.$this->port);
+        logger::debug("MPDPLAYER", "Creating Player for",$this->ip.':'.$this->port);
         $this->open_mpd_connection();
         if ($player_type !== null) {
             $this->player_type = $player_type;

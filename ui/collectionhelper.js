@@ -351,6 +351,15 @@ var collectionHelper = function() {
                 clearTimeout(update_timer);
                 setTimeout(updateUIElements, 1000);
             }
+        },
+
+        reloadAudiobooks() {
+            // While it would be nice to be able to update the audiobooks display
+            // the same way we do with the collection, the backend code was not
+            // designed with that in mind and it would be a horrible bodge on top of
+            // some already shonky code. And the only time we need to do that is when
+            // someone chooses 'Move To Spoken Word', which is so rare...
+            loadAudiobooks();
         }
 
     }

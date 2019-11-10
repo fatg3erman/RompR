@@ -336,6 +336,14 @@ class romprmetadata {
 		}
 	}
 
+	public static function setasaudiobook($data) {
+		if ($data['albumindex'] !== null && romprmetadata::set_as_audiobook($data['albumindex'])) {
+		} else {
+			header('HTTP/1.1 400 Bad Request');
+			$returninfo['error'] = 'That just did not work';
+		}
+	}
+
 	public static function deletetag($data) {
 		if (romprmetadata::remove_tag_from_db($data['value'])) {
 		} else {
@@ -719,6 +727,11 @@ class romprmetadata {
 			return false;
 		}
 		return true;
+	}
+
+	static function set_as_audiobook($albumindex) {
+		$result = sql_prepare_query(true, null, null, null, 'UPDATE Tracktable SET isAudiobook = 1 WHERE Albumindex = ?', $albumindex);
+		return $result;
 	}
 
 }

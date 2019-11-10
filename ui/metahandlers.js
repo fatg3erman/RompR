@@ -330,7 +330,7 @@ var dbQueue = function() {
 
 	// Cleanup cleans the database but it also updates the track stats
 	var actions_requiring_cleanup = [
-		'add', 'set', 'remove', 'amendalbum', 'deletetag', 'delete', 'deletewl', 'clearwishlist'
+		'add', 'set', 'remove', 'amendalbum', 'deletetag', 'delete', 'deletewl', 'clearwishlist', 'setasaudiobook'
 	];
 
 	return {

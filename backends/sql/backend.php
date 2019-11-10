@@ -528,6 +528,13 @@ function num_collection_tracks($albumindex) {
 
 }
 
+function album_is_audiobook($albumindex) {
+	// Returns true if any of the tracks on this album are markd as audiobook tracks
+	// (WHY is that done by track and not by album?)
+	$t = generic_sql_query("SELECT COUNT(TTindex) AS cnt FROM Tracktable WHERE Albumindex = ".$albumindex." AND Hidden = 0 AND Uri IS NOT NULL AND isSearchResult < 2 AND isAudiobook = 1", false, null, 'cnt', 0);
+	return ($t > 0);
+}
+
 function get_all_data($ttid) {
 
 	// Misleadingly named function which should be used to get ratings and tags
@@ -610,6 +617,14 @@ function get_extra_track_info(&$filedata, $use_player_image) {
 			break;
 		}
 	}
+
+	if ($filedata['Album'] == 'YouTube' && $data['AlbumArtist'] !== null) {
+		// Workaround a mopidy-youtube bug where sometimes it reports incorrect Artist info
+		// if the item being added to the queue is not the result of a search. In this case we will
+		// (almost) always have AlbumArtist info, so use that and it'll then stay consistent with the collection
+		$data['Artist'] = $data['AlbumArtist'];
+	}
+
 	if ($use_player_image && $filedata['Album'] == 'YouTube' && $filedata['X-AlbumImage'] !== null) {
 		$data['X-AlbumImage'] = $filedata['X-AlbumImage'];
 	}

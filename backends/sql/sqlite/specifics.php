@@ -11,7 +11,7 @@ function connect_to_database($sp = true) {
 	}
 	try {
 		$dsn = "sqlite:prefs/collection.sq3";
-		logger::trace('SQLITE','Opening collection',$dsn);
+		logger::debug('SQLITE','Opening collection',$dsn);
 		$mysqlc = new PDO($dsn);
 		logger::debug("MYSQL", "Connected to SQLite");
 		// This increases performance

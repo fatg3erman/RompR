@@ -143,6 +143,8 @@ function onSourcesClicked(event, clickedElement) {
         makeAlbumMenu(event, clickedElement);
     } else if (clickedElement.hasClass("amendalbum")) {
         amendAlbumDetails(event, clickedElement);
+    } else if (clickedElement.hasClass("setasaudiobook")) {
+        setAsAudioBook(event, clickedElement);
     } else if (clickedElement.hasClass("fakedouble")) {
         playPlayable.call(clickedElement, event);
         clickedElement.parent().remove();
@@ -574,6 +576,12 @@ function makeAlbumMenu(e, element) {
             name: $(element).attr('name')
         }).html(language.gettext('label_amendalbum')));
     }
+    if ($(element).hasClass('clicksetasaudiobook')) {
+        d.append($('<div>', {
+            class: 'backhi clickable menuitem setasaudiobook',
+            name: $(element).attr('name')
+        }).html(language.gettext('label_move_to_audiobooks')));
+    }
     if ($(element).hasClass('clickalbumoptions')) {
         var cl = 'backhi clickable menuitem clicktrack fakedouble '
         d.append($('<div>', {
@@ -601,6 +609,28 @@ function makeAlbumMenu(e, element) {
     }
     d.appendTo($(element));
     d.slideToggle('fast');
+}
+
+function setAsAudioBook(e, element) {
+    var albumindex = $(element).attr('name');
+    var data = {
+        action: 'setasaudiobook',
+        albumindex: albumindex,
+    };
+    debug.log("UI","Setting as audiobook",data);
+    metaHandlers.genericAction(
+        [data],
+        function(rdata) {
+            collectionHelper.updateCollectionDisplay(rdata);
+            collectionHelper.reloadAudiobooks();
+            // playlist.repopulate();
+        },
+        function(rdata) {
+            debug.warn("RATING PLUGIN","Failure");
+            infobar.error(language.gettext('label_general_error'));
+        }
+    );
+    return true;
 }
 
 function amendAlbumDetails(e, element) {
