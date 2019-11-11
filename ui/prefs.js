@@ -601,7 +601,6 @@ var prefs = function() {
 
                 case "sortbydate":
                 case "notvabydate":
-                case "showartistbanners":
                     callback = layoutProcessor.changeCollectionSortMode;
                     break;
 
@@ -636,11 +635,6 @@ var prefs = function() {
             switch(prefsave) {
                 case 'clickmode':
                     callback = setPlayClickHandlers;
-                    break;
-
-                case 'sortcollectionby':
-                case 'collectionrange':
-                    callback = layoutProcessor.changeCollectionSortMode;
                     break;
 
                 case 'displayresultsas':
@@ -732,6 +726,12 @@ var prefs = function() {
                 case 'podcast_sort_3':
                     callback = podcasts.reloadList;
                     break;
+
+                case 'collectionrange':
+                case 'sortcollectionby':
+                    callback = layoutProcessor.changeCollectionSortMode;
+                    break;
+
 
             }
             prefs.save(prefobj, callback);

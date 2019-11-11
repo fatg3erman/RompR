@@ -916,39 +916,39 @@ function rrmdir($path) {
 
 function collectionButtons() {
     print '<div id="collectionbuttons" class="invisible">';
-    print '<div class="pref styledinputs">';
-    print '<input type="radio" class="topcheck savulon" name="sortcollectionby" value="artist" id="sortbyartist">
-    <label for="sortbyartist">'.ucfirst(get_int_text('label_artists')).'</label><br/>
-    <input type="radio" class="topcheck savulon" name="sortcollectionby" value="album" id="sortbyalbum">
-    <label for="sortbyalbum">'.ucfirst(get_int_text('label_albums')).'</label><br/>
-    <input type="radio" class="topcheck savulon" name="sortcollectionby" value="albumbyartist" id="sortbyalbumbyartist">
-    <label for="sortbyalbumbyartist">'.ucfirst(get_int_text('label_albumsbyartist')).'</label>
-    <div class="pref">
-    <input class="autoset toggle" type="checkbox" id="showartistbanners">
-    <label for="showartistbanners">'.get_int_text('config_showartistbanners').'</label>
-    </div>
-    </div>
-    <div class="pref styledinputs">
+
+    print '<div class="pref containerbox dropdown-container">';
+    print '<div class="selectholder" style="width:100%;margin-left:0px">';
+    print '<select id="collectionrangeselector" class="saveomatic">';
+    print '<option value="'.ADDED_ALL_TIME.'">'.get_int_text('label_all_time').'</option>';
+    print '<option value="'.ADDED_TODAY.'">'.get_int_text('label_today').'</option>';
+    print '<option value="'.ADDED_THIS_WEEK.'">'.get_int_text('label_thisweek').'</option>';
+    print '<option value="'.ADDED_THIS_MONTH.'">'.get_int_text('label_thismonth').'</option>';
+    print '<option value="'.ADDED_THIS_YEAR.'">'.get_int_text('label_thisyear').'</option>';
+    print '</select>';
+    print '</div>';
+    print '</div>';
+
+    print '<div class="pref containerbox dropdown-container">';
+    print '<div class="selectholder" style="width:100%;margin-left:0px">';
+    print '<select id="sortcollectionbyselector" class="saveomatic">';
+    print '<option value="artist">'.ucfirst(get_int_text('label_artists')).'</option>';
+    print '<option value="album">'.ucfirst(get_int_text('label_albums')).'</option>';
+    print '<option value="albumbyartist">'.ucfirst(get_int_text('label_albumsbyartist')).'</option>';
+    print '</select>';
+    print '</div>';
+    print '</div>';
+
+    print '<div class="pref styledinputs">
     <input class="autoset toggle" type="checkbox" id="sortbydate">
     <label for="sortbydate">'.get_int_text('config_sortbydate').'</label>
     <div class="pref">
     <input class="autoset toggle" type="checkbox" id="notvabydate">
     <label for="notvabydate">'.get_int_text('config_notvabydate').'</label>
     </div>
-    </div>
-    <div class="pref styledinputs">
-    <input type="radio" class="topcheck savulon" name="collectionrange" value="'.ADDED_ALL_TIME.'" id="collalltime">
-    <label for="collalltime">'.get_int_text('label_all_time').'</label><br/>
-    <input type="radio" class="topcheck savulon" name="collectionrange" value="'.ADDED_TODAY.'" id="colltoday">
-    <label for="colltoday">'.get_int_text('label_today').'</label><br/>
-    <input type="radio" class="topcheck savulon" name="collectionrange" value="'.ADDED_THIS_WEEK.'" id="collweek">
-    <label for="collweek">'.get_int_text('label_thisweek').'</label><br/>
-    <input type="radio" class="topcheck savulon" name="collectionrange" value="'.ADDED_THIS_MONTH.'" id="collmonth">
-    <label for="collmonth">'.get_int_text('label_thismonth').'</label><br/>
-    <input type="radio" class="topcheck savulon" name="collectionrange" value="'.ADDED_THIS_YEAR.'" id="collyear">
-    <label for="collyear">'.get_int_text('label_thisyear').'</label><br/>
-    </div>
-    <div class="pref textcentre">
+    </div>';
+
+    print '<div class="pref textcentre">
     <button name="donkeykong">'.get_int_text('config_updatenow').'</button>
     </div>';
     print '</div>';

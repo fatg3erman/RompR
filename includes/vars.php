@@ -209,7 +209,6 @@ $prefs = array(
     "artistsatstart" => array("Various Artists","Soundtracks"),
     "nosortprefixes" => array("The"),
     "sortcollectionby" => "artist",
-    "showartistbanners" => true,
     "google_api_key" => '',
     "google_search_engine_id" => '',
     "sync_lastfm_playcounts" => false,

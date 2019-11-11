@@ -35,13 +35,10 @@ print '<div class="expand">Advanced Options...</div>';
 print '</div>';
 
 print '<div id="advsearchoptions" class="toggledown invisible marged">';
-    print '<div class="styledinputs">';
-    print '<div class="containerbox padright" style="margin-top:0.5em;margin-bottom:0.5em"><b>'.get_int_text('label_displayresultsas').'</b></div>';
-    print '<div class="marged">';
+    print '<div class="marged styledinputs podoptions">';
     print '<input type="radio" class="topcheck savulon" name="displayresultsas" value="collection" id="resultsascollection">
-    <label for="resultsascollection">'.ucfirst(get_int_text('label_resultscollection')).'</label><br/>
+    <label for="resultsascollection">'.ucfirst(get_int_text('label_resultscollection')).'</label>
     <input type="radio" class="topcheck savulon" name="displayresultsas" value="tree" id="resultsastree">
     <label for="resultsastree">'.ucfirst(get_int_text('label_resultstree')).'</label>
-    </div>
     </div>';
 ?>

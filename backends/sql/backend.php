@@ -956,7 +956,7 @@ function do_albums_from_database($why, $what, $who, $fragment = false, $use_arti
 		print albumControlHeader($fragment, $why, $what, $who, $result[0]['Artistname']);
 	}
 	foreach ($result as $obj) {
-		$artistbanner = ($prefs['sortcollectionby'] == 'albumbyartist' && $prefs['showartistbanners']) ? $obj['Artistname'] : null;
+		$artistbanner = ($prefs['sortcollectionby'] == 'albumbyartist') ? $obj['Artistname'] : null;
 		$obj['Artistname'] = ($force_artistname || $prefs['sortcollectionby'] == "album") ? $obj['Artistname'] : null;
 		$obj['why'] = $why;
 		$obj['id'] = $why.$what.$obj['Albumindex'];

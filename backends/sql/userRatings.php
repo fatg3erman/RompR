@@ -184,10 +184,8 @@ function prepare_returninfo() {
 					break;
 
 				case 'albumbyartist':
-					if ($prefs['showartistbanners']) {
-						logger::trace("USERRATINGS", "    Creating Artist Banner");
-						$returninfo['modifiedartists'][] = do_artist_banner('a','album',$mod['AlbumArtistindex']);
-					}
+					logger::trace("USERRATINGS", "    Creating Artist Banner");
+					$returninfo['modifiedartists'][] = do_artist_banner('a','album',$mod['AlbumArtistindex']);
 					break;
 			}
 		}

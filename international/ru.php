@@ -80,7 +80,6 @@ $languages['ru'] = array (
 	"config_fontsize" => "ШРИФТ",
 	"config_fontname" => "РАЗМЕР",
 	"config_alarm_on" => "Включить Будильник",
-	"config_showartistbanners" => "Показать Баннеры Артистов",
 
 	// Various buttons for the playlist dropdowns
 	"button_imsure" => "Я уверен в этом",

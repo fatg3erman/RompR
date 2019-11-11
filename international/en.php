@@ -80,7 +80,6 @@ $languages['en'] = array (
 	"config_fontsize" => "FONT SIZE",
 	"config_fontname" => "FONT STYLE",
 	"config_alarm_on" => "Alarm Clock Enabled",
-	"config_showartistbanners" => "Show Artist Banners",
 
 	// Various buttons for the playlist dropdowns
 	"button_imsure" => "I'm Sure About This",
@@ -118,7 +117,7 @@ $languages['en'] = array (
 	"button_search" => "Search",
 	"label_searchresults" => "Search Results",
 	"label_multiterms" => "Multiple search terms can be used at once",
-	"label_limitsearch" => "Search Specific Backends",
+	"label_limitsearch" => "Filter By Source",
 
 	// General multipurpose labels
 	"label_tracks" => "tracks",

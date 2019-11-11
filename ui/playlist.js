@@ -327,7 +327,21 @@ var playlist = function() {
                     count++;
                     switch (list[i].type) {
                         case "local":
-                            var hidden = (playlist.rolledup[sortartist+list[i].Album]) ? true : false;
+                            var hidden;
+                            switch (list[i].domain) {
+                                case 'youtube':
+                                case 'soundcloud':
+                                    // Track Name == Album Name for these, so it's pointless having them open
+                                    if (playlist.rolledup.hasOwnProperty(sortartist+list[i].Album)) {
+                                        hidden = playlist.rolledup[sortartist+list[i].Album];
+                                    } else {
+                                        hidden = true;
+                                    }
+                                    break;
+                                default:
+                                    hidden = (playlist.rolledup[sortartist+list[i].Album]) ? true : false;
+                                    break;
+                            }
                             tracklist[count] = new Album(sortartist, list[i].Album, count, hidden);
                             break;
                         case "stream":
@@ -336,7 +350,7 @@ var playlist = function() {
                             tracklist[count] = new Stream(count, list[i].Album, hidden);
                             break;
                         default:
-                            tracklist[count] = new Album(sortartist, list[i].Album, count);
+                            tracklist[count] = new Album(sortartist, list[i].Album, count, false);
                             break;
 
                     }
@@ -912,7 +926,7 @@ function Album(artist, album, index, rolledup) {
         }
 
         var inner = $('<div>', {class: 'containerbox'}).appendTo(holder);
-        var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].Id, class: 'expand clickplaylist playid containerbox'}).appendTo(inner);
+        var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].Id, class: 'expand clickplaylist playid containerbox vertcentre'}).appendTo(inner);
 
         if (prefs.use_albumart_in_playlist) {
             self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].ImgKey });
@@ -1011,7 +1025,7 @@ function Album(artist, album, index, rolledup) {
         if (rolledup) {
             playlist.rolledup[this.artist+this.album] = true;
         } else {
-            playlist.rolledup[this.artist+this.album] = undefined;
+            playlist.rolledup[this.artist+this.album] = false;
         }
     }
 
@@ -1148,7 +1162,7 @@ function Stream(index, album, rolledup) {
         }
 
         var inner = $('<div>', {class: 'containerbox'}).appendTo(header);
-        var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].Id, class: 'expand playid clickplaylist containerbox'}).appendTo(inner);
+        var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].Id, class: 'expand playid clickplaylist containerbox vertcentre'}).appendTo(inner);
 
         if (prefs.use_albumart_in_playlist) {
             self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].ImgKey });
@@ -1220,7 +1234,7 @@ function Stream(index, album, rolledup) {
         if (self.visible()) {
             playlist.rolledup["StReAm"+this.album] = true;
         } else {
-            playlist.rolledup["StReAm"+this.album] = undefined;
+            playlist.rolledup["StReAm"+this.album] = false;
         }
         rolledup = !rolledup;
     }
