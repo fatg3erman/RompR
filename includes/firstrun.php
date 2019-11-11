@@ -12,6 +12,7 @@ $root_level_dirs = array(
 	'prefs/jsoncache/lyrics',
 	'prefs/jsoncache/google',
 	'prefs/jsoncache/soundcloud',
+	'prefs/jsoncache/commradio',
 	'prefs/userplaylists',
 	'prefs/plimages',
 	'prefs/userbackgrounds',

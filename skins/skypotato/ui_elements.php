@@ -184,15 +184,18 @@ function directoryControlHeader($prefix, $name = null) {
     }
 }
 
-function printRadioDirectory($att) {
+function printRadioDirectory($att, $closeit, $prefix) {
     $name = md5($att['URL']);
     print '<input type="hidden" value="'.rawurlencode($att['URL']).'" />';
     print '<input type="hidden" value="'.rawurlencode($att['text']).'" />';
-    print '<div class="browse menu clickable tunein directory containerbox menuitem brick_wide" name="tunein_'.$name.'">';
+    print '<div class="browse menu clickable '.$prefix.' directory containerbox menuitem brick_wide" name="'.$prefix.'_'.$name.'">';
     print '<i class="icon-folder-open-empty fixed collectionicon"></i>';
     print '<div class="expand">'.$att['text'].'</div>';
     print '</div>';
-    print '<div id="tunein_'.$name.'" class="invisible indent containerbox wrap fullwidth"></div>';
+    print '<div id="'.$prefix.'_'.$name.'" class="invisible indent containerbox wrap fullwidth">';
+    if ($closeit) {
+        print '</div>';
+    }
 }
 
 function playlistPlayHeader($name, $text) {

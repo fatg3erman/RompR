@@ -74,7 +74,7 @@ class tuneinplugin {
                     break;
 
                 case 'link':
-                    printRadioDirectory($att);
+                    printRadioDirectory($att, true, 'tunein');
                     break;
 
                 case 'audio':

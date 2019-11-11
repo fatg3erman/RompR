@@ -710,7 +710,7 @@ function get_player_ip() {
     return $pip;
 }
 
-function getCacheData($uri, $cache, $use_cache = true) {
+function getCacheData($uri, $cache, $use_cache = true, $return_value = false) {
 
     $me = strtoupper($cache);
     logger::log("GET CACHE DATA", "Getting",$uri);
@@ -719,13 +719,15 @@ function getCacheData($uri, $cache, $use_cache = true) {
     }
     $options = array(
         'url' => $uri,
-        'send_cache_headers' => true,
+        'send_cache_headers' => !$return_value,
         'cache' => $use_cache ? $cache : null,
         'return_data' => true
     );
     $d = new url_downloader($options);
+    $retval = '';
+    $header = '';
     if ($d->get_data_to_file()) {
-        print $d->get_data();
+        $retval = $d->get_data();
     } else {
         if ($d->get_status() > 0) {
             $header = $d->get_status().' '.http_status_code_string($d->get_status());
@@ -733,12 +735,19 @@ function getCacheData($uri, $cache, $use_cache = true) {
         } else {
             $header = '500 '.http_status_code_string(500);
         }
-        header('HTTP/1.1 '.$header);
         if ($d->get_data() != '') {
-            print $d->get_data();
+            $retval = $d->get_data();
         } else {
-            print json_encode(array('error' => $header));
+            $retval =  json_encode(array('error' => $header));
         }
+    }
+    if ($return_value) {
+        return $retval;
+    } else {
+        if ($header != '') {
+            header('HTTP/1.1 '.$header);
+        }
+        print $retval;
     }
 }
 

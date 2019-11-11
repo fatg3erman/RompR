@@ -54,7 +54,7 @@ class somafmplugin {
 
     private function format_listenlink($c, $p, $label) {
         $img = $this->getimage($c);
-        print '<div class="clickable clickstream playable draggable indent containerbox padright menuitem" name="'.(string) $p.'" streamimg="'.$img.'" streamname="'.$c->title.'">';
+        print '<div class="clickable clickstream playable draggable indent containerbox padright dropdown-container" name="'.(string) $p.'" streamimg="'.$img.'" streamname="'.$c->title.'">';
         print '<i class="'.audioClass($p[0]['format']).' collectionicon fixed"></i>';
         print '<div class="expand">'.$label.'&nbsp';
         switch ($p[0]['format']) {
@@ -120,9 +120,22 @@ class somafmplugin {
             print '<div class="expand">'.$channel->listeners.' '.trim(get_int_text("lastfm_listeners"),':').'</div>';
             print '</div>';
         }
+        print '<div class="containerbox rowspacer"></div>';
+        if ($channel->lastPlaying) {
+            print '<div class="containerbox indent padright dropdown-container">';
+            print '<b>'.get_int_text('label_last_played').'</b>&nbsp;';
+            print $channel->lastPlaying;
+            print '</div>';
+        }
+        if ($channel->twitter && $channel->dj) {
+            print '<a href="http://twitter.com/@'.$channel->twitter.'" target="_blank">';
+            print '<div class="containerbox indent padright dropdown-container">';
+            print '<i class="icon-twitter-logo collectionicon fixed"></i>';
+            print '<div class="expand"><b>DJ: </b>'.$channel->dj.'</div>';
+            print '</div></a>';
+        }
 
         print '<div class="containerbox rowspacer"></div>';
-        print '<div class="containerbox expand ninesix indent padright"><b>Listen:</b></div>';
 
         if ($channel->highestpls) {
             $this->format_listenlink($channel, $channel->highestpls, "High Quality");
@@ -133,22 +146,7 @@ class somafmplugin {
         foreach ($channel->slowpls as $h) {
             $this->format_listenlink($channel, $h, "Low Quality");
         }
-
         print '<div class="containerbox rowspacer"></div>';
-
-        if ($channel->twitter && $channel->dj) {
-            print '<a href="http://twitter.com/@'.$channel->twitter.'" target="_blank">';
-            print '<div class="containerbox indent padright menuitem">';
-            print '<i class="icon-twitter-logo collectionicon fixed"></i>';
-            print '<div class="expand"><b>DJ: </b>'.$channel->dj.'</div>';
-            print '</div></a>';
-        }
-        if ($channel->lastPlaying) {
-            print '<div class="containerbox indent padright menuitem notbold">';
-            print '<b>'.get_int_text('label_last_played').'</b>&nbsp;';
-            print $channel->lastPlaying;
-            print '</div>';
-        }
 
         print '</div>';
     }

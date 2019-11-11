@@ -34,6 +34,8 @@ clean_cache_dir('prefs/jsoncache/soundcloud/', 2592000);
 clean_cache_dir('prefs/jsoncache/spotify/', 2592000);
 // One Month
 clean_cache_dir('prefs/jsoncache/google/', 2592000);
+// One Week
+clean_cache_dir('prefs/jsoncache/commradio/', 604800);
 // Six Months - after all, lyrics are small and don't change
 clean_cache_dir('prefs/jsoncache/lyrics/', 15552000);
 // One week (or it can get REALLY big)
@@ -152,7 +154,6 @@ if ($mysqlc) {
 logger::shout("CACHE CLEANER", "-----------------------------------------------------------------------");
 
 function clean_cache_dir($dir, $time) {
-
     logger::log("CACHE CLEANER", "Cache Cleaner is running on ".$dir);
     $cache = glob($dir."*");
     $now = time();
