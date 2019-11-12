@@ -32,11 +32,11 @@ Double-click a Radio Station or Podcast in this list to listen to it.
 
 This uses the radio directory at [http://www.radio-browser.info/](http://www.radio-browser.info)
 
-![](images/commradio.png)
+![](images/commradio2.png)
 
-You have a choice of either listing stations by Country, Language, or Tag by choosing an option from one of the dropdowns, or searching using the search boxes. You can use more than one search term at a time.
+You can search using any or all of the fields (Name, Country, etc) or browse by Country, Language, and Tag.
 
-You can change the order of the list by using the Order By buttons.
+You can change the order of the list by using the Order By menu at the top.
 
 ## Icecast Radio
 

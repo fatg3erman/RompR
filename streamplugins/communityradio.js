@@ -34,25 +34,25 @@ var communityRadioPlugin = {
         });
     },
 
-    getUri: function(p) {
-        var uri;
-        if (communityRadioPlugin.searching) {
-            uri = 'streamplugins/04_communityradio.php?populate='+p+
-                '&search=1'+
-                '&order='+prefs.communityradioorderby+
-                '&page='+communityRadioPlugin.page;
-            $('.comm_radio_searchterm').each(function() {
-                if ($(this).val() != '') {
-                    uri += '&'+$(this).attr('name')+'='+$(this).val();
-                }
-            });
-        } else {
-            uri = 'streamplugins/04_communityradio.php?populate='+p+
-                '&order='+prefs.communityradioorderby+
-                '&page='+communityRadioPlugin.page;
+    search: function(page) {
+        $('#communitystations').empty();
+        doSomethingUseful('communitystations', language.gettext('label_searching'));
+        var uri = 'streamplugins/04_communityradio.php?populate=3'
+                '&order='+prefs.communityradioorderby;
+        var foundterm = false;
+        $('.comm_radio_searchterm').each(function() {
+            if ($(this).val() != '') {
+                foundterm = true;
+                uri += '&'+$(this).attr('name')+'='+encodeURIComponent($(this).val());
+            }
+        });
+        if (!foundterm) {
+            uri = 'streamplugins/04_communityradio.php?populate=4';
         }
-        return encodeURI(uri);
-
+        $('#communitystations').load(uri, function() {
+            uiHelper.hackForSkinsThatModifyStuff("#communitystations");
+            layoutProcessor.postAlbumActions();
+        });
     },
 
     setTheThing: function() {
@@ -65,6 +65,7 @@ var communityRadioPlugin = {
         });
         w += 8;
         $(".comm-search-label").css("width", w+"px");
+        $('#communityradioorderbyselector').val(prefs.communityradioorderby);
     },
 
     browse: function(url, title, page, target, callback) {

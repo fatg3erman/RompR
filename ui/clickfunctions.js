@@ -409,8 +409,14 @@ function onKeyUp(e) {
 function fakeClickOnInput(jq) {
     if (jq.next("button").length > 0) {
         jq.next("button").trigger('click');
-    } else {
+    } else if (jq.parent().siblings("button").length > 0) {
         jq.parent().siblings("button").trigger('click');
+    } else if (jq.hasClass('cleargroup')) {
+        var p = jq.parent();
+        while (!p.hasClass('cleargroupparent')) {
+            p = p.parent();
+        }
+        p.find('button.cleargroup').trigger('click');
     }
 }
 
