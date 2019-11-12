@@ -620,12 +620,23 @@ class romprmetadata {
 					}
 					if (!$result) { break; }
 				}
+				romprmetadata::check_audiobook_status($ttid);
 				if ($uri) {
 					$returninfo['metadata'] = get_all_data($ttid);
 				}
 			}
 		}
 		return $result;
+	}
+
+	static function check_audiobook_status($ttid) {
+		$albumindex = generic_sql_query("SELECT Albumindex FROM Tracktable WHERE TTindex = ".$ttid, false, null, 'Albumindex', null);
+		if ($albumindex !== null) {
+			if (album_audiobookcount($albumindex) > 0) {
+				logger::log('USERRATING', 'Album '.$albumindex.' is an audiobook, updating track audiobook state');
+				generic_sql_query("UPDATE Tracktable SET isAudiobook = 1 WHERE TTindex = ".$ttid);
+			}
+		}
 	}
 
 	static function addTags($ttid, $tags) {
@@ -730,7 +741,7 @@ class romprmetadata {
 	}
 
 	static function set_as_audiobook($albumindex) {
-		$result = sql_prepare_query(true, null, null, null, 'UPDATE Tracktable SET isAudiobook = 1 WHERE Albumindex = ?', $albumindex);
+		$result = sql_prepare_query(true, null, null, null, 'UPDATE Tracktable SET isAudiobook = 1, justAdded = 1 WHERE Albumindex = ?', $albumindex);
 		return $result;
 	}
 

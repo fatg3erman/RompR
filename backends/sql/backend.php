@@ -285,11 +285,14 @@ function remove_ttid($ttid) {
 
 	// If it's a search result, it must be a manually added track (we can't delete collection tracks)
 	// and we might still need it in the search, so set it to a 2 instead of deleting it.
+	// Also in this case, set isAudiobook to 0 because if it's a search result AND it's been moved to Spoken Word
+	// then deleted, if someone tried to then re-add it it doesn't appear in the display because all manually-added tracks go to
+	// the Collection not Spoken Word, but this doesn't work oh god it's horrible just leave it.
 
 	logger::log("BACKEND", "Removing track ".$ttid);
 	$result = false;
 	if (generic_sql_query("DELETE FROM Tracktable WHERE isSearchResult != 1 AND TTindex = '".$ttid."'",true)) {
-		if (generic_sql_query("UPDATE Tracktable SET isSearchResult = 2 WHERE isSearchResult = 1 AND TTindex = '".$ttid."'", true)) {
+		if (generic_sql_query("UPDATE Tracktable SET isSearchResult = 2, isAudiobook = 0 WHERE isSearchResult = 1 AND TTindex = '".$ttid."'", true)) {
 			$result = true;;
 		}
 	}

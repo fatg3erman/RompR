@@ -447,7 +447,7 @@ var layoutProcessor = function() {
         },
 
         scrollCollectionTo: function(jq) {
-            if (jq) {
+            if (jq.length > 0) {
                 debug.log("LAYOUT","Scrolling Collection To",jq);
                 if (prefs.sortcollectionby == 'artist') {
                     $("#sources").mCustomScrollbar('update').mCustomScrollbar('scrollTo', jq,
@@ -461,7 +461,7 @@ var layoutProcessor = function() {
                     );
                 }
             } else {
-                debug.log("LAYOUT","Was asked to scroll collection to something non-existent",2);
+                debug.warn("LAYOUT","Was asked to scroll collection to something non-existent",2);
             }
         },
 
@@ -564,19 +564,35 @@ var layoutProcessor = function() {
             debug.log("UI","Displaying Collection Insert",details);
             infobar.notify(language.gettext('label_addedtocol'));
             infobar.markCurrentTrack();
-            if (prefs.chooser == 'albumlist') {
-                layoutProcessor.postAlbumActions();
-                switch (prefs.sortcollectionby) {
-                    case 'artist':
-                        layoutProcessor.scrollCollectionTo($('[name="aartist'+details.artistindex+'"]'));
-                        break;
+            if (details.isaudiobook) {
+                if (prefs.chooser == 'audiobooklist') {
+                    layoutProcessor.postAlbumActions();
+                    switch (prefs.sortcollectionby) {
+                        case 'artist':
+                            layoutProcessor.scrollCollectionTo($('[name="zartist'+details.artistindex+'"]'));
+                            break;
 
-                    case 'album':
-                    case 'albumbyartist':
-                        layoutProcessor.scrollCollectionTo($('[name="aalbum'+details.albumindex+'"]'));
-                        break;
+                        default:
+                            layoutProcessor.scrollCollectionTo($('[name="zalbum'+details.albumindex+'"]'));
+                            break;
 
+                    }
                 }
+            } else {
+                if (prefs.chooser == 'albumlist') {
+                    layoutProcessor.postAlbumActions();
+                    switch (prefs.sortcollectionby) {
+                        case 'artist':
+                            layoutProcessor.scrollCollectionTo($('[name="aartist'+details.artistindex+'"]'));
+                            break;
+
+                        default:
+                            layoutProcessor.scrollCollectionTo($('[name="aalbum'+details.albumindex+'"]'));
+                            break;
+
+                    }
+                }
+
             }
         },
 
@@ -731,14 +747,8 @@ var layoutProcessor = function() {
         setupPersonalRadio: function() {
             $('#pluginplaylistslist .menuitem').not('.dropdown').not('.spacer').wrap('<div class="collectionitem fixed"></div>');
             $('#pluginplaylistslist .combobox-entry').parent().parent().parent().parent().addClass('brick_wide helpfulalbum');
-            // $('#pluginplaylistslist .enter').not('.combobox-entry').parent().parent().parent().parent().parent().addClass('brick_wide helpfulalbum');
             $('#pluginplaylistslist .collectionitem').not('.brick_wide').children('.menuitem.containerbox').addClass('vertical helpfulalbum');
-            // $('#pluginplaylistslist .collectionitem i.icon-toggle-closed').parent().removeClass('vertical');
             $('#pluginplaylistslist div[class$="-stars"]').removeClass('svg-square').addClass('rating-icon-big').css('height', '32px');
-            // $('#pluginplaylistslist .toggledown').each(function() {
-            //     var s = $(this).prev();
-            //     $(this).detach().addClass('helpfulalbum').appendTo(s);
-            // });
         },
 
         setupPersonalRadioAdditions: function() {

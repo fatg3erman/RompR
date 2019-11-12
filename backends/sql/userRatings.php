@@ -169,10 +169,17 @@ function prepare_returninfo() {
 	$t = microtime(true);
 	$result = generic_sql_query('SELECT DISTINCT AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
 	foreach ($result as $mod) {
-		if (artist_albumcount($mod['AlbumArtistindex']) == 0) {
-			$returninfo['deletedartists'][] = $mod['AlbumArtistindex'];
+		$atc = artist_albumcount($mod['AlbumArtistindex']);
+		$abtc = artist_audiobookcount($mod['AlbumArtistindex']);
+		if ($atc == 0) {
 			logger::mark("USERRATINGS", "  Artist ".$mod['AlbumArtistindex']." has no visible albums");
-		} else {
+			$returninfo['deletedartists'][] = $mod['AlbumArtistindex'];
+		} 
+		if ($abtc == 0) {
+			logger::mark("USERRATINGS", "  Artist ".$mod['AlbumArtistindex']." has no visible audiobooks");
+			$returninfo['deletedbookartists'][] = $mod['AlbumArtistindex'];
+		} 
+		if ($atc != 0) {
 			logger::mark("USERRATINGS", "  Artist ".$mod['AlbumArtistindex']." has modified albums");
 			switch ($prefs['sortcollectionby']) {
 				case 'album':
@@ -189,6 +196,23 @@ function prepare_returninfo() {
 					break;
 			}
 		}
+		if ($abtc != 0) {
+			logger::mark("USERRATINGS", "  Artist ".$mod['AlbumArtistindex']." has modified audiobooks");
+			switch ($prefs['sortcollectionby']) {
+				case 'album':
+					break;
+
+				case 'artist':
+					logger::trace("USERRATINGS", "    Creating Artist Header");
+					$returninfo['modifiedbookartists'][] = do_artists_from_database('z', $prefs['sortcollectionby'], $mod['AlbumArtistindex']);
+					break;
+
+				case 'albumbyartist':
+					logger::trace("USERRATINGS", "    Creating Artist Banner");
+					$returninfo['modifiedbookartists'][] = do_artist_banner('z','album',$mod['AlbumArtistindex']);
+					break;
+			}
+		}
 	}
 
 	$at = microtime(true) - $t;
@@ -197,12 +221,19 @@ function prepare_returninfo() {
 	$t = microtime(true);
 	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
 	foreach ($result as $mod) {
-		if (album_trackcount($mod['Albumindex']) == 0) {
+		$atc = album_trackcount($mod['Albumindex']);
+		$abtc = album_audiobookcount($mod['Albumindex']);
+		if ($atc == 0) {
 			logger::mark("USERRATINGS", "  Album ".$mod['Albumindex']." has no visible tracks");
 			$returninfo['deletedalbums'][] = $mod['Albumindex'];
-		} else {
+		} 
+		if ($abtc == 0) {
+			logger::mark("USERRATINGS", "  Audiobook ".$mod['Albumindex']." has no visible tracks");
+			$returninfo['deletedaudiobooks'][] = $mod['Albumindex'];
+		} 
+		if ($atc != 0) {
 			logger::mark("USERRATINGS", "  Album ".$mod['Albumindex']." was modified");
-			$prefix = check_album_is_album($mod['Albumindex']);
+			$prefix = 'a';
 			switch ($prefs['sortcollectionby']) {
 				case 'album':
 				case 'albumbyartist':
@@ -216,29 +247,38 @@ function prepare_returninfo() {
 			$r['tracklist'] = do_tracks_from_database($prefix, 'album', $mod['Albumindex'], true);
 			$returninfo['modifiedalbums'][] = $r;
 		}
+		if ($abtc != 0) {
+			logger::mark("USERRATINGS", "  Audiobook ".$mod['Albumindex']." was modified");
+			$prefix = 'z';
+			switch ($prefs['sortcollectionby']) {
+				case 'album':
+				case 'albumbyartist':
+					$r = do_albums_from_database($prefix, 'album', 'root', $mod['Albumindex'], false, false);
+					break;
+
+				case 'artist':
+					$r = do_albums_from_database($prefix, 'album', $mod['AlbumArtistindex'], $mod['Albumindex'], false, false);
+					break;
+			}
+			$r['tracklist'] = do_tracks_from_database($prefix, 'album', $mod['Albumindex'], true);
+			$returninfo['modifiedaudiobooks'][] = $r;
+		}
 	}
 	$at = microtime(true) - $t;
 	logger::debug("TIMINGS", " -- Finding modified albums took ".$at." seconds");
 
 	$t = microtime(true);
-	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex, Uri, TTindex FROM Tracktable JOIN Albumtable USING (Albumindex) WHERE justAdded = 1 AND Hidden = 0');
+	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex, Uri, TTindex, isAudiobook FROM Tracktable JOIN Albumtable USING (Albumindex) WHERE justAdded = 1 AND Hidden = 0');
 	foreach ($result as $mod) {
 		logger::log("USERRATING", "  New Track in album ".$mod['Albumindex'].' has TTindex '.$mod['TTindex']);
-		$returninfo['addedtracks'][] = array('artistindex' => $mod['AlbumArtistindex'], 'albumindex' => $mod['Albumindex'], 'trackuri' => rawurlencode($mod['Uri']));
+		$returninfo['addedtracks'][] = array(	'artistindex' => $mod['AlbumArtistindex'], 
+												'albumindex' => $mod['Albumindex'], 
+												'trackuri' => rawurlencode($mod['Uri']),
+												'isaudiobook' => $mod['isAudiobook']
+											);
 	}
 	$at = microtime(true) - $t;
 	logger::debug("TIMINGS", " -- Finding added tracks took ".$at." seconds");
-}
-
-function check_album_is_album($albumindex) {
-	// See if the album is an album or an audiobook
-	$c = simple_query('COUNT(TTindex)', 'Tracktable', 'isAudiobook = 1 AND Albumindex', $albumindex, 0);
-	if ($c > 0) {
-		logger::trace("USERRATINGS", "    This is an audiobook");
-		return 'z';
-	} else {
-		return 'a';
-	}
 }
 
 function artist_albumcount($artistindex) {
@@ -255,6 +295,20 @@ function artist_albumcount($artistindex) {
 			AND Uri IS NOT NULL", false, null, 'num', 0);
 }
 
+function artist_audiobookcount($artistindex) {
+	return generic_sql_query(
+		"SELECT
+			COUNT(Albumindex) AS num
+		FROM
+			Albumtable LEFT JOIN Tracktable USING (Albumindex)
+		WHERE
+			AlbumArtistindex = ".$artistindex.
+			" AND Hidden = 0
+			AND isSearchResult < 2
+			AND isAudiobook = 1
+			AND Uri IS NOT NULL", false, null, 'num', 0);
+}
+
 function album_trackcount($albumindex) {
 	return generic_sql_query(
 		"SELECT
@@ -266,6 +320,20 @@ function album_trackcount($albumindex) {
 			" AND Hidden = 0
 			AND isSearchResult < 2
 			AND isAudiobook = 0
+			AND Uri IS NOT NULL", false, null, 'num', 0);
+}
+
+function album_audiobookcount($albumindex) {
+	return generic_sql_query(
+		"SELECT
+			COUNT(TTindex) AS num
+		FROM
+			Tracktable
+		WHERE
+			Albumindex = ".$albumindex.
+			" AND Hidden = 0
+			AND isSearchResult < 2
+			AND isAudiobook = 1
 			AND Uri IS NOT NULL", false, null, 'num', 0);
 }
 

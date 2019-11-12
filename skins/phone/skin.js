@@ -563,17 +563,33 @@ var layoutProcessor = function() {
         displayCollectionInsert: function(d) {
             infobar.notify(language.gettext('label_addedtocol'));
             infobar.markCurrentTrack();
-            if (prefs.chooser == 'albumlist') {
-                switch (prefs.sortcollectionby) {
-                    case 'artist':
-                        $('#albumlist').scrollTo($('[name="aartist'+d.artistindex+'"]'));
-                        break;
+            if (d.isaudiobook) {
+                if (prefs.chooser == 'audiobooklist') {
+                    switch (prefs.sortcollectionby) {
+                        case 'artist':
+                            $('#audiobooklist').scrollTo($('[name="zartist'+d.artistindex+'"]'));
+                            break;
 
-                    default:
-                        $('#albumlist').scrollTo($('[name="aalbum'+d.albumindex+'"]'));
-                        break;
+                        default:
+                            $('#audiobooklist').scrollTo($('[name="zalbum'+d.albumindex+'"]'));
+                            break;
 
+                    }
                 }
+            } else {
+                if (prefs.chooser == 'albumlist') {
+                    switch (prefs.sortcollectionby) {
+                        case 'artist':
+                            $('#albumlist').scrollTo($('[name="aartist'+d.artistindex+'"]'));
+                            break;
+
+                        default:
+                            $('#albumlist').scrollTo($('[name="aalbum'+d.albumindex+'"]'));
+                            break;
+
+                    }
+                }
+
             }
         },
 
@@ -694,13 +710,13 @@ var layoutProcessor = function() {
         removeArtist: function(key) {
             switch (prefs.sortcollectionby) {
                 case 'artist':
-                    $('#aartist'+key).findParentScroller().restoreScrollPos();
-                    $('#aartist'+key).remove();
-                    layoutProcessor.findArtistDisplayer('aartist'+key).remove();
+                    $('#'+key).findParentScroller().restoreScrollPos();
+                    $('#'+key).remove();
+                    layoutProcessor.findArtistDisplayer(key).remove();
                     break;
 
                 case 'albumbyartist':
-                    $('#aartist'+key).remove();
+                    $('#'+key).remove();
                     break;
 
             }

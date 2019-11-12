@@ -37,19 +37,6 @@ var layoutProcessor = function() {
         $('#'+source).fadeIn('fast');
     }
 
-    function flashTrack(uri, album) {
-        debug.log("UI", "Flashing Track", uri, album);
-        infobar.markCurrentTrack();
-        var thing = uri ?  uri : album;
-        debug.log("UI", " Making flasher on", thing);
-        $('[name="'+thing+'"]').makeFlasher({flashtime: 0.5, repeats: 5});
-        // The timeout is so that markCurrentTrack doesn't fuck it up - these often
-        // have CSS transitions that affect the scrollbar size
-        setTimeout(function() {
-            layoutProcessor.scrollCollectionTo($('[name="'+thing+'"]'));
-        }, 1000);
-    }
-
     function setBottomPanelWidths() {
         var widths = getPanelWidths();
         $("#sources").css("width", widths.sources+"%");
@@ -92,6 +79,11 @@ var layoutProcessor = function() {
         $("#playlistcontrols").animatePanel(widths);
         $("#infopane").animatePanel(widths);
         $("#infopanecontrols").animatePanel(widths);
+    }
+
+    function showTrack(holder, target) {
+        infobar.markCurrentTrack();
+        layoutProcessor.scrollCollectionTo(holder, target);
     }
 
     var my_scrollers = [ "#sources", "#infopane", "#pscroller", ".topdropmenu", ".drop-box" ];
@@ -272,18 +264,17 @@ var layoutProcessor = function() {
             });
         },
 
-        scrollCollectionTo: function(jq) {
-            if (jq) {
-                debug.log("LAYOUT","Scrolling Collection To",jq, jq.position().top,$("#collection").parent().parent().parent().height()/2);
-                var pospixels = Math.round(jq.position().top -
-                    $("#collection").parent().parent().parent().height()/2);
-                debug.log("LAYOUT","Scrolling Collection To",pospixels);
+        scrollCollectionTo: function(holder, jq) {
+            if (jq.length > 0) {
+                debug.log("LAYOUT","Scrolling",holder,"To",jq, jq.position().top,$(holder).parent().parent().parent().height()/2);
+                var pospixels = Math.round(jq.position().top - $(holder).parent().parent().parent().height()/2);
+                debug.log("LAYOUT","Scrolling",holder,"To",pospixels);
                 $("#sources").mCustomScrollbar('update').mCustomScrollbar('scrollTo', pospixels,
                     { scrollInertia: 1000,
                       scrollEasing: 'easeOut' }
                 );
             } else {
-                debug.log("LAYOUT","Was asked to scroll collection to something non-existent",2);
+                debug.warn("LAYOUT","Was asked to scroll collection to something non-existent",2);
             }
         },
 
@@ -315,29 +306,40 @@ var layoutProcessor = function() {
         },
 
         displayCollectionInsert: function(details) {
-
             debug.log("COLLECTION","Displaying New Insert",details);
-            layoutProcessor.sourceControl('albumlist');
-            if (prefs.sortcollectionby == "artist" && $('i[name="aartist'+details.artistindex+'"]').isClosed()) {
-                debug.log("COLLECTION","Opening Menu","aartist"+details.artistindex);
-                doAlbumMenu(null, $('i[name="aartist'+details.artistindex+'"]'), function() {
-                    if ($('i[name="aalbum'+details.albumindex+'"]').isClosed()) {
-                        debug.log("COLLECTION","Opening Menu","aalbum"+details.albumindex);
-                        doAlbumMenu(null, $('i[name="aalbum'+details.albumindex+'"]'), function() {
-                            flashTrack(details.trackuri, 'aalbum'+details.albumindex);
-                        });
-                    } else {
-                        flashTrack(details.trackuri, 'aalbum'+details.albumindex);
-                    }
-                });
-            } else if ($('i[name="aalbum'+details.albumindex+'"]').isClosed()) {
-                debug.log("COLLECTION","Opening Menu","aalbum"+details.albumindex);
-                doAlbumMenu(null, $('i[name="aalbum'+details.albumindex+'"]'), function() {
-                    flashTrack(details.trackuri,'aalbum'+details.albumindex);
-                });
+            var prefix;
+            var holder;
+            if (details.isaudiobook == 1) {
+                holder = '#audiobooks';
+                layoutProcessor.sourceControl('audiobooklist');
+                prefix = 'z';
             } else {
-                flashTrack(details.trackuri,'aalbum'+details.albumindex);
+                holder = '#collection';
+                layoutProcessor.sourceControl('albumlist');
+                prefix = 'a';
             }
+            setTimeout(function() {
+                if (prefs.sortcollectionby == "artist" && $('i[name="'+prefix+'artist'+details.artistindex+'"]').isClosed()) {
+                    debug.log("COLLECTION","Opening Menu",prefix+"artist"+details.artistindex);
+                    doAlbumMenu(null, $('i[name="'+prefix+'artist'+details.artistindex+'"]'), function() {
+                        if ($('i[name="'+prefix+'album'+details.albumindex+'"]').isClosed()) {
+                            debug.log("COLLECTION","Opening Menu",prefix+"album"+details.albumindex);
+                            doAlbumMenu(null, $('i[name="'+prefix+'album'+details.albumindex+'"]'), function() {
+                                showTrack(holder, $('[name="'+prefix+'album'+details.albumindex+'"]'));
+                            });
+                        } else {
+                            showTrack(holder, $('[name="'+prefix+'album'+details.albumindex+'"]'));
+                        }
+                    });
+                } else if ($('i[name="'+prefix+'album'+details.albumindex+'"]').isClosed()) {
+                    debug.log("COLLECTION","Opening Menu",prefix+"album"+details.albumindex);
+                    doAlbumMenu(null, $('i[name="'+prefix+'album'+details.albumindex+'"]'), function() {
+                        showTrack(holder, $('[name="'+prefix+'album'+details.albumindex+'"]'));
+                    });
+                } else {
+                    showTrack(holder, $('[name="'+prefix+'album'+details.albumindex+'"]'));
+                }
+            }, 1000);
         },
 
         setProgressTime: function(stats) {

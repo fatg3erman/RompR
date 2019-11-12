@@ -628,7 +628,7 @@ function setAsAudioBook(e, element) {
         [data],
         function(rdata) {
             collectionHelper.updateCollectionDisplay(rdata);
-            collectionHelper.reloadAudiobooks();
+            // collectionHelper.reloadAudiobooks();
             // playlist.repopulate();
         },
         function(rdata) {

@@ -333,8 +333,8 @@ var uiHelper = function() {
             try {
                 return layoutProcessor.removeArtist(v);
             } catch (err) {
-                $("#aartist"+v).remove();
-                uiHelper.findArtistDisplayer('aartist'+v).remove();
+                $("#"+v).remove();
+                uiHelper.findArtistDisplayer(v).remove();
                 layoutProcessor.postAlbumActions();
             }
         },

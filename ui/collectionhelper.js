@@ -179,14 +179,36 @@ var collectionHelper = function() {
             if (rdata && rdata.hasOwnProperty('deletedalbums')) {
                 $.each(rdata.deletedalbums, function(i, v) {
                     debug.log("REMOVING", "Album", v);
-                    uiHelper.removeAlbum('aalbum'+v);
+                    if ($('#aalbum'+v).length > 0) {
+                        uiHelper.removeAlbum('aalbum'+v);
+                    }
+                });
+            }
+
+            if (rdata && rdata.hasOwnProperty('deletedaudiobooks')) {
+                $.each(rdata.deletedaudiobooks, function(i, v) {
+                    debug.log("REMOVING", "Audiobook", v);
+                    if ($('#zalbum'+v).length > 0) {
+                        uiHelper.removeAlbum('zalbum'+v);
+                    }
                 });
             }
 
             if (rdata && rdata.hasOwnProperty('deletedartists')) {
                 $.each(rdata.deletedartists, function(i, v) {
                     debug.log("REMOVING", "Artist", v);
-                    uiHelper.removeArtist(v);
+                    if ($('#aartist'+v).length > 0) {
+                        uiHelper.removeArtist('aartist'+v);
+                    }
+                });
+            }
+
+            if (rdata && rdata.hasOwnProperty('deletedbookartists')) {
+                $.each(rdata.deletedartists, function(i, v) {
+                    debug.log("REMOVING", "Book Artist", v);
+                    if ($('#zartist'+v).length > 0) {
+                        uiHelper.removeArtist('zartist'+v);
+                    }
                 });
             }
 
@@ -196,6 +218,15 @@ var collectionHelper = function() {
                     // We remove and replace any modified albums, as they may have a new date or albumartist which would cause
                     // them to appear elsewhere in the collection. First remove the dropdown if it exists and replace its contents
                     debug.log("MODIFIED","Album",v.id);
+                    uiHelper.insertAlbum(v);
+                });
+            }
+
+            if (rdata && rdata.hasOwnProperty('modifiedaudiobooks')) {
+                $.each(rdata.modifiedaudiobooks, function(i,v) {
+                    // We remove and replace any modified albums, as they may have a new date or albumartist which would cause
+                    // them to appear elsewhere in the collection. First remove the dropdown if it exists and replace its contents
+                    debug.log("MODIFIED","Audiobook",v.id);
                     uiHelper.insertAlbum(v);
                 });
             }
@@ -211,6 +242,22 @@ var collectionHelper = function() {
                         $("#aartist"+v.id).remove();
                     }
                     var x = uiHelper.findArtistDisplayer('aartist'+v.id);
+                    if (x.length == 0) {
+                        uiHelper.insertArtist(v);
+                    }
+                });
+            }
+
+            if (rdata && rdata.hasOwnProperty('modifiedbookartists')) {
+                $.each(rdata.modifiedbookartists, function(i,v) {
+                    // The only thing to do with artists is to add them in if they don't exist
+                    // NOTE. Do this AFTER inserting new albums, because if we're doing albumbyartist with banners showing
+                    // then the insertAfter logic will be wrong if we've already inserted the artist banner. We also need
+                    // to remove and replace the banner when that sort option is used, because we only insertAfter an album ID
+                    if (prefs.sortcollectionby == 'albumbyartist') {
+                        $("#zartist"+v.id).remove();
+                    }
+                    var x = uiHelper.findArtistDisplayer('zartist'+v.id);
                     if (x.length == 0) {
                         uiHelper.insertArtist(v);
                     }
