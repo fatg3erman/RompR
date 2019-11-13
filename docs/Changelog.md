@@ -10,6 +10,8 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Fix some bugs relating to loading playlists
 * Make Mopidy-Youtube handling work better. This version of Rompr works best wuth the fork of Mopidy-Youtube [here](https://github.com/natumbri/mopidy-youtube)
 * Completely redesigned the Community Radio Browser to simplify the interface and make it more consistent with TuneIn
+* Manually added tracks can now be moved to the Spokem Word section - only in the Desktop and Fruit skins
+* Rompr will now check for a new release on startup and give you the option of downloading it
 * A few minor fixes and UI changes
 
 ## Version 1.32

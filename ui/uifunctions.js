@@ -505,7 +505,60 @@ function showUpdateWindow() {
                 });
             });
         });
+    } else if (prefs.lastversionchecktime < Date.now() - 604800000) {
+        debug.log('INIT', 'Doing Upgrade Check');
+        $.ajax({
+            method: 'GET',
+            dataType: 'json',
+            url: 'https://api.github.com/repos/fatg3erman/RompR/releases'
+        })
+        .done(function(data) {
+            debug.log('INIT', 'Got release data',data);
+            var newest = '1.00';
+            data.forEach(function(v) {
+                if (compare_version_numbers(newest, v.tag_name)) {
+                    debug.log('INIT', 'Found release',v.tag_name,'We are version',rompr_version);
+                    newest = v.tag_name;
+                }
+            });
+            if (compare_version_numbers(rompr_version, newest) && compare_version_numbers(prefs.lastversionchecked, newest)) {
+                debug.shout('INIT', 'New Version is available!');
+                showNewVersionWindow(newest);
+            } else {
+                debug.log('INIT', 'Not doing anything about update');
+                updateRemindLater();
+            }
+        })
+        .fail(function(xhr,status,err) {
+            debug.warn('INIT','Upgrade Check Failed',xhr,status,err);
+        });
     }
+}
+
+function showNewVersionWindow(version) {
+        var fnarkle = new popup({
+            css: {
+                width: 400,
+                height: 200
+            },
+            fitheight: true,
+            title: 'A New Version Is Available',
+            hasclosebutton: false
+        });
+        var mywin = fnarkle.create();
+        var d1 = $('<div>', {class: 'textcentre'}).appendTo(mywin);
+        d1.html('Version '+version+' is now available. You have version '+rompr_version);
+        var d2 = $('<div>', {class: 'textcentre'}).appendTo(mywin);
+        d2.html('<a href="https://github.com/fatg3erman/RompR/releases" target="_blank">Download The Latest Release Here</a>');
+        fnarkle.addCloseButton('Remind Me Later', updateRemindLater);
+        fnarkle.addCloseButton('Never Remind Me', function() {
+            prefs.save({lastversionchecked: version, lastversionchecktime: Date.now()});
+        });
+        fnarkle.open();
+}
+
+function updateRemindLater() {
+    prefs.save({lastversionchecktime: Date.now()});
 }
 
 function compare_version_numbers(ver1, ver2) {

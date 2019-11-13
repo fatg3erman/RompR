@@ -302,7 +302,9 @@ $prefs = array(
     "podcast_sort_2" => 'Category',
     "podcast_sort_3" => 'new',
     "bgimgparms" => (object) array('dummy' => 'baby'),
-    "alarms" => array( )
+    "alarms" => array( ),
+    "lastversionchecked" => '1.00',
+    "lastversionchecktime" => 0
 );
 
 // Prefs that should not be exposed to the browser for security reasons
