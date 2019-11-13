@@ -634,7 +634,7 @@ class romprmetadata {
 		if ($albumindex !== null) {
 			if (album_audiobookcount($albumindex) > 0) {
 				logger::log('USERRATING', 'Album '.$albumindex.' is an audiobook, updating track audiobook state');
-				generic_sql_query("UPDATE Tracktable SET isAudiobook = 1 WHERE TTindex = ".$ttid);
+				generic_sql_query("UPDATE Tracktable SET isAudiobook = 2 WHERE TTindex = ".$ttid);
 			}
 		}
 	}
@@ -741,7 +741,7 @@ class romprmetadata {
 	}
 
 	static function set_as_audiobook($albumindex) {
-		$result = sql_prepare_query(true, null, null, null, 'UPDATE Tracktable SET isAudiobook = 1, justAdded = 1 WHERE Albumindex = ?', $albumindex);
+		$result = sql_prepare_query(true, null, null, null, 'UPDATE Tracktable SET isAudiobook = 2, justAdded = 1 WHERE Albumindex = ?', $albumindex);
 		return $result;
 	}
 

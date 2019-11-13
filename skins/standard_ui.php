@@ -135,9 +135,9 @@ function albumHeader($obj) {
         $classes = array();;
         if (num_collection_tracks($id) == 0) {
             $classes[] = 'clickamendalbum';
-            if (!album_is_audiobook($id)) {
-                $classes[] = 'clicksetasaudiobook';
-            }
+        }
+        if (!album_is_audiobook($id)) {
+            $classes[] = 'clicksetasaudiobook';
         }
         if ($obj['AlbumUri']) {
             $classes[] = 'clickalbumoptions';

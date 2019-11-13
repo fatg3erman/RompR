@@ -44,6 +44,10 @@ jQuery.fn.toggleClosed = function() {
 jQuery.fn.makeSpinner = function() {
 
     return this.each(function() {
+        if ($(this).hasClass('icon-spin6') || $(this).hasClass('spinner')) {
+            debug.warn('UIHELPER', 'Trying to create spinner on already spinning element');
+            return;
+        }
         var originalclasses = new Array();
         var classes = '';
         if ($(this).attr("class")) {
@@ -319,6 +323,7 @@ var uiHelper = function() {
         },
 
         removeAlbum: function(key) {
+            debug.mark('UIHELPER', 'Removing Album',key);
             try {
                 return layoutProcessor.removeAlbum(key);
             } catch (err) {

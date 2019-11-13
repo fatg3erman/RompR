@@ -36,6 +36,10 @@ clean_cache_dir('prefs/jsoncache/spotify/', 2592000);
 clean_cache_dir('prefs/jsoncache/google/', 2592000);
 // One Week
 clean_cache_dir('prefs/jsoncache/commradio/', 604800);
+// One Week
+clean_cache_dir('prefs/jsoncache/somafm/', 604800);
+// One Week
+clean_cache_dir('prefs/jsoncache/icecast/', 604800);
 // Six Months - after all, lyrics are small and don't change
 clean_cache_dir('prefs/jsoncache/lyrics/', 15552000);
 // One week (or it can get REALLY big)

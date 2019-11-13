@@ -204,7 +204,7 @@ var info_lastfm = function() {
             var displaying = false;
 
             this.populate = function() {
-				$('#love').addClass('notloved').makeSpinner();
+				$('#love').removeClass('notloved').addClass('notloved').makeSpinner();
                 self.artist.populate();
 				self.album.populate();
 				self.track.populate();
@@ -299,7 +299,7 @@ var info_lastfm = function() {
             function doUserLoved(flag) {
 				debug.log("LASTFM","Doing UserLoved With Flags at",flag);
 				if (parent.isCurrentTrack()) {
-					$('#love').stopSpinner();
+                    $('#love').stopSpinner();
 					if (flag) {
 						$('#love').removeClass('notloved').attr('title', language.gettext("lastfm_unlove")).off('click').on('click', nowplaying.unlove);
 					} else {

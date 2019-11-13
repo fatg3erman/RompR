@@ -101,6 +101,10 @@ jQuery.fn.makeSpinner = function() {
         this.hasClass('icon-toggle-open') ||
         this.hasClass('podicon')) {
         return this.each(function() {
+            if ($(this).hasClass('icon-spin6') || $(this).hasClass('spinner')) {
+                debug.warn('UIHELPER', 'Trying to create spinner on already spinning element');
+                return;
+            }
             var originalclasses = new Array();
             var classes = '';
             if ($(this).attr("class")) {
@@ -564,35 +568,24 @@ var layoutProcessor = function() {
             debug.log("UI","Displaying Collection Insert",details);
             infobar.notify(language.gettext('label_addedtocol'));
             infobar.markCurrentTrack();
-            if (details.isaudiobook) {
-                if (prefs.chooser == 'audiobooklist') {
-                    layoutProcessor.postAlbumActions();
-                    switch (prefs.sortcollectionby) {
-                        case 'artist':
-                            layoutProcessor.scrollCollectionTo($('[name="zartist'+details.artistindex+'"]'));
-                            break;
+            var prefix = null;
+            if (details.isaudiobook > 0 && prefs.chooser == 'audiobooklist') {
+                prefix = 'z';
+            } else if (prefs.chooser == 'albumlist') {
+                prefix = 'a';
+            }
+            if (prefix !== null) {
+                layoutProcessor.postAlbumActions();
+                switch (prefs.sortcollectionby) {
+                    case 'artist':
+                        layoutProcessor.scrollCollectionTo($('[name="'+prefix+'artist'+details.artistindex+'"]'));
+                        break;
 
-                        default:
-                            layoutProcessor.scrollCollectionTo($('[name="zalbum'+details.albumindex+'"]'));
-                            break;
+                    default:
+                        layoutProcessor.scrollCollectionTo($('[name="'+prefix+'album'+details.albumindex+'"]'));
+                        break;
 
-                    }
                 }
-            } else {
-                if (prefs.chooser == 'albumlist') {
-                    layoutProcessor.postAlbumActions();
-                    switch (prefs.sortcollectionby) {
-                        case 'artist':
-                            layoutProcessor.scrollCollectionTo($('[name="aartist'+details.artistindex+'"]'));
-                            break;
-
-                        default:
-                            layoutProcessor.scrollCollectionTo($('[name="aalbum'+details.albumindex+'"]'));
-                            break;
-
-                    }
-                }
-
             }
         },
 

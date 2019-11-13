@@ -534,7 +534,7 @@ function num_collection_tracks($albumindex) {
 function album_is_audiobook($albumindex) {
 	// Returns true if any of the tracks on this album are markd as audiobook tracks
 	// (WHY is that done by track and not by album?)
-	$t = generic_sql_query("SELECT COUNT(TTindex) AS cnt FROM Tracktable WHERE Albumindex = ".$albumindex." AND Hidden = 0 AND Uri IS NOT NULL AND isSearchResult < 2 AND isAudiobook = 1", false, null, 'cnt', 0);
+	$t = generic_sql_query("SELECT COUNT(TTindex) AS cnt FROM Tracktable WHERE Albumindex = ".$albumindex." AND Hidden = 0 AND Uri IS NOT NULL AND isSearchResult < 2 AND isAudiobook > 0", false, null, 'cnt', 0);
 	return ($t > 0);
 }
 
@@ -809,7 +809,7 @@ function albumartist_sort_query($flag) {
 			break;
 
 		case 'z':
-			$sflag = "AND isSearchResult < 2 AND isAudiobook = 1";
+			$sflag = "AND isSearchResult < 2 AND isAudiobook > 0";
 			break;
 
 		case 'c':
@@ -876,7 +876,7 @@ function get_list_of_artists() {
 function album_sort_query($why, $what, $who) {
 	global $prefs;
 	$sflag = ($why == "b") ? "AND Tracktable.isSearchResult > 0" : "AND Tracktable.isSearchResult < 2";
-	$sflag .= ($why == 'z') ? " AND Tracktable.isAudiobook = 1" : " AND Tracktable.isAudiobook = 0";
+	$sflag .= ($why == 'z') ? " AND Tracktable.isAudiobook > 0" : " AND Tracktable.isAudiobook = 0";
 
 	$qstring = "SELECT Albumtable.*, Artisttable.Artistname FROM Albumtable JOIN Artisttable ON
 			(Albumtable.AlbumArtistindex = Artisttable.Artistindex) WHERE ";
@@ -1068,7 +1068,7 @@ function get_album_tracks_from_database($index, $cmd, $flag) {
 		case "z":
 			// z - Audiobooks
 			$action = "SELECT";
-			$sflag = "AND isSearchResult < 2 AND isAudiobook = 1";
+			$sflag = "AND isSearchResult < 2 AND isAudiobook > 0";
 			$rflag = "";
 			break;
 
@@ -1383,27 +1383,34 @@ function get_stat($item) {
 }
 
 function get_artist_count($range, $iab) {
-	$ac = generic_sql_query(
-		"SELECT COUNT(*) AS NumArtists FROM (SELECT AlbumArtistindex FROM Albumtable
+	$qstring = "SELECT COUNT(*) AS NumArtists FROM (SELECT AlbumArtistindex FROM Albumtable
 		INNER JOIN Tracktable USING (Albumindex) WHERE Uri IS NOT NULL
-		AND Hidden = 0 AND isSearchResult < 2 AND isAudiobook = ".$iab." ".track_date_check($range, 'a')." GROUP BY AlbumArtistindex) AS t", false, null, 'NumArtists', 0);
-	return $ac;
+		AND Hidden = 0 AND isSearchResult < 2 AND isAudiobook";
+	$qstring .= ($iab == 0) ? ' = ' : ' > ';
+	$qstring .= '0 '.track_date_check($range, 'a')." GROUP BY AlbumArtistindex) AS t";
+	return generic_sql_query($qstring, false, null, 'NumArtists', 0);
 }
 
 function get_album_count($range, $iab) {
-	$ac = generic_sql_query(
-		"SELECT COUNT(*) AS NumAlbums FROM (SELECT Albumindex FROM Tracktable WHERE Uri IS NOT NULL
-		AND Hidden = 0 AND isSearchResult < 2 AND isAudiobook = ".$iab." ".track_date_check($range, 'a')." GROUP BY Albumindex) AS t", false, null, 'NumAlbums', 0);
-	return $ac;
+	$qstring = "SELECT COUNT(*) AS NumAlbums FROM (SELECT Albumindex FROM Tracktable WHERE Uri IS NOT NULL
+		AND Hidden = 0 AND isSearchResult < 2 AND isAudiobook";
+	$qstring .= ($iab == 0) ? ' = ' : ' > ';
+	$qstring .= '0 '.track_date_check($range, 'a')." GROUP BY Albumindex) AS t";
+	return generic_sql_query($qstring, false, null, 'NumAlbums', 0);
 }
 
 function get_track_count($range, $iab) {
-	$ac = generic_sql_query("SELECT COUNT(*) AS NumTracks FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND isAudiobook = ".$iab." ".track_date_check($range, 'a')." AND isSearchResult < 2", false, null, 'NumTracks', 0);
-	return $ac;
+	$qstring = "SELECT COUNT(*) AS NumTracks FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND isAudiobook";
+	$qstring .= ($iab == 0) ? ' = ' : ' > ';
+	$qstring .= '0 '.track_date_check($range, 'a')." AND isSearchResult < 2";
+	return generic_sql_query($qstring, false, null, 'NumTracks', 0);
 }
 
 function get_duration_count($range, $iab) {
-	$ac = generic_sql_query("SELECT SUM(Duration) AS TotalTime FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND isAudiobook = ".$iab." ".track_date_check($range, 'a')." AND isSearchResult < 2", false, null, 'TotalTime', 0);
+	$qstring = "SELECT SUM(Duration) AS TotalTime FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND isAudiobook";
+	$qstring .= ($iab == 0) ? ' = ' : ' > ';
+	$qstring .= '0 '.track_date_check($range, 'a')." AND isSearchResult < 2";
+	$ac = generic_sql_query($qstring, false, null, 'TotalTime', 0);
 	if ($ac == '') {
 		$ac = 0;
 	}
@@ -1501,7 +1508,7 @@ function collectionStats() {
 
 function audiobookStats() {
 	global $prefs;
-	$html = '<div class="brick brick_wide">';
+	$html = '<div id="mingus" class="brick brick_wide">';
 	$html .= alistheader(get_artist_count($prefs['collectionrange'], 1),
 						get_album_count($prefs['collectionrange'], 1),
 						get_track_count($prefs['collectionrange'], 1),
@@ -1836,6 +1843,8 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 	//  - so if we have a manually added track and then add a collection track over it from a backend that doesn't
 	//  give us LastModified (eg Spotify-Web), we don't update lastModified and the track remains manually added.
 
+	// isaudiobook is 2 for anything manually moved to Spoken Word - we don't want these being reset
+
     if ($ttid) {
     	if ((!$doing_search && $trackobj->tags['Last-Modified'] !== $lastmodified) ||
     		($doing_search && $issearchresult == 0) ||
@@ -1881,7 +1890,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 	    		logger::log("MYSQL", "    It needs to be marked as a search result : Value ".$newsearchresult);
 	    		$newlastmodified = $lastmodified;
 	    	}
-			$newisaudiobook = $trackobj->tags['type'] == 'audiobook' ? 1 : 0;
+			$newisaudiobook = ($isaudiobook == 2) ? 2 : ($trackobj->tags['type'] == 'audiobook') ? 1 : 0;
 			if ($update_track->execute(array($trackobj->tags['Track'], $trackobj->tags['Time'], $trackobj->tags['Disc'],
 					$newlastmodified, $trackobj->tags['file'], $albumindex,	$newsearchresult, $newisaudiobook, $ttid))) {
 				$numdone++;

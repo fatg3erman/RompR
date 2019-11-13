@@ -21,9 +21,8 @@ if (array_key_exists('populate', $_REQUEST)) {
 		$getstr = $getstr . "search?search=" . $_REQUEST['searchfor'];
 	}
 	logger::log("ICESCRAPER", "Getting ".$getstr);
-	$d = new url_downloader(array('url' => $getstr));
-	$d->get_data_to_string();
-	$icecast_shitty_page = preg_replace('/<\?xml.*?\?>/', '', $d->get_data());
+	$page = getCacheData($getstr, 'icecast', true, true);
+	$icecast_shitty_page = preg_replace('/<\?xml.*?\?>/', '', $page);
 	$doc = phpQuery::newDocument($icecast_shitty_page);
 	$list = $doc->find('table.servers-list')->find('tr');
 	$page_title = $doc->find('#content')->children('h2')->text();

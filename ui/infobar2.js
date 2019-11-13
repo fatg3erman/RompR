@@ -440,7 +440,7 @@ var infobar = function() {
             nowplaying_updated = false;
             $("#progress").rangechooser("setOptions", {range: info.Time})
             setTheText(info);
-            lastfm.showloveban((info.Title != ""));
+            // lastfm.showloveban((info.Title != ""));
             if (info.Title != "" && info.trackartist != "") {
                 $("#stars").fadeIn('fast');
                 $("#dbtags").fadeIn('fast');

@@ -179,36 +179,28 @@ var collectionHelper = function() {
             if (rdata && rdata.hasOwnProperty('deletedalbums')) {
                 $.each(rdata.deletedalbums, function(i, v) {
                     debug.log("REMOVING", "Album", v);
-                    if ($('#aalbum'+v).length > 0) {
-                        uiHelper.removeAlbum('aalbum'+v);
-                    }
+                    uiHelper.removeAlbum('aalbum'+v);
                 });
             }
 
             if (rdata && rdata.hasOwnProperty('deletedaudiobooks')) {
                 $.each(rdata.deletedaudiobooks, function(i, v) {
                     debug.log("REMOVING", "Audiobook", v);
-                    if ($('#zalbum'+v).length > 0) {
-                        uiHelper.removeAlbum('zalbum'+v);
-                    }
+                    uiHelper.removeAlbum('zalbum'+v);
                 });
             }
 
             if (rdata && rdata.hasOwnProperty('deletedartists')) {
                 $.each(rdata.deletedartists, function(i, v) {
                     debug.log("REMOVING", "Artist", v);
-                    if ($('#aartist'+v).length > 0) {
-                        uiHelper.removeArtist('aartist'+v);
-                    }
+                    uiHelper.removeArtist('aartist'+v);
                 });
             }
 
             if (rdata && rdata.hasOwnProperty('deletedbookartists')) {
-                $.each(rdata.deletedartists, function(i, v) {
+                $.each(rdata.deletedbookartists, function(i, v) {
                     debug.log("REMOVING", "Book Artist", v);
-                    if ($('#zartist'+v).length > 0) {
-                        uiHelper.removeArtist('zartist'+v);
-                    }
+                    uiHelper.removeArtist('zartist'+v);
                 });
             }
 
@@ -279,7 +271,13 @@ var collectionHelper = function() {
             if (rdata && rdata.hasOwnProperty('stats')) {
                 // stats is another html fragment which is the contents of the
                 // statistics box at the top of the collection
-                $("#fothergill").html(rdata.stats);
+                $("#fothergill").html($(rdata.stats).children());
+            }
+
+            if (rdata && rdata.hasOwnProperty('bookstats')) {
+                // stats is another html fragment which is the contents of the
+                // statistics box at the top of the collection
+                $("#mingus").html($(rdata.bookstats).children());
             }
 
             returned_data[index] = null;

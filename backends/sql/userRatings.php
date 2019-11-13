@@ -305,7 +305,7 @@ function artist_audiobookcount($artistindex) {
 			AlbumArtistindex = ".$artistindex.
 			" AND Hidden = 0
 			AND isSearchResult < 2
-			AND isAudiobook = 1
+			AND isAudiobook > 0
 			AND Uri IS NOT NULL", false, null, 'num', 0);
 }
 
@@ -333,13 +333,14 @@ function album_audiobookcount($albumindex) {
 			Albumindex = ".$albumindex.
 			" AND Hidden = 0
 			AND isSearchResult < 2
-			AND isAudiobook = 1
+			AND isAudiobook > 0
 			AND Uri IS NOT NULL", false, null, 'num', 0);
 }
 
 function doCollectionHeader() {
 	global $returninfo;
 	$returninfo['stats'] = collectionStats();
+	$returninfo['bookstats'] = audiobookStats();
 }
 
 function check_backup_dir() {

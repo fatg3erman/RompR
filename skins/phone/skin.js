@@ -70,6 +70,10 @@ jQuery.fn.makeSpinner = function() {
         this.hasClass('icon-toggle-open') ||
         this.hasClass('podicon')) {
         return this.each(function() {
+            if ($(this).hasClass('icon-spin6') || $(this).hasClass('spinner')) {
+                debug.warn('UIHELPER', 'Trying to create spinner on already spinning element');
+                return;
+            }
             var originalclasses = new Array();
             var classes = '';
             if ($(this).attr("class")) {
@@ -560,37 +564,9 @@ var layoutProcessor = function() {
             return false;
         },
 
-        displayCollectionInsert: function(d) {
+        displayCollectionInsert: function(details) {
             infobar.notify(language.gettext('label_addedtocol'));
             infobar.markCurrentTrack();
-            if (d.isaudiobook) {
-                if (prefs.chooser == 'audiobooklist') {
-                    switch (prefs.sortcollectionby) {
-                        case 'artist':
-                            $('#audiobooklist').scrollTo($('[name="zartist'+d.artistindex+'"]'));
-                            break;
-
-                        default:
-                            $('#audiobooklist').scrollTo($('[name="zalbum'+d.albumindex+'"]'));
-                            break;
-
-                    }
-                }
-            } else {
-                if (prefs.chooser == 'albumlist') {
-                    switch (prefs.sortcollectionby) {
-                        case 'artist':
-                            $('#albumlist').scrollTo($('[name="aartist'+d.artistindex+'"]'));
-                            break;
-
-                        default:
-                            $('#albumlist').scrollTo($('[name="aalbum'+d.albumindex+'"]'));
-                            break;
-
-                    }
-                }
-
-            }
         },
 
         setProgressTime: function(stats) {
@@ -683,9 +659,7 @@ var layoutProcessor = function() {
         insertAlbum: function(v) {
             var albumindex = v.id;
             var displayer = $('#'+v.why+'album'+albumindex);
-            var image = displayer.children('.album-menu-header').detach();
             displayer.html(v.tracklist);
-            image.insertAfter(displayer.children('.backmenu'));
             uiHelper.makeResumeBar(displayer);
             layoutProcessor.findAlbumDisplayer(v.why+'album'+albumindex).remove();
             switch (v.type) {
@@ -699,6 +673,7 @@ var layoutProcessor = function() {
                     $(v.html).insertAfter($('#'+v.where).find('div.clickalbum[name="'+v.where+'"]'));
                     break;
             }
+            layoutProcessor.postAlbumActions(displayer);
         },
 
         removeAlbum: function(key) {

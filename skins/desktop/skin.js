@@ -309,7 +309,7 @@ var layoutProcessor = function() {
             debug.log("COLLECTION","Displaying New Insert",details);
             var prefix;
             var holder;
-            if (details.isaudiobook == 1) {
+            if (details.isaudiobook > 0) {
                 holder = '#audiobooks';
                 layoutProcessor.sourceControl('audiobooklist');
                 prefix = 'z';
@@ -318,26 +318,25 @@ var layoutProcessor = function() {
                 layoutProcessor.sourceControl('albumlist');
                 prefix = 'a';
             }
+            var artistmenu = prefix+'artist'+details.artistindex;
+            var albummenu = prefix+"album"+details.albumindex;
             setTimeout(function() {
-                if (prefs.sortcollectionby == "artist" && $('i[name="'+prefix+'artist'+details.artistindex+'"]').isClosed()) {
-                    debug.log("COLLECTION","Opening Menu",prefix+"artist"+details.artistindex);
-                    doAlbumMenu(null, $('i[name="'+prefix+'artist'+details.artistindex+'"]'), function() {
-                        if ($('i[name="'+prefix+'album'+details.albumindex+'"]').isClosed()) {
-                            debug.log("COLLECTION","Opening Menu",prefix+"album"+details.albumindex);
-                            doAlbumMenu(null, $('i[name="'+prefix+'album'+details.albumindex+'"]'), function() {
-                                showTrack(holder, $('[name="'+prefix+'album'+details.albumindex+'"]'));
+                if (prefs.sortcollectionby == "artist" && $('i[name="'+artistmenu+'"]').isClosed()) {
+                    doAlbumMenu(null, $('i[name="'+artistmenu+'"]'), function() {
+                        if ($('i[name="'+albummenu+'"]').isClosed()) {
+                            doAlbumMenu(null, $('i[name="'+albummenu+'"]'), function() {
+                                showTrack(holder, $('[name="'+albummenu+'"]'));
                             });
                         } else {
-                            showTrack(holder, $('[name="'+prefix+'album'+details.albumindex+'"]'));
+                            showTrack(holder, $('[name="'+albummenu+'"]'));
                         }
                     });
-                } else if ($('i[name="'+prefix+'album'+details.albumindex+'"]').isClosed()) {
-                    debug.log("COLLECTION","Opening Menu",prefix+"album"+details.albumindex);
-                    doAlbumMenu(null, $('i[name="'+prefix+'album'+details.albumindex+'"]'), function() {
-                        showTrack(holder, $('[name="'+prefix+'album'+details.albumindex+'"]'));
+                } else if ($('i[name="'+albummenu+'"]').isClosed()) {
+                    doAlbumMenu(null, $('i[name="'+albummenu+'"]'), function() {
+                        showTrack(holder, $('[name="'+albummenu+'"]'));
                     });
                 } else {
-                    showTrack(holder, $('[name="'+prefix+'album'+details.albumindex+'"]'));
+                    showTrack(holder, $('[name="'+albummenu+'"]'));
                 }
             }, 1000);
         },

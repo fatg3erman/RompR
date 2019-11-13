@@ -554,7 +554,9 @@ class imageMagickImage {
     }
 
     public function outputResizedFile() {
-        header('Content-type: '.$this->image_type);
+        $content_type = ($this->image_type == 'image/svg') ? 'image/svg+xml' : $this->image_type;
+        logger::log('IMAGEMAGICK', 'Outputting',$this->filename,'as',$content_type);
+        header('Content-type: '.$content_type);
         readfile($this->filename);
     }
 
