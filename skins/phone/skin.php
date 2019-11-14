@@ -89,7 +89,7 @@ printOutputCheckboxes();
                 <i class="icon-doc-text npicon clickicon"></i>
             </div>
             <div id="lastfm" class="invisible">
-                <i class="icon-heart npicon clickicon" id="love"></i>
+                <i class="icon-heart npicon clickicon spinable" id="love"></i>
             </div>
             <div id="ptagadd" class="invisible">
                 <i class="icon-plus npicon clickicon" onclick="tagAdder.show(event)"></i>

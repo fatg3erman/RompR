@@ -21,14 +21,16 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 
 	function startSource(source) {
 		debug.trace("TRACKDATA",self.nowplayingindex,"Starting collection",source);
+		// Prevent infinite recursion when plugins depend on each other
+		if (self.hasbeenstarted.indexOf(source) > -1) {
+			debug.trace('TRACKDATA',source,'has already been started');
+			return;
+		}
+		self.hasbeenstarted.push(source);
 		var requirements = (nowplaying.getPlugin(source)).getRequirements(self);
 		for (var i in requirements) {
-			// Prevent infinite recursion when plugins depend on each other
-			if (self.hasbeenstarted.indexOf(requirements[i]) == -1) {
-				debug.trace("TRACKDATA",self.nowplayingindex,"Starting collection",source,"requirement",requirements[i]);
-				self.hasbeenstarted.push(requirements[i]);
-				startSource(requirements[i]);
-			}
+			debug.trace("TRACKDATA",self.nowplayingindex,"Starting collection",source,"requirement",requirements[i]);
+			startSource(requirements[i]);
 		}
 		collections[source] = new (nowplaying.getPlugin(source)).collection(
 			self,

@@ -362,6 +362,7 @@ class albumImage extends baseAlbumImage {
                 break;
 
             case IMAGETYPE_SVG:
+            case 'image/svg':
             case 'image/svg+xml':
                 $this->change_file_extension('svg');
                 break;
@@ -485,7 +486,7 @@ class imageHandler {
     }
 
     public function outputResizedFile($size) {
-        $this->image->outputResizedFile($size);
+        return $this->image->outputResizedFile($size);
     }
 
     public function resizeToWidth($width) {
@@ -508,14 +509,20 @@ class imageMagickImage {
     private $convert_path;
     private $resize_to = 0;
     private $image_type;
+    private $cmdline_file;
 
     public function __construct($filename) {
         $this->filename = $filename;
         $this->convert_path = find_executable('convert');
         $this->image_type = mime_content_type($this->filename);
-        logger::log('IMAGEMAGICK', 'Image Type is "'.$this->image_type.'"');
+        logger::log('IMAGEMAGICK', 'Construct Image Type is "'.$this->image_type.'"');
         if ($this->image_type == 'text/plain') {
-            $this->image_type = IMAGETYPE_SVG;
+            $this->image_type = 'image-svg';
+        }
+        if ($this->image_type == 'image/x-icon') {
+            $this->cmdline_file = 'ico:'.$filename;
+        } else {
+            $this->cmdline_file = $filename;
         }
     }
 
@@ -524,19 +531,19 @@ class imageMagickImage {
     }
 
     public function checkImage() {
-        logger::log("IMAGEMAGICK", "  Imageis type is ".$this->image_type);
+        logger::log("IMAGEMAGICK", "  Image type is ".$this->image_type);
         return $this->image_type;
     }
 
     public function save($filename, $compression) {
-        if ($this->image_type == IMAGETYPE_SVG) {
+        if ($this->image_type == 'image/svg' || $this->image_type == 'image/svg+xml') {
             logger::log("IMAGEMAGICK", "  Copying SVG file instead of converting");
-            copy($this->filename, $filename);
+            $this->justCopy($filename);
         } else if ($this->convert_path === false) {
             logger::warn("IMAGEMAGICK", "WARNING! ImageMagick not installed");
-            copy($this->filename, $filename);
+            $this->justCopy($filename);
         } else {
-            if ($this->image_type == IMAGETYPE_PNG) {
+            if ($this->image_type == "image/png") {
                 $params = ' -quality 95';
             } else {
                 $params = ' -quality '.$compression.' -alpha remove';
@@ -544,31 +551,83 @@ class imageMagickImage {
             if ($this->resize_to > 0) {
                 $params .= ' -resize '.$this->resize_to;
             }
-            $cmd = 'convert "'.$this->filename.'"'.$params.' "'.$filename.'" 2>&1';
+            $cmd = 'convert "'.$this->cmdline_file.'"'.$params.' "'.$filename.'"';
             logger::trace("IMAGEMAGICK", "  Command is ".$cmd);
-            $r = exec($this->convert_path.$cmd, $o, $ret);
-            logger::trace("IMAGEMAGICK", "    Final line of output was ".$r);
-            logger::trace("IMAGEMAGICK", "    Return Value was ".$ret);
+            if (substr($filename, -1) == '-') {
+                passthru($this->convert_path.$cmd);
+            } else {
+                $cmd .= ' 2>&1';
+                $r = exec($this->convert_path.$cmd, $o, $ret);
+                logger::trace("IMAGEMAGICK", "    Final line of output was ".$r);
+                logger::trace("IMAGEMAGICK", "    Return Value was ".$ret);
+            }
             // No point trying a copy file fallback, as if ImageMagick can't handle it it's shite.
         }
     }
 
-    public function outputResizedFile() {
-        $content_type = ($this->image_type == 'image/svg') ? 'image/svg+xml' : $this->image_type;
-        logger::log('IMAGEMAGICK', 'Outputting',$this->filename,'as',$content_type);
+    private function justCopy($filename) {
+        if (substr($filename, -1) == '-') {
+            readfile($this->filename);
+        } else {
+            copy($this->filename, $filename);
+        }
+    }
+
+    public function outputResizedFile($size) {
+        switch ($this->image_type) {
+            case 'image/svg':
+            case 'image/svg+xml':
+                $content_type = 'image/svg+xml';
+                $outputfile = 'SVG:-';
+                break;
+            case 'image/png':
+                $content_type = 'image/png';
+                $outputfile = 'PNG:-';
+                break;
+            default:
+                $content_type = 'image/jpeg';
+                $outputfile = 'JPEG:-';
+                break;
+        }
+        logger::log('IMAGEMAGICK', 'Outputting',$this->filename,'as',$content_type,'size',$size);
         header('Content-type: '.$content_type);
-        readfile($this->filename);
+        switch ($size) {
+            case 'small':
+                $this->resizeToWidth(100);
+                return $this->save($outputfile, 75);
+                break;
+
+            case 'smallish':
+                $this->resizeToWidth(250);
+                return $this->save($outputfile, 70);
+                break;
+
+            case 'medium':
+                $this->resizeToWidth(400);
+                return $this->save($outputfile, 70);
+                break;
+
+            default:
+                return $this->save($outputfile, 90);
+                break;
+
+        }
     }
 
     public function resizeToWidth($width) {
-        $this->resize_to = $width;
+        $s = $this->get_image_dimensions();
+        if ($width > $s['width']) {
+            logger::log('IMAGEMAGICK', 'Not resizing as requested size is larger than image');
+        } else {
+            $this->resize_to = $width;
+        }
     }
 
     public function get_image_dimensions() {
         $width = -1;
         $height = -1;
         if ($this->image_type != IMAGETYPE_SVG) {
-            $c = $this->convert_path."identify \"".$this->filename."\" 2>&1";
+            $c = $this->convert_path."identify \"".$this->cmdline_file."\" 2>&1";
             $o = array();
             $r = exec($c, $o);
             if (preg_match('/ (\d+)x(\d+) /', $r, $matches)) {
@@ -790,14 +849,18 @@ class gdImage {
             default:
                 $this->save(null, 90);
                 break;
-
         }
+        return true;
     }
 
     public function resizeToWidth($width) {
         $ratio = $width / $this->getWidth();
-        $height = $this->getheight() * $ratio;
-        $this->resize($width,$height);
+        if ($ratio > 1) {
+            logger::trace('GD-IMAGE', "Not resizing as requested size is larger than image");
+        } else {
+            $height = $this->getheight() * $ratio;
+            $this->resize($width,$height);
+        }
     }
 
     private function getWidth() {

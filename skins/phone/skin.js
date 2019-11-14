@@ -66,47 +66,47 @@ jQuery.fn.isClosed = function() {
 }
 
 jQuery.fn.makeSpinner = function() {
-    if (this.hasClass('icon-toggle-closed') ||
-        this.hasClass('icon-toggle-open') ||
-        this.hasClass('podicon')) {
-        return this.each(function() {
-            if ($(this).hasClass('icon-spin6') || $(this).hasClass('spinner')) {
+    return this.each(function() {
+        var self = $(this);
+        if (self.hasClass('icon-toggle-closed') || self.hasClass('icon-toggle-open') || self.hasClass('spinable')) {
+            if (self.hasClass('icon-spin6') || self.hasClass('spinner')) {
                 debug.warn('UIHELPER', 'Trying to create spinner on already spinning element');
                 return;
             }
             var originalclasses = new Array();
             var classes = '';
-            if ($(this).attr("class")) {
-                var classes = $(this).attr("class").split(/\s/);
+            if (self.attr("class")) {
+                var classes = self.attr("class").split(/\s/);
             }
             for (var i = 0, len = classes.length; i < len; i++) {
                 if (classes[i] == "invisible" || (/^icon/.test(classes[i]))) {
                     originalclasses.push(classes[i]);
-                    $(this).removeClass(classes[i]);
+                    self.removeClass(classes[i]);
                 }
             }
-            $(this).attr("originalclass", originalclasses.join(" "));
-            $(this).addClass('icon-spin6 spinner');
-        });
-    } else {
-        this.addClass('clickflash');
+            self.attr("originalclass", originalclasses.join(" "));
+            self.addClass('icon-spin6 spinner');
+        } else {
+            self.addClass('clickflash');
+        }
         return this;
-    }
+    });
 }
 
 jQuery.fn.stopSpinner = function() {
-    if (this.hasClass('spinner')) {
-        this.each(function() {
-            $(this).removeClass('icon-spin6 spinner');
-            if ($(this).attr("originalclass")) {
-                $(this).addClass($(this).attr("originalclass"));
-                $(this).removeAttr("originalclass");
+    return this.each(function() {
+        var self = $(this);
+        if (self.hasClass('spinner')) {
+            self.removeClass('icon-spin6 spinner');
+            if (self.attr("originalclass")) {
+                self.addClass(self.attr("originalclass"));
+                self.removeAttr("originalclass");
             }
-        });
-    } else {
-        this.removeClass('clickflash');
-    }
-    return this;
+        } else {
+            self.removeClass('clickflash');
+        }
+        return this;
+    });
 }
 
 jQuery.fn.findParentScroller = function() {

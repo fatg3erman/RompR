@@ -42,34 +42,36 @@ jQuery.fn.toggleClosed = function() {
 }
 
 jQuery.fn.makeSpinner = function() {
-
     return this.each(function() {
-        if ($(this).hasClass('icon-spin6') || $(this).hasClass('spinner')) {
+        var self = $(this);
+        if (self.hasClass('icon-spin6') || $(this).hasClass('spinner')) {
             debug.warn('UIHELPER', 'Trying to create spinner on already spinning element');
             return;
         }
         var originalclasses = new Array();
         var classes = '';
-        if ($(this).attr("class")) {
-            var classes = $(this).attr("class").split(/\s/);
+        if (self.attr("class")) {
+            var classes = self.attr("class").split(/\s/);
         }
         for (var i = 0, len = classes.length; i < len; i++) {
             if (classes[i] == "invisible" || (/^icon/.test(classes[i]))) {
                 originalclasses.push(classes[i]);
-                $(this).removeClass(classes[i]);
+                self.removeClass(classes[i]);
             }
         }
-        $(this).attr("originalclass", originalclasses.join(" "));
-        $(this).addClass('icon-spin6 spinner');
+        self.attr("originalclass", originalclasses.join(" "));
+        self.addClass('icon-spin6 spinner');
+        return this;
     });
 }
 
 jQuery.fn.stopSpinner = function() {
     this.each(function() {
-        $(this).removeClass('icon-spin6 spinner');
-        if ($(this).attr("originalclass")) {
-            $(this).addClass($(this).attr("originalclass"));
-            $(this).removeAttr("originalclass");
+        var self = $(this);
+        self.removeClass('icon-spin6 spinner');
+        if (self.attr("originalclass")) {
+            self.addClass(self.attr("originalclass"));
+            self.removeAttr("originalclass");
         }
     });
     return this;
@@ -266,7 +268,7 @@ var uiHelper = function() {
                 var reinsert = false;
                 $('#'+v.why+'album'+albumindex).html(v.tracklist);
                 // This may look slightly messy but re-inserting the dropdown instead
-                // of just removing it re-opening it is much cleaner from a user
+                // of just removing it and re-opening it is much cleaner from a user
                 // experience perspective.
                 var dropdown = $('#'+v.why+'album'+albumindex);
                 if (dropdown.is(':visible')) {

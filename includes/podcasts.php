@@ -101,7 +101,7 @@ function doPodcastBase() {
     print '<button class="fixed searchbutton iconbutton" onclick="podcasts.search()"></button>';
     print '</div>';
 
-    print '<div class="fullwidth noselection clearfix"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon padright" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
+    print '<div class="fullwidth noselection clearfix"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon padright spinable" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
     print '<div id="podcast_search" class="fullwidth noselection padright"></div>';
 
     print '<div id="podcastbuttons" class="invisible">';

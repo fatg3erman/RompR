@@ -204,6 +204,7 @@ var info_lastfm = function() {
             var displaying = false;
 
             this.populate = function() {
+                debug.mark('LASTFM', 'Asked To Populate');
 				$('#love').removeClass('notloved').addClass('notloved').makeSpinner();
                 self.artist.populate();
 				self.album.populate();

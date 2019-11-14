@@ -55,7 +55,7 @@
                 <div id="lastfm" class="invisible topstats">
                     <?php
                     print '<i title="'.get_int_text('button_love').
-                        '" class="icon-heart npicon clickicon tooltip" id="love"></i>';
+                        '" class="icon-heart npicon clickicon tooltip spinable" id="love"></i>';
                     ?>
                 </div>
                 <div id="playcount" class="topstats"></div>

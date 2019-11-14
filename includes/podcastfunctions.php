@@ -642,20 +642,20 @@ function doPodcast($y, $do_searchbox) {
     if ($y->Subscribed == 1) {
         print '<div class="containerbox bumpad">';
         print '<i title="'.get_int_text("podcast_configure").'" class="icon-cog-alt podicon '.
-            'clickicon openmenu fixed tooltip" name="podconf_'.$pm.'"></i>';
+            'clickicon openmenu fixed tooltip spinable" name="podconf_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_refresh").'" class="icon-refresh podicon podaction podcast clickable '.
-            'clickicon fixed tooltip" name="refresh_'.$pm.'"></i>';
+            'clickicon fixed tooltip spinable" name="refresh_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_download_all").'" class="icon-download podicon '.
-            'clickable clickicon podgroupload podcast fixed tooltip" name="podgroupload_'.$pm.'"></i>';
+            'clickable clickicon podgroupload podcast fixed tooltip spinable" name="podgroupload_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_mark_all").'" class="icon-headphones podicon podcast podaction '.
-            'clickable clickicon fixed tooltip" name="channellistened_'.$pm.'"></i>';
+            'clickable clickicon fixed tooltip spinable" name="channellistened_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_undelete").'" class="icon-trash podicon podcast podaction oneeighty '.
-            'clickable clickicon fixed tooltip" name="channelundelete_'.$pm.'"></i>';
+            'clickable clickicon fixed tooltip spinable" name="channelundelete_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_removedownloaded").'" class="icon-download podicon podcast podaction oneeighty '.
-            'clickable clickicon fixed tooltip" name="removedownloaded_'.$pm.'"></i>';
+            'clickable clickicon fixed tooltip spinable" name="removedownloaded_'.$pm.'"></i>';
         print '<div class="expand"></div>';
         print '<i title="'.get_int_text("podcast_delete").'" class="icon-cancel-circled podicon '.
-                'clickable clickicon podremove podcast fixed tooltip" name="podremove_'.$pm.'"></i>';
+                'clickable clickicon podremove podcast fixed tooltip spinable" name="podremove_'.$pm.'"></i>';
         print '</div>';
 
         print '<div class="marged whatdoicallthis toggledown invisible podconfigpanel" id="podconf_'.$pm.'">';
@@ -863,14 +863,14 @@ function format_episode(&$y, &$item, $pm) {
             } else {
                 $extraclass = '';
             }
-            print '<i class="icon-download podicon clickable clickicon tleft podcast poddownload'.$extraclass.' tooltip" title="'.
+            print '<i class="icon-download podicon clickable clickicon tleft podcast poddownload spinable'.$extraclass.' tooltip" title="'.
                 get_int_text("podcast_tooltip_download").'" name="poddownload_'.$item->PODTrackindex.'"></i>';
         }
         if ($item->Listened == 0) {
-            print '<i class="icon-headphones podicon clickable clickicon tleft podcast podmarklistened tooltip" title="'.
+            print '<i class="icon-headphones podicon clickable clickicon tleft podcast podmarklistened tooltip spinable" title="'.
                 get_int_text("podcast_tooltip_mark").'" name="podmarklistened_'.$item->PODTrackindex.'"></i>';
         }
-        print '<i class="icon-cancel-circled podicon clickable clickicon tright podtrackremove podcast tooltip" title="'.
+        print '<i class="icon-cancel-circled podicon clickable clickicon tright podtrackremove podcast tooltip spinable" title="'.
             get_int_text("podcast_tooltip_delepisode").'" name="podtrackremove_'.$item->PODTrackindex.'" ></i>';
         print '</div>';
     }
@@ -919,7 +919,7 @@ function doPodcastHeader($y) {
             $extra .= '<span></span>';
         }
     } else {
-        $extra .= '<i class="clickicon clickable clickpodsubscribe podcast icon-rss podicon tooltip" title="Subscribe to this podcast"></i><input type="hidden" value="'.$y->PODindex.'" />';
+        $extra .= '<i class="clickicon clickable clickpodsubscribe podcast icon-rss podicon tooltip spinable" title="Subscribe to this podcast"></i><input type="hidden" value="'.$y->PODindex.'" />';
     }
     $extra .= '</div>';
 
