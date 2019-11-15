@@ -136,7 +136,7 @@ var spotiCrazyRadio = function() {
                 var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
                     appendTo(a).makeTagMenu({
                     textboxname: 'spotigenres',
-                    labelhtml: '<span class="padright">Genres</span>',
+                    placeholder: 'Enter Genres',
                     populatefunction: populateSpotiTagMenu
                 });
 

@@ -614,7 +614,7 @@ function playerController() {
             }
         });
         if ($('[name="searchrating"]').val() != "") {
-            terms['rating'] = $('[name="searchrating"]').val();x
+            terms['rating'] = $('[name="searchrating"]').val();
             termcount++;
         }
         var domains = new Array();

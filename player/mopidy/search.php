@@ -32,10 +32,4 @@ print '</div>';
 
 ?>
 
-<div class="containerbox">
-    <div class="expand"></div>
-<?php
-print '<button class="searchbutton iconbutton" style="margin-right:4px" class="fixed" onclick="player.controller.search(\'search\')"></button>';
-?>
-</div>
 </div>

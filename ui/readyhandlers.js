@@ -62,8 +62,8 @@ $(document).ready(function(){
     player.controller.initialise();
     layoutProcessor.initialise();
     checkServerTimeOffset();
-    $('.combobox').makeTagMenu({textboxextraclass: 'searchterm', textboxname: 'tag', labelhtml: '<b>'+language.gettext("label_tag")+'</b>', populatefunction: tagAdder.populateTagMenu});
-    $('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add});
+    $('.combobox').makeTagMenu({textboxextraclass: 'searchterm cleargroup', textboxname: 'tag', populatefunction: tagAdder.populateTagMenu});
+    $('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add, placeholder: language.gettext('lastfm_addtagslabel')});
     browser.createButtons();
     setPlayClickHandlers();
     bindClickHandlers();

@@ -803,7 +803,7 @@ function albumartist_sort_query($flag) {
 			break;
 
 		case 'b':
-			$sflag = "AND isSearchResult > 0 AND isAudiobook = 0";
+			$sflag = "AND isSearchResult > 0";
 			break;
 
 		case 'z':
@@ -874,7 +874,16 @@ function get_list_of_artists() {
 function album_sort_query($why, $what, $who) {
 	global $prefs;
 	$sflag = ($why == "b") ? "AND Tracktable.isSearchResult > 0" : "AND Tracktable.isSearchResult < 2";
-	$sflag .= ($why == 'z') ? " AND Tracktable.isAudiobook > 0" : " AND Tracktable.isAudiobook = 0";
+	switch ($why) {
+		case 'z':
+			$sflag .= " AND Tracktable.isAudiobook > 0";
+			break;
+		case 'b':
+			break;
+		default:
+			$sflag .= " AND Tracktable.isAudiobook = 0";
+			break;
+	}
 
 	$qstring = "SELECT Albumtable.*, Artisttable.Artistname FROM Albumtable JOIN Artisttable ON
 			(Albumtable.AlbumArtistindex = Artisttable.Artistindex) WHERE ";

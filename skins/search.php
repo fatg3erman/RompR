@@ -1,16 +1,13 @@
 
 <?php
-print '<table style="width:100%">';
+print '<div class="cleargroupparent fullwidth">';
 foreach ($sterms as $label => $term) {
-    print '<tr class="searchitem" name="'.$term.'">';
-    print '<td class="searchlabel slt"><b>'.ucwords(strtolower(get_int_text($label))).'</td>';
-    print '<td width="100%"><input class="searchterm enter clearbox" name="'.$term.'" type="text" /></td>';
-    print '</tr>';
+    print '<div class="searchitem dropdown-container containerbox fullwidth cleargroup" name="'.$term.'">';
+    print '<input class="expand searchterm enter clearbox" name="'.$term.'" type="text" placeholder="'.ucwords(strtolower(get_int_text($label))).'"/>';
+    print '</div>';
 }
 
-print '<tr>';
-print '<td class="searchlabel slt nohide"><b>'.get_int_text("label_rating").'</b></td>';
-print '<td width="100%"><div class="selectholder" style="width:100%">
+print '<div id="ratingsearch" class="selectholder fullwidth" style="width:100%">
 <select name="searchrating">
 <option value="5">5 '.get_int_text('stars').'</option>
 <option value="4">4 '.get_int_text('stars').'</option>
@@ -19,15 +16,17 @@ print '<td width="100%"><div class="selectholder" style="width:100%">
 <option value="1">1 '.get_int_text('star').'</option>
 <option value="" selected></option>
 </select>';
-print '</div></td>';
-print '</tr>';
+print '</div>';
 
-print '<tr>';
-print '<td class="searchlabel slt nohide"></td>';
-print '<td width="100%" class="combobox"></td>';
-print '</tr>';
+print '<div class="containerbox dropdown-container fullwidth combobox">';
+print '</div>';
 
-print '</table>';
+print '<div class="containerbox">
+    <div class="expand"></div>';
+print '<button class="searchbutton iconbutton cleargroup" style="margin-right:4px" class="fixed" onclick="player.controller.search(\'search\')"></button>';
+print '</div>';
+
+print '</div>';
 
 print '<div class="containerbox dropdown-container">';
 print '<i class="icon-toggle-closed mh menu openmenu fixed" name="advsearchoptions"></i>';

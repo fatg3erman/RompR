@@ -304,8 +304,7 @@ print '<div id="artistinformation" class="infotext noselection"><h2 align="cente
 <div id="tagadder" class="dropmenu dropshadow mobmenu">
     <div class="configtitle textcentre moveable" style="padding-top:4px"><b>
 <?php
-print get_int_text("lastfm_addtags").'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div><div>'.get_int_text("lastfm_addtagslabel");
+print get_int_text("lastfm_addtags").'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div>';
 ?>
-    </div>
     <div class="containerbox padright dropdown-container tagaddbox"></div>
 </div>

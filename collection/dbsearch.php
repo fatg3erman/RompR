@@ -111,7 +111,7 @@ function doDbCollection($terms, $domains, $resultstype, &$collection) {
 			'Last-Modified' => $obj->LastModified
 		);
 		$filedata = array_merge(MPD_FILE_MODEL, $filedata);
-		logger::log("DB SEARCH", "Found :",$obj->Title,$obj->Uri);
+		logger::log("DB SEARCH", "Found :",$obj->Title,$obj->Uri,$obj->TTindex);
 		if ($resultstype == "tree") {
             $collection->newItem($filedata);
 		} else if ($resultstype == "RAW") {
