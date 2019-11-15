@@ -565,7 +565,9 @@ var layoutProcessor = function() {
         },
 
         displayCollectionInsert: function(details) {
-            infobar.notify(language.gettext('label_addedtocol'));
+            infobar.notify(
+                (details.isaudiobook == 0) ? language.gettext('label_addedtocol') : language.gettext('label_addedtosw')
+            );
             infobar.markCurrentTrack();
         },
 

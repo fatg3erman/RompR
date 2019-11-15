@@ -6,7 +6,7 @@ if (array_key_exists('populate', $_REQUEST)) {
     include("includes/vars.php");
     include("includes/functions.php");
     include("international.php");
-    require_once("includes/podcastfunctions.php");
+    require_once("podcasts/podcastfunctions.php");
     include( "backends/sql/backend.php");
     include("utils/phpQuery.php");
     require_once('utils/imagefunctions.php');
@@ -83,7 +83,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 } else {
 
-    require_once("includes/podcastfunctions.php");
+    require_once("podcasts/podcastfunctions.php");
     require_once("skins/".$skin."/ui_elements.php");
     include("utils/phpQuery.php");
     doPodcastBase();

@@ -171,7 +171,7 @@ function browse_album() {
     $who = $matches[3];
     $albumlink = get_albumlink($who);
     if (substr($albumlink, 0, 8) == 'podcast+') {
-        require_once ('includes/podcastfunctions.php');
+        require_once ('podcasts/podcastfunctions.php');
         logger::log("ALBUMS", "Browsing For Podcast ".substr($albumlink, 9));
         $podid = getNewPodcast(substr($albumlink, 8), 0, false);
         logger::trace("ALBUMS", "Ouputting Podcast ID ".$podid);

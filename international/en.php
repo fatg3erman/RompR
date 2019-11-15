@@ -706,6 +706,7 @@ $languages['en'] = array (
 	"label_sleepon" => "Sleep Timer Enabled",
 	"label_outoftracks" => "There are no tracks left to play",
 	"label_addedtocol" => "Added track to Collection",
+	"label_addedtosw" => "Added track to Spoken Word",
 	"label_subscribing" => "Subscribing To Podcast...",
 	"label_subscribed" => "Subscribed to Podcast",
 	"label_addedradio" => "Added To Your Radio Stations",
@@ -764,7 +765,8 @@ $languages['en'] = array (
 	"label_lastfm_dip_12month" => "Last.FM Review of the Year",
 	"label_lastfm_dip_overall" => "Last.FM Nostalgia Trip",
 	"config_alarm_stopafter" => "Stop After (mins)",
-	"label_move_to_audiobooks" => "Move To Spoken Word"
+	"label_move_to_audiobooks" => "Move To Spoken Word",
+	"label_move_to_collection" => "Move To Music Collection"
 );
 
 ?>

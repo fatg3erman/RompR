@@ -465,6 +465,9 @@ class imageHandler {
         if (extension_loaded('gd')) {
             $this->image = new gdImage($filename);
             if ($this->image->checkImage() === false) {
+                // GD does not support SVG or ICO files, plus different installations
+                // have different built-in support. Hence we fall back to
+                // imagemagick if gd doesn't support it. (GD is faster, so we prefer that)
                 logger::log('IMAGEHANDLER', 'Switching to ImageMagick');
                 $this->image = new imageMagickImage($filename);
             }
@@ -505,6 +508,13 @@ class imageHandler {
 
 class imageMagickImage {
 
+    // imageMagickImage will be used when:
+    // GD is installed but does not support the format of the image (GD never supports SVG or ICO)
+    // OR GD is not installed
+
+    // If Imagemagick is not installed either, then it defaults to just copying files which, for outputResizedImage,
+    // will only work for PNG and JPEG images, and no resizing will occur
+
     private $filename;
     private $convert_path;
     private $resize_to = 0;
@@ -517,9 +527,16 @@ class imageMagickImage {
         $this->image_type = mime_content_type($this->filename);
         logger::log('IMAGEMAGICK', 'Construct Image Type is "'.$this->image_type.'"');
         if ($this->image_type == 'text/plain') {
-            $this->image_type = 'image-svg';
+            $this->image_type = 'image-svg+xml';
+        }
+        if ($this->image_type == 'image/svg') {
+            // MUST use image/svg+xml for MIME type for output, but some versions of PHP
+            // mime_content_type return image/svg
+            $this->image_type = 'image-svg+xml';
         }
         if ($this->image_type == 'image/x-icon') {
+            // Imagemagick can't auto-detect .ico files that don't have the .ico extension
+            // and we don't use file extensions in the cache. This forces IM to decode it as a .ico
             $this->cmdline_file = 'ico:'.$filename;
         } else {
             $this->cmdline_file = $filename;
@@ -531,12 +548,12 @@ class imageMagickImage {
     }
 
     public function checkImage() {
-        logger::log("IMAGEMAGICK", "  Image type is ".$this->image_type);
+        logger::log("IMAGEMAGICK", "  Check Image type is ".$this->image_type);
         return $this->image_type;
     }
 
     public function save($filename, $compression) {
-        if ($this->image_type == 'image/svg' || $this->image_type == 'image/svg+xml') {
+        if ($this->image_type == 'image/svg+xml') {
             logger::log("IMAGEMAGICK", "  Copying SVG file instead of converting");
             $this->justCopy($filename);
         } else if ($this->convert_path === false) {
@@ -554,13 +571,14 @@ class imageMagickImage {
             $cmd = 'convert "'.$this->cmdline_file.'"'.$params.' "'.$filename.'"';
             logger::trace("IMAGEMAGICK", "  Command is ".$cmd);
             if (substr($filename, -1) == '-') {
-                passthru($this->convert_path.$cmd);
+                // Output is to STDOUT
+                passthru($this->convert_path.$cmd, $ret);
             } else {
                 $cmd .= ' 2>&1';
                 $r = exec($this->convert_path.$cmd, $o, $ret);
                 logger::trace("IMAGEMAGICK", "    Final line of output was ".$r);
-                logger::trace("IMAGEMAGICK", "    Return Value was ".$ret);
             }
+            logger::trace("IMAGEMAGICK", "    Return Value was ".$ret);
             // No point trying a copy file fallback, as if ImageMagick can't handle it it's shite.
         }
     }
@@ -574,10 +592,12 @@ class imageMagickImage {
     }
 
     public function outputResizedFile($size) {
+        // Set content type and output to STDOUT
         switch ($this->image_type) {
-            case 'image/svg':
             case 'image/svg+xml':
                 $content_type = 'image/svg+xml';
+                // NOTE SVG is not a valid type for ImageMagick output, this is just a placeholder
+                // with a '-' on the end to denote output to STDOUT. We always just copy SVG files.
                 $outputfile = 'SVG:-';
                 break;
             case 'image/png':
@@ -626,7 +646,7 @@ class imageMagickImage {
     public function get_image_dimensions() {
         $width = -1;
         $height = -1;
-        if ($this->image_type != IMAGETYPE_SVG) {
+        if ($this->image_type != 'image/svg+xml' && $this->convert_path !== false) {
             $c = $this->convert_path."identify \"".$this->cmdline_file."\" 2>&1";
             $o = array();
             $r = exec($c, $o);
@@ -635,6 +655,7 @@ class imageMagickImage {
                 $height = $matches[2];
             }
         }
+        logger::trace('IMAGEMAGICK', 'Dimensions are',$width,'x',$height);
         return array('width' => $width, 'height' => $height);
     }
 
@@ -814,6 +835,7 @@ class gdImage {
     }
 
     public function save($filename, $compression) {
+        // If $filename is null this outputs to STDOUT
         if ($this->image_type == IMAGETYPE_PNG) {
             // Be aware - We always save PNGs as PNGs to preserve alpha channel
             imagepng($this->resizedimage, $filename, 9);

@@ -141,24 +141,31 @@ function albumControlHeader($fragment, $why, $what, $who, $artist) {
 
 function trackControlHeader($why, $what, $who, $dets) {
     $html = '';
+    $iab = album_is_audiobook($who);
+    $play_col_button = ($iab == 0) ? 'icon-music' : 'icon-audiobook';
     foreach ($dets as $det) {
         if ($why != '') {
             $html .= '<div class="containerbox wrap album-play-controls">';
             if ($det['AlbumUri']) {
                 $albumuri = rawurlencode($det['AlbumUri']);
                 if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
-                    $html .= '<div class="icon-no-response-playbutton smallicon expand playable clickcue noselect" name="'.$albumuri.'"></div>';
+                    $html .= '<div class="icon-no-response-playbutton smallicon expand playable clickcue noselect tooltip" name="'.$albumuri.'" tooltip="'.get_int_text('label_play_whole_album').'"></div>';
                 } else {
-                    $html .= '<div class="icon-no-response-playbutton smallicon expand clicktrack playable noselect" name="'.$albumuri.'"></div>';
-                    $html .= '<div class="icon-music smallicon expand clickalbum playable noselect" name="'.$why.'album'.$who.'"></div>';
+                    $html .= '<div class="icon-no-response-playbutton smallicon expand clicktrack playable noselect tooltip" name="'.$albumuri.'" tooltip="'.get_int_text('label_play_whole_album').'"></div>';
+                    $html .= '<div class="'.$play_col_button.' smallicon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" tooltip="'.get_int_text('label_from_collection').'"></div>';
                 }
             } else {
-                $html .= '<div class="icon-no-response-playbutton smallicon expand clickalbum playable noselect" name="'.$why.'album'.$who.'"></div>';
+                $html .= '<div class="icon-no-response-playbutton smallicon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" tooltip="'.get_int_text('label_play_whole_album').'"></div>';
             }
-            $html .= '<div class="icon-single-star smallicon expand clickicon clickalbum playable noselect" name="ralbum'.$who.'"></div>';
-            $html .= '<div class="icon-tags smallicon expand clickicon clickalbum playable noselect" name="talbum'.$who.'"></div>';
-            $html .= '<div class="icon-ratandtag smallicon expand clickicon clickalbum playable noselect" name="yalbum'.$who.'"></div>';
-            $html .= '<div class="icon-ratortag smallicon expand clickicon clickalbum playable noselect" name="ualbum'.$who.'"></div>';
+            $html .= '<div class="icon-single-star smallicon expand clickicon clickalbum playable noselect tooltip" name="ralbum'.$who.'" tooltip="'.get_int_text('label_with_ratings').'"></div>';
+            $html .= '<div class="icon-tags smallicon expand clickicon clickalbum playable noselect tooltip" name="talbum'.$who.'" tooltip="'.get_int_text('label_with_tags').'"></div>';
+            $html .= '<div class="icon-ratandtag smallicon expand clickicon clickalbum playable noselect tooltip" name="yalbum'.$who.'" tooltip="'.get_int_text('label_with_tagandrat').'"></div>';
+            $html .= '<div class="icon-ratortag smallicon expand clickicon clickalbum playable noselect tooltip" name="ualbum'.$who.'" tooltip="'.get_int_text('label_with_tagorrat').'"></div>';
+            if ($iab == 0) {
+                $html .= '<div class="icon-audiobook smallicon expand clickable clickicon noselect setasaudiobook tooltip" name="'.$who.'" tooltip="'.get_int_text('label_move_to_audiobooks').'"></div>';
+            } else if ($iab == 2) {
+                $html .= '<div class="icon-music smallicon expand clickable clickicon noselect setasmusiccollection tooltip" name="'.$who.'" tooltip="'.get_int_text('label_move_to_collection').'"></div>';
+            }
             $html .= '</div>';
             $html .= '<div class="textcentre ninesix playlistrow2">'.ucfirst(get_int_text('label_tracks')).'</div>';
         }

@@ -267,8 +267,10 @@ var layoutProcessor = function() {
             return false;
         },
 
-        displayCollectionInsert: function(d) {
-            infobar.notify(language.gettext('label_addedtocol'));
+        displayCollectionInsert: function(details) {
+            infobar.notify(
+                (details.isaudiobook == 0) ? language.gettext('label_addedtocol') : language.gettext('label_addedtosw')
+            );
             infobar.markCurrentTrack();
         },
 

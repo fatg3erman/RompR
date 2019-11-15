@@ -195,7 +195,7 @@ print '<div class="configtitle containerbox menuitem">';
 print '<i onclick="podcasts.toggleButtons()" class="icon-menu playlisticon clickicon tooltip fixed" title="'.get_int_text('label_podcastcontrols').'"></i>';
 print '<div class="textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div>';
 print '</div>';
-include("includes/podcasts.php");
+include("podcasts/podcasts.php");
 ?>
 </div>
 

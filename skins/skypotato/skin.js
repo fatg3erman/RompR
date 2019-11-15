@@ -565,7 +565,9 @@ var layoutProcessor = function() {
 
         displayCollectionInsert: function(details) {
             debug.log("UI","Displaying Collection Insert",details);
-            infobar.notify(language.gettext('label_addedtocol'));
+            infobar.notify(
+                (details.isaudiobook == 0) ? language.gettext('label_addedtocol') : language.gettext('label_addedtosw')
+            );
             infobar.markCurrentTrack();
             var prefix = null;
             if (details.isaudiobook > 0 && prefs.chooser == 'audiobooklist') {

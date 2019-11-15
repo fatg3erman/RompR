@@ -130,21 +130,24 @@ function albumHeader($obj) {
     $h .= artistNameHtml($obj);
 
     $h .= '</div>';
-    if ($obj['why'] == "a") {
+    if ($obj['why'] == "a" || $obj['why'] == "z") {
         $id = preg_replace('/^.album/','',$obj['id']);
+        $iab = album_is_audiobook($id);
         $classes = array();;
         if (num_collection_tracks($id) == 0) {
             $classes[] = 'clickamendalbum';
         }
-        if (!album_is_audiobook($id)) {
+        if ($iab == 0) {
             $classes[] = 'clicksetasaudiobook';
+        } else if ($iab == 2) {
+            $classes[] = 'clicksetasmusiccollection';
         }
         if ($obj['AlbumUri']) {
             $classes[] = 'clickalbumoptions';
         }
         $classes[] = 'clickratedtracks';
         if (count($classes) > 0) {
-            $h .= '<div class="icon-menu playlisticonr fixed clickable clickicon clickalbummenu '.implode(' ',$classes).'" name="'.$id.'"></div>';
+            $h .= '<div class="icon-menu playlisticonr fixed clickable clickicon clickalbummenu '.implode(' ',$classes).'" name="'.$id.'" why="'.$obj['why'].'"></div>';
         }
     }
     $h .= '</div>';

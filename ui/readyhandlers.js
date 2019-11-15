@@ -4,19 +4,19 @@
 // This method seems to work, called from the albumpicture's onload event
 // and is less clunky than just using some random setTimeout
 function rendered() {
-    debug.log('ALBUMPICTURE', 'Rendered');
+    debug.debug('ALBUMPICTURE', 'Rendered');
     $('#albumpicture').fadeIn('fast');
     $('#albumpicture').removeClass('clickicon').addClass('clickicon').off('click').on('click', infobar.albumImage.displayOriginalImage);
     layoutProcessor.adjustLayout();
 }
 
 function startRender() {
-    debug.log('ALBUMPICTURE', 'Start Render');
+    debug.debug('ALBUMPICTURE', 'Start Render');
     requestAnimationFrame(rendered);
 }
 
 function albumImageLoaded() {
-    debug.log('ALBUMPICTURE', 'Load event fired');
+    debug.debug('ALBUMPICTURE', 'Load event fired');
     requestAnimationFrame(startRender);
 }
 
@@ -49,7 +49,7 @@ function hideTagRemover() {
 }
 
 $(document).ready(function(){
-    debug.log("INIT","Document Ready Event has fired");
+    debug.blurt("INIT","Document Ready Event has fired");
     $('#albumpicture').on('load', albumImageLoaded);
     get_geo_country();
     if (prefs.do_not_show_prefs) {

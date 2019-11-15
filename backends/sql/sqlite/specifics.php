@@ -631,7 +631,7 @@ function check_sql_tables() {
 			case 38:
 				logger::log("SQL", "Updating FROM Schema version 38 TO Schema version 39");
 				generic_sql_query("ALTER TABLE Podcasttable ADD LastPubDate INTEGER DEFAULT NULL", true);
-				require_once('includes/podcastfunctions.php');
+				require_once('podcasts/podcastfunctions.php');
 				upgrade_podcasts_to_version();
 				generic_sql_query("UPDATE Statstable SET Value = 39 WHERE Item = 'SchemaVer'", true);
 				break;
@@ -639,7 +639,7 @@ function check_sql_tables() {
 			case 39:
 				logger::log("SQL", "Updating FROM Schema version 39 TO Schema version 40");
 				// Takes too long. It'll happen when they get refreshed anyway.
-				// require_once('includes/podcastfunctions.php');
+				// require_once('podcasts/podcastfunctions.php');
 				// upgrade_podcast_images();
 				generic_sql_query("UPDATE Statstable SET Value = 40 WHERE Item = 'SchemaVer'", true);
 				break;

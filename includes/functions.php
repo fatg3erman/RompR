@@ -479,7 +479,6 @@ function concatenate_artist_names($art) {
 }
 
 function unwanted_array($a) {
-
     if (is_array($a)) {
         return $a[0];
     } else {
@@ -816,7 +815,6 @@ function format_bytes($size, $precision = 1)
 {
     $base = log($size, 1024);
     $suffixes = array('', 'K', 'M', 'G', 'T');
-
     return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
 }
 

@@ -532,10 +532,8 @@ function num_collection_tracks($albumindex) {
 }
 
 function album_is_audiobook($albumindex) {
-	// Returns true if any of the tracks on this album are markd as audiobook tracks
-	// (WHY is that done by track and not by album?)
-	$t = generic_sql_query("SELECT COUNT(TTindex) AS cnt FROM Tracktable WHERE Albumindex = ".$albumindex." AND Hidden = 0 AND Uri IS NOT NULL AND isSearchResult < 2 AND isAudiobook > 0", false, null, 'cnt', 0);
-	return ($t > 0);
+	// Returns the maxiumum value of isAudiobook for a given album
+	return generic_sql_query("SELECT MAX(isAudiobook) AS cnt FROM Tracktable WHERE Albumindex = ".$albumindex." AND Hidden = 0 AND Uri IS NOT NULL AND isSearchResult < 2", false, null, 'cnt', 0);
 }
 
 function get_all_data($ttid) {

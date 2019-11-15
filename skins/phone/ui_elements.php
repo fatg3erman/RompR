@@ -131,6 +131,8 @@ function albumControlHeader($fragment, $why, $what, $who, $artist) {
 
 function trackControlHeader($why, $what, $who, $dets) {
     $html = '<div class="menu backmenu openmenu" name="'.$why.$what.$who.'"></div>';
+    $iab = album_is_audiobook($who);
+    $play_col_button = ($iab == 0) ? 'icon-music' : 'icon-audiobook';
     foreach ($dets as $det) {
         $albumimage = new baseAlbumImage(array('baseimage' => $det['Image']));
         $images = $albumimage->get_images();
@@ -144,7 +146,7 @@ function trackControlHeader($why, $what, $who, $dets) {
                     $html .= '<div class="icon-no-response-playbutton smallicon expand playable clickcue noselect" name="'.$albumuri.'"></div>';
                 } else {
                     $html .= '<div class="icon-no-response-playbutton smallicon expand clicktrack playable noselect" name="'.$albumuri.'"></div>';
-                    $html .= '<div class="icon-music smallicon expand clickalbum playable noselect" name="'.$why.'album'.$who.'"></div>';
+                    $html .= '<div class="'.$play_col_button.' smallicon expand clickalbum playable noselect" name="'.$why.'album'.$who.'"></div>';
                 }
             } else {
                 $html .= '<div class="icon-no-response-playbutton smallicon expand clickalbum playable noselect" name="'.$why.'album'.$who.'"></div>';
@@ -153,6 +155,11 @@ function trackControlHeader($why, $what, $who, $dets) {
             $html .= '<div class="icon-tags smallicon expand clickicon clickalbum playable noselect" name="talbum'.$who.'"></div>';
             $html .= '<div class="icon-ratandtag smallicon expand clickicon clickalbum playable noselect" name="yalbum'.$who.'"></div>';
             $html .= '<div class="icon-ratortag smallicon expand clickicon clickalbum playable noselect" name="ualbum'.$who.'"></div>';
+            if ($iab == 0) {
+                $html .= '<div class="icon-audiobook smallicon expand clickable clickicon noselect setasaudiobook" name="'.$who.'"></div>';
+            } else if ($iab == 2) {
+                $html .= '<div class="icon-music smallicon expand clickable clickicon noselect setasmusiccollection" name="'.$who.'"></div>';
+            }
             $html .= '</div>';
             $html .= '<div class="textcentre ninesix playlistrow2">'.ucfirst(get_int_text('label_tracks')).'</div>';
         }

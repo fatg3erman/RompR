@@ -337,7 +337,7 @@ class romprmetadata {
 	}
 
 	public static function setasaudiobook($data) {
-		if ($data['albumindex'] !== null && romprmetadata::set_as_audiobook($data['albumindex'])) {
+		if ($data['albumindex'] !== null && romprmetadata::set_as_audiobook($data['albumindex'], $data['value'])) {
 		} else {
 			header('HTTP/1.1 400 Bad Request');
 			$returninfo['error'] = 'That just did not work';
@@ -740,8 +740,8 @@ class romprmetadata {
 		return true;
 	}
 
-	static function set_as_audiobook($albumindex) {
-		$result = sql_prepare_query(true, null, null, null, 'UPDATE Tracktable SET isAudiobook = 2, justAdded = 1 WHERE Albumindex = ?', $albumindex);
+	static function set_as_audiobook($albumindex, $value) {
+		$result = sql_prepare_query(true, null, null, null, 'UPDATE Tracktable SET isAudiobook = ?, justAdded = 1 WHERE Albumindex = ?', $value, $albumindex);
 		return $result;
 	}
 

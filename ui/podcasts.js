@@ -16,7 +16,7 @@ var podcasts = function() {
 				var monitor = new podcastDownloadMonitor(track, channel);
 			    $.ajax( {
 			        type: "GET",
-			        url: "includes/podcasts.php",
+			        url: "podcasts/podcasts.php",
 			        cache: false,
 			        contentType: "text/html; charset=utf-8",
 			        data: {downloadtrack: track, channel: channel, populate: 1 },
@@ -137,7 +137,7 @@ var podcasts = function() {
 		}
 	    $.ajax({
 	        type: "GET",
-	        url: "includes/podcasts.php",
+	        url: "podcasts/podcasts.php",
 	        cache: false,
 	        data: options,
 			contentType: 'application/json'
@@ -183,7 +183,7 @@ var podcasts = function() {
 			}
 		    $.ajax( {
 		        type: "GET",
-		        url: "includes/podcasts.php",
+		        url: "podcasts/podcasts.php",
 		        cache: false,
 		        contentType: "text/html; charset=utf-8",
 		        data: {url: encodeURIComponent(url), populate: 1 }
@@ -212,7 +212,7 @@ var podcasts = function() {
 		reloadList: function() {
 			$.ajax( {
 		        type: "GET",
-		        url: "includes/podcasts.php",
+		        url: "podcasts/podcasts.php",
 		        cache: false,
 		        contentType: "text/html; charset=utf-8",
 		        data: {populate: 1 }
@@ -230,7 +230,7 @@ var podcasts = function() {
 		loadPodcast: function(channel) {
 			var target = $('#podcast_'+channel);
 			debug.log("PODCASTS","Loading Podcast",target);
-			var uri = "includes/podcasts.php?populate=1&loadchannel="+channel;
+			var uri = "podcasts/podcasts.php?populate=1&loadchannel="+channel;
 			var term = $('[name="podsearcher_'+channel+'"]').val();
 			var configvisible = target.find('.podconfigpanel').is(':visible');
 			if (typeof term !== 'undefined' && term != '') {
@@ -309,7 +309,7 @@ var podcasts = function() {
 		},
 
 		doNewCount: function() {
-			$.getJSON("includes/podcasts.php?populate=1&getcounts=1", function(data) {
+			$.getJSON("podcasts/podcasts.php?populate=1&getcounts=1", function(data) {
 				debug.trace('PODCASTS','Got New Counts',data);
 				newcounts = data;
 				$.each(data, function(index, value) {
@@ -326,7 +326,7 @@ var podcasts = function() {
 		checkIfSomeoneElseHasUpdatedStuff: function() {
 			var isnewpodcast = false;
 			var to_reload = new Array();
-			$.getJSON("includes/podcasts.php?populate=1&getcounts=1", function(data) {
+			$.getJSON("podcasts/podcasts.php?populate=1&getcounts=1", function(data) {
 				$.each(data, function(index, value) {
 					if (!newcounts.hasOwnProperty(index)) {
 						debug.shout('PODCASTS', 'A new podcast has been subscribed to by somebody else');
@@ -376,7 +376,7 @@ var podcasts = function() {
 			clearTimeout(refreshtimer);
 			$.ajax({
 				type: 'GET',
-				url: "includes/podcasts.php?populate=1&checkrefresh=1",
+				url: "podcasts/podcasts.php?populate=1&checkrefresh=1",
 				timeout: prefs.collection_load_timeout,
 				dataType: 'JSON'
 			})
@@ -405,7 +405,7 @@ var podcasts = function() {
 		    debug.log("PODCAST","Removing podcast",name);
 		    $.ajax( {
 		        type: "GET",
-		        url: "includes/podcasts.php",
+		        url: "podcasts/podcasts.php",
 		        cache: false,
 		        contentType: "text/html; charset=utf-8",
 		        data: {remove: name, populate: 1 }
@@ -434,7 +434,7 @@ var podcasts = function() {
 		    doSomethingUseful('podcast_search', language.gettext("label_searching"));
 		    $.ajax( {
 		        type: "GET",
-		        url: "includes/podcasts.php",
+		        url: "podcasts/podcasts.php",
 		        cache: false,
 		        contentType: "text/html; charset=utf-8",
 		        data: {search: encodeURIComponent(term), populate: 1 }
@@ -459,7 +459,7 @@ var podcasts = function() {
 			clickedElement.makeSpinner().removeClass('clickable');
 		    $.ajax( {
 		        type: "GET",
-		        url: "includes/podcasts.php",
+		        url: "podcasts/podcasts.php",
 		        cache: false,
 		        contentType: "text/html; charset=utf-8",
 		        data: {subscribe: index, populate: 1 }

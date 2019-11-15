@@ -83,7 +83,7 @@ var pluginManager = function() {
         doEarlyInit: function() {
             for (var i in plugins) {
                 if (plugins[i].setup) {
-                    if (!only_plugins_on_menu || plugins[i].menu) {
+                    if (!only_plugins_on_menu || plugins[i].onmenu) {
                         debug.log("PLUGINS","Setting up Plugin",plugins[i].label);
                         plugins[i].setup();
                     }

@@ -9,7 +9,7 @@ if (array_key_exists('populate', $_REQUEST)) {
     require_once ("skins/".$skin."/ui_elements.php");
 
     foreach ($_REQUEST as $i => $r) {
-        logger::log("COMMRADIO", $i,":",$r);
+        logger::trace("COMMRADIO", $i,":",$r);
     }
 }
 
@@ -232,6 +232,11 @@ class commradioplugin {
             if (substr($station['favicon'], 0, 10) == 'data:image') {
                 return $station['favicon'];
             } else {
+                logger::debug('COMMRADIO', 'Image Is',$station['favicon']);
+                if (preg_match('#http://www.bbc.co.uk///(rmp.files.bbci.co.uk/.*)#', $station['favicon'], $matches)) {
+                    // This appears to be a database fuckup on their part
+                    $station['favicon'] = 'http://'.$matches[1];
+                }
                 return 'getRemoteImage.php?url='.$station['favicon'].'&rompr_backup_type=stream';
             }
         } else {

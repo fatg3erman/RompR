@@ -16,7 +16,7 @@ require_once ("collection/collection.php");
 require_once ("collection/playlistcollection.php");
 require_once ("backends/sql/backend.php");
 require_once ("backends/sql/metadatafunctions.php");
-require_once ('includes/podcastfunctions.php');
+require_once ('podcasts/podcastfunctions.php');
 require_once ('utils/imagefunctions.php');
 require_once ("player/".$prefs['player_backend']."/player.php");
 $player = new $PLAYER_TYPE();
