@@ -12,14 +12,14 @@ function connect_to_database($sp = true) {
 	try {
 		if (is_numeric($prefs['mysql_port'])) {
 			logger::debug("SQL_CONNECT", "Connecting using hostname and port");
-			$dsn = "mysql:host=".$prefs['mysql_host'].";port=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'];
+			$dsn = "mysql:host=".$prefs['mysql_host'].";port=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'].";charset=utf8mb4";
 		} else {
 			logger::debug("SQL_CONNECT", "Connecting using unix socket");
-			$dsn = "mysql:unix_socket=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'];
+			$dsn = "mysql:unix_socket=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'].";charset=utf8mb4";
 		}
 		$mysqlc = new PDO($dsn, $prefs['mysql_user'], $prefs['mysql_password']);
 		logger::debug("SQL_CONNECT", "Connected to MySQL");
-		generic_sql_query("SET NAMES utf8", true);
+		// generic_sql_query("SET NAMES utf8mb4", true);
 		generic_sql_query('SET SESSION sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"', true);
 		readCollectionPlayer($sp);
 	} catch (Exception $e) {
@@ -762,17 +762,66 @@ function check_sql_tables() {
 
 			case 56:
 				logger::log("SQL", "Updating FROM Schema version 56 TO Schema version 57");
-				generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Description TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL;", true);
 				generic_sql_query("UPDATE Statstable SET Value = 57 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 57:
 				logger::log("SQL", "Updating FROM Schema version 57 TO Schema version 58");
-				generic_sql_query("ALTER TABLE Tracktable MODIFY COLUMN Title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci", true);
-				generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN Albumname VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci", true);
+				generic_sql_query("ALTER DATABASE romprdb CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci", true);
+				logger::log("SQL", " ... Modifying Tables");
+				generic_sql_query("ALTER TABLE Tracktable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Albumtable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Artisttable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Ratingtable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Progresstable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Tagtable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE TagListtable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Playcounttable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Podcasttable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE RadioStationtable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE RadioTracktable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE WishlistSourcetable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE AlbumsToListenTotable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE BackgroundImageTable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Statstable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				logger::log("SQL", " ... Modifying Columns");
+				generic_sql_query("ALTER TABLE Tracktable MODIFY COLUMN Title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Tracktable MODIFY COLUMN Uri VARCHAR(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN Albumname VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN AlbumUri VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN ImgKey CHAR(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN mbid CHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN Domain CHAR(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN Image VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Artisttable MODIFY COLUMN Artistname VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Tagtable MODIFY COLUMN Name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN FeedURL TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN Image VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN Title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN Artist VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN Description TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN Category VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Artist VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Description TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Link TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Guid TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Localfilename VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE RadioStationtable MODIFY COLUMN StationName VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE RadioStationtable MODIFY COLUMN PlaylistUrl TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE RadioStationtable MODIFY COLUMN Image VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE RadioTracktable MODIFY COLUMN TrackUri TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE RadioTracktable MODIFY COLUMN PrettyStream TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE WishlistSourcetable MODIFY COLUMN SourceName VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE WishlistSourcetable MODIFY COLUMN SourceImage VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE WishlistSourcetable MODIFY COLUMN SourceUri TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE AlbumsToListenTotable MODIFY COLUMN JsonData TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE BackgroundImageTable MODIFY COLUMN Skin VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE BackgroundImageTable MODIFY COLUMN BrowserID VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL", true);
+				generic_sql_query("ALTER TABLE BackgroundImageTable MODIFY COLUMN Filename VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL", true);
 				generic_sql_query("UPDATE Statstable SET Value = 58 WHERE Item = 'SchemaVer'", true);
 				break;
-
 
 		}
 		$sv++;
