@@ -792,6 +792,9 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 57 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 57:
+				generic_sql_query("UPDATE Statstable SET Value = 58 WHERE Item = 'SchemaVer'", true);
+				break;
 
 		}
 		$sv++;

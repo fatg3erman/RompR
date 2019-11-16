@@ -34,8 +34,7 @@ var info_lastfm = function() {
 
     function tagsInput(type) {
         var html = '<ul class="holdingcell"><li><b>'+language.gettext("lastfm_addtags")+'</b></li>';
-        html += '<li class="tiny">'+language.gettext("lastfm_addtagslabel")+'</li>';
-        html += '<li><input class="enter tiny inbrowser" type="text"></input>';
+        html += '<li><input class="enter tiny inbrowser" type="text" placeholder="'+language.gettext("lastfm_addtagslabel")+'"></input>';
         html += '<button class="infoclick clickaddtags tiny">'+language.gettext("button_add")+'</button>'+
                         '<i class="smallicon tright" id="tagadd'+type+'"></i></li></ul>';
         return html;

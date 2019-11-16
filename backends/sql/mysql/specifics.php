@@ -766,6 +766,14 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 57 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 57:
+				logger::log("SQL", "Updating FROM Schema version 57 TO Schema version 58");
+				generic_sql_query("ALTER TABLE Tracktable MODIFY COLUMN Title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci", true);
+				generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN Albumname VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci", true);
+				generic_sql_query("UPDATE Statstable SET Value = 58 WHERE Item = 'SchemaVer'", true);
+				break;
+
+
 		}
 		$sv++;
 	}
