@@ -195,6 +195,7 @@ print '<i title="'.get_int_text('button_plugins').'" class="icon-menu topimg too
     <div id="searcher" class="invisible noborder">
     <div class="menuitem containerbox configtitle">
     <?php
+        print '<i onclick="toggleSearchButtons()" title="Advanced Search Options" class="icon-menu playlisticon clickicon tooltip fixed"></i>';
         print '<div class="textcentre expand"><b>'.get_int_text('label_searchfor').'</b></div>';
     ?>
     </div>

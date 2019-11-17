@@ -352,6 +352,13 @@ function toggleCollectionButtons() {
     return false;
 }
 
+function toggleSearchButtons() {
+    $("#advsearchoptions").slideToggle('fast');
+    var p = !prefs.advanced_search_open;
+    prefs.save({ advanced_search_open: p });
+    return false;
+}
+
 function hidePanel(panel) {
     var is_hidden = $("#"+panel).is(':hidden');
     var new_state = prefs["hide_"+panel];

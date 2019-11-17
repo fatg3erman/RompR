@@ -1,5 +1,10 @@
-<div id="collectionsearcher">
 <?php
+require_once("skins/search.php");
+
+startAdvSearchOptions();
+print '</div>';
+
+print '<div id="collectionsearcher">';
 $sterms = array(
     "label_artist" => "artist",
     "label_albumartist" => "albumartist",
@@ -12,14 +17,8 @@ $sterms = array(
     "label_filename" => "file",
     "label_anything" => "any"
 );
-include("skins/search.php");
-print '<div class="styledinputs" style="padding-top:4px">';
 
-print '<input class="autoset toggle" type="checkbox" id="tradsearch">
-<label for="tradsearch">'.get_int_text("label_tradsearch").'</label>';
-
+doSearchBoxes($sterms);
 print '</div>';
 
-print '</div>';
-
-print '</div>';
+?>
