@@ -131,8 +131,12 @@ function albumControlHeader($fragment, $why, $what, $who, $artist) {
 
 function trackControlHeader($why, $what, $who, $dets) {
     $html = '<div class="menu backmenu openmenu" name="'.$why.$what.$who.'"></div>';
-    $iab = album_is_audiobook($who);
-    $play_col_button = ($iab == 0) ? 'icon-music' : 'icon-audiobook';
+    $iab = -1;
+    $play_col_button = 'icon-music';
+    if (function_exists('album_is_audiobook')) {
+        $iab = album_is_audiobook($who);
+        $play_col_button = ($iab == 0) ? 'icon-music' : 'icon-audiobook';
+    }
     foreach ($dets as $det) {
         $albumimage = new baseAlbumImage(array('baseimage' => $det['Image']));
         $images = $albumimage->get_images();

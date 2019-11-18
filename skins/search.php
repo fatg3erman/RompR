@@ -3,8 +3,8 @@
 function doSearchBoxes($sterms) {
     print '<div class="cleargroupparent fullwidth">';
     foreach ($sterms as $label => $term) {
-        print '<div class="searchitem dropdown-container containerbox fullwidth cleargroup" name="'.$term.'">';
-        print '<input class="expand searchterm enter clearbox" name="'.$term.'" type="text" placeholder="'.ucwords(strtolower(get_int_text($label))).'"/>';
+        print '<div class="searchitem dropdown-container containerbox fullwidth" name="'.$term.'">';
+        print '<input class="expand searchterm enter clearbox cleargroup" name="'.$term.'" type="text" placeholder="'.ucwords(strtolower(get_int_text($label))).'"/>';
         print '</div>';
     }
 

@@ -141,8 +141,12 @@ function albumControlHeader($fragment, $why, $what, $who, $artist) {
 
 function trackControlHeader($why, $what, $who, $dets) {
     $html = '';
-    $iab = album_is_audiobook($who);
-    $play_col_button = ($iab == 0) ? 'icon-music' : 'icon-audiobook';
+    $iab = -1;
+    $play_col_button = 'icon-music';
+    if (function_exists('album_is_audiobook')) {
+        $iab = album_is_audiobook($who);
+        $play_col_button = ($iab == 0) ? 'icon-music' : 'icon-audiobook';
+    }
     foreach ($dets as $det) {
         if ($why != '') {
             $html .= '<div class="containerbox wrap album-play-controls">';
