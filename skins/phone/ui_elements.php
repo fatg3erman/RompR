@@ -133,7 +133,7 @@ function trackControlHeader($why, $what, $who, $dets) {
     $html = '<div class="menu backmenu openmenu" name="'.$why.$what.$who.'"></div>';
     $iab = -1;
     $play_col_button = 'icon-music';
-    if (function_exists('album_is_audiobook')) {
+    if ($what == 'album' && ($why == 'a' || $why == 'z')) {
         $iab = album_is_audiobook($who);
         $play_col_button = ($iab == 0) ? 'icon-music' : 'icon-audiobook';
     }
