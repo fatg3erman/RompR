@@ -104,7 +104,7 @@ function getWishlist() {
         print '<div class="expand containerbox vertical">';
         print '<div class="fixed playlistrow2">Added On : '.date('r', strtotime($obj['DateAdded'])).'</div>';
         if ($obj['SourceUri']) {
-            print '<div class="fixed playlistrow2 playable clickstream" name="'.$obj['SourceUri'].'" streamname="'.$obj['SourceName'].'" streamimg="'.$obj['SourceImage'].'">While Listening To : <b>'.$obj['SourceName'].'</b></div>';
+            print '<div class="fixed playlistrow2 playable clickstream" name="'.rawurlencode($obj['SourceUri']).'" streamname="'.$obj['SourceName'].'" streamimg="'.$obj['SourceImage'].'">While Listening To : <b>'.$obj['SourceName'].'</b></div>';
         }
         print '</div>';
         print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed tooltip" title="'.get_int_text('label_searchtrack').'"></i>';

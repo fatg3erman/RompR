@@ -61,7 +61,7 @@ if (array_key_exists('playlist', $_REQUEST)) {
 function do_playlist_tracks($pl, $icon, $target) {
     global $PLAYER_TYPE;
     directoryControlHeader($target, $pl);
-    playlistPlayHeader($pl, $pl);
+    playlistPlayHeader(rawurlencode($pl), $pl);
     $player = new $PLAYER_TYPE();
     $c = 0;
     if ($pl == '[Radio Streams]') {
@@ -126,7 +126,7 @@ function do_user_playlist_tracks($pl, $icon, $target) {
 
     $tracks = load_internet_playlist($pl, '', '', true);
     directoryControlHeader($target, $pl_name);
-    playlistPlayHeader($pl, $pl_name);
+    playlistPlayHeader(rawurlencode($pl), $pl_name);
     foreach ($tracks as $c => $track) {
         add_playlist(
             rawurlencode($track['TrackUri']),

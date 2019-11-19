@@ -95,7 +95,7 @@ function albumHeader($obj) {
     if ($obj['id'] == 'nodrop') {
         // Hacky at the moment, we only use nodrop for streams but here there is no checking
         // because I'm lazy.
-        $h .= '<div class="containerbox wrap clickstream playable clickicon '.$obj['class'].'" name="'.$obj['streamuri'].'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
+        $h .= '<div class="containerbox wrap clickstream playable clickicon '.$obj['class'].'" name="'.rawurlencode($obj['streamuri']).'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
     } else {
         if (array_key_exists('plpath', $obj)) {
             $h .= '<input type="hidden" name="dirpath" value="'.$obj['plpath'].'" />';

@@ -888,7 +888,7 @@ $.widget('rompr.spotifyAlbumThing', {
                     name: self.options.id+'dropper_'+a.id
                 }));
                 html = '<div class="tagh albumthing sponklick relpos">'+
-                    '<span class="title-menu'+trackclass+' clicktrack" name="'+a.uri+'">';
+                    '<span class="title-menu'+trackclass+' clicktrack" name="'+rawurlencode(a.uri)+'">';
             } else {
                 y.append($('<img>', {
                     class: this.options.imageclass+trackclass+' clicktrack',
@@ -897,7 +897,7 @@ $.widget('rompr.spotifyAlbumThing', {
                 }));
                 html = '<div class="tagh albumthing sponklick">'+
                     '<i class="icon-toggle-closed menu infoclick'+clickclass+' clickopenalbum clickspotifywidget" name="'+self.options.id+'dropper_'+a.id+'"></i>'+
-                    '<span class="title-menu'+trackclass+' clicktrack" name="'+a.uri+'">';
+                    '<span class="title-menu'+trackclass+' clicktrack" name="'+rawurlencode(a.uri)+'">';
                 appendto = y;
             }
             if (this.options.showbiogs) {
@@ -912,7 +912,7 @@ $.widget('rompr.spotifyAlbumThing', {
                 html += '<a href="'+a.external_urls['spotify']+'" target="_blank"><i class="icon-spotify-circled playlisticonr"></i></a>';
             }
             if (layoutProcessor.openOnImage && player.canPlay('spotify')) {
-                html += '<div class="playdiv'+trackclass+' clicktrack" name="'+a.uri+'"></div>';
+                html += '<div class="playdiv'+trackclass+' clicktrack" name="'+rawurlencode(a.uri)+'"></div>';
             }
             html += '</div>';
             appendto.append(html);
@@ -1237,11 +1237,8 @@ $.widget('rompr.spotifyArtistThing', {
                     spotify.artist.getAlbums(id, 'album', $.proxy(self._gotAlbumsForArtist, self), self.spotiError, true);
                 }
             }
-        } else if (element.hasClass('clickopenalbum')) {
+        } else if (element.hasClass('clickopenalbum') || element.hasClass('clickaddtolistenlater') || element.hasClass('clickaddtocollection')) {
             $('#'+element.parent().parent().parent().parent().attr('id')).spotifyAlbumThing('handleClick', element);
-        } else if (element.hasClass('clickaddtolistenlater') ||
-                    element.hasClass('clickaddtocollection')) {
-            $('#'+element.parent().parent().parent().parent().parent().attr('id')).spotifyAlbumThing('handleClick', element);
         }
     },
 

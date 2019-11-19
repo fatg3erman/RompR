@@ -31,7 +31,8 @@ class somafmplugin {
         print '<div class="containerbox padright indent ninesix bumpad brick_wide">';
         print '<a href="http://somafm.com" target="_blank">'.get_int_text("label_soma_beg").'</a>';
         print '</div>';
-        $stations = getCacheData("http://api.somafm.com/channels.xml", 'somafm', true, true);
+        // NB Don't use the cache, it fucks up 'Last Played'
+        $stations = getCacheData("http://api.somafm.com/channels.xml", 'somafm', false, true);
         $this->doAllStations($stations);
     }
 
@@ -50,7 +51,7 @@ class somafmplugin {
 
     private function format_listenlink($c, $p, $label) {
         $img = $this->getimage($c);
-        print '<div class="clickable clickstream playable draggable indent containerbox padright dropdown-container" name="'.(string) $p.'" streamimg="'.$img.'" streamname="'.$c->title.'">';
+        print '<div class="clickable clickstream playable draggable indent containerbox padright dropdown-container" name="'.rawurlencode((string) $p).'" streamimg="'.$img.'" streamname="'.$c->title.'">';
         print '<i class="'.audioClass($p[0]['format']).' collectionicon fixed"></i>';
         print '<div class="expand">'.$label.'&nbsp';
         switch ($p[0]['format']) {

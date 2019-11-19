@@ -21,7 +21,8 @@ if (array_key_exists('populate', $_REQUEST)) {
 		$getstr = $getstr . "search?search=" . $_REQUEST['searchfor'];
 	}
 	logger::log("ICESCRAPER", "Getting ".$getstr);
-	$page = getCacheData($getstr, 'icecast', true, true);
+	// NB Don't use the cache, station links often don't stay live long enough
+	$page = getCacheData($getstr, 'icecast', false, true);
 	$icecast_shitty_page = preg_replace('/<\?xml.*?\?>/', '', $page);
 	$doc = phpQuery::newDocument($icecast_shitty_page);
 	$list = $doc->find('table.servers-list')->find('tr');
@@ -91,7 +92,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 			print '<div class="containerbox rowspacer"></div>';
 			print '<div class="indent">'.$listeners.'</div>';
 			print '<div class="containerbox rowspacer"></div>';
-			print '<div class="stream-description clickable icescraper clickstream playable draggable indent" name="'.$listenlink.'" streamname="'.$server_name.'" streamimg="">';
+			print '<div class="stream-description clickable icescraper clickstream playable draggable indent" name="'.rawurlencode($listenlink).'" streamname="'.$server_name.'" streamimg="">';
 			print '<b>Listen</b> '.$format;
 			print '</div>';
 			print '<div class="containerbox rowspacer"></div>';

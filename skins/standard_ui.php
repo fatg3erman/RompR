@@ -107,7 +107,7 @@ function albumHeader($obj) {
             $h .= '<div class="clicktrack playable draggable containerbox menuitem" name="'.$albumuri.'">';
         }
     } else if (array_key_exists('streamuri', $obj)) {
-        $h .= '<div class="clickstream playable draggable containerbox menuitem" name="'.$obj['streamuri'].'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
+        $h .= '<div class="clickstream playable draggable containerbox menuitem" name="'.rawurlencode($obj['streamuri']).'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
     } else if (array_key_exists('userplaylist', $obj)) {
         $h .= '<div class="playable '.$obj['userplaylist'].' draggable containerbox menuitem" name="'.$obj['plpath'].'">';
     } else {
