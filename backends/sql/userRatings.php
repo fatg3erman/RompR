@@ -138,6 +138,7 @@ foreach($params as $p) {
 		case 'syncinc':
 		case 'resetallsyncdata':
 		case 'deleteid':
+		case 'deletealbum':
 		case 'setasaudiobook':
 			romprmetadata::{$p['action']}($p);
 			break;

@@ -19,9 +19,9 @@ var charts = function() {
 		for (var i in data) {
 			if (data[i].uri) {
 				if (prefs.player_backend == "mpd" && data[i].uri.match(/soundcloud:/)) {
-					html += '<tr class="chart draggable clickcue playable backhi" name="'+encodeURIComponent(data[i].uri)+'">';
+					html += '<tr class="chart draggable clickcue playable backhi" name="'+rawurlncode(data[i].uri)+'">';
 				} else {
-					html += '<tr class="chart draggable clicktrack playable backhi" name="'+encodeURIComponent(data[i].uri)+'">';
+					html += '<tr class="chart draggable clicktrack playable backhi" name="'+rawurlencode(data[i].uri)+'">';
 				}
 			} else {
 				html += '<tr class="chart">';

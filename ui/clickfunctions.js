@@ -139,6 +139,8 @@ function onSourcesClicked(event, clickedElement) {
     debug.log('UI','Clicked On',clickedElement);
     if (clickedElement.hasClass("clickremdb")) {
         metaHandlers.fromUiElement.removeTrackFromDb(clickedElement);
+    } else if (clickedElement.hasClass("removealbum")) {
+        metaHandlers.fromUiElement.removeAlbumFromDb(clickedElement);
     } else if (clickedElement.hasClass("clickalbummenu")) {
         makeAlbumMenu(event, clickedElement);
     } else if (clickedElement.hasClass("amendalbum")) {
@@ -579,6 +581,12 @@ function makeAlbumMenu(e, element) {
             class: 'backhi clickable menuitem amendalbum',
             name: $(element).attr('name')
         }).html(language.gettext('label_amendalbum')));
+    }
+    if ($(element).hasClass('clickremovealbum')) {
+        d.append($('<div>', {
+            class: 'backhi clickable menuitem removealbum',
+            name: $(element).attr('name')
+        }).html(language.gettext('label_removealbum')));
     }
     if ($(element).hasClass('clicksetasaudiobook')) {
         d.append($('<div>', {

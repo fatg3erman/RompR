@@ -109,7 +109,7 @@ var ratingManager = function() {
 			current_albumholder = $('<div>', {class: "expand"}).appendTo(b);
 		}
 		var setdata = encodeURIComponent(JSON.stringify({title: data.Title, artist: data.Artistname, trackno: data.TrackNo, album: data.Albumname, albumartist: data.AlbumArtist}));
-		var html = '<div class="ntu draggable clicktrack playable fullwidth" name="'+encodeURIComponent(data.Uri)+'">';
+		var html = '<div class="ntu draggable clicktrack playable fullwidth" name="'+rawurlencode(data.Uri)+'">';
 		html += '<div class="containerbox line">';
 		html += '<div class="tracknumber fixed">'+data.TrackNo+'</div>';
 		html += '<div class="expand containerbox vertical">';

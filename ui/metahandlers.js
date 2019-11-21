@@ -161,6 +161,17 @@ var metaHandlers = function() {
 			            debug.warn("Failed to remove track! Possibly duplicate request?");
 			        }
 			    );
+			},
+
+			removeAlbumFromDb: function(element) {
+			    var albumToGo = element.attr("name");
+			    dbQueue.request(
+			        [{action: 'deletealbum', albumindex: albumToGo}],
+			        collectionHelper.updateCollectionDisplay,
+			        function(data) {
+			            debug.warn("Failed to remove album! Possibly duplicate request?");
+			        }
+			    );
 			}
 
 		},

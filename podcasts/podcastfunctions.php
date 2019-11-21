@@ -50,7 +50,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
                 $podcast['RefreshOption'] = REFRESHOPTION_MONTHLY;
                 break;
             default:
-                $podcast['RefreshOption'] = REFRESHOPTION_NEVER;
+                $podcast['RefreshOption'] = $prefs['default_podcast_refresh_mode'];
                 break;
         }
     } else if ($sy && $sy->updatePeriod) {
@@ -68,7 +68,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
                 $podcast['RefreshOption'] = REFRESHOPTION_MONTHLY;
                 break;
             default:
-                $podcast['RefreshOption'] = REFRESHOPTION_NEVER;
+                $podcast['RefreshOption'] = $prefs['default_podcast_refresh_mode'];
                 break;
         }
     } else {
@@ -459,6 +459,9 @@ function refreshPodcast($podid) {
             $podid);
         sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET New=?, JustUpdated=?, Listened = 0 WHERE PODindex=?", 1, 0, $podid);
     } else {
+        // Make sure we use the Refresh Option from the database, otherwise it gets replaced with the value
+        // calculated in parse_rss_feed
+        $podcast['RefreshOption'] = $podetails->RefreshOption;
         sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET New=?, JustUpdated=? WHERE PODindex=?", 0, 0, $podid);
         sql_prepare_query(true, null, null, null, "UPDATE Podcasttable SET Description=?, LastUpdate=?, DaysLive=?, LastPubDate=? WHERE PODindex=?",
             $podcast['Description'],

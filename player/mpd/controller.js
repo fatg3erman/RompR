@@ -770,10 +770,12 @@ function playerController() {
     }
 
     this.addTracksToPlaylist = function(playlist,tracks,moveto,playlistlength,callback) {
+        debug.log('PLAYER','Tracks is',tracks);
         debug.log("PLAYER","Adding tracks to playlist",playlist,"then moving to",moveto,"playlist length is",playlistlength);
         var cmds = new Array();
         for (var i in tracks) {
             if (tracks[i].uri) {
+                debug.log('PLAYER', 'Adding URI', tracks[i].uri);
                 cmds.push(['playlistadd',decodeURIComponent(playlist),tracks[i].uri,
                     moveto,playlistlength]);
             } else if (tracks[i].dir) {

@@ -351,7 +351,7 @@ var info_spotify = function() {
                 function doRecommendations(data) {
                     $('#helpful_title').html('<div class="textunderline notthere"><h3>'+language.gettext('discover_now', [trackmeta.spotify.track.name])+'</h3></div>');
                     for (var i in data.tracks) {
-                        var x = $('<div>', {class: 'arsecandle tagholder4 clickable draggable clicktrack playable notthere', name: data.tracks[i].uri}).appendTo($('#helpful_tracks'));
+                        var x = $('<div>', {class: 'arsecandle tagholder4 clickable draggable clicktrack playable notthere', name: rawurlencode(data.tracks[i].uri)}).appendTo($('#helpful_tracks'));
                         var a = data.tracks[i].album;
                         var img = '';
                         if (a.images && a.images[0]) {

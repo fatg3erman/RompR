@@ -1167,20 +1167,20 @@ $.widget('rompr.spotifyArtistThing', {
                 var t = $('<div>').appendTo(y);
                 t.append('<img class="'+this.options.imageclass+' menu infoclick'+clickclass+' clickopenartist clickspotifywidget" src="'+img+'"  name="'+a.id+'"/>');
                 html = '<div class="tagh albumthing sponklick relpos">'+
-                    '<span class="title-menu'+trackclass+' clicktrack" name="'+a.uri+'">'+a.name+'</span>';
+                    '<span class="title-menu'+trackclass+' clicktrack" name="'+rawurlencode(a.uri)+'">'+a.name+'</span>';
                 appendto = t;
             } else {
-                y.append('<img class="'+this.options.imageclass+trackclass+' clicktrack" src="'+img+'" name="'+a.uri+'"/>');
+                y.append('<img class="'+this.options.imageclass+trackclass+' clicktrack" src="'+img+'" name="'+rawurlencode(a.uri)+'"/>');
                 var html = '<div class="tagh albumthing">'+
                             '<i class="icon-toggle-closed menu infoclick clickopenartist clickspotifywidget" name="'+a.id+'"></i>'+
-                            '<span class="title-menu '+trackclass+' clicktrack" name="'+a.uri+'">'+a.name+'</span>';
+                            '<span class="title-menu '+trackclass+' clicktrack" name="'+rawurlencode(a.uri)+'">'+a.name+'</span>';
                 appendto = y;
             }
             if (!player.canPlay('spotify')) {
                 html += '<a href="'+a.external_urls['spotify']+'" target="_blank"><i class="icon-spotify-circled playlisticonr"></i></a>';
             }
             if (layoutProcessor.openOnImage && player.canPlay('spotify')) {
-                html += '<div class="playdiv'+trackclass+' clicktrack" name="'+a.uri+'"></div>';
+                html += '<div class="playdiv'+trackclass+' clicktrack" name="'+rawurlencode(a.uri)+'"></div>';
             }
             html += '</div>';
             appendto.append(html)

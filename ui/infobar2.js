@@ -418,7 +418,7 @@ var infobar = function() {
         markCurrentTrack: function() {
             if (playlistinfo.file) {
                 $('[name="'+rawurlencode(playlistinfo.file)+'"]').not('.playlistcurrentitem').not('.podcastresume').addClass('playlistcurrentitem');
-                $('[name="'+playlistinfo.file+'"]').not('.playlistcurrentitem').not('.podcastresume').addClass('playlistcurrentitem');
+                // $('[name="'+playlistinfo.file+'"]').not('.playlistcurrentitem').not('.podcastresume').addClass('playlistcurrentitem');
             }
         },
 

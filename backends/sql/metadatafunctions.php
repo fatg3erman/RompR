@@ -336,6 +336,14 @@ class romprmetadata {
 		}
 	}
 
+	public static function deletealbum($data) {
+		if ($data['albumindex'] !== null && romprmetadata::delete_album($data['albumindex'])) {
+		} else {
+			header('HTTP/1.1 400 Bad Request');
+			$returninfo['error'] = 'That just did not work';
+		}
+	}
+
 	public static function setasaudiobook($data) {
 		if ($data['albumindex'] !== null && romprmetadata::set_as_audiobook($data['albumindex'], $data['value'])) {
 		} else {
@@ -737,6 +745,11 @@ class romprmetadata {
 			logger::error("AMEND ALBUM", "Failed to find album to update!");
 			return false;
 		}
+		return true;
+	}
+
+	static function delete_album($albumindex) {
+		$result = generic_sql_query('DELETE FROM Tracktable WHERE Albumindex = '.$albumindex);
 		return true;
 	}
 

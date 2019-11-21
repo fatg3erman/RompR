@@ -40,7 +40,10 @@ if (array_key_exists('playlist', $_REQUEST)) {
         add_playlist(rawurlencode(file_get_contents($file)), htmlentities(basename($file)), 'icon-doc-text', 'clickloaduserplaylist', true, $c, true, null);
         $c++;
     }
-    if (!$player->playlist_error) {
+    if (!$player->playlist_error && 
+        ($prefs['player_backend'] == $prefs['collection_player']) &&
+        ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave == false)
+    ) {
         sort($used_images);
         $imgs = glob('prefs/plimages/*');
         sort($imgs);
