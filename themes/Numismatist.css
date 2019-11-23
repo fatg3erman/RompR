@@ -182,16 +182,6 @@ body.desktop #thetopbit
     border-top:1px solid #bbbbbb;
 }
 
-.album1
-{
-    /*background-color:rgba(200,200,200,0.1);*/
-}
-
-.album2
-{
-    /*background-color:rgba(200,200,200,0.2);*/
-}
-
 a.album:visited
 {
     color:#222222;
@@ -203,21 +193,16 @@ a.album:hover,a.album:active
 }
 
 .playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
-    text-shadow: 0 0 10px #ffffff;
+    font-weight:bold;
 }
 
 .playable.selected:hover, tr.playable.selected:hover>td {
     background-color:rgba(0,0,0,0.1);
 }
 
-div.playable.selected:hover
-{
-    text-shadow: 0 0 12px #333333;
-}
-
 .selected
 {
-    background-color:rgba(0,0,0,0.4) !important;
+    background-color:rgba(255,255,255,0.4) !important;
 }
 
 .playlistcurrentitem
@@ -299,7 +284,7 @@ tr.clickaddtrack:hover
 
 .dropshadow
 {
-    box-shadow:         7px 7px 5px rgba(0, 0, 0, 0.9);
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.9);
 }
 
 .progressbar
@@ -360,11 +345,13 @@ div.topdropmenu
 
 .helpfulalbum
 {
-    background-image: linear-gradient(#ededed, #bbbbbb);
+    /*background-image: linear-gradient(#ededed, #bbbbbb);*/
+    background-color: #cccccc;
 }
 
 .collectionitem .helpfulalbum.fixed {
-    background-image: linear-gradient(#bbbbbb, #aaaaaa);
+    /*background-image: linear-gradient(#bbbbbb, #aaaaaa);*/
+    background-color: #cccccc;
 }
 
 .tagholder_wide

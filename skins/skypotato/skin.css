@@ -677,6 +677,10 @@ div.rightmenu
     border: 4px solid transparent;
 }
 
+.collectionitem.selecotron.tagholder_wide.dropshadow {
+    padding-left: 0px;
+}
+
 .collectionitem.fixed.selecotron:not(.tagholder_wide)>.containerbox.wrap {
     height: 100%;
 }

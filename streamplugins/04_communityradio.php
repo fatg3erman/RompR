@@ -238,6 +238,7 @@ class commradioplugin {
                 $url .= '&reverse=true';
                 break;
         }
+        $url .= '&hidebroken=true';
         return $url;        
     }
 
@@ -298,13 +299,17 @@ class commradioplugin {
     }
 
     private function makeSelector($json, $root) {
-        foreach ($json as $thing) {
-            $val = strtolower($thing['value']);
-            $opts = array(
-                'URL' => $root.rawurlencode($val),
-                'text' => ucfirst($thing['value']).' ('.$thing['stationcount'].' stations)'
-            );
-            printRadioDirectory($opts, true, 'commradio');
+        if (is_array($json)) {
+            foreach ($json as $thing) {
+                $val = strtolower($thing['value']);
+                $opts = array(
+                    'URL' => $root.rawurlencode($val),
+                    'text' => ucfirst($thing['value']).' ('.$thing['stationcount'].' stations)'
+                );
+                printRadioDirectory($opts, true, 'commradio');
+            }
+        } else {
+            print '<b>There was an error</b>';
         }
     }
 

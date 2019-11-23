@@ -145,8 +145,8 @@ jQuery.fn.adjustBoxSizes = function() {
         var h = $(this);
         var width = calcPercentWidth(h, '.collectionitem', 220, h.width());
         h.find(".collectionitem").css('width', width.toString()+'%');
-        h.find(".tagholder_wide").css("width", "100%");
-        h.find(".brick_wide").css("width", "100%");
+        h.find(".tagholder_wide").css("width", "98%");
+        h.find(".brick_wide").css("width", "98%");
     });
 }
 
