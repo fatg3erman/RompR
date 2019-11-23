@@ -1,8 +1,9 @@
 <?php
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
+require_once ("includes/strings.php");
 $skin = 'desktop';
-$opts = getopt('', ['currenthost:', 'player_backend:']);
+$opts = getopt('', ['currenthost:', 'player_backend:', 'scrobbling:']);
 if (is_array($opts)) {
     foreach($opts as $key => $value) {
 	    logger::log("ROMONITOR", $key,'=',$value);
@@ -11,6 +12,18 @@ if (is_array($opts)) {
 }
 $romonitor_hack = false;
 logger::log("ROMONITOR", "Using Player ".$prefs['currenthost'].' of type '.$prefs['player_backend']);
+if (array_key_exists('scrobbling', $prefs) && $prefs['scrobbling'] == 'true') {
+    if ($prefs['lastfm_session_key'] == '') {
+        $prefs['scrobbling'] = false;
+        logger::warn('ROMONITOR', 'Warning. Scrobbling was requested bu user is not logged in. Scrobbling will not be enabled');
+    } else {
+        $prefs['scrobbling'] = true;
+        logger::log("ROMONITOR", "Scrobbling is enabled");
+    }
+} else {
+    logger::log('ROMONITOR', 'Scrobbling disabled');
+    $prefs['scrobbling'] = false;
+}
 require_once ("international.php");
 require_once ("collection/collection.php");
 require_once ("collection/playlistcollection.php");
@@ -107,6 +120,7 @@ while (true) {
                     logger::log("ROMONITOR", $prefs['currenthost'],"- Marking podcast episode as listened");
                     markAsListened($current_song['uri']);
                 }
+                scrobble_to_lastfm($current_song);
             }
 
             loadPrefs();
@@ -174,6 +188,50 @@ function map_tags($filedata) {
 function close_mpd() {
     global $player;
     $player->close_mpd_connection();
+}
+
+function scrobble_to_lastfm($currentsong) {
+    global $prefs, $my_piece_of_cheese;
+    if (!$prefs['scrobbling']) {
+        return;
+    }
+    logger::log('ROMONITOR', 'Scrobbling to Last.FM');
+    $options = array(
+        'timestamp' => time() - $currentsong['duration'],
+        'track' => $currentsong['title'],
+        'artist' => $currentsong['artist'],
+        'album' => $currentsong['album'],
+        'method' => 'track.scrobble',
+        'sk' => $prefs['lastfm_session_key'],
+        'api_key' => $my_piece_of_cheese['k']
+    );
+    if ($currentsong['albumartist'] && strtolower($currentsong['albumartist']) != strtolower($currentsong['artist'])) {
+        $options['albumArtist'] = $currentsong['albumartist'];
+    }
+    foreach ($options as $k => $v) {
+        logger::trace('ROMONITOR', $k,'=',$v);
+    }
+
+    $keys = array_keys($options);
+    sort($keys);
+    $sig = '';
+    foreach ($keys as $k) {
+        $sig .= $k.$options[$k];
+    }
+    $options['api_sig'] = md5($sig.$my_piece_of_cheese['s']);
+    $options['format'] = 'json';    
+
+    $u = new url_downloader(array(
+        'url' => "https://ws.audioscrobbler.com/2.0/",
+        'postfields' => $options,
+        'cache' => false,
+    ));
+
+    if ($u->get_data_to_string()) {
+        logger::log('ROMONITOR', 'Scrobble Success');
+    } else {
+        logger::log('ROMONITOR', 'Scrobble Failed');
+    }
 }
 
 ?>

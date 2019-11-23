@@ -12,13 +12,15 @@ One option is to always leave a desktop browser open on RompЯ and that will tak
 
 ## Scrobbling to Last.FM
 
-To make sure your tracks get scrobbled you should look at using [mopidy-scrobbler](https://github.com/mopidy/mopidy-scrobbler) for Mopidy or [mpdscribble](https://www.musicpd.org/clients/mpdscribble/) for mpd.
+Romonitor (see below) is the preferred method for solving both playcount updating and scrobbling; as using this will make sure your scrobbles match exactly what's in your collection. This makes a big difference with podcasts.
 
-## Updating RompЯ's Playcounts
+If you don't want to use romonitor and you just want scrobbles you should look at using [mopidy-scrobbler](https://github.com/mopidy/mopidy-scrobbler) for Mopidy or [mpdscribble](https://www.musicpd.org/clients/mpdscribble/) for mpd.
 
-Making RompЯ update Playcounts is only slightly harder. Even if you don't care about Playcounts, they are used by many of the [Personalised Radio Stations](/RompR/Personalised-Radio), so it's still useful.
+## Romonitor - Updating RompЯ's Playcounts and Scrobbling to Last.FM
 
-RompЯ is provided with a small program called romonitor that takes care of updating playcounts (and also marks podcasts as listened). It just needs a little setting up.
+Even if you don't care about Playcounts, they are used by many of the [Personalised Radio Stations](/RompR/Personalised-Radio), so it's still useful.
+
+RompЯ is provided with a small program called romonitor that takes care of updating playcounts, marks podcasts as listened, and scrobbles tracks to Last.FM. It just needs a little setting up.
 
 ### Create a Shell Script to run romonitor
 
@@ -49,6 +51,14 @@ And you should see something like
 
     bob       1336  0.0  1.0  63572 19572 ?        S    13:45   0:00 php ./romonitor.php --currenthost Mopidy --player_backend mopidy
     bob       2828  0.0  0.0   4696   804 pts/0    S+   14:02   0:00 grep --color=auto romonitor
+
+### Scrobbling
+
+To make romonitor scrobble to Last.FM you must first log in to Last.FM from the main Rompr application, then start romonitor with an additional paramter
+
+    php ./romonitor.php --currenthost Default --player_backend mpd --scrobbling true &
+
+Also make sure you're not scrobbling from the main RompR application or mpdscribble/mopidy-scrobbler etc or all your plays will be scrobbled twice!
 
 ### If you're using Multiple Players
 

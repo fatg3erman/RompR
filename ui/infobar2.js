@@ -19,10 +19,10 @@ var infobar = function() {
             if (lastfm.isLoggedIn()) {
                 if (playlistinfo.Title != "" && playlistinfo.trackartist != "") {
                     var options = {
-                                    timestamp: parseInt(starttime.toString()),
-                                    track: (lfminfo.title === undefined) ? playlistinfo.Title : lfminfo.title,
-                                    artist: (lfminfo.trackartist === undefined) ? playlistinfo.trackartist : lfminfo.trackartist,
-                                    album: (lfminfo.album === undefined) ? playlistinfo.Album : lfminfo.album
+                        timestamp: parseInt(starttime.toString()),
+                        track: (lfminfo.title === undefined) ? playlistinfo.Title : lfminfo.title,
+                        artist: (lfminfo.trackartist === undefined) ? playlistinfo.trackartist : lfminfo.trackartist,
+                        album: (lfminfo.album === undefined) ? playlistinfo.Album : lfminfo.album
                     };
                     options.chosenByUser = (playlistinfo.type == 'local' && !playlist.radioManager.isRunning()) ? 1 : 0;
                     if (playlistinfo.albumartist && playlistinfo.albumartist != "" && playlistinfo.albumartist.toLowerCase() != playlistinfo.trackartist.toLowerCase()) {

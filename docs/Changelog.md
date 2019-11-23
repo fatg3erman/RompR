@@ -8,6 +8,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Fix Panel hiding not working in Fruit skin
 * Make the Snapcast controls look neater
 * Fix some bugs relating to loading playlists
+* romonitor can now do Last.FM scrobbling, which will help make scrobbles match exactly what's in the rompr collection - which will help for those people using Last.FM to sync their playcounts across devices.
 * Make Mopidy-Youtube handling work better. This version of Rompr works best wuth the fork of Mopidy-Youtube [here](https://github.com/natumbri/mopidy-youtube)
 * Completely redesigned the Community Radio Browser to simplify the interface and make it more consistent with TuneIn
 * Albums can now be moved manually to the Spoken Word section, and back to the Music Collection

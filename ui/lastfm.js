@@ -40,7 +40,7 @@ function LastFM(user) {
     debug.mark('LASTFM', 'Doing the wrangling');
     $.ajax({
         method: 'GET',
-        url: 'includes/strings.php',
+        url: 'includes/strings.php?getcheese=1',
         dataType: 'json'
     })
     .done(function(data) {

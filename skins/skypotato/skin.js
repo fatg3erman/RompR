@@ -169,6 +169,7 @@ var layoutProcessor = function() {
     var currheader = 0;
     var headertimer;
     var loading_ui = true;
+    var artistinfotimer;
 
     function showPanel(source) {
         debug.log("UI","Showing Panel",source);
@@ -944,6 +945,49 @@ var layoutProcessor = function() {
             i.addClass(icon);
             i.addClass('smallpluginicon clickicon');
             return d;
+        },
+
+        postAlbumMenu: function(element) {
+            debug.log('POSTALBUMMENU', element);
+            var found = element.attr('name').match(/([abz])artist(\d+)/);
+            if (found !== null) {
+                clearTimeout(artistinfotimer);
+                artistinfotimer = setTimeout(function() {
+                    // Get artist info to display in the drop-down.
+                    // Do it on a timer so (a) We don't spam last.fm with requests if we're clcking rapidly through artists
+                    // (b) When we get here the div we're looking for isn't visible and so it can't be found
+                    // (I'm not even sure it's been created by this point, I've forgotten how this works)
+                    debug.log('POSTALBUMMENU', 'Artist', found[1], found[2]);
+                    var name = $('#'+element.attr('name')).children('.configtitle').first().children('b').html();
+                    debug.log('POSTALBUMMENU', 'Artist name',htmlspecialchars_decode(name));
+                    var divname = 'potato_'+found[1]+'artist_'+found[2];
+                    var destdiv = $('<div>', 
+                        {   class: 'collectionitem fixed tagholder_wide invisible', 
+                            style: 'width: 98%', 
+                            id: divname
+                        }).appendTo($('#'+element.attr('name')));
+                    if (prefs.artistsatstart.indexOf(name) == -1) {
+                        lastfm.artist.getInfo({artist: name},
+                            layoutProcessor.artistInfo,
+                            layoutProcessor.artistInfoError,
+                            divname
+                        );
+                    }
+                }, 1000);
+            }
+        },
+
+        artistInfo: function(data, reqid) {
+            if (data && !data.error) {
+                var lfmdata = new lfmDataExtractor(data.artist);
+                $('#'+reqid).html(lastfm.formatBio(lfmdata.bio(), lfmdata.url())).fadeIn('fast');
+            } else {
+                $('#'+reqid).remove();
+            }
+        },
+
+        artistInfoError: function(data, reqid) {
+
         }
 
     }
