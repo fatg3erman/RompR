@@ -369,7 +369,8 @@ div.topdropmenu
 
 .tagholder_wide
 {
-    background-image: linear-gradient(#ededed, #bbbbbb);
+    /*background-image: linear-gradient(#ededed, #bbbbbb);*/
+    border-top: 1px solid black;
 }
 
 .tagholder_wide .helpfulalbum.tleft

@@ -38,6 +38,8 @@ class commradioplugin {
             case 2:
                 if (substr($this->url, 0, 5) == 'json/') {
                     $this->browse();
+                } else if ($this->url == 'getgenres') {
+                    $this->doGenreList();
                 } else {
                     $this->doRequest();
                 }
@@ -120,20 +122,95 @@ class commradioplugin {
         printRadioDirectory(array('URL' => 'json/languages', 'text' => 'Language'), false, 'commradio');
         print '</div>';
 
-        printRadioDirectory(array('URL' => 'json/tags', 'text' => 'Tags'), false, 'commradio');
+        printRadioDirectory(array('URL' => 'getgenres', 'text' => 'Genres'), false, 'commradio');
         print '</div>';
+    }
+
+    private function doGenreList() {
+        $genres = array(
+            'breakbeat',
+            'chart',
+            'dance',
+            'electronic',
+            'jungle',
+            'oldschool',
+            'techno',
+            'trip-hop',
+            '50s',
+            '60s',
+            '70s',
+            '80s',
+            '90s',
+            '00s',
+            'contemporary',
+            'hits',
+            'rock',
+            'pop',
+            'afrobeat',
+            'folk',
+            'reggae',
+            'dub',
+            'acoustic',
+            'alt',
+            'ambient',
+            'bluegrass',
+            'blues',
+            'brazil',
+            'british',
+            'chill',
+            'classical',
+            'comedy',
+            'talk',
+            'country',
+            'dancehall',
+            'deep-house',
+            'disco',
+            'dnb',
+            'dubstep',
+            'emo',
+            'funk',
+            'garage',
+            'gospel',
+            'goth',
+            'grindcore',
+            'groove',
+            'grunge',
+            'hardcore',
+            'house',
+            'idm',
+            'indian',
+            'indie',
+            'industrial',
+            'jazz',
+            'metal',
+            'rap',
+            'progressive',
+            'psych',
+            'punk',
+            'soul',
+            'trance',
+            'world'
+        );
+        sort($genres);
+        foreach ($genres as $g) {
+            printRadioDirectory(array('URL' => 'json/tags/'.$g, 'text' => $g), false, 'commradio');
+            print '</div>';
+
+        }
     }
 
     private function browse() {
         directoryControlHeader('commradio_'.md5($this->url), $this->title);
         $bits = getCacheData('http://www.radio-browser.info/webservice/'.$this->url, 'commradio', true, true);
         $bits = json_decode($bits, true);
-        $mapping = array(
-            'json/countries' => 'bycountryexact/',
-            'json/languages' => 'bylanguageexact/',
-            'json/tags' => 'bytagexact'
-        );
-        $this->makeSelector($bits, $mapping[$this->url]);
+        if ($this->url == 'json/countries') {
+            $map = 'bycountryexact/';
+        } else if ($this->url == 'json/languages') {
+            $map = 'bylanguageexact/';
+        } else {
+            $map = 'bytagexact/';
+        }
+        $this->makeSelector($bits, $map);
     }
 
     private function doSearch() {
