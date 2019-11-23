@@ -166,7 +166,7 @@ function trackControlHeader($why, $what, $who, $dets) {
                 $html .= '<div class="icon-music smallicon expand clickable clickicon noselect setasmusiccollection" name="'.$who.'"></div>';
             }
             $html .= '</div>';
-            $html .= '<div class="textcentre ninesix playlistrow2">'.ucfirst(get_int_text('label_tracks')).'</div>';
+            // $html .= '<div class="textcentre ninesix playlistrow2">'.ucfirst(get_int_text('label_tracks')).'</div>';
         }
     }
     print $html;

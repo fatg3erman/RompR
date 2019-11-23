@@ -263,17 +263,15 @@ var metaHandlers = function() {
 						track.album = data.album['#text'];
 					}
 					if (data.artist) {
-						var a = data.artist.name;
-						// Join multiple names together so they match what our backend does
-						// Mopidy-Scrobbler has a habit of using commas to separate multiple artists
-						if (!a.match(/ & /)) {
-							// Don't do this if it's already got an '&' in it, as this could be one
-							// of our Scrobbles, or just something else
-							track.artist = concatenate_artist_names(a.split(', '));
-							debug.log("DBQUEUE","Concatenated artist names to",track.artist);
-						} else {
-							track.artist = a;
-						}
+						// We have in the past tried to be clever about this, since
+						// mpdscribble and mopidy-scrobbler don't always join artist names
+						// the same way we do. Unfortunately it just ain't possible to do.
+						// This works well if you have last.fm autocorrect disabled on last.fm
+						// and you use Rompr to scrobble and have autocorrect turned off there too.
+						// Otherwise I'm afraid it can be a bit shit where there are multiple artist names
+						// And it's fuckin shocking if you're playing back podcasts and not scrobbling from Rompr,
+						// 'cos the metadata the players use is nothing like what comes out of the RSS which is what we use
+						track.artist = data.artist.name;
 						track.albumartist = track.artist;
 					}
 					if (data.date) {

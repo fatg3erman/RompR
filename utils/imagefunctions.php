@@ -389,7 +389,7 @@ class albumImage extends baseAlbumImage {
                     break;
 
                 case 'medium':
-                    $imagehandler->resizeToWidth(400);
+                    $imagehandler->resizeToWidth(360);
                     $imagehandler->save($image, 70);
                     break;
 
@@ -623,7 +623,7 @@ class imageMagickImage {
                 break;
 
             case 'medium':
-                $this->resizeToWidth(400);
+                $this->resizeToWidth(360);
                 return $this->save($outputfile, 70);
                 break;
 
@@ -864,7 +864,7 @@ class gdImage {
                 break;
 
             case 'medium':
-                $this->resizeToWidth(400);
+                $this->resizeToWidth(360);
                 $this->save(null, 70);
                 break;
 

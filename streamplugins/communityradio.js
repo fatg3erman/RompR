@@ -1,7 +1,5 @@
 var communityRadioPlugin = {
 
-    prepopulated: ['countries', 'languages', 'tags'],
-
     loadBigRadio: function() {
         if ($("#communityradiolist").hasClass('notfilled')) {
             $('i[name="communityradiolist"]').makeSpinner();
@@ -80,15 +78,18 @@ var communityRadioPlugin = {
             event.stopImmediatePropagation();
             var url = clickedElement.prev().prev().val();
             var title = clickedElement.prev().val();
-            if (!clickedElement.hasClass('filled') && communityRadioPlugin.prepopulated.indexOf(url) == -1 && clickedElement.isClosed()) {
+            var menutoopen = clickedElement.attr("name");
+            if (clickedElement.isClosed()) {
                 clickedElement.makeSpinner();
-                var menutoopen = clickedElement.attr("name");
                 communityRadioPlugin.browse(url, title, 0, menutoopen, function() {
-                    clickedElement.stopSpinner().addClass('filled');
+                    clickedElement.stopSpinner();
                     doMenu(null, clickedElement);
                 });
             } else {
                 doMenu(null, clickedElement);
+                // This plugin can pull in a lot of crap and slow the browser,
+                // so empty dropdown when they're closed
+                $('#'+menutoopen).empty();
             }
         } else if (clickedElement.hasClass('clickcommradiopager')) {
             communityRadioPlugin.page(clickedElement);

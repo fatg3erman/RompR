@@ -143,7 +143,7 @@ jQuery.fn.stopSpinner = function() {
 jQuery.fn.adjustBoxSizes = function() {
     this.each(function() {
         var h = $(this);
-        var width = calcPercentWidth(h, '.collectionitem', 260, h.width());
+        var width = calcPercentWidth(h, '.collectionitem', 220, h.width());
         h.find(".collectionitem").css('width', width.toString()+'%');
         h.find(".tagholder_wide").css("width", "100%");
         h.find(".brick_wide").css("width", "100%");

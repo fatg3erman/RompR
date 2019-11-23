@@ -36,7 +36,11 @@ class commradioplugin {
                 break;
 
             case 2:
-                $this->doRequest();
+                if (substr($this->url, 0, 5) == 'json/') {
+                    $this->browse();
+                } else {
+                    $this->doRequest();
+                }
                 break;
 
             case 3:
@@ -110,26 +114,26 @@ class commradioplugin {
     }
 
     private function doBrowseRoot() {
-        printRadioDirectory(array('URL' => 'countries', 'text' => 'Country'), false, 'commradio');
-        directoryControlHeader('commradio_'.md5('countries'), 'Country');
-        $countries = getCacheData('http://www.radio-browser.info/webservice/json/countries', 'commradio', true, true);
-        $countries = json_decode($countries, true);
-        $this->makeSelector($countries, 'bycountryexact/');
+        printRadioDirectory(array('URL' => 'json/countries', 'text' => 'Country'), false, 'commradio');
         print '</div>';
 
-        printRadioDirectory(array('URL' => 'languages', 'text' => 'Language'), false, 'commradio');
-        directoryControlHeader('commradio_'.md5('languages'), 'Language');
-        $langs = getCacheData('http://www.radio-browser.info/webservice/json/languages', 'commradio', true, true);
-        $langs = json_decode($langs, true);
-        $this->makeSelector($langs, 'bylanguageexact/');
+        printRadioDirectory(array('URL' => 'json/languages', 'text' => 'Language'), false, 'commradio');
         print '</div>';
 
-        printRadioDirectory(array('URL' => 'tags', 'text' => 'Tags'), false, 'commradio');
-        directoryControlHeader('commradio_'.md5('tags'), 'Tags');
-        $tags = getCacheData('http://www.radio-browser.info/webservice/json/tags', 'commradio', true, true);
-        $tags = json_decode($tags, true);
-        $this->makeSelector($tags, 'bytagexact/');
+        printRadioDirectory(array('URL' => 'json/tags', 'text' => 'Tags'), false, 'commradio');
         print '</div>';
+    }
+
+    private function browse() {
+        directoryControlHeader('commradio_'.md5($this->url), $this->title);
+        $bits = getCacheData('http://www.radio-browser.info/webservice/'.$this->url, 'commradio', true, true);
+        $bits = json_decode($bits, true);
+        $mapping = array(
+            'json/countries' => 'bycountryexact/',
+            'json/languages' => 'bylanguageexact/',
+            'json/tags' => 'bytagexact'
+        );
+        $this->makeSelector($bits, $mapping[$this->url]);
     }
 
     private function doSearch() {

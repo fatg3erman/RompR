@@ -1965,7 +1965,7 @@ table.ambox {
 {
     width:95%;
     height:auto;
-    max-width:400px;
+    max-width:360px;
     transition: opacity 0.5s ease;
     opacity: 1;
 	object-fit: scale-down;

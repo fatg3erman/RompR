@@ -122,7 +122,7 @@ function albumHeader($obj) {
 
     $h .= '<div class="smallcover fixed">';
     $albumimage = new baseAlbumImage(array('baseimage' => $obj['Image']));
-    $h .= $albumimage->html_for_image($obj, 'smallcover fixed', 'small');
+    $h .= $albumimage->html_for_image($obj, 'smallcover', 'small');
     $h .= '</div>';
 
     $h .= domainHtml($obj['AlbumUri']);
