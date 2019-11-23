@@ -163,7 +163,6 @@ class commradioplugin {
             'talk',
             'country',
             'dancehall',
-            'deep-house',
             'disco',
             'dnb',
             'dubstep',
@@ -189,7 +188,17 @@ class commradioplugin {
             'punk',
             'soul',
             'trance',
-            'world'
+            'world',
+            'public',
+            'community',
+            'party',
+            'local',
+            'news',
+            'oldies',
+            'motown',
+            'easy',
+            'soundtracks',
+            'drama'
         );
         sort($genres);
         foreach ($genres as $g) {
@@ -281,10 +290,7 @@ class commradioplugin {
         trackControlHeader('','','communityradio_'.$index, array(array('Image' => $this->comm_radio_get_image($station))));
         // print '<div class="containerbox expand ninesix indent padright"><b>Listen:</b></div>';
         print '<div class="containerbox ninesix indent padright">'.htmlspecialchars($station['state'].$station['country']).'</div>';
-        print '<div class="clickstream playable draggable containerbox padright menuitem" name="'.rawurlencode($station['playurl']).'" streamimg="'.$this->comm_radio_get_stream_image($station).'" streamname="'.$station['name'].'">';
-        print '<i class="'.audioClass($station['codec']).' smallicon fixed"></i>';
-        print '<div class="expand">'.$station['bitrate'].'kbps &nbsp'.$station['codec'].'</div>';
-        print '</div>';
+
         print '<div class="containerbox ninesix indent padright">'.$station['votes'].' Upvotes, '.$station['negativevotes'].' Downvotes</div>';
         if ($station['homepage']) {
             print '<a href="'.$station['homepage'].'" target="_blank">';
@@ -294,6 +300,10 @@ class commradioplugin {
             print '</div>';
             print '</a>';
         }
+        print '<div class="clickstream playable draggable containerbox padright menuitem" name="'.rawurlencode($station['playurl']).'" streamimg="'.$this->comm_radio_get_stream_image($station).'" streamname="'.$station['name'].'">';
+        print '<i class="'.audioClass($station['codec']).' smallicon fixed"></i>';
+        print '<div class="expand">'.$station['bitrate'].'kbps &nbsp'.$station['codec'].'</div>';
+        print '</div>';
         print '</div>';
 
     }
