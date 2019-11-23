@@ -76,6 +76,7 @@ while (true) {
                     logger::trace("ROMONITOR", $prefs['currenthost'],"- Current ID is",$current_id);
                     logger::trace("ROMONITOR", $prefs['currenthost'],"- Duration is",$current_song['duration']);
                     logger::trace("ROMONITOR", $prefs['currenthost'],"- Current Playcount is",$current_playcount);
+                    lastfm_update_nowplaying($current_song);
                 }
             } else {
                 $current_id = -1;
@@ -190,6 +191,24 @@ function close_mpd() {
     $player->close_mpd_connection();
 }
 
+function lastfm_update_nowplaying($currentsong) {
+    global $prefs, $my_piece_of_cheese;
+    if (!$prefs['scrobbling']) {
+        return;
+    }
+    logger::log('ROMONITOR', 'Updating NowPlaying on Last.FM');
+    $options = array(
+        'track' => $currentsong['title'],
+        'artist' => $currentsong['artist'],
+        'album' => $currentsong['album'],
+        'method' => 'track.updateNowPlaying',
+        'sk' => $prefs['lastfm_session_key'],
+        'api_key' => $my_piece_of_cheese['k']
+    );
+    lastFMSignedRequest($options);
+}
+
+
 function scrobble_to_lastfm($currentsong) {
     global $prefs, $my_piece_of_cheese;
     if (!$prefs['scrobbling']) {
@@ -208,29 +227,37 @@ function scrobble_to_lastfm($currentsong) {
     if ($currentsong['albumartist'] && strtolower($currentsong['albumartist']) != strtolower($currentsong['artist'])) {
         $options['albumArtist'] = $currentsong['albumartist'];
     }
+    lastFMSignedRequest($options);
+}
+
+function lastFMSignedRequest($options) {
+    global $prefs, $my_piece_of_cheese;
+    $opts = array();
     foreach ($options as $k => $v) {
-        logger::trace('ROMONITOR', $k,'=',$v);
+        $opts[$k] = mb_convert_encoding($v, "UTF-8", "auto");
+        logger::trace('ROMONITOR', $k,'=',$opts[$k]);
     }
 
-    $keys = array_keys($options);
+    $keys = array_keys($opts);
     sort($keys);
     $sig = '';
     foreach ($keys as $k) {
-        $sig .= $k.$options[$k];
+        $sig .= $k.$opts[$k];
     }
-    $options['api_sig'] = md5($sig.$my_piece_of_cheese['s']);
-    $options['format'] = 'json';    
+    $opts['api_sig'] = md5($sig.$my_piece_of_cheese['s']);
+    $opts['format'] = 'json';    
 
     $u = new url_downloader(array(
         'url' => "https://ws.audioscrobbler.com/2.0/",
-        'postfields' => $options,
+        'postfields' => $opts,
         'cache' => false,
     ));
 
     if ($u->get_data_to_string()) {
-        logger::log('ROMONITOR', 'Scrobble Success');
+        logger::log('ROMONITOR', $options['method'].' Success');
     } else {
-        logger::log('ROMONITOR', 'Scrobble Failed');
+        logger::warn('ROMONITOR', $options['method'].' Failed');
+        logger::warn('ROMONITOR', $u->get_data());
     }
 }
 

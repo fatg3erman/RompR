@@ -94,11 +94,7 @@ class url_downloader {
             curl_setopt($this->ch, CURLOPT_HTTPHEADER, $this->options['header']);
         }
         if ($this->options['postfields'] !== null) {
-            $fields_string = '';
-            foreach ($this->options['postfields'] as $key => $value) {
-                $fields_string .= $key.'='.$value.'&';
-            }
-            rtrim($fields_string,'&');
+            $fields_string = http_build_query($this->options['postfields']);
             curl_setopt($this->ch, CURLOPT_POST, count($this->options['postfields']));
             curl_setopt($this->ch, CURLOPT_POSTFIELDS, $fields_string);
         }

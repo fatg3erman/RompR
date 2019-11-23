@@ -1,20 +1,10 @@
 # Using RompЯ with mobile devices
 
-## Updating RompЯ
-
-Unfortunately it seems that many mobile devices use very strong cache settings and when you update RompЯ it may not run properly on your device. The only cure for this seems to be to completely delete the cache on your device then load RompЯ. If you have added RompЯ as an icon on your home screen, you may have to remove and recreate the icon.
-
 ## Playcounts and Scrobbling
 
 RompЯ works fine on almost all mobile devices but, because it runs in a web browser, if the device goes to sleep (the screen switches off) then RompЯ will not be able to update Playcounts or scrobble tracks to Last.FM. This page explains how to set up some extras so that this still works.
 
 One option is to always leave a desktop browser open on RompЯ and that will take care of everything, but that won't be an option for most people, and the following is neater anyway.
-
-## Scrobbling to Last.FM
-
-Romonitor (see below) is the preferred method for solving both playcount updating and scrobbling; as using this will make sure your scrobbles match exactly what's in your collection. This makes a big difference with podcasts.
-
-If you don't want to use romonitor and you just want scrobbles you should look at using [mopidy-scrobbler](https://github.com/mopidy/mopidy-scrobbler) for Mopidy or [mpdscribble](https://www.musicpd.org/clients/mpdscribble/) for mpd.
 
 ## Romonitor - Updating RompЯ's Playcounts and Scrobbling to Last.FM
 
@@ -54,7 +44,9 @@ And you should see something like
 
 ### Scrobbling
 
-To make romonitor scrobble to Last.FM you must first log in to Last.FM from the main Rompr application, then start romonitor with an additional paramter
+You can use [mopidy-scrobbler](https://github.com/mopidy/mopidy-scrobbler) for Mopidy or [mpdscribble](https://www.musicpd.org/clients/mpdscribble/) for mpd to scrobble, but if you do then your scrobbles might not match exactly what's in your collection - especially if you use podcasts. If you use romonitor to scrobble instead, then everything will be consistent.
+
+To make romonitor scrobble to Last.FM you must first [log in to Last.FM](/RompR/LastFM) from the main Rompr application, then start romonitor with an additional paramter
 
     php ./romonitor.php --currenthost Default --player_backend mpd --scrobbling true &
 

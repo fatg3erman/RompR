@@ -356,6 +356,10 @@ function LastFM(user) {
         }
         it = it+lfms;
         options.api_sig = hex_md5(it);
+
+        debug.shout('LASTFM', 'String is',it);
+        debug.shout('LASTFM', 'API sig is',options.api_sig);
+
         queue.push({
             url: "POST",
             options: options,
