@@ -594,7 +594,7 @@ var layoutProcessor = function() {
         playlistupdate: function(upcoming) {
             var time = 0;
             for(var i in upcoming) {
-                time += upcoming[i].duration;
+                time += upcoming[i].Time;
             }
             if (time > 0) {
                 headers['upcoming'] = "Up Next : "+upcoming.length+" tracks, "+formatTimeString(time);
