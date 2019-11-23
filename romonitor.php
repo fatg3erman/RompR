@@ -192,37 +192,23 @@ function close_mpd() {
 }
 
 function lastfm_update_nowplaying($currentsong) {
-    global $prefs, $my_piece_of_cheese;
-    if (!$prefs['scrobbling']) {
-        return;
-    }
-    logger::log('ROMONITOR', 'Updating NowPlaying on Last.FM');
     $options = array(
         'track' => $currentsong['title'],
         'artist' => $currentsong['artist'],
         'album' => $currentsong['album'],
-        'method' => 'track.updateNowPlaying',
-        'sk' => $prefs['lastfm_session_key'],
-        'api_key' => $my_piece_of_cheese['k']
+        'method' => 'track.updateNowPlaying'
     );
     lastFMSignedRequest($options);
 }
 
 
 function scrobble_to_lastfm($currentsong) {
-    global $prefs, $my_piece_of_cheese;
-    if (!$prefs['scrobbling']) {
-        return;
-    }
-    logger::log('ROMONITOR', 'Scrobbling to Last.FM');
     $options = array(
         'timestamp' => time() - $currentsong['duration'],
         'track' => $currentsong['title'],
         'artist' => $currentsong['artist'],
         'album' => $currentsong['album'],
-        'method' => 'track.scrobble',
-        'sk' => $prefs['lastfm_session_key'],
-        'api_key' => $my_piece_of_cheese['k']
+        'method' => 'track.scrobble'
     );
     if ($currentsong['albumartist'] && strtolower($currentsong['albumartist']) != strtolower($currentsong['artist'])) {
         $options['albumArtist'] = $currentsong['albumartist'];
@@ -232,7 +218,14 @@ function scrobble_to_lastfm($currentsong) {
 
 function lastFMSignedRequest($options) {
     global $prefs, $my_piece_of_cheese;
-    $opts = array();
+    if (!$prefs['scrobbling']) {
+        return;
+    }
+    logger::log('ROMONITOR', 'Last.FM -',$options['method']);
+    $opts = array(        
+        'sk' => $prefs['lastfm_session_key'],
+        'api_key' => $my_piece_of_cheese['k']
+    );
     foreach ($options as $k => $v) {
         $opts[$k] = mb_convert_encoding($v, "UTF-8", "auto");
         logger::trace('ROMONITOR', $k,'=',$opts[$k]);
