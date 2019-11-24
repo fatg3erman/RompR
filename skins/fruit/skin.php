@@ -190,6 +190,7 @@ print '<i title="'.get_int_text('button_forward').'" id="forwardbutton" class="i
 </div>
 
 </div>
+</div>
 
 <div id="bottompage" class="clearfix">
 

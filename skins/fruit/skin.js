@@ -272,6 +272,7 @@ var layoutProcessor = function() {
             infobar.biggerize();
             browser.rePoint();
             $('.topdropmenu').fanoogleMenus();
+            setBottomPanelWidths();
         },
 
         displayCollectionInsert: function(details) {
