@@ -379,23 +379,23 @@ class albumImage extends baseAlbumImage {
             logger::log("ALBUMIMAGE", "  Creating file ".$image);
             switch ($size) {
                 case 'small':
-                    $imagehandler->resizeToWidth(100);
-                    $imagehandler->save($image, 75);
+                    $imagehandler->resizeToWidth(IMAGESIZE_SMALL);
+                    $imagehandler->save($image, IMAGEQUALITY_SMALL);
                     break;
 
                 case 'smallish':
-                    $imagehandler->resizeToWidth(260);
-                    $imagehandler->save($image, 70);
+                    $imagehandler->resizeToWidth(IMAGESIZE_SMALLISH);
+                    $imagehandler->save($image, IMAGEQUALITY_SMALLISH);
                     break;
 
                 case 'medium':
-                    $imagehandler->resizeToWidth(360);
-                    $imagehandler->save($image, 70);
+                    $imagehandler->resizeToWidth(IMAGESIZE_MEDIUM);
+                    $imagehandler->save($image, IMAGEQUALITY_MEDIUM);
                     break;
 
                 case 'asdownloaded':
                     $imagehandler->reset();
-                    $imagehandler->save($image, 90);
+                    $imagehandler->save($image, IMAGEQUALITY_ASDOWNLOADED);
                     break;
             }
         }
@@ -613,22 +613,22 @@ class imageMagickImage {
         header('Content-type: '.$content_type);
         switch ($size) {
             case 'small':
-                $this->resizeToWidth(100);
-                return $this->save($outputfile, 75);
+                $this->resizeToWidth(IMAGESIZE_SMALL);
+                return $this->save($outputfile, IMAGEQUALITY_SMALL);
                 break;
 
             case 'smallish':
-                $this->resizeToWidth(250);
-                return $this->save($outputfile, 70);
+                $this->resizeToWidth(IMAGESIZE_SMALLISH);
+                return $this->save($outputfile, IMAGEQUALITY_SMALLISH);
                 break;
 
             case 'medium':
-                $this->resizeToWidth(360);
-                return $this->save($outputfile, 70);
+                $this->resizeToWidth(IMAGESIZE_MEDIUM);
+                return $this->save($outputfile, IMAGEQUALITY_MEDIUM);
                 break;
 
             default:
-                return $this->save($outputfile, 90);
+                return $this->save($outputfile, IMAGEQUALITY_ASDOWNLOADED);
                 break;
 
         }
@@ -854,22 +854,22 @@ class gdImage {
         }
         switch ($size) {
             case 'small':
-                $this->resizeToWidth(100);
-                $this->save(null, 75);
+                $this->resizeToWidth(IMAGESIZE_SMALL);
+                $this->save(null, IMAGEQUALITY_SMALL);
                 break;
 
             case 'smallish':
-                $this->resizeToWidth(250);
-                $this->save(null, 70);
+                $this->resizeToWidth(IMAGESIZE_SMALLISH);
+                $this->save(null, IMAGEQUALITY_SMALLISH);
                 break;
 
             case 'medium':
-                $this->resizeToWidth(360);
-                $this->save(null, 70);
+                $this->resizeToWidth(IMAGESIZE_MEDIUM);
+                $this->save(null, IMAGEQUALITY_MEDIUM);
                 break;
 
             default:
-                $this->save(null, 90);
+                $this->save(null, IMAGEQUALITY_ASDOWNLOADED);
                 break;
         }
         return true;

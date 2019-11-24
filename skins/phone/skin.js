@@ -121,12 +121,17 @@ jQuery.fn.saveScrollPos = function() {
     this.prepend('<input type="hidden" name="restorescrollpos" value="'+this.scrollTop()+'" />');
     this.scrollTo(0);
     this.css('overflow-y', 'hidden');
+    // Backmenu with position of sticky: if we don't reset that the parent backmenu sits above the child one
+    // meaning we can't go back in appropriate steps. Note '.children' is essential - '.find' will reset the css
+    // for all the submenus too
+    this.children('.backmenu').css({position: 'static'});
 }
 
 jQuery.fn.restoreScrollPos = function() {
     var a = this.find('input[name="restorescrollpos"]');
     this.css('overflow-y', 'scroll');
     this.scrollTop(a.val());
+    this.children('.backmenu').css({position: ''});
     a.remove();
 }
 

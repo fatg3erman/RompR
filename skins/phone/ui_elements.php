@@ -143,7 +143,7 @@ function trackControlHeader($why, $what, $who, $dets) {
         $images = $albumimage->get_images();
         $html .= '<div class="album-menu-header"><img class="album_menu_image" asrc="'.$images['asdownloaded'].'" /></div>';
         if ($why != '') {
-            $html .= '<div class="textcentre ninesix playlistrow2">'.get_int_text('label_play_options').'</div>';
+            // $html .= '<div class="textcentre ninesix playlistrow2">'.get_int_text('label_play_options').'</div>';
             $html .= '<div class="containerbox wrap album-play-controls">';
             if ($det['AlbumUri']) {
                 $albumuri = rawurlencode($det['AlbumUri']);

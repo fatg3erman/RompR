@@ -5,6 +5,10 @@ html, body.phone .dropmenu {
     background-attachment:fixed;
 }
 
+.backmenu {
+    background-color: rgba(60,0,200,0.7) !important;
+}
+
 body.phone .dropmenu>div {
     background-color:rgba(0,0,0,0.4);
     background-clip:border-box;

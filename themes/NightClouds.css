@@ -40,6 +40,10 @@ body.phone .dropmenu>div {
     background-color:rgba(0,0,0,0.6);
 }
 
+.backmenu {
+    background-color: rgba(0,0,0,0.6);
+}
+
 #artistbio
 {
     padding:4px;

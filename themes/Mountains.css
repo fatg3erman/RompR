@@ -11,6 +11,10 @@ html, body.phone .dropmenu {
     background-attachment:fixed;
 }
 
+.backmenu {
+    background-color: rgba(0,0,0,0.5) !important;
+}
+
 body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input {
     color:#eeeeee;
 }

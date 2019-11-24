@@ -16,6 +16,10 @@ html, body.phone .dropmenu {
   min-height: 100%;
 }
 
+.backmenu {
+    background-color: rgba(0,0,0,0.6);
+}
+
 body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,textarea,input
 {
     color:#dddddd;

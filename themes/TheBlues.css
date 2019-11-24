@@ -1,6 +1,10 @@
 html, body.phone .dropmenu {
-    color:#000000;
+    color:#eeeeee;
     background-color:#171760;
+}
+
+.backmenu {
+    background-color: #171760 !important;
 }
 
 body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input

@@ -367,3 +367,8 @@ tr.clickaddtrack:hover
 {
     background-color:rgba(0,0,0,0.3);
 }
+
+.backmenu {
+    background-color: #cccccc;
+}
+

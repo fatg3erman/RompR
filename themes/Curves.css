@@ -300,6 +300,10 @@ body.mobile .configtitle
     margin-right:auto;
 }
 
+.backmenu {
+    background-color: #999999;
+}
+
 /*
 =====================================================================
 = Info Panel - General

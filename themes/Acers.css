@@ -269,6 +269,10 @@ tr.clickaddtrack:hover {
     border:1px solid #666666;
 }
 
+.backmenu {
+    background-color:rgba(30,30,30,0.9);
+}
+
 /*
 =====================================================================
 = Dropdown Menus

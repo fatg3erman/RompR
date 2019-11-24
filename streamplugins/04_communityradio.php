@@ -201,6 +201,7 @@ class commradioplugin {
             'drama'
         );
         sort($genres);
+        directoryControlHeader('commradio_'.md5('getgenres'), 'Genres');
         foreach ($genres as $g) {
             printRadioDirectory(array('URL' => 'json/tags/'.$g, 'text' => $g), false, 'commradio');
             print '</div>';

@@ -65,6 +65,15 @@ if (!defined('IMAGETYPE_SVG')) {
     define('IMAGETYPE_SVG', 'image/svg+xml');
 }
 
+define('IMAGESIZE_SMALL', 100);
+define('IMAGESIZE_SMALLISH', 250);
+define('IMAGESIZE_MEDIUM', 400);
+
+define('IMAGEQUALITY_SMALL', 75);
+define('IMAGEQUALITY_SMALLISH', 70);
+define('IMAGEQUALITY_MEDIUM', 70);
+define('IMAGEQUALITY_ASDOWNLOADED', 90);
+
 define('ORIENTATION_PORTRAIT', 0);
 define('ORIENTATION_LANDSCAPE', 1);
 

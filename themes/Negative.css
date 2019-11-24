@@ -64,6 +64,10 @@ body.mobile, body.phone .dropmenu {
     background-image: linear-gradient(#eeeeee, #999999);
 }
 
+.backmenu {
+    background-color: #eeeeee;
+}
+
 body.desktop #infobar
 {
     background-image: linear-gradient(#eeeeee, #dddddd);

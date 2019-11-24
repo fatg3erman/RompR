@@ -12,6 +12,10 @@
     }
 }
 
+.backmenu {
+    background-color: rgba(0,0,0,0.7) !important;
+}
+
 @media screen and (orientation: portrait) {
     html, body.phone .dropmenu {
         background-image:url("themes/plasma_portrait.jpg");

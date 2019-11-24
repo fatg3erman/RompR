@@ -6,6 +6,10 @@ html, body.phone .dropmenu
     background-attachment:fixed;
 }
 
+.backmenu {
+    background-color: rgba(150,40,23,0.8) !important;
+}
+
 body.phone .dropmenu>div.playable,
 body.phone .dropmenu>div.menuitem,
 body.phone #pluginplaylistholder .menuitem.clickicon,
