@@ -175,7 +175,7 @@ input[type="text"]:focus {
 
 .playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
     text-shadow: 0 0 15px #ffffff;
-    color:#ffffff;
+    color:red;
     cursor:pointer;
 }
 

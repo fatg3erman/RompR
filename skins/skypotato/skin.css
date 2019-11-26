@@ -697,6 +697,10 @@ div.rightmenu
     overflow:hidden;
 }
 
+#fruitbat .collectionitem.tagholder_wide {
+    margin-left:4px;
+}
+
 .minwidthed2.expand>.tagh.albumthing, .dropmenu.minwidthed2>.tagh.albumthing, .collectionitem.tagholder_wide>.tagh.albumthing {
     margin-bottom: 1em;
     font-size: 140%;
