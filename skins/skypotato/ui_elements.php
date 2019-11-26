@@ -34,7 +34,7 @@ function albumTrack($data) {
         print '>'.$data['trackno'].'</div>';
     }
 
-    print domainIcon($d, 'collecionicon');
+    print domainIcon($d, 'collectionicon');
 
     // Track Title, Artist, and Rating
     if ((string) $data['title'] == "") $data['title'] = urldecode($data['uri']);
