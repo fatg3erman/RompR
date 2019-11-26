@@ -700,7 +700,7 @@ var layoutProcessor = function() {
                 element.parent().addClass('tagholder_wide dropshadow');
                 element.parent().find('.helpfulalbum.expand').removeClass('expand').addClass('fixed');
                 if (x.length == 0) {
-                    element.parent().find('.containerbox.wrap').append($('<div>', {id: name, class: 'notfilled minwidthed2 expand'}));
+                    element.parent().find('.containerbox.openmenu').append($('<div>', {id: name, class: 'notfilled minwidthed2 expand'}));
                 }
             } else if (element.hasClass('directory')) {
                 var n = element.attr('name');

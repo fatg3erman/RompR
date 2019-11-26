@@ -697,6 +697,11 @@ div.rightmenu
     overflow:hidden;
 }
 
+.minwidthed2.expand>.tagh.albumthing, .dropmenu.minwidthed2>.tagh.albumthing, .collectionitem.tagholder_wide>.tagh.albumthing {
+    margin-bottom: 1em;
+    font-size: 140%;
+}
+
 .collectionitem.fixed.selecotron.tagholder_wide>.radiochannel+.minwidthed2:before
 {
     content:"";

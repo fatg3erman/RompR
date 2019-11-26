@@ -100,7 +100,12 @@ function albumHeader($obj) {
         if (array_key_exists('plpath', $obj)) {
             $h .= '<input type="hidden" name="dirpath" value="'.$obj['plpath'].'" />';
         }
-        $h .= '<div class="containerbox wrap openmenu menu '.$obj['class'].'" name="'.$obj['id'].'">';
+        if ($obj['class'] == 'podcast') {
+            $c = ' wrap';
+        } else {
+            $c = '';
+        }
+        $h .= '<div class="containerbox'.$c.' openmenu menu '.$obj['class'].'" name="'.$obj['id'].'">';
     }
 
     $h .= '<div class="helpfulalbum expand">';
