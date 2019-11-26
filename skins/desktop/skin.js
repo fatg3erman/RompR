@@ -443,11 +443,6 @@ var layoutProcessor = function() {
             });
 
             shortcuts.load();
-            $("#collectionsearcher input").on('keyup',  function(event) {
-                if (event.keyCode == 13) {
-                    player.controller.search('search');
-                }
-            } );
             setControlClicks();
             $('.choose_albumlist').on('click', function(){layoutProcessor.sourceControl('albumlist')});
             $('.choose_searcher').on('click', function(){layoutProcessor.sourceControl('searcher')});
