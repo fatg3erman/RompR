@@ -403,12 +403,8 @@ var layoutProcessor = function() {
         },
 
         postAlbumActions: function(menu) {
-            if (menu && menu.is(':visible')) {
-                var i = menu.find('.album_menu_image');
-                if (i.length > 0) {
-                    debug.log("UI", "Image has source",i.attr('src'),'asrc',i.attr('asrc'));
-                    i.attr('src', i.attr('asrc'));
-                }
+            if (menu) {
+                revealImage(menu);
             }
         },
 
@@ -662,6 +658,7 @@ var layoutProcessor = function() {
         },
 
         insertAlbum: function(v) {
+            debug.log('PHONE', 'Insert Album', v);
             var albumindex = v.id;
             var displayer = $('#'+v.why+'album'+albumindex);
             displayer.html(v.tracklist);
