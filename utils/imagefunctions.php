@@ -549,6 +549,13 @@ class imageMagickImage {
 
     public function checkImage() {
         logger::log("IMAGEMAGICK", "  Check Image type is ".$this->image_type);
+        $c = $this->convert_path."identify \"".$this->cmdline_file."\" 2>&1";
+        $o = array();
+        $r = exec($c, $o);
+        if (preg_match('/no decode delegate/', $r)) {
+            logger::log('IMAGEMAGICK', 'Unsupported image');
+            return false;
+        }
         return $this->image_type;
     }
 

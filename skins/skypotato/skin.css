@@ -47,6 +47,10 @@
     line-height:110%;
 }
 
+div.collectionpanel>div.configtitle.textcentre {
+    font-size:140%;
+}
+
 #albumpicture {
     width: auto;
 }

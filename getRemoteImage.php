@@ -31,7 +31,11 @@ if (!$url) {
 function output_file($outfile) {
 	$imagehandler = new imageHandler($outfile);
 	$size = array_key_exists('rompr_resize_size', $_REQUEST) ? $_REQUEST['rompr_resize_size'] : 'asdownloaded';
-	$imagehandler->outputResizedFile($size);
+	if ($imagehandler->checkImage()) {
+		$imagehandler->outputResizedFile($size);
+	} else {
+		send_backup_image();
+	}
 }
 
 function download_image_file($url, $outfile) {
