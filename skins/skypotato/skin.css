@@ -51,6 +51,10 @@
     width: auto;
 }
 
+.album-play-controls {
+    margin-bottom: 1em;
+}
+
 .timebox {
     min-width: 4em;
     font-size:9pt;
@@ -702,7 +706,7 @@ div.rightmenu
 }
 
 .minwidthed2.expand>.tagh.albumthing, .dropmenu.minwidthed2>.tagh.albumthing, .collectionitem.tagholder_wide>.tagh.albumthing {
-    margin-bottom: 1em;
+    margin-bottom: 0.75em;
     font-size: 140%;
 }
 
