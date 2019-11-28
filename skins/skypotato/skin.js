@@ -878,18 +878,25 @@ var layoutProcessor = function() {
         // Optional Additions
 
         findAlbumDisplayer: function(key) {
-            return $('.containerbox.wrap[name="'+key+'"]').parent();
+            return $('.containerbox[name="'+key+'"]').parent();
         },
 
         findArtistDisplayer: function(key) {
             return $('div.menu[name="'+key+'"]');
         },
 
+        albumBrowsed: function(menutoopen, data) {
+            var titlebit = $('#'+menutoopen).find('.tagh.albumthing').detach();
+            $("#"+menutoopen).html(data);
+            $("#"+menutoopen).prepend(titlebit);
+        },
+
         insertAlbum: function(v) {
             var albumindex = v.id;
             $('#aalbum'+albumindex).html(v.tracklist);
             var dropdown = $('#'+v.why+'album'+albumindex).is(':visible');
-            uiHelper.findAlbumDisplayer(v.why+'album'+albumindex).remove();
+            var titlebit = layoutProcessor.findAlbumDisplayer().find('.tagh.albumthing').detach();
+            layoutProcessor.findAlbumDisplayer(v.why+'album'+albumindex).remove();
             switch (v.type) {
                 case 'insertAfter':
                     debug.log("Insert After",v.where);
@@ -902,6 +909,7 @@ var layoutProcessor = function() {
                     break;
             }
             if (dropdown) {
+                $('#'+v.why+'album'+albumindex).prepend(titlebit);
                 uiHelper.findAlbumDisplayer(v.why+'album'+albumindex).find('.menu').trigger('click');
                 infobar.markCurrentTrack();
             }

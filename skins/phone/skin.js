@@ -1,3 +1,10 @@
+function revealImage(self) {
+    var i = self.find('.album_menu_image');
+    if (i.length > 0) {
+        i.attr('src', i.attr('asrc'));
+    }
+}
+
 jQuery.fn.menuReveal = function(callback) {
     debug.log("UI", "Revealing",$(this).attr('id'));
     var self = this;
@@ -10,10 +17,7 @@ jQuery.fn.menuReveal = function(callback) {
     } else {
         this.findParentScroller().saveScrollPos();
         this.show(0, function() {
-            var i = self.find('.album_menu_image');
-            if (i.length > 0) {
-                i.attr('src', i.attr('asrc'));
-            }
+            revealImage(self);
             if (callback) {
                 callback();
             }
@@ -703,6 +707,12 @@ var layoutProcessor = function() {
                     break;
 
             }
+        },
+
+        albumBrowsed: function(menutoopen, data) {
+            var self = $('#'+menutoopen);
+            self.html(data);
+            revealImage(self);
         },
 
         fixupArtistDiv: function(jq, name) {

@@ -343,6 +343,14 @@ var uiHelper = function() {
             }
         },
 
+        albumBrowsed: function(menutoopen, data) {
+            try {
+                return layoutProcessor.albumBrowsed(menutoopen, data);
+            } catch(err) {
+                $("#"+menutoopen).html(data);
+            }
+        },
+
         setupPersonalRadio: function(key) {
             try {
                 return layoutProcessor.setupPersonalRadio(key);

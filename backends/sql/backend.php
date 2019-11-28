@@ -1178,13 +1178,17 @@ function do_tracks_from_database($why, $what, $whom, $fragment = false) {
 		}
 		$arr['numtracks'] = $numtracks;
 		$tracktype = albumTrack($arr);
+		if ($tracktype == 2 && $why == 'b') {
+			// albumTrack will return 2 if this is an :album: link - we add an expandalbum
+			// input so the UI will populate the whole album, since spotify oftne only returns
+			// the odd track. Obviously only do this for search results
+			logger::mark("GET TRACKS", "Album",$who," - adding album link to get all tracks");
+			print '<input type="hidden" class="expandalbum"/>';
+		}
 	}
 	if ($tracktype == 1) {
 		logger::mark("GET TRACKS", "Album",$who,"has no tracks, just an artist link");
 		print '<input type="hidden" class="expandartist"/>';
-	} else if ($tracktype == 2) {
-		logger::mark("GET TRACKS", "Album",$who,"has no tracks, just an album link");
-		print '<input type="hidden" class="expandalbum"/>';
 	}
 	if ($fragment) {
 		$s = ob_get_contents();

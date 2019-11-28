@@ -306,7 +306,7 @@ function getAllTracksForAlbum(element, menutoopen) {
         debug.log("CLICKFUNCTIONS", "Got data. Inserting it into ",menutoopen);
         element.stopSpinner();
         infobar.markCurrentTrack();
-        $("#"+menutoopen).html(data);
+        uiHelper.albumBrowsed(menutoopen, data);
         collectionHelper.scootTheAlbums($("#"+menutoopen));
     })
     .fail(function(data) {
