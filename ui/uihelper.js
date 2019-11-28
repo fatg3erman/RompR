@@ -325,6 +325,7 @@ var uiHelper = function() {
             try {
                 return layoutProcessor.removeAlbum(key);
             } catch (err) {
+                debug.log('UIHELPER', 'Using default function');
                 $('#'+key).remove();
                 uiHelper.findAlbumDisplayer(key).remove();
                 uiHelper.findAlbumParent(key).remove();

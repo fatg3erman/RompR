@@ -678,16 +678,23 @@ var layoutProcessor = function() {
         },
 
         removeAlbum: function(key) {
-            $('#'+key).findParentScroller().restoreScrollPos();
-            $('#'+key).remove();
+            if ($('#'+key).length > 0) {
+                debug.log('PHONE', 'It exists...');
+                $('#'+key).findParentScroller().restoreScrollPos();
+                $('#'+key).remove();
+            }
+            debug.log('PHONE', 'Doing this bit');
             layoutProcessor.findAlbumDisplayer(key).remove();
+            debug.log('PHONE', 'Done that bit');
         },
 
         removeArtist: function(key) {
             switch (prefs.sortcollectionby) {
                 case 'artist':
-                    $('#'+key).findParentScroller().restoreScrollPos();
-                    $('#'+key).remove();
+                    if ($('#'+key).length > 0) {
+                        $('#'+key).findParentScroller().restoreScrollPos();
+                        $('#'+key).remove();
+                    }
                     layoutProcessor.findArtistDisplayer(key).remove();
                     break;
 
