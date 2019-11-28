@@ -1,8 +1,12 @@
-function revealImage(self) {
-    var i = self.find('.album_menu_image');
-    if (i.length > 0) {
-        i.attr('src', i.attr('asrc'));
-    }
+jQuery.fn.revealImage = function() {
+    // We don't return album images with the src attribute set
+    // because if we insert them into a div that is not visible, mobile Safari
+    // doesn't get the size right. So we set an 'asrc' attribute and set the src
+    // attribute when the image is visible.
+    $(this).each(function() {
+        $(this).attr('src', $(this).attr('asrc'));
+    });
+    return this;
 }
 
 jQuery.fn.menuReveal = function(callback) {
@@ -17,7 +21,7 @@ jQuery.fn.menuReveal = function(callback) {
     } else {
         this.findParentScroller().saveScrollPos();
         this.show(0, function() {
-            revealImage(self);
+            layoutProcessor.postAlbumActions();
             if (callback) {
                 callback();
             }
@@ -403,9 +407,7 @@ var layoutProcessor = function() {
         },
 
         postAlbumActions: function(menu) {
-            if (menu) {
-                revealImage(menu);
-            }
+            $('.album_menu_image:visible').revealImage();
         },
 
         afterHistory: function() {
@@ -526,6 +528,7 @@ var layoutProcessor = function() {
             $('#'+source).removeClass('invisible');
             prefs.save({chooser: source});
             layoutProcessor.adjustLayout();
+            layoutProcessor.postAlbumActions();
         },
 
         adjustLayout: function() {
@@ -680,13 +683,10 @@ var layoutProcessor = function() {
 
         removeAlbum: function(key) {
             if ($('#'+key).length > 0) {
-                debug.log('PHONE', 'It exists...');
                 $('#'+key).findParentScroller().restoreScrollPos();
                 $('#'+key).remove();
             }
-            debug.log('PHONE', 'Doing this bit');
             layoutProcessor.findAlbumDisplayer(key).remove();
-            debug.log('PHONE', 'Done that bit');
         },
 
         removeArtist: function(key) {
@@ -707,9 +707,8 @@ var layoutProcessor = function() {
         },
 
         albumBrowsed: function(menutoopen, data) {
-            var self = $('#'+menutoopen);
-            self.html(data);
-            revealImage(self);
+            $('#'+menutoopen).html(data);
+            layoutProcessor.postAlbumActions();
         },
 
         fixupArtistDiv: function(jq, name) {
