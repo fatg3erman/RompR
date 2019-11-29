@@ -759,7 +759,9 @@ var layoutProcessor = function() {
 
         setupPersonalRadio: function() {
             $('#pluginplaylistslist .menuitem').not('.dropdown').not('.spacer').wrap('<div class="collectionitem fixed"></div>');
-            $('#pluginplaylistslist .combobox-entry').parent().parent().parent().parent().addClass('brick_wide helpfulalbum');
+            $('#pluginplaylistslist .combobox-entry').parent().parent().parent().addClass('containerbox vertical helpfulalbum');
+            $('#pluginplaylistslist .combobox-entry').parent().parent().removeClass('expand dropdown-container containerbox').addClass('fixed').css({width: '95%'});
+            $('#pluginplaylistslist input[type="text"]').parent('.expand.dropdown-holder').css({width: '95%'});
             $('#pluginplaylistslist .collectionitem').not('.brick_wide').children('.menuitem.containerbox').addClass('vertical helpfulalbum');
             $('#pluginplaylistslist div[class$="-stars"]').removeClass('svg-square').addClass('rating-icon-big').css('height', '32px');
         },

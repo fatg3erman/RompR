@@ -10,7 +10,7 @@ The use of alt-SpongWare is entirely according to the following conditions:
     modified versions or provide it under any license other than this one, nor may you 
     distribute or make available modifications to any of the component files.
  4) You may not charge a fee or ask for any kind of remuneration nor accept any form of 
-     donation or gift in regards to distributing this software
+    donation or gift in regards to distributing this software
  5) There is no rule 6
  7) Rule 7 is irrelevant
  8) Adherence to 'coding standards' is to be regarded with suspicion.
