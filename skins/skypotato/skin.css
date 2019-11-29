@@ -286,6 +286,10 @@ div[id^=zalbum] .podcastresume>.fixed
     margin-left:0.5em;
 }
 
+button.iconbutton {
+    padding-right:0px;
+    margin-right:0px;
+}
 
 .clicktext {
     font-size:7pt;
@@ -538,8 +542,8 @@ div.rightmenu
 .podicon {
     padding:0px;
     margin:2px;
-    height:16px;
-    width:16px;
+    height:20px;
+    width:20px;
     vertical-align:middle;
 }
 

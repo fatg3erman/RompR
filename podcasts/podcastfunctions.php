@@ -732,8 +732,6 @@ function doPodcast($y, $do_searchbox) {
         print '</select>';
         print '</div></div>';
 
-        print '</div>';
-
         print '<div class="containerbox fixed bumpad styledinputs">';
         print '<input type="checkbox" class="topcheck" id="podkd"';
         if ($y->KeepDownloaded == 1) {
@@ -743,14 +741,6 @@ function doPodcast($y, $do_searchbox) {
             '" name="KeepDownloaded" onclick="podcasts.changeOption(event)">'.
             get_int_text("podcast_keep_downloaded").'</label></div>';
 
-        // print '<div class="containerbox fixed bumpad styledinputs">';
-        // print '<input type="checkbox" class="topcheck podautodown" id="podad"';
-        // if ($y->AutoDownload == 1) {
-        //     print ' checked';
-        // }
-        // print '><label for="podad" name="AutoDownload" onclick="podcasts.changeOption(event)">'.
-        //     get_int_text("podcast_auto_download").'</label></div>';
-
         print '<div class="containerbox fixed bumpad styledinputs">';
         print '<input type="checkbox" class="topcheck" id="podhd"';
         if ($y->HideDescriptions == 1) {
@@ -758,6 +748,8 @@ function doPodcast($y, $do_searchbox) {
         }
         print '><label for="podhd" name="HideDescriptions" onclick="podcasts.changeOption(event)">'.
             get_int_text("podcast_hidedescriptions").'</label></div>';
+
+        print '</div>';
 
         print '</div>';
     }
