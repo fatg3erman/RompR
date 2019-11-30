@@ -143,6 +143,8 @@ function onSourcesClicked(event, clickedElement) {
         metaHandlers.fromUiElement.removeAlbumFromDb(clickedElement);
     } else if (clickedElement.hasClass("clickalbummenu")) {
         makeAlbumMenu(event, clickedElement);
+    } else if (clickedElement.hasClass("addtollviabrowse")) {
+        browseAndAddToListenLater(clickedElement.attr('spalbumid'));
     } else if (clickedElement.hasClass("amendalbum")) {
         amendAlbumDetails(event, clickedElement);
     } else if (clickedElement.hasClass("setasaudiobook") ||
@@ -600,6 +602,12 @@ function makeAlbumMenu(e, element) {
             name: $(element).attr('name')
         }).html(language.gettext('label_move_to_collection')));
     }
+    if ($(element).hasClass('clickaddtollviabrowse')) {
+        d.append($('<div>', {
+            class: 'backhi clickable menuitem addtollviabrowse',
+            spalbumid: $(element).attr('spalbumid')
+        }).html(language.gettext('label_addtolistenlater')));
+    }
     if ($(element).hasClass('clickalbumoptions')) {
         var cl = 'backhi clickable menuitem clicktrack fakedouble '
         d.append($('<div>', {
@@ -711,4 +719,17 @@ function actuallyAmendAlbumDetails(albumindex) {
         }
     );
     return true;
+}
+
+function browseAndAddToListenLater(albumid) {
+    spotify.album.getInfo(
+        albumid,
+        function(data) {
+            debug.log('ADDLL', 'Success', data);
+            metaHandlers.addToListenLater(data);
+        },
+        function(data) {
+            debug.error('ADDLL', 'Failed');
+        }, false
+    );
 }

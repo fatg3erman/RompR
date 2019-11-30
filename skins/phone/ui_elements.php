@@ -143,30 +143,70 @@ function trackControlHeader($why, $what, $who, $dets) {
         $images = $albumimage->get_images();
         $html .= '<div class="album-menu-header"><img class="album_menu_image" asrc="'.$images['asdownloaded'].'" /></div>';
         if ($why != '') {
-            // $html .= '<div class="textcentre ninesix playlistrow2">'.get_int_text('label_play_options').'</div>';
             $html .= '<div class="containerbox wrap album-play-controls">';
+            // if ($det['AlbumUri']) {
+            //     $albumuri = rawurlencode($det['AlbumUri']);
+            //     if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
+            //         $html .= '<div class="icon-no-response-playbutton smallicon expand playable clickcue noselect" name="'.$albumuri.'"></div>';
+            //     } else {
+            //         $html .= '<div class="icon-no-response-playbutton smallicon expand clicktrack playable noselect" name="'.$albumuri.'"></div>';
+            //         $html .= '<div class="'.$play_col_button.' smallicon expand clickalbum playable noselect" name="'.$why.'album'.$who.'"></div>';
+            //     }
+            // } else {
+            //     $html .= '<div class="icon-no-response-playbutton smallicon expand clickalbum playable noselect" name="'.$why.'album'.$who.'"></div>';
+            // }
+            // $html .= '<div class="icon-single-star smallicon expand clickicon clickalbum playable noselect" name="ralbum'.$who.'"></div>';
+            // $html .= '<div class="icon-tags smallicon expand clickicon clickalbum playable noselect" name="talbum'.$who.'"></div>';
+            // $html .= '<div class="icon-ratandtag smallicon expand clickicon clickalbum playable noselect" name="yalbum'.$who.'"></div>';
+            // $html .= '<div class="icon-ratortag smallicon expand clickicon clickalbum playable noselect" name="ualbum'.$who.'"></div>';
+            // if ($why != 'b') {
+            //     if ($iab == 0) {
+            //         $html .= '<div class="icon-audiobook smallicon expand clickable clickicon noselect setasaudiobook" name="'.$who.'"></div>';
+            //     } else if ($iab == 2) {
+            //         $html .= '<div class="icon-music smallicon expand clickable clickicon noselect setasmusiccollection" name="'.$who.'"></div>';
+            //     }
+            // }
+            // if ($why == 'b' && $det['AlbumUri'] && preg_match('/spotify:album:(.*)$/', $det['AlbumUri'], $matches)) {
+            //     $html .= '<div class="icon-headphones smallicon expand clickable clickicon noselect addtollviabrowse tooltip" spalbumid="'.$matches[1].'" tooltip="'.get_int_text('label_addtolistenlater').'"></div>';
+            // }
+
             if ($det['AlbumUri']) {
                 $albumuri = rawurlencode($det['AlbumUri']);
                 if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
-                    $html .= '<div class="icon-no-response-playbutton smallicon expand playable clickcue noselect" name="'.$albumuri.'"></div>';
+                    $html .= '<div class="icon-no-response-playbutton smallicon expand playable clickcue noselect tooltip" name="'.$albumuri.'" tooltip="'.get_int_text('label_play_whole_album').'"></div>';
                 } else {
-                    $html .= '<div class="icon-no-response-playbutton smallicon expand clicktrack playable noselect" name="'.$albumuri.'"></div>';
-                    $html .= '<div class="'.$play_col_button.' smallicon expand clickalbum playable noselect" name="'.$why.'album'.$who.'"></div>';
+                    $html .= '<div class="icon-no-response-playbutton smallicon expand clicktrack playable noselect tooltip" name="'.$albumuri.'" tooltip="'.get_int_text('label_play_whole_album').'"></div>';
+                    $html .= '<div class="'.$play_col_button.' smallicon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" tooltip="'.get_int_text('label_from_collection').'"></div>';
                 }
             } else {
-                $html .= '<div class="icon-no-response-playbutton smallicon expand clickalbum playable noselect" name="'.$why.'album'.$who.'"></div>';
+                $html .= '<div class="icon-no-response-playbutton smallicon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" tooltip="'.get_int_text('label_play_whole_album').'"></div>';
             }
-            $html .= '<div class="icon-single-star smallicon expand clickicon clickalbum playable noselect" name="ralbum'.$who.'"></div>';
-            $html .= '<div class="icon-tags smallicon expand clickicon clickalbum playable noselect" name="talbum'.$who.'"></div>';
-            $html .= '<div class="icon-ratandtag smallicon expand clickicon clickalbum playable noselect" name="yalbum'.$who.'"></div>';
-            $html .= '<div class="icon-ratortag smallicon expand clickicon clickalbum playable noselect" name="ualbum'.$who.'"></div>';
-            if ($iab == 0) {
-                $html .= '<div class="icon-audiobook smallicon expand clickable clickicon noselect setasaudiobook" name="'.$who.'"></div>';
-            } else if ($iab == 2) {
-                $html .= '<div class="icon-music smallicon expand clickable clickicon noselect setasmusiccollection" name="'.$who.'"></div>';
+            $html .= '<div class="icon-single-star smallicon expand clickicon clickalbum playable noselect tooltip" name="ralbum'.$who.'" tooltip="'.get_int_text('label_with_ratings').'"></div>';
+            $html .= '<div class="icon-tags smallicon expand clickicon clickalbum playable noselect tooltip" name="talbum'.$who.'" tooltip="'.get_int_text('label_with_tags').'"></div>';
+            $html .= '<div class="icon-ratandtag smallicon expand clickicon clickalbum playable noselect tooltip" name="yalbum'.$who.'" tooltip="'.get_int_text('label_with_tagandrat').'"></div>';
+            $html .= '<div class="icon-ratortag smallicon expand clickicon clickalbum playable noselect tooltip" name="ualbum'.$who.'" tooltip="'.get_int_text('label_with_tagorrat').'"></div>';
+            $classes = array();
+            if ($why != 'b') {
+                if (num_collection_tracks($who) == 0) {
+                    $classes[] = 'clickamendalbum clickremovealbum';
+                }
+                if ($iab == 0) {
+                    $classes[] = 'clicksetasaudiobook';
+                } else if ($iab == 2) {
+                    $classes[] = 'clicksetasmusiccollection';
+                }
             }
+            if ($why == 'b' && $det['AlbumUri'] && preg_match('/spotify:album:(.*)$/', $det['AlbumUri'], $matches)) {
+                $classes[] = 'clickaddtollviabrowse';
+                $spalbumid = $matches[1];
+            } else {
+                $spalbumid = '';
+            }
+            if (count($classes) > 0) {
+                $html .= '<div class="icon-menu smallicon expand clickable clickicon clickalbummenu noselect '.implode(' ',$classes).'" name="'.$who.'" why="'.$why.'" spalbumid="'.$spalbumid.'"></div>';
+            }
+
             $html .= '</div>';
-            // $html .= '<div class="textcentre ninesix playlistrow2">'.ucfirst(get_int_text('label_tracks')).'</div>';
         }
     }
     print $html;

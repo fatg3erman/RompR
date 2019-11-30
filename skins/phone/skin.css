@@ -218,6 +218,12 @@ div.topdropmenu {
     right: 0;
 }
 
+div.topdropmenu.albumbitsmenu {
+    position: relative;
+    top: 24px;
+    left: -200px !important;
+}
+
 .mainpane {
     position: relative;
     top: 0;

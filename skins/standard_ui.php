@@ -130,24 +130,32 @@ function albumHeader($obj) {
     $h .= artistNameHtml($obj);
 
     $h .= '</div>';
-    if ($obj['why'] == "a" || $obj['why'] == "z") {
+    if ($obj['why'] == "a" || $obj['why'] == "z" || $obj['why'] == 'b') {
         $id = preg_replace('/^.album/','',$obj['id']);
         $iab = album_is_audiobook($id);
-        $classes = array();;
-        if (num_collection_tracks($id) == 0) {
-            $classes[] = 'clickamendalbum clickremovealbum';
-        }
-        if ($iab == 0) {
-            $classes[] = 'clicksetasaudiobook';
-        } else if ($iab == 2) {
-            $classes[] = 'clicksetasmusiccollection';
+        $classes = array();
+        if ($obj['why'] != 'b') {
+            if (num_collection_tracks($id) == 0) {
+                $classes[] = 'clickamendalbum clickremovealbum';
+            }
+            if ($iab == 0) {
+                $classes[] = 'clicksetasaudiobook';
+            } else if ($iab == 2) {
+                $classes[] = 'clicksetasmusiccollection';
+            }
         }
         if ($obj['AlbumUri']) {
             $classes[] = 'clickalbumoptions';
         }
+        if ($obj['why'] == 'b' && $obj['AlbumUri'] && preg_match('/spotify:album:(.*)$/', $obj['AlbumUri'], $matches)) {
+            $classes[] = 'clickaddtollviabrowse';
+            $spalbumid = $matches[1];
+        } else {
+            $spalbumid = '';
+        }
         $classes[] = 'clickratedtracks';
         if (count($classes) > 0) {
-            $h .= '<div class="icon-menu playlisticonr fixed clickable clickicon clickalbummenu '.implode(' ',$classes).'" name="'.$id.'" why="'.$obj['why'].'"></div>';
+            $h .= '<div class="icon-menu playlisticonr fixed clickable clickicon clickalbummenu '.implode(' ',$classes).'" name="'.$id.'" why="'.$obj['why'].'" spalbumid="'.$spalbumid.'"></div>';
         }
     }
     $h .= '</div>';
