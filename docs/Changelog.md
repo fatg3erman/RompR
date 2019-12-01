@@ -17,6 +17,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Fix ImageMagick handling of radio stations that only have a .ico file for their staion image, as many of the ones in Community Radio do. PHP-GD does not support .ico files so ImageMagick is required for these stations.
 * Fixed a serious bug in the PHP URL downloading code, it's a miracle it ever worked at all.
 * The 'back' button on the phone skin is now always visible so you don't have to scroll back to the top to go back
+* Done quite a lot of work on the Skypotato skin to make it neater, more efficient, and smoother and give it all the same functionality as the Desktop skin
 * As always, hundreds of little tweaks and tinkerings here and there
 
 ## Version 1.32

@@ -951,7 +951,7 @@ function do_albums_from_database($why, $what, $who, $fragment = false, $use_arti
 		$singleheader['where'] = $why.'artist'.$who;
 	} else {
 		$singleheader['type'] = 'insertAfter';
-		$singleheader['where'] = 'fothergill';
+		$singleheader['where'] = ($why == 'a') ? 'fothergill' : 'mingus';
 	}
 	logger::log("DUMPALBUMS", "Generating albums for",$why.$what.$who,"from database");
 

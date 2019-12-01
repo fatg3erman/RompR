@@ -754,6 +754,20 @@ div.helpfulalbum>div.tagh.albumthing.jalopy200 {
     max-width: 200px;
 }
 
+.collectionitem.tagholder_wide.dropshadow .helpfulalbum {
+    -webkit-box-flex:0;
+    flex-grow: 0;
+    flex-shrink:0;
+    background-color: unset !important;
+    background-image: unset !important;
+}
+
+.collectionitem.tagholder_wide.dropshadow .containerbox.vertical,
+.collectionitem.tagholder_wide.dropshadow .containerbox.radiochannel  {
+    padding-bottom: 4px;
+    float: left;
+}
+
 @media screen and (max-width:800px) {
     div.collectionitem.tagholder_wide>div.containerbox>div.helpfulalbum>img.jalopy {
         max-width: 260px;

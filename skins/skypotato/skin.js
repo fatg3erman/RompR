@@ -20,24 +20,20 @@ jQuery.fn.menuReveal = function(callback) {
         case holder.hasClass('userplaylist'):
             // Albums and Playlists
             parent.addClass('tagholder_wide dropshadow').css({width: '98%'});
-            holder.find('.helpfulalbum.expand').removeClass('expand').addClass('fixed').css({'background-color': 'unset', 'background-image': 'unset'});
             holder.find('div.albumthing').detach().prependTo(self).find('.collectionicon').hide();
             holder.find('div.menuitem.configtitle').remove();
             break;
 
         case holder.hasClass('podcast'):
             // Podcasts
-            parent.addClass('tagholder_wide dropshadow').css({width: '98%'}).find('.containerbox.vertical').addClass('tleft bumpad');
-            parent.find('.helpfulalbum.expand').removeClass('expand').addClass('fixed');
-            parent.find('.helpfulalbum').css({'background-color': 'unset', 'background-image': 'unset'});
+            parent.addClass('tagholder_wide dropshadow').css({width: '98%'});
             parent.find('div.albumthing').detach().appendTo(parent);
             self.detach().addClass('minwidthed2').appendTo(parent);
             break;
 
         case holder.hasClass('radiochannel'):
             // Radio Stations
-            parent.addClass('tagholder_wide dropshadow').css({width: '98%'}).find('.containerbox.radiochannel').addClass('tleft bumpad');
-            parent.find('.helpfulalbum.expand').removeClass('expand').addClass('fixed').css({'background-color': 'unset', 'background-image': 'unset'});
+            parent.addClass('tagholder_wide dropshadow').css({width: '98%'});
             self.detach().addClass('minwidthed2').appendTo(parent);
             holder.find('div.albumthing').detach().prependTo(self);
             break;
@@ -50,7 +46,6 @@ jQuery.fn.menuReveal = function(callback) {
             $('.collectionpanel').hide();
             $('.collectionpanel.radiolist').addClass('closed');
             if (self.hasClass('dropmenu')) {
-                self.find('.holderthing').removeClass('holderthing').addClass('containerbox wrap');
                 self.detach().removeClass('dropmenu').addClass('collectionpanel radiolist containerbox wrap noselection').insertBefore($('#infoholder'));
                 setDraggable('#'+id);
             }
@@ -89,17 +84,13 @@ jQuery.fn.menuHide = function(callback) {
         case holder.hasClass('userplaylist'):
             // Albums and Playlists
             parent.removeClass('tagholder_wide dropshadow');
-            var monkey = parent.find('.helpfulalbum.fixed');
-            monkey.removeClass('fixed').addClass('expand').css({'background-color': '', 'background-image': ''});
+            var monkey = parent.find('.helpfulalbum.expand');
             self.find('div.albumthing').detach().appendTo(monkey).find('.collectionicon').show();
             self.remove();
             break;
 
         case holder.hasClass('podcast'):
             // Podcasts
-            parent.find('.containerbox.vertical').removeClass('tleft bumpad');
-            parent.find('.helpfulalbum.fixed').not('.podcastcounts').removeClass('fixed').addClass('expand');
-            parent.find('.helpfulalbum').css({'background-color': '', 'background-image': ''});
             self.prev('div.albumthing').detach().appendTo(self.prev().children('.helpfulalbum').first());
             parent.removeClass('tagholder_wide dropshadow');
             self.removeClass('minwidthed2').css({display: 'none'});
@@ -107,9 +98,7 @@ jQuery.fn.menuHide = function(callback) {
 
         case holder.hasClass('radiochannel'):
             // Radio Stations
-            parent.find('.containerbox.radiochannel').removeClass('tleft bumpad');
-            var monkey = parent.find('.helpfulalbum.fixed');
-            monkey.removeClass('fixed').addClass('expand').css({'background-color': '', 'background-image': ''});
+            var monkey = parent.find('.helpfulalbum.expand');
             parent.removeClass('tagholder_wide dropshadow');
             parent.find('div.albumthing').detach().appendTo(monkey)
             self.removeClass('minwidthed2').css({display: 'none'});
@@ -296,6 +285,23 @@ var layoutProcessor = function() {
         widths.speed = { sources: 400, infopane: 400 };
         $("#sources").animatePanel(widths);
         $("#infopane").animatePanel(widths);
+    }
+
+    function makeNewPanel(element, name) {
+        var classes = {
+            collection: 'albumlist',
+            audiobooks: 'audiobooklist',
+            searchresultholder: 'searcher',
+            filelist: 'filelist'
+        };
+        $('.collectionpanel.'+classes[element.parent().prop('id')]).remove();
+        element.parent().find('.highlighted').removeClass('highlighted');
+        if ($('#'+name).length == 0) {
+            var t = $('<div>', {id: name, class: 'collectionpanel '+classes[element.parent().prop('id')]+' containerbox wrap noselection notfilled'}).insertBefore($('#infoholder'));
+        }
+        $('.collectionpanel').css({display: 'none'});
+        element.addClass('highlighted');
+        setDraggable('#'+name);
     }
 
     return {
@@ -734,17 +740,13 @@ var layoutProcessor = function() {
             if (element.hasClass('album') || element.hasClass('playlist') || element.hasClass('userplaylist')) {
                 // This is for an album clicked on in the album browser pane.
                 if ($('#'+name).length == 0) {
-                    element.parent().find('.containerbox.openmenu').append($('<div>', {id: name, class: 'notfilled minwidthed2 expand'}));
+                    element.parent().find('.containerbox.openmenu').append($('<div>', {id: name, class: 'notfilled minwidthed2 expand', style: 'display: none'}));
                 }
             } else if (element.hasClass('directory')) {
+                // This is for a directory in the file browser
                 var n = element.attr('name');
                 if (n.indexOf('_') == -1) {
-                    $('.collectionpanel.filelist').remove();
-                    $('.collectionpanel').hide(0);
-                    $('#filelist .highlighted').removeClass('highlighted');
-                    element.addClass('highlighted');
-                    var t = $('<div>', {id: name, class: 'collectionpanel filelist containerbox wrap noselection notfilled'}).insertBefore($('#infoholder'));
-                    setDraggable('#'+name);
+                    makeNewPanel(element, name);
                 } else {
                     var t= ($('<div>', {id: name, class: 'indent containerbox wrap notfilled'})).insertAfter(element);
                 }
@@ -752,30 +754,7 @@ var layoutProcessor = function() {
 
             } else {
                 // This is for an artist clicked on in the artist list.
-                var t;
-                var x = $('#'+name);
-                if (element.parent().prop('id') == 'collection') {
-                    $('.collectionpanel.albumlist').remove();
-                    $('#collection .highlighted').removeClass('highlighted');
-                    if (x.length == 0) {
-                        t = $('<div>', {id: name, class: 'collectionpanel albumlist containerbox wrap noselection notfilled'}).insertBefore($('#infoholder'));
-                    }
-                } else if (element.parent().prop('id') == 'audiobooks') {
-                    $('.collectionpanel.audiobooklist').remove();
-                    $('#audiobooks .highlighted').removeClass('highlighted');
-                    if (x.length == 0) {
-                        t = $('<div>', {id: name, class: 'collectionpanel audiobooklist containerbox wrap noselection notfilled'}).insertBefore($('#infoholder'));
-                    }
-                } else {
-                    $('.collectionpanel.searcher').remove();
-                    $('#searchresultholder .highlighted').removeClass('highlighted');
-                    if (x.length == 0) {
-                        t = $('<div>', {id: name, class: 'collectionpanel searcher containerbox wrap noselection notfilled'}).insertBefore($('#infoholder'));
-                    }
-                }
-                $('.collectionpanel').hide(0);
-                element.addClass('highlighted');
-                setDraggable('#'+name);
+                makeNewPanel(element, name);
             }
         },
 
@@ -913,7 +892,11 @@ var layoutProcessor = function() {
         // Optional Additions
 
         findAlbumDisplayer: function(key) {
-            return $('.containerbox[name="'+key+'"]').parent();
+            if (key == 'fothergill' || key == 'mingus') {
+                return $('#'+key);
+            } else {
+                return $('.containerbox[name="'+key+'"]').parent();
+            }
         },
 
         findArtistDisplayer: function(key) {
@@ -940,7 +923,7 @@ var layoutProcessor = function() {
 
                 case 'insertAtStart':
                     debug.log("Insert At Start",v.where);
-                    $(v.html).insertAfter($('#'+v.where).find('.clickalbum.ninesix.tagholder_wide'));
+                    $(v.html).insertAfter($('#'+v.where).find('.clickalbum.playable.brick_wide'));
                     break;
             }
             if (dropdown) {
