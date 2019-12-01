@@ -39,7 +39,7 @@
     font-size:90%;
 }
 
-#communitystations {
+.holderthing {
     display:-webkit-box;
     display: flex;
     flex-wrap:wrap;
