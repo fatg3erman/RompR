@@ -62,10 +62,6 @@ body.phone .mainpane .directory {
     padding:4px;
 }
 
-#pset {
-    background-color: rgba(1, 1, 1, 0);
-}
-
 body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input,select
 {
     color:#eeeeee;
@@ -175,10 +171,10 @@ a.album:hover,a.album:active
 }
 
 #pset {
-    background-color: rgba(139, 32, 23, 0.99);
+    background-color: rgba(215, 99, 0, 0.75);
 }
 #pmaxset {
-    background-color: rgba(173, 100, 44, 0.99);
+    background-color: rgba(255, 183, 0, 0.99);
 }
 
 .playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {

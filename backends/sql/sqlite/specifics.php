@@ -796,6 +796,12 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 58 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 58:
+				logger::log("SQL", "Updating FROM Schema version 58 TO Schema version 59");
+				update_remote_image_urls();
+				generic_sql_query("UPDATE Statstable SET Value = 59 WHERE Item = 'SchemaVer'", true);
+				break;
+
 		}
 		$sv++;
 	}

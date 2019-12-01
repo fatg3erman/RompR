@@ -37,7 +37,7 @@ function faveFinder(returnall) {
             }
         }
         if (im && im.substr(0,4) == "http") {
-            im = "getRemoteImage.php?url="+im;
+            im = "getRemoteImage.php?url="+rawurlencode(im);
         }
         return im;
     }

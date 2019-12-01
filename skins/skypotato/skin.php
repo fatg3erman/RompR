@@ -5,11 +5,6 @@
 <div id="notifications"></div>
 
 <div class="fullwidth containerbox" id="thetopbit">
-    <div class="fixed">
-        <div id="albumcover" class="fixed">
-            <img id="albumpicture" />
-        </div>
-    </div>
     <div id="groonburger" class="fixed containerbox vertical controlbutton-left">
 <?php
         print '<i title="'.get_int_text('button_previous').'" class="prev-button fixed icon-fast-backward clickicon controlbutton-small tooltip"></i>';
@@ -18,6 +13,11 @@
         print '<i title="'.get_int_text('button_stopafter').'" class="stopafter-button fixed icon-to-end-1 clickicon controlbutton-small tooltip"></i>';
         print '<i title="'.get_int_text('button_next').'" class="next-button fixed icon-fast-forward clickicon controlbutton-small tooltip"></i>';
 ?>
+    </div>
+    <div class="fixed">
+        <div id="albumcover" class="fixed">
+            <img id="albumpicture" />
+        </div>
     </div>
     <!-- <div class="expand"> -->
 <div id="infobar" class="fixed containerbox vertical">

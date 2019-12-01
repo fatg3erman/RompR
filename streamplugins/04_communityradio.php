@@ -334,7 +334,7 @@ class commradioplugin {
                     // This appears to be a database fuckup on their part
                     $station['favicon'] = 'http://'.$matches[1];
                 }
-                return 'getRemoteImage.php?url='.$station['favicon'].'&rompr_backup_type=stream';
+                return 'getRemoteImage.php?url='.rawurlencode($station['favicon']).'&rompr_backup_type=stream';
             }
         } else {
             return 'newimages/broadcast.svg';
@@ -347,7 +347,7 @@ class commradioplugin {
                 // Sadly we can't handle base64 data as a stream image in this way. The URLs are too long
                 return '';
             } else {
-                return 'getRemoteImage.php?url='.$station['favicon'];
+                return 'getRemoteImage.php?url='.rawurlencode($station['favicon']);
             }
         } else {
             return '';

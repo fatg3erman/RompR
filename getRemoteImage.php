@@ -3,13 +3,7 @@ include ("includes/vars.php");
 include ("includes/functions.php");
 include ("utils/imagefunctions.php");
 
-$url = $_REQUEST['url'];
-
-foreach ($_GET as $k => $v) {
-	if ($k != 'url' && $k != 'rompr_resize_size' && $k != 'rompr_backup_type') {
-		$url .= '&'.$k.'='.$v;
-	}
-}
+$url = rawurldecode($_REQUEST['url']);
 
 if (!$url) {
 	logger::error("GETREMOTEIMAGE", "Asked to download image but no URL given!");

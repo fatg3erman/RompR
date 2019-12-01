@@ -1083,4 +1083,78 @@ function sort_playlists($a, $b) {
     return (strtolower($a) < strtolower($b)) ? -1 : 1;
 }
 
+function update_remote_image_urls() {
+    logger::log('SQL', 'Updating Remote Images in Albumtable');
+    $albums = generic_sql_query("SELECT Albumindex, Image FROM Albumtable WHERE Image LIKE 'getRemoteImage%'");
+    foreach ($albums as $album) {
+        logger::log('SQL', '  Albumindex',$album['Albumindex'],'Image',$album['Image']);
+        $newurl = get_encoded_image($album['Image']);
+        sql_prepare_query(true, null, null, null, 
+            "UPDATE Albumtable SET Image = ? WHERE Albumindex = ?",
+            $newurl,
+            $album['Albumindex']
+        );
+    }
+
+    logger::log('SQL', 'Updating Remote Images in Podcasttable');
+    $albums = generic_sql_query("SELECT PODindex, Image FROM Podcasttable WHERE Image LIKE 'getRemoteImage%'");
+    foreach ($albums as $album) {
+        logger::log('SQL', '  PODindex',$album['PODindex'],'Image',$album['Image']);
+        $newurl = get_encoded_image($album['Image']);
+        sql_prepare_query(true, null, null, null, 
+            "UPDATE Podcasttable SET Image = ? WHERE PODindex = ?",
+            $newurl,
+            $album['PODindex']
+        );
+    }
+
+    logger::log('SQL', 'Updating Remote Images in RadioStationtable');
+    $albums = generic_sql_query("SELECT Stationindex, Image FROM RadioStationtable WHERE Image LIKE 'getRemoteImage%'");
+    foreach ($albums as $album) {
+        logger::log('SQL', '  Stationindex',$album['Stationindex'],'Image',$album['Image']);
+        $newurl = get_encoded_image($album['Image']);
+        sql_prepare_query(true, null, null, null, 
+            "UPDATE RadioStationtable SET Image = ? WHERE Stationindex = ?",
+            $newurl,
+            $album['Stationindex']
+        );
+    }
+
+    logger::log('SQL', 'Updating Remote Images in WishlistSourcetable');
+    $albums = generic_sql_query("SELECT Sourceindex, SourceImage FROM WishlistSourcetable WHERE SourceImage LIKE 'getRemoteImage%'");
+    foreach ($albums as $album) {
+        logger::log('SQL', '  Sourceindex',$album['Sourceindex'],'Image',$album['SourceImage']);
+        $newurl = get_encoded_image($album['SourceImage']);
+        sql_prepare_query(true, null, null, null, 
+            "UPDATE WishlistSourcetable SET SourceImage = ? WHERE Sourceindex = ?",
+            $newurl,
+            $album['Sourceindex']
+        );
+    }
+}
+
+function get_encoded_image($image) {
+    $i = explode('?', $image);
+    $bits = explode('&', $i[1]);
+    $newparts = array();
+    foreach ($bits as $bit) {
+        $a = explode('=', $bit);
+        if ($a[0] == 'url') {
+            $url = $a[1];
+        }
+    }
+    foreach ($bits as $bit) {
+        $a = explode('=', $bit);
+        if (substr($a[0], 0, 6) == 'rompr_') {
+            $newparts[$a[0]] = $a[1];
+        } else if ($a[0] != 'url') {
+            $url .= '&'.$bit;
+        }
+    }
+    $newparts['url'] = $url;
+    $newurl = 'getRemoteImage.php?'.http_build_query($newparts);
+    logger::log('SQL', '    New Image',$newurl);
+    return $newurl;
+}
+
 ?>

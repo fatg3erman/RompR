@@ -238,7 +238,7 @@ var info_soundcloud = function() {
 								if (accepted) {
 									debug.log("SOUNDCLOUD PLUGIN","Getting Track Waveform",formatSCMessyBits(trackmeta.soundcloud.track.waveform_url));
 							        scImg.onload = self.track.doSCImageStuff;
-							        scImg.src = "getRemoteImage.php?url="+formatSCMessyBits(trackmeta.soundcloud.track.waveform_url);
+							        scImg.src = "getRemoteImage.php?url="+rawurlencode(formatSCMessyBits(trackmeta.soundcloud.track.waveform_url));
 								}
 							}
 						}

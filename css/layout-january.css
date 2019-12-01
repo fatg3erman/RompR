@@ -1038,7 +1038,7 @@ div.topdropmenu.albumbitsmenu {
 
 div.clickalbummenu div.rightmenu
 {
-    left:-240px;
+    /*left:-240px;*/
     width:240px;
 }
 

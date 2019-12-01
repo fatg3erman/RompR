@@ -97,7 +97,7 @@ var info_discogs = function() {
         	for (var i in data.data.releases) {
         		html += '<tr>';
 				if (data.data.releases[i].thumb) {
-					html += '<td><div class="smallcover"><img class="smallcover" src="getRemoteImage.php?url='+data.data.releases[i].thumb+'" /></div></td>';
+					html += '<td><div class="smallcover"><img class="smallcover" src="getRemoteImage.php?url='+rawurlencode(data.data.releases[i].thumb)+'" /></div></td>';
 				} else {
 					html += '<td></td>';
 				}
@@ -620,8 +620,8 @@ var info_discogs = function() {
 					}
 				}
 				if (image !== null) {
-					html += '<img class="standout infoclick clickzoomimage cshrinker stright" src="getRemoteImage.php?url='+image+'" />';
-					html += '<input type="hidden" value="getRemoteImage.php?url='+image+'" />';
+					html += '<img class="standout infoclick clickzoomimage cshrinker stright" src="getRemoteImage.php?url='+rawurlencode(image)+'" />';
+					html += '<input type="hidden" value="getRemoteImage.php?url='+rawurlencode(image)+'" />';
 				}
 
 		        if (data.master && data.master.data.notes) {
@@ -676,7 +676,7 @@ var info_discogs = function() {
 		                html += 'clickchooseposs" name="'+i+'">';
 		                if (artistmeta.discogs.possibilities[i].image) {
 		                    html += '<img class="spotpossimg title-menu" src="getRemoteImage.php?url='+
-		                        artistmeta.discogs.possibilities[i].image+'" />';
+		                        rawurlencode(artistmeta.discogs.possibilities[i].image)+'" />';
 		                } else {
 							html += '<img class="spotpossimg title-menu" src="newimages/artist-icon.png" />';
 						}
@@ -725,8 +725,8 @@ var info_discogs = function() {
 							image = getBestImage(data.data.images);
 						}
 						if (image !== null) {
-							html += '<img class="standout infoclick clickzoomimage cshrinker stright" src="getRemoteImage.php?url='+image+'" />';
-							html += '<input type="hidden" value="getRemoteImage.php?url='+image+'" />';
+							html += '<img class="standout infoclick clickzoomimage cshrinker stright" src="getRemoteImage.php?url='+rawurlencode(image)+'" />';
+							html += '<input type="hidden" value="getRemoteImage.php?url='+rawurlencode(image)+'" />';
 						}
 
 				        if (expand) {

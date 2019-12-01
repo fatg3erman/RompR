@@ -314,9 +314,9 @@ var info_musicbrainz = function() {
 		if (data) {
 			for (var i in data.images) {
 				html += '<div class="infoclick clickzoomimage">';
-				html += '<img style="max-width:220px" src="getRemoteImage.php?url='+data.images[i].thumbnails.small+'" />';
+				html += '<img style="max-width:220px" src="getRemoteImage.php?url='+rawurlencode(data.images[i].thumbnails.small)+'" />';
 				html += '</div>';
-				html += '<input type="hidden" value="getRemoteImage.php?url='+data.images[i].image+'" />';
+				html += '<input type="hidden" value="getRemoteImage.php?url='+rawurlencode(data.images[i].image)+'" />';
 			}
 		}
 		return html;

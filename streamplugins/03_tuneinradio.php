@@ -98,7 +98,7 @@ class tuneinplugin {
 
                     print albumHeader(array(
                         'id' => 'nodrop',
-                        'Image' => 'getRemoteImage.php?url='.$att['image'],
+                        'Image' => 'getRemoteImage.php?url='.rawurlencode($att['image']),
                         'Searched' => 1,
                         'AlbumUri' => null,
                         'Year' => $year,
@@ -108,7 +108,7 @@ class tuneinplugin {
                         'ImgKey' => 'none',
                         'streamuri' => $att['URL'],
                         'streamname' => $sname,
-                        'streamimg' => 'getRemoteImage.php?url='.$att['image'],
+                        'streamimg' => 'getRemoteImage.php?url='.rawurlencode($att['image']),
                         'class' => 'radiochannel'
                     ));
                     break;

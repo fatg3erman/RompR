@@ -135,9 +135,9 @@ var info_lastfm = function() {
             if (bigurl && bigurl != imageurl) {
                 html += ' infoclick clickzoomimage';
             }
-            html += ' cshrinker" src="getRemoteImage.php?url=' + imageurl + '" />';
+            html += ' cshrinker" src="getRemoteImage.php?url=' + rawurlencode(imageurl) + '" />';
             if (bigurl && bigurl != imageurl) {
-                html += '<input type="hidden" value="getRemoteImage.php?url='+bigurl+'" />';
+                html += '<input type="hidden" value="getRemoteImage.php?url='+rawurlencode(bigurl)+'" />';
             }
         }
         if (lfmdata.releasedate() != 'Unknown') {
@@ -400,8 +400,8 @@ var info_lastfm = function() {
                              .done( function(data) {
                                 debug.log(medebug,"Got Allmusic Image", data);
                                 if (displaying) {
-									var image = $('<img>', {class: "stright standout infoclick clickzoomimage cshrinker", src: "getRemoteImage.php?url="+data}).insertBefore('#artistbio');
-									var input = $('<input>', {type: "hidden", value: "getRemoteImage.php?url="+data});
+									var image = $('<img>', {class: "stright standout infoclick clickzoomimage cshrinker", src: "getRemoteImage.php?url="+rawurlencode(data)}).insertBefore('#artistbio');
+									var input = $('<input>', {type: "hidden", value: "getRemoteImage.php?url="+rawurlencode(data)});
 								};
                              })
                              .fail( function() {

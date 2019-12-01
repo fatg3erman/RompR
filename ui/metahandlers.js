@@ -196,7 +196,7 @@ var metaHandlers = function() {
 			            if (data.images) {
 			                for (var j in data.images) {
 			                    if (data.images[j].url) {
-			                        track.image = "getRemoteImage.php?url="+data.images[j].url;
+			                        track.image = "getRemoteImage.php?url="+rawurlencode(data.images[j].url);
 			                        break;
 			                    }
 			                }

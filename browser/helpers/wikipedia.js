@@ -47,7 +47,7 @@ var wikipedia = function() {
 				    var url = "http://"+a[1]+"/w/api.php?action=query&iiprop=url|size&prop=imageinfo&titles=" + a[2] + "&format=json&callback=?";
 				    $.getJSON(url, function(data) {
 				        $.each(data.query.pages, function(index, value) {
-				        	imagePopup.create(element, event, 'getRemoteImage.php?url='+value.imageinfo[0].url);
+				        	imagePopup.create(element, event, 'getRemoteImage.php?url='+rawurlencode(value.imageinfo[0].url));
 				        	return false;
 				        });
 				    }).fail( function() { imagePopup.close() });

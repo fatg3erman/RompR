@@ -68,8 +68,7 @@ var info_spotify = function() {
 	    html += spotifyTrackListing(data)+'</div>';
         html += '<div class="cleft narrowright">';
     	if (data.images && data.images[0]) {
-    		html += '<img class="cnotshrinker infoclick clickzoomimage" src="getRemoteImage.php?url='+
-                data.images[0].url+'" />';
+    		html += '<img class="cnotshrinker infoclick clickzoomimage" src="getRemoteImage.php?url='+rawurlencode(data.images[0].url)+'" />';
     	}
     	html += '</div>';
     	html += '</div>';
@@ -98,8 +97,7 @@ var info_spotify = function() {
                 }
                 h += 'clickchooseposs" name="'+i+'">';
                 if (artistmeta.spotify.possibilities[i].image) {
-                    h += '<img class="spotpossimg title-menu" src="getRemoteImage.php?url='+
-                        artistmeta.spotify.possibilities[i].image+'" />';
+                    h += '<img class="spotpossimg title-menu" src="getRemoteImage.php?url='+rawurlencode(artistmeta.spotify.possibilities[i].image)+'" />';
 				} else {
 					h += '<img class="spotpossimg title-menu" src="newimages/artist-icon.png" />';
 				}
@@ -135,7 +133,7 @@ var info_spotify = function() {
     	h += '</ul></div>';
     	if (data.images && data.images[0]) {
             h += '<img class="stright standout cshrinker infoclick clickzoomimage" '+
-                'src="getRemoteImage.php?url='+data.images[0].url+'" />';
+                'src="getRemoteImage.php?url='+rawurlencode(data.images[0].url)+'" />';
     	}
 
     	h += '<div id="artistbio" class="minwidthed"></div>';
@@ -355,10 +353,10 @@ var info_spotify = function() {
                         var a = data.tracks[i].album;
                         var img = '';
                         if (a.images && a.images[0]) {
-                            img = 'getRemoteImage.php?url='+a.images[0].url
+                            img = 'getRemoteImage.php?url='+rawurlencode(a.images[0].url);
                             for (var j in a.images) {
                                 if (a.images[j].width <= maxwidth) {
-                                    img = 'getRemoteImage.php?url='+a.images[j].url;
+                                    img = 'getRemoteImage.php?url='+rawurlencode(a.images[j].url);
                                     break;
                                 }
                             }

@@ -46,7 +46,7 @@ class romprmetadata {
 		$data['hidden'] = 0;
 		$data['searchflag'] = 0;
 		if (substr($data['image'],0,4) == "http") {
-			$data['image'] = "getRemoteImage.php?url=".$data['image'];
+			$data['image'] = "getRemoteImage.php?url=".rawurlencode($data['image']);
 		}
 		if ($data['imagekey'] === null) {
 			$albumimage = new baseAlbumImage(array(

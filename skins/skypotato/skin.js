@@ -12,42 +12,69 @@ jQuery.fn.menuReveal = function(callback) {
 
     var self = this;
     var id = this.attr('id');
+    var holder = $('.openmenu[name="'+id+'"]');
+    var parent = holder.parent();
     debug.trace("UI","Revealing",'#'+id);
-    if ($('[name="'+id+'"]').hasClass('podcast')) {
-        // Podcasts
-        var p = $('[name="'+id+'"]').parent();
-        p.addClass('tagholder_wide dropshadow').find('.containerbox.vertical').addClass('tleft bumpad');
-        p.find('.helpfulalbum.expand').removeClass('expand').addClass('fixed');
-        p.find('.helpfulalbum').css({'background-color': 'unset', 'background-image': 'unset'});
-        p.find('div.albumthing').detach().appendTo(p);
-        this.detach().addClass('minwidthed2').appendTo(p);
-    } else if ($('[name="'+id+'"]').hasClass('radio')) {
-        // Radio Browsers
-        $('.collectionpanel').hide();
-        // We can't remove the radio plugin panels, but we need to mark which ones are closed
-        // Otherwise showPanel will reopen ALL the ones that have been opened if we switch away and
-        // back to the radio stations panel.
-        $('.collectionpanel.radiolist').addClass('closed');
-        if (self.hasClass('dropmenu')) {
-            self.find('.holderthing').removeClass('holderthing').addClass('containerbox wrap');
-            self.detach().removeClass('dropmenu').addClass('collectionpanel radiolist containerbox wrap noselection').insertBefore($('#infoholder'));
-            setDraggable('#'+id);
-        }
-        self.removeClass('closed');
-    } else if ($('[name="'+id+'"]').hasClass('radiochannel')) {
-        // Radio Stations
-        var p = $('[name="'+id+'"]').parent();
-        p.addClass('tagholder_wide dropshadow').find('.containerbox.radiochannel').addClass('tleft bumpad');
-        p.find('.helpfulalbum.expand').removeClass('expand').addClass('fixed').css({'background-color': 'unset', 'background-image': 'unset'});
-        this.detach().addClass('minwidthed2').appendTo(p);
-        $('[name="'+id+'"]').find('div.albumthing').detach().prependTo(self);
-    } else {
-        // Albums and Playlists
-        $('[name="'+id+'"]').find('div.helpfulalbum').css({'background-color': 'unset', 'background-image': 'unset'});
-        $('[name="'+id+'"]').find('div.albumthing').detach().prependTo(self).find('.collectionicon').hide();
-        $('[name="'+id+'"]').find('div.menuitem.configtitle').remove();
+
+    switch (true) {
+        case holder.hasClass('album'):
+        case holder.hasClass('playlist'):
+        case holder.hasClass('userplaylist'):
+            // Albums and Playliss
+            parent.addClass('tagholder_wide dropshadow');
+            holder.find('.helpfulalbum.expand').removeClass('expand').addClass('fixed').css({'background-color': 'unset', 'background-image': 'unset'});
+            holder.find('div.albumthing').detach().prependTo(self).find('.collectionicon').hide();
+            holder.find('div.menuitem.configtitle').remove();
+
+
+    //     // var myleft = parent.position().left;
+    //     // var leftmost = null;
+    //     // var prev = parent.prev();
+    //     // while (prev.hasClass('collectionitem') && !prev.hasClass('tagholder_wide') && prev.position().left < myleft) {
+    //     //     leftmost = prev;
+    //     //     prev = prev.prev();
+    //     // }
+
+    //     // if (leftmost !== null) {
+    //     //     parent.detach().insertBefore(leftmost);
+    //     // }
+
+
+            break;
+
+        case holder.hasClass('podcast'):
+            // Podcasts
+            parent.addClass('tagholder_wide dropshadow').find('.containerbox.vertical').addClass('tleft bumpad');
+            parent.find('.helpfulalbum.expand').removeClass('expand').addClass('fixed');
+            parent.find('.helpfulalbum').css({'background-color': 'unset', 'background-image': 'unset'});
+            parent.find('div.albumthing').detach().appendTo(parent);
+            self.detach().addClass('minwidthed2').appendTo(parent);
+            break;
+
+        case holder.hasClass('radiochannel'):
+            // Radio Stations
+            parent.addClass('tagholder_wide dropshadow').find('.containerbox.radiochannel').addClass('tleft bumpad');
+            parent.find('.helpfulalbum.expand').removeClass('expand').addClass('fixed').css({'background-color': 'unset', 'background-image': 'unset'});
+            self.detach().addClass('minwidthed2').appendTo(parent);
+            holder.find('div.albumthing').detach().prependTo(self);
+            break;
+
+        case holder.hasClass('radio'):
+            // Radio Browsers
+            // We can't remove the radio plugin panels, but we need to mark which ones are closed
+            // Otherwise showPanel will reopen ALL the ones that have been opened if we switch away and
+            // back to the radio stations panel.
+            $('.collectionpanel').hide();
+            $('.collectionpanel.radiolist').addClass('closed');
+            if (self.hasClass('dropmenu')) {
+                self.find('.holderthing').removeClass('holderthing').addClass('containerbox wrap');
+                self.detach().removeClass('dropmenu').addClass('collectionpanel radiolist containerbox wrap noselection').insertBefore($('#infoholder'));
+                setDraggable('#'+id);
+            }
+            self.removeClass('closed');
+            break;
     }
-    this.show(0, function() {
+    self.show(0, function() {
         if (callback) callback.call(self);
         if (self.hasClass('containerbox')) {
             self.css('display', 'flex');
@@ -59,43 +86,50 @@ jQuery.fn.menuReveal = function(callback) {
 
 jQuery.fn.menuHide = function(callback) {
     var self = this;
-    debug.trace('UI',"Menu Hide",self);
-    this.hide(0, function() {
-        // Revert back to their default state so the open functions work
-        debug.trace("UI","Hidden",self.parent());
-        if (self.parent().hasClass('album') || self.parent().hasClass('playlist') || self.parent().hasClass('userplaylist')) {
-            // Albums and playlists
-            debug.log("UI","Hiding album");
-            self.parent().parent().removeClass('tagholder_wide dropshadow');
-            var monkey = self.parent().parent().find('.helpfulalbum.fixed');
-            monkey.removeClass('fixed').addClass('expand').css({'background-color': '', 'background-image': ''});
-            self.parent().parent().find('.containerbox.wrap').children('.minwidthed2').remove();
-            self.find('div.albumthing').detach().appendTo(monkey).find('.collectionicon').show();
-        } else if (self.prev().prev().hasClass('podcast')) {
-            // Podcasts
-            self.parent().find('.containerbox.vertical').removeClass('tleft bumpad');
-            self.parent().find('.helpfulalbum.fixed').not('.podcastcounts').removeClass('fixed').addClass('expand');
-            self.parent().find('.helpfulalbum').css({'background-color': '', 'background-image': ''});
-            self.prev('div.albumthing').detach().appendTo(self.prev().children('.helpfulalbum').first());
-            self.parent().removeClass('tagholder_wide dropshadow');
-            self.removeClass('minwidthed2');
-        } else if (self.prev().hasClass('radiochannel')) {
-            // Radio stations
-            self.parent().find('.containerbox.radiochannel').removeClass('tleft bumpad');
-            var monkey = self.parent().find('.helpfulalbum.fixed');
-            monkey.removeClass('fixed').addClass('expand').css({'background-color': '', 'background-image': ''});
-            self.parent().removeClass('tagholder_wide dropshadow');
-            self.parent().find('div.albumthing').detach().appendTo(monkey)
-            self.removeClass('minwidthed2');
-        } else if (self.hasClass('radiolist')) {
-            // Radio Browsers
-            self.addClass('closed');
-        }
-        if (callback) callback.call(self);
-        layoutProcessor.adjustBoxSizes();
-    });
-    return this;
+    var id = this.attr('id');
+    var holder = $('.openmenu[name="'+id+'"]');
+    var parent = holder.parent();
 
+    switch (true) {
+        case holder.hasClass('album'):
+        case holder.hasClass('playlist'):
+        case holder.hasClass('userplaylist'):
+            // Albums and Playliss
+            parent.removeClass('tagholder_wide dropshadow');
+            var monkey = parent.find('.helpfulalbum.fixed');
+            monkey.removeClass('fixed').addClass('expand').css({'background-color': '', 'background-image': ''});
+            self.find('div.albumthing').detach().appendTo(monkey).find('.collectionicon').show();
+            self.remove();
+            break;
+
+        case holder.hasClass('podcast'):
+            // Podcasts
+            parent.find('.containerbox.vertical').removeClass('tleft bumpad');
+            parent.find('.helpfulalbum.fixed').not('.podcastcounts').removeClass('fixed').addClass('expand');
+            parent.find('.helpfulalbum').css({'background-color': '', 'background-image': ''});
+            self.prev('div.albumthing').detach().appendTo(self.prev().children('.helpfulalbum').first());
+            parent.removeClass('tagholder_wide dropshadow');
+            self.removeClass('minwidthed2').hide();
+            break;
+
+        case holder.hasClass('radiochannel'):
+            // Radio Stations
+            parent.find('.containerbox.radiochannel').removeClass('tleft bumpad');
+            var monkey = parent.find('.helpfulalbum.fixed');
+            monkey.removeClass('fixed').addClass('expand').css({'background-color': '', 'background-image': ''});
+            parent.removeClass('tagholder_wide dropshadow');
+            parent.find('div.albumthing').detach().appendTo(monkey)
+            self.removeClass('minwidthed2').hide();
+            break;
+
+        case holder.hasClass('radio'):
+            // Radio Browsers
+            self.addClass('closed').hide();
+            break;
+    }
+    if (callback) callback.call(self);
+    layoutProcessor.adjustBoxSizes();
+    return self;
 }
 
 jQuery.fn.isOpen = function() {
@@ -691,15 +725,12 @@ var layoutProcessor = function() {
 
         makeCollectionDropMenu: function(element, name) {
 
-            // Creates a nonexisted drop menu to hold contents.
+            // Creates a drop menu to hold contents.
             // 'element' is the PARENT menu element that has been clicked on.
 
             if (element.hasClass('album') || element.hasClass('playlist') || element.hasClass('userplaylist')) {
                 // This is for an album clicked on in the album browser pane.
-                var x = $('#'+name);
-                element.parent().addClass('tagholder_wide dropshadow');
-                element.parent().find('.helpfulalbum.expand').removeClass('expand').addClass('fixed');
-                if (x.length == 0) {
+                if ($('#'+name).length == 0) {
                     element.parent().find('.containerbox.openmenu').append($('<div>', {id: name, class: 'notfilled minwidthed2 expand'}));
                 }
             } else if (element.hasClass('directory')) {

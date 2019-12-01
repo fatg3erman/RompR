@@ -271,7 +271,7 @@ div[id^=zalbum] .podcastresume>.fixed
 
 .controlbutton-left
 {
-    margin-right:6px;
+    margin-right:2px;
     margin-left:6px;
 }
 
@@ -687,6 +687,7 @@ div.rightmenu
 .collectionitem {
     box-sizing:border-box;
     border: 4px solid transparent;
+    transition: width 0.5s ease;
 }
 
 .collectionitem.selecotron.tagholder_wide.dropshadow {
@@ -741,6 +742,12 @@ div.helpfulalbum>div.tagh.albumthing {
 
 div.helpfulalbum>div.tagh.albumthing.jalopy200 {
     max-width: 200px;
+}
+
+@media screen and (max-width:800px) {
+    div.collectionitem.tagholder_wide>div.containerbox>div.helpfulalbum>img.jalopy {
+        max-width: 260px;
+    }
 }
 
 #pluginplaylistslist .collectionitem .menuitem {

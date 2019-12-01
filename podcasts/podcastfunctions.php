@@ -876,7 +876,7 @@ function doPodcastHeader($y) {
 
     $i = getDomain($y->Image);
     if ($i == "http" || $i == "https") {
-        $img = "getRemoteImage.php?url=".$y->Image;
+        $img = "getRemoteImage.php?url=".rawurlencode($y->Image);
     } else {
         $img = $y->Image;
     }
@@ -1205,7 +1205,7 @@ function search_itunes($term) {
                 }
 
                 if (array_key_exists('artworkUrl600', $podcast) && $podcast['artworkUrl600'] != '' && $podcast['artworkUrl600'] != null) {
-                    $img = 'getRemoteImage.php?url='.$podcast['artworkUrl600'];
+                    $img = 'getRemoteImage.php?url='.rawurlencode($podcast['artworkUrl600']);
                 } else {
                     $img = 'newimages/podcast-logo.svg';
                 }

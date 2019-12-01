@@ -1092,10 +1092,10 @@ $.widget('rompr.spotifyAlbumThing', {
         var img = 'newimages/spotify-icon.png';
         if (a.images && a.images[0]) {
             debug.debug("SPOTIALBUM","Images",a.images);
-            var img = 'getRemoteImage.php?url='+a.images[0].url
+            var img = 'getRemoteImage.php?url='+rawurlencode(a.images[0].url);
             for (var j in a.images) {
                 if (a.images[j].width <= this.options.maxwidth) {
-                    img = 'getRemoteImage.php?url='+a.images[j].url;
+                    img = 'getRemoteImage.php?url='+rawurlencode(a.images[j].url);
                     break;
                 }
             }
@@ -1147,10 +1147,10 @@ $.widget('rompr.spotifyArtistThing', {
             var x = $('<div>', {class: this.options.classes+' clearfix'}).appendTo(this.element);
             var img = '';
             if (a.images[0]) {
-                img = 'getRemoteImage.php?url='+a.images[0].url;
+                img = 'getRemoteImage.php?url='+rawurlencode(a.images[0].url);
                 for (var j in a.images) {
                     if (a.images[j].width <= self.options.maxwidth) {
-                        img = 'getRemoteImage.php?url='+a.images[j].url;
+                        img = 'getRemoteImage.php?url='+rawurlencode(a.images[j].url);
                         break;
                     }
                 }
