@@ -68,6 +68,7 @@ var communityRadioPlugin = {
 
     browse: function(url, title, page, target, callback) {
         $("#"+target).load("streamplugins/04_communityradio.php?populate=2&url="+url+'&order='+prefs.communityradioorderby+'&page='+page+'&title='+title, function() {
+            layoutProcessor.postAlbumActions();
             callback();
         });
     },
