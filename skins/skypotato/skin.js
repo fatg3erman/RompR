@@ -18,7 +18,7 @@ jQuery.fn.menuReveal = function(callback) {
         case holder.hasClass('album'):
         case holder.hasClass('playlist'):
         case holder.hasClass('userplaylist'):
-            // Albums and Playliss
+            // Albums and Playlists
             parent.addClass('tagholder_wide dropshadow').css({width: '98%'});
             holder.find('.helpfulalbum.expand').removeClass('expand').addClass('fixed').css({'background-color': 'unset', 'background-image': 'unset'});
             holder.find('div.albumthing').detach().prependTo(self).find('.collectionicon').hide();
@@ -87,7 +87,7 @@ jQuery.fn.menuHide = function(callback) {
         case holder.hasClass('album'):
         case holder.hasClass('playlist'):
         case holder.hasClass('userplaylist'):
-            // Albums and Playliss
+            // Albums and Playlists
             parent.removeClass('tagholder_wide dropshadow');
             var monkey = parent.find('.helpfulalbum.fixed');
             monkey.removeClass('fixed').addClass('expand').css({'background-color': '', 'background-image': ''});
@@ -369,10 +369,6 @@ var layoutProcessor = function() {
 
         postAlbumActions: function(panel) {
             layoutProcessor.adjustBoxSizes();
-        },
-
-        hackForSkinsThatModifyStuff: function(id) {
-            $(id+'.holderthing').removeClass('holderthing').addClass('containerbox wrap');
         },
 
         afterHistory: function() {
@@ -863,8 +859,7 @@ var layoutProcessor = function() {
             $(".stayopen").not('.dontstealmyclicks').on('click', function(ev) {ev.stopPropagation() });
 
             // $(".enter").on('keyup',  onKeyUp );
-            $.each(my_scrollers,
-                function( index, value ) {
+            $.each(my_scrollers, function(index, value) {
                 layoutProcessor.addCustomScrollBar(value);
             });
 

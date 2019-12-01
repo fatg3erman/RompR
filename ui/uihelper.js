@@ -383,14 +383,6 @@ var uiHelper = function() {
             }
         },
 
-        hackForSkinsThatModifyStuff: function(id) {
-            try {
-                return layoutProcessor.hackForSkinsThatModifyStuff(id);
-            } catch (err) {
-
-            }
-        },
-
         postPlaylistLoad: function() {
             try {
                 return layoutProcessor.postPlaylistLoad();

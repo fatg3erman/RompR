@@ -8,7 +8,6 @@ var communityRadioPlugin = {
                     $('i[name="communityradiolist"]').stopSpinner();
                     $('#communityradiolist').removeClass('notfilled');
                     communityRadioPlugin.setTheThing();
-                    uiHelper.hackForSkinsThatModifyStuff("#communitystations");
                     layoutProcessor.postAlbumActions();
                 }
             );
@@ -27,7 +26,6 @@ var communityRadioPlugin = {
         var page = el.attr('name');
         communityRadioPlugin.browse(url, title, page, id, function() {
             el.stopSpinner();
-            uiHelper.hackForSkinsThatModifyStuff("#"+id);
             layoutProcessor.postAlbumActions();
         });
     },
@@ -35,8 +33,7 @@ var communityRadioPlugin = {
     search: function(page) {
         $('#communitystations').empty();
         doSomethingUseful('communitystations', language.gettext('label_searching'));
-        var uri = 'streamplugins/04_communityradio.php?populate=3'
-                '&order='+prefs.communityradioorderby;
+        var uri = 'streamplugins/04_communityradio.php?populate=3&order='+prefs.communityradioorderby;
         var foundterm = false;
         $('.comm_radio_searchterm').each(function() {
             if ($(this).val() != '') {
@@ -48,7 +45,6 @@ var communityRadioPlugin = {
             uri = 'streamplugins/04_communityradio.php?populate=4';
         }
         $('#communitystations').load(uri, function() {
-            uiHelper.hackForSkinsThatModifyStuff("#communitystations");
             layoutProcessor.postAlbumActions();
         });
     },

@@ -39,6 +39,12 @@
     font-size:90%;
 }
 
+#communitystations {
+    display:-webkit-box;
+    display: flex;
+    flex-wrap:wrap;
+}
+
 #uptrackcount, #uptimecount {
     font-weight:bold;
 }
