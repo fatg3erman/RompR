@@ -927,12 +927,12 @@ function album_sort_query($why, $what, $who) {
 function do_artist_banner($why, $what, $who) {
 	logger::debug("BACKEND", "Creating Banner ".$why." ".$what." ".$who);
 	$singleheader['type'] = 'insertAfter';
-	$singleheader['where'] = 'fothergill';
+	$singleheader['where'] = ($why == 'a') ? 'fothergill' : 'mingus';
 	$qstring = album_sort_query($why, $what, 'root');
 	$result = generic_sql_query($qstring, false, PDO::FETCH_OBJ);
 	foreach ($result as $obj) {
 		if ($obj->AlbumArtistindex != $who) {
-			$singleheader['where'] = 'aalbum'.$obj->Albumindex;
+			$singleheader['where'] = $why.'album'.$obj->Albumindex;
 			$singleheader['type'] = 'insertAfter';
 		} else {
 			$singleheader['html'] = artistBanner($obj->Artistname, $obj->AlbumArtistindex, $why);
