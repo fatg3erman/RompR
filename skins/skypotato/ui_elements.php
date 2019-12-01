@@ -139,8 +139,8 @@ function albumControlHeader($fragment, $why, $what, $who, $artist) {
     if ($fragment || $who == 'root') {
         return '';
     }
-    $html = '<div class="configtitle textcentre tagholder_wide brick"><b>'.$artist.'</b></div>';
-    $html .= '<div class="textcentre clickalbum playable tagholder_wide brick noselect" name="'.$why.'artist'.$who.'">'.get_int_text('label_play_all').'</div>';
+    $html = '<div class="configtitle textcentre brick_wide"><b>'.$artist.'</b></div>';
+    $html .= '<div class="textcentre clickalbum playable brick_wide noselect" name="'.$why.'artist'.$who.'">'.get_int_text('label_play_all').'</div>';
     return $html;
 }
 

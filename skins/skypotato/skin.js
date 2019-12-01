@@ -4,8 +4,6 @@
 // The biggest problem with this skin is that if we change stuff in the UI, it usually fucks it up.
 // So be careful to test it.
 
-// It's pretty fucking messy TBH. Need to do this better.
-
 jQuery.fn.menuReveal = function(callback) {
 
     // 'self' is the menu being opened, which will alresady have contents
@@ -14,37 +12,22 @@ jQuery.fn.menuReveal = function(callback) {
     var id = this.attr('id');
     var holder = $('.openmenu[name="'+id+'"]');
     var parent = holder.parent();
-    debug.trace("UI","Revealing",'#'+id);
+    var adjustboxes = true;
 
     switch (true) {
         case holder.hasClass('album'):
         case holder.hasClass('playlist'):
         case holder.hasClass('userplaylist'):
             // Albums and Playliss
-            parent.addClass('tagholder_wide dropshadow');
+            parent.addClass('tagholder_wide dropshadow').css({width: '98%'});
             holder.find('.helpfulalbum.expand').removeClass('expand').addClass('fixed').css({'background-color': 'unset', 'background-image': 'unset'});
             holder.find('div.albumthing').detach().prependTo(self).find('.collectionicon').hide();
             holder.find('div.menuitem.configtitle').remove();
-
-
-    //     // var myleft = parent.position().left;
-    //     // var leftmost = null;
-    //     // var prev = parent.prev();
-    //     // while (prev.hasClass('collectionitem') && !prev.hasClass('tagholder_wide') && prev.position().left < myleft) {
-    //     //     leftmost = prev;
-    //     //     prev = prev.prev();
-    //     // }
-
-    //     // if (leftmost !== null) {
-    //     //     parent.detach().insertBefore(leftmost);
-    //     // }
-
-
             break;
 
         case holder.hasClass('podcast'):
             // Podcasts
-            parent.addClass('tagholder_wide dropshadow').find('.containerbox.vertical').addClass('tleft bumpad');
+            parent.addClass('tagholder_wide dropshadow').css({width: '98%'}).find('.containerbox.vertical').addClass('tleft bumpad');
             parent.find('.helpfulalbum.expand').removeClass('expand').addClass('fixed');
             parent.find('.helpfulalbum').css({'background-color': 'unset', 'background-image': 'unset'});
             parent.find('div.albumthing').detach().appendTo(parent);
@@ -53,7 +36,7 @@ jQuery.fn.menuReveal = function(callback) {
 
         case holder.hasClass('radiochannel'):
             // Radio Stations
-            parent.addClass('tagholder_wide dropshadow').find('.containerbox.radiochannel').addClass('tleft bumpad');
+            parent.addClass('tagholder_wide dropshadow').css({width: '98%'}).find('.containerbox.radiochannel').addClass('tleft bumpad');
             parent.find('.helpfulalbum.expand').removeClass('expand').addClass('fixed').css({'background-color': 'unset', 'background-image': 'unset'});
             self.detach().addClass('minwidthed2').appendTo(parent);
             holder.find('div.albumthing').detach().prependTo(self);
@@ -73,14 +56,23 @@ jQuery.fn.menuReveal = function(callback) {
             }
             self.removeClass('closed');
             break;
+
+        case $(this).hasClass('collectionpanel'):
+            // Albums panel, when an artist name is clicked on. Catch it because we DO need to adjustBoxSizes
+            break;
+
+        default:
+            // Other dropdowns (eg podcast controls)
+            adjustboxes = false;
+            break;
     }
-    self.show(0, function() {
-        if (callback) callback.call(self);
-        if (self.hasClass('containerbox')) {
-            self.css('display', 'flex');
-        }
+    var displaymode = self.hasClass('containerbox') ? 'flex' : 'block';
+    self.css({display: displaymode});
+    if (callback) callback.call(self);
+    if (adjustboxes) {
         layoutProcessor.adjustBoxSizes();
-    });
+        layoutProcessor.scrollSourcesTo(parent);
+    }
     return self;
 }
 
@@ -89,6 +81,7 @@ jQuery.fn.menuHide = function(callback) {
     var id = this.attr('id');
     var holder = $('.openmenu[name="'+id+'"]');
     var parent = holder.parent();
+    var adjustboxes = true;
 
     switch (true) {
         case holder.hasClass('album'):
@@ -109,7 +102,7 @@ jQuery.fn.menuHide = function(callback) {
             parent.find('.helpfulalbum').css({'background-color': '', 'background-image': ''});
             self.prev('div.albumthing').detach().appendTo(self.prev().children('.helpfulalbum').first());
             parent.removeClass('tagholder_wide dropshadow');
-            self.removeClass('minwidthed2').hide();
+            self.removeClass('minwidthed2').css({display: 'none'});
             break;
 
         case holder.hasClass('radiochannel'):
@@ -119,16 +112,25 @@ jQuery.fn.menuHide = function(callback) {
             monkey.removeClass('fixed').addClass('expand').css({'background-color': '', 'background-image': ''});
             parent.removeClass('tagholder_wide dropshadow');
             parent.find('div.albumthing').detach().appendTo(monkey)
-            self.removeClass('minwidthed2').hide();
+            self.removeClass('minwidthed2').css({display: 'none'});
             break;
 
         case holder.hasClass('radio'):
             // Radio Browsers
-            self.addClass('closed').hide();
+            self.addClass('closed').css({display: 'none'});
+            break;
+
+        default:
+            // Other dropdowns (eg podcast controls)
+            self.css({display: 'none'});
+            adjustboxes = false;
             break;
     }
     if (callback) callback.call(self);
-    layoutProcessor.adjustBoxSizes();
+    if (adjustboxes) {
+        layoutProcessor.adjustBoxSizes();
+        layoutProcessor.scrollSourcesTo(parent);
+    }
     return self;
 }
 
@@ -196,9 +198,7 @@ jQuery.fn.adjustBoxSizes = function() {
     this.each(function() {
         var h = $(this);
         var width = calcPercentWidth(h, '.collectionitem', 220, h.width());
-        h.find(".collectionitem").css('width', width.toString()+'%');
-        h.find(".tagholder_wide").css("width", "98%");
-        h.find(".brick_wide").css("width", "98%");
+        h.find(".collectionitem").not('.tagholder_wide').css('width', width.toString()+'%');
     });
 }
 
@@ -358,11 +358,11 @@ var layoutProcessor = function() {
 
         adjustBoxSizes: function() {
             debug.log("UI", "adjusting Box Sizes");
-            $('.collectionpanel').adjustBoxSizes();
+            $('.collectionpanel:visible').adjustBoxSizes();
             $('#fruitbat:visible').adjustBoxSizes();
             $('#podcast_search:visible').adjustBoxSizes();
-            $('#infopane #collection').adjustBoxSizes();
-            $('#infopane #searchresultholder').adjustBoxSizes();
+            $('#infopane #collection:visible').adjustBoxSizes();
+            $('#infopane #searchresultholder:visible').adjustBoxSizes();
             $('#storedplaylists:visible').adjustBoxSizes();
             $('#pluginplaylistslist:visible').adjustBoxSizes();
         },
@@ -519,6 +519,13 @@ var layoutProcessor = function() {
             } else {
                 debug.warn("LAYOUT","Was asked to scroll collection to something non-existent",2);
             }
+        },
+
+        scrollSourcesTo: function(jq) {
+            $("#infopane").mCustomScrollbar('update').mCustomScrollbar('scrollTo', jq,
+                { scrollInertia: 500,
+                  scrollEasing: 'easeOut' }
+            );
         },
 
         expandInfo: function(side) {

@@ -307,7 +307,7 @@ button.iconbutton {
 }
 
 .smallcover {
-    transition: width 0.5s ease;
+    /*transition: width 0.5s ease;*/
     max-width:300px;
 }
 
@@ -501,6 +501,10 @@ button.iconbutton {
     margin-left:1em;
 }
 
+.brick_wide {
+    width: 98%;
+}
+
 /*
 =====================================================================
 = Dropdown Menus
@@ -687,7 +691,7 @@ div.rightmenu
 .collectionitem {
     box-sizing:border-box;
     border: 4px solid transparent;
-    transition: width 0.5s ease;
+    /*transition: width 0.5s ease;*/
 }
 
 .collectionitem.selecotron.tagholder_wide.dropshadow {
