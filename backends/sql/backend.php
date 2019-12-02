@@ -1166,7 +1166,9 @@ function do_tracks_from_database($why, $what, $whom, $fragment = false) {
 	$numdiscs = get_highest_disc($trackarr);
 	$currdisc = -1;
 	trackControlHeader($why, $what, $who[0], get_album_details($who[0]));
+	$total_time = 0;
 	foreach ($trackarr as $arr) {
+		$total_time += $arr['time'];
 		if ($numdiscs > 1 && $arr['disc'] != $currdisc && $arr['disc'] > 0) {
             $currdisc = $arr['disc'];
             print '<div class="clickable clickdisc playable draggable discnumber indent">'.ucfirst(strtolower(get_int_text("musicbrainz_disc"))).' '.$currdisc.'</div>';
@@ -1189,6 +1191,9 @@ function do_tracks_from_database($why, $what, $whom, $fragment = false) {
 	if ($tracktype == 1) {
 		logger::mark("GET TRACKS", "Album",$who,"has no tracks, just an artist link");
 		print '<input type="hidden" class="expandartist"/>';
+	}
+	if ($total_time > 0) {
+		print '<input type="hidden" class="albumtime" value="'.format_time($total_time).'" />';
 	}
 	if ($fragment) {
 		$s = ob_get_contents();

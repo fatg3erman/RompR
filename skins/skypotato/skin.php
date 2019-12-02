@@ -202,7 +202,7 @@ print '<i title="'.get_int_text('button_plugins').'" class="icon-menu topimg too
 <?php
 include("player/".$prefs['player_backend']."/search.php");
 ?>
-    <div id="searchresultholder" class="nosborder selecotron"></div>
+    <div id="searchresultholder" class="noborder selecotron"></div>
     </div>
 
     <div id="filelist" class="invisible">

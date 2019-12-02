@@ -217,7 +217,7 @@ print '<i title="'.get_int_text('button_forward').'" id="forwardbutton" class="i
 <?php
 include("player/".$prefs['player_backend']."/search.php");
 ?>
-    <div id="searchresultholder" class="nosborder selecotron"></div>
+    <div id="searchresultholder" class="noborder selecotron"></div>
     </div>
 
     <div id="filelist" class="invisible">

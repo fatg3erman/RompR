@@ -8,6 +8,7 @@ require_once ("backends/sql/backend.php");
 require_once ("utils/phpQuery.php");
 require_once ("utils/imagefunctions.php");
 $used_images = array();
+$dbterms = array( 'tags' => null, 'rating' => null );
 
 if (array_key_exists('playlist', $_REQUEST)) {
     $pl = $_REQUEST['playlist'];
