@@ -2136,6 +2136,10 @@ table.fileinfotable tr td:nth-child(2) {
 	opacity: 0.2;
 }
 
+.playdiv:hover {
+    opacity: 0.75;
+}
+
 .smallicon {
     padding:0px;
     margin:4px;

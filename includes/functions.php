@@ -470,7 +470,7 @@ function concatenate_artist_names($art) {
         return implode(' & ',$art);
     } else {
         $f = array_slice($art, 0, count($art) - 1);
-        return implode($f, ", ")." & ".$art[count($art) - 1];
+        return implode(', ', $f)." & ".$art[count($art) - 1];
     }
 }
 

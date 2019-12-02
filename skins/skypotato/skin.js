@@ -34,7 +34,7 @@ jQuery.fn.menuReveal = function(callback) {
         case holder.hasClass('radiochannel'):
             // Radio Stations
             parent.addClass('tagholder_wide dropshadow').css({width: '98%'});
-            self.detach().addClass('minwidthed2').appendTo(parent);
+            self.detach().appendTo(parent);
             holder.find('div.albumthing').detach().prependTo(self);
             break;
 
@@ -101,7 +101,7 @@ jQuery.fn.menuHide = function(callback) {
             var monkey = parent.find('.helpfulalbum.expand');
             parent.removeClass('tagholder_wide dropshadow');
             parent.find('div.albumthing').detach().appendTo(monkey)
-            self.removeClass('minwidthed2').css({display: 'none'});
+            self.css({display: 'none'});
             break;
 
         case holder.hasClass('radio'):
@@ -887,6 +887,15 @@ var layoutProcessor = function() {
                 orientation: 'vertical',
                 command: player.controller.volume
             });
+
+            $('#radiolist').children().not('.menuitem').each(function() { 
+                var c = $(this).find('.artistnamething').html();
+                $(this).find('.openmenu').addClass('menuitem').html(c).detach().prependTo($(this)); 
+                $(this).find('.collectionitem').remove();
+            });
+            $('#radiolist>div:nth-child(even)').addClass('album1');
+            $('#radiolist>div:nth-child(odd)').not('.configtitle').addClass('album2');
+
         },
 
         // Optional Additions

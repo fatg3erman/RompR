@@ -91,17 +91,17 @@ if (array_key_exists('populate', $_REQUEST)) {
 			print '<div class="indent">'.$server_description.'</div>';
 			print '<div class="containerbox rowspacer"></div>';
 			print '<div class="indent">'.$listeners.'</div>';
-			print '<div class="containerbox rowspacer"></div>';
-			print '<div class="stream-description clickable icescraper clickstream playable draggable indent" name="'.rawurlencode($listenlink).'" streamname="'.$server_name.'" streamimg="">';
-			print '<b>Listen</b> '.$format;
-			print '</div>';
-			print '<div class="containerbox rowspacer"></div>';
 			print '<a href="'.$server_web_link.'" target="_blank">';
-			print '<div class="containerbox indent padright menuitem">';
+			print '<div class="containerbox indent padright dropdown-container">';
 			print '<i class="icon-www collectionicon fixed"></i>';
 			print '<div class="expand">'.get_int_text('label_station_website').'</div>';
 			print '</div>';
 			print '</a>';
+			print '<div class="containerbox rowspacer"></div>';
+			print '<div class="stream-description clickable icescraper clickstream playable draggable indent" name="'.rawurlencode($listenlink).'" streamname="'.$server_name.'" streamimg="">';
+	        print '<i class="icon-no-response-playbutton collectionicon"></i>';
+			print '<b>Listen</b> '.$format;
+			print '</div>';
 			print '</div>';
 		}
 		$count++;

@@ -295,14 +295,16 @@ class commradioplugin {
         print '<div class="containerbox ninesix indent padright">'.$station['votes'].' Upvotes, '.$station['negativevotes'].' Downvotes</div>';
         if ($station['homepage']) {
             print '<a href="'.$station['homepage'].'" target="_blank">';
-            print '<div class="containerbox padright menuitem">';
-            print '<i class="icon-www smallicon fixed"></i>';
+            print '<div class="containerbox padright dropdown-container">';
+            print '<i class="icon-www collectionicon fixed"></i>';
             print '<div class="expand">'.get_int_text('label_station_website').'</div>';
             print '</div>';
             print '</a>';
         }
-        print '<div class="clickstream playable draggable containerbox padright menuitem" name="'.rawurlencode($station['playurl']).'" streamimg="'.$this->comm_radio_get_stream_image($station).'" streamname="'.$station['name'].'">';
-        print '<i class="'.audioClass($station['codec']).' smallicon fixed"></i>';
+        print '<div class="containerbox rowspacer"></div>';
+        print '<div class="clickstream playable draggable containerbox padright dropdown-container" name="'.rawurlencode($station['playurl']).'" streamimg="'.$this->comm_radio_get_stream_image($station).'" streamname="'.$station['name'].'">';
+        print '<i class="icon-no-response-playbutton collectionicon"></i>';
+        print '<i class="'.audioClass($station['codec']).' collectionicon fixed"></i>';
         print '<div class="expand">'.$station['bitrate'].'kbps &nbsp'.$station['codec'].'</div>';
         print '</div>';
         print '</div>';

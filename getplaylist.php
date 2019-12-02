@@ -17,6 +17,7 @@ require_once ("collection/playlistcollection.php");
 
 header('Content-Type: application/json; charset=utf-8');
 $doneone = false;
+$dbterms = array( 'tags' => null, 'rating' => null );
 
 $player = new $PLAYER_TYPE();
 $collection = new playlistCollection();

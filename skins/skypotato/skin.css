@@ -762,7 +762,7 @@ div.helpfulalbum>div.tagh.albumthing.jalopy200 {
     background-image: unset !important;
 }
 
-.collectionitem.tagholder_wide.dropshadow .containerbox.vertical,
+.collectionitem.tagholder_wide.dropshadow .containerbox.vertical:not(.podoptions),
 .collectionitem.tagholder_wide.dropshadow .containerbox.radiochannel  {
     padding-bottom: 4px;
     float: left;

@@ -52,6 +52,7 @@ class somafmplugin {
     private function format_listenlink($c, $p, $label) {
         $img = $this->getimage($c);
         print '<div class="clickable clickstream playable draggable indent containerbox padright dropdown-container" name="'.rawurlencode((string) $p).'" streamimg="'.$img.'" streamname="'.$c->title.'">';
+        print '<i class="icon-no-response-playbutton collectionicon fixed"></i>';
         print '<i class="'.audioClass($p[0]['format']).' collectionicon fixed"></i>';
         print '<div class="expand">'.$label.'&nbsp';
         switch ($p[0]['format']) {

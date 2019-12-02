@@ -1,11 +1,11 @@
 <?php
+
 /////////////////////////////////////////////////////////////////
 /// getID3() by James Heinrich <info@getid3.org>               //
-//  available at http://getid3.sourceforge.net                 //
-//            or http://www.getid3.org                         //
-//          also https://github.com/JamesHeinrich/getID3       //
-/////////////////////////////////////////////////////////////////
-// See readme.txt for more details                             //
+//  available at https://github.com/JamesHeinrich/getID3       //
+//            or https://www.getid3.org                        //
+//            or http://getid3.sourceforge.net                 //
+//  see readme.txt for more details                            //
 /////////////////////////////////////////////////////////////////
 //                                                             //
 // module.audio.dss.php                                        //
@@ -17,15 +17,17 @@
 
 class getid3_dss extends getid3_handler
 {
-
+	/**
+	 * @return bool
+	 */
 	public function Analyze() {
 		$info = &$this->getid3->info;
 
 		$this->fseek($info['avdataoffset']);
 		$DSSheader  = $this->fread(1540);
 
-		if (!preg_match('#^[\\x02-\\x06]ds[s2]#', $DSSheader)) {
-			$this->error('Expecting "[02-06] 64 73 [73|32]" at offset '.$info['avdataoffset'].', found "'.getid3_lib::PrintHexBytes(substr($DSSheader, 0, 4)).'"');
+		if (!preg_match('#^[\\x02-\\x08]ds[s2]#', $DSSheader)) {
+			$this->error('Expecting "[02-08] 64 73 [73|32]" at offset '.$info['avdataoffset'].', found "'.getid3_lib::PrintHexBytes(substr($DSSheader, 0, 4)).'"');
 			return false;
 		}
 
@@ -71,6 +73,11 @@ class getid3_dss extends getid3_handler
 		return true;
 	}
 
+	/**
+	 * @param string $datestring
+	 *
+	 * @return int|false
+	 */
 	public function DSSdateStringToUnixDate($datestring) {
 		$y = substr($datestring,  0, 2);
 		$m = substr($datestring,  2, 2);
@@ -82,6 +89,11 @@ class getid3_dss extends getid3_handler
 		return mktime($h, $i, $s, $m, $d, $y);
 	}
 
+	/**
+	 * @param int $sample_rate_index
+	 *
+	 * @return int|false
+	 */
 	public function DSSsampleRateLookup($sample_rate_index) {
 		static $dssSampleRateLookup = array(
 			0x0A => 16000,

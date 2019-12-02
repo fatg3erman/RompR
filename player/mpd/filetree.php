@@ -84,7 +84,7 @@ class fileCollector extends base_mpd_player {
         $fcount = 0;
         $filedata = array();
         $foundfile = false;
-        if (count($domains) == 0) {
+        if ($domains === false || count($domains) == 0) {
             $domains = null;
         }
         $this->send_command($cmd);
