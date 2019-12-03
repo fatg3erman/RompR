@@ -137,7 +137,7 @@ var lfmImporter = function() {
 		open: function() {
 
         	if (lfmi == null) {
-	        	lfmi = browser.registerExtraPlugin("lfmi", language.gettext("label_lfm_playcountimporter"), lfmImporter, 'https://fatg3erman.github.io/RompR/Using-Saved-Playlists#editing-your-saved-playlists');
+	        	lfmi = browser.registerExtraPlugin("lfmi", language.gettext("label_lfm_playcountimporter"), lfmImporter, 'https://fatg3erman.github.io/RompR/Keeping-Playcounts-In-Sync');
 			    $("#lfmifoldup").append('<div class="noselection fullwidth" id="lfmimunger"></div>');
 				$("#lfmimunger").append('<div style="height:1em;max-width:80%;margin:auto" id="lfmiprogress"></div>');
 				$("#lfmimunger").append('<div style="padding:4px;max-width:80%;margin:auto;text-align:center;font-size:80%;margin-bottom:1em" id="lfmiinfo"></div>');
@@ -146,9 +146,9 @@ var lfmImporter = function() {
                 	$('#lfmitable').append('<tr><th>Artist</th><th>'+language.gettext('label_album')+'</th><th>'+language.gettext('label_track')+'</th>th class="invisible"></th><th class="invisible"></th><th class="invisible"></th><th>'+language.gettext('label_playcount')+'</th><th>'+language.gettext('label_lfm_playcount')+'</th><th></th></tr>');
 					getTotalTracks();
 				} else {
-					$('#lfmimunger').append('<div  class="textcentre"><h3>'+language.gettext('label_mustlogintolfm')+'</h3></div>');
+					$('#lfmimunger').append('<div class="textcentre"><h3>'+language.gettext('label_mustlogintolfm')+'</h3></div>');
 				}
-				lfmi.slideToggle('fast');
+				lfmi.show();
 	        } else {
 	        	browser.goToPlugin("lfmi");
 	        }

@@ -51,14 +51,14 @@ var communityRadioPlugin = {
 
     setTheThing: function() {
         $('button[name="commradiosearch"]').on('click', communityRadioPlugin.search);
-        var w = 0;
-        $.each($(".cslt"), function() {
-            if ($(this).width() > w) {
-                w = $(this).width();
-            }
-        });
-        w += 8;
-        $(".comm-search-label").css("width", w+"px");
+        // var w = 0;
+        // $.each($(".cslt"), function() {
+        //     if ($(this).width() > w) {
+        //         w = $(this).width();
+        //     }
+        // });
+        // w += 8;
+        // $(".comm-search-label").css("width", w+"px");
         $('#communityradioorderbyselector').val(prefs.communityradioorderby);
     },
 

@@ -107,13 +107,13 @@ Again hit ctrl-X and the answer Y to save that file.
 
 ### PHP installation
 
-    brew install php@7.2
-
-Note: the '7.2' refers to the version number of PHP - in this case version 7.2. This was current at the time of writing but it may change in the future. 'brew search php' will give you a long list of stuff with various version numbers, probably 70, 72, and upwards. I'd suggest using 72 as I know it works, but if there's a newer version that should be OK too.
+    brew install php@
 
 ### PHP configuration
 
-    nano /usr/local/etc/php/7.2/php-fpm.d/www.conf
+The exact location of the config files will depend on the version of PHP that Homebrew has decided to install. At the time of writing, it was 7.4 and it should be obvious where this might need to be changed in the commands that follow
+
+    nano /usr/local/etc/php/7.4/php-fpm.d/www.conf
 
 First find and edit the user and group entries - as before "username" should be your username
 
@@ -147,7 +147,7 @@ On other devices you can either add an entry to their hosts file for the IP addr
 
 ## Start Everything
 
-    sudo brew services start php72
+    sudo brew services start php
     sudo brew services start nginx
 
 ## And We're Done

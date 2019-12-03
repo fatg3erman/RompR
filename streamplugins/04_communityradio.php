@@ -80,28 +80,28 @@ class commradioplugin {
         global $prefs;
         directoryControlHeader('communityradiolist', get_int_text('label_communityradio'));
 
-        print '<div class="fullwidth padright containerbox dropdown-container">';
-        print '<div class="fixed comm-search-label"><span class="cslt"><b>Order By</b></span></div>';
+        print '<div class="fullwidth containerbox dropdown-container">';
+        // print '<div class="fixed comm-search-label"><span class="cslt"><b>Order By</b></span></div>';
         print '<div class="selectholder expand">';
         print '<select id="communityradioorderbyselector" class="saveomatic">';
         foreach (array('name', 'country', 'language', 'state', 'tags', 'votes', 'bitrate') as $o) {
             print '<option value="'.$o.'"';
-            print '>'.ucfirst($o).'</option>';
+            print '>Order By '.ucfirst($o).'</option>';
         }
         print '</select>';
         print '</div>';
         print '</div>';
 
-        print '<div class="fullwidth cleargroupparent padright">';
+        print '<div class="fullwidth cleargroupparent">';
         foreach ($this->searchterms as $term) {
             print '<div class="containerbox dropdown-container fullwidth" name="'.$term.'">';
-            print '<div class="fixed comm-search-label"><span class="cslt"><b>'.ucfirst($term).'</b></span></div>';
+            // print '<div class="fixed comm-search-label"><span class="cslt"><b>'.ucfirst($term).'</b></span></div>';
             print '<div class="expand">';
-            print '<input class="comm_radio_searchterm clearbox enter cleargroup" name="'.$term.'" type="text" />';
+            print '<input class="comm_radio_searchterm clearbox enter cleargroup" name="'.$term.'" type="text" placeholder="'.ucfirst($term).'"/>';
             print '</div>';
             print '</div>';
         }
-        print '<div class="containerbox fullwidth padright">';
+        print '<div class="containerbox fullwidth">';
         print '<div class="expand"></div>';
         print '<button class="fixed searchbutton iconbutton cleargroup" name="commradiosearch"></button>';
         print '</div>';
