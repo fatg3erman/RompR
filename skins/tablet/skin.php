@@ -7,13 +7,13 @@
     <div id="sourcescontrols" class="expand center containerbox noborder">
         <div id="volumedropper" class="topdropmenu rightmenu widemenu">
 <?php
-            print '<div class="configtitle textcentre"><b>'.get_int_text('label_volume').'</b></div>';
+            print '<div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_volume').'</b></div></div>';
 ?>
             <div id="volumecontrol" class="fullwidth">
                 <div id="volume"></div>
             </div>
 <?php
-            print '<div class="configtitle textcentre"><b>'.get_int_text('config_audiooutputs').'</b></div>';
+            print '<div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('config_audiooutputs').'</b></div></div>';
 ?>
             <div class="pref">
 <?php
@@ -22,13 +22,13 @@ printOutputCheckboxes();
 ?>
             </div>
 <?php
-            print '<div class="configtitle textcentre nohelp"><b>'.get_int_text('config_players').'</b></div>';
+            print '<div class="configtitle nohelp"><div class="textcentre expand"><b>'.get_int_text('config_players').'</b></div></div>';
 ?>
             <div class="pref styledinputs" name="playerdefs">
             </div>
 
 <?php
-            print '<div class="configtitle textcentre nohelp invisible" id="snapheader"><b>Snapcast</b></div>';
+            print '<div class="configtitle nohelp invisible" id="snapheader"><div class="textcentre expand"><b>Snapcast</b></div></div>';
 ?>
             <div class="pref" id="snapcastgroups">
             </div>
@@ -124,7 +124,7 @@ printOutputCheckboxes();
 
 <div id="albumlist" class="scroller mainpane invisible pright">
 <?php
-    print '<div class="menuitem containerbox configtitle">';
+    print '<div class="dropdown-container configtitle">';
     print '<i onclick="toggleCollectionButtons()" title="'.get_int_text('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip fixed"></i>';
     print '<div class="textcentre expand"><b>'.get_int_text('button_local_music').'</b></div>';
     print '</div>';
@@ -136,7 +136,7 @@ printOutputCheckboxes();
 
 <div id='searchpane' class="scroller mainpane invisible pright">
 <div id="search" class="noborder">
-<div class="menuitem containerbox configtitle">
+<div class="dropdown-container configtitle">
 <?php
     print '<i onclick="toggleSearchButtons()" title="Advanced Search Options" class="icon-menu playlisticon clickicon tooltip fixed"></i>';
     print '<div class="textcentre expand"><b>'.get_int_text('label_searchfor').'</b></div>';
@@ -150,7 +150,7 @@ include("player/".$prefs['player_backend']."/search.php");
 </div>
 
 <div id="filelist" class="scroller mainpane invisible pright">
-    <div class="menuitem containerbox configtitle">
+    <div class="dropdown-container configtitle">
 <?php
     print '<div class="textcentre expand"><b>'.get_int_text('button_file_browser').'</b></div>';
 ?>
@@ -177,7 +177,7 @@ include("player/".$prefs['player_backend']."/search.php");
 </div>
 
 <div id="radiolist" class="scroller mainpane invisible pright">
-    <div class="menuitem containerbox configtitle">
+    <div class="dropdown-container configtitle">
 <?php
 print '<div class="expand textcentre"><b>'.get_int_text('button_internet_radio').'</b></div>';
 ?>
@@ -192,7 +192,7 @@ include($p);
 
 <div id="podcastslist" class="scroller mainpane invisible pright">
 <?php
-print '<div class="configtitle containerbox menuitem">';
+print '<div class="dropdown-container configtitle">';
 print '<i onclick="podcasts.toggleButtons()" class="icon-menu playlisticon clickicon tooltip fixed" title="'.get_int_text('label_podcastcontrols').'"></i>';
 print '<div class="textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div>';
 print '</div>';
@@ -201,7 +201,7 @@ include("podcasts/podcasts.php");
 </div>
 
 <div id="audiobooklist" class="scroller mainpane invisible pright">
-    <div class="menuitem containerbox configtitle">
+    <div class="dropdown-container configtitle">
 <?php
     print '<div class="textcentre expand"><b>'.get_int_text('label_audiobooks').'</b></div>';
 ?>
@@ -214,7 +214,7 @@ if ($use_smartradio) {
 ?>
 <div id="pluginplaylistholder" class="containerbox vertical scroller mainpane invisible pright">
 <?php
-print '<div class="menuitem containerbox configtitle">';
+print '<div class="dropdown-container configtitle">';
 print '<div class="expand textcentre"><b>'.get_int_text('label_pluginplaylists').'</b></div>';
 print '</div>';
 ?>
@@ -249,15 +249,15 @@ if ($prefs['player_backend'] == "mopidy") {
 
 <div id="playlistman" class="scroller mainpane invisible pright">
     <?php
-        print '<div class="configtitle textcentre" style="margin-top:8px"><b>'.get_int_text('button_saveplaylist').'</b></div>';
+        print '<div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('button_saveplaylist').'</b></div></div>';
     ?>
-        <div class="pref containerbox dropdown-container" style="margin-left:16px"><div class="fixed padright">
+        <div class="containerbox dropdown-container"><div class="fixed padright">
         </div><div class="expand"><input class="enter clearbox" id="playlistname" type="text" size="200"/></div>
     <?php
-            print '<button class="fixed">'.get_int_text('button_save').'</button>';
+            print '<button class="fixed iconbutton savebutton"></button>';
     ?>
         </div>
-        <div class="menuitem containerbox configtitle">
+        <div class="dropdown-container configtitle">
     <?php
         print '<div class="expand textcentre"><b>'.get_int_text('button_loadplaylist').'</b></div>';
     ?>
@@ -274,7 +274,7 @@ include("includes/prefspanel.php")
 ?>
 </div>
 
-<div id="playlistm" class="pleft pright">
+<div id="playlistm">
 <?php
 include('skins/playlist.php');
 ?>
@@ -282,17 +282,17 @@ include('skins/playlist.php');
 
 </div>
 
-<div id="tagadder" class="topdropmenu dropmenu dropshadow mobmenu">
-    <div class="configtitle textcentre moveable" style="padding-top:4px"><b>
+<div id="tagadder" class="dropmenu dropshadow mobmenu">
+    <div class="dropdown-container configtitle moveable" style="padding-top:4px"><div class="textcentre expand"><b>
 <?php
-print get_int_text("lastfm_addtags").'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div>';
+print get_int_text("lastfm_addtags").'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div></div>';
 ?>
     <div class="containerbox padright dropdown-container tagaddbox"></div>
 </div>
 
 <div id="pladddropdown" class="topdropmenu dropmenu dropshadow mobmenu">
     <?php
-    print '<div class="configtitle textcentre moveable" style="padding-top:4px"><b>'.get_int_text('button_addtoplaylist').'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="addToPlaylist.close()"></i></div>';
+    print '<div class="configtitle moveable" style="padding-top:4px"><div class="textcentre expand"><b>'.get_int_text('button_addtoplaylist').'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="addToPlaylist.close()"></i></div></div>';
         ?>
     <div id="addtoplaylistmenu" class="clearfix">
     </div>

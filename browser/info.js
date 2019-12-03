@@ -128,9 +128,9 @@ var browser = function() {
     }
 
     function updateHistory() {
-        $('#historypanel').off('click').empty().html('<div class="configtitle textcentre"><b>'
+        $('#historypanel').off('click').empty().html('<div class="dropdown-container configtitle"><div class="textcentre expand"><b>'
             +language.gettext("button_history")
-            +'</b><i class="icon-cancel-circled clickicon playlisticonr tright mobonly" onclick="showHistory()"></i></div>'
+            +'</b><i class="icon-cancel-circled clickicon playlisticonr tright mobonly" onclick="showHistory()"></i></div></div>'
         );
         if (displaypointer == 1) {
             $("#backbutton").off('click').addClass('button-disabled');

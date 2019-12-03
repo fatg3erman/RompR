@@ -64,7 +64,7 @@ var opmlImporter = function() {
 		gotData: function(data) {
 			debug.log("OPML IMPORTER", "File Parsed",data);
 			var html = '';
-			html += '<div class="configtitle textcentre brick_wide">'+language.gettext('label_opmlimporter')+'</div>';
+			html += '<div class="configtitle"><div class="expand textcentre">'+language.gettext('label_opmlimporter')+'</div></div>';
 			html += '<div class="containerbox fullwidth">';
 			html += '<button class="fixed" name="opml_selectall">'+language.gettext('button_selectall')+'</button>';
 			html += '<button class="fixed" name="opml_selectnone">'+language.gettext('button_selectnone')+'</button>';

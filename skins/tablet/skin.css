@@ -17,12 +17,17 @@ select {
     height:3em;
 }
 
-.selectholder {
+div.selectholder {
     height:3em;
 }
 
 input[type="text"] {
     height:3em;
+}
+
+button.iconbutton {
+    height: 3em;
+    width: 3em;
 }
 
 div {
@@ -441,7 +446,7 @@ div.rightmenu {
     border:8px solid transparent;
 }
 
-.combo-button {
+i.combo-button {
     box-sizing: border-box;
     border: 4px solid transparent;
 }
@@ -558,6 +563,10 @@ div.rightmenu {
     padding-right:4px;
 }
 
+.padleft {
+    padding-left:4px;
+}
+
 .whatdoicallthis {
     margin-bottom: 8px;
 }
@@ -585,16 +594,6 @@ div.rightmenu {
     width: 100%;
 }
 
-.pleft
-{
-    box-sizing:border-box;
-    padding-left:8px;
-}
-.pright
-{
-    box-sizing:border-box;
-    padding-right:8px;
-}
 .mobmenu
 {
     position:absolute;
@@ -718,6 +717,8 @@ div.rightmenu {
     #playlistm {
         width:100%;
         height:100%;
+        padding-left:8px;
+        padding-right:8px;
     }
 
     .mainpane {

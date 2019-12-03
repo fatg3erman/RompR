@@ -795,14 +795,14 @@ function rejig_wishlist_tracks() {
 }
 
 function emptyCollectionDisplay() {
-    print '<div id="emptycollection" class="pref textcentre">
+    print '<div id="emptycollection" class="textcentre fullwidth">
     <p>Your Music Collection Is Empty</p>
     <p>You can add files to it by tagging and rating them, or you can build a collection of all your music</p>';
     print '</div>';
 }
 
 function emptySearchDisplay() {
-    print '<div class="pref textcentre">
+    print '<div class="textcentre fullwidth">
     <p>No Results</p>
     </div>';
 }
@@ -920,8 +920,8 @@ function rrmdir($path) {
 function collectionButtons() {
     print '<div id="collectionbuttons" class="invisible">';
 
-    print '<div class="pref containerbox dropdown-container">';
-    print '<div class="selectholder" style="width:100%;margin-left:0px">';
+    print '<div class="containerbox dropdown-container">';
+    print '<div class="selectholder">';
     print '<select id="collectionrangeselector" class="saveomatic">';
     print '<option value="'.ADDED_ALL_TIME.'">'.get_int_text('label_all_time').'</option>';
     print '<option value="'.ADDED_TODAY.'">'.get_int_text('label_today').'</option>';
@@ -932,8 +932,8 @@ function collectionButtons() {
     print '</div>';
     print '</div>';
 
-    print '<div class="pref containerbox dropdown-container">';
-    print '<div class="selectholder" style="width:100%;margin-left:0px">';
+    print '<div class="containerbox dropdown-container">';
+    print '<div class="selectholder">';
     print '<select id="sortcollectionbyselector" class="saveomatic">';
     print '<option value="artist">'.ucfirst(get_int_text('label_artists')).'</option>';
     print '<option value="album">'.ucfirst(get_int_text('label_albums')).'</option>';
@@ -942,7 +942,7 @@ function collectionButtons() {
     print '</div>';
     print '</div>';
 
-    print '<div class="pref styledinputs">
+    print '<div class="styledinputs">
     <input class="autoset toggle" type="checkbox" id="sortbydate">
     <label for="sortbydate">'.get_int_text('config_sortbydate').'</label>
     <div class="pref">
@@ -951,7 +951,7 @@ function collectionButtons() {
     </div>
     </div>';
 
-    print '<div class="pref textcentre">
+    print '<div class="textcentre">
     <button name="donkeykong">'.get_int_text('config_updatenow').'</button>
     </div>';
     print '</div>';

@@ -48,14 +48,14 @@ a:hover,a:active
     background-color:rgba(0,0,0,0.2);
 }
 
-button, input[type="button"], .filebutton
+button, input[type="button"], div.filebutton
 {
     background-image: radial-gradient(circle farthest-side at center, yellow, orange, red);
     color:#000000;
     border:1px solid #000000;
 }
 
-button:hover, input[type="button"]:hover, .filebutton:hover
+button:hover, input[type="button"]:hover, div.filebutton:hover
 {
     color:#ffffff;
     text-shadow: 0 0 15px #ffffff;

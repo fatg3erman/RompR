@@ -14,16 +14,15 @@ body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,input
     color:#dddddd;
 }
 
-button, input[type="button"], .filebutton
+button, input[type="button"], div.filebutton
 {
     background-color:#000000;
     border:none;
     color:#dddddd;
     font-weight:bold;
-    font-size:110%;
 }
 
-button:hover, input[type="button"]:hover, .filebutton:hover
+button:hover, input[type="button"]:hover, div.filebutton:hover
 {
     background-color:#222222;
     color:#ffffff;
@@ -37,11 +36,11 @@ select:hover {
     color:#ffffff;
 }
 
-.selectholder {
+div.selectholder {
     background-color:rgba(200,200,200,0.05);
 }
 
-.selectholder:hover {
+div.selectholder:hover {
     background-color:rgba(200,200,200,0.1);
 }
 

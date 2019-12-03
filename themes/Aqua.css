@@ -38,13 +38,13 @@ a:hover,a:active {
     color:#ff4800;
 }
 
-button, input[type="button"], .filebutton {
+button, input[type="button"], div.filebutton {
     background-image: linear-gradient(#ccdcf2, #c0d0e7);
     color:#000000;
     border:1px solid #adadad;
 }
 
-button:hover, input[type="button"]:hover, .filebutton:hover {
+button:hover, input[type="button"]:hover, div.filebutton:hover {
     color:#3875d7;
     border:1px solid #ccdcf2;
     text-shadow: 0 0 15px #3875d7;

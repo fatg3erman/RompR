@@ -41,7 +41,7 @@
                     ?>
                     <div class="topdropmenu dropshadow leftmenu normalmenu useasfixed">
                         <?php
-                        print '<div class="configtitle textcentre"><b>'.get_int_text('button_addtoplaylist').'</b></div>';
+                        print '<div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('button_addtoplaylist').'</b></div></div>';
                         ?>
                         <div id="addtoplaylistmenu" class="clearfix">
                         </div>
@@ -70,12 +70,12 @@
 ?>
                 <div class="topdropmenu dropshadow rightmenu widemenu stayopen" id="plsaver">
 <?php
-                    print '<div class="configtitle textcentre"><b>'.get_int_text('button_saveplaylist').'</b></div>';
-                    print '<div class="containerbox">
+                    print '<div class="dropdown-container configtitle"><div class="textcentre expand"><b>'.get_int_text('button_saveplaylist').'</b></div></div>';
+                    print '<div class="containerbox dropdown-container">
                         <div class="expand">
                             <input class="enter clearbox" id="playlistname" type="text" size="200"/>
                         </div>';
-                        print '<button class="fixed">'.get_int_text('button_save').'</button>
+                        print '<button class="fixed iconbutton savebutton"></button>
                     </div>';
 ?>
                 </div>
@@ -93,7 +93,7 @@ include ("includes/prefspanel.php");
 
             <div class="fixed topdrop"><i class="icon-menu smallpluginicon clickicon"></i>
                 <div class="topdropmenu dropshadow rightmenu widemenu stayopen" id="phacker">
-                <div class="configtitle textcentre"><b>Play Queue</b></div>
+                <div class="configtitle"><div class="textcentre expand"><b>Play Queue</b></div></div>
                     <?php
                     include("skins/playlist.php");
                     ?>
@@ -170,7 +170,7 @@ print '<i title="'.get_int_text('button_plugins').'" class="icon-menu topimg too
 
     <div id="albumlist" class="invisible noborder">
 <?php
-    print '<div class="menuitem containerbox configtitle">';
+    print '<div class="dropdown-container configtitle">';
     print '<i onclick="toggleCollectionButtons()" title="'.get_int_text('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip fixed"></i>';
     print '<div class="textcentre expand"><b>'.get_int_text('button_local_music').'</b></div>';
     print '</div>';
@@ -180,7 +180,7 @@ print '<i title="'.get_int_text('button_plugins').'" class="icon-menu topimg too
     </div>
 
     <div id="audiobooklist" class="invisible noborder">
-        <div class="menuitem containerbox configtitle">
+        <div class="dropdown-container configtitle">
 <?php
         print '<div class="textcentre expand"><b>'.get_int_text('label_audiobooks').'</b></div>';
 ?>
@@ -193,7 +193,7 @@ print '<i title="'.get_int_text('button_plugins').'" class="icon-menu topimg too
     <div id="historypanel" class="invisible noborder"></div>
 
     <div id="searcher" class="invisible noborder">
-    <div class="menuitem containerbox configtitle">
+    <div class="dropdown-container configtitle">
     <?php
         print '<i onclick="toggleSearchButtons()" title="Advanced Search Options" class="icon-menu playlisticon clickicon tooltip fixed"></i>';
         print '<div class="textcentre expand"><b>'.get_int_text('label_searchfor').'</b></div>';
@@ -206,7 +206,7 @@ include("player/".$prefs['player_backend']."/search.php");
     </div>
 
     <div id="filelist" class="invisible">
-        <div class="menuitem containerbox configtitle">
+        <div class="dropdown-container configtitle">
 <?php
         print '<div class="textcentre expand"><b>'.get_int_text('button_file_browser').'</b></div>';
 ?>
@@ -215,7 +215,7 @@ include("player/".$prefs['player_backend']."/search.php");
     </div>
 
     <div id="radiolist" class="invisible">
-        <div class="menuitem containerbox configtitle">
+        <div class="dropdown-container configtitle">
 <?php
     print '<div class="expand textcentre"><b>'.get_int_text('button_internet_radio').'</b></div>';
 ?>
@@ -233,7 +233,7 @@ foreach($sp as $p) {
 <div id="infopane" class="cmiddle noborder infowiki tleft">
     <div id="podcastslist" class="helpfulholder noselection dropmenu invisible">
 <?php
-print '<div class="configtitle containerbox menuitem">';
+print '<div class="dropdown-container configtitle">';
 print '<i onclick="podcasts.toggleButtons()" class="icon-menu playlisticon clickicon tooltip fixed" title="'.get_int_text('label_podcastcontrols').'"></i>';
 print '<div class="textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div>';
 print '</div>';
@@ -241,7 +241,7 @@ include("podcasts/podcasts.php");
 ?>
     </div>
     <div id="playlistslist" class="invisible">
-        <div class="menuitem containerbox configtitle brick_wide">
+        <div class="dropdown-container configtitle">
 <?php
         print '<div class="expand textcentre"><b>'.get_int_text('button_loadplaylist').'</b></div>';
 ?>
@@ -303,9 +303,9 @@ print '<div id="artistinformation" class="infotext noselection"><h2 align="cente
 </div>
 
 <div id="tagadder" class="dropmenu dropshadow mobmenu">
-    <div class="configtitle textcentre moveable" style="padding-top:4px"><b>
+    <div class="dropdown-container configtitle moveable" style="padding-top:4px"><div class="textcentre expand"><b>
 <?php
-print get_int_text("lastfm_addtags").'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div>';
+print get_int_text("lastfm_addtags").'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div></div>';
 ?>
     <div class="containerbox padright dropdown-container tagaddbox"></div>
 </div>

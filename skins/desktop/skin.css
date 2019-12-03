@@ -4,6 +4,10 @@
 =====================================================================
 */
 
+input[type=text] {
+    height: 2em;
+}
+
 #infobar {
     width:100%;
     padding-top:4px;
@@ -188,6 +192,11 @@
 =====================================================================
 */
 
+button.iconbutton {
+    height: 2em;
+    width: 2em;
+}
+
 .infobarlayout {
     margin-left:12px;
     margin-top:0px;
@@ -364,6 +373,10 @@ i.topdrop
 
 .padright {
     padding-right:4px;
+}
+
+.padleft {
+    padding-left:4px;
 }
 
 .buttonchange {

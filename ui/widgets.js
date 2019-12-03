@@ -1427,7 +1427,8 @@ function popup(opts) {
         win = $('<div>', { id: winid, class: "popupwindow dropshadow noselection" }).appendTo($('body'));
         var container = $('<div>', {class: 'containerbox vertical popupcontentcontainer'}).appendTo(win);
         titlebar = $('<div>', { class: "cheese dragmenu fixed" }).appendTo(container);
-        var tit = $('<div>', { class: "configtitle textcentre"}).appendTo(titlebar)
+        var ct = $('<div>', {class: "configtitle"}).appendTo(titlebar);
+        var tit = $('<div>', { class: "expand textcentre"}).appendTo(ct)
         tit.html('<b>'+options.title+'</b>');
         if (options.hasclosebutton) {
             tit.append('<i class="icon-cancel-circled playlisticonr clickicon tright"></i>');

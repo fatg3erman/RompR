@@ -19,18 +19,15 @@ var crazyRadioManager = function() {
                 }
                 layoutProcessor.adjustLayout();
                 uiHelper.setupPersonalRadioAdditions();
-                $('.clickremcrazy').on('click', function(evt) {
-                    removeCrazy($(evt.delegateTarget).attr('name'));
-                });
             }, 'json');
         },
 
         refreshCrazyList: function() {
             $('.crazyradio').each(function() {
-                if ($(this).parent().hasClass('collectionitem')) {
-                    $(this).parent().remove();
+                if (skin == 'skypotato') {
+                    $(this).parent().parent().parent().remove();
                 } else {
-                    $(this).remove();
+                    $(this).parent().parent().remove();
                 }
             });
             crazyRadioManager.loadSavedCrazies();
@@ -57,10 +54,10 @@ var crazyRadioManager = function() {
             if (clickedElement.hasClass('clickremcrazy')) {
                 var i = clickedElement.attr('name');
                 debug.log("CRAZY BUGGER","Removing",i);
-                if ($('.crazyradio[name="'+i+'"]').parent().hasClass('collectionitem')) {
-                    $('.crazyradio[name="'+i+'"]').parent().remove();
+                if (skin == 'skypotato') {
+                    $('.crazyradio[name="'+i+'"]').parent().parent().parent().remove();
                 } else {
-                    $('.crazyradio[name="'+i+'"]').remove();
+                    $('.crazyradio[name="'+i+'"]').parent().parent().remove();
                 }
                 $.get('radios/crazymanager.php?action=remove&index='+i, crazyRadioManager.refreshCrazyList);
             }
@@ -145,12 +142,12 @@ var spotiCrazyRadio = function() {
                     addParameter(i, table)
                 });
 
-                html = '<div class="containerbox dropdown-container spacer menuitem" class="bacon"><div class="expand"></div>';
-                html += '<button class="fixed alignmid" '+
-                    'onclick="crazyRadioManager.saveCrazyRadioSettings(event)">Save These Settings</button>';
-                html += '<button class="fixed alignmid" '+
-                    'onclick="crazyRadioManager.go()">'+
-                    language.gettext('button_playradio')+'</button>';
+                html = '<div class="containerbox dropdown-container bacon">';
+                html += '<div class="expand"></div>';
+                html += '<button class="fixed iconbutton savebutton" '+
+                    'onclick="crazyRadioManager.saveCrazyRadioSettings(event)"></button>';
+                html += '<button class="fixed iconbutton icon-no-response-playbutton" '+
+                    'onclick="crazyRadioManager.go()"></button>';
                 html += '</div>';
                 $("#pluginplaylists_crazy").append(html);
 

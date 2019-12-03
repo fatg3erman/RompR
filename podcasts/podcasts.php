@@ -95,9 +95,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 function doPodcastBase() {
     global $prefs;
-    // print '<div class="containerbox indent"><div class="expand">'.get_int_text("label_searchfor").' (iTunes)</div></div>';
-    print '<div class="containerbox indent dropdown-container">';
-    print '<div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" placeholder="'.get_int_text('label_searchfor').' (iTunes)" /></div>';
+    print '<div class="containerbox dropdown-container"><div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" placeholder="'.get_int_text('label_searchfor').' (iTunes)" /></div>';
     print '<button class="fixed searchbutton iconbutton" onclick="podcasts.search()"></button>';
     print '</div>';
 
@@ -109,23 +107,20 @@ function doPodcastBase() {
     print '<div class="spacer"></div>';
 
     print '<div id="cocksausage">';
-    // print '<div class="containerbox indent"><div class="expand">'.get_int_text("podcast_entrybox").'</div></div>';
-    print '<div class="containerbox indent dropdown-container"><div class="expand"><input class="enter clearbox" id="podcastsinput" type="text" placeholder="'.get_int_text("podcast_entrybox").'" /></div>';
+    print '<div class="containerbox dropdown-container"><div class="expand"><input class="enter clearbox" id="podcastsinput" type="text" placeholder="'.get_int_text("podcast_entrybox").'" /></div>';
     print '<button class="fixed iconbutton rssbutton" onclick="podcasts.doPodcast(\'podcastsinput\')"></button></div>';
     print '</div>';
 
     print '<div class="spacer"></div>';
 
-    print '<div class="containerbox dropdown-container indent noselection">';
-    // print '<i class="icon-toggle-closed mh menu fixed openmenu" name="podcastsortoptions"></i>';
+    print '<div class="containerbox dropdown-container noselection">';
     print '<div class="expand"><b>'.get_int_text('label_global_controls').'</b></div>';
     print '</div>';
 
-    // print '<div id="podcastsortoptions" class="toggledown invisible marged">';
 
     print '<div class="spacer"></div>';
 
-    print '<div class="containerbox indent bumpad">';
+    print '<div class="containerbox fullwidth bumpad">';
     print '<i class="icon-refresh smallicon clickable clickicon fixed tooltip podcast podglobal" name="refreshall" title="'.get_int_text('podcast_refresh_all').'"></i>';
     print '<i class="icon-headphones smallicon clickable clickicon fixed tooltip podcast podglobal" name="markalllistened" title="'.get_int_text('podcast_mark_all').'"></i>';
     print '<i class="icon-trash oneeighty smallicon clickable clickicon fixed tooltip podcast podglobal" name="undeleteall" title="'.get_int_text('podcast_undelete').'"></i>';
@@ -142,10 +137,10 @@ function doPodcastBase() {
         get_int_text('label_unlistened_episodes') => 'unlistened'
     );
 
-    print '<div class="containerbox indent"><b>'.get_int_text('label_sortby').'</b></div>';
+    print '<div class="containerbox"><b>'.get_int_text('label_sortby').'</b></div>';
 
     for ($count = 0; $count < $prefs['podcast_sort_levels']; $count++) {
-        print '<div class="containerbox dropdown-container indent padright">';
+        print '<div class="containerbox dropdown-container">';
         print '<div class="selectholder expand">';
         print '<select id="podcast_sort_'.$count.'selector" class="saveomatic">';
         $options = '';
@@ -165,7 +160,7 @@ function doPodcastBase() {
 
     print '<div class="spacer"></div>';
 
-    print '<div class="menuitem configtitle textcentre brick_wide sensiblebox" style="margin-left:8px;margin-top:1em;margin-bottom:1em"><b>Subscribed Podcasts</b></div>';
+    print '<div class="dropdown-container configtitle"><div class="textcentre expand"><b>'.get_int_text('label_subbed_podcasts').'</b></div></div>';
 }
 
 function doPodcastList($subscribed) {

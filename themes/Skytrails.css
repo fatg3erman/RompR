@@ -58,14 +58,14 @@ a:hover,a:active
     cursor:pointer;
 }
 
-button, input[type="button"], .filebutton
+button, input[type="button"], div.filebutton
 {
     color:#000000;
     background-color:rgba(255,255,255,0.5);
     border:1px solid #222222;
 }
 
-button:hover, input[type="button"]:hover, .filebutton:hover
+button:hover, input[type="button"]:hover, div.filebutton:hover
 {
     border:1px solid #bbbbbb;
     background-color:rgba(255,255,255,0.7);
@@ -75,11 +75,11 @@ select {
     color:#000000;
 }
 
-.selectholder {
+div.selectholder {
     background-color:rgba(255,255,255,0.3);
 }
 
-.selectholder:hover {
+div.selectholder:hover {
     background-color:rgba(255,255,255,0.4);
 }
 

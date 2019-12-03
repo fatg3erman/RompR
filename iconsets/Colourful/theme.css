@@ -16,7 +16,7 @@
     background-repeat: no-repeat;
 }
 
-.combobox-entry, .selectholder {
+.combobox-entry, div.selectholder {
     background-image: url('iconsets/Colourful/blobdown2.svg');
     /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
     background-size: auto 50%;
@@ -24,7 +24,7 @@
     background-repeat: no-repeat;
 }
 
-.combobox-entry:hover, .selectholder:hover {
+.combobox-entry:hover, div.selectholder:hover {
     background-image: url('iconsets/Colourful/blobdown2-hi.svg');
     /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
     background-size: auto 50%;
@@ -51,7 +51,7 @@
     background-repeat: no-repeat;
 }
 
-.combo-button {
+i.combo-button {
     background-image: url('iconsets/Colourful/blobdown2.svg');
 }
 
@@ -240,20 +240,6 @@ img.plimage.notfound
     background-size: contain;
 }
 
-button.iconbutton {
-    height:2em;
-    width:2em;
-    background-size: contain;
-    background-position:center;
-    border: none !important;
-    opacity: 0.8;
-    background-color:transparent;
-}
-
-button.iconbutton:hover {
-    opacity: 1;
-}
-
 button.searchbutton {
     background-image: url('iconsets/Colourful/system-search.svg');
 }
@@ -262,4 +248,7 @@ button.rssbutton {
     background-image: url('iconsets/Colourful/rss.svg');
 }
 
+button.savebutton {
+    background-image: url('iconsets/Colourful/document-save.svg');
+}
 

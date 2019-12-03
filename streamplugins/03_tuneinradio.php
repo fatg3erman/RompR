@@ -22,7 +22,7 @@ class tuneinplugin {
             'class' => 'radio',
             'expand' => true
         ));
-        print '<div id="tuneinlist" class="dropmenu notfilled"><div class="configtitle textcentre"><b>'.get_int_text('label_loading').'</b></div></div>';
+        print '<div id="tuneinlist" class="dropmenu notfilled"><div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
         print '</div>';
     }
 
@@ -31,12 +31,12 @@ class tuneinplugin {
             $this->url = $_REQUEST['url'];
         } else {
             directoryControlHeader('tuneinlist', get_int_text('label_tuneinradio'));
-            print '<div class="fullwidth padright" style="margin-bottom:0px"><div class="containerbox padright noselection fullwidth dropdown-container"><div class="expand">
+            print '<div class="containerbox fullwidth dropdown-container"><div class="expand">
                 <input class="enter clearbox tuneinsearchbox" name="tuneinsearcher" type="text" ';
             if (array_key_exists('search', $_REQUEST)) {
                 print 'value="'.$_REQUEST['search'].'" ';
             }
-            print '/></div><button class="fixed tuneinsearchbutton searchbutton iconbutton clickable tunein"></button></div></div>';
+            print '/></div><button class="fixed tuneinsearchbutton searchbutton iconbutton clickable tunein"></button></div>';
         }
         if (array_key_exists('title', $_REQUEST)) {
             $this->title = $_REQUEST['title'];

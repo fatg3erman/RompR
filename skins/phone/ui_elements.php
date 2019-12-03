@@ -125,7 +125,7 @@ function albumControlHeader($fragment, $why, $what, $who, $artist) {
     }
     $html = '<div class="menu backmenu openmenu" name="'.$why.'artist'.$who.'">';
     $html .='</div>';
-    $html .= '<div class="configtitle textcentre"><b>'.$artist.'</b></div>';
+    $html .= '<div class="dropdown-container configtitle fullwidth"><div class="textcentre expand"><b>'.$artist.'</b></div></div>';
     $html .= '<div class="textcentre clickalbum playable ninesix noselect" name="'.$why.'artist'.$who.'">'.get_int_text('label_play_all').'</div>';
     return $html;
 }
@@ -144,32 +144,6 @@ function trackControlHeader($why, $what, $who, $dets) {
         $html .= '<div class="album-menu-header"><img class="album_menu_image" asrc="'.$images['asdownloaded'].'" /></div>';
         if ($why != '') {
             $html .= '<div class="containerbox wrap album-play-controls">';
-            // if ($det['AlbumUri']) {
-            //     $albumuri = rawurlencode($det['AlbumUri']);
-            //     if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
-            //         $html .= '<div class="icon-no-response-playbutton smallicon expand playable clickcue noselect" name="'.$albumuri.'"></div>';
-            //     } else {
-            //         $html .= '<div class="icon-no-response-playbutton smallicon expand clicktrack playable noselect" name="'.$albumuri.'"></div>';
-            //         $html .= '<div class="'.$play_col_button.' smallicon expand clickalbum playable noselect" name="'.$why.'album'.$who.'"></div>';
-            //     }
-            // } else {
-            //     $html .= '<div class="icon-no-response-playbutton smallicon expand clickalbum playable noselect" name="'.$why.'album'.$who.'"></div>';
-            // }
-            // $html .= '<div class="icon-single-star smallicon expand clickicon clickalbum playable noselect" name="ralbum'.$who.'"></div>';
-            // $html .= '<div class="icon-tags smallicon expand clickicon clickalbum playable noselect" name="talbum'.$who.'"></div>';
-            // $html .= '<div class="icon-ratandtag smallicon expand clickicon clickalbum playable noselect" name="yalbum'.$who.'"></div>';
-            // $html .= '<div class="icon-ratortag smallicon expand clickicon clickalbum playable noselect" name="ualbum'.$who.'"></div>';
-            // if ($why != 'b') {
-            //     if ($iab == 0) {
-            //         $html .= '<div class="icon-audiobook smallicon expand clickable clickicon noselect setasaudiobook" name="'.$who.'"></div>';
-            //     } else if ($iab == 2) {
-            //         $html .= '<div class="icon-music smallicon expand clickable clickicon noselect setasmusiccollection" name="'.$who.'"></div>';
-            //     }
-            // }
-            // if ($why == 'b' && $det['AlbumUri'] && preg_match('/spotify:album:(.*)$/', $det['AlbumUri'], $matches)) {
-            //     $html .= '<div class="icon-headphones smallicon expand clickable clickicon noselect addtollviabrowse tooltip" spalbumid="'.$matches[1].'" tooltip="'.get_int_text('label_addtolistenlater').'"></div>';
-            // }
-
             if ($det['AlbumUri']) {
                 $albumuri = rawurlencode($det['AlbumUri']);
                 if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
@@ -227,7 +201,7 @@ function printDirectoryItem($fullpath, $displayname, $prefix, $dircount, $printc
 function directoryControlHeader($prefix, $name = null) {
     print '<div class="menu backmenu openmenu" name="'.trim($prefix, '_').'"></div>';
     if ($name !== null) {
-        print '<div class="textcentre"><b>'.$name.'</b></div>';
+        print '<div class="dropdown-container configtitle fullwidth"><div class="textcentre expand"><b>'.$name.'</b></div></div>';
     }
 }
 

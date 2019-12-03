@@ -72,7 +72,7 @@ class commradioplugin {
             'expand' => true
         ));
         print '<div id="communityradiolist" class="dropmenu notfilled">';
-        print '<div class="configtitle textcentre"><b>'.get_int_text('label_loading').'</b></div></div>';
+        print '<div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
         print '</div>';
     }
 
@@ -80,7 +80,7 @@ class commradioplugin {
         global $prefs;
         directoryControlHeader('communityradiolist', get_int_text('label_communityradio'));
 
-        print '<div class="fullwidth padright brick_wide containerbox dropdown-container">';
+        print '<div class="fullwidth padright containerbox dropdown-container">';
         print '<div class="fixed comm-search-label"><span class="cslt"><b>Order By</b></span></div>';
         print '<div class="selectholder expand">';
         print '<select id="communityradioorderbyselector" class="saveomatic">';
@@ -92,16 +92,16 @@ class commradioplugin {
         print '</div>';
         print '</div>';
 
-        print '<div class="padright fullwidth cleargroupparent">';
+        print '<div class="fullwidth cleargroupparent padright">';
         foreach ($this->searchterms as $term) {
-            print '<div class="containerbox dropdown-container brick_wide fullwidth" name="'.$term.'">';
+            print '<div class="containerbox dropdown-container fullwidth" name="'.$term.'">';
             print '<div class="fixed comm-search-label"><span class="cslt"><b>'.ucfirst($term).'</b></span></div>';
             print '<div class="expand">';
             print '<input class="comm_radio_searchterm clearbox enter cleargroup" name="'.$term.'" type="text" />';
             print '</div>';
             print '</div>';
         }
-        print '<div class="containerbox">';
+        print '<div class="containerbox fullwidth padright">';
         print '<div class="expand"></div>';
         print '<button class="fixed searchbutton iconbutton cleargroup" name="commradiosearch"></button>';
         print '</div>';

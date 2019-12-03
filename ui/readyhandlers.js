@@ -172,8 +172,8 @@ function createHelpLinks() {
         $('b:contains("'+i+'")').each(function() {
             if ($(this).parent().hasClass('configtitle') && !$(this).parent().hasClass('nohelp')) {
                 $(this).parent().append('<a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticonr tright tooltip" title="'+language.gettext('label_gethelp')+'"></i></a>');
-            } else if ($(this).parent().parent().hasClass('configtitle') && $(this).parent().parent().hasClass('containerbox')) {
-                $(this).parent().parent().append('<div class="fixed"><a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticonr tright tooltip" title="'+language.gettext('label_gethelp')+'"></i></a></div>');
+            } else if ($(this).parent().parent().hasClass('configtitle') && $(this).parent().parent().hasClass('dropdown-container')) {
+                $(this).parent().parent().append('<div class="fixed"><a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticon tooltip" title="'+language.gettext('label_gethelp')+'"></i></a></div>');
             }
         });
         // $('b:contains("'+i+'")').parent('.configtitle').not('.nohelp').append('<a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticonr tright tooltip" title="'+language.gettext('label_gethelp')+'"></i></a>');

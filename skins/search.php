@@ -3,12 +3,12 @@
 function doSearchBoxes($sterms) {
     print '<div class="cleargroupparent fullwidth">';
     foreach ($sterms as $label => $term) {
-        print '<div class="searchitem dropdown-container containerbox fullwidth" name="'.$term.'">';
+        print '<div class="searchitem dropdown-container containerbox" name="'.$term.'">';
         print '<input class="expand searchterm enter clearbox cleargroup" name="'.$term.'" type="text" placeholder="'.ucwords(strtolower(get_int_text($label))).'"/>';
         print '</div>';
     }
 
-    print '<div id="ratingsearch" class="selectholder fullwidth" style="width:100%">
+    print '<div id="ratingsearch" class="selectholder">
     <select name="searchrating">
     <option value="5">5 '.get_int_text('stars').'</option>
     <option value="4">4 '.get_int_text('stars').'</option>
@@ -19,12 +19,12 @@ function doSearchBoxes($sterms) {
     </select>';
     print '</div>';
 
-    print '<div class="containerbox dropdown-container fullwidth combobox">';
+    print '<div class="containerbox dropdown-container combobox">';
     print '</div>';
 
     print '<div class="containerbox">
         <div class="expand"></div>';
-    print '<button class="searchbutton iconbutton cleargroup" style="margin-right:4px" class="fixed" onclick="player.controller.search(\'search\')"></button>';
+    print '<button class="searchbutton iconbutton cleargroup" class="fixed" onclick="player.controller.search(\'search\')"></button>';
     print '</div>';
 
     print '</div>';

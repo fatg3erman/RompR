@@ -36,13 +36,13 @@ input
     color:#181818;
 }
 
-button, .filebutton
+button, div.filebutton
 {
     color:#000000;
     border: 1px solid #000000;
 }
 
-button:hover, .filebutton:hover
+button:hover, div.filebutton:hover
 {
     color:#ff4800;
     text-shadow: 0 0 15px #ff4800;

@@ -22,7 +22,7 @@ class somafmplugin {
             'expand' => true
         ));
         print '<div id="somafmlist" class="dropmenu notfilled">';
-        print '<div class="configtitle textcentre"><b>'.get_int_text('label_loading').'</b></div></div>';
+        print '<div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
         print '</div>';
     }
 

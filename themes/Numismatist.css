@@ -28,16 +28,15 @@ body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
     border-bottom: 1px solid rgba(60,60,60,0.4);
 }
 
-button, input[type="button"], .filebutton
+button, input[type="button"], div.filebutton
 {
     background-color:#dddddd;
     border:none;
     color:#444444;
     font-weight:normal;
-    font-size:110%;
 }
 
-button:hover, input[type="button"]:hover, .filebutton:hover
+button:hover, input[type="button"]:hover, div.filebutton:hover
 {
     color:black;
     background-color:#eeeeee;
@@ -60,11 +59,11 @@ a:hover,a:active {
     color:#ff4800;
 }
 
-.selectholder {
+div.selectholder {
     background-color:rgba(0,0,0,0.05);
 }
 
-.selectholder:hover {
+div.selectholder:hover {
     background-color:rgba(0,0,0,0.03);
 }
 

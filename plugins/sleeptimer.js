@@ -109,7 +109,7 @@ var sleepTimer = function() {
 			}
 			var holder = uiHelper.makeDropHolder('sleeppanel', d, false);
 			// var holder = $('<div>', {class: 'topdropmenu dropshadow rightmenu normalmenu stayopen', id: 'sleeppanel'}).appendTo(d);
-			var html = '<div class="textcentre configtitle"><b>'+language.gettext('button_sleep')+'</b></div>'+
+			var html = '<div class="dropdown-container configtitle"><div class="textcentre expand"><b>'+language.gettext('button_sleep')+'</b></div></div>'+
 				'<input type="hidden" class="helplink" value="https://fatg3erman.github.io/RompR/Alarm-And-Sleep#sleep-timer" />'+
 				'<div class="noselection">'+
 				'<table align="center"><tr>'+

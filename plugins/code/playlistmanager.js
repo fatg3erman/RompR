@@ -32,7 +32,7 @@ var playlistManager = function() {
 				} else {
 					html += '<tr class="sortable draggable clicktrack playable" name="'+tracks[i].Uri+'" romprpos="playmanitem_'+i+'">';
 				}
-				html += '<td width="40px"><img class="smallcover';
+				html += '<td width="64px"><img class="smallcover';
 				if (tracks[i].Image) {
 					html += '" src="'+tracks[i].Image;
 				} else {

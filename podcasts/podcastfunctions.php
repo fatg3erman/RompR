@@ -928,7 +928,7 @@ function doPodcastHeader($y) {
     $html = preg_replace('/&amp;rompr_/','&rompr_', $h);
     print $html;
 
-    print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu padright"><div class="configtitle textcentre"><b>'.get_int_text('label_loading').'</b></div></div>';
+    print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu padright"><div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
 }
 
 function removePodcast($podid) {

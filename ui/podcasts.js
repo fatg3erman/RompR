@@ -441,7 +441,7 @@ var podcasts = function() {
 			})
 		    .done(function(data) {
 	            $("#podcast_search").html(data);
-	            $('#podcast_search').prepend('<div class="menuitem containerbox padright brick_wide sensiblebox"><div class="configtitle textcentre expand"><b>Search Results for &quot;'+term+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch podcast fixed"></i></div>');
+	            $('#podcast_search').prepend('<div class="configtitle dropdown-container brick_wide" style="width:100%"><div class="textcentre expand"><b>Search Results for &quot;'+term+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch podcast fixed"></i></div>');
 				layoutProcessor.postAlbumActions($('#podcast_search'));
 	        })
 		    .fail(function(data, status, thing) {

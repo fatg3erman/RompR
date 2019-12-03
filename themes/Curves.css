@@ -29,7 +29,7 @@ a:hover,a:active
     cursor:pointer;
 }
 
-button, input[type="button"], .filebutton
+button, input[type="button"], div.filebutton
 {
     background-image: linear-gradient(#999999, #cccccc, #999999);
     color:#ee3700;
@@ -118,7 +118,7 @@ select
     border-radius:1em;
 }
 
-.selectholder
+div.selectholder
 {
     border-radius:0.5em !important;
 }
@@ -379,7 +379,7 @@ body.mobile .configtitle
 =====================================================================
 */
 
-button:hover, input[type="button"]:hover, .filebutton:hover
+button:hover, input[type="button"]:hover, div.filebutton:hover
 {
     color:#ff4800;
     text-shadow: 0 0 15px #ff4800;

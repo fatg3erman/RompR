@@ -3,7 +3,7 @@
 // There may appear to be a lot of unnecessary divs wrapping around things here
 // but it makes it work in Safari. DO NOT CHANGE IT!
 
-print '<div class="textcentre configtitle"><i class="medicon"></i><b>'.get_int_text('settings_appearance').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.get_int_text('settings_appearance').'</b></div></div>';
 
 // Skin
 
@@ -66,7 +66,7 @@ print '<div id="backimageposition" class="tiny styledinputs invisible divlabel">
 <div id="cusbgcontrols"></div>
 </div>
 
-<div class="selectholder-noselect">
+<div>
 <div id="cusbgname" class="tiny styledinputs"></div>
 </div>
 
@@ -120,7 +120,7 @@ foreach($themes as $theme) {
 print '</select></div></div>';
 
 // Players
-print '<div class="textcentre configtitle"><i class="medicon"></i><b>'.get_int_text('config_players').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.get_int_text('config_players').'</b></div></div>';
 print '<div class="fullwidth">';
 print '<div class="clearfix">';
 print '<div class="pref styledinputs tleft" name="playerdefs">';
@@ -134,7 +134,7 @@ print '<div class="pref styledinputs">
 print '</div>';
 
 // Snapcast
-print '<div class="textcentre configtitle"><i class="icon-snapcast medicon"></i><b>'.get_int_text('config_snapcast').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="icon-snapcast medicon"></i><div class="textcentre expand"><b>'.get_int_text('config_snapcast').'</b></div></div>';
 print '<div class="fullwidth">';
 if (!$snapcast_in_volume) {
     print '<div class="pref" id="snapcastgroups">';
@@ -149,7 +149,7 @@ print '</div>';
 print '</div>';
 
 // Sources Panel Hiding
-print '<div class="textcentre configtitle"><i class="medicon"></i><b>'.get_int_text('settings_panels').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.get_int_text('settings_panels').'</b></div></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="hide_albumlist" />
 <label for="hide_albumlist">'.get_int_text('config_hidealbumlist').'</label>
@@ -190,7 +190,7 @@ print '<div class="pref styledinputs">
 }
 
 // Interface
-print '<div class="textcentre configtitle"><i class="medicon"></i><b>'.get_int_text('settings_interface').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.get_int_text('settings_interface').'</b></div></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="scrolltocurrent" />
 <label for="scrolltocurrent">'.get_int_text('config_autoscroll').'</label>
@@ -243,7 +243,7 @@ print '<div class="pref containerbox dropdown-container">
 }
 
 // Biography and Language
-print '<div class="textcentre ucfirst configtitle"><i class="medicon"></i><b>'.get_int_text('settings_language').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.get_int_text('settings_language').'</b></div></div>';
 
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
 get_int_text('settings_interface').
@@ -284,7 +284,7 @@ foreach($x->CountryEntry as $i => $c) {
 print '</select></div></div>';
 
 // Album Art
-print '<div class="textcentre configtitle"><i class="icon-cd medicon"></i><b>'.get_int_text('albumart_title').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="icon-cd medicon"></i><div class="textcentre expand"><b>'.get_int_text('albumart_title').'</b></div></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="downloadart" />
 <label for="downloadart">'.get_int_text('config_autocovers').'</label>
@@ -297,20 +297,20 @@ print '<div class="pref"><div class="tiny">If you want to use Google Images to g
 
 
 // Smart Radio
-print '<div class="textcentre configtitle"><i class="icon-wifi medicon"></i><b>'.get_int_text('label_pluginplaylists').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="icon-wifi medicon"></i><div class="textcentre expand"><b>'.get_int_text('label_pluginplaylists').'</b></div></div>';
 print '<div class="pref styledinputs">'.get_int_text('config_smart_chunksize').
     '<input class="saveotron" id="smartradio_chunksize" style="width:4em;margin-left:1em" type="text" size="4" />
     </div>';
 
 // Audiobooks
-print '<div class="textcentre configtitle"><i class="icon-audiobook medicon"></i><b>'.get_int_text('label_audiobooks').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="icon-audiobook medicon"></i><div class="textcentre expand"><b>'.get_int_text('label_audiobooks').'</b></div></div>';
 print '<div class="pref">'.get_int_text('config_audiobook_directory').'
 <input class="prefinput saveotron" id="audiobook_directory" type="text" size="40" />
 </div>';
 
 // Podcasts
-print '<div class="textcentre configtitle">
-<i class="icon-podcast-circled medicon"></i><b>'.get_int_text('label_podcasts').'</b></div>';
+print '<div class="dropdown-container configtitle">
+<i class="icon-podcast-circled medicon"></i><div class="textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div></div>';
 
 print '<div class="pref"><b>'.get_int_text('config_podcast_defaults').'</b></div>';
 
@@ -356,9 +356,9 @@ print '<div class="pref styledinputs">
 </div>';
 
 // Last.FM
-print '<div class="textcentre configtitle">
-<i class="icon-lastfm-1 medicon"></i><b>'.get_int_text('label_lastfm').'</b>
-</div>';
+print '<div class="dropdown-container configtitle">
+<i class="icon-lastfm-1 medicon"></i><div class="textcentre expand"><b>'.get_int_text('label_lastfm').'</b>
+</div></div>';
 
 print '<div class="pref">'.get_int_text('config_lastfmusername').'<br/><div class="containerbox"><div class="expand">'.
     '<input class="enter" name="lfmuser" type="text" size="30" value="'.$prefs['lastfm_user'].'"/>'.
@@ -414,7 +414,8 @@ print '</select>
 </div></div>';
 
 // Collection Options
-print '<div class="textcentre ucfirst configtitle"><i class="icon-music medicon"></i><b>'.get_int_text('button_local_music').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="icon-music medicon"></i><div class="textcentre expand">
+    <b>'.get_int_text('button_local_music').'</b></div></div>';
 
 // Album Sorting
 print '<div class="pref"><b>'.get_int_text('config_artistfirst').'

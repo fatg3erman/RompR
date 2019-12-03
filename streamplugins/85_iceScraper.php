@@ -30,14 +30,14 @@ if (array_key_exists('populate', $_REQUEST)) {
 	logger::log("ICESCRAPER", "Page Title Is ".$page_title);
 	$count = 0;
 	directoryControlHeader('icecastlist', get_int_text('label_icecast'));
-	print '<div class="containerbox brick_wide"><div class="expand"><input class="enter clearbox" name="searchfor" type="text"';
+	print '<div class="containerbox dropdown-container fullwidth"><div class="expand"><input class="enter clearbox" name="searchfor" type="text"';
 	if (array_key_exists("searchfor", $_REQUEST)) {
 		print ' value="'.$_REQUEST['searchfor'].'"';
 	}
 	print ' /></div>';
 	print '<button class="fixed searchbutton iconbutton" name="cornwallis"></button></div>';
 
-	print '<div class="configtitle textcentre brick_wide"><b>'.$page_title.'</b></div>';
+	print '<div class="configtitle brick_wide"><div class="textcentre expand"><b>'.$page_title.'</b></div></div>';
 	foreach ($list as $server) {
 		$server_web_link = '';
 		$server_name = pq($server)->find('.stream-name')->children('.name')->children('a');
@@ -130,7 +130,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 		'class' => 'radio',
 		'expand' => true
     ));
-	print '<div id="icecastlist" class="dropmenu notfilled"><div class="configtitle textcentre"><b>'.get_int_text('label_loading').'</b></div></div>';
+	print '<div id="icecastlist" class="dropmenu notfilled"><div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
 	print '</div>';
 }
 

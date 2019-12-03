@@ -25,7 +25,7 @@ a:hover,a:active {
     color:#ff4800;
 }
 
-button, .filebutton {
+button, div.filebutton {
     color:#000000;
     background-color:transparent;
     border:none;
@@ -33,11 +33,11 @@ button, .filebutton {
     font-weight:bold;
 }
 
-button:active, .filebutton:active {
+button:active, div.filebutton:active {
     box-shadow:none;
 }
 
-button:hover, .filebutton:hover {
+button:hover, div.filebutton:hover {
     color:#ff4800;
     background-color: rgba(255, 72, 0, 0.1);
 }

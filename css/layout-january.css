@@ -61,7 +61,11 @@ hr {
     -webkit-margin-after:0px;
 }
 
-input, .filebutton {
+div {
+    box-sizing: border-box;
+}
+
+input, div.filebutton {
     font-size:100%;
     width:100%;
     margin-bottom:4px;
@@ -72,7 +76,7 @@ input, .filebutton {
     padding-right:0px;
 }
 
-.inputfile {
+input.inputfile {
 	width: 0.1px;
 	height: 0.1px;
 	opacity: 0;
@@ -81,8 +85,26 @@ input, .filebutton {
 	z-index: -1;
 }
 
-.filebutton {
+div.filebutton {
 	word-break: break-all;
+}
+
+button.iconbutton {
+    padding:0px;
+    margin-right:0px;
+    margin-left:4px;
+    margin-top:0px;
+    margin-bottom:0px;
+    background-size: contain;
+    background-position:center;
+    background-repeat:no-repeat;
+    border: none !important;
+    opacity: 0.8;
+    background-color:transparent !important;
+}
+
+button.iconbutton:hover {
+    opacity: 1;
 }
 
 input[type=checkbox], input[type=radio] {
@@ -90,20 +112,13 @@ input[type=checkbox], input[type=radio] {
 }
 
 input[type=text] {
-    /* padding: 0px 2px; */
-    height: 2em;
     border: 0px none;
     border-radius: 0 0;
 	background-color: white;
-}
-
-.selectholder {
-	background-color:white;
+    box-sizing: border-box;
 }
 
 input.snapclientname[type=text] {
-    /* padding: 0px 2px; */
-    height: 1.5em !important;
 	background-color: transparent !important;
 }
 
@@ -155,25 +170,22 @@ button {
     display:none;
 }
 
-.selectholder {
+div.selectholder {
     overflow:hidden;
-    width:58%;
     margin-top:4px;
     margin-bottom:4px;
-    padding-left:2px;
     pointer-events:none;
     z-index:98;
+    width: 100%;
+    background-color:white;    
 }
 
-.noclicks {
-    pointer-events:none;
-}
-
-.pref .selectholder {
+div.pref div.selectholder {
     margin-left: 1em;
+    width:58%;
 }
 
-.selectholder-noselect {
+#custombgdropper>div>div:last-child {
     width:58%;
     margin-top:4px;
     margin-bottom:4px;
@@ -181,7 +193,7 @@ button {
     margin-left:1em;
 }
 
-.combo-button {
+i.combo-button {
     background-size:contain;
     background-position: center;
     background-repeat:no-repeat;
@@ -189,10 +201,6 @@ button {
     height:2em;
     width:2em;
     margin-left:4px;
-}
-
-.enter {
-    box-sizing: border-box;
 }
 
 .dropdown-container
@@ -220,12 +228,6 @@ button {
     cursor:pointer;
 }
 
-.tagmenu
-{
-    width:100%;
-    box-sizing:border-box;
-}
-
 .tag {
     white-space:nowrap;
     margin-right:1em;
@@ -234,12 +236,6 @@ button {
 .helpfulalbum .tag
 {
 	white-space: normal;
-}
-
-.tagmenu-contents .backhi:hover
-{
-    color:#ffffff !important;
-    background-color:#000000 !important;
 }
 
 .drop-box .mCSB_draggerRail
@@ -458,10 +454,6 @@ button {
     overflow:hidden;
 }
 
-.sensiblebox {
-	box-sizing: border-box;
-}
-
 .tagholder table tr.datetag
 {
     font-size: 120%;
@@ -494,6 +486,12 @@ button {
     font-size:110%;
 }
 
+.mixbox>.smallcover {
+    height: 100%;
+    width: auto;
+    max-width: 64px !important;
+}
+
 .mixinfo
 {
     padding-left:12px;
@@ -510,7 +508,7 @@ button {
 }
 
 #collectionsearcher {
-    padding-left:8px;
+    padding-left:4px;
 }
 
 #playlist {
@@ -587,10 +585,6 @@ button {
 
 #tagslist {
     line-height:150%;
-}
-
-.padleft {
-    padding-left:8px;
 }
 
 #artistchooser {
@@ -701,15 +695,13 @@ button {
 
 .configtitle {
     padding-top:2px;
-    padding-bottom:4px;
+    padding-bottom:2px;
+    padding-left:4px;
+    padding-right:4px;
     margin-bottom:4px;
     font-size:110%;
 	display:flex;
 	align-items:center;
-}
-
-.configtitle b {
-	flex-grow: 1;
 }
 
 .artistbanner {

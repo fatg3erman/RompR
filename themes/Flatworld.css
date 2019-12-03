@@ -32,13 +32,13 @@ input
     color:#181818;
 }
 
-button, .filebutton
+button, div.filebutton
 {
     color:#000000;
     border: 1px solid #000000;
 }
 
-button:hover, .filebutton:hover
+button:hover, div.filebutton:hover
 {
     color:#000000;
     border: 1px solid white;
@@ -54,11 +54,11 @@ select
     display:none;
 }
 
-.selectholder {
+div.selectholder {
     background-color:rgba(0,0,0,0);
 }
 
-.selectholder:hover {
+div.selectholder:hover {
     background-color:rgba(0,0,0,0);
 }
 

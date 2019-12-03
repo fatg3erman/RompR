@@ -99,7 +99,7 @@ jQuery.fn.makeTagMenu = function(options) {
         }
         var holder = $('<div>', { class: "expand"}).appendTo($(this));
         var textbox = $('<input>', { type: "text", class: tbc, name: settings.textboxname, placeholder: settings.placeholder }).appendTo(holder);
-        var dropbox = $('<div>', {class: "drop-box tagmenu dropshadow"}).insertAfter($(this));
+        var dropbox = $('<div>', {class: "drop-box tagmenu dropshadow fullwidth"}).insertAfter($(this));
         var menucontents = $('<div>', {class: "tagmenu-contents"}).appendTo(dropbox);
         if (settings.buttontext !== null) {
             var submitbutton = $('<button>', {class: "fixed"+settings.buttonclass,
@@ -163,13 +163,14 @@ jQuery.fn.makeTagMenu = function(options) {
 jQuery.fn.fanoogleMenus = function() {
     this.each( function() {
         if ($(this).is(':visible')) {
+            $(this).mCustomScrollbar("update");
+            var pt = parseInt($(this).css('padding-top')) + parseInt($(this).css('padding-bottom'));
             var top = $(this).children().first().children('.mCSB_container').offset().top;
             var conheight = $(this).children().first().children('.mCSB_container').height();
             var ws = getWindowSize();
             var avheight = ws.y - top;
-            var nh = Math.min(avheight, conheight);
+            var nh = Math.min(avheight, (conheight+pt));
             $(this).css({height: nh+"px"});
-            $(this).mCustomScrollbar("update");
         }
     });
     return this;

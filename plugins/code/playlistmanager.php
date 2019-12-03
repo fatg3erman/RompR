@@ -6,6 +6,7 @@ include ("includes/functions.php");
 require_once ("player/".$prefs['player_backend']."/player.php");
 include ("backends/sql/backend.php");
 require_once ("utils/imagefunctions.php");
+$dbterms = array( 'tags' => null, 'rating' => null );
 
 switch ($_REQUEST['action']) {
 

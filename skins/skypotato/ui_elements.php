@@ -139,7 +139,7 @@ function albumControlHeader($fragment, $why, $what, $who, $artist) {
     if ($fragment || $who == 'root') {
         return '';
     }
-    $html = '<div class="configtitle textcentre brick_wide"><b>'.$artist.'</b></div>';
+    $html = '<div class="dropdown-container configtitle fullwidth"><div class="textcentre expand"><b>'.$artist.'</b></div></div>';
     $html .= '<div class="textcentre clickalbum playable brick_wide noselect" name="'.$why.'artist'.$who.'">'.get_int_text('label_play_all').'</div>';
     return $html;
 }
@@ -210,7 +210,7 @@ function printDirectoryItem($fullpath, $displayname, $prefix, $dircount, $printc
 
 function directoryControlHeader($prefix, $name = null) {
     if ($name !== null) {
-        print '<div class="menuitem configtitle textcentre brick_wide"><b>'.$name.'</b></div>';
+        print '<div class="dropdown-container configtitle fullwidth"><div class="textcentre expand"><b>'.$name.'</b></div></div>';
     }
 }
 

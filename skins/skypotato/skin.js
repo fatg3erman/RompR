@@ -21,7 +21,7 @@ jQuery.fn.menuReveal = function(callback) {
             // Albums and Playlists
             parent.addClass('tagholder_wide dropshadow').css({width: '98%'});
             holder.find('div.albumthing').detach().prependTo(self).find('.collectionicon').hide();
-            holder.find('div.menuitem.configtitle').remove();
+            holder.find('div.dropdown-container.configtitle').remove();
             var tt = self.find('input.albumtime').val();
             if (tt) {
                 $('<div>', {class: 'tgtl podcastitem', style: 'padding-top: 4px'}).html(tt).appendTo(self);
