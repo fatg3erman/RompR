@@ -377,7 +377,7 @@ function sortletter_mangler() {
 
 function get_rating_info($sortby, $value) {
 
-	global $prefs;
+	global $prefs, $mysqlc;
 
 	// Tuned SQL queries for each type, for speed, otherwise it's unuseable
 
@@ -431,7 +431,7 @@ function get_rating_info($sortby, $value) {
 					JOIN Albumtable AS al USING (Albumindex)
 					JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-				WHERE tr.isSearchResult < 2  AND tr.Uri IS NOT NULL AND tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name = '".$value."')";
+				WHERE tr.isSearchResult < 2  AND tr.Uri IS NOT NULL AND tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name = ".$mysqlc->quote($value).")";
 				break;
 
 			case 'AlbumArtist':
@@ -457,7 +457,7 @@ function get_rating_info($sortby, $value) {
 			 		JOIN Albumtable AS al USING (Albumindex)
 			 		JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
 			 		JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL)  AND tr.Uri IS NOT NULL AND tr.isSearchResult < 2 AND a.Artistname = '".$value."'";
+			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL)  AND tr.Uri IS NOT NULL AND tr.isSearchResult < 2 AND a.Artistname = ".$mysqlc->quote($value);
 				break;
 
 			case 'Tags':
@@ -487,7 +487,7 @@ function get_rating_info($sortby, $value) {
 					WHERE ";
 					$tags = explode(', ',$value);
 					foreach ($tags as $i => $t) {
-						$tags[$i] = "tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name='".$t."')";
+						$tags[$i] = "tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name=".$mysqlc->quote($t).")";
 					}
 					$qstring .= implode(' AND ', $tags);
 					$qstring .= " AND tr.isSearchResult < 2 AND tr.Uri IS NOT NULL";
@@ -1906,7 +1906,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 	    		logger::log("MYSQL", "    It needs to be marked as a search result : Value ".$newsearchresult);
 	    		$newlastmodified = $lastmodified;
 	    	}
-			$newisaudiobook = ($isaudiobook == 2) ? 2 : ($trackobj->tags['type'] == 'audiobook') ? 1 : 0;
+			$newisaudiobook = ($isaudiobook == 2) ? 2 : (($trackobj->tags['type'] == 'audiobook') ? 1 : 0);
 			if ($update_track->execute(array($trackobj->tags['Track'], $trackobj->tags['Time'], $trackobj->tags['Disc'],
 					$newlastmodified, $trackobj->tags['file'], $albumindex,	$newsearchresult, $newisaudiobook, $ttid))) {
 				$numdone++;

@@ -1378,8 +1378,8 @@ div.lyrics p {
     border-collapse:collapse;
     width:96%;
     position:relative;
-    word-wrap:break-word;
-    word-break:break-all;
+    word-wrap:anywhere;
+    /*word-break:break-all;*/
 }
 
 .plmantableback {
