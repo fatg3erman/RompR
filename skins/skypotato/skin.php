@@ -137,7 +137,7 @@ include ("includes/prefspanel.php");
 
 ?>
     </div>
-    <div id="theotherthing" class="fixed infobarnoheight containerbox">
+    <div id="theotherthing" class="fixed infobarnoheight containerbox dropdown-container">
             <div id="playposss" class="fixed timebox tboxl"></div>
             <div class="expand"><div id="progress"></div></div>
             <div id="tracktimess" class="fixed timebox tboxr clickicon"></div>
