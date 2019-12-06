@@ -167,6 +167,52 @@ function check_album(&$data) {
 	$year = null;
 	$img = null;
 	$mbid = null;
+	$obj = null;
+	$otherobj = null;
+
+	// $result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
+	// 	"SELECT
+	// 		Albumindex,
+	// 		Year,
+	// 		Image,
+	// 		AlbumUri,
+	// 		mbid,
+	// 		Domain
+	// 	FROM
+	// 		Albumtable
+	// 	WHERE
+	// 		LOWER(Albumname) = LOWER(?)
+	// 		AND AlbumArtistindex = ?", $data['album'], $data['albumai']);
+
+	// foreach ($result as $a) {
+	// 	if ($a->Domain == $data['domain']) {
+	// 		logger::log('MYSQL' - 'Found album on same domain -',$a->Domain);
+	// 		$obj = $a;
+	// 	} else {
+	// 		logger::log('MYSQL', 'Found album on different domain -',$a->Domain,'- We are',$data['domain']);
+	// 		$otherobj = $a;
+	// 	}
+	// }
+
+	// if ($prefs['preferlocalfiles'] && $trackbytrack && !$doing_search) {
+	// 	if ($data['domain'] == 'local' && $obj == null && $otherobj != null) {
+	// 		$obj = $otherobj;
+	// 		logger::log("MYSQL", "Album ".$data['album']." was found on domain ".$obj->Domain.". Changing to local");
+	// 		$index = $obj->Albumindex;
+	// 		if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET AlbumUri=NULL, Domain=?, justUpdated=? WHERE Albumindex=?", 'local', 1, $index)) {
+	// 			$obj->AlbumUri = null;
+	// 			logger::debug("MYSQL", "   ...Success");
+	// 		} else {
+	// 			logger::fail("MYSQL", "   Album ".$data['album']." update FAILED");
+	// 			return false;
+	// 		}
+	// 	} else if ($data['domain'] != 'local' && $obj == null && $otherobj != null && $otherobj->Domain == 'local') {
+	// 		logger::log("MYSQL", "Album ".$data['album']." was found on local domain. Ignoring this album");
+	// 		return false;
+	// 	}
+	// }
+
+
 	$result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
 		"SELECT
 			Albumindex,
@@ -1167,6 +1213,7 @@ function do_tracks_from_database($why, $what, $whom, $fragment = false) {
 	$currdisc = -1;
 	trackControlHeader($why, $what, $who[0], get_album_details($who[0]));
 	$total_time = 0;
+	$tracktype = null;
 	foreach ($trackarr as $arr) {
 		$total_time += $arr['time'];
 		if ($numdiscs > 1 && $arr['disc'] != $currdisc && $arr['disc'] > 0) {

@@ -184,9 +184,11 @@ class album {
 			);
 			$this->albumindex = check_album($album);
 		}
-		foreach ($this->tracks as $trackobj) {
-			check_and_update_track($trackobj, $this->albumindex, $this->albumartistindex, $this->artist);
-		}
+        if ($this->albumindex) {
+    		foreach ($this->tracks as $trackobj) {
+    			check_and_update_track($trackobj, $this->albumindex, $this->albumartistindex, $this->artist);
+    		}
+        }
 	}
 
     public function getKey() {
