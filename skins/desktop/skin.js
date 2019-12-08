@@ -478,6 +478,9 @@ var layoutProcessor = function() {
                 orientation: 'vertical',
                 command: player.controller.volume
             });
+            $(document).on('click', '.clickaddtoplaylist', function() {
+                $('#addtoplaylistmenu').parent().parent().parent().hide();
+            });
         },
 
         createPluginHolder: function(icon, title, id, panel) {

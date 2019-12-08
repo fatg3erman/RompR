@@ -320,9 +320,8 @@ class mopidyPlayer extends base_mpd_player {
         return array();
     }
 
-    public static function is_personal_playlist($pl) {
-        if (preg_match('/ \(by/i', $pl)) {
-            // Don't permit deletion of tracks from other peple's playlists (Spotify)
+    public static function is_personal_playlist($playlist) {
+        if (strpos($playlist, '(by ') !== false) {
             return false;
         }
         return true;

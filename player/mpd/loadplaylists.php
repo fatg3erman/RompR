@@ -33,7 +33,7 @@ if (array_key_exists('playlist', $_REQUEST)) {
     $player = new $PLAYER_TYPE();
     foreach ($player->get_stored_playlists(false) as $pl) {
         logger::log("MPD PLAYLISTS", "Adding Playlist : ".$pl);
-        add_playlist(rawurlencode($pl), htmlentities($pl), 'icon-doc-text', 'clickloadplaylist', true, $c, false, null);
+        add_playlist(rawurlencode($pl), htmlentities($pl), 'icon-doc-text', 'clickloadplaylist', $PLAYER_TYPE::is_personal_playlist($pl), $c, false, null);
         $c++;
     }
     $existingfiles = glob('prefs/userplaylists/*');
@@ -147,6 +147,9 @@ function do_user_playlist_tracks($pl, $icon, $target) {
 
 function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $pl) {
     global $used_images;
+    // Non-editable playlists get a 'draggable' on tracks  as they don't use sortabletracklist
+    // Editable playlists get a 'canreorder' on the album header
+    $extra_class = ($delete) ? '' : 'draggable ';
     switch ($class) {
         case 'clickloadplaylist':
         case 'clickloaduserplaylist':
@@ -156,6 +159,7 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
             if (!in_array($i, $used_images)) {
                 $used_images[] = $i;
             }
+            $extra_class = ($delete && !$is_user) ? ' canreorder' : '';
             $html = albumHeader(array(
                 'id' => 'pholder_'.md5($name),
                 'Image' => $image,
@@ -168,28 +172,28 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
                 'ImgKey' => $albumimage->get_image_key(),
                 'userplaylist' => $class,
                 'plpath' => $link,
-                'class' => preg_replace('/clickload/', '', $class),
+                'class' => preg_replace('/clickload/', '', $class).$extra_class,
                 'expand' => true
             ));
-            $out = addPlaylistControls($html, $delete, $is_user, $name);
+            $out = addPlaylistControls($html, $delete, $is_user, rawurlencode($name));
             print $out->html();
             break;
 
         case "clicktrack":
-            print '<input type="hidden" value="'.$pl.'" />';
-            print '<input type="hidden" value="'.$count.'" />';
-            print '<div class="containerbox menuitem draggable playable clickable '.$class.' playlisttrack" name="'.$link.'">';
+            print '<div class="containerbox menuitem '.$extra_class.'playable clickable '.$class.' playlisttrack" name="'.$link.'">';
+            print '<input class="playlistname" type="hidden" value="'.rawurlencode($pl).'" />';
+            print '<input class="playlistpos" type="hidden" value="'.$count.'" />';
             print '<i class="'.$icon.' fixed collectionicon"></i>';
             print '<div class="expand">'.$name.'</div>';
             if ($delete) {
                 print '<i class="icon-cancel-circled fixed playlisticonr clickable clickicon clickdeleteplaylisttrack" name="'.$count.'"></i>';
-                print '<input type="hidden" value="'.$pl.'" />';
+                print '<input type="hidden" value="'.rawurlencode($pl).'" />';
             }
             print '</div>';
             break;
 
         case "clickcue":
-            print '<div class="containerbox meunitem draggable playable clickable '.$class.'" name="'.$link.'">';
+            print '<div class="containerbox meunitem '.$extra_class.'playable clickable '.$class.'" name="'.$link.'">';
             print '<i class="'.$icon.' fixed collectionicon"></i>';
             print '<div class="expand">'.$name.'</div>';
             print '</div>';

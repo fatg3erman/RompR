@@ -148,7 +148,7 @@ function albumHeader($obj) {
             $classes[] = 'clickalbumoptions';
         }
         if ($obj['why'] == 'b' && $obj['AlbumUri'] && preg_match('/spotify:album:(.*)$/', $obj['AlbumUri'], $matches)) {
-            $classes[] = 'clickaddtollviabrowse';
+            $classes[] = 'clickaddtollviabrowse clickaddtocollectionviabrowse';
             $spalbumid = $matches[1];
         } else {
             $spalbumid = '';
@@ -221,12 +221,14 @@ function addUserRadioButtons($html, $index, $uri, $name, $image) {
 function addPlaylistControls($html, $delete, $is_user, $name) {
     global $prefs;
     $out = phpQuery::newDocument($html);
-    if ($delete && ($is_user || $prefs['player_backend'] == "mpd")) {
+    if ($delete) {
         $add = ($is_user) ? "user" : "";
-        $h = '<i class="icon-floppy fixed smallicon clickable clickicon clickrename'.$add.'playlist"></i>';
+        $h = '<div class="fixed containerbox vertical">';
+        $h .= '<i class="icon-floppy expand collectionicon clickable clickicon clickrename'.$add.'playlist"></i>';
         $h .= '<input type="hidden" value="'.$name.'" />';
-        $h .= '<i class="icon-cancel-circled fixed smallicon clickable clickicon clickdelete'.$add.'playlist"></i>';
+        $h .= '<i class="icon-cancel-circled fixed collectionicon clickable clickicon clickdelete'.$add.'playlist"></i>';
         $h .= '<input type="hidden" value="'.$name.'" />';
+        $h .= '</div>';
         $out->find('.menuitem')->append($h);
     }
     return $out;

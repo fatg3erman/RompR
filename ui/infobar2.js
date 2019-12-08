@@ -613,19 +613,10 @@ var infobar = function() {
         },
 
         addToPlaylist: function(element) {
-            player.controller.addTracksToPlaylist(
+            playlistManager.addTracksToPlaylist(
                 element.attr('name'),
-                [{uri: playlistinfo.file}],
-                null,
-                0,
-                function() {
-                    player.controller.reloadPlaylists();
-                    player.controller.checkProgress();
-                    if (typeof(playlistManager) != 'undefined') {
-                        playlistManager.checkToUpdateTheThing(element.attr('name'));
-                    }
-                }
-            )
+                [{uri: playlistinfo.file}]
+            );
         }
     }
 

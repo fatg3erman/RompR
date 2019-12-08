@@ -368,9 +368,9 @@ var uiHelper = function() {
             }
         },
 
-        emptySearchResults: function() {
+        prepareCollectionUpdate: function() {
             try {
-                return layoutProcessor.emptySearchResults();
+                return layoutProcessor.prepareCollectionUpdate();
             } catch (err) {
                 $('#searchresultholder').empty();
             }
@@ -497,7 +497,46 @@ var uiHelper = function() {
             } catch (err) {
                 return true;
             }
+        },
+
+        preparePlaylistTarget: function(t) {
+            try {
+                return layoutProcessor.preparePlaylistTarget(t);
+            } catch (err) {
+                return false;
+            }
+        },
+
+        postPlaylistTarget: function(t, x) {
+            try {
+                return layoutProcessor.postPlaylistTarget(t, x);
+            } catch (err) {
+                return false;
+            }
+        },
+
+        makeSortablePlaylist: function(id) {
+            try {
+                return layoutProcessor.makeSortablePlaylist(id);
+            } catch (err) {
+                $('#'+id).sortableTrackList({
+                    items: '.playable',
+                    outsidedrop: playlistManager.dropOnPlaylist,
+                    insidedrop: playlistManager.dragInPlaylist,
+                    allowdragout: true,
+                    scroll: true,
+                    scrollparent: '#sources',
+                    scrollspeed: 80,
+                    scrollzone: 120
+                });
+                $('#'+id).acceptDroppedTracks({
+                    scroll: true,
+                    scrollparent: '#sources'
+                });
+            }
         }
+
+
     }
 
 }();

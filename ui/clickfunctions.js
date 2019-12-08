@@ -145,6 +145,8 @@ function onSourcesClicked(event, clickedElement) {
         makeAlbumMenu(event, clickedElement);
     } else if (clickedElement.hasClass("addtollviabrowse")) {
         browseAndAddToListenLater(clickedElement.attr('spalbumid'));
+    } else if (clickedElement.hasClass("addtocollectionviabrowse")) {
+        browseAndAddToCollection(clickedElement.attr('spalbumid'));
     } else if (clickedElement.hasClass("amendalbum")) {
         amendAlbumDetails(event, clickedElement);
     } else if (clickedElement.hasClass("setasaudiobook") ||
@@ -162,10 +164,10 @@ function onSourcesClicked(event, clickedElement) {
     } else if (clickedElement.hasClass('clickrenameuserplaylist')) {
         player.controller.renamePlaylist(clickedElement.next().val(), event, player.controller.doRenameUserPlaylist);
     } else if (clickedElement.hasClass('clickdeleteplaylisttrack')) {
-        player.controller.deletePlaylistTrack(
+        playlistManager.deletePlaylistTrack(
+            clickedElement,
             clickedElement.next().val(),
-            clickedElement.attr('name'),
-            false);
+            clickedElement.attr('name'));
     } else {
         clickRegistry.farmClick(event, clickedElement);
     }
@@ -339,17 +341,115 @@ function getAllTracksForArtist(element, menutoopen) {
     });
 }
 
-function browsePlaylist(plname, menutoopen) {
-    debug.log("CLICKFUNCTIONS","Browsing playlist",plname);
-    string = "player/mpd/loadplaylists.php?playlist="+plname+'&target='+menutoopen;
-    return string;
-}
+var playlistManager = function() {
 
-function browseUserPlaylist(plname, menutoopen) {
-    debug.log("CLICKFUNCTIONS","Browsing playlist",plname);
-    string = "player/mpd/loadplaylists.php?userplaylist="+plname+'&target='+menutoopen;
-    return string;
-}
+    function playlistLoadString(plname) {
+        debug.log('PLLOAD',plname);
+        return "player/mpd/loadplaylists.php?playlist="+plname+'&target='+playlistTargetString(plname);
+    }
+
+    function playlistTargetString(plname) {
+        debug.log('PLTARGET',plname);
+        return 'pholder_'+hex_md5(decodeURIComponent(plname));
+    }
+
+    return {
+
+        loadPlaylistIntoTarget: function(playlist) {
+            var t = playlistTargetString(playlist);
+            var x = uiHelper.preparePlaylistTarget(t);
+            debug.log('PLNAME', 'Loading playlist into',t);
+            $('#'+t).load(
+                playlistLoadString(playlist), function() {
+                    infobar.markCurrentTrack();
+                    uiHelper.postAlbumMenu($('[name="'+t+'"]'));
+                    if (x !== false) uiHelper.postPlaylistTarget(t, x);
+                }
+            );
+        },
+
+        browsePlaylist: function(plname, menutoopen) {
+            debug.log("CLICKFUNCTIONS","Browsing playlist",plname);
+            string = playlistLoadString(plname);
+            if ($('[name="'+menutoopen+'"]').hasClass('canreorder')) {
+                uiHelper.makeSortablePlaylist(menutoopen);
+            }
+            return string;
+        },
+
+        browseUserPlaylist: function(plname, menutoopen) {
+            debug.log("CLICKFUNCTIONS","Browsing playlist",plname);
+            string = "player/mpd/loadplaylists.php?userplaylist="+plname+'&target='+menutoopen;
+            return string;
+        },
+
+        addTracksToPlaylist: function(plname, tracks) {
+            player.controller.addTracksToPlaylist(
+                plname,
+                tracks,
+                null,
+                0,
+                playlistManager.loadPlaylistIntoTarget            );
+        },
+
+        dropOnPlaylist: function(event, ui) {
+            event.stopImmediatePropagation();
+            var which_playlist = ui.next().children('input.playlistname').val();
+            var nextitem = ui.next().children('input.playlistpos').val();
+            if (typeof nextitem == 'undefined') {
+                nextitem = null;
+            }
+            debug.log('PLMAN','Dropped on',which_playlist,'at position',nextitem);
+            
+            var tracks = new Array();
+            $.each($('.selected').filter(removeOpenItems), function (index, element) {
+                if ($(element).hasClass('directory')) {
+                    var uri = decodeURIComponent($(element).children('input').first().attr('name'));
+                    debug.log("PLAYLISTMANAGER","Dragged Directory",uri,"to",which_playlist);
+                    tracks.push({dir: uri});
+                } else if (element.hasAttribute('romprid')) {
+                    var playlistinfo = playlist.getId($(element).attr('romprid'));
+                    tracks.push({uri: playlistinfo.file});
+                } else {
+                    var uri = decodeURIComponent($(element).attr("name"));
+                    debug.log("PLAYLISTMANAGER","Dragged",uri,"to",which_playlist);
+                    tracks.push({uri: uri});
+                }
+            });
+            $('.selected').removeClass('selected');
+            var playlistlength = (nextitem == null) ? 0 : ui.parent().find('.playlisttrack').length;
+            if (tracks.length > 0) {
+                debug.log("PLAYLISTMANAGER","Dragged to position",nextitem,'length',playlistlength);
+                player.controller.addTracksToPlaylist(which_playlist,tracks,nextitem,playlistlength,playlistManager.loadPlaylistIntoTarget);
+            }
+        },
+
+        dragInPlaylist: function(event, ui) {
+            event.stopImmediatePropagation();
+            var playlist = ui.children('input.playlistname').val();
+            var draggeditem = ui.children('input.playlistpos').val();
+            var nextitem = ui.next().children('input.playlistpos').val();
+            if (typeof nextitem == 'undefined') {
+                nextitem = ui.prev().children('input.playlistpos').val()+1;
+            }
+            debug.log('PLMAN','Dragged item',draggeditem,'to position',nextitem,'in playlist',playlist);
+            // Oooh it's daft but the position we have to send is the position AFTER the track has been
+            // taken out of the list but before it's been put back in.
+            if (nextitem > draggeditem) nextitem--;
+            player.controller.movePlaylistTracks(
+                playlist,
+                draggeditem,
+                nextitem,
+                playlistManager.loadPlaylistIntoTarget
+            );
+        },
+
+        deletePlaylistTrack(element, name, songpos) {
+            element.makeSpinner();
+            player.controller.deletePlaylistTrack(name, songpos, playlistManager.loadPlaylistIntoTarget);
+        }
+    }
+}();
 
 function doFileMenu(event, element) {
 
@@ -366,9 +466,9 @@ function doFileMenu(event, element) {
             var string;
             var plname = element.prev().val();
             if (element.hasClass('playlist')) {
-                string = browsePlaylist(plname, menutoopen);
+                string = playlistManager.browsePlaylist(plname, menutoopen);
             } else if (element.hasClass('userplaylist')) {
-                string = browseUserPlaylist(plname, menutoopen);
+                string = playlistManager.browseUserPlaylist(plname, menutoopen);
             } else {
                 string = "dirbrowser.php?path="+plname+'&prefix='+menutoopen;
             }
@@ -608,6 +708,12 @@ function makeAlbumMenu(e, element) {
             spalbumid: $(element).attr('spalbumid')
         }).html(language.gettext('label_addtolistenlater')));
     }
+    if ($(element).hasClass('clickaddtocollectionviabrowse')) {
+        d.append($('<div>', {
+            class: 'backhi clickable menuitem addtocollectionviabrowse',
+            spalbumid: $(element).attr('spalbumid')
+        }).html(language.gettext('label_addtocollection')));
+    }
     if ($(element).hasClass('clickalbumoptions')) {
         var cl = 'backhi clickable menuitem clicktrack fakedouble '
         d.append($('<div>', {
@@ -730,6 +836,19 @@ function browseAndAddToListenLater(albumid) {
         },
         function(data) {
             debug.error('ADDLL', 'Failed');
+        }, false
+    );
+}
+
+function browseAndAddToCollection(albumid) {
+    spotify.album.getInfo(
+        albumid,
+        function(data) {
+            debug.log('ADDALBUM', 'Success', joinartists(data.artists), data);
+            metaHandlers.fromSpotifyData.addAlbumTracksToCollection(data, joinartists(data.artists))
+        },
+        function(data) {
+            debug.error('ADDALBUM', 'Failed');
         }, false
     );
 }

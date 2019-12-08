@@ -45,8 +45,10 @@ function rawurlencode (str) {
 }
 
 function htmlspecialchars_decode(string) {
-    string = string.toString().replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#0*39;/g, "'").replace(/&quot;/g, '"');
-    string = string.replace(/&amp;/g, '&');
+    if (string) {
+        string = string.toString().replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#0*39;/g, "'").replace(/&quot;/g, '"');
+        string = string.replace(/&amp;/g, '&');
+    }
     return string;
 }
 

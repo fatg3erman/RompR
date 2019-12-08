@@ -243,9 +243,11 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
         var vbox = (this.options.scroll) ? $(this.options.scrollparent) : this.element;
         this.bbox = {
             left:   this.element.offset().left,
-            top:    Math.max(vbox.offset().top, this.element.offset().top),
+            // top:    Math.max(vbox.offset().top, this.element.offset().top),
             right:  this.element.offset().left + this.element.width(),
-            bottom: Math.min(vbox.offset().top + vbox.height(), this.element.offset().top + this.element.height())
+            // bottom: Math.min(vbox.offset().top + vbox.height(), this.element.offset().top + this.element.height())
+            top:    vbox.offset().top,
+            bottom: vbox.offset().top + vbox.height()
         }
         if (this.helper) this.helper.remove();
         this.helper = null;

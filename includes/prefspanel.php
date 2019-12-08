@@ -441,7 +441,7 @@ if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave == false) {
         print '</div>';
     }
 
-    if ($prefs['collection_player'] == "mopidy" && $prefs['player_backend'] == 'mopidy') {
+    if (($prefs['collection_player'] == "mopidy" || $prefs['collection_player'] == null) && $prefs['player_backend'] == 'mopidy') {
         print '<div class="pref" id="mopidycollectionoptions">'.
         '<b>'.get_int_text('config_collectionfolders').'</b></div>';
         print '<div class="pref">'.get_int_text('config_beetsserver').'

@@ -2254,3 +2254,7 @@ div.unplayable {
 	line-height: 1.2em;
 	height:2.2em;
 }
+
+td.dan, th.dan{
+    width: 100%;
+}

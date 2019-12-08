@@ -18,11 +18,11 @@ function albumTrack($data) {
 
     // Outer container
     if ($data['playable'] == 1 or $data['playable'] == 3) {
-        print '<div class="unplayable clicktrack ninesix indent containerbox padright calign" name="'.rawurlencode($data['uri']).'">';
+        print '<div class="unplayable clicktrack ninesix containerbox padright calign" name="'.rawurlencode($data['uri']).'">';
     } else if ($data['uri'] == null) {
-        print '<div class="playable '.$class.' ninesix draggable indent containerbox padright calign" name="'.$data['ttid'].'">';
+        print '<div class="playable '.$class.' ninesix draggable containerbox padright calign" name="'.$data['ttid'].'">';
     } else {
-        print '<div class="playable '.$class.' ninesix draggable indent containerbox padright calign" name="'.rawurlencode($data['uri']).'">';
+        print '<div class="playable '.$class.' ninesix draggable containerbox padright calign" name="'.rawurlencode($data['uri']).'">';
     }
 
     // Track Number
@@ -182,7 +182,7 @@ function trackControlHeader($why, $what, $who, $dets) {
                 }
             }
             if ($why == 'b' && $det['AlbumUri'] && preg_match('/spotify:album:(.*)$/', $det['AlbumUri'], $matches)) {
-                $classes[] = 'clickaddtollviabrowse';
+                $classes[] = 'clickaddtollviabrowse clickaddtocollectionviabrowse';
                 $spalbumid = $matches[1];
             } else {
                 $spalbumid = '';
@@ -255,7 +255,7 @@ function addUserRadioButtons($html, $index, $uri, $name, $image) {
 function addPlaylistControls($html, $delete, $is_user, $name) {
     global $prefs;
     $out = phpQuery::newDocument($html);
-    if ($delete && ($is_user || $prefs['player_backend'] == "mpd")) {
+    if ($delete) {
         $add = ($is_user) ? "user" : "";
         $h = '<div class="fixed containerbox">';
         $h .= '<i class="icon-floppy fixed smallicon clickable clickicon clickrename'.$add.'playlist"></i>';

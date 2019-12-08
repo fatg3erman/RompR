@@ -454,6 +454,7 @@ var layoutProcessor = function() {
                 outsidedrop: playlist.dragstopped,
                 insidedrop: playlist.dragstopped,
                 scroll: true,
+                allowdragout: true,
                 scrollparent: '#phacker',
                 scrollspeed: 80,
                 scrollzone: 120
@@ -529,6 +530,9 @@ var layoutProcessor = function() {
                 orientation: 'vertical',
                 command: player.controller.volume
             });
+            $(document).on('click', '.clickaddtoplaylist', function() {
+                $('#addtoplaylistmenu').parent().parent().parent().hide();
+            });            
         },
 
         createPluginHolder: function(icon, title, id, panel) {

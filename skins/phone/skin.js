@@ -745,6 +745,9 @@ var layoutProcessor = function() {
                 podcasts.doNewCount();
                 layoutProcessor.postAlbumActions();
             });
+        },
+
+        makeSortablePlaylist: function(id) {
         }
 
     }

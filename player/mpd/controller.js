@@ -7,7 +7,6 @@ function playerController() {
     var previoussongid = -1;
     var AlanPartridge = 0;
     var plversion = null;
-    var openpl = null;
     var oldplname;
     var thenowplayinghack = false;
     var lastsearchcmd = "search";
@@ -246,23 +245,14 @@ function playerController() {
         return false;
     }
 
-	this.deletePlaylist = function(name, callback) {
-        openpl = null;
-        name = decodeURIComponent(name);
-        if (callback) {
-            self.do_command_list([['rm',name]], callback);
-        } else {
-    		self.do_command_list([['rm',name]], function() {
-                self.reloadPlaylists();
-                if (typeof(playlistManager) != 'undefined') {
-                    playlistManager.reloadAll();
-                }
-            });
-        }
+	this.deletePlaylist = function(name) {
+		self.do_command_list([['rm',decodeURIComponent(name)]], function() {
+            self.reloadPlaylists();
+            self.checkProgress();
+        });
 	}
 
     this.deleteUserPlaylist = function(name) {
-        openpl = null;
         var data = {del: encodeURIComponent(name)};
         $.ajax({
             type: "GET",
@@ -278,8 +268,7 @@ function playerController() {
     }
 
     this.renamePlaylist = function(name, e, callback) {
-        openpl = null;
-        oldplname = name;
+        oldplname = decodeURIComponent(name);
         debug.log("MPD","Renaming Playlist",name,e);
         var fnarkle = new popup({
             css: {
@@ -301,13 +290,11 @@ function playerController() {
     }
 
     this.doRenamePlaylist = function() {
-        self.do_command_list([["rename", decodeURIComponent(oldplname), $("#newplname").val()]],
+        self.do_command_list([["rename", oldplname, $("#newplname").val()]],
             function() {
                 self.reloadPlaylists();
+                self.checkProgress();
                 layoutProcessor.postAlbumActions();
-                if (typeof(playlistManager) != "undefined") {
-                    playlistManager.reloadAll();
-                }
             }
         );
         return true;
@@ -334,23 +321,12 @@ function playerController() {
         return true;
     }
 
-    this.deletePlaylistTrack = function(name,songpos,callback) {
-        openpl = name;
-        if (!callback) {
-            callback = self.checkReloadPlaylists;
-        }
-        self.do_command_list([['playlistdelete',decodeURIComponent(name),songpos]], callback);
-    }
-
-    this.checkReloadPlaylists = function() {
-        if (openpl !== null) {
-            var string = browsePlaylist(encodeURIComponent(openpl), 'pholder_'+hex_md5(openpl));
-            $('#pholder_'+hex_md5(openpl)).load(string);
-        }
-        if (typeof(playlistManager) != 'undefined') {
-            playlistManager.checkToUpdateTheThing(encodeURIComponent(openpl));
-        }
-        openpl = null;
+    this.deletePlaylistTrack = function(name,songpos, callback) {
+        debug.log('PLAYER', 'Deleting track',songpos,'from playlist',name);
+        self.do_command_list([['playlistdelete',decodeURIComponent(name),songpos]], function() {
+            self.checkProgress();
+            if (callback) callback(name);
+        });
     }
 
 	this.clearPlaylist = function(callback) {
@@ -368,9 +344,6 @@ function playerController() {
 	    } else {
 	        self.do_command_list([["save", name]], function() {
 	            self.reloadPlaylists();
-                if (typeof(playlistManager) != "undefined") {
-                    playlistManager.reloadAll();
-                }
 	            infobar.notify(language.gettext("label_savedpl", [name]));
                 $("#plsaver").slideToggle('fast');
                 self.checkProgress();
@@ -783,13 +756,20 @@ function playerController() {
                     moveto,playlistlength]);
             }
         }
-        self.do_command_list(cmds,callback);
+        self.do_command_list(cmds,function() {
+            player.controller.checkProgress();
+            if (callback) callback(playlist);
+        });
     }
 
     this.movePlaylistTracks = function(playlist,from,to,callback) {
+        debug.log('CONTROLLER', 'Playlist Move',playlist,from, to);
         var cmds = new Array();
         cmds.push(['playlistmove',decodeURIComponent(playlist),from,to]);
-        self.do_command_list(cmds,callback);
+        self.do_command_list(cmds,function() {
+            player.controller.checkProgress();
+            if (callback) callback(playlist);
+        });
     }
 
 }

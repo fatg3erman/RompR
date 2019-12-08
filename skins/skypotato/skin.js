@@ -815,6 +815,7 @@ var layoutProcessor = function() {
                 items: '.sortable',
                 outsidedrop: playlist.dragstopped,
                 insidedrop: playlist.dragstopped,
+                allowdragout: true,
                 scroll: true,
                 scrollparent: '#phacker',
                 scrollspeed: 80,
@@ -899,7 +900,9 @@ var layoutProcessor = function() {
             });
             $('#radiolist>div:nth-child(even)').addClass('album1');
             $('#radiolist>div:nth-child(odd)').not('.configtitle').addClass('album2');
-
+            $(document).on('click', '.clickaddtoplaylist', function() {
+                $('#addtoplaylistmenu').parent().parent().parent().hide();
+            });
         },
 
         // Optional Additions
@@ -947,6 +950,16 @@ var layoutProcessor = function() {
             layoutProcessor.postAlbumActions();
         },
 
+        preparePlaylistTarget: function(t) {
+            var d = $('#'+t).find('.tagh.albumthing').clone();
+            return d;
+        },
+
+        postPlaylistTarget: function(t, x) {
+            $('#'+t).prepend(x);
+            $('#'+t).find('div.dropdown-container.configtitle').remove();
+        },
+
         insertArtist: function(v) {
             switch (v.type) {
                 case 'insertAfter':
@@ -971,8 +984,10 @@ var layoutProcessor = function() {
             layoutProcessor.postAlbumActions();
         },
 
-        emptySearchResults: function() {
+        prepareCollectionUpdate: function() {
             $('.collectionpanel.searcher').remove();
+            $('.collectionpanel.albumlist').remove();
+            $('.collectionpanel.audiobooklist').remove();
             $('#searchresultholder').empty();
         },
 
@@ -1040,7 +1055,23 @@ var layoutProcessor = function() {
 
         artistInfoError: function(data, reqid) {
 
-        }
+        },
 
+        makeSortablePlaylist: function(id) {
+            $('#'+id).sortableTrackList({
+                items: '.playable',
+                outsidedrop: playlistManager.dropOnPlaylist,
+                insidedrop: playlistManager.dragInPlaylist,
+                allowdragout: true,
+                scroll: true,
+                scrollparent: '#infopane',
+                scrollspeed: 80,
+                scrollzone: 120
+            });
+            $('#'+id).acceptDroppedTracks({
+                scroll: true,
+                scrollparent: '#infopane'
+            });
+        }
     }
 }();

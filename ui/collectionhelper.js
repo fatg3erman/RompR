@@ -12,7 +12,7 @@ var collectionHelper = function() {
         collectionHelper.disableCollectionUpdates();
         collectionHelper.prepareForLiftOff(language.gettext("label_updating"));
         collectionHelper.markWaitFileList(language.gettext("label_updating"));
-        uiHelper.emptySearchResults();
+        uiHelper.prepareCollectionUpdate();
         debug.log("PLAYER","Scanning Files",cmd,prefs.player_backend);
         debug.shout("PLAYER","Scanning using",cmd);
         player.controller.do_command_list([[cmd]], function() {
@@ -330,6 +330,9 @@ var collectionHelper = function() {
             debug.log("COLLECTION", "Forcing Collection reload");
             collection_status = 0;
             collectionHelper.checkCollection(false, false);
+            if (notify) {
+                infobar.removenotify(notify);
+            }
         },
 
         prepareForLiftOff: function(text) {
@@ -400,11 +403,6 @@ var collectionHelper = function() {
         },
 
         reloadAudiobooks() {
-            // While it would be nice to be able to update the audiobooks display
-            // the same way we do with the collection, the backend code was not
-            // designed with that in mind and it would be a horrible bodge on top of
-            // some already shonky code. And the only time we need to do that is when
-            // someone chooses 'Move To Spoken Word', which is so rare...
             loadAudiobooks();
         }
 

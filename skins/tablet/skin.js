@@ -359,7 +359,10 @@ var layoutProcessor = function() {
 
         makeDropHolder: function(name) {
             return $('<div>', {class: 'scroller mainpane invisible pright', id: name}).insertBefore('#playlistm');
-        }
+        },
+
+        makeSortablePlaylist: function(id) {
+        }        
 
     }
 
