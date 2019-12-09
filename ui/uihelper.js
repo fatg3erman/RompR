@@ -534,8 +534,19 @@ var uiHelper = function() {
                     scrollparent: '#sources'
                 });
             }
-        }
+        },
 
+        maxAlbumMenuSize: function(element) {
+            try {
+                return layoutProcessor.maxAlbumMenuSize(element);
+            } catch (err) {
+                var ws = getWindowSize();
+                ws.left = 0;
+                ws.top = $('#sources').offset().top;
+                return ws;
+            }
+
+        }
 
     }
 

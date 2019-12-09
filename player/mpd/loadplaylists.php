@@ -20,13 +20,12 @@ if (array_key_exists('playlist', $_REQUEST)) {
 
 } else if (array_key_exists('addtoplaylistmenu', $_REQUEST)) {
     $player = new $PLAYER_TYPE();
+    $playlists = array();
     foreach ($player->get_stored_playlists(true) as $pl) {
-        print '<div class="containerbox backhi clickicon menuitem clickaddtoplaylist" name="'.rawurlencode($pl).'">';
-        print '<i class="fixed collectionicon icon-doc-text"></i>';
-        print '<div class="expand">'.htmlentities($pl).'</div>';
-        print '</div>';
+        $playlists[] = array('name' => rawurlencode($pl), 'html' => htmlentities($pl));
     }
-
+    header('Content-Type: application/json; charset=utf-8');
+    print json_encode($playlists);
 } else {
     do_playlist_header();
     $c = 0;

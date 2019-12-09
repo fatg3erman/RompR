@@ -227,8 +227,12 @@ div.topdropmenu {
 }
 
 div.topdropmenu.albumbitsmenu {
-    position: absolute;
-    top: 12px;
+    position: relative;
+    top: 24px;
+    /*width: 75vw;*/
+    width:300px;
+    /*right: 0px;*/
+    left: -280px !important;
 }
 
 .chooser {
@@ -361,7 +365,7 @@ div.topdropmenu.albumbitsmenu {
 }
 
 div.normalmenu {
-    width:40px;
+    /*width:40px;*/
 }
 
 div.rightmenu {

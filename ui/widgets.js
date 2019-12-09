@@ -297,7 +297,7 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
             });
         }
         this.helper.css('height', (item.height()+12)+"px");
-        this.helper.attr('class', item.hasClass('draggable') ? 'draggable' : 'something');
+        this.helper.attr('class', item.children().first().hasClass('playable') ? 'draggable' : 'something');
         this.helper.empty();
     },
 
@@ -343,42 +343,76 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
         while (!el.hasClass(this.options.items.replace(/^\./,'')) && el != this.element) {
             el = el.parent();
         }
-        return el;
+        if (el.hasClass('sortable')) {
+            // Special case for playlist
+            return el;
+        }
+        if (!el.hasClass('selected')) {
+            el.addClass('selected');
+        }
+        return this.element.find('.selected');
     },
 
     _mouseStart: function(event) {
         debug.log("SORTABLE","Mouse Start",event);
-        var dragged = this._findDraggable(event);
-        if (dragged.prev().length > 0) {
-            this.dragged_original_pos = dragged.prev();
-            this.dragged_original_type = 'after';
-        } else if (dragged.next().length > 0) {
-            this.dragged_original_pos = dragged.next();
-            this.dragged_original_type = 'before';
-        } else {
-            this.dragged_original_pos = dragged.parent();
-            this.dragged_original_type = 'into';
-        }
+        var self = this;
         if (this.dragger) this.dragger.remove();
-        this.dragger = dragged.clone().appendTo('body');
-        this.dragger.find('.icon-cancel-circled').remove();
-        if (this.dragger.is('tr')) {
-            this.dragger.wrap('<table></table>');
+        var dragged = self._findDraggable(event);
+        if (dragged.first().is('tr')) {
+            this.dragger = $('<table>').appendTo('body');
+        } else {
+            this.dragger = $('<div>').appendTo('body');
         }
         this.dragger.css({
             position: 'absolute',
-            top: dragged.offset().top + 'px',
-            left: dragged.offset().left + 'px',
-            width: dragged.width() + 'px',
+            top: dragged.first().offset().top + 'px',
+            left: dragged.first().offset().left + 'px',
+            width: dragged.first().width() + 'px',
             'z-index': 1500
         });
+        self.dragged_elements = new Array();
+        $.each(dragged, function() {
+            var d = $(this);
+            if (d.prev().length > 0) {
+                self.dragged_elements.push({
+                    dragged_original_pos: d.prev(),
+                    dragged_original_type: 'after',
+                    dragged_original_element: d.clone()
+                });
+            } else if (d.next().length > 0) {
+                self.dragged_elements.push({
+                    dragged_original_pos: d.next(),
+                    dragged_original_type: 'before',
+                    dragged_original_element: d.clone()
+                });
+            } else {
+                self.dragged_elements.push({
+                    dragged_original_pos: d.parent(),
+                    dragged_original_type: 'into',
+                    dragged_original_element: d.clone()
+                });
+            }
+            d.detach().removeClass('selected').appendTo(self.dragger);
+        });
         this.drag_x_offset = event.pageX - this.dragger.offset().left;
-        this.dragger.addClass('dropshadow');
+        this.dragger.addClass('dropshadow').find('.icon-cancel-circled').remove();
         if (this.helper) this.helper.remove();
         this.helper = null;
         this._checkHelper(dragged);
-        this.helper.detach().insertAfter(dragged);
-        this.original = dragged.detach();
+        switch (this.dragged_elements[0].dragged_original_type) {
+            case 'after':
+                this.helper.detach().insertAfter(this.dragged_elements[0].dragged_original_pos);
+                break;
+
+            case 'before':
+                this.helper.detach().insertBefore(this.dragged_elements[0].dragged_original_pos);
+                break;
+
+            case 'into':
+                this.helper.detach().appendTo(this.dragged_elements[0].dragged_original_pos);
+                break;
+
+        }
         this.dragstart();
         this.dragging = true;
         return true;
@@ -386,11 +420,7 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 
     _mouseDrag: function(event) {
         clearTimeout(this._scrollcheck);
-        // if (this.draggingout && event.pageX < this.bbox.right && event.pageX > this.bbox.left) {
-        //     debug.log('STR', 'Dragged Back In');
-        //     this.dragging = true;
-        //     this.draggingout = false;
-        // }
+        var self = this;
         if (this.dragging) {
             if ((event.pageX > this.bbox.right || event.pageX < this.bbox.left) &&
                 this.options.allowdragout)
@@ -401,25 +431,26 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
                 this.draggingout = true;
                 var pos = {top: event.pageY - 12, left: event.pageX - this.drag_x_offset};
                 this.dragger.css({top: pos.top+"px", left: pos.left+"px"});
-                switch (this.dragged_original_type) {
-                    case 'before':
-                        this.original.insertBefore(this.dragged_original_pos);
-                        break;
+                for (var i = this.dragged_elements.length; i > 0; i--) {
+                    var element = this.dragged_elements[i-1];
+                    switch (element.dragged_original_type) {
+                        case 'before':
+                            element.dragged_original_element.removeClass('selected').addClass('selected').insertBefore(self.element.find(element.dragged_original_pos));
+                            break;
 
-                    case 'after':
-                        this.original.insertAfter(this.dragged_original_pos);
-                        break;
+                        case 'after':
+                            element.dragged_original_element.removeClass('selected').addClass('selected').insertAfter(self.element.find(element.dragged_original_pos));
+                            break;
 
-                    case 'into':
-                        this.original.appendTo(this.dragged_original_pos);
-                        break;
-
+                        case 'into':
+                            element.dragged_original_element.removeClass('selected').addClass('selected').appendTo(self.element.find(element.dragged_original_pos));
+                            break;
+                    }
                 }
-                $('.selected').removeClass('selected');
-                this.original.addClass('selected');
                 if (this.helper) {
                     this.helper.detach();
                 }
+
                 this.dragger.attr('id','dragger');
                 this.dragger.css('z-index', 1500);
                 this.dragger.addClass('draggable');
@@ -449,14 +480,19 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 
     _mouseStop: function(event) {
         clearTimeout(this._scrollcheck);
+        var self = this;
         if (this.dragging) {
             this.dragger.remove();
-            this.original.insertAfter(this.helper);
+            var marker = this.helper;
+            for (var i = 0; i < this.dragged_elements.length; i++) {
+                var element = this.dragged_elements[i];
+                marker = element.dragged_original_element.insertAfter(marker);
+            };        
             this.helper.remove();
             this.helper = null;
             this.dragging = false;
             if (this.options.insidedrop) {
-                this.options.insidedrop(event, this.original);
+                this.options.insidedrop(event, marker);
             }
         } else if (this.draggingout) {
             debug.log("STL","Dragged out and onto something else");

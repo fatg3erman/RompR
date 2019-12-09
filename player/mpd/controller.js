@@ -213,7 +213,14 @@ function playerController() {
             if (openplaylists.length > 0) {
                 infobar.markCurrentTrack();
             }
-            $('#addtoplaylistmenu').load('player/mpd/loadplaylists.php?addtoplaylistmenu');
+        });
+        $.get('player/mpd/loadplaylists.php?addtoplaylistmenu', function(data) {
+            $('#addtoplaylistmenu').empty();
+            data.forEach(function(p) {
+                var h = $('<div>', {class: "containerbox backhi clickicon menuitem clickaddtoplaylist", name: p.name }).appendTo($('#addtoplaylistmenu'));
+                h.append('<i class="fixed collectionicon icon-doc-text"></i>');
+                h.append('<div class="expand">'+p.html+'</div>');
+            });
         });
 	}
 

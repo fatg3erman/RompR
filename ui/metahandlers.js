@@ -136,7 +136,7 @@ var metaHandlers = function() {
 					dbQueue.request(tracks,
 						function(rdata) {
 				            collectionHelper.updateCollectionDisplay(rdata);
-				            fn(name);
+				            if (fn) fn(name);
 				        },
 				        function(data) {
 				            debug.warn("DROPPLUGIN","Failed to set attributes for",track,data);
@@ -146,16 +146,56 @@ var metaHandlers = function() {
 				}
 			},
 
+			rateTrack: function(element) {
+				var value;
+				switch (true) {
+					case element.hasClass('rate_0'):
+						value = 0;
+						break;
+					case element.hasClass('rate_1'):
+						value = 1;
+						break;
+					case element.hasClass('rate_2'):
+						value = 2;
+						break;
+					case element.hasClass('rate_3'):
+						value = 3;
+						break;
+					case element.hasClass('rate_4'):
+						value = 4;
+						break;
+					case element.hasClass('rate_5'):
+						value = 5;
+						break;
+				}
+				metaHandlers.fromUiElement.doMeta('set', 'Rating', [{attribute: 'Rating', value: value}], null);
+			},
+
+			tagTrack: function(element) {
+				metaHandlers.fromUiElement.doMeta('set', 'Tag', [{attribute: 'Tags', value: [element.html()]}], null);
+			},
+
+			tracksToPlaylist: function(element) {
+				var playlist = element.attr('name');
+			    var tracks = new Array();
+			    $.each($('.selected').filter(removeOpenItems), function (index, element) {
+			    	tracks.push({uri: decodeURIComponent($(this).attr('name'))});
+			    });
+			    playlistManager.addTracksToPlaylist(
+			    	playlist,
+			    	tracks
+			    );
+			},
+
 			removeTrackFromDb: function(element) {
-			    var trackDiv = element.parent();
-			    if (!trackDiv.hasClass('clicktrack')) {
-			        trackDiv = trackDiv.parent();
-			    }
-			    var trackToGo = trackDiv.attr("name");
-			    debug.log("DB_TRACKS","Remove track from database",trackToGo);
-			    trackDiv.fadeOut('fast');
+				var trackstogo = new Array();
+				$('.clicktrack.selected').each(function() {
+					trackstogo.push({action: 'delete', uri: decodeURIComponent($(this).attr('name'))});
+				});
+				$('.clicktrack.selected').fadeOut('fast');
+			    debug.log("DB_TRACKS","Remove tracks from database",trackstogo);
 			    dbQueue.request(
-			        [{action: 'delete', uri: decodeURIComponent(trackToGo)}],
+			    	trackstogo,
 			        collectionHelper.updateCollectionDisplay,
 			        function(data) {
 			            debug.warn("Failed to remove track! Possibly duplicate request?");

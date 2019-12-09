@@ -977,7 +977,7 @@ td.fil {
     white-space: nowrap;
 }
 
-.clickalbummenu
+.clickalbummenu, .clicktrackmenu
 {
     position:relative;
 }
@@ -1029,10 +1029,8 @@ div.topdropmenu.albumbitsmenu {
     top: 12px;
 }
 
-div.clickalbummenu div.rightmenu
-{
-    /*left:-240px;*/
-    width:240px;
+.topdropmenu .topdropmenu {
+    position: relative;
 }
 
 /*

@@ -279,6 +279,10 @@ button.iconbutton {
     width: 12px;
 }
 
+.invisibleicon {
+    display:none !important;
+}
+
 .rating-icon-big {
     height: 20px;
     width: 100px;
@@ -441,6 +445,10 @@ div.normalmenu
     min-width:240px;
 }
 
+div.normalmenu.albumbitsmenu {
+    max-width: 300px;
+}
+
 div.widemenu
 {
     width:40vw;
@@ -457,7 +465,8 @@ div.leftmenu
 div.rightmenu
 {
     top:30px;
-    right:-12px;
+    /*right:-12px;*/
+    right: 0px;
 }
 
 /*

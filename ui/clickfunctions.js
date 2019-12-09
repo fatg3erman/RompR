@@ -139,10 +139,21 @@ function onSourcesClicked(event, clickedElement) {
     debug.log('UI','Clicked On',clickedElement);
     if (clickedElement.hasClass("clickremdb")) {
         metaHandlers.fromUiElement.removeTrackFromDb(clickedElement);
+    } else if (clickedElement.hasClass("clickratetrack")) {
+        metaHandlers.fromUiElement.rateTrack(clickedElement);
+    } else if (clickedElement.hasClass("clicktagtrack")) {
+        metaHandlers.fromUiElement.tagTrack(clickedElement);
+    } else if (clickedElement.hasClass("clickpltrack")) {
+        metaHandlers.fromUiElement.tracksToPlaylist(clickedElement);
+        clickedElement.parent().parent().parent().remove();
     } else if (clickedElement.hasClass("removealbum")) {
         metaHandlers.fromUiElement.removeAlbumFromDb(clickedElement);
     } else if (clickedElement.hasClass("clickalbummenu")) {
         makeAlbumMenu(event, clickedElement);
+    } else if (clickedElement.hasClass("clicktrackmenu")) {
+        makeTrackMenu(event, clickedElement);
+    } else if (clickedElement.hasClass("clicksubmenu")) {
+        makeSubMenu(event, clickedElement);
     } else if (clickedElement.hasClass("addtollviabrowse")) {
         browseAndAddToListenLater(clickedElement.attr('spalbumid'));
     } else if (clickedElement.hasClass("addtocollectionviabrowse")) {
@@ -426,20 +437,38 @@ var playlistManager = function() {
 
         dragInPlaylist: function(event, ui) {
             event.stopImmediatePropagation();
-            var playlist = ui.children('input.playlistname').val();
-            var draggeditem = ui.children('input.playlistpos').val();
-            var nextitem = ui.next().children('input.playlistpos').val();
-            if (typeof nextitem == 'undefined') {
-                nextitem = ui.prev().children('input.playlistpos').val()+1;
+            var playlist_name = ui.children('input.playlistname').val();
+            debug.log('PLMAN', 'Dragged inside playlist',playlist_name);
+            var dragged_pos = parseInt(ui.children('input.playlistpos').val());
+            var next_pos = parseInt(ui.next().children('input.playlistpos').val());
+            if (typeof next_pos == 'undefined') {
+                next_pos = parseInt(ui.prev().children('input.playlistpos').val())+1;
             }
-            debug.log('PLMAN','Dragged item',draggeditem,'to position',nextitem,'in playlist',playlist);
             // Oooh it's daft but the position we have to send is the position AFTER the track has been
             // taken out of the list but before it's been put back in.
-            if (nextitem > draggeditem) nextitem--;
+            // Additionally, since our range of tracks may not be contiguous and we have to move them
+            // one at a time,  we need to calculate the new position for each of our selected tracks 
+            // after the previous one has been moved
+            if (next_pos > dragged_pos) next_pos--;
+            var from = [dragged_pos];
+            var to = [next_pos];
+            ui = ui.prev();
+            var offset = 0;
+            while (ui.hasClass('selected')) {
+                offset++;
+                if (next_pos < dragged_pos) {
+                    from.push(parseInt(ui.children('input.playlistpos').val()) + offset);
+                    to.push(next_pos);
+                } else {
+                    from.push(parseInt(ui.children('input.playlistpos').val()));
+                    to.push(next_pos - offset);
+                }
+                ui = ui.prev();
+            }
             player.controller.movePlaylistTracks(
-                playlist,
-                draggeditem,
-                nextitem,
+                playlist_name,
+                from,
+                to,
                 playlistManager.loadPlaylistIntoTarget
             );
         },
@@ -545,7 +574,7 @@ function checkMetaKeys(event, element) {
 
     // Unselect all selected items if Ctrl or Meta is not pressed
     if (!event.metaKey && !event.ctrlKey && !event.shiftKey) {
-        $(".selected").removeClass("selected");
+        $(".selected").removeFromSelection();
         // If we've clicked a selected item without Ctrl or Meta,
         // then all we need to do is unselect everything. Nothing else to do
         if (is_currently_selected) {
@@ -560,6 +589,20 @@ function checkMetaKeys(event, element) {
     return is_currently_selected;
 }
 
+jQuery.fn.addToSelection = function() {
+    return this.each(function() {
+        $(this).addClass('selected');
+        $(this).find('div.clicktrackmenu').removeClass('invisibleicon');
+    });
+}
+
+jQuery.fn.removeFromSelection = function() {
+    return this.each(function() {
+        $(this).removeClass('selected');
+        $(this).find('div.clicktrackmenu').addClass('invisibleicon');
+    });
+}
+
 function albumSelect(event, element) {
     var is_currently_selected = checkMetaKeys(event, element);
     if (element.hasClass('clickloadplaylist') || element.hasClass('clickloaduserplaylist')) {
@@ -569,17 +612,17 @@ function albumSelect(event, element) {
     }
     debug.log("GENERAL","Albumselect Looking for div",div_to_select,is_currently_selected);
     if (is_currently_selected) {
-        element.removeClass("selected");
+        element.removeFromSelection();
         last_selected_element = element;
         div_to_select.find(".playable").filter(noActionButtons).each(function() {
-            $(this).removeClass("selected");
+            $(this).removeFromSelection();
             last_selected_element = $(this);
         });
     } else {
-        element.addClass("selected");
+        element.addToSelection();
         last_selected_element = element;
         div_to_select.find(".playable").filter(noActionButtons).each(function() {
-            $(this).addClass("selected");
+            $(this).addToSelection();
             last_selected_element = $(this);
         });
     }
@@ -596,8 +639,8 @@ function discSelect(event, element) {
     var num = discno[0];
     debug.log("GENERAL","Selecting Disc",num);
     var clas = ".disc"+num;
-    element.nextAll(clas).addClass("selected");
-    element.addClass('selected');
+    element.nextAll(clas).addToSelection();
+    element.addToSelection();
     last_selected_element = element.nextAll(clas).last();
 }
 
@@ -611,17 +654,13 @@ function noActionButtons(i) {
 }
 
 function trackSelect(event, element) {
-
     var is_currently_selected = checkMetaKeys(event, element);
-
-   if (is_currently_selected) {
-        element.removeClass("selected");
+    if (is_currently_selected) {
+        element.removeFromSelection();
     } else {
-        element.addClass("selected");
+        element.addToSelection();
     }
-
     last_selected_element = element;
-
 }
 
 function selectRange(first, last) {
@@ -629,10 +668,14 @@ function selectRange(first, last) {
 
     // Which list are we selecting from?
     var it = first;
-    while(!it.hasClass('selecotron') && !it.hasClass("menu") &&
-            it.prop("id") != "sources" && it.prop("id") != "sortable" &&
+    while(  !it.hasClass('selecotron') && 
+            !it.hasClass("menu") &&
+            it.prop("id") != "sources" && 
+            it.prop("id") != "sortable" &&
             it.prop("id") != "bottompage" &&
-            !it.hasClass("mainpane") && !it.hasClass("topdropmenu")) {
+            !it.hasClass("mainpane") && 
+            !it.hasClass("topdropmenu") ) 
+    {
         it = it.parent();
     }
     debug.log("GENERAL","Selecting within",it);
@@ -650,7 +693,7 @@ function selectRange(first, last) {
             done = true;
         }
         if (!done && target !== null && !$(this).hasClass('selected')) {
-            $(this).addClass('selected');
+            $(this).addToSelection();
         }
     });
 }
@@ -668,6 +711,109 @@ function checkServerTimeOffset() {
     })
     .fail(function(data) {
         debug.error("TIMECHECK","Failed to read server time");
+    });
+}
+
+function makeTrackMenu(e, element) {
+    if ($(element).children().last().hasClass('albumbitsmenu')) {
+        $(element).children().last().remove();
+        return true;
+    }
+    $('.albumbitsmenu').remove();
+    var d = $('<div>', {class:'topdropmenu dropshadow rightmenu normalmenu albumbitsmenu'});
+    if ($(element).hasClass('clickremovedb')) {
+        d.append($('<div>', {
+            class: 'backhi clickable menuitem clickremdb',
+        }).html(language.gettext('label_removefromcol')));
+    }
+
+    var rat = $('<div>', {
+        class: 'backhi clickable menuitem clicksubmenu',
+    }).html(language.gettext("label_rating")).appendTo(d);
+    var ratsub = $('<div>', {class:'topdropmenu dropshadow normalmenu invisible'}).appendTo(rat);
+    [0,1,2,3,4,5].forEach(function(r) {
+        ratsub.append($('<div>', {
+            class: 'backhi clickable menuitem clickratetrack rate_'+r,
+        }).html('<i class="icon-'+r+'-stars rating-icon-small"></i>'));
+
+    });
+
+    var tag = $('<div>', {
+        class: 'backhi clickable menuitem clicksubmenu',
+    }).html(language.gettext("label_tag")).appendTo(d);
+    var tagsub = $('<div>', {class:'topdropmenu dropshadow normalmenu invisible tracktagmenu'}).appendTo(tag);
+
+    var pls = $('<div>', {
+        class: 'backhi clickable menuitem clicksubmenu',
+    }).html(language.gettext("button_addtoplaylist")).appendTo(d);
+    var plssub = $('<div>', {class:'topdropmenu dropshadow normalmenu invisible trackplmenu'}).appendTo(pls);
+
+    d.appendTo($(element));
+    d.slideToggle('fast', function() {
+        $(this).jiggleToFit();
+    });
+}
+
+function makeSubMenu(e, element) {
+    var parentmenu = $(element).parent();
+    var menu = $(element).find('div.topdropmenu');
+    if (menu.is(':visible')) {
+        menu.css({display: ''});
+    } else {
+        if (menu.hasClass('tracktagmenu')) {
+            metaHandlers.genericAction(
+                'gettags',
+                function(data) {
+                    data.forEach(function(tag){
+                        menu.append('<div class="backhi clickable menuitme clicktagtrack">'+tag+'</div>');
+                    });
+                    menu.slideToggle('fast', function() {
+                        parentmenu.jiggleToFit();
+                    });
+                },
+                function() { debug.error('SUBMENU', 'Failed to populate tag menu') }
+            );
+        } else if (menu.hasClass('trackplmenu')) {
+            $.get('player/mpd/loadplaylists.php?addtoplaylistmenu', function(data) {
+                data.forEach(function(p) {
+                    var h = $('<div>', {class: "backhi clickable menuitme clickpltrack", name: p.name }).html(p.html).appendTo(menu);
+                });
+                menu.slideToggle('fast', function() {
+                    parentmenu.jiggleToFit();
+                });
+            });
+        } else {
+            menu.slideToggle('fast', function() {
+                parentmenu.jiggleToFit();
+            });
+        }
+    }
+}
+
+jQuery.fn.jiggleToFit = function() {
+    // Make sure the popup menu doesn't disappear below the bottom of the window
+    return this.each(function() {
+        // Reset CSS so offset() reports a value we can use.
+        // Hopefully all browsers recalculate the position immediately
+        // before we work out what botompos is
+        var self = $(this);
+        var ws = uiHelper.maxAlbumMenuSize(self);
+
+        self.css({top: '', height: '', width: ''});
+        var height = Math.min(self.height(), (ws.y - ws.top));
+        self.css({height: height+'px'});
+
+        var bottompos = self.offset().top + self.height();
+        if (bottompos > ws.y) {
+            self.css({top: '-'+(bottompos - ws.y)+'px', right: "24px"});
+        }
+
+        self.css({width: ''});
+        var leftpos = self.offset().left;
+        if (leftpos < ws.left) {
+            self.css({width: $(this).offset().right+'px'});
+        }
+
     });
 }
 
@@ -740,7 +886,9 @@ function makeAlbumMenu(e, element) {
         });
     }
     d.appendTo($(element));
-    d.slideToggle('fast');
+    d.slideToggle('fast', function() {
+        $(this).jiggleToFit();
+    });
 }
 
 function setAsAudioBook(e, element) {

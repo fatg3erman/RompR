@@ -1072,6 +1072,18 @@ var layoutProcessor = function() {
                 scroll: true,
                 scrollparent: '#infopane'
             });
+        },
+
+        maxAlbumMenuSize: function(element) {
+            while (!element.hasClass('tagholder_wide')) {
+                element = element.parent();
+            }
+            return {
+                x: element.offset().left + element.width(),
+                y: element.offset().top + element.height(),
+                left: element.offset().left,
+                top: element.offset().top
+            }
         }
     }
 }();

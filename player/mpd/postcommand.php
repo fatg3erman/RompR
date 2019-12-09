@@ -33,7 +33,7 @@ if ($player->is_connected()) {
 
         foreach ($json as $cmd) {
 
-            logger::trace("POSTCOMMAND", "RAW command : ".implode(' ', $cmd));
+            logger::trace("POSTCOMMAND", "RAW command : ".multi_implode($cmd, " "));
 
             switch ($cmd[0]) {
                 case "addtoend":
@@ -109,6 +109,13 @@ if ($player->is_connected()) {
                         logger::log('POSTCOMMAND',$cmd[0], $cmd[1], $cmd[2]);
                         $cmds[] = join_command_string(array($cmd[0], $cmd[1], $cmd[2]));
                         check_playlist_add_move($cmd, 1);
+                    }
+                    break;
+
+                case "playlistmove":
+                    // Expects playlistname, then arrays of from and to
+                    foreach ($cmd[2] as $i => $v) {
+                        $cmds[] = join_command_string(array($cmd[0], $cmd[1], $v, $cmd[3][$i]));
                     }
                     break;
 

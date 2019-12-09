@@ -63,9 +63,13 @@ function albumTrack($data) {
     }
     print '</div>';
 
-    // Delete Button
-    if ($data['lm'] === null) {
-        print '<i class="icon-cancel-circled playlisticonr fixed clickable clickicon clickremdb"></i>';
+    // Menu Button
+    if ($data['ttid']) {
+        $button_class = "icon-menu playlisticonr fixed clickable clickicon invisibleicon clicktrackmenu";
+        if ($data['lm'] === null) {
+            $button_class .= ' clickremovedb';
+        }
+        print '<div class="'.$button_class.'" rompr_id="'.$data['ttid'].'"></div>';
     }
 
     print '</div>';
