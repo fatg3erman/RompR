@@ -795,6 +795,10 @@ div.item div.containerbox.vertical.expand {
     font-style:italic;
 }
 
+.invisibleicon {
+    display:none !important;
+}
+
 .clicktrack {
     margin-bottom: 2px;
 }
@@ -1023,10 +1027,6 @@ div.topdropmenu div:not(.canbefaded) {
 
 div.topdropmenu div.notenabled, div.togglecontainer.notenabled, div#flowcontrols.notenabled {
 	opacity: 0.2 !important;
-}
-
-div.topdropmenu.albumbitsmenu {
-    top: 12px;
 }
 
 .topdropmenu .topdropmenu {

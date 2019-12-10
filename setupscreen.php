@@ -88,13 +88,12 @@ if (array_key_exists('collection_type', $prefs) && $prefs['collection_type'] == 
     print " checked";
 }
 print '><label for="dblite">Lite Database Collection</label></div>';
-print '<p class="tiny">Full featured but may be slow with a large collection</p>';
 print '<div class="styledinputs"><input id="dbsql" type="radio" name="collection_type" value="mysql"';
 if (array_key_exists('collection_type', $prefs) && $prefs['collection_type'] == "mysql") {
     print " checked";
 }
 print '><label for="dbsql">Full Database Collection</input></label>';
-print '<p class="tiny">Fast and full featured - requires MySQL Server:</p>';
+print '<p class="tiny">Requires MySQL Server:</p>';
 print '<p>Server<br><input type="text" name="mysql_host" value="'.
     $prefs['mysql_host'].'" /></p>'."\n";
 print '<p>Port or UNIX Socket<br><input type="text" name="mysql_port" value="'.

@@ -213,7 +213,6 @@ var metaHandlers = function() {
 			        }
 			    );
 			}
-
 		},
 
 		fromSpotifyData: {
@@ -255,7 +254,6 @@ var metaHandlers = function() {
 			        infobar.error(language.gettext('label_general_error'));
 			    }
 			}
-
 		},
 
 		fromPlaylistInfo: {

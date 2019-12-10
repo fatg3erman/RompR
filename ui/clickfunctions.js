@@ -293,6 +293,9 @@ function doAlbumMenu(event, element, callback) {
                     } else if (self.find('input.expandartist').length > 0) {
                         getAllTracksForArtist(element, menutoopen)
                     }
+                    if (prefs.clickmode == 'single') {
+                        self.find('.invisibleicon').removeClass('invisibleicon');
+                    }
                     uiHelper.makeResumeBar(self);
                 });
             });
@@ -592,14 +595,18 @@ function checkMetaKeys(event, element) {
 jQuery.fn.addToSelection = function() {
     return this.each(function() {
         $(this).addClass('selected');
-        $(this).find('div.clicktrackmenu').removeClass('invisibleicon');
+        if (prefs.clickmode == 'double') {
+            $(this).find('div.clicktrackmenu').removeClass('invisibleicon');
+        }
     });
 }
 
 jQuery.fn.removeFromSelection = function() {
     return this.each(function() {
         $(this).removeClass('selected');
-        $(this).find('div.clicktrackmenu').addClass('invisibleicon');
+        if (prefs.clickmode == 'double') {
+            $(this).find('div.clicktrackmenu').addClass('invisibleicon');
+        }
     });
 }
 
@@ -717,9 +724,19 @@ function checkServerTimeOffset() {
 function makeTrackMenu(e, element) {
     if ($(element).children().last().hasClass('albumbitsmenu')) {
         $(element).children().last().remove();
+        if (prefs.clickmode == 'single') {
+            if ($(element).parent().hasClass('selected')) {
+                $(element).parent().removeClass('selected');
+            }
+        }
         return true;
     }
     $('.albumbitsmenu').remove();
+    if (prefs.clickmode == 'single') {
+        if (!$(element).parent().hasClass('selected')) {
+            $(element).parent().addClass('selected');
+        }
+    }
     var d = $('<div>', {class:'topdropmenu dropshadow rightmenu normalmenu albumbitsmenu'});
     if ($(element).hasClass('clickremovedb')) {
         d.append($('<div>', {

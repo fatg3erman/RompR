@@ -240,8 +240,9 @@ class romprmetadata {
 		// Let's just see if it's a podcast track and mark it as listened.
 		// This won't always work, as scrobbles are often not what's in the RSS feed, but we can but do our best
 		sql_prepare_query(true, null, null, null, 
-			"UPDATE PodcastTrackTable SET Listened = ? WHERE Title = ? AND Artist = ?",
+			"UPDATE PodcastTrackTable SET Listened = ?, New = ? WHERE Title = ? AND Artist = ?",
 			1,
+			0,
 			$data['title'],
 			$data['artist']
 		);
