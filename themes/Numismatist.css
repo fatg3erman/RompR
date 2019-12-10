@@ -241,7 +241,8 @@ a.album:hover,a.album:active
 }
 
 .backhi:hover {
-    color:#444444;
+    color:#000000;
+    background-color: rgba(0,0,0,0.1);
     cursor:pointer;
 }
 
@@ -255,7 +256,8 @@ due to :hover events propagating from the parent menu
 /*Make sure the submenu entry being hovered over still gets highlighted*/
 
 .backhi:hover>div.topdropmenu>div.backhi:hover {
-    color:#444444;
+    color:#000000;
+    background-color: rgba(0,0,0,0.1);
 }
 
 table.histable tr:hover {
