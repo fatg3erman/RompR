@@ -351,6 +351,20 @@ table.histable tr
     transition:all 0.1s;
 }
 
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu 
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color:#eeeeee;    
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    text-shadow: 0 0 15px #ffffff;
+    color:#ff4800;
+}
+
 .backhi
 {
     transition:all 0.2s;

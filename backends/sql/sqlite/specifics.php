@@ -823,6 +823,7 @@ function delete_orphaned_artists() {
 	generic_sql_query("DROP TABLE IF EXISTS Croft", true);
 	generic_sql_query("CREATE TEMPORARY TABLE Croft AS SELECT Artistindex FROM Tracktable UNION SELECT AlbumArtistindex FROM Albumtable", true);
 	generic_sql_query("DELETE FROM Artisttable WHERE Artistindex NOT IN (SELECT Artistindex FROM Croft)", true);
+	generic_sql_query("DROP TABLE IF EXISTS Croft", true);
 }
 
 function hide_played_tracks() {

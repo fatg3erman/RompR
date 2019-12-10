@@ -767,7 +767,8 @@ $languages['en'] = array (
 	"label_move_to_audiobooks" => "Move To Spoken Word",
 	"label_move_to_collection" => "Move To Music Collection",
 	"label_removealbum" => "Remove Album From Collection",
-	"label_subbed_podcasts" => "Subscribed Podcasts"
+	"label_subbed_podcasts" => "Subscribed Podcasts",
+	"podcast_tooltip_unlistened" => "Mark as Unlistened"
 );
 
 ?>

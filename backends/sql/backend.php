@@ -170,49 +170,6 @@ function check_album(&$data) {
 	$obj = null;
 	$otherobj = null;
 
-	// $result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
-	// 	"SELECT
-	// 		Albumindex,
-	// 		Year,
-	// 		Image,
-	// 		AlbumUri,
-	// 		mbid,
-	// 		Domain
-	// 	FROM
-	// 		Albumtable
-	// 	WHERE
-	// 		LOWER(Albumname) = LOWER(?)
-	// 		AND AlbumArtistindex = ?", $data['album'], $data['albumai']);
-
-	// foreach ($result as $a) {
-	// 	if ($a->Domain == $data['domain']) {
-	// 		logger::log('MYSQL' - 'Found album on same domain -',$a->Domain);
-	// 		$obj = $a;
-	// 	} else {
-	// 		logger::log('MYSQL', 'Found album on different domain -',$a->Domain,'- We are',$data['domain']);
-	// 		$otherobj = $a;
-	// 	}
-	// }
-
-	// if ($prefs['preferlocalfiles'] && $trackbytrack && !$doing_search) {
-	// 	if ($data['domain'] == 'local' && $obj == null && $otherobj != null) {
-	// 		$obj = $otherobj;
-	// 		logger::log("MYSQL", "Album ".$data['album']." was found on domain ".$obj->Domain.". Changing to local");
-	// 		$index = $obj->Albumindex;
-	// 		if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET AlbumUri=NULL, Domain=?, justUpdated=? WHERE Albumindex=?", 'local', 1, $index)) {
-	// 			$obj->AlbumUri = null;
-	// 			logger::debug("MYSQL", "   ...Success");
-	// 		} else {
-	// 			logger::fail("MYSQL", "   Album ".$data['album']." update FAILED");
-	// 			return false;
-	// 		}
-	// 	} else if ($data['domain'] != 'local' && $obj == null && $otherobj != null && $otherobj->Domain == 'local') {
-	// 		logger::log("MYSQL", "Album ".$data['album']." was found on local domain. Ignoring this album");
-	// 		return false;
-	// 	}
-	// }
-
-
 	$result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
 		"SELECT
 			Albumindex,
@@ -1703,9 +1660,11 @@ function cleanSearchTables() {
 	// temporary tables of its own.
 	//
 
-	close_database();
-	sleep(1);
-	connect_to_database();
+	// Am now dropping the table again (used_tags in remove_cruft) so let's see how that goes
+	// Also temporary tables in delete_orphaned_artists and hide_played_tracks
+	// close_database();
+	// sleep(1);
+	// connect_to_database();
 
 }
 
@@ -1807,6 +1766,9 @@ function remove_cruft() {
 	generic_sql_query("DELETE FROM Tagtable WHERE Tagindex NOT IN (SELECT Tagindex FROM used_tags)", true);
 	generic_sql_query("DELETE FROM Playcounttable WHERE Playcount = '0'", true);
 	generic_sql_query("DELETE FROM Playcounttable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
+
+	generic_sql_query('DROP TABLE used_tags', true);
+
 	$at = microtime(true) - $t;
 	logger::debug("TIMINGS", " -- Tidying metadata took ".$at." seconds");
 }

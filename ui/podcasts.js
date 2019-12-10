@@ -284,6 +284,11 @@ var podcasts = function() {
 		    podcastRequest({markaslistened: track, channel: channel },null);
 		},
 
+		markEpisodeAsUnlistened: function(track, channel) {
+		    debug.log("PODCAST","Marking track",track,"from channel",channel,"as unlistened");
+		    podcastRequest({markasunlistened: track, channel: channel },null);
+		},
+
 		downloadPodcast: function(track, channel) {
 		    debug.log("PODCAST","Downloading track",track,"from channel",channel);
 		    downloadQueue.push({track: track, channel: channel});
@@ -540,11 +545,13 @@ var podcasts = function() {
 				var n = clickedElement.attr('name');
 		        var m = clickedElement.parent().attr('name');
 		        podcasts.markEpisodeAsListened(n.replace(/podmarklistened_/, ''), m.replace(/podcontrols_/,''));
+		    } else if (clickedElement.hasClass("podmarkunlistened")) {
+				var n = clickedElement.attr('name');
+		        var m = clickedElement.parent().attr('name');
+		        podcasts.markEpisodeAsUnlistened(n.replace(/podmarkunlistened_/, ''), m.replace(/podcontrols_/,''));
 			}
 		}
-
 	}
-
 }();
 
 $('#podcastsinput').on('drop', podcasts.handleDrop)

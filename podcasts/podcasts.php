@@ -33,6 +33,8 @@ if (array_key_exists('populate', $_REQUEST)) {
         $podid = downloadTrack($_REQUEST['downloadtrack'], $_REQUEST['channel']);
     } else if (array_key_exists('markaslistened', $_REQUEST)) {
         $podid = array(markKeyAsListened($_REQUEST['markaslistened'], $_REQUEST['channel']));
+    } else if (array_key_exists('markasunlistened', $_REQUEST)) {
+        $podid = array(markKeyAsUnlistened($_REQUEST['markasunlistened'], $_REQUEST['channel']));
     } else if (array_key_exists('channellistened', $_REQUEST)) {
         $podid = array(markChannelAsListened($_REQUEST['channellistened']));
     } else if (array_key_exists('channelundelete', $_REQUEST)) {
@@ -117,12 +119,12 @@ function doPodcastBase() {
     print '<div class="expand"><b>'.get_int_text('label_global_controls').'</b></div>';
     print '</div>';
 
-
     print '<div class="spacer"></div>';
 
     print '<div class="containerbox fullwidth bumpad">';
     print '<i class="icon-refresh smallicon clickable clickicon fixed tooltip podcast podglobal" name="refreshall" title="'.get_int_text('podcast_refresh_all').'"></i>';
     print '<i class="icon-headphones smallicon clickable clickicon fixed tooltip podcast podglobal" name="markalllistened" title="'.get_int_text('podcast_mark_all').'"></i>';
+    print '<div class="expand"></div>';
     print '<i class="icon-trash oneeighty smallicon clickable clickicon fixed tooltip podcast podglobal" name="undeleteall" title="'.get_int_text('podcast_undelete').'"></i>';
     print '<i class="icon-download oneeighty smallicon clickable clickicon fixed tooltip podcast podglobal" name="removealldownloaded" title="'.get_int_text('podcast_removedownloaded').'"></i>';
     print '</div>';
@@ -156,7 +158,6 @@ function doPodcastBase() {
         }
     }
     print '</div>';
-    // print '</div>';
 
     print '<div class="spacer"></div>';
 

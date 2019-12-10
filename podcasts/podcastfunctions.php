@@ -652,11 +652,11 @@ function doPodcast($y, $do_searchbox) {
             'clickable clickicon podgroupload podcast fixed tooltip spinable" name="podgroupload_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_mark_all").'" class="icon-headphones podicon podcast podaction '.
             'clickable clickicon fixed tooltip spinable" name="channellistened_'.$pm.'"></i>';
+        print '<div class="expand"></div>';
         print '<i title="'.get_int_text("podcast_undelete").'" class="icon-trash podicon podcast podaction oneeighty '.
             'clickable clickicon fixed tooltip spinable" name="channelundelete_'.$pm.'"></i>';
         print '<i title="'.get_int_text("podcast_removedownloaded").'" class="icon-download podicon podcast podaction oneeighty '.
             'clickable clickicon fixed tooltip spinable" name="removedownloaded_'.$pm.'"></i>';
-        print '<div class="expand"></div>';
         print '<i title="'.get_int_text("podcast_delete").'" class="icon-cancel-circled podicon '.
                 'clickable clickicon podremove podcast fixed tooltip spinable" name="podremove_'.$pm.'"></i>';
         print '</div>';
@@ -867,6 +867,10 @@ function format_episode(&$y, &$item, $pm) {
         }
         print '<i class="icon-cancel-circled podicon clickable clickicon tright podtrackremove podcast tooltip spinable" title="'.
             get_int_text("podcast_tooltip_delepisode").'" name="podtrackremove_'.$item->PODTrackindex.'" ></i>';
+        if ($item->Listened == 1) {
+            print '<i class="icon-headphones podicon clickable clickicon tright podcast podmarkunlistened tooltip spinable oneeighty" title="'.
+                get_int_text("podcast_tooltip_unlistened").'" name="podmarkunlistened_'.$item->PODTrackindex.'"></i>';
+        }
         print '</div>';
     }
     print '</div>';
@@ -963,6 +967,12 @@ function deleteTrack($trackid, $channel) {
 function markKeyAsListened($trackid, $channel) {
     logger::mark("PODCASTS", "Marking track",$trackid,"from podcast",$channel,"as listened");
     generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0, Progress = 0 WHERE PODTrackindex = ".$trackid, true);
+    return $channel;
+}
+
+function markKeyAsUnlistened($trackid, $channel) {
+    logger::mark("PODCASTS", "Marking track",$trackid,"from podcast",$channel,"as unlistened");
+    generic_sql_query("UPDATE PodcastTracktable SET Listened = 0, New = 0, Progress = 0 WHERE PODTrackindex = ".$trackid, true);
     return $channel;
 }
 

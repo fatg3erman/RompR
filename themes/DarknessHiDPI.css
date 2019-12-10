@@ -205,6 +205,19 @@ a:hover,a:active
     cursor:pointer;
 }
 
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu 
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color:#dddddd;    
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    background-color:#454545;
+}
+
 .tagholder table tr th
 {
     border-bottom:1px solid #cccccc;

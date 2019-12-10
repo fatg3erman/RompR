@@ -187,6 +187,19 @@ table.histable tr:hover {
     cursor:pointer;
 }
 
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu 
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color:#000000;    
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    background-color:#ccdcf2;
+}
+
 tr.clickaddtrack:hover {
     background-color:#e1e4ea;
 }
