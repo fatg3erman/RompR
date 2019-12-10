@@ -22,13 +22,31 @@ Tracks in the collection can be given a rating (from 1 to 5 stars) and arbitrary
 
 ![](images/taggedtrack1.png)
 
-They will also be shown in the Now Playing area. To rate a track that is playing, just click on the stars. To add a tag click on the + sign. To remove a tag, hover over the tag and click the x that appears.
-
-You can also add tags and ratings from the File [information panel](/RompR/The-Info-Panel). For people on touchscreen devices, this provides an easier way to remove tags,
+They will also be shown in the Now Playing area.
 
 ![](images/taggedtrack2.png)
 
-You can search for tags or ratings using the [Search Panel](/RompR/Searching-For-Music). You can also manage them and get a sorted list by using the [Ratings and Tags](/RompR/Managing-Ratings-And-Tags) panel. Tags and ratings can also be used to generate [Personalised Radio](/RompR/Personalised-Radio).
+To rate a track that is playing, just click on the stars in the Now Playing panel. To add a tag click on the + sign. To remove a tag, hover over the tag and click the x that appears.
+
+You can also add tags and ratings from the File [information panel](/RompR/The-Info-Panel).
+
+You can search for tags or ratings using the [Search Panel](/RompR/Searching-For-Music).
+
+Tags and ratings can also be used to generate [Personalised Radio](/RompR/Personalised-Radio).
+
+## Selecting tracks
+
+To play a track in one of the Desktop skins, double-click it. This will add it to the [Play Queue](/RompR/The-Playlist). In the Phone and Tablet skins, this is accomplished with a single-click.
+
+The 'Click Mode' can be changed from the Preferences pane.
+
+In Double-Click mode, clicking once on a track will select it. You can select multiple tracks by holding down Ctrl (Cmd on macOS), or Shift - which will select a range of tracks. A selection can be dragged to the Play Queue. Selected tracks will also display a menu 'hamburger icon' from which you can get a menu which allows you to Rate, Tag, or add tracks to a [Saved Playlist](/RompR/Using-Saved-Playlists)
+
+![](images/albummenu.png)
+
+When you use this to add Ratings, Tags, or to Playlists it will apply to *all selected tracks*.
+
+In Single-Click mode, the hamburger icon will always be visible. Clicking the icon will show the menu and will also select the track. Clicking the icon on further tracks will add them to the selection. Clicking it again will remove them from the selection.
 
 ## Collection Sources (Mopidy Only)
 
@@ -51,7 +69,7 @@ You will only see options for backends that are enabled in Mopidy. The complete 
 
 ### On-The-Fly Collection Building
 
-Mopidy users also have the option to add tracks to the collection as they play. If you're playing a track from, say, Spotify and you like it, just give it a tag or a rating and it will be automatically added to your Collection. It will appear in the Collection with a cross next to it, which you can click to remove the track from the Collection. Spotify albums from the [Current Playlist](/RompR/The-Playlist), the [Spotify Info Panel](/RompR/The-Info-Panel), and [Music Discovery Sources](/RompR/Music-Discovery) can also be added directly into the Music Collection.
+Mopidy users also have the option to add tracks to the collection as they play. If you're playing a track from, say, Spotify and you like it, just give it a tag or a rating and it will be automatically added to your Collection. Tracks added this way can be removed using the hamburger icon menu. Spotify albums from the [Current Playlist](/RompR/The-Playlist), the [Spotify Info Panel](/RompR/The-Info-Panel), and [Music Discovery Sources](/RompR/Music-Discovery) can also be added directly into the Music Collection.
 
 If you're listening to an internet radio station and you hear a track you like, tagging or rating that will make RompЯ search for it on Spotify and add it to the collection if it finds it, or to your [Wishlist](/RompR/The-Wishlist) if it doesn't.
 
