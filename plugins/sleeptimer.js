@@ -26,11 +26,11 @@ var sleepTimer = function() {
 				sleeptime = 0;
 			}
 			sleepTimer.setBoxes();
-	        inctimer = setTimeout(sleepTimer.runIncrement, inctime);
-	        inctime -= 50;
-	        if (inctime < 50) {
-	        	inctime = 50;
-	        }
+			inctimer = setTimeout(sleepTimer.runIncrement, inctime);
+			inctime -= 50;
+			if (inctime < 50) {
+				inctime = 50;
+			}
 		},
 
 		stopInc: function() {
@@ -40,7 +40,7 @@ var sleepTimer = function() {
 		},
 
 		setBoxes: function() {
-	        $("#sleepminutes").html(sleeptime.toString());
+			$("#sleepminutes").html(sleeptime.toString());
 		},
 
 		toggle: function() {

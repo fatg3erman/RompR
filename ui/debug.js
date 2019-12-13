@@ -132,7 +132,7 @@ window.debug = (function() {
 				focuson.push(module);
 			}
 		},
-		
+
 		focusoff: function(module) {
 			var index = focuson.indexOf(module);
 			if (index > -1) {

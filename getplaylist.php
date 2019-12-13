@@ -23,12 +23,12 @@ $player = new $PLAYER_TYPE();
 $collection = new playlistCollection();
 print '[';
 foreach ($player->get_playlist($collection) as $info) {
-    if ($doneone) {
-        print ', ';
-    } else {
-        $doneone = true;
-    }
-    print json_encode($info);
+	if ($doneone) {
+		print ', ';
+	} else {
+		$doneone = true;
+	}
+	print json_encode($info);
 };
 print ']';
 ob_flush();

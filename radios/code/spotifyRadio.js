@@ -25,15 +25,15 @@ function spotifyRadio() {
 			debug.trace("SPOTIRADIO ARTIST","Got related artists for",name,data);
 			for (var i in data.artists) {
 				ac: {
-	        		for (var j in self.artists) {
-	        			if (self.artists[j].getName() == data.artists[i].name) {
-	        				debug.shout("SPOTIRADIO", "Ignoring artist",data.artists[i].name,
-	        					"because it already exists");
-	        				break ac;
-	        			}
-	        		}
+					for (var j in self.artists) {
+						if (self.artists[j].getName() == data.artists[i].name) {
+							debug.shout("SPOTIRADIO", "Ignoring artist",data.artists[i].name,
+								"because it already exists");
+							break ac;
+						}
+					}
 					self.artists.push(new mixArtist(data.artists[i].name, data.artists[i].id, false));
-	        	}
+				}
 			}
 		}
 
@@ -87,8 +87,8 @@ function spotifyRadio() {
 			if (self.running && tracks.length > 0 && self.sending > 0) {
 				self.sending--;
 				debug.shout("SPOTIRADIO ALBUM",name,"is sending a track!",self.sending,"left");
-	        	player.controller.addTracks([tracks.shift()],
-	        		playlist.radioManager.playbackStartPos(), null);
+				player.controller.addTracks([tracks.shift()],
+					playlist.radioManager.playbackStartPos(), null);
 			} else {
 			// while (ids.length > 0) {
 				ids.sort(randomsort);

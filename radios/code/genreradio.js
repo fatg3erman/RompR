@@ -73,8 +73,8 @@ var genreRadio = function() {
 
 		fail: function() {
 			debug.error("GENRE RADIO","Well, that didn't work");
-            infobar.notify(language.gettext('label_gotnotracks'));
-            playlist.radioManager.stop(null);
+			infobar.notify(language.gettext('label_gotnotracks'));
+			playlist.radioManager.stop(null);
 		},
 
 		stop: function() {
@@ -83,7 +83,7 @@ var genreRadio = function() {
 		},
 
 		modeHtml: function(g) {
-            return '<i class="icon-wifi modeimg"/></i><span class="modespan ucfirst">'+g+' '+language.gettext('label_radio')+'</span>';
+			return '<i class="icon-wifi modeimg"/></i><span class="modespan ucfirst">'+g+' '+language.gettext('label_radio')+'</span>';
 		}
 
 	}

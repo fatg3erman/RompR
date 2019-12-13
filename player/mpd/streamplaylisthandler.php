@@ -90,9 +90,9 @@ class asxFile {
 		$this->image = $image;
 		$this->prettystream = ($xml->COPYRIGHT != null && $xml->COPYRIGHT != '') ? $xml->COPYRIGHT : "";
 		$this->tracks = array();
-	    foreach($xml->Entry as $r) {
-	    	$this->tracks[] = array('TrackUri' => $r->ref['href'], 'PrettyStream' => $prettystream);
-	    }
+		foreach($xml->Entry as $r) {
+			$this->tracks[] = array('TrackUri' => $r->ref['href'], 'PrettyStream' => $prettystream);
+		}
 	}
 
 	public function updateDatabase() {
@@ -147,9 +147,9 @@ class xspfFile {
 		$this->image = $image;
 		$prettystream = $xml->info != null ? $xml->info : "";
 		$this->tracks = array();
-	    foreach($xml->trackList->track as $r) {
-	    	$this->tracks[] = array('TrackUri' => (string) $r->location, 'PrettyStream' => $prettystream);
-	    }
+		foreach($xml->trackList->track as $r) {
+			$this->tracks[] = array('TrackUri' => (string) $r->location, 'PrettyStream' => $prettystream);
+		}
 	}
 
 	public function updateDatabase() {

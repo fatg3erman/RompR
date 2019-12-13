@@ -17,7 +17,7 @@ function spotifyRecommendationsRadio() {
 	this.spotiError = function(data) {
 		debug.warn("SPOTIFY RECC","Error!",data);
 		infobar.error(language.gettext('label_gotnotracks'));
-        playlist.radioManager.stop(null);
+		playlist.radioManager.stop(null);
 	}
 
 	this.sendTracks = function(num) {
@@ -26,13 +26,13 @@ function spotifyRecommendationsRadio() {
 			t.push({type: 'uri', name: tracks.shift()});
 			num--;
 		}
-        if (t.length > 0) {
-            player.controller.addTracks(t, playlist.radioManager.playbackStartPos(), null);
-        } else {
-        	debug.warn("SPOTIFY RECC","Out of Tracks!");
-        	infobar.notify('<i class="icon-spotify-circled modeimg"/></i>'+language.gettext('label_outoftracks'));
-            playlist.radioManager.stop(null);
-        }
+		if (t.length > 0) {
+			player.controller.addTracks(t, playlist.radioManager.playbackStartPos(), null);
+		} else {
+			debug.warn("SPOTIFY RECC","Out of Tracks!");
+			infobar.notify('<i class="icon-spotify-circled modeimg"/></i>'+language.gettext('label_outoftracks'));
+			playlist.radioManager.stop(null);
+		}
 	}
 
 	this.gotRecommendations = function(data, numtracks) {
@@ -47,7 +47,7 @@ function spotifyRecommendationsRadio() {
 			self.sendTracks(numtracks);
 		} else {
 			infobar.error(language.gettext('label_gotnotracks'));
-            playlist.radioManager.stop(null);
+			playlist.radioManager.stop(null);
 		}
 	}
 

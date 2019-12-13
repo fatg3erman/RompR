@@ -192,9 +192,9 @@ function dbg_params($string,$data) {
 			$string = preg_replace('/\?/', $v, $string, 1);
 		} else {
 			$string=str_replace(":$k", $v, $string);
-        }
-    }
-    return $string;
+		}
+	}
+	return $string;
 }
 
 function checkCollectionStatus() {
@@ -242,14 +242,14 @@ function check_transaction() {
 
 function close_transaction() {
 	global $transaction_open, $numdone, $mysqlc;
-    if ($transaction_open) {
-    	if ($mysqlc->commit()) {
-    		$transaction_open = false;
-    		$numdone = 0;
-    	}
-    } else {
+	if ($transaction_open) {
+		if ($mysqlc->commit()) {
+			$transaction_open = false;
+			$numdone = 0;
+		}
+	} else {
 		logger::warn("BACKEND", "WARNING! close_transaction called when transaction not open!");
-    }
+	}
 }
 
 function saveCollectionPlayer($type) {
@@ -274,23 +274,23 @@ function saveCollectionPlayer($type) {
 function readCollectionPlayer($sp = treu) {
 	global $prefs;
 	$c = simple_query('Value', 'Statstable', 'Item', 'CollType', 999);
-    switch ($c) {
+	switch ($c) {
 		case 999:
 			logger::trace("COLLECTION", "Collection type from database is not set");
 			logger::trace("COLLECTION", "Prefs collection_player is currently",$prefs['collection_player']);
 			$prefs['collection_player'] = null;
 			break;
 
-        case 1:
+		case 1:
 			logger::debug("COLLECTION", "Collection type from database is mopidy");
-            $prefs['collection_player'] = 'mopidy';
-            break;
+			$prefs['collection_player'] = 'mopidy';
+			break;
 
-        case 0:
+		case 0:
 		logger::debug("COLLECTION", "Collection type from database is mpd");
-            $prefs['collection_player'] = 'mpd';
-            break;
-    }
+			$prefs['collection_player'] = 'mpd';
+			break;
+	}
 	if ($sp) {
 		savePrefs();
 	}

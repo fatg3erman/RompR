@@ -12,81 +12,81 @@ var podcasts = function() {
 				downloadRunning = true;
 				var track = newTrack.track;
 				var channel = newTrack.channel;
-		    	$('[name="podgroupload_'+channel+'"]').makeFlasher().removeClass('podgroupload');
+				$('[name="podgroupload_'+channel+'"]').makeFlasher().removeClass('podgroupload');
 				var monitor = new podcastDownloadMonitor(track, channel);
-			    $.ajax( {
-			        type: "GET",
-			        url: "podcasts/podcasts.php",
-			        cache: false,
-			        contentType: "text/html; charset=utf-8",
-			        data: {downloadtrack: track, channel: channel, populate: 1 },
-			        timeout: 360000
+				$.ajax( {
+					type: "GET",
+					url: "podcasts/podcasts.php",
+					cache: false,
+					contentType: "text/html; charset=utf-8",
+					data: {downloadtrack: track, channel: channel, populate: 1 },
+					timeout: 360000
 				})
-			    .done(function(data) {
-		            monitor.stop(false);
+				.done(function(data) {
+					monitor.stop(false);
 					updatePodcastDropdown(channel, data);
-		            doDummyProgressBars();
-		            downloadRunning = false;
-			    	$('[name="podgroupload_'+channel+'"]').stopFlasher().removeClass('podgroupload').addClass('podgroupload');
-		            checkDownloadQueue();
-		        })
-		        .fail(function(data, status) {
-		            monitor.stop(true);
-		            debug.error("PODCASTS", "Podcast Download Failed!",data,status);
-		            downloadRunning = false;
-			    	$('[name="podgroupload_'+channel+'"]').stopFlasher().removeClass('podgroupload').addClass('podgroupload');
-		            checkDownloadQueue();
-			    });
+					doDummyProgressBars();
+					downloadRunning = false;
+					$('[name="podgroupload_'+channel+'"]').stopFlasher().removeClass('podgroupload').addClass('podgroupload');
+					checkDownloadQueue();
+				})
+				.fail(function(data, status) {
+					monitor.stop(true);
+					debug.error("PODCASTS", "Podcast Download Failed!",data,status);
+					downloadRunning = false;
+					$('[name="podgroupload_'+channel+'"]').stopFlasher().removeClass('podgroupload').addClass('podgroupload');
+					checkDownloadQueue();
+				});
 			} else {
-		    	$('[name^="podgroupdownload_"]').stopFlasher();
+				$('[name^="podgroupdownload_"]').stopFlasher();
 			}
 		}
 	}
 
 	function podcastDownloadMonitor(track, channel) {
 
-	    var self = this;
-	    var progressdiv = $('i[name="poddownload_'+track+'"]').parent();
-	    progressdiv.html('<div class="fullwidth"></div>');
-	    progressdiv.rangechooser({range: 100, startmax: 0, interactive: false});
-	    var timer;
-	    var running = true;
+		var self = this;
+		var progressdiv = $('i[name="poddownload_'+track+'"]').parent();
+		progressdiv.html('<div class="fullwidth"></div>');
+		progressdiv.rangechooser({range: 100, startmax: 0, interactive: false});
+		var timer;
+		var running = true;
 
-	    this.checkProgress = function() {
-	        $.ajax( {
-	            type: "GET",
-	            url: "utils/checkpodcastdownload.php",
-	            cache: false,
-	            dataType: "json"
+		this.checkProgress = function() {
+			$.ajax( {
+				type: "GET",
+				url: "utils/checkpodcastdownload.php",
+				cache: false,
+				dataType: "json"
 			})
-	        .done(function(data) {
-                progressdiv.rangechooser('setProgress', data.percent);
-                debug.debug("PODCAST DOWNLOAD","Download status is",data);
-                if (running) {
-                    timer = setTimeout(self.checkProgress, 500);
-                }
-            })
-	        .fail(function() {
-                infobar.error(language.gettext('error_dlpfail'));
-	        });
-	    }
+			.done(function(data) {
+				progressdiv.rangechooser('setProgress', data.percent);
+				debug.debug("PODCAST DOWNLOAD","Download status is",data);
+				if (running) {
+					timer = setTimeout(self.checkProgress, 500);
+				}
+			})
+			.fail(function() {
+				infobar.error(language.gettext('error_dlpfail'));
+			});
+		}
 
-	    this.stop = function(error) {
-	        running = false;
-	        clearTimeout(timer);
+		this.stop = function(error) {
+			running = false;
+			clearTimeout(timer);
 			if (error) {
 				progressdiv.replaceWith('<div class="fullwidth">'+language.gettext('error_dlfailed')+'</div>');
 			}
-	    }
+		}
 
-	    timer = setTimeout(self.checkProgress, 1000);
+		timer = setTimeout(self.checkProgress, 1000);
 	}
 
 	function doDummyProgressBars() {
 		for(var i = 0; i < downloadQueue.length; i++) {
 			var track = downloadQueue[i].track;
 			debug.trace("PODCAST DOWNLOAD","Putting Dummy Progress Bar in",track);
-		    $('i[name="poddownload_'+track+'"]').makeSpinner();
+			$('i[name="poddownload_'+track+'"]').makeSpinner();
 		}
 	}
 
@@ -135,20 +135,20 @@ var podcasts = function() {
 				options.searchterm = encodeURIComponent(term);
 			}
 		}
-	    $.ajax({
-	        type: "GET",
-	        url: "podcasts/podcasts.php",
-	        cache: false,
-	        data: options,
+		$.ajax({
+			type: "GET",
+			url: "podcasts/podcasts.php",
+			cache: false,
+			data: options,
 			contentType: 'application/json'
 		})
-	    .done(function(data) {
+		.done(function(data) {
 			checkForUpdatedPodcasts(data);
 			podcasts.doNewCount();
-            if (callback !== null) {
-            	callback();
-            }
-        })
+			if (callback !== null) {
+				callback();
+			}
+		})
 		.fail(function(data,status) {
 			debug.error("PODCASTS", "Podcast Request Failed:",data,options);
 			if (data.status == 412) {
@@ -157,9 +157,9 @@ var podcasts = function() {
 				infobar.error(language.gettext("label_general_error"));
 			}
 			if (callback !== null) {
-            	callback();
-            }
-	    });
+				callback();
+			}
+		});
 	}
 
 	function updatePodcastDropdown(channel, html) {
@@ -170,61 +170,61 @@ var podcasts = function() {
 		$('i[name="podcast_'+channel+'"]').stopSpinner();
 		uiHelper.makeResumeBar(target);
 		infobar.markCurrentTrack();
-		layoutProcessor.postAlbumActions( $('#podcast_'+channel));
+		uiHelper.postAlbumActions( $('#podcast_'+channel));
 	}
 
 	return {
 
 		getPodcast: function(url, callback) {
-		    debug.log("PODCAST","Getting podcast",url);
+			debug.log("PODCAST","Getting podcast",url);
 			if (!callback) {
-			    infobar.notify(language.gettext('label_subscribing'))
-			    doSomethingUseful('cocksausage', language.gettext("label_downloading"));
+				infobar.notify(language.gettext('label_subscribing'))
+				doSomethingUseful('cocksausage', language.gettext("label_downloading"));
 			}
-		    $.ajax( {
-		        type: "GET",
-		        url: "podcasts/podcasts.php",
-		        cache: false,
-		        contentType: "text/html; charset=utf-8",
-		        data: {url: encodeURIComponent(url), populate: 1 }
+			$.ajax( {
+				type: "GET",
+				url: "podcasts/podcasts.php",
+				cache: false,
+				contentType: "text/html; charset=utf-8",
+				data: {url: encodeURIComponent(url), populate: 1 }
 			})
-		    .done(function(data) {
+			.done(function(data) {
 				if (callback) {
 					callback(true);
 				} else {
-		            $("#fruitbat").html(data);
+					$("#fruitbat").html(data);
 					infobar.notify(language.gettext('label_subscribed'));
-		            podcasts.doNewCount();
+					podcasts.doNewCount();
 					$('#spinner_cocksausage').remove();
-					layoutProcessor.postAlbumActions($('#fruitbat'));
+					uiHelper.postAlbumActions($('#fruitbat'));
 				}
-	        })
-		    .fail(function(data, status, thing) {
+			})
+			.fail(function(data, status, thing) {
 				if (callback) {
 					callback(false);
 				} else {
-	            	infobar.error(language.gettext('error_subfail', [data.responseText]));
-	            	$('#spinner_cocksausage').remove();
+					infobar.error(language.gettext('error_subfail', [data.responseText]));
+					$('#spinner_cocksausage').remove();
 				}
-		    });
+			});
 		},
 
 		reloadList: function() {
 			$.ajax( {
-		        type: "GET",
-		        url: "podcasts/podcasts.php",
-		        cache: false,
-		        contentType: "text/html; charset=utf-8",
-		        data: {populate: 1 }
+				type: "GET",
+				url: "podcasts/podcasts.php",
+				cache: false,
+				contentType: "text/html; charset=utf-8",
+				data: {populate: 1 }
 			})
-		    .done(function(data) {
-	            $("#fruitbat").html(data);
-	            podcasts.doNewCount();
-				layoutProcessor.postAlbumActions($('#fruitbat'));
-	        })
-		    .fail(function(data, status, thing) {
+			.done(function(data) {
+				$("#fruitbat").html(data);
+				podcasts.doNewCount();
+				uiHelper.postAlbumActions($('#fruitbat'));
+			})
+			.fail(function(data, status, thing) {
 				infobar.error(language.gettext('error_plfail', [data.responseText]));
-		    });
+			});
 		},
 
 		loadPodcast: function(channel) {
@@ -246,58 +246,58 @@ var podcasts = function() {
 			});
 		},
 
-    	searchinpodcast: function(channel) {
-    		var term = $('[name="podsearcher_'+channel+'"]').val();
-    		debug.log("PODCASTS","Searching podcast",channel,'for',term);
-    		podcasts.loadPodcast(channel);
-    	},
+		searchinpodcast: function(channel) {
+			var term = $('[name="podsearcher_'+channel+'"]').val();
+			debug.log("PODCASTS","Searching podcast",channel,'for',term);
+			podcasts.loadPodcast(channel);
+		},
 
 		doPodcast: function(input) {
-		    var url = $("#"+input).val();
+			var url = $("#"+input).val();
 			if (url != '') {
-		    	podcasts.getPodcast(url);
+				podcasts.getPodcast(url);
 			}
 		},
 
 		handleDrop: function() {
-    		setTimeout(function() { podcasts.doPodcast('podcastsinput') }, 1000);
-    	},
+			setTimeout(function() { podcasts.doPodcast('podcastsinput') }, 1000);
+		},
 
-    	channelAction: function(channel, action) {
-    		debug.mark("PODCAST","Action",action," on podcast ",channel);
-    		var data = {populate: 1};
-    		data[action] = channel;
+		channelAction: function(channel, action) {
+			debug.mark("PODCAST","Action",action," on podcast ",channel);
+			var data = {populate: 1};
+			data[action] = channel;
 			data.channel = channel;
 			$('.podaction[name="'+action+'_'+channel+'"]').makeSpinner();
 			podcastRequest(data, function() {
 				$('.podaction[name="'+action+'_'+channel+'"]').stopSpinner();
 			});
-    	},
+		},
 
 		removePodcastTrack: function(track, channel) {
-		    debug.log("PODCAST","Removing track",track,"from channel",channel);
-		    podcastRequest({removetrack: track, channel: channel },null);
+			debug.log("PODCAST","Removing track",track,"from channel",channel);
+			podcastRequest({removetrack: track, channel: channel },null);
 		},
 
 		markEpisodeAsListened: function(track, channel) {
-		    debug.log("PODCAST","Marking track",track,"from channel",channel,"as listened");
-		    podcastRequest({markaslistened: track, channel: channel },null);
+			debug.log("PODCAST","Marking track",track,"from channel",channel,"as listened");
+			podcastRequest({markaslistened: track, channel: channel },null);
 		},
 
 		markEpisodeAsUnlistened: function(track, channel) {
-		    debug.log("PODCAST","Marking track",track,"from channel",channel,"as unlistened");
-		    podcastRequest({markasunlistened: track, channel: channel },null);
+			debug.log("PODCAST","Marking track",track,"from channel",channel,"as unlistened");
+			podcastRequest({markasunlistened: track, channel: channel },null);
 		},
 
 		downloadPodcast: function(track, channel) {
-		    debug.log("PODCAST","Downloading track",track,"from channel",channel);
-		    downloadQueue.push({track: track, channel: channel});
-		    doDummyProgressBars();
-		    checkDownloadQueue();
+			debug.log("PODCAST","Downloading track",track,"from channel",channel);
+			downloadQueue.push({track: track, channel: channel});
+			doDummyProgressBars();
+			checkDownloadQueue();
 		},
 
 		downloadPodcastChannel: function(channel) {
-            $("#podcast_"+channel).find('.poddownload').trigger('click');
+			$("#podcast_"+channel).find('.poddownload').trigger('click');
 		},
 
 		checkMarkPodcastAsListened: function(file) {
@@ -324,7 +324,7 @@ var podcasts = function() {
 						putPodCount('#podnumber_'+index, value.new, value.unlistened)
 					}
 				});
-				layoutProcessor.postAlbumActions();
+				uiHelper.postAlbumActions();
 			});
 		},
 
@@ -407,22 +407,22 @@ var podcasts = function() {
 		},
 
 		removePodcast: function(name) {
-		    debug.log("PODCAST","Removing podcast",name);
-		    $.ajax( {
-		        type: "GET",
-		        url: "podcasts/podcasts.php",
-		        cache: false,
-		        contentType: "text/html; charset=utf-8",
-		        data: {remove: name, populate: 1 }
+			debug.log("PODCAST","Removing podcast",name);
+			$.ajax( {
+				type: "GET",
+				url: "podcasts/podcasts.php",
+				cache: false,
+				contentType: "text/html; charset=utf-8",
+				data: {remove: name, populate: 1 }
 			})
-		    .done(function(data) {
-	            $("#fruitbat").html(data);
-            	podcasts.doNewCount();
-				layoutProcessor.postAlbumActions();
-		    })
-		    .fail(function(data, status) {
-	            infobar.error(language.gettext("podcast_remove_error"));
-		    });
+			.done(function(data) {
+				$("#fruitbat").html(data);
+				podcasts.doNewCount();
+				uiHelper.postAlbumActions();
+			})
+			.fail(function(data, status) {
+				infobar.error(language.gettext("podcast_remove_error"));
+			});
 		},
 
 		doInitialRefresh: function() {
@@ -436,23 +436,23 @@ var podcasts = function() {
 			if (term == '') {
 				return true;
 			}
-		    doSomethingUseful('podcast_search', language.gettext("label_searching"));
-		    $.ajax( {
-		        type: "GET",
-		        url: "podcasts/podcasts.php",
-		        cache: false,
-		        contentType: "text/html; charset=utf-8",
-		        data: {search: encodeURIComponent(term), populate: 1 }
+			doSomethingUseful('podcast_search', language.gettext("label_searching"));
+			$.ajax( {
+				type: "GET",
+				url: "podcasts/podcasts.php",
+				cache: false,
+				contentType: "text/html; charset=utf-8",
+				data: {search: encodeURIComponent(term), populate: 1 }
 			})
-		    .done(function(data) {
-	            $("#podcast_search").html(data);
-	            $('#podcast_search').prepend('<div class="configtitle dropdown-container brick_wide" style="width:100%"><div class="textcentre expand"><b>Search Results for &quot;'+term+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch podcast fixed"></i></div>');
-				layoutProcessor.postAlbumActions($('#podcast_search'));
-	        })
-		    .fail(function(data, status, thing) {
+			.done(function(data) {
+				$("#podcast_search").html(data);
+				$('#podcast_search').prepend('<div class="configtitle dropdown-container brick_wide" style="width:100%"><div class="textcentre expand"><b>Search Results for &quot;'+term+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch podcast fixed"></i></div>');
+				uiHelper.postAlbumActions($('#podcast_search'));
+			})
+			.fail(function(data, status, thing) {
 				infobar.error(language.gettext('error_searchfail', [data.responseText]));
-	            $('#spinner_podcast_search').remove();
-		    });
+				$('#spinner_podcast_search').remove();
+			});
 		},
 
 		clearsearch: function() {
@@ -462,32 +462,32 @@ var podcasts = function() {
 
 		subscribe: function(index, clickedElement) {
 			clickedElement.makeSpinner().removeClass('clickable');
-		    $.ajax( {
-		        type: "GET",
-		        url: "podcasts/podcasts.php",
-		        cache: false,
-		        contentType: "text/html; charset=utf-8",
-		        data: {subscribe: index, populate: 1 }
+			$.ajax( {
+				type: "GET",
+				url: "podcasts/podcasts.php",
+				cache: false,
+				contentType: "text/html; charset=utf-8",
+				data: {subscribe: index, populate: 1 }
 			})
-		    .done(function(data) {
+			.done(function(data) {
 				uiHelper.postPodcastSubscribe(data, index);
 			})
-		    .fail(function(data, status, thing) {
+			.fail(function(data, status, thing) {
 				infobar.error(language.gettext('error_subfail', [data.responseText]));
-	            $('#spinner_cocksausage').remove();
-		    });
+				$('#spinner_cocksausage').remove();
+			});
 		},
 
 		removeSearch: function() {
 			$('#podcast_search').empty();
-			layoutProcessor.postAlbumActions();
+			uiHelper.postAlbumActions();
 		},
 
 		toggleButtons: function() {
 			$("#podcastbuttons").slideToggle('fast');
-		    var p = !prefs.podcastcontrolsvisible;
-		    prefs.save({ podcastcontrolsvisible: p });
-		    return false;
+			var p = !prefs.podcastcontrolsvisible;
+			prefs.save({ podcastcontrolsvisible: p });
+			return false;
 		},
 
 		storePlaybackProgress: function(track) {
@@ -518,37 +518,37 @@ var podcasts = function() {
 
 		handleClick: function (event, clickedElement) {
 			if (clickedElement.hasClass("podremove")) {
-		        var n = clickedElement.attr('name');
-		        podcasts.removePodcast(n.replace(/podremove_/, ''));
-		    } else if (clickedElement.hasClass("podaction")) {
-		        var n = clickedElement.attr('name').match('(.*)_(.*)');
-		        podcasts.channelAction(n[2],n[1]);
-		    } else if (clickedElement.hasClass("podglobal")) {
-		        podcasts.globalAction(clickedElement.attr('name'), clickedElement);
-		    } else if (clickedElement.hasClass("podtrackremove")) {
-		        var n = clickedElement.attr('name');
-		        var m = clickedElement.parent().attr('name');
-		        podcasts.removePodcastTrack(n.replace(/podtrackremove_/, ''), m.replace(/podcontrols_/,''));
-		    } else if (clickedElement.hasClass("clickpodsubscribe")) {
-		        var index = clickedElement.next().val();
-		        podcasts.subscribe(index, clickedElement);
-		    } else if (clickedElement.hasClass("removepodsearch")) {
-		        podcasts.removeSearch();
-		    } else if (clickedElement.hasClass("poddownload")) {
-		        var n = clickedElement.attr('name');
-		        var m = clickedElement.parent().attr('name');
-		        podcasts.downloadPodcast(n.replace(/poddownload_/, ''), m.replace(/podcontrols_/,''));
-		    } else if (clickedElement.hasClass("podgroupload")) {
-		        var n = clickedElement.attr('name');
-		        podcasts.downloadPodcastChannel(n.replace(/podgroupload_/, ''));
-		    } else if (clickedElement.hasClass("podmarklistened")) {
 				var n = clickedElement.attr('name');
-		        var m = clickedElement.parent().attr('name');
-		        podcasts.markEpisodeAsListened(n.replace(/podmarklistened_/, ''), m.replace(/podcontrols_/,''));
-		    } else if (clickedElement.hasClass("podmarkunlistened")) {
+				podcasts.removePodcast(n.replace(/podremove_/, ''));
+			} else if (clickedElement.hasClass("podaction")) {
+				var n = clickedElement.attr('name').match('(.*)_(.*)');
+				podcasts.channelAction(n[2],n[1]);
+			} else if (clickedElement.hasClass("podglobal")) {
+				podcasts.globalAction(clickedElement.attr('name'), clickedElement);
+			} else if (clickedElement.hasClass("podtrackremove")) {
 				var n = clickedElement.attr('name');
-		        var m = clickedElement.parent().attr('name');
-		        podcasts.markEpisodeAsUnlistened(n.replace(/podmarkunlistened_/, ''), m.replace(/podcontrols_/,''));
+				var m = clickedElement.parent().attr('name');
+				podcasts.removePodcastTrack(n.replace(/podtrackremove_/, ''), m.replace(/podcontrols_/,''));
+			} else if (clickedElement.hasClass("clickpodsubscribe")) {
+				var index = clickedElement.next().val();
+				podcasts.subscribe(index, clickedElement);
+			} else if (clickedElement.hasClass("removepodsearch")) {
+				podcasts.removeSearch();
+			} else if (clickedElement.hasClass("poddownload")) {
+				var n = clickedElement.attr('name');
+				var m = clickedElement.parent().attr('name');
+				podcasts.downloadPodcast(n.replace(/poddownload_/, ''), m.replace(/podcontrols_/,''));
+			} else if (clickedElement.hasClass("podgroupload")) {
+				var n = clickedElement.attr('name');
+				podcasts.downloadPodcastChannel(n.replace(/podgroupload_/, ''));
+			} else if (clickedElement.hasClass("podmarklistened")) {
+				var n = clickedElement.attr('name');
+				var m = clickedElement.parent().attr('name');
+				podcasts.markEpisodeAsListened(n.replace(/podmarklistened_/, ''), m.replace(/podcontrols_/,''));
+			} else if (clickedElement.hasClass("podmarkunlistened")) {
+				var n = clickedElement.attr('name');
+				var m = clickedElement.parent().attr('name');
+				podcasts.markEpisodeAsUnlistened(n.replace(/podmarkunlistened_/, ''), m.replace(/podcontrols_/,''));
 			}
 		}
 	}

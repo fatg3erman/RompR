@@ -1,77 +1,77 @@
 var metaHandlers = function() {
 
 	function addedATrack(rdata,d2,d3) {
-	    debug.log("ADD ALBUM","Success",rdata);
-	    if (rdata) {
-	        collectionHelper.updateCollectionDisplay(rdata);
-	    }
+		debug.log("ADD ALBUM","Success",rdata);
+		if (rdata) {
+			collectionHelper.updateCollectionDisplay(rdata);
+		}
 	}
 
 	function didntAddATrack(rdata) {
-	    debug.error("ADD ALBUM","Failure",rdata,JSON.parse(rdata.responseText));
-	    infobar.error(language.gettext('label_general_error'));
+		debug.error("ADD ALBUM","Failure",rdata,JSON.parse(rdata.responseText));
+		infobar.error(language.gettext('label_general_error'));
 	}
 
 	function getPostData(playlistinfo) {
-	    var data = {};
-	    if (playlistinfo.Title) {
-	        data.title = playlistinfo.Title;
-	    }
-	    if (playlistinfo.trackartist) {
-	        data.artist = playlistinfo.trackartist;
-	    }
-	    if (playlistinfo.Track) {
-	        data.trackno = playlistinfo.Track;
-	    }
-	    if (playlistinfo.Time) {
-	        data.duration = playlistinfo.Time;
-	    } else {
-	        data.duration = 0;
-	    }
+		var data = {};
+		if (playlistinfo.Title) {
+			data.title = playlistinfo.Title;
+		}
+		if (playlistinfo.trackartist) {
+			data.artist = playlistinfo.trackartist;
+		}
+		if (playlistinfo.Track) {
+			data.trackno = playlistinfo.Track;
+		}
+		if (playlistinfo.Time) {
+			data.duration = playlistinfo.Time;
+		} else {
+			data.duration = 0;
+		}
 		if (playlistinfo.type) {
 			data.type = playlistinfo.type;
 		}
-	    if (playlistinfo.Disc) {
-	        data.disc = playlistinfo.Disc;
-	    }
-	    if (playlistinfo.albumartist
-	        && playlistinfo.Album != "SoundCloud"
-	        && playlistinfo.type != "stream") {
-	        data.albumartist = playlistinfo.albumartist;
-	    } else {
-	        if (playlistinfo.trackartist) {
-	            data.albumartist = playlistinfo.trackartist;
-	        }
-	    }
-	    if (playlistinfo.metadata && playlistinfo.metadata.album.uri) {
-	        data.albumuri = playlistinfo.metadata.album.uri;
-	    }
-	    if (playlistinfo.type != "stream" && playlistinfo.images && playlistinfo.images.small) {
-	        data.image = playlistinfo.images.small;
-	    }
-	    if ((playlistinfo.type == "local" || playlistinfo.type == "podcast") && playlistinfo.Album) {
-	        data.album = playlistinfo.Album;
-	    }
+		if (playlistinfo.Disc) {
+			data.disc = playlistinfo.Disc;
+		}
+		if (playlistinfo.albumartist
+			&& playlistinfo.Album != "SoundCloud"
+			&& playlistinfo.type != "stream") {
+			data.albumartist = playlistinfo.albumartist;
+		} else {
+			if (playlistinfo.trackartist) {
+				data.albumartist = playlistinfo.trackartist;
+			}
+		}
+		if (playlistinfo.metadata && playlistinfo.metadata.album.uri) {
+			data.albumuri = playlistinfo.metadata.album.uri;
+		}
+		if (playlistinfo.type != "stream" && playlistinfo.images && playlistinfo.images.small) {
+			data.image = playlistinfo.images.small;
+		}
+		if ((playlistinfo.type == "local" || playlistinfo.type == "podcast") && playlistinfo.Album) {
+			data.album = playlistinfo.Album;
+		}
 		if (playlistinfo.file) {
-		    if (playlistinfo.type == "local" || playlistinfo.type == "podcast") {
-		        if (playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//) && prefs.player_backend == "mpd") {
-		            var sc = playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//);
-		            data.uri = "soundcloud://track/"+sc[1];
-		        } else {
-		            data.uri = playlistinfo.file;
-		        }
-		    } else if (playlistinfo.type == "stream") {
+			if (playlistinfo.type == "local" || playlistinfo.type == "podcast") {
+				if (playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//) && prefs.player_backend == "mpd") {
+					var sc = playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//);
+					data.uri = "soundcloud://track/"+sc[1];
+				} else {
+					data.uri = playlistinfo.file;
+				}
+			} else if (playlistinfo.type == "stream") {
 				data.streamname = playlistinfo.Album;
 				data.streamimage = playlistinfo.images.small;
 				data.streamuri = playlistinfo.file;
 			}
 		}
-	    if (playlistinfo.year) {
-	        data.date = playlistinfo.year;
-	    } else {
-	        data.date = 0;
-	    }
-	    return data;
+		if (playlistinfo.year) {
+			data.date = playlistinfo.year;
+		} else {
+			data.date = 0;
+		}
+		return data;
 	}
 
 	return {
@@ -79,70 +79,70 @@ var metaHandlers = function() {
 		fromUiElement: {
 
 			doMeta: function(action, name, attributes, fn) {
-			    var tracks = new Array();
-			    debug.log('DROPPLUGIN', 'In doMeta');
-			    $.each($('.selected').filter(removeOpenItems), function (index, element) {
-			        var uri = unescapeHtml(decodeURIComponent($(element).attr("name")));
-			        debug.log("DROPPLUGIN","Dragged",uri,"to",name);
-			        if ($(element).hasClass('directory')) {
-			            tracks.push({
-			                uri: decodeURIComponent($(element).children('input').first().attr('name')),
-			                artist: 'geturisfordir',
-			                title: 'dummy',
-			                urionly: '1',
-			                action: action,
-			                attributes: attributes
-			            });
-			        } else if ($(element).hasClass('clickalbum')) {
-			            tracks.push({
-			                uri: uri,
-			                artist: 'geturis',
-			                title: 'dummy',
-			                urionly: '1',
-			                action: action,
-			                attributes: attributes
-			            });
-			        } else if ($(element).hasClass('playlistalbum')) {
-			            var tits = playlist.getAlbum($(element).attr('name'));
-			            for (var i in tits) {
-			                var t = getPostData(tits[i]);
-			                t.urionly = 1;
-			                t.action = action;
-			                t.attributes = attributes;
-			                tracks.push(t);
-			            }
-			            $(element).removeClass('selected');
-			        } else if (element.hasAttribute('romprid')) {
-			            var t = getPostData(playlist.getId($(element).attr('romprid')));
-			            t.urionly = 1;
-			            t.action = action;
-			            t.attributes = attributes;
-			            tracks.push(t);
-			            $(element).removeClass('selected');
+				var tracks = new Array();
+				debug.log('DROPPLUGIN', 'In doMeta');
+				$.each($('.selected').filter(removeOpenItems), function (index, element) {
+					var uri = unescapeHtml(decodeURIComponent($(element).attr("name")));
+					debug.log("DROPPLUGIN","Dragged",uri,"to",name);
+					if ($(element).hasClass('directory')) {
+						tracks.push({
+							uri: decodeURIComponent($(element).children('input').first().attr('name')),
+							artist: 'geturisfordir',
+							title: 'dummy',
+							urionly: '1',
+							action: action,
+							attributes: attributes
+						});
+					} else if ($(element).hasClass('clickalbum')) {
+						tracks.push({
+							uri: uri,
+							artist: 'geturis',
+							title: 'dummy',
+							urionly: '1',
+							action: action,
+							attributes: attributes
+						});
+					} else if ($(element).hasClass('playlistalbum')) {
+						var tits = playlist.getAlbum($(element).attr('name'));
+						for (var i in tits) {
+							var t = getPostData(tits[i]);
+							t.urionly = 1;
+							t.action = action;
+							t.attributes = attributes;
+							tracks.push(t);
+						}
+						$(element).removeClass('selected');
+					} else if (element.hasAttribute('romprid')) {
+						var t = getPostData(playlist.getId($(element).attr('romprid')));
+						t.urionly = 1;
+						t.action = action;
+						t.attributes = attributes;
+						tracks.push(t);
+						$(element).removeClass('selected');
 					} else if ($(element).hasClass('playlisttrack') || $(element).hasClass('clickloadplaylist') || $(element).hasClass('clickloaduserplaylist')) {
 						infobar.notify("Sorry, you can't add tracks from playlists");
-			        } else {
-			            tracks.push({
-			                uri: uri,
-			                artist: 'dummy',
-			                title: 'dummy',
-			                urionly: '1',
-			                action: action,
-			                attributes: attributes
-			            });
-			        }
-			    });
+					} else {
+						tracks.push({
+							uri: uri,
+							artist: 'dummy',
+							title: 'dummy',
+							urionly: '1',
+							action: action,
+							attributes: attributes
+						});
+					}
+				});
 				if (tracks.length > 0) {
 					dbQueue.request(tracks,
 						function(rdata) {
-				            collectionHelper.updateCollectionDisplay(rdata);
-				            if (fn) fn(name);
-				        },
-				        function(data) {
-				            debug.warn("DROPPLUGIN","Failed to set attributes for",track,data);
-				            infobar.error(language.gettext('label_general_error'));
-				        }
-				    );
+							collectionHelper.updateCollectionDisplay(rdata);
+							if (fn) fn(name);
+						},
+						function(data) {
+							debug.warn("DROPPLUGIN","Failed to set attributes for",track,data);
+							infobar.error(language.gettext('label_general_error'));
+						}
+					);
 				}
 			},
 
@@ -177,14 +177,14 @@ var metaHandlers = function() {
 
 			tracksToPlaylist: function(element) {
 				var playlist = element.attr('name');
-			    var tracks = new Array();
-			    $.each($('.selected').filter(removeOpenItems), function (index, element) {
-			    	tracks.push({uri: decodeURIComponent($(this).attr('name'))});
-			    });
-			    playlistManager.addTracksToPlaylist(
-			    	playlist,
-			    	tracks
-			    );
+				var tracks = new Array();
+				$.each($('.selected').filter(removeOpenItems), function (index, element) {
+					tracks.push({uri: decodeURIComponent($(this).attr('name'))});
+				});
+				playlistManager.addTracksToPlaylist(
+					playlist,
+					tracks
+				);
 			},
 
 			removeTrackFromDb: function(element) {
@@ -193,25 +193,25 @@ var metaHandlers = function() {
 					trackstogo.push({action: 'delete', uri: decodeURIComponent($(this).attr('name'))});
 				});
 				$('.clicktrack.selected').fadeOut('fast');
-			    debug.log("DB_TRACKS","Remove tracks from database",trackstogo);
-			    dbQueue.request(
-			    	trackstogo,
-			        collectionHelper.updateCollectionDisplay,
-			        function(data) {
-			            debug.warn("Failed to remove track! Possibly duplicate request?");
-			        }
-			    );
+				debug.log("DB_TRACKS","Remove tracks from database",trackstogo);
+				dbQueue.request(
+					trackstogo,
+					collectionHelper.updateCollectionDisplay,
+					function(data) {
+						debug.warn("Failed to remove track! Possibly duplicate request?");
+					}
+				);
 			},
 
 			removeAlbumFromDb: function(element) {
-			    var albumToGo = element.attr("name");
-			    dbQueue.request(
-			        [{action: 'deletealbum', albumindex: albumToGo}],
-			        collectionHelper.updateCollectionDisplay,
-			        function(data) {
-			            debug.warn("Failed to remove album! Possibly duplicate request?");
-			        }
-			    );
+				var albumToGo = element.attr("name");
+				dbQueue.request(
+					[{action: 'deletealbum', albumindex: albumToGo}],
+					collectionHelper.updateCollectionDisplay,
+					function(data) {
+						debug.warn("Failed to remove album! Possibly duplicate request?");
+					}
+				);
 			}
 		},
 
@@ -219,40 +219,40 @@ var metaHandlers = function() {
 
 			addAlbumTracksToCollection: function(data, albumartist) {
 				debug.mark('AAGH','Adding an album');
-			    var thisIsMessy = new Array();
-			    if (data.tracks && data.tracks.items) {
-			        debug.log("AAAGH","Adding Album From",data);
-			        infobar.notify(language.gettext('label_addingalbum'));
-			        for (var i in data.tracks.items) {
-			            var track = {};
-			            track.title = data.tracks.items[i].name;
-			            track.artist = joinartists(data.tracks.items[i].artists);
-			            track.trackno = data.tracks.items[i].track_number;
-			            track.duration = data.tracks.items[i].duration_ms/1000;
-			            track.disc = data.tracks.items[i].disc_number;
-			            track.albumartist = albumartist;
-			            track.albumuri = data.uri;
-			            if (data.images) {
-			                for (var j in data.images) {
-			                    if (data.images[j].url) {
-			                        track.image = "getRemoteImage.php?url="+rawurlencode(data.images[j].url);
-			                        break;
-			                    }
-			                }
-			            }
-			            track.album = data.name;
-			            track.uri = data.tracks.items[i].uri;
-			            track.date = data.release_date;
-			            track.action = 'add';
-			            thisIsMessy.push(track);
-			        }
-			        if (thisIsMessy.length > 0) {
-			        	dbQueue.request(thisIsMessy, addedATrack, didntAddATrack);
-			        }
-			    } else {
-			        debug.fail("SPOTIFY","Failed to add album - no tracks",data);
-			        infobar.error(language.gettext('label_general_error'));
-			    }
+				var thisIsMessy = new Array();
+				if (data.tracks && data.tracks.items) {
+					debug.log("AAAGH","Adding Album From",data);
+					infobar.notify(language.gettext('label_addingalbum'));
+					for (var i in data.tracks.items) {
+						var track = {};
+						track.title = data.tracks.items[i].name;
+						track.artist = joinartists(data.tracks.items[i].artists);
+						track.trackno = data.tracks.items[i].track_number;
+						track.duration = data.tracks.items[i].duration_ms/1000;
+						track.disc = data.tracks.items[i].disc_number;
+						track.albumartist = albumartist;
+						track.albumuri = data.uri;
+						if (data.images) {
+							for (var j in data.images) {
+								if (data.images[j].url) {
+									track.image = "getRemoteImage.php?url="+rawurlencode(data.images[j].url);
+									break;
+								}
+							}
+						}
+						track.album = data.name;
+						track.uri = data.tracks.items[i].uri;
+						track.date = data.release_date;
+						track.action = 'add';
+						thisIsMessy.push(track);
+					}
+					if (thisIsMessy.length > 0) {
+						dbQueue.request(thisIsMessy, addedATrack, didntAddATrack);
+					}
+				} else {
+					debug.fail("SPOTIFY","Failed to add album - no tracks",data);
+					infobar.error(language.gettext('label_general_error'));
+				}
 			}
 		},
 
@@ -407,44 +407,44 @@ var dbQueue = function() {
 				debug.log("DB QUEUE","Deferring",req.data[0].action,"request because collection is being updated");
 				throttle = setTimeout(dbQueue.dorequest, 1000);
 			} else {
-	            if (req) {
-	            	if (req.flag) {
-	            		debug.trace("DB QUEUE","Request just pulled from queue is already being handled");
-	            		return;
-	            	}
+				if (req) {
+					if (req.flag) {
+						debug.trace("DB QUEUE","Request just pulled from queue is already being handled");
+						return;
+					}
 					queue[0].flag = true;
 					debug.trace("DB QUEUE","Taking next request from queue",req);
-				    $.ajax({
-				        url: "backends/sql/userRatings.php",
-				        type: "POST",
+					$.ajax({
+						url: "backends/sql/userRatings.php",
+						type: "POST",
 						contentType: false,
-				        data: JSON.stringify(req.data),
-				        dataType: 'json'
+						data: JSON.stringify(req.data),
+						dataType: 'json'
 					})
-				    .done(function(data) {
+					.done(function(data) {
 						req = queue.shift();
-			        	debug.trace("DB QUEUE","Request Success",req,data);
+						debug.trace("DB QUEUE","Request Success",req,data);
 						for (var i in req.data) {
 							if (actions_requiring_cleanup.indexOf(req.data[i].action) > -1) {
 								debug.log("DB QUEUE","Setting cleanup flag for",req.data[i].action,"request");
 								cleanuprequired = true;
 							}
 						}
-			        	if (req.success) {
-			        		req.success(data);
-			        	}
-			        	throttle = setTimeout(dbQueue.dorequest, 1);
-			        })
-				    .fail(function(data) {
-	                	req = queue.shift();
-			        	debug.fail("DB QUEUE","Request Failed",req,data);
-			        	if (req.fail) {
-			        		req.fail(data);
-			        	}
-			        	throttle = setTimeout(dbQueue.dorequest, 1);
-				    });
-		        } else {
-	            	throttle = null;
+						if (req.success) {
+							req.success(data);
+						}
+						throttle = setTimeout(dbQueue.dorequest, 1);
+					})
+					.fail(function(data) {
+						req = queue.shift();
+						debug.fail("DB QUEUE","Request Failed",req,data);
+						if (req.fail) {
+							req.fail(data);
+						}
+						throttle = setTimeout(dbQueue.dorequest, 1);
+					});
+				} else {
+					throttle = null;
 					cleanuptimer = setTimeout(dbQueue.doCleanup, 1000);
 				}
 			}

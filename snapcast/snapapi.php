@@ -6,60 +6,60 @@ require_once ("includes/functions.php");
 
 class snapcast {
 
-    private $connection;
-    private $ip;
-    private $port;
+	private $connection;
+	private $ip;
+	private $port;
 
-    public function __construct($ip, $port) {
-        $this->port = $port;
-        $this->ip = $ip;
-    }
+	public function __construct($ip, $port) {
+		$this->port = $port;
+		$this->ip = $ip;
+	}
 
-    public function __destruct() {
-        $this->close_connection();
-    }
+	public function __destruct() {
+		$this->close_connection();
+	}
 
-    private function open_connection() {
-        if ($this->is_connected()) {
-            return true;
-        }
-        logger::trace("SNAPCAST", "Connecting to ".$this->ip.':'.$this->port);
-        $this->connection = @stream_socket_client('tcp://'.$this->ip.':'.$this->port);
-        if ($this->is_connected()) {
-            stream_set_timeout($this->connection, 65535);
-            stream_set_blocking($this->connection, true);
-            return true;
-        }
-        logger::warn("SNAPCAST", "Snapcast connection failed");
-        return false;
-    }
+	private function open_connection() {
+		if ($this->is_connected()) {
+			return true;
+		}
+		logger::trace("SNAPCAST", "Connecting to ".$this->ip.':'.$this->port);
+		$this->connection = @stream_socket_client('tcp://'.$this->ip.':'.$this->port);
+		if ($this->is_connected()) {
+			stream_set_timeout($this->connection, 65535);
+			stream_set_blocking($this->connection, true);
+			return true;
+		}
+		logger::warn("SNAPCAST", "Snapcast connection failed");
+		return false;
+	}
 
-    public function close_connection() {
-        if ($this->is_connected()) {
-            stream_socket_shutdown($this->connection, STREAM_SHUT_RDWR);
-        }
-    }
+	public function close_connection() {
+		if ($this->is_connected()) {
+			stream_socket_shutdown($this->connection, STREAM_SHUT_RDWR);
+		}
+	}
 
-    private function is_connected() {
-        return (isset($this->connection) && is_resource($this->connection));
-    }
+	private function is_connected() {
+		return (isset($this->connection) && is_resource($this->connection));
+	}
 
-    public function do_command($json) {
-        if ($this->open_connection()) {
-            logger::trace("SNAPCAST", "Sending ",$json);
-            // For some reason, fputs strips the final } off the string
-            fputs($this->connection, $json."}\n");
-            $got = fgets($this->connection);
-            return $got;
-        } else {
-            return $this->errorjson('Could not connect to snapcast server');
-        }
-    }
+	public function do_command($json) {
+		if ($this->open_connection()) {
+			logger::trace("SNAPCAST", "Sending ",$json);
+			// For some reason, fputs strips the final } off the string
+			fputs($this->connection, $json."}\n");
+			$got = fgets($this->connection);
+			return $got;
+		} else {
+			return $this->errorjson('Could not connect to snapcast server');
+		}
+	}
 
-    private function errorjson($msg) {
-        $retval = array('error' => $msg);
-        return json_encode($retval);
-    }
+	private function errorjson($msg) {
+		$retval = array('error' => $msg);
+		return json_encode($retval);
+	}
 }
 
 $server = new snapcast($prefs['snapcast_server'], $prefs['snapcast_port']);

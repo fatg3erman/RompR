@@ -9,35 +9,35 @@ var metaBackup = function() {
 			'getbackupdata',
 			metaBackup.doMainLayout,
 			function() {
-        		infobar.error(language.gettext('label_general_error'));
-        		mbb.slideToggle('fast');
-        	}
-        );
+				infobar.error(language.gettext('label_general_error'));
+				mbb.slideToggle('fast');
+			}
+		);
 	}
 
 	function goDoThings(thing, what) {
 		debug.mark("BACKUPS",thing,what);
 		metaHandlers.genericAction(
 			[{action: 'backup'+thing, which: what}],
-        	function(data) {
+			function(data) {
 				clearTimeout(monitortimer);
-        		debug.log("BACKUPS","Success");
-        		if (thing == 'restore') {
-        			collectionHelper.forceCollectionReload();
-        		}
+				debug.log("BACKUPS","Success");
+				if (thing == 'restore') {
+					collectionHelper.forceCollectionReload();
+				}
 				progressDiv.empty();
-        		getBackupData();
-        	},
-        	function() {
+				getBackupData();
+			},
+			function() {
 				clearTimeout(monitortimer);
-        		infobar.error(language.gettext('error_backupfail', [thing]));
-        		if (thing == 'restore') {
-        			collectionHelper.forceCollectionReload();
-        		}
+				infobar.error(language.gettext('error_backupfail', [thing]));
+				if (thing == 'restore') {
+					collectionHelper.forceCollectionReload();
+				}
 				progressDiv.empty();
-        		getBackupData();
-        	},
-        );
+				getBackupData();
+			},
+		);
 		if (thing == 'restore') {
 			setTimeout(monitorRestore, 250);
 		}
@@ -46,36 +46,36 @@ var metaBackup = function() {
 	function monitorRestore() {
 		clearTimeout(monitortimer);
 		$.ajax({
-            type: "GET",
-            url: 'utils/checkrestoreprogress.php',
-            dataType: 'json'
+			type: "GET",
+			url: 'utils/checkrestoreprogress.php',
+			dataType: 'json'
 		})
-        .done(function(data) {
-            debug.debug("UPDATE",data);
-            progressDiv.html(data.current);
-            monitortimer = setTimeout(monitorRestore, 250);
-        })
-        .fail(function(data) {
-            debug.log("UPDATE","ERROR",data);
+		.done(function(data) {
+			debug.debug("UPDATE",data);
+			progressDiv.html(data.current);
 			monitortimer = setTimeout(monitorRestore, 250);
-        });
+		})
+		.fail(function(data) {
+			debug.log("UPDATE","ERROR",data);
+			monitortimer = setTimeout(monitorRestore, 250);
+		});
 	}
 
 	return {
 
 		open: function() {
 			if (mbb === null) {
-	        	mbb = browser.registerExtraPlugin("mbb", language.gettext("label_metabackup"), metaBackup, 'https://fatg3erman.github.io/RompR/Backing-Up-Your-Metadata');
-    			$("#mbbfoldup").append('<div class="padright noselection" style="text-align:center">'+
+				mbb = browser.registerExtraPlugin("mbb", language.gettext("label_metabackup"), metaBackup, 'https://fatg3erman.github.io/RompR/Backing-Up-Your-Metadata');
+				$("#mbbfoldup").append('<div class="padright noselection" style="text-align:center">'+
 					'<button id="createbackup" class="fixed">'+language.gettext("button_backup")+'</button>'+
 					'<div class="svg-square invisible fixed" id="backupspinner"></div>'+
-    				'</div>');
+					'</div>');
 
 				progressDiv = $('<div>', {class: 'padright', style: 'text-align:center'}).appendTo('#mbbfoldup');
 
-			    $("#mbbfoldup").append('<div class="noselection fullwidth" id="mbbmunger"></div>');
+				$("#mbbfoldup").append('<div class="noselection fullwidth" id="mbbmunger"></div>');
 				$('#createbackup').on('click', metaBackup.create);
-			    getBackupData();
+				getBackupData();
 			} else {
 				browser.goToPlugin("mbb");
 			}
@@ -104,11 +104,11 @@ var metaBackup = function() {
 				html += '</table>';
 				$("#mbbmunger").append(html);
 			}
-            if (!$("#mbbfoldup").is(':visible')) {
-	            mbb.slideToggle('fast', function() {
-		        	browser.goToPlugin("mbb");
-	            });
-	        }
+			if (!$("#mbbfoldup").is(':visible')) {
+				mbb.slideToggle('fast', function() {
+					browser.goToPlugin("mbb");
+				});
+			}
 		},
 
 		create: function() {
@@ -117,19 +117,19 @@ var metaBackup = function() {
 			metaHandlers.genericAction(
 				'metabackup',
 				function(data) {
-            		infobar.notify(language.gettext('label_backupcreated'));
-            		getBackupData();
+					infobar.notify(language.gettext('label_backupcreated'));
+					getBackupData();
 					$('#backupspinner').stopSpinner().hide();
 					$('#createbackup').show().on('click', metaBackup.create);
-            	},
-            	function() {
+				},
+				function() {
 					$('#backupspinner').stopSpinner().css('display', 'none');
 					$('#createbackup').show().on('click', metaBackup.create);
-            		infobar.error(language.gettext('label_general_error'));
-            		mbb.slideToggle('fast');
-            	}
-            );
-	    },
+					infobar.error(language.gettext('label_general_error'));
+					mbb.slideToggle('fast');
+				}
+			);
+		},
 
 		close: function() {
 			mbb = null;

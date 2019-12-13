@@ -239,7 +239,7 @@ class romprmetadata {
 
 		// Let's just see if it's a podcast track and mark it as listened.
 		// This won't always work, as scrobbles are often not what's in the RSS feed, but we can but do our best
-		sql_prepare_query(true, null, null, null, 
+		sql_prepare_query(true, null, null, null,
 			"UPDATE PodcastTrackTable SET Listened = ?, New = ? WHERE Title = ? AND Artist = ?",
 			1,
 			0,
@@ -524,7 +524,7 @@ class romprmetadata {
 						WHERE
 							LOWER(Title) = LOWER(?)
 							AND LOWER(Artistname) = LOWER(?)
-						    AND LOWER(Albumname) = LOWER(?)", $data['title'], $data['artist'], $data['album']);
+							AND LOWER(Albumname) = LOWER(?)", $data['title'], $data['artist'], $data['album']);
 					$ttids = array_merge($ttids, $t);
 				}
 
@@ -553,9 +553,9 @@ class romprmetadata {
 					FROM
 						Tracktable JOIN Artisttable USING (Artistindex)
 					 WHERE
-					 	LOWER(Title) = LOWER(?)
-					 	AND LOWER(Artistname) = LOWER(?)
-					 	AND Uri IS NOT NULL", $data['title'], $data['artist']);
+						LOWER(Title) = LOWER(?)
+						AND LOWER(Artistname) = LOWER(?)
+						AND Uri IS NOT NULL", $data['title'], $data['artist']);
 				$ttids = array_merge($ttids, $t);
 
 				if (count($ttids) == 0) {
@@ -639,9 +639,12 @@ class romprmetadata {
 	}
 
 	static function check_audiobook_status($ttid) {
+		global $prefs;
 		$albumindex = generic_sql_query("SELECT Albumindex FROM Tracktable WHERE TTindex = ".$ttid, false, null, 'Albumindex', null);
 		if ($albumindex !== null) {
-			if (album_audiobookcount($albumindex) > 0) {
+			$sorter = 'sortby_'.$prefs['sortcollectionby'];
+			$lister = new $sorter('zalbum'.$albumindex);
+			if ($lister->album_trackcount($albumindex) > 0) {
 				logger::log('USERRATING', 'Album '.$albumindex.' is an audiobook, updating track audiobook state');
 				generic_sql_query("UPDATE Tracktable SET isAudiobook = 2 WHERE TTindex = ".$ttid);
 			}

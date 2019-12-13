@@ -90,7 +90,7 @@ function download_internet_playlist($url, $image, $station) {
 		if ($type == "" || $type == null) {
 			$type = pathinfo($path, PATHINFO_EXTENSION);
 			$qpos = strpos($type, "?");
-		  	if ($qpos != false) $type = substr($type, 0, $qpos);
+			if ($qpos != false) $type = substr($type, 0, $qpos);
 			logger::log("RADIO_PLAYLIST", "Playlist Type From URL is ".$type);
 		}
 

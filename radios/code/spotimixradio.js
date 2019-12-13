@@ -75,13 +75,13 @@ var spotiMixRadio = function() {
 						}
 						populated = true;
 						spotiMixRadio.doStageTwo();
-		        	},
-		        	function() {
-		        		debug.error(medebug,"Error Getting Seeds");
-		        		infobar.error(language.gettext('label_general_error'));
-		        		playlist.radioManager.stop(null);
-		        	}
-		        );
+					},
+					function() {
+						debug.error(medebug,"Error Getting Seeds");
+						infobar.error(language.gettext('label_general_error'));
+						playlist.radioManager.stop(null);
+					}
+				);
 			} else {
 				if (trackseeds.length > 0) {
 					populateTuner(numtracks);

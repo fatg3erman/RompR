@@ -4,10 +4,10 @@ var info_wikipedia = function() {
 
 	function formatWiki(xml) {
 		var xml_node = $(xml);
-       	var html = xml_node.find('parse > text').text();
-       	var domain = xml_node.find('rompr > domain').text();
-		
-       	var jq = $('<div>'+html+'</div>');
+		var html = xml_node.find('parse > text').text();
+		var domain = xml_node.find('rompr > domain').text();
+
+		var jq = $('<div>'+html+'</div>');
 
 		// Remove unwanted edit links
 		jq.find("span.editsection").remove();
@@ -93,11 +93,11 @@ var info_wikipedia = function() {
 			var self = this;
 			var displaying = false;
 
-            this.populate = function() {
+			this.populate = function() {
 				self.artist.populate();
 				self.album.populate();
 				self.track.populate();
-            }
+			}
 
 			this.displayData = function() {
 				displaying = true;
@@ -111,28 +111,28 @@ var info_wikipedia = function() {
 			}
 
 
-            this.handleClick = function(source, element, event) {
-                debug.trace("WIKI PLUGIN",parent.nowplayingindex,source,"is handling a click event");
-                if (element.hasClass('clickwikimedia')) {
-                	wikipedia.wikiMediaPopup(element, event);
-                } else if (element.hasClass('clickwikilink')) {
-                	var link = decodeURIComponent(element.attr('name'));
-                	debug.trace("WIKI PLUGIN",parent.nowplayingindex,source,"clicked a wiki link",link);
-                	self[source].followLink(link);
-                } else if (element.hasClass('clickwikicontents')) {
-                	var section = element.attr('name');
-                	debug.trace("WIKI PLUGIN",parent.nowplayingindex,source,"clicked a contents link",section);
-                	layoutProcessor.goToBrowserSection(section);
-                }
-            }
+			this.handleClick = function(source, element, event) {
+				debug.trace("WIKI PLUGIN",parent.nowplayingindex,source,"is handling a click event");
+				if (element.hasClass('clickwikimedia')) {
+					wikipedia.wikiMediaPopup(element, event);
+				} else if (element.hasClass('clickwikilink')) {
+					var link = decodeURIComponent(element.attr('name'));
+					debug.trace("WIKI PLUGIN",parent.nowplayingindex,source,"clicked a wiki link",link);
+					self[source].followLink(link);
+				} else if (element.hasClass('clickwikicontents')) {
+					var section = element.attr('name');
+					debug.trace("WIKI PLUGIN",parent.nowplayingindex,source,"clicked a contents link",section);
+					layoutProcessor.goToBrowserSection(section);
+				}
+			}
 
-            this.wikiGotFailed = function(data) {
-            	debug.warn("WIKI PLUGIN", "Failed to get Wiki Link",data);
-            }
+			this.wikiGotFailed = function(data) {
+				debug.warn("WIKI PLUGIN", "Failed to get Wiki Link",data);
+			}
 
-            function getSearchArtist() {
-                return (albummeta.artist && albummeta.artist != "") ? albummeta.artist : parent.playlistinfo.trackartist;
-            }
+			function getSearchArtist() {
+				return (albummeta.artist && albummeta.artist != "") ? albummeta.artist : parent.playlistinfo.trackartist;
+			}
 
 			this.artist = function() {
 
@@ -262,7 +262,7 @@ var info_wikipedia = function() {
 												  },
 												  self.album.wikiResponseHandler,
 												  self.album.wikiResponseHandler
-											    );
+												);
 						} else {
 							debug.trace("WIKI PLUGIN",parent.nowplayingindex,"album is already populated",albummeta.wikipedia.albumlink);
 						}

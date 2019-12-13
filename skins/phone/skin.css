@@ -5,33 +5,33 @@
 */
 
 h1 {
-    font-size:130%;
+	font-size:130%;
 }
 
 h2 {
-    font-size:120%;
+	font-size:120%;
 }
 
 select {
-    width:100%;
-    height:3em;
+	width:100%;
+	height:3em;
 }
 
 div.selectholder {
-    height:3em;
+	height:3em;
 }
 
 input[type="text"] {
-    height:3em;
+	height:3em;
 }
 
 button.iconbutton {
-    height: 3em;
-    width: 3em;
+	height: 3em;
+	width: 3em;
 }
 
 div {
-    box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 /*
@@ -41,171 +41,171 @@ div {
 */
 
 #pscroller {
-    overflow-y:scroll;
-    -webkit-overflow-scrolling: touch;
+	overflow-y:scroll;
+	-webkit-overflow-scrolling: touch;
 }
 
 #headerbar {
-    height:40px;
-    padding:0px;
-    margin:0px;
-    border:none;
+	height:40px;
+	padding:0px;
+	margin:0px;
+	border:none;
 }
 
 #loadsawrappers {
-    /* Tried to use this, but safari on my iPhone S sets 100vh as 320px when the browser reports
-    it as 300px, even in full-screen mode. This is definitely a bug, but what can ya do? */
-    /* Note this includes 40px for headerbar. Keep them synced */
-    /* height: calc(100vh - 40px); */
-    width: 100%;
-    overflow:hidden;
+	/* Tried to use this, but safari on my iPhone S sets 100vh as 320px when the browser reports
+	it as 300px, even in full-screen mode. This is definitely a bug, but what can ya do? */
+	/* Note this includes 40px for headerbar. Keep them synced */
+	/* height: calc(100vh - 40px); */
+	width: 100%;
+	overflow:hidden;
 }
 
 #albumpicture {
-    object-fit:contain;
+	object-fit:contain;
 }
 
 #historypanel, #tagadder {
-    overflow-y: auto !important;
+	overflow-y: auto !important;
 }
 
 #volume {
-    width:95%;
+	width:95%;
 }
 
 #volumecontrol {
-    height:2em;
+	height:2em;
 }
 
 #infobar {
-    overflow-x:hidden;
-    overflow-y:hidden;
+	overflow-x:hidden;
+	overflow-y:hidden;
 }
 
 #playbackTime {
-    font-weight:bold;
-    font-size:8px;
-    padding-top:1px;
-    height:11px;
-    line-height:11px;
-    text-align:center;
-    width:100%;
+	font-weight:bold;
+	font-size:8px;
+	padding-top:1px;
+	height:11px;
+	line-height:11px;
+	text-align:center;
+	width:100%;
 }
 
 #buttons {
-    padding-left:0px !important;
-    padding-right:0px !important;
-    padding-top:2px !important;
-    padding-bottom:0px !important;
-    text-align:center;
+	padding-left:0px !important;
+	padding-right:0px !important;
+	padding-top:2px !important;
+	padding-bottom:0px !important;
+	text-align:center;
 }
 
 #amontobin {
-    overflow:hidden;
+	overflow:hidden;
 }
 
 #nowplaying {
-    /* white-space:nowrap; */
-    margin:auto;
-    padding:4px;
+	/* white-space:nowrap; */
+	margin:auto;
+	padding:4px;
 }
 
 #nptext {
-    text-align:center;
+	text-align:center;
 }
 
 #lastfm, #addtoplaylist, #ptagadd, #subscribe {
-    float:right;
-    margin-left:6px;
-    margin-right:6px;
-    line-height:34px;
-    height:34px;
+	float:right;
+	margin-left:6px;
+	margin-right:6px;
+	line-height:34px;
+	height:34px;
 }
 
 .playspan {
-    margin-right: 1em;
+	margin-right: 1em;
 }
 
 #dbtags {
-    clear: both;
-    margin-top:4px;
-    padding-top:0px;
-    overflow:hidden;
-    opacity:0.9;
-    font-size:8pt;
-    line-height:12pt;
+	clear: both;
+	margin-top:4px;
+	padding-top:0px;
+	overflow:hidden;
+	opacity:0.9;
+	font-size:8pt;
+	line-height:12pt;
 }
 
 #scrobwrangler {
-    font-size:8pt;
-    width:90%;
+	font-size:8pt;
+	width:90%;
 }
 
 #stars {
-    margin-top:0px;
-    margin-right:2px;
-    padding-top:0px;
-    margin-left:6px;
+	margin-top:0px;
+	margin-right:2px;
+	padding-top:0px;
+	margin-left:6px;
 }
 
 #controls {
-    padding-top:1px;
+	padding-top:1px;
 }
 
 #notifications {
-    position:absolute;
-    width:100%;
-    padding:4px;
-    bottom:0px;
-    left:0px;
-    display:none;
-    font-size:8pt;
-    font-weight:bold;
-    z-index:10010;
+	position:absolute;
+	width:100%;
+	padding:4px;
+	bottom:0px;
+	left:0px;
+	display:none;
+	font-size:8pt;
+	font-weight:bold;
+	z-index:10010;
 }
 
 #chooserbuttons
 {
-    padding-top:4px;
+	padding-top:4px;
 }
 
 #sourcescontrols
 {
-    width:100%;
+	width:100%;
 }
 
 #tagadder
 {
-    z-index: 15000;
+	z-index: 15000;
 }
 
 #audiobooks .podcastresume>.fixed
 {
-    padding-left: 32px;
+	padding-left: 32px;
 }
 
 #audiobooks .podcastresume>.expand
 {
-    margin-right: 4px;
+	margin-right: 4px;
 }
 
 #audiobooks .podcastresume
 {
-    border-top: none !important;
+	border-top: none !important;
 }
 
 #flowcontrols {
-    height: 36px;
+	height: 36px;
 }
 
 #flowcontrols i {
-    max-height: 24px;
-    margin-top:4px;
+	max-height: 24px;
+	margin-top:4px;
 }
 
 #toomanywrappers {
-    height: 100%;
-    width: 100%;
+	height: 100%;
+	width: 100%;
 }
 
 
@@ -216,547 +216,548 @@ div {
 */
 
 div.topdropmenu {
-    z-index:10009;
-    box-sizing:border-box;
-    width:100%;
-    position:fixed;
-    right: 0;
+	z-index:10009;
+	box-sizing:border-box;
+	width:100%;
+	position:fixed;
+	right: 0;
 }
 
 div.topdropmenu.albumbitsmenu {
-    position: absolute;
-    top: 24px;
-    width: 75vw;
-    max-width:300px;
-    right: 0px;
+	position: absolute;
+	top: 24px;
+	width: 75vw;
+	max-width:300px;
+	right: 0px;
 }
 
 div.clicktrackmenu>div.normalmenu.albumbitsmenu {
-    right: 32px;
+	right: 32px;
 }
 
 .mainpane {
-    position: relative;
-    top: 0;
-    left: 0;
+	position: relative;
+	top: 0;
+	left: 0;
 }
 
 .chooser {
-    margin-left:auto;
-    margin-right:auto;
-    font-weight:bold;
-    font-size:130%;
-    padding-bottom:1em;
-    text-align:center;
-    cursor:pointer;
+	margin-left:auto;
+	margin-right:auto;
+	font-weight:bold;
+	font-size:130%;
+	padding-bottom:1em;
+	text-align:center;
+	cursor:pointer;
 }
 
 .topdrop
 {
-    float: none !important;
+	float: none !important;
 }
 
 .pref {
-    margin-left:8px;
-    margin-bottom:12px;
+	margin-left:8px;
+	margin-bottom:12px;
 }
 
 .topimg {
-    margin-right:4px;
-    margin-left:4px;
-    margin-bottom:2px;
-    margin-top:4px;
-    cursor: pointer;
+	margin-right:4px;
+	margin-left:4px;
+	margin-bottom:2px;
+	margin-top:4px;
+	cursor: pointer;
 }
 
 .topdropmenu .topimg {
-    width:36px;
-    height:36px;
+	width:36px;
+	height:36px;
 }
 
 #narrowscreenicons {
-    padding-right: 24px;
+	padding-right: 24px;
 }
 
 .topimg.infoclick {
-    box-sizing: border-box;
-    border: 6px solid transparent;
+	box-sizing: border-box;
+	border: 6px solid transparent;
 }
 
 .mobonly {
-    display:inline-block;
+	display:inline-block;
 }
 
 .tagremover {
-    margin-left:0.5em;
+	margin-left:0.5em;
 }
 
 .menuitem {
-    font-weight:bold;
-    margin:0px;
-    padding-left:4px;
-    padding-right:0px;
-    padding-top:6px;
-    padding-bottom:6px;
-    -webkit-box-align:center;
-    align-items: center;
+	font-weight:bold;
+	margin:0px;
+	padding-left:4px;
+	padding-right:0px;
+	padding-top:6px;
+	padding-bottom:6px;
+	-webkit-box-align:center;
+	align-items: center;
 }
 
 .playlistalbum {
-    font-weight:bold;
-    margin:0px;
-    padding-left:4px;
-    padding-right:0px;
-    padding-top:6px;
-    padding-bottom:6px;
-    -webkit-box-align:stretch;
-    align-items: stretch;
+	font-weight:bold;
+	margin:0px;
+	padding-left:4px;
+	padding-right:0px;
+	padding-top:6px;
+	padding-bottom:6px;
+	-webkit-box-align:stretch;
+	align-items: stretch;
 }
 
 .menu {
-    cursor:pointer;
+	cursor:pointer;
 }
 
 .dropmenu {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow-y: scroll;
-    z-index: 10000;
-    padding-bottom:0px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	overflow-y: scroll;
+	z-index: 10000;
+	padding-bottom:0px;
 }
 
 .popupcontents {
-    margin: 0px;
+	margin: 0px;
 }
 
 .popupcontents>div {
-    padding: 8px;
+	padding: 8px;
 }
 
 .dropmenu .menuitem {
-    margin-top: 4px;
+	margin-top: 4px;
 }
 
 .menuspacer {
-    width:1.5em;
-    height:1.5em;
+	width:1.5em;
+	height:1.5em;
 }
 
 .mh {
-    display:block;
-    padding:8px;
-    margin-top:2px;
-    margin-bottom:2px;
-    margin-right:1em;
+	display:block;
+	padding:8px;
+	margin-top:2px;
+	margin-bottom:2px;
+	margin-right:1em;
 }
 
 .ninesix {
-    font-size:96%;
-    padding-top:4px;
-    padding-bottom:4px;
+	font-size:96%;
+	padding-top:4px;
+	padding-bottom:4px;
 }
 
 div.normalmenu {
-    /*width:52px;*/
+	/*width:52px;*/
 }
 
 div.rightmenu {
-    top:38px;
-    right:0px;
+	top:38px;
+	right:0px;
 }
 
 .infobarlayout {
-    height:70px;
+	height:70px;
 }
 
 .playlistrow2 {
-    font-size:80%;
+	font-size:80%;
 }
 
 .clrbth {
-    clear:both;
-    display:table;
-    margin-top:8px;
+	clear:both;
+	display:table;
+	margin-top:8px;
 }
 
 .scroller {
-    -webkit-overflow-scrolling:touch;
-    overflow-y:scroll;
-    overflow-x:hidden;
+	-webkit-overflow-scrolling:touch;
+	overflow-y:scroll;
+	overflow-x:hidden;
 }
 
 .progressbar_v {
-    height:100%;
-    width:2em;
-    margin-right:auto;
-    margin-left:auto;
+	height:100%;
+	width:2em;
+	margin-right:auto;
+	margin-left:auto;
 }
 
 .infobox {
-    float:none;
-    clear:both;
-    margin-left:auto !important;
-    margin-right:auto !important;
-    width:90% !important;
+	float:none;
+	clear:both;
+	margin-left:auto !important;
+	margin-right:auto !important;
+	width:90% !important;
 }
 
 .infobox_v3 {
-    float:none;
-    clear:both;
-    margin-left:auto !important;
-    margin-right:auto !important;
-    width:90% !important;
+	float:none;
+	clear:both;
+	margin-left:auto !important;
+	margin-right:auto !important;
+	width:90% !important;
 }
 
 .thumb {
-    float:none !important;
-    margin-left: 0px !important;
-    margin-right: 0px !important;
+	float:none !important;
+	margin-left: 0px !important;
+	margin-right: 0px !important;
 }
 
 .content img {
-    max-width: 100% !important;
-    height: auto !important;
+	max-width: 100% !important;
+	height: auto !important;
 }
 
 .thumbinner
 {
-    margin-left:auto;
-    margin-right:auto;
+	margin-left:auto;
+	margin-right:auto;
 }
 
 .info-box-fixed {
-    padding-left: 1em;
+	padding-left: 1em;
 }
 
 .podicon {
-    margin-top:4px;
-    margin-bottom:4px;
-    margin-left:4px;
-    margin-right:4px;
-    height:36px;
-    width:36px;
-    vertical-align:middle;
-    box-sizing:border-box;
-    border:8px solid transparent;
+	margin-top:4px;
+	margin-bottom:4px;
+	margin-left:4px;
+	margin-right:4px;
+	height:36px;
+	width:36px;
+	vertical-align:middle;
+	box-sizing:border-box;
+	border:8px solid transparent;
 }
 
 i.combo-button {
-    box-sizing: border-box;
-    border: 4px solid transparent;
+	box-sizing: border-box;
+	border: 4px solid transparent;
 }
 
 .backhi {
-    padding-left:2px;
-    padding-right:2px;
-    padding-top:6px;
-    padding-bottom:6px;
+	padding-left:2px;
+	padding-right:2px;
+	padding-top:6px;
+	padding-bottom:6px;
 }
 
 /*#fruitbat .indent.dropmenu.padright {
-    padding-left: 0px;
-    padding-right: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
 }
 */
 /*#fruitbat .indent.dropmenu.padright>div {
-    padding-left: 8px;
-    width:100%;
-    padding-right:8px;
+	padding-left: 8px;
+	width:100%;
+	padding-right:8px;
 }
 */
 .playlisticon
 {
-    padding:0px;
-    margin-right:4px;
-    margin-bottom:2px;
-    margin-top:2px;
-    vertical-align:middle;
-    box-sizing:border-box;
-    border:6px solid transparent;
-    height: 26px;
-    width: 26px;
+	padding:0px;
+	margin-right:4px;
+	margin-bottom:2px;
+	margin-top:2px;
+	vertical-align:middle;
+	box-sizing:border-box;
+	border:6px solid transparent;
+	height: 26px;
+	width: 26px;
 }
 
 [class^="icon-"].menu, [class*=" icon-"].menu {
-    width: 24px;
-    height: 24px;
-    box-sizing: border-box;
-    border: 6px solid transparent;
-    vertical-align:middle;
+	width: 24px;
+	height: 24px;
+	box-sizing: border-box;
+	border: 6px solid transparent;
+	vertical-align:middle;
 }
 
 .collectionicon {
-    padding:0px;
-    margin-right:4px;
-    margin-bottom:2px;
-    margin-top:2px;
-    vertical-align:middle;
-    width:20px;
-    height:20px
+	padding:0px;
+	margin-right:4px;
+	margin-bottom:2px;
+	margin-top:2px;
+	vertical-align:middle;
+	width:20px;
+	height:20px
 }
 
 .playlisticonr {
-    padding:0px;
-    margin-left:4px;
-    margin-bottom:2px;
-    margin-top:2px;
-    margin-right:2px;
-    vertical-align:middle;
-    box-sizing:border-box;
-    border:8px solid transparent;
-    width:32px;
-    height:32px;
+	padding:0px;
+	margin-left:4px;
+	margin-bottom:2px;
+	margin-top:2px;
+	margin-right:2px;
+	vertical-align:middle;
+	box-sizing:border-box;
+	border:8px solid transparent;
+	width:32px;
+	height:32px;
 }
 
 #sortable {
-    position: relative;
-    top: 0;
-    left: 0;
+	position: relative;
+	top: 0;
+	left: 0;
 }
 
 #sortable .trackgroup {
-    position: relative;
-    top: 0;
-    left: 0;
+	position: relative;
+	top: 0;
+	left: 0;
 }
 
 #sortable .item {
-    position: relative;
-    top: 0;
-    left: 0;
+	position: relative;
+	top: 0;
+	left: 0;
 }
 
 #sortable .trackgroup .track {
-    position: relative;
-    top: 0;
-    left: 0;
+	position: relative;
+	top: 0;
+	left: 0;
 }
 
 #sortable .playlisticonr.icon-cancel-circled {
-    /* display: none; */
+	/* display: none; */
 }
 
 .prearranger {
-    display:none;
+	display:none;
 }
 
 #sortable .playlisticonr {
-    margin-right:4px;
-    width: 40px;
+	margin-right:4px;
+	width: 40px;
 }
 
 #collection .playlisticonr {
-    margin-right:4px;
-    width: 48px;
+	margin-right:4px;
+	width: 48px;
 }
 
 #sortable .track>div>div.clickable {
-    margin-right: 8px;
+	margin-right: 8px;
 }
 
 .npicon {
-    padding-top:0px;
-    padding-left:0px;
-    padding-right:0px;
-    padding-bottom:4px;
-    margin-top:0px;
-    margin-left:0px;
-    margin-bottom:0px;
-    margin-right:0px;
-    height:26px;
-    width:26px;
-    vertical-align:middle;
+	padding-top:0px;
+	padding-left:0px;
+	padding-right:0px;
+	padding-bottom:4px;
+	margin-top:0px;
+	margin-left:0px;
+	margin-bottom:0px;
+	margin-right:0px;
+	height:26px;
+	width:26px;
+	vertical-align:middle;
 }
 
 .rating-icon-big {
-    height: 34px;
-    width: 140px;
-    line-height:1em;
-    padding-bottom:4px;
-    cursor: pointer;
-    vertical-align:middle;
+	height: 34px;
+	width: 140px;
+	line-height:1em;
+	padding-bottom:4px;
+	cursor: pointer;
+	vertical-align:middle;
 }
 
 .rating-icon-small {
-    height: 14px;
-    width: 70px;
-    cursor: pointer;
-    vertical-align:middle;
+	height: 14px;
+	width: 70px;
+	cursor: pointer;
+	vertical-align:middle;
 
 }
 
 .sptext {
-    white-space:nowrap;
-    padding-right:4px;
-    text-align:right;
-    margin-right:24px;
+	white-space:nowrap;
+	padding-right:4px;
+	text-align:right;
+	margin-right:24px;
 }
 
 #ratingimage {
-    padding-bottom:0px;
+	padding-bottom:0px;
 }
 
 .trackgroup {
-    white-space:normal;
+	white-space:normal;
 }
 
 .dropdown-button {
-    margin-left:-20px !important;
+	margin-left:-20px !important;
 }
 
 .padright {
-    padding-right:4px;
+	padding-right:4px;
 }
 
 .padleft {
-    padding-left:4px;
+	padding-left:4px;
 }
 
 .whatdoicallthis {
-    margin-bottom: 8px;
+	margin-bottom: 8px;
 }
 
 .podhackshit {
-    margin-bottom:2em;
+	margin-bottom:2em;
 }
 
 @media screen and (orientation: landscape) {
-    .cshrinker {
-        max-height: calc(100vh - 40px);
-        width: auto;
-    }
+	.cshrinker {
+		max-height: calc(100vh - 40px);
+		width: auto;
+		max-width: 50vw;
+	}
 }
 
 @media screen and (orientation: portrait) {
-    .cshrinker {
-        max-width:100%;
-        height: auto;
-    }
+	.cshrinker {
+		max-width:100%;
+		height: auto;
+	}
 }
 
 .mobmenu
 {
-    position:absolute;
-    top:4px;
-    left:4px;
-    width:95%;
-    max-height:95%;
-    box-sizing:border-box;
-    padding:8px;
-    overflow-y:scroll !important;
+	position:absolute;
+	top:4px;
+	left:4px;
+	width:95%;
+	max-height:95%;
+	box-sizing:border-box;
+	padding:8px;
+	overflow-y:scroll !important;
 }
 
 .setupdiv
 {
-    width:100%;
-    box-sizing:border-box;
+	width:100%;
+	box-sizing:border-box;
 }
 
 .backmenu
 {
-    box-sizing: border-box;
-    height: 2.5em;
-    border-left: 4px solid transparent;
-    padding-left: 38px;
-    padding-right: 8px;
-    width: 100%;
-    text-align:right;
-    position: sticky;
-    position: -webkit-sticky;
-    top: 0;
-    z-index: 20000;
+	box-sizing: border-box;
+	height: 2.5em;
+	border-left: 4px solid transparent;
+	padding-left: 38px;
+	padding-right: 8px;
+	width: 100%;
+	text-align:right;
+	position: sticky;
+	position: -webkit-sticky;
+	top: 0;
+	z-index: 20000;
 }
 
 @-webkit-keyframes clickflash {
-     0%{
-          background-color: rgba(255,255,255,0.7);
-     }
-     50%{
-         background-color: rgba(255,255,255,0.3);
-     }
-     100%{
-         background-color: rgba(255,255,255,0);
-     }
+	 0%{
+		  background-color: rgba(255,255,255,0.7);
+	 }
+	 50%{
+		 background-color: rgba(255,255,255,0.3);
+	 }
+	 100%{
+		 background-color: rgba(255,255,255,0);
+	 }
 }
 @-moz-keyframes clickflash {
-     0%{
-          background-color: rgba(255,255,255,0.7);
-     }
-     50%{
-         background-color: rgba(255,255,255,0.3);
-     }
-     100%{
-         background-color: rgba(255,255,255,0);
-     }
+	 0%{
+		  background-color: rgba(255,255,255,0.7);
+	 }
+	 50%{
+		 background-color: rgba(255,255,255,0.3);
+	 }
+	 100%{
+		 background-color: rgba(255,255,255,0);
+	 }
 }
 @keyframes clickflash {
-     0%{
-          background-color: rgba(255,255,255,0.7);
-     }
-     50%{
-         background-color: rgba(255,255,255,0.3);
-     }
-     100%{
-         background-color: rgba(255,255,255,0);
-     }
+	 0%{
+		  background-color: rgba(255,255,255,0.7);
+	 }
+	 50%{
+		 background-color: rgba(255,255,255,0.3);
+	 }
+	 100%{
+		 background-color: rgba(255,255,255,0);
+	 }
 }
 
 .clickflash {
-    animation: clickflash 0.75s linear 1;
+	animation: clickflash 0.75s linear 1;
 }
 
 .album-menu-header {
-    width:100%;
-    text-align:center;
+	width:100%;
+	text-align:center;
 }
 
 .album-play-controls {
-    margin-bottom:4px;
-    padding-bottom:4px;
+	margin-bottom:4px;
+	padding-bottom:4px;
 }
 
 .album_menu_image {
-    max-width: 100%;
-    height: auto;
-    max-height: 60vh;
+	max-width: 100%;
+	height: auto;
+	max-height: 60vh;
 }
 
 .calign {
-    align-items: center;
+	align-items: center;
 }
 
 .indent {
-    padding-left: 4px;
-    box-szing:border-box;
+	padding-left: 4px;
+	box-szing:border-box;
 }
 
 img.jalopy200 {
-    max-width:140px;
+	max-width:140px;
 }
 
 .headercontainer {
-    height:90%;
-    box-sizing: border-box;
+	height:90%;
+	box-sizing: border-box;
 }
 
 .buttonbar {
-    height: 42px;
+	height: 42px;
 }
 
 .onlyverywide {
-    padding-left:8px;
-    padding-right:8px;
-    box-sizing:border-box;
+	padding-left:8px;
+	padding-right:8px;
+	box-sizing:border-box;
 }
 
 .info-box-expand {
-    -webkit-box-flex:1.0;
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: auto;
+	-webkit-box-flex:1.0;
+	flex-grow: 1;
+	flex-shrink: 1;
+	flex-basis: auto;
 }
 
 /*
@@ -766,62 +767,62 @@ img.jalopy200 {
 */
 
 @media screen and (max-width: 420px) {
-    .notnarrow.snapclienthost {
-        display: none;
-    }
+	.notnarrow.snapclienthost {
+		display: none;
+	}
 }
 
 @media screen and (max-width: 640px) {
-    .info-detail-layout {
-        -webkit-box-orient:vertical;
-        flex-direction: column;
-    }
-    .info-box-expand.stumpy {
-        padding-left:0px;
-    }
-    .info-box-fixed.info-border-right {
-        padding-left:0px;
-    }
-    .info-box-expand.info-border-right {
-        margin-bottom:1em;
-        padding-bottom:0.5em;
-    }
+	.info-detail-layout {
+		-webkit-box-orient:vertical;
+		flex-direction: column;
+	}
+	.info-box-expand.stumpy {
+		padding-left:0px;
+	}
+	.info-box-fixed.info-border-right {
+		padding-left:0px;
+	}
+	.info-box-expand.info-border-right {
+		margin-bottom:1em;
+		padding-bottom:0.5em;
+	}
 }
 
 @media screen and (min-width: 641px) {
-    .cleft.narrowright {
-        margin-left:1em;
-    }
+	.cleft.narrowright {
+		margin-left:1em;
+	}
 }
 
 @media screen and (max-width: 540px) {
-    .onlywide {
-        display:none !important;
-    }
+	.onlywide {
+		display:none !important;
+	}
 }
 
 @media screen and (min-width: 541px) {
-    .onlynarrow {
-        display:none !important;
-    }
+	.onlynarrow {
+		display:none !important;
+	}
 }
 
 @media screen and (max-width: 799px) {
-    .onlyverywide {
-        display: none;
-    }
+	.onlyverywide {
+		display: none;
+	}
 }
 
 @media screen and (max-width: 540px) {
-    .stleft
-    {
-        float:none;
-        width:auto;
-        max-width:95%;
-        clear:both;
-        border-right:none !important;
-        border-bottom: 1px solid #dddddd !important;
-    }
+	.stleft
+	{
+		float:none;
+		width:auto;
+		max-width:95%;
+		clear:both;
+		border-right:none !important;
+		border-bottom: 1px solid #dddddd !important;
+	}
 }
 
 /*
@@ -832,59 +833,59 @@ img.jalopy200 {
 
 @media screen and (max-height: 699px) and (orientation: portrait) {
 
-    #playlistm {
-        width:100%;
-        height:100%;
-        padding-left: 8px;
-        padding-right: 8px;
-    }
+	#playlistm {
+		width:100%;
+		height:100%;
+		padding-left: 8px;
+		padding-right: 8px;
+	}
 
-    .mainpane {
-        width: 100%;
-        height: 100%;
-    }
+	.mainpane {
+		width: 100%;
+		height: 100%;
+	}
 
-    #albumcover {
-        text-align: center;
-        overflow:hidden;
-    }
+	#albumcover {
+		text-align: center;
+		overflow:hidden;
+	}
 
-    #albumpicture {
-        width: 85%;
-        max-width: 60vh;
-    }
+	#albumpicture {
+		width: 85%;
+		max-width: 60vh;
+	}
 
-    #dbtags {
-        float: left;
-        margin-left:6px;
-        margin-right:6px;
-    }
+	#dbtags {
+		float: left;
+		margin-left:6px;
+		margin-right:6px;
+	}
 
-    #stars {
-        float:left;
-    }
+	#stars {
+		float:left;
+	}
 
 }
 
 /* == Tweaks for specific sizes */
 
 @media screen and (max-height: 480px) and (orientation: portrait) {
-    /* iPhone 4 screen height */
-    #albumpicture {
-        max-width:50vh;
-    }
+	/* iPhone 4 screen height */
+	#albumpicture {
+		max-width:50vh;
+	}
 }
 
 @media screen and (max-width: 360px) and (max-height: 699px) and (orientation: portrait) {
-    #albumpicture {
-        width:98%;
-    }
+	#albumpicture {
+		width:98%;
+	}
 }
 
 @media screen and (min-height: 640px) and (max-height: 699px) and (orientation: portrait) {
-    #albumpicture {
-        width: 98%;
-    }
+	#albumpicture {
+		width: 98%;
+	}
 }
 
 /*
@@ -896,85 +897,85 @@ img.jalopy200 {
 
 @media screen and (min-height: 700px) and (orientation: portrait) {
 
-    .mainpane {
-        width: 100%;
-        height: 100%;
-    }
+	.mainpane {
+		width: 100%;
+		height: 100%;
+	}
 
-    #infobar {
-        height: 50%;
-        width: 100%;
-    }
+	#infobar {
+		height: 50%;
+		width: 100%;
+	}
 
-    #toomanywrappers {
-        overflow: hidden;
-    }
+	#toomanywrappers {
+		overflow: hidden;
+	}
 
-    #playlistm {
-        height:50%;
-        width:100%;
-    }
+	#playlistm {
+		height:50%;
+		width:100%;
+	}
 
-    .choose_playlist {
+	.choose_playlist {
 /*      This is here so the layoutProcessor knows we're in tall portrait mode
-        and it should choose infobar instead */
-        font-weight:900;
-    }
+		and it should choose infobar instead */
+		font-weight:900;
+	}
 
 }
 
 @media screen and (min-height: 700px) and (max-width: 420px) and (orientation: portrait) {
-    /* Narrow screens - nowplaying under album picture */
-    #albumcover {
-        text-align: center;
-        overflow:hidden;
-    }
+	/* Narrow screens - nowplaying under album picture */
+	#albumcover {
+		text-align: center;
+		overflow:hidden;
+	}
 
-    #albumpicture {
-        width: 85%;
-        max-width: 22vh;
-        height: auto;
-    }
+	#albumpicture {
+		width: 85%;
+		max-width: 22vh;
+		height: auto;
+	}
 
-    #dbtags {
-        float: left;
-        margin-left:6px;
-        margin-right:6px;
-    }
+	#dbtags {
+		float: left;
+		margin-left:6px;
+		margin-right:6px;
+	}
 
-    #stars {
-        float:left;
-    }
+	#stars {
+		float:left;
+	}
 }
 
 @media screen and (min-height: 700px) and (min-width: 421px) and (orientation: portrait) {
-    /* Wider screens - nowplaying next to album picture */
-    #albumcover {
-        float: left;
-        height:100%;
-    }
+	/* Wider screens - nowplaying next to album picture */
+	#albumcover {
+		float: left;
+		height:100%;
+	}
 
-    #albumpicture {
-        height: 100%;
-        width: auto;
-        margin-right:8px;
-    }
+	#albumpicture {
+		height: 100%;
+		width: auto;
+		margin-right:8px;
+	}
 
-    #nowplaying {
-        padding-right: 8px;
-    }
+	#nowplaying {
+		padding-right: 8px;
+	}
 
-    #nptext {
-        text-align:right;
-    }
+	#nptext {
+		text-align:right;
+	}
 
-    #amontobin {
-        text-align: right;
-    }
+	#amontobin {
+		text-align: right;
+	}
 
-    #lastfm, #addtoplaylist, #ptagadd, #subscribe {
-        margin-bottom: 4px;
-    }
+	#lastfm, #addtoplaylist, #ptagadd, #subscribe {
+		margin-bottom: 4px;
+	}
 
 }
 
@@ -987,42 +988,42 @@ img.jalopy200 {
 
 @media screen and (max-width:639px) and (orientation: landscape) {
 
-    .mainpane {
-        width: 100%;
-        height: 100%;
-    }
+	.mainpane {
+		width: 100%;
+		height: 100%;
+	}
 
-    #albumpicture {
-        height: 100%;
-        width: auto;
-        margin-right:8px;
-    }
+	#albumpicture {
+		height: 100%;
+		width: auto;
+		margin-right:8px;
+	}
 
-    #playlistm {
-        width: 100%;
-        height: 100%;
-    }
+	#playlistm {
+		width: 100%;
+		height: 100%;
+	}
 
-    #albumcover {
-        float: left;
-        height:100%;
-    }
+	#albumcover {
+		float: left;
+		height:100%;
+	}
 
-    #nowplaying {
-        padding-right: 8px;
-    }
+	#nowplaying {
+		padding-right: 8px;
+	}
 
-    #amontobin {
-        text-align: right;
-    }
+	#amontobin {
+		text-align: right;
+	}
 
-    #lastfm, #addtoplaylist, #ptagadd, #subscribe, #stars {
-        margin-bottom: 8px;
-    }
+	#lastfm, #addtoplaylist, #ptagadd, #subscribe, #stars {
+		margin-bottom: 8px;
+	}
 
-    #stars {
-        float: right;
-    }
+	#stars {
+		float: right;
+	}
 }
 
 /*
@@ -1033,144 +1034,144 @@ img.jalopy200 {
 */
 
 @media screen and (min-width:640px) and (orientation: landscape) {
-    .mainpane {
-        width: 50%;
-        float:left;
-        height: 100%;
-    }
+	.mainpane {
+		width: 50%;
+		float:left;
+		height: 100%;
+	}
 
-    #playlistm {
-        width: 50%;
-        float:left;
-        height: 100%;
-    }
+	#playlistm {
+		width: 50%;
+		float:left;
+		height: 100%;
+	}
 
-    #infobar {
-        display:block;
-    }
+	#infobar {
+		display:block;
+	}
 
-    #infopane {
-        width:100%;
-    }
+	#infopane {
+		width:100%;
+	}
 }
 
 /* 3 Modes for info pane to make best use of available space */
 
 @media screen and (min-width:640px) and (orientation: landscape) {
-    /* Standard - info pane looks like small portrait mode */
-    #albumcover {
-        text-align: center;
-        overflow:hidden;
-    }
+	/* Standard - info pane looks like small portrait mode */
+	#albumcover {
+		text-align: center;
+		overflow:hidden;
+	}
 
-    #albumpicture {
-        width: 85%;
-        max-width: 40vh;
-    }
+	#albumpicture {
+		width: 85%;
+		max-width: 40vh;
+	}
 
-    #dbtags {
-        float: left;
-        margin-left:6px;
-        margin-right:6px;
-    }
+	#dbtags {
+		float: left;
+		margin-left:6px;
+		margin-right:6px;
+	}
 
-    #stars {
-        float:left;
-    }
+	#stars {
+		float:left;
+	}
 }
 
 @media screen and (min-width:810px) and (max-height: 540px) and (orientation: landscape) {
-    /* Wider - info pane looks like wide portrait mode up to 540px high*/
-    /* ie nowplaying is next to album image - can't have album image very big
-        with a screen of this height so there's loads of wasted space to the sides */
-    #albumcover {
-        float: left;
-        height:100%;
-    }
+	/* Wider - info pane looks like wide portrait mode up to 540px high*/
+	/* ie nowplaying is next to album image - can't have album image very big
+		with a screen of this height so there's loads of wasted space to the sides */
+	#albumcover {
+		float: left;
+		height:100%;
+	}
 
-    #albumpicture {
-        height: 100%;
-        width: auto;
-        margin-right:8px;
-        max-width:60vh;
-    }
+	#albumpicture {
+		height: 100%;
+		width: auto;
+		margin-right:8px;
+		max-width:60vh;
+	}
 
-    #nowplaying {
-        padding-right: 8px;
-    }
+	#nowplaying {
+		padding-right: 8px;
+	}
 
-    #nptext {
-        text-align:right;
-    }
+	#nptext {
+		text-align:right;
+	}
 
-    #amontobin {
-        text-align: right;
-    }
+	#amontobin {
+		text-align: right;
+	}
 
-    #lastfm, #addtoplaylist, #ptagadd, #subscribe {
-        margin-bottom: 4px;
-    }
+	#lastfm, #addtoplaylist, #ptagadd, #subscribe {
+		margin-bottom: 4px;
+	}
 
-    #stars, #dbtags {
-        float: none;
-    }
+	#stars, #dbtags {
+		float: none;
+	}
 
 }
 
 @media screen and (min-width:640px) and (min-height: 541px) and (orientation: landscape) {
-    /* at 540 px high it reverts to being like small portrait mode */
-    #albumpicture {
-        max-width:60vh
-    }
+	/* at 540 px high it reverts to being like small portrait mode */
+	#albumpicture {
+		max-width:60vh
+	}
 }
 
 @media screen and (min-width:1024px) and (min-height: 768px) and (orientation: landscape) {
-    /* Big screens - combination of everything - nowplaying and playlist together, chooser on right hand side */
-    #infobar {
-        height: 50%;
-    }
+	/* Big screens - combination of everything - nowplaying and playlist together, chooser on right hand side */
+	#infobar {
+		height: 50%;
+	}
 
-    #albumcover {
-        float: left;
-        height:100%;
-    }
+	#albumcover {
+		float: left;
+		height:100%;
+	}
 
-    #albumpicture {
-        height: 100%;
-        width: auto;
-        margin-right:8px;
-    }
+	#albumpicture {
+		height: 100%;
+		width: auto;
+		margin-right:8px;
+	}
 
-    #nowplaying {
-        padding-right: 8px;
-    }
+	#nowplaying {
+		padding-right: 8px;
+	}
 
-    #nptext {
-        text-align:right;
-    }
+	#nptext {
+		text-align:right;
+	}
 
-    #amontobin {
-        text-align: right;
-    }
+	#amontobin {
+		text-align: right;
+	}
 
-    #lastfm, #addtoplaylist, #ptagadd, #subscribe {
-        margin-bottom: 4px;
-    }
+	#lastfm, #addtoplaylist, #ptagadd, #subscribe {
+		margin-bottom: 4px;
+	}
 
-    #stars, #dbtags {
-        float: none;
-    }
+	#stars, #dbtags {
+		float: none;
+	}
 
-    .choose_playlist {
+	.choose_playlist {
 /*      This is here so the layoutProcessor knows we're in tall portrait mode
-        and it should choose infobar instead */
-        font-weight:1000;
-    }
+		and it should choose infobar instead */
+		font-weight:1000;
+	}
 
-    #playlistm {
-        position: absolute;
-        height: calc(50% - 20px);
-        top: calc(50% + 20px);
-    }
+	#playlistm {
+		position: absolute;
+		height: calc(50% - 20px);
+		top: calc(50% + 20px);
+	}
 
 }

@@ -121,12 +121,12 @@ function delete_files($path, $expr = '*.*') {
 
 function make_files_useful($arr) {
 	$new = array();
-    foreach ($arr as $key => $all) {
-        foreach ($all as $i => $val) {
-            $new[$i][$key] = $val;
-        }
-    }
-    return $new;
+	foreach ($arr as $key => $all) {
+		foreach ($all as $i => $val) {
+			$new[$i][$key] = $val;
+		}
+	}
+	return $new;
 }
 
 

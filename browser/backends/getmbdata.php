@@ -7,12 +7,12 @@ include ("international.php");
 $uri = $_POST['url'];
 $params = array();
 foreach ($_POST as $k => $v) {
-    if ($k != 'url') {
-        $params[] = $k.'='.$v;
-    }
+	if ($k != 'url') {
+		$params[] = $k.'='.$v;
+	}
 }
 if (count($params) > 0) {
-    $uri .= "?".implode('&', $params);
+	$uri .= "?".implode('&', $params);
 }
 getCacheData($uri, 'musicbrainz');
 

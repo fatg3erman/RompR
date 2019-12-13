@@ -1,37 +1,36 @@
 var icecastPlugin = {
 
-    refreshMyDrink: function(path) {
-        if ($("#icecastlist").hasClass('notfilled')) {
-    		icecastPlugin.makeabadger();
-            $("#icecastlist").load("streamplugins/85_iceScraper.php?populate", icecastPlugin.spaghetti);
-        } else if (path) {
-    		icecastPlugin.makeabadger();
-            $("#icecastlist").load("streamplugins/85_iceScraper.php?populate=1&path="+path, icecastPlugin.spaghetti);
-        }
-    },
+	refreshMyDrink: function(path) {
+		if ($("#icecastlist").hasClass('notfilled')) {
+			icecastPlugin.makeabadger();
+			$("#icecastlist").load("streamplugins/85_iceScraper.php?populate", icecastPlugin.spaghetti);
+		} else if (path) {
+			icecastPlugin.makeabadger();
+			$("#icecastlist").load("streamplugins/85_iceScraper.php?populate=1&path="+path, icecastPlugin.spaghetti);
+		}
+	},
 
-    makeabadger: function() {
-        $('i[name="icecastlist"]').makeSpinner();
-    },
+	makeabadger: function() {
+		$('i[name="icecastlist"]').makeSpinner();
+	},
 
-    spaghetti: function() {
-    	$('i[name="icecastlist"]').stopSpinner();
-        // $('[name="searchfor"]').on('keyup', onKeyUp);
-        $('[name="cornwallis"]').on('click', icecastPlugin.iceSearch);
-        $("#icecastlist").removeClass('notfilled');
-        layoutProcessor.postAlbumActions();
-    },
+	spaghetti: function() {
+		$('i[name="icecastlist"]').stopSpinner();
+		$('[name="cornwallis"]').on('click', icecastPlugin.iceSearch);
+		$("#icecastlist").removeClass('notfilled');
+		uiHelper.postAlbumActions();
+	},
 
-    iceSearch: function() {
-    	icecastPlugin.makeabadger();
-        $("#icecastlist").load("streamplugins/85_iceScraper.php?populate=1&searchfor="+encodeURIComponent($('input[name="searchfor"]').val()), icecastPlugin.spaghetti);
-    },
+	iceSearch: function() {
+		icecastPlugin.makeabadger();
+		$("#icecastlist").load("streamplugins/85_iceScraper.php?populate=1&searchfor="+encodeURIComponent($('input[name="searchfor"]').val()), icecastPlugin.spaghetti);
+	},
 
-    handleClick: function(event, clickedElement) {
-        if (clickedElement.hasClass("clickicepager")) {
-            icecastPlugin.refreshMyDrink(clickedElement.attr('name'));
-        }
-    }
+	handleClick: function(event, clickedElement) {
+		if (clickedElement.hasClass("clickicepager")) {
+			icecastPlugin.refreshMyDrink(clickedElement.attr('name'));
+		}
+	}
 
 }
 

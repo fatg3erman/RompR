@@ -5,217 +5,217 @@
 */
 
 input[type=text] {
-    height: 2em;
+	height: 2em;
 }
 
 #infobar {
-    width:100%;
-    padding-top:4px;
-    margin:0px;
+	width:100%;
+	padding-top:4px;
+	margin:0px;
 }
 
 #progress {
-    font-size:4px;
-    width: 100%;
+	font-size:4px;
+	width: 100%;
 }
 
 #playbackTime {
-    font-weight:bold;
-    font-size:11px;
-    padding-top:1px;
-    height:15px;
-    line-height:15px;
-    text-align:center;
-    width:100%;
-    height:15px;
+	font-weight:bold;
+	font-size:11px;
+	padding-top:1px;
+	height:15px;
+	line-height:15px;
+	text-align:center;
+	width:100%;
+	height:15px;
 }
 
 #albumcover {
-    margin:0px;
-    z-index:500;
+	margin:0px;
+	z-index:500;
 }
 
 #upcoming {
-    max-width:35%;
-    min-width:20%;
-    height:100%;
-    overflow:hidden;
-    font-size:90%;
+	max-width:35%;
+	min-width:20%;
+	height:100%;
+	overflow:hidden;
+	font-size:90%;
 }
 
 #uptrackcount, #uptimecount {
-    font-weight:bold;
+	font-weight:bold;
 }
 
 #upcontents {
-    line-height:110%;
+	line-height:110%;
 }
 
 #albumpicture {
-    width: auto;
+	width: auto;
 }
 
 .timebox {
-    min-width: 4em;
-    font-size:9pt;
-    font-weight:bold;
-    line-height:100%;
+	min-width: 4em;
+	font-size:9pt;
+	font-weight:bold;
+	line-height:100%;
 }
 
 .tboxl {
-    text-align:left;
+	text-align:left;
 }
 
 .tboxr {
-    text-align:right;
+	text-align:right;
 }
 
 #nowplaying {
-    font-size:8pt;
-    padding-top:0px;
-    padding-bottom:0px;
-    height:60px;
-    width:100%;
-    overflow:hidden;
-    box-sizing:border-box;
-    border-right:4px solid transparent;
-    border-left:4px solid transparent;
+	font-size:8pt;
+	padding-top:0px;
+	padding-bottom:0px;
+	height:60px;
+	width:100%;
+	overflow:hidden;
+	box-sizing:border-box;
+	border-right:4px solid transparent;
+	border-left:4px solid transparent;
 }
 
 #patrickmoore {
-    box-shadow: none !important;
+	box-shadow: none !important;
 }
 
 #firefoxisshitwrapper {
-    overflow:hidden;
+	overflow:hidden;
 }
 
 #nptext {
-    width:auto;
-    overflow:hidden;
+	width:auto;
+	overflow:hidden;
 }
 
 #gronky {
-    margin-left:8px;
-    font-size:8pt;
+	margin-left:8px;
+	font-size:8pt;
 }
 
 #amontobin {
-    padding-top:4px;
+	padding-top:4px;
 }
 
 #infopane {
-    height:100%;
-    overflow:auto;
-    position:relative;
-    display:block;
+	height:100%;
+	overflow:auto;
+	position:relative;
+	display:block;
 }
 
 #dbtags {
-    overflow:hidden;
-    opacity:0.9;
-    font-size:8pt;
-    height:22px;
-    line-height:22px;
+	overflow:hidden;
+	opacity:0.9;
+	font-size:8pt;
+	height:22px;
+	line-height:22px;
 }
 
 #tagadder {
-    width:400px;
-    padding-right:8px;
-    padding-bottom:4px;
+	width:400px;
+	padding-right:8px;
+	padding-bottom:4px;
 }
 
 #playcount {
-    overflow:hidden;
-    opacity:0.9;
-    font-size:8pt;
-    height:22px;
-    line-height:22px;
+	overflow:hidden;
+	opacity:0.9;
+	font-size:8pt;
+	height:22px;
+	line-height:22px;
 }
 
 #lastfm {
-    float:left;
-    margin-left:4px;
-    padding-top:1px;
+	float:left;
+	margin-left:4px;
+	padding-top:1px;
 }
 
 #lastfm img {
-    margin-right:2px;
-    margin-left:2px;
+	margin-right:2px;
+	margin-left:2px;
 }
 
 #headerbar {
-    padding:0px;
-    margin:0px;
-    width:100%;
-    height:36px;
+	padding:0px;
+	margin:0px;
+	width:100%;
+	height:36px;
 }
 
 #bottompage {
-    width:100%;
+	width:100%;
 }
 
 #sources {
-    height:100%;
-    overflow:auto;
+	height:100%;
+	overflow:auto;
 }
 
 #volumecontrol {
-    width:14px;
-    margin-left:0px;
-    margin-right:0px;
-    font-size:8px;
+	width:14px;
+	margin-left:0px;
+	margin-right:0px;
+	font-size:8px;
 }
 
 #notifications {
-    position:absolute;
-    width:50%;
-    max-width:500px;
-    padding:8px;
-    top:0px;
-    display:none;
-    z-index:2000;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
+	position:absolute;
+	width:50%;
+	max-width:500px;
+	padding:8px;
+	top:0px;
+	display:none;
+	z-index:2000;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
 }
 
 #keybindtable {
-    margin-bottom:1em;
+	margin-bottom:1em;
 }
 
 #outputbox {
-    max-width:20%;
+	max-width:20%;
 }
 
 #mobileplaylistcontrols
 {
-    display:none;
+	display:none;
 }
 
 #plmode {
-    font-size:8pt;
-    height:22px;
-    line-height:22px;
+	font-size:8pt;
+	height:22px;
+	line-height:22px;
 }
 
 #audiobooks .podcastresume>.fixed
 {
-    padding-left: 24px;
+	padding-left: 24px;
 }
 
 #audiobooks .podcastresume>.expand
 {
-    margin-right: 4px;
+	margin-right: 4px;
 }
 
 #flowcontrols {
-    height: 36px;
+	height: 36px;
 }
 
 #flowcontrols i {
-    max-height: 24px;
-    margin-top:4px;
+	max-height: 24px;
+	margin-top:4px;
 }
 
 /*
@@ -225,244 +225,244 @@ input[type=text] {
 */
 
 button.iconbutton {
-    height: 2em;
-    width: 2em;
+	height: 2em;
+	width: 2em;
 }
 
 .infobarlayout {
-    margin-left:6px;
-    margin-right:6px;
-    margin-top:0px;
-    margin-bottom:0px;
-    padding-top:0px;
-    padding-bottom:2px;
-    padding-left:0px;
-    padding-right:0px;
-    height:90px;
+	margin-left:6px;
+	margin-right:6px;
+	margin-top:0px;
+	margin-bottom:0px;
+	padding-top:0px;
+	padding-bottom:2px;
+	padding-left:0px;
+	padding-right:0px;
+	height:90px;
 }
 
 .infobarnoheight {
-    margin-left:6px;
-    margin-right:6px;
-    margin-top:2px;
-    margin-bottom:2px;
-    padding-top:0px;
-    padding-left:0px;
-    padding-right:0px;
+	margin-left:6px;
+	margin-right:6px;
+	margin-top:2px;
+	margin-bottom:2px;
+	padding-top:0px;
+	padding-left:0px;
+	padding-right:0px;
 }
 
 .nopadright {
-    margin-right:0px !important;
+	margin-right:0px !important;
 }
 
 .tinycover
 {
-    margin-right:8px;
-    width:28px;
-    height:auto;
+	margin-right:8px;
+	width:28px;
+	height:auto;
 }
 
 .controlbutton-left
 {
-    margin-right:6px;
-    margin-left:6px;
+	margin-right:6px;
+	margin-left:6px;
 }
 
 .topstats {
-    float:left;
-    margin-right:8px;
-    margin-top:1px;
+	float:left;
+	margin-right:8px;
+	margin-top:1px;
 }
 
 
 .tagremover {
-    margin-left:0.5em;
+	margin-left:0.5em;
 }
 
 
 .clicktext {
-    font-size:7pt;
-    font-weight:bold;
+	font-size:7pt;
+	font-weight:bold;
 }
 
 .topimg {
-    margin-right:4px;
-    margin-left:4px;
-    margin-bottom:2px;
-    cursor: pointer;
-    vertical-align:middle;
+	margin-right:4px;
+	margin-left:4px;
+	margin-bottom:2px;
+	cursor: pointer;
+	vertical-align:middle;
 }
 
 .smallcover {
-    transition: width 0.5s ease;
-    max-width:300px;
+	transition: width 0.5s ease;
+	max-width:300px;
 }
 
 .dropmenu {
-    padding-left:16px;
+	padding-left:16px;
 }
 
 .npicon {
-    padding:0px;
-    margin-top:0px;
-    margin-left:0px;
-    margin-bottom:0px;
-    margin-right:4px;
-    height:20px;
-    width:20px;
-    vertical-align:middle;
+	padding:0px;
+	margin-top:0px;
+	margin-left:0px;
+	margin-bottom:0px;
+	margin-right:4px;
+	height:20px;
+	width:20px;
+	vertical-align:middle;
 }
 
 .playlisticon {
-    padding:0px;
-    margin-right:4px;
-    margin-bottom:2px;
-    margin-top:2px;
-    vertical-align:middle;
-    height: 12px;
-    width: 12px;
+	padding:0px;
+	margin-right:4px;
+	margin-bottom:2px;
+	margin-top:2px;
+	vertical-align:middle;
+	height: 12px;
+	width: 12px;
 }
 
 .collectionicon {
-    padding:0px;
-    margin-right:4px;
-    margin-bottom:2px;
-    margin-top:2px;
-    vertical-align:middle;
-    width:16px;
-    height:16px;
+	padding:0px;
+	margin-right:4px;
+	margin-bottom:2px;
+	margin-top:2px;
+	vertical-align:middle;
+	width:16px;
+	height:16px;
 }
 
 .playlisticonr {
-    padding:0px;
-    margin-left:4px;
-    margin-right:2px;
-    margin-bottom:2px;
-    margin-top:2px;
-    vertical-align:middle;
-    height: 12px;
-    width: 12px;
+	padding:0px;
+	margin-left:4px;
+	margin-right:2px;
+	margin-bottom:2px;
+	margin-top:2px;
+	vertical-align:middle;
+	height: 12px;
+	width: 12px;
 }
 
 .rating-icon-big {
-    height: 20px;
-    width: 100px;
-    cursor: pointer;
-    vertical-align:middle;
+	height: 20px;
+	width: 100px;
+	cursor: pointer;
+	vertical-align:middle;
 }
 
 .rating-icon-small {
-    height: 14px;
-    width: 70px;
-    cursor: pointer;
-    vertical-align:middle;
+	height: 14px;
+	width: 70px;
+	cursor: pointer;
+	vertical-align:middle;
 }
 
 .headercontainer {
-    height:90%;
-    box-sizing:border-box;
+	height:90%;
+	box-sizing:border-box;
 }
 
 .background-left {
-    background-position: left !important;
-    max-height: 24px;
+	background-position: left !important;
+	max-height: 24px;
 }
 
 #sourcescontrols i, #chooserbuttons i {
-    max-width: 24px;
+	max-width: 24px;
 }
 
 i.topdrop
 {
-    position: relative;
-    font-style: normal;
+	position: relative;
+	font-style: normal;
 }
 
 .dragmenu {
-    cursor:move;
+	cursor:move;
 }
 
 .menuitem {
-    font-weight:bold;
-    margin:0px;
-    padding-left:8px;
-    padding-right:0px;
-    padding-top:2px;
-    padding-bottom:2px;
-    -webkit-box-align:center;
-    align-items: center;
+	font-weight:bold;
+	margin:0px;
+	padding-left:8px;
+	padding-right:0px;
+	padding-top:2px;
+	padding-bottom:2px;
+	-webkit-box-align:center;
+	align-items: center;
 }
 
 .prearranger {
-    display:none;
+	display:none;
 }
 
 .playlistitem.menuitem {
-    align-items: inherit !important;
+	align-items: inherit !important;
 }
 
 .playlistalbum {
-    font-weight:bold;
-    margin:0px;
-    padding-left:4px;
-    padding-right:0px;
-    padding-top:4px;
-    padding-bottom:2px;
-    -webkit-box-align:stretch;
-    align-items: stretch;
+	font-weight:bold;
+	margin:0px;
+	padding-left:4px;
+	padding-right:0px;
+	padding-top:4px;
+	padding-bottom:2px;
+	-webkit-box-align:stretch;
+	align-items: stretch;
 }
 
 .mh {
-    margin-right:6px;
-    display:block;
-    margin-top:2px;
-    margin-bottom:2px;
+	margin-right:6px;
+	display:block;
+	margin-top:2px;
+	margin-bottom:2px;
 }
 
 .menu {
-    width:14px;
-    height: 14px;
-    vertical-align:middle;
-    cursor:pointer;
+	width:14px;
+	height: 14px;
+	vertical-align:middle;
+	cursor:pointer;
 }
 
 .ninesix {
-    font-size:96%;
-    padding-top:2px;
+	font-size:96%;
+	padding-top:2px;
 }
 
 .indent {
-    margin-left:16px;
+	margin-left:16px;
 }
 
 .padright {
-    padding-right:4px;
+	padding-right:4px;
 }
 
 .padleft {
-    padding-left:4px;
+	padding-left:4px;
 }
 
 .buttonchange {
-    text-align:center;
+	text-align:center;
 }
 
 .outhack {
-    width:14px;
-    height:14px;
-    margin-top:2px;
+	width:14px;
+	height:14px;
+	margin-top:2px;
 }
 
 .cshrinker {
-    max-width:400px;
+	max-width:400px;
 }
 
 .smallpluginicon {
-    padding:0px;
-    margin-right:4px;
-    margin-bottom:2px;
-    margin-top:1px;
-    vertical-align:middle;
+	padding:0px;
+	margin-right:4px;
+	margin-bottom:2px;
+	margin-top:1px;
+	vertical-align:middle;
 }
 
 /*
@@ -472,33 +472,33 @@ i.topdrop
 */
 
 .info-box-fixed {
-    -webkit-box-flex:0;
-    flex-grow: 0;
-    flex-shrink:0;
+	-webkit-box-flex:0;
+	flex-grow: 0;
+	flex-shrink:0;
 }
 
 .info-border-right {
-    border-right: 1px solid #454545;
-    padding-right:1em;
-    max-width:240px;
+	border-right: 1px solid #454545;
+	padding-right:1em;
+	max-width:240px;
 }
 
 .info-box-expand {
-    -webkit-box-flex:1.0;
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: auto;
+	-webkit-box-flex:1.0;
+	flex-grow: 1;
+	flex-shrink: 1;
+	flex-basis: auto;
 
 }
 
 .info-detail-layout {
-    margin-top:8px;
+	margin-top:8px;
 }
 
 .cleft {
-    border-left: 1px solid #454545;
-    padding-left:1em;
-    margin-left:1em;
+	border-left: 1px solid #454545;
+	padding-left:1em;
+	margin-left:1em;
 }
 
 /*
@@ -509,37 +509,37 @@ i.topdrop
 
 div.normalmenu
 {
-    width:25vw;
-    max-width:360px;
-    min-width:240px;
+	width:25vw;
+	max-width:360px;
+	min-width:240px;
 }
 
 div.normalmenu.albumbitsmenu {
-    max-width: 300px;
-    top: 20px;
+	max-width: 300px;
+	top: 20px;
 }
 
 div.clicktrackmenu>div.normalmenu.albumbitsmenu {
-    right: 20px;
+	right: 20px;
 }
 
 div.widemenu
 {
-    width:40vw;
-    max-width:640px;
-    min-width:400px;
+	width:40vw;
+	max-width:640px;
+	min-width:400px;
 }
 
 div.leftmenu
 {
-    top: 30px;
-    left: 0px;
+	top: 30px;
+	left: 0px;
 }
 
 div.rightmenu
 {
-    /*top:30px;*/
-    right:0px;
+	/*top:30px;*/
+	right:0px;
 }
 
 /*
@@ -549,11 +549,11 @@ div.rightmenu
 */
 
 .podicon {
-    padding:0px;
-    margin:2px;
-    height:16px;
-    width:16px;
-    vertical-align:middle;
+	padding:0px;
+	margin:2px;
+	height:16px;
+	width:16px;
+	vertical-align:middle;
 }
 
 /*
@@ -563,81 +563,81 @@ div.rightmenu
 */
 
 @media screen and (max-width: 480px) {
-    #notifications {
-        width: 90% !important;
-    }
+	#notifications {
+		width: 90% !important;
+	}
 }
 
 @media screen and (max-height: 1099px) {
-    .infobarlayout {
-        height:140px;
-    }
-    #albumcover {
-        height: 162px;
-    }
-    #albumpicture {
-        height: 158px;
-        padding: 2px;
-    }
-    #nowplaying {
-        height: 110px;
-    }
+	.infobarlayout {
+		height:140px;
+	}
+	#albumcover {
+		height: 162px;
+	}
+	#albumpicture {
+		height: 158px;
+		padding: 2px;
+	}
+	#nowplaying {
+		height: 110px;
+	}
 
-    .controlbutton-small
-    {
-        width:24px !important;
-        height:24px !important;
-        margin-top:6px !important;
-        margin-left:4px !important;
-    }
+	.controlbutton-small
+	{
+		width:24px !important;
+		height:24px !important;
+		margin-top:6px !important;
+		margin-left:4px !important;
+	}
 
-    .controlbutton-main
-    {
-        width:32px !important;
-        height:32px !important;
-        margin-top:6px !important;
-    }
+	.controlbutton-main
+	{
+		width:32px !important;
+		height:32px !important;
+		margin-top:6px !important;
+	}
 
-    .smallpluginicon
-    {
-        height: 20px !important;
-        width: 18px !important;
-    }
+	.smallpluginicon
+	{
+		height: 20px !important;
+		width: 18px !important;
+	}
 }
 
 @media screen and (min-height: 1100px) {
-    .infobarlayout {
-        height:160px;
-    }
-    #albumcover {
-        height: 182px;
-    }
-    #albumpicture {
-        height: 178px;
-        padding: 2px;
-    }
-    #nowplaying {
-        height: 130px;
-    }
-    .controlbutton-small
-    {
-        width:28px !important;
-        height:28px !important;
-        margin-top:6px !important;
-        margin-left:4px !important;
-    }
+	.infobarlayout {
+		height:160px;
+	}
+	#albumcover {
+		height: 182px;
+	}
+	#albumpicture {
+		height: 178px;
+		padding: 2px;
+	}
+	#nowplaying {
+		height: 130px;
+	}
+	.controlbutton-small
+	{
+		width:28px !important;
+		height:28px !important;
+		margin-top:6px !important;
+		margin-left:4px !important;
+	}
 
-    .controlbutton-main
-    {
-        width:36px !important;
-        height:36px !important;
-        margin-top:6px !important;
-    }
+	.controlbutton-main
+	{
+		width:36px !important;
+		height:36px !important;
+		margin-top:6px !important;
+	}
 
-    .smallpluginicon
-    {
-        height: 24px !important;
-        width: 18px !important;
-    }
+	.smallpluginicon
+	{
+		height: 24px !important;
+		width: 18px !important;
+	}
 }
 

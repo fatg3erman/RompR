@@ -88,6 +88,6 @@ if ($prefs['player_backend'] == "mpd") {
 ?>
 </div>
 <div id="pscroller">
-    <div id="sortable" class="noselection">
-    </div>
+	<div id="sortable" class="noselection">
+	</div>
 </div>

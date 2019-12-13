@@ -62,29 +62,29 @@ if (array_key_exists('populate', $_REQUEST)) {
 				foreach(pq($p)->children('a') as $a) {
 					$l = pq($a)->attr('href');
 					if (substr($l, -5) == ".xspf") {
-				    	$listenlink = 'http://dir.xiph.org'.$l;
-				    }
+						$listenlink = 'http://dir.xiph.org'.$l;
+					}
 				}
 			}
 		}
 
 		if ($listenlink != '') {
 			print albumHeader(array(
-                'id' => 'icecast_'.$count,
-                'Image' => 'newimages/icecast.svg',
-                'Searched' => 1,
-                'AlbumUri' => null,
-                'Year' => null,
-                'Artistname' => implode(', ', $stream_tags),
-                'Albumname' => htmlspecialchars($server_name),
-                'why' => 'whynot',
-                'ImgKey' => 'none',
-                'streamuri' => $listenlink,
-                'streamname' => $server_name,
-                // 'streamimg' => 'newimages/icecast.svg',
+				'id' => 'icecast_'.$count,
+				'Image' => 'newimages/icecast.svg',
+				'Searched' => 1,
+				'AlbumUri' => null,
+				'Year' => null,
+				'Artistname' => implode(', ', $stream_tags),
+				'Albumname' => htmlspecialchars($server_name),
+				'why' => 'whynot',
+				'ImgKey' => 'none',
+				'streamuri' => $listenlink,
+				'streamname' => $server_name,
+				// 'streamimg' => 'newimages/icecast.svg',
 				'streamimg' => '',
 				'class' => 'radiochannel'
-            ));
+			));
 			print '<div id="icecast_'.$count.'" class="dropmenu">';
 			trackControlHeader('','','icecast_'.$count, array(array('Image' => 'newimages/icecast.svg')));
 			print '<div class="containerbox rowspacer"></div>';
@@ -99,7 +99,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 			print '</a>';
 			print '<div class="containerbox rowspacer"></div>';
 			print '<div class="stream-description clickable icescraper clickstream playable draggable indent" name="'.rawurlencode($listenlink).'" streamname="'.$server_name.'" streamimg="">';
-	        print '<i class="icon-no-response-playbutton collectionicon"></i>';
+			print '<i class="icon-no-response-playbutton collectionicon"></i>';
 			print '<b>Listen</b> '.$format;
 			print '</div>';
 			print '</div>';
@@ -118,18 +118,18 @@ if (array_key_exists('populate', $_REQUEST)) {
 } else {
 	print '<div id="icecastplugin">';
 	print albumHeader(array(
-        'id' => 'icecastlist',
-        'Image' => 'newimages/icecast.svg',
-        'Searched' => 1,
-        'AlbumUri' => null,
-        'Year' => null,
-        'Artistname' => '',
-        'Albumname' => get_int_text('label_icecast'),
-        'why' => null,
-        'ImgKey' => 'none',
+		'id' => 'icecastlist',
+		'Image' => 'newimages/icecast.svg',
+		'Searched' => 1,
+		'AlbumUri' => null,
+		'Year' => null,
+		'Artistname' => '',
+		'Albumname' => get_int_text('label_icecast'),
+		'why' => null,
+		'ImgKey' => 'none',
 		'class' => 'radio',
 		'expand' => true
-    ));
+	));
 	print '<div id="icecastlist" class="dropmenu notfilled"><div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
 	print '</div>';
 }

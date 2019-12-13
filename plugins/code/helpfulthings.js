@@ -1,15 +1,15 @@
 var helpfulThings = function() {
 
-    // It'd be nice to base some recommendations on all time favourite artists. These should come lower down as they're likely to be always the same.
+	// It'd be nice to base some recommendations on all time favourite artists. These should come lower down as they're likely to be always the same.
 
 	var hpl = null;
 	var medebug = "SPANKY";
 	var trackseeds;
 	var nonspotitracks;
 	var artists;
-    var maxwidth = 640;
-    var doneonce = false;
-    var current_seed = null;
+	var maxwidth = 640;
+	var doneonce = false;
+	var current_seed = null;
 	var trackfinder = new faveFinder(false);
 	trackfinder.setCheckDb(false);
 	trackfinder.setExact(true);
@@ -18,11 +18,11 @@ var helpfulThings = function() {
 	function getRecommendationSeeds() {
 		debug.log(medebug, "Getting Seeds For Recommendations");
 		metaHandlers.genericAction([{action: 'getrecommendationseeds', days: 30, limit: 20, top: 15}],
-    		gotRecommendationSeeds,
-        	function() {
-        		debug.error(medebug,"Error Getting Seeds");
-        	}
-        );
+			gotRecommendationSeeds,
+			function() {
+				debug.error(medebug,"Error Getting Seeds");
+			}
+		);
 	}
 
 	function gotRecommendationSeeds(data) {
@@ -60,10 +60,10 @@ var helpfulThings = function() {
 
 		open: function() {
 
-        	if (hpl == null) {
-	        	hpl = browser.registerExtraPlugin("hpl", language.gettext("button_infoyou"), helpfulThings, 'https://fatg3erman.github.io/RompR/Music-Discovery');
+			if (hpl == null) {
+				hpl = browser.registerExtraPlugin("hpl", language.gettext("button_infoyou"), helpfulThings, 'https://fatg3erman.github.io/RompR/Music-Discovery');
 
-			    $('#hplfoldup').append('<div id="helpful_radio" class="containerbox wrap mixcontainer"></div>');
+				$('#hplfoldup').append('<div id="helpful_radio" class="containerbox wrap mixcontainer"></div>');
 
 				var powers;
 				if (player.canPlay('spotify') && player.canPlay('gmusic')) {
@@ -74,77 +74,77 @@ var helpfulThings = function() {
 					powers = [' and Spotify'];
 				}
 
-			    if ((player.canPlay('spotify') || player.canPlay('gmusic')) && lastfm.isLoggedIn()) {
-			    	var html = '<div class="fixed infosection containerbox mixbox playable smartradio" name="lastFMTrackRadio+1month">';
-			    	html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
-			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_dailymix")+'</b><br/>';
+				if ((player.canPlay('spotify') || player.canPlay('gmusic')) && lastfm.isLoggedIn()) {
+					var html = '<div class="fixed infosection containerbox mixbox playable smartradio" name="lastFMTrackRadio+1month">';
+					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
+					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_dailymix")+'</b><br/>';
 					html += language.gettext('label_dailymixdesc', cloneObject(powers));
-			    	html += '</div></div>';
+					html += '</div></div>';
 
-			    	html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="lastFMArtistRadio+6month">';
-			    	html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
-			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_luckydip")+'</b><br/>';
+					html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="lastFMArtistRadio+6month">';
+					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
+					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_luckydip")+'</b><br/>';
 					html += language.gettext('label_luckydipdesc', powers);
-			    	html += '</div></div>';
-			    } else if ((player.canPlay('spotify') || player.canPlay('gmusic')) && !lastfm.isLoggedIn()) {
-			    	var html = '<div class="fixed infosection containerbox mixbox">';
-			    	html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
-			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_startshere")+'</b><br/>';
-			    	html += language.gettext('label_goonlogin')+"</div>";
-			    	html += '</div>';
-			    } else if (!player.canPlay('spotify') && !player.canPlay('gmusic')) {
-			    	var html = '<div class="fixed infosection containerbox mixbox">';
-			    	html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
-			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_getspotify")+'</b><br/>';
-			    	html += language.gettext('label_nospotify')+"</div>";
-			    	html += '</div>';
-			    }
+					html += '</div></div>';
+				} else if ((player.canPlay('spotify') || player.canPlay('gmusic')) && !lastfm.isLoggedIn()) {
+					var html = '<div class="fixed infosection containerbox mixbox">';
+					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
+					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_startshere")+'</b><br/>';
+					html += language.gettext('label_goonlogin')+"</div>";
+					html += '</div>';
+				} else if (!player.canPlay('spotify') && !player.canPlay('gmusic')) {
+					var html = '<div class="fixed infosection containerbox mixbox">';
+					html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
+					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_getspotify")+'</b><br/>';
+					html += language.gettext('label_nospotify')+"</div>";
+					html += '</div>';
+				}
 
-			    if (player.canPlay('spotify')) {
-			    	html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="spotiMixRadio+7day">';
-			    	html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
-			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext('label_spotify_mix')+'</b><br/>';
-			    	html += language.gettext('label_spotimixdesc')+"</div>";
-			    	html += '</div>';
+				if (player.canPlay('spotify')) {
+					html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="spotiMixRadio+7day">';
+					html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
+					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext('label_spotify_mix')+'</b><br/>';
+					html += language.gettext('label_spotimixdesc')+"</div>";
+					html += '</div>';
 
-			    	html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="spotiMixRadio+1year">';
-			    	html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
-			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext('label_spotify_dj')+'</b><br/>';
-			    	html += language.gettext('label_spotiswimdesc')+"</div>";
-			    	html += '</div>';
-		        }
+					html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="spotiMixRadio+1year">';
+					html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
+					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext('label_spotify_dj')+'</b><br/>';
+					html += language.gettext('label_spotiswimdesc')+"</div>";
+					html += '</div>';
+				}
 
-			    $('#helpful_radio').append(html);
+				$('#helpful_radio').append(html);
 
-			    if (player.canPlay('spotify')) {
+				if (player.canPlay('spotify')) {
 					$('#hplfoldup').append('<div id="helpful_spinner"><i class="svg-square icon-spin6 spinner"></i></div>');
-		            getRecommendationSeeds();
-		        }
+					getRecommendationSeeds();
+				}
 
 				hpl.slideToggle('fast');
-	        	browser.goToPlugin("hpl");
-	        	browser.rePoint();
+				browser.goToPlugin("hpl");
+				browser.rePoint();
 
-	        } else {
-	        	browser.goToPlugin("hpl");
-	        }
+			} else {
+				browser.goToPlugin("hpl");
+			}
 
 		},
 
 		handleClick: function(element, event) {
 			if (element.hasClass('clickrefreshalbums')) {
 				getRecommendationSeeds();
-            } else if (element.hasClass('clickspotifywidget')) {
-            	var e = element;
-            	while (!e.hasClass('helpfulholder')) {
-            		e = e.parent();
-            	}
-            	e.spotifyAlbumThing('handleClick', element);
-        	}
+			} else if (element.hasClass('clickspotifywidget')) {
+				var e = element;
+				while (!e.hasClass('helpfulholder')) {
+					e = e.parent();
+				}
+				e.spotifyAlbumThing('handleClick', element);
+			}
 		},
 
 		close: function() {
-            nowplaying.notifyTrackChanges('helpfulthings', null);
+			nowplaying.notifyTrackChanges('helpfulthings', null);
 			if (doneonce) {
 				$('#hplfoldup .helpfulholder').each(function() {
 					debug.log(medebug,"Removing And Destroying",$(this).attr("id"));

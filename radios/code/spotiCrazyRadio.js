@@ -43,8 +43,8 @@ var spotiCrazyRadio = function() {
 				if (tagarray.length > 0) {
 					populateTuner(parseInt(prefs.smartradio_chunksize));
 				} else {
-	        		infobar.error(language.gettext('error_nogenres'));
-	        		playlist.radioManager.stop(null);
+					infobar.error(language.gettext('error_nogenres'));
+					playlist.radioManager.stop(null);
 				}
 			} else {
 				if (tagarray.length > 0) {

@@ -368,10 +368,10 @@ function check_sql_tables() {
 						$artist = (string) $obj->Artistname;
 						$art = explode(' & ', $artist);
 						if (count($art) > 2) {
-						    $f = array_slice($art, 0, count($art) - 1);
-						    $newname = implode($f, ", ")." & ".$art[count($art) - 1];
-						    logger::log("UPGRADE_SCHEMA", "Updating artist name from ".$artist." to ".$newname);
-						    $stmt->execute(array($newname, $obj->Artistindex));
+							$f = array_slice($art, 0, count($art) - 1);
+							$newname = implode($f, ", ")." & ".$art[count($art) - 1];
+							logger::log("UPGRADE_SCHEMA", "Updating artist name from ".$artist." to ".$newname);
+							$stmt->execute(array($newname, $obj->Artistindex));
 						}
 					}
 				}
@@ -395,7 +395,7 @@ function check_sql_tables() {
 					}
 				}
 				generic_sql_query("UPDATE Statstable SET Value = 9 WHERE Item = 'SchemaVer'", true);
-			    break;
+				break;
 
 			case 9:
 				logger::log("SQL", "Updating FROM Schema version 9 TO Schema version 10");
@@ -828,7 +828,7 @@ function check_sql_tables() {
 				update_remote_image_urls();
 				generic_sql_query("UPDATE Statstable SET Value = 59 WHERE Item = 'SchemaVer'", true);
 				break;
-				
+
 		}
 		$sv++;
 	}

@@ -52,25 +52,25 @@ var charts = function() {
 
 		open: function() {
 
-        	if (cha == null) {
-	        	cha = browser.registerExtraPlugin("cha", language.gettext("label_charts"), charts);
-			    $("#chafoldup").append('<div class="noselection fullwidth masonified" id="chamunger"></div>');
-	        	getCharts(charts.firstLoad, charts.firstLoadFail);
-	        } else {
-	        	browser.goToPlugin("cha");
-	        }
+			if (cha == null) {
+				cha = browser.registerExtraPlugin("cha", language.gettext("label_charts"), charts);
+				$("#chafoldup").append('<div class="noselection fullwidth masonified" id="chamunger"></div>');
+				getCharts(charts.firstLoad, charts.firstLoadFail);
+			} else {
+				browser.goToPlugin("cha");
+			}
 
 		},
 
 		firstLoad: function(data) {
 			setDraggable('#chafoldup');
-    		charts.doMainLayout(data);
+			charts.doMainLayout(data);
 		},
 
 		firstLoadFail: function(data) {
-    		infobar.error(language.gettext('label_general_error'));
-    		cha.slideToggle('fast');
-        },
+			infobar.error(language.gettext('label_general_error'));
+			cha.slideToggle('fast');
+		},
 
 		doMainLayout: function(data) {
 			debug.log("CHARTS","Got data",data);
@@ -79,10 +79,10 @@ var charts = function() {
 				holders[i] = $('<div>', {class: 'tagholder selecotron noselection', id: 'chaman_'+i}).appendTo($("#chamunger"));
 				putItems(holders[i], data[i], i);
 			}
-            cha.slideToggle('fast', function() {
-	        	browser.goToPlugin("cha");
-	            browser.rePoint($("#chamunger"), {itemSelector: '.tagholder', percentPosition: true});
-            });
+			cha.slideToggle('fast', function() {
+				browser.goToPlugin("cha");
+				browser.rePoint($("#chamunger"), {itemSelector: '.tagholder', percentPosition: true});
+			});
 		},
 
 		close: function() {

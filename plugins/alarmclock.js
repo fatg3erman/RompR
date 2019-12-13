@@ -250,11 +250,11 @@ var alarmclock = function() {
 				prefs.alarms[incindex].alarmtime = 86400 + prefs.alarms[incindex].alarmtime;
 			}
 			update_timebox(incindex)
-	        inctimer = setTimeout(alarmclock.runIncrement, inctime);
-	        inctime -= 50;
-	        if (inctime < 50) {
-	        	inctime = 50;
-	        }
+			inctimer = setTimeout(alarmclock.runIncrement, inctime);
+			inctime -= 50;
+			if (inctime < 50) {
+				inctime = 50;
+			}
 		},
 
 		stopInc: function() {
@@ -283,7 +283,7 @@ var alarmclock = function() {
 				$('#alarmon_'+currentalarm).prop('checked', false);
 			}
 			$('i.play-button').off('click', alarmclock.snooze);
-		    $('i.stop-button').off('click', alarmclock.snooze);
+			$('i.stop-button').off('click', alarmclock.snooze);
 			setPlayClicks();
 			infobar.removenotify(notification);
 			notification = null;
@@ -395,7 +395,7 @@ var alarmclock = function() {
 			offPlayClicks();
 			clearTimeout(autostoptimer);
 			$('i.play-button').on('click', alarmclock.snooze);
-		    $('i.stop-button').on('click', alarmclock.snooze);
+			$('i.stop-button').on('click', alarmclock.snooze);
 			var alarm = prefs.alarms[currentalarm];
 			if (alarm.alarmstopafter) {
 				debug.mark('ALARMCLOCK', 'Alarm will auto-stop in',alarm.alarmstopmins,'minutes');
@@ -442,8 +442,8 @@ var alarmclock = function() {
 
 		dropped: function(event, element) {
 			if (event) {
-                event.stopImmediatePropagation();
-            }
+				event.stopImmediatePropagation();
+			}
 			debug.log("ALARM", "Dropped",element.attr('id'));
 			var cb = element.attr('id').split('_');
 			var index = cb[1];

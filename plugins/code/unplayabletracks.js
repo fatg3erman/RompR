@@ -1,38 +1,38 @@
 var unplayabletracks = function() {
 
-    var upl = null;
-    var holder;
-    var reqid = 0;
-    var databits = new Array();
-    var trawler = null;
+	var upl = null;
+	var holder;
+	var reqid = 0;
+	var databits = new Array();
+	var trawler = null;
 
-    function removeTrackFromDb(element, command) {
-	    debug.log("DB_TRACKS","Remove track from database",element.next().val());
+	function removeTrackFromDb(element, command) {
+		debug.log("DB_TRACKS","Remove track from database",element.next().val());
 		var trackDiv = element.parent().parent();
-	    metaHandlers.genericAction(
+		metaHandlers.genericAction(
 			[{action: command, ttid: element.next().val()}],
-	       	collectionHelper.updateCollectionDisplay,
-	        function() {
-	            debug.log("DB TRACKS", "Failed to remove track");
-	            infobar.error(language.gettext('label_general_error'));
-	        }
-	    );
+			collectionHelper.updateCollectionDisplay,
+			function() {
+				debug.log("DB TRACKS", "Failed to remove track");
+				infobar.error(language.gettext('label_general_error'));
+			}
+		);
 		trackDiv.fadeOut('fast');
 	}
 
-    function makeHolder() {
-        holder = $('<div>', {id: 'unplayabletracks', class: 'holdingcell masonified2 helpfulholder noselection'}).appendTo('#uplfoldup');
-    }
+	function makeHolder() {
+		holder = $('<div>', {id: 'unplayabletracks', class: 'holdingcell masonified2 helpfulholder noselection'}).appendTo('#uplfoldup');
+	}
 
-    function getUnplayableTracks() {
-        if (player.canPlay('spotify')) {
-            holder.load('plugins/code/getunplayable.php');
-        } else {
-            holder.html('<h3>'+language.gettext('label_onlyspotify')+'</h3>');
-        }
-    }
+	function getUnplayableTracks() {
+		if (player.canPlay('spotify')) {
+			holder.load('plugins/code/getunplayable.php');
+		} else {
+			holder.html('<h3>'+language.gettext('label_onlyspotify')+'</h3>');
+		}
+	}
 
-    function searchForTrack(element) {
+	function searchForTrack(element) {
 		reqid++;
 		element.addClass('upsch_'+reqid).makeSpinner();
 		if (trawler == null) {
@@ -53,7 +53,7 @@ var unplayabletracks = function() {
 			]
 		}
 
-        databits[reqid].attributes = new Array();
+		databits[reqid].attributes = new Array();
 		var rat = element.parent().find('.rating-icon-small').first();
 		if (rat.hasClass('icon-1-stars')) {
 			debug.log("WISHLIST","1 star");
@@ -80,51 +80,51 @@ var unplayabletracks = function() {
 		trawler.findThisOne(databits[reqid].data[databits[reqid].index], unplayabletracks.updateDatabase);
 	}
 
-    function chooseNew(clickedElement) {
+	function chooseNew(clickedElement) {
 		var key = clickedElement.attr('romprkey');
 		$('#upsearch_'+key).find('.importbutton, .playbutton').fadeOut('fast');
 		clickedElement.next().fadeIn('fast');
 		clickedElement.prev().fadeIn('fast');
 	}
 
-    function importRow(element) {
+	function importRow(element) {
 		var key = element.parent().prev().attr("romprkey");
 		var index = element.parent().prev().attr('romprindex');
 		debug.log("WISHLIST","Importing",databits[key], databits[key].data[index]);
 		doSqlStuff(databits[key], databits[key].data[index], false);
 	}
 
-    function doSqlStuff(parentdata, data, callback) {
+	function doSqlStuff(parentdata, data, callback) {
 		data.action = 'add';
 		data.attributes = parentdata.attributes;
 		dbQueue.request([data], collectionHelper.updateCollectionDisplay,
-            function(rdata) {
-	            infobar.error(language.gettext('label_general_error'));
-	            debug.warn("WISHLIST","Failure");
-            }
+			function(rdata) {
+				infobar.error(language.gettext('label_general_error'));
+				debug.warn("WISHLIST","Failure");
+			}
 		);
 	}
 
-    return {
+	return {
 
-        open: function() {
-            if (upl == null) {
-                upl = browser.registerExtraPlugin("upl", language.gettext("label_unplayabletracks"), unplayabletracks, 'https://fatg3erman.github.io/RompR/Unplayable-Tracks');
-                makeHolder();
-                getUnplayableTracks();
-                upl.slideToggle('fast');
-	        	browser.goToPlugin("upl");
-            } else {
-                browser.goToPlugin('upl');
-            }
-        },
+		open: function() {
+			if (upl == null) {
+				upl = browser.registerExtraPlugin("upl", language.gettext("label_unplayabletracks"), unplayabletracks, 'https://fatg3erman.github.io/RompR/Unplayable-Tracks');
+				makeHolder();
+				getUnplayableTracks();
+				upl.slideToggle('fast');
+				browser.goToPlugin("upl");
+			} else {
+				browser.goToPlugin('upl');
+			}
+		},
 
-        close: function() {
-            holder.remove();
-            upl = null;
-        },
+		close: function() {
+			holder.remove();
+			upl = null;
+		},
 
-        handleClick: function(element, event) {
+		handleClick: function(element, event) {
 			if (element.hasClass('clickremdb')) {
 				removeTrackFromDb(element, 'deleteid');
 			} else if (element.hasClass('clicksearchtrack')) {
@@ -138,7 +138,7 @@ var unplayabletracks = function() {
 			}
 		},
 
-        updateDatabase: function(results) {
+		updateDatabase: function(results) {
 			debug.log("UNPLAYABLE","Found A Track",results);
 			databits[results[0].reqid].index = 0;
 			databits[results[0].reqid].data = results;
@@ -163,7 +163,7 @@ var unplayabletracks = function() {
 			resultsDiv.find('.invisible.playbutton').first().fadeIn('fast');
 		}
 
-    }
+	}
 
 }();
 

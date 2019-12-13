@@ -113,7 +113,7 @@ function doDbCollection($terms, $domains, $resultstype, &$collection) {
 		$filedata = array_merge(MPD_FILE_MODEL, $filedata);
 		logger::log("DB SEARCH", "Found :",$obj->Title,$obj->Uri,$obj->TTindex);
 		if ($resultstype == "tree") {
-            $collection->newItem($filedata);
+			$collection->newItem($filedata);
 		} else if ($resultstype == "RAW") {
 			$collection->newTrack($filedata);
 		} else {

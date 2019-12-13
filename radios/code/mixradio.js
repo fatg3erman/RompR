@@ -16,27 +16,27 @@ var mixRadio = function() {
 		metaHandlers.genericAction(
 			'getfaveartists',
 			function(data) {
-                if (data.length > 0) {
-                    debug.mark("MIX RADIO","Got Fave Artists",data);
-                    data.sort(randomsort);
-                    for (var i in data) {
-                    	if (data[i].name && data[i] !== "" && fartists.length <= 10) {
-                    		fartists.push({name: data[i].name});
-                    	}
-                	}
-                	searchForNextArtist();
-                } else {
-	                infobar.notify(language.gettext('label_gotnotracks'));
-                	debug.warn("MIX RADIO", "No Fave Artists Returned", data);
-                    playlist.radioManager.stop(null);
-                }
-            },
-            function(data) {
-            	debug.error("MIX RADIO", "Failed to get artists", data);
-                infobar.notify(language.gettext('label_gotnotracks'));
-                playlist.radioManager.stop(null);
-            }
-        );
+				if (data.length > 0) {
+					debug.mark("MIX RADIO","Got Fave Artists",data);
+					data.sort(randomsort);
+					for (var i in data) {
+						if (data[i].name && data[i] !== "" && fartists.length <= 10) {
+							fartists.push({name: data[i].name});
+						}
+					}
+					searchForNextArtist();
+				} else {
+					infobar.notify(language.gettext('label_gotnotracks'));
+					debug.warn("MIX RADIO", "No Fave Artists Returned", data);
+					playlist.radioManager.stop(null);
+				}
+			},
+			function(data) {
+				debug.error("MIX RADIO", "Failed to get artists", data);
+				infobar.notify(language.gettext('label_gotnotracks'));
+				playlist.radioManager.stop(null);
+			}
+		);
 	}
 
 	function searchForNextArtist() {
@@ -96,37 +96,37 @@ var mixRadio = function() {
 			searchForNextArtist();
 		},
 
-        gotArtists: function(data) {
-        	debug.shout("MIX RADIO","Got artist search results",data);
-        	var found = false;
-        	for (var i in data.artists.items) {
-        		check: {
-	        		for (var j in tuner.artists) {
-	        			if (tuner.artists[j].getName() == data.artists.items[i].name) {
-	        				debug.shout("MIX RADIO", "Ignoring artist",data.artists.items[i].name,"because it already exists");
-	        				found = true;
-	        				break check;
-	        			}
-	        		}
-	        		if (data.artists.items[i].name.toLowerCase() ==
-	        				fartists[idhunting].name.toLowerCase()) {
-	        			debug.shout("MIX RADIO","Found Spotify ID for artist",idhunting,fartists[idhunting].name);
-	        			tuner.newArtist(data.artists.items[i].name, data.artists.items[i].id, true);
-	    				found = true;
-	    				if (!going) {
-	    					going = true;
-	    					tuner.startSending();
-	    				}
-	    				break;
-	    			}
-    			}
-        	}
-        	if (!found) {
-        		debug.shout("MIX RADIO","Failed to find Spotify ID for artist",
-        			fartists[idhunting].name);
-        	}
-        	searchForNextArtist();
-        },
+		gotArtists: function(data) {
+			debug.shout("MIX RADIO","Got artist search results",data);
+			var found = false;
+			for (var i in data.artists.items) {
+				check: {
+					for (var j in tuner.artists) {
+						if (tuner.artists[j].getName() == data.artists.items[i].name) {
+							debug.shout("MIX RADIO", "Ignoring artist",data.artists.items[i].name,"because it already exists");
+							found = true;
+							break check;
+						}
+					}
+					if (data.artists.items[i].name.toLowerCase() ==
+							fartists[idhunting].name.toLowerCase()) {
+						debug.shout("MIX RADIO","Found Spotify ID for artist",idhunting,fartists[idhunting].name);
+						tuner.newArtist(data.artists.items[i].name, data.artists.items[i].id, true);
+						found = true;
+						if (!going) {
+							going = true;
+							tuner.startSending();
+						}
+						break;
+					}
+				}
+			}
+			if (!found) {
+				debug.shout("MIX RADIO","Failed to find Spotify ID for artist",
+					fartists[idhunting].name);
+			}
+			searchForNextArtist();
+		},
 	}
 }();
 

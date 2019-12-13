@@ -13,7 +13,7 @@ if ($d->get_data_to_string()) {
 	print json_encode(array('country' => $arse->region, 'countryCode' => $arse->country));
 } else {
 	logger::warn("GETLOCATION", "Request to geoip service failed with status ".$d->get_status());
-    print json_encode(array('country' => 'ERROR', 'countryCode' => 'HTTP Status : '.$d->get_status()));
+	print json_encode(array('country' => 'ERROR', 'countryCode' => 'HTTP Status : '.$d->get_status()));
 }
 ob_flush();
 ?>

@@ -6,8 +6,8 @@ var opmlImporter = function() {
 
 		open: function() {
 
-        	if (opmlv == null) {
-	        	opmlv = browser.registerExtraPlugin("opmlv", language.gettext("label_opmlimporter"), opmlImporter, 'https://fatg3erman.github.io/RompR/OPML-Importer');
+			if (opmlv == null) {
+				opmlv = browser.registerExtraPlugin("opmlv", language.gettext("label_opmlimporter"), opmlImporter, 'https://fatg3erman.github.io/RompR/OPML-Importer');
 				$('#opmlvfoldup').append(
 					'<div class="fullwidth brick_wide">'+
 					'<form id="opmluploader" action="plugins/code/opmluploader.php" method="post" enctype="multipart/form-data">'+
@@ -19,7 +19,7 @@ var opmlImporter = function() {
 					'</form>'+
 					'</div>'
 				);
-	            $('#opmlvfoldup').append('<div id="opmllist"></div>');
+				$('#opmlvfoldup').append('<div id="opmllist"></div>');
 				$('#opmlvfoldup').append('<h2>'+language.gettext('label_opmlexp')+'</h2>')
 				$('#opmlvfoldup').append(
 					'<div class="fullwidth brick_wide">'+
@@ -32,9 +32,9 @@ var opmlImporter = function() {
 				opmlv.slideToggle('fast', function() {
 					browser.goToPlugin("opmlv");
 				});
-	        } else {
-	        	browser.goToPlugin("opmlv");
-	        }
+			} else {
+				browser.goToPlugin("opmlv");
+			}
 
 		},
 
@@ -48,17 +48,17 @@ var opmlImporter = function() {
 
 		uploadFile: function() {
 			var formElement = document.getElementById('opmluploader');
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "plugins/code/opmluploader.php");
-            xhr.responseType = "json";
-            xhr.onload = function () {
-                if (xhr.status === 200) {
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", "plugins/code/opmluploader.php");
+			xhr.responseType = "json";
+			xhr.onload = function () {
+				if (xhr.status === 200) {
 					opmlImporter.gotData(xhr.response);
-                } else {
-                    infobar.error(language.gettext('label_general_error'));
-                }
-            };
-            xhr.send(new FormData(formElement));
+				} else {
+					infobar.error(language.gettext('label_general_error'));
+				}
+			};
+			xhr.send(new FormData(formElement));
 		},
 
 		gotData: function(data) {

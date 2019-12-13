@@ -58,17 +58,17 @@ function searchRadio() {
 					debug.log("SEARCHRADIO ARTIST",name,"is sending a track");
 					sent = true;
 					self.sending--;
-	        		player.controller.addTracks([t], playlist.radioManager.playbackStartPos(), null);
-	        		break;
-	        	}
-	        	if (!sent) {
-	        		debug.shout("SEARCHRADIO ARTIST",name,"doesn't have any tracks");
-	        		// For playlist to repopulate to make someone else have a go
-	        		playlist.repopulate();
-	        	}
-	        } else {
-	        	myself.populate();
-	        }
+					player.controller.addTracks([t], playlist.radioManager.playbackStartPos(), null);
+					break;
+				}
+				if (!sent) {
+					debug.shout("SEARCHRADIO ARTIST",name,"doesn't have any tracks");
+					// For playlist to repopulate to make someone else have a go
+					playlist.repopulate();
+				}
+			} else {
+				myself.populate();
+			}
 		}
 
 		this.getName = function() {

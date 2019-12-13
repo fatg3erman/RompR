@@ -10,11 +10,11 @@ if (file_exists('prefs/monitor')) {
 		$pos = ftell($fp);
 		// Loop backward util "\n" is found.
 		if ($pos > 0) {
-	    	fseek($fp, $pos--);
+			fseek($fp, $pos--);
 		}
 		while((($C = fgetc($fp)) != "\n") && ($pos > 0)) {
-	    	$LastLine = $C.$LastLine;
-	    	fseek($fp, $pos--);
+			$LastLine = $C.$LastLine;
+			fseek($fp, $pos--);
 		}
 		fclose($fp);
 	}

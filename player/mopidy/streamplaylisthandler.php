@@ -146,9 +146,9 @@ class xspfFile {
 		$this->image = $image;
 		$prettystream = $xml->info != null ? $xml->info : "";
 		$this->tracks = array();
-	    foreach($xml->trackList->track as $r) {
-	    	$this->tracks[] = array('TrackUri' => (string) $r->location, 'PrettyStream' => $prettystream);
-	    }
+		foreach($xml->trackList->track as $r) {
+			$this->tracks[] = array('TrackUri' => (string) $r->location, 'PrettyStream' => $prettystream);
+		}
 	}
 
 	public function updateDatabase() {

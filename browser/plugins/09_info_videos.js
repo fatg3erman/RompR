@@ -69,14 +69,14 @@ var info_videos = function() {
 				displaying = true;
 				self.track.doBrowserUpdate();
 				browser.Update(null, 'album', me, parent.nowplayingindex, { name: "",
-                    					link: "",
-                    					data: null
-                						}
+										link: "",
+										data: null
+										}
 				);
-                browser.Update(null, 'artist', me, parent.nowplayingindex, { name: "",
-                    					link: "",
-                    					data: null
-                						}
+				browser.Update(null, 'artist', me, parent.nowplayingindex, { name: "",
+										link: "",
+										data: null
+										}
 				);
 			}
 
@@ -101,17 +101,17 @@ var info_videos = function() {
 							debug.trace("VIDEOS PLUGIN",parent.nowplayingindex,"No data yet, trying again in 1 second");
 							retrytimer = setTimeout(self.track.populate, 2000);
 						}
-				    },
+					},
 
 					doBrowserUpdate: function() {
 						if (displaying && albummeta.discogs.album !== undefined && trackmeta.discogs.track !== undefined &&
 								(albummeta.discogs.album.error !== undefined ||	albummeta.discogs.album.master !== undefined) &&
 								(trackmeta.discogs.track.error !== undefined ||	trackmeta.discogs.track.master !== undefined)) {
 							debug.mark("VIDEOS PLUGIN",parent.nowplayingindex,"track was asked to display");
-			                browser.Update(null, 'track', me, parent.nowplayingindex, { name: artistmeta.name+' / '+trackmeta.name,
-			                    					link: "",
-			                    					data: getVideosHtml()
-			                						}
+							browser.Update(null, 'track', me, parent.nowplayingindex, { name: artistmeta.name+' / '+trackmeta.name,
+													link: "",
+													data: getVideosHtml()
+													}
 							);
 						}
 					}

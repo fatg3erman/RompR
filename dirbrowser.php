@@ -16,14 +16,14 @@ $prefix = (array_key_exists('prefix', $_REQUEST)) ? $_REQUEST['prefix'].'_' : "d
 
 $player = new fileCollector();
 if ($player->is_connected()) {
-    if ($path == "") {
-        // print '<div class="configtitle textcentre expand" style="margin-left:8px"><b>'.get_int_text('button_file_browser').'</b></div>';
-    } else {
-        directoryControlHeader($prefix);
-    }
+	if ($path == "") {
+		// print '<div class="configtitle textcentre expand" style="margin-left:8px"><b>'.get_int_text('button_file_browser').'</b></div>';
+	} else {
+		directoryControlHeader($prefix);
+	}
 	$player->doFileBrowse($path, $prefix);
 } else {
-    header("HTTP/1.1 500 Internal Server Error");
+	header("HTTP/1.1 500 Internal Server Error");
 }
 
 ?>

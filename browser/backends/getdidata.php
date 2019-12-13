@@ -7,14 +7,14 @@ include ("international.php");
 $uri = $_POST['url'];
 $params = array();
 foreach ($_POST as $k => $v) {
-    if ($k != 'url') {
-        $params[] = $k.'='.rawurlencode($v);
-    }
+	if ($k != 'url') {
+		$params[] = $k.'='.rawurlencode($v);
+	}
 }
 $params[] = 'key=qmBviLdmIHhnxXkzWLHR';
 $params[] = 'secret=KAtjSjsJJlfQjdCXUrnbyXAltXDfelaV';
 if (count($params) > 0) {
-    $uri .= "?".implode('&', $params);
+	$uri .= "?".implode('&', $params);
 }
 
 getCacheData($uri, 'discogs');
