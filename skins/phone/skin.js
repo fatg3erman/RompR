@@ -21,7 +21,7 @@ jQuery.fn.menuReveal = function(callback) {
 	} else {
 		this.findParentScroller().saveScrollPos();
 		this.show(0, function() {
-			uiHelper.postAlbumActions();
+			layoutProcessor.postAlbumMenu();
 			if (callback) {
 				callback();
 			}
@@ -137,10 +137,12 @@ jQuery.fn.saveScrollPos = function() {
 
 jQuery.fn.restoreScrollPos = function() {
 	var a = this.find('input[name="restorescrollpos"]');
-	this.css('overflow-y', 'scroll');
-	this.scrollTop(a.val());
-	this.children('.backmenu').css({position: ''});
-	a.remove();
+	if (a.length > 0) {
+		this.css('overflow-y', 'scroll');
+		this.scrollTop(a.val());
+		this.children('.backmenu').css({position: ''});
+		a.remove();
+	}
 }
 
 jQuery.fn.makeTagMenu = function(options) {
@@ -406,7 +408,7 @@ var layoutProcessor = function() {
 			collectionHelper.forceCollectionReload();
 		},
 
-		postAlbumActions: function(menu) {
+		postAlbumMenu: function(menu) {
 			$('.album_menu_image:visible').revealImage();
 		},
 
@@ -528,7 +530,6 @@ var layoutProcessor = function() {
 			$('#'+source).removeClass('invisible');
 			prefs.save({chooser: source});
 			layoutProcessor.adjustLayout();
-			uiHelper.postAlbumActions();
 		},
 
 		adjustLayout: function() {
@@ -603,14 +604,6 @@ var layoutProcessor = function() {
 			}
 		},
 
-		getArtistDestinationDiv: function(menutoopen) {
-			if (prefs.sortcollectionby == "artist") {
-				return $('.menu[name="'+menutoopen+'"]').parent();
-			} else {
-				return  $("#"+menutoopen);
-			}
-		},
-
 		initialise: function() {
 
 			if (!prefs.checkSet('clickmode')) {
@@ -678,7 +671,6 @@ var layoutProcessor = function() {
 					$(v.html).insertAfter($('#'+v.where).find('div.clickalbum[name="'+v.where+'"]'));
 					break;
 			}
-			uiHelper.postAlbumActions(displayer);
 		},
 
 		removeAlbum: function(key) {
@@ -690,25 +682,16 @@ var layoutProcessor = function() {
 		},
 
 		removeArtist: function(key) {
-			switch (prefs.sortcollectionby) {
-				case 'artist':
-					if ($('#'+key).length > 0) {
-						$('#'+key).findParentScroller().restoreScrollPos();
-						$('#'+key).remove();
-					}
-					layoutProcessor.findArtistDisplayer(key).remove();
-					break;
-
-				case 'albumbyartist':
-					$('#'+key).remove();
-					break;
-
+			if ($('#'+key).length > 0) {
+				$('#'+key).findParentScroller().restoreScrollPos();
+				$('#'+key).remove();
 			}
+			layoutProcessor.findArtistDisplayer(key).remove();
 		},
 
 		albumBrowsed: function(menutoopen, data) {
 			$('#'+menutoopen).html(data);
-			uiHelper.postAlbumActions();
+			layoutProcessor.postAlbumMenu();
 		},
 
 		fixupArtistDiv: function(jq, name) {
@@ -739,9 +722,7 @@ var layoutProcessor = function() {
 				$('.menuitem[name="podcast_'+index+'"]').remove();
 				$('#podcast_'+index).remove();
 				$("#fruitbat").html(data);
-				infobar.notify(language.gettext('label_subscribed'));
 				podcasts.doNewCount();
-				uiHelper.postAlbumActions();
 			});
 		},
 

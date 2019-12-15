@@ -12,7 +12,7 @@ $(document).ready(function() {
 	var ws = getWindowSize();
 	if ((ws.x < 600 && ws.x < ws.y) || (ws.x < 800 && ws.x > ws.y)) {
 		setCookie('skin','phone',3650);
-	} else if ((ws.x < 1024 && ws.x < ws.y) || (ws.x < 600 && ws.x > ws.y)) {
+	} else if ((ws.x < 1024 && ws.x > ws.y) || (ws.x < 768 && ws.x < ws.y)) {
 		setCookie('skin','tablet',3650);
 	} else {
 		setCookie('skin','desktop',3650);

@@ -800,9 +800,9 @@ function format_episode(&$y, &$item, $pm) {
 	}
 	print '<div class="item podcastitem">';
 	if ($item->Downloaded == 1 && $y->Version > 1) {
-		print '<div class="containerbox clicktrack playable draggable dropdown-container" name="'.rawurlencode(get_base_url().$item->Localfilename).'">';
+		print '<div class="containerbox podcasttrack clicktrack playable draggable dropdown-container" name="'.rawurlencode(get_base_url().$item->Localfilename).'">';
 	} else {
-		print '<div class="containerbox clicktrack playable draggable dropdown-container" name="'.rawurlencode($item->Link).'">';
+		print '<div class="containerbox podcasttrack clicktrack playable draggable dropdown-container" name="'.rawurlencode($item->Link).'">';
 	}
 	if ($y->Subscribed == 1) {
 		if ($item->New == 1) {

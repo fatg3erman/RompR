@@ -18,7 +18,7 @@ var icecastPlugin = {
 		$('i[name="icecastlist"]').stopSpinner();
 		$('[name="cornwallis"]').on('click', icecastPlugin.iceSearch);
 		$("#icecastlist").removeClass('notfilled');
-		uiHelper.postAlbumActions();
+		uiHelper.doThingsAfterDisplayingListOfAlbums($("#icecastlist"));
 	},
 
 	iceSearch: function() {

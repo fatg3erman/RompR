@@ -655,21 +655,12 @@ function domainHtml($uri) {
 
 function artistNameHtml($obj) {
 	global $prefs;
-	$h = '';
-	if ($prefs['sortcollectionby'] == 'albumbyartist' && $obj['Artistname']) {
-		$h .= '<div class="expand">'.$obj['Albumname'];
+	$h = '<div class="expand">'.$obj['Albumname'];
+	if ($obj['Year'] && $prefs['sortbydate']) {
+		$h .= ' <span class="notbold">('.$obj['Year'].')</span>';
+	}
+	if ($obj['Artistname']) {
 		$h .= '<br><span class="notbold">'.$obj['Artistname'].'</span>';
-		if ($obj['Year'] && $prefs['sortbydate']) {
-			$h .= ' <span class="notbold">('.$obj['Year'].')</span>';
-		}
-	} else {
-		$h .= '<div class="expand">'.$obj['Albumname'];
-		if ($obj['Year'] && $prefs['sortbydate']) {
-			$h .= ' <span class="notbold">('.$obj['Year'].')</span>';
-		}
-		if ($obj['Artistname']) {
-			$h .= '<br><span class="notbold">'.$obj['Artistname'].'</span>';
-		}
 	}
 	return $h;
 }

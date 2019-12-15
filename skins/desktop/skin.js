@@ -317,7 +317,7 @@ var layoutProcessor = function() {
 			var artistmenu = prefix+'artist'+details.artistindex;
 			var albummenu = prefix+"album"+details.albumindex;
 			setTimeout(function() {
-				if (prefs.sortcollectionby == "artist" && $('i[name="'+artistmenu+'"]').isClosed()) {
+				if ($('i[name="'+artistmenu+'"]').isClosed()) {
 					doAlbumMenu(null, $('i[name="'+artistmenu+'"]'), function() {
 						if ($('i[name="'+albummenu+'"]').isClosed()) {
 							doAlbumMenu(null, $('i[name="'+albummenu+'"]'), function() {
@@ -357,14 +357,6 @@ var layoutProcessor = function() {
 					var c = 'dropmenu notfilled';
 				}
 				var t = $('<div>', {id: name, class: c}).insertAfter(element.parent());
-			}
-		},
-
-		getArtistDestinationDiv: function(menutoopen) {
-			if (prefs.sortcollectionby == "artist") {
-				return $("#"+menutoopen).parent();
-			} else {
-				return $("#"+menutoopen);
 			}
 		},
 

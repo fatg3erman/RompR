@@ -740,6 +740,11 @@ function update_image_db($key, $found, $imagefile) {
 	}
 }
 
+function set_image_for_album($albumindex, $image) {
+	logger::log('MYSQL', 'Setting image for album',$albumindex,'to',$image);
+	sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Image = ?, Searched = 1 WHERE Albumindex = ?", $image, $albumindex);
+}
+
 function track_is_hidden($ttid) {
 	$h = simple_query('Hidden', 'Tracktable', 'TTindex', $ttid, 0);
 	return ($h != 0) ? true : false;
@@ -786,7 +791,6 @@ function get_album_tracks_from_database($index, $cmd, $why) {
 	logger::log('SQL', 'Getting tracks for album',$why,$index,$cmd);
 	$sorter = 'sortby_'.$prefs['sortcollectionby'];
 	$lister = new $sorter($why.'album'.$index);
-	$lister->set_who(getArray($index));
 	$result = $lister->track_sort_query();
 	$cmd = ($cmd === null) ? 'add' : $cmd;
 	foreach($result as $a) {
@@ -1124,6 +1128,7 @@ function getItemsToAdd($which, $cmd = null) {
 }
 
 function playAlbumFromTrack($uri) {
+	// Used when CD player mode is on.
 	global $prefs;
 	$result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, "SELECT Albumindex, TrackNo, Disc, isSearchResult, isAudiobook FROM Tracktable WHERE Uri = ?", $uri);
 	$album = array_shift($result);
@@ -1142,6 +1147,11 @@ function playAlbumFromTrack($uri) {
 			$count++;
 		}
 		$retval = array_slice($alltracks, $count);
+	} else {
+		// If we didn't find the track in the database, that'll be because it's
+		// come from eg a spotifyAlbumThing or something like that (the JS doesn't discriminate)
+		// so in this case just add the track
+		$retval = array('add "'.$uri.'"');
 	}
 	return $retval;
 }

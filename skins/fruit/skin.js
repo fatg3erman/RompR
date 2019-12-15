@@ -25,6 +25,30 @@ jQuery.fn.animatePanel = function(options) {
 	);
 }
 
+jQuery.fn.menuReveal = function(callback) {
+	var id = this.prop('id');
+	var element = $('i[name="'+id+'"]');
+	layoutProcessor.postAlbumMenu(element, this);
+	this.slideToggle('fast',function() {
+		if (callback) {
+			callback();
+		}
+	});
+	return this;
+}
+
+jQuery.fn.menuHide = function(callback) {
+	var id = this.prop('id');
+	var element = $('i[name="'+id+'"]');
+	layoutProcessor.postAlbumMenu(element, this);
+	this.slideToggle('fast',function() {
+		if (callback) {
+			callback();
+		}
+	});
+	return this;
+}
+
 function showHistory() {
 
 }
@@ -287,7 +311,7 @@ var layoutProcessor = function() {
 			var artistmenu = prefix+'artist'+details.artistindex;
 			var albummenu = prefix+"album"+details.albumindex;
 			setTimeout(function() {
-				if (prefs.sortcollectionby == "artist" && $('i[name="'+artistmenu+'"]').isClosed()) {
+				if ($('i[name="'+artistmenu+'"]').isClosed()) {
 					doAlbumMenu(null, $('i[name="'+artistmenu+'"]'), function() {
 						if ($('i[name="'+albummenu+'"]').isClosed()) {
 							doAlbumMenu(null, $('i[name="'+albummenu+'"]'), function() {
@@ -378,12 +402,12 @@ var layoutProcessor = function() {
 			}
 		},
 
-		postAlbumMenu: function(element) {
+		postAlbumMenu: function(element, dropdown) {
 			debug.trace("SKIN","Post Album Menu Thing",element.next());
 			if (element.next().hasClass('smallcover')) {
 				var imgsrc = element.next().children('img').attr('src');
 				var aa = new albumart_translator(imgsrc);
-				if (element.isClosed()) {
+				if (dropdown.is(':visible')) {
 					if (imgsrc) {
 						element.next().children('img').attr('src', aa.getSize('small'));
 					}
@@ -412,14 +436,6 @@ var layoutProcessor = function() {
 					var c = 'dropmenu notfilled';
 				}
 				var t = $('<div>', {id: name, class: c}).insertAfter(element.parent());
-			}
-		},
-
-		getArtistDestinationDiv: function(menutoopen) {
-			if (prefs.sortcollectionby == "artist") {
-				return $("#"+menutoopen).parent();
-			} else {
-				return $("#"+menutoopen);
 			}
 		},
 

@@ -122,7 +122,7 @@ var collectionHelper = function() {
 				}
 				data = null;
 				collectionHelper.scootTheAlbums($("#collection"));
-				uiHelper.postAlbumActions($('#collection'));
+				uiHelper.doThingsAfterDisplayingListOfAlbums($('#collection'));
 				collectionHelper.enableCollectionUpdates();
 				loadAudiobooks();
 			})
@@ -153,7 +153,12 @@ var collectionHelper = function() {
 		if (prefs.hide_audiobooklist) {
 			return false;
 		}
-		$('#audiobooks').load('albums.php?item='+collectionHelper.collectionKey('z'));
+		$('#audiobooks').load(
+			'albums.php?item='+collectionHelper.collectionKey('z'),
+			function() {
+				uiHelper.doThingsAfterDisplayingListOfAlbums($('#audiobooks'));
+			}
+		);
 	}
 
 	function loadFileBrowser() {
@@ -232,6 +237,7 @@ var collectionHelper = function() {
 					// to remove and replace the banner when that sort option is used, because we only insertAfter an album ID
 					var x = uiHelper.findArtistDisplayer('aartist'+v.id);
 					if (x.length == 0) {
+						debug.log('UIHELPER', 'MODIFIED', 'aartist'+v.id);
 						uiHelper.insertArtist(v);
 					}
 				});

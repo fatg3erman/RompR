@@ -580,6 +580,11 @@ var playlist = function() {
 						});
 					} else if ($(element).hasClass('smartradio')) {
 						playlist.radioManager.loadFromUiElement($(element));
+					} else if ($(element).hasClass('podcasttrack')) {
+						tracks.push({
+							type: "podcasttrack",
+							name: decodeURIComponent(uri)
+						});
 					} else if ($(element).hasClass('podcastresume')) {
 						var is_already_in_playlist = playlist.findIdByUri(decodeURIComponent(uri));
 						if (is_already_in_playlist !== false) {

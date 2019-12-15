@@ -242,7 +242,6 @@ function doMenu(event, element) {
 			menuClosers[getMenuType(menutoopen)](getMenuIndex(menutoopen));
 		}
 	}
-	uiHelper.postAlbumMenu(element);
 	if (menutoopen == 'advsearchoptions') {
 		prefs.save({advanced_search_open: element.isOpen()});
 	}
@@ -293,10 +292,10 @@ function doAlbumMenu(event, element, callback) {
 					} else if (self.find('input.expandartist').length > 0) {
 						getAllTracksForArtist(element, menutoopen)
 					}
+					uiHelper.makeResumeBar(self);
 					if (prefs.clickmode == 'single') {
 						self.find('.invisibleicon').removeClass('invisibleicon');
 					}
-					uiHelper.makeResumeBar(self);
 				});
 			});
 		} else {
@@ -309,7 +308,6 @@ function doAlbumMenu(event, element, callback) {
 		$('#'+menutoopen).menuHide(callback);
 		element.toggleClosed();
 	}
-	uiHelper.postAlbumMenu(element);
 	return false;
 }
 
@@ -325,7 +323,6 @@ function getAllTracksForAlbum(element, menutoopen) {
 		element.stopSpinner();
 		infobar.markCurrentTrack();
 		uiHelper.albumBrowsed(menutoopen, data);
-		collectionHelper.scootTheAlbums($("#"+menutoopen));
 	})
 	.fail(function(data) {
 		debug.error("CLICKFUNCTIONS", "Got NO data for ",menutoopen);
@@ -342,9 +339,9 @@ function getAllTracksForArtist(element, menutoopen) {
 	})
 	.done(function(data) {
 		element.stopSpinner();
-		var spunk = layoutProcessor.getArtistDestinationDiv(menutoopen);
+		var spunk = uiHelper.getArtistDestinationDiv(menutoopen);
 		spunk.html(data);
-		uiHelper.postAlbumActions();
+		uiHelper.doThingsAfterDisplayingListOfAlbums(spunk);
 		collectionHelper.scootTheAlbums(spunk);
 		infobar.markCurrentTrack();
 		uiHelper.fixupArtistDiv(spunk, menutoopen);
@@ -375,7 +372,6 @@ var playlistManager = function() {
 			$('#'+t).load(
 				playlistLoadString(playlist), function() {
 					infobar.markCurrentTrack();
-					uiHelper.postAlbumMenu($('[name="'+t+'"]'));
 					if (x !== false) uiHelper.postPlaylistTarget(t, x);
 				}
 			);
@@ -508,7 +504,6 @@ function doFileMenu(event, element) {
 				$(this).menuReveal();
 				infobar.markCurrentTrack();
 				element.stopSpinner();
-				uiHelper.postAlbumMenu(element);
 			});
 		} else {
 			$('#'+menutoopen).menuReveal();
@@ -517,7 +512,6 @@ function doFileMenu(event, element) {
 		debug.log("UI","Hiding Menu");
 		$('#'+menutoopen).menuHide(function() {
 			element.toggleClosed();
-			uiHelper.postAlbumMenu(element);
 			// Remove this dropdown - this is so that when we next open it
 			// mopidy will rescan it. This makes things like soundcloud and spotify update
 			// without us having to refresh the window

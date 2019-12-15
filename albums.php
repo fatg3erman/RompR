@@ -180,9 +180,9 @@ function browse_album() {
 		logger::trace("ALBUMS", "Ouputting Podcast ID ".$podid);
 		outputPodcast($podid, false);
 	} else {
-		if (preg_match('/^.+?:artist:/', $albumlink)) {
-			remove_album_from_database($who);
-		}
+		// if (preg_match('/^.+?:artist:/', $albumlink)) {
+		// 	remove_album_from_database($who);
+		// }
 		$player = new $PLAYER_TYPE();
 		$collection = new musicCollection();
 		$cmd = 'find file "'.$albumlink.'"';
@@ -194,11 +194,20 @@ function browse_album() {
 		remove_findtracks();
 		if (preg_match('/^.+?:album:/', $albumlink)) {
 			// Just occasionally, the spotify album originally returned by search has an incorrect AlbumArtist
-			// When we browse the album the new tracks therefore get added to a new album, while the original tracks
-			// remain attached to the old one. This is where we use do_tracks_from_database with an array of albumids
-			// which joins them together into a virtual album, with the track ordering correct
-			$lister = new $sorter($why.'albumroot');
-			$lister->set_who(find_justadded_albums());
+			// When we browse the album the new tracks therefore get added to a new album.
+			// In this case we remove the old album and set the Albumindex of the new one to the Albumindex of the old one
+			// (otherwise the GUI doesn't work)
+			$lister = new $sorter($why.'album'.$who);
+			$a = find_justadded_albums();
+			if (is_array($a) && count($a) > 0 && $a[0] != $who) {
+				logger::log('BROWSEALBUM', 'New album',$a[0],'was created. Setting it to',$who);
+				if ($ad[0]['Image'] != null) {
+					set_image_for_album($a[0], $ad[0]['Image']);
+				}
+				remove_album_from_database($who);
+				generic_sql_query('UPDATE Albumtable SET Albumindex = '.$who.' WHERE Albumindex = '.$a[0]);
+				generic_sql_query('UPDATE Tracktable SET Albumindex = '.$who.' WHERE Albumindex = '.$a[0]);
+			}
 			print $lister->output_track_list(true);
 		} else {
 			$artistarray = find_justadded_artists();

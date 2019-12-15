@@ -19,7 +19,7 @@ jQuery.fn.menuReveal = function(callback) {
 		case holder.hasClass('playlist'):
 		case holder.hasClass('userplaylist'):
 			// Albums and Playlists
-			parent.addClass('tagholder_wide dropshadow').css({width: '98%'});
+			parent.addClass('tagholder_wide dropshadow').insertDummySpacers();
 			holder.find('div.albumthing').detach().prependTo(self).find('.collectionicon').hide();
 			holder.find('div.dropdown-container.configtitle').remove();
 			var tt = self.find('input.albumtime').val();
@@ -30,14 +30,14 @@ jQuery.fn.menuReveal = function(callback) {
 
 		case holder.hasClass('podcast'):
 			// Podcasts
-			parent.addClass('tagholder_wide dropshadow').css({width: '98%'});
+			parent.addClass('tagholder_wide dropshadow').insertDummySpacers();
 			parent.find('div.albumthing').detach().appendTo(parent);
 			self.detach().addClass('minwidthed2').appendTo(parent);
 			break;
 
 		case holder.hasClass('radiochannel'):
 			// Radio Stations
-			parent.addClass('tagholder_wide dropshadow').css({width: '98%'});
+			parent.addClass('tagholder_wide dropshadow').insertDummySpacers();
 			self.detach().appendTo(parent);
 			holder.find('div.albumthing').detach().prependTo(self);
 			break;
@@ -69,10 +69,51 @@ jQuery.fn.menuReveal = function(callback) {
 	self.css({display: displaymode});
 	if (callback) callback.call(self);
 	if (adjustboxes) {
-		layoutProcessor.adjustBoxSizes();
+		// layoutProcessor.adjustBoxSizes();
+		$(this).appendDummySpacers();
 		layoutProcessor.scrollSourcesTo(parent);
+		layoutProcessor.postAlbumMenu(holder);
 	}
 	return self;
+}
+
+// The number 4 in the following functions arises because we have
+// the css set to 20%
+
+// Insert empty collectionitem divs at end of the box, to make sure
+// any rows that aren't full keep the widths the same as the other rows.
+
+jQuery.fn.appendDummySpacers = function() {
+	return this.each(function() {
+		var lastitem = $(this).children('.collectionitem').last()
+		if (!lastitem.hasClass('collection_spacer')) {
+			for (var i = 0; i < 4; i++) {
+				$('<div>',  {class: "collectionitem collection_spacer"}).insertAfter(lastitem);
+			}
+		}
+		$(this).find('.configtitle.brick_wide').insertDummySpacers();
+	});
+}
+
+// Insert empty collectionitem divs before the one we're opening to prevent the
+// previous ones from expanding.
+
+jQuery.fn.insertDummySpacers = function() {
+	return this.each(function() {
+		if (!$(this).prev().hasClass('collection_spacer')) {
+			for (var i = 0; i < 4; i++) {
+				$('<div>',  {class: "collectionitem collection_spacer"}).insertBefore($(this));
+			}
+		}
+	});
+}
+
+jQuery.fn.removeDummySpacers = function() {
+	return this.each(function() {
+		while ($(this).prev().hasClass('collection_spacer')) {
+			$(this).prev().remove();
+		}
+	});
 }
 
 jQuery.fn.menuHide = function(callback) {
@@ -88,6 +129,7 @@ jQuery.fn.menuHide = function(callback) {
 		case holder.hasClass('userplaylist'):
 			// Albums and Playlists
 			parent.removeClass('tagholder_wide dropshadow');
+			parent.removeDummySpacers();
 			var monkey = parent.find('.helpfulalbum.expand');
 			self.find('div.albumthing').detach().appendTo(monkey).find('.collectionicon').show();
 			self.remove();
@@ -96,14 +138,14 @@ jQuery.fn.menuHide = function(callback) {
 		case holder.hasClass('podcast'):
 			// Podcasts
 			self.prev('div.albumthing').detach().appendTo(self.prev().children('.helpfulalbum').first());
-			parent.removeClass('tagholder_wide dropshadow');
+			parent.removeClass('tagholder_wide dropshadow').removeDummySpacers();
 			self.removeClass('minwidthed2').css({display: 'none'});
 			break;
 
 		case holder.hasClass('radiochannel'):
 			// Radio Stations
 			var monkey = parent.find('.helpfulalbum.expand');
-			parent.removeClass('tagholder_wide dropshadow');
+			parent.removeClass('tagholder_wide dropshadow').removeDummySpacers();
 			parent.find('div.albumthing').detach().appendTo(monkey)
 			self.css({display: 'none'});
 			break;
@@ -121,7 +163,7 @@ jQuery.fn.menuHide = function(callback) {
 	}
 	if (callback) callback.call(self);
 	if (adjustboxes) {
-		layoutProcessor.adjustBoxSizes();
+		// layoutProcessor.adjustBoxSizes();
 		layoutProcessor.scrollSourcesTo(parent);
 	}
 	return self;
@@ -187,13 +229,13 @@ jQuery.fn.stopSpinner = function() {
 	});
 }
 
-jQuery.fn.adjustBoxSizes = function() {
-	this.each(function() {
-		var h = $(this);
-		var width = calcPercentWidth(h, '.collectionitem', 220, h.width());
-		h.find(".collectionitem").not('.tagholder_wide').css('width', width.toString()+'%');
-	});
-}
+// jQuery.fn.adjustBoxSizes = function() {
+// 	this.each(function() {
+// 		var h = $(this);
+// 		var width = calcPercentWidth(h, '.collectionitem', 220, h.width());
+// 		h.find(".collectionitem").not('.tagholder_wide').css('width', width.toString()+'%');
+// 	});
+// }
 
 jQuery.fn.animatePanel = function(options) {
 	var settings = $.extend({},options);
@@ -220,22 +262,22 @@ var layoutProcessor = function() {
 		debug.log("UI","Showing Panel",source);
 		$('#'+source).show(0, function() {
 			$('.collectionpanel.'+source).not('.closed').show(0, function() {
-				layoutProcessor.adjustBoxSizes();
+				// layoutProcessor.adjustBoxSizes();
 			});
 			switch (source) {
 				case 'pluginplaylistslist':
-					layoutProcessor.adjustBoxSizes();
+					// layoutProcessor.adjustBoxSizes();
 					break;
 
 				case 'albumlist':
 				case 'audiobooklist':
-					if (prefs.sortcollectionby != 'artist') {
-						layoutProcessor.adjustBoxSizes();
-					}
+					// if (prefs.sortcollectionby != 'artist') {
+					// 	layoutProcessor.adjustBoxSizes();
+					// }
 					break;
 
 				case 'playlistslist':
-					layoutProcessor.adjustBoxSizes();
+					// layoutProcessor.adjustBoxSizes();
 					break;
 
 				case 'podcastslist':
@@ -253,7 +295,7 @@ var layoutProcessor = function() {
 
 				case 'pluginholder':
 					browser.rePoint();
-					layoutProcessor.adjustBoxSizes();
+					// layoutProcessor.adjustBoxSizes();
 					break;
 			}
 		});
@@ -264,7 +306,8 @@ var layoutProcessor = function() {
 			$('#fruitbat').removeClass('fullwidth').addClass('containerbox wrap');
 			$('#podcast_search').removeClass('fullwidth').addClass('containerbox wrap');
 		}
-		layoutProcessor.adjustBoxSizes();
+		// layoutProcessor.adjustBoxSizes();
+		$('#fruitbat').appendDummySpacers();
 	}
 
 	function setBottomPanelWidths() {
@@ -308,6 +351,17 @@ var layoutProcessor = function() {
 		setDraggable('#'+name);
 	}
 
+	function findParentScroller(jq) {
+		var p = jq.parent();
+		while (!p.is('body') && !p.hasClass('mCustomScrollbar')) {
+			p = p.parent();
+		}
+		if (p.is('body')) {
+			return false;
+		}
+		return p;
+	}
+
 	return {
 
 		supportsDragDrop: true,
@@ -320,44 +374,44 @@ var layoutProcessor = function() {
 			$('.collectionpanel.albumlist').remove();
 			$('.collectionpanel.searcher').remove();
 			$('.collectionpanel.audiobooklist').remove();
-			switch (prefs.sortcollectionby) {
-				case 'artist':
-					if ($('#collection').hasClass('containerbox')) {
-						$('.collectionpanel').hide(0);
-						$('#collection').empty().detach()
-							.removeClass('containerbox wrap collectionpanel').css('display', '')
-							.addClass('noborder')
-							.appendTo($('#albumlist'));
-						$('#searchresultholder').detach().empty()
-							.removeClass('containerbox wrap collectionpanel').css('display', '')
-							.addClass('noborder')
-							.appendTo($('#searcher'));
-						$('#audiobooks').detach().empty()
-							.removeClass('containerbox wrap collectionpanel').css('display', '')
-							.addClass('noborder')
-							.appendTo($('#audiobooklist'));
-						$('#collection, #searchresultholder, #audiobooks').off('click').off('dblclick');
-					}
-					break;
-
-				case 'album':
-				case 'albumbyartist':
-					if (!$('#collection').hasClass('containerbox')) {
-						$('.collectionpanel').hide(0);
-						$('#collection').empty().detach()
-							.removeClass('noborder')
-							.addClass('containerbox wrap collectionpanel').css('display', '')
-							.insertBefore($('#infoholder'));
-						$('#searchresultholder').detach().empty()
-							.removeClass('noborder')
-							.addClass('containerbox wrap collectionpanel').css('display', '')
-							.insertBefore($('#infoholder'));
-						$('#audiobooks').empty().detach()
-							.removeClass('noborder')
-							.addClass('containerbox wrap collectionpanel').css('display', '')
-							.insertBefore($('#infoholder'));
-					}
-					break;
+			// To work with this skin, sortcollectionby should begin with 'album'
+			// if there is to be no list in the left-hand pane (where the artists list normally is)
+			if (prefs.sortcollectionby.substr(0,5) == 'album') {
+				if (!$('#collection').hasClass('containerbox')) {
+					$('.collectionpanel').hide(0);
+					$('#collection').empty().detach()
+						.removeClass('noborder')
+						.addClass('containerbox wrap collectionpanel').css('display', '')
+						.insertBefore($('#infoholder'));
+					$('#searchresultholder').detach().empty()
+						.removeClass('noborder')
+						.addClass('containerbox wrap collectionpanel').css('display', '')
+						.insertBefore($('#infoholder'));
+					$('#audiobooks').empty().detach()
+						.removeClass('noborder')
+						.addClass('containerbox wrap collectionpanel').css('display', '')
+						.insertBefore($('#infoholder'));
+				}
+			} else {
+				if ($('#collection').hasClass('containerbox')) {
+					$('.collectionpanel').hide(0);
+					$('#collection').empty().detach()
+						.removeClass('containerbox wrap collectionpanel').css('display', '')
+						.addClass('noborder')
+						.appendTo($('#albumlist'));
+					// We must be on the collection to change this option, but #collection may be hidden,
+					// so make sure we show it
+					$('#collection').show();
+					$('#searchresultholder').detach().empty()
+						.removeClass('containerbox wrap collectionpanel').css('display', '')
+						.addClass('noborder')
+						.appendTo($('#searcher'));
+					$('#audiobooks').detach().empty()
+						.removeClass('containerbox wrap collectionpanel').css('display', '')
+						.addClass('noborder')
+						.appendTo($('#audiobooklist'));
+					$('#collection, #searchresultholder, #audiobooks').off('click').off('dblclick');
+				}
 			}
 		},
 
@@ -366,19 +420,20 @@ var layoutProcessor = function() {
 			collectionHelper.forceCollectionReload();
 		},
 
-		adjustBoxSizes: function() {
-			debug.log("UI", "adjusting Box Sizes");
-			$('.collectionpanel:visible').adjustBoxSizes();
-			$('#fruitbat:visible').adjustBoxSizes();
-			$('#podcast_search:visible').adjustBoxSizes();
-			$('#infopane #collection:visible').adjustBoxSizes();
-			$('#infopane #searchresultholder:visible').adjustBoxSizes();
-			$('#storedplaylists:visible').adjustBoxSizes();
-			$('#pluginplaylistslist:visible').adjustBoxSizes();
-		},
+		// adjustBoxSizes: function() {
+			// debug.log("UI", "adjusting Box Sizes");
+			// $('.collectionpanel:visible').adjustBoxSizes();
+			// $('#fruitbat:visible').adjustBoxSizes();
+			// $('#podcast_search:visible').adjustBoxSizes();
+			// $('#infopane #collection:visible').adjustBoxSizes();
+			// $('#infopane #searchresultholder:visible').adjustBoxSizes();
+			// $('#storedplaylists:visible').adjustBoxSizes();
+			// $('#pluginplaylistslist:visible').adjustBoxSizes();
+		// },
 
-		postAlbumActions: function(panel) {
-			layoutProcessor.adjustBoxSizes();
+		doThingsAfterDisplayingListOfAlbums: function(panel) {
+			panel.appendDummySpacers();
+			// layoutProcessor.adjustBoxSizes();
 		},
 
 		afterHistory: function() {
@@ -511,16 +566,14 @@ var layoutProcessor = function() {
 		scrollCollectionTo: function(jq) {
 			if (jq.length > 0) {
 				debug.log("LAYOUT","Scrolling Collection To",jq);
-				if (prefs.sortcollectionby == 'artist') {
-					$("#sources").mCustomScrollbar('update').mCustomScrollbar('scrollTo', jq,
+				scroller = findParentScroller(jq);
+				if (scroller !== false) {
+					scroller.mCustomScrollbar('update').mCustomScrollbar('scrollTo', jq,
 						{ scrollInertia: 1000,
 						  scrollEasing: 'easeOut' }
 					);
 				} else {
-					$("#infopane").mCustomScrollbar('update').mCustomScrollbar('scrollTo', jq,
-						{ scrollInertia: 1000,
-						  scrollEasing: 'easeOut' }
-					);
+					debug.warn('LAYOUT', 'Was asked to scroll to something without a parent scroller');
 				}
 			} else {
 				debug.warn("LAYOUT","Was asked to scroll collection to something non-existent",2);
@@ -626,7 +679,7 @@ var layoutProcessor = function() {
 			browser.rePoint();
 			$('.topdropmenu').fanoogleMenus();
 			setBottomPanelWidths();
-			layoutProcessor.adjustBoxSizes();
+			// layoutProcessor.adjustBoxSizes();
 		},
 
 		displayCollectionInsert: function(details) {
@@ -642,17 +695,8 @@ var layoutProcessor = function() {
 				prefix = 'a';
 			}
 			if (prefix !== null) {
-				uiHelper.postAlbumActions();
-				switch (prefs.sortcollectionby) {
-					case 'artist':
-						layoutProcessor.scrollCollectionTo($('[name="'+prefix+'artist'+details.artistindex+'"]'));
-						break;
-
-					default:
-						layoutProcessor.scrollCollectionTo($('[name="'+prefix+'album'+details.albumindex+'"]'));
-						break;
-
-				}
+				layoutProcessor.scrollCollectionTo($('[name="'+prefix+'artist'+details.artistindex+'"]'));
+				layoutProcessor.scrollCollectionTo($('[name="'+prefix+'album'+details.albumindex+'"]'));
 			}
 		},
 
@@ -763,15 +807,7 @@ var layoutProcessor = function() {
 		},
 
 		getArtistDestinationDiv: function(menutoopen) {
-			switch (prefs.sortcollectionby) {
-				case 'artist':
-					return $("#"+menutoopen).parent().parent().parent();
-					break;
-
-				default:
-					return $('[name="'+menutoopen+'"]').parent();
-					break;
-			}
+			return $('[name="'+menutoopen+'"]').parent();
 		},
 
 		setupPersonalRadio: function() {
@@ -784,8 +820,13 @@ var layoutProcessor = function() {
 		},
 
 		setupPersonalRadioAdditions: function() {
+			$('#pluginplaylists_spotify .collection_spacer').remove();
 			$('#pluginplaylistslist [name^="spotiCrazyRadio"]').addClass('vertical helpfulalbum').wrap('<div class="collectionitem fixed"></div>');
-			layoutProcessor.adjustBoxSizes();
+			// We do this here simply because this function gets called second
+			$('#pluginplaylists').appendDummySpacers();
+			$('#pluginplaylists_spotify').appendDummySpacers();
+			$('#pluginplaylists_everywhere').appendDummySpacers();
+			// layoutProcessor.adjustBoxSizes();
 		},
 
 		initialise: function() {
@@ -842,7 +883,6 @@ var layoutProcessor = function() {
 
 			$(".stayopen").not('.dontstealmyclicks').on('click', function(ev) {ev.stopPropagation() });
 
-			// $(".enter").on('keyup',  onKeyUp );
 			$.each(my_scrollers, function(index, value) {
 				layoutProcessor.addCustomScrollBar(value);
 			});
@@ -903,6 +943,11 @@ var layoutProcessor = function() {
 			$(document).on('click', '.clickaddtoplaylist', function() {
 				$('#addtoplaylistmenu').parent().parent().parent().hide();
 			});
+
+			$(document).on('ready', '.collectionpanel', function() {
+				debug.shout('Weeee', 'Woooo');
+			});
+
 		},
 
 		// Optional Additions
@@ -919,18 +964,59 @@ var layoutProcessor = function() {
 			return $('div.menu[name="'+key+'"]');
 		},
 
+		removeArtist: function(v) {
+			var banner = $("#"+v);
+			if (banner.length > 0) {
+				// albumbyartist sorting
+				banner.removeDummySpacers();
+				banner.remove();
+			} else {
+				layoutProcessor.findArtistDisplayer(v).remove();
+			}
+		},
+
+		insertArtist: function(v) {
+			switch (v.type) {
+				case 'insertAfter':
+					debug.log("Insert After",v.where);
+					var type = v.where.match(/.(album|artist)/)[1];
+					switch (type) {
+						case 'album':
+							var a = $(v.html).insertAfter(layoutProcessor.findAlbumDisplayer(v.where));
+							a.insertDummySpacers();
+							break;
+
+						case 'artist':
+							$(v.html).insertAfter(layoutProcessor.findArtistDisplayer(v.where));
+							break;
+					}
+					break;
+
+				case 'insertAtStart':
+					debug.log("Insert At Start",v.where);
+					$(v.html).prependTo($('#'+v.where));
+					break;
+			}
+		},
+
 		albumBrowsed: function(menutoopen, data) {
 			var titlebit = $('#'+menutoopen).find('.tagh.albumthing').detach();
 			$("#"+menutoopen).html(data);
 			$("#"+menutoopen).prepend(titlebit);
 		},
 
+		removeAlbum: function(key) {
+			$('#'+key).remove();
+			layoutProcessor.findAlbumDisplayer(key).removeDummySpacers().remove();
+			// uiHelper.findAlbumParent(key).remove();
+		},
+
 		insertAlbum: function(v) {
 			var albumindex = v.id;
-			$('#aalbum'+albumindex).html(v.tracklist);
+			$('#'+v.why+'album'+albumindex).html(v.tracklist);
 			var dropdown = $('#'+v.why+'album'+albumindex).is(':visible');
 			var titlebit = layoutProcessor.findAlbumDisplayer().find('.tagh.albumthing').detach();
-			layoutProcessor.findAlbumDisplayer(v.why+'album'+albumindex).remove();
+			layoutProcessor.findAlbumDisplayer(v.why+'album'+albumindex).removeDummySpacers().remove();
 			switch (v.type) {
 				case 'insertAfter':
 					debug.log("Insert After",v.where);
@@ -944,10 +1030,9 @@ var layoutProcessor = function() {
 			}
 			if (dropdown) {
 				$('#'+v.why+'album'+albumindex).prepend(titlebit);
-				uiHelper.findAlbumDisplayer(v.why+'album'+albumindex).find('.menu').trigger('click');
+				layoutProcessor.findAlbumDisplayer(v.why+'album'+albumindex).find('.menu').trigger('click');
 				infobar.markCurrentTrack();
 			}
-			uiHelper.postAlbumActions();
 		},
 
 		preparePlaylistTarget: function(t) {
@@ -968,17 +1053,20 @@ var layoutProcessor = function() {
 		},
 
 		fixupArtistDiv(jq, name) {
+			// This is used ONLY aftere've done a spotify:artist: browse and
+			// inserted a load of new albums.
 			jq.addClass('containerbox wrap');
+			jq.prev().remove();
+			jq.prev().remove();
 		},
 
 		postPodcastSubscribe: function(data, index) {
 			$('.menu[name="podcast_'+index+'"]').parent().fadeOut('fast', function() {
-				$('.menu[name="podcast_'+index+'"]').parent().remove();
+				$('.menu[name="podcast_'+index+'"]').parent().removeDummySpacers().remove();
 				$('#podcast_'+index).remove();
 				$("#fruitbat").html(data);
-				infobar.notify(language.gettext('label_subscribed'));
 				podcasts.doNewCount();
-				uiHelper.postAlbumActions();
+				layoutProcessor.doThingsAfterDisplayingListOfAlbums($("#fruitbat"));
 			});
 		},
 
@@ -1001,7 +1089,7 @@ var layoutProcessor = function() {
 					// (b) When we get here the div we're looking for isn't visible and so it can't be found
 					// (I'm not even sure it's been created by this point, I've forgotten how this works)
 					debug.log('POSTALBUMMENU', 'Artist', found[1], found[2]);
-					var name = $('#'+element.attr('name')).children('.configtitle').first().children('b').html();
+					var name = $('#'+element.attr('name')).children('.configtitle').first().find('b').first().html();
 					debug.log('POSTALBUMMENU', 'Artist name',htmlspecialchars_decode(name));
 					var divname = 'potato_'+found[1]+'artist_'+found[2];
 					var destdiv = $('<div>',

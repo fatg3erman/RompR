@@ -3,6 +3,7 @@ var podcasts = function() {
 	var downloadQueue = new Array();
 	var downloadRunning = false;
 	var refreshtimer;
+	var onlineTriggerActivated = false;
 	var newcounts = {}
 
 	function checkDownloadQueue() {
@@ -170,7 +171,6 @@ var podcasts = function() {
 		$('i[name="podcast_'+channel+'"]').stopSpinner();
 		uiHelper.makeResumeBar(target);
 		infobar.markCurrentTrack();
-		uiHelper.postAlbumActions( $('#podcast_'+channel));
 	}
 
 	return {
@@ -196,7 +196,7 @@ var podcasts = function() {
 					infobar.notify(language.gettext('label_subscribed'));
 					podcasts.doNewCount();
 					$('#spinner_cocksausage').remove();
-					uiHelper.postAlbumActions($('#fruitbat'));
+					uiHelper.doThingsAfterDisplayingListOfAlbums($('#fruitbat'));
 				}
 			})
 			.fail(function(data, status, thing) {
@@ -220,7 +220,7 @@ var podcasts = function() {
 			.done(function(data) {
 				$("#fruitbat").html(data);
 				podcasts.doNewCount();
-				uiHelper.postAlbumActions($('#fruitbat'));
+				uiHelper.doThingsAfterDisplayingListOfAlbums($('#fruitbat'));
 			})
 			.fail(function(data, status, thing) {
 				infobar.error(language.gettext('error_plfail', [data.responseText]));
@@ -324,7 +324,6 @@ var podcasts = function() {
 						putPodCount('#podnumber_'+index, value.new, value.unlistened)
 					}
 				});
-				uiHelper.postAlbumActions();
 			});
 		},
 
@@ -378,7 +377,12 @@ var podcasts = function() {
 		},
 
 		checkRefresh: function() {
+			debug.log('PODCASTS', 'In checkRefresh');
 			clearTimeout(refreshtimer);
+			if (!onlineTriggerActivated) {
+				window.addEventListener('online', podcasts.checkIfSomeoneElseHasUpdatedStuff);
+				onlineTriggerActivated = true;
+			}
 			$.ajax({
 				type: 'GET',
 				url: "podcasts/podcasts.php?populate=1&checkrefresh=1",
@@ -395,12 +399,10 @@ var podcasts = function() {
 				}
 			})
 			.fail(function(data,status,thing) {
-				debug.error("PODCASTS","Refresh Failed",data.status);
+				debug.error("PODCASTS","Refresh Failed with status",data.status);
 				if (data.status == 412) {
-					// infobar.error(language.gettext('label_refreshinprogress'));
 					podcasts.doInitialRefresh();
 				} else {
-					// podcasts.doInitialRefresh();
 					infobar.error(language.gettext('error_refreshfail'));
 				}
 			});
@@ -417,8 +419,8 @@ var podcasts = function() {
 			})
 			.done(function(data) {
 				$("#fruitbat").html(data);
+				uiHelper.doThingsAfterDisplayingListOfAlbums($('#fruitbat'));
 				podcasts.doNewCount();
-				uiHelper.postAlbumActions();
 			})
 			.fail(function(data, status) {
 				infobar.error(language.gettext("podcast_remove_error"));
@@ -426,8 +428,9 @@ var podcasts = function() {
 		},
 
 		doInitialRefresh: function() {
+			debug.log('PODCASTS', 'Setting initial refresh timer');
 			clearTimeout(refreshtimer);
-			refreshtimer = setTimeout(podcasts.checkRefresh, 10000);
+			refreshtimer = setTimeout(podcasts.checkRefresh, 30000);
 		},
 
 		search: function() {
@@ -447,7 +450,7 @@ var podcasts = function() {
 			.done(function(data) {
 				$("#podcast_search").html(data);
 				$('#podcast_search').prepend('<div class="configtitle dropdown-container brick_wide" style="width:100%"><div class="textcentre expand"><b>Search Results for &quot;'+term+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch podcast fixed"></i></div>');
-				uiHelper.postAlbumActions($('#podcast_search'));
+				uiHelper.doThingsAfterDisplayingListOfAlbums($('#podcast_search'));
 			})
 			.fail(function(data, status, thing) {
 				infobar.error(language.gettext('error_searchfail', [data.responseText]));
@@ -480,7 +483,6 @@ var podcasts = function() {
 
 		removeSearch: function() {
 			$('#podcast_search').empty();
-			uiHelper.postAlbumActions();
 		},
 
 		toggleButtons: function() {
@@ -558,5 +560,4 @@ $('#podcastsinput').on('drop', podcasts.handleDrop)
 menuOpeners['podcast'] = podcasts.loadPodcast;
 clickRegistry.addClickHandlers('podcast', podcasts.handleClick);
 podcasts.doInitialRefresh();
-window.addEventListener('online', podcasts.checkIfSomeoneElseHasUpdatedStuff);
 

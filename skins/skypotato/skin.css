@@ -475,6 +475,7 @@ button.iconbutton {
 .collectionpanel {
 	box-sizing: border-box;
 	border-left: 4px solid transparent;
+	justify-content: center;
 }
 
 /*
@@ -716,8 +717,17 @@ div.rightmenu
 	/*transition: width 0.5s ease;*/
 }
 
+.collectionitem:not(.tagholder_wide) {
+	flex-grow: 1;
+	flex-shrink: 1;
+	flex-basis: 20%;
+	min-width: 200px;
+	max-width: 320px;
+}
+
 .collectionitem.selecotron.tagholder_wide.dropshadow {
 	padding-left: 0px;
+	width: 98%;
 }
 
 .collectionitem.fixed.selecotron:not(.tagholder_wide)>.containerbox.wrap {

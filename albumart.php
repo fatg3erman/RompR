@@ -132,7 +132,7 @@ function do_artists_db_style() {
 function do_covers_db_style() {
 	global $count;
 	global $albums_without_cover;
-	$lister = new aortby_artist('cartistroot');
+	$lister = new sortby_artist('cartistroot');
 	foreach ($lister->root_sort_query() as $artist) {
 		print '<div class="cheesegrater" name="artistname'.$artist['Artistindex'].'">';
 			print '<div class="albumsection">';
@@ -140,7 +140,7 @@ function do_covers_db_style() {
 			print "</div>\n";
 				print '<div id="album'.$count.'" class="containerbox fullwidth bigholder wrap">';
 				$albumlister = new sortby_artist('cartist'.$artist['Artistindex']);
-				foreach ($albumlister->album_sort_query() as $album) {
+				foreach ($albumlister->album_sort_query(false) as $album) {
 					print '<div class="fixed albumimg closet">';
 						print '<div class="covercontainer">';
 							$class = "clickable clickicon clickalbumcover droppable";

@@ -16,7 +16,6 @@ jQuery.fn.menuHide = function(callback) {
 		this.slideToggle('fast');
 	}
 	return this;
-
 }
 
 jQuery.fn.isOpen = function() {
@@ -290,7 +289,6 @@ var uiHelper = function() {
 					infobar.markCurrentTrack();
 				}
 				uiHelper.makeResumeBar(dropdown);
-				uiHelper.postAlbumActions();
 			}
 		},
 
@@ -298,6 +296,7 @@ var uiHelper = function() {
 			try {
 				return layoutProcessor.insertArtist(v);
 			} catch(err) {
+				debug.log('UIHELPER', 'Default Function');
 				switch (v.type) {
 					case 'insertAfter':
 						debug.log("Insert After",v.where);
@@ -318,15 +317,22 @@ var uiHelper = function() {
 						$(v.html).prependTo($('#'+v.where));
 						break;
 				}
-				uiHelper.postAlbumActions();
 			}
 		},
 
-		postAlbumActions: function() {
+		doThingsAfterDisplayingListOfAlbums: function(panel) {
 			try {
-				return layoutProcessor.postAlbumActions();
+				return layoutProcessor.doThingsAfterDisplayingListOfAlbums(panel);
 			} catch (err) {
 
+			}
+		},
+
+		getArtistDestinationDiv(menutoopen) {
+			try {
+				return layoutProcessor.getArtistDestinationDiv(menutoopen);
+			} catch (err) {
+				return $('#'+menutoopen)
 			}
 		},
 
@@ -339,7 +345,6 @@ var uiHelper = function() {
 				$('#'+key).remove();
 				uiHelper.findAlbumDisplayer(key).remove();
 				uiHelper.findAlbumParent(key).remove();
-				uiHelper.postAlbumActions();
 			}
 		},
 
@@ -349,7 +354,6 @@ var uiHelper = function() {
 			} catch (err) {
 				$("#"+v).remove();
 				uiHelper.findArtistDisplayer(v).remove();
-				uiHelper.postAlbumActions();
 			}
 		},
 
@@ -358,6 +362,9 @@ var uiHelper = function() {
 				return layoutProcessor.albumBrowsed(menutoopen, data);
 			} catch(err) {
 				$("#"+menutoopen).html(data);
+			}
+			if (prefs.clickmode == 'single') {
+				$("#"+menutoopen).find('.invisibleicon').removeClass('invisibleicon');
 			}
 		},
 
@@ -429,14 +436,6 @@ var uiHelper = function() {
 			}
 		},
 
-		postAlbumMenu: function(element) {
-			try {
-				return layoutProcessor.postAlbumMenu(element);
-			} catch (err) {
-
-			}
-		},
-
 		postPodcastSubscribe: function(data, index) {
 			try {
 				return layoutProcessor.postPodcastSubscribe(data, index);
@@ -445,11 +444,10 @@ var uiHelper = function() {
 					$('i[name="podcast_'+index+'"]').parent().remove();
 					$('#podcast_'+index).remove();
 					$("#fruitbat").html(data);
-					infobar.notify(language.gettext('label_subscribed'));
 					podcasts.doNewCount();
-					uiHelper.postAlbumActions();
 				});
 			}
+			infobar.notify(language.gettext('label_subscribed'));
 		},
 
 		panelMapping: function() {

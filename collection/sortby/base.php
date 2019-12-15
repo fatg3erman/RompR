@@ -1,9 +1,5 @@
 <?php
 
-function do_fiddle($a) {
-	return 'tr.Albumindex = '.$a;
-}
-
 class sortby_base {
 
 	protected $why;
@@ -22,10 +18,6 @@ class sortby_base {
 		$this->what = $matches[2];
 		$this->who = $matches[3];
 		logger::log('SORTER', 'Initialised',$this->why,$this->what,$this->who);
-	}
-
-	public function set_who($who) {
-		$this->who = $who;
 	}
 
 	public function filter_root_on_why($table = '') {
@@ -166,7 +158,7 @@ class sortby_base {
 
 			case 'z':
 				print '<div class="textcentre fullwidth">
-				<p>No Audiobooks</p>
+				<p>There are no Spoken Word tracks in your Collection</p>
 				</div>';
 				break;
 		}
@@ -175,9 +167,6 @@ class sortby_base {
 	public function track_sort_query() {
 		// This is the generic query for sortby_artist, sortby_album, and sortby_albumbyartist
 		global $prefs;
-		$t = $this->filter_track_on_why();
-		// This looks like a wierd way of doing it but the obvious way doesn't work with mysql
-		// due to table aliases being used.
 		$qstring = "SELECT
 				".SQL_TAG_CONCAT." AS tags,
 				r.Rating AS rating,
@@ -199,11 +188,12 @@ class sortby_base {
 				LEFT JOIN Tagtable AS t USING (Tagindex)
 				LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
 				LEFT JOIN Progresstable AS pr ON tr.TTindex = pr.TTindex
-				WHERE (".implode(' OR ', array_map('do_fiddle', $this->who)).")
+				WHERE
+					tr.Albumindex = ".$this->who."
 					AND uri IS NOT NULL
 					AND tr.Hidden = 0
 					".track_date_check($prefs['collectionrange'], $this->why)."
-					".$t."
+					".$this->filter_track_on_why()."
 					AND tr.Artistindex = ta.Artistindex
 					AND al.Albumindex = tr.Albumindex
 			GROUP BY tr.TTindex
@@ -220,10 +210,7 @@ class sortby_base {
 	}
 
 	public function output_track_list($fragment = false) {
-		// This function can accept multiple album ids ($this->who can be an array set by set_who()
-		// in which case it will combine them all into one 'virtual album' - see browse_album()
-		$this->who = getArray($this->who);
-		logger::log('SORTBY', 'Doing Track List For Album',implode(',', $this->who));
+		logger::log('SORTBY', 'Doing Track List For Album',$this->who);
 		$trackarr = $this->track_sort_query();
 		if ($fragment) {
 			ob_start();
@@ -231,7 +218,7 @@ class sortby_base {
 		$numtracks = count($trackarr);
 		$numdiscs = get_highest_disc($trackarr);
 		$currdisc = -1;
-		trackControlHeader($this->why, $this->what, $this->who[0], get_album_details($this->who[0]));
+		trackControlHeader($this->why, $this->what, $this->who, get_album_details($this->who));
 		$total_time = 0;
 		$tracktype = null;
 		foreach ($trackarr as $arr) {
@@ -252,12 +239,12 @@ class sortby_base {
 				// albumTrack will return 2 if this is an :album: link - we add an expandalbum
 				// input so the UI will populate the whole album, since spotify oftne only returns
 				// the odd track. Obviously only do this for search results
-				logger::mark("GET TRACKS", "Album",$this->who[0]," - adding album link to get all tracks");
+				logger::mark("GET TRACKS", "Album",$this->who," - adding album link to get all tracks");
 				print '<input type="hidden" class="expandalbum"/>';
 			}
 		}
 		if ($tracktype == 1) {
-			logger::mark("GET TRACKS", "Album",$this->who[0],"has no tracks, just an artist link");
+			logger::mark("GET TRACKS", "Album",$this->who,"has no tracks, just an artist link");
 			print '<input type="hidden" class="expandartist"/>';
 		}
 		if ($total_time > 0) {

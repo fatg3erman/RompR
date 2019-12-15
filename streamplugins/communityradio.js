@@ -8,7 +8,6 @@ var communityRadioPlugin = {
 					$('i[name="communityradiolist"]').stopSpinner();
 					$('#communityradiolist').removeClass('notfilled');
 					communityRadioPlugin.setTheThing();
-					uiHelper.postAlbumActions();
 				}
 			);
 		}
@@ -26,7 +25,6 @@ var communityRadioPlugin = {
 		var page = el.attr('name');
 		communityRadioPlugin.browse(url, title, page, id, function() {
 			el.stopSpinner();
-			uiHelper.postAlbumActions();
 		});
 	},
 
@@ -45,26 +43,18 @@ var communityRadioPlugin = {
 			uri = 'streamplugins/04_communityradio.php?populate=4';
 		}
 		$('#communitystations').load(uri, function() {
-			uiHelper.postAlbumActions();
+			uiHelper.doThingsAfterDisplayingListOfAlbums($('#communitystations'));
 		});
 	},
 
 	setTheThing: function() {
 		$('button[name="commradiosearch"]').on('click', communityRadioPlugin.search);
-		// var w = 0;
-		// $.each($(".cslt"), function() {
-		//     if ($(this).width() > w) {
-		//         w = $(this).width();
-		//     }
-		// });
-		// w += 8;
-		// $(".comm-search-label").css("width", w+"px");
 		$('#communityradioorderbyselector').val(prefs.communityradioorderby);
 	},
 
 	browse: function(url, title, page, target, callback) {
 		$("#"+target).load("streamplugins/04_communityradio.php?populate=2&url="+url+'&order='+prefs.communityradioorderby+'&page='+page+'&title='+title, function() {
-			uiHelper.postAlbumActions();
+			uiHelper.doThingsAfterDisplayingListOfAlbums($("#"+target));
 			callback();
 		});
 	},

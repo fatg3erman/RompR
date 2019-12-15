@@ -7,7 +7,7 @@ var yourRadioPlugin = {
 				$('i[name="yourradiolist"]').stopSpinner();
 				$('[name="spikemilligan"]').on('click', yourRadioPlugin.loadSuppliedStation);
 				$("#anaconda").on("drop", yourRadioPlugin.handleDropRadio);
-				uiHelper.postAlbumActions();
+				uiHelper.doThingsAfterDisplayingListOfAlbums($('#yourradiostations'));
 				if (layoutProcessor.sortFaveRadios) {
 					$("#yourradiostations").sortableTrackList({
 						items: ".menuitem",
@@ -40,7 +40,7 @@ var yourRadioPlugin = {
 		$.post("utils/userstreams.php", data)
 			.done( function(data) {
 				$('#yourradiostations').html(data);
-				uiHelper.postAlbumActions();
+				uiHelper.doThingsAfterDisplayingListOfAlbums($('#yourradiostations'));
 				infobar.notify(language.gettext('label_addedradio'));
 			});
 	},
@@ -49,7 +49,7 @@ var yourRadioPlugin = {
 		$.post("utils/userstreams.php", {remove: name})
 			.done( function(data) {
 				$('#yourradiostations').html(data);
-				uiHelper.postAlbumActions();
+				uiHelper.doThingsAfterDisplayingListOfAlbums($('#yourradiostations'));
 			})
 			.fail( function() {
 				playlist.repopulate();

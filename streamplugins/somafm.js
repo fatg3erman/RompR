@@ -6,7 +6,7 @@ var somaFmPlugin = {
 			$("#somafmlist").load("streamplugins/01_somafm.php?populate", function( ) {
 				$('i[name="somafmlist"]').stopSpinner();
 				$('#somafmlist').removeClass('notfilled');
-				uiHelper.postAlbumActions();
+				uiHelper.doThingsAfterDisplayingListOfAlbums($("#somafmlist"));
 			});
 		}
 	}

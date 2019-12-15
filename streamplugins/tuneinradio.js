@@ -5,14 +5,9 @@ var tuneinRadioPlugin = {
 			$('i[name="tuneinlist"]').makeSpinner();
 			$("#tuneinlist").load("streamplugins/03_tuneinradio.php?populate=2", function() {
 				$('i[name="tuneinlist"]').stopSpinner();
-				tuneinRadioPlugin.setTheThing();
 				$("#tuneinlist").removeClass('notfilled');
 			});
 		}
-	},
-
-	setTheThing: function() {
-		uiHelper.postAlbumActions();
 	},
 
 	handleClick: function(event, clickedElement) {
@@ -26,7 +21,6 @@ var tuneinRadioPlugin = {
 				tuneinRadioPlugin.browse(url, title, menutoopen, function() {
 					clickedElement.stopSpinner();
 					doMenu(null, clickedElement);
-					tuneinRadioPlugin.setTheThing();
 				});
 			} else {
 				doMenu(null, clickedElement);
@@ -39,6 +33,7 @@ var tuneinRadioPlugin = {
 
 	browse: function(url, title, target, callback) {
 		$("#"+target).load("streamplugins/03_tuneinradio.php?populate=2&url="+url+'&title='+title+'&target='+target, function() {
+			uiHelper.doThingsAfterDisplayingListOfAlbums($("#"+target));
 			callback();
 		});
 	},
@@ -53,7 +48,7 @@ var tuneinRadioPlugin = {
 			$('i[name="tuneinlist"]').makeSpinner();
 			$("#tuneinlist").load("streamplugins/03_tuneinradio.php?populate=2&search="+encodeURIComponent(term), function() {
 				$('i[name="tuneinlist"]').stopSpinner();
-				tuneinRadioPlugin.setTheThing();
+				uiHelper.doThingsAfterDisplayingListOfAlbums($("#tuneinlist"));
 			});
 		}
 	}

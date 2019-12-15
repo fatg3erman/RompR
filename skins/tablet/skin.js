@@ -290,14 +290,6 @@ var layoutProcessor = function() {
 			}
 		},
 
-		getArtistDestinationDiv: function(menutoopen) {
-			if (prefs.sortcollectionby == "artist") {
-				return $("#"+menutoopen).parent();
-			} else {
-				return $("#"+menutoopen);
-			}
-		},
-
 		initialise: function() {
 
 			if (!prefs.checkSet('clickmode')) {

@@ -205,7 +205,7 @@ function playerController() {
 		})
 		$.get("player/mpd/loadplaylists.php", function(data) {
 			$("#storedplaylists").html(data);
-			uiHelper.postAlbumActions();
+			uiHelper.doThingsAfterDisplayingListOfAlbums($('#storedplaylists'));
 			$('b:contains("'+language.gettext('button_loadplaylist')+'")').parent('.configtitle').append('<a href="https://fatg3erman.github.io/RompR/Using-Saved-Playlists" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
 			for (var i in openplaylists) {
 				$('i.menu.openmenu.playlist.icon-toggle-closed[name="'+openplaylists[i]+'"]').click();
@@ -301,7 +301,6 @@ function playerController() {
 			function() {
 				self.reloadPlaylists();
 				self.checkProgress();
-				uiHelper.postAlbumActions();
 			}
 		);
 		return true;
@@ -319,7 +318,6 @@ function playerController() {
 			dataType: "xml"
 		})
 		.done(function(data) {
-			uiHelper.postAlbumActions();
 			self.reloadPlaylists();
 		})
 		.fail(function(data, status) {
@@ -473,6 +471,9 @@ function playerController() {
 					} else {
 						cmdlist.push(['add',v.name]);
 					}
+					break;
+				case 'podcasttrack':
+					cmdlist.push(['add',v.name]);
 					break;
 				case "playlist":
 				case "cue":
@@ -631,7 +632,7 @@ function playerController() {
 			.done(function(data) {
 				$("#searchresultholder").html(data);
 				collectionHelper.scootTheAlbums($("#searchresultholder"));
-				uiHelper.postAlbumActions();
+				uiHelper.doThingsAfterDisplayingListOfAlbums($("#searchresultholder"));
 				data = null;
 			});
 		}
