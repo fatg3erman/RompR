@@ -640,7 +640,7 @@ function doPodcast($y, $do_searchbox) {
 		$aa = $aa . ' - ';
 	}
 	$pm = $y->PODindex;
-	trackControlHeader('','','podcast_'. $pm,array(array('Image' => $y->Image)));
+	trackControlHeader('','','podcast_'. $pm, null, array(array('Image' => $y->Image)));
 	print '<div class="whatdoicallthis">'.format_text($y->Description).'</div>';
 	if ($y->Subscribed == 1) {
 		print '<div class="containerbox bumpad">';

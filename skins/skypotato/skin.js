@@ -967,26 +967,28 @@ var layoutProcessor = function() {
 		removeArtist: function(v) {
 			var banner = $("#"+v);
 			if (banner.length > 0) {
-				// albumbyartist sorting
 				banner.removeDummySpacers();
 				banner.remove();
-			} else {
-				layoutProcessor.findArtistDisplayer(v).remove();
 			}
+			layoutProcessor.findArtistDisplayer(v).remove();
 		},
 
 		insertArtist: function(v) {
 			switch (v.type) {
 				case 'insertAfter':
 					debug.log("Insert After",v.where);
-					var type = v.where.match(/.(album|artist)/)[1];
+					var type = v.where.match(/.([a-z]+)\d/)[1];
+					if (type === null) {
+						// Regexp won't match if v.where is 'fothergill' or 'mingus'
+						type = ['', 'album'];
+					}
 					switch (type) {
 						case 'album':
 							var a = $(v.html).insertAfter(layoutProcessor.findAlbumDisplayer(v.where));
 							a.insertDummySpacers();
 							break;
 
-						case 'artist':
+						default:
 							$(v.html).insertAfter(layoutProcessor.findArtistDisplayer(v.where));
 							break;
 					}
@@ -1008,15 +1010,14 @@ var layoutProcessor = function() {
 		removeAlbum: function(key) {
 			$('#'+key).remove();
 			layoutProcessor.findAlbumDisplayer(key).removeDummySpacers().remove();
-			// uiHelper.findAlbumParent(key).remove();
 		},
 
 		insertAlbum: function(v) {
 			var albumindex = v.id;
-			$('#'+v.why+'album'+albumindex).html(v.tracklist);
-			var dropdown = $('#'+v.why+'album'+albumindex).is(':visible');
+			$('#'+albumindex).html(v.tracklist);
+			var dropdown = $('#'+albumindex).is(':visible');
 			var titlebit = layoutProcessor.findAlbumDisplayer().find('.tagh.albumthing').detach();
-			layoutProcessor.findAlbumDisplayer(v.why+'album'+albumindex).removeDummySpacers().remove();
+			layoutProcessor.findAlbumDisplayer(albumindex).removeDummySpacers().remove();
 			switch (v.type) {
 				case 'insertAfter':
 					debug.log("Insert After",v.where);
@@ -1029,8 +1030,8 @@ var layoutProcessor = function() {
 					break;
 			}
 			if (dropdown) {
-				$('#'+v.why+'album'+albumindex).prepend(titlebit);
-				layoutProcessor.findAlbumDisplayer(v.why+'album'+albumindex).find('.menu').trigger('click');
+				$('#'+albumindex).prepend(titlebit);
+				layoutProcessor.findAlbumDisplayer(albumindex).find('.menu').trigger('click');
 				infobar.markCurrentTrack();
 			}
 		},
@@ -1093,7 +1094,7 @@ var layoutProcessor = function() {
 					debug.log('POSTALBUMMENU', 'Artist name',htmlspecialchars_decode(name));
 					var divname = 'potato_'+found[1]+'artist_'+found[2];
 					var destdiv = $('<div>',
-						{   class: 'collectionitem fixed tagholder_wide invisible',
+						{   class: 'collectionitem fixed tagholder_wide dropshadow invisible',
 							style: 'width: 98%',
 							id: divname
 						}).appendTo($('#'+element.attr('name')));

@@ -834,6 +834,38 @@ function makeAlbumMenu(e, element) {
 	}
 	$('.albumbitsmenu').remove();
 	var d = $('<div>', {class:'topdropmenu dropshadow rightmenu normalmenu albumbitsmenu'});
+	if ($(element).hasClass('clickalbumoptions')) {
+		var cl = 'backhi clickable menuitem fakedouble '
+		d.append($('<div>', {
+			class: cl+'clicktrack',
+			name: $(element).attr('uri')
+		}).html(language.gettext('label_play_whole_album')));
+		d.append($('<div>', {
+			class: cl+'clickalbum',
+			name: $(element).attr('why')+'album'+$(element).attr('who')
+		}).html(language.gettext('label_from_collection')));
+	}
+	if ($(element).hasClass('clickcolloptions')) {
+		var cl = 'backhi clickable menuitem clickalbum fakedouble'
+		d.append($('<div>', {
+			class: cl,
+			name: $(element).attr('why')+'album'+$(element).attr('who')
+		}).html(language.gettext('label_from_collection')));
+	}
+	if ($(element).hasClass('clickratedtracks')) {
+		var opts = {
+			r: language.gettext('label_with_ratings'),
+			t: language.gettext('label_with_tags'),
+			y: language.gettext('label_with_tagandrat'),
+			u: language.gettext('label_with_tagorrat')
+		}
+		$.each(opts, function(i, v) {
+			d.append($('<div>', {
+				class: 'backhi clickable menuitem clickalbum fakedouble',
+				name: i+'album'+$(element).attr('name')
+			}).html(v))
+		});
+	}
 	if ($(element).hasClass('clickamendalbum')) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem amendalbum',
@@ -869,31 +901,6 @@ function makeAlbumMenu(e, element) {
 			class: 'backhi clickable menuitem addtocollectionviabrowse',
 			spalbumid: $(element).attr('spalbumid')
 		}).html(language.gettext('label_addtocollection')));
-	}
-	if ($(element).hasClass('clickalbumoptions')) {
-		var cl = 'backhi clickable menuitem clicktrack fakedouble '
-		d.append($('<div>', {
-			class: cl+'clicktrack',
-			name: $(element).parent().attr('name')
-		}).html(language.gettext('label_play_whole_album')));
-		d.append($('<div>', {
-			class: cl+'clickalbum',
-			name: $(element).attr('why')+'album'+$(element).attr('name')
-		}).html(language.gettext('label_from_collection')));
-	}
-	if ($(element).hasClass('clickratedtracks')) {
-		var opts = {
-			r: language.gettext('label_with_ratings'),
-			t: language.gettext('label_with_tags'),
-			y: language.gettext('label_with_tagandrat'),
-			u: language.gettext('label_with_tagorrat')
-		}
-		$.each(opts, function(i, v) {
-			d.append($('<div>', {
-				class: 'backhi clickable menuitem clickalbum fakedouble',
-				name: i+'album'+$(element).attr('name')
-			}).html(v))
-		});
 	}
 	d.appendTo($(element));
 	d.slideToggle('fast', function() {

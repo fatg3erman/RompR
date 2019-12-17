@@ -5,11 +5,41 @@ class sortby_base {
 	protected $why;
 	protected $what;
 	protected $who;
+	protected $when = null;
+
+	// $which is a key passed in from the UI, and created by this class
+	// It is made up of several parts
+	// $why$what$who
+	// $why is a single lowercase character:
+	// 	a - tracks from Music Collection
+	//	b - tracks from search results
+	//	z - audiobooks
+	// When this is used to get tracks to add to the queue, some extras are accepted
+	//	r - only tracks with ratings
+	//	t - only tracks with tags
+	//	y - only tracks with tags and ratings
+	//	u - only tracks with tags or ratings
+	// $what is a lowercase string.
+	//	to get tracklistings for an album $what *must*be 'album'
+	//	any other string means 'the root item' (eg albumartists, tags)
+	// $who is:
+	//	root - to get the complete list of root items
+	//	[index] an index into the database
+	//
+	//	eg aartist1234 - sets this up to get albums from the collecion for Albumartist 1234
+	//		abollocks1234 would also work
+	//	   aalbum2345 gets tracks for Albumindex 2345, in the context of this sorter
+	//  $who can contain two indices eg 2345_1234
+	//	eg aalbum2345_1234 would get tracks for album 2345 in the context of root item 1234
+	//	This latter form is useful when dealing with sort modes where the same album may appear
+	//	under multiple root headings - eg when sorting by tag
+	//	In this case, '1234' is referred to as $when
+
 
 	public function __construct($which) {
 		global $prefs, $divtype;
 		$divtype = 'album1';
-		$a = preg_match('/(a|b|r|t|y|u|z)(.*?)(\d+|root)/', $which, $matches);
+		$a = preg_match('/(a|b|r|t|y|u|z)(.*?)(\d+|root)_*(\d+)*/', $which, $matches);
 		if (!$a) {
 			logger::fail("SORTBY", "Sort Init failed - regexp failed to match",$which);
 			return false;
@@ -17,7 +47,13 @@ class sortby_base {
 		$this->why = $matches[1];
 		$this->what = $matches[2];
 		$this->who = $matches[3];
+		if (array_key_exists(4, $matches)) {
+			$this->when = $matches[4];
+		}
 		logger::log('SORTER', 'Initialised',$this->why,$this->what,$this->who);
+		if ($this->when) {
+			logger::log('SORTER', '  Root item key is',$this->when);
+		}
 	}
 
 	public function filter_root_on_why($table = '') {
@@ -131,11 +167,11 @@ class sortby_base {
 
 			default:
 				switch ($this->what) {
-					case 'artist':
-						$this->output_album_list();
-						break;
 					case 'album':
 						$this->output_track_list();
+						break;
+					default:
+						$this->output_album_list();
 						break;
 				}
 		}
@@ -218,7 +254,7 @@ class sortby_base {
 		$numtracks = count($trackarr);
 		$numdiscs = get_highest_disc($trackarr);
 		$currdisc = -1;
-		trackControlHeader($this->why, $this->what, $this->who, get_album_details($this->who));
+		trackControlHeader($this->why, $this->what, $this->who, $this->when, get_album_details($this->who));
 		$total_time = 0;
 		$tracktype = null;
 		foreach ($trackarr as $arr) {
@@ -257,22 +293,6 @@ class sortby_base {
 		}
 	}
 
-	protected function returninfo_root_key() {
-		if ($this->why == 'a') {
-			return 'artists';
-		} else {
-			return 'bookartists';
-		}
-	}
-
-	protected function returninfo_album_key() {
-		if ($this->why == 'a') {
-			return 'albums';
-		} else {
-			return 'audiobooks';
-		}
-	}
-
 	protected function artist_albumcount($artistindex) {
 		$qstring =
 		"SELECT
@@ -282,10 +302,8 @@ class sortby_base {
 		WHERE
 			AlbumArtistindex = ".$artistindex.
 			" AND Hidden = 0
-			AND isSearchResult < 2
-			AND Uri IS NOT NULL
-			AND isAudiobook ";
-		$qstring .= ($this->why == 'a') ? '= 0' : '> 0';
+			AND Uri IS NOT NULL ".
+			$this->filter_track_on_why();
 		return generic_sql_query($qstring, false, null, 'num', 0);
 	}
 
@@ -298,10 +316,8 @@ class sortby_base {
 		WHERE
 			Albumindex = ".$albumindex.
 			" AND Hidden = 0
-			AND isSearchResult < 2
-			AND Uri IS NOT NULL
-			AND isAudiobook ";
-		$qstring .= ($this->why == 'a') ? '= 0' : '> 0';
+			AND Uri IS NOT NULL ".
+			$this->filter_track_on_why();
 		return generic_sql_query($qstring, false, null, 'num', 0);
 	}
 

@@ -86,7 +86,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 				'class' => 'radiochannel'
 			));
 			print '<div id="icecast_'.$count.'" class="dropmenu">';
-			trackControlHeader('','','icecast_'.$count, array(array('Image' => 'newimages/icecast.svg')));
+			trackControlHeader('','','icecast_'.$count, null, array(array('Image' => 'newimages/icecast.svg')));
 			print '<div class="containerbox rowspacer"></div>';
 			print '<div class="indent">'.$server_description.'</div>';
 			print '<div class="containerbox rowspacer"></div>';

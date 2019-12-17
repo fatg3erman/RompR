@@ -656,10 +656,10 @@ var layoutProcessor = function() {
 		insertAlbum: function(v) {
 			debug.log('PHONE', 'Insert Album', v);
 			var albumindex = v.id;
-			var displayer = $('#'+v.why+'album'+albumindex);
+			var displayer = $('#'+albumindex);
 			displayer.html(v.tracklist);
 			uiHelper.makeResumeBar(displayer);
-			layoutProcessor.findAlbumDisplayer(v.why+'album'+albumindex).remove();
+			layoutProcessor.findAlbumDisplayer(albumindex).remove();
 			switch (v.type) {
 				case 'insertAfter':
 					debug.log("Insert After",v.where);
@@ -671,6 +671,7 @@ var layoutProcessor = function() {
 					$(v.html).insertAfter($('#'+v.where).find('div.clickalbum[name="'+v.where+'"]'));
 					break;
 			}
+			layoutProcessor.postAlbumMenu();
 		},
 
 		removeAlbum: function(key) {
@@ -683,7 +684,9 @@ var layoutProcessor = function() {
 
 		removeArtist: function(key) {
 			if ($('#'+key).length > 0) {
-				$('#'+key).findParentScroller().restoreScrollPos();
+				if (!$('#'+key).hasClass('configtitle')) {
+					$('#'+key).findParentScroller().restoreScrollPos();
+				}
 				$('#'+key).remove();
 			}
 			layoutProcessor.findArtistDisplayer(key).remove();

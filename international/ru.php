@@ -564,7 +564,6 @@ $languages['ru'] = array (
 	"label_recentlyplayed" => "Недавно прослушанные треки",
 	"label_simar_radio" => "Артисты, похожие на",
 
-	"label_tradsearch_header" => "Тип Все, что вы ищете",
 	"label_tradsearch" => "Использовать традиционный поиск с несколькими терминами",
 
 	"played_never" => "Этот трек никогда не слушали",

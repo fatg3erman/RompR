@@ -913,9 +913,9 @@ function collectionButtons() {
 	print '<div class="containerbox dropdown-container">';
 	print '<div class="selectholder">';
 	print '<select id="sortcollectionbyselector" class="saveomatic">';
-	print '<option value="artist">'.ucfirst(get_int_text('label_artists')).'</option>';
-	print '<option value="album">'.ucfirst(get_int_text('label_albums')).'</option>';
-	print '<option value="albumbyartist">'.ucfirst(get_int_text('label_albumsbyartist')).'</option>';
+	foreach (COLLECTION_SORT_MODES as $mode => $key) {
+		print '<option value="'.$mode.'">'.ucfirst(get_int_text($key)).'</option>';
+	}
 	print '</select>';
 	print '</div>';
 	print '</div>';

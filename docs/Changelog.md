@@ -3,23 +3,28 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
-## Version 1.33
+## Version 1.40
 
-* Fix Panel hiding not working in Fruit skin
-* Make the Snapcast controls look neater
-* Fix some bugs relating to loading playlists
-* [romonitor](/RompR/Rompr-And-Mobiles) can now do Last.FM scrobbling, which will help make scrobbles match exactly what's in the rompr collection - which will help for those people using Last.FM to sync their playcounts across devices and helps especially with podcasts, where the metadata the players use often differs enormously from the more detailed info available to Rompr.
+Thought I'd bump the version number up a bit since this seems like quite a big release that contains a lot of work.
+
+### FEATURES:
+* [romonitor](/RompR/Rompr-And-Mobiles) can now do Last.FM scrobbling, which will help make scrobbles match exactly what's in the Rompr collection - which will help for those people using Last.FM to sync their playcounts across devices and helps especially with podcasts, where the metadata used by eg mpdscribble often differs enormously from the more detailed info available to Rompr.
 * Make Mopidy-Youtube handling work better. This version of Rompr works best wuth the fork of Mopidy-Youtube [here](https://github.com/natumbri/mopidy-youtube)
 * Completely redesigned the Community Radio Browser to simplify the interface and make it more consistent with TuneIn
 * Albums can now be moved manually to the Spoken Word section, and back to the Music Collection
 * Rompr will now check for a new release on startup and give you the option of downloading it
 * The Playlist Manager has been removed, since all of its functionality is now incorporated into the main playlist chooser panel
 * New pop-up menus for all tracks allowing you to tag, rate, and add to playlists right from the Music Collection or Search Results
+* The Tags and Ratings manager has been removed since a) I hated it and b) almost everything it did can now be done via the main Collection panel
+* The 'back' button on the phone skin is now always visible so you don't have to scroll back to the top to go back
+* Done quite a lot of work on the Skypotato skin to make it neater, more efficient, and smoother and give it all the same functionality as the Desktop skin
+### FIXES:
+* Fix Panel hiding not working in Fruit skin
+* Make the Snapcast controls look neater
+* Fix some bugs relating to loading playlists
 * On first run this version will upgrade MySQL installations to use 4-Byte UTF-8 encoding. Put simply, this upgrades the MySQL database to use the same character set as used by default in absolutely everything except MySQL which for some reason defauls to a pointless 3-Byte version which makes it incompatible with basically the entire internet. As I've said before, SQLite is just better but if you insist on using MySQL/MariaDB this will help. If you have a large database this upgrade will take a very very very very very very very very very very very very long time and may well time out. If that happens make a post on the Discussion forum and I'll put up instructions on how to fix it.
 * Fix ImageMagick handling of radio stations that only have a .ico file for their staion image, as many of the ones in Community Radio do. PHP-GD does not support .ico files so ImageMagick is required for these stations.
 * Fixed a serious bug in the PHP URL downloading code, it's a miracle it ever worked at all.
-* The 'back' button on the phone skin is now always visible so you don't have to scroll back to the top to go back
-* Done quite a lot of work on the Skypotato skin to make it neater, more efficient, and smoother and give it all the same functionality as the Desktop skin
 * As always, hundreds of little tweaks and tinkerings here and there
 
 ## Version 1.32

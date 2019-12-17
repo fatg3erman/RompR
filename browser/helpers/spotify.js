@@ -5,7 +5,7 @@ var spotify = function() {
 	var throttle = null;
 	var collectedobj = null;
 	var getit;
-	var rate = 500;
+	var rate = 250;
 	var backofftimer;
 
 	function objFirst(obj) {
@@ -81,7 +81,7 @@ var spotify = function() {
 		requestFail: function(xhr,status,err) {
 			if (xhr.responseJSON.error == 429) {
 				debug.warn("SPOTIFY","Too Many Requests. Slowing Request Rate");
-				rate += rate;
+				rate += 1000;
 				clearTimeout(backofftimer);
 				backofftimer = setTimeout(spotify.speedBackUp, 90000);
 			}
@@ -96,7 +96,7 @@ var spotify = function() {
 		},
 
 		speedBackUp: function() {
-			rate = 500;
+			rate = 250;
 		},
 
 		getrequest: function() {

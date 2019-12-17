@@ -50,15 +50,14 @@ class sortby_artist extends sortby_base {
 		$qstring =
 		"SELECT Albumtable.*, Artisttable.Artistname
 			FROM Albumtable
-				JOIN Artisttable ON (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
-				WHERE ";
-		if ($this->who != "root") {
-			$qstring .= "AlbumArtistindex = '".$this->who."' AND ";
-		}
+			JOIN Artisttable ON (Albumtable.AlbumArtistindex = Artisttable.Artistindex)
+			WHERE ";
+		$qstring .= "AlbumArtistindex = '".$this->who."' AND ";
 		$qstring .= "Albumindex IN (SELECT Albumindex FROM Tracktable WHERE
 				Tracktable.Albumindex = Albumtable.Albumindex AND ";
-
-		$qstring .= "Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 ".track_date_check($prefs['collectionrange'], $this->why)." ".$sflag.")";
+		$qstring .= "Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 ".
+		track_date_check($prefs['collectionrange'], $this->why)." ".
+		$sflag.")";
 		$qstring .= " ORDER BY ";
 		$qstring .= " CASE WHEN Albumname LIKE '".get_int_text('label_allartist')."%' THEN 1 ELSE 2 END,";
 		if ($prefs['sortbydate']) {
@@ -103,7 +102,7 @@ class sortby_artist extends sortby_base {
 				$singleheader['where'] = $this->why.'artist'.$artist['Artistindex'];
 			} else {
 				$singleheader['html'] = artistHeader($this->why.'artist'.$artist['Artistindex'], $artist['Artistname']);
-				$singleheader['id'] = $artistindex;
+				$singleheader['id'] = $this->why.'artist'.$artistindex;
 				return $singleheader;
 			}
 			$divtype = ($divtype == "album1") ? "album2" : "album1";
@@ -135,7 +134,7 @@ class sortby_artist extends sortby_base {
 				$singleheader['type'] = 'insertAfter';
 			} else {
 				$singleheader['html'] = albumHeader($album);
-				$singleheader['id'] = $albumindex;
+				$singleheader['id'] = $this->why.'album'.$albumindex;
 				return $singleheader;
 			}
 		}
@@ -144,14 +143,13 @@ class sortby_artist extends sortby_base {
 	public function get_modified_root_items() {
 		global $returninfo;
 		$result = generic_sql_query('SELECT DISTINCT AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
-		$key = $this->returninfo_root_key();
 		foreach ($result as $mod) {
 			$atc = $this->artist_albumcount($mod['AlbumArtistindex']);
 			logger::mark("SORTBY_ARTIST", "  Artist",$mod['AlbumArtistindex'],"has",$atc,$this->why,"albums we need to consider");
 			if ($atc == 0) {
-				$returninfo['deleted'.$key][] = $mod['AlbumArtistindex'];
+				$returninfo['deletedartists'][] = $this->why.'artist'.$mod['AlbumArtistindex'];
 			} else {
-				$returninfo['modified'.$key][] = $this->output_root_fragment($mod['AlbumArtistindex']);
+				$returninfo['modifiedartists'][] = $this->output_root_fragment($mod['AlbumArtistindex']);
 			}
 		}
 	}
@@ -159,18 +157,17 @@ class sortby_artist extends sortby_base {
 	public function get_modified_albums() {
 		global $returninfo;
 		$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
-		$key = $this->returninfo_album_key();
 		foreach ($result as $mod) {
 			$atc = $this->album_trackcount($mod['Albumindex']);
 			logger::mark("SORTBY_ARTIST", "  Album",$mod['Albumindex'],"has",$atc,$this->why,"tracks we need to consider");
 			if ($atc == 0) {
-				$returninfo['deleted'.$key][] = $mod['Albumindex'];
+				$returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'];
 			} else {
 				$lister = new sortby_artist($this->why.'artist'.$mod['AlbumArtistindex']);
 				$r = $lister->output_album_fragment($mod['Albumindex']);
 				$lister = new sortby_artist($this->why.'album'.$mod['Albumindex']);
 				$r['tracklist'] = $lister->output_track_list(true);
-				$returninfo['modified'.$key][] = $r;
+				$returninfo['modifiedalbums'][] = $r;
 			}
 		}
 	}
@@ -178,7 +175,6 @@ class sortby_artist extends sortby_base {
 	private function getArtistName() {
 		return simple_query('Artistname', 'Artisttable', 'Artistindex', $this->who,'');
 	}
-
 
 }
 

@@ -113,7 +113,7 @@ class somafmplugin {
 		));
 
 		print '<div id="somafm_'.$count.'" class="dropmenu">';
-		trackControlHeader('','','somafm_'.$count, array(array('Image' => $this->getimage($channel))));
+		trackControlHeader('','','somafm_'.$count, null, array(array('Image' => $this->getimage($channel))));
 		if ($channel->description) {
 			print '<div class="containerbox ninesix indent padright">'.utf8_encode($channel->description).'</div>';
 		}

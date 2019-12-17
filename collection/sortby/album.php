@@ -71,8 +71,8 @@ class sortby_album extends sortby_base {
 				$singleheader['type'] = 'insertAfter';
 			} else {
 				$singleheader['html'] = albumHeader($album);
-				$singleheader['id'] = $albumindex;
-				$singleheader['why'] = $this->why;
+				$singleheader['id'] = $album['id'];
+				// $singleheader['why'] = $this->why;
 				return $singleheader;
 			}
 		}
@@ -81,17 +81,16 @@ class sortby_album extends sortby_base {
 	public function get_modified_root_items() {
 		global $returninfo;
 		$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
-		$key = $this->returninfo_album_key();
 		foreach ($result as $mod) {
 			$atc = $this->album_trackcount($mod['Albumindex']);
 			logger::mark("SORTBY_ALBUM", "  Album",$mod['Albumindex'],"has",$atc,$this->why,"tracks we need to consider");
 			if ($atc == 0) {
-				$returninfo['deleted'.$key][] = $mod['Albumindex'];
+				$returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'];
 			} else {
 				$r = $this->output_root_fragment($mod['Albumindex']);
 				$lister = new sortby_album($this->why.'album'.$mod['Albumindex']);
 				$r['tracklist'] = $lister->output_track_list(true);
-				$returninfo['modified'.$key][] = $r;
+				$returninfo['modifiedalbums'][] = $r;
 			}
 		}
 	}

@@ -565,8 +565,7 @@ $languages['en'] = array (
 	"label_recentlyplayed" => "Recently Played Tracks",
 	"label_simar_radio" => "Artists Similar To",
 
-	"label_tradsearch_header" => "Type Anything You're Looking For",
-	"label_tradsearch" => "Use traditional search with multiple terms",
+	"label_tradsearch" => "Advanced Search",
 
 	"played_never" => "This track has never been played",
 	"played_once" => "This track has been played once",
@@ -603,7 +602,7 @@ $languages['en'] = array (
 	"label_station_website" => "Station Website",
 
 	"label_play_whole_album" => "Play Whole Album",
-	"label_from_collection" => "Play Only Tracks From Collection",
+	"label_from_collection" => "Play All Tracks From Collection",
 	"label_with_ratings" => "Play Only Tracks With Ratings",
 	"label_with_tags" => "Play Only Tracks With Tags",
 	"label_with_tagandrat" => "Play Only Tracks With Tags And Ratings",

@@ -100,16 +100,22 @@ function albumHeader($obj) {
 	$h = '';
 	if ($obj['why'] === null) {
 		$h .= '<div class="containerbox menuitem">';
-	} else if ($obj['AlbumUri']) {
-		$albumuri = rawurlencode($obj['AlbumUri']);
-		if (preg_match('/spotify%3Aartist%3A/', $albumuri)) {
-			$h .= '<div class="clickartist playable draggable containerbox menuitem" name="'.preg_replace('/'.get_int_text('label_allartist').'/', '', $obj['Albumname']).'">';
-		} else if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
-			logger::log("FUNCTIONS", "Cue Sheet found for album ".$obj['Albumname']);
-			$h .= '<div class="clickcue playable draggable containerbox menuitem" name="'.$albumuri.'">';
-		} else {
-			$h .= '<div class="clicktrack playable draggable containerbox menuitem" name="'.$albumuri.'">';
-		}
+	} else if ($obj['AlbumUri'] && preg_match('/spotify:artist:/', $obj['AlbumUri'])) {
+		$h .= '<div class="clickartist playable draggable containerbox menuitem" name="'.preg_replace('/'.get_int_text('label_allartist').'/', '', $obj['Albumname']).'">';
+	} else if ($obj['AlbumUri'] && strtolower(pathinfo($obj['AlbumUri'], PATHINFO_EXTENSION)) == "cue") {
+		logger::log("UI", "Cue Sheet found for album ".$obj['Albumname']);
+		$h .= '<div class="clickcue playable draggable containerbox menuitem" name="'.rawurlencode($obj['AlbumUri']).'">';
+
+	// } else if ($obj['AlbumUri']) {
+	// 	$albumuri = rawurlencode($obj['AlbumUri']);
+	// 	if (preg_match('/spotify%3Aartist%3A/', $albumuri)) {
+	// 		$h .= '<div class="clickartist playable draggable containerbox menuitem" name="'.preg_replace('/'.get_int_text('label_allartist').'/', '', $obj['Albumname']).'">';
+	// 	} else if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
+	// 		logger::log("FUNCTIONS", "Cue Sheet found for album ".$obj['Albumname']);
+	// 		$h .= '<div class="clickcue playable draggable containerbox menuitem" name="'.$albumuri.'">';
+	// 	} else {
+	// 		$h .= '<div class="clicktrack playable draggable containerbox menuitem" name="'.$albumuri.'">';
+	// 	}
 	} else if (array_key_exists('streamuri', $obj)) {
 		$h .= '<div class="clickstream playable draggable containerbox menuitem" name="'.rawurlencode($obj['streamuri']).'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
 	} else if (array_key_exists('userplaylist', $obj)) {
@@ -136,10 +142,11 @@ function albumHeader($obj) {
 	$h .= '</div>';
 	if ($obj['why'] == "a" || $obj['why'] == "z" || $obj['why'] == 'b') {
 		$id = preg_replace('/^.album/','',$obj['id']);
-		$iab = album_is_audiobook($id);
+		$albumid = preg_replace('/_\d+$/','',$id);
+		$iab = album_is_audiobook($albumid);
 		$classes = array();
 		if ($obj['why'] != 'b') {
-			if (num_collection_tracks($id) == 0) {
+			if (num_collection_tracks($albumid) == 0) {
 				$classes[] = 'clickamendalbum clickremovealbum';
 			}
 			if ($iab == 0) {
@@ -150,6 +157,8 @@ function albumHeader($obj) {
 		}
 		if ($obj['AlbumUri']) {
 			$classes[] = 'clickalbumoptions';
+		} else {
+			$classes[] = 'clickcolloptions';
 		}
 		if ($obj['why'] == 'b' && $obj['AlbumUri'] && preg_match('/spotify:album:(.*)$/', $obj['AlbumUri'], $matches)) {
 			$classes[] = 'clickaddtollviabrowse clickaddtocollectionviabrowse';
@@ -159,7 +168,7 @@ function albumHeader($obj) {
 		}
 		$classes[] = 'clickratedtracks';
 		if (count($classes) > 0) {
-			$h .= '<div class="icon-menu playlisticonr fixed clickable clickicon clickalbummenu '.implode(' ',$classes).'" name="'.$id.'" why="'.$obj['why'].'" spalbumid="'.$spalbumid.'"></div>';
+			$h .= '<div class="icon-menu playlisticonr fixed clickable clickicon clickalbummenu '.implode(' ',$classes).'" name="'.$id.'" who="'.$albumid.'" why="'.$obj['why'].'" spalbumid="'.$spalbumid.'" uri="'.rawurlencode($obj['AlbumUri']).'"></div>';
 		}
 	}
 	$h .= '</div>';
@@ -170,7 +179,7 @@ function albumControlHeader($fragment, $why, $what, $who, $artist, $playall = tr
 	return '';
 }
 
-function trackControlHeader($why, $what, $who, $dets) {
+function trackControlHeader($why, $what, $who, $when, $dets) {
 }
 
 function printDirectoryItem($fullpath, $displayname, $prefix, $dircount, $printcontainer = false) {

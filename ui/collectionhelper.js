@@ -150,15 +150,30 @@ var collectionHelper = function() {
 	}
 
 	function loadAudiobooks() {
-		if (prefs.hide_audiobooklist) {
-			return false;
+		if (!prefs.hide_audiobooklist) {
+			$('#audiobooks').load(
+				'albums.php?item='+collectionHelper.collectionKey('z'),
+				function() {
+					collectionHelper.scootTheAlbums($("#audiobooks"));
+					uiHelper.doThingsAfterDisplayingListOfAlbums($('#audiobooks'));
+					loadSearchResults();
+				}
+			);
+		} else {
+			loadSearchResults();
 		}
-		$('#audiobooks').load(
-			'albums.php?item='+collectionHelper.collectionKey('z'),
-			function() {
-				uiHelper.doThingsAfterDisplayingListOfAlbums($('#audiobooks'));
-			}
-		);
+	}
+
+	function loadSearchResults() {
+		if (!prefs.hide_searcher) {
+			$('#searchresultholder').load(
+				'albums.php?item='+collectionHelper.collectionKey('b'),
+				function() {
+					collectionHelper.scootTheAlbums($("#searchresultholder"));
+					uiHelper.doThingsAfterDisplayingListOfAlbums($('#searchresultholder'));
+				}
+			);
+		}
 	}
 
 	function loadFileBrowser() {
@@ -183,29 +198,15 @@ var collectionHelper = function() {
 
 			if (rdata && rdata.hasOwnProperty('deletedalbums')) {
 				$.each(rdata.deletedalbums, function(i, v) {
-					debug.log("REMOVING", "Album", v);
-					uiHelper.removeAlbum('aalbum'+v);
-				});
-			}
-
-			if (rdata && rdata.hasOwnProperty('deletedaudiobooks')) {
-				$.each(rdata.deletedaudiobooks, function(i, v) {
-					debug.log("REMOVING", "Audiobook", v);
-					uiHelper.removeAlbum('zalbum'+v);
+					debug.log("REMOVING", v);
+					uiHelper.removeAlbum(v);
 				});
 			}
 
 			if (rdata && rdata.hasOwnProperty('deletedartists')) {
 				$.each(rdata.deletedartists, function(i, v) {
-					debug.log("REMOVING", "Artist", v);
-					uiHelper.removeArtist('aartist'+v);
-				});
-			}
-
-			if (rdata && rdata.hasOwnProperty('deletedbookartists')) {
-				$.each(rdata.deletedbookartists, function(i, v) {
-					debug.log("REMOVING", "Book Artist", v);
-					uiHelper.removeArtist('zartist'+v);
+					debug.log("REMOVING", v);
+					uiHelper.removeArtist(v);
 				});
 			}
 
@@ -214,16 +215,7 @@ var collectionHelper = function() {
 				$.each(rdata.modifiedalbums, function(i,v) {
 					// We remove and replace any modified albums, as they may have a new date or albumartist which would cause
 					// them to appear elsewhere in the collection. First remove the dropdown if it exists and replace its contents
-					debug.log("MODIFIED","Album",v.id);
-					uiHelper.insertAlbum(v);
-				});
-			}
-
-			if (rdata && rdata.hasOwnProperty('modifiedaudiobooks')) {
-				$.each(rdata.modifiedaudiobooks, function(i,v) {
-					// We remove and replace any modified albums, as they may have a new date or albumartist which would cause
-					// them to appear elsewhere in the collection. First remove the dropdown if it exists and replace its contents
-					debug.log("MODIFIED","Audiobook",v.id);
+					debug.log("MODIFIED",v.id);
 					uiHelper.insertAlbum(v);
 				});
 			}
@@ -235,22 +227,10 @@ var collectionHelper = function() {
 					// NOTE. Do this AFTER inserting new albums, because if we're doing albumbyartist with banners showing
 					// then the insertAfter logic will be wrong if we've already inserted the artist banner. We also need
 					// to remove and replace the banner when that sort option is used, because we only insertAfter an album ID
-					var x = uiHelper.findArtistDisplayer('aartist'+v.id);
+					var x = uiHelper.findArtistDisplayer(v.id);
+					// var x = uiHelper.findArtistDisplayer('aartist'+v.id);
 					if (x.length == 0) {
-						debug.log('UIHELPER', 'MODIFIED', 'aartist'+v.id);
-						uiHelper.insertArtist(v);
-					}
-				});
-			}
-
-			if (rdata && rdata.hasOwnProperty('modifiedbookartists')) {
-				$.each(rdata.modifiedbookartists, function(i,v) {
-					// The only thing to do with artists is to add them in if they don't exist
-					// NOTE. Do this AFTER inserting new albums, because if we're doing albumbyartist with banners showing
-					// then the insertAfter logic will be wrong if we've already inserted the artist banner. We also need
-					// to remove and replace the banner when that sort option is used, because we only insertAfter an album ID
-					var x = uiHelper.findArtistDisplayer('zartist'+v.id);
-					if (x.length == 0) {
+						debug.log('MODIFIED', v.id);
 						uiHelper.insertArtist(v);
 					}
 				});
@@ -258,9 +238,11 @@ var collectionHelper = function() {
 
 			if (rdata && rdata.hasOwnProperty('addedtracks') && rdata.addedtracks.length > 0) {
 				$.each(rdata.addedtracks, function(i, v) {
-					if (v.albumindex !== null && v.trackuri != '') {
-						// (Ignore if it went into the wishlist)
-						debug.log("INSERTED","Displaying",v);
+					if (v.albumindex !== null && v.trackuri != '' && prefs.chooser != 'searcher') {
+						// (Ignore if it went into the wishlist) Also don't do it if we're looking
+						// at the search pane as it's just annoying to tag tracks from there and have it keep
+						// switching to the collection
+						debug.log("INSERTED",v);
 						layoutProcessor.displayCollectionInsert(v);
 					}
 				});
@@ -329,7 +311,7 @@ var collectionHelper = function() {
 		forceCollectionReload: function() {
 			debug.log("COLLECTION", "Forcing Collection reload");
 			collection_status = 0;
-			collectionHelper.checkCollection(false, false);
+			collectionHelper.displayCollection();
 			if (notify) {
 				infobar.removenotify(notify);
 			}
@@ -375,9 +357,13 @@ var collectionHelper = function() {
 				$("#searchresultholder").html('');
 				scanFiles(rescan ? 'rescan' : 'update');
 			} else {
-				loadCollection();
-				loadFileBrowser();
+				collectionHelper.displayCollection();
 			}
+		},
+
+		displayCollection: function() {
+			loadCollection();
+			loadFileBrowser();
 		},
 
 		scootTheAlbums: function(jq) {
@@ -400,12 +386,6 @@ var collectionHelper = function() {
 				clearTimeout(update_timer);
 				setTimeout(updateUIElements, 1000);
 			}
-		},
-
-		reloadAudiobooks() {
-			loadAudiobooks();
 		}
-
 	}
-
 }();

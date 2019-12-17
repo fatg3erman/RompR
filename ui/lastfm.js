@@ -8,7 +8,7 @@ function LastFM(user) {
 	var self=this;
 	var queue = new Array();
 	var throttle = null;
-	var throttleTime = 500;
+	var throttleTime = 250;
 	var backofftimer;
 
 	function startlogin() {
@@ -56,7 +56,7 @@ function LastFM(user) {
 	});
 
 	function speedBackUp() {
-		throttleTime = 500;
+		throttleTime = 250;
 	}
 
 	function setThrottling(t) {
@@ -276,7 +276,7 @@ function LastFM(user) {
 
 							case 29:
 								debug.warn("LASTFM","Rate Limit Exceeded. Slowing Down");
-								setThrottling(throttleTime*2);
+								setThrottling(throttleTime+1000);
 								// Fall through
 
 							default:
@@ -327,7 +327,7 @@ function LastFM(user) {
 						errormessage += '<br />'+errortext;
 						if (errorcode == 29) {
 							debug.warn("LASTFM","Rate Limit Exceeded. Slowing Down");
-							setThrottling(throttleTime*2);
+							setThrottling(throttleTime+1000);
 						}
 					} else {
 						errormessage += ' ('+xhr.status+' '+err+')';

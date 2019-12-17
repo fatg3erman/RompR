@@ -98,7 +98,7 @@ class sortby_albumbyartist extends sortby_base {
 				$singleheader['where'] = $this->why.'album'.$album['Albumindex'];
 			} else {
 				$singleheader['html'] = $this->artistBanner($album['Artistname'], $album['AlbumArtistindex']);
-				$singleheader['id'] = $artistindex;
+				$singleheader['id'] = $this->why.'artist'.$artistindex;
 				return $singleheader;
 			}
 		}
@@ -114,8 +114,8 @@ class sortby_albumbyartist extends sortby_base {
 			} else {
 				$album['Artistname'] = null;
 				$singleheader['html'] = albumHeader($album);
-				$singleheader['id'] = $albumindex;
-				$singleheader['why'] = $this->why;
+				$singleheader['id'] = $album['id'];
+				// $singleheader['why'] = $this->why;
 				return $singleheader;
 			}
 		}
@@ -124,15 +124,14 @@ class sortby_albumbyartist extends sortby_base {
 	public function get_modified_root_items() {
 		global $returninfo;
 		$result = generic_sql_query('SELECT DISTINCT AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
-		$key = $this->returninfo_root_key();
 		foreach ($result as $mod) {
 			$atc = $this->artist_albumcount($mod['AlbumArtistindex']);
 			logger::mark("SORTBY_ALBUMBYARTIST", "  Artist",$mod['AlbumArtistindex'],"has",$atc,$this->why,"albums we need to consider");
 			// Modified artists also go in as deleted - since the 'root' item in this case is an artist banner
 			// and we only do inserts after album IDs, we always remove and then re-insert the banners.
-			$returninfo['deleted'.$key][] = $mod['AlbumArtistindex'];
+			$returninfo['deletedartists'][] = $this->why.'artist'.$mod['AlbumArtistindex'];
 			if ($atc > 0) {
-				$returninfo['modified'.$key][] = $this->output_root_fragment($mod['AlbumArtistindex']);
+				$returninfo['modifiedartists'][] = $this->output_root_fragment($mod['AlbumArtistindex']);
 			}
 		}
 	}
@@ -140,17 +139,16 @@ class sortby_albumbyartist extends sortby_base {
 	public function get_modified_albums() {
 		global $returninfo;
 		$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
-		$key = $this->returninfo_album_key();
 		foreach ($result as $mod) {
 			$atc = $this->album_trackcount($mod['Albumindex']);
 			logger::mark("SORTBY_ALBUMBYARTIST", "  Album",$mod['Albumindex'],"has",$atc,$this->why,"tracks we need to consider");
 			if ($atc == 0) {
-				$returninfo['deleted'.$key][] = $mod['Albumindex'];
+				$returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'];
 			} else {
 				$r = $this->output_album_fragment($mod['Albumindex']);
 				$lister = new sortby_albumbyartist($this->why.'album'.$mod['Albumindex']);
 				$r['tracklist'] = $lister->output_track_list(true);
-				$returninfo['modified'.$key][] = $r;
+				$returninfo['modifiedalbums'][] = $r;
 			}
 		}
 	}

@@ -151,10 +151,11 @@ function albumControlHeader($fragment, $why, $what, $who, $artist, $playall = tr
 	return $html;
 }
 
-function trackControlHeader($why, $what, $who, $dets) {
+function trackControlHeader($why, $what, $who, $when, $dets) {
 	$html = '';
 	$iab = -1;
 	$play_col_button = 'icon-music';
+	$db_album = ($when === null) ? $who : $who.'_'.$when;
 	if ($what == 'album' && ($why == 'a' || $why == 'z')) {
 		$iab = album_is_audiobook($who);
 		$play_col_button = ($iab == 0) ? 'icon-music' : 'icon-audiobook';
@@ -171,12 +172,12 @@ function trackControlHeader($why, $what, $who, $dets) {
 					$html .= '<div class="'.$play_col_button.' smallicon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" tooltip="'.get_int_text('label_from_collection').'"></div>';
 				}
 			} else {
-				$html .= '<div class="icon-no-response-playbutton smallicon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" tooltip="'.get_int_text('label_play_whole_album').'"></div>';
+				$html .= '<div class="'.$play_col_button.' smallicon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" tooltip="'.get_int_text('label_from_collection').'"></div>';
 			}
-			$html .= '<div class="icon-single-star smallicon expand clickicon clickalbum playable noselect tooltip" name="ralbum'.$who.'" tooltip="'.get_int_text('label_with_ratings').'"></div>';
-			$html .= '<div class="icon-tags smallicon expand clickicon clickalbum playable noselect tooltip" name="talbum'.$who.'" tooltip="'.get_int_text('label_with_tags').'"></div>';
-			$html .= '<div class="icon-ratandtag smallicon expand clickicon clickalbum playable noselect tooltip" name="yalbum'.$who.'" tooltip="'.get_int_text('label_with_tagandrat').'"></div>';
-			$html .= '<div class="icon-ratortag smallicon expand clickicon clickalbum playable noselect tooltip" name="ualbum'.$who.'" tooltip="'.get_int_text('label_with_tagorrat').'"></div>';
+			$html .= '<div class="icon-single-star smallicon expand clickicon clickalbum playable noselect tooltip" name="ralbum'.$db_album.'" tooltip="'.get_int_text('label_with_ratings').'"></div>';
+			$html .= '<div class="icon-tags smallicon expand clickicon clickalbum playable noselect tooltip" name="talbum'.$db_album.'" tooltip="'.get_int_text('label_with_tags').'"></div>';
+			$html .= '<div class="icon-ratandtag smallicon expand clickicon clickalbum playable noselect tooltip" name="yalbum'.$db_album.'" tooltip="'.get_int_text('label_with_tagandrat').'"></div>';
+			$html .= '<div class="icon-ratortag smallicon expand clickicon clickalbum playable noselect tooltip" name="ualbum'.$db_album.'" tooltip="'.get_int_text('label_with_tagorrat').'"></div>';
 			$classes = array();
 			if ($why != 'b') {
 				if (num_collection_tracks($who) == 0) {

@@ -178,6 +178,10 @@ function prepare_returninfo() {
 	$lister->get_modified_root_items();
 	$lister->get_modified_albums();
 
+	$lister = new $sorter('bartistroot');
+	$lister->get_modified_root_items();
+	$lister->get_modified_albums();
+
 	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex, Uri, TTindex, isAudiobook FROM Tracktable JOIN Albumtable USING (Albumindex) WHERE justAdded = 1 AND Hidden = 0');
 	foreach ($result as $mod) {
 		logger::log("USERRATING", "  New Track in album ".$mod['Albumindex'].' has TTindex '.$mod['TTindex']);

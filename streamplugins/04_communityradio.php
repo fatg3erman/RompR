@@ -288,7 +288,7 @@ class commradioplugin {
 			'class' => 'radiochannel'
 		));
 		print '<div id="communityradio_'.$index.'" class="dropmenu">';
-		trackControlHeader('','','communityradio_'.$index, array(array('Image' => $this->comm_radio_get_image($station))));
+		trackControlHeader('','','communityradio_'.$index, null, array(array('Image' => $this->comm_radio_get_image($station))));
 		// print '<div class="containerbox expand ninesix indent padright"><b>Listen:</b></div>';
 		print '<div class="containerbox ninesix indent padright">'.htmlspecialchars($station['state'].$station['country']).'</div>';
 

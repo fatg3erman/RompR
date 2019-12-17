@@ -566,7 +566,6 @@ $languages['de'] = array (
         "label_recentlyplayed" => "Kürzlich gespielte Stücke",
         "label_simar_radio" => "Ähnliche Künstler wie",
 
-        "label_tradsearch_header" => "Irgendetwas eingeben, wonach gesucht werden soll",
         "label_tradsearch" => "Klassische Suche mit mehreren Suchbegriffen",
 
         "played_never" => "Dieses Stück wurde noch nie gespielt",

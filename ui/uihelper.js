@@ -257,21 +257,22 @@ var uiHelper = function() {
 		},
 
 		insertAlbum: function(v) {
+			debug.mark('UIHELPER', 'Inserting Album', v.id);
 			try {
 				return layoutProcessor.insertAlbum(v);
 			} catch (err) {
 				var albumindex = v.id;
 				var reinsert = false;
-				$('#'+v.why+'album'+albumindex).html(v.tracklist);
+				$('#'+albumindex).html(v.tracklist);
 				// This may look slightly messy but re-inserting the dropdown instead
 				// of just removing it and re-opening it is much cleaner from a user
 				// experience perspective.
-				var dropdown = $('#'+v.why+'album'+albumindex);
+				var dropdown = $('#'+albumindex);
 				if (dropdown.is(':visible')) {
 					reinsert = true;
 					dropdown.detach().html(v.tracklist);
 				}
-				uiHelper.findAlbumParent(v.why+'album'+albumindex).remove();
+				uiHelper.findAlbumParent(albumindex).remove();
 				switch (v.type) {
 					case 'insertAfter':
 						debug.log("Insert After",v.where);
@@ -284,8 +285,8 @@ var uiHelper = function() {
 						break;
 				}
 				if (reinsert) {
-					uiHelper.findAlbumDisplayer(v.why+'album'+albumindex).find('.menu').toggleOpen();
-					dropdown.insertAfter(uiHelper.findAlbumDisplayer(v.why+'album'+albumindex));
+					uiHelper.findAlbumDisplayer(albumindex).find('.menu').toggleOpen();
+					dropdown.insertAfter(uiHelper.findAlbumDisplayer(albumindex));
 					infobar.markCurrentTrack();
 				}
 				uiHelper.makeResumeBar(dropdown);
@@ -293,6 +294,7 @@ var uiHelper = function() {
 		},
 
 		insertArtist: function(v) {
+			debug.mark('UIHELPER', 'Inserting Artist', v.id);
 			try {
 				return layoutProcessor.insertArtist(v);
 			} catch(err) {
@@ -300,13 +302,17 @@ var uiHelper = function() {
 				switch (v.type) {
 					case 'insertAfter':
 						debug.log("Insert After",v.where);
-						var type = v.where.match(/.(album|artist)/)[1];
-						switch (type) {
+						var type = v.where.match(/.([a-z]+)\d/)
+						if (type === null) {
+							// Regexp won't match if v.where is 'fothergill' or 'mingus'
+							type = ['', 'album'];
+						}
+						switch (type[1]) {
 							case 'album':
 								$(v.html).insertAfter(uiHelper.findAlbumDisplayer(v.where));
 								break;
 
-							case 'artist':
+							default:
 								$(v.html).insertAfter(uiHelper.findArtistDisplayer(v.where));
 								break;
 						}
@@ -349,9 +355,11 @@ var uiHelper = function() {
 		},
 
 		removeArtist: function(v) {
+			debug.mark('UIHELPER', 'Removing Artist', v);
 			try {
 				return layoutProcessor.removeArtist(v);
 			} catch (err) {
+				debug.log('REMOVEARTIST', 'Default Function');
 				$("#"+v).remove();
 				uiHelper.findArtistDisplayer(v).remove();
 			}
@@ -552,9 +560,6 @@ var uiHelper = function() {
 				ws.top = $('#sources').offset().top;
 				return ws;
 			}
-
 		}
-
 	}
-
 }();

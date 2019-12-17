@@ -785,12 +785,12 @@ function remove_album_from_database($albumid) {
 	generic_sql_query("DELETE FROM Albumtable WHERE Albumindex = ".$albumid, true);
 }
 
-function get_album_tracks_from_database($index, $cmd, $why) {
+function get_album_tracks_from_database($which, $cmd) {
 	global $prefs;
 	$retarr = array();
-	logger::log('SQL', 'Getting tracks for album',$why,$index,$cmd);
+	logger::log('SQL', 'Getting tracks for album',$which,$cmd);
 	$sorter = 'sortby_'.$prefs['sortcollectionby'];
-	$lister = new $sorter($why.'album'.$index);
+	$lister = new $sorter($which);
 	$result = $lister->track_sort_query();
 	$cmd = ($cmd === null) ? 'add' : $cmd;
 	foreach($result as $a) {
@@ -799,14 +799,14 @@ function get_album_tracks_from_database($index, $cmd, $why) {
 	return $retarr;
 }
 
-function get_artist_tracks_from_database($index, $cmd, $why) {
+function get_artist_tracks_from_database($which, $cmd) {
 	global $prefs;
 	$retarr = array();
-	logger::log("GET TRACKS", "Getting Tracks for AlbumArtist",$index);
+	logger::log("GET TRACKS", "Getting Tracks for Root Item",$prefs['sortcollectionby'],$which);
 	$sorter = 'sortby_'.$prefs['sortcollectionby'];
-	$lister = new $sorter($why.'artist'.$index);
+	$lister = new $sorter($which);
 	foreach ($lister->albums_for_artist() as $a) {
-		$retarr = array_merge($retarr, get_album_tracks_from_database($a, $cmd, $why));
+		$retarr = array_merge($retarr, get_album_tracks_from_database($which, $cmd));
 	}
 	return $retarr;
 }
@@ -1107,23 +1107,17 @@ function getItemsToAdd($which, $cmd = null) {
 		logger::fail("GETITEMSTOADD", "Regexp failed to match",$which);
 		return array();
 	}
-	$why = $matches[1];
 	$what = $matches[2];
-	$who = $matches[3];
-	logger::log('GETITEMSTOADD','Getting tracks for',$why,$what,$who,$cmd);
+	logger::log('GETITEMSTOADD','Getting tracks for',$which,$cmd);
 	switch ($what) {
-		case "artist":
-			return get_artist_tracks_from_database($who, $cmd, $why);
-			break;
-
 		case "album":
-			return get_album_tracks_from_database($who, $cmd, $why);
+			return get_album_tracks_from_database($which, $cmd);
 			break;
 
 		default:
-			logger::fail("GETITEMSTOADD", "Unknown type",$which);
-			return array();
+			return get_artist_tracks_from_database($which, $cmd);
 			break;
+
 	}
 }
 

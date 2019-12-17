@@ -10,7 +10,9 @@ You can choose to display the collection sorted by
 
 * Artist (in alphabetical order)
 * Album (in alphabetical or date order)
-* Albums (by Artist) displays all albums at once sorted first by Artist, then either alphabetically or by date
+* Albums (by Artist) - displays all albums at once sorted first by Artist, then either alphabetically or by date
+* Rating - sorts your Collection by Rating first, album second. Only rated tracks will be shown.
+* Tag - sorts your Collection by Tag first, album second. Only tagged tracks will be shown.
 
 You can choose not to apply Date Sorting to 'Various Artists' - where sorting albums alphabetically is almost always more useful.
 
