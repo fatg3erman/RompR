@@ -143,6 +143,8 @@ function onSourcesClicked(event, clickedElement) {
 		metaHandlers.fromUiElement.rateTrack(clickedElement);
 	} else if (clickedElement.hasClass("clicktagtrack")) {
 		metaHandlers.fromUiElement.tagTrack(clickedElement);
+	} else if (clickedElement.hasClass("clickuntagtrack")) {
+		metaHandlers.fromUiElement.untagTrack(clickedElement);
 	} else if (clickedElement.hasClass("clickpltrack")) {
 		metaHandlers.fromUiElement.tracksToPlaylist(clickedElement);
 		clickedElement.parent().parent().parent().remove();
@@ -778,11 +780,17 @@ function makeSubMenu(e, element) {
 		menu.css({display: ''});
 	} else {
 		if (menu.hasClass('tracktagmenu')) {
+			var track_tags = (decodeURIComponent(parentmenu.parent().attr('rompr_tags'))).split(', ');
+			debug.log('TRACKMENU', 'Track tags are',track_tags);
 			metaHandlers.genericAction(
 				'gettags',
 				function(data) {
 					data.forEach(function(tag){
-						menu.append('<div class="backhi clickable menuitme clicktagtrack">'+tag+'</div>');
+						if (track_tags.indexOf(tag) == -1) {
+							menu.append('<div class="backhi clickable menuitme clicktagtrack"><i class="icon-blank collectionicon"></i><span>'+tag+'</span></div>');
+						} else {
+							menu.append('<div class="backhi clickable menuitme clickuntagtrack"><i class="icon-tick collectionicon"></i><span>'+tag+'</span></div>');
+						}
 					});
 					menu.slideToggle('fast', function() {
 						parentmenu.jiggleToFit();

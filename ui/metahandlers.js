@@ -172,7 +172,11 @@ var metaHandlers = function() {
 			},
 
 			tagTrack: function(element) {
-				metaHandlers.fromUiElement.doMeta('set', 'Tag', [{attribute: 'Tags', value: [element.html()]}], null);
+				metaHandlers.fromUiElement.doMeta('set', 'Tag', [{attribute: 'Tags', value: [element.children('span').html()]}], null);
+			},
+
+			untagTrack: function(element) {
+				metaHandlers.fromUiElement.doMeta('remove', 'Tag', [{attribute: 'Tags', value: [element.children('span').html()]}], null);
 			},
 
 			tracksToPlaylist: function(element) {

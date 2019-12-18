@@ -68,7 +68,7 @@ function albumTrack($data) {
 		if ($data['lm'] === null) {
 			$button_class .= ' clickremovedb';
 		}
-		print '<div class="'.$button_class.'" rompr_id="'.$data['ttid'].'"></div>';
+		print '<div class="'.$button_class.'" rompr_id="'.$data['ttid'].'" rompr_tags="'.rawurlencode($data['tags']).'"></div>';
 	}
 
 	print '</div>';
