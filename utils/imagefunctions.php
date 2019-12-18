@@ -62,11 +62,11 @@ class baseAlbumImage {
 		return file_exists($image);
 	}
 
-	public function get_image_if_exists() {
+	public function get_image_if_exists($size = 'small') {
 		foreach (array('png', 'svg', 'jpg') as $ext) {
 			$this->change_file_extension($ext);
-			if ($this->image_exists($this->images['small'])) {
-				return $this->images['small'];
+			if ($this->image_exists($this->images[$size])) {
+				return $this->images[$size];
 			}
 		}
 		if ($this->artist == 'PLAYLIST' && $this->album == 'Discover Weekly (by spotify)') {
@@ -75,6 +75,7 @@ class baseAlbumImage {
 			$this->images['asdownloaded'] = 'newimages/discoverweekly.jpg';
 			return 'newimages/discoverweekly.jpg';
 		}
+		$this->images['small'] = null;
 		return null;
 	}
 
@@ -229,6 +230,13 @@ class baseAlbumImage {
 	private function make_image_key() {
 		$key = strtolower($this->artist.$this->album);
 		return md5($key);
+	}
+
+	public function album_has_no_image() {
+		if (!$this->images['small']) {
+			return true;
+		}
+		return false;
 	}
 
 	public function html_for_image($obj, $imageclass, $size) {

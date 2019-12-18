@@ -407,7 +407,7 @@ var imageEditor = function() {
 			$('input#uploadalbum').val(searchparams.album);
 			$('#searchphrase').on('keyup', imageEditor.bumblefuck);
 			wobbleMyBottom();
-			$('#coverslist').mCustomScrollbar('scrollTo', currparent.parent().parent().prev());
+			$('#coverslist').mCustomScrollbar('scrollTo', $('#imageeditor').parent());
 		},
 
 		setWidth: function() {
@@ -650,7 +650,7 @@ function uploadComplete(data) {
 		}
 		imgobj.removeClass("notexist notfound");
 		var firefoxcrapnesshack = Math.floor(Date.now());
-		imgobj.attr('src', data.small+'?version='+firefoxcrapnesshack.toString());
+		imgobj.attr('src', data.medium+'?version='+firefoxcrapnesshack.toString());
 		imageEditor.updateBigImg(data.asdownloaded+'?version='+firefoxcrapnesshack.toString());
 		sendLocalStorageEvent(imagekey, data);
 	} else {

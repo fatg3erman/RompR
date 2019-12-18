@@ -416,9 +416,16 @@ var playlistManager = function() {
 					var uri = decodeURIComponent($(element).children('input').first().attr('name'));
 					debug.log("PLAYLISTMANAGER","Dragged Directory",uri,"to",which_playlist);
 					tracks.push({dir: uri});
-				} else if (element.hasAttribute('romprid')) {
+				} else if ($(element).hasClass('playlistitem') || $(element).hasClass('playlistcurrentitem')) {
 					var playlistinfo = playlist.getId($(element).attr('romprid'));
+					debug.log("PLAYLISTMANAGER","Dragged Playist Track",playlistinfo.file,"to",which_playlist);
 					tracks.push({uri: playlistinfo.file});
+				} else if ($(element).hasClass('playlistalbum')) {
+					var album = playlist.getAlbum($(element).attr('name'));
+					debug.log("PLAYLISTMANAGER","Dragged Playist Album",$(element).attr('name'),"to",which_playlist);
+					album.forEach(function(playlistinfo) {
+						tracks.push({uri: playlistinfo.file});
+					});
 				} else {
 					var uri = decodeURIComponent($(element).attr("name"));
 					debug.log("PLAYLISTMANAGER","Dragged",uri,"to",which_playlist);
@@ -903,7 +910,7 @@ function makeAlbumMenu(e, element) {
 		}).html(language.gettext('label_addtocollection')));
 	}
 	d.appendTo($(element));
-	d.slideToggle('fast', function() {
+	d.show(0, function() {
 		$(this).jiggleToFit();
 	});
 }

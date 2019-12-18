@@ -980,17 +980,14 @@ function find_radio_track_from_url($url) {
 function update_track_stats() {
 	logger::log("BACKEND", "Updating Track Stats");
 	$t = microtime(true);
-	$ac = get_artist_count(ADDED_ALL_TIME, 0);
-	update_stat('ArtistCount',$ac);
-
-	$ac = get_album_count(ADDED_ALL_TIME, 0);
-	update_stat('AlbumCount',$ac);
-
-	$ac = get_track_count(ADDED_ALL_TIME, 0);
-	update_stat('TrackCount',$ac);
-
-	$ac = get_duration_count(ADDED_ALL_TIME, 0);
-	update_stat('TotalTime',$ac);
+	update_stat('ArtistCount',get_artist_count(ADDED_ALL_TIME, 0));
+	update_stat('AlbumCount',get_album_count(ADDED_ALL_TIME, 0));
+	update_stat('TrackCount',get_track_count(ADDED_ALL_TIME, 0));
+	update_stat('TotalTime',get_duration_count(ADDED_ALL_TIME, 0));
+	update_stat('BookArtists',get_artist_count(ADDED_ALL_TIME, 1));
+	update_stat('BookAlbums',get_album_count(ADDED_ALL_TIME, 1));
+	update_stat('BookTracks',get_track_count(ADDED_ALL_TIME, 1));
+	update_stat('BookTime',get_duration_count(ADDED_ALL_TIME, 1));
 	$at = microtime(true) - $t;
 	logger::debug("TIMINGS", "Updating Track Stats took ".$at." seconds");
 }
@@ -1067,10 +1064,19 @@ function collectionStats() {
 function audiobookStats() {
 	global $prefs;
 	$html = '<div id="mingus" class="brick brick_wide">';
-	$html .= alistheader(get_artist_count($prefs['collectionrange'], 1),
-						get_album_count($prefs['collectionrange'], 1),
-						get_track_count($prefs['collectionrange'], 1),
-						format_time(get_duration_count($prefs['collectionrange'], 1)));
+
+	if ($prefs['collectionrange'] == ADDED_ALL_TIME) {
+		$html .= alistheader(get_stat('BookArtists'),
+							get_stat('BookAlbums'),
+							get_stat('BookTracks'),
+							format_time(get_stat('BookTime'))
+						);
+	} else {
+		$html .= alistheader(get_artist_count($prefs['collectionrange'], 1),
+							get_album_count($prefs['collectionrange'], 1),
+							get_track_count($prefs['collectionrange'], 1),
+							format_time(get_duration_count($prefs['collectionrange'], 1)));
+	}
 	$html .= "</div>";
 	return $html;
 }
@@ -1094,7 +1100,7 @@ function searchStats() {
 		"SELECT SUM(Duration) AS TotalTime FROM Tracktable WHERE Uri IS NOT NULL AND
 		Hidden=0 AND isSearchResult > 0", false, null, 'TotalTime', 0);
 
-	$html =  '<div class="brick brick_wide">';
+	$html =  '<div id="searchstats" class="brick brick_wide">';
 	$html .= alistheader($numartists, $numalbums, $numtracks, format_time($numtime));
 	$html .= '</div>';
 	return $html;
@@ -1102,7 +1108,7 @@ function searchStats() {
 }
 
 function getItemsToAdd($which, $cmd = null) {
-	$a = preg_match('/(a|b|r|t|y|u|z)(.*?)(\d+|root)/', $which, $matches);
+	$a = preg_match('/^(a|b|r|t|y|u|z)(.*?)(\d+|root)/', $which, $matches);
 	if (!$a) {
 		logger::fail("GETITEMSTOADD", "Regexp failed to match",$which);
 		return array();
@@ -1205,12 +1211,9 @@ function cleanSearchTables() {
 	// So this function must be called BEFORE prepareCollectionUpdate, as that creates
 	// temporary tables of its own.
 	//
-
-	// Am now dropping the table again (used_tags in remove_cruft) so let's see how that goes
-	// Also temporary tables in delete_orphaned_artists and hide_played_tracks
-	// close_database();
-	// sleep(1);
-	// connect_to_database();
+	close_database();
+	sleep(1);
+	connect_to_database();
 
 }
 
@@ -1312,8 +1315,6 @@ function remove_cruft() {
 	generic_sql_query("DELETE FROM Tagtable WHERE Tagindex NOT IN (SELECT Tagindex FROM used_tags)", true);
 	generic_sql_query("DELETE FROM Playcounttable WHERE Playcount = '0'", true);
 	generic_sql_query("DELETE FROM Playcounttable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
-
-	generic_sql_query('DROP TABLE used_tags', true);
 
 	$at = microtime(true) - $t;
 	logger::debug("TIMINGS", " -- Tidying metadata took ".$at." seconds");
@@ -1462,8 +1463,17 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 				$newlastmodified = $lastmodified;
 			}
 			$newisaudiobook = ($isaudiobook == 2) ? 2 : (($trackobj->tags['type'] == 'audiobook') ? 1 : 0);
-			if ($update_track->execute(array($trackobj->tags['Track'], $trackobj->tags['Time'], $trackobj->tags['Disc'],
-					$newlastmodified, $trackobj->tags['file'], $albumindex,	$newsearchresult, $newisaudiobook, $ttid))) {
+			if ($update_track->execute(array(
+				$trackobj->tags['Track'],
+				$trackobj->tags['Time'],
+				$trackobj->tags['Disc'],
+				$newlastmodified,
+				$trackobj->tags['file'],
+				$albumindex,
+				$newsearchresult,
+				$newisaudiobook,
+				$ttid
+			))) {
 				$numdone++;
 			} else {
 				show_sql_error();
@@ -1514,6 +1524,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 		$ttid = create_new_track($params);
 		$numdone++;
 	}
+
 	check_transaction();
 	if ($ttid == null) {
 		logger::error("MYSQL", "ERROR! No ttid for track ".$trackobj->tags['file']);

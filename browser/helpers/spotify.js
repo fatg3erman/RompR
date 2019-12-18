@@ -5,7 +5,7 @@ var spotify = function() {
 	var throttle = null;
 	var collectedobj = null;
 	var getit;
-	var rate = 250;
+	var rate = 100;
 	var backofftimer;
 
 	function objFirst(obj) {

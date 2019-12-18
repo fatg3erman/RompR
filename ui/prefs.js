@@ -77,7 +77,8 @@ var prefs = function() {
 		'player_backend',
 		"sortbydate",
 		"notvabydate",
-		"collectionrange"
+		"collectionrange",
+		"sortcollectionby"
 	];
 
 	const jsonNode = document.querySelector("script[name='prefs']");

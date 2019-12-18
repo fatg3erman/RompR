@@ -224,8 +224,9 @@ function update_ui_images(key, images) {
 		}
 	});
 	$('img[name="'+key+'"]').removeClass("notexist notfound").attr("src", "").hide().show();
-	$('img[name="'+key+'"]').not('.jalopy').attr("src", images.small);
+	$('img[name="'+key+'"]').not('.jalopy').not('.droppable').attr("src", images.small);
 	$('img[name="'+key+'"].jalopy').attr("src", images.medium);
+	$('img[name="'+key+'"].droppable').attr("src", images.medium);
 	if (typeof(infobar) != 'undefined') {
 		infobar.albumImage.setSource({images: images, ImgKey: key});
 	}

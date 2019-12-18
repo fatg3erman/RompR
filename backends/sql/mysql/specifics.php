@@ -297,6 +297,10 @@ function check_sql_tables() {
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('TotalTime', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('CollType', '999')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('SchemaVer', '".ROMPR_SCHEMA_VERSION."')", true);
+		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookArtists', '0')", true);
+		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookAlbums', '0')", true);
+		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTracks', '0')", true);
+		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTime', '0')", true);
 		$sv = ROMPR_SCHEMA_VERSION;
 		logger::log("MYSQL_CONNECT", "Statstable populated");
 		create_update_triggers();
@@ -829,6 +833,15 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 59 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 59:
+				logger::log("SQL", "Updating FROM Schema version 59 TO Schema version 60");
+				generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookArtists', '0')", true);
+				generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookAlbums', '0')", true);
+				generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTracks', '0')", true);
+				generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTime', '0')", true);
+				generic_sql_query("UPDATE Statstable SET Value = 60 WHERE Item = 'SchemaVer'", true);
+				break;
+
 		}
 		$sv++;
 	}
@@ -845,19 +858,14 @@ function mb4_bodge() {
 }
 
 function delete_orphaned_artists() {
-	generic_sql_query("DROP TABLE IF EXISTS Croft", true);
-	generic_sql_query("DROP TABLE IF EXISTS Cruft", true);
 	generic_sql_query("CREATE TEMPORARY TABLE Croft(Artistindex INT UNSIGNED NOT NULL UNIQUE, PRIMARY KEY(Artistindex)) AS SELECT Artistindex FROM Tracktable UNION SELECT AlbumArtistindex FROM Albumtable", true);
 	generic_sql_query("CREATE TEMPORARY TABLE Cruft(Artistindex INT UNSIGNED NOT NULL UNIQUE, PRIMARY KEY(Artistindex)) AS SELECT Artistindex FROM Artisttable WHERE Artistindex NOT IN (SELECT Artistindex FROM Croft)", true);
 	generic_sql_query("DELETE Artisttable FROM Artisttable INNER JOIN Cruft ON Artisttable.Artistindex = Cruft.Artistindex", true);
-	generic_sql_query("DROP TABLE IF EXISTS Croft", true);
-	generic_sql_query("DROP TABLE IF EXISTS Cruft", true);
 }
 
 function hide_played_tracks() {
 	generic_sql_query("CREATE TEMPORARY TABLE Fluff(TTindex INT UNSIGNED NOT NULL UNIQUE, PRIMARY KEY(TTindex)) AS SELECT TTindex FROM Tracktable JOIN Playcounttable USING (TTindex) WHERE isSearchResult = 2", true);
 	generic_sql_query("UPDATE Tracktable SET Hidden = 1, isSearchResult = 0 WHERE TTindex IN (SELECT TTindex FROM Fluff)", true);
-	generic_sql_query("DROP TABLE IF EXISTS Fluff", true);
 }
 
 function sql_recent_tracks() {

@@ -454,32 +454,36 @@ var info_discogs = function() {
 				p = p.replace(/\n/g, '<br>');
 				// Inline links using an artist id
 				p = p.replace(/\[a=*(\d+?)\]/g, '<span class="artists" name="$1">$1</span>');
-				// Inline links using an artist name
-				var reg = /\[a=*(.+?)\]/g;
-				var matches = [...p.matchAll(reg)];
-				for (var i in matches) {
-					p = p.replace(matches[i][0], '<a href="https://www.discogs.com/artist/'+rawurlencode(matches[i][1])+'" target="_blank">'+matches[i][1]+'</a>')
-				}
-				// Same ofr inline label links
-				p = p.replace(/\[l=*(.\d+?)\]/g, '<span class="labels" name="$1">$1</span>');
-				reg = /\[l=*(.+?)\]/g;
-				matches = [...p.matchAll(reg)];
-				for (var i in matches) {
-					p = p.replace(matches[i][0], '<a href="https://www.discogs.com/label/'+rawurlencode(matches[i][1])+'" target="_blank">'+matches[i][1]+'</a>')
-				}
-				// Same for inline master links
-				p = p.replace(/\[m=*(\d+?)\]/g, '<span class="masters" name="$1">$1</span>');
-				var reg = /\[m=*(.+?)\]/g;
-				var matches = [...p.matchAll(reg)];
-				for (var i in matches) {
-					p = p.replace(matches[i][0], '<a href="https://www.discogs.com/master/'+rawurlencode(matches[i][1])+'" target="_blank">'+matches[i][1]+'</a>')
-				}
-				// Same for inline release links
-				p = p.replace(/\[r=*(\d+?)\]/g, '<span class="releases" name="$1">$1</span>');
-				var reg = /\[r=*(.+?)\]/g;
-				var matches = [...p.matchAll(reg)];
-				for (var i in matches) {
-					p = p.replace(matches[i][0], '<a href="https://www.discogs.com/release/'+rawurlencode(matches[i][1])+'" target="_blank">'+matches[i][1]+'</a>')
+				try {
+					// Inline links using an artist name
+					var reg = /\[a=*(.+?)\]/g;
+					var matches = [...p.matchAll(reg)];
+					for (var i in matches) {
+						p = p.replace(matches[i][0], '<a href="https://www.discogs.com/artist/'+rawurlencode(matches[i][1])+'" target="_blank">'+matches[i][1]+'</a>')
+					}
+					// Same for inline label links
+					p = p.replace(/\[l=*(.\d+?)\]/g, '<span class="labels" name="$1">$1</span>');
+					reg = /\[l=*(.+?)\]/g;
+					matches = [...p.matchAll(reg)];
+					for (var i in matches) {
+						p = p.replace(matches[i][0], '<a href="https://www.discogs.com/label/'+rawurlencode(matches[i][1])+'" target="_blank">'+matches[i][1]+'</a>')
+					}
+					// Same for inline master links
+					p = p.replace(/\[m=*(\d+?)\]/g, '<span class="masters" name="$1">$1</span>');
+					var reg = /\[m=*(.+?)\]/g;
+					var matches = [...p.matchAll(reg)];
+					for (var i in matches) {
+						p = p.replace(matches[i][0], '<a href="https://www.discogs.com/master/'+rawurlencode(matches[i][1])+'" target="_blank">'+matches[i][1]+'</a>')
+					}
+					// Same for inline release links
+					p = p.replace(/\[r=*(\d+?)\]/g, '<span class="releases" name="$1">$1</span>');
+					var reg = /\[r=*(.+?)\]/g;
+					var matches = [...p.matchAll(reg)];
+					for (var i in matches) {
+						p = p.replace(matches[i][0], '<a href="https://www.discogs.com/release/'+rawurlencode(matches[i][1])+'" target="_blank">'+matches[i][1]+'</a>')
+					}
+				} catch (err) {
+					debug.warn('DISCOGS', 'Old browser, matchAll not supported');
 				}
 
 				p = p.replace(/\[url=*(.+?)\](.+?)\[\/url\]/g, '<a href="$1" target="_blank">$2</a>');

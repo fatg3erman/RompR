@@ -39,7 +39,7 @@ class sortby_base {
 	public function __construct($which) {
 		global $prefs, $divtype;
 		$divtype = 'album1';
-		$a = preg_match('/(a|b|r|t|y|u|z)(.*?)(\d+|root)_*(\d+)*/', $which, $matches);
+		$a = preg_match('/(a|b|c|r|t|y|u|z)(.*?)(\d+|root)_*(\d+)*/', $which, $matches);
 		if (!$a) {
 			logger::fail("SORTBY", "Sort Init failed - regexp failed to match",$which);
 			return false;
@@ -130,9 +130,20 @@ class sortby_base {
 	}
 
 	public function initial_root_insert() {
+		switch($this->why) {
+			case 'a':
+				$where = 'fothergill';
+				break;
+			case 'b':
+				$where = 'searchstats';
+				break;
+			case 'z':
+				$where = 'mingus';
+				break;
+		}
 		return array(
 			'type' => 'insertAfter',
-			'where' => ($this->why == 'a') ? 'fothergill' : 'mingus'
+			'where' => $where
 		);
 	}
 

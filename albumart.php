@@ -143,22 +143,14 @@ function do_covers_db_style() {
 				foreach ($albumlister->album_sort_query(false) as $album) {
 					print '<div class="fixed albumimg closet">';
 						print '<div class="covercontainer">';
-							$class = "clickable clickicon clickalbumcover droppable";
-							$src = "";
-							if ($album['Image'] && $album['Image'] !== "") {
-								$src = $album['Image'];
-							} else {
-								$class = $class . " notexist";
-								$albums_without_cover++;
-							}
 							print '<input name="albumpath" type="hidden" value="'.get_album_directory($album['Albumindex'], $album['AlbumUri']).'" />';
 							print '<input name="searchterm" type="hidden" value="'.rawurlencode($artist['Artistname']." ".munge_album_name($album['Albumname'])).'" />';
-							print '<img class="'.$class.'" name="'.$album['ImgKey'].'"';
-							if ($src != "") {
-								print ' src="'.$src.'" ';
+							$album['Searched'] = 1;
+							$img = new baseAlbumImage(array('baseimage' => $album['Image']));
+							print $img->html_for_image($album, "clickable clickicon clickalbumcover droppable", 'medium');
+							if ($img->album_has_no_image()) {
+								$albums_without_cover++;
 							}
-							print '/>';
-
 							print '<div>'.$album['Albumname'].'</div>';
 						print '</div>';
 					print '</div>';
@@ -184,23 +176,14 @@ function do_radio_stations() {
 				foreach ($playlists as $file) {
 					print '<div class="fixed albumimg closet">';
 					print '<div class="covercontainer">';
-					$class = "";
-					$src = "";
-					if ($file['Image']) {
-						$src = $file['Image'];
-					} else {
-						$class = " notexist";
-						$albums_without_cover++;
-					}
 					print '<input name="searchterm" type="hidden" value="'.rawurlencode($file['StationName']).'" />';
 					print '<input name="artist" type="hidden" value="STREAM" />';
 					print '<input name="album" type="hidden" value="'.rawurlencode($file['StationName']).'" />';
-					$albumimage = new baseAlbumImage(array('artist' => 'STREAM', 'album' => $file['StationName']));
-					print '<img class="clickable clickicon clickalbumcover droppable'.$class.'" name="'.$albumimage->get_image_key().'"';
-					if ($src != "") {
-						print ' src="'.$src.'" ';
+					$img = new baseAlbumImage(array('artist' => 'STREAM', 'album' => $file['StationName'], 'baseimage' => $file['Image']));
+					print $img->html_for_image(array('Searched' => 1, 'ImgKey' => $img->get_image_key()), 'clickable clickicon clickalbumcover droppable', 'medium');
+					if ($img->album_has_no_image()) {
+						$albums_without_cover++;
 					}
-					print '/>';
 					print '<div>'.htmlentities($file['StationName']).'</div>';
 					print '</div>';
 					print '</div>';
@@ -237,23 +220,16 @@ function do_playlists() {
 				logger::log("PLAYLISTART", "Playlist",$pl);
 				print '<div class="fixed albumimg closet">';
 					print '<div class="covercontainer">';
-						$class = "";
-						$albumimage = new baseAlbumImage(array('artist' => 'PLAYLIST', 'album' => $pl));
-						$src = $albumimage->get_image_if_exists();
-						if ($src === null) {
-							$class = " plimage notfound";
-							$src = '';
-							$albums_without_cover++;
-						}
 						$plsearch = preg_replace('/ \(by .*?\)$/', '', $pl);
 						print '<input name = "searchterm" type="hidden" value="'.rawurlencode($plsearch).'" />';
 						print '<input name="artist" type="hidden" value="PLAYLIST" />';
 						print '<input name="album" type="hidden" value="'.rawurlencode($pl).'" />';
-						print '<img class="clickable clickicon clickalbumcover droppable playlistimage'.$class.'" name="'.$albumimage->get_image_key().'"';
-						if ($src != "") {
-							print ' src="'.$src.'" ';
+						$img = new baseAlbumImage(array('artist' => 'PLAYLIST', 'album' => $pl));
+						$a = $img->get_image_if_exists('medium');
+						print $img->html_for_image(array('Searched' => 1, 'ImgKey' => $img->get_image_key()), 'clickable clickicon clickalbumcover droppable playlistimage', 'medium');
+						if ($img->album_has_no_image()) {
+							$albums_without_cover++;
 						}
-						print '/>';
 						print '<div>'.htmlentities($pl).'</div>';
 					print '</div>';
 				print '</div>';

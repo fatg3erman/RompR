@@ -507,8 +507,8 @@ var browser = function() {
 				var width = calcPercentWidth(h, '.tagholder2', 260, h.width());
 				h.find(".tagholder2").css('width', width.toString()+'%');
 				h.find(".sizer").css('width', width.toString()+'%');
-				h.find(".tagholder_wide").css("width", "100%");
-				h.find(".brick_wide").css("width", "100%");
+				h.find(".tagholder_wide").css("width", "98%");
+				h.find(".brick_wide").css("width", "98%");
 				if (typeof(params) == 'undefined' && h.css('position') == 'relative') {
 					h.masonry();
 				}
@@ -519,10 +519,10 @@ var browser = function() {
 				if (h.width() > 800) {
 					var width = 48;
 				} else {
-					var width = 99;
+					var width = 98;
 				}
 				h.find(".tagholder2").css('width', width.toString()+'%');
-				h.find(".tagholder_wode").css("width", "100%");
+				h.find(".tagholder_wode").css("width", "98%");
 				if (typeof(params) == 'undefined' && h.css('position') == 'relative') {
 					h.masonry();
 				}

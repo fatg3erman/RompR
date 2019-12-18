@@ -12,9 +12,6 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 	var scrolling = false;
 	var ignorelocal = false;
 
-	// I need to try and limit the number of lookups per second I do to last.fm
-	// Otherwise they will set the lions on me - hence the use of setTimeout
-
 	// Pass the img name to this function
 	this.GetNewAlbumArt = function(params) {
 		if (enabled) {
@@ -119,7 +116,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 			var percent = ((numAlbums - formObjects.length)/numAlbums)*100;
 			progress.rangechooser('setProgress', percent.toFixed(2));
 			if (scrolling) {
-				$('#coverslist').mCustomScrollbar("scrollTo",$('img[name="'+imgparams.imgkey+'"]'));
+				$('#coverslist').mCustomScrollbar("scrollTo",$('img[name="'+imgparams.imgkey+'"]').parent().parent());
 			}
 		 }
 

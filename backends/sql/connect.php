@@ -63,14 +63,14 @@ function generic_sql_query($qstring, $return_boolean = false, $return_type = PDO
 	logger::debug("GENERIC_SQL", $qstring);
 	$retval = true;
 	if (($result = @$mysqlc->query($qstring)) !== false) {
-		logger::debug("GENERIC_SQL", "Done : ".($result->rowCount())." rows affected");
+		// logger::debug("GENERIC_SQL", "Done : ".($result->rowCount())." rows affected");
 		if ($return_value !== null) {
 			$arr = $result->fetch(PDO::FETCH_ASSOC);
 			$retval = ($arr) ? $arr[$return_value] : $value_default;
 		} else if ($return_boolean) {
 			$retval = true;
 		} else if ($return_rowcount) {
-			return $result->rowCount();
+			$retval = $result->rowCount();
 		} else {
 			$retval = $result->fetchAll($return_type);
 		}

@@ -160,7 +160,7 @@ function mpd_search() {
 
 function browse_album() {
 	global $PLAYER_TYPE, $skin, $prefs;
-	$a = preg_match('/(a|b)(.*?)(\d+|root)/', $_REQUEST['browsealbum'], $matches);
+	$a = preg_match('/^(a|b)(.*?)(\d+|root)/', $_REQUEST['browsealbum'], $matches);
 	if (!$a) {
 		print '<h3>'.get_int_text("label_general_error").'</h3>';
 		logger::error("DUMPALBUMS", "Browse Album Failed - regexp failed to match", $_REQUEST['browsealbum']);

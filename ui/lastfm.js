@@ -8,7 +8,7 @@ function LastFM(user) {
 	var self=this;
 	var queue = new Array();
 	var throttle = null;
-	var throttleTime = 250;
+	var throttleTime = 100;
 	var backofftimer;
 
 	function startlogin() {
@@ -56,7 +56,7 @@ function LastFM(user) {
 	});
 
 	function speedBackUp() {
-		throttleTime = 250;
+		throttleTime = 100;
 	}
 
 	function setThrottling(t) {

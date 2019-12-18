@@ -417,6 +417,11 @@ var layoutProcessor = function() {
 
 		changeCollectionSortMode: function() {
 			layoutProcessor.setupCollectionDisplay();
+			// The above makes collection, search, and audiocook panels all visible
+			// if we're in one of the 'album' modes, so call into sourceControl again
+			// to hide the ones we don't need
+			loading_ui = true;
+			layoutProcessor.sourceControl(prefs.chooser);
 			collectionHelper.forceCollectionReload();
 		},
 

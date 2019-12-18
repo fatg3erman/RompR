@@ -39,9 +39,14 @@
 
 .closet {
 	position:relative;
-	width:160px;
+	/*width:160px;*/
 	text-align:center;
 	overflow:visible;
+	flex-shrink: 1;
+	flex-grow: 0;
+	min-width:160px;
+	max-width:220px;
+	flex-basis: 20%;
 }
 
 .covercontainer
@@ -87,7 +92,7 @@ img#browns {
 }
 
 .albumimg .covercontainer img {
-	width: 100px;
+	width: 150px;
 	height:auto;
 }
 
