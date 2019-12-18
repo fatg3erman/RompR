@@ -894,7 +894,8 @@ var layoutProcessor = function() {
 
 			$("#sources").find('.mCSB_draggerRail').resizeHandle({
 				side: 'left',
-				donefunc: setBottomPanelWidths
+				donefunc: setBottomPanelWidths,
+				offset: $('#headerbar').outerWidth(true)
 			});
 
 			shortcuts.load();

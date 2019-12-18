@@ -514,7 +514,8 @@ $.widget("rompr.resizeHandle", $.ui.mouse, {
 	widgetEventPrefix: "resize",
 	options: {
 		adjusticons: [],
-		side: 'left'
+		side: 'left',
+		offset: 0
 	},
 
 	_create: function() {
@@ -526,7 +527,7 @@ $.widget("rompr.resizeHandle", $.ui.mouse, {
 	_mouseCapture: function(event) {
 		this.dragging = true;
 		this.startX = event.clientX;
-		this.elementStartX = this.element.offset().left;
+		this.elementStartX = this.element.offset().left - this.options.offset;
 		this.winsize = getWindowSize();
 		this.widthadjust = this.element.outerWidth(true)/2;
 		return true;
