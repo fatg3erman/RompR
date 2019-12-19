@@ -606,7 +606,11 @@ jQuery.fn.removeFromSelection = function() {
 	return this.each(function() {
 		$(this).removeClass('selected');
 		if (prefs.clickmode == 'double') {
-			$(this).find('div.clicktrackmenu').addClass('invisibleicon');
+			$(this).find('div.clicktrackmenu').not('.invisibleicon').addClass('invisibleicon');
+			if ($(this).find('div.clicktrackmenu').hasClass('menu_opened')) {
+				$(this).find('div.clicktrackmenu').removeClass('menu_opened');
+				$('#popupmenu').remove();
+			}
 		}
 	});
 }
@@ -800,6 +804,7 @@ function popupMenu(event, element) {
 	}
 
 	this.openSubMenu = function(e, element) {
+		self.markTrackTags();
 		var menu = $(element).next();
 		menu.slideToggle('fast', setHeight);
 	}
@@ -818,6 +823,7 @@ function popupMenu(event, element) {
 		selection = $('.selected');
 		for (var i in actions) {
 			if (clickedElement.hasClass(i)) {
+				clickedElement.find('.collectionicon').makeSpinner();
 				actions[i](clickedElement, self.restoreSelection);
 			}
 		}
@@ -828,6 +834,7 @@ function popupMenu(event, element) {
 		// Have to make sure that
 		// a) Remove .selected from the items we saved so they don't get stored again
 		// b) Make sure we only operate on the ones in the document
+		holderdiv.find('.spinner').stopSpinner();
 		selection.each(function() {
 			$(this).removeClass('selected');
 			var n = $(this).attr('name');
@@ -855,9 +862,9 @@ function popupMenu(event, element) {
 			$(this).children('i').remove();
 			var mytag = $(this).find('span').html();
 			if (track_tags.indexOf(mytag) == -1) {
-				$(this).addClass('clicktagtrack').prepend('<i class="icon-blank collectionicon"></i>')
+				$(this).addClass('clicktagtrack').prepend('<i class="icon-blank collectionicon spinnable"></i>')
 			} else {
-				$(this).addClass('clickuntagtrack').prepend('<i class="icon-tick collectionicon"></i>')
+				$(this).addClass('clickuntagtrack').prepend('<i class="icon-tick collectionicon spinnable"></i>')
 			}
 		});
 	}
