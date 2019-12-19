@@ -448,11 +448,6 @@ div.normalmenu
 
 div.normalmenu.albumbitsmenu {
 	max-width: 300px;
-	top: 20px;
-}
-
-div.clicktrackmenu>div.normalmenu.albumbitsmenu {
-	right: 20px;
 }
 
 div.widemenu

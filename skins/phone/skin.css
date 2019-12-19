@@ -225,14 +225,8 @@ div.topdropmenu {
 
 div.topdropmenu.albumbitsmenu {
 	position: absolute;
-	top: 24px;
 	width: 75vw;
 	max-width:300px;
-	right: 0px;
-}
-
-div.clicktrackmenu>div.normalmenu.albumbitsmenu {
-	right: 32px;
 }
 
 .mainpane {

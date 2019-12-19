@@ -800,7 +800,6 @@ function popupMenu(event, element) {
 	}
 
 	this.openSubMenu = function(e, element) {
-		$('.clicksubmenu').next().hide();
 		var menu = $(element).next();
 		menu.slideToggle('fast', setHeight);
 	}
@@ -808,7 +807,7 @@ function popupMenu(event, element) {
 	// addAction permits you to set callbacks for clickable menu items
 	// that will preserve the selection after they complete.
 	// The callback supplied must accept a clickedElement and a callback
-	// which will be called when all the operations have completed
+	// which it will call when all the operations have completed
 
 	this.addAction = function(classname, callback) {
 		actions[classname] = callback;
@@ -826,15 +825,20 @@ function popupMenu(event, element) {
 
 	this.restoreSelection = function() {
 		debug.log('POPUPMENU', 'Restoring Selection');
+		// Have to make sure that
+		// a) Remove .selected from the items we saved so they don't get stored again
+		// b) Make sure we only operate on the ones in the document
 		selection.each(function() {
+			$(this).removeClass('selected');
 			var n = $(this).attr('name');
-			if (!$('[name="'+n+'"]').hasClass('selected')) {
-				$('[name="'+n+'"]').addClass('selected');
+			if (!$(document).find('[name="'+n+'"]').hasClass('selected')) {
+				$(document).find('[name="'+n+'"]').addToSelection();
 			}
 			if ($(this).find('.clicktrackmenu').hasClass('menu_opened')) {
-				$('[name="'+n+'"]').find('.clicktrackmenu').addClass('menu_opened');
+				$(document).find('[name="'+n+'"]').find('.clicktrackmenu').addClass('menu_opened');
 			}
 		});
+		selection = $('.selected');
 		self.markTrackTags();
 	}
 
@@ -842,6 +846,7 @@ function popupMenu(event, element) {
 		var track_tags = [];
 		$('.selected').each(function() {
 			var tags = decodeURIComponent($(this).find('.clicktrackmenu').attr('rompr_tags')).split(', ');
+			// This is how to append one array to another in JS. Don't do this if the second array is very large
 			Array.prototype.push.apply(track_tags, tags);
 		});
 		$('.clicktagtrack').removeClass('clicktagtrack');
@@ -862,12 +867,12 @@ function popupMenu(event, element) {
 function makeTrackMenu(e, element) {
 	if (prefs.clickmode == 'single') {
 		if ($(element).parent().hasClass('selected')) {
-			$(element).parent().removeClass('selected');
+			$(element).parent().removeFromSelection();
 			if (!$(element).hasClass('menu_opened')) {
 				return;
 			}
 		} else {
-			$(element).parent().addClass('selected');
+			$(element).parent().addToSelection();
 		}
 	}
 
