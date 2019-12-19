@@ -308,6 +308,7 @@ function doAlbumMenu(event, element, callback) {
 		debug.log("Closing",menutoopen);
 		$('#'+menutoopen).menuHide(callback);
 		element.toggleClosed();
+		$('#popupmenu').remove();
 	}
 	return false;
 }

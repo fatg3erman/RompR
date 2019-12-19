@@ -1020,9 +1020,7 @@ var layoutProcessor = function() {
 
 		insertAlbum: function(v) {
 			var albumindex = v.id;
-			$('#'+albumindex).html(v.tracklist);
 			var dropdown = $('#'+albumindex).is(':visible');
-			var titlebit = layoutProcessor.findAlbumDisplayer().find('.tagh.albumthing').detach();
 			layoutProcessor.findAlbumDisplayer(albumindex).removeDummySpacers().remove();
 			switch (v.type) {
 				case 'insertAfter':
@@ -1036,9 +1034,13 @@ var layoutProcessor = function() {
 					break;
 			}
 			if (dropdown) {
-				$('#'+albumindex).prepend(titlebit);
-				layoutProcessor.findAlbumDisplayer(albumindex).find('.menu').trigger('click');
+				layoutProcessor.makeCollectionDropMenu($('[name="'+albumindex+'"]'), albumindex);
+				$('#'+albumindex).removeClass('notfilled').html(v.tracklist);
+				$('#'+albumindex).menuReveal();
 				infobar.markCurrentTrack();
+				if (prefs.clickmode == 'single') {
+					$('#'+albumindex).find('.invisibleicon').removeClass('invisibleicon');
+				}
 			}
 		},
 
