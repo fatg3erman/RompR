@@ -742,6 +742,7 @@ function popupMenu(event, element) {
 	function setHeight() {
 		var top = 0;
 		var height = '';
+		maindiv.css({height: ''});
 		var my_height = maindiv.outerHeight(true);
 		if (mouseY + my_height > max_size.y) {
 			top = max_size.y - my_height;
@@ -799,6 +800,7 @@ function popupMenu(event, element) {
 	}
 
 	this.openSubMenu = function(e, element) {
+		$('.clicksubmenu').next().hide();
 		var menu = $(element).next();
 		menu.slideToggle('fast', setHeight);
 	}
