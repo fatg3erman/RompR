@@ -4,6 +4,7 @@ var collectionHelper = function() {
 	var monitorduration = 1000;
 	var update_load_timer = null;
 	var returned_data = new Array();
+	var return_callback = null;
 	var update_timer = null;
 	var notify = false;
 
@@ -217,6 +218,9 @@ var collectionHelper = function() {
 					// them to appear elsewhere in the collection. First remove the dropdown if it exists and replace its contents
 					debug.log("MODIFIED",v.id);
 					uiHelper.insertAlbum(v);
+					if (prefs.clickmode == 'single') {
+						$('#'+v.id).find('.invisibleicon').removeClass('invisibleicon');
+					}
 				});
 			}
 
@@ -267,6 +271,10 @@ var collectionHelper = function() {
 		});
 
 		collectionHelper.scootTheAlbums($("#collection"));
+		if (return_callback) {
+			return_callback();
+			return_callback = null;
+		}
 
 	}
 
@@ -375,7 +383,7 @@ var collectionHelper = function() {
 			}
 		},
 
-		updateCollectionDisplay: function(rdata) {
+		updateCollectionDisplay: function(rdata, callback) {
 			// rdata contains HTML fragments to insert into the collection
 			// Otherwise we would have to reload the entire collection panel every time,
 			// which would cause any opened dropdowns to be mysteriously closed,
@@ -383,6 +391,7 @@ var collectionHelper = function() {
 			debug.trace("COLLECTION","Update Display",rdata);
 			if (rdata) {
 				returned_data.push(rdata);
+				return_callback = callback;
 				clearTimeout(update_timer);
 				setTimeout(updateUIElements, 1000);
 			}

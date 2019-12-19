@@ -1141,7 +1141,7 @@ function playAlbumFromTrack($uri) {
 		} else {
 			$why = 'a';
 		}
-		$alltracks = get_album_tracks_from_database($album->Albumindex, 'add', $why);
+		$alltracks = get_album_tracks_from_database($why.'album'.$album->Albumindex, 'add');
 		$count = 0;
 		while (strpos($alltracks[$count], $uri) === false) {
 			$count++;

@@ -498,6 +498,11 @@ i.combo-button {
 	height:20px
 }
 
+.submenuspacer {
+	/*This needs to be the same width as collectionicon*/
+	margin-left:24px;
+}
+
 .playlisticonr {
 	padding:0px;
 	margin-left:4px;

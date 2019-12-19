@@ -143,6 +143,7 @@ jQuery.fn.restoreScrollPos = function() {
 		this.children('.backmenu').css({position: ''});
 		a.remove();
 	}
+	$('#popupmenu').remove();
 }
 
 jQuery.fn.makeTagMenu = function(options) {

@@ -268,6 +268,11 @@ button.iconbutton {
 	height:16px;
 }
 
+.submenuspacer {
+	/*This needs to be the same width as collectionicon*/
+	margin-left:20px;
+}
+
 .playlisticonr {
 	padding:0px;
 	margin-left:4px;

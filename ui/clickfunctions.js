@@ -4,6 +4,12 @@ var clickRegistry = function() {
 
 	return {
 		addClickHandlers: function(source, single) {
+			for (var i in clickHandlers) {
+				if (clickHandlers[i].source == source) {
+					clickHandlers[i] = {source: source, single: single};
+					return;
+				}
+			}
 			clickHandlers.push({source: source, single: single});
 		},
 
@@ -11,7 +17,6 @@ var clickRegistry = function() {
 			for (var i in clickHandlers) {
 				if (clickedElement.hasClass(clickHandlers[i].source)) {
 					clickHandlers[i].single(event, clickedElement);
-					break;
 				}
 			}
 		}
@@ -139,12 +144,6 @@ function onSourcesClicked(event, clickedElement) {
 	debug.log('UI','Clicked On',clickedElement);
 	if (clickedElement.hasClass("clickremdb")) {
 		metaHandlers.fromUiElement.removeTrackFromDb(clickedElement);
-	} else if (clickedElement.hasClass("clickratetrack")) {
-		metaHandlers.fromUiElement.rateTrack(clickedElement);
-	} else if (clickedElement.hasClass("clicktagtrack")) {
-		metaHandlers.fromUiElement.tagTrack(clickedElement);
-	} else if (clickedElement.hasClass("clickuntagtrack")) {
-		metaHandlers.fromUiElement.untagTrack(clickedElement);
 	} else if (clickedElement.hasClass("clickpltrack")) {
 		metaHandlers.fromUiElement.tracksToPlaylist(clickedElement);
 		clickedElement.parent().parent().parent().remove();
@@ -154,8 +153,6 @@ function onSourcesClicked(event, clickedElement) {
 		makeAlbumMenu(event, clickedElement);
 	} else if (clickedElement.hasClass("clicktrackmenu")) {
 		makeTrackMenu(event, clickedElement);
-	} else if (clickedElement.hasClass("clicksubmenu")) {
-		makeSubMenu(event, clickedElement);
 	} else if (clickedElement.hasClass("addtollviabrowse")) {
 		browseAndAddToListenLater(clickedElement.attr('spalbumid'));
 	} else if (clickedElement.hasClass("addtocollectionviabrowse")) {
@@ -167,7 +164,6 @@ function onSourcesClicked(event, clickedElement) {
 		setAsAudioBook(event, clickedElement);
 	} else if (clickedElement.hasClass("fakedouble")) {
 		playPlayable.call(clickedElement, event);
-		clickedElement.parent().remove();
 	} else if (clickedElement.hasClass('clickdeleteplaylist')) {
 		player.controller.deletePlaylist(clickedElement.next().val());
 	} else if (clickedElement.hasClass('clickdeleteuserplaylist')) {
@@ -183,6 +179,9 @@ function onSourcesClicked(event, clickedElement) {
 			clickedElement.attr('name'));
 	} else {
 		clickRegistry.farmClick(event, clickedElement);
+	}
+	if (clickedElement.hasClass('closepopup')) {
+		$('#popupmenu').remove();
 	}
 }
 
@@ -723,134 +722,213 @@ function checkServerTimeOffset() {
 	});
 }
 
-function makeTrackMenu(e, element) {
-	if ($(element).children().last().hasClass('albumbitsmenu')) {
-		$(element).children().last().remove();
-		if (prefs.clickmode == 'single') {
-			if ($(element).parent().hasClass('selected')) {
-				$(element).parent().removeClass('selected');
+function popupMenu(event, element) {
+
+	// Make the popup for the albumbits menu
+	var mouseX = event.pageX;
+	var mouseY = event.pageY;
+	var max_size = uiHelper.maxAlbumMenuSize();
+	$('.albumbitsmenu').remove();
+	var attributes_to_clone = ['rompr_id', 'rompr_tags', 'name', 'why', 'spalbumid'];
+	var maindiv;
+	var holderdiv;
+	var button = element;
+	var bw = $(element).outerWidth(true) / 2;
+	var self = this;
+	var selection = [];
+	var actions = [];
+	var justclosed = false;
+
+	function setHeight() {
+		var top = 0;
+		var height = '';
+		var my_height = maindiv.outerHeight(true);
+		if (mouseY + my_height > max_size.y) {
+			top = max_size.y - my_height;
+			if (top < max_size.top) {
+				top = max_size.top;
+				height = max_size.y - max_size.top;
+			}
+		} else {
+			top = mouseY;
+		}
+		maindiv.css({
+			top: top,
+			height: height
+		});
+	}
+
+	this.create = function() {
+
+		if ($(button).hasClass('menu_opened')) {
+			$(button).removeClass('menu_opened');
+			justclosed = true;
+			return;
+		}
+		$('.menu_opened').removeClass('menu_opened');
+		$(button).addClass('menu_opened');
+
+		maindiv = $('<div>', {id: 'popupmenu', class:'topdropmenu dropshadow normalmenu albumbitsmenu', style: 'opacity:0;display:block'}).appendTo($('body'));
+		holderdiv = $('<div>', {class: 'fullwidth'}).appendTo(maindiv);
+		// Copy the attributes from the button to a holder div so that .parent() still works
+		// and we don't have faffing with do we/don't we have custom scrollbars
+		attributes_to_clone.forEach(function(a) {
+			holderdiv.attr(a, $(element).attr(a));
+		});
+		clickRegistry.addClickHandlers('clicksubmenu', self.openSubMenu);
+		layoutProcessor.addCustomScrollBar('#popupmenu');
+		return holderdiv;
+	}
+
+	this.open = function() {
+		if (justclosed) {
+			return;
+		}
+		var my_width = maindiv.outerWidth(true);
+		var left = 0;
+		if (mouseX + my_width > max_size.x) {
+			left = mouseX - my_width - bw;
+		} else {
+			left = mouseX + bw;
+		}
+		maindiv.css({
+			left: left,
+			opacity: 1
+		});
+		setHeight();
+	}
+
+	this.openSubMenu = function(e, element) {
+		var menu = $(element).next();
+		menu.slideToggle('fast', setHeight);
+	}
+
+	// addAction permits you to set callbacks for clickable menu items
+	// that will preserve the selection after they complete.
+	// The callback supplied must accept a clickedElement and a callback
+	// which will be called when all the operations have completed
+
+	this.addAction = function(classname, callback) {
+		actions[classname] = callback;
+		clickRegistry.addClickHandlers(classname, self.performAction);
+	}
+
+	this.performAction = function(event, clickedElement) {
+		selection = $('.selected');
+		for (var i in actions) {
+			if (clickedElement.hasClass(i)) {
+				actions[i](clickedElement, self.restoreSelection);
 			}
 		}
-		return true;
 	}
-	$('.albumbitsmenu').remove();
+
+	this.restoreSelection = function() {
+		debug.log('POPUPMENU', 'Restoring Selection');
+		selection.each(function() {
+			var n = $(this).attr('name');
+			if (!$('[name="'+n+'"]').hasClass('selected')) {
+				$('[name="'+n+'"]').addClass('selected');
+			}
+			if ($(this).find('.clicktrackmenu').hasClass('menu_opened')) {
+				$('[name="'+n+'"]').find('.clicktrackmenu').addClass('menu_opened');
+			}
+		});
+		self.markTrackTags();
+	}
+
+	this.markTrackTags = function() {
+		var track_tags = [];
+		$('.selected').each(function() {
+			var tags = decodeURIComponent($(this).find('.clicktrackmenu').attr('rompr_tags')).split(', ');
+			Array.prototype.push.apply(track_tags, tags);
+		});
+		$('.clicktagtrack').removeClass('clicktagtrack');
+		$('.clickuntagtrack').removeClass('clickuntagtrack');
+		$('.tracktagger').each(function() {
+			$(this).children('i').remove();
+			var mytag = $(this).find('span').html();
+			if (track_tags.indexOf(mytag) == -1) {
+				$(this).addClass('clicktagtrack').prepend('<i class="icon-blank collectionicon"></i>')
+			} else {
+				$(this).addClass('clickuntagtrack').prepend('<i class="icon-tick collectionicon"></i>')
+			}
+		});
+	}
+
+}
+
+function makeTrackMenu(e, element) {
 	if (prefs.clickmode == 'single') {
-		if (!$(element).parent().hasClass('selected')) {
+		if ($(element).parent().hasClass('selected')) {
+			$(element).parent().removeClass('selected');
+			if (!$(element).hasClass('menu_opened')) {
+				return;
+			}
+		} else {
 			$(element).parent().addClass('selected');
 		}
 	}
-	var d = $('<div>', {class:'topdropmenu dropshadow rightmenu normalmenu albumbitsmenu'});
+
+	var menu = new popupMenu(e, element);
+	var d = menu.create();
+
 	if ($(element).hasClass('clickremovedb')) {
 		d.append($('<div>', {
-			class: 'backhi clickable menuitem clickremdb',
+			class: 'backhi clickable menuitem clickremdb closepopup',
 		}).html(language.gettext('label_removefromcol')));
 	}
 
 	var rat = $('<div>', {
 		class: 'backhi clickable menuitem clicksubmenu',
 	}).html(language.gettext("label_rating")).appendTo(d);
-	var ratsub = $('<div>', {class:'topdropmenu dropshadow normalmenu invisible'}).appendTo(rat);
+	var ratsub = $('<div>', {class:'submenu invisible'}).appendTo(d);
 	[0,1,2,3,4,5].forEach(function(r) {
 		ratsub.append($('<div>', {
 			class: 'backhi clickable menuitem clickratetrack rate_'+r,
-		}).html('<i class="icon-'+r+'-stars rating-icon-small"></i>'));
+		}).html('<i class="icon-blank collectionicon"></i><i class="icon-'+r+'-stars rating-icon-small"></i>'));
 
 	});
 
 	var tag = $('<div>', {
 		class: 'backhi clickable menuitem clicksubmenu',
 	}).html(language.gettext("label_tag")).appendTo(d);
-	var tagsub = $('<div>', {class:'topdropmenu dropshadow normalmenu invisible tracktagmenu'}).appendTo(tag);
+	var tagsub = $('<div>', {class:'submenu invisible'}).appendTo(d);
+	metaHandlers.genericAction(
+		'gettags',
+		function(data) {
+			data.forEach(function(tag){
+				tagsub.append('<div class="backhi clickable menuitem tracktagger"><span>'+tag+'</span></div>');
+			});
+			menu.markTrackTags();
+		},
+		function() { debug.error('SUBMENU', 'Failed to populate tag menu') }
+	);
 
 	var pls = $('<div>', {
 		class: 'backhi clickable menuitem clicksubmenu',
 	}).html(language.gettext("button_addtoplaylist")).appendTo(d);
-	var plssub = $('<div>', {class:'topdropmenu dropshadow normalmenu invisible trackplmenu'}).appendTo(pls);
+	var plssub = $('<div>', {class:'submenu invisible submenuspacer'}).appendTo(d);
 
-	d.appendTo($(element));
-	d.slideToggle('fast', function() {
-		$(this).jiggleToFit();
+	$.get('player/mpd/loadplaylists.php?addtoplaylistmenu', function(data) {
+		data.forEach(function(p) {
+			var h = $('<div>', {class: "backhi clickable menuitem clickpltrack closepopup", name: p.name }).html(p.html).appendTo(plssub);
+		});
 	});
-}
 
-function makeSubMenu(e, element) {
-	var parentmenu = $(element).parent();
-	var menu = $(element).find('div.topdropmenu');
-	if (menu.is(':visible')) {
-		menu.css({display: ''});
-	} else {
-		if (menu.hasClass('tracktagmenu')) {
-			var track_tags = (decodeURIComponent(parentmenu.parent().attr('rompr_tags'))).split(', ');
-			debug.log('TRACKMENU', 'Track tags are',track_tags);
-			metaHandlers.genericAction(
-				'gettags',
-				function(data) {
-					data.forEach(function(tag){
-						if (track_tags.indexOf(tag) == -1) {
-							menu.append('<div class="backhi clickable menuitme clicktagtrack"><i class="icon-blank collectionicon"></i><span>'+tag+'</span></div>');
-						} else {
-							menu.append('<div class="backhi clickable menuitme clickuntagtrack"><i class="icon-tick collectionicon"></i><span>'+tag+'</span></div>');
-						}
-					});
-					menu.slideToggle('fast', function() {
-						parentmenu.jiggleToFit();
-					});
-				},
-				function() { debug.error('SUBMENU', 'Failed to populate tag menu') }
-			);
-		} else if (menu.hasClass('trackplmenu')) {
-			$.get('player/mpd/loadplaylists.php?addtoplaylistmenu', function(data) {
-				data.forEach(function(p) {
-					var h = $('<div>', {class: "backhi clickable menuitme clickpltrack", name: p.name }).html(p.html).appendTo(menu);
-				});
-				menu.slideToggle('fast', function() {
-					parentmenu.jiggleToFit();
-				});
-			});
-		} else {
-			menu.slideToggle('fast', function() {
-				parentmenu.jiggleToFit();
-			});
-		}
-	}
-}
+	menu.addAction('clickratetrack', metaHandlers.fromUiElement.rateTrack);
+	menu.addAction('clicktagtrack', metaHandlers.fromUiElement.tagTrack);
+	menu.addAction('clickuntagtrack', metaHandlers.fromUiElement.untagTrack);
 
-jQuery.fn.jiggleToFit = function() {
-	// Make sure the popup menu doesn't disappear below the bottom of the window
-	return this.each(function() {
-		// Reset CSS so offset() reports a value we can use.
-		// Hopefully all browsers recalculate the position immediately
-		// before we work out what botompos is
-		var self = $(this);
-		var ws = uiHelper.maxAlbumMenuSize(self);
-
-		self.css({top: '', height: '', width: ''});
-		var height = Math.min(self.height(), (ws.y - ws.top));
-		self.css({height: height+'px'});
-
-		var bottompos = self.offset().top + self.height();
-		if (bottompos > ws.y) {
-			self.css({top: '-'+(bottompos - ws.y)+'px', right: "24px"});
-		}
-
-		self.css({width: ''});
-		var leftpos = self.offset().left;
-		if (leftpos < ws.left) {
-			self.css({width: $(this).offset().right+'px'});
-		}
-
-	});
+	menu.open();
 }
 
 function makeAlbumMenu(e, element) {
-	if ($(element).children().last().hasClass('albumbitsmenu')) {
-		$(element).children().last().remove();
-		return true;
-	}
-	$('.albumbitsmenu').remove();
-	var d = $('<div>', {class:'topdropmenu dropshadow rightmenu normalmenu albumbitsmenu'});
+
+	var menu = new popupMenu(e, element);
+	var d = menu.create();
+
 	if ($(element).hasClass('clickalbumoptions')) {
-		var cl = 'backhi clickable menuitem fakedouble '
+		var cl = 'backhi clickable menuitem fakedouble closepopup '
 		d.append($('<div>', {
 			class: cl+'clicktrack',
 			name: $(element).attr('uri')
@@ -861,7 +939,7 @@ function makeAlbumMenu(e, element) {
 		}).html(language.gettext('label_from_collection')));
 	}
 	if ($(element).hasClass('clickcolloptions')) {
-		var cl = 'backhi clickable menuitem clickalbum fakedouble'
+		var cl = 'backhi clickable menuitem clickalbum fakedouble closepopup'
 		d.append($('<div>', {
 			class: cl,
 			name: $(element).attr('why')+'album'+$(element).attr('who')
@@ -876,51 +954,48 @@ function makeAlbumMenu(e, element) {
 		}
 		$.each(opts, function(i, v) {
 			d.append($('<div>', {
-				class: 'backhi clickable menuitem clickalbum fakedouble',
+				class: 'backhi clickable menuitem clickalbum fakedouble closepopup',
 				name: i+'album'+$(element).attr('name')
 			}).html(v))
 		});
 	}
 	if ($(element).hasClass('clickamendalbum')) {
 		d.append($('<div>', {
-			class: 'backhi clickable menuitem amendalbum',
+			class: 'backhi clickable menuitem amendalbum closepopup',
 			name: $(element).attr('name')
 		}).html(language.gettext('label_amendalbum')));
 	}
 	if ($(element).hasClass('clickremovealbum')) {
 		d.append($('<div>', {
-			class: 'backhi clickable menuitem removealbum',
+			class: 'backhi clickable menuitem removealbum closepopup',
 			name: $(element).attr('name')
 		}).html(language.gettext('label_removealbum')));
 	}
 	if ($(element).hasClass('clicksetasaudiobook')) {
 		d.append($('<div>', {
-			class: 'backhi clickable menuitem setasaudiobook',
+			class: 'backhi clickable menuitem setasaudiobook closepopup',
 			name: $(element).attr('name')
 		}).html(language.gettext('label_move_to_audiobooks')));
 	}
 	if ($(element).hasClass('clicksetasmusiccollection')) {
 		d.append($('<div>', {
-			class: 'backhi clickable menuitem setasmusiccollection',
+			class: 'backhi clickable menuitem setasmusiccollection closepopup',
 			name: $(element).attr('name')
 		}).html(language.gettext('label_move_to_collection')));
 	}
 	if ($(element).hasClass('clickaddtollviabrowse')) {
 		d.append($('<div>', {
-			class: 'backhi clickable menuitem addtollviabrowse',
+			class: 'backhi clickable menuitem addtollviabrowse closepopup',
 			spalbumid: $(element).attr('spalbumid')
 		}).html(language.gettext('label_addtolistenlater')));
 	}
 	if ($(element).hasClass('clickaddtocollectionviabrowse')) {
 		d.append($('<div>', {
-			class: 'backhi clickable menuitem addtocollectionviabrowse',
+			class: 'backhi clickable menuitem addtocollectionviabrowse closepopup',
 			spalbumid: $(element).attr('spalbumid')
 		}).html(language.gettext('label_addtocollection')));
 	}
-	d.appendTo($(element));
-	d.show(0, function() {
-		$(this).jiggleToFit();
-	});
+	menu.open();
 }
 
 function setAsAudioBook(e, element) {

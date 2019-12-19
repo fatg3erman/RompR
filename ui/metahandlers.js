@@ -135,8 +135,9 @@ var metaHandlers = function() {
 				if (tracks.length > 0) {
 					dbQueue.request(tracks,
 						function(rdata) {
-							collectionHelper.updateCollectionDisplay(rdata);
-							if (fn) fn(name);
+							collectionHelper.updateCollectionDisplay(rdata, function() {
+								if (fn) fn(name);
+							});
 						},
 						function(data) {
 							debug.warn("DROPPLUGIN","Failed to set attributes for",track,data);
@@ -146,7 +147,7 @@ var metaHandlers = function() {
 				}
 			},
 
-			rateTrack: function(element) {
+			rateTrack: function(element, callback) {
 				var value;
 				switch (true) {
 					case element.hasClass('rate_0'):
@@ -168,18 +169,18 @@ var metaHandlers = function() {
 						value = 5;
 						break;
 				}
-				metaHandlers.fromUiElement.doMeta('set', 'Rating', [{attribute: 'Rating', value: value}], null);
+				metaHandlers.fromUiElement.doMeta('set', 'Rating', [{attribute: 'Rating', value: value}], callback);
 			},
 
-			tagTrack: function(element) {
-				metaHandlers.fromUiElement.doMeta('set', 'Tag', [{attribute: 'Tags', value: [element.children('span').html()]}], null);
+			tagTrack: function(element, callback) {
+				metaHandlers.fromUiElement.doMeta('set', 'Tag', [{attribute: 'Tags', value: [element.children('span').html()]}], callback);
 			},
 
-			untagTrack: function(element) {
-				metaHandlers.fromUiElement.doMeta('remove', 'Tag', [{attribute: 'Tags', value: [element.children('span').html()]}], null);
+			untagTrack: function(element, callback) {
+				metaHandlers.fromUiElement.doMeta('remove', 'Tag', [{attribute: 'Tags', value: [element.children('span').html()]}], callback);
 			},
 
-			tracksToPlaylist: function(element) {
+			tracksToPlaylist: function(element, callback) {
 				var playlist = element.attr('name');
 				var tracks = new Array();
 				$.each($('.selected').filter(removeOpenItems), function (index, element) {

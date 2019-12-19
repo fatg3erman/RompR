@@ -48,6 +48,10 @@ function hideTagRemover() {
 	$(this).children('i').hide();
 }
 
+function closeMenus() {
+	$('.albumbitsmenu').remove();
+}
+
 $(document).ready(function(){
 	debug.blurt("INIT","Document Ready Event has fired");
 	$('#albumpicture').on('load', albumImageLoaded);
@@ -114,6 +118,7 @@ $(document).ready(function(){
 	$(document).on('keyup', 'input.notspecial', filterSpecialChars);
 	$(document).on('mouseenter', "#dbtags>.tag", showTagRemover);
 	$(document).on('mouseleave', "#dbtags>.tag", hideTagRemover);
+	$(document).on('click', 'body', closeMenus);
 	$(document).on('click', '.tagremover:not(.plugclickable)', nowplaying.removeTag);
 	if (prefs.mopidy_slave || (prefs.collection_player != prefs.player_backend && prefs.collection_player != null)) {
 		$('[name="donkeykong"]').remove();
