@@ -229,10 +229,10 @@ a.album:hover,a.album:active
 }
 
 /*Prevent submenus from having all entries highlighted
-due to :hover events propagating from the parent menu 
+due to :hover events propagating from the parent menu
 */
 .backhi:hover>div.topdropmenu>div.backhi {
-    color:#dddddd;    
+    color:#dddddd;
 }
 
 /*Make sure the submenu entry being hovered over still gets highlighted*/
@@ -316,7 +316,7 @@ tr.clickaddtrack:hover
 
 .albumbitsmenu
 {
-    background-image: linear-gradient(#000000, #050505) !important;
+    background-image: linear-gradient(#0b0b0b, #444444) !important;
 }
 
 div.topdropmenu

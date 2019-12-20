@@ -524,7 +524,11 @@ function doFileMenu(event, element) {
 			// Remove this dropdown - this is so that when we next open it
 			// mopidy will rescan it. This makes things like soundcloud and spotify update
 			// without us having to refresh the window
-			$('#'+menutoopen).remove();
+			if (!element.hasClass('searchdir')) {
+				// But don't do it for search results displayed as a directory tree,
+				// since these are loaded in one go and not refreshed
+				$('#'+menutoopen).remove();
+			}
 		});
 	}
 	return false;
@@ -773,7 +777,7 @@ function popupMenu(event, element) {
 		}
 		$('.menu_opened').removeClass('menu_opened');
 		$(button).addClass('menu_opened');
-
+		justclosed = false;
 		maindiv = $('<div>', {id: 'popupmenu', class:'topdropmenu dropshadow normalmenu albumbitsmenu', style: 'opacity:0;display:block'}).appendTo($('body'));
 		holderdiv = $('<div>', {class: 'fullwidth'}).appendTo(maindiv);
 		// Copy the attributes from the button to a holder div so that .parent() still works
@@ -805,6 +809,7 @@ function popupMenu(event, element) {
 	}
 
 	this.openSubMenu = function(e, element) {
+		debug.log('POPUPMENU', 'Opening Submeny',element);
 		self.markTrackTags();
 		var menu = $(element).next();
 		menu.slideToggle('fast', setHeight);
@@ -821,7 +826,14 @@ function popupMenu(event, element) {
 	}
 
 	this.performAction = function(event, clickedElement) {
-		selection = $('.selected');
+		selection = new Array();
+		$('.selected').each(function() {
+			var item = {name: $(this).attr('name'), menu: false};
+			if ($(this).find('.clicktrackmenu').hasClass('menu_opened')) {
+				item.menu = true;
+			}
+			selection.push(item);
+		});
 		for (var i in actions) {
 			if (clickedElement.hasClass(i)) {
 				clickedElement.find('.collectionicon').makeSpinner();
@@ -832,21 +844,15 @@ function popupMenu(event, element) {
 
 	this.restoreSelection = function() {
 		debug.log('POPUPMENU', 'Restoring Selection');
-		// Have to make sure that
-		// a) Remove .selected from the items we saved so they don't get stored again
-		// b) Make sure we only operate on the ones in the document
 		holderdiv.find('.spinner').stopSpinner();
-		selection.each(function() {
-			$(this).removeClass('selected');
-			var n = $(this).attr('name');
-			if (!$(document).find('[name="'+n+'"]').hasClass('selected')) {
-				$(document).find('[name="'+n+'"]').addToSelection();
+		selection.forEach(function(n) {
+			if (!$('[name="'+n.name+'"]').hasClass('selected')) {
+				$('[name="'+n.name+'"]').addToSelection();
 			}
-			if ($(this).find('.clicktrackmenu').hasClass('menu_opened')) {
-				$(document).find('[name="'+n+'"]').find('.clicktrackmenu').addClass('menu_opened');
+			if (n.menu) {
+				$('[name="'+n.name+'"]').find('.clicktrackmenu').addClass('menu_opened');
 			}
 		});
-		selection = $('.selected');
 		self.markTrackTags();
 	}
 

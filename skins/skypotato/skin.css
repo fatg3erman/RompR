@@ -542,6 +542,10 @@ button.iconbutton {
 	width: 100%;
 }
 
+#searchresultholder .indent.brick_wide {
+	margin-left: 0px;
+}
+
 /*
 =====================================================================
 = Dropdown Menus

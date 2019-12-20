@@ -169,10 +169,10 @@ table.histable tr:hover {
 }
 
 /*Prevent submenus from having all entries highlighted
-due to :hover events propagating from the parent menu 
+due to :hover events propagating from the parent menu
 */
 .backhi:hover>div.topdropmenu>div.backhi {
-    color:#000000;    
+    color:#000000;
 }
 
 /*Make sure the submenu entry being hovered over still gets highlighted*/
@@ -230,7 +230,7 @@ tr.clickaddtrack:hover {
 =====================================================================
 */
 
-div.topdropmenu {
+div.topdropmenu, div.albumbitsmenu {
     background-image:url('newimages/silver2.jpg');;
     border-left:1px solid #ffffff;
     border-bottom:1px solid #555555;

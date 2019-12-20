@@ -166,15 +166,16 @@ var collectionHelper = function() {
 	}
 
 	function loadSearchResults() {
-		if (!prefs.hide_searcher) {
-			$('#searchresultholder').load(
-				'albums.php?item='+collectionHelper.collectionKey('b'),
-				function() {
-					collectionHelper.scootTheAlbums($("#searchresultholder"));
-					uiHelper.doThingsAfterDisplayingListOfAlbums($('#searchresultholder'));
-				}
-			);
-		}
+		// if (!prefs.hide_searcher && prefs.displayresultsas != 'tree') {
+		// 	// We can't re-load Directory Tree results so we don't bother
+		// 	$('#searchresultholder').load(
+		// 		'albums.php?item='+collectionHelper.collectionKey('b'),
+		// 		function() {
+		// 			collectionHelper.scootTheAlbums($("#searchresultholder"));
+		// 			uiHelper.doThingsAfterDisplayingListOfAlbums($('#searchresultholder'));
+		// 		}
+		// 	);
+		// }
 	}
 
 	function loadFileBrowser() {

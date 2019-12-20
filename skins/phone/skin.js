@@ -735,6 +735,13 @@ var layoutProcessor = function() {
 		},
 
 		makeSortablePlaylist: function(id) {
+		},
+
+		maxAlbumMenuSize: function(element) {
+			var ws = getWindowSize();
+			ws.left = 0;
+			ws.top = $('#headerbar').outerHeight(true);
+			return ws;
 		}
 
 	}

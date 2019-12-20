@@ -223,10 +223,15 @@ div.topdropmenu {
 	right: 0;
 }
 
-div.topdropmenu.albumbitsmenu {
+div.albumbitsmenu {
 	position: absolute;
 	width: 75vw;
 	max-width:300px;
+	z-index:10009;
+	overflow-y:auto;
+	overflow-x:hidden;
+	/*This is needed or iOS Safari won't register the clicks!*/
+	cursor:pointer;
 }
 
 .mainpane {

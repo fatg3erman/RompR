@@ -370,12 +370,14 @@ var layoutProcessor = function() {
 						.appendTo($('#albumlist'));
 					// We must be on the collection to change this option, but #collection may be hidden,
 					// so make sure we show it
-					$('#collection').show();
+					if (prefs.chooser == 'albumlist') {
+						$('#collection').show();
+					}
 					$('#audiobooks').detach().empty()
 						.removeClass('containerbox wrap collectionpanel').css('display', '')
 						.addClass('noborder')
 						.appendTo($('#audiobooklist'));
-					$('#collection, #searchresultholder, #audiobooks').off('click').off('dblclick');
+					$('#collection, #audiobooks').off('click').off('dblclick');
 				}
 			}
 			if (prefs.sortresultsby.substr(0,5) == 'album') {
@@ -391,6 +393,10 @@ var layoutProcessor = function() {
 						.removeClass('containerbox wrap collectionpanel').css('display', '')
 						.addClass('noborder')
 						.appendTo($('#searcher'));
+					if (prefs.chooser == 'searcher') {
+						$('#searchresultholder').show();
+					}
+					$('#searchresultholder').off('click').off('dblclick');
 				}
 			}
 		},

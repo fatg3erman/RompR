@@ -235,10 +235,10 @@ table.histable tr {
 }
 
 /*Prevent submenus from having all entries highlighted
-due to :hover events propagating from the parent menu 
+due to :hover events propagating from the parent menu
 */
 .backhi:hover>div.topdropmenu>div.backhi {
-    color:#eeeeee;    
+    color:#eeeeee;
 }
 
 /*Make sure the submenu entry being hovered over still gets highlighted*/
@@ -292,7 +292,7 @@ tr.clickaddtrack:hover {
 =====================================================================
 */
 
-div.topdropmenu {
+div.topdropmenu, div.albumbitsmenu {
     background-color:rgba(30,30,30,0.9);
 }
 

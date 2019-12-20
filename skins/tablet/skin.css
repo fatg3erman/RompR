@@ -229,6 +229,7 @@ div.topdropmenu {
 div.topdropmenu.albumbitsmenu {
 	width: 75vw;
 	max-width:300px;
+	cursor:pointer;
 }
 
 .chooser {
