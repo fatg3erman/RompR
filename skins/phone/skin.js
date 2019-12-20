@@ -647,7 +647,11 @@ var layoutProcessor = function() {
 		},
 
 		findAlbumDisplayer: function(key) {
-			return $('.containerbox.album[name="'+key+'"]');
+			if (key == 'fothergill' || key == 'mingus') {
+				return $('#'+key);
+			} else {
+				return $('.containerbox.album[name="'+key+'"]');
+			}
 		},
 
 		findArtistDisplayer: function(key) {

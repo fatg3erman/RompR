@@ -1,5 +1,19 @@
 <?php
 
+function choose_sorter_by_key($which) {
+	global $prefs;
+	$a = preg_match('/(a|b|c|r|t|y|u|z)(.*?)(\d+|root)_*(\d+)*/', $which, $matches);
+	switch ($matches[1]) {
+		case 'b':
+			return 'sortby_'.$prefs['sortresultsby'];
+			break;
+
+		default:
+			return 'sortby_'.$prefs['sortcollectionby'];
+			break;
+	}
+}
+
 class sortby_base {
 
 	protected $why;
@@ -189,6 +203,7 @@ class sortby_base {
 	}
 
 	protected function emptyCollectionDisplay() {
+		global $prefs;
 		switch ($this->why) {
 			case 'a':
 				print '<div id="emptycollection" class="textcentre fullwidth">
@@ -198,14 +213,16 @@ class sortby_base {
 				break;
 
 			case 'b':
-				print '<div class="textcentre fullwidth">
-				<p>No Results</p>
-				</div>';
+				print '<div class="textcentre fullwidth">';
+				if ($prefs['sortresultsby'] == 'tag' || $prefs['sortresultsby'] == 'rating') {
+					print '<p>You are sorting results by '.ucfirst(get_int_text(COLLECTION_SORT_MODES[$prefs['sortresultsby']])).' which may mean some results are not displayed</p>';
+				}
+				print '</div>';
 				break;
 
 			case 'z':
 				print '<div class="textcentre fullwidth">
-				<p>There are no Spoken Word tracks in your Collection</p>
+				<p>There are no Spoken Word tracks in your Collection that can be displayed when sorting by '.ucfirst(get_int_text(COLLECTION_SORT_MODES[$prefs['sortresultsby']])).'</p>
 				</div>';
 				break;
 		}
@@ -252,7 +269,7 @@ class sortby_base {
 		// Usd when adding all tracks for artist to eg the Play Queue
 		// Does not filter on r,t,y, or u
 		foreach ($this->album_sort_query(false) as $album) {
-			yield $album['Albumindex'];
+			yield $this->why.'album'.$album['Albumindex'];
 		}
 	}
 

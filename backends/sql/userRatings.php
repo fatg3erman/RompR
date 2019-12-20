@@ -168,16 +168,18 @@ function prepare_returninfo() {
 	logger::log("USERRATINGS", "Preparing Return Info");
 	$t = microtime(true);
 	global $returninfo, $prefs;
-	$sorter = 'sortby_'.$prefs['sortcollectionby'];
 
+	$sorter = choose_sorter_by_key('aartistroot');
 	$lister = new $sorter('aartistroot');
 	$lister->get_modified_root_items();
 	$lister->get_modified_albums();
 
+	$sorter = choose_sorter_by_key('zartistroot');
 	$lister = new $sorter('zartistroot');
 	$lister->get_modified_root_items();
 	$lister->get_modified_albums();
 
+	$sorter = choose_sorter_by_key('bartistroot');
 	$lister = new $sorter('bartistroot');
 	$lister->get_modified_root_items();
 	$lister->get_modified_albums();

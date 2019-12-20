@@ -886,6 +886,9 @@ function makeTrackMenu(e, element) {
 
 	var menu = new popupMenu(e, element);
 	var d = menu.create();
+	if (!d) {
+		return;
+	}
 
 	if ($(element).hasClass('clickremovedb')) {
 		d.append($('<div>', {

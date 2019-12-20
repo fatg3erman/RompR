@@ -172,7 +172,7 @@ function browse_album() {
 	$ad = get_album_details($who);
 	logger::log('BROWSEALBUM',$why,$what,$who,$ad[0]['Artistname']);
 	$albumlink = get_albumlink($who);
-	$sorter = 'sortby_'.$prefs['sortcollectionby'];
+	$sorter = choose_sorter_by_key($_REQUEST['browsealbum']);
 	if (substr($albumlink, 0, 8) == 'podcast+') {
 		require_once ('podcasts/podcastfunctions.php');
 		logger::log("ALBUMS", "Browsing For Podcast ".substr($albumlink, 9));

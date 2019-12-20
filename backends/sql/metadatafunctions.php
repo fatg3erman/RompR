@@ -642,7 +642,7 @@ class romprmetadata {
 		global $prefs;
 		$albumindex = generic_sql_query("SELECT Albumindex FROM Tracktable WHERE TTindex = ".$ttid, false, null, 'Albumindex', null);
 		if ($albumindex !== null) {
-			$sorter = 'sortby_'.$prefs['sortcollectionby'];
+			$sorter = choose_sorter_by_key('zalbum'.$albumindex);
 			$lister = new $sorter('zalbum'.$albumindex);
 			if ($lister->album_trackcount($albumindex) > 0) {
 				logger::log('USERRATING', 'Album '.$albumindex.' is an audiobook, updating track audiobook state');

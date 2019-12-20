@@ -90,7 +90,7 @@ class sortby_tag extends sortby_base {
 		logger::log("SORTBY_TAG", "Generating albums for",$this->why,$this->what,$this->who);
 		$count = 0;
 		if ($do_controlheader) {
-			print albumControlHeader(false, $this->why, 'album', $this->who, $this->getTagName());
+			print albumControlHeader(false, $this->why, 'tag', $this->who, $this->getTagName());
 		}
 		foreach ($this->album_sort_query($unused) as $album) {
 			print albumHeader($album);
@@ -221,6 +221,14 @@ class sortby_tag extends sortby_base {
 			'where' => $this->why.'tag'.$this->who,
 			'why' => $this->why
 		);
+	}
+
+	public function albums_for_artist() {
+		// Usd when adding all tracks for artist to eg the Play Queue
+		// Does not filter on r,t,y, or u
+		foreach ($this->album_sort_query(false) as $album) {
+			yield $this->why.'album'.$album['Albumindex'].'_'.$this->who;
+		}
 	}
 
 }

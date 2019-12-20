@@ -127,20 +127,20 @@ function albumControlHeader($fragment, $why, $what, $who, $artist, $playall = tr
 	if ($fragment || $who == 'root') {
 		return '';
 	}
-	$html = '<div class="menu backmenu openmenu" name="'.$why.'artist'.$who.'">';
+	$html = '<div class="menu backmenu openmenu" name="'.$why.$what.$who.'">';
 	$html .='</div>';
 	$html .= '<div class="dropdown-container configtitle fullwidth"><div class="textcentre expand"><b>'.$artist.'</b></div></div>';
 	if ($playall) {
-		$html .= '<div class="textcentre clickalbum playable ninesix noselect" name="'.$why.'artist'.$who.'">'.get_int_text('label_play_all').'</div>';
+		$html .= '<div class="textcentre clickalbum playable ninesix noselect" name="'.$why.$what.$who.'">'.get_int_text('label_play_all').'</div>';
 	}
 	return $html;
 }
 
 function trackControlHeader($why, $what, $who, $when, $dets) {
-	$html = '<div class="menu backmenu openmenu" name="'.$why.$what.$who.'"></div>';
+	$db_album = ($when === null) ? $who : $who.'_'.$when;
+	$html = '<div class="menu backmenu openmenu" name="'.$why.$what.$db_album.'"></div>';
 	$iab = -1;
 	$play_col_button = 'icon-music';
-	$db_album = ($when === null) ? $who : $who.'_'.$when;
 	if ($what == 'album' && ($why == 'a' || $why == 'z')) {
 		$iab = album_is_audiobook($who);
 		$play_col_button = ($iab == 0) ? 'icon-music' : 'icon-audiobook';

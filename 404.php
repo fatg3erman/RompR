@@ -4,13 +4,12 @@ include("includes/functions.php");
 $base_url = get_base_url();
 $request = $_SERVER['REQUEST_URI'];
 logger::log('REDIRECT','Uri is',$_SERVER['REQUEST_URI']);
-if (preg_match('#prefs/userstreams/.*\.jpg#', $request)) {
+if (preg_match('#prefs/userstreams/.*\.jpg#', $request) || preg_match('#prefs/userstreams/.*\.png#', $request)) {
 	$redirect = $base_url.'/newimages/broadcast.svg';
 	logger::log("404", "Request for missing userstream image. Redirecting to ".$redirect);
 	header("HTTP/1.1 307 Temporary Redirect");
 	header("Location: ".$redirect);
-} else if (preg_match('#prefs/podcasts/.*\.jpg#', $request) ||
-			preg_match('#prefs/podcasts/.*\.png#', $request)) {
+} else if (preg_match('#prefs/podcasts/.*\.jpg#', $request) || preg_match('#prefs/podcasts/.*\.png#', $request)) {
 	$redirect = $base_url.'/newimages/podcast-logo.svg';
 	logger::log("404", "Request for missing podcast image. Redirecting to ".$redirect);
 	header("HTTP/1.1 307 Temporary Redirect");

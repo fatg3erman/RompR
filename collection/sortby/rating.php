@@ -14,6 +14,7 @@ class sortby_rating extends sortby_base {
 		WHERE
 			Uri IS NOT NULL
 			AND Hidden = 0
+			AND Rating > 0
 			".track_date_check($prefs['collectionrange'], $this->why)."
 			".$sflag."
 		ORDER BY Rating ASC";
@@ -89,7 +90,7 @@ class sortby_rating extends sortby_base {
 		logger::log("SORTBY_RATING", "Generating albums for",$this->why,$this->what,$this->who);
 		$count = 0;
 		if ($do_controlheader) {
-			print albumControlHeader(false, $this->why, 'album', $this->who, '<i class="rating-icon-big icon-'.$this->who.'-stars"></i>');
+			print albumControlHeader(false, $this->why, 'rating', $this->who, '<i class="rating-icon-big icon-'.$this->who.'-stars"></i>');
 		}
 		foreach ($this->album_sort_query($unused) as $album) {
 			print albumHeader($album);
@@ -175,9 +176,10 @@ class sortby_rating extends sortby_base {
 			$returninfo['modifiedartists'][] = $this->output_root_fragment($mod['Rating']);
 		}
 		for ($i = 1; $i < 6; $i++) {
-			$qstring = "SELECT COUNT(TTindex) AS num FROM Ratingtable WHERE Rating = ".$i;
+			$qstring = "SELECT COUNT(TTindex) AS num FROM Tracktable JOIN Ratingtable USING (TTindex) WHERE Rating = ".$i." ".$this->filter_root_on_why();
 			$count = generic_sql_query($qstring, false, null, 'num', 0);
 			if ($count == 0) {
+				logger::log('SORTBY_RATING', 'Rating',$i,'is empty');
 				$returninfo['deletedartists'][] = $this->why.'rating'.$i;
 			}
 		}
@@ -187,13 +189,16 @@ class sortby_rating extends sortby_base {
 		global $returninfo;
 		$result = generic_sql_query('SELECT Albumindex FROM Albumtable WHERE justUpdated = 1');
 		foreach ($result as $mod) {
-			foreach ($this->root_sort_query() as $rating) {
-				if ($this->album_rating_trackcount($mod['Albumindex'], $rating['Rating']) == 0) {
-					$returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'].'_'.$rating['Rating'];
+			// Need to consider every value of rating, otherwise empty ones don't get removed
+			foreach (array(1,2,3,4,5) as $rating) {
+				$numtracks = $this->album_rating_trackcount($mod['Albumindex'], $rating);
+				logger::log('SORTBY_RATING', $this->why.'album'.$mod['Albumindex'].'_'.$rating,'has',$numtracks,'tracks of interest');
+				if ($numtracks == 0) {
+					$returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'].'_'.$rating;
 				} else {
-					$lister = new sortby_rating($this->why.'rating'.$rating['Rating']);
+					$lister = new sortby_rating($this->why.'rating'.$rating);
 					$r = $lister->output_album_fragment($mod['Albumindex']);
-					$lister = new sortby_rating($this->why.'album'.$mod['Albumindex'].'_'.$rating['Rating']);
+					$lister = new sortby_rating($this->why.'album'.$mod['Albumindex'].'_'.$rating);
 					$r['tracklist'] = $lister->output_track_list(true);
 					$returninfo['modifiedalbums'][] = $r;
 				}
@@ -206,7 +211,7 @@ class sortby_rating extends sortby_base {
 		"SELECT COUNT(TTindex) AS num
 		FROM Tracktable JOIN Ratingtable USING (TTindex)
 		WHERE Albumindex = ".$albumindex." AND Rating = ".$rating.
-		" AND Hidden = 0 AND Uri IS NOT NULL ".
+		" AND Hidden = 0 AND Uri IS NOT NULL AND Rating > 0 ".
 		$this->filter_track_on_why();
 		return generic_sql_query($qstring, false, null, 'num', 0);
 	}
@@ -217,6 +222,14 @@ class sortby_rating extends sortby_base {
 			'where' => $this->why.'rating'.$this->who,
 			'why' => $this->why
 		);
+	}
+
+	public function albums_for_artist() {
+		// Usd when adding all tracks for artist to eg the Play Queue
+		// Does not filter on r,t,y, or u
+		foreach ($this->album_sort_query(false) as $album) {
+			yield $this->why.'album'.$album['Albumindex'].'_'.$this->who;
+		}
 	}
 
 }

@@ -164,7 +164,6 @@ jQuery.fn.menuHide = function(callback) {
 	}
 	if (callback) callback.call(self);
 	if (adjustboxes) {
-		// layoutProcessor.adjustBoxSizes();
 		layoutProcessor.scrollSourcesTo(parent);
 	}
 	return self;
@@ -230,14 +229,6 @@ jQuery.fn.stopSpinner = function() {
 	});
 }
 
-// jQuery.fn.adjustBoxSizes = function() {
-// 	this.each(function() {
-// 		var h = $(this);
-// 		var width = calcPercentWidth(h, '.collectionitem', 220, h.width());
-// 		h.find(".collectionitem").not('.tagholder_wide').css('width', width.toString()+'%');
-// 	});
-// }
-
 jQuery.fn.animatePanel = function(options) {
 	var settings = $.extend({},options);
 	var panel = this.attr("id");
@@ -262,25 +253,8 @@ var layoutProcessor = function() {
 	function showPanel(source) {
 		debug.log("UI","Showing Panel",source);
 		$('#'+source).show(0, function() {
-			$('.collectionpanel.'+source).not('.closed').show(0, function() {
-				// layoutProcessor.adjustBoxSizes();
-			});
+			$('.collectionpanel.'+source).not('.closed').show();
 			switch (source) {
-				case 'pluginplaylistslist':
-					// layoutProcessor.adjustBoxSizes();
-					break;
-
-				case 'albumlist':
-				case 'audiobooklist':
-					// if (prefs.sortcollectionby != 'artist') {
-					// 	layoutProcessor.adjustBoxSizes();
-					// }
-					break;
-
-				case 'playlistslist':
-					// layoutProcessor.adjustBoxSizes();
-					break;
-
 				case 'podcastslist':
 					fanooglePodcasts();
 					$('#infopane').mCustomScrollbar('scrollTo', '#podcastslist');
@@ -296,7 +270,6 @@ var layoutProcessor = function() {
 
 				case 'pluginholder':
 					browser.rePoint();
-					// layoutProcessor.adjustBoxSizes();
 					break;
 			}
 		});
@@ -307,7 +280,6 @@ var layoutProcessor = function() {
 			$('#fruitbat').removeClass('fullwidth').addClass('containerbox wrap');
 			$('#podcast_search').removeClass('fullwidth').addClass('containerbox wrap');
 		}
-		// layoutProcessor.adjustBoxSizes();
 		$('#fruitbat').appendDummySpacers();
 	}
 
@@ -384,10 +356,6 @@ var layoutProcessor = function() {
 						.removeClass('noborder')
 						.addClass('containerbox wrap collectionpanel').css('display', '')
 						.insertBefore($('#infoholder'));
-					$('#searchresultholder').detach().empty()
-						.removeClass('noborder')
-						.addClass('containerbox wrap collectionpanel').css('display', '')
-						.insertBefore($('#infoholder'));
 					$('#audiobooks').empty().detach()
 						.removeClass('noborder')
 						.addClass('containerbox wrap collectionpanel').css('display', '')
@@ -403,15 +371,26 @@ var layoutProcessor = function() {
 					// We must be on the collection to change this option, but #collection may be hidden,
 					// so make sure we show it
 					$('#collection').show();
-					$('#searchresultholder').detach().empty()
-						.removeClass('containerbox wrap collectionpanel').css('display', '')
-						.addClass('noborder')
-						.appendTo($('#searcher'));
 					$('#audiobooks').detach().empty()
 						.removeClass('containerbox wrap collectionpanel').css('display', '')
 						.addClass('noborder')
 						.appendTo($('#audiobooklist'));
 					$('#collection, #searchresultholder, #audiobooks').off('click').off('dblclick');
+				}
+			}
+			if (prefs.sortresultsby.substr(0,5) == 'album') {
+				if (!$('#searchresultholder').hasClass('containerbox')) {
+					$('#searchresultholder').detach().empty()
+						.removeClass('noborder')
+						.addClass('containerbox wrap collectionpanel').css('display', '')
+						.insertBefore($('#infoholder'));
+				}
+			} else {
+				if ($('#searchresultholder').hasClass('containerbox')) {
+					$('#searchresultholder').detach().empty()
+						.removeClass('containerbox wrap collectionpanel').css('display', '')
+						.addClass('noborder')
+						.appendTo($('#searcher'));
 				}
 			}
 		},
@@ -426,20 +405,8 @@ var layoutProcessor = function() {
 			collectionHelper.forceCollectionReload();
 		},
 
-		// adjustBoxSizes: function() {
-			// debug.log("UI", "adjusting Box Sizes");
-			// $('.collectionpanel:visible').adjustBoxSizes();
-			// $('#fruitbat:visible').adjustBoxSizes();
-			// $('#podcast_search:visible').adjustBoxSizes();
-			// $('#infopane #collection:visible').adjustBoxSizes();
-			// $('#infopane #searchresultholder:visible').adjustBoxSizes();
-			// $('#storedplaylists:visible').adjustBoxSizes();
-			// $('#pluginplaylistslist:visible').adjustBoxSizes();
-		// },
-
 		doThingsAfterDisplayingListOfAlbums: function(panel) {
 			panel.appendDummySpacers();
-			// layoutProcessor.adjustBoxSizes();
 		},
 
 		afterHistory: function() {
@@ -685,7 +652,6 @@ var layoutProcessor = function() {
 			browser.rePoint();
 			$('.topdropmenu').fanoogleMenus();
 			setBottomPanelWidths();
-			// layoutProcessor.adjustBoxSizes();
 		},
 
 		displayCollectionInsert: function(details) {
@@ -1114,7 +1080,7 @@ var layoutProcessor = function() {
 							divname
 						);
 					}
-				}, 1000);
+				}, 500);
 			}
 		},
 

@@ -78,7 +78,8 @@ var prefs = function() {
 		"sortbydate",
 		"notvabydate",
 		"collectionrange",
-		"sortcollectionby"
+		"sortcollectionby",
+		"sortresultsby"
 	];
 
 	const jsonNode = document.querySelector("script[name='prefs']");
@@ -726,6 +727,7 @@ var prefs = function() {
 
 				case 'collectionrange':
 				case 'sortcollectionby':
+				case 'sortresultsby':
 					callback = layoutProcessor.changeCollectionSortMode;
 					break;
 

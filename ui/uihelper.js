@@ -344,6 +344,9 @@ var uiHelper = function() {
 
 		removeAlbum: function(key) {
 			debug.mark('UIHELPER', 'Removing Album',key);
+			if (uiHelper.findAlbumDisplayer(key).find('.menu_opened').length > 0) {
+				$('#popupmenu').remove();
+			}
 			try {
 				return layoutProcessor.removeAlbum(key);
 			} catch (err) {

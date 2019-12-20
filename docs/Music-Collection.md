@@ -42,13 +42,13 @@ To play a track in one of the Desktop skins, double-click it. This will add it t
 
 The 'Click Mode' can be changed from the Preferences pane.
 
-In Double-Click mode, clicking once on a track will select it. You can select multiple tracks by holding down Ctrl (Cmd on macOS), or Shift - which will select a range of tracks. A selection can be dragged to the Play Queue. Selected tracks will also display a menu 'hamburger icon' from which you can get a menu which allows you to Rate, Tag, or add tracks to a [Saved Playlist](/RompR/Using-Saved-Playlists)
+In Double-Click mode, clicking once on a track will select it. You can select multiple tracks by holding down Ctrl (Cmd on macOS), or Shift - which will select a range of tracks. A selection can be dragged to the Play Queue. Selected tracks will also display a '+' icon from which you can get a menu which allows you to Rate, Tag, or add tracks to a [Saved Playlist](/RompR/Using-Saved-Playlists)
 
 ![](images/albummenu.png)
 
 When you use this to add Ratings, Tags, or to Playlists it will apply to *all selected tracks*.
 
-In Single-Click mode, the hamburger icon will always be visible. Clicking the icon will show the menu and will also select the track. Clicking the icon on further tracks will add them to the selection. Clicking it again will remove them from the selection.
+In Single-Click mode, the + icon will always be visible. Clicking the icon will show the menu and will also select the track. Clicking the icon on further tracks will add them to the selection. Clicking it again will remove them from the selection.
 
 ## Collection Sources (Mopidy Only)
 

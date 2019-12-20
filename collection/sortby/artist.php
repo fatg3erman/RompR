@@ -113,7 +113,7 @@ class sortby_artist extends sortby_base {
 		logger::log("SORTBY_ARTIST", "Generating albums for",$this->why,$this->what,$this->who);
 		$count = 0;
 		if ($do_controlheader) {
-			print albumControlHeader(false, $this->why, 'album', $this->who, $this->getArtistName());
+			print albumControlHeader(false, $this->why, 'artist', $this->who, $this->getArtistName());
 		}
 		foreach ($this->album_sort_query($force_artistname) as $album) {
 			print albumHeader($album);

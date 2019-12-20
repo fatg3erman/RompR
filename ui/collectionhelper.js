@@ -232,7 +232,6 @@ var collectionHelper = function() {
 					// then the insertAfter logic will be wrong if we've already inserted the artist banner. We also need
 					// to remove and replace the banner when that sort option is used, because we only insertAfter an album ID
 					var x = uiHelper.findArtistDisplayer(v.id);
-					// var x = uiHelper.findArtistDisplayer('aartist'+v.id);
 					if (x.length == 0) {
 						debug.log('MODIFIED', v.id);
 						uiHelper.insertArtist(v);
@@ -339,7 +338,14 @@ var collectionHelper = function() {
 		},
 
 		collectionKey: function(w) {
-			return w+prefs.sortcollectionby+'root';
+			switch (w) {
+				case 'b':
+					return w+prefs.sortresultsby+'root';
+					break;
+				default:
+					return w+prefs.sortcollectionby+'root';
+					break;
+			}
 		},
 
 		checkCollection: function(forceup, rescan) {

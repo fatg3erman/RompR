@@ -2,7 +2,10 @@
 
 include ("backends/sql/connect.php");
 require_once ("skins/".$skin."/ui_elements.php");
-require_once('collection/sortby/'.$prefs['sortcollectionby'].'.php');
+$sorters = glob('collection/sortby/*.php');
+foreach ($sorters as $inc) {
+	require_once($inc);
+}
 connect_to_database($romonitor_hack);
 $find_track = null;
 $update_track = null;
@@ -789,7 +792,7 @@ function get_album_tracks_from_database($which, $cmd) {
 	global $prefs;
 	$retarr = array();
 	logger::log('SQL', 'Getting tracks for album',$which,$cmd);
-	$sorter = 'sortby_'.$prefs['sortcollectionby'];
+	$sorter = choose_sorter_by_key($which);
 	$lister = new $sorter($which);
 	$result = $lister->track_sort_query();
 	$cmd = ($cmd === null) ? 'add' : $cmd;
@@ -803,10 +806,10 @@ function get_artist_tracks_from_database($which, $cmd) {
 	global $prefs;
 	$retarr = array();
 	logger::log("GET TRACKS", "Getting Tracks for Root Item",$prefs['sortcollectionby'],$which);
-	$sorter = 'sortby_'.$prefs['sortcollectionby'];
+	$sorter = choose_sorter_by_key($which);
 	$lister = new $sorter($which);
 	foreach ($lister->albums_for_artist() as $a) {
-		$retarr = array_merge($retarr, get_album_tracks_from_database($which, $cmd));
+		$retarr = array_merge($retarr, get_album_tracks_from_database($a, $cmd));
 	}
 	return $retarr;
 }
@@ -1037,7 +1040,7 @@ function get_duration_count($range, $iab) {
 
 function dumpAlbums($which) {
 	global $divtype, $prefs;
-	$sorter = 'sortby_'.$prefs['sortcollectionby'];
+	$sorter = choose_sorter_by_key($which);
 	$lister = new $sorter($which);
 	$lister->output_html();
 }
