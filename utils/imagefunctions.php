@@ -75,7 +75,9 @@ class baseAlbumImage {
 			$this->images['asdownloaded'] = 'newimages/discoverweekly.jpg';
 			return 'newimages/discoverweekly.jpg';
 		}
-		$this->images['small'] = null;
+		if ($this->artist == 'PLAYLIST') {
+			$this->images['small'] = null;
+		}
 		return null;
 	}
 

@@ -284,6 +284,10 @@ button.iconbutton {
 	width: 12px;
 }
 
+.clicktrackmenu {
+	margin-left: 8px;
+}
+
 .rating-icon-big {
 	height: 20px;
 	width: 100px;

@@ -23,7 +23,6 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 		file_put_contents('prefs/podcasts/'.$id.'/feed.xml', $d->get_data());
 	}
 	$feed = simplexml_load_string($d->get_data());
-
 	logger::trace("PARSE_RSS", "  Our LastPubDate is ".$lastpubdate);
 
 	// Begin RSS Parse
@@ -31,8 +30,9 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 	$podcast['FeedURL'] = $url;
 	$domain = preg_replace('#^(http://.*?)/.*$#', '$1', $url);
 	$ppg = $feed->channel->children('ppg', TRUE);
-	$m = $feed->channel->children('itunes', TRUE);
+	$itunes = $feed->channel->children('itunes', TRUE);
 	$sy = $feed->channel->children('sy', TRUE);
+	$googleplay = $feed->channel->children('googleplay', TRUE);
 
 	// Automatic Refresh
 	if ($ppg && $ppg->seriesDetails) {
@@ -76,31 +76,45 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 	}
 
 	// Episode Expiry
-	if ($ppg && $ppg->seriesDetails && $ppg->seriesDetails[0]->attributes()->daysLive) {
-		$podcast['DaysLive'] = $ppg->seriesDetails[0]->attributes()->daysLive;
-	} else {
+	// if ($ppg && $ppg->seriesDetails && $ppg->seriesDetails[0]->attributes()->daysLive) {
+	// 	$podcast['DaysLive'] = $ppg->seriesDetails[0]->attributes()->daysLive;
+	// } else {
 		$podcast['DaysLive'] = -1;
-	}
+	// }
 
 	// Image
 	if ($feed->channel->image) {
-		$podcast['Image'] = html_entity_decode($feed->channel->image->url);
-		logger::log("PARSE_RSS", "  Image is ".$podcast['Image']);
-	} else if ($m && $m->image) {
-		$podcast['Image'] = $m->image[0]->attributes()->href;
-		logger::log("PARSE_RSS", "  Image is ".$podcast['Image']);
+		try {
+			foreach ($feed->channel->image as $i) {
+				$podcast['Image'] = html_entity_decode((string) $i->url);
+			}
+		} catch (Exception $e) {
+			$podcast['Image'] = html_entity_decode((string) $feed->channel->image->url);
+		}
+	} else if ($itunes && $itunes->image) {
+		try {
+			foreach ($itunes->image as $i) {
+				$podcast['Image'] = $i->attributes()->href;
+			}
+		} catch (Exception $e) {
+			try {
+				$podcast['Image'] = $itunes->image[0]->attributes()->href;
+			} catch (Exception $f) {
+				$podcast['Image'] = $itunes->image->attributes()->href;
+			}
+		}
 	} else {
 		$podcast['Image'] = "newimages/podcast-logo.svg";
-		logger::trace("PARSE_RSS", "  No Image Found");
 	}
 	if (preg_match('#^/#', $podcast['Image'])) {
 		// Image link with a relative URL. Duh.
 		$podcast['Image'] = $domain.$image;
 	}
+	logger::log("PARSE_RSS", "  Image is ".$podcast['Image']);
 
 	// Artist
-	if ($m && $m->author) {
-		$podcast['Artist'] = (string) $m->author;
+	if ($itunes && $itunes->author) {
+		$podcast['Artist'] = (string) $itunes->author;
 	} else {
 		$podcast['Artist'] = '';
 	}
@@ -109,15 +123,21 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 
 	// Category
 	$cats = array();
-	if ($m && $m->category) {
-		for ($i = 0; $i < count($m->category); $i++) {
-			$cat = html_entity_decode((string) $m->category[$i]->attributes()->text);
-			if (!in_array($cat, $cats)) {
-				$cats[] = $cat;
-			}
+	if ($itunes && $itunes->category) {
+		for ($i = 0; $i < count($itunes->category); $i++) {
+			$cat = html_entity_decode((string) $itunes->category[$i]->attributes()->text);
+			logger::log('POD', 'Found category',$cat);
+			$cats[] = $cat;
 		}
 	}
-	$spaz = array_diff($cats, array('Podcasts'));
+	if ($googleplay && $googleplay->category) {
+		for ($i = 0; $i < count($googleplay->category); $i++) {
+			$cat = html_entity_decode((string) $googleplay->category[$i]->attributes()->text);
+			$cats[] = $cat;
+		}
+	}
+	$spaz = array_unique($cats);
+	$spaz = array_diff($spaz, array('Podcasts'));
 	natsort($spaz);
 	$podcast['Category'] = implode(', ', $spaz);
 	logger::log("PARSE_RSS", "  Category is ".$podcast['Category']);
@@ -138,7 +158,16 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 	}
 
 	// Description
-	$podcast['Description'] = (string) $feed->channel->description;
+	$d1 = (string) $feed->channel->description;
+	$d2 = '';
+	if ($itunes && $itunes->summary) {
+		$d2 = (string) $itunes->summary;
+	}
+	if (strlen($d2) > strlen($d1)) {
+		$podcast['Description'] = $d2;
+	} else {
+		$podcast['Description'] = $d1;
+	}
 
 	// Tracks
 	$podcast['tracks'] = array();
@@ -238,22 +267,24 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 				$track['FileSize'] = 0;
 			}
 
-			if ($m && $m->summary) {
+			if ($item->description) {
+				$track['Description'] = $item->description;
+			} else if ($m && $m->summary) {
 				$track['Description'] = $m->summary;
 			} else {
-				$track['Description'] = $item->description;
+				$track['Description'] = '';
 			}
 
 			$podcast['tracks'][] = $track;
 		}
 	}
 
-	// if ($lastpubdate !== null) {
-	//     if ($podcast['LastPubDate'] !== false && $podcast['LastPubDate'] == $lastpubdate) {
-	//         logger::mark("PARSE_RSS", "Podcast has not been updated since last refresh");
-	//         return false;
-	//     }
-	// }
+	if ($lastpubdate !== null) {
+	    if ($podcast['LastPubDate'] !== false && $podcast['LastPubDate'] == $lastpubdate) {
+	        logger::mark("PARSE_RSS", "Podcast has not been updated since last refresh");
+	        return false;
+	    }
+	}
 
 	return $podcast;
 

@@ -379,6 +379,25 @@ button.iconbutton {
 	width: 12px;
 }
 
+.clicktrackmenu {
+	height: 16px;
+	width: 16px;
+	margin-left: 8px;
+	transition: opacity 0.2s ease;
+}
+
+/* Must be same as above */
+.timerspacer {
+	margin-left: 8px;
+	height: 16px;
+	width: 16px;
+}
+
+.invisibleicon {
+	display: block !important;
+	opacity: 0;
+}
+
 .rating-icon-big {
 	height: 20px;
 	width: 100px;

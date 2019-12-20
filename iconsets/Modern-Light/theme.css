@@ -39,11 +39,11 @@
 #ratingsearch:before {
     content: "";
     position: absolute;
-    top: 0; 
+    top: 0;
     left: 0;
-    width: 100%; 
-    height: 100%;  
-    opacity: 0.85; 
+    width: 100%;
+    height: 100%;
+    opacity: 0.85;
     z-index: -1;
     background-image: url('iconsets/Modern-Light/0stars.svg');
     background-size: auto 50%;
@@ -83,7 +83,6 @@
 .icon-cancel-circled { background-image: url('iconsets/Modern-Light/edit-delete.svg') }
 .icon-plus {
 	background-image: url('iconsets/Modern-Light/add.svg');
-  	opacity:0.9;
 }
 .icon-alarm { background-image: url('iconsets/Modern-Light/alarmclock_false.svg') }
 .icon-alarm-on { background-image: url('iconsets/Modern-Light/alarmclock_true.svg') }

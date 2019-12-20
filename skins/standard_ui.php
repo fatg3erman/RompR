@@ -65,7 +65,7 @@ function albumTrack($data) {
 
 	// Menu Button
 	if ($data['ttid']) {
-		$button_class = "icon-menu playlisticonr fixed clickable clickicon invisibleicon clicktrackmenu";
+		$button_class = "icon-plus playlisticonr fixed clickable clickicon invisibleicon clicktrackmenu";
 		if ($data['lm'] === null) {
 			$button_class .= ' clickremovedb';
 		}
