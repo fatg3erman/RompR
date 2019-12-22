@@ -143,7 +143,9 @@ if (!$snapcast_in_volume) {
 print '<div class="pref styledinputs containerbox dropdown-container">';
 print '<div class="fixed" style="margin-right:1em">'.get_int_text('config_snapcast_server').'</div>';
 print '<input class="saveotron expand" id="snapcast_server" type="text" />';
-print '<div class="fixed"style="margin-right:1em;margin-left:1em">'.get_int_text('config_snapcast_port').'</div>';
+print '</div>';
+print '<div class="pref styledinputs containerbox dropdown-container">';
+print '<div class="fixed" style="margin-right:1em">'.get_int_text('config_snapcast_port').'</div>';
 print '<input class="saveotron" id="snapcast_port" style="width:4em" type="text" size="4" />';
 print '</div>';
 print '</div>';

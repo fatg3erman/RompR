@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg2"
+   height="240.77507"
+   width="251.50963"
+   version="1.0">
+  <defs
+     id="defs4">
+    <marker
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path6959"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#FF4500;fill-opacity:1;fill-rule:evenodd;stroke:#FF4500;stroke-width:1pt;stroke-opacity:1"
+         transform="matrix(0.8,0,0,0.8,10,0)" />
+    </marker>
+  </defs>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     style="fill:#FF4500;fill-opacity:1;fill-rule:evenodd;stroke:#FF4500;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     stroke-miterlimit="4"
+     d="m 196.39011,231.67042 -70.86308,-46.81303 -71.480451,46.26207 22.398095,-82.20423 -65.864515,-54.032481 84.70576,-3.992507 30.774001,-79.65491 29.95215,79.73789 84.88541,4.802367 -66.19368,53.271651 z"
+     id="path4514" />
+</svg>

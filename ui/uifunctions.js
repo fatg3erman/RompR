@@ -645,6 +645,7 @@ function calcPercentWidth(element, childSelector, targetWidth, parentWidth) {
 }
 
 function makeHoverWork(ev) {
+	debug.trace('UI', 'Make Hover Work');
 	var jq = $(this);
 	if (calcComboPos(ev, jq)) {
 		jq.css('cursor','pointer');
@@ -654,6 +655,7 @@ function makeHoverWork(ev) {
 }
 
 function makeClearWork(ev) {
+	debug.trace('UI', 'Make Clear Work');
 	var jq = $(this);
 	if (calcComboPos(ev, jq)) {
 		jq.val("");

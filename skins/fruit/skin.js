@@ -535,8 +535,8 @@ var layoutProcessor = function() {
 			$(document).on('mouseenter', '.combobox-entry', makeHoverWork);
 			$(document).on('mouseleave', '.combobox-entry', makeHoverWork);
 			$(document).on('mousemove', '.combobox-entry', makeHoverWork);
-			$(document).on('mouseenter', '.tooltip', makeToolTip);
-			$(document).on('mouseleave', '.tooltip', stopToolTip);
+			// $(document).on('mouseenter', '.tooltip', makeToolTip);
+			// $(document).on('mouseleave', '.tooltip', stopToolTip);
 			$('#plmode').detach().appendTo('#amontobin').addClass('tright');
 			$('#volume').volumeControl({
 				orientation: 'vertical',

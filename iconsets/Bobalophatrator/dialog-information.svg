@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   viewBox="0 0 44 44"
+   version="1.1"
+   id="svg2331">
+  <metadata
+     id="metadata2337">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>info@1x</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs2335">
+    <linearGradient
+       id="linearGradient7334">
+      <stop
+         id="stop7330"
+         offset="0"
+         style="stop-color:#CA91BE;stop-opacity:1" />
+      <stop
+         id="stop7332"
+         offset="1"
+         style="stop-color:#BA3E91;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="43.934132"
+       x2="21.736526"
+       y1="0.13173653"
+       x1="22.658682"
+       id="linearGradient7336"
+       xlink:href="#linearGradient7334" />
+  </defs>
+  <title
+     id="title2324">info@1x</title>
+  <g
+     id="Layer_2"
+     data-name="Layer 2"
+     style="fill:url(#linearGradient7336);fill-opacity:1">
+    <g
+       id="General"
+       style="fill:url(#linearGradient7336);fill-opacity:1">
+      <g
+         id="Info_2x.png"
+         data-name="Info@2x.png"
+         style="fill:url(#linearGradient7336);fill-opacity:1">
+        <path
+           d="M24.94,31a2.14,2.14,0,0,1-1.29-.29,1.34,1.34,0,0,1-.37-1.1,5.71,5.71,0,0,1,.12-1,11,11,0,0,1,.26-1.12l1.18-4.06a6.15,6.15,0,0,0,.24-1.23c0-.45.06-.76.06-.94a2.63,2.63,0,0,0-.93-2.09,3.91,3.91,0,0,0-2.64-.8,6.85,6.85,0,0,0-2,.33q-1.06.33-2.23.79L17,20.81c.23-.08.51-.17.83-.27a3.4,3.4,0,0,1,.94-.14,1.92,1.92,0,0,1,1.27.31,1.45,1.45,0,0,1,.33,1.09,4.74,4.74,0,0,1-.11,1c-.07.35-.16.72-.27,1.11l-1.19,4.08a11.65,11.65,0,0,0-.23,1.15,7.14,7.14,0,0,0-.07,1,2.61,2.61,0,0,0,1,2.07,4,4,0,0,0,2.68.82,6.17,6.17,0,0,0,2-.29q.85-.29,2.27-.83l.32-1.26a5.53,5.53,0,0,1-.79.26A3.81,3.81,0,0,1,24.94,31Zm-.75-20a2.87,2.87,0,0,0-2,.75,2.39,2.39,0,0,0,0,3.62,3,3,0,0,0,4,0,2.4,2.4,0,0,0,0-3.62A2.85,2.85,0,0,0,24.19,11ZM22,0A22,22,0,1,0,44,22,22,22,0,0,0,22,0Zm0,42A20,20,0,1,1,42,22,20,20,0,0,1,22,42Z"
+           id="path2326"
+           style="fill:url(#linearGradient7336);fill-opacity:1" />
+      </g>
+    </g>
+  </g>
+</svg>

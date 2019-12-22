@@ -14,7 +14,7 @@ print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 <link rel="stylesheet" type="text/css" href="skins/'.$skin.'/skin.css?version='.ROMPR_VERSION.'" />
 <link rel="shortcut icon" href="newimages/favicon.ico" />
 <link rel="stylesheet" type="text/css" href="gettheme.php" />
-<script type="text/javascript" src="jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="jquery/jquery-3.4.1.min.js"></script>
 <script type="text/javascript" src="jquery/jquery-migrate-3.0.1.js"></script>
 <script type="text/javascript" src="utils/setupbits.js"></script>
 <style>

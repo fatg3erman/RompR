@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   viewBox="0 0 40 44"
+   version="1.1"
+   id="svg31637">
+  <metadata
+     id="metadata31643">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>podcast-1@1x</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs31641">
+    <linearGradient
+       id="linearGradient32987">
+      <stop
+         id="stop32983"
+         offset="0"
+         style="stop-color:#fff663;stop-opacity:1" />
+      <stop
+         id="stop32985"
+         offset="1"
+         style="stop-color:#fb8626;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="44.076973"
+       x2="20.323454"
+       y1="0"
+       x1="20"
+       id="linearGradient32989"
+       xlink:href="#linearGradient32987" />
+  </defs>
+  <title
+     id="title31630">podcast-1@1x</title>
+  <g
+     id="Layer_2"
+     data-name="Layer 2"
+     style="stroke:none;stroke-opacity:1;fill:url(#linearGradient32989);fill-opacity:1">
+    <g
+       id="Web"
+       style="stroke:none;stroke-opacity:1;fill:url(#linearGradient32989);fill-opacity:1">
+      <g
+         id="Podcasts_1_2x.png"
+         data-name="Podcasts 1@2x.png"
+         style="stroke:none;stroke-opacity:1;fill:url(#linearGradient32989);fill-opacity:1">
+        <path
+           d="M20,25c-5,0-6,3-6,6s1,9,2,11,2,2,2,2h4s1,0,2-2,2-8,2-11S25,25,20,25Zm2.21,16.11a3.38,3.38,0,0,1-.59.89H18.38a3.35,3.35,0,0,1-.6-.89C17,39.53,16,33.87,16,31s1-4,4-4,4,1,4,4S23,39.53,22.21,41.11ZM20,0a20,20,0,0,0-7.12,38.67c-.15-.76-.28-1.55-.39-2.33a18,18,0,1,1,15.06,0c-.11.78-.25,1.57-.4,2.33A20,20,0,0,0,20,0Zm0,23a5,5,0,1,0-5-5A5,5,0,0,0,20,23Zm0-8a3,3,0,1,1-3,3A3,3,0,0,1,20,15Zm6.38,10.7a7.09,7.09,0,0,1,1,1.77,12,12,0,1,0-14.77,0,6.73,6.73,0,0,1,1-1.77,10,10,0,1,1,12.82.06Z"
+           id="path31632"
+           style="stroke:none;stroke-opacity:1;fill:url(#linearGradient32989);fill-opacity:1" />
+      </g>
+    </g>
+  </g>
+</svg>

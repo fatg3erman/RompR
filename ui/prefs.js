@@ -635,12 +635,6 @@ var prefs = function() {
 					callback = setPlayClickHandlers;
 					break;
 
-				case 'displayresultsas':
-					callback = function() {
-						player.controller.reSearch();
-					}
-					break;
-
 				case 'currenthost':
 					defer = true;
 					offerToTransferPlaylist();
@@ -688,6 +682,12 @@ var prefs = function() {
 				var prefsave = prefname.replace(/_duplicate\d+/, '');
 				$("[name="+prefname+"][value="+prefs[prefsave]+"]").prop("checked", true);
 			});
+
+			if (prefs.displayresultsas == "collection") {
+				$('.choose-resultmode.icon-music').addClass('currentbun');
+			} else {
+				$('.choose-resultmode.icon-folder-open-empty').addClass('currentbun');
+			}
 
 		},
 

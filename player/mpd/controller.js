@@ -120,6 +120,7 @@ function playerController() {
 
 	this.do_command_list = function(list, callback) {
 		// Note, if you call this with a callback, your callback MUST call player.controller.checkProgress
+		debug.debug('PLAYER', 'Command List',list);
 		$.ajax({
 			type: 'POST',
 			url: 'player/mpd/postcommand.php',

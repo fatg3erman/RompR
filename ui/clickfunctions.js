@@ -177,11 +177,27 @@ function onSourcesClicked(event, clickedElement) {
 			clickedElement,
 			clickedElement.next().val(),
 			clickedElement.attr('name'));
+	} else if (clickedElement.hasClass('choose-resultmode')) {
+		setSearchResultMode(clickedElement);
 	} else {
 		clickRegistry.farmClick(event, clickedElement);
 	}
 	if (clickedElement.hasClass('closepopup')) {
 		$('#popupmenu').remove();
+	}
+}
+
+function setSearchResultMode(element) {
+	var old_mode = prefs.displayresultsas;
+	if (element.hasClass('icon-music')) {
+		var new_mode = 'collection';
+	} else {
+		new_mode = 'tree';
+	}
+	if (old_mode != new_mode) {
+		$('.choose-resultmode').removeClass('currentbun');
+		element.addClass('currentbun');
+		prefs.save({displayresultsas: new_mode}, player.controller.reSearch);
 	}
 }
 
