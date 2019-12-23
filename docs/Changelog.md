@@ -18,6 +18,7 @@ Thought I'd bump the version number up a bit since this seems like quite a big r
 * The Tags and Ratings manager has been removed since a) I hated it and b) almost everything it did can now be done via the main Collection panel
 * The 'back' button on the phone skin is now always visible so you don't have to scroll back to the top to go back
 * Done quite a lot of work on the Skypotato skin to make it neater, more efficient, and smoother and give it all the same functionality as the Desktop skin
+* Another batch of new icon themes
 ### FIXES:
 * Fix Panel hiding not working in Fruit skin
 * Make the Snapcast controls look neater
@@ -25,6 +26,7 @@ Thought I'd bump the version number up a bit since this seems like quite a big r
 * On first run this version will upgrade MySQL installations to use 4-Byte UTF-8 encoding. Put simply, this upgrades the MySQL database to use the same character set as used by default in absolutely everything except MySQL which for some reason defauls to a pointless 3-Byte version which makes it incompatible with basically the entire internet. As I've said before, SQLite is just better but if you insist on using MySQL/MariaDB this will help. If you have a large database this upgrade will take a very very very very very very very very very very very very long time and may well time out. If that happens make a post on the Discussion forum and I'll put up instructions on how to fix it.
 * Fix ImageMagick handling of radio stations that only have a .ico file for their staion image, as many of the ones in Community Radio do. PHP-GD does not support .ico files so ImageMagick is required for these stations.
 * Fixed a serious bug in the PHP URL downloading code, it's a miracle it ever worked at all.
+* Fixed the play control buttons in Modern-Dark looking blurred in Safari due to Safari not rendering SVG blur correctly
 * As always, hundreds of little tweaks and tinkerings here and there
 
 ## Version 1.32
