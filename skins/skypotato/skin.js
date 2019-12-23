@@ -20,7 +20,9 @@ jQuery.fn.menuReveal = function(callback) {
 		case holder.hasClass('userplaylist'):
 			// Albums and Playlists
 			parent.addClass('tagholder_wide dropshadow').insertDummySpacers();
-			holder.find('div.albumthing').detach().prependTo(self).find('.collectionicon').hide();
+			holder.find('div.albumthing').detach().prependTo(self)
+				.find('.title-menu').addClass('containerbox dropdown-container')
+				.find('.collectionicon').removeClass('collectionicon').addClass('svg-square');
 			holder.find('div.dropdown-container.configtitle').remove();
 			var tt = self.find('input.albumtime').val();
 			if (tt) {
@@ -70,10 +72,8 @@ jQuery.fn.menuReveal = function(callback) {
 	self.css({display: displaymode});
 	if (callback) callback.call(self);
 	if (adjustboxes) {
-		// layoutProcessor.adjustBoxSizes();
 		$(this).appendDummySpacers();
 		layoutProcessor.scrollSourcesTo(parent);
-		debug.log('SKIN', 'Calling Postalbummenu');
 		layoutProcessor.postAlbumMenu(holder);
 	}
 	return self;
@@ -133,7 +133,9 @@ jQuery.fn.menuHide = function(callback) {
 			parent.removeClass('tagholder_wide dropshadow');
 			parent.removeDummySpacers();
 			var monkey = parent.find('.helpfulalbum.expand');
-			self.find('div.albumthing').detach().appendTo(monkey).find('.collectionicon').show();
+			self.find('div.albumthing').detach().appendTo(monkey)
+				.find('.title-menu').removeClass('containerbox dropdown-container')
+				.find('.svg-square').removeClass('svg-square').addClass('collectionicon');
 			self.remove();
 			break;
 
@@ -775,7 +777,7 @@ var layoutProcessor = function() {
 				if (n.indexOf('_') == -1) {
 					makeNewPanel(element, name);
 				} else {
-					var t= ($('<div>', {id: name, class: 'indent containerbox wrap notfilled'})).insertAfter(element);
+					var t= ($('<div>', {id: name, class: 'indent containerbox wrap brick_wide notfilled'})).insertAfter(element);
 				}
 			} else if (element.hasClass('searchdir')) {
 

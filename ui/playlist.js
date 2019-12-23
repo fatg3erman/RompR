@@ -14,7 +14,6 @@ var playlist = function() {
 	var popmovetimer = null;
 	var popmoveelement = null;
 	var popmovetimeout = 2000;
-	var lastbuttonupdate = 0;
 
 	// Minimal set of information - just what infobar requires to make sure
 	// it blanks everything out
@@ -617,13 +616,6 @@ var playlist = function() {
 		},
 
 		setButtons: function() {
-			if (lastbuttonupdate > 0) {
-				var timediff = Date.now() - lastbuttonupdate;
-				if (timediff < 500) {
-					debug.error('PLAYLIST', 'Too frequent button updates!', timediff);
-				}
-			}
-			lastbuttonupdate = Date.now();
 			var c = (player.status.xfade === undefined || player.status.xfade === null || player.status.xfade == 0) ? "off" : "on";
 			$("#crossfade").flowToggle(c);
 			$.each(['random', 'repeat', 'consume'], function(i,v) {

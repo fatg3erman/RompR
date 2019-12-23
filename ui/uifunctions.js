@@ -369,9 +369,9 @@ function hidePanel(panel) {
 }
 
 function doSomethingUseful(div,text) {
-	var html = '<div class="containerbox bar">';
+	var html = '<div class="containerbox bar brick_wide">';
 	if (typeof div == "string") {
-		html = '<div class="containerbox bar menuitem" id="spinner_'+div+'">';
+		html = '<div class="containerbox bar menuitem brick_wide" id="spinner_'+div+'">';
 	}
 	html += '<div class="fixed alignmid">'+
 		'<i class="icon-spin6 svg-square spinner"></i></div>';

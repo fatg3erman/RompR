@@ -900,22 +900,22 @@ function collectionButtons() {
 
 	print '<div class="containerbox dropdown-container">';
 	print '<div class="selectholder">';
-	print '<select id="collectionrangeselector" class="saveomatic">';
-	print '<option value="'.ADDED_ALL_TIME.'">'.get_int_text('label_all_time').'</option>';
-	print '<option value="'.ADDED_TODAY.'">'.get_int_text('label_today').'</option>';
-	print '<option value="'.ADDED_THIS_WEEK.'">'.get_int_text('label_thisweek').'</option>';
-	print '<option value="'.ADDED_THIS_MONTH.'">'.get_int_text('label_thismonth').'</option>';
-	print '<option value="'.ADDED_THIS_YEAR.'">'.get_int_text('label_thisyear').'</option>';
+	print '<select id="sortcollectionbyselector" class="saveomatic">';
+	foreach (COLLECTION_SORT_MODES as $mode => $key) {
+		print '<option value="'.$mode.'">'.ucfirst(get_int_text($key)).'</option>';
+	}
 	print '</select>';
 	print '</div>';
 	print '</div>';
 
 	print '<div class="containerbox dropdown-container">';
 	print '<div class="selectholder">';
-	print '<select id="sortcollectionbyselector" class="saveomatic">';
-	foreach (COLLECTION_SORT_MODES as $mode => $key) {
-		print '<option value="'.$mode.'">'.ucfirst(get_int_text($key)).'</option>';
-	}
+	print '<select id="collectionrangeselector" class="saveomatic">';
+	print '<option value="'.ADDED_ALL_TIME.'">'.get_int_text('label_all_time').'</option>';
+	print '<option value="'.ADDED_TODAY.'">'.get_int_text('label_today').'</option>';
+	print '<option value="'.ADDED_THIS_WEEK.'">'.get_int_text('label_thisweek').'</option>';
+	print '<option value="'.ADDED_THIS_MONTH.'">'.get_int_text('label_thismonth').'</option>';
+	print '<option value="'.ADDED_THIS_YEAR.'">'.get_int_text('label_thisyear').'</option>';
 	print '</select>';
 	print '</div>';
 	print '</div>';

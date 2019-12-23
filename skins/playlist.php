@@ -20,12 +20,12 @@ print '<i title="'.get_int_text('button_clearplaylist').'" class="icon-trash sma
 <?php
 
 print '<div id="flowcontrols" class="noborder containerbox">';
-print '<i id="random" class="icon-random tooltip topimg expand flow-off" title="'.get_int_text('button_random').'"></i>';
+print '<i id="random" class="icon-random tooltip podicon clickicon expand flow-off" title="'.get_int_text('button_random').'"></i>';
 if ($prefs['player_backend'] == "mpd") {
-	print '<i id="crossfade" class="icon-crossfade tooltip topimg expand flow-off" title="'.get_int_text('button_crossfade').'"></i>';
+	print '<i id="crossfade" class="icon-crossfade tooltip podicon clickicon expand flow-off" title="'.get_int_text('button_crossfade').'"></i>';
 }
-print '<i id="repeat" class="icon-repeat tooltip topimg expand flow-off" title="'.get_int_text('button_repeat').'"></i>';
-print '<i id="consume" class="icon-consume tooltip topimg expand flow-off" title="'.get_int_text('button_consume').'"></i>';
+print '<i id="repeat" class="icon-repeat tooltip podicon clickicon expand flow-off" title="'.get_int_text('button_repeat').'"></i>';
+print '<i id="consume" class="icon-consume tooltip podicon clickicon expand flow-off" title="'.get_int_text('button_consume').'"></i>';
 print '</div>';
 
 if ($prefs['player_backend'] == "mpd") {

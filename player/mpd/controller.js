@@ -423,6 +423,7 @@ function playerController() {
 	}
 
 	this.toggleRandom = function() {
+		debug.log('PLAYER', 'Toggling Random');
 		var new_value = (player.status.random == 0) ? 1 : 0;
 		self.do_command_list([["random",new_value]], function() {
 			playlist.doUpcomingCrap();
@@ -431,6 +432,7 @@ function playerController() {
 	}
 
 	this.toggleCrossfade = function() {
+		debug.log('PLAYER', 'Toggling Crossfade');
 		var new_value = (player.status.xfade === undefined || player.status.xfade === null ||
 			player.status.xfade == 0) ? prefs.crossfade_duration : 0;
 		self.do_command_list([["crossfade",new_value]]);
@@ -441,11 +443,13 @@ function playerController() {
 	}
 
 	this.toggleRepeat = function() {
+		debug.log('PLAYER', 'Toggling Repeat');
 		var new_value = (player.status.repeat == 0) ? 1 : 0;
 		self.do_command_list([["repeat",new_value]]);
 	}
 
 	this.toggleConsume = function() {
+		debug.log('PLAYER', 'Toggling Consume');
 		var new_value = (player.status.consume == 0) ? 1 : 0;
 		self.do_command_list([["consume",new_value]]);
 	}
@@ -559,6 +563,7 @@ function playerController() {
 	}
 
 	this.doMute = function() {
+		debug.log('PLAYER', 'Toggling Mute');
 		if (prefs.player_backend == "mopidy") {
 			if ($("#mutebutton").hasClass('icon-output-mute')) {
 				$("#mutebutton").removeClass('icon-output-mute').addClass('icon-output');
