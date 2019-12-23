@@ -4,6 +4,13 @@
 =====================================================================
 */
 
+html, body.phone .dropmenu {
+    background-image: linear-gradient(#ffffff, #bbbbbb);
+    background-size:cover;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+}
+
 body
 {
 
@@ -86,10 +93,6 @@ input[type="text"]:focus {
 =====================================================================
 */
 
-body.mobile, body.phone .dropmenu {
-    background-image: linear-gradient(#ffffff, #bbbbbb);
-}
-
 .album2 {
     background-color:rgba(0,0,0,0.1);
 }
@@ -104,17 +107,17 @@ body.setup
     background-color: #dddddd;
 }
 
-body.desktop #infobar
+/*body.desktop #infobar
 {
     background-image: linear-gradient(#ffffff, #eeeeee);
 }
-
+*/
 body.desktop #headerbar
 {
     background-image: linear-gradient(#eeeeee, #ededed);
 }
 
-body.desktop #thetopbit
+/*body.desktop #thetopbit
 {
     background-image: linear-gradient(#ffffff, #ededed);
 }
@@ -123,7 +126,7 @@ body.desktop #thetopbit
 {
     background-image: linear-gradient(#ededed, #bbbbbb);
 }
-
+*/
 #pset {
     background-color: rgba(1, 1, 1, 0.75);
 }
@@ -247,10 +250,10 @@ a.album:hover,a.album:active
 }
 
 /*Prevent submenus from having all entries highlighted
-due to :hover events propagating from the parent menu 
+due to :hover events propagating from the parent menu
 */
 .backhi:hover>div.topdropmenu>div.backhi {
-    color:#111111;    
+    color:#111111;
 }
 
 /*Make sure the submenu entry being hovered over still gets highlighted*/

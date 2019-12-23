@@ -783,6 +783,10 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 	},
 
 	_mouseCapture: function(event) {
+		// Seemingly this is crucial to stop the event bubbling up the tree
+		// to the parent icon. Didn't used to be a problem, seems to fuck up with
+		// latest Firefox.
+		event.stopPropagation();
 		return true;
 	},
 
@@ -843,6 +847,7 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 					$(this).slideToggle('fast');
 				}
 			});
+
 			if (this.element.hasClass('useasfixed')) {
 				var top = parseInt(this.element.parent().offset().top) + this.element.parent().outerHeight(true);
 				this.element.css({

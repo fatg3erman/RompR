@@ -162,14 +162,16 @@ jQuery.fn.makeTagMenu = function(options) {
 jQuery.fn.fanoogleMenus = function() {
 	this.each( function() {
 		if ($(this).is(':visible')) {
-			$(this).mCustomScrollbar("update");
-			var pt = parseInt($(this).css('padding-top')) + parseInt($(this).css('padding-bottom'));
+			// Fucking css, what a pile of shit
+			var pt = parseInt($(this).css('padding-top')) + parseInt($(this).css('padding-bottom')) +
+				parseInt($(this).css('border-top-width')) + parseInt($(this).css('border-bottom-width'));
 			var top = $(this).children().first().children('.mCSB_container').offset().top;
 			var conheight = $(this).children().first().children('.mCSB_container').height();
 			var ws = getWindowSize();
 			var avheight = ws.y - top;
 			var nh = Math.min(avheight, (conheight+pt));
 			$(this).css({height: nh+"px"});
+			$(this).mCustomScrollbar("update");
 		}
 	});
 	return this;

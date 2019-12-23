@@ -199,7 +199,7 @@ div {
 }
 
 #flowcontrols i {
-	max-height: 24px;
+	/*max-height: 24px;*/
 	margin-top:4px;
 }
 
@@ -924,6 +924,7 @@ img.jalopy200 {
 /*      This is here so the layoutProcessor knows we're in tall portrait mode
 		and it should choose infobar instead */
 		font-weight:900;
+		display: none !important;
 	}
 
 }
@@ -1057,6 +1058,10 @@ img.jalopy200 {
 	#infopane {
 		width:100%;
 	}
+
+	.choose_nowplaying {
+		display:none !important;
+	}
 }
 
 /* 3 Modes for info pane to make best use of available space */
@@ -1170,6 +1175,7 @@ img.jalopy200 {
 /*      This is here so the layoutProcessor knows we're in tall portrait mode
 		and it should choose infobar instead */
 		font-weight:1000;
+		display:none !important;
 	}
 
 	#playlistm {
