@@ -489,7 +489,7 @@ i.combo-button {
 
 .collectionicon {
 	padding:0px;
-	margin-right:4px;
+	margin-right:8px;
 	margin-bottom:2px;
 	margin-top:2px;
 	vertical-align:middle;
@@ -499,7 +499,7 @@ i.combo-button {
 
 .submenuspacer {
 	/*This needs to be the same width as collectionicon*/
-	margin-left:24px;
+	margin-left:28px;
 }
 
 .playlisticonr {

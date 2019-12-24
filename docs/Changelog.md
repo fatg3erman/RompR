@@ -13,8 +13,8 @@ Thought I'd bump the version number up a bit since this seems like quite a big r
 * Completely redesigned the Community Radio Browser to simplify the interface and make it more consistent with TuneIn
 * Albums can now be moved manually to the Spoken Word section, and back to the Music Collection
 * Rompr will now check for a new release on startup and give you the option of downloading it
-* The Playlist Manager has been removed, since all of its functionality is now incorporated into the main playlist chooser panel
 * New pop-up menus for all tracks allowing you to tag, rate, and add to playlists right from the Music Collection or Search Results
+* The Playlist Manager has been removed, since all of its functionality is now incorporated into the main playlist chooser panel
 * The Tags and Ratings manager has been removed since a) I hated it and b) almost everything it did can now be done via the main Collection panel
 * The 'back' button on the phone skin is now always visible so you don't have to scroll back to the top to go back
 * Done quite a lot of work on the Skypotato skin to make it neater, more efficient, and smoother and give it all the same functionality as the Desktop skin

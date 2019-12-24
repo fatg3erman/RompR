@@ -25,6 +25,8 @@ function albumTrack($data) {
 		print '<div class="playable '.$class.' ninesix draggable indent containerbox padright calign" name="'.rawurlencode($data['uri']).'">';
 	}
 
+	print domainIcon($d, 'collectionicon');
+
 	// Track Number
 	if ($data['trackno'] && $data['trackno'] != "" && $data['trackno'] > 0) {
 		print '<div class="tracknumber fixed"';
@@ -33,8 +35,6 @@ function albumTrack($data) {
 		}
 		print '>'.$data['trackno'].'</div>';
 	}
-
-	print domainIcon($d, 'collectionicon');
 
 	// Track Title, Artist, and Rating
 	if ((string) $data['title'] == "") $data['title'] = urldecode($data['uri']);
