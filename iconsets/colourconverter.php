@@ -10,16 +10,19 @@ $dir = 'Bobalophatrator';
 # white
 # $newcolour = '#FFFFFF';
 # orange
-$newcolour = '#EEEEEE';
+$newcolour = '#FF4d00';
 // Highlight colour for hover over media control buttons, blobdown, and alarm on - Bobalophagus only
-$newhighlight = '#FF4d00';
+$newhighlight = '#000000';
 
 // Fiery Colours:
 // 255, 246, 99 to 251, 134, 38
 
-// Purple 186,62,145 to 202,145,190
+// Purple 202,145,190 to 186,62,145
 //  BA3E91 to CA91BE
 
+// Orange is 255, 77, 0 (FF4D00)
+
+// Bobalophagus-Light is EEEEEE
 
 $files = glob($dir.'/*.svg');
 
