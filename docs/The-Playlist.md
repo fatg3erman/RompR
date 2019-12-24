@@ -1,6 +1,6 @@
-# The Current Playlist
+# The Play Queue
 
-This might be better termed the 'Play Queue', but mpd uses the term Playlist, or 'Current Playlist'. This panel appears on the right-hand-side of the window in the default Desktop skin. It shows tracks that are currently playing and tracks queued to play next, in the order in which they will play.
+This panel appears on the right-hand-side of the window in the default Desktop skin. It shows tracks that are currently playing and tracks queued to play next, in the order in which they will play.
 
 ![](images/playlist.png)
 
@@ -34,4 +34,4 @@ The 'Musical Notes' icon will appear next to Spotify albums. Clicking this will 
 
 ## Non-Queueing Mode
 
-Although the default option (and the way mpd works) is to add tracks to the Playlist when you click them, you can also enable a more 'Media Centre-like' mode. In the Configuration panel is an option for 'CD Player Mode'. When this is enabled, when you double-click a track it will play immediately, removing any existing tracks from the Current Playlist. The album the track is from will be played from that track to the end.
+Although the default option (and the way mpd works) is to add tracks to the Play Queue when you click them, you can also enable a more 'Media Centre-like' mode. In the Configuration panel is an option for 'CD Player Mode'. When this is enabled, when you double-click a track it will play immediately, removing any existing tracks from the Play Queue. The album the track is from will be played from that track to the end.

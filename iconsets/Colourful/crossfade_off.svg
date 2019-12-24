@@ -5,43 +5,38 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0beta2 (2b71d25, 2019-12-03)"
+   sodipodi:docname="crossfade_off.svg"
    width="146.46507mm"
    height="154.59926mm"
    viewBox="0 0 146.46507 154.59926"
    version="1.1"
    id="svg8">
+  <sodipodi:namedview
+     inkscape:document-rotation="0"
+     inkscape:current-layer="svg8"
+     inkscape:window-maximized="0"
+     inkscape:window-y="0"
+     inkscape:window-x="0"
+     inkscape:cy="372.7402"
+     inkscape:cx="419.15096"
+     inkscape:zoom="0.8077874"
+     showgrid="false"
+     id="namedview8"
+     inkscape:window-height="900"
+     inkscape:window-width="1440"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
   <defs
-     id="defs2">
-    <linearGradient
-       id="linearGradient838">
-      <stop
-         id="stop834"
-         offset="0"
-         style="stop-color:#ff0000;stop-opacity:1" />
-      <stop
-         id="stop836"
-         offset="1"
-         style="stop-color:#00ff00;stop-opacity:0" />
-    </linearGradient>
-    <linearGradient
-       gradientUnits="userSpaceOnUse"
-       y2="74.901776"
-       x2="145.22131"
-       y1="74.901776"
-       x1="1.1786039"
-       id="linearGradient840"
-       xlink:href="#linearGradient838" />
-    <linearGradient
-       gradientTransform="matrix(-1,0,0,1,146.39991,0)"
-       y2="74.901776"
-       x2="145.22131"
-       y1="74.901776"
-       x1="1.1786039"
-       gradientUnits="userSpaceOnUse"
-       id="linearGradient834"
-       xlink:href="#linearGradient838" />
-  </defs>
+     id="defs2" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -55,11 +50,15 @@
     </rdf:RDF>
   </metadata>
   <path
-     id="rect949"
-     d="M 140.10371,126.43461 H 6.29719 V 23.368414 Z"
-     style="opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:url(#linearGradient840);stroke-width:10.23717213;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+     style="fill:none;fill-opacity:1;stroke:#FF4500;stroke-width:7.02312;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="m 141.84465,33.964602 -58.059605,85.488158 58.564465,-1e-5"
+     id="path897"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="ccc" />
   <path
-     style="opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:url(#linearGradient834);stroke-width:10.23717213;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     d="M 6.2961992,126.43461 H 140.10272 V 23.368414 Z"
-     id="path832" />
+     sodipodi:nodetypes="ccc"
+     inkscape:connector-curvature="0"
+     id="path899"
+     d="m 4.64497,33.964602 60.88205,85.488158 -61.4114587,-1e-5"
+     style="fill:none;fill-opacity:1;stroke:#FF4500;stroke-width:7.19181;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
 </svg>

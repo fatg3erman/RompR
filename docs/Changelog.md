@@ -47,7 +47,7 @@ Thought I'd bump the version number up a bit since this seems like quite a big r
 * Last.FM Info panel will display artist images again, but not for 'Similar Artists', and only in certain circumstances. Last.FM have removed all artist image functionality.
 * Done quite a lot of work on the Discogs Info panel to include images and a search that actually works and is quite accurate. This also makes the Videos panel work a lot better and get more accurate matches.
 * Multitudinous new icon themes
-* Some changes to the layout of the Phone and Tablet skins. Large tablets will now display the Now Playing, Playlist, and Media Chooser panels simultaneously when in Landscape orientation.
+* Some changes to the layout of the Phone and Tablet skins. Large tablets will now display the Now Playing, Play Queue, and Media Chooser panels simultaneously when in Landscape orientation.
 * Alarm Clock and Sleep Timer now supported on the Tablet skin. Note that they still won't work if your tablet sleeps, but the tablet skin is quite good for small laptop screens so that's what this is intended for.
 * Quite a lot of work has gone into preventing browsers from timing out on long collection updates. Did you know that browsers automatically retry if something takes more than 2 minutes? I didn't, but I do now. Crikey, it's annoying. So I've made some changes that will hopefully prevent this from being a problem. If you see your Collection Update just keep looping round and round, close your browser, restart your web server, then try again and send me a debug log at level 8.
 * Dirble Radio Browser has been removed, since Dirble seems to be no longer working, and it was always unreliable. Now we have TuneIn and Community Radio it's not really needed.

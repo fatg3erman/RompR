@@ -6,7 +6,7 @@ The Internet Radio Stations panel allows you to play radio stations from a varie
 
 ![](images/yourradio.png)
 
-This is a list of Favourite radio stations. It can be re-ordered by dragging items up and down. You can add stations to this list by clicking the Radio Tower icon in the Current Playlist while the station is playing.
+This is a list of Favourite radio stations. It can be re-ordered by dragging items up and down. You can add stations to this list by clicking the Radio Tower icon in the Play Queue while the station is playing.
 
 ![](images/yourradio2.png)
 

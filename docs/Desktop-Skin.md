@@ -39,11 +39,11 @@ In the centre is the Info Panel. The icons across the top are (left to right)
 * Spotify
 * Youtube
 
-On the right-hand side is the Current Playlist. Above that are various tools. These are (left to right):
+On the right-hand side is the Play Queue. Above that are various tools. These are (left to right):
 * [Sleep Timer](/RompR/Alarm-And-Sleep)
 * [Alarm Clock](/RompR/Alarm-And-Sleep)
 * [Album Art Manager](/RompR/Album-Art-Manager)
 * Configuration Menu
-* Save Current Playlist
+* Save Play Queue as a Playlist
 
 The lower panels can be resized by dragging their edges, or hidden using the 'double arrow' icons.

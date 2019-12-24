@@ -417,8 +417,11 @@ var infobar = function() {
 
 		markCurrentTrack: function() {
 			if (playlistinfo.file) {
-				$('[name="'+rawurlencode(playlistinfo.file)+'"]').not('.playlistcurrentitem').not('.podcastresume').addClass('playlistcurrentitem');
-				// $('[name="'+playlistinfo.file+'"]').not('.playlistcurrentitem').not('.podcastresume').addClass('playlistcurrentitem');
+				$('[name="'+rawurlencode(playlistinfo.file)+'"]')
+					.not('.playlistcurrentitem')
+					.not('.podcastresume')
+					.not('.icon-no-response-playbutton')
+					.addClass('playlistcurrentitem');
 			}
 		},
 
@@ -431,7 +434,7 @@ var infobar = function() {
 			debug.trace("INFOBAR","NPinfo",info);
 			if (playlistinfo.file) {
 				$('[name="'+rawurlencode(playlistinfo.file)+'"]').removeClass('playlistcurrentitem');
-				$('[name="'+playlistinfo.file+'"]').removeClass('playlistcurrentitem');
+				// $('[name="'+playlistinfo.file+'"]').removeClass('playlistcurrentitem');
 			}
 			playlistinfo = info;
 			infobar.markCurrentTrack();
@@ -440,7 +443,6 @@ var infobar = function() {
 			nowplaying_updated = false;
 			$("#progress").rangechooser("setOptions", {range: info.Time})
 			setTheText(info);
-			// lastfm.showloveban((info.Title != ""));
 			if (info.Title != "" && info.trackartist != "") {
 				$("#stars").fadeIn('fast');
 				$("#dbtags").fadeIn('fast');

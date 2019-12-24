@@ -393,6 +393,7 @@ var prefs = function() {
 	}
 
 	function updateCustomBackground(force) {
+		debug.log('PREFS', 'Updating custom background');
 		clearTimeout(backgroundTimer);
 		var bgp = prefs.bgimgparms[prefs.theme];
 		if (force || bgp.timeout + bgp.lastchange <= Date.now()) {

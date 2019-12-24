@@ -105,17 +105,6 @@ function albumHeader($obj) {
 	} else if ($obj['AlbumUri'] && strtolower(pathinfo($obj['AlbumUri'], PATHINFO_EXTENSION)) == "cue") {
 		logger::log("UI", "Cue Sheet found for album ".$obj['Albumname']);
 		$h .= '<div class="clickcue playable draggable containerbox menuitem" name="'.rawurlencode($obj['AlbumUri']).'">';
-
-	// } else if ($obj['AlbumUri']) {
-	// 	$albumuri = rawurlencode($obj['AlbumUri']);
-	// 	if (preg_match('/spotify%3Aartist%3A/', $albumuri)) {
-	// 		$h .= '<div class="clickartist playable draggable containerbox menuitem" name="'.preg_replace('/'.get_int_text('label_allartist').'/', '', $obj['Albumname']).'">';
-	// 	} else if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
-	// 		logger::log("FUNCTIONS", "Cue Sheet found for album ".$obj['Albumname']);
-	// 		$h .= '<div class="clickcue playable draggable containerbox menuitem" name="'.$albumuri.'">';
-	// 	} else {
-	// 		$h .= '<div class="clicktrack playable draggable containerbox menuitem" name="'.$albumuri.'">';
-	// 	}
 	} else if (array_key_exists('streamuri', $obj)) {
 		$h .= '<div class="clickstream playable draggable containerbox menuitem" name="'.rawurlencode($obj['streamuri']).'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
 	} else if (array_key_exists('userplaylist', $obj)) {

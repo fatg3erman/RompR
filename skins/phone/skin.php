@@ -28,7 +28,7 @@ printOutputCheckboxes();
 			</div>
 
 <?php
-			print '<div class="configtitle nohelp invisible id="snapheader"><div class="textcentre expand"><b>Snapcast</b></div></div>';
+			print '<div class="configtitle nohelp invisible" id="snapheader"><div class="textcentre expand"><b>Snapcast</b></div></div>';
 ?>
 			<div class="pref" id="snapcastgroups">
 			</div>

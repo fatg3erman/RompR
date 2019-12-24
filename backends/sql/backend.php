@@ -1368,13 +1368,16 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 	global $find_track, $update_track, $numdone, $prefs, $doing_search;
 	static $current_trackartist = null;
 	static $trackartistindex = null;
-	$ttid = null;
-	$lastmodified = null;
-	$hidden = 0;
-	$disc = 0;
-	$uri = null;
-	$issearchresult = 0;
-	$isaudiobook = 0;
+
+	$dbtrack = (object) [
+		'TTindex' => null,
+		'LastModified' => null,
+		'Hidden' => 0,
+		'Disc' => 0,
+		'Uri' => null,
+		'isSearchResult' => 0,
+		'isAudiobook' => 0
+	];
 
 	// Why are we not checking by URI? That should be unique, right?
 	// Well, er. no. They're not.
@@ -1391,15 +1394,13 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 		prepare_findtracks();
 	}
 
-	if ($find_track->execute(array($trackobj->tags['Title'], $albumindex, $trackobj->tags['Track'],$trackobj->tags['Disc'],$artistindex))) {
-		while ($obj = $find_track->fetch(PDO::FETCH_OBJ)) {
-			$ttid = $obj->TTindex;
-			$lastmodified = $obj->LastModified;
-			$hidden = $obj->Hidden;
-			$disc = $obj->Disc;
-			$issearchresult = $obj->isSearchResult;
-			$uri = $obj->Uri;
-			$isaudiobook = $obj->isAudiobook;
+	if ($find_track->execute(array(
+		$trackobj->tags['Title'],
+		$albumindex,
+		$trackobj->tags['Track'],
+		$trackobj->tags['Disc'],
+		$artistindex))) {
+		while ($dbtrack = $find_track->fetch(PDO::FETCH_OBJ)) {
 			break;
 		}
 	} else {
@@ -1420,14 +1421,14 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 
 	// isaudiobook is 2 for anything manually moved to Spoken Word - we don't want these being reset
 
-	if ($ttid) {
-		if ((!$doing_search && $trackobj->tags['Last-Modified'] !== $lastmodified) ||
-			($doing_search && $issearchresult == 0) ||
-			($trackobj->tags['Disc'] != $disc && $trackobj->tags['Disc'] !== '') ||
-			$hidden != 0 ||
-			($trackobj->tags['type'] == 'audiobook' && $isaudiobook == 0) ||
-			($trackobj->tags['type'] != 'audiobook' && $isaudiobook == 1) ||
-			$trackobj->tags['file'] != $uri) {
+	if ($dbtrack->TTindex) {
+		if ((!$doing_search && $trackobj->tags['Last-Modified'] !== $dbtrack->LastModified) ||
+			($doing_search && $dbtrack->isSearchResult == 0) ||
+			($trackobj->tags['Disc'] != $dbtrack->Disc && $trackobj->tags['Disc'] !== '') ||
+			$dbtrack->Hidden != 0 ||
+			($trackobj->tags['type'] == 'audiobook' && $dbtrack->isAudiobook == 0) ||
+			($trackobj->tags['type'] != 'audiobook' && $dbtrack->isAudiobook == 1) ||
+			$trackobj->tags['file'] != $dbtrack->Uri) {
 
 			//
 			// Lots of debug output
@@ -1436,15 +1437,15 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 			if ($prefs['debug_enabled'] > 6) {
 				logger::log("MYSQL", "  Updating track with ttid $ttid because :");
 
-				if (!$doing_search && $lastmodified === null) 								logger::log("MYSQL", "    LastModified is not set in the database");
-				if (!$doing_search && $trackobj->tags['Last-Modified'] === null) 			logger::log("MYSQL", "    TrackObj LastModified is NULL too!");
-				if (!$doing_search && $lastmodified !== $trackobj->tags['Last-Modified']) 	logger::log("MYSQL", "    LastModified has changed: We have ".$lastmodified." but track has ".$trackobj->tags['Last-Modified']);
-				if ($disc != $trackobj->tags['Disc']) 										logger::log("MYSQL", "    Disc Number has changed: We have ".$disc." but track has ".$trackobj->tags['Disc']);
-				if ($hidden != 0) 															logger::log("MYSQL", "    It is hidden");
-				if ($trackobj->tags['type'] == 'audiobook' && $isaudiobook == 0) 			logger::log("MYSQL", "    It needs to be marked as an Auidiobook");
-				if ($trackobj->tags['type'] != 'audiobook' && $isaudiobook == 1) 			logger::log("MYSQL", "    It needs to be un-marked as an Audiobook");
-				if ($trackobj->tags['file'] != $uri) {
-					logger::log("MYSQL", "    Uri has changed from : ".$uri);
+				if (!$doing_search && $dbtrack->LastModified === null) 								logger::log("MYSQL", "    LastModified is not set in the database");
+				if (!$doing_search && $trackobj->tags['Last-Modified'] === null) 					logger::log("MYSQL", "    TrackObj LastModified is NULL too!");
+				if (!$doing_search && $dbtrack->LastModified !== $trackobj->tags['Last-Modified']) 	logger::log("MYSQL", "    LastModified has changed: We have ".$dbtrack->LastModified." but track has ".$trackobj->tags['Last-Modified']);
+				if ($dbtrack->Disc != $trackobj->tags['Disc']) 										logger::log("MYSQL", "    Disc Number has changed: We have ".$dbtrack->Disc." but track has ".$trackobj->tags['Disc']);
+				if ($dbtrack->Hidden != 0) 															logger::log("MYSQL", "    It is hidden");
+				if ($trackobj->tags['type'] == 'audiobook' && $dbtrack->isAudiobook == 0) 			logger::log("MYSQL", "    It needs to be marked as an Auidiobook");
+				if ($trackobj->tags['type'] != 'audiobook' && $dbtrack->isAudiobook == 1) 			logger::log("MYSQL", "    It needs to be un-marked as an Audiobook");
+				if ($trackobj->tags['file'] != $dbtrack->Uri) {
+					logger::log("MYSQL", "    Uri has changed from : ".$dbtrack->Uri);
 					logger::log("MYSQL", "                      to : ".$trackobj->tags['file']);
 				}
 			}
@@ -1457,15 +1458,15 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 			if ($doing_search) {
 				// Sometimes spotify search returns the same track with multiple URIs. This means we update the track
 				// when we get the second one and isSearchResult gets set to zero unless we do this.
-				$newsearchresult = $issearchresult;
+				$newsearchresult = $dbtrack->isSearchResult;
 			}
 			$newlastmodified = $trackobj->tags['Last-Modified'];
-			if ($issearchresult == 0 && $doing_search) {
+			if ($dbtrack->isSearchResult == 0 && $doing_search) {
 				$newsearchresult = ($hidden != 0) ? 3 : 1;
 				logger::log("MYSQL", "    It needs to be marked as a search result : Value ".$newsearchresult);
-				$newlastmodified = $lastmodified;
+				$newlastmodified = $dbtrack->LastModified;
 			}
-			$newisaudiobook = ($isaudiobook == 2) ? 2 : (($trackobj->tags['type'] == 'audiobook') ? 1 : 0);
+			$newisaudiobook = ($dbtrack->isAudiobook == 2) ? 2 : (($trackobj->tags['type'] == 'audiobook') ? 1 : 0);
 			if ($update_track->execute(array(
 				$trackobj->tags['Track'],
 				$trackobj->tags['Time'],
@@ -1475,14 +1476,14 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 				$albumindex,
 				$newsearchresult,
 				$newisaudiobook,
-				$ttid
+				$dbtrack->TTindex
 			))) {
 				$numdone++;
 			} else {
 				show_sql_error();
 			}
 		} else {
-			generic_sql_query("UPDATE Tracktable SET justAdded = 1 WHERE TTindex = ".$ttid, true);
+			generic_sql_query("UPDATE Tracktable SET justAdded = 1 WHERE TTindex = ".$dbtrack->TTindex, true);
 		}
 	} else {
 		$a = $trackobj->get_artist_string();
@@ -1500,6 +1501,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 
 		$current_trackartist = $a;
 		$sflag = ($doing_search) ? 2 : 0;
+		// 'Only variables can be passed by reference' hence create a variable
 		$params = array(
 			'title' => $trackobj->tags['Title'],
 			'artist' => null,
@@ -1529,20 +1531,6 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 	}
 
 	check_transaction();
-	if ($ttid == null) {
-		logger::error("MYSQL", "ERROR! No ttid for track ".$trackobj->tags['file']);
-		logger::error("MYSQL", "Parameters were : ");
-		logger::error("MYSQL", "  Title            : ".$trackobj->tags['Title']);
-		logger::error("MYSQL", "  Track            : ".$trackobj->tags['Track']);
-		logger::error("MYSQL", "  Time             : ".$trackobj->tags['Time']);
-		logger::error("MYSQL", "  file             : ".$trackobj->tags['file']);
-		logger::error("MYSQL", "  trackartistindex : ".$trackartistindex);
-		logger::error("MYSQL", "  artistindex      : ".$artistindex);
-		logger::error("MYSQL", "  albumindex       : ".$albumindex);
-		logger::error("MYSQL", "  Last-Modified    : ".$trackobj->tags['Last-Modified']);
-		logger::error("MYSQL", "  Disc             : ".$trackobj->tags['Disc']);
-		logger::error("MYSQL", "  sflag            : ".$sflag);
-	}
 }
 
 ?>

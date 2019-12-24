@@ -40,7 +40,9 @@ var snapcast = function() {
 				snapcastRequest({
 					method: "Server.GetStatus"
 				}, snapcast.gotStatus);
-				$('#snapheader').removeClass('invisible');
+				$('#snapheader').show();
+			} else {
+				$('#snapheader').hide();
 			}
 		},
 

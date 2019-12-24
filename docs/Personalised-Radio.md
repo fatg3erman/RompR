@@ -8,11 +8,11 @@ Mopidy users get a host of extra online Music Discovery stations, that are descr
 
 These should all be self-explanatory. You can choose to play by Tag or Rating, or other criteria.
 
-When you start one of these stations playing, 5 tracks will be added to the Current Playlist, a header will appear at the top of the Playlist, and Consume mode will be enabled (and cannot be disabled while the station is playing).
+When you start one of these stations playing, 5 tracks will be added to the Play Queue, a header will appear at the top of the Playlist, and Consume mode will be enabled (and cannot be disabled while the station is playing).
 
 ![](images/personal2.png)
 
-You can skip, pause, stop, etc as normal. When a track has finished it will be removed from the Playlist and a new one will be added. You can add tracks to the end of the playlist (or any other position) and re-order the playlist as normal. New tracks will only be added automatically when there are less than 5.
+You can skip, pause, stop, etc as normal. When a track has finished it will be removed from the Play Queue and a new one will be added. You can add tracks to the end of the Play Queue (or any other position) and re-order the Play Queue as normal. New tracks will only be added automatically when there are less than 5.
 
 To stop the dynamic playlist generation and return to normal mode, either click the x next to the header or clear the playlist.
 

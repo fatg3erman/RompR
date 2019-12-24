@@ -5,7 +5,7 @@ RompЯ allows you to customise the interface with different options:
 * **Icons** can be chosen from white, black, or colourful.
 * **Font Style** allows you to pick a font. Note that some of the fonts used are taken from Google Fonts and therefore require an internet connection to work. All have sensible fallbacks, just in case.
 * **Font Size** allows you to change the font size
-* **Album Cover Size** changes the size of the album covers in the Music Collection and Current Playlist
+* **Album Cover Size** changes the size of the album covers in the Music Collection and Play Queue
 
 ## Themes
 
