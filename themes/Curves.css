@@ -6,7 +6,10 @@
 
 html, body.phone .dropmenu {
     background-image: linear-gradient(#999999, #eeeeee, #aaaaaa);
-    background-color:#aaaaaa;
+    /*background-color:#aaaaaa;*/
+    background-size:cover;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
 }
 
 body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,textarea,input

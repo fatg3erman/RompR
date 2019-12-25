@@ -7,6 +7,9 @@
 html, body.phone .dropmenu {
     color:#000000;
     background-image:url('newimages/silver1.jpg');
+    background-size:auto;
+    background-repeat:repeat;
+    background-attachment:fixed;
 }
 
 h1,h2,h3,h4,h5,h6 {

@@ -7,6 +7,9 @@
 html, body.phone .dropmenu {
     color:#eeeeee;
     background-image:url('themes/leaftile.jpg');
+    background-size:auto;
+    background-repeat:repeat;
+    background-attachment:fixed;
 }
 
 a:link
@@ -160,10 +163,10 @@ table.histable tr:hover {
 }
 
 /*Prevent submenus from having all entries highlighted
-due to :hover events propagating from the parent menu 
+due to :hover events propagating from the parent menu
 */
 .backhi:hover>div.topdropmenu>div.backhi {
-    color:#eeeeee;    
+    color:#eeeeee;
 }
 
 /*Make sure the submenu entry being hovered over still gets highlighted*/
