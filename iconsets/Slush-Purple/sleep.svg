@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0beta2 (2b71d25, 2019-12-03)"
+   sodipodi:docname="sleep.svg"
+   id="svg1891"
+   version="1.1"
+   viewBox="0 0 1024 1024"
+   style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;"
+   class="icon">
+  <sodipodi:namedview
+     inkscape:current-layer="svg1891"
+     inkscape:window-maximized="0"
+     inkscape:window-y="22"
+     inkscape:window-x="0"
+     inkscape:cy="512"
+     inkscape:cx="43.294118"
+     inkscape:zoom="0.265625"
+     showgrid="false"
+     id="namedview6599"
+     inkscape:window-height="726"
+     inkscape:window-width="1219"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     inkscape:document-rotation="0"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <metadata
+     id="metadata1897">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs1895">
+    <linearGradient
+       id="linearGradient5315">
+      <stop
+         style="stop-color:#ca91be;stop-opacity:1"
+         offset="0"
+         id="stop5311" />
+      <stop
+         style="stop-color:#ba3e91;stop-opacity:0"
+         offset="1"
+         id="stop5313" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient2464">
+      <stop
+         id="stop2460"
+         offset="0"
+         style="stop-color:#ca91be;stop-opacity:1" />
+      <stop
+         id="stop2462"
+         offset="1"
+         style="stop-color:#ba3e91;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.99999993,0,0,1.0438796,2.9540932e-5,-22.47916)"
+       r="420.1346"
+       fy="789.98901"
+       fx="184.57147"
+       cy="789.98901"
+       cx="184.57147"
+       id="radialGradient2466"
+       xlink:href="#linearGradient5315" />
+    <radialGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.6529365,-0.04129508,0.0381506,1.5270706,-298.89025,-271.61431)"
+       r="420.63412"
+       fy="551.96521"
+       fx="425.51218"
+       cy="551.96521"
+       cx="425.51218"
+       id="radialGradient2474"
+       xlink:href="#linearGradient2464" />
+  </defs>
+  <path
+     style="stroke:#ba3e91;fill-opacity:1;fill:url(#radialGradient2474);stroke-opacity:0"
+     id="path1889"
+     d="M794.239488 744.589312q-30.855168 5.142528-62.85312 5.142528-103.993344 0-192.559104-51.42528t-139.99104-139.99104-51.42528-192.559104q0-109.707264 59.424768-203.986944-114.849792 34.28352-187.702272 130.848768t-72.85248 219.414528q0 74.28096 29.140992 141.990912t77.995008 116.563968 116.563968 77.995008 141.990912 29.140992q82.280448 0 156.275712-35.140608t125.991936-97.993728zm115.992576-48.56832q-53.710848 115.992576-161.989632 185.416704t-236.270592 69.424128q-89.137152 0-170.274816-34.854912t-139.99104-93.708288-93.708288-139.99104-34.854912-170.274816q0-87.422976 32.85504-167.13216t89.137152-137.991168 134.562816-93.993984 165.70368-39.140352q25.141248-1.142784 34.854912 22.284288 10.285056 23.427072-8.57088 41.140224-49.139712 44.568576-75.138048 103.707648t-25.998336 124.849152q0 84.566016 41.711616 155.990016t113.135616 113.135616 155.990016 41.711616q67.424256 0 130.277376-29.140992 23.427072-10.285056 41.140224 7.428096 7.999488 7.999488 9.99936 19.427328t-2.571264 21.712896z" />
+</svg>

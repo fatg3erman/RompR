@@ -18,7 +18,7 @@ Then go [here](https://discourse.mopidy.com/t/cant-run-mopidy-on-fresh-brew-inst
 
 ### ... or install MPD
 
-    brew install mpd 
+    brew install mpd
 
 ## Install Rompr
 
@@ -74,6 +74,8 @@ This will create an empty file, into which you should paste the following (cmd-V
 
         server_name www.myrompr.net;
 
+        client_max_body_size 256M;
+
         # This section can be copied into an existing default setup
         location / {
                 allow all;
@@ -115,16 +117,40 @@ The exact location of the config files will depend on the version of PHP that Ho
 
     nano /usr/local/etc/php/7.4/php-fpm.d/www.conf
 
+Ctrl-W is 'find' in nano.
+
 First find and edit the user and group entries - as before "username" should be your username
 
     user = username
     group = staff
 
-Now change the entry for 'listen'.
+Now find and modify the following:
 
     listen = /usr/local/var/run/php.sock
 
-For performance reasons I like to also change the entry for pm.max_children to at least 10, but this uses up more memory and is not essential. I'll leave it up to you.
+For performance reasons I like to also change
+
+    pm.max_children = 10
+
+or an even higher number but this uses up more memory and is not essential. I'll leave it up to you.
+
+As usual, ctrl-X and then answer 'Y'.
+
+Now edit the php ini file:
+
+    nano /usr/local/etc/php/7.4/php.ini
+
+and edit the following parameters:
+
+    allow_url_fopen = On
+    memory_limit = 128M
+    max_execution_time = 1800
+    upload_max_filesize = 10M
+    max_file_uploads = 200
+    post_max_size = 256M
+
+(The last 3 entries are really only used when uploading [Custom Background Images](/RompR/Theming). They set, respectively, the maximum size of an individual file (in megabytes), the maximum number of files you can upload in one go, and the maximum total size (megabytes) you can upload in one go. The values above are just examples - but note that post_max_size has an equivalent called 'client_max_body_size' in the nginx config file and it's sensible to keep them the same).
+
 As usual, ctrl-X and then answer 'Y'.
 
 ## Install Some Additional Bits

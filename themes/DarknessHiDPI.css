@@ -10,7 +10,7 @@ html, body.phone .dropmenu {
   background-image: -moz-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-image: -ms-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-image: -o-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
+  background-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-repeat: no-repeat, repeat;
   background-attachment: fixed;
   min-height: 100%;
@@ -373,7 +373,7 @@ div.topdropmenu
   background-image: -moz-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-image: -ms-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-image: -o-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
+  background-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-repeat: no-repeat, repeat;
   background-attachment: fixed;
 }
@@ -386,7 +386,7 @@ div.topdropmenu
   background-image: -moz-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-image: -ms-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-image: -o-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
+  background-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-repeat: no-repeat, repeat;
   background-attachment: fixed;
 }

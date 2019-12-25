@@ -80,7 +80,7 @@ print '<div class="pref containerbox dropdown-container"><div class="divlabel">'
 	'</div><div class="selectholder"><select id="iconthemeselector" class="saveomatic">';
 $themes = glob("iconsets/*");
 foreach($themes as $theme) {
-	if (is_dir($theme)) {
+	if (is_dir($theme) && basename($theme) != 'iconfactory') {
 		print '<option value="'.basename($theme).'">'.basename($theme).'</option>';
 	}
 }

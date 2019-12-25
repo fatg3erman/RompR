@@ -926,9 +926,9 @@ var layoutProcessor = function() {
 				$('#addtoplaylistmenu').parent().parent().parent().hide();
 			});
 
-			$(document).on('ready', '.collectionpanel', function() {
-				debug.shout('Weeee', 'Woooo');
-			});
+			// $(document).on('ready', '.collectionpanel', function() {
+			// 	debug.shout('Weeee', 'Woooo');
+			// });
 
 		},
 

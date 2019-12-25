@@ -5,15 +5,13 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   width="205.66005mm"
-   height="207.89409mm"
-   viewBox="0 0 205.66004 207.89409"
+   width="205mm"
+   height="205mm"
+   viewBox="0 0 774.80316 774.80316"
    version="1.1"
-   id="svg8">
-  <defs
-     id="defs2" />
+   id="svg22720">
   <metadata
-     id="metadata5">
+     id="metadata22726">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -24,25 +22,16 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <ellipse
-     ry="94.947044"
-     rx="93.830025"
-     cy="103.94704"
-     cx="102.83002"
-     id="path815"
-     style="opacity:1;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:18;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-  <style
-     type="text/css"
-     id="style3111">
-	.st0{fill:#ffffff;}
-</style>
-  <g
-     transform="matrix(2.2664001,0,0,3.3977058,-5.843865,-59.18531)"
-     id="XMLID_6_">
-    <path
-       style="fill:#ffffff"
-       id="XMLID_11_"
-       class="st0"
-       d="m 15.9,38.6 5.8,5.8 c 14.5,-14.5 38,-14.5 52.5,0 L 80,38.6 C 62.4,20.9 33.6,20.9 15.9,38.6 Z m 23.3,23.3 8.8,8.8 8.8,-8.8 c -4.9,-4.8 -12.7,-4.8 -17.6,0 z m -11.6,-11.6 5.8,5.8 c 8.1,-8.1 21.1,-8.1 29.2,0 l 5.8,-5.8 C 57.1,39 38.9,39 27.6,50.3 Z" />
-  </g>
-<style id="stylebodge1" type="text/css">[id^="polygon"]{fill:#ffffff;fill-opacity:1}</style><style id="stylebodge2" type="text/css">[id^="path"]{fill:#ffffff;fill-opacity:1}</style></svg>
+  <defs
+     id="defs22724" />
+  <path
+     id="path3130"
+     d="m 101.53753,423.15738 120.64242,2.64224 39.55489,-158.52313 61.31007,348.75074 57.35461,-494.06353 63.28781,380.45535 57.35459,-171.7333 53.39913,153.23893 39.5549,-63.40925 h 77.13199"
+     style="fill:none;stroke:#FFFFFF;stroke-width:43.7106;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <circle
+     r="353.04288"
+     cy="388.51526"
+     cx="388.51529"
+     id="path3922"
+     style="fill:none;stroke:#FFFFFF;stroke-width:62.8123;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+</svg>

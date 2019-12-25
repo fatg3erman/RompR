@@ -617,14 +617,11 @@ var playlist = function() {
 
 		setButtons: function() {
 			var c = (player.status.xfade === undefined || player.status.xfade === null || player.status.xfade == 0) ? "off" : "on";
-			var debugtxt = 'crossfade : '+c;
 			$("#crossfade").flowToggle(c);
 			$.each(['random', 'repeat', 'consume'], function(i,v) {
 				c = player.status[v] == 0 ? 'off' : 'on';
 				$("#"+v).flowToggle(c);
-				debugtxt += ' '+v+' : '+c;
 			});
-			debug.log('BUTTONS', debugtxt);
 			if (player.status.replay_gain_mode) {
 				$.each(["off","track","album","auto"], function(i,v) {
 					if (player.status.replay_gain_mode == v) {

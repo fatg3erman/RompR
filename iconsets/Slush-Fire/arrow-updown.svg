@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg3179"
+   height="52.963"
+   width="52.963"
+   version="1.1"
+   sodipodi:docname="arrow-updown.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1417"
+     inkscape:window-height="980"
+     id="namedview33"
+     showgrid="false"
+     inkscape:zoom="4.4559408"
+     inkscape:cx="26.481501"
+     inkscape:cy="26.481501"
+     inkscape:window-x="780"
+     inkscape:window-y="262"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg3179" />
+  <defs
+     id="defs3181">
+    <linearGradient
+       id="linearGradient842">
+      <stop
+         id="stop838"
+         offset="0"
+         style="stop-color:#fff663;stop-opacity:1" />
+      <stop
+         id="stop840"
+         offset="1"
+         style="stop-color:#fb8626;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3177"
+       y2="614.64"
+       gradientUnits="userSpaceOnUse"
+       y1="592.79"
+       gradientTransform="matrix(0,-0.80139,1.247832,0,-726.8576,395.73501)"
+       x2="487.88"
+       x1="467.19">
+      <stop
+         id="stop4740"
+         stop-color="#FFF"
+         stop-opacity="0.72656250"
+         offset="0" />
+      <stop
+         id="stop4742"
+         stop-color="#FFF"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       x1="467.19"
+       x2="487.88"
+       gradientTransform="matrix(0,0.80139,1.247832,0,-726.8576,-343.16351)"
+       y1="592.79"
+       gradientUnits="userSpaceOnUse"
+       y2="614.64"
+       id="linearGradient3177-8">
+      <stop
+         offset="0"
+         stop-opacity="0.72656250"
+         stop-color="#FFF"
+         id="stop4740-5" />
+      <stop
+         offset="1"
+         stop-color="#FFF"
+         id="stop4742-8" />
+    </linearGradient>
+    <radialGradient
+       gradientUnits="userSpaceOnUse"
+       r="26.482284"
+       fy="26.477678"
+       fx="26.485329"
+       cy="26.477678"
+       cx="26.485329"
+       id="radialGradient844"
+       xlink:href="#linearGradient842"
+       gradientTransform="matrix(3.0931584,0.01694865,-0.00547932,0.99998499,-55.292908,-0.44849312)" />
+  </defs>
+  <metadata
+     id="metadata3184">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     id="path5200"
+     style="color:#fb8626;fill:url(#radialGradient844);fill-rule:nonzero;stroke-width:1.89606094;fill-opacity:1"
+     d="m 52.967612,26.477678 c 0,-14.625456 -11.856259,-26.48228365 -26.482284,-26.48228365 -14.625456,0 -26.48228403,11.85625865 -26.48228403,26.48228365 0,14.625456 11.85625903,26.482284 26.48228403,26.482284 14.625456,0 26.482284,-11.856259 26.482284,-26.482284 z" />
+  <path
+     id="path5206"
+     style="color:#fb8626;fill:url(#linearGradient3177);fill-rule:nonzero"
+     d="m 10.691301,18.907906 4.1313,4.1313 11.7,-11.7 11.588,11.588 4.1619,-4.1619 -15.72,-15.7190003 -15.862,15.8620003 z" />
+  <path
+     d="m 10.691301,33.663593 4.1313,-4.1313 11.7,11.7 11.588,-11.588 4.1619,4.1619 -15.72,15.719 -15.862,-15.862 z"
+     style="color:#fb8626;fill:url(#linearGradient3177-8);fill-rule:nonzero"
+     id="path5206-2" />
+</svg>
