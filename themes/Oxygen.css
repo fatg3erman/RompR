@@ -314,10 +314,10 @@ table.histable tr:hover {
 }
 
 /*Prevent submenus from having all entries highlighted
-due to :hover events propagating from the parent menu 
+due to :hover events propagating from the parent menu
 */
 .backhi:hover>div.topdropmenu>div.backhi {
-    color:#000000;    
+    color:#000000;
 }
 
 /*Make sure the submenu entry being hovered over still gets highlighted*/

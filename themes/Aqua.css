@@ -223,7 +223,7 @@ tr.clickaddtrack:hover {
 }
 
 .dropshadow {
-    box-shadow:         7px 7px 5px rgba(50, 50, 50, 0.6);
+    box-shadow: 7px 7px 5px rgba(50, 50, 50, 0.6);
 }
 
 .progressbar {
@@ -258,7 +258,7 @@ div.topdropmenu, div.albumbitsmenu
 
 .configtitle
 {
-    background-image: linear-gradient(#E5E5E5, #b3b3b3);
+    /*background-image: linear-gradient(#E5E5E5, #b3b3b3);*/
 }
 
 /*
@@ -269,7 +269,7 @@ div.topdropmenu, div.albumbitsmenu
 
 .infosection {
     background-image: linear-gradient(#E5E5E5, #b3b3b3);
-/}
+}
 
 .infowiki {
     background-color:#ffffff;
