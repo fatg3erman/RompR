@@ -86,7 +86,7 @@ var prefs = function() {
 	const jsonText = jsonNode.textContent;
 	const tags = JSON.parse(jsonText);
 
-	var backgroundImages;
+	var backgroundImages = new Array();
 	var backgroundTimer;
 	var portraitImage = new Image();
 	var landscapeImage = new Image();
@@ -220,7 +220,7 @@ var prefs = function() {
 			debug.log("PREFS","Custom Background Image",data);
 			if (data.images) {
 				if (typeof(prefs.bgimgparms[theme]) == 'undefined') {
-					debug.trace("PREFS","Init bgimgparms for",prefs.theme);
+					debug.trace("PREFS","Init bgimgparms for",theme);
 					prefs.bgimgparms[theme] = {
 						landscape: 0,
 						portrait: 0,
@@ -238,6 +238,8 @@ var prefs = function() {
 				$('input[name="thisbrowseronly"]').prop('checked', data.thisbrowseronly);
 				$('input[name="backgroundposition"][value="'+prefs.bgimgparms[theme].position+'"]').prop('checked', true);
 				$('input[name="backgroundposition"]').off('click').on('click', changeBackgroundPosition);
+			} else {
+				backgroundImages = new Array();
 			}
 		});
 	}
@@ -354,6 +356,9 @@ var prefs = function() {
 	}
 
 	function setBackgroundCss(bgp) {
+		if (backgroundImages.length == 0) {
+			return;
+		}
 		// Trying to reduce flickering using all kinds of stuff - pre-load images, update (not remove/recreate) the css
 		['background', 'phoneback', 'backgroundl', 'phonebackl', 'backgroundp', 'phonebackp'].forEach(function(i) {
 			if ($('style[id="'+i+'"]').length == 0) {
@@ -415,11 +420,12 @@ var prefs = function() {
 			landscapeImage.src = backgroundImages.landscape[bgp.landscape];
 		} else if (backgroundImages.landscape.length == 0) {
 			bgImagesLoaded++;
-			portraitImage.src = backgroundImages.portrait[bgp.landscape];
+			portraitImage.src = backgroundImages.portrait[bgp.portrait];
 		} else {
 			landscapeImage.src = backgroundImages.landscape[bgp.landscape];
-			portraitImage.src = backgroundImages.portrait[bgp.landscape];
+			portraitImage.src = backgroundImages.portrait[bgp.portrait];
 		}
+		debug.log('PREFS','Backgrounds set to',landscapeImage.src,portraitImage.src);
 	}
 
 	function setBackgroundTimer(timeout) {
