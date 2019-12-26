@@ -260,7 +260,7 @@ var layoutProcessor = function() {
 			switch (source) {
 				case 'podcastslist':
 					fanooglePodcasts();
-					$('#infopane').mCustomScrollbar('scrollTo', '#podcastslist');
+					$('#infopane').mCustomScrollbar('scrollTo', '#podholder');
 					break;
 
 				case 'historypanel':
@@ -280,6 +280,7 @@ var layoutProcessor = function() {
 
 	function fanooglePodcasts() {
 		if (!$('#fruitbat').hasClass('contaierbox')) {
+			$('#podholder').detach().insertBefore($('#infoholder'));
 			$('#fruitbat').removeClass('fullwidth').addClass('containerbox wrap');
 			$('#podcast_search').removeClass('fullwidth').addClass('containerbox wrap');
 		}
@@ -615,9 +616,17 @@ var layoutProcessor = function() {
 						}
 						break;
 
+					case 'podcastslist':
+						$('.collectionpanel').hide(0);
+						$('#podholder').show(0);
+						if (prefs.sourceshidden) {
+							layoutProcessor.expandInfo('left');
+						}
+						break;
+
+
 					case 'infoholder':
 					case 'pluginholder':
-					case 'podcastslist':
 					case 'playlistslist':
 					case 'pluginplaylistslist':
 						$('.collectionpanel').hide(0);

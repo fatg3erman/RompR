@@ -89,14 +89,9 @@ if (array_key_exists('populate', $_REQUEST)) {
 	require_once("skins/".$skin."/ui_elements.php");
 	include("utils/phpQuery.php");
 	doPodcastBase();
-	print '<div id="fruitbat" class="noselection fullwidth">';
-	doPodcastList(1);
-	print '</div>';
 
-}
+	print '<div id="podholder" class="collectionpanel">';
 
-function doPodcastBase() {
-	global $prefs;
 	print '<div class="containerbox dropdown-container"><div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" placeholder="'.get_int_text('label_searchfor').' (iTunes)" /></div>';
 	print '<button class="fixed searchbutton iconbutton" onclick="podcasts.search()"></button>';
 	print '</div>';
@@ -104,9 +99,20 @@ function doPodcastBase() {
 	print '<div class="fullwidth noselection clearfix"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon padright spinable" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
 	print '<div id="podcast_search" class="fullwidth noselection padright"></div>';
 
-	print '<div id="podcastbuttons" class="invisible">';
+	print '<div class="dropdown-container configtitle"><div class="textcentre expand"><b>'.get_int_text('label_subbed_podcasts').'</b></div></div>';
 
-	print '<div class="spacer"></div>';
+	print '<div id="fruitbat" class="noselection fullwidth">';
+	doPodcastList(1);
+	print '</div>';
+
+	print '</div>';
+
+}
+
+function doPodcastBase() {
+	global $prefs;
+
+	print '<div id="podcastbuttons" class="invisible">';
 
 	print '<div id="cocksausage">';
 	print '<div class="containerbox dropdown-container"><div class="expand"><input class="enter clearbox" id="podcastsinput" type="text" placeholder="'.get_int_text("podcast_entrybox").'" /></div>';
@@ -159,9 +165,6 @@ function doPodcastBase() {
 	}
 	print '</div>';
 
-	print '<div class="spacer"></div>';
-
-	print '<div class="dropdown-container configtitle"><div class="textcentre expand"><b>'.get_int_text('label_subbed_podcasts').'</b></div></div>';
 }
 
 function doPodcastList($subscribed) {

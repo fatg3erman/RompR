@@ -228,9 +228,6 @@ foreach($sp as $p) {
 ?>
 	</div>
 
-</div>
-
-<div id="infopane" class="cmiddle noborder infowiki tleft">
 	<div id="podcastslist" class="helpfulholder noselection dropmenu invisible">
 <?php
 print '<div class="dropdown-container configtitle">';
@@ -240,6 +237,10 @@ print '</div>';
 include("podcasts/podcasts.php");
 ?>
 	</div>
+
+</div>
+
+<div id="infopane" class="cmiddle noborder infowiki tleft">
 	<div id="playlistslist" class="invisible">
 		<div class="dropdown-container configtitle">
 <?php
