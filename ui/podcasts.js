@@ -243,7 +243,8 @@ var podcasts = function() {
 				}
 				target.removeClass('loaded').addClass('loaded');
 				updatePodcastDropdown(channel, null);
-				// layoutProcessor.postAlbumMenu();
+				// Needed for phone skin
+				layoutProcessor.postAlbumMenu();
 			});
 		},
 
