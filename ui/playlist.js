@@ -165,7 +165,6 @@ var playlist = function() {
 							prefs.save({mopidy_radio_domains: $("#radiodomains").makeDomainChooser("getSelection")});
 						});
 					});
-					uiHelper.setupPersonalRadio();
 				}
 			},
 
@@ -219,7 +218,7 @@ var playlist = function() {
 
 			standardBox: function(station, param, icon, label) {
 				var container = $('<div>', {
-					class: 'menuitem containerbox playable smartradio',
+					class: 'menuitem containerbox playable smartradio collectionitem',
 					name: station + (param ? '+'+param : '')
 				});
 				container.append('<div class="svg-square fixed '+icon+'"></div>');
@@ -229,7 +228,7 @@ var playlist = function() {
 
 			dropdownHeader: function(station, param, icon, label, dropid) {
 				var container = $('<div>', {
-					class: 'menuitem containerbox playable smartradio',
+					class: 'menuitem containerbox playable smartradio collectionitem',
 					name: station + (param ? '+'+param : '')
 				});
 				container.append($('<i>', {

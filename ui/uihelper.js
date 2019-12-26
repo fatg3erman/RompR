@@ -381,22 +381,6 @@ var uiHelper = function() {
 			}
 		},
 
-		setupPersonalRadio: function(key) {
-			try {
-				return layoutProcessor.setupPersonalRadio(key);
-			} catch (err) {
-
-			}
-		},
-
-		setupPersonalRadioAdditions: function(key) {
-			try {
-				return layoutProcessor.setupPersonalRadioAdditions(key);
-			} catch (err) {
-
-			}
-		},
-
 		prepareCollectionUpdate: function() {
 			try {
 				return layoutProcessor.prepareCollectionUpdate();

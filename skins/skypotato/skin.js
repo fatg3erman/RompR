@@ -624,7 +624,6 @@ var layoutProcessor = function() {
 						}
 						break;
 
-
 					case 'infoholder':
 					case 'pluginholder':
 					case 'playlistslist':
@@ -798,25 +797,6 @@ var layoutProcessor = function() {
 
 		getArtistDestinationDiv: function(menutoopen) {
 			return $('[name="'+menutoopen+'"]').parent();
-		},
-
-		setupPersonalRadio: function() {
-			$('#pluginplaylistslist .menuitem').not('.dropdown').not('.spacer').wrap('<div class="collectionitem fixed"></div>');
-			$('#pluginplaylistslist .combobox-entry').parent().parent().parent().addClass('containerbox vertical helpfulalbum');
-			$('#pluginplaylistslist .combobox-entry').parent().parent().removeClass('expand dropdown-container containerbox').addClass('fixed').css({width: '95%'});
-			$('#pluginplaylistslist input[type="text"]').parent('.expand.dropdown-holder').css({width: '95%'});
-			$('#pluginplaylistslist .collectionitem').not('.brick_wide').children('.menuitem.containerbox').addClass('vertical helpfulalbum');
-			$('#pluginplaylistslist div[class$="-stars"]').removeClass('svg-square').addClass('rating-icon-big').css('height', '32px');
-		},
-
-		setupPersonalRadioAdditions: function() {
-			$('#pluginplaylists_spotify .collection_spacer').remove();
-			$('#pluginplaylistslist [name^="spotiCrazyRadio"]').addClass('vertical helpfulalbum').wrap('<div class="collectionitem fixed"></div>');
-			// We do this here simply because this function gets called second
-			$('#pluginplaylists').appendDummySpacers();
-			$('#pluginplaylists_spotify').appendDummySpacers();
-			$('#pluginplaylists_everywhere').appendDummySpacers();
-			// layoutProcessor.adjustBoxSizes();
 		},
 
 		initialise: function() {

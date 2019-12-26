@@ -18,17 +18,12 @@ var crazyRadioManager = function() {
 					);
 				}
 				layoutProcessor.adjustLayout();
-				uiHelper.setupPersonalRadioAdditions();
 			}, 'json');
 		},
 
 		refreshCrazyList: function() {
 			$('.crazyradio').each(function() {
-				if (skin == 'skypotato') {
-					$(this).parent().parent().parent().remove();
-				} else {
-					$(this).parent().parent().remove();
-				}
+				$(this).parent().parent().remove();
 			});
 			crazyRadioManager.loadSavedCrazies();
 		},
@@ -54,11 +49,7 @@ var crazyRadioManager = function() {
 			if (clickedElement.hasClass('clickremcrazy')) {
 				var i = clickedElement.attr('name');
 				debug.log("CRAZY BUGGER","Removing",i);
-				if (skin == 'skypotato') {
-					$('.crazyradio[name="'+i+'"]').parent().parent().parent().remove();
-				} else {
-					$('.crazyradio[name="'+i+'"]').parent().parent().remove();
-				}
+				$('.crazyradio[name="'+i+'"]').parent().parent().remove();
 				$.get('radios/crazymanager.php?action=remove&index='+i, crazyRadioManager.refreshCrazyList);
 			}
 		},
