@@ -119,7 +119,6 @@ var playlist = function() {
 				// Don't do anything if we're waiting on playlist updates
 				if (fromend < prefs.smartradio_chunksize) {
 					debug.shout("RADIO MANAGER","Repopulating");
-					playlist.waiting();
 					radios[mode].func.populate(prefs.radioparam, tracksneeded);
 				}
 			}
@@ -183,7 +182,7 @@ var playlist = function() {
 
 			playbackStartPos: function() {
 				// startplaybackfrom is set to 0 when we first start a new radio. This makes the radio populate
-				// functions start playback when the first populate. After that it's set to null, because otherwise
+				// functions start playback when they first populate. After that it's set to null, because otherwise
 				// the user can stop playback, we repopulate, and playback starts again.
 				var a = startplaybackfrom;
 				startplaybackfrom = null;
@@ -454,7 +453,6 @@ var playlist = function() {
 		draggedToEmpty: function(event, ui) {
 			debug.log("PLAYLIST","Something was dropped on the empty playlist area",event,ui);
 			playlist.addItems($('.selected').filter(removeOpenItems), parseInt(finaltrack)+1);
-			doSomethingUseful('waiter', language.gettext('label_incoming'));
 		},
 
 		dragstopped: function(event, ui) {
@@ -522,6 +520,8 @@ var playlist = function() {
 		},
 
 		addItems: function(elements, moveto) {
+			// Call into this to add UI elements to the Play Queue
+			// CD Player Mode will always be respected
 			var tracks = new Array();
 			$.each(elements, function (index, element) {
 				var uri = $(element).attr("name");
@@ -540,6 +540,11 @@ var playlist = function() {
 							type: "item",
 							name: uri
 						});
+					} else if ($(element).hasClass('podcasttrack')) {
+						tracks.push({
+							type: "podcasttrack",
+							name: decodeURIComponent(uri)
+						});
 					} else if ($(element).hasClass('clickartist')) {
 						tracks.push({
 							type: "artist",
@@ -554,8 +559,8 @@ var playlist = function() {
 						tracks.push({
 							type: "stream",
 							url: decodeURIComponent(uri),
-							image: $(element).attr('streamimg') || 'null',
-							station: $(element).attr('streamname') || 'null'
+							image: $(element).attr('streamimg') || null,
+							station: $(element).attr('streamname') || null
 						});
 					} else if ($(element).hasClass('clickloadplaylist')) {
 						tracks.push({
@@ -567,36 +572,21 @@ var playlist = function() {
 							type: 'remoteplaylist',
 							name: decodeURIComponent($(element).children('input[name="dirpath"]').val())
 						});
-					} else if ($(element).hasClass('playlisttrack') && prefs.cdplayermode) {
-						tracks.push({
-							type: 'playlisttoend',
-							playlist: $(element).prev().prev().val(),
-							frompos: $(element).prev().val()
-						});
 					} else if ($(element).hasClass('playlisttrack')) {
 						tracks.push({
 							type: 'playlisttrack',
-							playlist: $(element).prev().prev().val(),
-							frompos: $(element).prev().val()
+							playlist: decodeURIComponent($(element).children('input.playlistname').val()),
+							frompos: decodeURIComponent($(element).children('input.playlistpos').val()),
+							name: decodeURIComponent(uri)
 						});
 					} else if ($(element).hasClass('smartradio')) {
 						playlist.radioManager.loadFromUiElement($(element));
 					} else if ($(element).hasClass('podcastresume')) {
-						var is_already_in_playlist = playlist.findIdByUri(decodeURIComponent(uri));
-						if (is_already_in_playlist !== false) {
-							player.controller.do_command_list([
-								['playid', is_already_in_playlist],
-								['seekpodcast', is_already_in_playlist, $(element).next().val()]
-							])
-						} else {
-							tracks.push({
-								type: 'resumepodcast',
-								resumefrom: $(element).next().val(),
-								uri: uri,
-								pos: prefs.cdplayermode ? 0 : playlist.getfinaltrack()+1
-							});
-							moveto = null;
-						}
+						tracks.push({
+							type: 'resumepodcast',
+							resumefrom: $(element).next().val(),
+							uri: decodeURIComponent(uri)
+						});
 					} else {
 						tracks.push({ type: "uri",
 										name: decodeURIComponent(uri)});
@@ -604,9 +594,11 @@ var playlist = function() {
 				}
 			});
 			if (tracks.length > 0) {
-				if (moveto === null) { playlist.waiting(); }
 				var playpos = (moveto === null) ? playlist.playFromEnd() : null;
-				player.controller.addTracks(tracks, playpos, moveto);
+				// if moveto is set then these items were dragged in, in which
+				// case we must always queue
+				var queue = (moveto !== null);
+				player.controller.addTracks(tracks, playpos, moveto, queue);
 				$('.selected').removeClass('selected');
 			}
 		},

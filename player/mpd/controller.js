@@ -463,63 +463,95 @@ function playerController() {
 		self.do_command_list([["repeat",0],["random", 0],["consume", 1]]);
 	}
 
-	this.addTracks = function(tracks, playpos, at_pos) {
+	this.addTracks = function(tracks, playpos, at_pos, queue) {
+		// Call into this to add items to the play queue.
+		// tracks  : list of things to add
+		// playpos : position to start playback from after adding items or null
+		// at_pos  : position to add tracks at (tracks will be added to end then moved to position) or null
+		// queue   : true to always queue regardless of CD Player mode
+
 		var abitofahack = true;
+		var queue_track = (queue == true) ? true : !prefs.cdplayermode;
 		layoutProcessor.notifyAddTracks();
-		debug.log("MPD","Adding Tracks",tracks,playpos,at_pos);
+		debug.log("MPD","Adding Tracks",tracks,playpos,at_pos,queue);
 		var cmdlist = [];
+		if (!queue_track) {
+			cmdlist.push(['stop']);
+			cmdlist.push(['clear']);
+		}
 		$.each(tracks, function(i,v) {
 			switch (v.type) {
 				case "uri":
-					if (prefs.cdplayermode && at_pos === null && !playlist.radioManager.isRunning()) {
-						cmdlist.push(['addtoend', v.name]);
-					} else {
+					if (queue_track) {
 						cmdlist.push(['add',v.name]);
+					} else {
+						cmdlist.push(['addtoend', v.name]);
 					}
 					break;
-				case 'podcasttrack':
-					cmdlist.push(['add',v.name]);
-					break;
+
 				case "playlist":
 				case "cue":
 					cmdlist.push(['load',v.name]);
 					break;
+
 				case "item":
 					cmdlist.push(['additem',v.name]);
 					break;
+
+				case "podcasttrack":
+					cmdlist.push(['add',v.name]);
+					break;
+
 				case "artist":
 					cmdlist.push(['addartist',v.name]);
 					break;
+
 				case "stream":
 					cmdlist.push(['loadstreamplaylist',v.url,v.image,v.station]);
 					break;
-				case "playlisttoend":
-					cmdlist.push(['playlisttoend',v.playlist,v.frompos]);
+
+				case "playlisttrack":
+					if (queue_track) {
+						cmdlist.push(['add',v.name]);
+					} else {
+						cmdlist.push(['playlisttoend',v.playlist,v.frompos]);
+					}
 					break;
+
 				case "resumepodcast":
-					cmdlist.push(['resume', v.uri, v.resumefrom, v.pos]);
-					playpos = null;
+					var is_already_in_playlist = playlist.findIdByUri(v.uri);
+					if (is_already_in_playlist !== false && queue_track) {
+						cmdlist.push(['playid', is_already_in_playlist]);
+						cmdlist.push(['seekpodcast', is_already_in_playlist, v.resumefrom]);
+					} else {
+						var pos = queue_track ? playlist.getfinaltrack()+1 : 0;
+						var to_end = queue_track ? 'no' : 'yes';
+						cmdlist.push(['resume', v.uri, v.resumefrom, pos, to_end]);
+						if (at_pos === null) {
+							playlist.waiting();
+						}
+					}
+					// Don't add the play command if we're doing a resume,
+					// because postcommand.php will add it and this will override it
 					abitofahack = false;
+					playpos = null;
 					break;
+
 				case 'remoteplaylist':
 					cmdlist.push(['addremoteplaylist', v.name]);
 					break;
 			}
 		});
-		// Note : playpos will only be set if at_pos isn't, because at_pos is only set when dragging to the playlist
-		if (prefs.cdplayermode && at_pos === null && !playlist.radioManager.isRunning()) {
-			cmdlist.unshift(["clear"]);
-			cmdlist.unshift(["stop"]);
-			if (abitofahack) {
-				// Don't add the play command if we're doing a resume,
-				// because postcommand.php will add it and this will override it
-				cmdlist.push(['play']);
-			}
+		if (abitofahack && !queue_track) {
+			cmdlist.push(['play']);
 		} else if (playpos !== null) {
 			cmdlist.push(['play', playpos.toString()]);
 		}
 		if (at_pos === 0 || at_pos) {
 			cmdlist.push(['moveallto', at_pos]);
+		}
+		if (at_pos === null && abitofahack) {
+			playlist.waiting();
 		}
 		self.do_command_list(cmdlist);
 	}

@@ -83,7 +83,7 @@ var lastFMTrackRadio = function() {
 		this.gotAUri = function(data) {
 			if (data.uri) {
 				tosend--;
-				player.controller.addTracks([{type: 'uri', name: data.uri}], playlist.radioManager.playbackStartPos(), null);
+				player.controller.addTracks([{type: 'uri', name: data.uri}], playlist.radioManager.playbackStartPos(), null, true);
 			} else {
 				debug.warn("LASTFM TRACK RADIO","Failed to get a URI");
 				lastFMTrackRadio.trackAddFailed();

@@ -137,7 +137,12 @@ if ($player->is_connected()) {
 				case "resume":
 					logger::log("POSTCOMMAND", "Adding Track ".$cmd[1]);
 					logger::log("POSTCOMMAND", "  .. and seeking position ".$cmd[3]." to ".$cmd[2]);
-					$cmds[] = join_command_string(array('add', rawurldecode($cmd[1])));
+					if ($cmd[4] == 'yes') {
+						logger::log('POSTCOMMAND', "  .. CD player mode was also requested");
+						$cmds = array_merge($cmds, playAlbumFromTrack($cmd[1]));
+					} else {
+						$cmds[] = join_command_string(array('add', $cmd[1]));
+					}
 					$cmds[] = join_command_string(array('play', $cmd[3]));
 					$expected_state = 'play';
 					$do_resume_seek = array($cmd[3], $cmd[2]);
@@ -188,7 +193,7 @@ if ($player->is_connected()) {
 	$cmd_status = $player->do_command_list($cmds);
 
 	//
-	// If we added tracks to the playlist, move them into position if we need to
+	// If we added tracks to the play queue, move them into position if we need to
 	//
 
 	if ($moveallto !== null) {

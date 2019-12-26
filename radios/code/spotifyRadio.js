@@ -87,8 +87,7 @@ function spotifyRadio() {
 			if (self.running && tracks.length > 0 && self.sending > 0) {
 				self.sending--;
 				debug.shout("SPOTIRADIO ALBUM",name,"is sending a track!",self.sending,"left");
-				player.controller.addTracks([tracks.shift()],
-					playlist.radioManager.playbackStartPos(), null);
+				player.controller.addTracks([tracks.shift()], playlist.radioManager.playbackStartPos(), null, true);
 			} else {
 			// while (ids.length > 0) {
 				ids.sort(randomsort);

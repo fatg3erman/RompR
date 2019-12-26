@@ -63,7 +63,7 @@ var faveAlbums = function() {
 		gotTracks: function(data) {
 			if (data.length > 0) {
 				debug.log("SMARTPLAYLIST","Got tracks",data);
-				player.controller.addTracks(data,  playlist.radioManager.playbackStartPos(), null);
+				player.controller.addTracks(data,  playlist.radioManager.playbackStartPos(), null, true);
 			} else {
 				debug.warn("SMARTPLAYLIST","Got NO tracks",data);
 				infobar.notify(language.gettext('label_gotnotracks'));

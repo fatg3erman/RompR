@@ -27,7 +27,7 @@ function spotifyRecommendationsRadio() {
 			num--;
 		}
 		if (t.length > 0) {
-			player.controller.addTracks(t, playlist.radioManager.playbackStartPos(), null);
+			player.controller.addTracks(t, playlist.radioManager.playbackStartPos(), null, true);
 		} else {
 			debug.warn("SPOTIFY RECC","Out of Tracks!");
 			infobar.notify('<i class="icon-spotify-circled modeimg"/></i>'+language.gettext('label_outoftracks'));

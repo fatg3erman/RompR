@@ -961,7 +961,7 @@ var layoutProcessor = function() {
 					var type = v.where.match(/.([a-z]+)\d/)[1];
 					if (type === null) {
 						// Regexp won't match if v.where is 'fothergill' or 'mingus'
-						type = ['', 'album'];
+						type = 'album';
 					}
 					switch (type) {
 						case 'album':

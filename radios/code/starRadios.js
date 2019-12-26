@@ -53,7 +53,7 @@ var starRadios = function() {
 			if (data.length > 0) {
 				debug.log("SMARTPLAYLIST","Got tracks",data);
 				if (running) {
-					player.controller.addTracks(data,  playlist.radioManager.playbackStartPos(), null);
+					player.controller.addTracks(data,  playlist.radioManager.playbackStartPos(), null, true);
 				}
 			} else {
 				debug.warn("SMARTPLAYLIST","Got NO tracks",data);

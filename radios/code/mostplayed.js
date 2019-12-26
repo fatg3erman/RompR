@@ -17,7 +17,7 @@ var mostPlayed = function() {
 					debug.trace("SMARTPLAYLIST","Got tracks",data);
 					running = true;
 					populating = false;
-					player.controller.addTracks(data, playlist.radioManager.playbackStartPos(), null);
+					player.controller.addTracks(data, playlist.radioManager.playbackStartPos(), null, true);
 				} else {
 					playlist.radioManager.stop(null);
 				}

@@ -29,7 +29,7 @@ var genreRadio = function() {
 				tracksneeded--;
 			}
 			if (ta.length > 0) {
-				player.controller.addTracks(ta, playlist.radioManager.playbackStartPos(), null);
+				player.controller.addTracks(ta, playlist.radioManager.playbackStartPos(), null, true);
 			}
 		}
 	}

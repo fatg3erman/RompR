@@ -58,7 +58,7 @@ function searchRadio() {
 					debug.log("SEARCHRADIO ARTIST",name,"is sending a track");
 					sent = true;
 					self.sending--;
-					player.controller.addTracks([t], playlist.radioManager.playbackStartPos(), null);
+					player.controller.addTracks([t], playlist.radioManager.playbackStartPos(), null, true);
 					break;
 				}
 				if (!sent) {

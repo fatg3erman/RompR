@@ -76,10 +76,12 @@ var yourRadioPlugin = {
 
 	loadSuppliedStation: function() {
 		if ($("#yourradioinput").val() != '') {
-			var el = new Array();
-			el.push($('<div>', {class: 'invisible clickstream', name: $("#yourradioinput").val(), supply: 'user'}));
-			playlist.addItems(el, null);
-			el[0].remove();
+			player.controller.addTracks({
+				type: "stream",
+				url: $("#yourradioinput").val(),
+				image: null,
+				station: null
+			}, playlist.playFromEnd(), null, false);
 		}
 	},
 
