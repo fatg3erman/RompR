@@ -166,6 +166,7 @@ var playlist = function() {
 						});
 					});
 				}
+				uiHelper.setupPersonalRadio();
 			},
 
 			load: function(which, param) {

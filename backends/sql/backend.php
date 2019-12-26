@@ -1400,7 +1400,8 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 		$trackobj->tags['Track'],
 		$trackobj->tags['Disc'],
 		$artistindex))) {
-		while ($dbtrack = $find_track->fetch(PDO::FETCH_OBJ)) {
+		while ($t = $find_track->fetch(PDO::FETCH_OBJ)) {
+			$dbtrack = $t;
 			break;
 		}
 	} else {
@@ -1435,7 +1436,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 			//
 
 			if ($prefs['debug_enabled'] > 6) {
-				logger::log("MYSQL", "  Updating track with ttid $ttid because :");
+				logger::log("MYSQL", "  Updating track with ttid",$dbtrack->TTindex,"because :");
 
 				if (!$doing_search && $dbtrack->LastModified === null) 								logger::log("MYSQL", "    LastModified is not set in the database");
 				if (!$doing_search && $trackobj->tags['Last-Modified'] === null) 					logger::log("MYSQL", "    TrackObj LastModified is NULL too!");
@@ -1462,7 +1463,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 			}
 			$newlastmodified = $trackobj->tags['Last-Modified'];
 			if ($dbtrack->isSearchResult == 0 && $doing_search) {
-				$newsearchresult = ($hidden != 0) ? 3 : 1;
+				$newsearchresult = ($dbtrack->Hidden != 0) ? 3 : 1;
 				logger::log("MYSQL", "    It needs to be marked as a search result : Value ".$newsearchresult);
 				$newlastmodified = $dbtrack->LastModified;
 			}

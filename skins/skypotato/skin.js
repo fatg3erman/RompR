@@ -20,9 +20,14 @@ jQuery.fn.menuReveal = function(callback) {
 		case holder.hasClass('userplaylist'):
 			// Albums and Playlists
 			parent.addClass('tagholder_wide dropshadow').insertDummySpacers();
-			holder.find('div.albumthing').detach().prependTo(self)
-				.find('.title-menu').addClass('containerbox dropdown-container')
-				.find('.collectionicon').removeClass('collectionicon').addClass('svg-square');
+
+			// All this bit is just re-formating the domain icon/album name/artist name
+			var titlediv = holder.find('div.albumthing').detach().prependTo(self).find('.title-menu');
+			titlediv.addClass('containerbox dropdown-container');
+			titlediv.find('.collectionicon').removeClass('collectionicon').addClass('svg-square');
+			var newwrapper = $('<div>', {class: 'containerbox vertical expand'}).appendTo(titlediv);
+			titlediv.find('div').not('.vertical').addClass('expand').detach().appendTo(newwrapper);
+
 			holder.find('div.dropdown-container.configtitle').remove();
 			var tt = self.find('input.albumtime').val();
 			if (tt) {
@@ -133,9 +138,13 @@ jQuery.fn.menuHide = function(callback) {
 			parent.removeClass('tagholder_wide dropshadow');
 			parent.removeDummySpacers();
 			var monkey = parent.find('.helpfulalbum.expand');
-			self.find('div.albumthing').detach().appendTo(monkey)
-				.find('.title-menu').removeClass('containerbox dropdown-container')
-				.find('.svg-square').removeClass('svg-square').addClass('collectionicon');
+
+			var titlediv = self.find('div.albumthing').detach().appendTo(monkey).find('.title-menu');
+			titlediv.removeClass('containerbox dropdown-container');
+			titlediv.find('.svg-square').removeClass('svg-square').addClass('collectionicon');
+			titlediv.find('div').not('.vertical').removeClass('expand').detach().appendTo(titlediv);
+			titlediv.find('.vertical').remove();
+
 			self.remove();
 			break;
 
@@ -274,6 +283,7 @@ var layoutProcessor = function() {
 				case 'pluginholder':
 					browser.rePoint();
 					break;
+
 			}
 		});
 	}
@@ -1110,6 +1120,14 @@ var layoutProcessor = function() {
 				scroll: true,
 				scrollparent: '#infopane'
 			});
+		},
+
+		setupPersonalRadio: function() {
+			// Don't append dummy spacers to the spotify panel, because we append
+			// saved crazy playlists here and it fucks up unless we do nasty skin-dependent
+			// shit in the crazy plugin, which is not nice.
+			$('#pluginplaylistslist .helpfulholder').not('#pluginplaylists_spotify').appendDummySpacers();
+			$('#pluginplaylistslist .fullwidth').not('.tagmenu').insertDummySpacers();
 		}
 
 	}

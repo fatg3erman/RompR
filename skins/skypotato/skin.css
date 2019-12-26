@@ -582,6 +582,15 @@ div.rightmenu
 	right:0px;
 }
 
+.title-menu.containerbox.dropdown-container {
+	margin-right: 0px;
+	margin-left: 0px;
+}
+
+.minwidthed2.expand>.tagh.albumthing {
+	padding: 0px;
+}
+
 /*
 =====================================================================
 = Podcasts
@@ -737,6 +746,10 @@ div.rightmenu
 	box-sizing:border-box;
 	border: 4px solid transparent;
 	/*transition: width 0.5s ease;*/
+}
+
+#pluginplaylistslist .menuitem.fullwidth {
+	border: 4px solid transparent;
 }
 
 .collectionitem:not(.tagholder_wide) {

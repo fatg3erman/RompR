@@ -549,6 +549,14 @@ var uiHelper = function() {
 				ws.top = $('#sources').offset().top;
 				return ws;
 			}
+		},
+
+		setupPersonalRadio: function() {
+			try {
+				return layoutProcessor.setupPersonalRadio();
+			} catch (err) {
+
+			}
 		}
 	}
 }();

@@ -103,6 +103,7 @@ if ($player->is_connected()) {
 
 				case "playlistadd":
 					if (preg_match('/^(a|b|r|t|y|u|z)(.*?)(\d+|root)/', $cmd[2])) {
+						// Add a whole album/artist
 						$lengthnow = count($cmds);
 						$cmds = array_merge($cmds, getItemsToAdd($cmd[2], $cmd[0].' "'.format_for_mpd($cmd[1]).'"'));
 						check_playlist_add_move($cmd, (count($cmds) - $lengthnow));

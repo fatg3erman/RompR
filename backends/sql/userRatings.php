@@ -250,6 +250,9 @@ function analyse_backups() {
 		// $ratings = count(json_decode(file_get_contents($backup.'/ratings.json')));
 		// $playcounts = count(json_decode(file_get_contents($backup.'/playcounts.json')));
 		// $tags = count(json_decode(file_get_contents($backup.'/tags.json')));
+
+		// FIXME: Save and restore Audiobook status.
+
 		$data[] = array(
 			'dir' => basename($backup),
 			'name' => strftime('%c', DateTime::createFromFormat('Y-m-d-H-i', basename($backup))->getTimestamp()),
