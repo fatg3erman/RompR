@@ -1012,6 +1012,7 @@ var layoutProcessor = function() {
 				layoutProcessor.makeCollectionDropMenu($('[name="'+albumindex+'"]'), albumindex);
 				$('#'+albumindex).removeClass('notfilled').html(v.tracklist);
 				$('#'+albumindex).menuReveal();
+				uiHelper.makeResumeBar($('#'+albumindex));
 				infobar.markCurrentTrack();
 				if (prefs.clickmode == 'single') {
 					$('#'+albumindex).find('.invisibleicon').removeClass('invisibleicon');

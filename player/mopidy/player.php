@@ -95,12 +95,6 @@ class mopidyPlayer extends base_mpd_player {
 				$filedata['X-AlbumUri'] = null;
 				$this->check_undefined_tags($filedata);
 				$filedata['folder'] = dirname($filedata['unmopfile']);
-				if ($prefs['audiobook_directory'] != '') {
-					$f = rawurldecode($filedata['folder']);
-					if (strpos($f, $prefs['audiobook_directory']) === 0) {
-						$filedata['type'] = 'audiobook';
-					}
-				}
 				break;
 
 			case 'http':

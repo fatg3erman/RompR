@@ -581,7 +581,7 @@ function get_all_data($ttid) {
 function get_extra_track_info(&$filedata) {
 	$data = array();;
 	$result = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
-		'SELECT Uri, TTindex, Disc, Artistname AS AlbumArtist, Albumtable.Image AS "X-AlbumImage", mbid AS MUSICBRAINZ_ALBUMID, Searched, IFNULL(Playcount, 0) AS Playcount
+		'SELECT Uri, TTindex, Disc, Artistname AS AlbumArtist, Albumtable.Image AS "X-AlbumImage", mbid AS MUSICBRAINZ_ALBUMID, Searched, IFNULL(Playcount, 0) AS Playcount, isAudiobook
 			FROM
 				Tracktable
 				JOIN Albumtable USING (Albumindex)
@@ -595,6 +595,10 @@ function get_extra_track_info(&$filedata) {
 	foreach ($result as $tinfo) {
 		if ($tinfo['Uri'] == $filedata['file']) {
 			logger::trace("EXTRAINFO", "Found Track In Collection");
+			if ($tinfo['isAudiobook'] > 0) {
+				$tinfo['type'] = 'audiobook';
+			}
+			$tinfo['isAudiobook'] = null;
 			$data = array_filter($tinfo, function($v) {
 				if ($v === null || $v == '') {
 					return false;

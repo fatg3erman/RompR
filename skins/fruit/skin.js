@@ -403,6 +403,9 @@ var layoutProcessor = function() {
 		},
 
 		postAlbumMenu: function(element, dropdown) {
+			if (!element) {
+				return;
+			}
 			debug.trace("SKIN","Post Album Menu Thing",element.next());
 			if (element.next().hasClass('smallcover')) {
 				var imgsrc = element.next().children('img').attr('src');

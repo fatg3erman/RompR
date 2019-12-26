@@ -557,6 +557,15 @@ var uiHelper = function() {
 			} catch (err) {
 
 			}
+		},
+
+		postAlbumMenu: function() {
+			try {
+				return layoutProcessor.postAlbumMenu();
+			} catch (err) {
+
+			}
 		}
+
 	}
 }();

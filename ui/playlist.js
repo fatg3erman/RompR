@@ -529,12 +529,7 @@ var playlist = function() {
 				if (uri) {
 					if ($(element).hasClass('searchdir')) {
 						var s = addSearchDir($(element));
-						// concat doesn't work if the first array is empty????? WTF????
-						if (tracks.length == 0) {
-							tracks = s;
-						} else {
-							tracks.concat(s);
-						}
+						tracks = tracks.concat(s);
 					} else if ($(element).hasClass('directory')) {
 						tracks.push({
 							type: "uri",
@@ -578,13 +573,14 @@ var playlist = function() {
 							playlist: $(element).prev().prev().val(),
 							frompos: $(element).prev().val()
 						});
+					} else if ($(element).hasClass('playlisttrack')) {
+						tracks.push({
+							type: 'playlisttrack',
+							playlist: $(element).prev().prev().val(),
+							frompos: $(element).prev().val()
+						});
 					} else if ($(element).hasClass('smartradio')) {
 						playlist.radioManager.loadFromUiElement($(element));
-					} else if ($(element).hasClass('podcasttrack')) {
-						tracks.push({
-							type: "podcasttrack",
-							name: decodeURIComponent(uri)
-						});
 					} else if ($(element).hasClass('podcastresume')) {
 						var is_already_in_playlist = playlist.findIdByUri(decodeURIComponent(uri));
 						if (is_already_in_playlist !== false) {

@@ -244,7 +244,7 @@ var podcasts = function() {
 				target.removeClass('loaded').addClass('loaded');
 				updatePodcastDropdown(channel, null);
 				// Needed for phone skin
-				layoutProcessor.postAlbumMenu();
+				uiHelper.postAlbumMenu();
 			});
 		},
 
