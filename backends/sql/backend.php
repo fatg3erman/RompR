@@ -1244,6 +1244,7 @@ function collectionUpdateRunning() {
 }
 
 function clearUpdateLock() {
+	logger::log('COLLECTION', 'Clearing update lock');
 	generic_sql_query("UPDATE Statstable SET Value = 0 WHERE Item = 'Updating'", true);
 }
 
@@ -1282,6 +1283,7 @@ function tidy_database() {
 	$now = time();
 	logger::trace("MYSQL", "Finding tracks that have been deleted");
 	generic_sql_query("DELETE FROM Tracktable WHERE LastModified IS NOT NULL AND Hidden = 0 AND justAdded = 0", true);
+	logger::log('COLLECTION', 'Updating collection version to', ROMPR_COLLECTION_VERSION);
 	remove_cruft();
 	update_stat('ListVersion',ROMPR_COLLECTION_VERSION);
 	update_track_stats();

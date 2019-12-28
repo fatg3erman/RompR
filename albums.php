@@ -330,12 +330,17 @@ function update_collection() {
 	}
 
 	// Browser is now happy. Now we can do our work in peace.
-	cleanSearchTables();
-	prepareCollectionUpdate();
-	$player = new $PLAYER_TYPE();
-	$player->musicCollectionUpdate();
-	tidy_database();
-	remove_findtracks();
+    logger::log('COLLECTION', 'Now were on our own');
+    cleanSearchTables();
+    logger::log('COLLECTION', 'Preparing update...');
+    prepareCollectionUpdate();
+    $player = new $PLAYER_TYPE();
+    logger::log('COLLECTION', 'Doing Update');
+    $player->musicCollectionUpdate();
+    logger::log('COLLECTION', 'Tidying...');
+    tidy_database();
+    logger::log('COLLECTION', 'Finishing...');
+    remove_findtracks();
 	// Add a marker to the monitor file to say we've finished
 	$player->collectionUpdateDone();
 	// Clear the update lock
