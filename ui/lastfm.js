@@ -88,12 +88,8 @@ function LastFM(user) {
 			case "browser":
 				return browserLanguage;
 				break;
-			case "user":
-				if (prefs.user_lang != "") {
-					return prefs.user_lang;
-				} else {
-					return null;
-				}
+			default:
+				return prefs.lastfmlang;
 				break;
 		}
 	}

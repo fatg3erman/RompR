@@ -490,7 +490,12 @@ var prefs = function() {
 			}
 
 			if (prefs.icontheme == 'IconFont') {
+				// Removed icon theme
 				prefs.icontheme = 'Colourful';
+			}
+			if (prefs.lastfmlang == 'user') {
+				// Pre- 1.40 lastfmlang could be 'user' to use a separate pref, now combined
+				prefs.lastfmlang = prefs.user_lang;
 			}
 		},
 
@@ -690,6 +695,7 @@ var prefs = function() {
 				$("[name="+prefname+"][value="+prefs[prefsave]+"]").prop("checked", true);
 			});
 
+			$('.choose-resultmode').removeClass('currentbun');
 			if (prefs.displayresultsas == "collection") {
 				$('.choose-resultmode.icon-music').addClass('currentbun');
 			} else {

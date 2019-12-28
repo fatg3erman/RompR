@@ -261,7 +261,7 @@ function playerController() {
 	}
 
 	this.deleteUserPlaylist = function(name) {
-		var data = {del: encodeURIComponent(name)};
+		var data = {del: name};
 		$.ajax({
 			type: "GET",
 			url: "utils/getUserPlaylist.php",

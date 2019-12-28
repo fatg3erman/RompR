@@ -257,19 +257,17 @@ foreach($langname as $key => $value) {
 }
 print '</select></div></div>';
 
-print '<div class="pref styledinputs">
-<b>'.get_int_text("config_lastfmlang").'</b><br/>
-<input type="radio" class="topcheck savulon" name="lastfmlang" value="default" id="langdefault" />
-<label for="langdefault">'.get_int_text('config_lastfmdefault').'</label><br/>
-<input type="radio" class="topcheck savulon" name="lastfmlang" value="interface" id="langint" />
-<label for="langint">'.get_int_text('config_lastfminterface').'</label><br/>
-<input type="radio" class="topcheck savulon" name="lastfmlang" value="browser" id="langbr" />
-<label for="langbr">'.get_int_text('config_lastfmbrowser').'</label><br/>
-<input type="radio" class="topcheck savulon" name="lastfmlang" value="user" id="languser" />
-<label for="languser">'.get_int_text('config_lastfmlanguser').
-'</label><input class="saveotron" id="user_lang" style="width:4em;margin-left:1em" type="text" size="4" /><br/>
-<div class="tiny">'.get_int_text('config_langinfo').'</div>
-</div>';
+print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+get_int_text('config_lastfmlang').
+'</div><div class="selectholder"><select class="saveomatic" id="lastfmlangselector"">';
+print '<option value="default">'.get_int_text('config_lastfmdefault').'</option>';
+print '<option value="interface">'.get_int_text('config_lastfminterface').'</option>';
+print '<option value="browser">'.get_int_text('config_lastfmbrowser').'</option>';
+$l = json_decode(file_get_contents('international/iso639.json'), true);
+foreach ($l as $language) {
+	print '<option value="'.$language['alpha2'].'">'.$language['English'].'</option>';
+}
+print '</select></div></div>';
 
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
 get_int_text('config_country').

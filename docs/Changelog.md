@@ -18,7 +18,7 @@ Thought I'd bump the version number up a bit since this seems like quite a big r
 * The Tags and Ratings manager has been removed since a) I hated it and b) almost everything it did can now be done via the main Collection panel
 * The 'back' button on the phone skin is now always visible so you don't have to scroll back to the top to go back
 * Done quite a lot of work on the Skypotato skin to make it neater, more efficient, and smoother and give it all the same functionality as the Desktop skin
-* Another batch of new icon themes
+* I wrote a script to automate a lot of the work in making icon themes, so now there are LOADS of them :-D
 ### FIXES:
 * Fix Panel hiding not working in Fruit skin
 * Make the Snapcast controls look neater

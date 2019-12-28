@@ -143,7 +143,6 @@ while (true) {
 						// Also, taking over would require us to have write access to prefs.var which is
 						// problematic on some systems, especially if something like SELinux is enabled
 						logger::log("ROMONITOR", "Smart Radio Master has gone away. Taking Over");
-						$radiomaster = $browser_id;
 						$tracksneeded = $prefs['smartradio_chunksize'] - $playlistlength  + 1;
 						logger::log("ROMONITOR", "Adding ".$tracksneeded." from ".$radiomode);
 						$tracks = doPlaylist($radioparam, $tracksneeded);

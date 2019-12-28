@@ -365,12 +365,12 @@ function snapcastClient() {
 			command: self.setVolume
 		});
 		groupmenu = $('<div>', {class: 'toggledown invisible'}).insertAfter(title);
-		var j = $('<div>', {class: "containerbox dropdown-container"}).appendTo(groupmenu);
+		var j = $('<div>', {class: "containerbox wrap dropdown-container"}).appendTo(groupmenu);
 		j.append('<div class="expand playlistrow2" name="clienthost"></div>');
-		var k = $('<div>', {class: "expand"}).appendTo(j);
-		k = $('<div>', {class: 'fixed padright'}).appendTo(j).html(language.gettext('snapcast_latency'));
-		k = $('<input>', {type: 'text', class: 'fixed', name: "latency", size: "6", style: "width:6em"}).appendTo(j);
-		k = $('<button>', {class: "fixed"}).appendTo(j).html(language.gettext('snapcast_setlatency')).on("click", self.changeLatency);
+		var lholder = $('<div>', {class: 'containerbox fixed dropdown-container'}).appendTo(j);
+		$('<div>', {class: 'fixed padright'}).appendTo(lholder).html(language.gettext('snapcast_latency'));
+		$('<input>', {type: 'text', class: 'fixed', name: "latency", size: "4", style: "width:4em"}).appendTo(lholder);
+		$('<button>', {class: "fixed"}).appendTo(lholder).html(language.gettext('snapcast_setlatency')).on("click", self.changeLatency);
 		grouplist = $('<div>').appendTo(groupmenu);
 		n.on('keyup', self.keyUp);
 	}
