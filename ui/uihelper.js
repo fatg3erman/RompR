@@ -471,7 +471,7 @@ var uiHelper = function() {
 				target.find('input.resumepos').each(function() {
 					var pos = parseInt($(this).val());
 					var duration = parseInt($(this).next().val());
-					debug.log("PODCASTS", "Episode has a progress bar",pos,duration);
+					debug.log("UIHELPER", "Episode has a progress bar",pos,duration);
 					var thething = $(
 						'<div>',
 						{

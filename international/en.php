@@ -767,7 +767,9 @@ $languages['en'] = array (
 	"label_move_to_collection" => "Move To Music Collection",
 	"label_removealbum" => "Remove Album From Collection",
 	"label_subbed_podcasts" => "Subscribed Podcasts",
-	"podcast_tooltip_unlistened" => "Mark as Unlistened"
+	"podcast_tooltip_unlistened" => "Mark as Unlistened",
+	"label_addtoqueue" => "Add to Play Queue",
+	"label_resetresume" => 'Reset Resume Position'
 );
 
 ?>

@@ -14,6 +14,7 @@ if (preg_match('#prefs/userstreams/.*\.jpg#', $request) || preg_match('#prefs/us
 	logger::log("404", "Request for missing podcast image. Redirecting to ".$redirect);
 	header("HTTP/1.1 307 Temporary Redirect");
 	header("Location: ".$redirect);
+} else if (preg_match('#themes/.*\.js#', $request)) {
 } else {
 	header("HTTP/1.1 404 Not Found");
 	?>

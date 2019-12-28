@@ -107,27 +107,11 @@ body.setup
     background-color: #dddddd;
 }
 
-/*body.desktop #infobar
-{
-    background-image: linear-gradient(#ffffff, #eeeeee);
-}
-*/
 body.desktop #headerbar
 {
     background-image: linear-gradient(#eeeeee, #ededed);
 }
 
-/*body.desktop #thetopbit
-{
-    background-image: linear-gradient(#ffffff, #ededed);
-}
-
-#bottompage
-{
-    background-image: linear-gradient(#ededed, #bbbbbb);
-}
-
-*/
 #pset {
     background-color: rgba(1, 1, 1, 0.75);
 }

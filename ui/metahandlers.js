@@ -208,6 +208,10 @@ var metaHandlers = function() {
 				);
 			},
 
+			resetResumePosition: function(element) {
+				metaHandlers.fromUiElement.doMeta('set', 'Progress', [{attribute: 'Progress', value: 0}]);
+			},
+
 			removeAlbumFromDb: function(element) {
 				var albumToGo = element.attr("name");
 				dbQueue.request(

@@ -149,6 +149,10 @@ function onSourcesClicked(event, clickedElement) {
 		clickedElement.parent().parent().parent().remove();
 	} else if (clickedElement.hasClass("removealbum")) {
 		metaHandlers.fromUiElement.removeAlbumFromDb(clickedElement);
+	} else if (clickedElement.hasClass("resetresume")) {
+		metaHandlers.fromUiElement.resetResumePosition(clickedElement);
+	} else if (clickedElement.hasClass("clickqueuetracks")) {
+		playlist.draggedToEmpty();
 	} else if (clickedElement.hasClass("clickalbummenu")) {
 		makeAlbumMenu(event, clickedElement);
 	} else if (clickedElement.hasClass("clicktrackmenu")) {
@@ -910,6 +914,18 @@ function makeTrackMenu(e, element) {
 	var d = menu.create();
 	if (!d) {
 		return;
+	}
+
+	if (prefs.cdplayermode) {
+		d.append($('<div>', {
+			class: 'backhi clickable menuitem clickqueuetracks closepopup',
+		}).html(language.gettext('label_addtoqueue')));
+	}
+
+	if ($(element).hasClass('clickresetresume')) {
+		d.append($('<div>', {
+			class: 'backhi clickable menuitem resetresume closepopup',
+		}).html(language.gettext('label_resetresume')));
 	}
 
 	if ($(element).hasClass('clickremovedb')) {

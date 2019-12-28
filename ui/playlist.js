@@ -451,6 +451,7 @@ var playlist = function() {
 		},
 
 		draggedToEmpty: function(event, ui) {
+			// This effectively adds all selected items to the end of the play queue irrespective of CD Player Mode
 			debug.log("PLAYLIST","Something was dropped on the empty playlist area",event,ui);
 			playlist.addItems($('.selected').filter(removeOpenItems), parseInt(finaltrack)+1);
 		},
@@ -599,7 +600,7 @@ var playlist = function() {
 				// case we must always queue
 				var queue = (moveto !== null);
 				player.controller.addTracks(tracks, playpos, moveto, queue);
-				$('.selected').removeClass('selected');
+				$('.selected').removeFromSelection();
 			}
 		},
 

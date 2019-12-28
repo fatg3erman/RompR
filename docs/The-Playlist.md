@@ -34,4 +34,4 @@ The 'Musical Notes' icon will appear next to Spotify albums. Clicking this will 
 
 ## Non-Queueing Mode
 
-Although the default option (and the way mpd works) is to add tracks to the Play Queue when you click them, you can also enable a more 'Media Centre-like' mode. In the Configuration panel is an option for 'CD Player Mode'. When this is enabled, when you double-click a track it will play immediately, removing any existing tracks from the Play Queue. The album the track is from will be played from that track to the end.
+Although the default option (and the way mpd works) is to add tracks to the Play Queue when you click them, you can also enable a more 'Media Centre-like' mode. In the Configuration panel is an option for 'CD Player Mode'. When this is enabled, when you double-click a track it will play immediately, removing any existing tracks from the Play Queue. The album the track is from will be played from that track to the end. In this mode you can add tracks to the end of the Play Queue by using the dropdown menu next to the tracks.

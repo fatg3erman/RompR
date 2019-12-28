@@ -756,6 +756,9 @@ var prefs = function() {
 
 		setTheme: function(theme) {
 			clearTimeout(uichangetimer);
+			themeManager.teardown();
+			themeManager.init = emptyfunction;
+			themeManager.teardown = emptyfunction;
 			if (!theme) theme = prefs.theme;
 			// These 2 themes were removed
 			if (theme == 'PlasmaPortrait.css') {
@@ -779,6 +782,18 @@ var prefs = function() {
 			$('<link>', {id: 'theme', rel: 'stylesheet', type: 'text/css', href: "gettheme.php?version="+t
 				+'&theme='+theme+'&fontsize='+prefs.fontsize+'&fontfamily='+prefs.fontfamily
 				+'&coversize='+prefs.coversize+'&icontheme='+prefs.icontheme}).on('load', prefs.postUIChange).appendTo('head');
+			try {
+				$.getScript('themes/'+theme+'.js')
+					.done(function() {
+						debug.log('PREFS','Loaded theme script for',theme);
+						themeManager.init();
+					})
+					.fail(function(jqxhr, settings, exception) {
+						debug.log('PREFS', 'Theme',theme,'does not have a manager script');
+					});
+			} catch(err) {
+				debug.log('PREFS',err);
+			}
 			loadBackgroundImages(theme);
 		},
 
@@ -880,3 +895,24 @@ if (localStorage.getItem("prefs.prefversion") == null) {
 }
 prefs.theme = prefs.theme.replace('_1080p','');
 prefs.fontfamily = prefs.fontfamily.replace('_', ' ');
+
+var emptyfunction = function() {
+
+}
+
+var themeManager = function() {
+
+	return {
+
+		init: function() {
+
+		},
+
+		teardown: function() {
+
+		}
+
+	}
+
+}();
+

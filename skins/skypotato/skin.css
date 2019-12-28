@@ -61,6 +61,10 @@ div.collectionpanel>div.configtitle>div.textcentre {
 	font-size:140%;
 }
 
+div.collectionpanel>div.playable.clickalbum.brick_wide {
+	margin-top: 8px;
+}
+
 #albumpicture {
 	width: auto;
 }
