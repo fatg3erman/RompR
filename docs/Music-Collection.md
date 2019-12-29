@@ -62,8 +62,8 @@ You will only see options for backends that are enabled in Mopidy. The complete 
 * **Beets** [('beets' backend must be enabled)](/RompR/Rompr-And-Mopidy)
 * **Beets Local** ('beetslocal' backend must be enabled)
 * **Spotify Playlists** ('spotify' backend must be enabled) *This will add all tracks from your Spotify Playlists into your collection. Your playlists will still be available as Playlists even if you don't select this option*
-* **Spotify 'Your Music'** ('spotify-web' backend must be enabled)
-* **Spotify 'Your Artists'** ('spotify-web' backend must be enabled)
+* **Spotify 'Your Track'** ('spotify' backend must be enabled, at least version 4)
+* **Spotify 'Your Albums'** ('spotify' backend must be enabled, at least version 4)
 * **Google Music** ('gmusic' backend must be enabled)
 * **SoundCloud 'Liked'** ('soundcloud' backend must be enabled)
 * **SoundCloud 'Sets'** ('soundcloud' backend must be enabled)

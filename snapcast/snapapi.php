@@ -47,8 +47,7 @@ class snapcast {
 	public function do_command($json) {
 		if ($this->open_connection()) {
 			logger::trace("SNAPCAST", "Sending ",$json);
-			// For some reason, fputs strips the final } off the string
-			fputs($this->connection, $json."}\n");
+			fputs($this->connection, $json."\r\n");
 			$got = fgets($this->connection);
 			return $got;
 		} else {

@@ -726,7 +726,7 @@ i.combo-button {
 .album_menu_image {
 	max-width: 100%;
 	height: auto;
-	max-height: 60vh;
+	max-height: 50vh;
 }
 
 .calign {
@@ -971,7 +971,7 @@ img.jalopy200 {
 	}
 
 	#nptext {
-		text-align:right;
+		text-align:left;
 	}
 
 	#amontobin {
@@ -1110,7 +1110,7 @@ img.jalopy200 {
 	}
 
 	#nptext {
-		text-align:right;
+		text-align:left;
 	}
 
 	#amontobin {
@@ -1128,9 +1128,9 @@ img.jalopy200 {
 }
 
 @media screen and (min-width:640px) and (min-height: 541px) and (orientation: landscape) {
-	/* at 540 px high it reverts to being like small portrait mode */
+	 /*at 540 px high it reverts to being like small portrait mode */
 	#albumpicture {
-		max-width:60vh
+		max-width:30vh
 	}
 }
 
@@ -1156,7 +1156,7 @@ img.jalopy200 {
 	}
 
 	#nptext {
-		text-align:right;
+		text-align:left;
 	}
 
 	#amontobin {

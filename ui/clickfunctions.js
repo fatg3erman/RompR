@@ -420,7 +420,8 @@ var playlistManager = function() {
 				tracks,
 				null,
 				0,
-				playlistManager.loadPlaylistIntoTarget            );
+				playlistManager.loadPlaylistIntoTarget
+			);
 		},
 
 		dropOnPlaylist: function(event, ui) {

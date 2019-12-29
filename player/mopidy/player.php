@@ -160,7 +160,7 @@ class mopidyPlayer extends base_mpd_player {
 				break;
 
 			default:
-				check_undefined_tags($filedata);
+				$this->check_undefined_tags($filedata);
 				$filedata['folder'] = dirname($filedata['unmopfile']);
 				break;
 		}
@@ -206,7 +206,9 @@ class mopidyPlayer extends base_mpd_player {
 		$filedata['AlbumArtist'] = $filedata['Artist'];
 		$filedata['X-AlbumUri'] = $filedata['file'];
 		$filedata['Album'] = $filedata['Title'];
-		$filedata['X-AlbumImage'] = 'getRemoteImage.php?url='.rawurlencode($filedata['X-AlbumImage']);
+		if ($filedata['X-AlbumImage']) {
+			$filedata['X-AlbumImage'] = 'getRemoteImage.php?url='.rawurlencode($filedata['X-AlbumImage']);
+		}
 	}
 
 	private function check_radio_and_podcasts($filedata) {
