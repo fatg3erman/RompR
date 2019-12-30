@@ -238,6 +238,10 @@ function backup_unrecoverable_data() {
 	$tracks = get_tags();
 	file_put_contents($dirname.'/tags.json',json_encode($tracks));
 
+	logger::log("BACKEND", "Backing up Audiobook Status");
+	$tracks = get_audiobooks();
+	file_put_contents($dirname.'/audiobooks.json',json_encode($tracks));
+
 }
 
 function analyse_backups() {
@@ -262,6 +266,7 @@ function analyse_backups() {
 				'Playcounts' => file_exists($backup.'/playcounts.json') ? 'OK' : 'Missing!',
 				'Tracks With Ratings' => file_exists($backup.'/ratings.json') ? 'OK' : 'Missing!',
 				'Tracks With Tags' => file_exists($backup.'/tags.json') ? 'OK' : 'Missing!',
+				'Spoken Word' => file_exists($backup.'/audiobooks.json') ? 'OK' : 'Missing!',
 			)
 		);
 	}
@@ -325,6 +330,16 @@ function restoreBackup($backup) {
 			fwrite($monitor, "\n<b>Restoring Playcounts : </b>".$progress."%");
 		}
 	}
+	if (file_exists('prefs/databackups/'.$backup.'/audiobooks.json')) {
+		logger::mark("BACKUPS", "Restoring Audiobooks");
+		$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/audiobooks.json'), true);
+		foreach ($tracks as $i => $trackdata) {
+			romprmetadata::sanitise_data($trackdata);
+			romprmetadata::updateAudiobookState($trackdata);
+			$progress = round(($i/count($tracks))*100);
+			fwrite($monitor, "\n<b>Restoring Spoken Word Tracks : </b>".$progress."%");
+		}
+	}
 	fwrite($monitor, "\n<b>Cleaning Up...</b>");
 	// Now... we may have restored data on tracks that were previously local and now aren't there any more.
 	// If they're local tracks that have been removed, then we don't want them or care about their data
@@ -336,6 +351,7 @@ function restoreBackup($backup) {
 	romprmetadata::resetallsyncdata();
 	remove_cruft();
 	update_track_stats();
+	fwrite($monitor, '\n ');
 	fclose($monitor);
 }
 
@@ -362,6 +378,32 @@ function get_manually_added_tracks() {
 			JOIN Albumtable ON Tracktable.Albumindex = Albumtable.Albumindex
 			JOIN Artisttable AS aat ON Albumtable.AlbumArtistindex = aat.Artistindex
 		WHERE Tracktable.LastModified IS NULL AND Tracktable.Hidden = 0 AND Tracktable.isSearchResult < 2 AND uri IS NOT NULL");
+}
+
+function get_audiobooks() {
+
+	// get_audiobooks
+	//		Creates data for backup
+
+	return generic_sql_query(
+		"SELECT
+			Tracktable.Title AS title,
+			Tracktable.TrackNo AS trackno,
+			Tracktable.Duration AS duration,
+			Tracktable.Disc AS disc,
+			Tracktable.Uri AS uri,
+			Albumtable.Albumname AS album,
+			Albumtable.AlbumUri AS albumuri,
+			Albumtable.Year AS date,
+			ta.Artistname AS artist,
+			aat.Artistname AS albumartist,
+			Tracktable.isAudiobook AS isaudiobook
+		FROM
+			Tracktable
+			JOIN Artisttable AS ta USING (Artistindex)
+			JOIN Albumtable ON Tracktable.Albumindex = Albumtable.Albumindex
+			JOIN Artisttable AS aat ON Albumtable.AlbumArtistindex = aat.Artistindex
+		WHERE Tracktable.Hidden = 0 AND Tracktable.isSearchResult < 2 AND uri IS NOT NULL AND Tracktable.isAudiobook > 0");
 }
 
 function get_ratings() {

@@ -322,6 +322,16 @@ class romprmetadata {
 		$returninfo = $nodata;
 	}
 
+	public static function updateAudiobookState($data) {
+		$ttids = romprmetadata::find_item($data, forcedUriOnly(false, getDomain($data['uri'])));
+		if (count($ttids) > 0) {
+			foreach ($ttids as $ttid) {
+				logger::log('SQL', 'Setting Audiobooks state for TTIndex',$ttid,'to',$data['isaudiobook']);
+				sql_prepare_query(true, null, null, null, 'UPDATE Tracktable SET isAudiobook = ? WHERE TTindex = ?', $data['isaudiobook'], $ttid);
+			}
+		}
+	}
+
 	public static function cleanup($data) {
 		logger::log("SQL", "Doing Database Cleanup And Stats Update");
 		remove_cruft();

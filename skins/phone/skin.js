@@ -544,6 +544,7 @@ var layoutProcessor = function() {
 			// Work around crappy iOS Safari bug where it updates width css before height
 			// and therefore doesn't get the album picture size right
 			$('#albumpicture').css('width', '0px');
+			await new Promise(r => setTimeout(r, 100));
 			$('#albumpicture').css('width', '');
 			layoutProcessor.setPlaylistHeight();
 			browser.rePoint();
@@ -559,12 +560,6 @@ var layoutProcessor = function() {
 			if (nptop > 0) {
 				var t = infoheight - nptop + hh;
 				np.css({height: t+"px"});
-				debug.mark('LAYOUT', 'Calling biggerize');
-				// Work around crappy iOS Safari bug where it updates width css before height
-				// and therefore doesn't get the album picture size right
-				$('#albumpicture').css('width', '0px');
-				await new Promise(r => setTimeout(r, 500));
-				$('#albumpicture').css('width', '');
 				infobar.rejigTheText();
 			}
 		},

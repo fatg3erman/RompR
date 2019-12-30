@@ -288,7 +288,7 @@ var playlist = function() {
 			retrytimer = setTimeout(playlist.repopulate, 2000);
 		},
 
-		newXSPF: function(request_id, list) {
+		newXSPF: async function(request_id, list) {
 			var count = -1;
 			var current_album = "";
 			var current_artist = "";

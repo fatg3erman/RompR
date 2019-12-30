@@ -195,10 +195,10 @@ var infobar = function() {
 		rejigTheText: function() {
 			debug.log('INFOBAR', 'Rejig was called');
 			clearTimeout(ftimer);
-			ftimer = setTimeout(infobar.biggerize, 500);
+			ftimer = setTimeout(infobar.biggerize, 300);
 		},
 
-		biggerize: function() {
+		biggerize: async function() {
 			clearTimeout(ftimer);
 
 			if (Object.keys(npinfo).length == 0 || $("#nptext").is(':hidden') || $("#infobar").is(':hidden')) {
