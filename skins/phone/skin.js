@@ -533,7 +533,7 @@ var layoutProcessor = function() {
 			layoutProcessor.adjustLayout();
 		},
 
-		adjustLayout: function() {
+		adjustLayout: async function() {
 			infobar.updateWindowValues();
 			var ws = getWindowSize();
 			var hh = $("#headerbar").outerHeight(true);
@@ -560,7 +560,12 @@ var layoutProcessor = function() {
 				var t = infoheight - nptop + hh;
 				np.css({height: t+"px"});
 				debug.mark('LAYOUT', 'Calling biggerize');
-				infobar.biggerize();
+				// Work around crappy iOS Safari bug where it updates width css before height
+				// and therefore doesn't get the album picture size right
+				$('#albumpicture').css('width', '0px');
+				await new Promise(r => setTimeout(r, 500));
+				$('#albumpicture').css('width', '');
+				infobar.rejigTheText();
 			}
 		},
 

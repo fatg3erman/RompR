@@ -1130,7 +1130,7 @@ img.jalopy200 {
 @media screen and (min-width:640px) and (min-height: 541px) and (orientation: landscape) {
 	 /*at 540 px high it reverts to being like small portrait mode */
 	#albumpicture {
-		max-width:30vh
+		/*max-width:30vh*/
 	}
 }
 
