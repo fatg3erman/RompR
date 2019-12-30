@@ -20,7 +20,7 @@ var snapcast = function() {
 		.done(callback)
 		.fail(function(jqXHR, textStatus, errorThrown) {
 			debug.error("SNAPCAST","Command Failed",parms,textStatus,errorThrown);
-			callback({error: language.gettext('snapcast_notthere')});
+			callback({error: {data: language.gettext('snapcast_notthere')}});
 		})
 	}
 
@@ -53,7 +53,7 @@ var snapcast = function() {
 					ew = $('<div>', {class: "fullwidth textcentre", style: "padding:4px"}).insertBefore('#snapcastgroups');
 					$('#snapcastgroups').addClass('canbefaded').css({opacity: '0.4'});
 				}
-				ew.html('<b>'+data.error+'</b>');
+				ew.html('<b>'+data.error.data+'</b>');
 			} else if (data.hasOwnProperty('id') && parseInt(data.id) == id) {
 				lastid = id;
 				if (ew !== null) {

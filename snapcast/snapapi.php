@@ -56,7 +56,7 @@ class snapcast {
 	}
 
 	private function errorjson($msg) {
-		$retval = array('error' => $msg);
+		$retval = array('error' => array('data' => $msg));
 		return json_encode($retval);
 	}
 }
