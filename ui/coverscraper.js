@@ -58,7 +58,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 		ignorelocal = s;
 	}
 
-	this.getImageSearchParams =  function(imgobj) {
+	this.getImageSearchParams = function(imgobj) {
 		if (imgobj.hasOwnProperty('cb')) {
 			// pre-populated data from the playlist
 			return imgobj;

@@ -136,6 +136,14 @@ function cleanBackendCache() {
 	} else {
 		debug.shout("INIT","Starting Backend Cache Clean");
 		collectionHelper.disableCollectionUpdates();
+		// try {
+		// 	response = await fetch('utils/cleancache.php');
+		// } catch(err) {
+		// 	debug.error('INIT', 'await / fetch error');
+		// }
+		// debug.shout("INIT","Cache Has Been Cleaned");
+		// collectionHelper.enableCollectionUpdates();
+		// setTimeout(cleanBackendCache, 86400000)
 		$.get('utils/cleancache.php', function() {
 			debug.shout("INIT","Cache Has Been Cleaned");
 			collectionHelper.enableCollectionUpdates();
@@ -160,7 +168,7 @@ function get_geo_country() {
 	}
 }
 
-function createHelpLinks() {
+async function createHelpLinks() {
 	var helplinks = {};
 	helplinks[language.gettext('button_local_music')] = 'https://fatg3erman.github.io/RompR/Music-Collection';
 	helplinks[language.gettext('label_searchfor')] = 'https://fatg3erman.github.io/RompR/Searching-For-Music';
@@ -181,6 +189,5 @@ function createHelpLinks() {
 				$(this).parent().parent().append('<div class="fixed"><a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticon tooltip" title="'+language.gettext('label_gethelp')+'"></i></a></div>');
 			}
 		});
-		// $('b:contains("'+i+'")').parent('.configtitle').not('.nohelp').append('<a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticonr tright tooltip" title="'+language.gettext('label_gethelp')+'"></i></a>');
 	}
 }

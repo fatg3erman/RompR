@@ -660,7 +660,7 @@ var prefs = function() {
 			}
 		},
 
-		setPrefs: function() {
+		setPrefs: async function() {
 			$("#langselector").val(interfaceLanguage);
 
 			$("#scrobwrangler").rangechooser({

@@ -1205,7 +1205,7 @@ function check_podcast_refresh() {
 		if ($updatetime <= $now) {
 			$retval = refreshPodcast($pod['podid']);
 			if ($retval !== false) {
-				$updated[] = $retval;
+				$updated['updated'][] = $retval;
 			}
 			if ($tempnextupdate < $nextupdate_seconds) {
 				$nextupdate_seconds = $tempnextupdate;

@@ -282,7 +282,7 @@ var layoutProcessor = function() {
 			return false;
 		},
 
-		adjustLayout: function() {
+		adjustLayout: async function() {
 			var ws = getWindowSize();
 			// Height of the bottom pane (chooser, info, playlist container)
 			var newheight = ws.y - $("#bottompage").offset().top;

@@ -381,10 +381,6 @@ var podcasts = function() {
 		checkRefresh: function() {
 			debug.log('PODCASTS', 'In checkRefresh');
 			clearTimeout(refreshtimer);
-			if (!onlineTriggerActivated) {
-				window.addEventListener('online', podcasts.checkIfSomeoneElseHasUpdatedStuff);
-				onlineTriggerActivated = true;
-			}
 			$.ajax({
 				type: 'GET',
 				url: "podcasts/podcasts.php?populate=1&checkrefresh=1",
@@ -398,6 +394,10 @@ var podcasts = function() {
 				if (data.nextupdate) {
 					debug.log("PODCASTS","Setting next podcast refresh for",data.nextupdate,'seconds');
 					refreshtimer = setTimeout(podcasts.checkRefresh, data.nextupdate*1000);
+				}
+				if (!onlineTriggerActivated) {
+					window.addEventListener('online', podcasts.checkIfSomeoneElseHasUpdatedStuff);
+					onlineTriggerActivated = true;
 				}
 			})
 			.fail(function(data,status,thing) {

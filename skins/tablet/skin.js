@@ -223,7 +223,7 @@ var layoutProcessor = function() {
 			layoutProcessor.adjustLayout();
 		},
 
-		adjustLayout: function() {
+		adjustLayout: async function() {
 			infobar.updateWindowValues();
 			var ws = getWindowSize();
 			var hh = $("#headerbar").outerHeight(true);
