@@ -645,7 +645,6 @@ function calcPercentWidth(element, childSelector, targetWidth, parentWidth) {
 }
 
 function makeHoverWork(ev) {
-	debug.trace('UI', 'Make Hover Work');
 	var jq = $(this);
 	if (calcComboPos(ev, jq)) {
 		jq.css('cursor','pointer');
@@ -655,7 +654,6 @@ function makeHoverWork(ev) {
 }
 
 function makeClearWork(ev) {
-	debug.trace('UI', 'Make Clear Work');
 	var jq = $(this);
 	if (calcComboPos(ev, jq)) {
 		jq.val("");
@@ -702,11 +700,10 @@ function doMopidyCollectionOptions() {
 		spotify: [{dir: "Spotify Playlists", label: "Spotify Playlists"},
 				  {dir: "Spotify/Your music/Your tracks", label: "Spotify 'Your Tracks'"},
 				  {dir: "Spotify/Your music/Your albums", label: "Spotify 'Your Albums'"}],
-		// spotifyweb: [{dir: "Spotify Web Browse/Your Music/Albums", label: "Spotify 'Your Music'"},
-		// 			 {dir: "Spotify Web Browse/Your Artists", label: "Spotify 'Your Artists'"}],
 		gmusic: [{dir: "Google Music/Albums", label: "Google Music"}],
 		soundcloud: [{dir: "SoundCloud/Liked", label: "SoundCloud Liked"},
-					 {dir: "SoundCloud/Sets", label: "SoundCloud Sets"}],
+					 {dir: "SoundCloud/Sets", label: "SoundCloud Sets"},
+					 {dir: "SoundCloud/Stream", label: "SoundCloud Stream"}],
 		vkontakte: [{dir: "VKontakte", label: "VKontakte" }]
 	}
 

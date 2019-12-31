@@ -92,10 +92,6 @@ function playerController() {
 		// before the playlist has repopulated.
 		self.do_command_list([],self.ready);
 		startBackgroundInitTasks.doNextTask();
-		// if (!player.collectionLoaded) {
-		// 	debug.log("MPD", "Checking Collection");
-		// 	collectionHelper.checkCollection(false, false);
-		// }
 	}
 
 	this.initialise = function() {
