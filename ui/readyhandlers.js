@@ -97,9 +97,10 @@ var startBackgroundInitTasks = function() {
 		wrangleLastFM,
 		player.controller.initialise,
 		collectionHelper.checkCollection,
+		player.controller.reloadPlaylists,
 		autoDiscovembobulate,
-		cacheCleaner.start,
 		wranglePodcasts,
+		cacheCleaner.start,
 		wranglePlaycounts,
 		wrangleSpotify
 	];

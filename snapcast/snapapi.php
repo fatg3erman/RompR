@@ -67,5 +67,4 @@ $output = $server->do_command($json);
 logger::debug("SNAPCAST", "Output is",$output);
 header('Content-Type: application/json; charset=utf-8');
 print $output;
-$server->close_connection();
 ?>

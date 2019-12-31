@@ -113,7 +113,6 @@ function playerController() {
 		var t = "Connected to "+getCookie('currenthost')+" ("+prefs.player_backend.capitalize() +
 			" at " + player_ip + ")";
 		infobar.notify(t);
-		self.reloadPlaylists();
 	}
 
 	this.do_command_list = function(list, callback) {
@@ -212,13 +211,14 @@ function playerController() {
 			if (openplaylists.length > 0) {
 				infobar.markCurrentTrack();
 			}
-		});
-		$.get('player/mpd/loadplaylists.php?addtoplaylistmenu', function(data) {
-			$('#addtoplaylistmenu').empty();
-			data.forEach(function(p) {
-				var h = $('<div>', {class: "containerbox backhi clickicon menuitem clickaddtoplaylist", name: p.name }).appendTo($('#addtoplaylistmenu'));
-				h.append('<i class="fixed collectionicon icon-doc-text"></i>');
-				h.append('<div class="expand">'+p.html+'</div>');
+			$.get('player/mpd/loadplaylists.php?addtoplaylistmenu', function(data) {
+				$('#addtoplaylistmenu').empty();
+				data.forEach(function(p) {
+					var h = $('<div>', {class: "containerbox backhi clickicon menuitem clickaddtoplaylist", name: p.name }).appendTo($('#addtoplaylistmenu'));
+					h.append('<i class="fixed collectionicon icon-doc-text"></i>');
+					h.append('<div class="expand">'+p.html+'</div>');
+				});
+				startBackgroundInitTasks.doNextTask();
 			});
 		});
 	}

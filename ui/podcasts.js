@@ -434,7 +434,7 @@ var podcasts = function() {
 		doInitialRefresh: function() {
 			debug.log('PODCASTS', 'Setting initial refresh timer');
 			clearTimeout(refreshtimer);
-			refreshtimer = setTimeout(podcasts.checkRefresh, 30000);
+			refreshtimer = setTimeout(podcasts.checkRefresh, 15000);
 		},
 
 		search: function() {
