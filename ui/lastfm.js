@@ -37,23 +37,25 @@ function LastFM(user) {
 
 	uiLoginBind();
 
-	debug.mark('LASTFM', 'Doing the wrangling');
-	$.ajax({
-		method: 'GET',
-		url: 'includes/strings.php?getcheese=1',
-		dataType: 'json'
-	})
-	.done(function(data) {
-		debug.mark('LASTFM', 'Done the wrangling',data);
-		lak = data.k;
-		lfms = data.s;
-		if (prefs.sync_lastfm_at_start) {
-			syncLastFMPlaycounts.start();
-		}
-	})
-	.fail(function(xhr,status,err) {
-		debug.warn("LASTFM", "Big Setup Failure",xhr,status,err);
-	});
+	this.wrangle = function() {
+		debug.mark('LASTFM', 'Doing the wrangling');
+		$.ajax({
+			method: 'GET',
+			url: 'includes/strings.php?getcheese=1',
+			dataType: 'json'
+		})
+		.done(function(data) {
+			debug.mark('LASTFM', 'Done the wrangling',data);
+			lak = data.k;
+			lfms = data.s;
+			startBackgroundInitTasks.doNextTask();
+		})
+		.fail(function(xhr,status,err) {
+			debug.warn("LASTFM", "Big Setup Failure",xhr,status,err);
+			logged_in = false;
+			startBackgroundInitTasks.doNextTask();
+		});
+	}
 
 	function speedBackUp() {
 		throttleTime = 100;

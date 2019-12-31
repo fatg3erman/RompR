@@ -52,6 +52,67 @@ function closeMenus() {
 	$('.albumbitsmenu').remove();
 }
 
+var cacheCleaner = function() {
+
+	return {
+
+		start: function() {
+			debug.shout("INIT","Starting Backend Cache Clean");
+			collectionHelper.disableCollectionUpdates();
+			$.get('utils/cleancache.php', function() {
+				debug.shout("INIT","Cache Has Been Cleaned");
+				collectionHelper.enableCollectionUpdates();
+				setTimeout(cacheCleaner.start, 86400000);
+				startBackgroundInitTasks.doNextTask();
+			});
+		}
+
+	}
+
+}();
+
+function wrangleLastFM() {
+	lastfm.wrangle();
+}
+
+function wranglePodcasts() {
+	podcasts.doInitialRefresh();
+}
+
+function wranglePlaycounts() {
+	syncLastFMPlaycounts.start();
+}
+
+function wrangleSpotify() {
+	spotifyLinkChecker.initialise();
+}
+
+var startBackgroundInitTasks = function() {
+
+	var stufftodo = [
+		wrangleLastFM,
+		player.controller.initialise,
+		collectionHelper.checkCollection,
+		cacheCleaner.start,
+		wranglePodcasts,
+		wranglePlaycounts,
+		wrangleSpotify
+	];
+
+	return {
+
+		doNextTask: function() {
+			debug.blurt('INIT', 'Starting an init task');
+			var nexttask = stufftodo.shift();
+			if (typeof nexttask != 'undefined') {
+				nexttask.call();
+			}
+		}
+
+	}
+
+}();
+
 $(document).ready(function(){
 	debug.blurt("INIT","Document Ready Event has fired");
 	$('#albumpicture').on('load', albumImageLoaded);
@@ -63,7 +124,7 @@ $(document).ready(function(){
 	infobar.createProgressBar();
 	pluginManager.doEarlyInit();
 	createHelpLinks();
-	player.controller.initialise();
+	// player.controller.initialise();
 	layoutProcessor.initialise();
 	checkServerTimeOffset();
 	$('.combobox').makeTagMenu({textboxextraclass: 'searchterm cleargroup', textboxname: 'tag', populatefunction: tagAdder.populateTagMenu});
@@ -108,7 +169,7 @@ $(document).ready(function(){
 	if (prefs.browser_id == null) {
 		prefs.save({browser_id: Date.now()});
 	}
-	setTimeout(cleanBackendCache, 5000);
+	// setTimeout(cleanBackendCache, 5000);
 	if (prefs.auto_discovembobulate) {
 		setTimeout(autoDiscovembobulate , 1000);
 	}
@@ -124,33 +185,10 @@ $(document).ready(function(){
 		$('[name="donkeykong"]').remove();
 		$('[name="dinkeyking"]').remove();
 	}
-	spotifyLinkChecker.initialise();
+	// spotifyLinkChecker.initialise();
 	snapcast.updateStatus();
+	startBackgroundInitTasks.doNextTask();
 });
-
-function cleanBackendCache() {
-	if (player.updatingcollection || !player.collectionLoaded || player.collection_is_empty) {
-		debug.trace("INIT","Deferring cache clean because collection is not ready",
-						player.updatingcollection, player.collectionLoaded, player.collection_is_empty);
-		setTimeout(cleanBackendCache, 200000);
-	} else {
-		debug.shout("INIT","Starting Backend Cache Clean");
-		collectionHelper.disableCollectionUpdates();
-		// try {
-		// 	response = await fetch('utils/cleancache.php');
-		// } catch(err) {
-		// 	debug.error('INIT', 'await / fetch error');
-		// }
-		// debug.shout("INIT","Cache Has Been Cleaned");
-		// collectionHelper.enableCollectionUpdates();
-		// setTimeout(cleanBackendCache, 86400000)
-		$.get('utils/cleancache.php', function() {
-			debug.shout("INIT","Cache Has Been Cleaned");
-			collectionHelper.enableCollectionUpdates();
-			setTimeout(cleanBackendCache, 86400000)
-		});
-	}
-}
 
 function get_geo_country() {
 	if (prefs.country_userset == false) {

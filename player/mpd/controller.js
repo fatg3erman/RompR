@@ -91,13 +91,15 @@ function playerController() {
 		// Need to call this with a callback when we start up so that checkprogress doesn't get called
 		// before the playlist has repopulated.
 		self.do_command_list([],self.ready);
-		if (!player.collectionLoaded) {
-			debug.log("MPD", "Checking Collection");
-			collectionHelper.checkCollection(false, false);
-		}
+		startBackgroundInitTasks.doNextTask();
+		// if (!player.collectionLoaded) {
+		// 	debug.log("MPD", "Checking Collection");
+		// 	collectionHelper.checkCollection(false, false);
+		// }
 	}
 
 	this.initialise = function() {
+		debug.shout('PLAYER', 'Initialising');
 		$.ajax({
 			type: 'GET',
 			url: 'player/mpd/geturlhandlers.php',

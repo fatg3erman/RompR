@@ -915,6 +915,7 @@ var syncLastFMPlaycounts = function() {
 		start: function() {
 			if (!lastfm.isLoggedIn()) {
 				debug.log("LASTFMSYNC","Last.FM is not logged in");
+				startBackgroundInitTasks.doNextTask();
 				return;
 			}
 			debug.log("LASTFMSYNC","Getting recent tracks since ",prefs.last_lastfm_synctime);
@@ -951,7 +952,11 @@ var syncLastFMPlaycounts = function() {
 					currentdata = data.recenttracks.track;
 					currenttrack = -1;
 					syncLastFMPlaycounts.checkNextTrack();
+				} else {
+					startBackgroundInitTasks.doNextTask();
 				}
+			} else {
+				startBackgroundInitTasks.doNextTask();
 			}
 		},
 
@@ -966,6 +971,7 @@ var syncLastFMPlaycounts = function() {
 				} else {
 					removeNotify();
 					prefs.save({last_lastfm_synctime: Math.floor(Date.now()/1000)});
+					startBackgroundInitTasks.doNextTask();
 				}
 			}
 		},
@@ -973,6 +979,7 @@ var syncLastFMPlaycounts = function() {
 		failed: function(data) {
 			debug.error("LASTFMSYNC", "Failed", data);
 			removeNotify();
+			startBackgroundInitTasks.doNextTask();
 		}
 	}
 

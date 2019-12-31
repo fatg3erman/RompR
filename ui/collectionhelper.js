@@ -112,7 +112,7 @@ var collectionHelper = function() {
 			.done(function(data) {
 				debug.log('GENERAL','Collection Loaded');
 				$("#collection").html(data);
-				player.collectionLoaded = true;
+				// player.collectionLoaded = true;
 				if ($('#emptycollection').length > 0) {
 					player.collection_is_empty = true;
 					$('#collectionbuttons').show();
@@ -150,6 +150,13 @@ var collectionHelper = function() {
 		}
 	}
 
+	function check_init_tasks() {
+		if (!player.collectionLoaded) {
+			player.collectionLoaded = true;
+			startBackgroundInitTasks.doNextTask();
+		}
+	}
+
 	function loadAudiobooks() {
 		if (!prefs.hide_audiobooklist) {
 			$('#audiobooks').load(
@@ -176,6 +183,7 @@ var collectionHelper = function() {
 		// 		}
 		// 	);
 		// }
+		check_init_tasks();
 	}
 
 	function loadFileBrowser() {

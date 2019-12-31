@@ -399,6 +399,7 @@ var podcasts = function() {
 					window.addEventListener('online', podcasts.checkIfSomeoneElseHasUpdatedStuff);
 					onlineTriggerActivated = true;
 				}
+				startBackgroundInitTasks.doNextTask();
 			})
 			.fail(function(data,status,thing) {
 				debug.error("PODCASTS","Refresh Failed with status",data.status);
@@ -406,6 +407,7 @@ var podcasts = function() {
 					podcasts.doInitialRefresh();
 				} else {
 					infobar.error(language.gettext('error_refreshfail'));
+					startBackgroundInitTasks.doNextTask();
 				}
 			});
 		},
@@ -561,5 +563,5 @@ var podcasts = function() {
 $('#podcastsinput').on('drop', podcasts.handleDrop)
 menuOpeners['podcast'] = podcasts.loadPodcast;
 clickRegistry.addClickHandlers('podcast', podcasts.handleClick);
-podcasts.doInitialRefresh();
+// podcasts.doInitialRefresh();
 
