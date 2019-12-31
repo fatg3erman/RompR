@@ -394,7 +394,7 @@ function setChooserButtons() {
 			$(".choose_"+value).fadeIn('fast');
 		}
 	});
-	layoutProcessor.adjustLayout();
+	uiHelper.adjustLayout();
 }
 
 function parsePsetCss(item, dflt) {

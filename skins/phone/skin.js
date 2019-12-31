@@ -380,6 +380,9 @@ function showHistory() {
 
 var layoutProcessor = function() {
 
+	var oldwindowsize = {x: 0, y: 0};
+	var oldchooser = '';
+
 	function isLandscape() {
 		if (window.innerHeight > window.innerWidth) {
 			return false;
@@ -530,7 +533,7 @@ var layoutProcessor = function() {
 			}
 			$('#'+source).removeClass('invisible');
 			prefs.save({chooser: source});
-			layoutProcessor.adjustLayout();
+			uiHelper.adjustLayout();
 		},
 
 		adjustLayout: async function() {
@@ -541,11 +544,15 @@ var layoutProcessor = function() {
 			$("#loadsawrappers").css({height: mainheight+"px"});
 			var infoheight = $('#infobar').outerHeight(true) - $('#cssisshit').outerHeight(true);
 			$('#toomanywrappers').css({height: infoheight+"px"});
-			// Work around crappy iOS Safari bug where it updates width css before height
-			// and therefore doesn't get the album picture size right
-			$('#albumpicture').css('width', '0px');
-			await new Promise(r => setTimeout(r, 50));
-			$('#albumpicture').css('width', '');
+			if (oldwindowsize.y != ws.y || oldwindowsize.x != ws.x || prefs.chooser != oldchooser) {
+				// Work around crappy iOS Safari bug where it updates width css before height
+				// and therefore doesn't get the album picture size right
+				$('#albumpicture').css('width', '0px');
+				await new Promise(r => setTimeout(r, 1));
+				$('#albumpicture').css('width', '');
+			}
+			oldwindowsize = ws;
+			oldchooser = prefs.chooser;
 			layoutProcessor.setPlaylistHeight();
 			browser.rePoint();
 			$('.topdropmenu:visible').fanoogleTopMenus();

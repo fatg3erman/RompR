@@ -220,7 +220,7 @@ var layoutProcessor = function() {
 			}
 			$('#'+source).removeClass('invisible');
 			prefs.save({chooser: source});
-			layoutProcessor.adjustLayout();
+			uiHelper.adjustLayout();
 		},
 
 		adjustLayout: async function() {

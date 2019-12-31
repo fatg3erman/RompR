@@ -267,7 +267,7 @@ var infobar = function() {
 			aImg.onerror = function() {
 				debug.warn("ALBUMPICTURE","Image Failed To Load",$(this).attr("src"));
 				$('img[name="'+$(this).attr('name')+'"]').addClass("notfound");
-				$('#albumpicture').fadeOut('fast',layoutProcessor.adjustLayout);
+				$('#albumpicture').fadeOut('fast',uiHelper.adjustLayout);
 			}
 
 			return {
@@ -434,7 +434,6 @@ var infobar = function() {
 			debug.trace("INFOBAR","NPinfo",info);
 			if (playlistinfo.file) {
 				$('[name="'+rawurlencode(playlistinfo.file)+'"]').removeClass('playlistcurrentitem');
-				// $('[name="'+playlistinfo.file+'"]').removeClass('playlistcurrentitem');
 			}
 			playlistinfo = info;
 			infobar.markCurrentTrack();
@@ -482,7 +481,7 @@ var infobar = function() {
 				infobar.albumImage.setKey(info.ImgKey);
 			}
 			infobar.albumImage.setSource(info);
-			layoutProcessor.adjustLayout();
+			uiHelper.adjustLayout();
 		},
 
 		stopped: function() {

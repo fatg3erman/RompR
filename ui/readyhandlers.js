@@ -7,7 +7,7 @@ function rendered() {
 	debug.debug('ALBUMPICTURE', 'Rendered');
 	$('#albumpicture').fadeIn('fast');
 	$('#albumpicture').removeClass('clickicon').addClass('clickicon').off('click').on('click', infobar.albumImage.displayOriginalImage);
-	layoutProcessor.adjustLayout();
+	uiHelper.adjustLayout();
 }
 
 function startRender() {
@@ -91,6 +91,12 @@ function wrangleSpotify() {
 	spotifyLinkChecker.initialise();
 }
 
+function startUI() {
+	startBackgroundInitTasks.readytogo = true;
+	uiHelper.adjustLayout();
+	startBackgroundInitTasks.doNextTask();
+}
+
 var startBackgroundInitTasks = function() {
 
 	var stufftodo = [
@@ -98,6 +104,7 @@ var startBackgroundInitTasks = function() {
 		player.controller.initialise,
 		collectionHelper.checkCollection,
 		player.controller.reloadPlaylists,
+		startUI,
 		autoDiscovembobulate,
 		wranglePodcasts,
 		cacheCleaner.start,
@@ -106,6 +113,8 @@ var startBackgroundInitTasks = function() {
 	];
 
 	return {
+
+		readytogo: false,
 
 		doNextTask: function() {
 			debug.blurt('INIT', 'Starting an init task');
@@ -136,7 +145,6 @@ $(document).ready(function(){
 	browser.createButtons();
 	setPlayClickHandlers();
 	bindClickHandlers();
-	setChooserButtons();
 	player.defs.replacePlayerOptions();
 	// Checkbox and Radio buttons sadly can't be handled by delegated events
 	// because a lot of them are in floatingMenus, which are handled by jQueryUI
@@ -160,10 +168,11 @@ $(document).ready(function(){
 	showUpdateWindow();
 	window.addEventListener("storage", onStorageChanged, false);
 	bindPlaylistClicks();
-	$(window).on('resize', layoutProcessor.adjustLayout);
+	$(window).on('resize', uiHelper.adjustLayout);
 	pluginManager.setupPlugins();
 	setAvailableSearchOptions();
-	layoutProcessor.adjustLayout();
+	// Note - the next function also calls adjustLayout
+	setChooserButtons();
 	// Some debugging info, saved to the backend so we can see it
 	prefs.save({test_width: $(window).width(), test_height: $(window).height()});
 	coverscraper = new coverScraper(0, false, false, prefs.downloadart);

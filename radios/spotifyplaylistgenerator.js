@@ -17,7 +17,7 @@ var crazyRadioManager = function() {
 						'</div>'
 					);
 				}
-				layoutProcessor.adjustLayout();
+				uiHelper.adjustLayout();
 			}, 'json');
 		},
 

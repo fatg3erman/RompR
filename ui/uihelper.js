@@ -224,6 +224,12 @@ var uiHelper = function() {
 
 	return {
 
+		adjustLayout: function() {
+			if (startBackgroundInitTasks.readytogo) {
+				layoutProcessor.adjustLayout();
+			}
+		},
+
 		findAlbumDisplayer: function(key) {
 			try {
 				return layoutProcessor.findAlbumDisplayer(key);

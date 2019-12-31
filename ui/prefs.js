@@ -814,7 +814,7 @@ var prefs = function() {
 				charts.reloadAll();
 			}
 			if (typeof(layoutProcessor) != 'undefined') {
-				layoutProcessor.adjustLayout();
+				uiHelper.adjustLayout();
 			}
 			if (prefs.advanced_search_open) {
 				$("#advsearchoptions").show();

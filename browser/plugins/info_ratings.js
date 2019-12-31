@@ -64,7 +64,7 @@ var info_ratings = function() {
 						$("#dbtags").append('<span class="tag">'+trackmeta.usermeta.Tags[i]+
 							'<i class="icon-cancel-circled clickicon tagremover playlisticon" style="display:none"></i></span> ');
 					}
-					layoutProcessor.adjustLayout();
+					uiHelper.adjustLayout();
 				}
 				// Make sure the browser updates the file info display
 				browser.reDo(parent.nowplayingindex, 'file');
