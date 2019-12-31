@@ -857,6 +857,7 @@ img.jalopy200 {
 	#albumpicture {
 		width: 85%;
 		max-width: 60vh;
+		max-height:50vh;
 	}
 
 	#dbtags {
@@ -963,6 +964,7 @@ img.jalopy200 {
 	#albumpicture {
 		height: 100%;
 		width: auto;
+		max-width:60vw;
 		margin-right:8px;
 	}
 
@@ -1001,6 +1003,7 @@ img.jalopy200 {
 	#albumpicture {
 		height: 100%;
 		width: auto;
+		max-width:60vw;
 		margin-right:8px;
 	}
 
@@ -1076,6 +1079,7 @@ img.jalopy200 {
 	#albumpicture {
 		width: 85%;
 		max-width: 40vh;
+		max-height: 50vh;
 	}
 
 	#dbtags {
@@ -1086,6 +1090,13 @@ img.jalopy200 {
 
 	#stars {
 		float:left;
+	}
+}
+
+@media screen and (max-height: 480px) and (orientation: landscape) {
+
+	#albumpicture {
+		max-height: 40vh;
 	}
 }
 

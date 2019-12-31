@@ -112,14 +112,10 @@ var collectionHelper = function() {
 			.done(function(data) {
 				debug.log('GENERAL','Collection Loaded');
 				$("#collection").html(data);
-				// player.collectionLoaded = true;
 				if ($('#emptycollection').length > 0) {
-					player.collection_is_empty = true;
 					$('#collectionbuttons').show();
 					prefs.save({ collectioncontrolsvisible: true });
 					$('[name="donkeykong"]').makeFlasher({flashtime: 0.5, repeats: 3});
-				} else {
-					player.collection_is_empty = false;
 				}
 				data = null;
 				collectionHelper.scootTheAlbums($("#collection"));

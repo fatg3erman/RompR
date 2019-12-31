@@ -544,7 +544,7 @@ var layoutProcessor = function() {
 			// Work around crappy iOS Safari bug where it updates width css before height
 			// and therefore doesn't get the album picture size right
 			$('#albumpicture').css('width', '0px');
-			await new Promise(r => setTimeout(r, 100));
+			await new Promise(r => setTimeout(r, 50));
 			$('#albumpicture').css('width', '');
 			layoutProcessor.setPlaylistHeight();
 			browser.rePoint();

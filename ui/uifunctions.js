@@ -123,9 +123,10 @@ var pluginManager = function() {
 			for (var i in plugins) {
 				if (plugins[i].label == label) {
 					openPlugin(i);
-					return true;
+					break;
 				}
 			}
+			startBackgroundInitTasks.doNextTask();
 		}
 	}
 }();

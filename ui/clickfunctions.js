@@ -736,22 +736,6 @@ function selectRange(first, last) {
 	});
 }
 
-function checkServerTimeOffset() {
-	$.ajax({
-		type: "GET",
-		url: "utils/checkServerTime.php",
-		dataType: "json"
-	})
-	.done(function(data) {
-		var time = Math.round(Date.now() / 1000);
-		serverTimeOffset = time - data.time;
-		debug.log("TIMECHECK","Browser Time is",time,". Server Time is",data.time,". Difference is",serverTimeOffset);
-	})
-	.fail(function(data) {
-		debug.error("TIMECHECK","Failed to read server time");
-	});
-}
-
 function popupMenu(event, element) {
 
 	// Make the popup for the albumbits menu

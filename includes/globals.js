@@ -1,6 +1,5 @@
 var sources = new Array();
 var last_selected_element = null;
-var serverTimeOffset = 0;
 var resizeTimer = null;
 var menuOpeners = new Array();
 var menuClosers = new Array();

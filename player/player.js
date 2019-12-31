@@ -190,8 +190,6 @@ var player = function() {
 
 		updatingcollection: false,
 
-		collection_is_empty: true,
-
 		controller: new playerController(),
 
 		defs: new playerEditor(),

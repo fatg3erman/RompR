@@ -4,7 +4,7 @@ var podcasts = function() {
 	var downloadRunning = false;
 	var refreshtimer;
 	var onlineTriggerActivated = false;
-	var newcounts = {}
+	var newcounts = {};
 
 	function checkDownloadQueue() {
 		if (downloadRunning == false) {

@@ -21,7 +21,11 @@ function albumImageLoaded() {
 }
 
 function autoDiscovembobulate() {
-	pluginManager.autoOpen(language.gettext('button_infoyou'));
+	if (prefs.auto_discovembobulate) {
+		pluginManager.autoOpen(language.gettext('button_infoyou'));
+	} else {
+		startBackgroundInitTasks.doNextTask();
+	}
 }
 
 function inputFIleChanged() {
@@ -93,6 +97,7 @@ var startBackgroundInitTasks = function() {
 		wrangleLastFM,
 		player.controller.initialise,
 		collectionHelper.checkCollection,
+		autoDiscovembobulate,
 		cacheCleaner.start,
 		wranglePodcasts,
 		wranglePlaycounts,
@@ -124,9 +129,7 @@ $(document).ready(function(){
 	infobar.createProgressBar();
 	pluginManager.doEarlyInit();
 	createHelpLinks();
-	// player.controller.initialise();
 	layoutProcessor.initialise();
-	checkServerTimeOffset();
 	$('.combobox').makeTagMenu({textboxextraclass: 'searchterm cleargroup', textboxname: 'tag', populatefunction: tagAdder.populateTagMenu});
 	$('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add, placeholder: language.gettext('lastfm_addtagslabel')});
 	browser.createButtons();
@@ -169,10 +172,6 @@ $(document).ready(function(){
 	if (prefs.browser_id == null) {
 		prefs.save({browser_id: Date.now()});
 	}
-	// setTimeout(cleanBackendCache, 5000);
-	if (prefs.auto_discovembobulate) {
-		setTimeout(autoDiscovembobulate , 1000);
-	}
 	$(document).on('click', '.clearbox.enter', makeClearWork);
 	$(document).on('keyup', '.enter', onKeyUp);
 	$(document).on('change', '.inputfile', inputFIleChanged);
@@ -185,7 +184,6 @@ $(document).ready(function(){
 		$('[name="donkeykong"]').remove();
 		$('[name="dinkeyking"]').remove();
 	}
-	// spotifyLinkChecker.initialise();
 	snapcast.updateStatus();
 	startBackgroundInitTasks.doNextTask();
 });
