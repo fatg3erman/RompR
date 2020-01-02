@@ -24,7 +24,7 @@ class snapcast {
 			return true;
 		}
 		logger::trace("SNAPCAST", "Connecting to ".$this->ip.':'.$this->port);
-		$this->connection = @stream_socket_client('tcp://'.$this->ip.':'.$this->port);
+		$this->connection = @stream_socket_client('tcp://'.$this->ip.':'.$this->port, $error, $errstr, 10);
 		if ($this->is_connected()) {
 			stream_set_timeout($this->connection, 65535);
 			stream_set_blocking($this->connection, true);

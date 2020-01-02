@@ -16,10 +16,7 @@ var collectionHelper = function() {
 		uiHelper.prepareCollectionUpdate();
 		debug.log("PLAYER","Scanning Files",cmd,prefs.player_backend);
 		debug.shout("PLAYER","Scanning using",cmd);
-		player.controller.do_command_list([[cmd]], function() {
-			update_load_timer = setTimeout( pollAlbumList, 2000);
-			player.controller.checkProgress();
-		});
+		player.controller.do_command_list([[cmd]]).then(pollAlbumList);
 	}
 
 	function pollAlbumList() {

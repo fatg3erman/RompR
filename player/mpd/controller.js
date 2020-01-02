@@ -115,57 +115,90 @@ function playerController() {
 		infobar.notify(t);
 	}
 
-	this.do_command_list = function(list, callback) {
+	this.do_command_list = async function(list, callback) {
 		// Note, if you call this with a callback, your callback MUST call player.controller.checkProgress
 		debug.debug('PLAYER', 'Command List',list);
-		$.ajax({
-			type: 'POST',
-			url: 'player/mpd/postcommand.php',
-			data: JSON.stringify(list),
-			// contentType of false prevents jQuery from re-encoding our data, where it
-			// converts %20 to +, which seems to be a bug in jQuery 3.0
-			contentType: false,
-			dataType: 'json',
-			timeout: 30000
-		})
-		.done(function(data) {
-			if (data) {
-				debug.debug("PLAYER",data);
-				if (data.state) {
-					// Clone the object so as not to leave this closure in memory
-					player.status = cloneObject(data);
-					['radiomode', 'radioparam', 'radiomaster', 'radioconsume'].forEach(function(e) {
-						prefs[e] = player.status[e];
-					});
-					if (player.status.playlist !== plversion) {
-						debug.blurt("PLAYER","Player has marked playlist as changed");
-						plversion = player.status.playlist;
-						playlist.repopulate();
-					}
-					infobar.setStartTime(player.status.elapsed);
-					checkStateChange();
-				}
+		try {
+			player.status = await $.ajax({
+				type: 'POST',
+				url: 'player/mpd/postcommand.php',
+				data: JSON.stringify(list),
+				contentType: false,
+				dataType: 'json',
+				timeout: 30000
+			});
+			['radiomode', 'radioparam', 'radiomaster', 'radioconsume'].forEach(function(e) {
+				prefs[e] = player.status[e];
+			});
+			if (player.status.playlist !== plversion) {
+				debug.blurt("PLAYER","Player has marked playlist as changed");
+				plversion = player.status.playlist;
+				playlist.repopulate();
 			}
-		})
-		.fail(function(jqXHR, textStatus, errorThrown) {
-			debug.error("MPD","Command List Failed",list,textStatus,errorThrown);
+			infobar.setStartTime(player.status.elapsed);
+			checkStateChange();
+		} catch (err) {
+			debug.error('CONTROLLER', 'Command List Failed', err);
 			if (list.length > 0) {
 				infobar.error(language.gettext('error_sendingcommands', [prefs.player_backend]));
 			}
-		})
-		.always(function() {
-			post_command_list(callback);
-		});
-	}
-
-	function post_command_list(callback) {
+		}
 		if (callback) {
 			callback();
 		} else {
 		   self.checkProgress();
 		}
 		infobar.updateWindowValues();
+
+
+		// $.ajax({
+		// 	type: 'POST',
+		// 	url: 'player/mpd/postcommand.php',
+		// 	data: JSON.stringify(list),
+		// 	// contentType of false prevents jQuery from re-encoding our data, where it
+		// 	// converts %20 to +, which seems to be a bug in jQuery 3.0
+		// 	contentType: false,
+		// 	dataType: 'json',
+		// 	timeout: 30000
+		// })
+		// .done(function(data) {
+		// 	if (data) {
+		// 		debug.debug("PLAYER",data);
+		// 		if (data.state) {
+		// 			// Clone the object so as not to leave this closure in memory
+		// 			player.status = cloneObject(data);
+		// 			['radiomode', 'radioparam', 'radiomaster', 'radioconsume'].forEach(function(e) {
+		// 				prefs[e] = player.status[e];
+		// 			});
+		// 			if (player.status.playlist !== plversion) {
+		// 				debug.blurt("PLAYER","Player has marked playlist as changed");
+		// 				plversion = player.status.playlist;
+		// 				playlist.repopulate();
+		// 			}
+		// 			infobar.setStartTime(player.status.elapsed);
+		// 			checkStateChange();
+		// 		}
+		// 	}
+		// })
+		// .fail(function(jqXHR, textStatus, errorThrown) {
+		// 	debug.error("MPD","Command List Failed",list,textStatus,errorThrown);
+		// 	if (list.length > 0) {
+		// 		infobar.error(language.gettext('error_sendingcommands', [prefs.player_backend]));
+		// 	}
+		// })
+		// .always(function() {
+		// 	post_command_list(callback);
+		// });
 	}
+
+	// function post_command_list(callback) {
+	// 	if (callback) {
+	// 		callback();
+	// 	} else {
+	// 	   self.checkProgress();
+	// 	}
+	// 	infobar.updateWindowValues();
+	// }
 
 	this.isConnected = function() {
 		return true;
@@ -252,10 +285,7 @@ function playerController() {
 	}
 
 	this.deletePlaylist = function(name) {
-		self.do_command_list([['rm',decodeURIComponent(name)]], function() {
-			self.reloadPlaylists();
-			self.checkProgress();
-		});
+		self.do_command_list([['rm',decodeURIComponent(name)]]).then(self.reloadPlaylists);
 	}
 
 	this.deleteUserPlaylist = function(name) {
@@ -296,12 +326,7 @@ function playerController() {
 	}
 
 	this.doRenamePlaylist = function() {
-		self.do_command_list([["rename", oldplname, $("#newplname").val()]],
-			function() {
-				self.reloadPlaylists();
-				self.checkProgress();
-			}
-		);
+		self.do_command_list([["rename", oldplname, $("#newplname").val()]]).then(self.reloadPlaylists);
 		return true;
 	}
 
@@ -325,17 +350,18 @@ function playerController() {
 		return true;
 	}
 
-	this.deletePlaylistTrack = function(name,songpos, callback) {
-		debug.log('PLAYER', 'Deleting track',songpos,'from playlist',name);
-		self.do_command_list([['playlistdelete',decodeURIComponent(name),songpos]], function() {
-			self.checkProgress();
-			if (callback) callback(name);
-		});
+	this.deletePlaylistTrack = function(playlist,songpos) {
+		debug.log('PLAYER', 'Deleting track',songpos,'from playlist',playlist);
+		self.do_command_list([['playlistdelete',decodeURIComponent(playlist),songpos]]).then(
+			function() {
+				playlistManager.loadPlaylistIntoTarget(playlist);
+			}
+		);
 	}
 
-	this.clearPlaylist = function(callback) {
+	this.clearPlaylist = function() {
 		// Mopidy does not like removing tracks while they're playing
-		self.do_command_list([['stop'], ['clear']], callback);
+		self.do_command_list([['stop'], ['clear']]);
 	}
 
 	this.savePlaylist = function() {
@@ -355,19 +381,19 @@ function playerController() {
 		}
 	}
 
-	this.getPlaylist = function(reqid) {
-		debug.log("PLAYER","Getting playlist using mpd connection");
-		$.ajax({
-			type: "GET",
-			url: "getplaylist.php",
-			cache: false,
-			dataType: "json"
-		})
-		.done(function(data) {
-			playlist.newXSPF(reqid, data);
-		})
-		.fail(playlist.updateFailure);
-	}
+	// this.getPlaylist = function(reqid) {
+	// 	debug.log("PLAYER","Getting playlist using mpd connection");
+	// 	$.ajax({
+	// 		type: "GET",
+	// 		url: "getplaylist.php",
+	// 		cache: false,
+	// 		dataType: "json"
+	// 	})
+	// 	.done(function(data) {
+	// 		playlist.gotPlaylist(reqid, data);
+	// 	})
+	// 	.fail(playlist.updateFailure);
+	// }
 
 	this.play = function() {
 		self.do_command_list([['play']]);
@@ -423,10 +449,7 @@ function playerController() {
 	this.toggleRandom = function() {
 		debug.log('PLAYER', 'Toggling Random');
 		var new_value = (player.status.random == 0) ? 1 : 0;
-		self.do_command_list([["random",new_value]], function() {
-			playlist.doUpcomingCrap();
-			self.checkProgress();
-		});
+		self.do_command_list([["random",new_value]]).then(playlist.doUpcomingCrap);
 	}
 
 	this.toggleCrossfade = function() {
@@ -762,17 +785,7 @@ function playerController() {
 
 	this.checkchange = function() {
 		clearProgressTimer();
-		// Update the status to see if the track has changed
-		if (playlist.getCurrent('type') == "stream") {
-			self.do_command_list([], self.checkStream);
-		} else {
-			self.do_command_list([], null);
-		}
-	}
-
-	this.checkStream = function() {
-		updateStreamInfo();
-		self.checkProgress();
+		self.do_command_list([]).then(updateStreamInfo);
 	}
 
 	this.onStop = function() {
@@ -786,7 +799,7 @@ function playerController() {
 		self.do_command_list([["replay_gain_mode",x]]);
 	}
 
-	this.addTracksToPlaylist = function(playlist,tracks,moveto,playlistlength,callback) {
+	this.addTracksToPlaylist = function(playlist,tracks,moveto,playlistlength) {
 		debug.log('PLAYER','Tracks is',tracks);
 		debug.log("PLAYER","Adding tracks to playlist",playlist,"then moving to",moveto,"playlist length is",playlistlength);
 		var cmds = new Array();
@@ -800,20 +813,22 @@ function playerController() {
 					moveto,playlistlength]);
 			}
 		}
-		self.do_command_list(cmds,function() {
-			player.controller.checkProgress();
-			if (callback) callback(playlist);
-		});
+		self.do_command_list(cmds).then(
+			function() {
+				playlistManager.loadPlaylistIntoTarget(playlist);
+			}
+		);
 	}
 
-	this.movePlaylistTracks = function(playlist,from,to,callback) {
+	this.movePlaylistTracks = function(playlist,from,to) {
 		debug.log('CONTROLLER', 'Playlist Move',playlist,from, to);
 		var cmds = new Array();
 		cmds.push(['playlistmove',decodeURIComponent(playlist),from,to]);
-		self.do_command_list(cmds,function() {
-			player.controller.checkProgress();
-			if (callback) callback(playlist);
-		});
+		self.do_command_list(cmds).then(
+			function() {
+				playlistManager.loadPlaylistIntoTarget(playlist);
+			}
+		);
 	}
 
 }

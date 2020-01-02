@@ -178,7 +178,7 @@ var info_file = function() {
 						self.updateBeetsInformation(m[2]);
 					} else {
 						setTimeout(function() {
-							player.controller.do_command_list([], self.updateFileInformation)
+							player.controller.do_command_list([]).then(self.updateFileInformation);
 						}, 1000);
 					}
 				} else {
@@ -190,7 +190,6 @@ var info_file = function() {
 				trackmeta.fileinfo = {beets: null, player: cloneObject(player.status)};
 				debug.log("FILE PLUGIN","Doing update from",trackmeta);
 				trackmeta.lyrics = null;
-				player.controller.checkProgress();
 				self.doBrowserUpdate();
 			}
 

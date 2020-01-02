@@ -545,7 +545,7 @@ var layoutProcessor = function() {
 			var infoheight = $('#infobar').outerHeight(true) - $('#cssisshit').outerHeight(true);
 			$('#toomanywrappers').css({height: infoheight+"px"});
 			if (oldwindowsize.y != ws.y || oldwindowsize.x != ws.x || prefs.chooser != oldchooser) {
-				// Work around crappy iOS Safari bug where it updates width css before height
+				// Work around iOS Safari bug where it updates width css before height
 				// and therefore doesn't get the album picture size right
 				$('#albumpicture').css('width', '0px');
 				await new Promise(r => setTimeout(r, 1));

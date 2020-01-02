@@ -47,7 +47,7 @@ var snapcast = function() {
 		},
 
 		gotStatus: function(data) {
-			debug.trace("SNAPCAST", "Server Status", data);
+			debug.debug("SNAPCAST", "Server Status", data);
 			if (data.hasOwnProperty('error') && lastid != id) {
 				if (ew === null) {
 					ew = $('<div>', {class: "fullwidth textcentre", style: "padding:4px"}).insertBefore('#snapcastgroups');
@@ -72,7 +72,7 @@ var snapcast = function() {
 						g.initialise();
 						g.update(i, data.result.server.groups[i]);
 					} else {
-						debug.trace('SNAPCAST','Updating group',data.result.server.groups[i].id);
+						debug.debug('SNAPCAST','Updating group',data.result.server.groups[i].id);
 						newgroups.push(groups[group_exists]);
 						groups[group_exists].update(i, data.result.server.groups[i]);
 					}
@@ -282,7 +282,7 @@ function snapcastGroup() {
 				g.initialise(holder);
 				g.update(id, data.clients[i]);
 			} else {
-				debug.trace('SNAPCAST','Updating client',data.clients[i].id);
+				debug.debug('SNAPCAST','Updating client',data.clients[i].id);
 				newclients.push(clients[client_exists]);
 				clients[client_exists].update(id, data.clients[i]);
 			}

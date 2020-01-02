@@ -1079,3 +1079,19 @@ var spotifyLinkChecker = function() {
 	}
 
 }();
+
+async function promiseTest() {
+	debug.shout('PROMISE', 'Doing it now');
+	try {
+		var r = await $.ajax({
+				type: 'GET',
+				url: 'player/mpd/geturlhandlers.php',
+				dataType: 'json'
+			});
+	} catch (err) {
+		// We get a jdXHR with status = 500 and statusText = 'Internal Server Error'
+		debug.error('PROMISE', 'There was an error', err);
+	}
+	debug.shout('PROMISE', 'Done it', r);
+
+}

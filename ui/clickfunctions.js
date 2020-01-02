@@ -419,8 +419,7 @@ var playlistManager = function() {
 				plname,
 				tracks,
 				null,
-				0,
-				playlistManager.loadPlaylistIntoTarget
+				0
 			);
 		},
 
@@ -459,7 +458,7 @@ var playlistManager = function() {
 			var playlistlength = (nextitem == null) ? 0 : ui.parent().find('.playlisttrack').length;
 			if (tracks.length > 0) {
 				debug.log("PLAYLISTMANAGER","Dragged to position",nextitem,'length',playlistlength);
-				player.controller.addTracksToPlaylist(which_playlist,tracks,nextitem,playlistlength,playlistManager.loadPlaylistIntoTarget);
+				player.controller.addTracksToPlaylist(which_playlist,tracks,nextitem,playlistlength);
 			}
 		},
 
@@ -496,14 +495,13 @@ var playlistManager = function() {
 			player.controller.movePlaylistTracks(
 				playlist_name,
 				from,
-				to,
-				playlistManager.loadPlaylistIntoTarget
+				to
 			);
 		},
 
 		deletePlaylistTrack(element, name, songpos) {
 			element.makeSpinner();
-			player.controller.deletePlaylistTrack(name, songpos, playlistManager.loadPlaylistIntoTarget);
+			player.controller.deletePlaylistTrack(name, songpos);
 		}
 	}
 }();

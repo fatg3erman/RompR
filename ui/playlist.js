@@ -7,8 +7,10 @@ var playlist = function() {
 	var pscrolltimer = null;
 	var pageloading = true;
 	var lookforcurrenttrack = false;
-	var reqid = 0;
-	var last_reqid = 0;
+	var update_queue = -1;
+	var current_queue_request = 0;
+	var playlist_valid = false;
+
 	var update_error = false;
 	var retrytimer;
 	var popmovetimer = null;
@@ -115,7 +117,7 @@ var playlist = function() {
 				prefs.save({radiomaster: prefs.browser_id});
 			}
 			debug.log("RADIO MANAGER","Repopulate Check : Final Track :",playlist.getfinaltrack()+1,"Fromend :",fromend,"Chunksize :",prefs.smartradio_chunksize,"Mode :",mode);
-			if (reqid == last_reqid && mode && prefs.radiomaster == prefs.browser_id) {
+			if (playlist_valid && mode && prefs.radiomaster == prefs.browser_id) {
 				// Don't do anything if we're waiting on playlist updates
 				if (fromend < prefs.smartradio_chunksize) {
 					debug.shout("RADIO MANAGER","Repopulating");
@@ -264,49 +266,61 @@ var playlist = function() {
 
 		radioManager: new personalRadioManager(),
 
-		repopulate: function() {
-			if (last_reqid == reqid) {
-				debug.shout("PLAYLIST","Repopulating....");
-				reqid++;
-				player.controller.getPlaylist(reqid);
-				coverscraper.clearCallbacks();
-			} else {
-				debug.log("PLAYLIST","Deferring repopulate request");
-				reqid++;
-				clearTimeout(retrytimer);
-				retrytimer = setTimeout(playlist.repopulate, 500);
-			}
-		},
+		repopulate: async function() {
 
-		updateFailure: function(jqxhr, response, error) {
-			debug.error("PLAYLIST","Got notified that an update FAILED",error,response,jqxhr);
-			if (update_error === false) {
-				update_error = infobar.permerror(language.gettext("label_playlisterror"));
-			}
-			clearTimeout(retrytimer);
-			last_reqid = reqid;
-			retrytimer = setTimeout(playlist.repopulate, 2000);
-		},
-
-		newXSPF: async function(request_id, list) {
 			var count = -1;
 			var current_album = "";
 			var current_artist = "";
 			var current_type = "";
 
-			if (request_id != reqid) {
-				debug.mark("PLAYLIST","Response from player does not match current request ID");
-				last_reqid = reqid;
-				return 0;
+			update_queue++;
+			var my_queue_id = update_queue;
+			playlist_valid = false;
+
+			while (my_queue_id > current_queue_request) {
+				debug.mark('PLAYLIST', 'Waiting for outstanding requests to finish');
+				await new Promise(r => setTimeout(r, 500));
+			}
+			if (my_queue_id < update_queue) {
+				debug.mark('PLAYLIST', 'Aborting request',my_queue_id);
+				current_queue_request++;
+				return false;
 			}
 
-			last_reqid = reqid;
+			debug.log('PLAYLIST', 'Starting update request',my_queue_id);
+			coverscraper.clearCallbacks();
+			try {
+				var list = await $.ajax({
+					type: "GET",
+					url: "getplaylist.php",
+					cache: false,
+					dataType: "json"
+				});
+			} catch (err) {
+				current_queue_request++;
+				debug.error("PLAYLIST","Got notified that an update FAILED");
+				if (update_error === false) {
+					update_error = infobar.permerror(language.gettext("label_playlisterror"));
+				}
+				clearTimeout(retrytimer);
+				retrytimer = setTimeout(playlist.repopulate, 2000);
+				return false;
+			}
+
+			if (update_queue != my_queue_id) {
+				debug.mark("PLAYLIST","Response",my_queue_id,"from player does not match current request ID",update_queue);
+				current_queue_request++;
+				return false;
+			}
+
+			am_waiting = false;
 
 			if (update_error !== false) {
 				infobar.removenotify(update_error);
 				update_error = false;
 			}
-			debug.log("PLAYLIST","Got Playlist from backend",list);
+
+			debug.log("PLAYLIST","Got Playlist from backend for request",my_queue_id);
 			finaltrack = -1;
 			currentalbum = -1;
 			tracklist = [];
@@ -360,7 +374,6 @@ var playlist = function() {
 					currentTrack.Pos = list[i].Pos;
 				}
 				finaltrack = parseInt(list[i].Pos);
-
 			}
 
 			// After all that, which will have taken a finite time - which could be a long time on
@@ -368,10 +381,12 @@ var playlist = function() {
 			// before we put all this stuff into the window. (More might have come in while we were organising this one)
 			// This might all seem like a faff, but you do not want stuff you've just removed
 			// suddenly re-appearing in front of your eyes and then vanishing again. It looks crap.
-			if (request_id != reqid) {
-				debug.mark("PLAYLIST","Response from player does match current request ID after processing");
-				return 0;
+			if (update_queue != my_queue_id) {
+				debug.mark("PLAYLIST","Response",my_reqid,"from player does match current request ID after processing",current_reqid);
+				current_queue_request++;
+				return false;
 			}
+			playlist_valid = true;
 
 			$("#sortable").empty();
 			for (var i in tracklist) {
@@ -396,8 +411,9 @@ var playlist = function() {
 				playlist.doUpcomingCrap();
 			}
 			player.controller.postLoadActions();
-			playlist.radioManager.repopulate();
 			uiHelper.postPlaylistLoad();
+			current_queue_request++;
+			playlist.radioManager.repopulate();
 		},
 
 		doUpcomingCrap: function() {
@@ -685,7 +701,7 @@ var playlist = function() {
 		},
 
 		trackHasChanged: function(backendid) {
-			if (reqid != last_reqid) {
+			if (!playlist_valid) {
 				debug.log("PLAYLIST","Deferring looking for current track - there is an ongoing update");
 				lookforcurrenttrack = backendid;
 				return;
