@@ -19,7 +19,7 @@ var infobar = function() {
 			if (lastfm.isLoggedIn()) {
 				if (playlistinfo.Title != "" && playlistinfo.trackartist != "") {
 					var options = {
-						timestamp: parseInt(starttime.toString()),
+						timestamp: starttime,
 						track: playlistinfo.Title,
 						artist: playlistinfo.trackartist,
 						album: playlistinfo.Album
@@ -439,6 +439,7 @@ var infobar = function() {
 			infobar.markCurrentTrack();
 			lfminfo = {};
 			scrobbled = false;
+			starttime = Math.floor(Date.now()/1000);
 			nowplaying_updated = false;
 			$("#progress").rangechooser("setOptions", {range: info.Time})
 			setTheText(info);
@@ -495,10 +496,6 @@ var infobar = function() {
 				setTheText(info);
 			}
 			infobar.albumImage.setSecondarySource(info);
-		},
-
-		setStartTime: function(elapsed) {
-			starttime = (Date.now())/1000 - parseFloat(elapsed);
 		},
 
 		progress: function() {

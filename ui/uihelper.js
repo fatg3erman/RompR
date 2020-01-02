@@ -571,6 +571,14 @@ var uiHelper = function() {
 			} catch (err) {
 
 			}
+		},
+
+		playlistUpdate: function() {
+			try {
+				return layoutProcessor.playlistUpdate();
+			} catch (err) {
+
+			}
 		}
 
 	}

@@ -185,13 +185,11 @@ var player = function() {
 		},
 
 		urischemes: new Object(),
-
 		collectionLoaded: false,
-
 		updatingcollection: false,
+		ready: false,
 
 		controller: new playerController(),
-
 		defs: new playerEditor(),
 
 		canPlay: function(urischeme) {

@@ -498,10 +498,6 @@ var layoutProcessor = function() {
 			}
 		},
 
-		playlistupdate: function(upcoming) {
-
-		},
-
 		addCustomScrollBar: function(value) {
 
 		},

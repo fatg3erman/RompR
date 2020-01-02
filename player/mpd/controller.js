@@ -1,13 +1,9 @@
 function playerController() {
 
 	var self = this;
-	var updatetimer = null;
-	var progresstimer = null;
-	var safetytimer = 500;
-	var previoussongid = -1;
-	var AlanPartridge = 0;
 	var plversion = null;
 	var oldplname;
+	var trackstarttime = 0;
 	var thenowplayinghack = false;
 	var lastsearchcmd = "search";
 	var stateChangeCallbacks = new Array();
@@ -71,52 +67,39 @@ function playerController() {
 		}
 	}
 
-	function setTheClock(callback, timeout) {
-		clearProgressTimer();
-		progresstimer = setTimeout(callback, timeout);
-	}
-
-	function initialised(data) {
-		for(var i =0; i < data.length; i++) {
-			var h = data[i].replace(/\:\/\/$/,'');
-			debug.log("PLAYER","URL Handler : ",h);
-			player.urischemes[h] = true;
-		}
-		if (!player.canPlay('spotify')) {
-			$('div.textcentre.textunderline:contains("Music From Spotify")').remove();
-		}
-		checkSearchDomains();
-		doMopidyCollectionOptions();
-		playlist.radioManager.init();
-		// Need to call this with a callback when we start up so that checkprogress doesn't get called
-		// before the playlist has repopulated.
-		self.do_command_list([],self.ready);
-		startBackgroundInitTasks.doNextTask();
-	}
-
-	this.initialise = function() {
+	this.initialise = async function() {
 		debug.shout('PLAYER', 'Initialising');
-		$.ajax({
-			type: 'GET',
-			url: 'player/mpd/geturlhandlers.php',
-			dataType: 'json'
-		})
-		.done(initialised)
-		.fail(function(data) {
-			debug.error("MPD","Failed to get URL Handlers",data);
-			infobar.permerror(language.gettext('error_noplayer'));
-		});
+		try {
+			var urischemes = await $.ajax({
+				type: 'GET',
+				url: 'player/mpd/geturlhandlers.php',
+				dataType: 'json'
+			});
+			for (var i in urischemes) {
+				var h = urischemes[i].replace(/\:\/\/$/,'');
+				debug.log("PLAYER","URI Handler : ",h);
+				player.urischemes[h] = true;
+			}
+			if (!player.canPlay('spotify')) {
+				$('div.textcentre.textunderline:contains("Music From Spotify")').remove();
+			}
+			checkSearchDomains();
+			doMopidyCollectionOptions();
+			playlist.radioManager.init();
+			self.do_command_list([]);
+			debug.mark("MPD","Player is ready");
+			infobar.notify(
+				"Connected to "+getCookie('currenthost')+" ("
+				+prefs.player_backend.capitalize()
+				+" at " + player_ip + ")"
+			);
+		} catch(err) {
+			debug.error("MPD","Failed to get URL Handlers",err);
+			infobar.permerror(language.gettext('error_noplayer'));			
+		}
 	}
 
-	this.ready = function() {
-		debug.mark("MPD","Player is ready");
-		var t = "Connected to "+getCookie('currenthost')+" ("+prefs.player_backend.capitalize() +
-			" at " + player_ip + ")";
-		infobar.notify(t);
-	}
-
-	this.do_command_list = async function(list, callback) {
-		// Note, if you call this with a callback, your callback MUST call player.controller.checkProgress
+	this.do_command_list = async function(list) {
 		debug.debug('PLAYER', 'Command List',list);
 		try {
 			player.status = await $.ajax({
@@ -130,12 +113,12 @@ function playerController() {
 			['radiomode', 'radioparam', 'radiomaster', 'radioconsume'].forEach(function(e) {
 				prefs[e] = player.status[e];
 			});
+			trackstarttime = (Date.now()/1000) - player.status.elapsed;
 			if (player.status.playlist !== plversion) {
 				debug.blurt("PLAYER","Player has marked playlist as changed");
 				plversion = player.status.playlist;
-				playlist.repopulate();
+				playlist.repopulate().then(self.checkProgress);
 			}
-			infobar.setStartTime(player.status.elapsed);
 			checkStateChange();
 		} catch (err) {
 			debug.error('CONTROLLER', 'Command List Failed', err);
@@ -143,17 +126,7 @@ function playerController() {
 				infobar.error(language.gettext('error_sendingcommands', [prefs.player_backend]));
 			}
 		}
-		if (callback) {
-			callback();
-		} else {
-		   self.checkProgress();
-		}
 		infobar.updateWindowValues();
-
-	}
-
-	this.isConnected = function() {
-		return true;
 	}
 
 	this.addStateChangeCallback = function(sc) {
@@ -324,28 +297,13 @@ function playerController() {
 		} else if (name.indexOf("/") >= 0 || name.indexOf("\\") >= 0) {
 			infobar.error(language.gettext("error_playlistname"));
 		} else {
-			self.do_command_list([["save", name]], function() {
+			self.do_command_list([["save", name]]).then(function() {
 				self.reloadPlaylists();
 				infobar.notify(language.gettext("label_savedpl", [name]));
 				$("#plsaver").slideToggle('fast');
-				self.checkProgress();
 			});
 		}
 	}
-
-	// this.getPlaylist = function(reqid) {
-	// 	debug.log("PLAYER","Getting playlist using mpd connection");
-	// 	$.ajax({
-	// 		type: "GET",
-	// 		url: "getplaylist.php",
-	// 		cache: false,
-	// 		dataType: "json"
-	// 	})
-	// 	.done(function(data) {
-	// 		playlist.gotPlaylist(reqid, data);
-	// 	})
-	// 	.fail(playlist.updateFailure);
-	// }
 
 	this.play = function() {
 		self.do_command_list([['play']]);
@@ -357,7 +315,7 @@ function playerController() {
 
 	this.stop = function() {
 		playlist.checkPodcastProgress();
-		self.do_command_list([["stop"]], self.onStop);
+		self.do_command_list([["stop"]]);
 	}
 
 	this.next = function() {
@@ -386,7 +344,11 @@ function playerController() {
 	}
 
 	this.volume = function(volume, callback) {
-		self.do_command_list([["setvol",parseInt(volume.toString())]], callback);
+		self.do_command_list([["setvol",parseInt(volume.toString())]]).then(function() {
+			if (callback) {
+				callback();
+			}
+		});
 		return true;
 	}
 
@@ -679,7 +641,6 @@ function playerController() {
 	}
 
 	this.postLoadActions = function() {
-		self.checkProgress();
 		if (thenowplayinghack) {
 			// The Now PLaying Hack is so that when we switch the option for
 			// 'display composer/performer in nowplaying', we can first reload the
@@ -697,52 +658,38 @@ function playerController() {
 		playlist.repopulate();
 	}
 
-	function clearProgressTimer() {
-		clearTimeout(progresstimer);
-	}
-
-	this.checkProgress = function() {
-		clearProgressTimer();
-		// Track changes are detected based on the playlist id. This prevents us from repopulating
-		// the browser every time the playlist gets repopulated.
-		if (player.status.songid !== previoussongid) {
-			debug.mark("MPD","Track has changed");
-			playlist.trackHasChanged(player.status.songid);
-			previoussongid = player.status.songid;
-			safetytimer = 500;
-		}
-
-		var progress = infobar.progress();
-		playlist.setCurrent({progress: progress});
-		var duration = playlist.getCurrent('Time') || 0;
-		infobar.setProgress(progress,duration);
-
-		if (player.status.state == "play") {
-			if (duration > 0 && progress >= duration) {
-				setTheClock(self.checkchange, safetytimer);
-				if (safetytimer < 5000) { safetytimer += 500 }
+	this.checkProgress = async function() {
+		var previoussongid = -1;
+		var AlanPartridge = 0;
+		var safetytimer = 250;
+		var waittime = 1000;
+		while (true) {
+			// Make sure we're in sync with the playlist, it could be refreshing
+			await playlist.is_valid();
+			if (player.status.songid !== previoussongid) {
+				playlist.trackHasChanged(player.status.songid);
+				previoussongid = player.status.songid;
+				safetytimer = 250;
+			}
+			var progress = (Date.now()/1000) - trackstarttime;
+			playlist.setCurrent({progress: progress});
+			var duration = playlist.getCurrent('Time') || 0;
+			infobar.setProgress(progress,duration);
+			if (player.status.state == 'play' && duration > 0 && progress > duration) {
+				AlanPartridge = 5;
+				safetytimer = Math.min(safetytimer + 250, 5000);
+				waittime = safetytimer;
 			} else {
 				AlanPartridge++;
-				if (AlanPartridge < 5) {
-					setTheClock( self.checkProgress, 1000);
-				} else {
-					AlanPartridge = 0;
-					setTheClock( self.checkchange, 1000);
-				}
+				waittime = 1000;
 			}
-		} else {
-			setTheClock(self.checkchange, 10000);
+			if (AlanPartridge >= 5) {
+				AlanPartridge = 0;
+				await self.do_command_list([]);
+				updateStreamInfo();
+			}
+			await new Promise(t => setTimeout(t, waittime));
 		}
-	}
-
-	this.checkchange = function() {
-		clearProgressTimer();
-		self.do_command_list([]).then(updateStreamInfo);
-	}
-
-	this.onStop = function() {
-		infobar.setProgress(0,-1,-1);
-		self.checkProgress();
 	}
 
 	this.replayGain = function(event) {

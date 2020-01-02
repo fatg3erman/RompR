@@ -133,10 +133,6 @@ var layoutProcessor = function() {
 
 		notifyAddTracks: function() { },
 
-		playlistupdate: function(upcoming) {
-
-		},
-
 		playlistControlHotKey: function(button) {
 			if (!$("#playlistbuttons").is(':visible')) {
 				togglePlaylistButtons()

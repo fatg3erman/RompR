@@ -6,7 +6,6 @@ var playlist = function() {
 	var do_delayed_update = false;
 	var pscrolltimer = null;
 	var pageloading = true;
-	var lookforcurrenttrack = false;
 	var update_queue = -1;
 	var current_queue_request = 0;
 	var playlist_valid = false;
@@ -403,17 +402,19 @@ var playlist = function() {
 			// Invisible empty div tacked on the end is where we add our 'Incoming' animation
 			$("#sortable").append('<div id="waiter" class="containerbox"></div>');
 			layoutProcessor.setPlaylistHeight();
-			if (lookforcurrenttrack !== false) {
-				playlist.trackHasChanged(lookforcurrenttrack);
-				lookforcurrenttrack = false;
-			} else {
-				playlist.doUpcomingCrap();
-			}
+			playlist.doUpcomingCrap();
 			player.controller.postLoadActions();
 			uiHelper.postPlaylistLoad();
 			$('.clear_playlist').on('click', playlist.clear).stopSpinner();
 			current_queue_request++;
 			playlist.radioManager.repopulate();
+		},
+
+		is_valid: async function() {
+			while (!playlist_valid) {
+				await new Promise(t => setTimeout(t, 250));
+			}
+			return true;
 		},
 
 		doUpcomingCrap: function() {
@@ -434,7 +435,7 @@ var playlist = function() {
 					i++;
 				}
 			}
-			layoutProcessor.playlistupdate(upcoming);
+			uiHelper.playlistupdate(upcoming);
 		},
 
 		clear: function() {
@@ -701,13 +702,7 @@ var playlist = function() {
 		},
 
 		trackHasChanged: function(backendid) {
-			if (!playlist_valid) {
-				debug.log("PLAYLIST","Deferring looking for current track - there is an ongoing update");
-				lookforcurrenttrack = backendid;
-				return;
-			}
 			var force = (currentTrack.Id == -1) ? true : false;
-			lookforcurrenttrack = false;
 			if (backendid != currentTrack.Id) {
 				debug.log("PLAYLIST","Looking For Current Track",backendid);
 				$("#pscroller .playlistcurrentitem").removeClass('playlistcurrentitem').addClass('playlistitem');

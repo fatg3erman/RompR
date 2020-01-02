@@ -97,11 +97,15 @@ function startUI() {
 	startBackgroundInitTasks.doNextTask();
 }
 
+function startPlayer() {
+	player.controller.initialise().then(startBackgroundInitTasks.doNextTask);
+}
+
 var startBackgroundInitTasks = function() {
 
 	var stufftodo = [
 		wrangleLastFM,
-		player.controller.initialise,
+		startPlayer,
 		collectionHelper.checkCollection,
 		player.controller.reloadPlaylists,
 		startUI,
