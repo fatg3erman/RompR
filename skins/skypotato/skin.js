@@ -890,7 +890,6 @@ var layoutProcessor = function() {
 			$("#ratingimage").on('click', nowplaying.setRating);
 			$('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodiput')});
 			$('#expandleft').on('click', function(){layoutProcessor.expandInfo('left')});
-			$('.clear_playlist').on('click', playlist.clear);
 			$("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
 			document.body.addEventListener('drop', function(e) {
 				e.preventDefault();

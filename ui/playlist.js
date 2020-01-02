@@ -289,6 +289,7 @@ var playlist = function() {
 
 			debug.log('PLAYLIST', 'Starting update request',my_queue_id);
 			coverscraper.clearCallbacks();
+			$('.clear_playlist').off('click').makeSpinner();
 			try {
 				var list = await $.ajax({
 					type: "GET",
@@ -312,8 +313,6 @@ var playlist = function() {
 				current_queue_request++;
 				return false;
 			}
-
-			am_waiting = false;
 
 			if (update_error !== false) {
 				infobar.removenotify(update_error);
@@ -412,6 +411,7 @@ var playlist = function() {
 			}
 			player.controller.postLoadActions();
 			uiHelper.postPlaylistLoad();
+			$('.clear_playlist').on('click', playlist.clear).stopSpinner();
 			current_queue_request++;
 			playlist.radioManager.repopulate();
 		},

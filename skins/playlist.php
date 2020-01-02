@@ -9,7 +9,7 @@ print '<i id="giblets" style="margin-left:4px" onclick="togglePlaylistButtons()"
 <td align="right" id="pltime"></td>
 <td align="right" class="smallicon">
 <?php
-print '<i title="'.get_int_text('button_clearplaylist').'" class="icon-trash smallicon clickicon tooltip clear_playlist"></i>';
+print '<i title="'.get_int_text('button_clearplaylist').'" class="icon-trash smallicon clickicon tooltip spinable clear_playlist"></i>';
 ?>
 </td>
 </tr>

@@ -150,55 +150,7 @@ function playerController() {
 		}
 		infobar.updateWindowValues();
 
-
-		// $.ajax({
-		// 	type: 'POST',
-		// 	url: 'player/mpd/postcommand.php',
-		// 	data: JSON.stringify(list),
-		// 	// contentType of false prevents jQuery from re-encoding our data, where it
-		// 	// converts %20 to +, which seems to be a bug in jQuery 3.0
-		// 	contentType: false,
-		// 	dataType: 'json',
-		// 	timeout: 30000
-		// })
-		// .done(function(data) {
-		// 	if (data) {
-		// 		debug.debug("PLAYER",data);
-		// 		if (data.state) {
-		// 			// Clone the object so as not to leave this closure in memory
-		// 			player.status = cloneObject(data);
-		// 			['radiomode', 'radioparam', 'radiomaster', 'radioconsume'].forEach(function(e) {
-		// 				prefs[e] = player.status[e];
-		// 			});
-		// 			if (player.status.playlist !== plversion) {
-		// 				debug.blurt("PLAYER","Player has marked playlist as changed");
-		// 				plversion = player.status.playlist;
-		// 				playlist.repopulate();
-		// 			}
-		// 			infobar.setStartTime(player.status.elapsed);
-		// 			checkStateChange();
-		// 		}
-		// 	}
-		// })
-		// .fail(function(jqXHR, textStatus, errorThrown) {
-		// 	debug.error("MPD","Command List Failed",list,textStatus,errorThrown);
-		// 	if (list.length > 0) {
-		// 		infobar.error(language.gettext('error_sendingcommands', [prefs.player_backend]));
-		// 	}
-		// })
-		// .always(function() {
-		// 	post_command_list(callback);
-		// });
 	}
-
-	// function post_command_list(callback) {
-	// 	if (callback) {
-	// 		callback();
-	// 	} else {
-	// 	   self.checkProgress();
-	// 	}
-	// 	infobar.updateWindowValues();
-	// }
 
 	this.isConnected = function() {
 		return true;

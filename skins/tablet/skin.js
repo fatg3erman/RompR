@@ -322,7 +322,6 @@ var layoutProcessor = function() {
 			$('.choose_playlist').on('click', function(){layoutProcessor.sourceControl('playlistm')});
 			$("#ratingimage").on('click', nowplaying.setRating);
 			$("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
-			$('.clear_playlist').on('click', playlist.clear);
 			$('#volume').volumeControl({
 				orientation: 'horizontal',
 				command: player.controller.volume
