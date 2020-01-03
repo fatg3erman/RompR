@@ -713,12 +713,10 @@ var layoutProcessor = function() {
 		},
 
 		notifyAddTracks: function() {
-			if (!playlist.radioManager.isRunning()) {
-				clearTimeout(headertimer);
-				$('#plmode').fadeOut(500, function() {
-					$('#plmode').html(language.gettext('label_addingtracks')).fadeIn(500);
-				});
-			}
+			clearTimeout(headertimer);
+			$('#plmode').fadeOut(500, function() {
+				$('#plmode').html(language.gettext('label_addingtracks')).fadeIn(500);
+			});
 		},
 
 		doFancyHeaderStuff: function() {

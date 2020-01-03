@@ -1,71 +1,108 @@
+async function checkProgress() {
+	var previoussongid = -1;
+	var AlanPartridge = 0;
+	var safetytimer = 250;
+	var waittime = 1000;
+	while (true) {
+		await playlist.is_valid();
+		if (player.status.songid !== previoussongid) {
+			// Make sure we're in sync with the playlist, it could be refreshing
+			playlist.trackHasChanged(player.status.songid);
+			previoussongid = player.status.songid;
+			safetytimer = 250;
+		}
+		var progress = (Date.now()/1000) - player.controller.trackstarttime;
+		playlist.setCurrent({progress: progress});
+		var duration = playlist.getCurrent('Time') || 0;
+		infobar.setProgress(progress,duration);
+		if (player.status.state == 'play' && duration > 0 && progress > duration) {
+			AlanPartridge = 5;
+			safetytimer = Math.min(safetytimer + 250, 5000);
+			waittime = safetytimer;
+		} else {
+			AlanPartridge++;
+			waittime = 1000;
+		}
+		if (AlanPartridge >= 5) {
+			AlanPartridge = 0;
+			await player.controller.do_command_list([]);
+			updateStreamInfo();
+		}
+		await new Promise(t => setTimeout(t, waittime));
+	}
+}
+
+function updateStreamInfo() {
+
+	// When playing a stream, mpd returns 'Title' in its status field.
+	// This usually has the form artist - track. We poll this so we know when
+	// the track has changed (note, we rely on radio stations setting their
+	// metadata reliably)
+
+	// Note that mopidy doesn't quite work this way. It sets Title and possibly Name
+	// - I fixed that bug once but it got broke again
+
+	if (playlist.getCurrent('type') == "stream") {
+		// debug.trace('STREAMHANDLER','Playlist:',playlist.getCurrent('Title'),playlist.getCurrent('Album'),playlist.getCurrent('trackartist'));
+		var temp = playlist.getCurrentTrack();
+		if (player.status.Title) {
+			var parts = player.status.Title.split(" - ");
+			if (parts[0] && parts[1]) {
+				temp.trackartist = parts.shift();
+				temp.Title = parts.join(" - ");
+				temp.metadata.artists = [{name: temp.trackartist, musicbrainz_id: ""}];
+				temp.metadata.track = {name: temp.Title, musicbrainz_id: ""};
+			} else if (player.status.Title && player.status.Artist) {
+				temp.trackartist = player.status.Artist;
+				temp.Title = player.status.Title;
+				temp.metadata.artists = [{name: temp.trackartist, musicbrainz_id: ""}];
+				temp.metadata.track = {name: temp.Title, musicbrainz_id: ""};
+			}
+		}
+		if (player.status.Name && !player.status.Name.match(/^\//) && temp.Album == rompr_unknown_stream) {
+			// NOTE: 'Name' is returned by MPD - it's the station name as read from the station's stream metadata
+			debug.shout('STREAMHANDLER',"Checking For Stream Name Update");
+			checkForUpdateToUnknownStream(playlist.getCurrent('StreamIndex'), player.status.Name);
+			temp.Album = player.status.Name;
+			temp.metadata.album = {name: temp.Album, musicbrainz_id: ""};
+		}
+		// debug.trace('STREAMHANDLER','Current:',temp.Title,temp.Album,temp.trackartist);
+		if (playlist.getCurrent('Title') != temp.Title ||
+			playlist.getCurrent('Album') != temp.Album ||
+			playlist.getCurrent('trackartist') != temp.trackartist)
+		{
+			debug.log("STREAMHANDLER","Detected change of track",temp);
+			var aa = new albumart_translator('');
+			temp.key = aa.getKey('stream', '', temp.Album);
+			playlist.setCurrent({Title: temp.Title, Album: temp.Album, trackartist: temp.trackartist });
+			nowplaying.newTrack(temp, true);
+		}
+	}
+}
+
+function checkForUpdateToUnknownStream(streamid, name) {
+	// If our playlist for this station has 'Unknown Internet Stream' as the
+	// station name, let's see if we can update it from the metadata.
+	debug.log("STREAMHANDLER","Checking For Update to Stream",streamid,name, name);
+	var m = playlist.getCurrent('Album');
+	if (m.match(/^Unknown Internet Stream/)) {
+		debug.shout("PLAYLIST","Updating Stream",name);
+		yourRadioPlugin.updateStreamName(streamid, name, playlist.getCurrent('file'), playlist.repopulate);
+	}
+}
+
 function playerController() {
 
 	var self = this;
 	var plversion = null;
 	var oldplname;
-	var trackstarttime = 0;
 	var thenowplayinghack = false;
 	var lastsearchcmd = "search";
 	var stateChangeCallbacks = new Array();
+	var request_id = -1;
+	var last_request_id = 0;
 
-	function updateStreamInfo() {
-
-		// When playing a stream, mpd returns 'Title' in its status field.
-		// This usually has the form artist - track. We poll this so we know when
-		// the track has changed (note, we rely on radio stations setting their
-		// metadata reliably)
-
-		// Note that mopidy doesn't quite work this way. It sets Title and possibly Name
-		// - I fixed that bug once but it got broke again
-
-		if (playlist.getCurrent('type') == "stream") {
-			// debug.trace('STREAMHANDLER','Playlist:',playlist.getCurrent('Title'),playlist.getCurrent('Album'),playlist.getCurrent('trackartist'));
-			var temp = playlist.getCurrentTrack();
-			if (player.status.Title) {
-				var parts = player.status.Title.split(" - ");
-				if (parts[0] && parts[1]) {
-					temp.trackartist = parts.shift();
-					temp.Title = parts.join(" - ");
-					temp.metadata.artists = [{name: temp.trackartist, musicbrainz_id: ""}];
-					temp.metadata.track = {name: temp.Title, musicbrainz_id: ""};
-				} else if (player.status.Title && player.status.Artist) {
-					temp.trackartist = player.status.Artist;
-					temp.Title = player.status.Title;
-					temp.metadata.artists = [{name: temp.trackartist, musicbrainz_id: ""}];
-					temp.metadata.track = {name: temp.Title, musicbrainz_id: ""};
-				}
-			}
-			if (player.status.Name && !player.status.Name.match(/^\//) && temp.Album == rompr_unknown_stream) {
-				// NOTE: 'Name' is returned by MPD - it's the station name as read from the station's stream metadata
-				debug.shout('STREAMHANDLER',"Checking For Stream Name Update");
-				checkForUpdateToUnknownStream(playlist.getCurrent('StreamIndex'), player.status.Name);
-				temp.Album = player.status.Name;
-				temp.metadata.album = {name: temp.Album, musicbrainz_id: ""};
-			}
-			// debug.trace('STREAMHANDLER','Current:',temp.Title,temp.Album,temp.trackartist);
-			if (playlist.getCurrent('Title') != temp.Title ||
-				playlist.getCurrent('Album') != temp.Album ||
-				playlist.getCurrent('trackartist') != temp.trackartist)
-			{
-				debug.log("STREAMHANDLER","Detected change of track",temp);
-				var aa = new albumart_translator('');
-				temp.key = aa.getKey('stream', '', temp.Album);
-				playlist.setCurrent({Title: temp.Title, Album: temp.Album, trackartist: temp.trackartist });
-				nowplaying.newTrack(temp, true);
-			}
-		}
-	}
-
-	function checkForUpdateToUnknownStream(streamid, name) {
-		// If our playlist for this station has 'Unknown Internet Stream' as the
-		// station name, let's see if we can update it from the metadata.
-		debug.log("STREAMHANDLER","Checking For Update to Stream",streamid,name, name);
-		var m = playlist.getCurrent('Album');
-		if (m.match(/^Unknown Internet Stream/)) {
-			debug.shout("PLAYLIST","Updating Stream",name);
-			yourRadioPlugin.updateStreamName(streamid, name, playlist.getCurrent('file'), playlist.repopulate);
-		}
-	}
+	this.trackstarttime = 0;
 
 	this.initialise = async function() {
 		debug.shout('PLAYER', 'Initialising');
@@ -93,6 +130,7 @@ function playerController() {
 				+prefs.player_backend.capitalize()
 				+" at " + player_ip + ")"
 			);
+			checkProgress();
 		} catch(err) {
 			debug.error("MPD","Failed to get URL Handlers",err);
 			infobar.permerror(language.gettext('error_noplayer'));			
@@ -101,8 +139,17 @@ function playerController() {
 
 	this.do_command_list = async function(list) {
 		debug.debug('PLAYER', 'Command List',list);
+		request_id++;
+		const my_request_id = request_id;
+		while (last_request_id < my_request_id) {
+			debug.blurt('PLAYER', 'Queuing Request',my_request_id);
+			await new Promise(t => setTimeout(t, 50));
+		}
+		// Prevent checkProgress from doing anything while we're doing things
+		playlist.invalidate();
 		try {
-			player.status = await $.ajax({
+			// Use temp variable in case it errors
+			var s = await $.ajax({
 				type: 'POST',
 				url: 'player/mpd/postcommand.php',
 				data: JSON.stringify(list),
@@ -110,23 +157,30 @@ function playerController() {
 				dataType: 'json',
 				timeout: 30000
 			});
+			// Clone the object so this thread can exit
+			player.status = cloneObject(s);
 			['radiomode', 'radioparam', 'radiomaster', 'radioconsume'].forEach(function(e) {
 				prefs[e] = player.status[e];
 			});
-			trackstarttime = (Date.now()/1000) - player.status.elapsed;
+			self.trackstarttime = (Date.now()/1000) - player.status.elapsed;
 			if (player.status.playlist !== plversion) {
-				debug.blurt("PLAYER","Player has marked playlist as changed");
+				debug.blurt("PLAYER","Player has marked playlist as changed",plversion,player.status.playlist);
 				plversion = player.status.playlist;
-				playlist.repopulate().then(self.checkProgress);
+				// Repopulate will re-validate the playlist when it completes
+				playlist.repopulate();
+			} else {
+				playlist.validate();
 			}
 			checkStateChange();
+			infobar.updateWindowValues();
 		} catch (err) {
 			debug.error('CONTROLLER', 'Command List Failed', err);
+			playlist.validate()
 			if (list.length > 0) {
 				infobar.error(language.gettext('error_sendingcommands', [prefs.player_backend]));
 			}
 		}
-		infobar.updateWindowValues();
+		last_request_id++;
 	}
 
 	this.addStateChangeCallback = function(sc) {
@@ -407,7 +461,6 @@ function playerController() {
 
 		var abitofahack = true;
 		var queue_track = (queue == true) ? true : !prefs.cdplayermode;
-		layoutProcessor.notifyAddTracks();
 		debug.log("MPD","Adding Tracks",tracks,playpos,at_pos,queue);
 		var cmdlist = [];
 		if (!queue_track) {
@@ -656,40 +709,6 @@ function playerController() {
 		debug.log("MPD","Doing the nowplaying hack thing");
 		thenowplayinghack = true;
 		playlist.repopulate();
-	}
-
-	this.checkProgress = async function() {
-		var previoussongid = -1;
-		var AlanPartridge = 0;
-		var safetytimer = 250;
-		var waittime = 1000;
-		while (true) {
-			// Make sure we're in sync with the playlist, it could be refreshing
-			await playlist.is_valid();
-			if (player.status.songid !== previoussongid) {
-				playlist.trackHasChanged(player.status.songid);
-				previoussongid = player.status.songid;
-				safetytimer = 250;
-			}
-			var progress = (Date.now()/1000) - trackstarttime;
-			playlist.setCurrent({progress: progress});
-			var duration = playlist.getCurrent('Time') || 0;
-			infobar.setProgress(progress,duration);
-			if (player.status.state == 'play' && duration > 0 && progress > duration) {
-				AlanPartridge = 5;
-				safetytimer = Math.min(safetytimer + 250, 5000);
-				waittime = safetytimer;
-			} else {
-				AlanPartridge++;
-				waittime = 1000;
-			}
-			if (AlanPartridge >= 5) {
-				AlanPartridge = 0;
-				await self.do_command_list([]);
-				updateStreamInfo();
-			}
-			await new Promise(t => setTimeout(t, waittime));
-		}
 	}
 
 	this.replayGain = function(event) {

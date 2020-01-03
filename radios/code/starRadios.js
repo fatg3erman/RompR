@@ -1,37 +1,37 @@
 var starRadios = function() {
 
-	var running = false;
-	var populating = false;
-	var selected;
-
-	function getSmartPlaylistTracks(action, playlist, numtracks) {
-		if (populating) {
-			debug.warn("STARRADIOS", "Asked to populate but already doing so!")
-			return false;
-		}
-		populating = true;
-		debug.shout("STAR RADIOS", action, playlist, numtracks);
-		metaHandlers.genericAction(
-			[{ action: action, playlist: playlist, numtracks: numtracks }],
-			starRadios.gotTracks,
-			starRadios.Fail
-		);
-	}
+	var param;
+	var whattodo;
+	var tracks;
 
 	return {
 
-		populate: function(param, numtracks) {
-			debug.log("STARRADIOS","Populate Called with",param,numtracks,"selected is",selected);
-			var whattodo = "repopulate";
-			if (param !== selected ) {
-				whattodo = "getplaylist";
-				selected = param;
-			}
-			running = true;
-			getSmartPlaylistTracks(whattodo, selected, numtracks);
+		initialise: function(p) {
+			param = p;
+			whattodo = 'getplaylist';
+			tracks = new Array();
 		},
 
-		modeHtml: function(param) {
+		getURIs: async function(numtracks) {
+			while (tracks.length < numtracks) {
+				try {
+					tracks = await $.ajax({
+						url: "backends/sql/userRatings.php",
+						type: "POST",
+						contentType: false,
+						data: JSON.stringify([{action: whattodo, playlist: param, numtracks: prefs.smartradio_chunksize}]),
+						dataType: 'json'
+					});
+				} catch(err) {
+					debug.error('STARRADIOS', 'Error getting tracks',err);
+					return false;
+				}
+			}
+			whattodo = 'repopulate';
+			return tracks.splice(0, numtracks);
+		},
+
+		modeHtml: function() {
 			if (param.match(/^\dstars/)) {
 				var cn = param.replace(/(\d)/, 'icon-$1-');
 				return '<i class="'+cn+' rating-icon-small"></i>';
@@ -44,30 +44,6 @@ var starRadios = function() {
 		},
 
 		stop: function() {
-			running = false;
-			selected = null;
-		},
-
-		gotTracks: function(data) {
-			populating = false;
-			if (data.length > 0) {
-				debug.log("SMARTPLAYLIST","Got tracks",data);
-				if (running) {
-					player.controller.addTracks(data,  playlist.radioManager.playbackStartPos(), null, true);
-				}
-			} else {
-				debug.warn("SMARTPLAYLIST","Got NO tracks",data);
-				infobar.notify(language.gettext('label_gotnotracks'));
-				playlist.radioManager.stop(null);
-				running = false;
-			}
-		},
-
-		Fail: function() {
-			infobar.notify(language.gettext('label_gotnotracks'));
-			playlist.radioManager.stop(null);
-			populating = false;
-			running = false;
 		},
 
 		tagPopulate: function(tags) {

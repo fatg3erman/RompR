@@ -24,7 +24,7 @@ var infobar = function() {
 						artist: playlistinfo.trackartist,
 						album: playlistinfo.Album
 					};
-					options.chosenByUser = (playlistinfo.type == 'local' && !playlist.radioManager.isRunning()) ? 1 : 0;
+					options.chosenByUser = (playlistinfo.type == 'local' && prefs.radiomode == '') ? 1 : 0;
 					if (playlistinfo.albumartist && playlistinfo.albumartist != "" && playlistinfo.albumartist.toLowerCase() != playlistinfo.trackartist.toLowerCase()) {
 						 options.albumArtist = playlistinfo.albumartist;
 					 }
@@ -411,7 +411,6 @@ var infobar = function() {
 			}
 			if (player.status.error && player.status.error != null) {
 				infobar.error(language.gettext("label_playererror")+": "+player.status.error);
-				playlist.repopulate();
 			}
 		},
 

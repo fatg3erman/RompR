@@ -445,9 +445,7 @@ var layoutProcessor = function() {
 		},
 
 		notifyAddTracks: function() {
-			if (!playlist.radioManager.isRunning()) {
-				infobar.notify(language.gettext("label_addingtracks"));
-			}
+			infobar.notify(language.gettext("label_addingtracks"));
 		},
 
 		hidePanel: function(panel, is_hidden, new_state) { },

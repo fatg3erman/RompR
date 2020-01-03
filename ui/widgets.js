@@ -86,7 +86,7 @@ $.widget("rompr.trackdragger", $.ui.mouse, {
 		this.dragger = $('<div>', {id: 'dragger', class: 'draggable dragsort containerbox vertical dropshadow'}).appendTo('body');
 		this.dragger.css('width', $('.selected').first().css('width'));
 		if ($(".selected").length > 6) {
-			this.dragger.append('<div class="containerbox menuitem">'+
+			this.dragger.append('<div class="containerbox menuitem playable_proxy">'+
 				'<div class="smallcover fixed"><i class="icon-music svg-square"></i></div>'+
 				'<div class="expand"><h3>'+$(".selected").not('.clickdisc').length+' Items</h3></div>'+
 				'</div>');
@@ -297,7 +297,7 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 			});
 		}
 		this.helper.css('height', (item.height()+12)+"px");
-		this.helper.attr('class', item.children().first().hasClass('playable') ? 'draggable' : 'something');
+		this.helper.attr('class', (item.children().first().hasClass('playable') || item.children().first().hasClass('playable_proxy')) ? 'draggable' : 'something');
 		this.helper.empty();
 	},
 

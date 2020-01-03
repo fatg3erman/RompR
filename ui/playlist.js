@@ -52,83 +52,60 @@ var playlist = function() {
 	function personalRadioManager() {
 
 		var self = this;
-		var mode = '';
-		var param = null;
 		var radios = new Object();
-		var rptimer = null;
-		var startplaybackfrom = null;
+		var this_radio = '';
+		var this_param = null;
+		var status_check_timer;
 
-		function actuallyRepopulate() {
-			debug.log("RADIO MANAGER","Repopulate Timer Has Fired");
-			debug.log("RADIO MANAGER","mode is",mode);
+		async function runPlaylist() {
+			debug.log("RADIO MANAGER","Running Playlist");
 			debug.trace("RADIO MANAGER","prefs.radiomode is",prefs.radiomode);
 			debug.trace("RADIO MANAGER","prefs.radioparam is",prefs.radioparam);
 			debug.trace("RADIO MANAGER","prefs.browser_id is",prefs.browser_id);
 			debug.trace("RADIO MANAGER","prefs.radiomaster is",prefs.radiomaster);
-
-			if ((mode && mode != prefs.radiomode) || (mode && param && param != prefs.radioparam)) {
-				radios[mode].func.stop();
-			}
-
-			param = prefs.radioparam;
-
-			if (prefs.radiomode != mode) {
-				mode = prefs.radiomode;
-				if (mode) {
-					playlist.preventControlClicks(false);
-					player.controller.takeBackControl();
-					if (radios[mode].script && radios[mode].loaded == false) {
-						debug.shout("RADIO MANAGER","Loading Script",radios[mode].script,"for",mode);
-						$.getScript(radios[mode].script+'?version='+rompr_version)
-							.done(function() {
-								radios[mode].loaded = true;
-								actuallyActuallyRepopulate();
-							})
-							.fail(function(data,thing,wotsit) {
-								debug.error("RADIO MANAGER","Failed to Load Script",wotsit);
-								mode = null;
-								player.controller.checkConsume(prefs.radioconsume);
-								playlist.repopulate();
-								infobar.error(language.gettext('label_general_error'));
-							});
-					} else {
-						actuallyActuallyRepopulate();
-					}
-				} else {
-					player.controller.checkConsume(prefs.radioconsume);
-					playlist.preventControlClicks(true);
-					setHeader();
-				}
-			} else {
-				actuallyActuallyRepopulate();
-			}
-		}
-
-		function actuallyActuallyRepopulate() {
+			this_radio = prefs.radiomode;
+			this_param = prefs.radioparam;
 			setHeader();
-			var fromend = playlist.getfinaltrack()+1;
-			if (currentTrack.playlistpos) {
-				fromend -= currentTrack.playlistpos;
-			}
-			var tracksneeded = prefs.smartradio_chunksize - fromend;
-			if (tracksneeded > 1 && prefs.radiomaster != prefs.browser_id) {
-				debug.mark("RADIO MANAGER","Looks like master has gone away. Taking over");
-				prefs.save({radiomaster: prefs.browser_id});
-			}
-			debug.log("RADIO MANAGER","Repopulate Check : Final Track :",playlist.getfinaltrack()+1,"Fromend :",fromend,"Chunksize :",prefs.smartradio_chunksize,"Mode :",mode);
-			if (playlist_valid && mode && prefs.radiomaster == prefs.browser_id) {
-				// Don't do anything if we're waiting on playlist updates
-				if (fromend < prefs.smartradio_chunksize) {
-					debug.shout("RADIO MANAGER","Repopulating");
-					radios[mode].func.populate(prefs.radioparam, tracksneeded);
+			// TODO we can't actually take over any more as we don't automatically refresh
+			while (this_radio == prefs.radiomode && this_param == prefs.radioparam) {
+				await playlist.is_valid();
+				var fromend = playlist.getfinaltrack()+1;
+				if (currentTrack.playlistpos) {
+					fromend -= currentTrack.playlistpos;
 				}
+				var tracksneeded = prefs.smartradio_chunksize - fromend;
+				if (tracksneeded > 2 && prefs.radiomaster != prefs.browser_id) {
+					debug.mark("RADIO MANAGER","Looks like master has gone away. Taking over");
+					prefs.save({radiomaster: prefs.browser_id});
+				}
+				var startpos = (tracksneeded == prefs.smartradio_chunksize) ? 0 : null;
+				if (tracksneeded > 0 && prefs.radiomaster == prefs.browser_id) {
+					var uris = await radios[this_radio].func.getURIs(tracksneeded);
+					if (uris) {
+						player.controller.addTracks(
+							uris,
+							startpos,
+							null, 
+							true
+						);
+						startpos = null;
+					} else {
+						infobar.notify(language.gettext('label_gotnotracks'));
+						playlist.radioManager.stop();
+					}
+				}
+				await new Promise(t => setTimeout(t, 2000));
 			}
+			radios[this_radio].func.stop();
+			this_radio = '';
+			this_param = null;
+			setHeader();
 		}
 
 		function setHeader() {
 			var html = '';
-			if (mode && radios[mode].func.modeHtml) {
-				var x = radios[mode].func.modeHtml(prefs.radioparam);
+			if (this_radio && radios[this_radio].func.modeHtml) {
+				var x = radios[this_radio].func.modeHtml();
 				if (x) {
 					html = x + '<i class="icon-cancel-circled playlisticon clickicon" style="margin-left:8px" onclick="playlist.radioManager.stop()"></i>';
 				}
@@ -169,47 +146,59 @@ var playlist = function() {
 				uiHelper.setupPersonalRadio();
 			},
 
-			load: function(which, param) {
+			load: async function(which, param, from_me) {
+				debug.log('RADIOMANAGER', which, param, from_me, this_radio, this_param);
+				if (which == '' || (which == this_radio && param == this_param)) {
+					return;
+				}
 				if (prefs.debug_enabled > 0) {
 					infobar.longnotify(language.gettext('warning_smart_debug'));
 				}
-				if (!mode) {
-					prefs.save({radioconsume: player.status.consume});
+				if (!from_me) {
+					prefs.save({radioconsume: player.status.consume, radiomaster: prefs.browser_id});
 				}
 				layoutProcessor.playlistLoading();
-				prefs.save({radiomode: which, radioparam: param, radiomaster: prefs.browser_id}, player.controller.clearPlaylist);
-				startplaybackfrom = 0;
+				prefs.save({radiomode: which, radioparam: param});
+				playlist.preventControlClicks(false);
+				player.controller.takeBackControl();
+				if (radios[which].script && radios[which].loaded == false) {
+					debug.shout("RADIO MANAGER","Loading Script",radios[which].script,"for",which);
+					try {
+						await $.getScript(radios[which].script+'?version='+rompr_version+Date.now());
+						radios[which].loaded = true;
+					} catch (err) {
+						debug.error("RADIO MANAGER","Failed to Load Script",err);
+						prefs.save({radiomode: '', radioparam: null});
+						player.controller.checkConsume(prefs.radioconsume);
+						infobar.error(language.gettext('label_general_error'));
+					}
+				}
+				radios[which].func.initialise(param);
+				if (!from_me) {
+					player.controller.clearPlaylist();
+				}
+				// When runPlaylist returns this will be because radiomode has changed. This could be
+				// because we cleared it, or it could be because someone else has changed it.
+				// In order that we can take over running it if they go away, start it now
+				runPlaylist().then(playlist.radioManager.checkStatus);
 			},
 
-			playbackStartPos: function() {
-				// startplaybackfrom is set to 0 when we first start a new radio. This makes the radio populate
-				// functions start playback when they first populate. After that it's set to null, because otherwise
-				// the user can stop playback, we repopulate, and playback starts again.
-				var a = startplaybackfrom;
-				startplaybackfrom = null;
-				return a;
+			checkStatus: function() {
+				clearTimeout(status_check_timer);
+				status_check_timer = setTimeout(playlist.radioManager.checkRemoteChanges, 1000);
 			},
 
-			repopulate: function() {
-				debug.debug("RADIO MANAGER","Setting Repopulate Timer");
-				// The timer is a mechanism to stop us repeatedly calling this when
-				// lots of asynchronous stuff is happening at once. There are several routes
-				// that call into this function to handle all the cases we need to handle
-				// but we only want to act on one of them.
-				clearTimeout(rptimer);
-				rptimer = setTimeout(actuallyRepopulate, 1000);
+			checkRemoteChanges: function() {
+				playlist.radioManager.load(prefs.radiomode, prefs.radioparam, true);
 			},
 
 			stop: function(callback) {
 				debug.log("RADIO MANAGER","Stopping");
-				// Not stricly ncessary, but does make the UI more responsive
+				// Dont' really need to do this here but it makes the UI more responsive
 				layoutProcessor.setRadioModeHeader('');
-				callback = (callback || playlist.repopulate);
 				prefs.save({radiomode: '', radioparam: null}, callback);
-			},
-
-			isRunning: function() {
-				return (mode != '');
+				playlist.preventControlClicks(true);
+				player.controller.checkConsume(prefs.radioconsume);
 			},
 
 			loadFromUiElement: function(element) {
@@ -264,6 +253,14 @@ var playlist = function() {
 		rolledup: [],
 
 		radioManager: new personalRadioManager(),
+
+		invalidate: function() {
+			playlist_valid = false;
+		},
+
+		validate: function() {
+			playlist_valid = true;
+		},
 
 		repopulate: async function() {
 
@@ -406,8 +403,8 @@ var playlist = function() {
 			player.controller.postLoadActions();
 			uiHelper.postPlaylistLoad();
 			$('.clear_playlist').on('click', playlist.clear).stopSpinner();
+			playlist.radioManager.checkStatus();
 			current_queue_request++;
-			playlist.radioManager.repopulate();
 		},
 
 		is_valid: async function() {
@@ -612,6 +609,7 @@ var playlist = function() {
 				}
 			});
 			if (tracks.length > 0) {
+				layoutProcessor.notifyAddTracks();
 				var playpos = (moveto === null) ? playlist.playFromEnd() : null;
 				// if moveto is set then these items were dragged in, in which
 				// case we must always queue
@@ -663,6 +661,7 @@ var playlist = function() {
 
 		delete: function(id) {
 			$('.track[romprid="'+id.toString()+'"]').remove();
+			$('.trackgroup:empty').prev().remove();
 			player.controller.removeId([parseInt(id)]);
 		},
 
@@ -723,7 +722,6 @@ var playlist = function() {
 				} else {
 					currentTrack = emptyTrack;
 				}
-				playlist.radioManager.repopulate();
 				nowplaying.newTrack(playlist.getCurrentTrack(), force);
 			}
 			playlist.doUpcomingCrap();
