@@ -1,21 +1,17 @@
 async function checkProgress() {
-	var previoussongid = -1;
 	var AlanPartridge = 0;
 	var safetytimer = 250;
 	var waittime = 1000;
 	while (true) {
 		await playlist.is_valid();
-		if (player.status.songid !== previoussongid) {
-			// Make sure we're in sync with the playlist, it could be refreshing
-			playlist.trackHasChanged(player.status.songid);
-			previoussongid = player.status.songid;
-			safetytimer = 250;
+		if (player.status.songid !== player.controller.previoussongid) {
+			safetytimer = 0;
 		}
 		var progress = (Date.now()/1000) - player.controller.trackstarttime;
 		playlist.setCurrent({progress: progress});
 		var duration = playlist.getCurrent('Time') || 0;
 		infobar.setProgress(progress,duration);
-		if (player.status.state == 'play' && duration > 0 && progress > duration) {
+		if (player.status.state == 'play' && duration > 0 && progress > (duration - 1)) {
 			AlanPartridge = 5;
 			safetytimer = Math.min(safetytimer + 250, 5000);
 			waittime = safetytimer;
@@ -101,6 +97,7 @@ function playerController() {
 	var stateChangeCallbacks = new Array();
 
 	this.trackstarttime = 0;
+	this.previoussongid = -1;
 
 	this.initialise = async function() {
 		debug.shout('PLAYER', 'Initialising');
@@ -156,6 +153,10 @@ function playerController() {
 				debug.debug('PLAYER', e, player.status[e]);
 				prefs[e] = player.status[e];
 			});
+			if (player.status.songid != self.previoussongid) {
+				playlist.trackHasChanged(player.status.songid);
+				self.previoussongid = player.status.songid;
+			}
 			self.trackstarttime = (Date.now()/1000) - player.status.elapsed;
 			if (player.status.playlist !== plversion) {
 				debug.blurt("PLAYER","Player has marked playlist as changed",plversion,player.status.playlist);

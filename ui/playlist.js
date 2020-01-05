@@ -418,7 +418,7 @@ var playlist = function() {
 
 		is_valid: async function() {
 			while (!playlist_valid ) {
-				await new Promise(t => setTimeout(t, 250));
+				await new Promise(t => setTimeout(t, 200));
 			}
 			return true;
 		},
