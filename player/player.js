@@ -87,8 +87,8 @@ var player = function() {
 			}
 			debug.log("PLAYERS",newhosts);
 			if (reloadNeeded !== false) {
-				prefs.save({currenthost: reloadNeeded}, function() {
-					prefs.save({multihosts: newhosts}, function() {
+				prefs.save({currenthost: reloadNeeded}).then(function() {
+					prefs.save({multihosts: newhosts}).then(function() {
 						reloadWindow();
 					});
 				});

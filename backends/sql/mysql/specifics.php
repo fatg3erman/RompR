@@ -53,6 +53,7 @@ function check_sql_tables() {
 		"Sourceindex INT UNSIGNED DEFAULT NULL, ".
 		"LinkChecked TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"isAudiobook TINYINT(1) UNSIGNED DEFAULT 0, ".
+		"usedInPlaylist TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"INDEX(Albumindex), ".
 		"INDEX(Title), ".
 		"INDEX(TrackNo)) ENGINE=InnoDB", true))
@@ -76,6 +77,7 @@ function check_sql_tables() {
 		"ImgVersion INT UNSIGNED DEFAULT ".ROMPR_IMAGE_VERSION.", ".
 		"Domain CHAR(32), ".
 		"Image VARCHAR(255), ".
+		"randomSort INT DEFAULT 0, ".
 		"justUpdated TINYINT(1) UNSIGNED DEFAULT 1, ".
 		"INDEX(Albumname), ".
 		"INDEX(AlbumArtistindex), ".
@@ -842,6 +844,24 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 60 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 60:
+				logger::log("SQL", "Updating FROM Schema version 60 TO Schema version 61");
+				generic_sql_query("ALTER TABLE Tracktable ADD usedInPlaylist TINYINT(1) UNSIGNED DEFAULT 0", true);
+				generic_sql_query("UPDATE Statstable SET Value = 61 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 61:
+				logger::log("SQL", "Updating FROM Schema version 61 TO Schema version 62");
+				generic_sql_query("ALTER TABLE Albumtable ADD randomSort INT DEFAULT 0", true);
+				generic_sql_query("UPDATE Statstable SET Value = 62 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 62:
+				logger::log("SQL", "Updating FROM Schema version 62 TO Schema version 63");
+				upgrade_saved_crazies();
+				generic_sql_query("UPDATE Statstable SET Value = 63 WHERE Item = 'SchemaVer'", true);
+				break;
+
 		}
 		$sv++;
 	}
@@ -869,30 +889,19 @@ function hide_played_tracks() {
 }
 
 function sql_recent_tracks() {
-	global $prefs;
-	$qstring = "SELECT TTindex FROM Tracktable WHERE (DATE_SUB(CURDATE(),INTERVAL 60 DAY) <= DateAdded) AND Hidden = 0 AND isSearchResult < 2 AND isAudiobook = 0 AND Uri IS NOT NULL";
-	if ($prefs['collection_player'] == 'mopidy' && $prefs['player_backend'] == 'mpd') {
-		$qstring .= ' AND Uri LIKE "local:%"';
-	}
-	return $qstring." ORDER BY RAND()";
-}
-
-function sql_recent_albums() {
-	global $prefs;
-	$qstring = "SELECT TTindex, Albumindex, TrackNo FROM Tracktable WHERE DATE_SUB(CURDATE(),INTERVAL 60 DAY) <= DateAdded AND Hidden = 0 AND isSearchResult < 2 AND isAudiobook = 0 AND Uri IS NOT NULL";
-	if ($prefs['collection_player'] == 'mopidy' && $prefs['player_backend'] == 'mpd') {
-		$qstring .= ' AND Uri LIKE "local:%"';
-	}
-	return $qstring;
+	return "SELECT Uri FROM Tracktable JOIN Albumtable USING (Albumindex) WHERE (DATE_SUB(CURDATE(),INTERVAL 60 DAY) <= DateAdded)";
 }
 
 function sql_recently_played() {
 	return "SELECT t.Uri, t.Title, a.Artistname, al.Albumname, al.Image, al.ImgKey, UNIX_TIMESTAMP(p.LastPlayed) AS unixtime FROM Tracktable AS t JOIN Playcounttable AS p USING (TTindex) JOIN Albumtable AS al USING (albumindex) JOIN Artisttable AS a ON (a.Artistindex = al.AlbumArtistindex) WHERE DATE_SUB(CURDATE(),INTERVAL 14 DAY) <= p.LastPlayed AND p.LastPlayed IS NOT NULL ORDER BY p.LastPlayed DESC";
 }
 
+function init_random_albums() {
+	generic_sql_query('UPDATE Albumtable SET randomSort = RAND() * 10000000', true);
+}
+
 function recently_played_playlist() {
-	$qstring = "SELECT TTindex FROM Playcounttable JOIN Tracktable USING (TTindex) WHERE DATE_SUB(CURDATE(),INTERVAL 14 DAY) <= LastPlayed AND LastPlayed IS NOT NULL AND isAudiobook = 0 AND Hidden = 0";
-	return $qstring;
+	return "SELECT Uri FROM Playcounttable JOIN Tracktable USING (TTindex) WHERE DATE_SUB(CURDATE(),INTERVAL 14 DAY) <= LastPlayed AND LastPlayed IS NOT NULL";
 }
 
 function sql_two_weeks() {

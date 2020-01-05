@@ -128,7 +128,7 @@ var prefs = function() {
 
 	function dontTransferPlaylist() {
 		setCookie('player_backend', 'none', 0);
-		prefs.save(deferredPrefs, reloadWindow);
+		prefs.save(deferredPrefs).then(reloadWindow);
 	}
 
 	function transferPlaylist() {
@@ -139,7 +139,7 @@ var prefs = function() {
 			data: JSON.stringify(deferredPrefs)
 		})
 		.done(function() {
-			prefs.save(deferredPrefs, reloadWindow);
+			prefs.save(deferredPrefs).then(reloadWindow);
 		})
 		.fail(function(data) {
 			debug.error("PREFS","Playlist transfer failed",data);
@@ -511,7 +511,7 @@ var prefs = function() {
 			}
 		},
 
-		save: function(options, callback) {
+		save: async function(options, callback) {
 			var prefsToSave = {};
 			var postSave = false;
 			for (var i in options) {
@@ -531,12 +531,9 @@ var prefs = function() {
 			}
 			if (postSave) {
 				debug.trace("PREFS",JSON.stringify(prefsToSave),prefsToSave);
-				$.post('saveprefs.php', {prefs: JSON.stringify(prefsToSave)}, function() {
-					if (callback) {
-						callback();
-					}
-				});
-			} else if (callback) {
+				await $.post('saveprefs.php', {prefs: JSON.stringify(prefsToSave)});
+			}
+			if (callback) {
 				callback();
 			}
 		},

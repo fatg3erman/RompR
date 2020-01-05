@@ -23,7 +23,7 @@ class snapcast {
 		if ($this->is_connected()) {
 			return true;
 		}
-		logger::trace("SNAPCAST", "Connecting to ".$this->ip.':'.$this->port);
+		logger::debug("SNAPCAST", "Connecting to ".$this->ip.':'.$this->port);
 		$this->connection = @stream_socket_client('tcp://'.$this->ip.':'.$this->port, $error, $errstr, 10);
 		if ($this->is_connected()) {
 			stream_set_timeout($this->connection, 65535);
@@ -46,7 +46,7 @@ class snapcast {
 
 	public function do_command($json) {
 		if ($this->open_connection()) {
-			logger::trace("SNAPCAST", "Sending ",$json);
+			logger::debug("SNAPCAST", "Sending ",$json);
 			fputs($this->connection, $json."\r\n");
 			$got = fgets($this->connection);
 			return $got;

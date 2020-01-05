@@ -4,8 +4,6 @@ var playlist = function() {
 	var currentalbum = -1;
 	var finaltrack = -1;
 	var do_delayed_update = false;
-	var pscrolltimer = null;
-	var pageloading = true;
 	var update_queue = -1;
 	var current_queue_request = 0;
 	var playlist_valid = false;
@@ -18,7 +16,7 @@ var playlist = function() {
 
 	// Minimal set of information - just what infobar requires to make sure
 	// it blanks everything out
-	// playlistpos is for radioManager
+	// Pos is for radioManager
 	// backendid must not be undefined
 	var emptyTrack = {
 		Album: "",
@@ -57,21 +55,17 @@ var playlist = function() {
 		var this_param = null;
 		var status_check_timer;
 
-		async function runPlaylist() {
-			debug.log("RADIO MANAGER","Running Playlist");
+		async function runPlaylist(my_radio, my_param) {
+			debug.shout("RADIO MANAGER","Running Playlist", my_radio, my_param);
 			debug.trace("RADIO MANAGER","prefs.radiomode is",prefs.radiomode);
 			debug.trace("RADIO MANAGER","prefs.radioparam is",prefs.radioparam);
 			debug.trace("RADIO MANAGER","prefs.browser_id is",prefs.browser_id);
 			debug.trace("RADIO MANAGER","prefs.radiomaster is",prefs.radiomaster);
-			this_radio = prefs.radiomode;
-			this_param = prefs.radioparam;
-			setHeader();
-			// TODO we can't actually take over any more as we don't automatically refresh
-			while (this_radio == prefs.radiomode && this_param == prefs.radioparam) {
+			while (my_radio == this_radio && my_param == this_param) {
 				await playlist.is_valid();
 				var fromend = playlist.getfinaltrack()+1;
-				if (currentTrack.playlistpos) {
-					fromend -= currentTrack.playlistpos;
+				if (currentTrack.Pos) {
+					fromend -= currentTrack.Pos;
 				}
 				var tracksneeded = prefs.smartradio_chunksize - fromend;
 				if (tracksneeded > 2 && prefs.radiomaster != prefs.browser_id) {
@@ -80,8 +74,8 @@ var playlist = function() {
 				}
 				var startpos = (tracksneeded == prefs.smartradio_chunksize) ? 0 : null;
 				if (tracksneeded > 0 && prefs.radiomaster == prefs.browser_id) {
-					var uris = await radios[this_radio].func.getURIs(tracksneeded);
-					if (uris) {
+					var uris = await radios[my_radio].func.getURIs(tracksneeded);
+					if (uris && uris.length > 0) {
 						player.controller.addTracks(
 							uris,
 							startpos,
@@ -96,10 +90,8 @@ var playlist = function() {
 				}
 				await new Promise(t => setTimeout(t, 2000));
 			}
-			radios[this_radio].func.stop();
-			this_radio = '';
-			this_param = null;
-			setHeader();
+			debug.shout("RADIO MANAGER","Exiting Playlist", my_radio, my_param);
+			radios[my_radio].func.stop();
 		}
 
 		function setHeader() {
@@ -154,13 +146,23 @@ var playlist = function() {
 				if (prefs.debug_enabled > 0) {
 					infobar.longnotify(language.gettext('warning_smart_debug'));
 				}
+				this_radio = which;
+				this_param = param;
+				// Wait for prefs to be saved to the backend otherwise we can get out of sync
+				// and the player resets our internal state to their previous values
+				await prefs.save({radiomode: which, radioparam: param});
 				if (!from_me) {
-					prefs.save({radioconsume: player.status.consume, radiomaster: prefs.browser_id});
+					prefs.save({
+						radioconsume: JSON.stringify(
+							[['consume', player.status.consume], ['repeat', player.status.repeat], ['random', player.status.random]]
+						), 
+						radiomaster: prefs.browser_id
+					});
+					await player.controller.takeBackControl();
+					player.controller.clearPlaylist();
 				}
 				layoutProcessor.playlistLoading();
-				prefs.save({radiomode: which, radioparam: param});
 				playlist.preventControlClicks(false);
-				player.controller.takeBackControl();
 				if (radios[which].script && radios[which].loaded == false) {
 					debug.shout("RADIO MANAGER","Loading Script",radios[which].script,"for",which);
 					try {
@@ -168,19 +170,19 @@ var playlist = function() {
 						radios[which].loaded = true;
 					} catch (err) {
 						debug.error("RADIO MANAGER","Failed to Load Script",err);
-						prefs.save({radiomode: '', radioparam: null});
-						player.controller.checkConsume(prefs.radioconsume);
+						playlist.radioManager.stop();
 						infobar.error(language.gettext('label_general_error'));
 					}
 				}
-				radios[which].func.initialise(param);
-				if (!from_me) {
-					player.controller.clearPlaylist();
+				var status = await radios[which].func.initialise(param);
+				if (status === false) {
+					debug.error("RADIO MANAGER","Failed to Initialise Script",err);
+					playlist.radioManager.stop();
+					infobar.error(language.gettext('label_general_error'));
+				} else {
+					setHeader();
+					runPlaylist(which, param);
 				}
-				// When runPlaylist returns this will be because radiomode has changed. This could be
-				// because we cleared it, or it could be because someone else has changed it.
-				// In order that we can take over running it if they go away, start it now
-				runPlaylist().then(playlist.radioManager.checkStatus);
 			},
 
 			checkStatus: function() {
@@ -189,16 +191,21 @@ var playlist = function() {
 			},
 
 			checkRemoteChanges: function() {
+				if (prefs.radiomode == '' && this_radio != '') {
+					playlist.radioManager.stop();
+				}
 				playlist.radioManager.load(prefs.radiomode, prefs.radioparam, true);
 			},
 
-			stop: function(callback) {
+			stop: async function() {
 				debug.log("RADIO MANAGER","Stopping");
 				// Dont' really need to do this here but it makes the UI more responsive
-				layoutProcessor.setRadioModeHeader('');
-				prefs.save({radiomode: '', radioparam: null}, callback);
+				this_radio = '';
+				this_param = null;
+				setHeader();
+				await prefs.save({radiomode: '', radioparam: null});
+				await player.controller.do_command_list(JSON.parse(prefs.radioconsume));
 				playlist.preventControlClicks(true);
-				player.controller.checkConsume(prefs.radioconsume);
 			},
 
 			loadFromUiElement: function(element) {
@@ -256,22 +263,18 @@ var playlist = function() {
 
 		invalidate: function() {
 			playlist_valid = false;
+			debug.debug('PLAYLIST', 'Invalidating playlist');
 		},
 
 		validate: function() {
-			playlist_valid = true;
+			playlist_valid = true;;
+			debug.debug('PLAYLIST', 'Validating playlist');
 		},
 
 		repopulate: async function() {
 
-			var count = -1;
-			var current_album = "";
-			var current_artist = "";
-			var current_type = "";
-
 			update_queue++;
 			var my_queue_id = update_queue;
-			playlist_valid = false;
 
 			while (my_queue_id > current_queue_request) {
 				debug.mark('PLAYLIST', 'Waiting for outstanding requests to finish');
@@ -282,6 +285,7 @@ var playlist = function() {
 				current_queue_request++;
 				return false;
 			}
+			playlist.invalidate();
 
 			debug.log('PLAYLIST', 'Starting update request',my_queue_id);
 			coverscraper.clearCallbacks();
@@ -316,59 +320,63 @@ var playlist = function() {
 			}
 
 			debug.log("PLAYLIST","Got Playlist from backend for request",my_queue_id);
+			var count = -1;
+			var current_album = "";
+			var current_artist = "";
+			var current_type = "";
 			finaltrack = -1;
 			currentalbum = -1;
-			tracklist = [];
+			var new_tracklist = [];
 			var totaltime = 0;
 
-			for (var i in list) {
-				list[i].Time = parseFloat(list[i].Time);
-				totaltime += list[i].Time;
-				var sortartist = (list[i].albumartist == "") ? list[i].trackartist : list[i].albumartist;
+			for (let track of list) {
+				track.Time = parseFloat(track.Time);
+				totaltime += track.Time;
+				var sortartist = (track.albumartist == "") ? track.trackartist : track.albumartist;
 				if ((sortartist.toLowerCase() != current_artist.toLowerCase()) ||
-					list[i].Album.toLowerCase() != current_album.toLowerCase() ||
-					list[i].type != current_type)
+					track.Album.toLowerCase() != current_album.toLowerCase() ||
+					track.type != current_type)
 				{
-					current_type = list[i].type;
+					current_type = track.type;
 					current_artist = sortartist;
-					current_album = list[i].Album;
+					current_album = track.Album;
 					count++;
-					switch (list[i].type) {
+					switch (track.type) {
 						case "local":
 							var hidden;
-							switch (list[i].domain) {
+							switch (track.domain) {
 								case 'youtube':
 								case 'soundcloud':
 									// Track Name == Album Name for these, so it's pointless having them open
-									if (playlist.rolledup.hasOwnProperty(sortartist+list[i].Album)) {
-										hidden = playlist.rolledup[sortartist+list[i].Album];
+									if (playlist.rolledup.hasOwnProperty(sortartist+track.Album)) {
+										hidden = playlist.rolledup[sortartist+track.Album];
 									} else {
 										hidden = true;
 									}
 									break;
 								default:
-									hidden = (playlist.rolledup[sortartist+list[i].Album]) ? true : false;
+									hidden = (playlist.rolledup[sortartist+track.Album]) ? true : false;
 									break;
 							}
-							tracklist[count] = new Album(sortartist, list[i].Album, count, hidden);
+							new_tracklist[count] = new Album(sortartist, track.Album, count, hidden);
 							break;
 						case "stream":
 							// Streams are hidden by default - hence we use the opposite logic for the flag
-							var hidden = (playlist.rolledup["StReAm"+list[i].Album]) ? false : true;
-							tracklist[count] = new Stream(count, list[i].Album, hidden);
+							var hidden = (playlist.rolledup["StReAm"+track.Album]) ? false : true;
+							new_tracklist[count] = new Stream(count, track.Album, hidden);
 							break;
 						default:
-							tracklist[count] = new Album(sortartist, list[i].Album, count, false);
+							new_tracklist[count] = new Album(sortartist, track.Album, count, false);
 							break;
 
 					}
 				}
-				tracklist[count].newtrack(list[i]);
-				if (list[i].Id == player.status.songid) {
+				new_tracklist[count].newtrack(track);
+				if (track.Id == player.status.songid) {
 					currentalbum = count;
-					currentTrack.Pos = list[i].Pos;
+					currentTrack.Pos = track.Pos;
 				}
-				finaltrack = parseInt(list[i].Pos);
+				finaltrack = parseInt(track.Pos);
 			}
 
 			// After all that, which will have taken a finite time - which could be a long time on
@@ -381,7 +389,8 @@ var playlist = function() {
 				current_queue_request++;
 				return false;
 			}
-			playlist_valid = true;
+			tracklist = new_tracklist;
+			playlist.validate();
 
 			$("#sortable").empty();
 			for (var i in tracklist) {
@@ -408,10 +417,14 @@ var playlist = function() {
 		},
 
 		is_valid: async function() {
-			while (!playlist_valid) {
+			while (!playlist_valid ) {
 				await new Promise(t => setTimeout(t, 250));
 			}
 			return true;
+		},
+
+		get_valid: function() {
+			return playlist_valid;
 		},
 
 		doUpcomingCrap: function() {
@@ -437,7 +450,7 @@ var playlist = function() {
 
 		clear: function() {
 			debug.log("PLAYLIST","Stopping Radio Manager");
-			playlist.radioManager.stop(player.controller.clearPlaylist);
+			playlist.radioManager.stop().then(player.controller.clearPlaylist);
 		},
 
 		handleClick: function(event) {
@@ -700,41 +713,38 @@ var playlist = function() {
 			}
 		},
 
-		trackHasChanged: function(backendid) {
+		trackHasChanged: async function(backendid) {
+			await playlist.is_valid();
 			var force = (currentTrack.Id == -1) ? true : false;
 			if (backendid != currentTrack.Id) {
 				debug.log("PLAYLIST","Looking For Current Track",backendid);
 				$("#pscroller .playlistcurrentitem").removeClass('playlistcurrentitem').addClass('playlistitem');
 				$('.track[romprid="'+backendid+'"],.booger[romprid="'+backendid+'"]').removeClass('playlistitem').addClass('playlistcurrentitem');
-				if (backendid && tracklist.length > 0) {
-					for(var i in tracklist) {
-						var c = tracklist[i].findcurrent(backendid);
-						if (c !== false) {
-							currentTrack = c;
-							if (currentalbum != i) {
-								currentalbum = i;
-								$(".playlistcurrenttitle").removeClass('playlistcurrenttitle').addClass('playlisttitle');
-								$('.item[name="'+i+'"]').removeClass('playlisttitle').addClass('playlistcurrenttitle');
-							}
-							break;
+				var found = false;
+				for (let album of tracklist) {
+					let c = album.findcurrent(backendid);
+					if (c !== false) {
+						currentTrack = c;
+						if (currentalbum != album.index) {
+							currentalbum = album.index;
+							$(".playlistcurrenttitle").removeClass('playlistcurrenttitle').addClass('playlisttitle');
+							$('.item[name="'+album.index+'"]').removeClass('playlisttitle').addClass('playlistcurrenttitle');
 						}
+						found = true;
+						debug.log('PLAYLIST', '  Found current track');
+						break;
 					}
-				} else {
+				}
+				if (!found) {
 					currentTrack = emptyTrack;
 				}
 				nowplaying.newTrack(playlist.getCurrentTrack(), force);
 			}
 			playlist.doUpcomingCrap();
-			clearTimeout(pscrolltimer);
-			if (pageloading) {
-				pscrolltimer = setTimeout(playlist.scrollToCurrentTrack, 3000);
-			} else {
-				playlist.scrollToCurrentTrack();
-			}
+			playlist.scrollToCurrentTrack();
 		},
 
 		scrollToCurrentTrack: function() {
-			pageloading = false;
 			layoutProcessor.scrollPlaylistToCurrentTrack();
 		},
 

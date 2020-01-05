@@ -1,54 +1,51 @@
 var spotiTrackRadio = function() {
 
-	var populated = false;
-	var trackparams;;
 	var tuner;
-	var tags;
+	var param;
+	var medebug = 'SPOTITRACK';
 
 	return {
 
-		populate: function(p, numtracks) {
+		initialise: async function(p) {
+			param = p;
 			if (typeof(spotifyRecommendationsRadio) == 'undefined') {
-				debug.log("CRAZY RADIO","Loading Spotify Radio Tuner");
-				$.getScript('radios/code/spotifyrecommendationsradio.js?version='+rompr_version,function() {
-					spotiTrackRadio.actuallyGo(p, numtracks)
-				});
-			} else {
-				spotiTrackRadio.actuallyGo(p, numtracks)
-			}
-		},
-
-		actuallyGo: function(p, numtracks) {
-			if (!populated) {
-				trackparams = p;
-				populated = true;
-				var params = {};
-				for (var i in trackparams) {
-					if (i.match(/seed_/)) {
-						params[i] = trackparams[i];
-					}
+				debug.log(medebug,"Loading Spotify Radio Tuner");
+				try {
+					await $.getScript('radios/code/spotifyrecommendationsradio.js?version='+rompr_version);
+				} catch (err) {
+					debug.error(medebug, 'Failed to load script');
+					return false;
 				}
-				tuner = new spotifyRecommendationsRadio();
-				tuner.populate(params, 5);
-			} else {
-				tuner.sendTracks(numtracks);
 			}
+			tuner = new spotifyRecommendationsRadio();
+			var r = {};
+			for (var i in param) {
+				if (i.match(/seed_/)) {
+					r[i] = param[i];
+				}
+			}
+			tuner.getRecommendations(r)
 		},
 
-		modeHtml: function(p) {
-			if (trackparams) {
-				return '<i class="icon-spotify-circled modeimg"/></i><span class="modespan">'+trackparams.name+'</span>';
-			} else {
-				return false;
-			}
+		getURIs: async function(numtracks) {
+			var tracks = await tuner.getTracks(numtracks);
+			var retval = new Array();
+			tracks.forEach(function(uri) {
+				retval.push({type: 'uri', name: uri});
+			});
+			return retval;
+		},
+
+		modeHtml: function() {
+			return '<i class="icon-spotify-circled modeimg"/></i><span class="modespan">'+param.name+'</span>';
 		},
 
 		stop: function() {
-			populated = false;
+
 		}
 
 	}
 
 }();
 
-playlist.radioManager.register("spotiTrackRadio",spotiTrackRadio,null);
+playlist.radioManager.register("spotiTrackRadio", spotiTrackRadio, null);

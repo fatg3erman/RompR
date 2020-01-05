@@ -95,22 +95,22 @@ function utf8_encode(s) {
 
 function escapeHtml(text) {
 	if (!text) return '';
-  return text
-	  .replace(/&/g, "&amp;")
-	  .replace(/</g, "&lt;")
-	  .replace(/>/g, "&gt;")
-	  .replace(/"/g, "&quot;")
-	  .replace(/'/g, "&#039;");
+	return text
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#039;");
 }
 
 function unescapeHtml(text) {
 	if (!text) return '';
-  return text
-	  .replace(/&amp;/g, "&")
-	  .replace(/&lt;/g, "<")
-	  .replace(/&gt;/g, ">")
-	  .replace(/&quot;/g, '"')
-	  .replace(/&#039;/g, "'");
+  	return text
+		.replace(/&amp;/g, "&")
+	  	.replace(/&lt;/g, "<")
+	  	.replace(/&gt;/g, ">")
+	  	.replace(/&quot;/g, '"')
+	  	.replace(/&#039;/g, "'");
 }
 
 String.prototype.capitalize = function() {

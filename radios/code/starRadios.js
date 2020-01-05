@@ -6,7 +6,7 @@ var starRadios = function() {
 
 	return {
 
-		initialise: function(p) {
+		initialise: async function(p) {
 			param = p;
 			whattodo = 'getplaylist';
 			tracks = new Array();
@@ -15,13 +15,14 @@ var starRadios = function() {
 		getURIs: async function(numtracks) {
 			while (tracks.length < numtracks) {
 				try {
-					tracks = await $.ajax({
+					var t = await $.ajax({
 						url: "backends/sql/userRatings.php",
 						type: "POST",
 						contentType: false,
 						data: JSON.stringify([{action: whattodo, playlist: param, numtracks: prefs.smartradio_chunksize}]),
 						dataType: 'json'
 					});
+					tracks = tracks.concat(t);
 				} catch(err) {
 					debug.error('STARRADIOS', 'Error getting tracks',err);
 					return false;
@@ -51,7 +52,5 @@ var starRadios = function() {
 		}
 	}
 }();
-
-debug.log("STARRADIOS","Real script Loaded");
 
 playlist.radioManager.register("starRadios", starRadios, null);

@@ -1135,4 +1135,16 @@ function get_encoded_image($image) {
 	return $newurl;
 }
 
+function upgrade_saved_crazies() {
+	logger::log('INIT', "Upgrading saved crazy playlists");
+	$files = glob('prefs/crazyplaylists/*.json');
+	foreach ($files as $file) {
+		logger::log('INIT', ' '.$file);
+		$data = json_decode(file_get_contents($file), true);
+		$data['tempo']['min'] = round($data['tempo']['min'] * 300, 2);
+		$data['tempo']['max'] = round($data['tempo']['max'] * 300, 2);
+		file_put_contents($file, json_encode($data));
+	}
+}
+
 ?>

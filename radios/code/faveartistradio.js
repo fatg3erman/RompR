@@ -1,71 +1,49 @@
 var faveArtistRadio = function() {
 
-	var populating = false;
 	var tuner;
-
-	function getFaveArtists() {
-		if (populating) {
-			debug.warn("FAVE ARTIST RADIO","Asked to populate but already doing so!");
-			return false;
-		}
-		populating = true;
-		metaHandlers.genericAction(
-			'getfaveartists',
-			function(data) {
-				if (data.length > 0) {
-					debug.trace("FAVE ARTIST RADIO","Got artists",data);
-					for (var i in data) {
-						tuner.newArtist(data[i].name);
-					}
-					tuner.startSending();
-				} else {
-					infobar.notify(language.gettext('label_gotnotracks'));
-					debug.warn("FAVE ARTIST RADIO", "Got no artists", data);
-					playlist.radioManager.stop(null);
-				}
-			},
-			function() {
-				debug.error("FAVE ARTIST RADIO", "Failed to get artists", data);
-				infobar.notify(language.gettext('label_gotnotracks'));
-				playlist.radioManager.stop(null);
-			}
-		);
-	}
+	var medebug = "FAVE ARTIST RADIO";
 
 	return {
 
-		populate: function(p, numtracks) {
-			if (!populating) {
-				if (typeof(searchRadio) == 'undefined') {
-					debug.log("FAVE ARTIST RADIO","Loading Search Radio Tuner");
-					$.getScript('radios/code/searchRadio.js?version=?'+rompr_version,function() {
-						faveArtistRadio.actuallyGo(numtracks)
-					});
-				} else {
-					faveArtistRadio.actuallyGo(numtracks);
+		initialise: async function(p) {
+			if (typeof(searchRadio) == 'undefined') {
+				debug.log(medebug,"Loading Search Radio Tuner");
+				try {
+					await $.getScript('radios/code/searchRadio.js?version='+rompr_version);
+				} catch(err) {
+					debug.error(medebug,'Failed to load script',err);
+					return false;
 				}
-			} else {
-				debug.log("FAVE ARTIST RADIO","RePopulating",numtracks);
-				tuner.sending += (numtracks - tuner.sending);
-				tuner.startSending();
+			}
+			tuner = new searchRadio();
+			try {
+				var fartists = await $.ajax({
+					url: "backends/sql/userRatings.php",
+					type: "POST",
+					contentType: false,
+					data: JSON.stringify([{action: 'getfaveartists'}]),
+					dataType: 'json'
+				});
+				if (fartists.length == 0) {
+					debug.warn(medebug, 'Got no fartists');
+					return false;
+				}
+				fartists.forEach(function(artist) {
+					tuner.newArtist(artist.name);
+				});
+			} catch(err) {
+				debug.error(medebug, 'Error getting fartists',err);
+				return false;
 			}
 		},
 
-		actuallyGo: function(numtracks) {
-			debug.shout("FAVE ARTIST RADIO","Populating");
-			tuner = new searchRadio();
-			tuner.sending = numtracks;
-			tuner.running = true;
-			tuner.artistindex = 0;
-			getFaveArtists();
+		getURIs: async function(numtracks) {
+			var t = await tuner.getTracks(numtracks);
+			return t;
 		},
 
 		stop: function() {
-			if (tuner) {
-				tuner.sending = 0;
-				tuner.running = false;
-			}
-			populating = false;
+			tuner = null;
 		},
 
 		modeHtml: function(p) {

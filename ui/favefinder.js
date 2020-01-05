@@ -110,7 +110,8 @@ function faveFinder(returnall) {
 					if (data[i].tracks[k].uri.isArtistOrAlbum()) {
 						debug.trace("FAVEFINDER", "Ignoring non-track ",data[i].tracks[k].uri);
 					} else {
-						debug.trace("FAVEFINDER","Found Track",data[i].tracks[k]);
+						// debug.debug("FAVEFINDER","Found Track",data[i].tracks[k]);
+						debug.trace('FAVEFINDER','Found Track',data[i].tracks[k].albumartist,data[i].tracks[k].title);
 						var r = cloneObject(req);
 						for (var g in data[i].tracks[k]) {
 							r.data[g] = data[i].tracks[k][g];

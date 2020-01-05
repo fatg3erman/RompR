@@ -27,6 +27,7 @@ Thought I'd bump the version number up a bit since this seems like quite a big r
 * Fix ImageMagick handling of radio stations that only have a .ico file for their staion image, as many of the ones in Community Radio do. PHP-GD does not support .ico files so ImageMagick is required for these stations.
 * Fixed a serious bug in the PHP URL downloading code, it's a miracle it ever worked at all.
 * Fixed the play control buttons in Modern-Dark looking blurred in Safari due to Safari not rendering SVG blur correctly
+* The Personalised Radio code has been re-written from scratch to make it perform better. In particular the Spotify and Last.FM stations now populate much more quickly.
 * As always, hundreds of little tweaks and tinkerings here and there
 
 ## Version 1.32

@@ -10,10 +10,11 @@ class base_mpd_player {
 	protected $player_type;
 	private $is_slave;
 	public $playlist_error;
+	private $debug_id;
 
 	public function __construct($ip = null, $port = null, $socket = null, $password = null, $player_type = null, $is_slave = null) {
 		global $prefs;
-
+		$this->debug_id = microtime();
 		if ($ip !== null) {
 			$this->ip = $ip;
 		} else {
@@ -64,32 +65,44 @@ class base_mpd_player {
 	}
 
 	public function open_mpd_connection() {
-		if ($this->is_connected()) {
-			return true;
-		}
-		if ($this->socket != "") {
-			$this->connection = @stream_socket_client('unix://'.$this->socket);
-		} else {
-			$this->connection = @stream_socket_client('tcp://'.$this->ip.':'.$this->port);
+
+		$retries = 10;
+		$errno = null;
+		$errstr = null;
+
+		while (!$this->is_connected() && $retries > 0) {
+			logger::debug('MPD', 'Opening Connection For',$this->debug_id);
+			if ($this->socket != "") {
+				$this->connection = stream_socket_client('unix://'.$this->socket, $errno, $errstr, 10, STREAM_CLIENT_CONNECT);
+			} else {
+				$this->connection = stream_socket_client('tcp://'.$this->ip.':'.$this->port, $errno, $errstr, 10, STREAM_CLIENT_CONNECT);
+			}
+			if ($errno != 0) {
+				logger::warn('MPD', 'Connection result: Error is',$errno,'Error String is',$errstr);
+				$this->connection = false;
+			}
+			$retries--;
 		}
 
 		if($this->is_connected()) {
 			stream_set_timeout($this->connection, 65535);
 			stream_set_blocking($this->connection, true);
 			while(!feof($this->connection)) {
-				$gt = fgets($this->connection, 1024);
+				$gt = fgets($this->connection);
 				if ($this->parse_mpd_var($gt))
 					break;
 			}
+		} else {
+			logger::error('MPD', 'Failed to connect to player', $errno, $errstr);
+			return false;
 		}
 
 		if ($this->password != "" && $this->is_connected()) {
 			fputs($this->connection, "password ".$this->password."\n");
 			while(!feof($this->connection)) {
-				$gt = fgets($this->connection, 1024);
+				$gt = fgets($this->connection);
 				$a = $this->parse_mpd_var($gt);
 				if($a === true) {
-					$is_connected = true;
 					break;
 				} else if ($a == null) {
 
@@ -104,13 +117,17 @@ class base_mpd_player {
 
 	public function close_mpd_connection() {
 		if ($this->is_connected()) {
-			$this->send_command('close');
+			logger::debug('MPD', 'Closing Connection for',$this->debug_id);
 			stream_socket_shutdown($this->connection, STREAM_SHUT_RDWR);
 		}
 	}
 
 	public function is_connected() {
-		return (isset($this->connection) && is_resource($this->connection));
+		if (isset($this->connection) && is_resource($this->connection) && !is_bool($this->connection)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	private function parse_mpd_var($in_str) {
@@ -128,7 +145,7 @@ class base_mpd_player {
 	}
 
 	protected function getline() {
-		$got = fgets($this->connection, 2048);
+		$got = fgets($this->connection);
 		$key = trim(strtok($got, ":"));
 		$val = trim(strtok("\0"));
 		if ($val != '') {
@@ -141,13 +158,14 @@ class base_mpd_player {
 	}
 
 	protected function send_command($command) {
-		$retries = 5;
+		$retries = 3;
 		$l = strlen($command."\n");
 		do {
-			$b = @fputs($this->connection, $command."\n");
+			$b = fputs($this->connection, $command."\n");
 			if ((!$b || $b < $l) && $command != 'close') {
 				logger::warn("MPD", "Socket Write Error for",$command,"- Retrying");
 				stream_socket_shutdown($this->connection, STREAM_SHUT_RDWR);
+				$this->connection = false;
 				usleep(500000);
 				$this->open_mpd_connection();
 				$retries--;
@@ -170,7 +188,7 @@ class base_mpd_player {
 			}
 			if ($success) {
 				while(!feof($this->connection)) {
-					$var = $this->parse_mpd_var(fgets($this->connection, 1024));
+					$var = $this->parse_mpd_var(fgets($this->connection));
 					if(isset($var)){
 						if($var === true && count($retarr) == 0) {
 							// Got an OK or ACK but - no results or return_array is false
@@ -229,22 +247,41 @@ class base_mpd_player {
 			$this->translate_player_types($cmds);
 		}
 
+
+
+		$retries = 3;
 		if (count($cmds) > 1) {
-			$this->send_command("command_list_begin");
-			foreach ($cmds as $c) {
-				logger::trace("POSTCOMMAND", "Command List:",$c);
-				// Note. We don't use send_command because that closes and re-opens the connection
-				// if it fails to fputs, and that loses our command list status. Also if this fputs
-				// fails it means the connection has dropped anyway, so we're screwed whatever happens.
-				fputs($this->connection, $c."\n");
-				$done++;
-				// Command lists have a maximum length, 50 seems to be the default
-				if ($done == 50) {
-					$this->do_mpd_command("command_list_end", true);
-					$this->send_command("command_list_begin");
-					$done = 0;
+			do {
+				$error = false;
+				$this->send_command("command_list_begin");
+				foreach ($cmds as $c) {
+					logger::trace("POSTCOMMAND", "Command List:",$c);
+					$l = strlen($c."\n");
+					// Note. We don't use send_command because that closes and re-opens the connection
+					// if it fails to fputs, and that loses our command list status, so we have to do our
+					// own error handling here
+					$b = fputs($this->connection, $c."\n");
+					if ((!$b || $b < $l)) {
+						logger::warn("MPD", "Command List Socket Write Error for",$c,"- Retrying");
+						stream_socket_shutdown($this->connection, STREAM_SHUT_RDWR);
+						$this->connection = false;
+						usleep(500000);
+						$this->open_mpd_connection();
+						$retries--;
+						$done = 0;
+						$error = true;
+						break;
+					} else {
+						$done++;
+						// Command lists have a maximum length, 50 seems to be the default
+						if ($done == 50) {
+							$this->do_mpd_command("command_list_end", true);
+							$this->send_command("command_list_begin");
+							$done = 0;
+						}
+					}
 				}
-			}
+			} while ($retries > 0 && $error == true);
 			$cmd_status = $this->do_mpd_command("command_list_end", true, false);
 		} else if (count($cmds) == 1) {
 			logger::trace("POSTCOMMAND", "Command :",$cmds[0]);

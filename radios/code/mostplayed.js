@@ -1,52 +1,43 @@
 var mostPlayed = function() {
 
-	var running = false;
-	var populating = false;
-	var started = false;
-
-	function getSmartPlaylistTracks(action, numtracks) {
-		if (populating) {
-			debug.warn("MOST PLAYED", "Asked to populate but already doing so!")
-			return false;
-		}
-		populating = true;
-		metaHandlers.genericAction(
-			[{ action: action, playlist: "mostplayed", numtracks: numtracks }],
-			function(data) {
-				if (data.length > 0) {
-					debug.trace("SMARTPLAYLIST","Got tracks",data);
-					running = true;
-					populating = false;
-					player.controller.addTracks(data, playlist.radioManager.playbackStartPos(), null, true);
-				} else {
-					playlist.radioManager.stop(null);
-				}
-			},
-			function() {
-				debug.error("MOST PLAYED","Database fail");
-				infobar.notify(language.gettext('label_gotnotracks'));
-				playlist.radioManager.stop(null);
-				populating = false;
-			}
-		);
-	}
+	var param;
+	var whattodo;
+	var tracks;
 
 	return {
 
-		populate: function(s, numtracks) {
-			debug.shout("MOST PLAYED", "Populating");
-			getSmartPlaylistTracks(started ? "repopulate" : "getplaylist", numtracks);
-			started = true;
+		initialise: async function(p) {
+			param = p;
+			whattodo = 'getplaylist';
+			tracks = new Array();
+		},
+
+		getURIs: async function(numtracks) {
+			while (tracks.length < numtracks) {
+				try {
+					var t = await $.ajax({
+						url: "backends/sql/userRatings.php",
+						type: "POST",
+						contentType: false,
+						data: JSON.stringify([{action: whattodo, playlist: param, numtracks: prefs.smartradio_chunksize}]),
+						dataType: 'json'
+					});
+					tracks = tracks.concat(t);
+				} catch(err) {
+					debug.error('STARRADIOS', 'Error getting tracks',err);
+					return false;
+				}
+			}
+			whattodo = 'repopulate';
+			return tracks.splice(0, numtracks);
 		},
 
 		modeHtml: function(p) {
-			return '<i class="icon-music modeimg"></i><span class="modespan">'+
-				language.gettext("label_mostplayed")+'</span>&nbsp;';
+			return '<i class="icon-music modeimg"></i><span class="modespan">'+language.gettext("label_mostplayed")+'</span>&nbsp;';
 		},
 
 		stop: function() {
-			running = false;
-			started = false;
+
 		}
 
 	}

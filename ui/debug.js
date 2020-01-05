@@ -7,7 +7,7 @@ window.debug = (function() {
 	var focuson = new Array();
 	var log_colours = {
 		1: "#FF0000",
-		2: "#FFDD00",
+		2: "#FE6700",
 		3: "#FF00FF",
 		4: "#00CCFF",
 		5: "#00CC00",
@@ -120,7 +120,26 @@ window.debug = (function() {
 		},
 
 		ignoreinfopanel: function() {
-			ignoring = ["LASTFM PLUGIN", "MBNZ PLUGIN", "SPOTIFY PLUGIN", "DISCOGS PLUGIN"];
+			ignoring = {
+				"LASTFM PLUGIN": true, 
+				"MBNZ PLUGIN": true ,
+				"SPOTIFY PLUGIN": true,
+				"DISCOGS PLUGIN": true,
+				"INFOBAR": true,
+				"NOWPLAYING": true,
+				"LASTFM": true,
+				"BROWSER": true,
+				"TRACKDATA": true,
+				"FILE INFO": true,
+				"FILE PLUGIN": true,
+				"RATINGS PLUGIN": true,
+				"COVERSCRAPER": true
+			};
+			debug.warn('DEBUG', 'Info panel debug is now ignored by default. Use debug.clearignore to switch it back on');
+		},
+
+		clearignore: function() {
+			ignoring = [];
 		},
 
 		highlight: function(module) {
@@ -162,3 +181,5 @@ window.debug = (function() {
 	}
 
 })();
+
+debug.ignoreinfopanel();

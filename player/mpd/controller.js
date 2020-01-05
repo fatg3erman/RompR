@@ -99,8 +99,6 @@ function playerController() {
 	var thenowplayinghack = false;
 	var lastsearchcmd = "search";
 	var stateChangeCallbacks = new Array();
-	var request_id = -1;
-	var last_request_id = 0;
 
 	this.trackstarttime = 0;
 
@@ -139,13 +137,7 @@ function playerController() {
 
 	this.do_command_list = async function(list) {
 		debug.debug('PLAYER', 'Command List',list);
-		request_id++;
-		const my_request_id = request_id;
-		while (last_request_id < my_request_id) {
-			debug.blurt('PLAYER', 'Queuing Request',my_request_id);
-			await new Promise(t => setTimeout(t, 50));
-		}
-		// Prevent checkProgress from doing anything while we're doing things
+		// Prevent checkProgress and radioManager from doing anything while we're doing things
 		playlist.invalidate();
 		try {
 			// Use temp variable in case it errors
@@ -158,29 +150,27 @@ function playerController() {
 				timeout: 30000
 			});
 			// Clone the object so this thread can exit
+			debug.debug('PLAYER', 'Got response for',list);
 			player.status = cloneObject(s);
 			['radiomode', 'radioparam', 'radiomaster', 'radioconsume'].forEach(function(e) {
+				debug.debug('PLAYER', e, player.status[e]);
 				prefs[e] = player.status[e];
 			});
 			self.trackstarttime = (Date.now()/1000) - player.status.elapsed;
 			if (player.status.playlist !== plversion) {
 				debug.blurt("PLAYER","Player has marked playlist as changed",plversion,player.status.playlist);
 				plversion = player.status.playlist;
-				// Repopulate will re-validate the playlist when it completes
 				playlist.repopulate();
-			} else {
-				playlist.validate();
 			}
 			checkStateChange();
 			infobar.updateWindowValues();
 		} catch (err) {
 			debug.error('CONTROLLER', 'Command List Failed', err);
-			playlist.validate()
 			if (list.length > 0) {
 				infobar.error(language.gettext('error_sendingcommands', [prefs.player_backend]));
 			}
 		}
-		last_request_id++;
+		playlist.validate();
 	}
 
 	this.addStateChangeCallback = function(sc) {
@@ -443,16 +433,11 @@ function playerController() {
 		self.do_command_list([["consume",new_value]]);
 	}
 
-	this.checkConsume = function(state) {
-		debug.log("PLAYER","Checking Consume",state);
-		self.do_command_list([["consume",state]]);
+	this.takeBackControl = async function(v) {
+		await self.do_command_list([["repeat",0],["random", 0],["consume", 1]]);
 	}
 
-	this.takeBackControl = function(v) {
-		self.do_command_list([["repeat",0],["random", 0],["consume", 1]]);
-	}
-
-	this.addTracks = function(tracks, playpos, at_pos, queue) {
+	this.addTracks = async function(tracks, playpos, at_pos, queue) {
 		// Call into this to add items to the play queue.
 		// tracks  : list of things to add
 		// playpos : position to start playback from after adding items or null
@@ -541,7 +526,7 @@ function playerController() {
 		if (at_pos === null && abitofahack) {
 			playlist.waiting();
 		}
-		self.do_command_list(cmdlist);
+		await self.do_command_list(cmdlist);
 	}
 
 	this.move = function(first, num, moveto) {

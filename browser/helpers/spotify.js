@@ -158,7 +158,7 @@ var spotify = function() {
 			},
 
 			getMultiInfo: function(ids, success, fail, prio) {
-				var url = baseURL + '/v1/albums/?ids=' + ids.join();
+				var url = baseURL + '/v1/albums/?ids=' + ids.join(',');
 				spotify.request('', url, success, fail, prio, true);
 			}
 

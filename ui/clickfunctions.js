@@ -201,7 +201,7 @@ function setSearchResultMode(element) {
 	if (old_mode != new_mode) {
 		$('.choose-resultmode').removeClass('currentbun');
 		element.addClass('currentbun');
-		prefs.save({displayresultsas: new_mode}, player.controller.reSearch);
+		prefs.save({displayresultsas: new_mode}).then(player.controller.reSearch);
 	}
 }
 

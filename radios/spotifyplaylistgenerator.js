@@ -1,16 +1,14 @@
 var crazyRadioManager = function() {
 
-	var crazySettings = new Array();
-
 	return {
 
 		loadSavedCrazies: function() {
 			$('.crazyradio').remove();
 			$.get('radios/crazymanager.php?action=get', function(data) {
 				debug.log("CRAZY RADIO","Saved Data",data);
-				crazySettings = data;
+				var crazySettings = data;
 				for (var i in crazySettings) {
-					var crazy = playlist.radioManager.standardBox('spotiCrazyRadio', i, 'icon-spotify-circled', crazySettings[i].playlistname).appendTo("#pluginplaylists_spotify");
+					var crazy = playlist.radioManager.standardBox('spotiCrazyRadio', JSON.stringify(crazySettings[i]), 'icon-spotify-circled', crazySettings[i].playlistname).appendTo("#pluginplaylists_spotify");
 					crazy.append(
 						'<div class="fixed">'+
 						'<i class="icon-cancel-circled collectionicon clickable crazyradio clickremcrazy" name="'+i+'"></i>'+
@@ -29,19 +27,31 @@ var crazyRadioManager = function() {
 		},
 
 		go: function() {
-			// Dummy param Date.now() to make sure radioManager stops the previous
-			// one if we've changed genres.
-			playlist.radioManager.load('spotiCrazyRadio', Date.now());
+			var params = {
+				playlistname: null,
+				genres: $('[name="spotigenres"]').val()
+			};
+			$('.spotiradioslider').each(function() {
+				var attribute = $(this).attr('name');
+				var range = $(this).rangechooser("getRange");
+				params['max_'+attribute] = range.max;
+				params['min_'+attribute] = range.min;
+			});
+			playlist.radioManager.load('spotiCrazyRadio', JSON.stringify(params));
 		},
 
-		load: function(i) {
-			if (crazySettings.hasOwnProperty(i)) {
-				debug.log("LOAD CRAZY","Loading",crazySettings[i]);
-				$('[name="spotigenres"]').val(crazySettings[i].genres);
-				$('.spotiradioslider').each(function() {
-					var attribute = $(this).attr('name');
-					$(this).rangechooser("setRange",crazySettings[i][attribute]);
-				});
+		load: function(settings) {
+			for (let i in settings) {
+				switch (i) {
+					case 'genres':
+						$('[name="spotigenres"]').val(settings[i]);
+						break;
+					case 'playlistname':
+						break;
+					default:
+						$('.spotiradioslider[name="'+i+'"]').rangechooser('setRange', settings[i]);
+						break;
+				}
 			}
 		},
 
@@ -106,7 +116,18 @@ var spotiCrazyRadio = function() {
 		var row = $('<tr>', {class: 'ucfirst'}).appendTo(table);
 		row.append('<td><b>'+name+'</b></td>');
 		var h = $('<td>', {width: '100%'}).appendTo(row);
-		var s = $('<div>', {name: name, class: 'spotiradioslider'}).appendTo(h).rangechooser();
+		switch (name) {
+			case 'tempo':
+				var options = {startmax: 1, range: 300};
+				break;
+			case 'popularity':
+				var options = {startmax: 1, range: 100};
+				break;
+			default:
+				var options = {startmax: 1, range: 1}
+				break;
+		}
+		var s = $('<div>', {name: name, class: 'spotiradioslider'}).appendTo(h).rangechooser(options);
 	}
 
 	return {
@@ -129,7 +150,7 @@ var spotiCrazyRadio = function() {
 				});
 
 				var table = $('<table>').appendTo('#pluginplaylists_crazy');
-				['energy', 'danceability', 'valence', 'instrumentalness', 'acousticness', 'tempo'].forEach(function(i) {
+				['energy', 'danceability', 'valence', 'instrumentalness', 'acousticness', 'tempo', 'liveness', 'popularity'].forEach(function(i) {
 					addParameter(i, table)
 				});
 

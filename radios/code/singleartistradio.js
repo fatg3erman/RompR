@@ -2,48 +2,37 @@ var singleArtistRadio = function() {
 
 	var tuner;
 	var artist;
+	var medebug = 'SINGLEARTIST RADIO';
 
 	return {
 
-		populate: function(p, numtracks) {
-			if (p && p != artist) {
-				debug.shout("ARTIST RADIO","Populating",p);
-				artist = p;
-				if (typeof(searchRadio) == 'undefined') {
-					debug.log("ARTIST RADIO","Loading Search Radio Tuner");
-					$.getScript('radios/code/searchRadio.js?version='+rompr_version,function() {
-						singleArtistRadio.actuallyGo(numtracks)
-					});
-				} else {
-					singleArtistRadio.actuallyGo(numtracks);
+		initialise: async function(p) {
+			artist = p;
+			if (typeof(searchRadio) == 'undefined') {
+				debug.log(medebug,"Loading Search Radio Tuner");
+				try {
+					await $.getScript('radios/code/searchRadio.js?version='+rompr_version);
+				} catch(err) {
+					debug.error(medebug,'Failed to load script',err);
+					return false;
 				}
-			} else {
-				debug.log("FAVE ARTIST RADIO","RePopulating");
-				tuner.sending += (numtracks - tuner.sending);
-				tuner.startSending();
-				tuner.running = true;
 			}
+			tuner = new searchRadio();
+			tuner.newArtist(artist);
 		},
 
-		actuallyGo: function(numtracks) {
-			tuner = new searchRadio();
-			tuner.sending = numtracks;
-			tuner.running = true;
-			tuner.artistindex = 0;
-			tuner.newArtist(artist);
-			tuner.startSending();
+		getURIs: async function(numtracks) {
+			var t = await tuner.getTracks(numtracks);
+			return t;
 		},
 
 		stop: function() {
-			if (tuner) {
-				tuner.sending = 0;
-				tuner.running = false;
-			}
+			tuner = null;
 			artist = null;
 		},
 
-		modeHtml: function(a) {
-			return '<i class="icon-artist modeimg"/></i><span class="modespan ucfirst">'+a+" "+language.gettext("label_radio")+'</span>';
+		modeHtml: function() {
+			return '<i class="icon-artist modeimg"/></i><span class="modespan ucfirst">'+artist+" "+language.gettext("label_radio")+'</span>';
 		}
 	}
 }();

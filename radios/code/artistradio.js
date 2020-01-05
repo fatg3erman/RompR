@@ -1,13 +1,12 @@
 var artistRadio = function() {
 
-	// Uses Spotify Web API
-
-	var artistname;
-	var artistindex;
+	var medebug = "ARTIST RADIO";
+	var artistname = null;
+	var artistindex = null;
 	var tuner;
 
 	function getArtistName(id) {
-		spotify.artist.getInfo(id, artistRadio.gotArtistName, artistRadio.fail);
+		spotify.artist.getInfo(id, artistRadio.gotArtistName, artistRadio.noName);
 	}
 
 	function searchForArtist(name) {
@@ -16,80 +15,78 @@ var artistRadio = function() {
 
 	return {
 
-		populate: function(artist, numtracks) {
-			if (artist && artist != artistname && artist != artistindex) {
-				debug.shout("ARTIST RADIO","Populating with",artist,artistname);
-				if (typeof(spotifyRadio) == 'undefined') {
-					debug.log("ARTIST RADIO","Loading Spotify Radio Tuner");
-					$.getScript('radios/code/spotifyRadio.js?version='+rompr_version,function() {
-						artistRadio.actuallyGo(artist, numtracks)
-					});
-				} else {
-					artistRadio.actuallyGo(artist, numtracks);
+		initialise: async function(artist) {
+			if (typeof(spotifyRadio) == 'undefined') {
+				debug.log(medebug,"Loading Spotify Radio Tuner");
+				try {
+					await $.getScript('radios/code/spotifyRadio.js?version='+rompr_version);
+				} catch (err) {
+					debug.error(medebug,'Failed to load script',err);
+					return false;
 				}
-			} else {
-				debug.log("ARTIST RADIO", "Repopulating");
-				tuner.sending += (numtracks - tuner.sending);
-				tuner.startSending();
 			}
-		},
-
-		actuallyGo: function(artist, numtracks) {
 			tuner = new spotifyRadio();
-			tuner.sending = numtracks;
-			tuner.running = true;
-			tuner.artistindex = 0;
 			if (artist.substr(0,15) == "spotify:artist:") {
 				artistindex = artist;
 				getArtistName(artist.substr(15,artist.length));
 			} else {
-				debug.shout("ARTIST RADIO","Searching for artist",artist);
+				debug.shout(medebug,"Searching for artist",artist);
 				artistname = artist;
 				searchForArtist(artist);
 			}
 		},
 
-		modeHtml: function(a) {
-			if (a.substr(0,15) == "spotify:artist:") {
-				if (artistname) {
-					a = artistname;
-				} else {
-					a= '';
-				}
+		getURIs: async function(numtracks) {
+			while (artistname === null && artistindex === null) {
+				await new Promise(t => setTimeout(t, 500));
 			}
-			return '<i class="icon-wifi modeimg"/></i><span class="modespan">'+a+' '+
-				language.gettext("label_radio")+'</span>';
+			if (artistindex === false) {
+				return false;
+			}
+			var t = await tuner.getTracks(numtracks);
+			return t;
+		},
+
+		modeHtml: function() {
+			if (artistname) {
+				a = artistname;
+			} else {
+				a = '';
+			}
+			return '<i class="icon-wifi modeimg"/></i><span class="modespan">'+a+' '+language.gettext("label_radio")+'</span>';
 		},
 
 		stop: function() {
-			tuner.sending = 0;
-			tuner.running = false;
-			artistname = "";
-			artistindex = "";
+			tuner = null;
+			artistname = null;
+			artistindex = null;
 		},
 
 		gotArtists: function(data) {
-			for (var i in data.artists.items) {
-				if (data.artists.items[i].name.removePunctuation().toLowerCase() == artistname.removePunctuation().toLowerCase()) {
-					artistindex = data.artists.items[i].id;
-					tuner.newArtist(artistname, data.artists.items[i].id, true);
-					tuner.startSending();
+			for (let artist of data.artists.items) {
+				if (artist.name.removePunctuation().toLowerCase() == artistname.removePunctuation().toLowerCase()) {
+					artistindex = artist.id;
+					tuner.newArtist(artistname, artist.id, true);
 					return;
 				}
-			}
+			};
 			artistRadio.fail();
 		},
 
 		gotArtistName: function(data) {
 			artistname = data.name;
 			tuner.newArtist(artistname, data.id, true);
-			tuner.startSending();
 		},
 
-		fail: function(data) {
-			debug.error("ARTIST RADIO","Failed to create playlist",data);
+		noName: function() {
+			debug.warn(medebug,"Couldn't find artist name");
+			artistname = false;
+		},
+
+		fail: function() {
+			debug.error(medebug,"Failed to find artist id");
 			infobar.notify(language.gettext('label_gotnotracks'));
-			playlist.radioManager.stop(null);
+			artistindex = false;
 		}
 
 	}

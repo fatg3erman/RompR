@@ -453,7 +453,7 @@ var browser = function() {
 			var displayer;
 			if (prefs.hidebrowser) {
 				$("#hidebrowser").prop("checked", !$("#hidebrowser").is(':checked'));
-				prefs.save({hidebrowser: $("#hidebrowser").is(':checked')}, hideBrowser);
+				prefs.save({hidebrowser: $("#hidebrowser").is(':checked')}).then(hideBrowser);
 			}
 			if ($('#pluginholder').length > 0 && !($('#pluginholder').is(':visible'))) {
 				displayer = $('<div>', {id: id+"information", class: "infotext invisible"}).appendTo('#pluginholder');
