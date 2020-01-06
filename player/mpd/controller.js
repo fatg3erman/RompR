@@ -1,16 +1,25 @@
 async function checkProgress() {
-	var AlanPartridge = 0;
+	var AlanPartridge = 5;
 	var safetytimer = 250;
 	var waittime = 1000;
 	while (true) {
 		await playlist.is_valid();
-		if (player.status.songid !== player.controller.previoussongid) {
-			safetytimer = 0;
+		if (AlanPartridge >= 5) {
+			AlanPartridge = 0;
+			await player.controller.do_command_list([]);
+			updateStreamInfo();
 		}
-		var progress = (Date.now()/1000) - player.controller.trackstarttime;
+		if (player.status.state == 'play') {
+			var progress = (Date.now()/1000) - player.controller.trackstarttime;
+		} else {
+			var progress = player.status.elapsed;
+		}
 		playlist.setCurrent({progress: progress});
 		var duration = playlist.getCurrent('Time') || 0;
 		infobar.setProgress(progress,duration);
+		if (player.status.songid !== player.controller.previoussongid) {
+			safetytimer = 0;
+		}
 		if (player.status.state == 'play' && duration > 0 && progress > (duration - 1)) {
 			AlanPartridge = 5;
 			safetytimer = Math.min(safetytimer + 250, 5000);
@@ -18,11 +27,6 @@ async function checkProgress() {
 		} else {
 			AlanPartridge++;
 			waittime = 1000;
-		}
-		if (AlanPartridge >= 5) {
-			AlanPartridge = 0;
-			await player.controller.do_command_list([]);
-			updateStreamInfo();
 		}
 		await new Promise(t => setTimeout(t, waittime));
 	}
