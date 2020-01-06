@@ -198,7 +198,7 @@ var playlist = function() {
 			},
 
 			stop: async function() {
-				debug.log("RADIO MANAGER","Stopping");
+				debug.shout("RADIO MANAGER","Stopping");
 				// Dont' really need to do this here but it makes the UI more responsive
 				this_radio = '';
 				this_param = null;
@@ -287,7 +287,7 @@ var playlist = function() {
 			}
 			playlist.invalidate();
 
-			debug.log('PLAYLIST', 'Starting update request',my_queue_id);
+			debug.mark('PLAYLIST', 'Starting update request',my_queue_id);
 			coverscraper.clearCallbacks();
 			$('.clear_playlist').off('click').makeSpinner();
 			try {
@@ -309,7 +309,7 @@ var playlist = function() {
 			}
 
 			if (update_queue != my_queue_id) {
-				debug.mark("PLAYLIST","Response",my_queue_id,"from player does not match current request ID",update_queue);
+				debug.shout("PLAYLIST","Response",my_queue_id,"from player does not match current request ID",update_queue);
 				current_queue_request++;
 				return false;
 			}
@@ -319,7 +319,7 @@ var playlist = function() {
 				update_error = false;
 			}
 
-			debug.log("PLAYLIST","Got Playlist from backend for request",my_queue_id);
+			debug.mark("PLAYLIST","Got Playlist from backend for request",my_queue_id);
 			var count = -1;
 			var current_album = "";
 			var current_artist = "";
@@ -385,7 +385,7 @@ var playlist = function() {
 			// This might all seem like a faff, but you do not want stuff you've just removed
 			// suddenly re-appearing in front of your eyes and then vanishing again. It looks crap.
 			if (update_queue != my_queue_id) {
-				debug.mark("PLAYLIST","Response",my_reqid,"from player does match current request ID after processing",current_reqid);
+				debug.shout("PLAYLIST","Response",my_reqid,"from player does match current request ID after processing",current_reqid);
 				current_queue_request++;
 				return false;
 			}
@@ -437,7 +437,7 @@ var playlist = function() {
 					tracklist[i].getrest(null, upcoming);
 					i++;
 				}
-				debug.trace("PLAYLIST","Upcoming list is",upcoming);
+				debug.debug("PLAYLIST","Upcoming list is",upcoming);
 			} else if (tracklist.length > 0) {
 				var i = 0;
 				while (i < tracklist.length) {
@@ -449,7 +449,6 @@ var playlist = function() {
 		},
 
 		clear: function() {
-			debug.log("PLAYLIST","Stopping Radio Manager");
 			playlist.radioManager.stop().then(player.controller.clearPlaylist);
 		},
 
@@ -717,7 +716,7 @@ var playlist = function() {
 			await playlist.is_valid();
 			var force = (currentTrack.Id == -1) ? true : false;
 			if (backendid != currentTrack.Id) {
-				debug.log("PLAYLIST","Looking For Current Track",backendid);
+				debug.mark("PLAYLIST","Looking For Current Track",backendid);
 				$("#pscroller .playlistcurrentitem").removeClass('playlistcurrentitem').addClass('playlistitem');
 				$('.track[romprid="'+backendid+'"],.booger[romprid="'+backendid+'"]').removeClass('playlistitem').addClass('playlistcurrentitem');
 				var found = false;
@@ -731,7 +730,7 @@ var playlist = function() {
 							$('.item[name="'+album.index+'"]').removeClass('playlisttitle').addClass('playlistcurrenttitle');
 						}
 						found = true;
-						debug.log('PLAYLIST', '  Found current track');
+						debug.mark('PLAYLIST', '  Found current track');
 						break;
 					}
 				}

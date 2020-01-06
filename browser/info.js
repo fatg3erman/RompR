@@ -252,9 +252,9 @@ var browser = function() {
 		},
 
 		dataIsComing: function(mastercollection, isartistswitch, nowplayingindex, source, trackartist, artist, albumartist, album, track) {
-			debug.log("BROWSER","Data is coming",isartistswitch, nowplayingindex, source, artist, albumartist, album, track)
+			debug.trace("BROWSER","Data is coming",isartistswitch, nowplayingindex, source, artist, albumartist, album, track)
 			if (prefs.hidebrowser) {
-				debug.log("BROWSER","Browser is hidden. Ignoring Data");
+				debug.mark("BROWSER","Browser is hidden. Ignoring Data");
 				return;
 			}
 			var showalbum  = (album != history[displaypointer].album.name || albumartist != history[displaypointer].album.artist || source != prefs.infosource);
@@ -351,7 +351,7 @@ var browser = function() {
 		},
 
 		handleClick: function(source, element, event) {
-			debug.log("BROWSER","Was clicked on",source,element);
+			debug.trace("BROWSER","Was clicked on",source,element);
 			if (element.hasClass('frog')) {
 				toggleSection(element);
 			} else if (element.hasClass('tadpole')) {

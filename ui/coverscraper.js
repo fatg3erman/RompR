@@ -79,7 +79,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 	function doNextImage(time) {
 		clearTimeout(covertimer);
 		if (formObjects.length > 0) {
-			debug.log("COVERSCRAPER","Next Image, delay time is",time);
+			debug.debug("COVERSCRAPER","Next Image, delay time is",time);
 			timer_running = true;
 			covertimer = setTimeout(processForm, time);
 		} else {
@@ -108,7 +108,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 		}
 		imgparams = self.getImageSearchParams(image);
 		imgparams.ignorelocal = ignorelocal;
-		debug.log("COVERSCRAPER","Getting Cover for", imgparams.imgkey);
+		debug.mark("COVERSCRAPER","Getting Cover for", imgparams.imgkey);
 
 		if (sendUpdates) {
 			var x = image.prev('input').val();
@@ -172,7 +172,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 		if (!delaytime) {
 			delaytime = 800;
 		}
-		debug.log("COVERSCRAPER","No Cover Found. Reverting to the blank icon");
+		debug.mark("COVERSCRAPER","No Cover Found. Reverting to the blank icon");
 		update_failed_ui_images(imgparams.imagekey);
 		if (useLocalStorage) {
 			sendLocalStorageEvent("!"+imgparams.imgkey);
@@ -211,7 +211,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 			}
 		}
 		if (def) {
-			debug.log("COVERSCRAPER", "Returning default image of",def);
+			debug.mark("COVERSCRAPER", "Returning default image of",def);
 			var images = {
 				small: def,
 				medium: def,

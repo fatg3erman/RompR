@@ -12,7 +12,7 @@ var wishlistViewer = function() {
 			[{action: command, wltrack: element.next().val()}],
 			collectionHelper.updateCollectionDisplay,
 			function() {
-				debug.log("DB TRACKS", "Failed to remove track");
+				debug.error("DB TRACKS", "Failed to remove track");
 				infobar.error(language.gettext('label_general_error'));
 			}
 		);

@@ -73,9 +73,8 @@ var charts = function() {
 		},
 
 		doMainLayout: function(data) {
-			debug.log("CHARTS","Got data",data);
+			debug.debug("CHARTS","Got data",data);
 			for (var i in data) {
-				debug.log("CHARTS",i);
 				holders[i] = $('<div>', {class: 'tagholder selecotron noselection', id: 'chaman_'+i}).appendTo($("#chamunger"));
 				putItems(holders[i], data[i], i);
 			}

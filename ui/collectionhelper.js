@@ -9,13 +9,11 @@ var collectionHelper = function() {
 	var notify = false;
 
 	function scanFiles(cmd) {
-		debug.log('GENERAL','Scanning Files');
 		collectionHelper.disableCollectionUpdates();
 		collectionHelper.prepareForLiftOff(language.gettext("label_updating"));
 		collectionHelper.markWaitFileList(language.gettext("label_updating"));
 		uiHelper.prepareCollectionUpdate();
-		debug.log("PLAYER","Scanning Files",cmd,prefs.player_backend);
-		debug.shout("PLAYER","Scanning using",cmd);
+		debug.shout("PLAYER","Scanning Files With",cmd,"on",prefs.player_backend);
 		player.controller.do_command_list([[cmd]]).then(pollAlbumList);
 	}
 
@@ -30,7 +28,7 @@ var collectionHelper = function() {
 			debug.log('GENERAL','Still updating collection');
 			update_load_timer = setTimeout( pollAlbumList, 1000);
 		} else {
-			debug.log('GENERAL','Player rescan is complete');
+			debug.shout('GENERAL','Player rescan is complete');
 			refreshCollection();
 			loadFileBrowser();
 		}
@@ -88,7 +86,7 @@ var collectionHelper = function() {
 			}
 		})
 		.fail(function(data) {
-			debug.log("UPDATE","ERROR",data);
+			debug.error("UPDATE","ERROR",data);
 			if (player.updatingcollection) {
 				monitortimer = setTimeout(checkUpdateMonitor,monitorduration);
 			}
@@ -98,7 +96,7 @@ var collectionHelper = function() {
 	function loadCollection() {
 		if (!prefs.hide_albumlist) {
 			var albums = 'albums.php?item='+collectionHelper.collectionKey('a');
-			debug.log("GENERAL","Loading Collection from URL",albums);
+			debug.mark("GENERAL","Loading Collection from URL",albums);
 			$.ajax({
 				type: "GET",
 				url: albums,
@@ -135,7 +133,7 @@ var collectionHelper = function() {
 				infobar.error(language.gettext('error_collectionupdate'));
 			})
 			.always(function() {
-				debug.log('GENERAL','In always callback');
+				debug.debug('GENERAL','In always callback');
 				player.updatingcollection = false;
 			});
 		} else {
@@ -184,14 +182,14 @@ var collectionHelper = function() {
 			return false;
 		}
 		var files = 'dirbrowser.php';
-		debug.log("GENERAL","Loading File Browser from URL",files);
+		debug.mark("GENERAL","Loading File Browser from URL",files);
 		$("#filecollection").load(files);
 	}
 
 	function updateUIElements() {
 
 		if (dbQueue.queuelength() > 0) {
-			debug.log("UI","Deferring updates due to outstanding requests");
+			debug.blurt("UI","Deferring updates due to outstanding requests");
 			clearTimeout(update_timer);
 			setTimeout(updateUIElements, 1000);
 			return;
@@ -351,7 +349,7 @@ var collectionHelper = function() {
 		},
 
 		checkCollection: function(forceup, rescan) {
-			debug.log("COLLECTION", "checking collection. collection_status is",collection_status);
+			debug.shout("COLLECTION", "checking collection. collection_status is",collection_status);
 			if (forceup && player.updatingcollection) {
 				infobar.error(language.gettext('error_nocol'));
 				return;
@@ -368,7 +366,7 @@ var collectionHelper = function() {
 				}
 			}
 			if (update) {
-				debug.log('GENERAL','We are going to update the collection');
+				debug.shout('GENERAL','We are going to update the collection');
 				player.updatingcollection = true;
 				$("#searchresultholder").html('');
 				scanFiles(rescan ? 'rescan' : 'update');
@@ -384,7 +382,7 @@ var collectionHelper = function() {
 
 		scootTheAlbums: function(jq) {
 			if (prefs.downloadart) {
-				debug.log("COLLECTION", "Scooting albums in",jq.attr('id'));
+				debug.trace("COLLECTION", "Scooting albums in",jq.attr('id'));
 				$.each(jq.find("img.notexist"), function() {
 					coverscraper.GetNewAlbumArt($(this));
 				});
@@ -396,7 +394,7 @@ var collectionHelper = function() {
 			// Otherwise we would have to reload the entire collection panel every time,
 			// which would cause any opened dropdowns to be mysteriously closed,
 			// which would just look shit.
-			debug.trace("COLLECTION","Update Display",rdata);
+			debug.debug("COLLECTION","Update Display",rdata);
 			if (rdata) {
 				returned_data.push(rdata);
 				return_callback = callback;

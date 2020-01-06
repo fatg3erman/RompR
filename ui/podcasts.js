@@ -116,11 +116,12 @@ var podcasts = function() {
 	}
 
 	function checkForUpdatedPodcasts(data) {
-		debug.log('PODCASTS', 'Checking for updated podcasts in',data);
+		debug.log('PODCASTS', 'Checking for updated podcasts');
+		debug.debug('PODCASTS', data);
 		if (data && data.length > 0) {
 			$.each(data, function(index, value) {
 				if ($('#podcast_'+value).hasClass('loaded')) {
-					debug.log("PODCASTS","Podcast",value,"was updated and is loaded - reloading it");
+					debug.shout("PODCASTS","Podcast",value,"was updated and is loaded - reloading it");
 					podcasts.loadPodcast(value);
 				}
 			});
@@ -128,7 +129,7 @@ var podcasts = function() {
 	}
 
 	function podcastRequest(options, callback) {
-		debug.log("PODCASTS","Sending request",options);
+		debug.trace("PODCASTS","Sending request",options);
 		options.populate = 1;
 		if (options.channel) {
 			var term = $('[name="podsearcher_'+options.channel+'"]').val();
@@ -317,7 +318,7 @@ var podcasts = function() {
 
 		doNewCount: function() {
 			$.getJSON("podcasts/podcasts.php?populate=1&getcounts=1", function(data) {
-				debug.trace('PODCASTS','Got New Counts',data);
+				debug.debug('PODCASTS','Got New Counts',data);
 				newcounts = data;
 				$.each(data, function(index, value) {
 					if (index == 'totals') {
@@ -388,7 +389,7 @@ var podcasts = function() {
 				dataType: 'JSON'
 			})
 			.done(function(data) {
-				debug.log("PODCASTS","Refresh result",data);
+				debug.debug("PODCASTS","Refresh result",data);
 				checkForUpdatedPodcasts(data.updated);
 				podcasts.doNewCount();
 				if (data.nextupdate) {

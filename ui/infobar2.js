@@ -63,7 +63,7 @@ var infobar = function() {
 	function mungeplaylistinfo(info) {
 		var npinfo = {};
 		var doctitle = "RompЯ";
-		debug.log("INFOBAR", "Doing Track Things",info);
+		debug.debug("INFOBAR", "Doing Track Things",info);
 		if (info.Title != "") {
 			npinfo.Title = info.Title;
 			doctitle = info.Title;
@@ -265,7 +265,7 @@ var infobar = function() {
 			}
 
 			aImg.onerror = function() {
-				debug.warn("ALBUMPICTURE","Image Failed To Load",$(this).attr("src"));
+				debug.fail("ALBUMPICTURE","Image Failed To Load",$(this).attr("src"));
 				$('img[name="'+$(this).attr('name')+'"]').addClass("notfound");
 				$('#albumpicture').fadeOut('fast',uiHelper.adjustLayout);
 			}
@@ -293,9 +293,9 @@ var infobar = function() {
 
 				setSecondarySource: function(data) {
 					if (data.key === undefined || data.key == aImg.getAttribute('name')) {
-						debug.log("ALBUMPICTURE","Secondary Source is being set to ",data.image,aImg);
+						debug.trace("ALBUMPICTURE","Secondary Source is being set to ",data.image);
 						if (data.image != "" && data.image !== null && (aImg.src.match(noimage) !== null || aImg.src.match(notafile) !== null)) {
-							debug.log("ALBUMPICTURE","  OK, the criteria have been met");
+							debug.log("ALBUMPICTURE","  OK, the secondary criteria have been met");
 							aImg.src = data.image;
 						}
 					}

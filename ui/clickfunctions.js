@@ -129,7 +129,7 @@ function offPlayClicks() {
 }
 
 function onBrowserClicked(event) {
-	debug.log("BROWSER","Click Event",event);
+	debug.debug("BROWSER","Click Event",event);
 	var clickedElement = $(this);
 	var parentElement = $(event.delegateTarget).attr('id');
 	var source = parentElement.replace('information', '');
@@ -141,7 +141,7 @@ function onBrowserClicked(event) {
 
 function onSourcesClicked(event, clickedElement) {
 	event.stopImmediatePropagation();
-	debug.log('UI','Clicked On',clickedElement);
+	debug.debug('UI','Clicked On',clickedElement);
 	if (clickedElement.hasClass("clickremdb")) {
 		metaHandlers.fromUiElement.removeTrackFromDb(clickedElement);
 	} else if (clickedElement.hasClass("clickpltrack")) {
@@ -334,7 +334,7 @@ function doAlbumMenu(event, element, callback) {
 }
 
 function getAllTracksForAlbum(element, menutoopen) {
-	debug.log("CLICKFUNCTIONS", "Album has link to get all tracks");
+	debug.shout("CLICKFUNCTIONS", "Album has link to get all tracks");
 	element.makeSpinner();
 	$.ajax({
 		type: 'GET',
@@ -812,7 +812,7 @@ function popupMenu(event, element) {
 	}
 
 	this.openSubMenu = function(e, element) {
-		debug.log('POPUPMENU', 'Opening Submeny',element);
+		debug.log('POPUPMENU', 'Opening Submenu',element);
 		self.markTrackTags();
 		var menu = $(element).next();
 		menu.slideToggle('fast', setHeight);
@@ -1043,7 +1043,7 @@ function setAsAudioBook(e, element) {
 		value: ($(element).hasClass('setasaudiobook')) ? 2 : 0,
 		albumindex: $(element).attr('name')
 	};
-	debug.log("UI","Setting as audiobook",data);
+	debug.mark("UI","Setting as audiobook",data);
 	metaHandlers.genericAction(
 		[data],
 		collectionHelper.updateCollectionDisplay,
@@ -1106,7 +1106,7 @@ function actuallyAmendAlbumDetails(albumindex) {
 	if (newdate) {
 		data.date = newdate;
 	}
-	debug.log("UI","Amending Album Details",data);
+	debug.mark("UI","Amending Album Details",data);
 	metaHandlers.genericAction(
 		[data],
 		function(rdata) {

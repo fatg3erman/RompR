@@ -5,7 +5,7 @@ var crazyRadioManager = function() {
 		loadSavedCrazies: function() {
 			$('.crazyradio').remove();
 			$.get('radios/crazymanager.php?action=get', function(data) {
-				debug.log("CRAZY RADIO","Saved Data",data);
+				debug.debug("CRAZY RADIO","Saved Data",data);
 				var crazySettings = data;
 				for (var i in crazySettings) {
 					var crazy = playlist.radioManager.standardBox('spotiCrazyRadio', JSON.stringify(crazySettings[i]), 'icon-spotify-circled', crazySettings[i].playlistname).appendTo("#pluginplaylists_spotify");

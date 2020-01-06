@@ -298,7 +298,8 @@ var layoutProcessor = function() {
 		},
 
 		displayCollectionInsert: function(details) {
-			debug.log("COLLECTION","Displaying New Insert",details);
+			debug.shout("COLLECTION","Displaying New Insert");
+			debug.debug('COLLECTION', details);
 			var prefix;
 			var holder;
 			if (details.isaudiobook > 0) {

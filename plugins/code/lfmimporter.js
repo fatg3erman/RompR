@@ -28,7 +28,7 @@ var lfmImporter = function() {
 		alloffset = 0;
 		if (data.length > 0) {
 			$('#lfmitable tr:not(:first-child)').remove();
-			debug.log("LFMIMPORTER","Got data",data);
+			debug.debug("LFMIMPORTER","Got data",data);
 			for (var i in data) {
 				var tr = $('<tr>', {name: data[i].TTindex}).appendTo('#lfmitable');
 				tr.append('<td class="playlistinfo underline" name="albumartist">'+data[i].Albumartist+'</td>');
@@ -44,7 +44,7 @@ var lfmImporter = function() {
 			offset += limit;
 			getNextRow();
 		} else {
-			debug.log("LFMIMPORTER","Got all data");
+			debug.mark("LFMIMPORTER","Got all data");
 			metaHandlers.resetSyncCounts();
 		}
 	}
@@ -81,7 +81,7 @@ var lfmImporter = function() {
 	}
 
 	function setSuccess() {
-		debug.log("LFMIMPORTER","Success");
+		debug.debug("LFMIMPORTER","Success");
 		row.children('td[name="tick"]').html('<i class="icon-tick collectionicon"></i>');
 		doNext();
 	}

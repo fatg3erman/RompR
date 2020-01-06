@@ -427,7 +427,7 @@ var alarmclock = function() {
 		},
 
 		snooze: function() {
-			debug.log("ALARM","Snoozing");
+			debug.mark("ALARM","Snoozing");
 			clearTimeout(alarmtimer);
 			clearTimeout(ramptimer);
 			$('.icon-sleep.alarmbutton').stopFlasher();

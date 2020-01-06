@@ -73,9 +73,9 @@ class base_mpd_player {
 		while (!$this->is_connected() && $retries > 0) {
 			logger::debug('MPD', 'Opening Connection For',$this->debug_id);
 			if ($this->socket != "") {
-				$this->connection = stream_socket_client('unix://'.$this->socket, $errno, $errstr, 10, STREAM_CLIENT_CONNECT);
+				$this->connection = @stream_socket_client('unix://'.$this->socket, $errno, $errstr, 10, STREAM_CLIENT_CONNECT);
 			} else {
-				$this->connection = stream_socket_client('tcp://'.$this->ip.':'.$this->port, $errno, $errstr, 10, STREAM_CLIENT_CONNECT);
+				$this->connection = @stream_socket_client('tcp://'.$this->ip.':'.$this->port, $errno, $errstr, 10, STREAM_CLIENT_CONNECT);
 			}
 			if ($errno != 0) {
 				logger::warn('MPD', 'Connection result: Error is',$errno,'Error String is',$errstr);

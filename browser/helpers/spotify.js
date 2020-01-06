@@ -43,7 +43,7 @@ var spotify = function() {
 			}
 			var root = objFirst(data);
 			if (data[root].next) {
-				debug.log("SPOTIFY","Got a response with a next page!");
+				debug.trace("SPOTIFY","Got a response with a next page!");
 				if (data[root].previous == null) {
 					collectedobj = data;
 				} else {
@@ -55,7 +55,7 @@ var spotify = function() {
 				debug.log("SPOTIFY","Returning concatenated multi-page result");
 				req.success(collectedobj);
 			} else if (data.next) {
-				debug.log("SPOTIFY","Got a response with a next page!");
+				debug.trace("SPOTIFY","Got a response with a next page!");
 				if (data.previous == null) {
 					collectedobj = data;
 				} else {

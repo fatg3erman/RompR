@@ -1,7 +1,7 @@
 var metaHandlers = function() {
 
 	function addedATrack(rdata,d2,d3) {
-		debug.log("ADD ALBUM","Success",rdata);
+		debug.log("ADD ALBUM","Success");
 		if (rdata) {
 			collectionHelper.updateCollectionDisplay(rdata);
 		}
@@ -395,7 +395,7 @@ var dbQueue = function() {
 		request: function(data, success, fail) {
 
 			queue.push( {flag: false, data: data, success: success, fail: fail } );
-			debug.trace("DB QUEUE","New request",data);
+			debug.debug("DB QUEUE","New request",data);
 			if (throttle == null && queue.length == 1) {
 				dbQueue.dorequest();
 			}
@@ -422,7 +422,7 @@ var dbQueue = function() {
 						return;
 					}
 					queue[0].flag = true;
-					debug.trace("DB QUEUE","Taking next request from queue",req);
+					debug.debug("DB QUEUE","Taking next request from queue",req);
 					$.ajax({
 						url: "backends/sql/userRatings.php",
 						type: "POST",
@@ -432,7 +432,7 @@ var dbQueue = function() {
 					})
 					.done(function(data) {
 						req = queue.shift();
-						debug.trace("DB QUEUE","Request Success",req,data);
+						debug.debug("DB QUEUE","Request Success",req,data);
 						for (var i in req.data) {
 							if (actions_requiring_cleanup.indexOf(req.data[i].action) > -1) {
 								debug.log("DB QUEUE","Setting cleanup flag for",req.data[i].action,"request");
@@ -463,7 +463,7 @@ var dbQueue = function() {
 			// We do these out-of-band to improve the responsiveness of the GUI.
 			clearTimeout(cleanuptimer);
 			if (cleanuprequired) {
-				debug.log("DB QUEUE", "Doing backend Cleanup");
+				debug.mark("DB QUEUE", "Doing backend Cleanup");
 				dbQueue.request([{action: 'cleanup'}], dbQueue.cleanupComplete, dbQueue.cleanupFailed);
 			}
 		},

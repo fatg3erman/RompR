@@ -156,7 +156,8 @@ function faveFinder(returnall) {
 						}
 						f = true;
 						req.callback(req.data);
-						debug.log("FAVEFINDER","Single track asked for, returning",req.data);
+						debug.log('FAVEFINDER', 'Returning single track as requested');
+						debug.debug("FAVEFINDER", req.data);
 						break;
 					}
 				}
@@ -171,7 +172,8 @@ function faveFinder(returnall) {
 	}
 
 	this.findThisOne = function(data, callback) {
-		debug.log("FAVEFINDER","New thing to look for",data);
+		debug.log("FAVEFINDER","New thing to look for",data.title);
+		debug.debug('FAVEFINDER', data);
 		queue.push({data: data, callback: callback});
 		if (throttle == null && queue.length == 1) {
 			self.next();
@@ -205,7 +207,7 @@ function faveFinder(returnall) {
 		if (req.data.album) {
 			st.album = [req.data.album];
 		}
-		debug.log("FAVEFINDER","Performing search",st,priority);
+		debug.debug("FAVEFINDER","Performing search",st,priority);
 		player.controller.rawsearch(st, priority, exact, self.handleResults, checkdb);
 	}
 

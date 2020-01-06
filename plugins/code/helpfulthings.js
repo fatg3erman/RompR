@@ -26,7 +26,7 @@ var helpfulThings = function() {
 	}
 
 	function gotRecommendationSeeds(data) {
-		debug.log(medebug, "Got Seeds For Recommendations",data);
+		debug.trace(medebug, "Got Seeds For Recommendations",data);
 		if (doneonce) {
 			$('#hplfoldup .helpfulholder').spotifyAlbumThing('destroy');
 			doneonce = false;
@@ -175,7 +175,7 @@ var helpfulThings = function() {
 		},
 
 		gotTrackResults: function(data) {
-			debug.log(medebug,"Got Track Results",data);
+			debug.trace(medebug,"Got Track Results",data);
 			var t = nonspotitracks.shift();
 			if (data.uri && data.artist && artists.indexOf(data.artist) == -1) {
 				var m = data.uri.match(/spotify:track:(.*)$/);
@@ -203,7 +203,7 @@ var helpfulThings = function() {
 		},
 
 		gotTrackRecommendations: function(data) {
-			debug.log(medebug, "Got Track Recommendations for", current_seed.Artistname, current_seed.id, data);
+			debug.log(medebug, "Got Track Recommendations for", current_seed.Artistname, current_seed.id);
 			if (data.tracks.length == 0) {
 				helpfulThings.getMoreStuff();
 				return true;

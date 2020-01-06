@@ -682,7 +682,8 @@ var layoutProcessor = function() {
 		},
 
 		displayCollectionInsert: function(details) {
-			debug.log("UI","Displaying Collection Insert",details);
+			debug.shout("COLLECTION","Displaying New Insert");
+			debug.debug('COLLECTION', details);
 			infobar.notify(
 				(details.isaudiobook == 0) ? language.gettext('label_addedtocol') : language.gettext('label_addedtosw')
 			);
@@ -1061,7 +1062,7 @@ var layoutProcessor = function() {
 		},
 
 		postAlbumMenu: function(element) {
-			debug.log('POSTALBUMMENU', element);
+			debug.debug('POSTALBUMMENU', element);
 			var found = element.attr('name').match(/([abz])artist(\d+)/);
 			if (found !== null) {
 				clearTimeout(artistinfotimer);

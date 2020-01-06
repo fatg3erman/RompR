@@ -93,7 +93,6 @@ var discogs = function() {
 			},
 
 			getReleases: function(name, page, reqid, success, fail) {
-				debug.log("DISCOGS","Get Artist Releases",name,page);
 				var data = {
 					url: baseURL+'artists/'+name+'/releases',
 					per_page: 25,

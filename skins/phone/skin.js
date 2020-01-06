@@ -343,7 +343,7 @@ jQuery.fn.playlistTouchWipe = function(settings) {
 		}
 
 		function longPress() {
-			debug.log("TOUCHWIPE","Long Press");
+			debug.mark("TOUCHWIPE","Long Press");
 			pressing = true;
 			// Unbind click handler from playlist, otherwise the touchend
 			// event makes it start playing the clicked track.
@@ -659,7 +659,8 @@ var layoutProcessor = function() {
 		},
 
 		insertAlbum: function(v) {
-			debug.log('PHONE', 'Insert Album', v);
+			debug.log('PHONE', 'Insert Album');
+			debug.debug('PHONE', v);
 			var albumindex = v.id;
 			var displayer = $('#'+albumindex);
 			displayer.html(v.tracklist);

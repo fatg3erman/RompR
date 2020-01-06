@@ -217,10 +217,10 @@ var prefs = function() {
 		$('#cusbgcontrols').empty();
 		$('#backimageposition').hide();
 		$.getJSON('backimage.php?getbackground='+theme+'&browser_id='+prefs.browser_id, function(data) {
-			debug.log("PREFS","Custom Background Image",data);
+			debug.debug("PREFS","Custom Background Image",data);
 			if (data.images) {
 				if (typeof(prefs.bgimgparms[theme]) == 'undefined') {
-					debug.trace("PREFS","Init bgimgparms for",theme);
+					debug.mark("PREFS","Init bgimgparms for",theme);
 					prefs.bgimgparms[theme] = {
 						landscape: 0,
 						portrait: 0,
@@ -795,7 +795,7 @@ var prefs = function() {
 						debug.log('PREFS', 'Theme',theme,'does not have a manager script');
 					});
 			} catch(err) {
-				debug.log('PREFS',err);
+				debug.error('PREFS','Error loading theme script',err);
 			}
 			loadBackgroundImages(theme);
 		},

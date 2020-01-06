@@ -56,7 +56,7 @@ var info_ratings = function() {
 					} else {
 						$('#dbtags').html(playtext);
 						if (trackmeta.usermeta.Tags.length > 0) {
-							debug.log('INFOBAR', 'Tags are',trackmeta.usermeta.Tags.length);
+							debug.log('RATINGS PLUGIN', 'Tags are',trackmeta.usermeta.Tags.length);
 							$('#dbtags').append('<span><b>'+language.gettext("musicbrainz_tags")+' &nbsp;</b></span>');
 						}
 					}
@@ -79,7 +79,7 @@ var info_ratings = function() {
 			}
 
 			function setSuccess(rdata) {
-				debug.log("RATING PLUGIN","Success");
+				debug.trace("RATING PLUGIN","Success");
 				if (rdata) {
 					trackmeta.usermeta = rdata.metadata;
 					doThingsWithData();
@@ -88,7 +88,7 @@ var info_ratings = function() {
 			}
 
 			function findSuccess(rdata) {
-				debug.log("RATING PLUGIN","Success");
+				debug.trace("RATING PLUGIN","Success");
 				if (rdata) {
 					trackmeta.usermeta = rdata.metadata;
 					doThingsWithData();

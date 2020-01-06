@@ -58,14 +58,14 @@ var player = function() {
 				newhosts[newname] = temp;
 				if (currentname == prefs.currenthost) {
 					if (newname != currentname) {
-						debug.log("Current Player renamed to "+newname,"PLAYERS");
+						debug.blurt("Current Player renamed to "+newname,"PLAYERS");
 						reloadNeeded = newname;
 					}
 					if (temp.host != prefs.multihosts[prefs.currenthost].host ||
 						temp.port != prefs.multihosts[prefs.currenthost].port||
 						temp.socket != prefs.multihosts[prefs.currenthost].socket ||
 						temp.password != prefs.multihosts[prefs.currenthost].password) {
-						debug.log("Current Player connection details changed","PLAYERS");
+						debug.blurt("Current Player connection details changed","PLAYERS");
 						reloadNeeded = newname;
 					}
 				}

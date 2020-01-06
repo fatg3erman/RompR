@@ -201,11 +201,11 @@ function arraycompare(a, b) {
 
 function onStorageChanged(e) {
 
-	debug.log("GENERAL","Storage Event",e);
+	debug.debug("GENERAL","Storage Event",e);
 
 	if (e.key == "key" && e.newValue != "Blerugh") {
 		var key = e.newValue;
-		debug.log("GENERAL","Updating album image for key",key,e);
+		debug.trace("GENERAL","Updating album image for key",key,e);
 		if (key.substring(0,1) == "!") {
 			key = key.substring(1,key.length);
 			update_failed_ui_images(key)

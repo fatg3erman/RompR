@@ -67,7 +67,7 @@ function updateStreamInfo() {
 			playlist.getCurrent('Album') != temp.Album ||
 			playlist.getCurrent('trackartist') != temp.trackartist)
 		{
-			debug.log("STREAMHANDLER","Detected change of track",temp);
+			debug.shout("STREAMHANDLER","Detected change of track",temp);
 			var aa = new albumart_translator('');
 			temp.key = aa.getKey('stream', '', temp.Album);
 			playlist.setCurrent({Title: temp.Title, Album: temp.Album, trackartist: temp.trackartist });
@@ -161,17 +161,20 @@ function playerController() {
 			if (player.status.playlist !== plversion) {
 				debug.blurt("PLAYER","Player has marked playlist as changed",plversion,player.status.playlist);
 				plversion = player.status.playlist;
+				// Repopulate will revalidate the playlist when it completes.
 				playlist.repopulate();
+			} else {
+				playlist.validate();
 			}
 			checkStateChange();
 			infobar.updateWindowValues();
 		} catch (err) {
+			playlist.validate();
 			debug.error('CONTROLLER', 'Command List Failed', err);
 			if (list.length > 0) {
 				infobar.error(language.gettext('error_sendingcommands', [prefs.player_backend]));
 			}
 		}
-		playlist.validate();
 	}
 
 	this.addStateChangeCallback = function(sc) {
@@ -447,13 +450,14 @@ function playerController() {
 
 		var abitofahack = true;
 		var queue_track = (queue == true) ? true : !prefs.cdplayermode;
-		debug.log("MPD","Adding Tracks",tracks,playpos,at_pos,queue);
+		debug.mark("MPD","Adding",tracks.length,"Tracks at",at_pos,"playing from",playpos,"queue is",queue);
 		var cmdlist = [];
 		if (!queue_track) {
 			cmdlist.push(['stop']);
 			cmdlist.push(['clear']);
 		}
 		$.each(tracks, function(i,v) {
+			debug.debug('MPD', v);
 			switch (v.type) {
 				case "uri":
 					if (queue_track) {
@@ -704,12 +708,12 @@ function playerController() {
 	}
 
 	this.addTracksToPlaylist = function(playlist,tracks,moveto,playlistlength) {
-		debug.log('PLAYER','Tracks is',tracks);
+		debug.debug('PLAYER','Tracks is',tracks);
 		debug.log("PLAYER","Adding tracks to playlist",playlist,"then moving to",moveto,"playlist length is",playlistlength);
 		var cmds = new Array();
 		for (var i in tracks) {
 			if (tracks[i].uri) {
-				debug.log('PLAYER', 'Adding URI', tracks[i].uri);
+				debug.trace('PLAYER', 'Adding URI', tracks[i].uri);
 				cmds.push(['playlistadd',decodeURIComponent(playlist),tracks[i].uri,
 					moveto,playlistlength]);
 			} else if (tracks[i].dir) {

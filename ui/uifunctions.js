@@ -138,11 +138,11 @@ var imagePopup = function() {
 	var clickedelement = null;
 	var image = new Image();
 	image.onload = function() {
-		debug.log("IMAGEPOPUP", "Image has loaded");
+		debug.debug("IMAGEPOPUP", "Image has loaded");
 		imagePopup.show();
 	}
 	image.onerror = function() {
-		debug.log("IMAGEPOPUP", "Image has NOT loaded");
+		debug.debug("IMAGEPOPUP", "Image has NOT loaded");
 		imagePopup.close();
 	}
 
@@ -514,7 +514,7 @@ function showUpdateWindow() {
 			});
 		});
 	} else if (prefs.lastversionchecktime < Date.now() - 604800000) {
-		debug.log('INIT', 'Doing Upgrade Check');
+		debug.shout('INIT', 'Doing Upgrade Check');
 		$.ajax({
 			method: 'GET',
 			dataType: 'json',
@@ -525,7 +525,7 @@ function showUpdateWindow() {
 			var newest = '1.00';
 			data.forEach(function(v) {
 				if (compare_version_numbers(newest, v.tag_name)) {
-					debug.log('INIT', 'Found release',v.tag_name,'We are version',rompr_version);
+					debug.blurt('INIT', 'Found release',v.tag_name,'We are version',rompr_version);
 					newest = v.tag_name;
 				}
 			});
