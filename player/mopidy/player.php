@@ -38,7 +38,7 @@ class mopidyPlayer extends base_mpd_player {
 			$collection = new musicCollection();
 			foreach ($playlists['playlist'] as $pl) {
 				if (preg_match('/\(by spotify\)/', $pl)) {
-					logger::log("COLLECTION", "Ignoring Playlist ".$pl);
+					logger::info("COLLECTION", "Ignoring Playlist ".$pl);
 				} else {
 					logger::log("COLLECTION", "Scanning Playlist ".$pl);
 					fwrite($this->monitor, "\n<b>".get_int_text('label_scanningp', array($pl))."</b>");
@@ -244,14 +244,14 @@ class mopidyPlayer extends base_mpd_player {
 			logger::log("STREAMHANDLER", "Found Radio Station ".$obj->StationName);
 			// Munge munge munge to make it looks pretty
 			if ($obj->StationName != '') {
-				logger::log("STREAMHANDLER", "  Setting Album name from database ".$obj->StationName);
+				logger::trace("STREAMHANDLER", "  Setting Album name from database ".$obj->StationName);
 				$album = $obj->StationName;
 			} else if ($filedata['Name'] && $filedata['Name'] != 'no name' && strpos($filedata['Name'], ' ') !== false) {
-				logger::log("STREAMHANDLER", "  Setting Album from Name ".$filedata['Name']);
+				logger::trace("STREAMHANDLER", "  Setting Album from Name ".$filedata['Name']);
 				$album = $filedata['Name'];
 			} else if ($filedata['Name'] == null && $filedata['Title'] != null && $filedata['Title'] != 'no name' &&
 				$filedata['Artist'] == null && $filedata['Album'] == null && strpos($filedata['Title'], ' ') !== false) {
-				logger::log("STREAMHANDLER", "  Setting Album from Title ".$filedata['Title']);
+				logger::trace("STREAMHANDLER", "  Setting Album from Title ".$filedata['Title']);
 				$album = $filedata['Title'];
 				$filedata['Title'] = null;
 			} else {
@@ -280,13 +280,13 @@ class mopidyPlayer extends base_mpd_player {
 		if ($filedata['Album']) {
 			$album = $filedata['Album'];
 		} else if ($filedata['Name']) {
-			logger::log("STREAMHANDLER", "  Setting Album from Name ".$filedata['Name']);
+			logger::trace("STREAMHANDLER", "  Setting Album from Name ".$filedata['Name']);
 			$album = $filedata['Name'];
 			if ($filedata['Pos'] !== null) {
 				update_radio_station_name(array('streamid' => null,'uri' => $filedata['file'], 'name' => $album));
 			}
 		} else if ($filedata['Name'] == null && $filedata['Title'] != null && $filedata['Artist'] == null && $filedata['Album'] == null) {
-			logger::log("STREAMHANDLER", "  Setting Album from Title ".$filedata['Title']);
+			logger::trace("STREAMHANDLER", "  Setting Album from Title ".$filedata['Title']);
 			$album = $filedata['Title'];
 			$filedata['Title'] = null;
 			if ($filedata['Pos'] !== null) {

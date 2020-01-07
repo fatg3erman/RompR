@@ -35,7 +35,7 @@ class baseAlbumImage {
 		}
 		if ($this->mbid !== null) {
 			if (preg_match('/\d+/', $this->mbid) && !preg_match('/-/', $this->mbid)) {
-				logger::log("ALBUMIMAGE", " Supplied MBID of ".$mbid." looks more like a Discogs ID");
+				logger::debug("ALBUMIMAGE", " Supplied MBID of ".$mbid." looks more like a Discogs ID");
 				$this->mbid = null;
 			}
 		}
@@ -83,10 +83,10 @@ class baseAlbumImage {
 	}
 
 	private function check_if_image_already_downloaded() {
-		logger::log('ALBUMIMAGE', 'Checking image for', $this->artist, $this->album);
+		logger::log('ALBUMIMAGE', 'Checking if image exists for', $this->artist, $this->album);
 		$checkimages = $this->image_info_from_album_info();
 		if ($this->image_exists($checkimages['small'])) {
-			logger::trace("ALBUMIMAGE", "  ..  File exists");
+			logger::log("ALBUMIMAGE", "  ..  File exists");
 			$this->images = $checkimages;
 			return true;
 		} else {
@@ -483,7 +483,7 @@ class imageHandler {
 				// GD does not support SVG or ICO files, plus different installations
 				// have different built-in support. Hence we fall back to
 				// imagemagick if gd doesn't support it. (GD is faster, so we prefer that)
-				logger::log('IMAGEHANDLER', 'Switching to ImageMagick');
+				logger::info('IMAGEHANDLER', 'Switching to ImageMagick');
 				$this->image = new imageMagickImage($filename);
 			}
 		} else {
@@ -540,7 +540,7 @@ class imageMagickImage {
 		$this->filename = $filename;
 		$this->convert_path = find_executable('convert');
 		$this->image_type = mime_content_type($this->filename);
-		logger::log('IMAGEMAGICK', 'Construct Image Type is "'.$this->image_type.'"');
+		logger::debug('IMAGEMAGICK', 'Construct Image Type is "'.$this->image_type.'"');
 		if ($this->image_type == 'text/plain') {
 			$this->image_type = 'image-svg+xml';
 		}
@@ -563,12 +563,12 @@ class imageMagickImage {
 	}
 
 	public function checkImage() {
-		logger::log("IMAGEMAGICK", "  Check Image type is ".$this->image_type);
+		logger::debug("IMAGEMAGICK", "  Check Image type is ".$this->image_type);
 		$c = $this->convert_path."identify \"".$this->cmdline_file."\" 2>&1";
 		$o = array();
 		$r = exec($c, $o);
 		if (preg_match('/no decode delegate/', $r)) {
-			logger::log('IMAGEMAGICK', 'Unsupported image');
+			logger::warn('IMAGEMAGICK', 'Unsupported image');
 			return false;
 		}
 		return $this->image_type;
@@ -591,16 +591,16 @@ class imageMagickImage {
 				$params .= ' -resize '.$this->resize_to;
 			}
 			$cmd = 'convert "'.$this->cmdline_file.'"'.$params.' "'.$filename.'"';
-			logger::trace("IMAGEMAGICK", "  Command is ".$cmd);
+			logger::debug("IMAGEMAGICK", "  Command is ".$cmd);
 			if (substr($filename, -1) == '-') {
 				// Output is to STDOUT
 				passthru($this->convert_path.$cmd, $ret);
 			} else {
 				$cmd .= ' 2>&1';
 				$r = exec($this->convert_path.$cmd, $o, $ret);
-				logger::trace("IMAGEMAGICK", "    Final line of output was ".$r);
+				logger::debug("IMAGEMAGICK", "    Final line of output was ".$r);
 			}
-			logger::trace("IMAGEMAGICK", "    Return Value was ".$ret);
+			logger::debug("IMAGEMAGICK", "    Return Value was ".$ret);
 			// No point trying a copy file fallback, as if ImageMagick can't handle it it's shite.
 		}
 	}
@@ -659,7 +659,7 @@ class imageMagickImage {
 	public function resizeToWidth($width) {
 		$s = $this->get_image_dimensions();
 		if ($width > $s['width']) {
-			logger::log('IMAGEMAGICK', 'Not resizing as requested size is larger than image');
+			logger::debug('IMAGEMAGICK', 'Not resizing as requested size is larger than image');
 		} else {
 			$this->resize_to = $width;
 		}
@@ -710,7 +710,7 @@ class gdImage {
 		try {
 			$image_info = getimagesize($filename);
 			$image_type = $image_info[2];
-			logger::log("GD-IMAGE", "Image Type is ".$image_type);
+			logger::debug("GD-IMAGE", "Image Type is ".$image_type);
 		} catch (Exception $e) {
 			logger::warn("GD-IMAGE", "  GD threw an error when handling",$filename);
 			$image_type = false;
@@ -900,7 +900,7 @@ class gdImage {
 	public function resizeToWidth($width) {
 		$ratio = $width / $this->getWidth();
 		if ($ratio > 1) {
-			logger::trace('GD-IMAGE', "Not resizing as requested size is larger than image");
+			logger::debug('GD-IMAGE', "Not resizing as requested size is larger than image");
 		} else {
 			$height = $this->getheight() * $ratio;
 			$this->resize($width,$height);

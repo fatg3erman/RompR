@@ -17,7 +17,7 @@ class transferCollection {
 	}
 
 	public function doNewPlaylistFile(&$filedata) {
-		logger::log("TRANSFER", "    Track ".$filedata['Pos']." ".$filedata['type']." ".$filedata['file']);
+		logger::trace("TRANSFER", "    Track ".$filedata['Pos']." ".$filedata['type']." ".$filedata['file']);
 		array_push($this->tracks, array('type' => $filedata['type'], 'uri' => $filedata['file']));
 		return true;
 	}

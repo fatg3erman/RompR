@@ -89,7 +89,7 @@ class somafmplugin {
 	}
 
 	private function doChannel($count, $channel) {
-		logger::log("SOMAFM", "Channel :", (string) $channel->title);
+		logger::trace("SOMAFM", "Channel :", (string) $channel->title);
 		if ($channel->highestpls) {
 			$pls = (string) $channel->highestpls;
 		} else {

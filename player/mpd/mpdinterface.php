@@ -382,11 +382,11 @@ class base_mpd_player {
 			}
 		}
 	   if (strpos($filedata['Title'], "[unplayable]") === 0) {
-			logger::trace("COLLECTION", "Ignoring unplayable track ".$filedata['file']);
+			logger::debug("COLLECTION", "Ignoring unplayable track ".$filedata['file']);
 			return false;
 		}
 		if (strpos($filedata['Title'], "[loading]") === 0) {
-			logger::trace("COLLECTION", "Ignoring unloaded track ".$filedata['file']);
+			logger::debug("COLLECTION", "Ignoring unloaded track ".$filedata['file']);
 			return false;
 		}
 		$filedata['unmopfile'] = $this->unmopify_file($filedata);
@@ -654,7 +654,7 @@ class base_mpd_player {
 			// playlistadd "local:track:
 			if (substr($cmd, 0, 17) == 'add "local:track:' ||
 				substr($cmd, 0,25) == 'playlistadd "local:track:') {
-				logger::log("MOPIDY", "Translating tracks for Mopidy Slave");
+				logger::mark("MOPIDY", "Translating tracks for Mopidy Slave");
 				$cmds[$key] = $this->swap_local_for_file($cmd);
 			}
 		}
@@ -667,7 +667,7 @@ class base_mpd_player {
 		global $prefs;
 		foreach ($cmds as $key => $cmd) {
 			if (substr($cmd, 0, 4) == 'add ') {
-				logger::log("PLAYER", "Translating Track Uris from",$prefs['collection_player'],'to',$this->player_type);
+				logger::mark("PLAYER", "Translating Track Uris from",$prefs['collection_player'],'to',$this->player_type);
 				if ($prefs['collection_player']== 'mopidy') {
 					$cmds[$key] = $this->mopidy_to_mpd($cmd);
 				} else if ($prefs['collection_player']== 'mpd'){
@@ -694,7 +694,7 @@ class base_mpd_player {
 		// url encode the album art directory
 		global $prefs;
 		$path = implode("/", array_map("rawurlencode", explode("/", $prefs['music_directory_albumart'])));
-		logger::trace("MOPIDYSLAVE", "Replacing with",$path);
+		logger::debug("MOPIDYSLAVE", "Replacing with",$path);
 		return preg_replace('#local:track:#', 'file://'.$path.'/', $string);
 	}
 
@@ -719,7 +719,7 @@ class base_mpd_player {
 					$retval = "mpd";
 				}
 			} else {
-				logger::mark("MPDPLAYER", "WARNING! No output for 'tagtypes' - probably an old version of Mopidy. RompЯ may not function correctly");
+				logger::warn("MPDPLAYER", "WARNING! No output for 'tagtypes' - probably an old version of Mopidy. RompЯ may not function correctly");
 				$retval =  "mopidy";
 			}
 			setcookie('player_backend',$retval,time()+365*24*60*60*10,'/');

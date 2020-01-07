@@ -49,7 +49,7 @@ if (array_key_exists('playlist', $_REQUEST)) {
 		sort($imgs);
 		$unneeded = array_diff($imgs, $used_images);
 		foreach ($unneeded as $img) {
-			logger::log("PLAYLISTS", "Removing uneeded playlist image",$img);
+			logger::log("MPD PLAYLISTS", "Removing uneeded playlist image",$img);
 			if (is_dir($img)) {
 				rrmdir($img);
 			} else {
@@ -57,7 +57,7 @@ if (array_key_exists('playlist', $_REQUEST)) {
 			}
 		}
 	} else {
-		logger::warn("LOADPLAYLISTS", "Error when loading saved playlists");
+		logger::warn("MPD PLAYLISTS", "Error when loading saved playlists");
 	}
 }
 

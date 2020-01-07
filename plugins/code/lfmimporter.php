@@ -39,7 +39,7 @@ function get_chunk_of_data($offset, $limit) {
 		sql_to_unixtime('DateAdded')." > ".$prefs['lfm_importer_last_import'].
 		" ORDER BY aa.Artistname, Albumname, Disc ASC, TrackNo ASC LIMIT ".$offset.", ".$limit);
 
-	logger::log("LFMIMPORTER", "Got ".count($arse)." rows");
+	logger::trace("LFMIMPORTER", "Got ".count($arse)." rows");
 	if (count($arse) == 0) {
 		logger::log("LFMIMPORTER", "Updating LastFM Import time");
 		$prefs['lfm_importer_last_import'] = time();
@@ -66,7 +66,7 @@ function get_total_tracks() {
 		sql_to_unixtime('DateAdded')." > ".$prefs['lfm_importer_last_import']
 	);
 
-	logger::log("LFMIMPORTER", "Got ".count($arse)." rows");
+	logger::trace("LFMIMPORTER", "Got ".count($arse)." rows");
 	header('Content-Type: application/json; charset=utf-8');
 	print json_encode(array('total' => $arse[0]['total']));
 

@@ -54,7 +54,7 @@ if ($mysqlc) {
 
 	$now = time();
 	logger::mark("CACHE CLEANER", "Tidying Database");
-	logger::mark("CACHE CLEANER", "Checking database for hidden album art");
+	logger::info("CACHE CLEANER", "Checking database for hidden album art");
 	// Note the final line checking that image isn't in use by another album
 	// it's an edge case where we have the album local but we also somehow have a spotify or whatever
 	// version with hidden tracks
@@ -72,13 +72,13 @@ if ($mysqlc) {
 			generic_sql_query("UPDATE Albumtable SET Image = NULL, Searched = 0 WHERE Albumindex = ".$obj->Albumindex, true);
 		}
 	}
-	logger::trace("CACHE CLEANER", "== Check For Hidden Album Art took ".format_time(time() - $now));
+	logger::info("CACHE CLEANER", "== Check For Hidden Album Art took ".format_time(time() - $now));
 
 
 	if ($prefs['cleanalbumimages']) {
 		$now = time();
 		// TODO: This is too slow
-		logger::mark("CACHE CLEANER", "Checking albumart folder for unneeded images");
+		logger::info("CACHE CLEANER", "Checking albumart folder for unneeded images");
 		$files = glob('albumart/small/*.*');
 		foreach ($files as $image) {
 			// Remove images for hidden tracks and search results. The missing check below will reset the db entries for those albums
@@ -92,9 +92,9 @@ if ($mysqlc) {
 				}
 			}
 		}
-		logger::trace("CACHE CLEANER", "== Check For Unneeded Images took ".format_time(time() - $now));
+		logger::info("CACHE CLEANER", "== Check For Unneeded Images took ".format_time(time() - $now));
 
-		logger::mark("CACHE CLEANER", "Checking for orphaned radio station images");
+		logger::info("CACHE CLEANER", "Checking for orphaned radio station images");
 		$now = time();
 		$files = glob('prefs/userstreams/*');
 		foreach ($files as $image) {
@@ -116,10 +116,10 @@ if ($mysqlc) {
 				rrmdir($file);
 			}
 		}
-		logger::trace("CACHE CLEANER", "== Check For Orphaned Podcast Data took ".format_time(time() - $now));
+		logger::info("CACHE CLEANER", "== Check For Orphaned Podcast Data took ".format_time(time() - $now));
 	}
 
-	logger::mark("CACHE CLEANER", "Checking database for missing album art");
+	logger::info("CACHE CLEANER", "Checking database for missing album art");
 	$now = time();
 	$result = generic_sql_query("SELECT Albumindex, Albumname, Image, Domain FROM Albumtable WHERE Image NOT LIKE 'getRemoteImage%'", false, PDO::FETCH_OBJ);
 	foreach ($result as $obj) {
@@ -135,12 +135,12 @@ if ($mysqlc) {
 			sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Searched = ?, Image = ? WHERE Albumindex = ?", $searched, $image, $obj->Albumindex);
 		}
 	}
-	logger::trace("CACHE CLEANER", "== Check For Missing Album Art took ".format_time(time() - $now));
+	logger::info("CACHE CLEANER", "== Check For Missing Album Art took ".format_time(time() - $now));
 
-	logger::mark("CACHE CLEANER", "Checking for orphaned Wishlist Sources");
+	logger::info("CACHE CLEANER", "Checking for orphaned Wishlist Sources");
 	$now = time();
 	generic_sql_query("DELETE FROM WishlistSourcetable WHERE Sourceindex NOT IN (SELECT DISTINCT Sourceindex FROM Tracktable WHERE Sourceindex IS NOT NULL)");
-	logger::trace("CACHE CLEANER", "== Check For Orphaned Wishlist Sources took ".format_time(time() - $now));
+	logger::info("CACHE CLEANER", "== Check For Orphaned Wishlist Sources took ".format_time(time() - $now));
 
 	// Compact the database
 	if ($prefs['collection_type'] == 'sqlite') {
@@ -148,7 +148,7 @@ if ($mysqlc) {
 		$now = time();
 		generic_sql_query("VACUUM", true);
 		generic_sql_query("PRAGMA optimize", true);
-		logger::trace("CACHE CLEANER", "== Database Optimisation took ".format_time(time() - $now));
+		logger::info("CACHE CLEANER", "== Database Optimisation took ".format_time(time() - $now));
 	}
 
 	logger::mark("CACHE CLEANER", "Database Tidying Is Complete");
@@ -164,7 +164,7 @@ function clean_cache_dir($dir, $time) {
 	foreach($cache as $file) {
 		if (!is_dir($file)) {
 			if($now - filemtime($file) > $time) {
-				logger::log("CACHE CLEANER", "Removing file ".$file);
+				logger::trace("CACHE CLEANER", "Removing file ".$file);
 				@unlink ($file);
 			}
 		}

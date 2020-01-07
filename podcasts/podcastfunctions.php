@@ -23,7 +23,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 		file_put_contents('prefs/podcasts/'.$id.'/feed.xml', $d->get_data());
 	}
 	$feed = simplexml_load_string($d->get_data());
-	logger::trace("PARSE_RSS", "  Our LastPubDate is ".$lastpubdate);
+	logger::debug("PARSE_RSS", "  Our LastPubDate is ".$lastpubdate);
 
 	// Begin RSS Parse
 	$podcast = array();
@@ -110,7 +110,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 		// Image link with a relative URL. Duh.
 		$podcast['Image'] = $domain.$image;
 	}
-	logger::log("PARSE_RSS", "  Image is ".$podcast['Image']);
+	logger::trace("PARSE_RSS", "  Image is ".$podcast['Image']);
 
 	// Artist
 	if ($itunes && $itunes->author) {
@@ -119,14 +119,14 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 		$podcast['Artist'] = '';
 	}
 
-	logger::log("PARSE_RSS", "  Artist is ".$podcast['Artist']);
+	logger::trace("PARSE_RSS", "  Artist is ".$podcast['Artist']);
 
 	// Category
 	$cats = array();
 	if ($itunes && $itunes->category) {
 		for ($i = 0; $i < count($itunes->category); $i++) {
 			$cat = html_entity_decode((string) $itunes->category[$i]->attributes()->text);
-			logger::log('POD', 'Found category',$cat);
+			logger::debug('POD', 'Found category',$cat);
 			$cats[] = $cat;
 		}
 	}
@@ -140,7 +140,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 	$spaz = array_diff($spaz, array('Podcasts'));
 	natsort($spaz);
 	$podcast['Category'] = implode(', ', $spaz);
-	logger::log("PARSE_RSS", "  Category is ".$podcast['Category']);
+	logger::debug("PARSE_RSS", "  Category is ".$podcast['Category']);
 
 	// Title
 	$podcast['Title'] = (string) $feed->channel->title;
@@ -180,7 +180,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 
 			// Track Title
 			$track['Title'] = (string) $item->title;
-			logger::log("PARSE_RSS", "  Found track ".$track['Title']);
+			logger::trace("PARSE_RSS", "  Found track ".$track['Title']);
 
 			// Track URI
 			$uri = null;
@@ -200,7 +200,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 			}
 
 			$track['Link'] = $uri;
-			logger::log("PARSE_RSS", "    Track URI is ".$uri);
+			logger::debug("PARSE_RSS", "    Track URI is ".$uri);
 
 			if ($item->guid) {
 				$track['GUID'] = $item->guid;
@@ -251,11 +251,11 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 
 			// Track Publication Date
 			$t = strtotime((string) $item->pubDate);
-			logger::log("PARSE_RSS", "    Track PubDate is ",(string) $item->pubDate,"(".$t.")");
+			logger::trace("PARSE_RSS", "    Track PubDate is ",(string) $item->pubDate,"(".$t.")");
 			if ($t === false) {
 				logger::warn("PARSE_RSS", "      ERROR - Could not parse episode Publication Date",(string) $item->pubDate);
 			} else if ($t > $podcast['LastPubDate']) {
-				logger::log("PARSE_RSS", "      This is a new episode");
+				logger::log("PARSE_RSS", " Found a new episode");
 			}
 			if ($t === false || $podcast['LastPubDate'] === null || $t > $podcast['LastPubDate']) {
 				$podcast['LastPubDate'] = $t;
@@ -346,7 +346,7 @@ function getNewPodcast($url, $subbed = 1, $gettracks = true) {
 					$newpodid, $track['Title'], $track['Artist'], $track['Duration'], $track['PubDate'],
 					$track['FileSize'], $track['Description'], $track['Link'], $track['GUID'], 1))
 				{
-					logger::log("PODCASTS", "  Added Track ".$track['Title']);
+					logger::trace("PODCASTS", "  Added Track ".$track['Title']);
 				} else {
 					logger::warn("PODCASTS", "  FAILED Adding Track ".$track['Title']);
 				}
@@ -375,8 +375,8 @@ function calculate_best_update_time($podcast) {
 	}
 	logger::log("PODCASTS", "Working out best update time for ".$podcast['Title']);
 	$dt = new DateTime(date('c', $podcast['LastPubDate']));
-	logger::log("PODCASTS", "  Last Pub Date is ".$podcast['LastPubDate'].' ('.$dt->format('c').')');
-	logger::log("PODCASTS", "  Podcast Refresh interval is ".$podcast['RefreshOption']);
+	logger::debug("PODCASTS", "  Last Pub Date is ".$podcast['LastPubDate'].' ('.$dt->format('c').')');
+	logger::debug("PODCASTS", "  Podcast Refresh interval is ".$podcast['RefreshOption']);
 	while ($dt->getTimestamp() < time()) {
 		switch ($podcast['RefreshOption']) {
 
@@ -395,8 +395,7 @@ function calculate_best_update_time($podcast) {
 		}
 
 	}
-	logger::log("PODCASTS", "  Worked out update time based on pubDate and RefreshOption: ".$dt->format('r').' ('.$dt->getTImestamp().')');
-	logger::log("PODCASTS", "  Give it an hour's grace");
+	logger::trace("PODCASTS", "  Worked out update time based on pubDate and RefreshOption: ".$dt->format('r').' ('.$dt->getTImestamp().')');
 	$dt->modify('+1 hour');
 
 	switch ($podcast['RefreshOption']) {
@@ -411,7 +410,7 @@ function calculate_best_update_time($podcast) {
 
 	}
 
-	logger::log("PODCASTS", "  Therefore setting lastupdate to: ".$dt->format('r').' ('.$dt->getTImestamp().')');
+	logger::log("PODCASTS", "  Setting lastupdate to: ".$dt->format('r').' ('.$dt->getTImestamp().')');
 
 	return $dt->getTimestamp();
 
@@ -450,7 +449,7 @@ function refreshPodcast($podid) {
 	$result = generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$podid, false, PDO::FETCH_OBJ);
 	if (count($result) > 0) {
 		$podetails = $result[0];
-		logger::log("PODCASTS", "  Podcast title is ".$podetails->Title);
+		logger::trace("PODCASTS", "  Podcast title is ".$podetails->Title);
 	} else {
 		logger::error("PODCASTS", "ERROR Looking up podcast ".$podid);
 		return $podid;
@@ -505,7 +504,7 @@ function refreshPodcast($podid) {
 	foreach ($podcast['tracks'] as $track) {
 		$trackid = sql_prepare_query(false, null, 'PODTrackindex' , null, "SELECT PODTrackindex FROM PodcastTracktable WHERE Guid=? AND PODindex = ?", $track['GUID'], $podid);
 		if ($trackid !== null) {
-			logger::trace("PODCASTS", "  Found existing track ".$track['Title']);
+			logger::debug("PODCASTS", "  Found existing track ".$track['Title']);
 			sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET JustUpdated=?, Duration=?, Link=? WHERE PODTrackindex=?",1,$track['Duration'], $track['Link'], $trackid);
 		} else {
 			if (sql_prepare_query(true, null, null, null,
@@ -544,7 +543,7 @@ function check_tokeep($podetails, $podid) {
 			generic_sql_query($qstring, true);
 			$numnow = simple_query("COUNT(PODTrackindex)", "PodcastTracktable", 'Deleted = 0 AND PODindex', $podid, 0);
 			if ($numnow != $numthen) {
-				logger::log("PODCASTS", "  Old episodes were removed from podcast ID ".$podid);
+				logger::info("PODCASTS", "  Old episodes were removed from podcast ID ".$podid);
 				$retval = true;
 			}
 		}
@@ -558,7 +557,7 @@ function check_tokeep($podetails, $podid) {
 			}
 			$num = generic_sql_query($qstring, false, null, 'num', 0);
 			$getrid = $num - $podetails->NumToKeep;
-			logger::log("PODCASTS", "  Num To Keep is ".$podetails->NumToKeep." and there are ".$num." episodes that can be pruned. Removing ".$getrid);
+			logger::trace("PODCASTS", "  Num To Keep is ".$podetails->NumToKeep." and there are ".$num." episodes that can be pruned. Removing ".$getrid);
 			if ($getrid > 0) {
 				$qstring = "SELECT PODTrackindex FROM PodcastTracktable WHERE PODindex=".$podid." AND Deleted = 0";
 				if ($podetails->KeepDownloaded == 1) {
@@ -567,7 +566,7 @@ function check_tokeep($podetails, $podid) {
 				$qstring .= " ORDER BY PubDate ASC LIMIT ".$getrid;
 				$pods = sql_get_column($qstring, 0);
 				foreach ($pods as $i) {
-					logger::trace("PODCASTS", "  Removing Track ".$i);
+					logger::debug("PODCASTS", "  Removing Track ".$i);
 					generic_sql_query("UPDATE PodcastTracktable SET Deleted=1 WHERE PODTrackindex=".$i, true);
 					$retval = true;
 				}
@@ -804,7 +803,7 @@ function doPodcast($y, $do_searchbox) {
 	} else {
 		$qstring .= "DESC";
 	}
-	logger::debug("PODCASTS", $qstring);
+	logger::core("PODCASTS", $qstring);
 	$result = generic_sql_query($qstring, false, PDO::FETCH_OBJ);
 	foreach ($result as $episode) {
 		format_episode($y, $episode, $pm);
@@ -980,14 +979,14 @@ function markAsListened($url) {
 	$pods = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, "SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR Localfilename = ?", $url, basename($url));
 	foreach ($pods as $pod) {
 		$podid = $pod->PODindex;
-		logger::mark("PODCASTS", "Marking track",$pod->PODTrackindex,"from podcast",$podid,"as listened");
+		logger::info("PODCASTS", "Marking track",$pod->PODTrackindex,"from podcast",$podid,"as listened");
 		sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Listened = 1, New = 0, Progress = 0 WHERE PODTrackindex=?",$pod->PODTrackindex);
 	}
 	return $podid;
 }
 
 function deleteTrack($trackid, $channel) {
-	logger::mark("PODCASTS", "Marking track",$trackid,"from podcast",$channel,"as deleted");
+	logger::info("PODCASTS", "Marking track",$trackid,"from podcast",$channel,"as deleted");
 	generic_sql_query("UPDATE PodcastTracktable SET Deleted = 1 WHERE PODTrackindex = ".$trackid, true);
 	if (is_dir('prefs/podcasts/'.$channel.'/'.$trackid)) {
 		rrmdir('prefs/podcasts/'.$channel.'/'.$trackid);
@@ -996,13 +995,13 @@ function deleteTrack($trackid, $channel) {
 }
 
 function markKeyAsListened($trackid, $channel) {
-	logger::mark("PODCASTS", "Marking track",$trackid,"from podcast",$channel,"as listened");
+	logger::info("PODCASTS", "Marking track",$trackid,"from podcast",$channel,"as listened");
 	generic_sql_query("UPDATE PodcastTracktable SET Listened = 1, New = 0, Progress = 0 WHERE PODTrackindex = ".$trackid, true);
 	return $channel;
 }
 
 function markKeyAsUnlistened($trackid, $channel) {
-	logger::mark("PODCASTS", "Marking track",$trackid,"from podcast",$channel,"as unlistened");
+	logger::info("PODCASTS", "Marking track",$trackid,"from podcast",$channel,"as unlistened");
 	generic_sql_query("UPDATE PodcastTracktable SET Listened = 0, New = 0, Progress = 0 WHERE PODTrackindex = ".$trackid, true);
 	return $channel;
 }
@@ -1124,7 +1123,7 @@ function downloadTrack($key, $channel) {
 		$fp = fopen('prefs/monitor.xml', 'w');
 		fwrite($fp, $xml);
 		fclose($fp);
-		logger::log("PODCASTS", "Downloading To prefs/podcasts/".$channel.'/'.$key.'/'.$filename);
+		logger::trace("PODCASTS", "Downloading To prefs/podcasts/".$channel.'/'.$key.'/'.$filename);
 		$d = new url_downloader(array('url' => $url));
 		if ($d->get_data_to_file('prefs/podcasts/'.$channel.'/'.$key.'/'.$filename, true)) {
 			sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?", 1, '/prefs/podcasts/'.$channel.'/'.$key.'/'.$filename, $key);
@@ -1176,7 +1175,7 @@ function check_podcast_refresh() {
 	$now = time();
 	foreach ($tocheck as $pod) {
 		$dt = new DateTime(date('c', $pod['lastupdate']));
-		logger::mark("PODCASTS", "Checking for refresh to podcast",$pod['podid'],'refreshoption is',$pod['refreshoption'],"LastUpdate is",$dt->format('c'));
+		logger::log("PODCASTS", "Checking for refresh to podcast",$pod['podid'],'refreshoption is',$pod['refreshoption'],"LastUpdate is",$dt->format('c'));
 		switch($pod['refreshoption']) {
 			case REFRESHOPTION_HOURLY:
 				$dt->modify('+1 hour');
@@ -1197,11 +1196,11 @@ function check_podcast_refresh() {
 				$tempnextupdate = 2119200;
 				break;
 			default:
-				logger::log("PODCASTS", "Not automatic update option for podcast id ".$pod['podid']);
+				logger::log("PODCASTS", "Podcast",$pod['podid'],'is set to manual refresh');
 				continue 2;
 		}
 		$updatetime = $dt->getTimestamp();
-		logger::trace("PODCASTS", "  lastupdate is",$pod['lastupdate'],"update time is",$updatetime,"current time is",$now);
+		logger::debug("PODCASTS", "  lastupdate is",$pod['lastupdate'],"update time is",$updatetime,"current time is",$now);
 		if ($updatetime <= $now) {
 			$retval = refreshPodcast($pod['podid']);
 			if ($retval !== false) {
@@ -1217,7 +1216,7 @@ function check_podcast_refresh() {
 			}
 		}
 	}
-	logger::log("PODCASTS", "Next update is required in",$nextupdate_seconds,"seconds");
+	logger::info("PODCASTS", "Next update is required in",$nextupdate_seconds,"seconds");
 	$updated['nextupdate'] = $nextupdate_seconds;
 	clear_refresh_pid();
 	return $updated;
@@ -1240,7 +1239,7 @@ function search_itunes($term) {
 				$r = check_if_podcast_is_subscribed($podcast);
 				if (count($r) > 0) {
 					foreach ($r as $a) {
-						logger::log("PODCASTS", "  Search found EXISTING podcast ".$a['Title']);
+						logger::trace("PODCASTS", "  Search found EXISTING podcast ".$a['Title']);
 					}
 					continue;
 				}
@@ -1294,7 +1293,7 @@ function setPlaybackProgress($progress, $uri) {
 	$pod = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, "SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR LocalFilename = ?", $uri, $uri);
 	foreach ($pod as $podcast) {
 		$podid = $podcast->PODindex;
-		logger::log("PODCASTS", "Updating Playback Progress for track",$podcast->PODTrackindex,"in podcast",$podid,"to",$progress);
+		logger::info("PODCASTS", "Updating Playback Progress for track",$podcast->PODTrackindex,"in podcast",$podid,"to",$progress);
 		generic_sql_query("UPDATE PodcastTracktable SET Progress = ".$progress." WHERE PODTrackindex = ".$podcast->PODTrackindex);
 	}
 	return $podid;

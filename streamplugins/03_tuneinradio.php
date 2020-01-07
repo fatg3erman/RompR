@@ -49,7 +49,7 @@ class tuneinplugin {
 	}
 
 	public function getUrl() {
-		logger::mark("TUNEIN", "Getting URL",$this->url);
+		logger::log("TUNEIN", "Getting URL",$this->url);
 		$d = new url_downloader(array('url' => $this->url));
 		if ($d->get_data_to_string()) {
 			$x = simplexml_load_string($d->get_data());

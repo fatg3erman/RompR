@@ -27,7 +27,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 	$doc = phpQuery::newDocument($icecast_shitty_page);
 	$list = $doc->find('table.servers-list')->find('tr');
 	$page_title = $doc->find('#content')->children('h2')->text();
-	logger::log("ICESCRAPER", "Page Title Is ".$page_title);
+	logger::debug("ICESCRAPER", "Page Title Is ".$page_title);
 	$count = 0;
 	directoryControlHeader('icecastlist', get_int_text('label_icecast'));
 	print '<div class="containerbox dropdown-container fullwidth"><div class="expand"><input class="enter clearbox" name="searchfor" type="text"';
@@ -43,7 +43,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 		$server_name = pq($server)->find('.stream-name')->children('.name')->children('a');
 		$server_web_link = $server_name->attr('href');
 		$server_name = $server_name->text();
-		logger::log("ICESCRAPER", "Server Name Is ".$server_name);
+		logger::debug("ICESCRAPER", "Server Name Is ".$server_name);
 		$server_description = munge_ice_text(pq($server)->find('.stream-description')->text());
 		$stream_tags = array();
 		$stream_tags_section = pq($server)->find('.stream-tags')->find('li');

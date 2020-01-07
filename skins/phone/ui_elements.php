@@ -106,7 +106,7 @@ function albumHeader($obj) {
 		$h .= '<div class="clickstream playable clickicon containerbox menuitem '.$obj['class'].'" name="'.rawurlencode($obj['streamuri']).'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
 	} else {
 		if (array_key_exists('plpath', $obj)) {
-			logger::log('ALBUMHEADER','plpath is',$obj['plpath']);
+			logger::debug('ALBUMHEADER','plpath is',$obj['plpath']);
 			$h .= '<input type="hidden" name="dirpath" value="'.$obj['plpath'].'" />';
 		}
 		$h .= '<div class="openmenu menu containerbox menuitem '.$obj['class'].'" name="'.$obj['id'].'">';

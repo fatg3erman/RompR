@@ -31,7 +31,7 @@ function download_internet_playlist($url, $image, $station) {
 	$station = ($station == 'null') ? ROMPR_UNKNOWN_STREAM : $station;
 	$image = ($image == 'null') ? '' : $image;
 	$url = trim($url);
-	logger::log("RADIO_PLAYLIST", "Getting Internet Stream:");
+	logger::mark("RADIO_PLAYLIST", "Getting Internet Stream:");
 	logger::log("RADIO_PLAYLIST", "  url : ".$url);
 	logger::log("RADIO_PLAYLIST", "  station : ".$station);
 	logger::log("RADIO_PLAYLIST", "  image : ".$image);
@@ -52,27 +52,27 @@ function download_internet_playlist($url, $image, $station) {
 		// To cope with charsets in the header...
 		// case "audio/x-scpls;charset=UTF-8";
 		$content_type = trim_content_type($content_type);
-		logger::log("RADIO_PLAYLIST", "Content Type Is ".$content_type);
+		logger::trace("RADIO_PLAYLIST", "Content Type Is ".$content_type);
 
 		switch ($content_type) {
 			case "video/x-ms-asf":
-				logger::log("RADIO_PLAYLIST", "Playlist Is ".PHP_EOL.$d->get_data());
+				logger::debug("RADIO_PLAYLIST", "Playlist Is ".PHP_EOL.$d->get_data());
 				$type = asfOrasx($d->get_data());
 				break;
 
 			case "audio/x-scpls":
-				logger::log("RADIO_PLAYLIST", "Playlist Is ".PHP_EOL.$d->get_data());
+				logger::debug("RADIO_PLAYLIST", "Playlist Is ".PHP_EOL.$d->get_data());
 				$type = "pls";
 				break;
 
 			case "audio/x-mpegurl":
 			case "application/x-mpegurl":
-				logger::log("RADIO_PLAYLIST", "Playlist Is ".PHP_EOL.$d->get_data());
+				logger::debug("RADIO_PLAYLIST", "Playlist Is ".PHP_EOL.$d->get_data());
 				$type = "m3u";
 				break;
 
 			case "application/xspf+xml":
-				logger::log("RADIO_PLAYLIST", "Playlist Is ".PHP_EOL.$d->get_data());
+				logger::debug("RADIO_PLAYLIST", "Playlist Is ".PHP_EOL.$d->get_data());
 				$type = "xspf";
 				break;
 
@@ -81,27 +81,27 @@ function download_internet_playlist($url, $image, $station) {
 				break;
 
 			case "text/html":
-				logger::log("RADIO_PLAYLIST", "HTML page returned!");
+				logger::debug("RADIO_PLAYLIST", "HTML page returned!");
 				header('HTTP/1.1 404 Not Found');
 				exit(0);
 		}
-		logger::log("RADIO_PLAYLIST", "Playlist Type From Content Type is ".$type);
+		logger::trace("RADIO_PLAYLIST", "Playlist Type From Content Type is ".$type);
 
 		if ($type == "" || $type == null) {
 			$type = pathinfo($path, PATHINFO_EXTENSION);
 			$qpos = strpos($type, "?");
 			if ($qpos != false) $type = substr($type, 0, $qpos);
-			logger::log("RADIO_PLAYLIST", "Playlist Type From URL is ".$type);
+			logger::trace("RADIO_PLAYLIST", "Playlist Type From URL is ".$type);
 		}
 
 		if (($type == "" || $type == null) && preg_match('#www.radio-browser.info/webservice/v2/m3u#', $url)) {
 			$type = 'm3u';
-			logger::log("RADIO_PLAYLIST", "Playlist Type From URL is ".$type);
+			logger::trace("RADIO_PLAYLIST", "Playlist Type From URL is ".$type);
 		}
 
 		if (($type == "" || $type == null) && preg_match('#www.radio-browser.info/webservice/v2/pls#', $url)) {
 			$type = 'pls';
-			logger::log("RADIO_PLAYLIST", "Playlist Type From URL is ".$type);
+			logger::trace("RADIO_PLAYLIST", "Playlist Type From URL is ".$type);
 		}
 
 		$playlist = null;
@@ -142,7 +142,7 @@ function download_internet_playlist($url, $image, $station) {
 						break;
 
 					default;
-						logger::warn("RADIO_PLAYLIST", "Unknown Playlist Type - treating as stream URL");
+						logger::info("RADIO_PLAYLIST", "Unknown Playlist Type - treating as stream URL");
 						$playlist = new possibleStreamUrl($url, $station, $image);
 						break;
 				}
@@ -153,7 +153,7 @@ function download_internet_playlist($url, $image, $station) {
 				break;
 
 			default:
-				logger::warn("RADIO_PLAYLIST", "Unexpected cURL status ".$d->get_status()." - treating as stream URL");
+				logger::info("RADIO_PLAYLIST", "Unexpected cURL status ".$d->get_status()." - treating as stream URL");
 				$playlist = new possibleStreamUrl($url, $station, $image);
 		}
 

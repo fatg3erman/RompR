@@ -9,7 +9,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 	require_once ("skins/".$skin."/ui_elements.php");
 
 	foreach ($_REQUEST as $i => $r) {
-		logger::trace("COMMRADIO", $i,":",$r);
+		logger::debug("COMMRADIO", $i,":",$r);
 	}
 }
 

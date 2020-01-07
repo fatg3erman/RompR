@@ -159,17 +159,17 @@ class mpdPlayer extends base_mpd_player {
 			logger::log("STREAMHANDLER", "Found Radio Station ".$obj->StationName);
 			// Munge munge munge to make it looks pretty
 			if ($obj->StationName != '') {
-				logger::log("STREAMHANDLER", "  Setting Album from database ".$obj->StationName);
+				logger::trace("STREAMHANDLER", "  Setting Album from database ".$obj->StationName);
 				$album = $obj->StationName;
 			} else if ($filedata['Name'] && strpos($filedata['Name'], ' ') !== false) {
-				logger::log("STREAMHANDLER", "  Setting Album from Name ".$filedata['Name']);
+				logger::trace("STREAMHANDLER", "  Setting Album from Name ".$filedata['Name']);
 				$album = $filedata['Name'];
 			} else if ($filedata['Name'] == null && $filedata['Title'] != null && $filedata['Artist'] == null && $filedata['Album'] == null && strpos($filedata['Title'], ' ') !== false) {
-				logger::log("STREAMHANDLER", "  Setting Album from Title ".$filedata['Title']);
+				logger::trace("STREAMHANDLER", "  Setting Album from Title ".$filedata['Title']);
 				$album = $filedata['Title'];
 				$filedata['Title'] = null;
 			} else {
-				logger::log("STREAMHANDLER", "  No information to set Album field");
+				logger::trace("STREAMHANDLER", "  No information to set Album field");
 				$album = ROMPR_UNKNOWN_STREAM;
 			}
 			return array (
@@ -198,14 +198,14 @@ class mpdPlayer extends base_mpd_player {
 				update_radio_station_name(array('streamid' => null,'uri' => $filedata['file'], 'name' => $album));
 			}
 		} else if ($filedata['Name'] == null && $filedata['Title'] != null && $filedata['Artist'] == null && $filedata['Album'] == null) {
-			logger::log("STREAMHANDLER", "  Setting Album from Title ".$filedata['Title']);
+			logger::trace("STREAMHANDLER", "  Setting Album from Title ".$filedata['Title']);
 			$album = $filedata['Title'];
 			$filedata['Title'] = null;
 			if ($filedata['Pos'] !== null) {
 				update_radio_station_name(array('streamid' => null,'uri' => $filedata['file'], 'name' => $album));
 			}
 		} else {
-			logger::log("STREAMHANDLER", "  No information to set Album field");
+			logger::trace("STREAMHANDLER", "  No information to set Album field");
 			$album = ROMPR_UNKNOWN_STREAM;
 		}
 		return array(
