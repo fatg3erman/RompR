@@ -61,7 +61,7 @@ var artistRadio = function() {
 var spotiTrackRadio = function() {
 	return {
 		setup: function() {
-			debug.trace("SPTR","Nothing to see here");
+			debug.core("SPTR","Nothing to see here");
 		}
 	}
 }();

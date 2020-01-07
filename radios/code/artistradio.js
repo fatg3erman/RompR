@@ -17,7 +17,7 @@ var artistRadio = function() {
 
 		initialise: async function(artist) {
 			if (typeof(spotifyRadio) == 'undefined') {
-				debug.log(medebug,"Loading Spotify Radio Tuner");
+				debug.info(medebug,"Loading Spotify Radio Tuner");
 				try {
 					await $.getScript('radios/code/spotifyRadio.js?version='+rompr_version);
 				} catch (err) {
@@ -30,7 +30,7 @@ var artistRadio = function() {
 				artistindex = artist;
 				getArtistName(artist.substr(15,artist.length));
 			} else {
-				debug.shout(medebug,"Searching for artist",artist);
+				debug.trace(medebug,"Searching for artist",artist);
 				artistname = artist;
 				searchForArtist(artist);
 			}

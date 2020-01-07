@@ -70,7 +70,7 @@ function faveFinder(returnall) {
 	}
 
 	function foundNothing(req) {
-		debug.log("FAVEFINDER","Nothing found",req);
+		debug.trace("FAVEFINDER","Nothing found",req);
 		if (returnall) {
 			req.callback([req.data]);
 		} else {
@@ -97,7 +97,7 @@ function faveFinder(returnall) {
 			return false;
 		}
 		var req = queue[0];
-		debug.trace("FAVEFINDER","Raw Results for",req,data);
+		debug.debug("FAVEFINDER","Raw Results for",req,data);
 
 		var results = new Array();
 		var best_matches = new Array();
@@ -156,7 +156,7 @@ function faveFinder(returnall) {
 						}
 						f = true;
 						req.callback(req.data);
-						debug.log('FAVEFINDER', 'Returning single track as requested');
+						debug.trace('FAVEFINDER', 'Returning single track as requested');
 						debug.debug("FAVEFINDER", req.data);
 						break;
 					}

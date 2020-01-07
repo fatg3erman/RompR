@@ -41,7 +41,7 @@ function spotifyRecommendationsRadio(can_repopulate) {
 	}
 
 	this.gotRecommendations = function(data) {
-		debug.trace("SPOTIRECC","Got Stuff!",data);
+		debug.debug("SPOTIRECC","Got Stuff!",data);
 		requests_outstanding--;
 		if (data.tracks) {
 			for (var i in data.tracks) {
@@ -49,12 +49,12 @@ function spotifyRecommendationsRadio(can_repopulate) {
 			}
 		}
 		tracks.sort(randomsort);
-		debug.trace('SPOTIRECC', 'We now have',tracks.length,'tracks');
+		debug.log('SPOTIRECC', 'We now have',tracks.length,'tracks');
 	}
 
 	this.getTracks = async function(numtracks) {
 		if (tracks.length == 0 && can_repopulate && requests_outstanding == 0) {
-			debug.shout('SPOTIRECC', 'Getting more tracks')
+			debug.log('SPOTIRECC', 'Getting more tracks')
 			self.getRecommendations(last_query);
 		}
 		while (tracks.length < numtracks && (requests_outstanding > 0 || self.moreseedscoming)) {

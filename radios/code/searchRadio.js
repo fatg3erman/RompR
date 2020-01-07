@@ -7,13 +7,13 @@ function searchRadio() {
 	trackfinder.setCheckDb(false);
 
 	function searchArtist(name) {
-		debug.trace(medebug,"Creating",name);
+		debug.debug(medebug,"Creating",name);
 		var tracks = null;
 		var myself = this;
 
 		this.sendATrack = async function() {
 			if (tracks === null) {
-				debug.trace(medebug, 'Getting tracks for',name);
+				debug.debug(medebug, 'Getting tracks for',name);
 				if (prefs.player_backend == "mopidy") {
 					// Do this here in case they get changed after the radio is started
 					trackfinder.setPriorities($("#radiodomains").makeDomainChooser("getSelection"));
@@ -37,7 +37,7 @@ function searchRadio() {
 
 
 		this.gotTracks = function(data) {
-			debug.trace(medebug,"Got Tracks",data);
+			debug.debug(medebug,"Got Tracks",data);
 			tracks = new Array();
 			for (let track of data) {
 				if (track.uri) {
@@ -45,7 +45,7 @@ function searchRadio() {
 				}
 			}
 			tracks.sort(randomsort);
-			debug.log(medebug,"Got",tracks.length,"tracks for",name);
+			debug.trace(medebug,"Got",tracks.length,"tracks for",name);
 		}
 
 		this.getName = function() {
@@ -66,7 +66,7 @@ function searchRadio() {
 				// Return tracks one at a time, otherwise there's a really long wait when we first start up
 				return [track];
 			} else {
-				debug.log(medebug, 'Deleting artist',artistindex);
+				debug.trace(medebug, 'Deleting artist',artistindex);
 				artists.splice(artistindex, 1);
 			}
 		}
@@ -80,7 +80,7 @@ function searchRadio() {
 		}
 		for (let artist of artists) {
 			if (artist.getName() == name) {
-				debug.log(medebug, 'Ignoring artist',name,'as it already exists');
+				debug.debug(medebug, 'Ignoring artist',name,'as it already exists');
 				return false;
 			}
 		}

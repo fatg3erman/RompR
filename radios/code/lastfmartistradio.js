@@ -45,7 +45,7 @@ var lastFMArtistRadio = function() {
 
 		initialise: async function(p) {
 			if (typeof(searchRadio) == 'undefined') {
-				debug.log(medebug,"Loading Search Radio Tuner");
+				debug.info(medebug,"Loading Search Radio Tuner");
 				try {
 					await $.getScript('radios/code/searchRadio.js?version='+rompr_version);
 				} catch(err) {
@@ -100,7 +100,7 @@ var lastFMArtistRadio = function() {
 							lastFMArtistRadio.gotNoSimilar
 						);
 					} else {
-						debug.log(medebug, 'Ignoring artist',artist.name,'as playcount of',artist.playcount,'is less than',minplays);
+						debug.trace(medebug, 'Ignoring artist',artist.name,'as playcount of',artist.playcount,'is less than',minplays);
 					}
 				}
 				if (currpage < totalpages) {
@@ -115,7 +115,7 @@ var lastFMArtistRadio = function() {
 
 		gotASimilar: function(data) {
 			if (data.similarartists) {
-				debug.info(medebug,"Got Similar Artists For",data.similarartists['@attr'].artist);
+				debug.log(medebug,"Got Similar Artists For",data.similarartists['@attr'].artist);
 				if (data.similarartists.artist) {
 					for (var artist of data.similarartists.artist) {
 						tuner.newArtist(artist.name);

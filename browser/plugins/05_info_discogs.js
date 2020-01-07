@@ -76,7 +76,7 @@ var info_discogs = function() {
 
 	function getReleaseHTML(data) {
 		var html = "";
-		debug.trace(medebug,"Generating release HTML for",data.id);
+		debug.debug(medebug,"Generating release HTML for",data.id);
 		if (data.data.releases.length > 0) {
 			html += '<div class="mbbox clearfix"><span style="float:right">PAGES: ';
 			for (var i = 1; i <= data.data.pagination.pages; i++) {
@@ -154,7 +154,7 @@ var info_discogs = function() {
 			}
 			html += '</span></div>';
 		}
-		debug.trace(medebug,"Returning release HTML for",data.id);
+		debug.debug(medebug,"Returning release HTML for",data.id);
 		return html;
 	}
 
@@ -218,7 +218,7 @@ var info_discogs = function() {
 
 		collection: function(parent, artistmeta, albummeta, trackmeta) {
 
-			debug.trace(medebug, "Creating data collection");
+			debug.debug(medebug, "Creating data collection");
 
 			var self = this;
 			var displaying = false;
@@ -227,7 +227,7 @@ var info_discogs = function() {
 			var tracktimer;
 
 			this.populate = function() {
-				debug.log(medebug,'Populating');
+				debug.debug(medebug,'Populating');
 				parent.updateData({
 						discogs: {
 							triedsearch: false,
@@ -274,7 +274,7 @@ var info_discogs = function() {
 			}
 
 			this.handleClick = function(source, element, event) {
-				debug.trace(medebug,parent.nowplayingindex,source,"is handling a click event");
+				debug.debug(medebug,parent.nowplayingindex,source,"is handling a click event");
 				if (element.hasClass('clickdoartist')) {
 					var targetdiv = element.parent().next();
 					if (!(targetdiv.hasClass('full')) && element.isClosed()) {
@@ -321,12 +321,12 @@ var info_discogs = function() {
 					var link = element.next().val();
 					var b = link.match(/(releases\/\d+)|(masters\/\d+)/);
 					if (b && b[0]) {
-						debug.log("DISCOGS","Getting info for",b[0])
+						debug.debug("DISCOGS","Getting info for",b[0])
 						discogs.album.getInfo('', b[0],
 							function(data) {
-								debug.trace("DISCOGS", "Got Data",data);
+								debug.debug("DISCOGS", "Got Data",data);
 								if (data.data.uri) {
-									debug.trace("DISCOGS", "Opening Data",data.data.uri);
+									debug.debug("DISCOGS", "Opening Data",data.data.uri);
 									var box = element.parent();
 									box.empty();
 									var newlink = $('<a href="'+data.data.uri+'" target="_blank">'+data.data.title+'</a>').appendTo(box);
@@ -397,9 +397,9 @@ var info_discogs = function() {
 			}
 
 			function getArtistData(id) {
-				debug.info(medebug,parent.nowplayingindex,"Getting data for artist with ID",id);
+				debug.debug(medebug,parent.nowplayingindex,"Getting data for artist with ID",id);
 				if (artistmeta.discogs['artist_'+id] === undefined) {
-					debug.trace(medebug,parent.nowplayingindex," ... retrieivng data");
+					debug.debug(medebug,parent.nowplayingindex," ... retrieivng data");
 					discogs.artist.getInfo(
 						'artist_'+id,
 						id,
@@ -407,7 +407,7 @@ var info_discogs = function() {
 						self.artist.extraResponseHandler
 					);
 				} else {
-					debug.trace(medebug,parent.nowplayingindex," ... displaying what we've already got");
+					debug.debug(medebug,parent.nowplayingindex," ... displaying what we've already got");
 					putArtistData(artistmeta.discogs['artist_'+id], "artist_"+id);
 				}
 			}
@@ -423,9 +423,9 @@ var info_discogs = function() {
 			}
 
 			function getArtistReleases(name, page) {
-				debug.info(medebug,parent.nowplayingindex,"Looking for release info for",name,"page",page);
+				debug.debug(medebug,parent.nowplayingindex,"Looking for release info for",name,"page",page);
 				if (artistmeta.discogs['discography_'+name+"_"+page] === undefined) {
-					debug.trace(medebug,"  ... retreiving them");
+					debug.debug(medebug,"  ... retreiving them");
 					discogs.artist.getReleases(
 						name,
 						page,
@@ -434,7 +434,7 @@ var info_discogs = function() {
 						self.artist.releaseResponseHandler
 					);
 				} else {
-					debug.trace(medebug,"  ... displaying what we've already got",artistmeta.discogs['discography_'+name+"_"+page]);
+					debug.debug(medebug,"  ... displaying what we've already got",artistmeta.discogs['discography_'+name+"_"+page]);
 					putArtistReleases(artistmeta.discogs['discography_'+name+"_"+page], 'discography_'+name);
 				}
 			}
@@ -505,9 +505,9 @@ var info_discogs = function() {
 					for(var i in m) {
 						var n = m[i].match(/<span class="artists" name="(\d+)">/);
 						if (n && n[1]) {
-							debug.shout(medebug,"Found unpopulated artist reference",n[1]);
+							debug.trace(medebug,"Found unpopulated artist reference",n[1]);
 							if (artistmeta.discogs['artist_'+n[1]] === undefined) {
-								debug.trace(medebug,parent.nowplayingindex," ... retrieivng data");
+								debug.debug(medebug,parent.nowplayingindex," ... retrieivng data");
 								discogs.artist.getInfo(
 									n[1],
 									n[1],
@@ -515,7 +515,7 @@ var info_discogs = function() {
 									self.artist.extraResponseHandler2
 								);
 							} else {
-								debug.trace(medebug,parent.nowplayingindex," ... displaying what we've already got");
+								debug.debug(medebug,parent.nowplayingindex," ... displaying what we've already got");
 								var name = artistmeta.discogs['artist_'+n[1]].data.name;
 								var link = artistmeta.discogs['artist_'+n[1]].data.uri;
 								p = p.replace(new RegExp('<span name="'+n[1]+'">'+n[1]+'<\/span>', 'g'), '<a href="'+link+'" target="_blank">'+name+'</a>');
@@ -529,7 +529,7 @@ var info_discogs = function() {
 					for(var i in m) {
 						var n = m[i].match(/<span class="masters" name="(\d+)">/);
 						if (n && n[1]) {
-							debug.shout(medebug, "Found unpopulated master reference", n[1]);
+							debug.trace(medebug, "Found unpopulated master reference", n[1]);
 							discogs.album.getInfo(
 								n[1],
 								'masters/'+n[1],
@@ -545,7 +545,7 @@ var info_discogs = function() {
 					for(var i in m) {
 						var n = m[i].match(/<span class="releases" name="(\d+)">/);
 						if (n && n[1]) {
-							debug.shout(medebug, "Found unpopulated release reference", n[1]);
+							debug.trace(medebug, "Found unpopulated release reference", n[1]);
 							discogs.album.getInfo(
 								n[1],
 								'releases/'+n[1],
@@ -561,7 +561,7 @@ var info_discogs = function() {
 					for(var i in m) {
 						var n = m[i].match(/<span class="labels" name="(\d+)">/);
 						if (n && n[1]) {
-							debug.shout(medebug, "Found unpopulated label reference", n[1]);
+							debug.trace(medebug, "Found unpopulated label reference", n[1]);
 							discogs.label.getInfo(
 								n[1],
 								n[1],
@@ -576,7 +576,7 @@ var info_discogs = function() {
 			}
 
 			function getAlbumHTML(data, order) {
-				debug.trace(medebug,"Creating HTML from release/master data",data);
+				debug.debug(medebug,"Creating HTML from release/master data",data);
 
 				if (data.error && data.master === undefined && data.release === undefined) {
 					return '<h3 align="center">'+data.error.error+'</h3>';
@@ -662,7 +662,7 @@ var info_discogs = function() {
 				if (data.error) {
 					return '<h3 align="center">'+data.error+'</h3>';
 				}
-				debug.trace(medebug, "Creating Artist HTML",data);
+				debug.debug(medebug, "Creating Artist HTML",data);
 
 				var html = '';
 
@@ -819,10 +819,10 @@ var info_discogs = function() {
 
 						if (artistmeta.discogs.artistinfo === undefined && (artistmeta.discogs.artistid === undefined || artistmeta.discogs.artistid === null)) {
 							if (artistmeta.discogs.artistlink === undefined) {
-								debug.shout(medebug,parent.nowplayingindex,"Artist asked to populate but no link yet");
+								debug.debug(medebug,parent.nowplayingindex,"Artist asked to populate but no link yet");
 								retries--;
 								if (retries == 0 || artistmeta.discogs.artisturi !== undefined) {
-									debug.warn(medebug,parent.nowplayingindex,"Artist giving up waiting for bloody musicbrainz");
+									debug.info(medebug,parent.nowplayingindex,"Artist giving up waiting for bloody musicbrainz");
 									artistmeta.discogs.artistlink = null;
 								} else {
 									artisttimer = setTimeout(self.artist.populate, 2000);
@@ -835,7 +835,7 @@ var info_discogs = function() {
 							if (link !== undefined && link !== null) {
 								var s = link.split('/').pop()
 								if (s.match(/^\d+$/)) {
-									debug.info(medebug,parent.nowplayingindex,"Artist asked to populate, using supplied link",s);
+									debug.debug(medebug,parent.nowplayingindex,"Artist asked to populate, using supplied link",s);
 									artistmeta.discogs.artistid = s;
 									discogs.artist.getInfo(
 										'artist_'+s,
@@ -845,7 +845,7 @@ var info_discogs = function() {
 									);
 									return;
 								} else {
-									debug.log(medebug,'Artist link was useless',s);
+									debug.warn(medebug,'Artist link was useless',s);
 								}
 							}
 							if (artistmeta.discogs.triedsearch && artistmeta.discogs.triedmunge) {
@@ -854,17 +854,17 @@ var info_discogs = function() {
 								self.artist.search(artistmeta.discogs.triedsearch ? mungeArtist(getSearchArtist()) : getSearchArtist());
 							}
 						} else {
-							debug.info(medebug,parent.nowplayingindex,"Artist is already populated");
+							debug.trace(medebug,parent.nowplayingindex,"Artist is already populated");
 						}
 					},
 
 					search: function(name) {
-						debug.log(medebug,'Searching for artist',name);
+						debug.trace(medebug,'Searching for artist',name);
 						discogs.artist.search(name, self.artist.searchResponse, self.artist.abjectFailure);
 					},
 
 					searchResponse: function(data) {
-						debug.log(medebug,'Got artist search response', data);
+						debug.debug(medebug,'Got artist search response', data);
 						if (artistmeta.discogs.triedsearch) {
 							artistmeta.discogs.triedmunge = true;
 						} else {
@@ -879,7 +879,7 @@ var info_discogs = function() {
 									var amatch = getSearchArtist();
 								}
 								if (compareArtists(data.data.results[i].title, amatch)) {
-									debug.log(medebug,'Found Artist index',i,data.data.results[i].title);
+									debug.trace(medebug,'Found Artist index',i,data.data.results[i].title);
 									artistmeta.discogs.possibilities.push({
 										name: data.data.results[i].title,
 										link: data.data.results[i].resource_url,
@@ -896,7 +896,7 @@ var info_discogs = function() {
 					},
 
 					artistResponseHandler: function(data) {
-						debug.log(medebug,parent.nowplayingindex,"got artist data",data);
+						debug.debug(medebug,parent.nowplayingindex,"got artist data",data);
 						if (data) {
 							artistmeta.discogs['artist_'+artistmeta.discogs.artistid] = data;
 							self.artist.doBrowserUpdate();
@@ -907,13 +907,13 @@ var info_discogs = function() {
 					},
 
 					abjectFailure: function() {
-						debug.warn(medebug,"Failed to find any artist data");
+						debug.info(medebug,"Failed to find any artist data");
 						artistmeta.discogs.artistinfo = {error: language.gettext("discogs_nonsense")};
 						self.artist.doBrowserUpdate();
 					},
 
 					extraResponseHandler: function(data) {
-						debug.info(medebug,parent.nowplayingindex,"got extra artist data for",data.id,data);
+						debug.debug(medebug,parent.nowplayingindex,"got extra artist data for",data.id,data);
 						if (data) {
 							artistmeta.discogs[data.id] = data;
 							putArtistData(artistmeta.discogs[data.id], data.id);
@@ -921,7 +921,7 @@ var info_discogs = function() {
 					},
 
 					extraResponseHandler2: function(data) {
-						debug.info(medebug,parent.nowplayingindex,"got stupidly extra artist data for",data.id,data);
+						debug.debug(medebug,parent.nowplayingindex,"got stupidly extra artist data for",data.id,data);
 						if (data) {
 							artistmeta.discogs['artist_'+data.id] = data;
 							if (data.data) {
@@ -933,7 +933,7 @@ var info_discogs = function() {
 					},
 
 					gotExtraAlbumInfo: function(data) {
-						debug.info(medebug, 'got extra album info',data);
+						debug.debug(medebug, 'got extra album info',data);
 						if (data) {
 							artistmeta.discogs['masters_'+data.id] = data;
 							if (data.data) {
@@ -945,7 +945,7 @@ var info_discogs = function() {
 					},
 
 					gotExtraAlbumInfo2: function(data) {
-						debug.info(medebug, 'got extra album info',data);
+						debug.debug(medebug, 'got extra album info',data);
 						if (data) {
 							artistmeta.discogs['releases_'+data.id] = data;
 							if (data.data) {
@@ -957,7 +957,7 @@ var info_discogs = function() {
 					},
 
 					gotExtraLabelInfo: function(data) {
-						debug.info(medebug, 'got extra label info',data);
+						debug.debug(medebug, 'got extra label info',data);
 						if (data) {
 							if (data.data) {
 								// Fill in any [l123456] or [l=123456] links in the main text body.
@@ -968,7 +968,7 @@ var info_discogs = function() {
 					},
 
 					releaseResponseHandler: function(data) {
-						debug.info(medebug,parent.nowplayingindex,"got release data for",data.id,data);
+						debug.debug(medebug,parent.nowplayingindex,"got release data for",data.id,data);
 						if (data) {
 							artistmeta.discogs[data.id+"_"+data.data.pagination.page] = data;
 							putArtistReleases(artistmeta.discogs[data.id+"_"+data.data.pagination.page], data.id);
@@ -977,7 +977,7 @@ var info_discogs = function() {
 
 					doBrowserUpdate: function() {
 						if (displaying) {
-							debug.info(medebug,parent.nowplayingindex,"artist was asked to display");
+							debug.debug(medebug,parent.nowplayingindex,"artist was asked to display");
 							// Any errors (such as failing to find the artist) go under artistinfo. Originally, this was where the actual artist info would go
 							// too, but then this bright spark had the idea to index all the artist info by the artist ID. This is indeed useful.
 							// But if there was an error in the initial search we don't know the ID. Hence artistinfo still exists and has to be checked.
@@ -1018,10 +1018,10 @@ var info_discogs = function() {
 
 						if (albummeta.discogs.album.error === undefined && albummeta.discogs.album.master === undefined) {
 							if (albummeta.discogs.albumlink === undefined) {
-								debug.shout(medebug,parent.nowplayingindex,"Album asked to populate but no link yet");
+								debug.debug(medebug,parent.nowplayingindex,"Album asked to populate but no link yet");
 								retries--;
 								if (retries == 0) {
-									debug.warn(medebug,parent.nowplayingindex,"Album giving up waiting for bloody musicbrainz");
+									debug.info(medebug,parent.nowplayingindex,"Album giving up waiting for bloody musicbrainz");
 									albummeta.discogs.albumlink = null;
 								} else {
 									albumtimer = setTimeout(self.album.populate, 2000);
@@ -1029,9 +1029,9 @@ var info_discogs = function() {
 								}
 							}
 							if (albummeta.discogs.albumlink === null && albummeta.discogs.triedmusicbrainz == false) {
-								debug.warn(medebug,parent.nowplayingindex,"Album asked to populate but no link could be found");
+								debug.debug(medebug,parent.nowplayingindex,"Album asked to populate but no link could be found");
 								if (albummeta.musicbrainz.album_releasegroupid !== null && albummeta.musicbrainz.album_releasegroupid !== undefined) {
-									debug.info(medebug,parent.nowplayingindex," ... trying the album release group");
+									debug.debug(medebug,parent.nowplayingindex," ... trying the album release group");
 									musicbrainz.releasegroup.getInfo(
 										albummeta.musicbrainz.album_releasegroupid,
 										'',
@@ -1043,7 +1043,7 @@ var info_discogs = function() {
 							} else if (albummeta.discogs.albumlink !== null) {
 								var b = albummeta.discogs.albumlink.match(/releases*\/(\d+)/);
 								if (b && b[1]) {
-									debug.info(medebug,parent.nowplayingindex,"Found album release link",b[1]);
+									debug.debug(medebug,parent.nowplayingindex,"Found album release link",b[1]);
 									discogs.album.getInfo(
 										b[1],
 										'releases/'+b[1],
@@ -1054,7 +1054,7 @@ var info_discogs = function() {
 								}
 								var b = albummeta.discogs.albumlink.match(/masters*\/(\d+)/);
 								if (b && b[1]) {
-									debug.info(medebug,parent.nowplayingindex,"Found album master link",b[1]);
+									debug.debug(medebug,parent.nowplayingindex,"Found album master link",b[1]);
 									discogs.album.getInfo(
 										b[1],
 										'masters/'+b[1],
@@ -1070,17 +1070,17 @@ var info_discogs = function() {
 								self.album.search(albummeta.discogs.triedsearch ? mungeArtist(getSearchArtistForAlbum()) : getSearchArtistForAlbum());
 							}
 						} else {
-							debug.info(medebug,parent.nowplayingindex,"Album is already populated, I think");
+							debug.trace(medebug,parent.nowplayingindex,"Album is already populated, I think");
 						}
 					},
 
 					search: function(artist) {
-						debug.log(medebug, 'Searching for album',artist,albummeta.name);
+						debug.trace(medebug, 'Searching for album',artist,albummeta.name);
 						discogs.album.search(artist, albummeta.name, self.album.searchResponse, self.album.abjectFailure);
 					},
 
 					searchResponse: function(data) {
-						debug.log(medebug, 'Got album search results', data);
+						debug.debug(medebug, 'Got album search results', data);
 						if (albummeta.discogs.triedsearch) {
 							albummeta.discogs.triedmunge = true;
 						} else {
@@ -1094,7 +1094,7 @@ var info_discogs = function() {
 									if (data.data.results[i].format && data.data.results[i].master_url) {
 										for (var j in data.data.results[i].format) {
 											if (getSearchArtistForAlbum() == "Various" && data.data.results[i].format[j] == "Compilation") {
-												debug.log(medebug, 'Using Compilation Result');
+												debug.trace(medebug, 'Using Compilation Result');
 												best = i;
 												break find_best_album;
 											} else if (data.data.results[i].format[j] == 'Album' && besta == 0) {
@@ -1106,13 +1106,13 @@ var info_discogs = function() {
 							}
 							best = (best >= 0) ? best : besta;
 							albummeta.discogs.albumlink = data.data.results[best].master_url;
-							debug.log(medebug,'Using album search result', best, albummeta.discogs.albumlink);
+							debug.debug(medebug,'Using album search result', best, albummeta.discogs.albumlink);
 						}
 						self.album.populate();
 					},
 
 					albumResponseHandler: function(data) {
-						debug.info(medebug,parent.nowplayingindex,"Got album data",data);
+						debug.debug(medebug,parent.nowplayingindex,"Got album data",data);
 						if (data.data.master_id) {
 							// If this key exists, then we have retrieved a release page - this data is useful but we also
 							// want the master release info. (Links that come to us from musicbrainz could be either master or release).
@@ -1138,26 +1138,26 @@ var info_discogs = function() {
 					},
 
 					mbRgHandler: function(data) {
-						debug.info(medebug,parent.nowplayingindex,"got musicbrainz release group data for",parent.playlistinfo.album, data);
+						debug.debug(medebug,parent.nowplayingindex,"got musicbrainz release group data for",parent.playlistinfo.album, data);
 						if (data.error) {
 							debug.warn(medebug,parent.nowplayingindex," ... MB error",data);
 						} else {
 							for (var i in data.relations) {
 								if (data.relations[i].type == "discogs") {
-									debug.info(medebug,parent.nowplayingindex,"has found a Discogs album link",data.relations[i].url.resource);
+									debug.trace(medebug,parent.nowplayingindex,"has found a Discogs album link",data.relations[i].url.resource);
 									albummeta.discogs.albumlink = data.relations[i].url.resource;
 									self.album.populate();
 									return;
 								}
 							}
 						}
-						debug.log(medebug,'No useful info in MB release group data');
+						debug.debug(medebug,'No useful info in MB release group data');
 						albummeta.discogs.triedmusicbrainz = true;
 						self.album.populate();
 					},
 
 					abjectFailure: function() {
-						debug.warn(medebug,"Completely failed to find the album");
+						debug.info(medebug,"Completely failed to find the album");
 						albummeta.discogs.album.error = {error: language.gettext("discogs_noalbum")};
 						self.album.doBrowserUpdate();
 					},
@@ -1167,7 +1167,7 @@ var info_discogs = function() {
 								(albummeta.discogs.album.error !== undefined ||
 								albummeta.discogs.album.master !== undefined ||
 								albummeta.discogs.album.release !== undefined)) {
-							debug.info(medebug,parent.nowplayingindex,"album was asked to display");
+							debug.debug(medebug,parent.nowplayingindex,"album was asked to display");
 							if (parent.playlistinfo.type == 'stream') {
 								browser.Update(null, 'album', me, parent.nowplayingindex, { name: "",
 														link: "",
@@ -1202,10 +1202,10 @@ var info_discogs = function() {
 
 						if (trackmeta.discogs.track.error === undefined && trackmeta.discogs.track.master === undefined) {
 							if (trackmeta.discogs.tracklink === undefined) {
-								debug.trace(medebug,parent.nowplayingindex,"Track asked to populate but no link yet");
+								debug.debug(medebug,parent.nowplayingindex,"Track asked to populate but no link yet");
 								retries--;
 								if (retries == 0) {
-									debug.warn(medebug,parent.nowplayingindex,"Track giving up on bloody musicbrainz");
+									debug.info(medebug,parent.nowplayingindex,"Track giving up on bloody musicbrainz");
 									trackmeta.discogs.tracklink = null;
 								} else {
 									tracktimer = setTimeout(self.track.populate, 2000);
@@ -1213,11 +1213,11 @@ var info_discogs = function() {
 								}
 							}
 							if (trackmeta.discogs.tracklink === null) {
-								debug.info(medebug,parent.nowplayingindex,"No track link found by musicbrainz");
+								debug.trace(medebug,parent.nowplayingindex,"No track link found by musicbrainz");
 							} else {
 								var b = trackmeta.discogs.tracklink.match(/releases*\/(\d+)/);
 								if (b && b[1]) {
-									debug.info(medebug,parent.nowplayingindex,"Track Link is useful - Track is populating",b[1]);
+									debug.debug(medebug,parent.nowplayingindex,"Track Link is useful - Track is populating",b[1]);
 									discogs.track.getInfo(
 										b[1],
 										'releases/'+b[1],
@@ -1228,7 +1228,7 @@ var info_discogs = function() {
 								}
 								var b = trackmeta.discogs.tracklink.match(/masters*\/(\d+)/);
 								if (b && b[1]) {
-									debug.info(medebug,parent.nowplayingindex,"Track Link is useful - Track is populating",b[1]);
+									debug.debug(medebug,parent.nowplayingindex,"Track Link is useful - Track is populating",b[1]);
 									discogs.track.getInfo(
 										b[1],
 										'masters/'+b[1],
@@ -1244,18 +1244,18 @@ var info_discogs = function() {
 								self.track.search(trackmeta.discogs.triedsearch ? mungeArtist(artistmeta.name) : artistmeta.name);
 							}
 						} else {
-							debug.info(medebug,parent.nowplayingindex,"Track is already populated, probably");
+							debug.trace(medebug,parent.nowplayingindex,"Track is already populated, probably");
 							self.artist.populate();
 						}
 					},
 
 					search: function(artist) {
-						debug.log(medebug,'Searching for track',artist,trackmeta.name);
+						debug.trace(medebug,'Searching for track',artist,trackmeta.name);
 						discogs.track.search(artist, trackmeta.name, self.track.searchResponse, self.track.abjectFailure);
 					},
 
 					searchResponse: function(data) {
-						debug.log(medebug, 'Got track search results', data);
+						debug.debug(medebug, 'Got track search results', data);
 						if (trackmeta.discogs.triedsearch) {
 							trackmeta.discogs.triedmunge = true;
 						} else {
@@ -1271,7 +1271,7 @@ var info_discogs = function() {
 										var amatch = artistmeta.name.toLowerCase();
 									}
 									if (data.data.results[i].format && data.data.results[i].resource_url && data.data.results[i].title.toLowerCase() == amatch+' - '+trackmeta.name.toLowerCase()) {
-										debug.log(medebug,'Found Artist - Title match');
+										debug.debug(medebug,'Found Artist - Title match');
 										for (var j in data.data.results[i].format) {
 											if (data.data.results[i].format[j] == 'Single') {
 												best = i;
@@ -1282,13 +1282,13 @@ var info_discogs = function() {
 								}
 							}
 							trackmeta.discogs.tracklink = data.data.results[best].resource_url;
-							debug.log(medebug,'Using track search result', best, trackmeta.discogs.tracklink);
+							debug.debug(medebug,'Using track search result', best, trackmeta.discogs.tracklink);
 						}
 						self.track.populate();
 					},
 
 					trackResponseHandler: function(data) {
-						debug.info(medebug,parent.nowplayingindex,"Got track data",data);
+						debug.debug(medebug,parent.nowplayingindex,"Got track data",data);
 						if (data.data.master_id) {
 							// If this key exists, then we have retrieved a release page - this data is useful but we also
 							// want the master release info. (Links that come to us from musicbrainz could be either master or release).
@@ -1325,7 +1325,7 @@ var info_discogs = function() {
 					},
 
 					abjectFailure: function() {
-						debug.warn(medebug,"Completely failed to find the track");
+						debug.info(medebug,"Completely failed to find the track");
 						trackmeta.discogs.track.error = {error: language.gettext("discogs_notrack")};
 						self.track.doBrowserUpdate();
 						self.artist.populate();
@@ -1335,7 +1335,7 @@ var info_discogs = function() {
 						if (displaying && trackmeta.discogs.track !== undefined &&
 								(trackmeta.discogs.track.error !== undefined ||
 								trackmeta.discogs.track.master !== undefined)) {
-							debug.info(medebug,parent.nowplayingindex,"track was asked to display");
+							debug.debug(medebug,parent.nowplayingindex,"track was asked to display");
 							browser.Update(
 								null,
 								'track',

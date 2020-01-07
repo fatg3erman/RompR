@@ -80,7 +80,7 @@ var metaHandlers = function() {
 
 			doMeta: function(action, name, attributes, fn) {
 				var tracks = new Array();
-				debug.log('DROPPLUGIN', 'In doMeta');
+				debug.debug('DROPPLUGIN', 'In doMeta');
 				$.each($('.selected').filter(removeOpenItems), function (index, element) {
 					var uri = unescapeHtml(decodeURIComponent($(element).attr("name")));
 					debug.log("DROPPLUGIN","Dragged",uri,"to",name);
@@ -198,7 +198,7 @@ var metaHandlers = function() {
 					trackstogo.push({action: 'delete', uri: decodeURIComponent($(this).attr('name'))});
 				});
 				$('.clicktrack.selected').fadeOut('fast');
-				debug.log("DB_TRACKS","Remove tracks from database",trackstogo);
+				debug.debug("DB_TRACKS","Remove tracks from database",trackstogo);
 				dbQueue.request(
 					trackstogo,
 					collectionHelper.updateCollectionDisplay,
@@ -230,7 +230,7 @@ var metaHandlers = function() {
 				debug.info('AAGH','Adding an album');
 				var thisIsMessy = new Array();
 				if (data.tracks && data.tracks.items) {
-					debug.log("AAAGH","Adding Album From",data);
+					debug.debug("AAAGH","Adding Album From",data);
 					infobar.notify(language.gettext('label_addingalbum'));
 					for (var i in data.tracks.items) {
 						var track = {};
@@ -327,7 +327,7 @@ var metaHandlers = function() {
 					if (attributes) {
 						track.attributes = attributes;
 					}
-					debug.log("DBQUEUE", "LFM Mapped Data is",track);
+					debug.debug("DBQUEUE", "LFM Mapped Data is",track);
 					return track;
 				}
 		},
@@ -413,12 +413,12 @@ var dbQueue = function() {
 			var req = queue[0];
 
 			if (req && player.updatingcollection) {
-				debug.log("DB QUEUE","Deferring",req.data[0].action,"request because collection is being updated");
+				debug.info("DB QUEUE","Deferring",req.data[0].action,"request because collection is being updated");
 				throttle = setTimeout(dbQueue.dorequest, 1000);
 			} else {
 				if (req) {
 					if (req.flag) {
-						debug.trace("DB QUEUE","Request just pulled from queue is already being handled");
+						debug.warn("DB QUEUE","Request just pulled from queue is already being handled");
 						return;
 					}
 					queue[0].flag = true;

@@ -13,22 +13,22 @@ var collectionHelper = function() {
 		collectionHelper.prepareForLiftOff(language.gettext("label_updating"));
 		collectionHelper.markWaitFileList(language.gettext("label_updating"));
 		uiHelper.prepareCollectionUpdate();
-		debug.shout("PLAYER","Scanning Files With",cmd,"on",prefs.player_backend);
+		debug.mark("PLAYER","Scanning Files With",cmd,"on",prefs.player_backend);
 		player.controller.do_command_list([[cmd]]).then(pollAlbumList);
 	}
 
 	function pollAlbumList() {
 		clearTimeout(update_load_timer);
-		debug.log('GENERAL','Polling Collection Rebuild')
+		debug.debug('GENERAL','Polling Collection Rebuild')
 		$.getJSON("player/mpd/postcommand.php", checkPoll);
 	}
 
 	function checkPoll(data) {
 		if (data.updating_db) {
-			debug.log('GENERAL','Still updating collection');
+			debug.debug('GENERAL','Still updating collection');
 			update_load_timer = setTimeout( pollAlbumList, 1000);
 		} else {
-			debug.shout('GENERAL','Player rescan is complete');
+			debug.info('GENERAL','Player rescan is complete');
 			refreshCollection();
 			loadFileBrowser();
 		}
@@ -40,7 +40,7 @@ var collectionHelper = function() {
 		// and there's no way to stop that.
 		// We rely on the update monitor to keep polling the server until it gets 'RompR Is Done'
 		// at which point it will load the collection.
-		debug.info('GENERAL', 'Initiating Collection Rebuild');
+		debug.mark('GENERAL', 'Initiating Collection Rebuild');
 		var albums = 'albums.php?rebuild=yes';
 		$.ajax({
 			type: "GET",
@@ -72,7 +72,7 @@ var collectionHelper = function() {
 			dataType: 'json',
 		})
 		.done(function(data) {
-			debug.trace("UPDATE",data);
+			debug.debug("UPDATE",data);
 			if (data.current == 'RompR Is Done') {
 				debug.info('GENERAL', 'Collection Update Finished');
 				infobar.notify(language.gettext('label_updatedone'));
@@ -189,7 +189,7 @@ var collectionHelper = function() {
 	function updateUIElements() {
 
 		if (dbQueue.queuelength() > 0) {
-			debug.blurt("UI","Deferring updates due to outstanding requests");
+			debug.info("UI","Deferring updates due to outstanding requests");
 			clearTimeout(update_timer);
 			setTimeout(updateUIElements, 1000);
 			return;
@@ -199,14 +199,12 @@ var collectionHelper = function() {
 
 			if (rdata && rdata.hasOwnProperty('deletedalbums')) {
 				$.each(rdata.deletedalbums, function(i, v) {
-					debug.log("REMOVING", v);
 					uiHelper.removeAlbum(v);
 				});
 			}
 
 			if (rdata && rdata.hasOwnProperty('deletedartists')) {
 				$.each(rdata.deletedartists, function(i, v) {
-					debug.log("REMOVING", v);
 					uiHelper.removeArtist(v);
 				});
 			}
@@ -216,7 +214,6 @@ var collectionHelper = function() {
 				$.each(rdata.modifiedalbums, function(i,v) {
 					// We remove and replace any modified albums, as they may have a new date or albumartist which would cause
 					// them to appear elsewhere in the collection. First remove the dropdown if it exists and replace its contents
-					debug.log("MODIFIED",v.id);
 					uiHelper.insertAlbum(v);
 					if (prefs.clickmode == 'single') {
 						$('#'+v.id).find('.invisibleicon').removeClass('invisibleicon');
@@ -233,7 +230,6 @@ var collectionHelper = function() {
 					// to remove and replace the banner when that sort option is used, because we only insertAfter an album ID
 					var x = uiHelper.findArtistDisplayer(v.id);
 					if (x.length == 0) {
-						debug.log('MODIFIED', v.id);
 						uiHelper.insertArtist(v);
 					}
 				});
@@ -316,7 +312,7 @@ var collectionHelper = function() {
 		},
 
 		forceCollectionReload: function() {
-			debug.log("COLLECTION", "Forcing Collection reload");
+			debug.info("COLLECTION", "Forcing Collection reload");
 			collection_status = 0;
 			collectionHelper.displayCollection();
 			if (notify) {
@@ -349,7 +345,7 @@ var collectionHelper = function() {
 		},
 
 		checkCollection: function(forceup, rescan) {
-			debug.shout("COLLECTION", "checking collection. collection_status is",collection_status);
+			debug.mark("COLLECTION", "checking collection. collection_status is",collection_status);
 			if (forceup && player.updatingcollection) {
 				infobar.error(language.gettext('error_nocol'));
 				return;
@@ -366,7 +362,7 @@ var collectionHelper = function() {
 				}
 			}
 			if (update) {
-				debug.shout('GENERAL','We are going to update the collection');
+				debug.mark('GENERAL','We are going to update the collection');
 				player.updatingcollection = true;
 				$("#searchresultholder").html('');
 				scanFiles(rescan ? 'rescan' : 'update');

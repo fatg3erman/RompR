@@ -66,7 +66,7 @@ var snapcast = function() {
 				for (var i in data.result.server.groups) {
 					var group_exists = findGroup(groups, data.result.server.groups[i].id);
 					if (group_exists === false) {
-						debug.info('SNAPCAST','Creating new group',data.result.server.groups[i].id);
+						debug.log('SNAPCAST','Creating new group',data.result.server.groups[i].id);
 						var g = new snapcastGroup();
 						newgroups.push(g);
 						g.initialise();
@@ -80,14 +80,14 @@ var snapcast = function() {
 				// Find removed groups
 				for (var i in groups) {
 					if (findGroup(newgroups, groups[i].getId()) === false) {
-						debug.shout('SNAPCAST','Group',groups[i].getId(),'has been removed');
+						debug.log('SNAPCAST','Group',groups[i].getId(),'has been removed');
 						groups[i].removeSelf();
 						groups[i] = null;
 					}
 				}
 				groups = newgroups;
 			} else {
-				debug.shout('SNAPCAST','Got response with id',data.id,'expecting',id);
+				debug.warn('SNAPCAST','Got response with id',data.id,'expecting',id);
 			}
 			updatetimer = setTimeout(snapcast.updateStatus, 60000);
 		},
@@ -276,7 +276,7 @@ function snapcastGroup() {
 		for (var i in data.clients) {
 			var client_exists = findClient(clients, data.clients[i].id);
 			if (client_exists === false) {
-				debug.info('SNAPCAST','Creating new client',data.clients[i].id);
+				debug.log('SNAPCAST','Creating new client',data.clients[i].id);
 				var g = new snapcastClient();
 				newclients.push(g);
 				g.initialise(holder);
@@ -290,7 +290,7 @@ function snapcastGroup() {
 		// Find removed groups
 		for (var i in clients) {
 			if (findClient(newclients, clients[i].getId()) === false) {
-				debug.shout('SNAPCAST','Client',clients[i].getId(),'has been removed');
+				debug.log('SNAPCAST','Client',clients[i].getId(),'has been removed');
 				clients[i].removeSelf();
 				clients[i] = null;
 			}

@@ -202,7 +202,7 @@ jQuery.fn.makeSpinner = function() {
 		var self = $(this);
 		if (self.hasClass('icon-toggle-closed') || self.hasClass('icon-toggle-open') || self.hasClass('spinable')) {
 			if (self.hasClass('icon-spin6') || self.hasClass('spinner')) {
-				debug.warn('UIHELPER', 'Trying to create spinner on already spinning element');
+				debug.trace('UIHELPER', 'Trying to create spinner on already spinning element');
 				return;
 			}
 			var originalclasses = new Array();
@@ -558,7 +558,7 @@ var layoutProcessor = function() {
 
 		scrollCollectionTo: function(jq) {
 			if (jq.length > 0) {
-				debug.log("LAYOUT","Scrolling Collection To",jq);
+				debug.debug("LAYOUT","Scrolling Collection To",jq);
 				scroller = findParentScroller(jq);
 				if (scroller !== false) {
 					scroller.mCustomScrollbar('update').mCustomScrollbar('scrollTo', jq,
@@ -682,7 +682,7 @@ var layoutProcessor = function() {
 		},
 
 		displayCollectionInsert: function(details) {
-			debug.shout("COLLECTION","Displaying New Insert");
+			debug.mark("COLLECTION","Displaying New Insert");
 			debug.debug('COLLECTION', details);
 			infobar.notify(
 				(details.isaudiobook == 0) ? language.gettext('label_addedtocol') : language.gettext('label_addedtosw')
@@ -924,7 +924,7 @@ var layoutProcessor = function() {
 			});
 
 			// $(document).on('ready', '.collectionpanel', function() {
-			// 	debug.shout('Weeee', 'Woooo');
+			// 	debug.mark('Weeee', 'Woooo');
 			// });
 
 		},

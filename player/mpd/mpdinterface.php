@@ -180,7 +180,7 @@ class base_mpd_player {
 
 		$retarr = array();
 		if ($this->is_connected()) {
-			if ($command == 'status') {
+			if ($command == 'status' || $command == 'currentsong') {
 				logger::core("MPD", "MPD Command",$command);
 			} else {
 				logger::trace("MPD", "MPD Command",$command);

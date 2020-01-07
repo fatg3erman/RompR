@@ -7,7 +7,7 @@ var mixRadio = function() {
 
 		initialise: async function(p) {
 			if (typeof(spotifyRadio) == 'undefined') {
-				debug.log(medebug,"Loading Spotify Radio Tuner");
+				debug.info(medebug,"Loading Spotify Radio Tuner");
 				try {
 					await $.getScript('radios/code/spotifyRadio.js?version='+rompr_version);
 				} catch (err) {
@@ -31,7 +31,7 @@ var mixRadio = function() {
 				fartists.sort(randomsort);
 				fartists = fartists.splice(0,10);
 				fartists.forEach(function(artist) {
-					debug.log(medebug,"Searching for spotify ID for",artist.name);
+					debug.trace(medebug,"Searching for spotify ID for",artist.name);
 					spotify.artist.search(artist.name, mixRadio.gotArtists, mixRadio.lookupFail);
 				});
 			} catch(err) {
@@ -58,7 +58,7 @@ var mixRadio = function() {
 		},
 
 		gotArtists: function(data) {
-			debug.trace(medebug,"Got artist search results",data);
+			debug.debug(medebug,"Got artist search results",data);
 			// To see which search result artist matches the one we actually searched for,
 			// check the original query string. This was encoded according to spotify.js
 			// name.replace(/&|%|@|:|\+|'|\\|\*|"|\?|\//g,'').replace(/\s+/g,'+')
@@ -70,7 +70,7 @@ var mixRadio = function() {
 			for (let artist of data.artists.items) {
 				var match_against = artist.name.replace(/&|%|@|:|\+|'|\\|\*|"|\?|\//g,'').toLowerCase();
 				if (to_match == match_against) {
-					debug.log(medebug, 'Found artist match for',to_match,artist.name);
+					debug.trace(medebug, 'Found artist match for',to_match,artist.name);
 					tuner.newArtist(artist.name, artist.id, true);
 					return;
 				}

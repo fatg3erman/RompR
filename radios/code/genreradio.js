@@ -8,7 +8,7 @@ var genreRadio = function() {
 		if (prefs.player_backend == "mopidy") {
 			domains = $("#radiodomains").makeDomainChooser("getSelection");
 		}
-		debug.shout("GENRE RADIO","Searching for Genre",genre,"in domains",domains);
+		debug.loag("GENRE RADIO","Searching for Genre",genre,"in domains",domains);
 		// Generally, using faveFinder is better but that doesn't support Genres
 		player.controller.rawsearch({genre: [genre]}, domains, false, genreRadio.checkResults, false);
 	}
@@ -29,7 +29,7 @@ var genreRadio = function() {
 		},
 
 		checkResults: function(data) {
-			debug.trace("GENRE RADIO","Search Results",data);
+			debug.debug("GENRE RADIO","Search Results",data);
 			tracks = [];
 			for (let i in data) {
 				let domain = data[i];
@@ -41,7 +41,7 @@ var genreRadio = function() {
 					}
 				}
 			}
-			debug.log('GENRE RADIO', 'We have',tracks.length,'tracks');
+			debug.trace('GENRE RADIO', 'We have',tracks.length,'tracks');
 			tracks.sort(randomsort);
 		},
 

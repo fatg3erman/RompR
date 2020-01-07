@@ -24,7 +24,7 @@ var musicbrainz = function() {
 
 			if (req) {
 				if (req.flag) {
-					debug.error("MUSICBRAINZ","Request just pulled from queue is already being handled");
+					debug.warn("MUSICBRAINZ","Request just pulled from queue is already being handled");
 					return;
 				}
 				queue[0].flag = true;

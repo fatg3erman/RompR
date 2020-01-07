@@ -62,7 +62,7 @@ var opmlImporter = function() {
 		},
 
 		gotData: function(data) {
-			debug.log("OPML IMPORTER", "File Parsed",data);
+			debug.debug("OPML IMPORTER", "File Parsed",data);
 			var html = '';
 			html += '<div class="configtitle"><div class="expand textcentre">'+language.gettext('label_opmlimporter')+'</div></div>';
 			html += '<div class="containerbox fullwidth">';
@@ -124,7 +124,7 @@ var opmlImporter = function() {
 			debug.log("OPML IMPORTER","Importing Podcast",feedUrl);
 			podcasts.getPodcast(feedUrl, function(flag) {
 				if (flag) {
-					debug.log("OPML Importer", "Success");
+					debug.debug("OPML Importer", "Success");
 					s.replaceWith('<i class="icon-tick smallicon"></i>');
 					opmlImporter.Import();
 				} else {

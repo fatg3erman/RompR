@@ -9,7 +9,7 @@ var info_lyrics = function() {
 
 		collection: function(parent, artistmeta, albummeta, trackmeta) {
 
-			debug.trace("LYRICS PLUGIN", "Creating data collection");
+			debug.debug("LYRICS PLUGIN", "Creating data collection");
 
 			var self = this;
 			var displaying = false;
@@ -57,7 +57,7 @@ var info_lyrics = function() {
 				} else {
 					$.post("browser/backends/getLyrics.php", {file: player.status.file, artist: getSearchArtist(), song: trackmeta.name})
 						.done(function(data) {
-							debug.trace("LYRICS",data);
+							debug.debug("LYRICS",data);
 							trackmeta.lyrics = data;
 							self.doBrowserUpdate();
 						});
@@ -66,7 +66,7 @@ var info_lyrics = function() {
 
 			this.populate = function() {
 				if (trackmeta.lyrics === undefined) {
-					debug.trace("LYRICS PLUGIN",parent.nowplayingindex,"No lyrics yet, trying again in 1 second");
+					debug.debug("LYRICS PLUGIN",parent.nowplayingindex,"No lyrics yet, trying again in 1 second");
 					setTimeout(self.populate, 1000);
 					return;
 				}

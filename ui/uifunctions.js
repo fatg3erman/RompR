@@ -67,7 +67,7 @@ var pluginManager = function() {
 		if (typeof plugins[index].action == 'function') {
 			plugins[index].action();
 		} else {
-			debug.log("PLUGINS","Loading script",plugins[index].script,"for",plugins[index].label);
+			debug.info("PLUGINS","Loading script",plugins[index].script,"for",plugins[index].label);
 			$.getScript(plugins[index].script+'?version='+rompr_version).fail(function(data, settings, exception) {
 				debug.error("PLUGINS","Failed Loading Script",exception);
 			});
@@ -142,7 +142,7 @@ var imagePopup = function() {
 		imagePopup.show();
 	}
 	image.onerror = function() {
-		debug.debug("IMAGEPOPUP", "Image has NOT loaded");
+		debug.warn("IMAGEPOPUP", "Image has NOT loaded");
 		imagePopup.close();
 	}
 
@@ -187,7 +187,7 @@ var imagePopup = function() {
 			// Calculate popup size and position
 			var imgwidth = image.width;
 			var imgheight = image.height;
-			debug.log("POPUP","Image size is",imgwidth,imgheight);
+			debug.debug("POPUP","Image size is",imgwidth,imgheight);
 			// Make sure it's not bigger than the window
 			var winsize=getWindowSize();
 			// hack to allow for vertical scrollbar
@@ -195,7 +195,7 @@ var imagePopup = function() {
 			// Allow for popup border
 			var w = winsize.x - 63;
 			var h = winsize.y - 36;
-			debug.log("POPUP","Allowed size is",w,h);
+			debug.debug("POPUP","Allowed size is",w,h);
 			var scale = w/image.width;
 			if (h/image.height < scale) {
 				scale = h/image.height;
@@ -204,7 +204,7 @@ var imagePopup = function() {
 				imgheight = Math.round(imgheight * scale);
 				imgwidth = Math.round(imgwidth * scale);
 			}
-			debug.log("POPUP","Calculated Image size is",imgwidth,imgheight,(imgwidth/image.width),
+			debug.debug("POPUP","Calculated Image size is",imgwidth,imgheight,(imgwidth/image.width),
 				(imgheight/image.height));
 			var popupwidth = imgwidth+36;
 			var popupheight = imgheight+36;
@@ -471,7 +471,7 @@ function getrgbs(percent,min) {
 function populateSpotiTagMenu(callback) {
 	spotify.recommendations.getGenreSeeds(
 		function(data) {
-			debug.log("SPOTIFY","Got Genre Seeds",data);
+			debug.debug("SPOTIFY","Got Genre Seeds",data);
 			callback(data.genres);
 		},
 		function(data) {
@@ -514,23 +514,23 @@ function showUpdateWindow() {
 			});
 		});
 	} else if (prefs.lastversionchecktime < Date.now() - 604800000) {
-		debug.shout('INIT', 'Doing Upgrade Check');
+		debug.mark('INIT', 'Doing Upgrade Check');
 		$.ajax({
 			method: 'GET',
 			dataType: 'json',
 			url: 'https://api.github.com/repos/fatg3erman/RompR/releases'
 		})
 		.done(function(data) {
-			debug.log('INIT', 'Got release data',data);
+			debug.debug('INIT', 'Got release data',data);
 			var newest = '1.00';
 			data.forEach(function(v) {
 				if (compare_version_numbers(newest, v.tag_name)) {
-					debug.blurt('INIT', 'Found release',v.tag_name,'We are version',rompr_version);
+					debug.trace('INIT', 'Found release',v.tag_name,'We are version',rompr_version);
 					newest = v.tag_name;
 				}
 			});
 			if (compare_version_numbers(rompr_version, newest) && compare_version_numbers(prefs.lastversionchecked, newest)) {
-				debug.shout('INIT', 'New Version is available!');
+				debug.mark('INIT', 'New Version is available!');
 				showNewVersionWindow(newest);
 			} else {
 				debug.log('INIT', 'Not doing anything about update');
@@ -731,7 +731,7 @@ function doMopidyCollectionOptions() {
 		$('.mopocol:checked').each(function() {
 			opts.push($(this).next().next().attr('name'));
 		});
-		debug.log("MOPIDY","Collection Options Are",opts);
+		debug.debug("MOPIDY","Collection Options Are",opts);
 		prefs.save({mopidy_collection_folders: opts});
 	});
 	if (!player.canPlay('beets')) {
@@ -930,7 +930,7 @@ var syncLastFMPlaycounts = function() {
 		},
 
 		gotPage: function(data) {
-			debug.log("LASTFMSYNC", "Got Data", data);
+			debug.debug("LASTFMSYNC", "Got Data", data);
 			if (data.recenttracks) {
 				totalpages = parseInt(data.recenttracks["@attr"].totalPages);
 				totaltracks = parseInt(data.recenttracks["@attr"].total);
@@ -1012,7 +1012,7 @@ var spotifyLinkChecker = function() {
 	}
 
 	function gotSpotiResponse(response) {
-		debug.trace("SPOTICHECKER","Response from Spotify",response);
+		debug.debug("SPOTICHECKER","Response from Spotify",response);
 		var callback = spotifyLinkChecker.setTimer;
 		var update_info = new Array();
 		for (var i = 0; i < tracks.length; i++) {
@@ -1022,14 +1022,14 @@ var spotifyLinkChecker = function() {
 					uri = track.uri;
 					debug.debug("SPOTICHECKER", "Track is playable");
 					if (track.linked_from) {
-						debug.info("SPOTICHECKER", "Track was relinked",track);
+						debug.trace("SPOTICHECKER", "Track was relinked",track);
 						uri = track.linked_from.uri;
 					}
 					update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: uri, status: 2});
 				} else {
-					debug.info("SPOTICHECKER", "Track is NOT playable", track.album.name, track.name);
+					debug.log("SPOTICHECKER", "Track is NOT playable", track.album.name, track.name);
 					if (track.restrictions) {
-						debug.blurt("SPOTICHECKER", "Track restrictions :",track.restrictions.reason)
+						debug.trace("SPOTICHECKER", "Track restrictions :",track.restrictions.reason)
 					}
 					update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: track.uri, status: 3});
 				}
@@ -1042,7 +1042,7 @@ var spotifyLinkChecker = function() {
 	}
 
 	function doneOK(data) {
-		debug.log("SPOTICHECKER","Link Checked OK");
+		debug.debug("SPOTICHECKER","Link Checked OK");
 	}
 
 	function gotNoSpotiResponse(data) {
@@ -1079,19 +1079,3 @@ var spotifyLinkChecker = function() {
 	}
 
 }();
-
-async function promiseTest() {
-	debug.shout('PROMISE', 'Doing it now');
-	try {
-		var r = await $.ajax({
-				type: 'GET',
-				url: 'player/mpd/geturlhandlers.php',
-				dataType: 'json'
-			});
-	} catch (err) {
-		// We get a jdXHR with status = 500 and statusText = 'Internal Server Error'
-		debug.error('PROMISE', 'There was an error', err);
-	}
-	debug.shout('PROMISE', 'Done it', r);
-
-}

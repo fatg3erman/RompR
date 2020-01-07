@@ -60,7 +60,7 @@ var communityRadioPlugin = {
 	},
 
 	handleClick: function(event, clickedElement) {
-		debug.log("COMM RADIO", "Handling Click");
+		debug.debug("COMM RADIO", "Handling Click");
 		if (clickedElement.hasClass("browse")) {
 			event.stopImmediatePropagation();
 			var url = clickedElement.prev().prev().val();

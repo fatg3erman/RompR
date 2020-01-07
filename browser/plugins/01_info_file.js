@@ -14,7 +14,7 @@ var info_file = function() {
 
 		var html = "";
 		var file = decodeURI(info.file);
-		debug.log("FILE INFO","Decoded File Name is",file);
+		debug.debug("FILE INFO","Decoded File Name is",file);
 		file = file.replace(/^file:\/\//, '');
 		var filetype = "";
 		if (file) {
@@ -137,7 +137,7 @@ var info_file = function() {
 
 		collection: function(parent, artistmeta, albummeta, trackmeta) {
 
-			debug.trace("FILE PLUGIN", "Creating data collection");
+			debug.debug("FILE PLUGIN", "Creating data collection");
 
 			var self = this;
 			var displaying = false;
@@ -182,13 +182,13 @@ var info_file = function() {
 						}, 1000);
 					}
 				} else {
-					debug.info("FILE PLUGIN",parent.nowplayingindex,"is already populated");
+					debug.log("FILE PLUGIN",parent.nowplayingindex,"is already populated");
 				}
 			}
 
 			this.updateFileInformation = function() {
 				trackmeta.fileinfo = {beets: null, player: cloneObject(player.status)};
-				debug.log("FILE PLUGIN","Doing update from",trackmeta);
+				debug.core("FILE PLUGIN","Doing update from",trackmeta);
 				trackmeta.lyrics = null;
 				self.doBrowserUpdate();
 			}
@@ -197,10 +197,10 @@ var info_file = function() {
 				// Get around possible same origin policy restriction by using a php script
 				$.getJSON('browser/backends/getBeetsInfo.php', 'uri='+thing)
 				.done(function(data) {
-					debug.trace("FILE PLUGIN",'Got info from beets server',data);
+					debug.core("FILE PLUGIN",'Got info from beets server',data);
 					trackmeta.fileinfo = {beets: data, player: null};
 					if (data.lyrics) {
-						debug.shout("FILE PLUGIN","Got lyrics from Beets Server");
+						debug.mark("FILE PLUGIN","Got lyrics from Beets Server");
 						trackmeta.lyrics = data.lyrics;
 					} else {
 						trackmeta.lyrics = null;
@@ -216,7 +216,7 @@ var info_file = function() {
 
 			this.ratingsInfo = function() {
 				var html = "";
-				debug.shout("FILE PLUGIN","Doing the monkey spanner",trackmeta);
+				debug.core("FILE PLUGIN","Doing the monkey spanner",trackmeta);
 				if (trackmeta.usermeta) {
 					html += '<table class="fileinfotable" style="width:100%">';
 					html += '<tr><th colspan="2">Collection Information</th></tr>';

@@ -9,11 +9,11 @@ var spotiTrackRadio = function() {
 		initialise: async function(p) {
 			param = p;
 			if (typeof(spotifyRecommendationsRadio) == 'undefined') {
-				debug.log(medebug,"Loading Spotify Radio Tuner");
+				debug.info(medebug,"Loading Spotify Radio Tuner");
 				try {
 					await $.getScript('radios/code/spotifyrecommendationsradio.js?version='+rompr_version);
 				} catch (err) {
-					debug.error(medebug, 'Failed to load script');
+					debug.error(medebug, 'Failed to load script', err);
 					return false;
 				}
 			}

@@ -45,8 +45,8 @@ var recentlyPlayed = function() {
 			.done(function(data) {
 				$('#rplmunger').html(data);
 			})
-			.fail(function() {
-				debug.error("RECENTLY PLAYED","Error reloading list");
+			.fail(function(data) {
+				debug.error("RECENTLY PLAYED","Error reloading list",data);
 			});
 		},
 

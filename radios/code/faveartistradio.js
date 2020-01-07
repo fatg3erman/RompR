@@ -7,7 +7,7 @@ var faveArtistRadio = function() {
 
 		initialise: async function(p) {
 			if (typeof(searchRadio) == 'undefined') {
-				debug.log(medebug,"Loading Search Radio Tuner");
+				debug.info(medebug,"Loading Search Radio Tuner");
 				try {
 					await $.getScript('radios/code/searchRadio.js?version='+rompr_version);
 				} catch(err) {

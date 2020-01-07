@@ -44,7 +44,7 @@ jQuery.fn.makeSpinner = function() {
 	return this.each(function() {
 		var self = $(this);
 		if (self.hasClass('icon-spin6') || $(this).hasClass('spinner')) {
-			debug.warn('UIHELPER', 'Trying to create spinner on already spinning element');
+			debug.debug('UIHELPER', 'Trying to create spinner on already spinning element');
 			return;
 		}
 		var originalclasses = new Array();
@@ -477,7 +477,7 @@ var uiHelper = function() {
 				target.find('input.resumepos').each(function() {
 					var pos = parseInt($(this).val());
 					var duration = parseInt($(this).next().val());
-					debug.log("UIHELPER", "Episode has a progress bar",pos,duration);
+					debug.trace("UIHELPER", "Episode has a progress bar",pos,duration);
 					var thething = $(
 						'<div>',
 						{

@@ -117,8 +117,8 @@ var shortcuts = function() {
 										button_ratefive: function() { nowplaying.setRating(5) },
 										button_togglesources: function() { layoutProcessor.expandInfo('left') },
 										button_toggleplaylist: function() { layoutProcessor.expandInfo('right') },
-										config_hidebrowser: function() { 
-											$("#hidebrowser").prop("checked", !$("#hidebrowser").is(':checked')); 
+										config_hidebrowser: function() {
+											$("#hidebrowser").prop("checked", !$("#hidebrowser").is(':checked'));
 											prefs.save({hidebrowser: $("#hidebrowser").is(':checked')}).then(hideBrowser);
 										},
 										button_updatecollection: function() {
@@ -157,7 +157,7 @@ var shortcuts = function() {
 		return {
 
 				load: function() {
-						debug.shout("SHORTCUTS","Loading Key Bindings");
+						debug.mark("SHORTCUTS","Loading Key Bindings");
 						unbind();
 						for (var i in hotkeys) {
 								if (localStorage.getItem('hotkeys.'+i) !== null) {
@@ -169,7 +169,7 @@ var shortcuts = function() {
 
 				action: function(ev) {
 						if ($(ev.target).is('input')) {
-								debug.trace("HOTKEYS","Ignoring key event in input");
+								debug.core("HOTKEYS","Ignoring key event in input");
 						} else {
 								var key = getHotkeyString(ev);
 								for (var i in hotkeys) {

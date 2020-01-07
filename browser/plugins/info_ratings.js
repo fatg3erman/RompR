@@ -11,7 +11,7 @@ var info_ratings = function() {
 
 		collection: function(parent, artistmeta, albummeta, trackmeta) {
 
-			debug.log("RATINGS PLUGIN", "Creating data collection");
+			debug.debug("RATINGS PLUGIN", "Creating data collection");
 
 			var self = this;
 			var displaying = false;
@@ -27,7 +27,7 @@ var info_ratings = function() {
 										debug.log("RATINGS PLUGIN","Update :",i,"is now",v);
 										trackmeta.usermeta[i] = v;
 									} else {
-										debug.log("RATINGS PLUGIN","Not using update for",i,"as",v,"is less than",trackmeta.usermeta[i]);
+										debug.debug("RATINGS PLUGIN","Not using update for",i,"as",v,"is less than",trackmeta.usermeta[i]);
 									}
 									break;
 							}
@@ -79,7 +79,7 @@ var info_ratings = function() {
 			}
 
 			function setSuccess(rdata) {
-				debug.trace("RATING PLUGIN","Success");
+				debug.debug("RATING PLUGIN","Success");
 				if (rdata) {
 					trackmeta.usermeta = rdata.metadata;
 					doThingsWithData();
@@ -88,7 +88,7 @@ var info_ratings = function() {
 			}
 
 			function findSuccess(rdata) {
-				debug.trace("RATING PLUGIN","Success");
+				debug.debug("RATING PLUGIN","Success");
 				if (rdata) {
 					trackmeta.usermeta = rdata.metadata;
 					doThingsWithData();
@@ -104,7 +104,7 @@ var info_ratings = function() {
 			}
 
 			function setFail(rdata) {
-				debug.warn("RATING PLUGIN","Failure");
+				debug.warn("RATING PLUGIN","Failure", rdata);
 				// infobar.error("Failed! Have you read the Wiki?");
 				doThingsWithData();
 			}
@@ -140,7 +140,7 @@ var info_ratings = function() {
 						}
 					);
 				} else {
-					debug.info("RATINGS PLUGIN",parent.nowplayingindex,"is already populated");
+					debug.trace("RATINGS PLUGIN",parent.nowplayingindex,"is already populated");
 					doThingsWithData();
 				}
 			}
@@ -175,7 +175,7 @@ var info_ratings = function() {
 			}
 
 			this.updateDatabase = function(data) {
-				debug.log("RATINGS","Update Database Function Called",data);
+				debug.debug("RATINGS","Update Database Function Called",data);
 				if (!data.uri) {
 					infobar.notify(language.gettext("label_addtow"));
 					update_wishlist = true;

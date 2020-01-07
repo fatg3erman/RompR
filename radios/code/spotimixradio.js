@@ -31,11 +31,11 @@ var spotiMixRadio = function() {
 	}
 
 	function gotTrackSearchResults(data) {
-		debug.trace(medebug,"Got Track Results",data);
+		debug.debug(medebug,"Got Track Results",data);
 		if (data.uri) {
 			var m = data.uri.match(/spotify:track:(.*)$/);
 			if (m && m[1]) {
-				debug.log(medebug,"Found Spotify Track Uri",m[1]);
+				debug.debug(medebug,"Found Spotify Track Uri",m[1]);
 				trackseeds.push(m[1]);
 			}
 		}
@@ -47,7 +47,7 @@ var spotiMixRadio = function() {
 		initialise: async function(p) {
 			param = p;
 			if (typeof(spotifyRecommendationsRadio) == 'undefined') {
-				debug.log(medebug,"Loading Spotify Radio Tuner");
+				debug.info(medebug,"Loading Spotify Radio Tuner");
 				await $.getScript('radios/code/spotifyrecommendationsradio.js?version='+rompr_version)
 			}
 			trackseeds = new Array();
@@ -82,10 +82,10 @@ var spotiMixRadio = function() {
 			for (var i in seeds) {
 				var m = seeds[i].Uri.match(/spotify:track:(.*)$/);
 				if (m && m[1]) {
-					debug.trace(medebug,"Got seed",seeds[i].Uri);
+					debug.debug(medebug,"Got seed",seeds[i].Uri);
 					trackseeds.push(m[1]);
 				} else {
-					debug.trace(medebug,"Didn't match Uri",seeds[i].Uri);
+					debug.racee(medebug,"Didn't match Uri",seeds[i].Uri);
 					nonspotitracks.push(seeds[i]);
 				}
 			}

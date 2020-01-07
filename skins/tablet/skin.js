@@ -71,7 +71,7 @@ jQuery.fn.fanoogleTopMenus = function() {
 		var top = $(this).offset().top;
 		var height = $(this).outerHeight(true);
 		var ws = getWindowSize();
-		debug.log('FANOOGLE',$(this).attr('id'), top, height, ws.y);
+		debug.debug('FANOOGLE',$(this).attr('id'), top, height, ws.y);
 		var nh = Math.min(height, ws.y - top);
 		$(this).css({height: nh+'px'});
 	});

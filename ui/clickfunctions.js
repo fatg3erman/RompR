@@ -334,7 +334,7 @@ function doAlbumMenu(event, element, callback) {
 }
 
 function getAllTracksForAlbum(element, menutoopen) {
-	debug.shout("CLICKFUNCTIONS", "Album has link to get all tracks");
+	debug.mark("CLICKFUNCTIONS", "Album has link to get all tracks");
 	element.makeSpinner();
 	$.ajax({
 		type: 'GET',
@@ -376,12 +376,12 @@ function getAllTracksForArtist(element, menutoopen) {
 var playlistManager = function() {
 
 	function playlistLoadString(plname) {
-		debug.log('PLLOAD',plname);
+		debug.debug('PLLOAD',plname);
 		return "player/mpd/loadplaylists.php?playlist="+plname+'&target='+playlistTargetString(plname);
 	}
 
 	function playlistTargetString(plname) {
-		debug.log('PLTARGET',plname);
+		debug.debug('PLTARGET',plname);
 		return 'pholder_'+hex_md5(decodeURIComponent(plname));
 	}
 
@@ -537,7 +537,7 @@ function doFileMenu(event, element) {
 			$('#'+menutoopen).menuReveal();
 		}
 	} else {
-		debug.log("UI","Hiding Menu");
+		debug.log("UI","Hiding File Menu");
 		$('#'+menutoopen).menuHide(function() {
 			element.toggleClosed();
 			// Remove this dropdown - this is so that when we next open it
@@ -563,7 +563,7 @@ function onKeyUp(e) {
 	e.stopPropagation();
 	e.preventDefault();
 	if (e.keyCode == 13) {
-		debug.log("KEYUP","Enter was pressed");
+		debug.debug("KEYUP","Enter was pressed");
 		fakeClickOnInput($(e.target));
 	}
 }
@@ -665,7 +665,6 @@ function albumSelect(event, element) {
 }
 
 function discSelect(event, element) {
-	debug.log("GENERAL","Selecting Disc");
 	var is_currently_selected = checkMetaKeys(event, element);
 	if (is_currently_selected) {
 		return false;
@@ -714,7 +713,7 @@ function selectRange(first, last) {
 	{
 		it = it.parent();
 	}
-	debug.log("GENERAL","Selecting within",it);
+	debug.debug("GENERAL","Selecting within",it);
 
 	var target = null;
 	var done = false;
@@ -1043,12 +1042,12 @@ function setAsAudioBook(e, element) {
 		value: ($(element).hasClass('setasaudiobook')) ? 2 : 0,
 		albumindex: $(element).attr('name')
 	};
-	debug.info("UI","Setting as audiobook",data);
+	debug.debug("UI","Setting as audiobook",data);
 	metaHandlers.genericAction(
 		[data],
 		collectionHelper.updateCollectionDisplay,
 		function(rdata) {
-			debug.warn("RATING PLUGIN","Failure");
+			debug.warn("RATING PLUGIN","Failure to set as audiobook", rdata);
 			infobar.error(language.gettext('label_general_error'));
 		}
 	);
@@ -1114,7 +1113,7 @@ function actuallyAmendAlbumDetails(albumindex) {
 			playlist.repopulate();
 		},
 		function(rdata) {
-			debug.warn("RATING PLUGIN","Failure");
+			debug.warn("RATING PLUGIN","Failure amending album details", rdata);
 			infobar.error(language.gettext('label_general_error'));
 		}
 	);
@@ -1125,11 +1124,11 @@ function browseAndAddToListenLater(albumid) {
 	spotify.album.getInfo(
 		albumid,
 		function(data) {
-			debug.log('ADDLL', 'Success', data);
+			debug.debug('ADDLL', 'Success', data);
 			metaHandlers.addToListenLater(data);
 		},
 		function(data) {
-			debug.error('ADDLL', 'Failed');
+			debug.error('ADDLL', 'Failed', data);
 		}, false
 	);
 }
@@ -1138,11 +1137,11 @@ function browseAndAddToCollection(albumid) {
 	spotify.album.getInfo(
 		albumid,
 		function(data) {
-			debug.log('ADDALBUM', 'Success', joinartists(data.artists), data);
+			debug.debug('ADDALBUM', 'Success', joinartists(data.artists), data);
 			metaHandlers.fromSpotifyData.addAlbumTracksToCollection(data, joinartists(data.artists))
 		},
 		function(data) {
-			debug.error('ADDALBUM', 'Failed');
+			debug.error('ADDALBUM', 'Failed', data);
 		}, false
 	);
 }

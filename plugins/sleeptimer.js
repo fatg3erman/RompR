@@ -13,7 +13,7 @@ var sleepTimer = function() {
 	return {
 
 		startInc: function(amount) {
-			debug.log("SLEEP","startInc",amount);
+			debug.debug("SLEEP","startInc",amount);
 			incamount = amount;
 			inctime = 500;
 			sleepTimer.runIncrement();
@@ -96,7 +96,7 @@ var sleepTimer = function() {
 					sleepTimer.fakeClick();
 				}
 			} else {
-				debug.log("SLEEP","Setting volume to",v,player.status.volume,volinc);
+				debug.debug("SLEEP","Setting volume to",v,player.status.volume,volinc);
 				player.controller.volume(Math.round(v));
 				ramptimer = setTimeout(sleepTimer.volRamp, 1000);
 			}

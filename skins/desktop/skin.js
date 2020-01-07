@@ -258,7 +258,7 @@ var layoutProcessor = function() {
 
 		scrollCollectionTo: function(holder, jq) {
 			if (jq.length > 0) {
-				debug.log("LAYOUT","Scrolling",holder,"To",jq, jq.position().top,$(holder).parent().parent().parent().height()/2);
+				debug.debug("LAYOUT","Scrolling",holder,"To",jq, jq.position().top,$(holder).parent().parent().parent().height()/2);
 				var pospixels = Math.round(jq.position().top - $(holder).parent().parent().parent().height()/2);
 				debug.log("LAYOUT","Scrolling",holder,"To",pospixels);
 				$("#sources").mCustomScrollbar('update').mCustomScrollbar('scrollTo', pospixels,
@@ -298,7 +298,7 @@ var layoutProcessor = function() {
 		},
 
 		displayCollectionInsert: function(details) {
-			debug.shout("COLLECTION","Displaying New Insert");
+			debug.mark("COLLECTION","Displaying New Insert");
 			debug.debug('COLLECTION', details);
 			var prefix;
 			var holder;

@@ -266,7 +266,7 @@ var alarmclock = function() {
 		volRamp: function() {
 			clearTimeout(ramptimer);
 			var v = parseInt(player.status.volume) + volinc;
-			debug.trace("ALARM","Setting volume to",v,player.status.volume,volinc);
+			debug.debug("ALARM","Setting volume to",v,player.status.volume,volinc);
 			if (v >= uservol) {
 				player.controller.volume(uservol);
 			} else {

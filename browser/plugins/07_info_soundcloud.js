@@ -6,7 +6,7 @@ var info_soundcloud = function() {
 
 	function getTrackHTML(data) {
 
-		debug.trace("SOUNDCLOUD PLUGIN","Creating track HTML from",data);
+		debug.debug("SOUNDCLOUD PLUGIN","Creating track HTML from",data);
 		var html = '<div class="containerbox info-detail-layout">';
 		html += '<div class="info-box-fixed info-border-right info-box-list">';
 
@@ -43,7 +43,7 @@ var info_soundcloud = function() {
 	}
 
 	function getArtistHTML(data) {
-		debug.trace("SOUNDCLOUD PLUGIN","Creating artist HTML from",data);
+		debug.debug("SOUNDCLOUD PLUGIN","Creating artist HTML from",data);
 		var html = '<div class="containerbox info-detail-layout">';
 		html += '<div class="info-box-fixed info-border-right info-box-list">';
 
@@ -86,7 +86,7 @@ var info_soundcloud = function() {
 		},
 
 		collection: function(parent, artistmeta, albummeta, trackmeta) {
-			debug.log("SOUNDCLOUD PLUGIN", "Creating data collection");
+			debug.debug("SOUNDCLOUD PLUGIN", "Creating data collection");
 
 			var self = this;
 			var wi = 0;
@@ -124,7 +124,7 @@ var info_soundcloud = function() {
 							);
 						} else {
 							if (artistmeta.soundcloud.artist === undefined) {
-								debug.log("SOUNDCLOUD PLUGIN","Artist is populating");
+								debug.debug("SOUNDCLOUD PLUGIN","Artist is populating");
 								soundcloud.getUserInfo(artistmeta.soundcloud.id, self.artist.scResponseHandler);
 							}
 						}
@@ -213,7 +213,7 @@ var info_soundcloud = function() {
 					},
 
 				   scResponseHandler: function(data) {
-						debug.log("SOUNDCLOUD PLUGIN","Got SoundCloud Track Data:",data);
+						debug.debug("SOUNDCLOUD PLUGIN","Got SoundCloud Track Data:",data);
 						trackmeta.soundcloud.track = data;
 						artistmeta.soundcloud.id = data.user_id;
 						self.artist.populate();
@@ -222,7 +222,7 @@ var info_soundcloud = function() {
 
 					doBrowserUpdate: function() {
 						if (displaying  && trackmeta.soundcloud.track !== undefined) {
-							debug.log("SOUNDCLOUD PLUGIN","Track was asked to display");
+							debug.debug("SOUNDCLOUD PLUGIN","Track was asked to display");
 							if (trackmeta.soundcloud.track.error) {
 								browser.Update(null, 'track', me, parent.nowplayingindex, {	name: trackmeta.name,
 																		link: "",
@@ -236,7 +236,7 @@ var info_soundcloud = function() {
 																		}
 								);
 								if (accepted) {
-									debug.log("SOUNDCLOUD PLUGIN","Getting Track Waveform",formatSCMessyBits(trackmeta.soundcloud.track.waveform_url));
+									debug.debug("SOUNDCLOUD PLUGIN","Getting Track Waveform",formatSCMessyBits(trackmeta.soundcloud.track.waveform_url));
 									scImg.onload = self.track.doSCImageStuff;
 									scImg.src = "getRemoteImage.php?url="+rawurlencode(formatSCMessyBits(trackmeta.soundcloud.track.waveform_url));
 								}

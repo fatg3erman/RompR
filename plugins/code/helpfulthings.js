@@ -19,14 +19,14 @@ var helpfulThings = function() {
 		debug.log(medebug, "Getting Seeds For Recommendations");
 		metaHandlers.genericAction([{action: 'getrecommendationseeds', days: 30, limit: 20, top: 15}],
 			gotRecommendationSeeds,
-			function() {
-				debug.error(medebug,"Error Getting Seeds");
+			function(data) {
+				debug.error(medebug,"Error Getting Seeds",data);
 			}
 		);
 	}
 
 	function gotRecommendationSeeds(data) {
-		debug.trace(medebug, "Got Seeds For Recommendations",data);
+		debug.debug(medebug, "Got Seeds For Recommendations",data);
 		if (doneonce) {
 			$('#hplfoldup .helpfulholder').spotifyAlbumThing('destroy');
 			doneonce = false;
@@ -42,7 +42,7 @@ var helpfulThings = function() {
 					trackseeds.push(data[i]);
 					artists.push(data[i].Artistname);
 				} else {
-					debug.log(medebug,"Didn't match Uri",data[i].Uri);
+					debug.trace(medebug,"Didn't match Uri",data[i].Uri);
 					nonspotitracks.push(data[i]);
 				}
 			}
@@ -147,7 +147,7 @@ var helpfulThings = function() {
 			nowplaying.notifyTrackChanges('helpfulthings', null);
 			if (doneonce) {
 				$('#hplfoldup .helpfulholder').each(function() {
-					debug.log(medebug,"Removing And Destroying",$(this).attr("id"));
+					debug.trace(medebug,"Removing And Destroying",$(this).attr("id"));
 					$(this).prev().remove();
 					$(this).remove();
 				});
@@ -159,7 +159,7 @@ var helpfulThings = function() {
 		doStageTwo: function() {
 			if (nonspotitracks.length > 0) {
 				var t = nonspotitracks[0];
-				debug.log(medebug, "Searching For Spotify ID for",t);
+				debug.trace(medebug, "Searching For Spotify ID for",t);
 				trackfinder.findThisOne(
 					{
 						title: t.Title,
@@ -175,12 +175,12 @@ var helpfulThings = function() {
 		},
 
 		gotTrackResults: function(data) {
-			debug.trace(medebug,"Got Track Results",data);
+			debug.debug(medebug,"Got Track Results",data);
 			var t = nonspotitracks.shift();
 			if (data.uri && data.artist && artists.indexOf(data.artist) == -1) {
 				var m = data.uri.match(/spotify:track:(.*)$/);
 				if (m && m[1]) {
-					debug.log(medebug,"Found Spotify Track Uri",m[1]);
+					debug.debug(medebug,"Found Spotify Track Uri",m[1]);
 					t.id = m[1];
 					trackseeds.push(t);
 					artists.push(data.artist);
@@ -232,8 +232,8 @@ var helpfulThings = function() {
 			});
 		},
 
-		spotiError: function() {
-			debug.warn("HELPFULTHINGS","Spotify Error");
+		spotiError: function(data) {
+			debug.warn("HELPFULTHINGS","Spotify Error",data);
 			helpfulthigs.getMoreStuff();
 		}
 

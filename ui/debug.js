@@ -10,11 +10,10 @@ window.debug = (function() {
 		2: "#FE6700",
 		3: "#FF00FF",
 		4: "#00CCFF",
-		5: "#00CC00",
-		6: "#0000FF",
-		7: "#000000",
+		5: "#000000",
+		6: "#AAAAAA",
+		7: "#BBBBBB",
 		8: "#CCCCCC",
-		9: "#DEDEDE"
 	};
 	var log_commands = {
 		1: 'error',
@@ -25,7 +24,6 @@ window.debug = (function() {
 		6: 'log',
 		7: 'log',
 		8: 'log',
-		9: 'log'
 	}
 
 	function doTheLogging(loglevel, args) {
@@ -70,47 +68,43 @@ window.debug = (function() {
 
 	return {
 
-		// Level 9
-		debug: function() {
-			doTheLogging(9, Array.prototype.slice.call(arguments));
-		},
-
-		// Level 8
-		trace: function() {
+		// Level 8 - CORE for continuous running commentary
+		// and memory-consuming structure dumps
+		core: function() {
 			doTheLogging(8, Array.prototype.slice.call(arguments));
 		},
 
-		// Level 7
-		tell: function() {
+		// Level 7 - DEBUG for low level complex info
+		debug: function() {
 			doTheLogging(7, Array.prototype.slice.call(arguments));
 		},
 
-		// Level 6
-		log: function() {
+		// Level 6 - TRACE for in-function details
+		trace: function() {
 			doTheLogging(6, Array.prototype.slice.call(arguments));
 		},
 
-		// Level 5
-		info: function() {
+		// Level 5 - LOG for following code flow
+		log: function() {
 			doTheLogging(5, Array.prototype.slice.call(arguments));
 		},
 
-		// Level 4
-		shout: function() {
+		// Level 4 - INFO for information
+		info: function() {
 			doTheLogging(4, Array.prototype.slice.call(arguments));
 		},
 
-		// Level 3
-		blurt: function() {
+		// Level 3 - MARK for important information
+		mark: function() {
 			doTheLogging(3, Array.prototype.slice.call(arguments));
 		},
 
-		// Level 2
+		// Level 2 - WARN for things that go wrong
 		warn: function() {
 			doTheLogging(2, Array.prototype.slice.call(arguments));
 		},
 
-		// Level 1
+		// Level 1 - ERROR for serious errors
 		error: function() {
 			doTheLogging(1, Array.prototype.slice.call(arguments));
 		},
@@ -121,19 +115,19 @@ window.debug = (function() {
 
 		ignoreinfopanel: function() {
 			ignoring = {
-				"LASTFM PLUGIN": true, 
-				"MBNZ PLUGIN": true ,
-				"SPOTIFY PLUGIN": true,
-				"DISCOGS PLUGIN": true,
-				"INFOBAR": true,
-				"NOWPLAYING": true,
-				"LASTFM": true,
-				"BROWSER": true,
-				"TRACKDATA": true,
-				"FILE INFO": true,
-				"FILE PLUGIN": true,
-				"RATINGS PLUGIN": true,
-				"COVERSCRAPER": true
+				// "LASTFM PLUGIN": true,
+				// "MBNZ PLUGIN": true ,
+				// "SPOTIFY PLUGIN": true,
+				// "DISCOGS PLUGIN": true,
+				// "INFOBAR": true,
+				// "NOWPLAYING": true,
+				// "LASTFM": true,
+				// "BROWSER": true,
+				// "TRACKDATA": true,
+				// "FILE INFO": true,
+				// "FILE PLUGIN": true,
+				// "RATINGS PLUGIN": true,
+				// "COVERSCRAPER": true
 			};
 			debug.warn('DEBUG', 'Info panel debug is now ignored by default. Use debug.clearignore to switch it back on');
 		},

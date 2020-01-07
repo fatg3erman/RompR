@@ -142,7 +142,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 	// Hello
 
 	function gotImage(data) {
-		debug.trace("COVERSCRAPER","Result Is", data);
+		debug.debug("COVERSCRAPER","Result Is", data);
 		stopAnimation();
 		if (data.small) {
 			self.updateInfo(1);
@@ -248,7 +248,7 @@ function sendLocalStorageEvent(key, data) {
 	if (data && data.small) {
 		localStorage.setItem("albumimg_"+key, JSON.stringify(data));
 	}
-	debug.trace("COVERSCRAPER","Sending local storage event",key);
+	debug.core("COVERSCRAPER","Sending local storage event",key);
 	// Event only fires when the key value actually CHANGES
 	localStorage.setItem("key", "Blerugh");
 	localStorage.setItem("key", key);

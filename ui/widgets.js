@@ -169,7 +169,7 @@ $.widget("rompr.acceptDroppedTracks", {
 	},
 
 	dragstop: function(event) {
-		debug.log("UITHING","dragstop",this.element.attr("id"));
+		debug.debug("UITHING","dragstop",this.element.attr("id"));
 		if (this.dragger_is_over && this.options.ondrop !== null) {
 			debug.log("UITHING","Dropped onto wotsit thingy",this.element.attr("id"));
 			this.dragger_is_over = false;
@@ -202,7 +202,7 @@ $.widget("rompr.acceptDroppedTracks", {
 			return true;
 		} else {
 			if (this.dragger_is_over) {
-				debug.log("UITHING","Dragger is NOT over",this.element.attr("id"));
+				debug.debug("UITHING","Dragger is NOT over",this.element.attr("id"));
 				this.element.removeClass('highlighted');
 				if (this.element.hasClass('sortabletracklist')) {
 					this.element.sortableTrackList('dragleave');
@@ -329,7 +329,7 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 
 	dropped: function(event) {
 		// This is called when something from OUTSIDE the list has been dropped onto us
-		debug.log("STL","Dropped",event);
+		debug.debug("STL","Dropped",event);
 		clearTimeout(this._scrollcheck);
 		if (this.helper) {
 			this.options.outsidedrop(event, this.helper);
@@ -354,7 +354,7 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 	},
 
 	_mouseStart: function(event) {
-		debug.log("SORTABLE","Mouse Start",event);
+		debug.debug("SORTABLE","Mouse Start",event);
 		var self = this;
 		if (this.dragger) this.dragger.remove();
 		var dragged = self._findDraggable(event);
@@ -425,7 +425,7 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 			if ((event.pageX > this.bbox.right || event.pageX < this.bbox.left) &&
 				this.options.allowdragout)
 			{
-				debug.log('STR', 'Dragged Out');
+				debug.trace('STR', 'Dragged Out');
 				clearTimeout(this._scrollcheck);
 				this.dragging = false;
 				this.draggingout = true;
@@ -495,7 +495,7 @@ $.widget("rompr.sortableTrackList", $.ui.mouse, {
 				this.options.insidedrop(event, marker);
 			}
 		} else if (this.draggingout) {
-			debug.log("STL","Dragged out and onto something else");
+			debug.trace("STL","Dragged out and onto something else");
 			this.dragger.remove();
 			this.draggedout = false;
 			if (this.helper) this.helper.remove();
@@ -774,7 +774,7 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 			this._parent = this.element.parent();
 			this.element.find('.closemenu').on('click', $.proxy(self.toggleMenu, self));
 			this._parent.on('click', function(event) {
-				debug.log("FRUITBAT",event);
+				debug.debug("FRUITBAT",event);
 				if (!event.target.className.match('progressbar')) {
 					$.proxy(self.toggleMenu, self)();
 				}
@@ -909,7 +909,7 @@ $.widget('rompr.spotifyAlbumThing', {
 				a.rompr_index = b;
 			}
 			if (ids.indexOf(a.id) > -1) {
-				debug.info("SPALBUM","Duplicate album ID",a.id);
+				debug.debug("SPALBUM","Duplicate album ID",a.id);
 				continue;
 			}
 			ids.push(a.id);
@@ -1115,7 +1115,7 @@ $.widget('rompr.spotifyAlbumThing', {
 
 	artistInfo: function(data, reqid) {
 		var self = this;
-		debug.log("MONKEYSPANNER","Got LastFM Info for reqid",data,reqid);
+		debug.debug("MONKEYSPANNER","Got LastFM Info for reqid",data,reqid);
 		if (data) {
 			if (data.error) {
 				self.element.find('#'+self.options.id+'bio_'+reqid).html(language.gettext('label_noartistinfo'));
@@ -1546,7 +1546,7 @@ function popup(opts) {
 
 	this.setCSS = function() {
 		for (var i in options.css) {
-			debug.trace("POPUP","Setting CSS",i,'to',options.css[i]);
+			debug.debug("POPUP","Setting CSS",i,'to',options.css[i]);
 			win.css(i, options.css[i]+'px');
 		}
 	}
@@ -1699,7 +1699,7 @@ $.widget('rompr.volumeControl', {
 	onstop: function(v) {
 		clearTimeout(this.vtimer);
 		this.sliderclamps = 0;
-		debug.log("VOLUMECONTROL","Setting volume",v.max);
+		debug.trace("VOLUMECONTROL","Setting volume",v.max);
 		this.options.command(v.max);
 	},
 
@@ -1714,7 +1714,7 @@ $.widget('rompr.volumeControl', {
 			// 1. The previous volume command returns
 			// 2. The timer expires
 			this.sliderclamps = 2;
-			debug.log("VOLUMECONTROL2","Setting volume",v.max);
+			debug.trace("VOLUMECONTROL2","Setting volume",v.max);
 			this.options.command(v.max, $.proxy(this.releaseTheClamps, this));
 			clearTimeout(this.vtimer);
 			this.vtimer = setTimeout($.proxy(this.releaseTheClamps, this), 500);

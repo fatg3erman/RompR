@@ -38,14 +38,14 @@ function LastFM(user) {
 	uiLoginBind();
 
 	this.wrangle = function() {
-		debug.info('LASTFM', 'Doing the wrangling');
+		debug.debug('LASTFM', 'Doing the wrangling');
 		$.ajax({
 			method: 'GET',
 			url: 'includes/strings.php?getcheese=1',
 			dataType: 'json'
 		})
 		.done(function(data) {
-			debug.info('LASTFM', 'Done the wrangling',data);
+			debug.core('LASTFM', 'Done the wrangling',data);
 			lak = data.k;
 			lfms = data.s;
 			startBackgroundInitTasks.doNextTask();
@@ -122,7 +122,7 @@ function LastFM(user) {
 		}
 		$.get(url, function(data) {
 			token = data.token;
-			debug.log("LASTFM","Token",token);
+			debug.core("LASTFM","Token",token);
 			var lfmlog = new popup({
 				css: {
 					width: 600,
@@ -154,7 +154,7 @@ function LastFM(user) {
 				method: "auth.getSession"
 			},
 			function(data) {
-				debug.log("LASTFM","Got Session Key : ",data);
+				debug.debug("LASTFM","Got Session Key : ",data);
 				var lastfm_session_key = data.session.key;
 				logged_in = true;
 				prefs.save({
@@ -181,7 +181,7 @@ function LastFM(user) {
 	}
 
 	this.formatBio = function(bio, link) {
-		debug.trace("LASTFM","    Formatting Bio");
+		debug.debug("LASTFM","    Formatting Bio");
 		if (bio) {
 			bio = bio.replace(/\n/g, "</p><p>");
 			bio = bio.replace(/(<a .*?href="http:\/\/.*?")/g, '$1 target="_blank"');
@@ -223,7 +223,7 @@ function LastFM(user) {
 		clearTimeout(throttle);
 		if (req) {
 			if (req.flag) {
-				debug.trace("LASTFM","Request pulled from queue is already being handled!")
+				debug.warn("LASTFM","Request pulled from queue is already being handled!")
 				return;
 			}
 			if (lak === null) {
@@ -232,9 +232,9 @@ function LastFM(user) {
 				return;
 			}
 			queue[0].flag = true;
-			debug.trace("LASTFM","Taking next request from queue",req.url);
+			debug.debug("LASTFM","Taking next request from queue",req.url);
 			if (req.url == "POST") {
-				debug.log("LASTFM", "Handling POST request via queue");
+				debug.debug("LASTFM", "Handling POST request via queue");
 				$.ajax({
 					method: "POST",
 					url: "https://ws.audioscrobbler.com/2.0/",
@@ -245,9 +245,9 @@ function LastFM(user) {
 				.done(function(data) {
 					throttle = setTimeout(lastfm.getRequest, throttleTime);
 					req = queue.shift();
-					debug.log("LASTFM", req.options.method,"request success");
+					debug.debug("LASTFM", req.options.method,"request success");
 					if (data.error) {
-						debug.blurt("LASTFM","Last FM signed request failed with status",data.error.message);
+						debug.warn("LASTFM","Last FM signed request failed with status",data.error.message);
 						req.fail(data);
 					} else {
 						req.success(data);
@@ -279,7 +279,7 @@ function LastFM(user) {
 
 							default:
 								if (req.retries < 3) {
-									debug.log("LASTFM","Retrying...");
+									debug.debug("LASTFM","Retrying...");
 									req.retries++;
 									req.flag = false;
 									queue.unshift(req);
@@ -354,10 +354,6 @@ function LastFM(user) {
 		}
 		it = it+lfms;
 		options.api_sig = hex_md5(it);
-
-		debug.shout('LASTFM', 'String is',it);
-		debug.shout('LASTFM', 'API sig is',options.api_sig);
-
 		queue.push({
 			url: "POST",
 			options: options,
@@ -486,7 +482,7 @@ function LastFM(user) {
 
 		scrobble : function(options) {
 			if (logged_in && prefs.lastfm_scrobbling) {
-				debug.log("LAST FM","Last.FM is scrobbling");
+				debug.debug("LAST FM","Last.FM is scrobbling");
 				addSetOptions(options, "track.scrobble");
 				LastFMSignedRequest(
 					options,
@@ -507,7 +503,7 @@ function LastFM(user) {
 			if (self.getLanguage()) {
 				options.lang = self.getLanguage();
 			}
-			debug.info("LASTFM","album.getInfo",options);
+			debug.debug("LASTFM","album.getInfo",options);
 			LastFMGetRequest(
 				options,
 				true,
@@ -519,7 +515,7 @@ function LastFM(user) {
 		getTags: function(options, callback, failcallback) {
 			addGetOptions(options, "album.getTags");
 			if (username != "") { options.user = username }
-			debug.info("LASTFM","album.getTags",options);
+			debug.debug("LASTFM","album.getTags",options);
 			LastFMGetRequest(
 				options,
 				!logged_in,

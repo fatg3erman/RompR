@@ -10,7 +10,7 @@ jQuery.fn.revealImage = function() {
 }
 
 jQuery.fn.menuReveal = function(callback) {
-	debug.log("UI", "Revealing",$(this).attr('id'));
+	debug.debug("UI", "Revealing",$(this).attr('id'));
 	var self = this;
 	if (this.hasClass('toggledown')) {
 		if (callback) {
@@ -31,7 +31,7 @@ jQuery.fn.menuReveal = function(callback) {
 }
 
 jQuery.fn.menuHide = function(callback) {
-	debug.log("UI", "Hiding",$(this).attr('id'));
+	debug.debug("UI", "Hiding",$(this).attr('id'));
 	var self = this;
 	if (this.hasClass('toggledown')) {
 		if (callback) {
@@ -78,7 +78,7 @@ jQuery.fn.makeSpinner = function() {
 		var self = $(this);
 		if (self.hasClass('icon-toggle-closed') || self.hasClass('icon-toggle-open') || self.hasClass('spinable')) {
 			if (self.hasClass('icon-spin6') || self.hasClass('spinner')) {
-				debug.warn('UIHELPER', 'Trying to create spinner on already spinning element');
+				debug.trace('UIHELPER', 'Trying to create spinner on already spinning element');
 				return;
 			}
 			var originalclasses = new Array();
@@ -219,7 +219,7 @@ jQuery.fn.fanoogleTopMenus = function() {
 		var top = $(this).offset().top;
 		var height = $(this).outerHeight(true);
 		var ws = getWindowSize();
-		debug.log('FANOOGLE',$(this).attr('id'), top, height, ws.y);
+		debug.debug('FANOOGLE',$(this).attr('id'), top, height, ws.y);
 		var nh = Math.min(height, ws.y - top);
 		$(this).css({height: nh+'px'});
 	});
@@ -501,7 +501,7 @@ var layoutProcessor = function() {
 		},
 
 		sourceControl: function(source) {
-			debug.shout('LAYOUT','Switching source to',source);
+			debug.mark('LAYOUT','Switching source to',source);
 			// hacky - set an irrelevant css parameter as a flag so we change behaviour
 			var layoutflag = parseInt($('.choose_playlist').css('font-weight'));
 			if ((source == 'playlistm' || source == 'infobar') && prefs.chooser != 'infopane' && layoutflag == 1000) {

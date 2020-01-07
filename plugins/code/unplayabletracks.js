@@ -12,8 +12,8 @@ var unplayabletracks = function() {
 		metaHandlers.genericAction(
 			[{action: command, ttid: element.next().val()}],
 			collectionHelper.updateCollectionDisplay,
-			function() {
-				debug.error("DB TRACKS", "Failed to remove track");
+			function(data) {
+				debug.error("DB TRACKS", "Failed to remove track",data);
 				infobar.error(language.gettext('label_general_error'));
 			}
 		);
@@ -100,7 +100,7 @@ var unplayabletracks = function() {
 		dbQueue.request([data], collectionHelper.updateCollectionDisplay,
 			function(rdata) {
 				infobar.error(language.gettext('label_general_error'));
-				debug.warn("WISHLIST","Failure");
+				debug.warn("WISHLIST","Failure",rdata);
 			}
 		);
 	}
@@ -139,7 +139,7 @@ var unplayabletracks = function() {
 		},
 
 		updateDatabase: function(results) {
-			debug.log("UNPLAYABLE","Found A Track",results);
+			debug.debug("UNPLAYABLE","Found A Track",results);
 			databits[results[0].reqid].index = 0;
 			databits[results[0].reqid].data = results;
 			var element = $('.upsch_'+results[0].reqid);

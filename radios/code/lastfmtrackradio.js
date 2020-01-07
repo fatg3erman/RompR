@@ -42,7 +42,7 @@ var lastFMTrackRadio = function() {
 		}
 
 		this.gotSimilar = function(data) {
-			debug.trace(medebug,"Got Similar Tracks For",track,artist,data);
+			debug.debug(medebug,"Got Similar Tracks For",track,artist,data);
 			to_find = [{title: track, artist: artist}];
 			if (data.similartracks && data.similartracks.track) {
 				for (let track of data.similartracks.track) {
@@ -62,7 +62,7 @@ var lastFMTrackRadio = function() {
 		}
 
 		function searchForTrack(t) {
-			debug.log(medebug,"Getting a URI For",t);
+			debug.debug(medebug,"Getting a URI For",t);
 			if (prefs.player_backend == "mopidy") {
 				trackfinder.setPriorities($("#radiodomains").makeDomainChooser("getSelection"));
 			}
@@ -128,7 +128,7 @@ var lastFMTrackRadio = function() {
 		},
 
 		gotTopTracks: function(data) {
-			debug.trace(medebug,"Got Top Tracks",data);
+			debug.debug(medebug,"Got Top Tracks",data);
 			if (toptracks === null) {
 				toptracks = [];
 			}

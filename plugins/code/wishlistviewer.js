@@ -11,8 +11,8 @@ var wishlistViewer = function() {
 		metaHandlers.genericAction(
 			[{action: command, wltrack: element.next().val()}],
 			collectionHelper.updateCollectionDisplay,
-			function() {
-				debug.error("DB TRACKS", "Failed to remove track");
+			function(data) {
+				debug.error("DB TRACKS", "Failed to remove track",data);
 				infobar.error(language.gettext('label_general_error'));
 			}
 		);
@@ -23,11 +23,11 @@ var wishlistViewer = function() {
 		metaHandlers.genericAction(
 			'clearwishlist',
 			function(rdata) {
-				debug.log("DB TRACKS","Wishlist Cleared");
+				debug.mark("DB TRACKS","Wishlist Cleared");
 				loadWishlist(false);
 			},
-			function() {
-				debug.log("DB TRACKS","Failed to clear wishlist for some reason");
+			function(data) {
+				debug.error("DB TRACKS","Failed to clear wishlist for some reason",data);
 				infobar.error(language.gettext('label_general_error'));
 			}
 		);
@@ -90,7 +90,7 @@ var wishlistViewer = function() {
 		dbQueue.request([data], collectionHelper.updateCollectionDisplay,
 			function(rdata) {
 				infobar.error(language.gettext('label_general_error'));
-				debug.warn("WISHLIST","Failure");
+				debug.warn("WISHLIST","Failure",rdata);
 			}
 		);
 	}

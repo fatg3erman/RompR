@@ -23,7 +23,7 @@ var discogs = function() {
 
 			if (req !== undefined) {
 				if (req.flag) {
-					debug.error("DISCOGS","Request just pulled from queue is already being handled",req.data.url);
+					debug.warn("DISCOGS","Request just pulled from queue is already being handled",req.data.url);
 					return;
 				}
 				queue[0].flag = true;

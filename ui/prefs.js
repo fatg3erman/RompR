@@ -132,7 +132,7 @@ var prefs = function() {
 	}
 
 	function transferPlaylist() {
-		debug.shout("PREFS","Transferring Playlist from",prefs.currenthost,"to",deferredPrefs.currenthost);
+		debug.mark("PREFS","Transferring Playlist from",prefs.currenthost,"to",deferredPrefs.currenthost);
 		$.ajax({
 			type: 'POST',
 			url: 'player/transferplaylist.php',
@@ -220,7 +220,7 @@ var prefs = function() {
 			debug.debug("PREFS","Custom Background Image",data);
 			if (data.images) {
 				if (typeof(prefs.bgimgparms[theme]) == 'undefined') {
-					debug.info("PREFS","Init bgimgparms for",theme);
+					debug.log("PREFS","Init bgimgparms for",theme);
 					prefs.bgimgparms[theme] = {
 						landscape: 0,
 						portrait: 0,
@@ -268,7 +268,7 @@ var prefs = function() {
 
 	function setCustombackground(images) {
 		clearTimeout(backgroundTimer);
-		debug.log("UI","Setting Custom Background To",images);
+		debug.debug("UI","Setting Custom Background To",images);
 		backgroundImages = images;
 		if (images.landscape.length > 1 || images.portrait.length > 1) {
 			var jesus = $('<div>', {class: 'containerbox dropdown-container'}).appendTo('#cusbgcontrols');
@@ -362,7 +362,7 @@ var prefs = function() {
 		// Trying to reduce flickering using all kinds of stuff - pre-load images, update (not remove/recreate) the css
 		['background', 'phoneback', 'backgroundl', 'phonebackl', 'backgroundp', 'phonebackp'].forEach(function(i) {
 			if ($('style[id="'+i+'"]').length == 0) {
-				debug.log('PREFS', 'Creating background style', i);
+				debug.debug('PREFS', 'Creating background style', i);
 				$('<style>', {id: i}).appendTo('head');
 			}
 		});
@@ -398,7 +398,7 @@ var prefs = function() {
 	}
 
 	function updateCustomBackground(force) {
-		debug.log('PREFS', 'Updating custom background');
+		debug.debug('PREFS', 'Updating custom background');
 		clearTimeout(backgroundTimer);
 		var bgp = prefs.bgimgparms[prefs.theme];
 		if (force || bgp.timeout + bgp.lastchange <= Date.now()) {
@@ -436,7 +436,7 @@ var prefs = function() {
 	}
 
 	function bgImageLoaded() {
-		debug.trace('PREFS', 'background Image Loaded');
+		debug.debug('PREFS', 'background Image Loaded');
 		bgImagesLoaded++;
 		if (bgImagesLoaded == 2) {
 			var bgp = prefs.bgimgparms[prefs.theme];
@@ -524,13 +524,13 @@ var prefs = function() {
 					debug.trace("PREFS", "Setting",i,"to",options[i],"in local storage");
 					localStorage.setItem("prefs."+i, JSON.stringify(options[i]));
 				} else {
-					debug.trace("PREFS", "Setting",i,"to",options[i],"on backend");
+					debug.debug("PREFS", "Setting",i,"to",options[i],"on backend");
 					prefsToSave[i] = options[i];
 					postSave = true;
 				}
 			}
 			if (postSave) {
-				debug.trace("PREFS",JSON.stringify(prefsToSave),prefsToSave);
+				debug.trace("PREFS",'Saving to backend', JSON.stringify(prefsToSave));
 				await $.post('saveprefs.php', {prefs: JSON.stringify(prefsToSave)});
 			}
 			if (callback) {
@@ -539,7 +539,7 @@ var prefs = function() {
 		},
 
 		togglePref: function(event) {
-			debug.log("PREFS","Toggling",event);
+			debug.debug("PREFS","Toggling",event);
 			var prefobj = new Object;
 			var prefname = $(this).attr("id");
 			if (event === null) {
@@ -792,7 +792,7 @@ var prefs = function() {
 						themeManager.init();
 					})
 					.fail(function(jqxhr, settings, exception) {
-						debug.log('PREFS', 'Theme',theme,'does not have a manager script');
+						debug.debug('PREFS', 'Theme',theme,'does not have a manager script');
 					});
 			} catch(err) {
 				debug.error('PREFS','Error loading theme script',err);
@@ -802,7 +802,7 @@ var prefs = function() {
 
 		postUIChange: function() {
 			clearTimeout(uichangetimer);
-			debug.info('PREFS','Post UI Change actions');
+			debug.debug('PREFS','Post UI Change actions');
 			$('#theme').off('load');
 			prefs.rgbs = null;
 			prefs.maxrgbs = null;
@@ -833,7 +833,7 @@ var prefs = function() {
 			xhr.onload = function () {
 				switch (xhr.status) {
 					case 200:
-						debug.log("BIMAGE", xhr.response);
+						debug.debug("BIMAGE", xhr.response);
 						prefs.setTheme();
 						$('#bguploadspinner').removeClass('spinner').parent().fadeOut('fast');
 						break;

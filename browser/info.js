@@ -31,7 +31,7 @@ var browser = function() {
 						index: history[ptr].mastercollection.nowplayingindex,
 						source: history[ptr].source
 		};
-		debug.log("BROWSER", "Waiting on source",waitingon.source,"for index", waitingon.index);
+		debug.debug("BROWSER", "Waiting on source",waitingon.source,"for index", waitingon.index);
 		if (waitingon.source != prefs.infosource) {
 			// Need to do this here rather than in switchsource otherwise it prevents
 			// the browser from accepting the update
@@ -195,7 +195,7 @@ var browser = function() {
 
 	function checkHistoryLength() {
 		if (history.length > maxhistorylength) {
-			debug.shout("BROWSER", "Truncating History");
+			debug.info("BROWSER", "Truncating History");
 			var np = history[1].mastercollection.nowplayingindex;
 			history.splice(1,1);
 			displaypointer--;
@@ -205,7 +205,7 @@ var browser = function() {
 					return;
 				}
 			}
-			debug.log("BROWSER","Telling nowplaying to remove nowplayingindex",np);
+			debug.trace("BROWSER","Telling nowplaying to remove nowplayingindex",np);
 			nowplaying.remove(np);
 		}
 	}
@@ -223,14 +223,14 @@ var browser = function() {
 		},
 
 		areweatfront: function() {
-			debug.log("BROWSER","displaypointer:",displaypointer,"historylength",history.length);
+			debug.debug("BROWSER","displaypointer:",displaypointer,"historylength",history.length);
 			return (displaypointer == history.length - 1);
 		},
 
 		createButtons: function() {
 			for (var i in sources) {
 				if (sources[i].icon !== null) {
-					debug.log("BROWSER", "Found plugin", i,sources[i].icon);
+					debug.info("BROWSER", "Found plugin", i,sources[i].icon);
 					layoutProcessor.addInfoSource(i, sources[i]);
 				}
 			}
@@ -252,7 +252,7 @@ var browser = function() {
 		},
 
 		dataIsComing: function(mastercollection, isartistswitch, nowplayingindex, source, trackartist, artist, albumartist, album, track) {
-			debug.trace("BROWSER","Data is coming",isartistswitch, nowplayingindex, source, artist, albumartist, album, track)
+			debug.debug("BROWSER","Data is coming",isartistswitch, nowplayingindex, source, artist, albumartist, album, track)
 			if (prefs.hidebrowser) {
 				debug.info("BROWSER","Browser is hidden. Ignoring Data");
 				return;
@@ -308,10 +308,10 @@ var browser = function() {
 			if (prefs.hidebrowser) {
 				return false;
 			}
-			debug.info("BROWSER", "Got",type,"info from",source,"for index",nowplayingindex,force,waitingon);
+			debug.debug("BROWSER", "Got",type,"info from",source,"for index",nowplayingindex,force,JSON.stringify(waitingon));
 			if (force === true || (source == waitingon.source && nowplayingindex == waitingon.index)) {
 				if (force === true || waitingon[type]) {
-					debug.trace("BROWSER", "  .. and we are going to display it");
+					debug.debug("BROWSER", "  .. and we are going to display it");
 					if (data.data !== null && (source == "file" || data.name !== "")) {
 						if ($("#"+type+"information").is(':hidden')) {
 							$("#"+type+"information").show();
@@ -342,7 +342,7 @@ var browser = function() {
 		},
 
 		switchsource: function(src) {
-			debug.log("BROWSER","Switching to",src);
+			debug.info("BROWSER","Switching to",src);
 			if (displaypointer >= 1) {
 				displaypointer = history.length - 1;
 				history[displaypointer].mastercollection.populate(src, true);
@@ -351,7 +351,7 @@ var browser = function() {
 		},
 
 		handleClick: function(source, element, event) {
-			debug.trace("BROWSER","Was clicked on",source,element);
+			debug.debug("BROWSER","Was clicked on",source,element);
 			if (element.hasClass('frog')) {
 				toggleSection(element);
 			} else if (element.hasClass('tadpole')) {
@@ -420,7 +420,7 @@ var browser = function() {
 					history[displaypointer].track.collection !== null));
 
 			displaypointer = index;
-			debug.log("BROWSER","History flags are",showartist,showalbum,showtrack);
+			debug.trace("BROWSER","History flags are",showartist,showalbum,showtrack);
 			// Calling displayTheData is important even if all the showxxx flags are false
 			// since it makes sure the correct trackDataCollection gets its displaying flag set.
 			displayTheData(displaypointer, showartist, showalbum, showtrack);
@@ -428,7 +428,7 @@ var browser = function() {
 
 			var bits = ["artist","album","track"];
 			bits.forEach(function(n) {
-				debug.log("BROWSER","Updating",n);
+				debug.debug("BROWSER","Updating",n);
 				if (history[index][n].collection) {
 					waitingon[n] = true;
 					waitingon.source = history[index].source;

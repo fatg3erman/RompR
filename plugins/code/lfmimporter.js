@@ -67,12 +67,12 @@ var lfmImporter = function() {
 		row = $('#lfmitable').children('tr[name="'+alldata[reqid].TTindex+'"]');
 		row.children('td[name="lastfmplaycount"]').html(de.userplaycount());
 		if (parseInt(alldata[reqid].Playcount) < parseInt(de.userplaycount())) {
-			debug.info("LFMIMPORTER","Incrementing Playcount for",alldata[reqid].TTindex,"to",de.userplaycount());
+			debug.log("LFMIMPORTER","Incrementing Playcount for",alldata[reqid].TTindex,"to",de.userplaycount());
 			var playlistinfo = {type: 'local', location: ''};
 			$.each(row.children('td.playlistinfo'), function() {
 				playlistinfo[$(this).attr('name')] = htmlspecialchars_decode($(this).html());
 			});
-			debug.trace("LFMIMPORTER","Using data",playlistinfo);
+			debug.debug("LFMIMPORTER","Using data",playlistinfo);
 			metaHandlers.fromPlaylistInfo.setMeta(playlistinfo, 'inc', [{attribute: 'Playcount', value: de.userplaycount()}], setSuccess, setFail);
 		} else {
 			row.children('td[name="tick"]').html('<i class="icon-block collectionicon"></i>');
@@ -86,8 +86,8 @@ var lfmImporter = function() {
 		doNext();
 	}
 
-	function setFail() {
-		debug.warn("LFMIMPORTER","Fail");
+	function setFail(data) {
+		debug.warn("LFMIMPORTER","Fail",data);
 		row.children('td[name="tick"]').html('<i class="dialog-error collectionicon"></i>');
 		doNext();
 	}

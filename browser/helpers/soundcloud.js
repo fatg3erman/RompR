@@ -5,10 +5,10 @@ var soundcloud = function() {
 	return {
 		getTrackInfo: function(mopidyURI, callback) {
 			// "soundcloud:song/King Tubby meets Soul Rebel Uptown.92868852"
-			debug.log("SOUNDCLOUD","Trying to get track info from",mopidyURI);
+			debug.trace("SOUNDCLOUD","Trying to get track info from",mopidyURI);
 			var a = mopidyURI.match(/\.(\d+)$/);
 			var tracknum = a[1];
-			debug.log("SOUNDCLOUD","Getting soundcloud info for track",tracknum);
+			debug.debug("SOUNDCLOUD","Getting soundcloud info for track",tracknum);
 			$.ajax({
 				method: 'POST',
 				dataType: 'json',
@@ -23,7 +23,7 @@ var soundcloud = function() {
 		},
 
 		getUserInfo: function(userid, callback) {
-			debug.log("SOUNDCLOUD","Getting soundcloud info for user",userid);
+			debug.trace("SOUNDCLOUD","Getting soundcloud info for user",userid);
 			$.ajax({
 				method: 'POST',
 				dataType: 'json',

@@ -14,7 +14,7 @@ var infobar = function() {
 
 	function scrobble() {
 		if (!scrobbled) {
-			debug.trace("INFOBAR","Track is not scrobbled");
+			debug.info("INFOBAR","Track is not scrobbled");
 			scrobbled = true;
 			if (lastfm.isLoggedIn()) {
 				if (playlistinfo.Title != "" && playlistinfo.trackartist != "") {
@@ -28,11 +28,11 @@ var infobar = function() {
 					if (playlistinfo.albumartist && playlistinfo.albumartist != "" && playlistinfo.albumartist.toLowerCase() != playlistinfo.trackartist.toLowerCase()) {
 						 options.albumArtist = playlistinfo.albumartist;
 					 }
-					debug.log("INFOBAR","Scrobbling", options);
+					debug.debug("INFOBAR","Scrobbling", options);
 					lastfm.track.scrobble( options );
 				}
 			}
-			debug.log("INFOBAR","Track playcount being updated");
+			debug.trace("INFOBAR","Track playcount being updated");
 			nowplaying.incPlaycount(null);
 		}
 	}
@@ -45,7 +45,7 @@ var infobar = function() {
 					artist: playlistinfo.trackartist,
 					album: playlistinfo.Album
 				};
-				debug.trace("INFOBAR","is updating nowplaying",opts);
+				debug.debug("INFOBAR","is updating nowplaying",opts);
 				lastfm.track.updateNowPlaying(opts);
 				nowplaying_updated = true;
 			}
@@ -193,7 +193,7 @@ var infobar = function() {
 	return {
 
 		rejigTheText: function() {
-			debug.log('INFOBAR', 'Rejig was called');
+			debug.debug('INFOBAR', 'Rejig was called');
 			clearTimeout(ftimer);
 			ftimer = setTimeout(infobar.biggerize, 300);
 		},
@@ -260,7 +260,7 @@ var infobar = function() {
 			const notafile = "newimages/thisdosntexist.png";
 
 			aImg.onload = function() {
-				debug.info("ALBUMPICTURE","Image Loaded",$(this).attr("src"));
+				debug.debug("ALBUMPICTURE","Image Loaded",$(this).attr("src"));
 				$('#albumpicture').attr("src", $(this).attr("src"));
 			}
 
@@ -272,7 +272,7 @@ var infobar = function() {
 
 			return {
 				setSource: function(data) {
-					debug.trace("ALBUMPICTURE","New source",data,"current is",aImg.src);
+					debug.debug("ALBUMPICTURE","New source",data,"current is",aImg.src);
 					if (data.ImgKey && data.ImgKey != aImg.name) {
 						return false;
 					}
@@ -295,7 +295,7 @@ var infobar = function() {
 					if (data.key === undefined || data.key == aImg.getAttribute('name')) {
 						debug.trace("ALBUMPICTURE","Secondary Source is being set to ",data.image);
 						if (data.image != "" && data.image !== null && (aImg.src.match(noimage) !== null || aImg.src.match(notafile) !== null)) {
-							debug.log("ALBUMPICTURE","  OK, the secondary criteria have been met");
+							debug.trace("ALBUMPICTURE","  OK, the secondary criteria have been met");
 							aImg.src = data.image;
 						}
 					}
@@ -430,7 +430,7 @@ var infobar = function() {
 
 		setNowPlayingInfo: function(info) {
 			//Now playing info
-			debug.trace("INFOBAR","NPinfo",info);
+			debug.debug("INFOBAR","NPinfo",info);
 			if (playlistinfo.file) {
 				$('[name="'+rawurlencode(playlistinfo.file)+'"]').removeClass('playlistcurrentitem');
 			}
@@ -520,7 +520,7 @@ var infobar = function() {
 		},
 
 		notify: function(message) {
-			debug.trace("INFOBAR","Creating notification",message);
+			debug.debug("INFOBAR","Creating notification",message);
 			var div = doNotification(message, 'icon-info-circled');
 			setTimeout($.proxy(infobar.removenotify, div, notifycounter), 5000);
 			return notifycounter;
@@ -556,7 +556,7 @@ var infobar = function() {
 
 		removenotify: function(data) {
 			if ($('#notifications>div').length == 1) {
-				debug.log("INFOBAR","Removing single notification");
+				debug.debug("INFOBAR","Removing single notification");
 				if ($('#notifications').is(':visible')) {
 					$('#notifications').slideToggle('slow', function() {
 						$('#notifications').empty();
@@ -565,7 +565,7 @@ var infobar = function() {
 					$('#notifications').empty();
 				}
 			} else {
-				debug.log("INFOBAR","Removing notification", data);
+				debug.debug("INFOBAR","Removing notification", data);
 				$('#notify_'+data).fadeOut('slow', function() {
 					$('#notify_'+data).remove();
 				});

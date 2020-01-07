@@ -21,7 +21,7 @@ var metaBackup = function() {
 			[{action: 'backup'+thing, which: what}],
 			function(data) {
 				clearTimeout(monitortimer);
-				debug.log("BACKUPS","Success");
+				debug.debug("BACKUPS","Success");
 				if (thing == 'restore') {
 					collectionHelper.forceCollectionReload();
 				}
@@ -51,12 +51,12 @@ var metaBackup = function() {
 			dataType: 'json'
 		})
 		.done(function(data) {
-			debug.debug("UPDATE",data);
+			debug.debug("MINITORRESTORE",data);
 			progressDiv.html(data.current);
 			monitortimer = setTimeout(monitorRestore, 250);
 		})
 		.fail(function(data) {
-			debug.log("UPDATE","ERROR",data);
+			debug.warn("MONITORRESTORE","ERROR",data);
 			monitortimer = setTimeout(monitorRestore, 250);
 		});
 	}

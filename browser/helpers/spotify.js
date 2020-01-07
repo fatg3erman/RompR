@@ -43,7 +43,7 @@ var spotify = function() {
 			}
 			var root = objFirst(data);
 			if (data[root].next) {
-				debug.trace("SPOTIFY","Got a response with a next page!");
+				debug.debug("SPOTIFY","Got a response with a next page!");
 				if (data[root].previous == null) {
 					collectedobj = data;
 				} else {
@@ -52,10 +52,10 @@ var spotify = function() {
 				queue.unshift({flag: false, reqid: '', url: data[root].next, success: req.success, fail: req.fail});
 			} else if (data[root].previous) {
 				collectedobj[root].items = collectedobj[root].items.concat(data[root].items);
-				debug.log("SPOTIFY","Returning concatenated multi-page result");
+				debug.trace("SPOTIFY","Returning concatenated multi-page result");
 				req.success(collectedobj);
 			} else if (data.next) {
-				debug.trace("SPOTIFY","Got a response with a next page!");
+				debug.debug("SPOTIFY","Got a response with a next page!");
 				if (data.previous == null) {
 					collectedobj = data;
 				} else {
@@ -64,7 +64,7 @@ var spotify = function() {
 				queue.unshift({flag: false, reqid: '', url: data.next, success: req.success, fail: req.fail});
 			} else if (data.previous) {
 				collectedobj.items = collectedobj.items.concat(data.items);
-				debug.log("SPOTIFY","Returning concatenated multi-page result");
+				debug.trace("SPOTIFY","Returning concatenated multi-page result");
 				req.success(collectedobj);
 			} else {
 				req.success(data);
@@ -80,7 +80,7 @@ var spotify = function() {
 
 		requestFail: function(xhr,status,err) {
 			if (xhr.responseJSON.error == 429) {
-				debug.warn("SPOTIFY","Too Many Requests. Slowing Request Rate");
+				debug.info("SPOTIFY","Too Many Requests. Slowing Request Rate");
 				rate += 1000;
 				clearTimeout(backofftimer);
 				backofftimer = setTimeout(spotify.speedBackUp, 90000);

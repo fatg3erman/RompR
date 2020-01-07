@@ -52,7 +52,7 @@ function getsmall() {
 	})
 	.done(function(data) {
 		$('#doobag').stopFlasher().css('opacity', '0');
-		debug.log("SMALL IMAGES","Got List!",data);
+		debug.debug("SMALL IMAGES","Got List!",data);
 		for (var i in data) {
 			$('img[name="'+data[i]+'"]').removeAttr('src').addClass('notexist');
 		}
@@ -339,7 +339,7 @@ var imageEditor = function() {
 			nosource = (imgobj.hasClass('notfound') || imgobj.hasClass('notexist'));
 			var phrase = decodeURIComponent(imgobj.parent().find('input[name="searchterm"]').val());
 			var path = imgobj.parent().find('input[name="albumpath"]').val();
-			debug.log('ALBUMART','Local Path Is',path);
+			debug.trace('ALBUMART','Local Path Is',path);
 
 			bigdiv.append($('<div>', { id: "searchcontent" }));
 			bigdiv.append($('<div>', { id: "origimage"}).append($("<img>", { id: 'browns' })));
@@ -445,7 +445,7 @@ var imageEditor = function() {
 		},
 
 		search: function() {
-			debug.log("IMAGEEDITOR",prefs.google_api_key,prefs.google_search_engine_id);
+			debug.core("IMAGEEDITOR",prefs.google_api_key,prefs.google_search_engine_id);
 			if (prefs.google_api_key != '' && prefs.google_search_engine_id != '') {
 				var searchfor = $("#searchphrase").val();
 				debug.log("IMAGEEDITOR","Searching Google for", searchfor);
@@ -457,7 +457,7 @@ var imageEditor = function() {
 				})
 				.done(imageEditor.googleSearchComplete)
 				.fail(function(data) {
-					debug.log("IMAGEEDITOR","IT'S ALL GONE HORRIBLY WRONG",data);
+					debug.warn("IMAGEEDITOR","IT'S ALL GONE HORRIBLY WRONG",data);
 					if (data == null) {
 						imageEditor.showError("No Response!");
 					} else {
@@ -483,7 +483,7 @@ var imageEditor = function() {
 		},
 
 		googleSearchComplete: function(data) {
-			debug.log("IMAGEEDITOR","Google Search Results", data);
+			debug.debug("IMAGEEDITOR","Google Search Results", data);
 			$("#morebutton").remove();
 			if (data.queries.nextPage) {
 				start = data.queries.nextPage[0].startIndex;
@@ -518,7 +518,7 @@ var imageEditor = function() {
 		onGoogleSearchClicked: function(event) {
 			var clickedElement = findClickableElement(event);
 			if (clickedElement.hasClass("clickgimage")) {
-				debug.log("ALBUMART","Search Result clicked :",clickedElement.next().val(), clickedElement.next().next().val());
+				debug.race("ALBUMART","Search Result clicked :",clickedElement.next().val(), clickedElement.next().next().val());
 				event.stopImmediatePropagation();
 				updateImage(clickedElement.next().val(), clickedElement.next().next().val());
 			} else if (clickedElement.hasClass("bmenu")) {
@@ -540,16 +540,16 @@ var imageEditor = function() {
 		},
 
 		showError: function(message) {
-			debug.log("IMAGEEDITOR","Error - ",message);
+			debug.warn("IMAGEEDITOR","Error - ",message);
 			$("#morebutton").remove();
 			$("#searchresults").append('<h3>'+language.gettext("albumart_googleproblem")+' "'+message+'"</h3>');
 		},
 
 		gotLocalImages: function(data) {
-			debug.log("ALBUMART","Retreived Local Images: ",data);
+			debug.debug("ALBUMART","Retreived Local Images: ",data);
 			if (data && data.length > 0) {
 				$.each(data, function(i,v) {
-					debug.log("ALBUMART","Local Image ",i, v);
+					debug.trace("ALBUMART","Local Image ",i, v);
 					$("#fsearch").append($("<img>", {
 														id: "img"+(i+100000).toString(),
 														class: "gimage clickable clickicon clickgimage" ,
@@ -632,7 +632,7 @@ function animationStop() {
 }
 
 function searchFail() {
-	debug.log("ALBUMART","No Source Found");
+	debug.info("ALBUMART","No Source Found");
 	$('#img'+clickindex).attr('src', 'newimages/imgnotfound.svg');
 	imgobj.removeClass('notfound notexist').addClass('notexist');
 	imageEditor.updateBigImg(false);
@@ -643,7 +643,7 @@ function uploadComplete(data) {
 	debug.log("ALBUMART","Upload Complete");
 	if (data.small) {
 		animationStop();
-		debug.log("ALBUMART","Success for",imagekey);
+		debug.trace("ALBUMART","Success for",imagekey);
 		if (nosource) {
 			coverscraper.updateInfo(1);
 			nosource = false;

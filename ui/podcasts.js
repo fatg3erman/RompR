@@ -86,7 +86,7 @@ var podcasts = function() {
 	function doDummyProgressBars() {
 		for(var i = 0; i < downloadQueue.length; i++) {
 			var track = downloadQueue[i].track;
-			debug.trace("PODCAST DOWNLOAD","Putting Dummy Progress Bar in",track);
+			debug.debug("PODCAST DOWNLOAD","Putting Dummy Progress Bar in",track);
 			$('i[name="poddownload_'+track+'"]').makeSpinner();
 		}
 	}
@@ -121,7 +121,7 @@ var podcasts = function() {
 		if (data && data.length > 0) {
 			$.each(data, function(index, value) {
 				if ($('#podcast_'+value).hasClass('loaded')) {
-					debug.shout("PODCASTS","Podcast",value,"was updated and is loaded - reloading it");
+					debug.log("PODCASTS","Podcast",value,"was updated and is loaded - reloading it");
 					podcasts.loadPodcast(value);
 				}
 			});
@@ -129,7 +129,7 @@ var podcasts = function() {
 	}
 
 	function podcastRequest(options, callback) {
-		debug.trace("PODCASTS","Sending request",options);
+		debug.debug("PODCASTS","Sending request",options);
 		options.populate = 1;
 		if (options.channel) {
 			var term = $('[name="podsearcher_'+options.channel+'"]').val();
@@ -267,7 +267,7 @@ var podcasts = function() {
 		},
 
 		channelAction: function(channel, action) {
-			debug.info("PODCAST","Action",action," on podcast ",channel);
+			debug.log("PODCAST","Action",action," on podcast ",channel);
 			var data = {populate: 1};
 			data[action] = channel;
 			data.channel = channel;
@@ -336,11 +336,11 @@ var podcasts = function() {
 			$.getJSON("podcasts/podcasts.php?populate=1&getcounts=1", function(data) {
 				$.each(data, function(index, value) {
 					if (!newcounts.hasOwnProperty(index)) {
-						debug.shout('PODCASTS', 'A new podcast has been subscribed to by somebody else');
+						debug.info('PODCASTS', 'A new podcast has been subscribed to by somebody else');
 						isnewpodcast = true;
 					}  else if (newcounts[index].new != value.new || newcounts[index].unlistened != value.unlistened) {
 						if (index != 'totals') {
-							debug.shout('PODCASTS', 'Podcast',index,'was updated by someobody else');
+							debug.info('PODCASTS', 'Podcast',index,'was updated by someobody else');
 							to_reload.push(index);
 						}
 					}
@@ -359,7 +359,7 @@ var podcasts = function() {
 			var elementType = element[0].tagName;
 			var options = {option: element.attr("name")};
 			var callback = null;
-			debug.log("PODCASTS","Option:",element,elementType);
+			debug.trace("PODCASTS","Option:",element,elementType);
 			switch(elementType) {
 				case "SELECT":
 					options.val = element.val();
@@ -380,7 +380,7 @@ var podcasts = function() {
 		},
 
 		checkRefresh: function() {
-			debug.log('PODCASTS', 'In checkRefresh');
+			debug.debug('PODCASTS', 'In checkRefresh');
 			clearTimeout(refreshtimer);
 			$.ajax({
 				type: 'GET',

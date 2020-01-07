@@ -61,7 +61,7 @@ function updateStreamInfo() {
 		}
 		if (player.status.Name && !player.status.Name.match(/^\//) && temp.Album == rompr_unknown_stream) {
 			// NOTE: 'Name' is returned by MPD - it's the station name as read from the station's stream metadata
-			debug.shout('STREAMHANDLER',"Checking For Stream Name Update");
+			debug.mark('STREAMHANDLER',"Checking For Stream Name Update");
 			checkForUpdateToUnknownStream(playlist.getCurrent('StreamIndex'), player.status.Name);
 			temp.Album = player.status.Name;
 			temp.metadata.album = {name: temp.Album, musicbrainz_id: ""};
@@ -71,7 +71,7 @@ function updateStreamInfo() {
 			playlist.getCurrent('Album') != temp.Album ||
 			playlist.getCurrent('trackartist') != temp.trackartist)
 		{
-			debug.shout("STREAMHANDLER","Detected change of track",temp);
+			debug.mark("STREAMHANDLER","Detected change of track",temp);
 			var aa = new albumart_translator('');
 			temp.key = aa.getKey('stream', '', temp.Album);
 			playlist.setCurrent({Title: temp.Title, Album: temp.Album, trackartist: temp.trackartist });
@@ -86,7 +86,7 @@ function checkForUpdateToUnknownStream(streamid, name) {
 	debug.log("STREAMHANDLER","Checking For Update to Stream",streamid,name, name);
 	var m = playlist.getCurrent('Album');
 	if (m.match(/^Unknown Internet Stream/)) {
-		debug.shout("PLAYLIST","Updating Stream",name);
+		debug.mark("PLAYLIST","Updating Stream",name);
 		yourRadioPlugin.updateStreamName(streamid, name, playlist.getCurrent('file'), playlist.repopulate);
 	}
 }
@@ -104,7 +104,7 @@ function playerController() {
 	this.previoussongid = -1;
 
 	this.initialise = async function() {
-		debug.shout('PLAYER', 'Initialising');
+		debug.mark('PLAYER', 'Initialising');
 		try {
 			var urischemes = await $.ajax({
 				type: 'GET',
@@ -163,7 +163,7 @@ function playerController() {
 			}
 			self.trackstarttime = (Date.now()/1000) - player.status.elapsed;
 			if (player.status.playlist !== plversion) {
-				debug.blurt("PLAYER","Player has marked playlist as changed",plversion,player.status.playlist);
+				debug.mark("PLAYER","Player has marked playlist as changed",plversion,player.status.playlist);
 				plversion = player.status.playlist;
 				// Repopulate will revalidate the playlist when it completes.
 				playlist.repopulate();

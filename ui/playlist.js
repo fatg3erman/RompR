@@ -56,7 +56,7 @@ var playlist = function() {
 		var status_check_timer;
 
 		async function runPlaylist(my_radio, my_param) {
-			debug.shout("RADIO MANAGER","Running Playlist", my_radio, my_param);
+			debug.mark("RADIO MANAGER","Running Playlist", my_radio, my_param);
 			debug.trace("RADIO MANAGER","prefs.radiomode is",prefs.radiomode);
 			debug.trace("RADIO MANAGER","prefs.radioparam is",prefs.radioparam);
 			debug.trace("RADIO MANAGER","prefs.browser_id is",prefs.browser_id);
@@ -69,7 +69,7 @@ var playlist = function() {
 				}
 				var tracksneeded = prefs.smartradio_chunksize - fromend;
 				if (tracksneeded > 2 && prefs.radiomaster != prefs.browser_id) {
-					debug.info("RADIO MANAGER","Looks like master has gone away. Taking over");
+					debug.mark("RADIO MANAGER","Looks like master has gone away. Taking over");
 					prefs.save({radiomaster: prefs.browser_id});
 				}
 				var startpos = (tracksneeded == prefs.smartradio_chunksize) ? 0 : null;
@@ -79,7 +79,7 @@ var playlist = function() {
 						player.controller.addTracks(
 							uris,
 							startpos,
-							null, 
+							null,
 							true
 						);
 						startpos = null;
@@ -90,7 +90,7 @@ var playlist = function() {
 				}
 				await new Promise(t => setTimeout(t, 2000));
 			}
-			debug.shout("RADIO MANAGER","Exiting Playlist", my_radio, my_param);
+			debug.mark("RADIO MANAGER","Exiting Playlist", my_radio, my_param);
 			radios[my_radio].func.stop();
 		}
 
@@ -139,7 +139,7 @@ var playlist = function() {
 			},
 
 			load: async function(which, param, from_me) {
-				debug.log('RADIOMANAGER', which, param, from_me, this_radio, this_param);
+				debug.core('RADIOMANAGER', which, param, from_me, this_radio, this_param);
 				if (which == '' || (which == this_radio && param == this_param)) {
 					return;
 				}
@@ -155,7 +155,7 @@ var playlist = function() {
 					prefs.save({
 						radioconsume: JSON.stringify(
 							[['consume', player.status.consume], ['repeat', player.status.repeat], ['random', player.status.random]]
-						), 
+						),
 						radiomaster: prefs.browser_id
 					});
 					await player.controller.takeBackControl();
@@ -164,7 +164,7 @@ var playlist = function() {
 				layoutProcessor.playlistLoading();
 				playlist.preventControlClicks(false);
 				if (radios[which].script && radios[which].loaded == false) {
-					debug.shout("RADIO MANAGER","Loading Script",radios[which].script,"for",which);
+					debug.info("RADIO MANAGER","Loading Script",radios[which].script,"for",which);
 					try {
 						await $.getScript(radios[which].script+'?version='+rompr_version+Date.now());
 						radios[which].loaded = true;
@@ -198,7 +198,7 @@ var playlist = function() {
 			},
 
 			stop: async function() {
-				debug.shout("RADIO MANAGER","Stopping");
+				debug.trace("RADIO MANAGER","Stopping");
 				// Dont' really need to do this here but it makes the UI more responsive
 				this_radio = '';
 				this_param = null;
@@ -263,12 +263,12 @@ var playlist = function() {
 
 		invalidate: function() {
 			playlist_valid = false;
-			debug.debug('PLAYLIST', 'Invalidating playlist');
+			debug.core('PLAYLIST', 'Invalidating playlist');
 		},
 
 		validate: function() {
 			playlist_valid = true;;
-			debug.debug('PLAYLIST', 'Validating playlist');
+			debug.core('PLAYLIST', 'Validating playlist');
 		},
 
 		repopulate: async function() {
@@ -277,17 +277,17 @@ var playlist = function() {
 			var my_queue_id = update_queue;
 
 			while (my_queue_id > current_queue_request) {
-				debug.info('PLAYLIST', 'Waiting for outstanding requests to finish');
+				debug.trace('PLAYLIST', 'Waiting for outstanding requests to finish');
 				await new Promise(r => setTimeout(r, 500));
 			}
 			if (my_queue_id < update_queue) {
-				debug.info('PLAYLIST', 'Aborting request',my_queue_id);
+				debug.trace('PLAYLIST', 'Aborting request',my_queue_id);
 				current_queue_request++;
 				return false;
 			}
 			playlist.invalidate();
 
-			debug.info('PLAYLIST', 'Starting update request',my_queue_id);
+			debug.log('PLAYLIST', 'Starting update request',my_queue_id);
 			coverscraper.clearCallbacks();
 			$('.clear_playlist').off('click').makeSpinner();
 			try {
@@ -309,7 +309,7 @@ var playlist = function() {
 			}
 
 			if (update_queue != my_queue_id) {
-				debug.shout("PLAYLIST","Response",my_queue_id,"from player does not match current request ID",update_queue);
+				debug.trace("PLAYLIST","Response",my_queue_id,"from player does not match current request ID",update_queue);
 				current_queue_request++;
 				return false;
 			}
@@ -319,7 +319,7 @@ var playlist = function() {
 				update_error = false;
 			}
 
-			debug.info("PLAYLIST","Got Playlist from backend for request",my_queue_id);
+			debug.log("PLAYLIST","Got Playlist from backend for request",my_queue_id);
 			var count = -1;
 			var current_album = "";
 			var current_artist = "";
@@ -385,7 +385,7 @@ var playlist = function() {
 			// This might all seem like a faff, but you do not want stuff you've just removed
 			// suddenly re-appearing in front of your eyes and then vanishing again. It looks crap.
 			if (update_queue != my_queue_id) {
-				debug.shout("PLAYLIST","Response",my_reqid,"from player does match current request ID after processing",current_reqid);
+				debug.mark("PLAYLIST","Response",my_reqid,"from player does match current request ID after processing",current_reqid);
 				current_queue_request++;
 				return false;
 			}
@@ -429,7 +429,7 @@ var playlist = function() {
 
 		doUpcomingCrap: function() {
 			var upcoming = new Array();
-			debug.trace("PLAYLIST","Doing Upcoming Crap",currentalbum);
+			debug.debug("PLAYLIST","Doing Upcoming Crap",currentalbum);
 			if (currentalbum >= 0 && player.status.random == 0) {
 				tracklist[currentalbum].getrest(currentTrack.Id, upcoming);
 				var i = parseInt(currentalbum)+1;
@@ -483,13 +483,13 @@ var playlist = function() {
 		},
 
 		dragstopped: function(event, ui) {
-			debug.trace("PLAYLIST","Drag Stopped",event,ui);
+			debug.debug("PLAYLIST","Drag Stopped",event,ui);
 			if (event) {
 				event.stopImmediatePropagation();
 			}
 			var moveto  = (function getMoveTo(i) {
 				if (i !== null) {
-					debug.trace("PLAYLIST", "Finding Next Item In List",i.next(),i.parent());
+					debug.debug("PLAYLIST", "Finding Next Item In List",i.next(),i.parent());
 					if (i.next().hasClass('track') || i.next().hasClass('booger')) {
 						debug.trace("PLAYLIST","Next Item Is Track");
 						return parseInt(i.next().attr("name"));
@@ -650,7 +650,7 @@ var playlist = function() {
 			if (player.status.xfade !== undefined && player.status.xfade !== null &&
 				player.status.xfade > 0 && player.status.xfade != prefs.crossfade_duration) {
 				prefs.save({crossfade_duration: player.status.xfade});
-				debug.log('PLAYLIST', 'Updating Crossfade Duration');
+				debug.debug('PLAYLIST', 'Updating Crossfade Duration');
 				$("#crossfade_duration").val(player.status.xfade);
 			}
 		},
@@ -688,10 +688,10 @@ var playlist = function() {
 
 		playFromEnd: function() {
 			if (player.status.state != "play") {
-				debug.trace("PLAYLIST","Playfromend",finaltrack+1);
+				debug.debug("PLAYLIST","Playfromend",finaltrack+1);
 				return finaltrack+1;
 			} else {
-				debug.trace("PLAYLIST","Disabling auto-play");
+				debug.debug("PLAYLIST","Disabling auto-play");
 				return null;
 			}
 		},
@@ -716,7 +716,7 @@ var playlist = function() {
 			await playlist.is_valid();
 			var force = (currentTrack.Id == -1) ? true : false;
 			if (backendid != currentTrack.Id) {
-				debug.info("PLAYLIST","Looking For Current Track",backendid);
+				debug.log("PLAYLIST","Looking For Current Track",backendid);
 				$("#pscroller .playlistcurrentitem").removeClass('playlistcurrentitem').addClass('playlistitem');
 				$('.track[romprid="'+backendid+'"],.booger[romprid="'+backendid+'"]').removeClass('playlistitem').addClass('playlistcurrentitem');
 				var found = false;
@@ -730,7 +730,7 @@ var playlist = function() {
 							$('.item[name="'+album.index+'"]').removeClass('playlisttitle').addClass('playlistcurrenttitle');
 						}
 						found = true;
-						debug.info('PLAYLIST', '  Found current track');
+						debug.trace('PLAYLIST', '  Found current track');
 						break;
 					}
 				}
@@ -820,7 +820,7 @@ var playlist = function() {
 		},
 
 		getAlbum: function(i) {
-			debug.log("PLAYLIST","Getting Tracks For",i);
+			debug.debug("PLAYLIST","Getting Tracks For",i);
 			return tracklist[i].getTracks();
 		},
 
@@ -1301,7 +1301,7 @@ function Stream(index, album, rolledup) {
 	}
 
 	this.updateImages = function(data) {
-		debug.trace("PLAYLIST","Updating track images with",data);
+		debug.debug("PLAYLIST","Updating track images with",data);
 		for (var trackpointer in tracks) {
 			tracks[trackpointer].images = data;
 		}

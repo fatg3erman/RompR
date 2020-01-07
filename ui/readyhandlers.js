@@ -61,10 +61,10 @@ var cacheCleaner = function() {
 	return {
 
 		start: function() {
-			debug.shout("INIT","Starting Backend Cache Clean");
+			debug.mark("INIT","Starting Backend Cache Clean");
 			collectionHelper.disableCollectionUpdates();
 			$.get('utils/cleancache.php', function() {
-				debug.shout("INIT","Cache Has Been Cleaned");
+				debug.mark("INIT","Cache Has Been Cleaned");
 				collectionHelper.enableCollectionUpdates();
 				setTimeout(cacheCleaner.start, 86400000);
 				startBackgroundInitTasks.doNextTask();
@@ -121,8 +121,8 @@ var startBackgroundInitTasks = function() {
 		readytogo: false,
 
 		doNextTask: function() {
-			debug.blurt('INIT', 'Starting an init task');
 			var nexttask = stufftodo.shift();
+			debug.mark('INIT', 'Starting init task', nexttask.name);
 			if (typeof nexttask != 'undefined') {
 				nexttask.call();
 			}
@@ -133,7 +133,7 @@ var startBackgroundInitTasks = function() {
 }();
 
 $(document).ready(function(){
-	debug.blurt("INIT","Document Ready Event has fired");
+	debug.mark("INIT","Document Ready Event has fired");
 	$('#albumpicture').on('load', albumImageLoaded);
 	get_geo_country();
 	if (prefs.do_not_show_prefs) {
@@ -207,7 +207,7 @@ function get_geo_country() {
 		// It's helpful and important to get the country code set, as many users won't see it
 		// and it's necessary for the Spotify info panel to return accurate data
 		$.getJSON("utils/getgeoip.php", function(result) {
-			debug.shout("GET COUNTRY", 'Country:',result.country,'Code:',result.countryCode);
+			debug.info("GET COUNTRY", 'Country:',result.country,'Code:',result.countryCode);
 			if (result.country != 'ERROR') {
 				$("#lastfm_country_codeselector").val(result.countryCode);
 				prefs.save({lastfm_country_code: result.countryCode, country_userset: true});
@@ -231,7 +231,7 @@ async function createHelpLinks() {
 	helplinks[language.gettext('config_snapcast')] = 'https://fatg3erman.github.io/RompR/Snapcast';
 
 	for (var i in helplinks) {
-		debug.log("HELPLINKS","Appending Help Link For",i);
+		debug.debug("HELPLINKS","Appending Help Link For",i);
 		$('b:contains("'+i+'")').each(function() {
 			if ($(this).parent().hasClass('configtitle') && !$(this).parent().hasClass('nohelp')) {
 				$(this).parent().append('<a href="'+helplinks[i]+'" target="_blank"><i class="icon-info-circled playlisticonr tright tooltip" title="'+language.gettext('label_gethelp')+'"></i></a>');

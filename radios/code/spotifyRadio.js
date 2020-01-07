@@ -14,12 +14,12 @@ function spotifyRadio() {
 	var medebug = 'SPOTIRADIO';
 
 	function mixArtist(name, id) {
-		debug.log(medebug,"Creating Artist",name,id);
+		debug.trace(medebug,"Creating Artist",name,id);
 		var albums = null;
 		var myself = this;
 
 		this.gotSomeAlbums = function(data) {
-			debug.trace(medebug,"Got albums for",name);
+			debug.debug(medebug,"Got albums for",name);
 			albums = new mixAlbum(name, data.items);
 		}
 
@@ -30,7 +30,7 @@ function spotifyRadio() {
 
 		this.sendATrack = async function() {
 			if (albums === null) {
-				debug.trace(medebug,'Getting albums for',name);
+				debug.debug(medebug,'Getting albums for',name);
 				spotify.artist.getAlbums(id, 'album', myself.gotSomeAlbums, myself.failQuiet, true);
 			}
 			while (albums === null) {
@@ -48,7 +48,7 @@ function spotifyRadio() {
 
 	function mixAlbum(name, items) {
 		var myself = this;
-		debug.log(medebug, 'Creating album for',name);
+		debug.trace(medebug, 'Creating album for',name);
 		var tracks = null;
 		var ids = new Array();
 		items.forEach(function(album) {
@@ -57,12 +57,12 @@ function spotifyRadio() {
 		ids.sort(randomsort);
 		ids = ids.splice(0, 20);
 		if (ids.length == 0) {
-			debug.log(medebug,'Got no albums for',name);
+			debug.trace(medebug,'Got no albums for',name);
 			tracks = [];
 		}
 
 		this.gotTracks = function(data) {
-			debug.log(medebug, "Got Tracks For",name);
+			debug.debug(medebug, "Got Tracks For",name);
 			tracks = [];
 			data.albums.forEach(function(album) {
 				album.tracks.items.forEach(function(track) {
@@ -79,13 +79,13 @@ function spotifyRadio() {
 
 		this.sendATrack = async function() {
 			if (tracks === null) {
-				debug.trace(medebug, "Getting tracks for artist",name);
+				debug.debug(medebug, "Getting tracks for artist",name);
 				spotify.album.getMultiInfo(ids, myself.gotTracks, myself.failQuiet, true);
 			}
 			while (tracks === null) {
 				await new Promise(t => setTimeout(t, 500));
 			}
-			return tracks.shift();			
+			return tracks.shift();
 		}
 
 	}
@@ -103,7 +103,7 @@ function spotifyRadio() {
 				// Return tracks one at a time, otherwise there's a really long wait when we first start up
 				return [track];
 			} else {
-				debug.log(medebug, 'Deleting artist',artistindex);
+				debug.trace(medebug, 'Deleting artist',artistindex);
 				artists.splice(artistindex, 1);
 			}
 		}
@@ -113,19 +113,19 @@ function spotifyRadio() {
 	this.newArtist = function(name, id, get_related) {
 		for (let artist of artists) {
 			if (artist.getName() == name) {
-				debug.log(medebug, 'Ignoring artist',name,'as it already exists');
+				debug.debug(medebug, 'Ignoring artist',name,'as it already exists');
 				return;
 			}
 		};
 		artists.push(new mixArtist(name, id, get_related));
 		if (get_related) {
-			debug.log(medebug, "Getting Related Artists For",name);
+			debug.trace(medebug, "Getting Related Artists For",name);
 			spotify.artist.getRelatedArtists(id, self.gotRelatedArtists, self.gotNoArtists);
 		}
 	}
 
 	this.gotRelatedArtists = function(data) {
-		debug.trace(medebug,"Got related artists for",name);
+		debug.debug(medebug,"Got related artists for",name);
 		data.artists.forEach(function(artist) {
 			self.newArtist(artist.name, artist.id, false);
 		});

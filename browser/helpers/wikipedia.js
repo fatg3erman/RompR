@@ -38,7 +38,7 @@ var wikipedia = function() {
 
 		wikiMediaPopup: function(element, event) {
 			var thing = element.attr("name");
-			debug.log("WIKIPEDIA","Clicked element has name",thing);
+			debug.trace("WIKIPEDIA","Clicked element has name",thing);
 			var a = thing.match(/(.*?)\/(.*)/);
 			if (a && a[1] && a[2]) {
 				var fname = a[2];
