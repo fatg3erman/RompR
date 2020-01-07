@@ -35,7 +35,7 @@ class transferCollection {
 }
 
 $json = json_decode(file_get_contents("php://input"), true);
-logger::shout("TRANSFER", "Transferring Playlist From",$prefs['currenthost'],"to",$json['currenthost']);
+logger::mark("TRANSFER", "Transferring Playlist From",$prefs['currenthost'],"to",$json['currenthost']);
 // Read the playlist from the current player
 $player = new $PLAYER_TYPE();
 $mpd_status = $player->get_status();

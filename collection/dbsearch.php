@@ -92,7 +92,7 @@ function doDbCollection($terms, $domains, $resultstype, &$collection) {
 		$qstring .= ")";
 	}
 
-	logger::log("DB SEARCH", "Parameters", $parameters);
+	logger::mark("DB SEARCH", "Parameters", $parameters);
 
 	$result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, $qstring, $parameters);
 	$fcount = count($result);
@@ -111,7 +111,7 @@ function doDbCollection($terms, $domains, $resultstype, &$collection) {
 			'Last-Modified' => $obj->LastModified
 		);
 		$filedata = array_merge(MPD_FILE_MODEL, $filedata);
-		logger::log("DB SEARCH", "Found :",$obj->Title,$obj->Uri,$obj->TTindex);
+		logger::trace("DB SEARCH", "Found :",$obj->Title,$obj->Uri,$obj->TTindex);
 		if ($resultstype == "tree") {
 			$collection->newItem($filedata);
 		} else if ($resultstype == "RAW") {

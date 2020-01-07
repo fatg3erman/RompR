@@ -10,8 +10,8 @@ include("includes/functions.php");
 require_once("utils/imagefunctions.php");
 include("backends/sql/backend.php");
 
-logger::shout("CACHE CLEANER", "-----------------------------------------------------------------------");
-logger::blurt("CACHE CLEANER", "Checking Cache");
+logger::mark("CACHE CLEANER", "-----------------------------------------------------------------------");
+logger::mark("CACHE CLEANER", "Checking Cache");
 
 // DO NOT REDUCE the values for musicbrainz
 // - we have to follow their API rules and as we don't check
@@ -48,12 +48,12 @@ clean_cache_dir('prefs/imagecache/', 604800);
 clean_cache_dir('albumart/', 1);
 // Clean the temp directory
 clean_cache_dir('prefs/temp/', 1);
-logger::shout("CACHE CLEANER", "Cache has been cleaned");
+logger::mark("CACHE CLEANER", "Cache has been cleaned");
 
 if ($mysqlc) {
 
 	$now = time();
-	logger::shout("CACHE CLEANER", "Tidying Database");
+	logger::mark("CACHE CLEANER", "Tidying Database");
 	logger::mark("CACHE CLEANER", "Checking database for hidden album art");
 	// Note the final line checking that image isn't in use by another album
 	// it's an edge case where we have the album local but we also somehow have a spotify or whatever
@@ -72,7 +72,7 @@ if ($mysqlc) {
 			generic_sql_query("UPDATE Albumtable SET Image = NULL, Searched = 0 WHERE Albumindex = ".$obj->Albumindex, true);
 		}
 	}
-	logger::debug("CACHE CLEANER", "== Check For Hidden Album Art took ".format_time(time() - $now));
+	logger::trace("CACHE CLEANER", "== Check For Hidden Album Art took ".format_time(time() - $now));
 
 
 	if ($prefs['cleanalbumimages']) {
@@ -92,7 +92,7 @@ if ($mysqlc) {
 				}
 			}
 		}
-		logger::debug("CACHE CLEANER", "== Check For Unneeded Images took ".format_time(time() - $now));
+		logger::trace("CACHE CLEANER", "== Check For Unneeded Images took ".format_time(time() - $now));
 
 		logger::mark("CACHE CLEANER", "Checking for orphaned radio station images");
 		$now = time();
@@ -104,7 +104,7 @@ if ($mysqlc) {
 				rrmdir($image);
 			}
 		}
-		logger::debug("CACHE CLEANER", "== Check For Orphaned Radio Station Images took ".format_time(time() - $now));
+		logger::trace("CACHE CLEANER", "== Check For Orphaned Radio Station Images took ".format_time(time() - $now));
 
 		logger::mark("CACHE CLEANER", "Checking for orphaned podcast data");
 		$now = time();
@@ -116,7 +116,7 @@ if ($mysqlc) {
 				rrmdir($file);
 			}
 		}
-		logger::debug("CACHE CLEANER", "== Check For Orphaned Podcast Data took ".format_time(time() - $now));
+		logger::trace("CACHE CLEANER", "== Check For Orphaned Podcast Data took ".format_time(time() - $now));
 	}
 
 	logger::mark("CACHE CLEANER", "Checking database for missing album art");
@@ -135,12 +135,12 @@ if ($mysqlc) {
 			sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Searched = ?, Image = ? WHERE Albumindex = ?", $searched, $image, $obj->Albumindex);
 		}
 	}
-	logger::debug("CACHE CLEANER", "== Check For Missing Album Art took ".format_time(time() - $now));
+	logger::trace("CACHE CLEANER", "== Check For Missing Album Art took ".format_time(time() - $now));
 
 	logger::mark("CACHE CLEANER", "Checking for orphaned Wishlist Sources");
 	$now = time();
 	generic_sql_query("DELETE FROM WishlistSourcetable WHERE Sourceindex NOT IN (SELECT DISTINCT Sourceindex FROM Tracktable WHERE Sourceindex IS NOT NULL)");
-	logger::debug("CACHE CLEANER", "== Check For Orphaned Wishlist Sources took ".format_time(time() - $now));
+	logger::trace("CACHE CLEANER", "== Check For Orphaned Wishlist Sources took ".format_time(time() - $now));
 
 	// Compact the database
 	if ($prefs['collection_type'] == 'sqlite') {
@@ -148,14 +148,14 @@ if ($mysqlc) {
 		$now = time();
 		generic_sql_query("VACUUM", true);
 		generic_sql_query("PRAGMA optimize", true);
-		logger::debug("CACHE CLEANER", "== Database Optimisation took ".format_time(time() - $now));
+		logger::trace("CACHE CLEANER", "== Database Optimisation took ".format_time(time() - $now));
 	}
 
-	logger::shout("CACHE CLEANER", "Database Tidying Is Complete");
+	logger::mark("CACHE CLEANER", "Database Tidying Is Complete");
 
 }
 
-logger::shout("CACHE CLEANER", "-----------------------------------------------------------------------");
+logger::mark("CACHE CLEANER", "-----------------------------------------------------------------------");
 
 function clean_cache_dir($dir, $time) {
 	logger::log("CACHE CLEANER", "Cache Cleaner is running on ".$dir);

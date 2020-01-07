@@ -16,7 +16,7 @@ var metaBackup = function() {
 	}
 
 	function goDoThings(thing, what) {
-		debug.mark("BACKUPS",thing,what);
+		debug.info("BACKUPS",thing,what);
 		metaHandlers.genericAction(
 			[{action: 'backup'+thing, which: what}],
 			function(data) {

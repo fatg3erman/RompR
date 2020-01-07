@@ -11,7 +11,7 @@ class mopidyPlayer extends base_mpd_player {
 
 	function musicCollectionUpdate() {
 		global $prefs;
-		logger::blurt("MOPIDY", "Starting Music Collection Update");
+		logger::mark("MOPIDY", "Starting Music Collection Update");
 		$collection = new musicCollection();
 		$this->monitor = fopen('prefs/monitor','w');
 		$dirs = $prefs['mopidy_collection_folders'];
@@ -275,7 +275,7 @@ class mopidyPlayer extends base_mpd_player {
 			);
 		}
 
-		logger::fail("STREAMHANDLER", "Stream Track",$filedata['file'],"from",$filedata['domain'],"was not found in database");
+		logger::warn("STREAMHANDLER", "Stream Track",$filedata['file'],"from",$filedata['domain'],"was not found in database");
 
 		if ($filedata['Album']) {
 			$album = $filedata['Album'];

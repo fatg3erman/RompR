@@ -80,7 +80,7 @@ switch (true) {
 		break;
 
 	default:
-		logger::fail("ALBUMS", "Couldn't figure out what to do!");
+		logger::warn("ALBUMS", "Couldn't figure out what to do!");
 		break;
 
 }
@@ -99,7 +99,7 @@ function checkDomains($d) {
 	if (array_key_exists('domains', $d)) {
 		return $d['domains'];
 	}
-	logger::debug("SEARCH", "No search domains in use");
+	logger::trace("SEARCH", "No search domains in use");
 	return false;
 }
 
@@ -170,14 +170,14 @@ function browse_album() {
 	$what = $matches[2];
 	$who = $matches[3];
 	$ad = get_album_details($who);
-	logger::log('BROWSEALBUM',$why,$what,$who,$ad[0]['Artistname']);
+	logger::trace('BROWSEALBUM',$why,$what,$who,$ad[0]['Artistname']);
 	$albumlink = get_albumlink($who);
 	$sorter = choose_sorter_by_key($_REQUEST['browsealbum']);
 	if (substr($albumlink, 0, 8) == 'podcast+') {
 		require_once ('podcasts/podcastfunctions.php');
-		logger::log("ALBUMS", "Browsing For Podcast ".substr($albumlink, 9));
+		logger::trace("ALBUMS", "Browsing For Podcast ".substr($albumlink, 9));
 		$podid = getNewPodcast(substr($albumlink, 8), 0, false);
-		logger::trace("ALBUMS", "Ouputting Podcast ID ".$podid);
+		logger::log("ALBUMS", "Ouputting Podcast ID ".$podid);
 		outputPodcast($podid, false);
 	} else {
 		// if (preg_match('/^.+?:artist:/', $albumlink)) {
@@ -239,7 +239,7 @@ function raw_search() {
 		foreach ($_REQUEST['rawterms'] as $key => $term) {
 			$cmd .= " ".$key.' "'.format_for_mpd(html_entity_decode($term[0])).'"';
 		}
-		logger::log("MPD SEARCH", "Search command : ".$cmd);
+		logger::trace("MPD SEARCH", "Search command : ".$cmd);
 		$doing_search = true;
 		$player = new $PLAYER_TYPE();
 		$player->populate_collection($cmd, $domains, $collection);
@@ -257,7 +257,7 @@ function raw_search() {
 		}
 		if (count($parms) > 0) {
 			$cmd .= '"'.implode(' ',$parms).'"';
-			logger::log("MPD SEARCH", "Search command : ".$cmd);
+			logger::trace("MPD SEARCH", "Search command : ".$cmd);
 			$doing_search = true;
 			$collection->filter_duplicate_tracks();
 			$player->populate_collection($cmd, $domains, $collection);

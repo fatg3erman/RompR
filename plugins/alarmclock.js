@@ -398,7 +398,7 @@ var alarmclock = function() {
 			$('i.stop-button').on('click', alarmclock.snooze);
 			var alarm = prefs.alarms[currentalarm];
 			if (alarm.alarmstopafter) {
-				debug.mark('ALARMCLOCK', 'Alarm will auto-stop in',alarm.alarmstopmins,'minutes');
+				debug.info('ALARMCLOCK', 'Alarm will auto-stop in',alarm.alarmstopmins,'minutes');
 				autostoptimer = setTimeout(alarmclock.autoStop, alarm.alarmstopmins*60000);
 			}
 			if (alarm.alarmplayitem) {
@@ -427,7 +427,7 @@ var alarmclock = function() {
 		},
 
 		snooze: function() {
-			debug.mark("ALARM","Snoozing");
+			debug.info("ALARM","Snoozing");
 			clearTimeout(alarmtimer);
 			clearTimeout(ramptimer);
 			$('.icon-sleep.alarmbutton').stopFlasher();

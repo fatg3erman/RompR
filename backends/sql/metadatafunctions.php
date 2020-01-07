@@ -62,7 +62,7 @@ class romprmetadata {
 		if ($data['artist'] === null ||
 			$data['title'] === null ||
 			$data['attributes'] == null) {
-			logger::error("USERRATING", "Something is not set", $data);
+			logger::error("SET", "Something is not set", $data);
 			header('HTTP/1.1 400 Bad Request');
 			print json_encode(array('error' => 'Artist or Title or Attributes not set'));
 			exit(0);
@@ -92,7 +92,7 @@ class romprmetadata {
 
 		if (count($ttids) == 0) {
 			$ttids[0] = create_new_track($data);
-			logger::log("USERRATINGS", "Created New Track with TTindex ".$ttids[0]);
+			logger::log("SET", "Created New Track with TTindex ".$ttids[0]);
 		}
 
 		if (count($ttids) > 0) {
@@ -102,7 +102,7 @@ class romprmetadata {
 				$returninfo['error'] = 'Setting attributes failed';
 			}
 		} else {
-			logger::fail("USERRATING", "TTID Not Found");
+			logger::warn("SET", "TTID Not Found");
 			header('HTTP/1.1 417 Expectation Failed');
 			$returninfo['error'] = 'TTindex not found';
 		}
@@ -126,21 +126,21 @@ class romprmetadata {
 		if (count($ttids) > 0) {
 			$ttid = $ttids[0];
 			if (track_is_hidden($ttid) || track_is_searchresult($ttid)) {
-				logger::mark("USERRATINGS", "Track ".$ttid." being added is a search result or a hidden track");
+				logger::mark("ADD", "Track ".$ttid." being added is a search result or a hidden track");
 				// Setting attributes (Rating: 0) will unhide/un-searchify it. Ratings of 0 are got rid of
 				// by remove_cruft at the end, because they're meaningless
 				if ($data['attributes'] == null) {
 					$data['attributes'] = array(array('attribute' => 'Rating', 'value'=> 0));
 				}
 			} else {
-				logger::warn("USERRATINGS", "Track being added already exists");
+				logger::warn("ADD", "Track being added already exists");
 			}
 		}
 
 		check_for_wishlist_track($data);
 
 		if ($ttid == null) {
-			logger::log("USERRATINGS", "Creating Track being added");
+			logger::log("ADD", "Creating Track being added");
 			$ttid = create_new_track($data);
 		}
 
@@ -155,14 +155,14 @@ class romprmetadata {
 		if ($data['artist'] === null ||
 			$data['title'] === null ||
 			$data['attributes'] == null) {
-			logger::error("USERRATING", "Something is not set",$data);
+			logger::error("INC", "Something is not set",$data);
 			header('HTTP/1.1 400 Bad Request');
 			print json_encode(array('error' => 'Artist or Title or Attributes not set'));
 			exit(0);
 		}
 		$ttids = romprmetadata::find_item($data, forcedUriOnly(false,getDomain($data['uri'])));
 		if (count($ttids) == 0) {
-			logger::log("USERRATING", "Doing an INCREMENT action - Found NOTHING so creating hidden track");
+			logger::trace("INC", "Doing an INCREMENT action - Found NOTHING so creating hidden track");
 			$data['hidden'] = 1;
 			$ttids[0] = create_new_track($data);
 		}
@@ -171,9 +171,9 @@ class romprmetadata {
 
 		if (count($ttids) > 0) {
 			foreach ($ttids as $ttid) {
-				logger::trace("USERRATING", "Doing an INCREMENT action - Found TTID ",$ttid);
+				logger::trace("INC", "Doing an INCREMENT action - Found TTID ",$ttid);
 				foreach ($data['attributes'] as $pair) {
-					logger::log("USERRATING", "(Increment) Setting",$pair["attribute"],"to",$pair["value"],"on",$ttid);
+					logger::log("INC", "(Increment) Setting",$pair["attribute"],"to",$pair["value"],"on",$ttid);
 					romprmetadata::increment_value($ttid, $pair["attribute"], $pair["value"], $data['lastplayed']);
 				}
 				$returninfo['metadata'] = get_all_data($ttid);
@@ -212,18 +212,17 @@ class romprmetadata {
 		}
 
 		romprmetadata::checkLastPlayed($data);
-		logger::log("SYNCINC", "LastPlayed is ".$data['lastplayed']);
 		foreach ($ttids as $ttid) {
-			logger::log("SYNCINC", "Doing a SYNC action on TTID ".$ttid);
+			logger::log("SYNCINC", "Doing a SYNC action on TTID ".$ttid,'LastPlayed is',$data['lastplayed']);
 			$rowcount = generic_sql_query("UPDATE Playcounttable SET SyncCount = SyncCount - 1, LastPlayed = '".$data['lastplayed']."' WHERE TTindex = ".$ttid." AND SyncCount > 0",
 				false, null, null, null, true);
 			if ($rowcount > 0) {
-				logger::log("SYNCINC", "  Decremented sync counter for this track");
+				logger::trace("SYNCINC", "  Decremented sync counter for this track");
 			} else {
 				$rowcount = generic_sql_query("UPDATE Playcounttable SET Playcount = Playcount + 1, LastPlayed = '".$data['lastplayed']."' WHERE TTindex = ".$ttid,
 					false, null, null, null, true);
 				if ($rowcount > 0) {
-					logger::log("SYNCINC", "  Incremented Playcount for this track");
+					logger::trace("SYNCINC", "  Incremented Playcount for this track");
 					// At this point, SyncCount must have been zero but the update will have incremented it again,
 					// because of the trigger. resetSyncCounts takes care of this;
 				} else {
@@ -271,10 +270,10 @@ class romprmetadata {
 			foreach ($ttids as $ttid) {
 				$result = true;
 				foreach ($data['attributes'] as $pair) {
-					logger::trace("USERRATING", "Removing",$pair);
+					logger::log("REMOVE", "Removing",$pair);
 					$r = romprmetadata::remove_tag($ttid, $pair["value"]);
 					if ($r == false) {
-						logger::fail("USERRATING", "FAILED Removing",$pair);
+						logger::warn("REMOVE", "FAILED Removing",$pair);
 						$result = false;
 					}
 				}
@@ -286,7 +285,7 @@ class romprmetadata {
 				}
 			}
 		} else {
-			logger::fail("USERRATING", "TTID Not Found");
+			logger::warn("USERRATING", "TTID Not Found");
 			header('HTTP/1.1 417 Expectation Failed');
 			$returninfo['error'] = 'TTindex not found';
 		}
@@ -313,9 +312,9 @@ class romprmetadata {
 		$ttids = romprmetadata::find_item($data, forcedUriOnly(false, getDomain($data['uri'])));
 		if (count($ttids) > 0) {
 			foreach ($ttids as $ttid) {
-				logger::log("BACKEND", "Updating album MBID ".$data['attributes']." from TTindex ".$ttid);
+				logger::trace("BACKEND", "Updating album MBID ".$data['attributes']." from TTindex ".$ttid);
 				$albumindex = simple_query('Albumindex', 'Tracktable', 'TTindex', $ttid, null);
-				logger::trace("BACKEND", "   .. album index is ".$albumindex);
+				logger::debug("BACKEND", "   .. album index is ".$albumindex);
 				sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET mbid = ? WHERE Albumindex = ? AND mbid IS NULL",$data['attributes'],$albumindex);
 			}
 		}
@@ -333,7 +332,7 @@ class romprmetadata {
 	}
 
 	public static function cleanup($data) {
-		logger::log("SQL", "Doing Database Cleanup And Stats Update");
+		logger::info("CLEANUP", "Doing Database Cleanup And Stats Update");
 		remove_cruft();
 		update_track_stats();
 		doCollectionHeader();
@@ -399,7 +398,7 @@ class romprmetadata {
 	public static function clearwishlist() {
 		logger::log("MONKEYS", "Removing Wishlist Tracks");
 		if (clear_wishlist()) {
-			logger::log("MONKEYS", " ... Success!");
+			logger::debug("MONKEYS", " ... Success!");
 		} else {
 			logger::warn("MONKEYS", "Failed removing wishlist tracks");
 		}
@@ -433,7 +432,7 @@ class romprmetadata {
 	static function print_debug_ttids($ttids, $s) {
 		$time = time() - $s;
 		if (count($ttids) > 0) {
-			logger::log("TIMINGS", "    Found TTindex(es)",$ttids,"in",$time,"seconds");
+			logger::info("TIMINGS", "    Found TTindex(es)",$ttids,"in",$time,"seconds");
 		}
 	}
 
@@ -475,10 +474,10 @@ class romprmetadata {
 		// looked up by TTindex
 
 		$start_time = time();
-		logger::shout("FIND ITEM", "Looking for item ".$data['title']);
+		logger::mark("FIND ITEM", "Looking for item ".$data['title']);
 		$ttids = array();
 		if ($urionly && $data['uri']) {
-			logger::mark("FIND ITEM", "  Trying by URI ".$data['uri']);
+			logger::log("FIND ITEM", "  Trying by URI ".$data['uri']);
 			$t = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null, "SELECT TTindex FROM Tracktable WHERE Uri = ?", $data['uri']);
 			$ttids = array_merge($ttids, $t);
 		}
@@ -491,7 +490,7 @@ class romprmetadata {
 		if (count($ttids) == 0) {
 			if ($data['album']) {
 				if ($data['albumartist'] !== null && $data['trackno'] != 0) {
-					logger::mark("FIND ITEM", "  Trying by albumartist",$data['albumartist'],"album",$data['album'],"title",$data['title'],"track number",$data['trackno']);
+					logger::log("FIND ITEM", "  Trying by albumartist",$data['albumartist'],"album",$data['album'],"title",$data['title'],"track number",$data['trackno']);
 					$t = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
 						"SELECT
 							TTindex
@@ -508,7 +507,7 @@ class romprmetadata {
 				}
 
 				if (count($ttids) == 0 && $data['albumartist'] !== null) {
-					logger::mark("FIND ITEM", "  Trying by albumartist",$data['albumartist'],"album",$data['album'],"and title",$data['title']);
+					logger::log("FIND ITEM", "  Trying by albumartist",$data['albumartist'],"album",$data['album'],"and title",$data['title']);
 					$t = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
 						"SELECT
 							TTindex
@@ -524,7 +523,7 @@ class romprmetadata {
 				}
 
 				if (count($ttids) == 0 && ($data['albumartist'] == null || $data['albumartist'] == $data['artist'])) {
-					logger::mark("FIND ITEM", "  Trying by artist",$data['artist'],",album",$data['album'],"and title",$data['title']);
+					logger::log("FIND ITEM", "  Trying by artist",$data['artist'],",album",$data['album'],"and title",$data['title']);
 					$t = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
 						"SELECT
 							TTindex
@@ -540,7 +539,7 @@ class romprmetadata {
 
 				// Finally look for Uri NULL which will be a wishlist item added via a radio station
 				if (count($ttids) == 0) {
-					logger::mark("FIND ITEM", "  Trying by (wishlist) artist",$data['artist'],"and title",$data['title']);
+					logger::log("FIND ITEM", "  Trying by (wishlist) artist",$data['artist'],"and title",$data['title']);
 					$t = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
 						"SELECT
 							TTindex
@@ -556,7 +555,7 @@ class romprmetadata {
 			} else {
 				// No album supplied - ie this is from a radio stream. First look for a match where
 				// there is something in the album field
-				logger::mark("FIND ITEM", "  Trying by artist",$data['artist'],"Uri NOT NULL and title",$data['title']);
+				logger::log("FIND ITEM", "  Trying by artist",$data['artist'],"Uri NOT NULL and title",$data['title']);
 				$t = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
 					"SELECT
 						TTindex
@@ -569,7 +568,7 @@ class romprmetadata {
 				$ttids = array_merge($ttids, $t);
 
 				if (count($ttids) == 0) {
-					logger::mark("FIND ITEM", "  Trying by (wishlist) artist",$data['artist'],"and title",$data['title']);
+					logger::log("FIND ITEM", "  Trying by (wishlist) artist",$data['artist'],"and title",$data['title']);
 					$t = sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
 						"SELECT
 							TTindex
@@ -593,11 +592,11 @@ class romprmetadata {
 		// unhiding them. It's used for Playcount, which was originally an 'increment' type function but
 		// that changed because multiple rompr instances cause multiple increments
 
-		logger::mark("INCREMENT", "Setting",$attribute,"to",$value,"for TTID",$ttid);
+		logger::log("INCREMENT", "Setting",$attribute,"to",$value,"for TTID",$ttid);
 		if (sql_prepare_query(true, null, null, null, "REPLACE INTO ".$attribute."table (TTindex, ".$attribute.", LastPlayed) VALUES (?, ?, ?)", $ttid, $value, $lp)) {
-			logger::trace("INCREMENT", " .. success");
+			logger::debug("INCREMENT", " .. success");
 		} else {
-			logger::fail("INCREMENT", "FAILED Setting",$attribute,"to",$value,"for TTID",$ttid);
+			logger::warn("INCREMENT", "FAILED Setting",$attribute,"to",$value,"for TTID",$ttid);
 			return false;
 		}
 		return true;
@@ -608,11 +607,11 @@ class romprmetadata {
 
 		// set_attribute
 		//		Sets an attribute (Rating, Tag etc) on a TTindex.
-		logger::mark("ATTRIBUTE", "Setting",$attribute,"to",$value,"on",$ttid);
+		logger::log("ATTRIBUTE", "Setting",$attribute,"to",$value,"on",$ttid);
 		if (sql_prepare_query(true, null, null, null, "REPLACE INTO ".$attribute."table (TTindex, ".$attribute.") VALUES (?, ?)", $ttid, $value)) {
-			logger::trace("ATTRIBUTE", "  .. success");
+			logger::debug("ATTRIBUTE", "  .. success");
 		} else {
-			logger::fail("ATTRIBUTE", "FAILED Setting",$attribute,"to",$value,"on",$ttid);
+			logger::warn("ATTRIBUTE", "FAILED Setting",$attribute,"to",$value,"on",$ttid);
 			return false;
 		}
 		return true;
@@ -621,9 +620,9 @@ class romprmetadata {
 	static function doTheSetting($ttids, $attributes, $uri) {
 		global $returninfo;
 		$result = true;
-		logger::trace("USERRATING", "Checking For attributes");
+		logger::debug("USERRATING", "Checking For attributes");
 		if ($attributes !== null) {
-			logger::trace("USERRATING", "Setting attributes");
+			logger::debug("USERRATING", "Setting attributes");
 			foreach($ttids as $ttid) {
 				logger::debug("USERRATING", "TTid ".$ttid);
 				foreach ($attributes as $pair) {
@@ -669,16 +668,16 @@ class romprmetadata {
 		foreach ($tags as $tag) {
 			$t = trim($tag);
 			if ($t == '') continue;
-			logger::mark("ADD TAGS", "Adding Tag",$t,"to TTindex",$ttid);
+			logger::log("ADD TAGS", "Adding Tag",$t,"to TTindex",$ttid);
 			$tagindex = sql_prepare_query(false, null, 'Tagindex', null, "SELECT Tagindex FROM Tagtable WHERE Name=?", $t);
 			if ($tagindex == null) $tagindex = romprmetadata::create_new_tag($t);
 			if ($tagindex == null) {
-				logger::fail("ADD TAGS", "    Could not create tag",$t);
+				logger::warn("ADD TAGS", "    Could not create tag",$t);
 				return false;
 			}
 
 			if ($result = generic_sql_query("INSERT INTO TagListtable (TTindex, Tagindex) VALUES ('".$ttid."', '".$tagindex."')", true)) {
-				logger::trace("ADD TAGS", "Success");
+				logger::debug("ADD TAGS", "Success");
 			} else {
 				// Doesn't matter, we have a UNIQUE constraint on both columns to prevent us adding the same tag twice
 				logger::debug("ADD TAGS", "  .. Failed but that's OK if it's because of a duplicate entry or UNQIUE constraint");
@@ -707,12 +706,12 @@ class romprmetadata {
 		// remove_tags
 		//		Removes a tag relation from a TTindex
 
-		logger::mark("REMOVE TAG", "Removing Tag",$tag,"from TTindex",$ttid);
+		logger::log("REMOVE TAG", "Removing Tag",$tag,"from TTindex",$ttid);
 		$retval = false;
 		if ($tagindex = simple_query('Tagindex', 'Tagtable', 'Name', $tag, false)) {
 			$retval = generic_sql_query("DELETE FROM TagListtable WHERE TTindex = '".$ttid."' AND Tagindex = '".$tagindex."'", true);
 		} else {
-			logger::fail("REMOVE TAG", "  ..  Could not find tag",$tag);
+			logger::warn("REMOVE TAG", "  ..  Could not find tag",$tag);
 		}
 		return $retval;
 	}
@@ -749,9 +748,9 @@ class romprmetadata {
 			if ($albumindex != $newalbumindex) {
 				logger::log("AMEND ALBUM", "Moving all tracks from album",$albumindex,"to album",$newalbumindex);
 				if (sql_prepare_query(true, null, null, null, "UPDATE Tracktable SET Albumindex = ? WHERE Albumindex = ?", $newalbumindex, $albumindex)) {
-					logger::trace("AMEND ALBUM", "...Success");
+					logger::debug("AMEND ALBUM", "...Success");
 				} else {
-					logger::fail("AMEND ALBUM", "Track move Failed!");
+					logger::warn("AMEND ALBUM", "Track move Failed!");
 					return false;
 				}
 			}
@@ -797,7 +796,7 @@ function preparePlaylist() {
 
 function doPlaylist($playlist, $limit) {
 	global $prefs;
-	logger::blurt("SMARTRADIO", "Loading Playlist",$playlist,'limit',$limit);
+	logger::mark("SMARTRADIO", "Loading Playlist",$playlist,'limit',$limit);
 	$sqlstring = "";
 	$tags = null;
 	$random = true;
@@ -865,7 +864,7 @@ function doPlaylist($playlist, $limit) {
 				$sqlstring .= '(';
 				$tags = array();
 				foreach ($taglist as $i => $tag) {
-					logger::mark("SMART RADIO", "Getting tag playlist for",$tag);
+					logger::trace("SMART RADIO", "Getting tag playlist for",$tag);
 					$tags[] = trim($tag);
 					if ($i > 0) {
 						$sqlstring .= " OR ";
@@ -875,7 +874,7 @@ function doPlaylist($playlist, $limit) {
 				$sqlstring .= ") AND Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 AND
 					Tracktable.isSearchResult < 2 ";
 			} else {
-				logger::fail("SMART RADIO", "Unrecognised playlist",$playlist);
+				logger::warn("SMART RADIO", "Unrecognised playlist",$playlist);
 			}
 			break;
 	}
@@ -901,7 +900,7 @@ function getAllURIs($sqlstring, $limit, $tags, $random = true) {
 	logger::log('GETALLURIS', $sqlstring);
 	do {
 		if ($tries == 1) {
-			logger::log("SMART PLAYLIST", "No URIs found. Resetting history table");
+			logger::info("SMART PLAYLIST", "No URIs found. Resetting history table");
 			preparePlaylist();
 		}
 		if ($tags) {

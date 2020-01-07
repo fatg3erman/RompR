@@ -65,7 +65,7 @@ class sortby_albumbyartist extends sortby_base {
 	}
 
 	public function output_root_list() {
-		logger::trace('SORTBY_ALBUMBYARTIST', 'Generating Album Root List');
+		logger::debug('SORTBY_ALBUMBYARTIST', 'Generating Album Root List');
 		$count = 0;
 		$current_artist = null;
 		foreach ($this->root_sort_query() as $album) {

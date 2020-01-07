@@ -55,7 +55,7 @@ class sortby_base {
 		$divtype = 'album1';
 		$a = preg_match('/(a|b|c|r|t|y|u|z)(.*?)(\d+|root)_*(\d+)*/', $which, $matches);
 		if (!$a) {
-			logger::fail("SORTBY", "Sort Init failed - regexp failed to match",$which);
+			logger::warn("SORTBY", "Sort Init failed - regexp failed to match",$which);
 			return false;
 		}
 		$this->why = $matches[1];
@@ -64,9 +64,9 @@ class sortby_base {
 		if (array_key_exists(4, $matches)) {
 			$this->when = $matches[4];
 		}
-		logger::log('SORTER', 'Initialised',$this->why,$this->what,$this->who);
+		logger::debug('SORTER', 'Initialised',$this->why,$this->what,$this->who);
 		if ($this->when) {
-			logger::log('SORTER', '  Root item key is',$this->when);
+			logger::debug('SORTER', '  Root item key is',$this->when);
 		}
 	}
 
@@ -286,7 +286,7 @@ class sortby_base {
 		$total_time = 0;
 		$tracktype = null;
 		foreach ($trackarr as $arr) {
-			logger::log('SORTBY', 'Track', $arr['title']);
+			logger::debug('SORTBY', 'Track', $arr['title']);
 			$total_time += $arr['time'];
 			if ($numdiscs > 1 && $arr['disc'] != $currdisc && $arr['disc'] > 0) {
 				$currdisc = $arr['disc'];

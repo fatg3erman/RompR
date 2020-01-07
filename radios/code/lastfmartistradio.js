@@ -115,7 +115,7 @@ var lastFMArtistRadio = function() {
 
 		gotASimilar: function(data) {
 			if (data.similarartists) {
-				debug.mark(medebug,"Got Similar Artists For",data.similarartists['@attr'].artist);
+				debug.info(medebug,"Got Similar Artists For",data.similarartists['@attr'].artist);
 				if (data.similarartists.artist) {
 					for (var artist of data.similarartists.artist) {
 						tuner.newArtist(artist.name);

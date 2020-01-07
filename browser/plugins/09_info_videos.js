@@ -107,7 +107,7 @@ var info_videos = function() {
 						if (displaying && albummeta.discogs.album !== undefined && trackmeta.discogs.track !== undefined &&
 								(albummeta.discogs.album.error !== undefined ||	albummeta.discogs.album.master !== undefined) &&
 								(trackmeta.discogs.track.error !== undefined ||	trackmeta.discogs.track.master !== undefined)) {
-							debug.mark("VIDEOS PLUGIN",parent.nowplayingindex,"track was asked to display");
+							debug.info("VIDEOS PLUGIN",parent.nowplayingindex,"track was asked to display");
 							browser.Update(null, 'track', me, parent.nowplayingindex, { name: artistmeta.name+' / '+trackmeta.name,
 													link: "",
 													data: getVideosHtml()

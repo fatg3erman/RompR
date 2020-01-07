@@ -81,7 +81,7 @@ class sortby_artist extends sortby_base {
 	}
 
 	public function output_root_list() {
-		logger::trace('SORTBY_ARTIST', 'Generating Artist Root List');
+		logger::debug('SORTBY_ARTIST', 'Generating Artist Root List');
 		global $divtype;
 		$count = 0;
 		foreach ($this->root_sort_query() as $artist) {

@@ -7,7 +7,7 @@ require_once ("includes/vars.php");
 // Check to see if this is a mobile browser
 //
 if ($skin === null) {
-   logger::blurt("INIT", "Detecting window size to decide which skin to use....");
+   logger::mark("INIT", "Detecting window size to decide which skin to use....");
    include('checkwindowsize.php');
    exit(0);
 }
@@ -75,7 +75,7 @@ if (array_key_exists('currenthost', $_POST)) {
 
 $collections = glob('prefs/collection_{mpd,mopidy}.sq3', GLOB_BRACE);
 if (count($collections) > 0) {
-	logger::blurt('UPGRADE', 'Old-style twin sqlite collections found');
+	logger::mark('UPGRADE', 'Old-style twin sqlite collections found');
 	@mkdir('prefs/oldcollections');
 	$time = 0;
 	$newest = null;
@@ -117,7 +117,7 @@ $player = new base_mpd_player();
 if ($player->is_connected()) {
 	$mpd_status = $player->get_status();
 	if (array_key_exists('error', $mpd_status)) {
-		logger::fail("INIT", "MPD Password Failed or other status failure");
+		logger::warn("INIT", "MPD Password Failed or other status failure");
 		connect_fail(get_int_text("setup_connecterror").$mpd_status['error']);
 	}
 } else {
@@ -157,7 +157,7 @@ savePrefs();
 include ("includes/firstrun.php");
 logger::trace("INIT", "Last Last.FM Sync Time is ".$prefs['last_lastfm_synctime'].", ".date('r', $prefs['last_lastfm_synctime']));
 logger::log("INIT", "Initialisation done. Let's Boogie!");
-logger::shout("CREATING PAGE", "******++++++======------******------======++++++******");
+logger::mark("CREATING PAGE", "******++++++======------******------======++++++******");
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -298,11 +298,11 @@ include('skins/'.$skin.'/skin.php');
 </body>
 </html>
 <?php
-logger::shout("INIT FINISHED", "******++++++======------******------======++++++******");
+logger::mark("INIT FINISHED", "******++++++======------******------======++++++******");
 
 function connect_fail($t) {
 	global $title, $prefs;
-	logger::fail("INIT", "MPD Connection Failed");
+	logger::warn("INIT", "MPD Connection Failed");
 	$title = $t;
 	include("setupscreen.php");
 	exit();

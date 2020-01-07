@@ -343,7 +343,7 @@ jQuery.fn.playlistTouchWipe = function(settings) {
 		}
 
 		function longPress() {
-			debug.mark("TOUCHWIPE","Long Press");
+			debug.info("TOUCHWIPE","Long Press");
 			pressing = true;
 			// Unbind click handler from playlist, otherwise the touchend
 			// event makes it start playing the clicked track.

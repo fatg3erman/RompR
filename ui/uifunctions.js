@@ -1002,7 +1002,7 @@ var spotifyLinkChecker = function() {
 			}
 			spotify.tracks.checkLinking(ids, gotSpotiResponse, gotNoSpotiResponse, false);
 		} else {
-			debug.mark("SPOTICHECKER","No more tracks to check");
+			debug.info("SPOTICHECKER","No more tracks to check");
 			prefs.save({linkchecker_isrunning: false});
 		}
 	}
@@ -1022,12 +1022,12 @@ var spotifyLinkChecker = function() {
 					uri = track.uri;
 					debug.debug("SPOTICHECKER", "Track is playable");
 					if (track.linked_from) {
-						debug.mark("SPOTICHECKER", "Track was relinked",track);
+						debug.info("SPOTICHECKER", "Track was relinked",track);
 						uri = track.linked_from.uri;
 					}
 					update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: uri, status: 2});
 				} else {
-					debug.mark("SPOTICHECKER", "Track is NOT playable", track.album.name, track.name);
+					debug.info("SPOTICHECKER", "Track is NOT playable", track.album.name, track.name);
 					if (track.restrictions) {
 						debug.blurt("SPOTICHECKER", "Track restrictions :",track.restrictions.reason)
 					}
@@ -1062,16 +1062,16 @@ var spotifyLinkChecker = function() {
 
 		initialise: function() {
 			if (prefs.linkchecker_isrunning) {
-				debug.mark("SPOTICHECKER","Link Checker Continuing");
+				debug.info("SPOTICHECKER","Link Checker Continuing");
 				updateNextRunTime();
 				spotifyLinkChecker.setTimer();
 			} else {
 				if (Date.now() > prefs.linkchecker_nextrun) {
-					debug.mark("SPOTICHECKER","Link Checker Restarting",Date.now(),prefs.linkchecker_nextrun);
+					debug.info("SPOTICHECKER","Link Checker Restarting",Date.now(),prefs.linkchecker_nextrun);
 					updateNextRunTime();
 					metaHandlers.genericAction('resetlinkcheck', spotifyLinkChecker.setTimer, goneTitsUp);
 				} else {
-					debug.mark("SPOTICHECKER","Link Checker Not Starting Yet");
+					debug.info("SPOTICHECKER","Link Checker Not Starting Yet");
 				}
 			}
 		}

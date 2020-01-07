@@ -40,7 +40,7 @@ var collectionHelper = function() {
 		// and there's no way to stop that.
 		// We rely on the update monitor to keep polling the server until it gets 'RompR Is Done'
 		// at which point it will load the collection.
-		debug.mark('GENERAL', 'Initiating Collection Rebuild');
+		debug.info('GENERAL', 'Initiating Collection Rebuild');
 		var albums = 'albums.php?rebuild=yes';
 		$.ajax({
 			type: "GET",
@@ -50,7 +50,7 @@ var collectionHelper = function() {
 			cache: false
 		})
 		.done(function() {
-			debug.mark('GENERAL','Collection Rebuild has Started. Polling From Here.');
+			debug.info('GENERAL','Collection Rebuild has Started. Polling From Here.');
 			monitortimer = setTimeout(checkUpdateMonitor,monitorduration);
 		})
 		.fail(function(data) {
@@ -74,7 +74,7 @@ var collectionHelper = function() {
 		.done(function(data) {
 			debug.trace("UPDATE",data);
 			if (data.current == 'RompR Is Done') {
-				debug.mark('GENERAL', 'Collection Update Finished');
+				debug.info('GENERAL', 'Collection Update Finished');
 				infobar.notify(language.gettext('label_updatedone'));
 				infobar.removenotify(notify);
 				loadCollection();
@@ -96,7 +96,7 @@ var collectionHelper = function() {
 	function loadCollection() {
 		if (!prefs.hide_albumlist) {
 			var albums = 'albums.php?item='+collectionHelper.collectionKey('a');
-			debug.mark("GENERAL","Loading Collection from URL",albums);
+			debug.info("GENERAL","Loading Collection from URL",albums);
 			$.ajax({
 				type: "GET",
 				url: albums,
@@ -182,7 +182,7 @@ var collectionHelper = function() {
 			return false;
 		}
 		var files = 'dirbrowser.php';
-		debug.mark("GENERAL","Loading File Browser from URL",files);
+		debug.info("GENERAL","Loading File Browser from URL",files);
 		$("#filecollection").load(files);
 	}
 
@@ -356,11 +356,11 @@ var collectionHelper = function() {
 			}
 			var update = forceup;
 			if (prefs.updateeverytime && prefs.player_backend == prefs.collection_player) {
-				debug.mark("COLLECTION","Updating Collection due to preference");
+				debug.info("COLLECTION","Updating Collection due to preference");
 				update = true;
 			} else {
 				if (!prefs.hide_albumlist && collection_status == 1 && prefs.player_backend == prefs.collection_player) {
-					debug.mark("COLLECTION","Updating Collection because it is out of date");
+					debug.info("COLLECTION","Updating Collection because it is out of date");
 					collection_status = 0;
 					update = true;
 				}

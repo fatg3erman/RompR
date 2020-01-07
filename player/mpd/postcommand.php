@@ -34,16 +34,16 @@ if ($player->is_connected()) {
 
 		foreach ($json as $cmd) {
 
-			logger::trace("POSTCOMMAND", "RAW command : ".multi_implode($cmd, " "));
+			logger::debug("POSTCOMMAND", "RAW command : ".multi_implode($cmd, " "));
 
 			switch ($cmd[0]) {
 				case "addtoend":
-					logger::trace("POSTCOMMAND", "Addtoend ".$cmd[1]);
+					logger::log("POSTCOMMAND", "Addtoend ".$cmd[1]);
 					$cmds = array_merge($cmds, playAlbumFromTrack($cmd[1]));
 					break;
 
 				case 'playlisttoend':
-					logger::trace("POSTCOMMAND", "Playing playlist ".$cmd[1]." from position ".$cmd[2]." to end");
+					logger::log("POSTCOMMAND", "Playing playlist ".$cmd[1]." from position ".$cmd[2]." to end");
 					foreach($player->get_stored_playlist_tracks($cmd[1], $cmd[2]) as list($class, $uri, $filedata)) {
 						if ($class == 'clicktrack') {
 							$cmds[] = 'add "'.$uri.'"';
@@ -54,12 +54,12 @@ if ($player->is_connected()) {
 					break;
 
 				case "additem":
-					logger::trace("POSTCOMMAND", "Adding Item ".$cmd[1]);
+					logger::log("POSTCOMMAND", "Adding Item ".$cmd[1]);
 					$cmds = array_merge($cmds, getItemsToAdd($cmd[1], null));
 					break;
 
 				case "addartist":
-					logger::trace("MPD", "Getting tracks for Artist ".$cmd[1]);
+					logger::log("MPD", "Getting tracks for Artist ".$cmd[1]);
 					$cmds = array_merge($cmds, $player->get_tracks_for_spotify_artist($cmd[1]));
 					break;
 
@@ -74,7 +74,7 @@ if ($player->is_connected()) {
 					// First, see if we can just 'load' the remote playlist. This is better with MPD
 					// as it parses track names from the playlist
 					if ($player->check_track_load_command($cmd[1]) == 'load') {
-						logger::log("POSTCOMMAND", "Loading remote playlist");
+						logger::trace("POSTCOMMAND", "Loading remote playlist");
 						$cmds[] = join_command_string(array('load', $cmd[1]));
 					} else {
 						// Always use the MPD version of the stream playlist handler, since that parses
@@ -83,7 +83,7 @@ if ($player->is_connected()) {
 						// and 'add' only adds the first track. As user remtote playlists can have multiple types of
 						// thing in them, including streams, we need to 'add' every track - unless we're using mpd and
 						// the 'track' is a playlist we need to load..... Crikey.
-						logger::log("POSTCOMMAND", "Adding remote playlist (track by track)");
+						logger::trace("POSTCOMMAND", "Adding remote playlist (track by track)");
 						require_once ("player/mpd/streamplaylisthandler.php");
 						require_once ("utils/getInternetPlaylist.php");
 						$tracks = load_internet_playlist($cmd[1], '', '', true);
@@ -108,7 +108,7 @@ if ($player->is_connected()) {
 						$cmds = array_merge($cmds, getItemsToAdd($cmd[2], $cmd[0].' "'.format_for_mpd($cmd[1]).'"'));
 						check_playlist_add_move($cmd, (count($cmds) - $lengthnow));
 					} else {
-						logger::log('POSTCOMMAND',$cmd[0], $cmd[1], $cmd[2]);
+						logger::trace('POSTCOMMAND',$cmd[0], $cmd[1], $cmd[2]);
 						$cmds[] = join_command_string(array($cmd[0], $cmd[1], $cmd[2]));
 						check_playlist_add_move($cmd, 1);
 					}
@@ -256,7 +256,7 @@ if ($player->is_connected()) {
 	//
 
 	if (array_key_exists('error', $mpd_status)) {
-		logger::log("MPD", "Clearing Player Error ".$mpd_status['error']);
+		logger::trace("MPD", "Clearing Player Error ".$mpd_status['error']);
 		$player->clear_error();
 	}
 

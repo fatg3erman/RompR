@@ -344,11 +344,12 @@ $private_prefs = array(
 loadPrefs();
 
 if (defined('ROMPR_IS_LOADING')) {
-	logger::log("INIT", "******++++++======------******------======++++++******");
+	logger::mark("INIT", "******++++++======------******------======++++++******");
+	logger::mark("INIT", "******++++++===== Hello Music Lovers =====++++++******");
 }
 
 if (array_key_exists('REQUEST_URI', $_SERVER)) {
-	logger::debug("REQUEST", $_SERVER['REQUEST_URI']);
+	logger::core("REQUEST", $_SERVER['REQUEST_URI']);
 }
 
 if (!property_exists($prefs['multihosts'], $prefs['currenthost'])) {
@@ -361,7 +362,7 @@ if (!property_exists($prefs['multihosts'], $prefs['currenthost'])) {
 	}
 }
 
-logger::debug("INIT", "Using MPD Host ".$prefs['currenthost']);
+logger::core("INIT", "Using MPD Host ".$prefs['currenthost']);
 
 if (!array_key_exists('currenthost', $_COOKIE)) {
 	setcookie('currenthost',$prefs['currenthost'],time()+365*24*60*60*10,'/');
@@ -373,10 +374,10 @@ if (!array_key_exists('currenthost', $_COOKIE)) {
 $skin = null;
 if(array_key_exists('skin', $_REQUEST)) {
 	$skin = $_REQUEST['skin'];
-	logger::log("INIT", "Request asked for skin: ".$skin);
+	logger::mark("INIT", "Request asked for skin: ".$skin);
 } else if (array_key_exists('skin', $_COOKIE)) {
 	$skin = $_COOKIE['skin'];
-	logger::debug("INIT", "Using skin as set by Cookie: ".$skin);
+	logger::core("INIT", "Using skin as set by Cookie: ".$skin);
 }
 if ($skin !== null) {
 	$skin = trim($skin);
@@ -420,7 +421,7 @@ function loadPrefs() {
 						if ($v === 'false') { $v = false; }
 						if ($v === 'true') { $v = true; }
 						$prefs[$a] = $v;
-						logger::debug('COOKIEPREFS',"Pref",$a,"is set by Cookie - Value :",$v);
+						logger::core('COOKIEPREFS',"Pref",$a,"is set by Cookie - Value :",$v);
 					}
 				}
 		  } else {
@@ -438,7 +439,7 @@ function loadPrefs() {
 
 function set_music_directory($dir) {
 	$prefs['music_directory_albumart'] = rtrim($dir, '/');
-	logger::log("SAVEPREFS", "Creating Album Art SymLink to ".$dir);
+	logger::mark("SAVEPREFS", "Creating Album Art SymLink to ".$dir);
 	if (is_link("prefs/MusicFolders")) {
 		system ("unlink prefs/MusicFolders");
 	}
@@ -475,13 +476,12 @@ class logger {
 	private static $debug_names = array(
 		1 => 'ERROR',
 		2 => 'WARN ',
-		3 => 'FAIL ',
-		4 => 'BLURT',
-		5 => 'SHOUT',
-		6 => 'MARK ',
-		7 => 'LOG  ',
-		8 => 'TRACE',
-		9 => 'DEBUG'
+		3 => 'MARK ',
+		4 => 'INFO ',
+		5 => 'LOG  ',
+		6 => 'TRACE',
+		7 => 'DEBUG',
+		8 => 'CORE '
 	);
 
 	public static function setLevel($level) {
@@ -523,55 +523,49 @@ class logger {
 		}
 	}
 
-	// Level 9
-	public static function debug() {
-		$parms = func_get_args();
-		logger::dothelogging(9, $parms);
-	}
-
-	// Level 8
-	public static function trace() {
+	// Level 8 - CORE for continuous running commentary
+	public static function core() {
 		$parms = func_get_args();
 		logger::dothelogging(8, $parms);
 	}
 
-	// Level 7
-	public static function log() {
+	// Level 7 - DEBUG for low level complex info
+	public static function debug() {
 		$parms = func_get_args();
 		logger::dothelogging(7, $parms);
 	}
 
-	// Level 6
-	public static function mark() {
+	// Level 6 - TRACE for in-function details
+	public static function trace() {
 		$parms = func_get_args();
 		logger::dothelogging(6, $parms);
 	}
 
-	// Level 5
-	public static function shout() {
+	// Level 5 - LOG for following code flow
+	public static function log() {
 		$parms = func_get_args();
 		logger::dothelogging(5, $parms);
 	}
 
-	// Level 4
-	public static function blurt() {
+	// Level 4 - INFO for information
+	public static function info() {
 		$parms = func_get_args();
 		logger::dothelogging(4, $parms);
 	}
 
-	// Level 3
-	public static function fail() {
+	// Level 3 - MARK for important information
+	public static function mark() {
 		$parms = func_get_args();
 		logger::dothelogging(3, $parms);
 	}
 
-	// Level 2
+	// Level 2 - WARN for things that go wrong
 	public static function warn() {
 		$parms = func_get_args();
 		logger::dothelogging(2, $parms);
 	}
 
-	// Level 1
+	// Level 1 - ERROR for serious errors
 	public static function error() {
 		$parms = func_get_args();
 		logger::dothelogging(1, $parms);

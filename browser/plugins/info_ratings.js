@@ -140,7 +140,7 @@ var info_ratings = function() {
 						}
 					);
 				} else {
-					debug.mark("RATINGS PLUGIN",parent.nowplayingindex,"is already populated");
+					debug.info("RATINGS PLUGIN",parent.nowplayingindex,"is already populated");
 					doThingsWithData();
 				}
 			}

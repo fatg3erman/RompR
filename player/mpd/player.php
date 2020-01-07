@@ -189,7 +189,7 @@ class mpdPlayer extends base_mpd_player {
 			);
 		}
 
-		logger::fail("STREAMHANDLER", "Stream Track",$filedata['file'],"from",$filedata['domain'],"was not found indatabase");
+		logger::warn("STREAMHANDLER", "Stream Track",$filedata['file'],"from",$filedata['domain'],"was not found indatabase");
 
 		if ($filedata['Name']) {
 			logger::log("STREAMHANDLER", "  Setting Album from Name ".$filedata['Name']);

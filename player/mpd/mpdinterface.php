@@ -45,7 +45,7 @@ class base_mpd_player {
 				$this->is_slave = false;
 			}
 		}
-		logger::debug("MPDPLAYER", "Creating Player for",$this->ip.':'.$this->port);
+		logger::core("MPDPLAYER", "Creating Player for",$this->ip.':'.$this->port);
 		$this->open_mpd_connection();
 		if ($player_type !== null) {
 			$this->player_type = $player_type;
@@ -71,7 +71,7 @@ class base_mpd_player {
 		$errstr = null;
 
 		while (!$this->is_connected() && $retries > 0) {
-			logger::debug('MPD', 'Opening Connection For',$this->debug_id);
+			logger::core('MPD', 'Opening Connection For',$this->debug_id);
 			if ($this->socket != "") {
 				$this->connection = @stream_socket_client('unix://'.$this->socket, $errno, $errstr, 10, STREAM_CLIENT_CONNECT);
 			} else {
@@ -117,7 +117,7 @@ class base_mpd_player {
 
 	public function close_mpd_connection() {
 		if ($this->is_connected()) {
-			logger::debug('MPD', 'Closing Connection for',$this->debug_id);
+			logger::core('MPD', 'Closing Connection for',$this->debug_id);
 			stream_socket_shutdown($this->connection, STREAM_SHUT_RDWR);
 		}
 	}
@@ -180,8 +180,11 @@ class base_mpd_player {
 
 		$retarr = array();
 		if ($this->is_connected()) {
-
-			logger::debug("MPD", "MPD Command",$command);
+			if ($command == 'status') {
+				logger::core("MPD", "MPD Command",$command);
+			} else {
+				logger::trace("MPD", "MPD Command",$command);
+			}
 			$success = true;
 			if ($command != '') {
 				$success = $this->send_command($command);
@@ -255,7 +258,7 @@ class base_mpd_player {
 				$error = false;
 				$this->send_command("command_list_begin");
 				foreach ($cmds as $c) {
-					logger::trace("POSTCOMMAND", "Command List:",$c);
+					logger::trace("MPD", "Command List:",$c);
 					$l = strlen($c."\n");
 					// Note. We don't use send_command because that closes and re-opens the connection
 					// if it fails to fputs, and that loses our command list status, so we have to do our
@@ -284,7 +287,7 @@ class base_mpd_player {
 			} while ($retries > 0 && $error == true);
 			$cmd_status = $this->do_mpd_command("command_list_end", true, false);
 		} else if (count($cmds) == 1) {
-			logger::trace("POSTCOMMAND", "Command :",$cmds[0]);
+			logger::debug("MPD", "Single Command :",$cmds[0]);
 			$cmd_status = $this->do_mpd_command($cmds[0], true, false);
 		}
 		return $cmd_status;
@@ -295,7 +298,7 @@ class base_mpd_player {
 		// Generator Function for parsing MPD output for 'list...info', 'search ...' etc type commands
 		// Returns MPD_FILE_MODEL
 
-		logger::trace("MPD", "MPD Parse",$command);
+		logger::log("MPD", "MPD Parse",$command);
 
 		$success = $this->send_command($command);
 		$filedata = MPD_FILE_MODEL;
@@ -379,11 +382,11 @@ class base_mpd_player {
 			}
 		}
 	   if (strpos($filedata['Title'], "[unplayable]") === 0) {
-			logger::log("COLLECTION", "Ignoring unplayable track ".$filedata['file']);
+			logger::trace("COLLECTION", "Ignoring unplayable track ".$filedata['file']);
 			return false;
 		}
 		if (strpos($filedata['Title'], "[loading]") === 0) {
-			logger::log("COLLECTION", "Ignoring unloaded track ".$filedata['file']);
+			logger::trace("COLLECTION", "Ignoring unloaded track ".$filedata['file']);
 			return false;
 		}
 		$filedata['unmopfile'] = $this->unmopify_file($filedata);
@@ -397,7 +400,7 @@ class base_mpd_player {
 		// cue sheet link (mpd only). We're only doing CUE sheets, not M3U
 		if ($filedata['X-AlbumUri'] === null && strtolower(pathinfo($filedata['playlist'], PATHINFO_EXTENSION)) == "cue") {
 			$filedata['X-AlbumUri'] = $filedata['playlist'];
-			logger::mark("COLLECTION", "Found CUE sheet for album ".$filedata['Album']);
+			logger::log("COLLECTION", "Found CUE sheet for album ".$filedata['Album']);
 		}
 
 		// Disc Number
@@ -564,7 +567,7 @@ class base_mpd_player {
 		while(!feof($connection) && $parts) {
 			$parts = $this->getline($connection);
 			if ($parts === false) {
-				logger::debug("PLAYER", "Got OK or ACK from MPD");
+				logger::core("PLAYER", "Got OK or ACK from MPD");
 			} else {
 				$lines[] = $parts;
 			}
@@ -691,7 +694,7 @@ class base_mpd_player {
 		// url encode the album art directory
 		global $prefs;
 		$path = implode("/", array_map("rawurlencode", explode("/", $prefs['music_directory_albumart'])));
-		logger::log("MOPIDYSLAVE", "Replacing with",$path);
+		logger::trace("MOPIDYSLAVE", "Replacing with",$path);
 		return preg_replace('#local:track:#', 'file://'.$path.'/', $string);
 	}
 
@@ -705,7 +708,7 @@ class base_mpd_player {
 		global $prefs;
 		$retval = false;
 		if ($this->is_connected()) {
-			logger::shout("MPDPLAYER", "Probing Player Type....");
+			logger::mark("MPDPLAYER", "Probing Player Type....");
 			$r = $this->do_mpd_command('tagtypes', true, true);
 			if (is_array($r) && array_key_exists('tagtype', $r)) {
 				if (in_array('X-AlbumUri', $r['tagtype'])) {

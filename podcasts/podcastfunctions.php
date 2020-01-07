@@ -4,12 +4,12 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 	global $prefs;
 	$url = preg_replace('#^itpc://#', 'http://', $url);
 	$url = preg_replace('#^feed://#', 'http://', $url);
-	logger::shout("PARSE_RSS", "Parsing Feed ".$url);
+	logger::mark("PARSE_RSS", "Parsing Feed ".$url);
 	$d = new url_downloader(array('url' => $url));
 	if (!$d->get_data_to_string()) {
 		header('HTTP/1.0 404 Not Found');
 		print "Feed Not Found";
-		logger::fail("PARSE_RSS", "  Failed to Download ".$url);
+		logger::warn("PARSE_RSS", "  Failed to Download ".$url);
 		exit;
 	}
 
@@ -209,7 +209,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 			}
 
 			if ($uri == null) {
-				logger::fail("PARSE_RSS", "    Could Not Find URI for track!");
+				logger::warn("PARSE_RSS", "    Could Not Find URI for track!");
 				continue;
 			}
 
@@ -300,7 +300,7 @@ function getNewPodcast($url, $subbed = 1, $gettracks = true) {
 												'artistName' => $podcast['Artist']));
 	if (count($r) > 0) {
 		foreach ($r as $a) {
-			logger::fail("PODCASTS", "  Already subscribed to podcast",$a['Title']);
+			logger::warn("PODCASTS", "  Already subscribed to podcast",$a['Title']);
 		}
 		header('HTTP/1.0 404 Not Found');
 		print 'You are already to subscrtibed to '.$podcast['Title'];
@@ -348,7 +348,7 @@ function getNewPodcast($url, $subbed = 1, $gettracks = true) {
 				{
 					logger::log("PODCASTS", "  Added Track ".$track['Title']);
 				} else {
-					logger::fail("PODCASTS", "  FAILED Adding Track ".$track['Title']);
+					logger::warn("PODCASTS", "  FAILED Adding Track ".$track['Title']);
 				}
 			}
 		}
@@ -435,7 +435,7 @@ function download_image($url, $podid, $title) {
 function check_podcast_upgrade($podetails, $podid, $podcast) {
 	if ($podetails->Version < ROMPR_PODCAST_TABLE_VERSION) {
 		if ($podcast === false) {
-			logger::blurt("PODCASTS", "Podcast needs to be upgraded, must re-parse the feed");
+			logger::mark("PODCASTS", "Podcast needs to be upgraded, must re-parse the feed");
 			$podcast = parse_rss_feed($podetails->FeedURL, $podid, null);
 		}
 		upgrade_podcast($podid, $podetails, $podcast);
@@ -445,8 +445,8 @@ function check_podcast_upgrade($podetails, $podid, $podcast) {
 function refreshPodcast($podid) {
 	global $prefs;
 	check_refresh_pid();
-	logger::shout("PODCASTS", "---------------------------------------------------");
-	logger::shout("PODCASTS", "Refreshing podcast ",$podid);
+	logger::mark("PODCASTS", "---------------------------------------------------");
+	logger::mark("PODCASTS", "Refreshing podcast ",$podid);
 	$result = generic_sql_query("SELECT * FROM Podcasttable WHERE PODindex = ".$podid, false, PDO::FETCH_OBJ);
 	if (count($result) > 0) {
 		$podetails = $result[0];
@@ -518,7 +518,7 @@ function refreshPodcast($podid) {
 			{
 				logger::log("PODCASTS", "  Added Track ".$track['Title']);
 			} else {
-				logger::fail("PODCASTS", "  FAILED Adding Track ".$track['Title']);
+				logger::warn("PODCASTS", "  FAILED Adding Track ".$track['Title']);
 			}
 		}
 	}
@@ -661,7 +661,7 @@ function doPodcast($y, $do_searchbox) {
 		if (count($a) > 0) {
 			$y = $a[0];
 		} else {
-			logger::fail("PODCASTS", "ERROR looking up podcast",$y->FeedURL);
+			logger::warn("PODCASTS", "ERROR looking up podcast",$y->FeedURL);
 			return;
 		}
 	}
@@ -1103,7 +1103,7 @@ function downloadTrack($key, $channel) {
 		$filesize = $obj->FileSize;
 	}
 	if ($url === null) {
-		logger::fail("PODCASTS", "  Failed to find URL for podcast",$channel);
+		logger::warn("PODCASTS", "  Failed to find URL for podcast",$channel);
 		return $channel;
 	}
 	// The file size reported in the RSS is often VERY inaccurate. Probably based on raw audio prior to converting to MP3

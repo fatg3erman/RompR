@@ -98,7 +98,7 @@ class musicCollection {
 					"duration" => $trackobj->tags['Time'],
 					"date" => $album->datestamp
 				);
-				logger::log("COLLECTION", "Title - ".$trackobj->tags['Title']);
+				logger::trace("COLLECTION", "Title - ".$trackobj->tags['Title']);
 				// A lot of code that depends on this was written to handle mopidy model search results.
 				// The above is not mopidy model, so friggicate it into just such a thing
 				$d = getDomain($track['uri']);

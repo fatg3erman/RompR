@@ -1043,7 +1043,7 @@ function setAsAudioBook(e, element) {
 		value: ($(element).hasClass('setasaudiobook')) ? 2 : 0,
 		albumindex: $(element).attr('name')
 	};
-	debug.mark("UI","Setting as audiobook",data);
+	debug.info("UI","Setting as audiobook",data);
 	metaHandlers.genericAction(
 		[data],
 		collectionHelper.updateCollectionDisplay,
@@ -1106,7 +1106,7 @@ function actuallyAmendAlbumDetails(albumindex) {
 	if (newdate) {
 		data.date = newdate;
 	}
-	debug.mark("UI","Amending Album Details",data);
+	debug.info("UI","Amending Album Details",data);
 	metaHandlers.genericAction(
 		[data],
 		function(rdata) {

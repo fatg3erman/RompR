@@ -4,7 +4,7 @@ require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 require_once ("utils/imagefunctions.php");
 require_once ("international.php");
-logger::blurt("USERRATING", "--------------------------START---------------------");
+logger::mark("USERRATING", "--------------------------START---------------------");
 require_once ("backends/sql/backend.php");
 require_once ("backends/sql/metadatafunctions.php");
 require_once ("player/".$prefs['player_backend']."/player.php");
@@ -26,7 +26,7 @@ $start = time();
 open_transaction();
 create_foundtracks();
 $took = time() - $start;
-logger::debug("TIMINGS", "Creating FoundTracks took ".$took." seconds");
+logger::info("TIMINGS", "Creating FoundTracks took ".$took." seconds");
 
 $params = json_decode(file_get_contents('php://input'), true);
 
@@ -36,10 +36,10 @@ foreach($params as $p) {
 
 	romprmetadata::sanitise_data($p);
 
-	logger::mark("USERRATING", "Doing action",strtoupper($p['action']));
+	logger::log("USERRATING", "  Doing action",strtoupper($p['action']));
 	foreach ($p as $i => $v) {
 		if ($i != 'action' && $v) {
-			logger::log("  Parameter", $i,':',$v);
+			logger::trace("Parameter", "    ",$i,':',$v);
 		}
 	}
 
@@ -145,7 +145,7 @@ foreach($params as $p) {
 			break;
 
 		default:
-			logger::fail("USERRATINGS", "Unknown Request",$p['action']);
+			logger::warn("USERRATINGS", "Unknown Request",$p['action']);
 			header('HTTP/1.1 400 Bad Request');
 			break;
 
@@ -163,7 +163,7 @@ if (count($returninfo) == 0 || array_key_exists('metadata', $returninfo)) {
 print json_encode($returninfo);
 close_transaction();
 
-logger::blurt("USERRATING", "---------------------------END----------------------");
+logger::mark("USERRATING", "---------------------------END----------------------");
 
 function prepare_returninfo() {
 	logger::log("USERRATINGS", "Preparing Return Info");
@@ -195,7 +195,7 @@ function prepare_returninfo() {
 											);
 	}
 	$at = microtime(true) - $t;
-	logger::debug("TIMINGS", " -- Finding modified items took ".$at." seconds");
+	logger::info("TIMINGS", " -- Finding modified items took ".$at." seconds");
 }
 
 
@@ -541,7 +541,7 @@ function get_fave_artists() {
 		derived GROUP BY Artistindex) AS alias JOIN Artisttable USING (Artistindex) WHERE
 		playtot > (SELECT AVG(playtotal) FROM aplaytable) ORDER BY ".SQL_RANDOM_SORT, false, PDO::FETCH_OBJ);
 	foreach ($result as $obj) {
-		logger::log("FAVEARTISTS", "Artist :",$obj->Artistname);
+		logger::debug("FAVEARTISTS", "Artist :",$obj->Artistname);
 		$artists[] = array( 'name' => $obj->Artistname, 'plays' => $obj->playtot);
 	}
 	return $artists;
@@ -595,7 +595,7 @@ function getLinkToCheck() {
 }
 
 function updateCheckedLink($ttindex, $uri, $status) {
-	logger::log("METADATA", "Updating Link Check For TTindex",$ttindex,$uri);
+	logger::trace("METADATA", "Updating Link Check For TTindex",$ttindex,$uri);
 	sql_prepare_query(true, null, null, null,
 		"UPDATE Tracktable SET LinkChecked = ?, Uri = ? WHERE TTindex = ?", $status, $uri, $ttindex);
 }

@@ -19,7 +19,7 @@ window.debug = (function() {
 	var log_commands = {
 		1: 'error',
 		2: 'warn',
-		3: 'warn',
+		3: 'log',
 		4: 'log',
 		5: 'log',
 		6: 'log',
@@ -81,27 +81,27 @@ window.debug = (function() {
 		},
 
 		// Level 7
-		log: function() {
+		tell: function() {
 			doTheLogging(7, Array.prototype.slice.call(arguments));
 		},
 
 		// Level 6
-		mark: function() {
+		log: function() {
 			doTheLogging(6, Array.prototype.slice.call(arguments));
 		},
 
 		// Level 5
-		shout: function() {
+		info: function() {
 			doTheLogging(5, Array.prototype.slice.call(arguments));
 		},
 
 		// Level 4
-		blurt: function() {
+		shout: function() {
 			doTheLogging(4, Array.prototype.slice.call(arguments));
 		},
 
 		// Level 3
-		fail: function() {
+		blurt: function() {
 			doTheLogging(3, Array.prototype.slice.call(arguments));
 		},
 

@@ -267,7 +267,7 @@ var podcasts = function() {
 		},
 
 		channelAction: function(channel, action) {
-			debug.mark("PODCAST","Action",action," on podcast ",channel);
+			debug.info("PODCAST","Action",action," on podcast ",channel);
 			var data = {populate: 1};
 			data[action] = channel;
 			data.channel = channel;

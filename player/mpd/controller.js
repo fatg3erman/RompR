@@ -123,7 +123,7 @@ function playerController() {
 			doMopidyCollectionOptions();
 			playlist.radioManager.init();
 			self.do_command_list([]);
-			debug.mark("MPD","Player is ready");
+			debug.info("MPD","Player is ready");
 			infobar.notify(
 				"Connected to "+getCookie('currenthost')+" ("
 				+prefs.player_backend.capitalize()
@@ -197,7 +197,7 @@ function playerController() {
 				// long time after we've started ramping the alarm clock volume
 				debug.log('PLAYER', 'State Change Check. State is',player.status.state,'Elapsed is',player.status.elapsed);
 				if (player.status.state != 'play' || player.status.elapsed > 5) {
-					debug.mark('PLAYER', 'Calling state change callback for state',player.status.state);
+					debug.info('PLAYER', 'Calling state change callback for state',player.status.state);
 					stateChangeCallbacks[i].callback();
 					stateChangeCallbacks.splice(i, 1);
 					i--;
@@ -454,7 +454,7 @@ function playerController() {
 
 		var abitofahack = true;
 		var queue_track = (queue == true) ? true : !prefs.cdplayermode;
-		debug.mark("MPD","Adding",tracks.length,"Tracks at",at_pos,"playing from",playpos,"queue is",queue);
+		debug.info("MPD","Adding",tracks.length,"Tracks at",at_pos,"playing from",playpos,"queue is",queue);
 		var cmdlist = [];
 		if (!queue_track) {
 			cmdlist.push(['stop']);

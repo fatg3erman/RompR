@@ -6,7 +6,7 @@ var soundcloud = function() {
 		getTrackInfo: function(mopidyURI, callback) {
 			// "soundcloud:song/King Tubby meets Soul Rebel Uptown.92868852"
 			debug.log("SOUNDCLOUD","Trying to get track info from",mopidyURI);
-			var a = mopidyURI.match(/(\d+)$/);
+			var a = mopidyURI.match(/\.(\d+)$/);
 			var tracknum = a[1];
 			debug.log("SOUNDCLOUD","Getting soundcloud info for track",tracknum);
 			$.ajax({

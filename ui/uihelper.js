@@ -265,7 +265,7 @@ var uiHelper = function() {
 		},
 
 		insertAlbum: function(v) {
-			debug.mark('UIHELPER', 'Inserting Album', v.id);
+			debug.info('UIHELPER', 'Inserting Album', v.id);
 			try {
 				return layoutProcessor.insertAlbum(v);
 			} catch (err) {
@@ -302,7 +302,7 @@ var uiHelper = function() {
 		},
 
 		insertArtist: function(v) {
-			debug.mark('UIHELPER', 'Inserting Artist', v.id);
+			debug.info('UIHELPER', 'Inserting Artist', v.id);
 			try {
 				return layoutProcessor.insertArtist(v);
 			} catch(err) {
@@ -351,7 +351,7 @@ var uiHelper = function() {
 		},
 
 		removeAlbum: function(key) {
-			debug.mark('UIHELPER', 'Removing Album',key);
+			debug.info('UIHELPER', 'Removing Album',key);
 			if (uiHelper.findAlbumDisplayer(key).find('.menu_opened').length > 0) {
 				$('#popupmenu').remove();
 			}
@@ -366,7 +366,7 @@ var uiHelper = function() {
 		},
 
 		removeArtist: function(v) {
-			debug.mark('UIHELPER', 'Removing Artist', v);
+			debug.info('UIHELPER', 'Removing Artist', v);
 			try {
 				return layoutProcessor.removeArtist(v);
 			} catch (err) {

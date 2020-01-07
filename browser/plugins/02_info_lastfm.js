@@ -203,7 +203,7 @@ var info_lastfm = function() {
 			var displaying = false;
 
 			this.populate = function() {
-				debug.mark('LASTFM', 'Asked To Populate');
+				debug.info('LASTFM', 'Asked To Populate');
 				$('#love').removeClass('notloved').addClass('notloved').makeSpinner();
 				self.artist.populate();
 				self.album.populate();
@@ -338,7 +338,7 @@ var info_lastfm = function() {
 								};
 					nowplaying.setLastFMCorrections(parent.currenttrack, updates);
 				} catch(err) {
-					debug.fail(medebug,"Not enough information to send corrections");
+					debug.warn(medebug,"Not enough information to send corrections");
 				}
 			}
 
@@ -355,7 +355,7 @@ var info_lastfm = function() {
 
 					populate: function() {
 						if (artistmeta.lastfm === undefined) {
-							debug.mark(medebug,parent.nowplayingindex,"artist is populating",artistmeta.name);
+							debug.info(medebug,parent.nowplayingindex,"artist is populating",artistmeta.name);
 							lastfm.artist.getInfo( {artist: artistmeta.name},
 													this.lfmResponseHandler,
 													this.lfmResponseHandler
@@ -513,7 +513,7 @@ var info_lastfm = function() {
 
 					populate: function() {
 						if (albummeta.lastfm === undefined) {
-							debug.mark(medebug,"Getting last.fm data for album",albummeta.name);
+							debug.info(medebug,"Getting last.fm data for album",albummeta.name);
 							if (parent.playlistinfo.type == 'stream') {
 								lastfm.artist.getInfo({  artist: albummeta.name },
 													this.lfmArtistResponseHandler,
@@ -660,7 +660,7 @@ var info_lastfm = function() {
 
 					populate: function() {
 						if (trackmeta.lastfm === undefined) {
-							debug.mark(medebug,parent.nowplayingindex,"Getting last.fm data for track",trackmeta.name);
+							debug.info(medebug,parent.nowplayingindex,"Getting last.fm data for track",trackmeta.name);
 							lastfm.track.getInfo( { artist: getSearchArtist(), track: trackmeta.name },
 													this.lfmResponseHandler,
 													this.lfmResponseHandler );

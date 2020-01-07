@@ -182,7 +182,7 @@ var info_file = function() {
 						}, 1000);
 					}
 				} else {
-					debug.mark("FILE PLUGIN",parent.nowplayingindex,"is already populated");
+					debug.info("FILE PLUGIN",parent.nowplayingindex,"is already populated");
 				}
 			}
 

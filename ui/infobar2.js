@@ -260,12 +260,12 @@ var infobar = function() {
 			const notafile = "newimages/thisdosntexist.png";
 
 			aImg.onload = function() {
-				debug.mark("ALBUMPICTURE","Image Loaded",$(this).attr("src"));
+				debug.info("ALBUMPICTURE","Image Loaded",$(this).attr("src"));
 				$('#albumpicture').attr("src", $(this).attr("src"));
 			}
 
 			aImg.onerror = function() {
-				debug.fail("ALBUMPICTURE","Image Failed To Load",$(this).attr("src"));
+				debug.warn("ALBUMPICTURE","Image Failed To Load",$(this).attr("src"));
 				$('img[name="'+$(this).attr('name')+'"]').addClass("notfound");
 				$('#albumpicture').fadeOut('fast',uiHelper.adjustLayout);
 			}
@@ -336,7 +336,7 @@ var infobar = function() {
 				},
 
 				handleDrop: function(ev) {
-					debug.mark("INFOBAR","Something dropped onto album image");
+					debug.info("INFOBAR","Something dropped onto album image");
 					$(ev.target).parent().removeClass("highlighted");
 					$('#albumpicture').attr("name", aImg.name).removeAttr('src');
 					current_image = aImg.src;

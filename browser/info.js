@@ -254,7 +254,7 @@ var browser = function() {
 		dataIsComing: function(mastercollection, isartistswitch, nowplayingindex, source, trackartist, artist, albumartist, album, track) {
 			debug.trace("BROWSER","Data is coming",isartistswitch, nowplayingindex, source, artist, albumartist, album, track)
 			if (prefs.hidebrowser) {
-				debug.mark("BROWSER","Browser is hidden. Ignoring Data");
+				debug.info("BROWSER","Browser is hidden. Ignoring Data");
 				return;
 			}
 			var showalbum  = (album != history[displaypointer].album.name || albumartist != history[displaypointer].album.artist || source != prefs.infosource);
@@ -308,7 +308,7 @@ var browser = function() {
 			if (prefs.hidebrowser) {
 				return false;
 			}
-			debug.mark("BROWSER", "Got",type,"info from",source,"for index",nowplayingindex,force,waitingon);
+			debug.info("BROWSER", "Got",type,"info from",source,"for index",nowplayingindex,force,waitingon);
 			if (force === true || (source == waitingon.source && nowplayingindex == waitingon.index)) {
 				if (force === true || waitingon[type]) {
 					debug.trace("BROWSER", "  .. and we are going to display it");
@@ -368,7 +368,7 @@ var browser = function() {
 		// This function is for links which are followed internally by one of the panels
 		// eg wikipedia
 		speciaUpdate: function(source, panel, data) {
-			debug.mark("BROWSER","Special Update from",source,"for",panel);
+			debug.info("BROWSER","Special Update from",source,"for",panel);
 			var n = new specialUpdateCollection(source, panel, data);
 
 			history.splice(displaypointer+1,0, {

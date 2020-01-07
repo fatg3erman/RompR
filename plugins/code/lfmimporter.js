@@ -44,7 +44,7 @@ var lfmImporter = function() {
 			offset += limit;
 			getNextRow();
 		} else {
-			debug.mark("LFMIMPORTER","Got all data");
+			debug.info("LFMIMPORTER","Got all data");
 			metaHandlers.resetSyncCounts();
 		}
 	}
@@ -67,7 +67,7 @@ var lfmImporter = function() {
 		row = $('#lfmitable').children('tr[name="'+alldata[reqid].TTindex+'"]');
 		row.children('td[name="lastfmplaycount"]').html(de.userplaycount());
 		if (parseInt(alldata[reqid].Playcount) < parseInt(de.userplaycount())) {
-			debug.mark("LFMIMPORTER","Incrementing Playcount for",alldata[reqid].TTindex,"to",de.userplaycount());
+			debug.info("LFMIMPORTER","Incrementing Playcount for",alldata[reqid].TTindex,"to",de.userplaycount());
 			var playlistinfo = {type: 'local', location: ''};
 			$.each(row.children('td.playlistinfo'), function() {
 				playlistinfo[$(this).attr('name')] = htmlspecialchars_decode($(this).html());

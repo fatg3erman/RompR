@@ -83,6 +83,7 @@ class baseAlbumImage {
 	}
 
 	private function check_if_image_already_downloaded() {
+		logger::log('ALBUMIMAGE', 'Checking image for', $this->artist, $this->album);
 		$checkimages = $this->image_info_from_album_info();
 		if ($this->image_exists($checkimages['small'])) {
 			logger::trace("ALBUMIMAGE", "  ..  File exists");
@@ -136,8 +137,8 @@ class baseAlbumImage {
 						case 'bassdrive':
 						case 'internetarchive':
 						case 'oe1':
-						case 'soundcloud':
-						case 'youtube':
+						// case 'soundcloud':
+						// case 'youtube':
 							$this->images = $this->image_paths_from_base_image('newimages/'.$domain.'-logo.svg');
 							break;
 					}
@@ -159,9 +160,9 @@ class baseAlbumImage {
 				case 'oe1':
 				case 'podcast':
 				case 'radio-de':
-				case 'soundcloud':
+				// case 'soundcloud':
 				case 'tunein':
-				case 'youtube':
+				// case 'youtube':
 					$this->images = $this->image_paths_from_base_image('newimages/'.$domain.'-logo.svg');
 					break;
 
@@ -434,9 +435,9 @@ class albumImage extends baseAlbumImage {
 				$retval = false;
 			}
 		} else {
-			logger::log("ALBUMIMAGE", "  .. Copying apparent local file");
+			logger::log("ALBUMIMAGE", "  .. Copying apparent local file",$this->source,'to',$download_file);
 			if (!copy($this->source, $download_file)) {
-				logger::fail("ALBUMIMAGE", "    .. File Copy Failed");
+				logger::warn("ALBUMIMAGE", "    .. File Copy Failed");
 				$retval = false;
 			}
 		}

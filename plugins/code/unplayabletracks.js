@@ -73,7 +73,7 @@ var unplayabletracks = function() {
 		}
 		var tag = element.parent().find('.tracktags').first();
 		if (tag.length > 0) {
-			debug.mark("WISHLIST","Setting Tags Attribute");
+			debug.info("WISHLIST","Setting Tags Attribute");
 			databits[reqid].attributes.push({attribute: 'Tags', value: tag.text().split(", ")});
 		}
 

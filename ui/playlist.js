@@ -69,7 +69,7 @@ var playlist = function() {
 				}
 				var tracksneeded = prefs.smartradio_chunksize - fromend;
 				if (tracksneeded > 2 && prefs.radiomaster != prefs.browser_id) {
-					debug.mark("RADIO MANAGER","Looks like master has gone away. Taking over");
+					debug.info("RADIO MANAGER","Looks like master has gone away. Taking over");
 					prefs.save({radiomaster: prefs.browser_id});
 				}
 				var startpos = (tracksneeded == prefs.smartradio_chunksize) ? 0 : null;
@@ -277,17 +277,17 @@ var playlist = function() {
 			var my_queue_id = update_queue;
 
 			while (my_queue_id > current_queue_request) {
-				debug.mark('PLAYLIST', 'Waiting for outstanding requests to finish');
+				debug.info('PLAYLIST', 'Waiting for outstanding requests to finish');
 				await new Promise(r => setTimeout(r, 500));
 			}
 			if (my_queue_id < update_queue) {
-				debug.mark('PLAYLIST', 'Aborting request',my_queue_id);
+				debug.info('PLAYLIST', 'Aborting request',my_queue_id);
 				current_queue_request++;
 				return false;
 			}
 			playlist.invalidate();
 
-			debug.mark('PLAYLIST', 'Starting update request',my_queue_id);
+			debug.info('PLAYLIST', 'Starting update request',my_queue_id);
 			coverscraper.clearCallbacks();
 			$('.clear_playlist').off('click').makeSpinner();
 			try {
@@ -319,7 +319,7 @@ var playlist = function() {
 				update_error = false;
 			}
 
-			debug.mark("PLAYLIST","Got Playlist from backend for request",my_queue_id);
+			debug.info("PLAYLIST","Got Playlist from backend for request",my_queue_id);
 			var count = -1;
 			var current_album = "";
 			var current_artist = "";
@@ -716,7 +716,7 @@ var playlist = function() {
 			await playlist.is_valid();
 			var force = (currentTrack.Id == -1) ? true : false;
 			if (backendid != currentTrack.Id) {
-				debug.mark("PLAYLIST","Looking For Current Track",backendid);
+				debug.info("PLAYLIST","Looking For Current Track",backendid);
 				$("#pscroller .playlistcurrentitem").removeClass('playlistcurrentitem').addClass('playlistitem');
 				$('.track[romprid="'+backendid+'"],.booger[romprid="'+backendid+'"]').removeClass('playlistitem').addClass('playlistcurrentitem');
 				var found = false;
@@ -730,7 +730,7 @@ var playlist = function() {
 							$('.item[name="'+album.index+'"]').removeClass('playlisttitle').addClass('playlistcurrenttitle');
 						}
 						found = true;
-						debug.mark('PLAYLIST', '  Found current track');
+						debug.info('PLAYLIST', '  Found current track');
 						break;
 					}
 				}
@@ -1140,7 +1140,7 @@ function Album(artist, album, index, rolledup) {
 				metaHandlers.fromSpotifyData.addAlbumTracksToCollection(data, tracks[0].albumartist)
 			},
 			function(data) {
-				debug.fail("ADD ALBUM","Failed to add album",data);
+				debug.warn("ADD ALBUM","Failed to add album",data);
 				infobar.error(language.gettext('label_general_error'));
 			},
 			false);

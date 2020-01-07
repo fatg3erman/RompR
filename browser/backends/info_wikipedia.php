@@ -109,15 +109,15 @@ function get_wikipedia_page($page, $site, $langsearch) {
 
 	if ($langsearch) {
 
-		logger::log("WIKIPEDIA", "Request for page ".$page." from ".$site.". Domain is ".$request_domain." and user domain is ".$domain);
+		logger::trace("WIKIPEDIA", "Request for page ".$page." from ".$site.". Domain is ".$request_domain." and user domain is ".$domain);
 
 		$user_link = ($request_domain == $domain) ? $page : null;
 		$english_link = ($site == "en.wikipedia.org") ? $page : null;
 
-		logger::log("WIKIPEDIA", "User Link is ".$user_link." and english link is ".$english_link);
+		logger::trace("WIKIPEDIA", "User Link is ".$user_link." and english link is ".$english_link);
 
 		if ($domain != $request_domain) {
-			logger::log("WIKIPEDIA", "Asked for page ".$page." from site ".$site." but user wants domain ".$domain);
+			logger::trace("WIKIPEDIA", "Asked for page ".$page." from site ".$site." but user wants domain ".$domain);
 			// Find language links for the requested page
 			$langlinks = wikipedia_request("http://".$site."/w/api.php?action=query&prop=langlinks&titles=".$page."&format=xml");
 			if ($langlinks !== null) {
@@ -126,7 +126,7 @@ function get_wikipedia_page($page, $site, $langsearch) {
 					foreach($langs->query->pages->page->langlinks->ll as $ll) {
 						$l = $ll['lang'];
 						$t = dom_import_simplexml($ll)->textContent;
-						logger::log("WIKIPEDIA", "Found language link ".$l." title ".$t);
+						logger::debug("WIKIPEDIA", "Found language link ".$l." title ".$t);
 						if ($l == $domain) {
 							$user_link = preg_replace('/ /', '_', $t);
 						}

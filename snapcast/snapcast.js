@@ -66,7 +66,7 @@ var snapcast = function() {
 				for (var i in data.result.server.groups) {
 					var group_exists = findGroup(groups, data.result.server.groups[i].id);
 					if (group_exists === false) {
-						debug.mark('SNAPCAST','Creating new group',data.result.server.groups[i].id);
+						debug.info('SNAPCAST','Creating new group',data.result.server.groups[i].id);
 						var g = new snapcastGroup();
 						newgroups.push(g);
 						g.initialise();
@@ -276,7 +276,7 @@ function snapcastGroup() {
 		for (var i in data.clients) {
 			var client_exists = findClient(clients, data.clients[i].id);
 			if (client_exists === false) {
-				debug.mark('SNAPCAST','Creating new client',data.clients[i].id);
+				debug.info('SNAPCAST','Creating new client',data.clients[i].id);
 				var g = new snapcastClient();
 				newclients.push(g);
 				g.initialise(holder);

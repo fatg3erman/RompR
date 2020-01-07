@@ -57,7 +57,7 @@ if (array_key_exists('playlist', $_REQUEST)) {
 			}
 		}
 	} else {
-		logger::fail("LOADPLAYLISTS", "Error when loading saved playlists");
+		logger::warn("LOADPLAYLISTS", "Error when loading saved playlists");
 	}
 }
 

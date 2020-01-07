@@ -11,19 +11,19 @@ function connect_to_database($sp = true) {
 	}
 	try {
 		if (is_numeric($prefs['mysql_port'])) {
-			logger::debug("SQL_CONNECT", "Connecting using hostname and port");
+			logger::debug("MYSQL", "Connecting using hostname and port");
 			$dsn = "mysql:host=".$prefs['mysql_host'].";port=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'].";charset=utf8mb4";
 		} else {
-			logger::debug("SQL_CONNECT", "Connecting using unix socket");
+			logger::debug("MYSQL", "Connecting using unix socket");
 			$dsn = "mysql:unix_socket=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'].";charset=utf8mb4";
 		}
 		$mysqlc = new PDO($dsn, $prefs['mysql_user'], $prefs['mysql_password']);
-		logger::debug("SQL_CONNECT", "Connected to MySQL");
+		logger::debug("MYSQL", "Connected to MySQL");
 		// generic_sql_query("SET NAMES utf8mb4", true);
 		generic_sql_query('SET SESSION sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"', true);
 		readCollectionPlayer($sp);
 	} catch (Exception $e) {
-		logger::fail("SQL_CONNECT", "Database connect failure - ".$e);
+		logger::warn("MYSQL", "Database connect failure - ".$e);
 		sql_init_fail($e->getMessage());
 	}
 }
@@ -58,7 +58,7 @@ function check_sql_tables() {
 		"INDEX(Title), ".
 		"INDEX(TrackNo)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  Tracktable OK");
+		logger::log("MYSQL", "  Tracktable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Tracktable : ".$err);
@@ -84,7 +84,7 @@ function check_sql_tables() {
 		"INDEX(Domain), ".
 		"INDEX(ImgKey)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  Albumtable OK");
+		logger::log("MYSQL", "  Albumtable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Albumtable : ".$err);
@@ -96,7 +96,7 @@ function check_sql_tables() {
 		"Artistname VARCHAR(255), ".
 		"INDEX(Artistname)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  Artisttable OK");
+		logger::log("MYSQL", "  Artisttable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Artisttable : ".$err);
@@ -107,7 +107,7 @@ function check_sql_tables() {
 		"PRIMARY KEY(TTindex), ".
 		"Rating TINYINT(1) UNSIGNED) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  Ratingtable OK");
+		logger::log("MYSQL", "  Ratingtable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Ratingtable : ".$err);
@@ -118,7 +118,7 @@ function check_sql_tables() {
 		"PRIMARY KEY(TTindex), ".
 		"Progress INT UNSIGNED) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  Progresstable OK");
+		logger::log("MYSQL", "  Progresstable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Progresstable : ".$err);
@@ -129,7 +129,7 @@ function check_sql_tables() {
 		"PRIMARY KEY(Tagindex), ".
 		"Name VARCHAR(255)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  Tagtable OK");
+		logger::log("MYSQL", "  Tagtable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Tagtable : ".$err);
@@ -140,7 +140,7 @@ function check_sql_tables() {
 		"TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex), ".
 		"PRIMARY KEY (Tagindex, TTindex)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  TagListtable OK");
+		logger::log("MYSQL", "  TagListtable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking TagListtable : ".$err);
@@ -153,7 +153,7 @@ function check_sql_tables() {
 		"LastPlayed TIMESTAMP, ".
 		"PRIMARY KEY (TTindex)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  Playcounttable OK");
+		logger::log("MYSQL", "  Playcounttable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Playcounttable : ".$err);
@@ -182,7 +182,7 @@ function check_sql_tables() {
 		"Category VARCHAR(255) NOT NULL, ".
 		"PRIMARY KEY (PODindex)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  Podcasttable OK");
+		logger::log("MYSQL", "  Podcasttable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Podcasttable : ".$err);
@@ -210,7 +210,7 @@ function check_sql_tables() {
 		"PRIMARY KEY (PODTrackindex), ".
 		"INDEX (Title)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  PodcastTracktable OK");
+		logger::log("MYSQL", "  PodcastTracktable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking PodcastTracktable : ".$err);
@@ -225,7 +225,7 @@ function check_sql_tables() {
 		"Image VARCHAR(255), ".
 		"PRIMARY KEY (Stationindex)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  RadioStationtable OK");
+		logger::log("MYSQL", "  RadioStationtable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking RadioStationtable : ".$err);
@@ -238,7 +238,7 @@ function check_sql_tables() {
 		"PrettyStream TEXT, ".
 		"PRIMARY KEY (Trackindex)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  RadioTracktable OK");
+		logger::log("MYSQL", "  RadioTracktable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking RadioTracktable : ".$err);
@@ -251,7 +251,7 @@ function check_sql_tables() {
 		"SourceUri TEXT, ".
 		"PRIMARY KEY (Sourceindex)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  WishlistSourcetable OK");
+		logger::log("MYSQL", "  WishlistSourcetable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking WishlistSourcetable : ".$err);
@@ -262,7 +262,7 @@ function check_sql_tables() {
 		"JsonData TEXT, ".
 		"PRIMARY KEY (Listenindex)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  AlbumsToListenTotabletable OK");
+		logger::log("MYSQL", "  AlbumsToListenTotabletable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking AlbumsToListenTotable : ".$err);
@@ -278,7 +278,7 @@ function check_sql_tables() {
 		"INDEX (Skin), ".
 		"INDEX (BrowserID)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  BackgounrdImageTable OK");
+		logger::log("MYSQL", "  BackgounrdImageTable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking BackgroundImageTable : ".$err);
@@ -291,7 +291,7 @@ function check_sql_tables() {
 	// Check schema version and update tables as necessary
 	$sv = simple_query('Value', 'Statstable', 'Item', 'SchemaVer', 0);
 	if ($sv == 0) {
-		logger::log("SQL_CONNECT", "No Schema Version Found - initialising table");
+		logger::mark("MYSQL", "No Schema Version Found - initialising table");
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('ListVersion', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('ArtistCount', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('AlbumCount', '0')", true);
@@ -304,14 +304,14 @@ function check_sql_tables() {
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTracks', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTime', '0')", true);
 		$sv = ROMPR_SCHEMA_VERSION;
-		logger::log("MYSQL_CONNECT", "Statstable populated");
+		logger::log("MYSQL", "Statstable populated");
 		create_update_triggers();
 		create_conditional_triggers();
 		create_playcount_triggers();
 	}
 
 	if ($sv > ROMPR_SCHEMA_VERSION) {
-		logger::log("MYSQL_CONNECT", "Schema Mismatch! We are version ".ROMPR_SCHEMA_VERSION." but database is version ".$sv);
+		logger::warn("MYSQL", "Schema Mismatch! We are version ".ROMPR_SCHEMA_VERSION." but database is version ".$sv);
 		return array(false, "Your database has version number ".$sv." but this version of rompr only handles version ".ROMPR_SCHEMA_VERSION);
 	}
 
@@ -450,9 +450,9 @@ function check_sql_tables() {
 				// Early MPD versions had LastModified as an integer value. They changed it to a datestamp some time ago but I didn't notice
 				$r = generic_sql_query("SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Tracktable' AND COLUMN_NAME = 'LastModified'");
 				foreach ($r as $obj) {
-					logger::log("MYSQL_INIT", "Data Type of LastModified is ".$obj['DATA_TYPE']);
+					logger::trace("MYSQL_INIT", "Data Type of LastModified is ".$obj['DATA_TYPE']);
 					if ($obj['DATA_TYPE'] == 'int') {
-						logger::log("MYSQL_INIT", "Modifying Tracktable");
+						logger::trace("MYSQL_INIT", "Modifying Tracktable");
 						generic_sql_query("ALTER TABLE Tracktable ADD LM CHAR(32)", true);
 						generic_sql_query("UPDATE Tracktable SET LM = LastModified", true);
 						generic_sql_query("ALTER TABLE Tracktable DROP LastModified", true);
@@ -472,7 +472,7 @@ function check_sql_tables() {
 				logger::log("SQL", "Updating FROM Schema version 18 TO Schema version 19");
 				$result = generic_sql_query('SELECT Tracktable.Uri AS uri, Tracktable.TTindex, Tracktable.Title AS ttit, Albumtable.*, Trackimagetable.Image AS ti FROM Tracktable JOIN Albumtable USING (Albumindex) LEFT JOIN Trackimagetable USING (TTindex) WHERE Tracktable.Uri LIKE "soundcloud:%"', false, PDO::FETCH_OBJ);
 				foreach ($result as $obj) {
-					logger::log("SQL", "  Creating new Album ".$obj->ttit." Image ".$obj->ti);
+					logger::trace("SQL", "  Creating new Album ".$obj->ttit." Image ".$obj->ti);
 					$ti = $obj->ti;
 					if (preg_match('/^http/', $ti)) {
 						$ti = 'getRemoteImage.php?url='.$ti;
@@ -485,10 +485,10 @@ function check_sql_tables() {
 							$obj->ttit, $obj->AlbumArtistindex, $obj->uri, $obj->Year, $obj->Searched, $obj->ImgKey, $obj->mbid, $obj->Domain, $ti
 						)) {
 							$retval = $mysqlc->lastInsertId();
-							logger::log("SQL", "    .. success, Albumindex ".$retval);
+							logger::debug("SQL", "    .. success, Albumindex ".$retval);
 							generic_sql_query("UPDATE Tracktable SET Albumindex = ".$retval." WHERE TTindex = ".$obj->TTindex, true);
 					} else {
-						logger::log("SQL", "    .. ERROR!");
+						logger::warn("SQL", "    .. ERROR!");
 					}
 				}
 				generic_sql_query("UPDATE Statstable SET Value = 19 WHERE Item = 'SchemaVer'", true);
@@ -498,7 +498,7 @@ function check_sql_tables() {
 				logger::log("SQL", "Updating FROM Schema version 19 TO Schema version 20");
 				$result = generic_sql_query('SELECT Tracktable.Uri AS uri, Tracktable.TTindex, Tracktable.Title AS ttit, Albumtable.*, Trackimagetable.Image AS ti FROM Tracktable JOIN Albumtable USING (Albumindex) LEFT JOIN Trackimagetable USING (TTindex) WHERE Tracktable.Uri LIKE "youtube:%"', false, PDO::FETCH_OBJ);
 				foreach ($result as $obj) {
-					logger::log("SQL", "  Creating new Album ".$obj->ttit." Image ".$obj->ti);
+					logger::trace("SQL", "  Creating new Album ".$obj->ttit." Image ".$obj->ti);
 					$ti = $obj->ti;
 					if (preg_match('/^http/', $ti)) {
 						$ti = 'getRemoteImage.php?url='.$ti;
@@ -511,10 +511,10 @@ function check_sql_tables() {
 							$obj->ttit, $obj->AlbumArtistindex, $obj->uri, $obj->Year, $obj->Searched, $obj->ImgKey, $obj->mbid, $obj->Domain, $ti
 						)) {
 							$retval = $mysqlc->lastInsertId();
-							logger::log("SQL", "    .. success, Albumindex ".$retval);
+							logger::debug("SQL", "    .. success, Albumindex ".$retval);
 							generic_sql_query("UPDATE Tracktable SET Albumindex = ".$retval." WHERE TTindex = ".$obj->TTindex, true);
 					} else {
-						logger::error("SQL", "    .. ERROR!");
+						logger::warn("SQL", "    .. ERROR!");
 					}
 				}
 				generic_sql_query("UPDATE Statstable SET Value = 20 WHERE Item = 'SchemaVer'", true);
@@ -774,7 +774,7 @@ function check_sql_tables() {
 			case 57:
 				logger::log("SQL", "Updating FROM Schema version 57 TO Schema version 58");
 				generic_sql_query("ALTER DATABASE romprdb CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci", true);
-				logger::log("SQL", " ... Modifying Tables");
+				logger::trace("SQL", " ... Modifying Tables");
 				generic_sql_query("ALTER TABLE Tracktable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
 				generic_sql_query("ALTER TABLE Albumtable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
 				generic_sql_query("ALTER TABLE Artisttable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
@@ -791,7 +791,7 @@ function check_sql_tables() {
 				generic_sql_query("ALTER TABLE AlbumsToListenTotable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
 				generic_sql_query("ALTER TABLE BackgroundImageTable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
 				generic_sql_query("ALTER TABLE Statstable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
-				logger::log("SQL", " ... Modifying Columns");
+				logger::trace("SQL", " ... Modifying Columns");
 				generic_sql_query("ALTER TABLE Tracktable MODIFY COLUMN Title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
 				generic_sql_query("ALTER TABLE Tracktable MODIFY COLUMN Uri VARCHAR(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
 				generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN Albumname VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
@@ -1008,7 +1008,7 @@ function create_playcount_triggers() {
 
 function create_update_triggers() {
 
-	logger::debug("MYSQL", "Creating Triggers for update operation");
+	logger::log("MYSQL", "Creating Triggers for update operation");
 
 	generic_sql_query("CREATE TRIGGER rating_update_trigger AFTER UPDATE ON Ratingtable
 						FOR EACH ROW

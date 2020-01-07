@@ -7,12 +7,12 @@ include ("backends/sql/backend.php");
 include ("includes/spotifyauth.php");
 include ("getid3/getid3.php");
 
-logger::shout("GETALBUMCOVER", "------- Searching For Album Art --------");
+logger::mark("GETALBUMCOVER", "------- Searching For Album Art --------");
 foreach ($_REQUEST as $k => $v) {
 	if ($k == 'base64data') {
 		logger::log("GETALBUMCOVER", "We have base64 data");
 	} else {
-		logger::log("GETALBUMCOVER", $k, '=', $v);
+		logger::trace("GETALBUMCOVER", $k, '=', $v);
 	}
 }
 
@@ -20,15 +20,19 @@ $albumimage = new albumImage($_REQUEST);
 $delaytime = 1;
 $ignore_local = (array_key_exists('ignorelocal', $_REQUEST) && $_REQUEST['ignorelocal'] == 'true') ? true : false;
 
+// Soundcloud/Youtube can be first since that function only returns images for soundcloud tracks, and it's the best way to get those images
 if ($albumimage->mbid != "") {
-	$searchfunctions = array( 'tryLocal', 'trySpotify', 'tryMusicBrainz', 'tryLastFM', 'tryGoogle' );
+	$searchfunctions = array( 'trySoundcloud', 'tryYoutube','tryLocal', 'trySpotify', 'tryMusicBrainz', 'tryLastFM', 'tryGoogle' );
 } else {
 	// Try LastFM twice - first time just to get an MBID since coverartarchive images tend to be bigger
-	$searchfunctions = array( 'tryLocal', 'trySpotify', 'tryLastFM', 'tryMusicBrainz', 'tryLastFM', 'tryGoogle' );
+	$searchfunctions = array( 'trySoundcloud', 'tryYoutube', 'tryLocal', 'trySpotify', 'tryLastFM', 'tryMusicBrainz', 'tryLastFM', 'tryGoogle' );
 }
 
 $result = $albumimage->download_image();
 if (!$albumimage->has_source()) {
+	// Turn on output buffering in case of PHP notices and errors etc - without this
+	// these get sent back to the browser if PHP is in development mode
+	ob_start();
 	while (count($searchfunctions) > 0 && $result === false) {
 		$fn = array_shift($searchfunctions);
 		$src = $fn($albumimage);
@@ -42,14 +46,15 @@ if ($result === false) {
 	$result = $albumimage->set_default();
 }
 if ($result === false) {
-	logger::shout("GETALBUMCOVER", "No art was found. Try the Tate Modern");
+	logger::mark("GETALBUMCOVER", "No art was found. Try the Tate Modern");
 	$result = array();
 }
+ob_end_clean();
 $albumimage->update_image_database();
 $result['delaytime'] = $delaytime;
 header('Content-Type: application/json; charset=utf-8');
 print json_encode($result);
-logger::shout("GETALBUMCOVER", "--------------------------------------------");
+logger::mark("GETALBUMCOVER", "--------------------------------------------");
 ob_flush();
 
 function tryLocal($albumimage) {
@@ -66,7 +71,7 @@ function tryLocal($albumimage) {
 		if (array_key_exists('extension', $info)) {
 			$file_name = strtolower(rawurldecode(html_entity_decode(basename($file,'.'.$info['extension']))));
 			if ($file_name == $albumimage->get_image_key()) {
-				logger::log("GETALBUMCOVER", "    Returning archived image");
+				logger::trace("GETALBUMCOVER", "    Returning archived image");
 				return $file;
 			}
 		}
@@ -77,7 +82,7 @@ function tryLocal($albumimage) {
 			$file_name = strtolower(rawurldecode(html_entity_decode(basename($file,'.'.$info['extension']))));
 			if ($file_name == strtolower($albumimage->artist." - ".$albumimage->album) ||
 				$file_name == strtolower($albumimage->album)) {
-				logger::log("GETALBUMCOVER", "    Returning file matching album name");
+				logger::trace("GETALBUMCOVER", "    Returning file matching album name");
 				return $file;
 			}
 		}
@@ -88,14 +93,14 @@ function tryLocal($albumimage) {
 			if (array_key_exists('extension', $info)) {
 				$file_name = strtolower(rawurldecode(html_entity_decode(basename($file,'.'.$info['extension']))));
 				if ($file_name == $name) {
-					logger::log("GETALBUMCOVER", "    Returning ".$file);
+					logger::trace("GETALBUMCOVER", "    Returning ".$file);
 					return $file;
 				}
 			}
 		}
 	}
 	if (count($files) > 1) {
-		logger::log("GETALBUMCOVER", "    Returning ".$files[0]);
+		logger::trace("GETALBUMCOVER", "    Returning ".$files[0]);
 		$delaytime = 1;
 		return $files[0];
 	}
@@ -116,7 +121,7 @@ function trySpotify($albumimage) {
 	$spiffy = end($spaffy);
 	$boop = $spaffy[1];
 	$url = 'https://api.spotify.com/v1/'.$boop.'s/'.$spiffy;
-	logger::log("GETALBUMCOVER", "      Getting ".$url);
+	logger::trace("GETALBUMCOVER", "      Getting ".$url);
 	list($success, $content, $status) = get_spotify_data($url);
 
 	if ($success) {
@@ -127,12 +132,12 @@ function trySpotify($albumimage) {
 				if ($img->width > $width) {
 					$width = $img->width;
 					$image = $img->url;
-					logger::log("GETALBUMCOVER", "  Found image with width ".$width);
-					logger::log("GETALBUMCOVER", "  URL is ".$image);
+					logger::trace("GETALBUMCOVER", "  Found image with width ".$width);
+					logger::trace("GETALBUMCOVER", "  URL is ".$image);
 				}
 			}
 		} else {
-			logger::log("GETALBUMCOVER", "    No Spotify Data Found");
+			logger::trace("GETALBUMCOVER", "    No Spotify Data Found");
 		}
 	} else {
 		logger::warn("GETALBUMCOVER", "    Spotify API data not retrieved");
@@ -144,10 +149,71 @@ function trySpotify($albumimage) {
 		$o = array( 'small' => $image, 'medium' => $image, 'asdownloaded' => $image, 'delaytime' => $delaytime);
 		header('Content-Type: application/json; charset=utf-8');
 		print json_encode($o);
-		logger::shout("GETALBUMCOVER", "--------------------------------------------");
+		logger::mark("GETALBUMCOVER", "--------------------------------------------");
 		ob_flush();
 		exit(0);
 	}
+	return $image;
+}
+
+function trySoundcloud($albumimage) {
+	global $delaytime;
+	if ($albumimage->albumuri === null || substr($albumimage->albumuri, 0, 11) != 'soundcloud:') {
+		return "";
+	}
+	$image = "newimages/soundcloud-logo.svg";
+	logger::mark("GETALBUMCOVER", "  Trying Soundcloud for ".$albumimage->albumuri);
+	$spaffy = preg_match("/\.(\d+$)/", $albumimage->albumuri, $matches);
+	if ($spaffy) {
+		$result = download_soundcloud('tracks/'.$matches[1].'.json');
+		if ($result) {
+			$data = json_decode($result, true);
+			if (array_key_exists('artwork_url', $data) && $data['artwork_url']) {
+				$image = $data['artwork_url'];
+			}
+		}
+		$delaytime = 1000;
+	}
+	return $image;
+}
+
+function tryYoutube($albumimage) {
+	global $prefs, $delaytime;
+	$image = '';
+	if ($prefs['google_api_key'] != '' &&
+		$albumimage->albumuri !== null &&
+		(substr($albumimage->albumuri, 0, 8) == 'youtube:' || substr($albumimage->albumuri, 0, 3 ) == 'yt:')) {
+
+		$image = 'newimages/youtube-logo.svg';
+		logger::mark("GETALBUMCOVER", "  Trying Youtube for ".$albumimage->albumuri);
+		$spaffy = preg_match("/\.(.+$)/", $albumimage->albumuri, $matches);
+		if ($spaffy) {
+			$url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet&id='.$matches[1].'&key='.$prefs['google_api_key'];
+			$response = getCacheData($url, 'google', true, true);
+			if ($response) {
+				$data = json_decode($response, true);
+				$size = 0;
+				// Pain how we can't catch errors if we try to loop something that doesn't exist
+				if (is_array($data) &&
+					array_key_exists('items', $data) &&
+					is_array($data['items']) &&
+					count($data['items']) > 0 &&
+					array_key_exists('snippet', $data['items'][0]) &&
+					array_key_exists('thumbnails', $data['items'][0]['snippet']) &&
+					is_array($data['items'][0]['snippet']['thumbnails']))
+				{
+					foreach ($data['items'][0]['snippet']['thumbnails'] as $thumb) {
+						if ($thumb['width'] > $size) {
+							$size = $thumb['width'];
+							$image = $thumb['url'];
+						}
+					}
+					logger::trace('GETALBUMCOVER', 'Found image on YouTube', $image);
+				}
+			}
+		}
+	}
+	$delaytime = 1000;
 	return $image;
 }
 
@@ -178,19 +244,19 @@ function tryLastFM($albumimage) {
 		$json = loadJSON('lastfm', "https://ws.audioscrobbler.com/2.0/?artist=".rawurlencode($sa)."&album=".rawurlencode($al)."&api_key=15f7532dff0b8d84635c757f9f18aaa3&autocorrect=0&method=album.getinfo&format=json");
 	}
 	if ($json === false) {
-		logger::fail("GETALBUMCOVER", "    Received error response from Last.FM");
+		logger::warn("GETALBUMCOVER", "    Received error response from Last.FM");
 		$tried_lastfm_once = true;
 		return "";
 	} else {
 		if (property_exists($json, 'album')) {
 			if (property_exists($json->album, 'mbid') && $albumimage->mbid === null && $json->album->mbid) {
 				$albumimage->mbid = (string) $json->album->mbid;
-				logger::log("GETALBUMCOVER", "      Last.FM gave us the MBID of '".$albumimage->mbid."'");
+				logger::trace("GETALBUMCOVER", "      Last.FM gave us the MBID of '".$albumimage->mbid."'");
 				if ($mysqlc) {
 					if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET mbid = ? WHERE ImgKey = ? AND mbid IS NULL", $albumimage->mbid, $albumimage->get_image_key())) {
 						logger::trace("GETALBUMCOVER", "        Updated collection with new MBID");
 					} else {
-						logger::fail("GETALBUMCOVER", "        Failed trying to update collection with new MBID");
+						logger::warn("GETALBUMCOVER", "        Failed trying to update collection with new MBID");
 					}
 				}
 				// return nothing here so we can try musicbrainz first
@@ -238,7 +304,7 @@ function tryGoogle($albumimage) {
 			logger::mark("GETALBUMCOVER", "  Trying Google for",$ma);
 			$uri = $nureek."&q=".urlencode($ma);
 		} else {
-			logger::log("GETALBUMCOVER", "  Trying Google for",$sa,$ma);
+			logger::mark("GETALBUMCOVER", "  Trying Google for",$sa,$ma);
 			$uri = $nureek."&q=".urlencode($sa.' '.$ma);
 		}
 		$d = new url_downloader(array(
@@ -254,10 +320,10 @@ function tryGoogle($albumimage) {
 				break;
 			}
 		} else if (array_key_exists('error', $json)) {
-			logger::fail("GETALBUMCOVER", "    Error response from Google : ".$json['error']['errors'][0]['reason']);
+			logger::warn("GETALBUMCOVER", "    Error response from Google : ".$json['error']['errors'][0]['reason']);
 		}
 		if ($retval != '') {
-			logger::log("GETALBUMCOVER", "    Found image ".$retval." from Google");
+			logger::trace("GETALBUMCOVER", "    Found image ".$retval." from Google");
 			$delaytime = 1000;
 		}
 	} else {
@@ -289,7 +355,7 @@ function tryMusicBrainz($albumimage) {
 			$retval = "http://coverartarchive.org/release/".$albumimage->mbid."/front";
 		}
 	} else {
-		logger::fail("GETALBUMCOVER", "    Status code ".$d->get_status()." from Musicbrainz");
+		logger::warn("GETALBUMCOVER", "    Status code ".$d->get_status()." from Musicbrainz");
 	}
 	return $retval;
 

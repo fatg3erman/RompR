@@ -909,7 +909,7 @@ $.widget('rompr.spotifyAlbumThing', {
 				a.rompr_index = b;
 			}
 			if (ids.indexOf(a.id) > -1) {
-				debug.mark("SPALBUM","Duplicate album ID",a.id);
+				debug.info("SPALBUM","Duplicate album ID",a.id);
 				continue;
 			}
 			ids.push(a.id);

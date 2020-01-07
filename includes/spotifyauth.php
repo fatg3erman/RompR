@@ -17,13 +17,13 @@ function get_spotify_data($uri) {
 			$prefs['spotify_token_expires'] = time() + $stuff->{'expires_in'};
 			savePrefs();
 		} else {
-			logger::fail("SPOTIFY", "Getting credentials FAILED!" );
+			logger::warn("SPOTIFY", "Getting credentials FAILED!" );
 			$stuff = json_decode($d->get_data());
 			return array(false, $stuff->{'error_description'}, $d->get_status());
 		}
 	}
 
-	logger::trace("SPOTIFY", "Getting with Authorisation :",$uri);
+	logger::debug("SPOTIFY", "Getting with Authorisation :",$uri);
 	$d = new url_downloader(array(
 		'url' => $uri,
 		'header' => array('Authorization: Bearer '.$prefs['spotify_token'])

@@ -82,7 +82,7 @@ class asxFile {
 		$this->url = $url;
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_NOCDATA);
 		if ($xml === false) {
-			logger::fail("RADIO", "ERROR could not parse XML from",$url);
+			logger::warn("RADIO", "ERROR could not parse XML from",$url);
 			header('HTTP/1.1 417 Expectation Failed');
 			exit(0);
 		}
@@ -139,7 +139,7 @@ class xspfFile {
 		$data = preg_replace('/ > /', ' &gt; ', $data);
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_NOCDATA);
 		if ($xml === false) {
-			logger::fail("RADIO", "ERROR could not parse XML from",$url);
+			logger::warn("RADIO", "ERROR could not parse XML from",$url);
 			header('HTTP/1.1 417 Expectation Failed');
 			exit(0);
 		}

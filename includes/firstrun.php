@@ -29,14 +29,14 @@ $root_level_dirs = array(
 );
 foreach ($root_level_dirs as $dir) {
 	if (!is_dir($dir)) {
-		logger::shout("INIT", "Making Directory ".$dir);
+		logger::mark("INIT", "Making Directory ".$dir);
 		mkdir($dir, 0755, true);
 	}
 }
 $all = glob('prefs/*');
 foreach ($all as $dir) {
 	if (is_dir($dir) && !in_array($dir, $root_level_dirs) && basename($dir) != 'MusicFolders') {
-		logger::shout("INIT", "Removing Directory ".$dir);
+		logger::mark("INIT", "Removing Directory ".$dir);
 		rrmdir($dir);
 	}
 }

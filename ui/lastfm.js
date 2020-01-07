@@ -38,14 +38,14 @@ function LastFM(user) {
 	uiLoginBind();
 
 	this.wrangle = function() {
-		debug.mark('LASTFM', 'Doing the wrangling');
+		debug.info('LASTFM', 'Doing the wrangling');
 		$.ajax({
 			method: 'GET',
 			url: 'includes/strings.php?getcheese=1',
 			dataType: 'json'
 		})
 		.done(function(data) {
-			debug.mark('LASTFM', 'Done the wrangling',data);
+			debug.info('LASTFM', 'Done the wrangling',data);
 			lak = data.k;
 			lfms = data.s;
 			startBackgroundInitTasks.doNextTask();
@@ -507,7 +507,7 @@ function LastFM(user) {
 			if (self.getLanguage()) {
 				options.lang = self.getLanguage();
 			}
-			debug.mark("LASTFM","album.getInfo",options);
+			debug.info("LASTFM","album.getInfo",options);
 			LastFMGetRequest(
 				options,
 				true,
@@ -519,7 +519,7 @@ function LastFM(user) {
 		getTags: function(options, callback, failcallback) {
 			addGetOptions(options, "album.getTags");
 			if (username != "") { options.user = username }
-			debug.mark("LASTFM","album.getTags",options);
+			debug.info("LASTFM","album.getTags",options);
 			LastFMGetRequest(
 				options,
 				!logged_in,

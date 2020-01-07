@@ -146,7 +146,7 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 	}
 
 	this.refreshUserMeta = function() {
-		debug.mark("NOWPLAYING",self.nowplayingindex," is refreshing all user metadata");
+		debug.info("NOWPLAYING",self.nowplayingindex," is refreshing all user metadata");
 		collections['ratings'].refresh();
 	}
 
@@ -249,7 +249,7 @@ var nowplaying = function() {
 				return;
 			}
 			currentbackendid = playlistinfo.Id;
-			debug.mark("NOWPLAYING","New Track:",playlistinfo);
+			debug.info("NOWPLAYING","New Track:",playlistinfo);
 			for (var i in to_notify) {
 				if (to_notify[i] !== null) {
 					debug.log("NOWPLAYING","Notifying",i);

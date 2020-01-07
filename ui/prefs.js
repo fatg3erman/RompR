@@ -220,7 +220,7 @@ var prefs = function() {
 			debug.debug("PREFS","Custom Background Image",data);
 			if (data.images) {
 				if (typeof(prefs.bgimgparms[theme]) == 'undefined') {
-					debug.mark("PREFS","Init bgimgparms for",theme);
+					debug.info("PREFS","Init bgimgparms for",theme);
 					prefs.bgimgparms[theme] = {
 						landscape: 0,
 						portrait: 0,
@@ -802,7 +802,7 @@ var prefs = function() {
 
 		postUIChange: function() {
 			clearTimeout(uichangetimer);
-			debug.mark('PREFS','Post UI Change actions');
+			debug.info('PREFS','Post UI Change actions');
 			$('#theme').off('load');
 			prefs.rgbs = null;
 			prefs.maxrgbs = null;
@@ -839,12 +839,12 @@ var prefs = function() {
 						break;
 
 					case 400:
-						debug.fail("BIMAGE", "FAILED");
+						debug.warn("BIMAGE", "FAILED");
 						infobar.error(language.gettext('error_toomanyimages'));
 						// Fall Through
 
 					default:
-						debug.fail("BIMAGE", "FAILED");
+						debug.warn("BIMAGE", "FAILED");
 						infobar.error(language.gettext('error_imageupload'));
 						$('#bguploadspinner').removeClass('spinner').parent().fadeOut('fast');
 

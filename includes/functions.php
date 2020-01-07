@@ -103,7 +103,7 @@ class url_downloader {
 	}
 
 	public function get_data_to_string() {
-		logger::trace("URL_DOWNLOADER", "Downloading ".$this->options['url']);
+		logger::log("URL_DOWNLOADER", "Downloading ".$this->options['url']);
 		if ($this->options['send_cache_headers']) {
 			header("Pragma: Not Cached");
 		}
@@ -128,17 +128,17 @@ class url_downloader {
 
 	public function get_data_to_file($file = null, $binary = false) {
 		if ($file === null && $this->options['cache'] === null) {
-			logger::trace("URL_DOWNLOADER", "  No file or cache dir for request, returning data as string");
+			logger::trace("URL_DOWNLOADER", "  Returning data as string");
 			return $this->get_data_to_string();
 		} else if ($this->options['cache'] !== null) {
 			$file = 'prefs/jsoncache/'.$this->options['cache'].'/'.md5($this->options['url']);
 		}
 		if ($this->options['cache'] !== null && $this->check_cache($file)) {
-			logger::log("URL_DOWNLOADER", "Returning cached data ".$file);
+			logger::debug("URL_DOWNLOADER", "    Returning cached data ".$file);
 			$this->content = file_get_contents($file);
 			return true;
 		} else {
-			logger::trace("URL_DOWNLOADER", "Downloading",$this->options['url'],"to",$file);
+			logger::trace("URL_DOWNLOADER", "  Downloading to",$file);
 			if (file_exists($file)) {
 				unlink ($file);
 			}
@@ -177,7 +177,7 @@ class url_downloader {
 		$this->info = curl_getinfo($this->ch);
 		curl_close($this->ch);
 		if ($this->get_status() == '200') {
-			logger::trace("URL_DOWNLOADER", "  ..  Download Success");
+			logger::debug("URL_DOWNLOADER", "  ..  Download Success");
 			return true;
 		} else {
 			logger::warn("URL_DOWNLOADER", "  ..  Download Failed With Status Code",$this->get_status());
@@ -325,11 +325,11 @@ function get_images($dir_path) {
 
 	$funkychicken = array();
 	$a = basename($dir_path);
-	logger::log("GET_IMAGES", "    Scanning :",$dir_path);
+	logger::trace("GET_IMAGES", "    Scanning :",$dir_path);
 	$globpath = preg_replace('/(\*|\?|\[)/', '[$1]', $dir_path);
 	logger::debug("GET_IMAGES", "      Glob Path is",$globpath);
 	$funkychicken = glob($globpath."/*.{jpg,png,bmp,gif,jpeg,JPEG,JPG,BMP,GIF,PNG}", GLOB_BRACE);
-	logger::log("GET_IMAGES", "    Checking for embedded images");
+	logger::trace("GET_IMAGES", "    Checking for embedded images");
 	$files = glob($globpath."/*.{mp3,MP3,mp4,MP4,flac,FLAC,ogg,OGG}", GLOB_BRACE);
 	$testfile = array_shift($files);
 	if ($testfile) {
@@ -377,7 +377,7 @@ function find_executable($prog) {
 		}
 	}
 	if ($retval === false) {
-		logger::debug("BITS", "      Program ".$prog." Not Found!");
+		logger::info("BITS", "      Program ".$prog." Not Found!");
 	} else {
 		logger::debug("BITS", "      program is ".$retval.$prog);
 	}
@@ -699,9 +699,9 @@ function get_player_ip() {
 function getCacheData($uri, $cache, $use_cache = true, $return_value = false) {
 
 	$me = strtoupper($cache);
-	logger::log("GET CACHE DATA", "Getting",$uri);
+	logger::debug("GET CACHE DATA", "Getting",$uri);
 	if ($use_cache == false) {
-		logger::trace("GET CACHE DATA", "  Not using cache for this request");
+		logger::debug("GET CACHE DATA", "  Not using cache for this request");
 	}
 	$options = array(
 		'url' => $uri,
@@ -717,7 +717,7 @@ function getCacheData($uri, $cache, $use_cache = true, $return_value = false) {
 	} else {
 		if ($d->get_status() > 0) {
 			$header = $d->get_status().' '.http_status_code_string($d->get_status());
-			logger::fail("GET CACHE DATA", "HTTP ERROR",$header);
+			logger::warn("GET CACHE DATA", "HTTP ERROR",$header);
 		} else {
 			$header = '500 '.http_status_code_string(500);
 		}
@@ -728,6 +728,7 @@ function getCacheData($uri, $cache, $use_cache = true, $return_value = false) {
 		}
 	}
 	if ($return_value) {
+		logger::debug('GET CACHE DATA', 'Returning value');
 		return $retval;
 	} else {
 		if ($header != '') {
@@ -737,9 +738,14 @@ function getCacheData($uri, $cache, $use_cache = true, $return_value = false) {
 	}
 }
 
+function download_soundcloud($uri) {
+	$clientid = "6f43d0d67acd6635273ffd6eeed302aa";
+	return getCacheData('https://api.soundcloud.com/'.$uri.'?client_id='.$clientid, 'soundcloud', true, true);
+}
+
 function get_user_file($src, $fname, $tmpname) {
 	global $error;
-	logger::log("GETALBUMCOVER", "  Uploading ".$src." ".$fname." ".$tmpname);
+	logger::mark("GETALBUMCOVER", "  Uploading ".$src." ".$fname." ".$tmpname);
 	$download_file = "prefs/temp/".$fname;
 	logger::log("GETALBUMCOVER", "Checking Temp File ".$tmpname);
 	if (move_uploaded_file($tmpname, $download_file)) {
@@ -779,7 +785,7 @@ function rejig_wishlist_tracks() {
 			'rompr_wishlist_'.microtime(true), $obj['Artistindex'], null, 0, 0, null, null, 'local', null)) {
 
 			$albumindex = $mysqlc->lastInsertId();
-			logger::log("MYSQL", "    Created Album with Albumindex ".$albumindex);
+			logger::log("REJIG", "    Created Album with Albumindex ".$albumindex);
 			generic_sql_query("UPDATE Tracktable SET Albumindex = ".$albumindex." WHERE TTindex = ".$obj['TTindex'], true);
 		}
 	}
@@ -826,7 +832,7 @@ function update_stream_images($schemaver) {
 			foreach ($stations as $station) {
 				logger::log("BACKEND", "  Updating Image For Station ".$station['StationName']);
 				if (file_exists($station['Image'])) {
-					logger::log("BACKEND", "    Image is ".$station['StationName']);
+					logger::debug("BACKEND", "    Image is ".$station['StationName']);
 					$src = get_base_url().'/'.$station['Image'];
 					$albumimage = new albumImage(array('artist' => "STREAM", 'album' => $station['StationName'], 'source' => $src));
 					if ($albumimage->download_image()) {
@@ -865,7 +871,7 @@ function getRemoteFilesize($url, $default) {
 	$clen = isset($head['content-length']) ? $head['content-length'] : 0;
 	$cstring = $clen;
 	if (is_array($clen)) {
-		logger::log("REMOTEFILESIZE", "Content Length is an array ", $clen);
+		logger::debug("REMOTEFILESIZE", "Content Length is an array ", $clen);
 		$cstring = 0;
 		foreach ($clen as $l) {
 			if ($l > $cstring) {
@@ -1136,7 +1142,7 @@ function get_encoded_image($image) {
 }
 
 function upgrade_saved_crazies() {
-	logger::log('INIT', "Upgrading saved crazy playlists");
+	logger::mark('INIT', "Upgrading saved crazy playlists");
 	$files = glob('prefs/crazyplaylists/*.json');
 	foreach ($files as $file) {
 		logger::log('INIT', ' '.$file);

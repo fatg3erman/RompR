@@ -108,7 +108,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 		}
 		imgparams = self.getImageSearchParams(image);
 		imgparams.ignorelocal = ignorelocal;
-		debug.mark("COVERSCRAPER","Getting Cover for", imgparams.imgkey);
+		debug.info("COVERSCRAPER","Getting Cover for", imgparams.imgkey);
 
 		if (sendUpdates) {
 			var x = image.prev('input').val();
@@ -172,7 +172,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 		if (!delaytime) {
 			delaytime = 800;
 		}
-		debug.mark("COVERSCRAPER","No Cover Found. Reverting to the blank icon");
+		debug.info("COVERSCRAPER","No Cover Found. Reverting to the blank icon");
 		update_failed_ui_images(imgparams.imagekey);
 		if (useLocalStorage) {
 			sendLocalStorageEvent("!"+imgparams.imgkey);
@@ -187,7 +187,8 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 		}
 		// Although getalbumcover does return a default for streams, this is here
 		// mainly for the case where auto art download is disabled - this will set a
-		// sensible default for streams
+		// sensible default for streams and also for soundcloud and youtube in the same case
+		debug.trace('COVERSCRAPER', 'Checking for default image',imgparams);
 		var def = null;
 		if (imgparams.type) {
 			switch (imgparams.type) {
@@ -197,6 +198,15 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 
 				case 'podcast':
 					def = 'newimages/podcast-logo.svg';
+					break;
+
+				case 'local':
+					if (imgparams.albumuri && imgparams.albumuri.indexOf('soundcloud:') == 0) {
+						def = 'newimages/soundcloud-logo.svg';
+					} else if (imgparams.albumuri && (imgparams.albumuri.indexOf('youtube:') == 0 || imgparams.indexOf('yt:') == 0)) {
+						def = 'newimages/youtube-logo.svg';
+					}
+
 					break;
 			}
 		} else {
@@ -211,7 +221,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 			}
 		}
 		if (def) {
-			debug.mark("COVERSCRAPER", "Returning default image of",def);
+			debug.info("COVERSCRAPER", "Returning default image of",def);
 			var images = {
 				small: def,
 				medium: def,

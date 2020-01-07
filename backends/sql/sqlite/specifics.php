@@ -11,9 +11,9 @@ function connect_to_database($sp = true) {
 	}
 	try {
 		$dsn = "sqlite:prefs/collection.sq3";
-		logger::debug('SQLITE','Opening collection',$dsn);
+		logger::core('SQLITE','Opening collection',$dsn);
 		$mysqlc = new PDO($dsn);
-		logger::debug("MYSQL", "Connected to SQLite");
+		logger::core("SQLITE", "Connected to SQLite");
 		// This increases performance
 		generic_sql_query('PRAGMA journal_mode=DELETE', true);
 		generic_sql_query('PRAGMA cache_size=-4000', true);
@@ -21,7 +21,7 @@ function connect_to_database($sp = true) {
 		generic_sql_query('PRAGMA threads=4', true);
 		readCollectionPlayer($sp);
 	} catch (Exception $e) {
-		logger::error("MYSQL", "Couldn't Connect To SQLite - ".$e);
+		logger::error("SQLITE", "Couldn't Connect To SQLite - ".$e);
 		sql_init_fail($e->getMessage());
 	}
 }
@@ -53,7 +53,7 @@ function check_sql_tables() {
 		"justAdded TINYINT(1) DEFAULT 1, ".
 		"usedInPlaylist TINYINT(1) DEFAULT 0)", true))
 	{
-		logger::log("SQLITE_CONNECT", "  Tracktable OK");
+		logger::log("SQLITE", "  Tracktable OK");
 		if (generic_sql_query("CREATE INDEX IF NOT EXISTS ai ON Tracktable (Albumindex)", true)) {
 		} else {
 			$err = $mysqlc->errorInfo()[2];
@@ -94,7 +94,7 @@ function check_sql_tables() {
 		"randomSort INT DEFAULT 0, ".
 		"justUpdated TINYINT(1) DEFAULT 0)", true))
 	{
-		logger::log("SQLITE_CONNECT", "  Albumtable OK");
+		logger::log("SQLITE", "  Albumtable OK");
 		if (generic_sql_query("CREATE INDEX IF NOT EXISTS ni ON Albumtable (Albumname)", true)) {
 		} else {
 			$err = $mysqlc->errorInfo()[2];
@@ -124,7 +124,7 @@ function check_sql_tables() {
 		"Artistindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 		"Artistname VARCHAR(255))", true))
 	{
-		logger::log("SQLITE_CONNECT", "  Artisttable OK");
+		logger::log("SQLITE", "  Artisttable OK");
 		if (generic_sql_query("CREATE INDEX IF NOT EXISTS ni ON Artisttable (Artistname)", true)) {
 		} else {
 			$err = $mysqlc->errorInfo()[2];
@@ -139,7 +139,7 @@ function check_sql_tables() {
 		"TTindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 		"Rating TINYINT(1))", true))
 	{
-		logger::log("SQLITE_CONNECT", "  Ratingtable OK");
+		logger::log("SQLITE", "  Ratingtable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Ratingtable : ".$err);
@@ -149,7 +149,7 @@ function check_sql_tables() {
 		"TTindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 		"Progress INTEGER)", true))
 	{
-		logger::log("SQLITE_CONNECT", "  Progresstable OK");
+		logger::log("SQLITE", "  Progresstable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Progresstable : ".$err);
@@ -159,7 +159,7 @@ function check_sql_tables() {
 		"Tagindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 		"Name VARCHAR(255))", true))
 	{
-		logger::log("SQLITE_CONNECT", "  Tagtable OK");
+		logger::log("SQLITE", "  Tagtable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Tagtable : ".$err);
@@ -170,7 +170,7 @@ function check_sql_tables() {
 		"TTindex INTEGER NOT NULL REFERENCES Tracktable(TTindex), ".
 		"PRIMARY KEY (Tagindex, TTindex))", true))
 	{
-		logger::log("SQLITE_CONNECT", "  TagListtable OK");
+		logger::log("SQLITE", "  TagListtable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking TagListtable : ".$err);
@@ -182,7 +182,7 @@ function check_sql_tables() {
 		"SyncCount INT UNSIGNED DEFAULT 0, ".
 		"LastPlayed TIMESTAMP DEFAULT NULL)", true))
 	{
-		logger::log("SQLITE_CONNECT", "  Playcounttable OK");
+		logger::log("SQLITE", "  Playcounttable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Playcounttable : ".$err);
@@ -215,7 +215,7 @@ function check_sql_tables() {
 		"LastPubDate INTEGER DEFAULT NULL, ".
 		"Category VARCHAR(255))", true))
 	{
-		logger::log("SQLITE_CONNECT", "  Podcasttable OK");
+		logger::log("SQLITE", "  Podcasttable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Podcasttable : ".$err);
@@ -240,7 +240,7 @@ function check_sql_tables() {
 		"Progress INTEGER DEFAULT 0, ".
 		"Deleted TINYINT(1) DEFAULT 0)", true))
 	{
-		logger::log("SQLITE_CONNECT", "  PodcastTracktable OK");
+		logger::log("SQLITE", "  PodcastTracktable OK");
 		if (generic_sql_query("CREATE INDEX IF NOT EXISTS ptt ON PodcastTracktable (Title)", true)) {
 		} else {
 			$err = $mysqlc->errorInfo()[2];
@@ -259,7 +259,7 @@ function check_sql_tables() {
 		"PlaylistUrl TEXT, ".
 		"Image VARCHAR(255))", true))
 	{
-		logger::log("SQLITE_CONNECT", "  RadioStationtable OK");
+		logger::log("SQLITE", "  RadioStationtable OK");
 		if (generic_sql_query("CREATE INDEX IF NOT EXISTS ui ON RadioStationtable (PlaylistUrl)", true)) {
 		} else {
 			$err = $mysqlc->errorInfo()[2];
@@ -276,7 +276,7 @@ function check_sql_tables() {
 		"TrackUri TEXT, ".
 		"PrettyStream TEXT)", true))
 	{
-		logger::log("SQLITE_CONNECT", "  RadioTracktable OK");
+		logger::log("SQLITE", "  RadioTracktable OK");
 		if (generic_sql_query("CREATE INDEX IF NOT EXISTS uri ON RadioTracktable (TrackUri)", true)) {
 		} else {
 			$err = $mysqlc->errorInfo()[2];
@@ -293,7 +293,7 @@ function check_sql_tables() {
 		"SourceImage VARCHAR(255), ".
 		"SourceUri TEXT)", true))
 	{
-		logger::log("SQLITE_CONNECT", "  WishlistSourcetable OK");
+		logger::log("SQLITE", "  WishlistSourcetable OK");
 		if (generic_sql_query("CREATE INDEX IF NOT EXISTS suri ON WishlistSourcetable (SourceUri)", true)) {
 		} else {
 			$err = $mysqlc->errorInfo()[2];
@@ -308,7 +308,7 @@ function check_sql_tables() {
 		"Listenindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
 		"JsonData TEXT)", true))
 	{
-		logger::log("MYSQL_CONNECT", "  AlbumsToListenTotabletable OK");
+		logger::log("SQLITE", "  AlbumsToListenTotabletable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking AlbumsToListenTotable : ".$err);
@@ -321,7 +321,7 @@ function check_sql_tables() {
 		"Filename VARCHAR(255), ".
 		"Orientation TINYINT(2))", true))
 	{
-		logger::log("MYSQL_CONNECT", "  BackgounrdImageTable OK");
+		logger::log("SQLITE", "  BackgounrdImageTable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking BackgroundImageTable : ".$err);
@@ -330,7 +330,7 @@ function check_sql_tables() {
 	// Check schema version and update tables as necessary
 	$sv = simple_query('Value', 'Statstable', 'Item', 'SchemaVer', 0);
 	if ($sv == 0) {
-		logger::log("SQLITE_CONNECT", "No Schema Version Found - initialising table");
+		logger::mark("SQLITE", "No Schema Version Found - initialising table");
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('ListVersion', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('ArtistCount', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('AlbumCount', '0')", true);
@@ -343,14 +343,14 @@ function check_sql_tables() {
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTracks', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTime', '0')", true);
 		$sv = ROMPR_SCHEMA_VERSION;
-		logger::log("SQLITE_CONNECT", "Statstable populated");
+		logger::log("SQLITE", "Statstable populated");
 		create_update_triggers();
 		create_conditional_triggers();
 		create_playcount_triggers();
 	}
 
 	if ($sv > ROMPR_SCHEMA_VERSION) {
-		logger::log("SQLITE_CONNECT", "Schema Mismatch! We are version ".ROMPR_SCHEMA_VERSION." but database is version ".$sv);
+		logger::warn("SQLITE", "Schema Mismatch! We are version ".ROMPR_SCHEMA_VERSION." but database is version ".$sv);
 		return array(false, "Your database has version number ".$sv." but this version of rompr only handles version ".ROMPR_SCHEMA_VERSION);
 	}
 
@@ -450,7 +450,7 @@ function check_sql_tables() {
 				logger::log("SQL", "Updating FROM Schema version 18 TO Schema version 19");
 				$result = generic_sql_query('SELECT Tracktable.Uri AS uri, Tracktable.TTindex, Tracktable.Title AS ttit, Albumtable.*, Trackimagetable.Image AS ti FROM Tracktable JOIN Albumtable USING (Albumindex) LEFT JOIN Trackimagetable USING (TTindex) WHERE Tracktable.Uri LIKE "soundcloud:%"', false, PDO::FETCH_OBJ);
 				foreach ($result as $obj) {
-					logger::log("SQL", "  Creating new Album ".$obj->ttit." Image ".$obj->ti);
+					logger::trace("SQL", "  Creating new Album ".$obj->ttit." Image ".$obj->ti);
 					$ti = $obj->ti;
 					if (preg_match('/^http/', $ti)) {
 						$ti = 'getRemoteImage.php?url='.$ti;
@@ -463,10 +463,10 @@ function check_sql_tables() {
 							$obj->ttit, $obj->AlbumArtistindex, $obj->uri, $obj->Year, $obj->Searched, $obj->ImgKey, $obj->mbid, $obj->Domain, $ti
 						)) {
 							$retval = $mysqlc->lastInsertId();
-							logger::log("SQL", "    .. success, Albumindex ".$retval);
+							logger::debug("SQL", "    .. success, Albumindex ".$retval);
 							generic_sql_query("UPDATE Tracktable SET Albumindex = ".$retval." WHERE TTindex = ".$obj->TTindex, true);
 					} else {
-						logger::log("SQL", "    .. ERROR!");
+						logger::warn("SQL", "    .. ERROR!");
 					}
 				}
 				generic_sql_query("UPDATE Statstable SET Value = 19 WHERE Item = 'SchemaVer'");
@@ -476,7 +476,7 @@ function check_sql_tables() {
 				logger::log("SQL", "Updating FROM Schema version 19 TO Schema version 20");
 				$result = generic_sql_query('SELECT Tracktable.Uri AS uri, Tracktable.TTindex, Tracktable.Title AS ttit, Albumtable.*, Trackimagetable.Image AS ti FROM Tracktable JOIN Albumtable USING (Albumindex) LEFT JOIN Trackimagetable USING (TTindex) WHERE Tracktable.Uri LIKE "youtube:%"', false, PDO::FETCH_OBJ);
 				foreach ($result as $obj) {
-					logger::log("SQL", "  Creating new Album ".$obj->ttit." Image ".$obj->ti);
+					logger::trace("SQL", "  Creating new Album ".$obj->ttit." Image ".$obj->ti);
 					$ti = $obj->ti;
 					if (preg_match('/^http/', $ti)) {
 						$ti = 'getRemoteImage.php?url='.$ti;
@@ -489,10 +489,10 @@ function check_sql_tables() {
 							$obj->ttit, $obj->AlbumArtistindex, $obj->uri, $obj->Year, $obj->Searched, $obj->ImgKey, $obj->mbid, $obj->Domain, $ti
 						)) {
 							$retval = $mysqlc->lastInsertId();
-							logger::log("SQL", "    .. success, Albumindex ".$retval);
+							logger::debug("SQL", "    .. success, Albumindex ".$retval);
 							generic_sql_query("UPDATE Tracktable SET Albumindex = ".$retval." WHERE TTindex = ".$obj->TTindex, true);
 					} else {
-						logger::log("SQL", "    .. ERROR!");
+						logger::warn("SQL", "    .. ERROR!");
 					}
 				}
 				generic_sql_query("UPDATE Statstable SET Value = 20 WHERE Item = 'SchemaVer'", true);
@@ -975,7 +975,7 @@ function create_playcount_triggers() {
 
 function create_update_triggers() {
 
-	logger::trace("SQLITE", "Creating Triggers for update operation");
+	logger::log("SQLITE", "Creating Triggers for update operation");
 
 	generic_sql_query("CREATE TRIGGER rating_update_trigger AFTER UPDATE ON Ratingtable
 						FOR EACH ROW

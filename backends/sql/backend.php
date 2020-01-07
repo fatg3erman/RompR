@@ -69,7 +69,7 @@ function create_new_track(&$data) {
 	}
 
 	if ($data['albumai'] == null || $data['trackai'] == null) {
-		logger::fail("MYSQL", "Trying to create new track but failed to get an artist index");
+		logger::warn('BACKEND', "Trying to create new track but failed to get an artist index");
 		return null;
 	}
 
@@ -80,7 +80,7 @@ function create_new_track(&$data) {
 		}
 		$data['albumindex'] = check_album($data);
 		if ($data['albumindex'] == null) {
-			logger::fail("MYSQL", "Trying to create new track but failed to get an album index");
+			logger::warn('BACKEND', "Trying to create new track but failed to get an album index");
 			return null;
 		}
 	}
@@ -108,7 +108,7 @@ function check_radio_source($data) {
 	global $mysqlc;
 	$index = simple_query('Sourceindex', 'WishlistSourcetable', 'SourceUri', $data['streamuri'], null);
 	if ($index === null) {
-		logger::log("SQL", "Creating Wishlist Source",$data['streamname']);
+		logger::log('BACKEND', "Creating Wishlist Source",$data['streamname']);
 		if (sql_prepare_query(true, null, null, null,
 		"INSERT INTO WishlistSourcetable (SourceName, SourceImage, SourceUri) VALUES (?, ?, ?)",
 		$data['streamname'], $data['streamimage'], $data['streamuri']))
@@ -142,7 +142,7 @@ function create_new_artist($artist) {
 	$retval = null;
 	if (sql_prepare_query(true, null, null, null, "INSERT INTO Artisttable (Artistname) VALUES (?)", $artist)) {
 		$retval = $mysqlc->lastInsertId();
-		logger::trace("MYSQL", "Created artist",$artist,"with Artistindex",$retval);
+		logger::trace('BACKEND', "Created artist",$artist,"with Artistindex",$retval);
 	}
 	return $retval;
 }
@@ -207,13 +207,13 @@ function check_album(&$data) {
 				AND AlbumArtistindex = ?", $data['album'], $data['albumai']);
 		$obj = array_shift($result);
 		if ($obj) {
-			logger::log("MYSQL", "Album ".$data['album']." was found on domain ".$obj->Domain.". Changing to local");
+			logger::mark('BACKEND', "Album ".$data['album']." was found on domain ".$obj->Domain.". Changing to local");
 			$index = $obj->Albumindex;
 			if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET AlbumUri=NULL, Domain=?, justUpdated=? WHERE Albumindex=?", 'local', 1, $index)) {
 				$obj->AlbumUri = null;
-				logger::debug("MYSQL", "   ...Success");
+				logger::debug('BACKEND', "   ...Success");
 			} else {
-				logger::fail("MYSQL", "   Album ".$data['album']." update FAILED");
+				logger::warn('BACKEND', "   Album ".$data['album']." update FAILED");
 				return false;
 			}
 		}
@@ -228,21 +228,21 @@ function check_album(&$data) {
 		if ($year != $obj->Year || $img != $obj->Image || $uri != $obj->AlbumUri || $mbid != $obj->mbid) {
 
 			if ($prefs['debug_enabled'] > 6) {
-				logger::log("BACKEND", "Updating Details For Album ".$data['album']." (index ".$index.")" );
-				logger::log("BACKEND", "  Old Date  : ".$obj->Year);
-				logger::log("BACKEND", "  New Date  : ".$year);
-				logger::log("BACKEND", "  Old Image : ".$obj->Image);
-				logger::log("BACKEND", "  New Image : ".$img);
-				logger::log("BACKEND", "  Old Uri  : ".$obj->AlbumUri);
-				logger::log("BACKEND", "  New Uri  : ".$uri);
-				logger::log("BACKEND", "  Old MBID  : ".$obj->mbid);
-				logger::log("BACKEND", "  New MBID  : ".$mbid);
+				logger::mark('BACKEND', "Updating Details For Album ".$data['album']." (index ".$index.")" );
+				logger::log('BACKEND', "  Old Date  : ".$obj->Year);
+				logger::log('BACKEND', "  New Date  : ".$year);
+				logger::log('BACKEND', "  Old Image : ".$obj->Image);
+				logger::log('BACKEND', "  New Image : ".$img);
+				logger::log('BACKEND', "  Old Uri  : ".$obj->AlbumUri);
+				logger::log('BACKEND', "  New Uri  : ".$uri);
+				logger::log('BACKEND', "  Old MBID  : ".$obj->mbid);
+				logger::log('BACKEND', "  New MBID  : ".$mbid);
 			}
 
 			if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Year=?, Image=?, AlbumUri=?, mbid=?, justUpdated=1 WHERE Albumindex=?",$year, $img, $uri, $mbid, $index)) {
-				logger::debug("BACKEND", "   ...Success");
+				logger::debug('BACKEND', "   ...Success");
 			} else {
-				logger::fail("BACKEND", "   Album ".$data['album']." update FAILED");
+				logger::warn('BACKEND', "   Album ".$data['album']." update FAILED");
 				return false;
 			}
 		}
@@ -272,7 +272,7 @@ function create_new_album($data) {
 			(?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		$data['album'], $data['albumai'], $data['albumuri'], $data['date'], $im['searched'], $data['imagekey'], $data['ambid'], $data['domain'], $im['image'])) {
 		$retval = $mysqlc->lastInsertId();
-		logger::log("BACKEND", "Created Album ".$data['album']." with Albumindex ".$retval);
+		logger::trace('BACKEND', "Created Album ".$data['album']." with Albumindex ".$retval);
 	}
 	return $retval;
 }
@@ -296,7 +296,7 @@ function remove_ttid($ttid) {
 	// then deleted, if someone tried to then re-add it it doesn't appear in the display because all manually-added tracks go to
 	// the Collection not Spoken Word, but this doesn't work oh god it's horrible just leave it.
 
-	logger::log("BACKEND", "Removing track ".$ttid);
+	logger::log('BACKEND', "Removing track ".$ttid);
 	$result = false;
 	if (generic_sql_query("DELETE FROM Tracktable WHERE isSearchResult != 1 AND TTindex = '".$ttid."'",true)) {
 		if (generic_sql_query("UPDATE Tracktable SET isSearchResult = 2, isAudiobook = 0 WHERE isSearchResult = 1 AND TTindex = '".$ttid."'", true)) {
@@ -318,213 +318,6 @@ function list_tags() {
 	}
 	return $tags;
 }
-
-// function get_rating_headers($sortby) {
-
-// 	$ratings = array();
-
-// 	switch ($sortby) {
-
-// 		case 'Rating':
-// 			$ratings = generic_sql_query("SELECT Rating AS Name, COUNT(TTindex) AS NumTracks FROM Ratingtable GROUP BY Rating ORDER BY Rating");
-// 			break;
-
-// 		case 'Tag':
-// 			$ratings = generic_sql_query('SELECT Name, COUNT(TTindex) AS NumTracks FROM Tagtable JOIN TagListtable USING (Tagindex) GROUP BY Name ORDER BY Name');
-// 			break;
-
-// 		case 'AlbumArtist':
-// 			// It's actually Track Artist, but sod changing it now.
-// 			$qstring = "SELECT DISTINCT Artistname AS Name, COUNT(DISTINCT TTindex) AS NumTracks
-// 						FROM
-// 						Artisttable AS a JOIN Tracktable AS tt USING (Artistindex)
-// 						LEFT JOIN Ratingtable USING (TTindex)
-// 						LEFT JOIN `TagListtable` USING (TTindex)
-// 						LEFT JOIN Tagtable AS t USING (Tagindex)
-// 						WHERE Hidden = 0 AND isSearchResult < 2 AND (Rating IS NOT NULL OR t.Name IS NOT NULL)
-// 						GROUP BY Artistname
-// 						ORDER BY ";
-// 			$qstring .= sort_artists_by_name();
-// 			$ratings = generic_sql_query($qstring);
-// 			break;
-
-// 		case 'Tags':
-// 			$ratings = generic_sql_query("SELECT DISTINCT ".SQL_TAG_CONCAT." AS Name, 0 AS NumTracks FROM
-// 											(SELECT Tagindex, TTindex FROM TagListtable ORDER BY Tagindex) AS tagorder
-// 											JOIN Tagtable AS t USING (Tagindex)
-// 											GROUP BY TTindex
-// 											ORDER By Name");
-// 			break;
-
-// 		default:
-// 			$ratings = array('INTERNAL ERROR!');
-// 			break;
-
-// 	}
-
-// 	return $ratings;
-// }
-
-// function sortletter_mangler() {
-// 	global $prefs;
-// 	$qstring = '';
-// 	if (count($prefs['nosortprefixes']) > 0) {
-// 		$qstring .= "CASE ";
-// 		foreach($prefs['nosortprefixes'] AS $p) {
-// 			$phpisshitsometimes = strlen($p)+2;
-// 			$qstring .= "WHEN LOWER(a.Artistname) LIKE '".strtolower($p).
-// 				" %' THEN UPPER(SUBSTR(a.Artistname,".$phpisshitsometimes.",1)) ";
-// 		}
-// 		$qstring .= "ELSE UPPER(SUBSTR(a.Artistname,1,1)) END AS SortLetter";
-// 	} else {
-// 		$qstring .= "UPPER(SUBSTR(a.Artistname,1,1)) AS SortLetter";
-// 	}
-// 	return $qstring;
-// }
-
-// function get_rating_info($sortby, $value) {
-
-// 	global $prefs, $mysqlc;
-
-// 	// Tuned SQL queries for each type, for speed, otherwise it's unuseable
-
-// 	switch ($sortby) {
-// 		case 'Rating':
-// 			$qstring = "SELECT
-// 		 		r.Rating AS Rating,
-// 				IFNULL(".SQL_TAG_CONCAT.", 'No Tags') AS Tags,
-// 				tr.TTindex,
-// 				tr.TrackNo,
-// 				tr.Title,
-// 				tr.Duration,
-// 				tr.Uri,
-// 				a.Artistname,
-// 				aa.Artistname AS AlbumArtist,
-// 				al.Albumname,
-// 				al.Image, ";
-// 			$qstring .= sortletter_mangler();
-
-// 			$qstring .= " FROM
-// 					Ratingtable AS r
-// 					JOIN Tracktable AS tr ON tr.TTindex = r.TTindex
-// 					LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
-// 					LEFT JOIN Tagtable AS t USING (Tagindex)
-// 					JOIN Albumtable AS al USING (Albumindex)
-// 					JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
-// 					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-// 				WHERE r.Rating = ".$value." AND tr.isSearchResult < 2 AND tr.Uri IS NOT NULL";
-// 				break;
-
-// 			case 'Tag':
-// 				$qstring = "SELECT
-// 					IFNULL(r.Rating, 0) AS Rating,
-// 					IFNULL(".SQL_TAG_CONCAT.", 'No Tags') AS Tags,
-// 					tr.TTindex,
-// 					tr.TrackNo,
-// 					tr.Title,
-// 					tr.Duration,
-// 					tr.Uri,
-// 					a.Artistname,
-// 					aa.Artistname AS AlbumArtist,
-// 					al.Albumname,
-// 					al.Image, ";
-// 				$qstring .= sortletter_mangler();
-
-// 				$qstring .= " FROM
-// 					Tracktable AS tr
-// 					LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
-// 					LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
-// 					LEFT JOIN Tagtable AS t USING (Tagindex)
-// 					JOIN Albumtable AS al USING (Albumindex)
-// 					JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
-// 					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-// 				WHERE tr.isSearchResult < 2  AND tr.Uri IS NOT NULL AND tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name = ".$mysqlc->quote($value).")";
-// 				break;
-
-// 			case 'AlbumArtist':
-// 				// It's actually Track Artist, but sod changing it now.
-// 				$qstring = "SELECT
-// 			 		IFNULL(r.Rating, 0) AS Rating,
-// 			 		IFNULL(".SQL_TAG_CONCAT.", 'No Tags') AS Tags,
-// 			 		tr.TTindex,
-// 			 		tr.TrackNo,
-// 			 		tr.Title,
-// 			 		tr.Duration,
-// 			 		tr.Uri,
-// 			 		a.Artistname,
-// 			 		aa.Artistname AS AlbumArtist,
-// 			 		al.Albumname,
-// 			 		al.Image ";
-
-// 			 	$qstring .= " FROM
-// 			 		Tracktable AS tr
-// 			 		LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
-// 			 		LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
-// 			 		LEFT JOIN Tagtable AS t USING (Tagindex)
-// 			 		JOIN Albumtable AS al USING (Albumindex)
-// 			 		JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
-// 			 		JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-// 			 	WHERE (r.Rating IS NOT NULL OR t.Name IS NOT NULL)  AND tr.Uri IS NOT NULL AND tr.isSearchResult < 2 AND a.Artistname = ".$mysqlc->quote($value);
-// 				break;
-
-// 			case 'Tags':
-// 				$qstring = "SELECT
-// 					IFNULL(r.Rating, 0) AS Rating,
-// 					".SQL_TAG_CONCAT." AS Tags,
-// 					tr.TTindex,
-// 					tr.TrackNo,
-// 					tr.Title,
-// 					tr.Duration,
-// 					tr.Uri,
-// 					a.Artistname,
-// 					aa.Artistname AS AlbumArtist,
-// 					al.Albumname,
-// 					COUNT(tr.TTindex) AS count,
-// 					al.Image, ";
-// 				$qstring .= sortletter_mangler();
-
-// 				$qstring .= " FROM
-// 					TagListtable AS tl
-// 					JOIN Tracktable AS tr USING (TTindex)
-// 					JOIN Tagtable AS t USING (Tagindex)
-// 					LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
-// 					JOIN Albumtable AS al USING (Albumindex)
-// 					JOIN Artisttable AS a ON (tr.Artistindex = a.Artistindex)
-// 					JOIN Artisttable AS aa ON (al.AlbumArtistindex = aa.Artistindex)
-// 					WHERE ";
-// 					$tags = explode(', ',$value);
-// 					foreach ($tags as $i => $t) {
-// 						$tags[$i] = "tr.TTindex IN (SELECT TTindex FROM TagListtable JOIN Tagtable USING (Tagindex) WHERE Name=".$mysqlc->quote($t).")";
-// 					}
-// 					$qstring .= implode(' AND ', $tags);
-// 					$qstring .= " AND tr.isSearchResult < 2 AND tr.Uri IS NOT NULL";
-// 					break;
-// 	}
-
-// 	$qstring .= " GROUP BY tr.TTindex ORDER BY ";
-// 	$qstring .= sort_artists_by_name();
-// 	$qstring .= ", al.Albumname, tr.TrackNo";
-
-// 	$t =  microtime(true);
-// 	$ratings =  generic_sql_query($qstring);
-// 	$took = microtime(true) - $t;
-// 	logger::debug("TIMINGS", " :: Getting rating data took ".$took." seconds");
-// 	// Our query for Tags (Tag List) will get eg if we're looking for 'tag1' it'll get tracks with 'tag1' and 'tag2'
-// 	// So we check how many tags there are in each result and only use the ones that match the number of tags we're looking for
-// 	if ($sortby == 'Tags') {
-// 		$temp = array();
-// 		$c = count($tags);
-// 		foreach ($ratings as $rat) {
-// 			if ($rat['count'] == $c) {
-// 				$temp[] = $rat;
-// 			}
-// 		}
-// 		$ratings = $temp;
-// 	}
-
-// 	return $ratings;
-
-// }
 
 function clear_wishlist() {
 	return generic_sql_query("DELETE FROM Tracktable WHERE Uri IS NULL", true);
@@ -594,7 +387,7 @@ function get_extra_track_info(&$filedata) {
 	);
 	foreach ($result as $tinfo) {
 		if ($tinfo['Uri'] == $filedata['file']) {
-			logger::trace("EXTRAINFO", "Found Track In Collection");
+			logger::debug('BACKEND', "Found Track In Collection");
 			if ($tinfo['isAudiobook'] > 0) {
 				$tinfo['type'] = 'audiobook';
 			}
@@ -619,7 +412,7 @@ function get_extra_track_info(&$filedata) {
 				$filedata['Album'], concatenate_artist_names($filedata['AlbumArtist'])
 		);
 		foreach ($result as $tinfo) {
-			logger::trace("EXTRAINFO", "Found Album In Collection");
+			logger::debug('BACKEND', "Found Album In Collection");
 			$data = array_filter($tinfo, function($v) {
 				if ($v === null || $v == '') {
 					return false;
@@ -677,7 +470,7 @@ function get_imagesearch_info($key) {
 		if ($retval['albumuri'] == null || $retval['albumuri'] == "") {
 			$retval['albumuri'] = $obj->AlbumUri;
 		}
-		logger::log("GETALBUMCOVER", "Found album",$retval['album'],",in collection");
+		logger::log('BACKEND', "Found album",$retval['album'],",in collection");
 	}
 
 	$result = generic_sql_query(
@@ -712,7 +505,7 @@ function get_imagesearch_info($key) {
 		if ($retval['albumuri'] == null || $retval['albumuri'] == "") {
 			$retval['albumuri'] = $obj->AlbumUri;
 		}
-		logger::log("GETALBUMCOVER", "Found album",$retval['album'],"in search results or hidden tracks");
+		logger::log('BACKEND', "Found album",$retval['album'],"in search results or hidden tracks");
 	}
 	return $retval;
 }
@@ -732,7 +525,7 @@ function get_album_directory($albumindex, $uri) {
 			$retval = preg_replace('#^local:track:#', '', $retval);
 			$retval = preg_replace('#^file://#', '', $retval);
 			$retval = preg_replace('#^beetslocal:\d+:'.$prefs['music_directory_albumart'].'/#', '', $retval);
-			logger::log("SQL", "Got album directory using track Uri :",$retval);
+			logger::log('BACKEND', "Got album directory using track Uri :",$retval);
 		}
 	}
 	return $retval;
@@ -741,9 +534,9 @@ function get_album_directory($albumindex, $uri) {
 function update_image_db($key, $found, $imagefile) {
 	$val = ($found) ? $imagefile : null;
 	if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Image = ?, Searched = 1 WHERE ImgKey = ?", $val, $key)) {
-		logger::log("MYSQL", "    Database Image URL Updated");
+		logger::log('BACKEND', "    Database Image URL Updated");
 	} else {
-		logger::fail("MYSQL", "    Failed To Update Database Image URL",$val,$key);
+		logger::warn('BACKEND', "    Failed To Update Database Image URL",$val,$key);
 	}
 }
 
@@ -766,7 +559,7 @@ function track_is_searchresult($ttid) {
 function track_is_wishlist($ttid) {
 	$u = simple_query('Uri', 'Tracktable', 'TTindex', $ttid, '');
 	if ($u === null) {
-		logger::mark("USERRATING", "Track",$ttid,"is wishlist. Discarding");
+		logger::mark('BACKEND', "Track",$ttid,"is wishlist. Discarding");
 		generic_sql_query("DELETE FROM Playcounttable WHERE TTindex=".$ttid, true);
 		generic_sql_query("DELETE FROM Tracktable WHERE TTindex=".$ttid, true);
 		return true;
@@ -778,7 +571,7 @@ function check_for_wishlist_track(&$data) {
 	$result = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null, "SELECT TTindex FROM Tracktable JOIN Artisttable USING (Artistindex)
 									WHERE Artistname=? AND Title=? AND Uri IS NULL",$data['artist'],$data['title']);
 	foreach ($result as $obj) {
-		logger::mark("USERRATING", "Wishlist Track",$obj['TTindex'],"matches the one we're adding");
+		logger::mark('BACKEND', "Wishlist Track",$obj['TTindex'],"matches the one we're adding");
 		$meta = get_all_data($obj['TTindex']);
 		$data['attributes'] = array();
 		$data['attributes'][] = array('attribute' => 'Rating', 'value' => $meta['Rating']);
@@ -795,7 +588,6 @@ function remove_album_from_database($albumid) {
 function get_album_tracks_from_database($which, $cmd) {
 	global $prefs;
 	$retarr = array();
-	logger::log('SQL', 'Getting tracks for album',$which,$cmd);
 	$sorter = choose_sorter_by_key($which);
 	$lister = new $sorter($which);
 	$result = $lister->track_sort_query();
@@ -809,7 +601,7 @@ function get_album_tracks_from_database($which, $cmd) {
 function get_artist_tracks_from_database($which, $cmd) {
 	global $prefs;
 	$retarr = array();
-	logger::log("GET TRACKS", "Getting Tracks for Root Item",$prefs['sortcollectionby'],$which);
+	logger::log('BACKEND', "Getting Tracks for Root Item",$prefs['sortcollectionby'],$which);
 	$sorter = choose_sorter_by_key($which);
 	$lister = new $sorter($which);
 	foreach ($lister->albums_for_artist() as $a) {
@@ -904,19 +696,19 @@ function check_radio_station($playlisturl, $stationname, $image) {
 	$index = null;
 	$index = sql_prepare_query(false, null, 'Stationindex', false, "SELECT Stationindex FROM RadioStationtable WHERE PlaylistUrl = ?", $playlisturl);
 	if ($index === false) {
-		logger::shout("RADIO", "Adding New Radio Station");
-		logger::mark("RADIO", "  Name  :",$stationname);
-		logger::mark("RADIO", "  Image :",$image);
-		logger::mark("RADIO", "  URL   :",$playlisturl);
+		logger::mark('BACKEND', "Adding New Radio Station");
+		logger::log('BACKEND', "  Name  :",$stationname);
+		logger::log('BACKEND', "  Image :",$image);
+		logger::log('BACKEND', "  URL   :",$playlisturl);
 		if (sql_prepare_query(true, null, null, null, "INSERT INTO RadioStationtable (IsFave, StationName, PlaylistUrl, Image) VALUES (?, ?, ?, ?)",
 								0, trim($stationname), trim($playlisturl), trim($image))) {
 			$index = $mysqlc->lastInsertId();
-			logger::log("RADIO", "Created new radio station with index ".$index);
+			logger::log('BACKEND', "Created new radio station with index ".$index);
 		}
 	} else {
 		sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET StationName = ?, Image = ? WHERE Stationindex = ?",
 			trim($stationname), trim($image), $index);
-		logger::shout("RADIO", "Found radio station",$stationname,"with index",$index);
+		logger::mark('BACKEND', "Found radio station",$stationname,"with index",$index);
 	}
 	return $index;
 }
@@ -926,10 +718,10 @@ function check_radio_tracks($stationid, $tracks) {
 	foreach ($tracks as $track) {
 		$index = sql_prepare_query(false, null, 'Stationindex', false, "SELECT Stationindex FROM RadioTracktable WHERE TrackUri = ?", trim($track['TrackUri']));
 		if ($index !== false) {
-			logger::log("RADIO", "  Track already exists for stationindex",$index);
+			logger::log('BACKEND', "  Track already exists for stationindex",$index);
 			$stationid = $index;
 		} else {
-			logger::mark("RADIO", "  Adding New Track",$track['TrackUri'],"to station",$stationid);
+			logger::log('BACKEND', "  Adding New Track",$track['TrackUri'],"to station",$stationid);
 			sql_prepare_query(true, null, null, null, "INSERT INTO RadioTracktable (Stationindex, TrackUri, PrettyStream) VALUES (?, ?, ?)",
 								$stationid, trim($track['TrackUri']), trim($track['PrettyStream']));
 		}
@@ -939,7 +731,7 @@ function check_radio_tracks($stationid, $tracks) {
 
 function add_fave_station($info) {
 	if (array_key_exists('streamid', $info) && $info['streamid']) {
-		logger::shout("RADIO", "Updating StationIndex",$info['streamid'],"to be fave");
+		logger::mark('BACKEND', "Updating StationIndex",$info['streamid'],"to be fave");
 		generic_sql_query("UPDATE RadioStationtable SET IsFave = 1 WHERE Stationindex = ".$info['streamid'], true);
 		return true;
 	}
@@ -950,7 +742,7 @@ function add_fave_station($info) {
 
 function update_radio_station_name($info) {
 	if ($info['streamid']) {
-		logger::shout("RADIO", "Updating Stationindex",$info['streamid'],"with new name",$info['name']);
+		logger::mark('BACKEND', "Updating Stationindex",$info['streamid'],"with new name",$info['name']);
 		sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET StationName = ? WHERE Stationindex = ?",$info['name'],$info['streamid']);
 	} else {
 		$stationid = check_radio_station($info['uri'], $info['name'], '');
@@ -967,7 +759,7 @@ function update_stream_image($stream, $image) {
 }
 
 function update_podcast_image($podid, $image) {
-	logger::log("PODCASTS", "Setting Image to",$image,"for podid",$podid);
+	logger::log('BACKEND', "Setting Image to",$image,"for podid",$podid);
 	sql_prepare_query(true, null, null, null, 'UPDATE Podcasttable SET Image = ? WHERE PODindex = ?',$image, $podid);
 }
 
@@ -985,7 +777,7 @@ function find_radio_track_from_url($url) {
 //
 
 function update_track_stats() {
-	logger::log("BACKEND", "Updating Track Stats");
+	logger::mark('BACKEND', "Updating Track Stats");
 	$t = microtime(true);
 	update_stat('ArtistCount',get_artist_count(ADDED_ALL_TIME, 0));
 	update_stat('AlbumCount',get_album_count(ADDED_ALL_TIME, 0));
@@ -996,7 +788,7 @@ function update_track_stats() {
 	update_stat('BookTracks',get_track_count(ADDED_ALL_TIME, 1));
 	update_stat('BookTime',get_duration_count(ADDED_ALL_TIME, 1));
 	$at = microtime(true) - $t;
-	logger::debug("TIMINGS", "Updating Track Stats took ".$at." seconds");
+	logger::info('BACKEND', "Updating Track Stats took ".$at." seconds");
 }
 
 function update_stat($item, $value) {
@@ -1117,11 +909,11 @@ function searchStats() {
 function getItemsToAdd($which, $cmd = null) {
 	$a = preg_match('/^(a|b|r|t|y|u|z)(.*?)(\d+|root)/', $which, $matches);
 	if (!$a) {
-		logger::fail("GETITEMSTOADD", "Regexp failed to match",$which);
+		logger::error('BACKEND', "Regexp failed to match",$which);
 		return array();
 	}
 	$what = $matches[2];
-	logger::log('GETITEMSTOADD','Getting tracks for',$which,$cmd);
+	logger::log('BACKEND','Getting tracks for',$which,$cmd);
 	switch ($what) {
 		case "album":
 			return get_album_tracks_from_database($which, $cmd);
@@ -1193,7 +985,7 @@ function check_url_against_database($url, $itags, $rating) {
 function cleanSearchTables() {
 	// Clean up the database tables before performing a new search or updating the collection
 
-	logger::trace("MYSQL", "Cleaning Search Results");
+	logger::mark('BACKEND', "Cleaning Search Results");
 	// Any track that was previously hidden needs to be re-hidden
 	generic_sql_query("UPDATE Tracktable SET Hidden = 1, isSearchResult = 0 WHERE isSearchResult = 3", true);
 
@@ -1238,13 +1030,13 @@ function collectionUpdateRunning() {
 			return false;
 
 		case '1':
-			logger::warn('COLLECTION', 'Multiple collection updates attempted');
+			logger::error('COLLECTION', 'Multiple collection updates attempted');
 			return true;
 	}
 }
 
 function clearUpdateLock() {
-	logger::log('COLLECTION', 'Clearing update lock');
+	logger::debug('COLLECTION', 'Clearing update lock');
 	generic_sql_query("UPDATE Statstable SET Value = 0 WHERE Item = 'Updating'", true);
 }
 
@@ -1279,17 +1071,17 @@ function remove_findtracks() {
 
 function tidy_database() {
 	// Find tracks that have been removed
-	logger::debug("TIMINGS", "Starting Cruft Removal");
+	logger::mark('BACKEND', "Starting Cruft Removal");
 	$now = time();
-	logger::trace("MYSQL", "Finding tracks that have been deleted");
+	logger::trace('BACKEND', "Finding tracks that have been deleted");
 	generic_sql_query("DELETE FROM Tracktable WHERE LastModified IS NOT NULL AND Hidden = 0 AND justAdded = 0", true);
-	logger::log('COLLECTION', 'Updating collection version to', ROMPR_COLLECTION_VERSION);
 	remove_cruft();
+	logger::log('COLLECTION', 'Updating collection version to', ROMPR_COLLECTION_VERSION);
 	update_stat('ListVersion',ROMPR_COLLECTION_VERSION);
 	update_track_stats();
 	$dur = format_time(time() - $now);
-	logger::debug("TIMINGS", "Cruft Removal Took ".$dur);
-	logger::debug("TIMINGS", "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+	logger::info('BACKEND', "Cruft Removal Took ".$dur);
+	logger::info('BACKEND', "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 	close_transaction();
 }
 
@@ -1302,19 +1094,19 @@ function create_foundtracks() {
 }
 
 function remove_cruft() {
-	logger::log("MYSQL", "Removing orphaned albums");
+	logger::log('BACKEND', "Removing orphaned albums");
 	$t = microtime(true);
 	generic_sql_query("DELETE FROM Albumtable WHERE Albumindex NOT IN (SELECT DISTINCT Albumindex FROM Tracktable)", true);
 	$at = microtime(true) - $t;
-	logger::debug("TIMINGS", " -- Removing orphaned albums took ".$at." seconds");
+	logger::info('BACKEND', " -- Removing orphaned albums took ".$at." seconds");
 
-	logger::log("MYSQL", "Removing orphaned artists");
+	logger::log('BACKEND', "Removing orphaned artists");
 	$t = microtime(true);
 	delete_orphaned_artists();
 	$at = microtime(true) - $t;
-	logger::debug("TIMINGS", " -- Removing orphaned artists took ".$at." seconds");
+	logger::info('BACKEND', " -- Removing orphaned artists took ".$at." seconds");
 
-	logger::log("MYSQL", "Tidying Metadata");
+	logger::log('BACKEND', "Tidying Metadata");
 	$t = microtime(true);
 	generic_sql_query("DELETE FROM Ratingtable WHERE Rating = '0'", true);
 	generic_sql_query("DELETE FROM Ratingtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable WHERE Hidden = 0)", true);
@@ -1326,7 +1118,7 @@ function remove_cruft() {
 	generic_sql_query("DELETE FROM Playcounttable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
 
 	$at = microtime(true) - $t;
-	logger::debug("TIMINGS", " -- Tidying metadata took ".$at." seconds");
+	logger::info('BACKEND', " -- Tidying metadata took ".$at." seconds");
 }
 
 function do_track_by_track($trackobject) {
@@ -1442,18 +1234,18 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 			//
 
 			if ($prefs['debug_enabled'] > 6) {
-				logger::log("MYSQL", "  Updating track with ttid",$dbtrack->TTindex,"because :");
+				logger::log('BACKEND', "  Updating track with ttid",$dbtrack->TTindex,"because :");
 
-				if (!$doing_search && $dbtrack->LastModified === null) 								logger::log("MYSQL", "    LastModified is not set in the database");
-				if (!$doing_search && $trackobj->tags['Last-Modified'] === null) 					logger::log("MYSQL", "    TrackObj LastModified is NULL too!");
-				if (!$doing_search && $dbtrack->LastModified !== $trackobj->tags['Last-Modified']) 	logger::log("MYSQL", "    LastModified has changed: We have ".$dbtrack->LastModified." but track has ".$trackobj->tags['Last-Modified']);
-				if ($dbtrack->Disc != $trackobj->tags['Disc']) 										logger::log("MYSQL", "    Disc Number has changed: We have ".$dbtrack->Disc." but track has ".$trackobj->tags['Disc']);
-				if ($dbtrack->Hidden != 0) 															logger::log("MYSQL", "    It is hidden");
-				if ($trackobj->tags['type'] == 'audiobook' && $dbtrack->isAudiobook == 0) 			logger::log("MYSQL", "    It needs to be marked as an Auidiobook");
-				if ($trackobj->tags['type'] != 'audiobook' && $dbtrack->isAudiobook == 1) 			logger::log("MYSQL", "    It needs to be un-marked as an Audiobook");
+				if (!$doing_search && $dbtrack->LastModified === null) 								logger::log('BACKEND', "    LastModified is not set in the database");
+				if (!$doing_search && $trackobj->tags['Last-Modified'] === null) 					logger::log('BACKEND', "    TrackObj LastModified is NULL too!");
+				if (!$doing_search && $dbtrack->LastModified !== $trackobj->tags['Last-Modified']) 	logger::log('BACKEND', "    LastModified has changed: We have ".$dbtrack->LastModified." but track has ".$trackobj->tags['Last-Modified']);
+				if ($dbtrack->Disc != $trackobj->tags['Disc']) 										logger::log('BACKEND', "    Disc Number has changed: We have ".$dbtrack->Disc." but track has ".$trackobj->tags['Disc']);
+				if ($dbtrack->Hidden != 0) 															logger::log('BACKEND', "    It is hidden");
+				if ($trackobj->tags['type'] == 'audiobook' && $dbtrack->isAudiobook == 0) 			logger::log('BACKEND', "    It needs to be marked as an Auidiobook");
+				if ($trackobj->tags['type'] != 'audiobook' && $dbtrack->isAudiobook == 1) 			logger::log('BACKEND', "    It needs to be un-marked as an Audiobook");
 				if ($trackobj->tags['file'] != $dbtrack->Uri) {
-					logger::log("MYSQL", "    Uri has changed from : ".$dbtrack->Uri);
-					logger::log("MYSQL", "                      to : ".$trackobj->tags['file']);
+					logger::log('BACKEND', "    Uri has changed from : ".$dbtrack->Uri);
+					logger::log('BACKEND', "                      to : ".$trackobj->tags['file']);
 				}
 			}
 
@@ -1470,7 +1262,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 			$newlastmodified = $trackobj->tags['Last-Modified'];
 			if ($dbtrack->isSearchResult == 0 && $doing_search) {
 				$newsearchresult = ($dbtrack->Hidden != 0) ? 3 : 1;
-				logger::log("MYSQL", "    It needs to be marked as a search result : Value ".$newsearchresult);
+				logger::log('BACKEND', "    It needs to be marked as a search result : Value ".$newsearchresult);
 				$newlastmodified = $dbtrack->LastModified;
 			}
 			$newisaudiobook = ($dbtrack->isAudiobook == 2) ? 2 : (($trackobj->tags['type'] == 'audiobook') ? 1 : 0);
@@ -1502,7 +1294,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 			}
 		}
 		if ($trackartistindex == null) {
-			logger::error("MYSQL_TBT", "ERROR! Trackartistindex is still null!");
+			logger::error('BACKEND', "ERROR! Trackartistindex is still null!");
 			return false;
 		}
 

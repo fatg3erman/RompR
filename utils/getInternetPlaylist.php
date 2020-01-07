@@ -149,7 +149,7 @@ function download_internet_playlist($url, $image, $station) {
 				break;
 
 			case '404':
-				logger::fail("RADIO_PLAYLIST", "404 Error trying to download URL");
+				logger::warn("RADIO_PLAYLIST", "404 Error trying to download URL");
 				break;
 
 			default:
@@ -160,7 +160,7 @@ function download_internet_playlist($url, $image, $station) {
 		if ($playlist) {
 			return $playlist;
 		} else {
-			logger::fail("RADIO_PLAYLIST", "Could not determine playlist type");
+			logger::warn("RADIO_PLAYLIST", "Could not determine playlist type");
 			header("HTTP/1.1 404 Not Found");
 			return false;
 		}

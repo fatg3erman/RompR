@@ -75,7 +75,7 @@ function searchRadio() {
 
 	this.newArtist = function(name) {
 		if (artists.length > 500) {
-			debug.mark(medebug, 'We have enough artists');
+			debug.info(medebug, 'We have enough artists');
 			return false;
 		}
 		for (let artist of artists) {

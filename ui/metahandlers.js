@@ -227,7 +227,7 @@ var metaHandlers = function() {
 		fromSpotifyData: {
 
 			addAlbumTracksToCollection: function(data, albumartist) {
-				debug.mark('AAGH','Adding an album');
+				debug.info('AAGH','Adding an album');
 				var thisIsMessy = new Array();
 				if (data.tracks && data.tracks.items) {
 					debug.log("AAAGH","Adding Album From",data);
@@ -259,7 +259,7 @@ var metaHandlers = function() {
 						dbQueue.request(thisIsMessy, addedATrack, didntAddATrack);
 					}
 				} else {
-					debug.fail("SPOTIFY","Failed to add album - no tracks",data);
+					debug.warn("SPOTIFY","Failed to add album - no tracks",data);
 					infobar.error(language.gettext('label_general_error'));
 				}
 			}
@@ -446,7 +446,7 @@ var dbQueue = function() {
 					})
 					.fail(function(data) {
 						req = queue.shift();
-						debug.fail("DB QUEUE","Request Failed",req,data);
+						debug.warn("DB QUEUE","Request Failed",req,data);
 						if (req.fail) {
 							req.fail(data);
 						}
@@ -463,7 +463,7 @@ var dbQueue = function() {
 			// We do these out-of-band to improve the responsiveness of the GUI.
 			clearTimeout(cleanuptimer);
 			if (cleanuprequired) {
-				debug.mark("DB QUEUE", "Doing backend Cleanup");
+				debug.info("DB QUEUE", "Doing backend Cleanup");
 				dbQueue.request([{action: 'cleanup'}], dbQueue.cleanupComplete, dbQueue.cleanupFailed);
 			}
 		},
@@ -474,7 +474,7 @@ var dbQueue = function() {
 		},
 
 		cleanupFailed: function(data) {
-			debug.fail("DB QUEUE","Cleanup Failed");
+			debug.warn("DB QUEUE","Cleanup Failed");
 		}
 
 	}

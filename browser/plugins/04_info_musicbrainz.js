@@ -586,7 +586,7 @@ var info_musicbrainz = function() {
 			}
 
 			function getArtistReleases(id, target) {
-				debug.mark(medebug,parent.nowplayingindex,"Looking for release info with id",id,target);
+				debug.info(medebug,parent.nowplayingindex,"Looking for release info with id",id,target);
 				if (artistmeta.musicbrainz[target] === undefined) {
 					debug.trace(medebug,"  ... retreiving them");
 					musicbrainz.artist.getReleases(
@@ -708,7 +708,7 @@ var info_musicbrainz = function() {
 			}
 
 			function getCoverArt() {
-				debug.mark(medebug,parent.nowplayingindex,"Getting Cover Art");
+				debug.info(medebug,parent.nowplayingindex,"Getting Cover Art");
 				if (albummeta.musicbrainz.coverart === undefined) {
 					debug.trace(medebug,parent.nowplayingindex," ... retrieivng data");
 					musicbrainz.album.getCoverArt(
@@ -737,7 +737,7 @@ var info_musicbrainz = function() {
 							return;
 						}
 						if (artistmeta.musicbrainz_id === null) {
-							debug.fail(medebug,parent.nowplayingindex,"Artist asked to populate but no MBID could be found. Aborting");
+							debug.warn(medebug,parent.nowplayingindex,"Artist asked to populate but no MBID could be found. Aborting");
 							artistmeta.musicbrainz.artist = {error: language.gettext("musicbrainz_noartist")};
 							parent.updateData({
 									wikipedia: { artistlink: null },
@@ -778,7 +778,7 @@ var info_musicbrainz = function() {
 								var re = new RegExp(domain);
 								for (var i in data.relations) {
 									if (data.relations[i].type == "wikipedia") {
-										debug.mark(medebug,parent.nowplayingindex,"has found a Wikipedia artist link",data.relations[i].url.resource);
+										debug.info(medebug,parent.nowplayingindex,"has found a Wikipedia artist link",data.relations[i].url.resource);
 										// For wikipedia links we need to prioritise:
 										// user's chosen domain first
 										// english second
@@ -798,11 +798,11 @@ var info_musicbrainz = function() {
 										}
 									}
 									if (data.relations[i].type == "discogs" && update.discogs.artistlink == null) {
-										debug.mark(medebug,parent.nowplayingindex,"has found a Discogs artist link",data.relations[i].url.resource);
+										debug.info(medebug,parent.nowplayingindex,"has found a Discogs artist link",data.relations[i].url.resource);
 										update.discogs.artistlink = data.relations[i].url.resource;
 									}
 									if (data.relations[i].type == "allmusic" && update.allmusic.artistlink == null) {
-										debug.mark(medebug,parent.nowplayingindex,"has found an Allmusic artist link",data.relations[i].url.resource);
+										debug.info(medebug,parent.nowplayingindex,"has found an Allmusic artist link",data.relations[i].url.resource);
 										update.allmusic.artistlink = data.relations[i].url.resource;
 									}
 								}
@@ -894,7 +894,7 @@ var info_musicbrainz = function() {
 								return;
 							}
 							if (albummeta.musicbrainz_id === null) {
-								debug.fail(medebug,parent.nowplayingindex,"Album asked to populate but no MBID could be found.");
+								debug.warn(medebug,parent.nowplayingindex,"Album asked to populate but no MBID could be found.");
 								albummeta.musicbrainz.album = {error: language.gettext("musicbrainz_noalbum")};
 								parent.updateData({
 											musicbrainz: { album_releasegroupid: null },
@@ -932,7 +932,7 @@ var info_musicbrainz = function() {
 							var re = new RegExp(domain);
 							for (var i in data.relations) {
 								if (data.relations[i].type == "wikipedia" && update.wikipedia.albumlink === null) {
-									debug.mark(medebug,parent.nowplayingindex,"has found a Wikipedia album link",data.relations[i].url.resource);
+									debug.info(medebug,parent.nowplayingindex,"has found a Wikipedia album link",data.relations[i].url.resource);
 									var wikitemp = data.relations[i].url.resource;
 									if (re.test(wikitemp)) {
 										debug.trace(medebug,parent.nowplayingindex,"found user domain wiki link");
@@ -946,7 +946,7 @@ var info_musicbrainz = function() {
 									}
 								}
 								if (data.relations[i].type == "discogs" && update.discogs.albumlink === null) {
-									debug.mark(medebug,parent.nowplayingindex,"has found a Discogs album link",data.relations[i].url.resource);
+									debug.info(medebug,parent.nowplayingindex,"has found a Discogs album link",data.relations[i].url.resource);
 									update.discogs.albumlink = data.relations[i].url.resource;
 								}
 							}
@@ -975,7 +975,7 @@ var info_musicbrainz = function() {
 					},
 
 					coverResponseHandler: function(data) {
-						debug.mark(medebug,parent.nowplayingindex,"got Cover Art Data",data);
+						debug.info(medebug,parent.nowplayingindex,"got Cover Art Data",data);
 						parent.updateData({ musicbrainz: { coverart: data }}, albummeta);
 						if (displaying) {
 							$("#coverart").html(getCoverHTML(albummeta.musicbrainz.coverart));
@@ -1030,7 +1030,7 @@ var info_musicbrainz = function() {
 								return;
 							}
 							if (trackmeta.musicbrainz_id === null) {
-								debug.fail(medebug,parent.nowplayingindex,"Track asked to populate but no MBID could be found..");
+								debug.warn(medebug,parent.nowplayingindex,"Track asked to populate but no MBID could be found..");
 								trackmeta.musicbrainz.track = {};
 								trackmeta.musicbrainz.track.error = {error: language.gettext("musicbrainz_notrack")};
 								parent.updateData({
@@ -1063,11 +1063,11 @@ var info_musicbrainz = function() {
 								if (data.recording) {
 									for (var i in data.recording.relations) {
 										if (data.recording.relations[i].type == "wikipedia" && update.wikipedia.tracklink === null) {
-											debug.mark(medebug,parent.nowplayingindex,"has found a Wikipedia track link!!!!!",data.recording.relations[i].url.resource);
+											debug.info(medebug,parent.nowplayingindex,"has found a Wikipedia track link!!!!!",data.recording.relations[i].url.resource);
 											update.wikipedia.tracklink = data.recording.relations[i].url.resource;
 										}
 										if (data.recording.relations[i].type == "discogs" && update.discogs.tracklink === null) {
-											debug.mark(medebug,parent.nowplayingindex,"has found a Discogs track link!!!!!",data.recording.relations[i].url.resource);
+											debug.info(medebug,parent.nowplayingindex,"has found a Discogs track link!!!!!",data.recording.relations[i].url.resource);
 											update.discogs.tracklink = data.recording.relations[i].url.resource;
 										}
 									}
@@ -1075,11 +1075,11 @@ var info_musicbrainz = function() {
 								if (data.work) {
 									for (var i in data.work.relations) {
 										if (data.work.relations[i].type == "wikipedia" && update.wikipedia.tracklink === null) {
-											debug.mark(medebug,parent.nowplayingindex,"has found a Wikipedia track link!!!!!",data.work.relations[i].url.resource);
+											debug.info(medebug,parent.nowplayingindex,"has found a Wikipedia track link!!!!!",data.work.relations[i].url.resource);
 											update.wikipedia.tracklink = data.work.relations[i].url.resource;
 										}
 										if (data.work.relations[i].type == "discogs" && update.discogs.tracklink === null) {
-											debug.mark(medebug,parent.nowplayingindex,"has found a Discogs track link!!!!!",data.work.relations[i].url.resource);
+											debug.info(medebug,parent.nowplayingindex,"has found a Discogs track link!!!!!",data.work.relations[i].url.resource);
 											update.discogs.tracklink = data.work.relations[i].url.resource;
 										}
 									}

@@ -48,7 +48,7 @@ class sortby_album extends sortby_base {
 	}
 
 	public function output_root_list() {
-		logger::trace('SORTBY_ALBUM', 'Generating Album Root List');
+		logger::debug('SORTBY_ALBUM', 'Generating Album Root List');
 		$count = 0;
 		foreach ($this->root_sort_query() as $album) {
 			print albumHeader($album);
