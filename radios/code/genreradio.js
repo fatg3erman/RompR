@@ -8,7 +8,7 @@ var genreRadio = function() {
 		if (prefs.player_backend == "mopidy") {
 			domains = $("#radiodomains").makeDomainChooser("getSelection");
 		}
-		debug.loag("GENRE RADIO","Searching for Genre",genre,"in domains",domains);
+		debug.log("GENRE RADIO","Searching for Genre",genre,"in domains",domains);
 		// Generally, using faveFinder is better but that doesn't support Genres
 		player.controller.rawsearch({genre: [genre]}, domains, false, genreRadio.checkResults, false);
 	}

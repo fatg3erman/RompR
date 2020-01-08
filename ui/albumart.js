@@ -518,7 +518,7 @@ var imageEditor = function() {
 		onGoogleSearchClicked: function(event) {
 			var clickedElement = findClickableElement(event);
 			if (clickedElement.hasClass("clickgimage")) {
-				debug.race("ALBUMART","Search Result clicked :",clickedElement.next().val(), clickedElement.next().next().val());
+				debug.trace("ALBUMART","Search Result clicked :",clickedElement.next().val(), clickedElement.next().next().val());
 				event.stopImmediatePropagation();
 				updateImage(clickedElement.next().val(), clickedElement.next().next().val());
 			} else if (clickedElement.hasClass("bmenu")) {

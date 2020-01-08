@@ -40,7 +40,8 @@ function setPlayClickHandlers() {
 	} else {
 		$(document).on('click', '.playable', playPlayable);
 	}
-
+	// Slightly misleading function name in this case - we're just using it
+	// to bind the click handlers to the Update Collection Now buttons
 	collectionHelper.enableCollectionUpdates();
 }
 

@@ -350,7 +350,6 @@ var podcasts = function() {
 				} else {
 					checkForUpdatedPodcasts(to_reload);
 				}
-				podcasts.doInitialRefresh();
 			});
 		},
 

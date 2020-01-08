@@ -281,7 +281,7 @@ var info_wikipedia = function() {
 					},
 
 					mbRgHandler: function(data) {
-						debug.tcore("WIKI PLUGIN",parent.nowplayingindex,"got musicbrainz release group data for",albummeta.name, data);
+						debug.core("WIKI PLUGIN",parent.nowplayingindex,"got musicbrainz release group data for",albummeta.name, data);
 						if (data.error) {
 							debug.trace("WIKI PLUGIN",parent.nowplayingindex," ... MB error",data);
 						} else {

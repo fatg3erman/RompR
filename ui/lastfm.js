@@ -37,24 +37,21 @@ function LastFM(user) {
 
 	uiLoginBind();
 
-	this.wrangle = function() {
+	this.wrangle = async function() {
 		debug.debug('LASTFM', 'Doing the wrangling');
-		$.ajax({
-			method: 'GET',
-			url: 'includes/strings.php?getcheese=1',
-			dataType: 'json'
-		})
-		.done(function(data) {
+		try {
+			var data = await $.ajax({
+				method: 'GET',
+				url: 'includes/strings.php?getcheese=1',
+				dataType: 'json'
+			});
 			debug.core('LASTFM', 'Done the wrangling',data);
 			lak = data.k;
 			lfms = data.s;
-			startBackgroundInitTasks.doNextTask();
-		})
-		.fail(function(xhr,status,err) {
-			debug.warn("LASTFM", "Big Setup Failure",xhr,status,err);
+		} catch (err) {
+			debug.warn("LASTFM", "Big Setup Failure",err);
 			logged_in = false;
-			startBackgroundInitTasks.doNextTask();
-		});
+		}
 	}
 
 	function speedBackUp() {

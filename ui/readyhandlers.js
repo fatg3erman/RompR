@@ -20,14 +20,6 @@ function albumImageLoaded() {
 	requestAnimationFrame(startRender);
 }
 
-function autoDiscovembobulate() {
-	if (prefs.auto_discovembobulate) {
-		pluginManager.autoOpen(language.gettext('button_infoyou'));
-	} else {
-		startBackgroundInitTasks.doNextTask();
-	}
-}
-
 function inputFIleChanged() {
 	var filenames = $.map($(this).prop('files'), function(val) {
 		return val.name.replace(/.*(\/|\\)/, '')
@@ -60,7 +52,7 @@ var cacheCleaner = function() {
 
 	return {
 
-		start: function() {
+		clean_cache: function() {
 			debug.mark("INIT","Starting Backend Cache Clean");
 			collectionHelper.disableCollectionUpdates();
 			$.get('utils/cleancache.php', function() {
@@ -75,45 +67,53 @@ var cacheCleaner = function() {
 
 }();
 
-function wrangleLastFM() {
-	lastfm.wrangle();
+function setup_lastfm() {
+	lastfm.wrangle().then(startBackgroundInitTasks.doNextTask);
 }
 
-function wranglePodcasts() {
+function connect_to_player() {
+	player.controller.initialise().then(startBackgroundInitTasks.doNextTask);
+}
+
+function refresh_podcasts() {
 	podcasts.doInitialRefresh();
 }
 
-function wranglePlaycounts() {
+function sync_lastfm_playcounts() {
 	syncLastFMPlaycounts.start();
 }
 
-function wrangleSpotify() {
+function check_unplayable_tracks() {
 	spotifyLinkChecker.initialise();
 }
 
-function startUI() {
+function open_discoverator() {
+	if (prefs.auto_discovembobulate) {
+		pluginManager.autoOpen(language.gettext('button_infoyou'));
+	} else {
+		startBackgroundInitTasks.doNextTask();
+	}
+}
+
+function start_userinterface() {
 	startBackgroundInitTasks.readytogo = true;
 	uiHelper.adjustLayout();
 	startBackgroundInitTasks.doNextTask();
 }
 
-function startPlayer() {
-	player.controller.initialise().then(startBackgroundInitTasks.doNextTask);
-}
-
 var startBackgroundInitTasks = function() {
 
 	var stufftodo = [
-		wrangleLastFM,
-		startPlayer,
+		setup_lastfm,
+		connect_to_player,
 		collectionHelper.checkCollection,
 		player.controller.reloadPlaylists,
-		startUI,
-		autoDiscovembobulate,
-		wranglePodcasts,
-		cacheCleaner.start,
-		wranglePlaycounts,
-		wrangleSpotify
+		start_userinterface,
+		open_discoverator,
+		refresh_podcasts,
+		cacheCleaner.clean_cache,
+		sync_lastfm_playcounts,
+		check_unplayable_tracks
 	];
 
 	return {
@@ -122,8 +122,8 @@ var startBackgroundInitTasks = function() {
 
 		doNextTask: function() {
 			var nexttask = stufftodo.shift();
-			debug.mark('INIT', 'Starting init task', nexttask.name);
 			if (typeof nexttask != 'undefined') {
+				debug.mark('INIT', 'Starting init task', nexttask.name);
 				nexttask.call();
 			}
 		}
@@ -218,7 +218,7 @@ function get_geo_country() {
 	}
 }
 
-async function createHelpLinks() {
+function createHelpLinks() {
 	var helplinks = {};
 	helplinks[language.gettext('button_local_music')] = 'https://fatg3erman.github.io/RompR/Music-Collection';
 	helplinks[language.gettext('label_searchfor')] = 'https://fatg3erman.github.io/RompR/Searching-For-Music';

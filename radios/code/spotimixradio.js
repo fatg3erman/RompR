@@ -85,7 +85,7 @@ var spotiMixRadio = function() {
 					debug.debug(medebug,"Got seed",seeds[i].Uri);
 					trackseeds.push(m[1]);
 				} else {
-					debug.racee(medebug,"Didn't match Uri",seeds[i].Uri);
+					debug.trace(medebug,"Didn't match Uri",seeds[i].Uri);
 					nonspotitracks.push(seeds[i]);
 				}
 			}
