@@ -132,7 +132,7 @@ function playerController() {
 			checkProgress();
 		} catch(err) {
 			debug.error("MPD","Failed to get URL Handlers",err);
-			infobar.permerror(language.gettext('error_noplayer'));			
+			infobar.permerror(language.gettext('error_noplayer'));
 		}
 	}
 
@@ -206,12 +206,13 @@ function playerController() {
 		}
 	}
 
-	this.reloadPlaylists = function() {
+	this.reloadPlaylists = async function() {
 		var openplaylists = [];
 		$('#storedplaylists').find('i.menu.openmenu.playlist.icon-toggle-open').each(function() {
 			openplaylists.push($(this).attr('name'));
 		})
-		$.get("player/mpd/loadplaylists.php", function(data) {
+		try {
+			var data = await $.get("player/mpd/loadplaylists.php");
 			$("#storedplaylists").html(data);
 			uiHelper.doThingsAfterDisplayingListOfAlbums($('#storedplaylists'));
 			$('b:contains("'+language.gettext('button_loadplaylist')+'")').parent('.configtitle').append('<a href="https://fatg3erman.github.io/RompR/Using-Saved-Playlists" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
@@ -221,16 +222,16 @@ function playerController() {
 			if (openplaylists.length > 0) {
 				infobar.markCurrentTrack();
 			}
-			$.get('player/mpd/loadplaylists.php?addtoplaylistmenu', function(data) {
-				$('#addtoplaylistmenu').empty();
-				data.forEach(function(p) {
-					var h = $('<div>', {class: "containerbox backhi clickicon menuitem clickaddtoplaylist", name: p.name }).appendTo($('#addtoplaylistmenu'));
-					h.append('<i class="fixed collectionicon icon-doc-text"></i>');
-					h.append('<div class="expand">'+p.html+'</div>');
-				});
-				startBackgroundInitTasks.doNextTask();
+			data = await $.get('player/mpd/loadplaylists.php?addtoplaylistmenu');
+			$('#addtoplaylistmenu').empty();
+			data.forEach(function(p) {
+				var h = $('<div>', {class: "containerbox backhi clickicon menuitem clickaddtoplaylist", name: p.name }).appendTo($('#addtoplaylistmenu'));
+				h.append('<i class="fixed collectionicon icon-doc-text"></i>');
+				h.append('<div class="expand">'+p.html+'</div>');
 			});
-		});
+		} catch (err) {
+			debug.warn('PLAYER', 'Failed to load playlists', err);
+		}
 	}
 
 	this.loadPlaylist = function(name) {

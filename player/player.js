@@ -203,7 +203,7 @@ var player = function() {
 				if (p < 0) p = 0;
 				this.controller.seek(to);
 			}
-		},
+		}
 
 	}
 

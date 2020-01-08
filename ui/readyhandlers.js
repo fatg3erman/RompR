@@ -75,29 +75,44 @@ function connect_to_player() {
 	player.controller.initialise().then(startBackgroundInitTasks.doNextTask);
 }
 
-function refresh_podcasts() {
-	podcasts.doInitialRefresh();
-}
-
-function sync_lastfm_playcounts() {
-	syncLastFMPlaycounts.start();
-}
-
-function check_unplayable_tracks() {
-	spotifyLinkChecker.initialise();
-}
-
-function open_discoverator() {
-	if (prefs.auto_discovembobulate) {
-		pluginManager.autoOpen(language.gettext('button_infoyou'));
-	} else {
-		startBackgroundInitTasks.doNextTask();
-	}
+function load_playlists() {
+	player.controller.reloadPlaylists().then(startBackgroundInitTasks.doNextTask)
 }
 
 function start_userinterface() {
 	startBackgroundInitTasks.readytogo = true;
 	uiHelper.adjustLayout();
+	startBackgroundInitTasks.doNextTask();
+}
+
+function open_discoverator() {
+	if (prefs.auto_discovembobulate) {
+		pluginManager.autoOpen(language.gettext('button_infoyou'));
+	}
+	startBackgroundInitTasks.doNextTask();
+}
+
+async function refresh_podcasts() {
+	// We want to wait until podcasts have been refreshed before we sync lastfm playcounts,
+	// because the sync might mark some pdcast episodes as listened
+	startBackgroundInitTasks.doNextTask();
+	await new Promise(t => setTimeout(t, 15000));
+	podcasts.checkRefresh().then(syncLastFMPlaycounts.start);
+}
+
+function clean_backend_cache() {
+	debug.mark("INIT","Starting Backend Cache Clean");
+	collectionHelper.disableCollectionUpdates();
+	$.get('utils/cleancache.php', function() {
+		debug.mark("INIT","Cache Has Been Cleaned");
+		collectionHelper.enableCollectionUpdates();
+		setTimeout(clean_backend_cache, 86400000);
+		startBackgroundInitTasks.doNextTask();
+	});
+}
+
+function check_unplayable_tracks() {
+	spotifyLinkChecker.initialise();
 	startBackgroundInitTasks.doNextTask();
 }
 
@@ -107,12 +122,11 @@ var startBackgroundInitTasks = function() {
 		setup_lastfm,
 		connect_to_player,
 		collectionHelper.checkCollection,
-		player.controller.reloadPlaylists,
+		load_playlists,
 		start_userinterface,
 		open_discoverator,
 		refresh_podcasts,
-		cacheCleaner.clean_cache,
-		sync_lastfm_playcounts,
+		clean_backend_cache,
 		check_unplayable_tracks
 	];
 

@@ -331,6 +331,7 @@ var podcasts = function() {
 		},
 
 		checkIfSomeoneElseHasUpdatedStuff: function() {
+			debug.log('PODCASTS', 'Checking if someone else has updated stuff');
 			var isnewpodcast = false;
 			var to_reload = new Array();
 			$.getJSON("podcasts/podcasts.php?populate=1&getcounts=1", function(data) {
@@ -378,16 +379,17 @@ var podcasts = function() {
 			podcastRequest(options, callback);
 		},
 
-		checkRefresh: function() {
-			debug.debug('PODCASTS', 'In checkRefresh');
+		checkRefresh: async function() {
+			debug.log('PODCASTS', 'Starting Refresh');
 			clearTimeout(refreshtimer);
-			$.ajax({
-				type: 'GET',
-				url: "podcasts/podcasts.php?populate=1&checkrefresh=1",
-				timeout: prefs.collection_load_timeout,
-				dataType: 'JSON'
-			})
-			.done(function(data) {
+			try {
+				var data = await $.ajax({
+					type: 'GET',
+					url: "podcasts/podcasts.php?populate=1&checkrefresh=1",
+					timeout: prefs.collection_load_timeout,
+					dataType: 'JSON'
+				});
+				debug.log('PODCASTS', 'Refresh complete');
 				debug.debug("PODCASTS","Refresh result",data);
 				checkForUpdatedPodcasts(data.updated);
 				podcasts.doNewCount();
@@ -399,17 +401,14 @@ var podcasts = function() {
 					window.addEventListener('online', podcasts.checkIfSomeoneElseHasUpdatedStuff);
 					onlineTriggerActivated = true;
 				}
-				startBackgroundInitTasks.doNextTask();
-			})
-			.fail(function(data,status,thing) {
-				debug.error("PODCASTS","Refresh Failed with status",data.status);
-				if (data.status == 412) {
-					podcasts.doInitialRefresh();
+			} catch (err)  {
+				debug.error("PODCASTS","Refresh Failed with status",err.status);
+				if (err.status == 412) {
+					setTimeout(podcasts.checkRefresh, 10000);
 				} else {
 					infobar.error(language.gettext('error_refreshfail'));
-					startBackgroundInitTasks.doNextTask();
 				}
-			});
+			}
 		},
 
 		removePodcast: function(name) {
@@ -429,12 +428,6 @@ var podcasts = function() {
 			.fail(function(data, status) {
 				infobar.error(language.gettext("podcast_remove_error"));
 			});
-		},
-
-		doInitialRefresh: function() {
-			debug.log('PODCASTS', 'Setting initial refresh timer');
-			clearTimeout(refreshtimer);
-			refreshtimer = setTimeout(podcasts.checkRefresh, 15000);
 		},
 
 		search: function() {
@@ -563,5 +556,4 @@ var podcasts = function() {
 $('#podcastsinput').on('drop', podcasts.handleDrop)
 menuOpeners['podcast'] = podcasts.loadPodcast;
 clickRegistry.addClickHandlers('podcast', podcasts.handleClick);
-// podcasts.doInitialRefresh();
 

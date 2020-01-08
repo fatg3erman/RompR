@@ -205,7 +205,8 @@ function onStorageChanged(e) {
 
 	if (e.key == "key" && e.newValue != "Blerugh") {
 		var key = e.newValue;
-		debug.trace("GENERAL","Updating album image for key",key,e);
+		debug.trace("GENERAL","Updating album image for key",key);
+		debug.debug('GENERAL', e);
 		if (key.substring(0,1) == "!") {
 			key = key.substring(1,key.length);
 			update_failed_ui_images(key)
