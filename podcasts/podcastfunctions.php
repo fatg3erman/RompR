@@ -1103,7 +1103,8 @@ function downloadTrack($key, $channel) {
 	}
 	if ($url === null) {
 		logger::warn("PODCASTS", "  Failed to find URL for podcast",$channel);
-		return $channel;
+		header('HTTP/1.0 404 Not Found');
+		exit(0);
 	}
 	// The file size reported in the RSS is often VERY inaccurate. Probably based on raw audio prior to converting to MP3
 	// To make the progress bars look better in the GUI we attempt to read the actual filesize
@@ -1112,28 +1113,32 @@ function downloadTrack($key, $channel) {
 		$filename = basename($url);
 		$filename = preg_replace('/\?.*$/','',$filename);
 
-		$fp = fopen('prefs/monitor.xml', 'w');
-		if ($fp === false) {
-			logger::warn("PODCASTS", "Failed to open monitor.xml");
-			return $channel;
-		}
 		$xml = '<?xml version="1.0" encoding="utf-8"?><download><filename>';
 		$xml = $xml . 'prefs/podcasts/'.$channel.'/'.$key.'/'.$filename;
 		$xml = $xml . '</filename><filesize>'.$filesize.'</filesize></download>';
 		$fp = fopen('prefs/monitor.xml', 'w');
-		fwrite($fp, $xml);
-		fclose($fp);
+		if ($fp) {
+			fwrite($fp, $xml);
+			fclose($fp);
+		} else {
+			@unlink('prefs/monitor.xml');
+			logger::warn("PODCASTS", "Failed to open monitor.xml");
+		}
 		logger::trace("PODCASTS", "Downloading To prefs/podcasts/".$channel.'/'.$key.'/'.$filename);
 		$d = new url_downloader(array('url' => $url));
 		if ($d->get_data_to_file('prefs/podcasts/'.$channel.'/'.$key.'/'.$filename, true)) {
 			sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?", 1, '/prefs/podcasts/'.$channel.'/'.$key.'/'.$filename, $key);
 		} else {
+			logger::error('PODCASTS', 'Failed to download',$key, $channel, $url);
 			header('HTTP/1.0 404 Not Found');
 			system (escapeshellarg('rm -fR prefs/podcasts/'.$channel.'/'.$key));
+			header('HTTP/1.0 404 Not Found');
+			exit(0);
 		}
 	} else {
 		logger::warn("PODCASTS", 'Failed to create directory prefs/podcasts/'.$channel.'/'.$key);
-		return $channel;
+		header('HTTP/1.0 404 Not Found');
+		exit(0);
 	}
 
 	return $channel;

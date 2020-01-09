@@ -48,25 +48,6 @@ function closeMenus() {
 	$('.albumbitsmenu').remove();
 }
 
-var cacheCleaner = function() {
-
-	return {
-
-		clean_cache: function() {
-			debug.mark("INIT","Starting Backend Cache Clean");
-			collectionHelper.disableCollectionUpdates();
-			$.get('utils/cleancache.php', function() {
-				debug.mark("INIT","Cache Has Been Cleaned");
-				collectionHelper.enableCollectionUpdates();
-				setTimeout(cacheCleaner.start, 86400000);
-				startBackgroundInitTasks.doNextTask();
-			});
-		}
-
-	}
-
-}();
-
 function setup_lastfm() {
 	lastfm.wrangle().then(startBackgroundInitTasks.doNextTask);
 }

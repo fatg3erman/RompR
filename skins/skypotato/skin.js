@@ -702,8 +702,8 @@ var layoutProcessor = function() {
 
 		playlistupdate: function(upcoming) {
 			var time = 0;
-			for(var i in upcoming) {
-				time += upcoming[i].Time;
+			for(var track of upcoming) {
+				time += track.Time;
 			}
 			if (time > 0) {
 				headers['upcoming'] = "Up Next : "+upcoming.length+" tracks, "+formatTimeString(time);
@@ -728,7 +728,9 @@ var layoutProcessor = function() {
 					lines.push(headers[i]);
 				}
 			}
+			debug.trace('DOFANCYHEADERS', 'Lines is',lines);
 			if (lines.length == 0 && $('#plmode').html() != '') {
+				currheader = 0;
 				$('#plmode').fadeOut(500, function() {
 					$('#plmode').html('').fadeIn(500);
 				});

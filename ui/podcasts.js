@@ -6,42 +6,36 @@ var podcasts = function() {
 	var onlineTriggerActivated = false;
 	var newcounts = {};
 
-	function checkDownloadQueue() {
-		if (downloadRunning == false) {
+	async function downloadTrack(track, channel) {
+		downloadQueue.push({track: track, channel: channel});
+		$('i[name="poddownload_'+track+'"]').not('.spinner').makeSpinner();
+		if (downloadRunning) {
+			return;
+		}
+		while (downloadQueue.length > 0) {
+			downloadRunning = true;
 			var newTrack = downloadQueue.shift();
-			if (newTrack) {
-				downloadRunning = true;
-				var track = newTrack.track;
-				var channel = newTrack.channel;
-				$('[name="podgroupload_'+channel+'"]').makeFlasher().removeClass('podgroupload');
-				var monitor = new podcastDownloadMonitor(track, channel);
-				$.ajax( {
+			$('[name="podgroupload_'+newTrack.channel+'"]').makeFlasher().removeClass('podgroupload');
+			var monitor = new podcastDownloadMonitor(newTrack.track, newTrack.channel);
+			try {
+				var data = await $.ajax( {
 					type: "GET",
 					url: "podcasts/podcasts.php",
 					cache: false,
 					contentType: "text/html; charset=utf-8",
-					data: {downloadtrack: track, channel: channel, populate: 1 },
+					data: {downloadtrack: newTrack.track, channel: newTrack.channel, populate: 1},
 					timeout: 360000
-				})
-				.done(function(data) {
-					monitor.stop(false);
-					updatePodcastDropdown(channel, data);
-					doDummyProgressBars();
-					downloadRunning = false;
-					$('[name="podgroupload_'+channel+'"]').stopFlasher().removeClass('podgroupload').addClass('podgroupload');
-					checkDownloadQueue();
-				})
-				.fail(function(data, status) {
-					monitor.stop(true);
-					debug.error("PODCASTS", "Podcast Download Failed!",data,status);
-					downloadRunning = false;
-					$('[name="podgroupload_'+channel+'"]').stopFlasher().removeClass('podgroupload').addClass('podgroupload');
-					checkDownloadQueue();
 				});
-			} else {
-				$('[name^="podgroupdownload_"]').stopFlasher();
+				monitor.stop(false);
+				updatePodcastDropdown(newTrack.channel, data);
+				doDummyProgressBars();
+			} catch (err) {
+				monitor.stop(true);
+				debug.error("PODCASTS", "Podcast Download Failed!",err);
 			}
+			$('[name="podgroupload_'+newTrack.channel+'"]').stopFlasher().removeClass('podgroupload').addClass('podgroupload');
 		}
+		downloadRunning = false;
 	}
 
 	function podcastDownloadMonitor(track, channel) {
@@ -84,10 +78,9 @@ var podcasts = function() {
 	}
 
 	function doDummyProgressBars() {
-		for(var i = 0; i < downloadQueue.length; i++) {
-			var track = downloadQueue[i].track;
-			debug.debug("PODCAST DOWNLOAD","Putting Dummy Progress Bar in",track);
-			$('i[name="poddownload_'+track+'"]').makeSpinner();
+		for (var track of downloadQueue) {
+			debug.trace('PODCASTS', 'Making spinner on', track.track,'in',track.channel);
+			$('i[name="poddownload_'+track.track+'"]').not('.spinner').makeSpinner();
 		}
 	}
 
@@ -294,9 +287,9 @@ var podcasts = function() {
 
 		downloadPodcast: function(track, channel) {
 			debug.log("PODCAST","Downloading track",track,"from channel",channel);
-			downloadQueue.push({track: track, channel: channel});
-			doDummyProgressBars();
-			checkDownloadQueue();
+			downloadTrack(track, channel);
+			// doDummyProgressBars();
+			// checkDownloadQueue();
 		},
 
 		downloadPodcastChannel: function(channel) {

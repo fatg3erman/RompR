@@ -429,7 +429,7 @@ var playlist = function() {
 
 		doUpcomingCrap: function() {
 			var upcoming = new Array();
-			debug.debug("PLAYLIST","Doing Upcoming Crap",currentalbum);
+			debug.trace("PLAYLIST","Doing Upcoming Crap",currentalbum);
 			if (currentalbum >= 0 && player.status.random == 0) {
 				tracklist[currentalbum].getrest(currentTrack.Id, upcoming);
 				var i = parseInt(currentalbum)+1;

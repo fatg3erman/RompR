@@ -573,9 +573,9 @@ var uiHelper = function() {
 			}
 		},
 
-		playlistupdate: function() {
+		playlistupdate: function(upcoming) {
 			try {
-				return layoutProcessor.playlistupdate();
+				return layoutProcessor.playlistupdate(upcoming);
 			} catch (err) {
 
 			}

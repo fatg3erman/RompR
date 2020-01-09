@@ -115,21 +115,21 @@ window.debug = (function() {
 
 		ignoreinfopanel: function() {
 			ignoring = {
-				// "LASTFM PLUGIN": true,
-				// "MBNZ PLUGIN": true ,
-				// "SPOTIFY PLUGIN": true,
-				// "DISCOGS PLUGIN": true,
-				// "INFOBAR": true,
-				// "NOWPLAYING": true,
-				// "LASTFM": true,
-				// "BROWSER": true,
-				// "TRACKDATA": true,
-				// "FILE INFO": true,
-				// "FILE PLUGIN": true,
-				// "RATINGS PLUGIN": true,
-				// "COVERSCRAPER": true
+				"LASTFM PLUGIN": true,
+				"MBNZ PLUGIN": true ,
+				"SPOTIFY PLUGIN": true,
+				"DISCOGS PLUGIN": true,
+				"INFOBAR": true,
+				"NOWPLAYING": true,
+				"LASTFM": true,
+				"BROWSER": true,
+				"TRACKDATA": true,
+				"FILE INFO": true,
+				"FILE PLUGIN": true,
+				"RATINGS PLUGIN": true,
+				"COVERSCRAPER": true
 			};
-			debug.warn('DEBUG', 'Info panel debug is now ignored by default. Use debug.clearignore to switch it back on');
+			// debug.warn('DEBUG', 'Info panel debug is now ignored by default. Use debug.clearignore to switch it back on');
 		},
 
 		clearignore: function() {
@@ -175,5 +175,3 @@ window.debug = (function() {
 	}
 
 })();
-
-debug.ignoreinfopanel();
