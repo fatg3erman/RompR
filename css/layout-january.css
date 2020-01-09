@@ -1819,7 +1819,7 @@ th.mbox-text
 
 #toc, .toc {
 	display: inline-block;
-	zoom: 1;
+	/*zoom: 1;*/
 	padding: 7px;
 	border: 1px solid #454545;
 	font-size:90%;

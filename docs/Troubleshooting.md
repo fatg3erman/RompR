@@ -145,7 +145,7 @@ You can enable debug logging from the Setup page.
 
 ![](images/debugsetup.png)
 
-If you're reporting a bug, adding a debug log is very helpful. Level 7 is usually sufficient information.
+If you're reporting a bug, adding a debug log is very helpful. Level 6 is usually sufficient information.
 
 By default the debug log is the web server's error log - eg
 

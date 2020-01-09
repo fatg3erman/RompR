@@ -461,19 +461,18 @@ class logger {
 		3 => 35,
 		# cyan
 		4 => 36,
-		# lihgt grey
-		5 => 37,
+		# light blue
+		5 => 94,
 		# light yellow
 		6 => 93,
 		# green
 		7 => 32,
-		# white
-		8 => 97,
-		# light blue
-		9 => 94
+		# light grey
+		8 => 37,
 	);
 
 	private static $debug_names = array(
+		0 => 'Disabled',
 		1 => 'ERROR',
 		2 => 'WARN ',
 		3 => 'MARK ',
@@ -490,6 +489,10 @@ class logger {
 
 	public static function setOutfile($file) {
 		self::$outfile  = $file;
+	}
+
+	public static function getLevelName($level) {
+		return self::$debug_names[$level];
 	}
 
 	private static function dothelogging($level, $parms) {
@@ -526,24 +529,44 @@ class logger {
 	// Level 8 - CORE for continuous running commentary
 	public static function core() {
 		$parms = func_get_args();
+		if (!is_array($parms[1])) {
+			$dbt=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
+	        $caller = isset($dbt[1]['function']) ? '('.$dbt[1]['function'].') ' : '';
+	        $parms[1] = $caller.$parms[1];
+	    }
 		logger::dothelogging(8, $parms);
 	}
 
 	// Level 7 - DEBUG for low level complex info
 	public static function debug() {
 		$parms = func_get_args();
+		if (!is_array($parms[1])) {
+			$dbt=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
+	        $caller = isset($dbt[1]['function']) ? '('.$dbt[1]['function'].') ' : '';
+	        $parms[1] = $caller.$parms[1];
+	    }
 		logger::dothelogging(7, $parms);
 	}
 
 	// Level 6 - TRACE for in-function details
 	public static function trace() {
 		$parms = func_get_args();
+		if (!is_array($parms[1])) {
+			$dbt=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
+	        $caller = isset($dbt[1]['function']) ? '('.$dbt[1]['function'].') ' : '';
+	        $parms[1] = $caller.$parms[1];
+	    }
 		logger::dothelogging(6, $parms);
 	}
 
 	// Level 5 - LOG for following code flow
 	public static function log() {
 		$parms = func_get_args();
+		if (!is_array($parms[1])) {
+			$dbt=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
+	        $caller = isset($dbt[1]['function']) ? '('.$dbt[1]['function'].') ' : '';
+	        $parms[1] = $caller.$parms[1];
+	    }
 		logger::dothelogging(5, $parms);
 	}
 

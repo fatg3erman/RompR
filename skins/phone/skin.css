@@ -1100,7 +1100,7 @@ img.jalopy200 {
 	}
 }
 
-@media screen and (min-width:810px) and (max-height: 540px) and (orientation: landscape) {
+@media screen and (min-width: 810px) and (max-height: 540px) and (orientation: landscape) {
 	/* Wider - info pane looks like wide portrait mode up to 540px high*/
 	/* ie nowplaying is next to album image - can't have album image very big
 		with a screen of this height so there's loads of wasted space to the sides */

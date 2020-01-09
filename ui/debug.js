@@ -5,6 +5,7 @@ window.debug = (function() {
 	var highlighting = new Array();
 	var colours =  new Array();
 	var focuson = new Array();
+	var stacktrace = false;
 	var log_colours = {
 		1: "#FF0000",
 		2: "#FE6700",
@@ -27,7 +28,6 @@ window.debug = (function() {
 	}
 
 	function doTheLogging(loglevel, args) {
-
 		if (loglevel > level) return;
 		var module = args.shift();
 		if (ignoring[module]) return;
@@ -35,35 +35,22 @@ window.debug = (function() {
 		var css = (colours[module]) ? 'color:'+colours[module] : 'color:'+log_colours[loglevel];
 		if (highlighting[module]) {
 			css += ";font-weight:bold";
-		} else if (Object.keys(highlighting).length > 0) {
-			css = "color:#eeeeee";
 		}
-
-		var string = module;
-		while (string.length < 18) {
-			string = string + " ";
-		}
-		string = string + ": ";
 		var a = new Date();
-		string = a.toLocaleTimeString()+" : "+string
-
-		for (var i in args) {
-			if (typeof(args[i]) != "object" || args[i] === null || args[i] === undefined) {
-				string = string + " " + args[i];
-			}
+		var string = "%c"+a.toLocaleTimeString()+' : '+module.padEnd(18, ' ');
+		args.unshift(css);
+		args.unshift(string);
+		if (stacktrace) {
+			console.trace();
 		}
-
-		console[log_commands[loglevel]]("%c"+string,css);
-
-		var sex = false;
-		for (var i in args) {
-			if (typeof(args[i]) == "object" && args[i] !== null && args[i] !== undefined) {
-				console.log(args[i]);
-				sex = true;
+		console[log_commands[loglevel]](...args.map(v => {
+			if (typeof(v) == 'object') {
+				// Make sure we pass the value of the variable at the time it was logged and not a reference to its current state
+				return JSON.parse(JSON.stringify(v));
+			} else {
+				return v;
 			}
-		}
-		if (sex) console.log("    ");
-
+		}));
 	}
 
 	return {
@@ -170,6 +157,10 @@ window.debug = (function() {
 
 		getLevel: function() {
 			return level;
+		},
+
+		stackTrace: function(v) {
+			stacktrace = v;
 		}
 
 	}

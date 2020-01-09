@@ -369,7 +369,7 @@ function snapcastClient() {
 		j.append('<div class="expand playlistrow2" name="clienthost"></div>');
 		var lholder = $('<div>', {class: 'containerbox fixed dropdown-container'}).appendTo(j);
 		$('<div>', {class: 'fixed padright'}).appendTo(lholder).html(language.gettext('snapcast_latency'));
-		$('<input>', {type: 'text', class: 'fixed', name: "latency", size: "4", style: "width:4em"}).appendTo(lholder);
+		$('<input>', {type: 'text', class: 'fixed', name: "latency", style: "width:4em"}).appendTo(lholder);
 		$('<button>', {class: "fixed"}).appendTo(lholder).html(language.gettext('snapcast_setlatency')).on("click", self.changeLatency);
 		grouplist = $('<div>').appendTo(groupmenu);
 		n.on('keyup', self.keyUp);

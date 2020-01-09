@@ -114,46 +114,18 @@ print '<p>Proxy Password<br><input type="text" name="proxy_password" value="'.
 	$prefs['proxy_password'].'" /></p>'."\n";
 print '<hr class="dingleberry" />';
 print '<h3>Debug Logging</h3>';
-print '<table width="100%"><tr>';
 
-for ($i = 0; $i<5; $i++) {
-	print '<td align="center">';
-	if ($i == 0) {
-		print 'Off';
-	} else {
-		print 'Level '.$i;
+print '<div class="pref containerbox drodown-container">';
+print '<div class="selectholder" style="margin:auto"><select name="debug_enabled">';
+foreach(array(0,1,2,3,4,5,6,7,8) as $level) {
+	print '<option value="'.$level.'"';
+	if ($level == $prefs['debug_enabled']) {
+		print ' selected="selected"';
 	}
-	print '</td>';
+	print '>Level '.$level.' ('.trim(logger::getLevelName($level)).')</option>';
 }
-print '</tr><tr>';
-for ($i = 0; $i<5; $i++) {
-	print '<td align="center" class="styledinputs"><input id="debug'.$i.'" type="radio" name="debug_enabled" value="'.$i.'"';
-	if ($prefs['debug_enabled'] == $i) {
-		print " checked";
-	}
-	print '>';
-	print '<label for="debug'.$i.'" style="display:inline"></label>';
-}
-print '</tr><tr>';
-for ($i = 5; $i<10; $i++) {
-	print '<td align="center">';
-	if ($i == 0) {
-		print 'Off';
-	} else {
-		print 'Level '.$i;
-	}
-	print '</td>';
-}
-print '</tr><tr>';
-for ($i = 5; $i<10; $i++) {
-	print '<td align="center" class="styledinputs"><input id="debug'.$i.'" type="radio" name="debug_enabled" value="'.$i.'"';
-	if ($prefs['debug_enabled'] == $i) {
-		print " checked";
-	}
-	print '>';
-	print '<label for="debug'.$i.'" style="display:inline"></label>';
-}
-print '</tr></table>';
+print '</select></div></div>';
+
 print '<p>Custom Log File</p>';
 print '<p class=tiny>Rompr debug output will be sent to this file, but PHP error messages will
  still go to the web server error log. The web server needs write access to this file, it must
