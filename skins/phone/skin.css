@@ -921,7 +921,7 @@ img.jalopy200 {
 		width:100%;
 	}
 
-	.choose_playlist {
+	i.choosepanel[name="playlistm"] {
 /*      This is here so the layoutProcessor knows we're in tall portrait mode
 		and it should choose infobar instead */
 		font-weight:900;
@@ -1182,7 +1182,7 @@ img.jalopy200 {
 		float: none;
 	}
 
-	.choose_playlist {
+	i.choosepanel[name="playlistm"] {
 /*      This is here so the layoutProcessor knows we're in tall portrait mode
 		and it should choose infobar instead */
 		font-weight:1000;

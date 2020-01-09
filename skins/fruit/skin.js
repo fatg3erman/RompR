@@ -442,102 +442,27 @@ var layoutProcessor = function() {
 		},
 
 		initialise: function() {
-			if (prefs.outputsvisible) {
-				layoutProcessor.toggleAudioOutpts();
-			}
 			$("#sortable").disableSelection();
-			setDraggable('#collection');
-			setDraggable('#filecollection');
-			setDraggable('#searchresultholder');
-			setDraggable("#podcastslist");
-			setDraggable("#audiobooks");
-			setDraggable("#somafmlist");
-			setDraggable("#communityradiolist");
-			setDraggable("#icecastlist");
-			setDraggable("#tuneinlist");
-			setDraggable('#artistinformation');
-			setDraggable('#albuminformation');
-			setDraggable('#storedplaylists');
-
-			$("#sortable").acceptDroppedTracks({
-				scroll: true,
-				scrollparent: '#phacker'
-			});
-			$("#sortable").sortableTrackList({
-				items: '.sortable',
-				outsidedrop: playlist.dragstopped,
-				insidedrop: playlist.dragstopped,
-				scroll: true,
-				allowdragout: true,
-				scrollparent: '#phacker',
-				scrollspeed: 80,
-				scrollzone: 120
-			});
-
-			$("#pscroller").acceptDroppedTracks({
-				ondrop: playlist.draggedToEmpty,
-				coveredby: '#sortable'
-			});
-
 			animatePanels();
-
 			$(".topdropmenu").floatingMenu({
 				handleClass: 'dragmenu',
 				addClassTo: 'configtitle',
 				siblings: '.topdropmenu'
 			});
-
 			$("#tagadder").floatingMenu({
 				handleClass: 'configtitle',
 				handleshow: false
 			});
-
 			$(".stayopen").not('.dontstealmyclicks').on('click', function(ev) {ev.stopPropagation() });
-
-			// $(".enter").on('keyup',  onKeyUp );
 			$.each(my_scrollers,
 				function( index, value ) {
 				layoutProcessor.addCustomScrollBar(value);
 			});
-
 			$("#sources").find('.mCSB_draggerRail').resizeHandle({
 				adjusticons: ['#sourcescontrols', '#infopanecontrols'],
 				side: 'left',
 				donefunc: setBottomPanelWidths
 			});
-
-			shortcuts.load();
-			setControlClicks();
-			$('.choose_albumlist').on('click', function(){layoutProcessor.sourceControl('albumlist')});
-			$('.choose_searcher').on('click', function(){layoutProcessor.sourceControl('searcher')});
-			$('.choose_filelist').on('click', function(){layoutProcessor.sourceControl('filelist')});
-			$('.choose_radiolist').on('click', function(){layoutProcessor.sourceControl('radiolist')});
-			$('.choose_podcastslist').on('click', function(){layoutProcessor.sourceControl('podcastslist')});
-			$('.choose_audiobooklist').on('click', function(){layoutProcessor.sourceControl('audiobooklist')});
-			$('.choose_playlistslist').on('click', function(){layoutProcessor.sourceControl('playlistslist')});
-			$('.choose_pluginplaylistslist').on('click', function(){layoutProcessor.sourceControl('pluginplaylistslist')});
-			$('.open_albumart').on('click', openAlbumArtManager);
-			$("#ratingimage").on('click', nowplaying.setRating);
-			$('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodiput')});
-			$('#expandleft').on('click', function(){layoutProcessor.expandInfo('left')});
-			$("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
-
-			document.body.addEventListener('drop', function(e) {
-				e.preventDefault();
-			}, false);
-			$('#albumcover').on('dragenter', infobar.albumImage.dragEnter);
-			$('#albumcover').on('dragover', infobar.albumImage.dragOver);
-			$('#albumcover').on('dragleave', infobar.albumImage.dragLeave);
-			$("#albumcover").on('drop', infobar.albumImage.handleDrop);
-			$("#tracktimess").on('click', layoutProcessor.toggleRemainTime);
-			$(document).on('mouseenter', '.clearbox', makeHoverWork);
-			$(document).on('mouseleave', '.clearbox', makeHoverWork);
-			$(document).on('mousemove', '.clearbox', makeHoverWork);
-			$(document).on('mouseenter', '.combobox-entry', makeHoverWork);
-			$(document).on('mouseleave', '.combobox-entry', makeHoverWork);
-			$(document).on('mousemove', '.combobox-entry', makeHoverWork);
-			// $(document).on('mouseenter', '.tooltip', makeToolTip);
-			// $(document).on('mouseleave', '.tooltip', stopToolTip);
 			$('#plmode').detach().appendTo('#amontobin').addClass('tright');
 			$('#volume').volumeControl({
 				orientation: 'vertical',

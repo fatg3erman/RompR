@@ -82,7 +82,7 @@
 			</div>
 <?php
 			print '<div class="fixed topdrop"><i title="'.get_int_text('button_albumart').'" class="icon-cd tooltip smallpluginicon clickicon open_albumart"></i></div>';
-			print '<div class="fixed topdrop"><i class="icon-cog-alt smallpluginicon clickicon tooltip choose_prefs" title="'.get_int_text('button_prefs').'"></i>';
+			print '<div class="fixed topdrop"><i class="icon-cog-alt smallpluginicon clickicon tooltip" title="'.get_int_text('button_prefs').'"></i>';
 ?>
 				<div class="topdropmenu dropshadow rightmenu widemenu stayopen" id="configpanel">
 <?php
@@ -150,14 +150,14 @@ include ("includes/prefspanel.php");
 
 <div id="sourcescontrols" class="noborder tleft containerbox headercontainer topbox">
 <?php
-print '<i title="'.get_int_text('button_local_music').'" class="icon-music tooltip topimg choose_albumlist expand"></i>';
-print '<i title="'.get_int_text('button_searchmusic').'" class="icon-search topimg tooltip choose_searcher expand"></i>';
-print '<i title="'.get_int_text('button_file_browser').'" class="icon-folder-open-empty tooltip topimg choose_filelist expand"></i>';
-print '<i title="'.get_int_text('button_internet_radio').'" class="icon-radio-tower tooltip topimg choose_radiolist expand"></i>';
-print '<i title="'.get_int_text('label_podcasts').'" class="icon-podcast-circled tooltip topimg choose_podcastslist expand"></i>';
-print '<i title="'.get_int_text('label_audiobooks').'" class="icon-audiobook tooltip topimg choose_audiobooklist expand"></i>';
-print '<i title="'.get_int_text('button_loadplaylist').'" class="icon-doc-text tooltip topimg choose_playlistslist expand"></i>';
-print '<i title="'.get_int_text('label_pluginplaylists').'" class="icon-wifi tooltip topimg choose_pluginplaylistslist expand"></i>';
+print '<i title="'.get_int_text('button_local_music').'" class="icon-music tooltip topimg choosepanel expand" name="albumlist"></i>';
+print '<i title="'.get_int_text('button_searchmusic').'" class="icon-search topimg tooltip choosepanel expand" name="searcher"></i>';
+print '<i title="'.get_int_text('button_file_browser').'" class="icon-folder-open-empty tooltip topimg choosepanel expand" name="filelist"></i>';
+print '<i title="'.get_int_text('button_internet_radio').'" class="icon-radio-tower tooltip topimg choosepanel expand" name="radiolist"></i>';
+print '<i title="'.get_int_text('label_podcasts').'" class="icon-podcast-circled tooltip topimg choosepanel expand" name="podcastslist"></i>';
+print '<i title="'.get_int_text('label_audiobooks').'" class="icon-audiobook tooltip topimg choosepanel expand" name="audiobooklist"></i>';
+print '<i title="'.get_int_text('button_loadplaylist').'" class="icon-doc-text tooltip topimg choosepanel expand" name="playlistslist"></i>';
+print '<i title="'.get_int_text('label_pluginplaylists').'" class="icon-wifi tooltip topimg choosepanel expand" name="pluginplaylistslist"></i>';
 ?>
 <div class="expand"></div>
 </div>

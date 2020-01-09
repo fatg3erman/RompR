@@ -102,9 +102,9 @@ var startBackgroundInitTasks = function() {
 	var stufftodo = [
 		setup_lastfm,
 		connect_to_player,
+		start_userinterface,
 		collectionHelper.checkCollection,
 		load_playlists,
-		start_userinterface,
 		open_discoverator,
 		refresh_podcasts,
 		clean_backend_cache,
@@ -138,21 +138,9 @@ $(document).ready(function(){
 	infobar.createProgressBar();
 	pluginManager.doEarlyInit();
 	createHelpLinks();
-	layoutProcessor.initialise();
-	$('.combobox').makeTagMenu({textboxextraclass: 'searchterm cleargroup', textboxname: 'tag', populatefunction: tagAdder.populateTagMenu});
-	$('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add, placeholder: language.gettext('lastfm_addtagslabel')});
 	browser.createButtons();
-	setPlayClickHandlers();
-	bindClickHandlers();
+	uiHelper.initialise();
 	player.defs.replacePlayerOptions();
-	// Checkbox and Radio buttons sadly can't be handled by delegated events
-	// because a lot of them are in floatingMenus, which are handled by jQueryUI
-	// which stops the events from propagating;
-	$('.toggle').on('click', prefs.togglePref);
-	$('.savulon').on('click', prefs.toggleRadio);
-	$(document).on('keyup', ".saveotron", prefs.saveTextBoxes);
-	$(document).on('change', ".saveomatic", prefs.saveSelectBoxes);
-	$('.clickreplaygain').on('click', player.controller.replayGain);
 	playlist.preventControlClicks(true);
 	prefs.setPrefs();
 	if (prefs.playlistcontrolsvisible) {
@@ -164,31 +152,18 @@ $(document).ready(function(){
 	if (prefs.podcastcontrolsvisible) {
 		$("#podcastbuttons").show();
 	}
-	showUpdateWindow();
 	window.addEventListener("storage", onStorageChanged, false);
-	bindPlaylistClicks();
-	$(window).on('resize', uiHelper.adjustLayout);
 	pluginManager.setupPlugins();
 	setAvailableSearchOptions();
-	// Note - the next function also calls adjustLayout
 	setChooserButtons();
 	// Some debugging info, saved to the backend so we can see it
-	prefs.save({test_width: $(window).width(), test_height: $(window).height()});
+	// prefs.save({test_width: $(window).width(), test_height: $(window).height()});
 	coverscraper = new coverScraper(0, false, false, prefs.downloadart);
 	lastfm = new LastFM(prefs.lastfm_user);
-	uiHelper.setupCollectionDisplay();
 	layoutProcessor.sourceControl(prefs.chooser);
 	if (prefs.browser_id == null) {
 		prefs.save({browser_id: Date.now()});
 	}
-	$(document).on('click', '.clearbox.enter', makeClearWork);
-	$(document).on('keyup', '.enter', onKeyUp);
-	$(document).on('change', '.inputfile', inputFIleChanged);
-	$(document).on('keyup', 'input.notspecial', filterSpecialChars);
-	$(document).on('mouseenter', "#dbtags>.tag", showTagRemover);
-	$(document).on('mouseleave', "#dbtags>.tag", hideTagRemover);
-	$(document).on('click', 'body', closeMenus);
-	$(document).on('click', '.tagremover:not(.plugclickable)', nowplaying.removeTag);
 	if (prefs.mopidy_slave || (prefs.collection_player != prefs.player_backend && prefs.collection_player != null)) {
 		$('[name="donkeykong"]').remove();
 		$('[name="dinkeyking"]').remove();

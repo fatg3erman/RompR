@@ -493,14 +493,6 @@ var uiHelper = function() {
 			}
 		},
 
-		setupCollectionDisplay: function() {
-			try {
-				layoutProcessor.setupCollectionDisplay();
-			} catch (err) {
-
-			}
-		},
-
 		showTagButton: function() {
 			try {
 				return layoutProcessor.showTagButton();
@@ -579,6 +571,99 @@ var uiHelper = function() {
 			} catch (err) {
 
 			}
+		},
+
+		initialise: function() {
+			if (prefs.outputsvisible) {
+				layoutProcessor.toggleAudioOutpts();
+			}
+			if (layoutProcessor.supportsDragDrop) {
+				setDraggable('#collection');
+				setDraggable('#filecollection');
+				setDraggable('#searchresultholder');
+				setDraggable("#podcastslist");
+				setDraggable("#audiobooks");
+				setDraggable("#somafmlist");
+				setDraggable("#communityradiolist");
+				setDraggable("#icecastlist");
+				setDraggable("#tuneinlist");
+				setDraggable('#artistinformation');
+				setDraggable('#albuminformation');
+				setDraggable('#storedplaylists');
+				$("#sortable").acceptDroppedTracks({
+					scroll: true,
+					scrollparent: '#phacker'
+				});
+				$("#sortable").sortableTrackList({
+					items: '.sortable',
+					outsidedrop: playlist.dragstopped,
+					insidedrop: playlist.dragstopped,
+					scroll: true,
+					allowdragout: true,
+					scrollparent: '#phacker',
+					scrollspeed: 80,
+					scrollzone: 120
+				});
+				$("#pscroller").acceptDroppedTracks({
+					ondrop: playlist.draggedToEmpty,
+					coveredby: '#sortable'
+				});
+				document.body.addEventListener('drop', function(e) {
+					e.preventDefault();
+				}, false);
+				$('#albumcover').on('dragenter', infobar.albumImage.dragEnter);
+				$('#albumcover').on('dragover', infobar.albumImage.dragOver);
+				$('#albumcover').on('dragleave', infobar.albumImage.dragLeave);
+				$("#albumcover").on('drop', infobar.albumImage.handleDrop);
+				$("#tracktimess").on('click', layoutProcessor.toggleRemainTime);
+				$(document).on('mouseenter', '.clearbox', makeHoverWork);
+				$(document).on('mouseleave', '.clearbox', makeHoverWork);
+				$(document).on('mousemove', '.clearbox', makeHoverWork);
+				$(document).on('mouseenter', '.combobox-entry', makeHoverWork);
+				$(document).on('mouseleave', '.combobox-entry', makeHoverWork);
+				$(document).on('mousemove', '.combobox-entry', makeHoverWork);
+				// $(document).on('mouseenter', '.tooltip', makeToolTip);
+				// $(document).on('mouseleave', '.tooltip', stopToolTip);
+			}
+			if (layoutProcessor.usesKeyboard) {
+				shortcuts.load();
+			}
+			setControlClicks();
+			setPlayClickHandlers();
+			bindClickHandlers();
+			bindPlaylistClicks();
+			$('.open_albumart').on('click', openAlbumArtManager);
+			$("#ratingimage").on('click', nowplaying.setRating);
+			$('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodiput')});
+			$('#expandleft').on('click', function(){layoutProcessor.expandInfo('left')});
+			$('#expandright').on('click', function(){layoutProcessor.expandInfo('right')});
+			$("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
+			// Checkbox and Radio buttons sadly can't be handled by delegated events
+			// because a lot of them are in floatingMenus, which are handled by jQueryUI
+			// which stops the events from propagating;
+			$('.toggle').on('click', prefs.togglePref);
+			$('.savulon').on('click', prefs.toggleRadio);
+			$(document).on('keyup', ".saveotron", prefs.saveTextBoxes);
+			$(document).on('change', ".saveomatic", prefs.saveSelectBoxes);
+			$('.clickreplaygain').on('click', player.controller.replayGain);
+			$(document).on('click', '.clearbox.enter', makeClearWork);
+			$(document).on('keyup', '.enter', onKeyUp);
+			$(document).on('change', '.inputfile', inputFIleChanged);
+			$(document).on('keyup', 'input.notspecial', filterSpecialChars);
+			$(document).on('mouseenter', "#dbtags>.tag", showTagRemover);
+			$(document).on('mouseleave', "#dbtags>.tag", hideTagRemover);
+			$(document).on('click', 'body', closeMenus);
+			$(document).on('click', '.tagremover:not(.plugclickable)', nowplaying.removeTag);
+			$(document).on('click', '.choosepanel', uiHelper.changePanel)
+			$('.combobox').makeTagMenu({textboxextraclass: 'searchterm cleargroup', textboxname: 'tag', populatefunction: tagAdder.populateTagMenu});
+			$('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add, placeholder: language.gettext('lastfm_addtagslabel')});
+			$(window).on('resize', uiHelper.adjustLayout);
+			layoutProcessor.initialise();
+			showUpdateWindow();
+		},
+
+		changePanel: function() {
+			layoutProcessor.sourceControl($(this).attr('name'));
 		}
 
 	}

@@ -38,21 +38,21 @@ printOutputCheckboxes();
 			<div class="sptext"></div>
 		</div>
 		<div id="narrowscreenicons" class="topdropmenu rightmenu autohide clearfix">
-			<i class="noshrink icon-folder-open-empty topimg choose_filelist tright"></i>
-			<i class="noshrink choose_audiobooklist icon-audiobook topimg tright"></i>
-			<i class="noshrink choose_playlistman icon-doc-text topimg tright"></i>
-			<i class="noshrink icon-info-circled topimg choose_infopanel tright"></i>
-			<i class="noshrink choose_prefs icon-cog-alt topimg tright"></i>
+			<i class="noshrink icon-folder-open-empty topimg choosepanel tright" name="filelist"></i>
+			<i class="noshrink choosepanel icon-audiobook topimg tright" name="audiobooklist"></i>
+			<i class="noshrink choosepanel icon-doc-text topimg tright" name="playlistman"></i>
+			<i class="noshrink icon-info-circled topimg choosepanel tright" name="infopane"></i>
+			<i class="noshrink choosepanel icon-cog-alt topimg tright" name="prefsm"></i>
 		</div>
-		<i class="icon-no-response-playbutton topimg choose_nowplaying expand"></i>
-		<i class="icon-music topimg choose_albumlist expand"></i>
-		<i class="icon-search topimg choose_searcher expand"></i>
-		<i class="icon-folder-open-empty onlywide topimg choose_filelist expand"></i>
-		<i class="icon-radio-tower topimg choose_radiolist expand"></i>
-		<i class="icon-podcast-circled topimg choose_podcastslist expand"></i>
-		<i class="choose_audiobooklist onlywide icon-audiobook topimg expand"></i>
-		<i class="choose_playlistman onlywide icon-doc-text topimg expand"></i>
-		<i class="choose_pluginplaylists icon-wifi topimg expand"></i>
+		<i class="icon-no-response-playbutton topimg choosepanel expand" name="infobar"></i>
+		<i class="icon-music topimg choosepanel expand" name="albumlist"></i>
+		<i class="icon-search topimg choosepanel expand" name="searchpane"></i>
+		<i class="icon-folder-open-empty onlywide topimg choosepanel expand" name="filelist"></i>
+		<i class="icon-radio-tower topimg choosepanel expand" name="radiolist"></i>
+		<i class="icon-podcast-circled topimg choosepanel expand" name="podcastslist"></i>
+		<i class="choosepanel onlywide icon-audiobook topimg expand" name="audiobooklist"></i>
+		<i class="choosepanel onlywide icon-doc-text topimg expand" name="playlistman"></i>
+		<i class="choosepanel icon-wifi topimg expand" name="pluginplaylistholder"></i>
 		<div class="onlyverywide containerbox expandabit topbarplaycontrols">
 			<i class="prev-button icon-fast-backward topimg expand"></i>
 			<i class="play-button icon-play-circled topimg expand"></i>
@@ -61,9 +61,9 @@ printOutputCheckboxes();
 			<i class="next-button icon-fast-forward topimg expand"></i>
 		</div>
 		<i class="icon-volume-up topimg expand topbarmenu" name="volumedropper"></i>
-		<i class="icon-doc-text topimg choose_playlist expand"></i>
-		<i class="onlywide icon-info-circled topimg choose_infopanel expand"></i>
-		<i class="onlywide choose_prefs icon-cog-alt topimg expand"></i>
+		<i class="icon-doc-text topimg choosepanel expand" name="playlistm"></i>
+		<i class="onlywide icon-info-circled topimg choosepanel expand" name="infopane"></i>
+		<i class="onlywide choosepanel icon-cog-alt topimg expand" name="prefsm"></i>
 		<i class="icon-menu topimg ninety expand topbarmenu" name="specialplugins"></i>
 		<i class="icon-menu topimg expand onlynarrow topbarmenu" name="narrowscreenicons"></i>
 	</div>

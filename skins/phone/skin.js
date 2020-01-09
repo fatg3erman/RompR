@@ -503,7 +503,7 @@ var layoutProcessor = function() {
 		sourceControl: function(source) {
 			debug.mark('LAYOUT','Switching source to',source);
 			// hacky - set an irrelevant css parameter as a flag so we change behaviour
-			var layoutflag = parseInt($('.choose_playlist').css('font-weight'));
+			var layoutflag = parseInt($('i.choosepanel[name="playlistm"]').css('font-weight'));
 			if ((source == 'playlistm' || source == 'infobar') && prefs.chooser != 'infopane' && layoutflag == 1000) {
 				return;
 			}
@@ -550,7 +550,7 @@ var layoutProcessor = function() {
 			layoutProcessor.setPlaylistHeight();
 			browser.rePoint();
 			$('.topdropmenu:visible').fanoogleTopMenus();
-			if ($('.choose_playlist').css('font-weight') == '1000'
+			if ($('i.choosepanel[name="playlistm"]').css('font-weight') == '1000'
 				&& $('.mainpane:visible').not('#infobar').length == 0
 				&& (prefs.chooser == 'playlistm' || prefs.chooser == 'infobar')) {
 				layoutProcessor.sourceControl('albumlist');
@@ -607,7 +607,6 @@ var layoutProcessor = function() {
 		},
 
 		initialise: function() {
-
 			if (!prefs.checkSet('clickmode')) {
 				prefs.clickmode = 'single';
 			}
@@ -621,23 +620,7 @@ var layoutProcessor = function() {
 			$('.autohide').on('click', function() {
 				$(this).slideToggle('fast');
 			});
-			setControlClicks();
-			$('.choose_nowplaying').on('click', function(){layoutProcessor.sourceControl('infobar')});
-			$('.choose_albumlist').on('click', function(){layoutProcessor.sourceControl('albumlist')});
-			$('.choose_searcher').on('click', function(){layoutProcessor.sourceControl('searchpane')});
-			$('.choose_filelist').on('click', function(){layoutProcessor.sourceControl('filelist')});
-			$('.choose_radiolist').on('click', function(){layoutProcessor.sourceControl('radiolist')});
-			$('.choose_podcastslist').on('click', function(){layoutProcessor.sourceControl('podcastslist')});
-			$('.choose_audiobooklist').on('click', function(){layoutProcessor.sourceControl('audiobooklist')});
-			$('.choose_infopanel').on('click', function(){layoutProcessor.sourceControl('infopane')});
-			$('.choose_playlistman').on('click', function(){layoutProcessor.sourceControl('playlistman')});
-			$('.choose_pluginplaylists').on('click', function(){layoutProcessor.sourceControl('pluginplaylistholder')});
-			$('.choose_prefs').on('click', function(){layoutProcessor.sourceControl('prefsm')});
 			$('#choose_history').on('click', showHistory);
-			$('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodiput')});
-			$('.choose_playlist').on('click', function(){layoutProcessor.sourceControl('playlistm')});
-			$("#ratingimage").on('click', nowplaying.setRating);
-			$("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
 			$('#volume').volumeControl({
 				orientation: 'horizontal',
 				command: player.controller.volume
