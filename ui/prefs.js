@@ -36,7 +36,6 @@ var prefs = function() {
 		"fontsize",
 		"fontfamily",
 		"collectioncontrolsvisible",
-		"displayresultsas",
 		"crossfade_duration",
 		"newradiocountry",
 		"search_limit_limitsearch",
@@ -691,13 +690,6 @@ var prefs = function() {
 				var prefsave = prefname.replace(/_duplicate\d+/, '');
 				$("[name="+prefname+"][value="+prefs[prefsave]+"]").prop("checked", true);
 			});
-
-			$('.choose-resultmode').removeClass('currentbun');
-			if (prefs.displayresultsas == "collection") {
-				$('.choose-resultmode.icon-music').addClass('currentbun');
-			} else {
-				$('.choose-resultmode.icon-folder-open-empty').addClass('currentbun');
-			}
 
 		},
 

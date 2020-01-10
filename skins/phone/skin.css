@@ -1093,13 +1093,13 @@ img.jalopy200 {
 	}
 }
 
-@media screen and (max-height: 480px) and (orientation: landscape) {
+/*@media screen and (max-height: 480px) and (orientation: landscape) {
 
 	#albumpicture {
 		max-height: 40vh;
 	}
 }
-
+*/
 @media screen and (min-width: 810px) and (max-height: 540px) and (orientation: landscape) {
 	/* Wider - info pane looks like wide portrait mode up to 540px high*/
 	/* ie nowplaying is next to album image - can't have album image very big
@@ -1145,7 +1145,7 @@ img.jalopy200 {
 	}
 }
 
-@media screen and (min-width:1024px) and (min-height: 768px) and (orientation: landscape) {
+@media screen and (min-width:1024px) and (min-height: 740px) and (orientation: landscape) {
 	/* Big screens - combination of everything - nowplaying and playlist together, chooser on right hand side */
 	#infobar {
 		height: 50%;

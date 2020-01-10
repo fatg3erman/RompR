@@ -23,8 +23,8 @@ function doSearchBoxes($sterms) {
 	print '</div>';
 
 	print '<div class="containerbox">';
-	print '<i class="fixed podicon icon-music choose-resultmode clickable clickicon" title="'.ucfirst(get_int_text('label_resultscollection')).'"></i>';
-	print '<i class="fixed podicon icon-folder-open-empty choose-resultmode clickable clickicon" title="'.ucfirst(get_int_text('label_resultstree')).'"></i>';
+	// print '<i class="fixed podicon icon-music choose-resultmode clickable clickicon" title="'.ucfirst(get_int_text('label_resultscollection')).'"></i>';
+	// print '<i class="fixed podicon icon-folder-open-empty choose-resultmode clickable clickicon" title="'.ucfirst(get_int_text('label_resultstree')).'"></i>';
 	print '<div class="expand"></div>';
 	print '<button class="searchbutton iconbutton cleargroup" class="fixed" onclick="player.controller.search(\'search\')"></button>';
 	print '</div>';
@@ -34,12 +34,8 @@ function doSearchBoxes($sterms) {
 
 function startAdvSearchOptions() {
 	print '<div id="advsearchoptions" class="invisible">';
-		// print '<div class="marged styledinputs podoptions">';
-		// print '<input type="radio" class="topcheck savulon" name="displayresultsas" value="collection" id="resultsascollection">
-		// <label for="resultsascollection">'.ucfirst(get_int_text('label_resultscollection')).'</label>
-		// <input type="radio" class="topcheck savulon" name="displayresultsas" value="tree" id="resultsastree">
-		// <label for="resultsastree">'.ucfirst(get_int_text('label_resultstree')).'</label>
-		// </div>';
+
+	print '<div>'.get_int_text('label_displayresultsas').'</div>';
 
 	print '<div class="containerbox dropdown-container">';
 	print '<div class="selectholder">';
@@ -47,6 +43,7 @@ function startAdvSearchOptions() {
 	foreach (COLLECTION_SORT_MODES as $mode => $key) {
 		print '<option value="'.$mode.'">'.ucfirst(get_int_text($key)).'</option>';
 	}
+	print '<option value="results_as_tree">'.get_int_text('label_resultstree').'</option>';
 	print '</select>';
 	print '</div>';
 	print '</div>';

@@ -630,7 +630,7 @@ function playerController() {
 			doSomethingUseful('searchresultholder', language.gettext("label_searching"));
 			var st = {
 				command: command,
-				resultstype: prefs.displayresultsas,
+				resultstype: (prefs.sortresultsby == 'results_as_tree') ? 'tree' : 'collection',
 				domains: domains,
 				dump: collectionHelper.collectionKey('b')
 			};

@@ -7,14 +7,14 @@ window.debug = (function() {
 	var focuson = new Array();
 	var stacktrace = false;
 	var log_colours = {
-		1: "#FF0000",
-		2: "#FE6700",
-		3: "#FF00FF",
-		4: "#00CCFF",
-		5: "#000000",
-		6: "#AAAAAA",
-		7: "#BBBBBB",
-		8: "#CCCCCC",
+		1: "color:#FF0000;font-weight:bold;font-size:140%",
+		2: "color:#FE6700;font-weight:bold;font-size:135%",
+		3: "color:#FF00FF;font-weight:bold;font-size:130%",
+		4: "color:#00CCFF;font-size:120%",
+		5: "color:#000000;font-size:110%",
+		6: "color:#AAAAAA",
+		7: "color:#BBBBBB",
+		8: "color:#CCCCCC;font-size:90%",
 	};
 	var log_commands = {
 		1: 'error',
@@ -32,7 +32,7 @@ window.debug = (function() {
 		var module = args.shift();
 		if (ignoring[module]) return;
 		if (focuson.length > 0 && focuson.indexOf(module) == -1) return;
-		var css = (colours[module]) ? 'color:'+colours[module] : 'color:'+log_colours[loglevel];
+		var css = (colours[module]) ? colours[module] : log_colours[loglevel];
 		if (highlighting[module]) {
 			css += ";font-weight:bold";
 		}
@@ -146,12 +146,12 @@ window.debug = (function() {
 
 		setLevel: function(l) {
 			if (l == level) {
-				console.log("Debugging is already set to Level "+l+". Duh.");
+				console.log("%cDebugging is already set to Level "+l+". Duh.", 'font-weight:bold;font-size:300%');
 				return false;
 			}
 			level = l;
 			prefs.save({debug_enabled: l});
-			console.log("Debugging set to level "+l+". Aren't you clever?");
+			console.log("%cDebugging set to level "+l+". Aren't you clever?", 'font-weight:bold;font-size:200%');
 			return true;
 		},
 

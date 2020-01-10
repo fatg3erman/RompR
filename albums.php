@@ -180,9 +180,11 @@ function browse_album() {
 		logger::log("ALBUMS", "Ouputting Podcast ID ".$podid);
 		outputPodcast($podid, false);
 	} else {
-		// if (preg_match('/^.+?:artist:/', $albumlink)) {
-		// 	remove_album_from_database($who);
-		// }
+		if (preg_match('/^.+?:artist:/', $albumlink)) {
+			// Absolutely MUST do this - although it can have odd effects in the UI, not doing it
+			// has massively bad consequences
+			remove_album_from_database($who);
+		}
 		$player = new $PLAYER_TYPE();
 		$collection = new musicCollection();
 		$cmd = 'find file "'.$albumlink.'"';

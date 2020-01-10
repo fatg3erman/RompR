@@ -469,6 +469,8 @@ class logger {
 		7 => 32,
 		# light grey
 		8 => 37,
+		# white
+		9 => 97
 	);
 
 	private static $debug_names = array(

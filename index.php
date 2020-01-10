@@ -187,6 +187,9 @@ foreach ($prefs as $p => $v) {
 print '<script type="application/json" name="prefs">'."\n".json_encode($safeprefs)."\n</script>\n";
 print '<link rel="stylesheet" type="text/css" href="css/layout-january.css?version='.time().'" />'."\n";
 print '<link rel="stylesheet" type="text/css" href="skins/'.$skin.'/skin.css?version='.time().'" />'."\n";
+if (file_exists('skins/'.$skin.'/controlbuttons.css')) {
+	print '<link rel="stylesheet" type="text/css" href="skins/'.$skin.'/controlbuttons.css?version='.time().'" />'."\n";
+}
 foreach ($skinrequires as $s) {
 	$s = trim($s);
 	$ext = strtolower(pathinfo($s, PATHINFO_EXTENSION));

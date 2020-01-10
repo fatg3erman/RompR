@@ -508,6 +508,7 @@ class imageHandler {
 	}
 
 	public function resizeToWidth($width) {
+		logger::trace('IMAGEHANDLER', 'Resizing to width', $width);
 		$this->image->resizeToWidth($width);
 	}
 
@@ -900,7 +901,8 @@ class gdImage {
 	public function resizeToWidth($width) {
 		$ratio = $width / $this->getWidth();
 		if ($ratio > 1) {
-			logger::debug('GD-IMAGE', "Not resizing as requested size is larger than image");
+			logger::debug('GD-IMAGE', "Not resizing as requested size is larger than image. Asked for",$width,"but image is",$this->getWidth());
+			$this->reset();
 		} else {
 			$height = $this->getheight() * $ratio;
 			$this->resize($width,$height);
@@ -916,10 +918,11 @@ class gdImage {
 	}
 
 	private function resize($width, $height) {
-	   $this->resizedimage = imagecreatetruecolor($width, $height);
-	   imagealphablending($this->resizedimage, false);
-	   imagesavealpha($this->resizedimage, true);
-	   imagecopyresampled($this->resizedimage, $this->image, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight());
+		logger::debug('GD-IMAGE', 'Resizing to',$width,'x',$height);
+		$this->resizedimage = imagecreatetruecolor($width, $height);
+		imagealphablending($this->resizedimage, false);
+		imagesavealpha($this->resizedimage, true);
+		imagecopyresampled($this->resizedimage, $this->image, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight());
 	}
 
 	public function get_image_dimensions() {

@@ -367,7 +367,7 @@ tr.clickaddtrack:hover
 }
 
 .tagholder table tr th {
-    background-color:rgba(200,200,200,0.5);
+    background-color:rgba(0,0,0,0.3);
     border-bottom:1px solid #cccccc;
 }
 

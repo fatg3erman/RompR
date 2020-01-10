@@ -628,10 +628,6 @@ var uiHelper = function() {
 			if (layoutProcessor.usesKeyboard) {
 				shortcuts.load();
 			}
-			setControlClicks();
-			setPlayClickHandlers();
-			bindClickHandlers();
-			bindPlaylistClicks();
 			$('.open_albumart').on('click', openAlbumArtManager);
 			$("#ratingimage").on('click', nowplaying.setRating);
 			$('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodiput')});
@@ -659,6 +655,10 @@ var uiHelper = function() {
 			$('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add, placeholder: language.gettext('lastfm_addtagslabel')});
 			$(window).on('resize', uiHelper.adjustLayout);
 			layoutProcessor.initialise();
+			setControlClicks();
+			setPlayClickHandlers();
+			bindClickHandlers();
+			bindPlaylistClicks();
 			showUpdateWindow();
 		},
 
