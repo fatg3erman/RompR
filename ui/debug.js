@@ -7,11 +7,11 @@ window.debug = (function() {
 	var focuson = new Array();
 	var stacktrace = false;
 	var log_colours = {
-		1: "color:#FF0000;font-weight:bold;font-size:140%",
-		2: "color:#FE6700;font-weight:bold;font-size:135%",
-		3: "color:#FF00FF;font-weight:bold;font-size:130%",
-		4: "color:#00CCFF;font-size:120%",
-		5: "color:#000000;font-size:110%",
+		1: "color:#FF0000;font-weight:bold",
+		2: "color:#FE6700;font-weight:bold",
+		3: "color:#FF00FF;font-weight:bold",
+		4: "color:#00CCFF",
+		5: "color:#000000",
 		6: "color:#AAAAAA",
 		7: "color:#BBBBBB",
 		8: "color:#CCCCCC;font-size:90%",

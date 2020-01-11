@@ -246,14 +246,18 @@ class baseAlbumImage {
 		return false;
 	}
 
-	public function html_for_image($obj, $imageclass, $size) {
+	public function html_for_image($obj, $imageclass, $size, $lazy = true) {
 		$extra = (array_key_exists('userplaylist', $obj)) ? 'plimage '.$imageclass : $imageclass;
 		if (!$this->images['small'] && $obj['Searched'] != 1) {
 			return '<img class="notexist '.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
 		} else  if (!$this->images['small'] && $obj['Searched'] == 1) {
 			return '<img class="notfound '.$extra.'" name="'.$obj['ImgKey'].'" />'."\n";
 		} else {
-			return '<img class="'.$extra.'" name="'.$obj['ImgKey'].'" src="'.$this->images[$size].'" />'."\n";
+			if ($lazy) {
+				return '<img class="lazy '.$extra.'" name="'.$obj['ImgKey'].'" src="newimages/transparent.png" data-src="'.$this->images[$size].'" />'."\n";
+			} else {
+				return '<img class="'.$extra.'" name="'.$obj['ImgKey'].'" src="'.$this->images[$size].'" />'."\n";
+			}
 		}
 	}
 

@@ -436,7 +436,7 @@ var layoutProcessor = function() {
 		},
 
 		goToBrowserPlugin: function(panel) {
-			layoutProcessor.sourceControl('infopane');
+			uiHelper.sourceControl('infopane');
 			layoutProcessor.goToBrowserPanel(panel);
 		},
 
@@ -553,7 +553,7 @@ var layoutProcessor = function() {
 			if ($('i.choosepanel[name="playlistm"]').css('font-weight') == '1000'
 				&& $('.mainpane:visible').not('#infobar').length == 0
 				&& (prefs.chooser == 'playlistm' || prefs.chooser == 'infobar')) {
-				layoutProcessor.sourceControl('albumlist');
+				uiHelper.sourceControl('albumlist');
 			}
 			var np = $('#nowplaying');
 			var nptop = np.offset().top;

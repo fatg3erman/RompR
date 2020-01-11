@@ -124,7 +124,7 @@ var layoutProcessor = function() {
 		},
 
 		goToBrowserPlugin: function(panel) {
-			layoutProcessor.sourceControl('infopane');
+			uiHelper.sourceControl('infopane');
 			layoutProcessor.goToBrowserPanel(panel);
 		},
 
@@ -242,7 +242,7 @@ var layoutProcessor = function() {
 			if ($('i.choosepanel[name="playlistm"]').css('font-weight') == '1000'
 				&& $('.mainpane:visible').not('#infobar').length == 0
 				&& (prefs.chooser == 'playlistm' || prefs.chooser == 'infobar')) {
-				layoutProcessor.sourceControl('albumlist');
+				uiHelper.sourceControl('albumlist');
 			}
 
 		},
@@ -317,8 +317,8 @@ var layoutProcessor = function() {
 		},
 
 		createPluginHolder: function(icon, title, id, panel) {
-			$('<i>', {class: 'onlywide topimg expand '+icon}).insertBefore('i[name="specialplugins"]').on('click', function() {layoutProcessor.sourceControl(panel)});
-			return $('<i>', {class: 'noshrink topimg tright '+icon}).appendTo('#narrowscreenicons').on('click', function() {layoutProcessor.sourceControl(panel)});
+			$('<i>', {class: 'onlywide topimg expand '+icon}).insertBefore('i[name="specialplugins"]').on('click', function() {uiHelper.sourceControl(panel)});
+			return $('<i>', {class: 'noshrink topimg tright '+icon}).appendTo('#narrowscreenicons').on('click', function() {uiHelper.sourceControl(panel)});
 		},
 
 		makeDropHolder: function(name) {

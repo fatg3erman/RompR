@@ -248,7 +248,7 @@ jQuery.fn.animatePanel = function(options) {
 }
 
 function showHistory() {
-	layoutProcessor.sourceControl('infoholder');
+	uiHelper.sourceControl('infoholder');
 }
 
 var layoutProcessor = function() {
@@ -421,7 +421,7 @@ var layoutProcessor = function() {
 			// if we're in one of the 'album' modes, so call into sourceControl again
 			// to hide the ones we don't need
 			loading_ui = true;
-			layoutProcessor.sourceControl(prefs.chooser);
+			uiHelper.sourceControl(prefs.chooser);
 			collectionHelper.forceCollectionReload();
 		},
 
@@ -452,14 +452,14 @@ var layoutProcessor = function() {
 		},
 
 		goToBrowserPlugin: function(panel) {
-			layoutProcessor.sourceControl('pluginholder');
+			uiHelper.sourceControl('pluginholder');
 			setTimeout(function() {
 				layoutProcessor.goToBrowserPanel(panel);
 			}, 500);
 		},
 
 		goToBrowserSection: function(section) {
-			layoutProcessor.sourceControl('pluginholder');
+			uiHelper.sourceControl('pluginholder');
 			$("#infopane").mCustomScrollbar("scrollTo",section);
 		},
 
@@ -477,7 +477,7 @@ var layoutProcessor = function() {
 					var s = ["albumlist", "specialplugins", "searcher", "filelist", "radiolist", "audiobooklist", "playlistslist", "podcastslist", "pluginplaylistslist"];
 					for (var i in s) {
 						if (s[i] != panel && !prefs["hide_"+s[i]]) {
-							layoutProcessor.sourceControl(s[i]);
+							uiHelper.sourceControl(s[i]);
 							break;
 						}
 					}

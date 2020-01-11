@@ -257,7 +257,7 @@ var infobar = function() {
 			var aImg = new Image();
 			var current_image;
 			const noimage = "newimages/compact-disc.png";
-			const notafile = "newimages/thisdosntexist.png";
+			const notafile = "newimages/thisdoesntexist.png";
 
 			aImg.onload = function() {
 				debug.debug("ALBUMPICTURE","Image Loaded",$(this).attr("src"));

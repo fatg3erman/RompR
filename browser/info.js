@@ -178,7 +178,7 @@ var browser = function() {
 			extraPlugins[section].div.remove();
 			extraPlugins[section].div = null;
 			if ($('#pluginholder').length > 0 && openPlugins() == 0) {
-				layoutProcessor.sourceControl('specialplugins');
+				uiHelper.sourceControl('specialplugins');
 			}
 		});
 	}

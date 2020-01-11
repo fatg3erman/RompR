@@ -127,8 +127,42 @@ var startBackgroundInitTasks = function() {
 
 }();
 
+if (typeof(IntersectionObserver) == 'function') {
+
+	// Use IntersectionObserver API to load album images as they come into view
+	// - makes sortby Album modes work, otherwise it loads every single image at
+	// page load time. IntersectionObserver is relatively new, so check for support.
+	// collectionHeolper.scootTheAlbums is called every time we load something with album
+	// images and that takes care of loading them
+
+
+	const imageLoadConfig = {
+		rootMargin: '0px 0px 50px 0px',
+		threshold: 0
+	}
+
+	var imageLoader = new IntersectionObserver(function(entries, self) {
+	  entries.forEach(entry => {
+	    if(entry.isIntersecting) {
+	      preloadImage(entry.target);
+	      self.unobserve(entry.target);
+	    }
+	  });
+	}, imageLoadConfig);
+
+	function preloadImage(img) {
+		var self = $(img);
+		self.attr('src', self.attr('data-src')).removeAttr('data-src').removeClass('lazy');
+	}
+}
+
 $(document).ready(function(){
 	debug.mark("INIT","Document Ready Event has fired");
+
+	if (typeof(IntersectionObserver) == 'function') {
+		debug.mark('UI', 'IntersectionObserver is present and being used');
+	}
+
 	$('#albumpicture').on('load', albumImageLoaded);
 	get_geo_country();
 	if (prefs.do_not_show_prefs) {
@@ -160,7 +194,7 @@ $(document).ready(function(){
 	// prefs.save({test_width: $(window).width(), test_height: $(window).height()});
 	coverscraper = new coverScraper(0, false, false, prefs.downloadart);
 	lastfm = new LastFM(prefs.lastfm_user);
-	layoutProcessor.sourceControl(prefs.chooser);
+	uiHelper.sourceControl(prefs.chooser);
 	if (prefs.browser_id == null) {
 		prefs.save({browser_id: Date.now()});
 	}

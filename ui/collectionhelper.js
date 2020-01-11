@@ -336,6 +336,15 @@ var collectionHelper = function() {
 					coverscraper.GetNewAlbumArt($(this));
 				});
 			}
+			debug.trace("COLLECTION", "Loading Images In",jq.attr('id'));
+			if (typeof(IntersectionObserver) == 'function') {
+				jq.find("img.lazy").get().forEach(img => imageLoader.observe(img));
+			} else {
+				jq.find("img.lazy").each(function() {
+					var self = $(this);
+					self.attr('src', self.attr('data-src')).removeAttr('data-src').removeClass('lazy');
+				});
+			}
 		},
 
 		updateCollectionDisplay: function(rdata, callback) {

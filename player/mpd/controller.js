@@ -652,7 +652,7 @@ function playerController() {
 			})
 			.done(function(data) {
 				$("#searchresultholder").html(data);
-				collectionHelper.scootTheAlbums($("#searchresultholder"));
+				// collectionHelper.scootTheAlbums($("#searchresultholder"));
 				uiHelper.doThingsAfterDisplayingListOfAlbums($("#searchresultholder"));
 				data = null;
 			});

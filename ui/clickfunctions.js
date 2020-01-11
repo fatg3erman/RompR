@@ -14,9 +14,10 @@ var clickRegistry = function() {
 		},
 
 		farmClick: function(event, clickedElement) {
-			for (var i in clickHandlers) {
-				if (clickedElement.hasClass(clickHandlers[i].source)) {
-					clickHandlers[i].single(event, clickedElement);
+			for (var h of clickHandlers) {
+				if (clickedElement.hasClass(h.source)) {
+					debug.trace('FARMCLICK', 'Farming click out to',h.single.name)
+					h.single(event, clickedElement);
 				}
 			}
 		}
@@ -234,8 +235,10 @@ function doMenu(event, element) {
 	if (element.isClosed()) {
 		element.toggleOpen();
 		if (menuOpeners[menutoopen]) {
+			debug.trace('DOMENU', 'Opening using menuopener', menuOpeners[menutoopen].name);
 			menuOpeners[menutoopen]();
 		} else if (menuOpeners[getMenuType(menutoopen)]) {
+			debug.trace('DOMENU', 'Opening using menuopener type', menuOpeners[getMenuType(menutoopen)].name);
 			menuOpeners[getMenuType(menutoopen)](getMenuIndex(menutoopen));
 		}
 		$('#'+menutoopen).menuReveal();
@@ -349,7 +352,7 @@ function getAllTracksForArtist(element, menutoopen) {
 		var spunk = uiHelper.getArtistDestinationDiv(menutoopen);
 		spunk.html(data);
 		uiHelper.doThingsAfterDisplayingListOfAlbums(spunk);
-		collectionHelper.scootTheAlbums(spunk);
+		// collectionHelper.scootTheAlbums(spunk);
 		infobar.markCurrentTrack();
 		uiHelper.fixupArtistDiv(spunk, menutoopen);
 	})
@@ -949,6 +952,9 @@ function makeAlbumMenu(e, element) {
 
 	var menu = new popupMenu(e, element);
 	var d = menu.create();
+	if (!d) {
+		return;
+	}
 
 	if ($(element).hasClass('clickalbumoptions')) {
 		var cl = 'backhi clickable menuitem fakedouble closepopup '

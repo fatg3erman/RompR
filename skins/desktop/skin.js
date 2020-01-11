@@ -151,7 +151,7 @@ var layoutProcessor = function() {
 					var s = ["albumlist", "searcher", "filelist", "radiolist", "audiobooklist", "podcastslist", "playlistslist", "pluginplaylistslist"];
 					for (var i in s) {
 						if (s[i] != panel && !prefs["hide_"+s[i]]) {
-							layoutProcessor.sourceControl(s[i]);
+							uiHelper.sourceControl(s[i]);
 							break;
 						}
 					}
@@ -304,11 +304,11 @@ var layoutProcessor = function() {
 			var holder;
 			if (details.isaudiobook > 0) {
 				holder = '#audiobooks';
-				layoutProcessor.sourceControl('audiobooklist');
+				uiHelper.sourceControl('audiobooklist');
 				prefix = 'z';
 			} else {
 				holder = '#collection';
-				layoutProcessor.sourceControl('albumlist');
+				uiHelper.sourceControl('albumlist');
 				prefix = 'a';
 			}
 			var artistmenu = prefix+'artist'+details.artistindex;

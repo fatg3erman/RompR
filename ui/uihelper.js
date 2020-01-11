@@ -335,6 +335,7 @@ var uiHelper = function() {
 		},
 
 		doThingsAfterDisplayingListOfAlbums: function(panel) {
+			collectionHelper.scootTheAlbums(panel);
 			try {
 				return layoutProcessor.doThingsAfterDisplayingListOfAlbums(panel);
 			} catch (err) {
@@ -663,7 +664,19 @@ var uiHelper = function() {
 		},
 
 		changePanel: function() {
-			layoutProcessor.sourceControl($(this).attr('name'));
+			uiHelper.sourceControl($(this).attr('name'));
+			if ($(this).attr('name') == 'podcastslist') {
+				// HACK HACK HACK
+				collectionHelper.scootTheAlbums($('#fruitbat'));
+			}
+		},
+
+		sourceControl: function(panel) {
+			layoutProcessor.sourceControl(panel);
+			if (panel == 'podcastslist') {
+				// HACK HACK HACK
+				collectionHelper.scootTheAlbums($('#fruitbat'));
+			}
 		}
 
 	}

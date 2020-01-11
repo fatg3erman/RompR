@@ -10,6 +10,24 @@ var allshown = true;
 var stream = "";
 var progress;
 
+// const imageLoadConfig = {
+// 	rootMargin: '0px 0px 50px 0px',
+// 	threshold: 0
+// }
+
+// var imageLoader = new IntersectionObserver(function(entries, self) {
+//   entries.forEach(entry => {
+//     if(entry.isIntersecting) {
+//       preloadImage(entry.target);
+//       self.unobserve(entry.target);
+//     }
+//   });
+// }, imageLoadConfig);
+
+function preloadImage(img) {
+	$(img).attr('src', $(img).attr('data-src')).removeAttr('data-src').removeClass('lazy');
+}
+
 function getNewAlbumArt(div) {
 
 	debug.log("ALBUMART","Getting art in",div);
@@ -262,6 +280,7 @@ $(window).on('load', function () {
 	coverscraper.reset(albums_without_cover);
 	coverscraper.updateInfo(albums_without_cover - count);
 	$("#status").html(language.gettext("albumart_instructions"));
+	// $("img.lazy").get().forEach(img => imageLoader.observe(img));
 });
 
 function dragEnter(ev) {
