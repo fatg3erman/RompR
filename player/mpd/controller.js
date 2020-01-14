@@ -87,7 +87,7 @@ function checkForUpdateToUnknownStream(streamid, name) {
 	var m = playlist.getCurrent('Album');
 	if (m.match(/^Unknown Internet Stream/)) {
 		debug.mark("PLAYLIST","Updating Stream",name);
-		yourRadioPlugin.updateStreamName(streamid, name, playlist.getCurrent('file'), playlist.repopulate);
+		yourRadioPlugin.updateStreamName(streamid, name, playlist.getCurrent('file'));
 	}
 }
 
@@ -212,16 +212,12 @@ function playerController() {
 			openplaylists.push($(this).attr('name'));
 		})
 		try {
-			var data = await $.get("player/mpd/loadplaylists.php");
-			$("#storedplaylists").html(data);
-			uiHelper.doThingsAfterDisplayingListOfAlbums($('#storedplaylists'));
+			await clickRegistry.loadContentIntoTarget($("#storedplaylists"), $('.choosepanel[name="playlistslist"]'), true, "player/mpd/loadplaylists.php");
 			$('b:contains("'+language.gettext('button_loadplaylist')+'")').parent('.configtitle').append('<a href="https://fatg3erman.github.io/RompR/Using-Saved-Playlists" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
 			for (var i in openplaylists) {
 				$('i.menu.openmenu.playlist.icon-toggle-closed[name="'+openplaylists[i]+'"]').click();
 			}
-			if (openplaylists.length > 0) {
-				infobar.markCurrentTrack();
-			}
+
 			data = await $.get('player/mpd/loadplaylists.php?addtoplaylistmenu');
 			$('#addtoplaylistmenu').empty();
 			data.forEach(function(p) {
@@ -485,10 +481,6 @@ function playerController() {
 					cmdlist.push(['add',v.name]);
 					break;
 
-				case "artist":
-					cmdlist.push(['addartist',v.name]);
-					break;
-
 				case "stream":
 					cmdlist.push(['loadstreamplaylist',v.url,v.image,v.station]);
 					break;
@@ -652,7 +644,7 @@ function playerController() {
 			})
 			.done(function(data) {
 				$("#searchresultholder").html(data);
-				// collectionHelper.scootTheAlbums($("#searchresultholder"));
+				$("#searchresultholder").scootTheAlbums();
 				uiHelper.doThingsAfterDisplayingListOfAlbums($("#searchresultholder"));
 				data = null;
 			});

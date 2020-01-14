@@ -60,7 +60,6 @@ var prefs = function() {
 		"tradsearch",
 		"sortwishlistby",
 		"player_in_titlebar",
-		"communityradioorderby",
 		"browser_id",
 		"playlistswipe",
 		"podcastcontrolsvisible",

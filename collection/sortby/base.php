@@ -307,10 +307,10 @@ class sortby_base {
 				print '<input type="hidden" class="expandalbum"/>';
 			}
 		}
-		if ($tracktype == 1) {
-			logger::mark("GET TRACKS", "Album",$this->who,"has no tracks, just an artist link");
-			print '<input type="hidden" class="expandartist"/>';
-		}
+		// if ($tracktype == 1) {
+		// 	logger::mark("GET TRACKS", "Album",$this->who,"has no tracks, just an artist link");
+		// 	print '<input type="hidden" class="expandartist"/>';
+		// }
 		if ($total_time > 0) {
 			print '<input type="hidden" class="albumtime" value="'.format_time($total_time).'" />';
 		}

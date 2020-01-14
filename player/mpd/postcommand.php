@@ -58,11 +58,6 @@ if ($player->is_connected()) {
 					$cmds = array_merge($cmds, getItemsToAdd($cmd[1], null));
 					break;
 
-				case "addartist":
-					logger::log("MPD", "Getting tracks for Artist ".$cmd[1]);
-					$cmds = array_merge($cmds, $player->get_tracks_for_spotify_artist($cmd[1]));
-					break;
-
 				case "loadstreamplaylist":
 					require_once ("player/".$prefs['player_backend']."/streamplaylisthandler.php");
 					require_once ("utils/getInternetPlaylist.php");

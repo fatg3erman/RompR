@@ -43,14 +43,15 @@ window.debug = (function() {
 		if (stacktrace) {
 			console.trace();
 		}
-		console[log_commands[loglevel]](...args.map(v => {
-			if (typeof(v) == 'object') {
-				// Make sure we pass the value of the variable at the time it was logged and not a reference to its current state
-				return JSON.parse(JSON.stringify(v));
-			} else {
-				return v;
-			}
-		}));
+		// console[log_commands[loglevel]](...args.map(v => {
+		// 	if (typeof(v) == 'object') {
+		// 		// Make sure we pass the value of the variable at the time it was logged and not a reference to its current state
+		// 		return JSON.parse(JSON.stringify(v));
+		// 	} else {
+		// 		return v;
+		// 	}
+		// }));
+		console[log_commands[loglevel]](...args);
 	}
 
 	return {

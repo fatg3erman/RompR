@@ -261,7 +261,7 @@ include("podcasts/podcasts.php");
 		print '<div class="expand textcentre"><b>'.get_int_text('button_loadplaylist').'</b></div>';
 ?>
 		</div>
-		<div id="storedplaylists" class="noborder selecotron"></div>
+		<div id="storedplaylists" class="noborder selecotron is-albumlist"></div>
 	</div>
 
 	<div id="pluginplaylistslist" class="invisible noselection">

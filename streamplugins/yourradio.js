@@ -1,68 +1,61 @@
 var yourRadioPlugin = {
 
-	loadStations: function() {
-		if ($('#yourradiostations').is(':empty')) {
-			$('i[name="yourradiolist"]').makeSpinner();
-			$('#yourradiostations').load('utils/userstreams.php?populate', function() {
-				$('i[name="yourradiolist"]').stopSpinner();
-				$('[name="spikemilligan"]').on('click', yourRadioPlugin.loadSuppliedStation);
-				$("#anaconda").on("drop", yourRadioPlugin.handleDropRadio);
-				uiHelper.doThingsAfterDisplayingListOfAlbums($('#yourradiostations'));
-				if (layoutProcessor.sortFaveRadios) {
-					$("#yourradiostations").sortableTrackList({
-						items: ".menuitem",
-						insidedrop: yourRadioPlugin.saveRadioOrder,
-						scroll: true,
-						scrollparent: "#radiolist",
-						scrollspeed: 80,
-						scrollzone:120,
-						allowdragout: true
-					});
-				}
-			});
+	reloadStations: function() {
+		if (!prefs.hide_radiolist) {
+			clickRegistry.loadContentIntoTarget($('#yourradiostations'), $('i[name="yourradiolist"]'), true, 'utils/userstreams.php?populate');
 		}
 	},
 
-	updateStreamName: function(streamid, name, uri, callback) {
-		$.post("utils/userstreams.php", { updatename: 1, streamid: streamid, name: name, uri: uri })
-		.done( function(data) {
-			if (callback) {
-				callback();
-			}
-			if (!prefs.hide_radiolist) {
-				$('#yourradiostations').html(data);
-			}
+	loadStations: function() {
+		if (layoutProcessor.sortFaveRadios) {
+			$("#yourradiolist").sortableTrackList({
+				items: ".menuitem",
+				insidedrop: yourRadioPlugin.saveRadioOrder,
+				scroll: true,
+				scrollparent: "#radiolist",
+				scrollspeed: 80,
+				scrollzone:120,
+				allowdragout: true
+			});
+		}
+		return 'utils/userstreams.php?firstload';
+	},
+
+	updateStreamName: async function(streamid, name, uri) {
+		await $.ajax({
+			type: 'POST',
+			data: { updatename: 1, streamid: streamid, name: name, uri: uri },
+			url: "utils/userstreams.php"
 		});
+		yourRadioPlugin.reloadStations();
 	},
 
-	addFave: function(data) {
+	addFave: async function(data) {
 		data.addfave = 1;
-		$.post("utils/userstreams.php", data)
-			.done( function(data) {
-				$('#yourradiostations').html(data);
-				uiHelper.doThingsAfterDisplayingListOfAlbums($('#yourradiostations'));
-				infobar.notify(language.gettext('label_addedradio'));
-			});
+		await $.ajax({
+			type: 'POST',
+			data: data,
+			url: "utils/userstreams.php"
+		});
+		yourRadioPlugin.reloadStations();
+		infobar.notify(language.gettext('label_addedradio'));
 	},
 
-	removeUserStream: function(name) {
-		$.post("utils/userstreams.php", {remove: name})
-			.done( function(data) {
-				$('#yourradiostations').html(data);
-				uiHelper.doThingsAfterDisplayingListOfAlbums($('#yourradiostations'));
-			})
-			.fail( function() {
-				playlist.repopulate();
-				infobar.error(language.gettext("label_general_error"));
-			});
+	removeUserStream: async function(name) {
+		await $.ajax({
+			type: 'POST',
+			data: {remove: name},
+			url: "utils/userstreams.php"
+		});
+		yourRadioPlugin.reloadStations();
 	},
 
 	saveRadioOrder: function() {
-		var radioOrder = Array();
-		$("#yourradiostations").find(".clickradioremove").each( function() {
+		var radioOrder = new Array();
+		$("#yourradiolist").find(".clickradioremove").each( function() {
 			radioOrder.push($(this).attr('name'));
 		});
-
+		debug.log('YOURRADIO', 'Saving radio order',radioOrder);
 		$.ajax({
 				type: 'POST',
 				url: 'utils/userstreams.php',
@@ -71,7 +64,7 @@ var yourRadioPlugin = {
 	},
 
 	handleDropRadio: function() {
-		setTimeout(function() { yourRadioPlugin.loadSuppliedStation }, 1000);
+		setTimeout(function() { yourRadioPlugin.loadSuppliedStation }, 200);
 	},
 
 	loadSuppliedStation: function() {
@@ -87,13 +80,13 @@ var yourRadioPlugin = {
 
 	handleClick: function(event, clickedElement) {
 		if (clickedElement.hasClass("clickradioremove")) {
-			event.stopImmediatePropagation();
 			yourRadioPlugin.removeUserStream(clickedElement.attr("name"));
 		}
-
 	}
 
 }
 
-menuOpeners['yourradiolist'] = yourRadioPlugin.loadStations;
+$(document).on('click', '[name="spikemilligan"]', yourRadioPlugin.loadSuppliedStation);
+$(document).on("drop", "#anaconda", yourRadioPlugin.handleDropRadio);
 clickRegistry.addClickHandlers('yourradio', yourRadioPlugin.handleClick);
+clickRegistry.addMenuHandlers('yourradioroot', yourRadioPlugin.loadStations);

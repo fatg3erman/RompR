@@ -98,7 +98,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 			print '</div>';
 			print '</a>';
 			print '<div class="containerbox rowspacer"></div>';
-			print '<div class="stream-description clickable icescraper clickstream playable draggable indent" name="'.rawurlencode($listenlink).'" streamname="'.$server_name.'" streamimg="">';
+			print '<div class="stream-description icescraper clickstream playable draggable indent" name="'.rawurlencode($listenlink).'" streamname="'.$server_name.'" streamimg="">';
 			print '<i class="icon-no-response-playbutton collectionicon"></i>';
 			print '<b>Listen</b> '.$format;
 			print '</div>';
@@ -127,10 +127,10 @@ if (array_key_exists('populate', $_REQUEST)) {
 		'Albumname' => get_int_text('label_icecast'),
 		'why' => null,
 		'ImgKey' => 'none',
-		'class' => 'radio',
+		'class' => 'radio icecastroot',
 		'expand' => true
 	));
-	print '<div id="icecastlist" class="dropmenu notfilled"><div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
+	print '<div id="icecastlist" class="dropmenu notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
 	print '</div>';
 }
 

@@ -87,7 +87,7 @@ var collectionHelper = function() {
 					$('[name="donkeykong"]').makeFlasher({flashtime: 0.5, repeats: 3});
 				}
 				data = null;
-				collectionHelper.scootTheAlbums($("#collection"));
+				$("#collection").scootTheAlbums();
 				uiHelper.doThingsAfterDisplayingListOfAlbums($('#collection'));
 				loadAudiobooks();
 			})
@@ -122,7 +122,7 @@ var collectionHelper = function() {
 			$('#audiobooks').load(
 				'albums.php?item='+collectionHelper.collectionKey('z'),
 				function() {
-					collectionHelper.scootTheAlbums($("#audiobooks"));
+					$("#audiobooks").scootTheAlbums();
 					uiHelper.doThingsAfterDisplayingListOfAlbums($('#audiobooks'));
 					check_init_tasks();
 				}
@@ -170,9 +170,6 @@ var collectionHelper = function() {
 					// We remove and replace any modified albums, as they may have a new date or albumartist which would cause
 					// them to appear elsewhere in the collection. First remove the dropdown if it exists and replace its contents
 					uiHelper.insertAlbum(v);
-					if (prefs.clickmode == 'single') {
-						$('#'+v.id).find('.invisibleicon').removeClass('invisibleicon');
-					}
 				});
 			}
 
@@ -220,7 +217,7 @@ var collectionHelper = function() {
 
 		});
 
-		collectionHelper.scootTheAlbums($("#collection"));
+		$("#collection").scootTheAlbums();
 		if (return_callback) {
 			return_callback();
 			return_callback = null;
@@ -329,23 +326,23 @@ var collectionHelper = function() {
 			loadFileBrowser();
 		},
 
-		scootTheAlbums: function(jq) {
-			if (prefs.downloadart) {
-				debug.trace("COLLECTION", "Scooting albums in",jq.attr('id'));
-				$.each(jq.find("img.notexist"), function() {
-					coverscraper.GetNewAlbumArt($(this));
-				});
-			}
-			debug.trace("COLLECTION", "Loading Images In",jq.attr('id'));
-			if (typeof(IntersectionObserver) == 'function') {
-				jq.find("img.lazy").get().forEach(img => imageLoader.observe(img));
-			} else {
-				jq.find("img.lazy").each(function() {
-					var self = $(this);
-					self.attr('src', self.attr('data-src')).removeAttr('data-src').removeClass('lazy');
-				});
-			}
-		},
+		// scootTheAlbums: function(jq) {
+		// 	if (prefs.downloadart) {
+		// 		debug.trace("COLLECTION", "Scooting albums in",jq.attr('id'));
+		// 		$.each(jq.find("img.notexist"), function() {
+		// 			coverscraper.GetNewAlbumArt($(this));
+		// 		});
+		// 	}
+		// 	debug.trace("COLLECTION", "Loading Images In",jq.attr('id'));
+		// 	if (typeof(IntersectionObserver) == 'function') {
+		// 		jq.find("img.lazy").get().forEach(img => imageLoader.observe(img));
+		// 	} else {
+		// 		jq.find("img.lazy").each(function() {
+		// 			var self = $(this);
+		// 			self.attr('src', self.attr('data-src')).removeAttr('data-src').removeClass('lazy');
+		// 		});
+		// 	}
+		// },
 
 		updateCollectionDisplay: function(rdata, callback) {
 			// rdata contains HTML fragments to insert into the collection

@@ -534,7 +534,6 @@ $languages['ru'] = array (
 	"label_resultstree" => "Дерево каталогов",
 	"label_displayresultsas" => "Показать результаты как:",
 	"label_files" => "Файлы",
-	"label_allartist" => "Все артисты ",
 	"button_findexact" => "Найти точное соответствие",
 	"label_albumartist" => "Исполнитель Альбома",
 	"config_collectionfolders" => "Создать коллекцию из:",

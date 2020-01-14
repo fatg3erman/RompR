@@ -5,7 +5,10 @@ require_once('utils/imagefunctions.php');
 function albumTrack($data) {
 	global $prefs;
 	if (substr($data['title'],0,6) == "Album:") return 2;
-	if (substr($data['title'],0,7) == "Artist:") return 1;
+	if (substr($data['title'],0,7) == "Artist:") {
+		logger::warn('ALBUMTRACK', 'Found artist link in album - this should not be here!');
+		return 1;
+	}
 
 	$d = getDomain($data['uri']);
 
@@ -151,7 +154,7 @@ function trackControlHeader($why, $what, $who, $when, $dets) {
 	foreach ($dets as $det) {
 		$albumimage = new baseAlbumImage(array('baseimage' => $det['Image']));
 		$images = $albumimage->get_images();
-		$html .= '<div class="album-menu-header"><img class="album_menu_image" asrc="'.$images['asdownloaded'].'" /></div>';
+		$html .= '<div class="album-menu-header"><img class="lazy album_menu_image" data-src="'.$images['asdownloaded'].'" /></div>';
 		if ($why != '') {
 			$html .= '<div class="containerbox wrap album-play-controls">';
 			if ($det['AlbumUri']) {
@@ -219,11 +222,11 @@ function printRadioDirectory($att, $closeit, $prefix) {
 	$name = md5($att['URL']);
 	print '<input type="hidden" value="'.rawurlencode($att['URL']).'" />';
 	print '<input type="hidden" value="'.rawurlencode($att['text']).'" />';
-	print '<div class="browse clickable menu '.$prefix.' directory containerbox menuitem" name="'.$prefix.'_'.$name.'">';
+	print '<div class="menu openmenu '.$prefix.' directory containerbox menuitem" name="'.$prefix.'_'.$name.'">';
 	print '<i class="icon-folder-open-empty fixed collectionitem"></i>';
 	print '<div class="expand">'.$att['text'].'</div>';
 	print '</div>';
-	print '<div id="'.$prefix.'_'.$name.'" class="dropmenu">';
+	// print '<div id="'.$prefix.'_'.$name.'" class="dropmenu notfilled is-albumlist removeable">';
 	if ($closeit) {
 		print '</div>';
 	}
@@ -235,7 +238,7 @@ function playlistPlayHeader($name, $text) {
 	$image = $albumimage->get_image_if_exists();
 	if ($image) {
 		$images = $albumimage->get_images();
-		print '<div class="album-menu-header"><img class="album_menu_image" asrc="'.$images['asdownloaded'].'" /></div>';
+		print '<div class="album-menu-header"><img class="lazy album_menu_image" data-src="'.$images['asdownloaded'].'" /></div>';
 	}
 	print '<div class="textcentre clickloadplaylist playable ninesix" name="'.$name.'">'.get_int_text('label_play_all');
 	// logger::log('PLAYLISTPLAYHDR','name is',$name);

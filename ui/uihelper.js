@@ -1,19 +1,17 @@
 // skin.js may redefine these jQuery functionss if necessary
 
-jQuery.fn.menuReveal = function(callback) {
+jQuery.fn.menuReveal = async function(callback) {
+	await this.slideToggle('fast').promise();
 	if (callback) {
-		this.slideToggle('fast',callback);
-	} else {
-		this.slideToggle('fast');
+		callback();
 	}
 	return this;
 }
 
-jQuery.fn.menuHide = function(callback) {
+jQuery.fn.menuHide = async function(callback) {
+	await this.slideToggle('fast').promise();
 	if (callback) {
-		this.slideToggle('fast',callback);
-	} else {
-		this.slideToggle('fast');
+		callback();
 	}
 	return this;
 }
@@ -335,7 +333,6 @@ var uiHelper = function() {
 		},
 
 		doThingsAfterDisplayingListOfAlbums: function(panel) {
-			collectionHelper.scootTheAlbums(panel);
 			try {
 				return layoutProcessor.doThingsAfterDisplayingListOfAlbums(panel);
 			} catch (err) {
@@ -353,13 +350,9 @@ var uiHelper = function() {
 
 		removeAlbum: function(key) {
 			debug.info('UIHELPER', 'Removing Album',key);
-			if (uiHelper.findAlbumDisplayer(key).find('.menu_opened').length > 0) {
-				$('#popupmenu').remove();
-			}
 			try {
 				return layoutProcessor.removeAlbum(key);
 			} catch (err) {
-				debug.log('UIHELPER', 'Using default function');
 				$('#'+key).remove();
 				uiHelper.findAlbumDisplayer(key).remove();
 				uiHelper.findAlbumParent(key).remove();
@@ -371,20 +364,8 @@ var uiHelper = function() {
 			try {
 				return layoutProcessor.removeArtist(v);
 			} catch (err) {
-				debug.log('REMOVEARTIST', 'Default Function');
 				$("#"+v).remove();
 				uiHelper.findArtistDisplayer(v).remove();
-			}
-		},
-
-		albumBrowsed: function(menutoopen, data) {
-			try {
-				return layoutProcessor.albumBrowsed(menutoopen, data);
-			} catch(err) {
-				$("#"+menutoopen).html(data);
-			}
-			if (prefs.clickmode == 'single') {
-				$("#"+menutoopen).find('.invisibleicon').removeClass('invisibleicon');
 			}
 		},
 
@@ -393,14 +374,6 @@ var uiHelper = function() {
 				return layoutProcessor.prepareCollectionUpdate();
 			} catch (err) {
 				$('#searchresultholder').empty();
-			}
-		},
-
-		fixupArtistDiv: function(jq, name) {
-			try {
-				return layoutProcessor.fixupArtistDiv(jq, name);
-			} catch (err) {
-
 			}
 		},
 
@@ -591,24 +564,6 @@ var uiHelper = function() {
 				setDraggable('#artistinformation');
 				setDraggable('#albuminformation');
 				setDraggable('#storedplaylists');
-				$("#sortable").acceptDroppedTracks({
-					scroll: true,
-					scrollparent: '#phacker'
-				});
-				$("#sortable").sortableTrackList({
-					items: '.sortable',
-					outsidedrop: playlist.dragstopped,
-					insidedrop: playlist.dragstopped,
-					scroll: true,
-					allowdragout: true,
-					scrollparent: '#phacker',
-					scrollspeed: 80,
-					scrollzone: 120
-				});
-				$("#pscroller").acceptDroppedTracks({
-					ondrop: playlist.draggedToEmpty,
-					coveredby: '#sortable'
-				});
 				document.body.addEventListener('drop', function(e) {
 					e.preventDefault();
 				}, false);
@@ -629,53 +584,50 @@ var uiHelper = function() {
 			if (layoutProcessor.usesKeyboard) {
 				shortcuts.load();
 			}
-			$('.open_albumart').on('click', openAlbumArtManager);
-			$("#ratingimage").on('click', nowplaying.setRating);
-			$('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodiput')});
-			$('#expandleft').on('click', function(){layoutProcessor.expandInfo('left')});
-			$('#expandright').on('click', function(){layoutProcessor.expandInfo('right')});
-			$("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
-			// Checkbox and Radio buttons sadly can't be handled by delegated events
-			// because a lot of them are in floatingMenus, which are handled by jQueryUI
-			// which stops the events from propagating;
-			$('.toggle').on('click', prefs.togglePref);
-			$('.savulon').on('click', prefs.toggleRadio);
-			$(document).on('keyup', ".saveotron", prefs.saveTextBoxes);
-			$(document).on('change', ".saveomatic", prefs.saveSelectBoxes);
-			$('.clickreplaygain').on('click', player.controller.replayGain);
-			$(document).on('click', '.clearbox.enter', makeClearWork);
-			$(document).on('keyup', '.enter', onKeyUp);
-			$(document).on('change', '.inputfile', inputFIleChanged);
-			$(document).on('keyup', 'input.notspecial', filterSpecialChars);
-			$(document).on('mouseenter', "#dbtags>.tag", showTagRemover);
-			$(document).on('mouseleave', "#dbtags>.tag", hideTagRemover);
-			$(document).on('click', 'body', closeMenus);
-			$(document).on('click', '.tagremover:not(.plugclickable)', nowplaying.removeTag);
-			$(document).on('click', '.choosepanel', uiHelper.changePanel)
 			$('.combobox').makeTagMenu({textboxextraclass: 'searchterm cleargroup', textboxname: 'tag', populatefunction: tagAdder.populateTagMenu});
 			$('.tagaddbox').makeTagMenu({textboxname: 'newtags', populatefunction: tagAdder.populateTagMenu, buttontext: language.gettext('button_add'), buttonfunc: tagAdder.add, placeholder: language.gettext('lastfm_addtagslabel')});
 			$(window).on('resize', uiHelper.adjustLayout);
 			layoutProcessor.initialise();
 			setControlClicks();
-			setPlayClickHandlers();
 			bindClickHandlers();
+			setPlayClickHandlers();
 			bindPlaylistClicks();
 			showUpdateWindow();
 		},
 
 		changePanel: function() {
 			uiHelper.sourceControl($(this).attr('name'));
-			if ($(this).attr('name') == 'podcastslist') {
-				// HACK HACK HACK
-				collectionHelper.scootTheAlbums($('#fruitbat'));
-			}
 		},
 
 		sourceControl: function(panel) {
 			layoutProcessor.sourceControl(panel);
-			if (panel == 'podcastslist') {
 				// HACK HACK HACK
-				collectionHelper.scootTheAlbums($('#fruitbat'));
+			if (panel == 'podcastslist') {
+				$('#fruitbat').scootTheAlbums();
+			} else if (panel == 'radiolist') {
+				$('#radiolist').scootTheAlbums();;
+			}
+		},
+
+		makeCollectionDropMenu: function(element, name) {
+			try {
+				return layoutProcessor.makeCollectionDropMenu(element, name);
+			} catch (err) {
+				if (element.parent().hasClass('album1')) {
+					var c = 'dropmenu notfilled album1 is-albumlist';
+				} else if (element.parent().hasClass('album2')) {
+					var c = 'dropmenu notfilled album2 is-albumlist';
+				} else {
+					var c = 'dropmenu notfilled is-albumlist';
+				}
+				if (
+					element.hasClass('directory') ||
+					element.hasClass('playlist') ||
+					element.hasClass('userplaylist')
+				) {
+					c += ' removeable';
+				}
+				return $('<div>', {id: name, class: c}).insertAfter(element.parent());
 			}
 		}
 

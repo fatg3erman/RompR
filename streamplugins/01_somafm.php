@@ -18,10 +18,10 @@ class somafmplugin {
 			'Albumname' => get_int_text('label_somafm'),
 			'why' => null,
 			'ImgKey' => 'none',
-			'class' => 'radio',
+			'class' => 'radio somafmroot',
 			'expand' => true
 		));
-		print '<div id="somafmlist" class="dropmenu notfilled">';
+		print '<div id="somafmlist" class="dropmenu notfilled is-albumlist">';
 		print '<div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
 		print '</div>';
 	}

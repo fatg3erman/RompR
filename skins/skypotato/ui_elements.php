@@ -5,7 +5,10 @@ require_once('utils/imagefunctions.php');
 function albumTrack($data) {
 	global $prefs;
 	if (substr($data['title'],0,6) == "Album:") return 2;
-	if (substr($data['title'],0,7) == "Artist:") return 1;
+	if (substr($data['title'],0,7) == "Artist:") {
+		logger::warn('ALBUMTRACK', 'Found artist link in album - this should not be here!');
+		return 1;
+	}
 
 	$d = getDomain($data['uri']);
 
@@ -229,11 +232,11 @@ function printRadioDirectory($att, $closeit, $prefix) {
 	$name = md5($att['URL']);
 	print '<input type="hidden" value="'.rawurlencode($att['URL']).'" />';
 	print '<input type="hidden" value="'.rawurlencode($att['text']).'" />';
-	print '<div class="browse menu clickable '.$prefix.' directory containerbox menuitem brick_wide" name="'.$prefix.'_'.$name.'">';
+	print '<div class="menu openmenu '.$prefix.' directory containerbox menuitem brick_wide" name="'.$prefix.'_'.$name.'">';
 	print '<i class="icon-folder-open-empty fixed collectionicon"></i>';
 	print '<div class="expand">'.$att['text'].'</div>';
 	print '</div>';
-	print '<div id="'.$prefix.'_'.$name.'" class="invisible indent containerbox wrap fullwidth">';
+	// print '<div id="'.$prefix.'_'.$name.'" class="invisible indent containerbox wrap fullwidth notfilled is-albumlist removeable">';
 	if ($closeit) {
 		print '</div>';
 	}

@@ -39,7 +39,6 @@ class sortby_rating extends sortby_base {
 		track_date_check($prefs['collectionrange'], $this->why)." ".
 		$sflag.")";
 		$qstring .= " ORDER BY ";
-		$qstring .= " CASE WHEN Albumname LIKE '".get_int_text('label_allartist')."%' THEN 1 ELSE 2 END,";
 		if ($prefs['sortbydate']) {
 			if ($prefs['notvabydate']) {
 				$qstring .= " CASE WHEN Artisttable.Artistname = 'Various Artists' THEN LOWER(Albumname) ELSE Year END,";

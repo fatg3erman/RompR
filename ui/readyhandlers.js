@@ -75,7 +75,7 @@ function open_discoverator() {
 
 async function refresh_podcasts() {
 	// We want to wait until podcasts have been refreshed before we sync lastfm playcounts,
-	// because the sync might mark some pdcast episodes as listened
+	// because the sync might mark some podcast episodes as listened
 	startBackgroundInitTasks.doNextTask();
 	await new Promise(t => setTimeout(t, 15000));
 	podcasts.checkRefresh().then(syncLastFMPlaycounts.start);
@@ -132,7 +132,7 @@ if (typeof(IntersectionObserver) == 'function') {
 	// Use IntersectionObserver API to load album images as they come into view
 	// - makes sortby Album modes work, otherwise it loads every single image at
 	// page load time. IntersectionObserver is relatively new, so check for support.
-	// collectionHeolper.scootTheAlbums is called every time we load something with album
+	// scootTheAlbums is called every time we load something with album
 	// images and that takes care of loading them
 
 
@@ -158,11 +158,9 @@ if (typeof(IntersectionObserver) == 'function') {
 
 $(document).ready(function(){
 	debug.mark("INIT","Document Ready Event has fired");
-
 	if (typeof(IntersectionObserver) == 'function') {
-		debug.mark('UI', 'IntersectionObserver is present and being used');
+		debug.info('UI', 'IntersectionObserver is present and being used');
 	}
-
 	$('#albumpicture').on('load', albumImageLoaded);
 	get_geo_country();
 	if (prefs.do_not_show_prefs) {

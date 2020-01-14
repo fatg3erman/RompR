@@ -1,38 +1,25 @@
 var icecastPlugin = {
 
-	refreshMyDrink: function(path) {
-		if ($("#icecastlist").hasClass('notfilled')) {
-			icecastPlugin.makeabadger();
-			$("#icecastlist").load("streamplugins/85_iceScraper.php?populate", icecastPlugin.spaghetti);
-		} else if (path) {
-			icecastPlugin.makeabadger();
-			$("#icecastlist").load("streamplugins/85_iceScraper.php?populate=1&path="+path, icecastPlugin.spaghetti);
-		}
+	loadIcecastRoot: function() {
+		return "streamplugins/85_iceScraper.php?populate";
 	},
 
-	makeabadger: function() {
-		$('i[name="icecastlist"]').makeSpinner();
-	},
-
-	spaghetti: function() {
-		$('i[name="icecastlist"]').stopSpinner();
-		$('[name="cornwallis"]').on('click', icecastPlugin.iceSearch);
-		$("#icecastlist").removeClass('notfilled');
-		uiHelper.doThingsAfterDisplayingListOfAlbums($("#icecastlist"));
+	loadIcecastSearch: function() {
+		return "streamplugins/85_iceScraper.php?populate=1&searchfor="+encodeURIComponent($('input[name="searchfor"]').val());
 	},
 
 	iceSearch: function() {
-		icecastPlugin.makeabadger();
-		$("#icecastlist").load("streamplugins/85_iceScraper.php?populate=1&searchfor="+encodeURIComponent($('input[name="searchfor"]').val()), icecastPlugin.spaghetti);
+		clickRegistry.loadContentIntoTarget($('#icecastlist'), $('i[name="icecastlist"]'), true, "streamplugins/85_iceScraper.php?populate=1&searchfor="+encodeURIComponent($('input[name="searchfor"]').val()));
 	},
 
 	handleClick: function(event, clickedElement) {
-		if (clickedElement.hasClass("clickicepager")) {
-			icecastPlugin.refreshMyDrink(clickedElement.attr('name'));
+		if (clickedElement.hasClass('clickicepager')) {
+			clickRegistry.loadContentIntoTarget($('#icecastlist'), $('i[name="icecastlist"]'), true, "streamplugins/85_iceScraper.php?populate=1&path="+clickedElement.attr('name'));
 		}
 	}
 
 }
 
-menuOpeners['icecastlist'] = icecastPlugin.refreshMyDrink;
+$(document).on('click', '[name="cornwallis"]', icecastPlugin.iceSearch);
 clickRegistry.addClickHandlers('icescraper', icecastPlugin.handleClick);
+clickRegistry.addMenuHandlers('icecastroot', icecastPlugin.loadIcecastRoot);

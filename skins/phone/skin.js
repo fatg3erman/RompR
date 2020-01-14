@@ -9,50 +9,30 @@ jQuery.fn.revealImage = function() {
 	return this;
 }
 
-jQuery.fn.menuReveal = function(callback) {
+jQuery.fn.menuReveal = async function(callback) {
 	debug.debug("UI", "Revealing",$(this).attr('id'));
-	var self = this;
 	if (this.hasClass('toggledown')) {
-		if (callback) {
-			this.slideToggle('fast',callback);
-		} else {
-			this.slideToggle('fast');
-		}
+		await this.slideToggle('fast').promise();
 	} else {
 		this.findParentScroller().saveScrollPos();
-		this.show(0, function() {
-			layoutProcessor.postAlbumMenu();
-			if (callback) {
-				callback();
-			}
-		});
+		await this.show(0).promise();
+	}
+	if (callback) {
+		callback();
 	}
 	return this;
 }
 
-jQuery.fn.menuHide = function(callback) {
+jQuery.fn.menuHide = async function(callback) {
 	debug.debug("UI", "Hiding",$(this).attr('id'));
-	var self = this;
 	if (this.hasClass('toggledown')) {
-		if (callback) {
-			this.slideToggle('fast',callback);
-		} else {
-			this.slideToggle('fast');
-		}
+		await this.slideToggle('fast').promise();
 	} else {
-		this.hide(0, function() {
-			if (callback) {
-				callback();
-			}
-			self.findParentScroller().restoreScrollPos();
-			if (self.hasClass('removeable')) {
-				self.remove();
-			} else {
-				debug.log("UI", "Hiding Image",$(this).attr('id'));
-				var i = self.find('.album_menu_image');
-				i.removeAttr('src');
-			}
-		});
+		await this.hide(0).promise();
+		this.findParentScroller().restoreScrollPos();
+	}
+	if (callback) {
+		callback();
 	}
 	return this;
 }
@@ -412,10 +392,6 @@ var layoutProcessor = function() {
 			collectionHelper.forceCollectionReload();
 		},
 
-		postAlbumMenu: function(menu) {
-			$('.album_menu_image:visible').revealImage();
-		},
-
 		afterHistory: function() {
 			browser.rePoint();
 			showHistory();
@@ -588,22 +564,22 @@ var layoutProcessor = function() {
 		},
 
 		makeCollectionDropMenu: function(element, name) {
-			var x = $('#'+name);
-			// If the dropdown doesn't exist then create it
-			if (x.length == 0) {
-				if (element.hasClass('album1')) {
-					var c = 'dropmenu notfilled album1';
-				} else if (element.hasClass('album2')) {
-					var c = 'dropmenu notfilled album2';
-				} else {
-					var c = 'dropmenu notfilled';
-				}
-				var ec = '';
-				if (/aalbum/.test(name) || /aartist/.test(name)) {
-					ec = ' removeable';
-				}
-				var t = $('<div>', {id: name, class: c+ec}).insertAfter(element);
+			if (element.hasClass('album1')) {
+				var c = 'dropmenu notfilled album1 is-albumlist';
+			} else if (element.hasClass('album2')) {
+				var c = 'dropmenu notfilled album2 is-albumlist';
+			} else {
+				var c = 'dropmenu notfilled is-albumlist';
 			}
+			if (
+				/^[abz](album|artist)/.test(name) ||
+				element.hasClass('directory') ||
+				element.hasClass('playlist') ||
+				element.hasClass('userplaylist')
+			) {
+				c += ' removeable';
+			}
+			return $('<div>', {id: name, class: c}).insertAfter(element);
 		},
 
 		initialise: function() {
@@ -684,10 +660,6 @@ var layoutProcessor = function() {
 		albumBrowsed: function(menutoopen, data) {
 			$('#'+menutoopen).html(data);
 			layoutProcessor.postAlbumMenu();
-		},
-
-		fixupArtistDiv: function(jq, name) {
-			jq.find('.menu.backmenu').attr('name', jq.attr('id'));
 		},
 
 		getElementPlaylistOffset: function(element) {

@@ -19,10 +19,10 @@ class tuneinplugin {
 			'Albumname' => get_int_text('label_tuneinradio'),
 			'why' => null,
 			'ImgKey' => 'none',
-			'class' => 'radio',
+			'class' => 'radio tuneinroot',
 			'expand' => true
 		));
-		print '<div id="tuneinlist" class="dropmenu notfilled"><div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
+		print '<div id="tuneinlist" class="dropmenu notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
 		print '</div>';
 	}
 

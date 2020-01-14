@@ -4,7 +4,7 @@
 // The biggest problem with this skin is that if we change stuff in the UI, it usually fucks it up.
 // So be careful to test it.
 
-jQuery.fn.menuReveal = function(callback) {
+jQuery.fn.menuReveal = async function(callback) {
 
 	// 'self' is the menu being opened, which will alresady have contents
 
@@ -21,8 +21,10 @@ jQuery.fn.menuReveal = function(callback) {
 			// Albums and Playlists
 			parent.addClass('tagholder_wide dropshadow').insertDummySpacers();
 
+			self.wrap('<div class="expand"></div>');
+
 			// All this bit is just re-formating the domain icon/album name/artist name
-			var titlediv = holder.find('div.albumthing').detach().prependTo(self).find('.title-menu');
+			var titlediv = holder.find('div.albumthing').detach().insertBefore(self).find('.title-menu');
 			titlediv.addClass('containerbox dropdown-container');
 			titlediv.find('.collectionicon').removeClass('collectionicon').addClass('svg-square');
 			var newwrapper = $('<div>', {class: 'containerbox vertical expand'}).appendTo(titlediv);
@@ -123,7 +125,7 @@ jQuery.fn.removeDummySpacers = function() {
 	});
 }
 
-jQuery.fn.menuHide = function(callback) {
+jQuery.fn.menuHide = async function(callback) {
 	var self = this;
 	var id = this.attr('id');
 	var holder = $('.openmenu[name="'+id+'"]');
@@ -138,14 +140,13 @@ jQuery.fn.menuHide = function(callback) {
 			parent.removeClass('tagholder_wide dropshadow');
 			parent.removeDummySpacers();
 			var monkey = parent.find('.helpfulalbum.expand');
-
-			var titlediv = self.find('div.albumthing').detach().appendTo(monkey).find('.title-menu');
+			var titlediv = self.parent().find('div.albumthing').detach().appendTo(monkey).find('.title-menu');
 			titlediv.removeClass('containerbox dropdown-container');
 			titlediv.find('.svg-square').removeClass('svg-square').addClass('collectionicon');
 			titlediv.find('div').not('.vertical').removeClass('expand').detach().appendTo(titlediv);
 			titlediv.find('.vertical').remove();
-
-			self.remove();
+			self.parent().remove();
+			// self.remove();
 			break;
 
 		case holder.hasClass('podcast'):
@@ -322,7 +323,7 @@ var layoutProcessor = function() {
 	}
 
 	function makeNewPanel(element, name) {
-		var classes = {
+		const classes = {
 			collection: 'albumlist',
 			audiobooks: 'audiobooklist',
 			searchresultholder: 'searcher',
@@ -331,11 +332,12 @@ var layoutProcessor = function() {
 		$('.collectionpanel.'+classes[element.parent().prop('id')]).remove();
 		element.parent().find('.highlighted').removeClass('highlighted');
 		if ($('#'+name).length == 0) {
-			var t = $('<div>', {id: name, class: 'collectionpanel '+classes[element.parent().prop('id')]+' containerbox wrap noselection notfilled'}).insertBefore($('#infoholder'));
+			var t = $('<div>', {id: name, class: 'collectionpanel '+classes[element.parent().prop('id')]+' containerbox wrap noselection notfilled is-albumlist'}).insertBefore($('#infoholder'));
 		}
 		$('.collectionpanel').css({display: 'none'});
 		element.addClass('highlighted');
 		setDraggable('#'+name);
+		return t;
 	}
 
 	function findParentScroller(jq) {
@@ -787,22 +789,30 @@ var layoutProcessor = function() {
 
 			if (element.hasClass('album') || element.hasClass('playlist') || element.hasClass('userplaylist')) {
 				// This is for an album clicked on in the album browser pane.
+				var c = 'notfilled minwidthed2 expand is-albumlist';
+				if (
+					element.hasClass('playlist') ||
+					element.hasClass('userplaylist')
+				) {
+					c += ' removeable';
+				}
 				if ($('#'+name).length == 0) {
-					element.parent().find('.containerbox.openmenu').append($('<div>', {id: name, class: 'notfilled minwidthed2 expand', style: 'display: none'}));
+					return $('<div>', {id: name, class: c, style: 'display: none'}).appendTo(element.parent().find('.containerbox.openmenu'));
+					// element.parent().find('.containerbox.openmenu').append($('<div>', {id: name, class: c, style: 'display: none'}));
 				}
 			} else if (element.hasClass('directory')) {
 				// This is for a directory in the file browser
 				var n = element.attr('name');
 				if (n.indexOf('_') == -1) {
-					makeNewPanel(element, name);
+					return makeNewPanel(element, name);
 				} else {
-					var t= ($('<div>', {id: name, class: 'indent containerbox wrap brick_wide notfilled'})).insertAfter(element);
+					return $('<div>', {id: name, class: 'indent containerbox wrap brick_wide notfilled removeable is-albumlist', style: 'display: none'}).insertAfter(element);
 				}
 			} else if (element.hasClass('searchdir')) {
 
 			} else {
 				// This is for an artist clicked on in the artist list.
-				makeNewPanel(element, name);
+				return makeNewPanel(element, name);
 			}
 		},
 
@@ -812,6 +822,24 @@ var layoutProcessor = function() {
 
 		initialise: function() {
 			$("#sortable").disableSelection();
+            $("#sortable").acceptDroppedTracks({
+                scroll: true,
+                scrollparent: '#phacker'
+            });
+            $("#sortable").sortableTrackList({
+                items: '.sortable',
+                outsidedrop: playlist.dragstopped,
+                insidedrop: playlist.dragstopped,
+                scroll: true,
+                scrollparent: '#phacker',
+                scrollspeed: 80,
+                scrollzone: 120
+            });
+
+            $("#pscroller").acceptDroppedTracks({
+                ondrop: playlist.draggedToEmpty,
+                coveredby: '#sortable'
+            });
 			animatePanels();
 			$(".topdropmenu").floatingMenu({
 				handleClass: 'dragmenu',
@@ -900,12 +928,6 @@ var layoutProcessor = function() {
 			}
 		},
 
-		albumBrowsed: function(menutoopen, data) {
-			var titlebit = $('#'+menutoopen).find('.tagh.albumthing').detach();
-			$("#"+menutoopen).html(data);
-			$("#"+menutoopen).prepend(titlebit);
-		},
-
 		removeAlbum: function(key) {
 			$('#'+key).remove();
 			layoutProcessor.findAlbumDisplayer(key).removeDummySpacers().remove();
@@ -955,13 +977,13 @@ var layoutProcessor = function() {
 			$('#searchresultholder').empty();
 		},
 
-		fixupArtistDiv(jq, name) {
-			// This is used ONLY aftere've done a spotify:artist: browse and
-			// inserted a load of new albums.
-			jq.addClass('containerbox wrap');
-			jq.prev().remove();
-			jq.prev().remove();
-		},
+		// fixupArtistDiv(jq, name) {
+		// 	// This is used ONLY aftere've done a spotify:artist: browse and
+		// 	// inserted a load of new albums.
+		// 	jq.addClass('containerbox wrap');
+		// 	jq.prev().remove();
+		// 	jq.prev().remove();
+		// },
 
 		postPodcastSubscribe: function(data, index) {
 			$('.menu[name="podcast_'+index+'"]').parent().fadeOut('fast', function() {

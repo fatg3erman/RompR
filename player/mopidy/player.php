@@ -78,10 +78,8 @@ class mopidyPlayer extends base_mpd_player {
 		global $prefs;
 
 		if (strpos($filedata['file'], ':artist:') !== false) {
-			$filedata['X-AlbumUri'] = $filedata['file'];
-			$filedata['Album'] = get_int_text("label_allartist").concatenate_artist_names($filedata['Artist']);
-			$filedata['Disc'] = 0;
-			$filedata['Track'] = 0;
+			$this->to_browse[] = $filedata['file'];
+			return false;
 		} else if (strpos($filedata['file'], ':album:') !== false) {
 			$filedata['X-AlbumUri'] = $filedata['file'];
 			$filedata['Disc'] = 0;
@@ -164,6 +162,8 @@ class mopidyPlayer extends base_mpd_player {
 				$filedata['folder'] = dirname($filedata['unmopfile']);
 				break;
 		}
+
+		return true;
 
 	}
 

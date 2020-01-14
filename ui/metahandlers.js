@@ -180,7 +180,7 @@ var metaHandlers = function() {
 				metaHandlers.fromUiElement.doMeta('remove', 'Tag', [{attribute: 'Tags', value: [element.children('span').html()]}], callback);
 			},
 
-			tracksToPlaylist: function(element, callback) {
+			tracksToPlaylist: function(event, element) {
 				var playlist = element.attr('name');
 				var tracks = new Array();
 				$.each($('.selected').filter(removeOpenItems), function (index, element) {
@@ -192,7 +192,7 @@ var metaHandlers = function() {
 				);
 			},
 
-			removeTrackFromDb: function(element) {
+			removeTrackFromDb: function(event, element) {
 				var trackstogo = new Array();
 				$('.clicktrack.selected').each(function() {
 					trackstogo.push({action: 'delete', uri: decodeURIComponent($(this).attr('name'))});
@@ -208,11 +208,11 @@ var metaHandlers = function() {
 				);
 			},
 
-			resetResumePosition: function(element) {
+			resetResumePosition: function(event, element) {
 				metaHandlers.fromUiElement.doMeta('set', 'Progress', [{attribute: 'Progress', value: 0}]);
 			},
 
-			removeAlbumFromDb: function(element) {
+			removeAlbumFromDb: function(event, element) {
 				var albumToGo = element.attr("name");
 				dbQueue.request(
 					[{action: 'deletealbum', albumindex: albumToGo}],

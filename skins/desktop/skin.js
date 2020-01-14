@@ -342,26 +342,29 @@ var layoutProcessor = function() {
 			$("#plmode").html(html);
 		},
 
-		makeCollectionDropMenu: function(element, name) {
-			var x = $('#'+name);
-			// If the dropdown doesn't exist then create it
-			if (x.length == 0) {
-				if (element.parent().hasClass('album1')) {
-					var c = 'dropmenu notfilled album1';
-				} else if (element.parent().hasClass('album2')) {
-					var c = 'dropmenu notfilled album2';
-				} else {
-					var c = 'dropmenu notfilled';
-				}
-				var t = $('<div>', {id: name, class: c}).insertAfter(element.parent());
-			}
-		},
-
 		initialise: function() {
 			if (prefs.outputsvisible) {
 				layoutProcessor.toggleAudioOutpts();
 			}
 			$("#sortable").disableSelection();
+            $("#sortable").acceptDroppedTracks({
+                scroll: true,
+                scrollparent: '#pscroller'
+            });
+            $("#sortable").sortableTrackList({
+                items: '.sortable',
+                outsidedrop: playlist.dragstopped,
+                insidedrop: playlist.dragstopped,
+                allowdragout: true,
+                scroll: true,
+                scrollparent: '#pscroller',
+                scrollspeed: 80,
+                scrollzone: 120
+            });
+            $("#pscroller").acceptDroppedTracks({
+                ondrop: playlist.draggedToEmpty,
+                coveredby: '#sortable'
+            });
 			animatePanels();
 			$(".topdropmenu").floatingMenu({
 				handleClass: 'dragmenu',

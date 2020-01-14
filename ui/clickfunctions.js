@@ -1,29 +1,156 @@
 var clickRegistry = function() {
 
 	var clickHandlers = new Array();
+	var menuLoaders = new Array();
+
+	function findMenuLoader(clickedElement, menutoopen) {
+		for (var classname in menuLoaders) {
+			if (clickedElement.hasClass(classname)) {
+				debug.trace('DOMENU', 'Filling Menu using',menuLoaders[classname].name);
+				return menuLoaders[classname](clickedElement, menutoopen);
+			}
+		}
+		return false;
+	}
 
 	return {
-		addClickHandlers: function(source, single) {
-			for (var i in clickHandlers) {
-				if (clickHandlers[i].source == source) {
-					clickHandlers[i] = {source: source, single: single};
-					return;
-				}
-			}
-			clickHandlers.push({source: source, single: single});
+
+		addClickHandlers: function(source, fn) {
+			clickHandlers[source] = fn;
 		},
 
-		farmClick: function(event, clickedElement) {
-			for (var h of clickHandlers) {
-				if (clickedElement.hasClass(h.source)) {
-					debug.trace('FARMCLICK', 'Farming click out to',h.single.name)
-					h.single(event, clickedElement);
+		farmClick: function(event) {
+			var clickedElement = $(this);
+			debug.trace('CLICKREGISTRY', 'Clicked On',clickedElement);
+			for (var classname in clickHandlers) {
+				if (clickedElement.hasClass(classname)) {
+					debug.trace('FARMCLICK', 'Farming click out to',clickHandlers[classname].name)
+					event.stopImmediatePropagation();
+					clickHandlers[classname](event, clickedElement);
+				}
+			}
+		},
+
+		addMenuHandlers: function(cls, loader) {
+			menuLoaders[cls] = loader;
+		},
+
+		doMenu: async function(event) {
+			event.stopImmediatePropagation();
+			var clickedElement = $(this);
+			debug.trace('DOMENU', 'Opening',clickedElement);
+			var menutoopen = clickedElement.attr('name');
+			var target = $('#'+menutoopen);
+			if (target.length == 0) {
+				target = uiHelper.makeCollectionDropMenu(clickedElement, menutoopen);
+			}
+			debug.log('DOMENU', 'Doing Menu', menutoopen);
+			if (clickedElement.isClosed()) {
+				if (target.hasClass('notfilled')) {
+					await clickRegistry.loadContentIntoTarget(target, clickedElement, false);
+				}
+				debug.trace('DOMENU', 'Revealing Menu',menutoopen);
+				clickedElement.toggleOpen();
+				await target.menuReveal();
+				if (target.hasClass('is-albumlist')) {
+					target.scootTheAlbums();
+				}
+				if (target.find('input.expandalbum').length > 0 ) {
+					getAllTracksForAlbum(clickedElement, menutoopen);
+				}
+			} else {
+				clickedElement.toggleClosed();
+				await target.menuHide();
+				if (target.hasClass('removeable')) {
+					target.clearOut();
+					target.remove();
+				} else {
+					target.find('.selected').removeFromSelection();
+				}
+			}
+			if (menutoopen == 'advsearchoptions') {
+				prefs.save({advanced_search_open: clickedElement.isOpen()});
+			}
+			return false;
+		},
+
+		loadContentIntoTarget: async function(target, clickedElement, scoot, uri) {
+			var menutoopen = target.prop('id');
+			clickedElement.makeSpinner();
+			target.clearOut();
+			if (!uri) {
+				uri = findMenuLoader(clickedElement, menutoopen);
+			}
+			if (uri) {
+				debug.trace('DOMENU', 'Loading from', uri);
+				var data = await $.ajax({
+					type: 'GET',
+					url: uri,
+					cache: false,
+					dataType: 'html'
+				});
+				target.html(data);
+				data = null;
+			} else {
+				debug.error('DOMENU', 'Unfilled menu element with no loader',clickedElement);
+			}
+			clickedElement.stopSpinner();
+			target.removeClass('notfilled');
+			uiHelper.makeResumeBar(target);
+			infobar.markCurrentTrack();
+			if (prefs.clickmode == 'single') {
+				target.find('.invisibleicon').removeClass('invisibleicon');
+			}
+			if (target.hasClass('is-albumlist')) {
+				uiHelper.doThingsAfterDisplayingListOfAlbums(target);
+				if (scoot) {
+					target.scootTheAlbums();
 				}
 			}
 		}
-
 	}
 }();
+
+function getAlbumUrl(clickedElement, menutoopen) {
+	return "albums.php?item="+menutoopen;
+}
+
+function getDirectoryUrl(clickedElement, menutoopen) {
+	return "dirbrowser.php?path="+clickedElement.prev().val()+'&prefix='+menutoopen;
+}
+
+jQuery.fn.clearOut = function() {
+	return this.each(function() {
+		var self = $(this);
+		if (!self.is(':empty')) {
+			self.find('.selected').removeFromSelection();
+			if (typeof(IntersectionObserver) == 'function' && self.hasClass('is-albumlist')) {
+				self.find("img.lazy").get().forEach(img => imageLoader.unobserve(img));
+			}
+		}
+	});
+}
+
+jQuery.fn.scootTheAlbums = function() {
+	return this.each(function() {
+		var self = $(this);
+		if (prefs.downloadart) {
+			debug.trace("COLLECTION", "Scooting albums in",self.attr('id'));
+			self.find("img.notexist").each(function() {
+				coverscraper.GetNewAlbumArt($(this));
+			});
+		}
+		debug.trace("COLLECTION", "Loading Images In",self.attr('id'));
+		if (typeof(IntersectionObserver) == 'function') {
+			self.find("img.lazy").get().forEach(img => imageLoader.observe(img));
+		} else {
+			self.find("img.lazy").each(function() {
+				var myself = $(this);
+				myself.attr('src', myself.attr('data-src')).removeAttr('data-src').removeClass('lazy');
+			});
+		}
+	});
+}
 
 /*
 
@@ -49,21 +176,24 @@ function setPlayClickHandlers() {
 /*
 
 	Items which should respond to clicks in the main UI should have a class of 'clickable'
-		These are passed in the first instance to onSourcesClicked
-		Plugins can provide their own single click handler by adding an extra 'pluginclass' to the items
-		and calling clickRegistry.addClickHandlers('pluginclass', handlerFunction).
+		These are passed to clickRegistry.farmClick
+		Click handlers are provided by calling clickRegistry.addClickHandlers with a classname and a handler function
 		handlerFunction takes 2 parameters - the event and the clicked element
+		Items may have multiple matching classes, all will be acted upon but the order is undefined
 
-	Items for where the click should open a dropdown menu should have a class of 'openmenu'
-	and NOT 'clickable'. The item's name attribute should be the id attribute of the dropdown panel,
-	which should have a class of 'toggledown'
-		Plugins can provide a callback function to populate the dropdown panel
-		menuOpeners['id attribute (no hash)'] = populateFunction
-		or if you have id attributes like 'something_1' and 'something_2' then menuOpeners['something'] will
-		call the function with the numeric part of the id attribute as a parameter.
-		menuClosers[] is also a thing
-		Note there are special built-in attributes for many of the dropdowns - eg album, artist, directory etc
-		which are handled by specific functions. Don't use these attributes.
+	Items for where the click should open a dropdown menu should have a class of 'openmenu' and NOT 'clickable'.
+		The item's name attribute should be the id attribute of the dropdown panel, which does not need to exist if
+		the openmenu item has a class of album, artist, directory, playlist, or userplaylist
+		To populate a menu on-the-fly give it the dropdown class of 'notfilled' and provide a populate function using
+		clickRegistry.addMenuHandlers(classname, populateFunction)
+		The populate function will be called before menuReveal with (clickedElement, menutoopen)
+		To load data on-the-fly into a panel call
+		clickRegistry.loadContentIntoTarget(target (jquery), clickable that would open the target (jquery), scoot (bool) )
+			scoot will alnost always be true in this case, and setting it to true won't hurt
+			loadContentIntoTarget takes an optional 4th parameter - uri. In this case 'clickable that would..' is ignored
+			except for making it a spinner while the loading occurs.
+		If the dropdown shoud be emptied when it is closed give it a class of 'removeable'
+		If the dropdown contains album images that need to be scooted or lazyloaded give it a class of is-albumlist
 
 	Info panel info plugins should use 'infoclick' and NOT 'clickable'. The info panel will pass these clicks
 		through to the appropriate artist, album, or track child of the info collection
@@ -75,32 +205,68 @@ function setPlayClickHandlers() {
 
 */
 
+function closePopupMenu() {
+	$('#popupmenu').remove();
+}
+
 function bindClickHandlers() {
 
 	// Set up all our click event listeners
 
 	$('.infotext').on('click', '.infoclick',  onBrowserClicked);
+	$(document).on('click', '.openmenu', clickRegistry.doMenu);
+	$(document).on('click', '.clickable', clickRegistry.farmClick);
 
-	$(document).on('click', '.openmenu.artist, .openmenu.album', function(event) {
-		doAlbumMenu(event, $(this), null);
-	});
+	clickRegistry.addClickHandlers('clickalbummenu', makeAlbumMenu);
+	clickRegistry.addClickHandlers('clicktrackmenu', makeTrackMenu);
+	clickRegistry.addClickHandlers('addtollviabrowse', browseAndAddToListenLater);
+	clickRegistry.addClickHandlers('addtocollectionviabrowse', browseAndAddToCollection);
+	clickRegistry.addClickHandlers('amendalbum', amendAlbumDetails);
+	clickRegistry.addClickHandlers('setasaudiobook', setAsAudioBook);
+	clickRegistry.addClickHandlers('setasmusiccollection', setAsAudioBook);
+	clickRegistry.addClickHandlers('fakedouble', playPlayable);
+	clickRegistry.addClickHandlers('closepopup', closePopupMenu);
+	clickRegistry.addClickHandlers('clickqueuetracks', playlist.draggedToEmpty);
+	clickRegistry.addClickHandlers('clickremdb', metaHandlers.fromUiElement.removeTrackFromDb);
+	clickRegistry.addClickHandlers('clickpltrack', metaHandlers.fromUiElement.tracksToPlaylist);
+	clickRegistry.addClickHandlers('removealbum', metaHandlers.fromUiElement.removeAlbumFromDb);
+	clickRegistry.addClickHandlers('resetresume', metaHandlers.fromUiElement.resetResumePosition);
+	clickRegistry.addClickHandlers('clickdeleteplaylisttrack', playlistManager.deletePlaylistTrack);
+	clickRegistry.addClickHandlers('clickdeleteplaylist', playlistManager.deletePlaylist);
+	clickRegistry.addClickHandlers('clickdeleteuserplaylist', playlistManager.deleteUserPlaylist);
+	clickRegistry.addClickHandlers('clickrenameplaylist', playlistManager.renamePlaylist);
+	clickRegistry.addClickHandlers('clickrenameuserplaylist', playlistManager.renameUserPlaylist);
 
-	$(document).on('click', '.openmenu.searchdir, .openmenu.directory, .openmenu.playlist, .openmenu.userplaylist', function(event) {
-		doFileMenu(event, $(this));
-	});
+	clickRegistry.addMenuHandlers('artist', getAlbumUrl);
+	clickRegistry.addMenuHandlers('album', getAlbumUrl);
+	clickRegistry.addMenuHandlers('playlist', playlistManager.browsePlaylist);
+	clickRegistry.addMenuHandlers('userplaylist', playlistManager.browseUserPlaylist);
+	clickRegistry.addMenuHandlers('directory', getDirectoryUrl);
 
-	$(document).on('click', '.openmenu:not(.artist):not(.album):not(.searchdir):not(.directory):not(.playlist):not(.userplaylist)', function(event) {
-		doMenu(event, $(this));
-	});
-
-	$(document).on('click', '.clickable', function(event) {
-		onSourcesClicked(event, $(this));
-	});
-
-	$(document).on('click', '.clickaddtoplaylist', function(event) {
-		infobar.addToPlaylist($(this));
-	});
-
+	$('.open_albumart').on('click', openAlbumArtManager);
+	$("#ratingimage").on('click', nowplaying.setRating);
+	$('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodiput')});
+	$('#expandleft').on('click', function(){layoutProcessor.expandInfo('left')});
+	$('#expandright').on('click', function(){layoutProcessor.expandInfo('right')});
+	$("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
+	// Checkbox and Radio buttons sadly can't be handled by delegated events
+	// because a lot of them are in floatingMenus, which are handled by jQueryUI
+	// which stops the events from propagating;
+	$('.toggle').on('click', prefs.togglePref);
+	$('.savulon').on('click', prefs.toggleRadio);
+	$(document).on('keyup', ".saveotron", prefs.saveTextBoxes);
+	$(document).on('change', ".saveomatic", prefs.saveSelectBoxes);
+	$('.clickreplaygain').on('click', player.controller.replayGain);
+	$(document).on('click', '.clearbox.enter', makeClearWork);
+	$(document).on('keyup', '.enter', onKeyUp);
+	$(document).on('change', '.inputfile', inputFIleChanged);
+	$(document).on('keyup', 'input.notspecial', filterSpecialChars);
+	$(document).on('mouseenter', "#dbtags>.tag", showTagRemover);
+	$(document).on('mouseleave', "#dbtags>.tag", hideTagRemover);
+	$(document).on('click', 'body', closeMenus);
+	$(document).on('click', '.tagremover:not(.plugclickable)', nowplaying.removeTag);
+	$(document).on('click', '.choosepanel', uiHelper.changePanel);
+	$(document).on('click', '.clickaddtoplaylist', infobar.addToPlaylist);
 }
 
 function bindPlaylistClicks() {
@@ -141,59 +307,13 @@ function onBrowserClicked(event) {
 	return false;
 }
 
-function onSourcesClicked(event, clickedElement) {
-	event.stopImmediatePropagation();
-	debug.debug('UI','Clicked On',clickedElement);
-	if (clickedElement.hasClass("clickremdb")) {
-		metaHandlers.fromUiElement.removeTrackFromDb(clickedElement);
-	} else if (clickedElement.hasClass("clickpltrack")) {
-		metaHandlers.fromUiElement.tracksToPlaylist(clickedElement);
-		clickedElement.parent().parent().parent().remove();
-	} else if (clickedElement.hasClass("removealbum")) {
-		metaHandlers.fromUiElement.removeAlbumFromDb(clickedElement);
-	} else if (clickedElement.hasClass("resetresume")) {
-		metaHandlers.fromUiElement.resetResumePosition(clickedElement);
-	} else if (clickedElement.hasClass("clickqueuetracks")) {
-		playlist.draggedToEmpty();
-	} else if (clickedElement.hasClass("clickalbummenu")) {
-		makeAlbumMenu(event, clickedElement);
-	} else if (clickedElement.hasClass("clicktrackmenu")) {
-		makeTrackMenu(event, clickedElement);
-	} else if (clickedElement.hasClass("addtollviabrowse")) {
-		browseAndAddToListenLater(clickedElement.attr('spalbumid'));
-	} else if (clickedElement.hasClass("addtocollectionviabrowse")) {
-		browseAndAddToCollection(clickedElement.attr('spalbumid'));
-	} else if (clickedElement.hasClass("amendalbum")) {
-		amendAlbumDetails(event, clickedElement);
-	} else if (clickedElement.hasClass("setasaudiobook") ||
-				clickedElement.hasClass("setasmusiccollection")) {
-		setAsAudioBook(event, clickedElement);
-	} else if (clickedElement.hasClass("fakedouble")) {
-		playPlayable.call(clickedElement, event);
-	} else if (clickedElement.hasClass('clickdeleteplaylist')) {
-		player.controller.deletePlaylist(clickedElement.next().val());
-	} else if (clickedElement.hasClass('clickdeleteuserplaylist')) {
-		player.controller.deleteUserPlaylist(clickedElement.next().val());
-	} else if (clickedElement.hasClass('clickrenameplaylist')) {
-		player.controller.renamePlaylist(clickedElement.next().val(), event, player.controller.doRenamePlaylist);
-	} else if (clickedElement.hasClass('clickrenameuserplaylist')) {
-		player.controller.renamePlaylist(clickedElement.next().val(), event, player.controller.doRenameUserPlaylist);
-	} else if (clickedElement.hasClass('clickdeleteplaylisttrack')) {
-		playlistManager.deletePlaylistTrack(
-			clickedElement,
-			clickedElement.next().val(),
-			clickedElement.attr('name'));
-	} else {
-		clickRegistry.farmClick(event, clickedElement);
+function selectPlayable(event, clickedElement) {
+	if (event) {
+		event.stopImmediatePropagation();
 	}
-	if (clickedElement.hasClass('closepopup')) {
-		$('#popupmenu').remove();
+	if (!clickedElement) {
+		clickedElement = $(this);
 	}
-}
-
-function selectPlayable(event) {
-	event.stopImmediatePropagation();
-	var clickedElement = $(this);
 	if ((clickedElement.hasClass("clickalbum") || clickedElement.hasClass('clickloadplaylist') || clickedElement.hasClass('clickloaduserplaylist'))
 		&& !clickedElement.hasClass('noselect')) {
 		albumSelect(event, clickedElement);
@@ -206,9 +326,13 @@ function selectPlayable(event) {
 	}
 }
 
-function playPlayable(event) {
-	var clickedElement = $(this);
-	event.stopImmediatePropagation();
+function playPlayable(event, clickedElement) {
+	if (event) {
+		event.stopImmediatePropagation();
+	}
+	if (!clickedElement) {
+		clickedElement = $(this);
+	}
 	if (clickedElement.hasClass('clickdisc')) {
 		discSelect(event, clickedElement);
 		playlist.addItems($('.selected'),null);
@@ -225,140 +349,11 @@ jQuery.fn.findPlParent = function() {
 	return el;
 }
 
-function doMenu(event, element) {
-
-	if (event) {
-		event.stopImmediatePropagation();
-	}
-	var menutoopen = element.attr("name");
-	debug.log("UI","Doing Menu",menutoopen);
-	if (element.isClosed()) {
-		element.toggleOpen();
-		if (menuOpeners[menutoopen]) {
-			debug.trace('DOMENU', 'Opening using menuopener', menuOpeners[menutoopen].name);
-			menuOpeners[menutoopen]();
-		} else if (menuOpeners[getMenuType(menutoopen)]) {
-			debug.trace('DOMENU', 'Opening using menuopener type', menuOpeners[getMenuType(menutoopen)].name);
-			menuOpeners[getMenuType(menutoopen)](getMenuIndex(menutoopen));
-		}
-		$('#'+menutoopen).menuReveal();
-	} else {
-		element.toggleClosed();
-		$('#'+menutoopen).menuHide();
-		if (menuClosers[menutoopen]) {
-			menuClosers[menutoopen]();
-		} else if (menuClosers[getMenuType(menutoopen)]) {
-			menuClosers[getMenuType(menutoopen)](getMenuIndex(menutoopen));
-		}
-	}
-	if (menutoopen == 'advsearchoptions') {
-		prefs.save({advanced_search_open: element.isOpen()});
-	}
-	if (menutoopen.match(/alarmpanel/)) {
-		setTimeout(alarmclock.whatAHack, 400);
-	}
-	return false;
-}
-
-function getMenuType(m) {
-	var i = m.indexOf('_');
-	if (i !== -1) {
-		return m.substr(0, i);
-	} else {
-		return 'none';
-	}
-}
-
-function getMenuIndex(m) {
-	var i = m.indexOf('_');
-	if (i != -1) {
-		return m.substr(i+1);
-	} else {
-		debug.error("CLICKFUNCTIONS","Could not find menu index of",m);
-		return '0';
-	}
-}
-
-function doAlbumMenu(event, element, callback) {
-
-	if (event) {
-		event.stopImmediatePropagation();
-	}
-	var menutoopen = element.attr("name");
-	if (element.isClosed()) {
-		layoutProcessor.makeCollectionDropMenu(element, menutoopen);
-		if ($('#'+menutoopen).hasClass("notfilled")) {
-			debug.log("CLICKFUNCTIONS","Opening and filling",menutoopen);
-			$('#'+menutoopen).load("albums.php?item="+menutoopen, function() {
-				var self = $(this);
-				self.removeClass("notfilled");
-				self.menuReveal(function() {
-					collectionHelper.scootTheAlbums(self);
-					if (callback) callback();
-					infobar.markCurrentTrack();
-					if (self.find('input.expandalbum').length > 0 ) {
-						getAllTracksForAlbum(element, menutoopen);
-					} else if (self.find('input.expandartist').length > 0) {
-						getAllTracksForArtist(element, menutoopen)
-					}
-					uiHelper.makeResumeBar(self);
-					if (prefs.clickmode == 'single') {
-						self.find('.invisibleicon').removeClass('invisibleicon');
-					}
-				});
-			});
-		} else {
-			debug.log("Opening",menutoopen);
-			$('#'+menutoopen).menuReveal(callback);
-		}
-		element.toggleOpen();
-	} else {
-		debug.log("Closing",menutoopen);
-		$('#'+menutoopen).menuHide(callback);
-		element.toggleClosed();
-		$('#popupmenu').remove();
-	}
-	return false;
-}
-
-function getAllTracksForAlbum(element, menutoopen) {
+async function getAllTracksForAlbum(element, menutoopen) {
 	debug.mark("CLICKFUNCTIONS", "Album has link to get all tracks");
-	element.makeSpinner();
-	$.ajax({
-		type: 'GET',
-		url: 'albums.php?browsealbum='+menutoopen
-	})
-	.done(function(data) {
-		debug.log("CLICKFUNCTIONS", "Got data. Inserting it into ",menutoopen);
-		element.stopSpinner();
-		infobar.markCurrentTrack();
-		uiHelper.albumBrowsed(menutoopen, data);
-	})
-	.fail(function(data) {
-		debug.error("CLICKFUNCTIONS", "Got NO data for ",menutoopen);
-		element.stopSpinner();
-	});
-}
-
-function getAllTracksForArtist(element, menutoopen) {
-	debug.log("CLICKFUNCTIONS", "Album has link to get all tracks for artist",menutoopen);
-	element.makeSpinner();
-	$.ajax({
-		type: 'GET',
-		url: 'albums.php?browsealbum='+menutoopen
-	})
-	.done(function(data) {
-		element.stopSpinner();
-		var spunk = uiHelper.getArtistDestinationDiv(menutoopen);
-		spunk.html(data);
-		uiHelper.doThingsAfterDisplayingListOfAlbums(spunk);
-		// collectionHelper.scootTheAlbums(spunk);
-		infobar.markCurrentTrack();
-		uiHelper.fixupArtistDiv(spunk, menutoopen);
-	})
-	.fail(function(data) {
-		element.stopSpinner();
-	});
+	var target = $('#'+menutoopen);
+	await clickRegistry.loadContentIntoTarget(target, element, true, 'albums.php?browsealbum='+menutoopen);
+	target.find('input.expandalbum').remove();
 }
 
 var playlistManager = function() {
@@ -387,8 +382,9 @@ var playlistManager = function() {
 			);
 		},
 
-		browsePlaylist: function(plname, menutoopen) {
+		browsePlaylist: function(clickedElement, menutoopen) {
 			debug.log("CLICKFUNCTIONS","Browsing playlist",plname);
+			var plname = clickedElement.prev().val();
 			string = playlistLoadString(plname);
 			if ($('[name="'+menutoopen+'"]').hasClass('canreorder')) {
 				uiHelper.makeSortablePlaylist(menutoopen);
@@ -396,7 +392,8 @@ var playlistManager = function() {
 			return string;
 		},
 
-		browseUserPlaylist: function(plname, menutoopen) {
+		browseUserPlaylist: function(clickedElement, menutoopen) {
+			var plname = clickedElement.prev().val();
 			debug.log("CLICKFUNCTIONS","Browsing playlist",plname);
 			string = "player/mpd/loadplaylists.php?userplaylist="+plname+'&target='+menutoopen;
 			return string;
@@ -487,59 +484,28 @@ var playlistManager = function() {
 			);
 		},
 
-		deletePlaylistTrack(element, name, songpos) {
+		deletePlaylistTrack: function(event, element) {
 			element.makeSpinner();
-			player.controller.deletePlaylistTrack(name, songpos);
+			player.controller.deletePlaylistTrack(element.next().val(), element.attr('name'));
+		},
+
+		deletePlaylist: function(event, clickedElement) {
+			player.controller.deletePlaylist(clickedElement.next().val());
+		},
+
+		deleteUserPlaylist: function(event, clickedElement) {
+			player.controller.deleteUserPlaylist(clickedElement.next().val());
+		},
+
+		renamePlaylist: function(event, clickedElement) {
+			player.controller.renamePlaylist(clickedElement.next().val(), event, player.controller.doRenamePlaylist);
+		},
+
+		renameUserPlaylist: function(event, clickedElement) {
+			player.controller.renamePlaylist(clickedElement.next().val(), event, player.controller.doRenameUserPlaylist);
 		}
 	}
 }();
-
-function doFileMenu(event, element) {
-
-	if (event) {
-		event.stopImmediatePropagation();
-	}
-	var menutoopen = element.attr("name");
-	debug.log("UI","File Menu",menutoopen);
-	if (element.isClosed()) {
-		layoutProcessor.makeCollectionDropMenu(element, menutoopen);
-		element.toggleOpen();
-		if ($('#'+menutoopen).hasClass("notfilled")) {
-			element.makeSpinner();
-			var string;
-			var plname = element.prev().val();
-			if (element.hasClass('playlist')) {
-				string = playlistManager.browsePlaylist(plname, menutoopen);
-			} else if (element.hasClass('userplaylist')) {
-				string = playlistManager.browseUserPlaylist(plname, menutoopen);
-			} else {
-				string = "dirbrowser.php?path="+plname+'&prefix='+menutoopen;
-			}
-			$('#'+menutoopen).load(string, function() {
-				$(this).removeClass("notfilled");
-				$(this).menuReveal();
-				infobar.markCurrentTrack();
-				element.stopSpinner();
-			});
-		} else {
-			$('#'+menutoopen).menuReveal();
-		}
-	} else {
-		debug.log("UI","Hiding File Menu");
-		$('#'+menutoopen).menuHide(function() {
-			element.toggleClosed();
-			// Remove this dropdown - this is so that when we next open it
-			// mopidy will rescan it. This makes things like soundcloud and spotify update
-			// without us having to refresh the window
-			if (!element.hasClass('searchdir')) {
-				// But don't do it for search results displayed as a directory tree,
-				// since these are loaded in one go and not refreshed
-				$('#'+menutoopen).remove();
-			}
-		});
-	}
-	return false;
-}
 
 function setDraggable(selector) {
 	if (layoutProcessor.supportsDragDrop) {
@@ -621,7 +587,7 @@ jQuery.fn.removeFromSelection = function() {
 			$(this).find('div.clicktrackmenu').not('.invisibleicon').addClass('invisibleicon');
 			if ($(this).find('div.clicktrackmenu').hasClass('menu_opened')) {
 				$(this).find('div.clicktrackmenu').removeClass('menu_opened');
-				$('#popupmenu').remove();
+				closePopupMenu();
 			}
 		}
 	});
@@ -1111,7 +1077,8 @@ function actuallyAmendAlbumDetails(albumindex) {
 	return true;
 }
 
-function browseAndAddToListenLater(albumid) {
+function browseAndAddToListenLater(event, clickedElement) {
+	var albumid = clickedElement.attr('spalbumid')
 	spotify.album.getInfo(
 		albumid,
 		function(data) {
@@ -1124,7 +1091,8 @@ function browseAndAddToListenLater(albumid) {
 	);
 }
 
-function browseAndAddToCollection(albumid) {
+function browseAndAddToCollection(event, clickedElement) {
+	var albumid = clickedElement.attr('spalbumid')
 	spotify.album.getInfo(
 		albumid,
 		function(data) {

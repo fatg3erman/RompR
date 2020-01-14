@@ -50,9 +50,9 @@ var sleepTimer = function() {
 
 		setButton: function() {
 			if (prefs.sleepon) {
-				$("#sleeptimer").makeFlasher({flashtime: 10, repeats: prefs.sleeptime*6});
+				$("#sleeptimer_icon").removeClass('currentbun').addClass('currentbun');
 			} else {
-				$("#sleeptimer").stopFlasher();
+				$("#sleeptimer_icon").removeClass('currentbun');
 			}
 		},
 

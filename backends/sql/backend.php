@@ -687,6 +687,7 @@ function remove_user_radio_stream($x) {
 
 function save_radio_order($order) {
 	foreach ($order as $i => $o) {
+		logger::trace('RADIO ORDER', 'Station',$o,'index',$i);
 		generic_sql_query("UPDATE RadioStationtable SET Number = ".$i." WHERE Stationindex = ".$o, true);
 	}
 }

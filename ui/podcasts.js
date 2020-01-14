@@ -237,8 +237,6 @@ var podcasts = function() {
 				}
 				target.removeClass('loaded').addClass('loaded');
 				updatePodcastDropdown(channel, null);
-				// Needed for phone skin
-				uiHelper.postAlbumMenu();
 			});
 		},
 
@@ -288,8 +286,6 @@ var podcasts = function() {
 		downloadPodcast: function(track, channel) {
 			debug.log("PODCAST","Downloading track",track,"from channel",channel);
 			downloadTrack(track, channel);
-			// doDummyProgressBars();
-			// checkDownloadQueue();
 		},
 
 		downloadPodcastChannel: function(channel) {
@@ -547,6 +543,6 @@ var podcasts = function() {
 }();
 
 $('#podcastsinput').on('drop', podcasts.handleDrop)
-menuOpeners['podcast'] = podcasts.loadPodcast;
+// menuOpeners['podcast'] = podcasts.loadPodcast;
 clickRegistry.addClickHandlers('podcast', podcasts.handleClick);
 

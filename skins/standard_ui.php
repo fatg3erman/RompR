@@ -5,7 +5,10 @@ require_once('utils/imagefunctions.php');
 function albumTrack($data) {
 	global $prefs;
 	if (substr($data['title'],0,6) == "Album:") return 2;
-	if (substr($data['title'],0,7) == "Artist:") return 1;
+	if (substr($data['title'],0,7) == "Artist:") {
+		logger::warn('ALBUMTRACK', 'Found artist link in album - this should not be here!');
+		return 1;
+	}
 
 	$d = getDomain($data['uri']);
 
@@ -103,8 +106,6 @@ function albumHeader($obj) {
 	$h = '';
 	if ($obj['why'] === null) {
 		$h .= '<div class="containerbox menuitem">';
-	} else if ($obj['AlbumUri'] && preg_match('/spotify:artist:/', $obj['AlbumUri'])) {
-		$h .= '<div class="clickartist playable draggable containerbox menuitem" name="'.preg_replace('/'.get_int_text('label_allartist').'/', '', $obj['Albumname']).'">';
 	} else if ($obj['AlbumUri'] && strtolower(pathinfo($obj['AlbumUri'], PATHINFO_EXTENSION)) == "cue") {
 		logger::log("UI", "Cue Sheet found for album ".$obj['Albumname']);
 		$h .= '<div class="clickcue playable draggable containerbox menuitem" name="'.rawurlencode($obj['AlbumUri']).'">';
@@ -196,11 +197,11 @@ function printRadioDirectory($att, $closeit, $prefix) {
 	print '<div class="directory containerbox menuitem">';
 	print '<input type="hidden" value="'.rawurlencode($att['URL']).'" />';
 	print '<input type="hidden" value="'.rawurlencode($att['text']).'" />';
-	print '<i class="browse menu clickable mh '.$prefix.' fixed icon-toggle-closed" name="'.$prefix.'_'.$name.'"></i>';
+	print '<i class="openmenu mh menu directory '.$prefix.' fixed icon-toggle-closed" name="'.$prefix.'_'.$name.'"></i>';
 	print '<i class="icon-folder-open-empty fixed collectionicon"></i>';
 	print '<div class="expand">'.$att['text'].'</div>';
 	print '</div>';
-	print '<div id="'.$prefix.'_'.$name.'" class="dropmenu">';
+	// print '<div id="'.$prefix.'_'.$name.'" class="dropmenu notfilled is-albumlist removeable">';
 	if ($closeit) {
 		print '</div>';
 	}

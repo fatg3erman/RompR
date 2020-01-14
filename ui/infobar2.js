@@ -609,7 +609,8 @@ var infobar = function() {
 			nowplaying.progressUpdate(percent);
 		},
 
-		addToPlaylist: function(element) {
+		addToPlaylist: function(event) {
+			var element = $(this);
 			playlistManager.addTracksToPlaylist(
 				element.attr('name'),
 				[{uri: playlistinfo.file}]

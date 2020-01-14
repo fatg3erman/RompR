@@ -68,7 +68,7 @@ class commradioplugin {
 			'Albumname' => get_int_text('label_communityradio'),
 			'why' => null,
 			'ImgKey' => 'none',
-			'class' => 'radio',
+			'class' => 'radio commradioroot',
 			'expand' => true
 		));
 		print '<div id="communityradiolist" class="dropmenu notfilled">';
@@ -86,6 +86,9 @@ class commradioplugin {
 		print '<select id="communityradioorderbyselector" class="saveomatic">';
 		foreach (array('name', 'country', 'language', 'state', 'tags', 'votes', 'bitrate') as $o) {
 			print '<option value="'.$o.'"';
+			if ($prefs['communityradioorderby'] == $o) {
+				print ' selected';
+			}
 			print '>Order By '.ucfirst($o).'</option>';
 		}
 		print '</select>';
@@ -103,11 +106,11 @@ class commradioplugin {
 		}
 		print '<div class="containerbox fullwidth">';
 		print '<div class="expand"></div>';
-		print '<button class="fixed searchbutton iconbutton cleargroup" name="commradiosearch"></button>';
+		print '<button class="fixed searchbutton iconbutton cleargroup clickable commradiosearch" name="commradiosearch"></button>';
 		print '</div>';
 		print '</div>';
 
-		print '<div id="communitystations" class="fullwidth padright holderthing">';
+		print '<div id="communitystations" class="fullwidth padright holderthing is-albumlist">';
 
 		$this->doBrowseRoot();
 

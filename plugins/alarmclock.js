@@ -153,8 +153,12 @@ var alarmclock = function() {
 
 	return {
 
-		whatAHack: function() {
-			$('#alarmpanel').fanoogleMenus();
+		toggleControls: function(element) {
+			var index = element.attr('name').substr(element.attr('name').indexOf('_')+1);
+			$('#alarmhoursup_'+index).toggle('fast');
+			$('#alarmhoursdown_'+index).toggle('fast');
+			$('#alarmminsup_'+index).toggle('fast');
+			$('#alarmminsdown_'+index).toggle('fast');
 		},
 
 		showControls: function(index) {
@@ -510,19 +514,18 @@ var alarmclock = function() {
 			html += '</table>';
 			holder.append(html);
 
-			menuOpeners['alarmpanel'] = alarmclock.showControls;
-			menuClosers['alarmpanel'] = alarmclock.hideControls;
-
-			$('#alarmpanel').on('click', function(event) {
+			$('#alarmpanel').on('click', async function(event) {
 				// We need to use a single click event handler for the whole panel:
 				// We must prevent propagation of clicks anywhere on the panel, otherwise it will close
-				// But we obvioously need to react to clicks on checkboxes (because we're handling those, not the generic prefs mechanism)
+				// But we obviously need to react to clicks on checkboxes (because we're handling those, not the generic prefs mechanism)
 				event.stopPropagation();
 				var element = $(event.target);
 				if (element.is('label') && element.hasClass('alarmclock')) {
 					alarmclock.checkboxClicked(event, element);
 				} else if (element.hasClass('openmenu')) {
-					doMenu(event, element);
+					alarmclock.toggleControls(element);
+					await $.proxy(clickRegistry.doMenu, element, event).call();
+					$('#alarmpanel').fanoogleMenus();
 				} else if (element.hasClass('createnewalarm')) {
 					alarmclock.newAlarm();
 				} else if (element.hasClass('deletealarm')) {

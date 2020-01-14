@@ -264,7 +264,7 @@ if ($prefs['player_backend'] == "mopidy") {
 		</div>
 		<div class="pref">
 			<div id="playlistslist">
-				<div id="storedplaylists"></div>
+				<div id="storedplaylists" class="is-albumlist"></div>
 			</div>
 		</div>
 	</div>

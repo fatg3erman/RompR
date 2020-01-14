@@ -478,7 +478,7 @@ var playlist = function() {
 
 		draggedToEmpty: function(event, ui) {
 			// This effectively adds all selected items to the end of the play queue irrespective of CD Player Mode
-			debug.log("PLAYLIST","Something was dropped on the empty playlist area",event,ui);
+			debug.log("PLAYLIST","Something was dropped on the empty playlist area");
 			playlist.addItems($('.selected').filter(removeOpenItems), parseInt(finaltrack)+1);
 		},
 
@@ -571,11 +571,6 @@ var playlist = function() {
 						tracks.push({
 							type: "podcasttrack",
 							name: decodeURIComponent(uri)
-						});
-					} else if ($(element).hasClass('clickartist')) {
-						tracks.push({
-							type: "artist",
-							name: uri
 						});
 					} else if ($(element).hasClass('clickcue')) {
 						tracks.push({

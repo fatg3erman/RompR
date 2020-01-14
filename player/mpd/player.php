@@ -87,6 +87,7 @@ class mpdPlayer extends base_mpd_player {
 				$filedata['folder'] = dirname($filedata['unmopfile']);
 				break;
 		}
+		return true;
 	}
 
 	private function preprocess_stream(&$filedata) {

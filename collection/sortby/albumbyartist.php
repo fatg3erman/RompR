@@ -41,12 +41,11 @@ class sortby_albumbyartist extends sortby_base {
 				$qstring .= "WHEN LOWER(Artistname) LIKE '".strtolower($p).
 					" %' THEN LOWER(SUBSTR(Artistname,".$phpisshitsometimes.")) ";
 			}
-			$qstring .= "ELSE LOWER(Artistname) END)";
+			$qstring .= "ELSE LOWER(Artistname) END), ";
 		} else {
-			$qstring .= ", LOWER(Artistname)";
+			$qstring .= ", LOWER(Artistname), ";
 		}
 
-		$qstring .= ", CASE WHEN Albumname LIKE '".get_int_text('label_allartist')."%' THEN 1 ELSE 2 END,";
 		if ($prefs['sortbydate']) {
 			if ($prefs['notvabydate']) {
 				$qstring .= " CASE WHEN Artisttable.Artistname = 'Various Artists' THEN LOWER(Albumname) ELSE Year END,";

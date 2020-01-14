@@ -81,7 +81,7 @@ $.widget("rompr.trackdragger", $.ui.mouse, {
 		}
 		this.dragging = true;
 		if (!clickedElement.hasClass("selected")) {
-			$.proxy(selectPlayable, clickedElement, event).call();
+			selectPlayable(event, clickedElement);
 		}
 		this.dragger = $('<div>', {id: 'dragger', class: 'draggable dragsort containerbox vertical dropshadow'}).appendTo('body');
 		this.dragger.css('width', $('.selected').first().css('width'));

@@ -11,6 +11,7 @@ class base_mpd_player {
 	private $is_slave;
 	public $playlist_error;
 	private $debug_id;
+	public $to_browse;
 
 	public function __construct($ip = null, $port = null, $socket = null, $password = null, $player_type = null, $is_slave = null) {
 		global $prefs;
@@ -410,11 +411,13 @@ class base_mpd_player {
 
 		$filedata['year'] = getYear($filedata['Date']);
 
-		$this->player_specific_fixups($filedata);
-
-		$numtracks++;
-		$totaltime += $filedata['Time'];
-		return true;
+		if ($this->player_specific_fixups($filedata)) {
+			$numtracks++;
+			$totaltime += $filedata['Time'];
+			return true;
+		} else {
+			return false;
+		}
 
 	}
 
@@ -636,13 +639,8 @@ class base_mpd_player {
 		}
 	}
 
-	public function get_tracks_for_spotify_artist($artist) {
-		$dirs = array();
-		$collection = new musicCollection();
-		foreach ($this->parse_list_output('find "artist" "'.format_for_mpd($artist).'"', $dirs, array("spotify")) as $filedata) {
-			$collection->newTrack($filedata);
-		}
-		return $collection->getAllTracks('add');
+	public function initialise_search() {
+		$this->to_browse = array();
 	}
 
 	private function translate_commands_for_slave(&$cmds) {

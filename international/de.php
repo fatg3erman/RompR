@@ -541,7 +541,6 @@ $languages['de'] = array (
         "label_resultstree" => "Verzeichnisbaum",
         "label_displayresultsas" => "Zeige Ergebnisse als:",
         "label_files" => "Dateien",
-        "label_allartist" => "Alle Alben Featuring ",
         "button_findexact" => "Finde exakte Übereinstimmung",
         "label_albumartist" => "Album Künstler/in",
         "config_collectionfolders" => "Bilde Sammlung von:",

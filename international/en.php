@@ -535,7 +535,6 @@ $languages['en'] = array (
 	"label_resultstree" => "Directory Tree",
 	"label_displayresultsas" => "Display Results As:",
 	"label_files" => "Files",
-	"label_allartist" => "All Albums Featuring ",
 	"button_findexact" => "Find Exact Match",
 	"label_albumartist" => "Album Artist",
 	"config_collectionfolders" => "Build Collection From:",
