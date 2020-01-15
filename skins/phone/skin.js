@@ -123,7 +123,7 @@ jQuery.fn.restoreScrollPos = function() {
 		this.children('.backmenu').css({position: ''});
 		a.remove();
 	}
-	$('#popupmenu').remove();
+	// $('#popupmenu').remove();
 }
 
 jQuery.fn.makeTagMenu = function(options) {
@@ -204,6 +204,49 @@ jQuery.fn.fanoogleTopMenus = function() {
 		$(this).css({height: nh+'px'});
 	});
 	return this;
+}
+
+jQuery.fn.removeCollectionDropdown = function() {
+	this.each(function() {
+		var self = $(this);
+		if (!self.hasClass('configtitle')) {
+			self.findParentScroller().restoreScrollPos();
+		}
+		self.clearOut().remove();
+	});
+}
+
+jQuery.fn.removeCollectionItem = function() {
+	this.each(function() {
+		$(this).clearOut().remove();
+	});
+}
+
+jQuery.fn.insertAlbumAfter = function(albumindex, html, tracklist) {
+	// Somewhat easy in the phone skin - if the dropdown (#albumindex)
+	// exists then it must be open. And it doesn't matter if we insert the
+	// album before or after the dropdown as it gets removed when we close it
+	return this.each(function() {
+		var me = $(this);
+		$('.openmenu[name="'+albumindex+'"]').removeCollectionItem();
+		$('#'+albumindex).html(tracklist).updateTracklist().scootTheAlbums();
+		$(html).insertAfter(me).scootTheAlbums();
+	});
+};
+
+jQuery.fn.insertAlbumAtStart = function(albumindex, html, tracklist) {
+	return this.each(function() {
+		var me = $(this);
+		$('.openmenu[name="'+albumindex+'"]').removeCollectionItem();
+		$('#'+albumindex).html(tracklist).updateTracklist().scootTheAlbums();
+		$(html).prependTo(me).scootTheAlbums();
+	});
+}
+
+jQuery.fn.insertArtistAfter = function(html) {
+	return this.each(function() {
+		$(html).insertAfter($(this));
+	});
 }
 
 /* Touchwipe for playlist only, based on the more general jquery touchwipe */
@@ -603,63 +646,6 @@ var layoutProcessor = function() {
 			});
 			doSwipeCss();
 			$(document).on('click', '.clickaddtoplaylist', addToPlaylist.close);
-		},
-
-		findAlbumDisplayer: function(key) {
-			if (key == 'fothergill' || key == 'mingus') {
-				return $('#'+key);
-			} else {
-				return $('.containerbox.album[name="'+key+'"]');
-			}
-		},
-
-		findArtistDisplayer: function(key) {
-			return $('div.menu[name="'+key+'"]');
-		},
-
-		insertAlbum: function(v) {
-			debug.log('PHONE', 'Insert Album');
-			debug.debug('PHONE', v);
-			var albumindex = v.id;
-			var displayer = $('#'+albumindex);
-			displayer.html(v.tracklist);
-			uiHelper.makeResumeBar(displayer);
-			layoutProcessor.findAlbumDisplayer(albumindex).remove();
-			switch (v.type) {
-				case 'insertAfter':
-					debug.log("Insert After",v.where);
-					$(v.html).insertAfter(layoutProcessor.findAlbumDisplayer(v.where));
-					break;
-
-				case 'insertAtStart':
-					debug.log("Insert At Start",v.where);
-					$(v.html).insertAfter($('#'+v.where).find('div.clickalbum[name="'+v.where+'"]'));
-					break;
-			}
-			layoutProcessor.postAlbumMenu();
-		},
-
-		removeAlbum: function(key) {
-			if ($('#'+key).length > 0) {
-				$('#'+key).findParentScroller().restoreScrollPos();
-				$('#'+key).remove();
-			}
-			layoutProcessor.findAlbumDisplayer(key).remove();
-		},
-
-		removeArtist: function(key) {
-			if ($('#'+key).length > 0) {
-				if (!$('#'+key).hasClass('configtitle')) {
-					$('#'+key).findParentScroller().restoreScrollPos();
-				}
-				$('#'+key).remove();
-			}
-			layoutProcessor.findArtistDisplayer(key).remove();
-		},
-
-		albumBrowsed: function(menutoopen, data) {
-			$('#'+menutoopen).html(data);
-			layoutProcessor.postAlbumMenu();
 		},
 
 		getElementPlaylistOffset: function(element) {

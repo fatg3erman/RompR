@@ -62,7 +62,7 @@ div {
 }
 
 #albumpicture {
-	object-fit:contain;
+	object-fit:scale-down;
 }
 
 #historypanel, #tagadder {
@@ -1154,6 +1154,7 @@ img.jalopy200 {
 	#albumcover {
 		float: left;
 		height:100%;
+		max-height:35vw;
 	}
 
 	#albumpicture {

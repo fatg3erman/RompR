@@ -13,6 +13,7 @@ jQuery.fn.menuReveal = async function(callback) {
 	var holder = $('.openmenu[name="'+id+'"]');
 	var parent = holder.parent();
 	var adjustboxes = true;
+	var scrollto = true;
 
 	switch (true) {
 		case holder.hasClass('album'):
@@ -36,6 +37,7 @@ jQuery.fn.menuReveal = async function(callback) {
 				var d = $('<div>', {class: 'tgtl podcastitem', style: 'padding-top: 4px'}).html(tt).appendTo(self);
 				$('<i>', {class: 'icon-blank timerspacer'}).appendTo(d);
 			}
+			adjustboxes = false;
 			break;
 
 		case holder.hasClass('podcast'):
@@ -43,6 +45,7 @@ jQuery.fn.menuReveal = async function(callback) {
 			parent.addClass('tagholder_wide dropshadow').insertDummySpacers();
 			parent.find('div.albumthing').detach().appendTo(parent);
 			self.detach().addClass('minwidthed2').appendTo(parent);
+			adjustboxes = false;
 			break;
 
 		case holder.hasClass('radiochannel'):
@@ -50,6 +53,7 @@ jQuery.fn.menuReveal = async function(callback) {
 			parent.addClass('tagholder_wide dropshadow').insertDummySpacers();
 			self.detach().appendTo(parent);
 			holder.find('div.albumthing').detach().prependTo(self);
+			adjustboxes = false;
 			break;
 
 		case holder.hasClass('radio'):
@@ -67,20 +71,24 @@ jQuery.fn.menuReveal = async function(callback) {
 			break;
 
 		case $(this).hasClass('collectionpanel'):
-			// Albums panel, when an artist name is clicked on. Catch it because we DO need to adjustBoxSizes
+			// Albums panel, when an artist name is clicked on. Catch it because we DO need to appendDummySpacers
+			scrollto = false;
 			break;
 
 		default:
 			// Other dropdowns (eg podcast controls)
 			adjustboxes = false;
+			scrollto = false;
 			break;
 	}
 	var displaymode = self.hasClass('containerbox') ? 'flex' : 'block';
 	self.css({display: displaymode});
 	if (callback) callback.call(self);
+	if (scrollto) {
+		layoutProcessor.scrollSourcesTo(parent);
+	}
 	if (adjustboxes) {
 		$(this).appendDummySpacers();
-		layoutProcessor.scrollSourcesTo(parent);
 		layoutProcessor.postAlbumMenu(holder);
 	}
 	return self;
@@ -246,6 +254,69 @@ jQuery.fn.animatePanel = function(options) {
 	var settings = $.extend({},options);
 	var panel = this.attr("id");
 	this.css('width', settings[panel]+'%');
+}
+
+jQuery.fn.removeCollectionDrodown = function() {
+	this.each(function() {
+		var self = $(this);
+		self.removeDummySpacers();
+		self.remove();
+	});
+}
+
+jQuery.fn.removeCollectionItem = function() {
+	this.each(function() {
+		if ($(this).attr('name').match(/artist/)) {
+			var self = $(this);
+		} else {
+			var self = $(this).parent();
+		}
+		self.removeDummySpacers();
+		self.remove();
+	});
+}
+
+jQuery.fn.insertAlbumAfter = function(albumindex, html, tracklist) {
+	return this.each(function() {
+		var me = $(this).parent();
+		var isopen = $('#'+albumindex).is(':visible');
+		var newthing = $(html);
+		if (isopen) {
+			var dropdown = $('#'+albumindex).detach().html(tracklist).updateTracklist().appendTo(newthing.find('.containerbox.openmenu'));
+		}
+		$('.openmenu[name="'+albumindex+'"]').removeCollectionItem();
+		newthing.insertAfter(me).scootTheAlbums();
+		if (isopen) {
+			dropdown.menuReveal();
+		}
+	});
+}
+
+jQuery.fn.insertAlbumAtStart = function(albumindex, html, tracklist) {
+	return this.each(function() {
+		var me = $(this);
+		var isopen = $('#'+albumindex).is(':visible');
+		var newthing = $(html);
+		if (isopen) {
+			var dropdown = $('#'+albumindex).detach().html(tracklist).updateTracklist().appendTo(newthing.find('.containerbox.openmenu'));
+		}
+		$('.openmenu[name="'+albumindex+'"]').removeCollectionItem();
+		newthing.prependTo(me).scootTheAlbums();
+		if (isopen) {
+			dropdown.menuReveal();
+		}
+	});
+}
+
+jQuery.fn.insertArtistAfter = function(html) {
+	return this.each(function() {
+		var me = $(this);
+		if (me.hasClass('artist')) {
+			$(html).insertAfter(me);
+		} else {
+			$(html).insertAfter(me.parent()).insertDummySpacers();
+		}
+	});
 }
 
 function showHistory() {
@@ -816,10 +887,6 @@ var layoutProcessor = function() {
 			}
 		},
 
-		getArtistDestinationDiv: function(menutoopen) {
-			return $('[name="'+menutoopen+'"]').parent();
-		},
-
 		initialise: function() {
 			$("#sortable").disableSelection();
             $("#sortable").acceptDroppedTracks({
@@ -879,87 +946,6 @@ var layoutProcessor = function() {
 
 		// Optional Additions
 
-		findAlbumDisplayer: function(key) {
-			if (key == 'fothergill' || key == 'mingus') {
-				return $('#'+key);
-			} else {
-				return $('.containerbox[name="'+key+'"]').parent();
-			}
-		},
-
-		findArtistDisplayer: function(key) {
-			return $('div.menu[name="'+key+'"]');
-		},
-
-		removeArtist: function(v) {
-			var banner = $("#"+v);
-			if (banner.length > 0) {
-				banner.removeDummySpacers();
-				banner.remove();
-			}
-			layoutProcessor.findArtistDisplayer(v).remove();
-		},
-
-		insertArtist: function(v) {
-			switch (v.type) {
-				case 'insertAfter':
-					debug.log("Insert After",v.where);
-					var type = v.where.match(/.([a-z]+)\d/)[1];
-					if (type === null) {
-						// Regexp won't match if v.where is 'fothergill' or 'mingus'
-						type = 'album';
-					}
-					switch (type) {
-						case 'album':
-							var a = $(v.html).insertAfter(layoutProcessor.findAlbumDisplayer(v.where));
-							a.insertDummySpacers();
-							break;
-
-						default:
-							$(v.html).insertAfter(layoutProcessor.findArtistDisplayer(v.where));
-							break;
-					}
-					break;
-
-				case 'insertAtStart':
-					debug.log("Insert At Start",v.where);
-					$(v.html).prependTo($('#'+v.where));
-					break;
-			}
-		},
-
-		removeAlbum: function(key) {
-			$('#'+key).remove();
-			layoutProcessor.findAlbumDisplayer(key).removeDummySpacers().remove();
-		},
-
-		insertAlbum: function(v) {
-			var albumindex = v.id;
-			var dropdown = $('#'+albumindex).is(':visible');
-			layoutProcessor.findAlbumDisplayer(albumindex).removeDummySpacers().remove();
-			switch (v.type) {
-				case 'insertAfter':
-					debug.log("Insert After",v.where);
-					$(v.html).insertAfter(uiHelper.findAlbumDisplayer(v.where));
-					break;
-
-				case 'insertAtStart':
-					debug.log("Insert At Start",v.where);
-					$(v.html).insertAfter($('#'+v.where).find('.clickalbum.playable.brick_wide'));
-					break;
-			}
-			if (dropdown) {
-				layoutProcessor.makeCollectionDropMenu($('[name="'+albumindex+'"]'), albumindex);
-				$('#'+albumindex).removeClass('notfilled').html(v.tracklist);
-				$('#'+albumindex).menuReveal();
-				uiHelper.makeResumeBar($('#'+albumindex));
-				infobar.markCurrentTrack();
-				if (prefs.clickmode == 'single') {
-					$('#'+albumindex).find('.invisibleicon').removeClass('invisibleicon');
-				}
-			}
-		},
-
 		preparePlaylistTarget: function(t) {
 			var d = $('#'+t).find('.tagh.albumthing').clone();
 			return d;
@@ -976,14 +962,6 @@ var layoutProcessor = function() {
 			$('.collectionpanel.audiobooklist').remove();
 			$('#searchresultholder').empty();
 		},
-
-		// fixupArtistDiv(jq, name) {
-		// 	// This is used ONLY aftere've done a spotify:artist: browse and
-		// 	// inserted a load of new albums.
-		// 	jq.addClass('containerbox wrap');
-		// 	jq.prev().remove();
-		// 	jq.prev().remove();
-		// },
 
 		postPodcastSubscribe: function(data, index) {
 			$('.menu[name="podcast_'+index+'"]').parent().fadeOut('fast', function() {

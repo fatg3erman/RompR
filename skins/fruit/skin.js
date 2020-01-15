@@ -292,40 +292,40 @@ var layoutProcessor = function() {
 		},
 
 		displayCollectionInsert: function(details) {
-			debug.mark("COLLECTION","Displaying New Insert");
-			debug.debug('COLLECTION', details);
-			var prefix;
-			var holder;
-			if (details.isaudiobook > 0) {
-				holder = '#audiobooks';
-				uiHelper.sourceControl('audiobooklist');
-				prefix = 'z';
-			} else {
-				holder = '#collection';
-				uiHelper.sourceControl('albumlist');
-				prefix = 'a';
-			}
-			var artistmenu = prefix+'artist'+details.artistindex;
-			var albummenu = prefix+"album"+details.albumindex;
-			setTimeout(function() {
-				if ($('i[name="'+artistmenu+'"]').isClosed()) {
-					doAlbumMenu(null, $('i[name="'+artistmenu+'"]'), function() {
-						if ($('i[name="'+albummenu+'"]').isClosed()) {
-							doAlbumMenu(null, $('i[name="'+albummenu+'"]'), function() {
-								showTrack(holder, $('[name="'+albummenu+'"]'));
-							});
-						} else {
-							showTrack(holder, $('[name="'+albummenu+'"]'));
-						}
-					});
-				} else if ($('i[name="'+albummenu+'"]').isClosed()) {
-					doAlbumMenu(null, $('i[name="'+albummenu+'"]'), function() {
-						showTrack(holder, $('[name="'+albummenu+'"]'));
-					});
-				} else {
-					showTrack(holder, $('[name="'+albummenu+'"]'));
-				}
-			}, 1000);
+			// debug.mark("COLLECTION","Displaying New Insert");
+			// debug.debug('COLLECTION', details);
+			// var prefix;
+			// var holder;
+			// if (details.isaudiobook > 0) {
+			// 	holder = '#audiobooks';
+			// 	uiHelper.sourceControl('audiobooklist');
+			// 	prefix = 'z';
+			// } else {
+			// 	holder = '#collection';
+			// 	uiHelper.sourceControl('albumlist');
+			// 	prefix = 'a';
+			// }
+			// var artistmenu = prefix+'artist'+details.artistindex;
+			// var albummenu = prefix+"album"+details.albumindex;
+			// setTimeout(function() {
+			// 	if ($('i[name="'+artistmenu+'"]').isClosed()) {
+			// 		doAlbumMenu(null, $('i[name="'+artistmenu+'"]'), function() {
+			// 			if ($('i[name="'+albummenu+'"]').isClosed()) {
+			// 				doAlbumMenu(null, $('i[name="'+albummenu+'"]'), function() {
+			// 					showTrack(holder, $('[name="'+albummenu+'"]'));
+			// 				});
+			// 			} else {
+			// 				showTrack(holder, $('[name="'+albummenu+'"]'));
+			// 			}
+			// 		});
+			// 	} else if ($('i[name="'+albummenu+'"]').isClosed()) {
+			// 		doAlbumMenu(null, $('i[name="'+albummenu+'"]'), function() {
+			// 			showTrack(holder, $('[name="'+albummenu+'"]'));
+			// 		});
+			// 	} else {
+			// 		showTrack(holder, $('[name="'+albummenu+'"]'));
+			// 	}
+			// }, 1000);
 		},
 
 		playlistupdate: function(upcoming) {

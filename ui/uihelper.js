@@ -215,6 +215,62 @@ jQuery.fn.removeBunnyEars = function() {
 	return this;
 }
 
+jQuery.fn.removeCollectionDropdown = function() {
+	this.each(function() {
+		$(this).clearOut().remove();
+	});
+}
+
+jQuery.fn.removeCollectionItem = function() {
+	this.each(function() {
+		$(this).parent().clearOut().remove();
+	});
+}
+
+jQuery.fn.insertAlbumAfter = function(albumindex, html, tracklist) {
+	// We don't just insert and then fake a click if it was open because we use
+	// animations and that looks shit.
+	return this.each(function() {
+		// albumindex is the index of the NEW album
+		var me = $(this).parent();
+		var isopen = $('#'+albumindex).is(':visible');
+		$('.openmenu[name="'+albumindex+'"]').removeCollectionItem();
+		var location = me.next().hasClass('dropmenu') ? me.next() : me;
+		var newthing = $(html).insertAfter(location).scootTheAlbums();
+		if (isopen) {
+			var dropdown = $('#'+albumindex).detach().insertAfter(newthing).html(tracklist).updateTracklist();
+			newthing.find('.openmenu').toggleOpen();
+			debug.trace('UIHELPER', 'Album contents have been replaced');
+		} else {
+			$('#'+albumindex).removeCollectionDropdown();
+		}
+	});
+}
+
+jQuery.fn.insertAlbumAtStart = function(albumindex, html, tracklist) {
+	return this.each(function() {
+		var me = $(this);
+		var isopen = $('#'+albumindex).is(':visible');
+		$('.openmenu[name="'+albumindex+'"]').removeCollectionItem();
+		var newthing = $(html).prependTo(me).scootTheAlbums();
+		if (isopen) {
+			var dropdown = $('#'+albumindex).detach().insertAfter(newthing).html(tracklist).updateTracklist();
+			newthing.find('.openmenu').toggleOpen();
+			debug.trace('UIHELPER', 'Album contents have been replaced');
+		} else {
+			$('#'+albumindex).removeCollectionDropdown();
+		}
+	});
+}
+
+jQuery.fn.insertArtistAfter = function(html) {
+	return this.each(function() {
+		var me = $(this).parent();
+		var location = me.next().hasClass('dropmenu') ? me.next() : me;
+		$(html).insertAfter(location);
+	});
+}
+
 // Functions that could just be in layoutProcessor, but it makes maintenance easier
 // if we have a proxy like this so we don't have to add new stuff to every single skin.
 
@@ -228,107 +284,34 @@ var uiHelper = function() {
 			}
 		},
 
-		findAlbumDisplayer: function(key) {
-			try {
-				return layoutProcessor.findAlbumDisplayer(key);
-			} catch (err) {
-				if ($("#"+key).length > 0) {
-					return $("#"+key);
-				} else {
-					return $('i[name="'+key+'"]').parent();
-				}
-			}
-		},
-
-		findAlbumParent: function(key) {
-			try {
-				return layoutProcessor.findAlbumParent(key);
-			} catch (err) {
-				return $('i[name="'+key+'"]').parent();
-			}
-		},
-
-		findArtistDisplayer: function(key) {
-			try {
-				return layoutProcessor.findArtistDisplayer(key);
-			} catch (err) {
-				if ($("#"+key).length > 0) {
-					// If it already exists
-					return $("#"+key);
-				} else {
-					// Opener div (standard UI)
-					return $('i[name="'+key+'"]').parent();
-				}
-			}
-		},
-
 		insertAlbum: function(v) {
 			debug.info('UIHELPER', 'Inserting Album', v.id);
-			try {
-				return layoutProcessor.insertAlbum(v);
-			} catch (err) {
-				var albumindex = v.id;
-				var reinsert = false;
-				$('#'+albumindex).html(v.tracklist);
-				// This may look slightly messy but re-inserting the dropdown instead
-				// of just removing it and re-opening it is much cleaner from a user
-				// experience perspective.
-				var dropdown = $('#'+albumindex);
-				if (dropdown.is(':visible')) {
-					reinsert = true;
-					dropdown.detach().html(v.tracklist);
-				}
-				uiHelper.findAlbumParent(albumindex).remove();
-				switch (v.type) {
-					case 'insertAfter':
-						debug.log("Insert After",v.where);
-						$(v.html).insertAfter(uiHelper.findAlbumDisplayer(v.where));
-						break;
+			switch (v.type) {
+				case 'insertAfter':
+					debug.log('UIHELPER', "Insert After",v.where);
+					$('.openmenu[name="'+v.where+'"]').insertAlbumAfter(v.id, v.html, v.tracklist);
+					break;
 
-					case 'insertAtStart':
-						debug.log("Insert At Start",v.where);
-						$(v.html).prependTo($('#'+v.where));
-						break;
-				}
-				if (reinsert) {
-					uiHelper.findAlbumDisplayer(albumindex).find('.menu').toggleOpen();
-					dropdown.insertAfter(uiHelper.findAlbumDisplayer(albumindex));
-					infobar.markCurrentTrack();
-				}
-				uiHelper.makeResumeBar(dropdown);
+				case 'insertAtStart':
+					debug.log('UIHELPER', "Insert At Start",v.where);
+					$('#'+v.where).insertAlbumAtStart(v.id, v.html, v.tracklist);
+					break;
 			}
 		},
 
 		insertArtist: function(v) {
 			debug.info('UIHELPER', 'Inserting Artist', v.id);
-			try {
-				return layoutProcessor.insertArtist(v);
-			} catch(err) {
-				debug.log('UIHELPER', 'Default Function');
-				switch (v.type) {
-					case 'insertAfter':
-						debug.log("Insert After",v.where);
-						var type = v.where.match(/.([a-z]+)\d/)
-						if (type === null) {
-							// Regexp won't match if v.where is 'fothergill' or 'mingus'
-							type = ['', 'album'];
-						}
-						switch (type[1]) {
-							case 'album':
-								$(v.html).insertAfter(uiHelper.findAlbumDisplayer(v.where));
-								break;
+			switch (v.type) {
+				case 'insertAfter':
+					debug.log('UIHELPER', 'Insert After', v.where);
+					$('.openmenu[name="'+v.where+'"]').insertArtistAfter(v.html);
+					break;
 
-							default:
-								$(v.html).insertAfter(uiHelper.findArtistDisplayer(v.where));
-								break;
-						}
-						break;
+				case 'insertAtStart':
+					debug.log('UIHELPER', 'Insert At Start', v.where);
+					$(v.html).prependTo($('#'+v.where));
+					break;
 
-					case 'insertAtStart':
-						debug.log("Insert At Start",v.where);
-						$(v.html).prependTo($('#'+v.where));
-						break;
-				}
 			}
 		},
 
@@ -348,25 +331,10 @@ var uiHelper = function() {
 			}
 		},
 
-		removeAlbum: function(key) {
-			debug.info('UIHELPER', 'Removing Album',key);
-			try {
-				return layoutProcessor.removeAlbum(key);
-			} catch (err) {
-				$('#'+key).remove();
-				uiHelper.findAlbumDisplayer(key).remove();
-				uiHelper.findAlbumParent(key).remove();
-			}
-		},
-
-		removeArtist: function(v) {
-			debug.info('UIHELPER', 'Removing Artist', v);
-			try {
-				return layoutProcessor.removeArtist(v);
-			} catch (err) {
-				$("#"+v).remove();
-				uiHelper.findArtistDisplayer(v).remove();
-			}
+		removeFromCollection: function(key) {
+			debug.info('UIHELPER', 'Removing',key);
+			$('#'+key).removeCollectionDropdown();
+			$('.openmenu[name="'+key+'"]').removeCollectionItem();
 		},
 
 		prepareCollectionUpdate: function() {
@@ -526,14 +494,6 @@ var uiHelper = function() {
 		setupPersonalRadio: function() {
 			try {
 				return layoutProcessor.setupPersonalRadio();
-			} catch (err) {
-
-			}
-		},
-
-		postAlbumMenu: function() {
-			try {
-				return layoutProcessor.postAlbumMenu();
 			} catch (err) {
 
 			}

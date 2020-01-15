@@ -146,7 +146,7 @@ var collectionHelper = function() {
 		if (dbQueue.queuelength() > 0) {
 			debug.info("UI","Deferring updates due to outstanding requests");
 			clearTimeout(update_timer);
-			update_timer = setTimeout(updateUIElements, 1000);
+			update_timer = setTimeout(updateUIElements, 500);
 			return;
 		}
 
@@ -154,13 +154,13 @@ var collectionHelper = function() {
 
 			if (rdata && rdata.hasOwnProperty('deletedalbums')) {
 				$.each(rdata.deletedalbums, function(i, v) {
-					uiHelper.removeAlbum(v);
+					uiHelper.removeFromCollection(v);
 				});
 			}
 
 			if (rdata && rdata.hasOwnProperty('deletedartists')) {
 				$.each(rdata.deletedartists, function(i, v) {
-					uiHelper.removeArtist(v);
+					uiHelper.removeFromCollection(v);
 				});
 			}
 
@@ -178,10 +178,8 @@ var collectionHelper = function() {
 				$.each(rdata.modifiedartists, function(i,v) {
 					// The only thing to do with artists is to add them in if they don't exist
 					// NOTE. Do this AFTER inserting new albums, because if we're doing albumbyartist with banners showing
-					// then the insertAfter logic will be wrong if we've already inserted the artist banner. We also need
-					// to remove and replace the banner when that sort option is used, because we only insertAfter an album ID
-					var x = uiHelper.findArtistDisplayer(v.id);
-					if (x.length == 0) {
+					// then the insertAfter logic will be wrong if we've already inserted the artist banner.
+					if ($('.openmenu[name="'+v.id+'"]').length == 0 && $('#'+v.id).length == 0) {
 						uiHelper.insertArtist(v);
 					}
 				});
@@ -201,6 +199,11 @@ var collectionHelper = function() {
 				infobar.markCurrentTrack();
 			}
 
+			// If we had an insertAtStart for collection, it'll be inserted before the stats display
+			// so just pop that out and back in again.
+			$('#fothergill').detach().prependTo($('#collection'));
+			$('#mingus').detach().prependTo($('#audiobooks'));
+
 			if (rdata && rdata.hasOwnProperty('stats')) {
 				// stats is another html fragment which is the contents of the
 				// statistics box at the top of the collection
@@ -217,7 +220,6 @@ var collectionHelper = function() {
 
 		});
 
-		$("#collection").scootTheAlbums();
 		if (return_callback) {
 			return_callback();
 			return_callback = null;
@@ -326,24 +328,6 @@ var collectionHelper = function() {
 			loadFileBrowser();
 		},
 
-		// scootTheAlbums: function(jq) {
-		// 	if (prefs.downloadart) {
-		// 		debug.trace("COLLECTION", "Scooting albums in",jq.attr('id'));
-		// 		$.each(jq.find("img.notexist"), function() {
-		// 			coverscraper.GetNewAlbumArt($(this));
-		// 		});
-		// 	}
-		// 	debug.trace("COLLECTION", "Loading Images In",jq.attr('id'));
-		// 	if (typeof(IntersectionObserver) == 'function') {
-		// 		jq.find("img.lazy").get().forEach(img => imageLoader.observe(img));
-		// 	} else {
-		// 		jq.find("img.lazy").each(function() {
-		// 			var self = $(this);
-		// 			self.attr('src', self.attr('data-src')).removeAttr('data-src').removeClass('lazy');
-		// 		});
-		// 	}
-		// },
-
 		updateCollectionDisplay: function(rdata, callback) {
 			// rdata contains HTML fragments to insert into the collection
 			// Otherwise we would have to reload the entire collection panel every time,
@@ -354,7 +338,7 @@ var collectionHelper = function() {
 				clearTimeout(update_timer);
 				returned_data.push(rdata);
 				return_callback = callback;
-				update_timer = setTimeout(updateUIElements, 1000);
+				update_timer = setTimeout(updateUIElements, 500);
 			}
 		}
 	}

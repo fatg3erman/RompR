@@ -94,13 +94,9 @@ var clickRegistry = function() {
 			} else {
 				debug.error('DOMENU', 'Unfilled menu element with no loader',clickedElement);
 			}
-			clickedElement.stopSpinner();
 			target.removeClass('notfilled');
-			uiHelper.makeResumeBar(target);
-			infobar.markCurrentTrack();
-			if (prefs.clickmode == 'single') {
-				target.find('.invisibleicon').removeClass('invisibleicon');
-			}
+			clickedElement.stopSpinner();
+			target.updateTracklist();
 			if (target.hasClass('is-albumlist')) {
 				uiHelper.doThingsAfterDisplayingListOfAlbums(target);
 				if (scoot) {
@@ -110,6 +106,16 @@ var clickRegistry = function() {
 		}
 	}
 }();
+
+jQuery.fn.updateTracklist = function() {
+	return this.each(function() {
+		uiHelper.makeResumeBar($(this));
+		infobar.markCurrentTrack();
+		if (prefs.clickmode == 'single') {
+			$(this).find('.invisibleicon').removeClass('invisibleicon');
+		}
+	});
+}
 
 function getAlbumUrl(clickedElement, menutoopen) {
 	return "albums.php?item="+menutoopen;
@@ -124,6 +130,12 @@ jQuery.fn.clearOut = function() {
 		var self = $(this);
 		if (!self.is(':empty')) {
 			self.find('.selected').removeFromSelection();
+			if ($(this).find('.menu_opened').length > 0) {
+				// Although removeFromSelection does close the popup menu, it only does that
+				// for tracks, not albums in the phone/skypotato skin
+				closePopupMenu();
+				$(this).find('.menu_opened').removeClass('menu_opened');
+			}
 			if (typeof(IntersectionObserver) == 'function' && self.hasClass('is-albumlist')) {
 				self.find("img.lazy").get().forEach(img => imageLoader.unobserve(img));
 			}
@@ -142,7 +154,10 @@ jQuery.fn.scootTheAlbums = function() {
 		}
 		debug.trace("COLLECTION", "Loading Images In",self.attr('id'));
 		if (typeof(IntersectionObserver) == 'function') {
+			let starttime = Date.now();
 			self.find("img.lazy").get().forEach(img => imageLoader.observe(img));
+			let endtime = Date.now() - starttime;
+			debug.info('SCOOTING', 'Scooting albums in',self.attr('id'),'took',endtime,'ms');
 		} else {
 			self.find("img.lazy").each(function() {
 				var myself = $(this);
@@ -783,6 +798,7 @@ function popupMenu(event, element) {
 
 	this.performAction = function(event, clickedElement) {
 		selection = new Array();
+		debug.log('POPUPMENU', 'Saving selection');
 		$('.selected').each(function() {
 			var item = {name: $(this).attr('name'), menu: false};
 			if ($(this).find('.clicktrackmenu').hasClass('menu_opened')) {
@@ -793,13 +809,14 @@ function popupMenu(event, element) {
 		for (var i in actions) {
 			if (clickedElement.hasClass(i)) {
 				clickedElement.find('.collectionicon').makeSpinner();
+				debug.log('POPUPMENU', 'Calling',actions[i].name,'for action',i);
 				actions[i](clickedElement, self.restoreSelection);
 			}
 		}
 	}
 
 	this.restoreSelection = function() {
-		debug.log('POPUPMENU', 'Restoring Selection');
+		debug.log('POPUPMENU', 'Restoring Selection', selection);
 		holderdiv.find('.spinner').stopSpinner();
 		selection.forEach(function(n) {
 			if (!$('[name="'+n.name+'"]').hasClass('selected')) {

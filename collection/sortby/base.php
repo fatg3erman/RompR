@@ -146,17 +146,17 @@ class sortby_base {
 	public function initial_root_insert() {
 		switch($this->why) {
 			case 'a':
-				$where = 'fothergill';
+				$where = 'collection';
 				break;
 			case 'b':
-				$where = 'searchstats';
+				$where = 'searchresultholder';
 				break;
 			case 'z':
-				$where = 'mingus';
+				$where = 'audiobooks';
 				break;
 		}
 		return array(
-			'type' => 'insertAfter',
+			'type' => 'insertAtStart',
 			'where' => $where
 		);
 	}
