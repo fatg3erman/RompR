@@ -168,7 +168,7 @@ class mopidyPlayer extends base_mpd_player {
                 break;
 
             default:
-    			check_undefined_tags($filedata);
+    			$this->check_undefined_tags($filedata);
                 $filedata['folder'] = dirname($filedata['unmopfile']);
                 break;
         }
