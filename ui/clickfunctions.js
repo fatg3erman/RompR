@@ -134,7 +134,6 @@ jQuery.fn.clearOut = function() {
 				// Although removeFromSelection does close the popup menu, it only does that
 				// for tracks, not albums in the phone/skypotato skin
 				closePopupMenu();
-				$(this).find('.menu_opened').removeClass('menu_opened');
 			}
 			if (typeof(IntersectionObserver) == 'function' && self.hasClass('is-albumlist')) {
 				self.find("img.lazy").get().forEach(img => imageLoader.unobserve(img));
@@ -221,6 +220,7 @@ function setPlayClickHandlers() {
 */
 
 function closePopupMenu() {
+	$('.menu_opened').removeClass('menu_opened');
 	$('#popupmenu').remove();
 }
 
@@ -600,8 +600,7 @@ jQuery.fn.removeFromSelection = function() {
 		$(this).removeClass('selected');
 		if (prefs.clickmode == 'double') {
 			$(this).find('div.clicktrackmenu').not('.invisibleicon').addClass('invisibleicon');
-			if ($(this).find('div.clicktrackmenu').hasClass('menu_opened')) {
-				$(this).find('div.clicktrackmenu').removeClass('menu_opened');
+			if ($(this).find('div.clicktrackmenu.menu_opened').length > 0 || $(this).find('div.clickalbummenu.menu_opened').length) {
 				closePopupMenu();
 			}
 		}
@@ -746,7 +745,7 @@ function popupMenu(event, element) {
 			justclosed = true;
 			return;
 		}
-		$('.menu_opened').removeClass('menu_opened');
+		closePopupMenu();
 		$(button).addClass('menu_opened');
 		justclosed = false;
 		maindiv = $('<div>', {id: 'popupmenu', class:'topdropmenu dropshadow normalmenu albumbitsmenu', style: 'opacity:0;display:block'}).appendTo($('body'));
