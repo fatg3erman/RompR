@@ -1492,7 +1492,7 @@ function popup(opts) {
 		self.adjustCSS(true, true);
 		self.setCSS();
 		win.css({opacity: 1});
-		layoutProcessor.addCustomScrollBar(contentholder);
+		contentholder.addCustomScrollBar();
 	}
 
 	this.close = function(event) {

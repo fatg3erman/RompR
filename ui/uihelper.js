@@ -271,6 +271,26 @@ jQuery.fn.insertArtistAfter = function(html) {
 	});
 }
 
+jQuery.fn.addCustomScrollBar = function() {
+	return this.each(function() {
+		$(this).mCustomScrollbar({
+			theme: "light-thick",
+			scrollInertia: 300,
+			contentTouchScroll: 25,
+			mouseWheel: {
+				scrollAmount: parseInt(prefs.wheelscrollspeed),
+			},
+			alwaysShowScrollbar: 1,
+			advanced: {
+				updateOnContentResize: true,
+				updateOnImageLoad: false,
+				autoScrollOnFocus: false,
+				autoUpdateTimeout: 500,
+			}
+		});
+	});
+}
+
 // Functions that could just be in layoutProcessor, but it makes maintenance easier
 // if we have a proxy like this so we don't have to add new stuff to every single skin.
 

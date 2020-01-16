@@ -193,10 +193,6 @@ var layoutProcessor = function() {
 			}
 		},
 
-		preHorse: function() {
-
-		},
-
 		hideBrowser: function() {
 
 		},
@@ -217,24 +213,6 @@ var layoutProcessor = function() {
 					$("#"+panel).fadeIn('fast');
 				}
 			}
-		},
-
-		addCustomScrollBar: function(value) {
-			$(value).mCustomScrollbar({
-				theme: "light-thick",
-				scrollInertia: 300,
-				contentTouchScroll: 25,
-				mouseWheel: {
-					scrollAmount: parseInt(prefs.wheelscrollspeed),
-				},
-				alwaysShowScrollbar: 1,
-				advanced: {
-					updateOnContentResize: true,
-					updateOnImageLoad: false,
-					autoScrollOnFocus: false,
-					autoUpdateTimeout: 500,
-				}
-			});
 		},
 
 		scrollCollectionTo: function(holder, jq) {
@@ -454,10 +432,9 @@ var layoutProcessor = function() {
 				handleshow: false
 			});
 			$(".stayopen").not('.dontstealmyclicks').on('click', function(ev) {ev.stopPropagation() });
-			$.each(my_scrollers,
-				function( index, value ) {
-				layoutProcessor.addCustomScrollBar(value);
-			});
+			for (let value of my_scrollers) {
+				$(value).addCustomScrollBar();
+			};
 			$("#sources").find('.mCSB_draggerRail').resizeHandle({
 				adjusticons: ['#sourcescontrols', '#infopanecontrols'],
 				side: 'left',

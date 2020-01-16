@@ -757,7 +757,7 @@ function popupMenu(event, element) {
 			holderdiv.attr(a, $(element).attr(a));
 		});
 		clickRegistry.addClickHandlers('clicksubmenu', self.openSubMenu);
-		layoutProcessor.addCustomScrollBar('#popupmenu');
+		$('#popupmenu').addCustomScrollBar();
 		return holderdiv;
 	}
 
@@ -842,9 +842,9 @@ function popupMenu(event, element) {
 			$(this).children('i').remove();
 			var mytag = $(this).find('span').html();
 			if (track_tags.indexOf(mytag) == -1) {
-				$(this).addClass('clicktagtrack').prepend('<i class="icon-blank collectionicon spinnable"></i>')
+				$(this).addClass('clicktagtrack').prepend('<i class="icon-blank collectionicon spinable"></i>')
 			} else {
-				$(this).addClass('clickuntagtrack').prepend('<i class="icon-tick collectionicon spinnable"></i>')
+				$(this).addClass('clickuntagtrack').prepend('<i class="icon-tick collectionicon spinable"></i>')
 			}
 		});
 	}
@@ -894,7 +894,7 @@ function makeTrackMenu(e, element) {
 	[0,1,2,3,4,5].forEach(function(r) {
 		ratsub.append($('<div>', {
 			class: 'backhi clickable menuitem clickratetrack rate_'+r,
-		}).html('<i class="icon-blank collectionicon"></i><i class="icon-'+r+'-stars rating-icon-small"></i>'));
+		}).html('<i class="icon-blank collectionicon spinable"></i><i class="icon-'+r+'-stars rating-icon-small"></i>'));
 
 	});
 

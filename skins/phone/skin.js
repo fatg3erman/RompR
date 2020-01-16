@@ -249,6 +249,10 @@ jQuery.fn.insertArtistAfter = function(html) {
 	});
 }
 
+jQuery.fn.addCustomScrollBar = function() {
+	return this;
+}
+
 /* Touchwipe for playlist only, based on the more general jquery touchwipe */
 /*! jquery.touchwipe - v1.3.0 - 2015-01-08
 * Copyright (c) 2015 Josh Stafford; Licensed MIT */
@@ -498,25 +502,12 @@ var layoutProcessor = function() {
 			infobar.smartradio(language.gettext('label_preparing'));
 		},
 
-		preHorse: function() {
-			if (!$("#playlistbuttons").is(":visible")) {
-				// Make the playlist scroller shorter so the window doesn't get a vertical scrollbar
-				// while the buttons are being slid down
-				var newheight = $("#pscroller").height() - 48;
-				$("#pscroller").css("height", newheight.toString()+"px");
-			}
-		},
-
 		scrollPlaylistToCurrentTrack: function() {
 			var scrollto = playlist.getCurrentTrackElement();
 			if (prefs.scrolltocurrent && scrollto.length > 0) {
 				var offset = 0 - ($('#pscroller').outerHeight(true) / 2);
 				$('#pscroller').scrollTo(scrollto, 800, {offset: {top: offset}, easing: 'swing'});
 			}
-		},
-
-		addCustomScrollBar: function(value) {
-
 		},
 
 		sourceControl: function(source) {

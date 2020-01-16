@@ -205,15 +205,6 @@ var layoutProcessor = function() {
 			});
 		},
 
-		preHorse: function() {
-			if (!$("#playlistbuttons").is(":visible")) {
-				// Make the playlist scroller shorter so the window doesn't get a vertical scrollbar
-				// while the buttons are being slid down
-				var newheight = $("#pscroller").height() - 48;
-				$("#pscroller").css("height", newheight.toString()+"px");
-			}
-		},
-
 		hideBrowser: function() {
 			if (prefs.hidebrowser) {
 				prefs.save({playlistwidthpercent: 50, sourceswidthpercent: 50});
@@ -236,24 +227,6 @@ var layoutProcessor = function() {
 			}
 			animatePanels();
 			return false;
-		},
-
-		addCustomScrollBar: function(value) {
-			$(value).mCustomScrollbar({
-				theme: "light-thick",
-				scrollInertia: 300,
-				contentTouchScroll: 25,
-				mouseWheel: {
-					scrollAmount: parseInt(prefs.wheelscrollspeed),
-				},
-				alwaysShowScrollbar: 1,
-				advanced: {
-					updateOnContentResize: true,
-					updateOnImageLoad: false,
-					autoScrollOnFocus: false,
-					autoUpdateTimeout: 500,
-				}
-			});
 		},
 
 		scrollCollectionTo: function(holder, jq) {
@@ -376,10 +349,9 @@ var layoutProcessor = function() {
 				handleshow: false
 			});
 			$(".stayopen").not('.dontstealmyclicks').on('click', function(ev) {ev.stopPropagation() });
-			$.each(my_scrollers,
-				function( index, value ) {
-				layoutProcessor.addCustomScrollBar(value);
-			});
+			for (let value of my_scrollers) {
+				$(value).addCustomScrollBar();
+			};
 			$("#sources").find('.mCSB_draggerRail').resizeHandle({
 				adjusticons: ['#sourcescontrols', '#infopanecontrols'],
 				side: 'left',
