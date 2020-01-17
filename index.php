@@ -7,9 +7,17 @@ require_once ("includes/vars.php");
 // Check to see if this is a mobile browser
 //
 if ($skin === null) {
-   logger::mark("INIT", "Detecting window size to decide which skin to use....");
-   include('checkwindowsize.php');
-   exit(0);
+	logger::mark("INIT", "Detecting browser...");
+	require_once('includes/Mobile_Detect.php');
+	$md = new Mobile_Detect;
+	if ($md->isMobile()) {
+		logger::info('INIT', 'Browser is a mobile browser');
+		$skin = 'phone';
+	} else {
+		logger::info('INIT', 'Browser is a desktop browser');
+		$skin = 'desktop';
+	}
+	setcookie('skin', $skin, time()+365*24*60*60*10,'/');
 }
 
 logger::debug("INIT", "Using skin : ".$skin);

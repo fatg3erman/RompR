@@ -106,25 +106,24 @@ function albumHeader($obj) {
 	if ($obj['id'] == 'nodrop') {
 		// Hacky at the moment, we only use nodrop for streams but here there is no checking
 		// because I'm lazy.
-		$h .= '<div class="clickstream playable clickicon containerbox menuitem '.$obj['class'].'" name="'.rawurlencode($obj['streamuri']).'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
+		$h .= '<div class="clickstream playable clickicon '.$obj['class'].'" name="'.rawurlencode($obj['streamuri']).'" streamname="'.$obj['streamname'].'" streamimg="'.$obj['streamimg'].'">';
 	} else {
 		if (array_key_exists('plpath', $obj)) {
 			logger::debug('ALBUMHEADER','plpath is',$obj['plpath']);
 			$h .= '<input type="hidden" name="dirpath" value="'.$obj['plpath'].'" />';
 		}
-		$h .= '<div class="openmenu menu containerbox menuitem '.$obj['class'].'" name="'.$obj['id'].'">';
+		$h .= '<div class="openmenu menu '.$obj['class'].'" name="'.$obj['id'].'">';
 	}
-
+	$h .= '<div class="containerbox menuitem">';
 	$h .= '<div class="smallcover fixed">';
 	$albumimage = new baseAlbumImage(array('baseimage' => $obj['Image']));
 	$h .= $albumimage->html_for_image($obj, 'smallcover fixed', 'small');
 	$h .= '</div>';
-
 	$h .= domainHtml($obj['AlbumUri']);
-
 	$h .= artistNameHtml($obj);
-
 	$h .= '</div>';
+	$h .= '</div>';
+	$h .= '<div class="progressbar invisible wafflything"><div class="wafflebanger"></div></div>';
 	$h .= '</div>';
 	return $h;
 }

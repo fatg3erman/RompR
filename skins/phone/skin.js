@@ -74,6 +74,10 @@ jQuery.fn.makeSpinner = function() {
 			}
 			self.attr("originalclass", originalclasses.join(" "));
 			self.addClass('icon-spin6 spinner');
+		} else if (self.find('.wafflything').length > 0) {
+			var waffler = self.find('.wafflything');
+			waffler.fadeIn(100).children('.wafflebanger').addClass('wafflebanger-moving');
+			self.addClass('clickflash');
 		} else {
 			self.addClass('clickflash');
 		}
@@ -90,6 +94,10 @@ jQuery.fn.stopSpinner = function() {
 				self.addClass(self.attr("originalclass"));
 				self.removeAttr("originalclass");
 			}
+		} else if (self.find('.wafflything').length > 0) {
+			var waffler = self.find('.wafflything');
+			waffler.hide().children('.wafflebanger').removeClass('wafflebanger-moving');
+			self.removeClass('clickflash');
 		} else {
 			self.removeClass('clickflash');
 		}
