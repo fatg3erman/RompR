@@ -368,22 +368,6 @@ function hidePanel(panel) {
 	collectionHelper.rejigDoodahs(panel, is_hidden);
 }
 
-function doSomethingUseful(div,text) {
-	var html = '<div class="containerbox bar brick_wide">';
-	if (typeof div == "string") {
-		html = '<div class="containerbox bar menuitem brick_wide" id="spinner_'+div+'">';
-	}
-	html += '<div class="fixed alignmid">'+
-		'<i class="icon-spin6 svg-square spinner"></i></div>';
-	html += '<h3 class="expand ucfirst label">'+text+'</h3>';
-	html += '</div>';
-	if (typeof div == "object") {
-		div.append(html);
-	} else if (typeof div == "string") {
-		$("#"+div).append(html);
-	}
-}
-
 function setChooserButtons() {
 	var s = uiHelper.panelMapping();
 	$.each(s, function(key, value) {

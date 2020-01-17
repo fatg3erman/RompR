@@ -480,8 +480,7 @@ var info_musicbrainz = function() {
 				if (element.hasClass('clickdoartist')){
 					var targetdiv = element.parent().next();
 					if (!(targetdiv.hasClass('full')) && element.isClosed()) {
-						doSomethingUseful(targetdiv, language.gettext("info_gettinginfo"));
-						targetdiv.slideToggle('fast');
+						targetdiv.doSomethingUseful(language.gettext("info_gettinginfo")).slideToggle('fast');
 						getArtistData(element.attr('name'));
 						element.toggleOpen();
 						targetdiv.addClass('underline');
@@ -498,7 +497,7 @@ var info_musicbrainz = function() {
 				} else if (element.hasClass('clickdodiscography')) {
 					var targetdiv = element.parent().next();
 					if (!(targetdiv.hasClass('full')) && element.isClosed()) {
-						doSomethingUseful(targetdiv, language.gettext("info_gettinginfo"));
+						targetdiv.doSomethingUseful(language.gettext("info_gettinginfo"));
 						getArtistReleases(element.attr('name'), 'discography_'+element.attr('name'));
 						element.toggleOpen();
 						targetdiv.slideToggle('fast');

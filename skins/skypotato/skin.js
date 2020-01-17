@@ -209,7 +209,12 @@ jQuery.fn.isClosed = function() {
 jQuery.fn.makeSpinner = function() {
 	return this.each(function() {
 		var self = $(this);
-		if (self.hasClass('icon-toggle-closed') || self.hasClass('icon-toggle-open') || self.hasClass('spinable')) {
+		if (self.find('.wafflything').length > 0) {
+			var waffler = self.find('.wafflything');
+			if (!wafller.children('.wafflebanger').first().hasClass("wafflebanger-moving")) {
+				waffler.fadeIn(100).children('.wafflebanger').addClass('wafflebanger-moving');
+			}
+		} else if (self.hasClass('icon-toggle-closed') || self.hasClass('icon-toggle-open') || self.hasClass('spinable')) {
 			if (self.hasClass('icon-spin6') || self.hasClass('spinner')) {
 				debug.trace('UIHELPER', 'Trying to create spinner on already spinning element');
 				return;
@@ -227,9 +232,6 @@ jQuery.fn.makeSpinner = function() {
 			}
 			self.attr("originalclass", originalclasses.join(" "));
 			self.addClass('icon-spin6 spinner');
-		} else if (self.find('.wafflything').length > 0) {
-			var waffler = self.find('.wafflything');
-			waffler.fadeIn(100).children('.wafflebanger').addClass('wafflebanger-moving');
 		} else {
 			if (!$('#'+self.attr('name')).is(':visible')) {
 				self.addClass('clickflash');

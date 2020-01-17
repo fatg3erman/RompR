@@ -278,8 +278,7 @@ var info_discogs = function() {
 				if (element.hasClass('clickdoartist')) {
 					var targetdiv = element.parent().next();
 					if (!(targetdiv.hasClass('full')) && element.isClosed()) {
-						doSomethingUseful(targetdiv, language.gettext("info_gettinginfo"));
-						targetdiv.slideToggle('fast');
+						targetdiv.doSomethingUseful(language.gettext("info_gettinginfo")).slideToggle('fast');
 						getArtistData(element.attr('name'));
 						element.toggleOpen();
 						targetdiv.addClass('underline');
@@ -297,12 +296,12 @@ var info_discogs = function() {
 				} else if (element.hasClass('clickreleasepage')) {
 					var targetdiv = element.parent().parent().parent().attr("name");
 					element.parent().parent().parent().addClass("expectingpage_"+element.text());
-					doSomethingUseful(element.parent().parent(), language.gettext("info_gettinginfo"));
+					element.parent().parent().doSomethingUseful(language.gettext("info_gettinginfo"));
 					getArtistReleases(element.attr('name'), element.text());
 				} else if (element.hasClass('clickdodiscography')) {
 					var targetdiv = element.parent().next();
 					if (!(targetdiv.hasClass('full')) && element.isClosed()) {
-						doSomethingUseful(targetdiv, language.gettext("info_gettinginfo"));
+						targetdiv.doSomethingUseful(language.gettext("info_gettinginfo"));
 						targetdiv.addClass("expectingpage_1");
 						getArtistReleases(element.attr('name'), 1);
 						element.toggleOpen();

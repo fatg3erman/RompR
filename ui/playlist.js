@@ -527,7 +527,7 @@ var playlist = function() {
 			if (ui.hasClass("draggable")) {
 				// Something dragged from the albums list
 				debug.log("PLAYLIST","Something was dropped from the albums list");
-				doSomethingUseful(ui.attr('id'), language.gettext('label_incoming'));
+				ui.doSomethingUseful(language.gettext('label_incoming'));
 				playlist.addItems($('.selected').filter(removeOpenItems), moveto);
 			} else if (ui.hasClass('track') || ui.hasClass('item')) {
 				// Something dragged within the playlist
@@ -681,8 +681,7 @@ var playlist = function() {
 		},
 
 		waiting: function() {
-			$("#waiter").empty();
-			doSomethingUseful('waiter', language.gettext("label_incoming"));
+			$("#waiter").empty().doSomethingUseful(language.gettext("label_incoming"));
 		},
 
 		hideItem: function(i) {

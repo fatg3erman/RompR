@@ -274,15 +274,13 @@ var collectionHelper = function() {
 
 		prepareForLiftOff: function(text) {
 			notify = infobar.permnotify(text);
-			$("#collection").empty();
-			$("#audiobooks").empty();
-			doSomethingUseful('collection', text);
+			$("#collection").clearOut().empty().doSomethingUseful(text);
+			$("#audiobooks").clearOut().empty();
 			var x = $('<div>',{ id: 'updatemonitor', class: 'tiny', style: 'padding-left:1em;margin-right:1em'}).insertAfter($('#spinner_collection'));
 		},
 
 		markWaitFileList: function(text) {
-			$("#filecollection").empty();
-			doSomethingUseful("filecollection", text);
+			$("#filecollection").empty().doSomethingUseful(text);
 		},
 
 		collectionKey: function(w) {

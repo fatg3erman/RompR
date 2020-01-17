@@ -378,7 +378,6 @@ var podcasts = function() {
 				return true;
 			}
 			$('#podcast_search').empty();
-			doSomethingUseful('podcast_search', language.gettext("label_searching"));
 			await clickRegistry.loadContentIntoTarget({
 				target: $('#podcast_search'),
 				clickedElement: $('#podcastsearch').parent().next(),
@@ -386,11 +385,10 @@ var podcasts = function() {
 				data: {search: encodeURIComponent($('#podcastsearch').val()), populate: 1}
 			});
 			$('#podcast_search').prepend('<div class="configtitle dropdown-container brick_wide" style="width:100%"><div class="textcentre expand"><b>Search Results for &quot;'+$('#podcastsearch').val()+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch podcast fixed"></i></div>');
-			$('#spinner_podcast_search').remove();
 		},
 
 		clearsearch: function() {
-			$('#podcast_search').empty();
+			$('#podcast_search').clearOut().empty();
 			$('#podsclear').hide();
 		},
 

@@ -41,33 +41,45 @@ jQuery.fn.toggleClosed = function() {
 jQuery.fn.makeSpinner = function() {
 	return this.each(function() {
 		var self = $(this);
-		if (self.hasClass('icon-spin6') || $(this).hasClass('spinner')) {
-			debug.debug('UIHELPER', 'Trying to create spinner on already spinning element');
-			return;
-		}
-		var originalclasses = new Array();
-		var classes = '';
-		if (self.attr("class")) {
-			var classes = self.attr("class").split(/\s/);
-		}
-		for (let c of classes) {
-			if (c == "invisible" || (/^icon/.test(c))) {
-				originalclasses.push(c);
-				self.removeClass(c);
+		if (self.find('.wafflything').length > 0) {
+			var waffler = self.find('.wafflything');
+			if (!wafller.children('.wafflebanger').first().hasClass("wafflebanger-moving")) {
+				waffler.fadeIn(100).children('.wafflebanger').addClass('wafflebanger-moving');
 			}
+		} else {
+			if (self.hasClass('icon-spin6') || $(this).hasClass('spinner')) {
+				debug.debug('UIHELPER', 'Trying to create spinner on already spinning element');
+				return;
+			}
+			var originalclasses = new Array();
+			var classes = '';
+			if (self.attr("class")) {
+				var classes = self.attr("class").split(/\s/);
+			}
+			for (let c of classes) {
+				if (c == "invisible" || (/^icon/.test(c))) {
+					originalclasses.push(c);
+					self.removeClass(c);
+				}
+			}
+			self.attr("originalclass", originalclasses.join(" "));
+			self.addClass('icon-spin6 spinner');
 		}
-		self.attr("originalclass", originalclasses.join(" "));
-		self.addClass('icon-spin6 spinner');
 	});
 }
 
 jQuery.fn.stopSpinner = function() {
 	return this.each(function() {
 		var self = $(this);
-		self.removeClass('icon-spin6 spinner');
-		if (self.attr("originalclass")) {
-			self.addClass(self.attr("originalclass"));
-			self.removeAttr("originalclass");
+		if (self.find('.wafflything').length > 0) {
+			var waffler = self.find('.wafflything');
+			waffler.hide().children('.wafflebanger').removeClass('wafflebanger-moving');
+		} else {
+			self.removeClass('icon-spin6 spinner');
+			if (self.attr("originalclass")) {
+				self.addClass(self.attr("originalclass"));
+				self.removeAttr("originalclass");
+			}
 		}
 	});
 }
@@ -292,6 +304,20 @@ jQuery.fn.addCustomScrollBar = function() {
 jQuery.fn.doThingsAfterDisplayingListOfAlbums = function() {
 	return this;
 }
+
+jQuery.fn.doSomethingUseful = function(text) {
+	return this.each(function() {
+		var self = $(this);
+		var useful = $('<div>', {class: 'bar brick_wide fullwidth'});
+		if (self.prop('id')) {
+			useful.prop('id', 'spinner_'+self.prop('id'));
+		}
+		useful.append('<div class="menuitem textcentre">'+text+'</div>');
+		useful.append('<div class="progressbar wafflything"><div class="wafflebanger wafflebanger-moving"></div></div>');
+		useful.appendTo(self);
+	});
+}
+
 
 // Functions that could just be in layoutProcessor, but it makes maintenance easier
 // if we have a proxy like this so we don't have to add new stuff to every single skin.
