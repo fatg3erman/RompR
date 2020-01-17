@@ -227,10 +227,14 @@ jQuery.fn.makeSpinner = function() {
 			}
 			self.attr("originalclass", originalclasses.join(" "));
 			self.addClass('icon-spin6 spinner');
+		} else if (self.find('.wafflything').length > 0) {
+			var waffler = self.find('.wafflything');
+			waffler.fadeIn(100).children('.wafflebanger').addClass('wafflebanger-moving');
 		} else {
-			self.addClass('clickflash');
+			if (!$('#'+self.attr('name')).is(':visible')) {
+				self.addClass('clickflash');
+			}
 		}
-		return this;
 	});
 }
 
@@ -243,10 +247,12 @@ jQuery.fn.stopSpinner = function() {
 				self.addClass(self.attr("originalclass"));
 				self.removeAttr("originalclass");
 			}
+		} else if (self.find('.wafflything').length > 0) {
+			var waffler = self.find('.wafflything');
+			waffler.hide().children('.wafflebanger').removeClass('wafflebanger-moving');
 		} else {
 			self.removeClass('clickflash');
 		}
-		return this;
 	});
 }
 
@@ -301,7 +307,12 @@ jQuery.fn.insertAlbumAtStart = function(albumindex, html, tracklist) {
 			var dropdown = $('#'+albumindex).detach().html(tracklist).updateTracklist().appendTo(newthing.find('.containerbox.openmenu'));
 		}
 		$('.openmenu[name="'+albumindex+'"]').removeCollectionItem();
-		newthing.prependTo(me).scootTheAlbums();
+		if (me.children('.clickalbum').length > 0) {
+			// In 'Artist' mode the first thing in the panel is a title followed by a Play All Link
+			newthing.insertAfter(me.children('.clickalbum').last()).scootTheAlbums();
+		} else {
+			newthing.prependTo(me).scootTheAlbums();
+		}
 		if (isopen) {
 			dropdown.menuReveal();
 		}
@@ -316,6 +327,12 @@ jQuery.fn.insertArtistAfter = function(html) {
 		} else {
 			$(html).insertAfter(me.parent()).insertDummySpacers();
 		}
+	});
+}
+
+jQuery.fn.doThingsAfterDisplayingListOfAlbums = function() {
+	return this.each(function() {
+		$(this).appendDummySpacers();
 	});
 }
 
@@ -496,10 +513,6 @@ var layoutProcessor = function() {
 			loading_ui = true;
 			uiHelper.sourceControl(prefs.chooser);
 			collectionHelper.forceCollectionReload();
-		},
-
-		doThingsAfterDisplayingListOfAlbums: function(panel) {
-			panel.appendDummySpacers();
 		},
 
 		afterHistory: function() {
@@ -924,31 +937,11 @@ var layoutProcessor = function() {
 
 		// Optional Additions
 
-		preparePlaylistTarget: function(t) {
-			var d = $('#'+t).find('.tagh.albumthing').clone();
-			return d;
-		},
-
-		postPlaylistTarget: function(t, x) {
-			$('#'+t).prepend(x);
-			$('#'+t).find('div.dropdown-container.configtitle').remove();
-		},
-
 		prepareCollectionUpdate: function() {
 			$('.collectionpanel.searcher').remove();
 			$('.collectionpanel.albumlist').remove();
 			$('.collectionpanel.audiobooklist').remove();
 			$('#searchresultholder').empty();
-		},
-
-		postPodcastSubscribe: function(data, index) {
-			$('.menu[name="podcast_'+index+'"]').parent().fadeOut('fast', function() {
-				$('.menu[name="podcast_'+index+'"]').parent().removeDummySpacers().remove();
-				$('#podcast_'+index).remove();
-				$("#fruitbat").html(data);
-				podcasts.doNewCount();
-				layoutProcessor.doThingsAfterDisplayingListOfAlbums($("#fruitbat"));
-			});
 		},
 
 		createPluginHolder: function(icon, title, id, panel) {

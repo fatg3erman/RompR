@@ -123,6 +123,7 @@ function albumHeader($obj) {
 	$h .= $albumimage->html_for_image($obj, 'jalopy', 'medium');
 
 	$h .= '<div class="tagh albumthing">';
+	$h .= '<div class="progressbar invisible wafflything"><div class="wafflebanger"></div></div>';
 	$h .= '<div class="title-menu">';
 
 	$h .= domainHtml($obj['AlbumUri']);
@@ -223,7 +224,8 @@ function printDirectoryItem($fullpath, $displayname, $prefix, $dircount, $printc
 }
 
 function directoryControlHeader($prefix, $name = null) {
-	if ($name !== null) {
+	logger::log('SKIN', 'DCH prefix is',$prefix,'name is',$name);
+	if ($name !== null && !preg_match('/^pholder_/', $prefix)) {
 		print '<div class="dropdown-container configtitle fullwidth"><div class="textcentre expand"><b>'.$name.'</b></div></div>';
 	}
 }
@@ -278,7 +280,8 @@ function addPlaylistControls($html, $delete, $is_user, $name) {
 		$h .= '<i class="icon-cancel-circled fixed smallicon clickable clickicon clickdelete'.$add.'playlist"></i>';
 		$h .= '<input type="hidden" value="'.$name.'" />';
 		$h .= '</div>';
-		$out->find('.helpfulalbum')->append($h);
+		// $out->find('.helpfulalbum')->append($h);
+		phpQuery::newDocument($h)->insertAfter($out->find('img.plimage'));
 	}
 	return $out;
 }

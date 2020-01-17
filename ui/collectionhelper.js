@@ -87,8 +87,7 @@ var collectionHelper = function() {
 					$('[name="donkeykong"]').makeFlasher({flashtime: 0.5, repeats: 3});
 				}
 				data = null;
-				$("#collection").scootTheAlbums();
-				uiHelper.doThingsAfterDisplayingListOfAlbums($('#collection'));
+				$("#collection").doThingsAfterDisplayingListOfAlbums().scootTheAlbums();
 				loadAudiobooks();
 			})
 			.fail(function(data) {
@@ -122,8 +121,7 @@ var collectionHelper = function() {
 			$('#audiobooks').load(
 				'albums.php?item='+collectionHelper.collectionKey('z'),
 				function() {
-					$("#audiobooks").scootTheAlbums();
-					uiHelper.doThingsAfterDisplayingListOfAlbums($('#audiobooks'));
+					$("#audiobooks").doThingsAfterDisplayingListOfAlbums().scootTheAlbums();
 					check_init_tasks();
 				}
 			);

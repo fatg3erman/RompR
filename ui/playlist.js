@@ -1,3 +1,11 @@
+jQuery.fn.findPlParent = function() {
+	var el = $(this).parent();
+	while (!el.hasClass('track') && !el.hasClass('item') && !el.hasClass('booger')) {
+		el = el.parent();
+	}
+	return el;
+}
+
 var playlist = function() {
 
 	var tracklist = [];

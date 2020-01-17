@@ -26,7 +26,7 @@ function doSearchBoxes($sterms) {
 	// print '<i class="fixed podicon icon-music choose-resultmode clickable clickicon" title="'.ucfirst(get_int_text('label_resultscollection')).'"></i>';
 	// print '<i class="fixed podicon icon-folder-open-empty choose-resultmode clickable clickicon" title="'.ucfirst(get_int_text('label_resultstree')).'"></i>';
 	print '<div class="expand"></div>';
-	print '<button class="searchbutton iconbutton cleargroup" class="fixed" onclick="player.controller.search(\'search\')"></button>';
+	print '<button name="playersearch" class="searchbutton iconbutton cleargroup spinable" class="fixed" onclick="player.controller.search(\'search\')"></button>';
 	print '</div>';
 
 	print '</div>';

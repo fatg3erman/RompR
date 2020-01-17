@@ -9,12 +9,22 @@ var icecastPlugin = {
 	},
 
 	iceSearch: function() {
-		clickRegistry.loadContentIntoTarget($('#icecastlist'), $('i[name="icecastlist"]'), true, "streamplugins/85_iceScraper.php?populate=1&searchfor="+encodeURIComponent($('input[name="searchfor"]').val()));
+		clickRegistry.loadContentIntoTarget({
+			target: $('#icecastlist'),
+			clickedElement: $('.openmenu[name="icecastlist"]'),
+			uri: "streamplugins/85_iceScraper.php",
+			data: {populate: 1, searchfor: encodeURIComponent($('input[name="searchfor"]').val())}
+		});
 	},
 
 	handleClick: function(event, clickedElement) {
 		if (clickedElement.hasClass('clickicepager')) {
-			clickRegistry.loadContentIntoTarget($('#icecastlist'), $('i[name="icecastlist"]'), true, "streamplugins/85_iceScraper.php?populate=1&path="+clickedElement.attr('name'));
+			clickRegistry.loadContentIntoTarget({
+				target: $('#icecastlist'),
+				clickedElement: $('.openmenu[name="icecastlist"]'),
+				uri: "streamplugins/85_iceScraper.php",
+				data: {populate: 1, path: clickedElement.attr('name')}
+			});
 		}
 	}
 

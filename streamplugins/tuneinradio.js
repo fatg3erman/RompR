@@ -12,7 +12,11 @@ var tuneinRadioPlugin = {
 			} else {
 				var uri = tuneinRadioPlugin.loadBigRadio();
 			}
-			clickRegistry.loadContentIntoTarget($('#tuneinlist'), $('i[name="tuneinlist"]'), true, uri);
+			clickRegistry.loadContentIntoTarget({
+				target: $('#tuneinlist'),
+				clickedElement: $('i[name="tuneinlist"]'),
+				uri: uri
+			});
 		}
 	},
 

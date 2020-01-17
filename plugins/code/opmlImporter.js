@@ -112,26 +112,26 @@ var opmlImporter = function() {
 				opmlImporter.subscribeToNext(s.first());
 			} else {
 				$('[name="opml_import"]').on('click', opmlImporter.Import);
-				podcasts.reloadList();
+				podcasts.doNewCount();
 			}
 		},
 
-		subscribeToNext: function(c) {
+		subscribeToNext: async function(c) {
 			var feedUrl = c.prev().val();
-			var s = $('<i>', {class: 'icon-spin6 spinner smallicon'}).insertBefore(c);
+			var s = $('<i>', {class: 'spinable smallicon'}).insertBefore(c);
 			c.next().remove();
 			c.remove();
 			debug.log("OPML IMPORTER","Importing Podcast",feedUrl);
-			podcasts.getPodcast(feedUrl, function(flag) {
-				if (flag) {
-					debug.debug("OPML Importer", "Success");
+			await podcasts.getFromUrl(feedUrl, s);
+				// if (flag) {
+					debug.debug("OPML Importer", "Success?");
 					s.replaceWith('<i class="icon-tick smallicon"></i>');
 					opmlImporter.Import();
-				} else {
-					debug.warn("OPML Importer", "Failed to import",feedUrl);
-					s.replaceWith('<i class="icon-attention-1 smallicon"></i>');
-					opmlImporter.Import();
-				}
+				// } else {
+				// 	debug.warn("OPML Importer", "Failed to import",feedUrl);
+				// 	s.replaceWith('<i class="icon-attention-1 smallicon"></i>');
+				// 	opmlImporter.Import();
+				// }
 			});
 		}
 

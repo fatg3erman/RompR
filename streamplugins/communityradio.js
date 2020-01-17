@@ -14,7 +14,10 @@ var communityRadioPlugin = {
 		target.children('input').first().clone().insertBefore(clickedElement);
 		target.children('input').last().clone().insertBefore(clickedElement);
 		communityRadioPlugin.pagenum = clickedElement.attr('name');
-		clickRegistry.loadContentIntoTarget(target, clickedElement, true);
+		clickRegistry.loadContentIntoTarget({
+			target: target,
+			clickedElement: clickedElement
+		});
 	},
 
 	search: function(event, clickedElement) {
@@ -29,7 +32,11 @@ var communityRadioPlugin = {
 		if (!foundterm) {
 			uri = 'streamplugins/04_communityradio.php?populate=4';
 		}
-		clickRegistry.loadContentIntoTarget($('#communitystations'), $('i[name="communityradiolist"]'), true, uri);
+		clickRegistry.loadContentIntoTarget({
+			target: $('#communitystations'),
+			clickedElement: $('i[name="communityradiolist"]'),
+			uri: uri
+		});
 	},
 
 	browse: function(clickedElement, menutoopen) {

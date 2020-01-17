@@ -2256,3 +2256,34 @@ div.unplayable {
 td.dan, th.dan{
 	width: 100%;
 }
+
+.wafflything {
+	position: relative;
+	overflow:hidden;
+	height:2px !important;
+	border: none !important;
+	margin-bottom: 4px;
+}
+
+.wafflebanger {
+	height: 100%;
+	width: 50px;
+	position: relative;
+	background-image: linear-gradient(to left, rgba(255,255,255,0) 0%, rgba(255,255,255,50) 50% ,rgba(255,255,255,0) 100%);
+}
+
+@keyframes switchback {
+	0% {
+		left: -50px;
+	}
+	50% {
+		left: 100%;
+	}
+	100% {
+		left: -50px;
+	}
+}
+
+.wafflebanger-moving {
+	animation: switchback 2s linear infinite;
+}

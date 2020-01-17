@@ -691,7 +691,11 @@ function doPodcast($y, $do_searchbox) {
 				'clickable clickicon podremove podcast fixed tooltip spinable" name="podremove_'.$pm.'"></i>';
 		print '</div>';
 
-		print '<div class="marged whatdoicallthis toggledown invisible podconfigpanel" id="podconf_'.$pm.'">';
+		if (array_key_exists('configvisible', $_REQUEST) && $_REQUEST['configvisible'] == 1) {
+			print '<div class="marged whatdoicallthis toggledown invisible podconfigpanel" id="podconf_'.$pm.'" style="display:block">';
+		} else {
+			print '<div class="marged whatdoicallthis toggledown invisible podconfigpanel" id="podconf_'.$pm.'">';
+		}
 		print '<div class="containerbox vertical podoptions">';
 		print '<div class="containerbox fixed dropdown-container"><div class="divlabel">'.
 			get_int_text("podcast_display").'</div>';
@@ -962,7 +966,7 @@ function doPodcastHeader($y) {
 	$html = preg_replace('/&amp;rompr_/','&rompr_', $h);
 	print $html;
 
-	print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu padright"><div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
+	print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu padright notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
 }
 
 function removePodcast($podid) {

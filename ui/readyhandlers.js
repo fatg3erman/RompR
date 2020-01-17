@@ -60,6 +60,10 @@ function load_playlists() {
 	player.controller.reloadPlaylists().then(startBackgroundInitTasks.doNextTask)
 }
 
+function load_podcasts() {
+	podcasts.reloadList().then(startBackgroundInitTasks.doNextTask)
+}
+
 function start_userinterface() {
 	startBackgroundInitTasks.readytogo = true;
 	uiHelper.adjustLayout();
@@ -105,6 +109,7 @@ var startBackgroundInitTasks = function() {
 		start_userinterface,
 		collectionHelper.checkCollection,
 		load_playlists,
+		load_podcasts,
 		open_discoverator,
 		refresh_podcasts,
 		clean_backend_cache,

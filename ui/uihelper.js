@@ -50,20 +50,19 @@ jQuery.fn.makeSpinner = function() {
 		if (self.attr("class")) {
 			var classes = self.attr("class").split(/\s/);
 		}
-		for (var i = 0, len = classes.length; i < len; i++) {
-			if (classes[i] == "invisible" || (/^icon/.test(classes[i]))) {
-				originalclasses.push(classes[i]);
-				self.removeClass(classes[i]);
+		for (let c of classes) {
+			if (c == "invisible" || (/^icon/.test(c))) {
+				originalclasses.push(c);
+				self.removeClass(c);
 			}
 		}
 		self.attr("originalclass", originalclasses.join(" "));
 		self.addClass('icon-spin6 spinner');
-		return this;
 	});
 }
 
 jQuery.fn.stopSpinner = function() {
-	this.each(function() {
+	return this.each(function() {
 		var self = $(this);
 		self.removeClass('icon-spin6 spinner');
 		if (self.attr("originalclass")) {
@@ -71,7 +70,6 @@ jQuery.fn.stopSpinner = function() {
 			self.removeAttr("originalclass");
 		}
 	});
-	return this;
 }
 
 jQuery.fn.makeTagMenu = function(options) {
@@ -291,6 +289,10 @@ jQuery.fn.addCustomScrollBar = function() {
 	});
 }
 
+jQuery.fn.doThingsAfterDisplayingListOfAlbums = function() {
+	return this;
+}
+
 // Functions that could just be in layoutProcessor, but it makes maintenance easier
 // if we have a proxy like this so we don't have to add new stuff to every single skin.
 
@@ -332,22 +334,6 @@ var uiHelper = function() {
 					$(v.html).prependTo($('#'+v.where));
 					break;
 
-			}
-		},
-
-		doThingsAfterDisplayingListOfAlbums: function(panel) {
-			try {
-				return layoutProcessor.doThingsAfterDisplayingListOfAlbums(panel);
-			} catch (err) {
-
-			}
-		},
-
-		getArtistDestinationDiv(menutoopen) {
-			try {
-				return layoutProcessor.getArtistDestinationDiv(menutoopen);
-			} catch (err) {
-				return $('#'+menutoopen)
 			}
 		},
 
@@ -401,20 +387,6 @@ var uiHelper = function() {
 			}
 		},
 
-		postPodcastSubscribe: function(data, index) {
-			try {
-				return layoutProcessor.postPodcastSubscribe(data, index);
-			} catch (err) {
-				$('i[name="podcast_'+index+'"]').parent().fadeOut('fast', function() {
-					$('i[name="podcast_'+index+'"]').parent().remove();
-					$('#podcast_'+index).remove();
-					$("#fruitbat").html(data);
-					podcasts.doNewCount();
-				});
-			}
-			infobar.notify(language.gettext('label_subscribed'));
-		},
-
 		panelMapping: function() {
 			try {
 				return layoutProcessor.panelMapping();
@@ -460,22 +432,6 @@ var uiHelper = function() {
 				return layoutProcessor.showTagButton();
 			} catch (err) {
 				return true;
-			}
-		},
-
-		preparePlaylistTarget: function(t) {
-			try {
-				return layoutProcessor.preparePlaylistTarget(t);
-			} catch (err) {
-				return false;
-			}
-		},
-
-		postPlaylistTarget: function(t, x) {
-			try {
-				return layoutProcessor.postPlaylistTarget(t, x);
-			} catch (err) {
-				return false;
 			}
 		},
 
@@ -582,10 +538,8 @@ var uiHelper = function() {
 		sourceControl: function(panel) {
 			layoutProcessor.sourceControl(panel);
 				// HACK HACK HACK
-			if (panel == 'podcastslist') {
-				$('#fruitbat').scootTheAlbums();
-			} else if (panel == 'radiolist') {
-				$('#radiolist').scootTheAlbums();;
+			if (panel == 'radiolist') {
+				$('#radiolist').scootTheAlbums();
 			}
 		},
 

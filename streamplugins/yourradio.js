@@ -2,7 +2,11 @@ var yourRadioPlugin = {
 
 	reloadStations: function() {
 		if (!prefs.hide_radiolist) {
-			clickRegistry.loadContentIntoTarget($('#yourradiostations'), $('i[name="yourradiolist"]'), true, 'utils/userstreams.php?populate');
+			clickRegistry.loadContentIntoTarget({
+				target: $('#yourradiostations'),
+				clickedElement: $('i[name="yourradiolist"]'),
+				uri: 'utils/userstreams.php?populate'
+			});
 		}
 	},
 

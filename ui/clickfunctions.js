@@ -47,7 +47,7 @@ var clickRegistry = function() {
 			debug.log('DOMENU', 'Doing Menu', menutoopen);
 			if (clickedElement.isClosed()) {
 				if (target.hasClass('notfilled')) {
-					await clickRegistry.loadContentIntoTarget(target, clickedElement, false);
+					await clickRegistry.loadContentIntoTarget({target: target, clickedElement: clickedElement, scoot: false});
 				}
 				debug.trace('DOMENU', 'Revealing Menu',menutoopen);
 				clickedElement.toggleOpen();
@@ -74,33 +74,51 @@ var clickRegistry = function() {
 			return false;
 		},
 
-		loadContentIntoTarget: async function(target, clickedElement, scoot, uri) {
-			var menutoopen = target.prop('id');
-			clickedElement.makeSpinner();
-			target.clearOut();
-			if (!uri) {
-				uri = findMenuLoader(clickedElement, menutoopen);
+		loadContentIntoTarget: async function(params) {
+			var opts = {
+				type: 'GET',
+				target: null,
+				clickedElement: null,
+				scoot: true,
+				uri: false,
+				data: {}
+			};
+			opts = $.extend(opts, params);
+			var menutoopen = opts.target.prop('id');
+			opts.clickedElement.makeSpinner();
+			opts.target.clearOut();
+			if (!opts.uri) {
+				opts.uri = findMenuLoader(opts.clickedElement, menutoopen);
 			}
-			if (uri) {
-				debug.trace('DOMENU', 'Loading from', uri);
-				var data = await $.ajax({
-					type: 'GET',
-					url: uri,
-					cache: false,
-					dataType: 'html'
-				});
-				target.html(data);
-				data = null;
+			if (opts.uri) {
+				debug.trace('DOMENU', 'Loading from', opts.uri);
+				try {
+					var html = await $.ajax({
+						type: opts.type,
+						url: opts.uri,
+						cache: false,
+						dataType: 'html',
+						data: opts.data
+					});
+					opts.target.html(html);
+					data = null;
+					opts.target.removeClass('notfilled');
+				} catch(err) {
+					let msg = language.gettext('label_general_error');
+					if (err.responseText) {
+						msg += ' '+err.responseText;
+					}
+					infobar.error('msg');
+				}
 			} else {
-				debug.error('DOMENU', 'Unfilled menu element with no loader',clickedElement);
+				debug.error('DOMENU', 'Unfilled menu element with no loader',opts.clickedElement);
 			}
-			target.removeClass('notfilled');
-			clickedElement.stopSpinner();
-			target.updateTracklist();
-			if (target.hasClass('is-albumlist')) {
-				uiHelper.doThingsAfterDisplayingListOfAlbums(target);
-				if (scoot) {
-					target.scootTheAlbums();
+			opts.clickedElement.stopSpinner();
+			opts.target.updateTracklist();
+			if (opts.target.hasClass('is-albumlist')) {
+				opts.target.doThingsAfterDisplayingListOfAlbums();
+				if (opts.scoot) {
+					opts.target.scootTheAlbums();
 				}
 			}
 		}
@@ -202,10 +220,16 @@ function setPlayClickHandlers() {
 		clickRegistry.addMenuHandlers(classname, populateFunction)
 		The populate function will be called before menuReveal with (clickedElement, menutoopen)
 		To load data on-the-fly into a panel call
-		clickRegistry.loadContentIntoTarget(target (jquery), clickable that would open the target (jquery), scoot (bool) )
+		clickRegistry.loadContentIntoTarget({}
+			target: JQuery,
+			clickedElement: JQuery,
+			type: 'GET' or 'POST', default GET
+			scoot: bool default true
+			uri: uri (optional)
+			data: data
+		})
 			scoot will alnost always be true in this case, and setting it to true won't hurt
-			loadContentIntoTarget takes an optional 4th parameter - uri. In this case 'clickable that would..' is ignored
-			except for making it a spinner while the loading occurs.
+			If the uri parameter is used clickedElement is ignored except for making it a spinner while the loading occurs.
 		If the dropdown shoud be emptied when it is closed give it a class of 'removeable'
 		If the dropdown contains album images that need to be scooted or lazyloaded give it a class of is-albumlist
 
@@ -260,7 +284,7 @@ function bindClickHandlers() {
 
 	$('.open_albumart').on('click', openAlbumArtManager);
 	$("#ratingimage").on('click', nowplaying.setRating);
-	$('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodiput')});
+	$('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodinput', $('.icon-rss.npicon'))});
 	$('#expandleft').on('click', function(){layoutProcessor.expandInfo('left')});
 	$('#expandright').on('click', function(){layoutProcessor.expandInfo('right')});
 	$("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
@@ -356,18 +380,14 @@ function playPlayable(event, clickedElement) {
 	}
 }
 
-jQuery.fn.findPlParent = function() {
-	var el = $(this).parent();
-	while (!el.hasClass('track') && !el.hasClass('item') && !el.hasClass('booger')) {
-		el = el.parent();
-	}
-	return el;
-}
-
 async function getAllTracksForAlbum(element, menutoopen) {
 	debug.mark("CLICKFUNCTIONS", "Album has link to get all tracks");
 	var target = $('#'+menutoopen);
-	await clickRegistry.loadContentIntoTarget(target, element, true, 'albums.php?browsealbum='+menutoopen);
+	await clickRegistry.loadContentIntoTarget({
+		target: target,
+		clickedElement: element,
+		uri: 'albums.php?browsealbum='+menutoopen
+	});
 	target.find('input.expandalbum').remove();
 }
 
@@ -386,15 +406,12 @@ var playlistManager = function() {
 	return {
 
 		loadPlaylistIntoTarget: function(playlist) {
-			var t = playlistTargetString(playlist);
-			var x = uiHelper.preparePlaylistTarget(t);
-			debug.log('PLNAME', 'Loading playlist into',t);
-			$('#'+t).load(
-				playlistLoadString(playlist), function() {
-					infobar.markCurrentTrack();
-					if (x !== false) uiHelper.postPlaylistTarget(t, x);
-				}
-			);
+			var target = playlistTargetString(playlist);
+			clickRegistry.loadContentIntoTarget({
+				target: $('#'+target),
+				clickedElement: $('.openmenu[name="'+target+'"]'),
+				uri: playlistLoadString(playlist)
+			});
 		},
 
 		browsePlaylist: function(clickedElement, menutoopen) {

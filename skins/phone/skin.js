@@ -658,15 +658,6 @@ var layoutProcessor = function() {
 			}
 		},
 
-		postPodcastSubscribe: function(data, index) {
-			$('.menuitem[name="podcast_'+index+'"]').fadeOut('fast', function() {
-				$('.menuitem[name="podcast_'+index+'"]').remove();
-				$('#podcast_'+index).remove();
-				$("#fruitbat").html(data);
-				podcasts.doNewCount();
-			});
-		},
-
 		makeSortablePlaylist: function(id) {
 		},
 

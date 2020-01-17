@@ -17,22 +17,14 @@ var podcasts = function() {
 			var newTrack = downloadQueue.shift();
 			$('[name="podgroupload_'+newTrack.channel+'"]').makeFlasher().removeClass('podgroupload');
 			var monitor = new podcastDownloadMonitor(newTrack.track, newTrack.channel);
-			try {
-				var data = await $.ajax( {
-					type: "GET",
-					url: "podcasts/podcasts.php",
-					cache: false,
-					contentType: "text/html; charset=utf-8",
-					data: {downloadtrack: newTrack.track, channel: newTrack.channel, populate: 1},
-					timeout: 360000
-				});
-				monitor.stop(false);
-				updatePodcastDropdown(newTrack.channel, data);
-				doDummyProgressBars();
-			} catch (err) {
-				monitor.stop(true);
-				debug.error("PODCASTS", "Podcast Download Failed!",err);
-			}
+			await clickRegistry.loadContentIntoTarget({
+				target: $('#podcast_'+newTrack.channel),
+				clickedElement: $('.openmenu[name="podcast_'+channel+'"]'),
+				uri: 'podcasts/podcasts.php',
+				data: {downloadtrack: newTrack.track, channel: newTrack.channel, populate: 1}
+			});
+			monitor.stop();
+			doDummyProgressBars();
 			$('[name="podgroupload_'+newTrack.channel+'"]').stopFlasher().removeClass('podgroupload').addClass('podgroupload');
 		}
 		downloadRunning = false;
@@ -66,12 +58,9 @@ var podcasts = function() {
 			});
 		}
 
-		this.stop = function(error) {
+		this.stop = function() {
 			running = false;
 			clearTimeout(timer);
-			if (error) {
-				progressdiv.replaceWith('<div class="fullwidth">'+language.gettext('error_dlfailed')+'</div>');
-			}
 		}
 
 		timer = setTimeout(self.checkProgress, 1000);
@@ -113,7 +102,7 @@ var podcasts = function() {
 		debug.debug('PODCASTS', data);
 		if (data && data.length > 0) {
 			$.each(data, function(index, value) {
-				if ($('#podcast_'+value).hasClass('loaded')) {
+				if (!$('#podcast_'+value).hasClass('notfilled')) {
 					debug.log("PODCASTS","Podcast",value,"was updated and is loaded - reloading it");
 					podcasts.loadPodcast(value);
 				}
@@ -157,86 +146,51 @@ var podcasts = function() {
 		});
 	}
 
-	function updatePodcastDropdown(channel, html) {
-		var target = $('#podcast_'+channel);
-		if (html !== null) {
-			target.html(html);
-		}
-		$('i[name="podcast_'+channel+'"]').stopSpinner();
-		uiHelper.makeResumeBar(target);
-		infobar.markCurrentTrack();
-	}
-
 	return {
 
-		getPodcast: function(url, callback) {
-			debug.log("PODCAST","Getting podcast",url);
-			if (!callback) {
-				infobar.notify(language.gettext('label_subscribing'))
-				doSomethingUseful('cocksausage', language.gettext("label_downloading"));
+		getFromUrl: async function(url, element) {
+			debug.log("PODCASTS","Importing Podcast",url);
+			if (!element) {
+				element = $('i.icon-podcast-circled.choosepanel');
 			}
-			$.ajax( {
-				type: "GET",
-				url: "podcasts/podcasts.php",
-				cache: false,
-				contentType: "text/html; charset=utf-8",
-				data: {url: encodeURIComponent(url), populate: 1 }
-			})
-			.done(function(data) {
-				if (callback) {
-					callback(true);
-				} else {
-					$("#fruitbat").html(data);
-					infobar.notify(language.gettext('label_subscribed'));
-					podcasts.doNewCount();
-					$('#spinner_cocksausage').remove();
-					uiHelper.doThingsAfterDisplayingListOfAlbums($('#fruitbat'));
-				}
-			})
-			.fail(function(data, status, thing) {
-				if (callback) {
-					callback(false);
-				} else {
-					infobar.error(language.gettext('error_subfail', [data.responseText]));
-					$('#spinner_cocksausage').remove();
-				}
+			await clickRegistry.loadContentIntoTarget({
+				target: $('#fruitbat'),
+				clickedElement: element,
+				uri: 'podcasts/podcasts.php',
+				data: {url: encodeURIComponent(url), populate: 1}
 			});
+			podcasts.doNewCount();
 		},
 
-		reloadList: function() {
-			$.ajax( {
-				type: "GET",
-				url: "podcasts/podcasts.php",
-				cache: false,
-				contentType: "text/html; charset=utf-8",
-				data: {populate: 1 }
-			})
-			.done(function(data) {
-				$("#fruitbat").html(data);
-				podcasts.doNewCount();
-				uiHelper.doThingsAfterDisplayingListOfAlbums($('#fruitbat'));
-			})
-			.fail(function(data, status, thing) {
-				infobar.error(language.gettext('error_plfail', [data.responseText]));
+		reloadList: async function() {
+			await clickRegistry.loadContentIntoTarget({
+				target: $('#fruitbat'),
+				clickedElement: $('i.icon-podacst-cricled.choosepanel'),
+				uri: "podcasts/podcasts.php?populate=1"
 			});
+			podcasts.doNewCount();
 		},
 
-		loadPodcast: function(channel) {
-			var target = $('#podcast_'+channel);
-			debug.log("PODCASTS","Loading Podcast",target);
+		getPodcast: function(clickedElement, menutoopen) {
+			return podcasts.channelUri(menutoopen.replace(/podcast_/, ''));
+		},
+
+		channelUri: function(channel) {
 			var uri = "podcasts/podcasts.php?populate=1&loadchannel="+channel;
 			var term = $('[name="podsearcher_'+channel+'"]').val();
-			var configvisible = target.find('.podconfigpanel').is(':visible');
 			if (typeof term !== 'undefined' && term != '') {
 				uri += '&searchterm='+encodeURIComponent(term);
 			}
-			$('i[name="podcast_'+channel+'"]').makeSpinner();
-			target.load(uri, function() {
-				if (configvisible) {
-					target.find('.podconfigpanel').show();
-				}
-				target.removeClass('loaded').addClass('loaded');
-				updatePodcastDropdown(channel, null);
+			return uri;
+		},
+
+		loadPodcast: function(channel) {
+			debug.log("PODCASTS","Loading Podcast",channel);
+			var configvisible = $('#podcast_'+channel).find('.podconfigpanel').is(':visible');
+			clickRegistry.loadContentIntoTarget({
+				target: $('#podcast_'+channel),
+				clickedElement: $('.openmenu[name="podcast_'+channel+'"]'),
+				data: {configvisible: configvisible ? 1 : 0}
 			});
 		},
 
@@ -246,15 +200,18 @@ var podcasts = function() {
 			podcasts.loadPodcast(channel);
 		},
 
-		doPodcast: function(input) {
+		doPodcast: function(input, element) {
 			var url = $("#"+input).val();
+			if (!element) {
+				element = $("#"+input).parent().next('');
+			}
 			if (url != '') {
-				podcasts.getPodcast(url);
+				podcasts.getFromUrl(url, element);
 			}
 		},
 
 		handleDrop: function() {
-			setTimeout(function() { podcasts.doPodcast('podcastsinput') }, 1000);
+			setTimeout(function() { podcasts.doPodcast('podcastsinput', $('#podcastsinput').parent().next()) }, 1000);
 		},
 
 		channelAction: function(channel, action) {
@@ -400,48 +357,36 @@ var podcasts = function() {
 			}
 		},
 
-		removePodcast: function(name) {
-			debug.log("PODCAST","Removing podcast",name);
-			$.ajax( {
-				type: "GET",
-				url: "podcasts/podcasts.php",
-				cache: false,
-				contentType: "text/html; charset=utf-8",
-				data: {remove: name, populate: 1 }
-			})
-			.done(function(data) {
-				$("#fruitbat").html(data);
-				uiHelper.doThingsAfterDisplayingListOfAlbums($('#fruitbat'));
-				podcasts.doNewCount();
-			})
-			.fail(function(data, status) {
-				infobar.error(language.gettext("podcast_remove_error"));
-			});
+		removePodcast: async function(index) {
+			debug.log("PODCAST","Removing podcast",index);
+			// Remove it right away for responsiveness
+			$('.openmenu[name="podcast_'+index+'"]').removeCollectionItem();
+			$('#podcast_search').find('#podcast_'+index).removeCollectionDropdown();
+			// Therefore don't need to reload the list (but do need to call populate=1 otherwise php can't find its include files)
+			// await clickRegistry.loadContentIntoTarget(
+			// 	$('#fruitbat'),
+			// 	$('i.icon-podcast-circled.choosepanel'),
+			// 	true,
+			// 	'podcasts/podcasts.php?remove='+index+'&populate=1'
+			// );
+			await $.get('podcasts/podcasts.php?remove='+index+'&populate=1').promise();
+			podcasts.doNewCount();
 		},
 
-		search: function() {
-			$('#podcast_search').empty();
-			var term = $('#podcastsearch').val();
-			if (term == '') {
+		search: async function() {
+			if ($('#podcastsearch').val() == '') {
 				return true;
 			}
+			$('#podcast_search').empty();
 			doSomethingUseful('podcast_search', language.gettext("label_searching"));
-			$.ajax( {
-				type: "GET",
-				url: "podcasts/podcasts.php",
-				cache: false,
-				contentType: "text/html; charset=utf-8",
-				data: {search: encodeURIComponent(term), populate: 1 }
-			})
-			.done(function(data) {
-				$("#podcast_search").html(data);
-				$('#podcast_search').prepend('<div class="configtitle dropdown-container brick_wide" style="width:100%"><div class="textcentre expand"><b>Search Results for &quot;'+term+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch podcast fixed"></i></div>');
-				uiHelper.doThingsAfterDisplayingListOfAlbums($('#podcast_search'));
-			})
-			.fail(function(data, status, thing) {
-				infobar.error(language.gettext('error_searchfail', [data.responseText]));
-				$('#spinner_podcast_search').remove();
+			await clickRegistry.loadContentIntoTarget({
+				target: $('#podcast_search'),
+				clickedElement: $('#podcastsearch').parent().next(),
+				uri: 'podcasts/podcasts.php',
+				data: {search: encodeURIComponent($('#podcastsearch').val()), populate: 1}
 			});
+			$('#podcast_search').prepend('<div class="configtitle dropdown-container brick_wide" style="width:100%"><div class="textcentre expand"><b>Search Results for &quot;'+$('#podcastsearch').val()+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch podcast fixed"></i></div>');
+			$('#spinner_podcast_search').remove();
 		},
 
 		clearsearch: function() {
@@ -449,22 +394,15 @@ var podcasts = function() {
 			$('#podsclear').hide();
 		},
 
-		subscribe: function(index, clickedElement) {
-			clickedElement.makeSpinner().removeClass('clickable');
-			$.ajax( {
-				type: "GET",
-				url: "podcasts/podcasts.php",
-				cache: false,
-				contentType: "text/html; charset=utf-8",
-				data: {subscribe: index, populate: 1 }
-			})
-			.done(function(data) {
-				uiHelper.postPodcastSubscribe(data, index);
-			})
-			.fail(function(data, status, thing) {
-				infobar.error(language.gettext('error_subfail', [data.responseText]));
-				$('#spinner_cocksausage').remove();
+		subscribe: async function(index, clickedElement) {
+			await clickRegistry.loadContentIntoTarget({
+				target: $('#fruitbat'),
+				clickedElement: clickedElement,
+				uri: 'podcasts/podcasts.php?subscribe='+index+'&populate=1'
 			});
+			$('#podcast_search').find('.openmenu[name="podcast_'+index+'"]').removeCollectionItem();
+			$('#podcast_search').find('#podcast_'+index).removeCollectionDropdown();
+			podcasts.doNewCount();
 		},
 
 		removeSearch: function() {
@@ -516,6 +454,7 @@ var podcasts = function() {
 			} else if (clickedElement.hasClass("podtrackremove")) {
 				var n = clickedElement.attr('name');
 				var m = clickedElement.parent().attr('name');
+				clickedElement.makeSpinner();
 				podcasts.removePodcastTrack(n.replace(/podtrackremove_/, ''), m.replace(/podcontrols_/,''));
 			} else if (clickedElement.hasClass("clickpodsubscribe")) {
 				var index = clickedElement.next().val();
@@ -532,10 +471,12 @@ var podcasts = function() {
 			} else if (clickedElement.hasClass("podmarklistened")) {
 				var n = clickedElement.attr('name');
 				var m = clickedElement.parent().attr('name');
+				clickedElement.makeSpinner();
 				podcasts.markEpisodeAsListened(n.replace(/podmarklistened_/, ''), m.replace(/podcontrols_/,''));
 			} else if (clickedElement.hasClass("podmarkunlistened")) {
 				var n = clickedElement.attr('name');
 				var m = clickedElement.parent().attr('name');
+				clickedElement.makeSpinner();
 				podcasts.markEpisodeAsUnlistened(n.replace(/podmarkunlistened_/, ''), m.replace(/podcontrols_/,''));
 			}
 		}
@@ -543,6 +484,5 @@ var podcasts = function() {
 }();
 
 $('#podcastsinput').on('drop', podcasts.handleDrop)
-// menuOpeners['podcast'] = podcasts.loadPodcast;
 clickRegistry.addClickHandlers('podcast', podcasts.handleClick);
-
+clickRegistry.addMenuHandlers('podcast', podcasts.getPodcast);
