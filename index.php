@@ -10,7 +10,7 @@ if ($skin === null) {
 	logger::mark("INIT", "Detecting browser...");
 	require_once('includes/Mobile_Detect.php');
 	$md = new Mobile_Detect;
-	if ($md->isMobile()) {
+	if ($md->isMobile() || $md->isTablet()) {
 		logger::info('INIT', 'Browser is a mobile browser');
 		$skin = 'phone';
 	} else {
