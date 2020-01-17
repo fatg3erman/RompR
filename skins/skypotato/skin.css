@@ -254,6 +254,12 @@ button.iconbutton {
 	width: 2em;
 }
 
+button.spinable.icon-spin6 {
+	height: 2em;
+	width: 2em;
+	background-color: transparent !important;
+}
+
 .infobarlayout {
 	margin-left:6px;
 	margin-right:6px;

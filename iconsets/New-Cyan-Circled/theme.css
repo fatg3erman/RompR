@@ -130,7 +130,7 @@ i.combo-button {
 .icon-volume-up { background-image: url('iconsets/New-Cyan-Circled/volume.svg') }
 .icon-toggle-open { background-image: url('iconsets/New-Cyan-Circled/toggle-open.svg') }
 .icon-toggle-closed { background-image: url('iconsets/New-Cyan-Circled/toggle-closed.svg') }
-.icon-spin6 { background-image: url('iconsets/New-Cyan-Circled/spinner.svg') }
+.icon-spin6 { background-image: url('iconsets/New-Cyan-Circled/spinner.svg') !important }
 .icon-output { background-image: url('iconsets/New-Cyan-Circled/output.svg') }
 .icon-output-mute { background-image: url('iconsets/New-Cyan-Circled/output_mute.svg') }
 .icon-sliders { background-image: url('iconsets/New-Cyan-Circled/sliders.svg') }

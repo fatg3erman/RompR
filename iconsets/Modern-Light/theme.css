@@ -119,7 +119,7 @@
 .icon-volume-up { background-image: url('iconsets/Modern-Light/volume.svg') }
 .icon-toggle-open { background-image: url('iconsets/Modern-Light/toggle-open.svg') }
 .icon-toggle-closed { background-image: url('iconsets/Modern-Light/toggle-closed.svg') }
-.icon-spin6 { background-image: url('iconsets/Modern-Light/spinner.svg') }
+.icon-spin6 { background-image: url('iconsets/Modern-Light/spinner.svg') !important }
 .icon-output { background-image: url('iconsets/Modern-Light/output.svg') }
 .icon-output-mute { background-image: url('iconsets/Modern-Light/output_mute.svg') }
 .icon-sliders { background-image: url('iconsets/Modern-Light/sliders.svg') }

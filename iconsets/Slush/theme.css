@@ -125,7 +125,7 @@ i.combo-button {
 .icon-volume-up { background-image: url('iconsets/Slush/volume.svg') }
 .icon-toggle-open { background-image: url('iconsets/Slush/toggle-open.svg') }
 .icon-toggle-closed { background-image: url('iconsets/Slush/toggle-closed.svg') }
-.icon-spin6 { background-image: url('iconsets/Slush/spinner.svg') }
+.icon-spin6 { background-image: url('iconsets/Slush/spinner.svg') !important }
 .icon-output { background-image: url('iconsets/Slush/output.svg') }
 .icon-output-mute { background-image: url('iconsets/Slush/output_mute.svg') }
 .icon-sliders { background-image: url('iconsets/Slush/sliders.svg') }

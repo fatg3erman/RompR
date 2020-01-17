@@ -30,6 +30,12 @@ button.iconbutton {
 	width: 3em;
 }
 
+button.spinable.icon-spin6 {
+	height: 3em;
+	width: 3em;
+	background-color: transparent !important;
+}
+
 div {
 	box-sizing: border-box;
 }

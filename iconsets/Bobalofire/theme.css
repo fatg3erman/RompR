@@ -125,7 +125,7 @@ i.combo-button {
 .icon-volume-up { background-image: url('iconsets/Bobalofire/volume.svg') }
 .icon-toggle-open { background-image: url('iconsets/Bobalofire/toggle-open.svg') }
 .icon-toggle-closed { background-image: url('iconsets/Bobalofire/toggle-closed.svg') }
-.icon-spin6 { background-image: url('iconsets/Bobalofire/spinner.svg') }
+.icon-spin6 { background-image: url('iconsets/Bobalofire/spinner.svg') !important }
 .icon-output { background-image: url('iconsets/Bobalofire/output.svg') }
 .icon-output-mute { background-image: url('iconsets/Bobalofire/output_mute.svg') }
 .icon-sliders { background-image: url('iconsets/Bobalofire/sliders.svg') }

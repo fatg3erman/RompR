@@ -125,7 +125,7 @@ i.combo-button {
 .icon-volume-up { background-image: url('iconsets/Modern-Dark/volume.svg') }
 .icon-toggle-open { background-image: url('iconsets/Modern-Dark/toggle-open.svg') }
 .icon-toggle-closed { background-image: url('iconsets/Modern-Dark/toggle-closed.svg') }
-.icon-spin6 { background-image: url('iconsets/Modern-Dark/spinner.svg') }
+.icon-spin6 { background-image: url('iconsets/Modern-Dark/spinner.svg') !important }
 .icon-output { background-image: url('iconsets/Modern-Dark/output.svg') }
 .icon-output-mute { background-image: url('iconsets/Modern-Dark/output_mute.svg') }
 .icon-sliders { background-image: url('iconsets/Modern-Dark/sliders.svg') }

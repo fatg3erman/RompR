@@ -125,7 +125,7 @@ i.combo-button {
 .icon-volume-up { background-image: url('iconsets/Bobalophagus-Dark/volume.svg') }
 .icon-toggle-open { background-image: url('iconsets/Bobalophagus-Dark/toggle-open.svg') }
 .icon-toggle-closed { background-image: url('iconsets/Bobalophagus-Dark/toggle-closed.svg') }
-.icon-spin6 { background-image: url('iconsets/Bobalophagus-Dark/spinner.svg') }
+.icon-spin6 { background-image: url('iconsets/Bobalophagus-Dark/spinner.svg') !important }
 .icon-output { background-image: url('iconsets/Bobalophagus-Dark/output.svg') }
 .icon-output-mute { background-image: url('iconsets/Bobalophagus-Dark/output_mute.svg') }
 .icon-sliders { background-image: url('iconsets/Bobalophagus-Dark/sliders.svg') }
