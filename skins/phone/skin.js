@@ -58,7 +58,7 @@ jQuery.fn.makeSpinner = function() {
 		var self = $(this);
 		if (self.find('.wafflything').length > 0) {
 			var waffler = self.find('.wafflything');
-			if (!wafller.children('.wafflebanger').first().hasClass("wafflebanger-moving")) {
+			if (!waffler.children('.wafflebanger').first().hasClass("wafflebanger-moving")) {
 				waffler.fadeIn(100).children('.wafflebanger').addClass('wafflebanger-moving');
 			}
 		} else if (self.hasClass('icon-toggle-closed') || self.hasClass('icon-toggle-open') || self.hasClass('spinable')) {
