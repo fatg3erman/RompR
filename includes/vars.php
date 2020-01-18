@@ -255,7 +255,6 @@ $prefs = array(
 	"sourceshidden" => false,
 	"playlisthidden" => false,
 	"infosource" => "lastfm",
-	"playlistcontrolsvisible" => false,
 	"sourceswidthpercent" => 25,
 	"playlistwidthpercent" => 25,
 	"downloadart" => true,
@@ -283,7 +282,6 @@ $prefs = array(
 	"coversize" => "40-Large.css",
 	"fontsize" => "04-Grande.css",
 	"fontfamily" => "Nunito.css",
-	"collectioncontrolsvisible" => false,
 	"displayresultsas" => "collection",
 	'crossfade_duration' => 5,
 	"newradiocountry" => "countries/GB",
@@ -301,13 +299,11 @@ $prefs = array(
 	"auto_discovembobulate" => false,
 	"sleeptime" => 30,
 	"sleepon" => false,
-	"advanced_search_open" => false,
 	"sortwishlistby" => 'artist',
 	"player_in_titlebar" => false,
 	"communityradioorderby" => 'name',
 	"browser_id" => null,
 	"playlistswipe" => true,
-	"podcastcontrolsvisible" => false,
 	"default_podcast_display_mode" => DISPLAYMODE_ALL,
 	"default_podcast_refresh_mode" => REFRESHOPTION_MONTHLY,
 	"default_podcast_sort_mode" => SORTMODE_NEWESTFIRST,
@@ -321,7 +317,11 @@ $prefs = array(
 	"bgimgparms" => (object) array('dummy' => 'baby'),
 	"alarms" => array( ),
 	"lastversionchecked" => '1.00',
-	"lastversionchecktime" => 0
+	"lastversionchecktime" => 0,
+	'playlistbuttons_isopen' => false,
+	'collectionbuttons_isopen' => false,
+	'advsearchoptions_isopen' => false,
+	'podcastbuttons_isopen' => false
 );
 
 // Prefs that should not be exposed to the browser for security reasons

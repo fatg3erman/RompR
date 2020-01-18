@@ -68,9 +68,11 @@ var clickRegistry = function() {
 					target.find('.selected').removeFromSelection();
 				}
 			}
-			if (menutoopen == 'advsearchoptions') {
-				prefs.save({advanced_search_open: clickedElement.isOpen()});
+			prefs.save_prefs_for_open_menus(menutoopen);
+			if (menutoopen == 'playlistbuttons') {
+				layoutProcessor.setPlaylistHeight();
 			}
+
 			return false;
 		},
 

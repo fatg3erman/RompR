@@ -81,8 +81,12 @@ jQuery.fn.menuReveal = async function(callback) {
 			scrollto = false;
 			break;
 	}
-	var displaymode = self.hasClass('containerbox') ? 'flex' : 'block';
-	self.css({display: displaymode});
+	if (self.hasClass('toggledown')) {
+		await self.slideToggle('fast').promise();
+	} else {
+		var displaymode = self.hasClass('containerbox') ? 'flex' : 'block';
+		self.css({display: displaymode});
+	}
 	if (callback) callback.call(self);
 	if (scrollto) {
 		layoutProcessor.scrollSourcesTo(parent);

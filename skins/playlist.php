@@ -1,8 +1,8 @@
 <div id="horse" class="fullwidth">
 <table width="100%"><tr><td align="left" class="smallicon">
 <?php
-print '<i id="giblets" style="margin-left:4px" onclick="togglePlaylistButtons()" title="'.get_int_text('button_playlistcontrols').
-	'" class="icon-menu smallicon clickicon tooltip"></i>';
+print '<i style="margin-left:4px" title="'.get_int_text('button_playlistcontrols').
+	'" class="icon-menu smallicon clickicon openmenu tooltip" name="playlistbuttons"></i>';
 ?>
 </td>
 <td align="left" id="pltracks"></td>
@@ -16,7 +16,7 @@ print '<i title="'.get_int_text('button_clearplaylist').'" class="icon-trash sma
 <tr><td colspan="4" align="center"><div id="plmode"></div></td></tr>
 </table>
 </div>
-<div id="playlistbuttons" class="invisible">
+<div id="playlistbuttons" class="toggledown invisible">
 <?php
 
 print '<div id="flowcontrols" class="noborder containerbox">';

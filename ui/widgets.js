@@ -786,8 +786,13 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 		// Seemingly this is crucial to stop the event bubbling up the tree
 		// to the parent icon. Didn't used to be a problem, seems to fuck up with
 		// latest Firefox.
-		event.stopPropagation();
-		return true;
+		if ($(event.target).hasClass('openmenu')) {
+			$.proxy(clickRegistry.doMenu, $(event.target), event).call();
+			return false;
+		} else {
+			event.stopPropagation();
+			return true;
+		}
 	},
 
 	_findSourceElement: function(event) {

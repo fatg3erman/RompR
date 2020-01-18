@@ -171,7 +171,7 @@ print '<i title="'.get_int_text('button_plugins').'" class="icon-menu topimg too
 	<div id="albumlist" class="invisible noborder">
 <?php
 	print '<div class="dropdown-container configtitle">';
-	print '<i onclick="toggleCollectionButtons()" title="'.get_int_text('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip fixed"></i>';
+	print '<i title="'.get_int_text('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="collectionbuttons"></i>';
 	print '<div class="textcentre expand"><b>'.get_int_text('button_local_music').'</b></div>';
 	print '</div>';
 	collectionButtons();
@@ -195,7 +195,7 @@ print '<i title="'.get_int_text('button_plugins').'" class="icon-menu topimg too
 	<div id="searcher" class="invisible noborder">
 	<div class="dropdown-container configtitle">
 	<?php
-		print '<i onclick="toggleSearchButtons()" title="Advanced Search Options" class="icon-menu playlisticon clickicon tooltip fixed"></i>';
+		print '<i title="'.get_int_text('setup_advanced').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="advsearchoptions"></i>';
 		print '<div class="textcentre expand"><b>'.get_int_text('label_searchfor').'</b></div>';
 	?>
 	</div>
@@ -231,7 +231,7 @@ foreach($sp as $p) {
 	<div id="podcastslist" class="helpfulholder noselection dropmenu invisible">
 <?php
 print '<div class="dropdown-container configtitle">';
-print '<i onclick="podcasts.toggleButtons()" class="icon-menu playlisticon clickicon tooltip fixed" title="'.get_int_text('label_podcastcontrols').'"></i>';
+print '<i class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.get_int_text('label_podcastcontrols').'"></i>';
 print '<div class="textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div>';
 print '</div>';
 include("podcasts/podcasts.php");

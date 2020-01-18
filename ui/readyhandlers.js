@@ -180,15 +180,6 @@ $(document).ready(function(){
 	player.defs.replacePlayerOptions();
 	playlist.preventControlClicks(true);
 	prefs.setPrefs();
-	if (prefs.playlistcontrolsvisible) {
-		$("#playlistbuttons").show();
-	}
-	if (prefs.collectioncontrolsvisible) {
-		$("#collectionbuttons").show();
-	}
-	if (prefs.podcastcontrolsvisible) {
-		$("#podcastbuttons").show();
-	}
 	window.addEventListener("storage", onStorageChanged, false);
 	pluginManager.setupPlugins();
 	setAvailableSearchOptions();

@@ -8,7 +8,6 @@ var prefs = function() {
 		"sourceshidden",
 		"playlisthidden",
 		"infosource",
-		"playlistcontrolsvisible",
 		"sourceswidthpercent",
 		"playlistwidthpercent",
 		"downloadart",
@@ -35,7 +34,6 @@ var prefs = function() {
 		"coversize",
 		"fontsize",
 		"fontfamily",
-		"collectioncontrolsvisible",
 		"crossfade_duration",
 		"newradiocountry",
 		"search_limit_limitsearch",
@@ -55,18 +53,20 @@ var prefs = function() {
 		"ratman_sortby",
 		"sleeptime",
 		"sleepon",
-		"advanced_search_open",
 		"mopidy_radio_domains",
 		"tradsearch",
 		"sortwishlistby",
 		"player_in_titlebar",
 		"browser_id",
 		"playlistswipe",
-		"podcastcontrolsvisible",
 		"use_albumart_in_playlist",
 		"bgimgparms",
 		"collectionrange",
-		"alarms"
+		"alarms",
+		'playlistbuttons_isopen',
+		'collectionbuttons_isopen',
+		'advsearchoptions_isopen',
+		'podcastbuttons_isopen'
 	];
 
 	const cookiePrefs = [
@@ -78,6 +78,13 @@ var prefs = function() {
 		"collectionrange",
 		"sortcollectionby",
 		"sortresultsby"
+	];
+
+	const menus_to_save_state_for = [
+		'podcastbuttons',
+		'advsearchoptions',
+		'collectionbuttons',
+		'playlistbuttons'
 	];
 
 	const jsonNode = document.querySelector("script[name='prefs']");
@@ -690,6 +697,12 @@ var prefs = function() {
 				$("[name="+prefname+"][value="+prefs[prefsave]+"]").prop("checked", true);
 			});
 
+			for (var menu of menus_to_save_state_for) {
+				if (prefs[menu+'_isopen']) {
+					$('#'+menu).show();
+				}
+			}
+
 		},
 
 		saveSelectBoxes: function(event) {
@@ -804,11 +817,6 @@ var prefs = function() {
 			if (typeof(layoutProcessor) != 'undefined') {
 				uiHelper.adjustLayout();
 			}
-			if (prefs.advanced_search_open) {
-				$("#advsearchoptions").show();
-			} else {
-				$("#advsearchoptions").hide();
-			}
 			browser.rePoint();
 		},
 
@@ -862,6 +870,14 @@ var prefs = function() {
 
 		clickBindType: function() {
 			return prefs.clickmode == 'double' ? 'dblclick' : 'click';
+		},
+
+		save_prefs_for_open_menus: function(menu) {
+			if (menus_to_save_state_for.indexOf(menu) != -1) {
+				let tosave = {};
+				tosave[menu+'_isopen'] = !prefs[menu+'_isopen'];
+				prefs.save(tosave);
+			}
 		},
 
 		rgbs: null

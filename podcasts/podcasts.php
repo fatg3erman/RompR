@@ -102,7 +102,6 @@ if (array_key_exists('populate', $_REQUEST)) {
 	print '<div class="dropdown-container configtitle"><div class="textcentre expand"><b>'.get_int_text('label_subbed_podcasts').'</b></div></div>';
 
 	print '<div id="fruitbat" class="noselection fullwidth is-albumlist">';
-	// doPodcastList(1);
 	print '</div>';
 
 	print '</div>';
@@ -112,7 +111,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 function doPodcastBase() {
 	global $prefs;
 
-	print '<div id="podcastbuttons" class="invisible">';
+	print '<div id="podcastbuttons" class="invisible toggledown">';
 
 	print '<div id="cocksausage">';
 	print '<div class="containerbox dropdown-container"><div class="expand"><input class="enter clearbox" id="podcastsinput" type="text" placeholder="'.get_int_text("podcast_entrybox").'" /></div>';

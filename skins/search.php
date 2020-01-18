@@ -33,7 +33,7 @@ function doSearchBoxes($sterms) {
 }
 
 function startAdvSearchOptions() {
-	print '<div id="advsearchoptions" class="invisible">';
+	print '<div id="advsearchoptions" class="toggledown invisible">';
 
 	print '<div>'.get_int_text('label_displayresultsas').'</div>';
 

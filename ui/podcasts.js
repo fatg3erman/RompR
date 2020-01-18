@@ -404,14 +404,7 @@ var podcasts = function() {
 		},
 
 		removeSearch: function() {
-			$('#podcast_search').empty();
-		},
-
-		toggleButtons: function() {
-			$("#podcastbuttons").slideToggle('fast');
-			var p = !prefs.podcastcontrolsvisible;
-			prefs.save({ podcastcontrolsvisible: p });
-			return false;
+			$('#podcast_search').clearOut().empty();
 		},
 
 		storePlaybackProgress: function(track) {
