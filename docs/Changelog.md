@@ -20,6 +20,7 @@ Thought I'd bump the version number up a bit since this seems like quite a big r
 * Done quite a lot of work on the Skypotato skin to make it neater, more efficient, and smoother and give it all the same functionality as the Desktop skin
 * I wrote a script to automate a lot of the work in making icon themes, so now there are LOADS of them :-D
 ### FIXES:
+* Translations have been cleaned up - unused translation keys have been removed. For translators, any key missing from the translations has been added to the end of the translation file, commented out, ready to be updated. This will make it much easier for you to follow my crazy and undocumented updates.
 * Fix Panel hiding not working in Fruit skin
 * Make the Snapcast controls look neater
 * Fix some bugs relating to loading playlists

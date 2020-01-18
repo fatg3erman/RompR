@@ -169,7 +169,7 @@ var playlist = function() {
 					await player.controller.takeBackControl();
 					player.controller.clearPlaylist();
 				}
-				layoutProcessor.playlistLoading();
+				infobar.smartradio(language.gettext('label_preparing'));
 				playlist.preventControlClicks(false);
 				if (radios[which].script && radios[which].loaded == false) {
 					debug.info("RADIO MANAGER","Loading Script",radios[which].script,"for",which);

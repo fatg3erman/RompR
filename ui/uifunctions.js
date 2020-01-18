@@ -792,18 +792,6 @@ function dropProcessor(evt, imgobj, coverscraper, success, fail) {
 	return false;
 }
 
-function makeProgressOfString(stats) {
-	if (stats.progressString != "" && stats.durationString != "") {
-		$("#playbackTime").html(stats.progressString + " " + frequentLabels.of + " " + stats.durationString);
-	} else if (stats.progressString != "" && stats.durationString == "") {
-		$("#playbackTime").html(stats.progressString);
-	} else if (stats.progressString == "" && stats.durationString != "") {
-		$("#playbackTime").html("0:00 " + frequentLabels.of + " " + stats.durationString);
-	} else if (stats.progressString == "" && stats.durationString == "") {
-		$("#playbackTime").html("");
-	}
-}
-
 function spotifyTrackListing(data) {
 	var h = '';
 	for(var i in data.tracks.items) {
@@ -820,12 +808,6 @@ function spotifyTrackListing(data) {
 			'</div>';
 	}
 	return h;
-}
-
-function setWindowTitle(t) {
-	if (document.title != t) {
-		document.title = t;
-	}
 }
 
 function ratingCalc(element, event) {

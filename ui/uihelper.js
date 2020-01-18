@@ -168,25 +168,33 @@ jQuery.fn.makeTagMenu = function(options) {
 }
 
 jQuery.fn.fanoogleMenus = function() {
-	this.each( function() {
+	return this.each( function() {
 		if ($(this).is(':visible')) {
 			// Fucking css, what a pile of shit
+			debug.log('FANOOGLING', $(this).prop('id'));
 			var pt = parseInt($(this).css('padding-top')) + parseInt($(this).css('padding-bottom')) +
 				parseInt($(this).css('border-top-width')) + parseInt($(this).css('border-bottom-width'));
 			var top = $(this).children().first().children('.mCSB_container').offset().top;
 			var conheight = $(this).children().first().children('.mCSB_container').height();
 			var ws = getWindowSize();
 			var avheight = ws.y - top;
-			var nh = Math.min(avheight, (conheight+pt));
-			$(this).css({height: nh+"px"});
+			var nh = (conheight+pt+8);
+			if (nh > avheight) {
+				$(this).css({height: avheight+"px"});
+			} else {
+				// Seems like we need an 8 pixel fudge factor to stop scollbars appearing on
+				// menus that don't need scrollbars. Not sure why this is. If it wasn't for that
+				// we could just unset the css height attribute like we do on the phone skin
+				$(this).css({height: nh+"px"});
+				// $(this).css({height: ''});
+			}
 			$(this).mCustomScrollbar("update");
 		}
 	});
-	return this;
 }
 
 jQuery.fn.addBunnyEars = function() {
-	this.each(function() {
+	return this.each(function() {
 		if ($(this).hasBunnyEars()) {
 			$(this).removeBunnyEars();
 		} else {
@@ -201,7 +209,6 @@ jQuery.fn.addBunnyEars = function() {
 			}
 		}
 	});
-	return this;
 }
 
 jQuery.fn.hasBunnyEars = function() {
@@ -374,6 +381,22 @@ var uiHelper = function() {
 				return layoutProcessor.prepareCollectionUpdate();
 			} catch (err) {
 				$('#searchresultholder').empty();
+			}
+		},
+
+		setProgressTime: function(stats) {
+			try {
+				layoutProcessor.setProgressTime(stats);
+			} catch (err) {
+				if (stats.progressString != "" && stats.durationString != "") {
+					$("#playbackTime").html(stats.progressString + " " + frequentLabels.of + " " + stats.durationString);
+				} else if (stats.progressString != "" && stats.durationString == "") {
+					$("#playbackTime").html(stats.progressString);
+				} else if (stats.progressString == "" && stats.durationString != "") {
+					$("#playbackTime").html("0:00 " + frequentLabels.of + " " + stats.durationString);
+				} else if (stats.progressString == "" && stats.durationString == "") {
+					$("#playbackTime").html("");
+				}
 			}
 		},
 

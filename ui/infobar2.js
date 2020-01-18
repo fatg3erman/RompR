@@ -54,7 +54,9 @@ var infobar = function() {
 
 	function setTheText(info) {
 		var stuff = mungeplaylistinfo(info);
-		setWindowTitle(stuff.doctitle);
+		if (document.title != stuff.doctitle) {
+			document.title = stuff.doctitle;
+		}
 		npinfo = stuff.textbits
 		debug.debug("INFOBAR","Now Playing Info",npinfo);
 		infobar.biggerize();
@@ -598,7 +600,7 @@ var infobar = function() {
 			}
 			$("#progress").rangechooser("setRange", {min: 0, max: progress});
 			var remain = duration - progress;
-			layoutProcessor.setProgressTime({
+			uiHelper.setProgressTime({
 				progress: progress,
 				duration: duration,
 				remain: remain,

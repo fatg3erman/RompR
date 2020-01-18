@@ -92,7 +92,7 @@ var collectionHelper = function() {
 			})
 			.fail(function(data) {
 				collectionHelper.disableCollectionUpdates();
-				var html = '<p align="center"><b><font color="red">Failed To Generate Collection</font></b></p>';
+				var html = '<p align="center"><b><font color="red">'+language.gettext('label_update_error')+'</font></b></p>';
 				if (data.responseText) {
 					html += '<p align="center">'+data.responseText+'</p>';
 				}

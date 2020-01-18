@@ -97,7 +97,7 @@ var metaBackup = function() {
 					for (var j in data[i].stats) {
 						html += '<td>'+data[i].stats[j]+'</td>';
 					}
-					html += '<td align="center"><button class="plugclickable infoclick restore" name="'+data[i].dir+'">Restore</button></td>';
+					html += '<td align="center"><button class="plugclickable infoclick restore" name="'+data[i].dir+'">'+language.gettext('button_restore')+'</button></td>';
 					html += '<td align="center"><i class="icon-cancel-circled playlisticon clickicon plugclickable infoclick remove" name="'+data[i].dir+'"></i></td>';
 					html += '</tr>';
 				}

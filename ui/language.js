@@ -11,7 +11,7 @@ var language = function() {
 			}
 			if (tags[key] === undefined) {
 				debug.error("LANGUAGE","Unknown key",key);
-				return "UNKNOWN TRANSLATION KEY";
+				return "UNKNOWN TRANSLATION "+key;
 			} else {
 				var s = tags[key];
 				if (typeof(s) == 'string') {

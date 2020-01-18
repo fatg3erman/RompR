@@ -83,11 +83,6 @@ var layoutProcessor = function() {
 		$("#infopanecontrols").animatePanel(widths);
 	}
 
-	function showTrack(holder, target) {
-		infobar.markCurrentTrack();
-		layoutProcessor.scrollCollectionTo(holder, target);
-	}
-
 	var my_scrollers = [ "#sources", "#infopane", ".topdropmenu", ".drop-box" ];
 	var rtime = '';
 	var ptime = '';
@@ -157,7 +152,7 @@ var layoutProcessor = function() {
 		},
 
 		setPlaylistHeight: function() {
-			$('#phacker').fanoogleMenus();
+			// $('#phacker').fanoogleMenus();
 		},
 
 		playlistControlHotKey: function(button) {
@@ -169,10 +164,6 @@ var layoutProcessor = function() {
 
 		updateInfopaneScrollbars: function() {
 			$('#infopane').mCustomScrollbar('update');
-		},
-
-		playlistLoading: function() {
-			infobar.smartradio(language.gettext('label_smartsetup'));
 		},
 
 		scrollPlaylistToCurrentTrack: function() {
@@ -215,13 +206,10 @@ var layoutProcessor = function() {
 			}
 		},
 
-		scrollCollectionTo: function(holder, jq) {
+		scrollCollectionTo: function(jq) {
 			if (jq.length > 0) {
-				debug.debug("LAYOUT","Scrolling",holder,"To",jq, jq.position().top,$(holder).parent().parent().parent().height()/2);
-				var pospixels = Math.round(jq.position().top - $(holder).parent().parent().parent().height()/2);
-				debug.log("LAYOUT","Scrolling",holder,"To",pospixels);
-				$("#sources").mCustomScrollbar('update').mCustomScrollbar('scrollTo', pospixels,
-					{ scrollInertia: 1000,
+				$("#sources").mCustomScrollbar('update').mCustomScrollbar('scrollTo', jq,
+					{ scrollInertia: 10,
 					  scrollEasing: 'easeOut' }
 				);
 			} else {
@@ -269,41 +257,27 @@ var layoutProcessor = function() {
 			setBottomPanelWidths();
 		},
 
-		displayCollectionInsert: function(details) {
-			// debug.mark("COLLECTION","Displaying New Insert");
-			// debug.debug('COLLECTION', details);
-			// var prefix;
-			// var holder;
-			// if (details.isaudiobook > 0) {
-			// 	holder = '#audiobooks';
-			// 	uiHelper.sourceControl('audiobooklist');
-			// 	prefix = 'z';
-			// } else {
-			// 	holder = '#collection';
-			// 	uiHelper.sourceControl('albumlist');
-			// 	prefix = 'a';
-			// }
-			// var artistmenu = prefix+'artist'+details.artistindex;
-			// var albummenu = prefix+"album"+details.albumindex;
-			// setTimeout(function() {
-			// 	if ($('i[name="'+artistmenu+'"]').isClosed()) {
-			// 		doAlbumMenu(null, $('i[name="'+artistmenu+'"]'), function() {
-			// 			if ($('i[name="'+albummenu+'"]').isClosed()) {
-			// 				doAlbumMenu(null, $('i[name="'+albummenu+'"]'), function() {
-			// 					showTrack(holder, $('[name="'+albummenu+'"]'));
-			// 				});
-			// 			} else {
-			// 				showTrack(holder, $('[name="'+albummenu+'"]'));
-			// 			}
-			// 		});
-			// 	} else if ($('i[name="'+albummenu+'"]').isClosed()) {
-			// 		doAlbumMenu(null, $('i[name="'+albummenu+'"]'), function() {
-			// 			showTrack(holder, $('[name="'+albummenu+'"]'));
-			// 		});
-			// 	} else {
-			// 		showTrack(holder, $('[name="'+albummenu+'"]'));
-			// 	}
-			// }, 1000);
+		displayCollectionInsert: async function(details) {
+			debug.mark("COLLECTION","Displaying New Insert");
+			debug.debug('COLLECTION', details);
+			if (details.isaudiobook > 0) {
+				var holder = '#audiobooks';
+				uiHelper.sourceControl('audiobooklist');
+				var artistmenu = '.openmenu[name="zartist'+details.artistindex+'"]';
+				var albummenu = '.openmenu[name="zalbum'+details.albumindex+'"]';
+			} else {
+				var holder = '#collection';
+				uiHelper.sourceControl('albumlist');
+				var artistmenu = '.openmenu[name="aartist'+details.artistindex+'"]';
+				var albummenu = '.openmenu[name="aalbum'+details.albumindex+'"]';
+			}
+			if ($(artistmenu).isClosed()) {
+				await $.proxy(clickRegistry.doMenu, $(artistmenu)).call();
+			}
+			if ($(albummenu).isClosed()) {
+				await $.proxy(clickRegistry.doMenu, $(albummenu)).call();
+			}
+			layoutProcessor.scrollCollectionTo($(albummenu).parent());
 		},
 
 		playlistupdate: function(upcoming) {
@@ -422,6 +396,9 @@ var layoutProcessor = function() {
                 coveredby: '#sortable'
             });
 			animatePanels();
+			for (let value of my_scrollers) {
+				$(value).addCustomScrollBar();
+			};
 			$(".topdropmenu").floatingMenu({
 				handleClass: 'dragmenu',
 				addClassTo: 'configtitle',
@@ -432,9 +409,6 @@ var layoutProcessor = function() {
 				handleshow: false
 			});
 			$(".stayopen").not('.dontstealmyclicks').on('click', function(ev) {ev.stopPropagation() });
-			for (let value of my_scrollers) {
-				$(value).addCustomScrollBar();
-			};
 			$("#sources").find('.mCSB_draggerRail').resizeHandle({
 				adjusticons: ['#sourcescontrols', '#infopanecontrols'],
 				side: 'left',

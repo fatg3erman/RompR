@@ -82,6 +82,7 @@ jQuery.fn.menuReveal = async function(callback) {
 			break;
 	}
 	if (self.hasClass('toggledown')) {
+		debug.log('SKIN', 'Sliding menu');
 		await self.slideToggle('fast').promise();
 	} else {
 		var displaymode = self.hasClass('containerbox') ? 'flex' : 'block';
@@ -183,7 +184,12 @@ jQuery.fn.menuHide = async function(callback) {
 
 		default:
 			// Other dropdowns (eg podcast controls)
-			self.css({display: 'none'});
+			if (self.hasClass('toggledown')) {
+				debug.log('SKIN', 'Sliding menu');
+				await self.slideToggle('fast').promise();
+			} else {
+				self.css({display: 'none'});
+			}
 			adjustboxes = false;
 			break;
 	}
@@ -586,7 +592,7 @@ var layoutProcessor = function() {
 		},
 
 		setPlaylistHeight: function() {
-			$('#phacker').fanoogleMenus();
+			// $('#phacker').fanoogleMenus();
 		},
 
 		playlistControlHotKey: function(button) {
@@ -598,10 +604,6 @@ var layoutProcessor = function() {
 
 		updateInfopaneScrollbars: function() {
 			$('#infopane').mCustomScrollbar('update');
-		},
-
-		playlistLoading: function() {
-			infobar.smartradio(language.gettext('label_smartsetup'));
 		},
 
 		scrollPlaylistToCurrentTrack: function() {
@@ -628,18 +630,18 @@ var layoutProcessor = function() {
 
 		scrollCollectionTo: function(jq) {
 			if (jq.length > 0) {
-				debug.debug("LAYOUT","Scrolling Collection To",jq);
+				debug.trace("LAYOUT","Scrolling Collection To",jq);
 				scroller = findParentScroller(jq);
 				if (scroller !== false) {
 					scroller.mCustomScrollbar('update').mCustomScrollbar('scrollTo', jq,
-						{ scrollInertia: 1000,
+						{ scrollInertia: 10,
 						  scrollEasing: 'easeOut' }
 					);
 				} else {
 					debug.warn('LAYOUT', 'Was asked to scroll to something without a parent scroller');
 				}
 			} else {
-				debug.warn("LAYOUT","Was asked to scroll collection to something non-existent",2);
+				debug.warn("LAYOUT","Was asked to scroll collection to something non-existent");
 			}
 		},
 
@@ -754,19 +756,13 @@ var layoutProcessor = function() {
 		displayCollectionInsert: function(details) {
 			debug.mark("COLLECTION","Displaying New Insert");
 			debug.debug('COLLECTION', details);
-			infobar.notify(
-				(details.isaudiobook == 0) ? language.gettext('label_addedtocol') : language.gettext('label_addedtosw')
-			);
-			infobar.markCurrentTrack();
-			var prefix = null;
+			infobar.notify((details.isaudiobook == 0) ? language.gettext('label_addedtocol') : language.gettext('label_addedtosw'));
 			if (details.isaudiobook > 0 && prefs.chooser == 'audiobooklist') {
-				prefix = 'z';
+				layoutProcessor.scrollCollectionTo($('.openmenu[name="zartist'+details.artistindex+'"]'));
+				layoutProcessor.scrollCollectionTo($('.openmenu[name="zalbum'+details.albumindex+'"]'));
 			} else if (prefs.chooser == 'albumlist') {
-				prefix = 'a';
-			}
-			if (prefix !== null) {
-				layoutProcessor.scrollCollectionTo($('[name="'+prefix+'artist'+details.artistindex+'"]'));
-				layoutProcessor.scrollCollectionTo($('[name="'+prefix+'album'+details.albumindex+'"]'));
+				layoutProcessor.scrollCollectionTo($('.openmenu[name="aartist'+details.artistindex+'"]'));
+				layoutProcessor.scrollCollectionTo($('.openmenu[name="aalbum'+details.albumindex+'"]'));
 			}
 		},
 
@@ -866,7 +862,6 @@ var layoutProcessor = function() {
 				}
 				if ($('#'+name).length == 0) {
 					return $('<div>', {id: name, class: c, style: 'display: none'}).appendTo(element.parent().find('.containerbox.openmenu'));
-					// element.parent().find('.containerbox.openmenu').append($('<div>', {id: name, class: c, style: 'display: none'}));
 				}
 			} else if (element.hasClass('directory')) {
 				// This is for a directory in the file browser
@@ -905,6 +900,9 @@ var layoutProcessor = function() {
                 coveredby: '#sortable'
             });
 			animatePanels();
+			for (let value of my_scrollers) {
+				$(value).addCustomScrollBar();
+			};
 			$(".topdropmenu").floatingMenu({
 				handleClass: 'dragmenu',
 				addClassTo: 'configtitle',
@@ -915,9 +913,6 @@ var layoutProcessor = function() {
 				handleshow: false
 			});
 			$(".stayopen").not('.dontstealmyclicks').on('click', function(ev) {ev.stopPropagation() });
-			for (let value of my_scrollers) {
-				$(value).addCustomScrollBar();
-			};
 			$("#sources").find('.mCSB_draggerRail').resizeHandle({
 				side: 'left',
 				donefunc: setBottomPanelWidths,

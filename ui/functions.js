@@ -228,6 +228,10 @@ function update_ui_images(key, images) {
 	$('img[name="'+key+'"]').not('.jalopy').not('.droppable').attr("src", images.small);
 	$('img[name="'+key+'"].jalopy').attr("src", images.medium);
 	$('img[name="'+key+'"].droppable').attr("src", images.medium);
+	if (typeof(IntersectionObserver) == 'function') {
+		$('img[name="'+key+'"].lazy').get().forEach(img => imageLoader.unobserve(img));
+		$('img[name="'+key+'"].lazy').removeClass('lazy');
+	}
 	if (typeof(infobar) != 'undefined') {
 		infobar.albumImage.setSource({images: images, ImgKey: key});
 	}
@@ -237,12 +241,12 @@ function update_failed_ui_images(key) {
 	$('img.notexist[name="'+key+'"]').removeClass("notexist").removeClass('notfound').addClass("notfound").removeAttr('src');
 }
 
-function preventDefault(ev) {
-	evt = ev.originalEvent;
-	evt.stopPropagation();
-	evt.preventDefault();
-	return false;
-}
+// function preventDefault(ev) {
+// 	evt = ev.originalEvent;
+// 	evt.stopPropagation();
+// 	evt.preventDefault();
+// 	return false;
+// }
 
 function joinartists(ob) {
 	if (typeof(ob) != "object") {

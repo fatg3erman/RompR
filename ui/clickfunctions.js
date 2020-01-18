@@ -36,7 +36,9 @@ var clickRegistry = function() {
 		},
 
 		doMenu: async function(event) {
-			event.stopImmediatePropagation();
+			if (event) {
+				event.stopImmediatePropagation();
+			}
 			var clickedElement = $(this);
 			debug.trace('DOMENU', 'Opening',clickedElement);
 			var menutoopen = clickedElement.attr('name');

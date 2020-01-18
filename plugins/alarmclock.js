@@ -97,7 +97,7 @@ var alarmclock = function() {
 	}
 
 	function createAlarmDropdown(holder, alarm, index) {
-		var container = $('<div>', {id: 'alarmpanel_'+index, class: 'toggledown invisible cheesemaster'}).insertAfter(holder);
+		var container = $('<div>', {id: 'alarmpanel_'+index, class: 'toggledown invisible cheesemaster alarmdropper'}).insertAfter(holder);
 
 		var twatt = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(container);
 		$('<i>', {class: "mh menu fixed icon-cancel-circled deletealarm", id: 'deletealarm_'+index}).appendTo(twatt);
@@ -458,7 +458,7 @@ var alarmclock = function() {
 			prefs.alarms[index].alarm_itemtoplay = items.html();
 			prefs.save({alarms: prefs.alarms});
 			putAlarmDropPlayItem(prefs.alarms[index], element);
-			$('#alarmpanel').fanoogleMenus();
+			// $('#alarmpanel').fanoogleMenus();
 		},
 
 		newAlarm: function() {
@@ -481,7 +481,7 @@ var alarmclock = function() {
 			prefs.save({alarms: prefs.alarms});
 			key = createAlarmHeader(key, prefs.alarms[i], i);
 			key = createAlarmDropdown(key, prefs.alarms[i], i);
-			$('#alarmpanel').fanoogleMenus();
+			// $('#alarmpanel').fanoogleMenus();
 		},
 
 		deleteAlarm: function(event, element) {
@@ -492,7 +492,7 @@ var alarmclock = function() {
 			prefs.save({alarms: prefs.alarms});
 			$('.cheesemaster').remove();
 			fillWindow();
-			$('#alarmpanel').fanoogleMenus();
+			// $('#alarmpanel').fanoogleMenus();
 			alarmclock.setAlarm();
 		},
 
@@ -524,8 +524,8 @@ var alarmclock = function() {
 					alarmclock.checkboxClicked(event, element);
 				} else if (element.hasClass('openmenu')) {
 					alarmclock.toggleControls(element);
-					await $.proxy(clickRegistry.doMenu, element, event).call();
-					$('#alarmpanel').fanoogleMenus();
+					// await $.proxy(clickRegistry.doMenu, element, event).call();
+					// $('#alarmpanel').fanoogleMenus();
 				} else if (element.hasClass('createnewalarm')) {
 					alarmclock.newAlarm();
 				} else if (element.hasClass('deletealarm')) {

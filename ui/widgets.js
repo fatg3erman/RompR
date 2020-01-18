@@ -756,6 +756,8 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 		movecallback: null
 	},
 
+	resizetimer: null,
+
 	_create: function() {
 		var self = this;
 		this.dragging = false;
@@ -780,12 +782,30 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 				}
 			});
 		}
+
+		if (typeof(ResizeObserver) == 'function') {
+			let resizeObserver = new ResizeObserver(function(entries, myself) {
+				clearTimeout(self.resizetimer);
+				self.resizetimer = setTimeout($.proxy(self.resizeme, self), 20);
+			});
+			resizeObserver.observe(self.element.find('.mCSB_container').get()[0]);
+		} else {
+			// Safari, Edge, Firefox for Android. Also IE but who gives a fuck?
+			self.resizetimer = setTimeout($.proxy(self.resizeme, self), 1000);
+		}
+	},
+
+	resizeme: function() {
+		var self = this;
+		self.element.fanoogleMenus();
+		if (typeof(ResizeObserver) != 'function') {
+			self.resizetimer = setTimeout($.proxy(self.resizeme, self), 1000);
+		}
 	},
 
 	_mouseCapture: function(event) {
 		// Seemingly this is crucial to stop the event bubbling up the tree
-		// to the parent icon. Didn't used to be a problem, seems to fuck up with
-		// latest Firefox.
+		// to the parent icon and closing the menu. Didn't used to be a problem.
 		if ($(event.target).hasClass('openmenu')) {
 			$.proxy(clickRegistry.doMenu, $(event.target), event).call();
 			return false;

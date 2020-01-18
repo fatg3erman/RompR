@@ -2250,7 +2250,11 @@ div.unplayable {
 
 .alarmdescription {
 	line-height: 1.2em;
-	height:2.2em;
+	/*height:2.2em;*/
+}
+
+.alarmdropper {
+	padding-left:24px;
 }
 
 td.dan, th.dan{
@@ -2287,3 +2291,4 @@ td.dan, th.dan{
 .wafflebanger-moving {
 	animation: switchback 2s linear infinite;
 }
+

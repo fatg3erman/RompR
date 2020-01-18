@@ -203,16 +203,18 @@ jQuery.fn.fanoogleMenus = function() {
 }
 
 jQuery.fn.fanoogleTopMenus = function() {
-	this.each(function() {
-		$(this).css({height: ''});
-		var top = $(this).offset().top;
-		var height = $(this).outerHeight(true);
-		var ws = getWindowSize();
-		debug.debug('FANOOGLE',$(this).attr('id'), top, height, ws.y);
-		var nh = Math.min(height, ws.y - top);
-		$(this).css({height: nh+'px'});
+	return this.each(function() {
+		if ($(this).is(':visible')) {
+			$(this).css({height: ''});
+			var top = $(this).offset().top;
+			var height = $(this).outerHeight(true);
+			var ws = getWindowSize();
+			if (height > (ws.y - top)) {
+				var nh = Math.min(height, ws.y - top);
+				$(this).css({height: nh+'px'});
+			}
+		}
 	});
-	return this;
 }
 
 jQuery.fn.removeCollectionDropdown = function() {
@@ -507,10 +509,6 @@ var layoutProcessor = function() {
 			$("#pscroller").css("height", newheight.toString()+"px");
 		},
 
-		playlistLoading: function() {
-			infobar.smartradio(language.gettext('label_preparing'));
-		},
-
 		scrollPlaylistToCurrentTrack: function() {
 			var scrollto = playlist.getCurrentTrackElement();
 			if (prefs.scrolltocurrent && scrollto.length > 0) {
@@ -592,11 +590,6 @@ var layoutProcessor = function() {
 			infobar.notify(
 				(details.isaudiobook == 0) ? language.gettext('label_addedtocol') : language.gettext('label_addedtosw')
 			);
-			infobar.markCurrentTrack();
-		},
-
-		setProgressTime: function(stats) {
-			makeProgressOfString(stats);
 		},
 
 		updateInfopaneScrollbars: function() {
