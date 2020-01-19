@@ -63,18 +63,15 @@ var clickRegistry = function() {
 			} else {
 				clickedElement.toggleClosed();
 				await target.menuHide();
+				target.clearOut();
 				if (target.hasClass('removeable')) {
-					target.clearOut();
 					target.remove();
-				} else {
-					target.find('.selected').removeFromSelection();
 				}
 			}
 			prefs.save_prefs_for_open_menus(menutoopen);
 			if (menutoopen == 'playlistbuttons') {
 				layoutProcessor.setPlaylistHeight();
 			}
-
 			return false;
 		},
 
@@ -741,17 +738,20 @@ function popupMenu(event, element) {
 
 	function setHeight() {
 		var top = 0;
-		var height = '';
 		maindiv.css({height: ''});
 		var my_height = maindiv.outerHeight(true);
+		// 8 pixel fudge factor to prevent scrollbars appearing on menus that don\t need them.
+		var height = (my_height+8)+'px';
 		if (mouseY + my_height > max_size.y) {
 			top = max_size.y - my_height;
 			if (top < max_size.top) {
 				top = max_size.top;
-				height = max_size.y - max_size.top;
+				height = max_size.y - max_size.top + 8;
 			}
+			top += 'px';
+			height += 'px';
 		} else {
-			top = mouseY;
+			top = mouseY+'px';
 		}
 		maindiv.css({
 			top: top,
@@ -847,6 +847,10 @@ function popupMenu(event, element) {
 			}
 		});
 		self.markTrackTags();
+		if ($('.selected').hasClass('playlistcurrentitem')) {
+			// Make sure nowplaying updates its data if one of the selected tracks is the current track
+			nowplaying.refreshUserMeta();
+		}
 	}
 
 	this.markTrackTags = function() {

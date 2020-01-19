@@ -88,8 +88,8 @@ var player = function() {
 			debug.log("PLAYERS",newhosts);
 			if (reloadNeeded !== false) {
 				setCookie('player_backend', '', 0);
-				prefs.save({currenthost: reloadNeeded}).then(function() {
-					prefs.save({multihosts: newhosts}).then(function() {
+				prefs.save({multihosts: newhosts}).then(function() {
+					prefs.save({currenthost: reloadNeeded}).then(function() {
 						reloadWindow();
 					});
 				});

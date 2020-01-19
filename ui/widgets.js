@@ -787,7 +787,7 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 			if (typeof(ResizeObserver) == 'function') {
 				let resizeObserver = new ResizeObserver(function(entries, myself) {
 					clearTimeout(self.resizetimer);
-					self.resizetimer = setTimeout($.proxy(self.resizeme, self), 20);
+					self.resizetimer = setTimeout($.proxy(self.resizeme, self), 10);
 				});
 				resizeObserver.observe(self.element.find('.mCSB_container').get()[0]);
 			} else {
