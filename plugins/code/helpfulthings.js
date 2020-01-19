@@ -144,7 +144,6 @@ var helpfulThings = function() {
 		},
 
 		close: function() {
-			nowplaying.notifyTrackChanges('helpfulthings', null);
 			if (doneonce) {
 				$('#hplfoldup .helpfulholder').each(function() {
 					debug.trace(medebug,"Removing And Destroying",$(this).attr("id"));

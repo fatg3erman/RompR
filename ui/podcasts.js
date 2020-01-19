@@ -99,7 +99,7 @@ var podcasts = function() {
 
 	function checkForUpdatedPodcasts(data) {
 		debug.log('PODCASTS', 'Checking for updated podcasts');
-		debug.debug('PODCASTS', data);
+		debug.trace('PODCASTS', data);
 		if (data && data.length > 0) {
 			$.each(data, function(index, value) {
 				if (!$('#podcast_'+value).hasClass('notfilled')) {
@@ -110,8 +110,8 @@ var podcasts = function() {
 		}
 	}
 
-	function podcastRequest(options, callback) {
-		debug.debug("PODCASTS","Sending request",options);
+	async function podcastRequest(options, clickedElement) {
+		if (clickedElement)	clickedElement.makeSpinner();
 		options.populate = 1;
 		if (options.channel) {
 			var term = $('[name="podsearcher_'+options.channel+'"]').val();
@@ -119,31 +119,26 @@ var podcasts = function() {
 				options.searchterm = encodeURIComponent(term);
 			}
 		}
-		$.ajax({
-			type: "GET",
-			url: "podcasts/podcasts.php",
-			cache: false,
-			data: options,
-			contentType: 'application/json'
-		})
-		.done(function(data) {
+		debug.trace("PODCASTS","Sending request",options);
+		try {
+			var data = await $.ajax({
+				type: "GET",
+				url: "podcasts/podcasts.php",
+				cache: false,
+				data: options,
+				contentType: 'application/json'
+			});
 			checkForUpdatedPodcasts(data);
 			podcasts.doNewCount();
-			if (callback !== null) {
-				callback();
-			}
-		})
-		.fail(function(data,status) {
+		} catch (err) {
 			debug.error("PODCASTS", "Podcast Request Failed:",data,options);
 			if (data.status == 412) {
 				infobar.error(language.gettext('label_refreshinprogress'));
 			} else {
 				infobar.error(language.gettext("label_general_error"));
 			}
-			if (callback !== null) {
-				callback();
-			}
-		});
+		};
+		if (clickedElement)	clickedElement.stopSpinner();
 	}
 
 	return {
@@ -214,38 +209,45 @@ var podcasts = function() {
 			setTimeout(function() { podcasts.doPodcast('podcastsinput', $('#podcastsinput').parent().next()) }, 1000);
 		},
 
-		channelAction: function(channel, action) {
-			debug.log("PODCAST","Action",action," on podcast ",channel);
-			var data = {populate: 1};
-			data[action] = channel;
-			data.channel = channel;
-			$('.podaction[name="'+action+'_'+channel+'"]').makeSpinner();
-			podcastRequest(data, function() {
-				$('.podaction[name="'+action+'_'+channel+'"]').stopSpinner();
-			});
+		channelAction: function(event, clickedElement) {
+			var data = {};
+			var n = clickedElement.attr('name').match('(.*)_(.*)');
+			data[n[1]] = n[2];
+			data.channel = n[2];
+			debug.log("PODCAST","Action",data.action,"on podcast",data.channel);
+			podcastRequest(data, clickedElement);
 		},
 
-		removePodcastTrack: function(track, channel) {
+		removePodcastTrack: function(event, clickedElement) {
+			var track = clickedElement.attr('name').replace(/podtrackremove_/, '');
+			var channel = clickedElement.parent().attr('name').replace(/podcontrols_/,'');
 			debug.log("PODCAST","Removing track",track,"from channel",channel);
-			podcastRequest({removetrack: track, channel: channel },null);
+			podcastRequest({removetrack: track, channel: channel}, clickedElement);
 		},
 
-		markEpisodeAsListened: function(track, channel) {
+		markEpisodeAsListened: function(event, clickedElement) {
+			var track = clickedElement.attr('name').replace(/podmarklistened_/, '');
+			var channel = clickedElement.parent().attr('name').replace(/podcontrols_/,'');
 			debug.log("PODCAST","Marking track",track,"from channel",channel,"as listened");
-			podcastRequest({markaslistened: track, channel: channel },null);
+			podcastRequest({markaslistened: track, channel: channel }, clickedElement);
 		},
 
-		markEpisodeAsUnlistened: function(track, channel) {
+		markEpisodeAsUnlistened: function(event, clickedElement) {
+			var track = clickedElement.attr('name').replace(/podmarkunlistened_/, '');
+			var channel = clickedElement.parent().attr('name').replace(/podcontrols_/,'');
 			debug.log("PODCAST","Marking track",track,"from channel",channel,"as unlistened");
 			podcastRequest({markasunlistened: track, channel: channel },null);
 		},
 
-		downloadPodcast: function(track, channel) {
+		downloadPodcast: function(event, clickedElement) {
+			var track = clickedElement.attr('name').replace(/poddownload_/, '');
+			var channel = clickedElement.parent().attr('name').replace(/podcontrols_/,'');
 			debug.log("PODCAST","Downloading track",track,"from channel",channel);
 			downloadTrack(track, channel);
 		},
 
-		downloadPodcastChannel: function(channel) {
+		downloadPodcastChannel: function(event, clickedElement) {
+			var channel = clickedElement.attr('name').replace(/podgroupload_/, '');
 			$("#podcast_"+channel).find('.poddownload').trigger('click');
 		},
 
@@ -300,7 +302,7 @@ var podcasts = function() {
 			});
 		},
 
-		changeOption: function(event) {
+		changeOption: async function(event) {
 			var element = $(event.target);
 			var elementType = element[0].tagName;
 			var options = {option: element.attr("name")};
@@ -322,7 +324,8 @@ var podcasts = function() {
 			}
 			var channel = element.attr('id');
 			options.channel = channel.replace(/podconf_/,'');
-			podcastRequest(options, callback);
+			await podcastRequest(options, null);
+			if (callback) callback();
 		},
 
 		checkRefresh: async function() {
@@ -357,20 +360,14 @@ var podcasts = function() {
 			}
 		},
 
-		removePodcast: async function(index) {
+		removePodcast: async function(event, clickedElement) {
+			var index = clickedElement.attr('name').replace(/podremove_/, '');
 			debug.log("PODCAST","Removing podcast",index);
 			// Remove it right away for responsiveness
 			$('.openmenu[name="podcast_'+index+'"]').removeCollectionItem();
-			$('#podcast_search').find('#podcast_'+index).removeCollectionDropdown();
-			// Therefore don't need to reload the list (but do need to call populate=1 otherwise php can't find its include files)
-			// await clickRegistry.loadContentIntoTarget(
-			// 	$('#fruitbat'),
-			// 	$('i.icon-podcast-circled.choosepanel'),
-			// 	true,
-			// 	'podcasts/podcasts.php?remove='+index+'&populate=1'
-			// );
+			$('#podcast_'+index).removeCollectionDropdown();
 			await $.get('podcasts/podcasts.php?remove='+index+'&populate=1').promise();
-			podcasts.doNewCount();
+			podcasts.reloadList();
 		},
 
 		search: async function() {
@@ -392,7 +389,8 @@ var podcasts = function() {
 			$('#podsclear').hide();
 		},
 
-		subscribe: async function(index, clickedElement) {
+		subscribe: async function(event, clickedElement) {
+			var index = clickedElement.next().val();
 			await clickRegistry.loadContentIntoTarget({
 				target: $('#fruitbat'),
 				clickedElement: clickedElement,
@@ -403,7 +401,7 @@ var podcasts = function() {
 			podcasts.doNewCount();
 		},
 
-		removeSearch: function() {
+		removeSearch: function(event, clickedElement) {
 			$('#podcast_search').clearOut().empty();
 		},
 
@@ -411,14 +409,11 @@ var podcasts = function() {
 			podcastRequest({setprogress: track.progress, track: encodeURIComponent(track.uri)}, null);
 		},
 
-		globalAction: function(thing, el) {
-			el.makeSpinner();
-			var options = new Object;
-			options[thing] = 1;
-			podcastRequest(options, function() {
-				el.stopSpinner();
-				podcasts.reloadList()
-			});
+		globalAction: async function(event, clickedElement) {
+			var options = {};
+			options[clickedElement.attr('name')] = 1;
+			await podcastRequest(options, clickedElement);
+			podcasts.reloadList()
 		},
 
 		makeSearchWork: function(event) {
@@ -431,49 +426,19 @@ var podcasts = function() {
 				var thing = $(event.target).attr('name').replace(/podsearcher_/,'');
 				podcasts.searchinpodcast(thing);
 			}
-		},
-
-		handleClick: function (event, clickedElement) {
-			if (clickedElement.hasClass("podremove")) {
-				var n = clickedElement.attr('name');
-				podcasts.removePodcast(n.replace(/podremove_/, ''));
-			} else if (clickedElement.hasClass("podaction")) {
-				var n = clickedElement.attr('name').match('(.*)_(.*)');
-				podcasts.channelAction(n[2],n[1]);
-			} else if (clickedElement.hasClass("podglobal")) {
-				podcasts.globalAction(clickedElement.attr('name'), clickedElement);
-			} else if (clickedElement.hasClass("podtrackremove")) {
-				var n = clickedElement.attr('name');
-				var m = clickedElement.parent().attr('name');
-				clickedElement.makeSpinner();
-				podcasts.removePodcastTrack(n.replace(/podtrackremove_/, ''), m.replace(/podcontrols_/,''));
-			} else if (clickedElement.hasClass("clickpodsubscribe")) {
-				var index = clickedElement.next().val();
-				podcasts.subscribe(index, clickedElement);
-			} else if (clickedElement.hasClass("removepodsearch")) {
-				podcasts.removeSearch();
-			} else if (clickedElement.hasClass("poddownload")) {
-				var n = clickedElement.attr('name');
-				var m = clickedElement.parent().attr('name');
-				podcasts.downloadPodcast(n.replace(/poddownload_/, ''), m.replace(/podcontrols_/,''));
-			} else if (clickedElement.hasClass("podgroupload")) {
-				var n = clickedElement.attr('name');
-				podcasts.downloadPodcastChannel(n.replace(/podgroupload_/, ''));
-			} else if (clickedElement.hasClass("podmarklistened")) {
-				var n = clickedElement.attr('name');
-				var m = clickedElement.parent().attr('name');
-				clickedElement.makeSpinner();
-				podcasts.markEpisodeAsListened(n.replace(/podmarklistened_/, ''), m.replace(/podcontrols_/,''));
-			} else if (clickedElement.hasClass("podmarkunlistened")) {
-				var n = clickedElement.attr('name');
-				var m = clickedElement.parent().attr('name');
-				clickedElement.makeSpinner();
-				podcasts.markEpisodeAsUnlistened(n.replace(/podmarkunlistened_/, ''), m.replace(/podcontrols_/,''));
-			}
 		}
 	}
 }();
 
 $('#podcastsinput').on('drop', podcasts.handleDrop)
-clickRegistry.addClickHandlers('podcast', podcasts.handleClick);
+clickRegistry.addClickHandlers('podremove', podcasts.removePodcast);
+clickRegistry.addClickHandlers('podaction', podcasts.channelAction);
+clickRegistry.addClickHandlers('podglobal', podcasts.globalAction);
+clickRegistry.addClickHandlers('podtrackremove', podcasts.removePodcastTrack);
+clickRegistry.addClickHandlers('clickpodsubscribe', podcasts.subscribe);
+clickRegistry.addClickHandlers('removepodsearch', podcasts.removeSearch);
+clickRegistry.addClickHandlers('poddownload', podcasts.downloadPodcast);
+clickRegistry.addClickHandlers('podgroupload', podcasts.downloadPodcastChannel);
+clickRegistry.addClickHandlers('podmarklistened', podcasts.markEpisodeAsListened);
+clickRegistry.addClickHandlers('podmarkunlistened', podcasts.markEpisodeAsUnlistened);
 clickRegistry.addMenuHandlers('podcast', podcasts.getPodcast);

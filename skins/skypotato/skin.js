@@ -4,12 +4,12 @@
 // The biggest problem with this skin is that if we change stuff in the UI, it usually fucks it up.
 // So be careful to test it.
 
-jQuery.fn.menuReveal = async function(callback) {
+jQuery.fn.menuReveal = async function() {
 
 	// 'self' is the menu being opened, which will alresady have contents
 
-	var self = this;
-	var id = this.attr('id');
+	var self = $(this);
+	var id = self.attr('id');
 	var holder = $('.openmenu[name="'+id+'"]');
 	var parent = holder.parent();
 	var adjustboxes = true;
@@ -70,7 +70,7 @@ jQuery.fn.menuReveal = async function(callback) {
 			self.removeClass('closed');
 			break;
 
-		case $(this).hasClass('collectionpanel'):
+		case self.hasClass('collectionpanel'):
 			// Albums panel, when an artist name is clicked on. Catch it because we DO need to appendDummySpacers
 			scrollto = false;
 			break;
@@ -88,15 +88,14 @@ jQuery.fn.menuReveal = async function(callback) {
 		var displaymode = self.hasClass('containerbox') ? 'flex' : 'block';
 		self.css({display: displaymode});
 	}
-	if (callback) callback.call(self);
 	if (scrollto) {
 		layoutProcessor.scrollSourcesTo(parent);
 	}
 	if (adjustboxes) {
-		$(this).appendDummySpacers();
+		self.appendDummySpacers();
 		layoutProcessor.postAlbumMenu(holder);
 	}
-	return self;
+	return this;
 }
 
 // The number 4 in the following functions arises because we have
@@ -138,9 +137,9 @@ jQuery.fn.removeDummySpacers = function() {
 	});
 }
 
-jQuery.fn.menuHide = async function(callback) {
-	var self = this;
-	var id = this.attr('id');
+jQuery.fn.menuHide = async function() {
+	var self = $(this);
+	var id = self.attr('id');
 	var holder = $('.openmenu[name="'+id+'"]');
 	var parent = holder.parent();
 	var adjustboxes = true;
@@ -193,11 +192,10 @@ jQuery.fn.menuHide = async function(callback) {
 			adjustboxes = false;
 			break;
 	}
-	if (callback) callback.call(self);
 	if (adjustboxes) {
 		layoutProcessor.scrollSourcesTo(parent);
 	}
-	return self;
+	return this;
 }
 
 jQuery.fn.isOpen = function() {

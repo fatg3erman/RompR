@@ -233,10 +233,6 @@ var nowplaying = function() {
 			return plugins;
 		},
 
-		notifyTrackChanges: function(name, callback) {
-			to_notify[name] = callback;
-		},
-
 		newTrack: function(playlistinfo, force) {
 
 			debug.debug("NOWPLAYING","New Info",playlistinfo);
@@ -250,12 +246,6 @@ var nowplaying = function() {
 			}
 			currentbackendid = playlistinfo.Id;
 			debug.debug("NOWPLAYING","New Track:",playlistinfo);
-			for (var i in to_notify) {
-				if (to_notify[i] !== null) {
-					debug.trace("NOWPLAYING","Notifying",i);
-					to_notify[i](playlistinfo);
-				}
-			}
 
 			// Repeatedly querying online databases for the same data is a bad idea -
 			// it's slow, it means we have to store the same data multiple times,

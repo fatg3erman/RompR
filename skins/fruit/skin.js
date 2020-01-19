@@ -25,26 +25,24 @@ jQuery.fn.animatePanel = function(options) {
 	);
 }
 
-jQuery.fn.menuReveal = async function(callback) {
-	var id = this.prop('id');
-	var element = $('i[name="'+id+'"]');
-	layoutProcessor.postAlbumMenu(element, this);
-	await this.slideToggle('fast').promise();
-	if (callback) {
-		callback();
-	}
-	return this;
+jQuery.fn.menuReveal = async function() {
+	return this.each(function() {
+		var self = $(this);
+		var id = self.prop('id');
+		var element = $('i[name="'+id+'"]');
+		layoutProcessor.postAlbumMenu(element, self);
+		await self.slideToggle('fast').promise();
+	});
 }
 
-jQuery.fn.menuHide = async function(callback) {
-	var id = this.prop('id');
-	var element = $('i[name="'+id+'"]');
-	layoutProcessor.postAlbumMenu(element, this);
-	await this.slideToggle('fast').promise();
-	if (callback) {
-		callback();
-	}
-	return this;
+jQuery.fn.menuHide = async function() {
+	return this.each(function() {
+		var self = $(this);
+		var id = self.prop('id');
+		var element = $('i[name="'+id+'"]');
+		layoutProcessor.postAlbumMenu(element, self);
+		await self.slideToggle('fast').promise();
+	});
 }
 
 function showHistory() {

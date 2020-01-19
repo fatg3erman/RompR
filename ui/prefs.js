@@ -518,7 +518,6 @@ var prefs = function() {
 
 		save: async function(options, callback) {
 			var prefsToSave = {};
-			var postSave = false;
 			for (var i in options) {
 				prefs[i] = options[i];
 				if (cookiePrefs.indexOf(i) > -1) {
@@ -531,16 +530,13 @@ var prefs = function() {
 				} else {
 					debug.debug("PREFS", "Setting",i,"to",options[i],"on backend");
 					prefsToSave[i] = options[i];
-					postSave = true;
 				}
 			}
-			if (postSave) {
+			if (Object.keys(prefsToSave).length > 0) {
 				debug.trace("PREFS",'Saving to backend', JSON.stringify(prefsToSave));
 				await $.post('saveprefs.php', {prefs: JSON.stringify(prefsToSave)});
 			}
-			if (callback) {
-				callback();
-			}
+			if (callback) callback();
 		},
 
 		togglePref: function(event) {

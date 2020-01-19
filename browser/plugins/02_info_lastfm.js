@@ -440,16 +440,6 @@ var info_lastfm = function() {
 						}
 					},
 
-					getFullBio: function(callback, failcallback) {
-						debug.debug(medebug,parent.nowplayingindex,"Not Getting Bio URL:", artistmeta.lastfm.artist.url);
-					},
-
-					updateBio: function(data) {
-						if (displaying) {
-							$("#artistbio").html(lastfm.formatBio(data, null));
-						}
-					},
-
 					resetUserTags: function() {
 						artistmeta.lastfm.usertags = null;
 					},

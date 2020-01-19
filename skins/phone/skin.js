@@ -1,38 +1,21 @@
-jQuery.fn.revealImage = function() {
-	// We don't return album images with the src attribute set
-	// because if we insert them into a div that is not visible, mobile Safari
-	// doesn't get the size right. So we set an 'asrc' attribute and set the src
-	// attribute when the image is visible.
-	$(this).each(function() {
-		$(this).attr('src', $(this).attr('asrc'));
-	});
-	return this;
-}
-
-jQuery.fn.menuReveal = async function(callback) {
-	debug.debug("UI", "Revealing",$(this).attr('id'));
-	if (this.hasClass('toggledown')) {
-		await this.slideToggle('fast').promise();
+jQuery.fn.menuReveal = async function() {
+	var self = $(this);
+	if (self.hasClass('toggledown')) {
+		await self.slideToggle('fast').promise();
 	} else {
-		this.findParentScroller().saveScrollPos();
-		await this.show(0).promise();
-	}
-	if (callback) {
-		callback();
+		self.findParentScroller().saveScrollPos();
+		await self.show(0).promise();
 	}
 	return this;
 }
 
-jQuery.fn.menuHide = async function(callback) {
-	debug.debug("UI", "Hiding",$(this).attr('id'));
-	if (this.hasClass('toggledown')) {
-		await this.slideToggle('fast').promise();
+jQuery.fn.menuHide = async function() {
+	var self = $(this);
+	if (self.hasClass('toggledown')) {
+		await self.slideToggle('fast').promise();
 	} else {
-		await this.hide(0).promise();
-		this.findParentScroller().restoreScrollPos();
-	}
-	if (callback) {
-		callback();
+		await self.hide(0).promise();
+		self.findParentScroller().restoreScrollPos();
 	}
 	return this;
 }

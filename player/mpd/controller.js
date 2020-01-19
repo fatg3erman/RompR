@@ -398,9 +398,7 @@ function playerController() {
 
 	this.volume = function(volume, callback) {
 		self.do_command_list([["setvol",parseInt(volume.toString())]]).then(function() {
-			if (callback) {
-				callback();
-			}
+			if (callback) callback();
 		});
 		return true;
 	}

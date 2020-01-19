@@ -1,18 +1,12 @@
 // skin.js may redefine these jQuery functionss if necessary
 
-jQuery.fn.menuReveal = async function(callback) {
-	await this.slideToggle('fast').promise();
-	if (callback) {
-		callback();
-	}
+jQuery.fn.menuReveal = async function() {
+	await $(this).slideToggle('fast').promise();
 	return this;
 }
 
-jQuery.fn.menuHide = async function(callback) {
-	await this.slideToggle('fast').promise();
-	if (callback) {
-		callback();
-	}
+jQuery.fn.menuHide = async function() {
+	await $(this).slideToggle('fast').promise();
 	return this;
 }
 
