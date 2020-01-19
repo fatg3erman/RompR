@@ -387,7 +387,6 @@ function get_extra_track_info(&$filedata) {
 	);
 	foreach ($result as $tinfo) {
 		if ($tinfo['Uri'] == $filedata['file']) {
-			logger::debug('BACKEND', "Found Track In Collection");
 			if ($tinfo['isAudiobook'] > 0) {
 				$tinfo['type'] = 'audiobook';
 			}
@@ -412,7 +411,6 @@ function get_extra_track_info(&$filedata) {
 				$filedata['Album'], concatenate_artist_names($filedata['AlbumArtist'])
 		);
 		foreach ($result as $tinfo) {
-			logger::debug('BACKEND', "Found Album In Collection");
 			$data = array_filter($tinfo, function($v) {
 				if ($v === null || $v == '') {
 					return false;
