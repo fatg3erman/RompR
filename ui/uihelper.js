@@ -105,7 +105,7 @@ jQuery.fn.makeTagMenu = function(options) {
 			$(this).append(settings.labelhtml);
 		}
 		var holder = $('<div>', { class: "expand"}).appendTo($(this));
-		var textbox = $('<input>', { type: "text", class: tbc, name: settings.textboxname, placeholder: settings.placeholder }).appendTo(holder);
+		var textbox = $('<input>', { type: "text", class: tbc, name: settings.textboxname, placeholder: unescapeHtml(settings.placeholder) }).appendTo(holder);
 		var dropbox = $('<div>', {class: "drop-box tagmenu dropshadow fullwidth"}).insertAfter($(this));
 		var menucontents = $('<div>', {class: "tagmenu-contents"}).appendTo(dropbox);
 		if (settings.buttontext !== null) {
