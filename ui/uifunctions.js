@@ -350,9 +350,9 @@ function setChooserButtons() {
 	var s = uiHelper.panelMapping();
 	$.each(s, function(key, value) {
 		if (prefs["hide_"+key]) {
-			$(".choose_"+value).fadeOut('fast');
+			$('.choosepanel[name="'+value+'"]').fadeOut('fast');
 		} else {
-			$(".choose_"+value).fadeIn('fast');
+			$('.choosepanel[name="'+value+'"]').fadeIn('fast');
 		}
 	});
 	uiHelper.adjustLayout();

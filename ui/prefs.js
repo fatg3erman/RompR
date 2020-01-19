@@ -634,6 +634,7 @@ var prefs = function() {
 		},
 
 		toggleRadio: function(event) {
+			debug.trace('PREFS', 'Toggling radio', $(this));
 			var defer = false;
 			var prefobj = new Object;
 			var prefname = $(this).attr("name");

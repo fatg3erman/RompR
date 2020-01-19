@@ -168,7 +168,7 @@ jQuery.fn.fanoogleMenus = function() {
 			debug.log('FANOOGLING', $(this).prop('id'));
 			var pt = parseInt($(this).css('padding-top')) + parseInt($(this).css('padding-bottom')) +
 				parseInt($(this).css('border-top-width')) + parseInt($(this).css('border-bottom-width'));
-			var top = $(this).children().first().children('.mCSB_container').offset().top;
+			var top = $(this).children('.mCustomScrollBox').offset().top;
 			var conheight = $(this).children().first().children('.mCSB_container').height();
 			var ws = getWindowSize();
 			var avheight = ws.y - top;

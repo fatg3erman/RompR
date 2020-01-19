@@ -783,15 +783,17 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 			});
 		}
 
-		if (typeof(ResizeObserver) == 'function') {
-			let resizeObserver = new ResizeObserver(function(entries, myself) {
-				clearTimeout(self.resizetimer);
-				self.resizetimer = setTimeout($.proxy(self.resizeme, self), 20);
-			});
-			resizeObserver.observe(self.element.find('.mCSB_container').get()[0]);
-		} else {
-			// Safari, Edge, Firefox for Android. Also IE but who gives a fuck?
-			self.resizetimer = setTimeout($.proxy(self.resizeme, self), 1000);
+		if (self.element.find('.mCSB_container').length > 0) {
+			if (typeof(ResizeObserver) == 'function') {
+				let resizeObserver = new ResizeObserver(function(entries, myself) {
+					clearTimeout(self.resizetimer);
+					self.resizetimer = setTimeout($.proxy(self.resizeme, self), 20);
+				});
+				resizeObserver.observe(self.element.find('.mCSB_container').get()[0]);
+			} else {
+				// Safari, Edge, Firefox for Android. Also IE but who gives a fuck?
+				self.resizetimer = setTimeout($.proxy(self.resizeme, self), 1000);
+			}
 		}
 	},
 

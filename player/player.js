@@ -96,7 +96,6 @@ var player = function() {
 				prefs.save({multihosts: newhosts});
 				self.replacePlayerOptions();
 				prefs.setPrefs();
-				$('[name="playerdefs"] > .savulon').on('click', prefs.toggleRadio);
 			}
 			return true;
 		}
@@ -158,6 +157,7 @@ var player = function() {
 						'<label for="host_'+escape(i)+index+'">'+i+'</label><br/>');
 				}
 			});
+			$('[name="playerdefs"] > .savulon').off('click').on('click', prefs.toggleRadio);
 		}
 	}
 
