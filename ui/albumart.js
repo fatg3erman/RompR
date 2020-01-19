@@ -165,7 +165,7 @@ function filterImages() {
 	if ($(this).hasClass('playlistimage')){
 		return false;
 	}
-	if ($(this).hasAttr('src')) {
+	if ($(this).hasAttr('src') && $(this).attr('src') != 'newimages/transparent.png') {
 		return false;
 	} else {
 		return true;

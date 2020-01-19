@@ -814,7 +814,6 @@ var prefs = function() {
 			if (typeof(layoutProcessor) != 'undefined') {
 				uiHelper.adjustLayout();
 			}
-			browser.rePoint();
 		},
 
 		changeBackgroundImage: function() {

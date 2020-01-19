@@ -132,11 +132,11 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 	}
 
 	function animateWaiting() {
-		$('img.notexist[name="'+imgparams.imgkey+'"]').removeClass('nospin').addClass('spinner').removeAttr('src');
+		$('img.notexist[name="'+imgparams.imgkey+'"]').removeClass('nospin').addClass('spinner').attr({src: "newimages/transparent.png"});
 	}
 
 	function stopAnimation() {
-		$('img[name="'+imgparams.imgkey+'"]').removeClass('spinner').addClass('nospin').removeAttr('src');
+		$('img[name="'+imgparams.imgkey+'"]').removeClass('spinner').addClass('nospin').attr({src: "newimages/transparent.png"});
 	}
 
 	// Hello

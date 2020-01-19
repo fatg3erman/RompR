@@ -437,6 +437,9 @@ if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave == false) {
 		print '</div>';
 	}
 
+	logger::info('PREFSPANEL', 'Collection Player is', $prefs['collection_player']);
+	logger::info('PREFSPANEL', 'Player Backend is', $prefs['player_backend']);
+
 	if (($prefs['collection_player'] == "mopidy" || $prefs['collection_player'] == null) && $prefs['player_backend'] == 'mopidy') {
 		print '<div class="pref" id="mopidycollectionoptions">'.
 		'<b>'.get_int_text('config_collectionfolders').'</b></div>';

@@ -944,7 +944,7 @@ function Album(artist, album, index, rolledup) {
 		var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].Id, class: 'expand clickplaylist playid containerbox vertcentre'}).appendTo(inner);
 
 		if (prefs.use_albumart_in_playlist) {
-			self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].ImgKey });
+			self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].ImgKey, src: 'newimages/transparent.png' });
 			self.image.on('error', self.getart);
 			var imgholder = $('<div>', { class: 'smallcover fixed clickplaylist clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
 			if (tracks[0].images.small) {
@@ -1180,7 +1180,7 @@ function Stream(index, album, rolledup) {
 		var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].Id, class: 'expand playid clickplaylist containerbox vertcentre'}).appendTo(inner);
 
 		if (prefs.use_albumart_in_playlist) {
-			self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].ImgKey });
+			self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].ImgKey, src: 'newimages/transparent.png' });
 			self.image.on('error', self.getart);
 			var imgholder = $('<div>', { class: 'smallcover fixed clickplaylist clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
 			if (tracks[0].images.small) {
