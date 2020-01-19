@@ -185,21 +185,6 @@ jQuery.fn.fanoogleMenus = function() {
 	return this;
 }
 
-jQuery.fn.fanoogleTopMenus = function() {
-	return this.each(function() {
-		if ($(this).is(':visible')) {
-			$(this).css({height: ''});
-			var top = $(this).offset().top;
-			var height = $(this).outerHeight(true);
-			var ws = getWindowSize();
-			if (height > (ws.y - top)) {
-				var nh = Math.min(height, ws.y - top);
-				$(this).css({height: nh+'px'});
-			}
-		}
-	});
-}
-
 jQuery.fn.removeCollectionDropdown = function() {
 	this.each(function() {
 		var self = $(this);
@@ -549,7 +534,6 @@ var layoutProcessor = function() {
 			oldchooser = prefs.chooser;
 			layoutProcessor.setPlaylistHeight();
 			browser.rePoint();
-			$('.topdropmenu:visible').fanoogleTopMenus();
 			if ($('i.choosepanel[name="playlistm"]').css('font-weight') == '1000'
 				&& $('.mainpane:visible').not('#infobar').length == 0
 				&& (prefs.chooser == 'playlistm' || prefs.chooser == 'infobar')) {
@@ -608,9 +592,7 @@ var layoutProcessor = function() {
 			$(".dropdown").floatingMenu({ });
 			$('.topbarmenu').on('click', function() {
 				$('.autohide:visible').not('#'+$(this).attr('name')).slideToggle('fast');
-				$('#'+$(this).attr('name')).slideToggle('fast', function() {
-					$(this).fanoogleTopMenus();
-				});
+				$('#'+$(this).attr('name')).slideToggle('fast');
 			});
 			$('.autohide').on('click', function() {
 				$(this).slideToggle('fast');

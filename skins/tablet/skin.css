@@ -58,6 +58,10 @@ div {
 	margin:0px;
 }
 
+.topdropmenu {
+	max-height: calc(100vh - 40px);
+}
+
 /* Note this includes 40px for headerbar. Keep them synced */
 #loadsawrappers {
 	/* Tried to use this, but safari on my iPhone S sets 100vh as 320px when the browser reports

@@ -213,7 +213,7 @@ print '<button class="fixed iconbutton savebutton"></button></div>';
 <?php
 include("player/".$prefs['player_backend']."/search.php");
 ?>
-	<div id="searchresultholder" class="noborder selecotron"></div>
+	<div id="searchresultholder" class="noborder selecotron is-albumlist"></div>
 	</div>
 
 	<div id="filelist" class="invisible">

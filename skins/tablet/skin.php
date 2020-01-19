@@ -146,7 +146,7 @@ printOutputCheckboxes();
 include("player/".$prefs['player_backend']."/search.php");
 ?>
 </div>
-<div id="searchresultholder" class="selecotron"></div>
+<div id="searchresultholder" class="selecotron is-albumlist"></div>
 </div>
 
 <div id="filelist" class="scroller mainpane invisible pright">

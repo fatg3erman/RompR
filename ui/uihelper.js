@@ -172,15 +172,11 @@ jQuery.fn.fanoogleMenus = function() {
 			var conheight = $(this).children().first().children('.mCSB_container').height();
 			var ws = getWindowSize();
 			var avheight = ws.y - top;
-			var nh = (conheight+pt+8);
+			var nh = conheight+pt;
 			if (nh > avheight) {
 				$(this).css({height: avheight+"px"});
 			} else {
-				// Seems like we need an 8 pixel fudge factor to stop scollbars appearing on
-				// menus that don't need scrollbars. Not sure why this is. If it wasn't for that
-				// we could just unset the css height attribute like we do on the phone skin
-				$(this).css({height: nh+"px"});
-				// $(this).css({height: ''});
+				$(this).css({height: ''});
 			}
 			$(this).mCustomScrollbar("update");
 		}
@@ -299,6 +295,9 @@ jQuery.fn.addCustomScrollBar = function() {
 				autoUpdateTimeout: 500,
 			}
 		});
+		// 4 pixel high fudge div to prevent mCustomScrollbar putting scroll bars
+		// on divs that don't need them
+		$(this).find('.mCustomScrollBox').append('<div style="height:4px"></div>');
 	});
 }
 
@@ -318,7 +317,6 @@ jQuery.fn.doSomethingUseful = function(text) {
 		useful.appendTo(self);
 	});
 }
-
 
 // Functions that could just be in layoutProcessor, but it makes maintenance easier
 // if we have a proxy like this so we don't have to add new stuff to every single skin.

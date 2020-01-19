@@ -58,6 +58,10 @@ div {
 	border:none;
 }
 
+.topdropmenu {
+	max-height: calc(100vh - 40px);
+}
+
 #loadsawrappers {
 	/* Tried to use this, but safari on my iPhone S sets 100vh as 320px when the browser reports
 	it as 300px, even in full-screen mode. This is definitely a bug, but what can ya do? */

@@ -312,7 +312,7 @@ var collectionHelper = function() {
 			}
 			if (update) {
 				debug.mark('GENERAL','We are going to update the collection');
-				$("#searchresultholder").html('');
+				$("#searchresultholder").clearOut().empty();
 				scanFiles(rescan ? 'rescan' : 'update');
 			} else {
 				collectionHelper.displayCollection();
