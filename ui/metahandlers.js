@@ -294,13 +294,12 @@ var metaHandlers = function() {
 				},
 
 				setMeta: function(data, action, attributes, success, fail) {
-					var track = metaHandlers.fromLastFMData.mapData(data, action, attributes);
-					dbQueue.request([track], success, fail);
-					// Hackety hack
-					// As this is currently only for incrementing playcounts from Last.FM
-					// We use the data to also check if it's a podcast episode we need to mark as listened
-					// Note use of CloneObject, because podcasts urlencodes the content
-					podcasts.checkForEpisode(cloneObject(track));
+					var tracks = [];
+					data.forEach(function(track) {
+						tracks.push(metaHandlers.fromLastFMData.mapData(track, action, attributes));
+					});
+					dbQueue.request(tracks, success, fail);
+					return cloneObject(tracks);
 				},
 
 				mapData: function(data, action, attributes) {

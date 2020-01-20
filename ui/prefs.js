@@ -77,7 +77,8 @@ var prefs = function() {
 		"notvabydate",
 		"collectionrange",
 		"sortcollectionby",
-		"sortresultsby"
+		"sortresultsby",
+		"actuallysortresultsby"
 	];
 
 	const menus_to_save_state_for = [
@@ -521,6 +522,7 @@ var prefs = function() {
 			for (var i in options) {
 				prefs[i] = options[i];
 				if (cookiePrefs.indexOf(i) > -1) {
+					debug.trace("PREFS", "Setting",i,"to",options[i],"as a cookie");
 					var val = options[i];
 					setCookie(i, val, 3650);
 				}
@@ -736,9 +738,20 @@ var prefs = function() {
 					callback = podcasts.reloadList;
 					break;
 
-				case 'collectionrange':
-				case 'sortcollectionby':
 				case 'sortresultsby':
+					prefobj.actuallysortresultsby = (prefobj.sortresultsby == 'sameas') ? prefs.sortcollectionby : prefobj.sortresultsby;
+					callback = function() {
+						layoutProcessor.changeCollectionSortMode();
+						player.controller.reSearch();
+					}
+					break;
+
+				case 'sortcollectionby':
+					prefobj.actuallysortresultsby = (prefs.sortresultsby == 'sameas') ? prefobj.sortcollectionby : prefs.actuallysortresultsby;
+					callback = layoutProcessor.changeCollectionSortMode;
+					break;
+
+				case 'collectionrange':
 					callback = layoutProcessor.changeCollectionSortMode;
 					break;
 

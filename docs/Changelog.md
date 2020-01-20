@@ -6,6 +6,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 ## Version 1.40
 
 Thought I'd bump the version number up a bit since this seems like quite a big release that contains a lot of work.
+NOTE: This version needs to update your Music Collection. This will happen automatically when you first load the new version.
 
 ### FEATURES:
 * [romonitor](/RompR/Rompr-And-Mobiles) can now do Last.FM scrobbling, which will help make scrobbles match exactly what's in the Rompr collection - which will help for those people using Last.FM to sync their playcounts across devices and helps especially with podcasts, where the metadata used by eg mpdscribble often differs enormously from the more detailed info available to Rompr.
@@ -18,7 +19,10 @@ Thought I'd bump the version number up a bit since this seems like quite a big r
 * The Tags and Ratings manager has been removed since a) I hated it and b) almost everything it did can now be done via the main Collection panel
 * The 'back' button on the phone skin is now always visible so you don't have to scroll back to the top to go back
 * Done quite a lot of work on the Skypotato skin to make it neater, more efficient, and smoother and give it all the same functionality as the Desktop skin
+* Almost all the UI code has been updayted and tidied up for a faster, smoother UI.
 * I wrote a script to automate a lot of the work in making icon themes, so now there are LOADS of them :-D
+* 'Display Search Results as Directory Tree' is now incoporated into a new menu giving you the option to display your search results in a different format to the Muisc Collection
+
 ### FIXES:
 * Translations have been cleaned up - unused translation keys have been removed. For translators, any key missing from the translations has been added to the end of the translation file, commented out, ready to be updated. This will make it much easier for you to follow my crazy and undocumented updates.
 * Fix Panel hiding not working in Fruit skin
@@ -30,6 +34,10 @@ Thought I'd bump the version number up a bit since this seems like quite a big r
 * Fixed the play control buttons in Modern-Dark looking blurred in Safari due to Safari not rendering SVG blur correctly
 * The Personalised Radio code has been re-written from scratch to make it perform better. In particular the Spotify and Last.FM stations now populate much more quickly.
 * As always, hundreds of little tweaks and tinkerings here and there
+
+### KNOWN ISSUES:
+* In some circumstances, using the sort mode 'Albums (by Artist)' can cause your borwser to run very slowly for around a minute after the page loads. This is not a new issue in this release but has recently been identified. I don't yet know that cause and it doesn't happen every time.
+
 
 ## Version 1.32
 

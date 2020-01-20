@@ -579,7 +579,7 @@ var infobar = function() {
 				ends: ['max'],
 				onstop: infobar.seek,
 				startmax: 0,
-				animate: true
+				animate: false
 			});
 		},
 

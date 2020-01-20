@@ -486,7 +486,7 @@ var layoutProcessor = function() {
 				$('#collection, #audiobooks').off('click').off('dblclick');
 			}
 		}
-		if (prefs.sortresultsby.substr(0,5) == 'album') {
+		if (prefs.actuallysortresultsby.substr(0,5) == 'album') {
 			if (!$('#searchresultholder').hasClass('containerbox')) {
 				$('#searchresultholder').detach().empty()
 					.removeClass('noborder')

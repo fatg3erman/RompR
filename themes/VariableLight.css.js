@@ -66,7 +66,7 @@ themeManager.setBgCss = function(hour) {
 		23: '#777777'
 	};
 	const iconColours = {
-		0:  'opacity: 0.6',
+		0:  'opacity: 0.4',
 		1:  'opacity: 0.5',
 		2:  'opacity: 0.5',
 		3:  'opacity: 0.5',
@@ -84,18 +84,18 @@ themeManager.setBgCss = function(hour) {
 		15: 'opacity: 1',
 		16: 'opacity: 1',
 		17: 'opacity: 1',
-		18: 'opacity: 1',
-		19: 'opacity: 0.9',
-		20: 'opacity: 0.8',
-		21: 'opacity: 0.7',
+		18: 'opacity: 0.9',
+		19: 'opacity: 0.8',
+		20: 'opacity: 0.7',
+		21: 'opacity: 0.6',
 		22: 'opacity: 0.6',
-		23: 'opacity: 0.6'
+		23: 'opacity: 0.5'
 	};
 	debug.log('THEMEMANAGER', 'Updating background colour for hour', hour);
 	$('style[id="vl_background"]').html(
 		':root { --vl_bg_colour: '+hourColours[hour]+'; '
 		+'--vl_text_colour: '+textColours[hour]+'; } '
-		+'[class^="icon-"]:not(.invisibleicon), [class*=" icon-"]:not(.invisibleicon) { '+iconColours[hour]+'; } '
+		+'[class^="icon-"]:not(.invisibleicon):not(.topdrop), [class*=" icon-"]:not(.invisibleicon):not(.topdrop) { '+iconColours[hour]+'; } '
 		+'img { '+iconColours[hour]+' !important; } '
 		);
 }

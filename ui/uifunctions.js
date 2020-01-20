@@ -825,23 +825,52 @@ var syncLastFMPlaycounts = function() {
 
 	var limit = 100;
 	var page = 1;
-	var totaltracks = 0;
 	var totalpages = 0;
-	var tracksdone = 0;
 	var currentdata = new Array();
-	var currenttrack;
 	var notify = null;
 
-	function failedMetaData(data) {
+	function failed(data) {
 		debug.warn("LASTFMSYNC","It's all gone horribly wrong", data);
-		syncLastFMPlaycounts.checkNextTrack();
+		removeNotify();
 	}
 
-	function doneItAll() {
-		debug.log("LASTFMSYNC", "Done");
-		tracksdone++;
-		$('#lfmsyncprogress').rangechooser('setRange', {min: 0, max: tracksdone});
-		syncLastFMPlaycounts.checkNextTrack();
+	function gotPage(data) {
+		debug.log('LASTFMSYNC', 'Got page', page);
+		debug.debug("LASTFMSYNC", "Got Data", data);
+		if (data.recenttracks) {
+			totalpages = parseInt(data.recenttracks["@attr"].totalPages);
+			if (data.recenttracks.track && data.recenttracks.track.length > 0) {
+				if (notify === null) {
+					notify = infobar.permnotify(
+						'<div class="fullwidth">'+language.gettext('label_lfm_syncing')+'</div>'+
+						'<div class="fullwidth" id="lfmsyncprogress" style="height:0.8em"></div>'
+					);
+					$('#lfmsyncprogress').rangechooser({
+						range: (totalpages*2),
+						interactive: false,
+						startmax: 0,
+						animate: true
+					});
+				}
+				$('#lfmsyncprogress').rangechooser('setRange', {min: 0, max: page});
+				let tracks = metaHandlers.fromLastFMData.setMeta(data.recenttracks.track, 'syncinc', [{attribute: 'Playcount', value: 1}], donePage, failed);
+				podcasts.checkScrobbles(tracks);
+			} else {
+				debug.log('LASTFMSYNC', 'No tracks in page', page);
+				removeNotify();
+				prefs.save({last_lastfm_synctime: Math.floor(Date.now()/1000)});
+				podcasts.doScrobbleCheck();
+			}
+		} else {
+			removeNotify();
+		}
+	}
+
+	function donePage() {
+		debug.log("LASTFMSYNC", "Done page", page);
+		$('#lfmsyncprogress').rangechooser('setRange', {min: 0, max: (page*2)});
+		page++;
+		syncLastFMPlaycounts.start();
 	}
 
 	function removeNotify() {
@@ -849,6 +878,7 @@ var syncLastFMPlaycounts = function() {
 			infobar.removenotify(notify);
 			notify = null;
 		}
+		page = 1;
 	}
 
 	return {
@@ -866,54 +896,9 @@ var syncLastFMPlaycounts = function() {
 					from: prefs.last_lastfm_synctime,
 					extended: 1
 				},
-				syncLastFMPlaycounts.gotPage,
-				syncLastFMPlaycounts.failed
+				gotPage,
+				failed
 			)
-		},
-
-		gotPage: function(data) {
-			debug.debug("LASTFMSYNC", "Got Data", data);
-			if (data.recenttracks) {
-				totalpages = parseInt(data.recenttracks["@attr"].totalPages);
-				totaltracks = parseInt(data.recenttracks["@attr"].total);
-				if (data.recenttracks.track && data.recenttracks.track.length > 0) {
-					if (notify === null) {
-						notify = infobar.permnotify(
-							'<div class="fullwidth">'+language.gettext('label_lfm_syncing')+'</div>'+
-							'<div class="fullwidth" id="lfmsyncprogress" style="height:0.8em"></div>'
-						);
-						$('#lfmsyncprogress').rangechooser({
-							range: totaltracks,
-							interactive: false,
-							startmax: 0,
-							animate: true
-						});
-					}
-					currentdata = data.recenttracks.track;
-					currenttrack = -1;
-					syncLastFMPlaycounts.checkNextTrack();
-				}
-			}
-		},
-
-		checkNextTrack: function() {
-			currenttrack++;
-			if (currenttrack < currentdata.length) {
-				metaHandlers.fromLastFMData.setMeta(currentdata[currenttrack], 'syncinc', [{attribute: 'Playcount', value: 1}], doneItAll, failedMetaData);
-			} else {
-				if (page < totalpages) {
-					page++;
-					syncLastFMPlaycounts.start();
-				} else {
-					removeNotify();
-					prefs.save({last_lastfm_synctime: Math.floor(Date.now()/1000)});
-				}
-			}
-		},
-
-		failed: function(data) {
-			debug.error("LASTFMSYNC", "Failed", data);
-			removeNotify();
 		}
 	}
 

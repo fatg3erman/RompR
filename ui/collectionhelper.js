@@ -286,7 +286,7 @@ var collectionHelper = function() {
 		collectionKey: function(w) {
 			switch (w) {
 				case 'b':
-					return w+prefs.sortresultsby+'root';
+					return w+prefs.actuallysortresultsby+'root';
 					break;
 				default:
 					return w+prefs.sortcollectionby+'root';

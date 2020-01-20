@@ -5,6 +5,7 @@ var podcasts = function() {
 	var refreshtimer;
 	var onlineTriggerActivated = false;
 	var newcounts = {};
+	var scrobblesToCheck = [];
 
 	async function downloadTrack(track, channel) {
 		downloadQueue.push({track: track, channel: channel});
@@ -255,13 +256,46 @@ var podcasts = function() {
 			podcastRequest({listened: encodeURIComponent(file), populate: 1}, null);
 		},
 
-		checkForEpisode: function(track) {
-			$.each(track, function(i, v) {
-				track[i] = encodeURIComponent(v);
-			});
-			track.checklistened = 1;
-			track.populate = 1;
-			podcastRequest(track, null);
+		checkScrobbles: function(tracks) {
+			for (let track of tracks) {
+				scrobblesToCheck.push({
+					title: encodeURIComponent(track.title),
+					album: encodeURIComponent(track.album),
+					artist: encodeURIComponent(track.srtist),
+					checklistened: 1,
+					populate: 1
+				});
+			}
+		},
+
+		doScrobbleCheck: async function() {
+			var updated = [];
+			while (scrobblesToCheck.length > 0) {
+				let track = scrobblesToCheck.shift();
+				// Don't use podcastRequest for this because it checks for updated podcasts after every
+				// request. Ideally we want podcasts.php to accept multiple options the way userRatings dooes,
+				// but that's a lorra lorra work right now
+				debug.info('PODCASTS', 'Checking scrobble',decodeURIComponent(track.title),decodeURIComponent(track.album));
+				try {
+					var data = await $.ajax({
+						type: "GET",
+						url: "podcasts/podcasts.php",
+						cache: false,
+						data: track,
+						contentType: 'application/json'
+					});
+					for (let i of data) {
+						if (updated.indexOf(i) == -1) {
+							debug.log('PODCASTS', 'Scrobble check modified podcast',i);
+							updated.push(i);
+						}
+					}
+				} catch (err) {
+					debug.trace("PODCASTS", "Podcast Request",track,'Failed - probably that was not a podcast episode');
+				};
+			}
+			checkForUpdatedPodcasts(updated);
+			podcasts.doNewCount();
 		},
 
 		doNewCount: function() {

@@ -40,7 +40,7 @@ var clickRegistry = function() {
 				event.stopImmediatePropagation();
 			}
 			var clickedElement = $(this);
-			debug.trace('DOMENU', 'Opening',clickedElement);
+			debug.trace('DOMENU', clickedElement);
 			var menutoopen = clickedElement.attr('name');
 			var target = $('#'+menutoopen);
 			if (target.length == 0) {

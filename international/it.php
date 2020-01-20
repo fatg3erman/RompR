@@ -772,6 +772,8 @@ $languages['it'] = array (
 	//"podcast_tooltip_unlistened" =>		"Mark as Unlistened",
 	//"label_addtoqueue" =>					"Add to Play Queue",
 	//"label_resetresume" =>				"Reset Resume Position",
+	//"label_sameascollection" =>				"Same As Collection"
+
 );
 
 ?>

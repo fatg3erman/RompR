@@ -1428,10 +1428,9 @@ div.lyrics p {
 	margin-left:1em;
 	padding-left:6px;
 	padding-right:6px;
-	padding-bottom:2px;
-	padding-top:1px;
 	background-color: rgba(255, 0, 0, 0.9);
 	border-radius: 1em;
+	color: black;
 }
 
 .unlistenedpod {
@@ -1440,10 +1439,9 @@ div.lyrics p {
 	margin-left:1em;
 	padding-left:6px;
 	padding-right:6px;
-	padding-bottom:2px;
-	padding-top:1px;
 	background-color: rgba(255, 160, 0, 0.9);
 	border-radius: 1em;
+	color: black;
 }
 
 .podtitle {

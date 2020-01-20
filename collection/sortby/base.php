@@ -5,7 +5,7 @@ function choose_sorter_by_key($which) {
 	$a = preg_match('/(a|b|c|r|t|y|u|z)(.*?)(\d+|root)_*(\d+)*/', $which, $matches);
 	switch ($matches[1]) {
 		case 'b':
-			return 'sortby_'.$prefs['sortresultsby'];
+			return 'sortby_'.$prefs['actuallysortresultsby'];
 			break;
 
 		default:
@@ -214,15 +214,15 @@ class sortby_base {
 
 			case 'b':
 				print '<div class="textcentre fullwidth">';
-				if ($prefs['sortresultsby'] == 'tag' || $prefs['sortresultsby'] == 'rating') {
-					print '<p>You are sorting results by '.ucfirst(get_int_text(COLLECTION_SORT_MODES[$prefs['sortresultsby']])).' which may mean some results are not displayed</p>';
+				if ($prefs['actuallysortresultsby'] == 'tag' || $prefs['actuallysortresultsby'] == 'rating') {
+					print '<p>You are sorting results by '.ucfirst(get_int_text(COLLECTION_SORT_MODES[$prefs['actuallysortresultsby']])).' which may mean some results are not displayed</p>';
 				}
 				print '</div>';
 				break;
 
 			case 'z':
 				print '<div class="textcentre fullwidth">
-				<p>There are no Spoken Word tracks in your Collection that can be displayed when sorting by '.ucfirst(get_int_text(COLLECTION_SORT_MODES[$prefs['sortresultsby']])).'</p>
+				<p>There are no Spoken Word tracks in your Collection that can be displayed when sorting by '.ucfirst(get_int_text(COLLECTION_SORT_MODES[$prefs['actuallysortresultsby']])).'</p>
 				</div>';
 				break;
 		}

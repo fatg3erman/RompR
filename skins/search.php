@@ -40,6 +40,7 @@ function startAdvSearchOptions() {
 	print '<div class="containerbox dropdown-container">';
 	print '<div class="selectholder">';
 	print '<select id="sortresultsbyselector" class="saveomatic">';
+	print '<option value="sameas">'.get_int_text('label_sameascollection').'</option>';
 	foreach (COLLECTION_SORT_MODES as $mode => $key) {
 		print '<option value="'.$mode.'">'.ucfirst(get_int_text($key)).'</option>';
 	}
