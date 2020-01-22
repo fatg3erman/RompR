@@ -24,11 +24,11 @@ var infobar = function() {
 						artist: playlistinfo.trackartist,
 						album: playlistinfo.Album
 					};
-					options.chosenByUser = (playlistinfo.type == 'local' && prefs.radiomode == '') ? 1 : 0;
+					options.chosenByUser = (playlistinfo.type != 'stream' && prefs.radiomode == '') ? 1 : 0;
 					if (playlistinfo.albumartist && playlistinfo.albumartist != "" && playlistinfo.albumartist.toLowerCase() != playlistinfo.trackartist.toLowerCase()) {
 						 options.albumArtist = playlistinfo.albumartist;
 					 }
-					debug.debug("INFOBAR","Scrobbling", options);
+					debug.trace("INFOBAR","Scrobbling", options);
 					lastfm.track.scrobble( options );
 				}
 			}
@@ -197,7 +197,7 @@ var infobar = function() {
 		rejigTheText: function() {
 			debug.debug('INFOBAR', 'Rejig was called');
 			clearTimeout(ftimer);
-			ftimer = setTimeout(infobar.biggerize, 300);
+			ftimer = setTimeout(infobar.biggerize, 100);
 		},
 
 		biggerize: async function() {
@@ -497,10 +497,6 @@ var infobar = function() {
 				setTheText(info);
 			}
 			infobar.albumImage.setSecondarySource(info);
-		},
-
-		progress: function() {
-			return (player.status.state == "stop") ? 0 : (Date.now())/1000 - starttime;
 		},
 
 		seek: function(e) {

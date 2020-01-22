@@ -523,13 +523,13 @@ var layoutProcessor = function() {
 			$("#loadsawrappers").css({height: mainheight+"px"});
 			var infoheight = $('#infobar').outerHeight(true) - $('#cssisshit').outerHeight(true);
 			$('#toomanywrappers').css({height: infoheight+"px"});
-			if (oldwindowsize.y != ws.y || oldwindowsize.x != ws.x || prefs.chooser != oldchooser) {
-				// Work around iOS Safari bug where it updates width css before height
-				// and therefore doesn't get the album picture size right
-				$('#albumpicture').css('width', '0px');
-				await new Promise(r => setTimeout(r, 1));
-				$('#albumpicture').css('width', '');
-			}
+			// if (oldwindowsize.y != ws.y || oldwindowsize.x != ws.x || prefs.chooser != oldchooser) {
+			// 	// Work around iOS Safari bug where it updates width css before height
+			// 	// and therefore doesn't get the album picture size right
+			// 	$('#albumpicture').css('width', '0px');
+			// 	await new Promise(r => setTimeout(r, 1));
+			// 	$('#albumpicture').css('width', '');
+			// }
 			oldwindowsize = ws;
 			oldchooser = prefs.chooser;
 			layoutProcessor.setPlaylistHeight();
@@ -543,7 +543,7 @@ var layoutProcessor = function() {
 			var nptop = np.offset().top;
 			debug.debug('LAYOUT', 'nptop is',nptop);
 			if (nptop > 0) {
-				var t = infoheight - nptop + hh;
+				var t = Math.min(250, (infoheight - nptop + hh));
 				np.css({height: t+"px"});
 				infobar.rejigTheText();
 			}

@@ -10,17 +10,16 @@ async function checkProgress() {
 			updateStreamInfo();
 		}
 		if (player.status.state == 'play') {
-			var progress = (Date.now()/1000) - player.controller.trackstarttime;
+			player.status.progress = (Date.now()/1000) - player.controller.trackstarttime;
 		} else {
-			var progress = player.status.elapsed;
+			player.status.progress = player.status.elapsed;
 		}
-		playlist.setCurrent({progress: progress});
 		var duration = playlist.getCurrent('Time') || 0;
-		infobar.setProgress(progress,duration);
+		infobar.setProgress(player.status.progress, duration);
 		if (player.status.songid !== player.controller.previoussongid) {
 			safetytimer = 250;
 		}
-		if (player.status.state == 'play' && duration > 0 && progress >= (duration - 1)) {
+		if (player.status.state == 'play' && duration > 0 && player.status.progress >= (duration - 1)) {
 			AlanPartridge = 5;
 			safetytimer = Math.min(safetytimer + 100, 5000);
 			waittime = safetytimer;
@@ -151,10 +150,10 @@ function playerController() {
 				timeout: 30000
 			});
 			// Clone the object so this thread can exit
-			debug.debug('PLAYER', 'Got response for',list);
+			debug.debug('PLAYER', 'Got response for',list,s);
 			player.status = cloneObject(s);
 			['radiomode', 'radioparam', 'radiomaster', 'radioconsume'].forEach(function(e) {
-				debug.debug('PLAYER', e, player.status[e]);
+				debug.core('PLAYER', e, player.status[e]);
 				prefs[e] = player.status[e];
 			});
 			if (player.status.songid != self.previoussongid) {

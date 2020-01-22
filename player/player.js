@@ -183,6 +183,7 @@ var player = function() {
 			Date: null,
 			Genre: null,
 			Title: null,
+			progress: null
 		},
 
 		urischemes: new Object(),
@@ -199,7 +200,7 @@ var player = function() {
 
 		skip: function(sec) {
 			if (this.status.state == "play") {
-				var p = infobar.progress();
+				var p = player.status.progress ? 0 : player.status.progress;
 				var to = p + sec;
 				if (p < 0) p = 0;
 				this.controller.seek(to);

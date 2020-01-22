@@ -936,7 +936,7 @@ img.jalopy200 {
 
 }
 
-@media screen and (min-height: 700px) and (max-width: 420px) and (orientation: portrait) {
+@media screen and (min-height: 700px) and (max-width: 600px) and (orientation: portrait) {
 	/* Narrow screens - nowplaying under album picture */
 	#albumcover {
 		text-align: center;
@@ -960,7 +960,7 @@ img.jalopy200 {
 	}
 }
 
-@media screen and (min-height: 700px) and (min-width: 421px) and (orientation: portrait) {
+@media screen and (min-height: 700px) and (min-width: 601px) and (orientation: portrait) {
 	/* Wider screens - nowplaying next to album picture */
 	#albumcover {
 		float: left;

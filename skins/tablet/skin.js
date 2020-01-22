@@ -206,7 +206,7 @@ var layoutProcessor = function() {
 			var np = $('#nowplaying');
 			var nptop = np.offset().top;
 			if (nptop > 0) {
-				var t = infoheight - nptop + hh;
+				var t = Math.min(250, (infoheight - nptop + hh));
 				np.css({height: t+"px"});
 				infobar.biggerize();
 			}

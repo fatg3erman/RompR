@@ -704,8 +704,8 @@ var playlist = function() {
 
 		checkPodcastProgress: function() {
 			if (player.status.state == 'play' || player.status.state == 'pause') {
-				var durationfraction = currentTrack.progress/currentTrack.Time;
-				var progresstostore = (durationfraction > 0.05 && durationfraction < 0.98) ? currentTrack.progress : 0;
+				var durationfraction = player.status.progress/currentTrack.Time;
+				var progresstostore = (durationfraction > 0.05 && durationfraction < 0.98) ? player.status.progress : 0;
 				if (currentTrack.type == "podcast") {
 					podcasts.storePlaybackProgress({uri: currentTrack.file, progress: Math.round(progresstostore)});
 				} else if (currentTrack.type == 'audiobook') {
