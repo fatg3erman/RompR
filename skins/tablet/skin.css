@@ -977,44 +977,6 @@ i.combo-button {
 	}
 }
 
-@media screen and (min-width:810px) and (max-height: 540px) and (orientation: landscape) {
-	/* Wider - info pane looks like wide portrait mode up to 540px high*/
-	/* ie nowplaying is next to album image - can't have album image very big
-		with a screen of this height so there's loads of wasted space to the sides */
-	#albumcover {
-		float: left;
-		height:100%;
-	}
-
-	#albumpicture {
-		height: 100%;
-		width: auto;
-		margin-right:8px;
-		max-width:60vh;
-	}
-
-	#nowplaying {
-		padding-right: 8px;
-	}
-
-	#nptext {
-		text-align:right;
-	}
-
-	#amontobin {
-		text-align: right;
-	}
-
-	#lastfm, #addtoplaylist, #ptagadd, #subscribe {
-		margin-bottom: 4px;
-	}
-
-	#stars, #dbtags {
-		float: none;
-	}
-
-}
-
 @media screen and (min-width:640px) and (min-height: 541px) and (orientation: landscape) {
 	/* at 540 px high it reverts to being like small portrait mode */
 	#albumpicture {

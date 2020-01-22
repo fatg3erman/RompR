@@ -21,6 +21,7 @@ function albumTrack($data) {
 
 	// Outer container
 	if ($data['playable'] == 1 or $data['playable'] == 3) {
+		// Note - needs clicktrack and name in case it is a removeable track
 		print '<div class="unplayable clicktrack ninesix containerbox padright calign" name="'.rawurlencode($data['uri']).'">';
 	} else if ($data['uri'] == null) {
 		print '<div class="playable '.$class.' ninesix draggable containerbox padright calign" name="'.$data['ttid'].'">';

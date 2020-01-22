@@ -18,11 +18,11 @@ async function checkProgress() {
 		var duration = playlist.getCurrent('Time') || 0;
 		infobar.setProgress(progress,duration);
 		if (player.status.songid !== player.controller.previoussongid) {
-			safetytimer = 0;
+			safetytimer = 250;
 		}
-		if (player.status.state == 'play' && duration > 0 && progress > (duration - 1)) {
+		if (player.status.state == 'play' && duration > 0 && progress >= (duration - 1)) {
 			AlanPartridge = 5;
-			safetytimer = Math.min(safetytimer + 250, 5000);
+			safetytimer = Math.min(safetytimer + 100, 5000);
 			waittime = safetytimer;
 		} else {
 			AlanPartridge++;
