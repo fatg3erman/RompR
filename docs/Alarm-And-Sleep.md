@@ -24,7 +24,7 @@ To create an alarm, click the + next to 'Create New Alarm' ...
 
 * REPEAT means the alarm will automatically go off at the set time on the specified days. If you do not enable REPEAT then the alarm will go off once, at the specified time, and then disable itself.
 
-* You can choose what you want the alarm to play by dragging it to the panel on 'Drop Item Here'. This could be an album, a playlist, a radio station - anything from the sources (except Personalised Radio, currently). If you don't choose an item then the alarm will play whatever is in the Current Playlist when it goes off.
+* You can choose what you want the alarm to play by dragging it to the panel on 'Drop Item Here'. This could be an album, a playlist, a radio station - anything from the sources (except Personalised Radio, currently). If you don't choose an item then the alarm will play whatever is in the Play Queue when it goes off.
 
 Here's an example alarm that wakes me up for work every weekday morning by playing Radio 2
 

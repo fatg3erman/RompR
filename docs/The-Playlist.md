@@ -4,7 +4,7 @@ This panel appears on the right-hand-side of the window in the default Desktop s
 
 ![](images/playlist.png)
 
-To add a track or album (or all tracks by an artist) to the end of the Playlist, double-click it in the collection (single-click on the Phone skin).
+To add a track or album (or all tracks by an artist) to the end of the Play Queue, double-click it in the collection (single-click on the Phone skin).
 
 On the Desktop skins you can also drag tracks to any position in the playlist. You can re-order tracks or albums by dragging them within the playlist, and remove them by clickng the x.
 
@@ -14,7 +14,7 @@ On the Tablet skin you can re-order tracks by using the re-order buttons as desc
 
 To clear the entire playlist use the wastebasket icon at the top right.
 
-Mopidy users can add tracks to the Playlist from many other sources too - the [Discoverator](/RompR/Music-Discovery) panel and the [Spotify Info](/RompR/The-Info-Panel) panel.
+Mopidy users can add tracks to the Play Queue from many other sources too - the [Discoverator](/RompR/Music-Discovery) panel and the [Spotify Info](/RompR/The-Info-Panel) panel.
 
 The 'Musical Notes' icon will appear next to Spotify albums. Clicking this will add the entire album to your collection.
 

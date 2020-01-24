@@ -122,7 +122,7 @@ NOTE: This version needs to update your Music Collection. This will happen autom
 * Added options to only display Collection tracks that were added within a specific time period, after I added something good to mine and then forgot what it was called :)
 * Added more tooltips as the number of control butons spirals upwards
 * The Discoverator now populates much more quickly
-* Option to transfer current playlist to new player when switching players
+* Option to transfer Play Queue to new player when switching players
 * New Global Refresh, Mark as Listened, etc controls for podcasts
 * Upgrade to jQuery 3, which might make some older browsers no longer work
 * Added Slave mode for Mopidy Players so you only need to have one 'Master' Mopidy Player and all the others can still play local tracks using the file backend without the need to have a local files database on all of them
@@ -136,8 +136,8 @@ NOTE: This version needs to update your Music Collection. This will happen autom
 * Fixed bug where plugins menu didn't work in Tablet skin
 * Added two new icon themes
 * Some code refactoring and minor UI bugfixing
-* Added swipe and long press options to phone skin to allow tracks to be removed from and re-ordered within the Current Playlist
-* Added a new button to allow the Current Playlist to be re-ordered on the Tablet Skin
+* Added swipe and long press options to phone skin to allow tracks to be removed from and re-ordered within the Play Queue
+* Added a new button to allow the Play Queue to be re-ordered on the Tablet Skin
 * Moved Google API Credentials fields to the setup screen - they're messy, technical, and don't really want to be exposed to all and sundry.
 * Added Debug Information plugin to help with assisting in bug reports.
 * Added play controls to top bar on wide screens (>799px) on Phone and Tablet skins
@@ -145,7 +145,7 @@ NOTE: This version needs to update your Music Collection. This will happen autom
 * Added default options for new Podcasts
 * Added option to mark 'New' podcast episodes as 'Unlistened' before refresh. This used to be the default behaviour. The default is now that episodes will remain as 'New' until a new one is published. Rompr therefore accurately reflects the state of the podcast's feed.
 * Improved podcast refresh intervals. 'Weekly' and 'Monthly' now actually mean what they say (same time and day of the week) and will attempt to set their refresh time based on the peridocity of the episodes in the podcast, to try to ensure the refresh happens automatically when a new episode is published.
-* The Current Playlist and the Subscribed Podcasts display now use thumbnail album covers instead of full resolution ones scaled down. This should save a lot of memory which may help users on mobile devices.
+* The Play Queue and the Subscribed Podcasts display now use thumbnail album covers instead of full resolution ones scaled down. This should save a lot of memory which may help users on mobile devices.
 * All your Album Art needs to be updated in this version. The process will start automatically and may take a long time. There is a progress bar, and you can continue to use Rompr while it happens.
 * Player selection can now be done from the volume control dropdown on Phone and Tablet skins
 * Option to not display album art in the Playlist, which might help memory usage on phones, although the change to use thumbnail images will probably be enough.
