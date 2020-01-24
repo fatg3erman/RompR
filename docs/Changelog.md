@@ -36,7 +36,7 @@ NOTE: This version needs to update your Music Collection. This will happen autom
 * As always, hundreds of little tweaks and tinkerings here and there
 
 ### KNOWN ISSUES:
-* In some circumstances, using the sort mode 'Albums (by Artist)' can cause your borwser to run very slowly for around a minute after the page loads. This is not a new issue in this release but has recently been identified. I don't yet know that cause and it doesn't happen every time.
+* In some circumstances, using the sort mode 'Albums (by Artist)' can cause your browser to run very slowly for around a minute after the page loads. This is not a new issue in this release but has recently been identified. I don't yet know that cause and it doesn't happen every time. Disabling your ad-blocker might help. (Rompr does not serve any ads)
 
 
 ## Version 1.32

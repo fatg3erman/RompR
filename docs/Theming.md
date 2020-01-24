@@ -66,6 +66,10 @@ You may specify a theme in the URL in your browser. Just point your browser at
 
 where 'ThemeName' is one of the suppplied themes.
 
+## VariableLight Theme
+
+This theme is designed for people who use Rompr bfore they go to bed. It gets progressively darker the later the hour gets, including a nice 'sunset fade' in the evening :)
+
 ## Making Your Own Theme
 
 You can make your own theme if you know some CSS. Just take a copy of one of the existing ones from

@@ -69,10 +69,10 @@ function getsmall() {
 		timeout: 300000
 	})
 	.done(function(data) {
-		$('#doobag').stopFlasher().css('opacity', '0');
+		$('#doobag').stopFlasher().remove();
 		debug.debug("SMALL IMAGES","Got List!",data);
 		for (var i in data) {
-			$('img[name="'+data[i]+'"]').removeAttr('src').addClass('notexist');
+			$('img[name="'+data[i]+'"]').attr('src', 'newimages/transparent.png').addClass('notexist');
 		}
 		coverscraper.reset($('.notexist:not(.notfound)').length + $('.notfound:not(.notexist)').length);
 	})
@@ -280,6 +280,8 @@ $(window).on('load', function () {
 	coverscraper.reset(albums_without_cover);
 	coverscraper.updateInfo(albums_without_cover - count);
 	$("#status").html(language.gettext("albumart_instructions"));
+	$('#dinkylabel').prop('disabled', false);
+	$('#poobaglabel').prop('disabled', false);
 	// $("img.lazy").get().forEach(img => imageLoader.observe(img));
 });
 
