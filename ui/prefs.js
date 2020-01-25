@@ -1,8 +1,24 @@
+var visibilityHidden, visibilityChange;
+if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+  visibilityHidden = "hidden";
+  visibilityChange = "visibilitychange";
+} else if (typeof document.msHidden !== "undefined") {
+  visibilityHidden = "msHidden";
+  visibilityChange = "msvisibilitychange";
+} else if (typeof document.webkitHidden !== "undefined") {
+  visibilityHidden = "webkitHidden";
+  visibilityChange = "webkitvisibilitychange";
+}
+
 var prefs = function() {
 
 	var textSaveTimer = null;
 	var deferredPrefs = null;
 	var uichangetimer = null;
+
+	var windowActivationTimer = null;
+	var wakeHelpers = new Array();
+	var sleepHelpers = new Array();
 
 	const prefsInLocalStorage = [
 		"sourceshidden",
@@ -248,8 +264,8 @@ var prefs = function() {
 				$('input[name="thisbrowseronly"]').prop('checked', data.thisbrowseronly);
 				$('input[name="backgroundposition"][value="'+prefs.bgimgparms[theme].position+'"]').prop('checked', true);
 				$('input[name="backgroundposition"]').off('click').on('click', changeBackgroundPosition);
-				uiHelper.addWakeHelper(backOnline);
-				uiHelper.addSleepHelper(goneOffline);
+				prefs.addWakeHelper(backOnline);
+				prefs.addSleepHelper(goneOffline);
 			} else {
 				backgroundImages = false;
 			}
@@ -305,7 +321,7 @@ var prefs = function() {
 			s.on('change', function() {
 				prefs.bgimgparms[prefs.theme].timeout = parseInt(s.val());
 				prefs.save({bgimgparms: prefs.bgimgparms});
-				updateCustomBackground(false);
+				setBackgroundTimer();
 			});
 			var gibbon = $('<div>').appendTo('#cusbgcontrols');
 			var ran = $('<input>', {type: 'checkbox', id: 'bgimagerandom'}).appendTo(gibbon);
@@ -921,7 +937,81 @@ var prefs = function() {
 			}
 		},
 
-		rgbs: null
+		rgbs: null,
+
+		// Handler helpers to assist with doing things when the device wakes or goes to sleep
+		// addWakeHelper(callback) to add a function to call when the device wakes
+		// addSleepHelper(callback) to add a function to call when the device sleeps
+		// We react to online, offline, and visibility events but will only call the callback ONCE
+		// even if both events occur
+
+		deviceHasWoken: function(event) {
+			clearTimeout(windowActivationTimer);
+			debug.trace('UIHELPER', event);
+			switch (event.type) {
+				case 'visibilitychange':
+					if (document[visibilityHidden]) {
+						debug.log('UIHELPER', 'Browser tab is hidden');
+						windowActivationTimer = setTimeout(prefs.goToSleepMode, 1000);
+					} else {
+						debug.log('PREFS', 'Browser tab is visible');
+						windowActivationTimer = setTimeout(prefs.goToWakeMode, 1000);
+					}
+					break;
+
+				case 'online':
+					debug.log('PREFS', 'Device is back online');
+					windowActivationTimer = setTimeout(prefs.goToWakeMode, 1000);
+					break;
+
+				case 'offline':
+					debug.log('PREFS', 'Device is offline');
+					windowActivationTimer = setTimeout(prefs.goToSleepMode, 1000);
+					break;
+			}
+		},
+
+		goToWakeMode: function() {
+			clearTimeout(windowActivationTimer);
+			for (var f of wakeHelpers) {
+				debug.trace('UIHELPER', 'Calling Wake Mode Helper',f.name);
+				f.call();
+			}
+		},
+
+		goToSleepMode: function() {
+			clearTimeout(windowActivationTimer);
+			for (var f of sleepHelpers) {
+				debug.trace('UIHELPER', 'Calling Sleep Mode Helper',f.name);
+				f.call();
+			}
+		},
+
+		addWakeHelper: function(callback) {
+			if (wakeHelpers.indexOf(callback) == -1) {
+				wakeHelpers.push(callback);
+			}
+		},
+
+		addSleepHelper: function(callback) {
+			if (sleepHelpers.indexOf(callback) == -1) {
+				sleepHelpers.push(callback);
+			}
+		},
+
+		removeWakeHelper: function(callback) {
+			var i = wakeHelpers.indexOf(callback);
+			if (i > -1) {
+				wakeHelpers.splice(i, 1);
+			}
+		},
+
+		removeSleepHelper: function(callback) {
+			var i = sleepHelpers.indexOf(callback);
+			if (i > -1) {
+				sleepHelpers.splice(i, 1);
+			}
+		}
 
 	}
 
@@ -967,4 +1057,8 @@ var themeManager = function() {
 
 }();
 
+// Handle two types of event to try and catch everything
+document.addEventListener(visibilityChange, prefs.deviceHasWoken);
+window.addEventListener('online', prefs.deviceHasWoken);
+window.addEventListener('offline', prefs.deviceHasWoken);
 

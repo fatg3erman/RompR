@@ -860,7 +860,7 @@ var syncLastFMPlaycounts = function() {
 				removeNotify();
 				prefs.save({last_lastfm_synctime: Math.floor(Date.now()/1000)});
 				podcasts.doScrobbleCheck();
-				uiHelper.addWakeHelper(syncLastFMPlaycounts.start);
+				prefs.addWakeHelper(syncLastFMPlaycounts.start);
 			}
 		} else {
 			removeNotify();
@@ -996,7 +996,7 @@ var spotifyLinkChecker = function() {
 					debug.info("SPOTICHECKER","Link Checker Not Starting Yet");
 				}
 			}
-			uiHelper.addWakeHelper(spotifyLinkChecker.initialise);
+			prefs.addWakeHelper(spotifyLinkChecker.initialise);
 		}
 
 	}

@@ -100,7 +100,7 @@ function clean_backend_cache() {
 	} else {
 		startBackgroundInitTasks.doNextTask();
 	}
-	uiHelper.addWakeHelper(clean_backend_cache);
+	prefs.addWakeHelper(clean_backend_cache);
 }
 
 function check_unplayable_tracks() {
