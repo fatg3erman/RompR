@@ -468,8 +468,12 @@ var prefs = function() {
 			var bgp = prefs.bgimgparms[prefs.theme];
 			setBackgroundCss(bgp);
 			prefs.save({bgimgparms: prefs.bgimgparms});
-			var timeout = Math.max(0, (bgp.timeout + bgp.lastchange - Date.now()));
-			setBackgroundTimer(timeout);
+			var timeout = bgp.timeout + bgp.lastchange - Date.now();
+			if (timeout > 0) {
+				setBackgroundTimer(timeout);
+			} else {
+				updateCustomBackground(true);
+			}
 		}
 	}
 
