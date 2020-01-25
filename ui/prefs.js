@@ -219,7 +219,8 @@ var prefs = function() {
 
 	function loadBackgroundImages(theme) {
 		clearTimeout(backgroundTimer);
-		window.removeEventListener('online', updateCustomBackground);
+		window.removeEventListener('online', backOnline);
+		window.removeEventListener('offline', goneOffline);
 		$('#cusbgname').empty();
 		$('#cusbgcontrols').empty();
 		$('#backimageposition').hide();
@@ -249,11 +250,23 @@ var prefs = function() {
 				$('input[name="thisbrowseronly"]').prop('checked', data.thisbrowseronly);
 				$('input[name="backgroundposition"][value="'+prefs.bgimgparms[theme].position+'"]').prop('checked', true);
 				$('input[name="backgroundposition"]').off('click').on('click', changeBackgroundPosition);
-				window.addEventListener('online', updateCustomBackground);
+				window.addEventListener('online', backOnline);
+				window.addEventListener('offline', goneOffline);
 			} else {
 				backgroundImages = new Array();
 			}
 		});
+	}
+
+	function goneOffline() {
+		debug.log('PREFS', 'Browser has gone offline');
+		clearTimeout(backgroundTimer);
+	}
+
+	function backOnline() {
+		debug.log('PREFS', 'Browser is back online');
+		updateCustomBackground();
+		setBackgroundTimer();
 	}
 
 	function changeRandomMode() {
@@ -455,6 +468,7 @@ var prefs = function() {
 	}
 
 	function setBackgroundTimer(timeout) {
+		clearTimeout(backgroundTimer);
 		if (backgroundImages.portrait.length > 1 || backgroundImages.landscape.length > 1) {
 			debug.debug("PREFS","Setting Slideshow Timeout For",timeout/1000,"seconds");
 			backgroundTimer = setTimeout(updateCustomBackground, timeout);
