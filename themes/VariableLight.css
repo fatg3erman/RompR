@@ -75,7 +75,7 @@ button:hover, input[type="button"]:hover, div.filebutton:hover
 }
 
 select {
-    color:white;
+    color:var(--vl_text_colour);
 }
 
 div.selectholder {
@@ -157,7 +157,7 @@ a.album:hover,a.album:active
 {
     font-weight:bold;
     border-left:4px solid white;
-    color:#eeeeee;
+    color:var(--vl_text_colour);
     transition:font-size 0.3s ease, text-shadow 0.3s ease;
 }
 
@@ -175,7 +175,7 @@ a.album:hover,a.album:active
 {
     text-shadow: 0px 0px 20px #cccccc;
     font-weight:bold;
-    color:#eeeeee;
+    color:var(--vl_text_colour);
     background-color:rgba(0,0,0,0.2);
 }
 
@@ -353,7 +353,7 @@ tr.clickaddtrack:hover
 
 .bsel
 {
-    color:#ffffff;
+    color:var(--vl_text_colour);
     text-shadow:0 0 15px #ffffff;
 }
 
