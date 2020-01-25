@@ -98,6 +98,18 @@ var prefs = function() {
 	var landscapeImage = new Image();
 	var bgImagesLoaded = 0;
 
+	var hidden, visibilityChange;
+	if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+	  hidden = "hidden";
+	  visibilityChange = "visibilitychange";
+	} else if (typeof document.msHidden !== "undefined") {
+	  hidden = "msHidden";
+	  visibilityChange = "msvisibilitychange";
+	} else if (typeof document.webkitHidden !== "undefined") {
+	  hidden = "webkitHidden";
+	  visibilityChange = "webkitvisibilitychange";
+	}
+
 	var timeouts = {
 		'10 Seconds': 10000,
 		'30 Seconds': 30000,
@@ -219,8 +231,9 @@ var prefs = function() {
 
 	function loadBackgroundImages(theme) {
 		clearTimeout(backgroundTimer);
-		window.removeEventListener('online', backOnline);
-		window.removeEventListener('offline', goneOffline);
+		// window.removeEventListener('online', backOnline);
+		// window.removeEventListener('offline', goneOffline);
+		document.removeEventListener(visibilityChange, handleVisibilityChange);
 		$('#cusbgname').empty();
 		$('#cusbgcontrols').empty();
 		$('#backimageposition').hide();
@@ -250,8 +263,9 @@ var prefs = function() {
 				$('input[name="thisbrowseronly"]').prop('checked', data.thisbrowseronly);
 				$('input[name="backgroundposition"][value="'+prefs.bgimgparms[theme].position+'"]').prop('checked', true);
 				$('input[name="backgroundposition"]').off('click').on('click', changeBackgroundPosition);
-				window.addEventListener('online', backOnline);
-				window.addEventListener('offline', goneOffline);
+				// window.addEventListener('online', backOnline);
+				// window.addEventListener('offline', goneOffline);
+				document.addEventListener(visibilityChange, handleVisibilityChange);
 			} else {
 				backgroundImages = new Array();
 			}
@@ -267,6 +281,17 @@ var prefs = function() {
 		debug.log('PREFS', 'Browser is back online');
 		updateCustomBackground();
 		setBackgroundTimer();
+	}
+
+	function handleVisibilityChange() {
+		if (document[hidden]) {
+			debug.log('PREFS', 'Browser tab is hidden');
+			clearTimeout(backgroundTimer);
+		} else {
+			debug.log('PREFS', 'Browser tab is visible');
+			updateCustomBackground();
+			setBackgroundTimer();
+		}
 	}
 
 	function changeRandomMode() {
