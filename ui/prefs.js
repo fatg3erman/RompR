@@ -219,6 +219,7 @@ var prefs = function() {
 
 	function loadBackgroundImages(theme) {
 		clearTimeout(backgroundTimer);
+		window.removeEventListener('online', updateCustomBackground);
 		$('#cusbgname').empty();
 		$('#cusbgcontrols').empty();
 		$('#backimageposition').hide();
@@ -240,10 +241,15 @@ var prefs = function() {
 					prefs.bgimgparms[theme].position = 'top left';
 					prefs.save({bgimgparms: prefs.bgimgparms});
 				}
+				portraitImage.onload = bgImageLoaded;
+				landscapeImage.onload = bgImageLoaded;
+				portraitImage.onerror = bgImageError;
+				landscapeImage.onerror = bgImageError;
 				setCustombackground(data.images);
 				$('input[name="thisbrowseronly"]').prop('checked', data.thisbrowseronly);
 				$('input[name="backgroundposition"][value="'+prefs.bgimgparms[theme].position+'"]').prop('checked', true);
 				$('input[name="backgroundposition"]').off('click').on('click', changeBackgroundPosition);
+				window.addEventListener('online', updateCustomBackground);
 			} else {
 				backgroundImages = new Array();
 			}
@@ -351,14 +357,28 @@ var prefs = function() {
 		prefs.save({bgimgparms: prefs.bgimgparms});
 	}
 
+	function doNothing() {
+
+	}
+
 	function clearCustomBackground() {
 		debug.log('PREFS', 'Clearing Custom background');
+		// Clear the image onload/onerror handlers because we also need to
+		// clear the image source, otherwise if we change some other aspect of
+		// the theme - eg font, the background image load event doesn't fire
+		// and the background images don't get loaded (at least on Safari)
+		portraitImage.onload = doNothing;
+		landscapeImage.onload = doNothing;
+		portraitImage.onerror = doNothing;
+		landscapeImage.onerror = doNothing;
 		$('style[id="phoneback"]').remove();
 		$('style[id="background"]').remove();
 		$('style[id="phonebackl"]').remove();
 		$('style[id="backgroundl"]').remove();
 		$('style[id="phonebackp"]').remove();
 		$('style[id="backgroundp"]').remove();
+		portraitImage.src = '';
+		landscapeImage.src = '';
 	}
 
 	function setBackgroundCss(bgp) {
@@ -458,11 +478,6 @@ var prefs = function() {
 		debug.warn('PREFS', 'Background image failed to load', bgp.landscape,bgp.portrait,backgroundImages.landscape.length,backgroundImages.portrait.length,portraitImage.src,landscapeImage.src);
 		updateCustomBackground(true);
 	}
-
-	portraitImage.onload = bgImageLoaded;
-	landscapeImage.onload = bgImageLoaded;
-	portraitImage.onerror = bgImageError;
-	landscapeImage.onerror = bgImageError;
 
 	return {
 		loadPrefs: function() {
