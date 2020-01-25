@@ -3,7 +3,6 @@ var podcasts = function() {
 	var downloadQueue = new Array();
 	var downloadRunning = false;
 	var refreshtimer;
-	var onlineTriggerActivated = false;
 	var newcounts = {};
 	var scrobblesToCheck = [];
 
@@ -380,10 +379,7 @@ var podcasts = function() {
 					debug.log("PODCASTS","Setting next podcast refresh for",data.nextupdate,'seconds');
 					refreshtimer = setTimeout(podcasts.checkRefresh, data.nextupdate*1000);
 				}
-				if (!onlineTriggerActivated) {
-					window.addEventListener('online', podcasts.checkIfSomeoneElseHasUpdatedStuff);
-					onlineTriggerActivated = true;
-				}
+				uiHelper.addWakeHelper(podcasts.checkIfSomeoneElseHasUpdatedStuff);
 			} catch (err)  {
 				debug.error("PODCASTS","Refresh Failed with status",err.status);
 				if (err.status == 412) {

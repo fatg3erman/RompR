@@ -323,6 +323,10 @@ jQuery.fn.doSomethingUseful = function(text) {
 
 var uiHelper = function() {
 
+	var windowActivationTimer = null;
+	var wakeHelpers = new Array();
+	var sleepHelpers = new Array();
+
 	return {
 
 		adjustLayout: function() {
@@ -604,7 +608,89 @@ var uiHelper = function() {
 				}
 				return $('<div>', {id: name, class: c}).insertAfter(element.parent());
 			}
+		},
+
+		// Handler helpers to assist with doing things when the device wakes or goes to sleep
+		// addWakeHelper(callback) to add a function to call when the device wakes
+		// addSleepHelper(callback) to add a function to call when the device sleeps
+		// We react to online, offline, and visibility events but will only call the callback ONCE
+		// even if both events occur
+
+		deviceHasWoken: function(event) {
+			clearTimeout(windowActivationTimer);
+			debug.trace('UIHELPER', event);
+			switch (event.type) {
+				case 'visibilitychange':
+					if (document[visibilityHidden]) {
+						debug.log('UIHELPER', 'Browser tab is hidden');
+						windowActivationTimer = setTimeout(uiHelper.goToSleepMode, 1000);
+					} else {
+						debug.log('PREFS', 'Browser tab is visible');
+						windowActivationTimer = setTimeout(uiHelper.goToWakeMode, 1000);
+					}
+					break;
+
+				case 'online':
+					debug.log('PREFS', 'Device is back online');
+					windowActivationTimer = setTimeout(uiHelper.goToWakeMode, 1000);
+					break;
+
+				case 'offline':
+					debug.log('PREFS', 'Device is offline');
+					windowActivationTimer = setTimeout(uiHelper.goToSleepMode, 1000);
+					break;
+			}
+		},
+
+		goToWakeMode: function() {
+			clearTimeout(windowActivationTimer);
+			for (var f of wakeHelpers) {
+				debug.trace('UIHELPER', 'Calling Wake Mode Helper',f.name);
+				f.call();
+			}
+		},
+
+		goToSleepMode: function() {
+			clearTimeout(windowActivationTimer);
+			for (var f of sleepHelpers) {
+				debug.trace('UIHELPER', 'Calling Sleep Mode Helper',f.name);
+				f.call();
+			}
+		},
+
+		addWakeHelper: function(callback) {
+			if (wakeHelpers.indexOf(callback) == -1) {
+				wakeHelpers.push(callback);
+			}
+		},
+
+		addSleepHelper: function(callback) {
+			if (sleepHelpers.indexOf(callback) == -1) {
+				sleepHelpers.push(callback);
+			}
+		},
+
+		removeWakeHelper: function(callback) {
+			var i = wakeHelpers.indexOf(callback);
+			if (i > -1) {
+				wakeHelpers.splice(i, 1);
+			}
+		},
+
+		removeSleepHelper: function(callback) {
+			var i = sleepHelpers.indexOf(callback);
+			if (i > -1) {
+				sleepHelpers.splice(i, 1);
+			}
 		}
 
 	}
 }();
+
+// Handle two types of event to try and catch everything
+document.addEventListener(visibilityChange, uiHelper.deviceHasWoken);
+window.addEventListener('online', uiHelper.deviceHasWoken);
+window.addEventListener('offline', uiHelper.deviceHasWoken);
+
+
+

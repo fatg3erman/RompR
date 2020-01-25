@@ -92,23 +92,11 @@ var prefs = function() {
 	const jsonText = jsonNode.textContent;
 	const tags = JSON.parse(jsonText);
 
-	var backgroundImages = new Array();
+	var backgroundImages = false;
 	var backgroundTimer;
 	var portraitImage = new Image();
 	var landscapeImage = new Image();
 	var bgImagesLoaded = 0;
-
-	var hidden, visibilityChange;
-	if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
-	  hidden = "hidden";
-	  visibilityChange = "visibilitychange";
-	} else if (typeof document.msHidden !== "undefined") {
-	  hidden = "msHidden";
-	  visibilityChange = "msvisibilitychange";
-	} else if (typeof document.webkitHidden !== "undefined") {
-	  hidden = "webkitHidden";
-	  visibilityChange = "webkitvisibilitychange";
-	}
 
 	var timeouts = {
 		'10 Seconds': 10000,
@@ -231,9 +219,6 @@ var prefs = function() {
 
 	function loadBackgroundImages(theme) {
 		clearTimeout(backgroundTimer);
-		// window.removeEventListener('online', backOnline);
-		// window.removeEventListener('offline', goneOffline);
-		document.removeEventListener(visibilityChange, handleVisibilityChange);
 		$('#cusbgname').empty();
 		$('#cusbgcontrols').empty();
 		$('#backimageposition').hide();
@@ -263,32 +248,20 @@ var prefs = function() {
 				$('input[name="thisbrowseronly"]').prop('checked', data.thisbrowseronly);
 				$('input[name="backgroundposition"][value="'+prefs.bgimgparms[theme].position+'"]').prop('checked', true);
 				$('input[name="backgroundposition"]').off('click').on('click', changeBackgroundPosition);
-				// window.addEventListener('online', backOnline);
-				// window.addEventListener('offline', goneOffline);
-				document.addEventListener(visibilityChange, handleVisibilityChange);
+				uiHelper.addWakeHelper(backOnline);
+				uiHelper.addSleepHelper(goneOffline);
 			} else {
-				backgroundImages = new Array();
+				backgroundImages = false;
 			}
 		});
 	}
 
 	function goneOffline() {
-		debug.log('PREFS', 'Browser has gone offline');
 		clearTimeout(backgroundTimer);
 	}
 
 	function backOnline() {
-		debug.log('PREFS', 'Browser is back online');
-		updateCustomBackground();
-		setBackgroundTimer();
-	}
-
-	function handleVisibilityChange() {
-		if (document[hidden]) {
-			debug.log('PREFS', 'Browser tab is hidden');
-			clearTimeout(backgroundTimer);
-		} else {
-			debug.log('PREFS', 'Browser tab is visible');
+		if (backgroundImages !== false) {
 			updateCustomBackground();
 			setBackgroundTimer();
 		}
@@ -390,7 +363,7 @@ var prefs = function() {
 		} else if (el.hasClass('portraitimage')) {
 			bgp.portrait = parseInt(el.attr('name'));
 			bgImagesLoaded = 1;
-			portraitImage.src = backgroundImages.portrait[bgp.landscape];
+			portraitImage.src = backgroundImages.portrait[bgp.portrait];
 		}
 		prefs.save({bgimgparms: prefs.bgimgparms});
 	}
@@ -420,7 +393,7 @@ var prefs = function() {
 	}
 
 	function setBackgroundCss(bgp) {
-		if (backgroundImages.length == 0) {
+		if (backgroundImages === false) {
 			return;
 		}
 		// Trying to reduce flickering using all kinds of stuff - pre-load images, update (not remove/recreate) the css
@@ -462,7 +435,7 @@ var prefs = function() {
 	}
 
 	function updateCustomBackground(force) {
-		debug.debug('PREFS', 'Updating custom background');
+		debug.info('PREFS', 'Updating custom background');
 		clearTimeout(backgroundTimer);
 		var bgp = prefs.bgimgparms[prefs.theme];
 		if (force || bgp.timeout + bgp.lastchange <= Date.now()) {
@@ -492,11 +465,17 @@ var prefs = function() {
 		debug.log('PREFS','Backgrounds set to',landscapeImage.src,portraitImage.src);
 	}
 
-	function setBackgroundTimer(timeout) {
+	function setBackgroundTimer() {
 		clearTimeout(backgroundTimer);
 		if (backgroundImages.portrait.length > 1 || backgroundImages.landscape.length > 1) {
-			debug.debug("PREFS","Setting Slideshow Timeout For",timeout/1000,"seconds");
-			backgroundTimer = setTimeout(updateCustomBackground, timeout);
+			var bgp = prefs.bgimgparms[prefs.theme];
+			var timeout = bgp.timeout + bgp.lastchange - Date.now();
+			if (timeout > 0) {
+				debug.trace("PREFS","Setting Slideshow Timeout For",timeout/1000,"seconds");
+				backgroundTimer = setTimeout(updateCustomBackground, timeout);
+			} else {
+				updateCustomBackground(true);
+			}
 		}
 	}
 
@@ -507,12 +486,7 @@ var prefs = function() {
 			var bgp = prefs.bgimgparms[prefs.theme];
 			setBackgroundCss(bgp);
 			prefs.save({bgimgparms: prefs.bgimgparms});
-			var timeout = bgp.timeout + bgp.lastchange - Date.now();
-			if (timeout > 0) {
-				setBackgroundTimer(timeout);
-			} else {
-				updateCustomBackground(true);
-			}
+			setBackgroundTimer();
 		}
 	}
 
@@ -992,4 +966,5 @@ var themeManager = function() {
 	}
 
 }();
+
 

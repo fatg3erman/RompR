@@ -13,7 +13,6 @@ var alarmclock = function() {
 	var snoozing = false;
 	var alarminprogress = false;
 	var topofwindow = null;
-	var waitingforwake = false;
 	var autostoptimer;
 	var autosavetimer;
 
@@ -353,17 +352,8 @@ var alarmclock = function() {
 				debug.log("ALARM","Alarm",currentalarm,"will go off in",alarmtime,"seconds");
 				alarmtimer = setTimeout(alarmclock.Ding, alarmtime*1000);
 				$("#alarmclock_icon").removeClass("icon-alarm icon-alarm-on").addClass("icon-alarm-on");
-				if (!waitingforwake) {
-					// try to re-set the alarm if we wake from sleep
-					window.addEventListener('online', alarmclock.setAlarm);
-					waitingforwake = true;
-				}
 			} else {
 				$("#alarmclock_icon").removeClass("icon-alarm icon-alarm-on").addClass("icon-alarm");
-				if (waitingforwake) {
-					window.removeEventListener('online', alarmclock.setAlarm);
-					waitingforwake = false;
-				}
 			}
 			if (notification !== null) {
 				infobar.removenotify(notification);
@@ -554,6 +544,8 @@ var alarmclock = function() {
 			$(document).on('click', '.icon-alarm-on.alarmbutton', alarmclock.disable);
 
 			alarmclock.setAlarm();
+
+			uiHelper.addWakeHelper(alarmclock.setAlarm);
 		}
 
 	}

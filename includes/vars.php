@@ -322,7 +322,8 @@ $prefs = array(
 	'playlistbuttons_isopen' => false,
 	'collectionbuttons_isopen' => false,
 	'advsearchoptions_isopen' => false,
-	'podcastbuttons_isopen' => false
+	'podcastbuttons_isopen' => false,
+	'last_cache_clean' => 0
 );
 
 // Prefs that should not be exposed to the browser for security reasons
