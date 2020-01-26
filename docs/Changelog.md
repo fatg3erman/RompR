@@ -13,7 +13,6 @@ NOTE: This version needs to update your Music Collection. This will happen autom
 * Make Mopidy-Youtube handling work better. This version of Rompr works best wuth the fork of Mopidy-Youtube [here](https://github.com/natumbri/mopidy-youtube)
 * Completely redesigned the Community Radio Browser to simplify the interface and make it more consistent with TuneIn
 * Albums can now be moved manually to the Spoken Word section, and back to the Music Collection
-* Rompr will now check for a new release on startup and give you the option of downloading it
 * New pop-up menus for all tracks allowing you to tag, rate, and add to playlists right from the Music Collection or Search Results
 * The Playlist Manager has been removed, since all of its functionality is now incorporated into the main playlist chooser panel
 * The Tags and Ratings manager has been removed since a) I hated it and b) almost everything it did can now be done via the main Collection panel
@@ -22,6 +21,7 @@ NOTE: This version needs to update your Music Collection. This will happen autom
 * Almost all the UI code has been updayted and tidied up for a faster, smoother UI.
 * I wrote a script to automate a lot of the work in making icon themes, so now there are LOADS of them :-D
 * 'Display Search Results as Directory Tree' is now incoporated into a new menu giving you the option to display your search results in a different format to the Muisc Collection
+* A lot of images are now lazy-loaded so they're only loaded when they're visible on screen, which reducs memory usage a lot. This requires a modern browser and will fall back to loading everything at once if your browser doesn't support it. Recent versions of all major browsers should work, except for Safari where it's still listed as an 'Experimental' feature.
 
 ### FIXES:
 * Translations have been cleaned up - unused translation keys have been removed. For translators, any key missing from the translations has been added to the end of the translation file, commented out, ready to be updated. This will make it much easier for you to follow my crazy and undocumented updates.
@@ -33,6 +33,7 @@ NOTE: This version needs to update your Music Collection. This will happen autom
 * Fixed a serious bug in the PHP URL downloading code, it's a miracle it ever worked at all.
 * Fixed the play control buttons in Modern-Dark looking blurred in Safari due to Safari not rendering SVG blur correctly
 * The Personalised Radio code has been re-written from scratch to make it perform better. In particular the Spotify and Last.FM stations now populate much more quickly.
+* Made some changes so that Rompr is aware when a mobile device sleeps and wakes up. This reduces battery usage a little (but still can't make the alarm clock work)
 * As always, hundreds of little tweaks and tinkerings here and there
 
 ### KNOWN ISSUES:

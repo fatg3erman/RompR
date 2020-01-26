@@ -118,18 +118,18 @@ function mpd_search() {
 				$dbterms[$key] = $term;
 				break;
 
-			case 'any':
+			// case 'any':
 				// This makes a search term of 'Madness My Girl' into
 				// search any Madness any My any Girl
 				// which seems to produce better results with Spotify. But probably doesn't with Google Play, which
 				// only uses the first term. Soundcloud concatenates them all back into one term again. What does MPD do?
-				foreach ($term as $t) {
-					$terms = explode(' ',$t);
-					foreach ($terms as $tom) {
-						$cmd .= " ".$key.' "'.format_for_mpd(html_entity_decode(trim($tom))).'"';
-					}
-				}
-				break;
+				// foreach ($term as $t) {
+				// 	$terms = explode(' ',$t);
+				// 	foreach ($terms as $tom) {
+				// 		$cmd .= " ".$key.' "'.format_for_mpd(html_entity_decode(trim($tom))).'"';
+				// 	}
+				// }
+				// break;
 
 			default:
 				foreach ($term as $t) {

@@ -618,8 +618,10 @@ var playlist = function() {
 							uri: decodeURIComponent(uri)
 						});
 					} else {
-						tracks.push({ type: "uri",
-										name: decodeURIComponent(uri)});
+						tracks.push({
+							type: "uri",
+							name: decodeURIComponent(uri)
+						});
 					}
 				}
 			});

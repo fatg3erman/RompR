@@ -26,8 +26,8 @@ $qstring = "SELECT
 	JOIN Albumtable USING (Albumindex)
 	JOIN Artisttable AS aa ON (Albumtable.AlbumArtistindex = aa.Artistindex)
 	WHERE LinkChecked = 1 OR LinkChecked = 3
-	GROUP BY TTindex
-	ORDER BY Artistname, Albumname, TrackNo";
+	GROUP BY tr.TTindex
+	ORDER BY aa.Artistname, Albumname, TrackNo";
 
 $result = generic_sql_query($qstring);
 if (count($result) == 0) {

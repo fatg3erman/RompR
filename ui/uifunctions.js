@@ -941,10 +941,12 @@ var spotifyLinkChecker = function() {
 			track = response.tracks[i];
 			if (track) {
 				if (track.is_playable) {
-					uri = track.uri;
+					var uri = track.uri;
 					debug.debug("SPOTICHECKER", "Track is playable");
 					if (track.linked_from) {
-						debug.trace("SPOTICHECKER", "Track was relinked",track);
+						debug.trace("SPOTICHECKER", "Track was relinked from",track.linked_from.uri,'to',uri);
+						// Keep the ORIGINAL track ID, otherwise we might have issues adding it to playlists
+						// https://developer.spotify.com/documentation/general/guides/track-relinking-guide/
 						uri = track.linked_from.uri;
 					}
 					update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: uri, status: 2});
