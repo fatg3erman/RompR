@@ -61,7 +61,7 @@ if (count($result) == 0) {
 		}
 		print '</div>';
 
-		print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed tooltip" title="'.get_int_text('label_searchtrack').'"></i>';
+		print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed tooltip spinable" title="'.get_int_text('label_searchtrack').'"></i>';
 		print '<input type="hidden" value="'.$track['Title'].'" />';
 		if (in_array($track['AlbumArtist'], $prefs['artistsatstart'])) {
 			print '<input type="hidden" value="'.$track['Artistname'].'" />';
