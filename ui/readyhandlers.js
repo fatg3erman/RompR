@@ -87,7 +87,7 @@ async function refresh_podcasts() {
 
 function clean_backend_cache() {
 	debug.log('CACHE', 'last_cache_clean is',prefs.last_cache_clean);
-	if (prefs.last_cache_clean + 86400000000 <= Date.now()) {
+	if (prefs.last_cache_clean + 86400000 <= Date.now()) {
 		prefs.save({last_cache_clean: Date.now()});
 		debug.mark("INIT","Starting Backend Cache Clean");
 		collectionHelper.disableCollectionUpdates();
