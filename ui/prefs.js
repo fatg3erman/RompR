@@ -75,6 +75,10 @@ var sleepHelper = function() {
 			}
 		},
 
+		isVisible: function() {
+			return !document[visibilityHidden];
+		},
+
 		goToWakeMode: function() {
 			clearTimeout(windowActivationTimer);
 			for (var f of wakeHelpers) {
@@ -403,7 +407,8 @@ var prefs = function() {
 		var bgp = prefs.bgimgparms[prefs.theme];
 		bgp.position = $('input[name="backgroundposition"]:checked').val();
 		prefs.save({bgimgparms: prefs.bgimgparms});
-		updateCustomBackground(false);
+		// updateCustomBackground(false);
+		setBackgroundCss(bgp);
 	}
 
 	function removeAllBackgroundImages() {

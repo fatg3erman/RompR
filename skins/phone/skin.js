@@ -536,7 +536,11 @@ var layoutProcessor = function() {
 			browser.rePoint();
 			if ($('i.choosepanel[name="playlistm"]').css('font-weight') == '1000'
 				&& $('.mainpane:visible').not('#infobar').length == 0
-				&& (prefs.chooser == 'playlistm' || prefs.chooser == 'infobar')) {
+				&& (prefs.chooser == 'playlistm' || prefs.chooser == 'infobar')
+				// don't do this if we're on a mobile device and the window is being hidden or device is going to sleep
+				&& sleepHelper.isVisible()) {
+				debug.trace('SKIN', 'Active source switch',$('i.choosepanel[name="playlistm"]').css('font-weight'),
+							$('.mainpane:visible').not('#infobar').length, prefs.chooser)
 				uiHelper.sourceControl('albumlist');
 			}
 			var np = $('#nowplaying');

@@ -214,7 +214,8 @@ var layoutProcessor = function() {
 			browser.rePoint();
 			if ($('i.choosepanel[name="playlistm"]').css('font-weight') == '1000'
 				&& $('.mainpane:visible').not('#infobar').length == 0
-				&& (prefs.chooser == 'playlistm' || prefs.chooser == 'infobar')) {
+				&& (prefs.chooser == 'playlistm' || prefs.chooser == 'infobar')
+				&& sleepHelper.isVisible()) {
 				uiHelper.sourceControl('albumlist');
 			}
 
