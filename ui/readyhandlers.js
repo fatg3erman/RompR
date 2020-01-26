@@ -100,7 +100,7 @@ function clean_backend_cache() {
 	} else {
 		startBackgroundInitTasks.doNextTask();
 	}
-	prefs.addWakeHelper(clean_backend_cache);
+	sleepHelper.addWakeHelper(clean_backend_cache);
 }
 
 function check_unplayable_tracks() {
@@ -146,7 +146,6 @@ if (typeof(IntersectionObserver) == 'function') {
 	// page load time. IntersectionObserver is relatively new, so check for support.
 	// scootTheAlbums is called every time we load something with album
 	// images and that takes care of loading them
-
 
 	const imageLoadConfig = {
 		rootMargin: '0px 0px 50px 0px',

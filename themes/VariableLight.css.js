@@ -105,11 +105,11 @@ themeManager.init = function() {
 		$('<style>', {id: 'vl_background'}).appendTo('head');
 	}
 	themeManager.vl_update();
-	prefs.addWakeHelper(themeManager.vl_update);
+	sleepHelper.addWakeHelper(themeManager.vl_update);
 }
 
 themeManager.teardown = function() {
 	clearTimeout(themeManager.vl_timer);
-	prefs.removeWakeHelper(themeManager.vl_update);
+	sleepHelper.removeWakeHelper(themeManager.vl_update);
 	$('#vl_background').remove();
 }

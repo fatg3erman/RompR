@@ -545,7 +545,7 @@ var alarmclock = function() {
 
 			alarmclock.setAlarm();
 
-			prefs.addWakeHelper(alarmclock.setAlarm);
+			sleepHelper.addWakeHelper(alarmclock.setAlarm);
 		}
 
 	}

@@ -132,7 +132,7 @@ var opmlImporter = function() {
 				// 	s.replaceWith('<i class="icon-attention-1 smallicon"></i>');
 				// 	opmlImporter.Import();
 				// }
-			});
+			// });
 		}
 
 	}

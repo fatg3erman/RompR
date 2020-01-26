@@ -819,8 +819,10 @@ function set_version_string() {
 				$version_string = ROMPR_VERSION.".".time();
 			}
 		}
+		logger::log('INIT', 'Dev mode - version string is '.$version_string);
 	} else {
 		$version_string = ROMPR_VERSION;
+		logger::log('INIT', 'NOT Dev mode - version string is '.$version_string);
 	}
 }
 
