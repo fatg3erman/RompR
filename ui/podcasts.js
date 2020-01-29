@@ -267,6 +267,10 @@ var podcasts = function() {
 			}
 		},
 
+		resetScrobbleCheck: function() {
+			scrobblesToCheck = [];
+		},
+
 		doScrobbleCheck: async function() {
 			var updated = [];
 			while (scrobblesToCheck.length > 0) {
@@ -311,11 +315,16 @@ var podcasts = function() {
 			});
 		},
 
-		checkIfSomeoneElseHasUpdatedStuff: function() {
+		checkIfSomeoneElseHasUpdatedStuff: async function() {
 			debug.log('PODCASTS', 'Checking if someone else has updated stuff');
 			var isnewpodcast = false;
 			var to_reload = new Array();
-			$.getJSON("podcasts/podcasts.php?populate=1&getcounts=1", function(data) {
+			try {
+				var data = await $.ajax({
+					type: 'GET',
+					url: "podcasts/podcasts.php?populate=1&getcounts=1",
+					dataType: 'json'
+				});
 				$.each(data, function(index, value) {
 					if (!newcounts.hasOwnProperty(index)) {
 						debug.info('PODCASTS', 'A new podcast has been subscribed to by somebody else');
@@ -327,12 +336,16 @@ var podcasts = function() {
 						}
 					}
 				});
-				if (isnewpodcast) {
-					podcasts.reloadList();
-				} else {
-					checkForUpdatedPodcasts(to_reload);
-				}
-			});
+			} catch(err) {
+				debug.warn('PODCASTS', 'Failed when doing post-wake actions');
+			}
+			if (isnewpodcast) {
+				await podcasts.reloadList();
+			} else {
+				checkForUpdatedPodcasts(to_reload);
+				podcasts.doNewCount();
+			}
+			podcasts.checkRefresh();
 		},
 
 		changeOption: async function(event) {
@@ -362,32 +375,40 @@ var podcasts = function() {
 		},
 
 		checkRefresh: async function() {
-			debug.log('PODCASTS', 'Starting Refresh');
 			clearTimeout(refreshtimer);
-			try {
-				var data = await $.ajax({
-					type: 'GET',
-					url: "podcasts/podcasts.php?populate=1&checkrefresh=1",
-					timeout: prefs.collection_load_timeout,
-					dataType: 'JSON'
-				});
-				debug.log('PODCASTS', 'Refresh complete');
-				debug.debug("PODCASTS","Refresh result",data);
-				checkForUpdatedPodcasts(data.updated);
-				podcasts.doNewCount();
-				if (data.nextupdate) {
-					debug.log("PODCASTS","Setting next podcast refresh for",data.nextupdate,'seconds');
-					refreshtimer = setTimeout(podcasts.checkRefresh, data.nextupdate*1000);
-				}
-				sleepHelper.addWakeHelper(podcasts.checkIfSomeoneElseHasUpdatedStuff);
-			} catch (err)  {
-				debug.error("PODCASTS","Refresh Failed with status",err.status);
-				if (err.status == 412) {
-					setTimeout(podcasts.checkRefresh, 10000);
-				} else {
-					infobar.error(language.gettext('error_refreshfail'));
+			if (prefs.next_podcast_refresh >= Date.now()) {
+				let timeout = (prefs.next_podcast_refresh - Date.now());
+				debug.info('PODCASTS', 'Will refresh podcasts in',timeout/1000,'seconds');
+				refreshtimer = setTimeout(podcasts.checkRefresh, timeout);
+			} else {
+				debug.info('PODCASTS', 'Starting Refresh');
+				try {
+					var data = await $.ajax({
+						type: 'GET',
+						url: "podcasts/podcasts.php?populate=1&checkrefresh=1",
+						timeout: prefs.collection_load_timeout,
+						dataType: 'JSON'
+					});
+					debug.log('PODCASTS', 'Refresh complete');
+					debug.debug("PODCASTS","Refresh result",data);
+					checkForUpdatedPodcasts(data.updated);
+					podcasts.doNewCount();
+					if (data.nextupdate) {
+						debug.log("PODCASTS","Setting next podcast refresh for",data.nextupdate,'seconds');
+						var wtf = Date.now()+(data.nextupdate*1000);
+						prefs.save({next_podcast_refresh: wtf});
+						refreshtimer = setTimeout(podcasts.checkRefresh, data.nextupdate*1000);
+					}
+				} catch (err)  {
+					debug.error("PODCASTS","Refresh Failed with status",err.status);
+					if (err.status == 412) {
+						setTimeout(podcasts.checkRefresh, 10000);
+					} else {
+						infobar.error(language.gettext('error_refreshfail'));
+					}
 				}
 			}
+			sleepHelper.addWakeHelper(podcasts.checkIfSomeoneElseHasUpdatedStuff);
 		},
 
 		removePodcast: async function(event, clickedElement) {

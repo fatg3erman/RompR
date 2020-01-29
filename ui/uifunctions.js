@@ -859,12 +859,19 @@ var syncLastFMPlaycounts = function() {
 				debug.log('LASTFMSYNC', 'No tracks in page', page);
 				removeNotify();
 				prefs.save({last_lastfm_synctime: Math.floor(Date.now()/1000)});
-				podcasts.doScrobbleCheck();
-				sleepHelper.addWakeHelper(syncLastFMPlaycounts.start);
+				allDone(page);
 			}
 		} else {
 			removeNotify();
+			allDone(1)
 		}
+	}
+
+	function allDone(page) {
+		if (page > 1) {
+			podcasts.doScrobbleCheck();
+		}
+		sleepHelper.addWakeHelper(syncLastFMPlaycounts.start);
 	}
 
 	function donePage() {
@@ -889,17 +896,23 @@ var syncLastFMPlaycounts = function() {
 				debug.log("LASTFMSYNC","Last.FM is not logged in");
 				return;
 			}
-			debug.log("LASTFMSYNC","Getting recent tracks since ",prefs.last_lastfm_synctime);
-			lastfm.user.getRecentTracks(
-				{
-					limit: limit,
-					page: page,
-					from: prefs.last_lastfm_synctime,
-					extended: 1
-				},
-				gotPage,
-				failed
-			)
+			if ((prefs.last_lastfm_synctime - 3600) >= (Date.now()/1000)) {
+				podcasts.resetScrobbleCheck();
+				debug.log("LASTFMSYNC","Getting recent tracks since ",prefs.last_lastfm_synctime);
+				lastfm.user.getRecentTracks(
+					{
+						limit: limit,
+						page: page,
+						from: prefs.last_lastfm_synctime,
+						extended: 1
+					},
+					gotPage,
+					failed
+				)
+			} else {
+				debug.log('LASTFMSYNC', 'Less than 1 hour since last LastFM Sync Check');
+				allDone(1);
+			}
 		}
 	}
 
