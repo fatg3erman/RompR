@@ -323,8 +323,8 @@ $prefs = array(
 	'collectionbuttons_isopen' => false,
 	'advsearchoptions_isopen' => false,
 	'podcastbuttons_isopen' => false,
-	'last_cache_clean' => 0,
-	'next_podcast_refresh' => 0
+	'last_cache_clean' => 10,
+	'next_podcast_refresh' => 10
 );
 
 // Prefs that should not be exposed to the browser for security reasons

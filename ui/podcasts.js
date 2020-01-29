@@ -389,16 +389,16 @@ var podcasts = function() {
 						timeout: prefs.collection_load_timeout,
 						dataType: 'JSON'
 					});
+					if (data.nextupdate) {
+						debug.log("PODCASTS","Setting next podcast refresh for",data.nextupdate,'seconds');
+						wtf = Date.now()+(data.nextupdate*1000);
+						await prefs.save({next_podcast_refresh: wtf});
+						refreshtimer = setTimeout(podcasts.checkRefresh, data.nextupdate*1000);
+					}
 					debug.log('PODCASTS', 'Refresh complete');
 					debug.debug("PODCASTS","Refresh result",data);
 					checkForUpdatedPodcasts(data.updated);
 					podcasts.doNewCount();
-					if (data.nextupdate) {
-						debug.log("PODCASTS","Setting next podcast refresh for",data.nextupdate,'seconds');
-						var wtf = Date.now()+(data.nextupdate*1000);
-						prefs.save({next_podcast_refresh: wtf});
-						refreshtimer = setTimeout(podcasts.checkRefresh, data.nextupdate*1000);
-					}
 				} catch (err)  {
 					debug.error("PODCASTS","Refresh Failed with status",err.status);
 					if (err.status == 412) {
