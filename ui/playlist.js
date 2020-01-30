@@ -400,10 +400,11 @@ var playlist = function() {
 			tracklist = new_tracklist;
 			playlist.validate();
 
-			$("#sortable").empty();
+			$("#sortable").clearOut().empty();
 			for (var i in tracklist) {
 				tracklist[i].presentYourself();
 			}
+			$('#sortable').scootTheAlbums();
 
 			if (finaltrack > -1) {
 				$("#pltracks").html((finaltrack+1).toString() +' '+language.gettext("label_tracks"));
@@ -950,7 +951,8 @@ function Album(artist, album, index, rolledup) {
 			self.image.on('error', self.getart);
 			var imgholder = $('<div>', { class: 'smallcover fixed clickplaylist clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
 			if (tracks[0].images.small) {
-				self.image.attr('src', tracks[0].images.small).appendTo(imgholder);
+				self.image.attr('data-src', tracks[0].images.small).appendTo(imgholder);
+				self.image.addClass('lazy');
 			} else {
 				if (tracks[0].Searched == 0) {
 					self.image.addClass('notexist').appendTo(imgholder);
@@ -1186,7 +1188,8 @@ function Stream(index, album, rolledup) {
 			self.image.on('error', self.getart);
 			var imgholder = $('<div>', { class: 'smallcover fixed clickplaylist clickicon clickrollup', romprname: self.index}).appendTo(albumDetails);
 			if (tracks[0].images.small) {
-				self.image.attr('src', tracks[0].images.small).appendTo(imgholder);
+				self.image.attr('data-src', tracks[0].images.small).appendTo(imgholder);
+				self.image.addClass('lazy');
 			} else {
 				if (tracks[0].Searched == 0) {
 					self.image.addClass('notexist stream').appendTo(imgholder);
