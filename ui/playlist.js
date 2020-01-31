@@ -955,7 +955,9 @@ function Album(artist, album, index, rolledup) {
 				self.image.addClass('lazy');
 			} else {
 				if (tracks[0].Searched == 0) {
-					self.image.addClass('notexist').appendTo(imgholder);
+					// NOTE: use notfound, not notexist otherwise ScootTheAlbums will try to get art for us
+					// and that doesn't work
+					self.image.addClass('notfound').appendTo(imgholder);
 					self.getart();
 				} else {
 					self.image.addClass('notfound').appendTo(imgholder);
@@ -1192,7 +1194,9 @@ function Stream(index, album, rolledup) {
 				self.image.addClass('lazy');
 			} else {
 				if (tracks[0].Searched == 0) {
-					self.image.addClass('notexist stream').appendTo(imgholder);
+					self.image.addClass('notfound stream').appendTo(imgholder);
+					// NOTE: use notfound, not notexist otherwise ScootTheAlbums will try to get art for us
+					// and that doesn't work
 					if (tracks[0].album != rompr_unknown_stream) {
 						self.getart();
 					}
