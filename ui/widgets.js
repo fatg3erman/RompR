@@ -1044,6 +1044,7 @@ $.widget('rompr.spotifyAlbumThing', {
 	},
 
 	handleClick: function(element) {
+		debug.trace('SPOTIFYALBUMTHING', 'Handling Click');
 		var self = this;
 		var id = element.attr("name").replace(self.options.id+'dropper_', '');
 		if (element.hasClass('clickopenalbum')) {
@@ -1282,6 +1283,7 @@ $.widget('rompr.spotifyArtistThing', {
 	},
 
 	handleClick: function(element) {
+		debug.trace('SPOTIFYARTISTTHING', 'Handling Click');
 		var self = this;
 		var id = element.attr("name");
 		var dropper = $('#'+id);
@@ -1309,7 +1311,11 @@ $.widget('rompr.spotifyArtistThing', {
 				}
 			}
 		} else if (element.hasClass('clickopenalbum') || element.hasClass('clickaddtolistenlater') || element.hasClass('clickaddtocollection')) {
-			$('#'+element.parent().parent().parent().parent().attr('id')).spotifyAlbumThing('handleClick', element);
+			if (layoutProcessor.openOnImage) {
+				$('#'+element.parent().parent().parent().parent().parent().attr('id')).spotifyAlbumThing('handleClick', element);
+			} else {
+				$('#'+element.parent().parent().parent().parent().attr('id')).spotifyAlbumThing('handleClick', element);
+			}
 		}
 	},
 
