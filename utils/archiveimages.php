@@ -42,8 +42,11 @@ foreach ($r as $obj) {
 				$img = 'albumart/asdownloaded/'.basename($obj->Image);
 				$out = $albumpath.'/'.basename($obj->Image);
 				print "Archiving Image ".$img.' to '.$out."\n";
-				if (file_exists($out)) {
-					unlink($out);
+				$filename = pathinfo($img, PATHINFO_FILENAME);
+				$current = glob($albumpath.'/'.$filename.'.*');
+				foreach ($current as $f) {
+					print '  Removing '.$f."\n";
+					unlink($f);
 				}
 				copy($img, $out);
 			}

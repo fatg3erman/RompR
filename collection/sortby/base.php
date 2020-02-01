@@ -242,6 +242,7 @@ class sortby_base {
 				tr.LastModified AS lm,
 				tr.Disc AS disc,
 				tr.Uri AS uri,
+				tr.isSearchResult AS isSearchResult,
 				tr.LinkChecked AS playable,
 				ta.Artistname AS artist,
 				tr.Artistindex AS trackartistindex,
