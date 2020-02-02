@@ -132,7 +132,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 	}
 
 	function animateWaiting() {
-		$('img.notexist[name="'+imgparams.imgkey+'"]').removeClass('nospin').addClass('spinner').attr({src: "newimages/transparent.png"});
+		$('img[name="'+imgparams.imgkey+'"]').removeClass('nospin').addClass('spinner').attr({src: "newimages/transparent.png"});
 	}
 
 	function stopAnimation() {

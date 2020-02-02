@@ -234,7 +234,7 @@ class baseAlbumImage {
 
 	public function album_has_no_image() {
 		// return true if the image does not exist
-		if (substr($this->images['small'], 0, 4) == 'http' || substr($this->images['small'], 0, 14 == 'getRemoteImage')) {
+		if (substr($this->images['small'], 0, 4) == 'http' || substr($this->images['small'], 0, 14) == 'getRemoteImage') {
 			return false;
 		}
 		if (!$this->images['small']) {
@@ -246,8 +246,13 @@ class baseAlbumImage {
 		return false;
 	}
 
-	public function html_for_image($obj, $imageclass, $size, $lazy = true) {
+	public function html_for_image($obj, $imageclass, $size, $lazy = true, $check_exists = false) {
 		$extra = (array_key_exists('userplaylist', $obj)) ? 'plimage '.$imageclass : $imageclass;
+		if ($check_exists && $this->album_has_no_image()) {
+			$this->images['small'] = null;
+			$this->images['mediaum'] = null;
+			$this->images['asdownloaded'] = null;
+		}
 		if (!$this->images['small'] && $obj['Searched'] != 1) {
 			return '<img class="notexist '.$extra.'" name="'.$obj['ImgKey'].'" src="newimages/transparent.png" />'."\n";
 		} else  if (!$this->images['small'] && $obj['Searched'] == 1) {

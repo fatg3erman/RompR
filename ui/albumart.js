@@ -10,19 +10,22 @@ var allshown = true;
 var stream = "";
 var progress;
 
-// const imageLoadConfig = {
-// 	rootMargin: '0px 0px 50px 0px',
-// 	threshold: 0
-// }
+if (typeof(IntersectionObserver) == 'function') {
 
-// var imageLoader = new IntersectionObserver(function(entries, self) {
-//   entries.forEach(entry => {
-//     if(entry.isIntersecting) {
-//       preloadImage(entry.target);
-//       self.unobserve(entry.target);
-//     }
-//   });
-// }, imageLoadConfig);
+	const imageLoadConfig = {
+		rootMargin: '0px 0px 50px 0px',
+		threshold: 0
+	}
+
+	var imageLoader = new IntersectionObserver(function(entries, self) {
+	  entries.forEach(entry => {
+	    if(entry.isIntersecting) {
+	      preloadImage(entry.target);
+	      self.unobserve(entry.target);
+	    }
+	  });
+	}, imageLoadConfig);
+}
 
 function preloadImage(img) {
 	$(img).attr('src', $(img).attr('data-src')).removeAttr('data-src').removeClass('lazy');
@@ -154,21 +157,18 @@ function boogerbenson() {
 }
 
 function onlywithcovers() {
-	if ($(this).hasAttr('src')) {
-		return true;
-	} else {
+	if ($(this).hasClass('notexist') || $(this).hasClass('notfound')) {
 		return false;
+	} else {
+		return true;
 	}
 }
 
 function filterImages() {
-	if ($(this).hasClass('playlistimage')){
-		return false;
-	}
-	if ($(this).hasAttr('src') && $(this).attr('src') != 'newimages/transparent.png') {
-		return false;
+	if ($(this).hasClass('notexist') || $(this).hasClass('notfound')) {
+		return true
 	} else {
-		return true;
+		return false;
 	}
 }
 
@@ -265,10 +265,6 @@ $(window).on('load', function () {
 	debug.log("ALBUMART","Document has loaded");
 	coverscraper = new coverScraper(1, true, true, true);
 	var count = 0;
-	$.each($(document).find("img").filter(filterImages), function() {
-		count++;
-		$(this).addClass("notexist");
-	});
 	$('.cheesegrater').filter(sections_with_missing_images).each(function() {
 		$(this).children('.albumsection').find('button').show();
 	});
@@ -278,11 +274,16 @@ $(window).on('load', function () {
 	coverscraper.toggleLocal(false);
 	$("#totaltext").html(numcovers+" "+language.gettext("label_albums"));
 	coverscraper.reset(albums_without_cover);
-	coverscraper.updateInfo(albums_without_cover - count);
 	$("#status").html(language.gettext("albumart_instructions"));
 	$('#dinkylabel').prop('disabled', false);
 	$('#poobaglabel').prop('disabled', false);
-	// $("img.lazy").get().forEach(img => imageLoader.observe(img));
+	if (typeof(IntersectionObserver) == 'function') {
+		$("img.lazy").get().forEach(img => imageLoader.observe(img));
+	} else {
+		$('img.lazy').not('.notexist').not('.notfound').each(function() {
+			preloadImage(this);
+		});
+	}
 });
 
 function dragEnter(ev) {

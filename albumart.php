@@ -150,7 +150,7 @@ function do_covers_db_style() {
 							print '<input name="searchterm" type="hidden" value="'.rawurlencode($artist['Artistname']." ".munge_album_name($album['Albumname'])).'" />';
 							$album['Searched'] = 1;
 							$img = new baseAlbumImage(array('baseimage' => $album['Image']));
-							print $img->html_for_image($album, "clickable clickicon clickalbumcover droppable", 'medium', false);
+							print $img->html_for_image($album, "clickable clickicon clickalbumcover droppable", 'medium', true, true);
 							if ($img->album_has_no_image()) {
 								$albums_without_cover++;
 							}
@@ -183,7 +183,7 @@ function do_radio_stations() {
 					print '<input name="artist" type="hidden" value="STREAM" />';
 					print '<input name="album" type="hidden" value="'.rawurlencode($file['StationName']).'" />';
 					$img = new baseAlbumImage(array('artist' => 'STREAM', 'album' => $file['StationName'], 'baseimage' => $file['Image']));
-					print $img->html_for_image(array('Searched' => 1, 'ImgKey' => $img->get_image_key()), 'clickable clickicon clickalbumcover droppable', 'medium', false);
+					print $img->html_for_image(array('Searched' => 1, 'ImgKey' => $img->get_image_key()), 'clickable clickicon clickalbumcover droppable', 'medium', true, true);
 					if ($img->album_has_no_image()) {
 						$albums_without_cover++;
 					}
@@ -229,7 +229,7 @@ function do_playlists() {
 						print '<input name="album" type="hidden" value="'.rawurlencode($pl).'" />';
 						$img = new baseAlbumImage(array('artist' => 'PLAYLIST', 'album' => $pl));
 						$a = $img->get_image_if_exists('medium');
-						print $img->html_for_image(array('Searched' => 1, 'ImgKey' => $img->get_image_key()), 'clickable clickicon clickalbumcover droppable playlistimage', 'medium', false);
+						print $img->html_for_image(array('Searched' => 1, 'ImgKey' => $img->get_image_key()), 'clickable clickicon clickalbumcover droppable playlistimage', 'medium', true, true);
 						if ($img->album_has_no_image()) {
 							$albums_without_cover++;
 						}
