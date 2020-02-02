@@ -9,10 +9,8 @@ include ('utils/phpQuery.php');
 require_once ('utils/imagefunctions.php');
 
 logger::log("USERSTREAMS", "Doing User Radio Stuff");
-if (array_key_exists('firstload', $_REQUEST)) {
+if (array_key_exists('populate', $_REQUEST)) {
 	do_radio_header();
-} else if (array_key_exists('populate', $_REQUEST)) {
-	do_radio_list();
 } else if (array_key_exists('remove', $_REQUEST)) {
 	remove_user_radio_stream($_REQUEST['remove']);
 	header('HTTP/1.1 204 No Content');
@@ -35,9 +33,9 @@ function do_radio_header() {
 			print '<button class="fixed iconbutton icon-no-response-playbutton" name="spikemilligan"></button>';
 		print '</div>';
 	print '</div>';
-	print '<div id="yourradiostations" class="holderthing is-albumlist">';
+	// print '<div id="yourradiostations" class="holderthing is-albumlist">';
 	do_radio_list();
-	print '</div>';
+	// print '</div>';
 }
 
 function do_radio_list() {

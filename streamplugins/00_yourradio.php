@@ -13,7 +13,7 @@ print albumHeader(array(
 	'class' => 'radio yourradioroot',
 	'expand' => true
 ));
-print '<div id="yourradiolist" class="dropmenu notfilled is-albumlist">';
+print '<div id="yourradiolist" class="dropmenu notfilled is-albumlist holderthing">';
 print '</div>';
 print '</div>';
 ?>

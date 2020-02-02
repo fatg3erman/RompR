@@ -3,7 +3,7 @@ var yourRadioPlugin = {
 	reloadStations: function() {
 		if (!prefs.hide_radiolist) {
 			clickRegistry.loadContentIntoTarget({
-				target: $('#yourradiostations'),
+				target: $('#yourradiolist'),
 				clickedElement: $('i[name="yourradiolist"]'),
 				uri: 'utils/userstreams.php?populate'
 			});
@@ -22,7 +22,7 @@ var yourRadioPlugin = {
 				allowdragout: true
 			});
 		}
-		return 'utils/userstreams.php?firstload';
+		return 'utils/userstreams.php?populate';
 	},
 
 	updateStreamName: async function(streamid, name, uri) {
