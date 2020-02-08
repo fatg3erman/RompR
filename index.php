@@ -163,7 +163,6 @@ savePrefs();
 // Do some initialisation and cleanup of the Apache backend
 //
 include ("includes/firstrun.php");
-logger::trace("INIT", "Last Last.FM Sync Time is ".$prefs['last_lastfm_synctime'].", ".date('r', $prefs['last_lastfm_synctime']));
 logger::log("INIT", "Initialisation done. Let's Boogie!");
 logger::mark("CREATING PAGE", "******++++++======------******------======++++++******");
 
