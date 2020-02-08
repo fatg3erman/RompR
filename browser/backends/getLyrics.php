@@ -38,7 +38,7 @@ if (file_exists($fname)) {
 
 if ($output == null) {
 	$uri = "http://lyrics.wikia.com/api.php?func=getSong&artist=".urlencode($artist)."&song=".urlencode($song)."&fmt=xml";
-	logger::mark("LYRICS", "Trying",$uri);
+	logger::log("LYRICS", "Trying",$uri);
 	$d = new url_downloader(array(
 		'url' => $uri,
 		'cache' => 'lyrics',
@@ -47,7 +47,7 @@ if ($output == null) {
 	if ($d->get_data_to_file()) {
 		$l = simplexml_load_string($d->get_data());
 		if ($l->url) {
-			logger::log("LYRICS", "  Now Getting",html_entity_decode($l->url));
+			logger::debug("LYRICS", "  Now Getting",html_entity_decode($l->url));
 			$d2 = new url_downloader(array(
 				'url' => html_entity_decode($l->url),
 				'cache' => 'lyrics',
@@ -59,15 +59,15 @@ if ($output == null) {
 				} else if (preg_match('/\<div class=\'lyricbox\'\>(.*?)\<div class=\'lyricsbreak\'\>/', $d2->get_data(), $matches)) {
 					$output = html_entity_decode($matches[1]);
 				} else {
-					logger::mark("LYRICS", "    Could Not Find Lyrics");
+					logger::info("LYRICS", "    Could Not Find Lyrics");
 				}
 			}
 		} else {
-			logger::mark("LYRICS", "  Nope, nothing there");
+			logger::info("LYRICS", "    Could Not Find URI for Lyrics");
 		}
 	}
 } else {
-	logger::mark("LYRICS", "  Got lyrics from file");
+	logger::info("LYRICS", "  Got lyrics from file");
 }
 
 if ($output == null) {

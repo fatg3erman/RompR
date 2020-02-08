@@ -11,6 +11,10 @@ html, body.phone .dropmenu {
     background-attachment:fixed;
 }
 
+.backmenu {
+    background-color: rgba(255,255,255,0.7) !important;
+}
+
 body.phone .dropmenu>div.playable,
 body.phone .dropmenu>div.menuitem,
 body.phone #pluginplaylistholder .menuitem.clickicon,
@@ -54,14 +58,14 @@ a:hover,a:active
     cursor:pointer;
 }
 
-button, input[type="button"], .filebutton
+button, input[type="button"], div.filebutton
 {
     color:#000000;
     background-color:rgba(255,255,255,0.5);
     border:1px solid #222222;
 }
 
-button:hover, input[type="button"]:hover, .filebutton:hover
+button:hover, input[type="button"]:hover, div.filebutton:hover
 {
     border:1px solid #bbbbbb;
     background-color:rgba(255,255,255,0.7);
@@ -71,11 +75,11 @@ select {
     color:#000000;
 }
 
-.selectholder {
+div.selectholder {
     background-color:rgba(255,255,255,0.3);
 }
 
-.selectholder:hover {
+div.selectholder:hover {
     background-color:rgba(255,255,255,0.4);
 }
 
@@ -171,7 +175,7 @@ input[type="text"]:focus {
 
 .playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
     text-shadow: 0 0 15px #ffffff;
-    color:#ffffff;
+    color:red;
     cursor:pointer;
 }
 
@@ -244,6 +248,20 @@ table.histable tr
     color:#ff4800;
     cursor:pointer;
     transition:all 0.1s;
+}
+
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu 
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color:#000000;    
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    text-shadow: 0 0 15px #ffffff;
+    color:#ff4800;
 }
 
 .backhi

@@ -22,53 +22,53 @@ var musicbrainz = function() {
 			var req = queue[0];
 			clearTimeout(throttle);
 
-            if (req) {
-            	if (req.flag) {
-            		debug.error("MUSICBRAINZ","Request just pulled from queue is already being handled");
-            		return;
-            	}
+			if (req) {
+				if (req.flag) {
+					debug.warn("MUSICBRAINZ","Request just pulled from queue is already being handled");
+					return;
+				}
 				queue[0].flag = true;
 				debug.debug("MUSICBRAINZ","Taking next request from queue",req.data);
-	            var getit = $.ajax({
+				var getit = $.ajax({
 					method: 'POST',
 					url: "browser/backends/getmbdata.php",
 					data: req.data,
-	                dataType: "json",
+					dataType: "json",
 				})
-	            .done(function(data) {
-                	var c = getit.getResponseHeader('Pragma');
-                	debug.debug("MUSICBRAINZ","Request success",c,data);
-                	if (c == "From Cache") {
-                		throttle = setTimeout(musicbrainz.getrequest, 100);
-                	} else {
-                		throttle = setTimeout(musicbrainz.getrequest, 1500);
-                	}
-                	req = queue.shift();
-                	if (data === null) {
-                		data = {error: language.gettext("musicbrainz_error")};
-                	}
-                	if (req.reqid != '') {
-                		data.id = req.reqid;
-                	}
-	                if (data.error) {
-	                    req.fail(data);
-	                } else {
-	                    req.success(data);
-	                }
-	            })
-	            .fail(function(xhr,status,err) {
-                	throttle = setTimeout(musicbrainz.getrequest, 1500);
-                	req = queue.shift();
-                	debug.warn("MUSICBRAINZ","Request failed",req,xhr);
-                	data = {error: language.gettext("musicbrainz_noinfo") + ' ('+xhr.status+' '+err+')'};
-                	if (req.reqid != '') {
-                		data.id = req.reqid;
-                	}
-                	req.fail(data);
-	            });
-	        } else {
-            	throttle = null;
-	        }
+				.done(function(data) {
+					var c = getit.getResponseHeader('Pragma');
+					debug.debug("MUSICBRAINZ","Request success",c,data);
+					if (c == "From Cache") {
+						throttle = setTimeout(musicbrainz.getrequest, 100);
+					} else {
+						throttle = setTimeout(musicbrainz.getrequest, 1500);
+					}
+					req = queue.shift();
+					if (data === null) {
+						data = {error: language.gettext("musicbrainz_error")};
+					}
+					if (req.reqid != '') {
+						data.id = req.reqid;
+					}
+					if (data.error) {
+						req.fail(data);
+					} else {
+						req.success(data);
+					}
+				})
+				.fail(function(xhr,status,err) {
+					throttle = setTimeout(musicbrainz.getrequest, 1500);
+					req = queue.shift();
+					debug.warn("MUSICBRAINZ","Request failed",req,xhr);
+					data = {error: language.gettext("musicbrainz_noinfo") + ' ('+xhr.status+' '+err+')'};
+					if (req.reqid != '') {
+						data.id = req.reqid;
+					}
+					req.fail(data);
+				});
+			} else {
+				throttle = null;
+			}
 		},
 
 		artist: {

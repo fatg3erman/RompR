@@ -1,5 +1,9 @@
 html, body.phone .dropmenu {
     background-image: radial-gradient(circle farthest-side at top left, yellow, orange, red);
+    /*Required to work around apparent Firefox/Safari dropdown menu redraw bug*/
+    background-size:cover;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
 }
 
 body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input
@@ -48,14 +52,14 @@ a:hover,a:active
     background-color:rgba(0,0,0,0.2);
 }
 
-button, input[type="button"], .filebutton
+button, input[type="button"], div.filebutton
 {
     background-image: radial-gradient(circle farthest-side at center, yellow, orange, red);
     color:#000000;
     border:1px solid #000000;
 }
 
-button:hover, input[type="button"]:hover, .filebutton:hover
+button:hover, input[type="button"]:hover, div.filebutton:hover
 {
     color:#ffffff;
     text-shadow: 0 0 15px #ffffff;
@@ -297,6 +301,20 @@ table.histable tr
     color:#ff4800;
     cursor:pointer;
     transition:all 0.1s;
+}
+
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color:#000000;
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    text-shadow: 0 0 15px #ffffff;
+    color:#ff4800;
 }
 
 .backhi

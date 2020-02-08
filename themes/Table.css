@@ -91,14 +91,14 @@ a:hover,a:active
 
 /*-- divs used to create infobar layout --*/
 
-button, input[type="button"], .filebutton
+button, input[type="button"], div.filebutton
 {
     color:#dddddd;
     background-color:transparent;
     border:1px solid #aaaaaa;
 }
 
-button:hover, input[type="button"]:hover, .filebutton:hover
+button:hover, input[type="button"]:hover, div.filebutton:hover
 {
     color:#ffffff;
     border:1px solid #ffffff;
@@ -109,11 +109,11 @@ select {
     color:#dddddd;
 }
 
-.selectholder {
+div.selectholder {
     background-color:rgba(0,0,0,0.5);
 }
 
-.selectholder:hover {
+div.selectholder:hover {
     background-color:rgba(0,0,0,0.6);
 }
 
@@ -354,6 +354,20 @@ table.histable tr
     color:#ff4800;
     cursor:pointer;
     transition:all 0.1s;
+}
+
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu 
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color:#eeeeee;    
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    text-shadow: 0 0 15px #ffffff;
+    color:#ff4800;
 }
 
 .backhi

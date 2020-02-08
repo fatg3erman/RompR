@@ -12,6 +12,10 @@
     }
 }
 
+.backmenu {
+    background-color: rgba(0,0,0,0.7) !important;
+}
+
 @media screen and (orientation: portrait) {
     html, body.phone .dropmenu {
         background-image:url("themes/plasma_portrait.jpg");
@@ -47,14 +51,15 @@ a:hover,a:active
     cursor:pointer;
 }
 
-button, input[type="button"], .filebutton
-{    color:#dddddd;
+button, input[type="button"], div.filebutton
+{    
+    color:#dddddd;
     background-color:rgba(0,0,0,0.5);
     border:1px solid transparent;
 }
 
 
-button:hover, input[type="button"]:hover, .filebutton:hover
+button:hover, input[type="button"]:hover, div.filebutton:hover
 {
     color:#ffffff;
     background-color:rgba(0,0,0,0.7);
@@ -65,11 +70,11 @@ select {
     color:#dddddd;
 }
 
-.selectholder {
+div.selectholder {
     background-color:rgba(0,0,0,0.5);
 }
 
-.selectholder:hover {
+div.selectholder:hover {
     background-color:rgba(0,0,0,0.2);
 }
 
@@ -248,6 +253,20 @@ table.histable tr
     color:#ff4800;
     cursor:pointer;
     transition:all 0.1s;
+}
+
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu 
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color:#cccccc;    
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    text-shadow: 0 0 15px #ffffff;
+    color:#ff4800;
 }
 
 .backhi

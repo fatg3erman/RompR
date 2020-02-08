@@ -1,23 +1,37 @@
 
-# (C) Fat German Productions/Mark Greenwood 2017
+(C) Fat German Productions/Mark Greenwood 2017, 2018, 2019 and onwards
 
-SEE includes/license.html
+This program is released under an alt-SpongWare license
+The use of alt-SpongWare is entirely according to the following conditions:
+
+ 1) It is provided 'as is'. Nobody is responsible for anything it might or might not do.
+ 2) It is provided free of charge but donations to the original developer are welcomed.
+ 3) You may redistribute it but you may not, without permission of the author, distribute
+    modified versions or provide it under any license other than this one, nor may you 
+    distribute or make available modifications to any of the component files.
+ 4) You may not charge a fee or ask for any kind of remuneration nor accept any form of 
+    donation or gift in regards to distributing this software
+ 5) There is no rule 6
+ 7) Rule 7 is irrelevant
+ 8) Adherence to 'coding standards' is to be regarded with suspicion.
+ 9) If this program goes wrong in any way, for example it deletes all your data or 
+    perhaps it wipes the entire internet overnight and leaves the world a dead place, 
+    nobody is responsible.  Deal with it. You use it at your own risk. 
+    As you do with, say, knives. Or cereal.
+10) Use of any part of this software in any commercial context by any for-profit organisation 
+    without the express permission of the author is forbidden.
+11) The use of the name RompЯ (or Rompr or RompR) or images of RompЯ in connection with
+    any business or products, whether it be through advertising, marketing, sales literature, 
+    blog posts, website articles or any other form of media is srictly forbidden without 
+    the author's permission.
 
 CREDITS
 =======
 
 This program makes use of lots of other stuff which are all released
-under their own licenses, just to make it complicated.
+under their own licenses, just to make it complicated. Details are included in the UI.
 
-The original inspiration came from phpMP, and the original core of this app was lifted
-directly from there. It's grown quite a lot since then.
+The original core that I built it around was lifted from PHPmp. 
+It's grown quite a lot since then.
 
-jquery (http://jquery.com) and the jquery UI framework (http://jqueryui.com)
-are probably released under the GPL or something. I dunno, their websites aren't
-very clear on that point.
 
-The md5 hashing algorithm code was taken from http://pajhome.org.uk/crypt/md5
-and is released under a BSD license
-
-The jquery form plugin comes from http://malsup.com/jquery/form/
-and also has two licenses.

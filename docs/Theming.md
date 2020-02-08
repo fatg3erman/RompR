@@ -5,7 +5,7 @@ RompЯ allows you to customise the interface with different options:
 * **Icons** can be chosen from white, black, or colourful.
 * **Font Style** allows you to pick a font. Note that some of the fonts used are taken from Google Fonts and therefore require an internet connection to work. All have sensible fallbacks, just in case.
 * **Font Size** allows you to change the font size
-* **Album Cover Size** changes the size of the album covers in the Music Collection and Current Playlist
+* **Album Cover Size** changes the size of the album covers in the Music Collection and Play Queue
 
 ## Themes
 
@@ -65,6 +65,10 @@ You may specify a theme in the URL in your browser. Just point your browser at
     http://ip.address.of.rompr/?theme=ThemeName
 
 where 'ThemeName' is one of the suppplied themes.
+
+## VariableLight Theme
+
+This theme is designed for people who use Rompr bfore they go to bed. It gets progressively darker the later the hour gets, including a nice 'sunset fade' in the evening :)
 
 ## Making Your Own Theme
 

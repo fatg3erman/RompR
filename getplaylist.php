@@ -14,23 +14,22 @@ require_once ("collection/playlistcollection.php");
 // and the Collection data models use up a lot of memory for things we just don't need here
 
 // This is intended to be a fast pipe to convert MPD data into RompR data.
-
+$t = microtime(true);
+$c = 0;
 header('Content-Type: application/json; charset=utf-8');
-$doneone = false;
-
+$dbterms = array( 'tags' => null, 'rating' => null );
 $player = new $PLAYER_TYPE();
 $collection = new playlistCollection();
 print '[';
 foreach ($player->get_playlist($collection) as $info) {
-    if ($doneone) {
-        print ', ';
-    } else {
-        $doneone = true;
-    }
-    print json_encode($info);
+	if ($c > 0) {
+		print ', ';
+	}
+	$c++;
+	print json_encode($info);
 };
 print ']';
 ob_flush();
-logger::trace("GETPLAYLIST", "Playlist Output Is Done");
-
+$at = microtime(true) - $t;
+logger::info("GETPLAYLIST", "Playlist has",$c,"tracks and took",$at,"seconds to parse");
 ?>

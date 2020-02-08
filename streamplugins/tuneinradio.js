@@ -1,64 +1,33 @@
 var tuneinRadioPlugin = {
 
-    loadBigRadio: function() {
-        if ($("#tuneinlist").hasClass('notfilled')) {
-            $('i[name="tuneinlist"]').makeSpinner();
-            $("#tuneinlist").load("streamplugins/03_tuneinradio.php?populate=2", function() {
-                $('i[name="tuneinlist"]').stopSpinner();
-                tuneinRadioPlugin.setTheThing();
-                $("#tuneinlist").removeClass('notfilled');
-            });
-        }
-    },
+	loadBigRadio: function(clickedElement, menutoopen) {
+		return "streamplugins/03_tuneinradio.php?populate=2";
+	},
 
-    setTheThing: function() {
-        layoutProcessor.postAlbumActions();
-    },
+	handleClick: function(event, clickedElement) {
+		if (clickedElement.hasClass("tuneinsearchbutton")) {
+			var term = $('[name="tuneinsearcher"]').val();
+			if (term) {
+				var uri = "streamplugins/03_tuneinradio.php?populate=2&search="+encodeURIComponent(term);
+			} else {
+				var uri = tuneinRadioPlugin.loadBigRadio();
+			}
+			clickRegistry.loadContentIntoTarget({
+				target: $('#tuneinlist'),
+				clickedElement: $('i[name="tuneinlist"]'),
+				uri: uri
+			});
+		}
+	},
 
-    handleClick: function(event, clickedElement) {
-        if (clickedElement.hasClass("browse")) {
-            event.stopImmediatePropagation();
-            if (clickedElement.isClosed()) {
-                clickedElement.makeSpinner();
-                var url = clickedElement.prev().prev().val();
-                var title = clickedElement.prev().val();
-                var menutoopen = clickedElement.attr("name");
-                tuneinRadioPlugin.browse(url, title, menutoopen, function() {
-                    clickedElement.stopSpinner();
-                    doMenu(null, clickedElement);
-                    tuneinRadioPlugin.setTheThing();
-                });
-            } else {
-                doMenu(null, clickedElement);
-            }
-        } else if (clickedElement.hasClass("tuneinsearchbutton")) {
-            tuneinRadioPlugin.search();
-        }
-
-    },
-
-    browse: function(url, title, target, callback) {
-        $("#"+target).load("streamplugins/03_tuneinradio.php?populate=2&url="+url+'&title='+title+'&target='+target, function() {
-            callback();
-        });
-    },
-
-    search: function() {
-        var term = $('[name="tuneinsearcher"]').val();
-        if (term == '') {
-            $('#tuneinlist').empty().addClass('notfilled');
-            tuneinRadioPlugin.loadBigRadio();
-        } else {
-            debug.log("TUNEIN","Searching For",term);
-            $('i[name="tuneinlist"]').makeSpinner();
-            $("#tuneinlist").load("streamplugins/03_tuneinradio.php?populate=2&search="+encodeURIComponent(term), function() {
-                $('i[name="tuneinlist"]').stopSpinner();
-                tuneinRadioPlugin.setTheThing();
-            });
-        }
-    }
+	browse: function(clickedElement, menutoopen) {
+		var url = clickedElement.prev().prev().val();
+		var title = clickedElement.prev().val();
+		return "streamplugins/03_tuneinradio.php?populate=2&url="+url+'&title='+title+'&target='+menutoopen;
+	}
 
 }
 
-menuOpeners['tuneinlist'] = tuneinRadioPlugin.loadBigRadio;
 clickRegistry.addClickHandlers('tunein', tuneinRadioPlugin.handleClick);
+clickRegistry.addMenuHandlers('tuneinroot', tuneinRadioPlugin.loadBigRadio);
+clickRegistry.addMenuHandlers('tunein', tuneinRadioPlugin.browse);

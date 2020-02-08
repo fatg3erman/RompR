@@ -37,14 +37,14 @@ a:hover,a:active
     cursor:pointer;
 }
 
-button, input[type="button"], .filebutton
+button, input[type="button"], div.filebutton
 {
     color:#000000;
     background-color:rgba(255,255,255,0.5);
     border:1px solid #222222;
 }
 
-button:hover, input[type="button"]:hover, .filebutton:hover
+button:hover, input[type="button"]:hover, div.filebutton:hover
 {
     color:#ffffff;
     border:1px solid #ffffff;
@@ -63,11 +63,11 @@ input {
     color: #dddddd;
 }
 
-.selectholder {
+div.selectholder {
     background-color:rgba(0,0,0,0.4);
 }
 
-.selectholder:hover {
+div.selectholder:hover {
     background-color:rgba(0,0,0,0.5);
 }
 
@@ -247,6 +247,20 @@ table.histable tr
     color:#ff4800;
     cursor:pointer;
     transition:all 0.1s;
+}
+
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu 
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color:#000000;    
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    text-shadow: 0 0 15px #ffffff;
+    color:#ff4800;
 }
 
 .backhi

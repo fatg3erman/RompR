@@ -11,19 +11,19 @@ function connect_to_database($sp = true) {
 	}
 	try {
 		if (is_numeric($prefs['mysql_port'])) {
-			logger::debug("SQL_CONNECT", "Connecting using hostname and port");
-			$dsn = "mysql:host=".$prefs['mysql_host'].";port=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'];
+			logger::debug("MYSQL", "Connecting using hostname and port");
+			$dsn = "mysql:host=".$prefs['mysql_host'].";port=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'].";charset=utf8mb4";
 		} else {
-			logger::debug("SQL_CONNECT", "Connecting using unix socket");
-			$dsn = "mysql:unix_socket=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'];
+			logger::debug("MYSQL", "Connecting using unix socket");
+			$dsn = "mysql:unix_socket=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'].";charset=utf8mb4";
 		}
 		$mysqlc = new PDO($dsn, $prefs['mysql_user'], $prefs['mysql_password']);
-		logger::debug("SQL_CONNECT", "Connected to MySQL");
-		generic_sql_query("SET NAMES utf8", true);
+		logger::debug("MYSQL", "Connected to MySQL");
+		// generic_sql_query("SET NAMES utf8mb4", true);
 		generic_sql_query('SET SESSION sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"', true);
 		readCollectionPlayer($sp);
 	} catch (Exception $e) {
-		logger::fail("SQL_CONNECT", "Database connect failure - ".$e);
+		logger::warn("MYSQL", "Database connect failure - ".$e);
 		sql_init_fail($e->getMessage());
 	}
 }
@@ -53,11 +53,12 @@ function check_sql_tables() {
 		"Sourceindex INT UNSIGNED DEFAULT NULL, ".
 		"LinkChecked TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"isAudiobook TINYINT(1) UNSIGNED DEFAULT 0, ".
+		"usedInPlaylist TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"INDEX(Albumindex), ".
 		"INDEX(Title), ".
 		"INDEX(TrackNo)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  Tracktable OK");
+		logger::log("MYSQL", "  Tracktable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Tracktable : ".$err);
@@ -76,13 +77,14 @@ function check_sql_tables() {
 		"ImgVersion INT UNSIGNED DEFAULT ".ROMPR_IMAGE_VERSION.", ".
 		"Domain CHAR(32), ".
 		"Image VARCHAR(255), ".
+		"randomSort INT DEFAULT 0, ".
 		"justUpdated TINYINT(1) UNSIGNED DEFAULT 1, ".
 		"INDEX(Albumname), ".
 		"INDEX(AlbumArtistindex), ".
 		"INDEX(Domain), ".
 		"INDEX(ImgKey)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  Albumtable OK");
+		logger::log("MYSQL", "  Albumtable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Albumtable : ".$err);
@@ -94,7 +96,7 @@ function check_sql_tables() {
 		"Artistname VARCHAR(255), ".
 		"INDEX(Artistname)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  Artisttable OK");
+		logger::log("MYSQL", "  Artisttable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Artisttable : ".$err);
@@ -105,7 +107,7 @@ function check_sql_tables() {
 		"PRIMARY KEY(TTindex), ".
 		"Rating TINYINT(1) UNSIGNED) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  Ratingtable OK");
+		logger::log("MYSQL", "  Ratingtable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Ratingtable : ".$err);
@@ -116,7 +118,7 @@ function check_sql_tables() {
 		"PRIMARY KEY(TTindex), ".
 		"Progress INT UNSIGNED) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  Progresstable OK");
+		logger::log("MYSQL", "  Progresstable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Progresstable : ".$err);
@@ -127,7 +129,7 @@ function check_sql_tables() {
 		"PRIMARY KEY(Tagindex), ".
 		"Name VARCHAR(255)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  Tagtable OK");
+		logger::log("MYSQL", "  Tagtable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Tagtable : ".$err);
@@ -138,7 +140,7 @@ function check_sql_tables() {
 		"TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex), ".
 		"PRIMARY KEY (Tagindex, TTindex)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  TagListtable OK");
+		logger::log("MYSQL", "  TagListtable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking TagListtable : ".$err);
@@ -151,7 +153,7 @@ function check_sql_tables() {
 		"LastPlayed TIMESTAMP, ".
 		"PRIMARY KEY (TTindex)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  Playcounttable OK");
+		logger::log("MYSQL", "  Playcounttable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Playcounttable : ".$err);
@@ -180,7 +182,7 @@ function check_sql_tables() {
 		"Category VARCHAR(255) NOT NULL, ".
 		"PRIMARY KEY (PODindex)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  Podcasttable OK");
+		logger::log("MYSQL", "  Podcasttable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Podcasttable : ".$err);
@@ -208,7 +210,7 @@ function check_sql_tables() {
 		"PRIMARY KEY (PODTrackindex), ".
 		"INDEX (Title)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  PodcastTracktable OK");
+		logger::log("MYSQL", "  PodcastTracktable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking PodcastTracktable : ".$err);
@@ -223,7 +225,7 @@ function check_sql_tables() {
 		"Image VARCHAR(255), ".
 		"PRIMARY KEY (Stationindex)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  RadioStationtable OK");
+		logger::log("MYSQL", "  RadioStationtable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking RadioStationtable : ".$err);
@@ -236,7 +238,7 @@ function check_sql_tables() {
 		"PrettyStream TEXT, ".
 		"PRIMARY KEY (Trackindex)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  RadioTracktable OK");
+		logger::log("MYSQL", "  RadioTracktable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking RadioTracktable : ".$err);
@@ -249,7 +251,7 @@ function check_sql_tables() {
 		"SourceUri TEXT, ".
 		"PRIMARY KEY (Sourceindex)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  WishlistSourcetable OK");
+		logger::log("MYSQL", "  WishlistSourcetable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking WishlistSourcetable : ".$err);
@@ -260,7 +262,7 @@ function check_sql_tables() {
 		"JsonData TEXT, ".
 		"PRIMARY KEY (Listenindex)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  AlbumsToListenTotabletable OK");
+		logger::log("MYSQL", "  AlbumsToListenTotabletable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking AlbumsToListenTotable : ".$err);
@@ -276,7 +278,7 @@ function check_sql_tables() {
 		"INDEX (Skin), ".
 		"INDEX (BrowserID)) ENGINE=InnoDB", true))
 	{
-		logger::log("MYSQL_CONNECT", "  BackgounrdImageTable OK");
+		logger::log("MYSQL", "  BackgounrdImageTable OK");
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking BackgroundImageTable : ".$err);
@@ -289,7 +291,7 @@ function check_sql_tables() {
 	// Check schema version and update tables as necessary
 	$sv = simple_query('Value', 'Statstable', 'Item', 'SchemaVer', 0);
 	if ($sv == 0) {
-		logger::log("SQL_CONNECT", "No Schema Version Found - initialising table");
+		logger::mark("MYSQL", "No Schema Version Found - initialising table");
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('ListVersion', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('ArtistCount', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('AlbumCount', '0')", true);
@@ -297,15 +299,19 @@ function check_sql_tables() {
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('TotalTime', '0')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('CollType', '999')", true);
 		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('SchemaVer', '".ROMPR_SCHEMA_VERSION."')", true);
+		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookArtists', '0')", true);
+		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookAlbums', '0')", true);
+		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTracks', '0')", true);
+		generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTime', '0')", true);
 		$sv = ROMPR_SCHEMA_VERSION;
-		logger::log("MYSQL_CONNECT", "Statstable populated");
+		logger::log("MYSQL", "Statstable populated");
 		create_update_triggers();
 		create_conditional_triggers();
 		create_playcount_triggers();
 	}
 
 	if ($sv > ROMPR_SCHEMA_VERSION) {
-		logger::log("MYSQL_CONNECT", "Schema Mismatch! We are version ".ROMPR_SCHEMA_VERSION." but database is version ".$sv);
+		logger::warn("MYSQL", "Schema Mismatch! We are version ".ROMPR_SCHEMA_VERSION." but database is version ".$sv);
 		return array(false, "Your database has version number ".$sv." but this version of rompr only handles version ".ROMPR_SCHEMA_VERSION);
 	}
 
@@ -368,10 +374,10 @@ function check_sql_tables() {
 						$artist = (string) $obj->Artistname;
 						$art = explode(' & ', $artist);
 						if (count($art) > 2) {
-						    $f = array_slice($art, 0, count($art) - 1);
-						    $newname = implode($f, ", ")." & ".$art[count($art) - 1];
-						    logger::log("UPGRADE_SCHEMA", "Updating artist name from ".$artist." to ".$newname);
-						    $stmt->execute(array($newname, $obj->Artistindex));
+							$f = array_slice($art, 0, count($art) - 1);
+							$newname = implode($f, ", ")." & ".$art[count($art) - 1];
+							logger::log("UPGRADE_SCHEMA", "Updating artist name from ".$artist." to ".$newname);
+							$stmt->execute(array($newname, $obj->Artistindex));
 						}
 					}
 				}
@@ -395,7 +401,7 @@ function check_sql_tables() {
 					}
 				}
 				generic_sql_query("UPDATE Statstable SET Value = 9 WHERE Item = 'SchemaVer'", true);
-			    break;
+				break;
 
 			case 9:
 				logger::log("SQL", "Updating FROM Schema version 9 TO Schema version 10");
@@ -444,9 +450,9 @@ function check_sql_tables() {
 				// Early MPD versions had LastModified as an integer value. They changed it to a datestamp some time ago but I didn't notice
 				$r = generic_sql_query("SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Tracktable' AND COLUMN_NAME = 'LastModified'");
 				foreach ($r as $obj) {
-					logger::log("MYSQL_INIT", "Data Type of LastModified is ".$obj['DATA_TYPE']);
+					logger::trace("MYSQL_INIT", "Data Type of LastModified is ".$obj['DATA_TYPE']);
 					if ($obj['DATA_TYPE'] == 'int') {
-						logger::log("MYSQL_INIT", "Modifying Tracktable");
+						logger::trace("MYSQL_INIT", "Modifying Tracktable");
 						generic_sql_query("ALTER TABLE Tracktable ADD LM CHAR(32)", true);
 						generic_sql_query("UPDATE Tracktable SET LM = LastModified", true);
 						generic_sql_query("ALTER TABLE Tracktable DROP LastModified", true);
@@ -466,7 +472,7 @@ function check_sql_tables() {
 				logger::log("SQL", "Updating FROM Schema version 18 TO Schema version 19");
 				$result = generic_sql_query('SELECT Tracktable.Uri AS uri, Tracktable.TTindex, Tracktable.Title AS ttit, Albumtable.*, Trackimagetable.Image AS ti FROM Tracktable JOIN Albumtable USING (Albumindex) LEFT JOIN Trackimagetable USING (TTindex) WHERE Tracktable.Uri LIKE "soundcloud:%"', false, PDO::FETCH_OBJ);
 				foreach ($result as $obj) {
-					logger::log("SQL", "  Creating new Album ".$obj->ttit." Image ".$obj->ti);
+					logger::trace("SQL", "  Creating new Album ".$obj->ttit." Image ".$obj->ti);
 					$ti = $obj->ti;
 					if (preg_match('/^http/', $ti)) {
 						$ti = 'getRemoteImage.php?url='.$ti;
@@ -479,10 +485,10 @@ function check_sql_tables() {
 							$obj->ttit, $obj->AlbumArtistindex, $obj->uri, $obj->Year, $obj->Searched, $obj->ImgKey, $obj->mbid, $obj->Domain, $ti
 						)) {
 							$retval = $mysqlc->lastInsertId();
-							logger::log("SQL", "    .. success, Albumindex ".$retval);
+							logger::debug("SQL", "    .. success, Albumindex ".$retval);
 							generic_sql_query("UPDATE Tracktable SET Albumindex = ".$retval." WHERE TTindex = ".$obj->TTindex, true);
 					} else {
-						logger::log("SQL", "    .. ERROR!");
+						logger::warn("SQL", "    .. ERROR!");
 					}
 				}
 				generic_sql_query("UPDATE Statstable SET Value = 19 WHERE Item = 'SchemaVer'", true);
@@ -492,7 +498,7 @@ function check_sql_tables() {
 				logger::log("SQL", "Updating FROM Schema version 19 TO Schema version 20");
 				$result = generic_sql_query('SELECT Tracktable.Uri AS uri, Tracktable.TTindex, Tracktable.Title AS ttit, Albumtable.*, Trackimagetable.Image AS ti FROM Tracktable JOIN Albumtable USING (Albumindex) LEFT JOIN Trackimagetable USING (TTindex) WHERE Tracktable.Uri LIKE "youtube:%"', false, PDO::FETCH_OBJ);
 				foreach ($result as $obj) {
-					logger::log("SQL", "  Creating new Album ".$obj->ttit." Image ".$obj->ti);
+					logger::trace("SQL", "  Creating new Album ".$obj->ttit." Image ".$obj->ti);
 					$ti = $obj->ti;
 					if (preg_match('/^http/', $ti)) {
 						$ti = 'getRemoteImage.php?url='.$ti;
@@ -505,10 +511,10 @@ function check_sql_tables() {
 							$obj->ttit, $obj->AlbumArtistindex, $obj->uri, $obj->Year, $obj->Searched, $obj->ImgKey, $obj->mbid, $obj->Domain, $ti
 						)) {
 							$retval = $mysqlc->lastInsertId();
-							logger::log("SQL", "    .. success, Albumindex ".$retval);
+							logger::debug("SQL", "    .. success, Albumindex ".$retval);
 							generic_sql_query("UPDATE Tracktable SET Albumindex = ".$retval." WHERE TTindex = ".$obj->TTindex, true);
 					} else {
-						logger::error("SQL", "    .. ERROR!");
+						logger::warn("SQL", "    .. ERROR!");
 					}
 				}
 				generic_sql_query("UPDATE Statstable SET Value = 20 WHERE Item = 'SchemaVer'", true);
@@ -638,7 +644,7 @@ function check_sql_tables() {
 				logger::log("SQL", "Updating FROM Schema version 38 TO Schema version 39");
 				generic_sql_query("ALTER TABLE Podcasttable ADD LastPubDate INT UNSIGNED DEFAULT NULL", true);
 				generic_sql_query("CREATE INDEX ptt ON PodcastTracktable (Title)", true);
-				require_once('includes/podcastfunctions.php');
+				require_once('podcasts/podcastfunctions.php');
 				upgrade_podcasts_to_version();
 				generic_sql_query("UPDATE Statstable SET Value = 39 WHERE Item = 'SchemaVer'", true);
 				break;
@@ -646,7 +652,7 @@ function check_sql_tables() {
 			case 39:
 				logger::log("SQL", "Updating FROM Schema version 39 TO Schema version 40");
 				// Takes too long. It'll happen when they get refreshed anyway.
-				// require_once('includes/podcastfunctions.php');
+				// require_once('podcasts/podcastfunctions.php');
 				// upgrade_podcast_images();
 				generic_sql_query("UPDATE Statstable SET Value = 40 WHERE Item = 'SchemaVer'", true);
 				break;
@@ -760,6 +766,102 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 56 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 56:
+				logger::log("SQL", "Updating FROM Schema version 56 TO Schema version 57");
+				generic_sql_query("UPDATE Statstable SET Value = 57 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 57:
+				logger::log("SQL", "Updating FROM Schema version 57 TO Schema version 58");
+				generic_sql_query("ALTER DATABASE romprdb CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci", true);
+				logger::trace("SQL", " ... Modifying Tables");
+				generic_sql_query("ALTER TABLE Tracktable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Albumtable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Artisttable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Ratingtable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Progresstable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Tagtable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE TagListtable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Playcounttable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Podcasttable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE RadioStationtable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE RadioTracktable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE WishlistSourcetable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE AlbumsToListenTotable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE BackgroundImageTable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Statstable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				logger::trace("SQL", " ... Modifying Columns");
+				generic_sql_query("ALTER TABLE Tracktable MODIFY COLUMN Title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Tracktable MODIFY COLUMN Uri VARCHAR(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN Albumname VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN AlbumUri VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN ImgKey CHAR(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN mbid CHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN Domain CHAR(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN Image VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Artisttable MODIFY COLUMN Artistname VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Tagtable MODIFY COLUMN Name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN FeedURL TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN Image VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN Title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN Artist VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN Description TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN Category VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Artist VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Description TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Link TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Guid TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Localfilename VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE RadioStationtable MODIFY COLUMN StationName VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE RadioStationtable MODIFY COLUMN PlaylistUrl TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE RadioStationtable MODIFY COLUMN Image VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE RadioTracktable MODIFY COLUMN TrackUri TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE RadioTracktable MODIFY COLUMN PrettyStream TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE WishlistSourcetable MODIFY COLUMN SourceName VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE WishlistSourcetable MODIFY COLUMN SourceImage VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE WishlistSourcetable MODIFY COLUMN SourceUri TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE AlbumsToListenTotable MODIFY COLUMN JsonData TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE BackgroundImageTable MODIFY COLUMN Skin VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+				generic_sql_query("ALTER TABLE BackgroundImageTable MODIFY COLUMN BrowserID VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL", true);
+				generic_sql_query("ALTER TABLE BackgroundImageTable MODIFY COLUMN Filename VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL", true);
+				generic_sql_query("UPDATE Statstable SET Value = 58 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 58:
+				logger::log("SQL", "Updating FROM Schema version 58 TO Schema version 59");
+				update_remote_image_urls();
+				generic_sql_query("UPDATE Statstable SET Value = 59 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 59:
+				logger::log("SQL", "Updating FROM Schema version 59 TO Schema version 60");
+				generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookArtists', '0')", true);
+				generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookAlbums', '0')", true);
+				generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTracks', '0')", true);
+				generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTime', '0')", true);
+				generic_sql_query("UPDATE Statstable SET Value = 60 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 60:
+				logger::log("SQL", "Updating FROM Schema version 60 TO Schema version 61");
+				generic_sql_query("ALTER TABLE Tracktable ADD usedInPlaylist TINYINT(1) UNSIGNED DEFAULT 0", true);
+				generic_sql_query("UPDATE Statstable SET Value = 61 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 61:
+				logger::log("SQL", "Updating FROM Schema version 61 TO Schema version 62");
+				generic_sql_query("ALTER TABLE Albumtable ADD randomSort INT DEFAULT 0", true);
+				generic_sql_query("UPDATE Statstable SET Value = 62 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 62:
+				logger::log("SQL", "Updating FROM Schema version 62 TO Schema version 63");
+				upgrade_saved_crazies();
+				generic_sql_query("UPDATE Statstable SET Value = 63 WHERE Item = 'SchemaVer'", true);
+				break;
+
 		}
 		$sv++;
 	}
@@ -771,9 +873,11 @@ function delete_oldtracks() {
 	// generic_sql_query("DELETE Tracktable FROM Tracktable JOIN Playcounttable USING (TTindex) WHERE Hidden = 1 AND DATE_SUB(CURDATE(), INTERVAL 6 MONTH) > DateAdded AND Playcount < 2", true);
 }
 
+function mb4_bodge() {
+	return 'SET NAMES utf8mb4;';
+}
+
 function delete_orphaned_artists() {
-	generic_sql_query("DROP TABLE IF EXISTS Croft", true);
-	generic_sql_query("DROP TABLE IF EXISTS Cruft", true);
 	generic_sql_query("CREATE TEMPORARY TABLE Croft(Artistindex INT UNSIGNED NOT NULL UNIQUE, PRIMARY KEY(Artistindex)) AS SELECT Artistindex FROM Tracktable UNION SELECT AlbumArtistindex FROM Albumtable", true);
 	generic_sql_query("CREATE TEMPORARY TABLE Cruft(Artistindex INT UNSIGNED NOT NULL UNIQUE, PRIMARY KEY(Artistindex)) AS SELECT Artistindex FROM Artisttable WHERE Artistindex NOT IN (SELECT Artistindex FROM Croft)", true);
 	generic_sql_query("DELETE Artisttable FROM Artisttable INNER JOIN Cruft ON Artisttable.Artistindex = Cruft.Artistindex", true);
@@ -785,30 +889,19 @@ function hide_played_tracks() {
 }
 
 function sql_recent_tracks() {
-	global $prefs;
-	$qstring = "SELECT TTindex FROM Tracktable WHERE (DATE_SUB(CURDATE(),INTERVAL 60 DAY) <= DateAdded) AND Hidden = 0 AND isSearchResult < 2 AND isAudiobook = 0 AND Uri IS NOT NULL";
-	if ($prefs['collection_player'] == 'mopidy' && $prefs['player_backend'] == 'mpd') {
-		$qstring .= ' AND Uri LIKE "local:%"';
-	}
-	return $qstring." ORDER BY RAND()";
-}
-
-function sql_recent_albums() {
-	global $prefs;
-	$qstring = "SELECT TTindex, Albumindex, TrackNo FROM Tracktable WHERE DATE_SUB(CURDATE(),INTERVAL 60 DAY) <= DateAdded AND Hidden = 0 AND isSearchResult < 2 AND isAudiobook = 0 AND Uri IS NOT NULL";
-	if ($prefs['collection_player'] == 'mopidy' && $prefs['player_backend'] == 'mpd') {
-		$qstring .= ' AND Uri LIKE "local:%"';
-	}
-	return $qstring;
+	return "SELECT Uri FROM Tracktable JOIN Albumtable USING (Albumindex) WHERE (DATE_SUB(CURDATE(),INTERVAL 60 DAY) <= DateAdded)";
 }
 
 function sql_recently_played() {
 	return "SELECT t.Uri, t.Title, a.Artistname, al.Albumname, al.Image, al.ImgKey, UNIX_TIMESTAMP(p.LastPlayed) AS unixtime FROM Tracktable AS t JOIN Playcounttable AS p USING (TTindex) JOIN Albumtable AS al USING (albumindex) JOIN Artisttable AS a ON (a.Artistindex = al.AlbumArtistindex) WHERE DATE_SUB(CURDATE(),INTERVAL 14 DAY) <= p.LastPlayed AND p.LastPlayed IS NOT NULL ORDER BY p.LastPlayed DESC";
 }
 
+function init_random_albums() {
+	generic_sql_query('UPDATE Albumtable SET randomSort = RAND() * 10000000', true);
+}
+
 function recently_played_playlist() {
-	$qstring = "SELECT TTindex FROM Playcounttable JOIN Tracktable USING (TTindex) WHERE DATE_SUB(CURDATE(),INTERVAL 14 DAY) <= LastPlayed AND LastPlayed IS NOT NULL AND isAudiobook = 0 AND Hidden = 0";
-	return $qstring;
+	return "SELECT Uri FROM Playcounttable JOIN Tracktable USING (TTindex) WHERE DATE_SUB(CURDATE(),INTERVAL 14 DAY) <= LastPlayed AND LastPlayed IS NOT NULL";
 }
 
 function sql_two_weeks() {
@@ -856,6 +949,23 @@ function track_date_check($range, $flag) {
 	}
 }
 
+function find_podcast_track_from_url($url) {
+	return sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
+								"SELECT
+									PodcastTracktable.Title AS title,
+									PodcastTracktable.Artist AS artist,
+									PodcastTracktable.Duration AS duration,
+									PodcastTracktable.Description AS comment,
+									Podcasttable.Title AS album,
+									Podcasttable.Artist AS albumartist,
+									Podcasttable.Image AS image
+									FROM PodcastTracktable JOIN Podcasttable USING (PODindex)
+									WHERE PodcastTracktable.Link=?
+									OR ? LIKE CONCAT('%', PodcastTracktable.Localfilename)",
+									$url,
+									$url);
+}
+
 function create_conditional_triggers() {
 	generic_sql_query("CREATE TRIGGER track_insert_trigger AFTER INSERT ON Tracktable
 						FOR EACH ROW
@@ -898,7 +1008,7 @@ function create_playcount_triggers() {
 
 function create_update_triggers() {
 
-	logger::debug("MYSQL", "Creating Triggers for update operation");
+	logger::log("MYSQL", "Creating Triggers for update operation");
 
 	generic_sql_query("CREATE TRIGGER rating_update_trigger AFTER UPDATE ON Ratingtable
 						FOR EACH ROW

@@ -6,8 +6,8 @@ var opmlImporter = function() {
 
 		open: function() {
 
-        	if (opmlv == null) {
-	        	opmlv = browser.registerExtraPlugin("opmlv", language.gettext("label_opmlimporter"), opmlImporter, 'https://fatg3erman.github.io/RompR/OPML-Importer');
+			if (opmlv == null) {
+				opmlv = browser.registerExtraPlugin("opmlv", language.gettext("label_opmlimporter"), opmlImporter, 'https://fatg3erman.github.io/RompR/OPML-Importer');
 				$('#opmlvfoldup').append(
 					'<div class="fullwidth brick_wide">'+
 					'<form id="opmluploader" action="plugins/code/opmluploader.php" method="post" enctype="multipart/form-data">'+
@@ -19,7 +19,7 @@ var opmlImporter = function() {
 					'</form>'+
 					'</div>'
 				);
-	            $('#opmlvfoldup').append('<div id="opmllist"></div>');
+				$('#opmlvfoldup').append('<div id="opmllist"></div>');
 				$('#opmlvfoldup').append('<h2>'+language.gettext('label_opmlexp')+'</h2>')
 				$('#opmlvfoldup').append(
 					'<div class="fullwidth brick_wide">'+
@@ -32,9 +32,9 @@ var opmlImporter = function() {
 				opmlv.slideToggle('fast', function() {
 					browser.goToPlugin("opmlv");
 				});
-	        } else {
-	        	browser.goToPlugin("opmlv");
-	        }
+			} else {
+				browser.goToPlugin("opmlv");
+			}
 
 		},
 
@@ -48,23 +48,23 @@ var opmlImporter = function() {
 
 		uploadFile: function() {
 			var formElement = document.getElementById('opmluploader');
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "plugins/code/opmluploader.php");
-            xhr.responseType = "json";
-            xhr.onload = function () {
-                if (xhr.status === 200) {
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", "plugins/code/opmluploader.php");
+			xhr.responseType = "json";
+			xhr.onload = function () {
+				if (xhr.status === 200) {
 					opmlImporter.gotData(xhr.response);
-                } else {
-                    infobar.error(language.gettext('label_general_error'));
-                }
-            };
-            xhr.send(new FormData(formElement));
+				} else {
+					infobar.error(language.gettext('label_general_error'));
+				}
+			};
+			xhr.send(new FormData(formElement));
 		},
 
 		gotData: function(data) {
-			debug.log("OPML IMPORTER", "File Parsed",data);
+			debug.debug("OPML IMPORTER", "File Parsed",data);
 			var html = '';
-			html += '<div class="configtitle textcentre brick_wide">'+language.gettext('label_opmlimporter')+'</div>';
+			html += '<div class="configtitle"><div class="expand textcentre">'+language.gettext('label_opmlimporter')+'</div></div>';
 			html += '<div class="containerbox fullwidth">';
 			html += '<button class="fixed" name="opml_selectall">'+language.gettext('button_selectall')+'</button>';
 			html += '<button class="fixed" name="opml_selectnone">'+language.gettext('button_selectnone')+'</button>';
@@ -112,27 +112,27 @@ var opmlImporter = function() {
 				opmlImporter.subscribeToNext(s.first());
 			} else {
 				$('[name="opml_import"]').on('click', opmlImporter.Import);
-				podcasts.reloadList();
+				podcasts.doNewCount();
 			}
 		},
 
-		subscribeToNext: function(c) {
+		subscribeToNext: async function(c) {
 			var feedUrl = c.prev().val();
-			var s = $('<i>', {class: 'icon-spin6 spinner smallicon'}).insertBefore(c);
+			var s = $('<i>', {class: 'spinable smallicon'}).insertBefore(c);
 			c.next().remove();
 			c.remove();
 			debug.log("OPML IMPORTER","Importing Podcast",feedUrl);
-			podcasts.getPodcast(feedUrl, function(flag) {
-				if (flag) {
-					debug.log("OPML Importer", "Success");
+			await podcasts.getFromUrl(feedUrl, s);
+				// if (flag) {
+					debug.debug("OPML Importer", "Success?");
 					s.replaceWith('<i class="icon-tick smallicon"></i>');
 					opmlImporter.Import();
-				} else {
-					debug.warn("OPML Importer", "Failed to import",feedUrl);
-					s.replaceWith('<i class="icon-attention-1 smallicon"></i>');
-					opmlImporter.Import();
-				}
-			});
+				// } else {
+				// 	debug.warn("OPML Importer", "Failed to import",feedUrl);
+				// 	s.replaceWith('<i class="icon-attention-1 smallicon"></i>');
+				// 	opmlImporter.Import();
+				// }
+			// });
 		}
 
 	}

@@ -4,6 +4,13 @@
 =====================================================================
 */
 
+html, body.phone .dropmenu {
+    background-image: linear-gradient(#eeeeee, #999999);
+    background-size:cover;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+}
+
 body
 {
 
@@ -14,17 +21,15 @@ body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol
     color:#111111;
 }
 
-button, input[type="button"], .filebutton
+button, input[type="button"], div.filebutton
 {
     background-color:#121212;
     border:1px solid #333333;
-    /* background-image:none !important; */
     color:#cccccc;
     font-weight:bold;
-    font-size:110%;
 }
 
-button:hover, input[type="button"]:hover, .filebutton:hover
+button:hover, input[type="button"]:hover, div.filebutton:hover
 {
     color:#ffffff;
     border:1px solid #666666;
@@ -60,21 +65,25 @@ a:hover,a:active
 =====================================================================
 */
 
-body.mobile, body.phone .dropmenu {
+/*body.mobile, body.phone .dropmenu {
     background-image: linear-gradient(#eeeeee, #999999);
+}
+
+.backmenu {
+    background-color: #eeeeee;
 }
 
 body.desktop #infobar
 {
     background-image: linear-gradient(#eeeeee, #dddddd);
 }
-
+*/
 body.desktop #headerbar
 {
     background-image: linear-gradient(#dddddd, #dcdcdc);
 }
 
-body.desktop #thetopbit
+/*body.desktop #thetopbit
 {
     background-image: linear-gradient(#eeeeee, #dcdcdc);
 }
@@ -83,7 +92,7 @@ body.desktop #thetopbit
 {
     background-image: linear-gradient(#dcdcdc, #999999);
 }
-
+*/
 #custombackground
 {
     display:none;
@@ -217,6 +226,19 @@ a.album:hover,a.album:active
 .backhi:hover {
     color:#444444;
     cursor:pointer;
+}
+
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color:#111111;
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    color:#444444;
 }
 
 table.histable tr:hover {

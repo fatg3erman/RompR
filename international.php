@@ -30,7 +30,7 @@ function get_int_text($key, $sub = null) {
 		}
 	} else {
 		logger::error("INTERNATIONAL", "ERROR! Translation key ".$key." not found!");
-		return "UNKNOWN KEY";
+		return "UNKNOWN TRANSLATION ".$key;
 	}
 }
 

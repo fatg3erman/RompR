@@ -60,24 +60,23 @@ a:hover,a:active {
     cursor:pointer;
 }
 
-button, input[type="button"], .filebutton {
+button, input[type="button"], div.filebutton {
     color:#dddddd;
     background-color:rgba(206,37,214,0.2);
     border: 1px solid transparent;
-    /* border:1px solid #aaaaaa; */
 }
 
-button:hover, input[type="button"]:hover, .filebutton:hover {
+button:hover, input[type="button"]:hover, div.filebutton:hover {
     color:#ffffff;
     border:1px solid #555555;
     text-shadow: 0 0 12px #777777;
 }
 
-.selectholder {
+div.selectholder {
     background-color:rgba(0,0,0,0.3);
 }
 
-.selectholder:hover {
+div.selectholder:hover {
     background-color:rgba(0,0,0,0.2);
 }
 
@@ -235,6 +234,20 @@ table.histable tr {
     transition:all 0.1s;
 }
 
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color:#eeeeee;
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    text-shadow: 0 0 15px #ffffff;
+    color:#ff4800;
+}
+
 .backhi {
     transition:all 0.2s;
 }
@@ -269,13 +282,17 @@ tr.clickaddtrack:hover {
     border:1px solid #666666;
 }
 
+.backmenu {
+    background-color:rgba(30,30,30,0.9);
+}
+
 /*
 =====================================================================
 = Dropdown Menus
 =====================================================================
 */
 
-div.topdropmenu {
+div.topdropmenu, div.albumbitsmenu {
     background-color:rgba(30,30,30,0.9);
 }
 

@@ -3,28 +3,28 @@
 // There may appear to be a lot of unnecessary divs wrapping around things here
 // but it makes it work in Safari. DO NOT CHANGE IT!
 
-print '<div class="textcentre configtitle"><i class="medicon"></i><b>'.get_int_text('settings_appearance').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.get_int_text('settings_appearance').'</b></div></div>';
 
 // Skin
 
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-    get_int_text('config_skin').
-    '</div><div class="selectholder"><select id="skinselector" class="saveomatic">';
+	get_int_text('config_skin').
+	'</div><div class="selectholder"><select id="skinselector" class="saveomatic">';
 $skins = glob("skins/*");
 foreach($skins as $sk) {
-    if (is_dir($sk)) {
-        print '<option value="'.basename($sk).'">'.ucfirst(basename($sk)).'</option>';
-    }
+	if (is_dir($sk)) {
+		print '<option value="'.basename($sk).'">'.ucfirst(basename($sk)).'</option>';
+	}
 }
 print '</select></div></div>';
 
 // Theme
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-    get_int_text('config_theme').
-    '</div><div class="selectholder"><select id="themeselector" class="saveomatic">';
+	get_int_text('config_theme').
+	'</div><div class="selectholder"><select id="themeselector" class="saveomatic">';
 $themes = glob("themes/*.css");
 foreach($themes as $theme) {
-    print '<option value="'.basename($theme).'">'.preg_replace('/\.css$/', "", basename($theme)).'</option>';
+	print '<option value="'.basename($theme).'">'.preg_replace('/\.css$/', "", basename($theme)).'</option>';
 }
 print '</select></div></div>';
 
@@ -66,7 +66,7 @@ print '<div id="backimageposition" class="tiny styledinputs invisible divlabel">
 <div id="cusbgcontrols"></div>
 </div>
 
-<div class="selectholder-noselect">
+<div>
 <div id="cusbgname" class="tiny styledinputs"></div>
 </div>
 
@@ -76,51 +76,51 @@ print '<div id="backimageposition" class="tiny styledinputs invisible divlabel">
 
 // Icon Theme
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-    get_int_text('config_icontheme').
-    '</div><div class="selectholder"><select id="iconthemeselector" class="saveomatic">';
+	get_int_text('config_icontheme').
+	'</div><div class="selectholder"><select id="iconthemeselector" class="saveomatic">';
 $themes = glob("iconsets/*");
 foreach($themes as $theme) {
-    if (is_dir($theme)) {
-        print '<option value="'.basename($theme).'">'.basename($theme).'</option>';
-    }
+	if (is_dir($theme) && basename($theme) != 'iconfactory') {
+		print '<option value="'.basename($theme).'">'.basename($theme).'</option>';
+	}
 }
 print '</select></div></div>';
 
 // Font
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-    get_int_text('config_fontname').
-    '</div><div class="selectholder"><select id="fontfamilyselector" class="saveomatic">';
+	get_int_text('config_fontname').
+	'</div><div class="selectholder"><select id="fontfamilyselector" class="saveomatic">';
 $themes = glob("fonts/*.css");
 foreach($themes as $theme) {
-    print '<option value="'.preg_replace("#fonts/#", "", $theme).'">'.
-        preg_replace('/fonts\/(.*?)\.css$/', "$1", $theme).'</option>';
+	print '<option value="'.preg_replace("#fonts/#", "", $theme).'">'.
+		preg_replace('/fonts\/(.*?)\.css$/', "$1", $theme).'</option>';
 }
 print '</select></div></div>';
 
 //Font Size
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-    get_int_text('config_fontsize').
-    '</div><div class="selectholder"><select id="fontsizeselector" class="saveomatic">';
+	get_int_text('config_fontsize').
+	'</div><div class="selectholder"><select id="fontsizeselector" class="saveomatic">';
 $themes = glob("sizes/*.css");
 foreach($themes as $theme) {
-    print '<option value="'.preg_replace("#sizes/#", "", $theme).'">'.
-        preg_replace('/sizes\/\d+-(.*?)\.css$/', "$1", $theme).'</option>';
+	print '<option value="'.preg_replace("#sizes/#", "", $theme).'">'.
+		preg_replace('/sizes\/\d+-(.*?)\.css$/', "$1", $theme).'</option>';
 }
 print '</select></div></div>';
 
 // Album Cover Size
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-    get_int_text('config_coversize').
-    '</div><div class="selectholder"><select id="coversizeselector" class="saveomatic">';
+	get_int_text('config_coversize').
+	'</div><div class="selectholder"><select id="coversizeselector" class="saveomatic">';
 $themes = glob("coversizes/*.css");
 foreach($themes as $theme) {
-    print '<option value="'.preg_replace("#coversizes/#", "", $theme).'">'.
-        preg_replace('/coversizes\/\d+-(.*?)\.css$/', "$1", $theme).'</option>';
+	print '<option value="'.preg_replace("#coversizes/#", "", $theme).'">'.
+		preg_replace('/coversizes\/\d+-(.*?)\.css$/', "$1", $theme).'</option>';
 }
 print '</select></div></div>';
 
 // Players
-print '<div class="textcentre configtitle"><i class="medicon"></i><b>'.get_int_text('config_players').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.get_int_text('config_players').'</b></div></div>';
 print '<div class="fullwidth">';
 print '<div class="clearfix">';
 print '<div class="pref styledinputs tleft" name="playerdefs">';
@@ -134,22 +134,20 @@ print '<div class="pref styledinputs">
 print '</div>';
 
 // Snapcast
-print '<div class="textcentre configtitle"><i class="icon-snapcast medicon"></i><b>'.get_int_text('config_snapcast').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="icon-snapcast medicon"></i><div class="textcentre expand"><b>'.get_int_text('config_snapcast').'</b></div></div>';
 print '<div class="fullwidth">';
 if (!$snapcast_in_volume) {
-    print '<div class="pref" id="snapcastgroups">';
-    print '</div>';
+	print '<div class="pref" id="snapcastgroups">';
+	print '</div>';
 }
 print '<div class="pref styledinputs containerbox dropdown-container">';
-print '<div class="fixed" style="margin-right:1em">'.get_int_text('config_snapcast_server').'</div>';
-print '<input class="saveotron expand" id="snapcast_server" type="text" />';
-print '<div class="fixed"style="margin-right:1em;margin-left:1em">'.get_int_text('config_snapcast_port').'</div>';
-print '<input class="saveotron" id="snapcast_port" style="width:4em" type="text" size="4" />';
+print '<input class="saveotron expand" id="snapcast_server" type="text" placeholder="'.get_int_text('config_snapcast_server').'" />';
+print '<input class="saveotron fixed" id="snapcast_port" style="width:4em;margin-left:1em" type="text" size="4" placeholder="'.get_int_text('config_snapcast_port').'" />';
 print '</div>';
 print '</div>';
 
 // Sources Panel Hiding
-print '<div class="textcentre configtitle"><i class="medicon"></i><b>'.get_int_text('settings_panels').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.get_int_text('settings_panels').'</b></div></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="hide_albumlist" />
 <label for="hide_albumlist">'.get_int_text('config_hidealbumlist').'</label>
@@ -190,16 +188,16 @@ print '<div class="pref styledinputs">
 }
 
 // Interface
-print '<div class="textcentre configtitle"><i class="medicon"></i><b>'.get_int_text('settings_interface').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.get_int_text('settings_interface').'</b></div></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="scrolltocurrent" />
 <label for="scrolltocurrent">'.get_int_text('config_autoscroll').'</label>
 </div>';
 if ($use_plugins) {
-    print '<div class="pref styledinputs">
-    <input class="autoset toggle" type="checkbox" id="auto_discovembobulate" />
-    <label for="auto_discovembobulate">'.get_int_text('config_discovembobulate').'</label>
-    </div>';
+	print '<div class="pref styledinputs">
+	<input class="autoset toggle" type="checkbox" id="auto_discovembobulate" />
+	<label for="auto_discovembobulate">'.get_int_text('config_discovembobulate').'</label>
+	</div>';
 }
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="displaycomposer" />
@@ -223,68 +221,66 @@ print '<div class="pref styledinputs">
 </div>';
 if ($skin != "phone") {
 print '<div class="pref styledinputs">'.get_int_text('config_wheelspeed').
-    '<input class="saveotron" id="wheelscrollspeed" style="width:4em;margin-left:1em" type="text" size="4" />
-    </div>';
+	'<input class="saveotron" id="wheelscrollspeed" style="width:4em;margin-left:1em" type="text" size="4" />
+	</div>';
 print '<div class="pref textcentre"><button onclick="shortcuts.edit()">'.
-    get_int_text('config_editshortcuts').'</button></div>'."\n";
+	get_int_text('config_editshortcuts').'</button></div>'."\n";
 } else {
-    print '<div class="pref styledinputs">
-    <input class="autoset toggle" type="checkbox" id="playlistswipe" />
-    <label for="playlistswipe">'.get_int_text('config_playlistswipe').'</label>
-    </div>';
+	print '<div class="pref styledinputs">
+	<input class="autoset toggle" type="checkbox" id="playlistswipe" />
+	<label for="playlistswipe">'.get_int_text('config_playlistswipe').'</label>
+	</div>';
 }
 if ($prefs['player_backend'] == "mpd") {
 print '<div class="pref containerbox dropdown-container">
-    <div class="fixed" style="margin-right:2em">'.
-    get_int_text('config_crossfade').
-    '</div>
-    <input class="saveotron fixed" style="width:4em" id="crossfade_duration" type="text" size="3" />
-    </div>';
+	<div class="fixed" style="margin-right:2em">'.
+	get_int_text('config_crossfade').
+	'</div>
+	<input class="saveotron fixed" style="width:4em" id="crossfade_duration" type="text" size="3" />
+	</div>';
 }
 
 // Biography and Language
-print '<div class="textcentre ucfirst configtitle"><i class="medicon"></i><b>'.get_int_text('settings_language').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.get_int_text('settings_language').'</b></div></div>';
 
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
 get_int_text('settings_interface').
 '</div><div class="selectholder"><select id="langselector" onchange="prefs.changelanguage()">';
 $langs = glob("international/*.php");
 foreach($langs as $lang) {
-    if (basename($lang) != "en.php" && basename($lang) != $interface_language.".php") {
-        include($lang);
-    }
+	if (basename($lang) != "en.php" && basename($lang) != $interface_language.".php") {
+		include($lang);
+	}
 }
 foreach($langname as $key => $value) {
-    print '<option value="'.$key.'">'.$value.'</option>';
+	print '<option value="'.$key.'">'.$value.'</option>';
 }
 print '</select></div></div>';
 
-print '<div class="pref styledinputs">
-<b>'.get_int_text("config_lastfmlang").'</b><br/>
-<input type="radio" class="topcheck savulon" name="lastfmlang" value="default" id="langdefault" />
-<label for="langdefault">'.get_int_text('config_lastfmdefault').'</label><br/>
-<input type="radio" class="topcheck savulon" name="lastfmlang" value="interface" id="langint" />
-<label for="langint">'.get_int_text('config_lastfminterface').'</label><br/>
-<input type="radio" class="topcheck savulon" name="lastfmlang" value="browser" id="langbr" />
-<label for="langbr">'.get_int_text('config_lastfmbrowser').'</label><br/>
-<input type="radio" class="topcheck savulon" name="lastfmlang" value="user" id="languser" />
-<label for="languser">'.get_int_text('config_lastfmlanguser').
-'</label><input class="saveotron" id="user_lang" style="width:4em;margin-left:1em" type="text" size="4" /><br/>
-<div class="tiny">'.get_int_text('config_langinfo').'</div>
-</div>';
+print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+get_int_text('config_lastfmlang').
+'</div><div class="selectholder"><select class="saveomatic" id="lastfmlangselector"">';
+print '<option value="default">'.get_int_text('config_lastfmdefault').'</option>';
+print '<option value="interface">'.get_int_text('config_lastfminterface').'</option>';
+print '<option value="browser">'.get_int_text('config_lastfmbrowser').'</option>';
+$l = json_decode(file_get_contents('international/iso639.json'), true);
+foreach ($l as $language) {
+	print '<option value="'.$language['alpha2'].'">'.$language['English'].'</option>';
+}
+print '</select></div></div>';
 
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
 get_int_text('config_country').
 '</div><div class="selectholder"><select class="saveomatic" id="lastfm_country_codeselector">';
 $x = simplexml_load_file('iso3166.xml');
 foreach($x->CountryEntry as $i => $c) {
-    print '<option value="'.$c->CountryCode.'">'.
-        mb_convert_case($c->CountryName, MB_CASE_TITLE, "UTF-8")."</option>\n";
+	print '<option value="'.$c->CountryCode.'">'.
+		mb_convert_case($c->CountryName, MB_CASE_TITLE, "UTF-8")."</option>\n";
 }
 print '</select></div></div>';
 
 // Album Art
-print '<div class="textcentre configtitle"><i class="icon-cd medicon"></i><b>'.get_int_text('albumart_title').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="icon-cd medicon"></i><div class="textcentre expand"><b>'.get_int_text('albumart_title').'</b></div></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="downloadart" />
 <label for="downloadart">'.get_int_text('config_autocovers').'</label>
@@ -297,55 +293,55 @@ print '<div class="pref"><div class="tiny">If you want to use Google Images to g
 
 
 // Smart Radio
-print '<div class="textcentre configtitle"><i class="icon-wifi medicon"></i><b>'.get_int_text('label_pluginplaylists').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="icon-wifi medicon"></i><div class="textcentre expand"><b>'.get_int_text('label_pluginplaylists').'</b></div></div>';
 print '<div class="pref styledinputs">'.get_int_text('config_smart_chunksize').
-    '<input class="saveotron" id="smartradio_chunksize" style="width:4em;margin-left:1em" type="text" size="4" />
-    </div>';
+	'<input class="saveotron" id="smartradio_chunksize" style="width:4em;margin-left:1em" type="text" size="4" />
+	</div>';
 
 // Audiobooks
-print '<div class="textcentre configtitle"><i class="icon-audiobook medicon"></i><b>'.get_int_text('label_audiobooks').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="icon-audiobook medicon"></i><div class="textcentre expand"><b>'.get_int_text('label_audiobooks').'</b></div></div>';
 print '<div class="pref">'.get_int_text('config_audiobook_directory').'
 <input class="prefinput saveotron" id="audiobook_directory" type="text" size="40" />
 </div>';
 
 // Podcasts
-print '<div class="textcentre configtitle">
-<i class="icon-podcast-circled medicon"></i><b>'.get_int_text('label_podcasts').'</b></div>';
+print '<div class="dropdown-container configtitle">
+<i class="icon-podcast-circled medicon"></i><div class="textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div></div>';
 
 print '<div class="pref"><b>'.get_int_text('config_podcast_defaults').'</b></div>';
 
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-    get_int_text("podcast_display").'</div>';
+	get_int_text("podcast_display").'</div>';
 print '<div class="selectholder">';
 print '<select id="default_podcast_display_modeselector" class="saveomatic">';
 $options =  '<option value="'.DISPLAYMODE_ALL.'">'.get_int_text("podcast_display_all").'</option>'.
-            '<option value="'.DISPLAYMODE_NEW.'">'.get_int_text("podcast_display_onlynew").'</option>'.
-            '<option value="'.DISPLAYMODE_UNLISTENED.'">'.get_int_text("podcast_display_unlistened").'</option>'.
-            '<option value="'.DISPLAYMODE_DOWNLOADEDNEW.'">'.get_int_text("podcast_display_downloadnew").'</option>'.
-            '<option value="'.DISPLAYMODE_DOWNLOADED.'">'.get_int_text("podcast_display_downloaded").'</option>';
+			'<option value="'.DISPLAYMODE_NEW.'">'.get_int_text("podcast_display_onlynew").'</option>'.
+			'<option value="'.DISPLAYMODE_UNLISTENED.'">'.get_int_text("podcast_display_unlistened").'</option>'.
+			'<option value="'.DISPLAYMODE_DOWNLOADEDNEW.'">'.get_int_text("podcast_display_downloadnew").'</option>'.
+			'<option value="'.DISPLAYMODE_DOWNLOADED.'">'.get_int_text("podcast_display_downloaded").'</option>';
 print $options;
 print '</select>';
 print '</div></div>';
 
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-    get_int_text("podcast_refresh").'</div>';
+	get_int_text("podcast_refresh").'</div>';
 print '<div class="selectholder">';
 print '<select id="default_podcast_refresh_modeselector" class="saveomatic">';
 $options =  '<option value="'.REFRESHOPTION_NEVER.'">'.get_int_text("podcast_refresh_never").'</option>'.
-            '<option value="'.REFRESHOPTION_HOURLY.'">'.get_int_text("podcast_refresh_hourly").'</option>'.
-            '<option value="'.REFRESHOPTION_DAILY.'">'.get_int_text("podcast_refresh_daily").'</option>'.
-            '<option value="'.REFRESHOPTION_WEEKLY.'">'.get_int_text("podcast_refresh_weekly").'</option>'.
-            '<option value="'.REFRESHOPTION_MONTHLY.'">'.get_int_text("podcast_refresh_monthly").'</option>';
+			'<option value="'.REFRESHOPTION_HOURLY.'">'.get_int_text("podcast_refresh_hourly").'</option>'.
+			'<option value="'.REFRESHOPTION_DAILY.'">'.get_int_text("podcast_refresh_daily").'</option>'.
+			'<option value="'.REFRESHOPTION_WEEKLY.'">'.get_int_text("podcast_refresh_weekly").'</option>'.
+			'<option value="'.REFRESHOPTION_MONTHLY.'">'.get_int_text("podcast_refresh_monthly").'</option>';
 print $options;
 print '</select>';
 print '</div></div>';
 
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-    get_int_text("podcast_sortmode").'</div>';
+	get_int_text("podcast_sortmode").'</div>';
 print '<div class="selectholder">';
 print '<select id="default_podcast_sort_modeselector" class="saveomatic">';
 $options =  '<option value="'.SORTMODE_NEWESTFIRST.'">'.get_int_text("podcast_newestfirst").'</option>'.
-            '<option value="'.SORTMODE_OLDESTFIRST.'">'.get_int_text("podcast_oldestfirst").'</option>';
+			'<option value="'.SORTMODE_OLDESTFIRST.'">'.get_int_text("podcast_oldestfirst").'</option>';
 print $options;
 print '</select>';
 print '</div></div>';
@@ -356,14 +352,14 @@ print '<div class="pref styledinputs">
 </div>';
 
 // Last.FM
-print '<div class="textcentre configtitle">
-<i class="icon-lastfm-1 medicon"></i><b>'.get_int_text('label_lastfm').'</b>
-</div>';
+print '<div class="dropdown-container configtitle">
+<i class="icon-lastfm-1 medicon"></i><div class="textcentre expand"><b>'.get_int_text('label_lastfm').'</b>
+</div></div>';
 
 print '<div class="pref">'.get_int_text('config_lastfmusername').'<br/><div class="containerbox"><div class="expand">'.
-    '<input class="enter" name="lfmuser" type="text" size="30" value="'.$prefs['lastfm_user'].'"/>'.
-    '</div><button id="lastfmloginbutton" class="fixed">'.get_int_text('config_loginbutton').
-    '</button></div>';
+	'<input class="enter" name="lfmuser" type="text" size="30" value="'.$prefs['lastfm_user'].'"/>'.
+	'</div><button id="lastfmloginbutton" class="fixed">'.get_int_text('config_loginbutton').
+	'</button></div>';
 print '</div>';
 
 print '<div class="pref styledinputs">
@@ -414,7 +410,8 @@ print '</select>
 </div></div>';
 
 // Collection Options
-print '<div class="textcentre ucfirst configtitle"><i class="icon-music medicon"></i><b>'.get_int_text('button_local_music').'</b></div>';
+print '<div class="dropdown-container configtitle"><i class="icon-music medicon"></i><div class="textcentre expand">
+	<b>'.get_int_text('button_local_music').'</b></div></div>';
 
 // Album Sorting
 print '<div class="pref"><b>'.get_int_text('config_artistfirst').'
@@ -426,43 +423,47 @@ print '<div class="pref"><b>'.get_int_text('config_nosortprefixes').'
 
 if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave == false) {
 
-    if ($prefs['collection_player'] == $prefs['player_backend'] || $prefs['collection_player'] == null) {
-        print '<div class="pref styledinputs">
-            <div class="clearfix">
-                <div class="tleft">
-                    <input class="autoset toggle" type="checkbox" id="updateeverytime" /><label for="updateeverytime">'.get_int_text('config_updateonstart').'</label>
-                </div>';
-        print '<button class="tright" name="donkeykong">'.get_int_text('config_updatenow').'</button>';
-        if ($prefs['player_backend'] == "mpd") {
-            print '<button class="tright" name="dinkeyking">'.get_int_text('config_rescan').'</button>';
-        }
-        print '</div></div>';
-    }
+	if ($prefs['collection_player'] == $prefs['player_backend'] || $prefs['collection_player'] == null) {
+		print '<div class="pref styledinputs">
+			<div class="clearfix">
+				<div class="tleft">
+					<input class="autoset toggle" type="checkbox" id="updateeverytime" /><label for="updateeverytime">'.get_int_text('config_updateonstart').'</label>
+				</div>';
+		print '<button class="tright" name="donkeykong">'.get_int_text('config_updatenow').'</button>';
+		print '</div>';
+		if ($prefs['player_backend'] == "mpd" && $prefs['collection_player'] !== null) {
+			print '<div class="clearfix"><button class="tright" name="dinkeyking">'.get_int_text('config_rescan').'</button></div>';
+		}
+		print '</div>';
+	}
 
-    if ($prefs['collection_player'] == "mopidy" && $prefs['player_backend'] == 'mopidy') {
-        print '<div class="pref" id="mopidycollectionoptions">'.
-        '<b>'.get_int_text('config_collectionfolders').'</b></div>';
-        print '<div class="pref">'.get_int_text('config_beetsserver').'
-        <input class="prefinput saveotron" id="beets_server_location" type="text" size="40" />
-        </div>';
+	logger::info('PREFSPANEL', 'Collection Player is', $prefs['collection_player']);
+	logger::info('PREFSPANEL', 'Player Backend is', $prefs['player_backend']);
 
-        print '<div class="pref styledinputs">
-        <input class="autoset toggle" type="checkbox" id="preferlocalfiles" />
-        <label for="preferlocalfiles">'.get_int_text('config_preferlocal').'</label></div>';
-    }
+	if (($prefs['collection_player'] == "mopidy" || $prefs['collection_player'] == null) && $prefs['player_backend'] == 'mopidy') {
+		print '<div class="pref" id="mopidycollectionoptions">'.
+		'<b>'.get_int_text('config_collectionfolders').'</b></div>';
+		print '<div class="pref">'.get_int_text('config_beetsserver').'
+		<input class="prefinput saveotron" id="beets_server_location" type="text" size="40" />
+		</div>';
 
-    if ($prefs['collection_player'] == $prefs['player_backend']) {
-        print '<div class="pref styledinputs">
-        <input class="autoset toggle" type="checkbox" id="sortbycomposer" />
-        <label for="sortbycomposer">'.get_int_text('config_sortbycomposer').'</label>
-        </div>';
-        print '<div class="pref indent styledinputs">
-        <input class="autoset toggle" type="checkbox" id="composergenre" />
-        <label for="composergenre">'.get_int_text('config_composergenre').'</label>
-        </div>';
-        print '<div class="pref indent">
-        <input class="saveotron prefinput arraypref" id="composergenrename" type="text" size="40" />
-        </div>';
-    }
+		print '<div class="pref styledinputs">
+		<input class="autoset toggle" type="checkbox" id="preferlocalfiles" />
+		<label for="preferlocalfiles">'.get_int_text('config_preferlocal').'</label></div>';
+	}
+
+	if ($prefs['collection_player'] == $prefs['player_backend'] || $prefs['collection_player'] == null) {
+		print '<div class="pref styledinputs">
+		<input class="autoset toggle" type="checkbox" id="sortbycomposer" />
+		<label for="sortbycomposer">'.get_int_text('config_sortbycomposer').'</label>
+		</div>';
+		print '<div class="pref indent styledinputs">
+		<input class="autoset toggle" type="checkbox" id="composergenre" />
+		<label for="composergenre">'.get_int_text('config_composergenre').'</label>
+		</div>';
+		print '<div class="pref indent">
+		<input class="saveotron prefinput arraypref" id="composergenrename" type="text" size="40" />
+		</div>';
+	}
 }
 ?>

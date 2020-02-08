@@ -1,15 +1,15 @@
 var helpfulThings = function() {
 
-    // It'd be nice to base some recommendations on all time favourite artists. These should come lower down as they're likely to be always the same.
+	// It'd be nice to base some recommendations on all time favourite artists. These should come lower down as they're likely to be always the same.
 
 	var hpl = null;
 	var medebug = "SPANKY";
 	var trackseeds;
 	var nonspotitracks;
 	var artists;
-    var maxwidth = 640;
-    var doneonce = false;
-    var current_seed = null;
+	var maxwidth = 640;
+	var doneonce = false;
+	var current_seed = null;
 	var trackfinder = new faveFinder(false);
 	trackfinder.setCheckDb(false);
 	trackfinder.setExact(true);
@@ -18,15 +18,15 @@ var helpfulThings = function() {
 	function getRecommendationSeeds() {
 		debug.log(medebug, "Getting Seeds For Recommendations");
 		metaHandlers.genericAction([{action: 'getrecommendationseeds', days: 30, limit: 20, top: 15}],
-    		gotRecommendationSeeds,
-        	function() {
-        		debug.error(medebug,"Error Getting Seeds");
-        	}
-        );
+			gotRecommendationSeeds,
+			function(data) {
+				debug.error(medebug,"Error Getting Seeds",data);
+			}
+		);
 	}
 
 	function gotRecommendationSeeds(data) {
-		debug.log(medebug, "Got Seeds For Recommendations",data);
+		debug.debug(medebug, "Got Seeds For Recommendations",data);
 		if (doneonce) {
 			$('#hplfoldup .helpfulholder').spotifyAlbumThing('destroy');
 			doneonce = false;
@@ -42,7 +42,7 @@ var helpfulThings = function() {
 					trackseeds.push(data[i]);
 					artists.push(data[i].Artistname);
 				} else {
-					debug.log(medebug,"Didn't match Uri",data[i].Uri);
+					debug.trace(medebug,"Didn't match Uri",data[i].Uri);
 					nonspotitracks.push(data[i]);
 				}
 			}
@@ -60,10 +60,10 @@ var helpfulThings = function() {
 
 		open: function() {
 
-        	if (hpl == null) {
-	        	hpl = browser.registerExtraPlugin("hpl", language.gettext("button_infoyou"), helpfulThings, 'https://fatg3erman.github.io/RompR/Music-Discovery');
+			if (hpl == null) {
+				hpl = browser.registerExtraPlugin("hpl", language.gettext("button_infoyou"), helpfulThings, 'https://fatg3erman.github.io/RompR/Music-Discovery');
 
-			    $('#hplfoldup').append('<div id="helpful_radio" class="containerbox wrap mixcontainer"></div>');
+				$('#hplfoldup').append('<div id="helpful_radio" class="containerbox wrap mixcontainer"></div>');
 
 				var powers;
 				if (player.canPlay('spotify') && player.canPlay('gmusic')) {
@@ -74,80 +74,79 @@ var helpfulThings = function() {
 					powers = [' and Spotify'];
 				}
 
-			    if ((player.canPlay('spotify') || player.canPlay('gmusic')) && lastfm.isLoggedIn()) {
-			    	var html = '<div class="fixed infosection containerbox mixbox playable smartradio" name="lastFMTrackRadio+1month">';
-			    	html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
-			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_dailymix")+'</b><br/>';
+				if ((player.canPlay('spotify') || player.canPlay('gmusic')) && lastfm.isLoggedIn()) {
+					var html = '<div class="fixed infosection containerbox mixbox playable smartradio" name="lastFMTrackRadio+1month">';
+					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
+					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_dailymix")+'</b><br/>';
 					html += language.gettext('label_dailymixdesc', cloneObject(powers));
-			    	html += '</div></div>';
+					html += '</div></div>';
 
-			    	html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="lastFMArtistRadio+6month">';
-			    	html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
-			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_luckydip")+'</b><br/>';
+					html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="lastFMArtistRadio+6month">';
+					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
+					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_luckydip")+'</b><br/>';
 					html += language.gettext('label_luckydipdesc', powers);
-			    	html += '</div></div>';
-			    } else if ((player.canPlay('spotify') || player.canPlay('gmusic')) && !lastfm.isLoggedIn()) {
-			    	var html = '<div class="fixed infosection containerbox mixbox">';
-			    	html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
-			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_startshere")+'</b><br/>';
-			    	html += language.gettext('label_goonlogin')+"</div>";
-			    	html += '</div>';
-			    } else if (!player.canPlay('spotify') && !player.canPlay('gmusic')) {
-			    	var html = '<div class="fixed infosection containerbox mixbox">';
-			    	html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
-			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_getspotify")+'</b><br/>';
-			    	html += language.gettext('label_nospotify')+"</div>";
-			    	html += '</div>';
-			    }
+					html += '</div></div>';
+				} else if ((player.canPlay('spotify') || player.canPlay('gmusic')) && !lastfm.isLoggedIn()) {
+					var html = '<div class="fixed infosection containerbox mixbox">';
+					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
+					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_startshere")+'</b><br/>';
+					html += language.gettext('label_goonlogin')+"</div>";
+					html += '</div>';
+				} else if (!player.canPlay('spotify') && !player.canPlay('gmusic')) {
+					var html = '<div class="fixed infosection containerbox mixbox">';
+					html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
+					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_getspotify")+'</b><br/>';
+					html += language.gettext('label_nospotify')+"</div>";
+					html += '</div>';
+				}
 
-			    if (player.canPlay('spotify')) {
-			    	html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="spotiMixRadio+7day">';
-			    	html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
-			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext('label_spotify_mix')+'</b><br/>';
-			    	html += language.gettext('label_spotimixdesc')+"</div>";
-			    	html += '</div>';
+				if (player.canPlay('spotify')) {
+					html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="spotiMixRadio+7day">';
+					html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
+					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext('label_spotify_mix')+'</b><br/>';
+					html += language.gettext('label_spotimixdesc')+"</div>";
+					html += '</div>';
 
-			    	html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="spotiMixRadio+1year">';
-			    	html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
-			    	html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext('label_spotify_dj')+'</b><br/>';
-			    	html += language.gettext('label_spotiswimdesc')+"</div>";
-			    	html += '</div>';
-		        }
+					html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="spotiMixRadio+1year">';
+					html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
+					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext('label_spotify_dj')+'</b><br/>';
+					html += language.gettext('label_spotiswimdesc')+"</div>";
+					html += '</div>';
+				}
 
-			    $('#helpful_radio').append(html);
+				$('#helpful_radio').append(html);
 
-			    if (player.canPlay('spotify')) {
+				if (player.canPlay('spotify')) {
 					$('#hplfoldup').append('<div id="helpful_spinner"><i class="svg-square icon-spin6 spinner"></i></div>');
-		            getRecommendationSeeds();
-		        }
+					getRecommendationSeeds();
+				}
 
 				hpl.slideToggle('fast');
-	        	browser.goToPlugin("hpl");
-	        	browser.rePoint();
+				browser.goToPlugin("hpl");
+				browser.rePoint();
 
-	        } else {
-	        	browser.goToPlugin("hpl");
-	        }
+			} else {
+				browser.goToPlugin("hpl");
+			}
 
 		},
 
 		handleClick: function(element, event) {
 			if (element.hasClass('clickrefreshalbums')) {
 				getRecommendationSeeds();
-            } else if (element.hasClass('clickspotifywidget')) {
-            	var e = element;
-            	while (!e.hasClass('helpfulholder')) {
-            		e = e.parent();
-            	}
-            	e.spotifyAlbumThing('handleClick', element);
-        	}
+			} else if (element.hasClass('clickspotifywidget')) {
+				var e = element;
+				while (!e.hasClass('helpfulholder')) {
+					e = e.parent();
+				}
+				e.spotifyAlbumThing('handleClick', element);
+			}
 		},
 
 		close: function() {
-            nowplaying.notifyTrackChanges('helpfulthings', null);
 			if (doneonce) {
 				$('#hplfoldup .helpfulholder').each(function() {
-					debug.log(medebug,"Removing And Destroying",$(this).attr("id"));
+					debug.trace(medebug,"Removing And Destroying",$(this).attr("id"));
 					$(this).prev().remove();
 					$(this).remove();
 				});
@@ -159,7 +158,7 @@ var helpfulThings = function() {
 		doStageTwo: function() {
 			if (nonspotitracks.length > 0) {
 				var t = nonspotitracks[0];
-				debug.log(medebug, "Searching For Spotify ID for",t);
+				debug.trace(medebug, "Searching For Spotify ID for",t);
 				trackfinder.findThisOne(
 					{
 						title: t.Title,
@@ -175,12 +174,12 @@ var helpfulThings = function() {
 		},
 
 		gotTrackResults: function(data) {
-			debug.log(medebug,"Got Track Results",data);
+			debug.debug(medebug,"Got Track Results",data);
 			var t = nonspotitracks.shift();
 			if (data.uri && data.artist && artists.indexOf(data.artist) == -1) {
 				var m = data.uri.match(/spotify:track:(.*)$/);
 				if (m && m[1]) {
-					debug.log(medebug,"Found Spotify Track Uri",m[1]);
+					debug.debug(medebug,"Found Spotify Track Uri",m[1]);
 					t.id = m[1];
 					trackseeds.push(t);
 					artists.push(data.artist);
@@ -193,9 +192,6 @@ var helpfulThings = function() {
 			if (trackseeds.length > 0) {
 				current_seed = trackseeds.shift();
 				var params = { limit: 8 }
-				if (prefs.lastfm_country_code) {
-					params.market = prefs.lastfm_country_code;
-				}
 				params.seed_tracks = current_seed.id;
 				spotify.recommendations.getRecommendations(params, helpfulThings.gotTrackRecommendations, helpfulThings.spotiError);
 			} else if (nonspotitracks.length == 0) {
@@ -206,7 +202,7 @@ var helpfulThings = function() {
 		},
 
 		gotTrackRecommendations: function(data) {
-			debug.log(medebug, "Got Track Recommendations for", current_seed.Artistname, current_seed.id, data);
+			debug.log(medebug, "Got Track Recommendations for", current_seed.Artistname, current_seed.id);
 			if (data.tracks.length == 0) {
 				helpfulThings.getMoreStuff();
 				return true;
@@ -235,8 +231,8 @@ var helpfulThings = function() {
 			});
 		},
 
-		spotiError: function() {
-			debug.warn("HELPFULTHINGS","Spotify Error");
+		spotiError: function(data) {
+			debug.warn("HELPFULTHINGS","Spotify Error",data);
 			helpfulthigs.getMoreStuff();
 		}
 

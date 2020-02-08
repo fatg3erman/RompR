@@ -33,10 +33,10 @@ function probe_database() {
 		try {
 			$dsn = "sqlite:prefs/collection.sq3";
 			$mysqlc = new PDO($dsn);
-			logger::mark("MYSQL", "Connected to SQLite");
+			logger::log("SQL_CONNECT", "Connected to SQLite");
 			$prefs['collection_type'] = 'sqlite';
 		} catch (Exception $e) {
-			logger::fail("MYSQL", "Couldn't use SQLite Either - ".$e);
+			logger::warn("SQL_CONNECT", "Couldn't use SQLite Either - ".$e);
 			$mysqlc = null;
 		}
 	}
@@ -60,17 +60,17 @@ function show_sql_error($text = "", $stmt = null) {
 
 function generic_sql_query($qstring, $return_boolean = false, $return_type = PDO::FETCH_ASSOC, $return_value = null, $value_default = null, $return_rowcount = false ) {
 	global $mysqlc;
-	logger::debug("GENERIC_SQL", $qstring);
+	logger::core("GENERIC_SQL", $qstring);
 	$retval = true;
 	if (($result = @$mysqlc->query($qstring)) !== false) {
-		logger::debug("GENERIC_SQL", "Done : ".($result->rowCount())." rows affected");
+		// logger::debug("GENERIC_SQL", "Done : ".($result->rowCount())." rows affected");
 		if ($return_value !== null) {
 			$arr = $result->fetch(PDO::FETCH_ASSOC);
 			$retval = ($arr) ? $arr[$return_value] : $value_default;
 		} else if ($return_boolean) {
 			$retval = true;
 		} else if ($return_rowcount) {
-			return $result->rowCount();
+			$retval = $result->rowCount();
 		} else {
 			$retval = $result->fetchAll($return_type);
 		}
@@ -91,7 +91,7 @@ function generic_sql_query($qstring, $return_boolean = false, $return_type = PDO
 
 function sql_get_column($qstring, $column) {
 	global $mysqlc;
-	logger::debug("SQL_GET_COLUMN", "Get column",$column,"from",$qstring);
+	logger::core("SQL_GET_COLUMN", "Get column",$column,"from",$qstring);
 	$retval = array();
 	if (($result = $mysqlc->query($qstring)) !== false) {
 		$retval = $result->fetchAll(PDO::FETCH_COLUMN, $column);
@@ -127,7 +127,7 @@ function sql_prepare_query() {
 
 	global $mysqlc;
 	$allargs = func_get_args();
-	logger::debug("SQL_PREPARE",$allargs);
+	logger::core("SQL_PREPARE",$allargs);
 	$return_boolean = $allargs[0];
 	$return_type = $allargs[1];
 	$return_value = $allargs[2];
@@ -192,22 +192,22 @@ function dbg_params($string,$data) {
 			$string = preg_replace('/\?/', $v, $string, 1);
 		} else {
 			$string=str_replace(":$k", $v, $string);
-        }
-    }
-    return $string;
+		}
+	}
+	return $string;
 }
 
 function checkCollectionStatus() {
 	$lv = generic_sql_query("SELECT Value FROM Statstable WHERE Item = 'ListVersion'", false, null, 'Value', null);
 	if ($lv == ROMPR_COLLECTION_VERSION) {
-		logger::log("MYSQL", "Collection version is correct");
+		logger::log("DATABASE", "Collection version is correct");
 		return "0";
 	} else {
 		if ($lv > 0) {
-			logger::warn("MYSQL", "Collection version is outdated - ".$lv);
+			logger::warn("DATABASE", "Collection version is outdated - ".$lv);
 			return "1";
 		} else {
-			logger::shout("MYSQL", "Collection has not been built".$lv);
+			logger::mark("DATABASE", "Collection has not been built".$lv);
 			return "2";
 		}
 	}
@@ -215,7 +215,7 @@ function checkCollectionStatus() {
 
 function checkAlbumArt() {
 	$oa =  generic_sql_query("SELECT COUNT(ImgVersion) AS NumOldAlbums FROM Albumtable WHERE Image LIKE 'albumart/small/%' AND ImgVersion < ".ROMPR_IMAGE_VERSION, false, null, 'NumOldAlbums', 0);
-	logger::log("INIT", "There are ".$oa." albums with old-style album art");
+	logger::log("DATABASE", "There are ".$oa." albums with old-style album art");
 	return $oa;
 }
 
@@ -236,25 +236,25 @@ function check_transaction() {
 			open_transaction();
 		}
 	} else {
-		logger::warn("BACKEND", "WARNING! check_transaction called when transaction not open!");
+		logger::warn("DATABASE", "WARNING! check_transaction called when transaction not open!");
 	}
 }
 
 function close_transaction() {
 	global $transaction_open, $numdone, $mysqlc;
-    if ($transaction_open) {
-    	if ($mysqlc->commit()) {
-    		$transaction_open = false;
-    		$numdone = 0;
-    	}
-    } else {
-		logger::warn("BACKEND", "WARNING! close_transaction called when transaction not open!");
-    }
+	if ($transaction_open) {
+		if ($mysqlc->commit()) {
+			$transaction_open = false;
+			$numdone = 0;
+		}
+	} else {
+		logger::warn("DATABASE", "WARNING! close_transaction called when transaction not open!");
+	}
 }
 
 function saveCollectionPlayer($type) {
 	global $prefs;
-	logger::mark("COLLECTION", "Setting Collection Type to",$type);
+	logger::mark("DATABASE", "Setting Collection Type to",$type);
 	switch ($type) {
 		case 'mopidy':
 			sql_prepare_query(true, null, null, null,
@@ -274,23 +274,23 @@ function saveCollectionPlayer($type) {
 function readCollectionPlayer($sp = treu) {
 	global $prefs;
 	$c = simple_query('Value', 'Statstable', 'Item', 'CollType', 999);
-    switch ($c) {
+	switch ($c) {
 		case 999:
-			logger::trace("COLLECTION", "Collection type from database is not set");
-			logger::trace("COLLECTION", "Prefs collection_player is currently",$prefs['collection_player']);
+			logger::log("DATABASE", "Collection type from database is not set");
+			logger::log("DATABASE", "Prefs collection_player is currently",$prefs['collection_player']);
 			$prefs['collection_player'] = null;
 			break;
 
-        case 1:
-			logger::debug("COLLECTION", "Collection type from database is mopidy");
-            $prefs['collection_player'] = 'mopidy';
-            break;
+		case 1:
+			logger::core("DATABASE", "Collection type from database is mopidy");
+			$prefs['collection_player'] = 'mopidy';
+			break;
 
-        case 0:
-		logger::debug("COLLECTION", "Collection type from database is mpd");
-            $prefs['collection_player'] = 'mpd';
-            break;
-    }
+		case 0:
+			logger::core("DATABASE", "Collection type from database is mpd");
+			$prefs['collection_player'] = 'mpd';
+			break;
+	}
 	if ($sp) {
 		savePrefs();
 	}

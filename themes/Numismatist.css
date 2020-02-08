@@ -4,6 +4,13 @@
 =====================================================================
 */
 
+html, body.phone .dropmenu {
+    background-image: linear-gradient(#ffffff, #bbbbbb);
+    background-size:cover;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+}
+
 body
 {
 
@@ -28,16 +35,15 @@ body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
     border-bottom: 1px solid rgba(60,60,60,0.4);
 }
 
-button, input[type="button"], .filebutton
+button, input[type="button"], div.filebutton
 {
     background-color:#dddddd;
     border:none;
     color:#444444;
     font-weight:normal;
-    font-size:110%;
 }
 
-button:hover, input[type="button"]:hover, .filebutton:hover
+button:hover, input[type="button"]:hover, div.filebutton:hover
 {
     color:black;
     background-color:#eeeeee;
@@ -60,11 +66,11 @@ a:hover,a:active {
     color:#ff4800;
 }
 
-.selectholder {
+div.selectholder {
     background-color:rgba(0,0,0,0.05);
 }
 
-.selectholder:hover {
+div.selectholder:hover {
     background-color:rgba(0,0,0,0.03);
 }
 
@@ -87,10 +93,6 @@ input[type="text"]:focus {
 =====================================================================
 */
 
-body.mobile, body.phone .dropmenu {
-    background-image: linear-gradient(#ffffff, #bbbbbb);
-}
-
 .album2 {
     background-color:rgba(0,0,0,0.1);
 }
@@ -105,24 +107,9 @@ body.setup
     background-color: #dddddd;
 }
 
-body.desktop #infobar
-{
-    background-image: linear-gradient(#ffffff, #eeeeee);
-}
-
 body.desktop #headerbar
 {
     background-image: linear-gradient(#eeeeee, #ededed);
-}
-
-body.desktop #thetopbit
-{
-    background-image: linear-gradient(#ffffff, #ededed);
-}
-
-#bottompage
-{
-    background-image: linear-gradient(#ededed, #bbbbbb);
 }
 
 #pset {
@@ -182,16 +169,6 @@ body.desktop #thetopbit
     border-top:1px solid #bbbbbb;
 }
 
-.album1
-{
-    /*background-color:rgba(200,200,200,0.1);*/
-}
-
-.album2
-{
-    /*background-color:rgba(200,200,200,0.2);*/
-}
-
 a.album:visited
 {
     color:#222222;
@@ -203,21 +180,16 @@ a.album:hover,a.album:active
 }
 
 .playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
-    text-shadow: 0 0 10px #ffffff;
+    font-weight:bold;
 }
 
 .playable.selected:hover, tr.playable.selected:hover>td {
     background-color:rgba(0,0,0,0.1);
 }
 
-div.playable.selected:hover
-{
-    text-shadow: 0 0 12px #333333;
-}
-
 .selected
 {
-    background-color:rgba(0,0,0,0.4) !important;
+    background-color:rgba(255,255,255,0.4) !important;
 }
 
 .playlistcurrentitem
@@ -257,8 +229,23 @@ div.playable.selected:hover
 }
 
 .backhi:hover {
-    color:#444444;
+    color:#000000;
+    background-color: rgba(0,0,0,0.1);
     cursor:pointer;
+}
+
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color:#111111;
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    color:#000000;
+    background-color: rgba(0,0,0,0.1);
 }
 
 table.histable tr:hover {
@@ -299,7 +286,7 @@ tr.clickaddtrack:hover
 
 .dropshadow
 {
-    box-shadow:         7px 7px 5px rgba(0, 0, 0, 0.9);
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.9);
 }
 
 .progressbar
@@ -318,6 +305,10 @@ tr.clickaddtrack:hover
 .textunderline
 {
     border-bottom: 1px solid #222222;
+}
+
+.backmenu {
+    background-color: #fefefe;
 }
 
 /*
@@ -360,16 +351,21 @@ div.topdropmenu
 
 .helpfulalbum
 {
-    background-image: linear-gradient(#ededed, #bbbbbb);
+    /*background-image: linear-gradient(#ededed, #bbbbbb);*/
+    background-color: #cccccc;
 }
 
 .collectionitem .helpfulalbum.fixed {
-    background-image: linear-gradient(#bbbbbb, #aaaaaa);
+    /*background-image: linear-gradient(#bbbbbb, #aaaaaa);*/
+    background-color: #cccccc;
 }
 
 .tagholder_wide
 {
-    background-image: linear-gradient(#ededed, #bbbbbb);
+    /*background-image: linear-gradient(#ededed, #bbbbbb);*/
+    border-top: 1px solid rgba(0,0,0,0.07);
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+    border-left: 1px solid rgba(0,0,0,0.07);
 }
 
 .tagholder_wide .helpfulalbum.tleft

@@ -3,6 +3,43 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.40
+
+Thought I'd bump the version number up a bit since this seems like quite a big release that contains a lot of work.
+
+### FEATURES:
+* The first time you load this version it will update your Music Collection automatically. Sorry for having to force that on you but it's essential.
+* [romonitor](/RompR/Rompr-And-Mobiles) can now do Last.FM scrobbling, which will help make scrobbles match exactly what's in the Rompr collection - which will help for those people using Last.FM to sync their playcounts across devices and helps especially with podcasts, where the metadata used by eg mpdscribble often differs enormously from the more detailed info available to Rompr.
+* Make Mopidy-Youtube handling work better. This version of Rompr works best wuth the fork of Mopidy-Youtube [here](https://github.com/natumbri/mopidy-youtube)
+* Completely redesigned the Community Radio Browser to simplify the interface and make it more consistent with TuneIn
+* Albums can now be moved manually to the Spoken Word section, and back to the Music Collection
+* New pop-up menus for all tracks allowing you to tag, rate, and add to playlists right from the Music Collection or Search Results
+* The Playlist Manager has been removed, since all of its functionality is now incorporated into the main playlist chooser panel
+* The Tags and Ratings manager has been removed since a) I hated it and b) almost everything it did can now be done via the main Collection panel
+* The 'back' button on the phone skin is now always visible so you don't have to scroll back to the top to go back
+* Done quite a lot of work on the Skypotato skin to make it neater, more efficient, and smoother and give it all the same functionality as the Desktop skin
+* Almost all the UI code has been updayted and tidied up for a faster, smoother UI.
+* I wrote a script to automate a lot of the work in making icon themes, so now there are LOADS of them :-D
+* 'Display Search Results as Directory Tree' is now incoporated into a new menu giving you the option to display your search results in a different format to the Muisc Collection
+* A lot of images are now lazy-loaded so they're only loaded when they're visible on screen, which reducs memory usage a lot. This requires a modern browser and will fall back to loading everything at once if your browser doesn't support it. Recent versions of all major browsers should work, except for Safari where it's still listed as an 'Experimental' feature.
+
+### FIXES:
+* Translations have been cleaned up - unused translation keys have been removed. For translators, any key missing from the translations has been added to the end of the translation file, commented out, ready to be updated. This will make it much easier for you to follow my crazy and undocumented updates.
+* Fix Panel hiding not working in Fruit skin
+* Make the Snapcast controls look neater
+* Fix some bugs relating to loading playlists
+* On first run this version will upgrade MySQL installations to use 4-Byte UTF-8 encoding. Put simply, this upgrades the MySQL database to use the same character set as used by default in absolutely everything except MySQL which for some reason defauls to a 3-Byte version which makes it incompatible with basically the entire internet. As I've said before, SQLite is just better but if you insist on using MySQL/MariaDB this will help. If you have a large database this upgrade will take a very very very very very very very very very very very very long time and may well time out. If that happens make a post on the Discussion forum and I'll put up instructions on how to fix it.
+* Fix ImageMagick handling of radio stations that only have a .ico file for their staion image, as many of the ones in Community Radio do. PHP-GD does not support .ico files so ImageMagick is required for these stations.
+* Fixed a serious bug in the PHP URL downloading code, it's a miracle it ever worked at all.
+* Fixed the play control buttons in Modern-Dark looking blurred in Safari due to Safari not rendering SVG blur correctly
+* The Personalised Radio code has been re-written from scratch to make it perform better. In particular the Spotify and Last.FM stations now populate much more quickly.
+* Made some changes so that Rompr is aware when a mobile device sleeps and wakes up. This reduces battery usage a little (but still can't make the alarm clock work)
+* As always, hundreds of little tweaks and tinkerings here and there
+
+### KNOWN ISSUES:
+* In some circumstances, using the sort mode 'Albums (by Artist)' can cause your browser to run very slowly for around a minute after the page loads. This is not a new issue in this release but has recently been identified. I don't yet know that cause and it doesn't happen every time. Disabling your ad-blocker might help. (Rompr does not serve any ads)
+
+
 ## Version 1.32
 
 * Fix last.FM Playcount importer
@@ -21,7 +58,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Last.FM Info panel will display artist images again, but not for 'Similar Artists', and only in certain circumstances. Last.FM have removed all artist image functionality.
 * Done quite a lot of work on the Discogs Info panel to include images and a search that actually works and is quite accurate. This also makes the Videos panel work a lot better and get more accurate matches.
 * Multitudinous new icon themes
-* Some changes to the layout of the Phone and Tablet skins. Large tablets will now display the Now Playing, Playlist, and Media Chooser panels simultaneously when in Landscape orientation.
+* Some changes to the layout of the Phone and Tablet skins. Large tablets will now display the Now Playing, Play Queue, and Media Chooser panels simultaneously when in Landscape orientation.
 * Alarm Clock and Sleep Timer now supported on the Tablet skin. Note that they still won't work if your tablet sleeps, but the tablet skin is quite good for small laptop screens so that's what this is intended for.
 * Quite a lot of work has gone into preventing browsers from timing out on long collection updates. Did you know that browsers automatically retry if something takes more than 2 minutes? I didn't, but I do now. Crikey, it's annoying. So I've made some changes that will hopefully prevent this from being a problem. If you see your Collection Update just keep looping round and round, close your browser, restart your web server, then try again and send me a debug log at level 8.
 * Dirble Radio Browser has been removed, since Dirble seems to be no longer working, and it was always unreliable. Now we have TuneIn and Community Radio it's not really needed.
@@ -86,7 +123,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Added options to only display Collection tracks that were added within a specific time period, after I added something good to mine and then forgot what it was called :)
 * Added more tooltips as the number of control butons spirals upwards
 * The Discoverator now populates much more quickly
-* Option to transfer current playlist to new player when switching players
+* Option to transfer Play Queue to new player when switching players
 * New Global Refresh, Mark as Listened, etc controls for podcasts
 * Upgrade to jQuery 3, which might make some older browsers no longer work
 * Added Slave mode for Mopidy Players so you only need to have one 'Master' Mopidy Player and all the others can still play local tracks using the file backend without the need to have a local files database on all of them
@@ -100,8 +137,8 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Fixed bug where plugins menu didn't work in Tablet skin
 * Added two new icon themes
 * Some code refactoring and minor UI bugfixing
-* Added swipe and long press options to phone skin to allow tracks to be removed from and re-ordered within the Current Playlist
-* Added a new button to allow the Current Playlist to be re-ordered on the Tablet Skin
+* Added swipe and long press options to phone skin to allow tracks to be removed from and re-ordered within the Play Queue
+* Added a new button to allow the Play Queue to be re-ordered on the Tablet Skin
 * Moved Google API Credentials fields to the setup screen - they're messy, technical, and don't really want to be exposed to all and sundry.
 * Added Debug Information plugin to help with assisting in bug reports.
 * Added play controls to top bar on wide screens (>799px) on Phone and Tablet skins
@@ -109,7 +146,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Added default options for new Podcasts
 * Added option to mark 'New' podcast episodes as 'Unlistened' before refresh. This used to be the default behaviour. The default is now that episodes will remain as 'New' until a new one is published. Rompr therefore accurately reflects the state of the podcast's feed.
 * Improved podcast refresh intervals. 'Weekly' and 'Monthly' now actually mean what they say (same time and day of the week) and will attempt to set their refresh time based on the peridocity of the episodes in the podcast, to try to ensure the refresh happens automatically when a new episode is published.
-* The Current Playlist and the Subscribed Podcasts display now use thumbnail album covers instead of full resolution ones scaled down. This should save a lot of memory which may help users on mobile devices.
+* The Play Queue and the Subscribed Podcasts display now use thumbnail album covers instead of full resolution ones scaled down. This should save a lot of memory which may help users on mobile devices.
 * All your Album Art needs to be updated in this version. The process will start automatically and may take a long time. There is a progress bar, and you can continue to use Rompr while it happens.
 * Player selection can now be done from the volume control dropdown on Phone and Tablet skins
 * Option to not display album art in the Playlist, which might help memory usage on phones, although the change to use thumbnail images will probably be enough.

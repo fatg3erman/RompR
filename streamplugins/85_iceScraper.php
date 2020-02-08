@@ -21,29 +21,29 @@ if (array_key_exists('populate', $_REQUEST)) {
 		$getstr = $getstr . "search?search=" . $_REQUEST['searchfor'];
 	}
 	logger::log("ICESCRAPER", "Getting ".$getstr);
-	$d = new url_downloader(array('url' => $getstr));
-	$d->get_data_to_string();
-	$icecast_shitty_page = preg_replace('/<\?xml.*?\?>/', '', $d->get_data());
+	// NB Don't use the cache, station links often don't stay live long enough
+	$page = getCacheData($getstr, 'icecast', false, true);
+	$icecast_shitty_page = preg_replace('/<\?xml.*?\?>/', '', $page);
 	$doc = phpQuery::newDocument($icecast_shitty_page);
 	$list = $doc->find('table.servers-list')->find('tr');
 	$page_title = $doc->find('#content')->children('h2')->text();
-	logger::log("ICESCRAPER", "Page Title Is ".$page_title);
+	logger::debug("ICESCRAPER", "Page Title Is ".$page_title);
 	$count = 0;
 	directoryControlHeader('icecastlist', get_int_text('label_icecast'));
-	print '<div class="containerbox brick_wide"><div class="expand"><input class="enter clearbox" name="searchfor" type="text"';
+	print '<div class="containerbox dropdown-container fullwidth"><div class="expand"><input class="enter clearbox" name="searchfor" type="text"';
 	if (array_key_exists("searchfor", $_REQUEST)) {
 		print ' value="'.$_REQUEST['searchfor'].'"';
 	}
 	print ' /></div>';
 	print '<button class="fixed searchbutton iconbutton" name="cornwallis"></button></div>';
 
-	print '<div class="configtitle textcentre brick_wide"><b>'.$page_title.'</b></div>';
+	print '<div class="configtitle brick_wide"><div class="textcentre expand"><b>'.$page_title.'</b></div></div>';
 	foreach ($list as $server) {
 		$server_web_link = '';
 		$server_name = pq($server)->find('.stream-name')->children('.name')->children('a');
 		$server_web_link = $server_name->attr('href');
 		$server_name = $server_name->text();
-		logger::log("ICESCRAPER", "Server Name Is ".$server_name);
+		logger::debug("ICESCRAPER", "Server Name Is ".$server_name);
 		$server_description = munge_ice_text(pq($server)->find('.stream-description')->text());
 		$stream_tags = array();
 		$stream_tags_section = pq($server)->find('.stream-tags')->find('li');
@@ -62,46 +62,46 @@ if (array_key_exists('populate', $_REQUEST)) {
 				foreach(pq($p)->children('a') as $a) {
 					$l = pq($a)->attr('href');
 					if (substr($l, -5) == ".xspf") {
-				    	$listenlink = 'http://dir.xiph.org'.$l;
-				    }
+						$listenlink = 'http://dir.xiph.org'.$l;
+					}
 				}
 			}
 		}
 
 		if ($listenlink != '') {
 			print albumHeader(array(
-                'id' => 'icecast_'.$count,
-                'Image' => 'newimages/icecast.svg',
-                'Searched' => 1,
-                'AlbumUri' => null,
-                'Year' => null,
-                'Artistname' => implode(', ', $stream_tags),
-                'Albumname' => htmlspecialchars($server_name),
-                'why' => 'whynot',
-                'ImgKey' => 'none',
-                'streamuri' => $listenlink,
-                'streamname' => $server_name,
-                // 'streamimg' => 'newimages/icecast.svg',
+				'id' => 'icecast_'.$count,
+				'Image' => 'newimages/icecast.svg',
+				'Searched' => 1,
+				'AlbumUri' => null,
+				'Year' => null,
+				'Artistname' => implode(', ', $stream_tags),
+				'Albumname' => htmlspecialchars($server_name),
+				'why' => 'whynot',
+				'ImgKey' => 'none',
+				'streamuri' => $listenlink,
+				'streamname' => $server_name,
+				// 'streamimg' => 'newimages/icecast.svg',
 				'streamimg' => '',
 				'class' => 'radiochannel'
-            ));
+			));
 			print '<div id="icecast_'.$count.'" class="dropmenu">';
-			trackControlHeader('','','icecast_'.$count, array(array('Image' => 'newimages/icecast.svg')));
+			trackControlHeader('','','icecast_'.$count, null, array(array('Image' => 'newimages/icecast.svg')));
 			print '<div class="containerbox rowspacer"></div>';
 			print '<div class="indent">'.$server_description.'</div>';
 			print '<div class="containerbox rowspacer"></div>';
 			print '<div class="indent">'.$listeners.'</div>';
-			print '<div class="containerbox rowspacer"></div>';
-			print '<div class="stream-description clickable icescraper clickstream playable draggable indent" name="'.$listenlink.'" streamname="'.$server_name.'" streamimg="">';
-			print '<b>Listen</b> '.$format;
-			print '</div>';
-			print '<div class="containerbox rowspacer"></div>';
 			print '<a href="'.$server_web_link.'" target="_blank">';
-			print '<div class="containerbox indent padright menuitem">';
+			print '<div class="containerbox indent padright dropdown-container">';
 			print '<i class="icon-www collectionicon fixed"></i>';
 			print '<div class="expand">'.get_int_text('label_station_website').'</div>';
 			print '</div>';
 			print '</a>';
+			print '<div class="containerbox rowspacer"></div>';
+			print '<div class="stream-description icescraper clickstream playable draggable indent" name="'.rawurlencode($listenlink).'" streamname="'.$server_name.'" streamimg="">';
+			print '<i class="icon-no-response-playbutton collectionicon"></i>';
+			print '<b>Listen</b> '.$format;
+			print '</div>';
 			print '</div>';
 		}
 		$count++;
@@ -118,19 +118,19 @@ if (array_key_exists('populate', $_REQUEST)) {
 } else {
 	print '<div id="icecastplugin">';
 	print albumHeader(array(
-        'id' => 'icecastlist',
-        'Image' => 'newimages/icecast.svg',
-        'Searched' => 1,
-        'AlbumUri' => null,
-        'Year' => null,
-        'Artistname' => '',
-        'Albumname' => get_int_text('label_icecast'),
-        'why' => null,
-        'ImgKey' => 'none',
-		'class' => 'radio',
+		'id' => 'icecastlist',
+		'Image' => 'newimages/icecast.svg',
+		'Searched' => 1,
+		'AlbumUri' => null,
+		'Year' => null,
+		'Artistname' => '',
+		'Albumname' => get_int_text('label_icecast'),
+		'why' => null,
+		'ImgKey' => 'none',
+		'class' => 'radio icecastroot',
 		'expand' => true
-    ));
-	print '<div id="icecastlist" class="dropmenu notfilled"><div class="configtitle textcentre"><b>'.get_int_text('label_loading').'</b></div></div>';
+	));
+	print '<div id="icecastlist" class="dropmenu notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
 	print '</div>';
 }
 

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   width="490"
+   height="490"
+   version="1.1"
+   id="svg4">
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs8">
+    <linearGradient
+       id="linearGradient46296">
+      <stop
+         id="stop46292"
+         offset="0"
+         style="stop-color:#CA91BE;stop-opacity:1" />
+      <stop
+         id="stop46294"
+         offset="1"
+         style="stop-color:#BA3E91;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="486.87836"
+       x2="259.04709"
+       y1="1.3881596"
+       x1="263.52747"
+       id="linearGradient46298"
+       xlink:href="#linearGradient46296" />
+  </defs>
+  <path
+     fill="none"
+     stroke="#000"
+     stroke-width="36"
+     stroke-linecap="round"
+     d="m280,278a153,153 0 1,0-2,2l170,170m-91-117 110,110-26,26-110-110"
+     id="path2"
+     style="fill-opacity:1;fill:none;stroke:url(#linearGradient46298);stroke-opacity:1" />
+</svg>

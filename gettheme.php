@@ -19,5 +19,4 @@ readfile('themes/'.$theme);
 readfile('sizes/'.$fontsize);
 readfile('coversizes/'.$coversize);
 readfile('iconsets/'.$icontheme.'/theme.css');
-readfile('iconsets/'.$icontheme.'/adjustments.css');
 ?>

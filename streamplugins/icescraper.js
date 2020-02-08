@@ -1,39 +1,35 @@
 var icecastPlugin = {
 
-    refreshMyDrink: function(path) {
-        if ($("#icecastlist").hasClass('notfilled')) {
-    		icecastPlugin.makeabadger();
-            $("#icecastlist").load("streamplugins/85_iceScraper.php?populate", icecastPlugin.spaghetti);
-        } else if (path) {
-    		icecastPlugin.makeabadger();
-            $("#icecastlist").load("streamplugins/85_iceScraper.php?populate=1&path="+path, icecastPlugin.spaghetti);
-        }
-    },
+	loadIcecastRoot: function() {
+		return "streamplugins/85_iceScraper.php?populate";
+	},
 
-    makeabadger: function() {
-        $('i[name="icecastlist"]').makeSpinner();
-    },
+	loadIcecastSearch: function() {
+		return "streamplugins/85_iceScraper.php?populate=1&searchfor="+encodeURIComponent($('input[name="searchfor"]').val());
+	},
 
-    spaghetti: function() {
-    	$('i[name="icecastlist"]').stopSpinner();
-        // $('[name="searchfor"]').on('keyup', onKeyUp);
-        $('[name="cornwallis"]').on('click', icecastPlugin.iceSearch);
-        $("#icecastlist").removeClass('notfilled');
-        layoutProcessor.postAlbumActions();
-    },
+	iceSearch: function() {
+		clickRegistry.loadContentIntoTarget({
+			target: $('#icecastlist'),
+			clickedElement: $('.openmenu[name="icecastlist"]'),
+			uri: "streamplugins/85_iceScraper.php",
+			data: {populate: 1, searchfor: encodeURIComponent($('input[name="searchfor"]').val())}
+		});
+	},
 
-    iceSearch: function() {
-    	icecastPlugin.makeabadger();
-        $("#icecastlist").load("streamplugins/85_iceScraper.php?populate=1&searchfor="+encodeURIComponent($('input[name="searchfor"]').val()), icecastPlugin.spaghetti);
-    },
-
-    handleClick: function(event, clickedElement) {
-        if (clickedElement.hasClass("clickicepager")) {
-            icecastPlugin.refreshMyDrink(clickedElement.attr('name'));
-        }
-    }
+	handleClick: function(event, clickedElement) {
+		if (clickedElement.hasClass('clickicepager')) {
+			clickRegistry.loadContentIntoTarget({
+				target: $('#icecastlist'),
+				clickedElement: $('.openmenu[name="icecastlist"]'),
+				uri: "streamplugins/85_iceScraper.php",
+				data: {populate: 1, path: clickedElement.attr('name')}
+			});
+		}
+	}
 
 }
 
-menuOpeners['icecastlist'] = icecastPlugin.refreshMyDrink;
+$(document).on('click', '[name="cornwallis"]', icecastPlugin.iceSearch);
 clickRegistry.addClickHandlers('icescraper', icecastPlugin.handleClick);
+clickRegistry.addMenuHandlers('icecastroot', icecastPlugin.loadIcecastRoot);

@@ -1,46 +1,24 @@
 # Installing on macOS with nginx webserver
 
-This is an alternative method to install RompЯ on macOS which uses the nginx webserver instead of the built in Apache server.
+This is an alternative method to install RompЯ on macOS which uses the nginx webserver instead of the built in Apache server. This method installs everything from Homebrew, which should future-proof it better against Apple removing stuff from macOS in the future.
+
+## Install Homebrew
+
+[Homebrew](https://brew.sh/)
 
 ## Installing a player
 
-You'll need either MPD or Mopidy
+You'll need either MPD or Mopidy. However as at time of writing Mopidy installation is not working on macOS at all.
 
 ### Install Mopidy...
 
-The instructions on mopidy's website no longer work, so first install [Homebrew](https://brew.sh/)
+The instructions on Mopidy's website [Mopidy](https://docs.mopidy.com/en/latest/installation/osx/) don't currently work.
 
 Then go [here](https://discourse.mopidy.com/t/cant-run-mopidy-on-fresh-brew-install-getting-python-framework-error/2343/2)
 
 ### ... or install MPD
 
-First install [Homebrew](https://brew.sh/)
-
-Then
-
-    brew install mpd --with-opus --with-libmss
-
-### Player Connection Timeout
-    
-There is one thing you should adjust in the configuration for MPD and Mopidy
-    
-MPD and Mopidy both have a connection timeout parameter, after which time they will drop the connection between them and Rompr. This is seriously bad news for Rompr. You should make sure you increase it.
-    
-### For Mopidy
-    
-In mopidy.conf, your mpd section needs to contain
-    
-    [mpd]
-    connection_timeout = 120
-        
-### For MPD
-    
-Somewhere in mpd.conf
-    
-    connection_timeout     "120"
-    
-    
-If you have a very large music collection, the higher the numbeer the better. It is in seconds.
+    brew install mpd
 
 ## Install Rompr
 
@@ -96,6 +74,8 @@ This will create an empty file, into which you should paste the following (cmd-V
 
         server_name www.myrompr.net;
 
+        client_max_body_size 256M;
+
         # This section can be copied into an existing default setup
         location / {
                 allow all;
@@ -129,25 +109,48 @@ Again hit ctrl-X and the answer Y to save that file.
 
 ### PHP installation
 
-    brew tap homebrew/homebrew-php
-    brew install php72
-
-Note: the '72' refers to the version number of PHP - in this case version 7.2. This was current at the time of writing but it may change in the future. 'brew search php' will give you a long list of stuff with various version numbers, probably 54, 55, 70, 72, and upwards. I'd suggest using 72 as I know it works, but if there's a newer version that should be OK too.
+    brew install php@
 
 ### PHP configuration
 
-    nano /usr/local/etc/php/7.2/php-fpm.d/www.conf
+The exact location of the config files will depend on the version of PHP that Homebrew has decided to install. At the time of writing, it was 7.4 and it should be obvious where this might need to be changed in the commands that follow
+
+    nano /usr/local/etc/php/7.4/php-fpm.d/www.conf
+
+Ctrl-W is 'find' in nano.
 
 First find and edit the user and group entries - as before "username" should be your username
 
     user = username
     group = staff
 
-Now change the entry for 'listen'.
+Now find and modify the following:
 
     listen = /usr/local/var/run/php.sock
 
-For performance reasons I like to also change the entry for pm.max_children to at least 10, but this uses up more memory and is not essential. I'll leave it up to you.
+For performance reasons I like to also change
+
+    pm.max_children = 10
+
+or an even higher number but this uses up more memory and is not essential. I'll leave it up to you.
+
+As usual, ctrl-X and then answer 'Y'.
+
+Now edit the php ini file:
+
+    nano /usr/local/etc/php/7.4/php.ini
+
+and edit the following parameters:
+
+    allow_url_fopen = On
+    memory_limit = 128M
+    max_execution_time = 1800
+    upload_max_filesize = 10M
+    max_file_uploads = 200
+    post_max_size = 256M
+
+(The last 3 entries are really only used when uploading [Custom Background Images](/RompR/Theming). They set, respectively, the maximum size of an individual file (in megabytes), the maximum number of files you can upload in one go, and the maximum total size (megabytes) you can upload in one go. The values above are just examples - but note that post_max_size has an equivalent called 'client_max_body_size' in the nginx config file and it's sensible to keep them the same).
+
 As usual, ctrl-X and then answer 'Y'.
 
 ## Install Some Additional Bits
@@ -170,7 +173,7 @@ On other devices you can either add an entry to their hosts file for the IP addr
 
 ## Start Everything
 
-    sudo brew services start homebrew/php/php72
+    sudo brew services start php
     sudo brew services start nginx
 
 ## And We're Done

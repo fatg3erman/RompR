@@ -57,15 +57,6 @@ Otherwise beets will not allow RompЯ to talk to it. Your configuration for beet
 ## Google Play
 
 If you have a Google Play Music subscription, then [mopidy-gmusic](https://github.com/mopidy/mopidy-gmusic) will allow you to search all of Google Play's online music library in the same way the Mopidy-Spotify allows you to search Spotify. You'll also be able to make use of many of RompЯ's music discovery features. If you don't have a Google Play Music subscription then you'll only be able to play tracks you have uploaded to your Google Music library, which makes the Music Discovery features much less useful, but they'll still be presented to you as I've no way to know.
-
-## If you use Mopidy-Local-Sqlite
-
-There seems to be a bug in the scanner engine in mopidy's sqlite backend where sometimes it puts tracks on the wrong albums. Putting the following in your mopidy configuration seems to work around this.
-
-    [local-sqlite]
-    enabled = true
-    use_album_mbid_uri = false
-    use_artist_sortname = false
     
 ## Scanning Local Files
 

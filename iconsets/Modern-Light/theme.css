@@ -16,7 +16,7 @@
     background-repeat: no-repeat;
 }
 
-.combobox-entry, .selectholder {
+.combobox-entry, div.selectholder {
     background-image: url('iconsets/Modern-Light/blobdown3.svg');
     /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
     background-size: auto 50%;
@@ -24,11 +24,30 @@
     background-repeat: no-repeat;
 }
 
-.combobox-entry:hover, .selectholder:hover {
+.combobox-entry:hover, div.selectholder:hover {
     background-image: url('iconsets/Modern-Light/blobdown3-hi.svg');
     /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
     background-size: auto 50%;
     background-position: right 2px center;
+    background-repeat: no-repeat;
+}
+
+#ratingsearch {
+    position: relative;
+}
+
+#ratingsearch:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.85;
+    z-index: -1;
+    background-image: url('iconsets/Modern-Light/0stars.svg');
+    background-size: auto 50%;
+    background-position: left 2px center;
     background-repeat: no-repeat;
 }
 
@@ -64,7 +83,6 @@
 .icon-cancel-circled { background-image: url('iconsets/Modern-Light/edit-delete.svg') }
 .icon-plus {
 	background-image: url('iconsets/Modern-Light/add.svg');
-  	opacity:0.9;
 }
 .icon-alarm { background-image: url('iconsets/Modern-Light/alarmclock_false.svg') }
 .icon-alarm-on { background-image: url('iconsets/Modern-Light/alarmclock_true.svg') }
@@ -95,14 +113,13 @@
 .icon-heart { background-image: url('iconsets/Modern-Light/lastfm-love.svg') }
 .icon-heart-broken { background-image: url('iconsets/Modern-Light/lastfm-unlove.svg') }
 .icon-refresh { background-image: url('iconsets/Modern-Light/refresh.svg') }
-.icon-dirble-circled { background-image: url('iconsets/Modern-Light/dirble-logo.svg') }
 .icon-tunein { background-image: url('iconsets/Modern-Light/../../newimages/tunein-logo.svg') }
 .icon-no-response-playbutton { background-image :url('iconsets/Modern-Light/media-playback-start.svg') }
 .icon-tags { background-image: url('iconsets/Modern-Light/tag.svg') }
 .icon-volume-up { background-image: url('iconsets/Modern-Light/volume.svg') }
 .icon-toggle-open { background-image: url('iconsets/Modern-Light/toggle-open.svg') }
 .icon-toggle-closed { background-image: url('iconsets/Modern-Light/toggle-closed.svg') }
-.icon-spin6 { background-image: url('iconsets/Modern-Light/spinner.svg') }
+.icon-spin6 { background-image: url('iconsets/Modern-Light/spinner.svg') !important }
 .icon-output { background-image: url('iconsets/Modern-Light/output.svg') }
 .icon-output-mute { background-image: url('iconsets/Modern-Light/output_mute.svg') }
 .icon-sliders { background-image: url('iconsets/Modern-Light/sliders.svg') }
@@ -215,20 +232,6 @@ img.plimage.notfound
     background-size: contain;
 }
 
-button.iconbutton {
-    height:2em;
-    width:2em;
-    background-size: contain;
-    background-position:center;
-    border: none !important;
-    opacity: 0.8;
-    background-color:transparent;
-}
-
-button.iconbutton:hover {
-    opacity: 1;
-}
-
 button.searchbutton {
     background-image: url('iconsets/Modern-Light/system-search.svg');
 }
@@ -237,3 +240,6 @@ button.rssbutton {
     background-image: url('iconsets/Modern-Light/rss.svg');
 }
 
+button.savebutton {
+    background-image: url('iconsets/Modern-Light/document-save.svg');
+}

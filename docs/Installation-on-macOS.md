@@ -1,51 +1,24 @@
 # macOS (with Apache webserver)
 
-Getting this to work on macOS gets harder by the release, but it's not actually that much of a problem. This guide should work on macOS High Sierra.
+Getting this to work on macOS gets harder by the release, but it's not actually that much of a problem. This guide should work on macOS High Sierra, and uses the built-in versions of Apache and PHP that Apple supply. Apple are slowly removing all this stuff from macOS so for future-proofing I'd reccomend doing everything from Homebrew instead, as described [here](/RompR/macOS-With-Nginx)
 
-First open Terminal. If you haven't used Terminal before, don't be scared. It's under 'Other' or 'Utilities'. Type commands exactly as they appear here, and enter your Mac password whenever you are asked.
+## Install Homebrew
 
-## 1. Installing a player
+[Homebrew](https://brew.sh/)
 
-You'll need either MPD or Mopidy
+## Installing a player
+
+You'll need either MPD or Mopidy. 
 
 ### Install Mopidy...
 
-The instructions on mopidy's website no longer work, so
-
-First install [Homebrew](https://brew.sh/)
+The instructions on Mopidy's website [Mopidy](https://docs.mopidy.com/en/latest/installation/osx/) don't currently work.
 
 Then go [here](https://discourse.mopidy.com/t/cant-run-mopidy-on-fresh-brew-install-getting-python-framework-error/2343/2)
 
 ### ... or install MPD
 
-First install [Homebrew](https://brew.sh/)
-
-Then
-
-    brew install mpd --with-opus --with-libmss
-
-### Player Connection Timeout
-
-There is one thing you should adjust in the configuration for MPD and Mopidy
-
-MPD and Mopidy both have a connection timeout parameter, after which time they will drop the connection between them and Rompr. This is seriously bad news for Rompr. You should make sure you increase it.
-
-### For Mopidy
-
-In mopidy.conf, your mpd section needs to contain
-
-    [mpd]
-    connection_timeout = 120
-
-### For MPD
-
-Somewhere in mpd.conf
-
-    connection_timeout     "120"
-
-
-If you have a very large music collection, the higher the numbeer the better. It is in seconds.
-
+    brew install mpd
 
 ## 2. Installing Rompr
 

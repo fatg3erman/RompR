@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0beta2 (2b71d25, 2019-12-03)"
+   sodipodi:docname="cd_case.svg"
+   version="1.1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 1000 1000"
+   enable-background="new 0 0 1000 1000"
+   xml:space="preserve"
+   id="svg1038"><sodipodi:namedview
+   inkscape:current-layer="svg1038"
+   inkscape:window-maximized="0"
+   inkscape:window-y="22"
+   inkscape:window-x="15"
+   inkscape:cy="525.4491"
+   inkscape:cx="463.32335"
+   inkscape:zoom="0.334"
+   showgrid="false"
+   id="namedview8605"
+   inkscape:window-height="770"
+   inkscape:window-width="1425"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0"
+   guidetolerance="10"
+   gridtolerance="10"
+   objecttolerance="10"
+   borderopacity="1"
+   inkscape:document-rotation="0"
+   bordercolor="#666666"
+   pagecolor="#ffffff" /><defs
+   id="defs1042" />
+<metadata
+   id="metadata1022"> Svg Vector Icons : http://www.onlinewebfonts.com/icon <rdf:RDF><cc:Work
+     rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+       rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata>
+<g
+   style="stroke:#EEEEEE;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:none"
+   id="g9183"><path
+     style="fill:#EEEEEE;fill-opacity:1;stroke-width:12;stroke:#EEEEEE;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     id="path1024"
+     d="M 23.15,80.07 C 8.98,87.16 10.02,54.43 10.02,500 c 0,446.62 -1.04,413.04 13.55,419.93 6.26,2.92 53.17,3.33 476.43,3.33 423.26,0 470.17,-0.42 476.43,-3.33 14.6,-6.88 13.55,26.69 13.55,-419.93 0,-446.62 1.04,-413.05 -13.55,-419.93 C 970.18,77.15 923.26,76.73 499.58,76.73 77.36,76.74 29.2,77.15 23.15,80.07 Z M 143.46,500 V 877.39 H 99.67 55.89 V 500 122.61 h 43.79 43.79 V 500 Z m 800.65,0 V 877.39 H 566.72 189.33 V 500 122.61 h 377.39 377.39 z"
+     inkscape:connector-curvature="0" /><path
+     style="fill:#EEEEEE;fill-opacity:1;stroke-width:12;stroke:#EEEEEE;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     id="path1026"
+     d="m 534.4,167.65 c -147.82,15.84 -266.26,124.26 -295.45,270.42 -6.67,33.57 -6.67,90.28 0,123.85 27.11,135.74 130.11,238.74 265.84,265.84 33.57,6.67 90.28,6.67 123.85,0 135.53,-27.11 238.74,-130.31 265.84,-265.84 6.67,-33.57 6.67,-90.28 0,-123.85 C 867.38,302.76 763.76,198.92 629.9,172.65 c -21.9,-4.38 -75.48,-7.09 -95.5,-5 z m 83.4,47.95 c 38.57,7.3 76.73,22.73 110.51,44.83 21.06,13.76 63.18,55.88 77.15,76.94 33.36,50.04 49.62,103.21 49.62,161.59 0,59.84 -15.84,112.38 -48.79,162.63 -14.39,21.68 -56.3,63.59 -77.98,77.98 -50.25,32.94 -102.79,48.79 -162.63,48.79 -58.38,0 -111.55,-16.26 -161.59,-49.62 -21.06,-13.97 -63.18,-56.09 -76.94,-77.15 -32.94,-50.25 -49,-102.79 -48.79,-161.59 0,-47.96 8.76,-85.07 29.82,-128.23 43.79,-88.82 130.94,-149.08 231.44,-159.71 20.01,-2.09 56.71,-0.42 78.18,3.54 z"
+     inkscape:connector-curvature="0" /><path
+     style="fill:#EEEEEE;fill-opacity:1;stroke-width:12;stroke:#EEEEEE;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     id="path1028"
+     d="m 533.36,394.29 c -36.7,12.51 -63.17,39.82 -73.81,76.31 -4.38,14.8 -4.38,44 0,58.8 5.42,18.14 15.64,35.45 28.98,48.79 43.37,43.37 113.01,43.37 156.38,0 59.84,-59.84 33.15,-161.38 -48.79,-185.36 -17.1,-5 -45.87,-4.38 -62.76,1.46 z m 53.79,42.33 c 15.85,5.21 29.19,16.47 37.74,32.11 6.88,12.51 7.51,14.8 7.51,31.28 -0.21,16.05 -0.83,18.97 -7.09,30.86 -7.92,14.59 -14.59,21.06 -30.23,29.19 -8.97,4.59 -13.34,5.42 -28.36,5.63 -16.47,0 -18.56,-0.42 -31.28,-7.5 -28.77,-15.85 -42.12,-48.58 -32.11,-78.4 12.1,-35.46 48.8,-54.43 83.82,-43.17 z"
+     inkscape:connector-curvature="0" /><path
+     style="fill:#EEEEEE;fill-opacity:1;stroke-width:12;stroke:#EEEEEE;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     id="path1030"
+     d="m 561.51,478.73 c -20.23,4.8 -23.14,33.36 -3.96,41.28 9.38,3.96 17.3,2.29 24.39,-5 7.51,-7.92 8.76,-15.22 4.59,-24.19 -4.8,-10 -14.6,-14.59 -25.02,-12.09 z"
+     inkscape:connector-curvature="0" /></g>
+</svg>

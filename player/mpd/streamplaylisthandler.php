@@ -16,6 +16,7 @@
 class plsFile {
 
 	public function __construct($data, $url, $station, $image) {
+		logger::mark("RADIO_PLAYLIST", "PLS File ".$url.", ".$station);
 		$this->url = $url;
 		$this->station = $station;
 		$this->image = $image;
@@ -43,7 +44,7 @@ class plsFile {
 		if ($stationid) {
 			check_radio_tracks($stationid, $this->tracks);
 		} else {
-			logger::error("RADIO", "ERROR! Null station ID!");
+			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 			header('HTTP/1.1 417 Expectation Failed');
 			exit(0);
 		}
@@ -79,10 +80,11 @@ class plsFile {
 class asxFile {
 
 	public function __construct($data, $url, $station, $image) {
+		logger::mark("RADIO_PLAYLIST", "ASX File ".$url.", ".$station);
 		$this->url = $url;
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_NOCDATA);
 		if ($xml === false) {
-			logger::fail("RADIO", "ERROR could not parse XML from",$url);
+			logger::warn("RADIO_PLAYLIST", "ERROR could not parse XML from",$url);
 			header('HTTP/1.1 417 Expectation Failed');
 			exit(0);
 		}
@@ -90,9 +92,9 @@ class asxFile {
 		$this->image = $image;
 		$this->prettystream = ($xml->COPYRIGHT != null && $xml->COPYRIGHT != '') ? $xml->COPYRIGHT : "";
 		$this->tracks = array();
-	    foreach($xml->Entry as $r) {
-	    	$this->tracks[] = array('TrackUri' => $r->ref['href'], 'PrettyStream' => $prettystream);
-	    }
+		foreach($xml->Entry as $r) {
+			$this->tracks[] = array('TrackUri' => $r->ref['href'], 'PrettyStream' => $prettystream);
+		}
 	}
 
 	public function updateDatabase() {
@@ -100,7 +102,7 @@ class asxFile {
 		if ($stationid) {
 			check_radio_tracks($stationid, $this->tracks);
 		} else {
-			logger::error("RADIO", "ERROR! Null station ID!");
+			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 			header('HTTP/1.1 417 Expectation Failed');
 			exit(0);
 		}
@@ -132,6 +134,7 @@ class asxFile {
 class xspfFile {
 
 	public function __construct($data, $url, $station, $image) {
+		logger::mark("RADIO_PLAYLIST", "XSPF File ".$url.", ".$station);
 		$this->url = $url;
 		// Handle badly formed XML that some stations return
 		$data = preg_replace('/ & /', ' &amp; ', $data);
@@ -139,7 +142,7 @@ class xspfFile {
 		$data = preg_replace('/ > /', ' &gt; ', $data);
 		$xml = simplexml_load_string($data, 'SimpleXMLElement', LIBXML_NOCDATA);
 		if ($xml === false) {
-			logger::fail("RADIO", "ERROR could not parse XML from",$url);
+			logger::warn("RADIO_PLAYLIST", "ERROR could not parse XML from",$url);
 			header('HTTP/1.1 417 Expectation Failed');
 			exit(0);
 		}
@@ -147,9 +150,9 @@ class xspfFile {
 		$this->image = $image;
 		$prettystream = $xml->info != null ? $xml->info : "";
 		$this->tracks = array();
-	    foreach($xml->trackList->track as $r) {
-	    	$this->tracks[] = array('TrackUri' => (string) $r->location, 'PrettyStream' => $prettystream);
-	    }
+		foreach($xml->trackList->track as $r) {
+			$this->tracks[] = array('TrackUri' => (string) $r->location, 'PrettyStream' => $prettystream);
+		}
 	}
 
 	public function updateDatabase() {
@@ -157,7 +160,7 @@ class xspfFile {
 		if ($stationid) {
 			check_radio_tracks($stationid, $this->tracks);
 		} else {
-			logger::error("RADIO", "ERROR! Null station ID!");
+			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 			header('HTTP/1.1 417 Expectation Failed');
 			exit(0);
 		}
@@ -184,7 +187,7 @@ class xspfFile {
 class m3uFile {
 
 	public function __construct($data, $url, $station, $image) {
-		logger::log("RADIO PLAYLIST", "New M3U Station ".$station);
+		logger::mark("RADIO_PLAYLIST", "M3U File ".$url.", ".$station);
 		$this->url = $url;
 		$this->station = $station;
 		$this->image = $image;
@@ -205,7 +208,7 @@ class m3uFile {
 		}
 
 		if (preg_match('/opml\.radiotime\.com/', $url)) {
-			logger::mark("RADIO PLAYLIST", "This is a radiotime tune api, Checking returned playlist");
+			logger::log("RADIO PLAYLIST", "This is a radiotime tune api, Checking returned playlist");
 			$this->url_to_add = $this->get_first_track();
 			$this->secondary = download_internet_playlist($this->url_to_add, null, null);
 			$this->tracks = $this->secondary->tracks;
@@ -218,7 +221,7 @@ class m3uFile {
 		if ($stationid) {
 			check_radio_tracks($stationid, $this->tracks);
 		} else {
-			logger::error("RADIO", "ERROR! Null station ID!");
+			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 			header('HTTP/1.1 417 Expectation Failed');
 			exit(0);
 		}
@@ -241,7 +244,7 @@ class m3uFile {
 				break;
 			}
 		}
-		logger::log("RADIO_PLAYLIST", "  First Track Is ".$return);
+		logger::trace("RADIO_PLAYLIST", "  First Track Is ".$return);
 		return $return;
 	}
 }
@@ -253,6 +256,7 @@ class m3uFile {
 class asfFile {
 
 	public function __construct($data, $url, $station, $image) {
+		logger::mark("RADIO_PLAYLIST", "ASF File ".$url.", ".$station);
 		$this->url = $url;
 		$this->station = $station;
 		$this->image = $image;
@@ -272,7 +276,7 @@ class asfFile {
 		if ($stationid) {
 			check_radio_tracks($stationid, $this->tracks);
 		} else {
-			logger::error("RADIO", "ERROR! Null station ID!");
+			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 			header('HTTP/1.1 417 Expectation Failed');
 			exit(0);
 		}
@@ -300,7 +304,7 @@ class possibleStreamUrl {
 		if ($stationid) {
 			check_radio_tracks($stationid, $this->tracks);
 		} else {
-			logger::error("RADIO", "ERROR! Null station ID!");
+			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 			header('HTTP/1.1 417 Expectation Failed');
 			exit(0);
 		}

@@ -1,81 +1,56 @@
 var starRadios = function() {
 
-	var running = false;
-    var populating = false;
-    var selected;
-
-    function getSmartPlaylistTracks(action, playlist, numtracks) {
-        if (populating) {
-            debug.warn("STARRADIOS", "Asked to populate but already doing so!")
-            return false;
-        }
-        populating = true;
-        debug.shout("STAR RADIOS", action, playlist, numtracks);
-        metaHandlers.genericAction(
-            [{ action: action, playlist: playlist, numtracks: numtracks }],
-            starRadios.gotTracks,
-            starRadios.Fail
-        );
-    }
+	var param;
+	var whattodo;
+	var tracks;
 
 	return {
 
-		populate: function(param, numtracks) {
-            debug.log("STARRADIOS","Populate Called with",param,numtracks,"selected is",selected);
-            var whattodo = "repopulate";
-            if (param !== selected ) {
-                whattodo = "getplaylist";
-				selected = param;
-            }
-            running = true;
-			getSmartPlaylistTracks(whattodo, selected, numtracks);
+		initialise: async function(p) {
+			param = p;
+			whattodo = 'getplaylist';
+			tracks = new Array();
 		},
 
-        modeHtml: function(param) {
-            if (param.match(/^\dstars/)) {
-                var cn = param.replace(/(\d)/, 'icon-$1-');
-                return '<i class="'+cn+' rating-icon-small"></i>';
-            } else if (param == "neverplayed" || param == "allrandom" || param == "recentlyplayed") {
-                return '<i class="icon-'+param+' modeimg"/></i><span class="modespan">'+
-                    language.gettext('label_'+param)+'</span>';
-            } else {
-                return '<i class="icon-tags modeimg"/><span class="modespan">'+param.replace(/^tag\+/, '')+'</span>';
-            }
-        },
-
-        stop: function() {
-            running = false;
-            selected = null;
-        },
-
-        gotTracks: function(data) {
-            populating = false;
-            if (data.length > 0) {
-                debug.log("SMARTPLAYLIST","Got tracks",data);
-                if (running) {
-					player.controller.addTracks(data,  playlist.radioManager.playbackStartPos(), null);
+		getURIs: async function(numtracks) {
+			while (tracks.length < numtracks) {
+				try {
+					var t = await $.ajax({
+						url: "backends/sql/userRatings.php",
+						type: "POST",
+						contentType: false,
+						data: JSON.stringify([{action: whattodo, playlist: param, numtracks: prefs.smartradio_chunksize}]),
+						dataType: 'json'
+					});
+					tracks = tracks.concat(t);
+				} catch(err) {
+					debug.error('STARRADIOS', 'Error getting tracks',err);
+					return false;
 				}
-            } else {
-                debug.warn("SMARTPLAYLIST","Got NO tracks",data);
-                infobar.notify(language.gettext('label_gotnotracks'));
-                playlist.radioManager.stop(null);
-                running = false;
-            }
-        },
+			}
+			whattodo = 'repopulate';
+			return tracks.splice(0, numtracks);
+		},
 
-        Fail: function() {
-            infobar.notify(language.gettext('label_gotnotracks'));
-            playlist.radioManager.stop(null);
-            populating = false;
-            running = false;
-        },
+		modeHtml: function() {
+			if (param.match(/^\dstars/)) {
+				var cn = param.replace(/(\d)/, 'icon-$1-');
+				return '<i class="'+cn+' rating-icon-small"></i>';
+			} else if (param == "neverplayed" || param == "allrandom" || param == "recentlyplayed") {
+				return '<i class="icon-'+param+' modeimg"/></i><span class="modespan">'+
+					language.gettext('label_'+param)+'</span>';
+			} else {
+				return '<i class="icon-tags modeimg"/><span class="modespan">'+param.replace(/^tag\+/, '')+'</span>';
+			}
+		},
 
-        tagPopulate: function(tags) {
-            playlist.radioManager.load('starRadios', tags);
-        }
-    }
+		stop: function() {
+		},
+
+		tagPopulate: function(tags) {
+			playlist.radioManager.load('starRadios', tags);
+		}
+	}
 }();
-
-debug.log("STARRADIOS","Real script Loaded");
 
 playlist.radioManager.register("starRadios", starRadios, null);

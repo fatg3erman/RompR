@@ -6,7 +6,7 @@ require_once ('utils/imagefunctions.php');
 
 if (array_key_exists('url', $_REQUEST)) {
 	$url = rawurldecode($_REQUEST['url']);
-	logger::log("USERPLAYLIST", "Adding User External Playlist ".$url);
+	logger::mark("USERPLAYLIST", "Adding User External Playlist ".$url);
 	$existingfiles = glob('prefs/userplaylists/*');
 	$number = 1;
 	while(in_array('prefs/userplaylists/User_Playlist_'.$number, $existingfiles)) {

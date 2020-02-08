@@ -13,7 +13,7 @@ var sleepTimer = function() {
 	return {
 
 		startInc: function(amount) {
-			debug.log("SLEEP","startInc",amount);
+			debug.debug("SLEEP","startInc",amount);
 			incamount = amount;
 			inctime = 500;
 			sleepTimer.runIncrement();
@@ -26,11 +26,11 @@ var sleepTimer = function() {
 				sleeptime = 0;
 			}
 			sleepTimer.setBoxes();
-	        inctimer = setTimeout(sleepTimer.runIncrement, inctime);
-	        inctime -= 50;
-	        if (inctime < 50) {
-	        	inctime = 50;
-	        }
+			inctimer = setTimeout(sleepTimer.runIncrement, inctime);
+			inctime -= 50;
+			if (inctime < 50) {
+				inctime = 50;
+			}
 		},
 
 		stopInc: function() {
@@ -40,7 +40,7 @@ var sleepTimer = function() {
 		},
 
 		setBoxes: function() {
-	        $("#sleepminutes").html(sleeptime.toString());
+			$("#sleepminutes").html(sleeptime.toString());
 		},
 
 		toggle: function() {
@@ -50,9 +50,9 @@ var sleepTimer = function() {
 
 		setButton: function() {
 			if (prefs.sleepon) {
-				$("#sleeptimer").makeFlasher({flashtime: 10, repeats: prefs.sleeptime*6});
+				$("#sleeptimer_icon").removeClass('currentbun').addClass('currentbun');
 			} else {
-				$("#sleeptimer").stopFlasher();
+				$("#sleeptimer_icon").removeClass('currentbun');
 			}
 		},
 
@@ -96,7 +96,7 @@ var sleepTimer = function() {
 					sleepTimer.fakeClick();
 				}
 			} else {
-				debug.log("SLEEP","Setting volume to",v,player.status.volume,volinc);
+				debug.debug("SLEEP","Setting volume to",v,player.status.volume,volinc);
 				player.controller.volume(Math.round(v));
 				ramptimer = setTimeout(sleepTimer.volRamp, 1000);
 			}
@@ -109,7 +109,7 @@ var sleepTimer = function() {
 			}
 			var holder = uiHelper.makeDropHolder('sleeppanel', d, false);
 			// var holder = $('<div>', {class: 'topdropmenu dropshadow rightmenu normalmenu stayopen', id: 'sleeppanel'}).appendTo(d);
-			var html = '<div class="textcentre configtitle"><b>'+language.gettext('button_sleep')+'</b></div>'+
+			var html = '<div class="dropdown-container configtitle"><div class="textcentre expand"><b>'+language.gettext('button_sleep')+'</b></div></div>'+
 				'<input type="hidden" class="helplink" value="https://fatg3erman.github.io/RompR/Alarm-And-Sleep#sleep-timer" />'+
 				'<div class="noselection">'+
 				'<table align="center"><tr>'+

@@ -4,6 +4,8 @@ By default, RompЯ uses SQLite for its database. This option requires no setup a
 
 If you would like to use a MySQL server instead - perhaps because you're already running one - then you can do so.
 
+Note that *unless you have a really good reason to use MySQL, SQLite is always better*. MySQL will not give superior performance unless you have a collection of over 100,000 tracks and even then it's marginal. Also MySQL does not, by default, support the full UTF8 character set and this may cause problems including being simply unable to add some tracks into your collection. Unless you really really know what you're doing, use SQLite, it's just better.
+
 ## Install MySQL
 
     sudo apt-get install mysql
@@ -15,7 +17,7 @@ You must create the RompЯ database before you start. You will need your mysql r
 *If you are using MySQL older than version 8*
 
     mysql -uroot -p
-    CREATE DATABASE romprdb CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+    CREATE DATABASE romprdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
     USE romprdb;
     GRANT ALL ON romprdb.* TO rompr@localhost IDENTIFIED BY 'romprdbpass';
     FLUSH PRIVILEGES;
@@ -24,14 +26,14 @@ You must create the RompЯ database before you start. You will need your mysql r
 *If you are using MYSQL version 8 or later*
 
     mysql -uroot -p
-    CREATE DATABASE romprdb CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+    CREATE DATABASE romprdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
     USE romprdb;
     CREATE USER 'rompr'@'%' IDENTIFIED WITH mysql_native_password BY 'romprdbpass';    
     GRANT ALL ON romprdb.* TO rompr;
     FLUSH PRIVILEGES;
     quit;
 
-**On Raspberry Pi** with Raspbian you need to use
+**On Raspberry Pi** with Raspbian, or any other distro that doesn't permit root logins you need to use
 
     sudo mysql -uroot -p
 

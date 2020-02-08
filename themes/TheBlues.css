@@ -1,6 +1,15 @@
 html, body.phone .dropmenu {
-    color:#000000;
+    color:#eeeeee;
     background-color:#171760;
+    /*Required to work around apparent Firefox/Safari dropdown menu redraw bug*/
+    background-image: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0));
+    background-size:cover;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+}
+
+.backmenu {
+    background-color: #171760 !important;
 }
 
 body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input
@@ -33,13 +42,13 @@ input
     color:#222222;
 }
 
-button, .filebutton
+button, div.filebutton
 {
     color:#000000;
     border: 1px solid #000000;
 }
 
-button:hover, .filebutton:hover
+button:hover, div.filebutton:hover
 {
     color:#ff4800;
     border:1px solid #ff4800;

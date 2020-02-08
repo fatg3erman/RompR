@@ -13,7 +13,6 @@ var alarmclock = function() {
 	var snoozing = false;
 	var alarminprogress = false;
 	var topofwindow = null;
-	var waitingforwake = false;
 	var autostoptimer;
 	var autosavetimer;
 
@@ -97,7 +96,7 @@ var alarmclock = function() {
 	}
 
 	function createAlarmDropdown(holder, alarm, index) {
-		var container = $('<div>', {id: 'alarmpanel_'+index, class: 'toggledown invisible cheesemaster'}).insertAfter(holder);
+		var container = $('<div>', {id: 'alarmpanel_'+index, class: 'toggledown invisible cheesemaster alarmdropper'}).insertAfter(holder);
 
 		var twatt = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(container);
 		$('<i>', {class: "mh menu fixed icon-cancel-circled deletealarm", id: 'deletealarm_'+index}).appendTo(twatt);
@@ -153,8 +152,12 @@ var alarmclock = function() {
 
 	return {
 
-		whatAHack: function() {
-			$('#alarmpanel').fanoogleMenus();
+		toggleControls: function(element) {
+			var index = element.attr('name').substr(element.attr('name').indexOf('_')+1);
+			$('#alarmhoursup_'+index).toggle('fast');
+			$('#alarmhoursdown_'+index).toggle('fast');
+			$('#alarmminsup_'+index).toggle('fast');
+			$('#alarmminsdown_'+index).toggle('fast');
 		},
 
 		showControls: function(index) {
@@ -250,11 +253,11 @@ var alarmclock = function() {
 				prefs.alarms[incindex].alarmtime = 86400 + prefs.alarms[incindex].alarmtime;
 			}
 			update_timebox(incindex)
-	        inctimer = setTimeout(alarmclock.runIncrement, inctime);
-	        inctime -= 50;
-	        if (inctime < 50) {
-	        	inctime = 50;
-	        }
+			inctimer = setTimeout(alarmclock.runIncrement, inctime);
+			inctime -= 50;
+			if (inctime < 50) {
+				inctime = 50;
+			}
 		},
 
 		stopInc: function() {
@@ -266,7 +269,7 @@ var alarmclock = function() {
 		volRamp: function() {
 			clearTimeout(ramptimer);
 			var v = parseInt(player.status.volume) + volinc;
-			debug.trace("ALARM","Setting volume to",v,player.status.volume,volinc);
+			debug.debug("ALARM","Setting volume to",v,player.status.volume,volinc);
 			if (v >= uservol) {
 				player.controller.volume(uservol);
 			} else {
@@ -283,7 +286,7 @@ var alarmclock = function() {
 				$('#alarmon_'+currentalarm).prop('checked', false);
 			}
 			$('i.play-button').off('click', alarmclock.snooze);
-		    $('i.stop-button').off('click', alarmclock.snooze);
+			$('i.stop-button').off('click', alarmclock.snooze);
 			setPlayClicks();
 			infobar.removenotify(notification);
 			notification = null;
@@ -349,17 +352,8 @@ var alarmclock = function() {
 				debug.log("ALARM","Alarm",currentalarm,"will go off in",alarmtime,"seconds");
 				alarmtimer = setTimeout(alarmclock.Ding, alarmtime*1000);
 				$("#alarmclock_icon").removeClass("icon-alarm icon-alarm-on").addClass("icon-alarm-on");
-				if (!waitingforwake) {
-					// try to re-set the alarm if we wake from sleep
-					window.addEventListener('online', alarmclock.setAlarm);
-					waitingforwake = true;
-				}
 			} else {
 				$("#alarmclock_icon").removeClass("icon-alarm icon-alarm-on").addClass("icon-alarm");
-				if (waitingforwake) {
-					window.removeEventListener('online', alarmclock.setAlarm);
-					waitingforwake = false;
-				}
 			}
 			if (notification !== null) {
 				infobar.removenotify(notification);
@@ -395,10 +389,10 @@ var alarmclock = function() {
 			offPlayClicks();
 			clearTimeout(autostoptimer);
 			$('i.play-button').on('click', alarmclock.snooze);
-		    $('i.stop-button').on('click', alarmclock.snooze);
+			$('i.stop-button').on('click', alarmclock.snooze);
 			var alarm = prefs.alarms[currentalarm];
 			if (alarm.alarmstopafter) {
-				debug.mark('ALARMCLOCK', 'Alarm will auto-stop in',alarm.alarmstopmins,'minutes');
+				debug.info('ALARMCLOCK', 'Alarm will auto-stop in',alarm.alarmstopmins,'minutes');
 				autostoptimer = setTimeout(alarmclock.autoStop, alarm.alarmstopmins*60000);
 			}
 			if (alarm.alarmplayitem) {
@@ -427,7 +421,7 @@ var alarmclock = function() {
 		},
 
 		snooze: function() {
-			debug.log("ALARM","Snoozing");
+			debug.info("ALARM","Snoozing");
 			clearTimeout(alarmtimer);
 			clearTimeout(ramptimer);
 			$('.icon-sleep.alarmbutton').stopFlasher();
@@ -442,8 +436,8 @@ var alarmclock = function() {
 
 		dropped: function(event, element) {
 			if (event) {
-                event.stopImmediatePropagation();
-            }
+				event.stopImmediatePropagation();
+			}
 			debug.log("ALARM", "Dropped",element.attr('id'));
 			var cb = element.attr('id').split('_');
 			var index = cb[1];
@@ -454,7 +448,7 @@ var alarmclock = function() {
 			prefs.alarms[index].alarm_itemtoplay = items.html();
 			prefs.save({alarms: prefs.alarms});
 			putAlarmDropPlayItem(prefs.alarms[index], element);
-			$('#alarmpanel').fanoogleMenus();
+			// $('#alarmpanel').fanoogleMenus();
 		},
 
 		newAlarm: function() {
@@ -477,7 +471,7 @@ var alarmclock = function() {
 			prefs.save({alarms: prefs.alarms});
 			key = createAlarmHeader(key, prefs.alarms[i], i);
 			key = createAlarmDropdown(key, prefs.alarms[i], i);
-			$('#alarmpanel').fanoogleMenus();
+			// $('#alarmpanel').fanoogleMenus();
 		},
 
 		deleteAlarm: function(event, element) {
@@ -488,7 +482,7 @@ var alarmclock = function() {
 			prefs.save({alarms: prefs.alarms});
 			$('.cheesemaster').remove();
 			fillWindow();
-			$('#alarmpanel').fanoogleMenus();
+			// $('#alarmpanel').fanoogleMenus();
 			alarmclock.setAlarm();
 		},
 
@@ -498,7 +492,7 @@ var alarmclock = function() {
 				return false;
 			}
 			var holder = uiHelper.makeDropHolder('alarmpanel', d, true);
-			holder.append('<div class="textcentre configtitle"><b>'+language.gettext('button_alarm')+'</b></div>');
+			holder.append('<div class="dropdown-container configtitle"><div class="textcentre expand"><b>'+language.gettext('button_alarm')+'</b></div></div>');
 			topofwindow = $('<input>', {type: "hidden", class: "helplink", value: "https://fatg3erman.github.io/RompR/Alarm-And-Sleep"}).appendTo(holder);
 			fillWindow();
 			createNewAlarmBox(holder);
@@ -510,19 +504,18 @@ var alarmclock = function() {
 			html += '</table>';
 			holder.append(html);
 
-			menuOpeners['alarmpanel'] = alarmclock.showControls;
-			menuClosers['alarmpanel'] = alarmclock.hideControls;
-
-			$('#alarmpanel').on('click', function(event) {
+			$('#alarmpanel').on('click', async function(event) {
 				// We need to use a single click event handler for the whole panel:
 				// We must prevent propagation of clicks anywhere on the panel, otherwise it will close
-				// But we obvioously need to react to clicks on checkboxes (because we're handling those, not the generic prefs mechanism)
+				// But we obviously need to react to clicks on checkboxes (because we're handling those, not the generic prefs mechanism)
 				event.stopPropagation();
 				var element = $(event.target);
 				if (element.is('label') && element.hasClass('alarmclock')) {
 					alarmclock.checkboxClicked(event, element);
 				} else if (element.hasClass('openmenu')) {
-					doMenu(event, element);
+					alarmclock.toggleControls(element);
+					// await $.proxy(clickRegistry.doMenu, element, event).call();
+					// $('#alarmpanel').fanoogleMenus();
 				} else if (element.hasClass('createnewalarm')) {
 					alarmclock.newAlarm();
 				} else if (element.hasClass('deletealarm')) {
@@ -551,6 +544,8 @@ var alarmclock = function() {
 			$(document).on('click', '.icon-alarm-on.alarmbutton', alarmclock.disable);
 
 			alarmclock.setAlarm();
+
+			sleepHelper.addWakeHelper(alarmclock.setAlarm);
 		}
 
 	}

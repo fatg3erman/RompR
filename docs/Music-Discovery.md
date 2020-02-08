@@ -8,13 +8,13 @@ The Discoverator panel can be opened from the drop-down menu above the Info Pane
 
 ![](images/discoverator.png)
 
-The first four entries are 'Personalised Radio' stations that create dynamic playlists based on your listening habits. When you engage one of these stations the Current Playlist will populate with 5 tracks initially, adding a new one each time the first comes to the end. 'Consume' mode will be enabled to prevent your playlist from filling up. (You can always re-play tracks by using 'Recently Played Tracks')
+The first four entries are 'Personalised Radio' stations that create dynamic playlists based on your listening habits. When you engage one of these stations the Play Queue will populate with 5 tracks initially, adding a new one each time the first comes to the end. 'Consume' mode will be enabled to prevent your playlist from filling up. (You can always re-play tracks by using 'Recently Played Tracks')
 
 The Last.FM stations are my attempt to recreate the old and much missed Last.FM radio stations. If you're [logged in to Last.FM](/RompR/LastFM) these stations use your Last.FM scrobbles along with Last.FM's suggestions engine to play you a mix of things you've played before along with new music that Last.FM suggests. The suggestions come from Last.FM, the music comes from your Music Collection, Spotify, and Google Play.
 
 The Spotify stations are similar except they use your listening history from RompЯ along with Spotify's suggestions.
 
-Below the radio stations are several sections giving you suggestions of albums you might like. Again these are generated using your RompЯ listening history and Spotify's suggestions. If you open one of the album panels (using the triangle icon) then you will get a full track listing for the album and a biography of the artist. You can add any of the albums or tracks to the Current Playlist if you are using Mopidy with Spotify.
+Below the radio stations are several sections giving you suggestions of albums you might like. Again these are generated using your RompЯ listening history and Spotify's suggestions. If you open one of the album panels (using the triangle icon) then you will get a full track listing for the album and a biography of the artist. You can add any of the albums or tracks to the Play Queue if you are using Mopidy with Spotify.
 
 The 'Headphones' icon will add the album to [Albums To Listen To](/RompR/Albums-To-Listen-To), from where you can come back and listen to the album at your leisure.
 

@@ -14,7 +14,7 @@ print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 <link rel="stylesheet" type="text/css" href="skins/'.$skin.'/skin.css?version='.ROMPR_VERSION.'" />
 <link rel="shortcut icon" href="newimages/favicon.ico" />
 <link rel="stylesheet" type="text/css" href="gettheme.php" />
-<script type="text/javascript" src="jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="jquery/jquery-3.4.1.min.js"></script>
 <script type="text/javascript" src="jquery/jquery-migrate-3.0.1.js"></script>
 <script type="text/javascript" src="utils/setupbits.js"></script>
 <style>
@@ -26,8 +26,8 @@ print 'var multihosts = '.json_encode($prefs['multihosts']).";\n";
 print '</script>';
 print '</head>
 <body class="setup" style="overflow-y:scroll">
-    <div class="bordered dingleberry setupdiv">
-    <h3>';
+	<div class="bordered dingleberry setupdiv">
+	<h3>';
 print $title;
 print '</h3>';
 print '<p>'.get_int_text("setup_labeladdresses").'</p>';
@@ -38,13 +38,13 @@ print '<h3>'.get_int_text("setup_mpd").'</h3>';
 print '<p>Choose or edit a player</p>';
 $c = 0;
 foreach ($prefs['multihosts'] as $host => $def) {
-    print '<div class="styledinputs">';
-    print '<input id="host'.$c.'" type="radio" name="currenthost" value="'.$host.'" onclick="displaySettings(event)"';
-    if ($host == $prefs['currenthost']) {
-        print ' checked';
-    }
-    print '><label for="host'.$c.'">'.$host.'</label></div>';
-    $c++;
+	print '<div class="styledinputs">';
+	print '<input id="host'.$c.'" type="radio" name="currenthost" value="'.$host.'" onclick="displaySettings(event)"';
+	if ($host == $prefs['currenthost']) {
+		print ' checked';
+	}
+	print '><label for="host'.$c.'">'.$host.'</label></div>';
+	$c++;
 }
 
 print '<p>'.get_int_text("setup_ipaddress").'<br>';
@@ -60,14 +60,14 @@ print '<hr class="dingleberry" />';
 print '<h3>'.get_int_text("label_generalsettings").'</h3>';
 print '<div class="styledinputs"><input id="cli" type="checkbox" name="cleanalbumimages" ';
 if ($prefs['cleanalbumimages']) {
-    print " checked";
+	print " checked";
 }
 print '><label for="cli">Clean ununsed album art on startup</label></div>';
 print '<p class="tiny">You almost certainly want to keep this enabled</p>';
 
 print '<div class="styledinputs"><input id="dsp" type="checkbox" name="do_not_show_prefs" ';
 if ($prefs['do_not_show_prefs']) {
-    print " checked";
+	print " checked";
 }
 print '><label for="dsp">Do not show preferences panel on the interface</label></div>';
 print '<p class="tiny">This will stop people messing with your configuration, but also with theirs</p>';
@@ -85,85 +85,56 @@ print '<hr class="dingleberry" />';
 print '<h3>Collection Settings</h3>';
 print '<div class="styledinputs"><input id="dblite" type="radio" name="collection_type" value="sqlite"';
 if (array_key_exists('collection_type', $prefs) && $prefs['collection_type'] == "sqlite") {
-    print " checked";
+	print " checked";
 }
 print '><label for="dblite">Lite Database Collection</label></div>';
-print '<p class="tiny">Full featured but may be slow with a large collection</p>';
 print '<div class="styledinputs"><input id="dbsql" type="radio" name="collection_type" value="mysql"';
 if (array_key_exists('collection_type', $prefs) && $prefs['collection_type'] == "mysql") {
-    print " checked";
+	print " checked";
 }
 print '><label for="dbsql">Full Database Collection</input></label>';
-print '<p class="tiny">Fast and full featured - requires MySQL Server:</p>';
+print '<p class="tiny">Requires MySQL Server:</p>';
 print '<p>Server<br><input type="text" name="mysql_host" value="'.
-    $prefs['mysql_host'].'" /></p>'."\n";
+	$prefs['mysql_host'].'" /></p>'."\n";
 print '<p>Port or UNIX Socket<br><input type="text" name="mysql_port" value="'.
-    $prefs['mysql_port'].'" /></p>'."\n";
+	$prefs['mysql_port'].'" /></p>'."\n";
 print '<p>Database<br><input type="text" name="mysql_database" value="'.
-    $prefs['mysql_database'].'" /></p>'."\n";
+	$prefs['mysql_database'].'" /></p>'."\n";
 print '<p>Username<br><input type="text" name="mysql_user" value="'.
-    $prefs['mysql_user'].'" /></p>'."\n";
+	$prefs['mysql_user'].'" /></p>'."\n";
 print '<p>Password<br><input type="text" name="mysql_password" value="'.
-    $prefs['mysql_password'].'" /></p>'."\n";
+	$prefs['mysql_password'].'" /></p>'."\n";
 print '<hr class="dingleberry" />';
 print '<h3>Proxy Settings</h3>';
 print '<p>Proxy Server (eg 192.168.3.4:8800)<br><input type="text" name="proxy_host" value="'.
-    $prefs['proxy_host'].'" /></p>'."\n";
+	$prefs['proxy_host'].'" /></p>'."\n";
 print '<p>Proxy Username<br><input type="text" name="proxy_user" value="'.
-    $prefs['proxy_user'].'" /></p>'."\n";
+	$prefs['proxy_user'].'" /></p>'."\n";
 print '<p>Proxy Password<br><input type="text" name="proxy_password" value="'.
-    $prefs['proxy_password'].'" /></p>'."\n";
+	$prefs['proxy_password'].'" /></p>'."\n";
 print '<hr class="dingleberry" />';
 print '<h3>Debug Logging</h3>';
-print '<table width="100%"><tr>';
 
-for ($i = 0; $i<5; $i++) {
-    print '<td align="center">';
-    if ($i == 0) {
-        print 'Off';
-    } else {
-        print 'Level '.$i;
-    }
-    print '</td>';
+print '<div class="pref containerbox drodown-container">';
+print '<div class="selectholder" style="margin:auto"><select name="debug_enabled">';
+foreach(array(0,1,2,3,4,5,6,7,8) as $level) {
+	print '<option value="'.$level.'"';
+	if ($level == $prefs['debug_enabled']) {
+		print ' selected="selected"';
+	}
+	print '>Level '.$level.' ('.trim(logger::getLevelName($level)).')</option>';
 }
-print '</tr><tr>';
-for ($i = 0; $i<5; $i++) {
-    print '<td align="center" class="styledinputs"><input id="debug'.$i.'" type="radio" name="debug_enabled" value="'.$i.'"';
-    if ($prefs['debug_enabled'] == $i) {
-        print " checked";
-    }
-    print '>';
-    print '<label for="debug'.$i.'" style="display:inline"></label>';
-}
-print '</tr><tr>';
-for ($i = 5; $i<10; $i++) {
-    print '<td align="center">';
-    if ($i == 0) {
-        print 'Off';
-    } else {
-        print 'Level '.$i;
-    }
-    print '</td>';
-}
-print '</tr><tr>';
-for ($i = 5; $i<10; $i++) {
-    print '<td align="center" class="styledinputs"><input id="debug'.$i.'" type="radio" name="debug_enabled" value="'.$i.'"';
-    if ($prefs['debug_enabled'] == $i) {
-        print " checked";
-    }
-    print '>';
-    print '<label for="debug'.$i.'" style="display:inline"></label>';
-}
-print '</tr></table>';
+print '</select></div></div>';
+
 print '<p>Custom Log File</p>';
 print '<p class=tiny>Rompr debug output will be sent to this file, but PHP error messages will
  still go to the web server error log. The web server needs write access to this file, it must
  already exist, and you should ensure it gets rotated as it will get large</p>';
 print '<p><input type="text" style="width:90%" name="custom_logfile" value="'.
-    $prefs['custom_logfile'].'" /></p>';
+	$prefs['custom_logfile'].'" /></p>';
 print '<p><button style="width:50%" type="submit">OK</button></p>';
 print'    </form>
-    </div>
+	</div>
 </body>
 </html>';
 print "\n";

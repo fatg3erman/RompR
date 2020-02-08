@@ -6,16 +6,16 @@ var wishlistViewer = function() {
 	var reqid = 0;
 
 	function removeTrackFromWl(element, command) {
-	    debug.log("DB_TRACKS","Remove track from database",element.next().val());
+		debug.log("DB_TRACKS","Remove track from database",element.next().val());
 		var trackDiv = element.parent().parent();
-	    metaHandlers.genericAction(
+		metaHandlers.genericAction(
 			[{action: command, wltrack: element.next().val()}],
-	       	collectionHelper.updateCollectionDisplay,
-	        function() {
-	            debug.log("DB TRACKS", "Failed to remove track");
-	            infobar.error(language.gettext('label_general_error'));
-	        }
-	    );
+			collectionHelper.updateCollectionDisplay,
+			function(data) {
+				debug.error("DB TRACKS", "Failed to remove track",data);
+				infobar.error(language.gettext('label_general_error'));
+			}
+		);
 		trackDiv.fadeOut('fast');
 	}
 
@@ -23,11 +23,11 @@ var wishlistViewer = function() {
 		metaHandlers.genericAction(
 			'clearwishlist',
 			function(rdata) {
-				debug.log("DB TRACKS","Wishlist Cleared");
+				debug.mark("DB TRACKS","Wishlist Cleared");
 				loadWishlist(false);
 			},
-			function() {
-				debug.log("DB TRACKS","Failed to clear wishlist for some reason");
+			function(data) {
+				debug.error("DB TRACKS","Failed to clear wishlist for some reason",data);
 				infobar.error(language.gettext('label_general_error'));
 			}
 		);
@@ -78,7 +78,7 @@ var wishlistViewer = function() {
 		}
 		var tag = element.parent().find('.tracktags').first();
 		if (tag.length > 0) {
-			debug.mark("WISHLIST","Setting Tags Attribute");
+			debug.info("WISHLIST","Setting Tags Attribute");
 			databits[reqid].attributes.push({attribute: 'Tags', value: tag.text().split(", ")});
 		}
 		trawler.findThisOne(databits[reqid].data[databits[reqid].index], wishlistViewer.updateDatabase);
@@ -88,24 +88,24 @@ var wishlistViewer = function() {
 		data.action = 'add';
 		data.attributes = parentdata.attributes;
 		dbQueue.request([data], collectionHelper.updateCollectionDisplay,
-            function(rdata) {
-	            infobar.error(language.gettext('label_general_error'));
-	            debug.warn("WISHLIST","Failure");
-            }
+			function(rdata) {
+				infobar.error(language.gettext('label_general_error'));
+				debug.warn("WISHLIST","Failure",rdata);
+			}
 		);
 	}
 
 	function loadWishlist(display) {
-        $("#wishlistlist").load("plugins/code/getwishlist.php?sortby="+prefs.sortwishlistby, function() {
+		$("#wishlistlist").load("plugins/code/getwishlist.php?sortby="+prefs.sortwishlistby, function() {
 			$('[name="sortwishlistby"][value="'+prefs.sortwishlistby+'"]').prop('checked', true);
 			$('[name="sortwishlistby"]').on('click', reloadWishlist);
 			infobar.markCurrentTrack();
-            if (display && !wlv.is(':visible')) {
-	            wlv.slideToggle('fast', function() {
-		        	browser.goToPlugin("wlv");
-	            });
-	        }
-        });
+			if (display && !wlv.is(':visible')) {
+				wlv.slideToggle('fast', function() {
+					browser.goToPlugin("wlv");
+				});
+			}
+		});
 	}
 
 	function reloadWishlist() {
@@ -131,13 +131,13 @@ var wishlistViewer = function() {
 
 		open: function() {
 
-        	if (wlv == null) {
-	        	wlv = browser.registerExtraPlugin("wlv", language.gettext("label_wishlist"), wishlistViewer, 'https://fatg3erman.github.io/RompR/The-Wishlist');
-	            $("#wlvfoldup").append('<div id="wishlistlist"></div>');
-	            loadWishlist(true);
-	        } else {
-	        	browser.goToPlugin("wlv");
-	        }
+			if (wlv == null) {
+				wlv = browser.registerExtraPlugin("wlv", language.gettext("label_wishlist"), wishlistViewer, 'https://fatg3erman.github.io/RompR/The-Wishlist');
+				$("#wlvfoldup").append('<div id="wishlistlist"></div>');
+				loadWishlist(true);
+			} else {
+				browser.goToPlugin("wlv");
+			}
 
 		},
 

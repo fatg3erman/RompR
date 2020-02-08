@@ -10,10 +10,14 @@ html, body.phone .dropmenu {
   background-image: -moz-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-image: -ms-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-image: -o-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
+  background-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-repeat: no-repeat, repeat;
   background-attachment: fixed;
   min-height: 100%;
+}
+
+.backmenu {
+    background-color: rgba(0,0,0,0.6);
 }
 
 body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,textarea,input
@@ -21,17 +25,15 @@ body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,textarea,input
     color:#dddddd;
 }
 
-button, .filebutton
+button, div.filebutton
 {
     background-color:#202020;
     border:1px solid #dedede;
-    /* background-image:none !important; */
     color:#dddddd;
     font-weight:bold;
-    font-size:110%;
 }
 
-button:hover, .filebutton:hover
+button:hover, div.filebutton:hover
 {
     color:#ff4800;
     text-shadow: 0 0 15px #ff4800;
@@ -203,6 +205,19 @@ a:hover,a:active
     cursor:pointer;
 }
 
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color:#dddddd;
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    background-color:#454545;
+}
+
 .tagholder table tr th
 {
     border-bottom:1px solid #cccccc;
@@ -358,7 +373,7 @@ div.topdropmenu
   background-image: -moz-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-image: -ms-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-image: -o-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
+  background-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-repeat: no-repeat, repeat;
   background-attachment: fixed;
 }
@@ -371,7 +386,7 @@ div.topdropmenu
   background-image: -moz-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-image: -ms-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-image: -o-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
+  background-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
   background-repeat: no-repeat, repeat;
   background-attachment: fixed;
 }

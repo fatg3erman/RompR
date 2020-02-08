@@ -19,9 +19,9 @@ var charts = function() {
 		for (var i in data) {
 			if (data[i].uri) {
 				if (prefs.player_backend == "mpd" && data[i].uri.match(/soundcloud:/)) {
-					html += '<tr class="chart draggable clickcue playable backhi" name="'+encodeURIComponent(data[i].uri)+'">';
+					html += '<tr class="chart draggable clickcue playable backhi" name="'+rawurlncode(data[i].uri)+'">';
 				} else {
-					html += '<tr class="chart draggable clicktrack playable backhi" name="'+encodeURIComponent(data[i].uri)+'">';
+					html += '<tr class="chart draggable clicktrack playable backhi" name="'+rawurlencode(data[i].uri)+'">';
 				}
 			} else {
 				html += '<tr class="chart">';
@@ -52,37 +52,36 @@ var charts = function() {
 
 		open: function() {
 
-        	if (cha == null) {
-	        	cha = browser.registerExtraPlugin("cha", language.gettext("label_charts"), charts);
-			    $("#chafoldup").append('<div class="noselection fullwidth masonified" id="chamunger"></div>');
-	        	getCharts(charts.firstLoad, charts.firstLoadFail);
-	        } else {
-	        	browser.goToPlugin("cha");
-	        }
+			if (cha == null) {
+				cha = browser.registerExtraPlugin("cha", language.gettext("label_charts"), charts);
+				$("#chafoldup").append('<div class="noselection fullwidth masonified" id="chamunger"></div>');
+				getCharts(charts.firstLoad, charts.firstLoadFail);
+			} else {
+				browser.goToPlugin("cha");
+			}
 
 		},
 
 		firstLoad: function(data) {
 			setDraggable('#chafoldup');
-    		charts.doMainLayout(data);
+			charts.doMainLayout(data);
 		},
 
 		firstLoadFail: function(data) {
-    		infobar.error(language.gettext('label_general_error'));
-    		cha.slideToggle('fast');
-        },
+			infobar.error(language.gettext('label_general_error'));
+			cha.slideToggle('fast');
+		},
 
 		doMainLayout: function(data) {
-			debug.log("CHARTS","Got data",data);
+			debug.debug("CHARTS","Got data",data);
 			for (var i in data) {
-				debug.log("CHARTS",i);
 				holders[i] = $('<div>', {class: 'tagholder selecotron noselection', id: 'chaman_'+i}).appendTo($("#chamunger"));
 				putItems(holders[i], data[i], i);
 			}
-            cha.slideToggle('fast', function() {
-	        	browser.goToPlugin("cha");
-	            browser.rePoint($("#chamunger"), {itemSelector: '.tagholder', percentPosition: true});
-            });
+			cha.slideToggle('fast', function() {
+				browser.goToPlugin("cha");
+				browser.rePoint($("#chamunger"), {itemSelector: '.tagholder', percentPosition: true});
+			});
 		},
 
 		close: function() {

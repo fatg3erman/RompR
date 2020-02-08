@@ -168,10 +168,10 @@ Now find and modify (or add in if they're not there) the following parameters. C
     memory_limit = 128M
     max_execution_time = 1800
     post_max_size = 256M
-    upload_max_filesize = 8M
-    max_file_uploads = 50
+    upload_max_filesize = 10M
+    max_file_uploads = 200
 
-Note that the last three settings are only really needed for supporting uploading large numbers of [Custom Background Images](/RompR/Theming), but adding them in doesn't do any harm.
+(The last 3 entries are really only used when uploading [Custom Background Images](/RompR/Theming). They set, respectively, the maximum size of an individual file (in megabytes), the maximum number of files you can upload in one go, and the maximum total size (megabytes) you can upload in one go. The values above are just examples - but note that post_max_size has an equivalent called 'client_max_body_size' in the nginx config file and it's sensible to keep them the same).
 
 ### That's all the configuring. Let's get everything running
 

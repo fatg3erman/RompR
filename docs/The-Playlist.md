@@ -1,10 +1,10 @@
-# The Current Playlist
+# The Play Queue
 
-This might be better termed the 'Play Queue', but mpd uses the term Playlist, or 'Current Playlist'. This panel appears on the right-hand-side of the window in the default Desktop skin. It shows tracks that are currently playing and tracks queued to play next, in the order in which they will play.
+This panel appears on the right-hand-side of the window in the default Desktop skin. It shows tracks that are currently playing and tracks queued to play next, in the order in which they will play.
 
 ![](images/playlist.png)
 
-To add a track or album (or all tracks by an artist) to the end of the Playlist, double-click it in the collection (single-click on the Phone skin).
+To add a track or album (or all tracks by an artist) to the end of the Play Queue, double-click it in the collection (single-click on the Phone skin).
 
 On the Desktop skins you can also drag tracks to any position in the playlist. You can re-order tracks or albums by dragging them within the playlist, and remove them by clickng the x.
 
@@ -14,7 +14,7 @@ On the Tablet skin you can re-order tracks by using the re-order buttons as desc
 
 To clear the entire playlist use the wastebasket icon at the top right.
 
-Mopidy users can add tracks to the Playlist from many other sources too - the [Discoverator](/RompR/Music-Discovery) panel and the [Spotify Info](/RompR/The-Info-Panel) panel.
+Mopidy users can add tracks to the Play Queue from many other sources too - the [Discoverator](/RompR/Music-Discovery) panel and the [Spotify Info](/RompR/The-Info-Panel) panel.
 
 The 'Musical Notes' icon will appear next to Spotify albums. Clicking this will add the entire album to your collection.
 
@@ -34,4 +34,4 @@ The 'Musical Notes' icon will appear next to Spotify albums. Clicking this will 
 
 ## Non-Queueing Mode
 
-Although the default option (and the way mpd works) is to add tracks to the Playlist when you click them, you can also enable a more 'Media Centre-like' mode. In the Configuration panel is an option for 'CD Player Mode'. When this is enabled, when you double-click a track it will play immediately, removing any existing tracks from the Current Playlist. The album the track is from will be played from that track to the end.
+Although the default option (and the way mpd works) is to add tracks to the Play Queue when you click them, you can also enable a more 'Media Centre-like' mode. In the Configuration panel is an option for 'CD Player Mode'. When this is enabled, when you double-click a track it will play immediately, removing any existing tracks from the Play Queue. The album the track is from will be played from that track to the end. In this mode you can add tracks to the end of the Play Queue by using the dropdown menu next to the tracks.

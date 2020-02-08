@@ -1,30 +1,13 @@
 var lastFMArtistRadio = function() {
 
-	var populating = false;
-	var tuner;
-	var fartists;
-	var currpage = 1;
-	var totalpages = 1;
-	var started;
-	var minplays;
+	var medebug = 'LFM ARTIST RADIO';
 	var param = null;
-
-	function getNextSimilars() {
-		var art = fartists.shift();
-		if (art) {
-			lastfm.artist.getSimilar(
-				{artist: art},
-				lastFMArtistRadio.gotASimilar,
-				lastFMArtistRadio.gotNoSimilar
-			);
-		}
-	}
+	var minplays;
+	var tuner;
+	var artistcount = 0;
 
 	function getTopArtists(page) {
-		var period = null;
-		period = param;
-		debug.log("LASTFM MIX RADIO","Using parameter for period",period);
-		switch (period) {
+		switch (param) {
 			case 'overall':
 				minplays = 7;
 				break
@@ -51,7 +34,7 @@ var lastFMArtistRadio = function() {
 
 		}
 		lastfm.user.getTopArtists(
-			{period: period,
+			{period: param,
 			page: page},
 			lastFMArtistRadio.gotTopArtists,
 			lastFMArtistRadio.lfmerror
@@ -60,109 +43,89 @@ var lastFMArtistRadio = function() {
 
 	return {
 
-		populate: function(p, numtracks) {
-			if (!populating) {
-				param = p;
-				if (typeof(searchRadio) == 'undefined') {
-					debug.log("LASTFM MIX RADIO","Loading Search Radio Tuner");
-					$.getScript('radios/code/searchRadio.js?version='+rompr_version,function() {
-						lastFMArtistRadio.actuallyGo(numtracks);
-					});
-				} else {
-					lastFMArtistRadio.actuallyGo(numtracks);
+		initialise: async function(p) {
+			if (typeof(searchRadio) == 'undefined') {
+				debug.info(medebug,"Loading Search Radio Tuner");
+				try {
+					await $.getScript('radios/code/searchRadio.js?version='+rompr_version);
+				} catch(err) {
+					debug.error(medebug,'Failed to load script',err);
+					return false;
 				}
-			} else {
-				debug.log("LASTFM MIX RADIO","RePopulating",numtracks);
-				tuner.sending += (numtracks - tuner.sending);
-				tuner.startSending();
 			}
-		},
-
-		actuallyGo: function(numtracks) {
-			debug.log("LASTFM MIX RADIO","And we're off");
 			tuner = new searchRadio();
-			tuner.sending = numtracks;
-			tuner.running = true;
-			tuner.artistindex = 0;
-			fartists = new Array();
-			populating = true;
-			started = false;
+			param = p;
 			getTopArtists(1);
 		},
 
+		getURIs: async function(numtracks) {
+			while (artistcount === 0) {
+				await new Promise(t => setTimeout(t, 500));
+			}
+			if (artistcount === false) {
+				return false;
+			}
+			var t = await tuner.getTracks(numtracks);
+			return t;
+		},
+
 		lfmerror: function(data) {
-			debug.warn("LASTFM MIX RADIO","Last.FM Error",data);
-			if (currpage < totalpages) {
-				getTopArtists(currpage+1);
+			debug.warn(medebug,"Last.FM Error",data);
+			if (artistcount == 0) {
+				artistcount = false;
 			}
 		},
 
-		modeHtml: function(p) {
-			return '<i class="icon-lastfm-1 modeimg"/></i><span class="modespan">'+language.gettext('label_lastfm_dip_'+p)+'</span>';
+		modeHtml: function() {
+			return '<i class="icon-lastfm-1 modeimg"/></i><span class="modespan">'+language.gettext('label_lastfm_dip_'+param)+'</span>';
 		},
 
 		stop: function() {
-			populating = false;
 			param = null;
-			if (tuner) {
-				tuner.sending = 0;
-				tuner = null;
-			}
+			tuner = null;
 		},
 
 		gotTopArtists: function(data) {
-			if (data.topartists.artist) {
-				if (tuner) {
-					currpage = parseInt(data.topartists['@attr'].page);
-					totalpages = parseInt(data.topartists['@attr'].totalPages);
-					debug.mark("LASTFM MIX RADIO","Got Page",currpage,"Of",totalpages,"Of Top Artists");
-					for (var i in data.topartists.artist) {
-						if (data.topartists.artist[i].playcount >= minplays) {
-							fartists.push(data.topartists.artist[i].name);
-							tuner.newArtist(data.topartists.artist[i].name);
-						} else {
-							debug.mark("LASTFM MIX RADIO","Ignoring Artist",data.topartists.artist[i].name,"because it only has",data.topartists.artist[i].playcount,"plays");
-						}
-					}
-					if (populating) {
-						if (currpage < totalpages) {
-							getTopArtists(currpage+1);
-						}
-						if (!started) {
-							started = true;
-							tuner.startSending();
-							getNextSimilars();
-						}
+			if (data.topartists.artist && tuner.hasSpace()) {
+				currpage = parseInt(data.topartists['@attr'].page);
+				totalpages = parseInt(data.topartists['@attr'].totalPages);
+				debug.log(medebug,"Got Page",currpage,"Of",totalpages,"Of Top Artists");
+				for (let artist of data.topartists.artist) {
+					if (artist.playcount >= minplays) {
+						artistcount++;
+						tuner.newArtist(artist.name);
+						lastfm.artist.getSimilar(
+							{artist: artist.name},
+							lastFMArtistRadio.gotASimilar,
+							lastFMArtistRadio.gotNoSimilar
+						);
+					} else {
+						debug.trace(medebug, 'Ignoring artist',artist.name,'as playcount of',artist.playcount,'is less than',minplays);
 					}
 				}
-			} else {
-				if (currpage == 1) {
-					infobar.error(language.gettext('lastfm_error'));
-					playlist.radioManager.stop(null);
+				if (currpage < totalpages) {
+					getTopArtists(currpage+1);
 				}
+				return;
+			}
+			if (artistcount == 0) {
+				artistcount = false;
 			}
 		},
 
 		gotASimilar: function(data) {
-			if (tuner) {
-				if (data.similarartists) {
-					debug.mark("LASTFM MIX RADIO","Got Similar Artists For",data.similarartists['@attr'].artist);
-					if (data.similarartists.artist) {
-						for (var i in data.similarartists.artist) {
-							tuner.newArtist(data.similarartists.artist[i].name);
-						}
+			if (data.similarartists) {
+				debug.log(medebug,"Got Similar Artists For",data.similarartists['@attr'].artist);
+				if (data.similarartists.artist) {
+					for (var artist of data.similarartists.artist) {
+						tuner.newArtist(artist.name);
 					}
-				}
-				if (populating) {
-					getNextSimilars();
 				}
 			}
 		},
 
 		gotNoSimilar: function() {
-			if (populating) {
-				getNextSimilars();
-			}
+
 		}
 
 	}

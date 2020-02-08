@@ -6,6 +6,11 @@
 
 html, body.phone .dropmenu {
     background-color:#e8ebf0;
+    /*Required to work around apparent Firefox/Safari dropdown menu redraw bug*/
+    background-image: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0));
+    background-size:cover;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
 }
 
 body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,textarea,input {
@@ -38,13 +43,13 @@ a:hover,a:active {
     color:#ff4800;
 }
 
-button, input[type="button"], .filebutton {
+button, input[type="button"], div.filebutton {
     background-image: linear-gradient(#ccdcf2, #c0d0e7);
     color:#000000;
     border:1px solid #adadad;
 }
 
-button:hover, input[type="button"]:hover, .filebutton:hover {
+button:hover, input[type="button"]:hover, div.filebutton:hover {
     color:#3875d7;
     border:1px solid #ccdcf2;
     text-shadow: 0 0 15px #3875d7;
@@ -187,6 +192,19 @@ table.histable tr:hover {
     cursor:pointer;
 }
 
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color:#000000;
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    background-color:#ccdcf2;
+}
+
 tr.clickaddtrack:hover {
     background-color:#e1e4ea;
 }
@@ -210,7 +228,7 @@ tr.clickaddtrack:hover {
 }
 
 .dropshadow {
-    box-shadow:         7px 7px 5px rgba(50, 50, 50, 0.6);
+    box-shadow: 7px 7px 5px rgba(50, 50, 50, 0.6);
 }
 
 .progressbar {
@@ -225,13 +243,17 @@ tr.clickaddtrack:hover {
     background:rgba(0,0,0,0.75) !important;
 }
 
+.backmenu {
+    background-color: #e8ebf0;
+}
+
 /*
 =====================================================================
 = Dropdown Menus
 =====================================================================
 */
 
-div.topdropmenu
+div.topdropmenu, div.albumbitsmenu
 {
     background-image: linear-gradient(#E5E5E5, #b3b3b3);
     border-left:1px solid #eeeeee;
@@ -241,7 +263,7 @@ div.topdropmenu
 
 .configtitle
 {
-    background-image: linear-gradient(#E5E5E5, #b3b3b3);
+    /*background-image: linear-gradient(#E5E5E5, #b3b3b3);*/
 }
 
 /*
@@ -252,7 +274,7 @@ div.topdropmenu
 
 .infosection {
     background-image: linear-gradient(#E5E5E5, #b3b3b3);
-/}
+}
 
 .infowiki {
     background-color:#ffffff;

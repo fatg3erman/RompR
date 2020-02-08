@@ -10,7 +10,7 @@ var info_videos = function() {
 
 		collection: function(parent, artistmeta, albummeta, trackmeta) {
 
-			debug.trace("VIDEOS PLUGIN", "Creating data collection");
+			debug.debug("VIDEOS PLUGIN", "Creating data collection");
 
 			var self = this;
 			var displaying = false;
@@ -18,7 +18,7 @@ var info_videos = function() {
 			var retrytimer;
 
 			function mungeDiscogsData(videos) {
-				debug.trace("VIDEOS PLUGIN","Doing Videos From Discogs Data",videos);
+				debug.debug("VIDEOS PLUGIN","Doing Videos From Discogs Data",videos);
 				for (var i in videos) {
 					var u = videos[i].uri;
 					if (videos[i].embed == true && u.match(/youtube\.com/)) {
@@ -69,14 +69,14 @@ var info_videos = function() {
 				displaying = true;
 				self.track.doBrowserUpdate();
 				browser.Update(null, 'album', me, parent.nowplayingindex, { name: "",
-                    					link: "",
-                    					data: null
-                						}
+										link: "",
+										data: null
+										}
 				);
-                browser.Update(null, 'artist', me, parent.nowplayingindex, { name: "",
-                    					link: "",
-                    					data: null
-                						}
+				browser.Update(null, 'artist', me, parent.nowplayingindex, { name: "",
+										link: "",
+										data: null
+										}
 				);
 			}
 
@@ -88,30 +88,30 @@ var info_videos = function() {
 			this.track = function() {
 				return {
 					populate: function() {
-						debug.trace('VIDEOS','album master', albummeta.discogs.album.master);
-						debug.trace('VIDEOS','track master', trackmeta.discogs.track.master);
-						debug.trace('VIDEOS','album error', albummeta.discogs.album.error);
-						debug.trace('VIDEOS','track error', trackmeta.discogs.track.error);
+						debug.debug('VIDEOS','album master', albummeta.discogs.album.master);
+						debug.debug('VIDEOS','track master', trackmeta.discogs.track.master);
+						debug.debug('VIDEOS','album error', albummeta.discogs.album.error);
+						debug.debug('VIDEOS','track error', trackmeta.discogs.track.error);
 						if ((trackmeta.discogs.track.master && albummeta.discogs.album.master) ||
 							(trackmeta.discogs.track.master && albummeta.discogs.album.error)  ||
 							(trackmeta.discogs.track.error  && albummeta.discogs.album.master) ||
 							(trackmeta.discogs.track.error  && albummeta.discogs.album.error)) {
 							self.track.doBrowserUpdate();
 						} else {
-							debug.trace("VIDEOS PLUGIN",parent.nowplayingindex,"No data yet, trying again in 1 second");
+							debug.debug("VIDEOS PLUGIN",parent.nowplayingindex,"No data yet, trying again in 1 second");
 							retrytimer = setTimeout(self.track.populate, 2000);
 						}
-				    },
+					},
 
 					doBrowserUpdate: function() {
 						if (displaying && albummeta.discogs.album !== undefined && trackmeta.discogs.track !== undefined &&
 								(albummeta.discogs.album.error !== undefined ||	albummeta.discogs.album.master !== undefined) &&
 								(trackmeta.discogs.track.error !== undefined ||	trackmeta.discogs.track.master !== undefined)) {
-							debug.mark("VIDEOS PLUGIN",parent.nowplayingindex,"track was asked to display");
-			                browser.Update(null, 'track', me, parent.nowplayingindex, { name: artistmeta.name+' / '+trackmeta.name,
-			                    					link: "",
-			                    					data: getVideosHtml()
-			                						}
+							debug.debug("VIDEOS PLUGIN",parent.nowplayingindex,"track was asked to display");
+							browser.Update(null, 'track', me, parent.nowplayingindex, { name: artistmeta.name+' / '+trackmeta.name,
+													link: "",
+													data: getVideosHtml()
+													}
 							);
 						}
 					}

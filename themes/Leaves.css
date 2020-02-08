@@ -7,6 +7,9 @@
 html, body.phone .dropmenu {
     color:#eeeeee;
     background-image:url('themes/leaftile.jpg');
+    background-size:auto;
+    background-repeat:repeat;
+    background-attachment:fixed;
 }
 
 a:link
@@ -24,7 +27,7 @@ a:hover,a:active
     color:#ff4800;
 }
 
-button, .filebutton
+button, div.filebutton
 {
     color:#eeeeee;
     background-image:url('themes/veins.jpg');
@@ -32,12 +35,12 @@ button, .filebutton
     box-shadow: 0px 0px 20px rgba(150, 250, 50, 0.4);
 }
 
-button:active, .filebutton:active
+button:active, div.filebutton:active
 {
     box-shadow:none;
 }
 
-button:hover, .filebutton:hover
+button:hover, div.filebutton:hover
 {
     color:#ff4800;
     box-shadow: 0px 0px 20px rgba(150, 250, 50, 1);
@@ -157,6 +160,19 @@ table.histable tr:hover {
 .backhi:hover {
     background-color:#CC5500;
     cursor:pointer;
+}
+
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color:#eeeeee;
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    background-color:#CC5500;
 }
 
 tr.clickaddtrack:hover

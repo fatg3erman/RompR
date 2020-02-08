@@ -1,28 +1,48 @@
 
 jQuery.fn.animatePanel = function(options) {
-    var settings = $.extend({},options);
-    var panel = this.attr("id");
-    var opanel = panel;
-    panel = panel.replace(/controls/,'');
-    if (settings[panel] > 0 && this.is(':hidden')) {
-        this.show();
-    }
-    this.animate({width: settings[panel]+"%"},
-        {
-            duration: settings.speed[panel],
-            always: function() {
-                if (settings[panel] == 0) {
-                    $(this).hide();
-                } else {
-                    if (opanel == "infopane") browser.rePoint();
-                    if (opanel.match(/controls/)) {
-                        var i = (prefs.sourceshidden) ? "icon-angle-double-right" : "icon-angle-double-left";
-                        $("#expandleft").removeClass("icon-angle-double-right icon-angle-double-left").addClass(i);
-                    }
-                }
-            }
-        }
-    );
+	var settings = $.extend({},options);
+	var panel = this.attr("id");
+	var opanel = panel;
+	panel = panel.replace(/controls/,'');
+	if (settings[panel] > 0 && this.is(':hidden')) {
+		this.show();
+	}
+	this.animate({width: settings[panel]+"%"},
+		{
+			duration: settings.speed[panel],
+			always: function() {
+				if (settings[panel] == 0) {
+					$(this).hide();
+				} else {
+					if (opanel == "infopane") browser.rePoint();
+					if (opanel.match(/controls/)) {
+						var i = (prefs.sourceshidden) ? "icon-angle-double-right" : "icon-angle-double-left";
+						$("#expandleft").removeClass("icon-angle-double-right icon-angle-double-left").addClass(i);
+					}
+				}
+			}
+		}
+	);
+}
+
+jQuery.fn.menuReveal = async function() {
+	return this.each(function() {
+		var self = $(this);
+		var id = self.prop('id');
+		var element = $('i[name="'+id+'"]');
+		layoutProcessor.postAlbumMenu(element, self);
+		await self.slideToggle('fast').promise();
+	});
+}
+
+jQuery.fn.menuHide = async function() {
+	return this.each(function() {
+		var self = $(this);
+		var id = self.prop('id');
+		var element = $('i[name="'+id+'"]');
+		layoutProcessor.postAlbumMenu(element, self);
+		await self.slideToggle('fast').promise();
+	});
 }
 
 function showHistory() {
@@ -31,398 +51,331 @@ function showHistory() {
 
 var layoutProcessor = function() {
 
-    function showPanel(source) {
-        $('#'+source).fadeIn('fast');
-    }
+	function showPanel(source) {
+		$('#'+source).fadeIn('fast');
+	}
 
-    function flashTrack(uri, album) {
-        infobar.markCurrentTrack();
-        var thing = uri ?  uri : album;
-        $('[name="'+thing+'"]').makeFlasher({flashtime: 0.5, repeats: 5});
-        // The timeout is so that markCurrentTrack doesn't fuck it up - these often
-        // have CSS transitions that affect the scrollbar size
-        setTimeout(function() {
-            layoutProcessor.scrollCollectionTo($('[name="'+thing+'"]'));
-        }, 1000);
-    }
+	function setBottomPanelWidths() {
+		var widths = getPanelWidths();
+		$("#sources").css("width", widths.sources+"%");
+		$("#sourcescontrols").css("width", widths.sources+"%");
+		$("#infopane").css("width", widths.infopane+"%");
+		$("#infopanecontrols").css("width", widths.infopane+"%");
+	}
 
-    function setBottomPanelWidths() {
-        var widths = getPanelWidths();
-        $("#sources").css("width", widths.sources+"%");
-        $("#sourcescontrols").css("width", widths.sources+"%");
-        $("#infopane").css("width", widths.infopane+"%");
-        $("#infopanecontrols").css("width", widths.infopane+"%");
-    }
+	function getPanelWidths() {
+		var sourcesweight = (prefs.sourceshidden) ? 0 : 1;
+		var browserweight = (prefs.hidebrowser) ? 0 : 1;
+		var sourceswidth = prefs.sourceswidthpercent*sourcesweight;
+		var browserwidth = (100 - sourceswidth)*browserweight;
+		if (browserwidth < 0) browserwidth = 0;
+		return ({infopane: browserwidth, sources: sourceswidth});
+	}
 
-    function getPanelWidths() {
-        var sourcesweight = (prefs.sourceshidden) ? 0 : 1;
-        var browserweight = (prefs.hidebrowser) ? 0 : 1;
-        var sourceswidth = prefs.sourceswidthpercent*sourcesweight;
-        var browserwidth = (100 - sourceswidth)*browserweight;
-        if (browserwidth < 0) browserwidth = 0;
-        return ({infopane: browserwidth, sources: sourceswidth});
-    }
+	function animatePanels() {
+		var widths = getPanelWidths();
+		widths.speed = { sources: 400, infopane: 400 };
+		$("#sources").animatePanel(widths);
+		$("#sourcescontrols").animatePanel(widths);
+		$("#infopane").animatePanel(widths);
+		$("#infopanecontrols").animatePanel(widths);
+	}
 
-    function animatePanels() {
-        var widths = getPanelWidths();
-        widths.speed = { sources: 400, infopane: 400 };
-        $("#sources").animatePanel(widths);
-        $("#sourcescontrols").animatePanel(widths);
-        $("#infopane").animatePanel(widths);
-        $("#infopanecontrols").animatePanel(widths);
-    }
+	var my_scrollers = [ "#sources", "#infopane", ".topdropmenu", ".drop-box" ];
+	var rtime = '';
+	var ptime = '';
+	var headers = Array();
+	var currheader = 0;
+	var headertimer;
 
-    var my_scrollers = [ "#sources", "#infopane", ".topdropmenu", ".drop-box" ];
-    var rtime = '';
-    var ptime = '';
-    var headers = Array();
-    var currheader = 0;
-    var headertimer;
+	return {
 
-    return {
+		supportsDragDrop: true,
+		hasCustomScrollbars: true,
+		usesKeyboard: true,
+		sortFaveRadios: true,
+		openOnImage: false,
 
-        supportsDragDrop: true,
-        hasCustomScrollbars: true,
-        usesKeyboard: true,
-        sortFaveRadios: true,
-        openOnImage: false,
+		changeCollectionSortMode: function() {
+			collectionHelper.forceCollectionReload();
+		},
 
-        changeCollectionSortMode: function() {
-            collectionHelper.forceCollectionReload();
-        },
+		afterHistory: function() {
+			setTimeout(function() { $("#infopane").mCustomScrollbar("scrollTo",0) }, 500);
+		},
 
-        postAlbumActions: function() {
+		addInfoSource: function(name, obj) {
+			$("#chooserbuttons").append($('<i>', {
+				onclick: "browser.switchsource('"+name+"')",
+				title: language.gettext(obj.text),
+				class: obj.icon+' topimg sep expand tooltip',
+				id: "button_source"+name
+			}));
+		},
 
-        },
+		setupInfoButtons: function() {
+			$("#button_source"+prefs.infosource).addClass("currentbun");
+		},
 
-        afterHistory: function() {
-            setTimeout(function() { $("#infopane").mCustomScrollbar("scrollTo",0) }, 500);
-        },
+		goToBrowserPanel: function(panel) {
+			$("#infopane").mCustomScrollbar('update');
+			$("#infopane").mCustomScrollbar("scrollTo","#"+panel+"information");
+		},
 
-        addInfoSource: function(name, obj) {
-            $("#chooserbuttons").append($('<i>', {
-                onclick: "browser.switchsource('"+name+"')",
-                title: language.gettext(obj.text),
-                class: obj.icon+' topimg sep expand tooltip',
-                id: "button_source"+name
-            }));
-        },
+		goToBrowserPlugin: function(panel) {
+			setTimeout( function() { layoutProcessor.goToBrowserPanel(panel) }, 1000);
+		},
 
-        setupInfoButtons: function() {
-            $("#button_source"+prefs.infosource).addClass("currentbun");
-        },
+		goToBrowserSection: function(section) {
+			$("#infopane").mCustomScrollbar("scrollTo",section);
+		},
 
-        goToBrowserPanel: function(panel) {
-            $("#infopane").mCustomScrollbar('update');
-            $("#infopane").mCustomScrollbar("scrollTo","#"+panel+"information");
-        },
+		notifyAddTracks: function() {
+			clearTimeout(headertimer);
+			$('#plmode').fadeOut(500, function() {
+				$('#plmode').html(language.gettext('label_addingtracks')).fadeIn(500);
+			});
+		},
 
-        goToBrowserPlugin: function(panel) {
-            setTimeout( function() { layoutProcessor.goToBrowserPanel(panel) }, 1000);
-        },
+		toggleAudioOutpts: function() {
+			prefs.save({outputsvisible: !$('#outputbox').is(':visible')});
+			$("#outputbox").animate({width: 'toggle'},'fast',function() {
+				infobar.biggerize();
+			});
+		},
 
-        goToBrowserSection: function(section) {
-            $("#infopane").mCustomScrollbar("scrollTo",section);
-        },
+		setTagAdderPosition: function(position) {
+			$("#tagadder").css({top: Math.min(position.y+8, $(window).height() - $('#tagadder').height()),
+				left: Math.min($(window).width() - $('#tagadder').width(),  position.x-16)});
+		},
 
-        notifyAddTracks: function() {
-            if (!playlist.radioManager.isRunning()) {
-                clearTimeout(headertimer);
-                $('#plmode').fadeOut(500, function() {
-                    $('#plmode').html(language.gettext('label_addingtracks')).fadeIn(500);
-                });
-            }
-        },
+		setPlaylistHeight: function() {
+			// $('#phacker').fanoogleMenus();
+		},
 
-        toggleAudioOutpts: function() {
-            prefs.save({outputsvisible: !$('#outputbox').is(':visible')});
-            $("#outputbox").animate({width: 'toggle'},'fast',function() {
-                infobar.biggerize();
-            });
-        },
+		playlistControlHotKey: function(button) {
+			if (!$("#playlistbuttons").is(':visible')) {
+				togglePlaylistButtons()
+			}
+			$("#"+button).tirgger('click');
+		},
 
-        setTagAdderPosition: function(position) {
-            $("#tagadder").css({top: Math.min(position.y+8, $(window).height() - $('#tagadder').height()),
-                left: Math.min($(window).width() - $('#tagadder').width(),  position.x-16)});
-        },
+		updateInfopaneScrollbars: function() {
+			$('#infopane').mCustomScrollbar('update');
+		},
 
-        setPlaylistHeight: function() {
-            $('#phacker').fanoogleMenus();
-        },
+		scrollPlaylistToCurrentTrack: function() {
+			if (prefs.scrolltocurrent) {
+				var scrollto = playlist.getCurrentTrackElement();;
+				if (scrollto.length > 0) {
+					debug.log("LAYOUT","Scrolling Playlist To Song:",player.status.songid);
+					$('#phacker').mCustomScrollbar("stop");
+					$('#phacker').mCustomScrollbar("update");
+					var pospixels = Math.round(scrollto.position().top - ($("#sortable").parent().parent().height()/2));
+					pospixels = Math.min($("#sortable").parent().height(), Math.max(pospixels, 0));
+					$('#phacker').mCustomScrollbar(
+						"scrollTo",
+						pospixels,
+						{ scrollInertia: 0 }
+					);
+				}
+			}
+		},
 
-        playlistControlHotKey: function(button) {
-            if (!$("#playlistbuttons").is(':visible')) {
-                togglePlaylistButtons()
-            }
-            $("#"+button).tirgger('click');
-        },
+		hideBrowser: function() {
 
-        updateInfopaneScrollbars: function() {
-            $('#infopane').mCustomScrollbar('update');
-        },
+		},
 
-        playlistLoading: function() {
-            infobar.smartradio(language.gettext('label_smartsetup'));
-        },
+		hidePanel: function(panel, is_hidden, new_state) {
+			if (is_hidden != new_state) {
+				if (new_state && prefs.chooser == panel) {
+					$("#"+panel).fadeOut('fast');
+					var s = ["albumlist", "searcher", "filelist", "radiolist", "audiobooklist", "podcastslist", "playlistslist", "pluginplaylistslist"];
+					for (var i in s) {
+						if (s[i] != panel && !prefs["hide_"+s[i]]) {
+							uiHelper.sourceControl(s[i]);
+							break;
+						}
+					}
+				}
+				if (!new_state && prefs.chooser == panel) {
+					$("#"+panel).fadeIn('fast');
+				}
+			}
+		},
 
-        scrollPlaylistToCurrentTrack: function() {
-            if (prefs.scrolltocurrent) {
-                var scrollto = playlist.getCurrentTrackElement();;
-                if (scrollto.length > 0) {
-                    debug.log("LAYOUT","Scrolling Playlist To Song:",player.status.songid);
-                    $('#phacker').mCustomScrollbar("stop");
-                    $('#phacker').mCustomScrollbar("update");
-                    var pospixels = Math.round(scrollto.position().top - ($("#sortable").parent().parent().height()/2));
-                    pospixels = Math.min($("#sortable").parent().height(), Math.max(pospixels, 0));
-                    $('#phacker').mCustomScrollbar(
-                        "scrollTo",
-                        pospixels,
-                        { scrollInertia: 0 }
-                    );
-                }
-            }
-        },
+		scrollCollectionTo: function(jq) {
+			if (jq.length > 0) {
+				$("#sources").mCustomScrollbar('update').mCustomScrollbar('scrollTo', jq,
+					{ scrollInertia: 10,
+					  scrollEasing: 'easeOut' }
+				);
+			} else {
+				debug.warn("LAYOUT","Was asked to scroll collection to something non-existent",2);
+			}
+		},
 
-        preHorse: function() {
+		expandInfo: function(side) {
+			switch(side) {
+				case "left":
+					var p = !prefs.sourceshidden;
+					prefs.save({sourceshidden: p});
+					break;
+			}
+			animatePanels();
+			return false;
+		},
 
-        },
+		sourceControl: function(source) {
+			if ($('#'+source).length == 0) {
+				prefs.save({chooser: 'albumlist'});
+				source = 'albumlist';
+			}
+			if (source != prefs.chooser) {
+				$('#'+prefs.chooser).fadeOut('fast', function() {
+					showPanel(source);
+					prefs.save({chooser: source});
+				});
+			} else {
+				showPanel(source);
+			}
+			return false;
+		},
 
-        hideBrowser: function() {
+		adjustLayout: async function() {
+			var ws = getWindowSize();
+			// Height of the bottom pane (chooser, info, playlist container)
+			var newheight = ws.y - $("#bottompage").offset().top;
+			$("#bottompage").css("height", newheight+"px");
+			var newwidth = ws.x - $('#infobar').offset().left;
+			$('#infobar').css('width', newwidth+'px');
+			infobar.biggerize();
+			browser.rePoint();
+			$('.topdropmenu').fanoogleMenus();
+			setBottomPanelWidths();
+		},
 
-        },
+		displayCollectionInsert: async function(details) {
+			debug.mark("COLLECTION","Displaying New Insert");
+			debug.debug('COLLECTION', details);
+			if (details.isaudiobook > 0) {
+				var holder = '#audiobooks';
+				uiHelper.sourceControl('audiobooklist');
+				var artistmenu = '.openmenu[name="zartist'+details.artistindex+'"]';
+				var albummenu = '.openmenu[name="zalbum'+details.albumindex+'"]';
+			} else {
+				var holder = '#collection';
+				uiHelper.sourceControl('albumlist');
+				var artistmenu = '.openmenu[name="aartist'+details.artistindex+'"]';
+				var albummenu = '.openmenu[name="aalbum'+details.albumindex+'"]';
+			}
+			if ($(artistmenu).isClosed()) {
+				await $.proxy(clickRegistry.doMenu, $(artistmenu)).call();
+			}
+			if ($(albummenu).isClosed()) {
+				await $.proxy(clickRegistry.doMenu, $(albummenu)).call();
+			}
+			layoutProcessor.scrollCollectionTo($(albummenu).parent());
+		},
 
-        addCustomScrollBar: function(value) {
-            $(value).mCustomScrollbar({
-                theme: "light-thick",
-                scrollInertia: 300,
-                contentTouchScroll: 25,
-                mouseWheel: {
-                    scrollAmount: parseInt(prefs.wheelscrollspeed),
-                },
-                alwaysShowScrollbar: 1,
-                advanced: {
-                    updateOnContentResize: true,
-                    updateOnImageLoad: false,
-                    autoScrollOnFocus: false,
-                    autoUpdateTimeout: 500,
-                }
-            });
-        },
+		playlistupdate: function(upcoming) {
+			var time = 0;
+			for(var i in upcoming) {
+				time += upcoming[i].duration;
+			}
+			if (time > 0) {
+				headers['upcoming'] = "Up Next : "+upcoming.length+" tracks, "+formatTimeString(time);
+			} else {
+				headers['upcoming'] = '';
+			}
+			layoutProcessor.doFancyHeaderStuff();
+		},
 
-        scrollCollectionTo: function(jq) {
-            if (jq) {
-                debug.log("LAYOUT","Scrolling Collection To",jq, jq.position().top,$("#collection").parent().parent().parent().height()/2);
-                var pospixels = Math.round(jq.position().top -
-                    $("#collection").parent().parent().parent().height()/2);
-                debug.log("LAYOUT","Scrolling Collection To",pospixels);
-                $("#sources").mCustomScrollbar('update').mCustomScrollbar('scrollTo', pospixels,
-                    { scrollInertia: 1000,
-                      scrollEasing: 'easeOut' }
-                );
-            } else {
-                debug.log("LAYOUT","Was asked to scroll collection to something non-existent",2);
-            }
-        },
+		doFancyHeaderStuff: function() {
+			clearTimeout(headertimer);
+			var lines = Array();
+			for (var i in headers) {
+				if (headers[i] != '') {
+					lines.push(headers[i]);
+				}
+			}
+			if (lines.length == 0 && $('#plmode').html() != '') {
+				$('#plmode').fadeOut(500, function() {
+					$('#plmode').html('').fadeIn(500);
+				});
+			} else if (lines.length == 1 && $('#plmode').html() != lines[0]) {
+				$('#plmode').fadeOut(500, function() {
+					$('#plmode').html(lines[0]).fadeIn(500);
+				});
+			} else {
+				currheader++;
+				if (currheader >= lines.length) {
+					currheader = 0;
+				}
+				if ($('#plmode').html() != lines[currheader]) {
+					$('#plmode').fadeOut(500, function() {
+						$('#plmode').html(lines[currheader]).fadeIn(500, function() {
+							headertimer = setTimeout(layoutProcessor.doFancyHeaderStuff, 5000);
+						});
+					});
+				} else {
+					headertimer = setTimeout(layoutProcessor.doFancyHeaderStuff, 5000);
+				}
+			}
+		},
 
-        expandInfo: function(side) {
-            switch(side) {
-                case "left":
-                    var p = !prefs.sourceshidden;
-                    prefs.save({sourceshidden: p});
-                    break;
-            }
-            animatePanels();
-            return false;
-        },
+		setProgressTime: function(stats) {
+			if (stats !== null) {
+				rtime = stats.remainString;
+				ptime = stats.durationString;
+				$("#playposss").html(stats.progressString);
+			}
+			if (prefs.displayremainingtime) {
+				$("#tracktimess").html(rtime);
+			} else {
+				$("#tracktimess").html(ptime);
+			}
+		},
 
-        sourceControl: function(source) {
-            if ($('#'+source).length == 0) {
-                prefs.save({chooser: 'albumlist'});
-                source = 'albumlist';
-            }
-            if (source != prefs.chooser) {
-                $('#'+prefs.chooser).fadeOut('fast', function() {
-                    showPanel(source);
-                    prefs.save({chooser: source});
-                });
-            } else {
-                showPanel(source);
-            }
-            return false;
-        },
+		toggleRemainTime: function() {
+			prefs.save({displayremainingtime: !prefs.displayremainingtime});
+			layoutProcessor.setProgressTime(null);
+		},
 
-        adjustLayout: function() {
-            var ws = getWindowSize();
-            // Height of the bottom pane (chooser, info, playlist container)
-            var newheight = ws.y - $("#bottompage").offset().top;
-            $("#bottompage").css("height", newheight+"px");
-            var newwidth = ws.x - $('#infobar').offset().left;
-            $('#infobar').css('width', newwidth+'px');
-            infobar.biggerize();
-            browser.rePoint();
-            $('.topdropmenu').fanoogleMenus();
-        },
+		setRadioModeHeader: function(html) {
+			if (html != headers['radiomode']) {
+				headers['radiomode'] = html;
+				layoutProcessor.doFancyHeaderStuff();
+			}
+		},
 
-        displayCollectionInsert: function(details) {
+		postAlbumMenu: function(element, dropdown) {
+			if (!element) {
+				return;
+			}
+			debug.debug("SKIN","Post Album Menu Thing",element.next());
+			if (element.next().hasClass('smallcover')) {
+				var imgsrc = element.next().children('img').attr('src');
+				var aa = new albumart_translator(imgsrc);
+				if (dropdown.is(':visible')) {
+					if (imgsrc) {
+						element.next().children('img').attr('src', aa.getSize('small'));
+					}
+					element.next().css('width','50%');
+					element.next().css('width','');
+					element.next().children('img').css('width', '');
+				} else {
+					if (imgsrc) {
+						element.next().children('img').attr('src', aa.getSize('medium'));
+					}
+					element.next().css('width','50%');
+					element.next().children('img').css('width', '100%');
+				}
+			}
+		},
 
-            debug.log("COLLECTION","Displaying New Insert",details);
-            layoutProcessor.sourceControl('albumlist');
-            if (prefs.sortcollectionby == "artist" && $('i[name="aartist'+details.artistindex+'"]').isClosed()) {
-                debug.log("COLLECTION","Opening Menu","aartist"+details.artistindex);
-                doAlbumMenu(null, $('i[name="aartist'+details.artistindex+'"]'), function() {
-                    if ($('i[name="aalbum'+details.albumindex+'"]').isClosed()) {
-                        debug.log("COLLECTION","Opening Menu","aalbum"+details.albumindex);
-                        doAlbumMenu(null, $('i[name="aalbum'+details.albumindex+'"]'), function() {
-                            flashTrack(details.trackuri, 'aalbum'+details.albumindex);
-                        });
-                    } else {
-                        flashTrack(details.trackuri, 'aalbum'+details.albumindex);
-                    }
-                });
-            } else if ($('i[name="aalbum'+details.albumindex+'"]').isClosed()) {
-                debug.log("COLLECTION","Opening Menu","aalbum"+details.albumindex);
-                doAlbumMenu(null, $('i[name="aalbum'+details.albumindex+'"]'), function() {
-                    flashTrack(details.trackuri,'aalbum'+details.albumindex);
-                });
-            } else {
-                flashTrack(details.trackuri,'aalbum'+details.albumindex);
-            }
-        },
-
-        playlistupdate: function(upcoming) {
-            var time = 0;
-            for(var i in upcoming) {
-                time += upcoming[i].duration;
-            }
-            if (time > 0) {
-                headers['upcoming'] = "Up Next : "+upcoming.length+" tracks, "+formatTimeString(time);
-            } else {
-                headers['upcoming'] = '';
-            }
-            layoutProcessor.doFancyHeaderStuff();
-        },
-
-        doFancyHeaderStuff: function() {
-            clearTimeout(headertimer);
-            var lines = Array();
-            for (var i in headers) {
-                if (headers[i] != '') {
-                    lines.push(headers[i]);
-                }
-            }
-            if (lines.length == 0 && $('#plmode').html() != '') {
-                $('#plmode').fadeOut(500, function() {
-                    $('#plmode').html('').fadeIn(500);
-                });
-            } else if (lines.length == 1 && $('#plmode').html() != lines[0]) {
-                $('#plmode').fadeOut(500, function() {
-                    $('#plmode').html(lines[0]).fadeIn(500);
-                });
-            } else {
-                currheader++;
-                if (currheader >= lines.length) {
-                    currheader = 0;
-                }
-                if ($('#plmode').html() != lines[currheader]) {
-                    $('#plmode').fadeOut(500, function() {
-                        $('#plmode').html(lines[currheader]).fadeIn(500, function() {
-                            headertimer = setTimeout(layoutProcessor.doFancyHeaderStuff, 5000);
-                        });
-                    });
-                } else {
-                    headertimer = setTimeout(layoutProcessor.doFancyHeaderStuff, 5000);
-                }
-            }
-        },
-
-        setProgressTime: function(stats) {
-            if (stats !== null) {
-                rtime = stats.remainString;
-                ptime = stats.durationString;
-                $("#playposss").html(stats.progressString);
-            }
-            if (prefs.displayremainingtime) {
-                $("#tracktimess").html(rtime);
-            } else {
-                $("#tracktimess").html(ptime);
-            }
-        },
-
-        toggleRemainTime: function() {
-            prefs.save({displayremainingtime: !prefs.displayremainingtime});
-            layoutProcessor.setProgressTime(null);
-        },
-
-        setRadioModeHeader: function(html) {
-            if (html != headers['radiomode']) {
-                headers['radiomode'] = html;
-                layoutProcessor.doFancyHeaderStuff();
-            }
-        },
-
-        postAlbumMenu: function(element) {
-            debug.trace("SKIN","Post Album Menu Thing",element.next());
-            if (element.next().hasClass('smallcover')) {
-                var imgsrc = element.next().children('img').attr('src');
-                var aa = new albumart_translator(imgsrc);
-                if (element.isClosed()) {
-                    if (imgsrc) {
-                        element.next().children('img').attr('src', aa.getSize('small'));
-                    }
-                    element.next().css('width','50%');
-                    element.next().css('width','');
-                    element.next().children('img').css('width', '');
-                } else {
-                    if (imgsrc) {
-                        element.next().children('img').attr('src', aa.getSize('medium'));
-                    }
-                    element.next().css('width','50%');
-                    element.next().children('img').css('width', '100%');
-                }
-            }
-        },
-
-        makeCollectionDropMenu: function(element, name) {
-            var x = $('#'+name);
-            // If the dropdown doesn't exist then create it
-            if (x.length == 0) {
-                if (element.parent().hasClass('album1')) {
-                    var c = 'dropmenu notfilled album1';
-                } else if (element.parent().hasClass('album2')) {
-                    var c = 'dropmenu notfilled album2';
-                } else {
-                    var c = 'dropmenu notfilled';
-                }
-                var t = $('<div>', {id: name, class: c}).insertAfter(element.parent());
-            }
-        },
-
-        getArtistDestinationDiv: function(menutoopen) {
-            if (prefs.sortcollectionby == "artist") {
-                return $("#"+menutoopen).parent();
-            } else {
-                return $("#"+menutoopen);
-            }
-        },
-
-        initialise: function() {
-            if (prefs.outputsvisible) {
-                layoutProcessor.toggleAudioOutpts();
-            }
-            $("#sortable").disableSelection();
-            setDraggable('#collection');
-            setDraggable('#filecollection');
-            setDraggable('#searchresultholder');
-            setDraggable("#podcastslist");
-            setDraggable("#audiobooks");
-            setDraggable("#somafmlist");
-            setDraggable("#communityradiolist");
-            setDraggable("#icecastlist");
-            setDraggable("#tuneinlist");
-            setDraggable('#artistinformation');
-            setDraggable('#albuminformation');
-            setDraggable('#storedplaylists');
-
+		initialise: function() {
+			$("#sortable").disableSelection();
             $("#sortable").acceptDroppedTracks({
                 scroll: true,
                 scrollparent: '#phacker'
@@ -436,91 +389,46 @@ var layoutProcessor = function() {
                 scrollspeed: 80,
                 scrollzone: 120
             });
-
             $("#pscroller").acceptDroppedTracks({
                 ondrop: playlist.draggedToEmpty,
                 coveredby: '#sortable'
             });
+			animatePanels();
+			for (let value of my_scrollers) {
+				$(value).addCustomScrollBar();
+			};
+			$(".topdropmenu").floatingMenu({
+				handleClass: 'dragmenu',
+				addClassTo: 'configtitle',
+				siblings: '.topdropmenu'
+			});
+			$("#tagadder").floatingMenu({
+				handleClass: 'configtitle',
+				handleshow: false
+			});
+			$(".stayopen").not('.dontstealmyclicks').on('click', function(ev) {ev.stopPropagation() });
+			$("#sources").find('.mCSB_draggerRail').resizeHandle({
+				adjusticons: ['#sourcescontrols', '#infopanecontrols'],
+				side: 'left',
+				donefunc: setBottomPanelWidths
+			});
+			$('#plmode').detach().appendTo('#amontobin').addClass('tright');
+			$('#volume').volumeControl({
+				orientation: 'vertical',
+				command: player.controller.volume
+			});
+			$(document).on('click', '.clickaddtoplaylist', function() {
+				$('#addtoplaylistmenu').parent().parent().parent().hide();
+			});
+		},
 
-            animatePanels();
+		createPluginHolder: function(icon, title, id, panel) {
+			var d = $('<div>', {class: 'topdrop'}).prependTo('#righthandtop');
+			var i = $('<i>', {class: 'tooltip', title: title, id: id}).appendTo(d);
+			i.addClass(icon);
+			i.addClass('smallpluginicon clickicon');
+			return d;
+		}
 
-            $(".topdropmenu").floatingMenu({
-                handleClass: 'dragmenu',
-                addClassTo: 'configtitle',
-                siblings: '.topdropmenu'
-            });
-
-            $("#tagadder").floatingMenu({
-                handleClass: 'configtitle',
-                handleshow: false
-            });
-
-            $(".stayopen").not('.dontstealmyclicks').on('click', function(ev) {ev.stopPropagation() });
-
-            // $(".enter").on('keyup',  onKeyUp );
-            $.each(my_scrollers,
-                function( index, value ) {
-                layoutProcessor.addCustomScrollBar(value);
-            });
-
-            $("#sources").find('.mCSB_draggerRail').resizeHandle({
-                adjusticons: ['#sourcescontrols', '#infopanecontrols'],
-                side: 'left',
-                donefunc: setBottomPanelWidths
-            });
-
-            shortcuts.load();
-            $("#collectionsearcher input").on('keyup',  function(event) {
-                if (event.keyCode == 13) {
-                    player.controller.search('search');
-                }
-            } );
-            setControlClicks();
-            $('.choose_albumlist').on('click', function(){layoutProcessor.sourceControl('albumlist')});
-            $('.choose_searcher').on('click', function(){layoutProcessor.sourceControl('searcher')});
-            $('.choose_filelist').on('click', function(){layoutProcessor.sourceControl('filelist')});
-            $('.choose_radiolist').on('click', function(){layoutProcessor.sourceControl('radiolist')});
-            $('.choose_podcastslist').on('click', function(){layoutProcessor.sourceControl('podcastslist')});
-            $('.choose_audiobooklist').on('click', function(){layoutProcessor.sourceControl('audiobooklist')});
-            $('.choose_playlistslist').on('click', function(){layoutProcessor.sourceControl('playlistslist')});
-            $('.choose_pluginplaylistslist').on('click', function(){layoutProcessor.sourceControl('pluginplaylistslist')});
-            $('.open_albumart').on('click', openAlbumArtManager);
-            $("#ratingimage").on('click', nowplaying.setRating);
-            $('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodiput')});
-            $('#expandleft').on('click', function(){layoutProcessor.expandInfo('left')});
-            $('.clear_playlist').on('click', playlist.clear);
-            $("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
-
-            document.body.addEventListener('drop', function(e) {
-                e.preventDefault();
-            }, false);
-            $('#albumcover').on('dragenter', infobar.albumImage.dragEnter);
-            $('#albumcover').on('dragover', infobar.albumImage.dragOver);
-            $('#albumcover').on('dragleave', infobar.albumImage.dragLeave);
-            $("#albumcover").on('drop', infobar.albumImage.handleDrop);
-            $("#tracktimess").on('click', layoutProcessor.toggleRemainTime);
-            $(document).on('mouseenter', '.clearbox', makeHoverWork);
-            $(document).on('mouseleave', '.clearbox', makeHoverWork);
-            $(document).on('mousemove', '.clearbox', makeHoverWork);
-            $(document).on('mouseenter', '.combobox-entry', makeHoverWork);
-            $(document).on('mouseleave', '.combobox-entry', makeHoverWork);
-            $(document).on('mousemove', '.combobox-entry', makeHoverWork);
-            $(document).on('mouseenter', '.tooltip', makeToolTip);
-            $(document).on('mouseleave', '.tooltip', stopToolTip);
-            $('#plmode').detach().appendTo('#amontobin').addClass('tright');
-            $('#volume').volumeControl({
-                orientation: 'vertical',
-                command: player.controller.volume
-            });
-        },
-
-        createPluginHolder: function(icon, title, id, panel) {
-            var d = $('<div>', {class: 'topdrop'}).prependTo('#righthandtop');
-            var i = $('<i>', {class: 'tooltip', title: title, id: id}).appendTo(d);
-            i.addClass(icon);
-            i.addClass('smallpluginicon clickicon');
-            return d;
-        }
-
-    }
+	}
 }();

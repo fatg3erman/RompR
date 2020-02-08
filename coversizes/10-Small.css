@@ -1,10 +1,11 @@
-.smallcover
+div.smallcover
 {
 	width:32px;
 }
 
-.smallcover-svg {
-	height:32px;
+img.smallcover {
+	width: 100%;
+	object-fit: scale-down;
 }
 
 img.notexist,img.notfound {

@@ -4,7 +4,7 @@ require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 require_once ("utils/imagefunctions.php");
 require_once ("international.php");
-logger::blurt("USERRATING", "--------------------------START---------------------");
+logger::mark("USERRATING", "--------------------------START---------------------");
 require_once ("backends/sql/backend.php");
 require_once ("backends/sql/metadatafunctions.php");
 require_once ("player/".$prefs['player_backend']."/player.php");
@@ -26,7 +26,7 @@ $start = time();
 open_transaction();
 create_foundtracks();
 $took = time() - $start;
-logger::debug("TIMINGS", "Creating FoundTracks took ".$took." seconds");
+logger::info("TIMINGS", "Creating FoundTracks took ".$took." seconds");
 
 $params = json_decode(file_get_contents('php://input'), true);
 
@@ -36,10 +36,10 @@ foreach($params as $p) {
 
 	romprmetadata::sanitise_data($p);
 
-	logger::mark("USERRATING", "Doing action",strtoupper($p['action']));
+	logger::log("USERRATING", "  Doing action",strtoupper($p['action']));
 	foreach ($p as $i => $v) {
 		if ($i != 'action' && $v) {
-			logger::log("  Parameter", $i,':',$v);
+			logger::trace("Parameter", "    ",$i,':',$v);
 		}
 	}
 
@@ -138,11 +138,14 @@ foreach($params as $p) {
 		case 'syncinc':
 		case 'resetallsyncdata':
 		case 'deleteid':
+		case 'deletealbum':
+		case 'setasaudiobook':
+		case 'resetresume':
 			romprmetadata::{$p['action']}($p);
 			break;
 
 		default:
-			logger::fail("USERRATINGS", "Unknown Request",$p['action']);
+			logger::warn("USERRATINGS", "Unknown Request",$p['action']);
 			header('HTTP/1.1 400 Bad Request');
 			break;
 
@@ -160,117 +163,46 @@ if (count($returninfo) == 0 || array_key_exists('metadata', $returninfo)) {
 print json_encode($returninfo);
 close_transaction();
 
-logger::blurt("USERRATING", "---------------------------END----------------------");
+logger::mark("USERRATING", "---------------------------END----------------------");
 
 function prepare_returninfo() {
 	logger::log("USERRATINGS", "Preparing Return Info");
+	$t = microtime(true);
 	global $returninfo, $prefs;
-	$t = microtime(true);
-	$result = generic_sql_query('SELECT DISTINCT AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
-	foreach ($result as $mod) {
-		if (artist_albumcount($mod['AlbumArtistindex']) == 0) {
-			$returninfo['deletedartists'][] = $mod['AlbumArtistindex'];
-			logger::mark("USERRATINGS", "  Artist ".$mod['AlbumArtistindex']." has no visible albums");
-		} else {
-			logger::mark("USERRATINGS", "  Artist ".$mod['AlbumArtistindex']." has modified albums");
-			switch ($prefs['sortcollectionby']) {
-				case 'album':
-					break;
 
-				case 'artist':
-					logger::trace("USERRATINGS", "    Creating Artist Header");
-					$returninfo['modifiedartists'][] = do_artists_from_database('a', $prefs['sortcollectionby'], $mod['AlbumArtistindex']);
-					break;
+	$sorter = choose_sorter_by_key('aartistroot');
+	$lister = new $sorter('aartistroot');
+	$lister->get_modified_root_items();
+	$lister->get_modified_albums();
 
-				case 'albumbyartist':
-					if ($prefs['showartistbanners']) {
-						logger::trace("USERRATINGS", "    Creating Artist Banner");
-						$returninfo['modifiedartists'][] = do_artist_banner('a','album',$mod['AlbumArtistindex']);
-					}
-					break;
-			}
-		}
-	}
+	$sorter = choose_sorter_by_key('zartistroot');
+	$lister = new $sorter('zartistroot');
+	$lister->get_modified_root_items();
+	$lister->get_modified_albums();
 
-	$at = microtime(true) - $t;
-	logger::debug("TIMINGS", " -- Finding modified artists took ".$at." seconds");
+	$sorter = choose_sorter_by_key('bartistroot');
+	$lister = new $sorter('bartistroot');
+	$lister->get_modified_root_items();
+	$lister->get_modified_albums();
 
-	$t = microtime(true);
-	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
-	foreach ($result as $mod) {
-		if (album_trackcount($mod['Albumindex']) == 0) {
-			logger::mark("USERRATINGS", "  Album ".$mod['Albumindex']." has no visible tracks");
-			$returninfo['deletedalbums'][] = $mod['Albumindex'];
-		} else {
-			logger::mark("USERRATINGS", "  Album ".$mod['Albumindex']." was modified");
-			$prefix = check_album_is_album($mod['Albumindex']);
-			switch ($prefs['sortcollectionby']) {
-				case 'album':
-				case 'albumbyartist':
-					$r = do_albums_from_database($prefix, 'album', 'root', $mod['Albumindex'], false, false);
-					break;
-
-				case 'artist':
-					$r = do_albums_from_database($prefix, 'album', $mod['AlbumArtistindex'], $mod['Albumindex'], false, false);
-					break;
-			}
-			$r['tracklist'] = do_tracks_from_database($prefix, 'album', $mod['Albumindex'], true);
-			$returninfo['modifiedalbums'][] = $r;
-		}
-	}
-	$at = microtime(true) - $t;
-	logger::debug("TIMINGS", " -- Finding modified albums took ".$at." seconds");
-
-	$t = microtime(true);
-	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex, Uri, TTindex FROM Tracktable JOIN Albumtable USING (Albumindex) WHERE justAdded = 1 AND Hidden = 0');
+	$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex, Uri, TTindex, isAudiobook FROM Tracktable JOIN Albumtable USING (Albumindex) WHERE justAdded = 1 AND Hidden = 0');
 	foreach ($result as $mod) {
 		logger::log("USERRATING", "  New Track in album ".$mod['Albumindex'].' has TTindex '.$mod['TTindex']);
-		$returninfo['addedtracks'][] = array('artistindex' => $mod['AlbumArtistindex'], 'albumindex' => $mod['Albumindex'], 'trackuri' => rawurlencode($mod['Uri']));
+		$returninfo['addedtracks'][] = array(	'artistindex' => $mod['AlbumArtistindex'],
+												'albumindex' => $mod['Albumindex'],
+												'trackuri' => rawurlencode($mod['Uri']),
+												'isaudiobook' => $mod['isAudiobook']
+											);
 	}
 	$at = microtime(true) - $t;
-	logger::debug("TIMINGS", " -- Finding added tracks took ".$at." seconds");
+	logger::info("TIMINGS", " -- Finding modified items took ".$at." seconds");
 }
 
-function check_album_is_album($albumindex) {
-	// See if the album is an album or an audiobook
-	$c = simple_query('COUNT(TTindex)', 'Tracktable', 'isAudiobook = 1 AND Albumindex', $albumindex, 0);
-	if ($c > 0) {
-		logger::trace("USERRATINGS", "    This is an audiobook");
-		return 'z';
-	} else {
-		return 'a';
-	}
-}
-
-function artist_albumcount($artistindex) {
-	return generic_sql_query(
-		"SELECT
-			COUNT(Albumindex) AS num
-		FROM
-			Albumtable LEFT JOIN Tracktable USING (Albumindex)
-		WHERE
-			AlbumArtistindex = ".$artistindex.
-			" AND Hidden = 0
-			AND isSearchResult < 2
-			AND Uri IS NOT NULL", false, null, 'num', 0);
-}
-
-function album_trackcount($albumindex) {
-	return generic_sql_query(
-		"SELECT
-			COUNT(TTindex) AS num
-		FROM
-			Tracktable
-		WHERE
-			Albumindex = ".$albumindex.
-			" AND Hidden = 0
-			AND isSearchResult < 2
-			AND Uri IS NOT NULL", false, null, 'num', 0);
-}
 
 function doCollectionHeader() {
 	global $returninfo;
 	$returninfo['stats'] = collectionStats();
+	$returninfo['bookstats'] = audiobookStats();
 }
 
 function check_backup_dir() {
@@ -306,6 +238,10 @@ function backup_unrecoverable_data() {
 	$tracks = get_tags();
 	file_put_contents($dirname.'/tags.json',json_encode($tracks));
 
+	logger::log("BACKEND", "Backing up Audiobook Status");
+	$tracks = get_audiobooks();
+	file_put_contents($dirname.'/audiobooks.json',json_encode($tracks));
+
 }
 
 function analyse_backups() {
@@ -319,6 +255,9 @@ function analyse_backups() {
 		// $ratings = count(json_decode(file_get_contents($backup.'/ratings.json')));
 		// $playcounts = count(json_decode(file_get_contents($backup.'/playcounts.json')));
 		// $tags = count(json_decode(file_get_contents($backup.'/tags.json')));
+
+		// FIXME: Save and restore Audiobook status.
+
 		$data[] = array(
 			'dir' => basename($backup),
 			'name' => strftime('%c', DateTime::createFromFormat('Y-m-d-H-i', basename($backup))->getTimestamp()),
@@ -327,6 +266,7 @@ function analyse_backups() {
 				'Playcounts' => file_exists($backup.'/playcounts.json') ? 'OK' : 'Missing!',
 				'Tracks With Ratings' => file_exists($backup.'/ratings.json') ? 'OK' : 'Missing!',
 				'Tracks With Tags' => file_exists($backup.'/tags.json') ? 'OK' : 'Missing!',
+				'Spoken Word' => file_exists($backup.'/audiobooks.json') ? 'OK' : 'Missing!',
 			)
 		);
 	}
@@ -390,6 +330,16 @@ function restoreBackup($backup) {
 			fwrite($monitor, "\n<b>Restoring Playcounts : </b>".$progress."%");
 		}
 	}
+	if (file_exists('prefs/databackups/'.$backup.'/audiobooks.json')) {
+		logger::mark("BACKUPS", "Restoring Audiobooks");
+		$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/audiobooks.json'), true);
+		foreach ($tracks as $i => $trackdata) {
+			romprmetadata::sanitise_data($trackdata);
+			romprmetadata::updateAudiobookState($trackdata);
+			$progress = round(($i/count($tracks))*100);
+			fwrite($monitor, "\n<b>Restoring Spoken Word Tracks : </b>".$progress."%");
+		}
+	}
 	fwrite($monitor, "\n<b>Cleaning Up...</b>");
 	// Now... we may have restored data on tracks that were previously local and now aren't there any more.
 	// If they're local tracks that have been removed, then we don't want them or care about their data
@@ -401,6 +351,7 @@ function restoreBackup($backup) {
 	romprmetadata::resetallsyncdata();
 	remove_cruft();
 	update_track_stats();
+	fwrite($monitor, '\n ');
 	fclose($monitor);
 }
 
@@ -427,6 +378,32 @@ function get_manually_added_tracks() {
 			JOIN Albumtable ON Tracktable.Albumindex = Albumtable.Albumindex
 			JOIN Artisttable AS aat ON Albumtable.AlbumArtistindex = aat.Artistindex
 		WHERE Tracktable.LastModified IS NULL AND Tracktable.Hidden = 0 AND Tracktable.isSearchResult < 2 AND uri IS NOT NULL");
+}
+
+function get_audiobooks() {
+
+	// get_audiobooks
+	//		Creates data for backup
+
+	return generic_sql_query(
+		"SELECT
+			Tracktable.Title AS title,
+			Tracktable.TrackNo AS trackno,
+			Tracktable.Duration AS duration,
+			Tracktable.Disc AS disc,
+			Tracktable.Uri AS uri,
+			Albumtable.Albumname AS album,
+			Albumtable.AlbumUri AS albumuri,
+			Albumtable.Year AS date,
+			ta.Artistname AS artist,
+			aat.Artistname AS albumartist,
+			Tracktable.isAudiobook AS isaudiobook
+		FROM
+			Tracktable
+			JOIN Artisttable AS ta USING (Artistindex)
+			JOIN Albumtable ON Tracktable.Albumindex = Albumtable.Albumindex
+			JOIN Artisttable AS aat ON Albumtable.AlbumArtistindex = aat.Artistindex
+		WHERE Tracktable.Hidden = 0 AND Tracktable.isSearchResult < 2 AND uri IS NOT NULL AND Tracktable.isAudiobook > 0");
 }
 
 function get_ratings() {
@@ -564,7 +541,7 @@ function get_fave_artists() {
 		derived GROUP BY Artistindex) AS alias JOIN Artisttable USING (Artistindex) WHERE
 		playtot > (SELECT AVG(playtotal) FROM aplaytable) ORDER BY ".SQL_RANDOM_SORT, false, PDO::FETCH_OBJ);
 	foreach ($result as $obj) {
-		logger::log("FAVEARTISTS", "Artist :",$obj->Artistname);
+		logger::debug("FAVEARTISTS", "Artist :",$obj->Artistname);
 		$artists[] = array( 'name' => $obj->Artistname, 'plays' => $obj->playtot);
 	}
 	return $artists;
@@ -618,7 +595,7 @@ function getLinkToCheck() {
 }
 
 function updateCheckedLink($ttindex, $uri, $status) {
-	logger::log("METADATA", "Updating Link Check For TTindex",$ttindex,$uri);
+	logger::trace("METADATA", "Updating Link Check For TTindex",$ttindex,$uri);
 	sql_prepare_query(true, null, null, null,
 		"UPDATE Tracktable SET LinkChecked = ?, Uri = ? WHERE TTindex = ?", $status, $uri, $ttindex);
 }

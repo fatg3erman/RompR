@@ -1,88 +1,44 @@
 var recentlyaddedtracks = function() {
 
-	var running = false;
-	var populated = false;
-    var tracksneeded = 0;
-	var mode;
-
-	function getTracks() {
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-			contentType: false,
-            url: "radios/recentlyadded.php?mode="+mode
-		})
-        .done(function(data) {
-            if (data && data.total > 0) {
-                debug.trace("SMARTPLAYLIST","Got tracks",data);
-				populated = true;
-                running = true;
-                addTracks();
-            } else {
-                infobar.notify(language.gettext('label_gotnotracks'));
-                playlist.radioManager.stop(null);
-            }
-        })
-        .fail(function() {
-            infobar.notify(language.gettext('label_gotnotracks'));
-            playlist.radioManager.stop(null);
-            populated = false;
-        });
-
-	}
-
-	function addTracks() {
-		if (running) {
-			metaHandlers.genericAction(
-                [{ action: 'repopulate', playlist: mode, numtracks: tracksneeded }],
-                recentlyaddedtracks.gotTracks,
-                recentlyaddedtracks.Fail
-            );
-		}
-	}
+	var param;
+	var whattodo;
+	var tracks;
 
 	return {
 
-		populate: function(param, numtracks) {
-			if (param && param != mode) {
-				mode = param;
-			}
-            tracksneeded += (numtracks - tracksneeded);
-			debug.shout("RECENTLY ADDED", "Populating",param,numtracks);
-			if (!populated) {
-				getTracks();
-			} else {
-				addTracks();
-			}
+		initialise: async function(p) {
+			param = p;
+			tracks = new Array();
+			whattodo = 'getplaylist';
 		},
 
-        modeHtml: function(param) {
-            return '<i class="icon-recentlyplayed modeimg"></i><span class="modespan">'+language.gettext("label_"+param)+'</span>&nbsp;';
-        },
+		getURIs: async function(numtracks) {
+			while (tracks.length < numtracks) {
+				try {
+					var t = await $.ajax({
+						url: "backends/sql/userRatings.php",
+						type: "POST",
+						contentType: false,
+						data: JSON.stringify([{action: whattodo, playlist: param, numtracks: prefs.smartradio_chunksize}]),
+						dataType: 'json'
+					});
+					tracks = tracks.concat(t);
+				} catch(err) {
+					debug.error('RECENTLYADDED', 'Error getting tracks',err);
+					return false;
+				}
+			}
+			whattodo = 'repopulate';
+			return tracks.splice(0, numtracks);
+		},
 
-        stop: function() {
-            running = false;
-			populated = false;
-        },
+		modeHtml: function() {
+			return '<i class="icon-recentlyplayed modeimg"></i><span class="modespan">'+language.gettext("label_"+param)+'</span>&nbsp;';
+		},
 
-		gotTracks: function(data) {
-            if (data.length > 0) {
-                debug.log("SMARTPLAYLIST","Got tracks",data);
-				player.controller.addTracks(data,  playlist.radioManager.playbackStartPos(), null);
-            } else {
-                debug.warn("SMARTPLAYLIST","Got NO tracks",data);
-                infobar.notify(language.gettext('label_gotnotracks'));
-                playlist.radioManager.stop(null);
-                running = false;
-            }
-        },
+		stop: function() {
 
-        Fail: function() {
-            infobar.notify(language.gettext('label_gotnotracks'));
-            playlist.radioManager.stop(null);
-            populated = false;
-            running = false;
-        }
+		}
 
 	}
 

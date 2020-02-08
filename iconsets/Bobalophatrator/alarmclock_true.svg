@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   width="214.04736mm"
+   height="214.04736mm"
+   viewBox="0 0 214.04736 214.04736"
+   version="1.1"
+   id="svg9492">
+  <defs
+     id="defs9486">
+    <linearGradient
+       id="linearGradient3501">
+      <stop
+         id="stop3497"
+         offset="0"
+         style="stop-color:#CA91BE;stop-opacity:1" />
+      <stop
+         id="stop3499"
+         offset="1"
+         style="stop-color:#BA3E91;stop-opacity:1" />
+    </linearGradient>
+    <marker
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker10115"
+       style="overflow:visible">
+      <path
+         id="path10113"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         transform="matrix(0.8,0,0,0.8,10,0)" />
+    </marker>
+    <marker
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker10093"
+       style="overflow:visible">
+      <path
+         id="path10091"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.8,0,0,0.8,10,0)" />
+    </marker>
+    <marker
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker10077"
+       style="overflow:visible">
+      <path
+         id="path10075"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.8,0,0,0.8,10,0)" />
+    </marker>
+    <marker
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path6959"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.8,0,0,0.8,10,0)" />
+    </marker>
+    <linearGradient
+       y2="213.85715"
+       x2="109.52963"
+       y1="-0.077380955"
+       x1="109.54179"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3541"
+       xlink:href="#linearGradient3501" />
+  </defs>
+  <metadata
+     id="metadata9489">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     transform="translate(2.0236816,2.0236816)">
+    <circle
+       style="fill:none;stroke:url(#linearGradient3541);stroke-width:16;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path10055"
+       cx="105"
+       cy="105"
+       r="99.023682" />
+    <rect
+       style="fill:none;stroke:#ff2a2b;stroke-width:7.99999;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect10057"
+       width="16"
+       height="16"
+       x="97"
+       y="97" />
+    <path
+       style="fill:none;stroke:#ff2a2b;stroke-width:12;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 105.49702,105.9375 -0.99405,-84.014881 v 0"
+       id="path10059" />
+    <path
+       style="fill:none;stroke:#ff2a2b;stroke-width:16;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 105.49702,105.9375 c -59.383926,-1.875 -59.383926,-1.875 -59.383926,-1.875"
+       id="path10063" />
+    <path
+       style="fill:none;stroke:#ff2a2b;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 154.97024,152.70238 105.49702,105.9375"
+       id="path10065" />
+  </g>
+</svg>

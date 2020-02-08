@@ -3,17 +3,11 @@ include ("includes/vars.php");
 include ("includes/functions.php");
 include ("utils/imagefunctions.php");
 
-$url = $_REQUEST['url'];
-
-foreach ($_GET as $k => $v) {
-	if ($k != 'url' && $k != 'rompr_resize_size' && $k != 'rompr_backup_type') {
-		$url .= '&'.$k.'='.$v;
-	}
-}
+$url = rawurldecode($_REQUEST['url']);
 
 if (!$url) {
 	logger::error("GETREMOTEIMAGE", "Asked to download image but no URL given!");
-    header("HTTP/1.1 404 Not Found");
+	header("HTTP/1.1 404 Not Found");
 } else {
 	logger::log("GETREMOTEIMAGE", "Getting Remote Image ".$url);
 	$outfile = 'prefs/imagecache/'.md5($url);
@@ -31,7 +25,11 @@ if (!$url) {
 function output_file($outfile) {
 	$imagehandler = new imageHandler($outfile);
 	$size = array_key_exists('rompr_resize_size', $_REQUEST) ? $_REQUEST['rompr_resize_size'] : 'asdownloaded';
-	$imagehandler->outputResizedFile($size);
+	if ($imagehandler->checkImage()) {
+		$imagehandler->outputResizedFile($size);
+	} else {
+		send_backup_image();
+	}
 }
 
 function download_image_file($url, $outfile) {

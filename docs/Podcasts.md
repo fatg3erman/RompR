@@ -108,7 +108,7 @@ If you stop or skip a Podcast episode while it is playing, Rompr will store the 
 
 ![](images/podresume.png)
 
-Double-click the Resume bar to add the podcast to the Current Playlist and start playback from the position shown. Note that this functionality may be flaky if you use Mopidy, there appears to be a bug in Mopidy to do with seeking.
+Double-click the Resume bar to add the podcast to the Play Queue and start playback from the position shown. Note that this functionality may be flaky if you use Mopidy, there appears to be a bug in Mopidy to do with seeking.
 
 If the episode is already in the playlist, the episode will not be added again, instead the exisiting item in the playlist will be played from the resume position.
 
@@ -126,6 +126,6 @@ Normally, Rompr will only refresh your Podcasts while the browser is open. If yo
 
 If you would like to make Rompr update your podcasts overnight while you're not using it you can do this by creating a cron job. This is not the place to discuss how to create cron jobs, but it needs to run the command
 
-    curl http://address.of.rompr/includes/podcasts.php?rebuild=1&checkrefresh=1 > /dev/null
-   
-  
+    curl http://address.of.rompr/podcasts/podcasts.php?rebuild=1&checkrefresh=1 > /dev/null
+
+

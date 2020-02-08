@@ -7,6 +7,9 @@
 html, body.phone .dropmenu {
     color:#000000;
     background-image:url('newimages/silver1.jpg');
+    background-size:auto;
+    background-repeat:repeat;
+    background-attachment:fixed;
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -25,12 +28,12 @@ a:hover,a:active {
     color:#ff4800;
 }
 
-button, .filebutton {
+button, div.filebutton {
     color:#000000;
     border: 1px solid #000000;
 }
 
-button:hover, .filebutton:hover {
+button:hover, div.filebutton:hover {
     color:#ff4800;
     text-shadow: 0 0 15px #ff4800;
 }
@@ -39,11 +42,11 @@ input.inbrowser, div.inbrowser {
     border: 1px solid #888888;
 }
 
-.selectholder {
+div.selectholder {
     background-color:rgba(0,0,0,0.1);
 }
 
-.selectholder:hover {
+div.selectholder:hover {
     background-color:rgba(0,0,0,0.2);
 }
 
@@ -168,6 +171,19 @@ table.histable tr:hover {
     cursor:pointer;
 }
 
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color:#000000;
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    background-color:#CC5500;
+}
+
 tr.clickaddtrack:hover {
     background-image:url('newimages/silver1.jpg');
 }
@@ -217,7 +233,7 @@ tr.clickaddtrack:hover {
 =====================================================================
 */
 
-div.topdropmenu {
+div.topdropmenu, div.albumbitsmenu {
     background-image:url('newimages/silver2.jpg');;
     border-left:1px solid #ffffff;
     border-bottom:1px solid #555555;

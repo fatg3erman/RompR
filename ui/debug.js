@@ -5,112 +5,94 @@ window.debug = (function() {
 	var highlighting = new Array();
 	var colours =  new Array();
 	var focuson = new Array();
+	var stacktrace = false;
 	var log_colours = {
-		1: "#FF0000",
-		2: "#FFDD00",
-		3: "#FF00FF",
-		4: "#00CCFF",
-		5: "#00CC00",
-		6: "#0000FF",
-		7: "#000000",
-		8: "#CCCCCC",
-		9: "#DEDEDE"
+		1: "color:#FF0000;font-weight:bold",
+		2: "color:#FE6700;font-weight:bold",
+		3: "color:#FF00FF;font-weight:bold",
+		4: "color:#00CCFF",
+		5: "color:#000000",
+		6: "color:#AAAAAA",
+		7: "color:#BBBBBB",
+		8: "color:#CCCCCC;font-size:90%",
 	};
 	var log_commands = {
 		1: 'error',
 		2: 'warn',
-		3: 'warn',
+		3: 'log',
 		4: 'log',
 		5: 'log',
 		6: 'log',
 		7: 'log',
 		8: 'log',
-		9: 'log'
 	}
 
 	function doTheLogging(loglevel, args) {
-
 		if (loglevel > level) return;
 		var module = args.shift();
 		if (ignoring[module]) return;
 		if (focuson.length > 0 && focuson.indexOf(module) == -1) return;
-		var css = (colours[module]) ? 'color:'+colours[module] : 'color:'+log_colours[loglevel];
+		var css = (colours[module]) ? colours[module] : log_colours[loglevel];
 		if (highlighting[module]) {
 			css += ";font-weight:bold";
-		} else if (Object.keys(highlighting).length > 0) {
-			css = "color:#eeeeee";
 		}
-
-		var string = module;
-		while (string.length < 18) {
-			string = string + " ";
-		}
-		string = string + ": ";
 		var a = new Date();
-		string = a.toLocaleTimeString()+" : "+string
-
-		for (var i in args) {
-			if (typeof(args[i]) != "object" || args[i] === null || args[i] === undefined) {
-				string = string + " " + args[i];
-			}
+		var string = "%c"+a.toLocaleTimeString()+' : '+module.padEnd(18, ' ');
+		args.unshift(css);
+		args.unshift(string);
+		if (stacktrace) {
+			console.trace();
 		}
-
-		console[log_commands[loglevel]]("%c"+string,css);
-
-		var sex = false;
-		for (var i in args) {
-			if (typeof(args[i]) == "object" && args[i] !== null && args[i] !== undefined) {
-				console.log(args[i]);
-				sex = true;
-			}
-		}
-		if (sex) console.log("    ");
-
+		// console[log_commands[loglevel]](...args.map(v => {
+		// 	if (typeof(v) == 'object') {
+		// 		// Make sure we pass the value of the variable at the time it was logged and not a reference to its current state
+		// 		return JSON.parse(JSON.stringify(v));
+		// 	} else {
+		// 		return v;
+		// 	}
+		// }));
+		console[log_commands[loglevel]](...args);
 	}
 
 	return {
 
-		// Level 9
-		debug: function() {
-			doTheLogging(9, Array.prototype.slice.call(arguments));
-		},
-
-		// Level 8
-		trace: function() {
+		// Level 8 - CORE for continuous running commentary
+		// and memory-consuming structure dumps
+		core: function() {
 			doTheLogging(8, Array.prototype.slice.call(arguments));
 		},
 
-		// Level 7
-		log: function() {
+		// Level 7 - DEBUG for low level complex info
+		debug: function() {
 			doTheLogging(7, Array.prototype.slice.call(arguments));
 		},
 
-		// Level 6
-		mark: function() {
+		// Level 6 - TRACE for in-function details
+		trace: function() {
 			doTheLogging(6, Array.prototype.slice.call(arguments));
 		},
 
-		// Level 5
-		shout: function() {
+		// Level 5 - LOG for following code flow
+		log: function() {
 			doTheLogging(5, Array.prototype.slice.call(arguments));
 		},
 
-		// Level 4
-		blurt: function() {
+		// Level 4 - INFO for information
+		info: function() {
 			doTheLogging(4, Array.prototype.slice.call(arguments));
 		},
 
-		// Level 3
-		fail: function() {
+		// Level 3 - MARK for important information
+		mark: function() {
 			doTheLogging(3, Array.prototype.slice.call(arguments));
 		},
 
-		// Level 2
+		// Level 2 - WARN for things that go wrong
 		warn: function() {
 			doTheLogging(2, Array.prototype.slice.call(arguments));
 		},
 
-		// Level 1
+		// Level 1 - ERROR for serious errors
 		error: function() {
 			doTheLogging(1, Array.prototype.slice.call(arguments));
 		},
@@ -120,7 +102,26 @@ window.debug = (function() {
 		},
 
 		ignoreinfopanel: function() {
-			ignoring = ["LASTFM PLUGIN", "MBNZ PLUGIN", "SPOTIFY PLUGIN", "DISCOGS PLUGIN"];
+			ignoring = {
+				"LASTFM PLUGIN": true,
+				"MBNZ PLUGIN": true ,
+				"SPOTIFY PLUGIN": true,
+				"DISCOGS PLUGIN": true,
+				"INFOBAR": true,
+				"NOWPLAYING": true,
+				"LASTFM": true,
+				"BROWSER": true,
+				"TRACKDATA": true,
+				"FILE INFO": true,
+				"FILE PLUGIN": true,
+				"RATINGS PLUGIN": true,
+				"COVERSCRAPER": true
+			};
+			// debug.warn('DEBUG', 'Info panel debug is now ignored by default. Use debug.clearignore to switch it back on');
+		},
+
+		clearignore: function() {
+			ignoring = [];
 		},
 
 		highlight: function(module) {
@@ -132,7 +133,7 @@ window.debug = (function() {
 				focuson.push(module);
 			}
 		},
-		
+
 		focusoff: function(module) {
 			var index = focuson.indexOf(module);
 			if (index > -1) {
@@ -146,17 +147,21 @@ window.debug = (function() {
 
 		setLevel: function(l) {
 			if (l == level) {
-				console.log("Debugging is already set to Level "+l+". Duh.");
+				console.log("%cDebugging is already set to Level "+l+". Duh.", 'font-weight:bold;font-size:300%');
 				return false;
 			}
 			level = l;
 			prefs.save({debug_enabled: l});
-			console.log("Debugging set to level "+l+". Aren't you clever?");
+			console.log("%cDebugging set to level "+l+". Aren't you clever?", 'font-weight:bold;font-size:200%');
 			return true;
 		},
 
 		getLevel: function() {
 			return level;
+		},
+
+		stackTrace: function(v) {
+			stacktrace = v;
 		}
 
 	}

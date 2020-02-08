@@ -4,6 +4,13 @@
 =====================================================================
 */
 
+html, body.phone .dropmenu {
+    background-image: linear-gradient(#000000, #444444);
+    background-size:cover;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+}
+
 body
 {
 
@@ -14,16 +21,15 @@ body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,input
     color:#dddddd;
 }
 
-button, input[type="button"], .filebutton
+button, input[type="button"], div.filebutton
 {
     background-color:#000000;
     border:none;
     color:#dddddd;
     font-weight:bold;
-    font-size:110%;
 }
 
-button:hover, input[type="button"]:hover, .filebutton:hover
+button:hover, input[type="button"]:hover, div.filebutton:hover
 {
     background-color:#222222;
     color:#ffffff;
@@ -37,11 +43,11 @@ select:hover {
     color:#ffffff;
 }
 
-.selectholder {
+div.selectholder {
     background-color:rgba(200,200,200,0.05);
 }
 
-.selectholder:hover {
+div.selectholder:hover {
     background-color:rgba(200,200,200,0.1);
 }
 
@@ -78,7 +84,7 @@ a:hover,a:active
 = Specific Elements By ID
 =====================================================================
 */
-
+/*
 body.mobile, body.phone .dropmenu {
     background-image: linear-gradient(#000000, #444444);
 }
@@ -93,14 +99,15 @@ body.desktop #thetopbit
     background-image: linear-gradient(#000000, #050505);
 }
 
-body.desktop #headerbar
-{
-    background-image: linear-gradient(#050505, #0b0b0b);
-}
-
 #bottompage
 {
     background-image: linear-gradient(#0b0b0b, #444444);
+}
+*/
+
+body.desktop #headerbar
+{
+    background-image: linear-gradient(#050505, #0b0b0b);
 }
 
 #pset {
@@ -229,6 +236,21 @@ a.album:hover,a.album:active
     background-color:rgba(255,255,255,0.1);
 }
 
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color:#dddddd;
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    color:#ffffff;
+    background-color:rgba(255,255,255,0.1);
+}
+
+
 table.histable tr:hover {
     background-color:rgba(255,255,255,0.1);
     cursor:pointer;
@@ -290,6 +312,10 @@ tr.clickaddtrack:hover
     background-color:rgba(200,200,200,0.2);
 }
 
+.backmenu {
+    background-color: #000000;
+}
+
 /*
 =====================================================================
 = Dropdown Menus
@@ -298,7 +324,7 @@ tr.clickaddtrack:hover
 
 .albumbitsmenu
 {
-    background-image: linear-gradient(#000000, #050505) !important;
+    background-image: linear-gradient(#0b0b0b, #444444) !important;
 }
 
 div.topdropmenu
@@ -321,11 +347,11 @@ div.topdropmenu
 =====================================================================
 */
 
-.infowiki
+/*.infowiki
 {
     background-color:rgba(255,255,255,0.1);
 }
-
+*/
 /*
 =====================================================================
 = Info Panel - Spotify
@@ -359,7 +385,7 @@ div.topdropmenu
 
 .podcastitem
 {
-    border-top:1px solid #444444;
+    border-top:1px solid #222222;
 }
 
 /*

@@ -1,25 +1,18 @@
 var lastFMTrackRadio = function() {
 
-	var populating = false;
-	var currpage = 1;
-	var totalpages = 1;
-	var topTracks = new Array();
-	var tosend = 0;
-	var started = false;
+	var medebug = 'LFM TRACK RADIO';
 	var param = null;
 	var trackfinder = new faveFinder(false);
 	trackfinder.setCheckDb(false);
+	var toptracks = null;
 
 	function topTrack(track, artist) {
 		var self = this;
-		var tracks = new Array();
-		this.populated = false;
+		var to_find = null;
+		var track_uri = null;
 
-		this.sendATrack = function() {
-			debug.log("LASTFM TRACK RADIO",track,artist,"sending a track",self.populated);
-			if (!self.populated) {
-				debug.log("LASTFM TRACK RADIO","Getting Similar Tracks For",track,artist);
-				tracks.push({title: track, artist: artist});
+		this.sendATrack = async function() {
+			if (to_find === null) {
 				lastfm.track.getSimilar({
 						track: track,
 						artist: artist,
@@ -28,75 +21,75 @@ var lastFMTrackRadio = function() {
 					self.gotSimilar,
 					self.gotNoSimilar
 				);
-			} else {
-				getAUri();
 			}
-		}
-
-		function getAUri() {
-			if (tosend > 0) {
-				if (tracks.length > 0) {
-					var t = tracks.shift();
-					debug.log("LASTFM TRACK RADIO","Getting a URI For",t);
-					if (prefs.player_backend == "mopidy") {
-						trackfinder.setPriorities($("#radiodomains").makeDomainChooser("getSelection"));
-					}
-					trackfinder.findThisOne(
-						{
-							title: t.title,
-							artist: t.artist,
-							duration: 0,
-							albumartist: t.artist,
-							date: 0
-						},
-						self.gotAUri
-					);
+			while (to_find === null) {
+				await new Promise(t => setTimeout(t, 500));
+			}
+			var retval = false;
+			while (to_find.length > 0 && track_uri === null) {
+				searchForTrack(to_find.shift());
+				while (track_uri === null) {
+					await new Promise(t => setTimeout(t, 500));
+				}
+				if (track_uri !== false) {
+					retval = {type: 'uri', name: track_uri};
 				} else {
-					// This isn't ideal. What we need to do is inform the parent that we're out
-					// of tracks so he longer asks us to send any.
-					lastFMTrackRadio.trackAddFailed();
+					track_uri = null;
 				}
 			}
+			track_uri = null;
+			return retval;
 		}
 
 		this.gotSimilar = function(data) {
-			debug.log("LASTFM TRACK RADIO","Got Similar Tracks For",track,artist,data);
-			self.populated = true;
+			debug.debug(medebug,"Got Similar Tracks For",track,artist,data);
+			to_find = [{title: track, artist: artist}];
 			if (data.similartracks && data.similartracks.track) {
-				for (var i in data.similartracks.track) {
-					if (data.similartracks.track[i].name && data.similartracks.track[i].artist) {
-						tracks.push({
-							title: data.similartracks.track[i].name,
-							artist: data.similartracks.track[i].artist.name
+				for (let track of data.similartracks.track) {
+					if (track.name && track.artist) {
+						to_find.push({
+							title: track.name,
+							artist: track.artist.name
 						});
 					}
 				}
 			}
-			tracks = tracks.sort(randomsort);
-			getAUri();
+			to_find.sort(randomsort);
 		}
 
 		this.gotNoSimilar = function(data) {
-			getAUri();
+			to_find = [{title: track, artist: artist}];
+		}
+
+		function searchForTrack(t) {
+			debug.debug(medebug,"Getting a URI For",t);
+			if (prefs.player_backend == "mopidy") {
+				trackfinder.setPriorities($("#radiodomains").makeDomainChooser("getSelection"));
+			}
+			trackfinder.findThisOne(
+				{
+					title: t.title,
+					artist: t.artist,
+					duration: 0,
+					albumartist: t.artist,
+					date: 0
+				},
+				self.gotAUri
+			);
 		}
 
 		this.gotAUri = function(data) {
 			if (data.uri) {
-				tosend--;
-        		player.controller.addTracks([{type: 'uri', name: data.uri}], playlist.radioManager.playbackStartPos(), null);
+				track_uri = data.uri;
 			} else {
-				debug.warn("LASTFM TRACK RADIO","Failed to get a URI");
-				lastFMTrackRadio.trackAddFailed();
+				track_uri = false;
 			}
 		}
 	}
 
 	function getTopTracks(page) {
-		var period = null;
-		period = param;
-		debug.log("LASTFM TRACK RADIO","Using parameter for period",period);
 		lastfm.user.getTopTracks(
-			{period: period,
+			{period: param,
 			page: page,
 			limit: 100},
 			lastFMTrackRadio.gotTopTracks,
@@ -104,74 +97,63 @@ var lastFMTrackRadio = function() {
 		);
 	}
 
-	function sendATrack() {
-		debug.log("LASTFM TRACK RADIO","Sending a track",tosend);
-		if (tosend > 0) {
-			var index = Math.floor(Math.random() * topTracks.length);
-			debug.log("LASTFM TRACK RADIO","Using Index",index);
-			topTracks[index].sendATrack();
-		}
-	}
-
 	return {
 
-		populate: function(p, numtracks) {
-			if (populating) {
-				tosend += (numtracks - tosend);
-				sendATrack();
-			} else {
-				param = p;
-				topTracks = new Array();
-				tosend = numtracks;
-				populating = true;
-				started = false;
-				getTopTracks(1);
+		initialise: async function(p) {
+			param = p;
+			getTopTracks(1);
+		},
+
+		getURIs: async function(numtracks) {
+			while (toptracks === null) {
+				await new Promise(t => setTimeout(t, 500));
 			}
+			debug.log(medebug, 'We have',toptracks.length,'toptracks');
+			while (toptracks.length > 0) {
+				var trackindex = Math.floor(Math.random() * (toptracks.length - 1));
+				var track = await toptracks[trackindex].sendATrack();
+				if (track) {
+					// Return tracks one at a time, otherwise there's a really long wait when we first start up
+					return [track];
+				} else {
+					debug.log(medebug, 'Deleting toptrack',trackindex);
+					toptracks.splice(trackindex, 1);
+				}
+			}
+			return [];
 		},
 
 		lfmerror: function(data) {
-			debug.warn("LASTFM MIX RADIO","Last.FM Error",data);
-		},
-
-		trackAddFailed: function() {
-			sendATrack();
+			debug.warn(medebug,"Last.FM Error",data);
 		},
 
 		gotTopTracks: function(data) {
-			debug.log("LASTFM TRACK RADIO","Got Top Tracks",data);
+			debug.debug(medebug,"Got Top Tracks",data);
+			if (toptracks === null) {
+				toptracks = [];
+			}
 			if (data.toptracks.track) {
 				currpage = parseInt(data.toptracks['@attr'].page);
 				totalpages = parseInt(data.toptracks['@attr'].totalPages);
-				debug.mark("LASTFM TRACK RADIO","Got Page",currpage,"Of",totalpages,"Of Top Tracks");
-				for (var i in data.toptracks.track) {
-					if (data.toptracks.track[i].name && data.toptracks.track[i].artist) {
-						topTracks.push(new topTrack(data.toptracks.track[i].name, data.toptracks.track[i].artist.name));
+				debug.log(medebug,"Got Page",currpage,"Of",totalpages,"Of Top Tracks");
+				for (var track of data.toptracks.track) {
+					if (track.name && track.artist) {
+						toptracks.push(new topTrack(track.name, track.artist.name));
 					}
 				}
-				if (populating) {
-					if (currpage < totalpages) {
-						getTopTracks(currpage+1);
-					}
-					if (!started) {
-						started = true;
-						sendATrack();
-					}
-				}
-			} else {
-				if (currpage == 1) {
-					infobar.error(language.gettext('lastfm_error'));
-					playlist.radioManager.stop(null);
+				if (currpage < totalpages) {
+					getTopTracks(currpage+1);
 				}
 			}
 		},
 
 		stop: function() {
-			populating = false;
 			param = null;
+			toptracks = null;
 		},
 
-		modeHtml: function(p) {
-			return '<i class="icon-lastfm-1 modeimg"/></i><span class="modespan">'+language.gettext('label_lastfm_mix_'+p)+'</span>';
+		modeHtml: function() {
+			return '<i class="icon-lastfm-1 modeimg"/></i><span class="modespan">'+language.gettext('label_lastfm_mix_'+param)+'</span>';
 		},
 
 	}

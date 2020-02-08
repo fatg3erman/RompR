@@ -9,7 +9,7 @@ var info_lyrics = function() {
 
 		collection: function(parent, artistmeta, albummeta, trackmeta) {
 
-			debug.trace("LYRICS PLUGIN", "Creating data collection");
+			debug.debug("LYRICS PLUGIN", "Creating data collection");
 
 			var self = this;
 			var displaying = false;
@@ -23,21 +23,21 @@ var info_lyrics = function() {
 				return '<div class="lyrics"><h2 align="center">'+language.gettext("lyrics_lyrics")+'</h2><p>'+data+'</p></div>';
 			}
 
-            function getSearchArtist() {
-                return (albummeta.artist && albummeta.artist != "") ? albummeta.artist : parent.playlistinfo.trackartist;
-            }
+			function getSearchArtist() {
+				return (albummeta.artist && albummeta.artist != "") ? albummeta.artist : parent.playlistinfo.trackartist;
+			}
 
 			this.displayData = function() {
 				displaying = true;
-                browser.Update(null, 'album', me, parent.nowplayingindex, { name: "",
-                    					link: "",
-                    					data: null
-                						}
+				browser.Update(null, 'album', me, parent.nowplayingindex, { name: "",
+										link: "",
+										data: null
+										}
 				);
-                browser.Update(null, 'artist', me, parent.nowplayingindex, { name: "",
-                    					link: "",
-                    					data: null
-                						}
+				browser.Update(null, 'artist', me, parent.nowplayingindex, { name: "",
+										link: "",
+										data: null
+										}
 				);
 				self.doBrowserUpdate();
 			}
@@ -46,27 +46,27 @@ var info_lyrics = function() {
 				displaying = false;
 			}
 
-            this.startAfterSpecial = function() {
+			this.startAfterSpecial = function() {
 
-            }
+			}
 
-            this.tryReadingTags = function() {
-            	if (prefs.music_directory_albumart == "") {
-        			trackmeta.lyrics = '<h3 align=center>'+language.gettext("lyrics_nonefound")+'</h3><p>'+language.gettext("lyrics_nopath")+'</p>';
-        			self.doBrowserUpdate();
-            	} else {
-	            	$.post("browser/backends/getLyrics.php", {file: player.status.file, artist: getSearchArtist(), song: trackmeta.name})
-	            		.done(function(data) {
-	            			debug.trace("LYRICS",data);
-	            			trackmeta.lyrics = data;
-	            			self.doBrowserUpdate();
-	            		});
-	           	}
-            }
+			this.tryReadingTags = function() {
+				if (prefs.music_directory_albumart == "") {
+					trackmeta.lyrics = '<h3 align=center>'+language.gettext("lyrics_nonefound")+'</h3><p>'+language.gettext("lyrics_nopath")+'</p>';
+					self.doBrowserUpdate();
+				} else {
+					$.post("browser/backends/getLyrics.php", {file: player.status.file, artist: getSearchArtist(), song: trackmeta.name})
+						.done(function(data) {
+							debug.debug("LYRICS",data);
+							trackmeta.lyrics = data;
+							self.doBrowserUpdate();
+						});
+				}
+			}
 
 			this.populate = function() {
 				if (trackmeta.lyrics === undefined) {
-					debug.trace("LYRICS PLUGIN",parent.nowplayingindex,"No lyrics yet, trying again in 1 second");
+					debug.debug("LYRICS PLUGIN",parent.nowplayingindex,"No lyrics yet, trying again in 1 second");
 					setTimeout(self.populate, 1000);
 					return;
 				}
@@ -76,14 +76,14 @@ var info_lyrics = function() {
 					self.doBrowserUpdate();
 				}
 
-		    }
+			}
 
 			this.doBrowserUpdate = function() {
 				if (displaying && trackmeta.lyrics !== undefined && trackmeta.lyrics !== null) {
-	                browser.Update(null, 'track', me, parent.nowplayingindex, { name: trackmeta.name,
-	                    					link: "",
-	                    					data: formatLyrics(trackmeta.lyrics)
-	                						}
+					browser.Update(null, 'track', me, parent.nowplayingindex, { name: trackmeta.name,
+											link: "",
+											data: formatLyrics(trackmeta.lyrics)
+											}
 					);
 				}
 			}

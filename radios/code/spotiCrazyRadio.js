@@ -1,71 +1,69 @@
 var spotiCrazyRadio = function() {
 
-	var populated = false;
 	var tuner;
-	var tags;
-	var tagarray;
-	var params = {};
-	var index = null;
-
-	function populateTuner(numtracks) {
-		var sods = tagarray.splice(0,5);
-		var params = {seed_genres: sods.join(',')}
-		tuner.populate(params, numtracks);
-	}
+	var name;
+	var medebug = 'CRAZYRADIO';
+	const integer_values = ['popularity'];
 
 	return {
 
-		populate: function(p, numtracks) {
-			index = p;
+		initialise: async function(p) {
 			if (typeof(spotifyRecommendationsRadio) == 'undefined') {
-				debug.log("CRAZY RADIO","Loading Spotify Radio Tuner");
-				$.getScript('radios/code/spotifyrecommendationsradio.js?version='+rompr_version,function() {
-					spotiCrazyRadio.actuallyGo(numtracks)
-				});
-			} else {
-				spotiCrazyRadio.actuallyGo(numtracks)
-			}
-		},
-
-		actuallyGo: function(numtracks) {
-			if (!populated) {
-				crazyRadioManager.load(index);
-				tags = $('[name="spotigenres"]').val();
-				tagarray = tags.split(',')
-				populated = true;
-				$('.spotiradioslider').each(function() {
-					var attribute = $(this).attr('name');
-					var range = $(this).rangechooser("getRange");
-					params['max_'+attribute] = range.max.toFixed(2);
-					params['min_'+attribute] = range.min.toFixed(2);
-				});
-				tuner = new spotifyRecommendationsRadio();
-				if (tagarray.length > 0) {
-					populateTuner(parseInt(prefs.smartradio_chunksize));
-				} else {
-	        		infobar.error(language.gettext('error_nogenres'));
-	        		playlist.radioManager.stop(null);
-				}
-			} else {
-				if (tagarray.length > 0) {
-					populateTuner(numtracks);
-				} else {
-					tuner.sendTracks(numtracks);
+				debug.info(medebug,"Loading Spotify Radio Tuner");
+				try {
+					await $.getScript('radios/code/spotifyrecommendationsradio.js?version='+rompr_version);
+				} catch (err) {
+					debug.error(medebug, 'Failed to load script', err);
+					return false;
 				}
 			}
-		},
-
-		modeHtml: function(p) {
-			if (tags) {
-				return '<i class="icon-spotify-circled modeimg"/></i><span class="modespan">'+tags+'</span>';
+			tuner = new spotifyRecommendationsRadio(true);
+			p = JSON.parse(p);
+			crazyRadioManager.load(p);
+			var params = {'seed_genres': p.genres};
+			if (p.playlistname) {
+				name = p.playlistname;
 			} else {
+				name = p.genres;
+			}
+			delete p.playlistname;
+			delete p.genres;
+			for (var param in p) {
+				if (integer_values.indexOf(param) == -1) {
+					var places = 2;
+				} else {
+					var places = 0;
+				}
+				for (var attr in p[param]) {
+					params[attr+'_'+param] = parseFloat(p[param][attr]).toFixed(places);
+				}
+			}
+			if (params.seed_genres != '') {
+				debug.log(medebug, 'Loading with',params);
+				tuner.getRecommendations(params);
+			} else {
+				debug.info(medebug, 'No Genres!');
+				infobar.error(language.gettext('error_nogenres'));
 				return false;
 			}
 		},
 
+		getURIs: async function(numtracks) {
+			var tracks = await tuner.getTracks(numtracks);
+			var retval = new Array();
+			tracks.forEach(function(uri) {
+				retval.push({type: 'uri', name: uri});
+			});
+			return retval;
+		},
+
+		modeHtml: function() {
+			return '<i class="icon-spotify-circled modeimg"/></i><span class="modespan">'+name+'</span>';
+		},
+
 		stop: function() {
-			populated = false;
-			params = {};
+			tuner = null;
+			name = '';
 		}
 
 	}

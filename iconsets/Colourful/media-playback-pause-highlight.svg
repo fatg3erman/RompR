@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -9,40 +7,41 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   id="svg3065"
-   height="112.56"
-   width="112.38"
+   sodipodi:docname="media-playback-pause-highlight.svg"
+   inkscape:version="1.0beta2 (2b71d25, 2019-12-03)"
    version="1.1"
-   inkscape:version="0.48.5 r10040"
-   sodipodi:docname="media-playback-pause-highlight.svg">
+   width="112.38"
+   height="112.56"
+   id="svg3065">
   <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="775"
-     inkscape:window-height="480"
-     id="namedview11"
-     showgrid="false"
-     inkscape:zoom="2.0966596"
-     inkscape:cx="56.189999"
-     inkscape:cy="56.279999"
-     inkscape:window-x="1387"
-     inkscape:window-y="397"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="svg3065"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg3065" />
+     inkscape:window-y="24"
+     inkscape:window-x="0"
+     inkscape:cy="48.171864"
+     inkscape:cx="34.695762"
+     inkscape:zoom="4.1933192"
+     showgrid="false"
+     id="namedview13"
+     inkscape:window-height="876"
+     inkscape:window-width="1440"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
   <defs
      id="defs3067">
     <filter
-       id="filter3316"
-       color-interpolation-filters="sRGB">
+       color-interpolation-filters="sRGB"
+       id="filter3316">
       <feGaussianBlur
-         id="feGaussianBlur7"
-         stdDeviation=".58672" />
+         stdDeviation=".58672"
+         id="feGaussianBlur7" />
     </filter>
   </defs>
   <metadata
@@ -53,38 +52,29 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
+  <circle
+     r="51.404675"
+     cy="56.279999"
+     cx="56.189999"
+     id="path4532"
+     style="fill:none;stroke:#ff4d00;stroke-width:8.21167;stroke-linecap:round;stroke-linejoin:round" />
   <path
-     id="path13"
-     d="m211.43,266.65a54.286,51.429,0,1,1,-108.57,0,54.286,51.429,0,1,1,108.57,0z"
-     transform="matrix(0.99975,0,0,1.05529,-100.91039,-225.10457)"
-     filter="url(#filter3316)"
-     stroke="#000"
-     fill-rule="evenodd"
-     style="fill:#0000aa;fill-opacity:1" />
+     style="fill:#ff4d00;fill-rule:evenodd;stroke:#ffffff;stroke-width:2;fill-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     inkscape:connector-curvature="0"
+     d="m 63.59032,27.89462 h 17.211 v 56.783 h -17.211 z"
+     id="path15" />
   <path
-     id="path15"
-     d="m63.59,27.895h17.211v56.783h-17.211z"
-     fill-rule="evenodd"
-     stroke="#FFF"
-     stroke-width="0.93142002999999995"
-     fill="#da6800" />
+     style="fill:#ff4d00;fill-rule:evenodd;stroke:#ffffff;stroke-width:2;fill-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     inkscape:connector-curvature="0"
+     d="m 31.59032,27.89462 h 17.211 v 56.783 h -17.211 z"
+     id="path17" />
   <path
-     id="path17"
-     d="m31.59,27.895h17.211v56.783h-17.211z"
-     fill-rule="evenodd"
-     stroke="#FFF"
-     stroke-width="0.93142002999999995"
-     fill="#da6800" />
-  <path
-     id="path19"
-     opacity="0.5"
-     d="m55.71,3.1546c-29.13,0.00001-52.781,24.323-52.781,54.281,46.899-10.605,58.321-10.745,105.53,0,0.00001-29.958-23.62-54.281-52.75-54.281z"
-     stroke-opacity="0.18256998"
-     fill-rule="evenodd"
-     stroke="#000"
-     fill="#FFF" />
+     style="opacity:0.5;fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-opacity:0.18256998"
+     inkscape:connector-curvature="0"
+     d="m 55.71032,3.15462 c -29.13,1e-5 -52.781,24.323 -52.781,54.281 46.899,-10.605 58.321,-10.745 105.53,0 10e-6,-29.958 -23.62,-54.281 -52.75,-54.281 z"
+     id="path19" />
 </svg>

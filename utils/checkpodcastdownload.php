@@ -10,7 +10,9 @@ if (file_exists('prefs/monitor.xml')) {
 		$status['percent'] = ($csize/$fsize)*100;
 		$status['filename'] = $fname;
 	}
+	print json_encode($status);
+} else {
+	header('HTTP/1.0 404 Not Found');
 }
 
-print json_encode($status);
 ?>

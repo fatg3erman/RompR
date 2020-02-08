@@ -1,6 +1,11 @@
-.smallcover
+div.smallcover
 {
 	width:24px;
+}
+
+img.smallcover {
+	width: 100%;
+	object-fit: scale-down;
 }
 
 .smallcover-svg {

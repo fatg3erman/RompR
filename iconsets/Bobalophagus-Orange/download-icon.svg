@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 1000 1000"
+   enable-background="new 0 0 1000 1000"
+   xml:space="preserve"
+   id="svg4031"><defs
+   id="defs4035" />
+<metadata
+   id="metadata3989"> Svg Vector Icons : http://www.onlinewebfonts.com/icon <rdf:RDF><cc:Work
+     rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+       rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata>
+<polygon
+   transform="translate(3.6764706,128.67647)"
+   style="fill:#ff4500;fill-opacity:1"
+   id="polygon3991"
+   points="561.3,423.4 438.8,423.4 438.8,668.4 346.9,668.4 500,852.2 653.1,668.4 561.3,668.4 " /><path
+   style="fill:#ff4500;fill-opacity:1;stroke-width:1.04835"
+   id="path3993"
+   d="M 854.8,363.5467 C 826.4,280.67911 753.7,221.77059 668.4,221.77059 c -19.6,0 -38.6,3.07731 -56.5,8.90222 C 563.3,144.5081 476.5,87.138235 377.5,87.138235 227.3,87.138235 105.1,219.2428 101.9,383.43932 47,418.38878 10,483.78163 10,558.40642 10,669.84904 92.3,760.3 193.8,760.3 h 137.8 l -51.1,-67.37113 h -86.9 c -67.5,0 -122.4,-60.22737 -122.4,-134.63235 0,-63.7443 40.3,-117.15762 94.5,-131.11543 -1.8,-12.08943 -2.7,-24.50858 -2.7,-37.14754 0,-130.12629 96,-235.63409 214.4,-235.63409 96.8,0 178.7,70.55834 205.2,167.49364 23.6,-20.55204 53.3,-32.86129 85.7,-32.86129 70.9,0 129.4,58.90853 137,134.63236 h 0.9 c 67.5,0 122.4,60.22737 122.4,134.63235 0,74.18517 -54.8,134.63235 -122.4,134.63235 H 719.3 L 668.2,760.3 H 806 c 101.4,0 183.8,-90.67077 183.8,-202.00348 0.2,-92.97875 -57.1,-171.34028 -135,-194.74982 z" />
+</svg>

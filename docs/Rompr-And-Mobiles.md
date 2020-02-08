@@ -1,24 +1,16 @@
 # Using RompЯ with mobile devices
 
-## Updating RompЯ
-
-Unfortunately it seems that many mobile devices use very strong cache settings and when you update RompЯ it may not run properly on your device. The only cure for this seems to be to completely delete the cache on your device then load RompЯ. If you have added RompЯ as an icon on your home screen, you may have to remove and recreate the icon.
-
 ## Playcounts and Scrobbling
 
 RompЯ works fine on almost all mobile devices but, because it runs in a web browser, if the device goes to sleep (the screen switches off) then RompЯ will not be able to update Playcounts or scrobble tracks to Last.FM. This page explains how to set up some extras so that this still works.
 
 One option is to always leave a desktop browser open on RompЯ and that will take care of everything, but that won't be an option for most people, and the following is neater anyway.
 
-## Scrobbling to Last.FM
+## Romonitor - Updating RompЯ's Playcounts and Scrobbling to Last.FM
 
-To make sure your tracks get scrobbled you should look at using [mopidy-scrobbler](https://github.com/mopidy/mopidy-scrobbler) for Mopidy or [mpdscribble](https://www.musicpd.org/clients/mpdscribble/) for mpd.
+Even if you don't care about Playcounts, they are used by many of the [Personalised Radio Stations](/RompR/Personalised-Radio), so it's still useful.
 
-## Updating RompЯ's Playcounts
-
-Making RompЯ update Playcounts is only slightly harder. Even if you don't care about Playcounts, they are used by many of the [Personalised Radio Stations](/RompR/Personalised-Radio), so it's still useful.
-
-RompЯ is provided with a small program called romonitor that takes care of updating playcounts (and also marks podcasts as listened). It just needs a little setting up.
+RompЯ is provided with a small program called romonitor that takes care of updating playcounts, marks podcasts as listened, and scrobbles tracks to Last.FM. It just needs a little setting up.
 
 ### Create a Shell Script to run romonitor
 
@@ -49,6 +41,16 @@ And you should see something like
 
     bob       1336  0.0  1.0  63572 19572 ?        S    13:45   0:00 php ./romonitor.php --currenthost Mopidy --player_backend mopidy
     bob       2828  0.0  0.0   4696   804 pts/0    S+   14:02   0:00 grep --color=auto romonitor
+
+### Scrobbling
+
+You can use [mopidy-scrobbler](https://github.com/mopidy/mopidy-scrobbler) for Mopidy or [mpdscribble](https://www.musicpd.org/clients/mpdscribble/) for mpd to scrobble, but if you do then your scrobbles might not match exactly what's in your collection - especially if you use podcasts. If you use romonitor to scrobble instead, then everything will be consistent.
+
+To make romonitor scrobble to Last.FM you must first [log in to Last.FM](/RompR/LastFM) from the main Rompr application, then start romonitor with an additional paramter
+
+    php ./romonitor.php --currenthost Default --player_backend mpd --scrobbling true &
+
+Also make sure you're not scrobbling from the main RompR application or mpdscribble/mopidy-scrobbler etc or all your plays will be scrobbled twice!
 
 ### If you're using Multiple Players
 

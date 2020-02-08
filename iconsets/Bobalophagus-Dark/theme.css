@@ -1,0 +1,251 @@
+
+ [class^="icon-"], [class*=" icon-"] {
+ 	background-size:contain;
+	background-position: center;
+	background-repeat:no-repeat;
+	display:inline-block;
+}
+
+.button-disabled { opacity: 0.1 }
+
+.clearbox {
+    background-image: url('iconsets/Bobalophagus-Dark/edit-delete.svg');
+    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
+    background-size: auto 50%;
+    background-position: right 2px center;
+    background-repeat: no-repeat;
+}
+
+.combobox-entry, div.selectholder {
+    background-image: url('iconsets/Bobalophagus-Dark/blobdown2.svg');
+    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
+    background-size: auto 50%;
+    background-position: right 2px center;
+    background-repeat: no-repeat;
+}
+
+.combobox-entry:hover, div.selectholder:hover {
+    background-image: url('iconsets/Bobalophagus-Dark/blobdown2-hi.svg');
+    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
+    background-size: auto 50%;
+    background-position: right 2px center;
+    background-repeat: no-repeat;
+}
+
+#ratingsearch {
+    position: relative;
+}
+
+#ratingsearch:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+    z-index: -1;
+    background-image: url('iconsets/Bobalophagus-Dark/0stars.svg');
+    background-size: auto 50%;
+    background-position: left 2px center;
+    background-repeat: no-repeat;
+}
+
+i.combo-button {
+    background-image: url('iconsets/Bobalophagus-Dark/blobdown2.svg');
+}
+
+.icon-play-circled { background-image :url('iconsets/Bobalophagus-Dark/media-playback-start.svg') }
+.playdiv { background-image :url('iconsets/Bobalophagus-Dark/media-playback-start.svg') }
+.icon-play-circled:hover { background-image :url('iconsets/Bobalophagus-Dark/media-playback-start-highlight.svg') }
+.icon-pause-circled { background-image :url('iconsets/Bobalophagus-Dark/media-playback-pause.svg') }
+.icon-pause-circled:hover { background-image :url('iconsets/Bobalophagus-Dark/media-playback-pause-highlight.svg') }
+.icon-fast-backward { background-image :url('iconsets/Bobalophagus-Dark/media-skip-backward.svg') }
+.icon-fast-backward:hover { background-image :url('iconsets/Bobalophagus-Dark/media-skip-backward-highlight.svg') }
+.icon-fast-forward { background-image :url('iconsets/Bobalophagus-Dark/media-skip-forward.svg') }
+.icon-fast-forward:hover { background-image :url('iconsets/Bobalophagus-Dark/media-skip-forward-highlight.svg') }
+.icon-stop-1 { background-image :url('iconsets/Bobalophagus-Dark/media-playback-stop.svg') }
+.icon-stop-1:hover { background-image :url('iconsets/Bobalophagus-Dark/media-playback-stop-highlight.svg') }
+.icon-to-end-1 { background-image :url('iconsets/Bobalophagus-Dark/stopafter.svg') }
+.icon-to-end-1:hover { background-image :url('iconsets/Bobalophagus-Dark/stopafter-highlight.svg') }
+
+.icon-music { background-image: url('iconsets/Bobalophagus-Dark/collection.svg') }
+.icon-search { background-image: url('iconsets/Bobalophagus-Dark/system-search.svg') }
+.icon-folder-open-empty { background-image: url('iconsets/Bobalophagus-Dark/folder.svg') }
+.icon-radio-tower { background-image: url('iconsets/Bobalophagus-Dark/broadcast-new.svg') }
+.icon-cd { background-image: url('iconsets/Bobalophagus-Dark/cd_case.svg') }
+.icon-resize-horizontal { background-image: url('iconsets/Bobalophagus-Dark/resize.svg') }
+.icon-angle-double-left { background-image:url('iconsets/Bobalophagus-Dark/arrow-left-double.svg') }
+.icon-angle-double-right { background-image:url('iconsets/Bobalophagus-Dark/arrow-right-double.svg') }
+.icon-menu { background-image: url('iconsets/Bobalophagus-Dark/pushbutton.svg') }
+.icon-versions { background-image: url('iconsets/Bobalophagus-Dark/history.svg') }
+.icon-left-circled { background-image: url('iconsets/Bobalophagus-Dark/backbutton.svg') }
+.icon-right-circled { background-image: url('iconsets/Bobalophagus-Dark/forwardbutton.svg') }
+.icon-cog-alt { background-image: url('iconsets/Bobalophagus-Dark/preferences.svg') }
+.icon-trash { background-image: url('iconsets/Bobalophagus-Dark/edit-clear-list.svg') }
+.icon-wifi { background-image: url('iconsets/Bobalophagus-Dark/smartradio.svg') }
+.icon-doc-text { background-image: url('iconsets/Bobalophagus-Dark/playlist.svg') }
+.icon-floppy { background-image: url('iconsets/Bobalophagus-Dark/document-save.svg') }
+.icon-cancel-circled { background-image: url('iconsets/Bobalophagus-Dark/edit-delete.svg') }
+.icon-plus {
+	background-image: url('iconsets/Bobalophagus-Dark/add.svg');
+}
+.icon-alarm { background-image: url('iconsets/Bobalophagus-Dark/alarmclock_false.svg') }
+.icon-alarm-on { background-image: url('iconsets/Bobalophagus-Dark/alarmclock_true.svg') }
+.icon-sleep { background-image: url('iconsets/Bobalophagus-Dark/sleep.svg') }
+.icon-library { background-image: url('iconsets/Bobalophagus-Dark/file.svg') }
+.icon-lastfm-1 { background-image: url('iconsets/Bobalophagus-Dark/lastfm.svg') }
+.icon-wikipedia { background-image: url('iconsets/Bobalophagus-Dark/wikipedia-logo.svg') }
+.icon-musicbrainz {	background-image: url('iconsets/Bobalophagus-Dark/musicbrainz_logo.svg') }
+.icon-discogs {	background-image: url('iconsets/Bobalophagus-Dark/discogs-logo.svg') }
+.icon-doc-text-1 { background-image: url('iconsets/Bobalophagus-Dark/lyrics.svg') }
+.icon-soundcloud-circled { background-image: url('iconsets/Bobalophagus-Dark/soundcloud-logo.svg') }
+.icon-youtube-circled { background-image: url('iconsets/Bobalophagus-Dark/youtube-logo.svg') }
+.icon-gmusic-circled { background-image: url('iconsets/Bobalophagus-Dark/gmusic-logo.svg') }
+.icon-spotify-circled { background-image: url('iconsets/Bobalophagus-Dark/spotify-logo.svg') }
+.icon-vkontakte-circled { background-image: url('iconsets/Bobalophagus-Dark/vkontakte-logo.svg') }
+.icon-podcast-circled { background-image: url('iconsets/Bobalophagus-Dark/podcast-logo.svg') }
+.icon-audiobook { background-image: url('iconsets/Bobalophagus-Dark/audiobook.svg') }
+.icon-internetarchive-circled { background-image: url('iconsets/Bobalophagus-Dark/internetarchive-logo.svg') }
+.icon-increase { background-image: url('iconsets/Bobalophagus-Dark/arrow-increase.svg') }
+.icon-decrease { background-image: url('iconsets/Bobalophagus-Dark/arrow-decrease.svg') }
+.icon-attention-1 { background-image: url('iconsets/Bobalophagus-Dark/dialog-error.svg') }
+.icon-info-circled { background-image: url('iconsets/Bobalophagus-Dark/dialog-information.svg') }
+.icon-download { background-image: url('iconsets/Bobalophagus-Dark/download-icon.svg') }
+.icon-sun { background-image: url('iconsets/Bobalophagus-Dark/icon-new.svg') }
+.icon-headphones { background-image: url('iconsets/Bobalophagus-Dark/headphones.svg') }
+.icon-unlistened { background-image: url('iconsets/Bobalophagus-Dark/headphones.svg') }
+.icon-block { background-image: url('iconsets/Bobalophagus-Dark/lastfm-ban.svg') }
+.icon-heart { background-image: url('iconsets/Bobalophagus-Dark/lastfm-love.svg') }
+.icon-heart-broken { background-image: url('iconsets/Bobalophagus-Dark/lastfm-unlove.svg') }
+.icon-refresh { background-image: url('iconsets/Bobalophagus-Dark/refresh.svg') }
+.icon-tunein { background-image: url('iconsets/Bobalophagus-Dark/../../newimages/tunein-logo.svg') }
+.icon-no-response-playbutton { background-image :url('iconsets/Bobalophagus-Dark/media-playback-start.svg') }
+.icon-tags { background-image: url('iconsets/Bobalophagus-Dark/tag.svg') }
+.icon-volume-up { background-image: url('iconsets/Bobalophagus-Dark/volume.svg') }
+.icon-toggle-open { background-image: url('iconsets/Bobalophagus-Dark/toggle-open.svg') }
+.icon-toggle-closed { background-image: url('iconsets/Bobalophagus-Dark/toggle-closed.svg') }
+.icon-spin6 { background-image: url('iconsets/Bobalophagus-Dark/spinner.svg') !important }
+.icon-output { background-image: url('iconsets/Bobalophagus-Dark/output.svg') }
+.icon-output-mute { background-image: url('iconsets/Bobalophagus-Dark/output_mute.svg') }
+.icon-sliders { background-image: url('iconsets/Bobalophagus-Dark/sliders.svg') }
+.icon-0-stars { background-image: url('iconsets/Bobalophagus-Dark/0stars.svg') }
+.icon-1-stars { background-image: url('iconsets/Bobalophagus-Dark/1stars.svg') }
+.icon-2-stars { background-image: url('iconsets/Bobalophagus-Dark/2stars.svg') }
+.icon-3-stars { background-image: url('iconsets/Bobalophagus-Dark/3stars.svg') }
+.icon-4-stars { background-image: url('iconsets/Bobalophagus-Dark/4stars.svg') }
+.icon-5-stars { background-image: url('iconsets/Bobalophagus-Dark/5stars.svg') }
+.icon-single-star { background-image: url('iconsets/Bobalophagus-Dark/singlestar.svg') }
+.icon-ratandtag { background-image: url('iconsets/Bobalophagus-Dark/ratandtag.svg') }
+.icon-ratortag { background-image: url('iconsets/Bobalophagus-Dark/ratortag.svg') }
+.icon-toggle-on { background-image: url('iconsets/Bobalophagus-Dark/togglebutton-new2-on.svg') }
+.icon-toggle-off { background-image: url('iconsets/Bobalophagus-Dark/togglebutton-new2-off.svg') }
+
+.icon-random.flow-on { background-image: url('iconsets/Bobalophagus-Dark/random.svg') }
+.icon-random.flow-off { background-image: url('iconsets/Bobalophagus-Dark/random_off.svg') }
+.icon-crossfade.flow-on { background-image: url('iconsets/Bobalophagus-Dark/crossfade.svg') }
+.icon-crossfade.flow-off { background-image: url('iconsets/Bobalophagus-Dark/crossfade_off.svg') }
+.icon-repeat.flow-on { background-image: url('iconsets/Bobalophagus-Dark/refresh.svg') }
+.icon-repeat.flow-off { background-image: url('iconsets/Bobalophagus-Dark/refresh_off.svg') }
+.icon-consume.flow-on { background-image: url('iconsets/Bobalophagus-Dark/consume.svg') }
+.icon-consume.flow-off { background-image: url('iconsets/Bobalophagus-Dark/consume_off.svg') }
+
+.icon-allrandom { background-image: url('iconsets/Bobalophagus-Dark/shuffle.svg') }
+.icon-neverplayed { background-image: url('iconsets/Bobalophagus-Dark/neverheard.svg') }
+.icon-recentlyplayed { background-image: url('iconsets/Bobalophagus-Dark/calendar.svg') }
+.icon-artist { background-image: url('iconsets/Bobalophagus-Dark/artist-icon.svg') }
+.icon-mp3-audio { background-image: url('iconsets/Bobalophagus-Dark/mp3-audio.svg') }
+.icon-aac-audio { background-image: url('iconsets/Bobalophagus-Dark/aac-audio.svg') }
+.icon-flac-audio { background-image: url('iconsets/Bobalophagus-Dark/flac-audio.svg') }
+.icon-wma-audio { background-image: url('iconsets/Bobalophagus-Dark/wma-audio.svg') }
+.icon-ogg-audio { background-image: url('iconsets/Bobalophagus-Dark/ogg-audio.svg') }
+.icon-explicit { background-image: url('iconsets/Bobalophagus-Dark/parental-advisory.svg') }
+.icon-expand-up { background-image: url('iconsets/Bobalophagus-Dark/expand-up.svg') }
+.icon-rss { background-image: url('iconsets/Bobalophagus-Dark/rss.svg') }
+.icon-tick { background-image: url('iconsets/Bobalophagus-Dark/tick.svg') }
+.icon-video { background-image: url('iconsets/Bobalophagus-Dark/movie-1.svg') }
+.icon-bbc-logo { background-image: url('iconsets/Bobalophagus-Dark/bbc-logo.svg') }
+.icon-imdb-logo { background-image: url('iconsets/Bobalophagus-Dark/imdb-logo.svg') }
+.icon-facebook-logo { background-image: url('iconsets/Bobalophagus-Dark/facebook-logo.svg') }
+.icon-twitter-logo { background-image: url('iconsets/Bobalophagus-Dark/twitter-logo.svg') }
+.icon-www { background-image: url('iconsets/Bobalophagus-Dark/world-wide-web.svg') }
+.icon-allmusic { background-image: url('iconsets/Bobalophagus-Dark/allmusic-logo.svg') }
+.icon-updown { background-image: url('iconsets/Bobalophagus-Dark/arrow-updown.svg') }
+.icon-snapcast { background-image: url('iconsets/Bobalophagus-Dark/../../newimages/snapcast.png') }
+
+.styledinputs label
+{
+    display:inline-block;
+    cursor:pointer;
+    position:relative;
+    padding-left:2.5em;
+    line-height:1.5em;
+}
+
+.styledinputs input[type=radio]
+{
+    display:none;
+}
+
+.styledinputs input[type=checkbox]
+{
+    display:none;
+}
+
+.styledinputs label:before
+{
+    content:"";
+    display:inline-block;
+    width:2em;
+    height:1.5em;
+    position:absolute;
+    left:0;
+    /* bottom:0.2em; */
+    background-image: url('iconsets/Bobalophagus-Dark/togglebutton-new2-off.svg');
+ 	background-size:auto 80%;
+	background-position: center;
+	background-repeat:no-repeat;
+}
+
+.styledinputs input:checked + label:before
+{
+    background-image: url('iconsets/Bobalophagus-Dark/togglebutton-new2-on.svg') !important;
+}
+
+img.notexist,img.notfound
+{
+    background-image: url('iconsets/Bobalophagus-Dark/compact-disc.svg');
+    background-size:contain;
+    display:inline-block;
+    background-position:center;
+    background-repeat: no-repeat;
+}
+
+img.stream.notfound, img.stream.notexist
+{
+    background-image: url('iconsets/Bobalophagus-Dark/broadcast-new.svg');
+}
+
+img.plimage.notfound
+{
+    background-image: url('iconsets/Bobalophagus-Dark/playlist.svg');
+}
+
+.backmenu
+{
+    background-image: url('iconsets/Bobalophagus-Dark/arrow-left-double.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+button.searchbutton {
+    background-image: url('iconsets/Bobalophagus-Dark/system-search.svg');
+}
+
+button.rssbutton {
+    background-image: url('iconsets/Bobalophagus-Dark/rss.svg');
+}
+
+button.savebutton {
+    background-image: url('iconsets/Bobalophagus-Dark/document-save.svg');
+}

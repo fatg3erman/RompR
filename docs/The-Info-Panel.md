@@ -10,7 +10,7 @@ The Spotify Info panel is another source of Music Discovery.
 
 You'll get a display of a biography of the artist, options to start up dynamic playlists based on this artist, and a list of albums by the artist. Each album can be opened to display a track listing.
 
-Mopidy-Spotify users can add tracks and albums to the Current Playlist directly from this panel.
+Mopidy-Spotify users can add tracks and albums to the Play Queue directly from this panel.
 
 The 'Headphones' icon will add the album to [Albums To Listen To](/RompR/Albums-To-Listen-To), from where you can come back and listen to the album at your leisure.
 
@@ -20,7 +20,7 @@ The 'Similar Artists' option allows you to delve deeper into Spotify. You'll get
 
 ![](images/infopanel2.png)
 
-The Track information section will give you suggested new tracks to listen to. if you have Mopidy-Spotify you can add them to the Current Playlist directly from here
+The Track information section will give you suggested new tracks to listen to. if you have Mopidy-Spotify you can add them to the Play Queue directly from here
 
 ![](images/spotifyinfo2.png)
 

@@ -7,6 +7,10 @@
 html, body.phone .dropmenu {
     color:#000000;
     background-image:url('themes/Paper1.jpg');
+    /*Required to work around apparent Firefox/Safari dropdown menu redraw bug*/
+    background-size:auto;
+    background-repeat:repeat;
+    background-attachment:fixed;
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -25,7 +29,7 @@ a:hover,a:active {
     color:#ff4800;
 }
 
-button, .filebutton {
+button, div.filebutton {
     color:#000000;
     background-color:transparent;
     border:none;
@@ -33,11 +37,11 @@ button, .filebutton {
     font-weight:bold;
 }
 
-button:active, .filebutton:active {
+button:active, div.filebutton:active {
     box-shadow:none;
 }
 
-button:hover, .filebutton:hover {
+button:hover, div.filebutton:hover {
     color:#ff4800;
     background-color: rgba(255, 72, 0, 0.1);
 }
@@ -145,6 +149,19 @@ table.histable tr:hover {
 .backhi:hover {
     background-color:#CC5500;
     cursor:pointer;
+}
+
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color:#000000;
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    color:#cc5500;
 }
 
 tr.clickaddtrack:hover {

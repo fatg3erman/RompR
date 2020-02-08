@@ -20,8 +20,8 @@ switch ($_REQUEST['action']) {
 		break;
 
 	case 'save':
-	    $json = file_get_contents("php://input");
-	    $d = json_decode($json);
+		$json = file_get_contents("php://input");
+		$d = json_decode($json);
 		$filename = md5($d->{'playlistname'}).'.json';
 		file_put_contents('../prefs/crazyplaylists/'.$filename, $json);
 		print '<html></html>';

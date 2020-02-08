@@ -1,215 +1,235 @@
-jQuery.fn.menuReveal = function(callback) {
-    debug.log("UI", "Revealing",$(this).attr('id'));
-    var self = this;
-    if (this.hasClass('toggledown')) {
-        if (callback) {
-            this.slideToggle('fast',callback);
-        } else {
-            this.slideToggle('fast');
-        }
-    } else {
-        this.findParentScroller().saveScrollPos();
-        this.show(0, function() {
-            var i = self.find('.album_menu_image');
-            if (i.length > 0) {
-                i.attr('src', i.attr('asrc'));
-            }
-            if (callback) {
-                callback();
-            }
-        });
-    }
-    return this;
+jQuery.fn.menuReveal = async function() {
+	var self = $(this);
+	if (self.hasClass('toggledown')) {
+		await self.slideToggle('fast').promise();
+	} else {
+		self.findParentScroller().saveScrollPos();
+		await self.show(0).promise();
+	}
+	return this;
 }
 
-jQuery.fn.menuHide = function(callback) {
-    debug.log("UI", "Hiding",$(this).attr('id'));
-    var self = this;
-    if (this.hasClass('toggledown')) {
-        if (callback) {
-            this.slideToggle('fast',callback);
-        } else {
-            this.slideToggle('fast');
-        }
-    } else {
-        this.hide(0, function() {
-            if (callback) {
-                callback();
-            }
-            self.findParentScroller().restoreScrollPos();
-            if (self.hasClass('removeable')) {
-                self.remove();
-            } else {
-                debug.log("UI", "Hiding Image",$(this).attr('id'));
-                var i = self.find('.album_menu_image');
-                i.removeAttr('src');
-            }
-        });
-    }
-    return this;
+jQuery.fn.menuHide = async function() {
+	var self = $(this);
+	if (self.hasClass('toggledown')) {
+		await self.slideToggle('fast').promise();
+	} else {
+		await self.hide(0).promise();
+		self.findParentScroller().restoreScrollPos();
+	}
+	return this;
 }
 
 jQuery.fn.isOpen = function() {
-    if (this.hasClass('backmenu') || $('#'+this.attr('name')).is(':visible')) {
-        return true;
-    } else {
-        return false;
-    }
+	if (this.hasClass('backmenu') || $('#'+this.attr('name')).is(':visible')) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 jQuery.fn.isClosed = function() {
-    if (this.hasClass('backmenu') || $('#'+this.attr('name')).is(':visible')) {
-        return false;
-    } else {
-        return true;
-    }
+	if (this.hasClass('backmenu') || $('#'+this.attr('name')).is(':visible')) {
+		return false;
+	} else {
+		return true;
+	}
 }
 
 jQuery.fn.makeSpinner = function() {
-    if (this.hasClass('icon-toggle-closed') ||
-        this.hasClass('icon-toggle-open') ||
-        this.hasClass('podicon')) {
-        return this.each(function() {
-            var originalclasses = new Array();
-            var classes = '';
-            if ($(this).attr("class")) {
-                var classes = $(this).attr("class").split(/\s/);
-            }
-            for (var i = 0, len = classes.length; i < len; i++) {
-                if (classes[i] == "invisible" || (/^icon/.test(classes[i]))) {
-                    originalclasses.push(classes[i]);
-                    $(this).removeClass(classes[i]);
-                }
-            }
-            $(this).attr("originalclass", originalclasses.join(" "));
-            $(this).addClass('icon-spin6 spinner');
-        });
-    } else {
-        this.addClass('clickflash');
-        return this;
-    }
+	return this.each(function() {
+		var self = $(this);
+		if (self.find('.wafflything').length > 0) {
+			var waffler = self.find('.wafflything');
+			if (!waffler.children('.wafflebanger').first().hasClass("wafflebanger-moving")) {
+				waffler.fadeIn(100).children('.wafflebanger').addClass('wafflebanger-moving');
+			}
+		} else if (self.hasClass('icon-toggle-closed') || self.hasClass('icon-toggle-open') || self.hasClass('spinable')) {
+			if (self.hasClass('icon-spin6') || self.hasClass('spinner')) {
+				debug.trace('UIHELPER', 'Trying to create spinner on already spinning element');
+				return;
+			}
+			var originalclasses = new Array();
+			var classes = '';
+			if (self.attr("class")) {
+				var classes = self.attr("class").split(/\s/);
+			}
+			for (var i = 0, len = classes.length; i < len; i++) {
+				if (classes[i] == "invisible" || (/^icon/.test(classes[i]))) {
+					originalclasses.push(classes[i]);
+					self.removeClass(classes[i]);
+				}
+			}
+			self.attr("originalclass", originalclasses.join(" "));
+			self.addClass('icon-spin6 spinner');
+		} else {
+			self.addClass('clickflash');
+		}
+		return this;
+	});
 }
 
 jQuery.fn.stopSpinner = function() {
-    if (this.hasClass('spinner')) {
-        this.each(function() {
-            $(this).removeClass('icon-spin6 spinner');
-            if ($(this).attr("originalclass")) {
-                $(this).addClass($(this).attr("originalclass"));
-                $(this).removeAttr("originalclass");
-            }
-        });
-    } else {
-        this.removeClass('clickflash');
-    }
-    return this;
+	return this.each(function() {
+		var self = $(this);
+		if (self.hasClass('spinner')) {
+			self.removeClass('icon-spin6 spinner');
+			if (self.attr("originalclass")) {
+				self.addClass(self.attr("originalclass"));
+				self.removeAttr("originalclass");
+			}
+		} else if (self.find('.wafflything').length > 0) {
+			var waffler = self.find('.wafflything');
+			waffler.hide().children('.wafflebanger').removeClass('wafflebanger-moving');
+			self.removeClass('clickflash');
+		} else {
+			self.removeClass('clickflash');
+		}
+		return this;
+	});
 }
 
 jQuery.fn.findParentScroller = function() {
-    var parentScroller = this.parent();
-    while (!parentScroller.hasClass('scroller') && !parentScroller.hasClass('dropmenu') && !parentScroller.hasClass('phone')) {
-        parentScroller = parentScroller.parent();
-    }
-    return parentScroller;
+	var parentScroller = this.parent();
+	while (!parentScroller.hasClass('scroller') && !parentScroller.hasClass('dropmenu') && !parentScroller.hasClass('phone')) {
+		parentScroller = parentScroller.parent();
+	}
+	return parentScroller;
 }
 
 jQuery.fn.saveScrollPos = function() {
-    this.prepend('<input type="hidden" name="restorescrollpos" value="'+this.scrollTop()+'" />');
-    this.scrollTo(0);
-    this.css('overflow-y', 'hidden');
+	this.prepend('<input type="hidden" name="restorescrollpos" value="'+this.scrollTop()+'" />');
+	this.scrollTo(0);
+	this.css('overflow-y', 'hidden');
+	// Backmenu with position of sticky: if we don't reset that the parent backmenu sits above the child one
+	// meaning we can't go back in appropriate steps. Note '.children' is essential - '.find' will reset the css
+	// for all the submenus too
+	this.children('.backmenu').css({position: 'static'});
 }
 
 jQuery.fn.restoreScrollPos = function() {
-    var a = this.find('input[name="restorescrollpos"]');
-    this.css('overflow-y', 'scroll');
-    this.scrollTop(a.val());
-    a.remove();
+	var a = this.find('input[name="restorescrollpos"]');
+	if (a.length > 0) {
+		this.css('overflow-y', 'scroll');
+		this.scrollTop(a.val());
+		this.children('.backmenu').css({position: ''});
+		a.remove();
+	}
+	// $('#popupmenu').remove();
 }
 
 jQuery.fn.makeTagMenu = function(options) {
-    var settings = $.extend({
-        textboxname: "",
-        textboxextraclass: "",
-        labelhtml: "",
-        populatefunction: null,
-        buttontext: null,
-        buttonfunc: null,
-        buttonclass: ""
-    },options);
+	var settings = $.extend({
+		textboxname: "",
+		textboxextraclass: "",
+		labelhtml: "",
+		populatefunction: null,
+		buttontext: null,
+		buttonfunc: null,
+		buttonclass: "",
+		placeholder: 'Tag'
+	},options);
 
-    this.each(function() {
-        var tbc = "enter";
-        if (settings.textboxextraclass) {
-            tbc = tbc + " "+settings.textboxextraclass;
-        }
-        if ($(this).is('td')) {
-            $(this).prev().html(settings.labelhtml);
-            var wrapper = $('<div>', {class: 'containerbox dropdown-container'}).appendTo($(this));
-            var holder = $('<div>', { class: "expand"}).appendTo(wrapper);
-            var dropbutton = $('<i>', { class: 'fixed combo-button'}).appendTo(wrapper);
-            var textbox = $('<input>', { type: "text", class: tbc, name: settings.textboxname }).appendTo(holder);
-            var dropbox = $('<div>', {class: "drop-box tagmenu dropshadow"}).appendTo($(this));
-        } else {
-            $(this).append(settings.labelhtml);
-            var holder = $('<div>', { class: "expand"}).appendTo($(this));
-            var dropbutton = $('<i>', { class: 'fixed combo-button'}).appendTo($(this));
-            var textbox = $('<input>', { type: "text", class: tbc, name: settings.textboxname }).appendTo(holder);
-            var dropbox = $('<div>', {class: "drop-box tagmenu dropshadow"}).insertAfter($(this));
-        }
-        var menucontents = $('<div>', {class: "tagmenu-contents"}).appendTo(dropbox);
-        if (settings.buttontext !== null) {
-            var submitbutton = $('<button>', {class: "fixed"+settings.buttonclass,
-                style: "margin-left: 8px"}).appendTo($(this));
-            submitbutton.html(settings.buttontext);
-            if (settings.buttonfunc) {
-                submitbutton.on('click', function() {
-                    settings.buttonfunc(textbox.val());
-                });
-            }
-        }
+	this.each(function() {
+		var tbc = "enter";
+		if (settings.textboxextraclass) {
+			tbc = tbc + " "+settings.textboxextraclass;
+		}
+		if (settings.labelhtml != '') {
+			$(this).append(settings.labelhtml);
+		}
+		var holder = $('<div>', { class: "expand"}).appendTo($(this));
+		var dropbutton = $('<i>', { class: 'fixed combo-button'}).appendTo($(this));
+		var textbox = $('<input>', { type: "text", class: tbc, name: settings.textboxname, placeholder: unescapeHtml(settings.placeholder) }).appendTo(holder);
+		var dropbox = $('<div>', {class: "drop-box tagmenu dropshadow fullwidth"}).insertAfter($(this));
+		var menucontents = $('<div>', {class: "tagmenu-contents"}).appendTo(dropbox);
+		if (settings.buttontext !== null) {
+			var submitbutton = $('<button>', {class: "fixed"+settings.buttonclass,
+				style: "margin-left: 8px"}).appendTo($(this));
+			submitbutton.html(settings.buttontext);
+			if (settings.buttonfunc) {
+				submitbutton.on('click', function() {
+					settings.buttonfunc(textbox.val());
+				});
+			}
+		}
 
-        dropbutton.on('click', function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-            if (dropbox.is(':visible')) {
-                dropbox.slideToggle('fast');
-            } else {
-                var data = settings.populatefunction(function(data) {
-                    menucontents.empty();
-                    for (var i in data) {
-                        var d = $('<div>', {class: "backhi"}).appendTo(menucontents);
-                        d.html(data[i]);
-                        d.on('click', function() {
-                            var cv = textbox.val();
-                            if (cv != "") {
-                                cv += ",";
-                            }
-                            cv += $(this).html();
-                            textbox.val(cv);
-                        });
-                    }
-                    dropbox.slideToggle('fast');
-                });
-            }
-        });
-    });
+		dropbutton.on('click', function(ev) {
+			ev.preventDefault();
+			ev.stopPropagation();
+			if (dropbox.is(':visible')) {
+				dropbox.slideToggle('fast');
+			} else {
+				var data = settings.populatefunction(function(data) {
+					menucontents.empty();
+					for (var i in data) {
+						var d = $('<div>', {class: "backhi"}).appendTo(menucontents);
+						d.html(data[i]);
+						d.on('click', function() {
+							var cv = textbox.val();
+							if (cv != "") {
+								cv += ",";
+							}
+							cv += $(this).html();
+							textbox.val(cv);
+						});
+					}
+					dropbox.slideToggle('fast');
+				});
+			}
+		});
+	});
 }
 
 jQuery.fn.fanoogleMenus = function() {
-    return this;
+	return this;
 }
 
-jQuery.fn.fanoogleTopMenus = function() {
-    this.each(function() {
-        $(this).css({height: ''});
-        var top = $(this).offset().top;
-        var height = $(this).outerHeight(true);
-        var ws = getWindowSize();
-        debug.log('FANOOGLE',$(this).attr('id'), top, height, ws.y);
-        var nh = Math.min(height, ws.y - top);
-        $(this).css({height: nh+'px'});
-    });
-    return this;
+jQuery.fn.removeCollectionDropdown = function() {
+	this.each(function() {
+		var self = $(this);
+		if (!self.hasClass('configtitle')) {
+			self.findParentScroller().restoreScrollPos();
+		}
+		self.clearOut().remove();
+	});
+}
+
+jQuery.fn.removeCollectionItem = function() {
+	this.each(function() {
+		$(this).clearOut().remove();
+	});
+}
+
+jQuery.fn.insertAlbumAfter = function(albumindex, html, tracklist) {
+	// Somewhat easy in the phone skin - if the dropdown (#albumindex)
+	// exists then it must be open. And it doesn't matter if we insert the
+	// album before or after the dropdown as it gets removed when we close it
+	return this.each(function() {
+		var me = $(this);
+		$('.openmenu[name="'+albumindex+'"]').removeCollectionItem();
+		$('#'+albumindex).html(tracklist).updateTracklist().scootTheAlbums();
+		$(html).insertAfter(me).scootTheAlbums();
+	});
+};
+
+jQuery.fn.insertAlbumAtStart = function(albumindex, html, tracklist) {
+	return this.each(function() {
+		var me = $(this);
+		$('.openmenu[name="'+albumindex+'"]').removeCollectionItem();
+		$('#'+albumindex).html(tracklist).updateTracklist().scootTheAlbums();
+		$(html).prependTo(me).scootTheAlbums();
+	});
+}
+
+jQuery.fn.insertArtistAfter = function(html) {
+	return this.each(function() {
+		$(html).insertAfter($(this));
+	});
+}
+
+jQuery.fn.addCustomScrollBar = function() {
+	return this;
 }
 
 /* Touchwipe for playlist only, based on the more general jquery touchwipe */
@@ -221,552 +241,429 @@ jQuery.fn.fanoogleTopMenus = function() {
 
 jQuery.fn.playlistTouchWipe = function(settings) {
 
-    var config = {
-        min_move_x: 20,
-        min_move_y: 20,
-        swipeSpeed: 300,
-        swipeDistance: 120,
-        longPressTime: 1000,
-        preventDefaultEvents: false, // prevent default on swipe
-        preventDefaultEventsX: true, // prevent default is touchwipe is triggered on horizontal movement
-        preventDefaultEventsY: true // prevent default is touchwipe is triggered on vertical movement
-    };
+	var config = {
+		min_move_x: 20,
+		min_move_y: 20,
+		swipeSpeed: 300,
+		swipeDistance: 120,
+		longPressTime: 1000,
+		preventDefaultEvents: false, // prevent default on swipe
+		preventDefaultEventsX: true, // prevent default is touchwipe is triggered on horizontal movement
+		preventDefaultEventsY: true // prevent default is touchwipe is triggered on vertical movement
+	};
 
-    if (settings) {
-        $.extend(config, settings);
-    }
+	if (settings) {
+		$.extend(config, settings);
+	}
 
-    this.each(function() {
-        var startX;
-        var startY;
-        var isMoving = false;
-        var touchesX = [];
-        var touchesY = [];
-        var self = this;
-        var starttime = 0;
-        var longpresstimer = null;
-        var pressing = false;
+	this.each(function() {
+		var startX;
+		var startY;
+		var isMoving = false;
+		var touchesX = [];
+		var touchesY = [];
+		var self = this;
+		var starttime = 0;
+		var longpresstimer = null;
+		var pressing = false;
 
-        function cancelTouch() {
-            clearTimeout(longpresstimer);
-            this.removeEventListener('touchmove', onTouchMove);
-            this.removeEventListener('touchend', onTouchEnd);
-            startX = null;
-            startY = null;
-            isMoving = false;
-            pressing = false;
-        }
+		function cancelTouch() {
+			clearTimeout(longpresstimer);
+			this.removeEventListener('touchmove', onTouchMove);
+			this.removeEventListener('touchend', onTouchEnd);
+			startX = null;
+			startY = null;
+			isMoving = false;
+			pressing = false;
+		}
 
-        function onTouchEnd(e) {
-            var time = Date.now();
-            clearTimeout(longpresstimer);
-            if (pressing) {
-                e.stopImmediatePropagation();
-                e.stopPropagation();
-                e.preventDefault();
-                pressing = false;
-                setTimeout(bindPlaylistClicks, 500);
-            } else if (isMoving) {
-                var dx = touchesX.pop();
-                touchesX.push(dx);
-                if (time - starttime < config.swipeSpeed && dx > config.swipeDistance) {
-                    touchesX.push($(self).outerWidth(true));
-                    if ($(self).hasClass('item')) {
-                        $(self).next().animate({left: 0 - $(self).outerWidth(true)}, 'fast', 'swing');
-                    }
-                    $(self).animate({left: 0 - $(self).outerWidth(true)}, 'fast', 'swing', doAction);
-                } else {
-                    doAction();
-                }
-            }
-        }
+		function onTouchEnd(e) {
+			var time = Date.now();
+			clearTimeout(longpresstimer);
+			if (pressing) {
+				e.stopImmediatePropagation();
+				e.stopPropagation();
+				e.preventDefault();
+				pressing = false;
+				setTimeout(bindPlaylistClicks, 500);
+			} else if (isMoving) {
+				var dx = touchesX.pop();
+				touchesX.push(dx);
+				if (time - starttime < config.swipeSpeed && dx > config.swipeDistance) {
+					touchesX.push($(self).outerWidth(true));
+					if ($(self).hasClass('item')) {
+						$(self).next().animate({left: 0 - $(self).outerWidth(true)}, 'fast', 'swing');
+					}
+					$(self).animate({left: 0 - $(self).outerWidth(true)}, 'fast', 'swing', doAction);
+				} else {
+					doAction();
+				}
+			}
+		}
 
-        function doAction() {
-            var dxFinal, dyFinal;
-            cancelTouch();
-            dxFinal = touchesX.pop();
-            touchesX = [];
-            if (dxFinal > ($(self).outerWidth(true)*0.75)) {
-                if ($(self).hasClass('track')) {
-                    playlist.delete($(self).attr('romprid'));
-                } else if ($(self).hasClass('item')) {
-                    playlist.deleteGroup($(self).attr('name'));
-                }
-            } else {
-                $(self).animate({left: 0}, 'fast', 'swing');
-                if ($(self).hasClass('item')) {
-                    $(self).next().animate({left: 0}, 'fast', 'swing');
-                }
-            }
-        }
+		function doAction() {
+			var dxFinal, dyFinal;
+			cancelTouch();
+			dxFinal = touchesX.pop();
+			touchesX = [];
+			if (dxFinal > ($(self).outerWidth(true)*0.75)) {
+				if ($(self).hasClass('track')) {
+					playlist.delete($(self).attr('romprid'));
+				} else if ($(self).hasClass('item')) {
+					playlist.deleteGroup($(self).attr('name'));
+				}
+			} else {
+				$(self).animate({left: 0}, 'fast', 'swing');
+				if ($(self).hasClass('item')) {
+					$(self).next().animate({left: 0}, 'fast', 'swing');
+				}
+			}
+		}
 
-        function onTouchMove(e) {
-            clearTimeout(longpresstimer);
-            if(config.preventDefaultEvents) {
-                e.preventDefault();
-            }
+		function onTouchMove(e) {
+			clearTimeout(longpresstimer);
+			if(config.preventDefaultEvents) {
+				e.preventDefault();
+			}
 
-            if (isMoving) {
-                var x = e.touches[0].pageX;
-                var y = e.touches[0].pageY;
-                var dx = startX - x;
-                var dy = startY - y;
+			if (isMoving) {
+				var x = e.touches[0].pageX;
+				var y = e.touches[0].pageY;
+				var dx = startX - x;
+				var dy = startY - y;
 
-                if (Math.abs(dx) >= config.min_move_x) {
-                    if (config.preventDefaultEventsX) {
-                        e.preventDefault();
-                    }
-                    var newpos = 0 - dx;
-                    if (newpos < 0) {
-                        $(self).css('left', newpos.toString()+'px');
-                        if ($(self).hasClass('item')) {
-                            $(self).next().css('left', newpos.toString()+'px');
-                        }
-                        touchesX.push(dx);
-                    }
-                }
-            }
-        }
+				if (Math.abs(dx) >= config.min_move_x) {
+					if (config.preventDefaultEventsX) {
+						e.preventDefault();
+					}
+					var newpos = 0 - dx;
+					if (newpos < 0) {
+						$(self).css('left', newpos.toString()+'px');
+						if ($(self).hasClass('item')) {
+							$(self).next().css('left', newpos.toString()+'px');
+						}
+						touchesX.push(dx);
+					}
+				}
+			}
+		}
 
-        function longPress() {
-            debug.log("TOUCHWIPE","Long Press");
-            pressing = true;
-            // Unbind click handler from playlist, otherwise the touchend
-            // event makes it start playing the clicked track.
-            // Don't seem to be able to prevent the event propagating.
-            $(self).addBunnyEars();
-            unbindPlaylistClicks();
-        }
+		function longPress() {
+			debug.info("TOUCHWIPE","Long Press");
+			pressing = true;
+			// Unbind click handler from playlist, otherwise the touchend
+			// event makes it start playing the clicked track.
+			// Don't seem to be able to prevent the event propagating.
+			$(self).addBunnyEars();
+			unbindPlaylistClicks();
+		}
 
-        function onTouchStart(e) {
-            starttime = Date.now();
-            if (e.touches.length === 1) {
-                startX = e.touches[0].pageX;
-                startY = e.touches[0].pageY;
-                isMoving = true;
-                this.addEventListener('touchmove', onTouchMove, false);
-                this.addEventListener('touchend', onTouchEnd, false);
-                longpresstimer = setTimeout(longPress, config.longPressTime);
-            }
-        }
+		function onTouchStart(e) {
+			starttime = Date.now();
+			if (e.touches.length === 1) {
+				startX = e.touches[0].pageX;
+				startY = e.touches[0].pageY;
+				isMoving = true;
+				this.addEventListener('touchmove', onTouchMove, false);
+				this.addEventListener('touchend', onTouchEnd, false);
+				longpresstimer = setTimeout(longPress, config.longPressTime);
+			}
+		}
 
-        this.addEventListener('touchstart', onTouchStart, false);
+		this.addEventListener('touchstart', onTouchStart, false);
 
-    });
+	});
 
-    return this;
+	return this;
 };
 
 
 function showHistory() {
-    if ($('#historypanel').find('.configtitle').length > 0) {
-        $('#historypanel').slideToggle('fast');
-    }
+	if ($('#historypanel').find('.configtitle').length > 0) {
+		$('#historypanel').slideToggle('fast');
+	}
 }
 
 var layoutProcessor = function() {
 
-    function isLandscape() {
-        if (window.innerHeight > window.innerWidth) {
-            return false;
-        } else {
-            return true;
-        }
-    }
+	var oldwindowsize = {x: 0, y: 0};
+	var oldchooser = '';
 
-    function doSwipeCss() {
-        if (prefs.playlistswipe) {
-            $('<style id="playlist_swipe">#sortable .playlisticonr.icon-cancel-circled { display: none }</style>').appendTo('head');
-        } else {
-            $('style[id="playlist_swipe"]').remove();
-        }
-    }
+	function isLandscape() {
+		if (window.innerHeight > window.innerWidth) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 
-    return {
+	function doSwipeCss() {
+		if (prefs.playlistswipe) {
+			$('<style id="playlist_swipe">#sortable .playlisticonr.icon-cancel-circled { display: none }</style>').appendTo('head');
+		} else {
+			$('style[id="playlist_swipe"]').remove();
+		}
+	}
 
-        supportsDragDrop: false,
-        hasCustomScrollbars: false,
-        usesKeyboard: false,
-        sortFaveRadios: false,
-        openOnImage: true,
-        swipewason: prefs.playlistswipe,
+	return {
 
-        changeCollectionSortMode: function() {
-            collectionHelper.forceCollectionReload();
-        },
+		supportsDragDrop: false,
+		hasCustomScrollbars: false,
+		usesKeyboard: false,
+		sortFaveRadios: false,
+		openOnImage: true,
+		swipewason: prefs.playlistswipe,
 
-        postAlbumActions: function(menu) {
-            if (menu && menu.is(':visible')) {
-                var i = menu.find('.album_menu_image');
-                if (i.length > 0) {
-                    debug.log("UI", "Image has source",i.attr('src'),'asrc',i.attr('asrc'));
-                    i.attr('src', i.attr('asrc'));
-                }
-            }
-        },
+		changeCollectionSortMode: function() {
+			collectionHelper.forceCollectionReload();
+		},
 
-        afterHistory: function() {
-            browser.rePoint();
-            showHistory();
-        },
+		afterHistory: function() {
+			browser.rePoint();
+			showHistory();
+		},
 
-        addInfoSource: function(name, obj) {
-            $("#chooserbuttons").append($('<i>', {
-                onclick: "browser.switchsource('"+name+"')",
-                class: obj.icon+' topimg expand',
-                id: "button_source"+name
-            }));
-        },
+		addInfoSource: function(name, obj) {
+			$("#chooserbuttons").append($('<i>', {
+				onclick: "browser.switchsource('"+name+"')",
+				class: obj.icon+' topimg expand',
+				id: "button_source"+name
+			}));
+		},
 
-        setupInfoButtons: function() { },
+		setupInfoButtons: function() { },
 
-        goToBrowserPanel: function(panel) {
-            $('#infopane').scrollTo('#'+panel+'information',800,{easing: 'swing'});
-        },
+		goToBrowserPanel: function(panel) {
+			$('#infopane').scrollTo('#'+panel+'information',800,{easing: 'swing'});
+		},
 
-        goToBrowserPlugin: function(panel) {
-            layoutProcessor.sourceControl('infopane');
-            layoutProcessor.goToBrowserPanel(panel);
-        },
+		goToBrowserPlugin: function(panel) {
+			uiHelper.sourceControl('infopane');
+			layoutProcessor.goToBrowserPanel(panel);
+		},
 
-        goToBrowserSection: function(section) {
-            // Wikipedia mobile does not return contents
-        },
+		goToBrowserSection: function(section) {
+			// Wikipedia mobile does not return contents
+		},
 
-        notifyAddTracks: function() {
-            if (!playlist.radioManager.isRunning()) {
-                infobar.notify(language.gettext("label_addingtracks"));
-            }
-        },
+		notifyAddTracks: function() {
+			infobar.notify(language.gettext("label_addingtracks"));
+		},
 
-        hidePanel: function(panel, is_hidden, new_state) { },
+		hidePanel: function(panel, is_hidden, new_state) { },
 
-        panelMapping: function() {
-            return {
-                "albumlist": 'albumlist',
-                "searcher": 'searcher',
-                "filelist": 'filelist',
-                "radiolist": 'radiolist',
-                "audiobooklist": "audiobooklist",
-                "podcastslist": 'podcastslist',
-                "playlistslist": 'playlistman',
-                "pluginplaylistslist": 'pluginplaylists'
-            }
-        },
+		panelMapping: function() {
+			return {
+				"albumlist": 'albumlist',
+				"searcher": 'searcher',
+				"filelist": 'filelist',
+				"radiolist": 'radiolist',
+				"audiobooklist": "audiobooklist",
+				"podcastslist": 'podcastslist',
+				"playlistslist": 'playlistman',
+				"pluginplaylistslist": 'pluginplaylists'
+			}
+		},
 
-        setTagAdderPosition: function(position) {
+		setTagAdderPosition: function(position) {
 
-        },
+		},
 
-        setPlaylistHeight: function() {
-            var newheight = $("#playlistm").height() - $("#horse").outerHeight(true);
-            if ($("#playlistbuttons").is(":visible")) {
-                newheight = newheight - $("#playlistbuttons").outerHeight(true) - 2;
-            }
-            $("#pscroller").css("height", newheight.toString()+"px");
-        },
+		setPlaylistHeight: function() {
+			var newheight = $("#playlistm").height() - $("#horse").outerHeight(true);
+			if ($("#playlistbuttons").is(":visible")) {
+				newheight = newheight - $("#playlistbuttons").outerHeight(true) - 2;
+			}
+			$("#pscroller").css("height", newheight.toString()+"px");
+		},
 
-        playlistLoading: function() {
-            infobar.smartradio(language.gettext('label_preparing'));
-        },
+		scrollPlaylistToCurrentTrack: function() {
+			var scrollto = playlist.getCurrentTrackElement();
+			if (prefs.scrolltocurrent && scrollto.length > 0) {
+				var offset = 0 - ($('#pscroller').outerHeight(true) / 2);
+				$('#pscroller').scrollTo(scrollto, 800, {offset: {top: offset}, easing: 'swing'});
+			}
+		},
 
-        preHorse: function() {
-            if (!$("#playlistbuttons").is(":visible")) {
-                // Make the playlist scroller shorter so the window doesn't get a vertical scrollbar
-                // while the buttons are being slid down
-                var newheight = $("#pscroller").height() - 48;
-                $("#pscroller").css("height", newheight.toString()+"px");
-            }
-        },
+		sourceControl: function(source) {
+			debug.mark('LAYOUT','Switching source to',source);
+			// hacky - set an irrelevant css parameter as a flag so we change behaviour
+			var layoutflag = parseInt($('i.choosepanel[name="playlistm"]').css('font-weight'));
+			if ((source == 'playlistm' || source == 'infobar') && prefs.chooser != 'infopane' && layoutflag == 1000) {
+				return;
+			}
+			if (source == 'infopane') {
+				$('#infobar').css('display', 'none');
+				if (layoutflag >= 900) {
+					$('#playlistm').css('display', 'none');
+				}
+			} else {
+				$('#infobar').css('display', '');
+				if (layoutflag >= 900) {
+					$('#playlistm').css('display', '');
+				}
+			}
+			if (source == "playlistm" && layoutflag >= 900) {
+				source = "infobar";
+			}
+			$('.mainpane:not(.invisible):not(#'+source+')').addClass('invisible');
+			if (layoutflag >= 900) {
+				$('#playlistm').removeClass('invisible');
+			}
+			$('#'+source).removeClass('invisible');
+			prefs.save({chooser: source});
+			uiHelper.adjustLayout();
+		},
 
-        scrollPlaylistToCurrentTrack: function() {
-            var scrollto = playlist.getCurrentTrackElement();
-            if (prefs.scrolltocurrent && scrollto.length > 0) {
-                var offset = 0 - ($('#pscroller').outerHeight(true) / 2);
-                $('#pscroller').scrollTo(scrollto, 800, {offset: {top: offset}, easing: 'swing'});
-            }
-        },
+		adjustLayout: async function() {
+			infobar.updateWindowValues();
+			var ws = getWindowSize();
+			var hh = $("#headerbar").outerHeight(true);
+			var mainheight = ws.y - hh;
+			$("#loadsawrappers").css({height: mainheight+"px"});
+			var infoheight = $('#infobar').outerHeight(true) - $('#cssisshit').outerHeight(true);
+			$('#toomanywrappers').css({height: infoheight+"px"});
+			if (oldwindowsize.y != ws.y || oldwindowsize.x != ws.x || prefs.chooser != oldchooser) {
+				// Work around iOS Safari bug where it updates width css before height
+				// and therefore doesn't get the album picture size right
+				$('#albumpicture').css('width', '0px');
+				await new Promise(r => setTimeout(r, 1));
+				$('#albumpicture').css('width', '');
+			}
+			oldwindowsize = ws;
+			oldchooser = prefs.chooser;
+			layoutProcessor.setPlaylistHeight();
+			browser.rePoint();
+			if ($('i.choosepanel[name="playlistm"]').css('font-weight') == '1000'
+				&& $('.mainpane:visible').not('#infobar').length == 0
+				&& (prefs.chooser == 'playlistm' || prefs.chooser == 'infobar')
+				// don't do this if we're on a mobile device and the window is being hidden or device is going to sleep
+				&& sleepHelper.isVisible()) {
+				debug.trace('SKIN', 'Active source switch',$('i.choosepanel[name="playlistm"]').css('font-weight'),
+							$('.mainpane:visible').not('#infobar').length, prefs.chooser)
+				uiHelper.sourceControl('albumlist');
+			}
+			var np = $('#nowplaying');
+			var nptop = np.offset().top;
+			debug.debug('LAYOUT', 'nptop is',nptop);
+			if (nptop > 0) {
+				var t = Math.min(250, (infoheight - nptop + hh));
+				np.css({height: t+"px"});
+				infobar.rejigTheText();
+			}
+		},
 
-        playlistupdate: function(upcoming) {
+		showTagButton: function() {
+			return false;
+		},
 
-        },
+		displayCollectionInsert: function(details) {
+			infobar.notify(
+				(details.isaudiobook == 0) ? language.gettext('label_addedtocol') : language.gettext('label_addedtosw')
+			);
+		},
 
-        addCustomScrollBar: function(value) {
+		updateInfopaneScrollbars: function() {
+		},
 
-        },
+		setRadioModeHeader: function(html) {
+			$("#plmode").html(html);
+		},
 
-        sourceControl: function(source) {
-            debug.shout('LAYOUT','Switching source to',source);
-            // hacky - set an irrelevant css parameter as a flag so we change behaviour
-            var layoutflag = parseInt($('.choose_playlist').css('font-weight'));
-            if ((source == 'playlistm' || source == 'infobar') && prefs.chooser != 'infopane' && layoutflag == 1000) {
-                return;
-            }
-            if (source == 'infopane') {
-                $('#infobar').css('display', 'none');
-                if (layoutflag >= 900) {
-                    $('#playlistm').css('display', 'none');
-                }
-            } else {
-                $('#infobar').css('display', '');
-                if (layoutflag >= 900) {
-                    $('#playlistm').css('display', '');
-                }
-            }
-            if (source == "playlistm" && layoutflag >= 900) {
-                source = "infobar";
-            }
-            $('.mainpane:not(.invisible):not(#'+source+')').addClass('invisible');
-            if (layoutflag >= 900) {
-                $('#playlistm').removeClass('invisible');
-            }
-            $('#'+source).removeClass('invisible');
-            prefs.save({chooser: source});
-            layoutProcessor.adjustLayout();
-        },
+		makeCollectionDropMenu: function(element, name) {
+			if (element.hasClass('album1')) {
+				var c = 'dropmenu notfilled album1 is-albumlist';
+			} else if (element.hasClass('album2')) {
+				var c = 'dropmenu notfilled album2 is-albumlist';
+			} else {
+				var c = 'dropmenu notfilled is-albumlist';
+			}
+			if (
+				/^[abz](album|artist)/.test(name) ||
+				element.hasClass('directory') ||
+				element.hasClass('playlist') ||
+				element.hasClass('userplaylist')
+			) {
+				c += ' removeable';
+			}
+			return $('<div>', {id: name, class: c}).insertAfter(element);
+		},
 
-        adjustLayout: function() {
-            infobar.updateWindowValues();
-            var ws = getWindowSize();
-            var hh = $("#headerbar").outerHeight(true);
-            var mainheight = ws.y - hh;
-            $("#loadsawrappers").css({height: mainheight+"px"});
-            var infoheight = $('#infobar').outerHeight(true) - $('#cssisshit').outerHeight(true);
-            $('#toomanywrappers').css({height: infoheight+"px"});
-            // Work around crappy iOS Safari bug where it updates width css before height
-            // and therefore doesn't get the album picture size right
-            $('#albumpicture').css('width', '0px');
-            $('#albumpicture').css('width', '');
-            layoutProcessor.setPlaylistHeight();
-            browser.rePoint();
-            $('.topdropmenu:visible').fanoogleTopMenus();
-            if ($('.choose_playlist').css('font-weight') == '1000'
-                && $('.mainpane:visible').not('#infobar').length == 0
-                && (prefs.chooser == 'playlistm' || prefs.chooser == 'infobar')) {
-                layoutProcessor.sourceControl('albumlist');
-            }
-            var np = $('#nowplaying');
-            var nptop = np.offset().top;
-            debug.debug('LAYOUT', 'nptop is',nptop);
-            if (nptop > 0) {
-                var t = infoheight - nptop + hh;
-                np.css({height: t+"px"});
-                debug.mark('LAYOUT', 'Calling biggerize');
-                infobar.biggerize();
-            }
-        },
+		initialise: function() {
+			if (!prefs.checkSet('clickmode')) {
+				prefs.clickmode = 'single';
+			}
+			$(".dropdown").floatingMenu({ });
+			$('.topbarmenu').on('click', function() {
+				$('.autohide:visible').not('#'+$(this).attr('name')).slideToggle('fast');
+				$('#'+$(this).attr('name')).slideToggle('fast');
+			});
+			$('.autohide').on('click', function() {
+				$(this).slideToggle('fast');
+			});
+			$('#choose_history').on('click', showHistory);
+			$('#volume').volumeControl({
+				orientation: 'horizontal',
+				command: player.controller.volume
+			});
+			doSwipeCss();
+			$(document).on('click', '.clickaddtoplaylist', addToPlaylist.close);
+		},
 
-        showTagButton: function() {
-            return false;
-        },
+		getElementPlaylistOffset: function(element) {
+			var top = element.position().top;
+			if (element.parent().hasClass('trackgroup')) {
+				top += element.parent().position().top;
+			}
+			return top;
+		},
 
-        displayCollectionInsert: function(d) {
-            infobar.notify(language.gettext('label_addedtocol'));
-            infobar.markCurrentTrack();
-            if (prefs.chooser == 'albumlist') {
-                switch (prefs.sortcollectionby) {
-                    case 'artist':
-                        $('#albumlist').scrollTo($('[name="aartist'+d.artistindex+'"]'));
-                        break;
+		postPlaylistLoad: function() {
+			if (prefs.playlistswipe) {
+				$('#sortable .track').playlistTouchWipe({});
+				$('#sortable .item').playlistTouchWipe({});
+			} else {
+				$('#pscroller').find('.icon-cancel-circled').each(function() {
+					var d = $('<i>', {class: 'icon-updown playlisticonr fixed clickplaylist clickicon rearrange_playlist'}).insertBefore($(this));
+				});
+			}
+		},
 
-                    default:
-                        $('#albumlist').scrollTo($('[name="aalbum'+d.albumindex+'"]'));
-                        break;
+		makeSortablePlaylist: function(id) {
+		},
 
-                }
-            }
-        },
+		maxAlbumMenuSize: function(element) {
+			var ws = getWindowSize();
+			ws.left = 0;
+			ws.top = $('#headerbar').outerHeight(true);
+			return ws;
+		}
 
-        setProgressTime: function(stats) {
-            makeProgressOfString(stats);
-        },
-
-        updateInfopaneScrollbars: function() {
-        },
-
-        setRadioModeHeader: function(html) {
-            $("#plmode").html(html);
-        },
-
-        makeCollectionDropMenu: function(element, name) {
-            var x = $('#'+name);
-            // If the dropdown doesn't exist then create it
-            if (x.length == 0) {
-                if (element.hasClass('album1')) {
-                    var c = 'dropmenu notfilled album1';
-                } else if (element.hasClass('album2')) {
-                    var c = 'dropmenu notfilled album2';
-                } else {
-                    var c = 'dropmenu notfilled';
-                }
-                var ec = '';
-                if (/aalbum/.test(name) || /aartist/.test(name)) {
-                    ec = ' removeable';
-                }
-                var t = $('<div>', {id: name, class: c+ec}).insertAfter(element);
-            }
-        },
-
-        getArtistDestinationDiv: function(menutoopen) {
-            if (prefs.sortcollectionby == "artist") {
-                return $('.menu[name="'+menutoopen+'"]').parent();
-            } else {
-                return  $("#"+menutoopen);
-            }
-        },
-
-        initialise: function() {
-
-            if (!prefs.checkSet('clickmode')) {
-                prefs.clickmode = 'single';
-            }
-            $(".dropdown").floatingMenu({ });
-            $('.topbarmenu').on('click', function() {
-                $('.autohide:visible').not('#'+$(this).attr('name')).slideToggle('fast');
-                $('#'+$(this).attr('name')).slideToggle('fast', function() {
-                    $(this).fanoogleTopMenus();
-                });
-            });
-            $('.autohide').on('click', function() {
-                $(this).slideToggle('fast');
-            });
-            setControlClicks();
-            $('.choose_nowplaying').on('click', function(){layoutProcessor.sourceControl('infobar')});
-            $('.choose_albumlist').on('click', function(){layoutProcessor.sourceControl('albumlist')});
-            $('.choose_searcher').on('click', function(){layoutProcessor.sourceControl('searchpane')});
-            $('.choose_filelist').on('click', function(){layoutProcessor.sourceControl('filelist')});
-            $('.choose_radiolist').on('click', function(){layoutProcessor.sourceControl('radiolist')});
-            $('.choose_podcastslist').on('click', function(){layoutProcessor.sourceControl('podcastslist')});
-            $('.choose_audiobooklist').on('click', function(){layoutProcessor.sourceControl('audiobooklist')});
-            $('.choose_infopanel').on('click', function(){layoutProcessor.sourceControl('infopane')});
-            $('.choose_playlistman').on('click', function(){layoutProcessor.sourceControl('playlistman')});
-            $('.choose_pluginplaylists').on('click', function(){layoutProcessor.sourceControl('pluginplaylistholder')});
-            $('.choose_prefs').on('click', function(){layoutProcessor.sourceControl('prefsm')});
-            $('#choose_history').on('click', showHistory);
-            $('.icon-rss.npicon').on('click', function(){podcasts.doPodcast('nppodiput')});
-            $('.choose_playlist').on('click', function(){layoutProcessor.sourceControl('playlistm')});
-            $("#ratingimage").on('click', nowplaying.setRating);
-            $("#playlistname").parent().next('button').on('click', player.controller.savePlaylist);
-            $('.clear_playlist').on('click', playlist.clear);
-            $('#volume').volumeControl({
-                orientation: 'horizontal',
-                command: player.controller.volume
-            });
-            doSwipeCss();
-            $(document).on('click', '.clickaddtoplaylist', addToPlaylist.close);
-        },
-
-        findAlbumDisplayer: function(key) {
-            return $('.containerbox.album[name="'+key+'"]');
-        },
-
-        findArtistDisplayer: function(key) {
-            return $('div.menu[name="'+key+'"]');
-        },
-
-        insertAlbum: function(v) {
-            var albumindex = v.id;
-            var displayer = $('#'+v.why+'album'+albumindex);
-            var image = displayer.children('.album-menu-header').detach();
-            displayer.html(v.tracklist);
-            image.insertAfter(displayer.children('.backmenu'));
-            uiHelper.makeResumeBar(displayer);
-            layoutProcessor.findAlbumDisplayer(v.why+'album'+albumindex).remove();
-            switch (v.type) {
-                case 'insertAfter':
-                    debug.log("Insert After",v.where);
-                    $(v.html).insertAfter(layoutProcessor.findAlbumDisplayer(v.where));
-                    break;
-
-                case 'insertAtStart':
-                    debug.log("Insert At Start",v.where);
-                    $(v.html).insertAfter($('#'+v.where).find('div.clickalbum[name="'+v.where+'"]'));
-                    break;
-            }
-        },
-
-        removeAlbum: function(key) {
-            $('#'+key).findParentScroller().restoreScrollPos();
-            $('#'+key).remove();
-            layoutProcessor.findAlbumDisplayer(key).remove();
-        },
-
-        removeArtist: function(key) {
-            switch (prefs.sortcollectionby) {
-                case 'artist':
-                    $('#aartist'+key).findParentScroller().restoreScrollPos();
-                    $('#aartist'+key).remove();
-                    layoutProcessor.findArtistDisplayer('aartist'+key).remove();
-                    break;
-
-                case 'albumbyartist':
-                    $('#aartist'+key).remove();
-                    break;
-
-            }
-        },
-
-        fixupArtistDiv: function(jq, name) {
-            if (prefs.sortcollectionby != 'artist') {
-                jq.find('.menu.backmenu').attr('name', name);
-            }
-        },
-
-        getElementPlaylistOffset: function(element) {
-            var top = element.position().top;
-            if (element.parent().hasClass('trackgroup')) {
-                top += element.parent().position().top;
-            }
-            return top;
-        },
-
-        postPlaylistLoad: function() {
-            if (prefs.playlistswipe) {
-                $('#sortable .track').playlistTouchWipe({});
-                $('#sortable .item').playlistTouchWipe({});
-            } else {
-                $('#pscroller').find('.icon-cancel-circled').each(function() {
-                    var d = $('<i>', {class: 'icon-updown playlisticonr fixed clickplaylist clickicon rearrange_playlist'}).insertBefore($(this));
-                });
-            }
-        },
-
-        postPodcastSubscribe: function(data, index) {
-            $('.menuitem[name="podcast_'+index+'"]').fadeOut('fast', function() {
-                $('.menuitem[name="podcast_'+index+'"]').remove();
-                $('#podcast_'+index).remove();
-                $("#fruitbat").html(data);
-                infobar.notify(language.gettext('label_subscribed'));
-                podcasts.doNewCount();
-                layoutProcessor.postAlbumActions();
-            });
-        }
-
-    }
+	}
 
 }();
 
 // Dummy functions standing in for widgets we don't use in this version -
 // custom scroll bars, and drag/drop stuff
 jQuery.fn.acceptDroppedTracks = function() {
-    return this;
+	return this;
 }
 
 jQuery.fn.sortableTrackList = function() {
-    return this;
+	return this;
 }
 
 jQuery.fn.trackDragger = function() {
-    return this;
+	return this;
 }
 
 var addToPlaylist = function() {
-    return {
-        open: function() {
-            $('#pladddropdown').slideDown('fast');
-        },
-        close: function() {
-            $('#pladddropdown').slideUp('fast');
-        }
-    }
+	return {
+		open: function() {
+			$('#pladddropdown').slideDown('fast');
+		},
+		close: function() {
+			$('#pladddropdown').slideUp('fast');
+		}
+	}
 }();

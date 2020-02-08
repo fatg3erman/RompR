@@ -21,59 +21,59 @@ var discogs = function() {
 			var req = queue[0];
 			clearTimeout(throttle);
 
-            if (req !== undefined) {
-            	if (req.flag) {
-            		debug.error("DISCOGS","Request just pulled from queue is already being handled",req.data.url);
-            		return;
-            	}
+			if (req !== undefined) {
+				if (req.flag) {
+					debug.warn("DISCOGS","Request just pulled from queue is already being handled",req.data.url);
+					return;
+				}
 				queue[0].flag = true;
 				debug.debug("DISCOGS","Taking next request from queue",req.data);
-	            var getit = $.ajax({
+				var getit = $.ajax({
 					method: 'POST',
 					url: "browser/backends/getdidata.php",
 					data: req.data,
-	                dataType: "json"
+					dataType: "json"
 				})
-		        .done(function(data) {
-                	var c = getit.getResponseHeader('Pragma');
-	            	debug.debug("DISCOGS", "Request Success",c,data);
-                	if (c == "From Cache") {
-	                	throttle = setTimeout(discogs.getrequest, 100);
-                	} else {
-	                	throttle = setTimeout(discogs.getrequest, 1500);
-	                }
-                	req = queue.shift();
-                	if (data === null) {
-	                	data = {error: language.gettext("discogs_error")}
-                	} else if (!data.error) {
-                		// info_discogs.js was written to accept jsonp data passed back from $.jsonp
-                		// However as Discogs now seem to be refusing to respond to those requests
-                		// we're using a php script to get it instead. So here we bodge the response
-                		// into the form that info_discogs.js is expecting.
-                		data = {data: data};
-                	}
-                	if (req.reqid != '') {
-                		data.id = req.reqid;
-                	}
-	                if (data.error) {
-	                    req.fail(data);
-	                } else {
-	                    req.success(data);
-	                }
-	            })
+				.done(function(data) {
+					var c = getit.getResponseHeader('Pragma');
+					debug.debug("DISCOGS", "Request Success",c,data);
+					if (c == "From Cache") {
+						throttle = setTimeout(discogs.getrequest, 100);
+					} else {
+						throttle = setTimeout(discogs.getrequest, 1500);
+					}
+					req = queue.shift();
+					if (data === null) {
+						data = {error: language.gettext("discogs_error")}
+					} else if (!data.error) {
+						// info_discogs.js was written to accept jsonp data passed back from $.jsonp
+						// However as Discogs now seem to be refusing to respond to those requests
+						// we're using a php script to get it instead. So here we bodge the response
+						// into the form that info_discogs.js is expecting.
+						data = {data: data};
+					}
+					if (req.reqid != '') {
+						data.id = req.reqid;
+					}
+					if (data.error) {
+						req.fail(data);
+					} else {
+						req.success(data);
+					}
+				})
 				.fail(function(xhr,status,err) {
-                	throttle = setTimeout(discogs.getrequest, 1500);
-                	req = queue.shift();
-                	debug.warn("DISCOGS","Request failed",req,xhr);
+					throttle = setTimeout(discogs.getrequest, 1500);
+					req = queue.shift();
+					debug.warn("DISCOGS","Request failed",req,xhr);
 					data = {error: language.gettext("discogs_error") + ' ('+xhr.status+' '+err+')'};
-                	if (req.reqid != '') {
-                		data.id = req.reqid;
-                	}
-                	req.fail(data);
-		        });
-	        } else {
+					if (req.reqid != '') {
+						data.id = req.reqid;
+					}
+					req.fail(data);
+				});
+			} else {
 				throttle = null;
-	        }
+			}
 		},
 
 		artist: {
@@ -93,7 +93,6 @@ var discogs = function() {
 			},
 
 			getReleases: function(name, page, reqid, success, fail) {
-				debug.log("DISCOGS","Get Artist Releases",name,page);
 				var data = {
 					url: baseURL+'artists/'+name+'/releases',
 					per_page: 25,
