@@ -508,7 +508,7 @@ function refreshPodcast($podid) {
 			sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET JustUpdated=?, Duration=?, Link=? WHERE PODTrackindex=?",1,$track['Duration'], $track['Link'], $trackid);
 		} else {
 			if (sql_prepare_query(true, null, null, null,
-				mb4_bodge()."INSERT INTO PodcastTracktable
+				"INSERT INTO PodcastTracktable
 				(JustUpdated, PODindex, Title, Artist, Duration, PubDate, FileSize, Description, Link, Guid, New)
 				VALUES
 				(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
