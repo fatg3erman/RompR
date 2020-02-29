@@ -61,7 +61,7 @@ function tryLocal($albumimage) {
 	global $ignore_local;
 	global $delaytime;
 	logger::mark("GETALBUMCOVER", "  Checking for local images");
-	$covernames = array("cover", "albumart", "thumb", "albumartsmall", "front");
+	$covernames = array("folder", "cover", "albumart", "thumb", "albumartsmall", "front");
 	if ($albumimage->albumpath == "" || $albumimage->albumpath == "." || $albumimage->albumpath === null || $ignore_local) {
 		return "";
 	}
