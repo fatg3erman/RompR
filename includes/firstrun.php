@@ -21,6 +21,7 @@ $root_level_dirs = array(
 	'prefs/crazyplaylists',
 	'prefs/databackups',
 	'prefs/userstreams',
+	'prefs/customradio',
 	'prefs/temp',
 	'prefs/oldcollections',
 	'albumart/asdownloaded',

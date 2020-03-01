@@ -67,12 +67,12 @@ div.selectholder:hover {
     background-color:rgba(0,0,0,0);
 }
 
-input[type="text"] {
+input[type="text"],input[type="number"] {
     background-color: rgba(0,0,0,0);
     border-bottom: 1px solid #555555;
 }
 
-input[type="text"]:focus {
+input[type="text"]:focus,input[type="number"]:focus {
     border-bottom: 1px solid #eeeeee;
 }
 

@@ -538,8 +538,9 @@ function compare_version_numbers(ver1, ver2) {
 	// digit by digit, so I came up with this.
 	var ver1_split = ver1.split('.');
 	var ver2_split = ver2.split('.');
+	debug.log('VERSIONS',ver1,ver2);
 	for (var i in ver1_split) {
-		if (prefs.dev_mode && ver2_split[i].length > 4) {
+		if (prefs.dev_mode && typeof(ver2_split[i]) != 'undefined' && ver2_split[i].length > 4) {
 			return false;
 		}
 		if (i > ver2_split.length) {
@@ -836,7 +837,7 @@ var syncLastFMPlaycounts = function() {
 
 	function gotPage(data) {
 		debug.log('LASTFMSYNC', 'Got page', page);
-		debug.debug("LASTFMSYNC", "Got Data", data);
+		debug.log("LASTFMSYNC", "Got Data", data);
 		if (data.recenttracks) {
 			totalpages = parseInt(data.recenttracks["@attr"].totalPages);
 			if (data.recenttracks.track && data.recenttracks.track.length > 0) {
@@ -901,12 +902,12 @@ var syncLastFMPlaycounts = function() {
 			}
 			if (Date.now() > prefs.next_lastfm_synctime) {
 				podcasts.resetScrobbleCheck();
-				debug.log("LASTFMSYNC","Getting recent tracks since ",prefs.last_lastfm_synctime);
+				debug.log("LASTFMSYNC","Getting recent tracks since ",Math.floor(prefs.last_lastfm_synctime/1000));
 				lastfm.user.getRecentTracks(
 					{
 						limit: limit,
 						page: page,
-						from: prefs.last_lastfm_synctime,
+						from: Math.floor(prefs.last_lastfm_synctime/1000),
 						extended: 1
 					},
 					gotPage,

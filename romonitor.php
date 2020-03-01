@@ -178,7 +178,8 @@ function map_tags($filedata) {
 		"imagekey" => $filedata['ImgKey'],
 		"domain" => $filedata['domain'],
 		"image" => $filedata['images']['small'],
-		"albumuri" => $filedata['X-AlbumUri']
+		"albumuri" => $filedata['X-AlbumUri'],
+		"genre" => $filedata['Genre']
 	);
 
 	romprmetadata::sanitise_data($current_song);

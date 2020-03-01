@@ -6,14 +6,14 @@ If you use Mopidy, please make sure you read the following to ensure you get the
 
 ## Communication with Mopidy
 
-RompЯ communicates with mopidy using its MPD frontend.
+RompЯ communicates with mopidy using its MPD frontend - you must have mopidy-mpd installed.
 Mopidy version 1.1 or later is required.
 
 In mopidy.conf, your mpd section needs to contain
 
     [mpd]
     connection_timeout = 120
-    
+
 120 is a minimum (it's in seconds). If you have a large music collection try a much larger number, say 600.
 
 ## Building Your Music Collection
@@ -57,9 +57,13 @@ Otherwise beets will not allow RompЯ to talk to it. Your configuration for beet
 ## Google Play
 
 If you have a Google Play Music subscription, then [mopidy-gmusic](https://github.com/mopidy/mopidy-gmusic) will allow you to search all of Google Play's online music library in the same way the Mopidy-Spotify allows you to search Spotify. You'll also be able to make use of many of RompЯ's music discovery features. If you don't have a Google Play Music subscription then you'll only be able to play tracks you have uploaded to your Google Music library, which makes the Music Discovery features much less useful, but they'll still be presented to you as I've no way to know.
-    
+
 ## Scanning Local Files
 
 Where MPD provides an 'update' command that RompЯ can use to update MPD's music database, Mopidy does not and so RompЯ can not easily make Mopidy scan local files - this has to be done with the 'mopidy local scan' command, which cannot be run directly by RompЯ .
 
 The only current solution to this to run mopidy local scan yourself first. If you're using the json local files backend in mopidy you will then need to restart mopidy. You do not need to restart mopidy if you are using mopidy-local-sqlite.
+
+## Genres
+
+Note that only Mopidy-Local seems to return Genres, so Genre-based Collection functions will not work as your might expect if you use Spotify, Soundcloud, etc.

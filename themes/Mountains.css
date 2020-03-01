@@ -66,17 +66,17 @@ div.selectholder:hover {
     background-color:rgba(0,0,0,0.2);
 }
 
-input[type="text"] {
+input[type="text"],input[type="number"] {
     background-color: rgba(0,0,0,0.3);
     border-bottom: 1px solid #555555;
 }
 
-input[type="text"]:hover {
+input[type="text"]:hover,input[type="number"]:hover {
     background-color: rgba(0,0,0,0.2);
     border-bottom: 1px solid #555555;
 }
 
-input[type="text"]:focus {
+input[type="text"]:focus,input[type="number"]:focus {
     transition: border-bottom 0.5s ease;
     border-bottom: 1px solid #bbbbbb;
 }
@@ -225,10 +225,10 @@ table.histable tr {
 }
 
 /*Prevent submenus from having all entries highlighted
-due to :hover events propagating from the parent menu 
+due to :hover events propagating from the parent menu
 */
 .backhi:hover>div.topdropmenu>div.backhi {
-    color:#eeeeee;    
+    color:#eeeeee;
 }
 
 /*Make sure the submenu entry being hovered over still gets highlighted*/

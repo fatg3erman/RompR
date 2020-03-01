@@ -39,8 +39,16 @@ var starRadios = function() {
 			} else if (param == "neverplayed" || param == "allrandom" || param == "recentlyplayed") {
 				return '<i class="icon-'+param+' modeimg"/></i><span class="modespan">'+
 					language.gettext('label_'+param)+'</span>';
+			} else if (/^tag\+/.test(param)) {
+				return '<i class="icon-tags modeimg"/><span class="modespan">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
+			} else if (/^genre\+/.test(param)) {
+				return '<i class="icon-wifi modeimg"/><span class="modespan">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
+			} else if (/^artist\+/.test(param)) {
+				return '<i class="icon-artist modeimg"/><span class="modespan">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
+			} else if (/^custom\+/.test(param)) {
+				return '<i class="icon-artist modeimg"/><span class="modespan">'+param.replace(/^custom\+/, '')+'</span>';
 			} else {
-				return '<i class="icon-tags modeimg"/><span class="modespan">'+param.replace(/^tag\+/, '')+'</span>';
+				return '<i class="icon-wifi modeimg"/>';
 			}
 		},
 

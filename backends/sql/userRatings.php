@@ -86,6 +86,14 @@ foreach($params as $p) {
 			$returninfo = list_tags();
 			break;
 
+		case 'getgenres':
+			$returninfo = list_genres();
+			break;
+
+		case 'getartists':
+			$returninfo = list_artists();
+			break;
+
 		case 'getfaveartists':
 			$returninfo = get_fave_artists();
 			break;
@@ -367,6 +375,8 @@ function get_manually_added_tracks() {
 			Tracktable.Duration AS duration,
 			Tracktable.Disc AS disc,
 			Tracktable.Uri AS uri,
+			Genretable.Genre AS genre,
+			Tracktable.Genreindex AS genreindex,
 			Albumtable.Albumname AS album,
 			Albumtable.AlbumUri AS albumuri,
 			Albumtable.Year AS date,
@@ -374,6 +384,7 @@ function get_manually_added_tracks() {
 			aat.Artistname AS albumartist
 		FROM
 			Tracktable
+			JOIN Genretable USING (Genreindex)
 			JOIN Artisttable AS ta USING (Artistindex)
 			JOIN Albumtable ON Tracktable.Albumindex = Albumtable.Albumindex
 			JOIN Artisttable AS aat ON Albumtable.AlbumArtistindex = aat.Artistindex
@@ -392,6 +403,7 @@ function get_audiobooks() {
 			Tracktable.Duration AS duration,
 			Tracktable.Disc AS disc,
 			Tracktable.Uri AS uri,
+			Genretable.Genre AS genre,
 			Albumtable.Albumname AS album,
 			Albumtable.AlbumUri AS albumuri,
 			Albumtable.Year AS date,
@@ -400,6 +412,7 @@ function get_audiobooks() {
 			Tracktable.isAudiobook AS isaudiobook
 		FROM
 			Tracktable
+			JOIN Genretable USING (Genreindex)
 			JOIN Artisttable AS ta USING (Artistindex)
 			JOIN Albumtable ON Tracktable.Albumindex = Albumtable.Albumindex
 			JOIN Artisttable AS aat ON Albumtable.AlbumArtistindex = aat.Artistindex
@@ -419,6 +432,7 @@ function get_ratings() {
 			tr.Duration AS duration,
 			tr.Disc AS disc,
 			tr.Uri AS uri,
+			ge.Genre AS genre,
 			al.Albumname AS album,
 			al.AlbumUri AS albumuri,
 			al.Year AS date,
@@ -427,6 +441,7 @@ function get_ratings() {
 		FROM
 			Ratingtable AS r
 			JOIN Tracktable AS tr USING (TTindex)
+			JOIN Genretable AS ge USING (Genreindex)
 			JOIN Artisttable AS ta USING (Artistindex)
 			JOIN Albumtable AS al ON tr.Albumindex = al.Albumindex
 			JOIN Artisttable AS aat ON al.AlbumArtistindex = aat.Artistindex
@@ -448,6 +463,7 @@ function get_playcounts() {
 			tr.Duration AS duration,
 			tr.Disc AS disc,
 			tr.Uri AS uri,
+			ge.Genre AS genre,
 			al.Albumname AS album,
 			al.AlbumUri AS albumuri,
 			al.Year AS date,
@@ -456,6 +472,7 @@ function get_playcounts() {
 		FROM
 			Playcounttable AS p
 			JOIN Tracktable AS tr USING (TTindex)
+			JOIN Genretable AS ge USING (Genreindex)
 			JOIN Artisttable AS ta USING (Artistindex)
 			JOIN Albumtable AS al ON tr.Albumindex = al.Albumindex
 			JOIN Artisttable AS aat ON al.AlbumArtistindex = aat.Artistindex
@@ -476,6 +493,7 @@ function get_tags() {
 			tr.Duration AS duration,
 			tr.Disc AS disc,
 			tr.Uri AS uri,
+			ge.Genre AS genre,
 			al.Albumname AS album,
 			al.AlbumUri AS albumuri,
 			al.Year AS date,
@@ -485,6 +503,7 @@ function get_tags() {
 			Tagtable AS t
 			JOIN TagListtable AS tl USING (Tagindex)
 			JOIN Tracktable AS tr ON tl.TTindex = tr.TTindex
+			JOIN Genretable AS ge USING (Genreindex)
 			JOIN Artisttable AS ta USING (Artistindex)
 			JOIN Albumtable AS al ON tr.Albumindex = al.Albumindex
 			JOIN Artisttable AS aat ON al.AlbumArtistindex = aat.Artistindex

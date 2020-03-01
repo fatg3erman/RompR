@@ -3,6 +3,11 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.41
+* Added 'folder' as a valid filename for local album art
+* Added Genres to the database. This permits the Collection to be sorted by Genre, along with a few other new features. Note that Spotify does not return Genre information, even though the API says it does, so this will only work for Local Music and the data will only be as good as the state of the tags in your music files.
+
+
 ## Version 1.40
 
 Thought I'd bump the version number up a bit since this seems like quite a big release that contains a lot of work.

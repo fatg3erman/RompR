@@ -284,6 +284,18 @@ function check_sql_tables() {
 		return array(false, "Error While Checking BackgroundImageTable : ".$err);
 	}
 
+	if (generic_sql_query("CREATE TABLE IF NOT EXISTS Genretable(".
+		"Genreindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+		"Genre VARCHAR(40), ".
+		"PRIMARY KEY (Genreindex), ".
+		"INDEX (Genre))", true))
+	{
+		logger::log("MYSQL", "  Genretable OK");
+	} else {
+		$err = $mysqlc->errorInfo()[2];
+		return array(false, "Error While Checking Genretable : ".$err);
+	}
+
 	if (!generic_sql_query("CREATE TABLE IF NOT EXISTS Statstable(Item CHAR(11), PRIMARY KEY(Item), Value INT UNSIGNED) ENGINE=InnoDB", true)) {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Statstable : ".$err);
@@ -860,6 +872,13 @@ function check_sql_tables() {
 				logger::log("SQL", "Updating FROM Schema version 62 TO Schema version 63");
 				upgrade_saved_crazies();
 				generic_sql_query("UPDATE Statstable SET Value = 63 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 63:
+				logger::log("SQL", "Updating FROM Schema version 63 TO Schema version 64");
+				generic_sql_query("INSERT INTO Genretable (Genre) VALUES ('None')", true);
+				generic_sql_query("ALTER TABLE Tracktable ADD Genreindex INT UNSIGNED DEFAULT 0", true);
+				generic_sql_query("UPDATE Statstable SET Value = 64 WHERE Item = 'SchemaVer'", true);
 				break;
 
 		}

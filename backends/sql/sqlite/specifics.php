@@ -327,6 +327,16 @@ function check_sql_tables() {
 		return array(false, "Error While Checking BackgroundImageTable : ".$err);
 	}
 
+	if (generic_sql_query("CREATE TABLE IF NOT EXISTS Genretable(".
+		"Genreindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+		"Genre VARCHAR(40))", true))
+	{
+		logger::log("SQLITE", "  Genretable OK");
+	} else {
+		$err = $mysqlc->errorInfo()[2];
+		return array(false, "Error While Checking Genretable : ".$err);
+	}
+
 	// Check schema version and update tables as necessary
 	$sv = simple_query('Value', 'Statstable', 'Item', 'SchemaVer', 0);
 	if ($sv == 0) {
@@ -833,6 +843,14 @@ function check_sql_tables() {
 				logger::log("SQL", "Updating FROM Schema version 62 TO Schema version 63");
 				upgrade_saved_crazies();
 				generic_sql_query("UPDATE Statstable SET Value = 63 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 63:
+				logger::log("SQL", "Updating FROM Schema version 63 TO Schema version 64");
+				generic_sql_query("CREATE INDEX IF NOT EXISTS gi ON Genretable (Genre)", true);
+				generic_sql_query("INSERT INTO Genretable (Genre) VALUES ('None')", true);
+				generic_sql_query("ALTER TABLE Tracktable ADD COLUMN Genreindex INT UNSIGNED DEFAULT 0", true);
+				generic_sql_query("UPDATE Statstable SET Value = 64 WHERE Item = 'SchemaVer'", true);
 				break;
 
 		}

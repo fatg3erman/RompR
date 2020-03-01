@@ -96,7 +96,8 @@ class musicCollection {
 					"albumuri" => $album->uri,
 					"image" => $album->getImage('asdownloaded'),
 					"duration" => $trackobj->tags['Time'],
-					"date" => $album->datestamp
+					"date" => $album->datestamp,
+					"genre" => $trackobj->tags['Genre']
 				);
 				logger::trace("COLLECTION", "Title - ".$trackobj->tags['Title']);
 				// A lot of code that depends on this was written to handle mopidy model search results.

@@ -26,6 +26,34 @@ var starRadios = function() {
 			});
 
 			//
+			// Genre
+			//
+			var a = $('<div>', {class: "menuitem fullwidth"}).appendTo('#pluginplaylists');
+			var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
+				appendTo(a).makeTagMenu({
+				textboxname: 'farrago',
+				placeholder: 'Genre',
+				labelhtml: '<i class="icon-wifi svg-square"></i>',
+				populatefunction: starRadios.populateGenreMenu,
+				buttontext: language.gettext('button_playradio'),
+				buttonfunc: starRadios.genrePopulate
+			});
+
+			//
+			// Artist
+			//
+			var a = $('<div>', {class: "menuitem fullwidth"}).appendTo('#pluginplaylists');
+			var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
+				appendTo(a).makeTagMenu({
+				textboxname: 'bobblehat',
+				placeholder: 'Tracks By Artist',
+				labelhtml: '<i class="icon-artist svg-square"></i>',
+				populatefunction: starRadios.populateArtistMenu,
+				buttontext: language.gettext('button_playradio'),
+				buttonfunc: starRadios.artistPopulate
+			});
+
+			//
 			// All Tracks at random
 			//
 			$('#pluginplaylists').append(playlist.radioManager.standardBox('starRadios', 'allrandom', 'icon-allrandom', language.gettext('label_allrandom')));
@@ -44,7 +72,36 @@ var starRadios = function() {
 
 		tagPopulate: function() {
 			playlist.radioManager.load('starRadios', 'tag+'+$('[name="cynthia"]').val());
+		},
+
+		populateGenreMenu: function(callback) {
+			metaHandlers.genericAction(
+				'getgenres',
+				callback,
+				function() {
+					debug.error("DB TRACKS", "Failed to get genres");
+				}
+			);
+		},
+
+		genrePopulate: function() {
+			playlist.radioManager.load('starRadios', 'genre+'+$('[name="farrago"]').val());
+		},
+
+		populateArtistMenu: function(callback) {
+			metaHandlers.genericAction(
+				'getartists',
+				callback,
+				function() {
+					debug.error("DB TRACKS", "Failed to get artists");
+				}
+			);
+		},
+
+		artistPopulate: function() {
+			playlist.radioManager.load('starRadios', 'artist+'+$('[name="bobblehat"]').val());
 		}
+
 	}
 }();
 

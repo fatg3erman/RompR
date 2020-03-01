@@ -1,6 +1,11 @@
 <?php
 define('ROMPR_IS_LOADING', true);
 
+header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
+header("Pragma: no-cache"); // HTTP 1.0.
+header("Expires: 0");
+header("Content-Type: text/html; charset=UTF-8");
+
 require_once ("includes/vars.php");
 
 //
@@ -171,10 +176,6 @@ logger::mark("CREATING PAGE", "******++++++======------******------======++++++*
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <title>RompЯ</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
 <link rel="shortcut icon" sizes="196x196" href="newimages/favicon-196.png" />
 <link rel="shortcut icon" sizes="128x128" href="newimages/favicon-128.png" />
 <link rel="shortcut icon" sizes="64x64" href="newimages/favicon-64.png" />
@@ -192,6 +193,8 @@ foreach ($prefs as $p => $v) {
 	}
 }
 print '<script type="application/json" name="prefs">'."\n".json_encode($safeprefs)."\n</script>\n";
+print '<script type="application/json" name="custom_radio_items">'."\n".json_encode(CUSTOM_RADIO_ITEMS)."\n</script>\n";
+print '<script type="application/json" name="radio_combine_options">'."\n".json_encode(RADIO_COMBINE_OPTIONS)."\n</script>\n";
 print '<link rel="stylesheet" type="text/css" href="css/layout-january.css?version='.time().'" />'."\n";
 print '<link rel="stylesheet" type="text/css" href="skins/'.$skin.'/skin.css?version='.time().'" />'."\n";
 if (file_exists('skins/'.$skin.'/controlbuttons.css')) {
