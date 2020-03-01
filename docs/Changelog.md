@@ -6,7 +6,9 @@ Note that some versions listed here may be unreleased, I use version number incr
 ## Version 1.41
 * Added 'folder' as a valid filename for local album art
 * Added Genres to the database. This permits the Collection to be sorted by Genre, along with a few other new features. Note that Spotify does not return Genre information, even though the API says it does, so this will only work for Local Music and the data will only be as good as the state of the tags in your music files.
-
+* Fix bug in last.FM Playcount sync where it only worked the first time you used it
+* Fix bug in last.FM Playcount sync that wouldn't mark podcast episodes as listsned when using MySQL
+* Added Custom Personal Radio option
 
 ## Version 1.40
 
