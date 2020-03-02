@@ -948,7 +948,7 @@ function smart_radio_custom($param) {
 		LEFT JOIN Genretable USING (Genreindex)
 		LEFT JOIN Ratingtable USING (TTindex)
 		LEFT JOIN Playcounttable USING (TTindex)
-		LEFT JOIN Taglisttable USING (TTindex)
+		LEFT JOIN TagListtable USING (TTindex)
 		LEFT JOIN Tagtable USING (Tagindex)
 		WHERE (";
 	foreach ($station['rules'] as $i => $rule) {
