@@ -54,6 +54,7 @@ function check_sql_tables() {
 		"LinkChecked TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"isAudiobook TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"usedInPlaylist TINYINT(1) UNSIGNED DEFAULT 0, ".
+		"Genreindex INT UNSIGNED DEFAULT 0, ".
 		"INDEX(Albumindex), ".
 		"INDEX(Title), ".
 		"INDEX(TrackNo)) ENGINE=InnoDB", true))
@@ -876,7 +877,7 @@ function check_sql_tables() {
 
 			case 63:
 				logger::log("SQL", "Updating FROM Schema version 63 TO Schema version 64");
-				generic_sql_query("INSERT INTO Genretable (Genre) VALUES ('None')", true);
+				// generic_sql_query("INSERT INTO Genretable (Genre) VALUES ('None')", true);
 				generic_sql_query("ALTER TABLE Tracktable ADD Genreindex INT UNSIGNED DEFAULT 0", true);
 				generic_sql_query("UPDATE Statstable SET Value = 64 WHERE Item = 'SchemaVer'", true);
 				break;

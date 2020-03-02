@@ -51,7 +51,8 @@ function check_sql_tables() {
 		"LinkChecked TINYINT(1) DEFAULT 0, ".
 		"isAudiobook TINYINT(1) DEFAULT 0, ".
 		"justAdded TINYINT(1) DEFAULT 1, ".
-		"usedInPlaylist TINYINT(1) DEFAULT 0)", true))
+		"usedInPlaylist TINYINT(1) DEFAULT 0, ".
+		"Genreindex INT UNSIGNED DEFAULT 0)", true))
 	{
 		logger::log("SQLITE", "  Tracktable OK");
 		if (generic_sql_query("CREATE INDEX IF NOT EXISTS ai ON Tracktable (Albumindex)", true)) {
@@ -336,6 +337,7 @@ function check_sql_tables() {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking Genretable : ".$err);
 	}
+	generic_sql_query("CREATE INDEX IF NOT EXISTS gi ON Genretable (Genre)", true);
 
 	// Check schema version and update tables as necessary
 	$sv = simple_query('Value', 'Statstable', 'Item', 'SchemaVer', 0);
@@ -847,9 +849,8 @@ function check_sql_tables() {
 
 			case 63:
 				logger::log("SQL", "Updating FROM Schema version 63 TO Schema version 64");
-				generic_sql_query("CREATE INDEX IF NOT EXISTS gi ON Genretable (Genre)", true);
-				generic_sql_query("INSERT INTO Genretable (Genre) VALUES ('None')", true);
 				generic_sql_query("ALTER TABLE Tracktable ADD COLUMN Genreindex INT UNSIGNED DEFAULT 0", true);
+				// generic_sql_query("INSERT INTO Genretable (Genre) VALUES ('None')", true);
 				generic_sql_query("UPDATE Statstable SET Value = 64 WHERE Item = 'SchemaVer'", true);
 				break;
 
