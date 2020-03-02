@@ -16,6 +16,26 @@ You can skip, pause, stop, etc as normal. When a track has finished it will be r
 
 To stop the dynamic playlist generation and return to normal mode, either click the x next to the header or clear the playlist.
 
+## Creating A Custom Radio Station
+
+You can create custom Personal Radio Stations that combines several Rules to choose tracks from your Music Collection. This feature is inspired by Kodi's Party Mode.
+
+### Rules for Rules
+
+You can choose whether the tracks selected must match any of the rules or all of the rules. For even more flexibility you can use multiple values within rules as described below.
+
+### Creating Rules
+
+Rules can be created to select from Artist (the Track Artist, not the Album Artist), Genre, Tag, Rating, Playcount, Duration, and Year. To create a rule, choose one of these from the dropdown menu. This will cuase further options to appear.
+
+To add another rule, click on the + icon. To remove a rule, click the x.
+
+To save the settings so you can easily recall them in future, click the Floppy Disc icon. Your saved Radio Station will then appear in the list - it can still be edited afterwards.
+
+### Using Multiple Values in Rules
+
+Artist, Genre, and Tag can accept multiple values in one rule. To understand how this makes the rules even more flexible, it's best to use some examples.
+
 ## Number of Upcoming Tracks
 
 By default, 5 upcoming tracks will be displayed. You can change this number from the Prefs Panel

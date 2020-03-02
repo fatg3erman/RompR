@@ -42,11 +42,11 @@ var starRadios = function() {
 			} else if (/^tag\+/.test(param)) {
 				return '<i class="icon-tags modeimg"/><span class="modespan">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
 			} else if (/^genre\+/.test(param)) {
-				return '<i class="icon-wifi modeimg"/><span class="modespan">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
+				return '<i class="icon-music modeimg"/><span class="modespan">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
 			} else if (/^artist\+/.test(param)) {
 				return '<i class="icon-artist modeimg"/><span class="modespan">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
 			} else if (/^custom\+/.test(param)) {
-				return '<i class="icon-artist modeimg"/><span class="modespan">'+param.replace(/^custom\+/, '')+'</span>';
+				return '<i class="icon-wifi modeimg"/><span class="modespan">'+param.replace(/^custom\+/, '')+'</span>';
 			} else {
 				return '<i class="icon-wifi modeimg"/>';
 			}
@@ -55,9 +55,9 @@ var starRadios = function() {
 		stop: function() {
 		},
 
-		tagPopulate: function(tags) {
-			playlist.radioManager.load('starRadios', tags);
-		}
+		// tagPopulate: function(tags) {
+		// 	playlist.radioManager.load('starRadios', tags);
+		// }
 	}
 }();
 

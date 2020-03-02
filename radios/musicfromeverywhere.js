@@ -7,7 +7,7 @@ var genreRadio = function() {
 			// Genre (Music from Everywhere)
 			//
 			if (player.canPlay('spotify') || player.canPlay('gmusic')) {
-				$('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-wifi', language.gettext('label_genre'), 'genre_radio'));
+				$('#pluginplaylists_everywhere').append(playlist.radioManager.textEntry('icon-music', language.gettext('label_genre'), 'genre_radio'));
 				$('button[name="genre_radio"]').on('click', function() {
 					var v = $('#genre_radio').val();
 					if (v != '') {

@@ -694,7 +694,12 @@ $languages['en'] = array (
 	"label_greaterthan" =>					"is greater than",
 	"label_any_rule" =>						"Tracks must match at least one rule",
 	"label_all_rules" =>					"Tracks must match all rules",
-	"label_choose_one" =>					"Choose One..."
+	"label_choose_one" =>					"Choose One...",
+	"error_norules" =>						"You must create some rules",
+	'label_ruleoptions' =>					"Rule Options",
+	"label_genres" =>						"Genres",
+	"label_createcustom" =>					"Create Custom Radio Station",
+	"label_edit" =>							"Edit"
 );
 
 ?>

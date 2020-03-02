@@ -324,13 +324,26 @@ function list_genres() {
 }
 
 function list_artists() {
-	$artists = array();
-	require_once('collection/sortby/artist.php');
-	$sorter = new sortby_artist('aartistroot');
-	foreach ($sorter->root_sort_query() as $r) {
-		$artists[] = $r['Artistname'];
+	global $prefs;
+
+	$qstring = "SELECT DISTINCT Artistname FROM Tracktable JOIN Artisttable USING (Artistindex)
+		WHERE (LinkChecked = 0 OR LinkChecked = 2) AND isAudiobook = 0 AND isSearchResult < 2 AND Hidden = 0 AND Uri IS NOT NULL
+		ORDER BY ";
+	foreach ($prefs['artistsatstart'] as $a) {
+		$qstring .= "CASE WHEN LOWER(Artistname) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
 	}
-	return $artists;
+	if (count($prefs['nosortprefixes']) > 0) {
+		$qstring .= "(CASE ";
+		foreach($prefs['nosortprefixes'] AS $p) {
+			$phpisshitsometimes = strlen($p)+2;
+			$qstring .= "WHEN LOWER(Artistname) LIKE '".strtolower($p).
+				" %' THEN LOWER(SUBSTR(Artistname,".$phpisshitsometimes.")) ";
+		}
+		$qstring .= "ELSE LOWER(Artistname) END)";
+	} else {
+		$qstring .= "LOWER(Artistname)";
+	}
+	return sql_get_column($qstring, 'Artistname');
 }
 
 function clear_wishlist() {

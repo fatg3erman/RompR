@@ -4,8 +4,15 @@ require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 $json = file_get_contents("php://input");
 $station = json_decode($json, true);
-logger::log('CUSTOMRADIO', 'Saving Station',$station['name']);
 $filename = 'prefs/customradio/'.format_for_disc($station['name']).'.json';
-file_put_contents($filename, $json);
+if (array_key_exists('delete', $station)) {
+	logger::log('CUSTOMRADIO', 'Deleting Station',$station['name']);
+	if (file_exists($filename)) {
+		unlink($filename);
+	}
+} else {
+	logger::log('CUSTOMRADIO', 'Saving Station',$station['name']);
+	file_put_contents($filename, $json);
+}
 header('HTTP/1.1 204 No Content');
 ?>

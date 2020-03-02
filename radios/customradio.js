@@ -15,8 +15,8 @@ var customRadioManager = function() {
 	};
 
 	var default_station = {
-		name: 'Create Custom Radio Station',
-		combine_option: ' OR ',
+		name: language.gettext('label_createcustom'),
+		combine_option: ' AND ',
 		rules: [
 			cloneObject(default_rule)
 		]
@@ -37,7 +37,7 @@ var customRadioManager = function() {
 
 		var key_selector;
 		var option_selector;
-		var delete_icon = $('<i>', {class: 'playlisticon clickicon icon-cancel-circled'}).css('display', 'none').appendTo(delete_box);
+		var delete_icon = $('<i>', {class: 'playlisticon clickicon icon-cancel-circled'}).appendTo(delete_box);
 
 		var enabled = false;
 		var my_id = rule_counter;
@@ -49,9 +49,9 @@ var customRadioManager = function() {
 					var dropper = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
 						appendTo(value_box).makeTagMenu({
 							textboxname: 'rule_entry_'+my_id,
-							placeholder: 'Artist Name(s)',
+							placeholder: language.gettext('label_artists').capitalize(),
 							labelhtml: '',
-							populatefunction: starRadios.populateArtistMenu,
+							populatefunction: starHelpers.populateArtistMenu,
 							buttontext: null,
 							buttonfunc: null
 						});
@@ -61,9 +61,9 @@ var customRadioManager = function() {
 					var dropper = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
 						appendTo(value_box).makeTagMenu({
 							textboxname: 'rule_entry_'+my_id,
-							placeholder: 'Genre(s)',
+							placeholder: language.gettext('label_genres'),
 							labelhtml: '',
-							populatefunction: starRadios.populateGenreMenu,
+							populatefunction: starHelpers.populateGenreMenu,
 							buttontext: null,
 							buttonfunc: null
 						});
@@ -73,7 +73,7 @@ var customRadioManager = function() {
 					var dropper = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
 						appendTo(value_box).makeTagMenu({
 							textboxname: 'rule_entry_'+my_id,
-							placeholder: 'Tag(s)',
+							placeholder: language.gettext('label_tags'),
 							labelhtml: '',
 							populatefunction: tagAdder.populateTagMenu,
 							buttontext: null,
@@ -85,6 +85,7 @@ var customRadioManager = function() {
 					value_box.append($('<input>', {type: 'number', name: 'rule_entry_'+my_id}));
 					break;
 			}
+			$('input[name="rule_entry_'+my_id+'"]').val(params.value);
 		}
 
 		this.initialise = function() {
@@ -94,17 +95,18 @@ var customRadioManager = function() {
 			custom_radio_items.forEach(function(item) {
 				key_selector.append($('<option>').attr('value', item.db_key).text(language.gettext(item.name)));
 			});
-			key_selector.on('change', self.key_changed);
 			key_selector.val(params.db_key);
-		},
+			self.key_changed();
+			key_selector.on('change', self.key_changed);
+			delete_icon.on('click', self.delete);
+		}
 
 		this.key_changed = function(event) {
 			var new_key = key_selector.val();
 			debug.log('CUSTOMRADIO', 'Key Changed To', new_key);
 			option_box.empty();
 			value_box.empty();
-			delete_icon.off('click').css('display', 'none');
-			if (new_key != 'Nothing') {
+			if (new_key != 'Nothing' && new_key !== null) {
 				enabled = true;
 				var option_div = $('<div>', {class: 'selectholder'}).appendTo(option_box);
 				var options;
@@ -115,11 +117,14 @@ var customRadioManager = function() {
 				});
 				option_selector = $('<select>').appendTo(option_div);
 				$.each(options, function(i, v) {
+					if (params.option == 0) {
+						params.option = i;
+					}
 					option_selector.append($('<option>').attr('value', i).text(language.gettext(v)));
 				});
+				option_selector.val(params.option);
+				self.option_changed();
 				option_selector.on('change', self.option_changed);
-				make_value_box(new_key);
-				delete_icon.css('display', '').on('click', self.delete);
 				table.css('width', '100%');
 			}
 		}
@@ -129,7 +134,7 @@ var customRadioManager = function() {
 				value_box.empty();
 				value_box.append($('<input>', {type: 'hidden', name: 'rule_entry_'+my_id}).val('dummy'));
 			} else {
-				if (value_box.children('input[type="hidden"]').length > 0) {
+				if (value_box.children('input[type="hidden"]').length > 0 || value_box.children('input').length == 0) {
 					value_box.empty();
 					make_value_box(key_selector.val());
 				}
@@ -142,7 +147,7 @@ var customRadioManager = function() {
 		}
 
 		this.is_enabled = function() {
-			return enabled;
+			return (enabled && $('input[name="rule_entry_'+my_id+'"]').val() != '');
 		}
 
 		this.get_params = function() {
@@ -158,15 +163,20 @@ var customRadioManager = function() {
 	function custom_radio_station(params) {
 
 		var self = this;
+		var my_id = rule_counter;
+		rule_counter++;
 
 		var holder = $('<div>', {class: 'menuitem fullwidth'}).appendTo('#pluginplaylists');
 		var title = $('<div>', {class: "containerbox dropdown-container"}).appendTo(holder);
 		title.append('<div class="svg-square fixed icon-wifi"></div>');
 		title.append('<div class="expand dropdown-holder">'+params.name+'</div>');
+		var editbutton = $('<button>', {class: 'fixed alignmid openmenu', name: 'custom_radio_'+my_id}).html(language.gettext('label_edit')).appendTo(title);
 		var playbutton = $('<button>', {class: 'fixed alignmid'}).html(language.gettext('button_playradio')).appendTo(title);
 
-		var combine_div = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(holder);
-		combine_div.append($('<div>', {class: 'fixed', style: 'margin-right: 1em'}).html('Rule Options'));
+		var dropdown = $('<div>', {id: 'custom_radio_'+my_id, class: 'dropmenu'}).appendTo(holder);
+
+		var combine_div = $('<div>', {class: 'containerbox dropdown-container', style: 'margin-right: 8px'}).appendTo(dropdown);
+		combine_div.append($('<div>', {class: 'fixed', style: 'margin-right: 1em'}).html(language.gettext('label_ruleoptions')));
 		var combine_holder = $('<div>', {class: 'selectholder expand'}).appendTo(combine_div);
 		var combine_selector = $('<select>').appendTo(combine_holder);
 		$.each(radio_combine_options, function(i, v) {
@@ -174,16 +184,34 @@ var customRadioManager = function() {
 		});
 		combine_selector.val(params.combine_option);
 
-		var bum_div = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(holder);
+		var bum_div = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(dropdown);
 		bum_div.append($('<div>', {class: 'expand'}).html('Rules :'));
 
-		var table = $('<table>').appendTo(holder);
+		var table = $('<table>').appendTo(dropdown);
 
-		var arse_div = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(holder);
+		var arse_div = $('<div>', {class: 'containerbox dropdown-container', style: 'margin-right: 8px'}).appendTo(dropdown);
 		var add_button = $('<i>', {class: 'smallicon clickicon fixed icon-plus'}).appendTo(arse_div);
 		arse_div.append($('<div>', {class: 'expand'}));
+		if (params.name != language.gettext('label_createcustom')) {
+			var delete_button = $('<i>', {class: 'smallicon clickicon fixed icon-cancel-circled'}).appendTo(arse_div);
+		}
+		var save_button = $('<i>', {class: 'smallicon clickicon fixed icon-floppy'}).appendTo(arse_div);
 
 		var rules = new Array();
+
+		function get_save_params(name) {
+			var save_params = {
+				name: name,
+				combine_option: combine_selector.val(),
+				rules: new Array()
+			};
+			for (let rule of rules) {
+				if (rule.is_enabled()) {
+					save_params.rules.push(rule.get_params());
+				}
+			}
+			return save_params;
+		}
 
 		this.initialise = function() {
 			params.rules.forEach(function(rule) {
@@ -192,6 +220,10 @@ var customRadioManager = function() {
 				rules.push(r);
 			});
 			add_button.on('click', self.addRule);
+			if (params.name != language.gettext('label_createcustom')) {
+				delete_button.on('click', self.delete);
+			}
+			save_button.on('click', self.save);
 			playbutton.on('click', self.play);
 		}
 
@@ -202,22 +234,17 @@ var customRadioManager = function() {
 			rules.push(r);
 		}
 
-		this.play = async function() {
-			var save_params = {
-				name: params.name,
-				combine_option: combine_selector.val(),
-				rules: new Array()
-			};
-			for (let rule of rules) {
-				if (rule.is_enabled()) {
-					save_params.rules.push(rule.get_params());
-				}
-			}
+		this.play = function() {
+			self.save_to_backend(self.start_playing, params.name)
+		}
+
+		this.save_to_backend = async function(callback, name) {
+			var save_params = get_save_params(name);
 			if (save_params.rules.length == 0) {
-				infobar.notify('You must create some rules');
+				infobar.notify(language.gettext('error_norules'));
 				return;
 			}
-			debug.log('CUSTOMRADIO','Playing Station',save_params);
+			debug.log('CUSTOMRADIO','Saving Station',save_params);
 			try {
 				var s = await $.ajax({
 					type: 'POST',
@@ -225,22 +252,115 @@ var customRadioManager = function() {
 					data: JSON.stringify(save_params),
 					contentType: false
 				});
-				playlist.radioManager.load('starRadios', 'custom+'+save_params.name);
+				callback.call();
 			} catch (err) {
-				debug.error('CUSTOMRADIO', 'Failed to play station',err);
+				debug.error('CUSTOMRADIO', 'Failed to save station',err);
 				infobar.error(language.gettext('label_general_error'));
 			}
 		}
 
+		this.start_playing = function() {
+			playlist.radioManager.load('starRadios', 'custom+'+params.name);
+		}
+
+		this.save = function(e) {
+			var fnarkle = new popup({
+				css: {
+					width: 400,
+					height: 300
+				},
+				title: language.gettext("button_createplaylist"),
+				atmousepos: true,
+				mousevent: e
+			});
+			var mywin = fnarkle.create();
+			var d = $('<div>',{class: 'containerbox'}).appendTo(mywin);
+			var e = $('<div>',{class: 'expand'}).appendTo(d);
+			var i = $('<input>',{class: 'enter', id: 'gratuitous', type: 'text', size: '200'}).val(params.name).appendTo(e);
+			var b = $('<button>',{class: 'fixed'}).appendTo(d);
+			b.html(language.gettext('button_save'));
+			fnarkle.useAsCloseButton(b, self.actually_save);
+			fnarkle.open();
+		}
+
+		this.actually_save = function() {
+			self.save_to_backend(customRadioManager.setup, $('#gratuitous').val());
+			return true;
+		}
+
+		this.remove = function() {
+			rules = new Array();
+			holder.remove();
+		}
+
+		this.delete = function() {
+			params.delete = 1;
+ 			$.ajax({
+				type: 'POST',
+				url: 'radios/code/savecustom.php',
+				data: JSON.stringify(params),
+				contentType: false
+			});
+			self.remove();
+		}
+
+	}
+
+	function sort_stations(a, b) {
+		if (a.name == language.gettext('label_createcustom')) {
+			return 1;
+		}
+		if (b.name == language.gettext('label_createcustom')) {
+			return -1;
+		}
+		var nameA = a.name.toUpperCase();
+		var nameB = b.name.toUpperCase();
+		if (nameA < nameB) {
+		    return -1;
+		}
+		if (nameA > nameB) {
+			return 1;
+		}
+		return 0;
 	}
 
 	return {
-		setup: function() {
-			var params = cloneObject(default_station);
-			var s = new custom_radio_station(params);
-			s.initialise();
-			stations.push(s);
+		setup: async function() {
+			var sd = new Array();
+			try {
+				sd = await $.ajax({
+					type: 'GET',
+					url: 'radios/code/loadcustom.php',
+					dataType: 'json'
+				});
+			} catch (err) {
+				debug.error('CUSTOMRADIO', 'Error loading stations', err);
+			}
+			// This code was written to sort the loaded stations and make sure the default one
+			// comes last. Then I changed mym mind and I no lnger load the default one
+			// but I didn't change this because I might change my mind again.
+			sd.sort(sort_stations);
+			for (let s of stations) {
+				s.remove();
+			}
+			stations = new Array();
+			var found_default = false;
+			for (let station of sd) {
+				if (station.name == language.gettext('label_createcustom')) {
+					found_default = true;
+				}
+				var s = new custom_radio_station(station);
+				s.initialise();
+				stations.push(s);
+			}
+			if (!found_default) {
+				var params = cloneObject(default_station);
+				var s = new custom_radio_station(params);
+				s.initialise();
+				stations.push(s);
+			}
 		}
+
 	}
 
 }();

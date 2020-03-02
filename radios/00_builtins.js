@@ -33,8 +33,8 @@ var starRadios = function() {
 				appendTo(a).makeTagMenu({
 				textboxname: 'farrago',
 				placeholder: 'Genre',
-				labelhtml: '<i class="icon-wifi svg-square"></i>',
-				populatefunction: starRadios.populateGenreMenu,
+				labelhtml: '<i class="icon-music svg-square"></i>',
+				populatefunction: starHelpers.populateGenreMenu,
 				buttontext: language.gettext('button_playradio'),
 				buttonfunc: starRadios.genrePopulate
 			});
@@ -48,7 +48,7 @@ var starRadios = function() {
 				textboxname: 'bobblehat',
 				placeholder: 'Tracks By Artist',
 				labelhtml: '<i class="icon-artist svg-square"></i>',
-				populatefunction: starRadios.populateArtistMenu,
+				populatefunction: starHelpers.populateArtistMenu,
 				buttontext: language.gettext('button_playradio'),
 				buttonfunc: starRadios.artistPopulate
 			});
@@ -74,6 +74,20 @@ var starRadios = function() {
 			playlist.radioManager.load('starRadios', 'tag+'+$('[name="cynthia"]').val());
 		},
 
+		genrePopulate: function() {
+			playlist.radioManager.load('starRadios', 'genre+'+$('[name="farrago"]').val());
+		},
+
+
+		artistPopulate: function() {
+			playlist.radioManager.load('starRadios', 'artist+'+$('[name="bobblehat"]').val());
+		}
+
+	}
+}();
+
+var starHelpers = function() {
+	return {
 		populateGenreMenu: function(callback) {
 			metaHandlers.genericAction(
 				'getgenres',
@@ -84,10 +98,6 @@ var starRadios = function() {
 			);
 		},
 
-		genrePopulate: function() {
-			playlist.radioManager.load('starRadios', 'genre+'+$('[name="farrago"]').val());
-		},
-
 		populateArtistMenu: function(callback) {
 			metaHandlers.genericAction(
 				'getartists',
@@ -96,10 +106,6 @@ var starRadios = function() {
 					debug.error("DB TRACKS", "Failed to get artists");
 				}
 			);
-		},
-
-		artistPopulate: function() {
-			playlist.radioManager.load('starRadios', 'artist+'+$('[name="bobblehat"]').val());
 		}
 
 	}
