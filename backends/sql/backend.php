@@ -1087,6 +1087,7 @@ function prepare_findtracks() {
 		show_sql_error();
 		exit(1);
 	}
+
 }
 
 function remove_findtracks() {

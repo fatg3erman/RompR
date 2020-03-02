@@ -22,7 +22,7 @@ var starRadios = function() {
 				labelhtml: '<i class="icon-tags svg-square"></i>',
 				populatefunction: tagAdder.populateTagMenu,
 				buttontext: language.gettext('button_playradio'),
-				buttonfunc: starRadios.tagPopulate
+				buttonfunc: starHelpers.tagPopulate
 			});
 
 			//
@@ -36,7 +36,7 @@ var starRadios = function() {
 				labelhtml: '<i class="icon-music svg-square"></i>',
 				populatefunction: starHelpers.populateGenreMenu,
 				buttontext: language.gettext('button_playradio'),
-				buttonfunc: starRadios.genrePopulate
+				buttonfunc: starHelpers.genrePopulate
 			});
 
 			//
@@ -50,7 +50,7 @@ var starRadios = function() {
 				labelhtml: '<i class="icon-artist svg-square"></i>',
 				populatefunction: starHelpers.populateArtistMenu,
 				buttontext: language.gettext('button_playradio'),
-				buttonfunc: starRadios.artistPopulate
+				buttonfunc: starHelpers.artistPopulate
 			});
 
 			//
@@ -68,7 +68,13 @@ var starRadios = function() {
 			//
 			$('#pluginplaylists').append(playlist.radioManager.standardBox('starRadios', 'recentlyplayed', 'icon-recentlyplayed', language.gettext('label_recentlyplayed')));
 
-		},
+		}
+
+	}
+}();
+
+var starHelpers = function() {
+	return {
 
 		tagPopulate: function() {
 			playlist.radioManager.load('starRadios', 'tag+'+$('[name="cynthia"]').val());
@@ -81,13 +87,8 @@ var starRadios = function() {
 
 		artistPopulate: function() {
 			playlist.radioManager.load('starRadios', 'artist+'+$('[name="bobblehat"]').val());
-		}
+		},
 
-	}
-}();
-
-var starHelpers = function() {
-	return {
 		populateGenreMenu: function(callback) {
 			metaHandlers.genericAction(
 				'getgenres',

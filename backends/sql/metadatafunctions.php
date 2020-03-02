@@ -938,6 +938,7 @@ function smart_radio_artist($param) {
 }
 
 function smart_radio_custom($param) {
+	global $mysqlc;
 	$station = json_decode(file_get_contents('prefs/customradio/'.format_for_disc($param).'.json'), true);
 	$tags = array();
 	$sqlstring = "SELECT DISTINCT Uri FROM
@@ -989,11 +990,11 @@ function smart_radio_custom($param) {
 					break;
 
 				case RADIO_RULE_OPTIONS_STRING_CONTAINS:
-					$sqlstring .= 'LOWER('.$rule['db_key'].") LIKE '%".strtolower(trim($value))."%'";
+					$sqlstring .= 'LOWER('.$rule['db_key'].") LIKE ".$mysqlc->quote("%".strtolower(trim($value))."%");
 					break;
 
 				case RADIO_RULE_OPTIONS_STRING_NOT_CONTAINS:
-					$sqlstring .= 'LOWER('.$rule['db_key'].") NOT LIKE '%".strtolower(trim($value))."%'";
+					$sqlstring .= 'LOWER('.$rule['db_key'].") NOT LIKE ".$mysqlc->quote("%".strtolower(trim($value))."%");
 					break;
 
 				case RADIO_RULE_OPTIONS_INTEGER_LESSTHAN:
