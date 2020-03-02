@@ -1063,6 +1063,7 @@ $.widget('rompr.spotifyAlbumThing', {
 				if (dropper.hasClass("filled")) {
 					self._openAlbum(dropper);
 					dropper.show();
+					self.element.find('#'+self.options.id+'bio_'+id).show();
 					browser.rePoint();
 				} else {
 					if (layoutProcessor.openOnImage) {
