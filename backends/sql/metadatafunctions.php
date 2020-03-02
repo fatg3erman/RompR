@@ -1057,6 +1057,9 @@ function getAllURIs($sqlstring, $limit, $tags, $random = true) {
 	foreach ($uris as $uri) {
 		sql_prepare_query(true, null, null, null, 'UPDATE Tracktable SET usedInPlaylist = 1 WHERE Uri = ?', $uri);
 	}
+	if (count($uris) == 0) {
+		$uris = array('NOTRACKS!');
+	}
 	return $uris;
 }
 

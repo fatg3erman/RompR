@@ -19,7 +19,7 @@ var starRadios = function() {
 						url: "backends/sql/userRatings.php",
 						type: "POST",
 						contentType: false,
-						data: JSON.stringify([{action: whattodo, playlist: param, numtracks: prefs.smartradio_chunksize}]),
+						data: JSON.stringify([{action: whattodo, playlist: param, numtracks: numtracks}]),
 						dataType: 'json'
 					});
 					tracks = tracks.concat(t);
