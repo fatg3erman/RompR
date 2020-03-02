@@ -170,10 +170,10 @@ var customRadioManager = function() {
 		var title = $('<div>', {class: "containerbox dropdown-container"}).appendTo(holder);
 		title.append('<div class="svg-square fixed icon-wifi"></div>');
 		title.append('<div class="expand dropdown-holder">'+params.name+'</div>');
-		var editbutton = $('<button>', {class: 'fixed alignmid openmenu', name: 'custom_radio_'+my_id}).html(language.gettext('label_edit')).appendTo(title);
+		var editbutton = $('<button>', {class: 'fixed alignmid'}).html(language.gettext('label_edit')).appendTo(title);
 		var playbutton = $('<button>', {class: 'fixed alignmid'}).html(language.gettext('button_playradio')).appendTo(title);
 
-		var dropdown = $('<div>', {id: 'custom_radio_'+my_id, class: 'dropmenu'}).appendTo(holder);
+		var dropdown = $('<div>', {class: 'invisible'}).appendTo(holder);
 
 		var combine_div = $('<div>', {class: 'containerbox dropdown-container', style: 'margin-right: 8px'}).appendTo(dropdown);
 		combine_div.append($('<div>', {class: 'fixed', style: 'margin-right: 1em'}).html(language.gettext('label_ruleoptions')));
@@ -225,6 +225,7 @@ var customRadioManager = function() {
 			}
 			save_button.on('click', self.save);
 			playbutton.on('click', self.play);
+			editbutton.on('click', self.edit);
 		}
 
 		this.addRule = function() {
@@ -236,6 +237,10 @@ var customRadioManager = function() {
 
 		this.play = function() {
 			self.save_to_backend(self.start_playing, params.name)
+		}
+
+		this.edit = function() {
+			dropdown.slideToggle('fast');
 		}
 
 		this.save_to_backend = async function(callback, name) {
