@@ -939,15 +939,15 @@ function tracks_played_since($option, $value) {
 	$value = round($value);
 	switch ($option) {
 		case RADIO_RULE_OPTIONS_INTEGER_LESSTHAN:
-			return "(LastPlayed IS NOT NULL AND TIMESTAMPDIIF(DAY, LastPlayed, CURRENT_TIMESTAMP) < ".$value.")";
+			return "(LastPlayed IS NOT NULL AND TIMESTAMPDIFF(DAY, LastPlayed, CURRENT_TIMESTAMP) < ".$value.")";
 			break;
 
 		case RADIO_RULE_OPTIONS_INTEGER_EQUALS:
-			return "(LastPlayed IS NOT NULL AND TIMESTAMPDIIF(DAY, LastPlayed, CURRENT_TIMESTAMP) = ".$value.")";
+			return "(LastPlayed IS NOT NULL AND TIMESTAMPDIFF(DAY, LastPlayed, CURRENT_TIMESTAMP) = ".$value.")";
 			break;
 
 		case RADIO_RULE_OPTIONS_INTEGER_GREATERTHAN:
-			return "(LastPlayed IS NULL OR TIMESTAMPDIIF(DAY, LastPlayed, CURRENT_TIMESTAMP) > ".$value.")";
+			return "(LastPlayed IS NULL OR TIMESTAMPDIFF(DAY, LastPlayed, CURRENT_TIMESTAMP) > ".$value.")";
 			break;
 
 	}
