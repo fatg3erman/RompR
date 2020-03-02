@@ -977,49 +977,54 @@ function smart_radio_custom($param) {
 				}
 			}
 
-			switch ($rule['option']) {
-				case RADIO_RULE_OPTIONS_STRING_IS:
-					$tags[] = strtolower(trim($value));
-					$sqlstring .= 'LOWER('.$rule['db_key'].') = ?';
-					break;
+			if (preg_match('/db_function_(.+)$/', $rule['db_key'], $matches)) {
+				$function = $matches[1];
+				$sqlstring .= $function($rule['option'], trim($value));
+			} else {
+				switch ($rule['option']) {
+					case RADIO_RULE_OPTIONS_STRING_IS:
+						$tags[] = strtolower(trim($value));
+						$sqlstring .= 'LOWER('.$rule['db_key'].') = ?';
+						break;
 
-				case RADIO_RULE_OPTIONS_STRING_IS_NOT:
-					$tags[] = strtolower(trim($value));
-					$sqlstring .= 'LOWER('.$rule['db_key'].') IS NOT ?';
-					break;
-					break;
+					case RADIO_RULE_OPTIONS_STRING_IS_NOT:
+						$tags[] = strtolower(trim($value));
+						$sqlstring .= 'LOWER('.$rule['db_key'].') IS NOT ?';
+						break;
+						break;
 
-				case RADIO_RULE_OPTIONS_STRING_CONTAINS:
-					$sqlstring .= 'LOWER('.$rule['db_key'].") LIKE ".$mysqlc->quote("%".strtolower(trim($value))."%");
-					break;
+					case RADIO_RULE_OPTIONS_STRING_CONTAINS:
+						$sqlstring .= 'LOWER('.$rule['db_key'].") LIKE ".$mysqlc->quote("%".strtolower(trim($value))."%");
+						break;
 
-				case RADIO_RULE_OPTIONS_STRING_NOT_CONTAINS:
-					$sqlstring .= 'LOWER('.$rule['db_key'].") NOT LIKE ".$mysqlc->quote("%".strtolower(trim($value))."%");
-					break;
+					case RADIO_RULE_OPTIONS_STRING_NOT_CONTAINS:
+						$sqlstring .= 'LOWER('.$rule['db_key'].") NOT LIKE ".$mysqlc->quote("%".strtolower(trim($value))."%");
+						break;
 
-				case RADIO_RULE_OPTIONS_INTEGER_LESSTHAN:
-					$tags[] = trim($value);
-					$sqlstring .= $rule['db_key'].' < ?';
-					break;
+					case RADIO_RULE_OPTIONS_INTEGER_LESSTHAN:
+						$tags[] = trim($value);
+						$sqlstring .= $rule['db_key'].' < ?';
+						break;
 
-				case RADIO_RULE_OPTIONS_INTEGER_EQUALS:
-					$tags[] = trim($value);
-					$sqlstring .= $rule['db_key'].' = ?';
-					break;
+					case RADIO_RULE_OPTIONS_INTEGER_EQUALS:
+						$tags[] = trim($value);
+						$sqlstring .= $rule['db_key'].' = ?';
+						break;
 
-				case RADIO_RULE_OPTIONS_INTEGER_GREATERTHAN:
-					$tags[] = trim($value);
-					$sqlstring .= $rule['db_key'].' > ?';
-					break;
+					case RADIO_RULE_OPTIONS_INTEGER_GREATERTHAN:
+						$tags[] = trim($value);
+						$sqlstring .= $rule['db_key'].' > ?';
+						break;
 
-				case RADIO_RULE_OPTIONS_STRING_EXISTS:
-					$sqlstring .= $rule['db_key'].' IS NOT NULL';
-					break;
+					case RADIO_RULE_OPTIONS_STRING_EXISTS:
+						$sqlstring .= $rule['db_key'].' IS NOT NULL';
+						break;
 
-				default:
-					logger::error('CUSTOMRADIO', 'Unknown Option Value',$rule['option']);
-					break;
+					default:
+						logger::error('CUSTOMRADIO', 'Unknown Option Value',$rule['option']);
+						break;
 
+				}
 			}
 
 		}

@@ -239,6 +239,11 @@ define('CUSTOM_RADIO_ITEMS', array(
 		'name'		=> 'label_year',
 		'db_key'	=> 'Year',
 		'options'	=> RADIO_OPTIONS_INTEGER
+	),
+	array(
+		'name'		=> 'label_dayssince',
+		'db_key'	=> 'db_function_tracks_played_since',
+		'options'	=> RADIO_OPTIONS_INTEGER
 	)
 ));
 

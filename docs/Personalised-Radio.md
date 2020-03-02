@@ -26,7 +26,7 @@ You can choose whether the tracks selected must match any of the rules or all of
 
 ### Creating Rules
 
-Rules can be created to select from Artist (the Track Artist, not the Album Artist), Genre, Tag, Rating, Playcount, Duration, and Year. To create a rule, choose one of these from the dropdown menu. This will cuase further options to appear.
+Rules can be created to select from Artist (the Track Artist, not the Album Artist), Genre, Tag, Rating, Playcount, Duration, Year, and Days since Last Played. To create a rule, choose one of these from the dropdown menu. This will cuase further options to appear.
 
 To add another rule, click on the + icon. To remove a rule, click the x.
 

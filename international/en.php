@@ -699,7 +699,8 @@ $languages['en'] = array (
 	'label_ruleoptions' =>					"Rule Options",
 	"label_genres" =>						"Genres",
 	"label_createcustom" =>					"Create Custom Radio Station",
-	"label_edit" =>							"Edit"
+	"label_edit" =>							"Edit",
+	"label_dayssince" =>					"Days since Last Played"
 );
 
 ?>
