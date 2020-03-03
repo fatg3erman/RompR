@@ -346,6 +346,16 @@ function list_artists() {
 	return sql_get_column($qstring, 'Artistname');
 }
 
+function list_albumartists() {
+	require_once('collection/sortby/artist.php');
+	$artists = array();
+	$sorter = new sortby_artist('aartistroot');
+	foreach ($sorter->root_sort_query() as $a) {
+		$artists[] = $a['Artistname'];
+	}
+	return $artists;
+}
+
 function clear_wishlist() {
 	return generic_sql_query("DELETE FROM Tracktable WHERE Uri IS NULL", true);
 }

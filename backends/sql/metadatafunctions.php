@@ -891,11 +891,11 @@ function smart_radio_tag($param) {
 	$tags = array();
 	foreach ($taglist as $i => $tag) {
 		logger::trace("SMART RADIO", "Getting tag playlist for",$tag);
-		$tags[] = trim($tag);
+		$tags[] = strtolower(trim($tag));
 		if ($i > 0) {
 			$sqlstring .= " OR ";
 		}
-		$sqlstring .=  "Tagtable.Name = ?";
+		$sqlstring .=  "LOWER(Tagtable.Name) = ?";
 	}
 	$sqlstring .= ")";
 	return array($sqlstring, $tags);
@@ -909,11 +909,11 @@ function smart_radio_genre($param) {
 	$tags = array();
 	foreach ($genrelist as $i => $genre) {
 		logger::trace("SMART RADIO", "Getting genre playlist for",$genre);
-		$tags[] = trim($genre);
+		$tags[] = strtolower(trim($genre));
 		if ($i > 0) {
 			$sqlstring .= " OR ";
 		}
-		$sqlstring .=  "Genre = ?";
+		$sqlstring .=  "LOWER(Genre) = ?";
 	}
 	$sqlstring .= ")";
 	return array($sqlstring, $tags);
@@ -927,11 +927,11 @@ function smart_radio_artist($param) {
 	$tags = array();
 	foreach ($artistlist as $i => $artist) {
 		logger::trace("SMART RADIO", "Getting artist playlist for",$artist);
-		$tags[] = trim($artist);
+		$tags[] = strtolower(trim($artist));
 		if ($i > 0) {
 			$sqlstring .= " OR ";
 		}
-		$sqlstring .=  "Artistname = ?";
+		$sqlstring .=  "LOWER(Artistname) = ?";
 	}
 	$sqlstring .= ")";
 	return array($sqlstring, $tags);
@@ -943,8 +943,9 @@ function smart_radio_custom($param) {
 	$tags = array();
 	$sqlstring = "SELECT DISTINCT Uri FROM
 		Tracktable
-		JOIN Artisttable USING (Artistindex)
+		JOIN Artisttable AS ta USING (Artistindex)
 		JOIN Albumtable USING (Albumindex)
+		JOIN Artisttable AS aa ON (Albumtable.AlbumArtistindex = aa.Artistindex)
 		LEFT JOIN Genretable USING (Genreindex)
 		LEFT JOIN Ratingtable USING (TTindex)
 		LEFT JOIN Playcounttable USING (TTindex)

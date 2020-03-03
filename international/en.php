@@ -700,7 +700,10 @@ $languages['en'] = array (
 	"label_genres" =>						"Genres",
 	"label_createcustom" =>					"Create Custom Radio Station",
 	"label_edit" =>							"Edit",
-	"label_dayssince" =>					"Days since Last Played"
+	"label_dayssince" =>					"Days since Last Played",
+	"label_disc" =>							"Disc Number",
+	"label_tracktitle" =>					"Track Title",
+	"label_tracknumber" =>					"Track Number"
 );
 
 ?>

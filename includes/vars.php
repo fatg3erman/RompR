@@ -204,10 +204,21 @@ const RADIO_COMBINE_OPTIONS = array(
 	' AND '	=> 'label_all_rules'
 );
 
+// NOTE: STRING options need a specific handler in customradio.js::make_value_box()
 define('CUSTOM_RADIO_ITEMS', array(
 	array(
 		'name'		=> 'label_artist',
-		'db_key'	=> 'Artistname',
+		'db_key'	=> 'ta.Artistname',
+		'options'	=> RADIO_OPTIONS_STRING
+	),
+	array(
+		'name'		=> 'label_albumartist',
+		'db_key'	=> 'aa.Artistname',
+		'options'	=> RADIO_OPTIONS_STRING
+	),
+	array(
+		'name'		=> 'label_tracktitle',
+		'db_key'	=> 'Title',
 		'options'	=> RADIO_OPTIONS_STRING
 	),
 	array(
@@ -238,6 +249,16 @@ define('CUSTOM_RADIO_ITEMS', array(
 	array(
 		'name'		=> 'label_year',
 		'db_key'	=> 'Year',
+		'options'	=> RADIO_OPTIONS_INTEGER
+	),
+	array(
+		'name'		=> 'label_tracknumber',
+		'db_key'	=> 'TrackNo',
+		'options'	=> RADIO_OPTIONS_INTEGER
+	),
+	array(
+		'name'		=> 'label_disc',
+		'db_key'	=> 'Disc',
 		'options'	=> RADIO_OPTIONS_INTEGER
 	),
 	array(

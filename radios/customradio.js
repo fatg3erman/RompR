@@ -45,13 +45,25 @@ var customRadioManager = function() {
 
 		function make_value_box(new_key) {
 			switch (new_key) {
-				case 'Artistname':
+				case 'ta.Artistname':
 					var dropper = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
 						appendTo(value_box).makeTagMenu({
 							textboxname: 'rule_entry_'+my_id,
 							placeholder: language.gettext('label_artists').capitalize(),
 							labelhtml: '',
 							populatefunction: starHelpers.populateArtistMenu,
+							buttontext: null,
+							buttonfunc: null
+						});
+						break;
+
+				case 'aa.Artistname':
+					var dropper = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
+						appendTo(value_box).makeTagMenu({
+							textboxname: 'rule_entry_'+my_id,
+							placeholder: language.gettext('label_artists').capitalize(),
+							labelhtml: '',
+							populatefunction: starHelpers.populateAlbumArtistMenu,
 							buttontext: null,
 							buttonfunc: null
 						});
@@ -80,6 +92,10 @@ var customRadioManager = function() {
 							buttonfunc: null
 						});
 						break;
+
+				case  'Title':
+					value_box.append($('<input>', {type: 'text', name: 'rule_entry_'+my_id}));
+					break;
 
 				default:
 					value_box.append($('<input>', {type: 'number', name: 'rule_entry_'+my_id}));

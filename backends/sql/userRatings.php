@@ -94,6 +94,10 @@ foreach($params as $p) {
 			$returninfo = list_artists();
 			break;
 
+		case 'getalbumartists':
+			$returninfo = list_albumartists();
+			break;
+
 		case 'getfaveartists':
 			$returninfo = get_fave_artists();
 			break;

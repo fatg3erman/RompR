@@ -107,6 +107,16 @@ var starHelpers = function() {
 					debug.error("DB TRACKS", "Failed to get artists");
 				}
 			);
+		},
+
+		populateAlbumArtistMenu: function(callback) {
+			metaHandlers.genericAction(
+				'getalbumartists',
+				callback,
+				function() {
+					debug.error("DB TRACKS", "Failed to get artists");
+				}
+			);
 		}
 
 	}
