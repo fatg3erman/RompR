@@ -40,7 +40,10 @@ class romprmetadata {
 			}
 		}
 		$data['albumartist'] = array_key_exists('albumartist', $data) ? $data['albumartist'] : $data['artist'];
+		// One of these following two is redundant, but code needs tidying VASTLY before I can unpick that
+		// i.e. why aren't we using ROMPR_FILE_MODEL for this?
 		$data['date'] = (array_key_exists('date', $data) && $data['date'] != 0) ? getYear($data['date']) : null;
+		$data['year'] = (array_key_exists('date', $data) && $data['date'] != 0) ? getYear($data['date']) : null;
 		$data['urionly'] = array_key_exists('urionly', $data) ? true : false;
 		$data['disc'] = array_key_exists('disc', $data) ? $data['disc'] : 1;
 		$data['domain'] = array_key_exists('domain', $data) ? $data['domain'] : ($data['uri'] === null ? "local" : getDomain($data['uri']));

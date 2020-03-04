@@ -93,11 +93,24 @@ function create_new_track(&$data) {
 	if (sql_prepare_query(true, null, null, null,
 		"INSERT INTO
 			Tracktable
-			(Title, Albumindex, Trackno, Duration, Artistindex, Disc, Uri, LastModified, Hidden, isSearchResult, Sourceindex, isAudiobook, Genreindex)
+			(Title, Albumindex, Trackno, Duration, Artistindex, Disc, Uri, LastModified, Hidden, isSearchResult, Sourceindex, isAudiobook, Genreindex, TYear)
 			VALUES
-			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-		$data['title'], $data['albumindex'], $data['trackno'], $data['duration'], $data['trackai'],
-		$data['disc'], $data['uri'], $data['lastmodified'], $data['hidden'], $data['searchflag'], $data['sourceindex'], $data['isaudiobook'], $data['genreindex']))
+			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+			$data['title'],
+			$data['albumindex'],
+			$data['trackno'],
+			$data['duration'],
+			$data['trackai'],
+			$data['disc'], 
+			$data['uri'], 
+			$data['lastmodified'], 
+			$data['hidden'], 
+			$data['searchflag'], 
+			$data['sourceindex'], 
+			$data['isaudiobook'], 
+			$data['genreindex'],
+			$data['year']
+		))
 	{
 		return $mysqlc->lastInsertId();
 	}
@@ -1085,14 +1098,14 @@ function prepareCollectionUpdate() {
 function prepare_findtracks() {
 	global $find_track, $update_track;
 	if ($find_track = sql_prepare_query_later(
-		"SELECT TTindex, Disc, LastModified, Hidden, isSearchResult, Uri, isAudiobook, Genreindex FROM Tracktable WHERE Title=? AND ((Albumindex=? AND TrackNo=? AND Disc=?) OR (Artistindex=? AND Uri IS NULL))")) {
+		"SELECT TTindex, Disc, LastModified, Hidden, isSearchResult, Uri, isAudiobook, Genreindex, TYear FROM Tracktable WHERE Title=? AND ((Albumindex=? AND TrackNo=? AND Disc=?) OR (Artistindex=? AND Uri IS NULL))")) {
 	} else {
 		show_sql_error();
 		exit(1);
 	}
 
 	if ($update_track = sql_prepare_query_later(
-		"UPDATE Tracktable SET LinkChecked=0, Trackno=?, Duration=?, Disc=?, LastModified=?, Uri=?, Albumindex=?, isSearchResult=?, isAudiobook=?, Hidden=0, justAdded=1, Genreindex=? WHERE TTindex=?")) {
+		"UPDATE Tracktable SET LinkChecked=0, Trackno=?, Duration=?, Disc=?, LastModified=?, Uri=?, Albumindex=?, isSearchResult=?, isAudiobook=?, Hidden=0, justAdded=1, Genreindex=?, TYear = ? WHERE TTindex=?")) {
 	} else {
 		show_sql_error();
 		exit(1);
@@ -1233,6 +1246,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 		'isSearchResult' => 0,
 		'isAudiobook' => 0,
 		'Genreindex' => null,
+		'TYear' => null
 	];
 
 	// Why are we not checking by URI? That should be unique, right?
@@ -1286,6 +1300,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 			$dbtrack->Genreindex != $genreindex ||
 			($trackobj->tags['type'] == 'audiobook' && $dbtrack->isAudiobook == 0) ||
 			($trackobj->tags['type'] != 'audiobook' && $dbtrack->isAudiobook == 1) ||
+			$trackobj->tags['year'] != $dbtrack->TYear ||
 			$trackobj->tags['file'] != $dbtrack->Uri) {
 
 			//
@@ -1301,6 +1316,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 				if ($dbtrack->Disc != $trackobj->tags['Disc']) 										logger::log('BACKEND', "    Disc Number has changed: We have ".$dbtrack->Disc." but track has ".$trackobj->tags['Disc']);
 				if ($dbtrack->Hidden != 0) 															logger::log('BACKEND', "    It is hidden");
 				if ($dbtrack->Genreindex != $genreindex)											logger::log("BACKEND", "    Genreindex needs to be changed from ".$dbtrack->Genreindex.' to '.$genreindex);
+				if ($trackobj->tags['year'] != $dbtrack->TYear)							 			logger::log('BACKEND', "    Year needs updatinf from", $dbtrack->TYear,'to',$trackobj->tags['year']);
 				if ($trackobj->tags['type'] == 'audiobook' && $dbtrack->isAudiobook == 0) 			logger::log('BACKEND', "    It needs to be marked as an Auidiobook");
 				if ($trackobj->tags['type'] != 'audiobook' && $dbtrack->isAudiobook == 1) 			logger::log('BACKEND', "    It needs to be un-marked as an Audiobook");
 				if ($trackobj->tags['file'] != $dbtrack->Uri) {
@@ -1336,6 +1352,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 				$newsearchresult,
 				$newisaudiobook,
 				$genreindex,
+				$trackobj->tags['year'],
 				$dbtrack->TTindex
 			))) {
 				$numdone++;
@@ -1372,6 +1389,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 			'image' => null,
 			'album' => null,
 			'date' => null,
+			'year' => $tracksobj->tags['year'],
 			'uri' => $trackobj->tags['file'],
 			'trackai' => $trackartistindex,
 			'albumai' => $artistindex,

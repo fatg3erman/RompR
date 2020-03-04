@@ -140,6 +140,7 @@ class album {
 		$this->domain = $track->tags['domain'];
 		$this->albumartistindex = null;
 		$this->albumindex = null;
+		$this->year = $track->tags['year'];
 	}
 
 	public function newTrack(&$track) {
@@ -177,7 +178,7 @@ class album {
 				'albumai' => $this->albumartistindex,
 				'albumuri' => $this->uri,
 				'image' => $this->getImage('small'),
-				'date' => $this->getDate(),
+				'date' => $this->year,
 				'searched' => "0",
 				'imagekey' => $this->getKey(),
 				'ambid' => $this->musicbrainz_albumid,
@@ -210,10 +211,6 @@ class album {
 
 	public function trackCount() {
 		return count($this->tracks);
-	}
-
-	public function getDate() {
-		return getYear($this->datestamp);
 	}
 
 	public function getAllTracks($cmd) {

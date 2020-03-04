@@ -52,7 +52,8 @@ function check_sql_tables() {
 		"isAudiobook TINYINT(1) DEFAULT 0, ".
 		"justAdded TINYINT(1) DEFAULT 1, ".
 		"usedInPlaylist TINYINT(1) DEFAULT 0, ".
-		"Genreindex INT UNSIGNED DEFAULT 0)", true))
+		"Genreindex INT UNSIGNED DEFAULT 0, ".
+		"TYear YEAR)", true))
 	{
 		logger::log("SQLITE", "  Tracktable OK");
 		if (generic_sql_query("CREATE INDEX IF NOT EXISTS ai ON Tracktable (Albumindex)", true)) {
@@ -852,6 +853,19 @@ function check_sql_tables() {
 				generic_sql_query("ALTER TABLE Tracktable ADD COLUMN Genreindex INT UNSIGNED DEFAULT 0", true);
 				// generic_sql_query("INSERT INTO Genretable (Genre) VALUES ('None')", true);
 				generic_sql_query("UPDATE Statstable SET Value = 64 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 64:
+				logger::log("SQL", "Updating FROM Schema version 64 TO Schema version 65");
+				generic_sql_query("ALTER TABLE Tracktable ADD COLUMN TYear YEAR", true);
+				// generic_sql_query("INSERT INTO Genretable (Genre) VALUES ('None')", true);
+				generic_sql_query("UPDATE Statstable SET Value = 65 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 65:
+				logger::log("SQL", "Updating FROM Schema version 65 TO Schema version 66");
+				update_track_dates();
+				generic_sql_query("UPDATE Statstable SET Value = 66 WHERE Item = 'SchemaVer'", true);
 				break;
 
 		}

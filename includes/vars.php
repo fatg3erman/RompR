@@ -6,9 +6,9 @@ if (!$dtz) {
 }
 
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
-define('ROMPR_COLLECTION_VERSION', 5);
+define('ROMPR_COLLECTION_VERSION', 6);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 64);
+define('ROMPR_SCHEMA_VERSION', 66);
 define('ROMPR_VERSION', '1.40');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
@@ -248,7 +248,7 @@ define('CUSTOM_RADIO_ITEMS', array(
 	),
 	array(
 		'name'		=> 'label_year',
-		'db_key'	=> 'Year',
+		'db_key'	=> 'TYear',
 		'options'	=> RADIO_OPTIONS_INTEGER
 	),
 	array(
