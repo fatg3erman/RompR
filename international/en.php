@@ -704,7 +704,8 @@ $languages['en'] = array (
 	"label_disc" =>							"Disc Number",
 	"label_tracktitle" =>					"Track Title",
 	"label_albumtitle" =>					"Album Title",
-	"label_tracknumber" =>					"Track Number"
+	"label_tracknumber" =>					"Track Number",
+	"config_use_original_releasedate" =>	"Use Original Release Date for Album Date, if present"
 );
 
 ?>

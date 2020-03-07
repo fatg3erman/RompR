@@ -1,4 +1,5 @@
 <?php
+setcookie('player_backend','',1,'/');
 $skin = 'desktop';
 logger::log("SETUP", "Displaying Setup Screen");
 print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.

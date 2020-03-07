@@ -121,7 +121,7 @@ if (array_key_exists('setup', $_REQUEST)) {
 
 require_once ('player/mpd/mpdinterface.php');
 logger::mark('INIT','Attempting to connect to player',$prefs['currenthost']);
-if (array_key_exists('player_backend', $_COOKIE)) {
+if (array_key_exists('player_backend', $_COOKIE) && $_COOKIE['player_backend'] != '') {
 	logger::mark('INIT','Player backend cookie is',$_COOKIE['player_backend']);
 } else {
 	logger::mark('INIT','Player backend cookie is not set');
@@ -139,6 +139,7 @@ if ($player->is_connected()) {
 }
 // If we're connected by a local socket we can read the music directory
 $arse = $player->get_config();
+logger::log('INIT', 'Getting Player Config');
 if (array_key_exists('music_directory', $arse)) {
 	set_music_directory($arse['music_directory']);
 }

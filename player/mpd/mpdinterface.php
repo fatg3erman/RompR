@@ -375,7 +375,7 @@ class base_mpd_player {
 	}
 
 	protected function sanitize_data(&$filedata) {
-		global $dbterms, $numtracks, $totaltime;
+		global $dbterms, $numtracks, $totaltime, $prefs;
 		if ($dbterms['tags'] !== null || $dbterms['rating'] !== null) {
 			// If this is a search and we have tags or ratings to search for, check them here.
 			if (check_url_against_database($filedata['file'], $dbterms['tags'], $dbterms['rating']) == false) {
@@ -407,6 +407,11 @@ class base_mpd_player {
 		// Disc Number
 		if ($filedata['Disc'] != null) {
 			$filedata['Disc'] = format_tracknum(ltrim($filedata['Disc'], '0'));
+		}
+
+		if ($prefs['use_original_releasedate'] && $filedata['OriginalDate']) {
+			logger::log('COLLECTION', 'Using Rriginal Release Date for album',$filedata['Album']);
+			$filedata['Date'] = $filedata['OriginalDate'];
 		}
 
 		$filedata['year'] = getYear($filedata['Date']);

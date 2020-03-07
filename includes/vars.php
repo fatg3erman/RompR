@@ -9,7 +9,7 @@ define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 6);
 define('ROMPR_IMAGE_VERSION', 4);
 define('ROMPR_SCHEMA_VERSION', 66);
-define('ROMPR_VERSION', '1.40');
+define('ROMPR_VERSION', '1.41');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_UNKNOWN_STREAM', "Unknown Internet Stream");
@@ -95,6 +95,7 @@ define('MPD_FILE_MODEL', array (
 		'playlist' => '',
 		'X-AlbumImage' => null,
 		'Date' => null,
+		'OriginalDate' => null,
 		'Last-Modified' => '0',
 		'Disc' => null,
 		'Composer' => null,
@@ -433,7 +434,8 @@ $prefs = array(
 	'advsearchoptions_isopen' => false,
 	'podcastbuttons_isopen' => false,
 	'last_cache_clean' => 10,
-	'next_podcast_refresh' => 10
+	'next_podcast_refresh' => 10,
+	'use_original_releasedate' => false
 );
 
 // Prefs that should not be exposed to the browser for security reasons
@@ -550,6 +552,7 @@ function loadPrefs() {
 }
 
 function set_music_directory($dir) {
+	global $prefs;
 	$prefs['music_directory_albumart'] = rtrim($dir, '/');
 	logger::mark("SAVEPREFS", "Creating Album Art SymLink to ".$dir);
 	if (is_link("prefs/MusicFolders")) {
