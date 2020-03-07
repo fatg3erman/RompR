@@ -12,7 +12,7 @@ function doDbCollection($terms, $domains, $resultstype, &$collection) {
 	// any of the above terms, because mopidy often returns incomplete search results.
 
 	$parameters = array();
-	$qstring = "SELECT t.*, al.*, a1.*, a2.Artistname AS AlbumArtistName ";
+	$qstring = "SELECT t.*, al.*, a1.*, a2.Artistname AS AlbumArtistName, Genre ";
 	if (array_key_exists('rating', $terms)) {
 		$qstring .= ",rat.Rating ";
 	}
@@ -31,6 +31,7 @@ function doDbCollection($terms, $domains, $resultstype, &$collection) {
 		$qstring .= "JOIN (SELECT * FROM Ratingtable WHERE Rating >= ".
 			$terms['rating'].") AS rat ON rat.TTindex = t.TTindex ";
 	}
+	$qstring .= "LEFT JOIN Genretable USING (Genreindex) ";
 	$qstring .= "JOIN Artisttable AS a1 ON a1.Artistindex = t.Artistindex ";
 	$qstring .= "JOIN Albumtable AS al ON al.Albumindex = t.Albumindex ";
 	$qstring .= "JOIN Artisttable AS a2 ON al.AlbumArtistindex = a2.Artistindex ";
@@ -43,6 +44,7 @@ function doDbCollection($terms, $domains, $resultstype, &$collection) {
 
 	// Map search parameters to database tables
 	$searchmap = array(
+		'genre' => 'Genre',
 		'artist' => 'a1.Artistname',
 		'album' =>  'al.Albumname',
 		'title' => 't.Title',
@@ -92,6 +94,7 @@ function doDbCollection($terms, $domains, $resultstype, &$collection) {
 		$qstring .= ")";
 	}
 
+	logger::mark("DB SEARCH", "String", $qstring);
 	logger::mark("DB SEARCH", "Parameters", $parameters);
 
 	$result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, $qstring, $parameters);
@@ -108,7 +111,8 @@ function doDbCollection($terms, $domains, $resultstype, &$collection) {
 			'Time' => $obj->Duration,
 			'X-AlbumUri' => $obj->AlbumUri,
 			'Date' => $obj->Year,
-			'Last-Modified' => $obj->LastModified
+			'Last-Modified' => $obj->LastModified,
+			'Genre' => $obj->Genre
 		);
 		$filedata = array_merge(MPD_FILE_MODEL, $filedata);
 		logger::trace("DB SEARCH", "Found :",$obj->Title,$obj->Uri,$obj->TTindex);
@@ -126,28 +130,22 @@ function doDbCollection($terms, $domains, $resultstype, &$collection) {
 }
 
 function format_for_search($terms, $s, &$parameters) {
-	// Make things a little more searchable
 	$a = array();
 	foreach ($terms as $i => $term) {
-		$t = trim($term);
-		$t = preg_replace('/[\(\)\/\[\]\&\*\+\'\"\,\/]/','%',$t);
-		$a[] = $s.' LIKE ?';
-		$parameters[] = '% '.$t. '%';
-		$a[] = $s.' LIKE ?';
-		$parameters[] = '%'.$t. ' %';
+		$a[] = "LOWER(".$s.") LIKE ?";
+		$parameters[] = '% '.strtolower(trim($term)). '%';
+		$a[] = "LOWER(".$s.") LIKE ?";
+		$parameters[] = '%'.strtolower(trim($term)). ' %';
 	}
 	$ret = implode(' OR ',$a);
 	return $ret;
 }
 
 function format_for_search2($terms, $s, &$parameters) {
-	// Make things a little more searchable
 	$a = array();
 	foreach ($terms as $i => $term) {
-		$t = trim($term);
-		$t = preg_replace('/[\(\)\/\[\]\&\*\+\'\"\,\/]/','%',$t);
-		$a[] = $s.' = ?';
-		$parameters[] = $t;
+		$a[] = "LOWER(".$s.') = ?';
+		$parameters[] = strtolower(trim($term));
 	}
 	$ret = implode(' OR ',$a);
 	return $ret;

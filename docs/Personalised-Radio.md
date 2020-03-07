@@ -4,11 +4,11 @@ Your listening habits, tags, and ratings, can be used to generate dynamic playli
 
 Mopidy users get a host of extra online Music Discovery stations, that are described [here](/RompR/Music-Discovery).
 
-![](images/personalradio.png)
+![](images/personalradio1.png)
 
 These should all be self-explanatory. You can choose to play by Tag or Rating, or other criteria.
 
-When you start one of these stations playing, 5 tracks will be added to the Play Queue, a header will appear at the top of the Playlist, and Consume mode will be enabled (and cannot be disabled while the station is playing).
+When you start one of these stations playing, 5 tracks will be added to the Play Queue, a header will appear at the top of the Play Queue, and Consume mode will be enabled (and cannot be disabled while the station is playing).
 
 ![](images/personal2.png)
 
@@ -18,7 +18,9 @@ To stop the dynamic playlist generation and return to normal mode, either click 
 
 ## Creating A Custom Radio Station
 
-You can create custom Personal Radio Stations that combines several Rules to choose tracks from your Music Collection. This feature is inspired by Kodi's Party Mode.
+You can create custom Personal Radio Stations that combines several Rules to choose tracks from your Music Collection. This feature is inspired by Kodi's Party Mode. Start By clicking the Edit button:
+
+![](images/cusrad1.png)
 
 ### Rules for Rules
 
@@ -26,7 +28,27 @@ You can choose whether the tracks selected must match any of the rules or all of
 
 ### Creating Rules
 
-Rules can be created to select from Artist (the Track Artist, not the Album Artist), Genre, Tag, Rating, Playcount, Duration, Year, and Days since Last Played. To create a rule, choose one of these from the dropdown menu. This will cuase further options to appear.
+Rules can be created to select from:
+
+* Artist
+* Album Artist
+* Track Title
+* Album Title
+* Genre
+* Tag
+* Rating
+* Playcount
+* Duration
+* Year
+* Track Number
+* Disc Number
+* Days since last played
+
+To create a rule, choose one of these from the dropdown menu. This will cause further options to appear.
+
+![](images/cusrad2.png)
+
+For each rule choose an option from the middle column, and enter some values in the end column.
 
 To add another rule, click on the + icon. To remove a rule, click the x.
 
@@ -34,7 +56,31 @@ To save the settings so you can easily recall them in future, click the Floppy D
 
 ### Using Multiple Values in Rules
 
-Artist, Genre, and Tag can accept multiple values in one rule. To understand how this makes the rules even more flexible, it's best to use some examples.
+Rules that use values that are not numbers can accept multiple values in one rule. To understand how this makes the rules even more flexible, it's best to use some examples.
+
+![](images/cusradio3.png)
+
+In this example, the tracks must match both rules. This will choose tracks where the Tag is either 'calm', 'chill', or 'electric piano' and the Rating is greater than 2. Or to express it a different way:
+
+(Tag = calm OR Tag = chill OR tag = electric piano) AND Rating > 2
+
+![](images/cusradio4.png)
+
+Now compare this one. The only thing that has changed is that tracks must now match at least one rule. This will choose tracks where the Tag is either 'calm', 'chill', or 'electric piano' or the Rating is greater than 2. Or to express it a different way:
+
+(Tag = calm OR Tag = chill OR tag = electric piano) OR Rating > 2
+
+By using multiple rules with the Options set appropriately it is possible to create Radio Stations with very specific criteria indeed.
+
+When using Tag as a rule there is one extra option
+
+![](images/cusradio5.png)
+
+'exists' means 'The track has a tag'. This one will choose tracks that have a tag or a rating.
+
+![](images/cusradio6.png)
+
+This final example shows how to choose all tracks that have a Tag except the Tags 'reggae' or 'dub'. You need the 'exists' rule in there because 'Tag is not something' also implies 'Tag does not exist'.
 
 ## Number of Upcoming Tracks
 

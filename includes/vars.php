@@ -222,6 +222,11 @@ define('CUSTOM_RADIO_ITEMS', array(
 		'options'	=> RADIO_OPTIONS_STRING
 	),
 	array(
+		'name'		=> 'label_albumtitle',
+		'db_key'	=> 'Albumname',
+		'options'	=> RADIO_OPTIONS_STRING
+	),
+	array(
 		'name'		=> 'label_genre',
 		'db_key'	=> 'Genre',
 		'options'	=> RADIO_OPTIONS_STRING

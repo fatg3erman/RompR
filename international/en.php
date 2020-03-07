@@ -703,6 +703,7 @@ $languages['en'] = array (
 	"label_dayssince" =>					"Days since Last Played",
 	"label_disc" =>							"Disc Number",
 	"label_tracktitle" =>					"Track Title",
+	"label_albumtitle" =>					"Album Title",
 	"label_tracknumber" =>					"Track Number"
 );
 

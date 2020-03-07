@@ -94,6 +94,7 @@ var customRadioManager = function() {
 						break;
 
 				case  'Title':
+				case 'Albumname':
 					value_box.append($('<input>', {type: 'text', name: 'rule_entry_'+my_id}));
 					break;
 
