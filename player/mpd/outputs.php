@@ -5,14 +5,16 @@ $player = new $PLAYER_TYPE();
 if ($player->is_connected()) {
 	$outputs = $player->get_outputs();
 	foreach ($outputs as $i => $n) {
-		if (is_array($n)) {
-			foreach ($n as $a => $b) {
-				logger::debug("AUDIO OUTPUT", $i,"-",$b.":".$a);
-				$outputdata[$a][$i] = $b;
+		if ($i != 'attribute') {
+			if (is_array($n)) {
+				foreach ($n as $a => $b) {
+					logger::debug("AUDIO OUTPUT", $i,"-",$b.":".$a);
+					$outputdata[$a][$i] = $b;
+				}
+			} else {
+				logger::debug("AUDIO OUTPUT", $i,"-",$n);
+				$outputdata[0][$i] = $n;
 			}
-		} else {
-			logger::debug("AUDIO OUTPUT", $i,"-",$n);
-			$outputdata[0][$i] = $n;
 		}
 	}
 }
