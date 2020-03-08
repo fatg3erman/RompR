@@ -181,7 +181,7 @@ class base_mpd_player {
 
 		$retarr = array();
 		if ($this->is_connected()) {
-			if ($command == 'status' || $command == 'currentsong') {
+			if ($command == 'status' || $command == 'currentsong' || $command == 'replay_gain_status') {
 				logger::core("MPD", "MPD Command",$command);
 			} else {
 				logger::trace("MPD", "MPD Command",$command);
@@ -250,9 +250,6 @@ class base_mpd_player {
 		} else if ($this->player_type != $prefs['collection_player']) {
 			$this->translate_player_types($cmds);
 		}
-
-
-
 		$retries = 3;
 		if (count($cmds) > 1) {
 			do {
@@ -410,7 +407,7 @@ class base_mpd_player {
 		}
 
 		if ($prefs['use_original_releasedate'] && $filedata['OriginalDate']) {
-			logger::log('COLLECTION', 'Using Rriginal Release Date for album',$filedata['Album']);
+			logger::trace('COLLECTION', 'Using Rriginal Release Date for album',$filedata['Album']);
 			$filedata['Date'] = $filedata['OriginalDate'];
 		}
 

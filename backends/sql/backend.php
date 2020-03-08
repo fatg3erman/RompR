@@ -1304,24 +1304,23 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 			$trackobj->tags['file'] != $dbtrack->Uri) {
 
 			//
-			// Lots of debug output
+			// Lots of debug output. All skipped if debug level < 7, to save those few ms
 			//
 
 			if ($prefs['debug_enabled'] > 6) {
-				logger::log('BACKEND', "  Updating track with ttid",$dbtrack->TTindex,"because :");
-
-				if (!$doing_search && $dbtrack->LastModified === null) 								logger::log('BACKEND', "    LastModified is not set in the database");
-				if (!$doing_search && $trackobj->tags['Last-Modified'] === null) 					logger::log('BACKEND', "    TrackObj LastModified is NULL too!");
-				if (!$doing_search && $dbtrack->LastModified !== $trackobj->tags['Last-Modified']) 	logger::log('BACKEND', "    LastModified has changed: We have ".$dbtrack->LastModified." but track has ".$trackobj->tags['Last-Modified']);
-				if ($dbtrack->Disc != $trackobj->tags['Disc']) 										logger::log('BACKEND', "    Disc Number has changed: We have ".$dbtrack->Disc." but track has ".$trackobj->tags['Disc']);
-				if ($dbtrack->Hidden != 0) 															logger::log('BACKEND', "    It is hidden");
-				if ($dbtrack->Genreindex != $genreindex)											logger::log("BACKEND", "    Genreindex needs to be changed from ".$dbtrack->Genreindex.' to '.$genreindex);
-				if ($trackobj->tags['year'] != $dbtrack->TYear)							 			logger::log('BACKEND', "    Year needs updatinf from", $dbtrack->TYear,'to',$trackobj->tags['year']);
-				if ($trackobj->tags['type'] == 'audiobook' && $dbtrack->isAudiobook == 0) 			logger::log('BACKEND', "    It needs to be marked as an Auidiobook");
-				if ($trackobj->tags['type'] != 'audiobook' && $dbtrack->isAudiobook == 1) 			logger::log('BACKEND', "    It needs to be un-marked as an Audiobook");
+				logger::trace('BACKEND', "  Updating track with ttid",$dbtrack->TTindex,"because :");
+				if (!$doing_search && $dbtrack->LastModified === null) 								logger::trace('BACKEND', "    LastModified is not set in the database");
+				if (!$doing_search && $trackobj->tags['Last-Modified'] === null) 					logger::trace('BACKEND', "    TrackObj LastModified is NULL too!");
+				if (!$doing_search && $dbtrack->LastModified !== $trackobj->tags['Last-Modified']) 	logger::trace('BACKEND', "    LastModified has changed: We have ".$dbtrack->LastModified." but track has ".$trackobj->tags['Last-Modified']);
+				if ($dbtrack->Disc != $trackobj->tags['Disc']) 										logger::trace('BACKEND', "    Disc Number has changed: We have ".$dbtrack->Disc." but track has ".$trackobj->tags['Disc']);
+				if ($dbtrack->Hidden != 0) 															logger::trace('BACKEND', "    It is hidden");
+				if ($dbtrack->Genreindex != $genreindex)											logger::trace("BACKEND", "    Genreindex needs to be changed from ".$dbtrack->Genreindex.' to '.$genreindex);
+				if ($trackobj->tags['year'] != $dbtrack->TYear)							 			logger::trace('BACKEND', "    Year needs updatinf from", $dbtrack->TYear,'to',$trackobj->tags['year']);
+				if ($trackobj->tags['type'] == 'audiobook' && $dbtrack->isAudiobook == 0) 			logger::trace('BACKEND', "    It needs to be marked as an Auidiobook");
+				if ($trackobj->tags['type'] != 'audiobook' && $dbtrack->isAudiobook == 1) 			logger::trace('BACKEND', "    It needs to be un-marked as an Audiobook");
 				if ($trackobj->tags['file'] != $dbtrack->Uri) {
-					logger::log('BACKEND', "    Uri has changed from : ".$dbtrack->Uri);
-					logger::log('BACKEND', "                      to : ".$trackobj->tags['file']);
+					logger::trace('BACKEND', "    Uri has changed from : ".$dbtrack->Uri);
+					logger::trace('BACKEND', "                      to : ".$trackobj->tags['file']);
 				}
 			}
 
