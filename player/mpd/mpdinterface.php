@@ -12,6 +12,7 @@ class base_mpd_player {
 	public $playlist_error;
 	private $debug_id;
 	public $to_browse;
+	private $mpd_version = null;
 
 	public function __construct($ip = null, $port = null, $socket = null, $password = null, $player_type = null, $is_slave = null) {
 		global $prefs;
@@ -90,8 +91,10 @@ class base_mpd_player {
 			stream_set_blocking($this->connection, true);
 			while(!feof($this->connection)) {
 				$gt = fgets($this->connection);
-				if ($this->parse_mpd_var($gt))
+				if ($this->parse_mpd_var($gt)) {
+					$this->mpd_version = $gt;
 					break;
+				}
 			}
 		} else {
 			logger::error('MPD', 'Failed to connect to player', $errno, $errstr);
@@ -114,6 +117,14 @@ class base_mpd_player {
 			}
 		}
 		return true;
+	}
+
+	public function get_mpd_version() {
+		if (preg_match('/OK MPD (.+$)/', $this->mpd_version, $matches)) {
+			return $matches[1];
+		} else {
+			return 'Unknown. Got '.$this->mpd_version;
+		}
 	}
 
 	public function close_mpd_connection() {

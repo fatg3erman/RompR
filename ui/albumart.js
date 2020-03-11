@@ -237,7 +237,7 @@ $(document).ready(function () {
 		scrollInertia: 200,
 		contentTouchScroll: 25,
 		mouseWheel: {
-			scrollAmount: 20,
+			scrollAmount: parseInt(prefs.wheelscrollspeed),
 		},
 		advanced: {
 			updateOnContentResize: true,

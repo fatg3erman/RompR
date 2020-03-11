@@ -82,6 +82,8 @@ print '<tr><th colspan="2">Player Information</th></tr>';
 if ($player->is_connected()) {
 	print '<tr><td>Connection Status</td><td>Connection Successful</td></tr>';
 
+	print '<tr><td>MPD Interface Version</td><td>'.$player->get_mpd_version().'</td></tr>';
+
 	$config = $player->get_config();
 	foreach ($config as $c => $v) {
 		print '<tr><td>'.$c.'</td><td>'.multi_implode($v).'</td></tr>';
