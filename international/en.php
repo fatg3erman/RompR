@@ -513,7 +513,6 @@ $languages['en'] = array (
 	"because_liked" =>						"You like %s, so you might like:",
 	"because_listened" =>					"Similar to %s:",
 	"albumart_findsmall" =>					"Find Small Images",
-	"label_smartsetup" =>					"Preparing. Please Wait A Moment....",
 	"button_sleep" =>						"Sleep Timer",
 	"label_tuneinradio" =>					"TuneIn Radio Directory",
 	"label_generalsettings" =>				"General Settings",
@@ -696,7 +695,7 @@ $languages['en'] = array (
 	"label_all_rules" =>					"Tracks must match all rules",
 	"label_choose_one" =>					"Choose One...",
 	"error_norules" =>						"You must create some rules",
-	'label_ruleoptions' =>					"Rule Options",
+	"label_ruleoptions" =>					"Rule Options",
 	"label_genres" =>						"Genres",
 	"label_createcustom" =>					"Create Custom Radio Station",
 	"label_edit" =>							"Edit",
@@ -705,7 +704,11 @@ $languages['en'] = array (
 	"label_tracktitle" =>					"Track Title",
 	"label_albumtitle" =>					"Album Title",
 	"label_tracknumber" =>					"Track Number",
-	"config_use_original_releasedate" =>	"Use Original Release Date for Album Date, if present"
+	"config_use_original_releasedate" =>		"Use Original Release Date for Album Date, if present",
+	// ----------------------------------------------------
+	// Proobaly Unused
+	// ----------------------------------------------------
+	//"label_smartsetup" =>					"Preparing. Please Wait A Moment....",
 );
 
 ?>
