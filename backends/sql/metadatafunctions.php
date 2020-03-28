@@ -27,6 +27,7 @@ class romprmetadata {
 						'attributes',
 						'imagekey',
 						'which',
+						'genre',
 						'wltrack',
 						'reqid') as $key) {
 			if (!array_key_exists($key, $data)) {
@@ -39,11 +40,19 @@ class romprmetadata {
 			}
 		}
 		$data['albumartist'] = array_key_exists('albumartist', $data) ? $data['albumartist'] : $data['artist'];
+		// One of these following two is redundant, but code needs tidying VASTLY before I can unpick that
+		// i.e. why aren't we using ROMPR_FILE_MODEL for this?
 		$data['date'] = (array_key_exists('date', $data) && $data['date'] != 0) ? getYear($data['date']) : null;
+		$data['year'] = (array_key_exists('date', $data) && $data['date'] != 0) ? getYear($data['date']) : null;
 		$data['urionly'] = array_key_exists('urionly', $data) ? true : false;
 		$data['disc'] = array_key_exists('disc', $data) ? $data['disc'] : 1;
 		$data['domain'] = array_key_exists('domain', $data) ? $data['domain'] : ($data['uri'] === null ? "local" : getDomain($data['uri']));
 		$data['hidden'] = 0;
+		if ($data['genre'] === null) {
+			logger::warn('SANITISER', 'Track has NULL genre');
+			$data['genre'] = 'None';
+		}
+		$data['genreindex'] = check_genre($data['genre']);
 		$data['searchflag'] = 0;
 		if (substr($data['image'],0,4) == "http") {
 			$data['image'] = "getRemoteImage.php?url=".rawurlencode($data['image']);
@@ -239,7 +248,7 @@ class romprmetadata {
 		// Let's just see if it's a podcast track and mark it as listened.
 		// This won't always work, as scrobbles are often not what's in the RSS feed, but we can but do our best
 		sql_prepare_query(true, null, null, null,
-			"UPDATE PodcastTrackTable SET Listened = ?, New = ? WHERE Title = ? AND Artist = ?",
+			"UPDATE PodcastTracktable SET Listened = ?, New = ? WHERE Title = ? AND Artist = ?",
 			1,
 			0,
 			$data['title'],
@@ -826,7 +835,7 @@ function doPlaylist($playlist, $limit) {
 		case "favealbums":
 			$avgplays = getAveragePlays();
 			$sqlstring = "SELECT Uri FROM Tracktable JOIN Albumtable USING (Albumindex)
-				WHERE Albumindex IN 
+				WHERE Albumindex IN
 				(SELECT Albumindex FROM Tracktable JOIN Playcounttable USING (TTindex)
 				LEFT JOIN Ratingtable USING (TTindex) WHERE Uri IS NOT NULL
 				AND (Playcount > ".$avgplays." OR Rating IS NOT NULL))";
@@ -857,22 +866,9 @@ function doPlaylist($playlist, $limit) {
 			break;
 
 		default:
-			if (preg_match('/tag\+(.*)/', $playlist, $matches)) {
-				$taglist = explode(',', $matches[1]);
-				$sqlstring = 'SELECT DISTINCT Uri FROM Tracktable JOIN TagListtable USING (TTindex) JOIN Tagtable USING (Tagindex) WHERE ';
-				// Concatenate this bracket here otherwise Atom's syntax colouring goes haywire
-				$sqlstring .= '(';
-				$tags = array();
-				foreach ($taglist as $i => $tag) {
-					logger::trace("SMART RADIO", "Getting tag playlist for",$tag);
-					$tags[] = trim($tag);
-					if ($i > 0) {
-						$sqlstring .= " OR ";
-					}
-					$sqlstring .=  "Tagtable.Name = ?";
-				}
-				$sqlstring .= ") AND Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 AND
-					Tracktable.isSearchResult < 2 ";
+			if (preg_match('/^(\w+)\+(.+)$/', $playlist, $matches)) {
+				$fn = 'smart_radio_'.$matches[1];
+				list($sqlstring, $tags) = $fn($matches[2]);
 			} else {
 				logger::warn("SMART RADIO", "Unrecognised playlist",$playlist);
 			}
@@ -890,6 +886,161 @@ function doPlaylist($playlist, $limit) {
 	return $json;
 }
 
+function smart_radio_tag($param) {
+	$taglist = explode(',', $param);
+	$sqlstring = 'SELECT DISTINCT Uri FROM Tracktable JOIN TagListtable USING (TTindex) JOIN Tagtable USING (Tagindex) WHERE ';
+	// Concatenate this bracket here otherwise Atom's syntax colouring goes haywire
+	$sqlstring .= '(';
+	$tags = array();
+	foreach ($taglist as $i => $tag) {
+		logger::trace("SMART RADIO", "Getting tag playlist for",$tag);
+		$tags[] = strtolower(trim($tag));
+		if ($i > 0) {
+			$sqlstring .= " OR ";
+		}
+		$sqlstring .=  "LOWER(Tagtable.Name) = ?";
+	}
+	$sqlstring .= ")";
+	return array($sqlstring, $tags);
+}
+
+function smart_radio_genre($param) {
+	$genrelist = explode(',', $param);
+	$sqlstring = 'SELECT DISTINCT Uri FROM Tracktable JOIN Genretable USING (Genreindex) WHERE ';
+	// Concatenate this bracket here otherwise Atom's syntax colouring goes haywire
+	$sqlstring .= '(';
+	$tags = array();
+	foreach ($genrelist as $i => $genre) {
+		logger::trace("SMART RADIO", "Getting genre playlist for",$genre);
+		$tags[] = strtolower(trim($genre));
+		if ($i > 0) {
+			$sqlstring .= " OR ";
+		}
+		$sqlstring .=  "LOWER(Genre) = ?";
+	}
+	$sqlstring .= ")";
+	return array($sqlstring, $tags);
+}
+
+function smart_radio_artist($param) {
+	$artistlist = explode(',', $param);
+	$sqlstring = 'SELECT DISTINCT Uri FROM Tracktable JOIN Artisttable USING (Artistindex) WHERE ';
+	// Concatenate this bracket here otherwise Atom's syntax colouring goes haywire
+	$sqlstring .= '(';
+	$tags = array();
+	foreach ($artistlist as $i => $artist) {
+		logger::trace("SMART RADIO", "Getting artist playlist for",$artist);
+		$tags[] = strtolower(trim($artist));
+		if ($i > 0) {
+			$sqlstring .= " OR ";
+		}
+		$sqlstring .=  "LOWER(Artistname) = ?";
+	}
+	$sqlstring .= ")";
+	return array($sqlstring, $tags);
+}
+
+function smart_radio_custom($param) {
+	$station = json_decode(file_get_contents('prefs/customradio/'.format_for_disc($param).'.json'), true);
+	$tags = array();
+	$sqlstring = "SELECT DISTINCT Uri FROM
+		Tracktable
+		JOIN Artisttable AS ta USING (Artistindex)
+		JOIN Albumtable USING (Albumindex)
+		JOIN Artisttable AS aa ON (Albumtable.AlbumArtistindex = aa.Artistindex)
+		LEFT JOIN Genretable USING (Genreindex)
+		LEFT JOIN Ratingtable USING (TTindex)
+		LEFT JOIN Playcounttable USING (TTindex)
+		LEFT JOIN TagListtable USING (TTindex)
+		LEFT JOIN Tagtable USING (Tagindex)
+		WHERE (";
+	foreach ($station['rules'] as $i => $rule) {
+		if ($i > 0) {
+			$sqlstring .= $station['combine_option'];
+		}
+		$values = explode(',', $rule['value']);
+		$sqlstring .= '(';
+		foreach ($values as $j => $value) {
+			logger::log('CUSTOMRADIO',$rule['db_key'],$value);
+			if ($j > 0) {
+				switch ($rule['option']) {
+					case RADIO_RULE_OPTIONS_STRING_IS:
+					case RADIO_RULE_OPTIONS_STRING_CONTAINS:
+						$sqlstring .= ' OR ';
+						break;
+
+					case RADIO_RULE_OPTIONS_STRING_IS_NOT:
+					case RADIO_RULE_OPTIONS_STRING_NOT_CONTAINS:
+						$sqlstring .= ' AND ';
+						break;
+
+					default:
+						logger::error('CUSTOMRADIO', 'Multiple values in integer option!');
+						break;
+				}
+			}
+
+			if (preg_match('/db_function_(.+)$/', $rule['db_key'], $matches)) {
+				$function = $matches[1];
+				$sqlstring .= $function($rule['option'], trim($value));
+			} else {
+				switch ($rule['option']) {
+					case RADIO_RULE_OPTIONS_STRING_IS:
+						$tags[] = strtolower(trim($value));
+						$sqlstring .= 'LOWER('.$rule['db_key'].') = ?';
+						break;
+
+					case RADIO_RULE_OPTIONS_STRING_IS_NOT:
+						$tags[] = strtolower(trim($value));
+						$sqlstring .= 'LOWER('.$rule['db_key'].') IS NOT ?';
+						break;
+						break;
+
+					case RADIO_RULE_OPTIONS_STRING_CONTAINS:
+						$tags[] = "%".strtolower(trim($value))."%";
+						$sqlstring .= 'LOWER('.$rule['db_key'].") LIKE ?";
+						break;
+
+					case RADIO_RULE_OPTIONS_STRING_NOT_CONTAINS:
+						$tags[] = "%".strtolower(trim($value))."%";
+						$sqlstring .= 'LOWER('.$rule['db_key'].") NOT LIKE ?";
+						break;
+
+					case RADIO_RULE_OPTIONS_INTEGER_LESSTHAN:
+						$tags[] = trim($value);
+						$sqlstring .= $rule['db_key'].' < ?';
+						break;
+
+					case RADIO_RULE_OPTIONS_INTEGER_EQUALS:
+						$tags[] = trim($value);
+						$sqlstring .= $rule['db_key'].' = ?';
+						break;
+
+					case RADIO_RULE_OPTIONS_INTEGER_GREATERTHAN:
+						$tags[] = trim($value);
+						$sqlstring .= $rule['db_key'].' > ?';
+						break;
+
+					case RADIO_RULE_OPTIONS_STRING_EXISTS:
+						$sqlstring .= $rule['db_key'].' IS NOT NULL';
+						break;
+
+					default:
+						logger::error('CUSTOMRADIO', 'Unknown Option Value',$rule['option']);
+						break;
+
+				}
+			}
+
+		}
+		$sqlstring.= ')';
+
+	}
+	$sqlstring .= ")";
+
+	return array($sqlstring, $tags);
+}
+
 function getAllURIs($sqlstring, $limit, $tags, $random = true) {
 
 	// Get all track URIs using a supplied SQL string. For playlist generators
@@ -898,6 +1049,9 @@ function getAllURIs($sqlstring, $limit, $tags, $random = true) {
 	$rndstr = $random ? " ORDER BY ".SQL_RANDOM_SORT : " ORDER BY randomSort, Albumindex, Disc, TrackNo";
 	$sqlstring .= ' '.$rndstr.' LIMIT '.$limit;
 	logger::log('GETALLURIS', $sqlstring);
+	foreach ($tags as $t) {
+		logger::log('GETALLURILS', '  Param :',$t);
+	}
 	do {
 		if ($tries == 1) {
 			logger::info("SMART PLAYLIST", "No URIs found. Resetting history table");
@@ -912,6 +1066,9 @@ function getAllURIs($sqlstring, $limit, $tags, $random = true) {
 	} while (count($uris) == 0 && $tries < 2);
 	foreach ($uris as $uri) {
 		sql_prepare_query(true, null, null, null, 'UPDATE Tracktable SET usedInPlaylist = 1 WHERE Uri = ?', $uri);
+	}
+	if (count($uris) == 0) {
+		$uris = array('NOTRACKS!');
 	}
 	return $uris;
 }

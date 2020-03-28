@@ -19,7 +19,7 @@ var starRadios = function() {
 						url: "backends/sql/userRatings.php",
 						type: "POST",
 						contentType: false,
-						data: JSON.stringify([{action: whattodo, playlist: param, numtracks: prefs.smartradio_chunksize}]),
+						data: JSON.stringify([{action: whattodo, playlist: param, numtracks: numtracks}]),
 						dataType: 'json'
 					});
 					tracks = tracks.concat(t);
@@ -39,17 +39,25 @@ var starRadios = function() {
 			} else if (param == "neverplayed" || param == "allrandom" || param == "recentlyplayed") {
 				return '<i class="icon-'+param+' modeimg"/></i><span class="modespan">'+
 					language.gettext('label_'+param)+'</span>';
+			} else if (/^tag\+/.test(param)) {
+				return '<i class="icon-tags modeimg"/><span class="modespan">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
+			} else if (/^genre\+/.test(param)) {
+				return '<i class="icon-music modeimg"/><span class="modespan">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
+			} else if (/^artist\+/.test(param)) {
+				return '<i class="icon-artist modeimg"/><span class="modespan">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
+			} else if (/^custom\+/.test(param)) {
+				return '<i class="icon-wifi modeimg"/><span class="modespan">'+param.replace(/^custom\+/, '')+'</span>';
 			} else {
-				return '<i class="icon-tags modeimg"/><span class="modespan">'+param.replace(/^tag\+/, '')+'</span>';
+				return '<i class="icon-wifi modeimg"/>';
 			}
 		},
 
 		stop: function() {
 		},
 
-		tagPopulate: function(tags) {
-			playlist.radioManager.load('starRadios', tags);
-		}
+		// tagPopulate: function(tags) {
+		// 	playlist.radioManager.load('starRadios', tags);
+		// }
 	}
 }();
 

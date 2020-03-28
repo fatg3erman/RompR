@@ -51,7 +51,9 @@ function check_sql_tables() {
 		"LinkChecked TINYINT(1) DEFAULT 0, ".
 		"isAudiobook TINYINT(1) DEFAULT 0, ".
 		"justAdded TINYINT(1) DEFAULT 1, ".
-		"usedInPlaylist TINYINT(1) DEFAULT 0)", true))
+		"usedInPlaylist TINYINT(1) DEFAULT 0, ".
+		"Genreindex INT UNSIGNED DEFAULT 0, ".
+		"TYear YEAR)", true))
 	{
 		logger::log("SQLITE", "  Tracktable OK");
 		if (generic_sql_query("CREATE INDEX IF NOT EXISTS ai ON Tracktable (Albumindex)", true)) {
@@ -326,6 +328,17 @@ function check_sql_tables() {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking BackgroundImageTable : ".$err);
 	}
+
+	if (generic_sql_query("CREATE TABLE IF NOT EXISTS Genretable(".
+		"Genreindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+		"Genre VARCHAR(40))", true))
+	{
+		logger::log("SQLITE", "  Genretable OK");
+	} else {
+		$err = $mysqlc->errorInfo()[2];
+		return array(false, "Error While Checking Genretable : ".$err);
+	}
+	generic_sql_query("CREATE INDEX IF NOT EXISTS gi ON Genretable (Genre)", true);
 
 	// Check schema version and update tables as necessary
 	$sv = simple_query('Value', 'Statstable', 'Item', 'SchemaVer', 0);
@@ -835,6 +848,26 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 63 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 63:
+				logger::log("SQL", "Updating FROM Schema version 63 TO Schema version 64");
+				generic_sql_query("ALTER TABLE Tracktable ADD COLUMN Genreindex INT UNSIGNED DEFAULT 0", true);
+				// generic_sql_query("INSERT INTO Genretable (Genre) VALUES ('None')", true);
+				generic_sql_query("UPDATE Statstable SET Value = 64 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 64:
+				logger::log("SQL", "Updating FROM Schema version 64 TO Schema version 65");
+				generic_sql_query("ALTER TABLE Tracktable ADD COLUMN TYear YEAR", true);
+				// generic_sql_query("INSERT INTO Genretable (Genre) VALUES ('None')", true);
+				generic_sql_query("UPDATE Statstable SET Value = 65 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 65:
+				logger::log("SQL", "Updating FROM Schema version 65 TO Schema version 66");
+				update_track_dates();
+				generic_sql_query("UPDATE Statstable SET Value = 66 WHERE Item = 'SchemaVer'", true);
+				break;
+
 		}
 		$sv++;
 	}
@@ -888,6 +921,25 @@ function sql_two_weeks_include($days) {
 
 function sql_to_unixtime($s) {
 	return "CAST(strftime('%s', ".$s.") AS INT)";
+}
+
+function tracks_played_since($option, $value) {
+	$value = round($value);
+	switch ($option) {
+		case RADIO_RULE_OPTIONS_INTEGER_LESSTHAN:
+			return "(LastPlayed IS NOT NULL AND DATE('now', '-".$value." DAYS') < DATE(LastPlayed))";
+			break;
+
+		case RADIO_RULE_OPTIONS_INTEGER_EQUALS:
+			return "(LastPlayed IS NOT NULL AND DATE('now', '-".$value." DAYS') = DATE(LastPlayed))";
+			break;
+
+		case RADIO_RULE_OPTIONS_INTEGER_GREATERTHAN:
+			return "(LastPlayed IS NULL OR DATE('now', '-".$value." DAYS') > DATE(LastPlayed))";
+			break;
+
+	}
+
 }
 
 function track_date_check($range, $flag) {

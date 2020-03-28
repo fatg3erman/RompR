@@ -96,7 +96,8 @@ class musicCollection {
 					"albumuri" => $album->uri,
 					"image" => $album->getImage('asdownloaded'),
 					"duration" => $trackobj->tags['Time'],
-					"date" => $album->datestamp
+					"date" => $album->datestamp,
+					"genre" => $trackobj->tags['Genre']
 				);
 				logger::trace("COLLECTION", "Title - ".$trackobj->tags['Title']);
 				// A lot of code that depends on this was written to handle mopidy model search results.
@@ -139,6 +140,7 @@ class album {
 		$this->domain = $track->tags['domain'];
 		$this->albumartistindex = null;
 		$this->albumindex = null;
+		$this->year = $track->tags['year'];
 	}
 
 	public function newTrack(&$track) {
@@ -176,7 +178,7 @@ class album {
 				'albumai' => $this->albumartistindex,
 				'albumuri' => $this->uri,
 				'image' => $this->getImage('small'),
-				'date' => $this->getDate(),
+				'date' => $this->year,
 				'searched' => "0",
 				'imagekey' => $this->getKey(),
 				'ambid' => $this->musicbrainz_albumid,
@@ -209,10 +211,6 @@ class album {
 
 	public function trackCount() {
 		return count($this->tracks);
-	}
-
-	public function getDate() {
-		return getYear($this->datestamp);
 	}
 
 	public function getAllTracks($cmd) {

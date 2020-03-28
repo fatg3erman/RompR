@@ -12,6 +12,7 @@ class base_mpd_player {
 	public $playlist_error;
 	private $debug_id;
 	public $to_browse;
+	private $mpd_version = null;
 
 	public function __construct($ip = null, $port = null, $socket = null, $password = null, $player_type = null, $is_slave = null) {
 		global $prefs;
@@ -90,8 +91,10 @@ class base_mpd_player {
 			stream_set_blocking($this->connection, true);
 			while(!feof($this->connection)) {
 				$gt = fgets($this->connection);
-				if ($this->parse_mpd_var($gt))
+				if ($this->parse_mpd_var($gt)) {
+					$this->mpd_version = $gt;
 					break;
+				}
 			}
 		} else {
 			logger::error('MPD', 'Failed to connect to player', $errno, $errstr);
@@ -114,6 +117,14 @@ class base_mpd_player {
 			}
 		}
 		return true;
+	}
+
+	public function get_mpd_version() {
+		if (preg_match('/OK MPD (.+$)/', $this->mpd_version, $matches)) {
+			return $matches[1];
+		} else {
+			return 'Unknown. Got '.$this->mpd_version;
+		}
 	}
 
 	public function close_mpd_connection() {
@@ -181,7 +192,7 @@ class base_mpd_player {
 
 		$retarr = array();
 		if ($this->is_connected()) {
-			if ($command == 'status' || $command == 'currentsong') {
+			if ($command == 'status' || $command == 'currentsong' || $command == 'replay_gain_status') {
 				logger::core("MPD", "MPD Command",$command);
 			} else {
 				logger::trace("MPD", "MPD Command",$command);
@@ -250,9 +261,6 @@ class base_mpd_player {
 		} else if ($this->player_type != $prefs['collection_player']) {
 			$this->translate_player_types($cmds);
 		}
-
-
-
 		$retries = 3;
 		if (count($cmds) > 1) {
 			do {
@@ -375,7 +383,7 @@ class base_mpd_player {
 	}
 
 	protected function sanitize_data(&$filedata) {
-		global $dbterms, $numtracks, $totaltime;
+		global $dbterms, $numtracks, $totaltime, $prefs;
 		if ($dbterms['tags'] !== null || $dbterms['rating'] !== null) {
 			// If this is a search and we have tags or ratings to search for, check them here.
 			if (check_url_against_database($filedata['file'], $dbterms['tags'], $dbterms['rating']) == false) {
@@ -407,6 +415,11 @@ class base_mpd_player {
 		// Disc Number
 		if ($filedata['Disc'] != null) {
 			$filedata['Disc'] = format_tracknum(ltrim($filedata['Disc'], '0'));
+		}
+
+		if ($prefs['use_original_releasedate'] && $filedata['OriginalDate']) {
+			logger::trace('COLLECTION', 'Using Rriginal Release Date for album',$filedata['Album']);
+			$filedata['Date'] = $filedata['OriginalDate'];
 		}
 
 		$filedata['year'] = getYear($filedata['Date']);

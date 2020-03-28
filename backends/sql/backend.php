@@ -93,11 +93,24 @@ function create_new_track(&$data) {
 	if (sql_prepare_query(true, null, null, null,
 		"INSERT INTO
 			Tracktable
-			(Title, Albumindex, Trackno, Duration, Artistindex, Disc, Uri, LastModified, Hidden, isSearchResult, Sourceindex, isAudiobook)
+			(Title, Albumindex, Trackno, Duration, Artistindex, Disc, Uri, LastModified, Hidden, isSearchResult, Sourceindex, isAudiobook, Genreindex, TYear)
 			VALUES
-			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-		$data['title'], $data['albumindex'], $data['trackno'], $data['duration'], $data['trackai'],
-		$data['disc'], $data['uri'], $data['lastmodified'], $data['hidden'], $data['searchflag'], $data['sourceindex'], $data['isaudiobook']))
+			(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+			$data['title'],
+			$data['albumindex'],
+			$data['trackno'],
+			$data['duration'],
+			$data['trackai'],
+			$data['disc'],
+			$data['uri'],
+			$data['lastmodified'],
+			$data['hidden'],
+			$data['searchflag'],
+			$data['sourceindex'],
+			$data['isaudiobook'],
+			$data['genreindex'],
+			$data['year']
+		))
 	{
 		return $mysqlc->lastInsertId();
 	}
@@ -317,6 +330,43 @@ function list_tags() {
 		$tags[] = $r['Name'];
 	}
 	return $tags;
+}
+
+function list_genres() {
+	return sql_get_column("SELECT Genre FROM Genretable ORDER BY Genre ASC", 'Genre');
+}
+
+function list_artists() {
+	global $prefs;
+
+	$qstring = "SELECT DISTINCT Artistname FROM Tracktable JOIN Artisttable USING (Artistindex)
+		WHERE (LinkChecked = 0 OR LinkChecked = 2) AND isAudiobook = 0 AND isSearchResult < 2 AND Hidden = 0 AND Uri IS NOT NULL
+		ORDER BY ";
+	foreach ($prefs['artistsatstart'] as $a) {
+		$qstring .= "CASE WHEN LOWER(Artistname) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
+	}
+	if (count($prefs['nosortprefixes']) > 0) {
+		$qstring .= "(CASE ";
+		foreach($prefs['nosortprefixes'] AS $p) {
+			$phpisshitsometimes = strlen($p)+2;
+			$qstring .= "WHEN LOWER(Artistname) LIKE '".strtolower($p).
+				" %' THEN LOWER(SUBSTR(Artistname,".$phpisshitsometimes.")) ";
+		}
+		$qstring .= "ELSE LOWER(Artistname) END)";
+	} else {
+		$qstring .= "LOWER(Artistname)";
+	}
+	return sql_get_column($qstring, 'Artistname');
+}
+
+function list_albumartists() {
+	require_once('collection/sortby/artist.php');
+	$artists = array();
+	$sorter = new sortby_artist('aartistroot');
+	foreach ($sorter->root_sort_query() as $a) {
+		$artists[] = $a['Artistname'];
+	}
+	return $artists;
 }
 
 function clear_wishlist() {
@@ -1048,18 +1098,19 @@ function prepareCollectionUpdate() {
 function prepare_findtracks() {
 	global $find_track, $update_track;
 	if ($find_track = sql_prepare_query_later(
-		"SELECT TTindex, Disc, LastModified, Hidden, isSearchResult, Uri, isAudiobook FROM Tracktable WHERE Title=? AND ((Albumindex=? AND TrackNo=? AND Disc=?) OR (Artistindex=? AND Uri IS NULL))")) {
+		"SELECT TTindex, Disc, LastModified, Hidden, isSearchResult, Uri, isAudiobook, Genreindex, TYear FROM Tracktable WHERE Title=? AND ((Albumindex=? AND TrackNo=? AND Disc=?) OR (Artistindex=? AND Uri IS NULL))")) {
 	} else {
 		show_sql_error();
 		exit(1);
 	}
 
 	if ($update_track = sql_prepare_query_later(
-		"UPDATE Tracktable SET LinkChecked=0, Trackno=?, Duration=?, Disc=?, LastModified=?, Uri=?, Albumindex=?, isSearchResult=?, isAudiobook=?, Hidden=0, justAdded=1 WHERE TTindex=?")) {
+		"UPDATE Tracktable SET LinkChecked=0, Trackno=?, Duration=?, Disc=?, LastModified=?, Uri=?, Albumindex=?, isSearchResult=?, isAudiobook=?, Hidden=0, justAdded=1, Genreindex=?, TYear = ? WHERE TTindex=?")) {
 	} else {
 		show_sql_error();
 		exit(1);
 	}
+
 }
 
 function remove_findtracks() {
@@ -1110,6 +1161,8 @@ function remove_cruft() {
 	generic_sql_query("DELETE FROM Ratingtable WHERE Rating = '0'", true);
 	generic_sql_query("DELETE FROM Ratingtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable WHERE Hidden = 0)", true);
 	generic_sql_query("DELETE FROM TagListtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable WHERE Hidden = 0)", true);
+	generic_sql_query("DELETE FROM Genretable WHERE Genreindex NOT IN (SELECT DISTINCT Genreindex FROM Tracktable)", true);
+
 	// Temporary table needed  because we can't use an IN clause as it conflicts with a trigger
 	generic_sql_query("CREATE TEMPORARY TABLE used_tags AS SELECT DISTINCT Tagindex FROM TagListtable", true);
 	generic_sql_query("DELETE FROM Tagtable WHERE Tagindex NOT IN (SELECT Tagindex FROM used_tags)", true);
@@ -1161,10 +1214,28 @@ function do_track_by_track($trackobject) {
 
 }
 
+function check_genre($genre) {
+	global $mysqlc;
+	$index = simple_query('Genreindex', 'Genretable', 'Genre', $genre, null);
+	if ($index === null) {
+		sql_prepare_query(true, null, null, null, 'INSERT INTO Genretable (Genre) VALUES(?)', $genre);
+		$index = $mysqlc->lastInsertId();
+		logger::log('BACKEND', 'Created Genre '.$genre);
+	}
+	return $index;
+}
+
 function check_and_update_track($trackobj, $albumindex, $artistindex, $artistname) {
 	global $find_track, $update_track, $numdone, $prefs, $doing_search;
 	static $current_trackartist = null;
 	static $trackartistindex = null;
+	static $current_genre = null;
+	static $genreindex = null;
+
+	if ($trackobj->tags['Genre'] != $current_genre || $genreindex === null) {
+		$current_genre = $trackobj->tags['Genre'];
+		$genreindex = check_genre($trackobj->tags['Genre']);
+	}
 
 	$dbtrack = (object) [
 		'TTindex' => null,
@@ -1173,7 +1244,9 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 		'Disc' => 0,
 		'Uri' => null,
 		'isSearchResult' => 0,
-		'isAudiobook' => 0
+		'isAudiobook' => 0,
+		'Genreindex' => null,
+		'TYear' => null
 	];
 
 	// Why are we not checking by URI? That should be unique, right?
@@ -1224,27 +1297,30 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 			($doing_search && $dbtrack->isSearchResult == 0) ||
 			($trackobj->tags['Disc'] != $dbtrack->Disc && $trackobj->tags['Disc'] !== '') ||
 			$dbtrack->Hidden != 0 ||
+			$dbtrack->Genreindex != $genreindex ||
 			($trackobj->tags['type'] == 'audiobook' && $dbtrack->isAudiobook == 0) ||
 			($trackobj->tags['type'] != 'audiobook' && $dbtrack->isAudiobook == 1) ||
+			$trackobj->tags['year'] != $dbtrack->TYear ||
 			$trackobj->tags['file'] != $dbtrack->Uri) {
 
 			//
-			// Lots of debug output
+			// Lots of debug output. All skipped if debug level < 7, to save those few ms
 			//
 
 			if ($prefs['debug_enabled'] > 6) {
-				logger::log('BACKEND', "  Updating track with ttid",$dbtrack->TTindex,"because :");
-
-				if (!$doing_search && $dbtrack->LastModified === null) 								logger::log('BACKEND', "    LastModified is not set in the database");
-				if (!$doing_search && $trackobj->tags['Last-Modified'] === null) 					logger::log('BACKEND', "    TrackObj LastModified is NULL too!");
-				if (!$doing_search && $dbtrack->LastModified !== $trackobj->tags['Last-Modified']) 	logger::log('BACKEND', "    LastModified has changed: We have ".$dbtrack->LastModified." but track has ".$trackobj->tags['Last-Modified']);
-				if ($dbtrack->Disc != $trackobj->tags['Disc']) 										logger::log('BACKEND', "    Disc Number has changed: We have ".$dbtrack->Disc." but track has ".$trackobj->tags['Disc']);
-				if ($dbtrack->Hidden != 0) 															logger::log('BACKEND', "    It is hidden");
-				if ($trackobj->tags['type'] == 'audiobook' && $dbtrack->isAudiobook == 0) 			logger::log('BACKEND', "    It needs to be marked as an Auidiobook");
-				if ($trackobj->tags['type'] != 'audiobook' && $dbtrack->isAudiobook == 1) 			logger::log('BACKEND', "    It needs to be un-marked as an Audiobook");
+				logger::trace('BACKEND', "  Updating track with ttid",$dbtrack->TTindex,"because :");
+				if (!$doing_search && $dbtrack->LastModified === null) 								logger::trace('BACKEND', "    LastModified is not set in the database");
+				if (!$doing_search && $trackobj->tags['Last-Modified'] === null) 					logger::trace('BACKEND', "    TrackObj LastModified is NULL too!");
+				if (!$doing_search && $dbtrack->LastModified !== $trackobj->tags['Last-Modified']) 	logger::trace('BACKEND', "    LastModified has changed: We have ".$dbtrack->LastModified." but track has ".$trackobj->tags['Last-Modified']);
+				if ($dbtrack->Disc != $trackobj->tags['Disc']) 										logger::trace('BACKEND', "    Disc Number has changed: We have ".$dbtrack->Disc." but track has ".$trackobj->tags['Disc']);
+				if ($dbtrack->Hidden != 0) 															logger::trace('BACKEND', "    It is hidden");
+				if ($dbtrack->Genreindex != $genreindex)											logger::trace("BACKEND", "    Genreindex needs to be changed from ".$dbtrack->Genreindex.' to '.$genreindex);
+				if ($trackobj->tags['year'] != $dbtrack->TYear)							 			logger::trace('BACKEND', "    Year needs updatinf from", $dbtrack->TYear,'to',$trackobj->tags['year']);
+				if ($trackobj->tags['type'] == 'audiobook' && $dbtrack->isAudiobook == 0) 			logger::trace('BACKEND', "    It needs to be marked as an Auidiobook");
+				if ($trackobj->tags['type'] != 'audiobook' && $dbtrack->isAudiobook == 1) 			logger::trace('BACKEND', "    It needs to be un-marked as an Audiobook");
 				if ($trackobj->tags['file'] != $dbtrack->Uri) {
-					logger::log('BACKEND', "    Uri has changed from : ".$dbtrack->Uri);
-					logger::log('BACKEND', "                      to : ".$trackobj->tags['file']);
+					logger::trace('BACKEND', "    Uri has changed from : ".$dbtrack->Uri);
+					logger::trace('BACKEND', "                      to : ".$trackobj->tags['file']);
 				}
 			}
 
@@ -1274,6 +1350,8 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 				$albumindex,
 				$newsearchresult,
 				$newisaudiobook,
+				$genreindex,
+				$trackobj->tags['year'],
 				$dbtrack->TTindex
 			))) {
 				$numdone++;
@@ -1310,6 +1388,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 			'image' => null,
 			'album' => null,
 			'date' => null,
+			'year' => $trackobj->tags['year'],
 			'uri' => $trackobj->tags['file'],
 			'trackai' => $trackartistindex,
 			'albumai' => $artistindex,
@@ -1322,7 +1401,8 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 			'domain' => null,
 			'hidden' => 0,
 			'searchflag' => $sflag,
-			'isaudiobook' => $trackobj->tags['type'] == 'audiobook' ? 1 : 0
+			'isaudiobook' => $trackobj->tags['type'] == 'audiobook' ? 1 : 0,
+			'genreindex' => $genreindex
 		);
 		$ttid = create_new_track($params);
 		$numdone++;

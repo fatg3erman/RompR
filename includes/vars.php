@@ -6,10 +6,10 @@ if (!$dtz) {
 }
 
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
-define('ROMPR_COLLECTION_VERSION', 4);
+define('ROMPR_COLLECTION_VERSION', 6);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 63);
-define('ROMPR_VERSION', '1.40');
+define('ROMPR_SCHEMA_VERSION', 66);
+define('ROMPR_VERSION', '1.41');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_UNKNOWN_STREAM', "Unknown Internet Stream");
@@ -95,11 +95,12 @@ define('MPD_FILE_MODEL', array (
 		'playlist' => '',
 		'X-AlbumImage' => null,
 		'Date' => null,
+		'OriginalDate' => null,
 		'Last-Modified' => '0',
 		'Disc' => null,
 		'Composer' => null,
 		'Performer' => null,
-		'Genre' => null,
+		'Genre' => 'None',
 		'ImgKey' => null,
 		'StreamIndex' => null,
 		'Searched' => 0,
@@ -159,12 +160,119 @@ define('ROMPR_FILE_MODEL', array(
 );
 
 const COLLECTION_SORT_MODES = array(
-	'artist' => 'label_artists',
-	'album' => 'label_albums',
+	'artist' 		=> 'label_artists',
+	'album' 		=> 'label_albums',
 	'albumbyartist' => 'label_albumsbyartist',
-	'rating' => 'label_rating',
-	'tag' => 'label_tag'
+	'genre' 		=> 'label_genre',
+	'rating' 		=> 'label_rating',
+	'tag' 			=> 'label_tag'
 );
+
+// These indices don't start at zero, to make sure json_encode includes them when we encode CUSTOM_RADIO_ITEMS
+// Also there are gaps so we can insert new ones
+define('RADIO_RULE_OPTIONS_STRING_IS', 10);
+define('RADIO_RULE_OPTIONS_STRING_IS_NOT', 20);
+define('RADIO_RULE_OPTIONS_STRING_CONTAINS', 30);
+define('RADIO_RULE_OPTIONS_STRING_NOT_CONTAINS', 40);
+define('RADIO_RULE_OPTIONS_STRING_EXISTS', 45);
+define('RADIO_RULE_OPTIONS_INTEGER_LESSTHAN', 50);
+define('RADIO_RULE_OPTIONS_INTEGER_EQUALS', 60);
+define('RADIO_RULE_OPTIONS_INTEGER_GREATERTHAN', 70);
+
+const RADIO_OPTIONS_STRING = array(
+	RADIO_RULE_OPTIONS_STRING_IS 			=> 'label_is',
+	RADIO_RULE_OPTIONS_STRING_IS_NOT		=> 'label_is_not',
+	RADIO_RULE_OPTIONS_STRING_CONTAINS		=> 'label_contains',
+	RADIO_RULE_OPTIONS_STRING_NOT_CONTAINS	=> 'label_does_not_contain'
+);
+
+const RADIO_OPTIONS_TAG = array(
+	RADIO_RULE_OPTIONS_STRING_IS 			=> 'label_is',
+	RADIO_RULE_OPTIONS_STRING_IS_NOT		=> 'label_is_not',
+	RADIO_RULE_OPTIONS_STRING_CONTAINS		=> 'label_contains',
+	RADIO_RULE_OPTIONS_STRING_NOT_CONTAINS	=> 'label_does_not_contain',
+	RADIO_RULE_OPTIONS_STRING_EXISTS		=> 'label_exists'
+);
+
+const RADIO_OPTIONS_INTEGER = array(
+	RADIO_RULE_OPTIONS_INTEGER_LESSTHAN		=> 'label_lessthan',
+	RADIO_RULE_OPTIONS_INTEGER_EQUALS		=> 'label_equals',
+	RADIO_RULE_OPTIONS_INTEGER_GREATERTHAN	=> 'label_greaterthan'
+);
+
+const RADIO_COMBINE_OPTIONS = array(
+	' OR '	=> 'label_any_rule',
+	' AND '	=> 'label_all_rules'
+);
+
+// NOTE: STRING options need a specific handler in customradio.js::make_value_box()
+define('CUSTOM_RADIO_ITEMS', array(
+	array(
+		'name'		=> 'label_artist',
+		'db_key'	=> 'ta.Artistname',
+		'options'	=> RADIO_OPTIONS_STRING
+	),
+	array(
+		'name'		=> 'label_albumartist',
+		'db_key'	=> 'aa.Artistname',
+		'options'	=> RADIO_OPTIONS_STRING
+	),
+	array(
+		'name'		=> 'label_tracktitle',
+		'db_key'	=> 'Title',
+		'options'	=> RADIO_OPTIONS_STRING
+	),
+	array(
+		'name'		=> 'label_albumtitle',
+		'db_key'	=> 'Albumname',
+		'options'	=> RADIO_OPTIONS_STRING
+	),
+	array(
+		'name'		=> 'label_genre',
+		'db_key'	=> 'Genre',
+		'options'	=> RADIO_OPTIONS_STRING
+	),
+	array(
+		'name'		=> 'label_tag',
+		'db_key'	=> 'Tagtable.Name',
+		'options'	=> RADIO_OPTIONS_TAG
+	),
+	array(
+		'name'		=> 'label_rating',
+		'db_key'	=> 'Rating',
+		'options'	=> RADIO_OPTIONS_INTEGER
+	),
+	array(
+		'name'		=> 'label_playcount',
+		'db_key'	=> 'Playcount',
+		'options'	=> RADIO_OPTIONS_INTEGER
+	),
+	array(
+		'name'		=> 'label_duration_seconds',
+		'db_key'	=> 'Duration',
+		'options'	=> RADIO_OPTIONS_INTEGER
+	),
+	array(
+		'name'		=> 'label_year',
+		'db_key'	=> 'TYear',
+		'options'	=> RADIO_OPTIONS_INTEGER
+	),
+	array(
+		'name'		=> 'label_tracknumber',
+		'db_key'	=> 'TrackNo',
+		'options'	=> RADIO_OPTIONS_INTEGER
+	),
+	array(
+		'name'		=> 'label_disc',
+		'db_key'	=> 'Disc',
+		'options'	=> RADIO_OPTIONS_INTEGER
+	),
+	array(
+		'name'		=> 'label_dayssince',
+		'db_key'	=> 'db_function_tracks_played_since',
+		'options'	=> RADIO_OPTIONS_INTEGER
+	)
+));
 
 $mysqlc = null;
 
@@ -326,7 +434,8 @@ $prefs = array(
 	'advsearchoptions_isopen' => false,
 	'podcastbuttons_isopen' => false,
 	'last_cache_clean' => 10,
-	'next_podcast_refresh' => 10
+	'next_podcast_refresh' => 10,
+	'use_original_releasedate' => false
 );
 
 // Prefs that should not be exposed to the browser for security reasons
@@ -443,6 +552,7 @@ function loadPrefs() {
 }
 
 function set_music_directory($dir) {
+	global $prefs;
 	$prefs['music_directory_albumart'] = rtrim($dir, '/');
 	logger::mark("SAVEPREFS", "Creating Album Art SymLink to ".$dir);
 	if (is_link("prefs/MusicFolders")) {

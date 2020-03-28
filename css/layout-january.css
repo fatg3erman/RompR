@@ -112,7 +112,7 @@ input[type=checkbox], input[type=radio] {
 	width:auto;
 }
 
-input[type=text] {
+input[type=text],input[type="number"] {
 	border: 0px none;
 	border-radius: 0 0;
 	background-color: white;

@@ -72,6 +72,8 @@ Currently the list of Personalised Radio stations supported by romonitor is
 
 * All Ratings Radios
 * Tags Radio
+* Genre Radio
+* Artist Radio
 * All Tracks At Random
 * Never Played Tracks
 * Recently Played Tracks
@@ -79,4 +81,4 @@ Currently the list of Personalised Radio stations supported by romonitor is
 * Favourite Albums
 * Recently Added Tracks
 * Recently Added Albums
-
+* All Custom Radio Stations

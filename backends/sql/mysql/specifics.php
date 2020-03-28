@@ -54,6 +54,8 @@ function check_sql_tables() {
 		"LinkChecked TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"isAudiobook TINYINT(1) UNSIGNED DEFAULT 0, ".
 		"usedInPlaylist TINYINT(1) UNSIGNED DEFAULT 0, ".
+		"Genreindex INT UNSIGNED DEFAULT 0, ".
+		"TYear YEAR, ".
 		"INDEX(Albumindex), ".
 		"INDEX(Title), ".
 		"INDEX(TrackNo)) ENGINE=InnoDB", true))
@@ -282,6 +284,18 @@ function check_sql_tables() {
 	} else {
 		$err = $mysqlc->errorInfo()[2];
 		return array(false, "Error While Checking BackgroundImageTable : ".$err);
+	}
+
+	if (generic_sql_query("CREATE TABLE IF NOT EXISTS Genretable(".
+		"Genreindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+		"Genre VARCHAR(40), ".
+		"PRIMARY KEY (Genreindex), ".
+		"INDEX (Genre))", true))
+	{
+		logger::log("MYSQL", "  Genretable OK");
+	} else {
+		$err = $mysqlc->errorInfo()[2];
+		return array(false, "Error While Checking Genretable : ".$err);
 	}
 
 	if (!generic_sql_query("CREATE TABLE IF NOT EXISTS Statstable(Item CHAR(11), PRIMARY KEY(Item), Value INT UNSIGNED) ENGINE=InnoDB", true)) {
@@ -862,6 +876,25 @@ function check_sql_tables() {
 				generic_sql_query("UPDATE Statstable SET Value = 63 WHERE Item = 'SchemaVer'", true);
 				break;
 
+			case 63:
+				logger::log("SQL", "Updating FROM Schema version 63 TO Schema version 64");
+				// generic_sql_query("INSERT INTO Genretable (Genre) VALUES ('None')", true);
+				generic_sql_query("ALTER TABLE Tracktable ADD Genreindex INT UNSIGNED DEFAULT 0", true);
+				generic_sql_query("UPDATE Statstable SET Value = 64 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 64:
+				logger::log("SQL", "Updating FROM Schema version 64 TO Schema version 65");
+				generic_sql_query("ALTER TABLE Tracktable ADD TYear YEAR", true);
+				generic_sql_query("UPDATE Statstable SET Value = 65 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 65:
+				logger::log("SQL", "Updating FROM Schema version 65 TO Schema version 66");
+				update_track_dates();
+				generic_sql_query("UPDATE Statstable SET Value = 66 WHERE Item = 'SchemaVer'", true);
+				break;
+
 		}
 		$sv++;
 	}
@@ -914,6 +947,25 @@ function sql_two_weeks_include($days) {
 
 function sql_to_unixtime($s) {
 	return "UNIX_TIMESTAMP(".$s.")";
+}
+
+function tracks_played_since($option, $value) {
+	$value = round($value);
+	switch ($option) {
+		case RADIO_RULE_OPTIONS_INTEGER_LESSTHAN:
+			return "(LastPlayed IS NOT NULL AND TIMESTAMPDIFF(DAY, LastPlayed, CURRENT_TIMESTAMP) < ".$value.")";
+			break;
+
+		case RADIO_RULE_OPTIONS_INTEGER_EQUALS:
+			return "(LastPlayed IS NOT NULL AND TIMESTAMPDIFF(DAY, LastPlayed, CURRENT_TIMESTAMP) = ".$value.")";
+			break;
+
+		case RADIO_RULE_OPTIONS_INTEGER_GREATERTHAN:
+			return "(LastPlayed IS NULL OR TIMESTAMPDIFF(DAY, LastPlayed, CURRENT_TIMESTAMP) > ".$value.")";
+			break;
+
+	}
+
 }
 
 function track_date_check($range, $flag) {

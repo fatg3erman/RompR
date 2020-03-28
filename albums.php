@@ -1,7 +1,7 @@
 <?php
 
 // Automatic Collection Updates can be performed using cURL:
-// curl -b "currenthost=Default;player_backend=mpd" http://localhost/rompr/albums.php?rebuild > /dev/null
+// curl -b "skin=desktop;currenthost=Default;player_backend=mpd" http://localhost/rompr/albums.php?rebuild > /dev/null
 // where currenthost is the name of one of the Players defined in the Configuration menu
 // and player_backend MUST be mpd or mopidy, depending on what your player is.
 // You can also use eg -b "debug_enabled=8;currenthost=MPD;player_backend=mpd"

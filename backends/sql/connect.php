@@ -219,6 +219,19 @@ function checkAlbumArt() {
 	return $oa;
 }
 
+function update_track_dates() {
+	$manual_albums = generic_sql_query("
+		SELECT DISTINCT Albumindex, Year FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE LastModified IS NULL AND Year IS NOT NULL
+	");
+	logger::mark('INIT', 'Updating TYear for',count($manual_albums),'albums');
+	open_transaction();
+	foreach($manual_albums as $album) {
+		sql_prepare_query(true, null, null, null, "UPDATE Tracktable SET TYear = ? WHERE Albumindex = ?", $album['Year'], $album['Albumindex']);
+		check_transaction();
+	}
+	close_transaction();
+}
+
 function open_transaction() {
 	global $transaction_open, $mysqlc;
 	if (!$transaction_open) {

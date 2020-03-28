@@ -21,7 +21,7 @@ div.selectholder {
 	height:3em;
 }
 
-input[type="text"] {
+input[type="text"],input[type="number"] {
 	height:3em;
 }
 

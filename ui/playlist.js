@@ -83,7 +83,8 @@ var playlist = function() {
 				var startpos = (tracksneeded == prefs.smartradio_chunksize) ? 0 : null;
 				if (tracksneeded > 0 && prefs.radiomaster == prefs.browser_id) {
 					var uris = await radios[my_radio].func.getURIs(tracksneeded);
-					if (uris && uris.length > 0) {
+					debug.log('RADIOMANAGER', 'Tracks are',uris);
+					if (uris && uris.length > 0 && uris[0].name != 'NOTRACKS!') {
 						player.controller.addTracks(
 							uris,
 							startpos,

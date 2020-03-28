@@ -14,8 +14,8 @@ foreach($p as $key => $value) {
 			break;
 
 		case 'music_directory_albumart':
-			set_music_directory($prefs[$key]);
-			//fall through
+			set_music_directory($value);
+			break;
 
 		default:
 			$prefs[$key] = $value;

@@ -424,6 +424,13 @@ print '<div class="pref"><b>'.get_int_text('config_nosortprefixes').'
 if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave == false) {
 
 	if ($prefs['collection_player'] == $prefs['player_backend'] || $prefs['collection_player'] == null) {
+
+		print '<div class="pref styledinputs">
+		<input class="autoset toggle" type="checkbox" id="use_original_releasedate" />
+		<label for="use_original_releasedate">'.get_int_text('config_use_original_releasedate').'</label>
+		</div>';
+
+
 		print '<div class="pref styledinputs">
 			<div class="clearfix">
 				<div class="tleft">

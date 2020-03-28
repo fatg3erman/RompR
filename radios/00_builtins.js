@@ -22,7 +22,35 @@ var starRadios = function() {
 				labelhtml: '<i class="icon-tags svg-square"></i>',
 				populatefunction: tagAdder.populateTagMenu,
 				buttontext: language.gettext('button_playradio'),
-				buttonfunc: starRadios.tagPopulate
+				buttonfunc: starHelpers.tagPopulate
+			});
+
+			//
+			// Genre
+			//
+			var a = $('<div>', {class: "menuitem fullwidth"}).appendTo('#pluginplaylists');
+			var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
+				appendTo(a).makeTagMenu({
+				textboxname: 'farrago',
+				placeholder: 'Genre',
+				labelhtml: '<i class="icon-music svg-square"></i>',
+				populatefunction: starHelpers.populateGenreMenu,
+				buttontext: language.gettext('button_playradio'),
+				buttonfunc: starHelpers.genrePopulate
+			});
+
+			//
+			// Artist
+			//
+			var a = $('<div>', {class: "menuitem fullwidth"}).appendTo('#pluginplaylists');
+			var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
+				appendTo(a).makeTagMenu({
+				textboxname: 'bobblehat',
+				placeholder: 'Tracks By Artist',
+				labelhtml: '<i class="icon-artist svg-square"></i>',
+				populatefunction: starHelpers.populateArtistMenu,
+				buttontext: language.gettext('button_playradio'),
+				buttonfunc: starHelpers.artistPopulate
 			});
 
 			//
@@ -40,11 +68,57 @@ var starRadios = function() {
 			//
 			$('#pluginplaylists').append(playlist.radioManager.standardBox('starRadios', 'recentlyplayed', 'icon-recentlyplayed', language.gettext('label_recentlyplayed')));
 
-		},
+		}
+
+	}
+}();
+
+var starHelpers = function() {
+	return {
 
 		tagPopulate: function() {
 			playlist.radioManager.load('starRadios', 'tag+'+$('[name="cynthia"]').val());
+		},
+
+		genrePopulate: function() {
+			playlist.radioManager.load('starRadios', 'genre+'+$('[name="farrago"]').val());
+		},
+
+
+		artistPopulate: function() {
+			playlist.radioManager.load('starRadios', 'artist+'+$('[name="bobblehat"]').val());
+		},
+
+		populateGenreMenu: function(callback) {
+			metaHandlers.genericAction(
+				'getgenres',
+				callback,
+				function() {
+					debug.error("DB TRACKS", "Failed to get genres");
+				}
+			);
+		},
+
+		populateArtistMenu: function(callback) {
+			metaHandlers.genericAction(
+				'getartists',
+				callback,
+				function() {
+					debug.error("DB TRACKS", "Failed to get artists");
+				}
+			);
+		},
+
+		populateAlbumArtistMenu: function(callback) {
+			metaHandlers.genericAction(
+				'getalbumartists',
+				callback,
+				function() {
+					debug.error("DB TRACKS", "Failed to get artists");
+				}
+			);
 		}
+
 	}
 }();
 

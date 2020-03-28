@@ -34,6 +34,9 @@ var metaHandlers = function() {
 		if (playlistinfo.Disc) {
 			data.disc = playlistinfo.Disc;
 		}
+		if (playlistinfo.Genre) {
+			data.genre = playlistinfo.Genre;
+		}
 		if (playlistinfo.albumartist
 			&& playlistinfo.Album != "SoundCloud"
 			&& playlistinfo.type != "stream") {
@@ -248,6 +251,11 @@ var metaHandlers = function() {
 									break;
 								}
 							}
+						}
+						if (data.genres && data.genres.length > 0) {
+							track.genre = data.genres[0];
+						} else {
+							track.genre = 'None';
 						}
 						track.album = data.name;
 						track.uri = data.tracks.items[i].uri;

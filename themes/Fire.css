@@ -68,7 +68,7 @@ input
     color:#181818;
 }
 
-input[type="text"] {
+input[type="text"],input[type="number"] {
     color: white;
     background-color: rgba(20,20,20,0.5);
     border: 1px solid #444;
@@ -238,10 +238,10 @@ table.histable tr
 }
 
 /*Prevent submenus from having all entries highlighted
-due to :hover events propagating from the parent menu 
+due to :hover events propagating from the parent menu
 */
 .backhi:hover>div.topdropmenu>div.backhi {
-    color:#eeeeee;    
+    color:#eeeeee;
 }
 
 /*Make sure the submenu entry being hovered over still gets highlighted*/
