@@ -18,7 +18,7 @@ To stop the dynamic playlist generation and return to normal mode, either click 
 
 ## Creating A Custom Radio Station
 
-You can create custom Personal Radio Stations that combines several Rules to choose tracks from your Music Collection. This feature is inspired by Kodi's Party Mode. Start By clicking the Edit button:
+You can create custom Personal Radio Stations that combine several Rules to choose tracks from your Music Collection. This feature is inspired by Kodi's Party Mode. Start By clicking the Edit button:
 
 ![](images/cusrad1.png)
 
@@ -58,29 +58,27 @@ To save the settings so you can easily recall them in future, click the Floppy D
 
 Rules that use values that are not numbers can accept multiple values in one rule. To understand how this makes the rules even more flexible, it's best to use some examples.
 
-![](images/cusradio3.png)
-
-In this example, the tracks must match both rules. This will choose tracks where the Tag is either 'calm', 'chill', or 'electric piano' and the Rating is greater than 2. Or to express it a different way:
+In the example below, the tracks must match both rules. This will choose tracks where the Tag is either 'calm', 'chill', or 'electric piano' and the Rating is greater than 2. Or to express it a different way:
 
 (Tag = calm OR Tag = chill OR tag = electric piano) AND Rating > 2
 
-![](images/cusradio4.png)
+![](images/cusradio3.png)
 
 Now compare this one. The only thing that has changed is that tracks must now match at least one rule. This will choose tracks where the Tag is either 'calm', 'chill', or 'electric piano' or the Rating is greater than 2. Or to express it a different way:
 
 (Tag = calm OR Tag = chill OR tag = electric piano) OR Rating > 2
 
+![](images/cusradio4.png)
+
 By using multiple rules with the Options set appropriately it is possible to create Radio Stations with very specific criteria indeed.
 
-When using Tag as a rule there is one extra option
+When using Tag as a rule there is one extra option - 'exists', which means 'The track has a tag'. This one will choose tracks that have a tag or a rating.
 
 ![](images/cusradio5.png)
 
-'exists' means 'The track has a tag'. This one will choose tracks that have a tag or a rating.
+This final example shows how to choose all tracks that have a Tag except the Tags 'reggae' or 'dub'. You need the 'exists' rule in there because 'Tag is not something' also implies 'Tag does not exist'.
 
 ![](images/cusradio6.png)
-
-This final example shows how to choose all tracks that have a Tag except the Tags 'reggae' or 'dub'. You need the 'exists' rule in there because 'Tag is not something' also implies 'Tag does not exist'.
 
 ## Number of Upcoming Tracks
 
