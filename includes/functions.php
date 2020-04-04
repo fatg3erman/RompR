@@ -904,6 +904,7 @@ function rrmdir($path) {
 }
 
 function collectionButtons() {
+	global $prefs;
 	print '<div id="collectionbuttons" class="invisible toggledown">';
 
 	print '<div class="containerbox dropdown-container">';
