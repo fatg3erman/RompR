@@ -904,6 +904,7 @@ function rrmdir($path) {
 }
 
 function collectionButtons() {
+	global $prefs;
 	print '<div id="collectionbuttons" class="invisible toggledown">';
 
 	print '<div class="containerbox dropdown-container">';
@@ -937,9 +938,13 @@ function collectionButtons() {
 	</div>
 	</div>';
 
-	print '<div class="textcentre">
-	<button name="donkeykong">'.get_int_text('config_updatenow').'</button>
-	</div>';
+	if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave == false) {
+		if ($prefs['collection_player'] == $prefs['player_backend'] || $prefs['collection_player'] == null) {
+			print '<div class="textcentre">
+			<button name="donkeykong">'.get_int_text('config_updatenow').'</button>
+			</div>';
+		}
+	}
 	print '</div>';
 
 }
