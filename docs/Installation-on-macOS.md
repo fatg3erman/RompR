@@ -8,13 +8,11 @@ Getting this to work on macOS gets harder by the release, but it's not actually 
 
 ## Installing a player
 
-You'll need either MPD or Mopidy. 
+You'll need either MPD or Mopidy.
 
 ### Install Mopidy...
 
-The instructions on Mopidy's website [Mopidy](https://docs.mopidy.com/en/latest/installation/osx/) don't currently work.
-
-Then go [here](https://discourse.mopidy.com/t/cant-run-mopidy-on-fresh-brew-install-getting-python-framework-error/2343/2)
+[Mopidy](https://docs.mopidy.com/en/latest/installation/macos/)
 
 ### ... or install MPD
 
@@ -26,13 +24,17 @@ Then go [here](https://discourse.mopidy.com/t/cant-run-mopidy-on-fresh-brew-inst
     mkdir Sites
 
 Now if you've downloaded the ZIP file from here, you can copy it into the Sites folder you just created above and unzip it. Probaby you just need to double-click it to do that.
-Now go back to that terminal window and we'll set some permissions.
+Now go back to that terminal window and we'll create some directories and set some permissions.
 
     cd Sites/rompr
     mkdir prefs
     mkdir albumart
     sudo chown _www prefs
     sudo chown _www albumart
+
+And install imagemagick, which is a helper program rompr requires for dealing with images
+
+    brew install imagemagick
 
 ## 3. Configure Apache Web Server
 
@@ -85,8 +87,8 @@ This will open nano again. It may bring up an empty file, or it may bring up a f
     		    php_admin_value memory_limit 128M
                 php_admin_value post_max_size 256M
                 php_admin_value upload_max_filesize 32M
-                php_admin_value max_file_uploads 50                
-                php_admin_value max_execution_time 1800         
+                php_admin_value max_file_uploads 50
+                php_admin_value max_execution_time 1800
 		    </IfModule>
 
 	    </Directory>
