@@ -1099,6 +1099,7 @@ function update_remote_image_urls() {
 		);
 	}
 
+
 	logger::log('SQL', 'Updating Remote Images in RadioStationtable');
 	$albums = generic_sql_query("SELECT Stationindex, Image FROM RadioStationtable WHERE Image LIKE 'getRemoteImage%'");
 	foreach ($albums as $album) {
