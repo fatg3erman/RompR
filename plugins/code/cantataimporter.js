@@ -25,7 +25,7 @@ var cantataImporter = function() {
 
 		open: function() {
 			if (cani == null) {
-				cani = browser.registerExtraPlugin("cani", language.gettext("label_cantataimporter"), cantataImporter, null);
+				cani = browser.registerExtraPlugin("cani", language.gettext("label_cantataimporter"), cantataImporter, 'https://fatg3erman.github.io/RompR/Cantata-Importer');
 				$("#canifoldup").append('<div class="noselection fullwidth" id="canimunger"></div>');
 				$('#canimunger').append('<div class="textcentre">This will import all your ratings from Cantata into RompR. Existing ratings in RompR will be replaced</div>');
 				$("#canimunger").append('<div style="height:1em;max-width:80%;margin:auto" id="caniprogress"></div>');
