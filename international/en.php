@@ -705,10 +705,12 @@ $languages['en'] = array (
 	"label_albumtitle" =>					"Album Title",
 	"label_tracknumber" =>					"Track Number",
 	"config_use_original_releasedate" =>		"Use Original Release Date for Album Date, if present",
+	"label_cantataimporter" =>				"Import Ratings from Cantata",
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------
 	//"label_smartsetup" =>					"Preparing. Please Wait A Moment....",
+
 );
 
 ?>

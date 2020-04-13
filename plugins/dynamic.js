@@ -7,6 +7,7 @@ pluginManager.addPlugin(language.gettext("label_metabackup"), null, null, 'plugi
 pluginManager.addPlugin(language.gettext("label_opmlimporter"), null, null, 'plugins/code/opmlImporter.js', true);
 pluginManager.addPlugin(language.gettext("label_lfm_playcountimporter"), null, null, 'plugins/code/lfmimporter.js', true);
 pluginManager.addPlugin(language.gettext("label_unplayabletracks"), null, null, 'plugins/code/unplayabletracks.js', true);
+pluginManager.addPlugin(language.gettext("label_cantataimporter"), null, null, 'plugins/code/cantataimporter.js', true);
 
 function lfmDataExtractor(data) {
 

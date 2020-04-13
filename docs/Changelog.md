@@ -3,6 +3,11 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.42
+* Added a quick-and-dirty plugin to import Ratings from Cantata into RompR. Development of Cantata has stopped, so there's very little point in putting any more work into interoperability with it.
+* A few minor bugfixes.
+
+
 ## Version 1.41
 * Added 'folder' as a valid filename for local album art
 * Added Genres to the database. This permits the Collection to be sorted by Genre, along with a few other new features.

@@ -12,9 +12,7 @@ You'll need either MPD or Mopidy. However as at time of writing Mopidy installat
 
 ### Install Mopidy...
 
-The instructions on Mopidy's website [Mopidy](https://docs.mopidy.com/en/latest/installation/osx/) don't currently work.
-
-Then go [here](https://discourse.mopidy.com/t/cant-run-mopidy-on-fresh-brew-install-getting-python-framework-error/2343/2)
+[Mopidy](https://docs.mopidy.com/en/latest/installation/macos/)
 
 ### ... or install MPD
 
@@ -28,7 +26,7 @@ First open Terminal. If you haven't used Terminal before, don't be scared. It's 
     mkdir Sites
 
 Now if you've downloaded the ZIP file from here, you can copy it into the Sites folder you just created above and unzip it. Probaby you just need to double-click it to do that.
-Now go back to that terminal window and we'll set some permissions.
+Now go back to that terminal window and we'll create a couple of directories.
 
     cd Sites/rompr
     mkdir prefs

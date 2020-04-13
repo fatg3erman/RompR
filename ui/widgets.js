@@ -1312,11 +1312,8 @@ $.widget('rompr.spotifyArtistThing', {
 				}
 			}
 		} else if (element.hasClass('clickopenalbum') || element.hasClass('clickaddtolistenlater') || element.hasClass('clickaddtocollection')) {
-			if (layoutProcessor.openOnImage) {
-				$('#'+element.parent().parent().parent().parent().parent().attr('id')).spotifyAlbumThing('handleClick', element);
-			} else {
-				$('#'+element.parent().parent().parent().parent().attr('id')).spotifyAlbumThing('handleClick', element);
-			}
+			debug.log('SPOTIFYARTISTTHING', 'Is a pass-up-to-album thing');
+			$('#'+element.parent().parent().parent().parent().attr('id')).spotifyAlbumThing('handleClick', element);
 		}
 	},
 

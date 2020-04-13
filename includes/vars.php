@@ -9,7 +9,7 @@ define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 6);
 define('ROMPR_IMAGE_VERSION', 4);
 define('ROMPR_SCHEMA_VERSION', 66);
-define('ROMPR_VERSION', '1.41');
+define('ROMPR_VERSION', '1.42');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_UNKNOWN_STREAM', "Unknown Internet Stream");
@@ -488,7 +488,7 @@ if (!array_key_exists('currenthost', $_COOKIE)) {
 $skin = null;
 if(array_key_exists('skin', $_REQUEST)) {
 	$skin = $_REQUEST['skin'];
-	logger::mark("INIT", "Request asked for skin: ".$skin);
+	logger::core("INIT", "Request asked for skin: ".$skin);
 } else if (array_key_exists('skin', $_COOKIE)) {
 	$skin = $_COOKIE['skin'];
 	logger::core("INIT", "Using skin as set by Cookie: ".$skin);
