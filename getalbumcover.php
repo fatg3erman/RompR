@@ -55,7 +55,7 @@ $result['delaytime'] = $delaytime;
 header('Content-Type: application/json; charset=utf-8');
 print json_encode($result);
 logger::mark("GETALBUMCOVER", "--------------------------------------------");
-ob_flush();
+// ob_flush();
 
 function tryLocal($albumimage) {
 	global $ignore_local;

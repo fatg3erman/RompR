@@ -488,7 +488,7 @@ if (!array_key_exists('currenthost', $_COOKIE)) {
 $skin = null;
 if(array_key_exists('skin', $_REQUEST)) {
 	$skin = $_REQUEST['skin'];
-	logger::mark("INIT", "Request asked for skin: ".$skin);
+	logger::core("INIT", "Request asked for skin: ".$skin);
 } else if (array_key_exists('skin', $_COOKIE)) {
 	$skin = $_COOKIE['skin'];
 	logger::core("INIT", "Using skin as set by Cookie: ".$skin);
