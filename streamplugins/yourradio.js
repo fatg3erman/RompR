@@ -73,12 +73,12 @@ var yourRadioPlugin = {
 
 	loadSuppliedStation: function() {
 		if ($("#yourradioinput").val() != '') {
-			player.controller.addTracks({
+			player.controller.addTracks([{
 				type: "stream",
 				url: $("#yourradioinput").val(),
 				image: null,
 				station: null
-			}, playlist.playFromEnd(), null, false);
+			}], playlist.playFromEnd(), null, false);
 		}
 	},
 
