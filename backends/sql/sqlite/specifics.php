@@ -2,6 +2,7 @@
 
 define('SQL_RANDOM_SORT', 'RANDOM()');
 define('SQL_TAG_CONCAT', "GROUP_CONCAT(t.Name,', ') ");
+define('STUPID_CONCAT_THING', "SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR ? LIKE '%' || Localfilename");
 
 function connect_to_database($sp = true) {
 	global $mysqlc, $prefs;

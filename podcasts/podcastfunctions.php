@@ -980,7 +980,8 @@ function removePodcast($podid) {
 
 function markAsListened($url) {
 	$podid = false;
-	$pods = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, "SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR Localfilename = ?", $url, basename($url));
+	logger::log('PODCASTS', 'Doing the mark as listened thing with',$url);
+	$pods = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, STUPID_CONCAT_THING, $url, $url);
 	foreach ($pods as $pod) {
 		$podid = $pod->PODindex;
 		logger::info("PODCASTS", "Marking track",$pod->PODTrackindex,"from podcast",$podid,"as listened");
