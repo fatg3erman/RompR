@@ -183,6 +183,7 @@ function check_sql_tables() {
 		"Description TEXT, ".
 		"LastPubDate INT UNSIGNED DEFAULT NULL, ".
 		"Category VARCHAR(255) NOT NULL, ".
+		"WriteTags TINYINT(1) DEFAULT 0, ".
 		"PRIMARY KEY (PODindex)) ENGINE=InnoDB", true))
 	{
 		logger::log("MYSQL", "  Podcasttable OK");
@@ -894,6 +895,12 @@ function check_sql_tables() {
 				logger::log("SQL", "Updating FROM Schema version 65 TO Schema version 66");
 				update_track_dates();
 				generic_sql_query("UPDATE Statstable SET Value = 66 WHERE Item = 'SchemaVer'", true);
+				break;
+
+			case 66:
+				logger::log("SQL", "Updating FROM Schema version 66 TO Schema version 67");
+				generic_sql_query("ALTER TABLE Podcasttable ADD WriteTags TINYINT(1) DEFAULT 0", true);
+				generic_sql_query("UPDATE Statstable SET Value = 67 WHERE Item = 'SchemaVer'", true);
 				break;
 
 		}

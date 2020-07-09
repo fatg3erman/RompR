@@ -1,5 +1,7 @@
 <?php
 
+require_once ('getid3/getid3.php');
+
 function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = true) {
 	global $prefs;
 	$url = preg_replace('#^itpc://#', 'http://', $url);
@@ -783,6 +785,14 @@ function doPodcast($y, $do_searchbox) {
 		print '><label for="podhd" name="HideDescriptions" onclick="podcasts.changeOption(event)">'.
 			get_int_text("podcast_hidedescriptions").'</label></div>';
 
+		print '<div class="containerbox fixed bumpad styledinputs">';
+		print '<input type="checkbox" class="topcheck" id="podwt"';
+		if ($y->WriteTags == 1) {
+			print ' checked';
+		}
+		print '><label for="podwt" name="WriteTags" onclick="podcasts.changeOption(event)">'.
+			get_int_text("podcast_writetags").'</label></div>';
+
 		print '</div>';
 
 		print '</div>';
@@ -1101,11 +1111,23 @@ function downloadTrack($key, $channel) {
 	logger::mark("PODCASTS", "Downloading track",$key,"from podcast",$channel);
 	$url = null;
 	$filesize = 0;
-	$result = generic_sql_query("SELECT Link, FileSize FROM PodcastTracktable WHERE PODTrackindex = " . intval($key), false, PDO::FETCH_OBJ);
+	$result = generic_sql_query("
+		SELECT Link,
+		FileSize,
+		WriteTags,
+		Podcasttable.Title AS album,
+		Podcasttable.Artist AS artist,
+		PodcastTracktable.Title AS title
+		FROM PodcastTracktable
+		JOIN Podcasttable USING (PODindex)
+		WHERE PODTrackindex = " . intval($key), false, PDO::FETCH_OBJ);
 	foreach ($result as $obj) {
 		$url = $obj->Link;
 		$filesize = $obj->FileSize;
 	}
+	logger::log("PODCASTS", "  Artist is",$obj->artist);
+	logger::log("PODCASTS", "   Album is",$obj->album);
+	logger::log("PODCASTS", "   Title is",$obj->title);
 	if ($url === null) {
 		logger::warn("PODCASTS", "  Failed to find URL for podcast",$channel);
 		header('HTTP/1.0 404 Not Found');
@@ -1131,8 +1153,40 @@ function downloadTrack($key, $channel) {
 		}
 		logger::trace("PODCASTS", "Downloading To prefs/podcasts/".$channel.'/'.$key.'/'.$filename);
 		$d = new url_downloader(array('url' => $url));
-		if ($d->get_data_to_file('prefs/podcasts/'.$channel.'/'.$key.'/'.$filename, true)) {
-			sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?", 1, '/prefs/podcasts/'.$channel.'/'.$key.'/'.$filename, $key);
+		$download_file = 'prefs/podcasts/'.$channel.'/'.$key.'/'.$filename;
+		if ($d->get_data_to_file($download_file, true)) {
+			if ($obj->WriteTags != 0) {
+				logger::log('PODCASTS', 'Writing Tags to',$download_file);
+				$getID3 = new getID3;
+				$getID3->setOption(array('encoding'=>'UTF-8'));
+
+				getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'write.php', __FILE__, true);
+
+				$tagwriter = new getid3_writetags;
+				$tagwriter->filename       = $download_file;
+				$tagwriter->tagformats     = array('id3v2.4');
+				$tagwriter->overwrite_tags = true;
+				$tagwriter->tag_encoding   = 'UTF-8';
+				$tagwriter->remove_other_tags = false;
+				$tags = array(
+					'artist' => array($obj->artist),
+					'albumartist' => array($obj->artist),
+					'album' => array($obj->album),
+					'title' => array($obj->title)
+				);
+				$tagwriter->tag_data = $tags;
+				if ($tagwriter->WriteTags()) {
+					logger::log('PODCASTS', 'Successfully wrote tags');
+					if (!empty($tagwriter->warnings)) {
+						logger::log('There were some warnings'.implode(' ', $tagwriter->warnings));
+					}
+				} else {
+					logger::error('PODCASTS', 'Failed to write tags!', implode(' ', $tagwriter->errors));
+				}
+			} else {
+				logger::log('PODCASTS', 'Not writing tags');
+			}
+			sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?", 1, $download_file, $key);
 		} else {
 			logger::error('PODCASTS', 'Failed to download',$key, $channel, $url);
 			header('HTTP/1.0 404 Not Found');
