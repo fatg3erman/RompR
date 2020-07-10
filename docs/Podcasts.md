@@ -69,7 +69,7 @@ The search box below the controls will search that Podcast's episodes for the te
 
 Each Podcast has several configuration options which are stored alongside the podcast.
 
-![](images/podcasts2.png)
+![](images/podcasts6.png)
 
 * **Display:** You can choose to display Everything, only New Episodes, only New and Unlistened episodes, only New and Downloaded Episodes, or only Downloaded episodes.
 * **Refresh:** Automatically refresh the podcast at the specified interval. This will be set automatically if the podcast feed provides that information.
@@ -78,6 +78,7 @@ Each Podcast has several configuration options which are stored alongside the po
 * **Sort Order:** Either Newest first or Oldest first
 * **Keep all downloaded episodes:** Downloaded episodes will not count towards 'Number To Keep' and will not be removed if they become older than 'Keep Episodes For'.
 * **Hide Descriptions:** By default, don't show the description for each episode. You can still expand the descriptions by clicking the triangle.
+* **Write ID3 Tags to Downloaded Files:** A lot of us like to download podcasts to listen to offline. I particularly like to copy them to a USB stick to play on my car stereo when I'm driving, as I frequently do, through areas of remote countryside with no radio or phone reception. A few podcasts (I'm looking at you, Welcome To Night Vale, though you're not the only one but it's ironic how I can't listen to you when I'm in remote areas) do not ID3 tag their files, which confuses the living doodoo out of my car stereo and makes everything play in the wrong order. Selecting this option will tag downloaded files with artist, albumartist, album, and title tags, as well as filling in the track number if it doesn't exist with something which will keep the tracks in order.
 
 You can set default values for some of these options, to be set on newly subscribed podcasts, from the Configuration Panel. Note that some podcasts announce their own refresh period. In this case that value will override your default.
 

@@ -1174,6 +1174,10 @@ function downloadTrack($key, $channel) {
 					'album' => array($obj->album),
 					'title' => array($obj->title)
 				);
+				$tracknumber = format_tracknum($obj->title);
+				if ($tracknumber > 0) {
+					$tags['tracknumber'] = array($tracknumber);
+				}
 				$tagwriter->tag_data = $tags;
 				if ($tagwriter->WriteTags()) {
 					logger::log('PODCASTS', 'Successfully wrote tags');
@@ -1186,7 +1190,7 @@ function downloadTrack($key, $channel) {
 			} else {
 				logger::log('PODCASTS', 'Not writing tags');
 			}
-			sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?", 1, $download_file, $key);
+			sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?", 1, '/'.$download_file, $key);
 		} else {
 			logger::error('PODCASTS', 'Failed to download',$key, $channel, $url);
 			header('HTTP/1.0 404 Not Found');
