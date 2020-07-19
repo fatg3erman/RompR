@@ -385,6 +385,11 @@ function playerController() {
 		self.do_command_list([["seek", player.status.song, parseInt(seekto.toString())]]);
 	}
 
+	this.seekcur = function(seekto) {
+		debug.log("PLAYER","Seeking Current To",seekto);
+		self.do_command_list([["seekcur", seekto.toString()]]);
+	}
+
 	this.playId = function(id) {
 		playlist.checkPodcastProgress();
 		self.do_command_list([["playid",id]]);
