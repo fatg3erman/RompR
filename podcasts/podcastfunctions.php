@@ -1115,6 +1115,7 @@ function downloadTrack($key, $channel) {
 		SELECT Link,
 		FileSize,
 		WriteTags,
+		Duration.
 		Podcasttable.Title AS album,
 		Podcasttable.Artist AS artist,
 		PodcastTracktable.Title AS title
@@ -1190,7 +1191,17 @@ function downloadTrack($key, $channel) {
 			} else {
 				logger::log('PODCASTS', 'Not writing tags');
 			}
-			sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Downloaded=?, Localfilename=? WHERE PODTrackindex=?", 1, '/'.$download_file, $key);
+			if ($obj->Duration == 0 || $obj->Duration === null) {
+				logger::log('PODCASTS', 'Trying to work out duration');
+				$getID3 = new getID3;
+				$file = $getID3->analyze($download_file);
+				$p = $file['playtime_seconds'];
+				if ($p) {
+					$obj->Duration = $p;
+					logger::log('PODCASTS', 'Duration is',$p,'seconds');
+				}
+			}
+			sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET Duration = ?, Downloaded=?, Localfilename=? WHERE PODTrackindex=?", $obj->Duration, 1, '/'.$download_file, $key);
 		} else {
 			logger::error('PODCASTS', 'Failed to download',$key, $channel, $url);
 			header('HTTP/1.0 404 Not Found');
