@@ -1115,7 +1115,7 @@ function downloadTrack($key, $channel) {
 		SELECT Link,
 		FileSize,
 		WriteTags,
-		Duration.
+		Duration,
 		Podcasttable.Title AS album,
 		Podcasttable.Artist AS artist,
 		PodcastTracktable.Title AS title
