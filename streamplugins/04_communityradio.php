@@ -214,7 +214,7 @@ class commradioplugin {
 
 	private function browse() {
 		directoryControlHeader('commradio_'.md5($this->url), $this->title);
-		$bits = getCacheData('http://www.radio-browser.info/webservice/'.$this->url, 'commradio', true, true);
+		$bits = getCacheData('http://de1.api.radio-browser.info/'.$this->url, 'commradio', true, true);
 		$bits = json_decode($bits, true);
 		if ($this->url == 'json/countries') {
 			$map = 'bycountryexact/';
@@ -227,7 +227,7 @@ class commradioplugin {
 	}
 
 	private function doSearch() {
-		$url = 'http://www.radio-browser.info/webservice/json/stations/search?';
+		$url = 'http://de1.api.radio-browser.info/json/stations/search?';
 		$ourterms = array();
 		foreach ($this->searchterms as $t) {
 			if (array_key_exists($t, $_REQUEST) && $_REQUEST[$t] != '') {
@@ -256,7 +256,7 @@ class commradioplugin {
 	}
 
 	private function doRequest() {
-		$url = $this->addBits('http://www.radio-browser.info/webservice/json/stations/'.$this->url.'?');
+		$url = $this->addBits('http://de1.api.radio-browser.info/json/stations/'.$this->url.'?');
 		$stations = getCacheData($url, 'commradio', true, true);
 		$stations = json_decode($stations, true);
 		$title = ($this->title) ? rawurldecode($this->title) : get_int_text('label_communityradio');
@@ -409,11 +409,12 @@ class commradioplugin {
 		}
 		// No real idea whay one works for one player but not the other. MPD won't load the M3U files,
 		// Mopidy won't load the PLS files. All I do is send a load/add and a URL.....
-		if ($prefs['player_backend'] == 'mpd') {
-			$result['playurl'] = 'http://www.radio-browser.info/webservice/v2/pls/url/'.$station['id'];
-		} else {
-			$result['playurl'] = 'http://www.radio-browser.info/webservice/v2/m3u/url/'.$station['id'];
-		}
+		// if ($prefs['player_backend'] == 'mpd') {
+		//	$result['playurl'] = 'http://www.radio-browser.info/webservice/v2/pls/url/'.$station['id'];
+		// } else {
+		//	$result['playurl'] = 'http://www.radio-browser.info/webservice/v2/m3u/url/'.$station['id'];
+		//}
+		$result['playurl'] = $station['url'];
 		return $result;
 	}
 
