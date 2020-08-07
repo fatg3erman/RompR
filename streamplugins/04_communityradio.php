@@ -26,6 +26,9 @@ class commradioplugin {
 	}
 
 	public function doWhatYoureTold() {
+
+		$this->server = $this->get_server();
+
 		switch ($this->populate) {
 			case 0:
 				$this->doHeader();
@@ -214,7 +217,7 @@ class commradioplugin {
 
 	private function browse() {
 		directoryControlHeader('commradio_'.md5($this->url), $this->title);
-		$bits = getCacheData('http://de1.api.radio-browser.info/'.$this->url, 'commradio', true, true);
+		$bits = getCacheData('https://'.$this->server.'/'.$this->url, 'commradio', true, true);
 		$bits = json_decode($bits, true);
 		if ($this->url == 'json/countries') {
 			$map = 'bycountryexact/';
@@ -227,7 +230,7 @@ class commradioplugin {
 	}
 
 	private function doSearch() {
-		$url = 'http://de1.api.radio-browser.info/json/stations/search?';
+		$url = 'https://'.$this->server.'/json/stations/search?';
 		$ourterms = array();
 		foreach ($this->searchterms as $t) {
 			if (array_key_exists($t, $_REQUEST) && $_REQUEST[$t] != '') {
@@ -256,7 +259,8 @@ class commradioplugin {
 	}
 
 	private function doRequest() {
-		$url = $this->addBits('http://de1.api.radio-browser.info/json/stations/'.$this->url.'?');
+		$url = $this->addBits('https://'.$this->server.'/json/stations/'.$this->url.'?');
+		logger::log('COMMRADIO','Getting',$url);
 		$stations = getCacheData($url, 'commradio', true, true);
 		$stations = json_decode($stations, true);
 		$title = ($this->title) ? rawurldecode($this->title) : get_int_text('label_communityradio');
@@ -317,10 +321,10 @@ class commradioplugin {
 	private function makeSelector($json, $root) {
 		if (is_array($json)) {
 			foreach ($json as $thing) {
-				$val = strtolower($thing['value']);
+				$val = strtolower($thing['name']);
 				$opts = array(
 					'URL' => $root.rawurlencode($val),
-					'text' => ucfirst($thing['value']).' ('.$thing['stationcount'].' stations)'
+					'text' => ucfirst($thing['name']).' ('.$thing['stationcount'].' stations)'
 				);
 				printRadioDirectory($opts, true, 'commradio');
 			}
@@ -407,15 +411,22 @@ class commradioplugin {
 		if ($result['bitrate'] == 0) {
 			$result['bitrate'] = 'Unknown ';
 		}
-		// No real idea whay one works for one player but not the other. MPD won't load the M3U files,
-		// Mopidy won't load the PLS files. All I do is send a load/add and a URL.....
-		// if ($prefs['player_backend'] == 'mpd') {
-		//	$result['playurl'] = 'http://www.radio-browser.info/webservice/v2/pls/url/'.$station['id'];
-		// } else {
-		//	$result['playurl'] = 'http://www.radio-browser.info/webservice/v2/m3u/url/'.$station['id'];
-		//}
 		$result['playurl'] = $station['url'];
 		return $result;
+	}
+
+	private function get_server() {
+		$servers = dns_get_record('all.api.radio-browser.info');
+		shuffle($servers);
+		foreach ($servers as $server) {
+			if (array_key_exists('ip', $server)) {
+				$name = gethostbyaddr($server['ip']);
+				logger::log('COMMRADIO', 'Using server',$name);
+				return $name;
+			}
+		}
+		logger::warn('COMMRADIO', 'Using fallback server!');
+		return 'de1.api.radio-browser.info';
 	}
 
 }
