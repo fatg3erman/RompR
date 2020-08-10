@@ -216,6 +216,7 @@ function check_sql_tables() {
 		"Subscribed TINYINT(1) NOT NULL DEFAULT 1, ".
 		"Description TEXT, ".
 		"LastPubDate INTEGER DEFAULT NULL, ".
+		"WriteTags TINYINT(1) DEFAULT 0, ".
 		"Category VARCHAR(255))", true))
 	{
 		logger::log("SQLITE", "  Podcasttable OK");
