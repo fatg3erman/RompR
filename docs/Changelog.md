@@ -3,6 +3,12 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.48
+* Seem to have missed a few
+* Player selection via the URL, based on initial work by Manvendra Bhangui
+* Remove some outdated terminology. You will need to restart romonitor if you are using it, but first you must refresh a browser window once.
+
+
 ## Version 1.42
 * Added a quick-and-dirty plugin to import Ratings from Cantata into RompR. Development of Cantata has stopped, so there's very little point in putting any more work into interoperability with it.
 * A few minor bugfixes.
