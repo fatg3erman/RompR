@@ -1,36 +1,10 @@
 # Installing on macOS with nginx webserver
 
-This is an alternative method to install RompЯ on macOS which uses the nginx webserver instead of the built in Apache server. This method installs everything from Homebrew, which should future-proof it better against Apple removing stuff from macOS in the future.
+This is an alternative method to install RompЯ on macOS which uses the nginx webserver instead of the built in Apache server. This method installs everything from Homebrew, which should future-proof it better against Apple removing stuff from macOS in the future. This guide assumed you've already installed a player and copied the RompЯ files to /Users/YOU/Sites/rompr
 
 ## Install Homebrew
 
 [Homebrew](https://brew.sh/)
-
-## Installing a player
-
-You'll need either MPD or Mopidy. However as at time of writing Mopidy installation is not working on macOS at all.
-
-### Install Mopidy...
-
-[Mopidy](https://docs.mopidy.com/en/latest/installation/macos/)
-
-### ... or install MPD
-
-    brew install mpd
-
-## Install Rompr
-
-First open Terminal. If you haven't used Terminal before, don't be scared. It's under 'Other' or 'Utilities'. Type commands exactly as they appear here, and enter your Mac password whenever you are asked.
-
-    cd ~
-    mkdir Sites
-
-Now if you've downloaded the ZIP file from here, you can copy it into the Sites folder you just created above and unzip it. Probaby you just need to double-click it to do that.
-Now go back to that terminal window and we'll create a couple of directories.
-
-    cd Sites/rompr
-    mkdir prefs
-    mkdir albumart
 
 ## Install nginx webserver
 
@@ -40,17 +14,13 @@ Now go back to that terminal window and we'll create a couple of directories.
 
 ### nginx configuration
 
-Now you need to edit a configuration file to tell nginx which user it should run as. It needs to be the same as the user you log in as. if you're not sure what that is, type
-
-    whoami
-
-and make a note of the response.
+Now you need to edit a configuration file to tell nginx which user it should run as. It needs to be the same as the user you log in as, which is the same YOU in the path where you installed rompr
 
     nano /usr/local/etc/nginx/nginx.conf
 
-At the top of that file, you need to change the setting for user. This gives nginx permission to read and write to your rompr installation. So here, where I've put "username" you should put your user login name, as told to you by 'whoami' above.
+At the top of that file, you need to change the setting for user. This gives nginx permission to read and write to your rompr installation. So here, where I've put "YOU" you should put your user login name.
 
-    user username staff;
+    user YOU staff;
 
 Now hit ctrl-X to exit. Answer 'Y' and hit enter when it asks you if you want to save the file.
 
@@ -67,7 +37,7 @@ This will create an empty file, into which you should paste the following (cmd-V
         listen 80 default_server;
         listen [::]:80 default_server;
 
-        root /PATH/TO/ROMPR;
+        root /Users/YOU/Sites/rompr
         index index.php index.html index.htm;
 
         server_name www.myrompr.net;
@@ -97,9 +67,7 @@ This will create an empty file, into which you should paste the following (cmd-V
         }
     }
 
-You must edit where I've put /PATH/TO/ROMPR to be the directory where you rompr files are. If you've followed these instructions exactly, this will be (again, replace"username" with the username that was the response to the 'whoami' command)
-
-    /Users/username/Sites/rompr
+You must edit where I've put YOU, as before.
 
 Again hit ctrl-X and the answer Y to save that file.
 
@@ -117,9 +85,9 @@ The exact location of the config files will depend on the version of PHP that Ho
 
 Ctrl-W is 'find' in nano.
 
-First find and edit the user and group entries - as before "username" should be your username
+First find and edit the user and group entries - as before "YOU" should be your username
 
-    user = username
+    user = YOU
     group = staff
 
 Now find and modify the following:

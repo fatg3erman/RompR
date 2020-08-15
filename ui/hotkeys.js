@@ -122,7 +122,7 @@ var shortcuts = function() {
 											prefs.save({hidebrowser: $("#hidebrowser").is(':checked')}).then(hideBrowser);
 										},
 										button_updatecollection: function() {
-												if (!prefs.mopidy_slave) {
+												if (!prefs.mopidy_remote) {
 														collectionHelper.checkCollection(true, false);
 												}
 										},

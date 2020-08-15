@@ -14,7 +14,7 @@ Note that *unless you have a really good reason to use MySQL, SQLite is always b
 
 You must create the RompЯ database before you start. You will need your mysql root password.
 
-*If you are using MySQL older than version 8*
+*If you are using MySQL version lower than version 8*
 
     mysql -uroot -p
     CREATE DATABASE romprdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -28,8 +28,8 @@ You must create the RompЯ database before you start. You will need your mysql r
     mysql -uroot -p
     CREATE DATABASE romprdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
     USE romprdb;
-    CREATE USER 'rompr'@'%' IDENTIFIED WITH mysql_native_password BY 'romprdbpass';    
-    GRANT ALL ON romprdb.* TO rompr;
+    CREATE USER 'rompr' IDENTIFIED WITH mysql_native_password BY 'romprdbpass';    
+    GRANT ALL ON romprdb.* TO 'rompr'@'%';
     FLUSH PRIVILEGES;
     quit;
 
@@ -43,15 +43,11 @@ Those commands set up the RompЯ database using a default username and password.
 
 In the above example, the username is 'rompr' and the password is 'romprdbpass'. I suggest you change these to something else as thse are obviously published on the internet.
 
-If your mysql server runs on a different machine than your webserver, you need to use
-
-    GRANT ALL ON romprdb.* TO rompr@ip.address.of.webserver IDENTIFIED BY 'romprdbpass';
-
 ## Tweak MySQL
 
 We also want to set some configuration values for mysql to increase performance. Create another file somewhere, called rompr-tweaks.cnf (note it MUST end in .cnf or it will be ignored). Put the following in it
 
-*For MySQL older than version 8*
+*For MySQL versions lower than 8*
 
     [mysqld]
     query_cache_limit       = 16M
@@ -62,7 +58,6 @@ We also want to set some configuration values for mysql to increase performance.
 *For MySQL Version 8 or newer*
 
     [mysqld]
-    # Only allow connections from localhost
     default_authentication_plugin = mysql_native_password
     innodb_buffer_pool_size = 256M
     innodb_flush_log_at_trx_commit = 0
@@ -79,7 +74,7 @@ Note that the default MySQL settings I've encountered on several distributions m
 
 ## Install PHP MySQL Library
 
-    sudo apt-get install php7.0-mysql
+    sudo apt-get install php-mysql
 
 ## Configure RompЯ
 

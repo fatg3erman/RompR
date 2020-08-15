@@ -2,45 +2,16 @@
 
 Getting this to work on macOS gets harder by the release, but it's not actually that much of a problem. This guide should work on macOS High Sierra, and uses the built-in versions of Apache and PHP that Apple supply. Apple are slowly removing all this stuff from macOS so for future-proofing I'd reccomend doing everything from Homebrew instead, as described [here](/RompR/macOS-With-Nginx)
 
-## Install Homebrew
 
-[Homebrew](https://brew.sh/)
-
-## Installing a player
-
-You'll need either MPD or Mopidy.
-
-### Install Mopidy...
-
-[Mopidy](https://docs.mopidy.com/en/latest/installation/macos/)
-
-### ... or install MPD
-
-    brew install mpd
-
-## 2. Installing Rompr
-
-    cd ~
-    mkdir Sites
-
-Now if you've downloaded the ZIP file from here, you can copy it into the Sites folder you just created above and unzip it. Probaby you just need to double-click it to do that.
-Now go back to that terminal window and we'll create some directories and set some permissions.
-
-    cd Sites/rompr
-    mkdir prefs
-    mkdir albumart
-    sudo chown _www prefs
-    sudo chown _www albumart
-
-And install imagemagick, which is a helper program rompr requires for dealing with images
+## 1. Install imagemagick
 
     brew install imagemagick
 
-## 3. Configure Apache Web Server
+## 2. Configure Apache Web Server
 
 This can get a little arcane but it's not all that complicated. There are, of course, a thousand ways to acheive the same thing, and googling will inevitably find differences.
 
-### 3a. httpd.conf
+### 2a. httpd.conf
 
     sudo nano /private/etc/apache2/httpd.conf
 
@@ -57,14 +28,14 @@ When you've done that, hit Ctrl-X and then answer 'Y' (and hit Enter) to save th
 That's the hardest bit, but we're not done yet.
 There's another file we need to edit with nano
 
-### 3b. httpd_dirs.conf
+### 2b. httpd_dirs.conf
 
     sudo nano /private/etc/apache2/other/httpd_dirs.conf
 
-This will open nano again. It may bring up an empty file, or it may bring up a file with stuf in it. Just paste the following on the end (cmd-V to paste). Edit YOURNAME so it matches your home directory
+This will open nano again. It may bring up an empty file, or it may bring up a file with stuff in it. Just paste the following on the end (cmd-V to paste). Edit YOU so it matches your home directory as described in the main installtion guide
 
     <VirtualHost \*:80>
-	    DocumentRoot /Users/YOURNAME/Sites/rompr
+	    DocumentRoot /Users/YOU/Sites/rompr
 	    ServerName www.myrompr.net
         ErrorDocument 404 /404.php
         Timeout 1800
@@ -82,7 +53,7 @@ This will open nano again. It may bring up an empty file, or it may bring up a f
 			    php_flag track_vars On
 			    php_admin_flag allow_url_fopen On
 			    php_value include_path .
-			    php_admin_value upload_tmp_dir /Users/YOURNAME/Sites/rompr/prefs/temp
+			    php_admin_value upload_tmp_dir /Users/YOU/Sites/rompr/prefs/temp
 			    php_admin_value open_basedir none
     		    php_admin_value memory_limit 128M
                 php_admin_value post_max_size 256M
@@ -93,17 +64,17 @@ This will open nano again. It may bring up an empty file, or it may bring up a f
 
 	    </Directory>
 
-	    <Directory /Users/YOURNAME/Sites/rompr/albumart/small>
+	    <Directory /Users/YOU/Sites/rompr/albumart/small>
 	        Header Set Cache-Control "max-age=0, no-store"
 	        Header Set Cache-Control "no-cache, must-revalidate"
 	    </Directory>
 
-        <Directory /Users/YOURNAME/Sites/rompr/albumart/medium>
+        <Directory /Users/YOU/Sites/rompr/albumart/medium>
 	        Header Set Cache-Control "max-age=0, no-store"
 	        Header Set Cache-Control "no-cache, must-revalidate"
 	    </Directory>
 
-	    <Directory /Users/YOURNAME/Sites/rompr/albumart/asdownloaded>
+	    <Directory /Users/YOU/Sites/rompr/albumart/asdownloaded>
 	        Header Set Cache-Control "max-age=0, no-store"
 	        Header Set Cache-Control "no-cache, must-revalidate"
 	    </Directory>
@@ -112,7 +83,7 @@ This will open nano again. It may bring up an empty file, or it may bring up a f
 
 Once again, Ctrl-X and answer Y to save the file.
 
-### 3c. php7.conf
+### 2c. php7.conf
 
 There's one more
 
@@ -129,7 +100,7 @@ and this is what you need in that file
         </IfModule>
     </IfModule>
 
-### 3d. Testing The Configuration
+### 3. Testing The Configuration
 
     sudo apachectl configtest
 

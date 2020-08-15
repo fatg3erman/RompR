@@ -42,7 +42,7 @@ if (array_key_exists('playlist', $_REQUEST)) {
 	}
 	if (!$player->playlist_error &&
 		($prefs['player_backend'] == $prefs['collection_player']) &&
-		($prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave == false)
+		($prefs['multihosts']->{$prefs['currenthost']}->mopidy_remote == false)
 	) {
 		sort($used_images);
 		$imgs = glob('prefs/plimages/*');

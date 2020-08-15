@@ -938,7 +938,7 @@ function collectionButtons() {
 	</div>
 	</div>';
 
-	if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave == false) {
+	if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_remote == false) {
 		if ($prefs['collection_player'] == $prefs['player_backend'] || $prefs['collection_player'] == null) {
 			print '<div class="textcentre">
 			<button name="donkeykong">'.get_int_text('config_updatenow').'</button>
