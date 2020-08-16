@@ -71,7 +71,7 @@ This is where you have another choice to make. There are a lot of web servers ou
 
 [RompЯ With Apache on Linux](/RompR/Installation-on-Linux-Alternative-Method)
 
-[RompЯ With Nginx on macOS](/RompR/macOS-With-Ngnix)
+[RompЯ With Nginx on macOS](/RompR/macOS-With-Nginx)
 
 [RompЯ With Apache on macOS](/RompR/Installation-on-macOS)
 
