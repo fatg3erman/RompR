@@ -12,7 +12,7 @@ If you want to have multiroom audio with all rooms playing the same music, in sy
 
 You can add new players from the configuration menu. This opens a dialog box.
 
-![](images/players.png)
+![](images/playerdefs.png)
 
 Click the + icon to add a new player.
 
@@ -36,6 +36,12 @@ When switching players you will be given the option to transfer your Play Queue 
 
 ![](images/players4.png)
 
+You can also choose a player by adding a 'currenthost' parameter to the URL, eg
+
+	http://my.rompr.server/rompr?currenthost=OneOfMyPlayers
+
+this permits you to store a bookmark for each player you use, or add an icon for each player to the home screen of your phone, for instance.
+
 ## Limitations
 
 * Do NOT try to control multiple players from multiple tabs in the same browser. I cannot stop this or detect it and it WILL result in data corruption.
@@ -47,9 +53,7 @@ If you're using local music, all players must have the same music files stored i
 
 ### With MPD
 
-MPD's local music database must be kept in sync across all your players. With mpd you can try to set the auto_update flag in mpd.conf, although I haven't been able to test whether this works on network shares.
-
-If this doesn't work for you, you will have to use 'Update Music Collection Now' on all your Players if you add or remove local files.
+MPD has a 'satellite' players feature that you can use for this purpose. See the MPD documentation.
 
 ### With Mopidy
 
@@ -57,17 +61,17 @@ With Mopidy, one solution to this is to use mopidy-local-sqlite and put the data
 
 Another is to use mopidy-beets instead, with one centralised Beets server.
 
-However, the best solution is to use 'Slave' Mode on all but one of your Players. This relies on you having Mopidy's 'file' backend installed, which is enabled by default in all recent versions of Mopidy. The file backend does not require Mopidy's local music database, so it can be used to add local music.
+However, the best solution is to use 'Remote' Mode on all but one of your Players. This relies on you having Mopidy's 'file' backend installed, which is enabled by default in all recent versions of Mopidy. The file backend does not require Mopidy's local music database, so it can be used to add local music.
 
-#### Using Slave Mode
+#### Using Remote Mode
 
-Decide on one Player to be your 'Master' Player. This will be the one on which you Update your Music Collection. The local files database can be stored locally on this Player, the others do not need to have access to it. You will not be allowed to update the Music Collection when using any of the Slave Players.
+Decide on one Player to be your main Player. This will be the one on which you Update your Music Collection. The local files database can be stored locally on this Player, the others do not need to have access to it. You will not be allowed to update the Music Collection when using any of the Remote Players.
 
-Then enable the 'SLAVE' option on all your other Players, as in the screenshot above.
+Then enable the 'REMOTE' option on all your other Players, as in the screenshot above.
 
 You must also set the path to your local music files as described for [Album Art](/RompR/Album-Art-Manager).
 
-Now when you add a local track to one of your Slave Players, Rompr will automatically use the file backend instead of the local backend. All of Rompr's other functions - including Playcounts, Tagging, and Rating - will continue to work as normal.
+Now when you add a local track to one of your Remote Players, Rompr will automatically use the file backend instead of the local backend. All of Rompr's other functions - including Playcounts, Tagging, and Rating - will continue to work as normal.
 
 ## Suggested Setup
 
@@ -79,7 +83,7 @@ All that was rather complicated, so here's an example setup.
 
 * Another computer in room 2, running Mopidy
     * The shared /media/USBDrive from above is mounted on /media/USBDrive
-    * This Player is configured as a Slave
+    * This Player is configured as a Remote
 
 * All Mopidys must have the same backends installed and configured.
 

@@ -50,7 +50,7 @@ $player->close_mpd_connection();
 $target = $prefs['multihosts']->{$json['currenthost']};
 $prefs['player_backend'] = 'none';
 $target_player = new base_mpd_player(
-	$target->host, $target->port, $target->socket, $target->password, null, $target->mopidy_slave
+	$target->host, $target->port, $target->socket, $target->password, null, $target->mopidy_remote
 );
 // probe_player_type has now set $prefs['player_backend']
 if ($target_player->is_connected()) {

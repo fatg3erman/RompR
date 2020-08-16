@@ -8,8 +8,8 @@ if (!$dtz) {
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 6);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 67);
-define('ROMPR_VERSION', '1.47');
+define('ROMPR_SCHEMA_VERSION', 68);
+define('ROMPR_VERSION', '1.48');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_UNKNOWN_STREAM', "Unknown Internet Stream");
@@ -307,7 +307,7 @@ $prefs = array(
 			'port' => '6600',
 			'password' => '',
 			'socket' => '',
-			'mopidy_slave' => false,
+			'mopidy_remote' => false,
 			'radioparams' => (object) array (
 				"radiomode" => "",
 				"radioparam" => "",
@@ -729,6 +729,13 @@ function upgrade_host_defs($ver) {
 					"radioconsume" => 0
 				);
 				break;
+
+			case 68:
+				# Remove outdated, offensive terminology
+				$prefs['multihosts']->{$key}->mopidy_remote = $prefs['multihosts']->{$key}->mopidy_slave;
+				unset($prefs['multihosts']->{$key}->mopidy_slave);
+				break;
+
 
 		}
 	}

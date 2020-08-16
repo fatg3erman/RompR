@@ -44,6 +44,18 @@ if (file_exists('skins/'.$skin.'/skin.requires')) {
 }
 
 require_once ("includes/functions.php");
+
+if (isset($_GET['currenthost'])) {
+    setcookie('currenthost',$_GET['currenthost'],time()+365*24*60*60*10,'/');
+    setcookie('player_backend','',1,'/');
+    $prefs['currenthost'] = $_GET['currenthost'];
+    $prefs['player_backend'] = 'none';
+    savePrefs();
+	header("HTTP/1.1 307 Temporary Redirect");
+   	header("Location: ".get_base_url());
+    exit;
+}
+
 require_once ("international.php");
 set_version_string();
 require_once ("skins/".$skin."/ui_elements.php");
@@ -66,16 +78,16 @@ if (array_key_exists('currenthost', $_POST)) {
 	}
 	setcookie('currenthost',$prefs['currenthost'],time()+365*24*60*60*10,'/');
 
-	$mopidy_slave = false;
-	if (property_exists($prefs['multihosts']->{$prefs['currenthost']}, 'mopidy_slave')) {
-		$mopidy_slave = $prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave;
+	$mopidy_remote = false;
+	if (property_exists($prefs['multihosts']->{$prefs['currenthost']}, 'mopidy_remote')) {
+		$mopidy_remote = $prefs['multihosts']->{$prefs['currenthost']}->mopidy_remote;
 	}
 	$prefs['multihosts']->{$prefs['currenthost']} = (object) array(
 			'host' => $prefs['mpd_host'],
 			'port' => $prefs['mpd_port'],
 			'password' => $prefs['mpd_password'],
 			'socket' => $prefs['unix_socket'],
-			'mopidy_slave' => $mopidy_slave,
+			'mopidy_remote' => $mopidy_remote,
 			'radioparams' => (object) array (
 				"radiomode" => "",
 				"radioparam" => "",

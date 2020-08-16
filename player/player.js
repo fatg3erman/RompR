@@ -22,7 +22,7 @@ var player = function() {
 				'<td><input type="text" size="30" name="port" value=""/></td>'+
 				'<td><input type="text" size="30" name="password" value=""/></td>'+
 				'<td><input type="text" size="30" name="socket" value=""/></td>'+
-				'<td align="center"><div class="styledinputs"><input type="checkbox" name="mopidy_slave" id="mopidy_slave_'+numhosts+'" /><label for="mopidy_slave_'+numhosts+'">&nbsp;</label></div></td>'+
+				'<td align="center"><div class="styledinputs"><input type="checkbox" name="mopidy_remote" id="mopidy_remote_'+numhosts+'" /><label for="mopidy_remote_'+numhosts+'">&nbsp;</label></div></td>'+
 				'<td><i class="icon-cancel-circled smallicon clickicon clickremhost"></i></td>'+
 				'</tr>'
 			);
@@ -114,7 +114,7 @@ var player = function() {
 			var mywin = playerpu.create();
 			numhosts = 0;
 			mywin.append('<table align="center" cellpadding="2" id="playertable" width="96%"></table>');
-			$("#playertable").append('<tr><th>NAME</th><th>HOST</th><th>PORT</th><th>PASSWORD</th><th>UNIX SOCKET</th><th>SLAVE</th></tr>');
+			$("#playertable").append('<tr><th>NAME</th><th>HOST</th><th>PORT</th><th>PASSWORD</th><th>UNIX SOCKET</th><th>REMOTE</th></tr>');
 			for (var i in prefs.multihosts) {
 				$("#playertable").append('<tr class="hostdef" name="'+escape(i)+'">'+
 					'<td><input type="text" size="30" name="name" class="notspecial" value="'+i+'"/></td>'+
@@ -122,11 +122,11 @@ var player = function() {
 					'<td><input type="text" size="30" name="port" value="'+prefs.multihosts[i]['port']+'"/></td>'+
 					'<td><input type="text" size="30" name="password" value="'+prefs.multihosts[i]['password']+'"/></td>'+
 					'<td><input type="text" size="30" name="socket" value="'+prefs.multihosts[i]['socket']+'"/></td>'+
-					'<td align="center"><div class="styledinputs"><input type="checkbox" name="mopidy_slave" id="mopidy_slave_'+numhosts+'" /><label for="mopidy_slave_'+numhosts+'">&nbsp;</label></div></td>'+
+					'<td align="center"><div class="styledinputs"><input type="checkbox" name="mopidy_remote" id="mopidy_remote_'+numhosts+'" /><label for="mopidy_remote_'+numhosts+'">&nbsp;</label></div></td>'+
 					'<td><i class="icon-cancel-circled smallicon clickicon clickremhost"></i></td>'+
 					'</tr>'
 				);
-				$('#mopidy_slave_'+numhosts).prop('checked', prefs.multihosts[i]['mopidy_slave']);
+				$('#mopidy_remote_'+numhosts).prop('checked', prefs.multihosts[i]['mopidy_remote']);
 				numhosts++;
 			}
 			var buttons = $('<div>',{class: "pref clearfix"}).appendTo(mywin);

@@ -30,7 +30,7 @@ You will only see options for backends that are enabled in Mopidy. The complete 
 * **Spotify Playlists** ('spotify' backend must be enabled) *This will add all tracks from your Spotify Playlists into your collection. Your playlists will still be available as Playlists even if you don't select this option*
 * **Spotify 'Your Music'** ('spotify-web' backend must be enabled)
 * **Spotify 'Your Artists'** ('spotify-web' backend must be enabled)
-* **Google Music** ('gmusic' backend must be enabled)
+* **Google Music** [Deprecated] ('gmusic' backend must be enabled)
 * **SoundCloud 'Liked'** ('soundcloud' backend must be enabled)
 * **SoundCloud 'Sets'** ('soundcloud' backend must be enabled)
 * **VKontakte** ('vkontakte' backend must be enabled)
@@ -54,9 +54,9 @@ You need to make sure that your browser can access your Beets server for this to
 
 Otherwise beets will not allow RompЯ to talk to it. Your configuration for beets in mopidy must also contain this IP address as Beets will only communicate via the supplied IP address.
 
-## Google Play
+## Google Play [Deprecated]
 
-If you have a Google Play Music subscription, then [mopidy-gmusic](https://github.com/mopidy/mopidy-gmusic) will allow you to search all of Google Play's online music library in the same way the Mopidy-Spotify allows you to search Spotify. You'll also be able to make use of many of RompЯ's music discovery features. If you don't have a Google Play Music subscription then you'll only be able to play tracks you have uploaded to your Google Music library, which makes the Music Discovery features much less useful, but they'll still be presented to you as I've no way to know.
+If you have a Google Play Music subscription, then [mopidy-gmusic](https://github.com/mopidy/mopidy-gmusic) used to allow you to search all of Google Play's online music library in the same way the Mopidy-Spotify allows you to search Spotify. But Google have shut that down now, so tough nuggets. I mean, why weren't you using Spotify anyway?
 
 ## Scanning Local Files
 

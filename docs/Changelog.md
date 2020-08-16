@@ -3,6 +3,12 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.48
+* Seem to have missed a few
+* Player selection via the URL, based on initial work by Manvendra Bhangui
+* Remove some outdated terminology. You will need to restart romonitor if you are using it, but first you must refresh a browser window once.
+
+
 ## Version 1.42
 * Added a quick-and-dirty plugin to import Ratings from Cantata into RompR. Development of Cantata has stopped, so there's very little point in putting any more work into interoperability with it.
 * A few minor bugfixes.
@@ -100,8 +106,8 @@ Thought I'd bump the version number up a bit since this seems like quite a big r
 
 ## Version 1.24
 
-* Fix bug where 'Slave' status of a player was lost if that player was selected on the setup screen
-* Fix bug where Collection could be updated by a hotkey press even when the current player was a Slave
+* Fix bug where 'Remote' status of a player was lost if that player was selected on the setup screen
+* Fix bug where Collection could be updated by a hotkey press even when the current player was a Remote
 * Add Last.FM Playcount Importer and Scrobble Sync options so you can use Last.FM to sync your playcounts across devices. Read [this](/RompR/Keeping-Playcounts-In-Sync)
 * There is now a setting for the number of tracks to pre-load when playing Personalised Radio
 * Personalised Radio settings are remembered when you refresh the browser, so you can switch away from RompR and come back to it without losing that setting.
@@ -143,7 +149,7 @@ Thought I'd bump the version number up a bit since this seems like quite a big r
 * Option to transfer Play Queue to new player when switching players
 * New Global Refresh, Mark as Listened, etc controls for podcasts
 * Upgrade to jQuery 3, which might make some older browsers no longer work
-* Added Slave mode for Mopidy Players so you only need to have one 'Master' Mopidy Player and all the others can still play local tracks using the file backend without the need to have a local files database on all of them
+* Added Remote mode for Mopidy Players so you only need to have one 'Master' Mopidy Player and all the others can still play local tracks using the file backend without the need to have a local files database on all of them
 * Partial, experimental, support for using mixed player types (MPD and Mopidy) as Players.
 * Several UI improvements to click handling and tooltips to reduce memory footprint and CPU usage
 * Updated Russian translation by Паша

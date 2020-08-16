@@ -54,7 +54,10 @@ var podcasts = function() {
 				}
 			})
 			.fail(function() {
-				infobar.error(language.gettext('error_dlpfail'));
+				debug.warn(language.gettext('error_dlpfail'));
+				if (running) {
+					timer = setTimeout(self.checkProgress, 1000);
+				}
 			});
 		}
 

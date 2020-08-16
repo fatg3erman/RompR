@@ -8,13 +8,13 @@ class base_mpd_player {
 	private $socket;
 	private $password;
 	protected $player_type;
-	private $is_slave;
+	private $is_remote;
 	public $playlist_error;
 	private $debug_id;
 	public $to_browse;
 	private $mpd_version = null;
 
-	public function __construct($ip = null, $port = null, $socket = null, $password = null, $player_type = null, $is_slave = null) {
+	public function __construct($ip = null, $port = null, $socket = null, $password = null, $player_type = null, $is_remote = null) {
 		global $prefs;
 		$this->debug_id = microtime();
 		if ($ip !== null) {
@@ -37,14 +37,14 @@ class base_mpd_player {
 		} else {
 			$this->password = $prefs['multihosts']->{$prefs['currenthost']}->password;
 		}
-		if ($is_slave !== null) {
-			$this->is_slave = $is_slave;
+		if ($is_remote !== null) {
+			$this->is_remote = $is_remote;
 		} else {
-			if (property_exists($prefs['multihosts']->{$prefs['currenthost']}, 'mopidy_slave')) {
-				$this->is_slave = $prefs['multihosts']->{$prefs['currenthost']}->mopidy_slave;
+			if (property_exists($prefs['multihosts']->{$prefs['currenthost']}, 'mopidy_remote')) {
+				$this->is_remote = $prefs['multihosts']->{$prefs['currenthost']}->mopidy_remote;
 			} else {
 				// Catch the case where we haven't yet upgraded the player defs
-				$this->is_slave = false;
+				$this->is_remote = false;
 			}
 		}
 		logger::core("MPDPLAYER", "Creating Player for",$this->ip.':'.$this->port);
@@ -256,8 +256,8 @@ class base_mpd_player {
 		$done = 0;
 		$cmd_status = null;
 
-		if ($this->is_slave) {
-			$this->translate_commands_for_slave($cmds);
+		if ($this->is_remote) {
+			$this->translate_commands_for_remote($cmds);
 		} else if ($this->player_type != $prefs['collection_player']) {
 			$this->translate_player_types($cmds);
 		}
@@ -439,7 +439,7 @@ class base_mpd_player {
 		if ($filedata['Pos'] !== null) {
 			// Convert URIs for different player types to be appropriate for the collection
 			// but only when we're getting the playlist
-			if ($this->is_slave && $filedata['domain'] == 'file') {
+			if ($this->is_remote && $filedata['domain'] == 'file') {
 				$filedata['file'] = $this->swap_file_for_local($filedata['file']);
 				$filedata['domain'] = 'local';
 			}
@@ -656,16 +656,16 @@ class base_mpd_player {
 		$this->to_browse = array();
 	}
 
-	private function translate_commands_for_slave(&$cmds) {
+	private function translate_commands_for_remote(&$cmds) {
 		//
-		// Re-check all add and playlistadd commands if we're using a Mopidy File Backend Slave
+		// Re-check all add and playlistadd commands if we're using a Mopidy File Backend Remote
 		//
 		foreach ($cmds as $key => $cmd) {
 			// add "local:track:
 			// playlistadd "local:track:
 			if (substr($cmd, 0, 17) == 'add "local:track:' ||
 				substr($cmd, 0,25) == 'playlistadd "local:track:') {
-				logger::mark("MOPIDY", "Translating tracks for Mopidy Slave");
+				logger::mark("MOPIDY", "Translating tracks for Mopidy Remote");
 				$cmds[$key] = $this->swap_local_for_file($cmd);
 			}
 		}
@@ -705,7 +705,7 @@ class base_mpd_player {
 		// url encode the album art directory
 		global $prefs;
 		$path = implode("/", array_map("rawurlencode", explode("/", $prefs['music_directory_albumart'])));
-		logger::debug("MOPIDYSLAVE", "Replacing with",$path);
+		logger::debug("MOPIDYREMOTE", "Replacing with",$path);
 		return preg_replace('#local:track:#', 'file://'.$path.'/', $string);
 	}
 

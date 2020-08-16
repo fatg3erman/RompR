@@ -1,64 +1,6 @@
-# Installation On Linux
+# Installation On Linux With Nginx Webserver
 
-RompЯ is a client for mpd or mopidy - you use RompЯ in a web browser to make mpd or mopidy play music
-These are basic installation instructions for RompЯ on Linux, using the code you can download from here on github.
-
-## Install MPD or Mopidy
-
-Mpd should be available from your normal package manager. If you want to run Mopidy it is easy to install -  see [mopdy.com](http://www.mopidy.com).
-
-
-### Player Connection Timeout
-
-There is one thing you should adjust in the configuration for MPD and Mopidy
-
-MPD and Mopidy both have a connection timeout parameter, after which time they will drop the connection between them and Rompr. This is seriously bad news for Rompr. You should make sure you increase it.
-
-### For Mopidy
-
-In mopidy.conf, your mpd section needs to contain
-
-    [mpd]
-    connection_timeout = 120
-
-### For MPD
-
-Somewhere in mpd.conf
-
-    connection_timeout     "120"
-
-
-If you have a very large music collection, the higher the numbeer the better. It is in seconds.
-
-
-## Recommended Setup for Linux
-
-This is the way I now recommend you do it. Thanks to the anonymous forum user who put up the initial instructions for getting it to work with PHP7 when I was in the wilderness.
-
-_The following is a guide. It has been tested on Kubuntu 17.10 so Ubuntu and Debian flavours should follow this. Other distributions will be similar but package names may be different and the location of files may be different. Sorry, I can't try them all. If only they'd agree._
-
-This guide sets up RompЯ to work with the nginx web server, an sqlite database and allows you to access it using a nice url - www.myrompr.net
-
-### Install RompЯ
-
-Download the latest release from [The Github Releases Page](https://github.com/fatg3erman/RompR/releases)
-
-Let's assume you extracted the zip file into a folder called 'web' in your home directory. So now you have /home/YOU/web/rompr. From now on we're going to refer to that as /PATH/TO/ROMPR, because that's what programmers do and it makes the guide more general. You can put the code anywhere you like, although it won't work very well if you put it in the oven. So you'll need to look out for /PATH/TO/ROMPR in everything below and make sure you substitute the correct path.
-
-### Set directory permissions
-
-We need to create directories to store data in.
-
-    cd /PATH/TO/ROMPR
-    mkdir prefs
-    mkdir albumart
-
-
-And then we need to give nginx permission to write to them. We can do this by changing the ownership of those directories to be the user that nginx runs as. This may differ depending on which distro you're running, but this is good for all Ubuntus, where nginx runs as the user www-data.
-
-    sudo chown www-data /PATH/TO/ROMPR/albumart
-    sudo chown www-data /PATH/TO/ROMPR/prefs
-
+This assumes you've already followed the guide to install a player and the RompЯ files.
 
 ### Install some packages
 
@@ -66,10 +8,6 @@ And then we need to give nginx permission to write to them. We can do this by ch
 
 
 ### Create nginx configuration
-
-We're going to create RompЯ as a standalone website which will be accessible through the address www.myrompr.net
-
-_Note. This sets RompЯ as the default site on your machine. For most people this will be the best configuration. If you are someone who cares about what that means and understands what that means, then you already know how to add RompЯ as the non-default site. What is described here is the easiest setup, which will work for most people_
 
 Nginx comes set up with a default web site, which we don't want to use. You used to be able to just delete it but now we can't do that as it causes errors. So first we will edit the existing default config, since we don't want it to be the default
 
@@ -85,39 +23,32 @@ and change them to
     listen 80;
     listen [::]:80;
 
-_Explnanation: The reason we want to set rompr as the default site on the machine is so we can easily access it from any device just by typing the machine's IP address into the browser_
-
-
 Then we will create the rompr config and set that to be the default
 
     sudo nano /etc/nginx/sites-available/rompr
 
-Paste in the following lines, remembering to change /PATH/TO/ROMPR as above.
-Also there is a version number in there : php7.1-fpm.sock - the 7.1 will change depending on the version of PHP installed on your system. You should have noticed the version number when you installed the packages above. If you didn't, you'll have to figure it out by doing:
+Paste in the following lines, remembering to edit the following:
 
-    apt-cache policy php-fpm
+/home/YOU/web etc appropriately
 
-and you'll get something that looks like
+server_name will be the hostname you configured on your computer, eg raspberrypi.local.
 
-    php-fpm:
-        Installed: 7.0.30-0+deb9u1
-
-There's a 7.0 in there, so I'd use php7.0-fpm.sock
+Also there is a version number in there : php7.1-fpm.sock - the 7.1 will change depending on the version of PHP installed on your system. Look in /var/run and see what's there. Note that /var/run is correct for Debian-derived distributions like Raspbian, Ubuntu, etc. It probably isn't right for some of the others but I just don't have the time.... The default nginx configuration should have a similar line that directs you where to look.
 
     server {
 
         listen 80 default_server;
         listen [::]:80 default_server;
 
-        root /PATH/TO/ROMPR;
+        root /home/YOU/web;
         index index.php index.html index.htm;
 
-        server_name www.myrompr.net;
+        server_name hostname.of.your.computer;
 
         client_max_body_size 256M;
 
         # This section can be copied into an existing default setup
-        location / {
+        location /rompr/ {
             allow all;
             index index.php;
             location ~ \.php {
@@ -140,21 +71,8 @@ Save the file (Ctrl-X in nano, then answer 'Y'). Now link the configuration so i
 
     sudo ln -s /etc/nginx/sites-available/rompr /etc/nginx/sites-enabled/rompr
 
-### Edit the hosts file
 
-To make your browser capable of accessing www.myrompr.net we need to edit your hosts file so the computer knows where www.myrompr.net actually is.
-
-On the computer where nginx is running you can use
-
-    sudo nano /etc/hosts
-
-and just add the line
-
-    127.0.0.1        www.myrompr.net
-
-On any other device you will have to edit /etc/hosts but you will need to use the full IP address of the computer running the nginx server. On devices where this is not possible - eg a mobile device - you can just enter the IP address of the machine running nginx into your browser to access RompЯ, because we have set RompЯ as the default site.
-
-_Those of you who want to be clever and know how to edit hostname and DNS mapping on your router can do that, you will then not need RompЯ to be the default site and you will not need to edit the existing default config. Just remove default_server from the rompr configuration above and set server_name appopriately. If you didn't understand that, then ignore this paragraph._
+If you want to host more websites on your computer, you can add further 'location' sections under the rompr section.
 
 ### Edit PHP configuration
 
@@ -178,4 +96,4 @@ Now find and modify (or add in if they're not there) the following parameters. C
     sudo systemctl restart php7.1-fpm
     sudo systemctl restart nginx
 
-That should be it. Direct your browser to www.myrompr.net and all should be well.
+That should be it. Direct your browser to http://hostname.of.your.computer/rompr (or http://ip.address.of.your.computer/rompr) and all should be well.

@@ -198,7 +198,7 @@ $(document).ready(function(){
 	if (prefs.browser_id == null) {
 		prefs.save({browser_id: Date.now()});
 	}
-	if (prefs.mopidy_slave || (prefs.collection_player != prefs.player_backend && prefs.collection_player != null)) {
+	if (prefs.mopidy_remote || (prefs.collection_player != prefs.player_backend && prefs.collection_player != null)) {
 		$('[name="donkeykong"]').remove();
 		$('[name="dinkeyking"]').remove();
 	}
