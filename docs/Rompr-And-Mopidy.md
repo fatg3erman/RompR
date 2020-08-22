@@ -67,3 +67,27 @@ The only current solution to this to run mopidy local scan yourself first. If yo
 ## Genres
 
 Note that only Mopidy-Local seems to return Genres, so Genre-based Collection functions will not work as your might expect if you use Spotify, Soundcloud, etc.
+
+## Mopidy-Youtube
+
+This version of Rompr works best wuth the fork of Mopidy-Youtube [here](https://github.com/natumbri/mopidy-youtube)
+
+If you add Youtube tracks to your Music Collection, you'll be given an option to download the audio.
+
+![](images/youtubedl.png)
+
+In order for this to work you must have the programs youtube-dl and either avconv or ffmpeg installed on your system. On macOS you can get youtube-dl and ffmpeg using HomeBrew,
+on Linux there are probably packages for both of these. (avconv is simply the new name for ffmpeg, so install whichever your distribution provides)
+
+RompR will not check for the presence of these binaries, just because that slows it down. So if you're trying to use this feature and you keep getting an error,
+enable debug logging and look at the output. If all the binaries are installed then the debug log will tell you the uri it is trying to download, you should try that from the
+command line using
+
+	youtube-dl -x --audio-format flac --audio-quality 0 uri/from/debug/log
+
+and see what error messages you get.
+
+Assuming it works, the YoutTube video will be downloaded and the audio will be extracted to a FLAC file. In future this file will be streamed from your webserver
+using Mopidy's Stream backend.
+
+

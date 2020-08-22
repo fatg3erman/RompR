@@ -271,6 +271,7 @@ function bindClickHandlers() {
 	clickRegistry.addClickHandlers('clickpltrack', metaHandlers.fromUiElement.tracksToPlaylist);
 	clickRegistry.addClickHandlers('removealbum', metaHandlers.fromUiElement.removeAlbumFromDb);
 	clickRegistry.addClickHandlers('resetresume', metaHandlers.fromUiElement.resetResumePosition);
+	clickRegistry.addClickHandlers('youtubedl', metaHandlers.fromUiElement.downloadYoutubeTrack);
 	clickRegistry.addClickHandlers('clickdeleteplaylisttrack', playlistManager.deletePlaylistTrack);
 	clickRegistry.addClickHandlers('clickdeleteplaylist', playlistManager.deletePlaylist);
 	clickRegistry.addClickHandlers('clickdeleteuserplaylist', playlistManager.deleteUserPlaylist);
@@ -903,6 +904,12 @@ function makeTrackMenu(e, element) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem resetresume closepopup',
 		}).html(language.gettext('label_resetresume')));
+	}
+
+	if ($(element).hasClass('clickyoutubedl')) {
+		d.append($('<div>', {
+			class: 'backhi clickable menuitem youtubedl closepopup',
+		}).html(language.gettext('label_youtubedl')));
 	}
 
 	if ($(element).hasClass('clickremovedb')) {

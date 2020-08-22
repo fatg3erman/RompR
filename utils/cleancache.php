@@ -142,6 +142,19 @@ if ($mysqlc) {
 	generic_sql_query("DELETE FROM WishlistSourcetable WHERE Sourceindex NOT IN (SELECT DISTINCT Sourceindex FROM Tracktable WHERE Sourceindex IS NOT NULL)");
 	logger::info("CACHE CLEANER", "== Check For Orphaned Wishlist Sources took ".format_time(time() - $now));
 
+
+	logger::info("CACHE CLEANER", "Checking for orphaned youtube downloads");
+	$now = time();
+	$yts = glob('prefs/youtubedl/*');
+	foreach ($yts as $dir) {
+		$numfiles = simple_query('COUNT(TTindex)', 'Tracktable', 'TTindex', basename($dir), 0);
+		if ($numfiles == 0) {
+			logger::log('CACHE CLEANER', $dir,'does not have an associated track');
+			exec('rm -fR '.$dir, $output, $retval);
+		}
+	}
+	logger::info("CACHE CLEANER", "== Check For Orphaned youtube downloads took ".format_time(time() - $now));
+
 	// Compact the database
 	if ($prefs['collection_type'] == 'sqlite') {
 		logger::mark("CACHE CLEANER", "Vacuuming Database");

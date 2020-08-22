@@ -24,6 +24,7 @@ $root_level_dirs = array(
 	'prefs/customradio',
 	'prefs/temp',
 	'prefs/oldcollections',
+	'prefs/youtubedl',
 	'albumart/asdownloaded',
 	'albumart/small',
 	'albumart/medium'

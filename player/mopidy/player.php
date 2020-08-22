@@ -211,9 +211,51 @@ class mopidyPlayer extends base_mpd_player {
 		}
 	}
 
+	private function check_stream_in_collection($url) {
+		return sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
+			"SELECT
+				Tracktable.Title AS title,
+				ta.Artistname AS artist,
+				Tracktable.Duration AS duration,
+				Albumname AS album,
+				aa.Artistname AS albumartist,
+				Image AS image,
+				ImgKey AS imgkey
+			FROM Tracktable
+				JOIN Artisttable AS ta USING (Artistindex)
+				JOIN Albumtable USING (Albumindex)
+				JOIN Artisttable AS aa ON (Albumtable.AlbumArtistindex = aa.Artistindex)
+			WHERE
+				URI = ?",
+			$url
+		);
+	}
+
 	private function check_radio_and_podcasts($filedata) {
 
 		$url = $filedata['file'];
+
+		// Check for any http files added to the collection or downloaded youtube tracks
+		$result = $this->check_stream_in_collection($url);
+		foreach ($result as $obj) {
+			logger::log("STREAMHANDLER", "Found Track in collection!",$obj->title);
+			return array(
+				$obj->title,
+				$obj->duration,
+				array($obj->artist),
+				$obj->album,
+				md5($obj->album),
+				'local',
+				$obj->image,
+				null,
+				'',
+				array($obj->albumartist),
+				null,
+				'',
+				$obj->imgkey
+			);
+		}
+
 
 		// Do podcasts first. Podcasts played fro TuneIn get added as radio stations, and then if we play that track again
 		// via podcasts we want to make sure we pick up the details.

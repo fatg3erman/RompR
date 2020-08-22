@@ -77,6 +77,9 @@ function albumTrack($data) {
 		if ($data['progress'] > 0) {
 			$button_class .= ' clickresetresume';
 		}
+		if ($d == 'youtube' || $d == 'yt') {
+			$button_class .= ' clickyoutubedl';
+		}
 		print '<div class="'.$button_class.'" rompr_id="'.$data['ttid'].'" rompr_tags="'.rawurlencode($data['tags']).'"></div>';
 	}
 

@@ -202,6 +202,66 @@ class romprmetadata {
 		}
 	}
 
+	public static function youtubedl($data) {
+		logger::log('YOUTUBEDL', print_r($data, true));
+		$ytdl_path = find_executable('youtube-dl');
+		if ($ytdl_path === false) {
+			logger::error('YOUTUBEDL', 'youtube-dl binary could not be found');
+			header("HTTP/1.1 404 Not Found");
+			exit(0);
+		}
+		logger::log('YOUTUBEDL', 'youtube-dl is at',$ytdl_path);
+		$avconv_path = find_executable('avconv');
+		if ($avconv_path === false) {
+			$avconv_path = find_executable('ffmpeg');
+			if ($avconv_path === false) {
+				logger::error('YOUTUBEDL', 'Could not find avconv or ffmpeg');
+				header("HTTP/1.1 404 Not Found");
+				exit(0);
+			}
+		}
+		$a = preg_match('/:video\/.*\.(.+)$/', $data['uri'], $matches);
+		if ($a) {
+			$uri_to_get = 'https://youtu.be/'.$matches[1];
+			logger::log('YOUTUBEDL', 'Downloading',$uri_to_get);
+			chdir('prefs/youtubedl');
+			$ttindex = simple_query('TTindex', 'Tracktable', 'Uri', $data['uri'], null);
+			if ($ttindex === null) {
+				logger::error('YOUTUBEDL', 'Could not locate that URI in the database!');
+				header("HTTP/1.1 404 Not Found");
+				exit(0);
+			}
+			mkdir($ttindex);
+			chdir($ttindex);
+			exec('export PATH='.$avconv_path.' && '.$ytdl_path.'youtube-dl -x --audio-format flac --audio-quality 0 '.$uri_to_get.' > /dev/null 2>&1', $output, $retval);
+			if ($retval != 0) {
+				logger::error('YOUTUBEDL', 'youtube-dl returned error code', $retval);
+				header("HTTP/1.1 404 Not Found");
+				exit(0);
+			}
+			$files = glob('*.flac');
+			if (count($files) == 0) {
+				logger::error('YOUTUBEDL', 'Could not find downloaded flac file in prefs/youtubedl/'.$ttindex);
+				header("HTTP/1.1 404 Not Found");
+				exit(0);
+			} else {
+				logger::log('YOUTUBEDL', print_r($files, true));
+			}
+			$new_uri = dirname(dirname(get_base_url())).'/prefs/youtubedl/'.$ttindex.'/'.$files[0];
+			logger::log('YOUTUBEDL', 'New URI is', $new_uri);
+			sql_prepare_query(true, null, null, null,
+				"UPDATE Tracktable SET Uri = ? WHERE Uri = ?",
+				$new_uri,
+				$data['uri']
+			);
+
+		} else {
+			logger::error('YOUTUBEDL', 'Could not match URI',$data['uri']);
+			header("HTTP/1.1 404 Not Found");
+			exit(0);
+		}
+	}
+
 	public static function syncinc($data) {
 		global $returninfo;
 		if ($data['artist'] === null ||

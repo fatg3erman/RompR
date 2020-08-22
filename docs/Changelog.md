@@ -3,6 +3,9 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.50
+* Added function to download YouTube videos (when using Mopidy-Youtube) and save the audio locally for future streaming. See [here](/RompR/Rompr-And-Mopidy) as there are specific requirements for this to work.
+
 ## Version 1.48
 * Seem to have missed a few
 * Player selection via the URL, based on initial work by Manvendra Bhangui

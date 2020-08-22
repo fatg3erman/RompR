@@ -153,6 +153,7 @@ foreach($params as $p) {
 		case 'deletealbum':
 		case 'setasaudiobook':
 		case 'resetresume':
+		case 'youtubedl':
 			romprmetadata::{$p['action']}($p);
 			break;
 

@@ -143,7 +143,7 @@ var metaHandlers = function() {
 							});
 						},
 						function(data) {
-							debug.warn("DROPPLUGIN","Failed to set attributes for",track,data);
+							debug.warn("DROPPLUGIN","Failed to set attributes for",data);
 							infobar.error(language.gettext('label_general_error'));
 						}
 					);
@@ -213,6 +213,22 @@ var metaHandlers = function() {
 
 			resetResumePosition: function(event, element) {
 				metaHandlers.fromUiElement.doMeta('set', 'Progress', [{attribute: 'Progress', value: 0}]);
+			},
+
+			downloadYoutubeTrack: function(event, element) {
+				var trackstogo = new Array();
+				$('.clicktrack.selected').each(function() {
+					var uri = decodeURIComponent($(this).attr('name'));
+					$(this).find('.clicktrackmenu').makeSpinner();
+					trackstogo.push({action: 'youtubedl', uri: uri });
+				});
+				dbQueue.request(
+					trackstogo,
+					collectionHelper.updateCollectionDisplay,
+					function(data) {
+						debug.warn("FUCK!", 'Why did that not work?');
+					}
+				);
 			},
 
 			removeAlbumFromDb: function(event, element) {
