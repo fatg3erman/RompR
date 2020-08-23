@@ -228,7 +228,7 @@ var metaHandlers = function() {
 					function(data) {
 						debug.warn("FUCK!", 'Why did that not work?',data);
 						if (data.responseJSON && data.responseJSON.error) {
-							infobar.error(data.responseJSON.error);
+							infobar.error('Failed to download YouTube track - '+data.responseJSON.error);
 						}
 					}
 				);

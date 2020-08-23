@@ -367,7 +367,7 @@ function find_executable($prog) {
 	// Test to see if $prog is on the path and then try Homebrew and MacPorts paths until we find it
 	// returns boolean false if the program is not found
 	logger::debug("BITS", "    Looking for executable program ",$prog);
-	$paths_to_try = array('', '/usr/local/bin/', '/opt/local/bin/', '/usr/bin/', './');
+	$paths_to_try = array( '/usr/local/bin/', '/opt/local/bin/', '/usr/bin/', './', '');
 	$retval = false;
 	foreach ($paths_to_try as $c) {
 		$r = exec($c.$prog." 2>&1", $o, $a);
