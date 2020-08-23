@@ -79,14 +79,13 @@ If you add Youtube tracks to your Music Collection, you'll be given an option to
 In order for this to work you must have the programs youtube-dl and either avconv or ffmpeg installed on your system. On macOS you can get youtube-dl and ffmpeg using HomeBrew,
 on Linux there are probably packages for both of these. (avconv is simply the new name for ffmpeg, so install whichever your distribution provides)
 
-RompR will not check for the presence of these binaries, just because that slows it down. So if you're trying to use this feature and you keep getting an error,
-enable debug logging and look at the output. If all the binaries are installed then the debug log will tell you the uri it is trying to download, you should try that from the
-command line using
+If you're trying to use this feature and you keep getting an error, enable debug logging and look at the output. If all the binaries are installed then the debug log
+will tell you the uri it is trying to download, you should try that from the command line using
 
-	youtube-dl -x --audio-format flac --audio-quality 0 uri/from/debug/log
+	youtube-dl --ffmpeg-location path/to/your/ffmpeg/binary -x --newline --audio-format flac --audio-quality 0 uri/from/debug/log
 
 and see what error messages you get.
 
-Assuming it works, the YoutTube video will be downloaded and the audio will be extracted to a FLAC file. In future this file will be streamed from your webserver
-using Mopidy's Stream backend.
+Assuming it works, the YoutTube video will be downloaded and the audio will be extracted to a FLAC file which will be streamed from your webserver
+using Mopidy's Stream backend the next time you add the track to the play queue.
 
