@@ -151,6 +151,12 @@ if ($mysqlc) {
 		if ($numfiles == 0) {
 			logger::log('CACHE CLEANER', $dir,'does not have an associated track');
 			exec('rm -fR '.$dir, $output, $retval);
+		} else {
+			$files = glob($dir.'/*.*');
+			if (count($files) == 0) {
+				logger::log('CACHE CLEANER', $dir,'is empty');
+				exec('rm -fR '.$dir, $output, $retval);
+			}
 		}
 	}
 	logger::info("CACHE CLEANER", "== Check For Orphaned youtube downloads took ".format_time(time() - $now));

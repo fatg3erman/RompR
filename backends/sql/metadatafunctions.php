@@ -237,6 +237,7 @@ class romprmetadata {
 			if ($retval != 0) {
 				logger::error('YOUTUBEDL', 'youtube-dl returned error code', $retval);
 				header("HTTP/1.1 404 Not Found");
+				print json_encode(array('error' => 'youtube-dl returned error code '.$retval));
 				exit(0);
 			}
 			$files = glob('*.flac');

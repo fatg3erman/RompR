@@ -226,7 +226,7 @@ var metaHandlers = function() {
 					trackstogo,
 					collectionHelper.updateCollectionDisplay,
 					function(data) {
-						debug.warn("FUCK!", 'Why did that not work?');
+						debug.warn("FUCK!", 'Why did that not work?',data);
 					}
 				);
 			},
