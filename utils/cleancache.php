@@ -147,7 +147,15 @@ if ($mysqlc) {
 	$now = time();
 	$yts = glob('prefs/youtubedl/*');
 	foreach ($yts as $dir) {
-		$numfiles = simple_query('COUNT(TTindex)', 'Tracktable', 'TTindex', basename($dir), 0);
+		$numfiles = 0;
+		$bacon = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
+			'SELECT COUNT(TTindex) AS thing FROM Tracktable WHERE TTindex = ? AND Hidden = ?',
+			basename($dir),
+			0
+		);
+		if (is_array($bacon) && count($bacon) > 0) {
+			$numfiles = $bacon[0]['thing'];
+		}
 		if ($numfiles == 0) {
 			logger::log('CACHE CLEANER', $dir,'does not have an associated track');
 			exec('rm -fR '.$dir, $output, $retval);
