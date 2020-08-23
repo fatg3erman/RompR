@@ -68,7 +68,7 @@ function albumTrack($data) {
 
 	// Menu Button
 	if ($data['ttid']) {
-		$button_class = "icon-plus playlisticonr fixed clickable clickicon invisibleicon clicktrackmenu";
+		$button_class = "icon-plus playlisticonr fixed clickable clickicon invisibleicon clicktrackmenu spinable";
 		// lm will be null if ths is a manually added track, but don't give the option to remove from collection
 		// if isSearchResult == 3 becaause that's a hidden track that has come up in search results.
 		if ($data['lm'] === null && $data['isSearchResult'] != 3) {

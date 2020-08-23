@@ -546,6 +546,10 @@ var infobar = function() {
 			return notifycounter;
 		},
 
+		updatenotify: function(id, message) {
+			$('#notify_'+id).children('div.expand').first().html(message);
+		},
+
 		smartradio: function(message) {
 			var div = doNotification(message, 'icon-wifi');
 			setTimeout($.proxy(infobar.removenotify, div, notifycounter), 5000);

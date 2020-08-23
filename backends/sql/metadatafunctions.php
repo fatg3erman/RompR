@@ -208,6 +208,7 @@ class romprmetadata {
 		if ($ytdl_path === false) {
 			logger::error('YOUTUBEDL', 'youtube-dl binary could not be found');
 			header("HTTP/1.1 404 Not Found");
+			print json_encode(array('error' => 'Could not find youtube-dl'));
 			exit(0);
 		}
 		logger::log('YOUTUBEDL', 'youtube-dl is at',$ytdl_path);
@@ -217,6 +218,7 @@ class romprmetadata {
 			if ($avconv_path === false) {
 				logger::error('YOUTUBEDL', 'Could not find avconv or ffmpeg');
 				header("HTTP/1.1 404 Not Found");
+				print json_encode(array('error' => 'Could not find avconv or ffmpeg'));
 				exit(0);
 			}
 		}
@@ -229,11 +231,12 @@ class romprmetadata {
 			if ($ttindex === null) {
 				logger::error('YOUTUBEDL', 'Could not locate that URI in the database!');
 				header("HTTP/1.1 404 Not Found");
+				print json_encode(array('error' => 'Could not locate that track in the database!'));
 				exit(0);
 			}
 			mkdir($ttindex);
 			chdir($ttindex);
-			exec('export PATH='.$avconv_path.' && '.$ytdl_path.'youtube-dl -x --audio-format flac --audio-quality 0 '.$uri_to_get.' > /dev/null 2>&1', $output, $retval);
+			exec('export PATH='.$avconv_path.' && '.$ytdl_path.'youtube-dl -x --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' > ../dlprogress 2>&1', $output, $retval);
 			if ($retval != 0) {
 				logger::error('YOUTUBEDL', 'youtube-dl returned error code', $retval);
 				header("HTTP/1.1 404 Not Found");
@@ -244,6 +247,7 @@ class romprmetadata {
 			if (count($files) == 0) {
 				logger::error('YOUTUBEDL', 'Could not find downloaded flac file in prefs/youtubedl/'.$ttindex);
 				header("HTTP/1.1 404 Not Found");
+				print json_encode(array('error' => 'Could not locate downloaded flac file!'));
 				exit(0);
 			} else {
 				logger::log('YOUTUBEDL', print_r($files, true));
@@ -255,10 +259,10 @@ class romprmetadata {
 				$new_uri,
 				$data['uri']
 			);
-
 		} else {
 			logger::error('YOUTUBEDL', 'Could not match URI',$data['uri']);
 			header("HTTP/1.1 404 Not Found");
+			print json_encode(array('error' => 'Could not match URI '.$data['uri']));
 			exit(0);
 		}
 	}

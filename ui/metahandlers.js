@@ -77,6 +77,45 @@ var metaHandlers = function() {
 		return data;
 	}
 
+	function youtubeDownloadMonitor() {
+		var self = this;
+		var notify = infobar.permnotify('Downloading Youtube Track');
+		var timer;
+		var running = true;
+
+		this.checkProgress = function() {
+			$.ajax( {
+				type: "GET",
+				url: "utils/checkyoutubedownload.php",
+				cache: false,
+				dataType: "json"
+			})
+			.done(function(data) {
+				debug.debug("YOUTUBE DOWNLOAD","Download status is",data);
+				if (data.info) {
+					infobar.updatenotify(notify, 'Youtube Download : '+data.info);
+				}
+				if (running) {
+					timer = setTimeout(self.checkProgress, 500);
+				}
+			})
+			.fail(function() {
+				debug.warn(language.gettext('error_dlpfail'));
+				if (running) {
+					timer = setTimeout(self.checkProgress, 1000);
+				}
+			});
+		}
+
+		this.stop = function() {
+			running = false;
+			clearTimeout(timer);
+			infobar.removenotify(notify);
+		}
+
+		timer = setTimeout(self.checkProgress, 1000);
+	}
+
 	return {
 
 		fromUiElement: {
@@ -222,11 +261,16 @@ var metaHandlers = function() {
 					$(this).find('.clicktrackmenu').makeSpinner();
 					trackstogo.push({action: 'youtubedl', uri: uri });
 				});
+				var monitor = new youtubeDownloadMonitor();
 				dbQueue.request(
 					trackstogo,
-					collectionHelper.updateCollectionDisplay,
+					function(data) {
+						collectionHelper.updateCollectionDisplay(data),
+						monitor.stop();
+					},
 					function(data) {
 						debug.warn("FUCK!", 'Why did that not work?',data);
+						monitor.stop();
 						if (data.responseJSON && data.responseJSON.error) {
 							infobar.error('Failed to download YouTube track - '+data.responseJSON.error);
 						}
