@@ -227,6 +227,9 @@ var metaHandlers = function() {
 					collectionHelper.updateCollectionDisplay,
 					function(data) {
 						debug.warn("FUCK!", 'Why did that not work?',data);
+						if (data.responseJSON && data.responseJSON.error) {
+							inforbar.error(data.responseJSON.error);
+						}
 					}
 				);
 			},
