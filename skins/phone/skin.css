@@ -525,8 +525,8 @@ i.combo-button {
 	height:32px;
 }
 
-.playlisticonr.clicktrackmenu {
-
+div.playable.clicktrack {
+	align-items: center;
 }
 
 #sortable {

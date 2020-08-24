@@ -340,7 +340,7 @@ var uiHelper = function() {
 					break;
 
 				case 'insertAtStart':
-					debug.log('UIHELPER', "Insert At Start",v.where);
+					debug.log('UIHELPER', "Insert Album At Start",v.where,v.html);
 					$('#'+v.where).insertAlbumAtStart(v.id, v.html, v.tracklist);
 					break;
 			}

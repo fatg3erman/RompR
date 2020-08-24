@@ -218,7 +218,7 @@ jQuery.fn.insertAlbumAtStart = function(albumindex, html, tracklist) {
 		var me = $(this);
 		$('.openmenu[name="'+albumindex+'"]').removeCollectionItem();
 		$('#'+albumindex).html(tracklist).updateTracklist().scootTheAlbums();
-		$(html).prependTo(me).scootTheAlbums();
+		$(html).insertAfter(me.children('.dropdown-container.configtitle').next()).scootTheAlbums();
 	});
 }
 
