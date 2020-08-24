@@ -520,9 +520,13 @@ i.combo-button {
 	margin-right:2px;
 	vertical-align:middle;
 	box-sizing:border-box;
-	border:8px solid transparent;
+	border:2px solid transparent;
 	width:32px;
 	height:32px;
+}
+
+.playlisticonr.clicktrackmenu {
+
 }
 
 #sortable {
