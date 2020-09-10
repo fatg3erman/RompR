@@ -157,7 +157,7 @@ function trackControlHeader($why, $what, $who, $when, $dets) {
 	foreach ($dets as $det) {
 		$albumimage = new baseAlbumImage(array('baseimage' => $det['Image']));
 		$images = $albumimage->get_images();
-		$html .= '<div class="album-menu-header"><img class="lazy album_menu_image" data-src="'.$images['asdownloaded'].'" /></div>';
+		$html .= '<div class="album-menu-header"><img class="album_menu_image" src="'.$images['asdownloaded'].'" /></div>';
 		if ($why != '') {
 			$html .= '<div class="containerbox wrap album-play-controls">';
 			if ($det['AlbumUri']) {
