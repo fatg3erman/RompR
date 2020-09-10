@@ -226,7 +226,8 @@ class mopidyPlayer extends base_mpd_player {
 				JOIN Albumtable USING (Albumindex)
 				JOIN Artisttable AS aa ON (Albumtable.AlbumArtistindex = aa.Artistindex)
 			WHERE
-				URI = ?",
+				Hidden = 0 AND
+				Uri = ?",
 			$url
 		);
 	}
@@ -255,7 +256,6 @@ class mopidyPlayer extends base_mpd_player {
 				$obj->imgkey
 			);
 		}
-
 
 		// Do podcasts first. Podcasts played fro TuneIn get added as radio stations, and then if we play that track again
 		// via podcasts we want to make sure we pick up the details.
