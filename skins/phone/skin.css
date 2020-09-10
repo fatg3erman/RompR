@@ -564,11 +564,13 @@ div.playable.clicktrack {
 #sortable .playlisticonr {
 	margin-right:4px;
 	width: 40px;
+	border: 4px solid transparent;
 }
 
 #collection .playlisticonr {
 	margin-right:4px;
 	width: 48px;
+	border: 6px solid transparent;
 }
 
 #sortable .track>div>div.clickable {
