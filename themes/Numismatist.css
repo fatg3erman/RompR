@@ -107,11 +107,6 @@ body.setup
     background-color: #dddddd;
 }
 
-body.desktop #headerbar
-{
-    background-image: linear-gradient(#eeeeee, #ededed);
-}
-
 #pset {
     background-color: rgba(1, 1, 1, 0.75);
 }
