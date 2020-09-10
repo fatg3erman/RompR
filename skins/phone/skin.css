@@ -573,6 +573,12 @@ div.playable.clicktrack {
 	border: 6px solid transparent;
 }
 
+#audiobooklist .playlisticonr {
+	margin-right:4px;
+	width: 48px;
+	border: 6px solid transparent;
+}
+
 #sortable .track>div>div.clickable {
 	margin-right: 8px;
 }
