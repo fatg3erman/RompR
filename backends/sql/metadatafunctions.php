@@ -236,7 +236,8 @@ class romprmetadata {
 			}
 			mkdir($ttindex);
 			chdir($ttindex);
-			exec($ytdl_path.'youtube-dl --ffmpeg-location '.$avconv_path.' -x --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' > ../dlprogress 2>&1', $output, $retval);
+			file_put_contents('original.uri', $uri_to_get);
+			exec($ytdl_path.'youtube-dl --ffmpeg-location '.$avconv_path.' --extract-audio --write-thumbnail --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' > ../dlprogress 2>&1', $output, $retval);
 			if ($retval != 0) {
 				logger::error('YOUTUBEDL', 'youtube-dl returned error code', $retval);
 				header("HTTP/1.1 404 Not Found");
