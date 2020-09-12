@@ -328,10 +328,11 @@ var prefs = function() {
 				case 'snapcast_server':
 				case 'snapcast_port':
 					if (felakuti.snapcast_server != prefs.snapcast_server ||
-						felakuti.snapcast_port != prefs.snapcast_port) {
+						felakuti.snapcast_http != prefs.snapcast_http) {
 							if (felakuti.snapcast_server == '') {
 								snapcast.clearEverything();
 							} else {
+								snapsocket.close();
 								callback = snapcast.updateStatus;
 							}
 					}

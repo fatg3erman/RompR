@@ -1,27 +1,104 @@
+var snapsocket = function() {
+
+	var socket = null;
+	var connected = false;
+
+	function socket_closed() {
+		debug.warn('SNAPSOCKET', 'Socket was closed');
+		if (socket || connected) {
+			socket_error();
+		}
+		socket = null;
+		connected = false;
+	}
+
+	function socket_message(message) {
+		if (message.data) {
+			var json = JSON.parse(message.data);
+			debug.log('SNAPSOCKET', 'Got', json);
+			if (json.id && json.result && json.result.server) {
+				snapcast.gotStatus(json);
+			} else if (json.method) {
+				switch (json.method) {
+					case 'Server.OnUpdate':
+						json.result = json.params;
+						snapcast.gotStatus(json);
+						break;
+
+					case 'Client.OnVolumeChanged':
+					case 'Client.OnLatencyChanged':
+					case 'Client.OnNameChanged':
+						snapcast.updateClient(json.params);
+						break;
+
+					default:
+						snapcast.updateStatus();
+						break;
+				}
+			} else {
+				snapcast.updateStatus();
+			}
+		}
+	}
+
+	function socket_error() {
+		snapcast.gotStatus({error: {data: language.gettext('snapcast_notthere')}});
+	}
+
+	function socket_open() {
+		debug.mark('SNAPSOCKET', 'Socket is open');
+		connected = true;
+	}
+
+	return {
+		initialise: function() {
+			if (socket) {
+ 				debug.log('SNAPSOCKET', 'readyState is', socket.readyState);
+ 			}
+			if (!connected || !socket || socket.readyState > WebSocket.OPEN) {
+				debug.mark('SNAPSOCKET', 'Connecting Socket');
+				socket = new WebSocket('ws://'+prefs.snapcast_server+':'+prefs.snapcast_http+'/jsonrpc');
+				socket.onopen = socket_open;
+				socket.onerror = socket_error;
+				socket.onclose = socket_closed;
+				socket.onmessage = socket_message;
+			}
+		},
+
+		close: function() {
+			if (connected || socket) {
+				socket.close();
+			}
+		},
+
+		send: async function(data, callback) {
+			snapsocket.initialise();
+			while (socket && socket.readyState == WebSocket.CONNECTING) {
+				await new Promise(t => setTimeout(t, 100));
+			}
+			if (socket && socket.readyState == WebSocket.OPEN) {
+				socket.send(JSON.stringify(data));
+			} else {
+				socket_error();
+			}
+		}
+	}
+
+}();
+
 var snapcast = function() {
 
 	var groups = new Array();
 	var streams = new Array();
-	var updatetimer = null;
 	var id = 0;
 	var lastid = 0;
 	var ew = null;
 
 	function snapcastRequest(parms, callback) {
-		clearTimeout(updatetimer);
 		id++;
 		parms.id = id;
 		parms.jsonrpc = "2.0";
-		$.ajax({
-			type: 'POST',
-			url: 'snapcast/snapapi.php',
-			data: JSON.stringify(parms)
-		})
-		.done(callback)
-		.fail(function(jqXHR, textStatus, errorThrown) {
-			debug.error("SNAPCAST","Command Failed",parms,textStatus,errorThrown);
-			callback({error: {data: language.gettext('snapcast_notthere')}});
-		})
+		snapsocket.send(parms);
 	}
 
 	function findGroup(arr, id) {
@@ -34,8 +111,13 @@ var snapcast = function() {
 	}
 
 	return {
+
+		initialise: function() {
+			sleepHelper.addWakeHelper(snapcast.updateStatus);
+			snapcast.updateStatus();
+		},
+
 		updateStatus: function() {
-			clearTimeout(updatetimer);
 			if (prefs.snapcast_server != '' && prefs.snapcast_port != '') {
 				snapcastRequest({
 					method: "Server.GetStatus"
@@ -54,7 +136,10 @@ var snapcast = function() {
 					$('#snapcastgroups').addClass('canbefaded').css({opacity: '0.4'});
 				}
 				ew.html('<b>'+data.error.data+'</b>');
-			} else if (data.hasOwnProperty('id') && parseInt(data.id) == id) {
+			} else if (
+				(data.hasOwnProperty('id') && parseInt(data.id) == id) ||
+				data.hasOwnProperty('method')
+			) {
 				lastid = id;
 				if (ew !== null) {
 					ew.remove();
@@ -89,10 +174,12 @@ var snapcast = function() {
 			} else {
 				debug.warn('SNAPCAST','Got response with id',data.id,'expecting',id);
 			}
-			updatetimer = setTimeout(snapcast.updateStatus, 60000);
 		},
 
 		streamInfo: function(streamid, showformat) {
+			if (streams.length == 1) {
+				return '';
+			}
 			for (var i in streams) {
 				if (streams[i].id == streamid) {
 					var h = streams[i].meta.STREAM;
@@ -119,7 +206,6 @@ var snapcast = function() {
 		},
 
 		setClientVolume: function(id, volume, muted) {
-			clearTimeout(updatetimer);
 			snapcastRequest({
 				method: "Client.SetVolume",
 				params: {
@@ -129,65 +215,69 @@ var snapcast = function() {
 						percent: volume
 					}
 				}
-			}, snapcast.updateStatus);
+			}, null);
 		},
 
 		setGroupMute: function(id, muted) {
-			clearTimeout(updatetimer);
 			snapcastRequest({
 				method: "Group.SetMute",
 				params: {
 					id: id,
 					mute: muted
 				}
-			}, snapcast.updateStatus);
+			}, null);
 		},
 
 		deleteClient: function(id) {
-			clearTimeout(updatetimer);
 			snapcastRequest({
 				method: "Server.DeleteClient",
 				params: {
 					id: id
 				}
-			}, snapcast.gotStatus);
+			}, null);
 		},
 
 		setClientName: function(id, name) {
-			clearTimeout(updatetimer);
 			snapcastRequest({
 				method: "Client.SetName",
 				params: {
 					id: id,
 					name: name
 				}
-			}, snapcast.updateStatus);
+			}, null);
+		},
+
+		setGroupName: function(id, name) {
+			snapcastRequest({
+				method: "Group.SetName",
+				params: {
+					id: id,
+					name: name
+				}
+			}, null);
 		},
 
 		setClientLatency: function(id, latency) {
-			clearTimeout(updatetimer);
 			snapcastRequest({
 				method: "Client.SetLatency",
 				params: {
 					id: id,
 					latency: parseInt(latency)
 				}
-			}, snapcast.updateStatus);
+			}, null);
 		},
 
 		setStream: function(group, stream) {
-			clearTimeout(updatetimer);
 			snapcastRequest({
 				method: "Group.SetStream",
 				params: {
 					id: group,
 					stream_id: stream
 				}
-			}, snapcast.updateStatus);
+			}, null);
 		},
 
 		addClientToGroup: function(client, group) {
-			clearTimeout(updatetimer);
 			var groupindex = findGroup(groups, group);
 			var clients = groups[groupindex].getClients();
 			clients.push(client);
@@ -197,23 +287,23 @@ var snapcast = function() {
 					clients: clients,
 					id: group
 				}
-			}, snapcast.gotStatus);
+			}, null);
 		},
 
 		clearEverything: function() {
-			clearTimeout(updatetimer);
 			streams = [];
 			groups = [];
 			$('#snapcastgroups').empty();
+			snapsocket.close();
 		},
 
-		clearUpdateTimer() {
-			clearTimeout(updatetimer);
-		},
-
-		setUpdateTimer() {
-			clearTimeout(updatetimer);
-			updatetimer = setTimeout(snapcast.updateStatus, 60000);
+		updateClient: function(params) {
+			var i = 0;
+			var found = false;
+			while (found === false && i < groups.length) {
+				found = groups[i].updateClient(params);
+				i++;
+			}
 		}
 
 	}
@@ -230,6 +320,7 @@ function snapcastGroup() {
 	var streammenu;
 	var ind;
 	var name;
+	var changeNameTimer;
 
 	function findClient(arr, id) {
 		for (var i in arr) {
@@ -240,14 +331,23 @@ function snapcastGroup() {
 		return false;
 	}
 
+	this.updateClient = function(params) {
+		var c = findClient(clients, params.id);
+		if (c !== false) {
+			clients[c].setParams(params);
+		}
+		return c;
+	}
+
 	this.initialise = function() {
 		holder = $('<div>', {class: 'snapcastgroup fullwidth'}).appendTo('#snapcastgroups');
 		var title = $('<div>', {class: 'containerbox snapgrouptitle dropdown-container'}).appendTo(holder);
-		title.append('<div class="fixed tag" name="groupname"></div>');
+		var n = $('<input>', {type: "text", class: "expand tag snapclientname", name: "groupname"}).appendTo(title);
 		title.append('<div class="expand tag textcentre" name="groupstream"></div>');
 		var m = $('<i>', {class: "podicon fixed icon-menu clickicon"}).appendTo(title).on('click', self.setStream);
 		m = $('<i>', {class: "podicon fixed clickicon", name: "groupmuted"}).appendTo(title).on('click', self.setMute);
 		streammenu = $('<div>', {class: 'toggledown invisible'}).insertAfter(title);
+		n.on('keyup', self.keyUp)
 	}
 
 	this.removeSelf = function() {
@@ -258,16 +358,26 @@ function snapcastGroup() {
 		return id;
 	}
 
+	this.keyUp = function() {
+		clearTimeout(changeNameTimer);
+		changeNameTimer = setTimeout(self.changeName, 2500);
+	}
+
+	this.changeName = function() {
+		snapcast.setGroupName(id, holder.find('input[name="groupname"]').val());
+	}
+
 	this.update = function(index, data) {
 		ind = index;
 		id = data.id;
 		muted = data.muted;
 		name = data.name;
-		var g = language.gettext('snapcast_group')+index;
 		if (data.name) {
-			g += ' ('+data.name+')';
+			var g = data.name;
+		} else {
+			var g = language.gettext('snapcast_group')+index;
 		}
-		holder.find('div[name="groupname"]').html(g);
+		holder.find('input[name="groupname"]').val(g);
 		holder.find('div[name="groupstream"]').html(snapcast.streamInfo(data.stream_id, false));
 		var icon = data.muted ? 'icon-output-mute' : 'icon-output';
 		holder.find('i[name="groupmuted"]').removeClass('icon-output icon-output-mute').addClass(icon);
@@ -349,6 +459,20 @@ function snapcastClient() {
 	var connected;
 	var changeNameTimer;
 
+	function updateVolume(params) {
+		volume.volumeControl("displayVolume", params.percent);
+		var icon = params.muted ? 'icon-output-mute' : 'icon-output';
+		holder.find('i[name="clientmuted"]').removeClass('icon-output icon-output-mute').addClass(icon);
+	}
+
+	function updateName(g) {
+		holder.find('input[name="clientname"]').val(g);
+	}
+
+	function updateLatency(l) {
+		holder.find('input[name="latency"]').val(l);
+	}
+
 	this.initialise = function(parentdiv) {
 		holder = $('<div>', {class: 'snapcastclient'}).appendTo(parentdiv);
 		var title = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(holder);
@@ -385,7 +509,6 @@ function snapcastClient() {
 
 	this.keyUp = function() {
 		clearTimeout(changeNameTimer);
-		snapcast.clearUpdateTimer();
 		changeNameTimer = setTimeout(self.changeName, 2500);
 	}
 
@@ -401,20 +524,30 @@ function snapcastClient() {
 		} else {
 			g = id;
 		}
-		holder.find('input[name="clientname"]').val(g);
+		updateName(g);
 		if (data.connected) {
 			holder.find('div[name="notcon"]').html('');
 			holder.find('div[name="clienthost"]').html('('+data.host.name+' - '+data.host.os+')');
-			volume.volumeControl("displayVolume", data.config.volume.percent);
-			var icon = data.config.volume.muted ? 'icon-output-mute' : 'icon-output';
-			holder.find('i[name="clientmuted"]').removeClass('icon-output icon-output-mute').addClass(icon);
-			holder.find('input[name="latency"]').val(data.config.latency);
+			updateVolume(data.config.volume);
+			updateLatency(data.config.latency);
 			vc.removeClass('invisible');
 		} else {
 			holder.find('div[name="notcon"]').html(language.gettext('snapcast_notconnected'));
 			if (!vc.hasClass('invisible')) {
 				vc.addClass('invisible');
 			}
+		}
+	}
+
+	this.setParams = function(params) {
+		if (params.volume) {
+			updateVolume(params.volume);
+		}
+		if (params.name) {
+			updateName(params.name);
+		}
+		if (params.latency || params.latency === 0) {
+			updateLatency(params.latency);
 		}
 	}
 

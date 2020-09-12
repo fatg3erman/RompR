@@ -202,7 +202,7 @@ $(document).ready(function(){
 		$('[name="donkeykong"]').remove();
 		$('[name="dinkeyking"]').remove();
 	}
-	snapcast.updateStatus();
+	snapcast.initialise();
 	startBackgroundInitTasks.doNextTask();
 });
 

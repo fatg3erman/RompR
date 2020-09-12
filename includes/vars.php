@@ -328,6 +328,7 @@ $prefs = array(
 	"collection_player" => null,
 	"snapcast_server" => '',
 	"snapcast_port" => '1705',
+	"snapcast_http" => '1780',
 
 	// Things that could be set on a per-user basis but need to be known by the backend
 	"displaycomposer" => true,
