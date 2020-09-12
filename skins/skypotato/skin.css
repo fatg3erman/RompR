@@ -613,6 +613,8 @@ div.rightmenu
 	height:20px;
 	width:20px;
 	vertical-align:middle;
+	box-sizing: border-box;
+	border: 2px solid transparent;
 }
 
 /*

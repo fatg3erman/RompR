@@ -2,6 +2,7 @@ var snapsocket = function() {
 
 	var socket = null;
 	var connected = false;
+	var reconnect_timer;
 
 	function socket_closed() {
 		debug.warn('SNAPSOCKET', 'Socket was closed');
@@ -43,18 +44,20 @@ var snapsocket = function() {
 
 	function socket_error() {
 		snapcast.gotStatus({error: {data: language.gettext('snapcast_notthere')}});
+		socket.close();
+		connected = false;
+		clearTimeout(reconnect_timer);
+		reconnect_timer = setTimeout(snapcast.updateStatus, 10000);
 	}
 
 	function socket_open() {
 		debug.mark('SNAPSOCKET', 'Socket is open');
+		clearTimeout(reconnect_timer);
 		connected = true;
 	}
 
 	return {
-		initialise: function() {
-			if (socket) {
- 				debug.log('SNAPSOCKET', 'readyState is', socket.readyState);
- 			}
+		initialise: async function() {
 			if (!connected || !socket || socket.readyState > WebSocket.OPEN) {
 				debug.mark('SNAPSOCKET', 'Connecting Socket');
 				socket = new WebSocket('ws://'+prefs.snapcast_server+':'+prefs.snapcast_http+'/jsonrpc');
@@ -62,6 +65,9 @@ var snapsocket = function() {
 				socket.onerror = socket_error;
 				socket.onclose = socket_closed;
 				socket.onmessage = socket_message;
+			}
+			while (socket && socket.readyState == WebSocket.CONNECTING) {
+				await new Promise(t => setTimeout(t, 100));
 			}
 		},
 
@@ -72,10 +78,7 @@ var snapsocket = function() {
 		},
 
 		send: async function(data, callback) {
-			snapsocket.initialise();
-			while (socket && socket.readyState == WebSocket.CONNECTING) {
-				await new Promise(t => setTimeout(t, 100));
-			}
+			await snapsocket.initialise();
 			if (socket && socket.readyState == WebSocket.OPEN) {
 				socket.send(JSON.stringify(data));
 			} else {
@@ -184,9 +187,9 @@ var snapcast = function() {
 				if (streams[i].id == streamid) {
 					var h = streams[i].meta.STREAM;
 					h += ' ('+streams[i].status.capitalize()+')';
-					if (showformat) {
-						h += ' <span class="snapclienthost">('+streams[i].uri.query.codec+' '+streams[i].uri.query.sampleformat+')</span>';
-					}
+					// if (showformat) {
+					// 	h += ' <span class="snapclienthost">('+streams[i].uri.query.codec+' '+streams[i].uri.query.sampleformat+')</span>';
+					// }
 					return h;
 				}
 			}
@@ -320,6 +323,7 @@ function snapcastGroup() {
 	var streammenu;
 	var ind;
 	var name;
+	var mutebutton;
 	var changeNameTimer;
 
 	function findClient(arr, id) {
@@ -342,12 +346,13 @@ function snapcastGroup() {
 	this.initialise = function() {
 		holder = $('<div>', {class: 'snapcastgroup fullwidth'}).appendTo('#snapcastgroups');
 		var title = $('<div>', {class: 'containerbox snapgrouptitle dropdown-container'}).appendTo(holder);
-		var n = $('<input>', {type: "text", class: "expand tag snapclientname", name: "groupname"}).appendTo(title);
-		title.append('<div class="expand tag textcentre" name="groupstream"></div>');
-		var m = $('<i>', {class: "podicon fixed icon-menu clickicon"}).appendTo(title).on('click', self.setStream);
-		m = $('<i>', {class: "podicon fixed clickicon", name: "groupmuted"}).appendTo(title).on('click', self.setMute);
-		streammenu = $('<div>', {class: 'toggledown invisible'}).insertAfter(title);
-		n.on('keyup', self.keyUp)
+		$('<input>', {type: "text", class: "expand tag snapclientname", name: "groupname"}).appendTo(title);
+
+		var sel = $('<div>', {class: 'selectholder boycie expand', style: 'margin-right: 1em'}).appendTo(title);
+		streammenu = $('<select>', {class: 'snapgroupstream'}).appendTo(sel);
+
+		mutebutton = $('<i>', {class: "podicon fixed clickicon", name: "groupmuted"}).appendTo(title).on('click', self.setMute);
+		mutebutton.on('keyup', self.keyUp)
 	}
 
 	this.removeSelf = function() {
@@ -378,7 +383,6 @@ function snapcastGroup() {
 			var g = language.gettext('snapcast_group')+index;
 		}
 		holder.find('input[name="groupname"]').val(g);
-		holder.find('div[name="groupstream"]').html(snapcast.streamInfo(data.stream_id, false));
 		var icon = data.muted ? 'icon-output-mute' : 'icon-output';
 		holder.find('i[name="groupmuted"]').removeClass('icon-output icon-output-mute').addClass(icon);
 
@@ -397,7 +401,7 @@ function snapcastGroup() {
 				clients[client_exists].update(id, data.clients[i]);
 			}
 		}
-		// Find removed groups
+		// Find removed clients
 		for (var i in clients) {
 			if (findClient(newclients, clients[i].getId()) === false) {
 				debug.log('SNAPCAST','Client',clients[i].getId(),'has been removed');
@@ -406,29 +410,26 @@ function snapcastGroup() {
 			}
 		}
 		clients = newclients;
+
+		streammenu.off('change');
+		streammenu.html('');
+		var s = snapcast.getAllStreams();
+		for (var i in s) {
+			$('<option>', {value: s[i].id}).html(snapcast.streamInfo(s[i].id, true)).appendTo(streammenu);
+		}
+		streammenu.val(data.stream_id);
+		streammenu.on('change', self.changeStream);
+
 	}
 
 	this.setMute = function() {
 		snapcast.setGroupMute(id, !muted);
 	}
 
-	this.setStream = function() {
-		streammenu.empty();
-		var s = snapcast.getAllStreams();
-		var a = $('<div>', {class: 'menuitem textcentre'}).appendTo(streammenu);
-		a.html('Change Stream');
-		for (var i in s) {
-			var d = $('<div>', {class: 'backhi clickitem textcentre', name: s[i].id}).appendTo(streammenu).on('click', self.changeStream);
-			d.html(snapcast.streamInfo(s[i].id, true));
-		}
-		streammenu.slideToggle('fast');
-	}
-
 	this.changeStream = function(e) {
-		var streamid = $(this).attr('name');
+		var streamid = $(this).val();
 		debug.log('SNAPCAST', 'Group',id,'changing stream to',streamid);
 		snapcast.setStream(id, streamid);
-		streammenu.slideToggle('fast');
 	}
 
 	this.getInfo = function() {
@@ -490,7 +491,6 @@ function snapcastClient() {
 		});
 		groupmenu = $('<div>', {class: 'toggledown invisible'}).insertAfter(title);
 		var j = $('<div>', {class: "containerbox wrap dropdown-container"}).appendTo(groupmenu);
-		j.append('<div class="expand playlistrow2" name="clienthost"></div>');
 		var lholder = $('<div>', {class: 'containerbox fixed dropdown-container'}).appendTo(j);
 		$('<div>', {class: 'fixed padright'}).appendTo(lholder).html(language.gettext('snapcast_latency'));
 		$('<input>', {type: 'text', class: 'fixed', name: "latency", style: "width:4em"}).appendTo(lholder);
@@ -522,12 +522,11 @@ function snapcastClient() {
 		if (data.config.name) {
 			g = data.config.name;
 		} else {
-			g = id;
+			g = data.host.name+' - '+data.host.os;
 		}
 		updateName(g);
 		if (data.connected) {
 			holder.find('div[name="notcon"]').html('');
-			holder.find('div[name="clienthost"]').html('('+data.host.name+' - '+data.host.os+')');
 			updateVolume(data.config.volume);
 			updateLatency(data.config.latency);
 			vc.removeClass('invisible');

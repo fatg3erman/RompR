@@ -181,7 +181,7 @@ div.selectholder {
 	background-color:white;
 }
 
-div.pref div.selectholder {
+div.pref div.selectholder:not(.boycie) {
 	margin-left: 1em;
 	width:58%;
 }
