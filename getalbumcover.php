@@ -81,6 +81,7 @@ function tryLocal($albumimage) {
 			$file_name = strtolower(rawurldecode(html_entity_decode(basename($file,'.'.$info['extension']))));
 			if ($file_name == $albumimage->get_image_key()) {
 				logger::trace("GETALBUMCOVER", "    Returning archived image");
+				$delaytime = 1;
 				return $file;
 			}
 		}
@@ -92,6 +93,7 @@ function tryLocal($albumimage) {
 			if ($file_name == strtolower($albumimage->artist." - ".$albumimage->album) ||
 				$file_name == strtolower($albumimage->album)) {
 				logger::trace("GETALBUMCOVER", "    Returning file matching album name");
+				$delaytime = 1;
 				return $file;
 			}
 		}
@@ -103,6 +105,7 @@ function tryLocal($albumimage) {
 				$file_name = strtolower(rawurldecode(html_entity_decode(basename($file,'.'.$info['extension']))));
 				if ($file_name == $name) {
 					logger::trace("GETALBUMCOVER", "    Returning ".$file);
+					$delaytime = 1;
 					return $file;
 				}
 			}
@@ -371,13 +374,16 @@ function tryMusicBrainz($albumimage) {
 }
 
 function tryMopidy($albumimage) {
-	global $player;
+	global $player, $delaytime;
 	$retval = '';
 	logger::log('GETALBUMCOVER', 'Trying Mopidy-Images. AlbumURI is', $albumimage->albumuri);
 	if ($albumimage->albumuri) {
 		$retval = $player->find_album_image($albumimage->albumuri);
 	} else if ($albumimage->trackuri) {
 		$retval = $player->find_album_image($albumimage->trackuri);
+	}
+	if ($retval != '') {
+		$delaytime = 100;
 	}
 	return $retval;
 }

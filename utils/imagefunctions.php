@@ -16,7 +16,7 @@ class baseAlbumImage {
 
 	public function __construct($params) {
 		global $prefs;
-		foreach (array('artist', 'album', 'key', 'source', 'file', 'base64data', 'mbid', 'albumpath', 'albumuri') as $param) {
+		foreach (array('artist', 'album', 'key', 'source', 'file', 'base64data', 'mbid', 'albumpath', 'albumuri', 'trackuri') as $param) {
 			if (array_key_exists($param, $params) && $params[$param] != '') {
 				$this->{$param} = $params[$param];
 			} else {
