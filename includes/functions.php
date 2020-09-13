@@ -692,6 +692,9 @@ function get_player_ip() {
 	} else {
 		$pip = $prefs['multihosts']->{$prefs['currenthost']}->host . ':' . $prefs['multihosts']->{$prefs['currenthost']}->port;
 	}
+	if ($prefs['mopidy_http_port'] !== false) {
+		$pip .= '/'.$prefs['mopidy_http_port'];
+	}
 	logger::log("INIT", "Displaying Player IP as: ".$pip);
 	return $pip;
 }

@@ -1,36 +1,3 @@
-async function checkProgress() {
-	var AlanPartridge = 5;
-	var safetytimer = 250;
-	var waittime = 1000;
-	while (true) {
-		await playlist.is_valid();
-		if (AlanPartridge >= 5) {
-			AlanPartridge = 0;
-			await player.controller.do_command_list([]);
-			updateStreamInfo();
-		}
-		if (player.status.state == 'play') {
-			player.status.progress = (Date.now()/1000) - player.controller.trackstarttime;
-		} else {
-			player.status.progress = player.status.elapsed;
-		}
-		var duration = playlist.getCurrent('Time') || 0;
-		infobar.setProgress(player.status.progress, duration);
-		if (player.status.songid !== player.controller.previoussongid) {
-			safetytimer = 250;
-		}
-		if (player.status.state == 'play' && duration > 0 && player.status.progress >= (duration - 1)) {
-			AlanPartridge = 5;
-			safetytimer = Math.min(safetytimer + 100, 5000);
-			waittime = safetytimer;
-		} else {
-			AlanPartridge++;
-			waittime = 1000;
-		}
-		await new Promise(t => setTimeout(t, waittime));
-	}
-}
-
 function updateStreamInfo() {
 
 	// When playing a stream, mpd returns 'Title' in its status field.
@@ -139,6 +106,7 @@ function playerController() {
 		debug.debug('PLAYER', 'Command List',list);
 		// Prevent checkProgress and radioManager from doing anything while we're doing things
 		playlist.invalidate();
+		disable_player_events();
 		try {
 			// Use temp variable in case it errors
 			var s = await $.ajax({
@@ -171,6 +139,7 @@ function playerController() {
 			}
 			checkStateChange();
 			infobar.updateWindowValues();
+			enable_player_events();
 		} catch (err) {
 			playlist.validate();
 			debug.error('CONTROLLER', 'Command List Failed', err);

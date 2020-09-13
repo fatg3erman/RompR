@@ -156,6 +156,7 @@ if (array_key_exists('music_directory', $arse)) {
 	set_music_directory($arse['music_directory']);
 }
 $player->close_mpd_connection();
+$player->probe_http_api();
 //
 // See if we can use the SQL backend
 //
@@ -260,6 +261,11 @@ $scripts = array(
 foreach ($scripts as $i) {
 	logger::log("INIT", "Loading ".$i);
 	print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
+}
+if ($prefs['mopidy_http_port'] === false) {
+	print '<script type="text/javascript" src="player/mpd/checkprogress.js?version='.$version_string.'"></script>'."\n";
+} else {
+	print '<script type="text/javascript" src="player/mopidy/checkprogress.js?version='.$version_string.'"></script>'."\n";
 }
 $inc = glob("streamplugins/*.js");
 foreach($inc as $i) {

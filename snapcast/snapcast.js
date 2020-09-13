@@ -90,7 +90,7 @@ var snapsocket = function() {
 			}
 		},
 
-		send: async function(data, callback) {
+		send: async function(data) {
 			if (await snapsocket.initialise()) {
 				socket.send(JSON.stringify(data));
 			}
@@ -107,7 +107,7 @@ var snapcast = function() {
 	var lastid = 0;
 	var ew = null;
 
-	function snapcastRequest(parms, callback) {
+	function snapcastRequest(parms) {
 		id++;
 		parms.id = id;
 		parms.jsonrpc = "2.0";
@@ -141,7 +141,7 @@ var snapcast = function() {
 			if (prefs.snapcast_server != '' && prefs.snapcast_http != '') {
 				snapcastRequest({
 					method: "Server.GetStatus"
-				}, snapcast.gotStatus);
+				});
 				$('#snapheader').show();
 			} else {
 				$('#snapheader').hide();
@@ -215,7 +215,7 @@ var snapcast = function() {
 						percent: volume
 					}
 				}
-			}, null);
+			});
 		},
 
 		setGroupMute: function(id, muted) {
@@ -225,7 +225,7 @@ var snapcast = function() {
 					id: id,
 					mute: muted
 				}
-			}, null);
+			});
 		},
 
 		deleteClient: function(id) {
@@ -234,7 +234,7 @@ var snapcast = function() {
 				params: {
 					id: id
 				}
-			}, null);
+			});
 		},
 
 		setClientName: function(id, name) {
@@ -245,7 +245,7 @@ var snapcast = function() {
 					id: id,
 					name: name
 				}
-			}, null);
+			});
 		},
 
 		setGroupName: function(id, name) {
@@ -255,7 +255,7 @@ var snapcast = function() {
 					id: id,
 					name: name
 				}
-			}, null);
+			});
 		},
 
 		setClientLatency: function(id, latency) {
@@ -265,7 +265,7 @@ var snapcast = function() {
 					id: id,
 					latency: parseInt(latency)
 				}
-			}, null);
+			});
 		},
 
 		setStream: function(group, stream) {
@@ -275,7 +275,7 @@ var snapcast = function() {
 					id: group,
 					stream_id: stream
 				}
-			}, null);
+			});
 		},
 
 		addClientToGroup: function(client, group) {
@@ -287,7 +287,7 @@ var snapcast = function() {
 					clients: clients,
 					id: group
 				}
-			}, null);
+			});
 		},
 
 		clearEverything: function() {

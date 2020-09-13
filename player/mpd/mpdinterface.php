@@ -13,6 +13,7 @@ class base_mpd_player {
 	private $debug_id;
 	public $to_browse;
 	private $mpd_version = null;
+	private $http_socket = 6680;
 
 	public function __construct($ip = null, $port = null, $socket = null, $password = null, $player_type = null, $is_remote = null) {
 		global $prefs;
@@ -737,6 +738,37 @@ class base_mpd_player {
 			$prefs['player_backend'] = $retval;
 		}
 		return $retval;
+	}
+
+	public function probe_http_api() {
+		global $prefs;
+		if ($prefs['player_backend'] == 'mopidy') {
+			logger::log('MPDPLAYER', 'Probing HTTP API');
+			$url = 'http://'.$this->ip.':'.$this->http_socket.'/mopidy/rpc';
+			$data = array(
+				'jsonrpc' => '2.0',
+				'id' => '1',
+				'method' => 'core.get_version'
+			);
+
+			$options = array(
+			    'http' => array(
+			        'header'  => "Content-type: application/json\r\n",
+			        'method'  => 'POST',
+			        'content' => http_build_query($data)
+			    )
+			);
+			$context  = stream_context_create($options);
+			$result = file_get_contents($url, false, $context);
+			if ($result !== false) {
+				logger::log('MPDPLAYER', 'Connected to Mopidy HTTP API Successfully');
+				$prefs['mopidy_http_port'] = $this->http_socket;
+			} else {
+				$prefs['mopidy_http_port'] = false;
+			}
+		} else {
+			$prefs['mopidy_http_port'] = false;
+		}
 	}
 
 }

@@ -199,8 +199,8 @@ div.collectionpanel>div.playable.clickalbum.brick_wide {
 
 #notifications {
 	position:absolute;
-	width:50%;
-	max-width:500px;
+	width:60%;
+	max-width:600px;
 	padding:8px;
 	top:0px;
 	display:none;
