@@ -47,6 +47,7 @@ class baseAlbumImage {
 			$this->images = $this->image_paths_from_base_image($params['baseimage']);
 			$this->key = $this->make_image_key();
 		} else if ($this->key !== null) {
+			logger::log('ALBUMIMAGE', 'Image Infor From Database');
 			$this->image_info_from_database();
 		} else {
 			$this->images = $this->image_info_from_album_info();

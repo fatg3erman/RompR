@@ -21,6 +21,7 @@ var mopidysocket = function() {
 	var react = true;
 	var react_timer;
 	var error_win = null;
+	var error_timer;
 
 	function socket_closed() {
 		debug.warn('MOPISOCKET', 'Socket was closed');
@@ -30,10 +31,15 @@ var mopidysocket = function() {
 		socket = null;
 	}
 
-	function socket_error() {
+	function show_connection_error() {
 		if (error_win == null) {
 			error_win = infobar.permerror(language.gettext('error_playergone'));
 		}
+	}
+
+	function socket_error() {
+		clearTimeout(error_timer);
+		error_timer = setTimeout(show_connection_error, 1000);
 		connected = false;
 		mopidysocket.close();
 		clearTimeout(reconnect_timer);
@@ -43,6 +49,7 @@ var mopidysocket = function() {
 	function socket_open() {
 		debug.mark('MOPISOCKET', 'Socket is open');
 		clearTimeout(reconnect_timer);
+		clearTimeout(error_timer);
 		connected = true;
 		if (error_win !== null) {
 			infobar.removenotify(error_win);

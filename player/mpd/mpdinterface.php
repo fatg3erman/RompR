@@ -753,9 +753,9 @@ class base_mpd_player {
 
 			$options = array(
 			    'http' => array(
-			        'header'  => "Content-type: application/json\r\n",
+			        'header'  => "Content-Type: application/json\r\n",
 			        'method'  => 'POST',
-			        'content' => http_build_query($data)
+			        'content' => json_encode($data)
 			    )
 			);
 			$context  = stream_context_create($options);
@@ -769,6 +769,68 @@ class base_mpd_player {
 		} else {
 			$prefs['mopidy_http_port'] = false;
 		}
+	}
+
+	public function find_album_image($uri) {
+		global $prefs;
+		$retval = '';
+		if ($prefs['player_backend'] == 'mopidy') {
+			logger::log('MPDPLAYER', 'Probing HTTP API for an album image for', $uri);
+			$url = 'http://'.$this->ip.':'.$prefs['mopidy_http_port'].'/mopidy/rpc';
+			$data = array(
+				'jsonrpc' => '2.0',
+				'id' => '1',
+				'method' => 'core.library.get_images',
+				"params" => array(
+					"uris" => array($uri)
+				)
+			);
+
+			$options = array(
+			    'http' => array(
+			        'header'  => "Content-Type: application/json\r\n",
+			        'method'  => 'POST',
+			        'content' => json_encode($data)
+			    )
+			);
+			$context  = stream_context_create($options);
+			$result = file_get_contents($url, false, $context);
+			if ($result !== false) {
+				$biggest = 0;
+				logger::log('MPDPLAYER', 'Connected to Mopidy HTTP API Successfully');
+				logger::log('MPDPLAYER', $result);
+				$json = json_decode($result, true);
+				if (array_key_exists('error', $json)) {
+					logger::warn('MPDPLAYER', 'Summit went awry');
+				} else if (array_key_exists($uri, $json['result'])
+					&& is_array($json['result'][$uri])
+					&& count($json['result'][$uri]) > 0
+				) {
+					foreach ($json['result'][$uri] as $image) {
+						if (array_key_exists('width', $image) && $image['width'] > $biggest) {
+							$retval = $image['uri'];
+							$biggest = $image['width'];
+						} else if (!array_key_exists('width', $image)) {
+							if ($retval == '') {
+								$retval = $image['uri'];
+							} else {
+								$ours = basename($retval);
+								$theirs = basename($image['uri']);
+								if ($ours == 'default.jpg' && ($theirs == 'mqdefault.jpg' || $theirs == 'hqdefault.jpg')) {
+									$retval = $image['uri'];
+								}
+								if ($ours == 'mqdefault.jpg' && $theirs == 'hqdefault.jpg') {
+									$retval = $image['uri'];
+								}
+							}
+						}
+					}
+				}
+			}
+			logger::log('MPDPLAYER', 'Returning', $retval);
+			return $retval;
+		}
+
 	}
 
 }

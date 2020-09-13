@@ -16,6 +16,25 @@ In mopidy.conf, your mpd section needs to contain
 
 120 is a minimum (it's in seconds). If you have a large music collection try a much larger number, say 600.
 
+### Using the HTTP frontend for improved responsiveness
+
+If your Mopidy has its HTTP frontend enabled on port 6680, RompR can use that *in addition to* the MPD interface. This is optional, it makes RompR a little more
+responsive when things change within Mopidy. RompR can also use this connection to query Mopidy for album images. You will, however, have to configure Mopidy to allow HTTP connections from your RompR installation.
+
+The correct way to do this is to set the http/allowed_origins parameter in mopidy.conf. However, so long as your Mopidy installation is not connected
+to the internet it is significantly easier to set http/csrf_protection=false in mopidy.conf. See the Mopidy docs for more information.
+
+	[http]
+	allowed_origins=
+		your.rompr.server
+
+or
+
+	[http]
+	csrf_protection=false
+
+If RompR is able to connect to Mopidy in this way, you will see a connection message that displays two port numbers when you first open RompR.
+
 ## Building Your Music Collection
 
 The configuration panel will allow you to choose various sources from which to build your [Music Collection](/RompR/Music-Collection).

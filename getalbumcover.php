@@ -6,6 +6,7 @@ require_once ("utils/imagefunctions.php");
 include ("backends/sql/backend.php");
 include ("includes/spotifyauth.php");
 include ("getid3/getid3.php");
+require_once ('player/mpd/mpdinterface.php');
 
 logger::mark("GETALBUMCOVER", "------- Searching For Album Art --------");
 foreach ($_REQUEST as $k => $v) {
@@ -26,6 +27,14 @@ if ($albumimage->mbid != "") {
 } else {
 	// Try LastFM twice - first time just to get an MBID since coverartarchive images tend to be bigger
 	$searchfunctions = array( 'trySoundcloud', 'tryYoutube', 'tryLocal', 'trySpotify', 'tryLastFM', 'tryMusicBrainz', 'tryLastFM', 'tryGoogle' );
+}
+
+$player = new base_mpd_player();
+$player->close_mpd_connection();
+$player->probe_http_api();
+
+if ($prefs['mopidy_http_port'] !== false) {
+	array_unshift($searchfunctions, 'tryMopidy');
 }
 
 $result = $albumimage->download_image();
@@ -359,6 +368,16 @@ function tryMusicBrainz($albumimage) {
 	}
 	return $retval;
 
+}
+
+function tryMopidy($albumimage) {
+	global $player;
+	$retval = '';
+	logger::log('GETALBUMCOVER', 'Trying Mopidy-Images. AlbumURI is', $albumimage->albumuri);
+	if ($albumimage->albumuri) {
+		$retval = $player->find_album_image($albumimage->albumuri);
+	}
+	return $retval;
 }
 
 function loadJSON($domain, $path) {
