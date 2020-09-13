@@ -485,75 +485,63 @@ function get_imagesearch_info($key) {
 
 	// Used by getalbumcover.php to get album and artist names etc based on an Image Key
 
-	$retval = array('artist' => null, 'album' => null, 'mbid' => null, 'albumpath' => null, 'albumuri' => null);
-	$result = generic_sql_query(
+	$retval = array('artist' => null, 'album' => null, 'mbid' => null, 'albumpath' => null, 'albumuri' => null, 'trackuri' => null);
+	$queries = array(
 		"SELECT DISTINCT
 			Artisttable.Artistname,
 			Albumname,
 			mbid,
 			Albumindex,
 			AlbumUri,
-			isSearchResult
+			isSearchResult,
+			Uri
 		FROM
 			Albumtable
 			JOIN Artisttable ON AlbumArtistindex = Artisttable.Artistindex
 			JOIN Tracktable USING (Albumindex)
-			WHERE ImgKey = '".$key."' AND isSearchResult < 2 AND Hidden = 0", false, PDO::FETCH_OBJ
-	);
-	// This can come back with multiple results if we have the same album on multiple backends
-	// So we make sure we combine the data to get the best possible set
-	foreach ($result as $obj) {
-		if ($retval['artist'] == null) {
-			$retval['artist'] = $obj->Artistname;
-		}
-		if ($retval['album'] == null) {
-			$retval['album'] = $obj->Albumname;
-		}
-		if ($retval['mbid'] == null || $retval['mbid'] == "") {
-			$retval['mbid'] = $obj->mbid;
-		}
-		if ($retval['albumpath'] == null) {
-			$retval['albumpath'] = get_album_directory($obj->Albumindex, $obj->AlbumUri);
-		}
-		if ($retval['albumuri'] == null || $retval['albumuri'] == "") {
-			$retval['albumuri'] = $obj->AlbumUri;
-		}
-		logger::log('BACKEND', "Found album",$retval['album'],",in collection");
-	}
+			WHERE ImgKey = ? AND isSearchResult < 2 AND Hidden = 0",
 
-	$result = generic_sql_query(
 		"SELECT DISTINCT
 			Artisttable.Artistname,
 			Albumname,
 			mbid,
 			Albumindex,
 			AlbumUri,
-			isSearchResult
+			isSearchResult,
+			Uri
 		FROM
 			Albumtable
 			JOIN Artisttable ON AlbumArtistindex = Artisttable.Artistindex
 			JOIN Tracktable USING (Albumindex)
-			WHERE ImgKey = '".$key."' AND isSearchResult > 1", false, PDO::FETCH_OBJ
+			WHERE ImgKey = ? AND isSearchResult > 1"
 	);
-	// This can come back with multiple results if we have the same album on multiple backends
-	// So we make sure we combine the data to get the best possible set
-	foreach ($result as $obj) {
-		if ($retval['artist'] == null) {
-			$retval['artist'] = $obj->Artistname;
+
+	foreach ($queries as $query) {
+		$result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, $query, $key);
+
+		// This can come back with multiple results if we have the same album on multiple backends
+		// So we make sure we combine the data to get the best possible set
+		foreach ($result as $obj) {
+			if ($retval['artist'] == null) {
+				$retval['artist'] = $obj->Artistname;
+			}
+			if ($retval['album'] == null) {
+				$retval['album'] = $obj->Albumname;
+			}
+			if ($retval['mbid'] == null || $retval['mbid'] == "") {
+				$retval['mbid'] = $obj->mbid;
+			}
+			if ($retval['albumpath'] == null) {
+				$retval['albumpath'] = get_album_directory($obj->Albumindex, $obj->AlbumUri);
+			}
+			if ($retval['albumuri'] == null || $retval['albumuri'] == "") {
+				$retval['albumuri'] = $obj->AlbumUri;
+			}
+			if ($retval['trackuri'] == null) {
+				$retval['trackuri'] = $obj->Uri;
+			}
+			logger::log('BACKEND', "Found album",$retval['album'],",in database");
 		}
-		if ($retval['album'] == null) {
-			$retval['album'] = $obj->Albumname;
-		}
-		if ($retval['mbid'] == null || $retval['mbid'] == "") {
-			$retval['mbid'] = $obj->mbid;
-		}
-		if ($retval['albumpath'] == null) {
-			$retval['albumpath'] = get_album_directory($obj->Albumindex, $obj->AlbumUri);
-		}
-		if ($retval['albumuri'] == null || $retval['albumuri'] == "") {
-			$retval['albumuri'] = $obj->AlbumUri;
-		}
-		logger::log('BACKEND', "Found album",$retval['album'],"in search results or hidden tracks");
 	}
 	return $retval;
 }

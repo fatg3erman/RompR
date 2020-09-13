@@ -300,8 +300,9 @@ function get_base_url() {
 
 function scan_for_images($albumpath) {
 	logger::log("LOCAL IMAGE SCAN", "Album Path Is ".$albumpath);
+	logger::log("LOCAL IMAGE SCAN", getcwd());
 	$result = array();
-	if (is_dir("prefs/MusicFolders") && $albumpath != ".") {
+	if ((is_dir("prefs/MusicFolders") || is_link('prefs/MusicFolders')) && $albumpath != ".") {
 		$albumpath = munge_filepath($albumpath);
 		$result = array_merge($result, get_images($albumpath));
 		// Is the album dir part of a multi-disc set?
@@ -317,6 +318,8 @@ function scan_for_images($albumpath) {
 				$result = array_merge($result, get_images($f));
 			}
 		}
+	} else {
+		logger::log('LOCAL IMAGE SCAN', 'Nope');
 	}
 	return $result;
 }

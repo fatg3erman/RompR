@@ -376,6 +376,8 @@ function tryMopidy($albumimage) {
 	logger::log('GETALBUMCOVER', 'Trying Mopidy-Images. AlbumURI is', $albumimage->albumuri);
 	if ($albumimage->albumuri) {
 		$retval = $player->find_album_image($albumimage->albumuri);
+	} else if ($albumimage->trackuri) {
+		$retval = $player->find_album_image($albumimage->trackuri);
 	}
 	return $retval;
 }
