@@ -38,12 +38,12 @@ var mopidysocket = function() {
 	}
 
 	function socket_error() {
-		clearTimeout(error_timer);
-		error_timer = setTimeout(show_connection_error, 1000);
 		connected = false;
 		mopidysocket.close();
 		clearTimeout(reconnect_timer);
 		reconnect_timer = setTimeout(mopidysocket.initialise, 10000);
+		clearTimeout(error_timer);
+		error_timer = setTimeout(show_connection_error, 3000);
 	}
 
 	function socket_open() {
