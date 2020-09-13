@@ -232,7 +232,7 @@ function createHelpLinks() {
 	helplinks[language.gettext('label_pluginplaylists')] = 'https://fatg3erman.github.io/RompR/Personalised-Radio';
 	helplinks[language.gettext('label_lastfm')] = 'https://fatg3erman.github.io/RompR/LastFM';
 	helplinks[language.gettext('config_players')] = 'https://fatg3erman.github.io/RompR/Using-Multiple-Players';
-	helplinks[language.gettext('config_snapcast')] = 'https://fatg3erman.github.io/RompR/Snapcast';
+	helplinks[language.gettext('config_snapcast')] = 'https://fatg3erman.github.io/RompR/snapcast';
 
 	for (var i in helplinks) {
 		debug.debug("HELPLINKS","Appending Help Link For",i);

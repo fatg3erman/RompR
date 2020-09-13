@@ -6,11 +6,10 @@ var snapsocket = function() {
 
 	function socket_closed() {
 		debug.warn('SNAPSOCKET', 'Socket was closed');
-		if (socket || connected) {
+		if (connected) {
 			socket_error();
 		}
 		socket = null;
-		connected = false;
 	}
 
 	function socket_message(message) {
@@ -24,6 +23,12 @@ var snapsocket = function() {
 					case 'Server.OnUpdate':
 						json.result = json.params;
 						snapcast.gotStatus(json);
+						break;
+
+					case 'Group.OnMute':
+					case 'GrClient.OnNameChanged':
+						debug.log('PARP', json);
+						snapcast.updateGroup(json.params);
 						break;
 
 					case 'Client.OnVolumeChanged':
@@ -44,8 +49,8 @@ var snapsocket = function() {
 
 	function socket_error() {
 		snapcast.gotStatus({error: {data: language.gettext('snapcast_notthere')}});
-		socket.close();
 		connected = false;
+		snapsocket.close();
 		clearTimeout(reconnect_timer);
 		reconnect_timer = setTimeout(snapcast.updateStatus, 10000);
 	}
@@ -69,6 +74,10 @@ var snapsocket = function() {
 			while (socket && socket.readyState == WebSocket.CONNECTING) {
 				await new Promise(t => setTimeout(t, 100));
 			}
+			if (!socket || socket.readyState > WebSocket.OPEN) {
+				socket_error();
+			}
+			return connected;
 		},
 
 		close: function() {
@@ -78,11 +87,8 @@ var snapsocket = function() {
 		},
 
 		send: async function(data, callback) {
-			await snapsocket.initialise();
-			if (socket && socket.readyState == WebSocket.OPEN) {
+			if (await snapsocket.initialise()) {
 				socket.send(JSON.stringify(data));
-			} else {
-				socket_error();
 			}
 		}
 	}
@@ -91,7 +97,7 @@ var snapsocket = function() {
 
 var snapcast = function() {
 
-	var groups = new Array();
+	var groups = {};
 	var streams = new Array();
 	var id = 0;
 	var lastid = 0;
@@ -104,13 +110,20 @@ var snapcast = function() {
 		snapsocket.send(parms);
 	}
 
-	function findGroup(arr, id) {
-		for (var i in arr) {
-			if (arr[i].getId() == id) {
-				return i;
-			}
+	function make_error_window(data) {
+		if (ew === null) {
+			ew = $('<div>', {class: "fullwidth textcentre", style: "padding:4px"}).insertBefore('#snapcastgroups');
+			$('#snapcastgroups').addClass('canbefaded').css({opacity: '0.4'});
 		}
-		return false;
+		ew.html('<b>'+data.error.data+'</b>');
+	}
+
+	function remove_error_window() {
+		if (ew !== null) {
+			ew.remove();
+			ew = null;
+			$('#snapcastgroups').removeClass('canbefaded').css({opacity: ''});
+		}
 	}
 
 	return {
@@ -121,7 +134,7 @@ var snapcast = function() {
 		},
 
 		updateStatus: function() {
-			if (prefs.snapcast_server != '' && prefs.snapcast_port != '') {
+			if (prefs.snapcast_server != '' && prefs.snapcast_http != '') {
 				snapcastRequest({
 					method: "Server.GetStatus"
 				}, snapcast.gotStatus);
@@ -133,47 +146,41 @@ var snapcast = function() {
 
 		gotStatus: function(data) {
 			debug.debug("SNAPCAST", "Server Status", data);
-			if (data.hasOwnProperty('error') && lastid != id) {
-				if (ew === null) {
-					ew = $('<div>', {class: "fullwidth textcentre", style: "padding:4px"}).insertBefore('#snapcastgroups');
-					$('#snapcastgroups').addClass('canbefaded').css({opacity: '0.4'});
-				}
-				ew.html('<b>'+data.error.data+'</b>');
+			if (data.hasOwnProperty('error')) {
+				make_error_window(data);
 			} else if (
 				(data.hasOwnProperty('id') && parseInt(data.id) == id) ||
 				data.hasOwnProperty('method')
 			) {
 				lastid = id;
-				if (ew !== null) {
-					ew.remove();
-					ew = null;
-					$('#snapcastgroups').removeClass('canbefaded').css({opacity: ''});
-				}
+				remove_error_window();
 				streams = data.result.server.streams;
-				var newgroups = new Array();
-				for (var i in data.result.server.groups) {
-					var group_exists = findGroup(groups, data.result.server.groups[i].id);
-					if (group_exists === false) {
-						debug.log('SNAPCAST','Creating new group',data.result.server.groups[i].id);
-						var g = new snapcastGroup();
-						newgroups.push(g);
-						g.initialise();
-						g.update(i, data.result.server.groups[i]);
+				$.each(groups, function() {
+					this.fresh = false;
+				});
+				data.result.server.groups.forEach(function(g) {
+					if (groups.hasOwnProperty(g.id)) {
+						groups[g.id].fresh = true;
+						debug.debug('SNAPCAST','Updating group',g.id);
+						groups[g.id].group.update(g);
 					} else {
-						debug.debug('SNAPCAST','Updating group',data.result.server.groups[i].id);
-						newgroups.push(groups[group_exists]);
-						groups[group_exists].update(i, data.result.server.groups[i]);
+						debug.log('SNAPCAST','Creating new group',g.id);
+						groups[g.id] = {
+							fresh: true,
+							group: new snapcastGroup()
+						}
+						groups[g.id].group.initialise();
+						groups[g.id].group.update(g);
 					}
-				}
-				// Find removed groups
-				for (var i in groups) {
-					if (findGroup(newgroups, groups[i].getId()) === false) {
-						debug.log('SNAPCAST','Group',groups[i].getId(),'has been removed');
-						groups[i].removeSelf();
-						groups[i] = null;
+				});
+				$.each(groups, function(i, v) {
+					if (groups[i].fresh) {
+						groups[i].group.updateGroupLists();
+					} else {
+						groups[i].group.removeSelf();
+						delete groups[i];
 					}
-				}
-				groups = newgroups;
+				});
 			} else {
 				debug.warn('SNAPCAST','Got response with id',data.id,'expecting',id);
 			}
@@ -187,9 +194,6 @@ var snapcast = function() {
 				if (streams[i].id == streamid) {
 					var h = streams[i].meta.STREAM;
 					h += ' ('+streams[i].status.capitalize()+')';
-					// if (showformat) {
-					// 	h += ' <span class="snapclienthost">('+streams[i].uri.query.codec+' '+streams[i].uri.query.sampleformat+')</span>';
-					// }
 					return h;
 				}
 			}
@@ -202,9 +206,9 @@ var snapcast = function() {
 
 		getAllGroups: function() {
 			var retval = new Array();
-			for (var i in groups) {
-				retval.push(groups[i].getInfo());
-			}
+			$.each(groups, function() {
+				retval.push(this.group.getInfo());
+			});
 			return retval;
 		},
 
@@ -241,6 +245,7 @@ var snapcast = function() {
 		},
 
 		setClientName: function(id, name) {
+			debug.log('Chaning name of client',id,'to',name);
 			snapcastRequest({
 				method: "Client.SetName",
 				params: {
@@ -281,8 +286,7 @@ var snapcast = function() {
 		},
 
 		addClientToGroup: function(client, group) {
-			var groupindex = findGroup(groups, group);
-			var clients = groups[groupindex].getClients();
+			var clients = groups[group].group.getClients();
 			clients.push(client);
 			snapcastRequest({
 				method: "Group.SetClients",
@@ -295,18 +299,20 @@ var snapcast = function() {
 
 		clearEverything: function() {
 			streams = [];
-			groups = [];
+			groups = {};
 			$('#snapcastgroups').empty();
 			snapsocket.close();
 		},
 
 		updateClient: function(params) {
-			var i = 0;
-			var found = false;
-			while (found === false && i < groups.length) {
-				found = groups[i].updateClient(params);
-				i++;
-			}
+			$.each(groups, function() {
+				found = this.group.updateClient(params);
+				return !found;
+			});
+		},
+
+		updateGroup(params) {
+			groups[params.id].group.setParams(params);
 		}
 
 	}
@@ -316,43 +322,54 @@ var snapcast = function() {
 function snapcastGroup() {
 
 	var self = this;
-	var clients = new Array();
+	var clients = {};
 	var holder;
 	var id = '';
 	var muted;
 	var streammenu;
-	var ind;
 	var name;
 	var mutebutton;
 	var changeNameTimer;
 
-	function findClient(arr, id) {
-		for (var i in arr) {
-			if (arr[i].getId() == id) {
-				return i;
-			}
+	function setName(data) {
+		if (data.name) {
+			name = data.name;
+		} else {
+			name = id;
+		}
+		holder.find('input[name="groupname"]').val(name);
+	}
+
+	function setMuted(data) {
+		muted = data.muted;
+		var icon = data.muted ? 'icon-output-mute' : 'icon-output';
+		holder.find('i[name="groupmuted"]').removeClass('icon-output icon-output-mute').addClass(icon);
+	}
+
+	this.updateClient = function(params) {
+		if (clients.hasOwnProperty(params.id)) {
+			clients[params.id].client.setParams(params);
+			return true;
 		}
 		return false;
 	}
 
-	this.updateClient = function(params) {
-		var c = findClient(clients, params.id);
-		if (c !== false) {
-			clients[c].setParams(params);
-		}
-		return c;
+	this.updateGroupLists = function() {
+		$.each(clients, function() {
+			this.client.updateGroupList();
+		});
 	}
 
 	this.initialise = function() {
 		holder = $('<div>', {class: 'snapcastgroup fullwidth'}).appendTo('#snapcastgroups');
 		var title = $('<div>', {class: 'containerbox snapgrouptitle dropdown-container'}).appendTo(holder);
-		$('<input>', {type: "text", class: "expand tag snapclientname", name: "groupname"}).appendTo(title);
+		var n = $('<input>', {type: "text", class: "expand tag snapclientname", name: "groupname"}).appendTo(title);
+		n.on('keyup', self.keyUp)
 
 		var sel = $('<div>', {class: 'selectholder boycie expand', style: 'margin-right: 1em'}).appendTo(title);
 		streammenu = $('<select>', {class: 'snapgroupstream'}).appendTo(sel);
 
 		mutebutton = $('<i>', {class: "podicon fixed clickicon", name: "groupmuted"}).appendTo(title).on('click', self.setMute);
-		mutebutton.on('keyup', self.keyUp)
 	}
 
 	this.removeSelf = function() {
@@ -372,44 +389,35 @@ function snapcastGroup() {
 		snapcast.setGroupName(id, holder.find('input[name="groupname"]').val());
 	}
 
-	this.update = function(index, data) {
-		ind = index;
+	this.update = function(data) {
 		id = data.id;
-		muted = data.muted;
-		name = data.name;
-		if (data.name) {
-			var g = data.name;
-		} else {
-			var g = language.gettext('snapcast_group')+index;
-		}
-		holder.find('input[name="groupname"]').val(g);
-		var icon = data.muted ? 'icon-output-mute' : 'icon-output';
-		holder.find('i[name="groupmuted"]').removeClass('icon-output icon-output-mute').addClass(icon);
+		setName(data);
+		setMuted(data);
 
-		var newclients = new Array();
-		for (var i in data.clients) {
-			var client_exists = findClient(clients, data.clients[i].id);
-			if (client_exists === false) {
-				debug.log('SNAPCAST','Creating new client',data.clients[i].id);
-				var g = new snapcastClient();
-				newclients.push(g);
-				g.initialise(holder);
-				g.update(id, data.clients[i]);
+		$.each(clients, function() {
+			this.fresh = false;
+		});
+		data.clients.forEach(function(c) {
+			if (clients.hasOwnProperty(c.id)) {
+				clients[c.id].fresh = true;
+				debug.debug('SNAPCAST','Updating clients',c.id);
+				clients[c.id].client.update(id, c);
 			} else {
-				debug.debug('SNAPCAST','Updating client',data.clients[i].id);
-				newclients.push(clients[client_exists]);
-				clients[client_exists].update(id, data.clients[i]);
+				debug.log('SNAPCAST','Creating new client',c.id);
+				clients[c.id] = {
+					fresh: true,
+					client: new snapcastClient()
+				}
+				clients[c.id].client.initialise(holder);
+				clients[c.id].client.update(id, c);
 			}
-		}
-		// Find removed clients
-		for (var i in clients) {
-			if (findClient(newclients, clients[i].getId()) === false) {
-				debug.log('SNAPCAST','Client',clients[i].getId(),'has been removed');
-				clients[i].removeSelf();
-				clients[i] = null;
+		});
+		$.each(clients, function(i, v) {
+			if (!clients[i].fresh) {
+				clients[i].client.removeSelf();
+				delete clients[i];
 			}
-		}
-		clients = newclients;
+		});
 
 		streammenu.off('change');
 		streammenu.html('');
@@ -433,15 +441,25 @@ function snapcastGroup() {
 	}
 
 	this.getInfo = function() {
-		return {index: ind, id: id, name: name};
+		return {id: id, name: name};
 	}
 
 	this.getClients = function() {
 		var retval = new Array();
-		for (var i in clients) {
-			retval.push(clients[i].getId());
-		}
+		$.each(clients, function(i,v) {
+			retval.push(clients[i].client.getId());
+		});
 		return retval;
+	}
+
+	this.setParams = function(params) {
+		if (params.hasOwnProperty('mute')) {
+			params.muted = params.mute;
+			setMuted(params);
+		}
+		if (params.hasOwnProperty('name')) {
+			setName(params);
+		}
 	}
 }
 
@@ -459,8 +477,11 @@ function snapcastClient() {
 	var groupid;
 	var connected;
 	var changeNameTimer;
+	var changeLatencyTimer;
 
 	function updateVolume(params) {
+		muted = params.muted;
+		volumepc = params.percent;
 		volume.volumeControl("displayVolume", params.percent);
 		var icon = params.muted ? 'icon-output-mute' : 'icon-output';
 		holder.find('i[name="clientmuted"]').removeClass('icon-output icon-output-mute').addClass(icon);
@@ -478,6 +499,8 @@ function snapcastClient() {
 		holder = $('<div>', {class: 'snapcastclient'}).appendTo(parentdiv);
 		var title = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(holder);
 		var n = $('<input>', {type: "text", class: "expand tag snapclientname", name: "clientname"}).appendTo(title);
+		n.on('keyup', self.keyUp);
+
 		$('<div>', {class: 'fixed tag', name: 'notcon'}).appendTo(title);
 		var client = $('<div>', {class: 'containerbox'}).appendTo(holder);
 		var m = $('<i>', {class: "podicon fixed icon-menu clickicon"}).appendTo(title).on('click', self.setGroup);
@@ -489,14 +512,18 @@ function snapcastClient() {
 			orientation: 'horizontal',
 			command: self.setVolume
 		});
+
 		groupmenu = $('<div>', {class: 'toggledown invisible'}).insertAfter(title);
 		var j = $('<div>', {class: "containerbox wrap dropdown-container"}).appendTo(groupmenu);
+
+		var wrapper = $('<div>', {class: 'expand', style: 'margin-right: 1em'}).appendTo(j);
+		var sel = $('<div>', {class: 'selectholder boycie'}).appendTo(wrapper);
+		grouplist = $('<select>', {class: 'snapclientgroup'}).appendTo(sel);
+
 		var lholder = $('<div>', {class: 'containerbox fixed dropdown-container'}).appendTo(j);
 		$('<div>', {class: 'fixed padright'}).appendTo(lholder).html(language.gettext('snapcast_latency'));
-		$('<input>', {type: 'text', class: 'fixed', name: "latency", style: "width:4em"}).appendTo(lholder);
-		$('<button>', {class: "fixed"}).appendTo(lholder).html(language.gettext('snapcast_setlatency')).on("click", self.changeLatency);
-		grouplist = $('<div>').appendTo(groupmenu);
-		n.on('keyup', self.keyUp);
+		lb = $('<input>', {type: 'text', class: 'fixed', name: "latency", style: "width:4em"}).appendTo(lholder);
+		lb.on('keyup', self.setLatency);
 	}
 
 	this.removeSelf = function() {
@@ -512,11 +539,14 @@ function snapcastClient() {
 		changeNameTimer = setTimeout(self.changeName, 2500);
 	}
 
+	this.setLatency = function() {
+		clearTimeout(changeLatencyTimer);
+		changeLatencyTimer = setTimeout(self.changeLatency, 500);
+	}
+
 	this.update = function(index, data) {
 		groupid = index;
 		id = data.id;
-		muted = data.config.volume.muted;
-		volumepc = data.config.volume.percent;
 		connected = data.connected;
 		var g = '';
 		if (data.config.name) {
@@ -536,6 +566,18 @@ function snapcastClient() {
 				vc.addClass('invisible');
 			}
 		}
+
+	}
+
+	this.updateGroupList = function() {
+		grouplist.off('change');
+		grouplist.html('');
+		var g = snapcast.getAllGroups();
+		for (var i in g) {
+			$('<option>', {value: g[i].id}).html(g[i].name).appendTo(grouplist);
+		}
+		grouplist.val(groupid);
+		grouplist.on('change', self.changeGroup);
 	}
 
 	this.setParams = function(params) {
@@ -574,32 +616,13 @@ function snapcastClient() {
 	}
 
 	this.setGroup = function() {
-		if (connected) {
-			grouplist.empty();
-			var g = snapcast.getAllGroups();
-			if (g.length > 1) {
-				var a = $('<div>', {class: 'menuitem textcentre'}).appendTo(grouplist);
-				a.html(language.gettext('snapcast_changegroup'));
-				for (var i in g) {
-					if (g[i].id != groupid) {
-						var d = $('<div>', {class: 'backhi clickitem textcentre', name: g[i].id}).appendTo(grouplist).on('click', self.changeGroup);
-						var h = language.gettext('snapcast_group')+g[i].index;
-						if (g[i].name) {
-							h += ' ('+g[i].name+')';
-						}
-						d.html(h);
-					}
-				}
-			}
-			groupmenu.slideToggle('fast');
-		}
+		groupmenu.slideToggle('fast');
 	}
 
 	this.changeGroup = function(e) {
-		var groupid = $(this).attr('name');
+		var groupid = $(this).val();
 		debug.log('SNAPCAST', 'Client',id,'changing group to',groupid);
 		snapcast.addClientToGroup(id, groupid);
-		groupmenu.slideToggle('fast');
 	}
 
 }
