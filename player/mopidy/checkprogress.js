@@ -6,6 +6,8 @@ function enable_player_events() {
 	mopidysocket.reactToThings();
 }
 
+var AlanPartridge = 30;
+
 // This gives us an event-driven response to Mopidy that works fine alongside our polling-driven
 // update methods. Essentially, thi'll pick up any changes that happen that aren't a result of
 // interaction with out UI. do_command_list() instructs us to ignore events when it is doing something
@@ -104,10 +106,14 @@ var mopidysocket = function() {
 
 }();
 
+async function update_on_wake() {
+	AlanPartridge = 30;
+}
+
 async function checkProgress() {
-	var AlanPartridge = 30;
 	await mopidysocket.initialise();
 	sleepHelper.addWakeHelper(mopidysocket.initialise);
+	sleepHelper.addWakeHelper(update_on_wake);
 	while (true) {
 		await playlist.is_valid();
 		if (AlanPartridge >= 30) {
