@@ -26,8 +26,8 @@ var snapsocket = function() {
 						break;
 
 					case 'Group.OnMute':
-					case 'GrClient.OnNameChanged':
-						debug.log('PARP', json);
+					case 'Group.OnNameChanged':
+					case 'Group.OnStreamChanged':
 						snapcast.updateGroup(json.params);
 						break;
 
@@ -35,6 +35,10 @@ var snapsocket = function() {
 					case 'Client.OnLatencyChanged':
 					case 'Client.OnNameChanged':
 						snapcast.updateClient(json.params);
+						break;
+
+					case 'Stream.OnUpdate':
+						snapcast.updateStream(json.params);
 						break;
 
 					default:
@@ -98,7 +102,7 @@ var snapsocket = function() {
 var snapcast = function() {
 
 	var groups = {};
-	var streams = new Array();
+	var streams = {};
 	var id = 0;
 	var lastid = 0;
 	var ew = null;
@@ -154,7 +158,10 @@ var snapcast = function() {
 			) {
 				lastid = id;
 				remove_error_window();
-				streams = data.result.server.streams;
+				streams = {};
+				data.result.server.streams.forEach(function(s) {
+					streams[s.id] = s;
+				});
 				$.each(groups, function() {
 					this.fresh = false;
 				});
@@ -184,20 +191,6 @@ var snapcast = function() {
 			} else {
 				debug.warn('SNAPCAST','Got response with id',data.id,'expecting',id);
 			}
-		},
-
-		streamInfo: function(streamid, showformat) {
-			if (streams.length == 1) {
-				return '';
-			}
-			for (var i in streams) {
-				if (streams[i].id == streamid) {
-					var h = streams[i].meta.STREAM;
-					h += ' ('+streams[i].status.capitalize()+')';
-					return h;
-				}
-			}
-			return 'Unknown Stream';
 		},
 
 		getAllStreams: function() {
@@ -298,7 +291,7 @@ var snapcast = function() {
 		},
 
 		clearEverything: function() {
-			streams = [];
+			streams = {};
 			groups = {};
 			$('#snapcastgroups').empty();
 			snapsocket.close();
@@ -313,6 +306,13 @@ var snapcast = function() {
 
 		updateGroup(params) {
 			groups[params.id].group.setParams(params);
+		},
+
+		updateStream(params) {
+			streams[params.id] = params.stream;
+			$.each(groups, function() {
+				this.group.setParams(params);
+			});
 		}
 
 	}
@@ -325,6 +325,7 @@ function snapcastGroup() {
 	var clients = {};
 	var holder;
 	var id = '';
+	var stream_id = null;
 	var muted;
 	var streammenu;
 	var name;
@@ -344,6 +345,25 @@ function snapcastGroup() {
 		muted = data.muted;
 		var icon = data.muted ? 'icon-output-mute' : 'icon-output';
 		holder.find('i[name="groupmuted"]').removeClass('icon-output icon-output-mute').addClass(icon);
+	}
+
+	function updateStreamMenu(data) {
+		if (data.stream_id) {
+			stream_id = data.stream_id;
+		}
+		streammenu.off('change');
+		streammenu.html('');
+		$.each(snapcast.getAllStreams(), function() {
+			$('<option>', {value: this.id}).html(streamInfo(this)).appendTo(streammenu);
+		});
+		streammenu.val(stream_id);
+		streammenu.on('change', self.changeStream);
+	}
+
+	function streamInfo(stream) {
+		var h = stream.meta.STREAM;
+		h += ' ('+stream.status.capitalize()+')';
+		return h;
 	}
 
 	this.updateClient = function(params) {
@@ -419,14 +439,7 @@ function snapcastGroup() {
 			}
 		});
 
-		streammenu.off('change');
-		streammenu.html('');
-		var s = snapcast.getAllStreams();
-		for (var i in s) {
-			$('<option>', {value: s[i].id}).html(snapcast.streamInfo(s[i].id, true)).appendTo(streammenu);
-		}
-		streammenu.val(data.stream_id);
-		streammenu.on('change', self.changeStream);
+		updateStreamMenu(data);
 
 	}
 
@@ -459,6 +472,9 @@ function snapcastGroup() {
 		}
 		if (params.hasOwnProperty('name')) {
 			setName(params);
+		}
+		if (params.hasOwnProperty('stream_id') || params.hasOwnProperty('stream')) {
+			updateStreamMenu(params);
 		}
 	}
 }
@@ -548,13 +564,11 @@ function snapcastClient() {
 		groupid = index;
 		id = data.id;
 		connected = data.connected;
-		var g = '';
 		if (data.config.name) {
-			g = data.config.name;
+			updateName(data.config.name)
 		} else {
-			g = data.host.name+' - '+data.host.os;
+			updatename(data.host.name+' - '+data.host.os);
 		}
-		updateName(g);
 		if (data.connected) {
 			holder.find('div[name="notcon"]').html('');
 			updateVolume(data.config.volume);
@@ -619,7 +633,7 @@ function snapcastClient() {
 		groupmenu.slideToggle('fast');
 	}
 
-	this.changeGroup = function(e) {
+	this.changeGroup = function() {
 		var groupid = $(this).val();
 		debug.log('SNAPCAST', 'Client',id,'changing group to',groupid);
 		snapcast.addClientToGroup(id, groupid);
