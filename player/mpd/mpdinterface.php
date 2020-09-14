@@ -752,7 +752,7 @@ class base_mpd_player {
 	private function mopidy_http_request($port, $data) {
 		global $prefs;
 		if ($prefs['player_backend'] == 'mopidy') {
-			$url = 'http://'.$this->ip.':'.$port.'/mopidy/rpc';
+			$url = 'http://'.$port.'/mopidy/rpc';
 
 			$data['jsonrpc'] = '2.0';
 			$data['id'] = 1;
@@ -780,14 +780,14 @@ class base_mpd_player {
 		global $prefs;
 		logger::log('MOPIDYHTTP', 'Probing HTTP API');
 		$result = $this->mopidy_http_request(
-			$this->http_socket,
+			$this->ip.':'.$this->http_socket,
 			array(
 				'method' => 'core.get_version'
 			)
 		);
 		if ($result !== false) {
 			logger::log('MOPIDYHTTP', 'Connected to Mopidy HTTP API Successfully');
-			$prefs['mopidy_http_port'] = $this->http_socket;
+			$prefs['mopidy_http_port'] = $this->ip.':'.$this->http_socket;
 		} else {
 			logger::log('MOPIDYHTTP', 'Mopidy HTTP API Not Available');
 			$prefs['mopidy_http_port'] = false;

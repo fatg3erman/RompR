@@ -77,8 +77,8 @@ var mopidysocket = function() {
 	return {
 		initialise: async function() {
 			if (!connected || !socket || socket.readyState > WebSocket.OPEN) {
-				debug.mark('MOPISOCKET', 'Connecting Socket');
-				socket = new WebSocket('ws://'+prefs.mpd_host+':'+prefs.mopidy_http_port+'/mopidy/ws');
+				debug.mark('MOPISOCKET', 'Connecting Socket to',prefs.mopidy_http_port);
+				socket = new WebSocket('ws://'+prefs.mopidy_http_port+'/mopidy/ws');
 				socket.onopen = socket_open;
 				socket.onerror = socket_error;
 				socket.onclose = socket_closed;
@@ -125,8 +125,8 @@ async function checkProgress() {
 	sleepHelper.addWakeHelper(mopidysocket.initialise);
 	sleepHelper.addWakeHelper(update_on_wake);
 	while (true) {
-		await playlist.is_valid();
 		if (AlanPartridge >= 30) {
+			await playlist.is_valid();
 			AlanPartridge = 0;
 			debug.core('MOPIDY', 'Doing poll');
 			await player.controller.do_command_list([]);
