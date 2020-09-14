@@ -688,18 +688,22 @@ function get_player_ip() {
 	$pip = '';
 	if ($prefs['multihosts']->{$prefs['currenthost']}->socket != '') {
 		$pip = $_SERVER['HTTP_HOST'];
-	} else if ( $prefs['multihosts']->{$prefs['currenthost']}->host == "localhost" ||
-				$prefs['multihosts']->{$prefs['currenthost']}->host == "127.0.0.1" ||
-				$prefs['multihosts']->{$prefs['currenthost']}->host == '::1') {
-		$pip = $_SERVER['HTTP_HOST'] . ':' . $prefs['multihosts']->{$prefs['currenthost']}->port;
 	} else {
-		$pip = $prefs['multihosts']->{$prefs['currenthost']}->host . ':' . $prefs['multihosts']->{$prefs['currenthost']}->port;
+		$pip = nice_server_address($prefs['multihosts']->{$prefs['currenthost']}->host). ':' . $prefs['multihosts']->{$prefs['currenthost']}->port;
 	}
 	if ($prefs['mopidy_http_port'] !== false) {
 		$pip .= '/'.$prefs['mopidy_http_port'];
 	}
 	logger::log("INIT", "Displaying Player IP as: ".$pip);
 	return $pip;
+}
+
+function nice_server_address($host) {
+ 	if ($host == "localhost" || $host == "127.0.0.1" || $host == '::1') {
+		return $_SERVER['HTTP_HOST'];
+	} else {
+		return $host;
+	}
 }
 
 function getCacheData($uri, $cache, $use_cache = true, $return_value = false) {

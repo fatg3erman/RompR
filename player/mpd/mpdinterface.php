@@ -787,7 +787,8 @@ class base_mpd_player {
 		);
 		if ($result !== false) {
 			logger::log('MOPIDYHTTP', 'Connected to Mopidy HTTP API Successfully');
-			$prefs['mopidy_http_port'] = $this->ip.':'.$this->http_socket;
+			$http_server = nice_server_address($this->ip);
+			$prefs['mopidy_http_port'] = $http_server.':'.$this->http_socket;
 		} else {
 			logger::log('MOPIDYHTTP', 'Mopidy HTTP API Not Available');
 			$prefs['mopidy_http_port'] = false;
@@ -826,7 +827,6 @@ class base_mpd_player {
 		}
 		if (strpos($retval, '/local/') === 0) {
 			$retval = 'http://'.$this->ip.':'.$prefs['mopidy_http_port'].$retval;
-			// $retval = '';
 		}
 		logger::log('MOPIDYHTTP', 'Returning', $retval);
 		return $retval;
