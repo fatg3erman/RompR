@@ -740,6 +740,15 @@ class base_mpd_player {
 		return $retval;
 	}
 
+	//
+	// Mopidy-HTTP functions
+	//
+
+	// Strictly speaking these belong in mopidy/player.php
+	// But at places where they're needed that would entain sometimes reating two players
+	// (one of these and one mopidy) which is inefficient and slow, so they're here
+	// If we're really playing the pedantic game, just rename this class so these functions fit.
+
 	private function mopidy_http_request($port, $data) {
 		global $prefs;
 		if ($prefs['player_backend'] == 'mopidy') {
@@ -756,7 +765,12 @@ class base_mpd_player {
 			    )
 			);
 			$context  = stream_context_create($options);
-			return file_get_contents($url, false, $context);
+			// Disable reporting of warnings for this call otherwise it spaffs into the error log
+			// if the connection doesn't work.
+			error_reporting(E_ERROR);
+			$cheese = file_get_contents($url, false, $context);
+			error_reporting();
+			return $cheese;
 		} else {
 			return false;
 		}
@@ -764,7 +778,7 @@ class base_mpd_player {
 
 	public function probe_http_api() {
 		global $prefs;
-		logger::log('MPDPLAYER', 'Probing HTTP API');
+		logger::log('MOPIDYHTTP', 'Probing HTTP API');
 		$result = $this->mopidy_http_request(
 			$this->http_socket,
 			array(
@@ -772,9 +786,10 @@ class base_mpd_player {
 			)
 		);
 		if ($result !== false) {
-			logger::log('MPDPLAYER', 'Connected to Mopidy HTTP API Successfully');
+			logger::log('MOPIDYHTTP', 'Connected to Mopidy HTTP API Successfully');
 			$prefs['mopidy_http_port'] = $this->http_socket;
 		} else {
+			logger::log('MOPIDYHTTP', 'Mopidy HTTP API Not Available');
 			$prefs['mopidy_http_port'] = false;
 		}
 	}
@@ -793,11 +808,11 @@ class base_mpd_player {
 		);
 		if ($result !== false) {
 			$biggest = 0;
-			logger::log('MPDPLAYER', 'Connected to Mopidy HTTP API Successfully');
-			logger::log('MPDPLAYER', $result);
+			logger::log('MOPIDYHTTP', 'Connected to Mopidy HTTP API Successfully');
+			logger::log('MOPIDYHTTP', $result);
 			$json = json_decode($result, true);
 			if (array_key_exists('error', $json)) {
-				logger::warn('MPDPLAYER', 'Summit went awry');
+				logger::warn('MOPIDYHTTP', 'Summit went awry');
 			} else if (array_key_exists($uri, $json['result']) && is_array($json['result'][$uri])) {
 				foreach ($json['result'][$uri] as $image) {
 					if (array_key_exists('width', $image) && $image['width'] > $biggest) {
@@ -825,8 +840,9 @@ class base_mpd_player {
 			// $retval = 'http://'.$this->ip.':'.$prefs['mopidy_http_port'].$retval;
 			$retval = '';
 		}
-		logger::log('MPDPLAYER', 'Returning', $retval);
+		logger::log('MOPIDYHTTP', 'Returning', $retval);
 		return $retval;
 	}
+
 }
 ?>

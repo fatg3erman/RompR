@@ -370,7 +370,6 @@ class mopidyPlayer extends base_mpd_player {
 		}
 		return true;
 	}
-
 }
 
 ?>

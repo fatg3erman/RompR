@@ -567,7 +567,7 @@ function snapcastClient() {
 		if (data.config.name) {
 			updateName(data.config.name)
 		} else {
-			updatename(data.host.name+' - '+data.host.os);
+			updateName(data.host.name+' - '+data.host.os);
 		}
 		if (data.connected) {
 			holder.find('div[name="notcon"]').html('');
