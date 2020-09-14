@@ -692,7 +692,7 @@ function get_player_ip() {
 		$pip = nice_server_address($prefs['multihosts']->{$prefs['currenthost']}->host). ':' . $prefs['multihosts']->{$prefs['currenthost']}->port;
 	}
 	if ($prefs['mopidy_http_port'] !== false) {
-		$pip .= '/'.$prefs['mopidy_http_port'];
+		$pip .= '/'.explode(':', $prefs['mopidy_http_port'])[1];
 	}
 	logger::log("INIT", "Displaying Player IP as: ".$pip);
 	return $pip;

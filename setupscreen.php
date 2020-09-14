@@ -58,6 +58,11 @@ print '<p>'.get_int_text("setup_unixsocket").'<br>';
 print '<input type="text" name="unix_socket" value="'.$prefs['multihosts']->{$prefs['currenthost']}->socket.'" /></p>';
 
 print '<hr class="dingleberry" />';
+print '<h3>'.get_int_text("label_mopidy_http").'</h3>';
+print '<p class="tiny">'.get_int_text("info_mopidy_http").'</p>';
+print '<input type="text" name="http_port_for_mopidy" value="'.$prefs['http_port_for_mopidy'].'" /></p>';
+
+print '<hr class="dingleberry" />';
 print '<h3>'.get_int_text("label_generalsettings").'</h3>';
 print '<div class="styledinputs"><input id="cli" type="checkbox" name="cleanalbumimages" ';
 if ($prefs['cleanalbumimages']) {

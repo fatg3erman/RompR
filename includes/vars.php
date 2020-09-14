@@ -329,6 +329,7 @@ $prefs = array(
 	"snapcast_server" => '',
 	"snapcast_port" => '1705',
 	"snapcast_http" => '1780',
+	"http_port_for_mopidy" => "6680",
 
 	// Things that could be set on a per-user basis but need to be known by the backend
 	"displaycomposer" => true,

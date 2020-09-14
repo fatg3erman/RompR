@@ -157,6 +157,7 @@ if (array_key_exists('music_directory', $arse)) {
 }
 $player->close_mpd_connection();
 $player->probe_http_api();
+
 //
 // See if we can use the SQL backend
 //

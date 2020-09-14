@@ -709,7 +709,9 @@ $languages['en'] = array (
 	"label_cantataimporter" =>				"Import Ratings from Cantata",
 	"podcast_writetags" =>					"Write ID3 Tags to Downloaded Files",
 	"label_youtubedl" =>					"Download Audio",
-	"error_playergone" =>					"Mopidy has stopped resonding!"
+	"error_playergone" =>					"Mopidy has stopped resonding!",
+	"label_mopidy_http" =>					"Mopidy HTTP Interface Port",
+	"info_mopidy_http" =>					"Optional, provides extra functionality with Mopidy"
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

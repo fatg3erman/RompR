@@ -13,7 +13,6 @@ class base_mpd_player {
 	private $debug_id;
 	public $to_browse;
 	private $mpd_version = null;
-	private $http_socket = 6680;
 
 	public function __construct($ip = null, $port = null, $socket = null, $password = null, $player_type = null, $is_remote = null) {
 		global $prefs;
@@ -780,7 +779,7 @@ class base_mpd_player {
 		global $prefs;
 		logger::log('MOPIDYHTTP', 'Probing HTTP API');
 		$result = $this->mopidy_http_request(
-			$this->ip.':'.$this->http_socket,
+			$this->ip.':'.$prefs['http_port_for_mopidy'],
 			array(
 				'method' => 'core.get_version'
 			)
@@ -788,7 +787,7 @@ class base_mpd_player {
 		if ($result !== false) {
 			logger::log('MOPIDYHTTP', 'Connected to Mopidy HTTP API Successfully');
 			$http_server = nice_server_address($this->ip);
-			$prefs['mopidy_http_port'] = $http_server.':'.$this->http_socket;
+			$prefs['mopidy_http_port'] = $http_server.':'.$prefs['http_port_for_mopidy'];
 		} else {
 			logger::log('MOPIDYHTTP', 'Mopidy HTTP API Not Available');
 			$prefs['mopidy_http_port'] = false;
