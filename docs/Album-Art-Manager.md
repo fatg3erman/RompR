@@ -29,6 +29,12 @@ Now when RompЯ searches for album art it will use your local images in preferen
 
 _Note: this setting only works if you're using MPD, or Mopidy's local backend. Other mopidy backends that play local files (eg beets) will not work_
 
+## Getting Album Images from Mopidy
+
+Mopidy can serve Album Art for most of the backends it supports - including Local Files. You do not need to set the path to your music, nor does your webserver have to be on the same machine as your music or as mopidy.
+
+However you need to have Mopidy's HTTP frontend enabled and working correctly as described [here](/RompR/Rompr-And-Mopidy)
+
 ### Archiving Local Images
 
 Once you've downloaded all the art for your Collection, you can archive the images for your local files if you have set the path correctly as above. This is a manual step and requires a terminal open on the PC where your webserver runs.
@@ -36,7 +42,7 @@ Once you've downloaded all the art for your Collection, you can archive the imag
     cd /PATH/TO/ROMPR
     cd utils
     php ./archiveimages.php
-    
+
 This will copy RompЯ's images into your Local Music folders.
 
 ### Using Google Images To Find Album Art
@@ -46,9 +52,9 @@ RompЯ is capable of searching Google Images for album art. However, Google Imag
 The API key is also required if you want to use the Youtube Information panel to get Artist videos.
 
 First you will need a Google Account if you don't already have one. Sign up at [Google](https://www.google.com).
- 
+
 #### Create Your Google API Key
- 
+
 Sign in to Google then go to [Google Developers](https://developers.google.com/). At the bottom of the page click 'Google API Console'.
 
 Next you must create a Project. There should be a 'Create Project' button for this. Once you have created the project (you just need to supply a name, which can be anything) you will be returned to the Dashboard.

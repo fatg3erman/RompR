@@ -272,11 +272,13 @@ var playlist = function() {
 
 		invalidate: function() {
 			playlist_valid = false;
+			disable_player_events();
 			debug.core('PLAYLIST', 'Invalidating playlist');
 		},
 
 		validate: function() {
 			playlist_valid = true;;
+			enable_player_events();
 			debug.core('PLAYLIST', 'Validating playlist');
 		},
 

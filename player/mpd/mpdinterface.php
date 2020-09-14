@@ -815,32 +815,33 @@ class base_mpd_player {
 				logger::warn('MOPIDYHTTP', 'Summit went awry');
 			} else if (array_key_exists($uri, $json['result']) && is_array($json['result'][$uri])) {
 				foreach ($json['result'][$uri] as $image) {
-					if (array_key_exists('width', $image) && $image['width'] > $biggest) {
+					if (!array_key_exists('width', $image)) {
+						$retval = ($retval == '') ? $image['uri'] : $this->compare_images($retval, $image['uri']);
+					} else if ($image['width'] > $biggest) {
 						$retval = $image['uri'];
 						$biggest = $image['width'];
-					} else if (!array_key_exists('width', $image)) {
-						if ($retval == '') {
-							$retval = $image['uri'];
-						} else {
-							$ours = basename($retval);
-							$theirs = basename($image['uri']);
-							if ($ours == 'default.jpg' && ($theirs == 'mqdefault.jpg' || $theirs == 'hqdefault.jpg')) {
-								$retval = $image['uri'];
-							}
-							if ($ours == 'mqdefault.jpg' && $theirs == 'hqdefault.jpg') {
-								$retval = $image['uri'];
-							}
-						}
 					}
 				}
 			}
 		}
 		if (strpos($retval, '/local/') === 0) {
-			// Mopidy-local resizes everything to 174x174. Which is shit.
-			// $retval = 'http://'.$this->ip.':'.$prefs['mopidy_http_port'].$retval;
-			$retval = '';
+			$retval = 'http://'.$this->ip.':'.$prefs['mopidy_http_port'].$retval;
+			// $retval = '';
 		}
 		logger::log('MOPIDYHTTP', 'Returning', $retval);
+		return $retval;
+	}
+
+	private function compare_images($current, $candidate) {
+		$retval = $current;
+		$ours = strtolower(pathinfo($current, PATHINFO_FILENAME));
+		$theirs = strtolower(pathinfo($candidate, PATHINFO_FILENAME));
+		if ($ours == 'default' && ($theirs == 'mqdefault' || $theirs == 'hqdefault')) {
+			$retval = $candidate;
+		}
+		if ($ours == 'mqdefault' && $theirs == 'hqdefault') {
+			$retval = $candidate;
+		}
 		return $retval;
 	}
 

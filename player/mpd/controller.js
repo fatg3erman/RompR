@@ -9,7 +9,7 @@ function updateStreamInfo() {
 	// - I fixed that bug once but it got broke again
 
 	if (playlist.getCurrent('type') == "stream") {
-		// debug.trace('STREAMHANDLER','Playlist:',playlist.getCurrent('Title'),playlist.getCurrent('Album'),playlist.getCurrent('trackartist'));
+		// debug.trace('STREAMHANDLER','Playlist:',playlist.getCurrent('Title'),playlist.getCurrent('Album'),playlist.getCurrent('trackartist'),playlist.getCurrent('type'));
 		var temp = playlist.getCurrentTrack();
 		if (player.status.Title) {
 			var parts = player.status.Title.split(" - ");
@@ -106,7 +106,6 @@ function playerController() {
 		debug.debug('PLAYER', 'Command List',list);
 		// Prevent checkProgress and radioManager from doing anything while we're doing things
 		playlist.invalidate();
-		disable_player_events();
 		try {
 			// Use temp variable in case it errors
 			var s = await $.ajax({
@@ -130,7 +129,6 @@ function playerController() {
 			}
 			self.trackstarttime = (Date.now()/1000) - player.status.elapsed;
 			if (player.status.playlist !== plversion) {
-				debug.mark("PLAYER","Player has marked playlist as changed",plversion,player.status.playlist);
 				plversion = player.status.playlist;
 				// Repopulate will revalidate the playlist when it completes.
 				playlist.repopulate();
@@ -139,7 +137,6 @@ function playerController() {
 			}
 			checkStateChange();
 			infobar.updateWindowValues();
-			enable_player_events();
 		} catch (err) {
 			playlist.validate();
 			debug.error('CONTROLLER', 'Command List Failed', err);

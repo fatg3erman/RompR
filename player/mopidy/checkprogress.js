@@ -6,7 +6,10 @@ function enable_player_events() {
 	mopidysocket.reactToThings();
 }
 
-var AlanPartridge = 30;
+// Start this at 25 so there's a short delay before we do our first poll
+// This helps if there's a stream already playing because we might not have
+// retrieved the playlist by this point and os updateStreamInfo won't do anything.
+var AlanPartridge = 29;
 
 // This gives us an event-driven response to Mopidy that works fine alongside our polling-driven
 // update methods. Essentially, thi'll pick up any changes that happen that aren't a result of
@@ -125,7 +128,9 @@ async function checkProgress() {
 		await playlist.is_valid();
 		if (AlanPartridge >= 30) {
 			AlanPartridge = 0;
+			debug.core('MOPIDY', 'Doing poll');
 			await player.controller.do_command_list([]);
+			updateStreamInfo();
 		}
 		if (player.status.state == 'play') {
 			player.status.progress = (Date.now()/1000) - player.controller.trackstarttime;

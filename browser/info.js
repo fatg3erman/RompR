@@ -399,7 +399,7 @@ var browser = function() {
 		},
 
 		doHistory: function(index) {
-			debug.log("BROWSER", "Doing history, index is",index);
+			debug.log("BROWSER", "Doing history, index is",index,"displaypointer is",displaypointer);
 
 			var showartist = (history[index].artist.collection === null &&
 				(history[index].artist.name != history[displaypointer].artist.name ||
@@ -440,12 +440,12 @@ var browser = function() {
 		},
 
 		forward: function() {
-			browser.doHistory(displaypointer+1);
+			browser.doHistory(parseInt(displaypointer)+1);
 			return false;
 		},
 
 		back: function() {
-			browser.doHistory(displaypointer-1);
+			browser.doHistory(parseInt(displaypointer)-1);
 			return false;
 		},
 
