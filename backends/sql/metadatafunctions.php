@@ -234,10 +234,11 @@ class romprmetadata {
 				print json_encode(array('error' => 'Could not locate that track in the database!'));
 				exit(0);
 			}
+			file_put_contents('dlprogress', $ttindex."\n");
 			mkdir($ttindex);
 			chdir($ttindex);
 			file_put_contents('original.uri', $uri_to_get);
-			exec($ytdl_path.'youtube-dl --ffmpeg-location '.$avconv_path.' --extract-audio --write-thumbnail --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' > ../dlprogress 2>&1', $output, $retval);
+			exec($ytdl_path.'youtube-dl --ffmpeg-location '.$avconv_path.' --extract-audio --write-thumbnail --restrict-filenames --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' >> ../dlprogress 2>&1', $output, $retval);
 			if ($retval != 0) {
 				logger::error('YOUTUBEDL', 'youtube-dl returned error code', $retval);
 				header("HTTP/1.1 404 Not Found");
@@ -1117,8 +1118,10 @@ function getAllURIs($sqlstring, $limit, $tags, $random = true) {
 	$rndstr = $random ? " ORDER BY ".SQL_RANDOM_SORT : " ORDER BY randomSort, Albumindex, Disc, TrackNo";
 	$sqlstring .= ' '.$rndstr.' LIMIT '.$limit;
 	logger::log('GETALLURIS', $sqlstring);
-	foreach ($tags as $t) {
-		logger::log('GETALLURILS', '  Param :',$t);
+	if ($tags) {
+		foreach ($tags as $t) {
+			logger::log('GETALLURILS', '  Param :',$t);
+		}
 	}
 	do {
 		if ($tries == 1) {
