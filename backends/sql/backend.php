@@ -693,14 +693,37 @@ function get_album_charts() {
 
 function get_track_charts($limit = 40) {
 	$tracks = array();
-	$query = "SELECT Title, Playcount, Artistname, Uri FROM Tracktable JOIN Playcounttable USING (TTIndex)
-		JOIN Artisttable USING (Artistindex)";
-	$query .= " ORDER BY Playcount DESC LIMIT ".$limit;
+	// Group by title and sum because we may have the same track on multiple backends
+	$query = "SELECT
+				Title,
+				SUM(Playcount) AS Playcount,
+				Artistname,
+				Albumname,
+				".SQL_URI_CONCAT." AS Uris
+			FROM
+				Tracktable
+				JOIN Playcounttable USING (TTIndex)
+				JOIN Artisttable USING (Artistindex)
+				JOIN Albumtable USING (Albumindex)
+			GROUP BY Title, Albumname, Artistname
+			ORDER BY Playcount DESC LIMIT ".$limit;
 	$result = generic_sql_query($query, false, PDO::FETCH_OBJ);
 	foreach ($result as $obj) {
-		$tracks[] = array( 'label_artist' => $obj->Artistname,
+		$uri = null;
+		$uris = explode(',', $obj->Uris);
+		foreach ($uris as $u) {
+			if ($uri === null) {
+				$uri = $u;
+			} else if (getDomain($uri) != 'local' && getDomain($u) == 'local') {
+				$uri = $u;
+			}
+		}
+
+		$tracks[] = array(
+			'label_artist' => $obj->Artistname,
 			'label_track' => $obj->Title,
-			'soundcloud_plays' => $obj->Playcount, 'uri' => $obj->Uri);
+			'soundcloud_plays' => $obj->Playcount,
+			'uri' => $uri);
 	}
 	return $tracks;
 }
