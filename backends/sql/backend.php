@@ -698,14 +698,12 @@ function get_track_charts($limit = 40) {
 				Title,
 				SUM(Playcount) AS Playcount,
 				Artistname,
-				Albumname,
 				".SQL_URI_CONCAT." AS Uris
 			FROM
 				Tracktable
 				JOIN Playcounttable USING (TTIndex)
 				JOIN Artisttable USING (Artistindex)
-				JOIN Albumtable USING (Albumindex)
-			GROUP BY Title, Albumname, Artistname
+			GROUP BY Title, Artistname
 			ORDER BY Playcount DESC LIMIT ".$limit;
 	$result = generic_sql_query($query, false, PDO::FETCH_OBJ);
 	foreach ($result as $obj) {
