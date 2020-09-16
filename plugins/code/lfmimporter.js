@@ -9,6 +9,7 @@ var lfmImporter = function() {
 	var tracksdone = 0;
 	var totaltracks;
 	var starttime;
+	var errorTimer;
 
 	function getNextChunk() {
 		$.ajax({
@@ -60,23 +61,29 @@ var lfmImporter = function() {
 	}
 
 	function lfmResponseHandler(data, reqid) {
-		var de = new lfmDataExtractor(data.track);
-		var trackdata = de.getCheckedData('track');
-		de = new lfmDataExtractor(trackdata);
-		debug.trace("LFMIMPORTER","Playcount for",reqid,"is",alldata[reqid].Playcount, de.userplaycount());
-		row = $('#lfmitable').children('tr[name="'+alldata[reqid].TTindex+'"]');
-		row.children('td[name="lastfmplaycount"]').html(de.userplaycount());
-		if (parseInt(alldata[reqid].Playcount) < parseInt(de.userplaycount())) {
-			debug.log("LFMIMPORTER","Incrementing Playcount for",alldata[reqid].TTindex,"to",de.userplaycount());
-			var playlistinfo = {type: 'local', location: ''};
-			$.each(row.children('td.playlistinfo'), function() {
-				playlistinfo[$(this).attr('name')] = htmlspecialchars_decode($(this).html());
-			});
-			debug.debug("LFMIMPORTER","Using data",playlistinfo);
-			metaHandlers.fromPlaylistInfo.setMeta(playlistinfo, 'inc', [{attribute: 'Playcount', value: de.userplaycount()}], setSuccess, setFail);
+		if (data) {
+			var de = new lfmDataExtractor(data.track);
+			var trackdata = de.getCheckedData('track');
+			de = new lfmDataExtractor(trackdata);
+			debug.trace("LFMIMPORTER","Playcount for",reqid,"is",alldata[reqid].Playcount, de.userplaycount());
+			row = $('#lfmitable').children('tr[name="'+alldata[reqid].TTindex+'"]');
+			row.children('td[name="lastfmplaycount"]').html(de.userplaycount());
+			if (parseInt(alldata[reqid].Playcount) < parseInt(de.userplaycount())) {
+				debug.log("LFMIMPORTER","Incrementing Playcount for",alldata[reqid].TTindex,"to",de.userplaycount());
+				var playlistinfo = {type: 'local', location: ''};
+				$.each(row.children('td.playlistinfo'), function() {
+					playlistinfo[$(this).attr('name')] = htmlspecialchars_decode($(this).html());
+				});
+				debug.debug("LFMIMPORTER","Using data",playlistinfo);
+				metaHandlers.fromPlaylistInfo.setMeta(playlistinfo, 'inc', [{attribute: 'Playcount', value: de.userplaycount()}], setSuccess, setFail);
+			} else {
+				row.children('td[name="tick"]').html('<i class="icon-block collectionicon"></i>');
+				doNext();
+			}
 		} else {
-			row.children('td[name="tick"]').html('<i class="icon-block collectionicon"></i>');
-			doNext();
+			debug.warn('LFMIMPORTER', 'Result has no data - was there an error? Pausing before continuing');
+			clearTimeout(errorTimer);
+			errorTimer = setTimeout(doNext, 10000);
 		}
 	}
 

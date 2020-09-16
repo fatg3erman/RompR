@@ -713,6 +713,10 @@ function get_track_charts($limit = 40) {
 			if ($uri === null) {
 				$uri = $u;
 			} else if (getDomain($uri) != 'local' && getDomain($u) == 'local') {
+				// Prepfer local to internet
+				$uri = $u;
+			} else if (getDomain($uri) == 'youtube' && strpos($u, 'prefs/youtubedl') !== false) {
+				// Prefer downloaded youtube tracks to online ones
 				$uri = $u;
 			}
 		}
