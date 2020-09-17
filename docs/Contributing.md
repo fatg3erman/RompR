@@ -10,7 +10,7 @@ We welcome Pull Requests on GitHub but please take note of the following
 
 Please do NOT contribute to RompR if
 * You think writing meaningful commit messages matters
-* You think fomratting is important
+* You think formatting is important
 * You think we give a flying toss about style guidelines
 
 Please DO contribute to RompR if
