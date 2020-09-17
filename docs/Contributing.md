@@ -18,7 +18,7 @@ Please DO contribute to RompR if
 * You've looked at the code and decided it's shit and you can do it better
 
 Please make Pull Requests against the 'develop' branch. The 'master' branch is used only for making releases
-and PRs submitted against matser will be rejected without exception (otherwise it's admin, and we hate admin).
+and PRs submitted against master will be rejected without exception (otherwise it's admin, and we hate admin).
 
 Please also note, our contribution guidelines contain the words 'fuck', 'shit' and 'bollocks'. If you're the type of
 person who feels this is inappropriate then you can go shove it up your arse, you big twat.
