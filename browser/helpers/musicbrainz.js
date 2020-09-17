@@ -3,72 +3,74 @@ var musicbrainz = function() {
 	var baseURL = 'http://musicbrainz.org/ws/2/';
 	var coverURL = 'http://coverartarchive.org/release/';
 	var queue = new Array();
-	var throttle = null;
+	var current_req = null;
+	const THROTTLE_TIME = 1500;
 
-	return {
+	function handle_response(req, data, jqxhr) {
+		var c = jqxhr.getResponseHeader('Pragma');
+		debug.debug("MUSICBRAINZ","Request success",c, data, jqxhr);
+		throttle = (c == "From Cache") ? 50 : THROTTLE_TIME;
+		if (data === null)
+			data = {error: format_error('musicbrainz_error', jqxhr)};
 
-		request: function(reqid, data, success, fail) {
+		if (req.reqid != '')
+			data.id = req.reqid;
 
-			queue.push( {flag: false, reqid: reqid, data: data, success: success, fail: fail } );
-			debug.debug("MUSICBRAINZ","New request",data.url);
-			if (throttle == null && queue.length == 1) {
-				musicbrainz.getrequest();
-			}
+		if (data.error) {
+			req.fail(data);
+		} else {
+			req.success(data);
+		}
+		return throttle;
+	}
 
-		},
+	function handle_error(req, err) {
+		debug.warn("MUSICBRAINZ","Request failed",err);
+		data = {error: format_error('musicbrainz_noinfo', err)};
+		if (req.reqid != '')
+			data.id = req.reqid;
 
-		getrequest: function() {
+		req.fail(data);
+		return THROTTLE_TIME;
+	}
 
-			var req = queue[0];
-			clearTimeout(throttle);
+	function format_error(msg, jqxhr) {
+		debug.debug("MUSICBRAINZ","Formatting error",jqxhr);
+		var errormessage = language.gettext(msg);
+		if (jqxhr.responseJSON && jqxhr.responseJSON.message)
+			errormessage += ' ('+jqxhr.responseJSON.message+')';
 
-			if (req) {
-				if (req.flag) {
-					debug.warn("MUSICBRAINZ","Request just pulled from queue is already being handled");
-					return;
-				}
-				queue[0].flag = true;
-				debug.debug("MUSICBRAINZ","Taking next request from queue",req.data);
-				var getit = $.ajax({
+		return errormessage;
+	}
+
+	async function do_Request() {
+		var data, jqxhr, throttle, req;
+		while (req = queue.shift()) {
+			current_req = req;
+			debug.debug("MUSICBRAINZ","New request",req);
+			try {
+				data = await (jqxhr = $.ajax({
 					method: 'POST',
 					url: "browser/backends/getmbdata.php",
 					data: req.data,
 					dataType: "json",
-				})
-				.done(function(data) {
-					var c = getit.getResponseHeader('Pragma');
-					debug.debug("MUSICBRAINZ","Request success",c,data);
-					if (c == "From Cache") {
-						throttle = setTimeout(musicbrainz.getrequest, 100);
-					} else {
-						throttle = setTimeout(musicbrainz.getrequest, 1500);
-					}
-					req = queue.shift();
-					if (data === null) {
-						data = {error: language.gettext("musicbrainz_error")};
-					}
-					if (req.reqid != '') {
-						data.id = req.reqid;
-					}
-					if (data.error) {
-						req.fail(data);
-					} else {
-						req.success(data);
-					}
-				})
-				.fail(function(xhr,status,err) {
-					throttle = setTimeout(musicbrainz.getrequest, 1500);
-					req = queue.shift();
-					debug.warn("MUSICBRAINZ","Request failed",req,xhr);
-					data = {error: language.gettext("musicbrainz_noinfo") + ' ('+xhr.status+' '+err+')'};
-					if (req.reqid != '') {
-						data.id = req.reqid;
-					}
-					req.fail(data);
-				});
-			} else {
-				throttle = null;
+				}));
+				throttle = handle_response(req, data, jqxhr);
+			} catch (err) {
+				throttle = handle_error(req, err);
 			}
+			await new Promise(t => setTimeout(t, throttle));
+		}
+		current_req = null;
+	}
+
+	return {
+
+		request: function(reqid, data, success, fail) {
+			queue.push( {reqid: reqid, data: data, success: success, fail: fail } );
+			if (current_req == null)
+				do_Request();
+
 		},
 
 		artist: {
@@ -80,7 +82,6 @@ var musicbrainz = function() {
 					fmt: 'json'
 				};
 				musicbrainz.request('', data, success, fail);
-
 			},
 
 			getReleases: function(mbid, reqid, success, fail) {
@@ -113,8 +114,6 @@ var musicbrainz = function() {
 								getAllReleaseGroups();
 							}
 						}
-
-
 					}, fail);
 				})();
 			}

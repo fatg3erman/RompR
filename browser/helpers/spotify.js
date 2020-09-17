@@ -2,11 +2,11 @@ var spotify = function() {
 
 	var baseURL = 'https://api.spotify.com';
 	var queue = new Array();
-	var throttle = null;
 	var collectedobj = null;
-	var getit;
-	var rate = 100;
+	const DEFAULT_RATE = 100;
+	var rate = DEFAULT_RATE;
 	var backofftimer;
+	var current_req = null;
 
 	function objFirst(obj) {
 		for (var a in obj) {
@@ -14,104 +14,13 @@ var spotify = function() {
 		}
 	}
 
-	return {
-
-		request: function(reqid, url, success, fail, prio, cache) {
-
-			if (prio && queue.length > 1) {
-				queue.splice(1, 0, {flag: false, reqid: reqid, url: url, success: success, fail: fail, cache: cache } );
-			} else {
-				queue.push( {flag: false, reqid: reqid, url: url, success: success, fail: fail, cache: cache } );
-			}
-			debug.debug("SPOTIFY","New request",url,throttle,queue.length,cache);
-			if (throttle == null && queue.length == 1) {
-				spotify.getrequest();
-			}
-
-		},
-
-		requestSuccess: function(data) {
-			var c = getit.getResponseHeader('Pragma');
-			debug.debug("SPOTIFY","Request success",c,data);
-			req = queue.shift();
-			if (data === null) {
-				debug.warn("SPOTIFY","No data in response",req);
-				data = {error: language.gettext("spotify_error")};
-			}
-			if (req.reqid != '') {
-				data.reqid = req.reqid;
-			}
-			var root = objFirst(data);
-			if (data[root].next) {
-				debug.debug("SPOTIFY","Got a response with a next page!");
-				if (data[root].previous == null) {
-					collectedobj = data;
-				} else {
-					collectedobj[root].items = collectedobj[root].items.concat(data[root].items);
-				}
-				queue.unshift({flag: false, reqid: '', url: data[root].next, success: req.success, fail: req.fail});
-			} else if (data[root].previous) {
-				collectedobj[root].items = collectedobj[root].items.concat(data[root].items);
-				debug.trace("SPOTIFY","Returning concatenated multi-page result");
-				req.success(collectedobj);
-			} else if (data.next) {
-				debug.debug("SPOTIFY","Got a response with a next page!");
-				if (data.previous == null) {
-					collectedobj = data;
-				} else {
-					collectedobj.items = collectedobj.items.concat(data.items);
-				}
-				queue.unshift({flag: false, reqid: '', url: data.next, success: req.success, fail: req.fail});
-			} else if (data.previous) {
-				collectedobj.items = collectedobj.items.concat(data.items);
-				debug.trace("SPOTIFY","Returning concatenated multi-page result");
-				req.success(collectedobj);
-			} else {
-				req.success(data);
-			}
-
-			if (c == "From Cache") {
-				throttle = setTimeout(spotify.getrequest, 100);
-			} else {
-				throttle = setTimeout(spotify.getrequest, rate);
-			}
-
-		},
-
-		requestFail: function(xhr,status,err) {
-			if (xhr.responseJSON.error == 429) {
-				debug.info("SPOTIFY","Too Many Requests. Slowing Request Rate");
-				rate += 1000;
-				clearTimeout(backofftimer);
-				backofftimer = setTimeout(spotify.speedBackUp, 90000);
-			}
-			throttle = setTimeout(spotify.getrequest, rate);
-			req = queue.shift();
-			debug.warn("SPOTIFY","Request failed",req,xhr,status,err);
-			data = {error: language.gettext("spotify_noinfo") + ' ('+xhr.responseJSON.error+' '+xhr.responseJSON.message+')'}
-			if (req.reqid != '') {
-				data.reqid = req.reqid;
-			}
-			req.fail(data);
-		},
-
-		speedBackUp: function() {
-			rate = 250;
-		},
-
-		getrequest: function() {
-
-			var req = queue[0];
-			clearTimeout(throttle);
-
-			if (req) {
-				if (req.flag) {
-					debug.warn("SPOTIFY","Request just pulled from queue is already being handled",req,throttle);
-					return;
-				}
-				queue[0].flag = true;
-				debug.debug("SPOTIFY","Taking next request from queue",req.url);
-				getit = $.ajax({
+	async function do_Request() {
+		var data, jqxhr, throttle, req;
+		while (req = queue.shift()) {
+			current_req = req;
+			debug.debug("SPOTIFY","Taking next request from queue",req);
+			try {
+				data = await (jqxhr = $.ajax({
 					type: 'POST',
 					url: "browser/backends/getspdata.php",
 					dataType: "json",
@@ -119,12 +28,91 @@ var spotify = function() {
 						url: req.url,
 						cache: req.cache
 					}
-				})
-				.done(spotify.requestSuccess)
-				.fail(spotify.requestFail);
-			} else {
-				throttle = null;
+				}));
+				throttle = handle_response(req, data, jqxhr);
+			} catch (err) {
+				throttle = handle_error(req, err);
 			}
+			await new Promise(t => setTimeout(t, throttle));
+		}
+		current_req = null;
+	}
+
+	function handle_response(req, data, jqxhr) {
+		var c = jqxhr.getResponseHeader('Pragma');
+		throttle = (c == "From Cache") ? 50 : rate;
+		debug.debug("SPOTIFY","Request success",c,req,data,jqxhr);
+		if (data === null) {
+			debug.warn("SPOTIFY","No data in response");
+			data = {error: language.gettext("spotify_error")};
+		}
+		if (req.reqid != '') {
+			data.reqid = req.reqid;
+		}
+		var root = objFirst(data);
+		// Bit messy this.
+		// Might prefer something like if (a = (data[root].next || data.next))
+		// but I can't remember whay this is the way it is so I'm not currently inclined to fuck with it
+		if (data[root].next) {
+			debug.debug("SPOTIFY","Got a response with a next page!");
+			if (data[root].previous == null) {
+				collectedobj = data;
+			} else {
+				collectedobj[root].items = collectedobj[root].items.concat(data[root].items);
+			}
+			queue.unshift({flag: false, reqid: '', url: data[root].next, success: req.success, fail: req.fail});
+		} else if (data[root].previous) {
+			collectedobj[root].items = collectedobj[root].items.concat(data[root].items);
+			debug.trace("SPOTIFY","Returning concatenated multi-page result");
+			req.success(collectedobj);
+		} else if (data.next) {
+			debug.debug("SPOTIFY","Got a response with a next page!");
+			if (data.previous == null) {
+				collectedobj = data;
+			} else {
+				collectedobj.items = collectedobj.items.concat(data.items);
+			}
+			queue.unshift({flag: false, reqid: '', url: data.next, success: req.success, fail: req.fail});
+		} else if (data.previous) {
+			collectedobj.items = collectedobj.items.concat(data.items);
+			debug.trace("SPOTIFY","Returning concatenated multi-page result");
+			req.success(collectedobj);
+		} else {
+			req.success(data);
+		}
+		return throttle;
+	}
+
+	function handle_error(req, err) {
+		debug.warn("SPOTIFY","Request failed",req,err);
+		if (err.responseJSON && err.responseJSON.error == 429) {
+			debug.info("SPOTIFY","Too Many Requests. Slowing Request Rate");
+			rate += 1000;
+			clearTimeout(backofftimer);
+			backofftimer = setTimeout(speedBackUp, 90000);
+		}
+		data = {error: language.gettext("spotify_noinfo") + ' ('+xhr.responseJSON.message+')'}
+		if (req.reqid != '') {
+			data.reqid = req.reqid;
+		}
+		req.fail(data);
+		return rate;
+	}
+
+	function speedBackUp() {
+		rate = DEFAULT_RATE;
+	}
+
+	return {
+
+		request: function(reqid, url, success, fail, prio, cache) {
+			if (prio) {
+				queue.unshift( {reqid: reqid, url: url, success: success, fail: fail, cache: cache } );
+			} else {
+				queue.push( {reqid: reqid, url: url, success: success, fail: fail, cache: cache } );
+			}
+			if (current_req == null)
+				do_Request();
 		},
 
 		track: {

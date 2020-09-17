@@ -10,6 +10,7 @@ var lfmImporter = function() {
 	var totaltracks;
 	var starttime;
 	var errorTimer;
+	var running = false;
 
 	function getNextChunk() {
 		$.ajax({
@@ -105,10 +106,12 @@ var lfmImporter = function() {
 		var elapsed = Date.now() - starttime;
 		var remaining = (elapsed/tracksdone) * (totaltracks - tracksdone - prefs.lfm_importer_start_offset);
 		$('#lfmiinfo').html(language.gettext('importer_status', [tracksdone+prefs.lfm_importer_start_offset, totaltracks, formatTimeString(elapsed/1000), formatTimeString(remaining/1000)]));
-		if (alloffset < alldata.length) {
-			getNextRow();
-		} else {
-			getNextChunk();
+		if (running) {
+			if (alloffset < alldata.length) {
+				getNextRow();
+			} else {
+				getNextChunk();
+			}
 		}
 	}
 
@@ -143,6 +146,7 @@ var lfmImporter = function() {
 
 		open: function() {
 
+			running = true;
 			switch (true) {
 				case lfmi == null:
 					lfmi = browser.registerExtraPlugin("lfmi", language.gettext("label_lfm_playcountimporter"), lfmImporter, 'https://fatg3erman.github.io/RompR/Keeping-Playcounts-In-Sync');
@@ -174,6 +178,7 @@ var lfmImporter = function() {
 			alldata = new Array();
 			alloffset = 0;
 			tracksdone = 0;
+			running = false;
 		}
 
 	}

@@ -456,7 +456,7 @@ var dbQueue = function() {
 	// This is a queueing mechanism for the local database in order to avoid deadlocks.
 
 	var queue = new Array();
-	var throttle = null;
+	var current_req = null;
 	var cleanuptimer = null;
 	var cleanuprequired = false;
 
@@ -465,82 +465,70 @@ var dbQueue = function() {
 		'add', 'set', 'remove', 'amendalbum', 'deletetag', 'delete', 'deletewl', 'clearwishlist', 'setasaudiobook'
 	];
 
+	async function process_request(req) {
+		try {
+			var data = await $.ajax({
+				url: "backends/sql/userRatings.php",
+				type: "POST",
+				contentType: false,
+				data: JSON.stringify(req.data),
+				dataType: 'json'
+			});
+			debug.debug('DB QUEUE', 'Request Success', data);
+			for (var i in req.data) {
+				if (actions_requiring_cleanup.indexOf(req.data[i].action) > -1) {
+					debug.debug("DB QUEUE","Setting cleanup flag for",req.data[i].action,"request");
+					cleanuprequired = true;
+				}
+			}
+			if (req.success) {
+				req.success(data);
+			}
+		} catch (err) {
+			debug.warn("DB QUEUE","Request Failed",err);
+			if (req.fail) {
+				req.fail(data);
+			}
+		}
+	}
+
 	return {
 
 		request: function(data, success, fail) {
-
-			queue.push( {flag: false, data: data, success: success, fail: fail } );
 			debug.debug("DB QUEUE","New request",data);
-			if (throttle == null && queue.length == 1) {
+			queue.push( {data: data, success: success, fail: fail } );
+			if (current_req == null) {
 				dbQueue.dorequest();
 			}
-
 		},
 
 		queuelength: function() {
 			return queue.length;
 		},
 
-		dorequest: function() {
-
-			clearTimeout(throttle);
+		dorequest: async function() {
+			var req;
+			while (req = queue.shift()) {
+				// The assignment above is automatically local to this colsure
+				// hence we need to assign it to our global
+				current_req = req;
+				clearTimeout(cleanuptimer);
+				await player.not_updating();
+				debug.debug('DB QUEUE', 'Handling Request', current_req);
+				await process_request(current_req);
+			}
+			current_req = null;
 			clearTimeout(cleanuptimer);
-			var req = queue[0];
-
-			if (req && player.updatingcollection) {
-				debug.info("DB QUEUE","Deferring",req.data[0].action,"request because collection is being updated");
-				throttle = setTimeout(dbQueue.dorequest, 1000);
-			} else {
-				if (req) {
-					if (req.flag) {
-						debug.warn("DB QUEUE","Request just pulled from queue is already being handled");
-						return;
-					}
-					queue[0].flag = true;
-					debug.debug("DB QUEUE","Taking next request from queue",req);
-					$.ajax({
-						url: "backends/sql/userRatings.php",
-						type: "POST",
-						contentType: false,
-						data: JSON.stringify(req.data),
-						dataType: 'json'
-					})
-					.done(function(data) {
-						req = queue.shift();
-						debug.debug("DB QUEUE","Request Success",req,data);
-						for (var i in req.data) {
-							if (actions_requiring_cleanup.indexOf(req.data[i].action) > -1) {
-								debug.log("DB QUEUE","Setting cleanup flag for",req.data[i].action,"request");
-								cleanuprequired = true;
-							}
-						}
-						if (req.success) {
-							req.success(data);
-						}
-						throttle = setTimeout(dbQueue.dorequest, 1);
-					})
-					.fail(function(data) {
-						req = queue.shift();
-						debug.warn("DB QUEUE","Request Failed",req,data);
-						if (req.fail) {
-							req.fail(data);
-						}
-						throttle = setTimeout(dbQueue.dorequest, 1);
-					});
-				} else {
-					throttle = null;
-					cleanuptimer = setTimeout(dbQueue.doCleanup, 1000);
-				}
+			if (cleanuprequired) {
+				cleanuptimer = setTimeout(dbQueue.doCleanup, 500);
 			}
 		},
 
 		doCleanup: function() {
 			// We do these out-of-band to improve the responsiveness of the GUI.
 			clearTimeout(cleanuptimer);
-			if (cleanuprequired) {
-				debug.info("DB QUEUE", "Doing backend Cleanup");
-				dbQueue.request([{action: 'cleanup'}], dbQueue.cleanupComplete, dbQueue.cleanupFailed);
-			}
+			debug.info("DB QUEUE", "Doing backend Cleanup");
+			dbQueue.request([{action: 'cleanup'}], dbQueue.cleanupComplete, dbQueue.cleanupFailed);
 		},
 
 		cleanupComplete: function(data) {
@@ -554,3 +542,4 @@ var dbQueue = function() {
 
 	}
 }();
+

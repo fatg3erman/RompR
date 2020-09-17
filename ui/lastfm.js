@@ -7,8 +7,9 @@ function LastFM(user) {
 	var token = "";
 	var self=this;
 	var queue = new Array();
-	var throttle = null;
+	var current_req = null;
 	var throttleTime = 100;
+	var nextThrottle;
 	var backofftimer;
 
 	function startlogin() {
@@ -168,13 +169,10 @@ function LastFM(user) {
 	}
 
 	this.flushReqids = function() {
-		clearTimeout(throttle);
 		for (var i = queue.length-1; i >= 0; i--) {
-			if (queue[i].flag == false && queue[i].reqid) {
+			if (queue[i].reqid)
 				queue.splice(i, 1);
-			}
 		}
-		throttle = setTimeout(lastfm.getRequest, throttleTime);
 	}
 
 	this.formatBio = function(bio, link) {
@@ -194,10 +192,9 @@ function LastFM(user) {
 	function LastFMGetRequest(options, cache, success, fail, reqid) {
 		options.format = "json";
 		options.cache = cache;
-		queue.push({url: options, success: success, fail: fail, flag: false, cache: cache, reqid: reqid, retries: 0});
-		if (throttle == null && queue.length == 1) {
-			lastfm.getRequest();
-		}
+		queue.push({url: options, success: success, fail: fail, cache: cache, reqid: reqid, retries: 0});
+		if (current_req == null)
+			do_Request();
 	}
 
 	function addGetOptions(options, method) {
@@ -213,130 +210,6 @@ function LastFM(user) {
 		}
 		keys.sort();
 		return keys;
-	}
-
-	this.getRequest = function() {
-		var req = queue[0];
-		clearTimeout(throttle);
-		if (req) {
-			if (req.flag) {
-				debug.warn("LASTFM","Request pulled from queue is already being handled!")
-				return;
-			}
-			if (lak === null) {
-				debug.error('LASTFM', 'Fatal Error');
-				throttle = setTimeout(lastfm.getRequest, throttleTime);
-				return;
-			}
-			queue[0].flag = true;
-			debug.debug("LASTFM","Taking next request from queue",req.url);
-			if (req.url == "POST") {
-				debug.debug("LASTFM", "Handling POST request via queue");
-				$.ajax({
-					method: "POST",
-					url: "https://ws.audioscrobbler.com/2.0/",
-					data: req.options,
-					dataType: 'json',
-					timeout: 5000
-				})
-				.done(function(data) {
-					throttle = setTimeout(lastfm.getRequest, throttleTime);
-					req = queue.shift();
-					debug.debug("LASTFM", req.options.method,"request success");
-					if (data.error) {
-						debug.warn("LASTFM","Last FM signed request failed with status",data.error.message);
-						req.fail(data);
-					} else {
-						req.success(data);
-					}
-				})
-				.fail(function(xhr,status,err) {
-					req = queue.shift();
-					debug.error("LASTFM",req.options.method,"request error",status,err);
-					if (xhr.responseJSON) {
-						var errorcode = xhr.responseJSON.error;
-						var errortext = xhr.responseJSON.message;
-						debug.error("LASTFM", 'Error Code',errorcode,"Message",errortext);
-
-						switch (errorcode) {
-							case 4:
-							case 9:
-							case 10:
-							case 14:
-							case 26:
-								debug.error("LASTFM","We are not authenticated. Logging Out");
-								logout();
-								req.fail(null);
-								break;
-
-							case 29:
-								debug.warn("LASTFM","Rate Limit Exceeded. Slowing Down");
-								setThrottling(throttleTime+1000);
-								// Fall through
-
-							default:
-								if (req.retries < 3) {
-									debug.debug("LASTFM","Retrying...");
-									req.retries++;
-									req.flag = false;
-									queue.unshift(req);
-								} else {
-									req.fail(null);
-								}
-
-					   }
-					}
-					throttle = setTimeout(lastfm.getRequest, throttleTime);
-				});
-			} else {
-				var getit = $.ajax({
-					method: 'POST',
-					url: 'browser/backends/getlfmdata.php',
-					data: req.url,
-					dataType: 'json'
-				})
-				.done(function(data) {
-					var c = getit.getResponseHeader('Pragma');
-					debug.debug("LASTFM","Request success",c,data);
-					if (c == "From Cache") {
-						throttle = setTimeout(lastfm.getRequest, 100);
-					} else {
-						throttle = setTimeout(lastfm.getRequest, throttleTime);
-					}
-					req = queue.shift();
-					debug.debug("LASTFM","Calling success callback");
-					if (req.reqid || req.reqid === 0) {
-						req.success(data, req.reqid);
-					} else {
-						req.success(data);
-					}
-				})
-				.fail(function(xhr,status,err) {
-					throttle = setTimeout(lastfm.getRequest, throttleTime);
-					req = queue.shift();
-					debug.warn("LASTFM", "Get Request Failed",xhr,status,err);
-					var errormessage = language.gettext('lastfm_error');
-					if (xhr.responseJSON) {
-						var errorcode = xhr.responseJSON.error;
-						var errortext = xhr.responseJSON.message;
-						errormessage += '<br />'+errortext;
-						if (errorcode == 29) {
-							debug.warn("LASTFM","Rate Limit Exceeded. Slowing Down");
-							setThrottling(throttleTime+1000);
-						}
-					} else {
-						errormessage += ' ('+xhr.status+' '+err+')';
-					}
-					if (req.reqid || req.reqid === 0) {
-						req.fail(null, req.reqid);
-					} else {
-						req.fail({error: 1, message: errormessage});
-					}
-				});
-			}
-		} else {
-			throttle = null;
-		}
 	}
 
 	function LastFMSignedRequest(options, success, fail) {
@@ -356,12 +229,10 @@ function LastFM(user) {
 			options: options,
 			success: success,
 			fail: fail,
-			flag: false,
 			retries : 0
 		});
-		if (throttle == null && queue.length == 1) {
-			lastfm.getRequest();
-		}
+		if (current_req == null)
+			do_Request();
 	}
 
 	function addSetOptions(options, method) {
@@ -369,6 +240,119 @@ function LastFM(user) {
 		options.api_key = lak;
 		options.sk = prefs.lastfm_session_key;
 		options.method = method;
+	}
+
+	async function do_Request() {
+		var req;
+		if (lak === null) {
+			debug.error('LASTFM', 'Fatal Error');
+			return;
+		}
+		while (req = queue.shift()) {
+			current_req = req;
+			if (req.url == "POST") {
+				await handle_post_request(req);
+			} else {
+				await handle_get_request(req);
+			}
+			await new Promise(t => setTimeout(t, nextThrottle));
+		}
+		current_req = null;
+	}
+
+	async function handle_post_request(req) {
+		var data, jqxhr;
+		debug.debug("LASTFM", "Handling POST request via queue", req);
+		try {
+			data = await (jqxhr = $.ajax({
+				method: "POST",
+				url: "https://ws.audioscrobbler.com/2.0/",
+				data: req.options,
+				dataType: 'json',
+				timeout: 5000
+			}));
+			debug.debug("LASTFM", req.options.method,"request success");
+			if (data.error) {
+				debug.warn("LASTFM","Last FM signed request failed with status",data.error.message);
+				req.fail(data);
+			} else {
+				req.success(data);
+			}
+		} catch (err) {
+			if (handle_error(req, err))
+				req.fail(null);
+		}
+		nextThrottle = throttleTime;
+	}
+
+	async function handle_get_request(req) {
+		var data, jqxhr;
+		debug.debug('LASTFM', 'Handling get request', req);
+		try {
+			data = await (jqxhr = $.ajax({
+				method: 'POST',
+				url: 'browser/backends/getlfmdata.php',
+				data: req.url,
+				dataType: 'json'
+			}));
+			var c = jqxhr.getResponseHeader('Pragma');
+			debug.debug("LASTFM","GET Request success",c, data, jqxhr);
+			nextThrottle = (c == "From Cache") ? 50 : throttleTime;
+			if (req.reqid || req.reqid === 0) {
+				req.success(data, req.reqid);
+			} else {
+				req.success(data);
+			}
+		} catch (err) {
+			debug.warn("LASTFM", "Get Request Failed",err);
+			if (handle_error(req, err)) {
+				if (req.reqid || req.reqid === 0) {
+					req.fail(null, req.reqid);
+				} else {
+					let errormessage = language.gettext('lastfm_error');
+					if (err.responseJSON)
+						errormessage += ' ('+err.responseJSON.message+')';
+					req.fail({error: 1, message: errormessage});
+				}
+			}
+			nextThrottle = throttleTime;
+		}
+	}
+
+	function handle_error(req, xhr) {
+		debug.error("LASTFM",req,"request error",xhr);
+		if (xhr.responseJSON) {
+			var errorcode = xhr.responseJSON.error;
+			var errortext = xhr.responseJSON.message;
+			debug.error("LASTFM", 'Error Code',errorcode,"Message",errortext);
+			switch (errorcode) {
+				case 4:
+				case 9:
+				case 10:
+				case 14:
+				case 26:
+					debug.error("LASTFM","We are not authenticated. Logging Out");
+					logout();
+					return true;
+					break;
+
+				case 29:
+					debug.warn("LASTFM","Rate Limit Exceeded. Slowing Down");
+					setThrottling(throttleTime+1000);
+					// Fall through
+
+				default:
+					if (req.retries < 3) {
+						debug.debug("LASTFM","Retrying...");
+						req.retries++;
+						queue.unshift(req);
+						return false;
+					} else {
+						return true;
+					}
+			}
+		}
+		return true;
 	}
 
 	this.track = {
@@ -410,9 +394,9 @@ function LastFM(user) {
 			// because it contains 'userloved', which we might update
 			if (username != "") { options.username = username; }
 			addGetOptions(options, "track.getInfo");
-			if (self.getLanguage()) {
+			if (self.getLanguage())
 				options.lang = self.getLanguage();
-			}
+
 			LastFMGetRequest(
 				options,
 				!logged_in,
@@ -495,11 +479,11 @@ function LastFM(user) {
 
 		getInfo: function(options, callback, failcallback) {
 			addGetOptions(options, "album.getInfo");
-			if (username != "") { options.username = username }
+			if (username != "")
+				options.username = username;
 			options.autocorrect = prefs.lastfm_autocorrect ? 1 : 0;
-			if (self.getLanguage()) {
+			if (self.getLanguage())
 				options.lang = self.getLanguage();
-			}
 			debug.debug("LASTFM","album.getInfo",options);
 			LastFMGetRequest(
 				options,
@@ -511,7 +495,8 @@ function LastFM(user) {
 
 		getTags: function(options, callback, failcallback) {
 			addGetOptions(options, "album.getTags");
-			if (username != "") { options.user = username }
+			if (username != "")
+				options.user = username;
 			debug.debug("LASTFM","album.getTags",options);
 			LastFMGetRequest(
 				options,
@@ -548,10 +533,11 @@ function LastFM(user) {
 
 		getInfo: function(options, callback, failcallback, reqid) {
 			addGetOptions(options, "artist.getInfo");
-			if (username != "") { options.username = username }
-			if (self.getLanguage()) {
+			if (username != "")
+				options.username = username;
+			if (self.getLanguage())
 				options.lang = self.getLanguage();
-			}
+
 			LastFMGetRequest(
 				options,
 				true,
@@ -562,7 +548,8 @@ function LastFM(user) {
 		},
 
 		getTags: function(options, callback, failcallback) {
-			if (username != "") { options.user = username }
+			if (username != "")
+				options.user = username;
 			addGetOptions(options, "artist.getTags");
 			LastFMGetRequest(
 				options,

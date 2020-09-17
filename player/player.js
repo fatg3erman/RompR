@@ -202,6 +202,12 @@ var player = function() {
 			if (this.status.state == "play") {
 				this.controller.seekcur(sec > 0 ? "+"+sec : sec);
 			}
+		},
+
+		not_updating: async function() {
+			while (player.updatingcollection) {
+				await new Promise(t => setTimeout(t, 500));
+			}
 		}
 
 	}

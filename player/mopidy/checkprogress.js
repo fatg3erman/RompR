@@ -61,10 +61,16 @@ var mopidysocket = function() {
 	}
 
 	function socket_message(message) {
-		if (react) {
-			debug.log('MOPISOCKET', message);
-			clearTimeout(react_timer);
-			react_timer = setTimeout(update_player, 100);
+		debug.log('MOPISOCKET', message);
+		var json = JSON.parse(message.data);
+		if (json.event) {
+			if (react || (!react && json.event != 'tracklist_changed')) {
+				// Don;t respond to tracklist changed messages if we're currently doing something
+				// because what we're doing might be getting the tracklist.
+				// Look it's complicated OK?
+				clearTimeout(react_timer);
+				react_timer = setTimeout(update_player, 100);
+			}
 		}
 	}
 

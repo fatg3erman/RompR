@@ -86,6 +86,7 @@ var clickRegistry = function() {
 			};
 			opts = $.extend(opts, params);
 			var menutoopen = opts.target.prop('id');
+			var success = true;
 			opts.clickedElement.makeSpinner();
 			opts.target.clearOut();
 			if (!opts.uri) {
@@ -109,7 +110,8 @@ var clickRegistry = function() {
 					if (err.responseText) {
 						msg += ' '+err.responseText;
 					}
-					infobar.error('msg');
+					infobar.error(msg);
+					success = false;
 				}
 			} else {
 				debug.error('DOMENU', 'Unfilled menu element with no loader',opts.clickedElement);
@@ -122,6 +124,7 @@ var clickRegistry = function() {
 					opts.target.scootTheAlbums();
 				}
 			}
+			return success;
 		}
 	}
 }();

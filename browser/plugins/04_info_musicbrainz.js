@@ -758,6 +758,8 @@ var info_musicbrainz = function() {
 					},
 
 					mbResponseHandler: function(data) {
+						debug.debug('MUSICBRAINZ', 'We are here 4', data);
+
 						debug.debug(medebug,parent.nowplayingindex,"got artist data for",artistmeta.musicbrainz_id,data);
 						// Look for the information that other plugins need
 						var update = 	{ 	disambiguation: null,

@@ -17,7 +17,7 @@ var podcasts = function() {
 			var newTrack = downloadQueue.shift();
 			$('[name="podgroupload_'+newTrack.channel+'"]').makeFlasher().removeClass('podgroupload');
 			var monitor = new podcastDownloadMonitor(newTrack.track, newTrack.channel);
-			await clickRegistry.loadContentIntoTarget({
+			var success = await clickRegistry.loadContentIntoTarget({
 				target: $('#podcast_'+newTrack.channel),
 				clickedElement: $('.openmenu[name="podcast_'+channel+'"]'),
 				uri: 'podcasts/podcasts.php',
@@ -26,6 +26,9 @@ var podcasts = function() {
 			monitor.stop();
 			doDummyProgressBars();
 			$('[name="podgroupload_'+newTrack.channel+'"]').stopFlasher().removeClass('podgroupload').addClass('podgroupload');
+			if (!success) {
+				downloadQueue.unshift(newTrack);
+			}
 		}
 		downloadRunning = false;
 	}
