@@ -262,20 +262,25 @@ var metaHandlers = function() {
 					trackstogo.push({action: 'youtubedl', uri: uri });
 				});
 				var monitor = new youtubeDownloadMonitor();
-				dbQueue.request(
-					trackstogo,
-					function(data) {
-						collectionHelper.updateCollectionDisplay(data),
-						monitor.stop();
-					},
-					function(data) {
-						debug.warn("FUCK!", 'Why did that not work?',data);
-						monitor.stop();
-						if (data.responseJSON && data.responseJSON.error) {
-							infobar.error('Failed to download YouTube track - '+data.responseJSON.error);
-						}
+				// Don't use the queue for this, it takes too long and holds up other stuff
+				$.ajax({
+					url: "backends/sql/userRatings.php",
+					type: "POST",
+					contentType: false,
+					data: JSON.stringify(trackstogo),
+					dataType: 'json'
+				})
+				.done(function(data) {
+					collectionHelper.updateCollectionDisplay(data),
+					monitor.stop();
+				})
+				.fail(function(data) {
+					debug.warn("FUCK!", 'Why did that not work?',data);
+					monitor.stop();
+					if (data.responseJSON && data.responseJSON.error) {
+						infobar.error('Failed to download YouTube track - '+data.responseJSON.error);
 					}
-				);
+				});
 			},
 
 			removeAlbumFromDb: function(event, element) {
