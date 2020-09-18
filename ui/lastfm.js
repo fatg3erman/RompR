@@ -7,7 +7,7 @@ function LastFM(user) {
 	var token = "";
 	var self=this;
 	var queue = new Array();
-	var current_req = null;
+	var current_req;
 	var throttleTime = 100;
 	var nextThrottle;
 	var backofftimer;
@@ -193,7 +193,7 @@ function LastFM(user) {
 		options.format = "json";
 		options.cache = cache;
 		queue.push({url: options, success: success, fail: fail, cache: cache, reqid: reqid, retries: 0});
-		if (current_req == null)
+		if (typeof current_req == 'undefined')
 			do_Request();
 	}
 
@@ -231,7 +231,7 @@ function LastFM(user) {
 			fail: fail,
 			retries : 0
 		});
-		if (current_req == null)
+		if (typeof current_req == 'undefined')
 			do_Request();
 	}
 
@@ -243,21 +243,18 @@ function LastFM(user) {
 	}
 
 	async function do_Request() {
-		var req;
 		if (lak === null) {
 			debug.error('LASTFM', 'Fatal Error');
 			return;
 		}
-		while (req = queue.shift()) {
-			current_req = req;
-			if (req.url == "POST") {
-				await handle_post_request(req);
+		while (current_req = queue.shift()) {
+			if (current_req.url == "POST") {
+				await handle_post_request(current_req);
 			} else {
-				await handle_get_request(req);
+				await handle_get_request(current_req);
 			}
 			await new Promise(t => setTimeout(t, nextThrottle));
 		}
-		current_req = null;
 	}
 
 	async function handle_post_request(req) {
@@ -309,10 +306,7 @@ function LastFM(user) {
 				if (req.reqid || req.reqid === 0) {
 					req.fail(null, req.reqid);
 				} else {
-					let errormessage = language.gettext('lastfm_error');
-					if (err.responseJSON)
-						errormessage += ' ('+err.responseJSON.message+')';
-					req.fail({error: 1, message: errormessage});
+					req.fail({error: 1, message: format_remote_api_error('lastfm_error', err)});
 				}
 			}
 			nextThrottle = throttleTime;

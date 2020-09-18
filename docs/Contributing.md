@@ -4,7 +4,7 @@ The code for RompR is a toy to be played with.
 So it changes, frequently and unpredictably according to the whims
 of the contributors. This is the philosophy that underpins everything we do.
 Coding RompR is a purely creative outlet that we do for enjoyent.
-Anything that feels like admin can fuck right off, we get enough of that bollocks at work.
+Anything that feels like admin can get stuffed.
 
 We welcome Pull Requests on GitHub but please take note of the following
 
@@ -19,6 +19,3 @@ Please DO contribute to RompR if
 
 Please make Pull Requests against the 'develop' branch. The 'master' branch is used only for making releases
 and PRs submitted against master will be rejected without exception (otherwise it's admin, and we hate admin).
-
-Please also note, our contribution guidelines contain the words 'fuck', 'shit' and 'bollocks'. If you're the type of
-person who feels this is inappropriate then you can go shove it up your arse, you big twat.

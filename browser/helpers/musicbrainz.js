@@ -3,15 +3,15 @@ var musicbrainz = function() {
 	var baseURL = 'http://musicbrainz.org/ws/2/';
 	var coverURL = 'http://coverartarchive.org/release/';
 	var queue = new Array();
-	var current_req = null;
+	var current_req;
 	const THROTTLE_TIME = 1500;
 
 	function handle_response(req, data, jqxhr) {
 		var c = jqxhr.getResponseHeader('Pragma');
 		debug.debug("MUSICBRAINZ","Request success",c, data, jqxhr);
-		throttle = (c == "From Cache") ? 50 : THROTTLE_TIME;
+		var throttle = (c == "From Cache") ? 50 : THROTTLE_TIME;
 		if (data === null)
-			data = {error: format_error('musicbrainz_error', jqxhr)};
+			data = {error: format_remote_api_error('musicbrainz_error', jqxhr)};
 
 		if (req.reqid != '')
 			data.id = req.reqid;
@@ -26,7 +26,7 @@ var musicbrainz = function() {
 
 	function handle_error(req, err) {
 		debug.warn("MUSICBRAINZ","Request failed",err);
-		data = {error: format_error('musicbrainz_noinfo', err)};
+		data = {error: format_remote_api_error('musicbrainz_noinfo', err)};
 		if (req.reqid != '')
 			data.id = req.reqid;
 
@@ -34,41 +34,30 @@ var musicbrainz = function() {
 		return THROTTLE_TIME;
 	}
 
-	function format_error(msg, jqxhr) {
-		debug.debug("MUSICBRAINZ","Formatting error",jqxhr);
-		var errormessage = language.gettext(msg);
-		if (jqxhr.responseJSON && jqxhr.responseJSON.message)
-			errormessage += ' ('+jqxhr.responseJSON.message+')';
-
-		return errormessage;
-	}
-
 	async function do_Request() {
-		var data, jqxhr, throttle, req;
-		while (req = queue.shift()) {
-			current_req = req;
-			debug.debug("MUSICBRAINZ","New request",req);
+		var data, jqxhr, throttle;
+		while (current_req = queue.shift()) {
+			debug.debug("MUSICBRAINZ","New request",current_req);
 			try {
 				data = await (jqxhr = $.ajax({
 					method: 'POST',
 					url: "browser/backends/getmbdata.php",
-					data: req.data,
+					data: current_req.data,
 					dataType: "json",
 				}));
-				throttle = handle_response(req, data, jqxhr);
+				throttle = handle_response(current_req, data, jqxhr);
 			} catch (err) {
-				throttle = handle_error(req, err);
+				throttle = handle_error(current_req, err);
 			}
 			await new Promise(t => setTimeout(t, throttle));
 		}
-		current_req = null;
 	}
 
 	return {
 
 		request: function(reqid, data, success, fail) {
 			queue.push( {reqid: reqid, data: data, success: success, fail: fail } );
-			if (current_req == null)
+			if (typeof current_req == 'undefined')
 				do_Request();
 
 		},

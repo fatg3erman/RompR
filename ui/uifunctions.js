@@ -1021,3 +1021,13 @@ var spotifyLinkChecker = function() {
 	}
 
 }();
+
+function format_remote_api_error(msg, err) {
+	let errormessage = language.gettext(msg);
+	if (err.statusText)
+		errormessage += ' ('+err.status+' '+err.statusText+')';
+	if (err.responseJSON)
+		errormessage += ' ('+err.responseJSON.message+')';
+
+	return errormessage;
+}

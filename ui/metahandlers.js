@@ -456,7 +456,7 @@ var dbQueue = function() {
 	// This is a queueing mechanism for the local database in order to avoid deadlocks.
 
 	var queue = new Array();
-	var current_req = null;
+	var current_req;
 	var cleanuptimer = null;
 	var cleanuprequired = false;
 
@@ -474,7 +474,7 @@ var dbQueue = function() {
 				data: JSON.stringify(req.data),
 				dataType: 'json'
 			});
-			debug.debug('DB QUEUE', 'Request Success', data);
+			debug.debug('DB QUEUE', 'Request Success', req, data);
 			for (var i in req.data) {
 				if (actions_requiring_cleanup.indexOf(req.data[i].action) > -1) {
 					debug.debug("DB QUEUE","Setting cleanup flag for",req.data[i].action,"request");
@@ -497,9 +497,9 @@ var dbQueue = function() {
 		request: function(data, success, fail) {
 			debug.debug("DB QUEUE","New request",data);
 			queue.push( {data: data, success: success, fail: fail } );
-			if (current_req == null) {
+			if (typeof current_req == 'undefined')
 				dbQueue.dorequest();
-			}
+
 		},
 
 		queuelength: function() {
@@ -507,17 +507,12 @@ var dbQueue = function() {
 		},
 
 		dorequest: async function() {
-			var req;
-			while (req = queue.shift()) {
-				// The assignment above is automatically local to this colsure
-				// hence we need to assign it to our global
-				current_req = req;
+			while (current_req = queue.shift()) {
 				clearTimeout(cleanuptimer);
 				await player.not_updating();
 				debug.debug('DB QUEUE', 'Handling Request', current_req);
 				await process_request(current_req);
 			}
-			current_req = null;
 			clearTimeout(cleanuptimer);
 			if (cleanuprequired) {
 				cleanuptimer = setTimeout(dbQueue.doCleanup, 500);

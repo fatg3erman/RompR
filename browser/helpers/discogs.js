@@ -2,78 +2,69 @@ var discogs = function() {
 
 	var baseURL = 'https://api.discogs.com/';
 	var queue = new Array();
-	var throttle = null;
+	var current_req;
+	const THROTTLE_TIME = 1500;
+
+	function handle_response(req, data, jqxhr) {
+		var c = jqxhr.getResponseHeader('Pragma');
+		debug.debug("DISCOGS","Request success",c, data, jqxhr);
+		var throttle = (c == "From Cache") ? 50 : THROTTLE_TIME;
+		if (data === null) {
+			data = {error: format_remote_api_error('discogs_error', jqxhr)};
+		} else if (!data.error) {
+			// info_discogs.js was written to accept jsonp data passed back from $.jsonp
+			// However as Discogs now seem to be refusing to respond to those requests
+			// we're using a php script to get it instead. So here we bodge the response
+			// into the form that info_discogs.js is expecting.
+			// It's important we do this because otherwise we overwrite discogs' id field with our own
+			data = {data: data};
+		}
+		if (req.reqid != '')
+			data.id = req.reqid;
+
+		if (data.error) {
+			req.fail(data);
+		} else {
+			req.success(data);
+		}
+		return throttle;
+	}
+
+	function handle_error(req, err) {
+		debug.warn("DISCOGS","Request failed",err);
+		data = {error: format_remote_api_error('discogs_error', err)};
+		if (req.reqid != '')
+			data.id = req.reqid;
+
+		req.fail(data);
+		return THROTTLE_TIME;
+	}
+
+	async function do_Request() {
+		var data, jqxhr, throttle;
+		while (current_req = queue.shift()) {
+			debug.debug("DISCOGS","New request",current_req);
+			try {
+				data = await (jqxhr = $.ajax({
+					method: 'POST',
+					url: "browser/backends/getdidata.php",
+					data: current_req.data,
+					dataType: "json",
+				}));
+				throttle = handle_response(current_req, data, jqxhr);
+			} catch (err) {
+				throttle = handle_error(current_req, err);
+			}
+			await new Promise(t => setTimeout(t, throttle));
+		}
+	}
 
 	return {
 
 		request: function(reqid, data, success, fail) {
-
-			queue.push( {flag: false, reqid: reqid, data: data, success: success, fail: fail } );
-			debug.debug("DISCOGS","New request",data.url,"throttle is",throttle,"length is",queue.length);
-			if (throttle == null && queue.length == 1) {
-				discogs.getrequest();
-			}
-
-		},
-
-		getrequest: function() {
-
-			var req = queue[0];
-			clearTimeout(throttle);
-
-			if (req !== undefined) {
-				if (req.flag) {
-					debug.warn("DISCOGS","Request just pulled from queue is already being handled",req.data.url);
-					return;
-				}
-				queue[0].flag = true;
-				debug.debug("DISCOGS","Taking next request from queue",req.data);
-				var getit = $.ajax({
-					method: 'POST',
-					url: "browser/backends/getdidata.php",
-					data: req.data,
-					dataType: "json"
-				})
-				.done(function(data) {
-					var c = getit.getResponseHeader('Pragma');
-					debug.debug("DISCOGS", "Request Success",c,data);
-					if (c == "From Cache") {
-						throttle = setTimeout(discogs.getrequest, 100);
-					} else {
-						throttle = setTimeout(discogs.getrequest, 1500);
-					}
-					req = queue.shift();
-					if (data === null) {
-						data = {error: language.gettext("discogs_error")}
-					} else if (!data.error) {
-						// info_discogs.js was written to accept jsonp data passed back from $.jsonp
-						// However as Discogs now seem to be refusing to respond to those requests
-						// we're using a php script to get it instead. So here we bodge the response
-						// into the form that info_discogs.js is expecting.
-						data = {data: data};
-					}
-					if (req.reqid != '') {
-						data.id = req.reqid;
-					}
-					if (data.error) {
-						req.fail(data);
-					} else {
-						req.success(data);
-					}
-				})
-				.fail(function(xhr,status,err) {
-					throttle = setTimeout(discogs.getrequest, 1500);
-					req = queue.shift();
-					debug.warn("DISCOGS","Request failed",req,xhr);
-					data = {error: language.gettext("discogs_error") + ' ('+xhr.status+' '+err+')'};
-					if (req.reqid != '') {
-						data.id = req.reqid;
-					}
-					req.fail(data);
-				});
-			} else {
-				throttle = null;
-			}
+			queue.push( {reqid: reqid, data: data, success: success, fail: fail } );
+			if (typeof current_req == 'undefined')
+				do_Request();
 		},
 
 		artist: {

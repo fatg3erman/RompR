@@ -2,40 +2,31 @@ var spotify = function() {
 
 	var baseURL = 'https://api.spotify.com';
 	var queue = new Array();
-	var collectedobj = null;
 	const DEFAULT_RATE = 100;
 	var rate = DEFAULT_RATE;
 	var backofftimer;
-	var current_req = null;
-
-	function objFirst(obj) {
-		for (var a in obj) {
-			return a;
-		}
-	}
+	var current_req;
 
 	async function do_Request() {
-		var data, jqxhr, throttle, req;
-		while (req = queue.shift()) {
-			current_req = req;
-			debug.debug("SPOTIFY","Taking next request from queue",req);
+		var data, jqxhr, throttle;
+		while (current_req = queue.shift()) {
+			debug.debug("SPOTIFY","Taking next request from queue",current_req);
 			try {
 				data = await (jqxhr = $.ajax({
 					type: 'POST',
 					url: "browser/backends/getspdata.php",
 					dataType: "json",
 					data: {
-						url: req.url,
-						cache: req.cache
+						url: current_req.url,
+						cache: current_req.cache
 					}
 				}));
-				throttle = handle_response(req, data, jqxhr);
+				throttle = handle_response(current_req, data, jqxhr);
 			} catch (err) {
-				throttle = handle_error(req, err);
+				throttle = handle_error(current_req, err);
 			}
 			await new Promise(t => setTimeout(t, throttle));
 		}
-		current_req = null;
 	}
 
 	function handle_response(req, data, jqxhr) {
@@ -49,49 +40,21 @@ var spotify = function() {
 		if (req.reqid != '') {
 			data.reqid = req.reqid;
 		}
-		var root = objFirst(data);
-		// Bit messy this.
-		// Might prefer something like if (a = (data[root].next || data.next))
-		// but I can't remember whay this is the way it is so I'm not currently inclined to fuck with it
-		if (data[root].next) {
-			debug.debug("SPOTIFY","Got a response with a next page!");
-			if (data[root].previous == null) {
-				collectedobj = data;
-			} else {
-				collectedobj[root].items = collectedobj[root].items.concat(data[root].items);
-			}
-			queue.unshift({flag: false, reqid: '', url: data[root].next, success: req.success, fail: req.fail});
-		} else if (data[root].previous) {
-			collectedobj[root].items = collectedobj[root].items.concat(data[root].items);
-			debug.trace("SPOTIFY","Returning concatenated multi-page result");
-			req.success(collectedobj);
-		} else if (data.next) {
-			debug.debug("SPOTIFY","Got a response with a next page!");
-			if (data.previous == null) {
-				collectedobj = data;
-			} else {
-				collectedobj.items = collectedobj.items.concat(data.items);
-			}
-			queue.unshift({flag: false, reqid: '', url: data.next, success: req.success, fail: req.fail});
-		} else if (data.previous) {
-			collectedobj.items = collectedobj.items.concat(data.items);
-			debug.trace("SPOTIFY","Returning concatenated multi-page result");
-			req.success(collectedobj);
-		} else {
-			req.success(data);
-		}
+		req.success(data);
 		return throttle;
 	}
 
 	function handle_error(req, err) {
 		debug.warn("SPOTIFY","Request failed",req,err);
-		if (err.responseJSON && err.responseJSON.error == 429) {
-			debug.info("SPOTIFY","Too Many Requests. Slowing Request Rate");
-			rate += 1000;
-			clearTimeout(backofftimer);
-			backofftimer = setTimeout(speedBackUp, 90000);
+		if (err.responseJSON) {
+			if (err.responseJSON.error == 429) {
+				debug.info("SPOTIFY","Too Many Requests. Slowing Request Rate");
+				rate += 1000;
+				clearTimeout(backofftimer);
+				backofftimer = setTimeout(speedBackUp, 90000);
+			}
 		}
-		data = {error: language.gettext("spotify_noinfo") + ' ('+xhr.responseJSON.message+')'}
+		data = {error: format_remote_api_error('spotify_noinfo', err)}
 		if (req.reqid != '') {
 			data.reqid = req.reqid;
 		}
@@ -178,7 +141,7 @@ var spotify = function() {
 			},
 
 			search: function(name, success, fail, prio) {
-				var url = baseURL + '/v1/search?q='+name.replace(/&|%|@|:|\+|'|\\|\*|"|\?|\//g,'').replace(/\s+/g,'+')+'&type=artist';
+				var url = baseURL + '/v1/search?q='+name.replace(/&|%|@|:|\+|'|\\|\*|"|\?|\//g,'').replace(/\s+/g,'+')+'&type=artist&limit=50';
 				spotify.request('', url, success, fail, prio, true);
 			}
 
