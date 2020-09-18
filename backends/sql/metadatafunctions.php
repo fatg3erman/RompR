@@ -235,7 +235,9 @@ class romprmetadata {
 				exit(0);
 			}
 			file_put_contents('dlprogress', $ttindex."\n");
-			mkdir($ttindex);
+			if (!is_dir($ttindex)) {
+				mkdir($ttindex);
+			}
 			chdir($ttindex);
 			file_put_contents('original.uri', $uri_to_get);
 			exec($ytdl_path.'youtube-dl --ffmpeg-location '.$avconv_path.' --extract-audio --write-thumbnail --restrict-filenames --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' >> ../dlprogress 2>&1', $output, $retval);

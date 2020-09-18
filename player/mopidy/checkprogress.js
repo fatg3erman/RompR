@@ -64,7 +64,7 @@ var mopidysocket = function() {
 		debug.log('MOPISOCKET', message);
 		var json = JSON.parse(message.data);
 		if (json.event) {
-			if (react || (!react && json.event != 'tracklist_changed')) {
+			if (react || (!react && json.event != 'tracklist_changed' && json.event != 'track_playback_started')) {
 				// Don;t respond to tracklist changed messages if we're currently doing something
 				// because what we're doing might be getting the tracklist.
 				// Look it's complicated OK?
