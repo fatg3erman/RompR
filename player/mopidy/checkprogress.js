@@ -76,6 +76,7 @@ var mopidysocket = function() {
 
 	async function update_player() {
 		debug.log('MOPISOCKET', 'Reacting to message');
+		await playlist.is_valid();
 		await player.controller.do_command_list([]);
 		updateStreamInfo();
 	}

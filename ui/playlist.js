@@ -722,6 +722,7 @@ var playlist = function() {
 
 		trackHasChanged: async function(backendid) {
 			await playlist.is_valid();
+			$retval = true;
 			var force = (currentTrack.Id == -1) ? true : false;
 			if (backendid != currentTrack.Id) {
 				debug.log("PLAYLIST","Looking For Current Track",backendid);
@@ -743,12 +744,21 @@ var playlist = function() {
 					}
 				}
 				if (!found) {
+					debug.trace('PLAYLIST', '  Did not find current track id',backendid);
 					currentTrack = emptyTrack;
+					if (typeof backendid != 'undefined') {
+						// Return false if the backendid says we're playing a track but we didn't find it
+						// This can only means that we're reacting to a track change event when the playlist
+						// is out of sync. Returing false here should make controller.js react to the track change
+						// again.
+						$retval = false;
+					}
 				}
 				nowplaying.newTrack(playlist.getCurrentTrack(), force);
 			}
 			playlist.doUpcomingCrap();
 			playlist.scrollToCurrentTrack();
+			return $retval;
 		},
 
 		scrollToCurrentTrack: function() {

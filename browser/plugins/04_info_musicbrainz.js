@@ -441,6 +441,7 @@ var info_musicbrainz = function() {
 	}
 
 	return {
+
 		getRequirements: function(parent) {
 			if (parent.playlistinfo.metadata.artists[parent.artistindex].musicbrainz_id == "" ||
 				parent.playlistinfo.metadata.album.musicbrainz_id == "" ||
@@ -477,86 +478,155 @@ var info_musicbrainz = function() {
 
 			this.handleClick = function(source, element, event) {
 				debug.debug(medebug,parent.nowplayingindex,source,"is handling a click event");
-				if (element.hasClass('clickdoartist')){
-					var targetdiv = element.parent().next();
-					if (!(targetdiv.hasClass('full')) && element.isClosed()) {
-						targetdiv.doSomethingUseful(language.gettext("info_gettinginfo")).slideToggle('fast');
-						getArtistData(element.attr('name'));
-						element.toggleOpen();
-						targetdiv.addClass('underline');
-					} else {
-						if (element.isOpen()) {
-							element.toggleClosed();
-							targetdiv.removeClass('underline');
-						} else {
-							element.toggleOpen();
-							targetdiv.addClass('underline');
-						}
-						targetdiv.slideToggle('fast');
-					}
+				if (element.hasClass('clickdoartist')) {
+					display_artist(source, element, event);
 				} else if (element.hasClass('clickdodiscography')) {
-					var targetdiv = element.parent().next();
-					if (!(targetdiv.hasClass('full')) && element.isClosed()) {
-						targetdiv.doSomethingUseful(language.gettext("info_gettinginfo"));
-						getArtistReleases(element.attr('name'), 'discography_'+element.attr('name'));
-						element.toggleOpen();
-						targetdiv.slideToggle('fast');
-					} else {
-						if (element.isOpen()) {
-							element.toggleClosed();
-						} else {
-							element.toggleOpen();
-						}
-						targetdiv.slideToggle('fast');
-					}
+					do_discography(source, element, event);
 				} else if (element.hasClass('clickexpandbox')) {
-					var id = element.attr('name');
-					var expandingframe = element.parent().parent().parent().parent();
-					var content = expandingframe.html();
-					content=content.replace(/<i class="icon-expand-up.*?>/, '');
-					var pos = expandingframe.offset();
-					var target = $("#artistfoldup").length == 0 ? "musicbrainz" : "artist";
-					var targetpos = $("#"+target+"foldup").offset();
-					debug.debug("MUSICBRAINZ","1. targetpos is",targetpos);
-					var animator = expandingframe.clone();
-					animator.css('position', 'absolute');
-					animator.css('top', pos.top+"px");
-					animator.css('left', pos.left+"px");
-					animator.css('width', expandingframe.width()+"px");
-					animator.appendTo($('body'));
-					$("#"+target+"foldup").animate(
-						{
-							opacity: 0
-						},
-						'fast',
-						'swing',
-						function() {
-							animator.animate(
-								{
-									top: targetpos.top+"px",
-									left: targetpos.left+"px",
-									width: $("#artistinformation").width()+"px"
-								},
-								'fast',
-								'swing',
-								function() {
-									browser.speciaUpdate(
-										me,
-										'artist',
-										{
-											name: artistmeta.musicbrainz[id].name,
-											link: null,
-											data: content
-										}
-									);
-									animator.remove();
-								}
-							);
-						}
-					);
+					expand_up(source, element, event);
 				} else if (element.hasClass('clickzoomimage')) {
 					imagePopup.create(element, event, element.next().val());
 				}
+			}
+
+			function display_artist(source, element, event) {
+				var targetdiv = element.parent().next();
+				if (!(targetdiv.hasClass('full')) && element.isClosed()) {
+					targetdiv.doSomethingUseful(language.gettext("info_gettinginfo")).slideToggle('fast');
+					getArtistData(element.attr('name'));
+					element.toggleOpen();
+					targetdiv.addClass('underline');
+				} else {
+					if (element.isOpen()) {
+						element.toggleClosed();
+						targetdiv.removeClass('underline');
+					} else {
+						element.toggleOpen();
+						targetdiv.addClass('underline');
+					}
+					targetdiv.slideToggle('fast');
+				}
+			}
+
+			function do_discography(source, element, event) {
+				var targetdiv = element.parent().next();
+				if (!(targetdiv.hasClass('full')) && element.isClosed()) {
+					targetdiv.doSomethingUseful(language.gettext("info_gettinginfo"));
+					getArtistReleases(element.attr('name'), 'discography_'+element.attr('name'));
+					element.toggleOpen();
+					targetdiv.slideToggle('fast');
+				} else {
+					if (element.isOpen()) {
+						element.toggleClosed();
+					} else {
+						element.toggleOpen();
+					}
+					targetdiv.slideToggle('fast');
+				}
+			}
+
+			function expand_up(source, element, event) {
+				var id = element.attr('name');
+				var expandingframe = element.parent().parent().parent().parent();
+				var content = expandingframe.html();
+				content=content.replace(/<i class="icon-expand-up.*?>/, '');
+				var pos = expandingframe.offset();
+				var target = $("#artistfoldup").length == 0 ? "musicbrainz" : "artist";
+				var targetpos = $("#"+target+"foldup").offset();
+				debug.debug("MUSICBRAINZ","1. targetpos is",targetpos);
+				var animator = expandingframe.clone();
+				animator.css('position', 'absolute');
+				animator.css('top', pos.top+"px");
+				animator.css('left', pos.left+"px");
+				animator.css('width', expandingframe.width()+"px");
+				animator.appendTo($('body'));
+				$("#"+target+"foldup").animate(
+					{
+						opacity: 0
+					},
+					'fast',
+					'swing',
+					function() {
+						animator.animate(
+							{
+								top: targetpos.top+"px",
+								left: targetpos.left+"px",
+								width: $("#artistinformation").width()+"px"
+							},
+							'fast',
+							'swing',
+							function() {
+								browser.speciaUpdate(
+									me,
+									'artist',
+									{
+										name: artistmeta.musicbrainz[id].name,
+										link: null,
+										data: content
+									}
+								);
+								animator.remove();
+							}
+						);
+					}
+				);
+			}
+
+			function scrape_useful_artist_links(data, update) {
+
+				var wikilinks = { user: null, english: null, anything: null };
+				debug.debug(medebug,parent.nowplayingindex,"wikipedia language is",wikipedia.getLanguage());
+
+				var domain = '^http://'+wikipedia.getLanguage();
+				var re = new RegExp(domain);
+				for (var i in data.relations) {
+					if (data.relations[i].type == "wikipedia") {
+						debug.trace(medebug,parent.nowplayingindex,"has found a Wikipedia artist link",data.relations[i].url.resource);
+						// For wikipedia links we need to prioritise:
+						// user's chosen domain first
+						// english second
+						// followed by anything will do
+						// the php side will also try to use the link we choose to get language links for the
+						// user's chosen language, but it's definitely best if we prioritise them here
+						var wikitemp = data.relations[i].url.resource;
+						if (re.test(wikitemp)) {
+							debug.trace(medebug,parent.nowplayingindex,"found user domain wiki link");
+							wikilinks.user = wikitemp;
+						} else if (wikitemp.match(/en.wikipedia.org/)) {
+							debug.trace(medebug,parent.nowplayingindex,"found english domain wiki link");
+							wikilinks.english = wikitemp;
+						} else {
+							debug.trace(medebug,parent.nowplayingindex,"found wiki link");
+							wikilinks.anything = wikitemp;
+						}
+					}
+					if (data.relations[i].type == "discogs" && update.discogs.artistlink == null) {
+						debug.trace(medebug,parent.nowplayingindex,"has found a Discogs artist link",data.relations[i].url.resource);
+						update.discogs.artistlink = data.relations[i].url.resource;
+					}
+					if (data.relations[i].type == "allmusic" && update.allmusic.artistlink == null) {
+						debug.trace(medebug,parent.nowplayingindex,"has found an Allmusic artist link",data.relations[i].url.resource);
+						update.allmusic.artistlink = data.relations[i].url.resource;
+					}
+				}
+				if (update.wikipedia.artistlink == null) {
+					if (wikilinks.user) {
+						debug.trace(medebug,parent.nowplayingindex,"using user domain wiki link",wikilinks.user);
+						update.wikipedia.artistlink = wikilinks.user;
+					} else if (wikilinks.english) {
+						debug.trace(medebug,parent.nowplayingindex,"using english domain wiki link",wikilinks.english);
+						update.wikipedia.artistlink = wikilinks.english;
+					} else if (wikilinks.anything) {
+						debug.trace(medebug,parent.nowplayingindex,"using any old domain wiki link",wikilinks.anything);
+						update.wikipedia.artistlink = wikilinks.anything;
+					}
+
+				}
+				if (data.disambiguation) {
+					update.disambiguation = data.disambiguation;
+				}
+
+				return update;
 			}
 
 			function getArtistData(id) {
@@ -726,30 +796,19 @@ var info_musicbrainz = function() {
 
 				return {
 
-					populate: function() {
-						if (artistmeta.musicbrainz === undefined) {
+					populate: async function() {
+						if (artistmeta.musicbrainz === undefined)
 							artistmeta.musicbrainz = {};
+
+						while (artistmeta.musicbrainz_id == '') {
+							await new Promise(t => setTimeout(t, 1000));
 						}
-						if (artistmeta.musicbrainz_id == "") {
-							debug.debug(medebug,parent.nowplayingindex,"Artist asked to populate but no MBID, trying again in 2 seonds");
-							setTimeout(self.artist.populate, 2000);
-							return;
-						}
+
 						if (artistmeta.musicbrainz_id === null) {
 							debug.info(medebug,parent.nowplayingindex,"Artist asked to populate but no MBID could be found. Aborting");
-							artistmeta.musicbrainz.artist = {error: language.gettext("musicbrainz_noartist")};
-							parent.updateData({
-									wikipedia: { artistlink: null },
-									discogs: {  artistlink: null },
-									allmusic: {  artistlink: null }
-								},
-								artistmeta
-							);
-							self.artist.doBrowserUpdate();
-							return;
+							self.artist.abjectFailure();
 						}
-						if (artistmeta.musicbrainz.artist === undefined &&
-							artistmeta.musicbrainz[artistmeta.musicbrainz_id] === undefined) {
+						if (artistmeta.musicbrainz[artistmeta.musicbrainz_id] === undefined) {
 							debug.debug(medebug,parent.nowplayingindex,"artist is populating",artistmeta.musicbrainz_id);
 							musicbrainz.artist.getInfo(artistmeta.musicbrainz_id, self.artist.mbResponseHandler, self.artist.mbResponseHandler);
 						} else {
@@ -757,9 +816,24 @@ var info_musicbrainz = function() {
 						}
 					},
 
-					mbResponseHandler: function(data) {
-						debug.debug('MUSICBRAINZ', 'We are here 4', data);
+					abjectFailure: function(err) {
+						artistmeta.musicbrainz_id = -1;
+						if (err) {
+							artistmeta.musicbrainz[artistmeta.musicbrainz_id] = err;
+						} else {
+							artistmeta.musicbrainz[artistmeta.musicbrainz_id] = {error: language.gettext("musicbrainz_noartist")};
+						}
+						parent.updateData({
+								wikipedia: { artistlink: null },
+								discogs: {  artistlink: null },
+								allmusic: {  artistlink: null }
+							},
+							artistmeta
+						);
+						self.artist.doBrowserUpdate();
+					},
 
+					mbResponseHandler: function(data) {
 						debug.debug(medebug,parent.nowplayingindex,"got artist data for",artistmeta.musicbrainz_id,data);
 						// Look for the information that other plugins need
 						var update = 	{ 	disambiguation: null,
@@ -767,70 +841,14 @@ var info_musicbrainz = function() {
 											discogs: {  artistlink: null },
 											allmusic: {  artistlink: null }
 										};
-						if (data) {
-							if (data.error) {
-								artistmeta.musicbrainz.artist = data;
-							} else {
-								artistmeta.musicbrainz[artistmeta.musicbrainz_id] = data;
-								var wikilinks = { user: null, english: null, anything: null };
-								debug.debug(medebug,parent.nowplayingindex,"wikipedia language is",wikipedia.getLanguage());
-
-								var domain = '^http://'+wikipedia.getLanguage();
-								var re = new RegExp(domain);
-								for (var i in data.relations) {
-									if (data.relations[i].type == "wikipedia") {
-										debug.trace(medebug,parent.nowplayingindex,"has found a Wikipedia artist link",data.relations[i].url.resource);
-										// For wikipedia links we need to prioritise:
-										// user's chosen domain first
-										// english second
-										// followed by anything will do
-										// the php side will also try to use the link we choose to get language links for the
-										// user's chosen language, but it's definitely best if we prioritise them here
-										var wikitemp = data.relations[i].url.resource;
-										if (re.test(wikitemp)) {
-											debug.trace(medebug,parent.nowplayingindex,"found user domain wiki link");
-											wikilinks.user = wikitemp;
-										} else if (wikitemp.match(/en.wikipedia.org/)) {
-											debug.trace(medebug,parent.nowplayingindex,"found english domain wiki link");
-											wikilinks.english = wikitemp;
-										} else {
-											debug.trace(medebug,parent.nowplayingindex,"found wiki link");
-											wikilinks.anything = wikitemp;
-										}
-									}
-									if (data.relations[i].type == "discogs" && update.discogs.artistlink == null) {
-										debug.trace(medebug,parent.nowplayingindex,"has found a Discogs artist link",data.relations[i].url.resource);
-										update.discogs.artistlink = data.relations[i].url.resource;
-									}
-									if (data.relations[i].type == "allmusic" && update.allmusic.artistlink == null) {
-										debug.trace(medebug,parent.nowplayingindex,"has found an Allmusic artist link",data.relations[i].url.resource);
-										update.allmusic.artistlink = data.relations[i].url.resource;
-									}
-								}
-								if (update.wikipedia.artistlink == null) {
-									if (wikilinks.user) {
-										debug.trace(medebug,parent.nowplayingindex,"using user domain wiki link",wikilinks.user);
-										update.wikipedia.artistlink = wikilinks.user;
-									} else if (wikilinks.english) {
-										debug.trace(medebug,parent.nowplayingindex,"using english domain wiki link",wikilinks.english);
-										update.wikipedia.artistlink = wikilinks.english;
-									} else if (wikilinks.anything) {
-										debug.trace(medebug,parent.nowplayingindex,"using any old domain wiki link",wikilinks.anything);
-										update.wikipedia.artistlink = wikilinks.anything;
-									}
-
-								}
-								if (data.disambiguation) {
-									update.disambiguation = data.disambiguation;
-								}
-							}
+						if (!data || data.error) {
+							self.artist.abjectFailure(data);
 						} else {
-							artistmeta.musicbrainz.artist = {error: language.gettext("musicbrainz_noinfo")};
+							artistmeta.musicbrainz[artistmeta.musicbrainz_id] = data;
+							update = scrape_useful_artist_links(data, update);
 						}
-
 						parent.updateData(update, artistmeta);
 						self.artist.doBrowserUpdate();
-
 					},
 
 					extraResponseHandler: function(data) {
@@ -855,10 +873,10 @@ var info_musicbrainz = function() {
 						if (displaying) {
 							debug.debug(medebug,parent.nowplayingindex," artist was asked to display");
 							var up = null;
-							if (artistmeta.musicbrainz.artist !== undefined && artistmeta.musicbrainz.artist.error) {
+							if (artistmeta.musicbrainz[artistmeta.musicbrainz_id].error) {
 								up = { name: artistmeta.name,
 									   link: null,
-									   data: '<h3 align="center">'+artistmeta.musicbrainz.artist.error+'</h3>'}
+									   data: '<h3 align="center">'+artistmeta.musicbrainz[artistmeta.musicbrainz_id].error+'</h3>'}
 							} else if (artistmeta.musicbrainz[artistmeta.musicbrainz_id] !== undefined) {
 								up = { name: artistmeta.musicbrainz[artistmeta.musicbrainz_id].name,
 									   link: 'http://musicbrainz.org/artist/'+artistmeta.musicbrainz_id,

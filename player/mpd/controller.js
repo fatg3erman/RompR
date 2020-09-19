@@ -124,8 +124,9 @@ function playerController() {
 				prefs[e] = player.status[e];
 			});
 			if (player.status.songid != self.previoussongid) {
-				playlist.trackHasChanged(player.status.songid);
-				self.previoussongid = player.status.songid;
+				if (playlist.trackHasChanged(player.status.songid)) {
+					self.previoussongid = player.status.songid;
+				}
 			}
 			self.trackstarttime = (Date.now()/1000) - player.status.elapsed;
 			if (player.status.playlist !== plversion) {
@@ -647,6 +648,11 @@ function playerController() {
 	}
 
 	this.postLoadActions = function() {
+		if (player.status.songid != self.previoussongid) {
+			if (playlist.trackHasChanged(player.status.songid)) {
+				self.previoussongid = player.status.songid;
+			}
+		}
 		if (thenowplayinghack) {
 			// The Now PLaying Hack is so that when we switch the option for
 			// 'display composer/performer in nowplaying', we can first reload the
