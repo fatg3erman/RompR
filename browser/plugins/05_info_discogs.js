@@ -75,87 +75,59 @@ var info_discogs = function() {
 	}
 
 	function getReleaseHTML(data) {
-		var html = "";
-		debug.debug(medebug,"Generating release HTML for",data.id);
-		if (data.data.releases.length > 0) {
-			html += '<div class="mbbox clearfix"><span style="float:right">PAGES: ';
-			for (var i = 1; i <= data.data.pagination.pages; i++) {
-				if (i == data.data.pagination.page) {
-					html += " <b>"+i+"</b>";
-				} else {
-					var a = data.data.pagination.urls.last || data.data.pagination.urls.first;
-					var b = a.match(/artists\/(\d+)\/releases/);
-					if (b && b[1]) {
-						html += ' <a href="#" class="infoclick clickreleasepage" name="'+b[1]+'">'+i+'</a>';
-					}
+		if (data.data.releases.length == 0)
+			return '';
+
+		var html = $('<div>');
+		var pagbox = $('<span>', {style: 'float: right'}).appendTo($('<div>', {class: 'mbbox clearfix'}).appendTo(html));
+		pagbox.html('PAGES: ');
+		for (var i = 1; i <= data.data.pagination.pages; i++) {
+			if (i == data.data.pagination.page) {
+				pagbox.append(" ").append($('<b>').html(i));
+			} else {
+				var a = data.data.pagination.urls.last || data.data.pagination.urls.first;
+				var b = a.match(/artists\/(\d+)\/releases/);
+				if (b && b[1]) {
+					pagbox.append(" ").append($('<a>', {href: '#', class: 'infoclick clickreleasepage', name: b[1]}).html(i));
 				}
 			}
-			html += '</span></div>';
-			html += '<div class="mbbox"><table class="padded" width="100%">';
-			html += '<tr><th></th><th>'+language.gettext("title_year")+'</th><th>'+language.gettext("title_title")+'</th><th>'
-						+language.getUCtext("label_artist")+'</th><th>'+language.gettext("title_type")+'</th><th>'+language.gettext("title_label")+'</th></tr>';
-			for (var i in data.data.releases) {
-				html += '<tr>';
-				if (data.data.releases[i].thumb) {
-					html += '<td><div class="smallcover"><img class="smallcover" src="getRemoteImage.php?url='+rawurlencode(data.data.releases[i].thumb)+'" /></div></td>';
-				} else {
-					html += '<td></td>';
-				}
-				if (data.data.releases[i].year) {
-					html += '<td>'+data.data.releases[i].year+'</td>';
-				} else {
-					html += '<td></td>';
-				}
-				if (data.data.releases[i].title) {
-					html += '<td><a href="#" class="infoclick clickgetdiscstuff" target="_blank">'+
-									data.data.releases[i].title+
-									'</a><input type="hidden" value="'+data.data.releases[i].resource_url+'" />';
-					if (data.data.releases[i].role && data.data.releases[i].role != 'Main') {
-						var r = data.data.releases[i].role;
-						r = r.replace(/([a-z])([A-Z])/, '$1 $2');
-						html += '<br>(<i>'+r+'</i>)'
-					}
-					if (data.data.releases[i].trackinfo) {
-						html += '<br>(<i>'+data.data.releases[i].trackinfo+'</i>)'
-					}
-					html += '</td>';
-				} else {
-					html += '<td></td>';
-				}
-				if (data.data.releases[i].artist) {
-					html += '<td>'+data.data.releases[i].artist+'</td>';
-				} else {
-					html += '<td></td>';
-				}
-				if (data.data.releases[i].format) {
-					html += '<td>'+data.data.releases[i].format+'</td>';
-				} else {
-					html += '<td></td>';
-				}
-				if (data.data.releases[i].label) {
-					html += '<td>'+data.data.releases[i].label+'</td>';
-				} else {
-					html += '<td></td>';
-				}
-				html += '</tr>';
-			}
-			html += '</table></div>';
-			html += '<div class="mbbox clearfix"><span style="float:right">'+language.gettext("label_pages")+': ';
-			for (var i = 1; i <= data.data.pagination.pages; i++) {
-				if (i == data.data.pagination.page) {
-					html += " <b>"+i+"</b>";
-				} else {
-					var a = data.data.pagination.urls.last || data.data.pagination.urls.first;
-					var b = a.match(/artists\/(\d+)\/releases/);
-					if (b && b[1]) {
-						html += ' <a href="#" class="infoclick clickreleasepage" name="'+b[1]+'">'+i+'</a>';
-					}
-				}
-			}
-			html += '</span></div>';
 		}
-		debug.debug(medebug,"Returning release HTML for",data.id);
-		return html;
+
+		var table = $('<table>', {class: 'padded', width: '100%'}).appendTo($('<div>', {class: 'mbbox clearfix'}).appendTo(html));
+		var row = $('<tr>').appendTo(table);
+		['', 'title_title', 'title_year', 'label_artist', 'title_type', 'title_label'].forEach(function(t) {
+			row.append($('<th>').html(language.gettext(t)));
+		});
+		data.data.releases.forEach(function(release) {
+			row = $('<tr>').appendTo(table);
+
+			var cell = $('<td>').appendTo(row);
+			if (release.thumb) {
+				cell.append($('<div>', {class: 'smallcover'})).append($('<img>', {class: 'smallcover', src: 'getRemoteImage.php?url='+rawurlencode(release.thumb)}));
+			}
+
+			cell = $('<td>').appendTo(row);
+			if (release.title) {
+				cell.append($('<a>', {href: '#', class: 'infoclick clickgetdiscstuff', target: '_blank'}).html(release.title));
+				cell.append($('<input>', {type: 'hidden'}).val(release.resource_url));
+				if (release.role && release.role != 'Main') {
+					cell.append($('<br>'));
+					cell.append($('<i>').html(release.role.replace(/([a-z])([A-Z])/, '$1 $2')));
+				}
+				if (release.trackinfo) {
+					cell.append($('<br>'));
+					cell.append($('<i>').html('('+release.trackinfo+')'));
+				}
+			}
+
+			['year', 'artist', 'format', 'label'].forEach(function(c) {
+				cell = $('<td>').appendTo(row);
+				if (release[c])
+					cell.html(release[c]);
+			});
+		});
+
+		return html.html();
 	}
 
 	function getStyles(styles) {
@@ -212,6 +184,7 @@ var info_discogs = function() {
 	}
 
 	return {
+
 		getRequirements: function(parent) {
 			return ["musicbrainz"];
 		},
@@ -780,17 +753,14 @@ var info_discogs = function() {
 			}
 
 			function doMembers(members) {
-				var html = "";
-				for (var i in members) {
-					html += '<div class="mbbox">';
-					html += '<i class="icon-toggle-closed menu infoclick clickdoartist" name="'+members[i].id+'"></i>';
-					var n = members[i].name;
-					n = n.replace(/ \(\d+\)$/, '');
-					html += '<span class="title-menu">'+n+'</span>';
-					html += '</div>';
-					html += '<div name="artist_'+members[i].id+'" class="invisible"></div>';
-				}
-				return html;
+				var html = $('<div>');
+				members.forEach(function(member) {
+					var h = $('<div>', {class: 'mbbox'}).appendTo(html);
+					h.append($('<i>', {class: 'icon-toggle-closed menu infoclick clickdoartist', name: member.id}));
+					h.append($('<span>', {class: 'title-menu'}).html(member.name.replace(/ \(\d+\)$/, '')));
+					html.append($('<div>', {name: 'artist_'+member.id, class: 'invisible'}));
+				});
+				return html.html();
 			}
 
 			function getSearchArtistForAlbum() {

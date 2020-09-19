@@ -491,9 +491,9 @@ class base_mpd_player {
 	public function wait_for_state($expected_state) {
 		if ($expected_state !== null) {
 			$status = $this->get_status();
-			$retries = 20;
+			$retries = 50;
 			while ($retries > 0 && array_key_exists('state', $status) && $status['state'] != $expected_state) {
-				usleep(500000);
+				usleep(100000);
 				$retries--;
 				$status = $this->get_status();
 			}

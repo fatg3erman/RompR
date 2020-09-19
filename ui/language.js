@@ -6,7 +6,7 @@ var language = function() {
 
 	return {
 		gettext: function(key, args) {
-			if (key === null) {
+			if (key === null || key == '') {
 				return "";
 			}
 			if (tags[key] === undefined) {

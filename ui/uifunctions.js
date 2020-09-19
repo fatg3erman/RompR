@@ -1031,3 +1031,10 @@ function format_remote_api_error(msg, err) {
 
 	return errormessage;
 }
+
+function objFirst(obj) {
+	// Return the first key of any object
+    var retval;
+    $.each(obj, function(i, v) { retval = i; return false; });
+    return retval;
+}
