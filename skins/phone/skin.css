@@ -809,11 +809,18 @@ img.jalopy200 {
 		margin-bottom:1em;
 		padding-bottom:0.5em;
 	}
+	.info-box-list img {
+		width: 100%;
+	}
+
 }
 
 @media screen and (min-width: 641px) {
 	.cleft.narrowright {
 		margin-left:1em;
+	}
+	.info-box-list img {
+		max-width: 220px;
 	}
 }
 

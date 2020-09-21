@@ -405,6 +405,7 @@ i.topdrop
 }
 
 .cshrinker {
+	width: 100%;
 	max-width:400px;
 }
 
@@ -441,6 +442,10 @@ i.topdrop
 	border-left: 1px solid #454545;
 	padding-left:1em;
 	margin-left:1em;
+}
+
+.info-box-list img {
+	max-width: 220px;
 }
 
 /*

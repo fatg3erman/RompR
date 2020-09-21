@@ -516,6 +516,10 @@ i.topdrop
 	margin-left:1em;
 }
 
+.info-box-list img {
+	max-width: 220px;
+}
+
 /*
 =====================================================================
 = Dropdown Menus

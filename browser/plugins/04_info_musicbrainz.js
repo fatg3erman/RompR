@@ -20,15 +20,8 @@ var info_musicbrainz = function() {
 		}
 	}
 
-	function doSpan(data) {
-		if (data.begin === undefined || data.begin === null) {
-			return "";
-		}
-		var by = new Date(data.begin);
-		var ey = new Date(data.end);
-		var tby = by.getFullYear() || "";
-		var tey = data.ended ? (ey.getFullYear() || "") : language.gettext("musicbrainz_now");
-		return '('+tby+'&nbsp;-&nbsp;'+tey+')';
+	function nozeros(x) {
+		return (x == 0) ? '-' : x;
 	}
 
 	function albumsbyyear(a, b) {
@@ -39,405 +32,473 @@ var info_musicbrainz = function() {
 	}
 
 	function getArtistHTML(data, expand) {
-
-		if (data.error) {
+		if (data.error)
 			return '<h3 align="center">'+data.error+'</h3>';
-		}
 
-		var html = '<div class="containerbox info-detail-layout">';
-		html += '<div class="info-box-fixed info-box-list info-border-right">';
-		html += '<ul><li>'+data.disambiguation+'</li></ul>';
-		if (data.type !== null) {
-			html += '<ul><li><b>'+language.gettext("title_type")+': </b>'+data.type+'</li></ul>';
-		}
+		var layout = new info_sidebar_layout({expand: expand, expandid: data.id});
+		layout.add_sidebar_list('', data.disambiguation);
+
+		if (data.type)
+			layout.add_sidebar_list(language.gettext("title_type"), data.type);
+
 		if (data.aliases && data.aliases.length > 0) {
-			html += '<br><ul><li><b>'+language.gettext("discogs_aliases")+'</b></li>';
-			for (var i in data.aliases) {
-				html += '<li>'+data.aliases[i].name + '</li>';
-			}
-			html += '</ul>';
+			let u = layout.add_sidebar_list(language.gettext("discogs_aliases"));
+			data.aliases.forEach(function(alias) {
+				u.append($('<li>').html(alias.name));
+			});
 		}
 
 		if (data.begin_area && data.area) {
-			html += '<br><ul><li><b>'+language.gettext("musicbrainz_origin")+': </b>'+data.begin_area.name+", "+data.area.name+'</li></ul>';
+			layout.add_sidebar_list(language.gettext("musicbrainz_origin"), data.begin_area.name+", "+data.area.name);
 		} else if (data.area) {
-			html += '<br><ul><li><b>'+language.gettext("musicbrainz_origin")+': </b>'+data.area.name+'</li></ul>';
+			layout.add_sidebar_list(language.gettext("musicbrainz_origin"), data.area.name);
 		}
-		if (data['life-span'] && data['life-span'].begin !== null) {
-			html += '<br><ul><li><b>'+language.gettext("musicbrainz_active")+': </b>'+data['life-span'].begin+" - "+(data['life-span'].end || language.gettext("musicbrainz_now"))+'</li></ul>';
-		}
-		if (data.rating && data.rating.value !== null) {
-			html += '<br><ul><li><b>'+language.gettext("musicbrainz_rating")+': </b>'+data.rating.value+"/5 from "+data.rating['votes-count']+' votes</li></ul>';
-		}
-		html += '<br>'+getURLs(data.relations, true);
-		html += '</div>';
 
-		html += '<div class="info-box-expand stumpy">';
-		if (expand) {
-			html += '<div class="mbbox"><i class="icon-expand-up medicon clickexpandbox infoclick tleft" name="'+data.id+'"></i></div>';
+		if (data['life-span'] && data['life-span'].begin !== null) {
+			layout.add_sidebar_list(language.gettext("musicbrainz_active"), data['life-span'].begin+" - "+(data['life-span'].end || language.gettext("musicbrainz_now")));
 		}
+
+		if (data.rating && data.rating.value !== null) {
+			layout.add_sidebar_list(language.gettext("musicbrainz_rating"), data.rating.value+"/5 from "+data.rating['votes-count']+' votes');
+		}
+
+		getURLs(layout, data.relations);
 
 		if (data.annotation) {
-			var a = data.annotation;
-			a = a.replace(/\n/, '<br>');
-			a = a.replace(/\[(.*?)\|(.*?)\]/g, '<a href="$1" target="_blank">$2</a>');
-			html += '<div class="mbbox underline"><b>'+language.gettext("musicbrainz_notes")+':</b></div><div class="mbbox">'+a+'</div>';
+			layout.add_flow_box_header({title: language.gettext("musicbrainz_notes")});
+			layout.add_flow_box(data.annotation.replace(/\n/, '<br>').replace(/\[(.*?)\|(.*?)\]/g, '<a href="$1" target="_blank">$2</a>'));
 		}
 
-		if (data.tags && data.tags.length > 0) {
-			html += '<div class="mbbox underline"><b>'+language.gettext("musicbrainz_tags")+'</b></div><div class="statsbox">';
-			for (var i in data.tags) {
-				html += '<span class="mbtag">'+data.tags[i].name+'</span> ';
-			}
-			html += '</div>';
-		}
+		doTags(layout, data.tags);
 
-		var bandMembers = new Array();
-		var memberOf = new Array();
-		for (var i in (data.relations)) {
-			if (data.relations[i].type == "member of band") {
-				if (data.relations[i].direction == "backward") {
-					bandMembers.push(data.relations[i]);
-				} else {
-					memberOf.push(data.relations[i]);
-				}
-			}
-		}
+		var bandMembers = data.relations.filter(r => (r.type == 'member of band' && r.direction == 'backward'));
+		var memberOf = data.relations.filter(r => (r.type == 'member of band' && r.direction != 'backward'));
 		if (bandMembers.length > 0) {
-			html += '<div class="mbbox underline"><b>'+language.gettext("discogs_bandmembers")+'</b></div>'+getMembers(bandMembers);
+			layout.add_flow_box_header({wide: true, title: language.gettext("discogs_bandmembers")});
+			getMembers(layout, bandMembers);
 		}
 		if (memberOf.length > 0) {
-			html += '<div class="mbbox underline"><b>'+language.gettext("discogs_memberof")+'</b></div>'+getMembers(memberOf);
+			layout.add_flow_box_header({wide: true, title: language.gettext("discogs_memberof")});
+			getMembers(layout, memberOf);
 		}
 
-		html += '<div class="mbbox underline">';
-		html += '<i class="icon-toggle-closed menu infoclick clickdodiscography" name="'+data.id+'"></i>';
-		html += '<span class="title-menu">'+language.gettext("discogs_discography", [data.name.toUpperCase()])+'</span></div>';
-		html += '<div name="discography_'+data.id+'" class="invisible">';
-		html += '</div>';
+		layout.add_dropdown_box(
+			layout.add_flow_box_header(''),
+			'clickdodiscography',
+			data.id,
+			'discography_'+data.id,
+			language.gettext("discogs_discography", [data.name.toUpperCase()])
+		)
 
-		html += '</div>';
-		html += '</div>';
-		return html;
+		return layout.getHTML();
 
 	}
 
-	function getMembers(data) {
-		var html = "";
-		var already_done = new Array();
-		var ayears = new Array();
-		for (var i in data) {
-			if (already_done[data[i].artist.id] !== true) {
-				debug.debug(medebug,"New Artist",data[i].artist.id,data[i].artist.name,data[i].begin,data[i].end);
-				html += '<div class="mbbox">';
-				// The already_done flag is just there because artist can appear multiple times in this data
-				// if they did multiple stints in the band.
+	function doTags(layout, tags) {
+		if (tags && tags.length > 0) {
+			layout.add_flow_box_header({title: language.gettext("musicbrainz_tags")});
+			let box = layout.add_flow_box('');
+			tags.forEach(function(tag) {
+				box.append($('<span>', {class: 'mbtag'}).html(tag.name).append()).append(' ');
+			});
+		}
+	}
 
-				html += '<i class="icon-toggle-closed menu infoclick clickdoartist" name="'+data[i].artist.id+'"></i>';
-				html += '<span class="title-menu">'+data[i].artist.name+'  </span>'+"AYEARS_"+data[i].artist.id;
-				ayears[data[i].artist.id] = doSpan(data[i]);
-				html += '</div>';
-				html += '<div name="'+data[i].artist.id+'" class="invisible"></div>';
-				already_done[data[i].artist.id] = true;
+	function getMembers(layout, data) {
+		var artists = data.map(function(a) {
+			if (a.a_years) {
+				a.a_years += " "+doSpan(a);
 			} else {
-				debug.debug(medebug,"Repeat Artist",data[i].artist.id,data[i].artist.name,data[i].begin,data[i].end);
-				ayears[data[i].artist.id] = ayears[data[i].artist.id] + " " + doSpan(data[i]);
+				a.a_years = doSpan(a);
 			}
-		}
-		for(var i in ayears) {
-			html = html.replace("AYEARS_"+i, ayears[i]);
-		}
-		return html;
-
+			return a;
+		});
+		artists.forEach(function(artist) {
+			layout.add_dropdown_box(layout.add_flow_box(''), 'clickdoartist', artist.artist.id, artist.artist.id, artist.artist.name+' '+artist.a_years);
+		});
 	}
 
-	function getURLs(relations, withheader) {
-		if (relations.length == 0) {
+	function doSpan(data) {
+		if (!data.begin)
 			return "";
-		}
-		if (withheader) {
-			var html = '<ul><li><b>'+language.gettext("discogs_external")+'</b></li>';
-		} else {
-			var html = '<ul style="list-style:none;margin:2px;padding:0px">';
-		}
-		for (var i in relations) {
-			if (relations[i].url) {
-				var u = relations[i].url.resource;
-				var d = u.match(/https*:\/\/(.*?)(\/|$)/);
-			}
-			switch (relations[i].type) {
-				case "wikipedia":
-					html += '<li><i class="icon-wikipedia smallicon padright"></i><a href="'+u+'" target="_blank">Wikipedia ('+d[1]+')</a></li>';
-					break;
 
-				case "wikidata":
-					html += '<li><i class="icon-wikipedia smallicon padright"></i><a href="'+u+'" target="_blank">Wikidata</a></li>';
-					break;
+		var by = new Date(data.begin);
+		var ey = new Date(data.end);
+		var tby = by.getFullYear() || "";
+		var tey = data.ended ? (ey.getFullYear() || "") : language.gettext("musicbrainz_now");
+		return '('+tby+'&nbsp;-&nbsp;'+tey+')';
+	}
 
-				case "discography":
-					html += '<li><i class="icon-noicon smallicon padright"></i><a href="'+u+'" target="_blank">'+language.gettext("musicbrainz_externaldiscography", [d[1]])+'</a></li>';
-					break;
+	function getURLs(layout, relations) {
+		if (relations.length == 0 || !relations.some(r => (r.url)))
+			return "";
 
-				case "musicmoz":
-					html += '<li><i class="icon-noicon smallicon padright"></i><a href="'+u+'" target="_blank">Musicmoz</a></li>';
-					break;
-
-				case "allmusic":
-					html += '<li><i class="icon-allmusic smallicon padright"></i><a href="'+u+'" target="_blank">Allmusic</a></li>';
-					break;
-
-				case "BBC Music page":
-					html += '<li><i class="icon-bbc-logo smallicon padright"></i><a href="'+u+'" target="_blank">BBC Music Page</a></li>';
-					break;
-
-				case "discogs":
-					html += '<li><i class="icon-discogs smallicon padright"></i><a href="'+u+'" target="_blank">Discogs</a></li>';
-					break;
-
-				case "official homepage":
-					html += '<li><i class="icon-noicon smallicon padright"></i><a href="'+u+'" target="_blank">'+language.gettext("musicbrainz_officalhomepage", [d[1]])+'</a></li>';
-					break;
-
-				case "fanpage":
-					html += '<li><i class="icon-noicon smallicon padright"></i><a href="'+u+'" target="_blank">'+language.gettext("musicbrainz_fansite", [d[1]])+'</a></li>';
-					break;
-
-				case "lyrics":
-					html += '<li><i class="icon-doc-text-1 smallicon padright"></i><a href="'+u+'" target="_blank">'+language.gettext("musicbrainz_lyrics", [d[1]])+'</a></li>';
-					break;
-
-				case "secondhandsongs":
-					html += '<li><i class="icon-noicon smallicon padright"></i><a href="'+u+'" target="_blank">Secondhand Songs</a></li>';
-					break;
-
-				case "IMDb":
-					html += '<li><i class="icon-imdb-logo smallicon padright"></i><a href="'+u+'" target="_blank">IMDb</a></li>';
-					break;
-
-				case "social network":
-					if (u.match(/last\.fm/i)) {
-						html += '<li><i class="icon-lastfm-1 smallicon padright"></i><a href="'+u+'" target="_blank">Last.FM</a></li>';
-					} else if (u.match(/facebook\.com/i)) {
-						html += '<li><i class="icon-facebook-logo smallicon padright"></i><a href="'+u+'" target="_blank">Facebook</a></li>';
-					} else {
-						html += '<li><i class="icon-noicon smallicon padright"></i><a href="'+u+'" target="_blank">'+language.gettext("musicbrainz_social", [d[1]])+'</a></li>';
-					}
-					break;
-
-				case "youtube":
-					html += '<li><i class="icon-youtube-circled smallicon padright"></i><a href="'+u+'" target="_blank">YouTube</a></li>';
-					break;
-
-				case "myspace":
-					html += '<li><i class="icon-noicon smallicon padright"></i><a href="'+u+'" target="_blank">Myspace</a></li>';
-					break;
-
-				case "microblog":
-					if (u.match(/twitter\.com/i)) {
-						html += '<li><i class="icon-twitter-logo smallicon padright"></i><a href="'+u+'" target="_blank">Twitter</a></li>';
-					} else {
-						html += '<li><i class="icon-noicon smallicon padright"></i><a href="'+u+'" target="_blank">'+language.gettext("musicbrainz_microblog", [d[1]])+'</a></li>';
-					}
-					break;
-
-				case "review":
-					if (u.match(/bbc\.co\.uk/i)) {
-						html += '<li><i class="icon-bbc-logo smallicon padright"></i><a href="'+u+'" target="_blank">BBC Music Review</a></li>';
-					} else {
-						html += '<li><i class="icon-noicon smallicon padright"></i><a href="'+u+'" target="_blank">'+language.gettext("musicbrainz_review", [d[1]])+'</a></li>';
-					}
-					break;
-
-				case "VIAF":
-					break;
-
-				default:
-					if (relations[i].url) {
-						html += '<li><i class="icon-noicon smallicon padright"></i><a href="'+u+'" target="_blank">'+d[1]+'</a></li>';
+		var list = layout.add_sidebar_list(language.gettext("discogs_external"));
+		relations.forEach(function(rel) {
+			if (rel.url) {
+				let item = $('<li>').appendTo(list);
+				let icon = $('<i>', {class: 'icon-noicon smallicon padright'}).appendTo(item);
+				let link = $('<a>', {target: '_blank', href: rel.url.resource}).appendTo(item);
+				let d = rel.url.resource.match(/https*:\/\/(.*?)(\/|$)/);
+				switch (rel.type) {
+					case "wikipedia":
+						icon.addClass('icon-wikipedia').removeClass('icon-noicon');
+						link.html('Wikipedia ('+d[1]+')');
 						break;
-					}
-			}
-		}
-		html += '</ul>'
-		return html;
 
+					case "wikidata":
+						icon.addClass('icon-wikipedia').removeClass('icon-noicon');
+						link.html('Wikidata');
+						break;
+
+					case "discography":
+						link.html(language.gettext("musicbrainz_externaldiscography", [d[1]]));
+						break;
+
+					case "musicmoz":
+						link.html('Musicmoz');
+						break;
+
+					case "allmusic":
+						icon.addClass('icon-allmusic').removeClass('icon-noicon');
+						link.html('Allmusic');
+						break;
+
+					case "BBC Music page":
+						icon.addClass('icon-bbc-logo').removeClass('icon-noicon');
+						link.html('BBC Music Page');
+						break;
+
+					case "discogs":
+						icon.addClass('icon-discogs').removeClass('icon-noicon');
+						link.html('Discogs');
+						break;
+
+					case "official homepage":
+						link.html(language.gettext("musicbrainz_officalhomepage", [d[1]]));
+						break;
+
+					case "fanpage":
+						link.html(language.gettext("musicbrainz_fansite", [d[1]]));
+						break;
+
+					case "lyrics":
+						icon.addClass('icon-doc-text-1').removeClass('icon-noicon');
+						link.html(language.gettext("musicbrainz_lyrics", [d[1]]));
+						break;
+
+					case "secondhandsongs":
+						link.html('Secondhand Songs')
+						break;
+
+					case "IMDb":
+						icon.addClass('icon-imdb-logo').removeClass('icon-noicon');
+						link.html('IMDb');
+						break;
+
+					case "social network":
+						if (rel.url.resource.match(/last\.fm/i)) {
+							icon.addClass('icon-lastfm-1').removeClass('icon-noicon');
+							link.html('Last.FM');
+						} else if (rel.url.resource.match(/facebook\.com/i)) {
+							icon.addClass('icon-facebook-logo').removeClass('icon-noicon');
+							link.html('Facebook');
+						} else {
+							link.html(language.gettext("musicbrainz_social", [d[1]]));
+						}
+						break;
+
+					case "youtube":
+						icon.addClass('icon-youtbe-circled').removeClass('icon-noicon');
+						link.html('YouTube');
+						break;
+
+					case "myspace":
+						link.html('MySpace');
+						break;
+
+					case "microblog":
+						if (rel.url.resource.match(/twitter\.com/i)) {
+							icon.addClass('icon-twitter-logo').removeClass('icon-noicon');
+							link.html('Twitter');
+						} else {
+							link.html(language.gettext("musicbrainz_microblog", [d[1]]));
+						}
+						break;
+
+					case "review":
+						if (rel.url.resource.match(/bbc\.co\.uk/i)) {
+							icon.addClass('icon-bbc-logo').removeClass('icon-noicon');
+							link.html('BBC Music Review');
+						} else {
+							link.html(language.gettext("musicbrainz_review", [d[1]]));
+						}
+						break;
+
+					case "VIAF":
+						break;
+
+					default:
+						link.html(d[1]);
+						break;
+
+				}
+			}
+		});
 	}
 
 	function getReleaseHTML(data) {
 
-		if (data.error) {
+		if (data.error)
 			return '<h3 align="center">'+language.gettext("musicbrainz_contacterror")+'</h3>';
+
+		if (data['release-groups'].length == 0)
+			return '';
+
+		var dby = data['release-groups'].sort(albumsbyyear);
+		var html = $('<div>');
+		var table = $('<table>', {class: 'padded', width: '100%'}).appendTo($('<div>', {class: 'mbbox'}).appendTo(html));
+		var row = $('<tr>').appendTo(table);
+		['title_title', 'title_year', 'label_artist', 'title_type'].forEach(function(t) {
+			row.append($('<th>').html(language.gettext(t)));
+		});
+		dby.forEach(function(rel) {
+			row = $('<tr>').appendTo(table);
+			row.append($('<td>').append($('<a>', {href: 'http://www.musicbrainz.org/release-group/'+rel.id, target: '_blank'}).html(rel.title)));
+			row.append($('<td>').html(nozeros(getYear(rel))));
+			row.append($('<td>').html(rel['artist-credit'].map(r => r.name).join(' '+rel['artist-credit'][0].joinphrase+' ')));
+			row.append($('<td>').html(rel['secondary-types'].join(' ')+' '+(rel['primary-type'] || '')));
+		});
+		return html.html();
+	}
+
+	function getAlbumHTML(albumobj, albummeta, layout, data) {
+		if (data.error) {
+			layout.html.empty().append('<h3 align="center">'+data.error+'</h3>');
+			return;
 		}
-		if (data['release-groups'].length > 0) {
-			var dby = data['release-groups'].sort(albumsbyyear);
-			var html = '<div class="mbbox"><table class="padded" width="100%">';
-			html += '<tr><th>'+language.gettext("title_year")+'</th><th>'+language.gettext("title_title")+' / '
-						+language.getUCtext("label_artist")+'</th><th>'+language.gettext("title_type")+'</th><th>'
-						+language.gettext("musicbrainz_rating")+'</th><th>'+language.gettext("discogs_external")+'</th></tr>'
-			for (var i in dby) {
 
-				var y = getYear(dby[i]);
-				if (y == 0) {
-					y = "-";
-				}
-				html += '<tr><td>'+y+'</td>';
-				html += '<td><a href="http://www.musicbrainz.org/release-group/'+dby[i].id+'" target="_blank">'+dby[i].title+'</a>';
+		if (data.disambiguation)
+			layout.add_sidebar_list('', data.disambiguation);
 
-				var ac = dby[i]['artist-credit'][0].name;
-				var jp = dby[i]['artist-credit'][0].joinphrase;
-				for(var j = 1; j < dby[i]['artist-credit'].length; j++) {
-					ac = ac + " "+jp+" "+dby[i]['artist-credit'][j].name;
-				}
+		let status = [	(data.status || ''),
+						(data['release-group']['secondary-types'] || []).join(' '),
+			 			(data['release-group']['primary-type'] || "") ].join(' ');
+		layout.add_sidebar_list(language.gettext("musicbrainz_status"), status);
 
-				html += '<br><i>'+ac+'</i></td><td>';
-				html += dby[i]['secondary-types'].join(' ');
-				html += ' ' + (dby[i]['primary-type'] || "");
-				html += '</td><td>';
-				if (dby[i].rating['votes-count'] == 0) {
-					html += language.gettext("musicbrainz_novotes");
-				} else {
-					html += language.gettext("musicbrainz_votes", [dby[i].rating.value, dby[i].rating['votes-count']]);
+		layout.add_sidebar_list(language.gettext("musicbrainz_date"), (data['release-group']['first-release-date'] || data.date));
+
+		if (data.country)
+			layout.add_sidebar_list(language.gettext("musicbrainz_country"), data.country);
+
+		if (data['label-info'] && data['label-info'].length > 0) {
+			let u = layout.add_sidebar_list(language.gettext("title_label"));
+			data['label-info'].forEach(function(label) {
+				if (label.label)
+					u.append($('<li>').html(label.label.name));
+			});
+		}
+
+		getURLs(layout, data.relations);
+
+		if (data.annotation) {
+			layout.add_flow_box_header({title: language.gettext("musicbrainz_notes")});
+			layout.add_flow_box(data.annotation.replace(/\n/, '<br>').replace(/\[(.*?)\|(.*?)\]/, '<a href="$1" target="_blank">$2</a>'));
+		}
+
+		doTags(layout, data.tags);
+
+		doCredits(layout, data.relations);
+
+		layout.add_flow_box_header({wide: true, title: language.gettext("discogs_tracklisting")});
+		var tl = $('<table>', {class: 'padded'}).appendTo(layout.add_flow_box(''));
+		data.media.forEach(function(media, index) {
+			var row = $('<tr>').appendTo(tl);
+			row.append($('<th>', {colspan: '3'}).html('<b>'+language.gettext("musicbrainz_disc")+' '+media.position+(media.title ? ' - '+media.title : '')+'</b>'));
+			media.tracks.forEach(function(track) {
+				row = $('<tr>').appendTo(tl);
+				$('<td>').html(track.number).appendTo(row);
+				let tit = $('<td>').html(track.title).appendTo(row);
+				if (data['artist-credit'][0].name == "Various Artists" && track['artist-credit']) {
+					tit.append($('<br>')).append(track['artist-credit'].map(r => r.name).join(' '+track['artist-credit'][0].joinphrase+' '));
 				}
-				html += '</td><td>';
-				html += getURLs(dby[i].relations);
-				html += '</td></tr>';
-			}
-			html += '</table></div>';
-			return html;
+				$('<td>').html(formatTimeString(Math.round(track.length/1000))).appendTo(row);
+			});
+		});
+
+		if (data['cover-art-archive'].artwork == true)
+			getCoverArt(albumobj, albummeta, layout);
+	}
+
+	function getCoverArt(albumobj, albummeta, layout) {
+		debug.trace(medebug,"Getting Cover Art");
+		if (albummeta.musicbrainz.coverart === undefined) {
+			debug.trace(medebug," ... retrieivng data");
+			musicbrainz.album.getCoverArt(
+				albummeta.musicbrainz_id,
+				albumobj.coverResponseHandler,
+				albumobj.coverResponseHandler
+			);
 		} else {
-			return "";
+			debug.trace(medebug," ... displaying what we've already got");
+			getCoverHTML(albummeta.musicbrainz.coverart, layout);
 		}
 	}
 
-	function getCoverHTML(data) {
-		var html = "";
-		if (data) {
-			for (var i in data.images) {
-				html += '<div class="infoclick clickzoomimage">';
-				html += '<img style="max-width:220px" src="getRemoteImage.php?url='+rawurlencode(data.images[i].thumbnails.small)+'" />';
-				html += '</div>';
-				html += '<input type="hidden" value="getRemoteImage.php?url='+rawurlencode(data.images[i].image)+'" />';
-			}
-		}
-		return html;
+	function getCoverHTML(data, layout) {
+		if (!data)
+			return;
+		debug.trace(medebug, 'Got Cover Images', data);
+		var img = data.images.shift();
+		layout.add_main_image(img.image);
+		data.images.reverse().forEach(function(img) {
+			layout.add_sidebar_image(img.thumbnails.small, img.image);
+		});
 	}
 
 	function getTrackHTML(data) {
-		if (data.error && data.recording === undefined && data.work === undefined) {
+		if (data.error && data.recording === undefined && data.work === undefined)
 			return '<h3 align="center">'+data.error+'</h3>';
-		}
-		var html = '<div class="containerbox info-detail-layout">';
-		html += '<div class="info-box-fixed info-box-list info-border-right">';
-		if (data.recording) {
-			if (data.recording.disambiguation) {
-				html += '<ul>'+data.recording.disambiguation+'</ul>';
-			}
-		}
-		if (data.work) {
-			if (data.work.disambiguation) {
-				html += '<ul>'+data.work.disambiguation+'</ul>';
-			}
+
+		var layout = new info_sidebar_layout();
+		if (data.recording && data.recording.disambiguation)
+			layout.add_sidebar_list('', data.recording.disambiguation);
+
+		if (data.work && data.work.disambiguation)
+			layout.add_sidebar_list('', data.work.disambiguation);
+
+		if (data.recording.rating && data.recording.rating.value !== null)
+			layout.add_sidebar_list(language.gettext('musicbrainz_rating'), language.gettext("musicbrainz_votes", [data.recording.rating.value, data.recording.rating['votes-count']]));
+
+		var rels = [];
+		if (data.work && data.work.relations)
+			rels = data.work.relations;
+
+		if (data.recording && data.recording.relations)
+			rels = rels.concat(data.recording.relations);
+
+		getURLs(layout, rels);
+
+		var notes = ((data.work && data.work.annotation) ? data.work.annotation : '') + ((data.recording && data.recording.annotation) ? data.recording.annotation : '');
+		if (notes) {
+			notes = notes.replace(/\n/, '<br>').replace(/\[(.*?)\|(.*?)\]/, '<a href="$1" target="_blank">$2</a>');
+			layout.add_flow_box_header({title: language.gettext("musicbrainz_notes")});
+			layout.add_flow_box(notes);
 		}
 
-		if (data.recording.rating && data.recording.rating.value !== null) {
-			html += '<br><ul><li><b>RATING: </b>'
-						+language.gettext("musicbrainz_votes", [data.recording.rating.value, data.recording.rating['votes-count']])
-						+'</li></ul>';
-		}
-		var rels = new Array();
+		if (data.recording)
+			doTags(layout, data.recording.tags);
 
-		if (data.work) {
-			for (var i in data.work.relations) {
-				rels.push(data.work.relations[i]);
-			}
-		}
-		if (data.recording) {
-			for (var i in data.recording.relations) {
-				rels.push(data.recording.relations[i]);
-			}
-		}
-		html += getURLs(rels, true);
-		html += '</div>';
-
-		html += '<div class="info-box-expand stumpy">';
-		if ((data.work && data.work.annotation) || (data.recording && data.recording.annotation)) {
-			var a  = "";
-			if (data.work && data.work.annotation) {
-				a = a + data.work.annotation;
-			}
-			if (data.recording && data.recording.annotation) {
-				a = a + data.recording.annotation;
-			}
-			a = a.replace(/\n/, '<br>');
-			a = a.replace(/\[(.*?)\|(.*?)\]/, '<a href="$1" target="_blank">$2</a>');
-			html += '<div class="mbbox underline"><b>'+language.gettext("musicbrainz_notes")+':</b></div><div class="mbbox">'+a+'</div>';
-		}
-
-		if (data.recording && data.recording.tags && data.recording.tags.length > 0) {
-			html += '<div class="mbbox underline"><b>'+language.gettext("musicbrainz_tags")+'</b></div><div class="statsbox">';
-			for (var i in data.recording.tags) {
-				html += '<span class="mbtag">'+data.recording.tags[i].name+'</span> ';
-			}
-			html += '</div>';
-		}
-		html += doCredits(rels);
+		doCredits(layout, rels);
 
 		if (data.recording && data.recording.releases && data.recording.releases.length > 0) {
-			html += '<div class="mbbox underline"><b>'+language.gettext("musicbrainz_appears")+'</b></div><div class="mbbox"><table class="padded">';
-			for (var i in data.recording.releases) {
-				html += '<tr><td><b><a href="http://www.musicbrainz.org/release/'+
-							data.recording.releases[i].id+'" target="_blank">'+
-							data.recording.releases[i].title+'</a></b></td><td>'+
-							data.recording.releases[i].date+'</td><td><i>'+
-							data.recording.releases[i].status+','+
-							data.recording.releases[i].country+'</i></td></tr>';
-			}
-			html += '</table></div>';
-
+			layout.add_flow_box_header({title: language.gettext("musicbrainz_appears")});
+			var table = $('<table>', {class: 'padded'}).appendTo(layout.add_flow_box(''));
+			data.recording.releases.forEach(function(release) {
+				let row = $('<tr>').appendTo(table);
+				row.append($('<td>').append($('<b>').append($('<a>', {href: 'http://www.musicbrainz.org/release/'+release.id, target: '_blank'}).html(release.title))));
+				row.append($('<td>').html(release.date));
+				row.append($('<td>').append($('<i>').html(release.status+', '+release.country)));
+			});
 		}
 
-
-		html += '</div>';
-		return html;
+		return layout.getHTML();
 
 	}
 
-	function doCredits(rels) {
-		var doit = true;
-		var html = "";
-		for (var i in rels) {
-			if (rels[i].artist) {
-				if (doit) {
-					html += '<div class="mbbox underline"><b>'+language.gettext("musicbrainz_credits")+'</b></div><div class="mbbox"><table class="padded">';
-					doit = false;
+	function doCredits(layout, rels) {
+		if (!rels.some(r => (r.artist)))
+			return;
+
+		layout.add_flow_box_header({title: language.gettext("musicbrainz_credits")});
+		var table = $('<table>', {class: 'padded'}).appendTo(layout.add_flow_box(''));
+		rels.forEach(function(rel) {
+			if (rel.artist) {
+				let row = $('<tr>').appendTo(table);
+				row.append($('<td>', {class: 'ucfirst'}).html(rel.type+(rel.attributes.length > 0 ? ' ('+rel.attributes.join(', ')+')' : '')));
+				row.append($('<td>').append($('<a>', {href: 'http://www.musicbrainz.org/artist/'+rel.artist.id, target: '_blank'}).html(rel.artist.name))
+					.append(rel.artist.disambiguation ? ' <i>('+rel.artist.disambiguation+')</i>' : ''));
+			}
+		});
+	}
+
+	function scrape_useful_links(data, update) {
+
+		var wikilinks = { user: null, english: null, anything: null };
+		var domain = '^http://'+wikipedia.getLanguage();
+		var re = new RegExp(domain);
+		for (var i in data.relations) {
+			if (data.relations[i].type == "wikipedia") {
+
+				// For wikipedia links we need to prioritise:
+				// user's chosen domain first
+				// english second
+				// followed by anything will do
+				// the php side will also try to use the link we choose to get language links for the
+				// user's chosen language, but it's definitely best if we prioritise them here
+				var wikitemp = data.relations[i].url.resource;
+				if (re.test(wikitemp)) {
+					wikilinks.user = wikitemp;
+				} else if (wikitemp.match(/en.wikipedia.org/)) {
+					wikilinks.english = wikitemp;
+				} else {
+					wikilinks.anything = wikitemp;
 				}
-				html += '<tr><td class="ucfirst">'+rels[i].type;
-				if (rels[i].attributes) {
-					var c = false;
-					for (var j in rels[i].attributes) {
-						if (j == 0) {
-							html += ' (';
-							c = true;
-						} else {
-							html = html +', ';
-						}
-						html += rels[i].attributes[j];
-					}
-					if (c) {
-						html += ')';
-					}
-				}
-				html = html +'</td><td><a href="http://www.musicbrainz.org/artist/'+rels[i].artist.id+'" target="_blank">'+rels[i].artist.name+'</a>';
-				if (rels[i].artist.disambiguation) {
-					html += ' <i>('+rels[i].artist.disambiguation+')</i>';
-				}
-				html = html +'</td></tr>';
+			}
+			if (data.relations[i].type == "discogs") {
+				let dk = objFirst(update.discogs);
+				if (dk && update.discogs[dk] == null)
+					update.discogs[dk] = data.relations[i].url.resource;
+
+			}
+			if (data.relations[i].type == "allmusic") {
+				let dk = objFirst(update.allmusic);
+				if (dk && update.discogs[dk] == null)
+					update.allmusic[dk] = data.relations[i].url.resource;
+
 			}
 		}
-		if (!doit) {
-			html += '</table></div>';
+
+		let dk = objFirst(update.wikipedia);
+		if (dk && update.wikipedia[dk] == null) {
+			update.wikipedia[dk] = (wikilinks.user || wikilinks.english || wikilinks.anything);
 		}
-		return html;
+		if (data.disambiguation && update.disambiguation == null) {
+			update.disambiguation = data.disambiguation;
+		}
+
+		if (data['release-group']) {
+			let dk = objFirst(update.musicbrainz);
+			if (dk == 'album_releasegroupid') {
+				update.musicbrainz.album_releasegroupid = data['release-group'].id;
+			}
+		}
+		debug.trace(medebug, 'Useful external links are', cloneObject(update));
+		return update;
+	}
+
+	function scrape_useful_track_data(data, update) {
+		if (data.recording) {
+			for (var i in data.recording.relations) {
+				if (data.recording.relations[i].type == "wikipedia" && update.wikipedia.tracklink === null) {
+					update.wikipedia.tracklink = data.recording.relations[i].url.resource;
+				}
+				if (data.recording.relations[i].type == "discogs" && update.discogs.tracklink === null) {
+					update.discogs.tracklink = data.recording.relations[i].url.resource;
+				}
+			}
+		}
+		if (data.work) {
+			for (var i in data.work.relations) {
+				if (data.work.relations[i].type == "wikipedia" && update.wikipedia.tracklink === null) {
+					update.wikipedia.tracklink = data.work.relations[i].url.resource;
+				}
+				if (data.work.relations[i].type == "discogs" && update.discogs.tracklink === null) {
+					update.discogs.tracklink = data.work.relations[i].url.resource;
+				}
+			}
+		}
+		return update;
 	}
 
 	return {
@@ -483,7 +544,7 @@ var info_musicbrainz = function() {
 				} else if (element.hasClass('clickdodiscography')) {
 					do_discography(source, element, event);
 				} else if (element.hasClass('clickexpandbox')) {
-					expand_up(source, element, event);
+					info_panel_expand_box(source, element, event, artistmeta.musicbrainz[element.attr('name')].name, me);
 				} else if (element.hasClass('clickzoomimage')) {
 					imagePopup.create(element, event, element.next().val());
 				}
@@ -523,138 +584,6 @@ var info_musicbrainz = function() {
 					}
 					targetdiv.slideToggle('fast');
 				}
-			}
-
-			function expand_up(source, element, event) {
-				var id = element.attr('name');
-				var expandingframe = element.parent().parent().parent().parent();
-				var content = expandingframe.html();
-				content=content.replace(/<i class="icon-expand-up.*?>/, '');
-				var pos = expandingframe.offset();
-				var target = $("#artistfoldup").length == 0 ? "musicbrainz" : "artist";
-				var targetpos = $("#"+target+"foldup").offset();
-				debug.debug("MUSICBRAINZ","1. targetpos is",targetpos);
-				var animator = expandingframe.clone();
-				animator.css('position', 'absolute');
-				animator.css('top', pos.top+"px");
-				animator.css('left', pos.left+"px");
-				animator.css('width', expandingframe.width()+"px");
-				animator.appendTo($('body'));
-				$("#"+target+"foldup").animate(
-					{
-						opacity: 0
-					},
-					'fast',
-					'swing',
-					function() {
-						animator.animate(
-							{
-								top: targetpos.top+"px",
-								left: targetpos.left+"px",
-								width: $("#artistinformation").width()+"px"
-							},
-							'fast',
-							'swing',
-							function() {
-								browser.speciaUpdate(
-									me,
-									'artist',
-									{
-										name: artistmeta.musicbrainz[id].name,
-										link: null,
-										data: content
-									}
-								);
-								animator.remove();
-							}
-						);
-					}
-				);
-			}
-
-			function scrape_useful_links(data, update) {
-
-				var wikilinks = { user: null, english: null, anything: null };
-				debug.debug(medebug,parent.nowplayingindex,"wikipedia language is",wikipedia.getLanguage());
-
-				var domain = '^http://'+wikipedia.getLanguage();
-				var re = new RegExp(domain);
-				for (var i in data.relations) {
-					if (data.relations[i].type == "wikipedia") {
-
-						// For wikipedia links we need to prioritise:
-						// user's chosen domain first
-						// english second
-						// followed by anything will do
-						// the php side will also try to use the link we choose to get language links for the
-						// user's chosen language, but it's definitely best if we prioritise them here
-						var wikitemp = data.relations[i].url.resource;
-						if (re.test(wikitemp)) {
-							wikilinks.user = wikitemp;
-						} else if (wikitemp.match(/en.wikipedia.org/)) {
-							wikilinks.english = wikitemp;
-						} else {
-							wikilinks.anything = wikitemp;
-						}
-					}
-					if (data.relations[i].type == "discogs") {
-						let dk = objFirst(update.discogs);
-						if (dk && update.discogs[dk] == null)
-							update.discogs[dk] = data.relations[i].url.resource;
-
-					}
-					if (data.relations[i].type == "allmusic") {
-						let dk = objFirst(update.allmusic);
-						if (dk && update.discogs[dk] == null)
-							update.allmusic[dk] = data.relations[i].url.resource;
-
-					}
-				}
-
-				let dk = objFirst(update.wikipedia);
-				if (dk && update.wikipedia[dk] == null) {
-					update.wikipedia[dk] = (wikilinks.user || wikilinks.english || wikilinks.anything);
-				}
-				if (data.disambiguation && update.disambiguation == null) {
-					update.disambiguation = data.disambiguation;
-				}
-
-				if (data['release-group']) {
-					let dk = objFirst(update.musicbrainz);
-					if (dk == 'album_releasegroupid') {
-						update.musicbrainz.album_releasegroupid = data['release-group'].id;
-					}
-				}
-				debug.trace(medebug, 'Useful external links are', cloneObject(update));
-				return update;
-			}
-
-			function scrape_useful_track_data(data, update) {
-				if (data.recording) {
-					for (var i in data.recording.relations) {
-						if (data.recording.relations[i].type == "wikipedia" && update.wikipedia.tracklink === null) {
-							debug.trace(medebug,parent.nowplayingindex,"has found a Wikipedia track link!!!!!",data.recording.relations[i].url.resource);
-							update.wikipedia.tracklink = data.recording.relations[i].url.resource;
-						}
-						if (data.recording.relations[i].type == "discogs" && update.discogs.tracklink === null) {
-							debug.trace(medebug,parent.nowplayingindex,"has found a Discogs track link!!!!!",data.recording.relations[i].url.resource);
-							update.discogs.tracklink = data.recording.relations[i].url.resource;
-						}
-					}
-				}
-				if (data.work) {
-					for (var i in data.work.relations) {
-						if (data.work.relations[i].type == "wikipedia" && update.wikipedia.tracklink === null) {
-							debug.trace(medebug,parent.nowplayingindex,"has found a Wikipedia track link!!!!!",data.work.relations[i].url.resource);
-							update.wikipedia.tracklink = data.work.relations[i].url.resource;
-						}
-						if (data.work.relations[i].type == "discogs" && update.discogs.tracklink === null) {
-							debug.trace(medebug,parent.nowplayingindex,"has found a Discogs track link!!!!!",data.work.relations[i].url.resource);
-							update.discogs.tracklink = data.work.relations[i].url.resource;
-						}
-					}
-				}
-				return update;
 			}
 
 			function getArtistData(id) {
@@ -706,118 +635,6 @@ var info_musicbrainz = function() {
 						$(this).addClass('full');
 					}
 				});
-			}
-
-			function getAlbumHTML(data) {
-				if (data.error) {
-					return '<h3 align="center">'+data.error+'</h3>';
-				}
-
-				var html = '<div class="containerbox info-detail-layout">';
-				html += '<div class="info-box-fixed info-box-list info-border-right">';
-
-				if (data['cover-art-archive'].artwork == true) {
-					debug.trace(medebug,"There is cover art available");
-					html += '<ul id="coverart">';
-					html += getCoverArt();
-					html += '</ul><br />';
-				}
-
-				html += '<ul><li>'+data.disambiguation+'</li></ul>';
-				html += '<ul><li><b>'+language.gettext("musicbrainz_status")+': </b>';
-				if (data.status) {
-					html = html +data.status+" ";
-				}
-				for(var j in data['release-group']['secondary-types']) {
-					html += data['release-group']['secondary-types'][j] + " ";
-				}
-				html += (data['release-group']['primary-type'] || "");
-				html += '</li></ul>';
-				if (data['release-group'] && data['release-group']['first-release-date']) {
-					html += '<ul><li><b>'+language.gettext("musicbrainz_date")+': </b>'+data['release-group']['first-release-date']+'</li></ul>';
-				} else {
-					html += '<ul><li><b>'+language.gettext("musicbrainz_date")+': </b>'+data.date+'</li></ul>';
-				}
-				if (data.country) {
-					html += '<ul><li><b>'+language.gettext("musicbrainz_country")+': </b>'+data.country+'</li></ul>';
-				}
-				if (data['label-info'] && data['label-info'].length > 0) {
-					html += '<ul><li><b>'+language.gettext("title_label")+': </b></li>';
-					for (var i in data['label-info']) {
-						if (data['label-info'][i].label) {
-							html += '<li>'+data['label-info'][i].label.name+'</li>';
-						}
-					}
-					html += '</ul>';
-				}
-				html += '<br>'+getURLs(data.relations, true);
-				html += '</div>';
-
-				html += '<div class="info-box-expand stumpy">';
-				if (data.annotation) {
-					var a = data.annotation;
-					a = a.replace(/\n/, '<br>');
-					a = a.replace(/\[(.*?)\|(.*?)\]/, '<a href="$1" target="_blank">$2</a>');
-					html += '<div class="mbbox underline"><b>'+language.gettext("musicbrainz_notes")+':</b></div><div class="mbbox">'+a+'</div>';
-				}
-
-				if (data.tags && data.tags.length > 0) {
-					html += '<div class="mbbox underline"><b>'+language.gettext("musicbrainz_tags")+'</b></div><div class="statsbox">';
-					for (var i in data.tags) {
-						html += '<span class="mbtag">'+data.tags[i].name+'</span> ';
-					}
-					html += '</div>';
-				}
-
-				html += doCredits(data.relations);
-
-				html += '<div class="mbbox underline"><b>'+language.gettext("discogs_tracklisting")+'</b></div><div class="mbbox"><table class="padded">';
-				for (var i in data.media) {
-					html += '<tr><th colspan="3"><b>'+language.gettext("musicbrainz_disc")+' '+data.media[i].position;
-					if (data.media[i].title !== null && data.media[i].title != "") {
-						html += " - " + data.media[i].title;
-					}
-					html += '</b></th></tr>';
-					for (var j in data.media[i].tracks) {
-						html += '<tr><td>'+data.media[i].tracks[j].number+'</td>';
-						html += '<td>'+data.media[i].tracks[j].title;
-						if (data['artist-credit'][0].name == "Various Artists" && data.media[i].tracks[j]['artist-credit']) {
-							html += '<br><i>';
-							var jp = "";
-							for (var k in data.media[i].tracks[j]['artist-credit']) {
-								if (jp != "") {
-									html += " "+jp+" ";
-								}
-								html += data.media[i].tracks[j]['artist-credit'][k].name;
-								jp = data.media[i].tracks[j]['artist-credit'][k].joinphrase;
-							}
-							html += '</i>';
-						}
-						html += '</td>';
-						html += '<td>'+formatTimeString(Math.round(data.media[i].tracks[j].length/1000))+'</td></tr>';
-					}
-				}
-				html += '</table>';
-				html += '</div>';
-				html += '</div>';
-				html += '</div>';
-				return html;
-			}
-
-			function getCoverArt() {
-				debug.trace(medebug,parent.nowplayingindex,"Getting Cover Art");
-				if (albummeta.musicbrainz.coverart === undefined) {
-					debug.debug(medebug,parent.nowplayingindex," ... retrieivng data");
-					musicbrainz.album.getCoverArt(
-						albummeta.musicbrainz_id,
-						self.album.coverResponseHandler,
-						self.album.coverResponseHandler
-					);
-					return "";
-				} else {
-					debug.debug(medebug,parent.nowplayingindex," ... displaying what we've already got");
-					return (getCoverHTML(albummeta.musicbrainz.coverart));
-				}
 			}
 
 			this.artist = function() {
@@ -900,32 +717,34 @@ var info_musicbrainz = function() {
 
 					doBrowserUpdate: function() {
 						if (displaying && artistmeta.musicbrainz_id && artistmeta.musicbrainz[artistmeta.musicbrainz_id]) {
+							var d = artistmeta.musicbrainz[artistmeta.musicbrainz_id];
 							debug.debug(medebug,parent.nowplayingindex," artist was asked to display");
-							var up = null;
-							if (artistmeta.musicbrainz[artistmeta.musicbrainz_id].error) {
-								up = { name: artistmeta.name,
-									   link: null,
-									   data: '<h3 align="center">'+artistmeta.musicbrainz[artistmeta.musicbrainz_id].error+'</h3>'}
-							} else if (artistmeta.musicbrainz[artistmeta.musicbrainz_id] !== undefined) {
-								up = { name: artistmeta.musicbrainz[artistmeta.musicbrainz_id].name,
-									   link: 'http://musicbrainz.org/artist/'+artistmeta.musicbrainz_id,
-									   data: getArtistHTML(artistmeta.musicbrainz[artistmeta.musicbrainz_id], false)}
-							}
-							if (up !== null) {
-								browser.Update(
-									null,
-									'artist',
-									me,
-									parent.nowplayingindex,
-									up
-								);
-							}
+							browser.Update(
+								null,
+								'artist',
+								me,
+								parent.nowplayingindex,
+								{ name: d.error ? artistmeta.name : d.name,
+								  link: d.error ? null : 'http://musicbrainz.org/artist/'+artistmeta.musicbrainz_id,
+								  data: getArtistHTML(artistmeta.musicbrainz[artistmeta.musicbrainz_id], false)
+								}
+							);
 						}
 					}
 				}
 			}();
 
 			this.album = function() {
+
+				var layout;
+
+				function make_album_html(data) {
+					if (!layout) {
+						layout = new info_sidebar_layout();
+						getAlbumHTML(self.album, albummeta,  layout, data);
+					}
+					return layout.get_contents();
+				}
 
 				return {
 
@@ -988,38 +807,24 @@ var info_musicbrainz = function() {
 
 					coverResponseHandler: function(data) {
 						debug.info(medebug,parent.nowplayingindex,"got Cover Art Data",data);
-						parent.updateData({ musicbrainz: { coverart: data }}, albummeta);
-						if (displaying) {
-							$("#coverart").html(getCoverHTML(albummeta.musicbrainz.coverart));
-						}
+						albummeta.musicbrainz.coverart = data;
+						if (displaying)
+							getCoverHTML(albummeta.musicbrainz.coverart, layout);
+
 					},
 
 					doBrowserUpdate: function() {
 						if (displaying && albummeta.musicbrainz_id && albummeta.musicbrainz[albummeta.musicbrainz_id]) {
+							var d = albummeta.musicbrainz[albummeta.musicbrainz_id];
 							debug.debug(medebug,parent.nowplayingindex,"album was asked to display");
-							var up = null;
-							if (parent.playlistinfo.type == 'stream') {
-								browser.Update(null, 'album', me, parent.nowplayingindex, { name: "",
-														link: "",
-														data: null
-														}
-								);
-							} else if (albummeta.musicbrainz[albummeta.musicbrainz_id].error) {
-								up = { name: albummeta.name,
-									   link: null,
-									   data: '<h3 align="center">'+albummeta.musicbrainz[albummeta.musicbrainz_id].error+'</h3>'}
-							} else {
-								up = { name: albummeta.musicbrainz[albummeta.musicbrainz_id].title,
-									   link: 'http://musicbrainz.org/release/'+albummeta.musicbrainz[albummeta.musicbrainz_id].id,
-									   data: html = getAlbumHTML(albummeta.musicbrainz[albummeta.musicbrainz_id])}
-
-							}
 							browser.Update(
 								null,
 								'album',
 								me,
 								parent.nowplayingindex,
-								up
+								{name: d.error ? albummeta.name : d.title,
+								 link: d.error ? null : 'http://musicbrainz.org/release/'+d.id,
+								 data: (parent.playlistinfo.type == 'stream') ? null : make_album_html(d)}
 							);
 						}
 					}

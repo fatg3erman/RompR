@@ -273,6 +273,10 @@ i.combo-button {
 	float:left;
 }
 
+.float-img {
+	width: 100%;
+}
+
 .textcentre {
 	text-align:center;
 }
@@ -1084,6 +1088,7 @@ div.topdropmenu div.notenabled, div.togglecontainer.notenabled, div#flowcontrols
 	list-style:none;
 	margin:2px;
 	padding:0px;
+	margin-bottom: 0.5em;
 }
 
 .info-box-list ul li {
@@ -1108,6 +1113,10 @@ div.topdropmenu div.notenabled, div.togglecontainer.notenabled, div#flowcontrols
 	margin-top:12px;
 }
 
+.info-box-expand .standout {
+	margin-top: 0;
+}
+
 .standout ul {
 	list-style:none;
 	margin:2px;
@@ -1125,6 +1134,7 @@ div.topdropmenu div.notenabled, div.togglecontainer.notenabled, div#flowcontrols
 
 table.padded {
 	border-collapse: collapse;
+	margin:auto;
 }
 
 table.padded tr {
@@ -1173,7 +1183,7 @@ table.histable tr.current {
 	margin-bottom:0.75em;
 }
 
-div.info-box-expand>.underline:nth-child(1) {
+div.info-box-expand .underline:nth-child(1) {
 	margin-top:0;
 }
 

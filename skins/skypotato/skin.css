@@ -556,6 +556,10 @@ button.spinable.icon-spin6 {
 	margin-left: 0px;
 }
 
+.info-box-list img {
+	max-width: 220px;
+}
+
 /*
 =====================================================================
 = Dropdown Menus

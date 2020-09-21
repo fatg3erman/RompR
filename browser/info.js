@@ -316,7 +316,12 @@ var browser = function() {
 						if ($("#"+type+"information").is(':hidden')) {
 							$("#"+type+"information").show();
 						}
-						$("#"+type+"information").html(banner(data, (collection === null) ? type : collection.bannertitle(), panelclosed[type], source)+data.data);
+						if (typeof data.data == 'object') {
+							$("#"+type+"information").html(banner(data, (collection === null) ? type : collection.bannertitle(), panelclosed[type], source));
+							$("#"+type+"information").append(data.data);
+						} else {
+							$("#"+type+"information").html(banner(data, (collection === null) ? type : collection.bannertitle(), panelclosed[type], source)+data.data);
+						}
 					} else {
 						$("#"+type+"information").empty();
 						if ($("#"+type+"information").is(':visible')) {
