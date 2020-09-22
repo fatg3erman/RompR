@@ -4,33 +4,43 @@ var info_spotify = function() {
 	var medebug = "SPOTIFY PLUGIN";
 	var maxwidth = 300;
 
-	function getTrackHTML(data) {
+	function makePersonalRadio(target, cls, label) {
+		target.append($('<div>', {class: 'containerbox menuitem infoclick '+cls, style: 'padding-left: 0px'})
+			.append($('<i>', {class: 'icon-wifi smallicon fixed alignmid'}))
+			.append($('<div>', {class: 'expand'}).html(label))
+		);
+	}
+
+	function getTrackHTML(trackobj, trackmeta, layout, data) {
 
 		debug.debug(medebug,"Making Track Info From",data);
 		if (data.error) {
-			return '<h3 align="center">'+data.error+'</h3>';
+			layout.html.empty().append('<h3 align="center">'+data.error+'</h3>');
+			return;
 		}
 
-		var h = '<div class="holdingcell">';
-		h += '<div class="standout stleft statsbox">';
-		h += '<ul>';
-		h += '<li><b>'+language.gettext("label_pop")+': </b>'+data.popularity+'</li>';
+		layout.add_sidebar_list(language.gettext("label_pop"), data.popularity);
 		if (player.canPlay('spotify')) {
-			h += '<li>'+
-				'<div class="containerbox menuitem infoclick clickstarttrackradio" style="padding-left:0px">'+
-				'<div class="fixed alignmid"><i class="icon-wifi smallicon"></i></div>'+
-				'<div class="expand">'+language.gettext('label_radio_recommend',['Track'])+'</div>'+
-				'</div></li>';
+			let u = layout.add_sidebar_list(language.gettext("label_pluginplaylists"));
+			var l = $('<li>').appendTo(u);
+			makePersonalRadio(l, 'clickstarttrackradio', language.gettext('label_radio_recommend', [language.gettext('label_track')]));
 		}
-		h += '</ul>';
-		h += '</div>';
-		if (data.explicit) {
-			h += '<i class="icon-explicit stright standout"></i>';
+
+		if (data.explicit)
+			layout.add_sidebar_list('', '<i class="icon-explicit stright standout"></i>');
+
+		if (trackmeta.spotify.recommendations) {
+			doRecommendations(layout, trackmeta);
+		} else {
+			let params = { limit: 15, seed_tracks: trackmeta.spotify.id }
+			spotify.recommendations.getRecommendations(params, trackobj.gotRecommendations, trackobj.spotifyRecError);
 		}
-		h += '</div>';
-		h += '<div id="helpful_title"></div>';
-		h += '<div id="helpful_tracks" class="holdingcell selecotron masonified4"></div>';
-		return h;
+
+	}
+
+	function doRecommendations(layout, trackmeta) {
+		layout.add_non_flow_box_header({wide: true, title: language.gettext('discover_now', [trackmeta.spotify.track.name])});
+		layout.add_playable_images(trackmeta.spotify.recommendations);
 	}
 
 	function getAlbumHTML(data) {
@@ -321,6 +331,8 @@ var info_spotify = function() {
 
 			this.track = function() {
 
+				var layout;
+
 				function spotifyResponse(data) {
 					debug.debug(medebug, "Got Spotify Track Data",data);
 					if (trackmeta.spotify.track === undefined) {
@@ -340,49 +352,12 @@ var info_spotify = function() {
 					self.artist.populate();
 				}
 
-				function gotTrackRecommendations(data) {
-					trackmeta.spotify.recommendations = data;
-					doRecommendations(data);
-				}
-
-				function doRecommendations(data) {
-					$('#helpful_title').html('<div class="textunderline notthere"><h3>'+language.gettext('discover_now', [trackmeta.spotify.track.name])+'</h3></div>');
-					for (var i in data.tracks) {
-						var x = $('<div>', {class: 'arsecandle tagholder4 clickable draggable clicktrack playable notthere', name: rawurlencode(data.tracks[i].uri)}).appendTo($('#helpful_tracks'));
-						var a = data.tracks[i].album;
-						var img = '';
-						if (a.images && a.images[0]) {
-							img = 'getRemoteImage.php?url='+rawurlencode(a.images[0].url);
-							for (var j in a.images) {
-								if (a.images[j].width <= maxwidth) {
-									img = 'getRemoteImage.php?url='+rawurlencode(a.images[j].url);
-									break;
-								}
-							}
-							img += '&rompr_resize_size=smallish';
-						} else {
-							img = 'newimages/spotify-icon.png';
-						}
-						x.append('<img class="cheeseandfish" src="'+img+'" /></div>');
-
-						var an = new Array();
-						for (var j in data.tracks[i].artists) {
-							an.push(data.tracks[i].artists[j].name);
-						}
-
-						x.append('<div>'+concatenate_artist_names(an)+'<br />'+data.tracks[i].name+'</div>');
+				function make_track_html(data) {
+					if (!layout) {
+						layout = new info_sidebar_layout();
+						getTrackHTML(self.track, trackmeta, layout, data);
 					}
-					$('#helpful_tracks').imagesLoaded(doBlockLayout);
-
-				}
-
-				function doBlockLayout() {
-					debug.log(medebug,"Track Images Have Loaded");
-					browser.rePoint($('#helpful_tracks'),{ itemSelector: '.arsecandle', columnWidth: '.arsecandle', percentPosition: true});
-					donetheother = true;
-					setDraggable('#helpful_tracks');
-					$('#helpful_title').find('.notthere').removeClass('notthere');
-					$('#helpful_tracks').find('.notthere').removeClass('notthere');
+					return layout.get_contents();
 				}
 
 				return {
@@ -416,6 +391,12 @@ var info_spotify = function() {
 						self.artist.populate();
 					},
 
+					gotRecommendations: function(data) {
+						debug.trace(medebug, 'Track Recommendations', data);
+						trackmeta.spotify.recommendations = data;
+						doRecommendations(layout, trackmeta);
+					},
+
 					spotifyRecError: function(data) {
 						debug.warn(medebug,"Error getting track reccomendations",data);
 					},
@@ -431,7 +412,7 @@ var info_spotify = function() {
 								parent.nowplayingindex,
 								{ name: trackmeta.spotify.track.name,
 								  link: trackmeta.spotify.track.external_urls.spotify,
-								  data: getTrackHTML(trackmeta.spotify.track)
+								  data: make_track_html(trackmeta.spotify.track)
 								}
 							);
 						} else if (parent.playlistinfo.file.substring(0,8) !== 'spotify:') {
@@ -440,15 +421,6 @@ var info_spotify = function() {
 													data: null
 													}
 							);
-						}
-						if (accepted && !trackmeta.spotify.track.error) {
-							if (trackmeta.spotify.recommendations) {
-								doRecommendations(trackmeta.spotify.recommendations);
-							} else {
-								var params = { limit: 8 }
-								params.seed_tracks = trackmeta.spotify.id;
-								spotify.recommendations.getRecommendations(params, gotTrackRecommendations, self.track.spotifyRecError);
-							}
 						}
 					}
 				}

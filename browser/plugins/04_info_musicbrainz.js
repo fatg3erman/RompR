@@ -741,7 +741,7 @@ var info_musicbrainz = function() {
 				function make_album_html(data) {
 					if (!layout) {
 						layout = new info_sidebar_layout();
-						getAlbumHTML(self.album, albummeta,  layout, data);
+						getAlbumHTML(self.album, albummeta, layout, data);
 					}
 					return layout.get_contents();
 				}

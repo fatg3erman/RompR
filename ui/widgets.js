@@ -521,7 +521,7 @@ $.widget("rompr.resizeHandle", $.ui.mouse, {
 	_create: function() {
 		this.dragging = false;
 		this._mouseInit();
-		this.element.css({cursor: "move"});
+		this.element.css({cursor: "ew-resize"});
 	},
 
 	_mouseCapture: function(event) {

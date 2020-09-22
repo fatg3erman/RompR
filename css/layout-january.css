@@ -1037,6 +1037,10 @@ div.topdropmenu div.notenabled, div.togglecontainer.notenabled, div#flowcontrols
 	position: relative;
 }
 
+i.icon-menu {
+	cursor: context-menu;
+}
+
 /*
 =====================================================================
 = Info Panel - General
@@ -1052,6 +1056,10 @@ div.topdropmenu div.notenabled, div.togglecontainer.notenabled, div#flowcontrols
 	margin-right:4px;
 	margin-bottom:4px;
 	padding:4px;
+}
+
+.infotext a {
+	cursor: pointer;
 }
 
 .infosection {
@@ -1949,7 +1957,6 @@ table.ambox {
 .arsecandle
 {
 	text-align:center;
-	font-weight:bold;
 	transition: opacity 0.5s ease;
 	opacity: 1;
 }

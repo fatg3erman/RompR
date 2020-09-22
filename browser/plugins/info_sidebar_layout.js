@@ -47,6 +47,11 @@ function info_sidebar_layout(options) {
 		holder.imageMasonry({images: images});
 	}
 
+	this.add_playable_images = function(spotidata) {
+		var holder = $('<div>', {class: 'holdingcell selecotron masonified4'}).appendTo(self.html);
+		holder.playableMasonry({spotidata: spotidata});
+	}
+
 	this.add_sidebar_image = function(thumb, image) {
 		$('<input>', {type: 'hidden'}).val('getRemoteImage.php?url='+rawurlencode(image)).insertAfter(
 			$('<img>', {class: 'infoclick clickzoomimage', src: 'getRemoteImage.php?url='+rawurlencode(thumb)}).appendTo(self.sidebar)
@@ -190,6 +195,42 @@ $.widget('rompr.imageMasonry', {
 		this.element.imagesLoaded(function() {
 			// Masonry doesn't work if I use self.element here?????
 			browser.rePoint($('#'+self.options.id), {itemSelector: '.'+self.options.class, percentPosition: true});
+		});
+	},
+
+	_destroy: function() {
+		this.element.masonry('destroy');
+		this.element.empty();
+		browser.rePoint();
+	}
+
+});
+
+$.widget('rompr.playableMasonry', {
+
+	options: {
+		spotidata: [],
+		class: 'tagholder4',
+		id: 'baggery_'+Date.now()
+	},
+
+	_create: function() {
+		var self = this;
+		this.element.empty();
+		this.element.attr('id', self.options.id)
+		this.options.spotidata.tracks.forEach(function(track) {
+			var img = (track.album.images && track.album.images.length > 0) ?
+				'getRemoteImage.php?url='+rawurlencode(track.album.images[0].url)+'&rompr_resize_size=smallish' : 'newimages/spotify-icon.png';
+			var x = $('<div>', {class: 'arsecandle tagholder4 clickable draggable clicktrack playable notthere', name: rawurlencode(track.uri)}).appendTo(self.element);
+			x.append($('<img>', {class: 'cheeseandfish', src: img}));
+			var an = track.artists.map(a => a.name);
+			x.append($('<div>').html(track.name+'<br /><b>'+concatenate_artist_names(an)+'</b>'));
+		});
+		this.element.imagesLoaded(function() {
+			// Masonry doesn't work if I use self.element here?????
+			$('#'+self.options.id).find('.notthere').removeClass('notthere');
+			setDraggable('#'+self.options.id);
+			browser.rePoint($('#'+self.options.id), {itemSelector: '.arsecandle', columnWidth: '.arsecandle', percentPosition: true});
 		});
 	},
 

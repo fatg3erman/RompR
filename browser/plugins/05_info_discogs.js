@@ -994,7 +994,7 @@ var info_discogs = function() {
 								}
 							}
 							best = (best >= 0) ? best : besta;
-							albummeta.discogs.albumlink = data.data.results[best].master_url;
+							albummeta.discogs.albumlink = data.data.results[best].resource_url || data.data.results[best].master_url;
 							debug.debug(medebug,'Using album search result', best, albummeta.discogs.albumlink);
 						}
 						searching = false;
