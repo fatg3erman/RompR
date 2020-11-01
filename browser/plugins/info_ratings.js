@@ -67,7 +67,7 @@ var info_ratings = function() {
 					uiHelper.adjustLayout();
 				}
 				// Make sure the browser updates the file info display
-				browser.reDo(parent.nowplayingindex, 'file');
+				nowplaying.reDo(parent.nowplayingindex, 'file');
 			}
 
 			function hideTheInputs() {

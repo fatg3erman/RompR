@@ -8,6 +8,7 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 	this.artistindex = artistindex;
 	this.populated = false;
 	this.hasbeenstarted = new Array();
+	this.special_layouts = new Array();
 
 	this.isCurrentTrack = function() {
 		return nowplaying.isThisCurrent(self.currenttrack);
@@ -41,6 +42,57 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 		collections[source].populate();
 	}
 
+	this.add_special_layout = function(layout) {
+		self.special_layouts.push(layout);
+		return self.special_layouts.length - 1;
+	}
+
+	this.get_special = function(index) {
+		return self.special_layouts[index];
+	}
+
+	this.get_a_thing = function(type, thing) {
+		switch (type) {
+			case 'track':
+			case 'album':
+				return self.playlistinfo.metadata[type][thing];
+
+			case 'artist':
+				return self.playlistinfo.metadata.artists[self.artistindex][thing];
+		}
+	}
+
+	this.get_source_thing = function(type, source, thing) {
+		switch (type) {
+			case 'track':
+			case 'album':
+				return self.playlistinfo.metadata[type][source][thing];
+
+			case 'artist':
+				return self.playlistinfo.metadata.artists[self.artistindex][source][thing];
+		}
+	}
+
+	this.re_display= function(source) {
+		if (collections[source]) {
+			collections[source].re_display();
+		}
+	}
+
+	this.get_random_discogs_artist_image = async function(layout) {
+		// The problem with this is it populates the discogs collection which does its masonry layout
+		// while the panel is not visible, which fucks up the masonry layout
+		// Need to mend browser.rePoint before we do this
+		// if (typeof collections['discogs'] == 'undefined') {
+		// 	startSource('discogs');
+		// }
+		// debug.mark('TRACKDATA', "Getting random discogs image");
+		// var image = await collections['discogs'].artist.get_random_image();
+		// debug.mark('TRACKDATA', "Got random discogs image", image);
+		// if (image)
+		// 	layout.add_main_image(image);
+	}
+
 	this.doArtistChoices = function() {
 		debug.debug("TRACKDATA",self.nowplayingindex,"Doing Artist Choices",self.artistindex);
 		// Need to put the html in the div even if we're hiding it. because nowplaying uses it
@@ -66,20 +118,8 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 	}
 
 	this.handleClick = function(source, panel, element, event) {
-		debug.debug("NOWPLAYING","Collection handling click in",source,panel);
+		debug.debug("NOWPLAYING","Collection handling click in",self.source,panel);
 		collections[source].handleClick(panel, element, event);
-	}
-
-	this.sendDataToBrowser = function(waitingon) {
-		debug.debug("TRACKDATA",self.nowplayingindex,"Telling",waitingon.source,"to start displaying");
-		collections[waitingon.source].displayData();
-	}
-
-	this.stopDisplaying = function(waitingon) {
-		for (var coll in collections) {
-			debug.debug("TRACKDATA",self.nowplayingindex,"Telling",coll,"to stop displaying");
-			collections[coll].stopDisplaying(waitingon);
-		}
 	}
 
 	this.updateData = function(data, start) {
@@ -155,34 +195,30 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 		collections['ratings'].updateMeta(updates);
 	}
 
+	this.getSource = function() {
+		return self.source;
+	}
+
 	// Create the data collections we need
 
-	this.populate = function(source, isartistswitch) {
+	this.populate = function(source, browser_showing_current, force) {
 		self.populated = true;
-		if (collections['ratings'] === undefined) startSource('ratings');
+		if (collections['ratings'] === undefined)
+			startSource('ratings');
 		// Last.FM needs to be running as it's used for love, ban, and autocorrect
-		if (collections['lastfm'] === undefined && (prefs.lastfm_autocorrect || lastfm.isLoggedIn())) {
+		if (collections['lastfm'] === undefined && (prefs.lastfm_autocorrect || lastfm.isLoggedIn()))
 			startSource('lastfm');
-		}
-		if (collections[source] === undefined) startSource(source);
-		browser.dataIsComing(
-			self,
-			isartistswitch,
-			self.nowplayingindex,
-			source,
-			self.playlistinfo.trackartist,
-			self.playlistinfo.metadata.artists[artistindex].name,
-			(self.playlistinfo.albumartist && self.playlistinfo.albumartist != "") ? self.playlistinfo.albumartist : self.playlistinfo.trackartist,
-			self.playlistinfo.metadata.album.name,
-			self.playlistinfo.metadata.track.name
-		);
-	};
 
+		if (collections[source] === undefined)
+			startSource(source);
+
+		browser.dataIsComing(null, {nowplayingindex: self.nowplayingindex, source: source, special: {}}, browser_showing_current, force, false, false);
+	};
 }
 
 var nowplaying = function() {
 
-	var history = new Array();
+	var tracks_played = new Array();
 	var plugins = new Array();
 	var to_notify = new Array();
 	var currenttrack = 0;
@@ -192,8 +228,8 @@ var nowplaying = function() {
 	var deftimer = null;
 
 	function findCurrentTrack() {
-		for (var i in history) {
-			if (history[i] !== undefined && history[i].currenttrack == currenttrack && history[i].populated == true) {
+		for (var i in tracks_played) {
+			if (tracks_played[i] !== undefined && tracks_played[i].currenttrack == currenttrack && tracks_played[i].populated == true) {
 				return i;
 			}
 		}
@@ -233,7 +269,7 @@ var nowplaying = function() {
 			return plugins;
 		},
 
-		newTrack: function(playlistinfo, force) {
+		newTrack: function(playlistinfo, force, source) {
 
 			debug.debug("NOWPLAYING","New Info",playlistinfo);
 			if (currentbackendid == playlistinfo.Id && force !== true) {
@@ -258,11 +294,12 @@ var nowplaying = function() {
 			for (var i in playlistinfo.metadata.artists) {
 				acheck: {
 					for (var j = nowplayingindex; j > 0; j--) {
-						if (history[j] 	!== undefined) {
-							for (var k in history[j].playlistinfo.metadata.artists) {
-								if (playlistinfo.metadata.artists[i].name == history[j].playlistinfo.metadata.artists[k].name) {
+						if (tracks_played[j] !== undefined) {
+							for (var k in tracks_played[j].playlistinfo.metadata.artists) {
+								if (!tracks_played[j].playlistinfo.metadata.artists[k].special &&
+									playlistinfo.metadata.artists[i].name == tracks_played[j].playlistinfo.metadata.artists[k].name) {
 									debug.debug("NOWPLAYING","Using artist info from",j,k,"for",i);
-									playlistinfo.metadata.artists[i] = history[j].playlistinfo.metadata.artists[k];
+									playlistinfo.metadata.artists[i] = tracks_played[j].playlistinfo.metadata.artists[k];
 									break acheck;
 								}
 							}
@@ -276,20 +313,22 @@ var nowplaying = function() {
 			var ft = false;
 			tcheck: {
 				for (var j = nowplayingindex; j > 0; j--) {
-					if (history[j] !== undefined) {
+					if (tracks_played[j] !== undefined) {
 						var newalbumartist = (playlistinfo.albumartist == "") ? playlistinfo.trackartist : playlistinfo.albumartist;
-						var albumartist = (history[j].playlistinfo.albumartist == "") ? history[j].playlistinfo.trackartist : history[j].playlistinfo.albumartist;
+						var albumartist = (tracks_played[j].playlistinfo.albumartist == "") ? tracks_played[j].playlistinfo.trackartist : tracks_played[j].playlistinfo.albumartist;
 						if (newalbumartist == albumartist) {
-							if (playlistinfo.metadata.album.name == history[j].playlistinfo.metadata.album.name) {
+							if (!tracks_played[j].playlistinfo.metadata.album.special &&
+								playlistinfo.metadata.album.name == tracks_played[j].playlistinfo.metadata.album.name) {
 								if (!fa) {
 									debug.debug("NOWPLAYING","Using album info from",j);
-									playlistinfo.metadata.album = history[j].playlistinfo.metadata.album;
+									playlistinfo.metadata.album = tracks_played[j].playlistinfo.metadata.album;
 									fa = true;
 								}
-								if (!ft && playlistinfo.metadata.track.name == history[j].playlistinfo.metadata.track.name &&
-									playlistinfo.Title == history[j].playlistinfo.Title) {
+								if (!ft && !tracks_played[j].playlistinfo.metadata.track.special &&
+									playlistinfo.metadata.track.name == tracks_played[j].playlistinfo.metadata.track.name &&
+									playlistinfo.Title == tracks_played[j].playlistinfo.Title) {
 									debug.debug("NOWPLAYING","Using track info from",j);
-									playlistinfo.metadata.track = history[j].playlistinfo.metadata.track;
+									playlistinfo.metadata.track = tracks_played[j].playlistinfo.metadata.track;
 									ft = true;
 								}
 								if (fa && ft) {
@@ -303,15 +342,12 @@ var nowplaying = function() {
 
 			currenttrack++;
 			var to_populate = null;
-			// isartistswitch makes sure the browser switches away from an artist if that artist is not present on this track.
-			// It gets set to false only if this track contains the currently displayed artist. In that case that's also the
-			// data collection we tell to populate.
-			var isartistswitch = browser.areweatfront();
+			force_artist = true;
 			for (var i in playlistinfo.metadata.artists) {
 				nowplayingindex++;
 				playlistinfo.metadata.artists[i].nowplayingindex = nowplayingindex;
 				debug.debug("NOWPLAYING","Setting Artist",playlistinfo.metadata.artists[i].name,"index",i,"to nowplayingindex",nowplayingindex);
-				history[nowplayingindex] = new trackDataCollection(currenttrack, nowplayingindex, i, playlistinfo);
+				tracks_played[nowplayingindex] = new trackDataCollection(currenttrack, nowplayingindex, i, playlistinfo);
 				// IF there are multiple artists we will be creating multiple trackdatacollections.
 				// BUT we only tell the first one (or the one that's the current displayed artist) to populate - this prevents the others from trying to
 				// populate the album and track info which is shared between them. However we must wait until
@@ -322,24 +358,18 @@ var nowplaying = function() {
 				if (isCurrentDisplayedArtist(playlistinfo.metadata.artists[i].name)) {
 					debug.debug("NOWPLAYING","Telling nowplaying index",nowplayingindex,"to populate");
 					to_populate = nowplayingindex;
-					isartistswitch = false;
+					force_artist = false;
 				}
 			}
-			history[to_populate].populate(prefs.infosource, isartistswitch);
+			// backendid will not change if we're listening to the radio
+			var force_track = (playlistinfo.type == 'stream');
+			tracks_played[to_populate].populate(source ? source : prefs.infosource, browser.is_displaying_current_track(), {artist: force_artist, album: false, track: force_track});
 		},
 
-		remove: function(npindex) {
-			// Browser has truncated its history, so we no longer need to hold on to
-			// an item. Rather than splice the array and go through a whole lot of rigmarole,
-			// just set the entry to undefined. This will permit garbage collection in the
-			// browser to tidy it up.
-			history[npindex] = undefined;
-		},
-
-		switchArtist: function(source, npindex) {
-			debug.log("NOWPLAYING","Asked to switch artist for nowplayingindex",npindex);
-			if (history[npindex] !== undefined) {
-				history[npindex].populate(source, true);
+		switchArtist: function(index, artistindex) {
+			debug.log("NOWPLAYING","Asked to switch artist for nowplayingindex",index,artistindex);
+			if (tracks_played[artistindex] !== undefined) {
+				tracks_played[artistindex].populate(prefs.infosource, true, {artist: true, album: false, track: false});
 			} else {
 				infobar.notify(language.gettext('error_truncated'));
 			}
@@ -348,7 +378,7 @@ var nowplaying = function() {
 		setLastFMCorrections: function(index, updates) {
 			debug.debug("NOWPLAYING","Recieved last.fm corrections for index",index);
 			if (index == currenttrack) {
-				var t = history[findCurrentTrack()].playlistinfo.file;
+				var t = tracks_played[findCurrentTrack()].playlistinfo.file;
 				if (t.substring(0,11) == 'soundcloud:') {
 					debug.debug("NOWPLAYING","Not sending LastFM Updates because this track is from soundcloud");
 				} else {
@@ -358,12 +388,12 @@ var nowplaying = function() {
 		},
 
 		setMetadataFromLastFM: function(index, updates) {
-			history[index].lastFMMetadata(updates);
+			tracks_played[index].lastFMMetadata(updates);
 		},
 
 		progressUpdate: function(percent) {
 			if (currenttrack > 0) {
-				history[findCurrentTrack()].updateProgress(percent);
+				tracks_played[findCurrentTrack()].updateProgress(percent);
 			}
 		},
 
@@ -380,12 +410,12 @@ var nowplaying = function() {
 			}
 			if (index > 0) {
 				debug.log("NOWPLAYING", "Setting Rating to",rating,"on index",index);
-				history[index].setMeta('set', 'Rating', rating.toString());
+				tracks_played[index].setMeta('set', 'Rating', rating.toString());
 				if (prefs.synclove && lastfm.isLoggedIn()) {
 					if (rating >= prefs.synclovevalue) {
-						history[index].love();
+						tracks_played[index].love();
 					} else {
-						history[index].unloveifloved();
+						tracks_played[index].unloveifloved();
 					}
 				}
 			}
@@ -396,11 +426,11 @@ var nowplaying = function() {
 				index = findCurrentTrack();
 			}
 			debug.log("NOWPLAYING","Setting Playback Progress on",index,"to", progress);
-			history[index].setMeta('set', 'Progress', progress);
+			tracks_played[index].setMeta('set', 'Progress', progress);
 		},
 
 		addTrackToCollection: function(evt, index) {
-			history[index].setMeta('set', 'Rating', '0');
+			tracks_played[index].setMeta('set', 'Rating', '0');
 		},
 
 		addTags: function(index, tags) {
@@ -408,9 +438,9 @@ var nowplaying = function() {
 			var tagarr = tags.split(',');
 			if (index > 0) {
 				debug.log("NOWPLAYING", "Adding tags",tags,"to index",index);
-				history[index].setMeta('set', 'Tags', tagarr);
+				tracks_played[index].setMeta('set', 'Tags', tagarr);
 				if (lastfm.isLoggedIn() && prefs.synctags) {
-					history[index].addlfmtags(tags);
+					tracks_played[index].addlfmtags(tags);
 				}
 			}
 		},
@@ -421,18 +451,18 @@ var nowplaying = function() {
 			tag = tag.replace(/x$/,'');
 			if (index > 0) {
 				debug.log("NOWPLAYING", "Removing tag",tag,"from index",index);
-				history[index].setMeta('remove', 'Tags', tag);
+				tracks_played[index].setMeta('remove', 'Tags', tag);
 				if (lastfm.isLoggedIn() && prefs.synctags) {
-					history[index].remlfmtags(tag);
+					tracks_played[index].remlfmtags(tag);
 				}
 			}
 		},
 
 		incPlaycount: function(index) {
 			if (!index) index = findCurrentTrack();
-			if (history[index].playlistinfo.metadata.track && history[index].playlistinfo.metadata.track.usermeta) {
-				var p = parseInt(history[index].getMeta("Playcount"));
-				history[index].setMeta('inc', 'Playcount', p+1);
+			if (tracks_played[index].playlistinfo.metadata.track && tracks_played[index].playlistinfo.metadata.track.usermeta) {
+				var p = parseInt(tracks_played[index].getMeta("Playcount"));
+				tracks_played[index].setMeta('inc', 'Playcount', p+1);
 			} else {
 				clearTimeout(deftimer);
 				debug.warn("NOWPLAYING","Trying to incremment Playcount on index",index,"before metadata has populated. Deferring request");
@@ -443,18 +473,18 @@ var nowplaying = function() {
 
 		love: function() {
 			if (lastfm.isLoggedIn()) {
-				history[findCurrentTrack()].love();
+				tracks_played[findCurrentTrack()].love();
 				if (prefs.synclove) {
-					history[findCurrentTrack()].setMeta('set', 'Rating', prefs.synclovevalue);
+					tracks_played[findCurrentTrack()].setMeta('set', 'Rating', prefs.synclovevalue);
 				}
 			}
 		},
 
 		unlove: function() {
 			if (lastfm.isLoggedIn()) {
-				history[findCurrentTrack()].unlove();
+				tracks_played[findCurrentTrack()].unlove();
 				if (prefs.synclove) {
-					history[findCurrentTrack()].setMeta('set', 'Rating', 0);
+					tracks_played[findCurrentTrack()].setMeta('set', 'Rating', 0);
 				}
 			}
 		},
@@ -464,12 +494,12 @@ var nowplaying = function() {
 		},
 
 		updateAlbumMBID: function(index, mbid) {
-			history[index].setAlbumMBID(mbid);
+			tracks_played[index].setAlbumMBID(mbid);
 		},
 
 		refreshUserMeta: function() {
-			for (var i in history) {
-				history[i].refreshUserMeta();
+			for (var i in tracks_played) {
+				tracks_played[i].refreshUserMeta();
 			}
 		},
 
@@ -487,7 +517,67 @@ var nowplaying = function() {
 
 		getCurrentCollection: function(index) {
 			if (!index) index = findCurrentTrack();
-			debug.debug("NOWPLAYING", history[index]);
+			debug.debug("NOWPLAYING", tracks_played[index]);
+		},
+
+		compare_ids: function(type, theirs, ours) {
+			return tracks_played[theirs].get_a_thing(type, 'backendid') != tracks_played[ours].get_a_thing(type, 'backendid');
+		},
+
+		getLayout: function(type, source, index, special_index) {
+			debug.log('NOWPLAYING', "Getting layout", type, source, index, special_index);
+			if (special_index >= 0) {
+				return tracks_played[index].get_special(special_index).get_contents();
+			} else {
+				return tracks_played[index].get_source_thing(type, source, 'layout').get_contents();
+			}
+		},
+
+		detachLayout: function(type, source, index, special_index) {
+			debug.log('NOWPLAYING', 'Detaching', type, source, index, special_index);
+			if (special_index >= 0) {
+				return tracks_played[index].get_special(special_index).detach_contents();
+			} else if (index in tracks_played) {
+				return tracks_played[index].get_source_thing(type, source, 'layout').detach_contents();
+			}
+		},
+
+		getTitle: function(type, source, index, special_index) {
+			if (special_index >= 0) {
+				return tracks_played[index].get_special(special_index).get_title();
+			} else {
+				return tracks_played[index].get_source_thing(type, source, 'layout').get_title();
+			}
+		},
+
+		doArtistChoices: function(index) {
+			tracks_played[index].doArtistChoices();
+		},
+
+		reDo: function(index, source) {
+			tracks_played[index].re_display(source);
+		},
+
+		handleClick: function(index, source, panel, element, event) {
+			tracks_played[index].handleClick(source, panel, element, event);
+		},
+
+		switch_source: function(index, source) {
+			tracks_played[index].populate(source, true, {artist: false, album: false, track: false});
+		},
+
+		special_update: function(source, panel, layout) {
+			debug.log('NOWPLAYING', 'Special Update', source, panel);
+			var index = browser.get_current_displayed_track();
+			var special_index = tracks_played[index].add_special_layout(layout);
+			var force = {artist: false, album: false, track: false};
+			force[panel] = true;
+			var history = {nowplayingindex: index, source: source, special: {}};
+			history.special[panel] = special_index;
+			browser.dataIsComing(null,
+				history,
+				true, force, panel, true
+			);
 		}
 
 	}

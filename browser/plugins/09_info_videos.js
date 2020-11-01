@@ -13,9 +13,7 @@ var info_videos = function() {
 			debug.debug("VIDEOS PLUGIN", "Creating data collection");
 
 			var self = this;
-			var displaying = false;
 			var ids = [];
-			var retrytimer;
 
 			function mungeDiscogsData(videos) {
 				debug.debug("VIDEOS PLUGIN","Doing Videos From Discogs Data",videos);
@@ -62,59 +60,51 @@ var info_videos = function() {
 			}
 
 			this.populate = function() {
-				self.track.populate();
-			}
 
-			this.displayData = function() {
-				displaying = true;
-				self.track.doBrowserUpdate();
-				browser.Update(null, 'album', me, parent.nowplayingindex, { name: "",
-										link: "",
-										data: null
-										}
-				);
-				browser.Update(null, 'artist', me, parent.nowplayingindex, { name: "",
-										link: "",
-										data: null
-										}
-				);
-			}
+				parent.updateData({
+					videos: {}
+				}, artistmeta);
 
-			this.stopDisplaying = function() {
-				displaying = false;
-				clearTimeout(retrytimer);
+				parent.updateData({
+					videos: {}
+				}, albummeta);
+
+				parent.updateData({
+					videos: {}
+				}, trackmeta);
+
+				if (typeof artistmeta.videos.layout == 'undefined')
+					artistmeta.videos.layout = new info_layout_empty();
+
+				if (typeof albummeta.videos.layout == 'undefined')
+					albummeta.videos.layout = new info_layout_empty();
+
+				if (typeof trackmeta.videos.layout == 'undefined') {
+					trackmeta.videos.layout = new info_html_layout({
+						title: artistmeta.name+' / '+trackmeta.name,
+						type: 'track',
+						source: me
+					});
+					self.track.populate();
+				}
+
 			}
 
 			this.track = function() {
 				return {
-					populate: function() {
-						debug.debug('VIDEOS','album master', albummeta.discogs.album.master);
-						debug.debug('VIDEOS','track master', trackmeta.discogs.track.master);
-						debug.debug('VIDEOS','album error', albummeta.discogs.album.error);
-						debug.debug('VIDEOS','track error', trackmeta.discogs.track.error);
-						if ((trackmeta.discogs.track.master && albummeta.discogs.album.master) ||
+					populate: async function() {
+						while (!(
+							(trackmeta.discogs.track.master && albummeta.discogs.album.master) ||
 							(trackmeta.discogs.track.master && albummeta.discogs.album.error)  ||
 							(trackmeta.discogs.track.error  && albummeta.discogs.album.master) ||
-							(trackmeta.discogs.track.error  && albummeta.discogs.album.error)) {
-							self.track.doBrowserUpdate();
-						} else {
-							debug.debug("VIDEOS PLUGIN",parent.nowplayingindex,"No data yet, trying again in 1 second");
-							retrytimer = setTimeout(self.track.populate, 2000);
+							(trackmeta.discogs.track.error  && albummeta.discogs.album.error)
+							))
+						{
+							await new Promise(t => setTimeout(t, 1000));
 						}
-					},
-
-					doBrowserUpdate: function() {
-						if (displaying && albummeta.discogs.album !== undefined && trackmeta.discogs.track !== undefined &&
-								(albummeta.discogs.album.error !== undefined ||	albummeta.discogs.album.master !== undefined) &&
-								(trackmeta.discogs.track.error !== undefined ||	trackmeta.discogs.track.master !== undefined)) {
-							debug.debug("VIDEOS PLUGIN",parent.nowplayingindex,"track was asked to display");
-							browser.Update(null, 'track', me, parent.nowplayingindex, { name: artistmeta.name+' / '+trackmeta.name,
-													link: "",
-													data: getVideosHtml()
-													}
-							);
-						}
+						trackmeta.videos.layout.finish(null, artistmeta.name+' / '+trackmeta.name, getVideosHtml());
 					}
+
 				}
 			}();
 		}

@@ -102,7 +102,7 @@ var layoutProcessor = function() {
 
 		addInfoSource: function(name, obj) {
 			$("#chooserbuttons").append($('<i>', {
-				onclick: "browser.switchsource('"+name+"')",
+				onclick: "browser.switch_source('"+name+"')",
 				class: obj.icon+' topimg expand',
 				id: "button_source"+name
 			}));

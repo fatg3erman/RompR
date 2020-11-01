@@ -2,132 +2,174 @@ var info_file = function() {
 
 	var me = "file";
 
-	function podComment(parent) {
-		if (parent.playlistinfo.type == 'podcast' && parent.playlistinfo.Comment) {
-			return '<div class="brick tagholder_wode tagholder"><table class="fileinfotable" style="width:100%"><tr><th>'+
-			language.gettext("info_comment").replace(':','')+'</th></tr><tr><td class="notbold">'+parent.playlistinfo.Comment+'</td></tr></table></div>';
-		}
-		return '';
+	function format_date(date) {
+		var t = parseInt(date) * 1000;
+		var d = new Date(t);
+		return d.toLocaleDateString(getLocale(), { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 	}
 
-	function createInfoFromPlayerInfo(info, parent) {
+	function make_file_information(layout, fileinfo, parent, usermeta, name) {
 
-		var html = "";
+		if (usermeta)
+			make_usermeta_info(layout, usermeta, parent);
+
+		if (fileinfo.player)
+			make_player_info(layout, fileinfo.player);
+
+		if (fileinfo.beets)
+			make_beets_info(layout, fileinfo.beets);
+
+		if (parent.playlistinfo.type == 'podcast' && parent.playlistinfo.Comment) {
+			layout.add_flow_box_header({title: language.gettext("info_comment").replace(':','')});
+			layout.add_flow_box(parent.playlistinfo.Comment);
+		}
+
+		layout.finish(null, name);
+
+	}
+
+	function make_player_info(layout, info) {
 		var file = decodeURI(info.file);
-		debug.debug("FILE INFO","Decoded File Name is",file);
 		file = file.replace(/^file:\/\//, '');
-		var filetype = "";
-		if (file) {
-			var n = file.match(/.*\.(.*?)$/);
-			if (n) {
-				filetype = n[n.length-1];
-				filetype = filetype.toLowerCase();
-				if (filetype.match(/\/|\?|\=/)) {
-					filetype = "";
-				}
+
+		layout.add_flow_box_header({title: language.gettext("info_file")});
+		layout.add_flow_box(file);
+
+		if (info.Performer) {
+			if (typeof info.Performer == "object") {
+				info.Performer = info.Performer.join(';');
 			}
+			layout.add_flow_box_header({title: language.gettext("info_performers")});
+			layout.add_flow_box(concatenate_artist_names(info.Performer.split(';')));
 		}
-		if (file == "null" || file == "undefined") file = "";
-		html += '<table class="fileinfotable" style="width:100%">';
-		html += '<tr><th colspan="2">Format Information</th></tr>';
-		html += '<tr><td>'+language.gettext("info_file")+'</td><td>'+file;
-		if (file.match(/^http:\/\/.*item\/\d+\/file/)) html += ' <i>'+language.gettext("info_from_beets")+'</i>';
-		if (info.file) {
-			var f = info.file.match(/^podcast[\:|\+](http.*?)\#/);
-			if (f && f[1]) {
-				html += '<button onclick="podcasts.doPodcast(\'filepodiput\')">'+language.gettext('button_subscribe')+'</button>'+
-								'<input type="hidden" id="filepodiput" value="'+f[1]+'" />';
+		if (info.Composer) {
+			if (typeof info.Composer == "object") {
+				info.Composer = info.Composer.join(';');
 			}
+			layout.add_flow_box_header({title: language.gettext("info_composers")});
+			layout.add_flow_box(concatenate_artist_names(info.Composer.split(';')));
 		}
-		html += '</td></tr>';
-		if (filetype != "" && !file.match(/^http/)) {
-			html += '<tr><td>'+language.gettext("info_format")+'</td><td>'+filetype+'</td></tr>';
+		if (info.Comment) {
+			if (typeof info.Comment == "object") {
+				info.Comment = info.Comment.join('<br>');
+			}
+			var poo = info.Comment;
+			if (parent.playlistinfo.type == 'stream' && parent.playlistinfo.stream) {
+				poo += '<br />'+parent.playlistinfo.stream;
+			}
+			layout.add_flow_box_header({title: language.gettext("info_comment")});
+			layout.add_flow_box(poo);
 		}
+
+		var filetype = get_file_extension(file).toLowerCase();
+		var list = layout.add_sidebar_list(language.gettext("info_format"), filetype);
 		if (info.bitrate && info.bitrate != 'None' && info.bitrate != 0) {
-			html += '<tr><td>'+language.gettext("info_bitrate")+'</td><td>'+info.bitrate+'</td></tr>';
+			layout.append_to_list(list, language.gettext("info_bitrate"), info.bitrate);
 		}
-		var ai = info.audio;
-		if (ai) {
-			var p = ai.split(":");
-			html += '<tr><td>'+language.gettext("info_samplerate")+'</td><td>'+p[0]+' Hz, '+p[1]+' Bit, ';
+		if (info.audio) {
+			var p = info.audio.split(":");
+			if (p[1] == 'f') p[1] = '16';
+			var format = p[0]+' Hz, '+p[1]+' Bit, ';
 			if (p[2] == 1) {
-				html += language.gettext("info_mono");
+				format += language.gettext("info_mono");
 			} else if (p[2] == 2) {
-				html += language.gettext("info_stereo");
+				format += language.gettext("info_stereo");
 			} else {
-				html += p[2]+' '+language.gettext("info_channels");
+				format += p[2]+' '+language.gettext("info_channels");
 			}
-			'</td></tr>';
+			layout.append_to_list(list, language.gettext("info_samplerate"), format);
 		}
+
 		if (info.Date) {
 			if (typeof info.Date == "string") {
 				info.Date = info.Date.split(';');
 			}
-			html += '<tr><td>'+language.gettext("info_date")+'</td><td>'+info.Date[0]+'</td></tr>';
+			layout.append_to_list(list, language.gettext("info_date"), info.Date[0]);
 		}
 
 		if (info.Genre) {
 			if (typeof info.Genre == "string") {
 				info.Genre = info.Genre.split(';');
 			}
-			html += '<tr><td>'+language.gettext("info_genre")+'</td><td>'+info.Genre.join(', ')+'</td></tr>';
+			layout.append_to_list(list, language.gettext("info_genre"), info.Genre.join(', '));
 		}
 
-		if (info.Performer) {
-			if (typeof info.Performer == "object") {
-				info.Performer = info.Performer.join(';');
-			}
-			html += '<tr><td>'+language.gettext("info_performers")+'</td><td>'+concatenate_artist_names(info.Performer.split(';'))+'</td></tr>';
-		}
-		if (info.Composer) {
-			if (typeof info.Composer == "object") {
-				info.Composer = info.Composer.join(';');
-			}
-			html += '<tr><td>'+language.gettext("info_composers")+'</td><td>'+concatenate_artist_names(info.Composer.split(';'))+'</td></tr>';
-		}
-		if (info.Comment) {
-			if (typeof info.Comment == "object") {
-				info.Comment = info.Comment.join('<br>');
-			}
-			html += '<tr><td>'+language.gettext("info_comment")+'</td><td>'+info.Comment+'</td></tr>';
-		}
-		if (parent.playlistinfo.type == 'stream' && parent.playlistinfo.stream) {
-			html += '<tr><td>'+language.gettext("info_comment")+'</td><td>'+parent.playlistinfo.stream+'</td></tr>';
-		}
-		html += '</table>';
-		return html;
 	}
 
-	function createInfoFromBeetsInfo(data) {
+	function make_beets_info(layout, data) {
+		try {
+			var file = decodeURIComponent(player.status.file);
+			if (!file)
+				return;
 
-		var html = "";
-		debug.log("FILE PLUGIN","Doing info from Beets server");
-		var file = decodeURIComponent(player.status.file);
-		var gibbons = [ 'year', 'genre', 'label', 'disctitle', 'encoder'];
-		if (!file) { return "" }
-		html += '<table class="motherfucker" style="width:100%">';
-		html += '<tr><th colspan="2">Format Information</th></tr>';
-		html += '<tr><td class="fil">'+language.gettext("info_file")+'</td><td>'+file;
-		html += ' <i>'+language.gettext("info_from_beets")+'</i>';
-		html = html +'</td></tr>';
-		html += '<tr><td class="fil">'+language.gettext("info_format")+'</td><td>'+data.format+'</td></tr>';
-		if (data.bitrate)  html += '<tr><td class="fil">'+language.gettext("info_bitrate")+'</td><td>'+data.bitrate+'</td></tr>';
-		html += '<tr><td class="fil">'+language.gettext("info_samplerate")+'</td><td>'+data.samplerate+' Hz, '+data.bitdepth+' Bit, ';
-		if (data.channels == 1) {
-			html += language.gettext("info_mono");
-		} else if (data.channels == 2) {
-			html = html +language.gettext("info_stereo");
-		} else {
-			html += data.channels +' '+language.gettext("info_channels");
+			layout.add_flow_box_header({title: language.gettext("info_file")});
+			layout.add_flow_box(file);
+			var list = layout.add_sidebar_list(language.gettext("info_format"), data.format);
+			layout.append_to_list(list, language.gettext("info_samplerate"), data.samplerate+' Hz, '+data.bitdepth+' Bit');
+			[ 'bitrate', 'channels', 'year', 'genre', 'label', 'disctitle', 'encoder'].forEach(function(thing) {
+				if (data[thing])
+					layout.append_to_list(list, language.gettext("info_"+thing), data[thing]);
+
+			});
+			if (data.composer) {
+				layout.add_flow_box_header({title: language.gettext("info_composers")});
+				layout.add_flow_box(data.composer);
+			}
+
+			if (data.comments) {
+				layout.add_flow_box_header({title: language.gettext("info_comment")});
+				layout.add_flow_box(data.comments);
+			}
+
+		} catch (err) {
+			layout.add_flow_box('Sorry, there is a bug with creating this box from Beets server info. Please report this');
 		}
-		html += '</td></tr>';
-		$.each(gibbons, function (i,g) {
-			if (data[g]) html += '<tr><td class="fil">'+language.gettext("info_"+g)+'</td><td>'+data[g]+'</td></tr>';
+	}
+
+	function make_usermeta_info(layout, usermeta, parent) {
+
+		layout.add_sidebar_list(language.gettext('label_rating'), '<i class="icon-'+usermeta.Rating+'-stars rating-icon-big infoclick clicksetrating"></i><input type="hidden" value="'+parent.nowplayingindex+'" />');
+
+		var tl = layout.add_sidebar_list(language.gettext("musicbrainz_tags"), '<i class="icon-plus infoclick smallicon clickaddtags"></i>');
+		usermeta.Tags.forEach(function(tag) {
+			layout.append_to_list(tl, '&nbsp;', '<span class="tag">'+tag+'<i class="icon-cancel-circled clickicon tagremover playlisticon"></i></span>');
 		});
-		if (data.composer) html += '<tr><td class="fil">'+language.gettext("info_composers")+'</td><td>'+data.composer+'</td></tr>';
-		if (data.comments) html += '<tr><td class="fil">'+language.gettext("info_comment")+'</td><td>'+data.comments+'</td></tr>';
-		html += '</table>';
-		return html;
+
+		layout.add_flow_box_header({title: language.gettext('label_collinfo')});
+
+		if (prefs.player_backend == 'mopidy') {
+			if (usermeta.isSearchResult < 2 && usermeta.Hidden == 0) {
+				layout.add_flow_box(language.gettext('label_incoll'));
+			} else {
+				layout.add_flow_box('<span class="infoclick clickaddtocollection">'+language.gettext('label_notincoll')+'</span>');
+			}
+		}
+
+		if (usermeta.Playcount) {
+			switch (usermeta.Playcount) {
+				case '0':
+					layout.add_flow_box(language.gettext('played_never'));
+					break
+				case '1':
+					layout.add_flow_box(language.gettext('played_once'));
+					break
+				case '2':
+					layout.add_flow_box(language.gettext('played_twice'));
+					break
+				default:
+					layout.add_flow_box(language.gettext('played_n',[usermeta.Playcount]));
+					break
+			}
+		}
+
+		if (typeof usermeta.Last != 'undefined' && usermeta.Last != 0) {
+			layout.add_flow_box(language.gettext('played_last',[format_date(usermeta.Last)]));
+		}
+
+		if (usermeta.isSearchResult < 2 && usermeta.Hidden == 0) {
+			layout.add_flow_box(language.gettext('added_on',[format_date(usermeta.DateAdded)]));
+		}
+
 	}
 
 	return {
@@ -140,21 +182,35 @@ var info_file = function() {
 			debug.debug("FILE PLUGIN", "Creating data collection");
 
 			var self = this;
-			var displaying = false;
 
-			this.displayData = function() {
-				displaying = true;
-				self.doBrowserUpdate();
-				browser.Update(null, 'album', me, parent.nowplayingindex,
-								{ name: "", link: "", data: null }
-				);
-				browser.Update(null, 'artist', me, parent.nowplayingindex,
-								{ name: "", link: "", data: null }
-				);
-			}
+			this.populate = function() {
+				parent.updateData({
+					file: { },
+					fileinfo: { },
+					lyrics: { }
+				}, trackmeta);
 
-			this.stopDisplaying = function() {
-				displaying = false;
+				parent.updateData({
+					file: { layout: new info_layout_empty() }
+				}, albummeta);
+
+				parent.updateData({
+					file: { layout: new info_layout_empty() }
+				}, artistmeta);
+
+				if (typeof trackmeta.file.layout == 'undefined') {
+					trackmeta.file.layout = new info_sidebar_layout({title: trackmeta.name, type: 'track', source: me});
+					var file = parent.playlistinfo.file;
+					var m = file.match(/^beets:library:track(:|;)(\d+)/)
+					if (m && m[2] && prefs.beets_server_location != '') {
+						debug.trace("FILE PLUGIN","File is from beets server",m[2]);
+						self.updateBeetsInformation(m[2]);
+					} else {
+						setTimeout(function() {
+							player.controller.do_command_list([]).then(self.updateFileInformation);
+						}, 500);
+					}
+				}
 			}
 
 			this.handleClick = function(source, element, event) {
@@ -169,27 +225,15 @@ var info_file = function() {
 				}
 			}
 
-			this.populate = function() {
-				if (trackmeta.fileinfo === undefined) {
-					var file = parent.playlistinfo.file;
-					var m = file.match(/^beets:library:track(:|;)(\d+)/)
-					if (m && m[2] && prefs.beets_server_location != '') {
-						debug.trace("FILE PLUGIN","File is from beets server",m[2]);
-						self.updateBeetsInformation(m[2]);
-					} else {
-						setTimeout(function() {
-							player.controller.do_command_list([]).then(self.updateFileInformation);
-						}, 1000);
-					}
-				} else {
-					debug.log("FILE PLUGIN",parent.nowplayingindex,"is already populated");
-				}
+			this.re_display = function() {
+				debug.mark('FILEINFO', 'Re-displaying');
+				self.doBrowserUpdate();
 			}
 
 			this.updateFileInformation = function() {
-				trackmeta.fileinfo = {beets: null, player: cloneObject(player.status)};
+				trackmeta.fileinfo.player = cloneObject(player.status);
 				debug.core("FILE PLUGIN","Doing update from",trackmeta);
-				trackmeta.lyrics = null;
+				trackmeta.lyrics.lyrics = null;
 				self.doBrowserUpdate();
 			}
 
@@ -198,15 +242,14 @@ var info_file = function() {
 				$.getJSON('browser/backends/getBeetsInfo.php', 'uri='+thing)
 				.done(function(data) {
 					debug.core("FILE PLUGIN",'Got info from beets server',data);
-					trackmeta.fileinfo = {beets: data, player: null};
+					trackmeta.fileinfo.beets = data;
 					if (data.lyrics) {
 						debug.mark("FILE PLUGIN","Got lyrics from Beets Server");
-						trackmeta.lyrics = data.lyrics;
+						trackmeta.lyrics.lyrics = data.lyrics;
 					} else {
-						trackmeta.lyrics = null;
+						trackmeta.lyrics.lyrics = null;
 					}
 					self.doBrowserUpdate();
-
 				})
 				.fail( function() {
 					debug.error("FILE PLUGIN", "Error getting info from beets server");
@@ -214,93 +257,9 @@ var info_file = function() {
 				});
 			}
 
-			this.ratingsInfo = function() {
-				var html = "";
-				debug.core("FILE PLUGIN","Doing the monkey spanner",trackmeta);
-				if (trackmeta.usermeta) {
-					html += '<table class="fileinfotable" style="width:100%">';
-					html += '<tr><th colspan="2">Collection Information</th></tr>';
-					if (typeof trackmeta.usermeta.Playcount != 'undefined') {
-						html += '<tr><td colspan="2" class="notbold">';
-						switch (trackmeta.usermeta.Playcount) {
-							case '0':
-								html += language.gettext('played_never');
-								break
-							case '1':
-								html += language.gettext('played_once');
-								break
-							case '2':
-								html += language.gettext('played_twice');
-								break
-							default:
-								html += language.gettext('played_n',[trackmeta.usermeta.Playcount]);
-								break
-						}
-						html += '</td></tr>';
-					}
-					if (typeof trackmeta.usermeta.Last != 'undefined' && trackmeta.usermeta.Last != 0) {
-						var t = parseInt(trackmeta.usermeta.Last) * 1000;
-						var d = new Date(t);
-						var s = d.toLocaleTimeString(getLocale(), { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-						html += '<tr><td colspan="2" class="notbold">'+language.gettext('played_last',[s]);
-						html += '</td></tr>';
-					}
-					if (prefs.player_backend == 'mopidy') {
-						html += '<tr><td colspan="2" class="notbold">';
-						if (trackmeta.usermeta.isSearchResult < 2 && trackmeta.usermeta.Hidden == 0) {
-							html += 'This track is in the Music Collection';
-						} else {
-							html += '<span class="infoclick clickaddtocollection">This track is not in the Music Collection. Click to add it</span>';
-						}
-						html += '</td></tr>';
-					}
-					if (trackmeta.usermeta.isSearchResult < 2 && trackmeta.usermeta.Hidden == 0) {
-						var t = parseInt(trackmeta.usermeta.DateAdded) * 1000;
-						var d = new Date(t);
-						var s = d.toLocaleDateString(getLocale(), { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-						html += '<tr><td colspan="2" class="notbold">'+language.gettext('added_on',[s]);
-						html += '</td></tr>';
-					}
-					html += '<tr><td>Rating:</td><td>';
-					html += '<i class="icon-'+trackmeta.usermeta.Rating+'-stars rating-icon-big infoclick clicksetrating"></i>';
-					html += '<input type="hidden" value="'+parent.nowplayingindex+'" />';
-					html += '</td></tr>';
-					html += '<tr><td style="vertical-align:top">'+language.gettext("musicbrainz_tags")+'<i class="icon-plus infoclick smallicon clickaddtags"></i></td><td>';
-					for(var i = 0; i < trackmeta.usermeta.Tags.length; i++) {
-						if (trackmeta.usermeta.Tags[i] != '') {
-							html += '<span class="tag">'+trackmeta.usermeta.Tags[i]+'<i class="icon-cancel-circled clickicon tagremover playlisticon"></i></span> ';
-						}
-					}
-					html += '</td></tr>';
-				}
-				html += '</table>';
-				return html;
-			}
-
 			this.doBrowserUpdate = function() {
-				if (displaying && trackmeta.fileinfo !== undefined) {
-					var data = '<div id="tinfobox" class="holdingcell masonified7 helpfulholder fullwidth">';
-					// data += '<div class="sizer"></div>';
-					data += '<div class="brick dingo tagholder2 tagholder">';
-					data += (trackmeta.fileinfo.player !== null) ? createInfoFromPlayerInfo(trackmeta.fileinfo.player, parent) : createInfoFromBeetsInfo(trackmeta.fileinfo.beets);
-					data += '</div>';
-					data += '<div class="brick dingo tagholder2 tagholder">';
-					data += self.ratingsInfo();
-					data += '</div>';
-					data += podComment(parent);
-					data += '</div>';
-					browser.Update(
-						null,
-						'track',
-						me,
-						parent.nowplayingindex,
-						{ name: trackmeta.name,
-						  link: "",
-						  data: data
-						}
-					);
-					browser.rePoint($('#tinfobox'), { itemSelector: '.brick', columnWidth: '.dingo', percentPosition: true });
-				}
+				trackmeta.file.layout.clear_out();
+				make_file_information(trackmeta.file.layout, trackmeta.fileinfo, parent, trackmeta.usermeta, trackmeta.name);
 			}
 		}
 	}

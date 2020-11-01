@@ -37,6 +37,7 @@ function zeroPad(num, count)
 
 function cloneObject(obj) {
 	return JSON.parse(JSON.stringify(obj));
+	// return $.extend(true, { }, obj);
 }
 
 function rawurlencode (str) {
@@ -291,4 +292,19 @@ function randomsort(a,b) {
 	} else {
 		return -1;
 	}
+}
+
+function lastIndexOf(a) {
+	var retval = 0;
+	a.forEach(function(value, index) {
+		retval = index;
+	});
+	return retval;
+}
+
+function get_file_extension(filename) {
+	if (filename.lastIndexOf('.') == -1)
+		return 'Unknown';
+
+	return filename.substring(filename.lastIndexOf('.')+1, filename.length) || 'Unknown';
 }

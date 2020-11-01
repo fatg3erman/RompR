@@ -344,7 +344,7 @@ $prefs = array(
 	"sync_lastfm_at_start" => false,
 	"last_lastfm_synctime" => time()*1000,
 	"next_lastfm_synctime" => 0,
-	"lastfm_sync_frequency" => 3600000,
+	"lastfm_sync_frequency" => 86400000,
 	"lfm_importer_start_offset" => 0,
 	"lfm_importer_last_import" => 0,
 

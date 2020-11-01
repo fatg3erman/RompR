@@ -31,11 +31,13 @@ var info_musicbrainz = function() {
 		return (year_a > year_b) ? 1 : -1;
 	}
 
-	function getArtistHTML(data, expand) {
-		if (data.error)
-			return '<h3 align="center">'+data.error+'</h3>';
+	function getArtistHTML(layout, data) {
+		if (data.error) {
+			layout.display_error(data.error);
+			layout.finish(null, null);
+			return;
+		}
 
-		var layout = new info_sidebar_layout({expand: expand, expandid: data.id});
 		layout.add_sidebar_list('', data.disambiguation);
 
 		if (data.type)
@@ -90,7 +92,7 @@ var info_musicbrainz = function() {
 			language.gettext("discogs_discography", [data.name.toUpperCase()])
 		)
 
-		return layout.getHTML();
+		layout.finish('http://musicbrainz.org/artist/'+data.id, data.name);
 
 	}
 
@@ -274,7 +276,8 @@ var info_musicbrainz = function() {
 
 	function getAlbumHTML(albumobj, albummeta, layout, data) {
 		if (data.error) {
-			layout.html.empty().append('<h3 align="center">'+data.error+'</h3>');
+			layout.display_error(data.error);
+			layout.finish(null, null);
 			return;
 		}
 
@@ -328,6 +331,9 @@ var info_musicbrainz = function() {
 
 		if (data['cover-art-archive'].artwork == true)
 			getCoverArt(albumobj, albummeta, layout);
+
+		debug.log('MUSICBRAINZ', 'Album data', albummeta);
+		layout.finish('http://musicbrainz.org/release/'+albummeta.musicbrainz_id, albummeta.musicbrainz[albummeta.musicbrainz_id].title);
 	}
 
 	function getCoverArt(albumobj, albummeta, layout) {
@@ -356,11 +362,13 @@ var info_musicbrainz = function() {
 		});
 	}
 
-	function getTrackHTML(data) {
-		if (data.error && data.recording === undefined && data.work === undefined)
-			return '<h3 align="center">'+data.error+'</h3>';
+	function getTrackHTML(layout, data) {
+		if (data.error) {
+			layout.display_error(data.error);
+			layout.finish(null, null);
+			return;
+		}
 
-		var layout = new info_sidebar_layout();
 		if (data.recording && data.recording.disambiguation)
 			layout.add_sidebar_list('', data.recording.disambiguation);
 
@@ -402,7 +410,8 @@ var info_musicbrainz = function() {
 			});
 		}
 
-		return layout.getHTML();
+		debug.log('MUSICBRAINZ', 'Track data', data);
+		layout.finish('http://musicbrainz.org/recording/'+data.recording.id, data.recording.title);
 
 	}
 
@@ -518,23 +527,28 @@ var info_musicbrainz = function() {
 			debug.debug(medebug, "Creating data collection");
 
 			var self = this;
-			var displaying = false;
 
 			this.populate = function() {
-				self.artist.populate();
-				self.album.populate();
-				self.track.populate();
-			}
+				parent.updateData({
+					musicbrainz: {}
+				}, artistmeta);
 
-			this.displayData = function() {
-				displaying = true;
-				self.artist.doBrowserUpdate();
-				self.album.doBrowserUpdate();
-				self.track.doBrowserUpdate();
-			}
+				parent.updateData({
+					musicbrainz: {}
+				}, albummeta);
 
-			this.stopDisplaying = function() {
-				displaying = false;
+				parent.updateData({
+					musicbrainz: {}
+				}, trackmeta);
+
+				if (typeof artistmeta.musicbrainz.layout == 'undefined')
+					self.artist.populate();
+
+				if (typeof albummeta.musicbrainz.layout == 'undefined')
+					self.album.populate();
+
+				if (typeof trackmeta.musicbrainz.layout == 'undefined')
+					self.track.populate();
 			}
 
 			this.handleClick = function(source, element, event) {
@@ -544,7 +558,10 @@ var info_musicbrainz = function() {
 				} else if (element.hasClass('clickdodiscography')) {
 					do_discography(source, element, event);
 				} else if (element.hasClass('clickexpandbox')) {
-					info_panel_expand_box(source, element, event, artistmeta.musicbrainz[element.attr('name')].name, me);
+					let artistid = element.attr('name');
+					info_panel_expand_box(source, element, event,
+						artistmeta.musicbrainz[artistid].name, me, 'http://musicbrainz.org/artist/'+artistmeta.musicbrainz[artistid].id
+					);
 				} else if (element.hasClass('clickzoomimage')) {
 					imagePopup.create(element, event, element.next().val());
 				}
@@ -597,15 +614,26 @@ var info_musicbrainz = function() {
 					);
 				} else {
 					debug.debug(medebug,parent.nowplayingindex," ... displaying what we've already got");
-					putArtistData(artistmeta.musicbrainz[id], id);
+					putArtistData(id);
 				}
 			}
 
-			function putArtistData(data, div) {
-				var html = getArtistHTML(data, true);
-				$('div[name="'+div+'"]').each(function() {
+			function putArtistData(id) {
+				// We did once try this by making a layout for every artist and just re-using them
+				// but that results in lots of unplesantness including panels being open because you opened
+				// them earlier in another layout, and circular references where the child contains the parent.
+				var layout = new info_sidebar_layout({
+					expand: true,
+					expandid: artistmeta.musicbrainz[id].id,
+					title: artistmeta.musicbrainz[id].name,
+					type: 'artist',
+					source: me,
+					withbannerid: false
+				});
+				getArtistHTML(layout, artistmeta.musicbrainz[id]);
+				$('div[name="'+id+'"]').each(function() {
 					if (!$(this).hasClass('full')) {
-						$(this).html(html);
+						$(this).empty().append(layout.get_contents());
 						$(this).addClass('full');
 					}
 				});
@@ -642,8 +670,8 @@ var info_musicbrainz = function() {
 				return {
 
 					populate: async function() {
-						if (artistmeta.musicbrainz === undefined)
-							artistmeta.musicbrainz = {};
+						if (typeof artistmeta.musicbrainz.layout == 'undefined')
+							artistmeta.musicbrainz.layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me});
 
 						while (artistmeta.musicbrainz_id == '') {
 							await new Promise(t => setTimeout(t, 500));
@@ -701,9 +729,8 @@ var info_musicbrainz = function() {
 						if (data) {
 							debug.debug(medebug,parent.nowplayingindex,"got extra artist data for",data.id,data);
 							artistmeta.musicbrainz[data.id] = data;
-							putArtistData(artistmeta.musicbrainz[data.id], data.id);
+							putArtistData(data.id);
 						}
-
 					},
 
 					releaseResponseHandler: function(data) {
@@ -716,41 +743,21 @@ var info_musicbrainz = function() {
 					},
 
 					doBrowserUpdate: function() {
-						if (displaying && artistmeta.musicbrainz_id && artistmeta.musicbrainz[artistmeta.musicbrainz_id]) {
-							var d = artistmeta.musicbrainz[artistmeta.musicbrainz_id];
-							debug.debug(medebug,parent.nowplayingindex," artist was asked to display");
-							browser.Update(
-								null,
-								'artist',
-								me,
-								parent.nowplayingindex,
-								{ name: d.error ? artistmeta.name : d.name,
-								  link: d.error ? null : 'http://musicbrainz.org/artist/'+artistmeta.musicbrainz_id,
-								  data: getArtistHTML(artistmeta.musicbrainz[artistmeta.musicbrainz_id], false)
-								}
-							);
-						}
+						getArtistHTML(artistmeta.musicbrainz.layout, artistmeta.musicbrainz[artistmeta.musicbrainz_id]);
 					}
 				}
 			}();
 
 			this.album = function() {
 
-				var layout;
-
-				function make_album_html(data) {
-					if (!layout) {
-						layout = new info_sidebar_layout();
-						getAlbumHTML(self.album, albummeta, layout, data);
-					}
-					return layout.get_contents();
-				}
-
 				return {
 
 					populate: async function() {
-						if (albummeta.musicbrainz === undefined)
-							albummeta.musicbrainz = {};
+						if (parent.playlistinfo.type == 'stream') {
+							albummeta.musicbrainz.layout = new info_layout_empty();
+							return;
+						}
+						albummeta.musicbrainz.layout = new info_sidebar_layout({title: albummeta.name, type: 'album', source: me});
 
 						while (albummeta.musicbrainz_id == '') {
 							await new Promise(t => setTimeout(t, 500));
@@ -808,25 +815,11 @@ var info_musicbrainz = function() {
 					coverResponseHandler: function(data) {
 						debug.info(medebug,parent.nowplayingindex,"got Cover Art Data",data);
 						albummeta.musicbrainz.coverart = data;
-						if (displaying)
-							getCoverHTML(albummeta.musicbrainz.coverart, layout);
-
+						getCoverHTML(albummeta.musicbrainz.coverart, albummeta.musicbrainz.layout);
 					},
 
 					doBrowserUpdate: function() {
-						if (displaying && albummeta.musicbrainz_id && albummeta.musicbrainz[albummeta.musicbrainz_id]) {
-							var d = albummeta.musicbrainz[albummeta.musicbrainz_id];
-							debug.debug(medebug,parent.nowplayingindex,"album was asked to display");
-							browser.Update(
-								null,
-								'album',
-								me,
-								parent.nowplayingindex,
-								{name: d.error ? albummeta.name : d.title,
-								 link: d.error ? null : 'http://musicbrainz.org/release/'+d.id,
-								 data: (parent.playlistinfo.type == 'stream') ? null : make_album_html(d)}
-							);
-						}
+						getAlbumHTML(self.album, albummeta, albummeta.musicbrainz.layout, albummeta.musicbrainz[albummeta.musicbrainz_id]);
 					}
 				}
 
@@ -837,8 +830,7 @@ var info_musicbrainz = function() {
 				return {
 
 					populate: async function() {
-						if (trackmeta.musicbrainz === undefined)
-							trackmeta.musicbrainz = {};
+						trackmeta.musicbrainz.layout = new info_sidebar_layout({title: trackmeta.name, type: 'track', source: me});
 
 						while (trackmeta.musicbrainz_id == "") {
 							await new Promise(t => setTimeout(t, 500));
@@ -890,26 +882,7 @@ var info_musicbrainz = function() {
 					},
 
 					doBrowserUpdate: function() {
-						if (displaying && trackmeta.musicbrainz.track !== undefined &&
-								(trackmeta.musicbrainz.track.error !== undefined ||
-								trackmeta.musicbrainz.track.recording !== undefined ||
-								trackmeta.musicbrainz.track.work !== undefined)) {
-							debug.debug(medebug,parent.nowplayingindex,"track was asked to display");
-							var link = null;
-							if (trackmeta.musicbrainz.track.recording) {
-								link = 'http://musicbrainz.org/recording/'+trackmeta.musicbrainz.track.recording.id;
-							}
-							browser.Update(
-								null,
-								'track',
-								me,
-								parent.nowplayingindex,
-								{	name: trackmeta.name,
-									link: link,
-									data: getTrackHTML(trackmeta.musicbrainz.track)
-								}
-							);
-						}
+						getTrackHTML(trackmeta.musicbrainz.layout, trackmeta.musicbrainz.track);
 					}
 				}
 			}();

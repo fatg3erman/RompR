@@ -12,7 +12,6 @@ var info_lyrics = function() {
 			debug.debug("LYRICS PLUGIN", "Creating data collection");
 
 			var self = this;
-			var displaying = false;
 
 			function formatLyrics(data) {
 				debug.trace("LYRICS PLUGIN","Formatting Lyrics");
@@ -27,50 +26,45 @@ var info_lyrics = function() {
 				return (albummeta.artist && albummeta.artist != "") ? albummeta.artist : parent.playlistinfo.trackartist;
 			}
 
-			this.displayData = function() {
-				displaying = true;
-				browser.Update(null, 'album', me, parent.nowplayingindex, { name: "",
-										link: "",
-										data: null
-										}
-				);
-				browser.Update(null, 'artist', me, parent.nowplayingindex, { name: "",
-										link: "",
-										data: null
-										}
-				);
-				self.doBrowserUpdate();
-			}
-
-			this.stopDisplaying = function() {
-				displaying = false;
-			}
-
 			this.startAfterSpecial = function() {
 
 			}
 
 			this.tryReadingTags = function() {
 				if (prefs.music_directory_albumart == "") {
-					trackmeta.lyrics = '<h3 align=center>'+language.gettext("lyrics_nonefound")+'</h3><p>'+language.gettext("lyrics_nopath")+'</p>';
+					trackmeta.lyrics.lyrics = '<h3 align=center>'+language.gettext("lyrics_nonefound")+'</h3><p>'+language.gettext("lyrics_nopath")+'</p>';
 					self.doBrowserUpdate();
 				} else {
 					$.post("browser/backends/getLyrics.php", {file: player.status.file, artist: getSearchArtist(), song: trackmeta.name})
 						.done(function(data) {
 							debug.debug("LYRICS",data);
-							trackmeta.lyrics = data;
+							trackmeta.lyrics.lyrics = data;
 							self.doBrowserUpdate();
 						});
 				}
 			}
 
-			this.populate = function() {
-				if (trackmeta.lyrics === undefined) {
-					debug.debug("LYRICS PLUGIN",parent.nowplayingindex,"No lyrics yet, trying again in 1 second");
-					setTimeout(self.populate, 1000);
-					return;
+			this.populate = async function() {
+
+				parent.updateData({
+					lyrics: { layout: new info_layout_empty() }
+				}, albummeta);
+
+				parent.updateData({
+					lyrics: { layout: new info_layout_empty() }
+				}, artistmeta);
+
+				parent.updateData({
+					lyrics: {  }
+				}, trackmeta);
+
+				if (typeof trackmeta.lyrics.layout == 'undefined')
+					trackmeta.lyrics.layout = new info_html_layout({title: trackmeta.name, type: 'track', source: me});
+
+				while (typeof trackmeta.lyrics.lyrics === 'undefined') {
+					await new Promise(t => setTimeout(t, 500));
 				}
-				if (trackmeta.lyrics === null) {
+				if (trackmeta.lyrics.lyrics === null) {
 					self.tryReadingTags();
 				} else {
 					self.doBrowserUpdate();
@@ -79,13 +73,7 @@ var info_lyrics = function() {
 			}
 
 			this.doBrowserUpdate = function() {
-				if (displaying && trackmeta.lyrics !== undefined && trackmeta.lyrics !== null) {
-					browser.Update(null, 'track', me, parent.nowplayingindex, { name: trackmeta.name,
-											link: "",
-											data: formatLyrics(trackmeta.lyrics)
-											}
-					);
-				}
+				trackmeta.lyrics.layout.finish(null, null, formatLyrics(trackmeta.lyrics.lyrics));
 			}
 		}
 

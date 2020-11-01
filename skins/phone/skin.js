@@ -4,6 +4,11 @@ jQuery.fn.menuReveal = async function() {
 		await self.slideToggle('fast').promise();
 	} else {
 		self.findParentScroller().saveScrollPos();
+		var tt = self.find('input.albumtime').val();
+		if (tt) {
+			var d = $('<div>', {class: 'tgtl podcastitem', style: 'padding-top: 4px'}).html(tt).appendTo(self);
+			$('<i>', {class: 'icon-blank timerspacer'}).appendTo(d);
+		}
 		await self.show(0).promise();
 	}
 	return this;
@@ -425,7 +430,7 @@ var layoutProcessor = function() {
 
 		addInfoSource: function(name, obj) {
 			$("#chooserbuttons").append($('<i>', {
-				onclick: "browser.switchsource('"+name+"')",
+				onclick: "browser.switch_source('"+name+"')",
 				class: obj.icon+' topimg expand',
 				id: "button_source"+name
 			}));

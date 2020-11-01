@@ -98,6 +98,9 @@ class playlistCollection {
 			array_push($info['metadata']['artists'], array( "name" => "", "musicbrainz_id" => ""));
 		}
 
+		$info['metadata']['track']['backendid'] = (int) $filedata['Id'];
+		$info['metadata']['album']['backendid'] = (int) $filedata['Id'];
+
 		return $info;
 	}
 
@@ -107,7 +110,7 @@ class playlistCollection {
 		}
 		foreach ($info['Composer'] as $comp) {
 			if ($this->artist_not_found_yet($comp)) {
-				array_push($info['metadata']['artists'], array( "name" => trim($comp), "musicbrainz_id" => "", "type" => "composer", "ignore" => "false"));
+				array_push($info['metadata']['artists'], array( "name" => trim($comp), "musicbrainz_id" => "", "type" => "composer", "ignore" => "false", 'backendid' => $info['Id']));
 			}
 		}
 	}
@@ -131,7 +134,7 @@ class playlistCollection {
 			}
 
 			if ($toremove !== null || $this->artist_not_found_yet($comp)) {
-				array_push($info['metadata']['artists'], array( "name" => trim($comp), "musicbrainz_id" => "", "type" => "performer", "ignore" => "false"));
+				array_push($info['metadata']['artists'], array( "name" => trim($comp), "musicbrainz_id" => "", "type" => "performer", "ignore" => "false", 'backendid' => $info['Id']));
 			}
 		}
 	}
@@ -145,7 +148,7 @@ class playlistCollection {
 			$aartist = $info['albumartist'];
 		}
 		if ($aartist !== null && $this->artist_not_found_yet($aartist)) {
-			array_push($info['metadata']['artists'], array( "name" => trim($aartist), "musicbrainz_id" => trim($info['MUSICBRAINZ_ALBUMARTISTID']), "type" => "albumartist", "ignore" => "false"));
+			array_push($info['metadata']['artists'], array( "name" => trim($aartist), "musicbrainz_id" => trim($info['MUSICBRAINZ_ALBUMARTISTID']), "type" => "albumartist", "ignore" => "false", 'backendid' => $info['Id']));
 		}
 	}
 
@@ -175,7 +178,7 @@ class playlistCollection {
 		foreach ($artists as $i => $comp) {
 			if ($comp != "") {
 				if ($this->artist_not_found_yet($comp)) {
-					array_push($info['metadata']['artists'], array( "name" => trim($comp), "musicbrainz_id" => trim($mbids[$i]), "type" => "artist", "ignore" => "false"));
+					array_push($info['metadata']['artists'], array( "name" => trim($comp), "musicbrainz_id" => trim($mbids[$i]), "type" => "artist", "ignore" => "false", 'backendid' => $info['Id']));
 					$a[] = $comp;
 				}
 			}

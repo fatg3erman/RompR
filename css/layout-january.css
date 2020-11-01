@@ -352,6 +352,11 @@ i.combo-button {
 	cursor:pointer;
 }
 
+.clickexpandbox {
+	margin-right: 1em !important;
+	margin-bottom: 0.5em !important;
+}
+
 .playable {
 	cursor: pointer;
 }
@@ -447,6 +452,7 @@ i.combo-button {
 {
 	content:"";
 	width: 10em;
+	max-width: 100%;
 	display:block;
 	overflow:hidden;
 }
@@ -454,7 +460,8 @@ i.combo-button {
 .minwidthed3:before
 {
 	content:"";
-	width: 20em;
+	width: 12em;
+	max-width: 100%;
 	display:block;
 	overflow:hidden;
 }
@@ -550,6 +557,16 @@ i.combo-button {
 #similarartists {
 	width:100%;
 	margin-top:8px;
+}
+
+#artistinformation:empty {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+#albuminformation:empty {
+	margin: 0px !important;
+	padding: 0px !important;
 }
 
 #smlrtst {
@@ -1142,7 +1159,7 @@ i.icon-menu {
 
 table.padded {
 	border-collapse: collapse;
-	margin:auto;
+	/*margin:auto;*/
 }
 
 table.padded tr {
@@ -1215,6 +1232,10 @@ div.info-box-expand .underline:nth-child(1) {
 	max-width: 100%;
 }
 
+.foldup {
+	transition: opacity 0.5s ease;
+}
+
 /*
 =====================================================================
 = Info Panel - File
@@ -1276,7 +1297,7 @@ a.infoclick.clickreleasepage
 =====================================================================
 */
 
-#scprog {
+.scprog {
 	position:absolute;
 	width:2px;
 	top:0px;
@@ -1289,7 +1310,7 @@ a.infoclick.clickreleasepage
 	transition-timing-function: linear;
 }
 
-#gosblin {
+.gosblin {
 	width:100%;
 	height:auto;
 }
@@ -1338,10 +1359,6 @@ a.infoclick.clickreleasepage
 	flex-shrink: 1;
 	flex-basis: auto;
 	max-width:400px;
-}
-
-.cnotshrinker {
-	max-width:100%;
 }
 
 /*

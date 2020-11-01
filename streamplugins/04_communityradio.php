@@ -416,15 +416,17 @@ class commradioplugin {
 	}
 
 	private function get_server() {
-		$servers = dns_get_record('all.api.radio-browser.info');
-		shuffle($servers);
-		foreach ($servers as $server) {
-			if (array_key_exists('ip', $server)) {
-				$name = gethostbyaddr($server['ip']);
-				logger::log('COMMRADIO', 'Using server',$name);
-				return $name;
-			}
-		}
+		// $servers = @dns_get_record('all.api.radio-browser.info');
+		// if (is_array($servers)) {
+		// 	shuffle($servers);
+		// 	foreach ($servers as $server) {
+		// 		if (array_key_exists('ip', $server)) {
+		// 			$name = gethostbyaddr($server['ip']);
+		// 			logger::log('COMMRADIO', 'Using server',$name);
+		// 			return $name;
+		// 		}
+		// 	}
+		// }
 		logger::warn('COMMRADIO', 'Using fallback server!');
 		return 'de1.api.radio-browser.info';
 	}

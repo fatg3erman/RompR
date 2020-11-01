@@ -711,7 +711,11 @@ $languages['en'] = array (
 	"label_youtubedl" =>					"Download Audio",
 	"error_playergone" =>					"Mopidy has stopped resonding!",
 	"label_mopidy_http" =>					"Mopidy HTTP Interface Port",
-	"info_mopidy_http" =>					"Optional, provides extra functionality with Mopidy"
+	"info_mopidy_http" =>					"Optional, provides extra functionality with Mopidy",
+	"label_collinfo" =>						"Collection Information",
+	"label_incoll" =>						"This track is in the Music Collection",
+	"label_notincoll" =>					"This track is not in the Music Collection. Click to add it"
+
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

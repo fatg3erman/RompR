@@ -81,7 +81,7 @@ var lfmImporter = function() {
 				row.children('td[name="tick"]').html('<i class="icon-block collectionicon"></i>');
 				doNext();
 			}
-	} else {
+		} else {
 			debug.warn('LFMIMPORTER', 'Result has no data - was there an error? Pausing before continuing');
 			clearTimeout(errorTimer);
 			errorTimer = setTimeout(doNext, 10000);

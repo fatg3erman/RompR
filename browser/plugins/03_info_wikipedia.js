@@ -72,13 +72,25 @@ var info_wikipedia = function() {
 
 	function formatLink(xml) {
 		var xml_node = $('api',xml);
-		return 'http://'+xml_node.find('rompr > domain').text()+'.wikipedia.org/wiki/'+xml_node.find('rompr > page').text();
+		var domain = xml_node.find('rompr > domain').text();
+		var page = xml_node.find('rompr > page').text();
+		if (domain == 'null' || page== 'null')
+			return null;
+
+		return 'http://'+domain+'.wikipedia.org/wiki/'+page;
 	}
 
 	function formatPage(xml) {
 		var xml_node = $('api',xml);
 		var page = xml_node.find('rompr > page').text();
+		if (page == 'null')
+			return null;
+
 		return page.replace(/_/g, ' ');
+	}
+
+	function formatNoResponse() {
+		return '<h3 align="center">'+language.gettext("wiki_nothing")+'</h3>';
 	}
 
 	return {
@@ -91,25 +103,29 @@ var info_wikipedia = function() {
 			debug.debug("WIKI PLUGIN", "Creating data collection");
 
 			var self = this;
-			var displaying = false;
 
 			this.populate = function() {
-				self.artist.populate();
-				self.album.populate();
-				self.track.populate();
-			}
+				parent.updateData({
+					wikipedia: {}
+				}, artistmeta);
 
-			this.displayData = function() {
-				displaying = true;
-				self.artist.doBrowserUpdate();
-				self.album.doBrowserUpdate();
-				self.track.doBrowserUpdate();
-			}
+				parent.updateData({
+					wikipedia: {}
+				}, albummeta);
 
-			this.stopDisplaying = function(waitingon) {
-				displaying = false;
-			}
+				parent.updateData({
+					wikipedia: {}
+				}, trackmeta);
 
+				if (typeof artistmeta.wikipedia.layout == 'undefined')
+					self.artist.populate();
+
+				if (typeof albummeta.wikipedia.layout == 'undefined')
+					self.album.populate();
+
+				if (typeof trackmeta.wikipedia.layout == 'undefined')
+					self.track.populate();
+			}
 
 			this.handleClick = function(source, element, event) {
 				debug.debug("WIKI PLUGIN",parent.nowplayingindex,source,"is handling a click event");
@@ -136,148 +152,96 @@ var info_wikipedia = function() {
 
 			this.artist = function() {
 
-				var retries = 10;
+				var following_layout;
 
 				return {
 
-					populate: function() {
-						if (artistmeta.wikipedia === undefined) {
-							artistmeta.wikipedia = {};
+					populate: async function() {
+						artistmeta.wikipedia.layout = new info_html_layout({title: artistmeta.name, type: 'artist', source: me});
+						while (typeof artistmeta.wikipedia.artistlink == 'undefined') {
+							await new Promise(t => setTimeout(t, 500));
 						}
-						if (artistmeta.wikipedia.artistinfo === undefined) {
-							if (artistmeta.wikipedia.artistlink === undefined) {
-								debug.debug("WIKI PLUGIN",parent.nowplayingindex,"Artist asked to populate but no link yet");
-								retries--;
-								if (retries == 0) {
-									debug.info("WIKI PLUGIN",parent.nowplayingindex,"Artist giving up waiting for poxy musicbrainz");
-									artistmeta.wikipedia.artistlink = null;
-									setTimeout(self.artist.populate, 200);
-								} else {
-									setTimeout(self.artist.populate, 2000);
-								}
-								return;
-							}
-							if (artistmeta.wikipedia.artistlink === null) {
-								debug.debug("WIKI PLUGIN",parent.nowplayingindex,"Artist asked to populate but no link could be found. Trying a search");
-								wikipedia.search({	artist: artistmeta.name,
-													disambiguation: artistmeta.disambiguation || ""
-												},
-												self.artist.wikiResponseHandler,
-												self.artist.wikiResponseHandler);
-								return;
-							}
-							debug.debug("WIKI PLUGIN",parent.nowplayingindex,"artist is populating",artistmeta.wikipedia.artistlink);
-							wikipedia.getFullUri({	uri: artistmeta.wikipedia.artistlink,
-													term: artistmeta.name
-												},
-												self.artist.wikiResponseHandler,
-												self.artist.wikiResponseHandler);
-						} else {
-							debug.trace("WIKI PLUGIN",parent.nowplayingindex,"artist is already populated",artistmeta.wikipedia.artistlink);
+						if (artistmeta.wikipedia.artistlink === null) {
+							debug.debug("WIKI PLUGIN",parent.nowplayingindex,"Artist asked to populate but no link could be found. Trying a search");
+							wikipedia.search({	artist: artistmeta.name,
+												disambiguation: artistmeta.disambiguation || ""
+											},
+											self.artist.wikiResponseHandler,
+											self.artist.wikiResponseHandler);
+							return;
 						}
+						debug.debug("WIKI PLUGIN",parent.nowplayingindex,"artist is populating",artistmeta.wikipedia.artistlink);
+						wikipedia.getFullUri({	uri: artistmeta.wikipedia.artistlink,
+												term: artistmeta.name
+											},
+											self.artist.wikiResponseHandler,
+											self.artist.wikiResponseHandler);
 					},
 
 					wikiResponseHandler: function(data) {
 						debug.debug("WIKI PLUGIN",parent.nowplayingindex,"got artist data for",artistmeta.name,data);
 						if (data) {
-							artistmeta.wikipedia.artistinfo = formatWiki(data);
-							artistmeta.wikipedia.artistlink = formatLink(data);
+							artistmeta.wikipedia.layout.finish(formatLink(data), formatPage(data), formatWiki(data));
 						} else {
-							artistmeta.wikipedia.artistinfo = '<h3 align="center">'+language.gettext("wiki_nothing")+'</h3>';
-							artistmeta.wikipedia.artistlink = null;
-						}
-
-						self.artist.doBrowserUpdate();
-					},
-
-					doBrowserUpdate: function() {
-						if (displaying && artistmeta.wikipedia.artistinfo !== undefined) {
-							debug.debug("WIKI PLUGIN",parent.nowplayingindex,"artist was asked to display");
-							browser.Update(
-								null,
-								'artist',
-								me,
-								parent.nowplayingindex,
-								{ name: artistmeta.name,
-								  link: artistmeta.wikipedia.artistlink,
-								  data: artistmeta.wikipedia.artistinfo
-								}
-							);
+							artistmeta.wikipedia.layout.finish(null, artistmeta.name, formatNoResponse());
 						}
 					},
 
 					followLink: function(link) {
+						following_layout = new info_html_layout({title: 'Wikipedia...', type: 'artist', source: me});
+						nowplaying.special_update(me, 'artist', following_layout);
 						wikipedia.getWiki(link, self.artist.gotWikiLink, self.wikiGotFailed);
 					},
 
-					gotWikiLink: function(data) {
-						browser.speciaUpdate(
-							me,
-							'artist',
-							{ name: formatPage(data),
-							  link: formatLink(data),
-							  data: formatWiki(data)
-							}
-						);
+					gotWikiLink: async function(data) {
+						following_layout.finish(formatLink(data), formatPage(data), formatWiki(data));
+						// The browser. the FUCKING browser is adding inline css to all the <a> tags.
+						// Chrome. What the actrual fuck?
+						await new Promise(t => setTimeout(t, 1000));
+						$('#artistinformation').find('a[style*=cursor]').removeInlineCss('cursor');
 					}
 				}
 			}();
 
 			this.album = function() {
 
-				var retries = 12;
+				var following_layout;
 
 				return {
 
-					populate: function() {
-						if (albummeta.wikipedia === undefined) {
-							albummeta.wikipedia = {};
+					populate: async function() {
+						if (typeof albummeta.wikipedia.layout == 'undefined')
+							albummeta.wikipedia.layout = new info_html_layout({title: albummeta.name, type: 'album', source: me});
+
+						while (typeof albummeta.wikipedia.albumlink == 'undefined') {
+							await new Promise(t => setTimeout(t, 500));
 						}
-						if (albummeta.wikipedia.albumdata === undefined) {
-							if (albummeta.wikipedia.albumlink === undefined) {
-								debug.debug("WIKI PLUGIN",parent.nowplayingindex,"Album asked to populate but no link yet");
-								retries--;
-								if (retries == 0) {
-									debug.info("WIKI PLUGIN",parent.nowplayingindex,"Album giving up waiting for poxy musicbrainz");
-									albummeta.wikipedia.albumlink = null;
-									setTimeout(self.album.populate, 200);
-								} else {
-									setTimeout(self.album.populate, 2000);
-								}
-								return;
+						if (albummeta.wikipedia.albumlink === null) {
+							if (albummeta.musicbrainz.album_releasegroupid !== null) {
+								debug.debug("WIKI PLUGIN",parent.nowplayingindex,"No album link found  ... trying the album release group");
+								musicbrainz.releasegroup.getInfo(albummeta.musicbrainz.album_releasegroupid, '', self.album.mbRgHandler, self.album.mbRgHandler);
+							} else {
+								debug.debug("WIKI PLUGIN",parent.nowplayingindex,"No album link or release group link ... trying a search");
+								wikipedia.search({album: albummeta.name, albumartist: getSearchArtist()}, self.album.wikiResponseHandler, self.album.wikiResponseHandler);
 							}
-							if (albummeta.wikipedia.albumlink === null) {
-								if (albummeta.musicbrainz.album_releasegroupid !== null) {
-									debug.debug("WIKI PLUGIN",parent.nowplayingindex,"No album link found  ... trying the album release group");
-									musicbrainz.releasegroup.getInfo(albummeta.musicbrainz.album_releasegroupid, '', self.album.mbRgHandler, self.album.mbRgHandler);
-								} else {
-									debug.debug("WIKI PLUGIN",parent.nowplayingindex,"No album link or release group link ... trying a search");
-									wikipedia.search({album: albummeta.name, albumartist: getSearchArtist()}, self.album.wikiResponseHandler, self.album.wikiResponseHandler);
-								}
-								return;
-							}
-							debug.debug("WIKI PLUGIN",parent.nowplayingindex,"album is populating",albummeta.wikipedia.albumlink);
-							wikipedia.getFullUri({	uri: albummeta.wikipedia.albumlink,
-													term: albummeta.name
-												  },
-												  self.album.wikiResponseHandler,
-												  self.album.wikiResponseHandler
-												);
-						} else {
-							debug.trace("WIKI PLUGIN",parent.nowplayingindex,"album is already populated",albummeta.wikipedia.albumlink);
+							return;
 						}
+						debug.debug("WIKI PLUGIN",parent.nowplayingindex,"album is populating",albummeta.wikipedia.albumlink);
+						wikipedia.getFullUri({	uri: albummeta.wikipedia.albumlink,
+												term: albummeta.name
+											  },
+											  self.album.wikiResponseHandler,
+											  self.album.wikiResponseHandler
+											);
 					},
 
 					wikiResponseHandler: function(data) {
-						debug.debug("WIKI PLUGIN",parent.nowplayingindex,"got album data for",albummeta.name);
+						debug.debug("WIKI PLUGIN",parent.nowplayingindex,"got album data for",albummeta.name,data);
 						if (data) {
-							albummeta.wikipedia.albumdata = formatWiki(data);
-							albummeta.wikipedia.albumlink = formatLink(data);
+							albummeta.wikipedia.layout.finish(formatLink(data), formatPage(data), formatWiki(data));
 						} else {
-							albummeta.wikipedia.albumdata = '<h3 align="center">'+language.gettext("wiki_nothing")+'</h3>';
-							albummeta.wikipedia.albumlink = null;
+							albummeta.wikipedia.layout.finish(null, albummeta.name, formatNoResponse());
 						}
-						self.album.doBrowserUpdate();
 					},
 
 					mbRgHandler: function(data) {
@@ -299,30 +263,18 @@ var info_wikipedia = function() {
 						self.album.populate();
 					},
 
-					doBrowserUpdate: function() {
-						if (displaying && albummeta.wikipedia.albumdata !== undefined) {
-							debug.debug("WIKI PLUGIN",parent.nowplayingindex,"album was asked to display");
-							browser.Update(
-								null,
-								'album',
-								me,
-								parent.nowplayingindex,
-								{ name: albummeta.name,
-								  link: albummeta.wikipedia.albumlink,
-								  data: albummeta.wikipedia.albumdata
-								}
-							);
-						}
-					},
-
 					followLink: function(link) {
+						following_layout = new info_html_layout({title: 'Wikipedia...', type: 'album', source: me});
+						nowplaying.special_update(me, 'album', following_layout);
 						wikipedia.getWiki(link, self.album.gotWikiLink, self.wikiGotFailed);
 					},
 
-					gotWikiLink: function(data) {
-						browser.speciaUpdate(me, 'album', { name: formatPage(data),
-															link: formatLink(data),
-															data: formatWiki(data)});
+					gotWikiLink: async function(data) {
+						following_layout.finish(formatLink(data), formatPage(data), formatWiki(data));
+						// The browser. the FUCKING browser is adding inline css to all the <a> tags.
+						// Chrome. What the actrual fuck?
+						await new Promise(t => setTimeout(t, 1000));
+						$('#albuminformation').find('a[style*=cursor]').removeInlineCss('cursor');
 					}
 
 				}
@@ -330,84 +282,50 @@ var info_wikipedia = function() {
 
 			this.track = function() {
 
-				var retries = 15;
+				var following_layout;
 
 				return {
 
-					populate: function() {
-						if (trackmeta.wikipedia === undefined) {
-							trackmeta.wikipedia = {};
+					populate: async function() {
+						trackmeta.wikipedia.layout = new info_html_layout({title: trackmeta.name, type: 'track', source: me});
+						while (typeof trackmeta.wikipedia.tracklink == 'undefined') {
+							await new Promise(t => setTimeout(t, 500));
 						}
-						if (trackmeta.wikipedia.trackdata === undefined) {
-							if (trackmeta.wikipedia.tracklink === undefined) {
-								debug.debug("WIKI PLUGIN",parent.nowplayingindex,"track asked to populate but no link yet");
-								retries--;
-								if (retries == 0) {
-									debug.info("WIKI PLUGIN",parent.nowplayingindex,"Track giving up waiting for poxy musicbrainz");
-									trackmeta.wikipedia.tracklink = null;
-									setTimeout(self.track.populate, 200);
-								} else {
-									setTimeout(self.track.populate, 2000);
-								}
-								return;
-							}
-							if (trackmeta.wikipedia.tracklink === null) {
-								debug.debug("WIKI PLUGIN",parent.nowplayingindex,"track asked to populate but no link could be found. Trying a search");
-								wikipedia.search({track: trackmeta.name, trackartist: parent.playlistinfo.trackartist}, self.track.wikiResponseHandler, self.track.wikiResponseHandler);
-								return;
-							}
-							debug.debug("WIKI PLUGIN",parent.nowplayingindex,"track is populating",trackmeta.wikipedia.tracklink);
-							wikipedia.getFullUri({	uri: trackmeta.wikipedia.tracklink,
-													term: trackmeta.name
-												  },
-												  self.track.wikiResponseHandler,
-												  self.track.wikiResponseHandler
-												);
-						} else {
-							debug.trace("WIKI PLUGIN",parent.nowplayingindex,"track is already populated",trackmeta.wikipedia.tracklink);
+						if (trackmeta.wikipedia.tracklink === null) {
+							debug.debug("WIKI PLUGIN",parent.nowplayingindex,"track asked to populate but no link could be found. Trying a search");
+							wikipedia.search({track: trackmeta.name, trackartist: parent.playlistinfo.trackartist}, self.track.wikiResponseHandler, self.track.wikiResponseHandler);
+							return;
 						}
+						debug.debug("WIKI PLUGIN",parent.nowplayingindex,"track is populating",trackmeta.wikipedia.tracklink);
+						wikipedia.getFullUri({	uri: trackmeta.wikipedia.tracklink,
+												term: trackmeta.name
+											  },
+											  self.track.wikiResponseHandler,
+											  self.track.wikiResponseHandler
+											);
 					},
 
 					wikiResponseHandler: function(data) {
 						debug.debug("WIKI PLUGIN",parent.nowplayingindex,"got track data for",trackmeta.name);
 						if (data) {
-							trackmeta.wikipedia.trackdata = formatWiki(data);
-							trackmeta.wikipedia.tracklink = formatLink(data);
+							trackmeta.wikipedia.layout.finish(formatLink(data), formatPage(data), formatWiki(data));
 						} else {
-							trackmeta.wikipedia.trackdata = '<h3 align="center">'+language.gettext("wiki_nothing")+'</h3>';
-							trackmeta.wikipedia.tracklink = null;
-						}
-
-						self.track.doBrowserUpdate();
-					},
-
-					doBrowserUpdate: function() {
-						if (displaying && trackmeta.wikipedia.trackdata !== undefined) {
-							debug.debug("WIKI PLUGIN",parent.nowplayingindex,"track was asked to display");
-							browser.Update(
-								null,
-								'track',
-								me,
-								parent.nowplayingindex,
-								{ name: trackmeta.name,
-								  link: trackmeta.wikipedia.tracklink,
-								  data: trackmeta.wikipedia.trackdata
-								}
-							);
+							trackmeta.wikipedia.layout.finish(null, trackmeta.name, formatNoResponse());
 						}
 					},
 
 					followLink: function(link) {
+						following_layout = new info_html_layout({title: 'Wikipedia...', type: 'track', source: me});
+						nowplaying.special_update(me, 'track', following_layout);
 						wikipedia.getWiki(link, self.track.gotWikiLink, self.wikiGotFailed);
 					},
 
-					gotWikiLink: function(data) {
-						browser.speciaUpdate( me, 'track',
-							{ name: formatPage(data),
-							  link: formatLink(data),
-							  data: formatWiki(data)
-							}
-						);
+					gotWikiLink: async function(data) {
+						following_layout.finish(formatLink(data), formatPage(data), formatWiki(data));
+						// The browser. the FUCKING browser is adding inline css to all the <a> tags.
+						// Chrome. What the actrual fuck?
+						await new Promise(t => setTimeout(t, 1000));
+						$('#trackinformation').find('a[style*=cursor]').removeInlineCss('cursor');
 					}
 
 				}

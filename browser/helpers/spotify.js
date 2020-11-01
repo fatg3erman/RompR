@@ -6,6 +6,8 @@ var spotify = function() {
 	var rate = DEFAULT_RATE;
 	var backofftimer;
 	var current_req;
+	var collectedobj = null;
+	var pages = 0;
 
 	async function do_Request() {
 		var data, jqxhr, throttle;
@@ -29,8 +31,15 @@ var spotify = function() {
 		}
 	}
 
+	function objFirst(obj) {
+		for (var a in obj) {
+			return a;
+		}
+	}
+
 	function handle_response(req, data, jqxhr) {
 		var c = jqxhr.getResponseHeader('Pragma');
+		var d;
 		throttle = (c == "From Cache") ? 50 : rate;
 		debug.debug("SPOTIFY","Request success",c,req,data,jqxhr);
 		if (data === null) {
@@ -40,7 +49,47 @@ var spotify = function() {
 		if (req.reqid != '') {
 			data.reqid = req.reqid;
 		}
-		req.success(data);
+		debug.log('SPOTIFY', data);
+		var root = objFirst(data);
+		if (data[root].next) {
+			debug.debug("SPOTIFY","Got a response with a next page!");
+			if (data[root].previous == null) {
+				collectedobj = data;
+				pages = 0;
+			} else {
+				collectedobj[root].items = collectedobj[root].items.concat(data[root].items);
+				pages++;
+			}
+			if (pages > 10) {
+				req.success(collectedobj);
+			} else {
+				queue.unshift({flag: false, reqid: '', url: data[root].next, success: req.success, fail: req.fail});
+			}
+		} else if (data[root].previous) {
+			collectedobj[root].items = collectedobj[root].items.concat(data[root].items);
+			debug.trace("SPOTIFY","Returning concatenated multi-page result");
+			req.success(collectedobj);
+		} else if (data.next) {
+			debug.debug("SPOTIFY","Got a response with a next page!");
+			if (data.previous == null) {
+				collectedobj = data;
+				pages = 0;
+			} else {
+				collectedobj.items = collectedobj.items.concat(data.items);
+				pages++;
+			}
+			if (pages > 10) {
+				req.success(collectedobj);
+			} else {
+				queue.unshift({flag: false, reqid: '', url: data.next, success: req.success, fail: req.fail});
+			}
+		} else if (data.previous) {
+			collectedobj.items = collectedobj.items.concat(data.items);
+			debug.trace("SPOTIFY","Returning concatenated multi-page result");
+			req.success(collectedobj);
+		} else {
+			req.success(data);
+		}
 		return throttle;
 	}
 

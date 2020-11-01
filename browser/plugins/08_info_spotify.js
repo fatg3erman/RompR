@@ -11,11 +11,13 @@ var info_spotify = function() {
 		);
 	}
 
-	function getTrackHTML(trackobj, trackmeta, layout, data) {
+	function getTrackHTML(trackobj, trackmeta, layout) {
 
+		var data = trackmeta.spotify.track;
 		debug.debug(medebug,"Making Track Info From",data);
 		if (data.error) {
-			layout.html.empty().append('<h3 align="center">'+data.error+'</h3>');
+			layout.display_error(data.error);
+			layout.finish(null, null);
 			return;
 		}
 
@@ -36,6 +38,8 @@ var info_spotify = function() {
 			spotify.recommendations.getRecommendations(params, trackobj.gotRecommendations, trackobj.spotifyRecError);
 		}
 
+		layout.finish(data.external_urls.spotify, data.name);
+
 	}
 
 	function doRecommendations(layout, trackmeta) {
@@ -43,141 +47,110 @@ var info_spotify = function() {
 		layout.add_playable_images(trackmeta.spotify.recommendations);
 	}
 
-	function getAlbumHTML(data) {
-
-		debug.debug(medebug,"Making Album Info From",data);
-		if (data.error) {
-			return '<h3 align="center">'+data.error+'</h3>';
-		}
-		var html = '<div class="containerbox standout info-detail-layout">';
-		html += '<div class="info-box-expand info-box-list info-border-right">';
-		html += '<ul>';
-		html += '<li>'+language.gettext("label_pop")+': '+data.popularity+'</li>';
-		html += '<li>'+language.gettext("lastfm_releasedate")+': '+data.release_date+'</li>';
-
-		if (player.canPlay('spotify')) {
-
-			html += '<li><div class="containerbox menuitem infoclick clickaddtolistenlater" style="padding-left:0px">'+
-				'<div class="fixed alignmid">'+
-				'<i class="icon-headphones smallicon"></i></div>'+
-				'<div class="expand">'+language.gettext("label_addtolistenlater")+'</div>'+
-				'</div></li>';
-
-			html += '<li><div class="containerbox menuitem infoclick clickaddtocollection" style="padding-left:0px">'+
-				'<div class="fixed alignmid">'+
-				'<i class="icon-music smallicon"></i></div>'+
-				'<div class="expand">'+language.gettext("label_addtocollection")+'</div>'+
-				'</div></li>';
-
-		}
-
-		html += '</ul>';
-		html += '</div>';
-
-		html += '<div class="stumpy selecotron widermiddle">';
-		html += spotifyTrackListing(data)+'</div>';
-		html += '<div class="cleft narrowright">';
-		if (data.images && data.images[0]) {
-			html += '<img class="cnotshrinker infoclick clickzoomimage" src="getRemoteImage.php?url='+rawurlencode(data.images[0].url)+'" />';
-		}
-		html += '</div>';
-		html += '</div>';
-		return html;
+	function add_coll_button(list, clarss, icon, label) {
+		let holder = $('<div>', {class: 'containerbox menuitem infoclick '+clarss}).appendTo(list);
+		holder.append($('<div>', {class: 'fixed alignmid'}).append($('<i>', {class: 'smallicon '+icon})));
+		holder.append($('<div>', {class: 'expand'}).html(label));
 	}
 
-	function getArtistHTML(data, parent, artistmeta) {
+	function getAlbumHTML(albumobj, albummeta, layout) {
+
+		var data = albummeta.spotify.album;
+		debug.debug(medebug,"Making Album Info From",data);
+		if (data.error) {
+			layout.display_error(data.error);
+			layout.finish(null, null);
+			return;
+		}
+		let u = layout.add_sidebar_list(language.gettext("label_pop"), data.popularity);
+		layout.append_to_list(u, language.gettext("lastfm_releasedate"), data.release_date);
+		if (player.canPlay('spotify')) {
+			add_coll_button(u, 'clickaddtolistenlater', 'icon-headphones', language.gettext('label_addtolistenlater'));
+			add_coll_button(u, 'clickaddtocollection', 'icon-music', language.gettext('label_addtocollection'));
+		}
+
+		if (data.images && data.images[0]) {
+			layout.add_main_image(data.images[0].url);
+		}
+
+		layout.add_flow_box_header({wide: true, title: language.gettext("discogs_tracklisting")});
+		var div = $('<div>', {class: 'selecotron'}).appendTo(layout.add_flow_box());
+		div.html(spotifyTrackListing(data));
+
+		layout.finish(data.external_urls.spotify, data.name);
+
+	}
+
+	function getArtistHTML(data, layout, artistmeta, artistobj) {
 
 		debug.debug(medebug,"Making Artist Info From",data);
 		if (data.error) {
-			return '<h3 align="center">'+data.error+'</h3>';
+			layout.display_error(data.error);
+			layout.finish(null, null);
+			return;
 		}
 
-		var h = "";
+		layout.make_possibility_chooser(artistmeta.spotify.possibilities, artistmeta.spotify.currentposs, artistmeta.name);
 
-		if (artistmeta.spotify.possibilities && artistmeta.spotify.possibilities.length > 1) {
-			h += '<div class="spotchoices clearfix">'+
-			'<table><tr><td>'+
-			'<div class="bleft tleft spotthing"><span class="spotpossname">All possibilities for "'+
-				artistmeta.spotify.artist.name+'"</span></div>'+
-			'</td><td>';
-			for (var i in artistmeta.spotify.possibilities) {
-				h += '<div class="tleft infoclick bleft ';
-				if (i == artistmeta.spotify.currentposs) {
-					h += 'bsel ';
-				}
-				h += 'clickchooseposs" name="'+i+'">';
-				if (artistmeta.spotify.possibilities[i].image) {
-					h += '<img class="spotpossimg title-menu" src="getRemoteImage.php?url='+rawurlencode(artistmeta.spotify.possibilities[i].image)+'" />';
-				} else {
-					h += '<img class="spotpossimg title-menu" src="newimages/artist-icon.png" />';
-				}
-				h += '<span class="spotpossname">'+artistmeta.spotify.possibilities[i].name+'</span>';
-				h += '</div>';
-			}
-			h += '</td></tr></table>';
-			h += '</div>';
-		}
-
-		h += '<div class="holdingcell">';
-		h += '<div class="standout stleft statsbox"><ul><li><b>'+language.gettext("label_pop")+
-			': </b>'+data.popularity+'</li>';
-		h += '<li><div class="containerbox menuitem infoclick clickstartsingleradio" style="padding-left:0px">'+
-			'<div class="fixed alignmid">'+
-			'<i class="icon-wifi smallicon"></i></div>'+
-			'<div class="expand">'+language.gettext("label_singleartistradio")+'</div>'+
-			'</div></li>';
+		let u = layout.add_sidebar_list(language.gettext("label_pop"), data.popularity);
+		add_coll_button(u, 'clickstartsingleradio', 'icon-wifi', language.gettext('label_singleartistradio'));
 		if (player.canPlay('spotify')) {
-			h += '<li>'+
-				'<div class="containerbox menuitem infoclick clickstartradio" style="padding-left:0px">'+
-				'<div class="fixed alignmid">'+
-				'<i class="icon-wifi smallicon"></i></div>'+
-				'<div class="expand">'+language.gettext("lastfm_simar")+'</div>'+
-				'</div></li>';
-			h += '<li>'+
-				'<div class="containerbox menuitem infoclick clickstartartistradio" style="padding-left:0px">'+
-				'<div class="fixed alignmid">'+
-				'<i class="icon-wifi smallicon"></i></div>'+
-				'<div class="expand">'+language.gettext('label_radio_recommend',['Artist'])+'</div>'+
-				'</div></li>';
+			add_coll_button(u, 'clickstartradio', 'icon-wifi', language.gettext('lastfm_simar'));
+			add_coll_button(u, 'clickstartartistradio', 'icon-wifi', language.gettext('label_radio_recommend',['Artist']));
 		}
-		h += '</ul></div>';
+
 		if (data.images && data.images[0]) {
-			h += '<img class="stright standout cshrinker infoclick clickzoomimage" '+
-				'src="getRemoteImage.php?url='+rawurlencode(data.images[0].url)+'" />';
+			layout.add_main_image(data.images[0].url);
 		}
 
-		h += '<div id="artistbio" class="minwidthed"></div>';
-		h += '</div>';
-		h += '<div class="containerbox textunderline" id="bumhole"><div class="fixed infoclick clickshowalbums bleft';
-		if (artistmeta.spotify.showing == "albums") {
-			h += ' bsel';
-		}
-		h += '">'+language.gettext("label_albumsby") + '</div>' +
-			'<div class="fixed infoclick clickshowartists bleft bmid';
-		if (artistmeta.spotify.showing == "artists") {
-			h += ' bsel';
-		}
+		tryForAllMusicBio(layout, artistmeta);
 
-		h += '">'+language.gettext("lastfm_simar")+'</div>' +
-			'<div class="fixed"><i id="hibbert" class="svg-square title-menu invisible">'+
-			'</i></div></div>' +
-			'<div class="fullwidth masonified2" id="artistalbums"></div>';
-		return h;
+		artistobj.spotichooser = layout.add_non_flow_box();
+		let holderbox = $('<div>', {class: 'containerbox textunderline'}).appendTo(artistobj.spotichooser);
+		holderbox.append($('<div>', {class: 'fixed infoclick clickshowalbums bleft'}).html(language.gettext('label_albumsby')));
+		holderbox.append($('<div>', {class: 'fixed infoclick clickshowartists bleft bmid'}).html(language.gettext('lastfm_simar')));
+		artistobj.spinnerthing = $('<i>', {class: 'fixed svg-square title-menu invisible'}).appendTo(holderbox);
+
+		artistobj.spotiwidget = layout.add_non_flow_box();
+		artistobj.spotiwidget.addClass('fullwidth masonified2');
+
+		layout.finish(data.external_urls.spotify, data.name);
 
 	}
 
-	function findDisplayPanel(element) {
+	async function tryForAllMusicBio(layout, artistmeta) {
+		var retries = 20;
+		while (retries > 0 && (typeof artistmeta.allmusic == 'undefined' || typeof artistmeta.allmusic.artistlink === 'undefined')) {
+			await new Promise(t => setTimeout(t, 1000));
+			retries--;
+		}
+		if (typeof artistmeta.allmusic == 'undefined' || typeof artistmeta.allmusic.artistlink === 'undefined') {
+			debug.info(medebug, 'Artist timed out waiting for MusicBrainz');
+		} else if (artistmeta.allmusic.artistlink === null) {
+			debug.info(medebug,"No Allmusic artist bio link found");
+		} else {
+			debug.debug(medebug,"Getting allmusic bio from",artistmeta.allmusic.artistlink);
+			try {
+				var data = await $.post('browser/backends/getambio.php', {url: artistmeta.allmusic.artistlink});
+				layout.add_profile(data);
+			} catch (err) {
+				debug.warn(medebug,"Didn't Get Allmusic Bio",data);
+			}
+		}
+	}
+
+	function findDisplayPanel(element, artistobj) {
 		var c = element;
 		while (!c.hasClass('nobwobbler')) {
 			c = c.parent();
 		}
 		if (c.hasClass('nobalbum')) {
 			debug.trace(medebug,"Opening Album Panel Via Widget");
-			$('#artistalbums').spotifyAlbumThing('handleClick', element);
+			artistobj.spotiwidget.spotifyAlbumThing('handleClick', element);
 			return true;
 		} else if (c.hasClass('nobartist')) {
 			debug.trace(medebug,"Opening Artist Panel Via Widget");
-			$('#artistalbums').spotifyArtistThing('handleClick', element);
+			artistobj.spotiwidget.spotifyArtistThing('handleClick', element);
 			return true;
 		} else {
 			debug.warn(medebug,"Click On Unknown Element!",element);
@@ -196,27 +169,24 @@ var info_spotify = function() {
 			debug.debug(medebug, "Creating data collection");
 
 			var self = this;
-			var displaying = false;
-			if (artistmeta.spotify === undefined) {
-				artistmeta.spotify = {};
-			}
-			if (artistmeta.spotify.showing === undefined) {
-				artistmeta.spotify.showing = "albums";
-			}
 
 			this.populate = function() {
-				self.track.populate();
-			}
+				parent.updateData({
+					spotify: {
+						showing: 'albums'
+					}
+				}, artistmeta);
 
-			this.displayData = function() {
-				displaying = true;
-				self.artist.doBrowserUpdate();
-				self.album.doBrowserUpdate();
-				self.track.doBrowserUpdate();
-			}
+				parent.updateData({
+					spotify: { }
+				}, trackmeta);
 
-			this.stopDisplaying = function() {
-				displaying = false;
+				parent.updateData({
+					spotify: { }
+				}, albummeta);
+
+				if (typeof trackmeta.spotify.layout == 'undefined')
+					self.track.populate();
 			}
 
 			this.handleClick = function(source, element, event) {
@@ -224,29 +194,26 @@ var info_spotify = function() {
 				if (element.hasClass('clickzoomimage')) {
 					imagePopup.create(element, event, element.attr("src"));
 				} else if (element.hasClass('clickspotifywidget')) {
-					findDisplayPanel(element);
+					findDisplayPanel(element, self.artist);
 				} else if (element.hasClass('clickchooseposs')) {
 					var poss = element.attr("name");
 					if (poss != artistmeta.spotify.currentposs) {
-						artistmeta.spotify = {
-							currentposs: poss,
-							possibilities: artistmeta.spotify.possibilities,
-							id: artistmeta.spotify.possibilities[poss].id,
-							showing: "albums"
-						}
-						self.artist.force = true;
+						artistmeta.spotify.currentposs = poss;
+						artistmeta.spotify.id = artistmeta.spotify.possibilities[poss].id;
+						artistmeta.spotify.showing = 'albums';
+						artistmeta.spotify.layout.clear_out();
+						artistmeta.spotify.albums = null;
+						artistmeta.spotify.related = null;
+						// browser.panel_updating(parent.nowplayingindex,'artist', {name: element.find('.spotpossname').html()});
 						self.artist.populate();
 					}
 				} else if (element.hasClass('clickshowalbums') && artistmeta.spotify.showing != "albums") {
-					$('#artistalbums').spotifyArtistThing('destroy');
+					self.artist.spotiwidget.spotifyArtistThing('destroy');
 					artistmeta.spotify.showing = "albums";
-					$("#bumhole .bsel").removeClass("bsel");
-					element.addClass("bsel");
 					getAlbums();
 				} else if (element.hasClass('clickshowartists') && artistmeta.spotify.showing != "artists") {
-					$('#artistalbums').spotifyAlbumThing('destroy');
+					self.artist.spotiwidget.spotifyAlbumThing('destroy');
 					artistmeta.spotify.showing = "artists";
-					$("#bumhole .bsel").removeClass("bsel");
 					element.addClass("bsel");
 					getArtists();
 				} else if (element.hasClass('clickaddtolistenlater')) {
@@ -267,8 +234,10 @@ var info_spotify = function() {
 			}
 
 			function getAlbums() {
-				$("#hibbert").makeSpinner();
-				if (artistmeta.spotify.albums === undefined) {
+				self.artist.spotichooser.find('.bsel').removeClass("bsel");
+				self.artist.spotichooser.find('.clickshowalbums').addClass("bsel");
+				self.artist.spinnerthing.makeSpinner();
+				if (!artistmeta.spotify.albums) {
 					spotify.artist.getAlbums(artistmeta.spotify.id, 'album,single', storeAlbums, self.artist.spotifyError, true)
 				} else {
 					doAlbums(artistmeta.spotify.albums);
@@ -276,8 +245,10 @@ var info_spotify = function() {
 			}
 
 			function getArtists() {
-				$("#hibbert").makeSpinner()
-				if (artistmeta.spotify.related === undefined) {
+				self.artist.spotichooser.find('.bsel').removeClass("bsel");
+				self.artist.spotichooser.find('.clickshowartists').addClass("bsel");
+				self.artist.spinnerthing.makeSpinner();
+				if (!artistmeta.spotify.related) {
 					spotify.artist.getRelatedArtists(artistmeta.spotify.id, storeArtists, self.artist.spotifyError, true)
 				} else {
 					doArtists(artistmeta.spotify.related);
@@ -295,15 +266,14 @@ var info_spotify = function() {
 			}
 
 			function doAlbums(data) {
-				debug.debug(medebug,"DoAlbums",artistmeta.spotify.showing, displaying);
-				if (artistmeta.spotify.showing == "albums" && displaying && data) {
+				if (artistmeta.spotify.showing == "albums" && data) {
 					debug.debug(medebug,"Doing Albums For Artist",data);
-					$('#artistalbums').spotifyAlbumThing({
+					self.artist.spotiwidget.spotifyAlbumThing({
 						classes: 'nobwobbler nobalbum tagholder2 selecotron',
 						itemselector: 'nobwobbler',
 						sub: null,
 						showbiogs: false,
-						layoutcallback: function() { $("#hibbert").stopSpinner(); browser.rePoint() },
+						layoutcallback: function() { self.artist.spinnerthing.stopSpinner(); browser.rePoint() },
 						maxwidth: maxwidth,
 						is_plugin: false,
 						imageclass: 'masochist',
@@ -313,13 +283,13 @@ var info_spotify = function() {
 			}
 
 			function doArtists(data) {
-				if (artistmeta.spotify.showing == "artists" && displaying && data) {
+				if (artistmeta.spotify.showing == "artists" && data) {
 					debug.debug(medebug,"Doing Related Artists",data);
-					$('#artistalbums').spotifyArtistThing({
+					self.artist.spotiwidget.spotifyArtistThing({
 						classes: 'nobwobbler nobartist tagholder2',
 						itemselector: 'nobwobbler',
 						sub: null,
-						layoutcallback: function() { $("#hibbert").stopSpinner(); browser.rePoint() },
+						layoutcallback: function() { self.artist.spinnerthing.stopSpinner(); browser.rePoint() },
 						is_plugin: false,
 						imageclass: 'jalopy',
 						maxalbumwidth: maxwidth,
@@ -331,51 +301,52 @@ var info_spotify = function() {
 
 			this.track = function() {
 
-				var layout;
-
 				function spotifyResponse(data) {
 					debug.debug(medebug, "Got Spotify Track Data",data);
-					if (trackmeta.spotify.track === undefined) {
-						trackmeta.spotify.track = data;
-					}
-					if (albummeta.spotify === undefined) {
-						albummeta.spotify = {id: data.album.id};
-					}
+					parent.updateData({
+						spotify: {
+							track: data
+						}
+					}, trackmeta);
+					parent.updateData({
+						spotify: {
+							id: data.album.id
+						}
+					}, albummeta);
 					for(var i in data.artists) {
 						if (data.artists[i].name == artistmeta.name) {
 							debug.debug(medebug,parent.nowplayingindex,"Found Spotify ID for", artistmeta.name);
-							artistmeta.spotify.id = data.artists[i].id;
+							parent.updateData({
+								spotify: {
+									id: data.artists[i].id
+								}
+							}, artistmeta);
+							break;
 						}
 					}
 					debug.debug(medebug,"Spotify Data now looks like",artistmeta, albummeta, trackmeta);
 					self.track.doBrowserUpdate();
 					self.artist.populate();
-				}
-
-				function make_track_html(data) {
-					if (!layout) {
-						layout = new info_sidebar_layout();
-						getTrackHTML(self.track, trackmeta, layout, data);
-					}
-					return layout.get_contents();
+					self.album.populate();
 				}
 
 				return {
 
 					populate: function() {
-						if (trackmeta.spotify === undefined || artistmeta.spotify.id === undefined) {
-							if (parent.playlistinfo.file.substring(0,8) !== 'spotify:') {
-								self.track.doBrowserUpdate()
-								self.artist.populate();
-								self.album.populate();
-							} else {
-								if (trackmeta.spotify === undefined) {
-									trackmeta.spotify = {id: parent.playlistinfo.file.substr(14, parent.playlistinfo.file.length) };
-								}
-								spotify.track.getInfo(trackmeta.spotify.id, spotifyResponse, self.track.spotifyError, true);
-							}
-						} else {
+						// Note that we have to create the artist and album layouts immediately, because the
+						// browser expects them to exist
+						if (parent.playlistinfo.file.substring(0,8) !== 'spotify:') {
+							// Not a spotify track. We don't search, because I can't be arsed
+							trackmeta.spotify.layout = new info_layout_empty();
+							albummeta.spotify.layout = new info_layout_empty();
+							artistmeta.spotify.layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me});
 							self.artist.populate();
+						} else {
+							trackmeta.spotify.layout = new info_sidebar_layout({title: trackmeta.name, type: 'track', source: me});
+							trackmeta.spotify.id = parent.playlistinfo.file.substr(14, parent.playlistinfo.file.length);
+							artistmeta.spotify.layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me});
+							albummeta.spotify.layout = new info_sidebar_layout({title: albummeta.name, type: 'album', source: me}),
+							spotify.track.getInfo(trackmeta.spotify.id, spotifyResponse, self.track.spotifyError, true);
 						}
 					},
 
@@ -384,17 +355,15 @@ var info_spotify = function() {
 						data.name = parent.playlistinfo.Title;
 						data.external_urls = {spotify: ''};
 						trackmeta.spotify.track = data;
-						if (albummeta.spotify === undefined) {
-							albummeta.spotify = {};
-						}
 						self.track.doBrowserUpdate()
+						albummeta.spotify.layout = new info_layout_empty();
 						self.artist.populate();
 					},
 
 					gotRecommendations: function(data) {
 						debug.trace(medebug, 'Track Recommendations', data);
 						trackmeta.spotify.recommendations = data;
-						doRecommendations(layout, trackmeta);
+						doRecommendations(trackmeta.spotify.layout, trackmeta);
 					},
 
 					spotifyRecError: function(data) {
@@ -402,26 +371,7 @@ var info_spotify = function() {
 					},
 
 					doBrowserUpdate: function() {
-						var accepted = false;
-						if (displaying && trackmeta.spotify !== undefined && trackmeta.spotify.track !== undefined) {
-							debug.debug(medebug,parent.nowplayingindex,"track was asked to display");
-							accepted = browser.Update(
-								null,
-								'track',
-								me,
-								parent.nowplayingindex,
-								{ name: trackmeta.spotify.track.name,
-								  link: trackmeta.spotify.track.external_urls.spotify,
-								  data: make_track_html(trackmeta.spotify.track)
-								}
-							);
-						} else if (parent.playlistinfo.file.substring(0,8) !== 'spotify:') {
-							browser.Update(null, 'track', me, parent.nowplayingindex, { name: "",
-													link: "",
-													data: null
-													}
-							);
-						}
+						getTrackHTML(self.track, trackmeta, trackmeta.spotify.layout);
 					}
 				}
 
@@ -438,13 +388,7 @@ var info_spotify = function() {
 				return {
 
 					populate: function() {
-						if (albummeta.spotify === undefined || albummeta.spotify.album === undefined ) {
-							if (parent.playlistinfo.file.substring(0,8) !== 'spotify:') {
-								self.album.doBrowserUpdate();
-							} else {
-								spotify.album.getInfo(albummeta.spotify.id, spotifyResponse, self.album.spotifyError, true);
-							}
-						}
+						spotify.album.getInfo(albummeta.spotify.id, spotifyResponse, self.album.spotifyError, true);
 					},
 
 					spotifyError: function(data) {
@@ -456,25 +400,7 @@ var info_spotify = function() {
 					},
 
 					doBrowserUpdate: function() {
-						if (displaying && albummeta.spotify !== undefined && albummeta.spotify.album !== undefined) {
-							debug.debug(medebug,parent.nowplayingindex,"album was asked to display");
-							var accepted = browser.Update(
-								null,
-								'album',
-								me,
-								parent.nowplayingindex,
-								{ name: albummeta.spotify.album.name,
-								  link: albummeta.spotify.album.external_urls.spotify,
-								  data: getAlbumHTML(albummeta.spotify.album)
-								}
-							);
-						} else if (parent.playlistinfo.file.substring(0,8) !== 'spotify:') {
-							browser.Update(null, 'album', me, parent.nowplayingindex, { name: "",
-													link: "",
-													data: null
-													}
-							);
-						}
+						getAlbumHTML(self.album, albummeta, albummeta.spotify.layout);
 						infobar.markCurrentTrack();
 					}
 
@@ -492,7 +418,6 @@ var info_spotify = function() {
 					debug.debug(medebug, "Got Spotify Artist Data", data);
 					artistmeta.spotify.artist = data;
 					self.artist.doBrowserUpdate();
-					self.album.populate();
 				}
 
 				function search(aname) {
@@ -514,9 +439,8 @@ var info_spotify = function() {
 							artistmeta.spotify.possibilities.push({
 								name: data.artists.items[i].name,
 								id: data.artists.items[i].id,
-								image: (data.artists.items[i].images &&
-									data.artists.items[i].images.length > 0) ?
-										data.artists.items[i].images[data.artists.items[i].images.length-1].url : null
+								image: (data.artists.items[i].images && data.artists.items[i].images.length > 0) ?
+									data.artists.items[i].images[data.artists.items[i].images.length-1].url : null
 							});
 						}
 					}
@@ -525,9 +449,8 @@ var info_spotify = function() {
 						artistmeta.spotify.possibilities.push({
 							name: data.artists.items[0].name,
 							id: data.artists.items[0].id,
-							image: (data.artists.items[0].images &&
-								data.artists.items[0].images.length > 0) ?
-							data.artists.items[0].images[data.artists.items[0].images.length-1].url : null
+							image: (data.artists.items[0].images && data.artists.items[0].images.length > 0) ?
+								data.artists.items[0].images[data.artists.items[0].images.length-1].url : null
 						});
 					}
 					if (artistmeta.spotify.possibilities.length > 0) {
@@ -569,13 +492,15 @@ var info_spotify = function() {
 							// Fall Through
 
 						default:
-							artistmeta.spotify = { artist: {    error: '<h3 align="center">'+
-																	language.gettext("label_noartistinfo")+
-																	'</h3>',
-																name: artistmeta.name,
-																external_urls: { spotify: '' }
-															}
-												};
+							parent.updateData({
+								spotify: {
+									artist: {
+										error: language.gettext("label_noartistinfo"),
+										name: artistmeta.name,
+										external_urls: { spotify: '' }
+									}
+								}
+							}, artistmeta);
 							self.artist.doBrowserUpdate();
 							break;
 
@@ -584,17 +509,15 @@ var info_spotify = function() {
 
 				return {
 
-					force: false,
+					spinnterthing: null,
+					spotiwidget: null,
+					spotichooser: null,
 
 					populate: function() {
 						if (artistmeta.spotify.id === undefined) {
 							search(artistmeta.name);
 						} else {
-							if (artistmeta.spotify.artist === undefined) {
-								spotify.artist.getInfo(artistmeta.spotify.id, spotifyResponse, self.artist.spotifyError, true);
-							} else {
-								self.album.populate();
-							}
+							spotify.artist.getInfo(artistmeta.spotify.id, spotifyResponse, self.artist.spotifyError, true);
 						}
 					},
 
@@ -604,58 +527,13 @@ var info_spotify = function() {
 						data.name = artistmeta.name;
 						artistmeta.spotify.artist = data;
 						self.artist.doBrowserUpdate();
-						self.album.populate();
-					},
-
-					tryForAllmusicBio: function() {
-						if (typeof artistmeta.allmusic == 'undefined' || typeof artistmeta.allmusic.artistlink === 'undefined') {
-							debug.debug(medebug,"Allmusic artist link not back yet");
-							retries--;
-							if (retries > 0) {
-								setTimeout(self.artist.tryForAllmusicBio, 2000);
-							} else {
-								debug.info(medebug,"Artist giving up waiting for musicbrainz");
-							}
-						} else if (artistmeta.allmusic.artistlink === null) {
-							debug.info(medebug,"No Allmusic artist bio link found");
-						} else {
-							debug.debug(medebug,"Getting allmusic bio from",artistmeta.allmusic.artistlink);
-						  $.post('browser/backends/getambio.php', {url: artistmeta.allmusic.artistlink})
-							 .done( function(data) {
-								debug.debug(medebug,"Got Allmusic Bio");
-								if (displaying) $("#artistbio").html(data);
-							 })
-							 .fail( function(data) {
-								debug.warn(medebug,"Didn't Get Allmusic Bio",data);
-								 if (displaying) $("#artistbio").html("");
-							 });
-						}
 					},
 
 					doBrowserUpdate: function() {
-						if (displaying && artistmeta.spotify !== undefined && artistmeta.spotify.artist !== undefined) {
-							debug.debug(medebug,parent.nowplayingindex,"artist was asked to display");
-							var accepted = browser.Update(
-								null,
-								'artist',
-								me,
-								parent.nowplayingindex,
-								{ name: artistmeta.spotify.artist.name,
-								  link: artistmeta.spotify.artist.external_urls.spotify,
-								  data: getArtistHTML(artistmeta.spotify.artist, parent, artistmeta)
-								},
-								false,
-								self.artist.force
-							);
-							if (accepted && artistmeta.spotify.artist.error == undefined) {
-								self.artist.tryForAllmusicBio();
-								if (artistmeta.spotify.showing == "albums") {
-									getAlbums();
-								} else {
-									getArtists();
-								}
-							}
-						}
+						getArtistHTML(artistmeta.spotify.artist, artistmeta.spotify.layout, artistmeta, self.artist);
+						if (self.artist.spotichooser)
+							getAlbums();
+
 					}
 				}
 			}();

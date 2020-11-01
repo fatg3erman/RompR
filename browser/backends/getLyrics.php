@@ -5,7 +5,7 @@ include ("includes/functions.php");
 include ("international.php");
 include ("getid3/getid3.php");
 
-$fname = $_POST['file'];
+$fname = rawurldecode($_POST['file']);
 $fname = preg_replace('/local:track:/','',$fname);
 $fname = preg_replace('#file://#','',$fname);
 $fname = 'prefs/MusicFolders/'.$fname;
@@ -37,40 +37,7 @@ if (file_exists($fname)) {
 }
 
 if ($output == null) {
-	$uri = "http://lyrics.wikia.com/api.php?func=getSong&artist=".urlencode($artist)."&song=".urlencode($song)."&fmt=xml";
-	logger::log("LYRICS", "Trying",$uri);
-	$d = new url_downloader(array(
-		'url' => $uri,
-		'cache' => 'lyrics',
-		'return_data' => true
-	));
-	if ($d->get_data_to_file()) {
-		$l = simplexml_load_string($d->get_data());
-		if ($l->url) {
-			logger::debug("LYRICS", "  Now Getting",html_entity_decode($l->url));
-			$d2 = new url_downloader(array(
-				'url' => html_entity_decode($l->url),
-				'cache' => 'lyrics',
-				'return_data' => true
-			));
-			if ($d2->get_data_to_file()) {
-				if (preg_match('/\<div class=\'lyricbox\'\>\<script\>.*?\<\/script\>(.*?)\<\!--/', $d2->get_data(), $matches)) {
-					$output = html_entity_decode($matches[1]);
-				} else if (preg_match('/\<div class=\'lyricbox\'\>(.*?)\<div class=\'lyricsbreak\'\>/', $d2->get_data(), $matches)) {
-					$output = html_entity_decode($matches[1]);
-				} else {
-					logger::info("LYRICS", "    Could Not Find Lyrics");
-				}
-			}
-		} else {
-			logger::info("LYRICS", "    Could Not Find URI for Lyrics");
-		}
-	}
-} else {
-	logger::info("LYRICS", "  Got lyrics from file");
-}
-
-if ($output == null) {
+	logger::info("LYRICS", "  Could not get lyrics from file");
 	$output = '<h3 align=center>'.get_int_text("lyrics_nonefound").'</h3><p>'.get_int_text("lyrics_info").'</p>';
 }
 

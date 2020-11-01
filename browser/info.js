@@ -1,174 +1,22 @@
 var browser = function() {
 
-	var history = [{
-					source: "",
-					artist: {
-						name: "",
-					},
-					album: {
-						name: "",
-						artist: "",
-					},
-					track: {
-						name: "",
-					}
-				}];
 	var displaypointer = 0;
 	var panelclosed = {artist: false, album: false, track: false};
-	var waitingon = {artist: false, album: false, track: false, index: -1, source: null};
 	var extraPlugins = [];
-	var maxhistorylength = 20;
 	var sources = nowplaying.getAllPlugins();
-	var doneone = false;
-
-	function displayTheData(ptr, showartist, showalbum, showtrack) {
-		var a = waitingon.artist;
-		var b = waitingon.album;
-		var c = waitingon.track;
-		waitingon = {   artist: a || showartist,
-						album:  b || showalbum,
-						track:  c || showtrack,
-						index: history[ptr].mastercollection.nowplayingindex,
-						source: history[ptr].source
-		};
-		debug.debug("BROWSER", "Waiting on source",waitingon.source,"for index", waitingon.index);
-		if (waitingon.source != prefs.infosource) {
-			// Need to do this here rather than in switchsource otherwise it prevents
-			// the browser from accepting the update
-			$("#button_source"+prefs.infosource).removeClass("currentbun");
-			prefs.save({infosource: waitingon.source});
-			debug.log("BROWSER", "Source switched to",prefs.infosource);
-			$("#button_source"+prefs.infosource).addClass("currentbun");
-		}
-		for (var i in waitingon) {
-			if (waitingon[i] === true) {
-				$("#"+i+"information").html(waitingBanner(i));
-			}
-		}
-		for (var i = 1; i < history.length-1; i++) {
-			history[i].mastercollection.stopDisplaying();
-		}
-		// Remember, here we tell artist, album, and track to display even if we only want one of them.
-		// This is because we need the new collections to handle clicks and other stuff,
-		// as otherwise it all gets very out of hand and impossible to follow,
-		// mainly because it's super tricky to keep the stopDisplaying/displayData displaying flags
-		// all in sync since they're global to one dataCollection and not individual for artist,
-		// album, and track. (This was tried before and got stupid).
-		history[ptr].mastercollection.sendDataToBrowser(waitingon);
-		if (displaypointer == history.length-1) {
-			// We only allow artist switching on the current playing track.
-			// It's not that it doesn't work, but it means the artist switch gets added to
-			// the end of history and then you have to go back to get to the current track,
-			// which means things stop auto-updating.
-			// Also it makes truncating the history really hard.
-			// TODO perhaps artist switches should be spliced in?
-			history[ptr].mastercollection.doArtistChoices();
-		} else {
-			if ($("#artistchooser").is(':visible')) {
-				$("#artistchooser").slideUp('fast');
-			}
-		}
-
-	}
-
-	function waitingBanner(which) {
-		var html = '<div class="containerbox infosection menuitem">';
-		html += '<h2 class="expand"><span class="ucfirst">'+language.gettext("label_"+which)+
-			'</span> : '+language.gettext("info_gettinginfo")+'</h2>';
-		html += '<div class="fixed alignmid"><i class="icon-spin6 svg-square spinner"></i></div>';
-		html += '</div>';
-		return html;
-	}
-
-	function banner(data, title, hidden, source, close) {
-		var html = '<div class="containerbox infosection menuitem">';
-		if (source) {
-			html += '<h2 class="expand"><span class="ucfirst">'+
-				language.gettext("label_"+title)+'</span> : ' + data.name + '</h2>';
-		} else {
-			html += '<h2 class="expand">' + data.name + '</h2>';
-		}
-		html += '<div class="fixed alignmid">';
-		html += '<i class="icon-menu svg-square infoclick clickicon frog tooltip" title="'+language.gettext('label_hidepanel')+'"></i>';
-		html += '</div>';
-		if (data.help) {
-			html += '<div class="fixed alignmid"><a href="'+data.help+'" target="_blank">'+
-				'<i class="icon-info-circled svg-square tooltip" title="'+language.gettext('label_gethelp')+'"></i></a></div>';
-		}
-		if (source) {
-			if (data.link) {
-				html += '<div class="fixed alignmid"><a href="'+data.link+'" target="_blank">'+
-					'<i class="'+sources[source].icon+' svg-square tooltip" title="'+language.gettext("info_newtab")+'"></i></a></div>';
-			} else {
-				html += '<div class="fixed alignmid"><i class="'+sources[source].icon+' svg-square"></i></div>';
-			}
-		}
-		if (close) {
-			html += '<div class="fixed alignmid padright"><i class="icon-cancel-circled svg-square infoclick clickicon tadpole tooltip" title="'+language.gettext('label_closepanel')+'"></i></div>';
-		}
-		html += '</div>';
-		html += '<div class="foldup" id="'+title+'foldup"';
-		if (hidden) {
-			html += ' style="display:none"';
-		}
-		html += '>';
-		return html;
-	}
+	var history = [];
+	const MAX_HISTORY_LENGTH = 20;
 
 	function toggleSection(element) {
 		var foldup = element.parent().parent().next();
-		var section = element.parent().parent().parent().attr("id");
+		var section = foldup.attr("id");
 		$(foldup).slideToggle('slow', function() {
 			if ($(this).is(':visible')) {
 				browser.rePoint();
 			}
 		});
-		section = section.replace(/information/,'');
+		section = section.replace(/foldup/,'');
 		panelclosed[section] = !panelclosed[section];
-	}
-
-	function updateHistory() {
-		$('#historypanel').off('click').empty().html('<div class="dropdown-container configtitle"><div class="textcentre expand"><b>'
-			+language.gettext("button_history")
-			+'</b><i class="icon-cancel-circled clickicon playlisticonr tright mobonly" onclick="showHistory()"></i></div></div>'
-		);
-		if (displaypointer == 1) {
-			$("#backbutton").off('click').addClass('button-disabled');
-		}
-		if (displaypointer > 1 && $("#backbutton").hasClass('button-disabled')) {
-			$("#backbutton").on('click', browser.back );
-			$("#backbutton").removeClass('button-disabled');
-		}
-		if (displaypointer == (history.length)-1) {
-			$("#forwardbutton").off('click').addClass('button-disabled');
-		}
-		if (displaypointer < (history.length)-1 && $("#forwardbutton").hasClass('button-disabled')) {
-			$("#forwardbutton").on('click', browser.forward );
-			$("#forwardbutton").removeClass('button-disabled');
-		}
-
-		var bits = ["artist","album","track"];
-		var t = $('<table>', {class: 'histable', width: '100%'}).appendTo('#historypanel');
-
-		for (var i = 1; i < history.length; i++) {
-			var clas = "top clickable clickicon";
-			if (i == displaypointer) {
-				clas = clas + " current";
-			}
-			var r = $('<tr>', {class: clas, name: i}).appendTo(t);
-			r.append('<td><i class="'+sources[history[i].source].icon+' medicon"></i></td>');
-			var td = $('<td>').appendTo(r);
-			var html = '';
-			bits.forEach(function(n) {
-				if (history[i][n].collection) {
-					html += history[i][n].collection.bannername()+'<br />';
-				} else {
-					html += language.gettext("label_"+n)+' : '+history[i][n].name+'<br>';
-				}
-			});
-			td.html(html);
-		}
-		$('#historypanel').on('click', browser.historyClicked);
 	}
 
 	function removeSection(section) {
@@ -193,38 +41,66 @@ var browser = function() {
 		return c;
 	}
 
-	function checkHistoryLength() {
-		if (history.length > maxhistorylength) {
-			debug.info("BROWSER", "Truncating History");
-			var np = history[1].mastercollection.nowplayingindex;
-			history.splice(1,1);
-			displaypointer--;
-			for (var i = 1; i < history.length; i++) {
-				// Scan our history to see if this nowplayingindex is being used anywhere else
-				if (history[i].mastercollection.nowplayingindex == np) {
-					return;
-				}
-			}
-			debug.trace("BROWSER","Telling nowplaying to remove nowplayingindex",np);
-			nowplaying.remove(np);
+	function historyClicked(event) {
+		var clickedRow = $(event.target);
+		while (!clickedRow.hasClass('clickable') && !clickedRow.is('#historypanel')) {
+			clickedRow = clickedRow.parent();
 		}
+		if (clickedRow.hasAttr('name')) {
+			browser.doHistory(parseInt(clickedRow.attr('name')));
+		}
+	}
+
+	function check_history() {
+		// var len = 0;
+		// var dp = browser.get_display_pointer();
+		// tracks_played.forEach(function(v) {
+		// 	if (v !== undefined)
+		// 		len++;
+		// });
+
+		// while (len > MAX_HISTORY_LENGTH) {
+		// 	var ind = tracks_played.findIndex(i => (i !== undefined));
+		// 	if (ind == dp) {
+		// 		while (tracks_played[ind++] == undefined && ind < tracks_played.length) { }
+		// 	}
+		// 	if (ind <= 0)
+		// 		ind = 1;
+		// 	tracks_played[ind] = undefined;
+		// 	len--;
+		// }
+
+		var hpanel = $('#historypanel').empty().off('click');
+		var title = $('<div>', {class: 'dropdown-container configtitle'}).appendTo(hpanel);
+		title.append($('<div>', {class: 'textcentre expand'}).html('<b>'+language.gettext('button_history')+'</b>')
+			.append($('<i>', {class: 'icon-cancel-circled clickicon playlisticonr tright mobonly'})).on('click', showHistory));
+
+		var t = $('<table>', {class: 'histable', width: '100%'}).appendTo('#historypanel');
+		history.forEach(function(h, i) {
+			var r = $('<tr>', {class: 'top clickable clickicon', name: i}).appendTo(t);
+			r.append($('<td>').append($('<i>', {class: sources[h.source].icon+' medicon'})));
+			var td = $('<td>').appendTo(r);
+			["artist","album","track"].forEach(function(n) {
+				var tit = nowplaying.getTitle(n, h.source, h.nowplayingindex, h.special[n]);
+				if (tit) {
+					td.append(tit+'<br />');
+				}
+			});
+		});
+		browser.update_forward_back_buttons();
+
+		hpanel.on('click', historyClicked);
+
 	}
 
 	return {
 
-		historyClicked: function(event) {
-			var clickedRow = $(event.target);
-			while (!clickedRow.hasClass('clickable') && !clickedRow.is('#historypanel')) {
-				clickedRow = clickedRow.parent();
-			}
-			if (clickedRow.hasAttr('name')) {
-				browser.doHistory(clickedRow.attr('name'));
-			}
+		is_displaying_current_track: function() {
+			return (history.length == 0 || displaypointer == history.length - 1);
 		},
 
-		areweatfront: function() {
-			debug.debug("BROWSER","displaypointer:",displaypointer,"historylength",history.length);
-			return (displaypointer == history.length - 1);
+		get_current_displayed_track: function() {
+			return history[displaypointer].nowplayingindex;
 		},
 
 		createButtons: function() {
@@ -248,115 +124,132 @@ var browser = function() {
 			var newsourceidx = cursourceidx+direction;
 			if (newsourceidx >= s.length) newsourceidx = 0;
 			if (newsourceidx < 0) newsourceidx = s.length-1;
-			browser.switchsource(s[newsourceidx]);
+			browser.switch_source(s[newsourceidx]);
 		},
 
-		dataIsComing: function(mastercollection, isartistswitch, nowplayingindex, source, trackartist, artist, albumartist, album, track) {
-			debug.debug("BROWSER","Data is coming",isartistswitch, nowplayingindex, source, artist, albumartist, album, track)
-			if (prefs.hidebrowser) {
-				debug.info("BROWSER","Browser is hidden. Ignoring Data");
+		switch_source: function(source) {
+			debug.info("BROWSER","Switching info source to",source);
+			var idx = history[history.length - 1].nowplayingindex;
+			nowplaying.switch_source(idx, source);
+		},
+
+		dataIsComing: function(historyindex, hist, browser_showing_current, force, scrollto, splice) {
+
+			debug.log('BROWSER', 'Incoming', historyindex, hist, browser_showing_current, force, scrollto);
+
+			if (prefs.hidebrowser)
 				return;
-			}
-			var showalbum  = (album != history[displaypointer].album.name || albumartist != history[displaypointer].album.artist || source != prefs.infosource);
-			var showartist = (isartistswitch || artist != history[displaypointer].artist.name || source != prefs.infosource ||
-				(showalbum && artist != history[displaypointer].artist.name));
-			var showtrack  = (track != history[displaypointer].track.name || showalbum || source != prefs.infosource);
 
-			checkHistoryLength();
-
-			history.push( {
-				mastercollection: mastercollection,
-				source: source,
-				trackartist: trackartist,
-				artist: {
-					name: artist,
-					collection: null
-				},
-				album: {
-					name: album,
-					artist: albumartist,
-					collection: null
-				},
-				track: {
-					name: track,
-					collection: null
-				}
-			});
-
-			// Display the new data only if either:
-			//  We are currently displaying the most recent track (ie continuous updates)
-			//  This is an artist switch request
-			//  This is a source switch request
-			//  History has been truncated such that the currently displayed info needs to be removed
-			if (displaypointer == history.length - 2 || isartistswitch || source != prefs.infosource || displaypointer < 1) {
-				displaypointer = history.length - 1;
-				// Hack timeout to get around a problem where Masonry doesn't layout properly
-				// during page load.
-				if (doneone) {
-					displayTheData( displaypointer,  showartist,  showalbum,  showtrack );
+			// If we're not currently showing the last item in the history, do nothing unless this is a source switch
+			if (browser_showing_current || source != prefs.infosource) {
+				// The metadata for each track includes the backend's playlist ID.
+				// In nowplaying we copy metadata if the artist, album, or track are the same
+				// Hence if the id field in the data we're been given is different from the one we're diplaying, we need to display the new one.
+				['artist', 'album', 'track'].forEach(function(thing) {
+					if (force[thing] ||
+						(history.length == 0) ||
+						(hist.source != prefs.infosource) ||
+						nowplaying.compare_ids(thing, history[displaypointer].nowplayingindex, hist.nowplayingindex))
+					{
+						debug.mark('BROWSER','Displaying',thing);
+						// Detaching the layout (rather than emptying the holder) ensures that masonry layouts continue to work
+						// if/when we put them back in - provided those layouts are not destroyed eg in a _destroy widget method
+						if (history[displaypointer]) {
+							nowplaying.detachLayout(thing, history[displaypointer].source, history[displaypointer].nowplayingindex, history[displaypointer].special[thing]);
+						}
+						// This is only here to remove the 'this is the information panel' div
+						$('#'+thing+'information .infobanner').remove();
+						$('#'+thing+'information').append(nowplaying.getLayout(thing, hist.source, hist.nowplayingindex, hist.special[thing]));
+					}
+				});
+				nowplaying.doArtistChoices(hist.nowplayingindex);
+				// We're cloning the object here, for reasons that it might perhaps contain
+				// references to parent object that can be cleaned up. Certainly we don't need those references if they exist.
+				if (historyindex === null) {
+					if (splice) {
+						displaypointer++;
+						history.splice(displaypointer, 0, cloneObject(hist));
+					} else {
+						displaypointer = history.length;
+						history[displaypointer] = cloneObject(hist);
+					}
 				} else {
-					setTimeout(function() {
-						displayTheData( displaypointer,  showartist, showalbum, showtrack );
-						doneone = true;
-					}, 1000);
+					displaypointer = historyindex;
 				}
+				if (hist.source != prefs.infosource) {
+					$("#button_source"+prefs.infosource).removeClass("currentbun");
+					prefs.save({infosource: hist.source});
+					debug.log("BROWSER", "Source switched to",prefs.infosource);
+					$("#button_source"+prefs.infosource).addClass("currentbun");
+				}
+				if (scrollto)
+					layoutProcessor.goToBrowserPanel(scrollto);
+
+			} else {
+				history.push(cloneObject(hist));
 			}
-			updateHistory();
+			browser.rePoint();
+			check_history();
+		},
+
+		get_icon: function(source) {
+			return sources[source].icon;
+		},
+
+		update_forward_back_buttons: function() {
+			if (displaypointer <= 0) {
+				$("#backbutton").off('click').addClass('button-disabled');
+			} else if ($("#backbutton").hasClass('button-disabled')) {
+				$("#backbutton").on('click', browser.back).removeClass('button-disabled');
+			}
+
+			if (history.length == 0 || displaypointer == history.length - 1) {
+				$("#forwardbutton").off('click').addClass('button-disabled');
+			} else if ($("#forwardbutton").hasClass('button-disabled')) {
+				$("#forwardbutton").on('click', browser.forward).removeClass('button-disabled');
+			}
+
+			$('#historypanel').find('tr.current').removeClass('current');
+			$('#historypanel').find('tr[name="'+displaypointer+'"]').addClass('current');
 		},
 
 		Update: function(collection, type, source, nowplayingindex, data, scrollto, force) {
-			if (prefs.hidebrowser) {
-				return false;
-			}
-			debug.debug("BROWSER", "Got",type,"info from",source,"for index",nowplayingindex,force,JSON.stringify(waitingon));
-			if (force === true || (source == waitingon.source && nowplayingindex == waitingon.index)) {
-				if (force === true || waitingon[type]) {
-					debug.debug("BROWSER", "  .. and we are going to display it");
-					if (data.data !== null && (source == "file" || data.name !== "")) {
-						if ($("#"+type+"information").is(':hidden')) {
-							$("#"+type+"information").show();
-						}
-						if (typeof data.data == 'object') {
-							$("#"+type+"information").html(banner(data, (collection === null) ? type : collection.bannertitle(), panelclosed[type], source));
-							$("#"+type+"information").append(data.data);
-						} else {
-							$("#"+type+"information").html(banner(data, (collection === null) ? type : collection.bannertitle(), panelclosed[type], source)+data.data);
-						}
-					} else {
-						$("#"+type+"information").empty();
-						if ($("#"+type+"information").is(':visible')) {
-							$("#"+type+"information").hide();
-						}
-					}
-					waitingon[type] = false;
-					if (scrollto) {
-						layoutProcessor.goToBrowserPanel(type);
-					}
-					return true;
-				} else {
-					return false;
-				}
-			}
+			// if (prefs.hidebrowser) {
+			// 	return false;
+			// }
+			// debug.debug("BROWSER", "Got",type,"info from",source,"for index",nowplayingindex,force,JSON.stringify(waitingon));
+			// if (force === true || (source == waitingon.source && nowplayingindex == waitingon.index)) {
+			// 	if (force === true || waitingon[type]) {
+			// 		debug.debug("BROWSER", "  .. and we are going to display it");
+			// 		if (data.data !== null && (source == "file" || data.name !== "")) {
+			// 			if ($("#"+type+"information").is(':hidden')) {
+			// 				$("#"+type+"information").show();
+			// 			}
+			// 			if (typeof data.data == 'object') {
+			// 				$("#"+type+"information").html(banner(data, (collection === null) ? type : collection.bannertitle(), panelclosed[type], source));
+			// 				$("#"+type+"information").append(data.data);
+			// 			} else {
+			// 				$("#"+type+"information").html(banner(data, (collection === null) ? type : collection.bannertitle(), panelclosed[type], source)+data.data);
+			// 			}
+			// 		} else {
+			// 			$("#"+type+"information").empty();
+			// 			if ($("#"+type+"information").is(':visible')) {
+			// 				$("#"+type+"information").hide();
+			// 			}
+			// 		}
+			// 		waitingon[type] = false;
+			// 		if (scrollto) {
+			// 			layoutProcessor.goToBrowserPanel(type);
+			// 		}
+			// 		return true;
+			// 	} else {
+			// 		return false;
+			// 	}
+			// }
 		},
 
-		reDo: function(index, source) {
-			if (history[displaypointer].mastercollection && index == history[displaypointer].mastercollection.nowplayingindex && source == prefs.infosource) {
-				debug.log("BROWSER","Re-displaying data for",source,"index",index);
-				displayTheData(displaypointer, true, true, true);
-			}
-		},
-
-		switchsource: function(src) {
-			debug.info("BROWSER","Switching to",src);
-			if (displaypointer >= 1) {
-				displaypointer = history.length - 1;
-				history[displaypointer].mastercollection.populate(src, true);
-				updateHistory();
-			}
-		},
-
-		handleClick: function(source, element, event) {
-			debug.debug("BROWSER","Was clicked on",source,element);
+		handleClick: function(panel, element, event) {
+			debug.debug("BROWSER","Was clicked on",panel,element);
 			if (element.hasClass('frog')) {
 				toggleSection(element);
 			} else if (element.hasClass('tadpole')) {
@@ -364,93 +257,33 @@ var browser = function() {
 			} else if (element.hasClass('plugclickable')) {
 				extraPlugins[source].parent.handleClick(element, event);
 			} else if (element.hasClass('clickartistchoose')) {
-				nowplaying.switchArtist(history[displaypointer].source, element.next().val());
+				nowplaying.switchArtist(history[displaypointer].nowplayingindex, element.next().val());
 			} else {
-				history[displaypointer].mastercollection.handleClick(history[displaypointer].source, source, element, event);
+				nowplaying.handleClick(history[displaypointer].nowplayingindex, history[displaypointer].source, panel, element, event);
 			}
 		},
 
-		// This function is for links which are followed internally by one of the panels
-		// eg wikipedia
-		speciaUpdate: function(source, panel, data) {
-			debug.info("BROWSER","Special Update from",source,"for",panel);
-			var n = new specialUpdateCollection(source, panel, data);
-
-			history.splice(displaypointer+1,0, {
-				mastercollection: history[displaypointer].mastercollection,
-				source: source,
-				trackartist: history[displaypointer].trackartist,
-				artist: {
-					name: history[displaypointer].artist.name,
-					collection: (panel == "artist") ? n : history[displaypointer].artist.collection
-				},
-				album: {
-					name: history[displaypointer].album.name,
-					albumartist: history[displaypointer].albumartist,
-					collection: (panel == "album") ? n : history[displaypointer].album.collection
-				},
-				track: {
-					name: history[displaypointer].track.name,
-					collection: (panel == "track") ? n : history[displaypointer].track.collection
-				}
-			});
-
-			waitingon[panel] = true;
-			waitingon.source = source;
-			waitingon.index = history[displaypointer].mastercollection.nowplayingindex;
-			displaypointer++;
-			updateHistory();
-			browser.Update(n, panel, source, waitingon.index, data, true);
-		},
-
 		doHistory: function(index) {
-			debug.log("BROWSER", "Doing history, index is",index,"displaypointer is",displaypointer);
-
-			var showartist = (history[index].artist.collection === null &&
-				(history[index].artist.name != history[displaypointer].artist.name ||
-					history[index].source != history[displaypointer].source ||
-					history[displaypointer].artist.collection !== null));
-
-			var showalbum = (history[index].album.collection === null &&
-				(history[index].album.name != history[displaypointer].album.name ||
-					history[index].album.artist != history[displaypointer].album.artist ||
-					history[index].source != history[displaypointer].source ||
-					history[displaypointer].album.collection !== null));
-
-			var showtrack = (history[index].track.collection === null &&
-				(history[index].track.name != history[displaypointer].track.name ||
-					history[index].album.name != history[displaypointer].album.name ||
-					history[index].album.artist != history[displaypointer].album.artist ||
-					history[index].source != history[displaypointer].source ||
-					history[displaypointer].track.collection !== null));
-
-			displaypointer = index;
-			debug.trace("BROWSER","History flags are",showartist,showalbum,showtrack);
-			// Calling displayTheData is important even if all the showxxx flags are false
-			// since it makes sure the correct trackDataCollection gets its displaying flag set.
-			displayTheData(displaypointer, showartist, showalbum, showtrack);
-			updateHistory();
-
-			var bits = ["artist","album","track"];
-			bits.forEach(function(n) {
-				debug.debug("BROWSER","Updating",n);
-				if (history[index][n].collection) {
-					waitingon[n] = true;
-					waitingon.source = history[index].source;
-					waitingon.index = history[index].mastercollection.nowplayingindex;
-					browser.Update(history[index][n].collection, n, waitingon.source, waitingon.index, history[index][n].collection.getData());
-				}
-			});
+			debug.trace('BROWSER', 'Doing history', index, history[index]);
+			browser.dataIsComing(index,
+				{	nowplayingindex: history[index].nowplayingindex,
+					source: history[index].source,
+					special: history[index].special
+				},
+				true, {artist: true, album: true, track: true}, false, false
+			);
 			layoutProcessor.afterHistory();
+			browser.update_forward_back_buttons();
 		},
 
 		forward: function() {
-			browser.doHistory(parseInt(displaypointer)+1);
+			debug.trace('BROWSER', 'Forwards', displaypointer);
+			browser.doHistory(displaypointer+1);
 			return false;
 		},
 
 		back: function() {
-			browser.doHistory(parseInt(displaypointer)-1);
+			browser.doHistory(displaypointer-1);
 			return false;
 		},
 
@@ -479,6 +312,35 @@ var browser = function() {
 
 		goToPlugin: function(id) {
 			layoutProcessor.goToBrowserPlugin(id);
+		},
+
+		info_banner: function(data, source, close) {
+			var holder = $('<div>', {class: 'infobanner containerbox infosection menuitem'});
+			var h = $('<h2>', {class: 'expand'}).appendTo(holder);
+			h.html(data.name);
+			if (data.withfoldup) {
+				holder.append($('<div>', {class: 'fixed alignmid'})
+					.append($('<i>', {class: 'icon-menu svg-square infoclick clickicon frog tooltip', title: language.gettext('label_hidepanel')})));
+			}
+			if (data.help) {
+				holder.append($('<div>', {class: 'fixed alignmid'})
+					.append($('<a>', {href: data.help, target: '_blank'})
+					.append($('<i>', {class: 'icon-info-circled svg-square tooltip', title: language.gettext('label_gethelp')}))));
+			}
+			if (source) {
+				if (typeof data.link == 'undefined') {
+					holder.append($('<div>', {class: 'fixed alignmid'}).append($('<i>', {class: 'icon-spin6 spinner svg-square'})));
+				} else if (data.link == null) {
+					holder.append($('<div>', {class: 'fixed alignmid'}).append($('<i>', {class: sources[source].icon+' svg-square'})));
+				} else {
+					holder.append($('<div>', {class: 'fixed alignmid'}).append($('<a>', {href: data.link, target: '_blank'}).append($('<i>', {class: sources[source].icon+' svg-square', title: language.gettext('info_newtab')}))));
+				}
+			}
+			if (close) {
+				holder.append($('<div>', {class: 'fixed alignmid padright'})
+					.append($('<i>', {class: 'icon-cancel-circled svg-square infoclick clickicon tadpole tooltip', title: language.gettext('label_closepanel')})));
+			}
+			return holder;
 		},
 
 		rePoint: function(panel, params) {
@@ -519,19 +381,19 @@ var browser = function() {
 				}
 			});
 
-			$('#infopane .masonified7:visible').each(function() {
-				var h = $(this);
-				if (h.width() > 800) {
-					var width = 48;
-				} else {
-					var width = 98;
-				}
-				h.find(".tagholder2").css('width', width.toString()+'%');
-				h.find(".tagholder_wode").css("width", "98%");
-				if (typeof(params) == 'undefined' && h.css('position') == 'relative') {
-					h.masonry();
-				}
-			});
+			// $('#infopane .masonified7:visible').each(function() {
+			// 	var h = $(this);
+			// 	if (h.width() > 800) {
+			// 		var width = 48;
+			// 	} else {
+			// 		var width = 98;
+			// 	}
+			// 	h.find(".tagholder2").css('width', width.toString()+'%');
+			// 	h.find(".tagholder_wode").css("width", "98%");
+			// 	if (typeof(params) == 'undefined' && h.css('position') == 'relative') {
+			// 		h.masonry();
+			// 	}
+			// });
 
 			$('#infopane .masonified4:visible').each(function() {
 				var h = $(this);
@@ -542,6 +404,7 @@ var browser = function() {
 				}
 			});
 
+			// Surely can do this with a flexbox-wrap layout?
 			$('#infopane .mixcontainer:visible').each(function() {
 				var h = $(this);
 				var w = h.width();
@@ -560,19 +423,3 @@ var browser = function() {
 		}
 	}
 }();
-
-function specialUpdateCollection(source, panel, data) {
-
-	this.bannertitle = function() {
-		return source;
-	}
-
-	this.bannername = function() {
-		return data.name;
-	}
-
-	this.getData = function() {
-		return data;
-	}
-
-}
