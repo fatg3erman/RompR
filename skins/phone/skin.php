@@ -171,7 +171,7 @@ include("player/".$prefs['player_backend']."/search.php");
 	<div id="artistchooser" class="infotext invisible"></div>
 	<div id="historypanel" class="fullwdith invisible"></div>
 <?php
-	print '<div id="artistinformation" class="infotext"><h2 align="center">'.
+	print '<div id="artistinformation" class="infotext"><h2 class="infobanner" align="center">'.
 		get_int_text('label_emptyinfo').'</h2></div>';
 ?>
 	<div id="albuminformation" class="infotext"></div>

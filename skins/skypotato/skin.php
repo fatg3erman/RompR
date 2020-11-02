@@ -292,7 +292,7 @@ if ($prefs['player_backend'] == "mopidy") {
 	</div>
 	<div id="artistchooser" class="infotext noselection invisible"></div>
 <?php
-print '<div id="artistinformation" class="infotext noselection"><h2 align="center">'.get_int_text('label_emptyinfo').'</h2></div>';
+print '<div id="artistinformation" class="infotext noselection"><h2 class="infobanner" align="center">'.get_int_text('label_emptyinfo').'</h2></div>';
 ?>
 <div id="albuminformation" class="infotext noselection"></div>
 <div id="trackinformation" class="infotext"></div>
