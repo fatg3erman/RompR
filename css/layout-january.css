@@ -499,7 +499,7 @@ i.combo-button {
 }
 
 .mixbox>.smallcover {
-	height: 100%;
+	/*height: 100%;*/
 	width: auto;
 	max-width: 64px !important;
 }

@@ -7,22 +7,17 @@ var browser = function() {
 	var history = [];
 	const MAX_HISTORY_LENGTH = 20;
 
-	function toggleSection(element) {
+	function toggleSection(section, element) {
 		var foldup = element.parent().parent().next();
-		var section = foldup.attr("id");
 		$(foldup).slideToggle('slow', function() {
 			if ($(this).is(':visible')) {
 				browser.rePoint();
 			}
 		});
-		section = section.replace(/foldup/,'');
 		panelclosed[section] = !panelclosed[section];
 	}
 
-	function removeSection(element) {
-		var foldup = element.parent().parent().next();
-		var section = foldup.attr("id");
-		section = section.replace(/foldup/,'');
+	function removeSection(section) {
 		extraPlugins[section].parent.close();
 		extraPlugins[section].div.fadeOut('fast', function() {
 			extraPlugins[section].div.empty();
@@ -254,11 +249,11 @@ var browser = function() {
 		handleClick: function(panel, element, event) {
 			debug.debug("BROWSER","Was clicked on",panel,element);
 			if (element.hasClass('frog')) {
-				toggleSection(element);
+				toggleSection(panel, element);
 			} else if (element.hasClass('tadpole')) {
-				removeSection(element);
+				removeSection(panel);
 			} else if (element.hasClass('plugclickable')) {
-				extraPlugins[source].parent.handleClick(element, event);
+				extraPlugins[panel].parent.handleClick(element, event);
 			} else if (element.hasClass('clickartistchoose')) {
 				nowplaying.switchArtist(history[displaypointer].nowplayingindex, element.next().val());
 			} else {
@@ -309,7 +304,7 @@ var browser = function() {
 				opts.help = help;
 			}
 			displayer.html(browser.info_banner(opts, false, true));
-			displayer.append($('<div>', {id: id+'foldup'}));
+			displayer.append($('<div>', {id: id+'foldup', class: 'extraplugin-foldup'}));
 			panelclosed[id] = false;
 			displayer.off('click');
 			extraPlugins[id] = { div: displayer, parent: parent };
