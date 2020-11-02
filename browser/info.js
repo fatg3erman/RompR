@@ -19,7 +19,10 @@ var browser = function() {
 		panelclosed[section] = !panelclosed[section];
 	}
 
-	function removeSection(section) {
+	function removeSection(element) {
+		var foldup = element.parent().parent().next();
+		var section = foldup.attr("id");
+		section = section.replace(/foldup/,'');
 		extraPlugins[section].parent.close();
 		extraPlugins[section].div.fadeOut('fast', function() {
 			extraPlugins[section].div.empty();
@@ -253,7 +256,7 @@ var browser = function() {
 			if (element.hasClass('frog')) {
 				toggleSection(element);
 			} else if (element.hasClass('tadpole')) {
-				removeSection(source);
+				removeSection(element);
 			} else if (element.hasClass('plugclickable')) {
 				extraPlugins[source].parent.handleClick(element, event);
 			} else if (element.hasClass('clickartistchoose')) {
@@ -298,11 +301,15 @@ var browser = function() {
 			} else {
 				displayer = $('<div>', {id: id+"information", class: "infotext invisible"}).insertBefore('#artistchooser');
 			}
-			var opts = {name: name};
+			var opts = {
+				name: name,
+				withfoldup: true
+			};
 			if (help) {
 				opts.help = help;
 			}
-			displayer.html(banner(opts, id, false, false, true));
+			displayer.html(browser.info_banner(opts, false, true));
+			displayer.append($('<div>', {id: id+'foldup'}));
 			panelclosed[id] = false;
 			displayer.off('click');
 			extraPlugins[id] = { div: displayer, parent: parent };
