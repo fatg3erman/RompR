@@ -580,7 +580,7 @@ i.combo-button {
 #wikipopup {
 	position:absolute;
 	display:none;
-	z-index:1001;
+	z-index:10001;
 	opacity:0.75;
 }
 
@@ -628,7 +628,7 @@ i.combo-button {
 #imagecontainer {
 	position:absolute;
 	opacity:1;
-	z-index:1002;
+	z-index:10002;
 	display:none;
 }
 

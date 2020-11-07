@@ -12,7 +12,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 		header('HTTP/1.0 404 Not Found');
 		print "Feed Not Found";
 		logger::warn("PARSE_RSS", "  Failed to Download ".$url);
-		exit;
+		return false;
 	}
 
 	// For debugging
@@ -24,7 +24,12 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 		}
 		file_put_contents('prefs/podcasts/'.$id.'/feed.xml', $d->get_data());
 	}
-	$feed = simplexml_load_string($d->get_data());
+	try {
+		$feed = simplexml_load_string($d->get_data());
+	} catch (Exception $e) {
+		logger::warn('Could not parse RSS feed!');
+		return false;
+	}
 	logger::debug("PARSE_RSS", "  Our LastPubDate is ".$lastpubdate);
 
 	// Begin RSS Parse
