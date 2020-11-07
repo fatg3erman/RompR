@@ -26,10 +26,10 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 	}
 	try {
 		$data = $d->get_data();
-		$d = str_replace('&amp;', '!!!ampersand!!!', $d);
-		$d = str_replce('&', '&amp;', $d);
-		$d = str_replace('!!!ampersand!!!', '&amp;', $d);
-		$feed = simplexml_load_string($d->get_data());
+		$data = str_replace('&amp;', '!!!ampersand!!!', $data);
+		$data = str_replce('&', '&amp;', $data);
+		$data = str_replace('!!!ampersand!!!', '&amp;', $data);
+		$feed = simplexml_load_string($data);
 	} catch (Exception $e) {
 		logger::warn('Could not parse RSS feed!');
 		return false;
