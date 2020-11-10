@@ -26,12 +26,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 	}
 	try {
 		$data = $d->get_data();
-		// Some feeds have bad XML that simpleXML does not like
-		// Richard Herring, I'm looking at you.
-		$data = str_replace('&amp;', '!!!ampersand!!!', $data);
-		$data = str_replace('&', '&amp;', $data);
-		$data = str_replace('!!!ampersand!!!', '&amp;', $data);
-		$feed = simplexml_load_string($data);
+		$feed = @simplexml_load_string($data);
 	} catch (Exception $e) {
 		logger::warn('Could not parse RSS feed!');
 		return false;
