@@ -26,7 +26,7 @@ jQuery.fn.animatePanel = function(options) {
 }
 
 jQuery.fn.menuReveal = async function() {
-	return this.each(function() {
+	return this.each(async function() {
 		var self = $(this);
 		var id = self.prop('id');
 		var element = $('i[name="'+id+'"]');
@@ -36,7 +36,7 @@ jQuery.fn.menuReveal = async function() {
 }
 
 jQuery.fn.menuHide = async function() {
-	return this.each(function() {
+	return this.each(async function() {
 		var self = $(this);
 		var id = self.prop('id');
 		var element = $('i[name="'+id+'"]');

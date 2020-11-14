@@ -50,29 +50,15 @@ var browser = function() {
 	}
 
 	function check_history() {
-		// var len = 0;
-		// var dp = browser.get_display_pointer();
-		// tracks_played.forEach(function(v) {
-		// 	if (v !== undefined)
-		// 		len++;
-		// });
 
-		// while (len > MAX_HISTORY_LENGTH) {
-		// 	var ind = tracks_played.findIndex(i => (i !== undefined));
-		// 	if (ind == dp) {
-		// 		while (tracks_played[ind++] == undefined && ind < tracks_played.length) { }
-		// 	}
-		// 	if (ind <= 0)
-		// 		ind = 1;
-		// 	tracks_played[ind] = undefined;
-		// 	len--;
-		// }
+		if (history.length > MAX_HISTORY_LENGTH) {
+			item_to_remove = (displaypointer == 0) ? 1 : 0;
+			let removed_item = history.splice(item_to_remove, 1);
+			debug.mark('BROWSER', 'History limit exceeded. Removing item nmber',item_to_remove,removed_item);
+			nowplaying.truncate_item(removed_item.nowplayingindex);
+		}
 
 		var hpanel = $('#historypanel').empty().off('click');
-		var title = $('<div>', {class: 'dropdown-container configtitle'}).appendTo(hpanel);
-		title.append($('<div>', {class: 'textcentre expand'}).html('<b>'+language.gettext('button_history')+'</b>')
-			.append($('<i>', {class: 'icon-cancel-circled clickicon playlisticonr tright mobonly'})).on('click', showHistory));
-
 		var t = $('<table>', {class: 'histable', width: '100%'}).appendTo('#historypanel');
 		history.forEach(function(h, i) {
 			var r = $('<tr>', {class: 'top clickable clickicon', name: i}).appendTo(t);
@@ -139,7 +125,7 @@ var browser = function() {
 				return;
 
 			// If we're not currently showing the last item in the history, do nothing unless this is a source switch
-			if (browser_showing_current || source != prefs.infosource) {
+			if (browser_showing_current || hist.source != prefs.infosource) {
 				// The metadata for each track includes the backend's playlist ID.
 				// In nowplaying we copy metadata if the artist, album, or track are the same
 				// Hence if the id field in the data we're been given is different from the one we're diplaying, we need to display the new one.
@@ -209,41 +195,6 @@ var browser = function() {
 
 			$('#historypanel').find('tr.current').removeClass('current');
 			$('#historypanel').find('tr[name="'+displaypointer+'"]').addClass('current');
-		},
-
-		Update: function(collection, type, source, nowplayingindex, data, scrollto, force) {
-			// if (prefs.hidebrowser) {
-			// 	return false;
-			// }
-			// debug.debug("BROWSER", "Got",type,"info from",source,"for index",nowplayingindex,force,JSON.stringify(waitingon));
-			// if (force === true || (source == waitingon.source && nowplayingindex == waitingon.index)) {
-			// 	if (force === true || waitingon[type]) {
-			// 		debug.debug("BROWSER", "  .. and we are going to display it");
-			// 		if (data.data !== null && (source == "file" || data.name !== "")) {
-			// 			if ($("#"+type+"information").is(':hidden')) {
-			// 				$("#"+type+"information").show();
-			// 			}
-			// 			if (typeof data.data == 'object') {
-			// 				$("#"+type+"information").html(banner(data, (collection === null) ? type : collection.bannertitle(), panelclosed[type], source));
-			// 				$("#"+type+"information").append(data.data);
-			// 			} else {
-			// 				$("#"+type+"information").html(banner(data, (collection === null) ? type : collection.bannertitle(), panelclosed[type], source)+data.data);
-			// 			}
-			// 		} else {
-			// 			$("#"+type+"information").empty();
-			// 			if ($("#"+type+"information").is(':visible')) {
-			// 				$("#"+type+"information").hide();
-			// 			}
-			// 		}
-			// 		waitingon[type] = false;
-			// 		if (scrollto) {
-			// 			layoutProcessor.goToBrowserPanel(type);
-			// 		}
-			// 		return true;
-			// 	} else {
-			// 		return false;
-			// 	}
-			// }
 		},
 
 		handleClick: function(panel, element, event) {

@@ -70,7 +70,7 @@ jQuery.fn.addCustomScrollBar = function() {
 }
 
 function showHistory() {
-	$('#historypanel').slideToggle('fast');
+	$('#historyholder').slideToggle('fast');
 }
 
 var layoutProcessor = function() {
@@ -97,7 +97,7 @@ var layoutProcessor = function() {
 
 		afterHistory: function() {
 			browser.rePoint();
-			showHistory();
+			// showHistory();
 		},
 
 		addInfoSource: function(name, obj) {

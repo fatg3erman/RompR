@@ -371,7 +371,7 @@ var layoutProcessor = function() {
 					$('#infopane').mCustomScrollbar('scrollTo', '#podholder');
 					break;
 
-				case 'historypanel':
+				case 'historyholder':
 					$('#infoholder').show(0, browser.rePoint);
 					break;
 
@@ -714,7 +714,7 @@ var layoutProcessor = function() {
 						}
 						break;
 
-					case 'historypanel':
+					case 'historyholder':
 						$('.collectionpanel').not('#infoholder').hide(0);
 						if (prefs.sourceshidden) {
 							layoutProcessor.expandInfo('left');

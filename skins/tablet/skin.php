@@ -167,7 +167,18 @@ include("player/".$prefs['player_backend']."/search.php");
 		</div>
 	</div>
 	<div id="artistchooser" class="infotext invisible"></div>
-	<div id="historypanel" class="fullwdith invisible"></div>
+	<div id="historyholder" class="fullwidth invisible">
+		<div class="dropdown-container configtitle">
+			<div class="textcentre expand">
+				<b>
+	<?php
+		print get_int_text('button_history');
+	?>
+				</b>
+			</div>
+		</div>
+		<div id="historypanel"></div>
+	</div>
 <?php
 	print '<div id="artistinformation" class="infotext"><h2 class="infobanner" align="center">'.
 		get_int_text('label_emptyinfo').'</h2></div>';

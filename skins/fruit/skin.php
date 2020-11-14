@@ -179,6 +179,15 @@ print '<i class="icon-menu topimg tooltip topdrop expand" title="'.get_int_text(
 print '<i class="icon-versions topimg tooltip topdrop expand" title="'.get_int_text('button_history').'">';
 ?>
 <div class="topdropmenu dropshadow leftmenu widemenu" id="hpscr">
+	<div class="dropdown-container configtitle">
+		<div class="textcentre expand">
+			<b>
+<?php
+	print get_int_text('button_history');
+?>
+			</b>
+		</div>
+	</div>
 	<div id="historypanel" class="clearfix"></div>
 </div>
 </i>

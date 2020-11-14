@@ -151,17 +151,17 @@ include ("includes/prefspanel.php");
 <div id="headerbar" class="noborder tleft">
 	<div id="sourcescontrols">
 <?php
-print '<i title="'.get_int_text('button_local_music').'" class="icon-music tooltip topimg choosepanel" name="albumlist""></i>';
-print '<i title="'.get_int_text('button_searchmusic').'" class="icon-search topimg tooltip choosepanel" name="searcher""></i>';
-print '<i title="'.get_int_text('button_file_browser').'" class="icon-folder-open-empty tooltip topimg choosepanel" name="filelist""></i>';
-print '<i title="'.get_int_text('button_internet_radio').'" class="icon-radio-tower tooltip topimg choosepanel" name="radiolist""></i>';
-print '<i title="'.get_int_text('label_podcasts').'" class="icon-podcast-circled tooltip topimg choosepanel" name="podcastslist""></i>';
-print '<i title="'.get_int_text('label_audiobooks').'" class="icon-audiobook tooltip topimg choosepanel" name="audiobooklist" expand"></i>';
-print '<i title="'.get_int_text('button_loadplaylist').'" class="icon-doc-text tooltip topimg choosepanel" name="playlistslist""></i>';
-print '<i title="'.get_int_text('label_pluginplaylists').'" class="icon-wifi tooltip topimg choosepanel" name="pluginplaylistslist""></i>';
-print '<i title="'.get_int_text('button_infopanel').'" class="icon-info-circled tooltip topimg choosepanel" name="infoholder""></i>';
-print '<i title="'.get_int_text('button_history').'" class="icon-versions tooltip topimg choosepanel" name="historypanel""></i>';
-print '<i title="'.get_int_text('button_plugins').'" class="icon-menu topimg tooltip choosepanel" name="specialplugins""></i>';
+print '<i title="'.get_int_text('button_local_music').'" class="icon-music tooltip topimg choosepanel" name="albumlist"></i>';
+print '<i title="'.get_int_text('button_searchmusic').'" class="icon-search topimg tooltip choosepanel" name="searcher"></i>';
+print '<i title="'.get_int_text('button_file_browser').'" class="icon-folder-open-empty tooltip topimg choosepanel" name="filelist"></i>';
+print '<i title="'.get_int_text('button_internet_radio').'" class="icon-radio-tower tooltip topimg choosepanel" name="radiolist"></i>';
+print '<i title="'.get_int_text('label_podcasts').'" class="icon-podcast-circled tooltip topimg choosepanel" name="podcastslist"></i>';
+print '<i title="'.get_int_text('label_audiobooks').'" class="icon-audiobook tooltip topimg choosepanel" name="audiobooklist"></i>';
+print '<i title="'.get_int_text('button_loadplaylist').'" class="icon-doc-text tooltip topimg choosepanel" name="playlistslist"></i>';
+print '<i title="'.get_int_text('label_pluginplaylists').'" class="icon-wifi tooltip topimg choosepanel" name="pluginplaylistslist"></i>';
+print '<i title="'.get_int_text('button_infopanel').'" class="icon-info-circled tooltip topimg choosepanel" name="infoholder"></i>';
+print '<i title="'.get_int_text('button_history').'" class="icon-versions tooltip topimg choosepanel" name="historyholder"></i>';
+print '<i title="'.get_int_text('button_plugins').'" class="icon-menu topimg tooltip choosepanel" name="specialplugins"></i>';
 ?>
 	</div>
 </div>
@@ -190,7 +190,18 @@ print '<i title="'.get_int_text('button_plugins').'" class="icon-menu topimg too
 
 	<div id="specialplugins" class="invisible noborder"></div>
 
-	<div id="historypanel" class="invisible noborder"></div>
+	<div id="historyholder" class="invisible noborder">
+		<div class="dropdown-container configtitle">
+			<div class="textcentre expand">
+				<b>
+	<?php
+		print get_int_text('button_history');
+	?>
+				</b>
+			</div>
+		</div>
+		<div id="historypanel"></div>
+	</div>
 
 	<div id="searcher" class="invisible noborder">
 	<div class="dropdown-container configtitle">

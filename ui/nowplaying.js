@@ -366,6 +366,13 @@ var nowplaying = function() {
 			tracks_played[to_populate].populate(source ? source : prefs.infosource, browser.is_displaying_current_track(), {artist: force_artist, album: false, track: force_track});
 		},
 
+		truncate_item(nowplayingindex) {
+			// info panel has truncated its history. Rather than remove items from tracks_played,
+			// which is horrible and needs indices adjusting all over the place, just set that
+			// one to null and eventually the browser will clean it up
+			tracks_played[nowplayingindex] = null;
+		},
+
 		switchArtist: function(index, artistindex) {
 			debug.log("NOWPLAYING","Asked to switch artist for nowplayingindex",index,artistindex);
 			if (tracks_played[artistindex] !== undefined) {

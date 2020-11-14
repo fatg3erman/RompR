@@ -384,9 +384,7 @@ jQuery.fn.playlistTouchWipe = function(settings) {
 
 
 function showHistory() {
-	if ($('#historypanel').find('.configtitle').length > 0) {
-		$('#historypanel').slideToggle('fast');
-	}
+	$('#historyholder').slideToggle('fast');
 }
 
 var layoutProcessor = function() {
@@ -425,7 +423,7 @@ var layoutProcessor = function() {
 
 		afterHistory: function() {
 			browser.rePoint();
-			showHistory();
+			// showHistory();
 		},
 
 		addInfoSource: function(name, obj) {
