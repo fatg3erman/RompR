@@ -10,7 +10,10 @@ One option is to always leave a desktop browser open on RompЯ and that will tak
 
 Even if you don't care about Playcounts, they are used by many of the [Personalised Radio Stations](/RompR/Personalised-Radio), so it's still useful.
 
-RompЯ is provided with a small program called romonitor that takes care of updating playcounts, marks podcasts as listened, and scrobbles tracks to Last.FM. It just needs a little setting up.
+RompЯ is provided with a small program called romonitor that takes care of updating playcounts, marks podcasts as listened, scrobbles tracks to Last.FM,
+and keeps personalised radio stations running even when no browser is open. It just needs a little setting up.
+
+## Romonitor method 1:
 
 ### Create a Shell Script to run romonitor
 
@@ -42,16 +45,6 @@ And you should see something like
     bob       1336  0.0  1.0  63572 19572 ?        S    13:45   0:00 php ./romonitor.php --currenthost Mopidy --player_backend mopidy
     bob       2828  0.0  0.0   4696   804 pts/0    S+   14:02   0:00 grep --color=auto romonitor
 
-### Scrobbling
-
-You can use [mopidy-scrobbler](https://github.com/mopidy/mopidy-scrobbler) for Mopidy or [mpdscribble](https://www.musicpd.org/clients/mpdscribble/) for mpd to scrobble, but if you do then your scrobbles might not match exactly what's in your collection - especially if you use podcasts. If you use romonitor to scrobble instead, then everything will be consistent.
-
-To make romonitor scrobble to Last.FM you must first [log in to Last.FM](/RompR/LastFM) from the main Rompr application, then start romonitor with an additional paramter
-
-    php ./romonitor.php --currenthost Default --player_backend mpd --scrobbling true &
-
-Also make sure you're not scrobbling from the main RompR application or mpdscribble/mopidy-scrobbler etc or all your plays will be scrobbled twice!
-
 ### If you're using Multiple Players
 
 In the case where you're using [multiple players](/RompR/Using-Multiple-Players) you'll need to create a separate line in the shell script for each player.
@@ -59,6 +52,61 @@ In the case where you're using [multiple players](/RompR/Using-Multiple-Players)
 ### Loading at startup
 
 To make sure romonitor gets loaded every time you boot, you can just add your shell script as a login program, using whatever method your choice of desktop environment provides to do that.
+
+## Romonitor Method 2:
+
+if you're running a headless system and you don't log in, you can start romonitor as a systemd service in the background.
+
+Just create a file /lib/systemd/system/romonitor.service that looks like this
+
+    [Unit]
+    Description=RompR Playback Monitor
+    After=avahi-daemon.service
+    After=dbus.service
+    After=network.target
+    After=nss-lookup.target
+    After=remote-fs.target
+    After=sound.target
+    After=mariadb.service
+    After=nginx.service
+
+    [Service]
+    User=www-data
+    PermissionsStartOnly=true
+    WorkingDirectory=/PATH/TO_ROMPR
+    ExecStart=/usr/bin/php /PATH/TO/ROMPR/romonitor.php  --currenthost Kitchen --player_backend mopidy
+
+    [Install]
+    WantedBy=multi-user.target
+
+You need to make some changes to that:
+
+* **/PATH/TO/ROMPR** is the full path to your RompЯ installation. Refer to the installation instructions for more details.
+* **currenthost** should be followed by the name of one of the Players as displayed in your Configuration menu.
+* **player_backend** should be followed by either mpd or mopidy, depending on the type of player.
+
+Then enable it with
+
+    sudo systemctl enable romonitor.service
+
+And start it with
+
+    sudo systemctl start romonitor
+
+### If you're using Multiple Players
+
+In the case where you're using [multiple players](/RompR/Using-Multiple-Players) you'll need to create a separate service for each player.
+
+
+## Scrobbling
+
+You can use [mopidy-scrobbler](https://github.com/mopidy/mopidy-scrobbler) for Mopidy or [mpdscribble](https://www.musicpd.org/clients/mpdscribble/) for mpd to scrobble, but if you do then your scrobbles might not match exactly what's in your collection - especially if you use podcasts. If you use romonitor to scrobble instead, then everything will be consistent.
+
+To make romonitor scrobble to Last.FM you must first [log in to Last.FM](/RompR/LastFM) from the main Rompr application, then start romonitor with an additional paramter, for example
+
+    php ./romonitor.php --currenthost Default --player_backend mpd --scrobbling true &
+
+Also make sure you're not scrobbling from the main RompR application or mpdscribble/mopidy-scrobbler etc or all your plays will be scrobbled twice!
 
 ### Troubleshooting
 

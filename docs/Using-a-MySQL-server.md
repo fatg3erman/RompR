@@ -10,6 +10,14 @@ Note that *unless you have a really good reason to use MySQL, SQLite is always b
 
     sudo apt-get install mysql
 
+Or if your distribution has switched to mariadb
+
+    sudo apt-get install mariadb
+
+Or you might have to specify a version number, like on raspbian. Try
+
+    apt-cache search mariadb
+
 ## Create MySQL Database
 
 You must create the RompЯ database before you start. You will need your mysql root password.
@@ -28,16 +36,22 @@ You must create the RompЯ database before you start. You will need your mysql r
     mysql -uroot -p
     CREATE DATABASE romprdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
     USE romprdb;
-    CREATE USER 'rompr' IDENTIFIED WITH mysql_native_password BY 'romprdbpass';    
+    CREATE USER 'rompr' IDENTIFIED WITH mysql_native_password BY 'romprdbpass';
     GRANT ALL ON romprdb.* TO 'rompr'@'%';
     FLUSH PRIVILEGES;
     quit;
 
-**On Raspberry Pi** with Raspbian, or any other distro that doesn't permit root logins you need to use
+*And if you're using mariadb version 10 you might need to do*
 
     sudo mysql -uroot -p
+    CREATE DATABASE romprdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    CREATE USER 'rompr' IDENTIFIED BY 'romprdbpass';
+    USE romprdb;
+    GRANT ALL ON romprdb.* TO 'rompr'@'%' IDENTIFIED BY 'romprdbpass';
+    FLUSH PRIVILEGES;
+    quit;
 
-and then enter your login password (for sudo) and then hit Enter when asked for a mysql password.
+One of those will probably work. Unfortunately there is no consistency either between distributions or between releases so I can't give a definitive set of instructions. Hint to distribution mainainers - it really makes everybody's lives easier if you all just do things the same way. Please. I'm sick of writing 8 different vrsions of every step of my instructions.
 
 Those commands set up the RompЯ database using a default username and password. Note that any usernames and passwords you put in will be stored by RompЯ in plain text, so don't use anything important.
 
