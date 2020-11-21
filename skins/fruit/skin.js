@@ -140,7 +140,7 @@ var layoutProcessor = function() {
 		toggleAudioOutpts: function() {
 			prefs.save({outputsvisible: !$('#outputbox').is(':visible')});
 			$("#outputbox").animate({width: 'toggle'},'fast',function() {
-				infobar.biggerize();
+				infobar.rejigTheText();
 			});
 		},
 
@@ -249,7 +249,7 @@ var layoutProcessor = function() {
 			$("#bottompage").css("height", newheight+"px");
 			var newwidth = ws.x - $('#infobar').offset().left;
 			$('#infobar').css('width', newwidth+'px');
-			infobar.biggerize();
+			infobar.rejigTheText();
 			browser.rePoint();
 			$('.topdropmenu').fanoogleMenus();
 			setBottomPanelWidths();

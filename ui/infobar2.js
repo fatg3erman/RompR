@@ -59,7 +59,7 @@ var infobar = function() {
 		}
 		npinfo = stuff.textbits
 		debug.debug("INFOBAR","Now Playing Info",npinfo);
-		infobar.biggerize();
+		infobar.rejigTheText();
 	}
 
 	function mungeplaylistinfo(info) {
@@ -192,67 +192,67 @@ var infobar = function() {
 		return div;
 	}
 
+	async function biggerize() {
+		clearTimeout(ftimer);
+
+		if (Object.keys(npinfo).length == 0 || $("#nptext").is(':hidden') || $("#infobar").is(':hidden')) {
+			debug.log("INFOBAR","Not biggerizing because", Object.keys(npinfo).length, $("#nptext").is(':hidden'), $("#infobar").is(':hidden'));
+			$("#nptext").html("");
+			return;
+		}
+		debug.mark("INFOBAR","Biggerizing",npinfo);
+
+		var nptext = $('#nptext');
+		var parent = nptext.parent();
+		var maxheight = parent.height();
+
+		// Start with a font size that will fill the height if no text wraps
+		var fontsize = Math.floor((maxheight/1.75)/1.25);
+		var two_lines = getLines(2);
+
+		nptext.empty().css('font-size', fontsize+'px').css('padding-top', '0px').removeClass('ready').removeClass('calculating').addClass('calculating');
+
+		if (two_lines[0] != ' ') {
+			put_text_in_area(two_lines, nptext);
+
+			// We can't simply calculate the font size based on the difference in height,
+			// because we've got text wrapping onto multiple lines and we don't know how that will
+			// change when we adjust the font size.
+			while (fontsize > 4 && (nptext.outerHeight(true) > maxheight)) {
+				fontsize -= 1;
+				nptext.css('font-size', fontsize+'px');
+			}
+
+			if (npinfo.Title && npinfo.Album && npinfo.Artist) {
+				/* Does it still fit if we use 3 lines -  this is because
+					Title
+					by Artist
+					on Album Has A Name
+				Looks better than
+					Title
+					by Artist on Album Has
+					A Name
+				*/
+				var three_lines = getLines(3);
+				put_text_in_area(three_lines, nptext);
+				if (nptext.outerHeight(true) > maxheight) {
+					put_text_in_area(two_lines, nptext);
+				}
+
+			}
+
+			var top = Math.max(0, Math.floor((maxheight - nptext.height())/2));
+			nptext.css("padding-top", top+"px").removeClass('calculating').addClass('ready');
+
+		}
+	}
+
 	return {
 
 		rejigTheText: function() {
 			debug.debug('INFOBAR', 'Rejig was called');
 			clearTimeout(ftimer);
-			ftimer = setTimeout(infobar.biggerize, 100);
-		},
-
-		biggerize: async function() {
-			clearTimeout(ftimer);
-
-			if (Object.keys(npinfo).length == 0 || $("#nptext").is(':hidden') || $("#infobar").is(':hidden')) {
-				debug.log("INFOBAR","Not biggerizing because", Object.keys(npinfo).length, $("#nptext").is(':hidden'), $("#infobar").is(':hidden'));
-				$("#nptext").html("");
-				return;
-			}
-			debug.debug("INFOBAR","Biggerizing",npinfo);
-
-			var nptext = $('#nptext');
-			var parent = nptext.parent();
-			var maxheight = parent.height();
-
-			// Start with a font size that will fill the height if no text wraps
-			var fontsize = Math.floor((maxheight/1.75)/1.25);
-			var two_lines = getLines(2);
-
-			nptext.empty().css('font-size', fontsize+'px').css('padding-top', '0px').removeClass('ready').removeClass('calculating').addClass('calculating');
-
-			if (two_lines[0] != ' ') {
-				put_text_in_area(two_lines, nptext);
-
-				// We can't simply calculate the font size based on the difference in height,
-				// because we've got text wrapping onto multiple lines and we don't know how that will
-				// change when we adjust the font size.
-				while (fontsize > 4 && (nptext.outerHeight(true) > maxheight)) {
-					fontsize -= 1;
-					nptext.css('font-size', fontsize+'px');
-				}
-
-				if (npinfo.Title && npinfo.Album && npinfo.Artist) {
-					/* Does it still fit if we use 3 lines -  this is because
-						Title
-						by Artist
-						on Album Has A Name
-					Looks better than
-						Title
-						by Artist on Album Has
-						A Name
-					*/
-					var three_lines = getLines(3);
-					put_text_in_area(three_lines, nptext);
-					if (nptext.outerHeight(true) > maxheight) {
-						put_text_in_area(two_lines, nptext);
-					}
-
-				}
-
-				var top = Math.max(0, Math.floor((maxheight - nptext.height())/2));
-				nptext.css("padding-top", top+"px").removeClass('calculating').addClass('ready');
-
-			}
+			ftimer = setTimeout(biggerize, 100);
 		},
 
 		albumImage: function() {

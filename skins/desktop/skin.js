@@ -192,7 +192,7 @@ var layoutProcessor = function() {
 		toggleAudioOutpts: function() {
 			prefs.save({outputsvisible: !$('#outputbox').is(':visible')});
 			$("#outputbox").animate({width: 'toggle'},'fast',function() {
-				infobar.biggerize();
+				infobar.rejigTheText();
 			});
 		},
 
@@ -254,7 +254,7 @@ var layoutProcessor = function() {
 			var newheight = ws.y - $("#bottompage").offset().top;
 			$("#bottompage").css("height", newheight+"px");
 			layoutProcessor.setPlaylistHeight();
-			infobar.biggerize();
+			infobar.rejigTheText();
 			browser.rePoint();
 			$('.topdropmenu').fanoogleMenus();
 		},

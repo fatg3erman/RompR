@@ -208,7 +208,7 @@ var layoutProcessor = function() {
 			if (nptop > 0) {
 				var t = Math.min(250, (infoheight - nptop + hh));
 				np.css({height: t+"px"});
-				infobar.biggerize();
+				infobar.rejigTheText();
 			}
 			layoutProcessor.setPlaylistHeight();
 			browser.rePoint();
