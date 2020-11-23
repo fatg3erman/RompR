@@ -216,9 +216,9 @@ var prefs = function() {
 		'playlistbuttons'
 	];
 
-	const jsonNode = document.querySelector("script[name='prefs']");
-	const jsonText = jsonNode.textContent;
-	const tags = JSON.parse(jsonText);
+	// const jsonNode = document.querySelector("script[name='prefs']");
+	// const jsonText = jsonNode.textContent;
+	// const tags = JSON.parse(jsonText);
 
 	var backgroundImages = false;
 	var backgroundTimer;
@@ -627,7 +627,15 @@ var prefs = function() {
 	}
 
 	return {
-		loadPrefs: function() {
+		loadPrefs: async function(callback) {
+
+			var tags = await $.ajax({
+				method: 'GET',
+				url: 'includes/loadprefs.php',
+				dataType: 'json',
+				cache: false
+			});
+
 			for (var p in tags) {
 				if (prefsInLocalStorage.indexOf(p) > -1) {
 					if (localStorage.getItem("prefs."+p) != null && localStorage.getItem("prefs."+p) != "") {
@@ -657,14 +665,11 @@ var prefs = function() {
 				}
 			}
 
-			if (prefs.icontheme == 'IconFont') {
-				// Removed icon theme
-				prefs.icontheme = 'Colourful';
-			}
-			if (prefs.lastfmlang == 'user') {
-				// Pre- 1.40 lastfmlang could be 'user' to use a separate pref, now combined
-				prefs.lastfmlang = prefs.user_lang;
-			}
+			prefs.fontfamily = prefs.fontfamily.replace('_', ' ');
+
+			if (callback)
+				callback();
+
 		},
 
 		checkSet: function(key) {
@@ -1057,25 +1062,4 @@ var prefs = function() {
 
 }();
 
-prefs.loadPrefs();
-// Update old pre-JSON prefs
-if (localStorage.getItem("prefs.prefversion") == null) {
-	for (var i in window.localStorage) {
-		if (i.match(/^prefs\.(.*)/)) {
-			var val = localStorage.getItem(i);
-			if (val === "true") {
-				val = true;
-			}
-			if (val === "false") {
-				val = false;
-			}
-			localStorage.setItem(i, JSON.stringify(val));
-		}
-	}
-	localStorage.setItem('prefs.prefversion', JSON.stringify(2));
-}
-prefs.theme = prefs.theme.replace('_1080p','');
-prefs.fontfamily = prefs.fontfamily.replace('_', ' ');
-
-sleepHelper.init();
 

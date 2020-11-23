@@ -118,7 +118,7 @@ var alarmclock = function() {
 		}
 		buttonOpacity(reps, alarm.alarmrepeat);
 		makeACheckbox('alarmplayitem_'+index, language.gettext('label_alarm_play_specific'), container, alarm.alarmplayitem, true);
-		var alarmdropper = $('<div>', {id: 'alarmdropper_'+index, class: 'alarmdropempty canbefaded'}).appendTo(container);
+		var alarmdropper = $('<div>', {id: 'alarmdropper_'+index, class: 'alarmdropempty canbefaded containerbox menuitem'}).appendTo(container);
 		if (alarm.alarm_itemtoplay == '') {
 			alarmdropper.html('<div class="containerbox menuitem" style="height:100%"><div class="expand textcentre">'+language.gettext('label_alarm_to_play')+'</div></div>');
 		} else {
@@ -204,7 +204,6 @@ var alarmclock = function() {
 			prefs.save({alarms: prefs.alarms});
 			alarmclock.setAlarm();
 		},
-
 
 		inputChanged: function(event) {
 			clearTimeout(autosavetimer);
@@ -396,20 +395,11 @@ var alarmclock = function() {
 				autostoptimer = setTimeout(alarmclock.autoStop, alarm.alarmstopmins*60000);
 			}
 			if (alarm.alarmplayitem) {
-				var items = $('#alarmdropper_'+currentalarm).children();
-				// For neatness - don't keep putting radio stations back in the playlist, it's silly.
-				// For other items well it'd be nice but we can't cover all eventualities
-				if (items.length == 1 && items.first().hasClass('clickstream')) {
-					var is_already_there = playlist.findIdByUri(decodeURIComponent(items.first().attr('name')));
-					if (is_already_there !== false) {
-						debug.log('ALARM', 'Alarm Item is already in playlist');
-						player.controller.do_command_list([
-							['playid', is_already_there]
-						]);
-						return true;
-					}
+				if (!alarm.alarm_playcommands) {
+					alarm.alarm_playcommands = playlist.ui_elements_to_rompr_commands($('#alarmdropper_'+currentalarm).children());
+					prefs.save({alarms: prefs.alarm});
 				}
-				playlist.addItems(items, null);
+				playlist.add_by_rompr_commands(alarm.alarm_playcommands, null);
 			} else {
 				player.controller.play();
 			}
@@ -441,7 +431,10 @@ var alarmclock = function() {
 			debug.log("ALARM", "Dropped",element.attr('id'));
 			var cb = element.attr('id').split('_');
 			var index = cb[1];
-			var items = $('.selected').filter(onlyAlbums).removeClass('selected').clone().wrapAll('<div></div>').parent();
+			var items = $('.selected').filter(onlyAlbums).removeClass('selected').clone();
+			prefs.alarms[index].alarm_playcommands = playlist.ui_elements_to_rompr_commands(items);
+
+			var elements = items.wrapAll('<div></div>').parent();
 			$('.selected').removeClass('selected');
 			items.find('.menu').remove();
 			items.find('.icon-menu').remove();

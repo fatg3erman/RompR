@@ -200,14 +200,6 @@ logger::mark("CREATING PAGE", "******++++++======------******------======++++++*
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
 <?php
-print '<script type="application/json" name="translations">'."\n".json_encode($translations)."\n</script>\n";
-$safeprefs = array();
-foreach ($prefs as $p => $v) {
-	if (!in_array($p, $private_prefs)) {
-		$safeprefs[$p] = $v;
-	}
-}
-print '<script type="application/json" name="prefs">'."\n".json_encode($safeprefs)."\n</script>\n";
 print '<script type="application/json" name="custom_radio_items">'."\n".json_encode(CUSTOM_RADIO_ITEMS)."\n</script>\n";
 print '<script type="application/json" name="radio_combine_options">'."\n".json_encode(RADIO_COMBINE_OPTIONS)."\n</script>\n";
 print '<link rel="stylesheet" type="text/css" href="css/layout-january.css?version='.time().'" />'."\n";
@@ -232,7 +224,7 @@ $scripts = array(
 	"jquery/jquery-migrate-3.0.1.js",
 	"ui/functions.js",
 	"ui/prefs.js",
-	"ui/language.js",
+	"ui/language.php",
 	"jquery/jquery-ui.min-19.1.18.js",
 	"jshash-2.2/md5-min.js",
 	"jquery/imagesloaded.pkgd.min.js",

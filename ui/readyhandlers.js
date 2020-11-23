@@ -169,9 +169,15 @@ if (typeof(IntersectionObserver) == 'function') {
 
 $(document).ready(function(){
 	debug.mark("INIT","Document Ready Event has fired");
+	prefs.loadPrefs(carry_on_starting);
+});
+
+function carry_on_starting() {
+	debug.mark("INIT","Prefs Have Been Loaded");
 	if (typeof(IntersectionObserver) == 'function') {
 		debug.info('UI', 'IntersectionObserver is present and being used');
 	}
+	sleepHelper.init();
 	$('#albumpicture').on('load', albumImageLoaded);
 	get_geo_country();
 	if (prefs.do_not_show_prefs) {
@@ -204,7 +210,7 @@ $(document).ready(function(){
 	}
 	snapcast.initialise();
 	startBackgroundInitTasks.doNextTask();
-});
+}
 
 function get_geo_country() {
 	if (prefs.country_userset == false) {

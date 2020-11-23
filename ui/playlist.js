@@ -558,9 +558,7 @@ var playlist = function() {
 			}
 		},
 
-		addItems: function(elements, moveto) {
-			// Call into this to add UI elements to the Play Queue
-			// CD Player Mode will always be respected
+		ui_elements_to_rompr_commands: function(elements) {
 			var tracks = new Array();
 			$.each(elements, function (index, element) {
 				var uri = $(element).attr("name");
@@ -629,6 +627,17 @@ var playlist = function() {
 					}
 				}
 			});
+			return tracks;
+		},
+
+		addItems: function(elements, moveto) {
+			// Call into this to add UI elements to the Play Queue
+			// CD Player Mode will always be respected
+			var tracks = playlist.ui_elements_to_rompr_commands(elements);
+			playlist.add_by_rompr_commands(tracks,moveto);
+		},
+
+		add_by_rompr_commands: function(tracks, moveto) {
 			if (tracks.length > 0) {
 				layoutProcessor.notifyAddTracks();
 				var playpos = (moveto === null) ? playlist.playFromEnd() : null;

@@ -15,7 +15,7 @@ logger::log("ROMONITOR", "Using Player ".$prefs['currenthost'].' of type '.$pref
 if (array_key_exists('scrobbling', $prefs) && $prefs['scrobbling'] == 'true') {
 	if ($prefs['lastfm_session_key'] == '') {
 		$prefs['scrobbling'] = false;
-		logger::warn('ROMONITOR', 'Warning. Scrobbling was requested bu user is not logged in. Scrobbling will not be enabled');
+		logger::warn('ROMONITOR', 'Warning. Scrobbling was requested but user is not logged in. Scrobbling will not be enabled');
 	} else {
 		$prefs['scrobbling'] = true;
 		logger::log("ROMONITOR", "Scrobbling is enabled");

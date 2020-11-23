@@ -1,10 +1,21 @@
+<?php
+header('Content-Type: text/javascript; charset=utf-8');
+?>
+
 var language = function() {
 
-	const jsonNode = document.querySelector("script[name='translations']");
-	const jsonText = jsonNode.textContent;
-	const tags = JSON.parse(jsonText);
+<?php
+
+	chdir('..');
+	include("includes/vars.php");
+	include("includes/functions.php");
+	include("international.php");
+	print 'const tags = '.json_encode($translations)."\r\n";
+
+?>
 
 	return {
+
 		gettext: function(key, args) {
 			if (key === null || key == '') {
 				return "";
