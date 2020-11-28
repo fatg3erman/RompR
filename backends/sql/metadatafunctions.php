@@ -1,5 +1,7 @@
 <?php
 
+require_once ('getid3/getid3.php');
+
 class romprmetadata {
 
 	public static function sanitise_data(&$data) {
@@ -203,7 +205,7 @@ class romprmetadata {
 	}
 
 	public static function youtubedl($data) {
-		logger::log('YOUTUBEDL', print_r($data, true));
+		// logger::log('YOUTUBEDL', print_r($data, true));
 		$ytdl_path = find_executable('youtube-dl');
 		if ($ytdl_path === false) {
 			logger::error('YOUTUBEDL', 'youtube-dl binary could not be found');
@@ -224,8 +226,21 @@ class romprmetadata {
 		}
 		$a = preg_match('/:video\/.*\.(.+)$/', $data['uri'], $matches);
 		if ($a) {
+
 			$uri_to_get = 'https://youtu.be/'.$matches[1];
 			logger::log('YOUTUBEDL', 'Downloading',$uri_to_get);
+
+			$info = sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
+				"SELECT Title, Artistname FROM Tracktable JOIN Artisttable USING (Artistindex) WHERE Uri = ?",
+				$data['uri']
+			);
+			if (is_array($info) && count($info) > 0) {
+				logger::log('YOUTUBEDL', '  Title is',$info[0]['Title']);
+				logger::log('YOUTUBEDL', '  Artist is',$info[0]['Artistname']);
+			} else {
+				loger::log('YOUTUBEDL', '  Could not find title and artist from collection');
+			}
+
 			chdir('prefs/youtubedl');
 			$ttindex = simple_query('TTindex', 'Tracktable', 'Uri', $data['uri'], null);
 			if ($ttindex === null) {
@@ -256,6 +271,38 @@ class romprmetadata {
 			} else {
 				logger::log('YOUTUBEDL', print_r($files, true));
 			}
+
+			if (is_array($info) && count($info) > 0) {
+				logger::log('YOUTUBEDL', 'Writing ID3 tags to',$files[0]);
+
+				$getID3 = new getID3;
+				$getID3->setOption(array('encoding'=>'UTF-8'));
+
+				getid3_lib::IncludeDependency(GETID3_INCLUDEPATH.'write.php', __FILE__, true);
+
+				$tagwriter = new getid3_writetags;
+				$tagwriter->filename       = $files[0];
+				$tagwriter->tagformats     = array('metaflac');
+				$tagwriter->overwrite_tags = true;
+				$tagwriter->tag_encoding   = 'UTF-8';
+				$tagwriter->remove_other_tags = false;
+				$tags = array(
+					'artist' => array(html_entity_decode($info[0]['Artistname'])),
+					'albumartist' => array(html_entity_decode($info[0]['Artistname'])),
+					'album' => array(html_entity_decode($info[0]['Title'])),
+					'title' => array(html_entity_decode($info[0]['Title']))
+				);
+				$tagwriter->tag_data = $tags;
+				if ($tagwriter->WriteTags()) {
+					logger::log('YOUTTUBEDL', 'Successfully wrote tags');
+					if (!empty($tagwriter->warnings)) {
+						logger::log('YOUTUBEDL', 'There were some warnings'.implode(' ', $tagwriter->warnings));
+					}
+				} else {
+					logger::error('YOUTUBEDL', 'Failed to write tags!', implode(' ', $tagwriter->errors));
+				}
+			}
+
 			$new_uri = dirname(dirname(get_base_url())).'/prefs/youtubedl/'.$ttindex.'/'.$files[0];
 			logger::log('YOUTUBEDL', 'New URI is', $new_uri);
 			sql_prepare_query(true, null, null, null,

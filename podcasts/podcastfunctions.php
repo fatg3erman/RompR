@@ -1189,7 +1189,7 @@ function downloadTrack($key, $channel) {
 				if ($tagwriter->WriteTags()) {
 					logger::log('PODCASTS', 'Successfully wrote tags');
 					if (!empty($tagwriter->warnings)) {
-						logger::log('There were some warnings'.implode(' ', $tagwriter->warnings));
+						logger::log('PODCASTS', 'There were some warnings'.implode(' ', $tagwriter->warnings));
 					}
 				} else {
 					logger::error('PODCASTS', 'Failed to write tags!', implode(' ', $tagwriter->errors));
