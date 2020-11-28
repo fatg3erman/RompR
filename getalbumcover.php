@@ -23,10 +23,10 @@ $ignore_local = (array_key_exists('ignorelocal', $_REQUEST) && $_REQUEST['ignore
 
 // Soundcloud/Youtube can be first since that function only returns images for soundcloud tracks, and it's the best way to get those images
 if ($albumimage->mbid != "") {
-	$searchfunctions = array( 'trySoundcloud', 'tryYoutube','tryLocal', 'trySpotify', 'tryMusicBrainz', 'tryLastFM', 'tryGoogle' );
+	$searchfunctions = array( 'trySoundcloud', 'tryYoutube','tryLocal', 'trySpotify', 'tryMusicBrainz', 'tryLastFM');
 } else {
 	// Try LastFM twice - first time just to get an MBID since coverartarchive images tend to be bigger
-	$searchfunctions = array( 'trySoundcloud', 'tryYoutube', 'tryLocal', 'trySpotify', 'tryLastFM', 'tryMusicBrainz', 'tryLastFM', 'tryGoogle' );
+	$searchfunctions = array( 'trySoundcloud', 'tryYoutube', 'tryLocal', 'trySpotify', 'tryLastFM', 'tryMusicBrainz', 'tryLastFM');
 }
 
 $player = new base_mpd_player();
@@ -304,45 +304,45 @@ function tryLastFM($albumimage) {
 
 }
 
-function tryGoogle($albumimage) {
-	global $delaytime;
-	global $prefs;
-	$retval = "";
-	if ($prefs['google_api_key'] != '' && $prefs['google_search_engine_id'] != '') {
-		$nureek = "https://www.googleapis.com/customsearch/v1?key=".trim($prefs['google_api_key'])."&cx=".trim($prefs['google_search_engine_id'])."&searchType=image&alt=json";
-		$sa = trim($albumimage->get_artist_for_search());
-		$ma = munge_album_name($albumimage->album);
-		if ($sa == '') {
-			logger::mark("GETALBUMCOVER", "  Trying Google for",$ma);
-			$uri = $nureek."&q=".urlencode($ma);
-		} else {
-			logger::mark("GETALBUMCOVER", "  Trying Google for",$sa,$ma);
-			$uri = $nureek."&q=".urlencode($sa.' '.$ma);
-		}
-		$d = new url_downloader(array(
-			'url' => $uri,
-			'cache' => 'google',
-			'return_data' => true
-		));
-		$d->get_data_to_file();
-		$json = json_decode($d->get_data(), true);
-		if (array_key_exists('items', $json)) {
-			foreach($json['items'] as $item) {
-				$retval = $item['link'];
-				break;
-			}
-		} else if (array_key_exists('error', $json)) {
-			logger::warn("GETALBUMCOVER", "    Error response from Google : ".$json['error']['errors'][0]['reason']);
-		}
-		if ($retval != '') {
-			logger::trace("GETALBUMCOVER", "    Found image ".$retval." from Google");
-			$delaytime = 1000;
-		}
-	} else {
-		logger::mark("GETALBUMCOVER", "  Not trying Google because no API Key or Search Engine ID");
-	}
-	return $retval;
-}
+// function tryGoogle($albumimage) {
+// 	global $delaytime;
+// 	global $prefs;
+// 	$retval = "";
+// 	if ($prefs['google_api_key'] != '' && $prefs['google_search_engine_id'] != '') {
+// 		$nureek = "https://www.googleapis.com/customsearch/v1?key=".trim($prefs['google_api_key'])."&cx=".trim($prefs['google_search_engine_id'])."&searchType=image&alt=json";
+// 		$sa = trim($albumimage->get_artist_for_search());
+// 		$ma = munge_album_name($albumimage->album);
+// 		if ($sa == '') {
+// 			logger::mark("GETALBUMCOVER", "  Trying Google for",$ma);
+// 			$uri = $nureek."&q=".urlencode($ma);
+// 		} else {
+// 			logger::mark("GETALBUMCOVER", "  Trying Google for",$sa,$ma);
+// 			$uri = $nureek."&q=".urlencode($sa.' '.$ma);
+// 		}
+// 		$d = new url_downloader(array(
+// 			'url' => $uri,
+// 			'cache' => 'google',
+// 			'return_data' => true
+// 		));
+// 		$d->get_data_to_file();
+// 		$json = json_decode($d->get_data(), true);
+// 		if (array_key_exists('items', $json)) {
+// 			foreach($json['items'] as $item) {
+// 				$retval = $item['link'];
+// 				break;
+// 			}
+// 		} else if (array_key_exists('error', $json)) {
+// 			logger::warn("GETALBUMCOVER", "    Error response from Google : ".$json['error']['errors'][0]['reason']);
+// 		}
+// 		if ($retval != '') {
+// 			logger::trace("GETALBUMCOVER", "    Found image ".$retval." from Google");
+// 			$delaytime = 1000;
+// 		}
+// 	} else {
+// 		logger::mark("GETALBUMCOVER", "  Not trying Google because no API Key or Search Engine ID");
+// 	}
+// 	return $retval;
+// }
 
 function tryMusicBrainz($albumimage) {
 	global $delaytime;

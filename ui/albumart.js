@@ -332,8 +332,8 @@ var imageEditor = function() {
 	var currparent = null;
 	var currhighlight = null;
 	var currname = null;
-	var current = "g";
-	var nureek = "https://www.googleapis.com/customsearch/v1?key="+prefs.google_api_key+"&cx="+prefs.google_search_engine_id+"&searchType=image&alt=json";
+	var current = "u";
+	// var nureek = "https://www.googleapis.com/customsearch/v1?key="+prefs.google_api_key+"&cx="+prefs.google_search_engine_id+"&searchType=image&alt=json";
 	bigimg.onload = function() {
 		imageEditor.displayBigImage();
 	}
@@ -370,16 +370,16 @@ var imageEditor = function() {
 			bigdiv.append($('<div>', { id: "origimage"}).append($("<img>", { id: 'browns' })));
 
 			$("#searchcontent").append( $('<div>', {id: "editcontrols", class: "clearfix fullwidth"}),
-										$('<div>', {id: "gsearch", class: "noddy fullwidth invisible"}),
+										// $('<div>', {id: "gsearch", class: "noddy fullwidth invisible"}),
 										$('<div>', {id: "fsearch", class: "noddy fullwidth invisible"}),
 										$('<div>', {id: "usearch", class: "noddy fullwidth invisible"}));
 
 			$("#"+current+"search").removeClass("invisible");
 
-			$("#gsearch").append(       $('<div>', {id: "brian", class: "fullwidth"}),
-										$('<div>', {id: "searchresultsholder", class: "fullwidth"}));
+			// $("#gsearch").append(       $('<div>', {id: "brian", class: "fullwidth"}),
+			// 							$('<div>', {id: "searchresultsholder", class: "fullwidth"}));
 
-			$("#searchresultsholder").append($('<div>', {id: "searchresults", class: "clearfix fullwidth"}));
+			// $("#searchresultsholder").append($('<div>', {id: "searchresults", class: "clearfix fullwidth"}));
 
 			var fdiv =                  $('<div>', {class: "fullwidth"}).appendTo('#usearch');
 			var uform =                 $('<form>', { id: 'uform', action: 'getalbumcover.php', method: 'post', enctype: 'multipart/form-data' }).appendTo(fdiv);
@@ -401,7 +401,7 @@ var imageEditor = function() {
 
 			$("#usearch").append(      '<div class="holdingcell"><p>'+language.gettext("albumart_dragdrop")+'</p></div>');
 
-			$("#editcontrols").append(  '<div id="g" class="tleft bleft clickable clickicon bmenu">'+language.gettext("albumart_googlesearch")+'</div>');
+			// $("#editcontrols").append(  '<div id="g" class="tleft bleft clickable clickicon bmenu">'+language.gettext("albumart_googlesearch")+'</div>');
 			if (path && path != '.') {
 				$("#editcontrols").append( '<div id="f" class="tleft bleft bmid clickable clickicon bmenu">'+language.gettext("albumart_local")+'</div>');
 			}
@@ -412,16 +412,16 @@ var imageEditor = function() {
 
 			$("#"+current).addClass("bsel");
 
-			$("#brian").append('<div class="containerbox"><div class="expand"><input class="enter clearbox" type="text" id="searchphrase" /></div><button class="fixed" onclick="imageEditor.research()">Search</button></div>');
+			// $("#brian").append('<div class="containerbox"><div class="expand"><input class="enter clearbox" type="text" id="searchphrase" /></div><button class="fixed" onclick="imageEditor.research()">Search</button></div>');
 
-			$("#searchphrase").val(phrase);
+			// $("#searchphrase").val(phrase);
 
 			if (imgobj.attr("src")) {
 				var aa = new albumart_translator(imgobj.attr("src"));
 				bigimg.src = aa.getSize('asdownloaded');
 			}
 
-			imageEditor.search();
+			// imageEditor.search();
 			if (path && path != '.') {
 				$.getJSON("utils/findLocalImages.php?path="+path, imageEditor.gotLocalImages)
 			}
@@ -430,7 +430,7 @@ var imageEditor = function() {
 			$('input#uploadkey').val(searchparams.key);
 			$('input#uploadartist').val(searchparams.artist);
 			$('input#uploadalbum').val(searchparams.album);
-			$('#searchphrase').on('keyup', imageEditor.bumblefuck);
+			// $('#searchphrase').on('keyup', imageEditor.bumblefuck);
 			wobbleMyBottom();
 			$('#coverslist').mCustomScrollbar('scrollTo', $('#imageeditor').parent());
 		},
@@ -463,82 +463,82 @@ var imageEditor = function() {
 			}
 		},
 
-		research: function() {
-			$("#searchresults").empty();
-			start = 1;
-			imageEditor.search();
-		},
+		// research: function() {
+		// 	$("#searchresults").empty();
+		// 	start = 1;
+		// 	imageEditor.search();
+		// },
 
-		search: function() {
-			debug.core("IMAGEEDITOR",prefs.google_api_key,prefs.google_search_engine_id);
-			if (prefs.google_api_key != '' && prefs.google_search_engine_id != '') {
-				var searchfor = $("#searchphrase").val();
-				debug.log("IMAGEEDITOR","Searching Google for", searchfor);
-				$.ajax({
-					type: "POST",
-					dataType: "json",
-					url: 'browser/backends/google.php',
-					data: {uri: encodeURIComponent(nureek+"&q="+encodeURIComponent(searchfor)+"&start="+start)}
-				})
-				.done(imageEditor.googleSearchComplete)
-				.fail(function(data) {
-					debug.warn("IMAGEEDITOR","IT'S ALL GONE HORRIBLY WRONG",data);
-					if (data == null) {
-						imageEditor.showError("No Response!");
-					} else {
-						var e = data.responseJSON;
-						if (e.error) {
-							if (typeof (e.error) == 'object') {
-								var t = '';
-								for (var i in e.error.errors) {
-									t += e.error.errors[i].message+' - '+e.error.errors[i].reason+'<br/>';
-								}
-								imageEditor.showError(t)
-							} else {
-								imageEditor.showError(e.error)
-							}
-						} else {
-							imageEditor.showError("No Response!");
-						}
-					}
-				});
-			} else {
-				imageEditor.showError('You need to use your own Google API Key to search Google. Read more at <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">The Documentation</a>');
-			}
-		},
+		// search: function() {
+		// 	debug.core("IMAGEEDITOR",prefs.google_api_key,prefs.google_search_engine_id);
+		// 	if (prefs.google_api_key != '' && prefs.google_search_engine_id != '') {
+		// 		var searchfor = $("#searchphrase").val();
+		// 		debug.log("IMAGEEDITOR","Searching Google for", searchfor);
+		// 		$.ajax({
+		// 			type: "POST",
+		// 			dataType: "json",
+		// 			url: 'browser/backends/google.php',
+		// 			data: {uri: encodeURIComponent(nureek+"&q="+encodeURIComponent(searchfor)+"&start="+start)}
+		// 		})
+		// 		.done(imageEditor.googleSearchComplete)
+		// 		.fail(function(data) {
+		// 			debug.warn("IMAGEEDITOR","IT'S ALL GONE HORRIBLY WRONG",data);
+		// 			if (data == null) {
+		// 				imageEditor.showError("No Response!");
+		// 			} else {
+		// 				var e = data.responseJSON;
+		// 				if (e.error) {
+		// 					if (typeof (e.error) == 'object') {
+		// 						var t = '';
+		// 						for (var i in e.error.errors) {
+		// 							t += e.error.errors[i].message+' - '+e.error.errors[i].reason+'<br/>';
+		// 						}
+		// 						imageEditor.showError(t)
+		// 					} else {
+		// 						imageEditor.showError(e.error)
+		// 					}
+		// 				} else {
+		// 					imageEditor.showError("No Response!");
+		// 				}
+		// 			}
+		// 		});
+		// 	} else {
+		// 		imageEditor.showError('You need to use your own Google API Key to search Google. Read more at <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">The Documentation</a>');
+		// 	}
+		// },
 
-		googleSearchComplete: function(data) {
-			debug.debug("IMAGEEDITOR","Google Search Results", data);
-			$("#morebutton").remove();
-			if (data.queries.nextPage) {
-				start = data.queries.nextPage[0].startIndex;
-			} else {
-				start = 1;
-			}
-			if (data.items) {
-				$.each(data.items, function(i,v){
-					var index = start+i;
-					$("#searchresults").append($('<img>', {
-						id: 'img'+index,
-						class: "gimage clickable clickicon clickgimage",
-						src: v.image.thumbnailLink
-					}));
-					$("#searchresults").append($('<input>', {
-						type: 'hidden',
-						value: v.link,
-					}));
-					$("#searchresults").append($('<input>', {
-						type: 'hidden',
-						value: index,
-					}));
+		// googleSearchComplete: function(data) {
+		// 	debug.debug("IMAGEEDITOR","Google Search Results", data);
+		// 	$("#morebutton").remove();
+		// 	if (data.queries.nextPage) {
+		// 		start = data.queries.nextPage[0].startIndex;
+		// 	} else {
+		// 		start = 1;
+		// 	}
+		// 	if (data.items) {
+		// 		$.each(data.items, function(i,v){
+		// 			var index = start+i;
+		// 			$("#searchresults").append($('<img>', {
+		// 				id: 'img'+index,
+		// 				class: "gimage clickable clickicon clickgimage",
+		// 				src: v.image.thumbnailLink
+		// 			}));
+		// 			$("#searchresults").append($('<input>', {
+		// 				type: 'hidden',
+		// 				value: v.link,
+		// 			}));
+		// 			$("#searchresults").append($('<input>', {
+		// 				type: 'hidden',
+		// 				value: index,
+		// 			}));
 
-				});
-				$(".gimage").css("height", "120px");
-				$("#searchresultsholder").append('<div id="morebutton" class="fullwidth"><button onclick="imageEditor.search()">'+language.gettext("albumart_showmore")+'</button></div>');
-			} else {
-				$("#searchresults").append('<h3 align="center">No Images Found</h3>');
-			}
-		},
+		// 		});
+		// 		$(".gimage").css("height", "120px");
+		// 		$("#searchresultsholder").append('<div id="morebutton" class="fullwidth"><button onclick="imageEditor.search()">'+language.gettext("albumart_showmore")+'</button></div>');
+		// 	} else {
+		// 		$("#searchresults").append('<h3 align="center">No Images Found</h3>');
+		// 	}
+		// },
 
 		onGoogleSearchClicked: function(event) {
 			var clickedElement = findClickableElement(event);
@@ -594,11 +594,11 @@ var imageEditor = function() {
 			}
 		},
 
-		bumblefuck: function(e) {
-			if (e.keyCode == 13) {
-				imageEditor.research();
-			}
-		},
+		// bumblefuck: function(e) {
+		// 	if (e.keyCode == 13) {
+		// 		imageEditor.research();
+		// 	}
+		// },
 
 		uploadFile: function() {
 			imgobj.removeClass('notfound notexist').addClass('notfound');
