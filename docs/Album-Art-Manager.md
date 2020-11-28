@@ -47,6 +47,12 @@ This will copy RompЯ's images into your Local Music folders.
 
 ### Using Google Images To Find Album Art
 
+#### Everything below here is now Wrong
+Google change how this works every six months and the Google Developer site is completely unintelligible to people whose brains work like normal people, so I'm
+no longer supporting this because I cannot be bothered to update the code and documentation on such a frequent basis. Fuck Google.
+
+if anybody cares to figure out how to make this work again, feel free to write a forum post about it.
+
 RompЯ is capable of searching Google Images for album art. However, Google Images only allow 100 free queries per day, and charge for anything more than that. In the past I have generously increased the limit to 1000 queries per day and paid for the (very small) use this gets out of my own pocket. Unfortunately, some days ago, some nefarious person or persons have hijacked my Google API key (which is published in the code) and started using it for their own purposes, racking up a substantial bill which I had to pay. So from now on if you wish to use Google Images to search for album art you will have to provide your own API key. This is free for up to 100 searches a day. If you wish to use more than that you can choose to limit the amount of searches per day to stop you overspending. The process for setting this up is described below. It is slightly complicated unfortunately.
 
 The API key is also required if you want to use the Youtube Information panel to get Artist videos.

@@ -309,7 +309,7 @@ function tryGoogle($albumimage) {
 	global $prefs;
 	$retval = "";
 	if ($prefs['google_api_key'] != '' && $prefs['google_search_engine_id'] != '') {
-		$nureek = "https://www.googleapis.com/customsearch/v1?key=".$prefs['google_api_key']."&cx=".$prefs['google_search_engine_id']."&searchType=image&alt=json";
+		$nureek = "https://www.googleapis.com/customsearch/v1?key=".trim($prefs['google_api_key'])."&cx=".trim($prefs['google_search_engine_id'])."&searchType=image&alt=json";
 		$sa = trim($albumimage->get_artist_for_search());
 		$ma = munge_album_name($albumimage->album);
 		if ($sa == '') {

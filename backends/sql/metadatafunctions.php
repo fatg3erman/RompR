@@ -285,7 +285,7 @@ class romprmetadata {
 				$tagwriter->tagformats     = array('metaflac');
 				$tagwriter->overwrite_tags = true;
 				$tagwriter->tag_encoding   = 'UTF-8';
-				$tagwriter->remove_other_tags = false;
+				$tagwriter->remove_other_tags = true;
 				$tags = array(
 					'artist' => array(html_entity_decode($info[0]['Artistname'])),
 					'albumartist' => array(html_entity_decode($info[0]['Artistname'])),
