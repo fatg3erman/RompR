@@ -52,7 +52,7 @@ class base_mpd_player {
 		if ($player_type !== null) {
 			$this->player_type = $player_type;
 		} else {
-			if (array_key_exists('player_backend', $prefs) && $prefs['player_backend'] !== 'none') {
+			if (array_key_exists('player_backend', $prefs) && ($prefs['player_backend'] == 'mpd' || $prefs['player_backend'] == 'mopidy')) {
 				$this->player_type = $prefs['player_backend'];
 			} else {
 				$this->player_type = $this->probe_player_type();

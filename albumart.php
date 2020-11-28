@@ -19,8 +19,6 @@ set_version_string();
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 <?php
-print '<script type="application/json" name="translations">'."\n".json_encode($translations)."\n</script>\n";
-print '<script type="application/json" name="prefs">'."\n".json_encode($prefs)."\n</script>\n";
 print '<link rel="stylesheet" type="text/css" href="css/layout-january.css?version=?'.ROMPR_VERSION.'" />'."\n";
 print '<link rel="stylesheet" type="text/css" href="skins/desktop/skin.css?version=='.ROMPR_VERSION.'" />'."\n";
 print '<link rel="stylesheet" type="text/css" href="css/albumart.css?version=?'.ROMPR_VERSION.'" />'."\n";
@@ -33,7 +31,7 @@ $scripts = array(
 	"jquery/jquery-migrate-3.0.1.js",
 	"ui/functions.js",
 	"ui/prefs.js",
-	"ui/language.js",
+	"ui/language.php",
 	"jquery/jquery-ui.min-19.1.18.js",
 	"jquery/jquery.mCustomScrollbar.concat.min-3.1.5.js",
 	"includes/globals.js",

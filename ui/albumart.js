@@ -205,7 +205,10 @@ function sections_with_missing_images() {
 }
 
 $(document).ready(function () {
+	prefs.loadPrefs(carry_on_loading);
+});
 
+function carry_on_loading() {
 	debug.log("ALBUMART","Document is ready");
 	prefs.rgbs = null;
 	prefs.maxrgbs = null;
@@ -259,7 +262,7 @@ $(document).ready(function () {
 	$(document).on('mousemove', '.clearbox', makeHoverWork);
 	$(document).on('click', '.clearbox.enter', makeClearWork);
 
-});
+};
 
 $(window).on('load', function () {
 	debug.log("ALBUMART","Document has loaded");

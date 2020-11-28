@@ -10,7 +10,7 @@ var language = function() {
 	include("includes/vars.php");
 	include("includes/functions.php");
 	include("international.php");
-	print 'const tags = '.json_encode($translations)."\r\n";
+	print '    const tags = '.json_encode($translations)."\r\n";
 
 ?>
 
