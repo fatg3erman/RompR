@@ -7,6 +7,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Minor bugfixes
 * Rewrote the Snapcast code so it updates faster and the UI is neater and more useable
 * Event-driven updates for Mopidy using Mopidy-HTTP. See [here](/RompR/Rompr-And-Mopidy)
+* Album Art Search now uses Bing instead of Google Images because Google broke my code and Bing's API is better
 
 
 ## Version 1.50

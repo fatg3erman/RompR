@@ -45,10 +45,19 @@ Once you've downloaded all the art for your Collection, you can archive the imag
 
 This will copy RompЯ's images into your Local Music folders.
 
-### Using Google Images To Find Album Art
+### Using Bing Image Search To Find Album Art
 
-Direct search from within RompR is no longer supported, since Google's terms of use have become far too restrictive, their API too often changing, and their developer website too complex for anybody who still has a life to bother trying to understand.
+This version of RompR now uses Bing instead of Google to search for Album Art. To use this functionality you'll need to sign up for a Free Azure account, enable the
+Bing Search v7 functionality, then create an API key and enter it into the setup screen you access from /rompr?setup on your RompR installtion. I could try and describe
+how you do this but it changes a lot so my docs would quickly go out of date. Instead I would start here https://docs.microsoft.com/en-us/bing/search-apis/bing-image-search/overview
+and once you have a subscription key you're good to go.
 
-Basically, I can't be fussed with it any more. Screw you, Google.
+The switch from Google to Microsoft is likely to raise a few eyebrows, so here is the reasoning.
 
-Google Search In New Tab still works, and you can usually drag a search result directly over the (small) album image in the Album Art Manager.
+* The existing Google Search code broke when Google made a change to their terms of service buried deep in a 1000-word email.
+* This pised me off enormously, and I went to try to find out how it works now and spent a fruitless couple of hours trying to get Google's docs to make sense.
+* Google's API is hugely complex and difficult to get to grips with, their documentation sucks, and the Developer Portal is as navigable as the Northwest Passage in winter.
+* Bing's API is straightforward, the documentation is good, and the data it returns is much more comprehensive than Google's.
+* I had Bing search working withint 30 minutes of signing up, including writing code. That's really all that matters.
+
+It's come to something when Microsoft are providing a better service than Google, but hey-ho, times change.

@@ -78,14 +78,12 @@ if ($prefs['do_not_show_prefs']) {
 print '><label for="dsp">Do not show preferences panel on the interface</label></div>';
 print '<p class="tiny">This will stop people messing with your configuration, but also with theirs</p>';
 
-// print '<hr class="dingleberry" />';
-// print '<h3>'.get_int_text('config_google_credentials').'</h3>';
-// print '<p class="tiny">To use Google and YoutTube features you need to create an API key</p>';
-// print '<p><a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></p>';
-// print '<p>Google API Key<br/>';
-// print '<input type="text" name="google_api_key" value="'.$prefs['google_api_key'].'" /></p>'."\n";
-// print '<p>Google Search Engine ID<br/>';
-// print '<input type="text" name="google_search_engine_id" value="'.$prefs['google_search_engine_id'].'" /></p>'."\n";
+print '<hr class="dingleberry" />';
+print '<h3>'.get_int_text('config_google_credentials').'</h3>';
+print '<p class="tiny">To use Bing Image Search you need to create an API key</p>';
+print '<p><a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></p>';
+print '<p>Bing API Key<br/>';
+print '<input type="text" name="bing_api_key" value="'.$prefs['bing_api_key'].'" /></p>'."\n";
 
 print '<hr class="dingleberry" />';
 print '<h3>Collection Settings</h3>';

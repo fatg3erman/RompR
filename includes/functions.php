@@ -706,7 +706,7 @@ function nice_server_address($host) {
 	}
 }
 
-function getCacheData($uri, $cache, $use_cache = true, $return_value = false) {
+function getCacheData($uri, $cache, $use_cache = true, $return_value = false, $header = false) {
 
 	$me = strtoupper($cache);
 	logger::debug("GET CACHE DATA", "Getting",$uri);
@@ -717,7 +717,8 @@ function getCacheData($uri, $cache, $use_cache = true, $return_value = false) {
 		'url' => $uri,
 		'send_cache_headers' => !$return_value,
 		'cache' => $use_cache ? $cache : null,
-		'return_data' => true
+		'return_data' => true,
+		'header' => $header
 	);
 	$d = new url_downloader($options);
 	$retval = '';

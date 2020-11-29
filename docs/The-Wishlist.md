@@ -2,7 +2,7 @@
 
 The wishlist is a means of keeping track of songs you heard on the radio that you liked.
 
-When listening to internet radio, if you hear a song you like you can give it a rating or a tag. If you're using RompЯ with mpd the track will be added to your wishlist. If you're running Mopidy with Mopidy-Spotify and/or Mopidy-GMusic, RompЯ will first search Spotify and/or Google Music for the track and will add it directly into your collection if it finds it, or to the Wishlist if it doesn't.
+When listening to internet radio, if you hear a song you like you can give it a rating or a tag. If you're using RompЯ with mpd the track will be added to your wishlist. If you're running Mopidy with Mopidy-Spotify, RompЯ will first search Spotify and/or Google Music for the track and will add it directly into your collection if it finds it, or to the Wishlist if it doesn't.
 
 ![](images/wishlist1.png)
 

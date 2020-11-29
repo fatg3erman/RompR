@@ -1026,9 +1026,11 @@ function format_remote_api_error(msg, err) {
 	let errormessage = language.gettext(msg);
 	if (err.statusText)
 		errormessage += ' ('+err.status+' '+err.statusText+')';
-	if (err.responseJSON)
+	if (err.responseJSON && err.responseJSON.error) {
+		errormessage += ' ('+err.responseJSON.error.message+')';
+	} else if (err.responseJSON && err.responseJSON.message) {
 		errormessage += ' ('+err.responseJSON.message+')';
-
+	}
 	return errormessage;
 }
 

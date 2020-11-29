@@ -23,10 +23,10 @@ $ignore_local = (array_key_exists('ignorelocal', $_REQUEST) && $_REQUEST['ignore
 
 // Soundcloud/Youtube can be first since that function only returns images for soundcloud tracks, and it's the best way to get those images
 if ($albumimage->mbid != "") {
-	$searchfunctions = array( 'trySoundcloud', 'tryYoutube','tryLocal', 'trySpotify', 'tryMusicBrainz', 'tryLastFM');
+	$searchfunctions = array( 'trySoundcloud', 'tryLocal', 'trySpotify', 'tryMusicBrainz', 'tryLastFM');
 } else {
 	// Try LastFM twice - first time just to get an MBID since coverartarchive images tend to be bigger
-	$searchfunctions = array( 'trySoundcloud', 'tryYoutube', 'tryLocal', 'trySpotify', 'tryLastFM', 'tryMusicBrainz', 'tryLastFM');
+	$searchfunctions = array( 'trySoundcloud', 'tryLocal', 'trySpotify', 'tryLastFM', 'tryMusicBrainz', 'tryLastFM');
 }
 
 $player = new base_mpd_player();
@@ -189,46 +189,6 @@ function trySoundcloud($albumimage) {
 	return $image;
 }
 
-function tryYoutube($albumimage) {
-	global $prefs, $delaytime;
-	$image = '';
-	if ($prefs['google_api_key'] != '' &&
-		$albumimage->albumuri !== null &&
-		(substr($albumimage->albumuri, 0, 8) == 'youtube:' || substr($albumimage->albumuri, 0, 3 ) == 'yt:')) {
-
-		$image = 'newimages/youtube-logo.svg';
-		logger::mark("GETALBUMCOVER", "  Trying Youtube for ".$albumimage->albumuri);
-		$spaffy = preg_match("/\.(.+$)/", $albumimage->albumuri, $matches);
-		if ($spaffy) {
-			$url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet&id='.$matches[1].'&key='.$prefs['google_api_key'];
-			$response = getCacheData($url, 'google', true, true);
-			if ($response) {
-				$data = json_decode($response, true);
-				$size = 0;
-				// Pain how we can't catch errors if we try to loop something that doesn't exist
-				if (is_array($data) &&
-					array_key_exists('items', $data) &&
-					is_array($data['items']) &&
-					count($data['items']) > 0 &&
-					array_key_exists('snippet', $data['items'][0]) &&
-					array_key_exists('thumbnails', $data['items'][0]['snippet']) &&
-					is_array($data['items'][0]['snippet']['thumbnails']))
-				{
-					foreach ($data['items'][0]['snippet']['thumbnails'] as $thumb) {
-						if ($thumb['width'] > $size) {
-							$size = $thumb['width'];
-							$image = $thumb['url'];
-						}
-					}
-					logger::trace('GETALBUMCOVER', 'Found image on YouTube', $image);
-				}
-			}
-		}
-	}
-	$delaytime = 1000;
-	return $image;
-}
-
 function tryLastFM($albumimage) {
 
 	global $delaytime, $mysqlc;
@@ -303,46 +263,6 @@ function tryLastFM($albumimage) {
 	return $retval;
 
 }
-
-// function tryGoogle($albumimage) {
-// 	global $delaytime;
-// 	global $prefs;
-// 	$retval = "";
-// 	if ($prefs['google_api_key'] != '' && $prefs['google_search_engine_id'] != '') {
-// 		$nureek = "https://www.googleapis.com/customsearch/v1?key=".trim($prefs['google_api_key'])."&cx=".trim($prefs['google_search_engine_id'])."&searchType=image&alt=json";
-// 		$sa = trim($albumimage->get_artist_for_search());
-// 		$ma = munge_album_name($albumimage->album);
-// 		if ($sa == '') {
-// 			logger::mark("GETALBUMCOVER", "  Trying Google for",$ma);
-// 			$uri = $nureek."&q=".urlencode($ma);
-// 		} else {
-// 			logger::mark("GETALBUMCOVER", "  Trying Google for",$sa,$ma);
-// 			$uri = $nureek."&q=".urlencode($sa.' '.$ma);
-// 		}
-// 		$d = new url_downloader(array(
-// 			'url' => $uri,
-// 			'cache' => 'google',
-// 			'return_data' => true
-// 		));
-// 		$d->get_data_to_file();
-// 		$json = json_decode($d->get_data(), true);
-// 		if (array_key_exists('items', $json)) {
-// 			foreach($json['items'] as $item) {
-// 				$retval = $item['link'];
-// 				break;
-// 			}
-// 		} else if (array_key_exists('error', $json)) {
-// 			logger::warn("GETALBUMCOVER", "    Error response from Google : ".$json['error']['errors'][0]['reason']);
-// 		}
-// 		if ($retval != '') {
-// 			logger::trace("GETALBUMCOVER", "    Found image ".$retval." from Google");
-// 			$delaytime = 1000;
-// 		}
-// 	} else {
-// 		logger::mark("GETALBUMCOVER", "  Not trying Google because no API Key or Search Engine ID");
-// 	}
-// 	return $retval;
-// }
 
 function tryMusicBrainz($albumimage) {
 	global $delaytime;

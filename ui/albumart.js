@@ -325,15 +325,14 @@ function handleDrop(ev) {
 
 var imageEditor = function() {
 
-	var start = 1;
+	var offset = 0;
 	var position = null;
 	var bigdiv = null;
 	var bigimg = new Image();
 	var currparent = null;
 	var currhighlight = null;
 	var currname = null;
-	var current = "u";
-	// var nureek = "https://www.googleapis.com/customsearch/v1?key="+prefs.google_api_key+"&cx="+prefs.google_search_engine_id+"&searchType=image&alt=json";
+	var current = "g";
 	bigimg.onload = function() {
 		imageEditor.displayBigImage();
 	}
@@ -352,7 +351,7 @@ var imageEditor = function() {
 			currname = where.attr('name');
 			bigdiv = $('<div>', {id: "imageeditor", class: "containerbox highlighted dropshadow"}).appendTo(newpos);
 			bigdiv.on('click', imageEditor.onGoogleSearchClicked);
-			start = 1;
+			offset = 0;
 			currhighlight = where.parent();
 			currhighlight.addClass('highlighted');
 			currparent = newpos;
@@ -370,16 +369,20 @@ var imageEditor = function() {
 			bigdiv.append($('<div>', { id: "origimage"}).append($("<img>", { id: 'browns' })));
 
 			$("#searchcontent").append( $('<div>', {id: "editcontrols", class: "clearfix fullwidth"}),
-										// $('<div>', {id: "gsearch", class: "noddy fullwidth invisible"}),
+										$('<div>', {id: "gsearch", class: "noddy fullwidth invisible"}),
 										$('<div>', {id: "fsearch", class: "noddy fullwidth invisible"}),
 										$('<div>', {id: "usearch", class: "noddy fullwidth invisible"}));
 
 			$("#"+current+"search").removeClass("invisible");
 
-			// $("#gsearch").append(       $('<div>', {id: "brian", class: "fullwidth"}),
-			// 							$('<div>', {id: "searchresultsholder", class: "fullwidth"}));
+			$("#gsearch").append(       $('<div>', {id: "brian", class: "fullwidth"}),
+										$('<div>', {id: "searchresultsholder", class: "fullwidth"}));
 
-			// $("#searchresultsholder").append($('<div>', {id: "searchresults", class: "clearfix fullwidth"}));
+			$("#searchresultsholder").append($('<div>', {id: "searchresults", class: "containerbox fullwidth wrap"}));
+
+			$("#fsearch").append(		$('<div>', {id: "localresultsholder", class: "fullwidth"}));
+
+			$("#localresultsholder").append($('<div>', {id: "localresults", class: "containerbox fullwidth wrap"}));
 
 			var fdiv =                  $('<div>', {class: "fullwidth"}).appendTo('#usearch');
 			var uform =                 $('<form>', { id: 'uform', action: 'getalbumcover.php', method: 'post', enctype: 'multipart/form-data' }).appendTo(fdiv);
@@ -401,7 +404,7 @@ var imageEditor = function() {
 
 			$("#usearch").append(      '<div class="holdingcell"><p>'+language.gettext("albumart_dragdrop")+'</p></div>');
 
-			// $("#editcontrols").append(  '<div id="g" class="tleft bleft clickable clickicon bmenu">'+language.gettext("albumart_googlesearch")+'</div>');
+			$("#editcontrols").append(  '<div id="g" class="tleft bleft clickable clickicon bmenu">'+language.gettext("albumart_googlesearch")+'</div>');
 			if (path && path != '.') {
 				$("#editcontrols").append( '<div id="f" class="tleft bleft bmid clickable clickicon bmenu">'+language.gettext("albumart_local")+'</div>');
 			}
@@ -412,16 +415,16 @@ var imageEditor = function() {
 
 			$("#"+current).addClass("bsel");
 
-			// $("#brian").append('<div class="containerbox"><div class="expand"><input class="enter clearbox" type="text" id="searchphrase" /></div><button class="fixed" onclick="imageEditor.research()">Search</button></div>');
+			$("#brian").append('<div class="containerbox"><div class="expand"><input class="enter clearbox" type="text" id="searchphrase" /></div><button class="fixed" onclick="imageEditor.research()">Search</button></div>');
 
-			// $("#searchphrase").val(phrase);
+			$("#searchphrase").val(phrase);
 
 			if (imgobj.attr("src")) {
 				var aa = new albumart_translator(imgobj.attr("src"));
 				bigimg.src = aa.getSize('asdownloaded');
 			}
 
-			// imageEditor.search();
+			imageEditor.search();
 			if (path && path != '.') {
 				$.getJSON("utils/findLocalImages.php?path="+path, imageEditor.gotLocalImages)
 			}
@@ -430,7 +433,7 @@ var imageEditor = function() {
 			$('input#uploadkey').val(searchparams.key);
 			$('input#uploadartist').val(searchparams.artist);
 			$('input#uploadalbum').val(searchparams.album);
-			// $('#searchphrase').on('keyup', imageEditor.bumblefuck);
+			$('#searchphrase').on('keyup', imageEditor.bumblefuck);
 			wobbleMyBottom();
 			$('#coverslist').mCustomScrollbar('scrollTo', $('#imageeditor').parent());
 		},
@@ -463,89 +466,67 @@ var imageEditor = function() {
 			}
 		},
 
-		// research: function() {
-		// 	$("#searchresults").empty();
-		// 	start = 1;
-		// 	imageEditor.search();
-		// },
+		research: function() {
+			$("#searchresults").empty();
+			offset = 0;
+			imageEditor.search();
+		},
 
-		// search: function() {
-		// 	debug.core("IMAGEEDITOR",prefs.google_api_key,prefs.google_search_engine_id);
-		// 	if (prefs.google_api_key != '' && prefs.google_search_engine_id != '') {
-		// 		var searchfor = $("#searchphrase").val();
-		// 		debug.log("IMAGEEDITOR","Searching Google for", searchfor);
-		// 		$.ajax({
-		// 			type: "POST",
-		// 			dataType: "json",
-		// 			url: 'browser/backends/google.php',
-		// 			data: {uri: encodeURIComponent(nureek+"&q="+encodeURIComponent(searchfor)+"&start="+start)}
-		// 		})
-		// 		.done(imageEditor.googleSearchComplete)
-		// 		.fail(function(data) {
-		// 			debug.warn("IMAGEEDITOR","IT'S ALL GONE HORRIBLY WRONG",data);
-		// 			if (data == null) {
-		// 				imageEditor.showError("No Response!");
-		// 			} else {
-		// 				var e = data.responseJSON;
-		// 				if (e.error) {
-		// 					if (typeof (e.error) == 'object') {
-		// 						var t = '';
-		// 						for (var i in e.error.errors) {
-		// 							t += e.error.errors[i].message+' - '+e.error.errors[i].reason+'<br/>';
-		// 						}
-		// 						imageEditor.showError(t)
-		// 					} else {
-		// 						imageEditor.showError(e.error)
-		// 					}
-		// 				} else {
-		// 					imageEditor.showError("No Response!");
-		// 				}
-		// 			}
-		// 		});
-		// 	} else {
-		// 		imageEditor.showError('You need to use your own Google API Key to search Google. Read more at <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">The Documentation</a>');
-		// 	}
-		// },
+		search: function() {
+			bing.image.search(
+				$("#searchphrase").val(),
+				offset,
+				imageEditor.bingSearchComplete,
+				imageEditor.bingSearchComplete,
+			);
+		},
 
-		// googleSearchComplete: function(data) {
-		// 	debug.debug("IMAGEEDITOR","Google Search Results", data);
-		// 	$("#morebutton").remove();
-		// 	if (data.queries.nextPage) {
-		// 		start = data.queries.nextPage[0].startIndex;
-		// 	} else {
-		// 		start = 1;
-		// 	}
-		// 	if (data.items) {
-		// 		$.each(data.items, function(i,v){
-		// 			var index = start+i;
-		// 			$("#searchresults").append($('<img>', {
-		// 				id: 'img'+index,
-		// 				class: "gimage clickable clickicon clickgimage",
-		// 				src: v.image.thumbnailLink
-		// 			}));
-		// 			$("#searchresults").append($('<input>', {
-		// 				type: 'hidden',
-		// 				value: v.link,
-		// 			}));
-		// 			$("#searchresults").append($('<input>', {
-		// 				type: 'hidden',
-		// 				value: index,
-		// 			}));
+		bingSearchComplete: function(data) {
+			debug.debug("IMAGEEDITOR","Bing Search Results", data);
+			$("#morebutton").remove();
+			if (data.value) {
+				data.value.forEach(function(image) {
+					$('#searchresults').append(imageEditor.imageResult(
+						{
+							thumbnail: image.thumbnailUrl,
+							dimensions: image.width.toString()+'x'+image.height.toString(),
+							hostpage: image.hostPageDomainFriendlyName,
+							name: image.name,
+							id: image.imageId,
+							fullurl: image.contentUrl
+						}
+					));
+				});
+				if (data.nextOffset) {
+					offset = data.nextOffset;
+					$("#searchresultsholder").append('<div id="morebutton" class="fullwidth"><button onclick="imageEditor.search()">'+language.gettext("albumart_showmore")+'</button></div>');
+				}
+			} else if (data.error) {
+				$('#searchresults').append('<h3>'+data.error+'</h3>');
+			}
 
-		// 		});
-		// 		$(".gimage").css("height", "120px");
-		// 		$("#searchresultsholder").append('<div id="morebutton" class="fullwidth"><button onclick="imageEditor.search()">'+language.gettext("albumart_showmore")+'</button></div>');
-		// 	} else {
-		// 		$("#searchresults").append('<h3 align="center">No Images Found</h3>');
-		// 	}
-		// },
+		},
+
+		imageResult: function(options) {
+			var holder = $('<div>', {class: 'fixed albumimg closet'});
+			var container = $('<div>', {class: 'covercontainer'}).appendTo(holder);
+			container.append($('<img>', {class: 'clickable clickicon clickgimage', src: options.thumbnail, id: options.id}));
+			container.append($('<input>', {type: 'hidden', value: options.fullurl}));
+			if (options.name)
+				container.append($('<div>', {class: 'playlistrow2'}).html(options.name));
+			if (options.dimensions)
+				container.append($('<div>', {class: 'playlistitem'}).html(options.dimensions));
+			if (options.hostpage)
+				container.append($('<div>', {class: 'playlistrow2'}).html(options.hostpage));
+			return holder;
+		},
 
 		onGoogleSearchClicked: function(event) {
 			var clickedElement = findClickableElement(event);
 			if (clickedElement.hasClass("clickgimage")) {
-				debug.trace("ALBUMART","Search Result clicked :",clickedElement.next().val(), clickedElement.next().next().val());
+				debug.trace("ALBUMART","Search Result clicked :",clickedElement.next().val(), clickedElement.prop('id'));
 				event.stopImmediatePropagation();
-				updateImage(clickedElement.next().val(), clickedElement.next().next().val());
+				updateImage(clickedElement.next().val(), clickedElement.prop('id'));
 			} else if (clickedElement.hasClass("bmenu")) {
 				var menu = clickedElement.attr("id");
 				$(".noddy").filter(':visible').fadeOut('fast', function() {
@@ -573,32 +554,24 @@ var imageEditor = function() {
 		gotLocalImages: function(data) {
 			debug.debug("ALBUMART","Retreived Local Images: ",data);
 			if (data && data.length > 0) {
-				$.each(data, function(i,v) {
-					debug.trace("ALBUMART","Local Image ",i, v);
-					$("#fsearch").append($("<img>", {
-														id: "img"+(i+100000).toString(),
-														class: "gimage clickable clickicon clickgimage" ,
-														src: v
-													})
-										);
-					$("#fsearch").append($('<input>', {
-						type: 'hidden',
-						value: v,
-					}));
-					$("#fsearch").append($('<input>', {
-						type: 'hidden',
-						value: i+100000,
+				data.forEach(function(image) {
+					$("#localresults").append(imageEditor.imageResult({
+						thumbnail: image,
+						dimensions: false,
+						hostpage: false,
+						name: false,
+						id: hex_md5(image),
+						fullurl: image
 					}));
 				});
-				$(".gimage").css("height", "120px");
 			}
 		},
 
-		// bumblefuck: function(e) {
-		// 	if (e.keyCode == 13) {
-		// 		imageEditor.research();
-		// 	}
-		// },
+		bumblefuck: function(e) {
+			if (e.keyCode == 13) {
+				imageEditor.research();
+			}
+		},
 
 		uploadFile: function() {
 			imgobj.removeClass('notfound notexist').addClass('notfound');
@@ -658,7 +631,7 @@ function animationStop() {
 
 function searchFail() {
 	debug.info("ALBUMART","No Source Found");
-	$('#img'+clickindex).attr('src', 'newimages/imgnotfound.svg');
+	$('#'+clickindex).attr('src', 'newimages/imgnotfound.svg');
 	imgobj.removeClass('notfound notexist').addClass('notexist');
 	imageEditor.updateBigImg(false);
 	animationStop();

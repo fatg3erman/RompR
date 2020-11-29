@@ -338,8 +338,6 @@ $prefs = array(
 	"sortcollectionby" => "artist",
 	"sortresultsby" => "sameas",
 	"actuallysortresultsby" => 'artist',
-	"google_api_key" => '',
-	"google_search_engine_id" => '',
 	"sync_lastfm_playcounts" => false,
 	"sync_lastfm_at_start" => false,
 	"last_lastfm_synctime" => time()*1000,
@@ -347,6 +345,7 @@ $prefs = array(
 	"lastfm_sync_frequency" => 86400000,
 	"lfm_importer_start_offset" => 0,
 	"lfm_importer_last_import" => 0,
+	"bing_api_key" => '',
 
 	// Things that are set as Cookies
 	"sortbydate" => false,
@@ -452,7 +451,8 @@ $private_prefs = array(
 	'proxy_password',
 	'proxy_user',
 	'spotify_token',
-	'spotify_token_expires'
+	'spotify_token_expires',
+	'bing_api_key'
 );
 
 // ====================================================================

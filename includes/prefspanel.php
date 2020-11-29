@@ -290,7 +290,7 @@ print '<div class="pref styledinputs">
 <div class="tiny">'.get_int_text('config_musicfolders').'</div>
 <input class="saveotron prefinput" id="music_directory_albumart" type="text" size="40" />
 </div>';
-print '<div class="pref"><div class="tiny">If you want to use Google Images to get Album Art you need to sign up for an API Key. <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></div></div>';
+// print '<div class="pref"><div class="tiny">If you want to use Google Images to get Album Art you need to sign up for an API Key. <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></div></div>';
 
 
 // Smart Radio

@@ -29,6 +29,7 @@ print '<link rel="stylesheet" type="text/css" href="css/albumart.css?version=?'.
 $scripts = array(
 	"jquery/jquery-3.4.1.min.js",
 	"jquery/jquery-migrate-3.0.1.js",
+	"jshash-2.2/md5-min.js",
 	"ui/functions.js",
 	"ui/prefs.js",
 	"ui/language.php",
@@ -40,6 +41,7 @@ $scripts = array(
 	"ui/widgets.js",
 	"ui/debug.js",
 	"ui/coverscraper.js",
+	"browser/helpers/bing.js",
 	"ui/albumart.js"
 );
 foreach ($scripts as $i) {

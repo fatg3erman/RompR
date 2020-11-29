@@ -32,8 +32,6 @@ clean_cache_dir('prefs/jsoncache/lastfm/', 2592000);
 clean_cache_dir('prefs/jsoncache/soundcloud/', 2592000);
 // One Month
 clean_cache_dir('prefs/jsoncache/spotify/', 2592000);
-// One Month
-clean_cache_dir('prefs/jsoncache/google/', 2592000);
 // One Week
 clean_cache_dir('prefs/jsoncache/commradio/', 604800);
 // One Week

@@ -74,4 +74,4 @@ The buttons above the info panel are (left to right)
 * Lyrics
 * Soundcloud (for when Soundcloud tracks are playing)
 * Spotify
-* (There used to be YouTube option, but I can't be bothered trying to understand Google's massively overcomplicated API any more)
+* Videos

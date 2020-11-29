@@ -446,7 +446,7 @@ class albumImage extends baseAlbumImage {
 			}
 		} else {
 			logger::log("ALBUMIMAGE", "  .. Copying apparent local file",$this->source,'to',$download_file);
-			if (!copy($this->source, $download_file)) {
+			if (!copy(rawurldecode($this->source), $download_file)) {
 				logger::warn("ALBUMIMAGE", "    .. File Copy Failed");
 				$retval = false;
 			}

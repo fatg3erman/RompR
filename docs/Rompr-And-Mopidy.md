@@ -59,7 +59,6 @@ You will only see options for backends that are enabled in Mopidy. The complete 
 * **Spotify Playlists** ('spotify' backend must be enabled) *This will add all tracks from your Spotify Playlists into your collection. Your playlists will still be available as Playlists even if you don't select this option*
 * **Spotify 'Your Music'** ('spotify-web' backend must be enabled)
 * **Spotify 'Your Artists'** ('spotify-web' backend must be enabled)
-* **Google Music** [Deprecated] ('gmusic' backend must be enabled)
 * **SoundCloud 'Liked'** ('soundcloud' backend must be enabled)
 * **SoundCloud 'Sets'** ('soundcloud' backend must be enabled)
 * **VKontakte** ('vkontakte' backend must be enabled)
@@ -82,10 +81,6 @@ You need to make sure that your browser can access your Beets server for this to
       host: IP.address.of.beets.server
 
 Otherwise beets will not allow RompЯ to talk to it. Your configuration for beets in mopidy must also contain this IP address as Beets will only communicate via the supplied IP address.
-
-## Google Play [Deprecated]
-
-If you have a Google Play Music subscription, then [mopidy-gmusic](https://github.com/mopidy/mopidy-gmusic) used to allow you to search all of Google Play's online music library in the same way the Mopidy-Spotify allows you to search Spotify. But Google have shut that down now, so tough nuggets. I mean, why weren't you using Spotify anyway?
 
 ## Scanning Local Files
 
@@ -116,5 +111,8 @@ will tell you the uri it is trying to download, you should try that from the com
 and see what error messages you get.
 
 Assuming it works, the YoutTube video will be downloaded and the audio will be extracted to a FLAC file which will be streamed from your webserver
-using Mopidy's Stream backend the next time you add the track to the play queue.
+using Mopidy's Stream backend the next time you add the track to the play queue. if you have the flac packages installed (sudo apt install flac) then the
+downloaded file will be tagged with the artist and track name. If you want to move the track into your 'normal' music collection you can move it from rompr/prefs/youtubedl
+into an appropriate folder and rescan your collection. Provided you have the option to 'Prefer Local Music to Internet Sources' enabled the collection will simply update
+woth the new location.
 

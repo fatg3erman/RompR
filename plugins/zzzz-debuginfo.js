@@ -4,15 +4,13 @@ var debugInfo = function() {
       var info = new Array();
 
       const redact = [
-        'google_api_key',
-        'google_search_engine_id',
         'lastfm_user',
         'lastfm_session_key'
       ];
-      
+
       function multi_implode(ar) {
           var ret = '';
-          
+
           if (typeof(ar) != 'object' || ar === null) {
               return ar;
           }
@@ -24,12 +22,12 @@ var debugInfo = function() {
                   ret += i+'='+v+', ';
               }
           });
-          
+
           ret = ret.substr(0, ret.length-2);
-          
+
           return ret;
       }
-      
+
       function getLocalInfo() {
           const t = $('#debuginfotable');
           t.append('<tr><th colspan="2">Config</th></tr>');
@@ -59,7 +57,7 @@ var debugInfo = function() {
                           browser.goToPlugin('debug');
                       });
                   });
-                                  
+
             } else {
                   browser.goToPlugin("debug");
             }
@@ -68,7 +66,7 @@ var debugInfo = function() {
       close: function() {
       	dbg = null;
     },
-    
+
     copyToClipboard: function() {
         var t = $('<textarea>', {id: 'debugtext'}).appendTo('body');
         var markdown = '';
@@ -89,14 +87,14 @@ var debugInfo = function() {
             });
             markdown += '\n';
         });
-        
+
         t.val(markdown);
         const el = document.getElementById('debugtext');
         el.select();
         document.execCommand('copy');
         t.remove();
     },
-    
+
     handleClick: function(element, event) {
         if (element.hasClass('clickcopy')) {
             debugInfo.copyToClipboard();

@@ -1,6 +1,6 @@
 # Music Discovery
 
-RompЯ contains many features to help you discover new music based on your listening habits. These will work best if you are using RompЯ with Mopidy and a Spotify Premium subscription or a Google Play Music subscriptions and I'll be assuming that is the case. If you don't have Spotify then you can still get suggestions of albums you might like but you will not be able to add tracks to the playlist.
+RompЯ contains many features to help you discover new music based on your listening habits. These will work best if you are using RompЯ with Mopidy and a Spotify Premium subscription and I'll be assuming that is the case. If you don't have Spotify then you can still get suggestions of albums you might like but you will not be able to add tracks to the playlist.
 
 ## The Discoverator
 
@@ -10,7 +10,7 @@ The Discoverator panel can be opened from the drop-down menu above the Info Pane
 
 The first four entries are 'Personalised Radio' stations that create dynamic playlists based on your listening habits. When you engage one of these stations the Play Queue will populate with 5 tracks initially, adding a new one each time the first comes to the end. 'Consume' mode will be enabled to prevent your playlist from filling up. (You can always re-play tracks by using 'Recently Played Tracks')
 
-The Last.FM stations are my attempt to recreate the old and much missed Last.FM radio stations. If you're [logged in to Last.FM](/RompR/LastFM) these stations use your Last.FM scrobbles along with Last.FM's suggestions engine to play you a mix of things you've played before along with new music that Last.FM suggests. The suggestions come from Last.FM, the music comes from your Music Collection, Spotify, and Google Play.
+The Last.FM stations are my attempt to recreate the old and much missed Last.FM radio stations. If you're [logged in to Last.FM](/RompR/LastFM) these stations use your Last.FM scrobbles along with Last.FM's suggestions engine to play you a mix of things you've played before along with new music that Last.FM suggests. The suggestions come from Last.FM, the music comes from your Music Collection and Spotify.
 
 The Spotify stations are similar except they use your listening history from RompЯ along with Spotify's suggestions.
 
@@ -59,7 +59,7 @@ The best thing with this panel is to experiment. If you find a group of settings
 
 ## Listening to the Radio
 
-When listening to internet radio, if the station you're listening to provides Artist and Title information, this will be displayed in the now-playing panel. If you hear a track you like you can give it rating or a tag. RompЯ will then search for it on Spotify and/or Google Play and will add it into your collection if it finds it. It the track is already in your collection, the rating or tag will be added to that track instead.
+When listening to internet radio, if the station you're listening to provides Artist and Title information, this will be displayed in the now-playing panel. If you hear a track you like you can give it rating or a tag. RompЯ will then search for it on Spotify and will add it into your collection if it finds it. It the track is already in your collection, the rating or tag will be added to that track instead.
 
 If the track can't be found it will be added to your [Wishlist](/RompR/The-Wishlist)
 
