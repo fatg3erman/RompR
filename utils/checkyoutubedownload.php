@@ -2,8 +2,9 @@
 chdir('..');
 include('includes/functions.php');
 $status = array( 'info' => 'Starting.....');
-if (file_exists('prefs/youtubedl/dlprogress')) {
-	$stuff = file('prefs/youtubedl/dlprogress');
+$progress_file = 'prefs/youtubedl/dlprogress_'.$_REQUEST['key'];
+if (file_exists($progress_file)) {
+	$stuff = file($progress_file);
 	$ttindex = trim(array_shift($stuff));
 	$lastline = trim(array_pop($stuff));
 	if (preg_match('/\[ffmpeg\]\s*Destination:\s*(.+)$/', $lastline, $matches)) {

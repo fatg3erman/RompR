@@ -77,16 +77,17 @@ var metaHandlers = function() {
 		return data;
 	}
 
-	function youtubeDownloadMonitor() {
+	function youtubeDownloadMonitor(uri) {
 		var self = this;
 		var notify = infobar.permnotify('Downloading Youtube Track');
 		var timer;
 		var running = true;
+		var key = hex_md5(uri);
 
 		this.checkProgress = function() {
 			$.ajax( {
 				type: "GET",
-				url: "utils/checkyoutubedownload.php",
+				url: "utils/checkyoutubedownload.php?key="+key,
 				cache: false,
 				dataType: "json"
 			})
@@ -254,31 +255,31 @@ var metaHandlers = function() {
 				metaHandlers.fromUiElement.doMeta('set', 'Progress', [{attribute: 'Progress', value: 0}]);
 			},
 
-			downloadYoutubeTrack: function(event, element) {
-				var trackstogo = new Array();
-				$('.clicktrack.selected').each(function() {
-					var uri = decodeURIComponent($(this).attr('name'));
+			downloadYoutubeTrack: async function(event, element) {
+				var tracks = $('.clicktrack.selected');
+				tracks.removeClass('selected');
+				tracks.each(function() {
 					$(this).find('.clicktrackmenu').makeSpinner();
-					trackstogo.push({action: 'youtubedl', uri: uri });
 				});
-				var monitor = new youtubeDownloadMonitor();
-				// Don't use the queue for this, it takes too long and holds up other stuff
-				$.ajax({
-					url: "backends/sql/userRatings.php",
-					type: "POST",
-					contentType: false,
-					data: JSON.stringify(trackstogo),
-					dataType: 'json'
-				})
-				.done(function(data) {
-					collectionHelper.updateCollectionDisplay(data),
-					monitor.stop();
-				})
-				.fail(function(data) {
-					debug.warn("FUCK!", 'Why did that not work?',data);
-					monitor.stop();
-					if (data.responseJSON && data.responseJSON.error) {
-						infobar.error('Failed to download YouTube track - '+data.responseJSON.error);
+				tracks.each(async function() {
+					var uri = decodeURIComponent($(this).attr('name'));
+					var monitor = new youtubeDownloadMonitor(uri);
+					try {
+						var data = await $.ajax({
+							url: "backends/sql/userRatings.php",
+							type: "POST",
+							contentType: false,
+							data: JSON.stringify([{action: 'youtubedl', uri: uri }]),
+							dataType: 'json'
+						});
+						collectionHelper.updateCollectionDisplay(data),
+						monitor.stop();
+					} catch (err) {
+						debug.warn("FUCK!", 'Why did that not work?',err);
+						monitor.stop();
+						if (err.responseJSON && err.responseJSON.error) {
+							infobar.error('Failed to download YouTube track - '+err.responseJSON.error);
+						}
 					}
 				});
 			},

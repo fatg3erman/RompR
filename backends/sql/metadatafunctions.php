@@ -249,17 +249,19 @@ class romprmetadata {
 				print json_encode(array('error' => 'Could not locate that track in the database!'));
 				exit(0);
 			}
-			file_put_contents('dlprogress', $ttindex."\n");
+			$progress_file = 'dlprogress_'.md5($data['uri']);
+			file_put_contents($progress_file, $ttindex."\n");
 			if (!is_dir($ttindex)) {
 				mkdir($ttindex);
 			}
 			chdir($ttindex);
 			file_put_contents('original.uri', $uri_to_get);
-			exec($ytdl_path.'youtube-dl --ffmpeg-location '.$avconv_path.' --extract-audio --write-thumbnail --restrict-filenames --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' >> ../dlprogress 2>&1', $output, $retval);
+			exec($ytdl_path.'youtube-dl --ffmpeg-location '.$avconv_path.' --extract-audio --write-thumbnail --restrict-filenames --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' >> ../'.$progress_file.' 2>&1', $output, $retval);
 			if ($retval != 0) {
 				logger::error('YOUTUBEDL', 'youtube-dl returned error code', $retval);
 				header("HTTP/1.1 404 Not Found");
 				print json_encode(array('error' => 'youtube-dl returned error code '.$retval));
+				unlink('../'.$progress_file);
 				exit(0);
 			}
 			$files = glob('*.flac');
@@ -267,6 +269,7 @@ class romprmetadata {
 				logger::error('YOUTUBEDL', 'Could not find downloaded flac file in prefs/youtubedl/'.$ttindex);
 				header("HTTP/1.1 404 Not Found");
 				print json_encode(array('error' => 'Could not locate downloaded flac file!'));
+				unlink('../'.$progress_file);
 				exit(0);
 			} else {
 				logger::log('YOUTUBEDL', print_r($files, true));
@@ -310,6 +313,7 @@ class romprmetadata {
 				$new_uri,
 				$data['uri']
 			);
+			unlink('../'.$progress_file);
 			// Ready for the next one if there is one
 			chdir('../../..');
 		} else {
