@@ -585,6 +585,10 @@ var nowplaying = function() {
 				history,
 				true, force, panel, true
 			);
+		},
+
+		dump_info: function() {
+			debug.log('TRACKS PLAYED', tracks_played);
 		}
 
 	}

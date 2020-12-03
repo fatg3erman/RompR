@@ -48,10 +48,6 @@ function closeMenus() {
 	$('.albumbitsmenu').remove();
 }
 
-function setup_lastfm() {
-	lastfm.wrangle().then(startBackgroundInitTasks.doNextTask);
-}
-
 function connect_to_player() {
 	player.controller.initialise().then(startBackgroundInitTasks.doNextTask);
 }
@@ -111,7 +107,6 @@ function check_unplayable_tracks() {
 var startBackgroundInitTasks = function() {
 
 	var stufftodo = [
-		setup_lastfm,
 		connect_to_player,
 		start_userinterface,
 		collectionHelper.checkCollection,
@@ -199,7 +194,7 @@ function carry_on_starting() {
 	// Some debugging info, saved to the backend so we can see it
 	// prefs.save({test_width: $(window).width(), test_height: $(window).height()});
 	coverscraper = new coverScraper(0, false, false, prefs.downloadart);
-	lastfm = new LastFM(prefs.lastfm_user);
+	lastfm = new LastFM();
 	uiHelper.sourceControl(prefs.chooser);
 	if (prefs.browser_id == null) {
 		prefs.save({browser_id: Date.now()});

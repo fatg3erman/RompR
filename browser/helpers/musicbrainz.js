@@ -1,7 +1,5 @@
 var musicbrainz = function() {
 
-	var baseURL = 'http://musicbrainz.org/ws/2/';
-	var coverURL = 'http://coverartarchive.org/release/';
 	var queue = new Array();
 	var current_req;
 	const THROTTLE_TIME = 1500;
@@ -41,8 +39,8 @@ var musicbrainz = function() {
 			try {
 				data = await (jqxhr = $.ajax({
 					method: 'POST',
-					url: "browser/backends/getmbdata.php",
-					data: current_req.data,
+					url: "browser/backends/api_handler.php",
+					data: JSON.stringify(current_req.data),
 					dataType: "json",
 				}));
 				throttle = handle_response(current_req, data, jqxhr);
@@ -56,6 +54,7 @@ var musicbrainz = function() {
 	return {
 
 		request: function(reqid, data, success, fail) {
+			data.module = 'musicbrainz';
 			queue.push( {reqid: reqid, data: data, success: success, fail: fail } );
 			if (typeof current_req == 'undefined')
 				do_Request();
@@ -66,9 +65,10 @@ var musicbrainz = function() {
 
 			getInfo: function(mbid, success, fail) {
 				var data = {
-					url: baseURL+'artist/'+mbid,
-					inc: 'aliases+tags+ratings+release-groups+artist-rels+label-rels+url-rels+release-group-rels+annotation',
-					fmt: 'json'
+					method: 'artist_getinfo',
+					params: {
+						mbid: mbid
+					}
 				};
 				musicbrainz.request('', data, success, fail);
 			},
@@ -78,12 +78,11 @@ var musicbrainz = function() {
 				result['release-groups'] = new Array();
 				(function getAllReleaseGroups() {
 					var data = {
-						url: baseURL+'release-group',
-						artist: mbid,
-						limit: 100,
-						fmt: 'json',
-						inc: 'artist-credits+tags+ratings+url-rels+annotation',
-						offset: result['release-groups'].length
+						method: 'artist_releases',
+						params: {
+							mbid: mbid,
+							offset: result['release-groups'].length
+						}
 					};
 					musicbrainz.request(reqid, data, function(data) {
 						debug.debug("MUSICBRAINZ","Release group data:",data);
@@ -113,16 +112,21 @@ var musicbrainz = function() {
 
 			getInfo: function(mbid, success, fail) {
 				var data = {
-					url: baseURL+'release/'+mbid,
-					inc: 'annotation+tags+ratings+artists+labels+recordings+release-groups+artist-credits+url-rels+release-group-rels+recording-rels+artist-rels',
-					fmt: 'json'
+					method: 'album_getinfo',
+					params: {
+						mbid: mbid
+					}
 				};
 				musicbrainz.request('', data, success, fail);
-
 			},
 
 			getCoverArt: function(id, success, fail) {
-				var data = {url: coverURL + id + "/" };
+				var data = {
+					method: 'album_getcover',
+					params: {
+						mbid: id
+					}
+				};
 				musicbrainz.request('', data, success, fail);
 			},
 
@@ -132,9 +136,10 @@ var musicbrainz = function() {
 
 			getInfo: function(mbid, reqid, success, fail) {
 				var data = {
-					url: baseURL+'release-group/'+mbid,
-					inc: 'artists+releases+artist-rels+label-rels+url-rels',
-					fmt: 'json'
+					method: 'releasegroup_getinfo',
+					params: {
+						mbid: mbid
+					}
 				};
 				musicbrainz.request(reqid, data, success, fail);
 			}
@@ -144,9 +149,10 @@ var musicbrainz = function() {
 
 			getInfo: function(mbid, success, fail) {
 				var data = {
-					url: baseURL+'recording/'+mbid,
-					inc: 'annotation+tags+ratings+releases+url-rels+work-rels+release-rels+release-group-rels+artist-rels+label-rels+recording-rels',
-					fmt: 'json'
+					method: 'track_getinfo',
+					params: {
+						mbid: mbid
+					}
 				};
 				var result = {};
 				// For a track, although there might be some good stuff in the recording data, what we really want
@@ -159,9 +165,10 @@ var musicbrainz = function() {
 							if (data.relations[i].work) {
 								debug.debug("MUSICBRAINZ","Found work data",data.relations[i].work.id);
 								var newdata = {
-									url: baseURL+'work/'+data.relations[i].work.id,
-									inc: 'annotation+tags+ratings+url-rels+artist-rels',
-									fmt: 'json'
+									method: 'work_getinfo',
+									params: {
+										mbid: data.relations[i].work.id
+									}
 								};
 								musicbrainz.request('', newdata,
 									function(workdata) {

@@ -32,8 +32,12 @@ class somafmplugin {
 		print '<a href="http://somafm.com" target="_blank">'.get_int_text("label_soma_beg").'</a>';
 		print '</div>';
 		// NB Don't use the cache, it fucks up 'Last Played'
-		$stations = getCacheData("http://api.somafm.com/channels.xml", 'somafm', false, true);
-		$this->doAllStations($stations);
+		$cache = new cache_handler([
+			'url' => "http://api.somafm.com/channels.xml",
+			'cache' => null,
+			'return_value' => true
+		]);
+		$this->doAllStations($cache->get_cache_data());
 	}
 
 	// -- Private Functions -- //

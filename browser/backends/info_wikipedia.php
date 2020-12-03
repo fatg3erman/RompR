@@ -78,15 +78,17 @@ if (array_key_exists("wiki", $_POST)) {
 
 function wikipedia_request($url) {
 	logger::trace("WIKIPEDIA", "Getting : ".$url);
-	$d = new url_downloader(array(
+	$cache = new cache_handler([
 		'url' => $url,
 		'cache' => 'wikipedia',
-		'return_data' => true
-	));
-	if ($d->get_data_to_file()) {
-		return $d->get_data();
-	} else {
+		'return_value' => true
+	]);
+	$data = $cache->get_cache_data();
+	if (array_key_exists('error', $data)) {
+		logger::log('WIKIPEDIA', 'Error',$data['error']);
 		return null;
+	} else {
+		return $data;
 	}
 }
 

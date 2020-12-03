@@ -171,9 +171,17 @@ var info_spotify = function() {
 			var self = this;
 
 			this.populate = function() {
+
+				// We need the extra 'populated' flags because the normal course of action is for
+				// the track to populate the album and arist once it has worked out their spotify ids -
+				// if we just blindly populate them every time this results in is filling the layout
+				// multiple times if we're playing successive tracks by the same artist
+				// (and we can't just check if the id field is populated because there are other routes by which that can happen)
+
 				parent.updateData({
 					spotify: {
-						showing: 'albums'
+						showing: 'albums',
+						populated: false
 					}
 				}, artistmeta);
 
@@ -182,11 +190,39 @@ var info_spotify = function() {
 				}, trackmeta);
 
 				parent.updateData({
-					spotify: { }
+					spotify: {
+						populated: false
+					}
 				}, albummeta);
 
-				if (typeof trackmeta.spotify.layout == 'undefined')
-					self.track.populate();
+				// We need to create all the layouts immediately because the browser expccts them to exist.
+				// Additionally, when switching artists using switchArtist, the track and album layouts
+				// will already exist but the artist one won't so belt and braces, check everything.
+
+				if (parent.playlistinfo.file.substring(0,8) !== 'spotify:') {
+					// Not a spotify track. We don't search, because I can't be arsed
+					if (typeof trackmeta.spotify.layout == 'undefined')
+						trackmeta.spotify.layout = new info_layout_empty();
+
+					if (typeof albummeta.spotify.layout == 'undefined')
+						albummeta.spotify.layout = new info_layout_empty();
+
+					if (typeof artistmeta.spotify.layout == 'undefined') {
+						artistmeta.spotify.layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me});
+						self.artist.populate();
+					}
+
+				} else {
+
+					if (typeof artistmeta.spotify.layout == 'undefined')
+						artistmeta.spotify.layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me});
+
+					if (typeof albummeta.spotify.layout == 'undefined')
+						albummeta.spotify.layout = new info_sidebar_layout({title: albummeta.name, type: 'album', source: me});
+
+					if (typeof trackmeta.spotify.layout == 'undefined')
+						self.track.populate();
+				}
 			}
 
 			this.handleClick = function(source, element, event) {
@@ -308,46 +344,47 @@ var info_spotify = function() {
 							track: data
 						}
 					}, trackmeta);
-					parent.updateData({
-						spotify: {
-							id: data.album.id
-						}
-					}, albummeta);
-					for(var i in data.artists) {
-						if (data.artists[i].name == artistmeta.name) {
-							debug.debug(medebug,parent.nowplayingindex,"Found Spotify ID for", artistmeta.name);
-							parent.updateData({
-								spotify: {
-									id: data.artists[i].id
-								}
-							}, artistmeta);
-							break;
-						}
+
+					if (!albummeta.spotify.populated) {
+						parent.updateData({
+							spotify: {
+								id: data.album.id,
+								populated: true
+							}
+						}, albummeta);
+						self.album.populate();
 					}
+
+					if (!artistmeta.spotify.populated) {
+						for(var i in data.artists) {
+							if (data.artists[i].name == artistmeta.name) {
+								debug.debug(medebug,parent.nowplayingindex,"Found Spotify ID for", artistmeta.name);
+								parent.updateData({
+									spotify: {
+										id: data.artists[i].id
+									}
+								}, artistmeta);
+								break;
+							}
+						}
+						parent.updateData({
+							spotify: {
+								populated: true
+							}
+						}, artistmeta);
+						self.artist.populate();
+					}
+
 					debug.debug(medebug,"Spotify Data now looks like",artistmeta, albummeta, trackmeta);
 					self.track.doBrowserUpdate();
-					self.artist.populate();
-					self.album.populate();
 				}
 
 				return {
 
 					populate: function() {
-						// Note that we have to create the artist and album layouts immediately, because the
-						// browser expects them to exist
-						if (parent.playlistinfo.file.substring(0,8) !== 'spotify:') {
-							// Not a spotify track. We don't search, because I can't be arsed
-							trackmeta.spotify.layout = new info_layout_empty();
-							albummeta.spotify.layout = new info_layout_empty();
-							artistmeta.spotify.layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me});
-							self.artist.populate();
-						} else {
-							trackmeta.spotify.layout = new info_sidebar_layout({title: trackmeta.name, type: 'track', source: me});
-							trackmeta.spotify.id = parent.playlistinfo.file.substr(14, parent.playlistinfo.file.length);
-							artistmeta.spotify.layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me});
-							albummeta.spotify.layout = new info_sidebar_layout({title: albummeta.name, type: 'album', source: me}),
-							spotify.track.getInfo(trackmeta.spotify.id, spotifyResponse, self.track.spotifyError, true);
-						}
+						trackmeta.spotify.layout = new info_sidebar_layout({title: trackmeta.name, type: 'track', source: me});
+						trackmeta.spotify.id = parent.playlistinfo.file.substr(14, parent.playlistinfo.file.length);
+						spotify.track.getInfo(trackmeta.spotify.id, spotifyResponse, self.track.spotifyError, true);
 					},
 
 					spotifyError: function(data) {

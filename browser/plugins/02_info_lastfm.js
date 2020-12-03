@@ -635,7 +635,6 @@ var info_lastfm = function() {
 								options,
 								self.track.gotUserTags,
 								self.track.somethingfailed,
-								0
 							);
 						}
 					},

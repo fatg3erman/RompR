@@ -656,3 +656,19 @@ div.rightmenu
 	}
 }
 
+.snap_vert_holder {
+	position: relative;
+	margin-left: 22px;
+	margin-right:-4px;
+}
+
+.snap_vert_text {
+	position: absolute;
+	top: 0;
+	left: 0;
+	transform: rotate(90deg);
+	transform-origin: 0 0;
+	white-space: nowrap;
+	font-size: 14px;
+}
+

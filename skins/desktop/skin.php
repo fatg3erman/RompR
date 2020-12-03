@@ -27,12 +27,15 @@
 		</div>
 	</div>
 
-	<div id="volumebox" class="fixed">
-		<div class="infobarlayout bordered containerbox vertical">
 <?php
+	include('player/mpd/outputs.php');
+	if ($prefs['hide_master_volume']) {
+		print '<div id="snapcast-secondary" class="fixed"></div>';
+	} else {
+		print '<div id="volumebox" class="fixed">';
+		print '<div class="infobarlayout bordered containerbox vertical">';
 			print '<div title="'.get_int_text('button_volume').
 				'" id="volumecontrol" class="tooltip expand containerbox vertical"><div id="volume" class="expand"></div></div>';
-			include('player/mpd/outputs.php');
 			if (count($outputdata) == 1) {
 				// There's only one output so we'll treat it like a Mute button
 				print '<div class="tooltip fixed" title="'.$outputdata[0]['outputname'].'" style="height:14px">';
@@ -45,14 +48,16 @@
 				print '<i id="mutebutton" onclick="layoutProcessor.toggleAudioOutpts()" class="icon-sliders outhack clickicon"></i>';
 				print '</div>';
 			}
+		print '</div>';
+		print '</div>';
+	}
 
-?>
-		</div>
-	</div>
-
-<?php
 	if (count($outputdata) > 1) {
-		print '<div id="outputbox" class="fixed" style="display:none">';
+		if ($prefs['hide_master_volume']) {
+			print '<div id="outputbox" class="fixed">';
+		} else {
+			print '<div id="outputbox" class="fixed" style="display:none">';
+		}
 		print '<div class="infobarlayout bordered">';
 		print '<div style="padding:4px">';
 		printOutputCheckboxes();

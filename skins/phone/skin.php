@@ -7,31 +7,40 @@
 	<div id="sourcescontrols" class="expand center containerbox noborder">
 		<div id="volumedropper" class="topdropmenu rightmenu widemenu">
 <?php
+	include('player/mpd/outputs.php');
+	if ($prefs['hide_master_volume']) {
+			print '<div class="configtitle nohelp invisible" id="snapheader"><div class="textcentre expand"><b>'.get_int_text('label_volume').'</b></div></div>';
+			print '<div class="pref" id="snapcastgroups"></div>';
+			if (count($outputdata) > 1) {
+				print '<div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('config_audiooutputs').'</b></div></div>';
+				print '<div class="pref">';
+				printOutputCheckboxes();
+				print '</div>';
+			}
+	} else {
 			print '<div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_volume').'</b></div></div>';
-?>
-			<div id="volumecontrol" class="fullwidth">
-				<div id="volume"></div>
-			</div>
-<?php
-			print '<div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('config_audiooutputs').'</b></div></div>';
-?>
-			<div class="pref">
-<?php
-include('player/mpd/outputs.php');
-printOutputCheckboxes();
-?>
-			</div>
-<?php
-			print '<div class="configtitle nohelp"><div class="textcentre expand"><b>'.get_int_text('config_players').'</b></div></div>';
-?>
-			<div class="pref styledinputs" name="playerdefs">
-			</div>
-
-<?php
+			print '<div id="volumecontrol" class="containerbox fullwidth menuitem">';
+			print '<div id="volume" class="expand"></div>';
+			if (count($outputdata) == 1) {
+				$f = ($outputdata[0]['outputname'] == "Mute") ? 0 : 1;
+				$c = ($outputdata[0]['outputenabled'] == $f) ? 'icon-output' : 'icon-output-mute';
+				print '<i id="mutebutton" onclick="player.controller.doMute()" class="'.$c.' fixed podicon clickicon"></i>';
+			}
+			print '</div>';
+			if (count($outputdata) > 1) {
+				print '<div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('config_audiooutputs').'</b></div></div>';
+				print '<div class="pref">';
+				printOutputCheckboxes();
+				print '</div>';
+			}
+	}
+			print '<div class="configtitle nohelp player-title"><div class="textcentre expand"><b>'.get_int_text('config_players').'</b></div></div>';
+			print '<div class="pref styledinputs" name="playerdefs"></div>';
+	if (!$prefs['hide_master_volume']) {
 			print '<div class="configtitle nohelp invisible" id="snapheader"><div class="textcentre expand"><b>Snapcast</b></div></div>';
+			print '<div class="pref" id="snapcastgroups"></div>';
+	}
 ?>
-			<div class="pref" id="snapcastgroups">
-			</div>
 
 		</div>
 		<div id="specialplugins" class="topdropmenu rightmenu autohide">

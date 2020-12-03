@@ -6,8 +6,8 @@
 
 Enter the hostname and port for your Snapcast server in the onfiguration panel. The panel will then update to show your Snapcast network.
 You should use the port for the HTTP JSON-RPC API, as defined in your snapserver.conf. By default this is enabled on port 1780.
-Note that earlier versions of RompR used snapserver's TCP port but this changed in RompR version 1.51 - using the HTTP port allows multiple RompRs to update their Snapcast info simultaneously.
-On the phone and tablet skins this information will appear in the volume control dropdown, underneath the Players.
+Note that earlier versions of RompR used snapserver's TCP port but this changed in RompR version 1.51 - using the HTTP port allows multiple
+RompRs to update their Snapcast info simultaneously.
 
 ![](images/snapcast1d.png)
 
@@ -19,6 +19,12 @@ Clients can be muted, removed, renamed, and have their volume adjusted.
 
 If your Snapcast server has multiple streams, you can assign a stream to a group by using the menu to the right of the group name
 
+On the phone and tablet skins the controls will appear in the volume control dropdown, underneath the Players.
+
+There is also an option to replace RompR's main volume control with the Snapcast volume control. On the phone skin this basically just hides the main volume control
+and Mute button and leaves everything else where it was. On the Desktop skin this replaces the volume control in the main UI with multiple sliders, one for each Snapcast client.
+
+![](images/snapcast1e.png)
 
 ## Assigning Clients to Groups and Setting Client Latency
 

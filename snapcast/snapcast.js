@@ -495,16 +495,30 @@ function snapcastClient() {
 	var changeNameTimer;
 	var changeLatencyTimer;
 
+	var holder2;
+	var label_holder2;
+	var second_volume;
+	var second_mute;
+	var second_label;
+
 	function updateVolume(params) {
 		muted = params.muted;
 		volumepc = params.percent;
 		volume.volumeControl("displayVolume", params.percent);
 		var icon = params.muted ? 'icon-output-mute' : 'icon-output';
 		holder.find('i[name="clientmuted"]').removeClass('icon-output icon-output-mute').addClass(icon);
+
+		if (second_volume)
+			second_volume.volumeControl("displayVolume", params.percent);
+
+		if (second_mute)
+			second_mute.removeClass('icon-output icon-output-mute').addClass(icon);
 	}
 
 	function updateName(g) {
 		holder.find('input[name="clientname"]').val(g);
+		if (second_label)
+			second_label.html(g);
 	}
 
 	function updateLatency(l) {
@@ -540,10 +554,32 @@ function snapcastClient() {
 		$('<div>', {class: 'fixed padright'}).appendTo(lholder).html(language.gettext('snapcast_latency'));
 		lb = $('<input>', {type: 'text', class: 'fixed', name: "latency", style: "width:4em"}).appendTo(lholder);
 		lb.on('keyup', self.setLatency);
+
+		if ($('#snapcast-secondary').length > 0) {
+			holder2 = $('<div>', {class: 'fixed'}).insertAfter('#snapcast-secondary');
+			let holder3 = $('<div>', {class: 'infobarlayout bordered containerbox vertical'}).appendTo(holder2);
+			let holder4 = $('<div>', {class: 'expand containerbox vertical'}).appendTo(holder3);
+			second_volume = $('<div>', {class: 'expand'}).appendTo(holder4);
+			second_mute = $('<i>', {class: 'fixed outhack clickicon'}).appendTo(holder4);
+			second_volume.volumeControl({
+				orientation: 'vertical',
+				command: self.setVolume
+			});
+			second_mute.on('click', self.setMute);
+
+			label_holder2 = $('<div>', {class: 'fixed snap_vert_holder'}).insertAfter(holder2);
+			second_label = $('<div>', {class: 'snap_vert_text'}).appendTo(label_holder2);
+
+		}
+
 	}
 
 	this.removeSelf = function() {
 		holder.remove();
+		if (holder2)
+			holder2.remove();
+		if (label_holder2)
+			label_holder2.remove();
 	}
 
 	this.getId = function() {

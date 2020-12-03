@@ -217,7 +217,12 @@ class commradioplugin {
 
 	private function browse() {
 		directoryControlHeader('commradio_'.md5($this->url), $this->title);
-		$bits = getCacheData('https://'.$this->server.'/'.$this->url, 'commradio', true, true);
+		$cache = new cache_handler([
+			'url' => 'https://'.$this->server.'/'.$this->url,
+			'cache' => 'commradio',
+			'return_value' => true
+		]);
+		$bits = $cache->get_cache_data();
 		$bits = json_decode($bits, true);
 		if ($this->url == 'json/countries') {
 			$map = 'bycountryexact/';
@@ -239,10 +244,15 @@ class commradioplugin {
 		}
 		$url .= implode('&', $ourterms).'&';
 		$url = $this->addBits($url);
-		$stations = getCacheData($url, 'commradio', true, true);
+		$cache = new cache_handler([
+			'url' => $url,
+			'cache' => 'commradio',
+			'return_value' => true
+		]);
+		$stations = $cache->get_cache_data();
 		$stations = json_decode($stations, true);
 		foreach ($stations as $index => $station) {
-			$this->doStation($this->comm_radio_sanitise_station($station), md5($index.$url.$station['id']));
+			$this->doStation($this->comm_radio_sanitise_station($station), md5($index.$url.$station['stationuuid']));
 		}
 	}
 
@@ -261,7 +271,12 @@ class commradioplugin {
 	private function doRequest() {
 		$url = $this->addBits('https://'.$this->server.'/json/stations/'.$this->url.'?');
 		logger::log('COMMRADIO','Getting',$url);
-		$stations = getCacheData($url, 'commradio', true, true);
+		$cache = new cache_handler([
+			'url' => $url,
+			'cache' => 'commradio',
+			'return_value' => true
+		]);
+		$stations = $cache->get_cache_data();
 		$stations = json_decode($stations, true);
 		$title = ($this->title) ? rawurldecode($this->title) : get_int_text('label_communityradio');
 		directoryControlHeader('commradio_'.md5($this->url), ucfirst($title));
@@ -273,7 +288,7 @@ class commradioplugin {
 			if ($index >= count($stations)) {
 				break;
 			}
-			$this->doStation($this->comm_radio_sanitise_station($stations[$index]), md5($index.$url.$stations[$index]['id']));
+			$this->doStation($this->comm_radio_sanitise_station($stations[$index]), md5($index.$url.$stations[$index]['stationuuid']));
 		}
 		$this->comm_radio_do_page_buttons($this->page, count($stations), $this->pagination);
 	}

@@ -21,18 +21,23 @@ $albumimage = new albumImage($_REQUEST);
 $delaytime = 1;
 $ignore_local = (array_key_exists('ignorelocal', $_REQUEST) && $_REQUEST['ignorelocal'] == 'true') ? true : false;
 
-// Soundcloud/Youtube can be first since that function only returns images for soundcloud tracks, and it's the best way to get those images
-if ($albumimage->mbid != "") {
-	$searchfunctions = array( 'trySoundcloud', 'tryLocal', 'trySpotify', 'tryMusicBrainz', 'tryLastFM');
-} else {
-	// Try LastFM twice - first time just to get an MBID since coverartarchive images tend to be bigger
-	$searchfunctions = array( 'trySoundcloud', 'tryLocal', 'trySpotify', 'tryLastFM', 'tryMusicBrainz', 'tryLastFM');
-}
+// Soundcloud can be first since that function only returns images for soundcloud tracks, and it's the best way to get those images
+// Try LastFM twice - first time just to get an MBID since coverartarchive images tend to be bigger.
+// We also do the MBID check early on because it will update the MBID in the database which is useful for the info panel
+// The requests are cached locally so it's only one request to Last.FM
 
+$searchfunctions = array(
+	'trySoundcloud',
+	'tryLastFMForMBID',
+	'tryLocal',
+	'trySpotify',
+	'tryMusicBrainz',
+	'tryLastFM',
+	'tryBing'
+);
 $player = new base_mpd_player();
 $player->close_mpd_connection();
 $player->probe_http_api();
-
 if ($prefs['mopidy_http_port'] !== false) {
 	array_unshift($searchfunctions, 'tryMopidy');
 }
@@ -69,11 +74,11 @@ logger::mark("GETALBUMCOVER", "--------------------------------------------");
 function tryLocal($albumimage) {
 	global $ignore_local;
 	global $delaytime;
-	logger::mark("GETALBUMCOVER", "  Checking for local images");
-	$covernames = array("folder", "cover", "albumart", "thumb", "albumartsmall", "front");
 	if ($albumimage->albumpath == "" || $albumimage->albumpath == "." || $albumimage->albumpath === null || $ignore_local) {
 		return "";
 	}
+	logger::mark("GETALBUMCOVER", "  Checking for local images");
+	$covernames = array("folder", "cover", "albumart", "thumb", "albumartsmall", "front");
 	$files = scan_for_images($albumimage->albumpath);
 	foreach ($files as $i => $file) {
 		$info = pathinfo($file);
@@ -177,7 +182,7 @@ function trySoundcloud($albumimage) {
 	logger::mark("GETALBUMCOVER", "  Trying Soundcloud for ".$albumimage->albumuri);
 	$spaffy = preg_match("/\.(\d+$)/", $albumimage->albumuri, $matches);
 	if ($spaffy) {
-		$result = download_soundcloud('tracks/'.$matches[1].'.json');
+		$result = soundcloud::track_info(['trackid' => $matches[1]], false);
 		if ($result) {
 			$data = json_decode($result, true);
 			if (array_key_exists('artwork_url', $data) && $data['artwork_url']) {
@@ -186,43 +191,25 @@ function trySoundcloud($albumimage) {
 		}
 		$delaytime = 1000;
 	}
+	logger::mark("GETALBUMCOVER", "  SoundCloud returning",$image);
 	return $image;
 }
 
-function tryLastFM($albumimage) {
-
-	global $delaytime, $mysqlc;
-	static $tried_lastfm_once = false;
-
-	if ($tried_lastfm_once) { return ""; }
-	$retval = "";
-	$pic = "";
-	$cs = -1;
-
-	$sizeorder = array( 0 => 'small', 1 => 'medium', 2 => 'large', 3=> 'extralarge', 4 => 'mega');
-
-	$al = munge_album_name($albumimage->album);
-
-	$sa = $albumimage->get_artist_for_search();
-	if ($sa == '') {
-		logger::mark("GETALBUMCOVER", "  Trying last.FM for ".$al);
-		$json = loadJSON('lastfm', "https://ws.audioscrobbler.com/2.0/?album=".rawurlencode($al)."&api_key=15f7532dff0b8d84635c757f9f18aaa3&autocorrect=0&method=album.getinfo&format=json");
-	} else if ($sa == 'Podcast') {
-		logger::mark("GETALBUMCOVER", "  Trying last.FM for ".$al);
-		// Last.FM sometimes works for podcasts if you use Artist
-		$json = loadJSON('lastfm', "https://ws.audioscrobbler.com/2.0/?artist=".rawurlencode($al)."&method=album.getinfo&autocorrect=0&api_key=15f7532dff0b8d84635c757f9f18aaa3&format=json");
-	} else {
-		logger::mark("GETALBUMCOVER", "  Trying last.FM for ".$sa." ".$al);
-		$json = loadJSON('lastfm', "https://ws.audioscrobbler.com/2.0/?artist=".rawurlencode($sa)."&album=".rawurlencode($al)."&api_key=15f7532dff0b8d84635c757f9f18aaa3&autocorrect=0&method=album.getinfo&format=json");
+function tryLastFMForMBID($albumimage) {
+	global $mysqlc;
+	if ($albumimage->mbid !== null) {
+		logger::log("GETALBUMCOVER", "    Image already has an MBID, skipping this step");
+		return '';
 	}
-	if ($json === false) {
+	$options = getLastFMUrl($albumimage);
+	$json = json_decode(lastfm::album_getinfo($options, false), true);
+	if (array_key_exists('error', $json)) {
 		logger::warn("GETALBUMCOVER", "    Received error response from Last.FM");
-		$tried_lastfm_once = true;
 		return "";
 	} else {
-		if (property_exists($json, 'album')) {
-			if (property_exists($json->album, 'mbid') && $albumimage->mbid === null && $json->album->mbid) {
-				$albumimage->mbid = (string) $json->album->mbid;
+		if (array_key_exists('album', $json)) {
+			if (array_key_exists('mbid', $json['album']) && $json['album']['mbid']) {
+				$albumimage->mbid = (string) $json['album']['mbid'];
 				logger::trace("GETALBUMCOVER", "      Last.FM gave us the MBID of '".$albumimage->mbid."'");
 				if ($mysqlc) {
 					if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET mbid = ? WHERE ImgKey = ? AND mbid IS NULL", $albumimage->mbid, $albumimage->get_image_key())) {
@@ -231,22 +218,43 @@ function tryLastFM($albumimage) {
 						logger::warn("GETALBUMCOVER", "        Failed trying to update collection with new MBID");
 					}
 				}
-				// return nothing here so we can try musicbrainz first
-				return "";
 			}
+		}
+	}
+	// return nothing here so we can try musicbrainz first
+	$delaytime = 1000;
+	return "";
+}
 
-			if (property_exists($json->album, 'image')) {
-				foreach ($json->album->image as $image) {
-					if ($image->{'#text'}) { $pic = $image->{'#text'}; }
-					$s = array_search($image->size, $sizeorder);
+function tryLastFM($albumimage) {
+
+	global $delaytime, $mysqlc;
+	$retval = "";
+	$pic = "";
+	$cs = -1;
+
+	$sizeorder = array( 0 => 'small', 1 => 'medium', 2 => 'large', 3=> 'extralarge', 4 => 'mega');
+
+	$options = getLastFMUrl($albumimage);
+	$json = json_decode(lastfm::album_getinfo($options, false), true);
+
+	if (array_key_exists('error', $json)) {
+		logger::warn("GETALBUMCOVER", "    Received error response from Last.FM");
+		return "";
+	} else {
+		if (array_key_exists('album', $json)) {
+			if (array_key_exists('image', $json['album'])) {
+				foreach ($json['album']['image'] as $image) {
+					if ($image['#text'])
+						$pic = $image['#text'];
+					$s = array_search($image['size'], $sizeorder);
 					if ($s > $cs) {
-						logger::trace("GETALBUMCOVER", "    Image ".$image->size." '".$image->{'#text'}."'");
-						$retval = $image->{'#text'};
+						logger::trace("GETALBUMCOVER", "    Image ".$image['size']." '".$image['#text']."'");
+						$retval = $image['#text'];
 						$cs = $s;
 					}
 				}
 			}
-
 		}
 		if ($retval == "") {
 			$retval = $pic;
@@ -258,39 +266,63 @@ function tryLastFM($albumimage) {
 		logger::log("GETALBUMCOVER", "    No cover found on Last.FM");
 	}
 	$delaytime = 1000;
-	$tried_lastfm_once = true;
 
 	return $retval;
 
+}
+
+function getLastFMUrl($albumimage) {
+	$al = munge_album_name($albumimage->album);
+	$sa = $albumimage->get_artist_for_search();
+	if ($sa == '') {
+		logger::mark("GETALBUMCOVER", "  Trying last.FM for album ".$al);
+		$options = ['album' => $al, 'artist' => 'Various Artists', 'autocorrect' => 1, 'cache' => true];
+	} else if ($sa == 'Podcast') {
+		logger::mark("GETALBUMCOVER", "  Trying last.FM for artist ".$al);
+		$options = ['artist' => $al, 'autocorrect' => 1, 'cache' => true];
+	} else {
+		logger::mark("GETALBUMCOVER", "  Trying last.FM for ".$sa." ".$al);
+		$options = ['album' => $al, 'artist' => $sa, 'autocorrect' => 1, 'cache' => true];
+	}
+	return $options;
 }
 
 function tryMusicBrainz($albumimage) {
 	global $delaytime;
 	$delaytime = 600;
 	if ($albumimage->mbid === null) {
+		logger::log('GETALBUMCOVER', '    No MBID, cannot try Musicbrainz');
 		return "";
 	}
-	$retval = "";
-	// Let's get some information from musicbrainz about this album
 	logger::mark("GETALBUMCOVER", "  Getting MusicBrainz release info for ".$albumimage->mbid);
-	$url = 'http://musicbrainz.org/ws/2/release/'.$albumimage->mbid.'?inc=release-groups';
-	$d = new url_downloader(array(
-		'url' => $url,
-		'cache' => 'musicbrainz',
-		'return_data' => true
-	));
-	if ($d->get_data_to_file()) {
-		$x = simplexml_load_string($d->get_data(), 'SimpleXMLElement', LIBXML_NOCDATA);
-		if ($x->{'release'}->{'cover-art-archive'}->{'artwork'} == "true" &&
-			$x->{'release'}->{'cover-art-archive'}->{'front'} == "true") {
-			logger::log("GETALBUMCOVER", "    Musicbrainz has artwork for this release");
-			$retval = "http://coverartarchive.org/release/".$albumimage->mbid."/front";
+	$data = musicbrainz::album_getreleases(['mbid' => $albumimage->mbid], false);
+	$d = json_decode($data, true);
+	if (is_array($d) && array_key_exists('cover-art-archive', $d)) {
+		if ($d['cover-art-archive']['artwork'] == 1 && $d['cover-art-archive']['front'] == 1) {
+			logger::log('GETALBUMCOVER', '    Musicbrainz has artwork for this release');
+			return musicbrainz::COVER_URL.$albumimage->mbid."/front";
 		}
+	}
+	logger::log('GETALBUMCOVER', '    Musicbrainz does not have artwork for this album');
+	return "";
+
+}
+
+function tryBing($albumimage) {
+	global $delaytime;
+	$delaytime = 1000;
+	$retval = '';
+	$searchterm = $albumimage->get_artist_for_search().' '.munge_album_name($albumimage->album);
+	logger::mark('GETALBUMCOVER', '  Trying Bing Image Search for',$searchterm);
+	$data = bing::image_search(['q' => $searchterm], false);
+	$d = json_decode($data, true);
+	if (array_key_exists('value', $d) && is_array($d['value']) && count($d['value']) > 0) {
+		$retval = $d['value'][0]['contentUrl'];
+		logger::log('GETALBUMCOVER', '  Bing gaves us',$retval);
 	} else {
-		logger::warn("GETALBUMCOVER", "    Status code ".$d->get_status()." from Musicbrainz");
+		logger::log('GETALBUMCOVER', '  Bing came up with nowt');
 	}
 	return $retval;
-
 }
 
 function tryMopidy($albumimage) {
@@ -306,19 +338,6 @@ function tryMopidy($albumimage) {
 		$delaytime = 100;
 	}
 	return $retval;
-}
-
-function loadJSON($domain, $path) {
-	$d = new url_downloader(array(
-		'url' => $path,
-		'cache' => $domain,
-		'return_data' => true
-	));
-	if ($d->get_data_to_file()) {
-		return json_decode($d->get_data());
-	} else {
-		return false;
-	}
 }
 
 ?>

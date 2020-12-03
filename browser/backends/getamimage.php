@@ -20,8 +20,7 @@ function get_bio_link($url) {
 	$html = '';
 	$d = new url_downloader(array(
 		'url' => $url,
-		'cache' => 'allmusic',
-		'return_data' => true
+		'cache' => 'allmusic'
 	));
 	if ($d->get_data_to_file()) {
 		$DOM = new DOMDocument;

@@ -790,6 +790,7 @@ var prefs = function() {
 					break;
 
 				case "playlistswipe":
+				case "hide_master_volume":
 					callback = reloadWindow;
 					break;
 

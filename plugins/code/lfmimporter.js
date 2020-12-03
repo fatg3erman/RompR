@@ -62,7 +62,7 @@ var lfmImporter = function() {
 	}
 
 	function lfmResponseHandler(data, reqid) {
-		if (data) {
+		if (data && !data.error) {
 			var de = new lfmDataExtractor(data.track);
 			var trackdata = de.getCheckedData('track');
 			de = new lfmDataExtractor(trackdata);

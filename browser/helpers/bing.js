@@ -1,6 +1,5 @@
 var bing = function() {
 
-	var baseURL = 'https://api.bing.microsoft.com/v7.0/';
 	var queue = new Array();
 	var current_req;
 	const THROTTLE_TIME = 1000;
@@ -40,8 +39,8 @@ var bing = function() {
 			try {
 				data = await (jqxhr = $.ajax({
 					method: 'POST',
-					url: "browser/backends/bing.php",
-					data: current_req.data,
+					url: "browser/backends/api_handler.php",
+					data: JSON.stringify(current_req.data),
 					dataType: "json",
 				}));
 				throttle = handle_response(current_req, data, jqxhr);
@@ -63,10 +62,12 @@ var bing = function() {
 		image: {
 			search: function(query, offset, success, fail) {
 				var data = {
-					url: baseURL+'images/search',
-					offset: offset,
-					safeSearch: 'Off',
-					q: query
+					module: 'bing',
+					method: 'image_search',
+					params: {
+						offset: offset,
+						q: query
+					}
 				}
 				bing.request('', data, success, fail);
 			}

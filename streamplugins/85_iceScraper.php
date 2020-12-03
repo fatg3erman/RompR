@@ -22,12 +22,18 @@ if (array_key_exists('populate', $_REQUEST)) {
 	}
 	logger::log("ICESCRAPER", "Getting ".$getstr);
 	// NB Don't use the cache, station links often don't stay live long enough
-	$page = getCacheData($getstr, 'icecast', false, true);
+		$cache = new cache_handler([
+		'url' => $getstr,
+		'cache' => null,
+		'return_value' => true
+	]);
+	$page = $cache->get_cache_data();
 	$icecast_shitty_page = preg_replace('/<\?xml.*?\?>/', '', $page);
 	$doc = phpQuery::newDocument($icecast_shitty_page);
-	$list = $doc->find('table.servers-list')->find('tr');
-	$page_title = $doc->find('#content')->children('h2')->text();
+	$page_title = $doc->find('main[role="main"]')->children('h2')->text();
 	logger::debug("ICESCRAPER", "Page Title Is ".$page_title);
+
+	$list = $doc->find('div.card.shadow-sm');
 	$count = 0;
 	directoryControlHeader('icecastlist', get_int_text('label_icecast'));
 	print '<div class="containerbox dropdown-container fullwidth"><div class="expand"><input class="enter clearbox" name="searchfor" type="text"';
@@ -40,33 +46,18 @@ if (array_key_exists('populate', $_REQUEST)) {
 	print '<div class="configtitle brick_wide"><div class="textcentre expand"><b>'.$page_title.'</b></div></div>';
 	foreach ($list as $server) {
 		$server_web_link = '';
-		$server_name = pq($server)->find('.stream-name')->children('.name')->children('a');
-		$server_web_link = $server_name->attr('href');
-		$server_name = $server_name->text();
+		$server_name = pq($server)->find('.card-title')->text();
 		logger::debug("ICESCRAPER", "Server Name Is ".$server_name);
-		$server_description = munge_ice_text(pq($server)->find('.stream-description')->text());
+		$server_description = munge_ice_text(pq($server)->find('.card-text')->text());
+
 		$stream_tags = array();
-		$stream_tags_section = pq($server)->find('.stream-tags')->find('li');
+		$stream_tags_section = pq($server)->find('.badge.badge-secondary');
 		foreach ($stream_tags_section as $tag) {
-			$stream_tags[] = pq($tag)->children('a')->text();
+			$stream_tags[] = pq($tag)->text();
 		}
-		$listeners = pq($server)->find('.listeners')->text();
-		$listenlinks = pq($server)->find('.tune-in');
-		$listenlink = '';
-		$format = '';
-		$ps = $listenlinks->find('p');
-		foreach ($ps as $p) {
-			if (pq($p)->hasClass('format')) {
-				$format = pq($p)->attr('title');
-			} else {
-				foreach(pq($p)->children('a') as $a) {
-					$l = pq($a)->attr('href');
-					if (substr($l, -5) == ".xspf") {
-						$listenlink = 'http://dir.xiph.org'.$l;
-					}
-				}
-			}
-		}
+
+		$format = pq($server)->find('.badge.badge-primary')->text();
+		$listenlink = pq($server)->find('a.btn.btn-sm')->attr('href');
 
 		if ($listenlink != '') {
 			print albumHeader(array(
@@ -89,14 +80,6 @@ if (array_key_exists('populate', $_REQUEST)) {
 			trackControlHeader('','','icecast_'.$count, null, array(array('Image' => 'newimages/icecast.svg')));
 			print '<div class="containerbox rowspacer"></div>';
 			print '<div class="indent">'.$server_description.'</div>';
-			print '<div class="containerbox rowspacer"></div>';
-			print '<div class="indent">'.$listeners.'</div>';
-			print '<a href="'.$server_web_link.'" target="_blank">';
-			print '<div class="containerbox indent padright dropdown-container">';
-			print '<i class="icon-www collectionicon fixed"></i>';
-			print '<div class="expand">'.get_int_text('label_station_website').'</div>';
-			print '</div>';
-			print '</a>';
 			print '<div class="containerbox rowspacer"></div>';
 			print '<div class="stream-description icescraper clickstream playable draggable indent" name="'.rawurlencode($listenlink).'" streamname="'.$server_name.'" streamimg="">';
 			print '<i class="icon-no-response-playbutton collectionicon"></i>';

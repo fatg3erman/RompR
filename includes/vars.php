@@ -5,10 +5,32 @@ if (!$dtz) {
 	date_default_timezone_set('UTC');
 }
 
+//
+//---------------------------------------------------------------------------------------------
+//
+
+//
+// Using autoloading as part of the code upgrade.
+// Things will be slowly shifted into this form as we go on
+//
+
+CONST CLASS_DIRS = array(
+	'apis'
+);
+foreach (CLASS_DIRS as $d) {
+	set_include_path($d.PATH_SEPARATOR.get_include_path());
+}
+spl_autoload_extensions('.class.php');
+spl_autoload_register();
+
+//
+//---------------------------------------------------------------------------------------------
+//
+
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 500);
 define('ROMPR_COLLECTION_VERSION', 6);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 68);
+define('ROMPR_SCHEMA_VERSION', 69);
 define('ROMPR_VERSION', '1.51');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
@@ -346,6 +368,7 @@ $prefs = array(
 	"lfm_importer_start_offset" => 0,
 	"lfm_importer_last_import" => 0,
 	"bing_api_key" => '',
+	"hide_master_volume" => false,
 
 	// Things that are set as Cookies
 	"sortbydate" => false,
@@ -359,6 +382,7 @@ $prefs = array(
 	"lastfm_user" => "",
 	"lastfm_session_key" => "",
 	"autotagname" => "",
+	"lastfm_logged_in" => false,
 
 	// All of these are saved in the browser, so these are only defaults
 	"tradsearch" => false,
@@ -440,7 +464,6 @@ $prefs = array(
 );
 
 // Prefs that should not be exposed to the browser for security reasons
-// lastfm_session_key should really be one of these, but it is needed by the frontend
 $private_prefs = array(
 	'mysql_database',
 	'mysql_host',
@@ -450,6 +473,7 @@ $private_prefs = array(
 	'proxy_host',
 	'proxy_password',
 	'proxy_user',
+	'lastfm_session_key',
 	'spotify_token',
 	'spotify_token_expires',
 	'bing_api_key'
@@ -631,7 +655,7 @@ class logger {
 			// or attempt to have different processes in different colours.
 			// This helps to keep track of things when multiple concurrent things are happening at once.
 			$col = self::$debug_colours[$pid % 10];
-			error_log("\033[90m".strftime('%T').' : '.self::$debug_names[$level]." : \033[".$col."m".$module.$in.$out."\033[0m\n",3,self::$outfile);
+			error_log("\033[90m".strftime('%T').' ['.$pid.'] '.self::$debug_names[$level]." : \033[".$col."m".$module.$in.$out."\033[0m\n",3,self::$outfile);
 		} else {
 			error_log(self::$debug_names[$level].' : '.$module.$in.": ".$out,0);
 		}
@@ -738,6 +762,11 @@ function upgrade_host_defs($ver) {
 				unset($prefs['multihosts']->{$key}->mopidy_slave);
 				break;
 
+			case 69:
+				if ($prefs['lastfm_session_key'] && $prefs['lastfm_user']) {
+					$prefs['lastfm_logged_in'] = true;
+				}
+				break;
 
 		}
 	}

@@ -825,7 +825,7 @@ class base_mpd_player {
 			}
 		}
 		if (strpos($retval, '/local/') === 0) {
-			$retval = 'http://'.$this->ip.':'.$prefs['mopidy_http_port'].$retval;
+			$retval = 'http://'.$prefs['mopidy_http_port'].$retval;
 		}
 		logger::log('MOPIDYHTTP', 'Returning', $retval);
 		return $retval;

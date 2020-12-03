@@ -150,15 +150,25 @@ var player = function() {
 		}
 
 		this.replacePlayerOptions = function() {
+			var numhosts;
 			$('[name="playerdefs"]').each(function(index) {
 				$(this).empty();
+				numhosts = 0;
 				for (var i in prefs.multihosts) {
+					numhosts++;
 					$(this).append('<input type="radio" class="topcheck savulon" name="currenthost_duplicate'+index+'" value="'+
 						i+'" id="host_'+escape(i)+index+'">'+
 						'<label for="host_'+escape(i)+index+'">'+i+'</label><br/>');
 				}
 			});
 			$('[name="playerdefs"] > .savulon').off('click').on('click', prefs.toggleRadio);
+			if (numhosts == 1) {
+				$('[name="playerdefs"]').hide();
+				$('.player-title').hide();
+			} else {
+				$('[name="playerdefs"]').show();
+				$('.player-title').show();
+			}
 		}
 	}
 

@@ -37,6 +37,14 @@ var infobar = function() {
 		}
 	}
 
+	function showLove(flag) {
+		if (lastfm.isLoggedIn() && flag) {
+			$("#lastfm").show();
+		} else {
+			$("#lastfm").hide();
+		}
+	}
+
 	function updateNowPlaying() {
 		if (!nowplaying_updated && lastfm.isLoggedIn()) {
 			if (playlistinfo.Title != "" && playlistinfo.type && playlistinfo.type != "stream") {
@@ -449,13 +457,13 @@ var infobar = function() {
 				$("#dbtags").fadeIn('fast');
 				$("#ptagadd").fadeIn('fast');
 				$("#playcount").fadeIn('fast');
-				lastfm.showloveban(true);
+				showLove(true);
 			} else {
 				$("#stars").fadeOut('fast');
 				$("#dbtags").fadeOut('fast');
 				$("#ptagadd").fadeOut('fast');
 				$("#playcount").fadeOut('fast');
-				lastfm.showloveban(false);
+				showLove(false);
 			}
 			if (info.file != "") {
 				var f = info.file.match(/^podcast[\:|\+](http.*?)\#/);
@@ -478,7 +486,7 @@ var infobar = function() {
 				$("#subscribe").fadeOut('fast');
 				$("#addtoplaylist").fadeOut('fast');
 				$("#ptagadd").fadeOut('fast');
-				lastfm.showloveban(false);
+				showLove(false);
 			} else {
 				infobar.albumImage.setKey(info.ImgKey);
 			}

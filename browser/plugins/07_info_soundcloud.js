@@ -117,6 +117,10 @@ var info_soundcloud = function() {
 				self.track.updateProgress(percent);
 			}
 
+			this.handleClick = function() {
+
+			}
+
 			this.artist = function() {
 
 				var retries = 5;

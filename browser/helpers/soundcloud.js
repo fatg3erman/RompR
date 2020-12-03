@@ -12,8 +12,14 @@ var soundcloud = function() {
 			$.ajax({
 				method: 'POST',
 				dataType: 'json',
-				url: 'browser/backends/getscdata.php',
-				data: {url: 'tracks/'+tracknum+'.json'}
+				url: 'browser/backends/api_handler.php',
+				data: JSON.stringify({
+					module: 'soundcloud',
+					method: 'track_info',
+					params: {
+						trackid: tracknum
+					}
+				})
 			})
 			.done(callback)
 			.fail(function(xhr,status,err) {
@@ -27,8 +33,14 @@ var soundcloud = function() {
 			$.ajax({
 				method: 'POST',
 				dataType: 'json',
-				url: 'browser/backends/getscdata.php',
-				data: {url: 'users/'+userid+'.json'}
+				url: 'browser/backends/api_handler.php',
+				data: JSON.stringify({
+					module: 'soundcloud',
+					method: 'user_info',
+					params: {
+						userid: userid
+					}
+				})
 			})
 			.done(callback)
 			.fail(function(xhr,status,err) {

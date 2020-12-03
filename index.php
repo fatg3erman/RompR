@@ -242,7 +242,6 @@ $scripts = array(
 	"ui/uifunctions.js",
 	"ui/metahandlers.js",
 	"ui/clickfunctions.js",
-	"ui/lastfm.js",
 	"ui/nowplaying.js",
 	"ui/infobar2.js",
 	"ui/coverscraper.js",
