@@ -658,7 +658,7 @@ div.rightmenu
 
 .snap_vert_holder {
 	position: relative;
-	margin-left: 22px;
+	margin-left: 20px;
 	margin-right:-4px;
 }
 
@@ -670,5 +670,6 @@ div.rightmenu
 	transform-origin: 0 0;
 	white-space: nowrap;
 	font-size: 14px;
+	margin-top: 8px;
 }
 

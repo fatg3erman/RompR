@@ -4,6 +4,25 @@ var musicbrainz = function() {
 	var current_req;
 	const THROTTLE_TIME = 1500;
 
+	async function do_Request() {
+		var data, jqxhr, throttle;
+		while (current_req = queue.shift()) {
+			debug.debug("MUSICBRAINZ","New request",current_req);
+			try {
+				data = await (jqxhr = $.ajax({
+					method: 'POST',
+					url: "browser/backends/api_handler.php",
+					data: JSON.stringify(current_req.data),
+					dataType: "json",
+				}));
+				throttle = handle_response(current_req, data, jqxhr);
+			} catch (err) {
+				throttle = handle_error(current_req, err);
+			}
+			await new Promise(t => setTimeout(t, throttle));
+		}
+	}
+
 	function handle_response(req, data, jqxhr) {
 		var c = jqxhr.getResponseHeader('Pragma');
 		debug.debug("MUSICBRAINZ","Request success",c, data, jqxhr);
@@ -30,25 +49,6 @@ var musicbrainz = function() {
 
 		req.fail(data);
 		return THROTTLE_TIME;
-	}
-
-	async function do_Request() {
-		var data, jqxhr, throttle;
-		while (current_req = queue.shift()) {
-			debug.debug("MUSICBRAINZ","New request",current_req);
-			try {
-				data = await (jqxhr = $.ajax({
-					method: 'POST',
-					url: "browser/backends/api_handler.php",
-					data: JSON.stringify(current_req.data),
-					dataType: "json",
-				}));
-				throttle = handle_response(current_req, data, jqxhr);
-			} catch (err) {
-				throttle = handle_error(current_req, err);
-			}
-			await new Promise(t => setTimeout(t, throttle));
-		}
 	}
 
 	return {
