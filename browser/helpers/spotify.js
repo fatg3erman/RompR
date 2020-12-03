@@ -1,6 +1,5 @@
 var spotify = function() {
 
-	var baseURL = 'https://api.spotify.com';
 	var queue = new Array();
 	const DEFAULT_RATE = 100;
 	var rate = DEFAULT_RATE;
@@ -15,13 +14,10 @@ var spotify = function() {
 			debug.debug("SPOTIFY","Taking next request from queue",current_req);
 			try {
 				data = await (jqxhr = $.ajax({
-					type: 'POST',
-					url: "browser/backends/getspdata.php",
+					method: 'POST',
+					url: "browser/backends/api_handler.php",
+					data: JSON.stringify(current_req.data),
 					dataType: "json",
-					data: {
-						url: current_req.url,
-						cache: current_req.cache
-					}
 				}));
 				throttle = handle_response(current_req, data, jqxhr);
 			} catch (err) {
@@ -63,7 +59,18 @@ var spotify = function() {
 			if (pages > 10) {
 				req.success(collectedobj);
 			} else {
-				queue.unshift({flag: false, reqid: '', url: data[root].next, success: req.success, fail: req.fail});
+				queue.unshift({
+					reqid: '',
+					data: {
+						module: 'spotify',
+						method: 'get_url',
+						params: {
+							url: data[root].next
+						}
+					},
+					success: req.success,
+					fail: req.fail
+				});
 			}
 		} else if (data[root].previous) {
 			collectedobj[root].items = collectedobj[root].items.concat(data[root].items);
@@ -81,7 +88,18 @@ var spotify = function() {
 			if (pages > 10) {
 				req.success(collectedobj);
 			} else {
-				queue.unshift({flag: false, reqid: '', url: data.next, success: req.success, fail: req.fail});
+				queue.unshift({
+					reqid: '',
+					data: {
+						module: 'spotify',
+						method: 'get_url',
+						params: {
+							url: data.next
+						}
+					},
+					success: req.success,
+					fail: req.fail
+				});
 			}
 		} else if (data.previous) {
 			collectedobj.items = collectedobj.items.concat(data.items);
@@ -96,7 +114,7 @@ var spotify = function() {
 	function handle_error(req, err) {
 		debug.warn("SPOTIFY","Request failed",req,err);
 		if (err.responseJSON) {
-			if (err.responseJSON.error == 429) {
+			if (err.responseJSON.error && err.responseJSON.error.status == 429) {
 				debug.info("SPOTIFY","Too Many Requests. Slowing Request Rate");
 				rate += 1000;
 				clearTimeout(backofftimer);
@@ -117,35 +135,39 @@ var spotify = function() {
 
 	return {
 
-		request: function(reqid, url, success, fail, prio, cache) {
+		request: function(reqid, data, success, fail, prio) {
+			data.module = 'spotify';
 			if (prio) {
-				queue.unshift( {reqid: reqid, url: url, success: success, fail: fail, cache: cache } );
+				queue.unshift( {reqid: reqid, data: data, success: success, fail: fail} );
 			} else {
-				queue.push( {reqid: reqid, url: url, success: success, fail: fail, cache: cache } );
+				queue.push( {reqid: reqid, data: data, success: success, fail: fail} );
 			}
-			if (current_req == null)
+			if (typeof current_req == 'undefined')
 				do_Request();
 		},
 
 		track: {
 
 			getInfo: function(id, success, fail, prio) {
-				var url = baseURL + '/v1/tracks/' + id;
-				spotify.request('', url, success, fail, prio, true);
+				var data = {
+					method: 'track_getinfo',
+					params: {
+						id: id,
+						cache: true
+					}
+				};
+				spotify.request('', data, success, fail, prio);
 			},
 
 			checkLinking: function(id, success, fail, prio) {
-				var url = baseURL + '/v1/tracks/' + id + '?market='+prefs.lastfm_country_code;
-				spotify.request('', url, success, fail, prio, false);
-			}
-
-		},
-
-		tracks: {
-
-			checkLinking: function(ids, success, fail, prio) {
-				var url = baseURL + '/v1/tracks?ids='+ids.join(',')+'&market='+prefs.lastfm_country_code;
-				spotify.request('', url, success, fail, prio, false);
+				var data = {
+					method: 'track_checklinking',
+					params: {
+						id: id,
+						cache: false
+					}
+				};
+				spotify.request('', data, success, fail, prio);
 			}
 
 		},
@@ -153,13 +175,15 @@ var spotify = function() {
 		album: {
 
 			getInfo: function(id, success, fail, prio) {
-				var url = baseURL + '/v1/albums/' + id;
-				spotify.request(id, url, success, fail, prio, true);
-			},
-
-			getMultiInfo: function(ids, success, fail, prio) {
-				var url = baseURL + '/v1/albums/?ids=' + ids.join(',');
-				spotify.request('', url, success, fail, prio, true);
+				var data = {
+					method: 'album_getinfo',
+					params: {
+						id: id,
+						cache: true
+					}
+				};
+				let reqid = (typeof(id) == 'string') ? id : '';
+				spotify.request(reqid, data, success, fail, prio);
 			}
 
 		},
@@ -167,31 +191,62 @@ var spotify = function() {
 		artist: {
 
 			getInfo: function(id, success, fail, prio) {
-				var url = baseURL + '/v1/artists/' + id;
-				spotify.request('', url, success, fail, prio, true);
+				var data = {
+					method: 'artist_getinfo',
+					params: {
+						id: id,
+						cache: true
+					}
+				};
+				spotify.request('', data, success, fail, prio);
 			},
 
 			getRelatedArtists: function(id, success, fail, prio) {
-				var url = baseURL + '/v1/artists/' + id + '/related-artists'
-				spotify.request('', url, success, fail, prio, true);
+				var data = {
+					method: 'artist_getrelated',
+					params: {
+						id: id,
+						cache: true
+					}
+				};
+				spotify.request('', data, success, fail, prio);
 			},
 
 			getTopTracks: function(id, success, fail, prio) {
-				var url = baseURL + '/v1/artists/' + id + '/top-tracks'
-				spotify.request('', url, success, fail, prio, true);
+				var data = {
+					method: 'artist_toptracks',
+					params: {
+						id: id,
+						cache: true
+					}
+				};
+				spotify.request('', data, success, fail, prio);
 			},
 
 			getAlbums: function(id, types, success, fail, prio) {
-				var url = baseURL + '/v1/artists/'+id+'/albums?album_type='+types+'&limit=50';
-				if (prefs.lastfm_country_code) {
-					url += '&market='+prefs.lastfm_country_code;
-				}
-				spotify.request(id, url, success, fail, prio, true);
+				var data = {
+					method: 'artist_getalbums',
+					params: {
+						id: id,
+						album_type: types,
+						limit: 50,
+						cache: true
+					}
+				};
+				spotify.request(id, data, success, fail, prio);
 			},
 
 			search: function(name, success, fail, prio) {
-				var url = baseURL + '/v1/search?q='+name.replace(/&|%|@|:|\+|'|\\|\*|"|\?|\//g,'').replace(/\s+/g,'+')+'&type=artist&limit=50';
-				spotify.request('', url, success, fail, prio, true);
+				var data = {
+					method: 'search',
+					params: {
+						q: name,
+						type: 'artist',
+						limit: 50,
+						cache: true
+					}
+				};
+				spotify.request('', data, success, fail, prio);
 			}
 
 		},
@@ -199,24 +254,26 @@ var spotify = function() {
 		recommendations: {
 
 			getGenreSeeds: function(success, fail) {
-				var url = baseURL + '/v1/recommendations/available-genre-seeds';
-				spotify.request('', url, success, fail, true, true);
+				var data = {
+					method: 'artist_toptracks',
+					params: {
+						id: id,
+						cache: true
+					}
+				};
+				spotify.request('', data, success, fail, true);
 			},
 
 			getRecommendations: function(param, success, fail) {
-				var p = new Array();
-				if (prefs.lastfm_country_code) {
-					param.market = prefs.lastfm_country_code;
-				}
-				for (var i in param) {
-					p.push(i+'='+encodeURIComponent(param[i]));
-				}
-				var paramstring = p.join('&');
-				var url = baseURL + '/v1/recommendations?'+paramstring;
-				spotify.request('', url, success, fail, false, false);
+				var data = {
+					method: 'get_recommendations',
+					params: {
+						param: param,
+						cache: true
+					}
+				};
+				spotify.request('', data, success, fail, true);
 			}
-
 		}
-
 	}
 }();

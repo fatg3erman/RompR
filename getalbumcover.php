@@ -4,7 +4,6 @@ include ("includes/vars.php");
 include ("includes/functions.php");
 require_once ("utils/imagefunctions.php");
 include ("backends/sql/backend.php");
-include ("includes/spotifyauth.php");
 include ("getid3/getid3.php");
 require_once ('player/mpd/mpdinterface.php');
 
@@ -127,6 +126,7 @@ function tryLocal($albumimage) {
 function trySpotify($albumimage) {
 	global $delaytime;
 	if ($albumimage->albumuri === null || substr($albumimage->albumuri, 0, 8) != 'spotify:') {
+		logger::log('GETALBUMCOVER', 'Not a Spotify album');
 		return "";
 	}
 	$image = "";
@@ -137,27 +137,21 @@ function trySpotify($albumimage) {
 	$spaffy = explode(":", $albumimage->albumuri);
 	$spiffy = end($spaffy);
 	$boop = $spaffy[1];
-	$url = 'https://api.spotify.com/v1/'.$boop.'s/'.$spiffy;
-	logger::trace("GETALBUMCOVER", "      Getting ".$url);
-	list($success, $content, $status) = get_spotify_data($url);
-
-	if ($success) {
-		$data = json_decode($content);
-		if (property_exists($data, 'images')) {
-			$width = 0;
-			foreach ($data->images as $img) {
-				if ($img->width > $width) {
-					$width = $img->width;
-					$image = $img->url;
-					logger::trace("GETALBUMCOVER", "  Found image with width ".$width);
-					logger::trace("GETALBUMCOVER", "  URL is ".$image);
-				}
+	$fn = $boop.'_getinfo';
+	$content = spotify::$fn(['id' => $spiffy, 'cache' => true], false);
+	$data = json_decode($content, true);
+	if (array_key_exists('images', $data)) {
+		$width = 0;
+		foreach ($data['images'] as $img) {
+			if ($img['width'] > $width) {
+				$width = $img['width'];
+				$image = $img['url'];
+				logger::trace("GETALBUMCOVER", "  Found image with width ".$width);
+				logger::trace("GETALBUMCOVER", "  URL is ".$image);
 			}
-		} else {
-			logger::trace("GETALBUMCOVER", "    No Spotify Data Found");
 		}
 	} else {
-		logger::warn("GETALBUMCOVER", "    Spotify API data not retrieved");
+		logger::trace("GETALBUMCOVER", "    No Spotify Data Found");
 	}
 	$delaytime = 1000;
 	if ($image == "" && $boop == 'artist') {

@@ -80,7 +80,7 @@ function spotifyRadio() {
 		this.sendATrack = async function() {
 			if (tracks === null) {
 				debug.debug(medebug, "Getting tracks for artist",name);
-				spotify.album.getMultiInfo(ids, myself.gotTracks, myself.failQuiet, true);
+				spotify.album.getInfo(ids, myself.gotTracks, myself.failQuiet, true);
 			}
 			while (tracks === null) {
 				await new Promise(t => setTimeout(t, 500));

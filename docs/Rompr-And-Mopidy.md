@@ -19,7 +19,8 @@ In mopidy.conf, your mpd section needs to contain
 ### Using the HTTP Frontend for Improved Responsiveness
 
 If your Mopidy has its HTTP frontend enabled, RompR can use that *in addition to* the MPD interface. This is optional, it makes RompR a little more
-responsive when things change within Mopidy. RompR can also use this connection to query Mopidy for album art.
+responsive when things change within Mopidy. RompR can also use this connection to query Mopidy for album art, which is very handy if the Mopidy backend supports
+it. Currently, local, spotify, and youtube definitely do.
 
 You will, however, have to configure a couple of things.
 
@@ -111,8 +112,14 @@ will tell you the uri it is trying to download, you should try that from the com
 and see what error messages you get.
 
 Assuming it works, the YoutTube video will be downloaded and the audio will be extracted to a FLAC file which will be streamed from your webserver
-using Mopidy's Stream backend the next time you add the track to the play queue. if you have the flac packages installed (sudo apt install flac) then the
-downloaded file will be tagged with the artist and track name. If you want to move the track into your 'normal' music collection you can move it from rompr/prefs/youtubedl
-into an appropriate folder and rescan your collection. Provided you have the option to 'Prefer Local Music to Internet Sources' enabled the collection will simply update
-woth the new location.
+using Mopidy's Stream backend the next time you add the track to the play queue.
+
+If you have the flac packages installed (sudo apt install flac) then the downloaded file will be tagged with the artist and track name.
+Tagged tracks can be moved into your 'normal' music collection. Provided you have the option to 'Prefer Local Music to Internet Sources' enabled, the collection will simply update
+with the new location. Moving the files to your music collection means they can be played using the 'local' backend which support seeking and pausing much better than the stream backend.
+
+One way is to move the downloaded files from rompr/prefs/youtubedl into an appropriate folder, do 'mopidy local scan' and rescan your collection.
+
+Another approach is to symlink rompr/prefs/youtubedl into your Music Directory and make sure the webserver has write permissions. When you download a track you simply need to 'mopidy local scan'
+and then Update your Music Collection.
 

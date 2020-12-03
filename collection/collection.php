@@ -1,7 +1,5 @@
 <?php
 
-require_once ("includes/spotifyauth.php");
-
 $numtracks = 0;
 $numalbums = 0;
 $numartists = 0;

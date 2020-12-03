@@ -95,6 +95,10 @@ class url_downloader {
 		return $this->get_final_info();
 	}
 
+	protected function get_cache_file($cache, $url){
+		return 'prefs/jsoncache/'.$cache.'/'.md5($url);
+	}
+
 	public function get_data_to_file($file = null, $binary = false) {
 
 		//
@@ -112,7 +116,7 @@ class url_downloader {
 			logger::trace("URL_DOWNLOADER", "  Returning data as string");
 			return $this->get_data_to_string();
 		} else if ($this->options['cache'] !== null) {
-			$this->file = 'prefs/jsoncache/'.$this->options['cache'].'/'.md5($this->options['url']);
+			$this->file = $this->get_cache_file($this->options['cache'], $this->options['url']);
 			if (file_exists($this->file)) {
 				logger::debug("URL_DOWNLOADER", "    Returning cached data ".$this->file);
 				$this->from_cache = true;

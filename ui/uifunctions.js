@@ -939,7 +939,7 @@ var spotifyLinkChecker = function() {
 			for (var i in data) {
 				ids.push(data[i].Uri.replace(/spotify:track:/, ''));
 			}
-			spotify.tracks.checkLinking(ids, gotSpotiResponse, gotNoSpotiResponse, false);
+			spotify.track.checklinking(ids, gotSpotiResponse, gotNoSpotiResponse, false);
 		} else {
 			debug.info("SPOTICHECKER","No more tracks to check");
 			prefs.save({linkchecker_isrunning: false});
@@ -1026,7 +1026,7 @@ function format_remote_api_error(msg, err) {
 	let errormessage = language.gettext(msg);
 	if (err.statusText)
 		errormessage += ' ('+err.status+' '+err.statusText+')';
-	if (err.responseJSON && err.responseJSON.error) {
+	if (err.responseJSON && err.responseJSON.error && err.responseJSON.error.message) {
 		errormessage += ' ('+err.responseJSON.error.message+')';
 	} else if (err.responseJSON && err.responseJSON.message) {
 		errormessage += ' ('+err.responseJSON.message+')';
