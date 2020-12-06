@@ -1,7 +1,6 @@
 <?php
 include ("includes/vars.php");
 include ("includes/functions.php");
-include ("utils/imagefunctions.php");
 
 $url = rawurldecode($_REQUEST['url']);
 
@@ -36,7 +35,7 @@ function download_image_file($url, $outfile) {
 
 	if (substr($url, 0, 10) == 'data:image') {
 		logger::trace("GETREMOTEIMAGE", "  ... Decoding Base64 Data");
-		create_image_from_base64($url, $outfile);
+		imageFunctions::create_image_from_base64($url, $outfile);
 	} else {
 		logger::trace("GETREMOTEIMAGE", "  ... Downloading it");
 		$d = new url_downloader(array('url' => $url));

@@ -159,7 +159,7 @@ function analyze_file($thing) {
 	if (pathinfo($thing, PATHINFO_EXTENSION) == 'php' || pathinfo($thing, PATHINFO_EXTENSION) == 'js') {
 		print "  ".$thing."\n";
 		foreach (file($thing) as $line) {
-			if (preg_match_all('/get_int_text\([\'|\"](.+?)[\'|\"]/', $line, $matches)) {
+			if (preg_match_all('/language::gettext\([\'|\"](.+?)[\'|\"]/', $line, $matches)) {
 				foreach ($matches[1] as $match) {
 					print '    Found '.$match."\n";
 					array_push($in_use, $match);

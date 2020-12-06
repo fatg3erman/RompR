@@ -9,8 +9,7 @@ var language = function() {
 	chdir('..');
 	include("includes/vars.php");
 	include("includes/functions.php");
-	include("international.php");
-	print '    const tags = '.json_encode($translations)."\r\n";
+	print '    const tags = '.json_encode(language::get_all_translations())."\r\n";
 
 ?>
 

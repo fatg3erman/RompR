@@ -3,12 +3,12 @@
 // There may appear to be a lot of unnecessary divs wrapping around things here
 // but it makes it work in Safari. DO NOT CHANGE IT!
 
-print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.get_int_text('settings_appearance').'</b></div></div>';
+print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_appearance').'</b></div></div>';
 
 // Skin
 
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-	get_int_text('config_skin').
+	language::gettext('config_skin').
 	'</div><div class="selectholder"><select id="skinselector" class="saveomatic">';
 $skins = glob("skins/*");
 foreach($skins as $sk) {
@@ -20,7 +20,7 @@ print '</select></div></div>';
 
 // Theme
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-	get_int_text('config_theme').
+	language::gettext('config_theme').
 	'</div><div class="selectholder"><select id="themeselector" class="saveomatic">';
 $themes = glob("themes/*.css");
 foreach($themes as $theme) {
@@ -33,19 +33,19 @@ print '<div id="custombackground" class="pref">';
 
 print '<div class="containerbox dropdown-container">
 <i class="icon-menu smallicon clickicon fixed" onclick="prefs.openBgImageBox()"></i>
-<div class="expand"><b>'.get_int_text('config_background').'</b></div>
+<div class="expand"><b>'.language::gettext('config_background').'</b></div>
 </div>';
 
 print '<div id="custombgdropper" class="invisible">';
 
-print '<form id="backimageform" action="backimage.php" method="post" enctype="multipart/form-data">
+print '<form id="backimageform" action="api/userbackgrounds/" method="post" enctype="multipart/form-data">
 <input type="hidden" name="currbackground" value="" />
 <input type="hidden" name="browser_id" value="" />
 <div class="filebutton textcentre" style="width:auto">
 <input type="file" name="imagefile[]" id="imagefile" class="inputfile" multiple="multiple" />
-<label for="imagefile">'.get_int_text('label_choosefiles').'</label>
+<label for="imagefile">'.language::gettext('label_choosefiles').'</label>
 </div>
-<input type="button" class="invisible" id="bgfileuploadbutton" onclick="prefs.changeBackgroundImage()" value="'.get_int_text('albumart_uploadbutton').'" />
+<input type="button" class="invisible" id="bgfileuploadbutton" onclick="prefs.changeBackgroundImage()" value="'.language::gettext('albumart_uploadbutton').'" />
 <div class="textcenter invisible"><i class="icon-spin6 medicon" id="bguploadspinner"></i></div>
 <div class="styledinputs">
 <input type="checkbox" id="thisbrowseronly" name="thisbrowseronly" /><label for="thisbrowseronly">For this browser only</label>
@@ -58,11 +58,11 @@ print '<div id="backimageposition" class="tiny styledinputs invisible divlabel">
 <div class="spacer"></div>
 <div class="textcentre"><b>Display Options</b></div>
 <div class="spacer"></div>
-<div><input type="radio" id="attach_centre" name="backgroundposition" value="center center" /><label for="attach_centre">'.get_int_text('label_centre').'</label></div>
-<div><input type="radio" id="attach_topleft" name="backgroundposition" value="top left" /><label for="attach_topleft">'.get_int_text('label_topleft').'</label></div>
-<div><input type="radio" id="attach_topright" name="backgroundposition" value="top right" /><label for="attach_topright">'.get_int_text('label_topright').'</label></div>
-<div><input type="radio" id="attach_bottomleft" name="backgroundposition" value="bottom left" /><label for="attach_bottomleft">'.get_int_text('label_bottomleft').'</label></div>
-<div><input type="radio" id="attach_bottomright" name="backgroundposition" value="bottom right" /><label for="attach_bottomright">'.get_int_text('label_bottomright').'</label></div>
+<div><input type="radio" id="attach_centre" name="backgroundposition" value="center center" /><label for="attach_centre">'.language::gettext('label_centre').'</label></div>
+<div><input type="radio" id="attach_topleft" name="backgroundposition" value="top left" /><label for="attach_topleft">'.language::gettext('label_topleft').'</label></div>
+<div><input type="radio" id="attach_topright" name="backgroundposition" value="top right" /><label for="attach_topright">'.language::gettext('label_topright').'</label></div>
+<div><input type="radio" id="attach_bottomleft" name="backgroundposition" value="bottom left" /><label for="attach_bottomleft">'.language::gettext('label_bottomleft').'</label></div>
+<div><input type="radio" id="attach_bottomright" name="backgroundposition" value="bottom right" /><label for="attach_bottomright">'.language::gettext('label_bottomright').'</label></div>
 <div id="cusbgcontrols"></div>
 </div>
 
@@ -76,7 +76,7 @@ print '<div id="backimageposition" class="tiny styledinputs invisible divlabel">
 
 // Icon Theme
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-	get_int_text('config_icontheme').
+	language::gettext('config_icontheme').
 	'</div><div class="selectholder"><select id="iconthemeselector" class="saveomatic">';
 $themes = glob("iconsets/*");
 foreach($themes as $theme) {
@@ -88,7 +88,7 @@ print '</select></div></div>';
 
 // Font
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-	get_int_text('config_fontname').
+	language::gettext('config_fontname').
 	'</div><div class="selectholder"><select id="fontfamilyselector" class="saveomatic">';
 $themes = glob("fonts/*.css");
 foreach($themes as $theme) {
@@ -99,7 +99,7 @@ print '</select></div></div>';
 
 //Font Size
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-	get_int_text('config_fontsize').
+	language::gettext('config_fontsize').
 	'</div><div class="selectholder"><select id="fontsizeselector" class="saveomatic">';
 $themes = glob("sizes/*.css");
 foreach($themes as $theme) {
@@ -110,7 +110,7 @@ print '</select></div></div>';
 
 // Album Cover Size
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-	get_int_text('config_coversize').
+	language::gettext('config_coversize').
 	'</div><div class="selectholder"><select id="coversizeselector" class="saveomatic">';
 $themes = glob("coversizes/*.css");
 foreach($themes as $theme) {
@@ -120,21 +120,21 @@ foreach($themes as $theme) {
 print '</select></div></div>';
 
 // Players
-print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.get_int_text('config_players').'</b></div></div>';
+print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('config_players').'</b></div></div>';
 print '<div class="fullwidth">';
 print '<div class="clearfix">';
 print '<div class="pref styledinputs tleft" name="playerdefs">';
 print '</div>';
-print '<div class="pref tright"><button onclick="player.defs.edit()">'.get_int_text('button_edit_players').'</button></div>';
+print '<div class="pref tright"><button onclick="player.defs.edit()">'.language::gettext('button_edit_players').'</button></div>';
 print '</div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="player_in_titlebar" />
-<label for="player_in_titlebar">'.get_int_text('config_playerintitlebar').'</label>
+<label for="player_in_titlebar">'.language::gettext('config_playerintitlebar').'</label>
 </div>';
 print '</div>';
 
 // Snapcast
-print '<div class="dropdown-container configtitle"><i class="icon-snapcast medicon"></i><div class="textcentre expand"><b>'.get_int_text('config_snapcast').'</b></div></div>';
+print '<div class="dropdown-container configtitle"><i class="icon-snapcast medicon"></i><div class="textcentre expand"><b>'.language::gettext('config_snapcast').'</b></div></div>';
 print '<div class="fullwidth">';
 if (!$snapcast_in_volume) {
 	print '<div class="pref" id="snapcastgroups">';
@@ -142,133 +142,127 @@ if (!$snapcast_in_volume) {
 }
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="hide_master_volume" />
-<label for="hide_master_volume">'.get_int_text('config_hidemastervolume').'</label>
+<label for="hide_master_volume">'.language::gettext('config_hidemastervolume').'</label>
 </div>';
 
 print '<div class="pref styledinputs containerbox dropdown-container">';
-print '<input class="saveotron expand" id="snapcast_server" type="text" placeholder="'.get_int_text('config_snapcast_server').'" />';
-// print '<input class="saveotron fixed" id="snapcast_port" style="width:4em;margin-left:1em" type="text" size="4" placeholder="'.get_int_text('config_snapcast_port').'" />';
-print '<input class="saveotron fixed" id="snapcast_http" style="width:4em;margin-left:1em" type="text" size="4" placeholder="'.get_int_text('config_snapcast_http').'" />';
+print '<input class="saveotron expand" id="snapcast_server" type="text" placeholder="'.language::gettext('config_snapcast_server').'" />';
+// print '<input class="saveotron fixed" id="snapcast_port" style="width:4em;margin-left:1em" type="text" size="4" placeholder="'.language::gettext('config_snapcast_port').'" />';
+print '<input class="saveotron fixed" id="snapcast_http" style="width:4em;margin-left:1em" type="text" size="4" placeholder="'.language::gettext('config_snapcast_http').'" />';
 print '</div>';
 print '</div>';
 
 // Sources Panel Hiding
-print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.get_int_text('settings_panels').'</b></div></div>';
+print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_panels').'</b></div></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="hide_albumlist" />
-<label for="hide_albumlist">'.get_int_text('config_hidealbumlist').'</label>
+<label for="hide_albumlist">'.language::gettext('config_hidealbumlist').'</label>
 </div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="hide_searcher" />
-<label for="hide_searcher">'.get_int_text('config_hidesearcher').'</label>
+<label for="hide_searcher">'.language::gettext('config_hidesearcher').'</label>
 </div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="hide_filelist" />
-<label for="hide_filelist">'.get_int_text('config_hidefileslist').'</label>
+<label for="hide_filelist">'.language::gettext('config_hidefileslist').'</label>
 </div>';
 print '<div class="pref styledinputs">';
 print '<input class="autoset toggle" type="checkbox" id="hide_radiolist" />
-<label for="hide_radiolist">'.get_int_text('config_hideradio').'</label>
+<label for="hide_radiolist">'.language::gettext('config_hideradio').'</label>
 </div>';
 print '<div class="pref styledinputs">';
 print '<input class="autoset toggle" type="checkbox" id="hide_podcastslist" />
-<label for="hide_podcastslist">'.get_int_text('config_hidepodcasts').'</label>
+<label for="hide_podcastslist">'.language::gettext('config_hidepodcasts').'</label>
 </div>';
 print '<div class="pref styledinputs">';
 print '<input class="autoset toggle" type="checkbox" id="hide_audiobooklist" />
-<label for="hide_audiobooklist">'.get_int_text('config_hideaudiobooks').'</label>
+<label for="hide_audiobooklist">'.language::gettext('config_hideaudiobooks').'</label>
 </div>';
 print '<div class="pref styledinputs">';
 print '<input class="autoset toggle" type="checkbox" id="hide_playlistslist" />
-<label for="hide_playlistslist">'.get_int_text('config_hideplaylistslist').'</label>
+<label for="hide_playlistslist">'.language::gettext('config_hideplaylistslist').'</label>
 </div>';
 print '<div class="pref styledinputs">';
 print '<input class="autoset toggle" type="checkbox" id="hide_pluginplaylistslist" />
-<label for="hide_pluginplaylistslist">'.get_int_text('config_hidepluginplaylistslist').'</label>
+<label for="hide_pluginplaylistslist">'.language::gettext('config_hidepluginplaylistslist').'</label>
 </div>';
 if ($skin == "desktop") {
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="hidebrowser" />
-<label for="hidebrowser">'.get_int_text('config_hidebrowser').'</label>
+<label for="hidebrowser">'.language::gettext('config_hidebrowser').'</label>
 </div>';
 }
 
 // Interface
-print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.get_int_text('settings_interface').'</b></div></div>';
+print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_interface').'</b></div></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="scrolltocurrent" />
-<label for="scrolltocurrent">'.get_int_text('config_autoscroll').'</label>
+<label for="scrolltocurrent">'.language::gettext('config_autoscroll').'</label>
 </div>';
 if ($use_plugins) {
 	print '<div class="pref styledinputs">
 	<input class="autoset toggle" type="checkbox" id="auto_discovembobulate" />
-	<label for="auto_discovembobulate">'.get_int_text('config_discovembobulate').'</label>
+	<label for="auto_discovembobulate">'.language::gettext('config_discovembobulate').'</label>
 	</div>';
 }
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="displaycomposer" />
-<label for="displaycomposer">'.get_int_text('config_displaycomposer').'</label>
+<label for="displaycomposer">'.language::gettext('config_displaycomposer').'</label>
 </div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="use_albumart_in_playlist" />
-<label for="use_albumart_in_playlist">'.get_int_text('config_albumartinplaylist').'</label>
+<label for="use_albumart_in_playlist">'.language::gettext('config_albumartinplaylist').'</label>
 </div>';
 
 // Click Policy
 print '<div class="pref styledinputs">';
 print '<input type="radio" class="topcheck savulon" name="clickmode" value="double" id="clickd" />
-<label for="clickd">'.get_int_text('config_doubleclick').'</label><br/>
+<label for="clickd">'.language::gettext('config_doubleclick').'</label><br/>
 <input type="radio" class="topcheck savulon" name="clickmode" value="single" id="clicks" />
-<label for="clicks">'.get_int_text('config_singleclick').'</label><br>
+<label for="clicks">'.language::gettext('config_singleclick').'</label><br>
 </div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="cdplayermode" />
-<label for="cdplayermode">'.get_int_text('config_cdplayermode').'</label>
+<label for="cdplayermode">'.language::gettext('config_cdplayermode').'</label>
 </div>';
 if ($skin != "phone") {
-print '<div class="pref styledinputs">'.get_int_text('config_wheelspeed').
+print '<div class="pref styledinputs">'.language::gettext('config_wheelspeed').
 	'<input class="saveotron" id="wheelscrollspeed" style="width:4em;margin-left:1em" type="text" size="4" />
 	</div>';
 print '<div class="pref textcentre"><button onclick="shortcuts.edit()">'.
-	get_int_text('config_editshortcuts').'</button></div>'."\n";
+	language::gettext('config_editshortcuts').'</button></div>'."\n";
 } else {
 	print '<div class="pref styledinputs">
 	<input class="autoset toggle" type="checkbox" id="playlistswipe" />
-	<label for="playlistswipe">'.get_int_text('config_playlistswipe').'</label>
+	<label for="playlistswipe">'.language::gettext('config_playlistswipe').'</label>
 	</div>';
 }
 if ($prefs['player_backend'] == "mpd") {
 print '<div class="pref containerbox dropdown-container">
 	<div class="fixed" style="margin-right:2em">'.
-	get_int_text('config_crossfade').
+	language::gettext('config_crossfade').
 	'</div>
 	<input class="saveotron fixed" style="width:4em" id="crossfade_duration" type="text" size="3" />
 	</div>';
 }
 
 // Biography and Language
-print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.get_int_text('settings_language').'</b></div></div>';
+print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_language').'</b></div></div>';
 
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-get_int_text('settings_interface').
+language::gettext('settings_interface').
 '</div><div class="selectholder"><select id="langselector" onchange="prefs.changelanguage()">';
-$langs = glob("international/*.php");
-foreach($langs as $lang) {
-	if (basename($lang) != "en.php" && basename($lang) != $interface_language.".php") {
-		include($lang);
-	}
-}
-foreach($langname as $key => $value) {
+foreach(language::get_language_list() as $key => $value) {
 	print '<option value="'.$key.'">'.$value.'</option>';
 }
 print '</select></div></div>';
 
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-get_int_text('config_lastfmlang').
+language::gettext('config_lastfmlang').
 '</div><div class="selectholder"><select class="saveomatic" id="lastfmlangselector"">';
-print '<option value="default">'.get_int_text('config_lastfmdefault').'</option>';
-print '<option value="interface">'.get_int_text('config_lastfminterface').'</option>';
-print '<option value="browser">'.get_int_text('config_lastfmbrowser').'</option>';
+print '<option value="default">'.language::gettext('config_lastfmdefault').'</option>';
+print '<option value="interface">'.language::gettext('config_lastfminterface').'</option>';
+print '<option value="browser">'.language::gettext('config_lastfmbrowser').'</option>';
 $l = json_decode(file_get_contents('international/iso639.json'), true);
 foreach ($l as $language) {
 	print '<option value="'.$language['alpha2'].'">'.$language['English'].'</option>';
@@ -276,7 +270,7 @@ foreach ($l as $language) {
 print '</select></div></div>';
 
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-get_int_text('config_country').
+language::gettext('config_country').
 '</div><div class="selectholder"><select class="saveomatic" id="lastfm_country_codeselector">';
 $x = simplexml_load_file('iso3166.xml');
 foreach($x->CountryEntry as $i => $c) {
@@ -286,144 +280,144 @@ foreach($x->CountryEntry as $i => $c) {
 print '</select></div></div>';
 
 // Album Art
-print '<div class="dropdown-container configtitle"><i class="icon-cd medicon"></i><div class="textcentre expand"><b>'.get_int_text('albumart_title').'</b></div></div>';
+print '<div class="dropdown-container configtitle"><i class="icon-cd medicon"></i><div class="textcentre expand"><b>'.language::gettext('albumart_title').'</b></div></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="downloadart" />
-<label for="downloadart">'.get_int_text('config_autocovers').'</label>
+<label for="downloadart">'.language::gettext('config_autocovers').'</label>
 </div>
 <div class="pref">
-<div class="tiny">'.get_int_text('config_musicfolders').'</div>
+<div class="tiny">'.language::gettext('config_musicfolders').'</div>
 <input class="saveotron prefinput" id="music_directory_albumart" type="text" size="40" />
 </div>';
-// print '<div class="pref"><div class="tiny">If you want to use Google Images to get Album Art you need to sign up for an API Key. <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></div></div>';
+// print '<div class="pref"><div class="tiny">If you want to use Google Images to get Album Art you need to sign up for an API Key. <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.language::gettext('config_read_the_docs').'</a></div></div>';
 
 
 // Smart Radio
-print '<div class="dropdown-container configtitle"><i class="icon-wifi medicon"></i><div class="textcentre expand"><b>'.get_int_text('label_pluginplaylists').'</b></div></div>';
-print '<div class="pref styledinputs">'.get_int_text('config_smart_chunksize').
+print '<div class="dropdown-container configtitle"><i class="icon-wifi medicon"></i><div class="textcentre expand"><b>'.language::gettext('label_pluginplaylists').'</b></div></div>';
+print '<div class="pref styledinputs">'.language::gettext('config_smart_chunksize').
 	'<input class="saveotron" id="smartradio_chunksize" style="width:4em;margin-left:1em" type="text" size="4" />
 	</div>';
 
 // Audiobooks
-print '<div class="dropdown-container configtitle"><i class="icon-audiobook medicon"></i><div class="textcentre expand"><b>'.get_int_text('label_audiobooks').'</b></div></div>';
-print '<div class="pref">'.get_int_text('config_audiobook_directory').'
+print '<div class="dropdown-container configtitle"><i class="icon-audiobook medicon"></i><div class="textcentre expand"><b>'.language::gettext('label_audiobooks').'</b></div></div>';
+print '<div class="pref">'.language::gettext('config_audiobook_directory').'
 <input class="prefinput saveotron" id="audiobook_directory" type="text" size="40" />
 </div>';
 
 // Podcasts
 print '<div class="dropdown-container configtitle">
-<i class="icon-podcast-circled medicon"></i><div class="textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div></div>';
+<i class="icon-podcast-circled medicon"></i><div class="textcentre expand"><b>'.language::gettext('label_podcasts').'</b></div></div>';
 
-print '<div class="pref"><b>'.get_int_text('config_podcast_defaults').'</b></div>';
+print '<div class="pref"><b>'.language::gettext('config_podcast_defaults').'</b></div>';
 
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-	get_int_text("podcast_display").'</div>';
+	language::gettext("podcast_display").'</div>';
 print '<div class="selectholder">';
 print '<select id="default_podcast_display_modeselector" class="saveomatic">';
-$options =  '<option value="'.DISPLAYMODE_ALL.'">'.get_int_text("podcast_display_all").'</option>'.
-			'<option value="'.DISPLAYMODE_NEW.'">'.get_int_text("podcast_display_onlynew").'</option>'.
-			'<option value="'.DISPLAYMODE_UNLISTENED.'">'.get_int_text("podcast_display_unlistened").'</option>'.
-			'<option value="'.DISPLAYMODE_DOWNLOADEDNEW.'">'.get_int_text("podcast_display_downloadnew").'</option>'.
-			'<option value="'.DISPLAYMODE_DOWNLOADED.'">'.get_int_text("podcast_display_downloaded").'</option>';
+$options =  '<option value="'.DISPLAYMODE_ALL.'">'.language::gettext("podcast_display_all").'</option>'.
+			'<option value="'.DISPLAYMODE_NEW.'">'.language::gettext("podcast_display_onlynew").'</option>'.
+			'<option value="'.DISPLAYMODE_UNLISTENED.'">'.language::gettext("podcast_display_unlistened").'</option>'.
+			'<option value="'.DISPLAYMODE_DOWNLOADEDNEW.'">'.language::gettext("podcast_display_downloadnew").'</option>'.
+			'<option value="'.DISPLAYMODE_DOWNLOADED.'">'.language::gettext("podcast_display_downloaded").'</option>';
 print $options;
 print '</select>';
 print '</div></div>';
 
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-	get_int_text("podcast_refresh").'</div>';
+	language::gettext("podcast_refresh").'</div>';
 print '<div class="selectholder">';
 print '<select id="default_podcast_refresh_modeselector" class="saveomatic">';
-$options =  '<option value="'.REFRESHOPTION_NEVER.'">'.get_int_text("podcast_refresh_never").'</option>'.
-			'<option value="'.REFRESHOPTION_HOURLY.'">'.get_int_text("podcast_refresh_hourly").'</option>'.
-			'<option value="'.REFRESHOPTION_DAILY.'">'.get_int_text("podcast_refresh_daily").'</option>'.
-			'<option value="'.REFRESHOPTION_WEEKLY.'">'.get_int_text("podcast_refresh_weekly").'</option>'.
-			'<option value="'.REFRESHOPTION_MONTHLY.'">'.get_int_text("podcast_refresh_monthly").'</option>';
+$options =  '<option value="'.REFRESHOPTION_NEVER.'">'.language::gettext("podcast_refresh_never").'</option>'.
+			'<option value="'.REFRESHOPTION_HOURLY.'">'.language::gettext("podcast_refresh_hourly").'</option>'.
+			'<option value="'.REFRESHOPTION_DAILY.'">'.language::gettext("podcast_refresh_daily").'</option>'.
+			'<option value="'.REFRESHOPTION_WEEKLY.'">'.language::gettext("podcast_refresh_weekly").'</option>'.
+			'<option value="'.REFRESHOPTION_MONTHLY.'">'.language::gettext("podcast_refresh_monthly").'</option>';
 print $options;
 print '</select>';
 print '</div></div>';
 
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
-	get_int_text("podcast_sortmode").'</div>';
+	language::gettext("podcast_sortmode").'</div>';
 print '<div class="selectholder">';
 print '<select id="default_podcast_sort_modeselector" class="saveomatic">';
-$options =  '<option value="'.SORTMODE_NEWESTFIRST.'">'.get_int_text("podcast_newestfirst").'</option>'.
-			'<option value="'.SORTMODE_OLDESTFIRST.'">'.get_int_text("podcast_oldestfirst").'</option>';
+$options =  '<option value="'.SORTMODE_NEWESTFIRST.'">'.language::gettext("podcast_newestfirst").'</option>'.
+			'<option value="'.SORTMODE_OLDESTFIRST.'">'.language::gettext("podcast_oldestfirst").'</option>';
 print $options;
 print '</select>';
 print '</div></div>';
 
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="podcast_mark_new_as_unlistened" />
-<label for="podcast_mark_new_as_unlistened">'.get_int_text('config_marknewasunlistened').'</label>
+<label for="podcast_mark_new_as_unlistened">'.language::gettext('config_marknewasunlistened').'</label>
 </div>';
 
 // Last.FM
 print '<div class="dropdown-container configtitle">
-<i class="icon-lastfm-1 medicon"></i><div class="textcentre expand"><b>'.get_int_text('label_lastfm').'</b>
+<i class="icon-lastfm-1 medicon"></i><div class="textcentre expand"><b>'.language::gettext('label_lastfm').'</b>
 </div></div>';
 
-print '<div class="pref">'.get_int_text('config_lastfmusername').'<br/><div class="containerbox"><div class="expand">'.
+print '<div class="pref">'.language::gettext('config_lastfmusername').'<br/><div class="containerbox"><div class="expand">'.
 	'<input class="enter" name="lfmuser" type="text" size="30" value="'.$prefs['lastfm_user'].'"/>'.
-	'</div><button id="lastfmloginbutton" class="fixed">'.get_int_text('config_loginbutton').
+	'</div><button id="lastfmloginbutton" class="fixed">'.language::gettext('config_loginbutton').
 	'</button></div>';
 print '</div>';
 
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="lastfm_autocorrect" />
-<label for="lastfm_autocorrect">'.get_int_text('config_autocorrect').'</label>
+<label for="lastfm_autocorrect">'.language::gettext('config_autocorrect').'</label>
 </div>';
 
 print '<div class="pref styledinputs lastfmlogin-required">
 <input class="autoset toggle" type="checkbox" id="sync_lastfm_playcounts" />
-<label for="sync_lastfm_playcounts">'.get_int_text('config_lastfm_playcounts').'</label>
+<label for="sync_lastfm_playcounts">'.language::gettext('config_lastfm_playcounts').'</label>
 </div>';
 
 print '<div class="pref styledinputs lastfmlogin-required">
 <input class="autoset toggle" type="checkbox" id="sync_lastfm_at_start" />
-<label for="sync_lastfm_at_start">'.get_int_text('config_sync_lastfm_playcounts').'</label>
+<label for="sync_lastfm_at_start">'.language::gettext('config_sync_lastfm_playcounts').'</label>
 </div>';
 
 print '<div class="pref styledinputs lastfmlogin-required">
 <input class="autoset toggle" type="checkbox" id="lastfm_scrobbling" />
-<label for="lastfm_scrobbling">'.get_int_text('config_scrobbling').'</label>
+<label for="lastfm_scrobbling">'.language::gettext('config_scrobbling').'</label>
 </div>
-<div class="pref lastfmlogin-required">'.get_int_text('config_scrobblepercent').'<br/>
+<div class="pref lastfmlogin-required">'.language::gettext('config_scrobblepercent').'<br/>
 <div id="scrobwrangler"></div>
 </div>
-<div class="pref lastfmlogin-required">'.get_int_text('config_tagloved').'
+<div class="pref lastfmlogin-required">'.language::gettext('config_tagloved').'
 <input class="prefinput saveotron" id="autotagname" type="text" size="40" />
 </div>';
 
 // Tags and Ratings
 print '<div class="pref styledinputs lastfmlogin-required">
 <input class="autoset toggle" type="checkbox" id="synctags" />
-<label for="synctags">'.get_int_text('config_synctags').'</label>';
+<label for="synctags">'.language::gettext('config_synctags').'</label>';
 ?>
 </div>
 <div class="pref containerbox dropdown-container lastfmlogin-required">
 <?php
 print '<div class="divlabel styledinputs"><input class="autoset toggle" type="checkbox" id="synclove" />
-<label for="synclove">'.get_int_text('config_loveis').'</label></div>';
+<label for="synclove">'.language::gettext('config_loveis').'</label></div>';
 ?>
 <div class="selectholder"><select id="synclovevalueselector" class="saveomatic">
 <?php
-print '<option value="5">5 '.get_int_text('stars').'</option>
-<option value="4">4 '.get_int_text('stars').'</option>
-<option value="3">3 '.get_int_text('stars').'</option>
-<option value="2">2 '.get_int_text('stars').'</option>
-<option value="1">1 '.get_int_text('star').'</option>';
+print '<option value="5">5 '.language::gettext('stars').'</option>
+<option value="4">4 '.language::gettext('stars').'</option>
+<option value="3">3 '.language::gettext('stars').'</option>
+<option value="2">2 '.language::gettext('stars').'</option>
+<option value="1">1 '.language::gettext('star').'</option>';
 print '</select>
 </div></div>';
 
 // Collection Options
 print '<div class="dropdown-container configtitle"><i class="icon-music medicon"></i><div class="textcentre expand">
-	<b>'.get_int_text('button_local_music').'</b></div></div>';
+	<b>'.language::gettext('button_local_music').'</b></div></div>';
 
 // Album Sorting
-print '<div class="pref"><b>'.get_int_text('config_artistfirst').'
+print '<div class="pref"><b>'.language::gettext('config_artistfirst').'
 <input class="saveotron prefinput arraypref" id="artistsatstart" type="text" size="256" />
 </b></div>';
-print '<div class="pref"><b>'.get_int_text('config_nosortprefixes').'
+print '<div class="pref"><b>'.language::gettext('config_nosortprefixes').'
 <input class="saveotron prefinput arraypref" id="nosortprefixes" type="text" size="128" />
 </b></div>';
 
@@ -433,19 +427,19 @@ if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_remote == false) {
 
 		print '<div class="pref styledinputs">
 		<input class="autoset toggle" type="checkbox" id="use_original_releasedate" />
-		<label for="use_original_releasedate">'.get_int_text('config_use_original_releasedate').'</label>
+		<label for="use_original_releasedate">'.language::gettext('config_use_original_releasedate').'</label>
 		</div>';
 
 
 		print '<div class="pref styledinputs">
 			<div class="clearfix">
 				<div class="tleft">
-					<input class="autoset toggle" type="checkbox" id="updateeverytime" /><label for="updateeverytime">'.get_int_text('config_updateonstart').'</label>
+					<input class="autoset toggle" type="checkbox" id="updateeverytime" /><label for="updateeverytime">'.language::gettext('config_updateonstart').'</label>
 				</div>';
-		print '<button class="tright" name="donkeykong">'.get_int_text('config_updatenow').'</button>';
+		print '<button class="tright" name="donkeykong">'.language::gettext('config_updatenow').'</button>';
 		print '</div>';
 		if ($prefs['player_backend'] == "mpd" && $prefs['collection_player'] !== null) {
-			print '<div class="clearfix"><button class="tright" name="dinkeyking">'.get_int_text('config_rescan').'</button></div>';
+			print '<div class="clearfix"><button class="tright" name="dinkeyking">'.language::gettext('config_rescan').'</button></div>';
 		}
 		print '</div>';
 	}
@@ -455,24 +449,24 @@ if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_remote == false) {
 
 	if (($prefs['collection_player'] == "mopidy" || $prefs['collection_player'] == null) && $prefs['player_backend'] == 'mopidy') {
 		print '<div class="pref" id="mopidycollectionoptions">'.
-		'<b>'.get_int_text('config_collectionfolders').'</b></div>';
-		print '<div class="pref">'.get_int_text('config_beetsserver').'
+		'<b>'.language::gettext('config_collectionfolders').'</b></div>';
+		print '<div class="pref">'.language::gettext('config_beetsserver').'
 		<input class="prefinput saveotron" id="beets_server_location" type="text" size="40" />
 		</div>';
 
 		print '<div class="pref styledinputs">
 		<input class="autoset toggle" type="checkbox" id="preferlocalfiles" />
-		<label for="preferlocalfiles">'.get_int_text('config_preferlocal').'</label></div>';
+		<label for="preferlocalfiles">'.language::gettext('config_preferlocal').'</label></div>';
 	}
 
 	if ($prefs['collection_player'] == $prefs['player_backend'] || $prefs['collection_player'] == null) {
 		print '<div class="pref styledinputs">
 		<input class="autoset toggle" type="checkbox" id="sortbycomposer" />
-		<label for="sortbycomposer">'.get_int_text('config_sortbycomposer').'</label>
+		<label for="sortbycomposer">'.language::gettext('config_sortbycomposer').'</label>
 		</div>';
 		print '<div class="pref indent styledinputs">
 		<input class="autoset toggle" type="checkbox" id="composergenre" />
-		<label for="composergenre">'.get_int_text('config_composergenre').'</label>
+		<label for="composergenre">'.language::gettext('config_composergenre').'</label>
 		</div>';
 		print '<div class="pref indent">
 		<input class="saveotron prefinput arraypref" id="composergenrename" type="text" size="40" />

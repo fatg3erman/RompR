@@ -2,7 +2,6 @@
 chdir('..');
 include ("includes/vars.php");
 include ("includes/functions.php");
-require_once ("utils/imagefunctions.php");
 include ("backends/sql/backend.php");
 $results = array();
 $r = generic_sql_query('SELECT Image, ImgKey FROM Albumtable', false, PDO::FETCH_OBJ);

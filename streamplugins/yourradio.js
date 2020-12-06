@@ -5,7 +5,7 @@ var yourRadioPlugin = {
 			clickRegistry.loadContentIntoTarget({
 				target: $('#yourradiolist'),
 				clickedElement: $('i[name="yourradiolist"]'),
-				uri: 'utils/userstreams.php?populate'
+				uri: 'api/yourradio/?populate'
 			});
 		}
 	},
@@ -22,14 +22,14 @@ var yourRadioPlugin = {
 				allowdragout: true
 			});
 		}
-		return 'utils/userstreams.php?populate';
+		return 'api/yourradio/?populate';
 	},
 
 	updateStreamName: async function(streamid, name, uri) {
 		await $.ajax({
 			type: 'POST',
 			data: { updatename: 1, streamid: streamid, name: name, uri: uri },
-			url: "utils/userstreams.php"
+			url: "api/yourradio"
 		});
 		yourRadioPlugin.reloadStations();
 	},
@@ -39,7 +39,7 @@ var yourRadioPlugin = {
 		await $.ajax({
 			type: 'POST',
 			data: data,
-			url: "utils/userstreams.php"
+			url: "api/yourradio/"
 		});
 		yourRadioPlugin.reloadStations();
 		infobar.notify(language.gettext('label_addedradio'));
@@ -49,7 +49,7 @@ var yourRadioPlugin = {
 		await $.ajax({
 			type: 'POST',
 			data: {remove: name},
-			url: "utils/userstreams.php"
+			url: "api/yourradio/"
 		});
 		yourRadioPlugin.reloadStations();
 	},
@@ -62,7 +62,7 @@ var yourRadioPlugin = {
 		debug.log('YOURRADIO', 'Saving radio order',radioOrder);
 		$.ajax({
 				type: 'POST',
-				url: 'utils/userstreams.php',
+				url: 'api/yourradio/',
 				data: {'order[]': radioOrder}
 		});
 	},

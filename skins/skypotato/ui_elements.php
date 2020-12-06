@@ -1,7 +1,5 @@
 <?php
 
-require_once('utils/imagefunctions.php');
-
 function albumTrack($data) {
 	global $prefs;
 	if (substr($data['title'],0,6) == "Album:") return 2;
@@ -102,7 +100,7 @@ function artistHeader($id, $name) {
 }
 
 function noAlbumsHeader() {
-	print '<div class="playlistrow2" style="padding-left:64px">'.get_int_text("label_noalbums").'</div>';
+	print '<div class="playlistrow2" style="padding-left:64px">'.language::gettext("label_noalbums").'</div>';
 }
 
 function albumHeader($obj) {
@@ -159,7 +157,7 @@ function albumControlHeader($fragment, $why, $what, $who, $artist, $playall = tr
 	}
 	$html = '<div class="dropdown-container configtitle fullwidth"><div class="textcentre expand"><b>'.$artist.'</b></div></div>';
 	if ($playall) {
-		$html .= '<div class="textcentre clickalbum playable brick_wide noselect" name="'.$why.'artist'.$who.'">'.get_int_text('label_play_all').'</div>';
+		$html .= '<div class="textcentre clickalbum playable brick_wide noselect" name="'.$why.'artist'.$who.'">'.language::gettext('label_play_all').'</div>';
 	}
 	return $html;
 }
@@ -179,18 +177,18 @@ function trackControlHeader($why, $what, $who, $when, $dets) {
 			if ($det['AlbumUri']) {
 				$albumuri = rawurlencode($det['AlbumUri']);
 				if (strtolower(pathinfo($albumuri, PATHINFO_EXTENSION)) == "cue") {
-					$html .= '<div class="icon-no-response-playbutton smallicon expand playable clickcue noselect tooltip" name="'.$albumuri.'" title="'.get_int_text('label_play_whole_album').'"></div>';
+					$html .= '<div class="icon-no-response-playbutton smallicon expand playable clickcue noselect tooltip" name="'.$albumuri.'" title="'.language::gettext('label_play_whole_album').'"></div>';
 				} else {
-					$html .= '<div class="icon-no-response-playbutton smallicon expand clicktrack playable noselect tooltip" name="'.$albumuri.'" title="'.get_int_text('label_play_whole_album').'"></div>';
-					$html .= '<div class="'.$play_col_button.' smallicon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" title="'.get_int_text('label_from_collection').'"></div>';
+					$html .= '<div class="icon-no-response-playbutton smallicon expand clicktrack playable noselect tooltip" name="'.$albumuri.'" title="'.language::gettext('label_play_whole_album').'"></div>';
+					$html .= '<div class="'.$play_col_button.' smallicon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" title="'.language::gettext('label_from_collection').'"></div>';
 				}
 			} else {
-				$html .= '<div class="'.$play_col_button.' smallicon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" title="'.get_int_text('label_from_collection').'"></div>';
+				$html .= '<div class="'.$play_col_button.' smallicon expand clickalbum playable noselect tooltip" name="'.$why.'album'.$who.'" title="'.language::gettext('label_from_collection').'"></div>';
 			}
-			$html .= '<div class="icon-single-star smallicon expand clickicon clickalbum playable noselect tooltip" name="ralbum'.$db_album.'" title="'.get_int_text('label_with_ratings').'"></div>';
-			$html .= '<div class="icon-tags smallicon expand clickicon clickalbum playable noselect tooltip" name="talbum'.$db_album.'" title="'.get_int_text('label_with_tags').'"></div>';
-			$html .= '<div class="icon-ratandtag smallicon expand clickicon clickalbum playable noselect tooltip" name="yalbum'.$db_album.'" title="'.get_int_text('label_with_tagandrat').'"></div>';
-			$html .= '<div class="icon-ratortag smallicon expand clickicon clickalbum playable noselect tooltip" name="ualbum'.$db_album.'" title="'.get_int_text('label_with_tagorrat').'"></div>';
+			$html .= '<div class="icon-single-star smallicon expand clickicon clickalbum playable noselect tooltip" name="ralbum'.$db_album.'" title="'.language::gettext('label_with_ratings').'"></div>';
+			$html .= '<div class="icon-tags smallicon expand clickicon clickalbum playable noselect tooltip" name="talbum'.$db_album.'" title="'.language::gettext('label_with_tags').'"></div>';
+			$html .= '<div class="icon-ratandtag smallicon expand clickicon clickalbum playable noselect tooltip" name="yalbum'.$db_album.'" title="'.language::gettext('label_with_tagandrat').'"></div>';
+			$html .= '<div class="icon-ratortag smallicon expand clickicon clickalbum playable noselect tooltip" name="ualbum'.$db_album.'" title="'.language::gettext('label_with_tagorrat').'"></div>';
 			$classes = array();
 			if ($why != 'b') {
 				if (num_collection_tracks($who) == 0) {
@@ -251,7 +249,7 @@ function printRadioDirectory($att, $closeit, $prefix) {
 }
 
 function playlistPlayHeader($name, $text) {
-	print '<div class="textcentre clickloadplaylist playable ninesix" name="'.$name.'">'.get_int_text('label_play_all');
+	print '<div class="textcentre clickloadplaylist playable ninesix" name="'.$name.'">'.language::gettext('label_play_all');
 	print '<input type="hidden" name="dirpath" value="'.$name.'" />';
 	print '</div>';
 }

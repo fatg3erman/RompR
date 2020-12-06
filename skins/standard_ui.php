@@ -1,7 +1,5 @@
 <?php
 
-require_once('utils/imagefunctions.php');
-
 function albumTrack($data) {
 	global $prefs;
 	if (substr($data['title'],0,6) == "Album:") return 2;
@@ -102,7 +100,7 @@ function artistHeader($id, $name) {
 
 function noAlbumsHeader() {
 	print '<div class="playlistrow2" style="padding-left:64px">'.
-		get_int_text("label_noalbums").'</div>';
+		language::gettext("label_noalbums").'</div>';
 }
 
 function albumHeader($obj) {

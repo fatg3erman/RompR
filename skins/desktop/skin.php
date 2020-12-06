@@ -9,15 +9,15 @@
 		<div id="buttonholder" class="containerbox vertical bordered infobarlayout">
 			<div id="buttons" class="fixed">
 <?php
-				print '<i title="'.get_int_text('button_previous').
+				print '<i title="'.language::gettext('button_previous').
 					'" class="prev-button icon-fast-backward clickicon controlbutton-small tooltip"></i>';
-				print '<i title="'.get_int_text('button_play').
+				print '<i title="'.language::gettext('button_play').
 					'" class="play-button icon-play-circled shiftleft clickicon controlbutton tooltip"></i>';
-				print '<i title="'.get_int_text('button_stop').
+				print '<i title="'.language::gettext('button_stop').
 					'" class="stop-button icon-stop-1 shiftleft2 clickicon controlbutton-small tooltip"></i>';
-				print '<i title="'.get_int_text('button_stopafter').
+				print '<i title="'.language::gettext('button_stopafter').
 					'" class="stopafter-button icon-to-end-1 shiftleft3 clickicon controlbutton-small tooltip"></i>';
-				print '<i title="'.get_int_text('button_next').
+				print '<i title="'.language::gettext('button_next').
 					'" class="next-button icon-fast-forward shiftleft4 clickicon controlbutton-small tooltip"></i>';
 ?>
 			</div>
@@ -34,7 +34,7 @@
 	} else {
 		print '<div id="volumebox" class="fixed">';
 		print '<div class="infobarlayout bordered containerbox vertical">';
-			print '<div title="'.get_int_text('button_volume').
+			print '<div title="'.language::gettext('button_volume').
 				'" id="volumecontrol" class="tooltip expand containerbox vertical"><div id="volume" class="expand"></div></div>';
 			if (count($outputdata) == 1) {
 				// There's only one output so we'll treat it like a Mute button
@@ -44,7 +44,7 @@
 				print '<i id="mutebutton" onclick="player.controller.doMute()" class="'.$c.' outhack clickicon"></i>';
 				print '</div>';
 			} else {
-				print '<div class="tooltip fixed" title="'.get_int_text('config_audiooutputs').'" style="height:14px">';
+				print '<div class="tooltip fixed" title="'.language::gettext('config_audiooutputs').'" style="height:14px">';
 				print '<i id="mutebutton" onclick="layoutProcessor.toggleAudioOutpts()" class="icon-sliders outhack clickicon"></i>';
 				print '</div>';
 			}
@@ -78,19 +78,19 @@
 			<div id="amontobin" class="clearfix">
 				<div id="subscribe" class="invisible topstats">
 					<?php
-					print '<i title="'.get_int_text('button_subscribe').
+					print '<i title="'.language::gettext('button_subscribe').
 						'" class="icon-rss npicon clickicon tooltip"></i>';
 					?>
 					<input type="hidden" id="nppodiput" value="" />
 				</div>
 				<div id="addtoplaylist" class="invisible topstats">
 					<?php
-					print '<i title="'.get_int_text('button_addtoplaylist').
+					print '<i title="'.language::gettext('button_addtoplaylist').
 						'" class="icon-doc-text npicon clickicon tooltip topdrop">';
 					?>
 					<div class="topdropmenu dropshadow leftmenu normalmenu useasfixed">
 						<?php
-						print '<div class="configtitle dropdown-container"><div class="textcentre expand"><b>'.get_int_text('button_addtoplaylist').'</b></div></div>';
+						print '<div class="configtitle dropdown-container"><div class="textcentre expand"><b>'.language::gettext('button_addtoplaylist').'</b></div></div>';
 						?>
 						<div id="addtoplaylistmenu" class="clearfix">
 						</div>
@@ -103,7 +103,7 @@
 				</div>
 				<div id="lastfm" class="invisible topstats">
 					<?php
-					print '<i title="'.get_int_text('button_love').
+					print '<i title="'.language::gettext('button_love').
 						'" class="icon-heart npicon clickicon tooltip" id="love"></i>';
 					?>
 				</div>
@@ -119,40 +119,40 @@
 
 <div id="sourcescontrols" class="noborder tleft containerbox headercontainer topbox">
 <?php
-print '<i title="'.get_int_text('button_local_music').'" class="icon-music tooltip topimg choosepanel expand" name="albumlist"></i>';
-print '<i title="'.get_int_text('button_searchmusic').'" class="icon-search topimg tooltip choosepanel expand" name="searcher"></i>';
-print '<i title="'.get_int_text('button_file_browser').'" class="icon-folder-open-empty tooltip topimg choosepanel expand" name="filelist"></i>';
-print '<i title="'.get_int_text('button_internet_radio').'" class="icon-radio-tower tooltip topimg choosepanel expand" name="radiolist"></i>';
-print '<i title="'.get_int_text('label_podcasts').'" class="icon-podcast-circled tooltip topimg choosepanel expand" name="podcastslist"></i>';
-print '<i title="'.get_int_text('label_audiobooks').'" class="icon-audiobook tooltip topimg choosepanel expand" name="audiobooklist"></i>';
-print '<i title="'.get_int_text('button_loadplaylist').'" class="icon-doc-text tooltip topimg choosepanel expand" name="playlistslist"></i>';
-print '<i title="'.get_int_text('label_pluginplaylists').'" class="icon-wifi tooltip topimg choosepanel expand" name="pluginplaylistslist"></i>';
+print '<i title="'.language::gettext('button_local_music').'" class="icon-music tooltip topimg choosepanel expand" name="albumlist"></i>';
+print '<i title="'.language::gettext('button_searchmusic').'" class="icon-search topimg tooltip choosepanel expand" name="searcher"></i>';
+print '<i title="'.language::gettext('button_file_browser').'" class="icon-folder-open-empty tooltip topimg choosepanel expand" name="filelist"></i>';
+print '<i title="'.language::gettext('button_internet_radio').'" class="icon-radio-tower tooltip topimg choosepanel expand" name="radiolist"></i>';
+print '<i title="'.language::gettext('label_podcasts').'" class="icon-podcast-circled tooltip topimg choosepanel expand" name="podcastslist"></i>';
+print '<i title="'.language::gettext('label_audiobooks').'" class="icon-audiobook tooltip topimg choosepanel expand" name="audiobooklist"></i>';
+print '<i title="'.language::gettext('button_loadplaylist').'" class="icon-doc-text tooltip topimg choosepanel expand" name="playlistslist"></i>';
+print '<i title="'.language::gettext('label_pluginplaylists').'" class="icon-wifi tooltip topimg choosepanel expand" name="pluginplaylistslist"></i>';
 ?>
 <div class="expand"></div>
 </div>
 
 <div id="infopanecontrols" class="noborder tleft containerbox headercontainer topbox">
 <?php
- print '<i title="'.get_int_text('button_togglesources').'" class="icon-angle-double-left tooltip topimg expandslightly background-left" id="expandleft"></i>';
+ print '<i title="'.language::gettext('button_togglesources').'" class="icon-angle-double-left tooltip topimg expandslightly background-left" id="expandleft"></i>';
  ?>
 
 <div id="chooserbuttons" class="noborder expandalot center containerbox headercontainer">
 <?php
-print '<i class="icon-menu topimg tooltip topdrop expand" title="'.get_int_text('button_plugins').'">';
+print '<i class="icon-menu topimg tooltip topdrop expand" title="'.language::gettext('button_plugins').'">';
 ?>
 <div class="topdropmenu dropshadow leftmenu normalmenu">
 	<div id="specialplugins" class="clearfix"></div>
 </div>
 </i>
 <?php
-print '<i class="icon-versions topimg tooltip topdrop expand" title="'.get_int_text('button_history').'">';
+print '<i class="icon-versions topimg tooltip topdrop expand" title="'.language::gettext('button_history').'">';
 ?>
 <div class="topdropmenu dropshadow leftmenu widemenu stayopen" id="hpscr">
 	<div class="dropdown-container configtitle">
 		<div class="textcentre expand">
 			<b>
 <?php
-	print get_int_text('button_history');
+	print language::gettext('button_history');
 ?>
 			</b>
 		</div>
@@ -162,13 +162,13 @@ print '<i class="icon-versions topimg tooltip topdrop expand" title="'.get_int_t
 </i>
 
 <?php
-print '<i title="'.get_int_text('button_back').'" id="backbutton" class="icon-left-circled topimg tooltip button-disabled expand"></i>';
-print '<i title="'.get_int_text('button_forward').'" id="forwardbutton" class="icon-right-circled tooltip topimg button-disabled expand"></i>';
+print '<i title="'.language::gettext('button_back').'" id="backbutton" class="icon-left-circled topimg tooltip button-disabled expand"></i>';
+print '<i title="'.language::gettext('button_forward').'" id="forwardbutton" class="icon-right-circled tooltip topimg button-disabled expand"></i>';
 ?>
 </div>
 
 <?php
-print '<i class="icon-angle-double-right tooltip topimg expandslightly background-right" title="'.get_int_text('button_toggleplaylist').'" id="expandright"></i>';
+print '<i class="icon-angle-double-right tooltip topimg expandslightly background-right" title="'.language::gettext('button_toggleplaylist').'" id="expandright"></i>';
 ?>
 </div>
 
@@ -176,8 +176,8 @@ print '<i class="icon-angle-double-right tooltip topimg expandslightly backgroun
 <div class="expand" id="rightspacer"></div>
 
 <?php
-print '<i title="'.get_int_text('button_albumart').'" class="icon-cd tooltip topimg open_albumart expand"></i>';
-print '<i class="icon-cog-alt topimg tooltip topdrop expand" title="'.get_int_text('button_prefs').'">';
+print '<i title="'.language::gettext('button_albumart').'" class="icon-cd tooltip topimg open_albumart expand"></i>';
+print '<i class="icon-cog-alt topimg tooltip topdrop expand" title="'.language::gettext('button_prefs').'">';
 ?>
 <div class="topdropmenu dropshadow rightmenu widemenu stayopen" id="configpanel">
 <?php
@@ -187,11 +187,11 @@ include ("includes/prefspanel.php");
 </i>
 
 <?php
-print '<i class="icon-floppy topimg tooltip topdrop expand" title="'.get_int_text('button_saveplaylist').'">';
+print '<i class="icon-floppy topimg tooltip topdrop expand" title="'.language::gettext('button_saveplaylist').'">';
 ?>
 <div class="topdropmenu dropshadow rightmenu widemenu stayopen" id="plsaver">
 <?php
-print '<div class="dropdown-container configtitle"><div class="textcentre expand"><b>'.get_int_text('button_saveplaylist').'</b></div></div>';
+print '<div class="dropdown-container configtitle"><div class="textcentre expand"><b>'.language::gettext('button_saveplaylist').'</b></div></div>';
 print '<div class="containerbox dropdown-container"><div class="expand">
 <input class="enter clearbox" id="playlistname" type="text" size="200"/></div>';
 print '<button class="fixed iconbutton savebutton"></button></div>';
@@ -209,8 +209,8 @@ print '<button class="fixed iconbutton savebutton"></button></div>';
 	<div id="albumlist" class="invisible noborder">
 <?php
 	print '<div class="dropdown-container configtitle">';
-	print '<i title="'.get_int_text('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="collectionbuttons"></i>';
-	print '<div class="textcentre expand"><b>'.get_int_text('button_local_music').'</b></div>';
+	print '<i title="'.language::gettext('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="collectionbuttons"></i>';
+	print '<div class="textcentre expand"><b>'.language::gettext('button_local_music').'</b></div>';
 	print '</div>';
 	collectionButtons();
 ?>
@@ -220,8 +220,8 @@ print '<button class="fixed iconbutton savebutton"></button></div>';
 	<div id="searcher" class="invisible noborder">
 	<div class="dropdown-container configtitle">
 	<?php
-		print '<i title="'.get_int_text('setup_advanced').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="advsearchoptions"></i>';
-		print '<div class="textcentre expand"><b>'.get_int_text('label_searchfor').'</b></div>';
+		print '<i title="'.language::gettext('setup_advanced').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="advsearchoptions"></i>';
+		print '<div class="textcentre expand"><b>'.language::gettext('label_searchfor').'</b></div>';
 	?>
 	</div>
 <?php
@@ -233,7 +233,7 @@ include("player/".$prefs['player_backend']."/search.php");
 	<div id="filelist" class="invisible">
 		<div class="dropdown-container configtitle">
 <?php
-		print '<div class="textcentre expand"><b>'.get_int_text('button_file_browser').'</b></div>';
+		print '<div class="textcentre expand"><b>'.language::gettext('button_file_browser').'</b></div>';
 ?>
 		</div>
 	<div id="filecollection" class="noborder selecotron"></div>
@@ -242,7 +242,7 @@ include("player/".$prefs['player_backend']."/search.php");
 	<div id="radiolist" class="invisible">
 		<div class="dropdown-container configtitle">
 <?php
-	print '<div class="expand textcentre"><b>'.get_int_text('button_internet_radio').'</b></div>';
+	print '<div class="expand textcentre"><b>'.language::gettext('button_internet_radio').'</b></div>';
 ?>
 		</div>
 <?php
@@ -255,8 +255,8 @@ foreach($sp as $p) {
 	<div id="podcastslist" class="invisible selecotron">
 <?php
 print '<div class="dropdown-container configtitle">';
-print '<i class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.get_int_text('label_podcastcontrols').'"></i>';
-print '<div class="textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div>';
+print '<i class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.language::gettext('label_podcastcontrols').'"></i>';
+print '<div class="textcentre expand"><b>'.language::gettext('label_podcasts').'</b></div>';
 print '</div>';
 include("podcasts/podcasts.php");
 ?>
@@ -264,7 +264,7 @@ include("podcasts/podcasts.php");
 	<div id="audiobooklist" class="invisible noborder">
 		<div class="dropdown-container configtitle">
 <?php
-		print '<div class="textcentre expand"><b>'.get_int_text('label_audiobooks').'</b></div>';
+		print '<div class="textcentre expand"><b>'.language::gettext('label_audiobooks').'</b></div>';
 ?>
 		</div>
 		<div id="audiobooks" class="noborder selecotron"></div>
@@ -272,7 +272,7 @@ include("podcasts/podcasts.php");
 	<div id="playlistslist" class="invisible">
 		<div class="dropdown-container configtitle">
 <?php
-		print '<div class="expand textcentre"><b>'.get_int_text('button_loadplaylist').'</b></div>';
+		print '<div class="expand textcentre"><b>'.language::gettext('button_loadplaylist').'</b></div>';
 ?>
 		</div>
 		<div id="storedplaylists" class="noborder selecotron is-albumlist"></div>
@@ -281,7 +281,7 @@ include("podcasts/podcasts.php");
 	<div id="pluginplaylistslist" class="invisible noselection">
 <?php
 print '<div class="dropdown-container configtitle">';
-print '<div class="expand textcentre"><b>'.get_int_text('label_pluginplaylists').'</b></div>';
+print '<div class="expand textcentre"><b>'.language::gettext('label_pluginplaylists').'</b></div>';
 print '</div>';
 
 if ($prefs['player_backend'] == "mopidy") {
@@ -313,7 +313,7 @@ if ($prefs['player_backend'] == "mopidy") {
 <div id="infopane" class="cmiddle noborder infowiki tleft">
 	<div id="artistchooser" class="infotext noselection invisible"></div>
 <?php
-print '<div id="artistinformation" class="infotext noselection"><h2 class="infobanner" align="center">'.get_int_text('label_emptyinfo').'</h2></div>';
+print '<div id="artistinformation" class="infotext noselection"><h2 class="infobanner" align="center">'.language::gettext('label_emptyinfo').'</h2></div>';
 ?>
 <div id="albuminformation" class="infotext noselection"></div>
 <div id="trackinformation" class="infotext"></div>
@@ -328,7 +328,7 @@ include("skins/playlist.php");
 <div id="tagadder" class="dropmenu dropshadow mobmenu">
 	<div class="dropdown-container configtitle moveable" style="padding-top:4px"><div class="textcentre expand"><b>
 <?php
-print get_int_text("lastfm_addtags").'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div></div>';
+print language::gettext("lastfm_addtags").'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div></div>';
 ?>
 	<div class="containerbox padright dropdown-container tagaddbox"></div>
 </div>

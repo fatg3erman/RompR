@@ -682,20 +682,20 @@ function doPodcast($y, $do_searchbox) {
 	print '<div class="whatdoicallthis">'.format_text($y->Description).'</div>';
 	if ($y->Subscribed == 1) {
 		print '<div class="containerbox bumpad">';
-		print '<i title="'.get_int_text("podcast_configure").'" class="icon-cog-alt podicon '.
+		print '<i title="'.language::gettext("podcast_configure").'" class="icon-cog-alt podicon '.
 			'clickicon openmenu fixed tooltip spinable" name="podconf_'.$pm.'"></i>';
-		print '<i title="'.get_int_text("podcast_refresh").'" class="icon-refresh podicon podaction podcast clickable '.
+		print '<i title="'.language::gettext("podcast_refresh").'" class="icon-refresh podicon podaction podcast clickable '.
 			'clickicon fixed tooltip spinable" name="refresh_'.$pm.'"></i>';
-		print '<i title="'.get_int_text("podcast_download_all").'" class="icon-download podicon '.
+		print '<i title="'.language::gettext("podcast_download_all").'" class="icon-download podicon '.
 			'clickable clickicon podgroupload podcast fixed tooltip spinable" name="podgroupload_'.$pm.'"></i>';
-		print '<i title="'.get_int_text("podcast_mark_all").'" class="icon-headphones podicon podcast podaction '.
+		print '<i title="'.language::gettext("podcast_mark_all").'" class="icon-headphones podicon podcast podaction '.
 			'clickable clickicon fixed tooltip spinable" name="channellistened_'.$pm.'"></i>';
 		print '<div class="expand"></div>';
-		print '<i title="'.get_int_text("podcast_undelete").'" class="icon-trash podicon podcast podaction oneeighty '.
+		print '<i title="'.language::gettext("podcast_undelete").'" class="icon-trash podicon podcast podaction oneeighty '.
 			'clickable clickicon fixed tooltip spinable" name="channelundelete_'.$pm.'"></i>';
-		print '<i title="'.get_int_text("podcast_removedownloaded").'" class="icon-download podicon podcast podaction oneeighty '.
+		print '<i title="'.language::gettext("podcast_removedownloaded").'" class="icon-download podicon podcast podaction oneeighty '.
 			'clickable clickicon fixed tooltip spinable" name="removedownloaded_'.$pm.'"></i>';
-		print '<i title="'.get_int_text("podcast_delete").'" class="icon-cancel-circled podicon '.
+		print '<i title="'.language::gettext("podcast_delete").'" class="icon-cancel-circled podicon '.
 				'clickable clickicon podremove podcast fixed tooltip spinable" name="podremove_'.$pm.'"></i>';
 		print '</div>';
 
@@ -706,53 +706,53 @@ function doPodcast($y, $do_searchbox) {
 		}
 		print '<div class="containerbox vertical podoptions">';
 		print '<div class="containerbox fixed dropdown-container"><div class="divlabel">'.
-			get_int_text("podcast_display").'</div>';
+			language::gettext("podcast_display").'</div>';
 		print '<div class="selectholder">';
 		print '<select name="DisplayMode" onchange="podcasts.changeOption(event)">';
-		$options =  '<option value="'.DISPLAYMODE_ALL.'">'.get_int_text("podcast_display_all").'</option>'.
-					'<option value="'.DISPLAYMODE_NEW.'">'.get_int_text("podcast_display_onlynew").'</option>'.
-					'<option value="'.DISPLAYMODE_UNLISTENED.'">'.get_int_text("podcast_display_unlistened").'</option>'.
-					'<option value="'.DISPLAYMODE_DOWNLOADEDNEW.'">'.get_int_text("podcast_display_downloadnew").'</option>'.
-					'<option value="'.DISPLAYMODE_DOWNLOADED.'">'.get_int_text("podcast_display_downloaded").'</option>';
+		$options =  '<option value="'.DISPLAYMODE_ALL.'">'.language::gettext("podcast_display_all").'</option>'.
+					'<option value="'.DISPLAYMODE_NEW.'">'.language::gettext("podcast_display_onlynew").'</option>'.
+					'<option value="'.DISPLAYMODE_UNLISTENED.'">'.language::gettext("podcast_display_unlistened").'</option>'.
+					'<option value="'.DISPLAYMODE_DOWNLOADEDNEW.'">'.language::gettext("podcast_display_downloadnew").'</option>'.
+					'<option value="'.DISPLAYMODE_DOWNLOADED.'">'.language::gettext("podcast_display_downloaded").'</option>';
 		print preg_replace('/(<option value="'.$y->DisplayMode.'")/', '$1 selected', $options);
 		print '</select>';
 		print '</div></div>';
 
 		print '<div class="containerbox fixed dropdown-container"><div class="divlabel">'.
-			get_int_text("podcast_refresh").'</div>';
+			language::gettext("podcast_refresh").'</div>';
 		print '<div class="selectholder">';
 		print '<select name="RefreshOption" onchange="podcasts.changeOption(event)">';
-		$options =  '<option value="'.REFRESHOPTION_NEVER.'">'.get_int_text("podcast_refresh_never").'</option>'.
-					'<option value="'.REFRESHOPTION_HOURLY.'">'.get_int_text("podcast_refresh_hourly").'</option>'.
-					'<option value="'.REFRESHOPTION_DAILY.'">'.get_int_text("podcast_refresh_daily").'</option>'.
-					'<option value="'.REFRESHOPTION_WEEKLY.'">'.get_int_text("podcast_refresh_weekly").'</option>'.
-					'<option value="'.REFRESHOPTION_MONTHLY.'">'.get_int_text("podcast_refresh_monthly").'</option>';
+		$options =  '<option value="'.REFRESHOPTION_NEVER.'">'.language::gettext("podcast_refresh_never").'</option>'.
+					'<option value="'.REFRESHOPTION_HOURLY.'">'.language::gettext("podcast_refresh_hourly").'</option>'.
+					'<option value="'.REFRESHOPTION_DAILY.'">'.language::gettext("podcast_refresh_daily").'</option>'.
+					'<option value="'.REFRESHOPTION_WEEKLY.'">'.language::gettext("podcast_refresh_weekly").'</option>'.
+					'<option value="'.REFRESHOPTION_MONTHLY.'">'.language::gettext("podcast_refresh_monthly").'</option>';
 		print preg_replace('/(<option value="'.$y->RefreshOption.'")/', '$1 selected', $options);
 		print '</select>';
 		print '</div></div>';
 
 		print '<div class="containerbox fixed dropdown-container"><div class="divlabel">'.
-			get_int_text("podcast_expire").'</div>';
+			language::gettext("podcast_expire").'</div>';
 		print '<div class="selectholder">';
-		print '<select title="'.get_int_text("podcast_expire_tooltip").
+		print '<select title="'.language::gettext("podcast_expire_tooltip").
 			'" name="DaysToKeep" class="tooltip" onchange="podcasts.changeOption(event)">';
-		$options =  '<option value="0">'.get_int_text("podcast_expire_never").'</option>'.
-					'<option value="7">'.get_int_text("podcast_expire_week").'</option>'.
-					'<option value="14">'.get_int_text("podcast_expire_2week").'</option>'.
-					'<option value="30">'.get_int_text("podcast_expire_month").'</option>'.
-					'<option value="60">'.get_int_text("podcast_expire_2month").'</option>'.
-					'<option value="182">'.get_int_text("podcast_expire_6month").'</option>'.
-					'<option value="365">'.get_int_text("podcast_expire_year").'</option>';
+		$options =  '<option value="0">'.language::gettext("podcast_expire_never").'</option>'.
+					'<option value="7">'.language::gettext("podcast_expire_week").'</option>'.
+					'<option value="14">'.language::gettext("podcast_expire_2week").'</option>'.
+					'<option value="30">'.language::gettext("podcast_expire_month").'</option>'.
+					'<option value="60">'.language::gettext("podcast_expire_2month").'</option>'.
+					'<option value="182">'.language::gettext("podcast_expire_6month").'</option>'.
+					'<option value="365">'.language::gettext("podcast_expire_year").'</option>';
 		print preg_replace('/(<option value="'.$y->DaysToKeep.'")/', '$1 selected', $options);
 		print '</select>';
 		print '</div></div>';
 
 		print '<div class="containerbox fixed dropdown-container"><div class="divlabel">'.
-			get_int_text("podcast_keep").'</div>';
+			language::gettext("podcast_keep").'</div>';
 		print '<div class="selectholder">';
-		print '<select title="'.get_int_text("podcast_keep_tooltip").
+		print '<select title="'.language::gettext("podcast_keep_tooltip").
 			'" name="NumToKeep" class="tooltip" onchange="podcasts.changeOption(event)">';
-		$options =  '<option value="0">'.get_int_text("podcast_keep_0").'</option>'.
+		$options =  '<option value="0">'.language::gettext("podcast_keep_0").'</option>'.
 					'<option value="1">1</option>'.
 					'<option value="5">5</option>'.
 					'<option value="10">10</option>'.
@@ -765,11 +765,11 @@ function doPodcast($y, $do_searchbox) {
 		print '</div></div>';
 
 		print '<div class="containerbox fixed dropdown-container"><div class="divlabel">'.
-			get_int_text("podcast_sortmode").'</div>';
+			language::gettext("podcast_sortmode").'</div>';
 		print '<div class="selectholder">';
 		print '<select name="SortMode" onchange="podcasts.changeOption(event)">';
-		$options =  '<option value="'.SORTMODE_NEWESTFIRST.'">'.get_int_text("podcast_newestfirst").'</option>'.
-					'<option value="'.SORTMODE_OLDESTFIRST.'">'.get_int_text("podcast_oldestfirst").'</option>';
+		$options =  '<option value="'.SORTMODE_NEWESTFIRST.'">'.language::gettext("podcast_newestfirst").'</option>'.
+					'<option value="'.SORTMODE_OLDESTFIRST.'">'.language::gettext("podcast_oldestfirst").'</option>';
 		print preg_replace('/(<option value="'.$y->SortMode.'")/', '$1 selected', $options);
 		print '</select>';
 		print '</div></div>';
@@ -779,9 +779,9 @@ function doPodcast($y, $do_searchbox) {
 		if ($y->KeepDownloaded == 1) {
 			print ' checked';
 		}
-		print '><label for="podkd" class="tooltip" title="'.get_int_text("podcast_kd_tooltip").
+		print '><label for="podkd" class="tooltip" title="'.language::gettext("podcast_kd_tooltip").
 			'" name="KeepDownloaded" onclick="podcasts.changeOption(event)">'.
-			get_int_text("podcast_keep_downloaded").'</label></div>';
+			language::gettext("podcast_keep_downloaded").'</label></div>';
 
 		print '<div class="containerbox fixed bumpad styledinputs">';
 		print '<input type="checkbox" class="topcheck" id="podhd"';
@@ -789,7 +789,7 @@ function doPodcast($y, $do_searchbox) {
 			print ' checked';
 		}
 		print '><label for="podhd" name="HideDescriptions" onclick="podcasts.changeOption(event)">'.
-			get_int_text("podcast_hidedescriptions").'</label></div>';
+			language::gettext("podcast_hidedescriptions").'</label></div>';
 
 		print '<div class="containerbox fixed bumpad styledinputs">';
 		print '<input type="checkbox" class="topcheck" id="podwt"';
@@ -797,7 +797,7 @@ function doPodcast($y, $do_searchbox) {
 			print ' checked';
 		}
 		print '><label for="podwt" name="WriteTags" onclick="podcasts.changeOption(event)">'.
-			get_int_text("podcast_writetags").'</label></div>';
+			language::gettext("podcast_writetags").'</label></div>';
 
 		print '</div>';
 
@@ -856,10 +856,10 @@ function format_episode(&$y, &$item, $pm) {
 	}
 	if ($y->Subscribed == 1) {
 		if ($item->New == 1) {
-			print '<i title="'.get_int_text("podcast_tooltip_new").
+			print '<i title="'.language::gettext("podcast_tooltip_new").
 				'" class="icon-sun fixed newpodicon tooltip"></i>';
 		} else if ($item->Listened == 0) {
-			print '<i title="'.get_int_text("podcast_tooltip_notnew").
+			print '<i title="'.language::gettext("podcast_tooltip_notnew").
 				'" class="icon-unlistened fixed oldpodicon tooltip"></i>';
 		}
 	}
@@ -901,7 +901,7 @@ function format_episode(&$y, &$item, $pm) {
 		print '<div class="clearfix" name="podcontrols_'.$pm.'">';
 		if ($item->Downloaded == 1) {
 			print '<i class="icon-floppy podicon tleft tooltip" title="'.
-				get_int_text("podcast_tooltip_downloaded").'"></i>';
+				language::gettext("podcast_tooltip_downloaded").'"></i>';
 		} else {
 			if ($item->New == 1) {
 				$extraclass = ' podnewdownload';
@@ -909,17 +909,17 @@ function format_episode(&$y, &$item, $pm) {
 				$extraclass = '';
 			}
 			print '<i class="icon-download podicon clickable clickicon tleft podcast poddownload spinable'.$extraclass.' tooltip" title="'.
-				get_int_text("podcast_tooltip_download").'" name="poddownload_'.$item->PODTrackindex.'"></i>';
+				language::gettext("podcast_tooltip_download").'" name="poddownload_'.$item->PODTrackindex.'"></i>';
 		}
 		if ($item->Listened == 0) {
 			print '<i class="icon-headphones podicon clickable clickicon tleft podcast podmarklistened tooltip spinable" title="'.
-				get_int_text("podcast_tooltip_mark").'" name="podmarklistened_'.$item->PODTrackindex.'"></i>';
+				language::gettext("podcast_tooltip_mark").'" name="podmarklistened_'.$item->PODTrackindex.'"></i>';
 		}
 		print '<i class="icon-cancel-circled podicon clickable clickicon tright podtrackremove podcast tooltip spinable" title="'.
-			get_int_text("podcast_tooltip_delepisode").'" name="podtrackremove_'.$item->PODTrackindex.'" ></i>';
+			language::gettext("podcast_tooltip_delepisode").'" name="podtrackremove_'.$item->PODTrackindex.'" ></i>';
 		if ($item->Listened == 1) {
 			print '<i class="icon-headphones podicon clickable clickicon tright podcast podmarkunlistened tooltip spinable oneeighty" title="'.
-				get_int_text("podcast_tooltip_unlistened").'" name="podmarkunlistened_'.$item->PODTrackindex.'"></i>';
+				language::gettext("podcast_tooltip_unlistened").'" name="podmarkunlistened_'.$item->PODTrackindex.'"></i>';
 		}
 		print '</div>';
 	}
@@ -982,7 +982,7 @@ function doPodcastHeader($y) {
 	$html = preg_replace('/&amp;rompr_/','&rompr_', $h);
 	print $html;
 
-	print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu padright notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
+	print '<div id="podcast_'.$y->PODindex.'" class="indent dropmenu padright notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
 }
 
 function removePodcast($podid) {

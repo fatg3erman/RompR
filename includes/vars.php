@@ -15,7 +15,9 @@ if (!$dtz) {
 //
 
 CONST CLASS_DIRS = array(
-	'apis'
+	'browser/apis',
+	'collection/sortby',
+	'util_classes'
 );
 foreach (CLASS_DIRS as $d) {
 	set_include_path($d.PATH_SEPARATOR.get_include_path());
@@ -408,8 +410,7 @@ $prefs = array(
 	"scrolltocurrent" => false,
 	"alarm_ramptime" => 30,
 	"alarm_snoozetime" => 8,
-	"lastfmlang" => "default",
-	"user_lang" => "en",
+	"lastfmlang" => "interface",
 	"synctags" => false,
 	"synclove" => false,
 	"synclovevalue" => "5",

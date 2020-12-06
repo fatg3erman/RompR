@@ -5,11 +5,9 @@ if (array_key_exists('populate', $_REQUEST)) {
 	chdir('..');
 	include("includes/vars.php");
 	include("includes/functions.php");
-	include("international.php");
 	require_once("podcasts/podcastfunctions.php");
 	include( "backends/sql/backend.php");
 	include("utils/phpQuery.php");
-	require_once('utils/imagefunctions.php');
 	set_error_handler('handle_error', E_ALL);
 	$subflag = 1;
 	$dtz = ini_get('date.timezone');
@@ -92,14 +90,14 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 	print '<div id="podholder" class="collectionpanel">';
 
-	print '<div class="containerbox dropdown-container"><div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" placeholder="'.get_int_text('label_searchfor').' (iTunes)" /></div>';
+	print '<div class="containerbox dropdown-container"><div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" placeholder="'.language::gettext('label_searchfor').' (iTunes)" /></div>';
 	print '<button class="fixed searchbutton iconbutton spinable" onclick="podcasts.search()"></button>';
 	print '</div>';
 
 	print '<div class="fullwidth noselection clearfix"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon padright spinable" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
 	print '<div id="podcast_search" class="fullwidth noselection padright is-albumlist"></div>';
 
-	print '<div class="dropdown-container configtitle"><div class="textcentre expand"><b>'.get_int_text('label_subbed_podcasts').'</b></div></div>';
+	print '<div class="dropdown-container configtitle"><div class="textcentre expand"><b>'.language::gettext('label_subbed_podcasts').'</b></div></div>';
 
 	print '<div id="fruitbat" class="noselection fullwidth is-albumlist">';
 	print '</div>';
@@ -114,37 +112,37 @@ function doPodcastBase() {
 	print '<div id="podcastbuttons" class="invisible toggledown">';
 
 	print '<div id="cocksausage">';
-	print '<div class="containerbox dropdown-container"><div class="expand"><input class="enter clearbox" id="podcastsinput" type="text" placeholder="'.get_int_text("podcast_entrybox").'" /></div>';
+	print '<div class="containerbox dropdown-container"><div class="expand"><input class="enter clearbox" id="podcastsinput" type="text" placeholder="'.language::gettext("podcast_entrybox").'" /></div>';
 	print '<button class="fixed iconbutton rssbutton spinable" onclick="podcasts.doPodcast(\'podcastsinput\')"></button></div>';
 	print '</div>';
 
 	print '<div class="spacer"></div>';
 
 	print '<div class="containerbox dropdown-container noselection">';
-	print '<div class="expand"><b>'.get_int_text('label_global_controls').'</b></div>';
+	print '<div class="expand"><b>'.language::gettext('label_global_controls').'</b></div>';
 	print '</div>';
 
 	print '<div class="spacer"></div>';
 
 	print '<div class="containerbox fullwidth bumpad">';
-	print '<i class="icon-refresh smallicon clickable clickicon fixed tooltip podcast podglobal" name="refreshall" title="'.get_int_text('podcast_refresh_all').'"></i>';
-	print '<i class="icon-headphones smallicon clickable clickicon fixed tooltip podcast podglobal" name="markalllistened" title="'.get_int_text('podcast_mark_all').'"></i>';
+	print '<i class="icon-refresh smallicon clickable clickicon fixed tooltip podcast podglobal" name="refreshall" title="'.language::gettext('podcast_refresh_all').'"></i>';
+	print '<i class="icon-headphones smallicon clickable clickicon fixed tooltip podcast podglobal" name="markalllistened" title="'.language::gettext('podcast_mark_all').'"></i>';
 	print '<div class="expand"></div>';
-	print '<i class="icon-trash oneeighty smallicon clickable clickicon fixed tooltip podcast podglobal" name="undeleteall" title="'.get_int_text('podcast_undelete').'"></i>';
-	print '<i class="icon-download oneeighty smallicon clickable clickicon fixed tooltip podcast podglobal" name="removealldownloaded" title="'.get_int_text('podcast_removedownloaded').'"></i>';
+	print '<i class="icon-trash oneeighty smallicon clickable clickicon fixed tooltip podcast podglobal" name="undeleteall" title="'.language::gettext('podcast_undelete').'"></i>';
+	print '<i class="icon-download oneeighty smallicon clickable clickicon fixed tooltip podcast podglobal" name="removealldownloaded" title="'.language::gettext('podcast_removedownloaded').'"></i>';
 	print '</div>';
 
 	print '<div class="spacer"></div>';
 
 	$sortoptions = array(
-		ucfirst(strtolower(get_int_text('title_title'))) => 'Title',
-		get_int_text('label_publisher') => 'Artist',
-		get_int_text('label_category') => 'Category',
-		get_int_text('label_new_episodes') => 'new',
-		get_int_text('label_unlistened_episodes') => 'unlistened'
+		ucfirst(strtolower(language::gettext('title_title'))) => 'Title',
+		language::gettext('label_publisher') => 'Artist',
+		language::gettext('label_category') => 'Category',
+		language::gettext('label_new_episodes') => 'new',
+		language::gettext('label_unlistened_episodes') => 'unlistened'
 	);
 
-	print '<div class="containerbox"><b>'.get_int_text('label_sortby').'</b></div>';
+	print '<div class="containerbox"><b>'.language::gettext('label_sortby').'</b></div>';
 
 	for ($count = 0; $count < $prefs['podcast_sort_levels']; $count++) {
 		print '<div class="containerbox dropdown-container">';
@@ -159,7 +157,7 @@ function doPodcastBase() {
 		print '</div>';
 		print '</div>';
 		if ($count < $prefs['podcast_sort_levels']-1) {
-			print '<div class="indent playlistrow2">'.get_int_text('label_then').'</div>';
+			print '<div class="indent playlistrow2">'.language::gettext('label_then').'</div>';
 		}
 	}
 	print '</div>';

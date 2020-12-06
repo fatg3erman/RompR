@@ -2,8 +2,6 @@
 chdir('../..');
 include ("includes/vars.php");
 include ("includes/functions.php");
-require_once ("utils/imagefunctions.php");
-include ("international.php");
 include ("backends/sql/backend.php");
 
 getWishlist();
@@ -77,10 +75,10 @@ function getWishlist() {
 		print '<div class="containerbox padright noselection"><button class="fixed infoclick plugclickable clickclearwishlist">Clear Wishlist</button><div class="expand"></div></div>';
 		print '<div class="configtitle brick_wide">Sort By</div>';
 		print '<div class="containerbox padright noselection">';
-		print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_artist" class="topcheck savulon" type="radio" name="sortwishlistby" value="artist"><label for="wishlist_sort_artist">'.get_int_text('label_artist').'</label></div>';
-		print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_date" class="topcheck savulon" type="radio" name="sortwishlistby" value="date"><label for="wishlist_sort_date">'.get_int_text('label_dateadded').'</label></div>';
-		print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_station" class="topcheck savulon" type="radio" name="sortwishlistby" value="station"><label for="wishlist_sort_station">'.get_int_text('label_radiostation').'</label></div>';
-		print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_rating" class="topcheck savulon" type="radio" name="sortwishlistby" value="rating"><label for="wishlist_sort_rating">'.get_int_text('label_rating').'</label></div>';
+		print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_artist" class="topcheck savulon" type="radio" name="sortwishlistby" value="artist"><label for="wishlist_sort_artist">'.language::gettext('label_artist').'</label></div>';
+		print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_date" class="topcheck savulon" type="radio" name="sortwishlistby" value="date"><label for="wishlist_sort_date">'.language::gettext('label_dateadded').'</label></div>';
+		print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_station" class="topcheck savulon" type="radio" name="sortwishlistby" value="station"><label for="wishlist_sort_station">'.language::gettext('label_radiostation').'</label></div>';
+		print '<div class="fixed brianblessed styledinputs"><input id="wishlist_sort_rating" class="topcheck savulon" type="radio" name="sortwishlistby" value="rating"><label for="wishlist_sort_rating">'.language::gettext('label_rating').'</label></div>';
 		print '</div>';
 	}
 	foreach ($result as $obj) {
@@ -107,10 +105,10 @@ function getWishlist() {
 			print '<div class="fixed playlistrow2 playable clickstream" name="'.rawurlencode($obj['SourceUri']).'" streamname="'.$obj['SourceName'].'" streamimg="'.$obj['SourceImage'].'">While Listening To : <b>'.$obj['SourceName'].'</b></div>';
 		}
 		print '</div>';
-		print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed tooltip" title="'.get_int_text('label_searchtrack').'"></i>';
+		print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed tooltip" title="'.language::gettext('label_searchtrack').'"></i>';
 		print '<input type="hidden" value="'.$obj['title'].'" />';
 		print '<input type="hidden" value="'.$obj['albumartist'].'" />';
-		print '<i class="icon-cancel-circled smallicon fixed clickicon clickremdb infoclick plugclickable tooltip" title="'.get_int_text('label_removefromwl').'"></i>';
+		print '<i class="icon-cancel-circled smallicon fixed clickicon clickremdb infoclick plugclickable tooltip" title="'.language::gettext('label_removefromwl').'"></i>';
 		print '<input type="hidden" value="'.$obj['ttid'].'" />';
 		print '</div>';
 		print '</div>';

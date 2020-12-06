@@ -5,7 +5,6 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 	require_once ("includes/vars.php");
 	require_once ("includes/functions.php");
-	require_once ("international.php");
 	require_once ("skins/".$skin."/ui_elements.php");
 
 	foreach ($_REQUEST as $i => $r) {
@@ -68,20 +67,20 @@ class commradioplugin {
 			'AlbumUri' => null,
 			'Year' => null,
 			'Artistname' => '',
-			'Albumname' => get_int_text('label_communityradio'),
+			'Albumname' => language::gettext('label_communityradio'),
 			'why' => null,
 			'ImgKey' => 'none',
 			'class' => 'radio commradioroot',
 			'expand' => true
 		));
 		print '<div id="communityradiolist" class="dropmenu notfilled">';
-		print '<div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
+		print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
 		print '</div>';
 	}
 
 	private function doDropdownHeader() {
 		global $prefs;
-		directoryControlHeader('communityradiolist', get_int_text('label_communityradio'));
+		directoryControlHeader('communityradiolist', language::gettext('label_communityradio'));
 
 		print '<div class="fullwidth containerbox dropdown-container">';
 		// print '<div class="fixed comm-search-label"><span class="cslt"><b>Order By</b></span></div>';
@@ -278,7 +277,7 @@ class commradioplugin {
 		]);
 		$stations = $cache->get_cache_data();
 		$stations = json_decode($stations, true);
-		$title = ($this->title) ? rawurldecode($this->title) : get_int_text('label_communityradio');
+		$title = ($this->title) ? rawurldecode($this->title) : language::gettext('label_communityradio');
 		directoryControlHeader('commradio_'.md5($this->url), ucfirst($title));
 		print '<input type="hidden" value="'.rawurlencode($this->url).'" />';
 		print '<input type="hidden" value="'.rawurlencode($title).'" />';
@@ -319,7 +318,7 @@ class commradioplugin {
 			print '<a href="'.$station['homepage'].'" target="_blank">';
 			print '<div class="containerbox padright dropdown-container">';
 			print '<i class="icon-www collectionicon fixed"></i>';
-			print '<div class="expand">'.get_int_text('label_station_website').'</div>';
+			print '<div class="expand">'.language::gettext('label_station_website').'</div>';
 			print '</div>';
 			print '</a>';
 		}

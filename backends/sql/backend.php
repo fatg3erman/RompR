@@ -2,10 +2,6 @@
 
 include ("backends/sql/connect.php");
 require_once ("skins/".$skin."/ui_elements.php");
-$sorters = glob('collection/sortby/*.php');
-foreach ($sorters as $inc) {
-	require_once($inc);
-}
 connect_to_database($romonitor_hack);
 $find_track = null;
 $update_track = null;
@@ -360,7 +356,6 @@ function list_artists() {
 }
 
 function list_albumartists() {
-	require_once('collection/sortby/artist.php');
 	$artists = array();
 	$sorter = new sortby_artist('aartistroot');
 	foreach ($sorter->root_sort_query() as $a) {
@@ -483,7 +478,7 @@ function get_extra_track_info(&$filedata) {
 
 function get_imagesearch_info($key) {
 
-	// Used by getalbumcover.php to get album and artist names etc based on an Image Key
+	// Used by utils/getalbumcover.php to get album and artist names etc based on an Image Key
 
 	$retval = array('artist' => null, 'album' => null, 'mbid' => null, 'albumpath' => null, 'albumuri' => null, 'trackuri' => null);
 	$queries = array(
@@ -986,6 +981,17 @@ function getItemsToAdd($which, $cmd = null) {
 			break;
 
 	}
+}
+
+function alistheader($nart, $nalb, $ntra, $tim) {
+	return '<div style="margin-bottom:4px">'.
+	'<table width="100%" class="playlistitem">'.
+	'<tr><td align="left">'.$nart.' '.language::gettext("label_artists").
+	'</td><td align="right">'.$nalb.' '.language::gettext("label_albums").'</td></tr>'.
+	'<tr><td align="left">'.$ntra.' '.language::gettext("label_tracks").
+	'</td><td align="right">'.$tim.'</td></tr>'.
+	'</table>'.
+	'</div>';
 }
 
 function playAlbumFromTrack($uri) {

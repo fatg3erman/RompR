@@ -2,7 +2,6 @@
 chdir('..');
 include ("includes/vars.php");
 include ("includes/functions.php");
-require_once ('utils/imagefunctions.php');
 
 if (array_key_exists('url', $_REQUEST)) {
 	$url = rawurldecode($_REQUEST['url']);

@@ -3,7 +3,6 @@ chdir('../..');
 include ("includes/vars.php");
 include ("includes/functions.php");
 require_once ("utils/imagefunctions.php");
-include ("international.php");
 include ("backends/sql/backend.php");
 
 $qstring = "SELECT
@@ -31,7 +30,7 @@ $qstring = "SELECT
 
 $result = generic_sql_query($qstring);
 if (count($result) == 0) {
-	print '<h3>'.get_int_text('label_no_unplayable').'</h3>';
+	print '<h3>'.language::gettext('label_no_unplayable').'</h3>';
 	exit(0);
 } else {
 	foreach ($result as $track) {
@@ -61,14 +60,14 @@ if (count($result) == 0) {
 		}
 		print '</div>';
 
-		print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed tooltip spinable" title="'.get_int_text('label_searchtrack').'"></i>';
+		print '<i class="icon-search smallicon infoclick clicksearchtrack plugclickable fixed tooltip spinable" title="'.language::gettext('label_searchtrack').'"></i>';
 		print '<input type="hidden" value="'.$track['Title'].'" />';
 		if (in_array($track['AlbumArtist'], $prefs['artistsatstart'])) {
 			print '<input type="hidden" value="'.$track['Artistname'].'" />';
 		} else {
 			print '<input type="hidden" value="'.$track['AlbumArtist'].'" />';
 		}
-		print '<i class="icon-cancel-circled smallicon fixed clickicon clickremdb infoclick plugclickable tooltip" title="'.get_int_text('label_removefromcol').'"></i>';
+		print '<i class="icon-cancel-circled smallicon fixed clickicon clickremdb infoclick plugclickable tooltip" title="'.language::gettext('label_removefromcol').'"></i>';
 		print '<input type="hidden" value="'.$track['TTindex'].'" />';
 
 		print '</div>';

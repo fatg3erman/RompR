@@ -2,7 +2,6 @@
 chdir('../..');
 include ("includes/vars.php");
 include ("includes/functions.php");
-include ("international.php");
 include ("getid3/getid3.php");
 
 $fname = rawurldecode($_POST['file']);
@@ -38,7 +37,7 @@ if (file_exists($fname)) {
 
 if ($output == null) {
 	logger::info("LYRICS", "  Could not get lyrics from file");
-	$output = '<h3 align=center>'.get_int_text("lyrics_nonefound").'</h3><p>'.get_int_text("lyrics_info").'</p>';
+	$output = '<h3 align=center>'.language::gettext("lyrics_nonefound").'</h3><p>'.language::gettext("lyrics_info").'</p>';
 }
 
 print $output;

@@ -2,8 +2,6 @@
 chdir('../..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-require_once ("utils/imagefunctions.php");
-require_once ("international.php");
 logger::mark("USERRATING", "--------------------------START---------------------");
 require_once ("backends/sql/backend.php");
 require_once ("backends/sql/metadatafunctions.php");

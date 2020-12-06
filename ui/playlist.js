@@ -304,7 +304,7 @@ var playlist = function() {
 			try {
 				var list = await $.ajax({
 					type: "GET",
-					url: "getplaylist.php",
+					url: "api/tracklist/",
 					cache: false,
 					dataType: "json"
 				});

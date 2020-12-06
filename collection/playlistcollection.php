@@ -28,7 +28,7 @@ class playlistCollection {
 
 		$albumimage = new baseAlbumImage(array(
 			'baseimage' => $filedata['X-AlbumImage'],
-			'artist' => artist_for_image($filedata['type'], $albumartist),
+			'artist' => imageFunctions::artist_for_image($filedata['type'], $albumartist),
 			'album' => $filedata['Album']
 		));
 		$albumimage->check_image($filedata['domain'], $filedata['type'], true);

@@ -30,7 +30,7 @@ var collectionHelper = function() {
 		try {
 			await $.ajax({
 				type: "GET",
-				url: 'albums.php?rebuild=yes',
+				url: 'api/collection/?rebuild=yes',
 				timeout: prefs.collection_load_timeout,
 				dataType: "html",
 				cache: false
@@ -69,7 +69,7 @@ var collectionHelper = function() {
 
 	function loadCollection() {
 		if (!prefs.hide_albumlist) {
-			var albums = 'albums.php?item='+collectionHelper.collectionKey('a');
+			var albums = 'api/collection/?item='+collectionHelper.collectionKey('a');
 			debug.info("GENERAL","Loading Collection from URL",albums);
 			$.ajax({
 				type: "GET",
@@ -119,7 +119,7 @@ var collectionHelper = function() {
 	function loadAudiobooks() {
 		if (!prefs.hide_audiobooklist) {
 			$('#audiobooks').load(
-				'albums.php?item='+collectionHelper.collectionKey('z'),
+				'api/collection/?item='+collectionHelper.collectionKey('z'),
 				function() {
 					$("#audiobooks").doThingsAfterDisplayingListOfAlbums().scootTheAlbums();
 					check_init_tasks();
@@ -134,7 +134,7 @@ var collectionHelper = function() {
 		if (prefs.hide_filelist) {
 			return false;
 		}
-		var files = 'dirbrowser.php';
+		var files = 'api/dirbrowser/';
 		debug.info("GENERAL","Loading File Browser from URL",files);
 		$("#filecollection").load(files);
 	}

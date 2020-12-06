@@ -16,13 +16,13 @@ class tuneinplugin {
 			'AlbumUri' => null,
 			'Year' => null,
 			'Artistname' => '',
-			'Albumname' => get_int_text('label_tuneinradio'),
+			'Albumname' => language::gettext('label_tuneinradio'),
 			'why' => null,
 			'ImgKey' => 'none',
 			'class' => 'radio tuneinroot',
 			'expand' => true
 		));
-		print '<div id="tuneinlist" class="dropmenu notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
+		print '<div id="tuneinlist" class="dropmenu notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
 		print '</div>';
 	}
 
@@ -30,7 +30,7 @@ class tuneinplugin {
 		if (array_key_exists('url', $_REQUEST)) {
 			$this->url = $_REQUEST['url'];
 		} else {
-			directoryControlHeader('tuneinlist', get_int_text('label_tuneinradio'));
+			directoryControlHeader('tuneinlist', language::gettext('label_tuneinradio'));
 			print '<div class="containerbox fullwidth dropdown-container"><div class="expand">
 				<input class="enter clearbox tuneinsearchbox" name="tuneinsearcher" type="text" ';
 			if (array_key_exists('search', $_REQUEST)) {
@@ -43,7 +43,7 @@ class tuneinplugin {
 			directoryControlHeader($_REQUEST['target'], htmlspecialchars($this->title));
 		}
 		if (array_key_exists('search', $_REQUEST)) {
-			directoryControlHeader('tuneinlist', get_int_text('label_tuneinradio'));
+			directoryControlHeader('tuneinlist', language::gettext('label_tuneinradio'));
 			$this->url .= 'Search.ashx?query='.urlencode($_REQUEST['search']);
 		}
 	}
@@ -126,7 +126,6 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 	include ("includes/vars.php");
 	include ("includes/functions.php");
-	include ("international.php");
 	include ("skins/".$skin."/ui_elements.php");
 
 	$tunein = new tuneinplugin();

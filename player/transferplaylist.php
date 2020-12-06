@@ -2,11 +2,9 @@
 chdir('..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-require_once ("international.php");
 require_once ("collection/collection.php");
 require_once ("player/".$prefs['player_backend']."/player.php");
 require_once ("backends/sql/backend.php");
-require_once ("utils/imagefunctions.php");
 
 class transferCollection {
 

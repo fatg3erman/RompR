@@ -61,7 +61,7 @@ class romprmetadata {
 		}
 		if ($data['imagekey'] === null) {
 			$albumimage = new baseAlbumImage(array(
-				'artist' => artist_for_image($data['type'], $data['albumartist']),
+				'artist' => imageFunctions::artist_for_image($data['type'], $data['albumartist']),
 				'album' => $data['album']
 			));
 			$data['imagekey'] = $albumimage->get_image_key();

@@ -33,7 +33,7 @@ class mpdPlayer extends base_mpd_player {
 		$dirs = array("/");
 		while (count($dirs) > 0) {
 			$dir = array_shift($dirs);
-			fwrite($this->monitor, "\n<b>".get_int_text('label_scanningf', array($dir))."</b><br />".get_int_text('label_fremaining', array(count($dirs))));
+			fwrite($this->monitor, "\n<b>".language::gettext('label_scanningf', array($dir))."</b><br />".language::gettext('label_fremaining', array(count($dirs))));
 			foreach ($this->parse_list_output('lsinfo "'.format_for_mpd($dir).'"', $dirs, false) as $filedata) {
 				$collection->newTrack($filedata);
 			}
@@ -181,7 +181,7 @@ class mpdPlayer extends base_mpd_player {
 				$obj->PlaylistUrl,
 				"stream",
 				($obj->Image == '') ? $filedata['X-AlbumImage'] : $obj->Image,
-				getDummyStation($url),
+				$this->getDummyStation($url),
 				$obj->PrettyStream,
 				$filedata['AlbumArtist'],
 				$obj->Stationindex,
@@ -214,10 +214,10 @@ class mpdPlayer extends base_mpd_player {
 			0,
 			$filedata['Artist'],
 			$album,
-			getStreamFolder(unwanted_array($url)),
+			$this->getStreamFolder(unwanted_array($url)),
 			"stream",
 			($filedata['X-AlbumImage'] == null) ? '' : $filedata['X-AlbumImage'],
-			getDummyStation(unwanted_array($url)),
+			$this->getDummyStation(unwanted_array($url)),
 			null,
 			$filedata['AlbumArtist'],
 			null,

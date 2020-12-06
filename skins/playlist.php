@@ -1,7 +1,7 @@
 <div id="horse" class="fullwidth">
 <table width="100%"><tr><td align="left" class="smallicon">
 <?php
-print '<i style="margin-left:4px" title="'.get_int_text('button_playlistcontrols').
+print '<i style="margin-left:4px" title="'.language::gettext('button_playlistcontrols').
 	'" class="icon-menu smallicon clickicon openmenu tooltip" name="playlistbuttons"></i>';
 ?>
 </td>
@@ -9,7 +9,7 @@ print '<i style="margin-left:4px" title="'.get_int_text('button_playlistcontrols
 <td align="right" id="pltime"></td>
 <td align="right" class="smallicon">
 <?php
-print '<i title="'.get_int_text('button_clearplaylist').'" class="icon-trash smallicon clickicon tooltip spinable clear_playlist"></i>';
+print '<i title="'.language::gettext('button_clearplaylist').'" class="icon-trash smallicon clickicon tooltip spinable clear_playlist"></i>';
 ?>
 </td>
 </tr>
@@ -20,12 +20,12 @@ print '<i title="'.get_int_text('button_clearplaylist').'" class="icon-trash sma
 <?php
 
 print '<div id="flowcontrols" class="noborder containerbox">';
-print '<i id="random" class="icon-random tooltip podicon clickicon expand flow-off" title="'.get_int_text('button_random').'"></i>';
+print '<i id="random" class="icon-random tooltip podicon clickicon expand flow-off" title="'.language::gettext('button_random').'"></i>';
 if ($prefs['player_backend'] == "mpd") {
-	print '<i id="crossfade" class="icon-crossfade tooltip podicon clickicon expand flow-off" title="'.get_int_text('button_crossfade').'"></i>';
+	print '<i id="crossfade" class="icon-crossfade tooltip podicon clickicon expand flow-off" title="'.language::gettext('button_crossfade').'"></i>';
 }
-print '<i id="repeat" class="icon-repeat tooltip podicon clickicon expand flow-off" title="'.get_int_text('button_repeat').'"></i>';
-print '<i id="consume" class="icon-consume tooltip podicon clickicon expand flow-off" title="'.get_int_text('button_consume').'"></i>';
+print '<i id="repeat" class="icon-repeat tooltip podicon clickicon expand flow-off" title="'.language::gettext('button_repeat').'"></i>';
+print '<i id="consume" class="icon-consume tooltip podicon clickicon expand flow-off" title="'.language::gettext('button_consume').'"></i>';
 print '</div>';
 
 if ($prefs['player_backend'] == "mpd") {

@@ -125,7 +125,7 @@ function coverScraper(size, useLocalStorage, sendUpdates, enabled) {
 		// Munge params here as we can't pass the 'callback' (cb) parameter to $.post
 		var postparams = cloneObject(imgparams);
 		delete postparams.cb;
-		$.post("getalbumcover.php", postparams)
+		$.post("utils/getalbumcover.php", postparams)
 		.done( gotImage )
 		.fail( revertCover );
 

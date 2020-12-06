@@ -210,7 +210,7 @@ class m3uFile {
 		if (preg_match('/opml\.radiotime\.com/', $url)) {
 			logger::log("RADIO PLAYLIST", "This is a radiotime tune api, Checking returned playlist");
 			$this->url_to_add = $this->get_first_track();
-			$this->secondary = download_internet_playlist($this->url_to_add, null, null);
+			$this->secondary = internetPlaylist::download_remote_playlist($this->url_to_add, null, null);
 			$this->tracks = $this->secondary->tracks;
 		}
 

@@ -627,7 +627,11 @@ class base_mpd_player {
 		$playlists = $this->do_mpd_command('listplaylists', true, true);
 		if (is_array($playlists) && array_key_exists('playlist', $playlists)) {
 			$retval = $playlists['playlist'];
-			usort($retval, 'sort_playlists');
+			usort($retval, function($a, $b) {
+				if (strpos($a, '(by spotify)')) return -1;
+				if (strpos($b, '(by spotify)')) return 1;
+				return (strtolower($a) < strtolower($b)) ? -1 : 1;
+			});
 			if ($only_personal) {
 				$retval = array_filter($retval, $PLAYER_TYPE.'::is_personal_playlist');
 			}
@@ -844,5 +848,34 @@ class base_mpd_player {
 		return $retval;
 	}
 
+	protected function getStreamFolder($url) {
+		$f = dirname($url);
+		if ($f == "." || $f == "") $f = $url;
+		return $f;
+	}
+
+	protected function getDummyStation($url) {
+		$f = getDomain($url);
+		switch ($f) {
+			case "http":
+			case "https":
+			case "mms":
+			case "mmsh":
+			case "mmst":
+			case "mmsu":
+			case "gopher":
+			case "rtp":
+			case "rtsp":
+			case "rtmp":
+			case "rtmpt":
+			case "rtmps":
+				return "Radio";
+				break;
+
+			default:
+				return ucfirst($f);
+				break;
+		}
+	}
 }
 ?>

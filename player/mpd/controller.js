@@ -612,7 +612,7 @@ function playerController() {
 				type: 'POST',
 				target: $('#searchresultholder'),
 				clickedElement: $('button[name="playersearch"]'),
-				uri: 'albums.php',
+				uri: 'api/collection/',
 				data: st
 			});
 		}
@@ -629,7 +629,7 @@ function playerController() {
 		}
 		$.ajax({
 			type: "POST",
-			url: "albums.php",
+			url: "api/collection/",
 			dataType: 'json',
 			data: {
 				rawterms: terms,

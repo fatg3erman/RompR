@@ -140,11 +140,11 @@ jQuery.fn.updateTracklist = function() {
 }
 
 function getAlbumUrl(clickedElement, menutoopen) {
-	return "albums.php?item="+menutoopen;
+	return "api/collection/?item="+menutoopen;
 }
 
 function getDirectoryUrl(clickedElement, menutoopen) {
-	return "dirbrowser.php?path="+clickedElement.prev().val()+'&prefix='+menutoopen;
+	return "api/dirbrowser/?path="+clickedElement.prev().val()+'&prefix='+menutoopen;
 }
 
 jQuery.fn.clearOut = function() {
@@ -391,7 +391,7 @@ async function getAllTracksForAlbum(element, menutoopen) {
 	await clickRegistry.loadContentIntoTarget({
 		target: target,
 		clickedElement: element,
-		uri: 'albums.php?browsealbum='+menutoopen
+		uri: 'api/collection/?browsealbum='+menutoopen
 	});
 	target.find('input.expandalbum').remove();
 }

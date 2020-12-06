@@ -15,21 +15,21 @@ class somafmplugin {
 			'AlbumUri' => null,
 			'Year' => null,
 			'Artistname' => '',
-			'Albumname' => get_int_text('label_somafm'),
+			'Albumname' => language::gettext('label_somafm'),
 			'why' => null,
 			'ImgKey' => 'none',
 			'class' => 'radio somafmroot',
 			'expand' => true
 		));
 		print '<div id="somafmlist" class="dropmenu notfilled is-albumlist">';
-		print '<div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
+		print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
 		print '</div>';
 	}
 
 	public function doStationList() {
-		directoryControlHeader('somafmlist', get_int_text('label_somafm'));
+		directoryControlHeader('somafmlist', language::gettext('label_somafm'));
 		print '<div class="containerbox padright indent ninesix bumpad brick_wide">';
-		print '<a href="http://somafm.com" target="_blank">'.get_int_text("label_soma_beg").'</a>';
+		print '<a href="http://somafm.com" target="_blank">'.language::gettext("label_soma_beg").'</a>';
 		print '</div>';
 		// NB Don't use the cache, it fucks up 'Last Played'
 		$cache = new cache_handler([
@@ -123,13 +123,13 @@ class somafmplugin {
 		}
 		if ($channel->listeners) {
 			print '<div class="containerbox indent padright">';
-			print '<div class="expand">'.$channel->listeners.' '.trim(get_int_text("lastfm_listeners"),':').'</div>';
+			print '<div class="expand">'.$channel->listeners.' '.trim(language::gettext("lastfm_listeners"),':').'</div>';
 			print '</div>';
 		}
 		print '<div class="containerbox rowspacer"></div>';
 		if ($channel->lastPlaying) {
 			print '<div class="containerbox indent padright dropdown-container">';
-			print '<b>'.get_int_text('label_last_played').'</b>&nbsp;';
+			print '<b>'.language::gettext('label_last_played').'</b>&nbsp;';
 			print $channel->lastPlaying;
 			print '</div>';
 		}
@@ -164,7 +164,6 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 	include ("includes/vars.php");
 	include ("includes/functions.php");
-	include ("international.php");
 	include ("skins/".$skin."/ui_elements.php");
 
 	$soma = new somafmplugin();

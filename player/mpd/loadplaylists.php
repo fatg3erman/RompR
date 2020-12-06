@@ -2,11 +2,9 @@
 chdir('../..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-require_once ("international.php");
 require_once ("player/".$prefs['player_backend']."/player.php");
 require_once ("backends/sql/backend.php");
 require_once ("utils/phpQuery.php");
-require_once ("utils/imagefunctions.php");
 $used_images = array();
 $dbterms = array( 'tags' => null, 'rating' => null );
 
@@ -109,7 +107,6 @@ function do_user_playlist_tracks($pl, $icon, $target) {
 	// Use the MPD version of the playlist parser, since that parses all tracks,
 	// which is what we want.
 	require_once ("player/mpd/streamplaylisthandler.php");
-	require_once ("utils/getInternetPlaylist.php");
 
 	// Real bugger this one.
 	// HACK ALERT
@@ -127,7 +124,7 @@ function do_user_playlist_tracks($pl, $icon, $target) {
 		}
 	}
 
-	$tracks = load_internet_playlist($pl, '', '', true);
+	$tracks = internetPlaylist::load_internet_playlist($pl, '', '', true);
 	directoryControlHeader($target, $pl_name);
 	playlistPlayHeader(rawurlencode($pl), $pl_name);
 	foreach ($tracks as $c => $track) {

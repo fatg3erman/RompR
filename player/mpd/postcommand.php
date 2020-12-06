@@ -2,7 +2,6 @@
 chdir('../..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-require_once ("international.php");
 require_once ("player/".$prefs['player_backend']."/player.php");
 require_once ("collection/collection.php");
 require_once ('backends/sql/backend.php');
@@ -60,8 +59,7 @@ if ($player->is_connected()) {
 
 				case "loadstreamplaylist":
 					require_once ("player/".$prefs['player_backend']."/streamplaylisthandler.php");
-					require_once ("utils/getInternetPlaylist.php");
-					$cmds = array_merge($cmds, load_internet_playlist($cmd[1], $cmd[2], $cmd[3]));
+					$cmds = array_merge($cmds, internetPlaylist::load_internet_playlist($cmd[1], $cmd[2], $cmd[3]));
 					break;
 
 				case "addremoteplaylist":
@@ -80,8 +78,7 @@ if ($player->is_connected()) {
 						// the 'track' is a playlist we need to load..... Crikey.
 						logger::trace("POSTCOMMAND", "Adding remote playlist (track by track)");
 						require_once ("player/mpd/streamplaylisthandler.php");
-						require_once ("utils/getInternetPlaylist.php");
-						$tracks = load_internet_playlist($cmd[1], '', '', true);
+						$tracks = internetPlaylist::load_internet_playlist($cmd[1], '', '', true);
 						foreach ($tracks as $track) {
 							$cmd = $player->check_track_load_command($track['TrackUri']);
 							$cmds[] = join_command_string(array($cmd, $track['TrackUri']));
@@ -90,7 +87,6 @@ if ($player->is_connected()) {
 					break;
 
 				case "rename":
-					require_once ('utils/imagefunctions.php');
 					$oldimage = new albumImage(array('artist' => 'PLAYLIST', 'album' => $cmd[1]));
 					$oldimage->change_name($cmd[2]);
 					$cmds[] = join_command_string($cmd);

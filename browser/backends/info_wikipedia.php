@@ -2,7 +2,6 @@
 chdir('../..');
 include ("includes/vars.php");
 include ("includes/functions.php");
-include ("international.php");
 $domain = "en";
 $userdomain = false;
 $mobile = (array_key_exists('layout', $_POST) && ($_POST['layout'] == 'phone' || $_POST['layout'] == 'tablet')) ? true : false;
@@ -78,17 +77,15 @@ if (array_key_exists("wiki", $_POST)) {
 
 function wikipedia_request($url) {
 	logger::trace("WIKIPEDIA", "Getting : ".$url);
-	$cache = new cache_handler([
+	$d = new url_downloader(array(
 		'url' => $url,
 		'cache' => 'wikipedia',
-		'return_value' => true
-	]);
-	$data = $cache->get_cache_data();
-	if (array_key_exists('error', $data)) {
-		logger::log('WIKIPEDIA', 'Error',$data['error']);
-		return null;
+		'return_data' => true
+	));
+	if ($d->get_data_to_file()) {
+		return $d->get_data();
 	} else {
-		return $data;
+		return null;
 	}
 }
 
@@ -222,7 +219,7 @@ function send_result($xml) {
 
 function send_failure($term) {
 	$xml = '<?xml version="1.0" encoding="UTF-8"?><api><parse><text xml:space="preserve">';
-	$xml .= htmlspecialchars('<h3 align="center">', ENT_QUOTES).get_int_text("wiki_fail", array($term)).htmlspecialchars('</h3>', ENT_QUOTES);
+	$xml .= htmlspecialchars('<h3 align="center">', ENT_QUOTES).language::gettext("wiki_fail", array($term)).htmlspecialchars('</h3>', ENT_QUOTES);
 	$xml .= '</text></parse>';
 	$xml .= '<rompr><domain>null</domain><page>null</page></rompr></api>';
 	send_result($xml);
@@ -296,8 +293,8 @@ function wikipedia_get_list_of_suggestions($term) {
 		if (count($xml->query->search->p) == 0) {
 			return null;
 		}
-		$html .= htmlspecialchars('<h3 align="center">', ENT_QUOTES).get_int_text("wiki_suggest", array($term)).htmlspecialchars('</h3>', ENT_QUOTES);
-		$html .= htmlspecialchars('<h3 align="center">', ENT_QUOTES).get_int_text("wiki_suggest2").htmlspecialchars('</h3>', ENT_QUOTES);
+		$html .= htmlspecialchars('<h3 align="center">', ENT_QUOTES).language::gettext("wiki_suggest", array($term)).htmlspecialchars('</h3>', ENT_QUOTES);
+		$html .= htmlspecialchars('<h3 align="center">', ENT_QUOTES).language::gettext("wiki_suggest2").htmlspecialchars('</h3>', ENT_QUOTES);
 		$html .= htmlspecialchars('<ul>', ENT_QUOTES);
 		foreach ($xml->query->search->p as $id) {
 			$link = preg_replace('/\s/', '_', $id['title']);

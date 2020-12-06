@@ -9,16 +9,16 @@
 <?php
 	include('player/mpd/outputs.php');
 	if ($prefs['hide_master_volume']) {
-			print '<div class="configtitle nohelp invisible" id="snapheader"><div class="textcentre expand"><b>'.get_int_text('label_volume').'</b></div></div>';
+			print '<div class="configtitle nohelp invisible" id="snapheader"><div class="textcentre expand"><b>'.language::gettext('label_volume').'</b></div></div>';
 			print '<div class="pref" id="snapcastgroups"></div>';
 			if (count($outputdata) > 1) {
-				print '<div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('config_audiooutputs').'</b></div></div>';
+				print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('config_audiooutputs').'</b></div></div>';
 				print '<div class="pref">';
 				printOutputCheckboxes();
 				print '</div>';
 			}
 	} else {
-			print '<div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_volume').'</b></div></div>';
+			print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_volume').'</b></div></div>';
 			print '<div id="volumecontrol" class="containerbox fullwidth menuitem">';
 			print '<div id="volume" class="expand"></div>';
 			if (count($outputdata) == 1) {
@@ -28,13 +28,13 @@
 			}
 			print '</div>';
 			if (count($outputdata) > 1) {
-				print '<div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('config_audiooutputs').'</b></div></div>';
+				print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('config_audiooutputs').'</b></div></div>';
 				print '<div class="pref">';
 				printOutputCheckboxes();
 				print '</div>';
 			}
 	}
-			print '<div class="configtitle nohelp player-title"><div class="textcentre expand"><b>'.get_int_text('config_players').'</b></div></div>';
+			print '<div class="configtitle nohelp player-title"><div class="textcentre expand"><b>'.language::gettext('config_players').'</b></div></div>';
 			print '<div class="pref styledinputs" name="playerdefs"></div>';
 	if (!$prefs['hide_master_volume']) {
 			print '<div class="configtitle nohelp invisible" id="snapheader"><div class="textcentre expand"><b>Snapcast</b></div></div>';
@@ -111,15 +111,15 @@
 		<div id="buttonholder" class="containerbox vertical">
 			<div id="buttons" class="fixed">
 <?php
-				print '<i title="'.get_int_text('button_previous').
+				print '<i title="'.language::gettext('button_previous').
 					'" class="prev-button icon-fast-backward clickicon controlbutton-small"></i>';
-				print '<i title="'.get_int_text('button_play').
+				print '<i title="'.language::gettext('button_play').
 					'" class="play-button icon-play-circled shiftleft clickicon controlbutton"></i>';
-				print '<i title="'.get_int_text('button_stop').
+				print '<i title="'.language::gettext('button_stop').
 					'" class="stop-button icon-stop-1 shiftleft2 clickicon controlbutton-small"></i>';
-				print '<i title="'.get_int_text('button_stopafter').
+				print '<i title="'.language::gettext('button_stopafter').
 					'" class="stopafter-button icon-to-end-1 shiftleft3 clickicon controlbutton-small"></i>';
-				print '<i title="'.get_int_text('button_next').
+				print '<i title="'.language::gettext('button_next').
 					'" class="next-button icon-fast-forward shiftleft4 clickicon controlbutton-small"></i>';
 ?>
 			</div>
@@ -133,8 +133,8 @@
 <div id="albumlist" class="scroller mainpane invisible pright">
 <?php
 	print '<div class="dropdown-container configtitle">';
-	print '<i title="'.get_int_text('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="collectionbuttons"></i>';
-	print '<div class="textcentre expand"><b>'.get_int_text('button_local_music').'</b></div>';
+	print '<i title="'.language::gettext('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="collectionbuttons"></i>';
+	print '<div class="textcentre expand"><b>'.language::gettext('button_local_music').'</b></div>';
 	print '</div>';
 	collectionButtons();
 ?>
@@ -146,8 +146,8 @@
 <div id="search" class="noborder">
 <div class="dropdown-container configtitle">
 <?php
-	print '<i title="'.get_int_text('setup_advanced').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="advsearchoptions"></i>';
-	print '<div class="textcentre expand"><b>'.get_int_text('label_searchfor').'</b></div>';
+	print '<i title="'.language::gettext('setup_advanced').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="advsearchoptions"></i>';
+	print '<div class="textcentre expand"><b>'.language::gettext('label_searchfor').'</b></div>';
 ?>
 </div>
 <?php
@@ -160,7 +160,7 @@ include("player/".$prefs['player_backend']."/search.php");
 <div id="filelist" class="scroller mainpane invisible pright">
 	<div class="dropdown-container configtitle">
 <?php
-	print '<div class="textcentre expand"><b>'.get_int_text('button_file_browser').'</b></div>';
+	print '<div class="textcentre expand"><b>'.language::gettext('button_file_browser').'</b></div>';
 ?>
 	</div>
 	<div id="filecollection" class="noborder selecotron"></div>
@@ -180,7 +180,7 @@ include("player/".$prefs['player_backend']."/search.php");
 			<div class="textcentre expand">
 				<b>
 	<?php
-		print get_int_text('button_history');
+		print language::gettext('button_history');
 	?>
 				</b>
 			</div>
@@ -189,7 +189,7 @@ include("player/".$prefs['player_backend']."/search.php");
 	</div>
 <?php
 	print '<div id="artistinformation" class="infotext"><h2 class="infobanner" align="center">'.
-		get_int_text('label_emptyinfo').'</h2></div>';
+		language::gettext('label_emptyinfo').'</h2></div>';
 ?>
 	<div id="albuminformation" class="infotext"></div>
 	<div id="trackinformation" class="infotext"></div>
@@ -198,7 +198,7 @@ include("player/".$prefs['player_backend']."/search.php");
 <div id="radiolist" class="scroller mainpane invisible pright">
 	<div class="dropdown-container configtitle">
 <?php
-print '<div class="expand textcentre"><b>'.get_int_text('button_internet_radio').'</b></div>';
+print '<div class="expand textcentre"><b>'.language::gettext('button_internet_radio').'</b></div>';
 ?>
 	</div>
 <?php
@@ -212,8 +212,8 @@ include($p);
 <div id="podcastslist" class="scroller mainpane invisible pright">
 <?php
 print '<div class="dropdown-container configtitle">';
-print '<i class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.get_int_text('label_podcastcontrols').'"></i>';
-print '<div class="textcentre expand"><b>'.get_int_text('label_podcasts').'</b></div>';
+print '<i class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.language::gettext('label_podcastcontrols').'"></i>';
+print '<div class="textcentre expand"><b>'.language::gettext('label_podcasts').'</b></div>';
 print '</div>';
 include("podcasts/podcasts.php");
 ?>
@@ -222,7 +222,7 @@ include("podcasts/podcasts.php");
 <div id="audiobooklist" class="scroller mainpane invisible pright">
 	<div class="dropdown-container configtitle">
 <?php
-	print '<div class="textcentre expand"><b>'.get_int_text('label_audiobooks').'</b></div>';
+	print '<div class="textcentre expand"><b>'.language::gettext('label_audiobooks').'</b></div>';
 ?>
 	</div>
 	<div id="audiobooks" class="noborder selecotron"></div>
@@ -234,7 +234,7 @@ if ($use_smartradio) {
 <div id="pluginplaylistholder" class="containerbox vertical scroller mainpane invisible pright">
 <?php
 print '<div class="dropdown-container configtitle">';
-print '<div class="expand textcentre"><b>'.get_int_text('label_pluginplaylists').'</b></div>';
+print '<div class="expand textcentre"><b>'.language::gettext('label_pluginplaylists').'</b></div>';
 print '</div>';
 ?>
 <div class="pref">
@@ -268,7 +268,7 @@ if ($prefs['player_backend'] == "mopidy") {
 
 <div id="playlistman" class="scroller mainpane invisible pright">
 	<?php
-		print '<div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('button_saveplaylist').'</b></div></div>';
+		print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('button_saveplaylist').'</b></div></div>';
 	?>
 		<div class="containerbox dropdown-container"><div class="fixed padright">
 		</div><div class="expand"><input class="enter clearbox" id="playlistname" type="text" size="200"/></div>
@@ -278,7 +278,7 @@ if ($prefs['player_backend'] == "mopidy") {
 		</div>
 		<div class="dropdown-container configtitle">
 	<?php
-		print '<div class="expand textcentre"><b>'.get_int_text('button_loadplaylist').'</b></div>';
+		print '<div class="expand textcentre"><b>'.language::gettext('button_loadplaylist').'</b></div>';
 	?>
 		</div>
 		<div class="pref">
@@ -304,14 +304,14 @@ include('skins/playlist.php');
 <div id="tagadder" class="dropmenu dropshadow mobmenu">
 	<div class="dropdown-container configtitle moveable" style="padding-top:4px"><div class="textcentre expand"><b>
 <?php
-print get_int_text("lastfm_addtags").'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div></div>';
+print language::gettext("lastfm_addtags").'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div></div>';
 ?>
 	<div class="containerbox padright dropdown-container tagaddbox"></div>
 </div>
 
 <div id="pladddropdown" class="topdropmenu dropmenu dropshadow mobmenu">
 	<?php
-	print '<div class="configtitle moveable" style="padding-top:4px"><div class="textcentre expand"><b>'.get_int_text('button_addtoplaylist').'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="addToPlaylist.close()"></i></div></div>';
+	print '<div class="configtitle moveable" style="padding-top:4px"><div class="textcentre expand"><b>'.language::gettext('button_addtoplaylist').'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="addToPlaylist.close()"></i></div></div>';
 		?>
 	<div id="addtoplaylistmenu" class="clearfix">
 	</div>

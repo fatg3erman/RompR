@@ -7,7 +7,6 @@
 chdir('..');
 include("includes/vars.php");
 include("includes/functions.php");
-require_once("utils/imagefunctions.php");
 include("backends/sql/backend.php");
 
 logger::mark("CACHE CLEANER", "-----------------------------------------------------------------------");

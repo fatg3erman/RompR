@@ -7,6 +7,20 @@ header("Expires: 0");
 header("Content-Type: text/html; charset=UTF-8");
 
 require_once ("includes/vars.php");
+if (array_key_exists('language', $prefs)) {
+	$newlangs = [
+		'de' => 'de-DE',
+		'en' => 'en-GB',
+		'fr' => 'fr-FR',
+		'it' => 'it-IT',
+		'ru' => 'ru-RU',
+		'pirate' => 'pirate'
+	];
+	$prefs['interface_language'] = $newlangs[$prefs['language']];
+	logger::mark('INIT', 'Upgrading interface language from',$prefs['language'],'to',$prefs['interface_language']);
+	unset($prefs['language']);
+	savePrefs();
+}
 
 //
 // Check to see if this is a mobile browser
@@ -56,7 +70,6 @@ if (isset($_GET['currenthost'])) {
     exit;
 }
 
-require_once ("international.php");
 set_version_string();
 require_once ("skins/".$skin."/ui_elements.php");
 
@@ -126,7 +139,7 @@ logger::debug("INIT", $_SERVER['PHP_SELF']);
 //
 
 if (array_key_exists('setup', $_REQUEST)) {
-	$title = get_int_text("setup_request");
+	$title = language::gettext("setup_request");
 	include("setupscreen.php");
 	exit();
 }
@@ -143,11 +156,11 @@ if ($player->is_connected()) {
 	$mpd_status = $player->get_status();
 	if (array_key_exists('error', $mpd_status)) {
 		logger::warn("INIT", "MPD Password Failed or other status failure");
-		connect_fail(get_int_text("setup_connecterror").$mpd_status['error']);
+		connect_fail(language::gettext("setup_connecterror").$mpd_status['error']);
 	}
 } else {
 	logger::error("INIT", "MPD Connection Failure");
-	connect_fail(get_int_text("setup_connectfail"));
+	connect_fail(language::gettext("setup_connectfail"));
 }
 // If we're connected by a local socket we can read the music directory
 $arse = $player->get_config();
@@ -176,6 +189,11 @@ if (!$mysqlc) {
 list($result, $message) = check_sql_tables();
 if ($result == false) {
 	sql_init_fail($message);
+}
+if (!$prefs['country_userset']) {
+	// Set the country code from the browser, though this may not be accurate.
+	// Later on we set it using geoip.
+	$prefs['lastfm_country_code'] = language::get_browser_country();
 }
 
 savePrefs();

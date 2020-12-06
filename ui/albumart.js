@@ -385,7 +385,7 @@ var imageEditor = function() {
 			$("#localresultsholder").append($('<div>', {id: "localresults", class: "containerbox fullwidth wrap"}));
 
 			var fdiv =                  $('<div>', {class: "fullwidth"}).appendTo('#usearch');
-			var uform =                 $('<form>', { id: 'uform', action: 'getalbumcover.php', method: 'post', enctype: 'multipart/form-data' }).appendTo(fdiv);
+			var uform =                 $('<form>', { id: 'uform', action: 'utils/getalbumcover.php', method: 'post', enctype: 'multipart/form-data' }).appendTo(fdiv);
 			uform.append(               $('<input>', { id: 'uploadkey', type: 'hidden', name: 'key', value: '' }),
 										$('<input>', { id: 'uploadartist', type: 'hidden', name: 'artist', value: '' }),
 										$('<input>', { id: 'uploadalbum', type: 'hidden', name: 'album', value: '' }),
@@ -579,7 +579,7 @@ var imageEditor = function() {
 			startAnimation();
 			var formElement = document.getElementById("uform");
 			var xhr = new XMLHttpRequest();
-			xhr.open("POST", "getalbumcover.php");
+			xhr.open("POST", "utils/getalbumcover.php");
 			xhr.responseType = "json";
 			xhr.onload = function () {
 				if (xhr.status === 200) {
@@ -612,7 +612,7 @@ function updateImage(url, index) {
 	var options = coverscraper.getImageSearchParams(imgobj);
 	options.source = url;
 	$.ajax({
-		url: "getalbumcover.php",
+		url: "utils/getalbumcover.php",
 		type: "POST",
 		data: options,
 		cache:false

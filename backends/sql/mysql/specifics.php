@@ -766,8 +766,7 @@ function check_sql_tables() {
 
 			case 53:
 				logger::log("SQL", "Updating FROM Schema version 53 TO Schema version 54");
-				require_once ('utils/backgroundimages.php');
-				first_upgrade_of_user_backgrounds();
+				backgroundImages::first_upgrade_of_user_backgrounds();
 				generic_sql_query("UPDATE Statstable SET Value = 54 WHERE Item = 'SchemaVer'", true);
 				break;
 

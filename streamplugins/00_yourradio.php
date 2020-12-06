@@ -7,7 +7,7 @@ print albumHeader(array(
 	'AlbumUri' => null,
 	'Year' => null,
 	'Artistname' => '',
-	'Albumname' => get_int_text('label_yourradio'),
+	'Albumname' => language::gettext('label_yourradio'),
 	'why' => null,
 	'ImgKey' => 'none',
 	'class' => 'radio yourradioroot',

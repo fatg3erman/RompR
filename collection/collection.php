@@ -198,7 +198,7 @@ class album {
 	public function getImage($size) {
 		$albumimage = new baseAlbumImage(array(
 			'baseimage' => ($this->image) ? $this->image : '',
-			'artist' => artist_for_image($this->tracks[0]->tags['type'], $this->artist),
+			'artist' => imageFunctions::artist_for_image($this->tracks[0]->tags['type'], $this->artist),
 			'album' => $this->name
 		));
 		$albumimage->check_image($this->domain, $this->tracks[0]->tags['type']);

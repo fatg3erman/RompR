@@ -1,13 +1,6 @@
 <?php
 
-// The first term here is the name that will appear in the drop-down list
-// This has the form $langname['file_name without .php extension'] = "Display Name";
-// Try to name your file as the two-letter language code so RompR can pick a suitable
-// default language automatically.
-
-$langname['pirate'] = "Pirate";
-
-$languages['pirate'] = array (
+language::add_translations([
 
 	// The Sources Chooser Button tooltips
 	"button_local_music" =>					"Ye Onboard Shantys",
@@ -715,6 +708,6 @@ $languages['pirate'] = array (
 	//"label_tracknumber" =>				"Track Number",
 	//"config_use_original_releasedate" =>		"Use Original Release Date for Album Date, if present",
 	//"label_cantataimporter" =>			"Import Ratings from Cantata",
-);
+]);
 
 ?>

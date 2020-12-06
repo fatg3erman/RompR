@@ -118,7 +118,12 @@ function LastFM() {
 				return null;
 				break;
 			case "interface":
-				return interfaceLanguage;
+				if (interfaceLanguage.substr(2,1) == '-') {
+					// Just in case it's "pirate";
+					return interfacelanguage.substr(0,2);
+				} else {
+					return 'en';
+				}
 				break;
 			case "browser":
 				return browserLanguage;

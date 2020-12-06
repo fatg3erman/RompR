@@ -152,11 +152,11 @@ class fileCollector extends base_mpd_player {
 function printFileSearch(&$tree, $fcount) {
 	$prefix = "sdirholder";
 	print '<div class="menuitem">';
-	print "<h3>".get_int_text("label_searchresults")."</h3>";
+	print "<h3>".language::gettext("label_searchresults")."</h3>";
 	print "</div>";
 	print '<div style="margin-bottom:4px">
 			<table width="100%" class="playlistitem">
-			<tr><td align="left">'.$fcount.' '.get_int_text('label_files').'</td></tr>
+			<tr><td align="left">'.$fcount.' '.language::gettext('label_files').'</td></tr>
 			</table>
 			</div>';
 	$tree->getHTML($prefix);

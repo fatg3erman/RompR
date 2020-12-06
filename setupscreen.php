@@ -17,7 +17,7 @@ print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 <link rel="stylesheet" type="text/css" href="gettheme.php" />
 <script type="text/javascript" src="jquery/jquery-3.4.1.min.js"></script>
 <script type="text/javascript" src="jquery/jquery-migrate-3.0.1.js"></script>
-<script type="text/javascript" src="utils/setupbits.js"></script>
+<script type="text/javascript" src="ui/setupbits.js"></script>
 <style>
 input[type=text] { width: 50% }
 input[type=submit] { width: 40% }
@@ -31,11 +31,11 @@ print '</head>
 	<h3>';
 print $title;
 print '</h3>';
-print '<p>'.get_int_text("setup_labeladdresses").'</p>';
-print '<p class="tiny">'.get_int_text("setup_addressnote").'</p>';
+print '<p>'.language::gettext("setup_labeladdresses").'</p>';
+print '<p class="tiny">'.language::gettext("setup_addressnote").'</p>';
 print '<form name="mpdetails" action="index.php" method="post">';
 print '<hr class="dingleberry" />';
-print '<h3>'.get_int_text("setup_mpd").'</h3>';
+print '<h3>'.language::gettext("setup_mpd").'</h3>';
 print '<p>Choose or edit a player</p>';
 $c = 0;
 foreach ($prefs['multihosts'] as $host => $def) {
@@ -48,22 +48,22 @@ foreach ($prefs['multihosts'] as $host => $def) {
 	$c++;
 }
 
-print '<p>'.get_int_text("setup_ipaddress").'<br>';
+print '<p>'.language::gettext("setup_ipaddress").'<br>';
 print '<input type="text" name="mpd_host" value="'.$prefs['multihosts']->{$prefs['currenthost']}->host.'" /></p>';
-print '<p>'.get_int_text("setup_port").'<br>';
+print '<p>'.language::gettext("setup_port").'<br>';
 print '<input type="text" name="mpd_port" value="'.$prefs['multihosts']->{$prefs['currenthost']}->port.'" /></p>';
-print '<p>'.get_int_text("setup_password").'<br>';
+print '<p>'.language::gettext("setup_password").'<br>';
 print '<input type="text" name="mpd_password" value="'.$prefs['multihosts']->{$prefs['currenthost']}->password.'" /></p>';
-print '<p>'.get_int_text("setup_unixsocket").'<br>';
+print '<p>'.language::gettext("setup_unixsocket").'<br>';
 print '<input type="text" name="unix_socket" value="'.$prefs['multihosts']->{$prefs['currenthost']}->socket.'" /></p>';
 
 print '<hr class="dingleberry" />';
-print '<h3>'.get_int_text("label_mopidy_http").'</h3>';
-print '<p class="tiny">'.get_int_text("info_mopidy_http").'</p>';
+print '<h3>'.language::gettext("label_mopidy_http").'</h3>';
+print '<p class="tiny">'.language::gettext("info_mopidy_http").'</p>';
 print '<input type="text" name="http_port_for_mopidy" value="'.$prefs['http_port_for_mopidy'].'" /></p>';
 
 print '<hr class="dingleberry" />';
-print '<h3>'.get_int_text("label_generalsettings").'</h3>';
+print '<h3>'.language::gettext("label_generalsettings").'</h3>';
 print '<div class="styledinputs"><input id="cli" type="checkbox" name="cleanalbumimages" ';
 if ($prefs['cleanalbumimages']) {
 	print " checked";
@@ -79,9 +79,9 @@ print '><label for="dsp">Do not show preferences panel on the interface</label><
 print '<p class="tiny">This will stop people messing with your configuration, but also with theirs</p>';
 
 print '<hr class="dingleberry" />';
-print '<h3>'.get_int_text('config_google_credentials').'</h3>';
+print '<h3>'.language::gettext('config_google_credentials').'</h3>';
 print '<p class="tiny">To use Bing Image Search you need to create an API key</p>';
-print '<p><a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.get_int_text('config_read_the_docs').'</a></p>';
+print '<p><a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.language::gettext('config_read_the_docs').'</a></p>';
 print '<p>Bing API Key<br/>';
 print '<input type="text" name="bing_api_key" value="'.$prefs['bing_api_key'].'" /></p>'."\n";
 

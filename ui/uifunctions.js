@@ -256,7 +256,7 @@ var imagePopup = function() {
 
 function albumart_translator(source) {
 
-	// This should be kept in step with class baseAlbumImgae in imagefunctions.php
+	// This should be kept in step with class baseAlbumImgae
 
 	// Given an album image of any size, return any other size
 	this.source = source;
@@ -320,7 +320,7 @@ function show_albumart_update_window() {
 }
 
 function do_albumart_update() {
-	$.getJSON('update_albumart.php', function(data) {
+	$.getJSON('utils/update_albumart.php', function(data) {
 		$('#albumart_update_bar').rangechooser('setProgress', data.percent);
 		if (data.percent < 100 && albumart_update) {
 			setTimeout(do_albumart_update, 100);
@@ -704,7 +704,7 @@ function doMopidyCollectionOptions() {
 function fileUploadThing(formData, options, success, fail) {
 	if (formData === null) {
 		$.ajax({
-			url: "getalbumcover.php",
+			url: "utils/getalbumcover.php",
 			type: "POST",
 			data: options,
 			cache:false
@@ -716,7 +716,7 @@ function fileUploadThing(formData, options, success, fail) {
 			formData.append(i, v);
 		})
 		var xhr = new XMLHttpRequest();
-		xhr.open('POST', 'getalbumcover.php');
+		xhr.open('POST', 'utils/getalbumcover.php');
 		xhr.responseType = "json";
 		xhr.onload = function () {
 			if (xhr.status === 200) {
@@ -939,7 +939,7 @@ var spotifyLinkChecker = function() {
 			for (var i in data) {
 				ids.push(data[i].Uri.replace(/spotify:track:/, ''));
 			}
-			spotify.track.checklinking(ids, gotSpotiResponse, gotNoSpotiResponse, false);
+			spotify.track.checkLinking(ids, gotSpotiResponse, gotNoSpotiResponse, false);
 		} else {
 			debug.info("SPOTICHECKER","No more tracks to check");
 			prefs.save({linkchecker_isrunning: false});

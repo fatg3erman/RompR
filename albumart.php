@@ -2,11 +2,8 @@
 define('ROMPR_IS_LOADING', true);
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-require_once ("international.php");
-require_once ('utils/imagefunctions.php');
 require_once ("backends/sql/backend.php");
 require_once ("player/".$prefs['player_backend']."/player.php");
-require_once('collection/sortby/artist.php');
 $only_plugins_on_menu = false;
 $skin = "desktop";
 set_version_string();
@@ -60,21 +57,21 @@ include ("includes/globals.php");
 <table width="100%">
 <?php
 print '<tr>
-		<td colspan="4"><h2>'.get_int_text("albumart_title").'</h2></td>
-		<td class="outer" align="right" colspan="1"><button id="finklestein">'.get_int_text("albumart_onlyempty").'</button></td>
+		<td colspan="4"><h2>'.language::gettext("albumart_title").'</h2></td>
+		<td class="outer" align="right" colspan="1"><button id="finklestein">'.language::gettext("albumart_onlyempty").'</button></td>
 	</tr>';
 print '<tr>
 		<td class="outer" id="totaltext"></td>
 		<td colspan="3"><div class="invisible" id="progress"></div></td>
-		<td class="outer" align="right"><button id="harold">'.get_int_text("albumart_getmissing").'</button></td>
+		<td class="outer" align="right"><button id="harold">'.language::gettext("albumart_getmissing").'</button></td>
 	</tr>';
 print '<tr>
 		<td colspan="4"</td>
-		<td class="outer" align="right"><button id="doobag">'.get_int_text("albumart_findsmall").'</button></td>
+		<td class="outer" align="right"><button id="doobag">'.language::gettext("albumart_findsmall").'</button></td>
 	</tr>';
 print '<tr>
 		<td class="outer" id="infotext"></td>
-		<td colspan="3" align="center"><div class="inner" id="status">'.get_int_text('label_loading').'</div></td>
+		<td colspan="3" align="center"><div class="inner" id="status">'.language::gettext('label_loading').'</div></td>
 		<td class="outer styledinputs" align="right"><input type="checkbox" class="topcheck" id="dinkytoys"><label id="dinkylabel" for="dinkytoys" onclick="toggleLocal()" disabled>Ignore Local Images</label></td>
 	</tr>';
 
@@ -92,9 +89,9 @@ print '<tr>
 	<div class="noselection fullwidth">
 <?php
 if ($mysqlc) {
-	print '<div class="containerbox menuitem clickable clickselectartist selected" id="allartists"><div class="expand" class="artistrow">'.get_int_text("albumart_allartists").'</div></div>';
+	print '<div class="containerbox menuitem clickable clickselectartist selected" id="allartists"><div class="expand" class="artistrow">'.language::gettext("albumart_allartists").'</div></div>';
 	print '<div class="containerbox menuitem clickable clickselectartist" id="savedplaylists"><div class="expand" class="artistrow">Saved Playlists</div></div>';
-	print '<div class="containerbox menuitem clickable clickselectartist" id="radio"><div class="expand" class="artistrow">'.get_int_text("label_yourradio").'</div></div>';
+	print '<div class="containerbox menuitem clickable clickselectartist" id="radio"><div class="expand" class="artistrow">'.language::gettext("label_yourradio").'</div></div>';
 	do_artists_db_style();
 }
 ?>
@@ -139,7 +136,7 @@ function do_covers_db_style() {
 	foreach ($lister->root_sort_query() as $artist) {
 		print '<div class="cheesegrater" name="artistname'.$artist['Artistindex'].'">';
 			print '<div class="albumsection">';
-				print '<div class="tleft"><h2>'.$artist['Artistname'].'</h2></div><div class="tright rightpad"><button class="invisible" onclick="getNewAlbumArt(\'#album'.$count.'\')">'.get_int_text("albumart_getthese").'</button></div>';
+				print '<div class="tleft"><h2>'.$artist['Artistname'].'</h2></div><div class="tright rightpad"><button class="invisible" onclick="getNewAlbumArt(\'#album'.$count.'\')">'.language::gettext("albumart_getthese").'</button></div>';
 			print "</div>\n";
 				print '<div id="album'.$count.'" class="containerbox fullwidth bigholder wrap">';
 				$albumlister = new sortby_artist('cartist'.$artist['Artistindex']);
@@ -173,7 +170,7 @@ function do_radio_stations() {
 	if (count($playlists) > 0) {
 		print '<div class="cheesegrater" name="radio">';
 			print '<div class="albumsection">';
-				print '<div class="tleft"><h2>Radio Stations</h2></div><div class="tright rightpad"><button class="invisible" onclick="getNewAlbumArt(\'#album'.$count.'\')">'.get_int_text("albumart_getthese").'</button></div>';
+				print '<div class="tleft"><h2>Radio Stations</h2></div><div class="tright rightpad"><button class="invisible" onclick="getNewAlbumArt(\'#album'.$count.'\')">'.language::gettext("albumart_getthese").'</button></div>';
 				print "</div>\n";
 				print '<div id="album'.$count.'" class="containerbox fullwidth bigholder wrap">';
 				foreach ($playlists as $file) {

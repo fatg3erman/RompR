@@ -6,7 +6,6 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 	include ("includes/vars.php");
 	include ("includes/functions.php");
-	include ("international.php");
 	include ("skins/".$skin."/ui_elements.php");
 	include ("utils/phpQuery.php");
 
@@ -35,7 +34,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 	$list = $doc->find('div.card.shadow-sm');
 	$count = 0;
-	directoryControlHeader('icecastlist', get_int_text('label_icecast'));
+	directoryControlHeader('icecastlist', language::gettext('label_icecast'));
 	print '<div class="containerbox dropdown-container fullwidth"><div class="expand"><input class="enter clearbox" name="searchfor" type="text"';
 	if (array_key_exists("searchfor", $_REQUEST)) {
 		print ' value="'.$_REQUEST['searchfor'].'"';
@@ -107,13 +106,13 @@ if (array_key_exists('populate', $_REQUEST)) {
 		'AlbumUri' => null,
 		'Year' => null,
 		'Artistname' => '',
-		'Albumname' => get_int_text('label_icecast'),
+		'Albumname' => language::gettext('label_icecast'),
 		'why' => null,
 		'ImgKey' => 'none',
 		'class' => 'radio icecastroot',
 		'expand' => true
 	));
-	print '<div id="icecastlist" class="dropmenu notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.get_int_text('label_loading').'</b></div></div></div>';
+	print '<div id="icecastlist" class="dropmenu notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
 	print '</div>';
 }
 

@@ -153,7 +153,6 @@ var prefs = function() {
 		"alarm_ramptime",
 		"alarm_snoozetime",
 		"lastfmlang",
-		"user_lang",
 		"synctags",
 		"synclove",
 		"synclovevalue",
@@ -351,7 +350,7 @@ var prefs = function() {
 		$('#cusbgname').empty();
 		$('#cusbgcontrols').empty();
 		$('#backimageposition').hide();
-		$.getJSON('backimage.php?getbackground='+theme+'&browser_id='+prefs.browser_id, function(data) {
+		$.getJSON('api/userbackgrounds/?getbackground='+theme+'&browser_id='+prefs.browser_id, function(data) {
 			debug.debug("PREFS","Custom Background Image",data);
 			if (data.images) {
 				if (typeof(prefs.bgimgparms[theme]) == 'undefined') {
@@ -414,7 +413,7 @@ var prefs = function() {
 
 	function removeAllBackgroundImages() {
 		clearCustomBackground();
-		$.getJSON('backimage.php?clearallbackgrounds='+prefs.theme+'&browser_id='+prefs.browser_id, function(data) {
+		$.getJSON('api/userbackgrounds/?clearallbackgrounds='+prefs.theme+'&browser_id='+prefs.browser_id, function(data) {
 			loadBackgroundImages(prefs.theme);
 		});
 	}
@@ -703,7 +702,7 @@ var prefs = function() {
 			}
 			if (Object.keys(prefsToSave).length > 0) {
 				debug.trace("PREFS",'Saving to backend', JSON.stringify(prefsToSave));
-				await $.post('saveprefs.php', {prefs: JSON.stringify(prefsToSave)});
+				await $.post('api/saveprefs/', {prefs: JSON.stringify(prefsToSave)});
 			}
 			if (callback) callback();
 		},
@@ -929,7 +928,7 @@ var prefs = function() {
 		},
 
 		changelanguage: function() {
-			prefs.save({language: $("#langselector").val()}, function() {
+			prefs.save({interface_language: $("#langselector").val()}, function() {
 				location.reload(true);
 			});
 		},
@@ -1004,7 +1003,7 @@ var prefs = function() {
 			$('[name="browser_id"]').val(prefs.browser_id);
 			var formElement = document.getElementById('backimageform');
 			var xhr = new XMLHttpRequest();
-			xhr.open("POST", "backimage.php");
+			xhr.open("POST", "api/userbackgrounds/");
 			xhr.responseType = "json";
 			xhr.onload = function () {
 				switch (xhr.status) {
@@ -1034,7 +1033,7 @@ var prefs = function() {
 			var image = clicked.next().next().val();
 			clicked.parent().remove();
 			clearCustomBackground();
-			$.getJSON('backimage.php?clearbackground='+image, function(data) {
+			$.getJSON('api/userbackgrounds/?clearbackground='+image, function(data) {
 				$('[name=imagefile').next().html(language.gettext('label_choosefile'));
 				$('[name=imagefile').parent().next('input[type="button"]').fadeOut('fast');
 				loadBackgroundImages(prefs.theme);

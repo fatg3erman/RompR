@@ -20,10 +20,6 @@ function format_for_disc($filename) {
 	return $filename;
 }
 
-function format_for_url($filename) {
-	return preg_replace('/#|&|\?|%|@|\+/', '_', $filename);
-}
-
 function format_tracknum($tracknum) {
 	$matches = array();
 	if (preg_match('/^\s*0*(\d+)/', $tracknum, $matches)) {
@@ -51,7 +47,7 @@ function format_text($d) {
 
 function format_time($t,$f=':') {
 	if (($t/86400) >= 1) {
-		return sprintf("%d%s%2d%s%02d%s%02d", ($t/86400), " ".get_int_text("label_days")." ",
+		return sprintf("%d%s%2d%s%02d%s%02d", ($t/86400), " ".language::gettext("label_days")." ",
 			($t/3600)%24, $f, ($t/60)%60, $f, $t%60);
 	}
 	if (($t/3600) >= 1) {
@@ -74,22 +70,6 @@ function munge_album_name($name) {
 	$b = preg_replace('#\s+$#', '', $b);
 	$b = preg_replace('#^\s+#', '', $b);
 	return $b;
-}
-
-function sanitsizeDiscogsResult($name) {
-	$b = preg_replace('/\* /',' ', $name);
-	return $b;
-}
-
-function alistheader($nart, $nalb, $ntra, $tim) {
-	return '<div style="margin-bottom:4px">'.
-	'<table width="100%" class="playlistitem">'.
-	'<tr><td align="left">'.$nart.' '.get_int_text("label_artists").
-	'</td><td align="right">'.$nalb.' '.get_int_text("label_albums").'</td></tr>'.
-	'<tr><td align="left">'.$ntra.' '.get_int_text("label_tracks").
-	'</td><td align="right">'.$tim.'</td></tr>'.
-	'</table>'.
-	'</div>';
 }
 
 function get_base_url() {
@@ -132,73 +112,6 @@ function get_base_url() {
 	return $protocol . $host . $directory;
 }
 
-function scan_for_images($albumpath) {
-	logger::log("LOCAL IMAGE SCAN", "Album Path Is ".$albumpath);
-	logger::log("LOCAL IMAGE SCAN", getcwd());
-	$result = array();
-	if ((is_dir("prefs/MusicFolders") || is_link('prefs/MusicFolders')) && $albumpath != ".") {
-		$albumpath = munge_filepath($albumpath);
-		$result = array_merge($result, get_images($albumpath));
-		// Is the album dir part of a multi-disc set?
-		if (preg_match('/^CD\s*\d+$|^disc\s*\d+$/i', basename($albumpath))) {
-			$albumpath = dirname($albumpath);
-			$result = array_merge($result, get_images($albumpath));
-		}
-		// Are there any subdirectories?
-		$globpath = preg_replace('/(\*|\?|\[)/', '[$1]', $albumpath);
-		$lookfor = glob($globpath."/*", GLOB_ONLYDIR);
-		foreach ($lookfor as $i => $f) {
-			if (is_dir($f)) {
-				$result = array_merge($result, get_images($f));
-			}
-		}
-	} else {
-		logger::log('LOCAL IMAGE SCAN', 'Nope');
-	}
-	return $result;
-}
-
-function get_images($dir_path) {
-
-	$funkychicken = array();
-	$a = basename($dir_path);
-	logger::trace("GET_IMAGES", "    Scanning :",$dir_path);
-	$globpath = preg_replace('/(\*|\?|\[)/', '[$1]', $dir_path);
-	logger::debug("GET_IMAGES", "      Glob Path is",$globpath);
-	$funkychicken = glob($globpath."/*.{jpg,png,bmp,gif,jpeg,JPEG,JPG,BMP,GIF,PNG}", GLOB_BRACE);
-	logger::trace("GET_IMAGES", "    Checking for embedded images");
-	$files = glob($globpath."/*.{mp3,MP3,mp4,MP4,flac,FLAC,ogg,OGG}", GLOB_BRACE);
-	$testfile = array_shift($files);
-	if ($testfile) {
-		$getID3 = new getID3;
-		$tags = $getID3->analyze($testfile);
-		getid3_lib::CopyTagsToComments($tags);
-		if (array_key_exists('comments', $tags) && array_key_exists('picture', $tags['comments'])) {
-			foreach ($tags['comments']['picture'] as $picture) {
-				if (array_key_exists('picturetype', $picture)) {
-					if ($picture['picturetype'] == 'Cover (front)') {
-						logger::log("GET_IMAGES", "    .. found embedded front cover image");
-						$filename = 'prefs/temp/'.md5($globpath);
-						file_put_contents($filename, $picture['data']);
-						array_unshift($funkychicken, $filename);
-					}
-				}
-			}
-		}
-	}
-	return $funkychicken;
-}
-
-function munge_filepath($p) {
-	global $prefs;
-	$p = rawurldecode(html_entity_decode($p));
-	$f = "file://".$prefs['music_directory_albumart'];
-	if (substr($p, 0, strlen($f)) == $f) {
-		$p = substr($p, strlen($f), strlen($p));
-	}
-	return "prefs/MusicFolders/".$p;
-}
-
 function find_executable($prog) {
 
 	// Test to see if $prog is on the path and then try Homebrew and MacPorts paths until we find it
@@ -220,45 +133,6 @@ function find_executable($prog) {
 	}
 	return $retval;
 
-}
-
-function get_browser_language() {
-	// TODO - this method is not good enough.
-	if (array_key_exists('HTTP_ACCEPT_LANGUAGE', $_SERVER)) {
-		return substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-	} else {
-		return 'en';
-	}
-}
-
-function getStreamFolder($url) {
-	$f = dirname($url);
-	if ($f == "." || $f == "") $f = $url;
-	return $f;
-}
-
-function getDummyStation($url) {
-	$f = getDomain($url);
-	switch ($f) {
-		case "http":
-		case "https":
-		case "mms":
-		case "mmsh":
-		case "mmst":
-		case "mmsu":
-		case "gopher":
-		case "rtp":
-		case "rtsp":
-		case "rtmp":
-		case "rtmpt":
-		case "rtmps":
-			return "Radio";
-			break;
-
-		default:
-			return ucfirst($f);
-			break;
-	}
 }
 
 function sql_init_fail($message) {
@@ -289,10 +163,6 @@ print '<h3 align="center">RompЯ encountered an error while checking your '.
 	include('setupscreen.php');
 	exit(0);
 
-}
-
-function imagePath($image) {
-	return ($image) ? $image : '';
 }
 
 function concatenate_artist_names($art) {
@@ -624,7 +494,6 @@ function set_version_string() {
 }
 
 function update_stream_images($schemaver) {
-	require_once('utils/imagefunctions.php');
 	switch ($schemaver) {
 		case 43:
 			$stations = generic_sql_query("SELECT Stationindex, StationName, Image FROM RadioStationtable WHERE Image LIKE 'prefs/userstreams/STREAM_%'");
@@ -708,7 +577,7 @@ function collectionButtons() {
 	print '<div class="selectholder">';
 	print '<select id="sortcollectionbyselector" class="saveomatic">';
 	foreach (COLLECTION_SORT_MODES as $mode => $key) {
-		print '<option value="'.$mode.'">'.ucfirst(get_int_text($key)).'</option>';
+		print '<option value="'.$mode.'">'.ucfirst(language::gettext($key)).'</option>';
 	}
 	print '</select>';
 	print '</div>';
@@ -717,28 +586,28 @@ function collectionButtons() {
 	print '<div class="containerbox dropdown-container">';
 	print '<div class="selectholder">';
 	print '<select id="collectionrangeselector" class="saveomatic">';
-	print '<option value="'.ADDED_ALL_TIME.'">'.get_int_text('label_all_time').'</option>';
-	print '<option value="'.ADDED_TODAY.'">'.get_int_text('label_today').'</option>';
-	print '<option value="'.ADDED_THIS_WEEK.'">'.get_int_text('label_thisweek').'</option>';
-	print '<option value="'.ADDED_THIS_MONTH.'">'.get_int_text('label_thismonth').'</option>';
-	print '<option value="'.ADDED_THIS_YEAR.'">'.get_int_text('label_thisyear').'</option>';
+	print '<option value="'.ADDED_ALL_TIME.'">'.language::gettext('label_all_time').'</option>';
+	print '<option value="'.ADDED_TODAY.'">'.language::gettext('label_today').'</option>';
+	print '<option value="'.ADDED_THIS_WEEK.'">'.language::gettext('label_thisweek').'</option>';
+	print '<option value="'.ADDED_THIS_MONTH.'">'.language::gettext('label_thismonth').'</option>';
+	print '<option value="'.ADDED_THIS_YEAR.'">'.language::gettext('label_thisyear').'</option>';
 	print '</select>';
 	print '</div>';
 	print '</div>';
 
 	print '<div class="styledinputs">
 	<input class="autoset toggle" type="checkbox" id="sortbydate">
-	<label for="sortbydate">'.get_int_text('config_sortbydate').'</label>
+	<label for="sortbydate">'.language::gettext('config_sortbydate').'</label>
 	<div class="pref">
 	<input class="autoset toggle" type="checkbox" id="notvabydate">
-	<label for="notvabydate">'.get_int_text('config_notvabydate').'</label>
+	<label for="notvabydate">'.language::gettext('config_notvabydate').'</label>
 	</div>
 	</div>';
 
 	if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_remote == false) {
 		if ($prefs['collection_player'] == $prefs['player_backend'] || $prefs['collection_player'] == null) {
 			print '<div class="textcentre">
-			<button name="donkeykong">'.get_int_text('config_updatenow').'</button>
+			<button name="donkeykong">'.language::gettext('config_updatenow').'</button>
 			</div>';
 		}
 	}
@@ -861,16 +730,6 @@ function format_sortartist($tags, $return_albumartist = false) {
 	return $sortartist;
 }
 
-function sort_playlists($a, $b) {
-	if ($a == "Discover Weekly (by spotify)") {
-		return -1;
-	}
-	if ($b == "Discover Weekly (by spotify)") {
-		return 1;
-	}
-	return (strtolower($a) < strtolower($b)) ? -1 : 1;
-}
-
 function update_remote_image_urls() {
 	logger::log('SQL', 'Updating Remote Images in Albumtable');
 	$albums = generic_sql_query("SELECT Albumindex, Image FROM Albumtable WHERE Image LIKE 'getRemoteImage%'");
@@ -954,6 +813,20 @@ function upgrade_saved_crazies() {
 		$data['tempo']['min'] = round($data['tempo']['min'] * 300, 2);
 		$data['tempo']['max'] = round($data['tempo']['max'] * 300, 2);
 		file_put_contents($file, json_encode($data));
+	}
+}
+
+function choose_sorter_by_key($which) {
+	global $prefs;
+	$a = preg_match('/(a|b|c|r|t|y|u|z)(.*?)(\d+|root)_*(\d+)*/', $which, $matches);
+	switch ($matches[1]) {
+		case 'b':
+			return 'sortby_'.$prefs['actuallysortresultsby'];
+			break;
+
+		default:
+			return 'sortby_'.$prefs['sortcollectionby'];
+			break;
 	}
 }
 

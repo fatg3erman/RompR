@@ -37,7 +37,7 @@ foreach ($r as $obj) {
 		$retval = preg_replace('#^beetslocal:\d+:'.$prefs['music_directory_albumart'].'/#', '', $retval);
 
 		if (is_dir('prefs/MusicFolders') && $retval != '.') {
-			$albumpath = munge_filepath($retval);
+			$albumpath = imageFunctions::munge_filepath($retval);
 			if (is_dir($albumpath)) {
 				$img = 'albumart/asdownloaded/'.basename($obj->Image);
 				$out = $albumpath.'/'.basename($obj->Image);
