@@ -3,7 +3,7 @@ define('ROMPR_IS_LOADING', true);
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 require_once ("backends/sql/backend.php");
-require_once ("player/".$prefs['player_backend']."/player.php");
+require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 $only_plugins_on_menu = false;
 $skin = "desktop";
 set_version_string();

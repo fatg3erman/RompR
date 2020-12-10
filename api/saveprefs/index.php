@@ -2,7 +2,7 @@
 chdir('../..');
 include ("includes/vars.php");
 logger::log("SAVEPREFS", "Saving prefs");
-$p = json_decode($_POST['prefs']);
+$p = json_decode($_POST['prefs'], true);
 $player =  $_COOKIE['currenthost'];
 foreach($p as $key => $value) {
 	logger::log("SAVEPREFS", ' ',$key,"=",$value);
@@ -11,19 +11,19 @@ foreach($p as $key => $value) {
 		case "radioparam":
 		case "radiomaster":
 		case "radioconsume":
-			$prefs['multihosts']->{$player}->radioparams->{$key} = $value;
+			prefs::$prefs['multihosts'][$player]['radioparams'][$key] = $value;
 			break;
 
 		case 'music_directory_albumart':
-			set_music_directory($value);
+			prefs::set_music_directory($value);
 			break;
 
 		default:
-			$prefs[$key] = $value;
+			prefs::$prefs[$key] = $value;
 			break;
 	}
 
 }
-savePrefs();
+prefs::save();
 header('HTTP/1.1 204 No Content');
 ?>

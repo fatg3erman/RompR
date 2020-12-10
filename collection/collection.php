@@ -9,9 +9,6 @@ $divtype = "album1";
 $dbterms = array( 'tags' => null, 'rating' => null );
 $trackbytrack = false;
 
-define('ROMPR_MIN_TRACKS_TO_DETERMINE_COMPILATION', 3);
-define('ROMPR_MIN_NOT_COMPILATION_THRESHOLD', 0.6);
-
 class musicCollection {
 
 	public function __construct() {

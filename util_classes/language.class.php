@@ -13,8 +13,8 @@ class language {
 			require_once('international/'.$interface_language.'.php');
 		} else {
 			logger::log("INTERNATIONAL", "Translation ".$interface_language." does not exist. Defaulting to English");
-			$prefs['interface_language'] = "en-GB";
-			savePrefs();
+			prefs::$prefs['interface_language'] = "en-GB";
+			prefs::save();
 		}
 	}
 
@@ -42,8 +42,7 @@ class language {
 	public static function get_interface_language() {
 		// The language used for the interface is prefs.interface_language and is initially undefined
 		// and we set it according to what the browser tells us.
-		global $prefs;
-		return array_key_exists("interface_language", $prefs) ? $prefs["interface_language"] : self::get_browser_locale();
+		return array_key_exists("interface_language", prefs::$prefs) ? prefs::$prefs["interface_language"] : self::get_browser_locale();
 	}
 
 	public static function get_browser_locale() {
@@ -97,7 +96,7 @@ class language {
 			} else {
 				$name = $locale;
 			}
-			$retval[$locale] = $name;
+			$retval[$locale] = ucfirst($name);
 		}
 		return $retval;
 	}

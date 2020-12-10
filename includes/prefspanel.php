@@ -237,7 +237,7 @@ print '<div class="pref textcentre"><button onclick="shortcuts.edit()">'.
 	<label for="playlistswipe">'.language::gettext('config_playlistswipe').'</label>
 	</div>';
 }
-if ($prefs['player_backend'] == "mpd") {
+if (prefs::$prefs['player_backend'] == "mpd") {
 print '<div class="pref containerbox dropdown-container">
 	<div class="fixed" style="margin-right:2em">'.
 	language::gettext('config_crossfade').
@@ -263,7 +263,7 @@ language::gettext('config_lastfmlang').
 print '<option value="default">'.language::gettext('config_lastfmdefault').'</option>';
 print '<option value="interface">'.language::gettext('config_lastfminterface').'</option>';
 print '<option value="browser">'.language::gettext('config_lastfmbrowser').'</option>';
-$l = json_decode(file_get_contents('international/iso639.json'), true);
+$l = json_decode(file_get_contents('resources/iso639.json'), true);
 foreach ($l as $language) {
 	print '<option value="'.$language['alpha2'].'">'.$language['English'].'</option>';
 }
@@ -272,7 +272,7 @@ print '</select></div></div>';
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
 language::gettext('config_country').
 '</div><div class="selectholder"><select class="saveomatic" id="lastfm_country_codeselector">';
-$x = simplexml_load_file('iso3166.xml');
+$x = simplexml_load_file('resources/iso3166.xml');
 foreach($x->CountryEntry as $i => $c) {
 	print '<option value="'.$c->CountryCode.'">'.
 		mb_convert_case($c->CountryName, MB_CASE_TITLE, "UTF-8")."</option>\n";
@@ -357,7 +357,7 @@ print '<div class="dropdown-container configtitle">
 </div></div>';
 
 print '<div class="pref">'.language::gettext('config_lastfmusername').'<br/><div class="containerbox"><div class="expand">'.
-	'<input class="enter" name="lfmuser" type="text" size="30" value="'.$prefs['lastfm_user'].'"/>'.
+	'<input class="enter" name="lfmuser" type="text" size="30" value="'.prefs::$prefs['lastfm_user'].'"/>'.
 	'</div><button id="lastfmloginbutton" class="fixed">'.language::gettext('config_loginbutton').
 	'</button></div>';
 print '</div>';
@@ -421,9 +421,9 @@ print '<div class="pref"><b>'.language::gettext('config_nosortprefixes').'
 <input class="saveotron prefinput arraypref" id="nosortprefixes" type="text" size="128" />
 </b></div>';
 
-if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_remote == false) {
+if (prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['mopidy_remote'] == false) {
 
-	if ($prefs['collection_player'] == $prefs['player_backend'] || $prefs['collection_player'] == null) {
+	if (prefs::$prefs['collection_player'] == prefs::$prefs['player_backend'] || prefs::$prefs['collection_player'] == null) {
 
 		print '<div class="pref styledinputs">
 		<input class="autoset toggle" type="checkbox" id="use_original_releasedate" />
@@ -438,16 +438,16 @@ if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_remote == false) {
 				</div>';
 		print '<button class="tright" name="donkeykong">'.language::gettext('config_updatenow').'</button>';
 		print '</div>';
-		if ($prefs['player_backend'] == "mpd" && $prefs['collection_player'] !== null) {
+		if (prefs::$prefs['player_backend'] == "mpd" && prefs::$prefs['collection_player'] !== null) {
 			print '<div class="clearfix"><button class="tright" name="dinkeyking">'.language::gettext('config_rescan').'</button></div>';
 		}
 		print '</div>';
 	}
 
-	logger::info('PREFSPANEL', 'Collection Player is', $prefs['collection_player']);
-	logger::info('PREFSPANEL', 'Player Backend is', $prefs['player_backend']);
+	logger::info('PREFSPANEL', 'Collection Player is', prefs::$prefs['collection_player']);
+	logger::info('PREFSPANEL', 'Player Backend is', prefs::$prefs['player_backend']);
 
-	if (($prefs['collection_player'] == "mopidy" || $prefs['collection_player'] == null) && $prefs['player_backend'] == 'mopidy') {
+	if ((prefs::$prefs['collection_player'] == "mopidy" || prefs::$prefs['collection_player'] == null) && prefs::$prefs['player_backend'] == 'mopidy') {
 		print '<div class="pref" id="mopidycollectionoptions">'.
 		'<b>'.language::gettext('config_collectionfolders').'</b></div>';
 		print '<div class="pref">'.language::gettext('config_beetsserver').'
@@ -459,7 +459,7 @@ if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_remote == false) {
 		<label for="preferlocalfiles">'.language::gettext('config_preferlocal').'</label></div>';
 	}
 
-	if ($prefs['collection_player'] == $prefs['player_backend'] || $prefs['collection_player'] == null) {
+	if (prefs::$prefs['collection_player'] == prefs::$prefs['player_backend'] || prefs::$prefs['collection_player'] == null) {
 		print '<div class="pref styledinputs">
 		<input class="autoset toggle" type="checkbox" id="sortbycomposer" />
 		<label for="sortbycomposer">'.language::gettext('config_sortbycomposer').'</label>

@@ -37,7 +37,7 @@ class sortby_base {
 
 
 	public function __construct($which) {
-		global $prefs, $divtype;
+		global $divtype;
 		$divtype = 'album1';
 		$a = preg_match('/(a|b|c|r|t|y|u|z)(.*?)(\d+|root)_*(\d+)*/', $which, $matches);
 		if (!$a) {
@@ -189,7 +189,6 @@ class sortby_base {
 	}
 
 	protected function emptyCollectionDisplay() {
-		global $prefs;
 		switch ($this->why) {
 			case 'a':
 				print '<div id="emptycollection" class="textcentre fullwidth">
@@ -200,15 +199,15 @@ class sortby_base {
 
 			case 'b':
 				print '<div class="textcentre fullwidth">';
-				if ($prefs['actuallysortresultsby'] == 'tag' || $prefs['actuallysortresultsby'] == 'rating') {
-					print '<p>You are sorting results by '.ucfirst(language::gettext(COLLECTION_SORT_MODES[$prefs['actuallysortresultsby']])).' which may mean some results are not displayed</p>';
+				if (prefs::$prefs['actuallysortresultsby'] == 'tag' || prefs::$prefs['actuallysortresultsby'] == 'rating') {
+					print '<p>You are sorting results by '.ucfirst(language::gettext(COLLECTION_SORT_MODES[prefs::$prefs['actuallysortresultsby']])).' which may mean some results are not displayed</p>';
 				}
 				print '</div>';
 				break;
 
 			case 'z':
 				print '<div class="textcentre fullwidth">
-				<p>There are no Spoken Word tracks in your Collection that can be displayed when sorting by '.ucfirst(language::gettext(COLLECTION_SORT_MODES[$prefs['actuallysortresultsby']])).'</p>
+				<p>There are no Spoken Word tracks in your Collection that can be displayed when sorting by '.ucfirst(language::gettext(COLLECTION_SORT_MODES[prefs::$prefs['actuallysortresultsby']])).'</p>
 				</div>';
 				break;
 		}
@@ -216,7 +215,6 @@ class sortby_base {
 
 	public function track_sort_query() {
 		// This is the generic query for sortby_artist, sortby_album, and sortby_albumbyartist
-		global $prefs;
 		$qstring = "SELECT
 				".SQL_TAG_CONCAT." AS tags,
 				r.Rating AS rating,
@@ -243,7 +241,7 @@ class sortby_base {
 					tr.Albumindex = ".$this->who."
 					AND uri IS NOT NULL
 					AND tr.Hidden = 0
-					".track_date_check($prefs['collectionrange'], $this->why)."
+					".track_date_check(prefs::$prefs['collectionrange'], $this->why)."
 					".$this->filter_track_on_why()."
 					AND tr.Artistindex = ta.Artistindex
 					AND al.Albumindex = tr.Albumindex

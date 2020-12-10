@@ -74,7 +74,7 @@ function playerController() {
 		try {
 			var urischemes = await $.ajax({
 				type: 'GET',
-				url: 'player/mpd/geturlhandlers.php',
+				url: 'player/utils/geturlhandlers.php',
 				dataType: 'json'
 			});
 			for (var i in urischemes) {
@@ -110,7 +110,7 @@ function playerController() {
 			// Use temp variable in case it errors
 			var s = await $.ajax({
 				type: 'POST',
-				url: 'player/mpd/postcommand.php',
+				url: 'api/player/',
 				data: JSON.stringify(list),
 				contentType: false,
 				dataType: 'json',
@@ -181,14 +181,14 @@ function playerController() {
 			await clickRegistry.loadContentIntoTarget({
 				target: $("#storedplaylists"),
 				clickedElement: $('.choosepanel[name="playlistslist"]'),
-				uri: "player/mpd/loadplaylists.php"
+				uri: "player/utils/loadplaylists.php"
 			});
 			$('b:contains("'+language.gettext('button_loadplaylist')+'")').parent('.configtitle').append('<a href="https://fatg3erman.github.io/RompR/Using-Saved-Playlists" target="_blank"><i class="icon-info-circled playlisticonr tright"></i></a>');
 			for (var i in openplaylists) {
 				$('i.menu.openmenu.playlist.icon-toggle-closed[name="'+openplaylists[i]+'"]').click();
 			}
 
-			data = await $.get('player/mpd/loadplaylists.php?addtoplaylistmenu');
+			data = await $.get('player/utils/loadplaylists.php?addtoplaylistmenu');
 			$('#addtoplaylistmenu').empty();
 			data.forEach(function(p) {
 				var h = $('<div>', {class: "containerbox backhi clickicon menuitem clickaddtoplaylist", name: p.name }).appendTo($('#addtoplaylistmenu'));
@@ -480,7 +480,7 @@ function playerController() {
 						}
 					}
 					// Don't add the play command if we're doing a resume,
-					// because postcommand.php will add it and this will override it
+					// because api/player/ will add it and this will override it
 					abitofahack = false;
 					playpos = null;
 					break;

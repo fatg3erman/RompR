@@ -3,7 +3,6 @@
 class sortby_genre extends sortby_base {
 
 	public function root_sort_query() {
-		global $prefs;
 		$sflag = $this->filter_root_on_why();
 		// This query gives us album artists only. It also makes sure we only get artists for whom we
 		// have actual tracks (no album artists who appear only on the wishlist or who have only hidden tracks)
@@ -17,7 +16,7 @@ class sortby_genre extends sortby_base {
 				(SELECT Genreindex FROM Tracktable
 				WHERE Uri IS NOT NULL
 				AND Hidden = 0
-				".track_date_check($prefs['collectionrange'], $this->why)."
+				".track_date_check(prefs::$prefs['collectionrange'], $this->why)."
 				".$sflag."
 				)
 			ORDER BY Genre ASC";
@@ -28,7 +27,6 @@ class sortby_genre extends sortby_base {
 	}
 
 	public function album_sort_query($force_artistname) {
-		global $prefs;
 		$sflag = $this->filter_album_on_why();
 
 		$qstring =
@@ -40,9 +38,9 @@ class sortby_genre extends sortby_base {
 				Tracktable.Albumindex = Albumtable.Albumindex AND
 			    Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0
 			    AND Tracktable.Genreindex = ".$this->who." ".
-			track_date_check($prefs['collectionrange'], $this->why)." ".
+			track_date_check(prefs::$prefs['collectionrange'], $this->why)." ".
 			$sflag.") ORDER BY";
-		if ($prefs['sortbydate']) {
+		if (prefs::$prefs['sortbydate']) {
 			$qstring .= ' Year,';
 		}
 		$qstring .= ' LOWER(Albumname)';

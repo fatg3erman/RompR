@@ -19,7 +19,7 @@ We need to make sure Apache can find RompЯ. To do this we create a soft link fr
 
 ### Install some packages
 
-    sudo apt-get install apache2 php-curl php-sqlite3 php-gd php-json php-xml php-mbstring imagemagick
+    sudo apt-get install apache2 php-curl php-sqlite3 php-gd php-json php-xml php-mbstring php-intl imagemagick
 
 
 ### Enable some Apache modules
@@ -59,8 +59,8 @@ So, create this file, note I've assumed the default apache root directory of /va
             php_admin_value memory_limit 128M
             php_admin_value post_max_size 256M
             php_admin_value upload_max_filesize 32M
-            php_admin_value max_file_uploads 50                
-            php_admin_value max_execution_time 1800         
+            php_admin_value max_file_uploads 50
+            php_admin_value max_execution_time 1800
         </IfModule>
 
     </Directory>

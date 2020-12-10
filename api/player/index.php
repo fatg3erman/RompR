@@ -2,7 +2,7 @@
 chdir('../..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-require_once ("player/".$prefs['player_backend']."/player.php");
+require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 require_once ("collection/collection.php");
 require_once ('backends/sql/backend.php');
 $mpd_status = array();
@@ -58,7 +58,7 @@ if ($player->is_connected()) {
 					break;
 
 				case "loadstreamplaylist":
-					require_once ("player/".$prefs['player_backend']."/streamplaylisthandler.php");
+					require_once ("player/".prefs::$prefs['player_backend']."/streamplaylisthandler.php");
 					$cmds = array_merge($cmds, internetPlaylist::load_internet_playlist($cmd[1], $cmd[2], $cmd[3]));
 					break;
 
@@ -271,14 +271,14 @@ if ($player->is_connected()) {
 	}
 
 } else {
-	$mpd_status['error'] = "Unable to Connect to ".$prefs['currenthost'];
+	$mpd_status['error'] = "Unable to Connect to ".prefs::$prefs['currenthost'];
 }
 
-$p = $prefs['currenthost'];
-$mpd_status['radiomode'] = $prefs['multihosts']->{$p}->radioparams->radiomode;
-$mpd_status['radioparam'] = $prefs['multihosts']->{$p}->radioparams->radioparam;
-$mpd_status['radiomaster'] = $prefs['multihosts']->{$p}->radioparams->radiomaster;
-$mpd_status['radioconsume'] = $prefs['multihosts']->{$p}->radioparams->radioconsume;
+$p = prefs::$prefs['currenthost'];
+$mpd_status['radiomode'] = prefs::$prefs['multihosts'][$p]['radioparams']['radiomode'];
+$mpd_status['radioparam'] = prefs::$prefs['multihosts'][$p]['radioparams']['radioparam'];
+$mpd_status['radiomaster'] = prefs::$prefs['multihosts'][$p]['radioparams']['radiomaster'];
+$mpd_status['radioconsume'] = prefs::$prefs['multihosts'][$p]['radioparams']['radioconsume'];
 
 header('Content-Type: application/json');
 echo json_encode($mpd_status);

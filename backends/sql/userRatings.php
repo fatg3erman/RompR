@@ -4,8 +4,7 @@ require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 logger::mark("USERRATING", "--------------------------START---------------------");
 require_once ("backends/sql/backend.php");
-require_once ("backends/sql/metadatafunctions.php");
-require_once ("player/".$prefs['player_backend']."/player.php");
+require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 
 $error = 0;
 $count = 1;
@@ -48,9 +47,9 @@ foreach($params as $p) {
 			break;
 
 		case 'getplaylist':
-			preparePlaylist();
+			collectionSmartRadio::preparePlaylist();
 		case 'repopulate':
-			$returninfo = doPlaylist($p['playlist'], $p['numtracks']);
+			$returninfo = collectionSmartRadio::doPlaylist($p['playlist'], $p['numtracks']);
 			break;
 
 		case 'ratlist':
@@ -179,7 +178,7 @@ logger::mark("USERRATING", "---------------------------END----------------------
 function prepare_returninfo() {
 	logger::log("USERRATINGS", "Preparing Return Info");
 	$t = microtime(true);
-	global $returninfo, $prefs;
+	global $returninfo;
 
 	$sorter = choose_sorter_by_key('aartistroot');
 	$lister = new $sorter('aartistroot');
@@ -289,7 +288,6 @@ function removeBackup($which) {
 }
 
 function restoreBackup($backup) {
-	global $prefs;
 	if (file_exists('prefs/backupmonitor')) {
 		unlink('prefs/backupmonitor');
 	}
@@ -354,7 +352,7 @@ function restoreBackup($backup) {
 	fwrite($monitor, "\n<b>Cleaning Up...</b>");
 	// Now... we may have restored data on tracks that were previously local and now aren't there any more.
 	// If they're local tracks that have been removed, then we don't want them or care about their data
-	if ($prefs['player_backend'] == "mpd") {
+	if (prefs::$prefs['player_backend'] == "mpd") {
 		generic_sql_query("DELETE FROM Tracktable WHERE Uri IS NOT NULL AND LastModified IS NULL AND Hidden = 0", true);
 	} else {
 		generic_sql_query("DELETE FROM Tracktable WHERE Uri LIKE 'local:%' AND LastModified IS NULL AND Hidden = 0", true);

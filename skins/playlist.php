@@ -21,14 +21,14 @@ print '<i title="'.language::gettext('button_clearplaylist').'" class="icon-tras
 
 print '<div id="flowcontrols" class="noborder containerbox">';
 print '<i id="random" class="icon-random tooltip podicon clickicon expand flow-off" title="'.language::gettext('button_random').'"></i>';
-if ($prefs['player_backend'] == "mpd") {
+if (prefs::$prefs['player_backend'] == "mpd") {
 	print '<i id="crossfade" class="icon-crossfade tooltip podicon clickicon expand flow-off" title="'.language::gettext('button_crossfade').'"></i>';
 }
 print '<i id="repeat" class="icon-repeat tooltip podicon clickicon expand flow-off" title="'.language::gettext('button_repeat').'"></i>';
 print '<i id="consume" class="icon-consume tooltip podicon clickicon expand flow-off" title="'.language::gettext('button_consume').'"></i>';
 print '</div>';
 
-if ($prefs['player_backend'] == "mpd") {
+if (prefs::$prefs['player_backend'] == "mpd") {
 ?>
 <table width="90%" align="center">
 	<tr>

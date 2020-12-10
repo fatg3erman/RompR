@@ -1,7 +1,6 @@
 <?php
 
 function albumTrack($data) {
-	global $prefs;
 	if (substr($data['title'],0,6) == "Album:") return 2;
 	if (substr($data['title'],0,7) == "Artist:") {
 		logger::warn('ALBUMTRACK', 'Found artist link in album - this should not be here!');
@@ -10,7 +9,7 @@ function albumTrack($data) {
 
 	$d = getDomain($data['uri']);
 
-	if ($prefs['player_backend'] == "mpd" && $d == "soundcloud") {
+	if (prefs::$prefs['player_backend'] == "mpd" && $d == "soundcloud") {
 		$class = 'clickcue';
 	} else {
 		$class = 'clicktrack';
@@ -104,7 +103,6 @@ function noAlbumsHeader() {
 }
 
 function albumHeader($obj) {
-	global $prefs;
 	$h = '<div class="collectionitem fixed selecotron clearfix">';
 	if ($obj['id'] == 'nodrop') {
 		// Hacky at the moment, we only use nodrop for streams but here there is no checking
@@ -133,7 +131,7 @@ function albumHeader($obj) {
 	$h .= domainHtml($obj['AlbumUri']);
 
 	$h .= '<div class="artistnamething">'.$obj['Albumname'];
-	if ($obj['Year'] && $prefs['sortbydate']) {
+	if ($obj['Year'] && prefs::$prefs['sortbydate']) {
 		$h .= ' <span class="notbold">('.$obj['Year'].')</span>';
 	}
 	$h .= '</div>';
@@ -273,7 +271,6 @@ function addUserRadioButtons($html, $index, $uri, $name, $image) {
 }
 
 function addPlaylistControls($html, $delete, $is_user, $name) {
-	global $prefs;
 	$out = phpQuery::newDocument($html);
 	if ($delete) {
 		$add = ($is_user) ? "user" : "";

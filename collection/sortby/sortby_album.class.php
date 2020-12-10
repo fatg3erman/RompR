@@ -3,7 +3,6 @@
 class sortby_album extends sortby_base {
 
 	public function root_sort_query() {
-		global $prefs;
 		$sflag = $this->filter_album_on_why();
 
 		$qstring =
@@ -24,11 +23,11 @@ class sortby_album extends sortby_base {
 				// For browse album 'All Artists Featuring'
 				$qstring .= "AND Albumtable.AlbumArtistindex = ".$this->who;
 			}
-			$qstring .= " ".track_date_check($prefs['collectionrange'], $this->why)."
+			$qstring .= " ".track_date_check(prefs::$prefs['collectionrange'], $this->why)."
 			".$sflag.")
 		ORDER BY ";
-		if ($prefs['sortbydate']) {
-			if ($prefs['notvabydate']) {
+		if (prefs::$prefs['sortbydate']) {
+			if (prefs::$prefs['notvabydate']) {
 				$qstring .= " CASE WHEN Artisttable.Artistname = 'Various Artists' THEN LOWER(Albumname) ELSE Year END,";
 			} else {
 				$qstring .= ' Year,';

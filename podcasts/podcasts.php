@@ -107,8 +107,6 @@ if (array_key_exists('populate', $_REQUEST)) {
 }
 
 function doPodcastBase() {
-	global $prefs;
-
 	print '<div id="podcastbuttons" class="invisible toggledown">';
 
 	print '<div id="cocksausage">';
@@ -144,7 +142,7 @@ function doPodcastBase() {
 
 	print '<div class="containerbox"><b>'.language::gettext('label_sortby').'</b></div>';
 
-	for ($count = 0; $count < $prefs['podcast_sort_levels']; $count++) {
+	for ($count = 0; $count < prefs::$prefs['podcast_sort_levels']; $count++) {
 		print '<div class="containerbox dropdown-container">';
 		print '<div class="selectholder expand">';
 		print '<select id="podcast_sort_'.$count.'selector" class="saveomatic">';
@@ -152,11 +150,11 @@ function doPodcastBase() {
 		foreach ($sortoptions as $i => $o) {
 			$options .= '<option value="'.$o.'">'.$i.'</option>';
 		}
-		print preg_replace('/(<option value="'.$prefs['podcast_sort_'.$count].'")/', '$1 selected', $options);
+		print preg_replace('/(<option value="'.prefs::$prefs['podcast_sort_'.$count].'")/', '$1 selected', $options);
 		print '</select>';
 		print '</div>';
 		print '</div>';
-		if ($count < $prefs['podcast_sort_levels']-1) {
+		if ($count < prefs::$prefs['podcast_sort_levels']-1) {
 			print '<div class="indent playlistrow2">'.language::gettext('label_then').'</div>';
 		}
 	}
@@ -165,28 +163,27 @@ function doPodcastBase() {
 }
 
 function doPodcastList($subscribed) {
-	global $prefs;
 	if ($subscribed == 1) {
 		$qstring = "SELECT Podcasttable.*, SUM(New = 1) AS new, SUM(Listened = 0) AS unlistened FROM Podcasttable JOIN PodcastTracktable USING(PODindex) WHERE Subscribed = 1 AND Deleted = 0 GROUP BY PODindex ORDER BY";
 	} else {
 		$qstring = "SELECT Podcasttable.*, 0 AS new, 0 AS unlistened FROM Podcasttable WHERE Subscribed = 0 ORDER BY";
 	}
 	$sortarray = array();
-	for ($i = 0; $i < $prefs['podcast_sort_levels']; $i++) {
-		if ($prefs['podcast_sort_'.$i] == 'new' || $prefs['podcast_sort_'.$i] == 'unlistened') {
-			$sortarray[] = ' '.$prefs['podcast_sort_'.$i].' DESC';
+	for ($i = 0; $i < prefs::$prefs['podcast_sort_levels']; $i++) {
+		if (prefs::$prefs['podcast_sort_'.$i] == 'new' || prefs::$prefs['podcast_sort_'.$i] == 'unlistened') {
+			$sortarray[] = ' '.prefs::$prefs['podcast_sort_'.$i].' DESC';
 		} else {
-			if (count($prefs['nosortprefixes']) > 0) {
+			if (count(prefs::$prefs['nosortprefixes']) > 0) {
 				$qqstring = "(CASE ";
-				foreach($prefs['nosortprefixes'] AS $p) {
+				foreach(prefs::$prefs['nosortprefixes'] AS $p) {
 					$phpisshitsometimes = strlen($p)+2;
-					$qqstring .= "WHEN LOWER(Podcasttable.".$prefs['podcast_sort_'.$i].") LIKE '".strtolower($p).
-						" %' THEN LOWER(SUBSTR(Podcasttable.".$prefs['podcast_sort_'.$i].",".$phpisshitsometimes.")) ";
+					$qqstring .= "WHEN LOWER(Podcasttable.".prefs::$prefs['podcast_sort_'.$i].") LIKE '".strtolower($p).
+						" %' THEN LOWER(SUBSTR(Podcasttable.".prefs::$prefs['podcast_sort_'.$i].",".$phpisshitsometimes.")) ";
 				}
-				$qqstring .= "ELSE LOWER(Podcasttable.".$prefs['podcast_sort_'.$i].") END) ASC";
+				$qqstring .= "ELSE LOWER(Podcasttable.".prefs::$prefs['podcast_sort_'.$i].") END) ASC";
 				$sortarray[] = $qqstring;
 			} else {
-				$sortarray[] = ' Podcasttable.'.$prefs['podcast_sort_'.$i].' ASC';
+				$sortarray[] = ' Podcasttable.'.prefs::$prefs['podcast_sort_'.$i].' ASC';
 			}
 		}
 	}

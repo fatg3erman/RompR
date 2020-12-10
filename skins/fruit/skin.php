@@ -103,10 +103,10 @@ include ("includes/prefspanel.php");
 		</div>
 
 <?php
-	include('player/mpd/outputs.php');
+	include('player/utils/outputs.php');
 
 	if (count($outputdata) > 1) {
-		if ($prefs['hide_master_volume']) {
+		if (prefs::$prefs['hide_master_volume']) {
 			print '<div id="outputbox" class="fixed">';
 		} else {
 			print '<div id="outputbox" class="fixed" style="display:none">';
@@ -119,7 +119,7 @@ include ("includes/prefspanel.php");
 		print '</div>';
 	}
 
-	if ($prefs['hide_master_volume']) {
+	if (prefs::$prefs['hide_master_volume']) {
 		print '<div id="snapcast-secondary" class="fixed"></div>';
 	} else {
 		print '<div id="volumebox" class="fixed">';
@@ -230,7 +230,7 @@ print '<i title="'.language::gettext('button_forward').'" id="forwardbutton" cla
 	?>
 	</div>
 <?php
-include("player/".$prefs['player_backend']."/search.php");
+include("player/".prefs::$prefs['player_backend']."/search.php");
 ?>
 	<div id="searchresultholder" class="noborder selecotron is-albumlist"></div>
 	</div>
@@ -290,7 +290,7 @@ print '<div class="dropdown-container configtitle">';
 print '<div class="expand textcentre"><b>'.language::gettext('label_pluginplaylists').'</b></div>';
 print '</div>';
 
-if ($prefs['player_backend'] == "mopidy") {
+if (prefs::$prefs['player_backend'] == "mopidy") {
 	print '<div class="textcentre textunderline"><b>Music From Your Collection</b></div>';
 }
 ?>
@@ -298,14 +298,14 @@ if ($prefs['player_backend'] == "mopidy") {
 
 
 <?php
-if ($prefs['player_backend'] == "mopidy") {
+if (prefs::$prefs['player_backend'] == "mopidy") {
 	print '<div class="textcentre textunderline"><b>Music From Spotify</b></div>';
 }
 ?>
 <div class="fullwidth" id="pluginplaylists_spotify"></div>
 
 <?php
-if ($prefs['player_backend'] == "mopidy") {
+if (prefs::$prefs['player_backend'] == "mopidy") {
 	print '<div class="textcentre textunderline"><b>Music From Everywhere</b></div>';
 	print '<div id="radiodomains" class="pref" style="padding-left:8px"><b>Play From These Sources:</b></div>';
 }

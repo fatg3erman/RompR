@@ -5,7 +5,6 @@ include ("includes/vars.php");
 include ("includes/functions.php");
 include ("backends/sql/backend.php");
 include ("getid3/getid3.php");
-require_once ('player/mpd/mpdinterface.php');
 
 logger::mark("GETALBUMCOVER", "------- Searching For Album Art --------");
 foreach ($_REQUEST as $k => $v) {
@@ -37,7 +36,7 @@ $searchfunctions = array(
 $player = new base_mpd_player();
 $player->close_mpd_connection();
 $player->probe_http_api();
-if ($prefs['mopidy_http_port'] !== false) {
+if (prefs::$prefs['mopidy_http_port'] !== false) {
 	array_unshift($searchfunctions, 'tryMopidy');
 }
 

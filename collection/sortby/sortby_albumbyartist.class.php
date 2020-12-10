@@ -5,7 +5,6 @@ class sortby_albumbyartist extends sortby_base {
 	private $forceartistname = false;
 
 	public function root_sort_query() {
-		global $prefs;
 		$sflag = $this->filter_album_on_why();
 		$qstring =
 		"SELECT Albumtable.*, Artisttable.Artistname
@@ -25,16 +24,16 @@ class sortby_albumbyartist extends sortby_base {
 				// For browse album 'All Artists Featuring'
 				$qstring .= "AND Albumtable.AlbumArtistindex = ".$this->who;
 			}
-			$qstring .= " ".track_date_check($prefs['collectionrange'], $this->why)."
+			$qstring .= " ".track_date_check(prefs::$prefs['collectionrange'], $this->why)."
 			".$sflag.")
 		ORDER BY";
 
-		foreach ($prefs['artistsatstart'] as $a) {
+		foreach (prefs::$prefs['artistsatstart'] as $a) {
 			$qstring .= " CASE WHEN LOWER(Artistname) = LOWER('".$a."') THEN 1 ELSE 2 END,";
 		}
-		if (count($prefs['nosortprefixes']) > 0) {
+		if (count(prefs::$prefs['nosortprefixes']) > 0) {
 			$qstring .= " (CASE ";
-			foreach($prefs['nosortprefixes'] AS $p) {
+			foreach(prefs::$prefs['nosortprefixes'] AS $p) {
 				$phpisshitsometimes = strlen($p)+2;
 				$qstring .= "WHEN LOWER(Artistname) LIKE '".strtolower($p).
 					" %' THEN LOWER(SUBSTR(Artistname,".$phpisshitsometimes.")) ";
@@ -44,8 +43,8 @@ class sortby_albumbyartist extends sortby_base {
 			$qstring .= ", LOWER(Artistname), ";
 		}
 
-		if ($prefs['sortbydate']) {
-			if ($prefs['notvabydate']) {
+		if (prefs::$prefs['sortbydate']) {
+			if (prefs::$prefs['notvabydate']) {
 				$qstring .= " CASE WHEN Artisttable.Artistname = 'Various Artists' THEN LOWER(Albumname) ELSE Year END,";
 			} else {
 				$qstring .= ' Year,';

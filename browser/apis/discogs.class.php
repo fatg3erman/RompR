@@ -5,7 +5,6 @@ class discogs {
 	const BASE_URL = 'https://api.discogs.com/';
 
 	private static function request($url, $print_data) {
-		global $prefs;
 		$cache = new cache_handler([
 			'url' => $url,
 			'cache' => 'discogs',

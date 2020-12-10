@@ -4,8 +4,8 @@
 chdir('../..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-require_once ("player/".$prefs['player_backend']."/player.php");
-require_once ("player/mpd/filetree.php");
+require_once ("player/".prefs::$prefs['player_backend']."/player.php");
+require_once ("collection/filetree.php");
 require_once ("skins/".$skin."/ui_elements.php");
 $error = 0;
 $dbterms = array( 'tags' => null, 'rating' => null );

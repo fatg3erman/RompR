@@ -1,5 +1,5 @@
 <?php
-require_once ("player/".$prefs['player_backend']."/player.php");
+require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 $outputdata = array();
 $player = new $PLAYER_TYPE();
 if ($player->is_connected()) {

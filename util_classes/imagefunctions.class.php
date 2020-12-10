@@ -3,9 +3,8 @@
 class imageFunctions {
 
 	public static function munge_filepath($p) {
-		global $prefs;
 		$p = rawurldecode(html_entity_decode($p));
-		$f = "file://".$prefs['music_directory_albumart'];
+		$f = "file://".prefs::$prefs['music_directory_albumart'];
 		if (substr($p, 0, strlen($f)) == $f) {
 			$p = substr($p, strlen($f), strlen($p));
 		}

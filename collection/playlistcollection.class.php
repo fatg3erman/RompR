@@ -5,9 +5,6 @@ class playlistCollection {
 	private $foundartists;
 
 	public function doNewPlaylistFile(&$filedata) {
-
-		global $prefs;
-
 		// Translate from MPD_FILE_MODEL to ROMPR_FILE_MODEL
 		$info = array_replace(ROMPR_FILE_MODEL, $filedata);
 		if ($info['Title'] === null) {
@@ -58,16 +55,16 @@ class playlistCollection {
 		// This creates the metadata array used by the info panel and nowplaying -
 		// Metadata such as scrobbles and ratings will still use the Album Artist
 
-		if ($prefs['displaycomposer']) {
+		if (prefs::$prefs['displaycomposer']) {
 			// The user has chosen to display Composer/Perfomer information
 			// Here check:
 			// a) There is composer/performer information AND
 			// bi) Specific Genre Selected, Track Has Genre, Genre Matches Specific Genre OR
 			// bii) No Specific Genre Selected, Track Has Genre
 			if (($info['Composer'] !== null || $info['Performer'] !== null) &&
-				(($prefs['composergenre'] && $info['Genre'] &&
-					checkComposerGenre($info['Genre'], $prefs['composergenrename'])) ||
-				(!$prefs['composergenre'] && $info['Genre'])))
+				((prefs::$prefs['composergenre'] && $info['Genre'] &&
+					checkComposerGenre($info['Genre'], prefs::$prefs['composergenrename'])) ||
+				(!prefs::$prefs['composergenre'] && $info['Genre'])))
 			{
 				// Track Genre matches selected 'Sort By Composer' Genre
 				// Display Compoer - Performer - AlbumArtist

@@ -79,7 +79,6 @@ class commradioplugin {
 	}
 
 	private function doDropdownHeader() {
-		global $prefs;
 		directoryControlHeader('communityradiolist', language::gettext('label_communityradio'));
 
 		print '<div class="fullwidth containerbox dropdown-container">';
@@ -88,7 +87,7 @@ class commradioplugin {
 		print '<select id="communityradioorderbyselector" class="saveomatic">';
 		foreach (array('name', 'country', 'language', 'state', 'tags', 'votes', 'bitrate') as $o) {
 			print '<option value="'.$o.'"';
-			if ($prefs['communityradioorderby'] == $o) {
+			if (prefs::$prefs['communityradioorderby'] == $o) {
 				print ' selected';
 			}
 			print '>Order By '.ucfirst($o).'</option>';
@@ -404,7 +403,6 @@ class commradioplugin {
 	}
 
 	private function comm_radio_sanitise_station($station) {
-		global $prefs;
 		$blank_station = array(
 			'tags' => '',
 			'name' => ROMPR_UNKNOWN_STREAM,

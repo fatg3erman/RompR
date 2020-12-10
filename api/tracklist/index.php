@@ -2,9 +2,8 @@
 chdir('../..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-require_once ("player/".$prefs['player_backend']."/player.php");
+require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 require_once ("backends/sql/backend.php");
-require_once ("collection/playlistcollection.php");
 
 // For speed and memory usage we do two VERY IMPORTANT things
 // 1. JSON encode each track one-by-one, print out the result, and then throw that data away

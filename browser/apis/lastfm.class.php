@@ -14,12 +14,11 @@ class lastfm {
 	//
 
 	public static function signed_request($params, $print_data, $auth = true) {
-		global $prefs;
 		$opts = [
 			'api_key' => self::LOCK,
 		];
 		if ($auth) {
-			$opts['sk'] = $prefs['lastfm_session_key'];
+			$opts['sk'] = prefs::$prefs['lastfm_session_key'];
 		}
 
 		foreach ($params as $k => $v) {

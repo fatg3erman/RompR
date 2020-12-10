@@ -4,7 +4,7 @@ This assumes you've already followed the guide to install a player and the Romp–
 
 ### Install some packages
 
-    sudo apt-get install nginx php-curl php-sqlite3 php-gd php-json php-xml php-mbstring php-fpm imagemagick
+    sudo apt-get install nginx php-curl php-sqlite3 php-gd php-json php-xml php-mbstring php-fpm php-intl imagemagick
 
 
 ### Create nginx configuration

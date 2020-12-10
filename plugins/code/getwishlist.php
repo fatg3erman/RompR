@@ -8,7 +8,7 @@ getWishlist();
 
 function getWishlist() {
 
-	global $mysqlc, $divtype, $prefs;
+	global $mysqlc, $divtype;
 	if ($mysqlc === null) {
 		connect_to_database();
 	}
@@ -39,12 +39,12 @@ function getWishlist() {
 
 	switch ($_REQUEST['sortby']) {
 		case 'artist':
-			foreach ($prefs['artistsatstart'] as $a) {
+			foreach (prefs::$prefs['artistsatstart'] as $a) {
 				$qstring .= "CASE WHEN LOWER(albumartist) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
 			}
-			if (count($prefs['nosortprefixes']) > 0) {
+			if (count(prefs::$prefs['nosortprefixes']) > 0) {
 				$qstring .= "(CASE ";
-				foreach($prefs['nosortprefixes'] AS $p) {
+				foreach(prefs::$prefs['nosortprefixes'] AS $p) {
 					$phpisshitsometimes = strlen($p)+2;
 					$qstring .= "WHEN LOWER(albumartist) LIKE '".strtolower($p)." %' THEN LOWER(SUBSTR(albumartist,".
 						$phpisshitsometimes.")) ";

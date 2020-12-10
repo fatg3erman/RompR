@@ -163,7 +163,6 @@ function printFileSearch(&$tree, $fcount) {
 }
 
 function printFileItem($displayname, $fullpath, $time) {
-	global $prefs;
 	$ext = strtolower(pathinfo($fullpath, PATHINFO_EXTENSION));
 	print '<div class="clickable clicktrack playable ninesix draggable indent containerbox padright line brick_wide" name="'.
 		rawurlencode($fullpath).'">';
@@ -198,8 +197,6 @@ class mpdlistthing {
 	}
 
 	public function newItem($filedata) {
-
-		global $prefs;
 
 		// This should only be called from outside the tree.
 		// This is the root object's pre-parser
@@ -274,7 +271,7 @@ class mpdlistthing {
 			}
 
 		} else {
-			if ($prefs['player_backend'] == "mopidy") {
+			if (prefs::$prefs['player_backend'] == "mopidy") {
 				$filedata['file_display_name'] = (array_key_exists('Title', $filedata)) ?
 					$filedata['Title'] : basename($decodedpath);
 			} else {

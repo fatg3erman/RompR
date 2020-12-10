@@ -39,7 +39,6 @@ class url_downloader {
 	protected $options;
 
 	public function __construct($options) {
-		global $prefs;
 		$this->options = array_merge($this->default_options, $options);
 		$this->ch = curl_init();
 		curl_setopt($this->ch, CURLOPT_URL, $this->options['url']);
@@ -50,11 +49,11 @@ class url_downloader {
 		curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($this->ch, CURLOPT_TIMEOUT, $this->options['timeout']);
 		curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, $this->options['connection_timeout']);
-		if ($prefs['proxy_host'] != "") {
-			curl_setopt($this->ch, CURLOPT_PROXY, $prefs['proxy_host']);
+		if (prefs::$prefs['proxy_host'] != "") {
+			curl_setopt($this->ch, CURLOPT_PROXY, prefs::$prefs['proxy_host']);
 		}
-		if ($prefs['proxy_user'] != "" && $prefs['proxy_password'] != "") {
-			curl_setopt($this->ch, CURLOPT_PROXYUSERPWD, $prefs['proxy_user'].':'.$prefs['proxy_password']);
+		if (prefs::$prefs['proxy_user'] != "" && prefs::$prefs['proxy_password'] != "") {
+			curl_setopt($this->ch, CURLOPT_PROXYUSERPWD, prefs::$prefs['proxy_user'].':'.prefs::$prefs['proxy_password']);
 		}
 		curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
 		if ($this->options['header']) {

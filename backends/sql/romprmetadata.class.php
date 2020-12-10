@@ -81,15 +81,15 @@ class romprmetadata {
 
 		switch ($data['artist']) {
 			case 'geturisfordir':
-				$ttids = romprmetadata::geturisfordir($data);
+				$ttids = self::geturisfordir($data);
 				break;
 
 			case  'geturis':
-				$ttids = romprmetadata::geturis($data);
+				$ttids = self::geturis($data);
 				break;
 
 			default:
-				$ttids = romprmetadata::find_item($data, forcedUriOnly($data['urionly'], getDomain($data['uri'])));
+				$ttids = self::find_item($data, self::forced_uri_only($data['urionly'], getDomain($data['uri'])));
 				break;
 		}
 
@@ -107,7 +107,7 @@ class romprmetadata {
 		}
 
 		if (count($ttids) > 0) {
-			if (romprmetadata::doTheSetting($ttids, $data['attributes'], $data['uri'])) {
+			if (self::doTheSetting($ttids, $data['attributes'], $data['uri'])) {
 			} else {
 				header('HTTP/1.1 417 Expectation Failed');
 				$returninfo['error'] = 'Setting attributes failed';
@@ -130,7 +130,7 @@ class romprmetadata {
 		// this makes most sense I think.
 
 		global $returninfo;
-		$ttids = romprmetadata::find_item($data, $urionly);
+		$ttids = self::find_item($data, $urionly);
 
 		// As we check by URI we can only have one result.
 		$ttid = null;
@@ -155,7 +155,7 @@ class romprmetadata {
 			$ttid = create_new_track($data);
 		}
 
-		romprmetadata::doTheSetting(array($ttid), $data['attributes'], $data['uri']);
+		self::doTheSetting(array($ttid), $data['attributes'], $data['uri']);
 	}
 
 	public static function inc($data) {
@@ -171,21 +171,21 @@ class romprmetadata {
 			print json_encode(array('error' => 'Artist or Title or Attributes not set'));
 			exit(0);
 		}
-		$ttids = romprmetadata::find_item($data, forcedUriOnly(false,getDomain($data['uri'])));
+		$ttids = self::find_item($data, self::forced_uri_only(false,getDomain($data['uri'])));
 		if (count($ttids) == 0) {
 			logger::trace("INC", "Doing an INCREMENT action - Found NOTHING so creating hidden track");
 			$data['hidden'] = 1;
 			$ttids[0] = create_new_track($data);
 		}
 
-		romprmetadata::checkLastPlayed($data);
+		self::checkLastPlayed($data);
 
 		if (count($ttids) > 0) {
 			foreach ($ttids as $ttid) {
 				logger::trace("INC", "Doing an INCREMENT action - Found TTID ",$ttid);
 				foreach ($data['attributes'] as $pair) {
 					logger::log("INC", "(Increment) Setting",$pair["attribute"],"to",$pair["value"],"on",$ttid);
-					romprmetadata::increment_value($ttid, $pair["attribute"], $pair["value"], $data['lastplayed']);
+					self::increment_value($ttid, $pair["attribute"], $pair["value"], $data['lastplayed']);
 				}
 				$returninfo['metadata'] = get_all_data($ttid);
 			}
@@ -335,14 +335,14 @@ class romprmetadata {
 			exit(0);
 		}
 
-		$ttids = romprmetadata::find_item($data, forcedUriOnly(false,getDomain($data['uri'])));
+		$ttids = self::find_item($data, self::forced_uri_only(false,getDomain($data['uri'])));
 		if (count($ttids) == 0) {
-			$ttids = romprmetadata::inc($data);
-			romprmetadata::resetSyncCounts($ttids);
+			$ttids = self::inc($data);
+			self::resetSyncCounts($ttids);
 			return true;
 		}
 
-		romprmetadata::checkLastPlayed($data);
+		self::checkLastPlayed($data);
 		foreach ($ttids as $ttid) {
 			logger::log("SYNCINC", "Doing a SYNC action on TTID ".$ttid,'LastPlayed is',$data['lastplayed']);
 			$rowcount = generic_sql_query("UPDATE Playcounttable SET SyncCount = SyncCount - 1, LastPlayed = '".$data['lastplayed']."' WHERE TTindex = ".$ttid." AND SyncCount > 0",
@@ -359,11 +359,11 @@ class romprmetadata {
 				} else {
 					logger::log("SYNCINC", "  Track not found in Playcounttable");
 					$metadata = get_all_data($ttid);
-					romprmetadata::increment_value($ttid, 'Playcount', $metadata['Playcount'] + 1, $data['lastplayed']);
+					self::increment_value($ttid, 'Playcount', $metadata['Playcount'] + 1, $data['lastplayed']);
 					// At this point, SyncCount must have been zero but the update will have incremented it again,
 					// because of the trigger. resetSyncCounts takes care of this;
 				}
-				romprmetadata::resetSyncCounts(array($ttid));
+				self::resetSyncCounts(array($ttid));
 			}
 		}
 
@@ -396,13 +396,13 @@ class romprmetadata {
 			print json_encode(array('error' => 'Artist or Title not set'));
 			exit(0);
 		}
-		$ttids = romprmetadata::find_item($data, forcedUriOnly($data['urionly'], getDomain($data['uri'])));
+		$ttids = self::find_item($data, self::forced_uri_only($data['urionly'], getDomain($data['uri'])));
 		if (count($ttids) > 0) {
 			foreach ($ttids as $ttid) {
 				$result = true;
 				foreach ($data['attributes'] as $pair) {
 					logger::log("REMOVE", "Removing",$pair);
-					$r = romprmetadata::remove_tag($ttid, $pair["value"]);
+					$r = self::remove_tag($ttid, $pair["value"]);
 					if ($r == false) {
 						logger::warn("REMOVE", "FAILED Removing",$pair);
 						$result = false;
@@ -429,7 +429,7 @@ class romprmetadata {
 			print json_encode(array('error' => 'Artist or Title not set'));
 			exit(0);
 		}
-		$ttids = romprmetadata::find_item($data, forcedUriOnly(false, getDomain($data['uri'])));
+		$ttids = self::find_item($data, self::forced_uri_only(false, getDomain($data['uri'])));
 		if (count($ttids) > 0) {
 			$ttid = array_shift($ttids);
 			$returninfo = get_all_data($ttid);
@@ -440,7 +440,7 @@ class romprmetadata {
 
 	public static function setalbummbid($data) {
 		global $returninfo, $nodata;
-		$ttids = romprmetadata::find_item($data, forcedUriOnly(false, getDomain($data['uri'])));
+		$ttids = self::find_item($data, self::forced_uri_only(false, getDomain($data['uri'])));
 		if (count($ttids) > 0) {
 			foreach ($ttids as $ttid) {
 				logger::trace("BACKEND", "Updating album MBID ".$data['attributes']." from TTindex ".$ttid);
@@ -453,7 +453,7 @@ class romprmetadata {
 	}
 
 	public static function updateAudiobookState($data) {
-		$ttids = romprmetadata::find_item($data, forcedUriOnly(false, getDomain($data['uri'])));
+		$ttids = self::find_item($data, self::forced_uri_only(false, getDomain($data['uri'])));
 		if (count($ttids) > 0) {
 			foreach ($ttids as $ttid) {
 				logger::log('SQL', 'Setting Audiobooks state for TTIndex',$ttid,'to',$data['isaudiobook']);
@@ -470,7 +470,7 @@ class romprmetadata {
 	}
 
 	public static function amendalbum($data) {
-		if ($data['albumindex'] !== null && romprmetadata::amend_album($data['albumindex'], $data['albumartist'], $data['date'])) {
+		if ($data['albumindex'] !== null && self::amend_album($data['albumindex'], $data['albumartist'], $data['date'])) {
 		} else {
 			header('HTTP/1.1 400 Bad Request');
 			$returninfo['error'] = 'That just did not work';
@@ -478,7 +478,7 @@ class romprmetadata {
 	}
 
 	public static function deletealbum($data) {
-		if ($data['albumindex'] !== null && romprmetadata::delete_album($data['albumindex'])) {
+		if ($data['albumindex'] !== null && self::delete_album($data['albumindex'])) {
 		} else {
 			header('HTTP/1.1 400 Bad Request');
 			$returninfo['error'] = 'That just did not work';
@@ -486,7 +486,7 @@ class romprmetadata {
 	}
 
 	public static function setasaudiobook($data) {
-		if ($data['albumindex'] !== null && romprmetadata::set_as_audiobook($data['albumindex'], $data['value'])) {
+		if ($data['albumindex'] !== null && self::set_as_audiobook($data['albumindex'], $data['value'])) {
 		} else {
 			header('HTTP/1.1 400 Bad Request');
 			$returninfo['error'] = 'That just did not work';
@@ -494,7 +494,7 @@ class romprmetadata {
 	}
 
 	public static function deletetag($data) {
-		if (romprmetadata::remove_tag_from_db($data['value'])) {
+		if (self::remove_tag_from_db($data['value'])) {
 		} else {
 			header('HTTP/1.1 400 Bad Request');
 			$returninfo['error'] = 'Well, that went well';
@@ -502,21 +502,21 @@ class romprmetadata {
 	}
 
 	public static function delete($data) {
-		$ttids = romprmetadata::find_item($data, true);
+		$ttids = self::find_item($data, true);
 		if (count($ttids) == 0) {
 			header('HTTP/1.1 400 Bad Request');
 			$returninfo['error'] = 'TTindex not found';
 		} else {
-			romprmetadata::delete_track(array_shift($ttids));
+			self::delete_track(array_shift($ttids));
 		}
 	}
 
 	public static function deletewl($data) {
-		romprmetadata::delete_track($data['wltrack']);
+		self::delete_track($data['wltrack']);
 	}
 
 	public static function deleteid($data) {
-		romprmetadata::delete_track($data['ttid']);
+		self::delete_track($data['ttid']);
 	}
 
 	public static function getcharts($data) {
@@ -537,7 +537,7 @@ class romprmetadata {
 
 	// Private Functions
 
-	static function geturisfordir($data) {
+	private static function geturisfordir($data) {
 		global $PLAYER_TYPE;
 		$player = new $PLAYER_TYPE();
 		$uris = $player->get_uris_for_directory($data['uri']);
@@ -549,7 +549,7 @@ class romprmetadata {
 		return $ttids;
 	}
 
-	static function geturis($data) {
+	private static function geturis($data) {
 		$uris = getItemsToAdd($data['uri'], "");
 		$ttids = array();
 		foreach ($uris as $uri) {
@@ -560,21 +560,21 @@ class romprmetadata {
 		return $ttids;
 	}
 
-	static function print_debug_ttids($ttids, $s) {
+	private static function print_debug_ttids($ttids, $s) {
 		$time = time() - $s;
 		if (count($ttids) > 0) {
 			logger::info("TIMINGS", "    Found TTindex(es)",$ttids,"in",$time,"seconds");
 		}
 	}
 
-	static function find_item($data,$urionly) {
+	private static function find_item($data,$urionly) {
 
-		// romprmetadata::find_item
+		// self::find_item
 		//		Looks for a track in the database based on uri, title, artist, album, and albumartist or
 		//		combinations of those
 		//		Returns: Array of TTindex
 
-		// romprmetadata::find_item is used by userRatings to find tracks on which to update or display metadata.
+		// self::find_item is used by userRatings to find tracks on which to update or display metadata.
 		// It is NOT used when the collection is created
 
 		// When Setting Metadata we do not use a URI because we might have mutliple versions of the
@@ -600,7 +600,7 @@ class romprmetadata {
 		// FIXME! There is one scenario where the above fails.
 		// If you tag or rate a track, and then add it to the collection again from another backend
 		// later on, the rating doesn't get picked up by the new copy.
-		// Looking everything up by name/album/artist (i.e. ignoring the URI in romprmetadata::find_item)
+		// Looking everything up by name/album/artist (i.e. ignoring the URI in self::find_item)
 		// doesn't fix this because the collection display still doesn't show the rating as that's
 		// looked up by TTindex
 
@@ -614,7 +614,7 @@ class romprmetadata {
 		}
 
 		if ($data['artist'] == null || $data['title'] == null || ($urionly && $data['uri'])) {
-			romprmetadata::print_debug_ttids($ttids, $start_time);
+			self::print_debug_ttids($ttids, $start_time);
 			return $ttids;
 		}
 
@@ -713,11 +713,11 @@ class romprmetadata {
 				}
 			}
 		}
-		romprmetadata::print_debug_ttids($ttids, $start_time);
+		self::print_debug_ttids($ttids, $start_time);
 		return $ttids;
 	}
 
-	static function increment_value($ttid, $attribute, $value, $lp) {
+	private static function increment_value($ttid, $attribute, $value, $lp) {
 
 		// Increment_value doesn't 'increment' as such - it's used for setting values on tracks without
 		// unhiding them. It's used for Playcount, which was originally an 'increment' type function but
@@ -734,7 +734,7 @@ class romprmetadata {
 
 	}
 
-	static function set_attribute($ttid, $attribute, $value) {
+	private static function set_attribute($ttid, $attribute, $value) {
 
 		// set_attribute
 		//		Sets an attribute (Rating, Tag etc) on a TTindex.
@@ -748,7 +748,7 @@ class romprmetadata {
 		return true;
 	}
 
-	static function doTheSetting($ttids, $attributes, $uri) {
+	private static function doTheSetting($ttids, $attributes, $uri) {
 		global $returninfo;
 		$result = true;
 		logger::debug("USERRATING", "Checking For attributes");
@@ -760,16 +760,16 @@ class romprmetadata {
 					logger::log("USERRATING", "Setting",$pair["attribute"],"to",$pair['value'],"on TTindex",$ttid);
 					switch ($pair['attribute']) {
 						case 'Tags':
-							$result = romprmetadata::addTags($ttid, $pair['value']);
+							$result = self::addTags($ttid, $pair['value']);
 							break;
 
 						default:
-							$result = romprmetadata::set_attribute($ttid, $pair["attribute"], $pair["value"]);
+							$result = self::set_attribute($ttid, $pair["attribute"], $pair["value"]);
 							break;
 					}
 					if (!$result) { break; }
 				}
-				romprmetadata::check_audiobook_status($ttid);
+				self::check_audiobook_status($ttid);
 				if ($uri) {
 					$returninfo['metadata'] = get_all_data($ttid);
 				}
@@ -778,8 +778,7 @@ class romprmetadata {
 		return $result;
 	}
 
-	static function check_audiobook_status($ttid) {
-		global $prefs;
+	private static function check_audiobook_status($ttid) {
 		$albumindex = generic_sql_query("SELECT Albumindex FROM Tracktable WHERE TTindex = ".$ttid, false, null, 'Albumindex', null);
 		if ($albumindex !== null) {
 			$sorter = choose_sorter_by_key('zalbum'.$albumindex);
@@ -791,7 +790,7 @@ class romprmetadata {
 		}
 	}
 
-	static function addTags($ttid, $tags) {
+	private static function addTags($ttid, $tags) {
 
 		// addTags
 		//		Add a list of tags to a TTindex
@@ -801,7 +800,7 @@ class romprmetadata {
 			if ($t == '') continue;
 			logger::log("ADD TAGS", "Adding Tag",$t,"to TTindex",$ttid);
 			$tagindex = sql_prepare_query(false, null, 'Tagindex', null, "SELECT Tagindex FROM Tagtable WHERE Name=?", $t);
-			if ($tagindex == null) $tagindex = romprmetadata::create_new_tag($t);
+			if ($tagindex == null) $tagindex = self::create_new_tag($t);
 			if ($tagindex == null) {
 				logger::warn("ADD TAGS", "    Could not create tag",$t);
 				return false;
@@ -817,7 +816,7 @@ class romprmetadata {
 		return true;
 	}
 
-	static function create_new_tag($tag) {
+	private static function create_new_tag($tag) {
 
 		// create_new_tags
 		//		Creates a new entry in Tagtable
@@ -832,7 +831,7 @@ class romprmetadata {
 		return $tagindex;
 	}
 
-	static function remove_tag($ttid, $tag) {
+	private static function remove_tag($ttid, $tag) {
 
 		// remove_tags
 		//		Removes a tag relation from a TTindex
@@ -847,19 +846,19 @@ class romprmetadata {
 		return $retval;
 	}
 
-	static function remove_tag_from_db($tag) {
+	private static function remove_tag_from_db($tag) {
 		logger::mark("REMOVE TAG", "Removing Tag",$tag,",from database");
 		return sql_prepare_query(true, null, null, null, "DELETE FROM Tagtable WHERE Name=?", $tag);
 	}
 
-	static function delete_track($ttid) {
+	private static function delete_track($ttid) {
 		if (remove_ttid($ttid)) {
 		} else {
 			header('HTTP/1.1 400 Bad Request');
 		}
 	}
 
-	static function amend_album($albumindex, $newartist, $date) {
+	private static function amend_album($albumindex, $newartist, $date) {
 		logger::mark("AMEND ALBUM", "Updating Album index",$albumindex,"with new artist",$newartist,"and new date",$date);
 		$artistindex = ($newartist == null) ? null : check_artist($newartist);
 		$result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, "SELECT * FROM Albumtable WHERE Albumindex = ?", $albumindex);
@@ -892,314 +891,31 @@ class romprmetadata {
 		return true;
 	}
 
-	static function delete_album($albumindex) {
+	private static function delete_album($albumindex) {
 		$result = generic_sql_query('DELETE FROM Tracktable WHERE Albumindex = '.$albumindex);
 		return true;
 	}
 
-	static function set_as_audiobook($albumindex, $value) {
+	private static function set_as_audiobook($albumindex, $value) {
 		$result = sql_prepare_query(true, null, null, null, 'UPDATE Tracktable SET isAudiobook = ?, justAdded = 1 WHERE Albumindex = ?', $value, $albumindex);
 		return $result;
 	}
 
-}
+	private static function forced_uri_only($u,$d) {
 
-function forcedUriOnly($u,$d) {
+		// Some mopidy backends - YouTube and SoundCloud - can return the same artist/album/track info
+		// for multiple different tracks.
+		// This gives us a problem because self::find_item will think they're the same.
+		// So for those backends we always force urionly to be true
+		logger::debug("USERRATINGS", "Checking domain : ".$d);
 
-	// Some mopidy backends - YouTube and SoundCloud - can return the same artist/album/track info
-	// for multiple different tracks.
-	// This gives us a problem because romprmetadata::find_item will think they're the same.
-	// So for those backends we always force urionly to be true
-	logger::debug("USERRATINGS", "Checking domain : ".$d);
-
-	if ($u || $d == "youtube" || $d == "soundcloud") {
-		return true;
-	} else {
-		return false;
-	}
-
-}
-
-function preparePlaylist() {
-	generic_sql_query('UPDATE Tracktable SET usedInPlaylist = 0 WHERE usedInPlaylist = 1');
-	init_random_albums();
-}
-
-function doPlaylist($playlist, $limit) {
-	global $prefs;
-	logger::mark("SMARTRADIO", "Loading Playlist",$playlist,'limit',$limit);
-	$sqlstring = "";
-	$tags = null;
-	$random = true;
-	switch($playlist) {
-		case "1stars":
-			$sqlstring = "SELECT Uri FROM Tracktable JOIN Ratingtable USING (TTindex) WHERE Rating > 0";
-			break;
-		case "2stars":
-			$sqlstring = "SELECT Uri FROM Tracktable JOIN Ratingtable USING (TTindex) WHERE Rating > 1";
-			break;
-		case "3stars":
-			$sqlstring = "SELECT Uri FROM Tracktable JOIN Ratingtable USING (TTindex) WHERE Rating > 2";
-			break;
-		case "4stars":
-			$sqlstring = "SELECT Uri FROM Tracktable JOIN Ratingtable USING (TTindex) WHERE Rating > 3";
-			break;
-		case "5stars":
-			$sqlstring = "SELECT Uri FROM Tracktable JOIN Ratingtable USING (TTindex) WHERE Rating > 4";
-			break;
-
-		case "recentlyadded_byalbum":
-			$random = false;
-		case "recentlyadded_random":
-			$sqlstring = sql_recent_tracks();
-			break;
-
-		case "favealbums":
-			$avgplays = getAveragePlays();
-			$sqlstring = "SELECT Uri FROM Tracktable JOIN Albumtable USING (Albumindex)
-				WHERE Albumindex IN
-				(SELECT Albumindex FROM Tracktable JOIN Playcounttable USING (TTindex)
-				LEFT JOIN Ratingtable USING (TTindex) WHERE Uri IS NOT NULL
-				AND (Playcount > ".$avgplays." OR Rating IS NOT NULL))";
-			$random = false;
-			break;
-
-		case "mostplayed":
-			// Used to be tracks with above average playcount, now also includes any rated tracks.
-			// Still called mostplayed :)
-			$avgplays = getAveragePlays();
-			$sqlstring = "SELECT Uri FROM Tracktable JOIN Playcounttable USING (TTindex)
-				LEFT JOIN Ratingtable USING (TTindex) WHERE Uri IS NOT NULL
-				AND (Playcount > ".$avgplays." OR Rating IS NOT NULL)";
-			break;
-
-		case "allrandom":
-			$sqlstring = "SELECT Uri FROM Tracktable WHERE Uri IS NOT NULL AND Hidden=0 AND
-				isSearchResult < 2";
-			break;
-
-		case "neverplayed":
-			$sqlstring = "SELECT Tracktable.Uri FROM Tracktable LEFT JOIN Playcounttable ON
-				Tracktable.TTindex = Playcounttable.TTindex WHERE Playcounttable.TTindex IS NULL";
-			break;
-
-		case "recentlyplayed":
-			$sqlstring = recently_played_playlist();
-			break;
-
-		default:
-			if (preg_match('/^(\w+)\+(.+)$/', $playlist, $matches)) {
-				$fn = 'smart_radio_'.$matches[1];
-				list($sqlstring, $tags) = $fn($matches[2]);
-			} else {
-				logger::warn("SMART RADIO", "Unrecognised playlist",$playlist);
-			}
-			break;
-	}
-	$sqlstring .= ' AND (LinkChecked = 0 OR LinkChecked = 2) AND isAudiobook = 0 AND usedInPlaylist = 0 AND isSearchResult < 2 AND Hidden = 0 AND Uri IS NOT NULL';
-	if ($prefs['collection_player'] == 'mopidy' && $prefs['player_backend'] == 'mpd') {
-		$sqlstring .= ' AND Uri LIKE "local:%"';
-	}
-	$uris = getAllURIs($sqlstring, $limit, $tags, $random);
-	$json = array();
-	foreach ($uris as $u) {
-		$json[] = array( 'type' => 'uri', 'name' => $u);
-	}
-	return $json;
-}
-
-function smart_radio_tag($param) {
-	$taglist = explode(',', $param);
-	$sqlstring = 'SELECT DISTINCT Uri FROM Tracktable JOIN TagListtable USING (TTindex) JOIN Tagtable USING (Tagindex) WHERE ';
-	// Concatenate this bracket here otherwise Atom's syntax colouring goes haywire
-	$sqlstring .= '(';
-	$tags = array();
-	foreach ($taglist as $i => $tag) {
-		logger::trace("SMART RADIO", "Getting tag playlist for",$tag);
-		$tags[] = strtolower(trim($tag));
-		if ($i > 0) {
-			$sqlstring .= " OR ";
-		}
-		$sqlstring .=  "LOWER(Tagtable.Name) = ?";
-	}
-	$sqlstring .= ")";
-	return array($sqlstring, $tags);
-}
-
-function smart_radio_genre($param) {
-	$genrelist = explode(',', $param);
-	$sqlstring = 'SELECT DISTINCT Uri FROM Tracktable JOIN Genretable USING (Genreindex) WHERE ';
-	// Concatenate this bracket here otherwise Atom's syntax colouring goes haywire
-	$sqlstring .= '(';
-	$tags = array();
-	foreach ($genrelist as $i => $genre) {
-		logger::trace("SMART RADIO", "Getting genre playlist for",$genre);
-		$tags[] = strtolower(trim($genre));
-		if ($i > 0) {
-			$sqlstring .= " OR ";
-		}
-		$sqlstring .=  "LOWER(Genre) = ?";
-	}
-	$sqlstring .= ")";
-	return array($sqlstring, $tags);
-}
-
-function smart_radio_artist($param) {
-	$artistlist = explode(',', $param);
-	$sqlstring = 'SELECT DISTINCT Uri FROM Tracktable JOIN Artisttable USING (Artistindex) WHERE ';
-	// Concatenate this bracket here otherwise Atom's syntax colouring goes haywire
-	$sqlstring .= '(';
-	$tags = array();
-	foreach ($artistlist as $i => $artist) {
-		logger::trace("SMART RADIO", "Getting artist playlist for",$artist);
-		$tags[] = strtolower(trim($artist));
-		if ($i > 0) {
-			$sqlstring .= " OR ";
-		}
-		$sqlstring .=  "LOWER(Artistname) = ?";
-	}
-	$sqlstring .= ")";
-	return array($sqlstring, $tags);
-}
-
-function smart_radio_custom($param) {
-	$station = json_decode(file_get_contents('prefs/customradio/'.format_for_disc($param).'.json'), true);
-	$tags = array();
-	$sqlstring = "SELECT DISTINCT Uri FROM
-		Tracktable
-		JOIN Artisttable AS ta USING (Artistindex)
-		JOIN Albumtable USING (Albumindex)
-		JOIN Artisttable AS aa ON (Albumtable.AlbumArtistindex = aa.Artistindex)
-		LEFT JOIN Genretable USING (Genreindex)
-		LEFT JOIN Ratingtable USING (TTindex)
-		LEFT JOIN Playcounttable USING (TTindex)
-		LEFT JOIN TagListtable USING (TTindex)
-		LEFT JOIN Tagtable USING (Tagindex)
-		WHERE (";
-	foreach ($station['rules'] as $i => $rule) {
-		if ($i > 0) {
-			$sqlstring .= $station['combine_option'];
-		}
-		$values = explode(',', $rule['value']);
-		$sqlstring .= '(';
-		foreach ($values as $j => $value) {
-			logger::log('CUSTOMRADIO',$rule['db_key'],$value);
-			if ($j > 0) {
-				switch ($rule['option']) {
-					case RADIO_RULE_OPTIONS_STRING_IS:
-					case RADIO_RULE_OPTIONS_STRING_CONTAINS:
-						$sqlstring .= ' OR ';
-						break;
-
-					case RADIO_RULE_OPTIONS_STRING_IS_NOT:
-					case RADIO_RULE_OPTIONS_STRING_NOT_CONTAINS:
-						$sqlstring .= ' AND ';
-						break;
-
-					default:
-						logger::error('CUSTOMRADIO', 'Multiple values in integer option!');
-						break;
-				}
-			}
-
-			if (preg_match('/db_function_(.+)$/', $rule['db_key'], $matches)) {
-				$function = $matches[1];
-				$sqlstring .= $function($rule['option'], trim($value));
-			} else {
-				switch ($rule['option']) {
-					case RADIO_RULE_OPTIONS_STRING_IS:
-						$tags[] = strtolower(trim($value));
-						$sqlstring .= 'LOWER('.$rule['db_key'].') = ?';
-						break;
-
-					case RADIO_RULE_OPTIONS_STRING_IS_NOT:
-						$tags[] = strtolower(trim($value));
-						$sqlstring .= 'LOWER('.$rule['db_key'].') IS NOT ?';
-						break;
-						break;
-
-					case RADIO_RULE_OPTIONS_STRING_CONTAINS:
-						$tags[] = "%".strtolower(trim($value))."%";
-						$sqlstring .= 'LOWER('.$rule['db_key'].") LIKE ?";
-						break;
-
-					case RADIO_RULE_OPTIONS_STRING_NOT_CONTAINS:
-						$tags[] = "%".strtolower(trim($value))."%";
-						$sqlstring .= 'LOWER('.$rule['db_key'].") NOT LIKE ?";
-						break;
-
-					case RADIO_RULE_OPTIONS_INTEGER_LESSTHAN:
-						$tags[] = trim($value);
-						$sqlstring .= $rule['db_key'].' < ?';
-						break;
-
-					case RADIO_RULE_OPTIONS_INTEGER_EQUALS:
-						$tags[] = trim($value);
-						$sqlstring .= $rule['db_key'].' = ?';
-						break;
-
-					case RADIO_RULE_OPTIONS_INTEGER_GREATERTHAN:
-						$tags[] = trim($value);
-						$sqlstring .= $rule['db_key'].' > ?';
-						break;
-
-					case RADIO_RULE_OPTIONS_STRING_EXISTS:
-						$sqlstring .= $rule['db_key'].' IS NOT NULL';
-						break;
-
-					default:
-						logger::error('CUSTOMRADIO', 'Unknown Option Value',$rule['option']);
-						break;
-
-				}
-			}
-
-		}
-		$sqlstring.= ')';
-
-	}
-	$sqlstring .= ")";
-
-	return array($sqlstring, $tags);
-}
-
-function getAllURIs($sqlstring, $limit, $tags, $random = true) {
-
-	// Get all track URIs using a supplied SQL string. For playlist generators
-	$uris = array();
-	$tries = 0;
-	$rndstr = $random ? " ORDER BY ".SQL_RANDOM_SORT : " ORDER BY randomSort, Albumindex, Disc, TrackNo";
-	$sqlstring .= ' '.$rndstr.' LIMIT '.$limit;
-	logger::log('GETALLURIS', $sqlstring);
-	if ($tags) {
-		foreach ($tags as $t) {
-			logger::log('GETALLURILS', '  Param :',$t);
-		}
-	}
-	do {
-		if ($tries == 1) {
-			logger::info("SMART PLAYLIST", "No URIs found. Resetting history table");
-			preparePlaylist();
-		}
-		if ($tags) {
-			$uris = sql_prepare_query(false, PDO::FETCH_COLUMN, 'Uri', null, $sqlstring, $tags);
+		if ($u || $d == "youtube" || $d == "soundcloud") {
+			return true;
 		} else {
-			$uris = sql_get_column($sqlstring, 'Uri');
+			return false;
 		}
-		$tries++;
-	} while (count($uris) == 0 && $tries < 2);
-	foreach ($uris as $uri) {
-		sql_prepare_query(true, null, null, null, 'UPDATE Tracktable SET usedInPlaylist = 1 WHERE Uri = ?', $uri);
-	}
-	if (count($uris) == 0) {
-		$uris = array('NOTRACKS!');
-	}
-	return $uris;
-}
 
-function getAveragePlays() {
-	$avgplays = simple_query('avg(Playcount)', 'Playcounttable', null, null, 0);
-	return round($avgplays, 0, PHP_ROUND_HALF_DOWN);
+	}
 }
 
 ?>

@@ -1,7 +1,7 @@
 <?php
 
 // Automatic Collection Updates can be performed using cURL:
-// curl -b "skin=desktop;currenthost=Default;player_backend=mpd" http://localhost/rompr/api/collection/?rebuild > /dev/null
+// curl -b "currenthost=Default;player_backend=mpd" http://localhost/rompr/api/collection/?rebuild > /dev/null
 // where currenthost is the name of one of the Players defined in the Configuration menu
 // and player_backend MUST be mpd or mopidy, depending on what your player is.
 // You can also use eg -b "debug_enabled=8;currenthost=MPD;player_backend=mpd"
@@ -30,7 +30,7 @@ switch (true) {
 	case array_key_exists('mpdsearch', $_REQUEST):
 		logit('mpdsearch');
 		// Handle an mpd-style search request
-		require_once ("player/".$prefs['player_backend']."/player.php");
+		require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 		require_once ("collection/collection.php");
 		$trackbytrack = true;
 		$doing_search = true;
@@ -40,7 +40,7 @@ switch (true) {
 	case array_key_exists('browsealbum', $_REQUEST):
 		logit('browsealbum');
 		// Populate a spotify album in mopidy's search results - as spotify doesn't return all tracks
-		require_once ("player/".$prefs['player_backend']."/player.php");
+		require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 		require_once ("collection/collection.php");
 		$trackbytrack = true;
 		$doing_search = true;
@@ -53,7 +53,7 @@ switch (true) {
 		// Note that raw_search uses the collection models but not the database
 		// hence $trackbytrack must be false
 		logger::log("MPD SEARCH", "Doing RAW search");
-		require_once ("player/".$prefs['player_backend']."/player.php");
+		require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 		require_once ("collection/collection.php");
 		require_once ("collection/dbsearch.php");
 		$doing_search = true;
@@ -63,7 +63,7 @@ switch (true) {
 	case array_key_exists('terms', $_REQUEST):
 		logit('terms');
 		// SQL database search request
-		require_once ("player/".$prefs['player_backend']."/player.php");
+		require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 		require_once ("collection/collection.php");
 		require_once ("collection/dbsearch.php");
 		$doing_search = true;
@@ -73,7 +73,7 @@ switch (true) {
 	case array_key_exists('rebuild', $_REQUEST):
 		logit('rebuild');
 		// This is a request to rebuild the music collection
-		require_once ("player/".$prefs['player_backend']."/player.php");
+		require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 		require_once ("collection/collection.php");
 		$trackbytrack = true;
 		update_collection();
@@ -141,7 +141,7 @@ function mpd_search() {
 	}
 	logger::log("MPD SEARCH", "Search command : ".$cmd);
 	if ($_REQUEST['resultstype'] == "tree") {
-		require_once ("player/mpd/filetree.php");
+		require_once ("collection/filetree.php");
 		require_once ("skins/".$skin."/ui_elements.php");
 		$player = new fileCollector();
 		$player->doFileSearch($cmd, $domains);
@@ -164,7 +164,7 @@ function mpd_search() {
 }
 
 function browse_album() {
-	global $PLAYER_TYPE, $skin, $prefs;
+	global $PLAYER_TYPE, $skin;
 	$a = preg_match('/^(a|b)(.*?)(\d+|root)/', $_REQUEST['browsealbum'], $matches);
 	if (!$a) {
 		print '<h3>'.language::gettext("label_general_error").'</h3>';

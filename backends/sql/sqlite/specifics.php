@@ -6,7 +6,7 @@ define('SQL_URI_CONCAT', "GROUP_CONCAT(Uri,',') ");
 define('STUPID_CONCAT_THING', "SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR ? LIKE '%' || Localfilename");
 
 function connect_to_database($sp = true) {
-	global $mysqlc, $prefs;
+	global $mysqlc;
 	if ($mysqlc !== null) {
 		logger::error("SQLITE", "AWOOOGA! ATTEMPTING MULTIPLE DATABASE CONNECTIONS!");
 		return;
@@ -34,7 +34,7 @@ function close_database() {
 }
 
 function check_sql_tables() {
-	global $mysqlc, $prefs;
+	global $mysqlc;
 
 	if (generic_sql_query("CREATE TABLE IF NOT EXISTS Tracktable(".
 		"TTindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
@@ -741,7 +741,7 @@ function check_sql_tables() {
 
 			case 44:
 				logger::log("SQL", "Updating FROM Schema version 44 TO Schema version 45");
-				upgrade_host_defs(45);
+				prefs::upgrade_host_defs(45);
 				generic_sql_query("UPDATE Statstable SET Value = 45 WHERE Item = 'SchemaVer'", true);
 				break;
 
@@ -764,7 +764,7 @@ function check_sql_tables() {
 
 			case 48:
 				logger::log("SQL", "Updating FROM Schema version 48 TO Schema version 49");
-				upgrade_host_defs(49);
+				prefs::upgrade_host_defs(49);
 				generic_sql_query("UPDATE Statstable SET Value = 49 WHERE Item = 'SchemaVer'", true);
 				break;
 
@@ -878,13 +878,13 @@ function check_sql_tables() {
 
 			case 67:
 				logger::log("SQL", "Updating FROM Schema version 67 TO Schema version 68");
-				upgrade_host_defs(68);
+				prefs::upgrade_host_defs(68);
 				generic_sql_query("UPDATE Statstable SET Value = 68 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 68:
 				logger::log("SQL", "Updating FROM Schema version 68 TO Schema version 69");
-				upgrade_host_defs(69);
+				prefs::upgrade_host_defs(69);
 				generic_sql_query("UPDATE Statstable SET Value = 69 WHERE Item = 'SchemaVer'", true);
 				break;
 

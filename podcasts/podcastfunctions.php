@@ -3,7 +3,6 @@
 require_once ('getid3/getid3.php');
 
 function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = true) {
-	global $prefs;
 	$url = preg_replace('#^itpc://#', 'http://', $url);
 	$url = preg_replace('#^feed://#', 'http://', $url);
 	logger::mark("PARSE_RSS", "Parsing Feed ".$url);
@@ -58,7 +57,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 				$podcast['RefreshOption'] = REFRESHOPTION_MONTHLY;
 				break;
 			default:
-				$podcast['RefreshOption'] = $prefs['default_podcast_refresh_mode'];
+				$podcast['RefreshOption'] = prefs::$prefs['default_podcast_refresh_mode'];
 				break;
 		}
 	} else if ($sy && $sy->updatePeriod) {
@@ -76,11 +75,11 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 				$podcast['RefreshOption'] = REFRESHOPTION_MONTHLY;
 				break;
 			default:
-				$podcast['RefreshOption'] = $prefs['default_podcast_refresh_mode'];
+				$podcast['RefreshOption'] = prefs::$prefs['default_podcast_refresh_mode'];
 				break;
 		}
 	} else {
-		$podcast['RefreshOption'] = $prefs['default_podcast_refresh_mode'];
+		$podcast['RefreshOption'] = prefs::$prefs['default_podcast_refresh_mode'];
 	}
 
 	// Episode Expiry
@@ -299,7 +298,7 @@ function parse_rss_feed($url, $id = false, $lastpubdate = null, $gettracks = tru
 }
 
 function getNewPodcast($url, $subbed = 1, $gettracks = true) {
-	global $mysqlc, $prefs;
+	global $mysqlc;
 	logger::mark("PODCASTS", "Getting podcast",$url);
 	$newpodid = null;
 	$podcast = parse_rss_feed($url, false, null, $gettracks);
@@ -329,8 +328,8 @@ function getNewPodcast($url, $subbed = 1, $gettracks = true) {
 		$podcast['Title'],
 		$podcast['Artist'],
 		$podcast['RefreshOption'],
-		$prefs['default_podcast_sort_mode'],
-		$prefs['default_podcast_display_mode'],
+		prefs::$prefs['default_podcast_sort_mode'],
+		prefs::$prefs['default_podcast_display_mode'],
 		$podcast['DaysLive'],
 		$podcast['Description'],
 		ROMPR_PODCAST_TABLE_VERSION,
@@ -450,7 +449,6 @@ function check_podcast_upgrade($podetails, $podid, $podcast) {
 }
 
 function refreshPodcast($podid) {
-	global $prefs;
 	check_refresh_pid();
 	logger::mark("PODCASTS", "---------------------------------------------------");
 	logger::mark("PODCASTS", "Refreshing podcast ",$podid);
@@ -463,7 +461,7 @@ function refreshPodcast($podid) {
 		return $podid;
 	}
 	$podcast = parse_rss_feed($podetails->FeedURL, $podid, $podetails->LastPubDate);
-	if ($podetails->Subscribed == 1 && $prefs['podcast_mark_new_as_unlistened']) {
+	if ($podetails->Subscribed == 1 && prefs::$prefs['podcast_mark_new_as_unlistened']) {
 		generic_sql_query("UPDATE PodcastTracktable SET New = 0 WHERE PODindex = ".$podetails->PODindex);
 	}
 	if ($podcast === false) {
@@ -480,7 +478,7 @@ function refreshPodcast($podid) {
 			),
 			$podid);
 		// Still check to keep (days to keep still needs to be honoured)
-		if (check_tokeep($podetails, $podid) || $prefs['podcast_mark_new_as_unlistened']) {
+		if (check_tokeep($podetails, $podid) || prefs::$prefs['podcast_mark_new_as_unlistened']) {
 			return $podid;
 		} else {
 			return false;
@@ -1308,7 +1306,6 @@ function check_podcast_refresh() {
 }
 
 function search_itunes($term) {
-	global $prefs;
 	logger::mark("PODCASTS", "Searching iTunes for '".$term."'");
 	generic_sql_query("DELETE FROM PodcastTracktable WHERE PODindex IN (SELECT PODindex FROM Podcasttable WHERE Subscribed = 0)", true);
 	generic_sql_query("DELETE FROM Podcasttable WHERE Subscribed = 0", true);
@@ -1350,9 +1347,9 @@ function search_itunes($term) {
 					$img,
 					$podcast['collectionName'],
 					$podcast['artistName'],
-					$prefs['default_podcast_refresh_mode'],
-					$prefs['default_podcast_sort_mode'],
-					$prefs['default_podcast_display_mode'],
+					prefs::$prefs['default_podcast_refresh_mode'],
+					prefs::$prefs['default_podcast_sort_mode'],
+					prefs::$prefs['default_podcast_display_mode'],
 					0,
 					'',
 					ROMPR_PODCAST_TABLE_VERSION,

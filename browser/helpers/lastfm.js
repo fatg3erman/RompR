@@ -120,7 +120,7 @@ function LastFM() {
 			case "interface":
 				if (interfaceLanguage.substr(2,1) == '-') {
 					// Just in case it's "pirate";
-					return interfacelanguage.substr(0,2);
+					return interfaceLanguage.substr(0,2);
 				} else {
 					return 'en';
 				}

@@ -3,14 +3,15 @@
 This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
-## Version 1.51
-* Minor bugfixes
+## Version 1.52
 * Rewrote the Snapcast code so it updates faster and the UI is neater and more useable. Note that RompR now uses the snapcast JSON-RPC API for
 Snapcast so you may need to change the port you are using and make sure that API is enabled in your snapserver configuration. (The default port is 1780)
 * Event-driven updates for Mopidy using Mopidy-HTTP. See [here](/RompR/Rompr-And-Mopidy)
 * Album Art Search now uses Bing instead of Google Images because Google broke my code and Bing's API is better
 * New option to use the Snapcast Volume Control instead of the main volume control
 * Completely re-written info panel code is faster and more efficient
+* Large amount of code re-organisation. Certain endpoints have changed. If you're using any automation by calling RompR's endpoints you should re-check the docs.
+* New dependency on php-intl. You should install this package.
 
 ## Version 1.50
 * Added function to download YouTube videos (when using Mopidy-Youtube) and save the audio locally for future streaming. See [here](/RompR/Rompr-And-Mopidy) as there are specific requirements for this to work.

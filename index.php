@@ -7,39 +7,6 @@ header("Expires: 0");
 header("Content-Type: text/html; charset=UTF-8");
 
 require_once ("includes/vars.php");
-if (array_key_exists('language', $prefs)) {
-	$newlangs = [
-		'de' => 'de-DE',
-		'en' => 'en-GB',
-		'fr' => 'fr-FR',
-		'it' => 'it-IT',
-		'ru' => 'ru-RU',
-		'pirate' => 'pirate'
-	];
-	$prefs['interface_language'] = $newlangs[$prefs['language']];
-	logger::mark('INIT', 'Upgrading interface language from',$prefs['language'],'to',$prefs['interface_language']);
-	unset($prefs['language']);
-	savePrefs();
-}
-
-//
-// Check to see if this is a mobile browser
-//
-if ($skin === null) {
-	logger::mark("INIT", "Detecting browser...");
-	require_once('includes/Mobile_Detect.php');
-	$md = new Mobile_Detect;
-	if ($md->isMobile() || $md->isTablet()) {
-		logger::info('INIT', 'Browser is a mobile browser');
-		$skin = 'phone';
-	} else {
-		logger::info('INIT', 'Browser is a desktop browser');
-		$skin = 'desktop';
-	}
-	setcookie('skin', $skin, time()+365*24*60*60*10,'/');
-}
-
-logger::debug("INIT", "Using skin : ".$skin);
 
 if (!is_dir('skins/'.$skin)) {
 	print '<h3>Skin '.htmlspecialchars($skin).' does not exist!</h3>';
@@ -59,12 +26,16 @@ if (file_exists('skins/'.$skin.'/skin.requires')) {
 
 require_once ("includes/functions.php");
 
+//
+// Check to see if a specific player has been requested in the URL
+//
+
 if (isset($_GET['currenthost'])) {
     setcookie('currenthost',$_GET['currenthost'],time()+365*24*60*60*10,'/');
     setcookie('player_backend','',1,'/');
-    $prefs['currenthost'] = $_GET['currenthost'];
-    $prefs['player_backend'] = 'none';
-    savePrefs();
+    prefs::$prefs['currenthost'] = $_GET['currenthost'];
+    prefs::$prefs['player_backend'] = 'none';
+    prefs::save();
 	header("HTTP/1.1 307 Temporary Redirect");
    	header("Location: ".get_base_url());
     exit;
@@ -72,63 +43,13 @@ if (isset($_GET['currenthost'])) {
 
 set_version_string();
 require_once ("skins/".$skin."/ui_elements.php");
+prefs::check_setup_values();
+upgrade_old_collections();
 
-//
-// See if there are any POST values from the setup screen
-//
-
-if (array_key_exists('currenthost', $_POST)) {
-	foreach (array('cleanalbumimages', 'do_not_show_prefs', 'separate_collections') as $p) {
-		if (array_key_exists($p, $_POST)) {
-			$_POST[$p] = true;
-		} else {
-			$_POST[$p] = false;
-		}
-	}
-	foreach ($_POST as $i => $value) {
-		logger::mark("INIT", "Setting Pref ".$i." to ".$value);
-		$prefs[$i] = $value;
-	}
-	setcookie('currenthost',$prefs['currenthost'],time()+365*24*60*60*10,'/');
-
-	$mopidy_remote = false;
-	if (property_exists($prefs['multihosts']->{$prefs['currenthost']}, 'mopidy_remote')) {
-		$mopidy_remote = $prefs['multihosts']->{$prefs['currenthost']}->mopidy_remote;
-	}
-	$prefs['multihosts']->{$prefs['currenthost']} = (object) array(
-			'host' => $prefs['mpd_host'],
-			'port' => $prefs['mpd_port'],
-			'password' => $prefs['mpd_password'],
-			'socket' => $prefs['unix_socket'],
-			'mopidy_remote' => $mopidy_remote,
-			'radioparams' => (object) array (
-				"radiomode" => "",
-				"radioparam" => "",
-				"radiomaster" => "",
-				"radioconsume" => 0
-			)
-	);
-	savePrefs();
-}
-
-$collections = glob('prefs/collection_{mpd,mopidy}.sq3', GLOB_BRACE);
-if (count($collections) > 0) {
-	logger::mark('UPGRADE', 'Old-style twin sqlite collections found');
-	@mkdir('prefs/oldcollections');
-	$time = 0;
-	$newest = null;
-	foreach ($collections as $file) {
-		if (filemtime($file) > $time) {
-			$newest = $file;
-			$time = filemtime($file);
-		}
-	}
-	logger::mark('UPGRADE', "Newest file is",$newest);
-	copy($newest, 'prefs/collection.sq3');
-	foreach ($collections as $file) {
-		logger::log('UPGRADE', 'Moving',$file,'to','prefs/oldcollections/'.basename($file));
-		rename($file, 'prefs/oldcollections/'.basename($file));
-	}
+if (!prefs::$prefs['country_userset']) {
+	// Set the country code from the browser, though this may not be accurate.
+	// Later on we set it using geoip.
+	prefs::$prefs['lastfm_country_code'] = language::get_browser_country();
 }
 
 logger::debug("INIT", $_SERVER['SCRIPT_FILENAME']);
@@ -144,8 +65,11 @@ if (array_key_exists('setup', $_REQUEST)) {
 	exit();
 }
 
-require_once ('player/mpd/mpdinterface.php');
-logger::mark('INIT','Attempting to connect to player',$prefs['currenthost']);
+//
+// Attempt a player connection. This will set player_backend if it is not already set
+//
+
+logger::mark('INIT','Attempting to connect to player',prefs::$prefs['currenthost']);
 if (array_key_exists('player_backend', $_COOKIE) && $_COOKIE['player_backend'] != '') {
 	logger::mark('INIT','Player backend cookie is',$_COOKIE['player_backend']);
 } else {
@@ -163,10 +87,10 @@ if ($player->is_connected()) {
 	connect_fail(language::gettext("setup_connectfail"));
 }
 // If we're connected by a local socket we can read the music directory
-$arse = $player->get_config();
 logger::log('INIT', 'Getting Player Config');
+$arse = $player->get_config();
 if (array_key_exists('music_directory', $arse)) {
-	set_music_directory($arse['music_directory']);
+	prefs::set_music_directory($arse['music_directory']);
 }
 $player->close_mpd_connection();
 $player->probe_http_api();
@@ -175,14 +99,15 @@ $player->probe_http_api();
 // See if we can use the SQL backend
 //
 
+logger::log('INIT', 'Checking Database Connection');
 include( "backends/sql/connect.php");
-if (array_key_exists('collection_type', $prefs)) {
+if (array_key_exists('collection_type', prefs::$prefs)) {
+	logger::log('INIT', 'Connecting to',prefs::$prefs['collection_type']);
 	connect_to_database();
+} else if (probe_database()) {
+	logger::log('INIT', 'Probing Database');
+	include("backends/sql/".prefs::$prefs['collection_type']."/specifics.php");
 } else {
-	probe_database();
-	include("backends/sql/".$prefs['collection_type']."/specifics.php");
-}
-if (!$mysqlc) {
 	sql_init_fail("No Database Connection Was Possible");
 }
 
@@ -190,17 +115,14 @@ list($result, $message) = check_sql_tables();
 if ($result == false) {
 	sql_init_fail($message);
 }
-if (!$prefs['country_userset']) {
-	// Set the country code from the browser, though this may not be accurate.
-	// Later on we set it using geoip.
-	$prefs['lastfm_country_code'] = language::get_browser_country();
-}
 
-savePrefs();
+prefs::save();
+
 //
-// Do some initialisation and cleanup of the Apache backend
+// Do some initialisation of the backend directories
 //
 include ("includes/firstrun.php");
+
 logger::log("INIT", "Initialisation done. Let's Boogie!");
 logger::mark("CREATING PAGE", "******++++++======------******------======++++++******");
 
@@ -251,7 +173,7 @@ $scripts = array(
 	"ui/widgets.js",
 	"ui/uihelper.js",
 	"skins/".$skin."/skin.js",
-	"player/mpd/controller.js",
+	"player/controller.js",
 	"ui/collectionhelper.js",
 	"player/player.js",
 	"ui/playlist.js",
@@ -272,7 +194,7 @@ foreach ($scripts as $i) {
 	logger::log("INIT", "Loading ".$i);
 	print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
-if ($prefs['mopidy_http_port'] === false) {
+if (prefs::$prefs['mopidy_http_port'] === false) {
 	print '<script type="text/javascript" src="player/mpd/checkprogress.js?version='.$version_string.'"></script>'."\n";
 } else {
 	print '<script type="text/javascript" src="player/mopidy/checkprogress.js?version='.$version_string.'"></script>'."\n";
@@ -312,7 +234,7 @@ if ($use_plugins) {
 		logger::log("INIT", "Including Plugin ".$i);
 		print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 	}
-	if ($prefs['load_plugins_at_loadtime']) {
+	if (prefs::$prefs['load_plugins_at_loadtime']) {
 		$inc = glob("plugins/code/*.js");
 		foreach($inc as $i) {
 			logger::log("INIT", "DEVELOPMENT MODE : Including Plugin ".$i);
@@ -343,7 +265,7 @@ include('skins/'.$skin.'/skin.php');
 logger::mark("INIT FINISHED", "******++++++======------******------======++++++******");
 
 function connect_fail($t) {
-	global $title, $prefs;
+	global $title;
 	logger::warn("INIT", "MPD Connection Failed");
 	$title = $t;
 	include("setupscreen.php");

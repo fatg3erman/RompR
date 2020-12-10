@@ -3,7 +3,6 @@
 class sortby_artist extends sortby_base {
 
 	public function root_sort_query() {
-		global $prefs;
 		$sflag = $this->filter_root_on_why();
 		// This query gives us album artists only. It also makes sure we only get artists for whom we
 		// have actual tracks (no album artists who appear only on the wishlist or who have only hidden tracks)
@@ -18,16 +17,16 @@ class sortby_artist extends sortby_base {
 				JOIN Tracktable USING (Albumindex)
 				WHERE Uri IS NOT NULL
 				AND Hidden = 0
-				".track_date_check($prefs['collectionrange'], $this->why)."
+				".track_date_check(prefs::$prefs['collectionrange'], $this->why)."
 				".$sflag."
 				GROUP BY AlbumArtistindex)
 			ORDER BY ";
-		foreach ($prefs['artistsatstart'] as $a) {
+		foreach (prefs::$prefs['artistsatstart'] as $a) {
 			$qstring .= "CASE WHEN LOWER(a.Artistname) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
 		}
-		if (count($prefs['nosortprefixes']) > 0) {
+		if (count(prefs::$prefs['nosortprefixes']) > 0) {
 			$qstring .= "(CASE ";
-			foreach($prefs['nosortprefixes'] AS $p) {
+			foreach(prefs::$prefs['nosortprefixes'] AS $p) {
 				$phpisshitsometimes = strlen($p)+2;
 				$qstring .= "WHEN LOWER(a.Artistname) LIKE '".strtolower($p).
 					" %' THEN LOWER(SUBSTR(a.Artistname,".$phpisshitsometimes.")) ";
@@ -43,7 +42,6 @@ class sortby_artist extends sortby_base {
 	}
 
 	public function album_sort_query($force_artistname) {
-		global $prefs;
 		$sflag = $this->filter_album_on_why();
 		$qstring =
 		"SELECT Albumtable.*, Artisttable.Artistname
@@ -54,11 +52,11 @@ class sortby_artist extends sortby_base {
 		$qstring .= "Albumindex IN (SELECT Albumindex FROM Tracktable WHERE
 				Tracktable.Albumindex = Albumtable.Albumindex AND ";
 		$qstring .= "Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 ".
-		track_date_check($prefs['collectionrange'], $this->why)." ".
+		track_date_check(prefs::$prefs['collectionrange'], $this->why)." ".
 		$sflag.")";
 		$qstring .= " ORDER BY ";
-		if ($prefs['sortbydate']) {
-			if ($prefs['notvabydate']) {
+		if (prefs::$prefs['sortbydate']) {
+			if (prefs::$prefs['notvabydate']) {
 				$qstring .= " CASE WHEN Artisttable.Artistname = 'Various Artists' THEN LOWER(Albumname) ELSE Year END,";
 			} else {
 				$qstring .= ' Year,';

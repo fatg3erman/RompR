@@ -14,7 +14,6 @@ class baseAlbumImage {
 	// Remember to keep albumart_translator in uifunctions.js in step with this
 
 	public function __construct($params) {
-		global $prefs;
 		foreach (array('artist', 'album', 'key', 'source', 'file', 'base64data', 'mbid', 'albumpath', 'albumuri', 'trackuri') as $param) {
 			if (array_key_exists($param, $params) && $params[$param] != '') {
 				$this->{$param} = $params[$param];
@@ -38,7 +37,7 @@ class baseAlbumImage {
 				$this->mbid = null;
 			}
 		}
-		if ($prefs['player_backend'] == 'mopidy') {
+		if (prefs::$prefs['player_backend'] == 'mopidy') {
 			$this->albumpath = urldecode($this->albumpath);
 		}
 		$this->image_downloaded = false;

@@ -2,7 +2,7 @@
 chdir('../..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-require_once ("player/".$prefs['player_backend']."/player.php");
+require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 require_once ("backends/sql/backend.php");
 require_once ("utils/phpQuery.php");
 $used_images = array();
@@ -39,8 +39,8 @@ if (array_key_exists('playlist', $_REQUEST)) {
 		$c++;
 	}
 	if (!$player->playlist_error &&
-		($prefs['player_backend'] == $prefs['collection_player']) &&
-		($prefs['multihosts']->{$prefs['currenthost']}->mopidy_remote == false)
+		(prefs::$prefs['player_backend'] == prefs::$prefs['collection_player']) &&
+		(prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['mopidy_remote'] == false)
 	) {
 		sort($used_images);
 		$imgs = glob('prefs/plimages/*');

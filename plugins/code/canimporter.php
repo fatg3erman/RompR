@@ -6,8 +6,7 @@ chdir('../..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 require_once ("backends/sql/backend.php");
-require_once ("backends/sql/metadatafunctions.php");
-require_once ("player/".$prefs['player_backend']."/player.php");
+require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 
 $player = new $PLAYER_TYPE();
 if (file_exists('prefs/canmonitor')) {

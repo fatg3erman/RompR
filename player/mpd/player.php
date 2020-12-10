@@ -1,5 +1,4 @@
 <?php
-require_once ('player/mpd/mpdinterface.php');
 $PLAYER_TYPE = 'mpdPlayer';
 class mpdPlayer extends base_mpd_player {
 
@@ -26,7 +25,6 @@ class mpdPlayer extends base_mpd_player {
 	}
 
 	public function musicCollectionUpdate() {
-		global $prefs;
 		logger::mark("MPD", "Starting Music Collection Update");
 		$collection = new musicCollection();
 		$this->monitor = fopen('prefs/monitor','w');
@@ -49,15 +47,13 @@ class mpdPlayer extends base_mpd_player {
 	}
 
 	protected function player_specific_fixups(&$filedata) {
-		global $prefs;
-
 		switch($filedata['domain']) {
 			case 'local':
 				$this->check_undefined_tags($filedata);
 				$filedata['folder'] = dirname($filedata['unmopfile']);
-				if ($prefs['audiobook_directory'] != '') {
+				if (prefs::$prefs['audiobook_directory'] != '') {
 					$f = rawurldecode($filedata['folder']);
-					if (strpos($f, $prefs['audiobook_directory']) === 0) {
+					if (strpos($f, prefs::$prefs['audiobook_directory']) === 0) {
 						$filedata['type'] = 'audiobook';
 					}
 				}

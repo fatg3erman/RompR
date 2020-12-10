@@ -3,7 +3,6 @@
 class sortby_rating extends sortby_base {
 
 	public function root_sort_query() {
-		global $prefs;
 		$sflag = $this->filter_root_on_why();
 		$qstring =
 		"SELECT DISTINCT Rating
@@ -13,7 +12,7 @@ class sortby_rating extends sortby_base {
 			Uri IS NOT NULL
 			AND Hidden = 0
 			AND Rating > 0
-			".track_date_check($prefs['collectionrange'], $this->why)."
+			".track_date_check(prefs::$prefs['collectionrange'], $this->why)."
 			".$sflag."
 		ORDER BY Rating ASC";
 		$result = generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
@@ -23,7 +22,6 @@ class sortby_rating extends sortby_base {
 	}
 
 	public function album_sort_query($unused) {
-		global $prefs;
 		$sflag = $this->filter_album_on_why();
 		$qstring =
 		"SELECT Albumtable.*, Artisttable.Artistname
@@ -34,11 +32,11 @@ class sortby_rating extends sortby_base {
 				Tracktable JOIN Ratingtable USING (TTindex)
 				WHERE Rating = ".$this->who." AND ";
 		$qstring .= "Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 ".
-		track_date_check($prefs['collectionrange'], $this->why)." ".
+		track_date_check(prefs::$prefs['collectionrange'], $this->why)." ".
 		$sflag.")";
 		$qstring .= " ORDER BY ";
-		if ($prefs['sortbydate']) {
-			if ($prefs['notvabydate']) {
+		if (prefs::$prefs['sortbydate']) {
+			if (prefs::$prefs['notvabydate']) {
 				$qstring .= " CASE WHEN Artisttable.Artistname = 'Various Artists' THEN LOWER(Albumname) ELSE Year END,";
 			} else {
 				$qstring .= ' Year,';

@@ -6,7 +6,6 @@ class soundcloud {
 	const ID_THING = '?client_id=6f43d0d67acd6635273ffd6eeed302aa';
 
 	private static function request($url, $print_data) {
-		global $prefs;
 		$cache = new cache_handler([
 			'url' => $url.soundcloud::ID_THING,
 			'cache' => 'soundcloud',

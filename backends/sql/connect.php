@@ -1,8 +1,8 @@
 <?php
 
 $mysqlc = null;
-if (array_key_exists('collection_type', $prefs)) {
-	include("backends/sql/".$prefs['collection_type']."/specifics.php");
+if (array_key_exists('collection_type', prefs::$prefs)) {
+	include("backends/sql/".prefs::$prefs['collection_type']."/specifics.php");
 }
 
 function probe_database() {
@@ -10,23 +10,24 @@ function probe_database() {
 	// This keeps the behaviour the same as previous versions which auto-detected
 	// the database type. This does mean we get some duplicate code but this is
 	// so much better for the user.
-	global $mysqlc, $prefs;
+	global $mysqlc;
 	logger::mark("SQL_CONNECT", "Probing Database Type");
 	logger::log("SQL_CONNECT", "Attempting to connect to MYSQL Server");
+	$retval = false;
 	try {
-		if (is_numeric($prefs['mysql_port'])) {
+		if (is_numeric(prefs::$prefs['mysql_port'])) {
 			logger::trace("SQL_CONNECT", "Connecting using hostname and port");
-			$dsn = "mysql:host=".$prefs['mysql_host'].";port=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'];
+			$dsn = "mysql:host=".prefs::$prefs['mysql_host'].";port=".prefs::$prefs['mysql_port'].";dbname=".prefs::$prefs['mysql_database'];
 		} else {
 			logger::trace("SQL_CONNECT", "Connecting using unix socket");
-			$dsn = "mysql:unix_socket=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'];
+			$dsn = "mysql:unix_socket=".prefs::$prefs['mysql_port'].";dbname=".prefs::$prefs['mysql_database'];
 		}
-		$mysqlc = new PDO($dsn, $prefs['mysql_user'], $prefs['mysql_password']);
+		$mysqlc = new PDO($dsn, prefs::$prefs['mysql_user'], prefs::$prefs['mysql_password']);
 		logger::mark("SQL_CONNECT", "Connected to MySQL");
-		$prefs['collection_type'] = 'mysql';
+		prefs::$prefs['collection_type'] = 'mysql';
+		$retval = true;
 	} catch (Exception $e) {
 		logger::warn("SQL_CONNECT", "Couldn't connect to MySQL - ".$e);
-		$mysqlc = null;
 	}
 	if ($mysqlc == null) {
 		logger::log("SQL_CONNECT", "Attempting to use SQLite Database");
@@ -34,12 +35,13 @@ function probe_database() {
 			$dsn = "sqlite:prefs/collection.sq3";
 			$mysqlc = new PDO($dsn);
 			logger::log("SQL_CONNECT", "Connected to SQLite");
-			$prefs['collection_type'] = 'sqlite';
+			prefs::$prefs['collection_type'] = 'sqlite';
+			$retval = true;
 		} catch (Exception $e) {
 			logger::warn("SQL_CONNECT", "Couldn't use SQLite Either - ".$e);
-			$mysqlc = null;
 		}
 	}
+	return $retval;
 }
 
 //
@@ -266,46 +268,44 @@ function close_transaction() {
 }
 
 function saveCollectionPlayer($type) {
-	global $prefs;
 	logger::mark("DATABASE", "Setting Collection Type to",$type);
 	switch ($type) {
 		case 'mopidy':
 			sql_prepare_query(true, null, null, null,
 				"UPDATE Statstable SET Value = ? WHERE Item = 'CollType'", 1);
-			$prefs['collection_player'] = 'mopidy';
+			prefs::$prefs['collection_player'] = 'mopidy';
 			break;
 
 		case 'mpd':
 			sql_prepare_query(true, null, null, null,
 				"UPDATE Statstable SET Value = ? WHERE Item = 'CollType'", 0);
-			$prefs['collection_player'] = 'mpd';
+			prefs::$prefs['collection_player'] = 'mpd';
 			break;
 	}
-	savePrefs();
+	prefs::save();
 }
 
 function readCollectionPlayer($sp = treu) {
-	global $prefs;
 	$c = simple_query('Value', 'Statstable', 'Item', 'CollType', 999);
 	switch ($c) {
 		case 999:
 			logger::log("DATABASE", "Collection type from database is not set");
-			logger::log("DATABASE", "Prefs collection_player is currently",$prefs['collection_player']);
-			$prefs['collection_player'] = null;
+			logger::log("DATABASE", "Prefs collection_player is currently",prefs::$prefs['collection_player']);
+			prefs::$prefs['collection_player'] = null;
 			break;
 
 		case 1:
 			logger::core("DATABASE", "Collection type from database is mopidy");
-			$prefs['collection_player'] = 'mopidy';
+			prefs::$prefs['collection_player'] = 'mopidy';
 			break;
 
 		case 0:
 			logger::core("DATABASE", "Collection type from database is mpd");
-			$prefs['collection_player'] = 'mpd';
+			prefs::$prefs['collection_player'] = 'mpd';
 			break;
 	}
 	if ($sp) {
-		savePrefs();
+		prefs::save();
 	}
 	return $c;
 }

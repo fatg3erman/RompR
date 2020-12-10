@@ -10,7 +10,9 @@ The following will work with both MPD and Mopidy.
 
 Most controls you will want to use are accessed via a simple HTTP POST request to the URL
 
-    http://address.of.rompr/player/mpd/postcommand.php
+    http://address.of.rompr/api/player/
+
+note the trailing '/', do not omit this!
 
 ## Command Set
 
@@ -83,7 +85,7 @@ to add all tracks by an artist. The number 1234 is Rompr's Artistindex, which yo
 
 ## Defining Which Player To Use
 
-If you have multiple players, you need to tell Rompr which one to use. In this case you need to set Cookies on your request.
+You need to set Cookies on your request.
 
     currenthost=Name_Of_Player
     player_backend=[mpd or mopidy]
@@ -94,10 +96,11 @@ You MUST set both cookies. player_backend MUST be either 'mpd' or 'mopidy'
 
 Curl is a very powerful command-line tool for sending HTTP requests. Here is how to make Rompr start playback using curl:
 
-     curl -d '[["play"]]' -H "Content-Type: application/json" -X POST http://www.myrompr.net/player/mpd/postcommand.php
+     curl  -b "currenthost=Mopidy;player_backend=mopidy" -d '[["play"]]' -H "Content-Type: application/json" -X POST http://www.myrompr.net/api/player/
 
 The options are:
 
+* -b : The Cookies required to be set
 * -d : The JSON data
 * -H : a Content-Type header specifying JSON. This is required for curl
 * -X : The type of request (POST)
@@ -116,12 +119,7 @@ You can also specify a file that contains the JSON data. Eg create a file called
 
 Then do
 
-     curl -d "@play.json" -H "Content-Type: application/json" -X POST http://www.myrompr.net/player/mpd/postcommand.php
+     curl -b "currenthost=Mopidy;player_backend=mopidy" -d "@play.json" -H "Content-Type: application/json" -X POST http://www.myrompr.net/api/player/
 
 In this way you can create predefined lists of commands.
 
-### With Cookies
-
-Here's an example that sets the cookies to tell Rompr which player to use
-
-    curl -b "currenthost=Mopidy;player_backend=mopidy" -d "@play.json" -H "Content-Type: application/json" -X POST http://www.myrompr.net/player/mpd/postcommand.php

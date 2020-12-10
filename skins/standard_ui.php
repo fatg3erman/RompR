@@ -1,7 +1,6 @@
 <?php
 
 function albumTrack($data) {
-	global $prefs;
 	if (substr($data['title'],0,6) == "Album:") return 2;
 	if (substr($data['title'],0,7) == "Artist:") {
 		logger::warn('ALBUMTRACK', 'Found artist link in album - this should not be here!');
@@ -10,7 +9,7 @@ function albumTrack($data) {
 
 	$d = getDomain($data['uri']);
 
-	if ($prefs['player_backend'] == "mpd" && $d == "soundcloud") {
+	if (prefs::$prefs['player_backend'] == "mpd" && $d == "soundcloud") {
 		$class = 'clickcue';
 	} else {
 		$class = 'clicktrack';
@@ -104,7 +103,6 @@ function noAlbumsHeader() {
 }
 
 function albumHeader($obj) {
-	global $prefs;
 	$h = '';
 	if ($obj['why'] === null) {
 		$h .= '<div class="containerbox menuitem">';
@@ -227,7 +225,6 @@ function addUserRadioButtons($html, $index, $uri, $name, $image) {
 }
 
 function addPlaylistControls($html, $delete, $is_user, $name) {
-	global $prefs;
 	$out = phpQuery::newDocument($html);
 	if ($delete) {
 		$add = ($is_user) ? "user" : "";

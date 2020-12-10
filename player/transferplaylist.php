@@ -3,7 +3,7 @@ chdir('..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
 require_once ("collection/collection.php");
-require_once ("player/".$prefs['player_backend']."/player.php");
+require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 require_once ("backends/sql/backend.php");
 
 class transferCollection {
@@ -33,7 +33,7 @@ class transferCollection {
 }
 
 $json = json_decode(file_get_contents("php://input"), true);
-logger::mark("TRANSFER", "Transferring Playlist From",$prefs['currenthost'],"to",$json['currenthost']);
+logger::mark("TRANSFER", "Transferring Playlist From",prefs::$prefs['currenthost'],"to",$json['currenthost']);
 // Read the playlist from the current player
 $player = new $PLAYER_TYPE();
 $mpd_status = $player->get_status();
@@ -45,18 +45,18 @@ $player->do_command_list(array('stop'));
 $player->close_mpd_connection();
 
 // Probe the type of the new player
-$target = $prefs['multihosts']->{$json['currenthost']};
-$prefs['player_backend'] = 'none';
+$target = prefs::$prefs['multihosts'][$json['currenthost']];
+prefs::$prefs['player_backend'] = 'none';
 $target_player = new base_mpd_player(
 	$target->host, $target->port, $target->socket, $target->password, null, $target->mopidy_remote
 );
-// probe_player_type has now set $prefs['player_backend']
+// probe_player_type has now set prefs::$prefs['player_backend']
 if ($target_player->is_connected()) {
-	$prefs['currenthost'] = $json['currenthost'];
-	setcookie('currenthost',$prefs['currenthost'], time()+365*24*60*60*10,'/');
+	prefs::$prefs['currenthost'] = $json['currenthost'];
+	setcookie('currenthost',prefs::$prefs['currenthost'], time()+365*24*60*60*10,'/');
 	$target_player->close_mpd_connection();
 	// Connect properly to the new player
-	require_once ("player/".$prefs['player_backend']."/player.php");
+	require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 	$target_player = new $PLAYER_TYPE();
 
 	// Transfer the playlist to the new player

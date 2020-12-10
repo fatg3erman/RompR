@@ -1,5 +1,4 @@
 <?php
-require_once ('player/mpd/mpdinterface.php');
 $PLAYER_TYPE = 'mopidyPlayer';
 class mopidyPlayer extends base_mpd_player {
 
@@ -10,11 +9,10 @@ class mopidyPlayer extends base_mpd_player {
 	}
 
 	function musicCollectionUpdate() {
-		global $prefs;
 		logger::mark("MOPIDY", "Starting Music Collection Update");
 		$collection = new musicCollection();
 		$this->monitor = fopen('prefs/monitor','w');
-		$dirs = $prefs['mopidy_collection_folders'];
+		$dirs = prefs::$prefs['mopidy_collection_folders'];
 		while (count($dirs) > 0) {
 			$dir = array_shift($dirs);
 			if ($dir == "Spotify Playlists") {
@@ -74,9 +72,6 @@ class mopidyPlayer extends base_mpd_player {
 	}
 
 	protected function player_specific_fixups(&$filedata) {
-
-		global $prefs;
-
 		if (strpos($filedata['file'], ':artist:') !== false) {
 			$this->to_browse[] = $filedata['file'];
 			return false;
@@ -93,9 +88,9 @@ class mopidyPlayer extends base_mpd_player {
 				$filedata['X-AlbumUri'] = null;
 				$this->check_undefined_tags($filedata);
 				$filedata['folder'] = dirname($filedata['unmopfile']);
-				if ($prefs['audiobook_directory'] != '') {
+				if (prefs::$prefs['audiobook_directory'] != '') {
 					$f = rawurldecode($filedata['folder']);
-					if (strpos($f, $prefs['audiobook_directory']) === 0) {
+					if (strpos($f, prefs::$prefs['audiobook_directory']) === 0) {
 						$filedata['type'] = 'audiobook';
 					}
 				}

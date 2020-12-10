@@ -72,7 +72,7 @@ if ($mysqlc) {
 	logger::info("CACHE CLEANER", "== Check For Hidden Album Art took ".format_time(time() - $now));
 
 
-	if ($prefs['cleanalbumimages']) {
+	if (prefs::$prefs['cleanalbumimages']) {
 		$now = time();
 		// TODO: This is too slow
 		logger::info("CACHE CLEANER", "Checking albumart folder for unneeded images");
@@ -167,7 +167,7 @@ if ($mysqlc) {
 	logger::info("CACHE CLEANER", "== Check For Orphaned youtube downloads took ".format_time(time() - $now));
 
 	// Compact the database
-	if ($prefs['collection_type'] == 'sqlite') {
+	if (prefs::$prefs['collection_type'] == 'sqlite') {
 		logger::mark("CACHE CLEANER", "Vacuuming Database");
 		$now = time();
 		generic_sql_query("VACUUM", true);

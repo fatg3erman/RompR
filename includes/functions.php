@@ -136,8 +136,6 @@ function find_executable($prog) {
 }
 
 function sql_init_fail($message) {
-
-	global $prefs;
 	header("HTTP/1.1 500 Internal Server Error");
 ?>
 <html><head>
@@ -151,7 +149,7 @@ function sql_init_fail($message) {
 <br>
 <?php
 print '<h3 align="center">RompЯ encountered an error while checking your '.
-	ucfirst($prefs['collection_type']).' database.</h3>';
+	ucfirst(prefs::$prefs['collection_type']).' database.</h3>';
 ?>
 <h3 align="center">An SQLite or MySQL database is required to run RompЯ</h3>
 <h3 align="center">You may find it helpful to <a href="https://fatg3erman.github.io/RompR/" target="_blank">Read The Docs</a></h3>
@@ -361,9 +359,8 @@ function domainHtml($uri) {
 }
 
 function artistNameHtml($obj) {
-	global $prefs;
 	$h = '<div class="expand">'.$obj['Albumname'];
-	if ($obj['Year'] && $prefs['sortbydate']) {
+	if ($obj['Year'] && prefs::$prefs['sortbydate']) {
 		$h .= ' <span class="notbold">('.$obj['Year'].')</span>';
 	}
 	if ($obj['Artistname']) {
@@ -383,20 +380,20 @@ function checkComposerGenre($genre, $pref) {
 }
 
 function get_player_ip() {
-	global $prefs;
 	// SERVER_ADDR reflects the address typed into the browser
 	logger::log("INIT", "Server Address is ".$_SERVER['SERVER_ADDR']);
 	// REMOTE_ADDR is the address of the machine running the browser
 	logger::log("INIT", "Remote Address is ".$_SERVER['REMOTE_ADDR']);
-	logger::log("INIT", "Prefs for mpd host is ".$prefs['multihosts']->{$prefs['currenthost']}->host);
+	logger::log("INIT", "Prefs for mpd host is ".prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['host']);
 	$pip = '';
-	if ($prefs['multihosts']->{$prefs['currenthost']}->socket != '') {
+	if (prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['socket'] != '') {
 		$pip = $_SERVER['HTTP_HOST'];
 	} else {
-		$pip = nice_server_address($prefs['multihosts']->{$prefs['currenthost']}->host). ':' . $prefs['multihosts']->{$prefs['currenthost']}->port;
+		$pip = nice_server_address(prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['host']).':'.
+			prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['port'];
 	}
-	if ($prefs['mopidy_http_port'] !== false) {
-		$pip .= '/'.explode(':', $prefs['mopidy_http_port'])[1];
+	if (prefs::$prefs['mopidy_http_port'] !== false) {
+		$pip .= '/'.explode(':', prefs::$prefs['mopidy_http_port'])[1];
 	}
 	logger::log("INIT", "Displaying Player IP as: ".$pip);
 	return $pip;
@@ -470,12 +467,12 @@ function fixup_links($s) {
 }
 
 function set_version_string() {
-	global $version_string, $prefs;
-	if ($prefs['dev_mode']) {
+	global $version_string;
+	if (prefs::$prefs['dev_mode']) {
 		// This adds an extra parameter to the version number - the short
 		// hash of the most recent git commit, or a timestamp. It's for use in testing,
 		// to make sure the browser pulls in the latest version of all the files.
-		if ($prefs['live_mode']) {
+		if (prefs::$prefs['live_mode']) {
 			$version_string = ROMPR_VERSION.".".time();
 		} else {
 			// DO NOT USE OUTSIDE A git REPO!
@@ -570,7 +567,6 @@ function rrmdir($path) {
 }
 
 function collectionButtons() {
-	global $prefs;
 	print '<div id="collectionbuttons" class="invisible toggledown">';
 
 	print '<div class="containerbox dropdown-container">';
@@ -604,8 +600,8 @@ function collectionButtons() {
 	</div>
 	</div>';
 
-	if ($prefs['multihosts']->{$prefs['currenthost']}->mopidy_remote == false) {
-		if ($prefs['collection_player'] == $prefs['player_backend'] || $prefs['collection_player'] == null) {
+	if (prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['mopidy_remote'] == false) {
+		if (prefs::$prefs['collection_player'] == prefs::$prefs['player_backend'] || prefs::$prefs['collection_player'] == null) {
 			print '<div class="textcentre">
 			<button name="donkeykong">'.language::gettext('config_updatenow').'</button>
 			</div>';
@@ -703,13 +699,12 @@ function format_artist($artist, $empty = null) {
 }
 
 function format_sortartist($tags, $return_albumartist = false) {
-	global $prefs;
 	$sortartist = null;
-	if ($prefs['sortbycomposer'] && $tags['Composer'] !== null) {
-		if ($prefs['composergenre'] && $tags['Genre'] &&
-			checkComposerGenre($tags['Genre'], $prefs['composergenrename'])) {
+	if (prefs::$prefs['sortbycomposer'] && $tags['Composer'] !== null) {
+		if (prefs::$prefs['composergenre'] && $tags['Genre'] &&
+			checkComposerGenre($tags['Genre'], prefs::$prefs['composergenrename'])) {
 				$sortartist = $tags['Composer'];
-		} else if (!$prefs['composergenre']) {
+		} else if (!prefs::$prefs['composergenre']) {
 			$sortartist = $tags['Composer'];
 		}
 	}
@@ -817,16 +812,37 @@ function upgrade_saved_crazies() {
 }
 
 function choose_sorter_by_key($which) {
-	global $prefs;
 	$a = preg_match('/(a|b|c|r|t|y|u|z)(.*?)(\d+|root)_*(\d+)*/', $which, $matches);
 	switch ($matches[1]) {
 		case 'b':
-			return 'sortby_'.$prefs['actuallysortresultsby'];
+			return 'sortby_'.prefs::$prefs['actuallysortresultsby'];
 			break;
 
 		default:
-			return 'sortby_'.$prefs['sortcollectionby'];
+			return 'sortby_'.prefs::$prefs['sortcollectionby'];
 			break;
+	}
+}
+
+function upgrade_old_collections() {
+	$collections = glob('prefs/collection_{mpd,mopidy}.sq3', GLOB_BRACE);
+	if (count($collections) > 0) {
+		logger::mark('UPGRADE', 'Old-style twin sqlite collections found');
+		@mkdir('prefs/oldcollections');
+		$time = 0;
+		$newest = null;
+		foreach ($collections as $file) {
+			if (filemtime($file) > $time) {
+				$newest = $file;
+				$time = filemtime($file);
+			}
+		}
+		logger::mark('UPGRADE', "Newest file is",$newest);
+		copy($newest, 'prefs/collection.sq3');
+		foreach ($collections as $file) {
+			logger::log('UPGRADE', 'Moving',$file,'to','prefs/oldcollections/'.basename($file));
+			rename($file, 'prefs/oldcollections/'.basename($file));
+		}
 	}
 }
 

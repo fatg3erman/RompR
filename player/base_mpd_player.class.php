@@ -15,33 +15,32 @@ class base_mpd_player {
 	private $mpd_version = null;
 
 	public function __construct($ip = null, $port = null, $socket = null, $password = null, $player_type = null, $is_remote = null) {
-		global $prefs;
 		$this->debug_id = microtime();
 		if ($ip !== null) {
 			$this->ip = $ip;
 		} else {
-			$this->ip = $prefs['multihosts']->{$prefs['currenthost']}->host;
+			$this->ip = prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['host'];
 		}
 		if ($port !== null) {
 			$this->port = $port;
 		} else {
-			$this->port = $prefs['multihosts']->{$prefs['currenthost']}->port;
+			$this->port = prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['port'];
 		}
 		if ($socket !== null) {
 			$this->socket = $socket;
 		} else {
-			$this->socket = $prefs['multihosts']->{$prefs['currenthost']}->socket;
+			$this->socket = prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['socket'];
 		}
 		if ($password !== null) {
 			$this->password = $password;
 		} else {
-			$this->password = $prefs['multihosts']->{$prefs['currenthost']}->password;
+			$this->password = prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['password'];
 		}
 		if ($is_remote !== null) {
 			$this->is_remote = $is_remote;
 		} else {
-			if (property_exists($prefs['multihosts']->{$prefs['currenthost']}, 'mopidy_remote')) {
-				$this->is_remote = $prefs['multihosts']->{$prefs['currenthost']}->mopidy_remote;
+			if (array_key_exists('mopidy_remote', prefs::$prefs['multihosts'][prefs::$prefs['currenthost']])) {
+				$this->is_remote = prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['mopidy_remote'];
 			} else {
 				// Catch the case where we haven't yet upgraded the player defs
 				$this->is_remote = false;
@@ -52,8 +51,8 @@ class base_mpd_player {
 		if ($player_type !== null) {
 			$this->player_type = $player_type;
 		} else {
-			if (array_key_exists('player_backend', $prefs) && ($prefs['player_backend'] == 'mpd' || $prefs['player_backend'] == 'mopidy')) {
-				$this->player_type = $prefs['player_backend'];
+			if (array_key_exists('player_backend', prefs::$prefs) && (prefs::$prefs['player_backend'] == 'mpd' || prefs::$prefs['player_backend'] == 'mopidy')) {
+				$this->player_type = prefs::$prefs['player_backend'];
 			} else {
 				$this->player_type = $this->probe_player_type();
 			}
@@ -252,13 +251,12 @@ class base_mpd_player {
 	}
 
 	public function do_command_list($cmds) {
-		global $prefs;
 		$done = 0;
 		$cmd_status = null;
 
 		if ($this->is_remote) {
 			$this->translate_commands_for_remote($cmds);
-		} else if ($this->player_type != $prefs['collection_player']) {
+		} else if ($this->player_type != prefs::$prefs['collection_player']) {
 			$this->translate_player_types($cmds);
 		}
 		$retries = 3;
@@ -383,7 +381,7 @@ class base_mpd_player {
 	}
 
 	protected function sanitize_data(&$filedata) {
-		global $dbterms, $numtracks, $totaltime, $prefs;
+		global $dbterms, $numtracks, $totaltime;
 		if ($dbterms['tags'] !== null || $dbterms['rating'] !== null) {
 			// If this is a search and we have tags or ratings to search for, check them here.
 			if (check_url_against_database($filedata['file'], $dbterms['tags'], $dbterms['rating']) == false) {
@@ -417,7 +415,7 @@ class base_mpd_player {
 			$filedata['Disc'] = format_tracknum(ltrim($filedata['Disc'], '0'));
 		}
 
-		if ($prefs['use_original_releasedate'] && $filedata['OriginalDate']) {
+		if (prefs::$prefs['use_original_releasedate'] && $filedata['OriginalDate']) {
 			logger::trace('COLLECTION', 'Using Rriginal Release Date for album',$filedata['Album']);
 			$filedata['Date'] = $filedata['OriginalDate'];
 		}
@@ -435,7 +433,6 @@ class base_mpd_player {
 	}
 
 	private function unmopify_file(&$filedata) {
-		global $prefs;
 		if ($filedata['Pos'] !== null) {
 			// Convert URIs for different player types to be appropriate for the collection
 			// but only when we're getting the playlist
@@ -443,10 +440,10 @@ class base_mpd_player {
 				$filedata['file'] = $this->swap_file_for_local($filedata['file']);
 				$filedata['domain'] = 'local';
 			}
-			if ($prefs['collection_player'] == 'mopidy' && $this->player_type == 'mpd') {
+			if (prefs::$prefs['collection_player'] == 'mopidy' && $this->player_type == 'mpd') {
 				$filedata['file'] = $this->mpd_to_mopidy($filedata['file']);
 			}
-			if ($prefs['collection_player'] == 'mpd' && $this->player_type == 'mopidy') {
+			if (prefs::$prefs['collection_player'] == 'mpd' && $this->player_type == 'mopidy') {
 				$filedata['file'] = $this->mopidy_to_mpd($filedata['file']);
 			}
 		}
@@ -679,13 +676,12 @@ class base_mpd_player {
 		//
 		// Experimental translation to and from MPD/Mopidy Local URIs
 		//
-		global $prefs;
 		foreach ($cmds as $key => $cmd) {
 			if (substr($cmd, 0, 4) == 'add ') {
-				logger::mark("PLAYER", "Translating Track Uris from",$prefs['collection_player'],'to',$this->player_type);
-				if ($prefs['collection_player']== 'mopidy') {
+				logger::mark("PLAYER", "Translating Track Uris from",prefs::$prefs['collection_player'],'to',$this->player_type);
+				if (prefs::$prefs['collection_player']== 'mopidy') {
 					$cmds[$key] = $this->mopidy_to_mpd($cmd);
-				} else if ($prefs['collection_player']== 'mpd'){
+				} else if (prefs::$prefs['collection_player']== 'mpd'){
 					$file = trim(substr($cmd, 4), '" ');
 					$cmds[$key] = 'add '.$this->mpd_to_mopidy($file);
 				}
@@ -707,20 +703,17 @@ class base_mpd_player {
 
 	private function swap_local_for_file($string) {
 		// url encode the album art directory
-		global $prefs;
-		$path = implode("/", array_map("rawurlencode", explode("/", $prefs['music_directory_albumart'])));
+		$path = implode("/", array_map("rawurlencode", explode("/", prefs::$prefs['music_directory_albumart'])));
 		logger::debug("MOPIDYREMOTE", "Replacing with",$path);
 		return preg_replace('#local:track:#', 'file://'.$path.'/', $string);
 	}
 
 	private function swap_file_for_local($string) {
-		global $prefs;
-		$path = 'file://'.implode("/", array_map("rawurlencode", explode("/", $prefs['music_directory_albumart']))).'/';
+		$path = 'file://'.implode("/", array_map("rawurlencode", explode("/", prefs::$prefs['music_directory_albumart']))).'/';
 		return preg_replace('#'.$path.'#', 'local:track:', $string);
 	}
 
 	private function probe_player_type() {
-		global $prefs;
 		$retval = false;
 		if ($this->is_connected()) {
 			logger::mark("MPDPLAYER", "Probing Player Type....");
@@ -738,7 +731,7 @@ class base_mpd_player {
 				$retval =  "mopidy";
 			}
 			setcookie('player_backend',$retval,time()+365*24*60*60*10,'/');
-			$prefs['player_backend'] = $retval;
+			prefs::$prefs['player_backend'] = $retval;
 		}
 		return $retval;
 	}
@@ -753,8 +746,7 @@ class base_mpd_player {
 	// If we're really playing the pedantic game, just rename this class so these functions fit.
 
 	private function mopidy_http_request($port, $data) {
-		global $prefs;
-		if ($prefs['player_backend'] == 'mopidy') {
+		if (prefs::$prefs['player_backend'] == 'mopidy') {
 			$url = 'http://'.$port.'/mopidy/rpc';
 
 			$data['jsonrpc'] = '2.0';
@@ -780,10 +772,9 @@ class base_mpd_player {
 	}
 
 	public function probe_http_api() {
-		global $prefs;
 		logger::log('MOPIDYHTTP', 'Probing HTTP API');
 		$result = $this->mopidy_http_request(
-			$this->ip.':'.$prefs['http_port_for_mopidy'],
+			$this->ip.':'.prefs::$prefs['http_port_for_mopidy'],
 			array(
 				'method' => 'core.get_version'
 			)
@@ -791,18 +782,17 @@ class base_mpd_player {
 		if ($result !== false) {
 			logger::log('MOPIDYHTTP', 'Connected to Mopidy HTTP API Successfully');
 			$http_server = nice_server_address($this->ip);
-			$prefs['mopidy_http_port'] = $http_server.':'.$prefs['http_port_for_mopidy'];
+			prefs::$prefs['mopidy_http_port'] = $http_server.':'.prefs::$prefs['http_port_for_mopidy'];
 		} else {
 			logger::log('MOPIDYHTTP', 'Mopidy HTTP API Not Available');
-			$prefs['mopidy_http_port'] = false;
+			prefs::$prefs['mopidy_http_port'] = false;
 		}
 	}
 
 	public function find_album_image($uri) {
-		global $prefs;
 		$retval = '';
 		$result = $this->mopidy_http_request(
-			$prefs['mopidy_http_port'],
+			prefs::$prefs['mopidy_http_port'],
 			array(
 				'method' => 'core.library.get_images',
 				"params" => array(
@@ -829,7 +819,7 @@ class base_mpd_player {
 			}
 		}
 		if (strpos($retval, '/local/') === 0) {
-			$retval = 'http://'.$prefs['mopidy_http_port'].$retval;
+			$retval = 'http://'.prefs::$prefs['mopidy_http_port'].$retval;
 		}
 		logger::log('MOPIDYHTTP', 'Returning', $retval);
 		return $retval;

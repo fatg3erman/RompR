@@ -175,7 +175,7 @@ function check_album(&$data) {
 	//		Checks for the existence of an album and creates it if necessary
 	//		Returns: Albumindex
 
-	global $prefs, $trackbytrack, $doing_search;
+	global $trackbytrack, $doing_search;
 	$index = null;
 	$year = null;
 	$img = null;
@@ -198,7 +198,7 @@ function check_album(&$data) {
 			AND Domain = ?", $data['album'], $data['albumai'], $data['domain']);
 	$obj = array_shift($result);
 
-	if ($prefs['preferlocalfiles'] && $trackbytrack && !$doing_search && $data['domain'] == 'local' && !$obj) {
+	if (prefs::$prefs['preferlocalfiles'] && $trackbytrack && !$doing_search && $data['domain'] == 'local' && !$obj) {
 		// Does the album exist on a different, non-local, domain? The checks above ensure we only do this
 		// during a collection update
 		$result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
@@ -236,7 +236,7 @@ function check_album(&$data) {
 		$mbid  = best_value($obj->mbid, $data['ambid']);
 		if ($year != $obj->Year || $img != $obj->Image || $uri != $obj->AlbumUri || $mbid != $obj->mbid) {
 
-			if ($prefs['debug_enabled'] > 6) {
+			if (prefs::$prefs['debug_enabled'] > 6) {
 				logger::mark('BACKEND', "Updating Details For Album ".$data['album']." (index ".$index.")" );
 				logger::log('BACKEND', "  Old Date  : ".$obj->Year);
 				logger::log('BACKEND', "  New Date  : ".$year);
@@ -333,17 +333,15 @@ function list_genres() {
 }
 
 function list_artists() {
-	global $prefs;
-
 	$qstring = "SELECT DISTINCT Artistname FROM Tracktable JOIN Artisttable USING (Artistindex)
 		WHERE (LinkChecked = 0 OR LinkChecked = 2) AND isAudiobook = 0 AND isSearchResult < 2 AND Hidden = 0 AND Uri IS NOT NULL
 		ORDER BY ";
-	foreach ($prefs['artistsatstart'] as $a) {
+	foreach (prefs::$prefs['artistsatstart'] as $a) {
 		$qstring .= "CASE WHEN LOWER(Artistname) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
 	}
-	if (count($prefs['nosortprefixes']) > 0) {
+	if (count(prefs::$prefs['nosortprefixes']) > 0) {
 		$qstring .= "(CASE ";
-		foreach($prefs['nosortprefixes'] AS $p) {
+		foreach(prefs::$prefs['nosortprefixes'] AS $p) {
 			$phpisshitsometimes = strlen($p)+2;
 			$qstring .= "WHEN LOWER(Artistname) LIKE '".strtolower($p).
 				" %' THEN LOWER(SUBSTR(Artistname,".$phpisshitsometimes.")) ";
@@ -546,7 +544,6 @@ function get_albumlink($albumindex) {
 }
 
 function get_album_directory($albumindex, $uri) {
-	global $prefs;
 	$retval = null;
 	// Get album directory by using the Uri of one of its tracks, making sure we choose only local tracks
 	if (getDomain($uri) == 'local') {
@@ -555,7 +552,7 @@ function get_album_directory($albumindex, $uri) {
 			$retval = dirname($obj2['Uri']);
 			$retval = preg_replace('#^local:track:#', '', $retval);
 			$retval = preg_replace('#^file://#', '', $retval);
-			$retval = preg_replace('#^beetslocal:\d+:'.$prefs['music_directory_albumart'].'/#', '', $retval);
+			$retval = preg_replace('#^beetslocal:\d+:'.prefs::$prefs['music_directory_albumart'].'/#', '', $retval);
 			logger::log('BACKEND', "Got album directory using track Uri :",$retval);
 		}
 	}
@@ -617,7 +614,6 @@ function remove_album_from_database($albumid) {
 }
 
 function get_album_tracks_from_database($which, $cmd) {
-	global $prefs;
 	$retarr = array();
 	$sorter = choose_sorter_by_key($which);
 	$lister = new $sorter($which);
@@ -630,9 +626,8 @@ function get_album_tracks_from_database($which, $cmd) {
 }
 
 function get_artist_tracks_from_database($which, $cmd) {
-	global $prefs;
 	$retarr = array();
-	logger::log('BACKEND', "Getting Tracks for Root Item",$prefs['sortcollectionby'],$which);
+	logger::log('BACKEND', "Getting Tracks for Root Item",prefs::$prefs['sortcollectionby'],$which);
 	$sorter = choose_sorter_by_key($which);
 	$lister = new $sorter($which);
 	foreach ($lister->albums_for_artist() as $a) {
@@ -892,46 +887,44 @@ function get_duration_count($range, $iab) {
 }
 
 function dumpAlbums($which) {
-	global $divtype, $prefs;
+	global $divtype;
 	$sorter = choose_sorter_by_key($which);
 	$lister = new $sorter($which);
 	$lister->output_html();
 }
 
 function collectionStats() {
-	global $prefs;
 	$html = '<div id="fothergill" class="brick brick_wide">';
-	if ($prefs['collectionrange'] == ADDED_ALL_TIME) {
+	if (prefs::$prefs['collectionrange'] == ADDED_ALL_TIME) {
 		$html .= alistheader(get_stat('ArtistCount'),
 							get_stat('AlbumCount'),
 							get_stat('TrackCount'),
 							format_time(get_stat('TotalTime'))
 						);
 	} else {
-		$html .= alistheader(get_artist_count($prefs['collectionrange'], 0),
-							get_album_count($prefs['collectionrange'], 0),
-							get_track_count($prefs['collectionrange'], 0),
-							format_time(get_duration_count($prefs['collectionrange'], 0)));
+		$html .= alistheader(get_artist_count(prefs::$prefs['collectionrange'], 0),
+							get_album_count(prefs::$prefs['collectionrange'], 0),
+							get_track_count(prefs::$prefs['collectionrange'], 0),
+							format_time(get_duration_count(prefs::$prefs['collectionrange'], 0)));
 	}
 	$html .= '</div>';
 	return $html;
 }
 
 function audiobookStats() {
-	global $prefs;
 	$html = '<div id="mingus" class="brick brick_wide">';
 
-	if ($prefs['collectionrange'] == ADDED_ALL_TIME) {
+	if (prefs::$prefs['collectionrange'] == ADDED_ALL_TIME) {
 		$html .= alistheader(get_stat('BookArtists'),
 							get_stat('BookAlbums'),
 							get_stat('BookTracks'),
 							format_time(get_stat('BookTime'))
 						);
 	} else {
-		$html .= alistheader(get_artist_count($prefs['collectionrange'], 1),
-							get_album_count($prefs['collectionrange'], 1),
-							get_track_count($prefs['collectionrange'], 1),
-							format_time(get_duration_count($prefs['collectionrange'], 1)));
+		$html .= alistheader(get_artist_count(prefs::$prefs['collectionrange'], 1),
+							get_album_count(prefs::$prefs['collectionrange'], 1),
+							get_track_count(prefs::$prefs['collectionrange'], 1),
+							format_time(get_duration_count(prefs::$prefs['collectionrange'], 1)));
 	}
 	$html .= "</div>";
 	return $html;
@@ -996,7 +989,6 @@ function alistheader($nart, $nalb, $ntra, $tim) {
 
 function playAlbumFromTrack($uri) {
 	// Used when CD player mode is on.
-	global $prefs;
 	$result = sql_prepare_query(false, PDO::FETCH_OBJ, null, null, "SELECT Albumindex, TrackNo, Disc, isSearchResult, isAudiobook FROM Tracktable WHERE Uri = ?", $uri);
 	$album = array_shift($result);
 	$retval = array();
@@ -1245,7 +1237,7 @@ function check_genre($genre) {
 }
 
 function check_and_update_track($trackobj, $albumindex, $artistindex, $artistname) {
-	global $find_track, $update_track, $numdone, $prefs, $doing_search;
+	global $find_track, $update_track, $numdone, $doing_search;
 	static $current_trackartist = null;
 	static $trackartistindex = null;
 	static $current_genre = null;
@@ -1278,7 +1270,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 	// of about 32 (9 minutes when checking by URI vs 15 seconds this way, on my collection)
 	// Also, URIs might change if the user moves his music collection.
 
-	if ($prefs['collection_type'] == "sqlite") {
+	if (prefs::$prefs['collection_type'] == "sqlite") {
 		// Lord knows why, but we have to re-prepare these every single bloody time!
 		prepare_findtracks();
 	}
@@ -1326,7 +1318,7 @@ function check_and_update_track($trackobj, $albumindex, $artistindex, $artistnam
 			// Lots of debug output. All skipped if debug level < 7, to save those few ms
 			//
 
-			if ($prefs['debug_enabled'] > 6) {
+			if (prefs::$prefs['debug_enabled'] > 6) {
 				logger::trace('BACKEND', "  Updating track with ttid",$dbtrack->TTindex,"because :");
 				if (!$doing_search && $dbtrack->LastModified === null) 								logger::trace('BACKEND', "    LastModified is not set in the database");
 				if (!$doing_search && $trackobj->tags['Last-Modified'] === null) 					logger::trace('BACKEND', "    TrackObj LastModified is NULL too!");

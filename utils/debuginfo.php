@@ -2,16 +2,14 @@
 chdir('..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-require_once ("player/".$prefs['player_backend']."/player.php");
+require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 set_version_string();
 print '<table id="debuginfotable" width="100%">';
 print '<tr><th colspan="2">Backend Info</th></tr>';
 print '<tr><td>Version</td><td>'.$version_string.'</td></tr>';
-foreach ($private_prefs as $p) {
-	if (array_key_exists($p, $prefs) && $prefs[$p] != '') {
-		$prefs[$p] = '[Redacted]';
-	}
-	print '<tr><td>'.$p.'</td><td>'.$prefs[$p].'</td></tr>';
+$confidential = prefs::redact_private();
+foreach ($confidential as $k => $v) {
+	print '<tr><td>'.$k.'</td><td>'.$v.'</td></tr>';
 }
 
 print '<tr><th colspan="2">Server Info</th></tr>';

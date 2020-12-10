@@ -7,8 +7,8 @@
 	<div id="sourcescontrols" class="expand center containerbox noborder">
 		<div id="volumedropper" class="topdropmenu rightmenu widemenu">
 <?php
-	include('player/mpd/outputs.php');
-	if ($prefs['hide_master_volume']) {
+	include('player/utils/outputs.php');
+	if (prefs::$prefs['hide_master_volume']) {
 			print '<div class="configtitle nohelp invisible" id="snapheader"><div class="textcentre expand"><b>'.language::gettext('label_volume').'</b></div></div>';
 			print '<div class="pref" id="snapcastgroups"></div>';
 			if (count($outputdata) > 1) {
@@ -36,7 +36,7 @@
 	}
 			print '<div class="configtitle nohelp player-title"><div class="textcentre expand"><b>'.language::gettext('config_players').'</b></div></div>';
 			print '<div class="pref styledinputs" name="playerdefs"></div>';
-	if (!$prefs['hide_master_volume']) {
+	if (!prefs::$prefs['hide_master_volume']) {
 			print '<div class="configtitle nohelp invisible" id="snapheader"><div class="textcentre expand"><b>Snapcast</b></div></div>';
 			print '<div class="pref" id="snapcastgroups"></div>';
 	}
@@ -151,7 +151,7 @@
 ?>
 </div>
 <?php
-include("player/".$prefs['player_backend']."/search.php");
+include("player/".prefs::$prefs['player_backend']."/search.php");
 ?>
 </div>
 <div id="searchresultholder" class="selecotron is-albumlist"></div>
@@ -239,21 +239,21 @@ print '</div>';
 ?>
 <div class="pref">
 <?php
-if ($prefs['player_backend'] == "mopidy") {
+if (prefs::$prefs['player_backend'] == "mopidy") {
 	print '<div class="textcentre textunderline"><b>Music From Your Collection</b></div>';
 }
 ?>
 <div class="fullwidth" id="pluginplaylists"></div>
 
 <?php
-if ($prefs['player_backend'] == "mopidy") {
+if (prefs::$prefs['player_backend'] == "mopidy") {
 	print '<div class="textcentre textunderline"><b>Music From Spotify</b></div>';
 }
 ?>
 <div class="fullwidth" id="pluginplaylists_spotify"></div>
 
 <?php
-if ($prefs['player_backend'] == "mopidy") {
+if (prefs::$prefs['player_backend'] == "mopidy") {
 	print '<div class="textcentre textunderline"><b>Music From Everywhere</b></div>';
 	print '<div id="radiodomains" class="pref" style="padding-left:8px"><b>Play From These Sources:</b></div>';
 }

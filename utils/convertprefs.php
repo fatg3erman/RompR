@@ -2,11 +2,10 @@
 
 loadOldPrefs();
 unlink('prefs/prefs');
-savePrefs();
+prefs::save();
 
 
 function loadOldPrefs() {
-	global $prefs;
 	if (file_exists('prefs/prefs')) {
 		$fp = fopen('prefs/prefs', 'r');
 		if($fp) {
@@ -40,14 +39,14 @@ function loadOldPrefs() {
 								$a[0] != "showfileinfo" &&
 								$a[0] != "apache_backend" &&
 								$a[0] != "player_backend") {
-									$prefs[$a[0]] = trim($a[1]);
-									if ($prefs[$a[0]] === "false" || $prefs[$a[0]] === 0) {
-										$prefs[$a[0]] = false;
+									prefs::$prefs[$a[0]] = trim($a[1]);
+									if (prefs::$prefs[$a[0]] === "false" || prefs::$prefs[$a[0]] === 0) {
+										prefs::$prefs[$a[0]] = false;
 									}
-									if ($prefs[$a[0]] === "true" || $prefs[$a[0]] === 1) {
-										$prefs[$a[0]] = true;
+									if (prefs::$prefs[$a[0]] === "true" || prefs::$prefs[$a[0]] === 1) {
+										prefs::$prefs[$a[0]] = true;
 									}
-									error_log("UPGRADE             : Pref ".$a[0]." = ".$prefs[$a[0]]);
+									error_log("UPGRADE             : Pref ".$a[0]." = ".prefs::$prefs[$a[0]]);
 							}
 						}
 					}

@@ -400,7 +400,7 @@ var playlistManager = function() {
 
 	function playlistLoadString(plname) {
 		debug.debug('PLLOAD',plname);
-		return "player/mpd/loadplaylists.php?playlist="+plname+'&target='+playlistTargetString(plname);
+		return "player/utils/loadplaylists.php?playlist="+plname+'&target='+playlistTargetString(plname);
 	}
 
 	function playlistTargetString(plname) {
@@ -432,7 +432,7 @@ var playlistManager = function() {
 		browseUserPlaylist: function(clickedElement, menutoopen) {
 			var plname = clickedElement.prev().val();
 			debug.log("CLICKFUNCTIONS","Browsing playlist",plname);
-			string = "player/mpd/loadplaylists.php?userplaylist="+plname+'&target='+menutoopen;
+			string = "player/utils/loadplaylists.php?userplaylist="+plname+'&target='+menutoopen;
 			return string;
 		},
 
@@ -952,7 +952,7 @@ function makeTrackMenu(e, element) {
 	}).html(language.gettext("button_addtoplaylist")).appendTo(d);
 	var plssub = $('<div>', {class:'submenu invisible submenuspacer'}).appendTo(d);
 
-	$.get('player/mpd/loadplaylists.php?addtoplaylistmenu', function(data) {
+	$.get('player/utils/loadplaylists.php?addtoplaylistmenu', function(data) {
 		data.forEach(function(p) {
 			var h = $('<div>', {class: "backhi clickable menuitem clickpltrack closepopup", name: p.name }).html(p.html).appendTo(plssub);
 		});

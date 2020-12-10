@@ -1,37 +1,34 @@
 <?php
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-$skin = 'desktop';
 $opts = getopt('', ['currenthost:', 'player_backend:', 'scrobbling:']);
 if (is_array($opts)) {
 	foreach($opts as $key => $value) {
 		logger::log("ROMONITOR", $key,'=',$value);
-		$prefs[$key] = $value;
+		prefs::$prefs[$key] = $value;
 	}
 }
 $romonitor_hack = false;
-logger::log("ROMONITOR", "Using Player ".$prefs['currenthost'].' of type '.$prefs['player_backend']);
-if (array_key_exists('scrobbling', $prefs) && $prefs['scrobbling'] == 'true') {
-	if ($prefs['lastfm_session_key'] == '') {
-		$prefs['scrobbling'] = false;
+logger::log("ROMONITOR", "Using Player ".prefs::$prefs['currenthost'].' of type '.prefs::$prefs['player_backend']);
+if (array_key_exists('scrobbling', prefs::$prefs) && prefs::$prefs['scrobbling'] == 'true') {
+	if (prefs::$prefs['lastfm_session_key'] == '') {
+		prefs::$prefs['scrobbling'] = false;
 		logger::warn('ROMONITOR', 'Warning. Scrobbling was requested but user is not logged in. Scrobbling will not be enabled');
 	} else {
-		$prefs['scrobbling'] = true;
+		prefs::$prefs['scrobbling'] = true;
 		logger::log("ROMONITOR", "Scrobbling is enabled");
 	}
 } else {
 	logger::log('ROMONITOR', 'Scrobbling disabled');
-	$prefs['scrobbling'] = false;
+	prefs::$prefs['scrobbling'] = false;
 }
 require_once ("collection/collection.php");
-require_once ("collection/playlistcollection.php");
 require_once ("backends/sql/backend.php");
-require_once ("backends/sql/metadatafunctions.php");
 require_once ('podcasts/podcastfunctions.php');
-require_once ("player/".$prefs['player_backend']."/player.php");
+require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 $player = new $PLAYER_TYPE();
-$currenthost_save = $prefs['currenthost'];
-$player_backend_save = $prefs['player_backend'];
+$currenthost_save = prefs::$prefs['currenthost'];
+$player_backend_save = prefs::$prefs['player_backend'];
 $trackbytrack = false;
 $current_id = -1;
 $read_time = 0;
@@ -66,13 +63,13 @@ while (true) {
 			$current_song = map_tags($player->get_currentsong_as_playlist($collection));
 			if (array_key_exists('duration', $current_song) && $current_song['duration'] > 0 && $current_song['type'] !== 'stream') {
 				if ($mpd_status['songid'] != $current_id) {
-					logger::log("ROMONITOR", $prefs['currenthost'],'-',"Track has changed");
+					logger::log("ROMONITOR", prefs::$prefs['currenthost'],'-',"Track has changed");
 					$current_id = $mpd_status['songid'];
 					romprmetadata::get($current_song);
 					$current_playcount = array_key_exists('Playcount', $returninfo) ? $returninfo['Playcount'] : 0;
-					logger::trace("ROMONITOR", $prefs['currenthost'],"- Current ID is",$current_id);
-					logger::trace("ROMONITOR", $prefs['currenthost'],"- Duration is",$current_song['duration']);
-					logger::trace("ROMONITOR", $prefs['currenthost'],"- Current Playcount is",$current_playcount);
+					logger::trace("ROMONITOR", prefs::$prefs['currenthost'],"- Current ID is",$current_id);
+					logger::trace("ROMONITOR", prefs::$prefs['currenthost'],"- Duration is",$current_song['duration']);
+					logger::trace("ROMONITOR", prefs::$prefs['currenthost'],"- Current Playcount is",$current_playcount);
 					lastfm_update_nowplaying($current_song);
 				}
 			} else {
@@ -90,7 +87,7 @@ while (true) {
 				$idle_status = $player->get_idle_status();
 			}
 			if (array_key_exists('error', $idle_status) && $idle_status['error'] == 'Timed Out') {
-				logger::trace("ROMONITOR", $prefs['currenthost'],"- idle command timed out, looping back");
+				logger::trace("ROMONITOR", prefs::$prefs['currenthost'],"- idle command timed out, looping back");
 				$timedout = true;
 				continue;
 			} else if (array_key_exists('error', $idle_status)) {
@@ -101,31 +98,31 @@ while (true) {
 		}
 		if (array_key_exists('changed', $idle_status) && $current_id != -1) {
 			connect_to_database(false);
-			logger::log("ROMONITOR", $prefs['currenthost'],"- Player State Has Changed");
+			logger::log("ROMONITOR", prefs::$prefs['currenthost'],"- Player State Has Changed");
 			$elapsed = time() - $read_time + $mpd_status['elapsed'];
 			$fraction_played = $elapsed/$current_song['duration'];
 			if ($fraction_played > 0.9) {
-				logger::log("ROMONITOR", $prefs['currenthost'],"- Played more than 90% of song. Incrementing playcount");
+				logger::log("ROMONITOR", prefs::$prefs['currenthost'],"- Played more than 90% of song. Incrementing playcount");
 				romprmetadata::get($current_song);
 				$now_playcount = array_key_exists('Playcount', $returninfo) ? $returninfo['Playcount'] : 0;
 				if ($now_playcount > $current_playcount) {
-					logger::log("ROMONITOR", $prefs['currenthost'],"- Current playcount is bigger than ours, doing nothing");
+					logger::log("ROMONITOR", prefs::$prefs['currenthost'],"- Current playcount is bigger than ours, doing nothing");
 				} else {
 					$current_song['attributes'] = array(array('attribute' => 'Playcount', 'value' => $current_playcount+1));
 					romprmetadata::inc($current_song);
 				}
 				if ($current_song['type'] == 'podcast') {
-					logger::log("ROMONITOR", $prefs['currenthost'],"- Marking podcast episode as listened");
+					logger::log("ROMONITOR", prefs::$prefs['currenthost'],"- Marking podcast episode as listened");
 					markAsListened($current_song['uri']);
 				}
 				scrobble_to_lastfm($current_song);
 			}
 
 			loadPrefs();
-			$prefs['currenthost'] = $currenthost_save;
-			$prefs['player_backend'] = $player_backend_save;
-			$radiomode = $prefs['multihosts']->{$prefs['currenthost']}->radioparams->radiomode;
-			$radioparam = $prefs['multihosts']->{$prefs['currenthost']}->radioparams->radioparam;
+			prefs::$prefs['currenthost'] = $currenthost_save;
+			prefs::$prefs['player_backend'] = $player_backend_save;
+			$radiomode = prefs::$prefs['multihosts'][$currenthost_save]['radioparams']['radiomode'];
+			$radioparam = prefs::$prefs['multihosts'][$currenthost_save]['radioparams']['radioparam'];
 			$playlistlength = $mpd_status['playlistlength'];
 			logger::log("ROMONITOR", "PLaylist length is ".$playlistlength);
 			switch ($radiomode) {
@@ -140,9 +137,9 @@ while (true) {
 						// Also, taking over would require us to have write access to prefs.var which is
 						// problematic on some systems, especially if something like SELinux is enabled
 						logger::log("ROMONITOR", "Smart Radio Master has gone away. Taking Over");
-						$tracksneeded = $prefs['smartradio_chunksize'] - $playlistlength  + 1;
+						$tracksneeded = prefs::$prefs['smartradio_chunksize'] - $playlistlength  + 1;
 						logger::log("ROMONITOR", "Adding ".$tracksneeded." from ".$radiomode);
-						$tracks = doPlaylist($radioparam, $tracksneeded);
+						$tracks = collectionSmartRadio::doPlaylist($radioparam, $tracksneeded);
 						$cmds = array();
 						foreach ($tracks as $track) {
 							$cmds[] = join_command_string(array('add', $track['name']));
@@ -155,7 +152,7 @@ while (true) {
 		}
 	}
 	close_mpd();
-	logger::log("ROMONITOR", $prefs['currenthost'],"- Player connection dropped - retrying in 10 seconds");
+	logger::log("ROMONITOR", prefs::$prefs['currenthost'],"- Player connection dropped - retrying in 10 seconds");
 	sleep(10);
 }
 
@@ -189,8 +186,7 @@ function close_mpd() {
 }
 
 function lastfm_update_nowplaying($currentsong) {
-	global $prefs;
-	if (!$prefs['scrobbling'])
+	if (!prefs::$prefs['scrobbling'])
 		return;
 	logger::log('ROMONITOR', 'Updating Nowplaying');
 	$options = array(
@@ -204,7 +200,7 @@ function lastfm_update_nowplaying($currentsong) {
 
 function scrobble_to_lastfm($currentsong) {
 	logger::log('ROMONITOR', 'Scrobbling');
-	if (!$prefs['scrobbling'])
+	if (!prefs::$prefs['scrobbling'])
 		return;
 	$options = array(
 		'timestamp' => time() - $currentsong['duration'],

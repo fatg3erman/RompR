@@ -1,6 +1,6 @@
 <?php
 
-require_once ('player/mpd/filetree.php');
+require_once ('collection/filetree.php');
 
 function doDbCollection($terms, $domains, $resultstype, &$collection) {
 

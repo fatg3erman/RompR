@@ -6,20 +6,20 @@ define('SQL_URI_CONCAT', "GROUP_CONCAT(Uri SEPARATOR ',') ");
 define('STUPID_CONCAT_THING', "SELECT PODindex, PODTrackindex FROM PodcastTracktable WHERE Link = ? OR ? LIKE CONCAT('%', Localfilename)");
 
 function connect_to_database($sp = true) {
-	global $mysqlc, $prefs;
+	global $mysqlc;
 	if ($mysqlc !== null) {
 		logger::error("MYSQL", "AWOOOGA! ATTEMPTING MULTIPLE DATABASE CONNECTIONS!");
 		return;
 	}
 	try {
-		if (is_numeric($prefs['mysql_port'])) {
+		if (is_numeric(prefs::$prefs['mysql_port'])) {
 			logger::debug("MYSQL", "Connecting using hostname and port");
-			$dsn = "mysql:host=".$prefs['mysql_host'].";port=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'].";charset=utf8mb4";
+			$dsn = "mysql:host=".prefs::$prefs['mysql_host'].";port=".prefs::$prefs['mysql_port'].";dbname=".prefs::$prefs['mysql_database'].";charset=utf8mb4";
 		} else {
 			logger::debug("MYSQL", "Connecting using unix socket");
-			$dsn = "mysql:unix_socket=".$prefs['mysql_port'].";dbname=".$prefs['mysql_database'].";charset=utf8mb4";
+			$dsn = "mysql:unix_socket=".prefs::$prefs['mysql_port'].";dbname=".prefs::$prefs['mysql_database'].";charset=utf8mb4";
 		}
-		$mysqlc = new PDO($dsn, $prefs['mysql_user'], $prefs['mysql_password']);
+		$mysqlc = new PDO($dsn, prefs::$prefs['mysql_user'], prefs::$prefs['mysql_password']);
 		logger::debug("MYSQL", "Connected to MySQL");
 		// generic_sql_query("SET NAMES utf8mb4", true);
 		generic_sql_query('SET SESSION sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"', true);
@@ -36,7 +36,7 @@ function close_database() {
 }
 
 function check_sql_tables() {
-	global $mysqlc, $prefs;
+	global $mysqlc;
 	if (generic_sql_query("CREATE TABLE IF NOT EXISTS Tracktable(".
 		"TTindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
 		"PRIMARY KEY(TTindex), ".
@@ -700,7 +700,7 @@ function check_sql_tables() {
 
 			case 44:
 				logger::log("SQL", "Updating FROM Schema version 44 TO Schema version 45");
-				upgrade_host_defs(45);
+				prefs::upgrade_host_defs(45);
 				generic_sql_query("UPDATE Statstable SET Value = 45 WHERE Item = 'SchemaVer'", true);
 				break;
 
@@ -726,7 +726,7 @@ function check_sql_tables() {
 
 			case 48:
 				logger::log("SQL", "Updating FROM Schema version 48 TO Schema version 49");
-				upgrade_host_defs(49);
+				prefs::upgrade_host_defs(49);
 				generic_sql_query("UPDATE Statstable SET Value = 49 WHERE Item = 'SchemaVer'", true);
 				break;
 
@@ -905,13 +905,13 @@ function check_sql_tables() {
 
 			case 67:
 				logger::log("SQL", "Updating FROM Schema version 67 TO Schema version 68");
-				upgrade_host_defs(68);
+				prefs::upgrade_host_defs(68);
 				generic_sql_query("UPDATE Statstable SET Value = 68 WHERE Item = 'SchemaVer'", true);
 				break;
 
 			case 68:
 				logger::log("SQL", "Updating FROM Schema version 68 TO Schema version 69");
-				upgrade_host_defs(69);
+				prefs::upgrade_host_defs(69);
 				generic_sql_query("UPDATE Statstable SET Value = 69 WHERE Item = 'SchemaVer'", true);
 				break;
 

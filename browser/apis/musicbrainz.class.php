@@ -6,7 +6,6 @@ class musicbrainz {
 	const COVER_URL = 'http://coverartarchive.org/release/';
 
 	private static function request($url, $print_data) {
-		global $prefs;
 		$cache = new cache_handler([
 			'url' => $url,
 			'cache' => 'musicbrainz',
