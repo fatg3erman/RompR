@@ -118,7 +118,7 @@ while (true) {
 				scrobble_to_lastfm($current_song);
 			}
 
-			loadPrefs();
+			prefs::load();
 			prefs::$prefs['currenthost'] = $currenthost_save;
 			prefs::$prefs['player_backend'] = $player_backend_save;
 			$radiomode = prefs::$prefs['multihosts'][$currenthost_save]['radioparams']['radiomode'];

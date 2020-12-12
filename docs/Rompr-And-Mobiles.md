@@ -13,49 +13,7 @@ Even if you don't care about Playcounts, they are used by many of the [Personali
 RompЯ is provided with a small program called romonitor that takes care of updating playcounts, marks podcasts as listened, scrobbles tracks to Last.FM,
 and keeps personalised radio stations running even when no browser is open. It just needs a little setting up.
 
-## Romonitor method 1:
-
-### Create a Shell Script to run romonitor
-
-Create a file somewhere (anywhere) called romonitor.sh, based on the following template:
-
-    #!/bin/bash
-
-    cd /PATH/TO/ROMPR
-    php ./romonitor.php --currenthost Default --player_backend mpd &
-
-You need to make some changes to that:
-
-* **/PATH/TO/ROMPR** is the full path to your RompЯ installation. Refer to the installation instructions for more details.
-* **currenthost** should be followed by the name of one of the Players as displayed in your Configuration menu.
-* **player_backend** should be followed by either mpd or mopidy, depending on the type of player.
-
-Now you just need to run this script.
-
-    cd /directory/where/you/put/romonitor.sh
-    chmod +x romonitor.sh
-    ./romonitor.sh
-
-The script will exit immediately but it will leave the romonitor program running. You can check by typing
-
-    ps aux | grep romonitor
-
-And you should see something like
-
-    bob       1336  0.0  1.0  63572 19572 ?        S    13:45   0:00 php ./romonitor.php --currenthost Mopidy --player_backend mopidy
-    bob       2828  0.0  0.0   4696   804 pts/0    S+   14:02   0:00 grep --color=auto romonitor
-
-### If you're using Multiple Players
-
-In the case where you're using [multiple players](/RompR/Using-Multiple-Players) you'll need to create a separate line in the shell script for each player.
-
-### Loading at startup
-
-To make sure romonitor gets loaded every time you boot, you can just add your shell script as a login program, using whatever method your choice of desktop environment provides to do that.
-
-## Romonitor Method 2:
-
-if you're running a headless system and you don't log in, you can start romonitor as a systemd service in the background.
+## Running RoMonitor:
 
 Just create a file /lib/systemd/system/romonitor.service that looks like this
 
@@ -84,6 +42,7 @@ You need to make some changes to that:
 * **/PATH/TO/ROMPR** is the full path to your RompЯ installation. Refer to the installation instructions for more details.
 * **currenthost** should be followed by the name of one of the Players as displayed in your Configuration menu.
 * **player_backend** should be followed by either mpd or mopidy, depending on the type of player.
+* **User** must be the username your web server runs as. On Debian/Ubuntu systems this is www-data
 
 Then enable it with
 
@@ -104,7 +63,7 @@ You can use [mopidy-scrobbler](https://github.com/mopidy/mopidy-scrobbler) for M
 
 To make romonitor scrobble to Last.FM you must first [log in to Last.FM](/RompR/LastFM) from the main Rompr application, then start romonitor with an additional paramter, for example
 
-    php ./romonitor.php --currenthost Default --player_backend mpd --scrobbling true &
+    ExecStart=/usr/bin/php /PATH/TO/ROMPR/romonitor.php  --currenthost Kitchen --player_backend mopidy --scrobbling true
 
 Also make sure you're not scrobbling from the main RompR application or mpdscribble/mopidy-scrobbler etc or all your plays will be scrobbled twice!
 
