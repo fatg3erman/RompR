@@ -69,7 +69,7 @@ var spotiMixRadio = function() {
 			}
 			try {
 				var seeds = await $.ajax({
-					url: "backends/sql/userRatings.php",
+					url: "api/metadata/",
 					type: "POST",
 					contentType: false,
 					data: JSON.stringify(searchparms),

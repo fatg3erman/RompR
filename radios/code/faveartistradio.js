@@ -18,7 +18,7 @@ var faveArtistRadio = function() {
 			tuner = new searchRadio();
 			try {
 				var fartists = await $.ajax({
-					url: "backends/sql/userRatings.php",
+					url: "api/metadata/",
 					type: "POST",
 					contentType: false,
 					data: JSON.stringify([{action: 'getfaveartists'}]),

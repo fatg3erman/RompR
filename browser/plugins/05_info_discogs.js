@@ -855,8 +855,8 @@ var info_discogs = function() {
 							artistmeta.discogs['artist_'+data.id] = data;
 							if (data.data) {
 								// Fill in any [a123456] or [a=123456] links in the main text body.
-								$('span.artists[name="'+data.data.id+'"]').html(data.data.name);
-								$('span.artists[name="'+data.data.id+'"]').wrap('<a href="'+data.data.uri+'" target="_blank"></a>');
+								artistmeta.discogs.layout.fill_in_element('span.artists[name="'+data.data.id+'"]', data.data.name);
+								artistmeta.discogs.layout.element_to_link('span.artists[name="'+data.data.id+'"]', data.data.uri);
 							}
 						}
 					},
@@ -867,8 +867,8 @@ var info_discogs = function() {
 							artistmeta.discogs['masters_'+data.id] = data;
 							if (data.data) {
 								// Fill in any [m123456] or [m=123456] links in the main text body.
-								$('span.masters[name="'+data.data.id+'"]').html(data.data.title);
-								$('span.masters[name="'+data.data.id+'"]').wrap('<a href="'+data.data.uri+'" target="_blank"></a>');
+								artistmeta.discogs.layout.fill_in_element('span.masters[name="'+data.data.id+'"]', data.data.title);
+								artistmeta.discogs.layout.element_to_link('span.masters[name="'+data.data.id+'"]', data.data.uri);
 							}
 						}
 					},
@@ -879,20 +879,18 @@ var info_discogs = function() {
 							artistmeta.discogs['releases_'+data.id] = data;
 							if (data.data) {
 								// Fill in any [r123456] or [r=123456] links in the main text body.
-								$('span.releases[name="'+data.data.id+'"]').html(data.data.title);
-								$('span.releases[name="'+data.data.id+'"]').wrap('<a href="'+data.data.uri+'" target="_blank"></a>');
+								artistmeta.discogs.layout.fill_in_element('span.releases[name="'+data.data.id+'"]', data.data.title);
+								artistmeta.discogs.layout.element_to_link('span.releases[name="'+data.data.id+'"]', data.data.uri);
 							}
 						}
 					},
 
 					gotExtraLabelInfo: function(data) {
 						debug.debug(medebug, 'got extra label info',data);
-						if (data) {
-							if (data.data) {
-								// Fill in any [l123456] or [l=123456] links in the main text body.
-								$('span.labels[name="'+data.data.id+'"]').html(data.data.name);
-								$('span.labels[name="'+data.data.id+'"]').wrap('<a href="'+data.data.uri+'" target="_blank"></a>');
-							}
+						if (data && data.data) {
+							// Fill in any [l123456] or [l=123456] links in the main text body.
+							artistmeta.discogs.layout.fill_in_element('span.labels[name="'+data.data.id+'"]', data.data.name);
+							artistmeta.discogs.layout.element_to_link('span.labels[name="'+data.data.id+'"]', data.data.uri);
 						}
 					},
 

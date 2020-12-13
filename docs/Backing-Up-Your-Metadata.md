@@ -14,7 +14,7 @@ Click the X to delete a backup.
 
 You can automate the process of creating metadata backups by creating a cron job that runs
 
-    curl -d '[{"action": "metabackup"}]' -H "Content-Type: application/json" -X POST  http://your.rompr.installation/backends/sql/userRatings.php
+    curl -d '[{"action": "metabackup"}]' -H "Content-Type: application/json" -X POST  http://your.rompr.installation/api/metadata/
 
 Note that there is no limit to the number of backups that can be created, so you will need to manually delete old ones from time to time to prevent your hard drive filling up!
 

@@ -16,7 +16,7 @@ var starRadios = function() {
 			while (tracks.length < numtracks) {
 				try {
 					var t = await $.ajax({
-						url: "backends/sql/userRatings.php",
+						url: "api/metadata/",
 						type: "POST",
 						contentType: false,
 						data: JSON.stringify([{action: whattodo, playlist: param, numtracks: numtracks}]),

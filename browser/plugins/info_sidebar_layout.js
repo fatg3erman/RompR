@@ -44,6 +44,14 @@ function info_sidebar_layout(options) {
 		return settings.title;
 	}
 
+	this.fill_in_element = function(identifier, content) {
+		self.html.find(identifier).html(content);
+	}
+
+	this.element_to_link = function(identifier, url) {
+		self.html.find(identifier).wrap('<a href="'+url+'" target="_blank"></a>');
+	}
+
 	this.check_expand_icon = function(id) {
 		if (self.mainbit.find('i.icon-expand-up').length == 0)
 			make_expand_icon(id);
@@ -346,6 +354,23 @@ $.widget('rompr.imageMasonry', {
 		var self = this;
 		this.element.empty();
 		this.element.attr('id', self.options.id)
+		if (typeof(IntersectionObserver) == 'function') {
+			//
+			// Use IntersectionObserver to do the Masonry layout. This makes masonry work in the case
+			// where the parent div is not visible when we first set the parameters. Not sure if this is
+			// due to something in rePoint or something in Masonry.
+			// Eg if someone starts on discogs, but swithces away before the images load, when they switch
+			// back the masonry layout will not have been done. Using IntersectionObserver fixes that.
+			//
+			this.observer = new IntersectionObserver(function(entries, me) {
+				entries.forEach(entry => {
+					if (entry.isIntersecting) {
+						browser.rePoint($('#'+self.options.id), {itemSelector: '.'+self.options.class, percentPosition: true});
+						me.unobserve(entry.target);
+					}
+				})
+			});
+		}
 
 		this.options.images.forEach(function(image) {
 			$('<input>', {type: 'hidden'}).val('getRemoteImage.php?url='+rawurlencode(image)).insertAfter(
@@ -355,8 +380,11 @@ $.widget('rompr.imageMasonry', {
 			);
 		});
 		this.element.imagesLoaded(function() {
-			// Masonry doesn't work if I use self.element here?????
-			browser.rePoint($('#'+self.options.id), {itemSelector: '.'+self.options.class, percentPosition: true});
+			if (typeof(IntersectionObserver) == 'function') {
+				self.element.get().forEach(d => self.observer.observe(d));
+			} else {
+				browser.rePoint($('#'+self.options.id), {itemSelector: '.'+self.options.class, percentPosition: true});
+			}
 		});
 
 	},
@@ -381,6 +409,24 @@ $.widget('rompr.playableMasonry', {
 		var self = this;
 		this.element.empty();
 		this.element.attr('id', self.options.id)
+		if (typeof(IntersectionObserver) == 'function') {
+			//
+			// Use IntersectionObserver to do the Masonry layout. This makes masonry work in the case
+			// where the parent div is not visible when we first set the parameters. Not sure if this is
+			// due to something in rePoint or something in Masonry.
+			// Eg if someone starts on discogs, but swithces away before the images load, when they switch
+			// back the masonry layout will not have been done. Using IntersectionObserver fixes that.
+			//
+			this.observer = new IntersectionObserver(function(entries, me) {
+				entries.forEach(entry => {
+					if (entry.isIntersecting) {
+						self.doMasonryStuff(self);
+						me.unobserve(entry.target);
+					}
+				})
+			});
+		}
+
 		this.options.spotidata.tracks.forEach(function(track) {
 			var img = (track.album.images && track.album.images.length > 0) ?
 				'getRemoteImage.php?url='+rawurlencode(track.album.images[0].url)+'&rompr_resize_size=smallish' : 'newimages/spotify-icon.png';
@@ -389,12 +435,20 @@ $.widget('rompr.playableMasonry', {
 			var an = track.artists.map(a => a.name);
 			x.append($('<div>').html(track.name+'<br /><b>'+concatenate_artist_names(an)+'</b>'));
 		});
+
 		this.element.imagesLoaded(function() {
-			// Masonry doesn't work if I use self.element here?????
-			$('#'+self.options.id).find('.notthere').removeClass('notthere');
-			setDraggable('#'+self.options.id);
-			browser.rePoint($('#'+self.options.id), {itemSelector: '.arsecandle', columnWidth: '.arsecandle', percentPosition: true});
+			if (typeof(IntersectionObserver) == 'function') {
+				self.element.get().forEach(d => self.observer.observe(d));
+			} else {
+				self.doMasonryStuff(self);
+			}
 		});
+	},
+
+	doMasonryStuff: function(self) {
+		$('#'+self.options.id).find('.notthere').removeClass('notthere');
+		setDraggable('#'+self.options.id);
+		browser.rePoint($('#'+self.options.id), {itemSelector: '.arsecandle', columnWidth: '.arsecandle', percentPosition: true});
 	},
 
 	_destroy: function() {

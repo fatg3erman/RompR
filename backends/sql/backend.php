@@ -27,7 +27,7 @@ $nodata = array (
 // tracks have no metadata apart from a Playcount. Always be aware of this.
 
 // For tracks, LastModified controls whether a collection update will update any of its data.
-// Tracks added by hand (by tagging or rating, via userRatings.php) must have LastModified as NULL
+// Tracks added by hand (by tagging or rating, via api/metadata/) must have LastModified as NULL
 // - this is how we prevent the collection update from removing them.
 
 // Search:

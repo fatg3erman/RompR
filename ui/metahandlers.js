@@ -266,7 +266,7 @@ var metaHandlers = function() {
 					var monitor = new youtubeDownloadMonitor(uri);
 					try {
 						var data = await $.ajax({
-							url: "backends/sql/userRatings.php",
+							url: "api/metadata/",
 							type: "POST",
 							contentType: false,
 							data: JSON.stringify([{action: 'youtubedl', uri: uri }]),
@@ -469,7 +469,7 @@ var dbQueue = function() {
 	async function process_request(req) {
 		try {
 			var data = await $.ajax({
-				url: "backends/sql/userRatings.php",
+				url: "api/metadata/",
 				type: "POST",
 				contentType: false,
 				data: JSON.stringify(req.data),

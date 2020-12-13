@@ -334,20 +334,6 @@ var browser = function() {
 				}
 			});
 
-			// $('#infopane .masonified7:visible').each(function() {
-			// 	var h = $(this);
-			// 	if (h.width() > 800) {
-			// 		var width = 48;
-			// 	} else {
-			// 		var width = 98;
-			// 	}
-			// 	h.find(".tagholder2").css('width', width.toString()+'%');
-			// 	h.find(".tagholder_wode").css("width", "98%");
-			// 	if (typeof(params) == 'undefined' && h.css('position') == 'relative') {
-			// 		h.masonry();
-			// 	}
-			// });
-
 			$('#infopane .masonified4:visible').each(function() {
 				var h = $(this);
 				var width = calcPercentWidth(h, '.tagholder4', 140, h.width());
