@@ -2,8 +2,6 @@
 chdir('../..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-require_once ("player/".prefs::$prefs['player_backend']."/player.php");
-require_once ("backends/sql/backend.php");
 
 // For speed and memory usage we do two VERY IMPORTANT things
 // 1. JSON encode each track one-by-one, print out the result, and then throw that data away
@@ -12,22 +10,23 @@ require_once ("backends/sql/backend.php");
 // and the Collection data models use up a lot of memory for things we just don't need here
 
 // This is intended to be a fast pipe to convert MPD data into RompR data.
-$t = microtime(true);
-$c = 0;
+$c = true;
 header('Content-Type: application/json; charset=utf-8');
 $dbterms = array( 'tags' => null, 'rating' => null );
-$player = new $PLAYER_TYPE();
-$collection = new playlistCollection();
+$player = new player();
+prefs::$database = new playlistCollection();
 print '[';
-foreach ($player->get_playlist($collection) as $info) {
-	if ($c > 0) {
+foreach ($player->get_playlist() as $filedata) {
+	$info = prefs::$database->doNewPlaylistFile($filedata);
+	# Timing comparisons show that if ($c) is faster than if ($c == 0)
+	if ($c) {
+		$c = false;
+	} else {
 		print ', ';
 	}
-	$c++;
 	print json_encode($info);
 };
 print ']';
 ob_flush();
-$at = microtime(true) - $t;
-logger::info("GETPLAYLIST", "Playlist has",$c,"tracks and took",$at,"seconds to parse");
+prefs::$database->close_database();
 ?>

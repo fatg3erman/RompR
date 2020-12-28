@@ -1,7 +1,7 @@
 <script language="javascript">
 <?php
-print "var collection_status = ".checkCollectionStatus().";\n";
-print "var old_style_albumart = ".checkAlbumArt().";\n";
+print "var collection_status = ".prefs::$database->checkCollectionStatus().";\n";
+print "var old_style_albumart = ".prefs::$database->checkAlbumArt().";\n";
 // There is no default language set in prefs, so that we can try to detect
 // it from the browser. This we set a global here so we know what it was.
 print "var interfaceLanguage = '".language::get_interface_language()."';\n";

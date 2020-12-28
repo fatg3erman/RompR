@@ -2,6 +2,8 @@
 
 class prefs {
 
+	public static $database = null;
+
 	public static $prefs = array(
 		// Things that only make sense as backend options, not per-user options
 		"music_directory_albumart" => "",
@@ -56,6 +58,7 @@ class prefs {
 				]
 			]
 		],
+		'old_style_sql' => false,
 
 		// Things that could be set on a per-user basis but need to be known by the backend
 		"displaycomposer" => true,

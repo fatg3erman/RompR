@@ -127,6 +127,6 @@ Normally, Rompr will only refresh your Podcasts while the browser is open. If yo
 
 If you would like to make Rompr update your podcasts overnight while you're not using it you can do this by creating a cron job. This is not the place to discuss how to create cron jobs, but it needs to run the command
 
-    curl http://address.of.rompr/podcasts/podcasts.php?rebuild=1&checkrefresh=1 > /dev/null
+    curl http://address.of.rompr/api/podcasts/?rebuild=1&checkrefresh=1 > /dev/null
 
 

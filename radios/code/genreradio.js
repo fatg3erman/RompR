@@ -31,14 +31,9 @@ var genreRadio = function() {
 		checkResults: function(data) {
 			debug.debug("GENRE RADIO","Search Results",data);
 			tracks = [];
-			for (let i in data) {
-				let domain = data[i];
-				if (domain.tracks) {
-					for (let track of domain.tracks) {
-						if (!track.uri.match(/:artist:/)) {
-							tracks.push({type: 'uri', name: track.uri});
-						}
-					}
+			for (let track of data) {
+				if (!track.uri.match(/:artist:/)) {
+					tracks.push({type: 'uri', name: track.uri});
 				}
 			}
 			debug.trace('GENRE RADIO', 'We have',tracks.length,'tracks');

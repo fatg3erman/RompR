@@ -4,8 +4,7 @@ chdir('../..');
 
 include ("includes/vars.php");
 include ("includes/functions.php");
-include ("backends/sql/backend.php");
-
+prefs::$database = new opml_io();
 $output = array();
 
 logger::mark("OPML IMPORTER", "Uploading OPML File");
@@ -30,7 +29,7 @@ foreach ($x->body->outline as $o) {
 				'Title' => (string) $att['text'],
 				'feedURL' => (string) $att['xmlUrl'],
 				'htmlURL' => (string) $att['htmlUrl'],
-				'subscribed' => podcast_is_subscribed((string) $att['xmlUrl'])
+				'subscribed' => prefs::$database->podcast_is_subscribed((string) $att['xmlUrl'])
 			));
 			break;
 
@@ -41,15 +40,5 @@ foreach ($x->body->outline as $o) {
 }
 
 print json_encode($output);
-
-function podcast_is_subscribed($feedURL) {
-	$r = sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
-		"SELECT Title FROM Podcasttable WHERE Subscribed = 1 AND FeedURL = ?", $feedURL);
-	if (count($r) > 0) {
-		logger::log("OPML Imoprter", "    Already Subscribed To Podcast ".$feedURL);
-		return true;
-	}
-	return false;
-}
 
 ?>

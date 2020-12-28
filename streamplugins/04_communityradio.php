@@ -5,7 +5,6 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 	require_once ("includes/vars.php");
 	require_once ("includes/functions.php");
-	require_once ("skins/".$skin."/ui_elements.php");
 
 	foreach ($_REQUEST as $i => $r) {
 		logger::debug("COMMRADIO", $i,":",$r);
@@ -60,7 +59,7 @@ class commradioplugin {
 
 	private function doHeader() {
 		print '<div id="communityradioplugin">';
-		print albumHeader(array(
+		print uibits::albumHeader(array(
 			'id' => 'communityradiolist',
 			'Image' => 'newimages/broadcast.svg',
 			'Searched' => 1,
@@ -79,7 +78,7 @@ class commradioplugin {
 	}
 
 	private function doDropdownHeader() {
-		directoryControlHeader('communityradiolist', language::gettext('label_communityradio'));
+		uibits::directoryControlHeader('communityradiolist', language::gettext('label_communityradio'));
 
 		print '<div class="fullwidth containerbox dropdown-container">';
 		// print '<div class="fixed comm-search-label"><span class="cslt"><b>Order By</b></span></div>';
@@ -120,13 +119,13 @@ class commradioplugin {
 	}
 
 	private function doBrowseRoot() {
-		printRadioDirectory(array('URL' => 'json/countries', 'text' => 'Country'), false, 'commradio');
+		uibits::printRadioDirectory(array('URL' => 'json/countries', 'text' => 'Country'), false, 'commradio');
 		print '</div>';
 
-		printRadioDirectory(array('URL' => 'json/languages', 'text' => 'Language'), false, 'commradio');
+		uibits::printRadioDirectory(array('URL' => 'json/languages', 'text' => 'Language'), false, 'commradio');
 		print '</div>';
 
-		printRadioDirectory(array('URL' => 'getgenres', 'text' => 'Genres'), false, 'commradio');
+		uibits::printRadioDirectory(array('URL' => 'getgenres', 'text' => 'Genres'), false, 'commradio');
 		print '</div>';
 	}
 
@@ -205,16 +204,16 @@ class commradioplugin {
 			'drama'
 		);
 		sort($genres);
-		directoryControlHeader('commradio_'.md5('getgenres'), 'Genres');
+		uibits::directoryControlHeader('commradio_'.md5('getgenres'), 'Genres');
 		foreach ($genres as $g) {
-			printRadioDirectory(array('URL' => 'json/tags/'.$g, 'text' => $g), false, 'commradio');
+			uibits::printRadioDirectory(array('URL' => 'json/tags/'.$g, 'text' => $g), false, 'commradio');
 			print '</div>';
 
 		}
 	}
 
 	private function browse() {
-		directoryControlHeader('commradio_'.md5($this->url), $this->title);
+		uibits::directoryControlHeader('commradio_'.md5($this->url), $this->title);
 		$cache = new cache_handler([
 			'url' => 'https://'.$this->server.'/'.$this->url,
 			'cache' => 'commradio',
@@ -277,7 +276,7 @@ class commradioplugin {
 		$stations = $cache->get_cache_data();
 		$stations = json_decode($stations, true);
 		$title = ($this->title) ? rawurldecode($this->title) : language::gettext('label_communityradio');
-		directoryControlHeader('commradio_'.md5($this->url), ucfirst($title));
+		uibits::directoryControlHeader('commradio_'.md5($this->url), ucfirst($title));
 		print '<input type="hidden" value="'.rawurlencode($this->url).'" />';
 		print '<input type="hidden" value="'.rawurlencode($title).'" />';
 		$this->comm_radio_do_page_buttons($this->page, count($stations), $this->pagination);
@@ -292,7 +291,7 @@ class commradioplugin {
 	}
 
 	private function doStation($station, $index) {
-		print albumHeader(array(
+		print uibits::albumHeader(array(
 			'id' => 'communityradio_'.$index,
 			'Image' => $this->comm_radio_get_image($station),
 			'Searched' => 1,
@@ -308,7 +307,7 @@ class commradioplugin {
 			'class' => 'radiochannel'
 		));
 		print '<div id="communityradio_'.$index.'" class="dropmenu">';
-		trackControlHeader('','','communityradio_'.$index, null, array(array('Image' => $this->comm_radio_get_image($station))));
+		uibits::trackControlHeader('','','communityradio_'.$index, null, array(array('Image' => $this->comm_radio_get_image($station))));
 		// print '<div class="containerbox expand ninesix indent padright"><b>Listen:</b></div>';
 		print '<div class="containerbox ninesix indent padright">'.htmlspecialchars($station['state'].$station['country']).'</div>';
 
@@ -339,7 +338,7 @@ class commradioplugin {
 					'URL' => $root.rawurlencode($val),
 					'text' => ucfirst($thing['name']).' ('.$thing['stationcount'].' stations)'
 				);
-				printRadioDirectory($opts, true, 'commradio');
+				uibits::printRadioDirectory($opts, true, 'commradio');
 			}
 		} else {
 			print '<b>There was an error</b>';

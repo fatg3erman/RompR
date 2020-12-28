@@ -218,7 +218,7 @@ print '<div class="dropdown-container configtitle">';
 print '<i class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.language::gettext('label_podcastcontrols').'"></i>';
 print '<div class="textcentre expand"><b>'.language::gettext('label_podcasts').'</b></div>';
 print '</div>';
-include("podcasts/podcasts.php");
+include("includes/podcast_base.php");
 ?>
 </div>
 

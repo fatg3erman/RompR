@@ -2,10 +2,8 @@
 define('ROMPR_IS_LOADING', true);
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-require_once ("backends/sql/backend.php");
-require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 $only_plugins_on_menu = false;
-$skin = "desktop";
+prefs::$database = new collection_base();
 set_version_string();
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -88,12 +86,10 @@ print '<tr>
 <div id="artistcoverslist" class="tleft noborder">
 	<div class="noselection fullwidth">
 <?php
-if ($mysqlc) {
 	print '<div class="containerbox menuitem clickable clickselectartist selected" id="allartists"><div class="expand" class="artistrow">'.language::gettext("albumart_allartists").'</div></div>';
 	print '<div class="containerbox menuitem clickable clickselectartist" id="savedplaylists"><div class="expand" class="artistrow">Saved Playlists</div></div>';
 	print '<div class="containerbox menuitem clickable clickselectartist" id="radio"><div class="expand" class="artistrow">'.language::gettext("label_yourradio").'</div></div>';
 	do_artists_db_style();
-}
 ?>
 	</div>
 </div>
@@ -143,7 +139,7 @@ function do_covers_db_style() {
 				foreach ($albumlister->album_sort_query(false) as $album) {
 					print '<div class="fixed albumimg closet">';
 						print '<div class="covercontainer">';
-							print '<input name="albumpath" type="hidden" value="'.get_album_directory($album['Albumindex'], $album['AlbumUri']).'" />';
+							print '<input name="albumpath" type="hidden" value="'.prefs::$database->get_album_directory($album['Albumindex'], $album['AlbumUri']).'" />';
 							print '<input name="searchterm" type="hidden" value="'.rawurlencode($artist['Artistname']." ".munge_album_name($album['Albumname'])).'" />';
 							$album['Searched'] = 1;
 							$img = new baseAlbumImage(array('baseimage' => $album['Image']));
@@ -166,7 +162,7 @@ function do_radio_stations() {
 	global $count;
 	global $albums_without_cover;
 
-	$playlists = get_user_radio_streams();
+	$playlists = prefs::$database->get_user_radio_streams();
 	if (count($playlists) > 0) {
 		print '<div class="cheesegrater" name="radio">';
 			print '<div class="albumsection">';
@@ -198,9 +194,7 @@ function do_playlists() {
 
 	global $count;
 	global $albums_without_cover;
-	global $PLAYER_TYPE;
-	logger::log("PLAYLISTART", "Player type is", $PLAYER_TYPE);
-	$player = new $PLAYER_TYPE();
+	$player = new player();
 
 	$playlists = $player->get_stored_playlists(false);
 	if (!is_array($playlists)) {

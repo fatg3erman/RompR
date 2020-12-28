@@ -936,7 +936,7 @@ function makeTrackMenu(e, element) {
 		class: 'backhi clickable menuitem clicksubmenu',
 	}).html(language.gettext("label_tag")).appendTo(d);
 	var tagsub = $('<div>', {class:'submenu invisible'}).appendTo(d);
-	metaHandlers.genericAction(
+	metaHandlers.genericQuery(
 		'gettags',
 		function(data) {
 			data.forEach(function(tag){

@@ -82,7 +82,7 @@
 			</div>
 <?php
 			print '<div class="fixed topdrop"><i title="'.language::gettext('button_albumart').'" class="icon-cd tooltip smallpluginicon clickicon open_albumart"></i></div>';
-			print '<div class="fixed topdrop"><i class="icon-cog-alt smallpluginicon clickicon tooltip" title="'.language::gettext('button_prefs').'"></i>';
+			print '<div class="fixed topdrop"><i class="icon-cog-alt smallpluginicon clickicon tooltip choose_prefs" title="'.language::gettext('button_prefs').'"></i>';
 ?>
 				<div class="topdropmenu dropshadow rightmenu widemenu stayopen" id="configpanel">
 <?php
@@ -251,7 +251,7 @@ print '<div class="dropdown-container configtitle">';
 print '<i class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.language::gettext('label_podcastcontrols').'"></i>';
 print '<div class="textcentre expand"><b>'.language::gettext('label_podcasts').'</b></div>';
 print '</div>';
-include("podcasts/podcasts.php");
+include("includes/podcast_base.php");
 ?>
 	</div>
 

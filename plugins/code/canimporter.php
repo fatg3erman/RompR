@@ -5,10 +5,8 @@
 chdir('../..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-require_once ("backends/sql/backend.php");
-require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 
-$player = new $PLAYER_TYPE();
+$player = new player();
 if (file_exists('prefs/canmonitor')) {
 	unlink('prefs/canmonitor');
 }
@@ -39,35 +37,15 @@ if ($total == 0) {
 	exit(0);
 }
 
-$count = 0;
-open_transaction();
-foreach ($player->parse_list_output('sticker find song "" rating', $dirs, false) as $filedata) {
-	$uri = $filedata['file'];
-	$cockend = $filedata['sticker'];
-	$bellend = explode('=', $cockend);
-	$rating = ceil($bellend[1]/2);
-	logger::log('CANIMPORTER', 'Uri :',$uri,', Rating',$rating);
+prefs::$database = new cantata_importer();
+prefs::$database->cantata_import();
 
-	$ttindex = simple_query('TTindex', 'Tracktable', 'Uri', $uri, null);
-	if ($ttindex) {
-		logger::log('CANIMPORTER','  TTindex is',$ttindex);
-		sql_prepare_query(true, null, null, null,
-			"REPLACE INTO Ratingtable (TTindex, Rating) VALUES (?, ?)",
-			$ttindex,
-			$rating
-		);
-		$numdone++;
-		check_transaction();
-	} else {
-		logger::log('CANIMPORTER', '  Could not find TTindex');
+function import_cantata_track() {
+	global $player;
+	foreach ($player->parse_list_output('sticker find song "" rating', $dirs, false) as $filedata) {
+		print 'Some data...';
+		yield $filedata;
 	}
-
-	$count++;
-	$output = array('done' => $count, 'total' => $total, 'message' => 'Done '.$count.' of '.$total);
-	file_put_contents('prefs/canmonitor', json_encode($output));
-	print 'Some data...';
 }
-close_transaction();
-
 
 ?>

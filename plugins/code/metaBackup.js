@@ -4,9 +4,24 @@ var metaBackup = function() {
 	var monitortimer = null;
 	var progressDiv;
 
+	async function do_request(req, success, fail) {
+		try {
+			var data = await $.ajax({
+				url: "api/metadata/backup/",
+				type: "POST",
+				contentType: false,
+				data: JSON.stringify(req),
+				dataType: 'json'
+			});
+			success(data);
+		} catch (err) {
+			fail(data);
+		}
+	}
+
 	function getBackupData() {
-		metaHandlers.genericAction(
-			'getbackupdata',
+		do_request(
+			{action: 'getbackupdata'},
 			metaBackup.doMainLayout,
 			function() {
 				infobar.error(language.gettext('label_general_error'));
@@ -17,8 +32,8 @@ var metaBackup = function() {
 
 	function goDoThings(thing, what) {
 		debug.info("BACKUPS",thing,what);
-		metaHandlers.genericAction(
-			[{action: 'backup'+thing, which: what}],
+		do_request(
+			{action: 'backup'+thing, which: what},
 			function(data) {
 				clearTimeout(monitortimer);
 				debug.debug("BACKUPS","Success");
@@ -114,8 +129,8 @@ var metaBackup = function() {
 		create: function() {
 			$('#createbackup').off('click').hide();
 			$('#backupspinner').css('display', 'inline-block').makeSpinner();
-			metaHandlers.genericAction(
-				'metabackup',
+			do_request(
+				{action: 'metabackup'},
 				function(data) {
 					infobar.notify(language.gettext('label_backupcreated'));
 					getBackupData();

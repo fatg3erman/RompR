@@ -98,7 +98,6 @@ class baseAlbumImage {
 	}
 
 	public function check_image($domain, $type, $in_playlist = false) {
-		global $doing_search;
 		// If there's no image, see if we can set a default
 		// Note we don't set defaults for streams because coverscaper handles those
 		// so it can set them in the playlist even when auto art download is off
@@ -136,8 +135,6 @@ class baseAlbumImage {
 						case 'bassdrive':
 						case 'internetarchive':
 						case 'oe1':
-						// case 'soundcloud':
-						// case 'youtube':
 							$this->images = $this->image_paths_from_base_image('newimages/'.$domain.'-logo.svg');
 							break;
 					}
@@ -145,7 +142,7 @@ class baseAlbumImage {
 				return true;
 			}
 
-			if ($doing_search) {
+			if (prefs::$database->get_option('doing_search')) {
 				if (!$disc_checked && $this->check_if_image_already_downloaded()) {
 					// We may have searched for it before
 					return true;
@@ -192,7 +189,7 @@ class baseAlbumImage {
 
 	private function image_info_from_database() {
 		$this->basepath = 'albumart/';
-		$info = get_imagesearch_info($this->key);
+		$info = prefs::$database->get_imagesearch_info($this->key);
 		foreach ($info as $k => $v) {
 			$this->{$k} = $v;
 		}
@@ -249,7 +246,7 @@ class baseAlbumImage {
 		$extra = (array_key_exists('userplaylist', $obj)) ? 'plimage '.$imageclass : $imageclass;
 		if ($check_exists && $this->album_has_no_image()) {
 			$this->images['small'] = null;
-			$this->images['mediaum'] = null;
+			$this->images['medium'] = null;
 			$this->images['asdownloaded'] = null;
 		}
 		if (!$this->images['small'] && $obj['Searched'] != 1) {

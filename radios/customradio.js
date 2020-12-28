@@ -270,7 +270,7 @@ var customRadioManager = function() {
 			try {
 				var s = await $.ajax({
 					type: 'POST',
-					url: 'radios/code/savecustom.php',
+					url: 'radios/api/savecustom.php',
 					data: JSON.stringify(save_params),
 					contentType: false
 				});
@@ -319,7 +319,7 @@ var customRadioManager = function() {
 			params.delete = 1;
  			$.ajax({
 				type: 'POST',
-				url: 'radios/code/savecustom.php',
+				url: 'radios/api/savecustom.php',
 				data: JSON.stringify(params),
 				contentType: false
 			});
@@ -352,7 +352,7 @@ var customRadioManager = function() {
 			try {
 				sd = await $.ajax({
 					type: 'GET',
-					url: 'radios/code/loadcustom.php',
+					url: 'radios/api/loadcustom.php',
 					dataType: 'json'
 				});
 			} catch (err) {

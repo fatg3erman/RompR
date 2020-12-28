@@ -17,7 +17,7 @@ var helpfulThings = function() {
 
 	function getRecommendationSeeds() {
 		debug.log(medebug, "Getting Seeds For Recommendations");
-		metaHandlers.genericAction([{action: 'getrecommendationseeds', days: 30, limit: 20, top: 15}],
+		metaHandlers.genericQuery({action: 'getrecommendationseeds', days: 30, limit: 20, top: 15},
 			gotRecommendationSeeds,
 			function(data) {
 				debug.error(medebug,"Error Getting Seeds",data);

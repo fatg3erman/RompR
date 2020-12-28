@@ -9,7 +9,7 @@ class tuneinplugin {
 
 	public function doHeader() {
 		print '<div id="tuneinradio">';
-		print albumHeader(array(
+		print uibits::albumHeader(array(
 			'id' => 'tuneinlist',
 			'Image' => 'newimages/tunein-logo.svg',
 			'Searched' => 1,
@@ -30,7 +30,7 @@ class tuneinplugin {
 		if (array_key_exists('url', $_REQUEST)) {
 			$this->url = $_REQUEST['url'];
 		} else {
-			directoryControlHeader('tuneinlist', language::gettext('label_tuneinradio'));
+			uibits::directoryControlHeader('tuneinlist', language::gettext('label_tuneinradio'));
 			print '<div class="containerbox fullwidth dropdown-container"><div class="expand">
 				<input class="enter clearbox tuneinsearchbox" name="tuneinsearcher" type="text" ';
 			if (array_key_exists('search', $_REQUEST)) {
@@ -40,10 +40,10 @@ class tuneinplugin {
 		}
 		if (array_key_exists('title', $_REQUEST)) {
 			$this->title = $_REQUEST['title'];
-			directoryControlHeader($_REQUEST['target'], htmlspecialchars($this->title));
+			uibits::directoryControlHeader($_REQUEST['target'], htmlspecialchars($this->title));
 		}
 		if (array_key_exists('search', $_REQUEST)) {
-			directoryControlHeader('tuneinlist', language::gettext('label_tuneinradio'));
+			uibits::directoryControlHeader('tuneinlist', language::gettext('label_tuneinradio'));
 			$this->url .= 'Search.ashx?query='.urlencode($_REQUEST['search']);
 		}
 	}
@@ -63,7 +63,7 @@ class tuneinplugin {
 
 		foreach ($node->outline as $o) {
 			$att = $o->attributes();
-			logger::trace("TUNEIN", "  Text is",$att['text'],", type is",$att['type']);
+			logger::core("TUNEIN", "  Text is",$att['text'],", type is",$att['type']);
 			switch ($att['type']) {
 
 				case '':
@@ -74,7 +74,7 @@ class tuneinplugin {
 					break;
 
 				case 'link':
-					printRadioDirectory($att, true, 'tunein');
+					uibits::printRadioDirectory($att, true, 'tunein');
 					break;
 
 				case 'audio':
@@ -96,7 +96,7 @@ class tuneinplugin {
 
 					}
 
-					print albumHeader(array(
+					print uibits::albumHeader(array(
 						'id' => 'nodrop',
 						'Image' => 'getRemoteImage.php?url='.rawurlencode($att['image']),
 						'Searched' => 1,
@@ -126,7 +126,6 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 	include ("includes/vars.php");
 	include ("includes/functions.php");
-	include ("skins/".$skin."/ui_elements.php");
 
 	$tunein = new tuneinplugin();
 	$tunein->parseParams();

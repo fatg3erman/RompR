@@ -588,13 +588,7 @@ var uiHelper = function() {
 			try {
 				return layoutProcessor.makeCollectionDropMenu(element, name);
 			} catch (err) {
-				if (element.parent().hasClass('album1')) {
-					var c = 'dropmenu notfilled album1 is-albumlist';
-				} else if (element.parent().hasClass('album2')) {
-					var c = 'dropmenu notfilled album2 is-albumlist';
-				} else {
-					var c = 'dropmenu notfilled is-albumlist';
-				}
+				var c = 'dropmenu notfilled is-albumlist';
 				if (
 					element.hasClass('directory') ||
 					element.hasClass('playlist') ||

@@ -16,11 +16,11 @@ class sortby_genre extends sortby_base {
 				(SELECT Genreindex FROM Tracktable
 				WHERE Uri IS NOT NULL
 				AND Hidden = 0
-				".track_date_check(prefs::$prefs['collectionrange'], $this->why)."
+				".prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)."
 				".$sflag."
 				)
 			ORDER BY Genre ASC";
-		$result = generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
+		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		foreach ($result as $genre) {
 			yield $genre;
 		}
@@ -38,13 +38,13 @@ class sortby_genre extends sortby_base {
 				Tracktable.Albumindex = Albumtable.Albumindex AND
 			    Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0
 			    AND Tracktable.Genreindex = ".$this->who." ".
-			track_date_check(prefs::$prefs['collectionrange'], $this->why)." ".
+			prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)." ".
 			$sflag.") ORDER BY";
 		if (prefs::$prefs['sortbydate']) {
 			$qstring .= ' Year,';
 		}
 		$qstring .= ' LOWER(Albumname)';
-		$result = generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
+		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		foreach ($result as $album) {
 			$album['why'] = $this->why;
 			$album['id'] = $this->why.'album'.$album['Albumindex'];
@@ -55,18 +55,15 @@ class sortby_genre extends sortby_base {
 
 	public function output_root_list() {
 		logger::debug('SORTBY_GENRE', 'Generating Artist Root List');
-		global $divtype;
 		$count = 0;
 		foreach ($this->root_sort_query() as $genre) {
-			print artistHeader($this->why.$this->what.$genre['Genreindex'], $genre['Genre']);
+			print uibits::artistHeader($this->why.$this->what.$genre['Genreindex'], $genre['Genre']);
 			$count++;
-			$divtype = ($divtype == "album1") ? "album2" : "album1";
 		}
 		return $count;
 	}
 
 	public function output_root_fragment($genreindex) {
-		global $divtype;
 		logger::log('SORTBY_GENRE','Generating genre fragment',$this->why,'genre',$genreindex);
 		$singleheader = $this->initial_root_insert();
 		foreach ($this->root_sort_query() as $genre) {
@@ -74,11 +71,10 @@ class sortby_genre extends sortby_base {
 				$singleheader['type'] = 'insertAfter';
 				$singleheader['where'] = $this->why.'genre'.$genre['Genreindex'];
 			} else {
-				$singleheader['html'] = artistHeader($this->why.'genre'.$genre['Genreindex'], $genre['Genre']);
+				$singleheader['html'] = uibits::artistHeader($this->why.'genre'.$genre['Genreindex'], $genre['Genre']);
 				$singleheader['id'] = $this->why.'genre'.$genreindex;
 				return $singleheader;
 			}
-			$divtype = ($divtype == "album1") ? "album2" : "album1";
 		}
 	}
 
@@ -86,14 +82,14 @@ class sortby_genre extends sortby_base {
 		logger::log("SORTBY_GENRE", "Generating albums for",$this->why,$this->what,$this->who);
 		$count = 0;
 		if ($do_controlheader) {
-			print albumControlHeader(false, $this->why, 'genre', $this->who, $this->getGenreName());
+			print uibits::albumControlHeader(false, $this->why, 'genre', $this->who, $this->getGenreName());
 		}
 		foreach ($this->album_sort_query($force_artistname) as $album) {
-			print albumHeader($album);
+			print uibits::albumHeader($album);
 			$count++;
 		}
 		if ($count == 0 && $this->why != 'a') {
-			noAlbumsHeader();
+			uibits::noAlbumsHaeder();
 		}
 		return $count;
 	}
@@ -106,7 +102,7 @@ class sortby_genre extends sortby_base {
 				$singleheader['where'] = $this->why.'album'.$album['Albumindex'];
 				$singleheader['type'] = 'insertAfter';
 			} else {
-				$singleheader['html'] = albumHeader($album);
+				$singleheader['html'] = uibits::albumHeader($album);
 				$singleheader['id'] = $this->why.'album'.$albumindex;
 				return $singleheader;
 			}
@@ -114,39 +110,37 @@ class sortby_genre extends sortby_base {
 	}
 
 	public function get_modified_root_items() {
-		global $returninfo;
-		$result = generic_sql_query('SELECT DISTINCT Genreindex FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE justUpdated = 1');
+		$result = prefs::$database->generic_sql_query('SELECT DISTINCT Genreindex FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE justUpdated = 1');
 		foreach ($result as $mod) {
 			$atc = $this->genre_albumcount($mod['Genreindex']);
 			logger::mark("SORTBY_ARTIST", "  Genre",$mod['Genreindex'],"has",$atc,$this->why,"albums we need to consider");
 			if ($atc == 0) {
-				$returninfo['deletedartists'][] = $this->why.'genre'.$mod['Genreindex'];
+				prefs::$database->returninfo['deletedartists'][] = $this->why.'genre'.$mod['Genreindex'];
 			} else {
-				$returninfo['modifiedartists'][] = $this->output_root_fragment($mod['Genreindex']);
+				prefs::$database->returninfo['modifiedartists'][] = $this->output_root_fragment($mod['Genreindex']);
 			}
 		}
 	}
 
 	public function get_modified_albums() {
-		global $returninfo;
-		$result = generic_sql_query('SELECT DISTINCT Albumindex, Genreindex FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE justUpdated = 1');
+		$result = prefs::$database->generic_sql_query('SELECT DISTINCT Albumindex, Genreindex FROM Albumtable JOIN Tracktable USING (Albumindex) WHERE justUpdated = 1');
 		foreach ($result as $mod) {
 			$atc = $this->album_genre_trackcount($mod['Albumindex'], $mod['Genreindex']);
 			logger::mark("SORTBY_ARTIST", "  Album",$mod['Albumindex'],"has",$atc,$this->why,"tracks we need to consider");
 			if ($atc == 0) {
-				$returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'];
+				prefs::$database->returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'];
 			} else {
 				$lister = new sortby_genre($this->why.'genre'.$mod['Genreindex']);
 				$r = $lister->output_album_fragment($mod['Albumindex']);
 				$lister = new sortby_genre($this->why.'album'.$mod['Albumindex']);
 				$r['tracklist'] = $lister->output_track_list(true);
-				$returninfo['modifiedalbums'][] = $r;
+				prefs::$database->returninfo['modifiedalbums'][] = $r;
 			}
 		}
 	}
 
 	private function getGenreName() {
-		return simple_query('Genre', 'Genretable', 'Genreindex', $this->who,'');
+		return prefs::$database->simple_query('Genre', 'Genretable', 'Genreindex', $this->who,'');
 	}
 
 	public function initial_album_insert() {
@@ -167,7 +161,7 @@ class sortby_genre extends sortby_base {
 			" AND Hidden = 0
 			AND Uri IS NOT NULL ".
 			$this->filter_track_on_why();
-		return generic_sql_query($qstring, false, null, 'num', 0);
+		return prefs::$database->generic_sql_query($qstring, false, null, 'num', 0);
 	}
 
 	private function album_genre_trackcount($albumindex, $genreindex) {
@@ -182,7 +176,7 @@ class sortby_genre extends sortby_base {
 			" AND Hidden = 0
 			AND Uri IS NOT NULL ".
 			$this->filter_track_on_why();
-		return generic_sql_query($qstring, false, null, 'num', 0);
+		return prefs::$database->generic_sql_query($qstring, false, null, 'num', 0);
 	}
 
 }

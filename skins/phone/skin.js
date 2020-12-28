@@ -574,13 +574,7 @@ var layoutProcessor = function() {
 		},
 
 		makeCollectionDropMenu: function(element, name) {
-			if (element.hasClass('album1')) {
-				var c = 'dropmenu notfilled album1 is-albumlist';
-			} else if (element.hasClass('album2')) {
-				var c = 'dropmenu notfilled album2 is-albumlist';
-			} else {
-				var c = 'dropmenu notfilled is-albumlist';
-			}
+			var c = 'dropmenu notfilled is-albumlist';
 			if (
 				/^[abz](album|artist)/.test(name) ||
 				element.hasClass('directory') ||

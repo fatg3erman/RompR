@@ -45,9 +45,9 @@ class plsFile {
 	}
 
 	public function updateDatabase() {
-		$stationid = check_radio_station($this->url, $this->station, $this->image);
+		$stationid = prefs::$database->check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			check_radio_tracks($stationid, $this->tracks);
+			prefs::$database->check_radio_tracks($stationid, $this->tracks);
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 			header('HTTP/1.1 417 Expectation Failed');
@@ -95,9 +95,9 @@ class asxFile {
 	}
 
 	public function updateDatabase() {
-		$stationid = check_radio_station($this->url, $this->station, $this->image);
+		$stationid = prefs::$database->check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			check_radio_tracks($stationid, array(array('TrackUri' => $this->url, 'PrettyStream' => $this->prettystream)));
+			prefs::$database->check_radio_tracks($stationid, array(array('TrackUri' => $this->url, 'PrettyStream' => $this->prettystream)));
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 			header('HTTP/1.1 417 Expectation Failed');
@@ -153,9 +153,9 @@ class xspfFile {
 	}
 
 	public function updateDatabase() {
-		$stationid = check_radio_station($this->url, $this->station, $this->image);
+		$stationid = prefs::$database->check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			check_radio_tracks($stationid, $this->tracks);
+			prefs::$database->check_radio_tracks($stationid, $this->tracks);
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 			header('HTTP/1.1 417 Expectation Failed');
@@ -206,9 +206,9 @@ class m3uFile {
 	}
 
 	public function updateDatabase() {
-		$stationid = check_radio_station($this->url, $this->station, $this->image);
+		$stationid = prefs::$database->check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			check_radio_tracks($stationid, array(array('TrackUri' => $this->url_to_add, 'PrettyStream' => $this->prettystream)));
+			prefs::$database->check_radio_tracks($stationid, array(array('TrackUri' => $this->url_to_add, 'PrettyStream' => $this->prettystream)));
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 		}
@@ -235,9 +235,9 @@ class asfFile {
 	}
 
 	public function updateDatabase() {
-		$stationid = check_radio_station($this->url, $this->station, $this->image);
+		$stationid = prefs::$database->check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			check_radio_tracks($stationid, array(array('TrackUri' => $this->url, 'PrettyStream' => '')));
+			prefs::$database->check_radio_tracks($stationid, array(array('TrackUri' => $this->url, 'PrettyStream' => '')));
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 		}
@@ -260,9 +260,9 @@ class possibleStreamUrl {
 	}
 
 	public function updateDatabase() {
-		$stationid = check_radio_station($this->url, $this->station, $this->image);
+		$stationid = prefs::$database->check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			check_radio_tracks($stationid, array(array('TrackUri' => $this->url, 'PrettyStream' => '')));
+			prefs::$database->check_radio_tracks($stationid, array(array('TrackUri' => $this->url, 'PrettyStream' => '')));
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 		}

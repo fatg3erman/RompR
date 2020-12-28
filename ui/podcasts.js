@@ -20,7 +20,7 @@ var podcasts = function() {
 			var success = await clickRegistry.loadContentIntoTarget({
 				target: $('#podcast_'+newTrack.channel),
 				clickedElement: $('.openmenu[name="podcast_'+channel+'"]'),
-				uri: 'podcasts/podcasts.php',
+				uri: 'api/podcasts/',
 				data: {downloadtrack: newTrack.track, channel: newTrack.channel, populate: 1}
 			});
 			monitor.stop();
@@ -129,7 +129,7 @@ var podcasts = function() {
 		try {
 			var data = await $.ajax({
 				type: "GET",
-				url: "podcasts/podcasts.php",
+				url: "api/podcasts/",
 				cache: false,
 				data: options,
 				contentType: 'application/json'
@@ -157,7 +157,7 @@ var podcasts = function() {
 			await clickRegistry.loadContentIntoTarget({
 				target: $('#fruitbat'),
 				clickedElement: element,
-				uri: 'podcasts/podcasts.php',
+				uri: 'api/podcasts/',
 				data: {url: encodeURIComponent(url), populate: 1}
 			});
 			podcasts.doNewCount();
@@ -167,7 +167,7 @@ var podcasts = function() {
 			await clickRegistry.loadContentIntoTarget({
 				target: $('#fruitbat'),
 				clickedElement: $('i.icon-podacst-cricled.choosepanel'),
-				uri: "podcasts/podcasts.php?populate=1"
+				uri: "api/podcasts/?populate=1"
 			});
 			podcasts.doNewCount();
 		},
@@ -177,7 +177,7 @@ var podcasts = function() {
 		},
 
 		channelUri: function(channel) {
-			var uri = "podcasts/podcasts.php?populate=1&loadchannel="+channel;
+			var uri = "api/podcasts/?populate=1&loadchannel="+channel;
 			var term = $('[name="podsearcher_'+channel+'"]').val();
 			if (typeof term !== 'undefined' && term != '') {
 				uri += '&searchterm='+encodeURIComponent(term);
@@ -288,7 +288,7 @@ var podcasts = function() {
 				try {
 					var data = await $.ajax({
 						type: "GET",
-						url: "podcasts/podcasts.php",
+						url: "api/podcasts/",
 						cache: false,
 						data: track,
 						contentType: 'application/json'
@@ -308,7 +308,7 @@ var podcasts = function() {
 		},
 
 		doNewCount: function() {
-			$.getJSON("podcasts/podcasts.php?populate=1&getcounts=1", function(data) {
+			$.getJSON("api/podcasts/?populate=1&getcounts=1", function(data) {
 				debug.debug('PODCASTS','Got New Counts',data);
 				newcounts = data;
 				$.each(data, function(index, value) {
@@ -328,7 +328,7 @@ var podcasts = function() {
 			try {
 				var data = await $.ajax({
 					type: 'GET',
-					url: "podcasts/podcasts.php?populate=1&getcounts=1",
+					url: "api/podcasts/?populate=1&getcounts=1",
 					dataType: 'json'
 				});
 				$.each(data, function(index, value) {
@@ -391,7 +391,7 @@ var podcasts = function() {
 				try {
 					var data = await $.ajax({
 						type: 'GET',
-						url: "podcasts/podcasts.php?populate=1&checkrefresh=1",
+						url: "api/podcasts/?populate=1&checkrefresh=1",
 						timeout: prefs.collection_load_timeout,
 						dataType: 'JSON'
 					});
@@ -423,7 +423,7 @@ var podcasts = function() {
 			// Remove it right away for responsiveness
 			$('.openmenu[name="podcast_'+index+'"]').removeCollectionItem();
 			$('#podcast_'+index).removeCollectionDropdown();
-			await $.get('podcasts/podcasts.php?remove='+index+'&populate=1').promise();
+			await $.get('api/podcasts/?remove='+index+'&populate=1').promise();
 			podcasts.reloadList();
 		},
 
@@ -435,7 +435,7 @@ var podcasts = function() {
 			await clickRegistry.loadContentIntoTarget({
 				target: $('#podcast_search'),
 				clickedElement: $('#podcastsearch').parent().next(),
-				uri: 'podcasts/podcasts.php',
+				uri: 'api/podcasts/',
 				data: {search: encodeURIComponent($('#podcastsearch').val()), populate: 1}
 			});
 			$('#podcast_search').prepend('<div class="configtitle dropdown-container brick_wide" style="width:100%"><div class="textcentre expand"><b>Search Results for &quot;'+$('#podcastsearch').val()+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch podcast fixed"></i></div>');
@@ -451,7 +451,7 @@ var podcasts = function() {
 			await clickRegistry.loadContentIntoTarget({
 				target: $('#fruitbat'),
 				clickedElement: clickedElement,
-				uri: 'podcasts/podcasts.php?subscribe='+index+'&populate=1'
+				uri: 'api/podcasts/?subscribe='+index+'&populate=1'
 			});
 			$('#podcast_search').find('.openmenu[name="podcast_'+index+'"]').removeCollectionItem();
 			$('#podcast_search').find('#podcast_'+index).removeCollectionDropdown();

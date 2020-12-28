@@ -149,11 +149,26 @@ var info_ratings = function() {
 				debug.log("RATINGS PLUGIN",parent.nowplayingindex,"Doing",action,type,value);
 				if (parent.playlistinfo.type == 'stream') {
 					infobar.notify(language.gettext('label_searching'));
-					trackFinder.findThisOne(metaHandlers.fromPlaylistInfo.mapData(parent.playlistinfo, action, [{attribute: type, value: value}]),
+					// Prioritize - local, beetslocal, beets, spotify - in that order
+					// There's currently no way to change these for tracks that are rated from radio stations
+					// which means that these are the only domains that will be searched, but this is better
+					// than including podcasts and radio stations, which we'll never want
+					// I'm also not including SoundCloud because it produces far too many false positives
+					if (prefs.player_backend == 'mopidy') {
+						trackFinder.setPriorities(["spotify", "beets", "beetslocal", "local"]);
+					}
+					trackFinder.findThisOne(
+						metaHandlers.fromPlaylistInfo.mapData(parent.playlistinfo, action, [{attribute: type, value: value}]),
 						self.updateDatabase
 					);
 				} else {
-					metaHandlers.fromPlaylistInfo.setMeta(parent.playlistinfo, action, [{attribute: type, value: value}], setSuccess, setFail);
+					metaHandlers.fromPlaylistInfo.setMeta(
+						parent.playlistinfo,
+						action,
+						[{attribute: type, value: value}],
+						setSuccess,
+						setFail
+					);
 				}
 			}
 

@@ -16,7 +16,7 @@ var starRadios = function() {
 			while (tracks.length < numtracks) {
 				try {
 					var t = await $.ajax({
-						url: "api/metadata/",
+						url: "radios/api/starRadios.php",
 						type: "POST",
 						contentType: false,
 						data: JSON.stringify([{action: whattodo, playlist: param, numtracks: numtracks}]),
@@ -53,11 +53,8 @@ var starRadios = function() {
 		},
 
 		stop: function() {
-		},
+		}
 
-		// tagPopulate: function(tags) {
-		// 	playlist.radioManager.load('starRadios', tags);
-		// }
 	}
 }();
 

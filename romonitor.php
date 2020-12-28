@@ -8,7 +8,6 @@ if (is_array($opts)) {
 		prefs::$prefs[$key] = $value;
 	}
 }
-$romonitor_hack = false;
 logger::log("ROMONITOR", "Using Player ".prefs::$prefs['currenthost'].' of type '.prefs::$prefs['player_backend']);
 if (array_key_exists('scrobbling', prefs::$prefs) && prefs::$prefs['scrobbling'] == 'true') {
 	if (prefs::$prefs['lastfm_session_key'] == '') {
@@ -22,21 +21,15 @@ if (array_key_exists('scrobbling', prefs::$prefs) && prefs::$prefs['scrobbling']
 	logger::log('ROMONITOR', 'Scrobbling disabled');
 	prefs::$prefs['scrobbling'] = false;
 }
-require_once ("collection/collection.php");
-require_once ("backends/sql/backend.php");
-require_once ('podcasts/podcastfunctions.php');
-require_once ("player/".prefs::$prefs['player_backend']."/player.php");
-$player = new $PLAYER_TYPE();
+set_include_path('player/'.prefs::$prefs['player_backend'].PATH_SEPARATOR.get_include_path());
+$player = new player();
 $currenthost_save = prefs::$prefs['currenthost'];
 $player_backend_save = prefs::$prefs['player_backend'];
-$trackbytrack = false;
 $current_id = -1;
 $read_time = 0;
 $playcount_updated = false;
 $current_song = array();
-$returninfo = array();
 $dummydata = array('dummy' => 'baby');
-close_database();
 register_shutdown_function('close_mpd');
 // Using the IDLE subsystem of MPD and mopidy reduces repeated connections, which helps a lot
 
@@ -49,24 +42,25 @@ register_shutdown_function('close_mpd');
 // the track so repeated increments just keep setting it to the same value
 
 while (true) {
-	$player->open_mpd_connection();
 	while ($player->is_connected()) {
 		$mpd_status = $player->get_status();
-		if (array_key_exists('error', $mpd_status)) {
+		if (array_key_exists('error', $mpd_status))
 			break;
-		}
+
 		if (array_key_exists('songid', $mpd_status) && array_key_exists('elapsed', $mpd_status)) {
-			connect_to_database(false);
 			$read_time = time();
-			$collection = new playlistCollection();
-			// map_tags will be uneccesary once romprmetadata starts using ROMPR_FILE_MODEL, ony sanitise_data will be required then
-			$current_song = map_tags($player->get_currentsong_as_playlist($collection));
+			prefs::$database = new playlistCollection();
+			$filedata = $player->get_currentsong_as_playlist();
+			$current_song = map_tags(prefs::$database->doNewPlaylistFile($filedata));
+			prefs::$database->close_database();
+			prefs::$database = new metaDatabase();
+			prefs::$database->sanitise_data($current_song);
 			if (array_key_exists('duration', $current_song) && $current_song['duration'] > 0 && $current_song['type'] !== 'stream') {
 				if ($mpd_status['songid'] != $current_id) {
 					logger::log("ROMONITOR", prefs::$prefs['currenthost'],'-',"Track has changed");
 					$current_id = $mpd_status['songid'];
-					romprmetadata::get($current_song);
-					$current_playcount = array_key_exists('Playcount', $returninfo) ? $returninfo['Playcount'] : 0;
+					prefs::$database->get($current_song);
+					$current_playcount = array_key_exists('Playcount', prefs::$database->returninfo) ? prefs::$database->returninfo['Playcount'] : 0;
 					logger::trace("ROMONITOR", prefs::$prefs['currenthost'],"- Current ID is",$current_id);
 					logger::trace("ROMONITOR", prefs::$prefs['currenthost'],"- Duration is",$current_song['duration']);
 					logger::trace("ROMONITOR", prefs::$prefs['currenthost'],"- Current Playcount is",$current_playcount);
@@ -75,7 +69,7 @@ while (true) {
 			} else {
 				$current_id = -1;
 			}
-			close_database();
+			prefs::$database->close_database();
 		} else {
 			$current_id = -1;
 		}
@@ -97,24 +91,28 @@ while (true) {
 			}
 		}
 		if (array_key_exists('changed', $idle_status) && $current_id != -1) {
-			connect_to_database(false);
 			logger::log("ROMONITOR", prefs::$prefs['currenthost'],"- Player State Has Changed");
 			$elapsed = time() - $read_time + $mpd_status['elapsed'];
 			$fraction_played = $elapsed/$current_song['duration'];
 			if ($fraction_played > 0.9) {
+				prefs::$database = new metaDatabase();
 				logger::log("ROMONITOR", prefs::$prefs['currenthost'],"- Played more than 90% of song. Incrementing playcount");
-				romprmetadata::get($current_song);
-				$now_playcount = array_key_exists('Playcount', $returninfo) ? $returninfo['Playcount'] : 0;
+				prefs::$database->get($current_song);
+				$now_playcount = array_key_exists('Playcount', prefs::$database->returninfo) ? prefs::$database->returninfo['Playcount'] : 0;
 				if ($now_playcount > $current_playcount) {
 					logger::log("ROMONITOR", prefs::$prefs['currenthost'],"- Current playcount is bigger than ours, doing nothing");
 				} else {
 					$current_song['attributes'] = array(array('attribute' => 'Playcount', 'value' => $current_playcount+1));
-					romprmetadata::inc($current_song);
+					prefs::$database->inc($current_song);
 				}
 				if ($current_song['type'] == 'podcast') {
 					logger::log("ROMONITOR", prefs::$prefs['currenthost'],"- Marking podcast episode as listened");
-					markAsListened($current_song['uri']);
+					$temp_db = new poDatabase();
+					$temp_db->markAsListened($current_song['uri']);
+					$temp_db->close_database();
+					$temp_db = null;
 				}
+				prefs::$database->close_database();
 				scrobble_to_lastfm($current_song);
 			}
 
@@ -139,7 +137,9 @@ while (true) {
 						logger::log("ROMONITOR", "Smart Radio Master has gone away. Taking Over");
 						$tracksneeded = prefs::$prefs['smartradio_chunksize'] - $playlistlength  + 1;
 						logger::log("ROMONITOR", "Adding ".$tracksneeded." from ".$radiomode);
-						$tracks = collectionSmartRadio::doPlaylist($radioparam, $tracksneeded);
+						prefs::$database = new collection_radio();
+						$tracks = prefs::$database->doPlaylist($radioparam, $tracksneeded);
+						prefs::$database->close_database();
 						$cmds = array();
 						foreach ($tracks as $track) {
 							$cmds[] = join_command_string(array('add', $track['name']));
@@ -148,13 +148,14 @@ while (true) {
 					}
 					break;
 			}
-			close_database();
 		}
 	}
 	close_mpd();
 	logger::log("ROMONITOR", prefs::$prefs['currenthost'],"- Player connection dropped - retrying in 10 seconds");
 	sleep(10);
+	$player->open_mpd_connection();
 }
+logger::log('ROMONITOR', 'How did we get here?');
 
 function map_tags($filedata) {
 
@@ -176,7 +177,6 @@ function map_tags($filedata) {
 		"genre" => $filedata['Genre']
 	);
 
-	romprmetadata::sanitise_data($current_song);
 	return $current_song;
 }
 
@@ -199,9 +199,9 @@ function lastfm_update_nowplaying($currentsong) {
 
 
 function scrobble_to_lastfm($currentsong) {
-	logger::log('ROMONITOR', 'Scrobbling');
 	if (!prefs::$prefs['scrobbling'])
 		return;
+	logger::log('ROMONITOR', 'Scrobbling');
 	$options = array(
 		'timestamp' => time() - $currentsong['duration'],
 		'track' => $currentsong['title'],

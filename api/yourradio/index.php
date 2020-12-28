@@ -3,28 +3,27 @@
 chdir ('../..');
 include ("includes/vars.php");
 include ("includes/functions.php");
-include ("backends/sql/backend.php");
-include ('utils/phpQuery.php');
+prefs::$database = new collection_base();
 
 logger::log("USERSTREAMS", "Doing User Radio Stuff");
 if (array_key_exists('populate', $_REQUEST)) {
 	do_radio_header();
 } else if (array_key_exists('remove', $_REQUEST)) {
-	remove_user_radio_stream($_REQUEST['remove']);
+	prefs::$database->remove_user_radio_stream($_REQUEST['remove']);
 	header('HTTP/1.1 204 No Content');
 } else if (array_key_exists('order', $_REQUEST)) {
-	save_radio_order($_REQUEST['order']);
+	prefs::$database->save_radio_order($_REQUEST['order']);
 	header('HTTP/1.1 204 No Content');
 } else if (array_key_exists('addfave', $_REQUEST)) {
-	add_fave_station($_REQUEST);
+	prefs::$database->add_fave_station($_REQUEST);
 	header('HTTP/1.1 204 No Content');
 } else if (array_key_exists('updatename', $_REQUEST)) {
-	update_radio_station_name($_REQUEST);
+	prefs::$database->update_radio_station_name($_REQUEST);
 	header('HTTP/1.1 204 No Content');
 }
 
 function do_radio_header() {
-	directoryControlHeader('yourradiolist', language::gettext('label_yourradio'));
+	uibits::directoryControlHeader('yourradiolist', language::gettext('label_yourradio'));
 	print '<div id="anaconda" class="noselection fullwidth">';
 		print '<div class="containerbox dropdown-container">';
 			print '<div class="expand"><input class="enter clearbox" id="yourradioinput" type="text" placeholder="'.language::gettext("label_radioinput").'" /></div>';
@@ -36,7 +35,7 @@ function do_radio_header() {
 
 function do_radio_list() {
 
-	$playlists = get_user_radio_streams();
+	$playlists = prefs::$database->get_user_radio_streams();
 
 	logger::log("USERSTREAMS", "Doing User Radio List");
 
@@ -46,7 +45,7 @@ function do_radio_list() {
 
 		$albumimage = new albumImage(array('artist' => 'STREAM', 'album' => $playlist['StationName']));
 
-		$html = albumHeader(array(
+		$html = uibits::albumHeader(array(
 			'id' => 'nodrop',
 			'Image' => $playlist['Image'],
 			'Searched' => 1,
@@ -63,7 +62,7 @@ function do_radio_list() {
 			'expand' => true
 		));
 
-		$out = addUserRadioButtons($html, $playlist['Stationindex'], $playlist['PlaylistUrl'], $playlist['StationName'], $playlist['Image']);
+		$out = uibits::addUserRadioButtons($html, $playlist['Stationindex'], $playlist['PlaylistUrl'], $playlist['StationName'], $playlist['Image']);
 		print $out->html();
 
 	}

@@ -1,7 +1,6 @@
 <?php
-require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 $outputdata = array();
-$player = new $PLAYER_TYPE();
+$player = new player();
 if ($player->is_connected()) {
 	$outputs = $player->get_outputs();
 	foreach ($outputs as $i => $n) {

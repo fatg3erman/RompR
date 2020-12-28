@@ -3,9 +3,8 @@ chdir('..');
 ob_start();
 include ("includes/vars.php");
 include ("includes/functions.php");
-include ("backends/sql/backend.php");
 include ("getid3/getid3.php");
-
+prefs::$database = new collection_base();
 logger::mark("GETALBUMCOVER", "------- Searching For Album Art --------");
 foreach ($_REQUEST as $k => $v) {
 	if ($k == 'base64data') {
@@ -189,7 +188,6 @@ function trySoundcloud($albumimage) {
 }
 
 function tryLastFMForMBID($albumimage) {
-	global $mysqlc;
 	if ($albumimage->mbid !== null) {
 		logger::log("GETALBUMCOVER", "    Image already has an MBID, skipping this step");
 		return '';
@@ -221,7 +219,7 @@ function tryLastFMForMBID($albumimage) {
 
 function tryLastFM($albumimage) {
 
-	global $delaytime, $mysqlc;
+	global $delaytime;
 	$retval = "";
 	$pic = "";
 	$cs = -1;

@@ -4,7 +4,7 @@ var crazyRadioManager = function() {
 
 		loadSavedCrazies: function() {
 			$('.crazyradio').remove();
-			$.get('radios/crazymanager.php?action=get', function(data) {
+			$.get('radios/api/crazymanager.php?action=get', function(data) {
 				debug.debug("CRAZY RADIO","Saved Data",data);
 				var crazySettings = data;
 				for (var i in crazySettings) {
@@ -60,7 +60,7 @@ var crazyRadioManager = function() {
 				var i = clickedElement.attr('name');
 				debug.log("CRAZY BUGGER","Removing",i);
 				$('.crazyradio[name="'+i+'"]').parent().parent().remove();
-				$.get('radios/crazymanager.php?action=remove&index='+i, crazyRadioManager.refreshCrazyList);
+				$.get('radios/api/crazymanager.php?action=remove&index='+i, crazyRadioManager.refreshCrazyList);
 			}
 		},
 
@@ -76,7 +76,7 @@ var crazyRadioManager = function() {
 			});
 			$.ajax({
 				type: 'POST',
-				url: 'radios/crazymanager.php?action=save',
+				url: 'radios/api/crazymanager.php?action=save',
 				data: JSON.stringify(settings)
 			})
 			.done(crazyRadioManager.refreshCrazyList)

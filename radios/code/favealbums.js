@@ -16,7 +16,7 @@ var faveAlbums = function() {
 			while (tracks.length < numtracks) {
 				try {
 					var t = await $.ajax({
-						url: "api/metadata/",
+						url: "radios/api/starRadios.php",
 						type: "POST",
 						contentType: false,
 						data: JSON.stringify([{action: whattodo, playlist: param, numtracks: prefs.smartradio_chunksize}]),

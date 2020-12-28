@@ -1,0 +1,1082 @@
+<?php
+
+class init_database extends init_generic {
+
+	public function check_sql_tables() {
+
+		$vsn = $this->generic_sql_query("SELECT VERSION() AS v");
+		$mysql_version = $vsn[0]['v'];
+		logger::log('INIT', 'MySQL Version is',$mysql_version);
+		if (strpos($mysql_version, 'MariaDB') !== false) {
+			if (version_compare($mysql_version, ROMPR_MIN_MARIADB_VERSION, '<')) {
+				logger::warning('MYSQL', 'Running old version of MariaDB, will have to use old style update query');
+				prefs::$prefs['old_style_sql'] = true;
+			} else {
+				prefs::$prefs['old_style_sql'] = false;
+			}
+		} else {
+			if (version_compare($mysql_version, ROMPR_MIN_MYSQL_VERSION, '<')) {
+				logger::warning('MYSQL', 'Running old version of MySQL, will have to use old style update query');
+				prefs::$prefs['old_style_sql'] = true;
+			} else {
+				prefs::$prefs['old_style_sql'] = false;
+			}
+		}
+
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Tracktable(".
+			"TTindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+			"PRIMARY KEY(TTindex), ".
+			"Title VARCHAR(255), ".
+			"Albumindex INT UNSIGNED, ".
+			"TrackNo SMALLINT UNSIGNED, ".
+			"Duration INT UNSIGNED, ".
+			"Artistindex INT UNSIGNED, ".
+			"Disc TINYINT(3) UNSIGNED, ".
+			"Uri VARCHAR(2000), ".
+			"LastModified CHAR(32), ".
+			"Hidden TINYINT(1) UNSIGNED DEFAULT 0, ".
+			"DateAdded TIMESTAMP DEFAULT CURRENT_TIMESTAMP, ".
+			"isSearchResult TINYINT(1) UNSIGNED DEFAULT 0, ".
+			"justAdded TINYINT(1) UNSIGNED DEFAULT 1, ".
+			"Sourceindex INT UNSIGNED DEFAULT NULL, ".
+			"LinkChecked TINYINT(1) UNSIGNED DEFAULT 0, ".
+			"isAudiobook TINYINT(1) UNSIGNED DEFAULT 0, ".
+			"usedInPlaylist TINYINT(1) UNSIGNED DEFAULT 0, ".
+			"Genreindex INT UNSIGNED DEFAULT 0, ".
+			"TYear YEAR, ".
+			"UNIQUE INDEX(Albumindex, Artistindex, TrackNo, Disc, Title)) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL", "  Tracktable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking Tracktable : ".$err);
+		}
+
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Albumtable(".
+			"Albumindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+			"PRIMARY KEY(Albumindex), ".
+			"Albumname VARCHAR(255), ".
+			"AlbumArtistindex INT UNSIGNED, ".
+			"AlbumUri VARCHAR(255), ".
+			"Year YEAR, ".
+			"Searched TINYINT(1) UNSIGNED, ".
+			"ImgKey CHAR(32), ".
+			"mbid CHAR(40), ".
+			"ImgVersion INT UNSIGNED DEFAULT ".ROMPR_IMAGE_VERSION.", ".
+			"Domain CHAR(32), ".
+			"Image VARCHAR(255), ".
+			"randomSort INT DEFAULT 0, ".
+			"justUpdated TINYINT(1) UNSIGNED DEFAULT 1, ".
+			"INDEX(Albumname), ".
+			"INDEX(AlbumArtistindex), ".
+			"INDEX(Domain), ".
+			"INDEX(ImgKey)) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL", "  Albumtable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking Albumtable : ".$err);
+		}
+
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Artisttable(".
+			"Artistindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+			"PRIMARY KEY(Artistindex), ".
+			"Artistname VARCHAR(255), ".
+			"INDEX(Artistname)) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL", "  Artisttable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking Artisttable : ".$err);
+		}
+
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Ratingtable(".
+			"TTindex INT UNSIGNED, ".
+			"PRIMARY KEY(TTindex), ".
+			"Rating TINYINT(1) UNSIGNED) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL", "  Ratingtable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking Ratingtable : ".$err);
+		}
+
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Progresstable(".
+			"TTindex INT UNSIGNED, ".
+			"PRIMARY KEY(TTindex), ".
+			"Progress INT UNSIGNED) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL", "  Progresstable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking Progresstable : ".$err);
+		}
+
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Tagtable(".
+			"Tagindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+			"PRIMARY KEY(Tagindex), ".
+			"Name VARCHAR(255)) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL", "  Tagtable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking Tagtable : ".$err);
+		}
+
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS TagListtable(".
+			"Tagindex INT UNSIGNED NOT NULL REFERENCES Tagtable(Tagindex), ".
+			"TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex), ".
+			"PRIMARY KEY (Tagindex, TTindex)) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL", "  TagListtable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking TagListtable : ".$err);
+		}
+
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Playcounttable(".
+			"TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex), ".
+			"Playcount INT UNSIGNED NOT NULL, ".
+			"SyncCount INT UNSIGNED DEFAULT 0, ".
+			"LastPlayed TIMESTAMP, ".
+			"PRIMARY KEY (TTindex)) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL", "  Playcounttable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking Playcounttable : ".$err);
+		}
+
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Podcasttable(".
+			"PODindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+			"FeedURL TEXT, ".
+			"LastUpdate INT UNSIGNED, ".
+			"Image VARCHAR(255), ".
+			"Title VARCHAR(255), ".
+			"Artist VARCHAR(255), ".
+			"RefreshOption TINYINT(2) UNSIGNED DEFAULT 0, ".
+			"SortMode TINYINT(2) UNSIGNED DEFAULT 0, ".
+			"HideDescriptions TINYINT(1) UNSIGNED DEFAULT 0, ".
+			"DisplayMode TINYINT(2) UNSIGNED DEFAULT 0, ".
+			"DaysToKeep INT UNSIGNED DEFAULT 0, ".
+			"NumToKeep INT UNSIGNED DEFAULT 0, ".
+			"KeepDownloaded TINYINT(1) UNSIGNED DEFAULT 0, ".
+			"AutoDownload TINYINT(1) UNSIGNED DEFAULT 0, ".
+			"DaysLive INT, ".
+			"Version TINYINT(2), ".
+			"Subscribed TINYINT(1) NOT NULL DEFAULT 1, ".
+			"Description TEXT, ".
+			"LastPubDate INT UNSIGNED DEFAULT NULL, ".
+			"Category VARCHAR(255) NOT NULL, ".
+			"WriteTags TINYINT(1) DEFAULT 0, ".
+			"PRIMARY KEY (PODindex)) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL", "  Podcasttable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking Podcasttable : ".$err);
+		}
+
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS PodcastTracktable(".
+			"PODTrackindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+			"JustUpdated TINYINT(1), ".
+			"PODindex INT UNSIGNED, ".
+			"Title VARCHAR(255), ".
+			"Artist VARCHAR(255), ".
+			"Duration INT UNSIGNED, ".
+			"PubDate INT, ".
+			"FileSize INT UNSIGNED, ".
+			"Description TEXT, ".
+			"Link TEXT, ".
+			"Guid TEXT, ".
+			"Localfilename VARCHAR(255), ".
+			"Downloaded TINYINT(1) UNSIGNED DEFAULT 0, ".
+			"Listened TINYINT(1) UNSIGNED DEFAULT 0, ".
+			"New TINYINT(1) UNSIGNED DEFAULT 1, ".
+			"Deleted TINYINT(1) UNSIGNED DEFAULT 0, ".
+			"Progress INT UNSIGNED DEFAULT 0, ".
+			"INDEX (PODindex), ".
+			"PRIMARY KEY (PODTrackindex), ".
+			"INDEX (Title)) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL", "  PodcastTracktable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking PodcastTracktable : ".$err);
+		}
+
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS RadioStationtable(".
+			"Stationindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+			"Number SMALLINT UNSIGNED DEFAULT 65535, ".
+			"IsFave TINYINT(1), ".
+			"StationName VARCHAR(255), ".
+			"PlaylistUrl TEXT, ".
+			"Image VARCHAR(255), ".
+			"PRIMARY KEY (Stationindex)) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL", "  RadioStationtable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking RadioStationtable : ".$err);
+		}
+
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS RadioTracktable(".
+			"Trackindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+			"Stationindex INT UNSIGNED REFERENCES RadioStationtable(Stationindex), ".
+			"TrackUri TEXT, ".
+			"PrettyStream TEXT, ".
+			"PRIMARY KEY (Trackindex)) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL", "  RadioTracktable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking RadioTracktable : ".$err);
+		}
+
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS WishlistSourcetable(".
+			"Sourceindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+			"SourceName VARCHAR(255), ".
+			"SourceImage VARCHAR(255), ".
+			"SourceUri TEXT, ".
+			"PRIMARY KEY (Sourceindex)) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL", "  WishlistSourcetable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking WishlistSourcetable : ".$err);
+		}
+
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS AlbumsToListenTotable(".
+			"Listenindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+			"JsonData TEXT, ".
+			"PRIMARY KEY (Listenindex)) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL", "  AlbumsToListenTotabletable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking AlbumsToListenTotable : ".$err);
+		}
+
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS BackgroundImageTable(".
+			"BgImageIndex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+			"Skin VARCHAR(255), ".
+			"BrowserID VARCHAR(20) DEFAULT NULL, ".
+			"Filename VARCHAR(255), ".
+			"Orientation TINYINT(2), ".
+			"PRIMARY KEY (BgImageIndex), ".
+			"INDEX (Skin), ".
+			"INDEX (BrowserID)) ENGINE=InnoDB", true))
+		{
+			logger::log("MYSQL", "  BackgounrdImageTable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking BackgroundImageTable : ".$err);
+		}
+
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Genretable(".
+			"Genreindex INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE, ".
+			"Genre VARCHAR(40), ".
+			"PRIMARY KEY (Genreindex), ".
+			"INDEX (Genre))", true))
+		{
+			logger::log("MYSQL", "  Genretable OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking Genretable : ".$err);
+		}
+
+		if (!$this->generic_sql_query("CREATE TABLE IF NOT EXISTS Statstable(Item CHAR(11), PRIMARY KEY(Item), Value INT UNSIGNED) ENGINE=InnoDB", true)) {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking Statstable : ".$err);
+		}
+		// Check schema version and update tables as necessary
+		$sv = $this->simple_query('Value', 'Statstable', 'Item', 'SchemaVer', 0);
+		if ($sv == 0) {
+			logger::mark("MYSQL", "No Schema Version Found - initialising table");
+			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('ListVersion', '0')", true);
+			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('ArtistCount', '0')", true);
+			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('AlbumCount', '0')", true);
+			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('TrackCount', '0')", true);
+			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('TotalTime', '0')", true);
+			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('CollType', '999')", true);
+			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('SchemaVer', '".ROMPR_SCHEMA_VERSION."')", true);
+			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookArtists', '0')", true);
+			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookAlbums', '0')", true);
+			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTracks', '0')", true);
+			$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTime', '0')", true);
+			$sv = ROMPR_SCHEMA_VERSION;
+			logger::log("MYSQL", "Statstable populated");
+		}
+
+		if (!$this->create_update_triggers()) {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Creating Triggers : ".$err);
+		}
+		if (!$this->create_conditional_triggers()) {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Creating Triggers : ".$err);
+		}
+		if (!$this->create_playcount_triggers()) {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Creating Triggers : ".$err);
+		}
+		if (!$this->create_progress_triggers()) {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Creating Triggers : ".$err);
+		}
+
+		if ($sv > ROMPR_SCHEMA_VERSION) {
+			logger::warn("MYSQL", "Schema Mismatch! We are version ".ROMPR_SCHEMA_VERSION." but database is version ".$sv);
+			return array(false, "Your database has version number ".$sv." but this version of rompr only handles version ".ROMPR_SCHEMA_VERSION);
+		}
+
+		while ($sv < ROMPR_SCHEMA_VERSION) {
+			switch ($sv) {
+				case 0:
+					logger::error("SQL", "BIG ERROR! No Schema Version found!!");
+					return array(false, "Database Error - could not read schema version. Cannot continue.");
+					break;
+
+				case 1:
+					logger::log("SQL", "Updating FROM Schema version 1 TO Schema version 2");
+					$this->generic_sql_query("ALTER TABLE Albumtable DROP Directory", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 2 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 2:
+					logger::log("SQL", "Updating FROM Schema version 2 TO Schema version 3");
+					$this->generic_sql_query("ALTER TABLE Tracktable ADD Hidden TINYINT(1) UNSIGNED DEFAULT 0", true);
+					$this->generic_sql_query("UPDATE Tracktable SET Hidden = 0 WHERE Hidden IS NULL", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 3 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 3:
+					logger::log("SQL", "Updating FROM Schema version 3 TO Schema version 4");
+					$this->generic_sql_query("UPDATE Tracktable SET Disc = 1 WHERE Disc IS NULL OR Disc = 0", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 4 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 4:
+					logger::log("SQL", "Updating FROM Schema version 4 TO Schema version 5");
+					$this->generic_sql_query("UPDATE Albumtable SET Searched = 0 WHERE Image NOT LIKE 'albumart%'", true);
+					$this->generic_sql_query("ALTER TABLE Albumtable DROP Image", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 5 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 5:
+					logger::log("SQL", "Updating FROM Schema version 5 TO Schema version 6");
+					$this->generic_sql_query("DROP INDEX Disc on Tracktable", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 6 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 6:
+					logger::log("SQL", "Updating FROM Schema version 6 TO Schema version 7");
+					// This was going to be a nice datestamp but newer versions of mysql don't work that way
+					$this->generic_sql_query("ALTER TABLE Tracktable ADD DateAdded TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", true);
+					$this->generic_sql_query("UPDATE Tracktable SET DateAdded = FROM_UNIXTIME(LastModified) WHERE LastModified IS NOT NULL AND LastModified > 0", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 7 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 7:
+					logger::log("SQL", "Updating FROM Schema version 7 TO Schema version 8");
+					// Since we've changed the way we're joining artist names together,
+					// rather than force the database to be recreated and screw up everyone's
+					// tags and rating, just modify the artist data.
+					$stmt = $this->sql_prepare_query_later("UPDATE Artisttable SET Artistname = ? WHERE Artistindex = ?");
+					if ($stmt !== FALSE) {
+						$result = $this->generic_sql_query("SELECT * FROM Artisttable", false, PDO::FETCH_OBJ);
+						foreach ($result as $obj) {
+							$artist = (string) $obj->Artistname;
+							$art = explode(' & ', $artist);
+							if (count($art) > 2) {
+								$f = array_slice($art, 0, count($art) - 1);
+								$newname = implode($f, ", ")." & ".$art[count($art) - 1];
+								logger::log("UPGRADE_SCHEMA", "Updating artist name from ".$artist." to ".$newname);
+								$stmt->execute(array($newname, $obj->Artistindex));
+							}
+						}
+					}
+					$this->generic_sql_query("UPDATE Statstable SET Value = 8 WHERE Item = 'SchemaVer'", true);
+					$stmt = null;
+					break;
+
+				case 8:
+					logger::log("SQL", "Updating FROM Schema version 8 TO Schema version 9");
+					// We removed the image column earlier, but I've decided we need it again
+					// because some mopidy backends supply images and archiving them all makes
+					// creating the collection take waaaaay too long.
+					$this->generic_sql_query("ALTER TABLE Albumtable ADD Image VARCHAR(255)", true);
+					// So we now need to recreate the image database. Sadly this means that people using Beets will lose their album images.
+					$result = $this->generic_sql_query("SELECT Albumindex, ImgKey FROM Albumtable", false, PDO::FETCH_OBJ);
+					foreach ($result as $obj) {
+						if (file_exists('albumart/small/'.$obj->ImgKey.'.jpg')) {
+							$this->generic_sql_query("UPDATE Albumtable SET Image = 'albumart/small/".$obj->ImgKey.".jpg', Searched = 1 WHERE Albumindex = ".$obj->Albumindex, true);
+						} else {
+							$this->generic_sql_query("UPDATE Albumtable SET Image = '', Searched = 0 WHERE Albumindex = ".$obj->Albumindex, true);
+						}
+					}
+					$this->generic_sql_query("UPDATE Statstable SET Value = 9 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 9:
+					logger::log("SQL", "Updating FROM Schema version 9 TO Schema version 10");
+					$this->generic_sql_query("ALTER TABLE Albumtable DROP NumDiscs", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 10 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 10:
+					logger::log("SQL", "Updating FROM Schema version 10 TO Schema version 11");
+					$this->generic_sql_query("ALTER TABLE Albumtable DROP IsOneFile", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 11 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 11:
+					logger::log("SQL", "Updating FROM Schema version 11 TO Scheme version 12");
+					$this->generic_sql_query("ALTER TABLE Tracktable ADD isSearchResult TINYINT(1) UNSIGNED DEFAULT 0", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 12 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 12:
+					logger::log("SQL", "Updating FROM Schema version 12 TO Scheme version 13");
+					$this->generic_sql_query("ALTER TABLE Albumtable CHANGE Spotilink AlbumUri VARCHAR(255)", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 13 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 13:
+					logger::log("SQL", "Updating FROM Schema version 13 TO Scheme version 14");
+					// Nothing to do here, this is for SQLite only.
+					$this->generic_sql_query("UPDATE Statstable SET Value = 14 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 14:
+					logger::log("SQL", "Updating FROM Schema version 14 TO Scheme version 15");
+					$this->generic_sql_query("ALTER TABLE Tracktable MODIFY LastModified CHAR(32)", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 15 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 15:
+					logger::log("SQL", "Updating FROM Schema version 15 TO Schema version 16");
+					$this->albumImageBuggery();
+					$this->generic_sql_query("UPDATE Statstable SET Value = 16 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 16:
+					logger::log("SQL", "Updating FROM Schema version 16 TO Schema version 17");
+					// Early MPD versions had LastModified as an integer value. They changed it to a datestamp some time ago but I didn't notice
+					$r = $this->generic_sql_query("SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Tracktable' AND COLUMN_NAME = 'LastModified'");
+					foreach ($r as $obj) {
+						logger::trace("MYSQL_INIT", "Data Type of LastModified is ".$obj['DATA_TYPE']);
+						if ($obj['DATA_TYPE'] == 'int') {
+							logger::trace("MYSQL_INIT", "Modifying Tracktable");
+							$this->generic_sql_query("ALTER TABLE Tracktable ADD LM CHAR(32)", true);
+							$this->generic_sql_query("UPDATE Tracktable SET LM = LastModified", true);
+							$this->generic_sql_query("ALTER TABLE Tracktable DROP LastModified", true);
+							$this->generic_sql_query("ALTER TABLE Tracktable CHANGE LM LastModified CHAR(32)", true);
+						}
+					}
+					$this->generic_sql_query("UPDATE Statstable SET Value = 17 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 17:
+					logger::log("SQL", "Updating FROM Schema version 17 TO Schema version 18");
+					include("utils/podcastupgrade.php");
+					$this->generic_sql_query("UPDATE Statstable SET Value = 18 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 18:
+					logger::log("SQL", "Updating FROM Schema version 18 TO Schema version 19");
+					$result = $this->generic_sql_query('SELECT Tracktable.Uri AS uri, Tracktable.TTindex, Tracktable.Title AS ttit, Albumtable.*, Trackimagetable.Image AS ti FROM Tracktable JOIN Albumtable USING (Albumindex) LEFT JOIN Trackimagetable USING (TTindex) WHERE Tracktable.Uri LIKE "soundcloud:%"', false, PDO::FETCH_OBJ);
+					foreach ($result as $obj) {
+						logger::trace("SQL", "  Creating new Album ".$obj->ttit." Image ".$obj->ti);
+						$ti = $obj->ti;
+						if (preg_match('/^http/', $ti)) {
+							$ti = 'getRemoteImage.php?url='.$ti;
+						}
+						if ($this->sql_prepare_query(true, null, null, null,
+							"INSERT INTO Albumtable
+								(Albumname, AlbumArtistindex, AlbumUri, Year, Searched, ImgKey, mbid, Domain, Image)
+							VALUES
+								(?, ?, ?, ?, ?, ?, ?, ?, ?)",
+								$obj->ttit, $obj->AlbumArtistindex, $obj->uri, $obj->Year, $obj->Searched, $obj->ImgKey, $obj->mbid, $obj->Domain, $ti
+							)) {
+								$retval = $this->mysqlc->lastInsertId();
+								logger::debug("SQL", "    .. success, Albumindex ".$retval);
+								$this->generic_sql_query("UPDATE Tracktable SET Albumindex = ".$retval." WHERE TTindex = ".$obj->TTindex, true);
+						} else {
+							logger::warn("SQL", "    .. ERROR!");
+						}
+					}
+					$this->generic_sql_query("UPDATE Statstable SET Value = 19 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 19:
+					logger::log("SQL", "Updating FROM Schema version 19 TO Schema version 20");
+					$result = $this->generic_sql_query('SELECT Tracktable.Uri AS uri, Tracktable.TTindex, Tracktable.Title AS ttit, Albumtable.*, Trackimagetable.Image AS ti FROM Tracktable JOIN Albumtable USING (Albumindex) LEFT JOIN Trackimagetable USING (TTindex) WHERE Tracktable.Uri LIKE "youtube:%"', false, PDO::FETCH_OBJ);
+					foreach ($result as $obj) {
+						logger::trace("SQL", "  Creating new Album ".$obj->ttit." Image ".$obj->ti);
+						$ti = $obj->ti;
+						if (preg_match('/^http/', $ti)) {
+							$ti = 'getRemoteImage.php?url='.$ti;
+						}
+						if ($this->sql_prepare_query(true, null, null, null,
+							"INSERT INTO Albumtable
+								(Albumname, AlbumArtistindex, AlbumUri, Year, Searched, ImgKey, mbid, Domain, Image)
+							VALUES
+								(?, ?, ?, ?, ?, ?, ?, ?, ?)",
+								$obj->ttit, $obj->AlbumArtistindex, $obj->uri, $obj->Year, $obj->Searched, $obj->ImgKey, $obj->mbid, $obj->Domain, $ti
+							)) {
+								$retval = $this->mysqlc->lastInsertId();
+								logger::debug("SQL", "    .. success, Albumindex ".$retval);
+								$this->generic_sql_query("UPDATE Tracktable SET Albumindex = ".$retval." WHERE TTindex = ".$obj->TTindex, true);
+						} else {
+							logger::warn("SQL", "    .. ERROR!");
+						}
+					}
+					$this->generic_sql_query("UPDATE Statstable SET Value = 20 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 20:
+					logger::log("SQL", "Updating FROM Schema version 20 TO Schema version 21");
+					$this->generic_sql_query("DROP TABLE Trackimagetable", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 21 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 21:
+					logger::log("SQL", "Updating FROM Schema version 21 TO Schema version 22");
+					$this->generic_sql_query("ALTER TABLE Playcounttable ADD LastPlayed TIMESTAMP NULL", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 22 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 22:
+					logger::log("SQL", "Updating FROM Schema version 22 TO Schema version 23");
+					$this->generic_sql_query("ALTER TABLE Podcasttable ADD Version TINYINT(2)", true);
+					$this->generic_sql_query("ALTER TABLE PodcastTracktable ADD Guid VARCHAR(2000)", true);
+					$this->generic_sql_query("ALTER TABLE PodcastTracktable ADD Localfilename VARCHAR(255)", true);
+					$this->generic_sql_query("UPDATE Podcasttable SET Version = 1 WHERE PODindex IS NOT NULL", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 23 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 23:
+					logger::log("SQL", "Updating FROM Schema version 23 TO Schema version 24");
+					$this->generic_sql_query("ALTER TABLE Tracktable CHANGE DateAdded DateAdded TIMESTAMP DEFAULT CURRENT_TIMESTAMP", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 24 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 24:
+					logger::log("SQL", "Updating FROM Schema version 24 TO Schema version 25");
+					$this->generic_sql_query("ALTER DATABASE romprdb CHARACTER SET utf8 COLLATE utf8_unicode_ci", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 25 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 25:
+					logger::log("SQL", "Updating FROM Schema version 25 TO Schema version 26");
+					$this->generic_sql_query("ALTER TABLE Tracktable ADD justAdded TINYINT(1) UNSIGNED DEFAULT 1", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 26 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 26:
+					logger::log("SQL", "Updating FROM Schema version 26 TO Schema version 27");
+					$this->generic_sql_query("ALTER TABLE Albumtable ADD justUpdated TINYINT(1) UNSIGNED DEFAULT 1", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 27 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 27:
+					logger::log("SQL", "Updating FROM Schema version 27 TO Schema version 28");
+					$this->rejig_wishlist_tracks();
+					$this->generic_sql_query("UPDATE Statstable SET Value = 28 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 28:
+					logger::log("SQL", "Updating FROM Schema version 28 TO Schema version 29");
+					if (!$this->create_update_triggers()) {
+						$err = $this->mysqlc->errorInfo()[2];
+						return array(false, "Error While Creating Triggers : ".$err);
+					}
+					$this->generic_sql_query("UPDATE Statstable SET Value = 29 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 29:
+					logger::log("SQL", "Updating FROM Schema version 29 TO Schema version 30");
+					include('utils/radioupgrade.php');
+					$this->generic_sql_query("UPDATE Statstable SET Value = 30 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 30:
+					logger::log("SQL", "Updating FROM Schema version 30 TO Schema version 31");
+					$this->generic_sql_query("ALTER TABLE PodcastTracktable CHANGE Description Description TEXT", true);
+					$this->generic_sql_query("ALTER TABLE PodcastTracktable CHANGE Link Link TEXT", true);
+					$this->generic_sql_query("ALTER TABLE PodcastTracktable CHANGE Guid Guid TEXT", true);
+					$this->generic_sql_query("ALTER TABLE Podcasttable CHANGE FeedURL FeedURL TEXT", true);
+					$this->generic_sql_query("ALTER TABLE Podcasttable CHANGE Description Description TEXT", true);
+					$this->generic_sql_query("ALTER TABLE Tracktable CHANGE Uri Uri TEXT", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 31 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 31:
+					logger::log("SQL", "Updating FROM Schema version 31 TO Schema version 32");
+					$this->generic_sql_query("ALTER TABLE Podcasttable ADD Subscribed TINYINT(1) NOT NULL DEFAULT 1", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 32 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 32:
+					logger::log("SQL", "Updating FROM Schema version 32 TO Schema version 33");
+					$this->generic_sql_query("DROP TRIGGER IF EXISTS track_insert_trigger", true);
+					$this->generic_sql_query("DROP TRIGGER IF EXISTS track_update_trigger", true);
+					if (!$this->create_conditional_triggers()) {
+						$err = $this->mysqlc->errorInfo()[2];
+						return array(false, "Error While Creating Triggers : ".$err);
+					}
+					$this->generic_sql_query("UPDATE Statstable SET Value = 33 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 33:
+					logger::log("SQL", "Updating FROM Schema version 33 TO Schema version 34");
+					$this->generic_sql_query("ALTER TABLE Albumtable ADD ImgVersion INT UNSIGNED DEFAULT ".ROMPR_IMAGE_VERSION, true);
+					$this->generic_sql_query("UPDATE Albumtable SET ImgVersion = 1",true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 34 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 34:
+					logger::log("SQL", "Updating FROM Schema version 34 TO Schema version 35");
+					$this->generic_sql_query("ALTER TABLE Tracktable ADD Sourceindex INT UNSIGNED DEFAULT NULL", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 35 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 35:
+					$this->generic_sql_query("UPDATE Statstable SET Value = 36 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 36:
+					logger::log("SQL", "Updating FROM Schema version 35 TO Schema version 37");
+					$localpods = $this->generic_sql_query("SELECT PODTrackindex, PODindex, LocalFilename FROM PodcastTracktable WHERE LocalFilename IS NOT NULL");
+					foreach ($localpods as $pod) {
+						$this->sql_prepare_query(true, null, null, null, "UPDATE PodcastTracktable SET LocalFilename = ? WHERE PODTrackindex = ?", '/prefs/podcasts/'.$pod['PODindex'].'/'.$pod['PODTrackindex'].'/'.$pod['LocalFilename'], $pod['PODTrackindex']);
+					}
+					$this->generic_sql_query("UPDATE Statstable SET Value = 37 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 37:
+					logger::log("SQL", "Updating FROM Schema version 37 TO Schema version 38");
+					$this->generic_sql_query("ALTER TABLE Albumtable MODIFY ImgVersion INT UNSIGNED DEFAULT ".ROMPR_IMAGE_VERSION, true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 38 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 38:
+					logger::log("SQL", "Updating FROM Schema version 38 TO Schema version 39");
+					$this->generic_sql_query("ALTER TABLE Podcasttable ADD LastPubDate INT UNSIGNED DEFAULT NULL", true);
+					$this->generic_sql_query("CREATE INDEX ptt ON PodcastTracktable (Title)", true);
+					require_once('podcasts/podcastfunctions.php');
+					$this->upgrade_podcasts_to_version();
+					$this->generic_sql_query("UPDATE Statstable SET Value = 39 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 39:
+					logger::log("SQL", "Updating FROM Schema version 39 TO Schema version 40");
+					// Takes too long. It'll happen when they get refreshed anyway.
+					// require_once('podcasts/podcastfunctions.php');
+					// upgrade_podcast_images();
+					$this->generic_sql_query("UPDATE Statstable SET Value = 40 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 40:
+					logger::log("SQL", "Updating FROM Schema version 40 TO Schema version 41");
+					$this->generic_sql_query("ALTER TABLE Podcasttable ADD Category VARCHAR(255) NOT NULL", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 41 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 41:
+					logger::log("SQL", "Updating FROM Schema version 41 TO Schema version 42");
+					$this->generic_sql_query("ALTER TABLE PodcastTracktable ADD Progress INT UNSIGNED DEFAULT 0", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 42 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 42:
+					logger::log("SQL", "Updating FROM Schema version 42 TO Schema version 43");
+					$this->update_stream_images(43);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 43 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 43:
+					logger::log("SQL", "Updating FROM Schema version 43 TO Schema version 44");
+					$this->empty_modified_cache_dirs(44);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 44 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 44:
+					logger::log("SQL", "Updating FROM Schema version 44 TO Schema version 45");
+					prefs::upgrade_host_defs(45);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 45 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 45:
+					logger::log("SQL", "Updating FROM Schema version 45 TO Schema version 46");
+					$this->generic_sql_query("UPDATE Statstable SET Value = 46 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 46:
+					logger::log("SQL", "Updating FROM Schema version 46 TO Schema version 47");
+					$this->generic_sql_query("ALTER TABLE Playcounttable ADD SyncCount INT UNSIGNED DEFAULT 0", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 47 WHERE Item = 'SchemaVer'", true);
+					$this->create_playcount_triggers();
+					break;
+
+				case 47:
+					logger::log("SQL", "Updating FROM Schema version 47 TO Schema version 48");
+					// Some versions had a default value and an on update for LastPlayed, which is WRONG and fucks things up
+					$this->generic_sql_query("ALTER TABLE Playcounttable ALTER LastPlayed DROP DEFAULT", true);
+					$this->generic_sql_query("ALTER TABLE Playcounttable CHANGE LastPlayed LastPlayed TIMESTAMP NULL", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 48 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 48:
+					logger::log("SQL", "Updating FROM Schema version 48 TO Schema version 49");
+					prefs::upgrade_host_defs(49);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 49 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 49:
+					logger::log("SQL", "Updating FROM Schema version 49 TO Schema version 50");
+					$this->generic_sql_query("ALTER TABLE Tracktable ADD LinkChecked TINYINT(1) UNSIGNED DEFAULT 0", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 50 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 50:
+					logger::log("SQL", "Updating FROM Schema version 50 TO Schema version 51");
+					// Something wierd happened and I lost half my triggers. In case it happens to anyone else...
+					$this->generic_sql_query("DROP TRIGGER IF EXISTS track_insert_trigger", true);
+					$this->generic_sql_query("DROP TRIGGER IF EXISTS track_update_trigger", true);
+					$this->generic_sql_query("DROP TRIGGER IF EXISTS rating_update_trigger", true);
+					$this->generic_sql_query("DROP TRIGGER IF EXISTS rating_insert_trigger", true);
+					$this->generic_sql_query("DROP TRIGGER IF EXISTS tag_delete_trigger", true);
+					$this->generic_sql_query("DROP TRIGGER IF EXISTS tag_insert_trigger", true);
+					$this->generic_sql_query("DROP TRIGGER IF EXISTS tag_remove_trigger", true);
+					$this->generic_sql_query("DROP TRIGGER IF EXISTS track_delete_trigger", true);
+					$this->create_conditional_triggers();
+					$this->create_update_triggers();
+					$this->generic_sql_query("UPDATE Statstable SET Value = 51 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 51:
+					logger::log("SQL", "Updating FROM Schema version 51 TO Schema version 52");
+					$this->generic_sql_query("ALTER TABLE Tracktable ADD isAudiobook TINYINT(1) UNSIGNED DEFAULT 0", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 52 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 52:
+					logger::log("SQL", "Updating FROM Schema version 52 TO Schema version 53");
+					if (!$this->create_progress_triggers()) {
+						$err = $this->mysqlc->errorInfo()[2];
+						return array(false, "Error While Creating Triggers : ".$err);
+					}
+					$this->generic_sql_query("UPDATE Statstable SET Value = 53 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 53:
+					logger::log("SQL", "Updating FROM Schema version 53 TO Schema version 54");
+					$this->generic_sql_query("UPDATE Statstable SET Value = 54 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 54:
+					logger::log("SQL", "Updating FROM Schema version 54 TO Schema version 55");
+					$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('PodUpPid', 0)", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 55 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 55:
+					logger::log("SQL", "Updating FROM Schema version 55 TO Schema version 56");
+					$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('Updating', '0')", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 56 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 56:
+					logger::log("SQL", "Updating FROM Schema version 56 TO Schema version 57");
+					$this->generic_sql_query("UPDATE Statstable SET Value = 57 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 57:
+					logger::log("SQL", "Updating FROM Schema version 57 TO Schema version 58");
+					$this->generic_sql_query("ALTER DATABASE romprdb CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci", true);
+					logger::trace("SQL", " ... Modifying Tables");
+					$this->generic_sql_query("ALTER TABLE Tracktable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Albumtable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Artisttable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Ratingtable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Progresstable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Tagtable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE TagListtable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Playcounttable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Podcasttable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE PodcastTracktable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE RadioStationtable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE RadioTracktable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE WishlistSourcetable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE AlbumsToListenTotable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE BackgroundImageTable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Statstable CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					logger::trace("SQL", " ... Modifying Columns");
+					$this->generic_sql_query("ALTER TABLE Tracktable MODIFY COLUMN Title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Tracktable MODIFY COLUMN Uri VARCHAR(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN Albumname VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN AlbumUri VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN ImgKey CHAR(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN mbid CHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN Domain CHAR(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Albumtable MODIFY COLUMN Image VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Artisttable MODIFY COLUMN Artistname VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Tagtable MODIFY COLUMN Name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN FeedURL TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN Image VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN Title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN Artist VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN Description TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE Podcasttable MODIFY COLUMN Category VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Artist VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Description TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL", true);
+					$this->generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Link TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Guid TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE PodcastTracktable MODIFY COLUMN Localfilename VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE RadioStationtable MODIFY COLUMN StationName VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE RadioStationtable MODIFY COLUMN PlaylistUrl TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE RadioStationtable MODIFY COLUMN Image VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE RadioTracktable MODIFY COLUMN TrackUri TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE RadioTracktable MODIFY COLUMN PrettyStream TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE WishlistSourcetable MODIFY COLUMN SourceName VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE WishlistSourcetable MODIFY COLUMN SourceImage VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE WishlistSourcetable MODIFY COLUMN SourceUri TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE AlbumsToListenTotable MODIFY COLUMN JsonData TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE BackgroundImageTable MODIFY COLUMN Skin VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", true);
+					$this->generic_sql_query("ALTER TABLE BackgroundImageTable MODIFY COLUMN BrowserID VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL", true);
+					$this->generic_sql_query("ALTER TABLE BackgroundImageTable MODIFY COLUMN Filename VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 58 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 58:
+					logger::log("SQL", "Updating FROM Schema version 58 TO Schema version 59");
+					$this->update_remote_image_urls();
+					$this->generic_sql_query("UPDATE Statstable SET Value = 59 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 59:
+					logger::log("SQL", "Updating FROM Schema version 59 TO Schema version 60");
+					$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookArtists', '0')", true);
+					$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookAlbums', '0')", true);
+					$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTracks', '0')", true);
+					$this->generic_sql_query("INSERT INTO Statstable (Item, Value) VALUES ('BookTime', '0')", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 60 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 60:
+					logger::log("SQL", "Updating FROM Schema version 60 TO Schema version 61");
+					$this->generic_sql_query("ALTER TABLE Tracktable ADD usedInPlaylist TINYINT(1) UNSIGNED DEFAULT 0", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 61 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 61:
+					logger::log("SQL", "Updating FROM Schema version 61 TO Schema version 62");
+					$this->generic_sql_query("ALTER TABLE Albumtable ADD randomSort INT DEFAULT 0", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 62 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 62:
+					logger::log("SQL", "Updating FROM Schema version 62 TO Schema version 63");
+					upgrade_saved_crazies();
+					$this->generic_sql_query("UPDATE Statstable SET Value = 63 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 63:
+					logger::log("SQL", "Updating FROM Schema version 63 TO Schema version 64");
+					// $this->generic_sql_query("INSERT INTO Genretable (Genre) VALUES ('None')", true);
+					$this->generic_sql_query("ALTER TABLE Tracktable ADD Genreindex INT UNSIGNED DEFAULT 0", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 64 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 64:
+					logger::log("SQL", "Updating FROM Schema version 64 TO Schema version 65");
+					$this->generic_sql_query("ALTER TABLE Tracktable ADD TYear YEAR", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 65 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 65:
+					logger::log("SQL", "Updating FROM Schema version 65 TO Schema version 66");
+					$this->update_track_dates();
+					$this->generic_sql_query("UPDATE Statstable SET Value = 66 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 66:
+					logger::log("SQL", "Updating FROM Schema version 66 TO Schema version 67");
+					$this->generic_sql_query("ALTER TABLE Podcasttable ADD WriteTags TINYINT(1) DEFAULT 0", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 67 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 67:
+					logger::log("SQL", "Updating FROM Schema version 67 TO Schema version 68");
+					prefs::upgrade_host_defs(68);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 68 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 68:
+					logger::log("SQL", "Updating FROM Schema version 68 TO Schema version 69");
+					prefs::upgrade_host_defs(69);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 69 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 69:
+					logger::log("SQL", "Updating FROM Schema version 69 TO Schema version 70");
+					$this->generic_sql_query("DROP INDEX Albumindex ON Tracktable", true);
+					$this->generic_sql_query("DROP INDEX Title ON Tracktable", true);
+					$this->generic_sql_query("DROP INDEX TrackNo ON Tracktable", true);
+					$this->generic_sql_query("CREATE UNIQUE INDEX trackfinder ON Tracktable (Albumindex, Artistindex, TrackNo, Disc, Title)", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 70 WHERE Item = 'SchemaVer'", true);
+					break;
+
+			}
+			$sv++;
+		}
+
+		return array(true, "");
+	}
+
+	protected function create_conditional_triggers() {
+		if ($this->trigger_not_exists('Tracktable', 'track_insert_trigger')) {
+			$this->generic_sql_query("CREATE TRIGGER track_insert_trigger AFTER INSERT ON Tracktable
+								FOR EACH ROW
+								BEGIN
+									IF (NEW.Hidden=0)
+									THEN
+									  UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = NEW.Albumindex;
+									END IF;
+								END;", true);
+		}
+
+		if ($this->trigger_not_exists('Tracktable', 'track_update_trigger')) {
+			return $this->generic_sql_query("CREATE TRIGGER track_update_trigger AFTER UPDATE ON Tracktable
+								FOR EACH ROW
+								BEGIN
+								IF (NEW.Hidden=0)
+								THEN
+									UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = NEW.Albumindex;
+									UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = OLD.Albumindex;
+								END IF;
+								END;", true);
+		}
+		return true;
+
+	}
+
+	protected function create_playcount_triggers() {
+		if ($this->trigger_not_exists('Playcounttable', 'syncupdatetrigger')) {
+			$this->generic_sql_query("CREATE TRIGGER syncupdatetrigger BEFORE UPDATE ON Playcounttable
+								FOR EACH ROW
+								BEGIN
+									IF (NEW.Playcount > OLD.Playcount)
+									THEN
+										SET NEW.SyncCount = OLD.SyncCount + 1;
+									END IF;
+								END;", true);
+		}
+
+		if ($this->trigger_not_exists('Playcounttable', 'syncinserttrigger')) {
+			return $this->generic_sql_query("CREATE TRIGGER syncinserttrigger BEFORE INSERT ON Playcounttable
+								FOR EACH ROW
+								BEGIN
+									SET NEW.SyncCount = 1;
+								END;", true);
+		}
+		return true;
+	}
+
+	protected function create_update_triggers() {
+
+		logger::log("MYSQL", "Creating Triggers for update operation");
+
+		if ($this->trigger_not_exists('Ratingtable', 'rating_update_trigger')) {
+			$this->generic_sql_query("CREATE TRIGGER rating_update_trigger AFTER UPDATE ON Ratingtable
+								FOR EACH ROW
+								BEGIN
+								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
+								UPDATE Tracktable SET Hidden = 0, justAdded = 1 WHERE Hidden = 1 AND TTindex = NEW.TTindex;
+								UPDATE Tracktable SET isSearchResult = 1, LastModified = NULL, justAdded = 1 WHERE isSearchResult > 1 AND TTindex = NEW.TTindex;
+								END;", true);
+		}
+
+		if ($this->trigger_not_exists('Ratingtable', 'rating_insert_trigger')) {
+			$this->generic_sql_query("CREATE TRIGGER rating_insert_trigger AFTER INSERT ON Ratingtable
+								FOR EACH ROW
+								BEGIN
+								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
+								UPDATE Tracktable SET Hidden = 0, justAdded = 1 WHERE Hidden = 1 AND TTindex = NEW.TTindex;
+								UPDATE Tracktable SET isSearchResult = 1, LastModified = NULL, justAdded = 1 WHERE isSearchResult > 1 AND TTindex = NEW.TTindex;
+								END;", true);
+		}
+
+		if ($this->trigger_not_exists('Tagtable', 'tag_delete_trigger')) {
+			$this->generic_sql_query("CREATE TRIGGER tag_delete_trigger AFTER DELETE ON Tagtable
+								FOR EACH ROW
+								BEGIN
+								DELETE FROM TagListtable WHERE Tagindex = OLD.Tagindex;
+								END;", true);
+		}
+
+		if ($this->trigger_not_exists('TagListtable', 'tag_insert_trigger')) {
+			$this->generic_sql_query("CREATE TRIGGER tag_insert_trigger AFTER INSERT ON TagListtable
+								FOR EACH ROW
+								BEGIN
+								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
+								UPDATE Tracktable SET Hidden = 0, justAdded = 1 WHERE Hidden = 1 AND TTindex = NEW.TTindex;
+								UPDATE Tracktable SET isSearchResult = 1, LastModified = NULL, justAdded = 1 WHERE isSearchResult > 1 AND TTindex = NEW.TTindex;
+								END;", true);
+		}
+
+		if ($this->trigger_not_exists('TagListtable', 'tag_remove_trigger')) {
+			$this->generic_sql_query("CREATE TRIGGER tag_remove_trigger AFTER DELETE ON TagListtable
+								FOR EACH ROW
+								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = OLD.TTindex);", true);
+		}
+
+		if ($this->trigger_not_exists('Tracktable', 'track_delete_trigger')) {
+			return $this->generic_sql_query("CREATE TRIGGER track_delete_trigger AFTER DELETE ON Tracktable
+								FOR EACH ROW
+								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = OLD.Albumindex;", true);
+		}
+		return true;
+	}
+
+	protected function create_progress_triggers() {
+
+		if ($this->trigger_not_exists('Progresstable', 'progress_update_trigger')) {
+			$this->generic_sql_query("CREATE TRIGGER progress_update_trigger AFTER UPDATE ON Progresstable
+								FOR EACH ROW
+								BEGIN
+								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
+								END;", true);
+		}
+
+		if ($this->trigger_not_exists('Progresstable', 'progress_insert_trigger')) {
+			return $this->generic_sql_query("CREATE TRIGGER progress_insert_trigger AFTER INSERT ON Progresstable
+								FOR EACH ROW
+								BEGIN
+								UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = (SELECT Albumindex FROM Tracktable WHERE TTindex = NEW.TTindex);
+								END;", true);
+		}
+		return true;
+	}
+
+	private function trigger_not_exists($table, $trig) {
+		// MySQL does not have CREATE TRIGGER IF NOT EXISTS
+		$retval = true;
+		logger::log('MYSQL', 'Checking triggers on',$table,'for',$trig);
+		$r = $this->generic_sql_query("SHOW TRIGGERS LIKE '".$table."'");
+		foreach ($r as $trigger) {
+			logger::core('MYSQL', ' "'.$trigger['Trigger'].'"');
+			if ($trigger['Trigger'] == $trig) {
+				logger::core('MYSQL', '   Trigger Exists');
+				$retval = false;
+			}
+		}
+		return $retval;
+	}
+
+}
+
+?>

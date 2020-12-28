@@ -12,7 +12,7 @@ var recentlyPlayed = function() {
 
 				$("#rplfoldup").append('<div class="noselection fullwidth tagholder" id="rplmunger"></div>');
 				$.ajax({
-					url: 'backends/sql/recentlyplayed.php',
+					url: 'plugins/code/recentlyplayed.php',
 					type: "POST"
 				})
 				.done(function(data) {
@@ -39,7 +39,7 @@ var recentlyPlayed = function() {
 
 		reloadAll: function() {
 			$.ajax({
-				url: 'backends/sql/recentlyplayed.php',
+				url: 'plugins/code/recentlyplayed.php',
 				type: "POST"
 			})
 			.done(function(data) {

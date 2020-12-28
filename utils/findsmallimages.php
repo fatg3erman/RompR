@@ -2,9 +2,9 @@
 chdir('..');
 include ("includes/vars.php");
 include ("includes/functions.php");
-include ("backends/sql/backend.php");
+prefs::$database = new collection_base();
 $results = array();
-$r = generic_sql_query('SELECT Image, ImgKey FROM Albumtable', false, PDO::FETCH_OBJ);
+$r = prefs::$database->get_all_images();
 foreach ($r as $obj) {
 	$image = new baseAlbumImage(array('baseimage' => $obj->Image));
 	if ($image->is_collection_image()) {

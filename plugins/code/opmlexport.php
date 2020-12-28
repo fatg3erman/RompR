@@ -4,7 +4,7 @@ chdir('../..');
 
 include ("includes/vars.php");
 include ("includes/functions.php");
-include ("backends/sql/backend.php");
+prefs::$datbase = new opml_io();
 
 $opml = new SimpleXMLElement('<opml version="2.0"></opml>');
 $head = $opml->addChild('head');
@@ -12,7 +12,7 @@ $head->addChild('title', 'Rompr Podcast Subscriptions');
 $head->addChild('dateCreated', date('d M y H:i:s O'));
 $body = $opml->addChild('body');
 
-$result = generic_sql_query("SELECT FeedURL, Title FROM Podcasttable WHERE Subscribed = 1", false, PDO::FETCH_OBJ);
+$result = prefs::$database->get_podcasts();
 foreach ($result as $obj) {
     $o = $body->addChild('outline');
     $o->addAttribute('text', htmlspecialchars($obj->Title));

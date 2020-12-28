@@ -24,7 +24,7 @@ class sortby_albumbyartist extends sortby_base {
 				// For browse album 'All Artists Featuring'
 				$qstring .= "AND Albumtable.AlbumArtistindex = ".$this->who;
 			}
-			$qstring .= " ".track_date_check(prefs::$prefs['collectionrange'], $this->why)."
+			$qstring .= " ".prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)."
 			".$sflag.")
 		ORDER BY";
 
@@ -51,7 +51,7 @@ class sortby_albumbyartist extends sortby_base {
 			}
 		}
 		$qstring .= ' LOWER(Albumname)';
-		$result = generic_sql_query($qstring);
+		$result = prefs::$database->generic_sql_query($qstring);
 		foreach ($result as $album) {
 			$album['why'] = $this->why;
 			$album['id'] = $this->why.'album'.$album['Albumindex'];
@@ -73,7 +73,7 @@ class sortby_albumbyartist extends sortby_base {
 				// Prevent albumHeader displaying the artist name
 				$album['Artistname'] = null;
 			}
-			print albumHeader($album);
+			print uibits::albumHeader($album);
 			$count++;
 		}
 		return $count;
@@ -109,7 +109,7 @@ class sortby_albumbyartist extends sortby_base {
 				$singleheader['where'] = $this->why.'album'.$album['Albumindex'];
 			} else {
 				$album['Artistname'] = null;
-				$singleheader['html'] = albumHeader($album);
+				$singleheader['html'] = uibits::albumHeader($album);
 				$singleheader['id'] = $album['id'];
 				// $singleheader['why'] = $this->why;
 				return $singleheader;
@@ -118,33 +118,31 @@ class sortby_albumbyartist extends sortby_base {
 	}
 
 	public function get_modified_root_items() {
-		global $returninfo;
-		$result = generic_sql_query('SELECT DISTINCT AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
+		$result = prefs::$database->generic_sql_query('SELECT DISTINCT AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
 		foreach ($result as $mod) {
 			$atc = $this->artist_albumcount($mod['AlbumArtistindex']);
 			logger::mark("SORTBY_ALBUMBYARTIST", "  Artist",$mod['AlbumArtistindex'],"has",$atc,$this->why,"albums we need to consider");
 			// Modified artists also go in as deleted - since the 'root' item in this case is an artist banner
 			// and we only do inserts after album IDs, we always remove and then re-insert the banners.
-			$returninfo['deletedartists'][] = $this->why.'artist'.$mod['AlbumArtistindex'];
+			prefs::$database->returninfo['deletedartists'][] = $this->why.'artist'.$mod['AlbumArtistindex'];
 			if ($atc > 0) {
-				$returninfo['modifiedartists'][] = $this->output_root_fragment($mod['AlbumArtistindex']);
+				prefs::$database->returninfo['modifiedartists'][] = $this->output_root_fragment($mod['AlbumArtistindex']);
 			}
 		}
 	}
 
 	public function get_modified_albums() {
-		global $returninfo;
-		$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
+		$result = prefs::$database->generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
 		foreach ($result as $mod) {
 			$atc = $this->album_trackcount($mod['Albumindex']);
 			logger::mark("SORTBY_ALBUMBYARTIST", "  Album",$mod['Albumindex'],"has",$atc,$this->why,"tracks we need to consider");
 			if ($atc == 0) {
-				$returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'];
+				prefs::$database->returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'];
 			} else {
 				$r = $this->output_album_fragment($mod['Albumindex']);
 				$lister = new sortby_albumbyartist($this->why.'album'.$mod['Albumindex']);
 				$r['tracklist'] = $lister->output_track_list(true);
-				$returninfo['modifiedalbums'][] = $r;
+				prefs::$database->returninfo['modifiedalbums'][] = $r;
 			}
 		}
 	}

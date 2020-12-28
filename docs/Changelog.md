@@ -10,8 +10,9 @@ Snapcast so you may need to change the port you are using and make sure that API
 * Album Art Search now uses Bing instead of Google Images because Google broke my code and Bing's API is better
 * New option to use the Snapcast Volume Control instead of the main volume control
 * Completely re-written info panel code is faster and more efficient
-* Large amount of code re-organisation. Certain endpoints have changed. If you're using any automation by calling RompR's endpoints you should re-check the docs.
+* Large amount of code re-organisation for speed and efficiency. Certain endpoints have changed. If you're using any automation by calling RompR's endpoints you should re-check the docs.
 * New dependency on php-intl. You should install this package.
+
 
 ## Version 1.50
 * Added function to download YouTube videos (when using Mopidy-Youtube) and save the audio locally for future streaming. See [here](/RompR/Rompr-And-Mopidy) as there are specific requirements for this to work.

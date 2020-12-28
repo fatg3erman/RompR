@@ -6,8 +6,6 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 	include ("includes/vars.php");
 	include ("includes/functions.php");
-	include ("skins/".$skin."/ui_elements.php");
-	include ("utils/phpQuery.php");
 
 	$getstr = "http://dir.xiph.org/";
 	if (array_key_exists('path', $_REQUEST)) {
@@ -34,7 +32,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 	$list = $doc->find('div.card.shadow-sm');
 	$count = 0;
-	directoryControlHeader('icecastlist', language::gettext('label_icecast'));
+	uibits::directoryControlHeader('icecastlist', language::gettext('label_icecast'));
 	print '<div class="containerbox dropdown-container fullwidth"><div class="expand"><input class="enter clearbox" name="searchfor" type="text"';
 	if (array_key_exists("searchfor", $_REQUEST)) {
 		print ' value="'.$_REQUEST['searchfor'].'"';
@@ -59,7 +57,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 		$listenlink = pq($server)->find('a.btn.btn-sm')->attr('href');
 
 		if ($listenlink != '') {
-			print albumHeader(array(
+			print uibits::albumHeader(array(
 				'id' => 'icecast_'.$count,
 				'Image' => 'newimages/icecast.svg',
 				'Searched' => 1,
@@ -76,7 +74,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 				'class' => 'radiochannel'
 			));
 			print '<div id="icecast_'.$count.'" class="dropmenu">';
-			trackControlHeader('','','icecast_'.$count, null, array(array('Image' => 'newimages/icecast.svg')));
+			uibits::trackControlHeader('','','icecast_'.$count, null, array(array('Image' => 'newimages/icecast.svg')));
 			print '<div class="containerbox rowspacer"></div>';
 			print '<div class="indent">'.$server_description.'</div>';
 			print '<div class="containerbox rowspacer"></div>';
@@ -99,7 +97,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 } else {
 	print '<div id="icecastplugin">';
-	print albumHeader(array(
+	print uibits::albumHeader(array(
 		'id' => 'icecastlist',
 		'Image' => 'newimages/icecast.svg',
 		'Searched' => 1,

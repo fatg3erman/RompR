@@ -45,7 +45,7 @@ var charts = function() {
 	}
 
 	function getCharts(success, failure) {
-		metaHandlers.genericAction('getcharts', success, failure);
+		metaHandlers.genericQuery('getcharts', success, failure);
 	}
 
 	return {

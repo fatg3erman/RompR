@@ -416,13 +416,33 @@ var metaHandlers = function() {
 			}
 		},
 
+		genericQuery: async function(action, success, fail) {
+			if (typeof action == "object") {
+				var request = action;
+			} else {
+				var request = {action: action};
+			}
+			try {
+				var data = await $.ajax({
+					url: "api/metadata/query/",
+					type: "POST",
+					contentType: false,
+					data: JSON.stringify(request),
+					dataType: 'json'
+				});
+				success(data);
+			} catch (err) {
+				fail(data);
+			}
+		},
+
 		addToListenLater: function(album) {
 			var data = {
 				action: 'addtolistenlater',
 				json: album
 			}
-			dbQueue.request(
-				[data],
+			metaHandlers.genericQuery(
+				data,
 				function() {
 					debug.log("METAHANDLERS","Album Added To Listen Later");
 					infobar.notify(language.gettext('label_addedtolistenlater'));
@@ -437,7 +457,7 @@ var metaHandlers = function() {
 		},
 
 		resetSyncCounts: function() {
-			metaHandlers.genericAction('resetallsyncdata', metaHandlers.genericSuccess, metaHandlers.genericFail);
+			metaHandlers.genericQuery('resetallsyncdata', metaHandlers.genericSuccess, metaHandlers.genericFail);
 		},
 
 		genericSuccess: function() {
@@ -463,7 +483,7 @@ var dbQueue = function() {
 
 	// Cleanup cleans the database but it also updates the track stats
 	var actions_requiring_cleanup = [
-		'add', 'set', 'remove', 'amendalbum', 'deletetag', 'delete', 'deletewl', 'clearwishlist', 'setasaudiobook'
+		'add', 'set', 'remove', 'amendalbum', 'delete', 'deletewl', 'clearwishlist', 'setasaudiobook'
 	];
 
 	async function process_request(req) {

@@ -38,6 +38,8 @@
 			8 => 'CORE '
 		);
 
+		private const FUNCTION_LENGTH = 25;
+
 		public static function setLevel($level) {
 			self::$loglevel = intval($level);
 		}
@@ -81,12 +83,19 @@
 			}
 		}
 
+		private static function format_function($dbt) {
+	        $caller = isset($dbt[1]['function']) ? '('.$dbt[1]['function'].')' : '';
+	        if (strlen($caller) < self::FUNCTION_LENGTH)
+	        	$caller = $caller.str_repeat(' ', self::FUNCTION_LENGTH - strlen($caller));
+	        return $caller.' : ';
+		}
+
 		// Level 8 - CORE for continuous running commentary
 		public static function core() {
 			$parms = func_get_args();
 			if (!is_array($parms[1])) {
-				$dbt=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
-		        $caller = isset($dbt[1]['function']) ? '('.$dbt[1]['function'].') ' : '';
+				$dbt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
+				$caller = logger::format_function($dbt);
 		        $parms[1] = $caller.$parms[1];
 		    }
 			logger::dothelogging(8, $parms);
@@ -96,8 +105,8 @@
 		public static function debug() {
 			$parms = func_get_args();
 			if (!is_array($parms[1])) {
-				$dbt=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
-		        $caller = isset($dbt[1]['function']) ? '('.$dbt[1]['function'].') ' : '';
+				$dbt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
+				$caller = logger::format_function($dbt);
 		        $parms[1] = $caller.$parms[1];
 		    }
 			logger::dothelogging(7, $parms);
@@ -107,8 +116,8 @@
 		public static function trace() {
 			$parms = func_get_args();
 			if (!is_array($parms[1])) {
-				$dbt=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
-		        $caller = isset($dbt[1]['function']) ? '('.$dbt[1]['function'].') ' : '';
+				$dbt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
+				$caller = logger::format_function($dbt);
 		        $parms[1] = $caller.$parms[1];
 		    }
 			logger::dothelogging(6, $parms);
@@ -118,8 +127,8 @@
 		public static function log() {
 			$parms = func_get_args();
 			if (!is_array($parms[1])) {
-				$dbt=debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
-		        $caller = isset($dbt[1]['function']) ? '('.$dbt[1]['function'].') ' : '';
+				$dbt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
+				$caller = logger::format_function($dbt);
 		        $parms[1] = $caller.$parms[1];
 		    }
 			logger::dothelogging(5, $parms);
@@ -128,24 +137,28 @@
 		// Level 4 - INFO for information
 		public static function info() {
 			$parms = func_get_args();
+			$parms[1] = str_repeat(' ', self::FUNCTION_LENGTH).' : '.$parms[1];
 			logger::dothelogging(4, $parms);
 		}
 
 		// Level 3 - MARK for important information
 		public static function mark() {
 			$parms = func_get_args();
+			$parms[1] = str_repeat(' ', self::FUNCTION_LENGTH).' : '.$parms[1];
 			logger::dothelogging(3, $parms);
 		}
 
 		// Level 2 - WARN for things that go wrong
 		public static function warn() {
 			$parms = func_get_args();
+			$parms[1] = str_repeat(' ', self::FUNCTION_LENGTH).' : '.$parms[1];
 			logger::dothelogging(2, $parms);
 		}
 
 		// Level 1 - ERROR for serious errors
 		public static function error() {
 			$parms = func_get_args();
+			$parms[1] = str_repeat(' ', self::FUNCTION_LENGTH).' : '.$parms[1];
 			logger::dothelogging(1, $parms);
 		}
 

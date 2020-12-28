@@ -1,6 +1,6 @@
 <?php
 print '<div id="faveradioplugin">';
-print albumHeader(array(
+print uibits::albumHeader(array(
 	'id' => 'yourradiolist',
 	'Image' => 'newimages/broadcast.svg',
 	'Searched' => 1,

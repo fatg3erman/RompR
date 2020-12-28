@@ -2,9 +2,7 @@
 chdir('../..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-require_once ("player/".prefs::$prefs['player_backend']."/player.php");
-require_once ("backends/sql/backend.php");
-require_once ("utils/phpQuery.php");
+prefs::$database = new collection_base();
 $used_images = array();
 $dbterms = array( 'tags' => null, 'rating' => null );
 
@@ -17,7 +15,7 @@ if (array_key_exists('playlist', $_REQUEST)) {
 	do_user_playlist_tracks($pl,'icon-music', $_REQUEST['target']);
 
 } else if (array_key_exists('addtoplaylistmenu', $_REQUEST)) {
-	$player = new $PLAYER_TYPE();
+	$player = new player();
 	$playlists = array();
 	foreach ($player->get_stored_playlists(true) as $pl) {
 		$playlists[] = array('name' => rawurlencode($pl), 'html' => htmlentities($pl));
@@ -27,10 +25,10 @@ if (array_key_exists('playlist', $_REQUEST)) {
 } else {
 	do_playlist_header();
 	$c = 0;
-	$player = new $PLAYER_TYPE();
+	$player = new player();
 	foreach ($player->get_stored_playlists(false) as $pl) {
 		logger::log("MPD PLAYLISTS", "Adding Playlist : ".$pl);
-		add_playlist(rawurlencode($pl), htmlentities($pl), 'icon-doc-text', 'clickloadplaylist', $PLAYER_TYPE::is_personal_playlist($pl), $c, false, null);
+		add_playlist(rawurlencode($pl), htmlentities($pl), 'icon-doc-text', 'clickloadplaylist', player::is_personal_playlist($pl), $c, false, null);
 		$c++;
 	}
 	$existingfiles = glob('prefs/userplaylists/*');
@@ -60,10 +58,9 @@ if (array_key_exists('playlist', $_REQUEST)) {
 }
 
 function do_playlist_tracks($pl, $icon, $target) {
-	global $PLAYER_TYPE;
-	directoryControlHeader($target, $pl);
-	playlistPlayHeader(rawurlencode($pl), $pl);
-	$player = new $PLAYER_TYPE();
+	uibits::directoryControlHeader($target, $pl);
+	uibits::playlistPlayHeader(rawurlencode($pl), $pl);
+	$player = new player();
 	$c = 0;
 	if ($pl == '[Radio Streams]') {
 		foreach ($player->get_stored_playlist_tracks('[Radio Streams]', 0) as list($class, $uri, $filedata)) {
@@ -84,7 +81,7 @@ function do_playlist_tracks($pl, $icon, $target) {
 					$icon = "icon-music";
 					break;
 			}
-			add_playlist(rawurlencode($uri), get_artist_track_title($filedata), $icon, $class, $PLAYER_TYPE::is_personal_playlist($pl), $c, false, $pl);
+			add_playlist(rawurlencode($uri), get_artist_track_title($filedata), $icon, $class, player::is_personal_playlist($pl), $c, false, $pl);
 			$c++;
 		}
 	}
@@ -125,8 +122,8 @@ function do_user_playlist_tracks($pl, $icon, $target) {
 	}
 
 	$tracks = internetPlaylist::load_internet_playlist($pl, '', '', true);
-	directoryControlHeader($target, $pl_name);
-	playlistPlayHeader(rawurlencode($pl), $pl_name);
+	uibits::directoryControlHeader($target, $pl_name);
+	uibits::playlistPlayHeader(rawurlencode($pl), $pl_name);
 	foreach ($tracks as $c => $track) {
 		add_playlist(
 			rawurlencode($track['TrackUri']),
@@ -156,7 +153,7 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
 				$used_images[] = $i;
 			}
 			$extra_class = ($delete && !$is_user) ? ' canreorder' : '';
-			$html = albumHeader(array(
+			$html = uibits::albumHeader(array(
 				'id' => 'pholder_'.md5($name),
 				'Image' => $image,
 				'Searched' => 1,
@@ -171,7 +168,7 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
 				'class' => preg_replace('/clickload/', '', $class).$extra_class,
 				'expand' => true
 			));
-			$out = addPlaylistControls($html, $delete, $is_user, rawurlencode($name));
+			$out = uibits::addPlaylistControls($html, $delete, $is_user, rawurlencode($name));
 			print $out->html();
 			break;
 

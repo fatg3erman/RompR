@@ -255,9 +255,8 @@ var spotify = function() {
 
 			getGenreSeeds: function(success, fail) {
 				var data = {
-					method: 'artist_toptracks',
+					method: 'get_genreseeds',
 					params: {
-						id: id,
 						cache: true
 					}
 				};

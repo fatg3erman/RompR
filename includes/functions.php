@@ -163,19 +163,21 @@ print '<h3 align="center">RompЯ encountered an error while checking your '.
 
 }
 
+function connect_fail($t) {
+	global $title;
+	logger::warn("INIT", "MPD Connection Failed");
+	$title = $t;
+	include("setupscreen.php");
+	exit();
+}
+
 function concatenate_artist_names($art) {
-	if (!is_array($art)) {
-		return $art;
-	}
+	$art = getArray($art);
+	$f = array_pop($art);
 	if (count($art) == 0) {
-		return '';
-	} else if (count($art) == 1) {
-		return $art[0];
-	} else if (count($art) == 2) {
-		return implode(' & ',$art);
+		return $f;
 	} else {
-		$f = array_slice($art, 0, count($art) - 1);
-		return implode(', ', $f)." & ".$art[count($art) - 1];
+		return implode(' & ', [implode(', ', $art), $f]);
 	}
 }
 
@@ -193,7 +195,7 @@ function getArray($a) {
 	} else if (is_array($a)) {
 		return $a;
 	} else {
-		return array($a);
+		return [$a];
 	}
 }
 
@@ -423,37 +425,6 @@ function get_user_file($src, $fname, $tmpname) {
 	return $download_file;
 }
 
-function albumImageBuggery() {
-	// This was used to update album art to a new format but it's really old now and we've totally refactored the album image code
-	// In the eventuality that someone is still using a version that old we'll keep the function but just use it to remove all album art
-	// and start again.
-	rrmdir('albumart/small');
-	rrmdir('albumart/asdownloaded');
-	mkdir('albumart/small', 0755);
-	mkdir('albumart/asdownloaded', 0755);
-	generic_sql_query("UPDATE Albumtable SET Searched = 0, Image = ''");
-}
-
-function rejig_wishlist_tracks() {
-	global $mysqlc;
-	generic_sql_query("DELETE FROM Playcounttable WHERE TTindex IN (SELECT TTindex FROM Tracktable WHERE Hidden = 1 AND Uri IS NULL)", true);
-	generic_sql_query("DELETE FROM Tracktable WHERE Hidden = 1 AND Uri IS NULL", true);
-	$result = generic_sql_query("SELECT * FROM Tracktable WHERE Uri IS NULL");
-	foreach ($result as $obj) {
-		if (sql_prepare_query(true, null, null, null,
-			"INSERT INTO
-				Albumtable
-				(Albumname, AlbumArtistindex, AlbumUri, Year, Searched, ImgKey, mbid, Domain, Image)
-			VALUES
-				(?, ?, ?, ?, ?, ?, ?, ?, ?)",
-			'rompr_wishlist_'.microtime(true), $obj['Artistindex'], null, 0, 0, null, null, 'local', null)) {
-
-			$albumindex = $mysqlc->lastInsertId();
-			logger::log("REJIG", "    Created Album with Albumindex ".$albumindex);
-			generic_sql_query("UPDATE Tracktable SET Albumindex = ".$albumindex." WHERE TTindex = ".$obj['TTindex'], true);
-		}
-	}
-}
 
 function format_bytes($size, $precision = 1)
 {
@@ -487,33 +458,6 @@ function set_version_string() {
 	} else {
 		$version_string = ROMPR_VERSION;
 		logger::log('INIT', 'NOT Dev mode - version string is '.$version_string);
-	}
-}
-
-function update_stream_images($schemaver) {
-	switch ($schemaver) {
-		case 43:
-			$stations = generic_sql_query("SELECT Stationindex, StationName, Image FROM RadioStationtable WHERE Image LIKE 'prefs/userstreams/STREAM_%'");
-			foreach ($stations as $station) {
-				logger::log("BACKEND", "  Updating Image For Station ".$station['StationName']);
-				if (file_exists($station['Image'])) {
-					logger::debug("BACKEND", "    Image is ".$station['StationName']);
-					$src = get_base_url().'/'.$station['Image'];
-					$albumimage = new albumImage(array('artist' => "STREAM", 'album' => $station['StationName'], 'source' => $src));
-					if ($albumimage->download_image()) {
-						// Can't call $albumimage->update_image_database because the functions that requires are in the backend
-						$images = $albumimage->get_images();
-						sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET Image = ? WHERE StationName = ?",$images['small'],$station['StationName']);
-						sql_prepare_query(true, null, null, null, "UPDATE WishlistSourcetable SET Image = ? WHERE Image = ?",$images['small'],$station['Image']);
-						unlink($station['Image']);
-					} else {
-						logger::warn("BACKEND", "  Image Upgrade Failed!");
-					}
-				} else {
-					generic_sql_query("UPDATE RadioStationtable SET IMAGE = NULL WHERE Stationindex = ".$station['Stationindex']);
-				}
-			}
-			break;
 	}
 }
 
@@ -691,88 +635,27 @@ function http_status_code_string($code)
 
 function format_artist($artist, $empty = null) {
 	$a = concatenate_artist_names($artist);
-	if ($a != '.' && $a != "") {
+	if ($a != "") {
 		return $a;
 	} else {
 		return $empty;
 	}
 }
 
-function format_sortartist($tags, $return_albumartist = false) {
+function format_sortartist($tags) {
 	$sortartist = null;
 	if (prefs::$prefs['sortbycomposer'] && $tags['Composer'] !== null) {
 		if (prefs::$prefs['composergenre'] && $tags['Genre'] &&
-			checkComposerGenre($tags['Genre'], prefs::$prefs['composergenrename'])) {
-				$sortartist = $tags['Composer'];
+				checkComposerGenre($tags['Genre'], prefs::$prefs['composergenrename'])) {
+			$sortartist = $tags['Composer'];
 		} else if (!prefs::$prefs['composergenre']) {
 			$sortartist = $tags['Composer'];
 		}
 	}
-	if ($sortartist == null) {
-		if ($return_albumartist || $tags['AlbumArtist'] != null) {
-			$sortartist = $tags['AlbumArtist'];
-		} else if ($tags['Artist'] != null) {
-			$sortartist = $tags['Artist'];
-		} else if ($tags['station'] != null) {
-			$sortartist = $tags['station'];
-		}
-	}
-	$sortartist = concatenate_artist_names($sortartist);
-	//Some discogs tags have 'Various' instead of 'Various Artists'
-	if ($sortartist == "Various") {
-		$sortartist = "Various Artists";
-	}
-	return $sortartist;
-}
+	if ($sortartist === null)
+		$sortartist = $tags['AlbumArtist'];
 
-function update_remote_image_urls() {
-	logger::log('SQL', 'Updating Remote Images in Albumtable');
-	$albums = generic_sql_query("SELECT Albumindex, Image FROM Albumtable WHERE Image LIKE 'getRemoteImage%'");
-	foreach ($albums as $album) {
-		logger::log('SQL', '  Albumindex',$album['Albumindex'],'Image',$album['Image']);
-		$newurl = get_encoded_image($album['Image']);
-		sql_prepare_query(true, null, null, null,
-			"UPDATE Albumtable SET Image = ? WHERE Albumindex = ?",
-			$newurl,
-			$album['Albumindex']
-		);
-	}
-
-	logger::log('SQL', 'Updating Remote Images in Podcasttable');
-	$albums = generic_sql_query("SELECT PODindex, Image FROM Podcasttable WHERE Image LIKE 'getRemoteImage%'");
-	foreach ($albums as $album) {
-		logger::log('SQL', '  PODindex',$album['PODindex'],'Image',$album['Image']);
-		$newurl = get_encoded_image($album['Image']);
-		sql_prepare_query(true, null, null, null,
-			"UPDATE Podcasttable SET Image = ? WHERE PODindex = ?",
-			$newurl,
-			$album['PODindex']
-		);
-	}
-
-	logger::log('SQL', 'Updating Remote Images in RadioStationtable');
-	$albums = generic_sql_query("SELECT Stationindex, Image FROM RadioStationtable WHERE Image LIKE 'getRemoteImage%'");
-	foreach ($albums as $album) {
-		logger::log('SQL', '  Stationindex',$album['Stationindex'],'Image',$album['Image']);
-		$newurl = get_encoded_image($album['Image']);
-		sql_prepare_query(true, null, null, null,
-			"UPDATE RadioStationtable SET Image = ? WHERE Stationindex = ?",
-			$newurl,
-			$album['Stationindex']
-		);
-	}
-
-	logger::log('SQL', 'Updating Remote Images in WishlistSourcetable');
-	$albums = generic_sql_query("SELECT Sourceindex, SourceImage FROM WishlistSourcetable WHERE SourceImage LIKE 'getRemoteImage%'");
-	foreach ($albums as $album) {
-		logger::log('SQL', '  Sourceindex',$album['Sourceindex'],'Image',$album['SourceImage']);
-		$newurl = get_encoded_image($album['SourceImage']);
-		sql_prepare_query(true, null, null, null,
-			"UPDATE WishlistSourcetable SET SourceImage = ? WHERE Sourceindex = ?",
-			$newurl,
-			$album['Sourceindex']
-		);
-	}
+	return concatenate_artist_names($sortartist);
 }
 
 function get_encoded_image($image) {
@@ -815,7 +698,11 @@ function choose_sorter_by_key($which) {
 	$a = preg_match('/(a|b|c|r|t|y|u|z)(.*?)(\d+|root)_*(\d+)*/', $which, $matches);
 	switch ($matches[1]) {
 		case 'b':
-			return 'sortby_'.prefs::$prefs['actuallysortresultsby'];
+			if (prefs::$prefs['actuallysortresultsby'] == 'results_as_tree') {
+				return false;
+			} else {
+				return 'sortby_'.prefs::$prefs['actuallysortresultsby'];
+			}
 			break;
 
 		default:
@@ -844,6 +731,100 @@ function upgrade_old_collections() {
 			rename($file, 'prefs/oldcollections/'.basename($file));
 		}
 	}
+}
+
+function saveCollectionPlayer($type) {
+	logger::mark("DATABASE", "Setting Collection Type to",$type);
+	prefs::$prefs['collection_player'] = $type;
+	prefs::save();
+}
+
+function calculate_best_update_time($podcast) {
+
+	// Note: this returns a value for LastUpdate, since that is what refresh is based on.
+	// The purpose of this is try to get the refresh in sync with the podcast's publication date.
+
+	if ($podcast['LastPubDate'] === null) {
+		logger::log("PODCASTS", $podcast['Title'],"last pub date is null");
+		return time();
+	}
+	switch ($podcast['RefreshOption']) {
+		case REFRESHOPTION_NEVER:
+		case REFRESHOPTION_HOURLY:
+		case REFRESHOPTION_DAILY:
+			return time();
+			break;
+
+	}
+	logger::log("PODCASTS", "Working out best update time for ".$podcast['Title']);
+	$dt = new DateTime(date('c', $podcast['LastPubDate']));
+	logger::debug("PODCASTS", "  Last Pub Date is ".$podcast['LastPubDate'].' ('.$dt->format('c').')');
+	logger::debug("PODCASTS", "  Podcast Refresh interval is ".$podcast['RefreshOption']);
+	while ($dt->getTimestamp() < time()) {
+		switch ($podcast['RefreshOption']) {
+
+			case REFRESHOPTION_WEEKLY:
+				$dt->modify('+1 week');
+				break;
+
+			case REFRESHOPTION_MONTHLY:
+				$dt->modify('+1 month');
+				break;
+
+			default:
+				logger::error("PODCASTS", "  Unknown refresh option",$podcast['RefreshOption'],"for podcast ID",$podcast['podid']);
+				return time();
+				break;
+		}
+
+	}
+	logger::trace("PODCASTS", "  Worked out update time based on pubDate and RefreshOption: ".$dt->format('r').' ('.$dt->getTImestamp().')');
+	$dt->modify('+1 hour');
+
+	switch ($podcast['RefreshOption']) {
+
+		case REFRESHOPTION_WEEKLY:
+			$dt->modify('-1 week');
+			break;
+
+		case REFRESHOPTION_MONTHLY:
+			$dt->modify('-1 month');
+			break;
+
+	}
+
+	logger::log("PODCASTS", "  Setting lastupdate to: ".$dt->format('r').' ('.$dt->getTImestamp().')');
+
+	return $dt->getTimestamp();
+
+}
+
+function printFileSearch(&$tree) {
+	$prefix = "sdirholder";
+	print '<div class="menuitem">';
+	print "<h3>".language::gettext("label_searchresults")."</h3>";
+	print "</div>";
+	$tree->getHTML($prefix);
+}
+
+function printFileItem($displayname, $fullpath, $time) {
+	$ext = strtolower(pathinfo($fullpath, PATHINFO_EXTENSION));
+	print '<div class="clickable clicktrack playable ninesix draggable indent containerbox padright line brick_wide" name="'.
+		rawurlencode($fullpath).'">';
+	print '<i class="'.audioClass($ext, getDomain($fullpath)).' fixed collectionicon"></i>';
+	print '<div class="expand">'.$displayname.'</div>';
+	if ($time > 0) {
+		print '<div class="fixed playlistrow2 tracktime">'.format_time($time).'</div>';
+	}
+	print '</div>';
+}
+
+function printPlaylistItem($displayname, $fullpath) {
+	print '<div class="clickable clickcue playable ninesix draggable indent containerbox padright line" name="'.
+		rawurlencode($fullpath).'">';
+	print '<i class="icon-doc-text fixed collectionitem"></i>';
+	print '<div class="expand">'.$displayname.'</div>';
+	print '</div>';
 }
 
 ?>

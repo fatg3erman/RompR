@@ -23,7 +23,7 @@ class sortby_album extends sortby_base {
 				// For browse album 'All Artists Featuring'
 				$qstring .= "AND Albumtable.AlbumArtistindex = ".$this->who;
 			}
-			$qstring .= " ".track_date_check(prefs::$prefs['collectionrange'], $this->why)."
+			$qstring .= " ".prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)."
 			".$sflag.")
 		ORDER BY ";
 		if (prefs::$prefs['sortbydate']) {
@@ -34,7 +34,7 @@ class sortby_album extends sortby_base {
 			}
 		}
 		$qstring .= ' LOWER(Albumname)';
-		$result = generic_sql_query($qstring);
+		$result = prefs::$database->generic_sql_query($qstring);
 		foreach ($result as $album) {
 			$album['why'] = $this->why;
 			$album['id'] = $this->why.'album'.$album['Albumindex'];
@@ -47,7 +47,7 @@ class sortby_album extends sortby_base {
 		logger::debug('SORTBY_ALBUM', 'Generating Album Root List');
 		$count = 0;
 		foreach ($this->root_sort_query() as $album) {
-			print albumHeader($album);
+			print uibits::albumHeader($album);
 			$count++;
 		}
 		return $count;
@@ -66,7 +66,7 @@ class sortby_album extends sortby_base {
 				$singleheader['where'] = $this->why.'album'.$album['Albumindex'];
 				$singleheader['type'] = 'insertAfter';
 			} else {
-				$singleheader['html'] = albumHeader($album);
+				$singleheader['html'] = uibits::albumHeader($album);
 				$singleheader['id'] = $album['id'];
 				// $singleheader['why'] = $this->why;
 				return $singleheader;
@@ -75,18 +75,17 @@ class sortby_album extends sortby_base {
 	}
 
 	public function get_modified_root_items() {
-		global $returninfo;
-		$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
+		$result = prefs::$database->generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
 		foreach ($result as $mod) {
 			$atc = $this->album_trackcount($mod['Albumindex']);
 			logger::mark("SORTBY_ALBUM", "  Album",$mod['Albumindex'],"has",$atc,$this->why,"tracks we need to consider");
 			if ($atc == 0) {
-				$returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'];
+				prefs::$database->returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'];
 			} else {
 				$r = $this->output_root_fragment($mod['Albumindex']);
 				$lister = new sortby_album($this->why.'album'.$mod['Albumindex']);
 				$r['tracklist'] = $lister->output_track_list(true);
-				$returninfo['modifiedalbums'][] = $r;
+				prefs::$database->returninfo['modifiedalbums'][] = $r;
 			}
 		}
 	}

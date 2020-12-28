@@ -2,7 +2,6 @@
 chdir('..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-require_once ("player/".prefs::$prefs['player_backend']."/player.php");
 set_version_string();
 print '<table id="debuginfotable" width="100%">';
 print '<tr><th colspan="2">Backend Info</th></tr>';
@@ -75,7 +74,7 @@ foreach ($php_values as $v) {
 	print '<tr><td>'.$v.'</td><td>'.multi_implode($t).'</td></tr>';
 }
 
-$player = new $PLAYER_TYPE();
+$player = new player();
 print '<tr><th colspan="2">Player Information</th></tr>';
 if ($player->is_connected()) {
 	print '<tr><td>Connection Status</td><td>Connection Successful</td></tr>';

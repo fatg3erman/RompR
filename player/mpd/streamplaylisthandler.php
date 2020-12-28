@@ -40,9 +40,9 @@ class plsFile {
 	}
 
 	public function updateDatabase() {
-		$stationid = check_radio_station($this->url, $this->station, $this->image);
+		$stationid = prefs::$database->check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			check_radio_tracks($stationid, $this->tracks);
+			prefs::$database->check_radio_tracks($stationid, $this->tracks);
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 			header('HTTP/1.1 417 Expectation Failed');
@@ -98,9 +98,9 @@ class asxFile {
 	}
 
 	public function updateDatabase() {
-		$stationid = check_radio_station($this->url, $this->station, $this->image);
+		$stationid = prefs::$database->check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			check_radio_tracks($stationid, $this->tracks);
+			prefs::$database->check_radio_tracks($stationid, $this->tracks);
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 			header('HTTP/1.1 417 Expectation Failed');
@@ -156,9 +156,9 @@ class xspfFile {
 	}
 
 	public function updateDatabase() {
-		$stationid = check_radio_station($this->url, $this->station, $this->image);
+		$stationid = prefs::$database->check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			check_radio_tracks($stationid, $this->tracks);
+			prefs::$database->check_radio_tracks($stationid, $this->tracks);
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 			header('HTTP/1.1 417 Expectation Failed');
@@ -217,9 +217,9 @@ class m3uFile {
 	}
 
 	public function updateDatabase() {
-		$stationid = check_radio_station($this->url, $this->station, $this->image);
+		$stationid = prefs::$database->check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			check_radio_tracks($stationid, $this->tracks);
+			prefs::$database->check_radio_tracks($stationid, $this->tracks);
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 			header('HTTP/1.1 417 Expectation Failed');
@@ -272,9 +272,9 @@ class asfFile {
 	}
 
 	public function updateDatabase() {
-		$stationid = check_radio_station($this->url, $this->station, $this->image);
+		$stationid = prefs::$database->check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			check_radio_tracks($stationid, $this->tracks);
+			prefs::$database->check_radio_tracks($stationid, $this->tracks);
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 			header('HTTP/1.1 417 Expectation Failed');
@@ -300,9 +300,9 @@ class possibleStreamUrl {
 	}
 
 	public function updateDatabase() {
-		$stationid = check_radio_station($this->url, $this->station, $this->image);
+		$stationid = prefs::$database->check_radio_station($this->url, $this->station, $this->image);
 		if ($stationid) {
-			check_radio_tracks($stationid, $this->tracks);
+			prefs::$database->check_radio_tracks($stationid, $this->tracks);
 		} else {
 			logger::error("RADIO_PLAYLIST", "ERROR! Null station ID for",$this->url,",",$this->station);
 			header('HTTP/1.1 417 Expectation Failed');

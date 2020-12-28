@@ -12,10 +12,10 @@ class sortby_rating extends sortby_base {
 			Uri IS NOT NULL
 			AND Hidden = 0
 			AND Rating > 0
-			".track_date_check(prefs::$prefs['collectionrange'], $this->why)."
+			".prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)."
 			".$sflag."
 		ORDER BY Rating ASC";
-		$result = generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
+		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		foreach ($result as $rating) {
 			yield $rating;
 		}
@@ -32,7 +32,7 @@ class sortby_rating extends sortby_base {
 				Tracktable JOIN Ratingtable USING (TTindex)
 				WHERE Rating = ".$this->who." AND ";
 		$qstring .= "Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 ".
-		track_date_check(prefs::$prefs['collectionrange'], $this->why)." ".
+		prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)." ".
 		$sflag.")";
 		$qstring .= " ORDER BY ";
 		if (prefs::$prefs['sortbydate']) {
@@ -43,7 +43,7 @@ class sortby_rating extends sortby_base {
 			}
 		}
 		$qstring .= ' LOWER(Albumname)';
-		$result = generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
+		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		foreach ($result as $album) {
 			$album['why'] = $this->why;
 			$album['id'] = $this->why.'album'.$album['Albumindex'].'_'.$this->who;
@@ -53,18 +53,15 @@ class sortby_rating extends sortby_base {
 	}
 
 	public function output_root_list() {
-		global $divtype;
 		$count = 0;
 		foreach ($this->root_sort_query() as $rating) {
-			print artistHeader($this->why.'rating'.$rating['Rating'], '<i class="rating-icon-big icon-'.$rating['Rating'].'-stars"></i>');
+			print uibits::artistHeader($this->why.'rating'.$rating['Rating'], '<i class="rating-icon-big icon-'.$rating['Rating'].'-stars"></i>');
 			$count++;
-			$divtype = ($divtype == "album1") ? "album2" : "album1";
 		}
 		return $count;
 	}
 
 	public function output_root_fragment($rat) {
-		global $divtype;
 		logger::log('SORTBY_RATING','Generating rating fragment',$this->why,'rating',$rat);
 		$singleheader = $this->initial_root_insert();
 		foreach ($this->root_sort_query() as $rating) {
@@ -72,11 +69,10 @@ class sortby_rating extends sortby_base {
 				$singleheader['type'] = 'insertAfter';
 				$singleheader['where'] = $this->why.'rating'.$rating['Rating'];
 			} else {
-				$singleheader['html'] = artistHeader($this->why.'rating'.$rating['Rating'], '<i class="rating-icon-big icon-'.$rating['Rating'].'-stars"></i>');
+				$singleheader['html'] = uibits::artistHeader($this->why.'rating'.$rating['Rating'], '<i class="rating-icon-big icon-'.$rating['Rating'].'-stars"></i>');
 				$singleheader['id'] = $this->why.'rating'.$rat;
 				return $singleheader;
 			}
-			$divtype = ($divtype == "album1") ? "album2" : "album1";
 		}
 		logger::error('SORTBY_RATING','Did not find position for',$this->why,'rating',$rating);
 	}
@@ -85,14 +81,14 @@ class sortby_rating extends sortby_base {
 		logger::log("SORTBY_RATING", "Generating albums for",$this->why,$this->what,$this->who);
 		$count = 0;
 		if ($do_controlheader) {
-			print albumControlHeader(false, $this->why, 'rating', $this->who, '<i class="rating-icon-big icon-'.$this->who.'-stars"></i>');
+			print uibits::albumControlHeader(false, $this->why, 'rating', $this->who, '<i class="rating-icon-big icon-'.$this->who.'-stars"></i>');
 		}
 		foreach ($this->album_sort_query($unused) as $album) {
-			print albumHeader($album);
+			print uibits::albumHeader($album);
 			$count++;
 		}
 		if ($count == 0 && $this->why != 'a') {
-			noAlbumsHeader();
+			uibits::noAlbumsHaeder();
 		}
 		return $count;
 	}
@@ -105,7 +101,7 @@ class sortby_rating extends sortby_base {
 				$singleheader['where'] = $this->why.'album'.$album['Albumindex'].'_'.$this->who;
 				$singleheader['type'] = 'insertAfter';
 			} else {
-				$singleheader['html'] = albumHeader($album);
+				$singleheader['html'] = uibits::albumHeader($album);
 				$singleheader['id'] = $this->why.'album'.$albumindex.'_'.$this->who;
 				return $singleheader;
 			}
@@ -161,41 +157,39 @@ class sortby_rating extends sortby_base {
 	}
 
 	public function get_modified_root_items() {
-		global $returninfo;
-		$result = generic_sql_query(
+		$result = prefs::$database->generic_sql_query(
 			"SELECT DISTINCT Rating FROM Albumtable
 			JOIN Tracktable USING (Albumindex)
 			JOIN Ratingtable USING (TTindex)
 			WHERE justUpdated = 1 ".$this->filter_root_on_why());
 		foreach ($result as $mod) {
-			$returninfo['modifiedartists'][] = $this->output_root_fragment($mod['Rating']);
+			prefs::$database->returninfo['modifiedartists'][] = $this->output_root_fragment($mod['Rating']);
 		}
 		for ($i = 1; $i < 6; $i++) {
 			$qstring = "SELECT COUNT(TTindex) AS num FROM Tracktable JOIN Ratingtable USING (TTindex) WHERE Rating = ".$i." ".$this->filter_root_on_why();
-			$count = generic_sql_query($qstring, false, null, 'num', 0);
+			$count = prefs::$database->generic_sql_query($qstring, false, null, 'num', 0);
 			if ($count == 0) {
 				logger::log('SORTBY_RATING', 'Rating',$i,'is empty');
-				$returninfo['deletedartists'][] = $this->why.'rating'.$i;
+				prefs::$database->returninfo['deletedartists'][] = $this->why.'rating'.$i;
 			}
 		}
 	}
 
 	public function get_modified_albums() {
-		global $returninfo;
-		$result = generic_sql_query('SELECT Albumindex FROM Albumtable WHERE justUpdated = 1');
+		$result = prefs::$database->generic_sql_query('SELECT Albumindex FROM Albumtable WHERE justUpdated = 1');
 		foreach ($result as $mod) {
 			// Need to consider every value of rating, otherwise empty ones don't get removed
 			foreach (array(1,2,3,4,5) as $rating) {
 				$numtracks = $this->album_rating_trackcount($mod['Albumindex'], $rating);
 				logger::log('SORTBY_RATING', $this->why.'album'.$mod['Albumindex'].'_'.$rating,'has',$numtracks,'tracks of interest');
 				if ($numtracks == 0) {
-					$returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'].'_'.$rating;
+					prefs::$database->returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'].'_'.$rating;
 				} else {
 					$lister = new sortby_rating($this->why.'rating'.$rating);
 					$r = $lister->output_album_fragment($mod['Albumindex']);
 					$lister = new sortby_rating($this->why.'album'.$mod['Albumindex'].'_'.$rating);
 					$r['tracklist'] = $lister->output_track_list(true);
-					$returninfo['modifiedalbums'][] = $r;
+					prefs::$database->returninfo['modifiedalbums'][] = $r;
 				}
 			}
 		}
@@ -208,7 +202,7 @@ class sortby_rating extends sortby_base {
 		WHERE Albumindex = ".$albumindex." AND Rating = ".$rating.
 		" AND Hidden = 0 AND Uri IS NOT NULL AND Rating > 0 ".
 		$this->filter_track_on_why();
-		return generic_sql_query($qstring, false, null, 'num', 0);
+		return prefs::$database->generic_sql_query($qstring, false, null, 'num', 0);
 	}
 
 	public function initial_album_insert() {

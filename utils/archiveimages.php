@@ -14,19 +14,9 @@
 
 chdir('..');
 include ("includes/vars.php");
-$skin = 'desktop';
 include ("includes/functions.php");
-include ("backends/sql/backend.php");
-$r = generic_sql_query(
-	'SELECT
-		Uri,
-		Image,
-		Albumname,
-		Domain
-	FROM Tracktable
-	JOIN Albumtable USING (Albumindex)
-	WHERE Domain = "local" AND Uri IS NOT NULL
-	GROUP BY Albumindex', false, PDO::FETCH_OBJ);
+prefs::$database = new image_archiver();
+$r = prefs::$database->get_all_images();
 
 foreach ($r as $obj) {
 	if ($obj->Domain == 'local') {
@@ -38,7 +28,7 @@ foreach ($r as $obj) {
 
 		if (is_dir('prefs/MusicFolders') && $retval != '.') {
 			$albumpath = imageFunctions::munge_filepath($retval);
-			if (is_dir($albumpath)) {
+			if (is_dir($albumpath) && basename($obj->Image)) {
 				$img = 'albumart/asdownloaded/'.basename($obj->Image);
 				$out = $albumpath.'/'.basename($obj->Image);
 				print "Archiving Image ".$img.' to '.$out."\n";

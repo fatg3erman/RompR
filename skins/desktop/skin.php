@@ -177,7 +177,7 @@ print '<i class="icon-angle-double-right tooltip topimg expandslightly backgroun
 
 <?php
 print '<i title="'.language::gettext('button_albumart').'" class="icon-cd tooltip topimg open_albumart expand"></i>';
-print '<i class="icon-cog-alt topimg tooltip topdrop expand" title="'.language::gettext('button_prefs').'">';
+print '<i class="icon-cog-alt topimg tooltip topdrop expand choose_prefs" title="'.language::gettext('button_prefs').'">';
 ?>
 <div class="topdropmenu dropshadow rightmenu widemenu stayopen" id="configpanel">
 <?php
@@ -258,7 +258,7 @@ print '<div class="dropdown-container configtitle">';
 print '<i class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.language::gettext('label_podcastcontrols').'"></i>';
 print '<div class="textcentre expand"><b>'.language::gettext('label_podcasts').'</b></div>';
 print '</div>';
-include("podcasts/podcasts.php");
+include("includes/podcast_base.php");
 ?>
 	</div>
 	<div id="audiobooklist" class="invisible noborder">

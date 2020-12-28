@@ -39,18 +39,18 @@ class albumImage extends baseAlbumImage {
 
 			case 'STREAM':
 				if ($this->image_downloaded) {
-					update_stream_image($this->album, $this->images['small']);
+					prefs::$database->update_stream_image($this->album, $this->images['small']);
 				}
 				break;
 
 			case 'PODCAST':
 				if ($this->image_downloaded) {
-					update_podcast_image($this->albumpath, $this->images['small']);
+					prefs::$database->update_podcast_image($this->albumpath, $this->images['small']);
 				}
 				break;
 
 			default:
-				update_image_db($this->key, $this->image_downloaded, $this->images['small']);
+				prefs::$database->update_image_db($this->key, $this->image_downloaded, $this->images['small']);
 				break;
 
 		}

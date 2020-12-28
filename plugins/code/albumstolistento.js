@@ -6,7 +6,7 @@ var albumstolistento = function() {
 	var spinner;
 
 	function getListenLater() {
-		metaHandlers.genericAction('getlistenlater', gotListenLater, notGotListenLater);
+		metaHandlers.genericQuery('getlistenlater', gotListenLater, notGotListenLater);
 	}
 
 	function notGotListenLater() {
@@ -75,7 +75,7 @@ var albumstolistento = function() {
 		},
 
 		removeId: function(id) {
-			metaHandlers.genericAction([{action: 'removelistenlater', index: id}], function() {
+			metaHandlers.genericQuery({action: 'removelistenlater', index: id}, function() {
 				debug.log("LISTENLATER", "Listen Later ID",id,"removed");
 			}, function() {
 				debug.error("LISTENLATER", "Failed To Remove ID",id);

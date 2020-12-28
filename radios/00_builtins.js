@@ -90,7 +90,7 @@ var starHelpers = function() {
 		},
 
 		populateGenreMenu: function(callback) {
-			metaHandlers.genericAction(
+			metaHandlers.genericQuery(
 				'getgenres',
 				callback,
 				function() {
@@ -100,7 +100,7 @@ var starHelpers = function() {
 		},
 
 		populateArtistMenu: function(callback) {
-			metaHandlers.genericAction(
+			metaHandlers.genericQuery(
 				'getartists',
 				callback,
 				function() {
@@ -110,7 +110,7 @@ var starHelpers = function() {
 		},
 
 		populateAlbumArtistMenu: function(callback) {
-			metaHandlers.genericAction(
+			metaHandlers.genericQuery(
 				'getalbumartists',
 				callback,
 				function() {

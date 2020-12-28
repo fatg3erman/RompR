@@ -35,7 +35,7 @@ var tagAdder = function() {
 		},
 
 		populateTagMenu: function(callback) {
-			metaHandlers.genericAction(
+			metaHandlers.genericQuery(
 				'gettags',
 				callback,
 				function() {
@@ -928,7 +928,7 @@ var spotifyLinkChecker = function() {
 	var tracks;
 
 	function getNextUriToCheck() {
-		metaHandlers.genericAction('getlinktocheck', gotLinkToCheck, goneTitsUp);
+		metaHandlers.genericQuery('getlinktocheck', gotLinkToCheck, goneTitsUp);
 	}
 
 	function gotLinkToCheck(data) {
@@ -1010,7 +1010,7 @@ var spotifyLinkChecker = function() {
 				if (Date.now() > prefs.linkchecker_nextrun) {
 					debug.info("SPOTICHECKER","Link Checker Restarting",Date.now(),prefs.linkchecker_nextrun);
 					updateNextRunTime();
-					metaHandlers.genericAction('resetlinkcheck', spotifyLinkChecker.setTimer, goneTitsUp);
+					metaHandlers.genericQuery('resetlinkcheck', spotifyLinkChecker.setTimer, goneTitsUp);
 				} else {
 					debug.info("SPOTICHECKER","Link Checker Not Starting Yet");
 				}

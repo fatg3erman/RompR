@@ -8,7 +8,7 @@ class somafmplugin {
 
 	public function doHeader() {
 		print '<div id="somafmplugin">';
-		print albumHeader(array(
+		print uibits::albumHeader(array(
 			'id' => 'somafmlist',
 			'Image' => 'newimages/somafmlogo.svg',
 			'Searched' => 1,
@@ -27,7 +27,7 @@ class somafmplugin {
 	}
 
 	public function doStationList() {
-		directoryControlHeader('somafmlist', language::gettext('label_somafm'));
+		uibits::directoryControlHeader('somafmlist', language::gettext('label_somafm'));
 		print '<div class="containerbox padright indent ninesix bumpad brick_wide">';
 		print '<a href="http://somafm.com" target="_blank">'.language::gettext("label_soma_beg").'</a>';
 		print '</div>';
@@ -100,7 +100,7 @@ class somafmplugin {
 			$pls = (string) $channel->fastpls[0];
 		}
 
-		print albumHeader(array(
+		print uibits::albumHeader(array(
 			'id' => 'somafm_'.$count,
 			'Image' => $this->getimage($channel),
 			'Searched' => 1,
@@ -117,7 +117,7 @@ class somafmplugin {
 		));
 
 		print '<div id="somafm_'.$count.'" class="dropmenu">';
-		trackControlHeader('','','somafm_'.$count, null, array(array('Image' => $this->getimage($channel))));
+		uibits::trackControlHeader('','','somafm_'.$count, null, array(array('Image' => $this->getimage($channel))));
 		if ($channel->description) {
 			print '<div class="containerbox ninesix indent padright">'.utf8_encode($channel->description).'</div>';
 		}
@@ -164,7 +164,6 @@ if (array_key_exists('populate', $_REQUEST)) {
 
 	include ("includes/vars.php");
 	include ("includes/functions.php");
-	include ("skins/".$skin."/ui_elements.php");
 
 	$soma = new somafmplugin();
 	$soma->doStationList();

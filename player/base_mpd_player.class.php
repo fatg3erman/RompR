@@ -72,10 +72,11 @@ class base_mpd_player {
 		$errstr = null;
 
 		while (!$this->is_connected() && $retries > 0) {
-			logger::core('MPD', 'Opening Connection For',$this->debug_id);
 			if ($this->socket != "") {
+				logger::core('MPDPLAYER', 'Opening connection to',$this->socket);
 				$this->connection = @stream_socket_client('unix://'.$this->socket, $errno, $errstr, 10, STREAM_CLIENT_CONNECT);
 			} else {
+				logger::core('MPDPLAYER', 'Opening connection to',$this->ip.':'.$this->port);
 				$this->connection = @stream_socket_client('tcp://'.$this->ip.':'.$this->port, $errno, $errstr, 10, STREAM_CLIENT_CONNECT);
 			}
 			if ($errno != 0) {
@@ -254,10 +255,11 @@ class base_mpd_player {
 		$done = 0;
 		$cmd_status = null;
 
+		if ($this->player_type != prefs::$prefs['collection_player']) {
+			$this->translate_player_types($cmds);
+		}
 		if ($this->is_remote) {
 			$this->translate_commands_for_remote($cmds);
-		} else if ($this->player_type != prefs::$prefs['collection_player']) {
-			$this->translate_player_types($cmds);
 		}
 		$retries = 3;
 		if (count($cmds) > 1) {
@@ -381,13 +383,6 @@ class base_mpd_player {
 	}
 
 	protected function sanitize_data(&$filedata) {
-		global $dbterms, $numtracks, $totaltime;
-		if ($dbterms['tags'] !== null || $dbterms['rating'] !== null) {
-			// If this is a search and we have tags or ratings to search for, check them here.
-			if (check_url_against_database($filedata['file'], $dbterms['tags'], $dbterms['rating']) == false) {
-				return false;
-			}
-		}
 	   if (strpos($filedata['Title'], "[unplayable]") === 0) {
 			logger::debug("COLLECTION", "Ignoring unplayable track ".$filedata['file']);
 			return false;
@@ -422,13 +417,41 @@ class base_mpd_player {
 
 		$filedata['year'] = getYear($filedata['Date']);
 
-		if ($this->player_specific_fixups($filedata)) {
-			$numtracks++;
-			$totaltime += $filedata['Time'];
-			return true;
-		} else {
-			return false;
+		return $this->player_specific_fixups($filedata);
+
+	}
+
+	protected function player_specific_fixups(&$filedata) {
+		// This is here for transferplaylist
+		switch($filedata['domain']) {
+			case 'http':
+			case 'https':
+			case 'mms':
+			case 'mmsh':
+			case 'mmst':
+			case 'mmsu':
+			case 'gopher':
+			case 'rtp':
+			case 'rtsp':
+			case 'rtmp':
+			case 'rtmpt':
+			case 'rtmps':
+			case 'dirble':
+			case 'tunein':
+			case 'radio-de':
+			case 'audioaddict':
+			case 'oe1':
+			case 'bassdrive':
+				$filedata['type'] = 'stream';
+				break;
+
+			default:
+				$filedata['type'] = 'local';
+				break;
+
 		}
+
+		return true;
 
 	}
 
@@ -541,31 +564,20 @@ class base_mpd_player {
 		return $this->do_mpd_command('', true, false);
 	}
 
-	public function get_playlist(&$collection) {
+	public function get_playlist() {
 		$dirs = array();
 		foreach ($this->parse_list_output('playlistinfo', $dirs, false) as $filedata) {
-			// Check the database for extra track info
-			$filedata = array_replace($filedata, get_extra_track_info($filedata));
-			yield $collection->doNewPlaylistFile($filedata);
+			yield $filedata;
 		}
 	}
 
-	public function get_currentsong_as_playlist(&$collection) {
+	public function get_currentsong_as_playlist() {
 		$dirs = array();
 		$retval = array();
 		foreach ($this->parse_list_output('currentsong', $dirs, false) as $filedata) {
-			// Check the database for extra track info
-			$filedata = array_replace($filedata, get_extra_track_info($filedata));
-			$retval = $collection->doNewPlaylistFile($filedata);
+			$retval = $filedata;
 		}
 		return $retval;
-	}
-
-	public function populate_collection($cmd, $domains, &$collection) {
-		$dirs = array();
-		foreach ($this->parse_list_output($cmd, $dirs, $domains) as $filedata) {
-			$collection->newTrack($filedata);
-		}
 	}
 
 	public function get_uris_for_directory($path) {
@@ -630,7 +642,7 @@ class base_mpd_player {
 				return (strtolower($a) < strtolower($b)) ? -1 : 1;
 			});
 			if ($only_personal) {
-				$retval = array_filter($retval, $PLAYER_TYPE.'::is_personal_playlist');
+				$retval = array_filter($retval, 'player::is_personal_playlist');
 			}
 		} else if (is_array($playlists) && array_key_exists('error', $playlists)) {
 			// We frequently get an error getting stored playlists - especially from mopidy
@@ -732,6 +744,7 @@ class base_mpd_player {
 			}
 			setcookie('player_backend',$retval,time()+365*24*60*60*10,'/');
 			prefs::$prefs['player_backend'] = $retval;
+			set_include_path('player/'.prefs::$prefs['player_backend'].PATH_SEPARATOR.get_include_path());
 		}
 		return $retval;
 	}
@@ -741,7 +754,7 @@ class base_mpd_player {
 	//
 
 	// Strictly speaking these belong in mopidy/player.php
-	// But at places where they're needed that would entain sometimes reating two players
+	// But at places where they're needed that would entain sometimes creating two players
 	// (one of these and one mopidy) which is inefficient and slow, so they're here
 	// If we're really playing the pedantic game, just rename this class so these functions fit.
 

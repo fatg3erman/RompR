@@ -17,7 +17,7 @@ class sortby_artist extends sortby_base {
 				JOIN Tracktable USING (Albumindex)
 				WHERE Uri IS NOT NULL
 				AND Hidden = 0
-				".track_date_check(prefs::$prefs['collectionrange'], $this->why)."
+				".prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)."
 				".$sflag."
 				GROUP BY AlbumArtistindex)
 			ORDER BY ";
@@ -35,7 +35,7 @@ class sortby_artist extends sortby_base {
 		} else {
 			$qstring .= "LOWER(a.Artistname)";
 		}
-		$result = generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
+		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		foreach ($result as $artist) {
 			yield $artist;
 		}
@@ -52,7 +52,7 @@ class sortby_artist extends sortby_base {
 		$qstring .= "Albumindex IN (SELECT Albumindex FROM Tracktable WHERE
 				Tracktable.Albumindex = Albumtable.Albumindex AND ";
 		$qstring .= "Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 ".
-		track_date_check(prefs::$prefs['collectionrange'], $this->why)." ".
+		prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)." ".
 		$sflag.")";
 		$qstring .= " ORDER BY ";
 		if (prefs::$prefs['sortbydate']) {
@@ -63,7 +63,7 @@ class sortby_artist extends sortby_base {
 			}
 		}
 		$qstring .= ' LOWER(Albumname)';
-		$result = generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
+		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		foreach ($result as $album) {
 			if (!$force_artistname) {
 				$album['Artistname'] = null;
@@ -77,18 +77,15 @@ class sortby_artist extends sortby_base {
 
 	public function output_root_list() {
 		logger::debug('SORTBY_ARTIST', 'Generating Artist Root List');
-		global $divtype;
 		$count = 0;
 		foreach ($this->root_sort_query() as $artist) {
-			print artistHeader($this->why.$this->what.$artist['Artistindex'], $artist['Artistname']);
+			print uibits::artistHeader($this->why.$this->what.$artist['Artistindex'], $artist['Artistname']);
 			$count++;
-			$divtype = ($divtype == "album1") ? "album2" : "album1";
 		}
 		return $count;
 	}
 
 	public function output_root_fragment($artistindex) {
-		global $divtype;
 		logger::log('SORTBY_ARTIST','Generating artist fragment',$this->why,'artist',$artistindex);
 		$singleheader = $this->initial_root_insert();
 		foreach ($this->root_sort_query() as $artist) {
@@ -96,11 +93,10 @@ class sortby_artist extends sortby_base {
 				$singleheader['type'] = 'insertAfter';
 				$singleheader['where'] = $this->why.'artist'.$artist['Artistindex'];
 			} else {
-				$singleheader['html'] = artistHeader($this->why.'artist'.$artist['Artistindex'], $artist['Artistname']);
+				$singleheader['html'] = uibits::artistHeader($this->why.'artist'.$artist['Artistindex'], $artist['Artistname']);
 				$singleheader['id'] = $this->why.'artist'.$artistindex;
 				return $singleheader;
 			}
-			$divtype = ($divtype == "album1") ? "album2" : "album1";
 		}
 	}
 
@@ -108,15 +104,16 @@ class sortby_artist extends sortby_base {
 		logger::log("SORTBY_ARTIST", "Generating albums for",$this->why,$this->what,$this->who);
 		$count = 0;
 		if ($do_controlheader) {
-			print albumControlHeader(false, $this->why, 'artist', $this->who, $this->getArtistName());
+			print uibits::albumControlHeader(false, $this->why, 'artist', $this->who, $this->getArtistName());
 		}
 		foreach ($this->album_sort_query($force_artistname) as $album) {
-			print albumHeader($album);
+			print uibits::albumHeader($album);
 			$count++;
 		}
 		if ($count == 0 && $this->why != 'a') {
-			noAlbumsHeader();
+			uibits::noAlbumsHaeder();
 		}
+
 		return $count;
 	}
 
@@ -128,7 +125,7 @@ class sortby_artist extends sortby_base {
 				$singleheader['where'] = $this->why.'album'.$album['Albumindex'];
 				$singleheader['type'] = 'insertAfter';
 			} else {
-				$singleheader['html'] = albumHeader($album);
+				$singleheader['html'] = uibits::albumHeader($album);
 				$singleheader['id'] = $this->why.'album'.$albumindex;
 				return $singleheader;
 			}
@@ -136,39 +133,37 @@ class sortby_artist extends sortby_base {
 	}
 
 	public function get_modified_root_items() {
-		global $returninfo;
-		$result = generic_sql_query('SELECT DISTINCT AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
+		$result = prefs::$database->generic_sql_query('SELECT DISTINCT AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
 		foreach ($result as $mod) {
 			$atc = $this->artist_albumcount($mod['AlbumArtistindex']);
 			logger::mark("SORTBY_ARTIST", "  Artist",$mod['AlbumArtistindex'],"has",$atc,$this->why,"albums we need to consider");
 			if ($atc == 0) {
-				$returninfo['deletedartists'][] = $this->why.'artist'.$mod['AlbumArtistindex'];
+				prefs::$database->returninfo['deletedartists'][] = $this->why.'artist'.$mod['AlbumArtistindex'];
 			} else {
-				$returninfo['modifiedartists'][] = $this->output_root_fragment($mod['AlbumArtistindex']);
+				prefs::$database->returninfo['modifiedartists'][] = $this->output_root_fragment($mod['AlbumArtistindex']);
 			}
 		}
 	}
 
 	public function get_modified_albums() {
-		global $returninfo;
-		$result = generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
+		$result = prefs::$database->generic_sql_query('SELECT Albumindex, AlbumArtistindex FROM Albumtable WHERE justUpdated = 1');
 		foreach ($result as $mod) {
 			$atc = $this->album_trackcount($mod['Albumindex']);
 			logger::mark("SORTBY_ARTIST", "  Album",$mod['Albumindex'],"has",$atc,$this->why,"tracks we need to consider");
 			if ($atc == 0) {
-				$returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'];
+				prefs::$database->returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'];
 			} else {
 				$lister = new sortby_artist($this->why.'artist'.$mod['AlbumArtistindex']);
 				$r = $lister->output_album_fragment($mod['Albumindex']);
 				$lister = new sortby_artist($this->why.'album'.$mod['Albumindex']);
 				$r['tracklist'] = $lister->output_track_list(true);
-				$returninfo['modifiedalbums'][] = $r;
+				prefs::$database->returninfo['modifiedalbums'][] = $r;
 			}
 		}
 	}
 
 	private function getArtistName() {
-		return simple_query('Artistname', 'Artisttable', 'Artistindex', $this->who,'');
+		return prefs::$database->simple_query('Artistname', 'Artisttable', 'Artistindex', $this->who,'');
 	}
 
 }

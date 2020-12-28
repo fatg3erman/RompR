@@ -36,9 +36,15 @@ class sortby_base {
 	//	In this case, '1234' is referred to as $when
 
 
+	// There will always be a database connection available when we want to use one of these
+	// and while it's "better" to have these inherit from the database class, that results in unnecessary
+	// multiple database connections (expecially as some of these recursively create new instances of themselves).
+	// We could just use these to generate the SQL and run that where these are being called, but that's messy too
+	// and some of the queries depend on database-engine spcific code.
+
+	// So REQUIEMENT that there is already a database connection that inherits from collection_base
+
 	public function __construct($which) {
-		global $divtype;
-		$divtype = 'album1';
 		$a = preg_match('/(a|b|c|r|t|y|u|z)(.*?)(\d+|root)_*(\d+)*/', $which, $matches);
 		if (!$a) {
 			logger::warn("SORTBY", "Sort Init failed - regexp failed to match",$which);
@@ -158,16 +164,16 @@ class sortby_base {
 	public function output_html() {
 		switch ($this->who) {
 			case 'root':
-				print '<div class="sizer"></div>';
+				uibits::albumSizer();
 				switch ($this->why) {
 					case 'a':
-						print collectionStats();
+						print prefs::$database->collectionStats();
 						break;
 					case 'b':
-						print searchStats();
+						print prefs::$database->searchStats();
 						break;
 					case 'z':
-						print audiobookStats();
+						print prefs::$database->audiobookStats();
 						break;
 				}
 				$count = $this->output_root_list();
@@ -206,9 +212,11 @@ class sortby_base {
 				break;
 
 			case 'z':
-				print '<div class="textcentre fullwidth">
-				<p>There are no Spoken Word tracks in your Collection that can be displayed when sorting by '.ucfirst(language::gettext(COLLECTION_SORT_MODES[prefs::$prefs['actuallysortresultsby']])).'</p>
-				</div>';
+				print '<div class="textcentre fullwidth">';
+				if (prefs::$prefs['actuallysortresultsby'] == 'tag' || prefs::$prefs['actuallysortresultsby'] == 'rating') {
+					print '<p>There are no Spoken Word tracks in your Collection that can be displayed when sorting by '.ucfirst(language::gettext(COLLECTION_SORT_MODES[prefs::$prefs['actuallysortresultsby']])).'</p>';
+				}
+				print '</div>';
 				break;
 		}
 	}
@@ -216,7 +224,7 @@ class sortby_base {
 	public function track_sort_query() {
 		// This is the generic query for sortby_artist, sortby_album, and sortby_albumbyartist
 		$qstring = "SELECT
-				".SQL_TAG_CONCAT." AS tags,
+				".database::SQL_TAG_CONCAT." AS tags,
 				r.Rating AS rating,
 				pr.Progress AS progress,
 				tr.TTindex AS ttid,
@@ -241,13 +249,13 @@ class sortby_base {
 					tr.Albumindex = ".$this->who."
 					AND uri IS NOT NULL
 					AND tr.Hidden = 0
-					".track_date_check(prefs::$prefs['collectionrange'], $this->why)."
+					".prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)."
 					".$this->filter_track_on_why()."
 					AND tr.Artistindex = ta.Artistindex
 					AND al.Albumindex = tr.Albumindex
 			GROUP BY tr.TTindex
 			ORDER BY CASE WHEN title LIKE 'Album: %' THEN 1 ELSE 2 END, disc, trackno";
-		return generic_sql_query($qstring);
+		return prefs::$database->generic_sql_query($qstring);
 	}
 
 	public function albums_for_artist() {
@@ -265,9 +273,9 @@ class sortby_base {
 			ob_start();
 		}
 		$numtracks = count($trackarr);
-		$numdiscs = get_highest_disc($trackarr);
+		$numdiscs = prefs::$database->get_highest_disc($trackarr);
 		$currdisc = -1;
-		trackControlHeader($this->why, $this->what, $this->who, $this->when, get_album_details($this->who));
+		uibits::trackControlHeader($this->why, $this->what, $this->who, $this->when, prefs::$database->get_album_details($this->who));
 		$total_time = 0;
 		$tracktype = null;
 		foreach ($trackarr as $arr) {
@@ -283,7 +291,7 @@ class sortby_base {
 				$arr['discclass'] = '';
 			}
 			$arr['numtracks'] = $numtracks;
-			$tracktype = albumTrack($arr);
+			$tracktype = uibits::albumTrack($arr);
 			if ($tracktype == 2 && $this->why == 'b') {
 				// albumTrack will return 2 if this is an :album: link - we add an expandalbum
 				// input so the UI will populate the whole album, since spotify oftne only returns
@@ -317,7 +325,7 @@ class sortby_base {
 			" AND Hidden = 0
 			AND Uri IS NOT NULL ".
 			$this->filter_track_on_why();
-		return generic_sql_query($qstring, false, null, 'num', 0);
+		return prefs::$database->generic_sql_query($qstring, false, null, 'num', 0);
 	}
 
 	public function album_trackcount($albumindex) {
@@ -331,7 +339,7 @@ class sortby_base {
 			" AND Hidden = 0
 			AND Uri IS NOT NULL ".
 			$this->filter_track_on_why();
-		return generic_sql_query($qstring, false, null, 'num', 0);
+		return prefs::$database->generic_sql_query($qstring, false, null, 'num', 0);
 	}
 
 }

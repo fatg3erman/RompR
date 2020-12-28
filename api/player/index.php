@@ -2,9 +2,7 @@
 chdir('../..');
 require_once ("includes/vars.php");
 require_once ("includes/functions.php");
-require_once ("player/".prefs::$prefs['player_backend']."/player.php");
-require_once ("collection/collection.php");
-require_once ('backends/sql/backend.php');
+
 $mpd_status = array();
 $playlist_movefrom = null;
 $playlist_moveto = null;
@@ -15,8 +13,8 @@ $do_resume_seek = false;
 $do_resume_seek_id = false;
 $moveallto = null;
 $current_playlist_length = 0;
-$player = new $PLAYER_TYPE();
-
+$player = new player();
+prefs::$database = new music_loader();
 if ($player->is_connected()) {
 
 	$cmd_status = true;
@@ -38,7 +36,7 @@ if ($player->is_connected()) {
 			switch ($cmd[0]) {
 				case "addtoend":
 					logger::log("POSTCOMMAND", "Addtoend ".$cmd[1]);
-					$cmds = array_merge($cmds, playAlbumFromTrack($cmd[1]));
+					$cmds = array_merge($cmds, prefs::$database->playAlbumFromTrack($cmd[1]));
 					break;
 
 				case 'playlisttoend':
@@ -54,7 +52,7 @@ if ($player->is_connected()) {
 
 				case "additem":
 					logger::log("POSTCOMMAND", "Adding Item ".$cmd[1]);
-					$cmds = array_merge($cmds, getItemsToAdd($cmd[1], null));
+					$cmds = array_merge($cmds, prefs::$database->getItemsToAdd($cmd[1], null));
 					break;
 
 				case "loadstreamplaylist":
@@ -96,7 +94,7 @@ if ($player->is_connected()) {
 					if (preg_match('/^(a|b|r|t|y|u|z)(.*?)(\d+|root)/', $cmd[2])) {
 						// Add a whole album/artist
 						$lengthnow = count($cmds);
-						$cmds = array_merge($cmds, getItemsToAdd($cmd[2], $cmd[0].' "'.format_for_mpd($cmd[1]).'"'));
+						$cmds = array_merge($cmds, prefs::$database->getItemsToAdd($cmd[2], $cmd[0].' "'.format_for_mpd($cmd[1]).'"'));
 						check_playlist_add_move($cmd, (count($cmds) - $lengthnow));
 					} else {
 						logger::trace('POSTCOMMAND',$cmd[0], $cmd[1], $cmd[2]);
@@ -130,7 +128,7 @@ if ($player->is_connected()) {
 					logger::log("POSTCOMMAND", "  .. and seeking position ".$cmd[3]." to ".$cmd[2]);
 					if ($cmd[4] == 'yes') {
 						logger::log('POSTCOMMAND', "  .. CD player mode was also requested");
-						$cmds = array_merge($cmds, playAlbumFromTrack($cmd[1]));
+						$cmds = array_merge($cmds, prefs::$database->playAlbumFromTrack($cmd[1]));
 					} else {
 						$cmds[] = join_command_string(array('add', $cmd[1]));
 					}

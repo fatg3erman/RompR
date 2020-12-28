@@ -12,10 +12,10 @@ class sortby_tag extends sortby_base {
 		WHERE
 			Uri IS NOT NULL
 			AND Hidden = 0
-			".track_date_check(prefs::$prefs['collectionrange'], $this->why)."
+			".prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)."
 			".$sflag."
 		ORDER BY Name ASC";
-		$result = generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
+		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		foreach ($result as $tag) {
 			yield $tag;
 		}
@@ -32,7 +32,7 @@ class sortby_tag extends sortby_base {
 				Tracktable JOIN TagListtable USING (TTindex)
 				WHERE Tagindex = ".$this->who." AND ";
 		$qstring .= "Tracktable.Uri IS NOT NULL AND Tracktable.Hidden = 0 ".
-		track_date_check(prefs::$prefs['collectionrange'], $this->why)." ".
+		prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)." ".
 		$sflag.")";
 		$qstring .= " ORDER BY ";
 		if (prefs::$prefs['sortbydate']) {
@@ -43,7 +43,7 @@ class sortby_tag extends sortby_base {
 			}
 		}
 		$qstring .= ' LOWER(Albumname)';
-		$result = generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
+		$result = prefs::$database->generic_sql_query($qstring, false, PDO::FETCH_ASSOC);
 		foreach ($result as $album) {
 			$album['why'] = $this->why;
 			$album['id'] = $this->why.'album'.$album['Albumindex'].'_'.$this->who;
@@ -53,18 +53,15 @@ class sortby_tag extends sortby_base {
 	}
 
 	public function output_root_list() {
-		global $divtype;
 		$count = 0;
 		foreach ($this->root_sort_query() as $tag) {
-			print artistHeader($this->why.'tag'.$tag['Tagindex'], $tag['Name']);
+			print uibits::artistHeader($this->why.'tag'.$tag['Tagindex'], $tag['Name']);
 			$count++;
-			$divtype = ($divtype == "album1") ? "album2" : "album1";
 		}
 		return $count;
 	}
 
 	public function output_root_fragment($tagindex) {
-		global $divtype;
 		logger::log('SORTBY_TAG','Generating tag fragment',$this->why,'tag',$tagindex);
 		$singleheader = $this->initial_root_insert();
 		foreach ($this->root_sort_query() as $tag) {
@@ -72,11 +69,10 @@ class sortby_tag extends sortby_base {
 				$singleheader['type'] = 'insertAfter';
 				$singleheader['where'] = $this->why.'tag'.$tag['Tagindex'];
 			} else {
-				$singleheader['html'] = artistHeader($this->why.'tag'.$tag['Tagindex'], $tag['Name']);
+				$singleheader['html'] = uibits::artistHeader($this->why.'tag'.$tag['Tagindex'], $tag['Name']);
 				$singleheader['id'] = $this->why.'tag'.$tagindex;
 				return $singleheader;
 			}
-			$divtype = ($divtype == "album1") ? "album2" : "album1";
 		}
 		logger::error('SORTBY_TAG','Did not find position for',$this->why,'tag',$tagindex);
 	}
@@ -85,14 +81,14 @@ class sortby_tag extends sortby_base {
 		logger::log("SORTBY_TAG", "Generating albums for",$this->why,$this->what,$this->who);
 		$count = 0;
 		if ($do_controlheader) {
-			print albumControlHeader(false, $this->why, 'tag', $this->who, $this->getTagName());
+			print uibits::albumControlHeader(false, $this->why, 'tag', $this->who, $this->getTagName());
 		}
 		foreach ($this->album_sort_query($unused) as $album) {
-			print albumHeader($album);
+			print uibits::albumHeader($album);
 			$count++;
 		}
 		if ($count == 0 && $this->why != 'a') {
-			noAlbumsHeader();
+			uibits::noAlbumsHaeder();
 		}
 		return $count;
 	}
@@ -105,7 +101,7 @@ class sortby_tag extends sortby_base {
 				$singleheader['where'] = $this->why.'album'.$album['Albumindex'].'_'.$this->who;
 				$singleheader['type'] = 'insertAfter';
 			} else {
-				$singleheader['html'] = albumHeader($album);
+				$singleheader['html'] = uibits::albumHeader($album);
 				$singleheader['id'] = $this->why.'album'.$albumindex.'_'.$this->who;
 				return $singleheader;
 			}
@@ -113,7 +109,7 @@ class sortby_tag extends sortby_base {
 	}
 
 	private function getTagName() {
-		return simple_query('Name', 'Tagtable', 'Tagindex', $this->who,'');
+		return prefs::$database->simple_query('Name', 'Tagtable', 'Tagindex', $this->who,'');
 	}
 
 	public function filter_track_on_why() {
@@ -165,36 +161,34 @@ class sortby_tag extends sortby_base {
 	}
 
 	public function get_modified_root_items() {
-		global $returninfo;
-		$result = generic_sql_query(
+		$result = prefs::$database->generic_sql_query(
 			"SELECT DISTINCT Tagindex FROM Albumtable
 			JOIN Tracktable USING (Albumindex)
 			JOIN TagListtable USING (TTindex)
 			WHERE justUpdated = 1 ".$this->filter_root_on_why());
 		foreach ($result as $mod) {
-			$returninfo['modifiedartists'][] = $this->output_root_fragment($mod['Tagindex']);
+			prefs::$database->returninfo['modifiedartists'][] = $this->output_root_fragment($mod['Tagindex']);
 		}
-		$result = generic_sql_query(
+		$result = prefs::$database->generic_sql_query(
 			"SELECT Tagindex FROM Tagtable WHERE Tagindex NOT IN
 			 	(SELECT DISTINCT Tagindex FROM TagListtable)");
 		foreach ($result as $mod) {
-			$returninfo['deletedartists'][] = $this->why.'tag'.$mod['Tagindex'];
+			prefs::$database->returninfo['deletedartists'][] = $this->why.'tag'.$mod['Tagindex'];
 		}
 	}
 
 	public function get_modified_albums() {
-		global $returninfo;
-		$result = generic_sql_query('SELECT Albumindex FROM Albumtable WHERE justUpdated = 1');
+		$result = prefs::$database->generic_sql_query('SELECT Albumindex FROM Albumtable WHERE justUpdated = 1');
 		foreach ($result as $mod) {
 			foreach ($this->root_sort_query() as $tag) {
 				if ($this->album_tag_trackcount($mod['Albumindex'], $tag['Tagindex']) == 0) {
-					$returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'].'_'.$tag['Tagindex'];
+					prefs::$database->returninfo['deletedalbums'][] = $this->why.'album'.$mod['Albumindex'].'_'.$tag['Tagindex'];
 				} else {
 					$lister = new sortby_tag($this->why.'tag'.$tag['Tagindex']);
 					$r = $lister->output_album_fragment($mod['Albumindex']);
 					$lister = new sortby_tag($this->why.'album'.$mod['Albumindex'].'_'.$tag['Tagindex']);
 					$r['tracklist'] = $lister->output_track_list(true);
-					$returninfo['modifiedalbums'][] = $r;
+					prefs::$database->returninfo['modifiedalbums'][] = $r;
 				}
 			}
 		}
@@ -207,7 +201,7 @@ class sortby_tag extends sortby_base {
 		WHERE Albumindex = ".$albumindex." AND Tagindex = ".$tagindex.
 		" AND Hidden = 0 AND Uri IS NOT NULL ".
 		$this->filter_track_on_why();
-		return generic_sql_query($qstring, false, null, 'num', 0);
+		return prefs::$database->generic_sql_query($qstring, false, null, 'num', 0);
 	}
 
 	public function initial_album_insert() {

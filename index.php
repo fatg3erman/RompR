@@ -13,17 +13,6 @@ if (!is_dir('skins/'.$skin)) {
 	exit(0);
 }
 
-$skinrequires = array();
-if (file_exists('skins/'.$skin.'/skin.requires')) {
-	logger::log("INIT", "Loading Skin Requirements File");
-	$requires = file('skins/'.$skin.'/skin.requires');
-	foreach ($requires as $r) {
-		if (substr($r,0,1) != '#') {
-			$skinrequires[] = $r;
-		}
-	}
-}
-
 require_once ("includes/functions.php");
 
 //
@@ -42,9 +31,27 @@ if (isset($_GET['currenthost'])) {
 }
 
 set_version_string();
-require_once ("skins/".$skin."/ui_elements.php");
-prefs::check_setup_values();
 upgrade_old_collections();
+
+//
+// See if we can use the SQL backend
+//
+
+logger::log('INIT', 'Checking Database Connection');
+
+if (!array_key_exists('collection_type', prefs::$prefs)) {
+	$success = data_base::probe_database();
+	if ($success) {
+		set_include_path('backends/sql/'.prefs::$prefs['collection_type'].PATH_SEPARATOR.get_include_path());
+	} else {
+		sql_init_fail("No Database Connection Was Possible");
+	}
+}
+prefs::$database = new init_database();
+list($result, $message) = prefs::$database->check_sql_tables();
+if ($result == false) {
+	sql_init_fail($message);
+}
 
 if (!prefs::$prefs['country_userset']) {
 	// Set the country code from the browser, though this may not be accurate.
@@ -95,27 +102,6 @@ if (array_key_exists('music_directory', $arse)) {
 $player->close_mpd_connection();
 $player->probe_http_api();
 
-//
-// See if we can use the SQL backend
-//
-
-logger::log('INIT', 'Checking Database Connection');
-include( "backends/sql/connect.php");
-if (array_key_exists('collection_type', prefs::$prefs)) {
-	logger::log('INIT', 'Connecting to',prefs::$prefs['collection_type']);
-	connect_to_database();
-} else if (probe_database()) {
-	logger::log('INIT', 'Probing Database');
-	include("backends/sql/".prefs::$prefs['collection_type']."/specifics.php");
-} else {
-	sql_init_fail("No Database Connection Was Possible");
-}
-
-list($result, $message) = check_sql_tables();
-if ($result == false) {
-	sql_init_fail($message);
-}
-
 prefs::save();
 
 //
@@ -147,6 +133,18 @@ print '<link rel="stylesheet" type="text/css" href="skins/'.$skin.'/skin.css?ver
 if (file_exists('skins/'.$skin.'/controlbuttons.css')) {
 	print '<link rel="stylesheet" type="text/css" href="skins/'.$skin.'/controlbuttons.css?version='.time().'" />'."\n";
 }
+
+$skinrequires = array();
+if (file_exists('skins/'.$skin.'/skin.requires')) {
+	logger::log("INIT", "Loading Skin Requirements File");
+	$requires = file('skins/'.$skin.'/skin.requires');
+	foreach ($requires as $s) {
+		if (substr($s,0,1) != '#') {
+			$skinrequires[] = $s;
+		}
+	}
+}
+// Load any CSS from the skin requirements file
 foreach ($skinrequires as $s) {
 	$s = trim($s);
 	$ext = strtolower(pathinfo($s, PATHINFO_EXTENSION));
@@ -242,6 +240,9 @@ if ($use_plugins) {
 		}
 	}
 }
+
+// Load any Javascript from the skin requirements file
+
 foreach ($skinrequires as $s) {
 	$s = trim($s);
 	$ext = strtolower(pathinfo($s, PATHINFO_EXTENSION));
@@ -264,12 +265,5 @@ include('skins/'.$skin.'/skin.php');
 <?php
 logger::mark("INIT FINISHED", "******++++++======------******------======++++++******");
 
-function connect_fail($t) {
-	global $title;
-	logger::warn("INIT", "MPD Connection Failed");
-	$title = $t;
-	include("setupscreen.php");
-	exit();
-}
 
 ?>
