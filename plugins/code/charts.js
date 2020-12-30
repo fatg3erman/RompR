@@ -4,38 +4,44 @@ var charts = function() {
 	var holders = new Array();
 
 	function putItems(holder, data, title) {
-		var cols = (title == "Artists") ? '3' : '4';
+		var cols = 0;
+		for (var i in data[0]) {
+			if (i != 'Uri')
+				cols++;
+		}
+		cols++;
 		var html = '<table align="center" style="border-collapse:collapse;width:96%"><tr class="tagh"><th colspan="'+cols+'" align="center">'+title+'</th></tr>';
 		html += '<tr class="chartheader">';
 		html += '<td></td>';
 		for (var i in data[0]) {
-			if (i != 'uri') {
+			if (i != 'Uri') {
 				html += '<td><b>'+language.gettext(i)+'</b></td>';
 			}
 		}
 		var maxplays = data[0].soundcloud_plays;
 		debug.log("CHARTS","Max plays for",title,"is",maxplays);
 		html += '</tr>';
-		for (var i in data) {
-			if (data[i].uri) {
-				if (prefs.player_backend == "mpd" && data[i].uri.match(/soundcloud:/)) {
-					html += '<tr class="chart draggable clickcue playable backhi" name="'+rawurlncode(data[i].uri)+'">';
+		var count = 0;
+		for (let item of data) {
+			count++;
+			if (item.Uri) {
+				if (prefs.player_backend == "mpd" && item.Uri.match(/soundcloud:/)) {
+					html += '<tr class="chart draggable clickcue playable backhi" name="'+rawurlncode(item.Uri)+'">';
 				} else {
-					html += '<tr class="chart draggable clicktrack playable backhi" name="'+rawurlencode(data[i].uri)+'">';
+					html += '<tr class="chart draggable clicktrack playable backhi" name="'+rawurlencode(item.Uri)+'">';
 				}
 			} else {
 				html += '<tr class="chart">';
 			}
-			var k = parseInt(i)+1;
-			html += '<td><i>'+k+'</i></td>';
-			for (var j in data[i]) {
-				if (j != "uri") {
-					html += '<td>'+data[i][j]+'</td>';
+			html += '<td><i>'+count+'</i></td>';
+			for (var j in item) {
+				if (j != "Uri") {
+					html += '<td>'+item[j]+'</td>';
 				}
 			}
 			html += '</tr>';
 
-			var percent = (data[i].soundcloud_plays/maxplays)*100;
+			var percent = (item.soundcloud_plays/maxplays)*100;
 			html += '<tr style="height:4px"><td class="chartbar" colspan="'+cols+'" style="background:linear-gradient(to right, '+getrgbs(percent,0)+'"></td></tr>';
 			html += '<tr style="height:0.75em"><td colspan="'+cols+'"></td></tr>';
 

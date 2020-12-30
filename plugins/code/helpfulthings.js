@@ -17,7 +17,7 @@ var helpfulThings = function() {
 
 	function getRecommendationSeeds() {
 		debug.log(medebug, "Getting Seeds For Recommendations");
-		metaHandlers.genericQuery({action: 'getrecommendationseeds', days: 30, limit: 20, top: 15},
+		metaHandlers.genericQuery({action: 'getrecommendationseeds', days: 30, limit: 20, top: 10},
 			gotRecommendationSeeds,
 			function(data) {
 				debug.error(medebug,"Error Getting Seeds",data);
@@ -161,11 +161,11 @@ var helpfulThings = function() {
 				debug.trace(medebug, "Searching For Spotify ID for",t);
 				trackfinder.findThisOne(
 					{
-						title: t.Title,
-						artist: t.Artistname,
-						duration: 0,
-						albumartist: t.Artistname,
-						date: 0
+						Title: t.Title,
+						trackartist: t.Artistname
+						// duration: 0,
+						// albumartist: t.Artistname,
+						// date: 0
 					},
 					helpfulThings.gotTrackResults
 				);
@@ -176,13 +176,13 @@ var helpfulThings = function() {
 		gotTrackResults: function(data) {
 			debug.debug(medebug,"Got Track Results",data);
 			var t = nonspotitracks.shift();
-			if (data.uri && data.artist && artists.indexOf(data.artist) == -1) {
-				var m = data.uri.match(/spotify:track:(.*)$/);
+			if (data.file && data.trackartist && artists.indexOf(data.trackartist) == -1) {
+				var m = data.file.match(/spotify:track:(.*)$/);
 				if (m && m[1]) {
 					debug.debug(medebug,"Found Spotify Track Uri",m[1]);
 					t.id = m[1];
 					trackseeds.push(t);
-					artists.push(data.artist);
+					artists.push(data.trackartist);
 				}
 			}
 			helpfulThings.doStageTwo();

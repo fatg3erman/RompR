@@ -140,78 +140,6 @@ class collection_base extends database {
 		$this->generic_sql_query("UPDATE Albumtable SET justUpdated = 0 WHERE justUpdated = 1", true);
 	}
 
-	protected function create_new_track(&$data) {
-
-		// create_new_track
-		//		Creates a new track, along with artists and album if necessary
-		//		Returns: TTindex
-
-		// This is used by the metadata functions for adding new tracks. It is NOT used
-		// when doing a search or updating the collection.
-
-		if ($data['albumai'] == null) {
-			// Does the albumartist exist?
-			$data['albumai'] = $this->check_artist($data['albumartist']);
-		}
-
-		// Does the track artist exist?
-		if ($data['trackai'] == null) {
-			if ($data['artist'] != $data['albumartist']) {
-				$data['trackai'] = $this->check_artist($data['artist']);
-			} else {
-				$data['trackai'] = $data['albumai'];
-			}
-		}
-
-		if ($data['albumai'] == null || $data['trackai'] == null) {
-			logger::warn('BACKEND', "Trying to create new track but failed to get an artist index");
-			return null;
-		}
-
-		if ($data['albumindex'] == null) {
-			// Does the album exist?
-			if ($data['album'] == null) {
-				$data['album'] = 'rompr_wishlist_'.microtime('true');
-			}
-			$data['albumindex'] = $this->check_album($data);
-			if ($data['albumindex'] == null) {
-				logger::warn('BACKEND', "Trying to create new track but failed to get an album index");
-				return null;
-			}
-		}
-
-		$data['sourceindex'] = null;
-		if ($data['uri'] === null && array_key_exists('streamuri', $data) && $data['streamuri'] !== null) {
-			$data['sourceindex'] = $this->check_radio_source($data);
-		}
-
-		if ($this->sql_prepare_query(true, null, null, null,
-			"INSERT INTO
-				Tracktable
-				(Title, Albumindex, Trackno, Duration, Artistindex, Disc, Uri, LastModified, Hidden, isSearchResult, Sourceindex, isAudiobook, Genreindex, TYear)
-				VALUES
-				(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-				$data['title'],
-				$data['albumindex'],
-				$data['trackno'],
-				$data['duration'],
-				$data['trackai'],
-				$data['disc'],
-				$data['uri'],
-				$data['lastmodified'],
-				$data['hidden'],
-				$data['searchflag'],
-				$data['sourceindex'],
-				$data['isaudiobook'],
-				$data['genreindex'],
-				$data['year']
-			))
-		{
-			return $this->mysqlc->lastInsertId();
-		}
-		return null;
-	}
-
 	public function check_artist($artist) {
 
 		// check_artist:
@@ -239,7 +167,7 @@ class collection_base extends database {
 		return $retval;
 	}
 
-	private function best_value($a, $b, &$changed) {
+	protected function best_value($a, $b, &$changed) {
 
 		// best_value
 		//		Used by check_album to determine the best value to use when updating album details
@@ -306,24 +234,24 @@ class collection_base extends database {
 		if ($this->find_album === true)
 			$this->prepare_findalbum();
 
-		$this->find_album->execute([$data['album'], $data['albumai'], $data['domain']]);
+		$this->find_album->execute([$data['Album'], $data['albumartist_index'], $data['domain']]);
 		$result = $this->find_album->fetchAll(PDO::FETCH_OBJ);
 		$obj = array_shift($result);
 
 		if (prefs::$prefs['preferlocalfiles'] && $this->options['trackbytrack'] && !$this->options['doing_search'] && $data['domain'] == 'local' && !$obj) {
 			// Does the album exist on a different, non-local, domain? The checks above ensure we only do this
 			// during a collection update
-			$this->find_album2->execute([$data['album'], $data['albumai']]);
+			$this->find_album2->execute([$data['Album'], $data['albumartist_index']]);
 			$result = $this->find_album2->fetchAll(PDO::FETCH_OBJ);
 			$obj = array_shift($result);
 			if ($obj) {
-				logger::mark('BACKEND', "Album ".$data['album']." was found on domain ".$obj->Domain.". Changing to local");
+				logger::mark('BACKEND', "Album ".$data['Album']." was found on domain ".$obj->Domain.". Changing to local");
 				$index = $obj->Albumindex;
 				if ($this->sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET AlbumUri = NULL, Domain = ?, justUpdated = ? WHERE Albumindex = ?", 'local', 1, $index)) {
 					$obj->AlbumUri = null;
 					logger::debug('BACKEND', "   ...Success");
 				} else {
-					logger::warn('BACKEND', "   Album ".$data['album']." update FAILED");
+					logger::warn('BACKEND', "   Album ".$data['Album']." update FAILED");
 					return false;
 				}
 			}
@@ -332,25 +260,30 @@ class collection_base extends database {
 		if ($obj) {
 			$changed = false;
 			$index = $obj->Albumindex;
-			$year = $this->best_value($obj->Year, $data['date'], $changed);
-			$img = $this->best_value($obj->Image, $data['image'], $changed);
-			$uri = $this->best_value($obj->AlbumUri, $data['albumuri'], $changed);
-			$mbid = $this->best_value($obj->mbid, $data['ambid'], $changed);
+			$year = $this->best_value($obj->Year, $data['year'], $changed);
+			$img = $this->best_value($obj->Image, $data['X-AlbumImage'], $changed);
+			$uri = $this->best_value($obj->AlbumUri, $data['X-AlbumUri'], $changed);
+			$mbid = $this->best_value($obj->mbid, $data['MUSICBRAINZ_ALBUMID'], $changed);
 			if ($changed) {
 
+				logger::mark('BACKEND', "Updating Details For Album ".$data['Album']." (index ".$index.")" );
 				if (prefs::$prefs['debug_enabled'] > 6) {
-					logger::mark('BACKEND', "Updating Details For Album ".$data['album']." (index ".$index.")" );
-					logger::log('BACKEND', "  Old Date  : ".$obj->Year);
-					logger::log('BACKEND', "  New Date  : ".$year);
-					logger::log('BACKEND', "  Old Image : ".$obj->Image);
-					logger::log('BACKEND', "  New Image : ".$img);
-					logger::log('BACKEND', "  Old Uri  : ".$obj->AlbumUri);
-					logger::log('BACKEND', "  New Uri  : ".$uri);
-					logger::log('BACKEND', "  Old MBID  : ".$obj->mbid);
-					logger::log('BACKEND', "  New MBID  : ".$mbid);
+					logger::trace('BACKEND', "  Date  :",$obj->Year,'->',$year);
+					logger::trace('BACKEND', "  Image :",$obj->Image,'->',$img);
+					logger::trace('BACKEND', "  Uri  :",$obj->AlbumUri,'->',$uri);
+					logger::trace('BACKEND', "  MBID  :",$obj->mbid,'->',$mbid);
 				}
 
-				if ($this->sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET Year=?, Image=?, AlbumUri=?, mbid=?, justUpdated=1 WHERE Albumindex=?",$year, $img, $uri, $mbid, $index)) {
+				if ($this->sql_prepare_query(true, null, null, null,
+					"UPDATE Albumtable SET
+						Year = ?,
+						Image = ?,
+						AlbumUri = ?,
+						mbid = ?,
+						justUpdated = 1
+					WHERE
+						Albumindex = ?",
+					$year, $img, $uri, $mbid, $index)) {
 					logger::debug('BACKEND', "   ...Success");
 				} else {
 					logger::warn('BACKEND', "   Album ".$data['album']." update FAILED");
@@ -370,19 +303,24 @@ class collection_base extends database {
 		//		Returns: Albumindex
 
 		$retval = null;
-		$im = array(
-			'searched' => $data['image'] ? 1: 0,
-			'image' => $data['image']
-		);
 		if ($this->sql_prepare_query(true, null, null, null,
 			"INSERT INTO
 				Albumtable
 				(Albumname, AlbumArtistindex, AlbumUri, Year, Searched, ImgKey, mbid, Domain, Image)
 			VALUES
 				(?, ?, ?, ?, ?, ?, ?, ?, ?)",
-			$data['album'], $data['albumai'], $data['albumuri'], $data['date'], $im['searched'], $data['imagekey'], $data['ambid'], $data['domain'], $im['image'])) {
+			$data['Album'],
+			$data['albumartist_index'],
+			$data['X-AlbumUri'],
+			$data['year'],
+			$data['X-AlbumImage'] ? 1 : 0,
+			$data['ImgKey'],
+			$data['MUSICBRAINZ_ALBUMID'],
+			$data['domain'],
+			$data['X-AlbumImage']))
+		{
 			$retval = $this->mysqlc->lastInsertId();
-			logger::trace('BACKEND', "Created Album ".$data['album']." with Albumindex ".$retval);
+			logger::trace('BACKEND', "Created Album ".$data['Album']." with Albumindex ".$retval);
 		}
 		return $retval;
 	}

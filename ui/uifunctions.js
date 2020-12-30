@@ -932,14 +932,9 @@ var spotifyLinkChecker = function() {
 	}
 
 	function gotLinkToCheck(data) {
-		if (data.length > 0) {
-			debug.debug('SPOTICHECKER',"Got next tracks to check", data);
-			tracks = data;
-			var ids = new Array();
-			for (var i in data) {
-				ids.push(data[i].Uri.replace(/spotify:track:/, ''));
-			}
-			spotify.track.checkLinking(ids, gotSpotiResponse, gotNoSpotiResponse, false);
+		debug.log('SPOTICHECKER', data);
+		if (data.more) {
+			spotifyLinkChecker.setTimer();
 		} else {
 			debug.info("SPOTICHECKER","No more tracks to check");
 			prefs.save({linkchecker_isrunning: false});
@@ -948,46 +943,7 @@ var spotifyLinkChecker = function() {
 
 	function goneTitsUp(data) {
 		debug.error('SPOTICHECKER',"Nothing", data);
-	}
-
-	function gotSpotiResponse(response) {
-		debug.debug("SPOTICHECKER","Response from Spotify",response);
-		var callback = spotifyLinkChecker.setTimer;
-		var update_info = new Array();
-		for (var i = 0; i < tracks.length; i++) {
-			track = response.tracks[i];
-			if (track) {
-				if (track.is_playable) {
-					var uri = track.uri;
-					debug.debug("SPOTICHECKER", "Track is playable");
-					if (track.linked_from) {
-						debug.trace("SPOTICHECKER", "Track was relinked from",track.linked_from.uri,'to',uri);
-						// Keep the ORIGINAL track ID, otherwise we might have issues adding it to playlists
-						// https://developer.spotify.com/documentation/general/guides/track-relinking-guide/
-						uri = track.linked_from.uri;
-					}
-					update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: uri, status: 2});
-				} else {
-					debug.log("SPOTICHECKER", "Track is NOT playable", track.album.name, track.name);
-					if (track.restrictions) {
-						debug.trace("SPOTICHECKER", "Track restrictions :",track.restrictions.reason)
-					}
-					update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: track.uri, status: 3});
-				}
-			} else {
-				debug.warn("SPOTICHECKER","No data from Spotify for TTindex",tracks[i]['TTindex'])
-				update_info.push({action: 'updatelinkcheck', ttindex: tracks[i]['TTindex'], uri: tracks[i]['Uri'], status: 3});
-			}
-		}
-		metaHandlers.genericAction(update_info, callback, goneTitsUp);
-	}
-
-	function doneOK(data) {
-		debug.debug("SPOTICHECKER","Link Checked OK");
-	}
-
-	function gotNoSpotiResponse(data) {
-		debug.error("SPOTICHECKER","Error Response from Spotify",data);
+		prefs.save({linkchecker_isrunning: false});
 	}
 
 	function updateNextRunTime() {

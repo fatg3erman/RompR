@@ -16,8 +16,6 @@ class db_collection extends collection_base {
 		// It's still used for searches where we're only looking for tags and/or ratings in conjunction with
 		// any of the above terms, because mopidy often returns incomplete search results.
 
-		logger::log('DBSEARCH', "HELLLOOOOOOOOOOOOOOOOO");
-
 		$parameters = array();
 		$qstring = "SELECT t.*, al.*, a1.*, a2.Artistname AS AlbumArtistName, Genre ";
 		if (array_key_exists('rating', $terms)) {
@@ -101,7 +99,6 @@ class db_collection extends collection_base {
 			$qstring .= ")";
 		}
 
-		logger::log('DB SEARCH', 'Hello');
 		logger::mark("DB SEARCH", "String", $qstring);
 		logger::mark("DB SEARCH", "Parameters", $parameters);
 
@@ -120,6 +117,7 @@ class db_collection extends collection_base {
 				'Time' => $obj->Duration,
 				'X-AlbumUri' => $obj->AlbumUri,
 				'Date' => $obj->Year,
+				'year' => $obj->Year,
 				'Last-Modified' => $obj->LastModified,
 				'Genre' => $obj->Genre
 			);

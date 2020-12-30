@@ -20,11 +20,11 @@ function searchRadio() {
 				}
 				trackfinder.findThisOne(
 					{
-						title: null,
-						artist: name,
-						duration: 0,
-						albumartist: name,
-						date: 0
+						Title: null,
+						trackartist: name
+						// duration: 0,
+						// albumartist: name,
+						// date: 0
 					},
 					myself.gotTracks
 				);
@@ -40,8 +40,8 @@ function searchRadio() {
 			debug.debug(medebug,"Got Tracks",data);
 			tracks = new Array();
 			for (let track of data) {
-				if (track.uri) {
-					tracks.push({type: 'uri', name: track.uri});
+				if (track.file) {
+					tracks.push({type: 'uri', name: track.file});
 				}
 			}
 			tracks.sort(randomsort);

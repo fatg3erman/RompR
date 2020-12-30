@@ -37,10 +37,6 @@ switch ($p['action']) {
 		prefs::$database->removeListenLater($p['index']);
 		break;
 
-	case 'updatelinkcheck':
-		prefs::$database->updateCheckedLink($p['ttindex'], $p['uri'], $p['status']);
-		break;
-
 	default:
 		logger::warn("USERRATINGS", "Unknown Request",$p['action']);
 		header('HTTP/1.1 400 Bad Request');

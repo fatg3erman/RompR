@@ -45,8 +45,8 @@ var unplayabletracks = function() {
 			index: 0,
 			data: [
 				{
-					title: element.next().val(),
-					artist: element.next().next().val(),
+					Title: element.next().val(),
+					trackartist: element.next().next().val(),
 					key: reqid,
 					reqid: reqid
 				}
@@ -91,11 +91,13 @@ var unplayabletracks = function() {
 		var key = element.parent().prev().attr("romprkey");
 		var index = element.parent().prev().attr('romprindex');
 		debug.log("WISHLIST","Importing",databits[key], databits[key].data[index]);
+		element.parent().parent().parent().parent().css({opacity: '0.2'});
+		element.remove();
 		doSqlStuff(databits[key], databits[key].data[index], false);
 	}
 
 	function doSqlStuff(parentdata, data, callback) {
-		data.action = 'add';
+		data.action = 'set';
 		data.attributes = parentdata.attributes;
 		dbQueue.request([data], collectionHelper.updateCollectionDisplay,
 			function(rdata) {
@@ -145,15 +147,15 @@ var unplayabletracks = function() {
 			var element = $('.upsch_'+results[0].reqid);
 			var trackDiv = element.parent().parent();
 			var resultsDiv = $('<div>', {id: 'upsearch_'+results[0].key, class: 'toggledown'}).appendTo(trackDiv);
-			if (results.length > 0 && results[0].uri) {
+			if (results.length > 0 && results[0].file) {
 				var dropper = $("<div>", {class: 'containerbox fixed'}).insertBefore(resultsDiv);
 				dropper.append('<i class="openmenu icon-menu clickicon fixed collectionicon" name="upsearch_'+results[0].reqid+'"></i>');
 				for (var i = 0; i < results.length; i++) {
 					var data = results[i];
-					var firstTrack = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(resultsDiv);
-					var trackDetails = $('<div>', {romprindex: i, romprkey: data.reqid, class: 'backhi plugclickable infoclick choosenew ninesix indent padright expand'}).html(trawler.trackHtml(data, false)).appendTo(firstTrack);
+					var firstTrack = $('<div>', {class: 'containerbox dropdown-container underline', style: 'margin: 0'}).appendTo(resultsDiv);
+					var trackDetails = $('<div>', {romprindex: i, romprkey: data.reqid, class: 'backhi plugclickable infoclick choosenew ninesix indent padright expand'}).html(trawler.trackHtml(data, true)).appendTo(firstTrack);
 					firstTrack.append('<div class="fixed invisible importbutton"><button class="plugclickable infoclick importrow">Import</button></div>');
-					firstTrack.prepend('<div class="fixed invisible playbutton"><i class="icon-no-response-playbutton clickicon playable collectionicon" name="'+data.uri+'"></i></div>');
+					firstTrack.prepend('<div class="fixed invisible playbutton"><i class="icon-no-response-playbutton clickicon playable collectionicon" name="'+data.file+'"></i></div>');
 				}
 			} else {
 				resultsDiv.append('<div class="expand"><b><i>'+language.gettext("label_notfound")+'</i></b></div>');

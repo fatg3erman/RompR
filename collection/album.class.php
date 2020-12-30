@@ -47,18 +47,8 @@ class album {
 			$this->tracks[0]->tags['albumartist_index'] = prefs::$database->check_artist($this->tracks[0]->tags['albumartist']);
 		}
 		if ($this->tracks[0]->tags['album_index'] === null) {
-			$album = array(
-				'album' => trim($this->tracks[0]->tags['Album']),
-				'albumai' => $this->tracks[0]->tags['albumartist_index'],
-				'albumuri' => $this->tracks[0]->tags['X-AlbumUri'],
-				'image' => $this->getImage('small'),
-				'date' => $this->tracks[0]->tags['year'],
-				'searched' => 0,
-				'imagekey' => $this->tracks[0]->tags['ImgKey'],
-				'ambid' => $this->tracks[0]->tags['MUSICBRAINZ_ALBUMID'],
-				'domain' => $this->tracks[0]->tags['domain']
-			);
-			$albumindex = prefs::$database->check_album($album);
+			$this->tracks[0]->tags['X-AlbumImage'] = $this->getImage('small');
+			$albumindex = prefs::$database->check_album($this->tracks[0]->tags);
 		} else {
 			$albumindex = $this->tracks[0]->tags['album_index'];
 		}

@@ -68,19 +68,19 @@ var lastFMTrackRadio = function() {
 			}
 			trackfinder.findThisOne(
 				{
-					title: t.title,
-					artist: t.artist,
-					duration: 0,
-					albumartist: t.artist,
-					date: 0
+					Title: t.title,
+					trackartist: t.artist
+					// duration: 0,
+					// albumartist: t.artist,
+					// date: 0
 				},
 				self.gotAUri
 			);
 		}
 
 		this.gotAUri = function(data) {
-			if (data.uri) {
-				track_uri = data.uri;
+			if (data.file) {
+				track_uri = data.file;
 			} else {
 				track_uri = false;
 			}

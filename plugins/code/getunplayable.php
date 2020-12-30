@@ -2,8 +2,8 @@
 chdir('../..');
 include ("includes/vars.php");
 include ("includes/functions.php");
-prefs::$database = new unplayabale_tracks();
-$result = prefs::$database->get_unplayabale_tracks();
+prefs::$database = new unplayable_tracks();
+$result = prefs::$database->get_unplayable_tracks();
 if (count($result) == 0) {
 	print '<h3>'.language::gettext('label_no_unplayable').'</h3>';
 	exit(0);

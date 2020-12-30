@@ -21,7 +21,7 @@ switch ($_REQUEST['action']) {
 
 	case "gettotal":
 		$arse = prefs::$database->get_total_tracks();
-		logger::trace("LFMIMPORTER", "Got ".count($arse)." rows");
+		logger::trace("LFMIMPORTER", "Got ".$arse[0]['total']." tracks");
 		header('Content-Type: application/json; charset=utf-8');
 		print json_encode(array('total' => $arse[0]['total']));
 		break;

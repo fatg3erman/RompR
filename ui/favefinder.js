@@ -32,26 +32,26 @@ function faveFinder(returnall) {
 	}
 
 	function compare_tracks(lookingfor, found) {
-		if (found.title == null) {
+		if (found.Title == null) {
 			return false;
-		} else if (lookingfor.title == null || lookingfor.title.removePunctuation().toLowerCase() == found.title.removePunctuation().toLowerCase()) {
+		} else if (lookingfor.Title == null || lookingfor.Title.removePunctuation().toLowerCase() == found.Title.removePunctuation().toLowerCase()) {
 			return true;
 		}
 		return false;
 	}
 
 	function compare_tracks_with_artist(lookingfor, found) {
-		if (lookingfor.title !== null && lookingfor.artist !== null) {
-			if (lookingfor.title.removePunctuation().toLowerCase() == found.title.removePunctuation().toLowerCase() &&
-				lookingfor.artist.removePunctuation().toLowerCase() == found.artist.removePunctuation().toLowerCase()) {
+		if (lookingfor.Title !== null && lookingfor.trackartist !== null) {
+			if (lookingfor.Title.removePunctuation().toLowerCase() == found.Title.removePunctuation().toLowerCase() &&
+				lookingfor.trackartist.removePunctuation().toLowerCase() == found.trackartist.removePunctuation().toLowerCase()) {
 				return true;
 			}
-		} else if (lookingfor.title === null) {
-			if (lookingfor.artist.removePunctuation().toLowerCase() == found.artist.removePunctuation().toLowerCase()) {
+		} else if (lookingfor.Title === null) {
+			if (lookingfor.trackartist.removePunctuation().toLowerCase() == found.trackartist.removePunctuation().toLowerCase()) {
 				return true;
 			}
-		} else if (lookingfor.artist === null) {
-			if (lookingfor.title.removePunctuation().toLowerCase() == found.title.removePunctuation().toLowerCase()) {
+		} else if (lookingfor.trackartist === null) {
+			if (lookingfor.Title.removePunctuation().toLowerCase() == found.Title.removePunctuation().toLowerCase()) {
 				return true;
 			}
 		}
@@ -94,10 +94,10 @@ function faveFinder(returnall) {
 		var worst_matches = new Array();
 		// Sort the results
 		for (let track of data) {
-			if (track.uri.isArtistOrAlbum()) continue;
+			if (track.file.isArtistOrAlbum()) continue;
 			var r = {...req.data, ...track};
 			debug.trace('FAVEFINDER','Found', r);
-			if (r.title == null && r.artist == null) continue;
+			if (r.Title == null && r.trackartist == null) continue;
 			if (r.albumartist != "Various Artists") {
 				if (compare_tracks_with_artist(req.data, r)) {
 					// Exactly matching track and artist are preferred...
@@ -126,9 +126,6 @@ function faveFinder(returnall) {
 				var f = false;
 				for (let track of results) {
 					if (results.length == 1 || compare_tracks_with_artist(req.data, track)) {
-						// for (var g in results[i]) {
-						// 	req.data[g] = results[i][g];
-						// }
 						f = true;
 						req.callback(track);
 						debug.trace('FAVEFINDER', 'Returning single track as requested');
@@ -173,14 +170,14 @@ function faveFinder(returnall) {
 	this.searchForTrack = function() {
 		var req = queue[0];
 		var st = {};
-		if (req.data.title) {
-			st.title = [req.data.title];
+		if (req.data.Title) {
+			st.title = [req.data.Title];
 		}
-		if (req.data.artist) {
-			st.artist = [req.data.artist];
+		if (req.data.trackartist) {
+			st.artist = [req.data.trackartist];
 		}
-		if (req.data.album) {
-			st.album = [req.data.album];
+		if (req.data.Album) {
+			st.album = [req.data.Album];
 		}
 		debug.debug("FAVEFINDER","Performing search",st,priority);
 		player.controller.rawsearch(st, priority, exact, self.handleResults, checkdb);
@@ -189,7 +186,7 @@ function faveFinder(returnall) {
 	this.trackHtml = function(data, breaks) {
 		var html = "";
 		// html += '<i class="icon-no-response-playbutton clickicon playable collectionicon" name="'+data.uri+'"></i>';
-		var u = data.uri;
+		var u = data.file;
 		if (u.match(/spotify:/)) {
 			html += '<i class="icon-spotify-circled collectionicon"></i>';
 		} else if (u.match(/soundcloud:/)) {
@@ -201,12 +198,12 @@ function faveFinder(returnall) {
 		} else if (u.match(/^podcast/)) {
 			html += '<i class="icon-podcast-circled collectionicon"></i>';
 		}
-		html += '<b>'+data.title+'</b>'+brk(breaks);
-		if (data.artist) {
-			html += '<i>by </i>'+data.artist+brk(breaks);
+		html += '<b>'+data.Title+'</b>'+brk(breaks);
+		if (data.trackartist) {
+			html += '<i>by </i>'+data.trackartist+brk(breaks);
 		}
-		html += '<i>on </i>'+data.album;
-		var arse = data.uri;
+		html += '<i>on </i>'+data.Album;
+		var arse = data.file;
 		if (arse.indexOf(":") > 0) {
 			html += '  <i>(' + arse.substr(0, arse.indexOf(":")) + ')</i>';
 		}

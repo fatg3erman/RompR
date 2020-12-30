@@ -86,9 +86,45 @@ class metaquery extends collection_base {
 		// 1 = Not Checked, Unplayable at last check
 		// 2 = Checked, Playable
 		// 3 = Checked, Unplayable
-		$retval = $this->generic_sql_query("SELECT TTindex, Uri, LinkChecked FROM Tracktable WHERE Uri LIKE 'spotify:%' AND Hidden = 0 AND isSearchResult < 2 AND LinkChecked < 2 ORDER BY TTindex ASC LIMIT 25");
-		if (count($retval) == 0)
-			$retval =  [ 'dummy' => 'baby' ];
+		$retval = ['more' => false];
+		$ids = [];
+		$tracks = $this->generic_sql_query("SELECT TTindex, Uri, LinkChecked FROM Tracktable WHERE Uri LIKE 'spotify:%' AND Hidden = 0 AND isSearchResult < 2 AND LinkChecked < 2 ORDER BY TTindex ASC LIMIT 25");
+		foreach ($tracks as $track) {
+			$ids[] = preg_replace('/spotify:track:/', '', $track['Uri']);
+		}
+		if (count($ids) > 0) {
+			logger::log('RELINKING', 'Got chunk of',count($ids),'spotify tracks to check');
+			$this->open_transaction();
+			$retval['more'] = true;
+			$trackinfo = spotify::track_checklinking(['id' => $ids, 'cache' => false], false);
+			$spoti_data = json_decode($trackinfo, true);
+			foreach ($tracks as $i => $my_track) {
+				$uri = $my_track['Uri'];
+				$status = 3;
+				$spoti_track = $spoti_data['tracks'][$i];
+				if ($spoti_track) {
+					if ($spoti_track['is_playable']) {
+						logger::log('RELINKING', 'Track',$spoti_track['name'],'is playable');
+						if (array_key_exists('linked_from', $spoti_track)) {
+							logger::log('RELINKING', '  Track',$spoti_track['name'],'is relinked',$uri, $spoti_track['linked_from']['uri']);
+							$uri = $spoti_track['linked_from']['uri'];
+						} else {
+							$uri = $spoti_track['uri'];
+						}
+						$status = 2;
+					} else {
+						logger::log('RELINKING', 'Track',$spoti_track['name'],'is not playable');
+						if ($spoti_track['restrictions']) {
+							logger::log('RELINKING','  Restrictions',$spoti_track['restrictions']['reason']);
+						}
+					}
+				} else {
+					logger::log('RELINKING', 'No data from spotify for TTindex',$my_track['TTindex']);
+				}
+				$this->updateCheckedLink($my_track['TTindex'], $uri, $status);
+			}
+			$this->close_transaction();
+		}
 		return $retval;
 	}
 
@@ -113,7 +149,7 @@ class metaquery extends collection_base {
 			FROM Playcounttable JOIN Tracktable USING (TTindex)
 			JOIN Artisttable USING (Artistindex)
 			WHERE ".$this->sql_two_weeks_include($days).
-			" AND Uri IS NOT NULL GROUP BY Artistindex ORDER BY playtotal DESC LIMIT ".$limit);
+			" AND Uri IS NOT NULL GROUP BY Artistname, Title ORDER BY playtotal DESC LIMIT ".$limit);
 
 		// 2. Get a list of recently played tracks, ignoring popularity
 		// $result = generic_sql_query(
@@ -125,13 +161,15 @@ class metaquery extends collection_base {
 		// $resultset = array_merge($resultset, $result);
 
 		// 3. Get the top tracks overall
-		$tracks = $this->get_track_charts(intval($limit/2));
+		$tracks = $this->get_track_charts(intval($top));
 		foreach ($tracks as $track) {
-			if ($track['uri']) {
-				$resultset[] = array('playtotal' => $track['soundcloud_plays'],
-										'Artistname' => $track['label_artist'],
-										'Title' => $track['label_track'],
-										'Uri' => $track['uri']);
+			if ($track->Uri) {
+				$resultset[] = [
+					'playtotal' => $track->soundcloud_plays,
+					'Artistname' => $track->label_artist,
+					'Title' => $track->label_track,
+					'Uri' => $track->Uri
+				];
 			}
 		}
 
@@ -174,69 +212,44 @@ class metaquery extends collection_base {
 	}
 
 	private function get_artist_charts() {
-		$artists = array();
-		$query = "SELECT SUM(Playcount) AS playtot, Artistindex, Artistname FROM
-			 Playcounttable JOIN Tracktable USING (TTindex) JOIN Artisttable USING (Artistindex)";
-		$query .= " GROUP BY Artistindex ORDER BY playtot DESC LIMIT 40";
-		$result = $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
-		foreach ($result as $obj) {
-			$artists[] = array( 'label_artist' => $obj->Artistname, 'soundcloud_plays' => $obj->playtot);
-		}
-		return $artists;
+		$query = "SELECT
+			Artistname AS label_artist,
+			SUM(Playcount) AS soundcloud_plays
+			FROM
+			Tracktable JOIN Playcounttable USING (TTindex)
+			JOIN Artisttable USING (Artistindex)
+			GROUP BY label_artist ORDER BY soundcloud_plays DESC LIMIT 40";
+		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
 	}
 
 	private function get_album_charts() {
-		$albums = array();
-		$query = "SELECT SUM(Playcount) AS playtot, Albumname, Artistname, AlbumUri, Albumindex
-			 FROM Playcounttable JOIN Tracktable USING (TTindex) JOIN Albumtable USING (Albumindex)
-			 JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex";
-		$query .= " GROUP BY Albumindex ORDER BY playtot DESC LIMIT 40";
-		$result = $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
-		foreach ($result as $obj) {
-			$albums[] = array( 'label_artist' => $obj->Artistname,
-				'label_album' => $obj->Albumname,
-				'soundcloud_plays' => $obj->playtot, 'uri' => $obj->AlbumUri);
-		}
-		return $albums;
+		$query = "SELECT
+			Artistname AS label_artist,
+			Albumname AS label_album,
+			SUM(Playcount) AS soundcloud_plays,
+			AlbumUri AS Uri
+			FROM Playcounttable JOIN Tracktable USING (TTindex)
+			JOIN Albumtable USING (Albumindex)
+			JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+			GROUP BY label_artist, label_album ORDER BY soundcloud_plays DESC LIMIT 40";
+		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
 	}
 
 	private function get_track_charts($limit = 40) {
-		$tracks = array();
-		// Group by title and sum because we may have the same track on multiple backends
 		$query = "SELECT
-					Title,
-					SUM(Playcount) AS Playcount,
-					Artistname,
-					".database::SQL_URI_CONCAT." AS Uris
-				FROM
-					Tracktable
-					JOIN Playcounttable USING (TTIndex)
-					JOIN Artisttable USING (Artistindex)
-				GROUP BY Title, Artistname
-				ORDER BY Playcount DESC LIMIT ".$limit;
-		$result = $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
-		foreach ($result as $obj) {
-			$uri = null;
-			$uris = explode(',', $obj->Uris);
-			foreach ($uris as $u) {
-				if ($uri === null) {
-					$uri = $u;
-				} else if (getDomain($uri) != 'local' && getDomain($u) == 'local') {
-					// Prepfer local to internet
-					$uri = $u;
-				} else if (getDomain($uri) == 'youtube' && strpos($u, 'prefs/youtubedl') !== false) {
-					// Prefer downloaded youtube tracks to online ones
-					$uri = $u;
-				}
-			}
-
-			$tracks[] = array(
-				'label_artist' => $obj->Artistname,
-				'label_track' => $obj->Title,
-				'soundcloud_plays' => $obj->Playcount,
-				'uri' => $uri);
-		}
-		return $tracks;
+			Artistname AS label_artist,
+			Albumname AS label_album,
+			Title AS label_track,
+			SUM(Playcount) AS soundcloud_plays,
+			Uri
+			FROM
+			Tracktable
+			JOIN Playcounttable USING (TTIndex)
+			JOIN Albumtable USING (Albumindex)
+			JOIN Artisttable USING (Artistindex)
+			GROUP BY label_artist, label_album, label_track
+			ORDER BY soundcloud_plays DESC LIMIT ".$limit;
+		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
 	}
 
 }

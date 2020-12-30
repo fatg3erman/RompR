@@ -39,6 +39,8 @@ class metabackup extends metaDatabase {
 		$tracks = $this->get_audiobooks();
 		file_put_contents($dirname.'/audiobooks.json',json_encode($tracks));
 
+		file_put_contents($dirname.'/newversion', ROMPR_SCHEMA_VERSION);
+
 	}
 
 	public function analyse_backups() {
@@ -52,8 +54,6 @@ class metabackup extends metaDatabase {
 			// $ratings = count(json_decode(file_get_contents($backup.'/ratings.json')));
 			// $playcounts = count(json_decode(file_get_contents($backup.'/playcounts.json')));
 			// $tags = count(json_decode(file_get_contents($backup.'/tags.json')));
-
-			// FIXME: Save and restore Audiobook status.
 
 			$data[] = array(
 				'dir' => basename($backup),
@@ -80,12 +80,16 @@ class metabackup extends metaDatabase {
 		}
 		$this->open_transaction();
 		$monitor = fopen('prefs/backupmonitor', 'w');
+		$translate = !file_exists('prefs/databackups/'.$backup.'/newversion');
 		if (file_exists('prefs/databackups/'.$backup.'/tracks.json')) {
 			logger::mark("BACKUPS", "Restoring Manually Added Tracks");
 			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/tracks.json'), true);
 			foreach ($tracks as $i => $trackdata) {
+				if ($translate)
+					$trackdata = $this->translate_data($trackdata);
 				$this->sanitise_data($trackdata);
-				$this->add($trackdata, false);
+				$trackdata['urionly'] = true;
+				$this->set($trackdata);
 				$this->check_transaction();
 				$progress = round(($i/count($tracks))*100);
 				fwrite($monitor, "\n<b>Restoring Manually Added Tracks : </b>".$progress."%");
@@ -95,9 +99,11 @@ class metabackup extends metaDatabase {
 			logger::mark("BACKUPS", "Restoring Ratings");
 			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/ratings.json'), true);
 			foreach ($tracks as $i => $trackdata) {
+				if ($translate)
+					$trackdata = $this->translate_data($trackdata);
 				$this->sanitise_data($trackdata);
 				$trackdata['attributes'] = array(array('attribute' => 'Rating', 'value' => $trackdata['rating']));
-				$this->set($trackdata, true);
+				$this->set($trackdata);
 				$this->check_transaction();
 				$progress = round(($i/count($tracks))*100);
 				fwrite($monitor, "\n<b>Restoring Ratings : </b>".$progress."%");
@@ -107,9 +113,11 @@ class metabackup extends metaDatabase {
 			logger::mark("BACKUPS", "Restoring Tags");
 			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/tags.json'), true);
 			foreach ($tracks as $i => $trackdata) {
+				if ($translate)
+					$trackdata = $this->translate_data($trackdata);
 				$this->sanitise_data($trackdata);
 				$trackdata['attributes'] = array(array('attribute' => 'Tags', 'value' => explode(',',$trackdata['tag'])));
-				$this->set($trackdata, true);
+				$this->set($trackdata);
 				$this->check_transaction();
 				$progress = round(($i/count($tracks))*100);
 				fwrite($monitor, "\n<b>Restoring Tags : </b>".$progress."%");
@@ -119,12 +127,10 @@ class metabackup extends metaDatabase {
 			logger::mark("BACKUPS", "Restoring Playcounts");
 			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/playcounts.json'), true);
 			foreach ($tracks as $i => $trackdata) {
+				if ($translate)
+					$trackdata = $this->translate_data($trackdata);
 				$this->sanitise_data($trackdata);
 				$trackdata['attributes'] = array(array('attribute' => 'Playcount', 'value' => $trackdata['playcount']));
-				if (!array_key_exists('lastplayed', $trackdata)) {
-					// Sanitise backups made before lastplayed was added
-					$trackdata['lastplayed'] = null;
-				}
 				$this->inc($trackdata);
 				$this->check_transaction();
 				$progress = round(($i/count($tracks))*100);
@@ -135,6 +141,8 @@ class metabackup extends metaDatabase {
 			logger::mark("BACKUPS", "Restoring Audiobooks");
 			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/audiobooks.json'), true);
 			foreach ($tracks as $i => $trackdata) {
+				if ($translate)
+					$trackdata = $this->translate_data($trackdata);
 				$this->sanitise_data($trackdata);
 				$this->updateAudiobookState($trackdata);
 				$this->check_transaction();
@@ -155,8 +163,29 @@ class metabackup extends metaDatabase {
 		$this->remove_cruft();
 		$this->update_track_stats();
 		$this->close_transaction();
-		fwrite($monitor, '\n ');
+		fwrite($monitor, "\n ");
 		fclose($monitor);
+	}
+
+	private function translate_data($trackdata) {
+		// Update older backups
+		$retval = [
+			'Title' => $trackdata['title'],
+			'Track' => $trackdata['trackno'],
+			'Time' => $trackdata['duration'],
+			'Disc' => $trackdata['disc'],
+			'file' => $trackdata['uri'],
+			'Album' => $trackdata['album'],
+			'X-AlbumUri' => $trackdata['albumuri'],
+			'Date' => $trackdata['date'],
+			'trackartist' => $trackdata['artist'],
+			'albumartist' => $trackdata['albumartist']
+		];
+		foreach (['isaudiobook', 'playcount', 'rating', 'tag'] as $thing)
+		if (array_key_exists($thing, $trackdata)) {
+			$retval[$thing] = $trackdata[$thing];
+		}
+		return $retval;
 	}
 
 	private function get_manually_added_tracks() {
@@ -166,21 +195,20 @@ class metabackup extends metaDatabase {
 
 		return $this->generic_sql_query(
 			"SELECT
-				Tracktable.Title AS title,
-				Tracktable.TrackNo AS trackno,
-				Tracktable.Duration AS duration,
-				Tracktable.Disc AS disc,
-				Tracktable.Uri AS uri,
-				Genretable.Genre AS genre,
-				Tracktable.Genreindex AS genreindex,
-				Albumtable.Albumname AS album,
-				Albumtable.AlbumUri AS albumuri,
-				Albumtable.Year AS date,
-				ta.Artistname AS artist,
+				Tracktable.Title AS Title,
+				Tracktable.TrackNo AS Track,
+				Tracktable.Duration AS Time,
+				Tracktable.Disc AS Disc,
+				Tracktable.Uri AS file,
+				IFNULL(Genretable.Genre, 'None') AS Genre,
+				Albumtable.Albumname AS Album,
+				Albumtable.AlbumUri AS `X-AlbumUri`,
+				Albumtable.Year AS year,
+				ta.Artistname AS trackartist,
 				aat.Artistname AS albumartist
 			FROM
 				Tracktable
-				JOIN Genretable USING (Genreindex)
+				LEFT JOIN Genretable USING (Genreindex)
 				JOIN Artisttable AS ta USING (Artistindex)
 				JOIN Albumtable ON Tracktable.Albumindex = Albumtable.Albumindex
 				JOIN Artisttable AS aat ON Albumtable.AlbumArtistindex = aat.Artistindex
@@ -194,21 +222,21 @@ class metabackup extends metaDatabase {
 
 		return $this->generic_sql_query(
 			"SELECT
-				Tracktable.Title AS title,
-				Tracktable.TrackNo AS trackno,
-				Tracktable.Duration AS duration,
-				Tracktable.Disc AS disc,
-				Tracktable.Uri AS uri,
-				Genretable.Genre AS genre,
-				Albumtable.Albumname AS album,
-				Albumtable.AlbumUri AS albumuri,
-				Albumtable.Year AS date,
-				ta.Artistname AS artist,
+				Tracktable.Title AS Title,
+				Tracktable.TrackNo AS Track,
+				Tracktable.Duration AS Time,
+				Tracktable.Disc AS Disc,
+				Tracktable.Uri AS file,
+				IFNULL(Genretable.Genre, 'None') AS Genre,
+				Albumtable.Albumname AS Album,
+				Albumtable.AlbumUri AS `X-AlbumUri`,
+				Albumtable.Year AS year,
+				ta.Artistname AS trackartist,
 				aat.Artistname AS albumartist,
 				Tracktable.isAudiobook AS isaudiobook
 			FROM
 				Tracktable
-				JOIN Genretable USING (Genreindex)
+				LEFT JOIN Genretable USING (Genreindex)
 				JOIN Artisttable AS ta USING (Artistindex)
 				JOIN Albumtable ON Tracktable.Albumindex = Albumtable.Albumindex
 				JOIN Artisttable AS aat ON Albumtable.AlbumArtistindex = aat.Artistindex
@@ -223,21 +251,21 @@ class metabackup extends metaDatabase {
 		return $this->generic_sql_query(
 			"SELECT
 				r.Rating AS rating,
-				tr.Title AS title,
-				tr.TrackNo AS trackno,
-				tr.Duration AS duration,
-				tr.Disc AS disc,
-				tr.Uri AS uri,
-				ge.Genre AS genre,
-				al.Albumname AS album,
-				al.AlbumUri AS albumuri,
-				al.Year AS date,
-				ta.Artistname AS artist,
+				tr.Title AS Title,
+				tr.TrackNo AS Track,
+				tr.Duration AS Time,
+				tr.Disc AS Disc,
+				tr.Uri AS file,
+				IFNULL(ge.Genre, 'None') AS Genre,
+				al.Albumname AS Album,
+				al.AlbumUri AS `X-AlbumUri`,
+				al.Year AS year,
+				ta.Artistname AS trackartist,
 				aat.Artistname AS albumartist
 			FROM
 				Ratingtable AS r
 				JOIN Tracktable AS tr USING (TTindex)
-				JOIN Genretable AS ge USING (Genreindex)
+				LEFT JOIN Genretable AS ge USING (Genreindex)
 				JOIN Artisttable AS ta USING (Artistindex)
 				JOIN Albumtable AS al ON tr.Albumindex = al.Albumindex
 				JOIN Artisttable AS aat ON al.AlbumArtistindex = aat.Artistindex
@@ -254,21 +282,21 @@ class metabackup extends metaDatabase {
 			"SELECT
 				p.Playcount AS playcount,
 				p.LastPlayed AS lastplayed,
-				tr.Title AS title,
-				tr.TrackNo AS trackno,
-				tr.Duration AS duration,
-				tr.Disc AS disc,
-				tr.Uri AS uri,
-				ge.Genre AS genre,
-				al.Albumname AS album,
-				al.AlbumUri AS albumuri,
-				al.Year AS date,
-				ta.Artistname AS artist,
+				tr.Title AS Title,
+				tr.TrackNo AS Track,
+				tr.Duration AS Time,
+				tr.Disc AS Disc,
+				tr.Uri AS file,
+				IFNULL(ge.Genre, 'None') AS Genre,
+				al.Albumname AS Album,
+				al.AlbumUri AS `X-AlbumUri`,
+				al.Year AS year,
+				ta.Artistname AS trackartist,
 				aat.Artistname AS albumartist
 			FROM
 				Playcounttable AS p
 				JOIN Tracktable AS tr USING (TTindex)
-				JOIN Genretable AS ge USING (Genreindex)
+				LEFT JOIN Genretable AS ge USING (Genreindex)
 				JOIN Artisttable AS ta USING (Artistindex)
 				JOIN Albumtable AS al ON tr.Albumindex = al.Albumindex
 				JOIN Artisttable AS aat ON al.AlbumArtistindex = aat.Artistindex
@@ -284,22 +312,22 @@ class metabackup extends metaDatabase {
 		return $this->generic_sql_query(
 			"SELECT
 				".database::SQL_TAG_CONCAT."AS tag,
-				tr.Title AS title,
-				tr.TrackNo AS trackno,
-				tr.Duration AS duration,
-				tr.Disc AS disc,
-				tr.Uri AS uri,
-				ge.Genre AS genre,
-				al.Albumname AS album,
-				al.AlbumUri AS albumuri,
-				al.Year AS date,
-				ta.Artistname AS artist,
+				tr.Title AS Title,
+				tr.TrackNo AS Track,
+				tr.Duration AS Time,
+				tr.Disc AS Disc,
+				tr.Uri AS file,
+				IFNULL(ge.Genre, 'None') AS Genre,
+				al.Albumname AS Album,
+				al.AlbumUri AS `X-AlbumUri`,
+				al.Year AS year,
+				ta.Artistname AS trackartist,
 				aat.Artistname AS albumartist
 			FROM
 				Tagtable AS t
 				JOIN TagListtable AS tl USING (Tagindex)
 				JOIN Tracktable AS tr ON tl.TTindex = tr.TTindex
-				JOIN Genretable AS ge USING (Genreindex)
+				LEFT JOIN Genretable AS ge USING (Genreindex)
 				JOIN Artisttable AS ta USING (Artistindex)
 				JOIN Albumtable AS al ON tr.Albumindex = al.Albumindex
 				JOIN Artisttable AS aat ON al.AlbumArtistindex = aat.Artistindex

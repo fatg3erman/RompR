@@ -66,14 +66,8 @@ class musicCollection extends collection_base {
 		$c = true;
 		print '[';
 		foreach($this->albums as $album) {
+			$image = $album->getImage('asdownloaded');
 			logger::log("COLLECTION", "Doing Album",$album->tracks[0]->tags['Album']);
-
-			//
-			// We translate from ROMPR_FILE_MODEL to these different names for faveFinder.
-			// This is because things like title, album etc then match the MPD search
-			// terms used in the request so they're easy to compare
-			//
-
 			$album->sortTracks();
 			foreach($album->tracks as $trackobj) {
 				if ($c) {
@@ -81,22 +75,9 @@ class musicCollection extends collection_base {
 				} else {
 					print ', ';
 				}
-				$track = array(
-					"uri" => $trackobj->tags['file'],
-					"album" => $trackobj->tags['Album'],
-					"title" => $trackobj->tags['Title'],
-					"artist" => $trackobj->tags['trackartist'],
-					"albumartist" => $trackobj->tags['albumartist'],
-					"trackno" => $trackobj->tags['Track'],
-					"disc" => $trackobj->tags['Disc'],
-					"albumuri" => $trackobj->tags['X-AlbumUri'],
-					"image" => $album->getImage('asdownloaded'),
-					"duration" => $trackobj->tags['Time'],
-					"date" => $trackobj->tags['Date'],
-					"genre" => $trackobj->tags['Genre']
-				);
+				$trackobj->tags['X-AlbumImage'] = $image;
 				logger::trace("COLLECTION", "Title - ".$trackobj->tags['Title']);
-				print json_encode($track);
+				print json_encode($trackobj->tags);
 			}
 		}
 		print ']';

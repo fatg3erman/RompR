@@ -1048,7 +1048,7 @@ function setAsAudioBook(e, element) {
 	var data = {
 		action: 'setasaudiobook',
 		value: ($(element).hasClass('setasaudiobook')) ? 2 : 0,
-		albumindex: $(element).attr('name')
+		album_index: $(element).attr('name')
 	};
 	debug.debug("UI","Setting as audiobook",data);
 	metaHandlers.genericAction(
@@ -1103,7 +1103,7 @@ function amendAlbumDetails(e, element) {
 function actuallyAmendAlbumDetails(albumindex) {
 	var data = {
 		action: 'amendalbum',
-		albumindex: albumindex,
+		album_index: albumindex,
 	};
 	var newartist = $('#amendname'+albumindex).val();
 	var newdate = $('#amenddate'+albumindex).val();
@@ -1111,7 +1111,7 @@ function actuallyAmendAlbumDetails(albumindex) {
 		data.albumartist = newartist;
 	}
 	if (newdate) {
-		data.date = newdate;
+		data.year = newdate;
 	}
 	debug.info("UI","Amending Album Details",data);
 	metaHandlers.genericAction(

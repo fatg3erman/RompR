@@ -33,7 +33,7 @@ var genreRadio = function() {
 			tracks = [];
 			for (let track of data) {
 				if (!track.uri.match(/:artist:/)) {
-					tracks.push({type: 'uri', name: track.uri});
+					tracks.push({type: 'uri', name: track.file});
 				}
 			}
 			debug.trace('GENRE RADIO', 'We have',tracks.length,'tracks');

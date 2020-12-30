@@ -923,11 +923,56 @@ class init_database extends init_generic {
 
 				case 69:
 					logger::log("SQL", "Updating FROM Schema version 69 TO Schema version 70");
+
+					//
+					// First check that there are no duplicate entires in the Tracktable that would prevent the
+					// new unique key from being created and correct them if there are
+					//
+
+					$duplicates = $this->generic_sql_query(
+						"SELECT GROUP_CONCAT(TTindex SEPARATOR ',') AS ttids, Albumindex, Artistindex, TrackNo, Disc, Title
+						FROM Tracktable
+						GROUP BY Albumindex, Artistindex, TrackNo, Disc, Title
+						HAVING COUNT(*) > 1"
+					);
+					if (count($duplicates) > 0) {
+						logger::warn('MYSQL', 'Duplicates found. Attempting to correct');
+						foreach ($duplicates as $duplicate) {
+							$disc = $duplicate['Disc'];
+							$ttids = explode(',', $duplicate['ttids']);
+							foreach ($ttids as $ttid) {
+								logger::log('MYSQL', 'Setting Disc to',$disc,'on TTindex',$ttid);
+								$this->sql_prepare_query(true, null, null, null,
+									"UPDATE Tracktable SET Disc = ? WHERE TTindex = ?",
+									$disc, $ttid
+								);
+								$disc++;
+							}
+						}
+					}
+
 					$this->generic_sql_query("DROP INDEX Albumindex ON Tracktable", true);
 					$this->generic_sql_query("DROP INDEX Title ON Tracktable", true);
 					$this->generic_sql_query("DROP INDEX TrackNo ON Tracktable", true);
-					$this->generic_sql_query("CREATE UNIQUE INDEX trackfinder ON Tracktable (Albumindex, Artistindex, TrackNo, Disc, Title)", true);
+					if (!$this->generic_sql_query("CREATE UNIQUE INDEX trackfinder ON Tracktable (Albumindex, Artistindex, TrackNo, Disc, Title)", true)) {
+						$err = $this->mysqlc->errorInfo()[2];
+						return array(false, "Error Creating Tracktable Index : ".$err);
+					}
 					$this->generic_sql_query("UPDATE Statstable SET Value = 70 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 70:
+					logger::log("SQL", "Updating FROM Schema version 70 TO Schema version 71");
+					$index = $this->simple_query('Genreindex', 'Genretable', 'Genre', 'None', null);
+					if ($index === null) {
+						$this->sql_prepare_query(true, null, null, null, 'INSERT INTO Genretable (Genre) VALUES(?)', 'None');
+						$index = $this->mysqlc->lastInsertId();
+					}
+					$this->sql_prepare_query(true, null, null, null,
+						"UPDATE Tracktable SET Genreindex = ? WHERE Genreindex NOT IN (SELECT DISTINCT Genreindex FROM Genretable)",
+						$index
+					);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 71 WHERE Item = 'SchemaVer'", true);
 					break;
 
 			}

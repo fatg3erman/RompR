@@ -62,16 +62,16 @@ var lfmImporter = function() {
 	}
 
 	function lfmResponseHandler(data, reqid) {
+		row = $('#lfmitable').children('tr[name="'+alldata[reqid].TTindex+'"]');
 		if (data && !data.error) {
 			var de = new lfmDataExtractor(data.track);
 			var trackdata = de.getCheckedData('track');
 			de = new lfmDataExtractor(trackdata);
 			debug.trace("LFMIMPORTER","Playcount for",reqid,"is",alldata[reqid].Playcount, de.userplaycount());
-			row = $('#lfmitable').children('tr[name="'+alldata[reqid].TTindex+'"]');
 			row.children('td[name="lastfmplaycount"]').html(de.userplaycount());
 			if (parseInt(alldata[reqid].Playcount) < parseInt(de.userplaycount())) {
 				debug.log("LFMIMPORTER","Incrementing Playcount for",alldata[reqid].TTindex,"to",de.userplaycount());
-				var playlistinfo = {type: 'local', location: ''};
+				var playlistinfo = {type: 'local'};
 				$.each(row.children('td.playlistinfo'), function() {
 					playlistinfo[$(this).attr('name')] = htmlspecialchars_decode($(this).html());
 				});
@@ -82,9 +82,14 @@ var lfmImporter = function() {
 				doNext();
 			}
 		} else {
-			debug.warn('LFMIMPORTER', 'Result has no data - was there an error? Pausing before continuing');
-			clearTimeout(errorTimer);
-			errorTimer = setTimeout(doNext, 10000);
+			if (data.error) {
+				row.children('td[name="tick"]').html('<i class="icon-block collectionicon"></i>');
+				doNext();
+			} else {
+				debug.warn('LFMIMPORTER', 'Result has no data - was there an error? Pausing before continuing');
+				clearTimeout(errorTimer);
+				errorTimer = setTimeout(doNext, 10000);
+			}
 		}
 	}
 

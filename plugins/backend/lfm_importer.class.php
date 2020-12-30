@@ -1,7 +1,7 @@
 <?php
 class lfm_importer extends database {
 	public function get_chunk_of_data($offset, $limit) {
-		$arse = $this->generic_sql_query("SELECT
+		return $this->generic_sql_query("SELECT
 			TTindex,
 			ta.Artistname as Trackartist,
 			aa.Artistname as Albumartist,
@@ -21,7 +21,7 @@ class lfm_importer extends database {
 	}
 
 	public function get_total_tracks() {
-		$arse = $this->generic_sql_query("SELECT
+		return $this->generic_sql_query("SELECT
 			COUNT(TTindex) AS total
 			FROM
 			Tracktable JOIN Albumtable USING (Albumindex)

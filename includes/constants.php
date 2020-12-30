@@ -3,7 +3,7 @@
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 1000);
 define('ROMPR_COLLECTION_VERSION', 6);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 70);
+define('ROMPR_SCHEMA_VERSION', 71);
 define('ROMPR_VERSION', '1.52');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
@@ -119,8 +119,8 @@ define('MPD_FILE_MODEL', array(
 		'trackartist_index' => null,
 		'albumartist_index' => null,
 		'album_index' => null,
-		'searchflag' => 0,
 		'hidden' => 0,
+		"year" => null,
 		'isaudiobook' => 0
 	)
 );
@@ -139,10 +139,14 @@ define('MPD_ARRAY_PARAMS', array(
 
 define('ROMPR_FILE_MODEL', array(
 		"progress" => 0,
-		"year" => null,
 		"albumartist" => '',
 		"trackartist" => '',
+		"lastplayed" => null,
+		"streamuri" => null,
 		"images" => '',
+		"urionly" => 0,
+		'hidden' => 0,
+		"attributes" => null,
 		"metadata" => array(
 			"iscomposer" => 'false',
 			"artists" => array(),

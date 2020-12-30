@@ -3,6 +3,7 @@ var metaBackup = function() {
 	var mbb = null;
 	var monitortimer = null;
 	var progressDiv;
+	var doing_something = false;
 
 	async function do_request(req, success, fail) {
 		try {
@@ -32,14 +33,17 @@ var metaBackup = function() {
 
 	function goDoThings(thing, what) {
 		debug.info("BACKUPS",thing,what);
+		doing_something = true;
 		do_request(
 			{action: 'backup'+thing, which: what},
 			function(data) {
 				clearTimeout(monitortimer);
-				debug.debug("BACKUPS","Success");
+				debug.mark("BACKUPS","Success");
 				if (thing == 'restore') {
 					collectionHelper.forceCollectionReload();
 				}
+				thing = null;
+				doing_something = false;
 				progressDiv.empty();
 				getBackupData();
 			},
@@ -51,6 +55,7 @@ var metaBackup = function() {
 				}
 				progressDiv.empty();
 				getBackupData();
+				doing_something = false;
 			},
 		);
 		if (thing == 'restore') {
@@ -68,11 +73,11 @@ var metaBackup = function() {
 		.done(function(data) {
 			debug.debug("MINITORRESTORE",data);
 			progressDiv.html(data.current);
-			monitortimer = setTimeout(monitorRestore, 250);
+			monitortimer = setTimeout(monitorRestore, 500);
 		})
 		.fail(function(data) {
 			debug.warn("MONITORRESTORE","ERROR",data);
-			monitortimer = setTimeout(monitorRestore, 250);
+			monitortimer = setTimeout(monitorRestore, 500);
 		});
 	}
 
@@ -151,7 +156,7 @@ var metaBackup = function() {
 		},
 
 		handleClick: function(element, event) {
-			if (element.hasClass('restore')) {
+			if (element.hasClass('restore') && !doing_something) {
 				collectionHelper.prepareForLiftOff('Restoring Data');
 				goDoThings('restore',element.attr("name"));
 			} else if (element.hasClass('remove')) {

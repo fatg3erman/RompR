@@ -182,7 +182,15 @@ function LastFM() {
 				var c = jqxhr.getResponseHeader('Pragma');
 				debug.debug("LASTFM","Request success",c, data, jqxhr);
 				throttle = (c == "From Cache") ? 50 : throttleTime;
-				current_req.success(data, current_req.reqid);
+				if (data.error) {
+					if (handle_error(current_req, jqxhr)) {
+						current_req.fail({error: data.error, message: format_remote_api_error('lastfm_error', jqxhr)}, current_req.reqid);
+					} else {
+						throttle = throttleTime;
+					}
+				} else {
+					current_req.success(data, current_req.reqid);
+				}
 			} catch (err) {
 				debug.warn("LASTFM", "Get Request Failed",err);
 				if (handle_error(current_req, err))
@@ -208,6 +216,12 @@ function LastFM() {
 				case 26:
 					debug.error("LASTFM","We are not authenticated. Logging Out");
 					logout();
+					return true;
+					break;
+
+				case 6:
+					// Track not found
+					debug.warn('LASTFM', errortext);
 					return true;
 					break;
 

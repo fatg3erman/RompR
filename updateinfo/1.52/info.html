@@ -1,6 +1,7 @@
 <h3 align="center">Version 1.52 Information</h3>
 <ul>
 <li>Almost all the backend code has been extensively reworked to make it cleaner and more efficient</li>
+<li>All this code reorganisation also means that <i><b>if you're running romonitor you must restart it after installing this version</b></i></li>
 <li>RompR now uses the snapcast JSON-RPC API for Snapcast so you may need to change the port you are using and make sure the JSON-RPC API is enabled in your snapserver configuration. (The default port is 1780)</li>
 <li>Mopidy users - if your mopidy-http interface is enabled, RompR can use it for better responsiveness and albumart</li>
 <li>Album Art Search now uses Bing instead of Google Images because Google broke my code and Bing's API is better. You'll need to check the docs for how to get this set up</li>
@@ -13,5 +14,4 @@
 	<li>Most functions that used /rompr/backends/sql/userRatings.php have moved to /rompr/api/metadata/ </li>
 	<li>Metadata backup functions that used /rompr/backends/sql/userRatings.php have moved to /rompr/api/metadata/backup/ </li>
 </ul>
-<li>All this code reorganisation also means that <b>if you're running romonitor you should restart it after installing this version</b></li>
 </ul>

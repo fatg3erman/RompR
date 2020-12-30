@@ -2,9 +2,9 @@ var metaHandlers = function() {
 
 	function addedATrack(rdata,d2,d3) {
 		debug.log("ADD ALBUM","Success");
-		if (rdata) {
+		if (rdata)
 			collectionHelper.updateCollectionDisplay(rdata);
-		}
+
 	}
 
 	function didntAddATrack(rdata) {
@@ -13,68 +13,86 @@ var metaHandlers = function() {
 	}
 
 	function getPostData(playlistinfo) {
-		var data = {};
-		if (playlistinfo.Title) {
-			data.title = playlistinfo.Title;
+		var data = {
+			albumartist: (playlistinfo.Album == 'SoundCloud' || playlistinfo.type == 'stream') ? playlistinfo.trackartist : playlistinfo.albumartist,
+			metadata: null,
+			Album: (playlistinfo.type == 'local' || playlistinfo.type == 'podcast') ? playlistinfo.Album : null,
+			// These are only used in the case where we're adding a track to the wishlist
+			streamname: playlistinfo.Album,
+			streamimage: playlistinfo['X-AlbumImage'],
 		}
-		if (playlistinfo.trackartist) {
-			data.artist = playlistinfo.trackartist;
+		if (prefs.player_backend == 'mpd' && playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//)) {
+			data.file = 'soundcloud://track/'+playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//)[1];
 		}
-		if (playlistinfo.Track) {
-			data.trackno = playlistinfo.Track;
+		if (playlistinfo.type == 'stream') {
+			data.streamuri = playlistinfo.file;
+			data.file = null;
 		}
-		if (playlistinfo.Time) {
-			data.duration = playlistinfo.Time;
-		} else {
-			data.duration = 0;
-		}
-		if (playlistinfo.type) {
-			data.type = playlistinfo.type;
-		}
-		if (playlistinfo.Disc) {
-			data.disc = playlistinfo.Disc;
-		}
-		if (playlistinfo.Genre) {
-			data.genre = playlistinfo.Genre;
-		}
-		if (playlistinfo.albumartist
-			&& playlistinfo.Album != "SoundCloud"
-			&& playlistinfo.type != "stream") {
-			data.albumartist = playlistinfo.albumartist;
-		} else {
-			if (playlistinfo.trackartist) {
-				data.albumartist = playlistinfo.trackartist;
-			}
-		}
-		if (playlistinfo.metadata && playlistinfo.metadata.album.uri) {
-			data.albumuri = playlistinfo.metadata.album.uri;
-		}
-		if (playlistinfo.type != "stream" && playlistinfo.images && playlistinfo.images.small) {
-			data.image = playlistinfo.images.small;
-		}
-		if ((playlistinfo.type == "local" || playlistinfo.type == "podcast") && playlistinfo.Album) {
-			data.album = playlistinfo.Album;
-		}
-		if (playlistinfo.file) {
-			if (playlistinfo.type == "local" || playlistinfo.type == "podcast") {
-				if (playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//) && prefs.player_backend == "mpd") {
-					var sc = playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//);
-					data.uri = "soundcloud://track/"+sc[1];
-				} else {
-					data.uri = playlistinfo.file;
-				}
-			} else if (playlistinfo.type == "stream") {
-				data.streamname = playlistinfo.Album;
-				data.streamimage = playlistinfo.images.small;
-				data.streamuri = playlistinfo.file;
-			}
-		}
-		if (playlistinfo.year) {
-			data.date = playlistinfo.year;
-		} else {
-			data.date = 0;
-		}
-		return data;
+
+		return {...playlistinfo, ...data};
+
+		// var data = {};
+		// if (playlistinfo.Title) {
+		// 	data.title = playlistinfo.Title;
+		// }
+		// if (playlistinfo.trackartist) {
+		// 	data.artist = playlistinfo.trackartist;
+		// }
+		// if (playlistinfo.Track) {
+		// 	data.trackno = playlistinfo.Track;
+		// }
+		// if (playlistinfo.Time) {
+		// 	data.duration = playlistinfo.Time;
+		// } else {
+		// 	data.duration = 0;
+		// }
+		// if (playlistinfo.type) {
+		// 	data.type = playlistinfo.type;
+		// }
+		// if (playlistinfo.Disc) {
+		// 	data.disc = playlistinfo.Disc;
+		// }
+		// if (playlistinfo.Genre) {
+		// 	data.genre = playlistinfo.Genre;
+		// }
+		// if (playlistinfo.albumartist
+		// 	&& playlistinfo.Album != "SoundCloud"
+		// 	&& playlistinfo.type != "stream") {
+		// 	data.albumartist = playlistinfo.albumartist;
+		// } else {
+		// 	if (playlistinfo.trackartist) {
+		// 		data.albumartist = playlistinfo.trackartist;
+		// 	}
+		// }
+		// if (playlistinfo.metadata && playlistinfo.metadata.album.uri) {
+		// 	data.albumuri = playlistinfo.metadata.album.uri;
+		// }
+		// if (playlistinfo.type != "stream" && playlistinfo.images && playlistinfo.images.small) {
+		// 	data.image = playlistinfo.images.small;
+		// }
+		// if ((playlistinfo.type == "local" || playlistinfo.type == "podcast") && playlistinfo.Album) {
+		// 	data.album = playlistinfo.Album;
+		// }
+		// if (playlistinfo.file) {
+		// 	if (playlistinfo.type == "local" || playlistinfo.type == "podcast") {
+		// 		if (playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//) && prefs.player_backend == "mpd") {
+		// 			var sc = playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//);
+		// 			data.uri = "soundcloud://track/"+sc[1];
+		// 		} else {
+		// 			data.uri = playlistinfo.file;
+		// 		}
+		// 	} else if (playlistinfo.type == "stream") {
+		// 		data.streamname = playlistinfo.Album;
+		// 		data.streamimage = playlistinfo.images.small;
+		// 		data.streamuri = playlistinfo.file;
+		// 	}
+		// }
+		// if (playlistinfo.year) {
+		// 	data.date = playlistinfo.year;
+		// } else {
+		// 	data.date = 0;
+		// }
+		// return data;
 	}
 
 	function youtubeDownloadMonitor(uri) {
@@ -129,18 +147,18 @@ var metaHandlers = function() {
 					debug.log("DROPPLUGIN","Dragged",uri,"to",name);
 					if ($(element).hasClass('directory')) {
 						tracks.push({
-							uri: decodeURIComponent($(element).children('input').first().attr('name')),
-							artist: 'geturisfordir',
-							title: 'dummy',
+							file: decodeURIComponent($(element).children('input').first().attr('name')),
+							trackartist: 'geturisfordir',
+							Title: 'dummy',
 							urionly: '1',
 							action: action,
 							attributes: attributes
 						});
 					} else if ($(element).hasClass('clickalbum')) {
 						tracks.push({
-							uri: uri,
-							artist: 'geturis',
-							title: 'dummy',
+							file: uri,
+							trackartist: 'geturis',
+							Title: 'dummy',
 							urionly: '1',
 							action: action,
 							attributes: attributes
@@ -166,9 +184,9 @@ var metaHandlers = function() {
 						infobar.notify("Sorry, you can't add tracks from playlists");
 					} else {
 						tracks.push({
-							uri: uri,
-							artist: 'dummy',
-							title: 'dummy',
+							file: uri,
+							trackartist: 'dummy',
+							Title: 'dummy',
 							urionly: '1',
 							action: action,
 							attributes: attributes
@@ -238,7 +256,7 @@ var metaHandlers = function() {
 			removeTrackFromDb: function(event, element) {
 				var trackstogo = new Array();
 				$('.clicktrack.selected').each(function() {
-					trackstogo.push({action: 'delete', uri: decodeURIComponent($(this).attr('name'))});
+					trackstogo.push({action: 'delete', file: decodeURIComponent($(this).attr('name'))});
 				});
 				$('.clicktrack.selected').fadeOut('fast');
 				debug.debug("DB_TRACKS","Remove tracks from database",trackstogo);
@@ -269,7 +287,7 @@ var metaHandlers = function() {
 							url: "api/metadata/",
 							type: "POST",
 							contentType: false,
-							data: JSON.stringify([{action: 'youtubedl', uri: uri }]),
+							data: JSON.stringify([{action: 'youtubedl', file: uri }]),
 							dataType: 'json'
 						});
 						collectionHelper.updateCollectionDisplay(data),
@@ -277,9 +295,9 @@ var metaHandlers = function() {
 					} catch (err) {
 						debug.warn("FUCK!", 'Why did that not work?',err);
 						monitor.stop();
-						if (err.responseJSON && err.responseJSON.error) {
+						if (err.responseJSON && err.responseJSON.error)
 							infobar.error('Failed to download YouTube track - '+err.responseJSON.error);
-						}
+
 					}
 				});
 			},
@@ -287,7 +305,7 @@ var metaHandlers = function() {
 			removeAlbumFromDb: function(event, element) {
 				var albumToGo = element.attr("name");
 				dbQueue.request(
-					[{action: 'deletealbum', albumindex: albumToGo}],
+					[{action: 'deletealbum', album_index: albumToGo}],
 					collectionHelper.updateCollectionDisplay,
 					function(data) {
 						debug.warn("Failed to remove album! Possibly duplicate request?");
@@ -304,37 +322,40 @@ var metaHandlers = function() {
 				if (data.tracks && data.tracks.items) {
 					debug.debug("AAAGH","Adding Album From",data);
 					infobar.notify(language.gettext('label_addingalbum'));
-					for (var i in data.tracks.items) {
-						var track = {};
-						track.title = data.tracks.items[i].name;
-						track.artist = joinartists(data.tracks.items[i].artists);
-						track.trackno = data.tracks.items[i].track_number;
-						track.duration = data.tracks.items[i].duration_ms/1000;
-						track.disc = data.tracks.items[i].disc_number;
-						track.albumartist = albumartist;
-						track.albumuri = data.uri;
+					for (let t of data.tracks.items) {
+						var track = {
+							Title: t.name,
+							trackartist: joinartists(t.artists),
+							Track: t.track_number,
+							Time: t.duration_ms/1000,
+							Disc: t.disc_number,
+							domain: 'spotify',
+							albumartist: albumartist,
+							Album: data.name,
+							file: t.uri,
+							Date: data.release_date,
+							action: 'set',
+							urionly: true
+						}
+						track['X-AlbumUri'] = data.uri;
 						if (data.images) {
-							for (var j in data.images) {
-								if (data.images[j].url) {
-									track.image = "getRemoteImage.php?url="+rawurlencode(data.images[j].url);
+							for (let j of data.images) {
+								if (j.url) {
+									track['X-AlbumImage'] = "getRemoteImage.php?url="+rawurlencode(j.url);
 									break;
 								}
 							}
 						}
 						if (data.genres && data.genres.length > 0) {
-							track.genre = data.genres[0];
+							track.Genre = data.genres[0];
 						} else {
-							track.genre = 'None';
+							track.Genre = 'None';
 						}
-						track.album = data.name;
-						track.uri = data.tracks.items[i].uri;
-						track.date = data.release_date;
-						track.action = 'add';
 						thisIsMessy.push(track);
 					}
-					if (thisIsMessy.length > 0) {
+					if (thisIsMessy.length > 0)
 						dbQueue.request(thisIsMessy, addedATrack, didntAddATrack);
-					}
+
 				} else {
 					debug.warn("SPOTIFY","Failed to add album - no tracks",data);
 					infobar.error(language.gettext('label_general_error'));
@@ -357,9 +378,9 @@ var metaHandlers = function() {
 			mapData: function(playlistinfo, action, attributes) {
 				var data = getPostData(playlistinfo);
 				data.action = action;
-				if (attributes) {
+				if (attributes)
 					data.attributes = attributes;
-				}
+
 				return data;
 			}
 		},
@@ -381,10 +402,10 @@ var metaHandlers = function() {
 
 				mapData: function(data, action, attributes) {
 					var track = {action: action};
-					track.title = data.name;
-					if (data.album) {
-						track.album = data.album['#text'];
-					}
+					track.Title = data.name;
+					if (data.album)
+						track.Album = data.album['#text'];
+
 					if (data.artist) {
 						// We have in the past tried to be clever about this, since
 						// mpdscribble and mopidy-scrobbler don't always join artist names
@@ -394,15 +415,15 @@ var metaHandlers = function() {
 						// Otherwise I'm afraid it can be a bit shit where there are multiple artist names
 						// And it's fuckin shocking if you're playing back podcasts and not scrobbling from Rompr,
 						// 'cos the metadata the players use is nothing like what comes out of the RSS which is what we use
-						track.artist = data.artist.name;
-						track.albumartist = track.artist;
+						track.trackartist = data.artist.name;
+						track.albumartist = track.trackartist;
 					}
-					if (data.date) {
+					if (data.date)
 						track.lastplayed = data.date.uts;
-					}
-					if (attributes) {
+
+					if (attributes)
 						track.attributes = attributes;
-					}
+
 					debug.debug("DBQUEUE", "LFM Mapped Data is",track);
 					return track;
 				}
@@ -483,7 +504,7 @@ var dbQueue = function() {
 
 	// Cleanup cleans the database but it also updates the track stats
 	var actions_requiring_cleanup = [
-		'add', 'set', 'remove', 'amendalbum', 'delete', 'deletewl', 'clearwishlist', 'setasaudiobook'
+		'set', 'remove', 'amendalbum', 'delete', 'deletewl', 'clearwishlist', 'setasaudiobook'
 	];
 
 	async function process_request(req) {

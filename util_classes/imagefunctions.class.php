@@ -17,16 +17,7 @@ class imageFunctions {
 	}
 
 	public static function artist_for_image($type, $artist) {
-		switch ($type) {
-			case 'stream':
-				$artistforimage = 'STREAM';
-				break;
-
-			default:
-				$artistforimage = $artist;
-				break;
-		}
-		return $artistforimage;
+		return ($type == 'stream') ? 'STREAM' : $artist;
 	}
 
 	public static function scan_for_local_images($albumpath) {
