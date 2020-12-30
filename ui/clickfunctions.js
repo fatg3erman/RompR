@@ -1005,19 +1005,22 @@ function makeAlbumMenu(e, element) {
 			}).html(v))
 		});
 	}
-	if ($(element).hasClass('clickamendalbum')) {
+	// Some sort modes (eg rating, tag) have a _ in the album selector and I can't currently
+	// be bothered to make certain options work in that case. (eg remove album from collection -
+	// does that apply to the entire album or just the bit you can see that is rated 3?)
+	if ($(element).hasClass('clickamendalbum') && $(element).attr('name').indexOf('_') == -1) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem amendalbum closepopup',
 			name: $(element).attr('name')
 		}).html(language.gettext('label_amendalbum')));
 	}
-	if ($(element).hasClass('clickremovealbum')) {
+	if ($(element).hasClass('clickremovealbum') && $(element).attr('name').indexOf('_') == -1) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem removealbum closepopup',
 			name: $(element).attr('name')
 		}).html(language.gettext('label_removealbum')));
 	}
-	if ($(element).hasClass('clicksetasaudiobook')) {
+	if ($(element).hasClass('clicksetasaudiobook') && $(element).attr('name').indexOf('_') == -1) {
 		d.append($('<div>', {
 			class: 'backhi clickable menuitem setasaudiobook closepopup',
 			name: $(element).attr('name')

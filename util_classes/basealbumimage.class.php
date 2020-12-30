@@ -33,7 +33,7 @@ class baseAlbumImage {
 		}
 		if ($this->mbid !== null) {
 			if (preg_match('/\d+/', $this->mbid) && !preg_match('/-/', $this->mbid)) {
-				logger::debug("ALBUMIMAGE", " Supplied MBID of ".$mbid." looks more like a Discogs ID");
+				logger::debug("ALBUMIMAGE", " Supplied MBID of ".$this->mbid." looks more like a Discogs ID");
 				$this->mbid = null;
 			}
 		}

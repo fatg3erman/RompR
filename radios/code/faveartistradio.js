@@ -21,7 +21,7 @@ var faveArtistRadio = function() {
 					url: "api/metadata/query/",
 					type: "POST",
 					contentType: false,
-					data: JSON.stringify([{action: 'getfaveartists'}]),
+					data: JSON.stringify({action: 'getfaveartists'}),
 					dataType: 'json'
 				});
 				if (fartists.length == 0) {

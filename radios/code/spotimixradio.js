@@ -56,20 +56,20 @@ var spotiMixRadio = function() {
 			var searchparms;
 			switch (param) {
 				case 'surprise':
-					searchparms = [{action: 'getrecommendationseeds', days: 7, limit: 50, top: 40}];
+					searchparms = {action: 'getrecommendationseeds', days: 7, limit: 50, top: 40};
 					break;
 
 				case '7day':
-					searchparms = [{action: 'getrecommendationseeds', days: 7, limit: 30, top: 2}];
+					searchparms = {action: 'getrecommendationseeds', days: 7, limit: 30, top: 2};
 					break;
 
 				case '1year':
-					searchparms = [{action: 'getrecommendationseeds', days: 365, limit: 100, top: 10}];
+					searchparms = {action: 'getrecommendationseeds', days: 365, limit: 100, top: 10};
 					break;
 			}
 			try {
 				var seeds = await $.ajax({
-					url: "api/metadata/",
+					url: "api/metadata/query/",
 					type: "POST",
 					contentType: false,
 					data: JSON.stringify(searchparms),

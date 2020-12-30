@@ -66,19 +66,19 @@ class metaDatabase extends collection_base {
 			exit(0);
 		}
 
-		switch ($data['trackartist']) {
-			case 'geturisfordir':
-				$ttids = $this->geturisfordir($data);
-				break;
+		// switch ($data['trackartist']) {
+		// 	case 'geturisfordir':
+		// 		$ttids = $this->geturisfordir($data);
+		// 		break;
 
-			case  'geturis':
-				$ttids = $this->geturis($data);
-				break;
+		// 	case  'geturis':
+		// 		$ttids = $this->geturis($data);
+		// 		break;
 
-			default:
+		// 	default:
 				$ttids = $this->find_item($data, $this->forced_uri_only($data['urionly'], $data['domain']));
-				break;
-		}
+		// 		break;
+		// }
 
 		$newttids = array();
 		$dummytributes = false;
@@ -110,7 +110,7 @@ class metaDatabase extends collection_base {
 		//
 		// If we don't have any attributes, set a dummy attribute because this will result in the track
 		// being unhidden/un-searchified if it already exists.
-		// But in the case where the above wishlist checks returned some metatdata use that instead
+		// But in the case where the above wishlist checks returned some metatdata, use that instead
 		// to make sure we transfer metadata from the wishlist to our new track
 		//
 		if ($data['attributes'] == null) {
@@ -965,7 +965,7 @@ class metaDatabase extends collection_base {
 
 		// Check the track doesn't already exist. This can happen if we're doing an ADD operation and only the URI is different
 		// (fucking Spotify). We're not using the ON DUPLICATE KEY UPDATE here because, when that does an UPDATE instead of an INSERT,
-		// lastUpdateDd() does not return the TTindex of the updated track but rather the current AUTO_INCREMENT value of the table
+		// lastUpdateId() does not return the TTindex of the updated track but rather the current AUTO_INCREMENT value of the table
 		// which is about as useful as giving me a forwarding address that only contains the correct continent.
 
 		// We also have to cope with fucking youtube and soundcloud, where the same combination of unique keys can actually refer to

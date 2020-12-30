@@ -143,55 +143,55 @@ var metaHandlers = function() {
 				var tracks = new Array();
 				debug.debug('DROPPLUGIN', 'In doMeta');
 				$.each($('.selected').filter(removeOpenItems), function (index, element) {
-					var uri = unescapeHtml(decodeURIComponent($(element).attr("name")));
-					debug.log("DROPPLUGIN","Dragged",uri,"to",name);
-					if ($(element).hasClass('directory')) {
+					// var uri = unescapeHtml(decodeURIComponent($(element).attr("name")));
+					// debug.log("DROPPLUGIN","Dragged",uri,"to",name);
+					// if ($(element).hasClass('directory')) {
+					// 	tracks.push({
+					// 		file: decodeURIComponent($(element).children('input').first().attr('name')),
+					// 		trackartist: 'geturisfordir',
+					// 		Title: 'dummy',
+					// 		urionly: '1',
+					// 		action: action,
+					// 		attributes: attributes
+					// 	});
+					// } else if ($(element).hasClass('clickalbum')) {
+					// 	tracks.push({
+					// 		file: uri,
+					// 		trackartist: 'geturis',
+					// 		Title: 'dummy',
+					// 		urionly: '1',
+					// 		action: action,
+					// 		attributes: attributes
+					// 	});
+					// } else if ($(element).hasClass('playlistalbum')) {
+					// 	var tits = playlist.getAlbum($(element).attr('name'));
+					// 	for (var i in tits) {
+					// 		var t = getPostData(tits[i]);
+					// 		t.urionly = 1;
+					// 		t.action = action;
+					// 		t.attributes = attributes;
+					// 		tracks.push(t);
+					// 	}
+					// 	$(element).removeClass('selected');
+					// } else if (element.hasAttribute('romprid')) {
+					// 	var t = getPostData(playlist.getId($(element).attr('romprid')));
+					// 	t.urionly = 1;
+					// 	t.action = action;
+					// 	t.attributes = attributes;
+					// 	tracks.push(t);
+					// 	$(element).removeClass('selected');
+					// } else if ($(element).hasClass('playlisttrack') || $(element).hasClass('clickloadplaylist') || $(element).hasClass('clickloaduserplaylist')) {
+					// 	infobar.notify("Sorry, you can't add tracks from playlists");
+					// } else {
 						tracks.push({
-							file: decodeURIComponent($(element).children('input').first().attr('name')),
-							trackartist: 'geturisfordir',
-							Title: 'dummy',
-							urionly: '1',
-							action: action,
-							attributes: attributes
-						});
-					} else if ($(element).hasClass('clickalbum')) {
-						tracks.push({
-							file: uri,
-							trackartist: 'geturis',
-							Title: 'dummy',
-							urionly: '1',
-							action: action,
-							attributes: attributes
-						});
-					} else if ($(element).hasClass('playlistalbum')) {
-						var tits = playlist.getAlbum($(element).attr('name'));
-						for (var i in tits) {
-							var t = getPostData(tits[i]);
-							t.urionly = 1;
-							t.action = action;
-							t.attributes = attributes;
-							tracks.push(t);
-						}
-						$(element).removeClass('selected');
-					} else if (element.hasAttribute('romprid')) {
-						var t = getPostData(playlist.getId($(element).attr('romprid')));
-						t.urionly = 1;
-						t.action = action;
-						t.attributes = attributes;
-						tracks.push(t);
-						$(element).removeClass('selected');
-					} else if ($(element).hasClass('playlisttrack') || $(element).hasClass('clickloadplaylist') || $(element).hasClass('clickloaduserplaylist')) {
-						infobar.notify("Sorry, you can't add tracks from playlists");
-					} else {
-						tracks.push({
-							file: uri,
+							file: unescapeHtml(decodeURIComponent($(element).attr("name"))),
 							trackartist: 'dummy',
 							Title: 'dummy',
 							urionly: '1',
 							action: action,
 							attributes: attributes
 						});
-					}
+					// }
 				});
 				if (tracks.length > 0) {
 					dbQueue.request(tracks,

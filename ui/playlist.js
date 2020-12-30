@@ -72,10 +72,13 @@ var playlist = function() {
 			while (my_radio == this_radio && my_param == this_param) {
 				await playlist.is_valid();
 				var fromend = playlist.getfinaltrack()+1;
-				if (currentTrack.Pos) {
+				if (currentTrack.Pos)
 					fromend -= currentTrack.Pos;
-				}
+
 				var tracksneeded = prefs.smartradio_chunksize - fromend;
+				debug.core('RADIOMANAGER', 'fromend',fromend);
+				debug.core('RADIOMANAGER', 'tracksneeded',tracksneeded);
+				debug.core('RADIOMANAGER', 'currentTrack',currentTrack);
 				if (tracksneeded > 2 && prefs.radiomaster != prefs.browser_id) {
 					debug.mark("RADIO MANAGER","Looks like master has gone away. Taking over");
 					prefs.save({radiomaster: prefs.browser_id});

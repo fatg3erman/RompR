@@ -785,11 +785,6 @@ class collection_base extends database {
 		$this->sql_prepare_query(true, null, null, null, "UPDATE RadioStationtable SET Image = ? WHERE StationName = ?",$image,$stream);
 	}
 
-	public function update_podcast_image($podid, $image) {
-		logger::log('BACKEND', "Setting Image to",$image,"for podid",$podid);
-		$this->sql_prepare_query(true, null, null, null, 'UPDATE Podcasttable SET Image = ? WHERE PODindex = ?',$image, $podid);
-	}
-
 	public function get_all_images() {
 		return $this->generic_sql_query('SELECT Image, ImgKey FROM Albumtable', false, PDO::FETCH_OBJ);
 	}

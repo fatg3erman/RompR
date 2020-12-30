@@ -159,7 +159,7 @@ class poDatabase extends database {
 			));
 			if ($albumimage->get_image_if_exists() === null) {
 				logger::mark("PODCASTS", "Replacing missing podcast image");
-				download_image($podcast['Image'], $id, $podcast['Title']);
+				$this->download_image($podcast['Image'], $id, $podcast['Title']);
 			}
 		}
 
@@ -294,6 +294,11 @@ class poDatabase extends database {
 
 		return $podcast;
 
+	}
+
+	public function update_podcast_image($podid, $image) {
+		logger::log('BACKEND', "Setting Image to",$image,"for podid",$podid);
+		$this->sql_prepare_query(true, null, null, null, 'UPDATE Podcasttable SET Image = ? WHERE PODindex = ?',$image, $podid);
 	}
 
 	public function getNewPodcast($url, $subbed = 1, $gettracks = true) {
@@ -754,7 +759,7 @@ class poDatabase extends database {
 		}
 		print '<div class="item podcastitem">';
 		if ($item->Downloaded == 1 && $y->Version > 1) {
-			print '<div class="containerbox podcasttrack clicktrack playable draggable dropdown-container" name="'.rawurlencode(dirname(get_base_url()).$item->Localfilename).'">';
+			print '<div class="containerbox podcasttrack clicktrack playable draggable dropdown-container" name="'.rawurlencode(dirname(dirname(get_base_url())).$item->Localfilename).'">';
 		} else {
 			print '<div class="containerbox podcasttrack clicktrack playable draggable dropdown-container" name="'.rawurlencode($item->Link).'">';
 		}
