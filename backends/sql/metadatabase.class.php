@@ -171,9 +171,11 @@ class metaDatabase extends collection_base {
 		// Return a LastPlayed value suitable for inerting into the database
 		// either from the data or using the current timestamp
 		//
-		if ($data['lastplayed'] !==  null && is_numeric($data['lastplayed'])) {
+		if ($data['lastplayed'] !== null && is_numeric($data['lastplayed'])) {
 			// Convert timestamp from LastFM into MySQL TIMESTAMP format
 			$data['lastplayed'] = date('Y-m-d H:i:s', $data['lastplayed']);
+		} else if ($data['lastplayed'] !== null && preg_match('/\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d/', $data['lastplayed'])) {
+			// Already in datestamp format as it would be eg when restoring a backup
 		} else {
 			$data['lastplayed'] = date('Y-m-d H:i:s');
 		}
