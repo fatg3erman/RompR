@@ -124,7 +124,10 @@ class database extends data_base {
 	}
 
 	public function delete_orphaned_artists() {
-		$this->generic_sql_query("CREATE TEMPORARY TABLE Cruft (Artistindex INT UNSIGNED) AS (SELECT DISTINCT Artistindex FROM Tracktable UNION SELECT DISTINCT AlbumArtistindex AS Artistindex FROM Albumtable)");
+		// MariaDB doesn't like using a UNION in the select when we create the table. MySQL is fine with it but we have to
+		// cope with the retarded backwards fork.
+		$this->generic_sql_query("CREATE TEMPORARY TABLE Cruft(Artistindex INT UNSIGNED) AS (SELECT DISTINCT Artistindex FROM Tracktable)");
+		$this->generic_sql_query('INSERT INTO Cruft (SELECT DISTINCT AlbumArtistindex AS Artistindex FROM Albumtable)');
 		$this->generic_sql_query("DELETE FROM Artisttable WHERE Artistindex NOT IN (SELECT Artistindex FROM Cruft)");
 		$this->generic_sql_query("DROP TABLE Cruft");
 	}

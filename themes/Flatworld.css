@@ -107,16 +107,6 @@ input[type="text"]:focus,input[type="number"]:focus {
 }
 /*-- divs and classes used in the albums list --*/
 
-.album1
-{
-    background-color:#cccccc;
-}
-
-.album2
-{
-    background-color:#cccccc;
-}
-
 a.album:visited
 {
     color:#220000;

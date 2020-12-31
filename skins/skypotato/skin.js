@@ -926,7 +926,6 @@ var layoutProcessor = function() {
 				$(this).find('.openmenu').addClass('menuitem').html(c).detach().prependTo($(this));
 				$(this).find('.collectionitem').remove();
 			});
-			$('#radiolist>div:nth-child(even)').addClass('album1');
 			$('#radiolist>div:nth-child(odd)').not('.configtitle').addClass('album2');
 			$(document).on('click', '.clickaddtoplaylist', function() {
 				$('#addtoplaylistmenu').parent().parent().parent().hide();

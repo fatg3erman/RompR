@@ -4,14 +4,18 @@ This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
 ## Version 1.52
-* Rewrote the Snapcast code so it updates faster and the UI is neater and more useable. Note that RompR now uses the snapcast JSON-RPC API for
-Snapcast so you may need to change the port you are using and make sure that API is enabled in your snapserver configuration. (The default port is 1780)
-* Event-driven updates for Mopidy using Mopidy-HTTP. See [here](/RompR/Rompr-And-Mopidy)
-* Album Art Search now uses Bing instead of Google Images because Google broke my code and Bing's API is better
-* New option to use the Snapcast Volume Control instead of the main volume control
-* Completely re-written info panel code is faster and more efficient
-* Large amount of code re-organisation for speed and efficiency. Certain endpoints have changed. If you're using any automation by calling RompR's endpoints you should re-check the docs.
-* New dependency on php-intl. You should install this package.
+* Almost all the backend code has been extensively reworked to make it cleaner and more efficient
+* All this code reorganisation also means that **if you're running romonitor you must restart it after installing this version**
+* If you're using Snapcast, RompR now uses the Snapcast JSON-RPC API so you may need to change the port you are using and make sure the JSON-RPC API is enabled in your snapserver configuration. (The default port is 1780)
+* Mopidy users - if your mopidy-http interface is enabled, RompR can use it for better responsiveness and albumart
+* Album Art Search now uses Bing instead of Google Images because Google broke my code and Bing's API is better. You'll need to check the docs for how to get this set up
+* **There is a new dependency on php-intl. You should install this package.** macOS users, if someone can figure out how to get Locale working on macOS php I'd like to hear
+* Due to code reorganisation, some of the endpoints used for automation have changed:
+	* The old /rompr/albums.php endpoint has moved to /rompr/api/collection/
+	* The old /rompr/player/mpd/postcommand.php endpoint has moved to /rompr/api/player/
+	* The old /rompr/podcasts/podcasts.php endpoint has moved to /rompr/api/podcasts/
+	* Most functions that used /rompr/backends/sql/userRatings.php have moved to /rompr/api/metadata/
+	* Metadata backup functions that used /rompr/backends/sql/userRatings.php have moved to /rompr/api/metadata/backup/
 
 
 ## Version 1.50
