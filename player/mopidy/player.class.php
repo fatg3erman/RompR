@@ -9,14 +9,13 @@ class player extends base_mpd_player {
 
 	public function musicCollectionUpdate() {
 		logger::mark("MOPIDY", "Starting Music Collection Update");
-		$this->monitor = fopen('prefs/monitor','w');
 		if (prefs::$prefs['use_mopidy_scan']) {
 			logger::mark('MOPIDY', 'Using mopidy local scan');
-			fwrite($this->monitor, "\n Scanning Files");
 			$dir = getcwd();
 			exec('sudo mopidyctl local scan >> '.$dir.'/prefs/monitor 2>&1');
 			logger::mark('MOPIDY', 'Mopidy local scan finished');
 		}
+		$this->monitor = fopen('prefs/monitor','w');
 		$dirs = prefs::$prefs['mopidy_collection_folders'];
 		while (count($dirs) > 0) {
 			$dir = array_shift($dirs);
