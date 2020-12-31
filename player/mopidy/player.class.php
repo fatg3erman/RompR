@@ -10,6 +10,10 @@ class player extends base_mpd_player {
 	public function musicCollectionUpdate() {
 		logger::mark("MOPIDY", "Starting Music Collection Update");
 		$this->monitor = fopen('prefs/monitor','w');
+
+		exec('sudo mopidyctl local scan >> prefs/monitor 2>&1');
+
+
 		$dirs = prefs::$prefs['mopidy_collection_folders'];
 		while (count($dirs) > 0) {
 			$dir = array_shift($dirs);
