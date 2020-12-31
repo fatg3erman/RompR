@@ -8,7 +8,7 @@ if (file_exists($progress_file)) {
 	$ttindex = trim(array_shift($stuff));
 	$lastline = trim(array_pop($stuff));
 	if (preg_match('/\[ffmpeg\]\s*Destination:\s*(.+)$/', $lastline, $matches)) {
-		$lastline .= '<br />Written '.format_bytes(filesize('prefs/youtubedl/'.$ttindex.'/'.trim($matches[1]))).'bytes';
+		$lastline .= '<br />Written '.format_bytes(filesize(trim($matches[1]))).'bytes';
 	}
 	$status['info'] = $lastline;
 }

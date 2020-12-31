@@ -1078,7 +1078,6 @@ class metaDatabase extends collection_base {
 				loger::log('YOUTUBEDL', '  Could not find title and artist from collection');
 			}
 
-			chdir('prefs/youtubedl');
 			$ttindex = $this->simple_query('TTindex', 'Tracktable', 'Uri', $data['file'], null);
 			if ($ttindex === null) {
 				logger::error('YOUTUBEDL', 'Could not locate that URI in the database!');
@@ -1086,14 +1085,13 @@ class metaDatabase extends collection_base {
 				print json_encode(array('error' => 'Could not locate that track in the database!'));
 				exit(0);
 			}
-			$progress_file = 'dlprogress_'.md5($data['file']);
+			$progress_file = 'prefs/youtubedl/dlprogress_'.md5($data['file']);
 			file_put_contents($progress_file, $ttindex."\n");
-			if (!is_dir($ttindex)) {
-				mkdir($ttindex);
+			if (!is_dir('prefs/youtubedl/'.$ttindex)) {
+				mkdir('prefs/youtubedl/'.$ttindex);
 			}
-			chdir($ttindex);
-			file_put_contents('original.uri', $uri_to_get);
-			exec($ytdl_path.'youtube-dl --ffmpeg-location '.$avconv_path.' --extract-audio --write-thumbnail --restrict-filenames --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' >> ../'.$progress_file.' 2>&1', $output, $retval);
+			file_put_contents('prefs/youtubedl/'.$ttindex.'/original.uri', $uri_to_get);
+			exec($ytdl_path.'youtube-dl -o "prefs/youtubedl/'.$ttindex.'/%(title)s-%(id)s.%(ext)s" --ffmpeg-location '.$avconv_path.' --extract-audio --write-thumbnail --restrict-filenames --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' >> '.$progress_file.' 2>&1', $output, $retval);
 			if ($retval != 0) {
 				logger::error('YOUTUBEDL', 'youtube-dl returned error code', $retval);
 				header("HTTP/1.1 404 Not Found");
@@ -1101,12 +1099,12 @@ class metaDatabase extends collection_base {
 				unlink('../'.$progress_file);
 				exit(0);
 			}
-			$files = glob('*.flac');
+			$files = glob('prefs/youtubedl/'.$ttindex.'/*.flac');
 			if (count($files) == 0) {
 				logger::error('YOUTUBEDL', 'Could not find downloaded flac file in prefs/youtubedl/'.$ttindex);
 				header("HTTP/1.1 404 Not Found");
 				print json_encode(array('error' => 'Could not locate downloaded flac file!'));
-				unlink('../'.$progress_file);
+				unlink($progress_file);
 				exit(0);
 			} else {
 				logger::log('YOUTUBEDL', print_r($files, true));
@@ -1150,9 +1148,7 @@ class metaDatabase extends collection_base {
 				$new_uri,
 				$data['file']
 			);
-			unlink('../'.$progress_file);
-			// Ready for the next one if there is one
-			chdir('../../..');
+			unlink($progress_file);
 		} else {
 			logger::error('YOUTUBEDL', 'Could not match URI',$data['file']);
 			header("HTTP/1.1 404 Not Found");
