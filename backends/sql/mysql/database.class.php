@@ -26,7 +26,7 @@ class database extends data_base {
 	}
 
 	protected function hide_played_tracks() {
-		$this->generic_sql_query("CREATE TEMPORARY TABLE Fluff(TTindex INT UNSIGNED NOT NULL UNIQUE, PRIMARY KEY(TTindex)) AS SELECT TTindex FROM Tracktable JOIN Playcounttable USING (TTindex) WHERE isSearchResult = 2", true);
+		$this->generic_sql_query("CREATE TEMPORARY TABLE Fluff(TTindex INT UNSIGNED NOT NULL UNIQUE, PRIMARY KEY(TTindex)) ENGINE=MEMORY AS SELECT TTindex FROM Tracktable JOIN Playcounttable USING (TTindex) WHERE isSearchResult = 2", true);
 		$this->generic_sql_query("UPDATE Tracktable SET Hidden = 1, isSearchResult = 0 WHERE TTindex IN (SELECT TTindex FROM Fluff)", true);
 	}
 
@@ -126,7 +126,7 @@ class database extends data_base {
 	public function delete_orphaned_artists() {
 		// MariaDB doesn't like using a UNION in the select when we create the table. MySQL is fine with it but we have to
 		// cope with the retarded backwards fork.
-		$this->generic_sql_query("CREATE TEMPORARY TABLE Cruft(Artistindex INT UNSIGNED) AS (SELECT DISTINCT Artistindex FROM Tracktable)");
+		$this->generic_sql_query("CREATE TEMPORARY TABLE Cruft(Artistindex INT UNSIGNED) ENGINE=MEMORY AS (SELECT DISTINCT Artistindex FROM Tracktable)");
 		$this->generic_sql_query('INSERT INTO Cruft (SELECT DISTINCT AlbumArtistindex AS Artistindex FROM Albumtable)');
 		$this->generic_sql_query("DELETE FROM Artisttable WHERE Artistindex NOT IN (SELECT Artistindex FROM Cruft)");
 		$this->generic_sql_query("DROP TABLE Cruft");
