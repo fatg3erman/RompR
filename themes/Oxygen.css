@@ -109,14 +109,9 @@ input.inbrowser, div.inbrowser
 }
 /*-- divs and classes used in the albums list --*/
 
-.album1
-{
-    background-color:#c4c4c4;
-}
-
 .album2
 {
-    background-color:#cccccc;
+    background-color:#c4c4c4;
 }
 
 .textunderline {

@@ -605,7 +605,7 @@ var uiHelper = function() {
 			var bit = ['#collection', '#searchresultholder', '#audiobooks'];
 			for (let parts of bit) {
 				$(parts+' .album2').removeClass('album2');
-				$(parts+' > .menuitem').filter(':odd').addClass('album2');
+				$(parts+' > .menuitem').filter(':even').addClass('album2');
 				$(parts+' > .album2 + .dropmenu').addClass('album2');
 			}
 		}

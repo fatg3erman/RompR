@@ -144,7 +144,7 @@ select {
 }
 
 .album2 {
-    background-color:rgba(225,228,234,0.75);
+    background-color:rgba(225,228,234,0.85);
 }
 
 .playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {

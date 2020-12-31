@@ -147,16 +147,6 @@ body.desktop #headerbar
     border-top:1px solid #bbbbbb;
 }
 
-.album1
-{
-    /*background-color:rgba(200,200,200,0.1);*/
-}
-
-.album2
-{
-    /*background-color:rgba(200,200,200,0.2);*/
-}
-
 a.album:visited
 {
     color:#222222;
