@@ -602,11 +602,11 @@ var uiHelper = function() {
 		},
 
 		doCollectionStripyStuff: function() {
-			var bit = [['#collection', 'a'], ['#searchresultholder', 'b'], ['#audiobooks', 'z']];
+			var bit = ['#collection', '#searchresultholder', '#audiobooks'];
 			for (let parts of bit) {
-				$(parts[0]+' .album2').removeClass('album2');
-				$(parts[0]+' > [name^="'+parts[1]+'artist"]').filter(':odd').addClass('album2');
-				$(parts[0]+' > .album2 + .dropmenu').addClass('album2');
+				$(parts+' .album2').removeClass('album2');
+				$(parts+' > .menuitem').filter(':odd').addClass('album2');
+				$(parts+' > .album2 + .dropmenu').addClass('album2');
 			}
 		}
 	}
