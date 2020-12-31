@@ -936,6 +936,7 @@ td.fil {
 	overflow-x: hidden;
 	transition: opacity 0.3s ease;
 	opacity: 0;
+	max-width:100%;
 }
 
 .popupcontentcontainer {
@@ -944,6 +945,7 @@ td.fil {
 
 .popupcontentholder {
 	overflow-y: auto;
+	overflow-x: auto;
 }
 
 .popupcontents {
