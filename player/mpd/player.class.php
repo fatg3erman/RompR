@@ -29,7 +29,7 @@ class player extends base_mpd_player {
 		$dirs = array("/");
 		while (count($dirs) > 0) {
 			$dir = array_shift($dirs);
-			fwrite($this->monitor, "\n<b>".language::gettext('label_scanningf', array($dir))."</b><br />".language::gettext('label_fremaining', array(count($dirs))));
+			fwrite($this->monitor, "\n<b>".language::gettext('label_scanningf', array($dir))."</b><br />".language::gettext('label_fremaining', array(count($dirs)))."\n");
 			foreach ($this->parse_list_output('lsinfo "'.format_for_mpd($dir).'"', $dirs, false) as $filedata) {
 				yield $filedata;
 			}

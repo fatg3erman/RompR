@@ -22,7 +22,7 @@ class player extends base_mpd_player {
 			if ($dir == "Spotify Playlists") {
 				$this->musicCollectionSpotifyPlaylistHack();
 			} else {
-				fwrite($this->monitor, "\n<b>".language::gettext('label_scanningf', array($dir))."</b><br />".language::gettext('label_fremaining', array(count($dirs))));
+				fwrite($this->monitor, "\n<b>".language::gettext('label_scanningf', array($dir))."</b><br />".language::gettext('label_fremaining', array(count($dirs)))."\n");
 				foreach ($this->parse_list_output('lsinfo "'.format_for_mpd($this->local_media_check($dir)).'"', $dirs, false) as $filedata) {
 					yield $filedata;
 				}
@@ -40,7 +40,7 @@ class player extends base_mpd_player {
 					logger::info("COLLECTION", "Ignoring Playlist ".$pl);
 				} else {
 					logger::log("COLLECTION", "Scanning Playlist ".$pl);
-					fwrite($this->monitor, "\n<b>".language::gettext('label_scanningp', array($pl))."</b>");
+					fwrite($this->monitor, "\n<b>".language::gettext('label_scanningp', array($pl))."</b>\n");
 					foreach ($this->parse_list_output('listplaylistinfo "'.format_for_mpd($pl).'"', $dirs, false) as $filedata) {
 						yield $filedata;
 					}
