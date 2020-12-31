@@ -121,9 +121,11 @@ var clickRegistry = function() {
 			if (opts.target.hasClass('is-albumlist')) {
 				opts.target.doThingsAfterDisplayingListOfAlbums();
 				if (opts.scoot) {
+					debug.log('HELLO', 'Doing that thing');
 					opts.target.scootTheAlbums();
 				}
 			}
+			uiHelper.doCollectionStripyStuff();
 			return success;
 		}
 	}

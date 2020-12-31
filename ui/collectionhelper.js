@@ -122,6 +122,7 @@ var collectionHelper = function() {
 				'api/collection/?item='+collectionHelper.collectionKey('z'),
 				function() {
 					$("#audiobooks").doThingsAfterDisplayingListOfAlbums().scootTheAlbums();
+					uiHelper.doCollectionStripyStuff();
 					check_init_tasks();
 				}
 			);
@@ -222,6 +223,8 @@ var collectionHelper = function() {
 			return_callback();
 			return_callback = null;
 		}
+
+		uiHelper.doCollectionStripyStuff();
 
 	}
 

@@ -302,6 +302,7 @@ jQuery.fn.addCustomScrollBar = function() {
 }
 
 jQuery.fn.doThingsAfterDisplayingListOfAlbums = function() {
+	debug.log('UIHELPER', 'functionwithlongname');
 	return this;
 }
 
@@ -597,6 +598,15 @@ var uiHelper = function() {
 					c += ' removeable';
 				}
 				return $('<div>', {id: name, class: c}).insertAfter(element.parent());
+			}
+		},
+
+		doCollectionStripyStuff: function() {
+			var bit = [['#collection', 'a'], ['#searchresultholder', 'b'], ['#audiobooks', 'z']];
+			for (let parts of bit) {
+				$(parts[0]+' .album2').removeClass('album2');
+				$(parts[0]+' > [name^="'+parts[1]+'artist"]').filter(':odd').addClass('album2');
+				$(parts[0]+' > .album2 + .dropmenu').addClass('album2');
 			}
 		}
 	}
