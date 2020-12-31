@@ -51,7 +51,7 @@ class player extends base_mpd_player {
 
 	public function collectionUpdateDone() {
 		saveCollectionPlayer('mopidy');
-		fwrite($this->monitor, "\nRompR Is Done");
+		fwrite($this->monitor, "\nRompR Is Done\n");
 		fclose($this->monitor);
 	}
 
