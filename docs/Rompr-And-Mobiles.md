@@ -42,7 +42,7 @@ You need to make some changes to that:
 * **/PATH/TO/ROMPR** is the full path to your RompЯ installation. Refer to the installation instructions for more details.
 * **currenthost** should be followed by the name of one of the Players as displayed in your Configuration menu.
 * **player_backend** should be followed by either mpd or mopidy, depending on the type of player.
-* **User** must be the username your web server runs as. On Debian/Ubuntu systems this is www-data
+* **User=** must be set to the username your web server runs as. On Debian/Ubuntu systems this is www-data
 
 Then enable it with
 

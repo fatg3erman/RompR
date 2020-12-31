@@ -54,10 +54,10 @@ and once you have a subscription key you're good to go.
 
 The switch from Google to Microsoft is likely to raise a few eyebrows, so here is the reasoning.
 
-* The existing Google Search code broke when Google made a change to their terms of service buried deep in a 1000-word email.
+* The existing Google Search code broke when Google made a change to their terms of service, the details of which were buried deep in a 1000-word email of the type that nobody ever reads.
 * This pised me off enormously, and I went to try to find out how it works now and spent a fruitless couple of hours trying to get Google's docs to make sense.
-* Google's API is hugely complex and difficult to get to grips with, their documentation sucks, and the Developer Portal is as navigable as the Northwest Passage in winter.
-* Bing's API is straightforward, the documentation is good, and the data it returns is much more comprehensive than Google's.
-* I had Bing search working withint 30 minutes of signing up, including writing code. That's really all that matters.
+* Google's API is hugely complex and difficult to get to grips with, their documentation is a very good example of how to write extremely bad documentation, and the layout of Google's developer portal was designed by a maniac with ADHD. I hate every single thing about it.
+* Bing's API is straightforward, the documentation is good, and the data it returns is much more comprehensive than Google's. The layout of the developer portal is still awful, but it's not as bad as Google's.
+* I had Bing search working within 30 minutes of signing up, including writing code. That's really all that matters in the end.
 
-It's come to something when Microsoft are providing a better service than Google, but hey-ho, times change.
+It's come to something when Microsoft are providing a better service than Google, but hey-ho, times change. Google are the new Microsoft. Microsoft are the new Google.

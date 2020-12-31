@@ -1,15 +1,14 @@
 # Changelog
 
-This is not a complete list of changes and it only starts with version 1.14.
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
 ## Version 1.52
 * Almost all the backend code has been extensively reworked to make it cleaner and more efficient
-* All this code reorganisation also means that **if you're running romonitor you must restart it after installing this version**
+* All this code reorganisation also means that **if you're running [romonitor](/Rompr-And-Mobiles) you must restart it after installing this version**
 * If you're using Snapcast, RompR now uses the Snapcast JSON-RPC API so you may need to change the port you are using and make sure the JSON-RPC API is enabled in your snapserver configuration. (The default port is 1780)
 * Mopidy users - if your mopidy-http interface is enabled, RompR can use it for better responsiveness and albumart
 * Mopidy users - there is now an automatic way to run [mopidyctl local scan](/RompR/Rompr-And-Mopidy) when updating the Music Collection.
-* Album Art Search now uses Bing instead of Google Images because Google broke my code and Bing's API is better. You'll need to check the docs for how to get this set up
+* Album Art Search now uses Bing instead of Google Images because Google broke my code and Bing's API is better. You'll need to [check the docs](/Album-Art-Manager) for how to get this set up
 * **There is a new dependency on php-intl. You should install this package.** macOS users, if someone can figure out how to get Locale working on macOS php I'd like to hear
 * Due to code reorganisation, some of the endpoints used for automation have changed:
 	* The old /rompr/albums.php endpoint has moved to /rompr/api/collection/
@@ -63,8 +62,8 @@ Thought I'd bump the version number up a bit since this seems like quite a big r
 * Done quite a lot of work on the Skypotato skin to make it neater, more efficient, and smoother and give it all the same functionality as the Desktop skin
 * Almost all the UI code has been updayted and tidied up for a faster, smoother UI.
 * I wrote a script to automate a lot of the work in making icon themes, so now there are LOADS of them :-D
-* 'Display Search Results as Directory Tree' is now incoporated into a new menu giving you the option to display your search results in a different format to the Muisc Collection
-* A lot of images are now lazy-loaded so they're only loaded when they're visible on screen, which reducs memory usage a lot. This requires a modern browser and will fall back to loading everything at once if your browser doesn't support it. Recent versions of all major browsers should work, except for Safari where it's still listed as an 'Experimental' feature.
+* 'Display Search Results as Directory Tree' is now incoporated into a new menu giving you the option to display your search results in a different format to the Music Collection
+* A lot of images are now lazy-loaded so they're only loaded when they're visible on screen, which reduces memory usage a lot. This requires a modern browser and will fall back to loading everything at once if your browser doesn't support it. Recent versions of all major browsers should work, except for Safari where it's still listed as an 'Experimental' feature.
 
 ### FIXES:
 * Translations have been cleaned up - unused translation keys have been removed. For translators, any key missing from the translations has been added to the end of the translation file, commented out, ready to be updated. This will make it much easier for you to follow my crazy and undocumented updates.

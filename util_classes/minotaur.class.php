@@ -20,7 +20,7 @@ class minotaur {
 				fseek($fp, -1, SEEK_END);
 				$pos = ftell($fp);
 				// Loop backward util "\n" is found.
-				// Start 1 character in from the end in case the last line ends with /n
+				// Start 1 character in from the end in case the last line ends with \n
 				if ($pos > 0)
 					$pos--;
 
