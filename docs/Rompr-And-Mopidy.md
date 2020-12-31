@@ -87,7 +87,26 @@ Otherwise beets will not allow RompЯ to talk to it. Your configuration for beet
 
 Where MPD provides an 'update' command that RompЯ can use to update MPD's music database, Mopidy does not and so RompЯ can not easily make Mopidy scan local files - this has to be done with the 'mopidy local scan' command, which cannot be run directly by RompЯ .
 
-The only current solution to this to run mopidy local scan yourself first. If you're using the json local files backend in mopidy you will then need to restart mopidy. You do not need to restart mopidy if you are using mopidy-local-sqlite.
+One solution is to run mopidy local scan yourself first, but this isn't so convenient and there is an alternative.
+
+I've tested this on Ubuntu and Raspbian. I cannot test it on other distributions. It will not work on macOS.
+
+* Firstly, mopidy must be running on the same machine as your webserver. This will not work otherwise.
+* Secondly you need to set up Mopidy so it is running as a service. See the Mopidy documentation for how to do that.
+* Thirdly, you need to give your webserver permission to run the 'mopidyctl local scan' command as sudo *without needing a password*. To do this, you do the following:
+
+
+    sudo visudo
+
+Now edit your sudoers file. Note. TAKE GREAT CARE when doing this. Messing up your sudoers file will be unrecoverable. In this example I am assuming that your webserver runs as the user www-data and the hostname of your machine is raspberry. Also the path to mopidyctl is /usr/sbin/mopidyctl. Make sure you know the correct values for these parameters before starting. In the suoders file you need to add a line
+
+
+    www-data raspberry = (root) NOPASSWD: /usr/sbin/mopidyctl
+
+Save the sudoers file then go to /rompr/?setup and enable the option for "Allow RompR to run mopidy local scan when creating the Music Collection"
+
+If you haven't done this right, then your music collection update will just hang. You'll probably have to reboot to clear it.
+
 
 ## Genres
 

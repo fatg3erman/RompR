@@ -63,6 +63,15 @@ print '<p class="tiny">'.language::gettext("info_mopidy_http").'</p>';
 print '<input type="text" name="http_port_for_mopidy" value="'.prefs::$prefs['http_port_for_mopidy'].'" /></p>';
 
 print '<hr class="dingleberry" />';
+print '<h3>'.language::gettext("setup_mopidy_scan_title").'</h3>';
+print '<div class="styledinputs"><input id="mopscan" type="checkbox" name="use_mopidy_scan" ';
+if (prefs::$prefs['use_mopidy_scan']) {
+	print " checked";
+}
+print '><label for="mopscan">'.language::gettext('setup_mopidy_scan').'</label></div>';
+print '<p><a href="https://fatg3erman.github.io/RompR/Rompr-And-Mopidy#scanning-local-files" target="_blank">'.language::gettext('config_read_the_docs').'</a></p>';
+
+print '<hr class="dingleberry" />';
 print '<h3>'.language::gettext("label_generalsettings").'</h3>';
 print '<div class="styledinputs"><input id="cli" type="checkbox" name="cleanalbumimages" ';
 if (prefs::$prefs['cleanalbumimages']) {

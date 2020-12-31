@@ -709,8 +709,9 @@ language::add_translations([
 	"label_incoll" =>						"This track is in the Music Collection",
 	"label_notincoll" =>					"This track is not in the Music Collection. Click to add it",
 	"label_image_search" =>					'You need a Bing Image Search API key to use Bing Search. Please read the documentation.',
-	"config_hidemastervolume" =>			'Use Snapcast Volume as Main Volume Control'
-
+	"config_hidemastervolume" =>			'Use Snapcast Volume as Main Volume Control',
+	"setup_mopidy_scan" =>					'Allow RompR to run mopidy local scan when creating the Music Collection',
+	"setup_mopidy_scan_title" =>			'Mopidy Special Options'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

@@ -31,6 +31,7 @@ class prefs {
 		"beets_server_location" => "",
 		'dev_mode' => false,
 		'live_mode' => false,
+		'use_mopidy_scan' => false,
 		'collection_load_timeout' => 3600000,
 		"smartradio_chunksize" => 5,
 		"linkchecker_nextrun" => 0,
@@ -335,7 +336,7 @@ class prefs {
 		//
 
 		if (array_key_exists('currenthost', $_POST)) {
-			foreach (array('cleanalbumimages', 'do_not_show_prefs', 'separate_collections') as $p) {
+			foreach (array('cleanalbumimages', 'do_not_show_prefs', 'use_mopidy_scan') as $p) {
 				if (array_key_exists($p, $_POST)) {
 					$_POST[$p] = true;
 				} else {
