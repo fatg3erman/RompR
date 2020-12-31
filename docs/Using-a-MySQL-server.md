@@ -4,7 +4,9 @@ By default, RompЯ uses SQLite for its database. This option requires no setup a
 
 If you would like to use a MySQL server instead - perhaps because you're already running one - then you can do so.
 
-Note that *unless you have a really good reason to use MySQL, SQLite is always better*. MySQL will not give superior performance unless you have a collection of over 100,000 tracks and even then it's marginal. Also MySQL does not, by default, support the full UTF8 character set and this may cause problems including being simply unable to add some tracks into your collection. Unless you really really know what you're doing, use SQLite, it's just better.
+Note that *unless you have a really good reason to use MySQL, SQLite is always better*.
+MySQL will almost never give superior performance. In my testing on a Raspberry Pi 4, SQLite is around 30% faster than MariaDB.
+Unless you really really know what you're doing, use SQLite, it's just better.
 
 ## Install MySQL
 

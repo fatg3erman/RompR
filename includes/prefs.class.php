@@ -284,8 +284,10 @@ class prefs {
 
 				case 68:
 					# Remove outdated, offensive terminology
-					self::$prefs['multihosts'][$key]['mopidy_remote'] = self::$prefs['multihosts'][$key]['mopidy_slave'];
-					unset(self::$prefs['multihosts'][$key]['mopidy_slave']);
+					if (array_key_exists('mopidy_slave', self::$prefs['multihosts'][$key])) {
+						self::$prefs['multihosts'][$key]['mopidy_remote'] = self::$prefs['multihosts'][$key]['mopidy_slave'];
+						unset(self::$prefs['multihosts'][$key]['mopidy_slave']);
+					}
 					break;
 
 				case 69:
