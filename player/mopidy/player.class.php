@@ -13,7 +13,8 @@ class player extends base_mpd_player {
 		if (prefs::$prefs['use_mopidy_scan']) {
 			logger::mark('MOPIDY', 'Using mopidy local scan');
 			fwrite($this->monitor, "\n Scanning Files");
-			exec('sudo mopidyctl local scan');
+			$dir = getcwd();
+			exec('sudo mopidyctl local scan >> '.$dir.'/prefs/monitor 2>&1');
 			logger::mark('MOPIDY', 'Mopidy local scan finished');
 		}
 		$dirs = prefs::$prefs['mopidy_collection_folders'];

@@ -8,6 +8,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * All this code reorganisation also means that **if you're running romonitor you must restart it after installing this version**
 * If you're using Snapcast, RompR now uses the Snapcast JSON-RPC API so you may need to change the port you are using and make sure the JSON-RPC API is enabled in your snapserver configuration. (The default port is 1780)
 * Mopidy users - if your mopidy-http interface is enabled, RompR can use it for better responsiveness and albumart
+* Mopidy users - there is now an automatic way to run [mopidyctl local scan](/RompR/Rompr-And-Mopidy) when updating the Music Collection.
 * Album Art Search now uses Bing instead of Google Images because Google broke my code and Bing's API is better. You'll need to check the docs for how to get this set up
 * **There is a new dependency on php-intl. You should install this package.** macOS users, if someone can figure out how to get Locale working on macOS php I'd like to hear
 * Due to code reorganisation, some of the endpoints used for automation have changed:
