@@ -185,7 +185,7 @@ class collection_radio extends database {
 
 				if (preg_match('/db_function_(.+)$/', $rule['db_key'], $matches)) {
 					$function = $matches[1];
-					$sqlstring .= $function($rule['option'], trim($value));
+					$sqlstring .= $this->{$function}($rule['option'], trim($value));
 				} else {
 					switch ($rule['option']) {
 						case RADIO_RULE_OPTIONS_STRING_IS:
