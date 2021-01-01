@@ -164,6 +164,10 @@ body.setup
     border-top:1px solid #bbbbbb;
 }
 
+.border-red {
+    border: 1px solid red;
+}
+
 a.album:visited
 {
     color:#222222;
