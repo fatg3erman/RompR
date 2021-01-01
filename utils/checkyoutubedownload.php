@@ -1,16 +1,16 @@
 <?php
 chdir('..');
+include('includes/vars.php');
 include('includes/functions.php');
-$status = array( 'info' => 'Starting.....');
-$progress_file = 'prefs/youtubedl/dlprogress_'.$_REQUEST['key'];
-if (file_exists($progress_file)) {
-	$stuff = file($progress_file);
-	$ttindex = trim(array_shift($stuff));
-	$lastline = trim(array_pop($stuff));
-	if (preg_match('/\[ffmpeg\]\s*Destination:\s*(.+)$/', $lastline, $matches)) {
-		$lastline .= '<br />Written '.format_bytes(filesize(trim($matches[1]))).'bytes';
+$retval = "Preparing...";
+$reader = new minotaur('prefs/youtubedl/dlprogress_'.$_REQUEST['key']);
+$r = $reader->get_last_line_of_file();
+if ($r !== false) {
+	if (preg_match('/\[ffmpeg\]\s*Destination:\s*(.+)$/', $r, $matches)) {
+		$retval = 'Writing Audio : Written '.format_bytes(filesize(trim($matches[1]))).'bytes';
+	} else {
+		$retval = $r;
 	}
-	$status['info'] = $lastline;
 }
-print json_encode($status);
+print json_encode(array('info' => $retval));
 ?>

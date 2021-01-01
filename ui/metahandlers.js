@@ -28,71 +28,7 @@ var metaHandlers = function() {
 			data.streamuri = playlistinfo.file;
 			data.file = null;
 		}
-
 		return {...playlistinfo, ...data};
-
-		// var data = {};
-		// if (playlistinfo.Title) {
-		// 	data.title = playlistinfo.Title;
-		// }
-		// if (playlistinfo.trackartist) {
-		// 	data.artist = playlistinfo.trackartist;
-		// }
-		// if (playlistinfo.Track) {
-		// 	data.trackno = playlistinfo.Track;
-		// }
-		// if (playlistinfo.Time) {
-		// 	data.duration = playlistinfo.Time;
-		// } else {
-		// 	data.duration = 0;
-		// }
-		// if (playlistinfo.type) {
-		// 	data.type = playlistinfo.type;
-		// }
-		// if (playlistinfo.Disc) {
-		// 	data.disc = playlistinfo.Disc;
-		// }
-		// if (playlistinfo.Genre) {
-		// 	data.genre = playlistinfo.Genre;
-		// }
-		// if (playlistinfo.albumartist
-		// 	&& playlistinfo.Album != "SoundCloud"
-		// 	&& playlistinfo.type != "stream") {
-		// 	data.albumartist = playlistinfo.albumartist;
-		// } else {
-		// 	if (playlistinfo.trackartist) {
-		// 		data.albumartist = playlistinfo.trackartist;
-		// 	}
-		// }
-		// if (playlistinfo.metadata && playlistinfo.metadata.album.uri) {
-		// 	data.albumuri = playlistinfo.metadata.album.uri;
-		// }
-		// if (playlistinfo.type != "stream" && playlistinfo.images && playlistinfo.images.small) {
-		// 	data.image = playlistinfo.images.small;
-		// }
-		// if ((playlistinfo.type == "local" || playlistinfo.type == "podcast") && playlistinfo.Album) {
-		// 	data.album = playlistinfo.Album;
-		// }
-		// if (playlistinfo.file) {
-		// 	if (playlistinfo.type == "local" || playlistinfo.type == "podcast") {
-		// 		if (playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//) && prefs.player_backend == "mpd") {
-		// 			var sc = playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//);
-		// 			data.uri = "soundcloud://track/"+sc[1];
-		// 		} else {
-		// 			data.uri = playlistinfo.file;
-		// 		}
-		// 	} else if (playlistinfo.type == "stream") {
-		// 		data.streamname = playlistinfo.Album;
-		// 		data.streamimage = playlistinfo.images.small;
-		// 		data.streamuri = playlistinfo.file;
-		// 	}
-		// }
-		// if (playlistinfo.year) {
-		// 	data.date = playlistinfo.year;
-		// } else {
-		// 	data.date = 0;
-		// }
-		// return data;
 	}
 
 	function youtubeDownloadMonitor(uri) {
@@ -143,55 +79,14 @@ var metaHandlers = function() {
 				var tracks = new Array();
 				debug.debug('DROPPLUGIN', 'In doMeta');
 				$.each($('.selected').filter(removeOpenItems), function (index, element) {
-					// var uri = unescapeHtml(decodeURIComponent($(element).attr("name")));
-					// debug.log("DROPPLUGIN","Dragged",uri,"to",name);
-					// if ($(element).hasClass('directory')) {
-					// 	tracks.push({
-					// 		file: decodeURIComponent($(element).children('input').first().attr('name')),
-					// 		trackartist: 'geturisfordir',
-					// 		Title: 'dummy',
-					// 		urionly: '1',
-					// 		action: action,
-					// 		attributes: attributes
-					// 	});
-					// } else if ($(element).hasClass('clickalbum')) {
-					// 	tracks.push({
-					// 		file: uri,
-					// 		trackartist: 'geturis',
-					// 		Title: 'dummy',
-					// 		urionly: '1',
-					// 		action: action,
-					// 		attributes: attributes
-					// 	});
-					// } else if ($(element).hasClass('playlistalbum')) {
-					// 	var tits = playlist.getAlbum($(element).attr('name'));
-					// 	for (var i in tits) {
-					// 		var t = getPostData(tits[i]);
-					// 		t.urionly = 1;
-					// 		t.action = action;
-					// 		t.attributes = attributes;
-					// 		tracks.push(t);
-					// 	}
-					// 	$(element).removeClass('selected');
-					// } else if (element.hasAttribute('romprid')) {
-					// 	var t = getPostData(playlist.getId($(element).attr('romprid')));
-					// 	t.urionly = 1;
-					// 	t.action = action;
-					// 	t.attributes = attributes;
-					// 	tracks.push(t);
-					// 	$(element).removeClass('selected');
-					// } else if ($(element).hasClass('playlisttrack') || $(element).hasClass('clickloadplaylist') || $(element).hasClass('clickloaduserplaylist')) {
-					// 	infobar.notify("Sorry, you can't add tracks from playlists");
-					// } else {
-						tracks.push({
-							file: unescapeHtml(decodeURIComponent($(element).attr("name"))),
-							trackartist: 'dummy',
-							Title: 'dummy',
-							urionly: '1',
-							action: action,
-							attributes: attributes
-						});
-					// }
+					tracks.push({
+						file: unescapeHtml(decodeURIComponent($(element).attr("name"))),
+						trackartist: 'dummy',
+						Title: 'dummy',
+						urionly: '1',
+						action: action,
+						attributes: attributes
+					});
 				});
 				if (tracks.length > 0) {
 					dbQueue.request(tracks,
