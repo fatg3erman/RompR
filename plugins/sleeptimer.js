@@ -3,7 +3,7 @@ var sleepTimer = function() {
 	var inctimer = null;
 	var inctime = 500;
 	var incamount = null;
-	var sleeptime = parseInt(prefs.sleeptime);
+	var sleeptime = 0;
 	var sleeptimer = null;
 	var uservol = 100;
 	var volinc = 1;
@@ -103,6 +103,7 @@ var sleepTimer = function() {
 		},
 
 		setup: function() {
+			sleeptime = parseInt(prefs.sleeptime);
 			var d = uiHelper.createPluginHolder('icon-sleep', language.gettext('button_sleep'), 'sleeptimer_icon', 'sleeppanel');
 			if (d === false) {
 				return false;
