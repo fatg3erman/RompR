@@ -92,7 +92,7 @@ class metabackup extends metaDatabase {
 				$this->set($trackdata);
 				$this->check_transaction();
 				$progress = round(($i/count($tracks))*100);
-				fwrite($monitor, "\n<b>Restoring Manually Added Tracks : </b>".$progress."%");
+				fwrite($monitor, "\n<b>Restoring Manually Added Tracks : </b>".$progress."%\n");
 			}
 		}
 		if (file_exists('prefs/databackups/'.$backup.'/ratings.json')) {
@@ -106,7 +106,7 @@ class metabackup extends metaDatabase {
 				$this->set($trackdata);
 				$this->check_transaction();
 				$progress = round(($i/count($tracks))*100);
-				fwrite($monitor, "\n<b>Restoring Ratings : </b>".$progress."%");
+				fwrite($monitor, "\n<b>Restoring Ratings : </b>".$progress."%\n");
 			}
 		}
 		if (file_exists('prefs/databackups/'.$backup.'/tags.json')) {
@@ -120,7 +120,7 @@ class metabackup extends metaDatabase {
 				$this->set($trackdata);
 				$this->check_transaction();
 				$progress = round(($i/count($tracks))*100);
-				fwrite($monitor, "\n<b>Restoring Tags : </b>".$progress."%");
+				fwrite($monitor, "\n<b>Restoring Tags : </b>".$progress."%\n");
 			}
 		}
 		if (file_exists('prefs/databackups/'.$backup.'/playcounts.json')) {
@@ -147,10 +147,10 @@ class metabackup extends metaDatabase {
 				$this->updateAudiobookState($trackdata);
 				$this->check_transaction();
 				$progress = round(($i/count($tracks))*100);
-				fwrite($monitor, "\n<b>Restoring Spoken Word Tracks : </b>".$progress."%");
+				fwrite($monitor, "\n<b>Restoring Spoken Word Tracks : </b>".$progress."%\n");
 			}
 		}
-		fwrite($monitor, "\n<b>Cleaning Up...</b>");
+		fwrite($monitor, "\n<b>Cleaning Up...</b>\n");
 		// Now... we may have restored data on tracks that were previously local and now aren't there any more.
 		// If they're local tracks that have been removed, then we don't want them or care about their data
 		if (prefs::$prefs['player_backend'] == "mpd") {
@@ -163,7 +163,7 @@ class metabackup extends metaDatabase {
 		$this->remove_cruft();
 		$this->update_track_stats();
 		$this->close_transaction();
-		fwrite($monitor, "\n ");
+		fwrite($monitor, "\n \n");
 		fclose($monitor);
 	}
 

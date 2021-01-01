@@ -136,31 +136,36 @@ function find_executable($prog) {
 }
 
 function sql_init_fail($message) {
+	global $title, $setup_error;
 	header("HTTP/1.1 500 Internal Server Error");
-?>
-<html><head>
-<link rel="stylesheet" type="text/css" href="css/layout-january.css" />
-<link rel="stylesheet" type="text/css" href="themes/Darkness.css" />
-<title>Badgers!</title>
-</head>
-<body>
-<h2 align="center" style="font-size:200%">Collection Database Error</h2>
-<h4 align="center">It's all gone horribly wrong</h2>
-<br>
-<?php
-print '<h3 align="center">RompЯ encountered an error while checking your '.
-	ucfirst(prefs::$prefs['collection_type']).' database.</h3>';
-?>
-<h3 align="center">An SQLite or MySQL database is required to run RompЯ</h3>
-<h3 align="center">You may find it helpful to <a href="https://fatg3erman.github.io/RompR/" target="_blank">Read The Docs</a></h3>
-<h3 align="center">The error message was:</h3><br>
-<?php
-	print '<div class="bordered" style="width:75%;margin:auto"><p align="center"><b>'.
-		$message.'</b></p></div><br><br></body></html>';
-		$title = "";
+	$setup_error = '<h2 align="center" style="font-size:200%">Collection Database Error</h2>
+	<h4 align="center">It\'s all gone horribly wrong</h4>
+	<h3 align="center">RompЯ encountered an error while checking your '
+	.ucfirst(prefs::$prefs['collection_type']).' database.</h3>
+	<h3 align="center">An SQLite or MySQL database is required to run RompЯ</h3>
+	<h3 align="center">You may find it helpful to <a href="https://fatg3erman.github.io/RompR/" target="_blank">Read The Docs</a></h3>
+	<h3 align="center">The error message was:</h3><br>
+	<div class="bordered" style="width:75%;margin:auto"><p align="center"><b>'.
+	$message.'</b></p></div><br><br></body></html>';
+	$title = "RompR Backend Setup";
 	include('setupscreen.php');
 	exit(0);
+}
 
+function big_bad_fail($message) {
+	global $title, $setup_error;
+	header("HTTP/1.1 500 Internal Server Error");
+	$setup_error = '<h2 align="center" style="font-size:200%">RompЯ Setup Error</h2>
+	<h4 align="center">It\'s all gone horribly wrong</h4>
+	<h3 align="center">RompЯ encountered an error while checking your '
+	.'installation.</h3>
+	<h3 align="center">You may find it helpful to <a href="https://fatg3erman.github.io/RompR/" target="_blank">Read The Docs</a></h3>
+	<h3 align="center">The error message was:</h3><br>
+	<div class="bordered" style="width:75%;margin:auto"><p align="center"><b>'.
+	$message.'</b></p></div><br><br></body></html>';
+	$title = "RompR Backend Setup";
+	include('setupscreen.php');
+	exit(0);
 }
 
 function connect_fail($t) {

@@ -28,7 +28,7 @@ class player extends base_mpd_player {
 				}
 			}
 		}
-		fwrite($this->monitor, "\nUpdating Database");
+		fwrite($this->monitor, "\nUpdating Database\n");
 	}
 
 	private function musicCollectionSpotifyPlaylistHack() {

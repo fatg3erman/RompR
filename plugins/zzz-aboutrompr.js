@@ -6,14 +6,18 @@ var aboutRompr = function() {
 
       open: function() {
             if (about == null) {
-      	         about = browser.registerExtraPlugin("about", "About RompЯ (version "+rompr_version+")", aboutRompr);
+      	     about = browser.registerExtraPlugin("about", "About RompЯ (version "+rompr_version+")", aboutRompr);
                   // randomly change the url to avoid the cache
-                  $("#aboutfoldup").load("includes/begging.html?_="+Math.round(Math.random()*10000), function() {
+                  $.get("utils/versioninfo.php?_="+Math.round(Math.random()*10000), function(data) {
+                        $("#aboutfoldup").empty().append(data);
                         about.slideToggle('fast', function() {
                               browser.goToPlugin("about");
-                              $.get("includes/about.html?_="+Math.round(Math.random()*10000), function(data) {
+                              $.get("includes/begging.html?_="+Math.round(Math.random()*10000), function(data) {
                                     $("#aboutfoldup").append(data);
-                                    $('#fnockulator').load("includes/license.html?_="+Math.round(Math.random()*10000));
+                                    $.get("includes/about.html?_="+Math.round(Math.random()*10000), function(data) {
+                                          $("#aboutfoldup").append(data);
+                                          $('#fnockulator').load("includes/license.html?_="+Math.round(Math.random()*10000));
+                                    });
                               });
                         });
                   });

@@ -4,6 +4,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 
 ## Version 1.52
 * Almost all the backend code has been extensively reworked to make it cleaner and more efficient
+* To install this version of RompЯ over an earlier version you must *delete everything except your albumart and prefs directories* and then copy the new version into your rompr directory
 * All this code reorganisation also means that **if you're running [romonitor](/Rompr-And-Mobiles) you must restart it after installing this version**
 * If you're using Snapcast, RompR now uses the Snapcast JSON-RPC API so you may need to change the port you are using and make sure the JSON-RPC API is enabled in your snapserver configuration. (The default port is 1780)
 * Mopidy users - if your mopidy-http interface is enabled, RompR can use it for better responsiveness and albumart

@@ -26,8 +26,11 @@ print '<script language="javascript">'."\n";
 print 'var multihosts = '.json_encode(prefs::$prefs['multihosts']).";\n";
 print '</script>';
 print '</head>
-<body class="setup" style="overflow-y:scroll">
-	<div class="bordered dingleberry setupdiv">
+<body class="setup" style="overflow-y:scroll">';
+if ($setup_error !== null)
+		print $setup_error;
+
+print '<div class="bordered dingleberry setupdiv">
 	<h3>';
 print $title;
 print '</h3>';

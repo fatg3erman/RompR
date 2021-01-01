@@ -7,13 +7,23 @@ header("Expires: 0");
 header("Content-Type: text/html; charset=UTF-8");
 
 require_once ("includes/vars.php");
+require_once ("includes/functions.php");
+
+//
+// Do some important pre-load checks
+//
 
 if (!is_dir('skins/'.$skin)) {
-	print '<h3>Skin '.htmlspecialchars($skin).' does not exist!</h3>';
-	exit(0);
+	big_bad_fail('Skin '.$skin.' does not exist!');
 }
 
-require_once ("includes/functions.php");
+if (file_exists('collection/collection.php')) {
+	big_bad_fail('Remains of an earlier installation still exist. To install this version of RompЯ you must
+		delete <b>everything except your albumart and prefs directories</b> and then copy the new version
+		into your rompr directory.');
+}
+
+check_php_installation();
 
 //
 // Check to see if a specific player has been requested in the URL
@@ -265,5 +275,19 @@ include('skins/'.$skin.'/skin.php');
 <?php
 logger::mark("INIT FINISHED", "******++++++======------******------======++++++******");
 
+function check_php_installation() {
+	if (version_compare(phpversion(), ROMPR_MIN_PHP_VERSION, '<' )) {
+		big_bad_fail('Your version of PHP is too old. You need at least version '.ROMPR_MIN_PHP_VERSION);
+	}
+	foreach (['mbstring', 'PDO', 'curl', 'date', 'fileinfo', 'json', 'simpleXML'] as $x) {
+		check_php_extension($x);
+	}
+}
+
+function check_php_extension($x) {
+	if (phpversion($x) === false) {
+		big_bad_fail('Your installation of PHP is missing the '.$x.' extension');
+	}
+}
 
 ?>

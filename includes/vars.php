@@ -114,10 +114,13 @@ if(array_key_exists('skin', $_REQUEST)) {
 	}
 }
 $skin = trim($skin);
-setcookie('skin', $skin, time()+365*24*60*60*10,'/');
-logger::core("INIT", "Using skin : ".$skin);
-set_include_path('skins/'.$skin.PATH_SEPARATOR.get_include_path());
-
+if (is_dir('skins/'.$skin)) {
+	setcookie('skin', $skin, time()+365*24*60*60*10,'/');
+	logger::core("INIT", "Using skin : ".$skin);
+	set_include_path('skins/'.$skin.PATH_SEPARATOR.get_include_path());
+	// index.php wil take us to the error screen if skin doesn't exist. It's important we don't set the cookie
+}
+$setup_error = null;
 // ====================================================================
 
 function multi_implode($array, $glue = ', ') {

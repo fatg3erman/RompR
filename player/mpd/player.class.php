@@ -34,7 +34,7 @@ class player extends base_mpd_player {
 				yield $filedata;
 			}
 		}
-		fwrite($this->monitor, "\nUpdating Database");
+		fwrite($this->monitor, "\nUpdating Database\n");
 	}
 
 	public function collectionUpdateDone() {

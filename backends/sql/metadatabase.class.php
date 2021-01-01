@@ -454,6 +454,7 @@ class metaDatabase extends collection_base {
 		$start_time = time();
 		logger::mark("FIND ITEM", "Looking for item ".$data['Title']);
 		$ttids = array();
+
 		if ($urionly && $data['file']) {
 			logger::log("FIND ITEM", "  Trying by URI ".$data['file']);
 			$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null, "SELECT TTindex FROM Tracktable WHERE Uri = ?", $data['file']);
@@ -560,6 +561,14 @@ class metaDatabase extends collection_base {
 				}
 			}
 		}
+
+		if (count($ttids) == 0 && !$urionly && $data['file']) {
+			// Just in case. Sometimes Spotify changes titles on us.
+			logger::log("FIND ITEM", "  Trying by URI ".$data['file']);
+			$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null, "SELECT TTindex FROM Tracktable WHERE Uri = ?", $data['file']);
+			$ttids = array_merge($ttids, $t);
+		}
+
 		$this->print_debug_ttids($ttids, $start_time);
 		return $ttids;
 	}
