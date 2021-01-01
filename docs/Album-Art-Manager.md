@@ -61,3 +61,7 @@ The switch from Google to Microsoft is likely to raise a few eyebrows, so here i
 * I had Bing search working within 30 minutes of signing up, including writing code. That's really all that matters in the end.
 
 It's come to something when Microsoft are providing a better service than Google, but hey-ho, times change. Google are the new Microsoft. Microsoft are the new Google.
+
+Note that you will eventually have to "Upgrade" to a Pay-As-You go plan on Azure, but the only API RompR uses is currently free so should not cost you anything.
+By entering any information relating to your Azure account into RompR you are agreeing that the developers of RompR are not responsible if you end up paying anything for your Azure account.
+Sorry to have to say that, but some people are dicks.
