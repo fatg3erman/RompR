@@ -1095,7 +1095,7 @@ class metaDatabase extends collection_base {
 				exit(0);
 			}
 			$progress_file = 'prefs/youtubedl/dlprogress_'.md5($data['file']);
-			file_put_contents($progress_file, $ttindex."\n");
+			file_put_contents($progress_file, 'Downloading '.$uri_to_get."\n");
 			if (!is_dir('prefs/youtubedl/'.$ttindex)) {
 				mkdir('prefs/youtubedl/'.$ttindex);
 			}

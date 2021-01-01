@@ -1,6 +1,5 @@
 window.debug = (function() {
 
-	var level = prefs.debug_enabled;
 	var ignoring = new Array();
 	var highlighting = new Array();
 	var colours =  new Array();
@@ -28,7 +27,7 @@ window.debug = (function() {
 	}
 
 	function doTheLogging(loglevel, args) {
-		if (loglevel > level) return;
+		if (!prefs.debug_enabled || loglevel > prefs.debug_enabled) return;
 		var module = args.shift();
 		if (ignoring[module]) return;
 		if (focuson.length > 0 && focuson.indexOf(module) == -1) return;
@@ -146,18 +145,17 @@ window.debug = (function() {
 		},
 
 		setLevel: function(l) {
-			if (l == level) {
+			if (l == prefs.debug_enabled) {
 				console.log("%cDebugging is already set to Level "+l+". Duh.", 'font-weight:bold;font-size:300%');
 				return false;
 			}
-			level = l;
 			prefs.save({debug_enabled: l});
 			console.log("%cDebugging set to level "+l+". Aren't you clever?", 'font-weight:bold;font-size:200%');
 			return true;
 		},
 
 		getLevel: function() {
-			return level;
+			return prefs.debug_enabled;
 		},
 
 		stackTrace: function(v) {
