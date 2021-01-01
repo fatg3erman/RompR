@@ -27,13 +27,13 @@ print 'var multihosts = '.json_encode(prefs::$prefs['multihosts']).";\n";
 print '</script>';
 print '</head>
 <body class="setup" style="overflow-y:scroll">';
-if ($setup_error !== null)
-		print $setup_error;
 
 print '<div class="bordered dingleberry setupdiv">
-	<h3>';
+	<br /><h2>';
 print $title;
-print '</h3>';
+print '</h2>';
+if ($setup_error !== null)
+		print $setup_error;
 print '<p>'.language::gettext("setup_labeladdresses").'</p>';
 print '<p class="tiny">'.language::gettext("setup_addressnote").'</p>';
 print '<form name="mpdetails" action="index.php" method="post">';

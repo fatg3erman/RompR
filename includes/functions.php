@@ -138,8 +138,8 @@ function find_executable($prog) {
 function sql_init_fail($message) {
 	global $title, $setup_error;
 	header("HTTP/1.1 500 Internal Server Error");
-	$setup_error = error_message('RompЯ encountered an error while checking your '.ucfirst(prefs::$prefs['collection_type']).' database', $message);
-	$title = "RompR Backend Setup";
+	$setup_error = error_message($message);
+	$title = 'RompЯ encountered an error while checking your '.ucfirst(prefs::$prefs['collection_type']).' database';
 	include('setupscreen.php');
 	exit(0);
 }
@@ -147,24 +147,21 @@ function sql_init_fail($message) {
 function big_bad_fail($message) {
 	global $title, $setup_error;
 	header("HTTP/1.1 500 Internal Server Error");
-	$setup_error = error_message('RompЯ encountered an error while checking your installation', $message);
-	$title = "RompR Backend Setup";
+	$setup_error = error_message($message);
+	$title = 'RompЯ encountered an error while checking your installation';
 	include('setupscreen.php');
 	exit(0);
 }
 
-function error_message($line, $message) {
-	return '<div class="bordered dingleberry setupdiv"><br><h2 align="center" style="font-size:200%">RompЯ Setup Error</h2>
-	<h4 align="center">It\'s all gone horribly wrong</h4>
-	<h3 align="center">'.$line.'</h3>
-	<h3 align="center">You may find it helpful to <a href="https://fatg3erman.github.io/RompR/" target="_blank">Read The Docs</a></h3>
+function error_message($message) {
+	return '<h3 align="center">You may find it helpful to <a href="https://fatg3erman.github.io/RompR/" target="_blank">Read The Docs</a></h3>
 	<h3 align="center">The error message was:</h3><br>
 	<div class="border-red bordered" style="width:75%;margin:auto"><p align="center"><b>'.
-	$message.'</b></p></div><br></div>';
+	$message.'</b></p></div><br>';
 }
 
 function connect_fail($t) {
-	global $title;
+	global $title, $setup_error;
 	logger::warn("INIT", "MPD Connection Failed");
 	$title = $t;
 	include("setupscreen.php");
