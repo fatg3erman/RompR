@@ -317,7 +317,7 @@ class poDatabase extends database {
 			exit(0);
 		}
 		logger::mark("PODCASTS", "Adding New Podcast",$podcast['Title']);
-
+		$this->open_transaction();
 		if ($this->sql_prepare_query(true, null, null, null,
 			"INSERT INTO Podcasttable
 			(FeedURL, LastUpdate, Image, Title, Artist, RefreshOption, SortMode, DisplayMode, DaysLive, Description, Version, Subscribed, LastPubDate, Category)
@@ -361,6 +361,7 @@ class poDatabase extends database {
 				}
 			}
 		}
+		$this->close_transaction();
 		return $newpodid;
 	}
 
@@ -402,6 +403,7 @@ class poDatabase extends database {
 			return $podid;
 		}
 		$podcast = $this->parse_rss_feed($podetails->FeedURL, $podid, $podetails->LastPubDate);
+		$this->open_transaction();
 		if ($podetails->Subscribed == 1 && prefs::$prefs['podcast_mark_new_as_unlistened']) {
 			$this->generic_sql_query("UPDATE PodcastTracktable SET New = 0 WHERE PODindex = ".$podetails->PODindex);
 		}
@@ -419,6 +421,7 @@ class poDatabase extends database {
 				),
 				$podid);
 			// Still check to keep (days to keep still needs to be honoured)
+			$this->close_transaction();
 			if ($this->check_tokeep($podetails, $podid) || prefs::$prefs['podcast_mark_new_as_unlistened']) {
 				return $podid;
 			} else {
@@ -469,6 +472,7 @@ class poDatabase extends database {
 			}
 		}
 		$this->check_tokeep($podetails, $podid);
+		$this->close_transaction();
 		$this->clear_refresh_pid();
 		return $podid;
 	}
