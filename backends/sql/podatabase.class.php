@@ -1312,10 +1312,8 @@ class poDatabase extends database {
 		$pods = $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
 			"SELECT PODindex, PODTrackindex FROM Podcasttable JOIN PodcastTracktable USING (PODindex)
 			WHERE
-			-- Podcasttable.Artist = ? AND
 			Podcasttable.Title = ? AND
 			PodcastTracktable.Title = ?",
-			// $artist,
 			$album,
 			$title);
 		foreach ($pods as $pod) {
