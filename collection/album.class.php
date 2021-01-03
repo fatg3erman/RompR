@@ -127,9 +127,9 @@ class album {
 			}
 		}
 
-		if ($this->numOfDiscs > 0 && ($this->numOfTrackOnes <= 1 || $this->numOfTrackOnes == $this->numOfDiscs)) {
-			return $this->numOfDiscs;
-		}
+		// if ($this->numOfDiscs > 0 && ($this->numOfTrackOnes <= 1 || $this->numOfTrackOnes == $this->numOfDiscs)) {
+		// 	return $this->numOfDiscs;
+		// }
 
 		$discs = array();
 		$number = 1;
