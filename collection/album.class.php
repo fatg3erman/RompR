@@ -131,44 +131,35 @@ class album {
 		// 	return $this->numOfDiscs;
 		// }
 
-		$discs = array();
+		$tracks = array();
+		$this->numOfDiscs = 0;
 		$number = 1;
-		foreach ($this->tracks as $ob) {
-			if (is_numeric($ob->tags['Track'])) {
-				$track_no = intval($ob->tags['Track']);
+		foreach ($this->tracks as &$track) {
+			if (!is_numeric($track->tags['Track']) || $track->tags['Track'] == 0) {
+				$track->tags['Track'] = $number;
+			}
+			$number = intval($track->tags['Track'])+1;
+			if (!array_key_exists($track->tags['Track'], $tracks)) {
+				$tracks[$track->tags['Track']] = 1;
 			} else {
-				$track_no = $number;
+				$tracks[$track->tags['Track']]++;
 			}
-			# Just in case we have a multiple disc album with no disc number tags
-			if (is_numeric($ob->tags['Disc']) && $ob->tags['Disc'] > 0) {
-				$discno = intval($ob->tags['Disc']);
-			} else {
-				$discno = 1;
-			}
-			if (!array_key_exists($discno, $discs)) {
-				$discs[$discno] = array();
-			}
-			while(array_key_exists($track_no, $discs[$discno])) {
-				$discno++;
-				if (!array_key_exists($discno, $discs)) {
-					$discs[$discno] = array();
-				}
-			}
-			$discs[$discno][$track_no] = $ob;
-			$ob->tags['Disc'] = $discno;
-			$number++;
 		}
-		$numdiscs = count($discs);
-
-		$this->tracks = array();
-		ksort($discs, SORT_NUMERIC);
-		foreach ($discs as $disc) {
-			ksort($disc, SORT_NUMERIC);
-			$this->tracks = array_merge($this->tracks, $disc);
+		// Assign disc numbers in reverse order so that tracks that are later in the list
+		// get higher disc numbers. This makes most sense.
+		$this->tracks = array_reverse($this->tracks);
+		foreach ($this->tracks as &$track) {
+			if (!is_numeric($track->tags['Disc'])) {
+				$track->tags['Disc'] = $tracks[$track->tags['Track']];
+				$tracks[$track->tags['Track']]--;
+			}
+			$this->numOfDiscs = max($this->numOfDiscs, $track->tags['Disc']);
 		}
-		$this->numOfDiscs = $numdiscs;
+		// Reverse the array again so they get added to the db in the same order we read them in
+		// so that if all else fails they might come out in the right order
+		$this->tracks = array_reverse($this->tracks);
 
-		return $numdiscs;
+		return $this->numOfDiscs;
 	}
 
 	public function checkForDuplicate($t) {

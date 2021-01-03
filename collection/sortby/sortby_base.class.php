@@ -254,7 +254,7 @@ class sortby_base {
 					AND tr.Artistindex = ta.Artistindex
 					AND al.Albumindex = tr.Albumindex
 			GROUP BY tr.TTindex
-			ORDER BY CASE WHEN title LIKE 'Album: %' THEN 1 ELSE 2 END, disc, trackno";
+			ORDER BY CASE WHEN title LIKE 'Album: %' THEN 1 ELSE 2 END, disc, trackno, title";
 		return prefs::$database->generic_sql_query($qstring);
 	}
 
