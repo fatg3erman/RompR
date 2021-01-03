@@ -134,7 +134,7 @@ class metabackup extends metaDatabase {
 				$this->inc($trackdata);
 				$this->check_transaction();
 				$progress = round(($i/count($tracks))*100);
-				fwrite($monitor, "\n<b>Restoring Playcounts : </b>".$progress."%");
+				fwrite($monitor, "\n<b>Restoring Playcounts : </b>".$progress."%\n");
 			}
 		}
 		if (file_exists('prefs/databackups/'.$backup.'/audiobooks.json')) {
