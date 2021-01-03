@@ -26,6 +26,13 @@ var info_ratings = function() {
 									if (parseInt(trackmeta.usermeta[i]) < parseInt(v)) {
 										debug.log("RATINGS PLUGIN","Update :",i,"is now",v);
 										trackmeta.usermeta[i] = v;
+										metaHandlers.fromPlaylistInfo.setMeta(
+											parent.playlistinfo,
+											'inc',
+											[{attribute: 'Playcount', value: parseInt(v)}],
+											function() { debug.mark('PLAYCOUNT', 'Backend playcount updated') },
+											function() { debug.warn('PLAYCOUNT', 'Failed to update backend playcount') }
+										);
 									} else {
 										debug.debug("RATINGS PLUGIN","Not using update for",i,"as",v,"is less than",trackmeta.usermeta[i]);
 									}
