@@ -922,6 +922,7 @@ $.widget('rompr.spotifyAlbumThing', {
 	_create: function() {
 		var self = this;
 		var ids = new Array();
+		var an = [];
 		this.options.id = this.element.attr('id');
 		this.element.empty();
 		this.element.append('<div class="sizer"></div>');
@@ -972,7 +973,6 @@ $.widget('rompr.spotifyAlbumThing', {
 				appendto = y;
 			}
 			if (this.options.showbiogs) {
-				var an = new Array();
 				for (var ai in a.artists) {
 					an.push(a.artists[ai].name);
 				}

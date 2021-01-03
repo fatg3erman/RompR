@@ -274,11 +274,12 @@ function joinartists(ob) {
 }
 
 function concatenate_artist_names(t) {
-	var f = t.pop();
-	if (t.length == 0) {
+	var shitte = cloneObject(t);
+	var f = shitte.pop();
+	if (shitte.length == 0) {
 		return f;
 	} else {
-		return [t.join(', '), f].join(' & ');
+		return [shitte.join(', '), f].join(' & ');
 	}
 }
 

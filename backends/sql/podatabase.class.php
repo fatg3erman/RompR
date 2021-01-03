@@ -451,6 +451,9 @@ class poDatabase extends database {
 				$podid);
 		}
 		$this->download_image($podcast['Image'], $podid, $podetails->Title);
+		//
+		// NB we're doing a lookup and modify / insert because we can't put a UNIQUE KEY on the Guid column because it's a TEXT field
+		//
 		foreach ($podcast['tracks'] as $track) {
 			$trackid = $this->sql_prepare_query(false, null, 'PODTrackindex' , null, "SELECT PODTrackindex FROM PodcastTracktable WHERE Guid=? AND PODindex = ?", $track['GUID'], $podid);
 			if ($trackid !== null) {
