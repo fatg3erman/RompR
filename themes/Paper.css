@@ -6,7 +6,7 @@
 
 html, body.phone .dropmenu {
     color:#000000;
-    background-image:url('themes/Paper1.jpg');
+    background-image:url('themes/vellum-seamless-repeating-white.jpg');
     /*Required to work around apparent Firefox/Safari dropdown menu redraw bug*/
     background-size:auto;
     background-repeat:repeat;
@@ -137,7 +137,7 @@ input.inbrowser, div.inbrowser {
 }
 
 .popupwindow {
-    background-image:url('themes/vellum-seamless-repeating-white.jpg');
+    background-image:url('themes/Paper1.jpg');
     border-top:1px solid #dddddd;
     border-left:1px solid #dddddd;
 }
