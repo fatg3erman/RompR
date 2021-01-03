@@ -133,12 +133,7 @@ class album {
 
 		$tracks = array();
 		$this->numOfDiscs = 0;
-		$number = 1;
 		foreach ($this->tracks as &$track) {
-			if (!is_numeric($track->tags['Track']) || $track->tags['Track'] == 0) {
-				$track->tags['Track'] = $number;
-			}
-			$number = intval($track->tags['Track'])+1;
 			if (!array_key_exists($track->tags['Track'], $tracks)) {
 				$tracks[$track->tags['Track']] = 1;
 			} else {
