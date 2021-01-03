@@ -262,11 +262,7 @@ class database extends data_base {
 				return "(LastPlayed IS NULL OR TIMESTAMPDIFF(DAY, LastPlayed, CURRENT_TIMESTAMP) > ".$value.")";
 				break;
 
+		}
 	}
-
 }
-
-
-}
-
 ?>
