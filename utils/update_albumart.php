@@ -1,4 +1,5 @@
 <?php
+chdir('..');
 include ("includes/vars.php");
 include ("includes/functions.php");
 prefs::$database = new database();
