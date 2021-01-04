@@ -68,8 +68,9 @@ class collection_base extends database {
 				LEFT JOIN Playcounttable USING (TTindex)
 			WHERE Title = ?
 			AND TrackNo = ?
-			AND Albumname = ?',
-			$filedata['Title'], $filedata['Track'], $filedata['Album']
+			AND Albumname = ?
+			AND Domain = ?',
+			$filedata['Title'], $filedata['Track'], $filedata['Album'], $filedata['domain']
 		);
 		foreach ($result as $tinfo) {
 			if ($tinfo['Uri'] == $filedata['file']) {
@@ -98,8 +99,9 @@ class collection_base extends database {
 					Albumtable
 					JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
 					WHERE Albumname = ?
-					AND Artistname = ?',
-				$filedata['Album'], concatenate_artist_names($filedata['AlbumArtist'])
+					AND Artistname = ?
+					AND Domain = ?',
+				$filedata['Album'], concatenate_artist_names($filedata['AlbumArtist']), $filedata['domain']
 			);
 			foreach ($result as $tinfo) {
 				$data = array_filter($tinfo, function($v) {

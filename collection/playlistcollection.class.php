@@ -16,7 +16,7 @@ class playlistCollection extends collection_base {
 		if ($track->tags['Title'] === null)
 			$track->tags['Title'] = '';
 
-		// Bloody spotify often returns album artist = A & B but track artists 'B' and 'A'.
+		// Bloody spotify often returns album artist = 'A & B' but track artists 'B' and 'A'.
 		// This screws up the playcount stats. They're also not consistent with
 		// capitalisation of articles in Album Artists
 		if (count($filedata['Artist']) > 1) {
