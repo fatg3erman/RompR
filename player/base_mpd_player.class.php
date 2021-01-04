@@ -382,7 +382,7 @@ class base_mpd_player {
 			if ($domains === false || in_array(getDomain($filedata['file']),$domains)) {
 				if ($this->sanitize_data($filedata)) {
 					if (function_exists('hrtime')) {
-						$performance['parsing'] += microtime(true) - $timer;
+						$performance['parsing'] += hrtime(true) - $timer;
 					}
 					yield $filedata;
 				}
