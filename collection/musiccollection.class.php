@@ -188,9 +188,6 @@ class musicCollection extends collection_base {
 		// Tracks must have disc and albumartist tags to be handled by this method.
 		// Loads of static variables to speed things up - we don't have to look things up every time.
 
-		global $performance;
-		if (function_exists('hrtime'))
-			$timer = hrtime(true);
 		static $current_albumartist = null;
 		static $current_album = null;
 		static $current_domain = null;
@@ -210,9 +207,9 @@ class musicCollection extends collection_base {
 			$current_album != $trackobject->tags['Album'] ||
 			$current_domain != $trackobject->tags['domain'] ||
 			($trackobject->tags['X-AlbumUri'] != null && $trackobject->tags['X-AlbumUri'] != $current_albumlink)) {
-			if ($albumobj !== true) {
+			if ($albumobj !== true)
 				$albumobj->check_database();
-			}
+
 			$albumobj = new album($trackobject);
 			$current_albumartist = $trackobject->tags['albumartist'];
 			$current_album = $trackobject->tags['Album'];
@@ -221,8 +218,6 @@ class musicCollection extends collection_base {
 		} else {
 			$albumobj->newTrack($trackobject);
 		}
-		if (function_exists('hrtime'))
-			$performance['trackbytrack'] += hrtime(true) - $timer;
 	}
 
 	public function check_and_update_track(&$trackobj) {
@@ -245,9 +240,6 @@ class musicCollection extends collection_base {
 		// is how we detect user-added tracks and prevent them being deleted on collection updates
 
 		// isaudiobook is 2 for anything manually moved to Spoken Word - we don't want these being reset
-		global $performance;
-		if (function_exists('hrtime'))
-			$timer = hrtime(true);
 		static $current_trackartist = null;
 		static $trackartistindex = null;
 		static $current_genre = null;
@@ -292,8 +284,6 @@ class musicCollection extends collection_base {
 		}
 
 		$this->check_transaction();
-		if (function_exists('hrtime'))
-			$performance['updatetrack'] += hrtime(true) - $timer;
 	}
 
 }
