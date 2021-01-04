@@ -303,7 +303,7 @@ class base_mpd_player {
 	}
 
 	public function parse_list_output($command, &$dirs, $domains) {
-
+		global $performance;
 		// Generator Function for parsing MPD output for 'list...info', 'search ...' etc type commands
 		// Returns MPD_FILE_MODEL
 
@@ -319,7 +319,9 @@ class base_mpd_player {
 		while(  $this->is_connected() &&
 				!feof($this->connection) &&
 				$parts) {
-
+			if (function_exists('hrtime')) {
+				$timer = hrtime(true);
+			}
 			$parts = $this->getline();
 			if (is_array($parts)) {
 				switch ($parts[0]) {
@@ -340,6 +342,9 @@ class base_mpd_player {
 							$filedata['domain'] = getDomain($filedata['file']);
 							if ($domains === false || in_array(getDomain($filedata['file']),$domains)) {
 								if ($this->sanitize_data($filedata)) {
+									if (function_exists('hrtime')) {
+										$performance['parsing'] += hrtime(true) - $timer;
+									}
 									yield $filedata;
 								}
 							}
@@ -376,6 +381,9 @@ class base_mpd_player {
 			$filedata['domain'] = getDomain($filedata['file']);
 			if ($domains === false || in_array(getDomain($filedata['file']),$domains)) {
 				if ($this->sanitize_data($filedata)) {
+					if (function_exists('hrtime')) {
+						$performance['parsing'] += microtime(true) - $timer;
+					}
 					yield $filedata;
 				}
 			}

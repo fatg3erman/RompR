@@ -46,6 +46,10 @@ class collection_base extends database {
 
 	// Looking up this way is hugely faster than looking up by Uri
 	protected function get_extra_track_info(&$filedata) {
+		// It's important to check the domain, since we're returning Albumindexes
+		// and that can make eg spotify search results be put under local albums
+		// We could also just not return the album index, but doing it this way speeds it up
+		// and I don't *think* it'll cause a problem.
 		$data = array();;
 		$result = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
 			'SELECT

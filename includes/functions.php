@@ -824,4 +824,18 @@ function printPlaylistItem($displayname, $fullpath) {
 	print '</div>';
 }
 
+function print_performance_measurements() {
+	global $performance;
+	$hr_timers = ['parsing', 'trackbytrack', 'updatetrack'];
+	logger::mark('TIMINGS','-------------------------------------------------------------------------');
+	$tot = $performance['total'];
+	foreach ($performance as $k => $v) {
+		if (in_array($k, $hr_timers))
+			$v = $v/1000000000;
+		$pc = ($v/$tot)*100;
+		logger::mark('TIMINGS', ucfirst($k),':',$v,'seconds, or',$pc.'%');
+	}
+	logger::mark('TIMINGS','-------------------------------------------------------------------------');
+}
+
 ?>

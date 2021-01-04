@@ -331,20 +331,33 @@ function update_collection() {
 		session_write_close();
 	}
 
+	global $performance;
+	$timer = microtime(true);
+
 	// Browser is now happy. Now we can do our work in peace.
     logger::log('COLLECTION', 'Now were on our own');
 	prefs::$database->open_transaction();
+	$t = microtime(true);
     prefs::$database->cleanSearchTables();
+    $performance['cleansearch'] = microtime(true) - $t;
     logger::log('COLLECTION', 'Preparing update...');
+	$t = microtime(true);
     prefs::$database->prepareCollectionUpdate();
+    $performance['prepareupdate'] = microtime(true) - $t;
     $player = new player();
     logger::log('COLLECTION', 'Doing Update');
+	$t = microtime(true);
     foreach ($player->musicCollectionUpdate() as $filedata) {
     	prefs::$database->newTrack($filedata);
     }
+    $performance['trackbytrack_scan'] = microtime(true) - $t;
+	$t = microtime(true);
 	prefs::$database->tracks_to_database();
+    $performance['tracks_to_database_outer'] = microtime(true) - $t;
     logger::log('COLLECTION', 'Tidying...');
+	$t = microtime(true);
     prefs::$database->tidy_database();
+    $performance['tidydatabase'] = microtime(true) - $t;
     logger::log('COLLECTION', 'Finishing...');
     prefs::$database->remove_findtracks();
 	prefs::$database->close_transaction();
@@ -352,6 +365,10 @@ function update_collection() {
 	$player->collectionUpdateDone();
 	// Clear the update lock
 	prefs::$database->clearUpdateLock();
+
+	$performance['total'] = microtime(true) - $timer;
+
+	print_performance_measurements();
 
 }
 

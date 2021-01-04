@@ -48,6 +48,8 @@ class musicCollection extends collection_base {
 
 	public function tracks_to_database() {
 		// Fluch the previous albumobj from track_by_track
+		global $performance;
+		$timer = microtime(true);
 		$nope = true;
 		$this->do_track_by_track($nope);
 		logger::mark('COLLECTION', 'Starting tracks_to_database');
@@ -56,6 +58,7 @@ class musicCollection extends collection_base {
 			$album->check_database();
 		}
 		$this->albums = array();
+		$performance['sorting'] = microtime(true) - $timer;
 	}
 
 	public function filter_duplicate_tracks() {
@@ -185,6 +188,9 @@ class musicCollection extends collection_base {
 		// Tracks must have disc and albumartist tags to be handled by this method.
 		// Loads of static variables to speed things up - we don't have to look things up every time.
 
+		global $performance;
+		if (function_exists('hrtime'))
+			$timer = hrtime(true);
 		static $current_albumartist = null;
 		static $current_album = null;
 		static $current_domain = null;
@@ -215,7 +221,8 @@ class musicCollection extends collection_base {
 		} else {
 			$albumobj->newTrack($trackobject);
 		}
-
+		if (function_exists('hrtime'))
+			$performance['trackbytrack'] += hrtime(true) - $timer;
 	}
 
 	public function check_and_update_track(&$trackobj) {
@@ -238,7 +245,9 @@ class musicCollection extends collection_base {
 		// is how we detect user-added tracks and prevent them being deleted on collection updates
 
 		// isaudiobook is 2 for anything manually moved to Spoken Word - we don't want these being reset
-
+		global $performance;
+		if (function_exists('hrtime'))
+			$timer = hrtime(true);
 		static $current_trackartist = null;
 		static $trackartistindex = null;
 		static $current_genre = null;
@@ -283,6 +292,8 @@ class musicCollection extends collection_base {
 		}
 
 		$this->check_transaction();
+		if (function_exists('hrtime'))
+			$performance['updatetrack'] += hrtime(true) - $timer;
 	}
 
 }

@@ -5,6 +5,12 @@ if (!$dtz) {
 	date_default_timezone_set('UTC');
 }
 
+$performance = [
+	'parsing' => 0,
+	'trackbytrack' => 0,
+	'updatetrack' => 0
+];
+
 //
 //---------------------------------------------------------------------------------------------
 //
