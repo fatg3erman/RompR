@@ -2,13 +2,9 @@
 class album {
 
 	public $tracks;
-	private $numOfDiscs;
-	private $numOfTrackOnes;
 
 	public function __construct(&$track) {
 		$this->tracks = [$track];
-		$this->numOfTrackOnes = $track->tags['Track'] == 1 ? 1 : 0;
-		$this->numOfDiscs = $track->tags['Disc'];
 	}
 
 	public function newTrack(&$track) {
@@ -31,12 +27,6 @@ class album {
 		}
 		if ($this->tracks[0]->tags['X-AlbumUri'] === null) {
 			$this->tracks[0]->tags['X-AlbumUri'] = $track->tags['X-AlbumUri'];
-		}
-		if ($track->tags['Disc'] !== null && $this->numOfDiscs < $track->tags['Disc']) {
-			$this->numOfDiscs = $track->tags['Disc'];
-		}
-		if ($track->tags['Track'] == 1) {
-			$this->numOfTrackOnes++;
 		}
 	}
 
@@ -127,34 +117,47 @@ class album {
 			}
 		}
 
-		// if ($this->numOfDiscs > 0 && ($this->numOfTrackOnes <= 1 || $this->numOfTrackOnes == $this->numOfDiscs)) {
-		// 	return $this->numOfDiscs;
-		// }
+		// Sort the tracks into discs. This is important because some backends (eg Spotify)
+		// don't return disc numbers and multi-disc albums don't sort properly (and could possibly
+		// result in duplicate tracks)
+
+		// Do NOT attempt to assign track numbers to tracks that don't have them (Track == 0)
+		// because that means what's in the db doesn't match what comes from the player,
+		// which means get_extra_track_info doesn't match the track.
+
+		// The most likely case for Track == 0 is from a backend that doesn't support track numbers
+		// because they're meaningless - eg YouTube, Soundcloud
+		// But another possibility is just badly tagged local tracks. What we really don't want to do
+		// in that case is end up with an album with 14 discs each with one track, becvause it looks shit.
+		// so Track zeroes have some special handling.
+
+		// The following will fail if we have an album where all the tracks has no track number, no disc
+		// number, and the same title. We'll regard them all as the same track. But that's correct.
 
 		$tracks = array();
-		$this->numOfDiscs = 0;
 		foreach ($this->tracks as &$track) {
-			if (!array_key_exists($track->tags['Track'], $tracks)) {
-				$tracks[$track->tags['Track']] = 1;
-			} else {
+			if ($track->tags['Track'] == 0 && $track->tags['Disc'] === null)
+				$track->tags['Disc'] = 1;
+
+			if (array_key_exists($track->tags['Track'], $tracks)) {
 				$tracks[$track->tags['Track']]++;
+			} else {
+				$tracks[$track->tags['Track']] = 1;
 			}
 		}
 		// Assign disc numbers in reverse order so that tracks that are later in the list
 		// get higher disc numbers. This makes most sense.
 		$this->tracks = array_reverse($this->tracks);
 		foreach ($this->tracks as &$track) {
-			if (!is_numeric($track->tags['Disc'])) {
+			if ($track->tags['Disc'] === null) {
 				$track->tags['Disc'] = $tracks[$track->tags['Track']];
 				$tracks[$track->tags['Track']]--;
 			}
-			$this->numOfDiscs = max($this->numOfDiscs, $track->tags['Disc']);
 		}
 		// Reverse the array again so they get added to the db in the same order we read them in
 		// so that if all else fails they might come out in the right order
 		$this->tracks = array_reverse($this->tracks);
 
-		return $this->numOfDiscs;
 	}
 
 	public function checkForDuplicate($t) {

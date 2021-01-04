@@ -687,7 +687,7 @@ class collection_base extends database {
 
 		// Used by utils/getalbumcover.php to get album and artist names etc based on an Image Key
 
-		$retval = array('artist' => null, 'album' => null, 'mbid' => null, 'albumpath' => null, 'albumuri' => null, 'trackuri' => null);
+		$retval = array('artist' => null, 'album' => null, 'mbid' => null, 'albumpath' => null, 'albumuri' => null, 'trackuri' => null, 'dbimage' => null);
 		$queries = array(
 			"SELECT DISTINCT
 				Artisttable.Artistname,
@@ -696,7 +696,8 @@ class collection_base extends database {
 				Albumindex,
 				AlbumUri,
 				isSearchResult,
-				Uri
+				Uri,
+				Image
 			FROM
 				Albumtable
 				JOIN Artisttable ON AlbumArtistindex = Artisttable.Artistindex
@@ -710,7 +711,8 @@ class collection_base extends database {
 				Albumindex,
 				AlbumUri,
 				isSearchResult,
-				Uri
+				Uri,
+				Image
 			FROM
 				Albumtable
 				JOIN Artisttable ON AlbumArtistindex = Artisttable.Artistindex
@@ -741,6 +743,9 @@ class collection_base extends database {
 				}
 				if ($retval['trackuri'] == null) {
 					$retval['trackuri'] = $obj->Uri;
+				}
+				if ($retval['dbimage'] == null) {
+					$retval['dbimage'] = $obj->Image;
 				}
 				logger::log('BACKEND', "Found album",$retval['album'],",in database");
 			}

@@ -14,8 +14,8 @@ class baseAlbumImage {
 	// Remember to keep albumart_translator in uifunctions.js in step with this
 
 	public function __construct($params) {
-		foreach (array('artist', 'album', 'key', 'source', 'file', 'base64data', 'mbid', 'albumpath', 'albumuri', 'trackuri') as $param) {
-			if (array_key_exists($param, $params) && $params[$param] != '') {
+		foreach (array('artist', 'album', 'key', 'source', 'file', 'base64data', 'mbid', 'albumpath', 'albumuri', 'trackuri', 'dbimage') as $param) {
+			if (array_key_exists($param, $params) && $params[$param] != ''  && $params[$param] !== null) {
 				$this->{$param} = $params[$param];
 			} else {
 				$this->{$param} = null;
@@ -43,9 +43,10 @@ class baseAlbumImage {
 		$this->image_downloaded = false;
 		if ($this->baseimage != 'No-Image') {
 			$this->images = $this->image_paths_from_base_image($params['baseimage']);
-			$this->key = $this->make_image_key();
+			if ($this->key === null)
+				$this->key = $this->make_image_key();
 		} else if ($this->key !== null) {
-			logger::log('ALBUMIMAGE', 'Image Infor From Database');
+			logger::log('ALBUMIMAGE', 'Image Info From Database');
 			$this->image_info_from_database();
 		} else {
 			$this->images = $this->image_info_from_album_info();
@@ -83,14 +84,15 @@ class baseAlbumImage {
 
 	private function check_if_image_already_downloaded() {
 		logger::log('ALBUMIMAGE', 'Checking if image exists for', $this->artist, $this->album);
-		$checkimages = $this->image_info_from_album_info();
-		if ($this->image_exists($checkimages['small'])) {
-			logger::log("ALBUMIMAGE", "  ..  File exists");
-			$this->images = $checkimages;
-			return true;
-		} else {
-			return false;
+		foreach (['jpg', 'png', 'svg'] as $ext) {
+		$checkimages = $this->image_info_from_album_info($ext);
+			if ($this->image_exists($checkimages['small'])) {
+				logger::log("ALBUMIMAGE", "  ..  File exists");
+				$this->images = $checkimages;
+				return true;
+			}
 		}
+		return false;
 	}
 
 	public function is_collection_image() {
@@ -193,11 +195,15 @@ class baseAlbumImage {
 		foreach ($info as $k => $v) {
 			$this->{$k} = $v;
 		}
-		$smallimage = $this->basepath.'small/'.$this->key.'.jpg';
+		if ($this->dbimage) {
+			$smallimage = $this->dbimage;
+		} else {
+			$smallimage = $this->basepath.'small/'.$this->key.'.jpg';
+		}
 		$this->images = $this->image_paths_from_base_image($smallimage);
 	}
 
-	protected function image_info_from_album_info() {
+	protected function image_info_from_album_info($ext = 'jpg') {
 		switch ($this->artist) {
 			case 'PLAYLIST':
 				$this->key = $this->make_image_key();
@@ -219,7 +225,7 @@ class baseAlbumImage {
 				$this->basepath = 'albumart/';
 				break;
 		}
-		$smallimage = $this->basepath.'small/'.$this->key.'.jpg';
+		$smallimage = $this->basepath.'small/'.$this->key.'.'.$ext;
 		return $this->image_paths_from_base_image($smallimage);
 	}
 

@@ -30,7 +30,8 @@ class playlistCollection extends collection_base {
 		$albumimage = new baseAlbumImage(array(
 			'baseimage' => $track->tags['X-AlbumImage'],
 			'artist' => imageFunctions::artist_for_image($track->tags['type'], $track->tags['albumartist']),
-			'album' => $track->tags['Album']
+			'album' => $track->tags['Album'],
+			'key' => $track->tags['ImgKey']
 		));
 		$albumimage->check_image($track->tags['domain'], $track->tags['type'], true);
 

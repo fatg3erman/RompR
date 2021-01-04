@@ -90,10 +90,11 @@ class albumImage extends baseAlbumImage {
 			case 'PLAYLIST':
 				logger::log("FUCKINGHELL", "Playlist name changing from ".$this->album." to ".$new_name);
 				if (file_exists($this->images['small'])) {
+					$ext = pathinfo($this->images['small'], PATHINFO_EXTENSION);
 					$oldbasepath = dirname($this->basepath);
 					$oldkey = $this->key;
 					$this->album = $new_name;
-					$this->images = $this->image_info_from_album_info();
+					$this->images = $this->image_info_from_album_info($ext);
 					$newbasepath = dirname($this->basepath);
 					logger::log("ALBUMIMAGE", "Renaming Playlist Image from ".$oldbasepath." to ".$newbasepath);
 					rename($oldbasepath, $newbasepath);
