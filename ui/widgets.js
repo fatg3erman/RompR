@@ -922,11 +922,11 @@ $.widget('rompr.spotifyAlbumThing', {
 	_create: function() {
 		var self = this;
 		var ids = new Array();
-		var an = [];
 		this.options.id = this.element.attr('id');
 		this.element.empty();
 		this.element.append('<div class="sizer"></div>');
 		for (var i in this.options.data) {
+			var an = [];
 			var a = this.options.data[i];
 			debug.debug("SPOTIALBUM","Index is",i,"data is",a);
 			if (this.options.sub && a.hasOwnProperty(this.options.sub)) {
