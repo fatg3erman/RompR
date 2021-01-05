@@ -272,16 +272,24 @@ class sortby_base {
 		if ($fragment) {
 			ob_start();
 		}
-		$numtracks = count($trackarr);
-		$numdiscs = prefs::$database->get_highest_disc($trackarr);
+		$numdiscs = 0;
+		$numtracks = 0;
+		// Because disc and track numbers may not be contiguous and these variables
+		// were named before I realised that. They're actually needed to be maxdiscs and maxtracks
+		foreach ($trackarr as $arr) {
+			$numdiscs = max($numdiscs, $arr['disc']);
+			$numtracks = max($numtracks, $arr['trackno']);
+		}
 		$currdisc = -1;
 		uibits::trackControlHeader($this->why, $this->what, $this->who, $this->when, prefs::$database->get_album_details($this->who));
 		$total_time = 0;
 		$tracktype = null;
 		foreach ($trackarr as $arr) {
+			$arr['numdiscs'] = $numdiscs;
+			$arr['numtracks'] = $numtracks;
 			logger::debug('SORTBY', 'Track', $arr['title']);
 			$total_time += $arr['time'];
-			if ($numdiscs > 1 && $arr['disc'] != $currdisc && $arr['disc'] > 0) {
+			if ($arr['numdiscs'] > 1 && $arr['disc'] != $currdisc && $arr['disc'] > 0) {
 				$currdisc = $arr['disc'];
 				print '<div class="clickable clickdisc playable draggable discnumber indent">'.ucfirst(strtolower(language::gettext("musicbrainz_disc"))).' '.$currdisc.'</div>';
 			}
@@ -290,7 +298,6 @@ class sortby_base {
 			} else {
 				$arr['discclass'] = '';
 			}
-			$arr['numtracks'] = $numtracks;
 			$tracktype = uibits::albumTrack($arr);
 			if ($tracktype == 2 && $this->why == 'b') {
 				// albumTrack will return 2 if this is an :album: link - we add an expandalbum

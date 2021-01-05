@@ -29,12 +29,12 @@ class uibits {
 		print domainIcon($d, 'collectionicon');
 
 		// Track Number
-		if ($data['trackno'] && $data['trackno'] != "" && $data['trackno'] > 0) {
-			print '<div class="tracknumber fixed"';
-			if ($data['numtracks'] > 99 || $data['trackno'] > 99) {
-				print ' style="width:3em"';
-			}
-			print '>'.$data['trackno'].'</div>';
+		if ($data['numtracks'] > 0) {
+			print '<div class="tracknumber fixed" style="width:'.strlen($data['numtracks']).'em">';
+			if ($data['trackno'] > 0)
+				print $data['trackno'];
+
+			print '</div>';
 		}
 
 		// Track Title, Artist, and Rating

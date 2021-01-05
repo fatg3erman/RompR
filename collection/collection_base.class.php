@@ -512,16 +512,6 @@ class collection_base extends database {
 		'</div>';
 	}
 
-	public function get_highest_disc($tracks) {
-		$n = 1;
-		foreach ($tracks as $t) {
-			if ($t['disc'] > $n) {
-				$n = $t['disc'];
-			}
-		}
-		return $n;
-	}
-
 	public function get_album_details($albumindex) {
 		return $this->generic_sql_query(
 			"SELECT Albumname, Artistname, Image, AlbumUri
