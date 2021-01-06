@@ -199,9 +199,8 @@ class data_base {
 	}
 
 	public function check_transaction() {
-		$this->numdone++;
 		if ($this->transaction_open) {
-			if ($this->numdone >= ROMPR_MAX_TRACKS_PER_TRANSACTION) {
+			if ($this->numdone++ >= ROMPR_MAX_TRACKS_PER_TRANSACTION) {
 				$this->close_transaction();
 				$this->open_transaction();
 			}

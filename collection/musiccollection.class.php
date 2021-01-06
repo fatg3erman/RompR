@@ -191,7 +191,6 @@ class musicCollection extends collection_base {
 		static $current_albumartist = null;
 		static $current_album = null;
 		static $current_domain = null;
-		static $current_albumlink = null;
 		static $albumobj = true;
 
 		// === true is ever so slightly faster than === null
@@ -205,8 +204,7 @@ class musicCollection extends collection_base {
 
 		if ($current_albumartist != $trackobject->tags['albumartist'] ||
 			$current_album != $trackobject->tags['Album'] ||
-			$current_domain != $trackobject->tags['domain'] ||
-			($trackobject->tags['X-AlbumUri'] != null && $trackobject->tags['X-AlbumUri'] != $current_albumlink)) {
+			$current_domain != $trackobject->tags['domain']) {
 			if ($albumobj !== true)
 				$albumobj->check_database();
 
@@ -214,7 +212,6 @@ class musicCollection extends collection_base {
 			$current_albumartist = $trackobject->tags['albumartist'];
 			$current_album = $trackobject->tags['Album'];
 			$current_domain = $trackobject->tags['domain'];
-			$current_albumlink = $albumobj->tracks[0]->tags['X-AlbumUri'];
 		} else {
 			$albumobj->newTrack($trackobject);
 		}

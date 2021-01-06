@@ -38,12 +38,11 @@ class album {
 		}
 		if ($this->tracks[0]->tags['album_index'] === null) {
 			$this->tracks[0]->tags['X-AlbumImage'] = $this->getImage('small');
-			$albumindex = prefs::$database->check_album($this->tracks[0]->tags);
-		} else {
-			$albumindex = $this->tracks[0]->tags['album_index'];
+			$this->tracks[0]->tags['album_index'] = prefs::$database->check_album($this->tracks[0]->tags);
 		}
 		foreach ($this->tracks as &$trackobj) {
-			$trackobj->tags['album_index'] = $albumindex;
+			$trackobj->tags['album_index'] = $this->tracks[0]->tags['album_index'];
+			$trackobj->tags['albumartist_index'] = $this->tracks[0]->tags['albumartist_index'];
 			prefs::$database->check_and_update_track($trackobj);
 		}
 	}
