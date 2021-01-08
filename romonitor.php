@@ -27,7 +27,6 @@ $currenthost_save = prefs::$prefs['currenthost'];
 $player_backend_save = prefs::$prefs['player_backend'];
 $current_id = -1;
 $read_time = 0;
-$playcount_updated = false;
 $current_song = array();
 register_shutdown_function('close_mpd');
 // Using the IDLE subsystem of MPD and mopidy reduces repeated connections, which helps a lot
@@ -59,7 +58,7 @@ while (true) {
 					$current_id = $mpd_status['songid'];
 					prefs::$database->get($current_song);
 					$current_playcount = array_key_exists('Playcount', prefs::$database->returninfo) ? prefs::$database->returninfo['Playcount'] : 0;
-					logger::trace("ROMONITOR", prefs::$prefs['currenthost'],"Track has changed - Current ID is",$current_id,"Duration is",$current_song['Time'],"Current Playcount is",$current_playcount);
+					logger::mark("ROMONITOR", prefs::$prefs['currenthost'],"Track has changed - Current ID is",$current_id,"Duration is",$current_song['Time'],"Current Playcount is",$current_playcount);
 					lastfm_update_nowplaying($current_song);
 				}
 			} else {
@@ -77,7 +76,7 @@ while (true) {
 				$idle_status = $player->get_idle_status();
 			}
 			if (array_key_exists('error', $idle_status) && $idle_status['error'] == 'Timed Out') {
-				logger::trace("ROMONITOR", prefs::$prefs['currenthost'],"- idle command timed out, looping back");
+				logger::mark("ROMONITOR", prefs::$prefs['currenthost'],"- idle command timed out, looping back");
 				$timedout = true;
 				continue;
 			} else if (array_key_exists('error', $idle_status)) {
@@ -87,22 +86,22 @@ while (true) {
 			}
 		}
 		if (array_key_exists('changed', $idle_status) && $current_id != -1) {
-			logger::trace("ROMONITOR", prefs::$prefs['currenthost'],"- Player State Has Changed");
+			logger::mark("ROMONITOR", prefs::$prefs['currenthost'],"- Player State Has Changed");
 			$elapsed = time() - $read_time + $mpd_status['elapsed'];
 			$fraction_played = $elapsed/$current_song['Time'];
 			if ($fraction_played > 0.9) {
 				prefs::$database = new metaDatabase();
-				logger::trace("ROMONITOR", prefs::$prefs['currenthost'],"- Played more than 90% of song. Incrementing playcount");
+				logger::mark("ROMONITOR", prefs::$prefs['currenthost'],"- Played more than 90% of song. Incrementing playcount");
 				prefs::$database->get($current_song);
 				$now_playcount = array_key_exists('Playcount', prefs::$database->returninfo) ? prefs::$database->returninfo['Playcount'] : 0;
 				if ($now_playcount > $current_playcount) {
-					logger::trace("ROMONITOR", prefs::$prefs['currenthost'],"- Current playcount is bigger than ours, doing nothing");
+					logger::mark("ROMONITOR", prefs::$prefs['currenthost'],"- Current playcount is bigger than ours, doing nothing");
 				} else {
 					$current_song['attributes'] = array(array('attribute' => 'Playcount', 'value' => $current_playcount+1));
 					prefs::$database->inc($current_song);
 				}
 				if ($current_song['type'] == 'podcast') {
-					logger::trace("ROMONITOR", prefs::$prefs['currenthost'],"- Marking podcast episode as listened");
+					logger::mark("ROMONITOR", prefs::$prefs['currenthost'],"- Marking podcast episode as listened");
 					$temp_db = new poDatabase();
 					$temp_db->markAsListened($current_song['file']);
 					$temp_db->close_database();
@@ -159,7 +158,7 @@ function close_mpd() {
 function lastfm_update_nowplaying($currentsong) {
 	if (!prefs::$prefs['scrobbling'])
 		return;
-	logger::trace('ROMONITOR', 'Updating Last.FM Nowplaying');
+	logger::mark('ROMONITOR', 'Updating Last.FM Nowplaying');
 	$options = array(
 		'track' => $currentsong['Title'],
 		'artist' => $currentsong['trackartist'],
@@ -172,7 +171,7 @@ function lastfm_update_nowplaying($currentsong) {
 function scrobble_to_lastfm($currentsong) {
 	if (!prefs::$prefs['scrobbling'])
 		return;
-	logger::trace('ROMONITOR', 'Scrobbling');
+	logger::mark('ROMONITOR', 'Scrobbling');
 	$options = array(
 		'timestamp' => time() - $currentsong['Time'],
 		'track' => $currentsong['Title'],
