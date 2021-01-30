@@ -195,6 +195,13 @@ var info_spotify = function() {
 					}
 				}, albummeta);
 
+				// This is a bit of a hack.
+				// When switching artists on a Spotify track we get here and trackmeta.spotify.layout is not undefined
+				// (because it's the same track) so we never populate. This gets set to true if the artist layout is undefined
+				// which makes sure we populate via the normal flow instead of having some extra code path where we only
+				// populate the artist. The same problem does not occur for local tracks because we populate the artist for those
+				var is_probably_artist_switch = false;
+
 				// We need to create all the layouts immediately because the browser expccts them to exist.
 				// Additionally, when switching artists using switchArtist, the track and album layouts
 				// will already exist but the artist one won't so belt and braces, check everything.
@@ -214,13 +221,15 @@ var info_spotify = function() {
 
 				} else {
 
-					if (typeof artistmeta.spotify.layout == 'undefined')
+					if (typeof artistmeta.spotify.layout == 'undefined') {
 						artistmeta.spotify.layout = new info_sidebar_layout({title: artistmeta.name, type: 'artist', source: me});
+						is_probably_artist_switch = true;
+					}
 
 					if (typeof albummeta.spotify.layout == 'undefined')
 						albummeta.spotify.layout = new info_sidebar_layout({title: albummeta.name, type: 'album', source: me});
 
-					if (typeof trackmeta.spotify.layout == 'undefined')
+					if (typeof trackmeta.spotify.layout == 'undefined' || is_probably_artist_switch)
 						self.track.populate();
 				}
 			}

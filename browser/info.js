@@ -56,6 +56,8 @@ var browser = function() {
 			let removed_item = history.splice(item_to_remove, 1);
 			debug.mark('BROWSER', 'History limit exceeded. Removing item nmber',item_to_remove,removed_item);
 			nowplaying.truncate_item(removed_item.nowplayingindex);
+			if (displaypointer > 0)
+				displaypointer--;
 		}
 
 		var hpanel = $('#historypanel').empty().off('click');
