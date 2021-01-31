@@ -1,10 +1,11 @@
 <h3 align="center">Version 1.52 Information</h3>
 <ul>
 <li>Almost all the backend code has been extensively reworked to make it cleaner and more efficient</li>
-<li>All this code reorganisation also means that <i><b>if you're running romonitor you must restart it after installing this version</b></i></li>
-<li>RompR now uses the snapcast JSON-RPC API for Snapcast so you may need to change the port you are using and make sure the JSON-RPC API is enabled in your snapserver configuration. (The default port is 1780)</li>
-<li>Mopidy users - if your mopidy-http interface is enabled, RompR can use it for better responsiveness and albumart</li>
-<li>Album Art Search now uses Bing instead of Google Images because Google broke my code and Bing's API is better. You'll need to check the docs for how to get this set up</li>
+<li>All this code reorganisation also means that <i><b>if you're running <a href="https://fatg3erman.github.io/RompR/Rompr-And-Mobiles" target="_blank">romonitor</a> you must restart it after installing this version</b></i></li>
+<li>RompR now uses the snapcast JSON-RPC API for <a href="https://fatg3erman.github.io/RompR/snapcast" target="_blank">Snapcast</a> so you may need to change the port you are using and make sure the JSON-RPC API is enabled in your snapserver configuration. (The default port is 1780)</li>
+<li>Mopidy users - if your <a href="https://fatg3erman.github.io/RompR/Rompr-And-Mopidy" target="_blank">mopidy-http interface</a> is enabled, RompR can use it for better responsiveness and albumart</li>
+<li>Mopidy users - there is now an automatic way to run <a href="https://fatg3erman.github.io/RompR/Rompr-And-Mopidy" target="_blank">mopidyctl</a> local scan when updating the Music Collection</li>
+<li>Album Art Search now uses Bing instead of Google Images because Google broke my code and Bing's API is better. You'll need to <a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">check the docs</a> for how to get this set up</li>
 <li><b>There is a new dependency on php-intl. You should install this package</b>. macOS users, if someone can figure out how to get Locale working on macOS php I'd like to hear</li>
 <li>Due to code reorganisation, some of the endpoints used for automation have changed:</li>
 <ul>

@@ -39,7 +39,7 @@ or
 
 If RompR is able to connect to Mopidy in this way, you will see a connection message that displays two port numbers when you first open RompR.
 
-If you get a permanent message saying 'Mopidy has stopped responding' this means the backend (web server) is able to connect but your browser is not.
+If you get a permanent message saying 'Mopidy has stopped responding' this means the backend (web server) is able to connect to the MPD interface  but your browser is not able to connect to the HTTP interface.
 Try not using 'localhost' in your player definition. If that doesn't work then Mopidy is blocking the connection from the browser and you need to check
 the settings above. If you're having problems and you just can't get rid of that message then either disable Mopidy's HTTP frontend, or change the port from the setup page
 in RompR so that RompR is using the 'wrong' port.
@@ -96,14 +96,15 @@ I've tested this on Ubuntu and Raspbian. I cannot test it on other distributions
 * Thirdly, you need to give your webserver permission to run the 'mopidyctl local scan' command as sudo *without needing a password*. To do this, you do the following:
 
 
-    sudo visudo
+    sudo visudo -f /etc/sudoers.d/mopidyscan
 
-Now edit your sudoers file. Note. TAKE GREAT CARE when doing this. Messing up your sudoers file will be unrecoverable. In this example I am assuming that your webserver runs as the user www-data and the hostname of your machine is raspberry. Also the path to mopidyctl is /usr/sbin/mopidyctl. Make sure you know the correct values for these parameters before starting. In the suoders file you need to add a line
+This will open an empty file. Note. TAKE GREAT CARE when doing this. Messing up your sudoers file will be unrecoverable. In this example I am assuming that your webserver runs as the user www-data and the hostname of your machine is raspberry. Also the path to mopidyctl is /usr/sbin/mopidyctl. Make sure you know the correct values for these parameters before starting. In the suoders file you need to add a line
 
 
     www-data raspberry = (root) NOPASSWD: /usr/sbin/mopidyctl
 
-Save the sudoers file then go to /rompr/?setup and enable the option for "Allow RompR to run mopidy local scan when creating the Music Collection"
+Save the new file (in the default vi editor you need to press I to get into Insert mode, then add the line, then do the very obvious and not at all ridiculous Esc:wq (Escape-colon-w-q) to save.
+Then go to /rompr/?setup and enable the option for "Allow RompR to run mopidy local scan when creating the Music Collection"
 
 If you haven't done this right, then your music collection update will just hang. You'll probably have to reboot to clear it.
 
