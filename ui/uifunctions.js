@@ -900,6 +900,11 @@ var syncLastFMPlaycounts = function() {
 				debug.log("LASTFMSYNC","Last.FM is not logged in");
 				return;
 			}
+			// make sure another browser hasn't already done this one
+			prefs.loadPrefs(syncLastFMPlaycounts.actuallyDoIt);
+		},
+
+		actuallyDoIt: function() {
 			if (Date.now() > prefs.next_lastfm_synctime) {
 				podcasts.resetScrobbleCheck();
 				debug.log("LASTFMSYNC","Getting recent tracks since ",Math.floor(prefs.last_lastfm_synctime/1000));
@@ -918,6 +923,7 @@ var syncLastFMPlaycounts = function() {
 				allDone(1);
 			}
 		}
+
 	}
 
 }();
