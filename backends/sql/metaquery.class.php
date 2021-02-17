@@ -16,7 +16,7 @@ class metaquery extends collection_base {
 	}
 
 	public function getgenres() {
-		return $this->sql_get_column("SELECT Genre FROM Genretable ORDER BY Genre ASC", 'Genre');
+		return $this->sql_get_column("SELECT Genre FROM Genretable ORDER BY Genre ASC", 0);
 	}
 
 	public function getartists() {
@@ -37,7 +37,7 @@ class metaquery extends collection_base {
 		} else {
 			$qstring .= "LOWER(Artistname)";
 		}
-		return $this->sql_get_column($qstring, 'Artistname');
+		return $this->sql_get_column($qstring, 0);
 	}
 
 	public function getalbumartists() {

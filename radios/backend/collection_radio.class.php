@@ -263,9 +263,9 @@ class collection_radio extends database {
 				$this->preparePlaylist();
 			}
 			if ($tags) {
-				$uris = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 'Uri', null, $sqlstring, $tags);
+				$uris = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null, $sqlstring, $tags);
 			} else {
-				$uris = $this->sql_get_column($sqlstring, 'Uri');
+				$uris = $this->sql_get_column($sqlstring, 0);
 			}
 			$tries++;
 		} while (count($uris) == 0 && $tries < 2);

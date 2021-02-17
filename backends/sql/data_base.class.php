@@ -122,7 +122,7 @@ class data_base {
 		// 5. query string
 		// ... parameters for query
 		// return type of PDO::FETCH_COLUMN returns an array of the values
-		//  from the column identified by field name
+		//  from the column identified by field name, which should be an integeer for column number
 		// --**-- NO PARAMETER CHECKING IS DONE BY THIS FUNCTION! --**--
 		//   because we want to make it fast, so make sure you call it right!
 

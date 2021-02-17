@@ -390,7 +390,7 @@ class metaDatabase extends collection_base {
 		$uris = $player->get_uris_for_directory($data['file']);
 		$ttids = array();
 		foreach ($uris as $uri) {
-			$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null, "SELECT TTindex FROM Tracktable WHERE Uri = ?", $uri);
+			$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null, "SELECT TTindex FROM Tracktable WHERE Uri = ?", $uri);
 			$ttids = array_merge($ttids, $t);
 		}
 		return $ttids;
@@ -401,7 +401,7 @@ class metaDatabase extends collection_base {
 		$ttids = array();
 		foreach ($uris as $uri) {
 			$uri = trim(substr($uri, strpos($uri, ' ')+1, strlen($uri)), '"');
-			$r = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null, "SELECT TTindex FROM Tracktable WHERE Uri = ?", $uri);
+			$r = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null, "SELECT TTindex FROM Tracktable WHERE Uri = ?", $uri);
 			$ttids = array_merge($ttids, $t);
 		}
 		return $ttids;
@@ -470,7 +470,7 @@ class metaDatabase extends collection_base {
 			if ($data['Album']) {
 				if ($data['albumartist'] !== null && $data['Track'] != 0) {
 					logger::log("FIND ITEM", "  Trying by albumartist",$data['albumartist'],"album",$data['Album'],"title",$data['Title'],"track number",$data['Track']);
-					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
+					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
 						"SELECT
 							TTindex
 						FROM
@@ -487,7 +487,7 @@ class metaDatabase extends collection_base {
 
 				if (count($ttids) == 0 && $data['albumartist'] !== null) {
 					logger::log("FIND ITEM", "  Trying by albumartist",$data['albumartist'],"album",$data['Album'],"and title",$data['Title']);
-					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
+					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
 						"SELECT
 							TTindex
 						FROM
@@ -503,7 +503,7 @@ class metaDatabase extends collection_base {
 
 				if (count($ttids) == 0 && ($data['albumartist'] == null || $data['albumartist'] == $data['trackartist'])) {
 					logger::log("FIND ITEM", "  Trying by artist",$data['trackartist'],",album",$data['Album'],"and title",$data['Title']);
-					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
+					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
 						"SELECT
 							TTindex
 						FROM
@@ -519,7 +519,7 @@ class metaDatabase extends collection_base {
 				// Finally look for Uri NULL which will be a wishlist item added via a radio station
 				if (count($ttids) == 0) {
 					logger::log("FIND ITEM", "  Trying by (wishlist) artist",$data['trackartist'],"and title",$data['Title']);
-					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
+					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
 						"SELECT
 							TTindex
 						FROM
@@ -535,7 +535,7 @@ class metaDatabase extends collection_base {
 				// No album supplied - ie this is from a radio stream. First look for a match where
 				// there is something in the album field
 				logger::log("FIND ITEM", "  Trying by artist",$data['trackartist'],"Uri NOT NULL and title",$data['Title']);
-				$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
+				$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
 					"SELECT
 						TTindex
 					FROM
@@ -548,7 +548,7 @@ class metaDatabase extends collection_base {
 
 				if (count($ttids) == 0) {
 					logger::log("FIND ITEM", "  Trying by (wishlist) artist",$data['trackartist'],"and title",$data['Title']);
-					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null,
+					$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null,
 						"SELECT
 							TTindex
 						FROM
@@ -565,7 +565,7 @@ class metaDatabase extends collection_base {
 		if (count($ttids) == 0 && !$urionly && $data['file']) {
 			// Just in case. Sometimes Spotify changes titles on us.
 			logger::log("FIND ITEM", "  Trying by URI ".$data['file']);
-			$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null, "SELECT TTindex FROM Tracktable WHERE Uri = ?", $data['file']);
+			$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null, "SELECT TTindex FROM Tracktable WHERE Uri = ?", $data['file']);
 			$ttids = array_merge($ttids, $t);
 		}
 
