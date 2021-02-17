@@ -2,6 +2,10 @@
 
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.53
+* If you're running PHP Version 8.0 or above you'll want to install this. Otherwise it is no different from version 1.52
+
+
 ## Version 1.52
 * Almost all the backend code has been extensively reworked to make it cleaner and more efficient
 * To install this version of RompЯ over an earlier version you must *delete everything except your albumart and prefs directories* and then copy the new version into your rompr directory
