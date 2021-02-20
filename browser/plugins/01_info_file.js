@@ -14,7 +14,7 @@ var info_file = function() {
 			make_usermeta_info(layout, usermeta, parent);
 
 		if (fileinfo.player)
-			make_player_info(layout, fileinfo.player);
+			make_player_info(layout, fileinfo.player, parent);
 
 		if (fileinfo.beets)
 			make_beets_info(layout, fileinfo.beets);
@@ -28,7 +28,7 @@ var info_file = function() {
 
 	}
 
-	function make_player_info(layout, info) {
+	function make_player_info(layout, info, parent) {
 		var file = decodeURI(info.file);
 		file = file.replace(/^file:\/\//, '');
 

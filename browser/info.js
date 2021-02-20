@@ -115,8 +115,10 @@ var browser = function() {
 
 		switch_source: function(source) {
 			debug.info("BROWSER","Switching info source to",source);
-			var idx = history[history.length - 1].nowplayingindex;
-			nowplaying.switch_source(idx, source);
+			if (history[history.length - 1]) {
+				var idx = history[history.length - 1].nowplayingindex;
+				nowplaying.switch_source(idx, source);
+			}
 		},
 
 		dataIsComing: function(historyindex, hist, browser_showing_current, force, scrollto, splice) {
