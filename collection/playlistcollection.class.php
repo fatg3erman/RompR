@@ -19,7 +19,7 @@ class playlistCollection extends collection_base {
 		// Bloody spotify often returns album artist = 'A & B' but track artists 'B' and 'A'.
 		// This screws up the playcount stats. They're also not consistent with
 		// capitalisation of articles in Album Artists
-		if (count($filedata['Artist']) > 1) {
+		if (is_array($filedata['Artist']) && count($filedata['Artist']) > 1) {
 			$trackartist_backwards = format_artist(array_reverse($filedata['Artist']),'');
 			if (strtolower($trackartist_backwards) == strtolower($track->tags['albumartist'])) {
 				$track->tags['Artist'] = array_reverse($track->tags['Artist']);
