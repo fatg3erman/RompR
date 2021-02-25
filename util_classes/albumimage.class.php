@@ -111,7 +111,7 @@ class albumImage extends baseAlbumImage {
 		$imagehandler = new imageHandler($download_file);
 		switch ($imagehandler->checkImage()) {
 			// Include the MIME types here in case we're using ImageMagick after an error
-			// was thrown in gdImage
+			// was thrown in gd_Image
 			case IMAGETYPE_PNG:
 			case 'image/png':
 				$this->change_file_extension('png');

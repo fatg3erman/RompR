@@ -7,6 +7,7 @@ class init_database extends init_generic {
 		$vsn = $this->generic_sql_query("SELECT VERSION() AS v");
 		$mysql_version = $vsn[0]['v'];
 		logger::log('INIT', 'MySQL Version is',$mysql_version);
+		prefs::$prefs['mysql_version'] = $mysql_version;
 		if (strpos($mysql_version, 'MariaDB') !== false) {
 			if (version_compare($mysql_version, ROMPR_MIN_MARIADB_VERSION, '<')) {
 				logger::warn('MYSQL', 'Running old version of MariaDB, will have to use old style update query');

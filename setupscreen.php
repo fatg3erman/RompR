@@ -146,6 +146,7 @@ print '<p>Custom Log File</p>';
 print '<p class=tiny>Rompr debug output will be sent to this file, but PHP error messages will
  still go to the web server error log. The web server needs write access to this file, it must
  already exist, and you should ensure it gets rotated as it will get large</p>';
+print '<p><b>Development Use Only. Do not use this option when submitting bug reports</b></p>';
 print '<p><input type="text" style="width:90%" name="custom_logfile" value="'.
 	prefs::$prefs['custom_logfile'].'" /></p>';
 print '<p><button style="width:50%" type="submit">OK</button></p>';

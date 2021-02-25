@@ -6,7 +6,7 @@ class imageHandler {
 
 	public function __construct($filename) {
 		if (extension_loaded('gd')) {
-			$this->image = new gdImage($filename);
+			$this->image = new gd_Image($filename);
 			if ($this->image->checkImage() === false) {
 				// GD does not support SVG or ICO files, plus different installations
 				// have different built-in support. Hence we fall back to

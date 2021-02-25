@@ -159,7 +159,7 @@ or
 
 If you're reporting a bug then this is the most useful type of log to send as it contains RompЯ's log trace as well as any PHP error messages.
 
-The option to use a custom log file makes rompr's trace look neater when you're 'tail'-ing it in real time in a terminal but you shouldn't use this option for bug reporting as it does not contain any PHP error messages.
+The option to use a custom log file makes rompr's trace look neater but do not use this option for bug reporting as it does not contain any PHP error messages.
 
 As web server error logs can get massive, the suggested method for creating a log for bug reporting is to enable debug logging first then open a terminal and then do
 

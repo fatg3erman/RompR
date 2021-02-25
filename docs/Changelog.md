@@ -2,6 +2,11 @@
 
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.55
+* More fixes related to running with PHP 8. If you're having issues with album art not working you'll want this version
+
+
+
 ## Version 1.53
 * If you're running PHP Version 8.0 or above you'll want to install this. Otherwise it is no different from version 1.52
 
