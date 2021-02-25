@@ -97,7 +97,12 @@ if ($player->is_connected()) {
 	$mpd_status = $player->get_status();
 	if (array_key_exists('error', $mpd_status)) {
 		logger::warn("INIT", "MPD Password Failed or other status failure");
-		connect_fail(language::gettext("setup_connecterror").$mpd_status['error']);
+		$player->clear_error();
+		if (strpos($mpd_status['error'], 'Failed to decode') !== false) {
+			logger::warn('INIT', 'Looks like the error is a stream decode error. Ignoring it');
+		} else {
+			connect_fail(language::gettext("setup_connecterror").$mpd_status['error']);
+		}
 	}
 } else {
 	logger::error("INIT", "MPD Connection Failure");
@@ -106,7 +111,7 @@ if ($player->is_connected()) {
 // If we're connected by a local socket we can read the music directory
 logger::log('INIT', 'Getting Player Config');
 $arse = $player->get_config();
-if (array_key_exists('music_directory', $arse)) {
+if (is_array($arse) && array_key_exists('music_directory', $arse)) {
 	prefs::set_music_directory($arse['music_directory']);
 }
 $player->close_mpd_connection();
