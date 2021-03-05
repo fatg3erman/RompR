@@ -159,16 +159,6 @@ class album {
 
 	}
 
-	public function checkForDuplicate($t) {
-		foreach ($this->tracks as $track) {
-			if ($t->tags['file'] == $track->tags['file']) {
-				logger::trace("COLLECTION", "Filtering Duplicate Track ".$t->tags['file']);
-				return false;
-			}
-		}
-		return true;
-	}
-
 	private function decideOnArtist($candidate) {
 		if ($this->tracks[0]->tags['albumartist'] === null) {
 			logger::log("COLLECTION", "  ... Setting artist to ".$candidate);

@@ -264,26 +264,6 @@ function raw_search() {
 		foreach ($player->parse_list_output($cmd, $dirs, $domains) as $filedata) {
 			prefs::$database->newTrack($filedata);
 		}
-
-		// // For backends that don't support multiple parameters (Google Play)
-		// // This'll return nothing for Spotify, so it's OK. It might help SoundCloud too.
-
-		// $cmd = $_REQUEST['command'].' any ';
-		// $parms = array();
-		// if (array_key_exists('artist', $_REQUEST['rawterms'])) {
-		// 	$parms[] = format_for_mpd(html_entity_decode($_REQUEST['rawterms']['artist'][0]));
-		// }
-		// if (array_key_exists('title', $_REQUEST['rawterms'])) {
-		// 	$parms[] = format_for_mpd(html_entity_decode($_REQUEST['rawterms']['title'][0]));
-		// }
-		// if (count($parms) > 0) {
-		// 	$cmd .= '"'.implode(' ',$parms).'"';
-		// 	logger::trace("MPD SEARCH", "Search command : ".$cmd);
-		// 	$doing_search = true;
-		// 	$collection->filter_duplicate_tracks();
-		// 	$player->populate_collection($cmd, $domains, $collection);
-		// }
-
 	}
 	prefs::$database->tracks_as_array();
 }

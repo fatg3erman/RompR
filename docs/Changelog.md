@@ -2,9 +2,13 @@
 
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.56
+* Fixed an issue with high memory usage if you have a lot of partially-tagged tracks. This may make this version sort those tracks a little differently,
+but it should be the same behaviour as pre-1.52. In some ways I didn't want to fix this, but not doing so makes it not work for many people.
+
+
 ## Version 1.55
 * More fixes related to running with PHP 8. If you're having issues with album art not working you'll want this version
-
 
 
 ## Version 1.53

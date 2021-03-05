@@ -15,6 +15,7 @@ class musicCollection extends collection_base {
 	}
 
 	public function newTrack(&$filedata) {
+		static $current_albumkey = null;
 		if ($this->options['dbterms'] === true || $this->check_url_against_database($filedata['file'], $this->options['dbterms']['tag'], $this->options['dbterms']['rating'])) {
 			if ($this->options['doing_search']) {
 				// If we're doing a search, we check to see if that track is in the database
@@ -23,14 +24,40 @@ class musicCollection extends collection_base {
 			}
 
 			$track = new track($filedata);
-			if ($this->options['trackbytrack'] && $track->tags['albumartist'] !== null && $track->tags['Disc'] !== null) {
-				$this->do_track_by_track( $track );
+			if ($this->options['trackbytrack']) {
+				if ($track->tags['albumartist'] !== null && $track->tags['Disc'] !== null) {
+					//
+					// With trackbytrack true, and the track having album artist and disc tags, we stick it
+					// directly into the database
+					//
+					$this->do_track_by_track( $track );
+				} else {
+					//
+					// With trackbytrack true, but the track lacking essential tags, we do album by album
+					// - assuming albums are at least grouped into directories. This'll fail if you've a directory
+					// of random badly tagged tracks, but the alternative of saving everything to the end can use
+					// undreds of MB and we start hitting Apache memory limits
+					//
+					$albumkey = strtolower($track->tags['folder'].$track->tags['Album'].$track->tags['albumartist']);
+					if ($albumkey == $current_albumkey) {
+						$this->albums[$albumkey]->newTrack($track);
+					} else {
+						if ($current_albumkey !== null) {
+							$this->albums[$current_albumkey]->sortTracks();
+							$this->albums[$current_albumkey]->check_database();
+							unset($this->albums[$current_albumkey]);
+						}
+						$current_albumkey = $albumkey;
+						$this->albums[$albumkey] = new album($track);
+					}
+				}
 			} else {
+				//
+				// Otherwise we store it all up to the end and sort it all then.
+				//
 				$albumkey = strtolower($track->tags['folder'].$track->tags['Album'].$track->tags['albumartist']);
 				if (array_key_exists($albumkey, $this->albums)) {
-					if ($this->options['allow_duplicates'] || $this->albums[$albumkey]->checkForDuplicate($track)) {
-						$this->albums[$albumkey]->newTrack($track);
-					}
+					$this->albums[$albumkey]->newTrack($track);
 				} else {
 					$this->albums[$albumkey] = new album($track);
 				}
@@ -59,10 +86,6 @@ class musicCollection extends collection_base {
 		}
 		$this->albums = array();
 		$performance['sorting'] = microtime(true) - $timer;
-	}
-
-	public function filter_duplicate_tracks() {
-		$this->options['allow_duplicates'] = false;
 	}
 
 	public function tracks_as_array() {

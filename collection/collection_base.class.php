@@ -33,7 +33,6 @@ class collection_base extends database {
 	protected $options = [
 		'doing_search' => false,
 		'trackbytrack' => true,
-		'allow_duplicates' => true,
 		'dbterms' => ['tag' => null, 'rating' => null]
 	];
 
