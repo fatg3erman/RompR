@@ -902,6 +902,12 @@ class init_database extends init_generic {
 					$this->generic_sql_query("UPDATE Statstable SET Value = 71 WHERE Item = 'SchemaVer'", true);
 					break;
 
+				case 71:
+					logger::log("SQL", "Updating FROM Schema version 71 TO Schema version 72");
+					$this->generic_sql_query("DROP TRIGGER IF EXISTS track_update_trigger", true);
+					$this->create_conditional_triggers();
+					$this->generic_sql_query("UPDATE Statstable SET Value = 72 WHERE Item = 'SchemaVer'", true);
+					break;
 			}
 			$sv++;
 		}
@@ -919,7 +925,7 @@ class init_database extends init_generic {
 
 		$this->generic_sql_query("CREATE TRIGGER IF NOT EXISTS track_update_trigger AFTER UPDATE ON Tracktable
 							FOR EACH ROW
-							WHEN NEW.Hidden=0
+							WHEN NEW.Hidden<>OLD.Hidden
 							BEGIN
 							UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = NEW.Albumindex;
 							UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = OLD.Albumindex;

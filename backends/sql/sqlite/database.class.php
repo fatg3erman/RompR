@@ -26,7 +26,9 @@ class database extends data_base {
 	}
 
 	protected function hide_played_tracks() {
-		$this->generic_sql_query("UPDATE Tracktable SET Hidden = 1, isSearchResult = 0 WHERE TTindex IN (SELECT TTindex FROM Tracktable JOIN Playcounttable USING (TTindex) WHERE isSearchResult = 2)", true);
+		// If isSearchResult is 2, then it had to be added, therefore if itis subsequently rated it needs to become a manually added track,
+		// so we need to set LastModified to NULL now.
+		$this->generic_sql_query("UPDATE Tracktable SET Hidden = 1, isSearchResult = 0, LastModified = NULL WHERE TTindex IN (SELECT TTindex FROM Tracktable JOIN Playcounttable USING (TTindex) WHERE isSearchResult = 2)", true);
 	}
 
 	protected function sql_recent_tracks() {
