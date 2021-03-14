@@ -24,9 +24,14 @@ class poDatabase extends database {
 		}
 		try {
 			$data = $d->get_data();
+			libxml_use_internal_errors(true);
 			$feed = @simplexml_load_string($data);
+			if ($feed === false) {
+				logger::warn('PODCASTS', 'Could not parse RSS feed!');
+				return false;
+			}
 		} catch (Exception $e) {
-			logger::warn('Could not parse RSS feed!');
+			logger::warn('PODCASTS', 'Could not parse RSS feed!');
 			return false;
 		}
 		logger::debug("PARSE_RSS", "  Our LastPubDate is ".$lastpubdate);
