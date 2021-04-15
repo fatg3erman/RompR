@@ -527,7 +527,11 @@ var uiHelper = function() {
 
 		initialise: function() {
 			if (prefs.outputsvisible) {
-				layoutProcessor.toggleAudioOutpts();
+				try {
+					layoutProcessor.toggleAudioOutpts();
+				} catch (err) {
+
+				}
 			}
 			if (layoutProcessor.supportsDragDrop) {
 				setDraggable('#collection');

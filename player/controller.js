@@ -627,6 +627,7 @@ function playerController() {
 			infobar.notify(language.gettext('error_nosearchnow'));
 			callback([]);
 		}
+		debug.log('RAWSEARCH', terms, sources, exact, checkdb);
 		$.ajax({
 			type: "POST",
 			url: "api/collection/",

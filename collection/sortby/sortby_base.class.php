@@ -238,13 +238,16 @@ class sortby_base {
 				tr.LinkChecked AS playable,
 				ta.Artistname AS artist,
 				tr.Artistindex AS trackartistindex,
-				al.AlbumArtistindex AS albumartistindex
+				al.AlbumArtistindex AS albumartistindex,
+				pt.LastPlayed AS lastplayed,
+				tr.isAudiobook AS isaudiobook
 			FROM
 				(Tracktable AS tr, Artisttable AS ta, Albumtable AS al)
 				LEFT JOIN TagListtable AS tl ON tr.TTindex = tl.TTindex
 				LEFT JOIN Tagtable AS t USING (Tagindex)
 				LEFT JOIN Ratingtable AS r ON tr.TTindex = r.TTindex
 				LEFT JOIN Progresstable AS pr ON tr.TTindex = pr.TTindex
+				LEFT JOIN Playcounttable AS pt ON tr.TTindex = pt.TTindex
 				WHERE
 					tr.Albumindex = ".$this->who."
 					AND uri IS NOT NULL
@@ -269,6 +272,23 @@ class sortby_base {
 	public function output_track_list($fragment = false) {
 		logger::log('SORTBY', 'Doing Track List For Album',$this->who);
 		$trackarr = $this->track_sort_query();
+		$most_recent = 0;
+		$most_recent_index = null;
+		foreach ($trackarr as $i => &$track) {
+			$track['ismostrecent'] = false;
+			if ($track['isaudiobook'] && $track['lastplayed'] != null) {
+				$ttime =  strtotime($track['lastplayed']);
+				if ($ttime > $most_recent) {
+					$most_recent = $ttime;
+					$most_recent_index = $i;
+				}
+			}
+		}
+		if ($most_recent_index !== null) {
+			logger::log('SORTBY', 'Most recent track is',$trackarr[$most_recent_index]['title']);
+			$trackarr[$most_recent_index]['ismostrecent'] = true;
+		}
+
 		if ($fragment) {
 			ob_start();
 		}

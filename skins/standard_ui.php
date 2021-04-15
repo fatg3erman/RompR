@@ -15,7 +15,6 @@ class uibits {
 			$class = 'clicktrack';
 		}
 		$class .= $data['discclass'];
-
 		// Outer container
 		if ($data['playable'] == 1 or $data['playable'] == 3) {
 			// Note - needs clicktrack and name in case it is a removeable track
@@ -24,6 +23,10 @@ class uibits {
 			print '<div class="playable '.$class.' ninesix draggable indent containerbox padright" name="'.$data['ttid'].'">';
 		} else {
 			print '<div class="playable '.$class.' ninesix draggable indent containerbox padright" name="'.rawurlencode($data['uri']).'">';
+		}
+
+		if ($data['ismostrecent']) {
+			print '<i class="fixed playlisticon icon-angle-double-right"></i>';
 		}
 
 		print domainIcon($d, 'collectionicon');

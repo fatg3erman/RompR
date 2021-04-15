@@ -26,6 +26,10 @@ class uibits {
 			print '<div class="playable '.$class.' ninesix draggable indent containerbox padright calign" name="'.rawurlencode($data['uri']).'">';
 		}
 
+		if ($data['ismostrecent']) {
+			print '<i class="fixed playlisticon icon-angle-double-right"></i>';
+		}
+
 		print domainIcon($d, 'collectionicon');
 
 		// Track Number
