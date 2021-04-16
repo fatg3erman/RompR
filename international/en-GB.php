@@ -711,7 +711,8 @@ language::add_translations([
 	"label_image_search" =>					'You need a Bing Image Search API key to use Bing Search. Please read the documentation.',
 	"config_hidemastervolume" =>			'Use Snapcast Volume as Main Volume Control',
 	"setup_mopidy_scan" =>					'Allow RompR to run mopidy local scan when creating the Music Collection',
-	"setup_mopidy_scan_title" =>			'Mopidy Special Options'
+	"setup_mopidy_scan_title" =>			'Mopidy Special Options',
+	"label_upnext" =>						'Up Next'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

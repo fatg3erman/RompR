@@ -26,10 +26,6 @@ class uibits {
 			print '<div class="playable '.$class.' ninesix draggable indent containerbox padright calign" name="'.rawurlencode($data['uri']).'">';
 		}
 
-		if ($data['ismostrecent']) {
-			print '<i class="fixed playlisticon icon-angle-double-right"></i>';
-		}
-
 		print domainIcon($d, 'collectionicon');
 
 		// Track Number
@@ -44,6 +40,11 @@ class uibits {
 		// Track Title, Artist, and Rating
 		if ((string) $data['title'] == "") $data['title'] = urldecode($data['uri']);
 		print '<div class="expand containerbox vertical">';
+
+		if ($data['ismostrecent']) {
+			print '<div class="fixed playlistrow2">'.language::gettext('label_upnext').'</div>';
+		}
+
 		print '<div class="fixed tracktitle">'.$data['title'].'</div>';
 		if ($data['artist'] && $data['trackartistindex'] != $data['albumartistindex']) {
 			print '<div class="fixed playlistrow2 trackartist">'.$data['artist'].'</div>';

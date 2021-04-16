@@ -284,9 +284,9 @@ class sortby_base {
 				}
 			}
 		}
-		if ($most_recent_index !== null) {
+		if ($most_recent_index !== null && array_key_exists($most_recent_index+1, $trackarr)) {
 			logger::log('SORTBY', 'Most recent track is',$trackarr[$most_recent_index]['title']);
-			$trackarr[$most_recent_index]['ismostrecent'] = true;
+			$trackarr[$most_recent_index+1]['ismostrecent'] = true;
 		}
 
 		if ($fragment) {
