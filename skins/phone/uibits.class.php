@@ -16,6 +16,9 @@ class uibits {
 		}
 		$class .= $data['discclass'];
 
+		if ($data['ismostrecent'])
+			$class .= ' mostrecent';
+
 		// Outer container
 		if ($data['playable'] == 1 or $data['playable'] == 3) {
 			// Note - needs clicktrack and name in case it is a removeable track

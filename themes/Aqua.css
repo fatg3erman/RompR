@@ -408,3 +408,7 @@ table.tracklist {
     border-left: 1px solid black;
     border-right: 1px solid black;
 }
+
+.mostrecent {
+    border-top: 1px solid rgba(0,0,0,0.25);
+}
