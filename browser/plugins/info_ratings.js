@@ -34,7 +34,7 @@ var info_ratings = function() {
 											function() { debug.warn('PLAYCOUNT', 'Failed to update backend playcount') }
 										);
 									} else {
-										debug.debug("RATINGS PLUGIN","Not using update for",i,"as",v,"is less than",trackmeta.usermeta[i]);
+										debug.debug("RATINGS PLUGIN","Not using lfm update for",i,"as",v,"is less than",trackmeta.usermeta[i]);
 									}
 									break;
 							}

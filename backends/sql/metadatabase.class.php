@@ -160,10 +160,19 @@ class metaDatabase extends collection_base {
 			foreach ($data['attributes'] as $pair) {
 				logger::log("INC", "(Increment) Setting",$pair["attribute"],"to",$pair["value"],"on",$ttid);
 				$this->increment_value($ttid, $pair["attribute"], $pair["value"], $data['lastplayed']);
+				$this->up_next_hack_for_audiobooks($ttid);
 			}
 			$this->returninfo['metadata'] = $this->get_all_data($ttid);
 		}
 		return $ttids;
+	}
+
+	private function up_next_hack_for_audiobooks($ttid) {
+		$this->sql_prepare_query(true, null, null, null,
+			"UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex IN
+			(SELECT Albumindex FROM Tracktable WHERE TTindex = ? AND isAudiobook = ?)",
+			$ttid, 1
+		);
 	}
 
 	private function checkLastPlayed(&$data) {

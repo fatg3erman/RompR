@@ -2,6 +2,11 @@
 
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.57
+* 'Up Next' displayed for Audiobooks to remind you where you got to.
+* Verious small bugfixes
+
+
 ## Version 1.56
 * Fixed an issue with high memory usage if you have a lot of partially-tagged tracks. This may make this version sort those tracks a little differently,
 but it should be the same behaviour as pre-1.52. In some ways I didn't want to fix this, but not doing so makes it not work for many people.
