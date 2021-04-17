@@ -123,6 +123,7 @@ function playerController() {
 				debug.core('PLAYER', e, player.status[e]);
 				prefs[e] = player.status[e];
 			});
+			$('#radiodomains').makeDomainChooser("setSelection", player.status.mopidy_radio_domains);
 			if (player.status.songid != self.previoussongid) {
 				if (playlist.trackHasChanged(player.status.songid)) {
 					self.previoussongid = player.status.songid;

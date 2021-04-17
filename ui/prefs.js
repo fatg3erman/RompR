@@ -180,7 +180,6 @@ var prefs = function() {
 		"ratman_sortby",
 		"sleeptime",
 		"sleepon",
-		"mopidy_radio_domains",
 		"tradsearch",
 		"sortwishlistby",
 		"player_in_titlebar",

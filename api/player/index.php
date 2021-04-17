@@ -277,6 +277,7 @@ $mpd_status['radiomode'] = prefs::$prefs['multihosts'][$p]['radioparams']['radio
 $mpd_status['radioparam'] = prefs::$prefs['multihosts'][$p]['radioparams']['radioparam'];
 $mpd_status['radiomaster'] = prefs::$prefs['multihosts'][$p]['radioparams']['radiomaster'];
 $mpd_status['radioconsume'] = prefs::$prefs['multihosts'][$p]['radioparams']['radioconsume'];
+$mpd_status['mopidy_radio_domains'] = prefs::$prefs['mopidy_radio_domains'];
 
 header('Content-Type: application/json');
 echo json_encode($mpd_status);

@@ -1431,18 +1431,24 @@ $.widget("rompr.makeDomainChooser", {
 					i.capitalize()+'</label></div>');
 			}
 		}
-		this.options.holder.find('.topcheck').each(function() {
-			var n = $(this).attr("id");
-			var d = n.substr(0, n.indexOf('_'));
-			if (self.options.default_domains.indexOf(d) > -1) {
-				$(this).prop("checked", true);
-			}
-		});
+		this.setSelection(this.options.default_domains);
 		this.options.holder.disableSelection();
 	},
 
 	_setOption: function(key, value) {
 		this.options[key] = value;
+	},
+
+	setSelection: function(domains) {
+		this.options.holder.find('.topcheck').each(function() {
+			var n = $(this).attr("id");
+			var d = n.substr(0, n.indexOf('_'));
+			if (domains.indexOf(d) > -1) {
+				$(this).prop("checked", true);
+			} else {
+				$(this).prop("checked", false);
+			}
+		});
 	},
 
 	getSelection: function() {
