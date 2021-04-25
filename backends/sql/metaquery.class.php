@@ -218,6 +218,7 @@ class metaquery extends collection_base {
 			FROM
 			Tracktable JOIN Playcounttable USING (TTindex)
 			JOIN Artisttable USING (Artistindex)
+			".$this->charts_include_option()."
 			GROUP BY label_artist ORDER BY soundcloud_plays DESC LIMIT 40";
 		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
 	}
@@ -231,6 +232,7 @@ class metaquery extends collection_base {
 			FROM Playcounttable JOIN Tracktable USING (TTindex)
 			JOIN Albumtable USING (Albumindex)
 			JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+			".$this->charts_include_option()."
 			GROUP BY label_artist, label_album ORDER BY soundcloud_plays DESC LIMIT 40";
 		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
 	}
@@ -247,9 +249,26 @@ class metaquery extends collection_base {
 			JOIN Playcounttable USING (TTIndex)
 			JOIN Albumtable USING (Albumindex)
 			JOIN Artisttable USING (Artistindex)
+			".$this->charts_include_option()."
 			GROUP BY label_artist, label_album, label_track
 			ORDER BY soundcloud_plays DESC LIMIT ".$limit;
 		return $this->generic_sql_query($query, false, PDO::FETCH_OBJ);
+	}
+
+	private function charts_include_option() {
+		switch (prefs::$prefs['chartoption']) {
+			case CHARTS_INCLUDE_ALL:
+				return '';
+				break;
+
+			case CHARTS_MUSIC_ONLY:
+				return ' WHERE isAudiobook = 0 ';
+				break;
+
+			case CHARTS_AUDIOBOOKS_ONLY:
+				return ' WHERE isAudiobook = 1 ';
+				break;
+		}
 	}
 
 }

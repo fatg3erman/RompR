@@ -4,7 +4,7 @@ define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 250);
 define('ROMPR_COLLECTION_VERSION', 6);
 define('ROMPR_IMAGE_VERSION', 4);
 define('ROMPR_SCHEMA_VERSION', 72);
-define('ROMPR_VERSION', '1.57');
+define('ROMPR_VERSION', '1.58');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
 define('ROMPR_UNKNOWN_STREAM', "Unknown Internet Stream");
@@ -287,5 +287,9 @@ define('CUSTOM_RADIO_ITEMS', array(
 		'options'	=> RADIO_OPTIONS_INTEGER
 	)
 ));
+
+define('CHARTS_INCLUDE_ALL', 0);
+define('CHARTS_MUSIC_ONLY', 1);
+define('CHARTS_AUDIOBOOKS_ONLY', 2);
 
 ?>

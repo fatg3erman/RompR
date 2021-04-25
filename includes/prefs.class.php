@@ -166,7 +166,8 @@ class prefs {
 		'last_cache_clean' => 10,
 		'next_podcast_refresh' => 10,
 		'use_original_releasedate' => false,
-		"bgimgparms" => ['dummy' => 'baby']
+		"bgimgparms" => ['dummy' => 'baby'],
+		"chartoption" => 0
 	);
 
 	// Prefs that should not be exposed to the browser for security reasons

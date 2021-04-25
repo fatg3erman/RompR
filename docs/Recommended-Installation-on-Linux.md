@@ -9,6 +9,8 @@ This assumes you've already followed the guide to install a player and the Romp–
 
 ### Create nginx configuration
 
+NOTE: Users of Arch Linux will find this method does not entirely work. There is a forum post [here](https://gitq.com/fatg3erman/RompR/topics/59/problem-with-database-connection-on-archlinux) that might help.
+
 Nginx comes set up with a default web site, which we don't want to use. You used to be able to just delete it but now we can't do that as it causes errors. So first we will edit the existing default config, since we don't want it to be the default
 
     sudo nano /etc/nginx/sites-available/default

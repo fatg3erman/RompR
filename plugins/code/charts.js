@@ -2,6 +2,13 @@ var charts = function() {
 
 	var cha = null;
 	var holders = new Array();
+	var refreshtimer;
+
+	const CHARTS_OPTIONS = [
+		'Display Everyting',
+		'Music Collection Only',
+		'Spoken Word Only'
+	];
 
 	function putItems(holder, data, title) {
 		var cols = 0;
@@ -60,8 +67,16 @@ var charts = function() {
 
 			if (cha == null) {
 				cha = browser.registerExtraPlugin("cha", language.gettext("label_charts"), charts);
+				var h = $('<div>', {class: 'containerbox dropwdown-container'}).appendTo('#chafoldup');
+				var sh = $('<div>', {class: 'selectholder'}).appendTo(h);
+				var sl = $('<select>', {id: 'chartoptionselector', class: 'saveomatic'}).appendTo(sh);
+				CHARTS_OPTIONS.forEach(function(v, i) {
+					sl.append($('<option>', {value: i}).html(v));
+				});
+				prefs.setPrefs();
 				$("#chafoldup").append('<div class="noselection fullwidth masonified" id="chamunger"></div>');
 				getCharts(charts.firstLoad, charts.firstLoadFail);
+				sl.on('change', charts.reloadAll);
 			} else {
 				browser.goToPlugin("cha");
 			}
@@ -96,8 +111,12 @@ var charts = function() {
 		},
 
 		reloadAll: function() {
+			clearTimeout(refreshtimer);
 			if (cha) {
-				getCharts(charts.backgroundUpdate,null);
+				refreshtimer = setTimeout(function() {
+					getCharts(charts.backgroundUpdate,null)
+				},
+				1000);
 			}
 		},
 
@@ -106,6 +125,7 @@ var charts = function() {
 				holders[i].empty();
 				putItems(holders[i],data[i],i);
 			}
+			browser.rePoint($("#chamunger"), {itemSelector: '.tagholder', percentPosition: true});
 		}
 
 	}

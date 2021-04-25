@@ -2,6 +2,10 @@
 
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.58
+* Top 40 plugin can now display Music, Audibooks, or both.
+
+
 ## Version 1.57
 * 'Up Next' displayed for Audiobooks to remind you where you got to.
 * Verious small bugfixes
