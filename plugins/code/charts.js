@@ -7,7 +7,8 @@ var charts = function() {
 	const CHARTS_OPTIONS = [
 		'Display Everyting',
 		'Music Collection Only',
-		'Spoken Word Only'
+		'Spoken Word Only',
+		'Internet Sources Only'
 	];
 
 	function putItems(holder, data, title) {

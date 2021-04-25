@@ -262,11 +262,15 @@ class metaquery extends collection_base {
 				break;
 
 			case CHARTS_MUSIC_ONLY:
-				return ' WHERE isAudiobook = 0 ';
+				return ' WHERE isAudiobook = 0 AND Hidden = 0 ';
 				break;
 
 			case CHARTS_AUDIOBOOKS_ONLY:
-				return ' WHERE isAudiobook = 1 ';
+				return ' WHERE isAudiobook = 1 AND Hidden = 0 ';
+				break;
+
+			case CHARTS_INTERNET_ONLY:
+				return ' WHERE Hidden = 1 ';
 				break;
 		}
 	}
