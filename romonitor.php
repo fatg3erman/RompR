@@ -121,7 +121,7 @@ while (true) {
 				$temp_status = $player->get_status();
 				if ($temp_status['state'] == 'stop' || $temp_status['songid'] != $current_id) {
 					logger::log('ROMONITOR','Consuming track ID',$current_id);
-					$mpd_status = $player->do_command_list(['deleteid "'.$current_id.'"']);
+					$player->do_command_list(['deleteid "'.$current_id.'"']);
 				}
 			}
 
