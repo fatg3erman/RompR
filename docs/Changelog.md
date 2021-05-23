@@ -7,6 +7,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Fixed bug where comma-separated list perferences couldn't have spaces around the commas
 * Added a workaround for the long standing Mopidy bug that makes consume not work properly, since they don't seem interested in merging my fix.
 This requires you to have romonitor running, [You should read the docs before enabling this option](/RompR/Rompr-And-Mopidy)
+* If you're running romonitor already, you should restart it after installing this update
 
 
 ## Version 1.57
