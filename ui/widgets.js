@@ -1443,7 +1443,7 @@ $.widget("rompr.makeDomainChooser", {
 		this.options.holder.find('.topcheck').each(function() {
 			var n = $(this).attr("id");
 			var d = n.substr(0, n.indexOf('_'));
-			if (domains.indexOf(d) > -1) {
+			if (domains && domains.indexOf(d) > -1) {
 				$(this).prop("checked", true);
 			} else {
 				$(this).prop("checked", false);

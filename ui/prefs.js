@@ -285,7 +285,7 @@ var prefs = function() {
 		var callback = null;
 		$(".saveotron").each( function() {
 			if ($(this).hasClass("arraypref")) {
-				felakuti[$(this).attr("id")] = $(this).val().split(',');
+				felakuti[$(this).attr("id")] = $(this).val().split(',').map(f => f.trim());
 			} else {
 				felakuti[$(this).attr("id")] = $(this).val();
 			}
@@ -796,6 +796,16 @@ var prefs = function() {
 					callback = playlist.repopulate;
 					break;
 
+				case "consume_workaround":
+				debug.log('ARSE',player.status.consume,prefobj[prefname]);
+					if (player.status.consume == 1 && prefobj[prefname]) {
+						infobar.notify(language.gettext('warn_consumearound'));
+						prefobj[prefname] = false;
+						$('#'+prefname).prop('checked', false);
+					} else if (prefobj['prefname']) {
+						infobar.notify(language.gettext('msg_consumearound'));
+					}
+					break;
 
 			}
 			prefs.save(prefobj, callback);

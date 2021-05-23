@@ -712,7 +712,10 @@ language::add_translations([
 	"config_hidemastervolume" =>			'Use Snapcast Volume as Main Volume Control',
 	"setup_mopidy_scan" =>					'Allow RompR to run mopidy local scan when creating the Music Collection',
 	"setup_mopidy_scan_title" =>			'Mopidy Special Options',
-	"label_upnext" =>						'Up Next'
+	"label_upnext" =>						'Up Next',
+	"config_consumeworkaround" =>			'Work Around Mopidy Consume Bug (Read the Docs First)',
+	"warn_consumearound" =>					'Please DISABLE consume before enabling this option',
+	"msg_consumearound" =>					'Read the Docs about this option. You must be running romonitor for it to work'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

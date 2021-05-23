@@ -152,6 +152,22 @@ if ($player->is_connected()) {
 					$cmds[] = join_command_string($cmd);
 					break;
 
+				case "consume":
+					if (prefs::$prefs['consume_workaround']) {
+						logger::log('POSTCOMMAND', 'Using Mopdiy Consume Workaround');
+						if ($cmd[1] == 0) {
+							logger::log('POSTCOMMAND', '  Disabling local consume');
+							prefs::$prefs['we_do_consume'] = false;
+						} else {
+							logger::log('POSTCOMMAND', '  Enabling local consume');
+							prefs::$prefs['we_do_consume'] = true;
+						}
+						prefs::save();
+					} else {
+						$cmds[] = join_command_string($cmd);
+					}
+					break;
+
 				case "play":
 				case "playid":
 					$expected_state = 'play';
@@ -214,6 +230,9 @@ if ($player->is_connected()) {
 	//
 
 	$mpd_status = $player->get_status();
+	if (prefs::$prefs['consume_workaround']) {
+		$mpd_status['consume'] = prefs::$prefs['we_do_consume'] ? 1 : 0;
+	}
 
 	//
 	// If we got an error from the command list and NOT from 'status',

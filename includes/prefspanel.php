@@ -129,8 +129,12 @@ print '<div class="pref tright"><button onclick="player.defs.edit()">'.language:
 print '</div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="player_in_titlebar" />
-<label for="player_in_titlebar">'.language::gettext('config_playerintitlebar').'</label>
+<label for="player_in_titlebar">'.language::gettext('config_playerintitlebar').'</label>';
+
+print '<input class="autoset toggle" type="checkbox" id="consume_workaround" />
+<label for="consume_workaround">'.language::gettext('config_consumeworkaround').'</label>
 </div>';
+
 print '</div>';
 
 // Snapcast

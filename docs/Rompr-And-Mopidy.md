@@ -46,6 +46,24 @@ in RompR so that RompR is using the 'wrong' port.
 
 ![](images/httport.png)
 
+### Fixing Mopidy's Consume Bug
+
+If you use Mopidy with consume enabled you've probably encountered a bug where it gets stuck playing the same track over and over again.
+I submitted a fix for this in early 2020 but so far it has been largely ignored. Out of frustration I added this workaround to Rompr so that
+Rompr will do the consuming. For this to work you first need to be running [romonitor](/RompR/Rompr-And-Mobiles).
+
+Once you've got romonitor set up you need to make sure you have DISABLED consume (otherwise Mopidy will keep trying to do it).
+Then in Rompr enable the option in the Config Panel.
+
+![](images/consumearound.png)
+
+Once you've done this the Consume control in Rompr will control Rompr's consume workaround option instead of Mopidy's consume setting.
+
+It's best if you also have the HTTP interface enabled as above, so that the tracklist updates responsively when the consume happens.
+
+Note that romonitor will continue to do the consuming even if you use another client to control Mopidy, but that client will not display the setting
+correctly and will not be able to switch it on or off.
+
 ## Building Your Music Collection
 
 The configuration panel will allow you to choose various sources from which to build your [Music Collection](/RompR/Music-Collection).

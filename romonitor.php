@@ -116,6 +116,12 @@ while (true) {
 			prefs::$prefs['player_backend'] = $player_backend_save;
 			$radiomode = prefs::$prefs['multihosts'][$currenthost_save]['radioparams']['radiomode'];
 			$radioparam = prefs::$prefs['multihosts'][$currenthost_save]['radioparams']['radioparam'];
+
+			if (prefs::$prefs['consume_workaround'] && prefs::$prefs['we_do_consume']) {
+				logger::log('ROMONITOR','Consuming track ID',$current_id);
+				$mpd_status = $player->do_command_list(['deleteid "'.$current_id.'"']);
+			}
+
 			$playlistlength = $mpd_status['playlistlength'];
 			switch ($radiomode) {
 				case 'starRadios':

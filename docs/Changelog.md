@@ -4,6 +4,9 @@ Note that some versions listed here may be unreleased, I use version number incr
 
 ## Version 1.58
 * Top 40 plugin can now display Music, Audibooks, or both.
+* Fixed bug where comma-separated list perferences couldn't have spaces around the commas
+* Added a workaround for the long standing Mopidy bug that makes consume not work properly, since they don't seem interested in merging my fix.
+This requires you to have romonitor running, [You should read the docs before enabling this option](/RompR/Rompr-And-Mopidy)
 
 
 ## Version 1.57
@@ -60,7 +63,7 @@ but it should be the same behaviour as pre-1.52. In some ways I didn't want to f
 * Added 'folder' as a valid filename for local album art
 * Added Genres to the database. This permits the Collection to be sorted by Genre, along with a few other new features.
 * Fix bug in Last.FM Playcount sync where it only worked the first time you used it
-* Fix bug in Last.FM Playcount sync that wouldn't mark podcast episodes as listsened when using MySQL
+* Fix bug in Last.FM Playcount sync that wouldn't mark podcast episodes as listened when using MySQL
 * Added Custom Personal Radio Station creator
 
 ### NOTES:
@@ -83,7 +86,7 @@ Thought I'd bump the version number up a bit since this seems like quite a big r
 * The Tags and Ratings manager has been removed since a) I hated it and b) almost everything it did can now be done via the main Collection panel
 * The 'back' button on the phone skin is now always visible so you don't have to scroll back to the top to go back
 * Done quite a lot of work on the Skypotato skin to make it neater, more efficient, and smoother and give it all the same functionality as the Desktop skin
-* Almost all the UI code has been updayted and tidied up for a faster, smoother UI.
+* Almost all the UI code has been updated and tidied up for a faster, smoother UI.
 * I wrote a script to automate a lot of the work in making icon themes, so now there are LOADS of them :-D
 * 'Display Search Results as Directory Tree' is now incoporated into a new menu giving you the option to display your search results in a different format to the Music Collection
 * A lot of images are now lazy-loaded so they're only loaded when they're visible on screen, which reduces memory usage a lot. This requires a modern browser and will fall back to loading everything at once if your browser doesn't support it. Recent versions of all major browsers should work, except for Safari where it's still listed as an 'Experimental' feature.
