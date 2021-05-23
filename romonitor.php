@@ -118,8 +118,11 @@ while (true) {
 			$radioparam = prefs::$prefs['multihosts'][$currenthost_save]['radioparams']['radioparam'];
 
 			if (prefs::$prefs['consume_workaround'] && prefs::$prefs['we_do_consume']) {
-				logger::log('ROMONITOR','Consuming track ID',$current_id);
-				$mpd_status = $player->do_command_list(['deleteid "'.$current_id.'"']);
+				$temp_status = $player->get_status();
+				if ($temp_status['state'] == 'stop' || $temp_status['songid'] != $current_id) {
+					logger::log('ROMONITOR','Consuming track ID',$current_id);
+					$mpd_status = $player->do_command_list(['deleteid "'.$current_id.'"']);
+				}
 			}
 
 			$playlistlength = $mpd_status['playlistlength'];
