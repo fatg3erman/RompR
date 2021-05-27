@@ -10,7 +10,7 @@ language::add_translations([
 
 	// Tooltips for Buttons across the top of the information panel
 	"button_togglesources" =>				"Панель Переключить источники",
-	"button_back" =>						"Предидущая",
+	"button_back" =>						"Предыдущая",
 	"button_history" =>						"История",
 	"button_forward" =>						"Следующая",
 	"button_toggleplaylist" =>				"Переключить плейлист",
