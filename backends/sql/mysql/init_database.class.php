@@ -45,7 +45,7 @@ class init_database extends init_generic {
 			"usedInPlaylist TINYINT(1) UNSIGNED DEFAULT 0, ".
 			"Genreindex INT UNSIGNED DEFAULT 0, ".
 			"TYear YEAR, ".
-			"INDEX Uri(768), ".
+			"INDEX (Uri(768)), ".
 			"UNIQUE INDEX(Albumindex, Artistindex, TrackNo, Disc, Title)) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL", "  Tracktable OK");
