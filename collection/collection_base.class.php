@@ -50,6 +50,7 @@ class collection_base extends database {
 		// We could also just not return the album index, but doing it this way speeds it up
 		// and I don't *think* it'll cause a problem.
 		$data = array();;
+
 		$result = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
 			'SELECT
 				Uri,
@@ -90,6 +91,49 @@ class collection_base extends database {
 				break;
 			}
 		}
+
+		// Spotify. Fucking Spotify will CHANGE THE TITLE OF A TRACK. So I've added an index to the Uri
+		// field, which I really didn't want to ever have to do. But we must follow down whatever shit-filled
+		// drainpipe Spotify lead us into.
+		if (count($data) == 0) {
+			$result = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
+				'SELECT
+					Title,
+					Uri,
+					TTindex,
+					Disc,
+					Artistname AS AlbumArtist,
+					Albumtable.Image AS "X-AlbumImage",
+					mbid AS MUSICBRAINZ_ALBUMID,
+					Searched,
+					IFNULL(Playcount, 0) AS Playcount,
+					isAudiobook,
+					Albumindex AS album_index,
+					AlbumArtistindex AS albumartist_index,
+					Tracktable.Artistindex AS trackartist_index
+				FROM
+					Tracktable
+					JOIN Albumtable USING (Albumindex)
+					JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
+					LEFT JOIN Playcounttable USING (TTindex)
+				WHERE Uri = ?',
+				$filedata['file']
+			);
+			foreach ($result as $tinfo) {
+				if ($tinfo['isAudiobook'] > 0) {
+					$tinfo['type'] = 'audiobook';
+				}
+				$tinfo['isAudiobook'] = null;
+				$data = array_filter($tinfo, function($v) {
+					if ($v === null || $v == '') {
+						return false;
+					}
+					return true;
+				});
+				break;
+			}
+		}
+
 		if (count($data) == 0) {
 			$result = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
 				'SELECT

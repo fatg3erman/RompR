@@ -68,6 +68,11 @@ class init_database extends init_generic {
 					return array(false, "Error Creating Tracktable Index : ".$err);
 				}
 			}
+			if ($this->generic_sql_query("CREATE INDEX IF NOT EXISTS track_finder_index ON Tracktable (Title, Uri)", true)) {
+			} else {
+				$err = $this->mysqlc->errorInfo()[2];
+				return array(false, "Error While Checking Tracktable : ".$err);
+			}
 		} else {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error While Checking Tracktable : ".$err);
@@ -907,6 +912,11 @@ class init_database extends init_generic {
 					$this->generic_sql_query("DROP TRIGGER IF EXISTS track_update_trigger", true);
 					$this->create_conditional_triggers();
 					$this->generic_sql_query("UPDATE Statstable SET Value = 72 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 72:
+					logger::log("SQL", "Updating FROM Schema version 72 TO Schema version 73");
+					$this->generic_sql_query("UPDATE Statstable SET Value = 73 WHERE Item = 'SchemaVer'", true);
 					break;
 			}
 			$sv++;
