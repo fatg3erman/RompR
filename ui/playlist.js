@@ -333,7 +333,7 @@ var playlist = function() {
 				update_error = false;
 			}
 
-			debug.log("PLAYLIST","Got Playlist from backend for request",my_queue_id);
+			debug.log("PLAYLIST","Got Playlist from backend for request",my_queue_id,list);
 			var count = -1;
 			var current_album = "";
 			var current_artist = "";
