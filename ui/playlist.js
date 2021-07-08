@@ -346,7 +346,7 @@ var playlist = function() {
 			for (let track of list) {
 				track.Time = parseFloat(track.Time);
 				totaltime += track.Time;
-				var sortartist = (track.albumartist == "") ? track.trackartist : track.albumartist;
+				var sortartist = (track.albumartist == "" || track.albumartist == null) ? track.trackartist : track.albumartist;
 				if ((sortartist.toLowerCase() != current_artist.toLowerCase()) ||
 					track.Album.toLowerCase() != current_album.toLowerCase() ||
 					track.type != current_type)
