@@ -201,7 +201,8 @@ class player extends base_mpd_player {
 		$filedata['folder'] = concatenate_artist_names($filedata['Artist']);
 		$filedata['AlbumArtist'] = $filedata['Artist'];
 		$filedata['X-AlbumUri'] = $filedata['file'];
-		$filedata['Album'] = $filedata['Title'];
+		if ($filedata['Title'])
+			$filedata['Album'] = $filedata['Title'];
 		if ($filedata['X-AlbumImage']) {
 			$filedata['X-AlbumImage'] = 'getRemoteImage.php?url='.rawurlencode($filedata['X-AlbumImage']);
 		}
