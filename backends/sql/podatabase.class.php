@@ -343,7 +343,7 @@ class poDatabase extends database {
 			$podcast['LastPubDate'],
 			$podcast['Category']))
 		{
-			$newpodid = $mysqlc->lastInsertId();
+			$newpodid = $this->mysqlc->lastInsertId();
 			if (is_dir('prefs/podcasts/'.$newpodid)) {
 				rrmdir('prefs/podcasts/'.$newpodid);
 			}
