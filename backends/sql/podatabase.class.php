@@ -310,6 +310,12 @@ class poDatabase extends database {
 		logger::mark("PODCASTS", "Getting podcast",$url);
 		$newpodid = null;
 		$podcast = $this->parse_rss_feed($url, false, null, $gettracks);
+		if ($podcast === false) {
+			logger::warn("PODCASTS", "  Failed to download RSS feed");
+			header('HTTP/1.0 404 Not Found');
+			print 'Could not download RSS feed '.$url;
+			exit(0);
+		}
 		$r = $this->check_if_podcast_is_subscribed(array(  'feedUrl' => $podcast['FeedURL'],
 													'collectionName' => $podcast['Title'],
 													'artistName' => $podcast['Artist']));
