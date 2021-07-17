@@ -640,7 +640,8 @@ class poDatabase extends database {
 						'<option value="'.DISPLAYMODE_NEW.'">'.language::gettext("podcast_display_onlynew").'</option>'.
 						'<option value="'.DISPLAYMODE_UNLISTENED.'">'.language::gettext("podcast_display_unlistened").'</option>'.
 						'<option value="'.DISPLAYMODE_DOWNLOADEDNEW.'">'.language::gettext("podcast_display_downloadnew").'</option>'.
-						'<option value="'.DISPLAYMODE_DOWNLOADED.'">'.language::gettext("podcast_display_downloaded").'</option>';
+						'<option value="'.DISPLAYMODE_DOWNLOADED.'">'.language::gettext("podcast_display_downloaded").'</option>'.
+						'<option value="'.DISPLAYMODE_NUD.'">'.language::gettext("podcast_display_nud").'</option>';
 			print preg_replace('/(<option value="'.$y->DisplayMode.'")/', '$1 selected', $options);
 			print '</select>';
 			print '</div></div>';
@@ -758,23 +759,24 @@ class poDatabase extends database {
 	}
 
 	private function format_episode(&$y, &$item, $pm) {
-		if ($item->Deleted == 1) {
+		if ($item->Deleted == 1)
 			return;
-		}
+
+		if ($y->DisplayMode == DISPLAYMODE_NUD && ($item->Downloaded == 0 && $item->New == 0 && $item->Listened == 1))
+			return;
+
 		if ($y->DisplayMode == DISPLAYMODE_DOWNLOADEDNEW && ($item->Downloaded == 0 && $item->New == 0))
-		{
 			return;
-		}
-		if ($y->DisplayMode == DISPLAYMODE_NEW && $item->New == 0) {
+
+		if ($y->DisplayMode == DISPLAYMODE_NEW && $item->New == 0)
 			return;
-		}
-		if ($y->DisplayMode == DISPLAYMODE_UNLISTENED && $item->Listened == 1) {
-			// Track cannot be new and unlistened, that can't happen because it makes no sense
+
+		if ($y->DisplayMode == DISPLAYMODE_UNLISTENED && $item->Listened == 1)
 			return;
-		}
-		if ($y->DisplayMode == DISPLAYMODE_DOWNLOADED && $item->Downloaded == 0) {
+
+		if ($y->DisplayMode == DISPLAYMODE_DOWNLOADED && $item->Downloaded == 0)
 			return;
-		}
+
 		print '<div class="item podcastitem">';
 		if ($item->Downloaded == 1 && $y->Version > 1) {
 			print '<div class="containerbox podcasttrack clicktrack playable draggable dropdown-container" name="'.rawurlencode(dirname(dirname(get_base_url())).$item->Localfilename).'">';

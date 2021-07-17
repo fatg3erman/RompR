@@ -322,7 +322,8 @@ $options =  '<option value="'.DISPLAYMODE_ALL.'">'.language::gettext("podcast_di
 			'<option value="'.DISPLAYMODE_NEW.'">'.language::gettext("podcast_display_onlynew").'</option>'.
 			'<option value="'.DISPLAYMODE_UNLISTENED.'">'.language::gettext("podcast_display_unlistened").'</option>'.
 			'<option value="'.DISPLAYMODE_DOWNLOADEDNEW.'">'.language::gettext("podcast_display_downloadnew").'</option>'.
-			'<option value="'.DISPLAYMODE_DOWNLOADED.'">'.language::gettext("podcast_display_downloaded").'</option>';
+			'<option value="'.DISPLAYMODE_DOWNLOADED.'">'.language::gettext("podcast_display_downloaded").'</option>'.
+			'<option value="'.DISPLAYMODE_NUD.'">'.language::gettext("podcast_display_nud").'</option>';
 print $options;
 print '</select>';
 print '</div></div>';

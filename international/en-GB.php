@@ -715,7 +715,8 @@ language::add_translations([
 	"label_upnext" =>						'Up Next',
 	"config_consumeworkaround" =>			'Work Around Mopidy Consume Bug (Read the Docs First)',
 	"warn_consumearound" =>					'Please DISABLE consume before enabling this option',
-	"msg_consumearound" =>					'Read the Docs about this option. You must be running romonitor for it to work'
+	"msg_consumearound" =>					'Read the Docs about this option. You must be running romonitor for it to work',
+	"podcast_display_nud" =>				'New, Unlistened, & Downloaded'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------
