@@ -33,16 +33,16 @@ function format_tracknum($tracknum) {
 	return 0;
 }
 
-function format_text($d) {
-	$d = preg_replace('/(<a href=.*?)>/', '$1 target="_blank">', $d);
-	$d = preg_replace('/(<a rel="nofollow" href=.*?)>/', '$1 target="_blank">', $d);
+function format_podcast_text($d) {
 	$d = preg_replace('/style\s*=\s*\".*?\"/', '', $d);
 	$d = preg_replace('/<p>\s*<\/p>/', '', $d);
 	$d = preg_replace('/<p>&nbsp;<\/p>/', '', $d);
 	$d = preg_replace('/\n|(\r\n)/', '<br/>', $d);
 	$d = preg_replace('/(<br\s*\/*>)+/', '<br/>', $d);
 	$d = preg_replace('/<\/p><br>/', '</p>', $d);
-	return $d;
+	$doc = phpQuery::newDocument('<html>'.$d.'</html>');
+	$doc->find('a')->attr('target', '_blank');
+	return $doc->html();
 }
 
 function format_time($t,$f=':') {
@@ -428,10 +428,6 @@ function format_bytes($size, $precision = 1)
 	$base = log($size, 1024);
 	$suffixes = array('', 'K', 'M', 'G', 'T');
 	return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
-}
-
-function fixup_links($s) {
-	return preg_replace('/(^|\s+|\n|[^\s+"])(https*:\/\/.*?)(<|\n|\r|\s|\)|$|[<|\n|\r|\s|\)|$])/', '$1<a href="$2">$2</a>$3', $s);
 }
 
 function set_version_string() {

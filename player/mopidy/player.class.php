@@ -254,7 +254,7 @@ class player extends base_mpd_player {
 				'',
 				($obj->albumartist == '') ? $filedata['AlbumArtist'] : array($obj->albumartist),
 				null,
-				format_text(fixup_links($obj->comment)),
+				format_podcast_text($obj->comment),
 				null
 			);
 		}

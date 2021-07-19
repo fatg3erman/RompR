@@ -606,7 +606,7 @@ class poDatabase extends database {
 		}
 		$pm = $y->PODindex;
 		uibits::trackControlHeader('','','podcast_'. $pm, null, array(array('Image' => $y->Image)));
-		print '<div class="whatdoicallthis">'.format_text($y->Description).'</div>';
+		print '<div class="whatdoicallthis">'.format_podcast_text($y->Description).'</div>';
 		if ($y->Subscribed == 1) {
 			print '<div class="containerbox bumpad">';
 			print '<i title="'.language::gettext("podcast_configure").'" class="icon-cog-alt podicon '.
@@ -821,7 +821,7 @@ class poDatabase extends database {
 		} else {
 			$class = 'invisible whatdoicallthis toggledown';
 		}
-		print '<div id="poddesc_'.$item->PODTrackindex.'" class="'.$class.'">'.format_text(fixup_links($item->Description)).'</div>';
+		print '<div id="poddesc_'.$item->PODTrackindex.'" class="'.$class.'">'.format_podcast_text($item->Description).'</div>';
 		// Usually very inaccurate
 		// if ($item->FileSize > 0) {
 		//     print '<div class="fsize">'.format_bytes($item->FileSize).'Bytes</div>';
