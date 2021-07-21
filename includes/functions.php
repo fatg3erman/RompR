@@ -40,6 +40,7 @@ function format_podcast_text($d) {
 	$d = preg_replace('/\n|(\r\n)/', '<br/>', $d);
 	$d = preg_replace('/(<br\s*\/*>)+/', '<br/>', $d);
 	$d = preg_replace('/<\/p><br>/', '</p>', $d);
+	$d = preg_replace('/&/', '&amp;', $d);
 	$doc = phpQuery::newDocument('<html>'.$d.'</html>');
 	$doc->find('a')->attr('target', '_blank');
 	return $doc->html();
