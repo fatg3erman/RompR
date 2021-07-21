@@ -2,7 +2,7 @@
 class albumImage extends baseAlbumImage {
 
 	public function set_source($src) {
-		$this->source = $src;
+		$this->source = trim($src);
 	}
 
 	public function has_source() {
@@ -164,7 +164,7 @@ class albumImage extends baseAlbumImage {
 	private function download_remote_file() {
 		$download_file = 'prefs/temp/'.$this->key;
 		$retval = $download_file;
-		if (preg_match('/^https*:/', $this->source) || preg_match('/^getRemoteImage.php/', $this->source)) {
+		if (preg_match('/^https*:/', trim($this->source)) || preg_match('/^getRemoteImage.php/', trim($this->source))) {
 			$d = new url_downloader(array('url' => $this->source));
 			if ($d->get_data_to_file($download_file, true)) {
 				$content_type = $d->get_content_type();
@@ -176,9 +176,14 @@ class albumImage extends baseAlbumImage {
 				$retval = false;
 			}
 		} else {
-			logger::log("ALBUMIMAGE", "  .. Copying apparent local file",$this->source,'to',$download_file);
-			if (!copy(rawurldecode($this->source), $download_file)) {
-				logger::warn("ALBUMIMAGE", "    .. File Copy Failed");
+			try {
+				logger::log("ALBUMIMAGE", "  .. Copying apparent local file",$this->source,'to',$download_file);
+				if (!copy(rawurldecode($this->source), $download_file)) {
+					logger::warn("ALBUMIMAGE", "    .. File Copy Failed");
+					$retval = false;
+				}
+			} catch (Exception $e) {
+				logger::warn("ALBUMIMAGE", "    .. File Copy Failed Fatally with exception");
 				$retval = false;
 			}
 		}
