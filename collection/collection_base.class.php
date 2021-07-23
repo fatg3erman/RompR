@@ -70,7 +70,9 @@ class collection_base extends database {
 				JOIN Albumtable USING (Albumindex)
 				JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
 				LEFT JOIN Playcounttable USING (TTindex)
-			WHERE Title = ?
+			WHERE
+			Hidden = 0
+			AND Title = ?
 			AND TrackNo = ?
 			AND Albumname = ?
 			AND Domain = ?',
@@ -116,7 +118,9 @@ class collection_base extends database {
 					JOIN Albumtable USING (Albumindex)
 					JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
 					LEFT JOIN Playcounttable USING (TTindex)
-				WHERE Uri = ?',
+				WHERE
+				Hidden = 0
+				AND Uri = ?',
 				$filedata['file']
 			);
 			foreach ($result as $tinfo) {
