@@ -264,6 +264,10 @@ class database extends data_base {
 				return "(LastPlayed IS NULL OR TIMESTAMPDIFF(DAY, LastPlayed, CURRENT_TIMESTAMP) > ".$value.")";
 				break;
 
+			case RADIO_RULE_OPTIONS_INTEGER_ISNOT:
+				return "(LastPlayed IS NULL OR TIMESTAMPDIFF(DAY, LastPlayed, CURRENT_TIMESTAMP) <> ".$value.")";
+				break;
+
 		}
 	}
 }

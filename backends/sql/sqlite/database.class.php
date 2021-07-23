@@ -197,6 +197,10 @@ class database extends data_base {
 				return "(LastPlayed IS NULL OR DATE('now', '-".$value." DAYS') > DATE(LastPlayed))";
 				break;
 
+			case RADIO_RULE_OPTIONS_INTEGER_ISNOT:
+				return "(LastPlayed IS NULL OR DATE('now', '-".$value." DAYS') <> DATE(LastPlayed))";
+				break;
+
 		}
 
 	}

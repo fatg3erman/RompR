@@ -224,6 +224,11 @@ class collection_radio extends database {
 							$sqlstring .= $rule['db_key'].' > ?';
 							break;
 
+						case RADIO_RULE_OPTIONS_INTEGER_ISNOT:
+							$tags[] = trim($value);
+							$sqlstring .= $rule['db_key'].' <> ?';
+							break;
+
 						case RADIO_RULE_OPTIONS_STRING_EXISTS:
 							$sqlstring .= $rule['db_key'].' IS NOT NULL';
 							break;
