@@ -2,6 +2,15 @@
 
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.59
+* Downlaoded podcast episodes can now be un-downloaded individually
+* New podcast display option "New, Unlistened, and Downloaded"
+* Fix OPML Importer
+* Add 'is not' option for integer values in custom radio stations
+* Minor bugfixes and stuff
+* Fix bug where some podcasts wouldn't refresh because their RSS feeds contained a newline before the image URL (WHY???)
+
+
 ## Version 1.58
 * Top 40 plugin can now display Music, Audibooks, or both.
 * Fixed bug where comma-separated list perferences couldn't have spaces around the commas
