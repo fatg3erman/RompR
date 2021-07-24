@@ -40,11 +40,13 @@ function format_podcast_text($d) {
 	$d = preg_replace('/\n|(\r\n)/', '<br/>', $d);
 	$d = preg_replace('/(<br\s*\/*>)+/', '<br/>', $d);
 	$d = preg_replace('/<\/p><br>/', '</p>', $d);
-	$d = preg_replace('/& /', '&amp; ', $d);
+	// $d = preg_replace('/& /', '&amp; ', $d);
 	$d = preg_replace('/<hr *\/*>/', '<br />', $d);
-	$doc = phpQuery::newDocument('<html>'.$d.'</html>');
-	$doc->find('a')->attr('target', '_blank');
-	return $doc->html();
+	$d = preg_replace('/<a/', '<a terget="_blank"', $d);
+	return $d;
+	// $doc = phpQuery::newDocument('<html>'.$d.'</html>');
+	// $doc->find('a')->attr('target', '_blank');
+	// return $doc->html();
 }
 
 function format_time($t,$f=':') {

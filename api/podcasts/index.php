@@ -25,6 +25,8 @@ if (array_key_exists('url', $_REQUEST)) {
 	$podid = array(prefs::$database->deleteTrack($_REQUEST['removetrack'], $_REQUEST['channel']));
 } else if (array_key_exists('downloadtrack', $_REQUEST)) {
 	$podid = prefs::$database->downloadTrack($_REQUEST['downloadtrack'], $_REQUEST['channel']);
+} else if (array_key_exists('undownloadtrack', $_REQUEST)) {
+	$podid = array(prefs::$database->undownloadTrack($_REQUEST['undownloadtrack'], $_REQUEST['channel']));
 } else if (array_key_exists('markaslistened', $_REQUEST)) {
 	$podid = array(prefs::$database->markKeyAsListened($_REQUEST['markaslistened'], $_REQUEST['channel']));
 } else if (array_key_exists('markasunlistened', $_REQUEST)) {
@@ -61,18 +63,23 @@ if (array_key_exists('url', $_REQUEST)) {
 }
 
 if ($podid === false) {
+	logger::log('PODCASTS', 'Returning No Content');
 	header('HTTP/1.1 204 No Content');
 } else if (is_array($podid)) {
 	if (array_key_exists(0, $podid) && $podid[0] === false) {
+		logger::log('PODCASTS', 'Returning No Content for array return');
 		header('HTTP/1.1 204 No Content');
 	} else {
+		logger::log('PODCASTS', 'Returning podid');
 		header('Content-Type: application/json');
 		print json_encode($podid);
 	}
 } else if ($podid !== null) {
+	logger::log('PODCASTS', 'Returning podcast HTML');
 	header('Content-Type: text/htnml; charset=utf-8');
 	prefs::$database->outputPodcast($podid);
 } else {
+	logger::log('PODCASTS', 'Returning podcast list');
 	header('Content-Type: text/htnml; charset=utf-8');
 	prefs::$database->doPodcastList($subflag);
 }

@@ -252,6 +252,13 @@ var podcasts = function() {
 			downloadTrack(track, channel);
 		},
 
+		undownloadPodcast: function(event, clickedElement) {
+			var track = clickedElement.attr('name').replace(/podremdownload_/, '');
+			var channel = clickedElement.parent().attr('name').replace(/podcontrols_/,'');
+			debug.log("PODCAST","Un-Downloading track",track,"from channel",channel);
+			podcastRequest({undownloadtrack: track, channel: channel },null);
+		},
+
 		downloadPodcastChannel: function(event, clickedElement) {
 			var channel = clickedElement.attr('name').replace(/podgroupload_/, '');
 			$("#podcast_"+channel).find('.poddownload').trigger('click');
@@ -495,6 +502,7 @@ clickRegistry.addClickHandlers('podtrackremove', podcasts.removePodcastTrack);
 clickRegistry.addClickHandlers('clickpodsubscribe', podcasts.subscribe);
 clickRegistry.addClickHandlers('removepodsearch', podcasts.removeSearch);
 clickRegistry.addClickHandlers('poddownload', podcasts.downloadPodcast);
+clickRegistry.addClickHandlers('podremdownload', podcasts.undownloadPodcast);
 clickRegistry.addClickHandlers('podgroupload', podcasts.downloadPodcastChannel);
 clickRegistry.addClickHandlers('podmarklistened', podcasts.markEpisodeAsListened);
 clickRegistry.addClickHandlers('podmarkunlistened', podcasts.markEpisodeAsUnlistened);

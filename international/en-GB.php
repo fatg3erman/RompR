@@ -174,7 +174,7 @@ language::add_translations([
 	"podcast_kd_tooltip" =>					"Enable this option to keep all downloaded episodes. The above two options will then only apply to episodes that have not been downloaded",
 	"podcast_tooltip_new" =>				"This is a new episode",
 	"podcast_tooltip_notnew" =>				"This episode is not new but it has not been listened to",
-	"podcast_tooltip_downloaded" =>			"This episode has been downloaded",
+	"podcast_tooltip_downloaded" =>			"This episode has been downloaded. Click to remove the downloaded file.",
 	"podcast_tooltip_download" =>			"Download this episode to your computer",
 	"podcast_tooltip_mark" =>				"Mark as listened",
 	"podcast_tooltip_delepisode" =>			"Delete this episode",

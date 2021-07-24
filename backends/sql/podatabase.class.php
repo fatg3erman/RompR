@@ -829,8 +829,8 @@ class poDatabase extends database {
 		if ($y->Subscribed == 1) {
 			print '<div class="clearfix" name="podcontrols_'.$pm.'">';
 			if ($item->Downloaded == 1) {
-				print '<i class="icon-floppy podicon tleft tooltip" title="'.
-					language::gettext("podcast_tooltip_downloaded").'"></i>';
+				print '<i class="icon-floppy podicon tleft tooltip clickable clickicon podcast podremdownload spinable" title="'.
+					language::gettext("podcast_tooltip_downloaded").'" name="podremdownload_'.$item->PODTrackindex.'"></i>';
 			} else {
 				if ($item->New == 1) {
 					$extraclass = ' podnewdownload';
@@ -953,6 +953,15 @@ class poDatabase extends database {
 	public function markKeyAsUnlistened($trackid, $channel) {
 		logger::info("PODCASTS", "Marking track",$trackid,"from podcast",$channel,"as unlistened");
 		$this->generic_sql_query("UPDATE PodcastTracktable SET Listened = 0, New = 0, Progress = 0 WHERE PODTrackindex = ".$trackid, true);
+		return $channel;
+	}
+
+	public function undownloadTrack($trackid, $channel) {
+		logger::info("PODCASTS", "un-Downloading track",$trackid,"from podcast",$channel);
+		$this->generic_sql_query("UPDATE PodcastTracktable SET Localfilename = NULL, Downloaded = 0 WHERE PODTrackindex = ".$trackid, true);
+		if (is_dir('prefs/podcasts/'.$channel.'/'.$trackid)) {
+			rrmdir('prefs/podcasts/'.$channel.'/'.$trackid);
+		}
 		return $channel;
 	}
 
