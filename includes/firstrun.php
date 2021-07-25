@@ -23,6 +23,7 @@ $root_level_dirs = array(
 	'prefs/userstreams',
 	'prefs/customradio',
 	'prefs/temp',
+	'prefs/playground',
 	'prefs/oldcollections',
 	'prefs/youtubedl',
 	'albumart/asdownloaded',

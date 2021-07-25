@@ -318,6 +318,10 @@ var infobar = function() {
 					}
 				},
 
+				getKey: function() {
+					return aImg.name;
+				},
+
 				displayOriginalImage: function(event) {
 					imagePopup.create($(event.target), event, aImg.src);
 				},
@@ -440,7 +444,7 @@ var infobar = function() {
 
 		setNowPlayingInfo: function(info) {
 			//Now playing info
-			debug.debug("INFOBAR","NPinfo",info);
+			debug.core("INFOBAR","NPinfo",info);
 			if (playlistinfo.file) {
 				$('[name="'+rawurlencode(playlistinfo.file)+'"]').removeClass('playlistcurrentitem');
 			}
@@ -491,7 +495,27 @@ var infobar = function() {
 				infobar.albumImage.setKey(info.ImgKey);
 			}
 			infobar.albumImage.setSource(info);
+			infobar.checkForTrackSpecificImage(info);
 			uiHelper.adjustLayout();
+		},
+
+		checkForTrackSpecificImage: async function(info) {
+			if (info.domain == 'local' && prefs.music_directory_albumart != '') {
+				try {
+					data = await (jqxhr = $.ajax({
+						method: 'POST',
+						url: 'utils/checklocalcover.php',
+						data: {file: info.unmopfile, ImgKey: info.ImgKey},
+						dataType: 'json'
+					}));
+					if (data.ImgKey) {
+						debug.log('INFOBAR', 'Setting image to track-specific image returned by plonkington boofar');
+						infobar.albumImage.setSource(data);
+					}
+				} catch (err) {
+					debug.warn('FETTLE', 'Fettling failed', err);
+				}
+			}
 		},
 
 		stopped: function() {

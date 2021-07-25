@@ -800,13 +800,16 @@ class collection_base extends database {
 		$retval = null;
 		// Get album directory by using the Uri of one of its tracks, making sure we choose only local tracks
 		if (getDomain($uri) == 'local') {
-			$result = $this->generic_sql_query("SELECT Uri FROM Tracktable WHERE Albumindex = ".$albumindex." LIMIT 1");
-			foreach ($result as $obj2) {
-				$retval = dirname($obj2['Uri']);
-				$retval = preg_replace('#^local:track:#', '', $retval);
-				$retval = preg_replace('#^file://#', '', $retval);
-				$retval = preg_replace('#^beetslocal:\d+:'.prefs::$prefs['music_directory_albumart'].'/#', '', $retval);
-				logger::log('BACKEND', "Got album directory using track Uri :",$retval);
+			$result = $this->generic_sql_query("SELECT Uri FROM Tracktable WHERE Albumindex = ".$albumindex);
+			while (count($result) > 0 && $retval === null) {
+				$obj2 = array_shift($result);
+				if ($obj2['Uri']) {
+					$retval = dirname($obj2['Uri']);
+					$retval = preg_replace('#^local:track:#', '', $retval);
+					$retval = preg_replace('#^file://#', '', $retval);
+					$retval = preg_replace('#^beetslocal:\d+:'.prefs::$prefs['music_directory_albumart'].'/#', '', $retval);
+					logger::log('BACKEND', "Got album directory using track Uri :",$retval);
+				}
 			}
 		}
 		return $retval;
