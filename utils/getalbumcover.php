@@ -38,6 +38,9 @@ $player->probe_http_api();
 if (prefs::$prefs['mopidy_http_port'] !== false) {
 	array_unshift($searchfunctions, 'tryMopidy');
 }
+if ($player->check_mpd_version('0.22')) {
+	array_unshift($searchfunctions, 'tryMPD');
+}
 
 $result = $albumimage->download_image();
 if (!$albumimage->has_source()) {
@@ -50,6 +53,10 @@ if (!$albumimage->has_source()) {
 		if ($src != "") {
 			$albumimage->set_source($src);
 			$result = $albumimage->download_image();
+			if (strpos($src, 'prefs/temp') === 0) {
+				logger::log('GETALBUMCOVER', 'Deleting temp file',$src);
+				unlink($src);
+			}
 		}
 	}
 }
@@ -329,6 +336,13 @@ function tryMopidy($albumimage) {
 		$delaytime = 100;
 	}
 	return $retval;
+}
+
+function tryMPD($albumimage) {
+	global $player;
+	logger::log('GETALBUMCOVER', 'Trying MPD Images. TrackURI is', $albumimage->trackuri);
+	$player->open_mpd_connection();
+	return $player->readpicture($albumimage->trackuri);
 }
 
 ?>

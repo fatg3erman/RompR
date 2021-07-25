@@ -835,4 +835,21 @@ function print_performance_measurements() {
 	logger::mark('TIMINGS','-------------------------------------------------------------------------');
 }
 
+function type_to_extension($mime) {
+	switch ($mime) {
+		case 'image/jpeg':
+		case 'image/jpg':
+			return 'jpg';
+			break;
+
+		case 'image/png':
+			return 'png';
+			break;
+
+		default:
+			return null;
+			break;
+	}
+}
+
 ?>
