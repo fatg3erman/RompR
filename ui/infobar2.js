@@ -500,12 +500,16 @@ var infobar = function() {
 		},
 
 		checkForTrackSpecificImage: async function(info) {
-			if (info.domain == 'local' && prefs.music_directory_albumart != '') {
+			// if (info.domain == 'local' && prefs.music_directory_albumart != '') {
+			if (info.ImgKey) {
 				try {
 					data = await (jqxhr = $.ajax({
 						method: 'POST',
 						url: 'utils/checklocalcover.php',
-						data: {file: info.unmopfile, ImgKey: info.ImgKey},
+						data: {
+							file: info.file,
+							unmopfile: info.unmopfile,
+							ImgKey: info.ImgKey},
 						dataType: 'json'
 					}));
 					if (data.ImgKey) {

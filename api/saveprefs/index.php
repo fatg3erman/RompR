@@ -16,7 +16,6 @@ foreach($p as $key => $value) {
 
 		case 'music_directory_albumart':
 			prefs::set_music_directory($value);
-			break;
 
 		default:
 			prefs::$prefs[$key] = $value;

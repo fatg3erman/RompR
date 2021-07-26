@@ -9,6 +9,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Add 'is not' option for integer values in custom radio stations
 * Minor bugfixes and stuff
 * Fix bug where some podcasts wouldn't refresh because their RSS feeds contained a newline before the image URL (WHY???)
+* Support for MPD's 'readpicture' command, allowing MPD to read embedded album art from files, meaning the webserver does not nee dot have read access to your music files
 
 
 ## Version 1.58

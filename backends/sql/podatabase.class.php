@@ -354,7 +354,7 @@ class poDatabase extends database {
 				rrmdir('prefs/podcasts/'.$newpodid);
 			}
 			mkdir('prefs/podcasts/'.$newpodid, 0755);
-			download_image($podcast['Image'], $newpodid, $podcast['Title']);
+			$this->download_image($podcast['Image'], $newpodid, $podcast['Title']);
 			if ($subbed == 1) {
 				foreach ($podcast['tracks'] as $track) {
 					if ($this->sql_prepare_query(true, null, null, null,

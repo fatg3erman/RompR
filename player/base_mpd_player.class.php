@@ -202,7 +202,6 @@ class base_mpd_player {
 	protected function do_mpd_command($command, $return_array = false, $force_array_results = false) {
 
 		$retarr = array();
-		$binary = false;
 		if ($this->is_connected()) {
 			if ($command == 'status' || $command == 'currentsong' || $command == 'replay_gain_status') {
 				logger::core("MPD", "MPD Command",$command);
@@ -215,55 +214,48 @@ class base_mpd_player {
 			}
 			if ($success) {
 				while(!feof($this->connection)) {
-					if ($binary) {
-						logger::log('Reading',$retarr['binary'],'bytes of data');
-						$retarr['binarydata'] .= fread($this->connection, $retarr['binary']);
-						$binary = false;
-						$var = $this->parse_mpd_var(fgets($this->connection));
-					} else {
-						$var = $this->parse_mpd_var(fgets($this->connection));
-						if(isset($var)){
-							if($var === true && count($retarr) == 0) {
-								// Got an OK or ACK but - no results or return_array is false
-								return true;
+					$var = $this->parse_mpd_var(fgets($this->connection));
+					if(isset($var)){
+						// Got an OK or ACK but - no results or return_array is false
+						if($var === true && count($retarr) == 0)
+							return true;
+
+						if ($var === true)
+							break;
+
+						if ($var[0] == false) {
+							$sdata = stream_get_meta_data($this->connection);
+							if (array_key_exists('timed_out', $sdata) && $sdata['timed_out']) {
+								$var[1] = 'Timed Out';
 							}
-							if ($var === true) {
-								break;
-							}
-							if ($var[0] == false) {
-								$sdata = stream_get_meta_data($this->connection);
-								if (array_key_exists('timed_out', $sdata) && $sdata['timed_out']) {
-									$var[1] = 'Timed Out';
-								}
-								logger::warn("MPD", "Error for'",$command,"':",$var[1]);
-								if ($return_array == true) {
-									$retarr['error'] = $var[1];
-								} else {
-									return false;
-								}
-								break;
-							}
+							logger::warn("MPD", "Error for'",$command,"':",$var[1]);
 							if ($return_array == true) {
-								if(array_key_exists($var[0], $retarr)) {
-									if(is_array($retarr[($var[0])])) {
-										$retarr[($var[0])][] = $var[1];
-									} else {
-										$tmp = $retarr[($var[0])];
-										$retarr[($var[0])] = array($tmp, $var[1]);
-									}
+								$retarr['error'] = $var[1];
+							} else {
+								return false;
+							}
+							break;
+						}
+						if ($return_array == true) {
+							if(array_key_exists($var[0], $retarr)) {
+								if(is_array($retarr[($var[0])])) {
+									$retarr[($var[0])][] = $var[1];
 								} else {
-									if ($force_array_results) {
-										$retarr[($var[0])] = array($var[1]);
-									} else {
-										$retarr[($var[0])] = $var[1];
-									}
+									$tmp = $retarr[($var[0])];
+									$retarr[($var[0])] = array($tmp, $var[1]);
+								}
+							} else {
+								if ($force_array_results) {
+									$retarr[($var[0])] = array($var[1]);
+								} else {
+									$retarr[($var[0])] = $var[1];
 								}
 							}
-							if ($var[0] == 'binary') {
-								logger::log('MPDPLAYER', 'Next line is',$retarr['binary'],'bytes of binary data');
-								$binary = true;
-								$retarr['binarydata'] = '';
-							}
+						}
+						if ($var[0] == 'binary') {
+							logger::log('MPDPLAYER', 'Reading',$retarr['binary'],'bytes of data');
+							$retarr['binarydata'] = fread($this->connection, $retarr['binary']);
+							fgets($this->connection);
 						}
 					}
 				}
@@ -774,9 +766,12 @@ class base_mpd_player {
 		$size = null;
 		$handle = null;
 		$filename = '';
+		$retries = 3;
 		logger::log('READPICTURE', 'Reading image from file',$uri);
+		// This doesn't fucking work because MPD is fucking shit fucker fuck fuck
+		// $this->do_mpd_command('binarylimit 32768');
 		while ($size === null || $size > 0) {
-			logger::log('MPDPLAYER', '  Reading at offset',$offset);
+				logger::log('MPDPLAYER', '  Reading at offset',$offset);
 			$result = $this->do_mpd_command('readpicture "'.$uri.'" '.$offset, true);
 			if (is_array($result) && array_key_exists('binary', $result)) {
 				if ($size === null) {
@@ -791,7 +786,12 @@ class base_mpd_player {
 				logger::log('MPDPLAYER', '    Remaining',$size);
 			} else {
 				logger::log('READPICTURE', '    No binary data is response from MPD');
-				$size = 'NO';
+				if ($handle && $retries > 0) {
+					$retries--;
+					logger::log('READPICTURE', '    ... retrying');
+				} else {
+					$size = 'NO';
+				}
 			}
 		}
 		if ($handle)

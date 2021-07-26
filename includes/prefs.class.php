@@ -262,12 +262,13 @@ class prefs {
 	}
 
 	public static function set_music_directory($dir) {
-		self::$prefs['music_directory_albumart'] = rtrim($dir, '/');
 		logger::mark("SAVEPREFS", "Creating Album Art SymLink to ".$dir);
 		if (is_link("prefs/MusicFolders")) {
 			system ("unlink prefs/MusicFolders");
 		}
-		system ('ln -s "'.$dir.'" prefs/MusicFolders');
+		if ($dir) {
+			system ('ln -s "'.$dir.'" prefs/MusicFolders');
+		}
 	}
 
 	public static function upgrade_host_defs($ver) {
