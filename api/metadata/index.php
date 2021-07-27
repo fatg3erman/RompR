@@ -39,6 +39,7 @@ foreach($params as $p) {
 		case 'amendalbum':
 		case 'deletealbum':
 		case 'setasaudiobook':
+		case 'usetrackimages':
 		case 'delete':
 		case 'deletewl':
 		case 'deleteid':

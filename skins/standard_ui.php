@@ -155,6 +155,13 @@ class uibits {
 					$classes[] = 'clicksetasmusiccollection';
 				}
 			}
+			if (array_key_exists('useTrackIms', $obj)) {
+				if ($obj['useTrackIms'] == 1) {
+					$classes[] = 'clickunusetrackimages';
+				} else {
+					$classes[] = 'clickusetrackimages';
+				}
+			}
 			if ($obj['AlbumUri']) {
 				$classes[] = 'clickalbumoptions';
 			} else {

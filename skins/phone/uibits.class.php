@@ -189,6 +189,13 @@ class uibits {
 						$classes[] = 'clicksetasmusiccollection';
 					}
 				}
+				if (array_key_exists('useTrackIms', $det)) {
+					if ($det['useTrackIms'] == 1) {
+						$classes[] = 'clickunusetrackimages';
+					} else {
+						$classes[] = 'clickusetrackimages';
+					}
+				}
 				if ($why == 'b' && $det['AlbumUri'] && preg_match('/spotify:album:(.*)$/', $det['AlbumUri'], $matches)) {
 					$classes[] = 'clickaddtollviabrowse clickaddtocollectionviabrowse';
 					$spalbumid = $matches[1];

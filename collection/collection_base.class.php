@@ -64,6 +64,7 @@ class collection_base extends database {
 				isAudiobook,
 				Albumindex AS album_index,
 				AlbumArtistindex AS albumartist_index,
+				useTrackIms AS usetrackimages,
 				Tracktable.Artistindex AS trackartist_index
 			FROM
 				Tracktable
@@ -110,6 +111,7 @@ class collection_base extends database {
 					Searched,
 					IFNULL(Playcount, 0) AS Playcount,
 					isAudiobook,
+					useTrackIms AS usetrackimages,
 					Albumindex AS album_index,
 					AlbumArtistindex AS albumartist_index,
 					Tracktable.Artistindex AS trackartist_index
@@ -144,6 +146,7 @@ class collection_base extends database {
 					Albumtable.Image AS "X-AlbumImage",
 					mbid AS MUSICBRAINZ_ALBUMID,
 					Searched,
+					useTrackIms AS usetrackimages,
 					Albumindex AS album_index,
 					AlbumArtistindex AS albumartist_index
 				FROM
@@ -561,7 +564,7 @@ class collection_base extends database {
 
 	public function get_album_details($albumindex) {
 		return $this->generic_sql_query(
-			"SELECT Albumname, Artistname, Image, AlbumUri
+			"SELECT Albumname, Artistname, Image, AlbumUri, useTrackIms
 			FROM Albumtable
 			JOIN Artisttable ON Albumtable.AlbumArtistindex = Artisttable.Artistindex
 			WHERE Albumindex = ".$albumindex );

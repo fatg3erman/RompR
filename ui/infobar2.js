@@ -501,7 +501,7 @@ var infobar = function() {
 
 		checkForTrackSpecificImage: async function(info) {
 			// if (info.domain == 'local' && prefs.music_directory_albumart != '') {
-			if (info.ImgKey) {
+			if (info.ImgKey && (info.usetrackimages == 1 || info.type == 'podcast')) {
 				try {
 					data = await (jqxhr = $.ajax({
 						method: 'POST',

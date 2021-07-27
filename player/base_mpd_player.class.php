@@ -771,7 +771,7 @@ class base_mpd_player {
 		// This doesn't fucking work because MPD is fucking shit fucker fuck fuck
 		// $this->do_mpd_command('binarylimit 32768');
 		while ($size === null || $size > 0) {
-				logger::log('MPDPLAYER', '  Reading at offset',$offset);
+			logger::log('MPDPLAYER', '  Reading at offset',$offset);
 			$result = $this->do_mpd_command('readpicture "'.$uri.'" '.$offset, true);
 			if (is_array($result) && array_key_exists('binary', $result)) {
 				if ($size === null) {

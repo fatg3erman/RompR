@@ -716,7 +716,9 @@ language::add_translations([
 	"config_consumeworkaround" =>			'Work Around Mopidy Consume Bug (Read the Docs First)',
 	"warn_consumearound" =>					'Please DISABLE consume before enabling this option',
 	"msg_consumearound" =>					'Read the Docs about this option. You must be running romonitor for it to work',
-	"podcast_display_nud" =>				'New, Unlistened, & Downloaded'
+	"podcast_display_nud" =>				'New, Unlistened, & Downloaded',
+	"label_usetrackimages" =>				'Scan each track for an image',
+	"label_unusetrackimages" =>			'Do not scan each track for an image'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

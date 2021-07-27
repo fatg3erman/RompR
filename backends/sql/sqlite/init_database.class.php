@@ -90,6 +90,7 @@ class init_database extends init_generic {
 			"ImgVersion INTEGER DEFAULT ".ROMPR_IMAGE_VERSION.", ".
 			"Domain CHAR(32), ".
 			"Image VARCHAR(255), ".
+			"useTrackIms TINYINT(1) DEFAULT 0, ".
 			"randomSort INT DEFAULT 0, ".
 			"justUpdated TINYINT(1) DEFAULT 0)", true))
 		{
@@ -918,6 +919,13 @@ class init_database extends init_generic {
 					logger::log("SQL", "Updating FROM Schema version 72 TO Schema version 73");
 					$this->generic_sql_query("UPDATE Statstable SET Value = 73 WHERE Item = 'SchemaVer'", true);
 					break;
+
+				case 73:
+					logger::log("SQL", "Updating FROM Schema version 73 TO Schema version 74");
+					$this->generic_sql_query("ALTER TABLE Albumtable ADD useTrackIms TINYINT(1) DEFAULT 0", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 74 WHERE Item = 'SchemaVer'", true);
+					break;
+
 			}
 			$sv++;
 		}

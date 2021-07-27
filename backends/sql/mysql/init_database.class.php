@@ -69,6 +69,7 @@ class init_database extends init_generic {
 			"Image VARCHAR(255), ".
 			"randomSort INT DEFAULT 0, ".
 			"justUpdated TINYINT(1) UNSIGNED DEFAULT 1, ".
+			"useTrackIms TINYINT(1) DEFAULT 0, ".
 			"INDEX(Albumname), ".
 			"INDEX(AlbumArtistindex), ".
 			"INDEX(Domain), ".
@@ -992,6 +993,13 @@ class init_database extends init_generic {
 					$this->generic_sql_query("CREATE INDEX track_finder_index ON Tracktable (Uri(768))");
 					$this->generic_sql_query("UPDATE Statstable SET Value = 73 WHERE Item = 'SchemaVer'", true);
 					break;
+
+				case 73:
+					logger::log("SQL", "Updating FROM Schema version 73 TO Schema version 74");
+					$this->generic_sql_query("ALTER TABLE Albumtable ADD useTrackIms TINYINT(1) DEFAULT 0", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 74 WHERE Item = 'SchemaVer'", true);
+					break;
+
 			}
 			$sv++;
 		}

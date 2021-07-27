@@ -365,6 +365,14 @@ class metaDatabase extends collection_base {
 		}
 	}
 
+	public function usetrackimages($data) {
+		if ($data['album_index'] !== null && $this->use_trackimages($data['album_index'], $data['value'])) {
+		} else {
+			header('HTTP/1.1 400 Bad Request');
+			$this->returninfo['error'] = 'That just did not work';
+		}
+	}
+
 	public function delete($data) {
 		$ttids = $this->find_item($data, true);
 		if (count($ttids) == 0) {
@@ -755,6 +763,11 @@ class metaDatabase extends collection_base {
 
 	private function set_as_audiobook($albumindex, $value) {
 		$result = $this->sql_prepare_query(true, null, null, null, 'UPDATE Tracktable SET isAudiobook = ?, justAdded = 1 WHERE Albumindex = ?', $value, $albumindex);
+		return $result;
+	}
+
+	private function use_trackimages($albumindex, $value) {
+		$result = $this->sql_prepare_query(true, null, null, null, 'UPDATE Albumtable SET useTrackIms = ?, justUpdated = 1 WHERE Albumindex = ?', $value, $albumindex);
 		return $result;
 	}
 

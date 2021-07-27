@@ -269,6 +269,8 @@ function bindClickHandlers() {
 	clickRegistry.addClickHandlers('amendalbum', amendAlbumDetails);
 	clickRegistry.addClickHandlers('setasaudiobook', setAsAudioBook);
 	clickRegistry.addClickHandlers('setasmusiccollection', setAsAudioBook);
+	clickRegistry.addClickHandlers('usetrackimages', useTrackImages);
+	clickRegistry.addClickHandlers('unusetrackimages', useTrackImages);
 	clickRegistry.addClickHandlers('fakedouble', playPlayable);
 	clickRegistry.addClickHandlers('closepopup', closePopupMenu);
 	clickRegistry.addClickHandlers('clickqueuetracks', playlist.draggedToEmpty);
@@ -1046,7 +1048,37 @@ function makeAlbumMenu(e, element) {
 			spalbumid: $(element).attr('spalbumid')
 		}).html(language.gettext('label_addtocollection')));
 	}
+	if ($(element).hasClass('clickusetrackimages')) {
+		d.append($('<div>', {
+			class: 'backhi clickable menuitem usetrackimages closepopup',
+			name: $(element).attr('name')
+		}).html(language.gettext('label_usetrackimages')));
+	}
+	if ($(element).hasClass('clickunusetrackimages')) {
+		d.append($('<div>', {
+			class: 'backhi clickable menuitem unusetrackimages closepopup',
+			name: $(element).attr('name')
+		}).html(language.gettext('label_unusetrackimages')));
+	}
 	menu.open();
+}
+
+function useTrackImages(e, element) {
+	var data = {
+		action: 'usetrackimages',
+		value: ($(element).hasClass('usetrackimages')) ? 1 : 0,
+		album_index: $(element).attr('name')
+	};
+	debug.debug("UI","Setting usetrackimages",data);
+	metaHandlers.genericAction(
+		[data],
+		collectionHelper.updateCollectionDisplay,
+		function(rdata) {
+			debug.warn("RATING PLUGIN","Failure to do bumfinger", rdata);
+			infobar.error(language.gettext('label_general_error'));
+		}
+	);
+	return true;
 }
 
 function setAsAudioBook(e, element) {

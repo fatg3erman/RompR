@@ -35,6 +35,15 @@ Mopidy can serve Album Art for most of the backends it supports - including Loca
 
 However you need to have Mopidy's HTTP frontend enabled and working correctly as described [here](/RompR/Rompr-And-Mopidy)
 
+## Getting Album Images from MPD
+
+If you have MPD version 0.22.4 or greater RompR will use MPD to scan your files for artwork. You do not need to set the path to your music, nor does your webserver have to be on the same machine as your music or as mpd.
+
+## Using individual images for different tracks
+
+This is quite niche but there is the occasional album where there are different images for each track. Under the drop down menu next to every album there is an option to 'Scan each track for an image'.
+If you select this option RompR will try to use the separate image for each track. This requires either your local music path to be set as above, or for you to be using MPD 0.22.4 or higher.
+
 ### Archiving Local Images
 
 Once you've downloaded all the art for your Collection, you can archive the images for your local files if you have set the path correctly as above. This is a manual step and requires a terminal open on the PC where your webserver runs.
