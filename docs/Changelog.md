@@ -3,13 +3,13 @@
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
 ## Version 1.59
-* Downlaoded podcast episodes can now be un-downloaded individually
+* Downloaded podcast episodes can now be un-downloaded individually
 * New podcast display option "New, Unlistened, and Downloaded"
 * Fix OPML Importer
-* Add 'is not' option for integer values in custom radio stations
+* Add an 'is not' option for integer values in custom radio stations
 * Minor bugfixes and stuff
 * Fix bug where some podcasts wouldn't refresh because their RSS feeds contained a newline before the image URL (WHY???)
-* Support for MPD's 'readpicture' command, allowing MPD to read embedded album art from files, meaning the webserver does not nee dot have read access to your music files
+* Support for MPD's 'readpicture' command, allowing MPD to read embedded album art from files, meaning the webserver does not need to have read access to your music files
 
 
 ## Version 1.58
