@@ -679,18 +679,15 @@ var playlist = function() {
 
 		preventControlClicks: function(t) {
 			if (t) {
-				$('#random').on('click', player.controller.toggleRandom);
-				$('#repeat').on('click', player.controller.toggleRepeat);
-				$('#consume').on('click', player.controller.toggleConsume);
-				$('#crossfade').on('click', player.controller.toggleCrossfade);
-				$('#flowcontrols').removeClass('notenabled');
+				$('#random').on('click', player.controller.toggleRandom).removeClass('notenabled');
+				$('#repeat').on('click', player.controller.toggleRepeat).removeClass('notenabled');
+				$('#consume').on('click', player.controller.toggleConsume).removeClass('notenabled');
 			} else {
 				$('#random').off('click').addClass('notenabled');
 				$('#repeat').off('click').addClass('notenabled');
 				$('#consume').off('click').addClass('notenabled');
-				$('#crossfade').off('click').addClass('notenabled');
-				$('#flowcontrols').removeClass('notenabled').addClass('notenabled');
 			}
+			$('#crossfade').off('click').on('click', player.controller.toggleCrossfade);
 		},
 
 		delete: function(id) {

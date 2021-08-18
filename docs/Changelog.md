@@ -2,6 +2,10 @@
 
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
+## Version 1.60
+* Allow crossfade to be toggled while running personalised radio (with MPD)
+
+
 ## Version 1.59
 * Downloaded podcast episodes can now be un-downloaded individually
 * New podcast display option "New, Unlistened, and Downloaded"

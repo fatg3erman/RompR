@@ -1052,7 +1052,7 @@ div.topdropmenu div:not(.canbefaded) {
 	opacity: 1 !important;
 }
 
-div.topdropmenu div.notenabled, div.togglecontainer.notenabled, div#flowcontrols.notenabled {
+div.topdropmenu div.notenabled, div.togglecontainer.notenabled, div#flowcontrols i.notenabled {
 	opacity: 0.2 !important;
 }
 
