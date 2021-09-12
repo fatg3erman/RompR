@@ -610,13 +610,20 @@ function snapcastClient() {
 			updateVolume(data.config.volume);
 			updateLatency(data.config.latency);
 			vc.removeClass('invisible');
+			if (holder2) {
+				holder2.removeClass('invisible');
+				label_holder2.removeClass('invisible');
+			}
 		} else {
 			holder.find('div[name="notcon"]').html(language.gettext('snapcast_notconnected'));
-			if (!vc.hasClass('invisible')) {
+			if (!vc.hasClass('invisible'))
 				vc.addClass('invisible');
+
+			if (holder2 && !holder2.hasClass('invisible')) {
+				holder2.addClass('invisible');
+				label_holder2.addClass('invisible');
 			}
 		}
-
 	}
 
 	this.updateGroupList = function() {
