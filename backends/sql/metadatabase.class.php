@@ -1093,6 +1093,9 @@ class metaDatabase extends collection_base {
 			}
 		}
 		$a = preg_match('/:video\/.*\.(.+)$/', $data['file'], $matches);
+		if (!$a)
+			$a = preg_match('/:video:(.+)$/', $data['file'], $matches);
+
 		if ($a) {
 
 			$uri_to_get = 'https://youtu.be/'.$matches[1];
