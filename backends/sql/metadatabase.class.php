@@ -1182,6 +1182,11 @@ class metaDatabase extends collection_base {
 				$new_uri,
 				$data['file']
 			);
+			$albumindex = $this->simple_query('Albumindex', 'Tracktable', 'Uri', $new_uri, null);
+			$this->sql_prepare_query(true, null, null, null,
+				"UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = ?",
+				$albumindex
+			);
 			unlink($progress_file);
 		} else {
 			logger::error('YOUTUBEDL', 'Could not match URI',$data['file']);
