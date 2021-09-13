@@ -1000,6 +1000,21 @@ class init_database extends init_generic {
 					$this->generic_sql_query("UPDATE Statstable SET Value = 74 WHERE Item = 'SchemaVer'", true);
 					break;
 
+				case 74:
+					logger::log("SQL", "Updating FROM Schema version 74 TO Schema version 75");
+					$this->generic_sql_query("UPDATE Statstable SET Value = 75 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 75:
+					logger::log("SQL", "Updating FROM Schema version 75 TO Schema version 76");
+					$this->generic_sql_query("DROP TRIGGER IF EXISTS track_update_trigger", true);
+					if (!$this->create_conditional_triggers()) {
+						$err = $this->mysqlc->errorInfo()[2];
+						return array(false, "Error While Creating Triggers : ".$err);
+					}
+					$this->generic_sql_query("UPDATE Statstable SET Value = 76 WHERE Item = 'SchemaVer'", true);
+					break;
+
 			}
 			$sv++;
 		}
@@ -1023,7 +1038,7 @@ class init_database extends init_generic {
 			return $this->generic_sql_query("CREATE TRIGGER track_update_trigger AFTER UPDATE ON Tracktable
 								FOR EACH ROW
 								BEGIN
-								IF (NEW.Hidden<>OLD.Hidden)
+								IF (NEW.Hidden<>OLD.Hidden OR NEW.isAudiobook<>OLD.isAudiobook)
 								THEN
 									UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = NEW.Albumindex;
 									UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = OLD.Albumindex;
