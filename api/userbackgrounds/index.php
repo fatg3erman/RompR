@@ -15,7 +15,7 @@ if (array_key_exists('getbackground', $_REQUEST)) {
 } else if (array_key_exists('clearbackground', $_REQUEST)) {
 	prefs::$database->clear_background($_REQUEST['clearbackground']);
 } else if (array_key_exists('clearallbackgrounds', $_REQUEST)) {
-	prefs::$database->clear_all_backgrounds($_REQUEST['getbackground'], $_REQUEST['browser_id']);
+	prefs::$database->clear_all_backgrounds($_REQUEST['clearallbackgrounds'], $_REQUEST['browser_id']);
 } else {
 	if (!array_key_exists('currbackground', $_REQUEST) || !array_key_exists('imagefile', $_FILES)) {
 		if (isset($_SERVER["CONTENT_LENGTH"])) {

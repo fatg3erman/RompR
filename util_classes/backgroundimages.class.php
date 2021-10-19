@@ -35,7 +35,7 @@ class backgroundImages extends database {
 		}
 	}
 
-	public function clear_all_background($theme, $browser_id) {
+	public function clear_all_backgrounds($theme, $browser_id) {
 		// Remove these here, just in case the folder has been deleted for some reason
 		$this->sql_prepare_query(true, null, null, null, 'DELETE FROM BackgroundImageTable WHERE Skin = ? AND BrowserID = ?', $theme, $browser_id);
 		if (is_dir('prefs/userbackgrounds/'.$theme.'/'.$browser_id)) {

@@ -306,5 +306,9 @@ class musicCollection extends collection_base {
 		$this->check_transaction();
 	}
 
+	public function update_album_mbid($mbid, $imgkey) {
+		$this->sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET mbid = ? WHERE ImgKey = ? AND mbid IS NULL", $mbid, $imgkey);
+	}
+
 }
 ?>

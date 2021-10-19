@@ -209,13 +209,8 @@ function tryLastFMForMBID($albumimage) {
 			if (array_key_exists('mbid', $json['album']) && $json['album']['mbid']) {
 				$albumimage->mbid = (string) $json['album']['mbid'];
 				logger::trace("GETALBUMCOVER", "      Last.FM gave us the MBID of '".$albumimage->mbid."'");
-				if ($mysqlc) {
-					if (sql_prepare_query(true, null, null, null, "UPDATE Albumtable SET mbid = ? WHERE ImgKey = ? AND mbid IS NULL", $albumimage->mbid, $albumimage->get_image_key())) {
-						logger::trace("GETALBUMCOVER", "        Updated collection with new MBID");
-					} else {
-						logger::warn("GETALBUMCOVER", "        Failed trying to update collection with new MBID");
-					}
-				}
+				$db = new musicCollection();
+				$db->update_album_mbid($albumimage->mbid, $albumimage->get_image_key());
 			}
 		}
 	}
