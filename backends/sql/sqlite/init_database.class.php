@@ -339,6 +339,16 @@ class init_database extends init_generic {
 		}
 		$this->generic_sql_query("CREATE INDEX IF NOT EXISTS gi ON Genretable (Genre)", true);
 
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Artistbrowse(".
+			"Artistindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+			"Uri VARCHAR(255))", true))
+		{
+			logger::log("MYSQL", "  Artistbrowse OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking Artistbrowse : ".$err);
+		}
+
 		// Check schema version and update tables as necessary
 		$sv = $this->simple_query('Value', 'Statstable', 'Item', 'SchemaVer', 0);
 		if ($sv == 0) {

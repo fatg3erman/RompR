@@ -5,6 +5,7 @@ class sortby_base {
 	protected $why;
 	protected $what;
 	protected $who;
+	protected $ui_why;
 	protected $when = null;
 
 	// $which is a key passed in from the UI, and created by this class
@@ -13,6 +14,7 @@ class sortby_base {
 	// $why is a single lowercase character:
 	// 	a - tracks from Music Collection
 	//	b - tracks from search results
+	//  x - tracks from search results that need to be browsed
 	//	z - audiobooks
 	// When this is used to get tracks to add to the queue, some extras are accepted
 	//	r - only tracks with ratings
@@ -45,12 +47,19 @@ class sortby_base {
 	// So REQUIEMENT that there is already a database connection that inherits from collection_base
 
 	public function __construct($which) {
-		$a = preg_match('/(a|b|c|r|t|y|u|z)(.*?)(\d+|root)_*(\d+)*/', $which, $matches);
+		$a = preg_match('/(a|b|c|r|t|y|u|z|x)(.*?)(\d+|root)_*(\d+)*/', $which, $matches);
 		if (!$a) {
 			logger::warn("SORTBY", "Sort Init failed - regexp failed to match",$which);
 			return false;
 		}
 		$this->why = $matches[1];
+		// WE need ui_why in the case where why == 'x'. It's a kludge, obviously but if why == x then it's
+		// a request coming from the search panel so we want search results BUT the album control header
+		// created by the UI in phone and skypotato needs to refer to the doobrey that is its parent.
+		$this->ui_why = $this->why;
+		if ($this->why == 'x')
+			$this->why = 'b';
+
 		$this->what = $matches[2];
 		$this->who = $matches[3];
 		if (array_key_exists(4, $matches)) {

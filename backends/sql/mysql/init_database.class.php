@@ -288,6 +288,17 @@ class init_database extends init_generic {
 			return array(false, "Error While Checking Genretable : ".$err);
 		}
 
+		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Artistbrowse(".
+			"Artistindex INT UNSIGNED NOT NULL UNIQUE, ".
+			"Uri VARCHAR(255), ".
+			"PRIMARY KEY (Artistindex))", true))
+		{
+			logger::log("MYSQL", "  Artistbrowse OK");
+		} else {
+			$err = $this->mysqlc->errorInfo()[2];
+			return array(false, "Error While Checking Artistbrowse : ".$err);
+		}
+
 		if (!$this->generic_sql_query("CREATE TABLE IF NOT EXISTS Statstable(Item CHAR(11), PRIMARY KEY(Item), Value INT UNSIGNED) ENGINE=InnoDB", true)) {
 			$err = $this->mysqlc->errorInfo()[2];
 			return array(false, "Error While Checking Statstable : ".$err);

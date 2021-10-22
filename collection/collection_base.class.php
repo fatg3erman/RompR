@@ -223,6 +223,19 @@ class collection_base extends database {
 		return $retval;
 	}
 
+	public function add_browse_artist($artist) {
+		logger::log('COLLECTION', 'Adding',$artist['Name'],$artist['Uri'],'to browse list');
+		$index = $this->check_artist($artist['Name']);
+		$this->sql_prepare_query(true, null, null, null,
+			"INSERT INTO Artistbrowse (Artistindex, Uri) VALUES (?, ?)",
+			$index, $artist['Uri']
+		);
+	}
+
+	public function get_browse_uri($index) {
+		return $this->simple_query('Uri', 'Artistbrowse', 'Artistindex', $index, null);
+	}
+
 	protected function best_value($a, $b, &$changed) {
 
 		// best_value
@@ -847,6 +860,9 @@ class collection_base extends database {
 		// Clean up the database tables before performing a new search or updating the collection
 
 		logger::mark('BACKEND', "Cleaning Search Results");
+
+		 $this->generic_sql_query("DELETE FROM Artistbrowse WHERE Artistindex IS NOT NULL", true);
+
 		// Any track that was previously hidden needs to be re-hidden
 		$this->generic_sql_query("UPDATE Tracktable SET Hidden = 1, isSearchResult = 0 WHERE isSearchResult = 3", true);
 

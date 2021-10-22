@@ -9,8 +9,12 @@ class sortby_artist extends sortby_base {
 		// Using GROUP BY is faster than using SELECT DISTINCT
 		// USING IN is faster than the double JOIN
 		$qstring =
-		"SELECT Artistname, Artistindex
+		"SELECT
+			Artistname,
+			Artistindex,
+			Uri
 			FROM Artisttable AS a
+			LEFT JOIN Artistbrowse USING (Artistindex)
 			WHERE
 			Artistindex IN
 				(SELECT AlbumArtistindex FROM Albumtable
@@ -20,6 +24,7 @@ class sortby_artist extends sortby_base {
 				".prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)."
 				".$sflag."
 				GROUP BY AlbumArtistindex)
+			OR Uri IS NOT NULL
 			ORDER BY ";
 		foreach (prefs::$prefs['artistsatstart'] as $a) {
 			$qstring .= "CASE WHEN LOWER(a.Artistname) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
@@ -79,7 +84,9 @@ class sortby_artist extends sortby_base {
 		logger::debug('SORTBY_ARTIST', 'Generating Artist Root List');
 		$count = 0;
 		foreach ($this->root_sort_query() as $artist) {
-			print uibits::artistHeader($this->why.$this->what.$artist['Artistindex'], $artist['Artistname']);
+			$why = ($this->why == 'b' && $artist['Uri'] !== null) ? 'x' : $this->why;
+			if ($artist['Uri'] !== null && $this->why != 'b') continue;
+			print uibits::artistHeader($why.$this->what.$artist['Artistindex'], $artist['Artistname']);
 			$count++;
 		}
 		return $count;
@@ -104,7 +111,7 @@ class sortby_artist extends sortby_base {
 		logger::log("SORTBY_ARTIST", "Generating albums for",$this->why,$this->what,$this->who);
 		$count = 0;
 		if ($do_controlheader) {
-			print uibits::albumControlHeader(false, $this->why, 'artist', $this->who, $this->getArtistName());
+			print uibits::albumControlHeader(false, $this->ui_why, 'artist', $this->who, $this->getArtistName());
 		}
 		foreach ($this->album_sort_query($force_artistname) as $album) {
 			print uibits::albumHeader($album);
@@ -113,7 +120,6 @@ class sortby_artist extends sortby_base {
 		if ($count == 0 && $this->why != 'a') {
 			uibits::noAlbumsHaeder();
 		}
-
 		return $count;
 	}
 

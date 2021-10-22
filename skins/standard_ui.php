@@ -110,6 +110,9 @@ class uibits {
 	}
 
 	public static function albumHeader($obj) {
+		if ($obj['Albumname'] == 'dummy_browse_album')
+			return '';
+
 		$h = '';
 		if ($obj['why'] === null) {
 			$h .= '<div class="containerbox menuitem">';

@@ -74,7 +74,11 @@ class player extends base_mpd_player {
 
 	protected function player_specific_fixups(&$filedata) {
 		if (strpos($filedata['file'], ':artist:') !== false) {
-			$this->to_browse[] = $filedata['file'];
+			$this->to_browse[] = [
+				'Uri' => $filedata['file'],
+				'Name' => preg_replace('/Artist: /', '', $filedata['Title'])
+			];
+			logger::log('MOPIDY', 'Marking',$filedata['Title'],$filedata['file'],'as browse artist');
 			return false;
 		} else if (strpos($filedata['file'], ':album:') !== false) {
 			$filedata['X-AlbumUri'] = $filedata['file'];

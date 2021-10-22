@@ -144,13 +144,18 @@ function mpd_search($cmd, $domains, $dbterms) {
 	foreach ($player->parse_list_output($cmd, $dirs, $domains) as $filedata) {
 		prefs::$database->newTrack($filedata);
 	}
-	foreach ($player->to_browse as $artist) {
-		logger::log('MPD SEARCH', 'Browsing', $artist);
-		foreach ($player->parse_list_output('find file "'.$artist.'"', $dirs, false) as $filedata) {
-			prefs::$database->newTrack($filedata);
-		}
-	}
+	// 	logger::log('MPD SEARCH', 'Browsing', $artist);
+	// 	foreach ($player->parse_list_output('find file "'.$artist.'"', $dirs, false) as $filedata) {
+	// 		prefs::$database->newTrack($filedata);
+	// 	}
+	// }
 	prefs::$database->tracks_to_database();
+
+	logger::log('MPD SEARCH', 'There are',count($player->to_browse),'artist URIs returned');
+	foreach ($player->to_browse as $artist) {
+		prefs::$database->add_browse_artist($artist);
+	}
+
 	prefs::$database->close_transaction();
 	prefs::$database->dumpAlbums($_REQUEST['dump']);
 	prefs::$database->remove_findtracks();
