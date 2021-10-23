@@ -4,8 +4,7 @@ Note that some versions listed here may be unreleased, I use version number incr
 
 ## Version 1.60
 * Allow crossfade to be toggled while running personalised radio (with MPD)
-* Cope with Spotify search results that are simply an Artist Uri by browsing them on demand. This only works if sorting search results by Artist, as it doesn't really make sense otherwise, so these results
-are ignored if you are using any other sort mode.
+* Cope with Spotify search results that are simply an Artist Uri by browsing them on demand. Currently this is not supported in the Skypotato skin.
 * Various small bugfixes
 
 

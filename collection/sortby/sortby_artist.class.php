@@ -179,6 +179,10 @@ class sortby_artist extends sortby_base {
 		return prefs::$database->simple_query('Artistname', 'Artisttable', 'Artistindex', $this->who,'');
 	}
 
+	public function output_artist_search_results() {
+
+	}
+
 }
 
 ?>

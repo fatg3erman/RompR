@@ -269,6 +269,10 @@ class sortby_base {
 		}
 	}
 
+	private function get_artist_browse_results() {
+		return prefs::$database->generic_sql_query("SELECT Artistindex, Artistname, Uri FROM Artistbrowse JOIN Artisttable USING (Artistindex) ORDER BY Artistname ASC");
+	}
+
 	public function output_track_list($fragment = false) {
 		logger::log('SORTBY', 'Doing Track List For Album',$this->who);
 		$trackarr = $this->track_sort_query();
@@ -369,6 +373,13 @@ class sortby_base {
 		return prefs::$database->generic_sql_query($qstring, false, null, 'num', 0);
 	}
 
+	public function output_artist_search_results() {
+		$artists = $this->get_artist_browse_results();
+		foreach ($artists as $artist) {
+			print uibits::browse_artistHeader($this->why.'artist'.$artist['Artistindex'],
+				ucfirst(getDomain($artist['Uri'])).' : '.language::gettext('label_artist').' : '.$artist['Artistname']);
+		}
+	}
 }
 
 ?>

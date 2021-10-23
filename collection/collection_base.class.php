@@ -237,8 +237,11 @@ class collection_base extends database {
 	}
 
 	private function unbrowse_artist($index) {
+		// Don't delete it, just set it to something that returns no results, otherwise skins
+		// that delete their holders (like phone) will not use sortby_artist when they come back
+		// into this mode
 		$this->sql_prepare_query(true, null, null, null,
-			"DELETE FROM Artistbrowse WHERE Artistindex = ?",
+			"UPDATE Artistbrowse SET Uri = 'dummy' WHERE Artistindex = ?",
 			$index
 		);
 	}
@@ -619,6 +622,12 @@ class collection_base extends database {
 		$sorter = choose_sorter_by_key($which);
 		$lister = new $sorter($which);
 		$lister->output_html();
+	}
+
+	public function dumpArtistSearchResults($which) {
+		$sorter = choose_sorter_by_key($which);
+		$lister = new $sorter($which);
+		$lister->output_artist_search_results();
 	}
 
 	public function check_url_against_database($url, $itags, $rating) {

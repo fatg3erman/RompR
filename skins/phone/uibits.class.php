@@ -103,6 +103,10 @@ class uibits {
 		return $h;
 	}
 
+	public static function browse_artistHeader($id, $name) {
+		return self::artistHeader($id, $name);
+	}
+
 	public static function noAlbumsHaeder() {
 		print '<div class="playlistrow2" style="padding-left:64px">'.
 			language::gettext("label_noalbums").'</div>';

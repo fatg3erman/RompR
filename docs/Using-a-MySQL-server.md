@@ -5,7 +5,7 @@ By default, RompЯ uses SQLite for its database. This option requires no setup a
 If you would like to use a MySQL server instead - perhaps because you're already running one - then you can do so.
 
 Note that *unless you have a really good reason to use MySQL, SQLite is always better*.
-MySQL will almost never give superior performance. In my testing on a Raspberry Pi 4, SQLite is around 30% faster than MariaDB.
+MySQL will never give superior performance. In my testing on a Raspberry Pi 4, SQLite is around 30% faster than MariaDB.
 Unless you really really know what you're doing, use SQLite, it's just better.
 
 ## Install MySQL
@@ -78,6 +78,12 @@ We also want to set some configuration values for mysql to increase performance.
     innodb_buffer_pool_size = 256M
     innodb_flush_log_at_trx_commit = 0
     skip-log-bin
+
+*If you're using MariaDB you will probably need at least the first two of these as well. Trial and error, I cannnot be bothered to figure it out*
+
+    innodb_file_format = BARRACUDA
+    innodb_large_prefix = ON
+    innodb_default_row_format = DYNAMIC
 
 And now link this file so mysql can find it
 

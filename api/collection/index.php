@@ -153,6 +153,8 @@ function mpd_search($cmd, $domains, $dbterms) {
 
 	prefs::$database->close_transaction();
 	prefs::$database->dumpAlbums($_REQUEST['dump']);
+	prefs::$database->dumpArtistSearchResults($_REQUEST['dump']);
+
 	prefs::$database->remove_findtracks();
 }
 
