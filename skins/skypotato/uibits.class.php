@@ -110,9 +110,6 @@ class uibits {
 	}
 
 	public static function albumHeader($obj) {
-		if ($obj['Albumname'] == 'dummy_browse_album')
-			return '';
-
 		$h = '<div class="collectionitem fixed selecotron clearfix">';
 		if ($obj['id'] == 'nodrop') {
 			// Hacky at the moment, we only use nodrop for streams but here there is no checking

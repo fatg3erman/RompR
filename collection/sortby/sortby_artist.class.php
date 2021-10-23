@@ -11,21 +11,30 @@ class sortby_artist extends sortby_base {
 		$qstring =
 		"SELECT
 			Artistname,
-			Artistindex,
-			Uri
-			FROM Artisttable AS a
-			LEFT JOIN Artistbrowse USING (Artistindex)
-			WHERE
-			Artistindex IN
-				(SELECT AlbumArtistindex FROM Albumtable
-				JOIN Tracktable USING (Albumindex)
-				WHERE Uri IS NOT NULL
-				AND Hidden = 0
-				".prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)."
-				".$sflag."
-				GROUP BY AlbumArtistindex)
-			OR Uri IS NOT NULL
-			ORDER BY ";
+			Artistindex ";
+
+		if ($this->why == 'b')
+			$qstring .= ", Uri ";
+
+		$qstring .= "FROM Artisttable AS a ";
+
+		if ($this->why == 'b')
+			$qstring .= "LEFT JOIN Artistbrowse USING (Artistindex) ";
+
+		$qstring .= "WHERE
+		Artistindex IN
+			(SELECT AlbumArtistindex FROM Albumtable
+			JOIN Tracktable USING (Albumindex)
+			WHERE Uri IS NOT NULL
+			AND Hidden = 0
+			".prefs::$database->track_date_check(prefs::$prefs['collectionrange'], $this->why)."
+			".$sflag."
+			GROUP BY AlbumArtistindex) ";
+
+		if ($this->why == 'b')
+			$qstring .= "OR Uri IS NOT NULL ";
+
+		$qstring .= "ORDER BY ";
 		foreach (prefs::$prefs['artistsatstart'] as $a) {
 			$qstring .= "CASE WHEN LOWER(a.Artistname) = LOWER('".$a."') THEN 1 ELSE 2 END, ";
 		}
@@ -84,9 +93,7 @@ class sortby_artist extends sortby_base {
 		logger::debug('SORTBY_ARTIST', 'Generating Artist Root List');
 		$count = 0;
 		foreach ($this->root_sort_query() as $artist) {
-			$why = ($this->why == 'b' && $artist['Uri'] !== null) ? 'x' : $this->why;
-			if ($artist['Uri'] !== null && $this->why != 'b') continue;
-			print uibits::artistHeader($why.$this->what.$artist['Artistindex'], $artist['Artistname']);
+			print uibits::artistHeader($this->why.$this->what.$artist['Artistindex'], $artist['Artistname']);
 			$count++;
 		}
 		return $count;
@@ -111,7 +118,7 @@ class sortby_artist extends sortby_base {
 		logger::log("SORTBY_ARTIST", "Generating albums for",$this->why,$this->what,$this->who);
 		$count = 0;
 		if ($do_controlheader) {
-			print uibits::albumControlHeader(false, $this->ui_why, 'artist', $this->who, $this->getArtistName());
+			print uibits::albumControlHeader(false, $this->why, 'artist', $this->who, $this->getArtistName());
 		}
 		foreach ($this->album_sort_query($force_artistname) as $album) {
 			print uibits::albumHeader($album);

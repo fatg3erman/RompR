@@ -232,8 +232,40 @@ class collection_base extends database {
 		);
 	}
 
-	public function get_browse_uri($index) {
+	private function get_browse_uri($index) {
 		return $this->simple_query('Uri', 'Artistbrowse', 'Artistindex', $index, null);
+	}
+
+	private function unbrowse_artist($index) {
+		$this->sql_prepare_query(true, null, null, null,
+			"DELETE FROM Artistbrowse WHERE Artistindex = ?",
+			$index
+		);
+	}
+
+	public function check_artist_browse($index) {
+		$uri = $this->get_browse_uri($index);
+		if ($uri) {
+			$this->options['doing_search'] = true;
+			$this->options['trackbytrack'] = true;
+			logger::log('COLLECTION', 'Browsing for artist',$index);
+			$player = new player();
+			$cmd = 'find file "'.$uri.'"';
+			logger::log("MPD", "Doing Artist Browse : ".$cmd);
+			$this->open_transaction();
+			$this->prepareCollectionUpdate();
+			$dirs = array();
+			foreach ($player->parse_list_output($cmd, $dirs, false) as $filedata) {
+				$this->newTrack($filedata);
+			}
+			$this->tracks_to_database(true);
+			$this->close_transaction();
+			$this->remove_findtracks();
+			$this->unbrowse_artist($index);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	protected function best_value($a, $b, &$changed) {

@@ -695,35 +695,15 @@ function choose_sorter_by_key($which) {
 	$a = preg_match('/(a|b|c|r|t|y|u|z|x)(.*?)(\d+|root)_*(\d+)*/', $which, $matches);
 	switch ($matches[1]) {
 		case 'b':
+			if ($matches[2] == 'artist' && is_numeric($matches[3])) {
+				if (prefs::$database->check_artist_browse($matches[3]))
+					return 'sortby_artist';
+			}
 			if (prefs::$prefs['actuallysortresultsby'] == 'results_as_tree') {
 				return false;
 			} else {
 				return 'sortby_'.prefs::$prefs['actuallysortresultsby'];
 			}
-			break;
-
-		case 'x':
-			logger::log('COLLECTION', 'Browsing for artist',$matches[3]);
-			prefs::$database = new musicCollection(
-				[
-					'doing_search' => true,
-					'trackbytrack' => true
-				]
-			);
-			$uri = prefs::$database->get_browse_uri($matches[3]);
-			$player = new player();
-			$cmd = 'find file "'.$uri.'"';
-			logger::log("MPD", "Doing Artist Browse : ".$cmd);
-			prefs::$database->open_transaction();
-			prefs::$database->prepareCollectionUpdate();
-			$dirs = array();
-			foreach ($player->parse_list_output($cmd, $dirs, false) as $filedata) {
-				prefs::$database->newTrack($filedata);
-			}
-			prefs::$database->tracks_to_database(true);
-			prefs::$database->close_transaction();
-			prefs::$database->remove_findtracks();
-			return 'sortby_artist';
 			break;
 
 		default:

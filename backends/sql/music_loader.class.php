@@ -1,5 +1,5 @@
 <?php
-class music_loader extends collection_base {
+class music_loader extends musicCollection {
 
 	public function getItemsToAdd($which, $cmd = null) {
 		$a = preg_match('/^(a|b|r|t|y|u|z)(.*?)(\d+|root)/', $which, $matches);
