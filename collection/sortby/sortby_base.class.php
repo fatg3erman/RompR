@@ -276,6 +276,15 @@ class sortby_base {
 	public function output_track_list($fragment = false) {
 		logger::log('SORTBY', 'Doing Track List For Album',$this->who);
 		$trackarr = $this->track_sort_query();
+
+		if ($this->why == 'b' && count($trackarr) == 1 && substr($trackarr[0]['title'],0,6) == "Album:") {
+			logger::log('SORTER', 'Album has one track which is an album Uri');
+			if (prefs::$database->check_album_browse($this->who)) {
+				return;
+			}
+			$trackarr = $this->track_sort_query();
+		}
+
 		$most_recent = 0;
 		$most_recent_index = null;
 		foreach ($trackarr as $i => &$track) {
@@ -323,18 +332,7 @@ class sortby_base {
 				$arr['discclass'] = '';
 			}
 			$tracktype = uibits::albumTrack($arr);
-			if ($tracktype == 2 && $this->why == 'b') {
-				// albumTrack will return 2 if this is an :album: link - we add an expandalbum
-				// input so the UI will populate the whole album, since spotify oftne only returns
-				// the odd track. Obviously only do this for search results
-				logger::mark("GET TRACKS", "Album",$this->who," - adding album link to get all tracks");
-				print '<input type="hidden" class="expandalbum"/>';
-			}
 		}
-		// if ($tracktype == 1) {
-		// 	logger::mark("GET TRACKS", "Album",$this->who,"has no tracks, just an artist link");
-		// 	print '<input type="hidden" class="expandartist"/>';
-		// }
 		if ($total_time > 0) {
 			print '<input type="hidden" class="albumtime" value="'.format_time($total_time).'" />';
 		}

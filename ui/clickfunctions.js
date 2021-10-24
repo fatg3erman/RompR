@@ -57,9 +57,6 @@ var clickRegistry = function() {
 				if (target.hasClass('is-albumlist')) {
 					target.scootTheAlbums();
 				}
-				if (target.find('input.expandalbum').length > 0 ) {
-					getAllTracksForAlbum(clickedElement, menutoopen);
-				}
 			} else {
 				clickedElement.toggleClosed();
 				await target.menuHide();
@@ -387,17 +384,6 @@ function playPlayable(event, clickedElement) {
 	} else {
 		playlist.addItems(clickedElement, null);
 	}
-}
-
-async function getAllTracksForAlbum(element, menutoopen) {
-	debug.mark("CLICKFUNCTIONS", "Album has link to get all tracks");
-	var target = $('#'+menutoopen);
-	await clickRegistry.loadContentIntoTarget({
-		target: target,
-		clickedElement: element,
-		uri: 'api/collection/?browsealbum='+menutoopen
-	});
-	target.find('input.expandalbum').remove();
 }
 
 var playlistManager = function() {

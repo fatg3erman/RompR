@@ -222,55 +222,6 @@ class collection_base extends database {
 		}
 		return $retval;
 	}
-
-	public function add_browse_artist($artist) {
-		logger::log('COLLECTION', 'Adding',$artist['Name'],$artist['Uri'],'to browse list');
-		$index = $this->check_artist($artist['Name']);
-		$this->sql_prepare_query(true, null, null, null,
-			"INSERT INTO Artistbrowse (Artistindex, Uri) VALUES (?, ?)",
-			$index, $artist['Uri']
-		);
-	}
-
-	private function get_browse_uri($index) {
-		return $this->simple_query('Uri', 'Artistbrowse', 'Artistindex', $index, null);
-	}
-
-	private function unbrowse_artist($index) {
-		// Don't delete it, just set it to something that returns no results, otherwise skins
-		// that delete their holders (like phone) will not use sortby_artist when they come back
-		// into this mode
-		$this->sql_prepare_query(true, null, null, null,
-			"UPDATE Artistbrowse SET Uri = 'dummy' WHERE Artistindex = ?",
-			$index
-		);
-	}
-
-	public function check_artist_browse($index) {
-		$uri = $this->get_browse_uri($index);
-		if ($uri) {
-			$this->options['doing_search'] = true;
-			$this->options['trackbytrack'] = true;
-			logger::log('COLLECTION', 'Browsing for artist',$index);
-			$player = new player();
-			$cmd = 'find file "'.$uri.'"';
-			logger::log("MPD", "Doing Artist Browse : ".$cmd);
-			$this->open_transaction();
-			$this->prepareCollectionUpdate();
-			$dirs = array();
-			foreach ($player->parse_list_output($cmd, $dirs, false) as $filedata) {
-				$this->newTrack($filedata);
-			}
-			$this->tracks_to_database(true);
-			$this->close_transaction();
-			$this->remove_findtracks();
-			$this->unbrowse_artist($index);
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 	protected function best_value($a, $b, &$changed) {
 
 		// best_value

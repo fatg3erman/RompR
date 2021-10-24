@@ -145,6 +145,97 @@ class musicCollection extends collection_base {
 		}
 	}
 
+	public function add_browse_artist($artist) {
+		logger::log('COLLECTION', 'Adding',$artist['Name'],$artist['Uri'],'to browse list');
+		$index = $this->check_artist($artist['Name']);
+		$this->sql_prepare_query(true, null, null, null,
+			"INSERT INTO Artistbrowse (Artistindex, Uri) VALUES (?, ?)",
+			$index, $artist['Uri']
+		);
+	}
+
+	private function get_browse_uri($index) {
+		return $this->simple_query('Uri', 'Artistbrowse', 'Artistindex', $index, null);
+	}
+
+	private function unbrowse_artist($index) {
+		// Don't delete it, just set it to something that returns no results, otherwise skins
+		// that delete their holders (like phone) will not use sortby_artist when they come back
+		// into this panel.
+		$this->sql_prepare_query(true, null, null, null,
+			"UPDATE Artistbrowse SET Uri = 'dummy' WHERE Artistindex = ?",
+			$index
+		);
+	}
+
+	private function browse_podcast_search_result($uri) {
+		logger::trace("COLLECTION", "Browsing For Podcast ".substr($uri, 9));
+		$podatabase = new poDatabase();
+		$podid = $podatabase->getNewPodcast(substr($uri, 8), 0, false);
+		logger::log("ALBUMS", "Ouputting Podcast ID ".$podid);
+		$podatabase->outputPodcast($podid, false);
+	}
+
+	public function check_album_browse($index) {
+		$this->options['doing_search'] = true;
+		$this->options['trackbytrack'] = true;
+		$album_details = $this->get_album_details($index);
+		$uri = $album_details[0]['AlbumUri'];
+
+		if (substr($uri, 0, 8) == 'podcast+') {
+			$this->browse_podcast_search_result($uri);
+			return true;
+		}
+
+		logger::log('COLLECTION', 'Browsing for album',$uri);
+		$this->do_update_with_command('find file "'.$uri.'"', array(), false);
+		$this->remove_findtracks();
+		// Just occasionally, the spotify album originally returned by search has an incorrect AlbumArtist
+		// When we browse the album the new tracks therefore get added to a new album.
+		// In this case we remove the old album and set the Albumindex of the new one to the Albumindex of the old one
+		// (otherwise the GUI doesn't work)
+		$just_added = $this->find_justadded_albums();
+		if (is_array($just_added) && count($just_added) > 0 && $just_added[0] != $index) {
+			logger::log('BROWSEALBUM', 'New album',$just_added[0],'was created. Setting it to',$index);
+			if ($album_details[0]['Image'] != null) {
+				$this->set_image_for_album($just_added[0], $album_details[0]['Image']);
+			}
+			$this->replace_album_in_database($index, $just_added[0]);
+		}
+		return false;
+	}
+
+	public function check_artist_browse($index) {
+		$uri = $this->get_browse_uri($index);
+		if ($uri) {
+			$this->options['doing_search'] = true;
+			$this->options['trackbytrack'] = true;
+			logger::log('COLLECTION', 'Browsing for artist',$uri);
+			$this->do_update_with_command('find file "'.$uri.'"', array(), false);
+			$this->remove_findtracks();
+			$this->unbrowse_artist($index);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function do_update_with_command($cmd, $dirs, $domains) {
+		logger::log('COLLECTION', 'Doing update with',$cmd);
+		$this->open_transaction();
+		$this->prepareCollectionUpdate();
+		$player = new player();
+		$player->initialise_search();
+		foreach ($player->parse_list_output($cmd, $dirs, $domains) as $filedata) {
+			$this->newTrack($filedata);
+		}
+		$this->tracks_to_database();
+		foreach ($player->to_browse as $artist) {
+			$this->add_browse_artist($artist);
+		}
+		$this->close_transaction();
+	}
+
 	public function tidy_database() {
 		// Find tracks that have been removed
 		logger::mark('BACKEND', "Starting Cruft Removal");

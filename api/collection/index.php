@@ -135,26 +135,10 @@ function mpd_search($cmd, $domains, $dbterms) {
 		$options['dbterms'] = $dbterms;
 	}
 	prefs::$database = new musicCollection($options);
-	prefs::$database->open_transaction();
 	prefs::$database->cleanSearchTables();
-	prefs::$database->prepareCollectionUpdate();
-	$player = new player();
-	$player->initialise_search();
-	$dirs = array();
-	foreach ($player->parse_list_output($cmd, $dirs, $domains) as $filedata) {
-		prefs::$database->newTrack($filedata);
-	}
-	prefs::$database->tracks_to_database();
-
-	logger::log('MPD SEARCH', 'There are',count($player->to_browse),'artist URIs returned');
-	foreach ($player->to_browse as $artist) {
-		prefs::$database->add_browse_artist($artist);
-	}
-
-	prefs::$database->close_transaction();
+	prefs::$database->do_update_with_command($cmd, array(), $domains);
 	prefs::$database->dumpAlbums($_REQUEST['dump']);
 	prefs::$database->dumpArtistSearchResults($_REQUEST['dump']);
-
 	prefs::$database->remove_findtracks();
 }
 
@@ -178,7 +162,6 @@ function browse_album() {
 	$ad = prefs::$database->get_album_details($who);
 	$albumlink = $ad[0]['AlbumUri'];
 	logger::trace('BROWSEALBUM',$why,$what,$who,$ad[0]['Artistname'],$albumlink);
-	$sorter = choose_sorter_by_key($_REQUEST['browsealbum']);
 	if (substr($albumlink, 0, 8) == 'podcast+') {
 		logger::trace("ALBUMS", "Browsing For Podcast ".substr($albumlink, 9));
 		$podatabase = new poDatabase();
@@ -187,22 +170,13 @@ function browse_album() {
 		$podatabase->outputPodcast($podid, false);
 		$podatabase->close_database();
 	} else {
-		$player = new player();
-		$cmd = 'find file "'.$albumlink.'"';
-		logger::log("MPD", "Doing Album Browse : ".$cmd);
-		prefs::$database->open_transaction();
-		prefs::$database->prepareCollectionUpdate();
-		$dirs = array();
-		foreach ($player->parse_list_output($cmd, $dirs, false) as $filedata) {
-			prefs::$database->newTrack($filedata);
-		}
-		prefs::$database->tracks_to_database(true);
-		prefs::$database->close_transaction();
+		prefs::$database->do_update_with_command('find file "'.$albumlink.'"', array(), false);
 		prefs::$database->remove_findtracks();
 		// Just occasionally, the spotify album originally returned by search has an incorrect AlbumArtist
 		// When we browse the album the new tracks therefore get added to a new album.
 		// In this case we remove the old album and set the Albumindex of the new one to the Albumindex of the old one
 		// (otherwise the GUI doesn't work)
+		$sorter = choose_sorter_by_key($_REQUEST['browsealbum']);
 		$lister = new $sorter($why.'album'.$who);
 		$a = prefs::$database->find_justadded_albums();
 		if (is_array($a) && count($a) > 0 && $a[0] != $who) {
