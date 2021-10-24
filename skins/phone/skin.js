@@ -587,9 +587,6 @@ var layoutProcessor = function() {
 		},
 
 		initialise: function() {
-			if (!prefs.checkSet('clickmode')) {
-				prefs.clickmode = 'single';
-			}
 			$(".dropdown").floatingMenu({ });
 			$('.topbarmenu').on('click', function() {
 				$('.autohide:visible').not('#'+$(this).attr('name')).slideToggle('fast');

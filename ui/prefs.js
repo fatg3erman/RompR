@@ -139,7 +139,6 @@ var prefs = function() {
 		"sourceswidthpercent",
 		"playlistwidthpercent",
 		"downloadart",
-		"clickmode",
 		"chooser",
 		"hide_albumlist",
 		"hide_filelist",
@@ -157,6 +156,7 @@ var prefs = function() {
 		"synclove",
 		"synclovevalue",
 		"theme",
+		'clickmode',
 		"icontheme",
 		"coversize",
 		"fontsize",
@@ -213,10 +213,6 @@ var prefs = function() {
 		'collectionbuttons',
 		'playlistbuttons'
 	];
-
-	// const jsonNode = document.querySelector("script[name='prefs']");
-	// const jsonText = jsonNode.textContent;
-	// const tags = JSON.parse(jsonText);
 
 	var backgroundImages = false;
 	var backgroundTimer;
@@ -406,7 +402,6 @@ var prefs = function() {
 		var bgp = prefs.bgimgparms[prefs.theme];
 		bgp.position = $('input[name="backgroundposition"]:checked').val();
 		prefs.save({bgimgparms: prefs.bgimgparms});
-		// updateCustomBackground(false);
 		setBackgroundCss(bgp);
 	}
 
@@ -639,8 +634,7 @@ var prefs = function() {
 					if (localStorage.getItem("prefs."+p) != null && localStorage.getItem("prefs."+p) != "") {
 						try {
 							prefs[p] = JSON.parse(localStorage.getItem("prefs."+p));
-						}
-						catch (err) {
+						} catch (err) {
 							prefs[p] = tags[p];
 						}
 					} else {
@@ -661,6 +655,14 @@ var prefs = function() {
 						console.log("PREFS      : "+cookiePrefs[i]+' = '+prefs[cookiePrefs[i]]);
 					}
 				}
+			}
+
+			// When we auto-choose a skin, we set clickmode as a cookie. Set our local value, save it, then clear the cookie
+			if (getCookie('clickmode') != '') {
+				prefs.clickmode = getCookie('clickmode');
+				debug.log('PREFS', 'Setting clickmode from cookie to',prefs.clickmode);
+				localStorage.setItem("prefs.clickmode", JSON.stringify(prefs.clickmode));
+				setCookie('clickmode', '', 1);
 			}
 
 			prefs.fontfamily = prefs.fontfamily.replace('_', ' ');

@@ -139,7 +139,6 @@ function mpd_search($cmd, $domains, $dbterms) {
 	prefs::$database->do_update_with_command($cmd, array(), $domains);
 	prefs::$database->dumpAlbums($_REQUEST['dump']);
 	prefs::$database->dumpArtistSearchResults($_REQUEST['dump']);
-	prefs::$database->remove_findtracks();
 }
 
 function browse_album() {
@@ -171,7 +170,6 @@ function browse_album() {
 		$podatabase->close_database();
 	} else {
 		prefs::$database->do_update_with_command('find file "'.$albumlink.'"', array(), false);
-		prefs::$database->remove_findtracks();
 		// Just occasionally, the spotify album originally returned by search has an incorrect AlbumArtist
 		// When we browse the album the new tracks therefore get added to a new album.
 		// In this case we remove the old album and set the Albumindex of the new one to the Albumindex of the old one
@@ -315,7 +313,6 @@ function update_collection() {
     prefs::$database->tidy_database();
     $performance['tidydatabase'] = microtime(true) - $t;
     logger::log('COLLECTION', 'Finishing...');
-    prefs::$database->remove_findtracks();
 	prefs::$database->close_transaction();
 	// Add a marker to the monitor file to say we've finished
 	$player->collectionUpdateDone();

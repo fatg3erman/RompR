@@ -189,7 +189,6 @@ class musicCollection extends collection_base {
 
 		logger::log('COLLECTION', 'Browsing for album',$uri);
 		$this->do_update_with_command('find file "'.$uri.'"', array(), false);
-		$this->remove_findtracks();
 		// Just occasionally, the spotify album originally returned by search has an incorrect AlbumArtist
 		// When we browse the album the new tracks therefore get added to a new album.
 		// In this case we remove the old album and set the Albumindex of the new one to the Albumindex of the old one
@@ -207,12 +206,12 @@ class musicCollection extends collection_base {
 
 	public function check_artist_browse($index) {
 		$uri = $this->get_browse_uri($index);
+		if ($uri == 'dummy') return true;
 		if ($uri) {
 			$this->options['doing_search'] = true;
 			$this->options['trackbytrack'] = true;
 			logger::log('COLLECTION', 'Browsing for artist',$uri);
 			$this->do_update_with_command('find file "'.$uri.'"', array(), false);
-			$this->remove_findtracks();
 			$this->unbrowse_artist($index);
 			return true;
 		} else {
@@ -291,10 +290,6 @@ class musicCollection extends collection_base {
 		} else {
 			$this->prepare_findtrack_for_update();
 		}
-	}
-
-	public function remove_findtracks() {
-		$this->find_track = null;
 	}
 
 	public function do_track_by_track(&$trackobject) {

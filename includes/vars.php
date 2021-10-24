@@ -108,9 +108,11 @@ if(array_key_exists('skin', $_REQUEST)) {
 	if ($md->isMobile() || $md->isTablet()) {
 		logger::info('INIT', 'Browser is a mobile browser');
 		$skin = 'phone';
+		setcookie('clickmode','single',time()+365*24*60*60*10,'/');
 	} else {
 		logger::info('INIT', 'Browser is a desktop browser or was not detected');
 		$skin = 'desktop';
+		setcookie('clickmode','double',time()+365*24*60*60*10,'/');
 	}
 }
 $skin = trim($skin);
@@ -120,6 +122,7 @@ if (is_dir('skins/'.$skin)) {
 	set_include_path('skins/'.$skin.PATH_SEPARATOR.get_include_path());
 	// index.php wil take us to the error screen if skin doesn't exist. It's important we don't set the cookie
 }
+
 $setup_error = null;
 // ====================================================================
 
