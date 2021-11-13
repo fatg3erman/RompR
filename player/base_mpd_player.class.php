@@ -714,7 +714,11 @@ class base_mpd_player {
 	}
 
 	private function mopidy_to_mpd($file) {
-		return rawurldecode(preg_replace('#local:track:#', '', $file));
+		if (strpos($file, 'local:track') === 0) {
+			return rawurldecode(preg_replace('#local:track:#', '', $file));
+		} else {
+			return $file;
+		}
 	}
 
 	private function mpd_to_mopidy($file) {
