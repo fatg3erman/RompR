@@ -1109,7 +1109,7 @@ class metaDatabase extends collection_base {
 				logger::log('YOUTUBEDL', '  Title is',$info[0]['Title']);
 				logger::log('YOUTUBEDL', '  Artist is',$info[0]['Artistname']);
 			} else {
-				loger::log('YOUTUBEDL', '  Could not find title and artist from collection');
+				logger::log('YOUTUBEDL', '  Could not find title and artist from collection');
 			}
 
 			$ttindex = $this->simple_query('TTindex', 'Tracktable', 'Uri', $data['file'], null);
