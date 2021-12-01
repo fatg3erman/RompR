@@ -1175,7 +1175,7 @@ class metaDatabase extends collection_base {
 				}
 			}
 
-			$new_uri = dirname(dirname(get_base_url())).'/prefs/youtubedl/'.$ttindex.'/'.$files[0];
+			$new_uri = dirname(dirname(get_base_url())).'/'.$files[0];
 			logger::log('YOUTUBEDL', 'New URI is', $new_uri);
 			$this->sql_prepare_query(true, null, null, null,
 				"UPDATE Tracktable SET Uri = ? WHERE Uri = ?",
