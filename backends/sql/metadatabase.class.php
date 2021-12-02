@@ -1126,7 +1126,7 @@ class metaDatabase extends collection_base {
 			}
 			file_put_contents('prefs/youtubedl/'.$ttindex.'/original.uri', $uri_to_get);
 			exec($ytdl_path.'youtube-dl -o "prefs/youtubedl/'.$ttindex.'/%(title)s-%(id)s.%(ext)s" --ffmpeg-location '.$avconv_path.' --extract-audio --write-thumbnail --restrict-filenames --newline --audio-format flac --audio-quality 0 '.$uri_to_get.' >> '.$progress_file.' 2>&1', $output, $retval);
-			if ($retval != 0) {
+			if ($retval != 0 && $retval != 1) {
 				logger::error('YOUTUBEDL', 'youtube-dl returned error code', $retval);
 				header("HTTP/1.1 404 Not Found");
 				print json_encode(array('error' => 'youtube-dl returned error code '.$retval));
