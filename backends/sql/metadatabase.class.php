@@ -1074,6 +1074,7 @@ class metaDatabase extends collection_base {
 	}
 
 	public function youtubedl($data) {
+		prefs::$database->close_transaction();
 		$ytdl_path = find_executable('youtube-dl');
 		if ($ytdl_path === false) {
 			logger::error('YOUTUBEDL', 'youtube-dl binary could not be found');
