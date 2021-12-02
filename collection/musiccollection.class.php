@@ -271,6 +271,13 @@ class musicCollection extends collection_base {
 		logger::trace('BACKEND', "Finding tracks that have been deleted");
 		$this->generic_sql_query("DELETE FROM Tracktable WHERE LastModified IS NOT NULL AND Hidden = 0 AND justAdded = 0", true);
 		$this->remove_cruft();
+		// Temporary table needed otherwise we get a conflict with one of our triggers
+		$this->generic_sql_query("CREATE TEMPORARY TABLE used_tags AS SELECT DISTINCT Tagindex FROM TagListtable", true);
+		$this->generic_sql_query("DELETE FROM Tagtable WHERE Tagindex NOT IN (SELECT Tagindex FROM used_tags)", true);
+		$this->generic_sql_query("DROP TABLE used_tags", true);
+		$this->generic_sql_query("DELETE FROM Playcounttable WHERE Playcount = 0", true);
+		$this->generic_sql_query("DELETE FROM Playcounttable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
+
 		logger::log('COLLECTION', 'Updating collection version to', ROMPR_COLLECTION_VERSION);
 		$this->update_stat('ListVersion',ROMPR_COLLECTION_VERSION);
 		$this->update_track_stats();
