@@ -183,7 +183,8 @@ var metaHandlers = function() {
 							type: "POST",
 							contentType: false,
 							data: JSON.stringify([{action: 'youtubedl', file: uri }]),
-							dataType: 'json'
+							dataType: 'json',
+							timeout: 0
 						});
 						collectionHelper.updateCollectionDisplay(data),
 						monitor.stop();
