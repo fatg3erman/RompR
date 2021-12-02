@@ -46,23 +46,22 @@ var metaHandlers = function() {
 				dataType: "json"
 			})
 			.done(function(data) {
-				debug.debug("YOUTUBE DOWNLOAD","Download status is",data);
+				debug.log("YOUTUBE DOWNLOAD","Download status is",data);
 				if (data.info) {
 					infobar.updatenotify(notify, 'Youtube Download : '+data.info);
 				}
 				if (running) {
-					timer = setTimeout(self.checkProgress, 500);
+					timer = setTimeout(self.checkProgress, 1000);
 				}
 			})
 			.fail(function() {
 				debug.warn(language.gettext('error_dlpfail'));
-				if (running) {
-					timer = setTimeout(self.checkProgress, 1000);
-				}
+				self.stop();
 			});
 		}
 
 		this.stop = function() {
+			debug.log('YOUTUBEDL', 'Stopping Monitor');
 			running = false;
 			clearTimeout(timer);
 			infobar.removenotify(notify);
@@ -169,6 +168,7 @@ var metaHandlers = function() {
 			},
 
 			downloadYoutubeTrack: async function(event, element) {
+				debug.log('YOUTUBEDL',event.element);
 				var tracks = $('.clicktrack.selected');
 				tracks.removeClass('selected');
 				tracks.each(function() {
@@ -176,6 +176,7 @@ var metaHandlers = function() {
 				});
 				tracks.each(async function() {
 					var uri = decodeURIComponent($(this).attr('name'));
+					debug.log('YOUTUBEDL', uri);
 					var monitor = new youtubeDownloadMonitor(uri);
 					try {
 						var data = await $.ajax({
@@ -184,7 +185,7 @@ var metaHandlers = function() {
 							contentType: false,
 							data: JSON.stringify([{action: 'youtubedl', file: uri }]),
 							dataType: 'json',
-							timeout: 0
+							timeout: 3600000
 						});
 						collectionHelper.updateCollectionDisplay(data),
 						monitor.stop();

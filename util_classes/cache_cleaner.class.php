@@ -70,16 +70,12 @@ class cache_cleaner extends database {
 	}
 
 	public function check_ttindex_exists($ttindex) {
-		$numfiles = 0;
-		$bacon = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null,
-			'SELECT COUNT(TTindex) AS thing FROM Tracktable WHERE TTindex = ? AND Hidden = ?',
+		$bacon = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, array(),
+			'SELECT * FROM Tracktable WHERE TTindex = ? AND Hidden = ?',
 			$ttindex,
 			0
 		);
-		if (is_array($bacon) && count($bacon) > 0) {
-			$numfiles = $bacon[0]['thing'];
-		}
-		return $numfiles;
+		return count($bacon);
 	}
 
 }

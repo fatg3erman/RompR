@@ -32,7 +32,6 @@ foreach($params as $p) {
 		case 'set':
 		case "add":
 		case 'inc':
-		case 'youtubedl':
 		case 'syncinc':
 		case 'remove':
 		case 'cleanup':
@@ -48,6 +47,16 @@ foreach($params as $p) {
 			prefs::$database->{$p['action']}($p);
 			prefs::$database->prepare_returninfo();
 			break;
+
+		case 'youtubedl':
+			set_time_limit(0);
+			prefs::$database->close_transaction();
+			prefs::$database->create_foundtracks();
+			prefs::$database->{$p['action']}($p);
+			prefs::$database->prepare_returninfo();
+			prefs::$database->open_transaction();
+			break;
+
 
 		// Things that return information but do not modify items
 		case 'get':

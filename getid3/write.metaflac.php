@@ -133,13 +133,21 @@ class getid3_write_metaflac
 		} else {
 
 			// It's simpler on *nix
-			$commandline  = 'metaflac --no-utf8-convert --remove-all-tags --import-tags-from='.escapeshellarg($tempcommentsfilename);
-			foreach ($this->pictures as $picturecommand) {
-				$commandline .= ' --import-picture-from='.escapeshellarg($picturecommand);
+			$commandline = null;
+			if (file_exists('/usr/bin/metaflac')) {
+				$commandline  = '/usr/bin/metaflac --no-utf8-convert --remove-all-tags --import-tags-from='.escapeshellarg($tempcommentsfilename);
+			} else if (file_exists('/usr/local/bin/metaflac')) {
+				$commandline  = '/usr/local/bin/metaflac --no-utf8-convert --remove-all-tags --import-tags-from='.escapeshellarg($tempcommentsfilename);
 			}
-			$commandline .= ' '.escapeshellarg($this->filename).' 2>&1';
-			$metaflacError = `$commandline`;
-
+			if ($commandline !== null) {
+				foreach ($this->pictures as $picturecommand) {
+					$commandline .= ' --import-picture-from='.escapeshellarg($picturecommand);
+				}
+				$commandline .= ' '.escapeshellarg($this->filename).' 2>&1';
+				$metaflacError = `$commandline`;
+			} else {
+				$metaflacError = 'metaflac not found in /usr/bin or /usr/local/bin';
+			}
 		}
 
 		// Remove temporary comments file
