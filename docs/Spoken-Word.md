@@ -26,6 +26,19 @@ You can have whatever directory structure you like underneath 'Spoken Word', so 
 
 Once you've done this you will need to Update your Music Collection. Mopidy users will have to do a 'mopidy local scan' first.
 
+You can also set an album to be Spoken Word at any time. There are two ways to do this:
+
+Firstly from the Album Menu in the UI:
+
+![](images/spokenword3.png)
+
+This will move the entire album to the Spoken Word section, and it will stay there even if it isn't under the Spoken Word directory.
+
+Secondly you can set up a list of tags that, when added to a track, will automatically mark that track as Spoken Word. Mopidy users
+will find this useful when adding tracks to the collection from search results.
+
+![](images/spokenword4.png)
+
 There are two advantages of storing Spoken Word items this way:
 
 * Spoken Word files will not be included in any Personalised Radio, irrespective of what tags or ratings they have

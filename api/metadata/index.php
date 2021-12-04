@@ -52,9 +52,12 @@ foreach($params as $p) {
 			set_time_limit(0);
 			prefs::$database->close_transaction();
 			prefs::$database->create_foundtracks();
-			prefs::$database->{$p['action']}($p);
+			$progress_file = prefs::$database->{$p['action']}($p);
 			prefs::$database->prepare_returninfo();
-			prefs::$database->open_transaction();
+			unlink($progress_file);
+			$progress_file = $progress_file.'_result';
+			file_put_contents($progress_file, json_encode(prefs::$database->returninfo));
+			exit(0);
 			break;
 
 

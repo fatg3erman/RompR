@@ -49,6 +49,10 @@ var metaHandlers = function() {
 				debug.log("YOUTUBE DOWNLOAD","Download status is",data);
 				if (data.info) {
 					infobar.updatenotify(notify, 'Youtube Download : '+data.info);
+				} else if (data.result) {
+					debug.log('YOUTUBE DOWNLOAD', 'Result is',data.result);
+					collectionHelper.updateCollectionDisplay(data.result);
+					self.stop();
 				}
 				if (running) {
 					timer = setTimeout(self.checkProgress, 1000);
@@ -184,17 +188,18 @@ var metaHandlers = function() {
 							type: "POST",
 							contentType: false,
 							data: JSON.stringify([{action: 'youtubedl', file: uri }]),
-							dataType: 'json',
-							timeout: 3600000
+							dataType: "html",
+							cache: false
 						});
-						collectionHelper.updateCollectionDisplay(data),
-						monitor.stop();
 					} catch (err) {
-						debug.warn("FUCK!", 'Why did that not work?',err);
-						monitor.stop();
-						if (err.responseJSON && err.responseJSON.error)
-							infobar.error('Failed to download YouTube track - '+err.responseJSON.error);
-
+						if (err.status == 200) {
+							debug.log('YOUTUBEDL', 'Error handler caught success code! WTF?');
+						} else {
+							debug.warn("FUCK!", 'Why did that not work?',err);
+							monitor.stop();
+							if (err.responseJSON && err.responseJSON.error)
+								infobar.error('Failed to download YouTube track - '+err.responseJSON.error);
+						}
 					}
 				});
 			},

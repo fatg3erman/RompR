@@ -60,6 +60,7 @@ class prefs {
 			]
 		],
 		'old_style_sql' => false,
+		'auto_audiobook' => array(),
 
 		// Things that could be set on a per-user basis but need to be known by the backend
 		"displaycomposer" => true,

@@ -679,6 +679,11 @@ class metaDatabase extends collection_base {
 
 			if ($result = $this->generic_sql_query("INSERT INTO TagListtable (TTindex, Tagindex) VALUES ('".$ttid."', '".$tagindex."')", true)) {
 				logger::debug("ADD TAGS", "Success");
+				if (in_array($t, prefs::$prefs['auto_audiobook'])) {
+					logger::log('ADD TAGS', 'Setting TTindex',$ttid,'as audiobook due to tag',$t);
+					$albumindex = $this->simple_query('Albumindex', 'Tracktable', 'TTindex', $ttid, null);
+					$this->set_as_audiobook($albumindex, 2);
+				}
 			} else {
 				// Doesn't matter, we have a UNIQUE constraint on both columns to prevent us adding the same tag twice
 				logger::debug("ADD TAGS", "  .. Failed but that's OK if it's because of a duplicate entry or UNQIUE constraint");
@@ -1120,7 +1125,11 @@ class metaDatabase extends collection_base {
 				exit(0);
 			}
 			$progress_file = 'prefs/youtubedl/dlprogress_'.md5($data['file']);
-			file_put_contents($progress_file, 'Downloading '.$uri_to_get."\n");
+			file_put_contents($progress_file, '    Downloading '.$uri_to_get."\n");
+
+			// At this point, terminate the request
+			prefs::$database->close_browser_connection();
+			logger::log('YOUTUBEDL', 'OK now we start the fun');
 			if (!is_dir('prefs/youtubedl/'.$ttindex)) {
 				mkdir('prefs/youtubedl/'.$ttindex);
 			}
@@ -1187,7 +1196,7 @@ class metaDatabase extends collection_base {
 				"UPDATE Albumtable SET justUpdated = 1 WHERE Albumindex = ?",
 				$albumindex
 			);
-			unlink($progress_file);
+			return $progress_file;
 		} else {
 			logger::error('YOUTUBEDL', 'Could not match URI',$data['file']);
 			header("HTTP/1.1 404 Not Found");

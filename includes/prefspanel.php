@@ -307,6 +307,9 @@ print '<div class="dropdown-container configtitle"><i class="icon-audiobook medi
 print '<div class="pref">'.language::gettext('config_audiobook_directory').'
 <input class="prefinput saveotron" id="audiobook_directory" type="text" size="40" />
 </div>';
+print '<div class="pref">'.language::gettext('config_audiobook_tags').'
+<input class="prefinput saveotron arraypref" id="auto_audiobook" type="text" size="40" />
+</div>';
 
 // Podcasts
 print '<div class="dropdown-container configtitle">

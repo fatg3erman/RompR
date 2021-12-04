@@ -6,6 +6,8 @@ Note that some versions listed here may be unreleased, I use version number incr
 * Allow crossfade to be toggled while running personalised radio (with MPD)
 * Cope with Spotify search results that are simply an Artist Uri by browsing them on demand.
 Currently this is not supported in the Skypotato skin unless you sort search results by Artist.
+* Fix Youtube Download - if a track took more than 3 minutes to download the browser would retry and cause havoc.
+* Automatically set track as Audiobook when adding certain tags
 * Various small bugfixes
 
 

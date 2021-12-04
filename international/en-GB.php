@@ -718,7 +718,8 @@ language::add_translations([
 	"msg_consumearound" =>					'Read the Docs about this option. You must be running romonitor for it to work',
 	"podcast_display_nud" =>				'New, Unlistened, & Downloaded',
 	"label_usetrackimages" =>				'Scan each track for an image',
-	"label_unusetrackimages" =>			'Do not scan each track for an image'
+	"label_unusetrackimages" =>				'Do not scan each track for an image',
+	"config_audiobook_tags" =>				'Set track as Spoken Word when adding tags'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------
