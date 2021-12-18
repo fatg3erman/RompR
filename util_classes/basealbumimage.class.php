@@ -195,7 +195,7 @@ class baseAlbumImage {
 		foreach ($info as $k => $v) {
 			$this->{$k} = $v;
 		}
-		if ($this->dbimage) {
+		if ($this->dbimage && strpos($this->dbimage, 'newimages/') !== 0) {
 			$smallimage = $this->dbimage;
 		} else {
 			$smallimage = $this->basepath.'small/'.$this->key.'.jpg';
