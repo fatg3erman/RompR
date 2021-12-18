@@ -889,6 +889,14 @@ class base_mpd_player {
 		if (strpos($retval, '/local/') === 0) {
 			$retval = 'http://'.prefs::$prefs['mopidy_http_port'].$retval;
 		}
+		if (basename($retval) == 'default.jpg' && strpos($retval, 'ytimg.com') !== false) {
+			logger::log('MOPIDYHTTP', 'Mopidy-Youtube only returned youtube default image. Checking for hqdefault');
+			$new_url = dirname($retval).'/hqdefault.jpg';
+			$mrchunks = new url_downloader(['url' => $new_url]);
+			if ($mrchunks->get_data_to_string()) {
+				$retval = $new_url;
+			}
+		}
 		logger::log('MOPIDYHTTP', 'Returning', $retval);
 		return $retval;
 	}
