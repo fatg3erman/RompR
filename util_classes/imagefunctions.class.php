@@ -82,7 +82,7 @@ class imageFunctions {
 		logger::trace("GET_IMAGES", "    Scanning :",$dir_path);
 		$globpath = preg_replace('/(\*|\?|\[)/', '[$1]', $dir_path);
 		logger::debug("GET_IMAGES", "      Glob Path is",$globpath);
-		$funkychicken = glob($globpath."/*.{jpg,png,bmp,gif,jpeg,JPEG,JPG,BMP,GIF,PNG}", GLOB_BRACE);
+		$funkychicken = glob($globpath."/*.{jpg,png,bmp,gif,jpeg,webp,JPEG,JPG,BMP,GIF,PNG,WEBP}", GLOB_BRACE);
 		logger::trace("GET_IMAGES", "    Checking for embedded images");
 		$files = glob($globpath."/*.{mp3,MP3,mp4,MP4,flac,FLAC,ogg,OGG}", GLOB_BRACE);
 		$testfile = array_shift($files);
