@@ -8,6 +8,24 @@ Note that some versions listed here may be unreleased, I use version number incr
 Currently this is not supported in the Skypotato skin unless you sort search results by Artist.
 * Fix Youtube Download - if a track took more than 3 minutes to download the browser would retry and cause havoc.
 * Automatically set track as Audiobook when adding certain tags
+* Add yet more notes about how to get MariaDB to work.
+* Work around the fact that there appears to be no logic or consistency in the version numbering of MariaDB between distributions
+or even different releases. I've had to fall back to an older way of doing certain things because features that are supposed to be
+in version 10.6 are not in version 10.6 unless you're one of the lucky ones who has a version 10.6 that has those features. Sigh.
+If this keeps hapepening, I WILL drop support for MariaDB because life's too damn short. Please use SQLite, or MySQL if you must
+use a remote database. It's probably a config file change somewhere but MariadB is supposed to be a drop-in replacement for MySQL and  it just isn't.
+There's a free lollipop for anybody who can work out why, on Ubuntu with MariaDB 10.6 I can do, eg
+
+		ON DUPLICATE KEY UPDATE
+						Duration = new.Duration
+
+but on Raspbian with MariaDB 10.6 I have to do eg
+
+		ON DUPLICATE KEY UPDATE
+						Duration = VALUES(Duration),
+
+and there's no backwards compatability. So if Search isn't working for you and you're using MariaDB, this will be why.
+
 * Various small bugfixes
 
 
