@@ -8,6 +8,8 @@ Note that some versions listed here may be unreleased, I use version number incr
 Currently this is not supported in the Skypotato skin unless you sort search results by Artist.
 * Fix Youtube Download - if a track took more than 3 minutes to download the browser would retry and cause havoc.
 * Automatically set track as Audiobook when adding certain tags
+* Remove Snapcast clients from the main volume control when they disconnect
+* Don't crash if snapserver doesn't send stream metadata
 * Add yet more notes about how to get MariaDB to work.
 * Work around the fact that there appears to be no logic or consistency in the version numbering of MariaDB between distributions
 or even different releases. I've had to fall back to an older way of doing certain things because features that are supposed to be

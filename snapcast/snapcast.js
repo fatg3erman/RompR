@@ -361,8 +361,13 @@ function snapcastGroup() {
 	}
 
 	function streamInfo(stream) {
-		var h = stream.meta.STREAM;
-		h += ' ('+stream.status.capitalize()+')';
+		var h = 'Unknown';
+		if (stream.meta)
+			h = stream.meta.STREAM;
+
+		if (stream.status)
+			h += ' ('+stream.status.capitalize()+')';
+
 		return h;
 	}
 
