@@ -362,8 +362,14 @@ function snapcastGroup() {
 
 	function streamInfo(stream) {
 		var h = 'Unknown';
-		if (stream.meta)
+		// Varkious versions of snapserver provide the stream name in different ways
+		if (stream.uri && stream.uri.query && stream.uri.query.name) {
+			h = stream.uri.query.name;
+		} else if (stream.id) {
+			h = stream.id;
+		} else if (stream.meta && stream.meta.STREAM) {
 			h = stream.meta.STREAM;
+		}
 
 		if (stream.status)
 			h += ' ('+stream.status.capitalize()+')';
