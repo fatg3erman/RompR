@@ -9,6 +9,7 @@ Currently this is not supported in the Skypotato skin unless you sort search res
 * Fix Youtube Download - if a track took more than 3 minutes to download the browser would retry and cause havoc.
 * Automatically set track as Audiobook when adding certain tags
 * Remove Snapcast clients from the main volume control when they disconnect
+* Fix snapcast API code so it works with snapserver 0.6.0
 * Don't crash if snapserver doesn't send stream metadata
 * Add yet more notes about how to get MariaDB to work.
 * Work around the fact that there appears to be no logic or consistency in the version numbering of MariaDB between distributions
