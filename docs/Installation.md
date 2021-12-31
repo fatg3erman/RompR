@@ -45,18 +45,16 @@ Also you probably should read [RompЯ And Mopidy](/RompR/Rompr-And-Mopidy)
 
 Download the latest release from [The Github Releases Page](https://github.com/fatg3erman/RompR/releases)
 
-Let's assume you extracted the zip file into a folder called 'web' in your home directory. So now you have /home/YOU/web/rompr, or on macOS /Users/YOU/web/rompr - where 'YOU' is your login username. You could put it anywhere but your home directory is easiest. I'm going to assume the Linux format in all the following instructions, so those on macOS remember to adjust the path as apprpriate.
+Let's assume you extracted the zip file into a folder called 'web' in your home directory. So now you have /home/YOU/web/rompr, or on macOS /Users/YOU/web/rompr - where 'YOU' is your login username.
+You could put it anywhere but your home directory is easiest.
 
-If you're not sure what your full path to your home directory is, do
+**Note - on Arch Linux, and Manjaro, and other related distributions, unzipping it into your home directory will not work due to some permissions issues**
+On these distributions you will need to extract it to /var/www, meaning you have /var/www/rompr.
+Or you can change the permissions on your home directory by doing the following (note that this gives all users on the system read access to your home directory)
 
-    cd ~
-    pwd
+    sudo chmod go+rw /home/YOU
 
-and that will come back with something like this
-
-    /home/bob
-
-So in this case, 'YOU' in the path above is 'bob', and RompЯ is installed at /home/bob/web/rompr
+I'm going to assume in all the following instructions that you have installed to /home/YOU/web/rompr, so adjust as necessary if you put it somewhere else.
 
 ### Set directory permissions
 
@@ -66,12 +64,23 @@ We need to create directories to store data in.
     mkdir prefs
     mkdir albumart
 
+And then we need to give the web server permission to write to them.
 
-And then we need to give the web server permission to write to them. There are a whole load of ways you can do this but this is easiest and always works
+**Debian / Ubuntu / Raspberry Pi OS / Mint etc**
+
+    sudo chown www-data:www-data albumart
+    sudo chown www-data:www-data prefs
+
+**Arch / Manjaro etc**
+
+    sudo chown http:http albumart
+    sudo chown http:http prefs
+
+The above commands work by changing the owner of the directories to the user the webserver runs as. If you don't know what that is, then you can do the
+following instead, but note that this gives everybody on the system write access.
 
     chmod ugo+rw albumart
     chmod ugo+rw prefs
-
 
 ## Next, You Need A Web Server
 
