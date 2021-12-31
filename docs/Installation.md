@@ -24,10 +24,20 @@ Somewhere in mpd.conf
 [Mopidy](http://www.mopidy.com) is similar to MPD. It does everything MPD does, but it also plays music from many online sources including Spotify and SoundCloud. I like Mopidy and I use it a lot,
 and a lot of RompЯ's Music Discovery features rely on Spotify support. But Mopidy isn't very well maintained any more and it has more bugs than MPD.
 
-In mopidy.conf, your mpd section needs to contain
+RompЯ requires Mopidy's MPD interface, and can also use its HTTP interface if present. As a minimum woul will need to install mopidy and mopidy-mpd. To get local files playback support, install mopidy-local, and for Spotify install mopidy-spotity.
+
+In your mopidy.conf you should ensure the following are set:
 
     [mpd]
+    enabled = true
+    max_connections = 30
     connection_timeout = 120
+
+    [http]
+    enabled=true
+    hostname = 0.0.0.0
+    port=6680
+    csrf_protection=false
 
 Also you probably should read [RompЯ And Mopidy](/RompR/Rompr-And-Mopidy)
 
