@@ -11,25 +11,13 @@ Currently this is not supported in the Skypotato skin unless you sort search res
 * Remove Snapcast clients from the main volume control when they disconnect
 * Fix snapcast API code so it works with snapserver 0.6.0
 * Don't crash if snapserver doesn't send stream metadata
-* Improve handling of custom background images - new Background Image Manager shows thumbnails. 'This Browser Only' mode can be changed after upload.
-* Add yet more notes about how to get MariaDB to work.
-* Work around the fact that there appears to be no logic or consistency in the version numbering of MariaDB between distributions
-or even different releases. I've had to fall back to an older way of doing certain things because features that are supposed to be
-in version 10.6 are not in version 10.6 unless you're one of the lucky ones who has a version 10.6 that has those features. Sigh.
-If this keeps hapepening, I WILL drop support for MariaDB because life's too damn short. Please use SQLite, or MySQL if you must
-use a remote database. It's probably a config file change somewhere but MariadB is supposed to be a drop-in replacement for MySQL and  it just isn't.
-There's a free lollipop for anybody who can work out why, on Ubuntu with MariaDB 10.6 I can do, eg
-
-		ON DUPLICATE KEY UPDATE
-						Duration = new.Duration
-
-but on Raspbian with MariaDB 10.6 I have to do eg
-
-		ON DUPLICATE KEY UPDATE
-						Duration = VALUES(Duration),
-
-and there's no backwards compatability. So if Search isn't working for you and you're using MariaDB, this will be why.
-
+* Improve handling of custom background images - new Background Image Manager shows thumbnails.
+'This Browser Only' mode can be changed after upload.
+* Add yet more notes about how to get MariaDB to work. NB MariaDB is proving difficult to support due to vaguaries
+in version numbering and incompatibilities between it and MySQL, for which it is supposed to be a drop-in replacement.
+Due to these issues I cannot guarantee that I will continue to support MariaDB. Please us SQLite unless you really really
+need a remote database, in which case please try to use proper MySQL instead of this substandard replacement.
+* Update installation instructions to provide more help for Arch Linux users.
 * Various small bugfixes
 
 
