@@ -3,7 +3,9 @@
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
 ## Version 1.60
-* I noticed an error in the installation instructions If you're using nginx you should check your config file. If it contains
+* I noticed an error in the installation instructions.
+
+If you're using nginx you should check your config file. If it contains
 
 	error_page 404 = /404.php;
 
@@ -21,7 +23,8 @@ Currently this is not supported in the Skypotato skin unless you sort search res
 * Fix snapcast API code so it works with snapserver 0.6.0
 * Don't crash if snapserver doesn't send stream metadata
 * Improve handling of custom background images - new Background Image Manager shows thumbnails.
-'This Browser Only' mode can be changed after upload.
+'This Browser Only' mode can be changed after upload. Random mode will cycle through every image in random order, rather
+than being truly random.
 * Add yet more notes about how to get MariaDB to work. NB MariaDB is proving difficult to support due to vaguaries
 in version numbering and incompatibilities between it and MySQL, for which it is supposed to be a drop-in replacement.
 Due to these issues I cannot guarantee that I will continue to support MariaDB. Please us SQLite unless you really really
