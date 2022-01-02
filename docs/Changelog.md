@@ -3,6 +3,15 @@
 Note that some versions listed here may be unreleased, I use version number incremements for testing purposes so released version numbers may not be contiguous.
 
 ## Version 1.60
+* I noticed an error in the installation instructions If you're using nginx you should check your config file. If it contains
+
+	error_page 404 = /404.php;
+
+You should update that so it reads
+
+	error_page 404 = /rompr/404.php;
+
+and then restart nginx.
 * Allow crossfade to be toggled while running personalised radio (with MPD)
 * Cope with Spotify search results that are simply an Artist Uri by browsing them on demand.
 Currently this is not supported in the Skypotato skin unless you sort search results by Artist.
