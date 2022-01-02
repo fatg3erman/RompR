@@ -69,17 +69,21 @@ var backimagemanager = function() {
 	function handleDrop(ev) {
 		evt = ev.originalEvent;
 		$(evt.target).removeClass("dropper-highlighted");
-		var files = evt.dataTransfer.files;
+		// If we have > max_file_uploads files, upload them in batches
+		var max_files = $('input[name="max_file_uploads"]').val();
+		var offset = 0;
 		var formData = new FormData();
-		if (files[0]) {
-			for (var i in files) {
-				formData.append('imagefile[]', files[i]);
+		while (offset < evt.dataTransfer.files.length) {
+			formData.append('imagefile[]', evt.dataTransfer.files[offset]);
+			offset++;
+			if (offset == max_files || offset == evt.dataTransfer.files.length) {
+				formData.append('currbackground', prefs.theme);
+				formData.append('browser_id', prefs.browser_id);
+				uploadFiles(formData);
+				formData = new FormData();
 			}
-			formData.append('currbackground', prefs.theme);
-			formData.append('browser_id', prefs.browser_id);
-			uploadFiles(formData);
-			return false;
 		}
+		return false;
 	}
 
 	function uploadFiles(formData) {

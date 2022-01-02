@@ -273,6 +273,9 @@ foreach ($skinrequires as $s) {
 <?php
 logger::log("LAYOUT", "Including skins/".$skin.'/skin.php');
 include('skins/'.$skin.'/skin.php');
+foreach (['post_max_size', 'max_file_uploads', 'upload_max_filesize'] as $i) {
+ 	print '<input type="hidden" name="'.$i.'" value="'.ini_get($i).'" />'."\n";
+}
 ?>
 
 </body>
