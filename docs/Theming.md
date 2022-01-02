@@ -25,36 +25,37 @@ Some themes use a background image
 
 ### Custom Background Images
 
-If you use a theme with a background image, you can change the image to one of your own from the configuration panel
+If you use a theme with a background image, you can change the image to one or more of your own. There is a button in the configuration panel,
+or you can use 'Manage Background Images' from the panel above the Info Panel.
 
-![](images/uioptions2.png)
+![](images/backimage1.png)
 
-Use 'Choose File(s)' to select the image then click 'Upload'.
+This will open the Background Image Manager, from where you can upload images
 
-![](images/uioptions3.png)
+Use 'Choose File(s)' to select the image then click 'Upload', or use drag-and-drop to add images.
 
-To remove your image and revert to the default, click the x.
+![](images/backimage2.png)
 
-If you want your image to only be used in the browser you're currently using, select the option. Note that this button has no effect except when uploading images - you can't change an image to be specific to one browser after it has been uploaded, you must first remove it then upload it again.
+Images can be removed by clicking the X icon next to them. Clicking an image will set it as the curent background.
 
-You can choose how the image is displayed -
+If you have a mix of Portrait and Landscape images, Portrait images will only be used when the window is in portrait orientation,
+and Landscape images will only be used in Landscape orienation. If you have only one format of image then they will be used for
+both window orientations.
 
-* Centered will centre the image within the browser window, scaling the shortest dimension so the image fills the window
-* Top Left, etc will anchor the image by the spceicifed corner, scaling the shortest dimension so the image fills the window
+You can select an option to use the images in all browsers or only in the current browser. You can set this before you upload,
+or you can change it at any time.
 
-#### Using Multiple Images
+Multiple images will be displayed as a slide show. Once you have uploaded some images the configuration panel will allow you to set
+how they appear in the browser. These options apply only to the current browser.
 
-You can upload as many images as you like, to use as a slideshow.
-
-![](images/uioptions4.png)
-
-The currently displayed image will be highlighted. If two images are highlighted, then one is landscape orientation, and one is portrait orientation (see next section)
-
-You can also change the current background image by clicking on one of them.
+![](images/backimage2.png)
 
 #### Using different images for different orientations
 
-If you upload multiple images, then images which are in portrait format (width < height) will only be used when the screen is also in portrait format, while images that are in landscape format (width > height) will only be used when the screen is in landscape format. In this way, if you use a mobile device, you can can have different images for different screen orientations. You can also have multiple portrait images and/or multiple landscape images and you will get a slideshow of the appropriate images for the screen orientation.
+If you upload multiple images, then images which are in portrait format (width < height) will only be used when the screen is also in portrait format,
+while images that are in landscape format (width > height) will only be used when the screen is in landscape format.
+In this way, if you use a mobile device, you can can have different images for different screen orientations.
+You can also have multiple portrait images and/or multiple landscape images and you will get a slideshow of the appropriate images for the screen orientation.
 
 If all of your images are the same orientation, they will be used for both landscape and portrait screens.
 

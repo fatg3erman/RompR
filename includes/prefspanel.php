@@ -28,52 +28,6 @@ foreach($themes as $theme) {
 }
 print '</select></div></div>';
 
-// Custom Background
-print '<div id="custombackground" class="pref">';
-
-print '<div class="containerbox dropdown-container">
-<i class="icon-menu smallicon clickicon fixed" onclick="prefs.openBgImageBox()"></i>
-<div class="expand"><b>'.language::gettext('config_background').'</b></div>
-</div>';
-
-print '<div id="custombgdropper" class="invisible">';
-
-print '<form id="backimageform" action="api/userbackgrounds/" method="post" enctype="multipart/form-data">
-<input type="hidden" name="currbackground" value="" />
-<input type="hidden" name="browser_id" value="" />
-<div class="filebutton textcentre" style="width:auto">
-<input type="file" name="imagefile[]" id="imagefile" class="inputfile" multiple="multiple" />
-<label for="imagefile">'.language::gettext('label_choosefiles').'</label>
-</div>
-<input type="button" class="invisible" id="bgfileuploadbutton" onclick="prefs.changeBackgroundImage()" value="'.language::gettext('albumart_uploadbutton').'" />
-<div class="textcenter invisible"><i class="icon-spin6 medicon" id="bguploadspinner"></i></div>
-<div class="styledinputs">
-<input type="checkbox" id="thisbrowseronly" name="thisbrowseronly" /><label for="thisbrowseronly">For this browser only</label>
-</div>
-</form>';
-
-print '<div class="containerbox">';
-
-print '<div id="backimageposition" class="tiny styledinputs invisible divlabel">
-<div class="spacer"></div>
-<div class="textcentre"><b>Display Options</b></div>
-<div class="spacer"></div>
-<div><input type="radio" id="attach_centre" name="backgroundposition" value="center center" /><label for="attach_centre">'.language::gettext('label_centre').'</label></div>
-<div><input type="radio" id="attach_topleft" name="backgroundposition" value="top left" /><label for="attach_topleft">'.language::gettext('label_topleft').'</label></div>
-<div><input type="radio" id="attach_topright" name="backgroundposition" value="top right" /><label for="attach_topright">'.language::gettext('label_topright').'</label></div>
-<div><input type="radio" id="attach_bottomleft" name="backgroundposition" value="bottom left" /><label for="attach_bottomleft">'.language::gettext('label_bottomleft').'</label></div>
-<div><input type="radio" id="attach_bottomright" name="backgroundposition" value="bottom right" /><label for="attach_bottomright">'.language::gettext('label_bottomright').'</label></div>
-<div id="cusbgcontrols"></div>
-</div>
-
-<div>
-<div id="cusbgname" class="tiny styledinputs"></div>
-</div>
-
-</div>
-</div>
-</div>';
-
 // Icon Theme
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
 	language::gettext('config_icontheme').
@@ -118,6 +72,42 @@ foreach($themes as $theme) {
 		preg_replace('/coversizes\/\d+-(.*?)\.css$/', "$1", $theme).'</option>';
 }
 print '</select></div></div>';
+
+// Custom Background
+print '<div id="custombackground">';
+
+print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('config_background').'</b></div></div>';
+
+print '<div id="cusbgoptions">';
+
+print '<div class="pref styledinputs">
+<div><input type="radio" id="attach_centre" name="backgroundposition" value="center center" /><label for="attach_centre">'.language::gettext('label_centre').'</label></div>
+<div><input type="radio" id="attach_topleft" name="backgroundposition" value="top left" /><label for="attach_topleft">'.language::gettext('label_topleft').'</label></div>
+<div><input type="radio" id="attach_topright" name="backgroundposition" value="top right" /><label for="attach_topright">'.language::gettext('label_topright').'</label></div>
+<div><input type="radio" id="attach_bottomleft" name="backgroundposition" value="bottom left" /><label for="attach_bottomleft">'.language::gettext('label_bottomleft').'</label></div>
+<div><input type="radio" id="attach_bottomright" name="backgroundposition" value="bottom right" /><label for="attach_bottomright">'.language::gettext('label_bottomright').'</label></div>
+</div>';
+
+print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+	language::gettext('label_changevery').
+	'</div><div class="selectholder"><select id="changeeveryselector">';
+foreach (BG_IMAGE_TIMEOUTS as $label => $value) {
+	print '<option value="'.$value.'">'.$label.'</option>';
+}
+print '</select></div></div>';
+
+print '<div class="pref styledinputs">
+<input type="checkbox" id="cus_bg_random" />
+<label for="cus_bg_random">'.language::gettext('label_random_order').'</label>
+</div>';
+
+print '</div>';
+
+print '<div class="clearfix">';
+print '<div class="pref tright"><button onclick="prefs.manage_bg_images()">'.language::gettext('manage_bgs').'</button></div>';
+print '</div>';
+
+print '</div>';
 
 // Players
 print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('config_players').'</b></div></div>';

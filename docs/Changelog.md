@@ -11,6 +11,7 @@ Currently this is not supported in the Skypotato skin unless you sort search res
 * Remove Snapcast clients from the main volume control when they disconnect
 * Fix snapcast API code so it works with snapserver 0.6.0
 * Don't crash if snapserver doesn't send stream metadata
+* Improve handling of custom background images - new Background Image Manager shows thumbnails. 'This Browser Only' mode can be changed after upload.
 * Add yet more notes about how to get MariaDB to work.
 * Work around the fact that there appears to be no logic or consistency in the version numbering of MariaDB between distributions
 or even different releases. I've had to fall back to an older way of doing certain things because features that are supposed to be

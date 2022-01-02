@@ -3,7 +3,7 @@
 define('ROMPR_MAX_TRACKS_PER_TRANSACTION', 250);
 define('ROMPR_COLLECTION_VERSION', 6);
 define('ROMPR_IMAGE_VERSION', 4);
-define('ROMPR_SCHEMA_VERSION', 76);
+define('ROMPR_SCHEMA_VERSION', 77);
 define('ROMPR_VERSION', '1.60');
 define('ROMPR_IDSTRING', 'RompR Music Player '.ROMPR_VERSION);
 define('ROMPR_MOPIDY_MIN_VERSION', 1.1);
@@ -179,6 +179,19 @@ const COLLECTION_SORT_MODES = array(
 	'rating' 		=> 'label_rating',
 	'tag' 			=> 'label_tag'
 );
+
+
+const BG_IMAGE_TIMEOUTS = [
+	'10 Seconds' => 10000,
+	'30 Seconds' => 30000,
+	'Minute' => 60000,
+	'5 Minutes' => 300000,
+	'10 Minutes' => 600000,
+	'20 Minutes' => 1200000,
+	'30 Minutes' => 1800000,
+	'Hour' => 3600000,
+	'Day' => 86400000
+];
 
 //
 // Constants For Custom Smart Radio Stations

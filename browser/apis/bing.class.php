@@ -5,7 +5,7 @@ class bing {
 	const BASE_URL = 'https://api.bing.microsoft.com/v7.0/';
 
 	private static function request($url, $print_data) {
-		if (prefs::$prefs['bing_api_key']) {
+		if (prefs::$prefs['bing_api_key'] != '') {
 			$cache = new cache_handler([
 				'url' => $url,
 				'header' => array('Ocp-Apim-Subscription-Key: '.prefs::$prefs['bing_api_key']),

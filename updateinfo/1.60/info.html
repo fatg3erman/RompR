@@ -1,0 +1,11 @@
+<h2 align="center">Version 1.60 Information</h2>
+<h3 style="color: red">Important Note!</h3>
+<p>We've noticed an error in the install instructions. If you're using nginx you should check your config file. If it contains</p>
+<p style="font-family: monospace">
+	error_page 404 = /404.php;
+</p>
+<p>Then you should update that so it reads</p>
+<p style="font-family: monospace">
+	error_page 404 = /rompr/404.php;
+</p>
+<p>and then restart nginx</p>

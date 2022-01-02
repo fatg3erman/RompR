@@ -266,6 +266,7 @@ class init_database extends init_generic {
 			"BrowserID VARCHAR(20) DEFAULT NULL, ".
 			"Filename VARCHAR(255), ".
 			"Orientation TINYINT(2), ".
+			"Used TINYINT(1) DEFAULT 0, ".
 			"PRIMARY KEY (BgImageIndex), ".
 			"INDEX (Skin), ".
 			"INDEX (BrowserID)) ENGINE=InnoDB", true))
@@ -1024,6 +1025,12 @@ class init_database extends init_generic {
 						return array(false, "Error While Creating Triggers : ".$err);
 					}
 					$this->generic_sql_query("UPDATE Statstable SET Value = 76 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 76:
+					logger::log("SQL", "Updating FROM Schema version 76 TO Schema version 77");
+					$this->generic_sql_query("ALTER TABLE BackgroundImageTable ADD Used TINYINT(1) DEFAULT 0", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 77 WHERE Item = 'SchemaVer'", true);
 					break;
 
 			}

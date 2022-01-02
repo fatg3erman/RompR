@@ -2,13 +2,109 @@
 
 class backgroundImages extends database {
 
+	public function get_next_background($theme, $browser_id, $random) {
+		// We know we're only going to be in here if the browser knows we have images to use
+		// First see if we have thisbrowseronly images
+		$thisbo = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'thisbo', 0,
+			"SELECT COUNT(BgImageIndex) AS thisbo FROM BackgroundImageTable WHERE Skin = ? AND BrowserID = ?",
+			$theme,
+			$browser_id
+		);
+		foreach ([ORIENTATION_PORTRAIT, ORIENTATION_LANDSCAPE] AS $o) {
+			if ($thisbo > 0) {
+				$num = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'num', 0,
+					"SELECT COUNT(BgImageIndex) AS num FROM BackgroundImageTable WHERE Skin = ? AND BrowserID = ? AND Orientation = ? AND Used = ?",
+					$theme,
+					$browser_id,
+					$o,
+					0
+				);
+				if ($num == 0) {
+					logger::log('BACKIMAGE', "Resetting Used flag for",$theme,$browser_id,$o);
+					$this->sql_prepare_query(true, null, null, null,
+						"UPDATE BackgroundImageTable SET Used = 0 WHERE Skin = ? AND BrowserID = ? AND Orientation = ?",
+						$theme,
+						$browser_id,
+						$o,
+					);
+				}
+			} else {
+				$num = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'num', 0,
+					"SELECT COUNT(BgImageIndex) AS num FROM BackgroundImageTable WHERE Skin = ? AND BrowserID IS NULL AND Orientation = ? AND Used = ?",
+					$theme,
+					$o,
+					0
+				);
+				if ($num == 0) {
+					logger::log('BACKIMAGE', "Resetting Used flag for",$theme,$o);
+					$this->sql_prepare_query(true, null, null, null,
+						"UPDATE BackgroundImageTable SET Used = 0 WHERE Skin = ? AND BrowserID IS NULL AND Orientation = ?",
+						$theme,
+						$o,
+					);
+				}
+			}
+		}
+
+		$landscape_image = $this->get_image($theme, $browser_id, $random, ORIENTATION_LANDSCAPE, $thisbo);
+		$portrait_image = $this->get_image($theme, $browser_id, $random, ORIENTATION_PORTRAIT, $thisbo);
+
+		if ($landscape_image == null)
+			$landscape_image = $portrait_image;
+
+		if ($portrait_image == null)
+			$portrait_image = $landscape_image;
+
+		foreach ([$landscape_image, $portrait_image] AS $i) {
+			if ($thisbo > 0) {
+				$this->sql_prepare_query(true, null, null, null,
+					"UPDATE BackgroundImageTable SET Used = 1 WHERE Skin = ? AND BrowserID = ? AND Filename = ?",
+					$theme,
+					$browser_id,
+					$i
+				);
+			} else {
+				$this->sql_prepare_query(true, null, null, null,
+					"UPDATE BackgroundImageTable SET Used = 1 WHERE Skin = ? AND BrowserID IS NULL AND Filename = ?",
+					$theme,
+					$i
+				);
+			}
+		}
+
+		return ['landscape' => $landscape_image, 'portrait' => $portrait_image];
+
+	}
+
+	private function get_image($theme, $browser_id, $random, $orientation, $thisbo) {
+		if ($random == 'true') {
+			$sort = database::SQL_RANDOM_SORT;
+		} else {
+			$sort = 'Filename ASC';
+		}
+		if ($thisbo > 0) {
+			return $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'Filename', null,
+				"SELECT Filename FROM BackgroundImageTable WHERE Skin = ? AND BrowserID = ? AND Orientation = ? AND Used = 0 ORDER BY $sort LIMIT 1",
+				$theme,
+				$browser_id,
+				$orientation
+			);
+		} else {
+			return $this->sql_prepare_query(false, PDO::FETCH_ASSOC, 'Filename', null,
+				"SELECT Filename FROM BackgroundImageTable WHERE Skin = ? AND BrowserID IS NULL AND Orientation = ? AND Used = 0 ORDER BY $sort LIMIT 1",
+				$theme,
+				$orientation
+			);
+		}
+	}
+
 	public function get_background_images($theme, $browser_id) {
 		$retval = array();
-		$images = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null, 'SELECT * FROM BackgroundImageTable WHERE Skin = ? AND BrowserID = ?', $theme, $browser_id);
+		$images = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null, 'SELECT * FROM BackgroundImageTable WHERE Skin = ? AND BrowserID = ? ORDER BY Filename ASC', $theme, $browser_id);
 		$thisbrowseronly = true;
 		if (count($images) == 0) {
 			logger::log("BACKIMAGE", "No Custom Backgrounds Exist for",$theme,$browser_id);
-			$images = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null, 'SELECT * FROM BackgroundImageTable WHERE Skin = ? AND BrowserID IS NULL', $theme);
+			$images = $this->sql_prepare_query(false, PDO::FETCH_ASSOC, null, null, 'SELECT * FROM BackgroundImageTable WHERE Skin = ? AND BrowserID IS NULL ORDER BY Filename ASC', $theme);
 			$thisbrowseronly = false;
 		} else {
 			logger::log("BACKIMAGE", "Custom Backgrounds Exist for",$theme,$browser_id);
@@ -30,6 +126,17 @@ class backgroundImages extends database {
 	public function clear_background($file) {
 		$this->sql_prepare_query(true, null, null, null, 'DELETE FROM BackgroundImageTable WHERE Filename = ?', $file);
 		unlink($file);
+
+		// This removes the thumbnails created by the background image manager via imagehandler.php
+		// This is a bit of a hack, we could probably use imagehandler to remove them
+		// but that's a bit of extra work.
+		$directory = dirname($file).'/thumbs';
+		$thumbfile = $directory.'/'.pathinfo($file, PATHINFO_FILENAME).'.smallish.'.pathinfo($file, PATHINFO_EXTENSION);
+		if (file_exists($thumbfile)) {
+			unlink($thumbfile);
+			$this->check_empty_directory($directory);
+		}
+
 		if (is_numeric(basename(dirname($file)))) {
 			$this->check_empty_directory(dirname($file));
 		}
@@ -38,15 +145,85 @@ class backgroundImages extends database {
 	public function clear_all_backgrounds($theme, $browser_id) {
 		// Remove these here, just in case the folder has been deleted for some reason
 		$this->sql_prepare_query(true, null, null, null, 'DELETE FROM BackgroundImageTable WHERE Skin = ? AND BrowserID = ?', $theme, $browser_id);
-		if (is_dir('prefs/userbackgrounds/'.$theme.'/'.$browser_id)) {
-			logger::log("BACKIMAGE", "Removing All Backgrounds For ".$theme.'/'.$browser_id);
-			$this->delete_files('prefs/userbackgrounds/'.$theme.'/'.$browser_id);
-			$this->check_empty_directory('prefs/userbackgrounds/'.$theme.'/'.$browser_id);
-		} else if (is_dir('prefs/userbackgrounds/'.$theme)) {
-			logger::log("BACKIMAGE", "Removing All Backgrounds For ".$theme);
-			$this->delete_files('prefs/userbackgrounds/'.$theme);
+		$browser_dir = 'prefs/userbackgrounds/'.$theme.'/'.$browser_id;
+		$global_dir = 'prefs/userbackgrounds/'.$theme;
+		if (is_dir($browser_dir)) {
+			logger::log("BACKIMAGE", "Removing All Backgrounds For",$browser_dir);
+			$this->delete_files($browser_dir);
+			if (is_dir($browser_dir.'/thumbs')) {
+				$this->delete_files($browser_dir.'/thumbs');
+				$this->check_empty_directory($browser_dir.'/thumbs');
+			}
+			$this->check_empty_directory($browser_dir);
+		} else if (is_dir($global_dir)) {
+			logger::log("BACKIMAGE", "Removing All non browser-specific Backgrounds For",$global_dir);
+			$this->delete_files($global_dir);
+			if (is_dir($global_dir.'/thumbs')) {
+				$this->delete_files($global_dir.'/thumbs');
+				$this->check_empty_directory($global_dir.'/thumbs');
+			}
 			$this->sql_prepare_query(true, null, null, null, 'DELETE FROM BackgroundImageTable WHERE Skin = ? AND BrowserID IS NULL', $theme);
 		}
+	}
+
+	public function switch_backgrounds($theme, $browser_id, $thisbrowseronly) {
+		// $thisbrowseronly is the NEW state
+		if ($thisbrowseronly == 1) {
+			$source_path = 'prefs/userbackgrounds/'.$theme;
+			$dest_path = 'prefs/userbackgrounds/'.$theme.'/'.$browser_id;
+		} else {
+			$source_path = 'prefs/userbackgrounds/'.$theme.'/'.$browser_id;
+			$dest_path = 'prefs/userbackgrounds/'.$theme;
+		}
+
+		if (!is_dir($dest_path))
+			mkdir($dest_path);
+
+		logger::log('BACKIMAGE', 'Moving from',$source_path,'to',$dest_path);
+
+		$source_thumbs = $source_path.'/thumbs';
+		$dest_thumbs = $dest_path.'/thumbs';
+		$newbrowserid = ($thisbrowseronly == 1) ? $browser_id : null;
+
+		$all_files = glob($source_path.'/*.*');
+		foreach ($all_files as $file) {
+			$dest_file = $dest_path.'/'.basename($file);
+			if (file_exists($dest_file)) {
+				logger::log('BACKIMAGE', $dest_file,'already exists');
+				$this->sql_prepare_query(true, null, null, null,
+					"DELETE FROM BackgroundImageTable WHERE Filename = ?",
+					$file
+				);
+				unlink($file);
+			} else {
+				rename($file, $dest_file);
+				$this->sql_prepare_query(true, null, null, null,
+					"UPDATE BackgroundImageTable SET Filename = ?, BrowserID = ? WHERE Filename = ?",
+					$dest_file,
+					$newbrowserid,
+					$file
+				);
+			}
+		}
+
+		if (is_dir($source_thumbs)) {
+			if (!is_dir($dest_thumbs))
+				mkdir($dest_thumbs);
+
+			$all_thumbs = glob($source_thumbs.'/*.*');
+			foreach ($all_thumbs as $thumb) {
+				$dest_thumb = $dest_thumbs.'/'.basename($thumb);
+				if (file_exists($dest_thumb)) {
+					unlink($thumb);
+				} else {
+					rename($thumb, $dest_thumb);
+				}
+			}
+			$this->check_empty_directory($source_thumbs);
+		}
+
+		$this->check_empty_directory($source_path);
+
 	}
 
 	public function upload_backgrounds($theme) {

@@ -10,12 +10,16 @@ foreach($_REQUEST as $i => $r) {
 }
 
 $retval = array();
-if (array_key_exists('getbackground', $_REQUEST)) {
-	$retval = prefs::$database->get_background_images($_REQUEST['getbackground'], $_REQUEST['browser_id']);
-} else if (array_key_exists('clearbackground', $_REQUEST)) {
-	prefs::$database->clear_background($_REQUEST['clearbackground']);
+if (array_key_exists('get_all_backgrounds', $_REQUEST)) {
+	$retval = prefs::$database->get_background_images($_REQUEST['get_all_backgrounds'], $_REQUEST['browser_id']);
+} else if (array_key_exists('get_next_background', $_REQUEST)) {
+	$retval = prefs::$database->get_next_background($_REQUEST['get_next_background'], $_REQUEST['browser_id'], $_REQUEST['random']);
+} else if (array_key_exists('deleteimage', $_REQUEST)) {
+	prefs::$database->clear_background($_REQUEST['deleteimage']);
 } else if (array_key_exists('clearallbackgrounds', $_REQUEST)) {
 	prefs::$database->clear_all_backgrounds($_REQUEST['clearallbackgrounds'], $_REQUEST['browser_id']);
+} else if (array_key_exists('switchbrowseronly', $_REQUEST)) {
+	prefs::$database->switch_backgrounds($_REQUEST['switchbrowseronly'], $_REQUEST['browser_id'], $_REQUEST['thisbrowseronly']);
 } else {
 	if (!array_key_exists('currbackground', $_REQUEST) || !array_key_exists('imagefile', $_FILES)) {
 		if (isset($_SERVER["CONTENT_LENGTH"])) {

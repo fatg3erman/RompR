@@ -24,7 +24,7 @@ Somewhere in mpd.conf
 [Mopidy](http://www.mopidy.com) is similar to MPD. It does everything MPD does, but it also plays music from many online sources including Spotify and SoundCloud. I like Mopidy and I use it a lot,
 and a lot of RompЯ's Music Discovery features rely on Spotify support. But Mopidy isn't very well maintained any more and it has more bugs than MPD.
 
-RompЯ requires Mopidy's MPD interface, and can also use its HTTP interface if present. As a minimum woul will need to install mopidy and mopidy-mpd. To get local files playback support, install mopidy-local, and for Spotify install mopidy-spotity.
+RompЯ requires Mopidy's MPD interface, and can also use its HTTP interface if present. As a minimum you will need to install mopidy and mopidy-mpd. To get local files playback support install mopidy-local, and for Spotify install mopidy-spotity.
 
 In your mopidy.conf you should ensure the following are set:
 
@@ -84,7 +84,10 @@ following instead, but note that this gives everybody on the system write access
 
 ## Next, You Need A Web Server
 
-This is where you have another choice to make. There are a lot of web servers out there and configuring them is never a simple task. What I've tried to do here is to create a few guides to how to get it working with two of the most popular ones (Apache and nginx). Which one you choose will depend on you. I like nginx, it works well on smaller system like Raspberry Pi. But you may already be running Apache on your system if you have some other web service already installed, like MythWeb for example.
+This is where you have another choice to make. There are a lot of web servers out there and configuring them is never a simple task.
+What I've tried to do here is to create a few guides to how to get it working with two of the most popular ones (Apache and nginx).
+Which one you choose will depend on you. I like nginx, it works well on smaller system like Raspberry Pi.
+But you may already be running Apache on your system if you have some other web service already installed, like MythWeb for example.
 
 [RompЯ With Nginx on Linux](/RompR/Recommended-Installation-on-Linux)
 

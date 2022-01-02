@@ -92,6 +92,8 @@ input.inputfile {
 
 div.filebutton {
 	word-break: break-all;
+	line-height: 3em;
+	padding: 0px !important;
 }
 
 button.iconbutton {
@@ -191,11 +193,11 @@ div.pref div.selectholder:not(.boycie) {
 }
 
 #custombgdropper>div>div:last-child {
-	width:58%;
+	/*width:58%;*/
 	margin-top:4px;
 	margin-bottom:4px;
 	padding-left:2px;
-	margin-left:1em;
+	/*margin-left:1em;*/
 }
 
 i.combo-button {
@@ -217,6 +219,10 @@ i.combo-button {
 .dropdown-holder
 {
 	position:relative;
+}
+
+option {
+    color: black;
 }
 
 .drop-box
@@ -2331,3 +2337,64 @@ td.dan, th.dan{
 	animation: switchback 2s linear infinite;
 }
 
+.closet {
+	position:relative;
+	/*width:160px;*/
+	text-align:center;
+	overflow:visible;
+	flex-shrink: 1;
+	flex-grow: 0;
+	/*min-width:180px;*/
+	max-width:220px;
+	flex-basis: 20%;
+}
+
+.covercontainer
+{
+	position: relative;
+	padding-left:4px;
+	padding-right:4px;
+	z-index:1;
+}
+
+.covercontainer div {
+	z-index:1;
+}
+
+.albumimg {
+	padding-top:8px;
+}
+
+.albumimg img {
+	padding:8px;
+}
+
+.albumimg .covercontainer img {
+	width: 180px;
+	height:auto;
+}
+
+.albumsection {
+	padding-top:4px;
+	padding-bottom:4px;
+	display:table;
+	width:100%;
+	margin-left:4px;
+}
+
+.albumsection .tleft h2 {
+	margin:8px;
+}
+
+div.drop-images-here {
+	background-color: rgba(0,0,0,0.2);
+	text-align: center;
+	line-height: 3em;
+	margin-bottom:4px;
+	margin-top:4px;
+}
+
+.dropper-highlighted {
+	border:  2px solid orange;
+	box-sizing:  border-box;
+}

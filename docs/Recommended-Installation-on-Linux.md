@@ -55,13 +55,18 @@ Paste in the following lines, remembering to edit /home/YOU/web appropriately, a
             index index.php;
             location ~ \.php {
                     try_files $uri index.php =404;
+
+                    # This line for Debian / Ubuntu
                     fastcgi_pass unix:/run/php/php-fpm.sock;
+                    # This line for Arch / Manjaro
+                    fastcgi_pass unix:/run/php-fpm/php-fpm.sock;
+
                     fastcgi_index index.php;
                     fastcgi_param SCRIPT_FILENAME $request_filename;
                     include /etc/nginx/fastcgi_params;
                     fastcgi_read_timeout 1800;
             }
-            error_page 404 = /404.php;
+            error_page 404 = /rompr/404.php;
             try_files $uri $uri/ =404;
             location ~ /albumart/* {
                     expires -1s;
@@ -74,7 +79,6 @@ Save the file (Ctrl-X in nano, then answer 'Y'). Now link the configuration so i
     sudo ln -s /etc/nginx/sites-available/rompr /etc/nginx/sites-enabled/rompr
 
 If you want to host more websites on your computer, you can add further 'location' sections under the rompr section, or add new files under sites-available and link them as above.
-I'm not 100% sure the default_server part is necessary to be honest but who has time to read documentation? :)
 
 ### Edit PHP configuration
 
@@ -107,6 +111,8 @@ You also need to find and enable (remove the ; from the start of the line) the f
 
     extension=curl
     extension=pdo_sqlite
+    extension=gd
+    extension=intl
 
 ### That's all the configuring. Let's get everything running
 
@@ -117,7 +123,9 @@ You also need to find and enable (remove the ; from the start of the line) the f
 
 **Arch / Manjaro etc**
 
-    sudo systemctl restart php-fpm
-    sudo systemctl restart nginx
+    sudo systemctl enable php-fpm
+    sudo systemctl enable nginx
+    sudo systemctl start php-fpm
+    sudo systemctl start nginx
 
 That should be it. Direct your browser to http://hostname.of.your.computer/rompr (or http://ip.address.of.your.computer/rompr) and all should be well.

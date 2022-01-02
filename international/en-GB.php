@@ -463,7 +463,7 @@ language::add_translations([
 	"config_collectionfolders" =>			"Build Collection From:",
 	"button_videos" =>						"Related Videos",
 	"label_allrandom" =>					"All Tracks At Random",
-	"config_background" =>					"BACKGROUND IMAGE",
+	"config_background" =>					"Background Image",
 	"lastfm_error" =>						"Could not find information on Last.FM",
 	"config_skin" =>						"SKIN",
 
@@ -719,7 +719,12 @@ language::add_translations([
 	"podcast_display_nud" =>				'New, Unlistened, & Downloaded',
 	"label_usetrackimages" =>				'Scan each track for an image',
 	"label_unusetrackimages" =>				'Do not scan each track for an image',
-	"config_audiobook_tags" =>				'Set track as Spoken Word when adding tags'
+	"config_audiobook_tags" =>				'Set track as Spoken Word when adding tags',
+	"label_random_order" => 				'Random Order',
+	"label_remove_all" => 					'Remove All',
+	"manage_bgs" =>							'Manage Background Images',
+	"label_bg_global" =>					'Use In All Browsers',
+	"label_bg_only" =>						'For This Browser Only'
 	// ----------------------------------------------------
 	// Proobaly Unused
 	// ----------------------------------------------------

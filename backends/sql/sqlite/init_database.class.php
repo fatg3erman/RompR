@@ -320,6 +320,7 @@ class init_database extends init_generic {
 			"Skin VARCHAR(255), ".
 			"BrowserID VARCHAR(20) DEFAULT NULL, ".
 			"Filename VARCHAR(255), ".
+			"Used TINYINT(1) DEFAULT 0, ".
 			"Orientation TINYINT(2))", true))
 		{
 			logger::log("SQLITE", "  BackgounrdImageTable OK");
@@ -947,6 +948,13 @@ class init_database extends init_generic {
 					$this->create_conditional_triggers();
 					$this->generic_sql_query("UPDATE Statstable SET Value = 76 WHERE Item = 'SchemaVer'", true);
 					break;
+
+				case 76:
+					logger::log("SQL", "Updating FROM Schema version 76 TO Schema version 77");
+					$this->generic_sql_query("ALTER TABLE BackgroundImageTable ADD Used TINYINT(1) DEFAULT 0", true);
+					$this->generic_sql_query("UPDATE Statstable SET Value = 77 WHERE Item = 'SchemaVer'", true);
+					break;
+
 
 			}
 			$sv++;

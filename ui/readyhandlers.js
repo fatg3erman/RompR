@@ -22,6 +22,7 @@ function albumImageLoaded() {
 
 function inputFIleChanged() {
 	var filenames = $.map($(this).prop('files'), function(val) {
+		debug.log('FILE', val);
 		return val.name.replace(/.*(\/|\\)/, '')
 	});
 	if (filenames.length > 3) {
@@ -178,7 +179,7 @@ function carry_on_starting() {
 	if (prefs.do_not_show_prefs) {
 		$('.choose_prefs').remove();
 	}
-	prefs.setTheme(prefs.theme);
+	prefs.setTheme();
 	infobar.createProgressBar();
 	pluginManager.doEarlyInit();
 	createHelpLinks();

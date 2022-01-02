@@ -220,18 +220,6 @@ var prefs = function() {
 	var landscapeImage = new Image();
 	var bgImagesLoaded = 0;
 
-	var timeouts = {
-		'10 Seconds': 10000,
-		'30 Seconds': 30000,
-		'Minute': 60000,
-		'5 Minutes': 300000,
-		'10 Minutes': 600000,
-		'20 Minutes': 1200000,
-		'30 Minutes': 1800000,
-		'Hour': 3600000,
-		'Day': 86400000
-	}
-
 	function offerToTransferPlaylist() {
 		var fnarkle = new popup({
 			css: {
@@ -340,43 +328,53 @@ var prefs = function() {
 		prefs.save({scrobblepercent: e.max});
 	}
 
-	function loadBackgroundImages(theme) {
+	function loadBackgroundImages() {
 		clearTimeout(backgroundTimer);
-		$('#cusbgname').empty();
-		$('#cusbgcontrols').empty();
-		$('#backimageposition').hide();
-		$.getJSON('api/userbackgrounds/?getbackground='+theme+'&browser_id='+prefs.browser_id, function(data) {
+		if (typeof(prefs.bgimgparms[prefs.theme]) == 'undefined') {
+			debug.log("PREFS","Init bgimgparms for",prefs.theme);
+			prefs.bgimgparms[prefs.theme] = {
+				timeout: 60000,
+				lastchange: Date.now(),
+				random: false,
+				position: 'top left'
+			}
+			prefs.save({bgimgparms: prefs.bgimgparms});
+		} else if (typeof(prefs.bgimgparms[prefs.theme].position) == 'undefined') {
+			prefs.bgimgparms[theme].position = 'top left';
+			prefs.save({bgimgparms: prefs.bgimgparms});
+		}
+		backgroundImages = false;
+		make_background_selector(prefs.theme);
+		$.getJSON('api/userbackgrounds/?get_next_background='+prefs.theme+'&browser_id='+prefs.browser_id+'&random='+prefs.bgimgparms[prefs.theme].random, function(data) {
 			debug.debug("PREFS","Custom Background Image",data);
-			if (data.images) {
-				if (typeof(prefs.bgimgparms[theme]) == 'undefined') {
-					debug.log("PREFS","Init bgimgparms for",theme);
-					prefs.bgimgparms[theme] = {
-						landscape: 0,
-						portrait: 0,
-						timeout: 60000,
-						lastchange: Date.now(),
-						random: false,
-						position: 'top left'
-					}
-					prefs.save({bgimgparms: prefs.bgimgparms});
-				} else if (typeof(prefs.bgimgparms[theme].position) == 'undefined') {
-					prefs.bgimgparms[theme].position = 'top left';
-					prefs.save({bgimgparms: prefs.bgimgparms});
-				}
+			if (data.landscape) {
 				portraitImage.onload = bgImageLoaded;
 				landscapeImage.onload = bgImageLoaded;
 				portraitImage.onerror = bgImageError;
 				landscapeImage.onerror = bgImageError;
-				setCustombackground(data.images);
-				$('input[name="thisbrowseronly"]').prop('checked', data.thisbrowseronly);
-				$('input[name="backgroundposition"][value="'+prefs.bgimgparms[theme].position+'"]').prop('checked', true);
-				$('input[name="backgroundposition"]').off('click').on('click', changeBackgroundPosition);
 				sleepHelper.addWakeHelper(backOnline);
 				sleepHelper.addSleepHelper(goneOffline);
+				set_backimage_urls(data);
+				$('#cusbgoptions').show();
 			} else {
-				backgroundImages = false;
+				$('#cusbgoptions').hide();
 			}
 		});
+	}
+
+	function set_backimage_urls(images) {
+		debug.log('BACKIMAGE',images.portrait,images.landscape);
+		var bgp = prefs.bgimgparms[prefs.theme];
+		bgp.lastchange = Date.now();
+		prefs.save({bgimgparms: prefs.bgimgparms});
+		backgroundImages = true;
+		bgImagesLoaded = 0;
+		// If they're both the same the onload event won't fire for both images
+		if (images.landscape == images.portrait)
+			bgImagesLoaded++;
+
+		landscapeImage.src = images.landscape;
+		portraitImage.src = images.portrait;
 	}
 
 	function goneOffline() {
@@ -384,10 +382,8 @@ var prefs = function() {
 	}
 
 	function backOnline() {
-		if (backgroundImages !== false) {
-			updateCustomBackground();
-			setBackgroundTimer();
-		}
+		if (backgroundImages !== false)
+			setBackgroundCss();
 	}
 
 	function changeRandomMode() {
@@ -402,93 +398,25 @@ var prefs = function() {
 		var bgp = prefs.bgimgparms[prefs.theme];
 		bgp.position = $('input[name="backgroundposition"]:checked').val();
 		prefs.save({bgimgparms: prefs.bgimgparms});
-		setBackgroundCss(bgp);
+		setBackgroundCss();
 	}
 
-	function removeAllBackgroundImages() {
-		clearCustomBackground();
-		$.getJSON('api/userbackgrounds/?clearallbackgrounds='+prefs.theme+'&browser_id='+prefs.browser_id, function(data) {
-			loadBackgroundImages(prefs.theme);
-		});
-	}
-
-	function setCustombackground(images) {
+	function make_background_selector(theme) {
 		clearTimeout(backgroundTimer);
-		debug.debug("UI","Setting Custom Background To",images);
-		backgroundImages = images;
-		if (images.landscape.length > 1 || images.portrait.length > 1) {
-			var jesus = $('<div>', {class: 'containerbox dropdown-container'}).appendTo('#cusbgcontrols');
-			jesus.append('<div class="divlabel">'+language.gettext('label_changevery')+'</div>');
-			var sh = $('<div>', {class: 'selectholder'}).appendTo(jesus);
-			var s = $('<select>').appendTo(sh);
-			$.each(timeouts, function(i, v){
-				s.append('<option value="'+v+'">'+i+'</option>');
-			});
-			s.val(prefs.bgimgparms[prefs.theme].timeout.toString());
-			s.on('change', function() {
-				prefs.bgimgparms[prefs.theme].timeout = parseInt(s.val());
-				prefs.save({bgimgparms: prefs.bgimgparms});
-				setBackgroundTimer();
-			});
-			var gibbon = $('<div>').appendTo('#cusbgcontrols');
-			var ran = $('<input>', {type: 'checkbox', id: 'bgimagerandom'}).appendTo(gibbon);
-			var lab = $('<label>', {for: 'bgimagerandom'}).appendTo(gibbon);
-			lab.html('Random Order');
-			ran.prop('checked', prefs.bgimgparms[prefs.theme].random);
-			ran.on('click', changeRandomMode);
-
-			var orangutan = $('<div>').appendTo('#cusbgcontrols');
-			var rb = $('<button>').appendTo(orangutan);
-			rb.html('Remove All');
-			rb.on('click', removeAllBackgroundImages);
-		}
-		if (images.landscape.length > 0 || images.portrait.length > 0) {
-			$('#backimageposition').show();
-		} else {
-			$('#backimageposition').hide();
-		}
-		$.each(images, function(x, p) {
-			if (p.length > 0) {
-				$('#cusbgname').append('<div class="spacer"></div>');
-				var q = $('<div>').appendTo('#cusbgname');
-				$('#cusbgname').append('<div class="spacer"></div>');
-				q.html('<b>'+p.length+' '+x.capitalize()+' Images</b>');
-			}
-			$.each(p, function(i, v) {
-				var n = $('<div>').appendTo('#cusbgname');
-				var c = $('<i>', {class: 'icon-cancel-circled clickicon collectionicon'}).appendTo(n);
-				var l = $('<span>', {class: 'bgimgname', name: i}).appendTo(n);
-				var z = $('<input>', {class: 'bgimagefile', type: 'hidden', value: v}).appendTo(n);
-				var nom = v.replace(/.*(\\|\/)/, '')+'&nbsp;'
-				if (x == 'landscape') {
-					l.addClass('landscapeimage');
-					// nom += '&#x25AD;';
-				} else {
-					l.addClass('portraitimage');
-					// nom += '&#x25AF;';
-				}
-				l.html(nom);
-				l.on('click', changeBgImage);
-				c.on('click', prefs.clearBgImage);
-			});
+		var s = $('#changeeveryselector');
+		s.val(prefs.bgimgparms[prefs.theme].timeout.toString());
+		s.off('change').on('change', function() {
+			prefs.bgimgparms[prefs.theme].timeout = parseInt(s.val());
+			prefs.save({bgimgparms: prefs.bgimgparms});
+			setBackgroundTimer();
 		});
-		updateCustomBackground(false);
-	}
 
-	function changeBgImage(event) {
-		var el = $(event.target);
-		var bgp = prefs.bgimgparms[prefs.theme];
-		bgp.lastchange = Date.now();
-		if (el.hasClass('landscapeimage')) {
-			bgp.landscape = parseInt(el.attr('name'));
-			bgImagesLoaded = 1;
-			landscapeImage.src = backgroundImages.landscape[bgp.landscape];
-		} else if (el.hasClass('portraitimage')) {
-			bgp.portrait = parseInt(el.attr('name'));
-			bgImagesLoaded = 1;
-			portraitImage.src = backgroundImages.portrait[bgp.portrait];
-		}
-		prefs.save({bgimgparms: prefs.bgimgparms});
+		var ran = $('#cus_bg_random');
+		ran.prop('checked', prefs.bgimgparms[prefs.theme].random);
+		ran.off('click').on('click', changeRandomMode);
+
+		$('input[name="backgroundposition"][value="'+prefs.bgimgparms[theme].position+'"]').prop('checked', true);
+		$('input[name="backgroundposition"]').off('click').on('click', changeBackgroundPosition);
 	}
 
 	function doNothing() {
@@ -505,8 +433,6 @@ var prefs = function() {
 		landscapeImage.onload = doNothing;
 		portraitImage.onerror = doNothing;
 		landscapeImage.onerror = doNothing;
-		$('style[id="phoneback"]').remove();
-		$('style[id="background"]').remove();
 		$('style[id="phonebackl"]').remove();
 		$('style[id="backgroundl"]').remove();
 		$('style[id="phonebackp"]').remove();
@@ -515,108 +441,59 @@ var prefs = function() {
 		landscapeImage.src = '';
 	}
 
-	function setBackgroundCss(bgp) {
-		if (backgroundImages === false) {
-			return;
-		}
+	function setBackgroundCss() {
 		// Trying to reduce flickering using all kinds of stuff - pre-load images, update (not remove/recreate) the css
-		['background', 'phoneback', 'backgroundl', 'phonebackl', 'backgroundp', 'phonebackp'].forEach(function(i) {
+		['backgroundl', 'phonebackl', 'backgroundp', 'phonebackp'].forEach(function(i) {
 			if ($('style[id="'+i+'"]').length == 0) {
 				debug.debug('PREFS', 'Creating background style', i);
 				$('<style>', {id: i}).appendTo('head');
 			}
 		});
-		if (backgroundImages.portrait.length == 0) {
-			$('style[id="background"]').html('html { background-image: url("'+backgroundImages.landscape[bgp.landscape]+'"); background-position: '+bgp.position+' }');
-			$('style[id="phoneback"]').html('body.phone .dropmenu { background-image: url("'+backgroundImages.landscape[bgp.landscape]+'"); background-position: '+bgp.position+' }');
-			$('style[id="backgroundl"]').html('');
-			$('style[id="phonebackl"]').html('');
-			$('style[id="backgroundp"]').html('');
-			$('style[id="phonebackp"]').html('');
-			$('span.bgimgname').removeClass('selected');
-			$('input.bgimagefile[value="'+backgroundImages.landscape[bgp.landscape]+'"]').prev().addClass('selected');
-		} else if (backgroundImages.landscape.length == 0) {
-			$('style[id="background"]').html('html { background-image: url("'+backgroundImages.portrait[bgp.portrait]+'"); background-position: '+bgp.position+' }');
-			$('style[id="phoneback"]').html('body.phone .dropmenu { background-image: url("'+backgroundImages.portrait[bgp.portrait]+'"); background-position: '+bgp.position+' }');
-			$('style[id="backgroundl"]').html('');
-			$('style[id="phonebackl"]').html('');
-			$('style[id="backgroundp"]').html('');
-			$('style[id="phonebackp"]').html('');
-			$('span.bgimgname').removeClass('selected');
-			$('input.bgimagefile[value="'+backgroundImages.portrait[bgp.portrait]+'"]').prev().addClass('selected');
-		} else {
-			$('style[id="backgroundl"]').html('@media screen and (orientation: landscape) { html { background-image: url("'+backgroundImages.landscape[bgp.landscape]+'"); background-position: '+bgp.position+' } }');
-			$('style[id="phonebackl"]').html('@media screen and (orientation: landscape) { body.phone .dropmenu { background-image: url("'+backgroundImages.landscape[bgp.landscape]+'"); background-position: '+bgp.position+' } }');
-			$('style[id="backgroundp"]').html('@media screen and (orientation: portrait) { html { background-image: url("'+backgroundImages.portrait[bgp.portrait]+'"); background-position: '+bgp.position+' } }');
-			$('style[id="phonebackp"]').html('@media screen and (orientation: portrait) { body.phone .dropmenu { background-image: url("'+backgroundImages.portrait[bgp.portrait]+'"); background-position: '+bgp.position+' } }');
-			$('style[id="background"]').html('');
-			$('style[id="phoneback"]').html('');
-			$('span.bgimgname').removeClass('selected');
-			$('input.bgimagefile[value="'+backgroundImages.landscape[bgp.landscape]+'"]').prev().addClass('selected');
-			$('input.bgimagefile[value="'+backgroundImages.portrait[bgp.portrait]+'"]').prev().addClass('selected');
-		}
+		$('style[id="backgroundl"]').html('@media screen and (orientation: landscape) { html { background-image: url("'+landscapeImage.src+'"); background-position: '+prefs.bgimgparms[prefs.theme].position+' } }');
+		$('style[id="phonebackl"]').html('@media screen and (orientation: landscape) { body.phone .dropmenu { background-image: url("'+landscapeImage.src+'"); background-position: '+prefs.bgimgparms[prefs.theme].position+' } }');
+		$('style[id="backgroundp"]').html('@media screen and (orientation: portrait) { html { background-image: url("'+portraitImage.src+'"); background-position: '+prefs.bgimgparms[prefs.theme].position+' } }');
+		$('style[id="phonebackp"]').html('@media screen and (orientation: portrait) { body.phone .dropmenu { background-image: url("'+portraitImage.src+'"); background-position: '+prefs.bgimgparms[prefs.theme].position+' } }');
+		prefs.updateImageManager();
+		setBackgroundTimer();
 	}
 
-	function updateCustomBackground(force) {
+	async function updateCustomBackground() {
 		debug.info('PREFS', 'Updating custom background');
 		clearTimeout(backgroundTimer);
-		var bgp = prefs.bgimgparms[prefs.theme];
-		if (force || bgp.timeout + bgp.lastchange <= Date.now()) {
-			if (bgp.random) {
-				bgp.landscape = Math.floor(Math.random() * backgroundImages.landscape.length);
-				bgp.portrait = Math.floor(Math.random() * backgroundImages.portrait.length);
-			} else {
-				bgp.landscape++;
-				bgp.portrait++;
-			}
-			bgp.lastchange = Date.now();
-			prefs.save({bgimgparms: prefs.bgimgparms});
-		}
-		if (bgp.landscape >= backgroundImages.landscape.length) { bgp.landscape = 0 }
-		if (bgp.portrait >= backgroundImages.portrait.length) { bgp.portrait = 0 }
-		bgImagesLoaded = 0;
-		if (backgroundImages.portrait.length == 0) {
-			bgImagesLoaded++;
-			landscapeImage.src = backgroundImages.landscape[bgp.landscape];
-		} else if (backgroundImages.landscape.length == 0) {
-			bgImagesLoaded++;
-			portraitImage.src = backgroundImages.portrait[bgp.portrait];
-		} else {
-			landscapeImage.src = backgroundImages.landscape[bgp.landscape];
-			portraitImage.src = backgroundImages.portrait[bgp.portrait];
-		}
-		debug.log('PREFS','Backgrounds set to',landscapeImage.src,portraitImage.src);
+
+		var images = await $.ajax({
+			method: 'GET',
+			url: 'api/userbackgrounds/?get_next_background='+prefs.theme+'&browser_id='+prefs.browser_id+'&random='+prefs.bgimgparms[prefs.theme].random,
+			dataType: 'json',
+			cache: false
+		});
+
+		set_backimage_urls(images);
 	}
 
 	function setBackgroundTimer() {
 		clearTimeout(backgroundTimer);
-		if (backgroundImages.portrait.length > 1 || backgroundImages.landscape.length > 1) {
-			var bgp = prefs.bgimgparms[prefs.theme];
-			var timeout = bgp.timeout + bgp.lastchange - Date.now();
-			if (timeout > 0) {
-				debug.trace("PREFS","Setting Slideshow Timeout For",timeout/1000,"seconds");
-				backgroundTimer = setTimeout(updateCustomBackground, timeout);
-			} else {
-				updateCustomBackground(true);
-			}
+		var bgp = prefs.bgimgparms[prefs.theme];
+		var timeout = bgp.timeout + bgp.lastchange - Date.now();
+		if (timeout > 0) {
+			debug.trace("PREFS","Setting Slideshow Timeout For",timeout/1000,"seconds");
+			backgroundTimer = setTimeout(updateCustomBackground, timeout);
+		} else {
+			updateCustomBackground();
 		}
 	}
 
 	function bgImageLoaded() {
 		debug.debug('PREFS', 'background Image Loaded');
 		bgImagesLoaded++;
-		if (bgImagesLoaded == 2) {
-			var bgp = prefs.bgimgparms[prefs.theme];
-			setBackgroundCss(bgp);
-			prefs.save({bgimgparms: prefs.bgimgparms});
-			setBackgroundTimer();
-		}
+		if (bgImagesLoaded >= 2)
+			setBackgroundCss();
+
 	}
 
 	function bgImageError() {
-		var bgp = prefs.bgimgparms[prefs.theme];
-		debug.warn('PREFS', 'Background image failed to load', bgp.landscape,bgp.portrait,backgroundImages.landscape.length,backgroundImages.portrait.length,portraitImage.src,landscapeImage.src);
-		updateCustomBackground(true);
+		debug.warn('PREFS', 'Background image failed to load', portraitImage.src,landscapeImage.src);
+		updateCustomBackground();
 	}
 
 	return {
@@ -949,12 +826,12 @@ var prefs = function() {
 			textSaveTimer = setTimeout(doTheSave, 1000);
 		},
 
-		setTheme: function(theme) {
+		setTheme: function() {
 			clearTimeout(uichangetimer);
 			themeManager.teardown();
 			themeManager.init = emptyfunction;
 			themeManager.teardown = emptyfunction;
-			if (!theme) theme = prefs.theme;
+			var theme = prefs.theme;
 			// These 2 themes were removed
 			if (theme == 'PlasmaPortrait.css') {
 				theme = 'Plasma.css';
@@ -989,7 +866,10 @@ var prefs = function() {
 			} catch(err) {
 				debug.error('PREFS','Error loading theme script',err);
 			}
-			loadBackgroundImages(theme);
+			loadBackgroundImages();
+			if ($('#backimunger').length > 0) {
+				backimagemanager.populate();
+			}
 		},
 
 		postUIChange: function() {
@@ -1007,52 +887,26 @@ var prefs = function() {
 			}
 		},
 
-		changeBackgroundImage: function() {
-			$('#bgfileuploadbutton').fadeOut('fast');
-			$('#bguploadspinner').addClass('spinner').parent().fadeIn('fast');
-			$('[name="currbackground"]').val(prefs.theme);
-			$('[name="browser_id"]').val(prefs.browser_id);
-			var formElement = document.getElementById('backimageform');
-			var xhr = new XMLHttpRequest();
-			xhr.open("POST", "api/userbackgrounds/");
-			xhr.responseType = "json";
-			xhr.onload = function () {
-				switch (xhr.status) {
-					case 200:
-						debug.debug("BIMAGE", xhr.response);
-						prefs.setTheme();
-						$('#bguploadspinner').removeClass('spinner').parent().fadeOut('fast');
-						break;
-
-					case 400:
-						debug.warn("BIMAGE", "FAILED");
-						infobar.error(language.gettext('error_toomanyimages'));
-						// Fall Through
-
-					default:
-						debug.warn("BIMAGE", "FAILED");
-						infobar.error(language.gettext('error_imageupload'));
-						$('#bguploadspinner').removeClass('spinner').parent().fadeOut('fast');
-
-				}
-			};
-			xhr.send(new FormData(formElement));
+		updateImageManager: function() {
+			if ($('#backimunger').length > 0) {
+				$('.back-image.highlighted').removeClass('highlighted');
+				var u = portraitImage.src.substr(portraitImage.src.indexOf('prefs/'));
+				$('input.back-filename[value="'+u+'"]').parent().addClass('highlighted');
+				u = landscapeImage.src.substr(landscapeImage.src.indexOf('prefs/'));
+				$('input.back-filename[value="'+u+'"]').parent().addClass('highlighted');
+			}
 		},
 
-		clearBgImage: function(event) {
-			var clicked = $(event.target);
-			var image = clicked.next().next().val();
-			clicked.parent().remove();
-			clearCustomBackground();
-			$.getJSON('api/userbackgrounds/?clearbackground='+image, function(data) {
-				$('[name=imagefile').next().html(language.gettext('label_choosefile'));
-				$('[name=imagefile').parent().next('input[type="button"]').fadeOut('fast');
-				loadBackgroundImages(prefs.theme);
-			});
-		},
+		setBgImage: function(orientation, url) {
+			switch (orientation) {
+				case 'portrait':
+					portraitImage.src = url;
+					break;
 
-		openBgImageBox: function() {
-			$('#custombgdropper').slideToggle('fast');
+				case 'landscape':
+					landscapeImage.src = url;
+					break;
+			}
 		},
 
 		clickBindType: function() {
@@ -1065,6 +919,10 @@ var prefs = function() {
 				tosave[menu+'_isopen'] = !prefs[menu+'_isopen'];
 				prefs.save(tosave);
 			}
+		},
+
+		manage_bg_images: function() {
+			pluginManager.autoOpen(language.gettext("manage_bgs"));
 		},
 
 		rgbs: null

@@ -17,6 +17,7 @@ class imageHandler {
 		} else {
 			$this->image = new imageMagickImage($filename);
 		}
+		$this->filename = $filename;
 	}
 
 	public function checkImage() {
@@ -46,6 +47,22 @@ class imageHandler {
 
 	public function destroy() {
 		$this->image->destroy();
+	}
+
+	public function output_thumbnail($size) {
+		$directory = dirname($this->filename).'/thumbs';
+		if (!is_dir($directory))
+			mkdir($directory);
+
+		$thumbfile = $directory.'/'.pathinfo($this->filename, PATHINFO_FILENAME).
+			'.'.$size.'.'.pathinfo($this->filename, PATHINFO_EXTENSION);
+
+		if (!file_exists($thumbfile)) {
+			logger::log('IMAGEHANDLER', 'Creating Thumbnail',$thumbfile);
+			$this->image->outputResizedFile($size, $thumbfile);
+		}
+
+		readfile($thumbfile);
 	}
 
 }

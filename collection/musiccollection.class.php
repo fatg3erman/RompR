@@ -8,7 +8,7 @@ class musicCollection extends collection_base {
 		$this->options = array_merge($this->options, $opts);
 		if ($this->options['dbterms']['tag'] == null && $this->options['dbterms']['rating'] == null) {
 			// Makes the if statement faster
-			logger::log('MUSICCOLLECTION', 'No tags or ratings in use');
+			logger::core('MUSICCOLLECTION', 'No tags or ratings in use');
 			$this->options['dbterms'] = true;
 		}
 		parent::__construct();

@@ -774,7 +774,7 @@ class base_mpd_player {
 		logger::log('READPICTURE', 'Reading image from file',$uri);
 		// This doesn't fucking work because MPD is fucking shit fucker fuck fuck
 		// $this->do_mpd_command('binarylimit 32768');
-		while ($size === null || $size > 0) {
+		while (($size === null || $size > 0) && $retries > 0) {
 			logger::log('MPDPLAYER', '  Reading at offset',$offset);
 			$result = $this->do_mpd_command('readpicture "'.$uri.'" '.$offset, true);
 			if (is_array($result) && array_key_exists('binary', $result)) {
@@ -789,17 +789,17 @@ class base_mpd_player {
 				$offset += $result['binary'];
 				logger::log('MPDPLAYER', '    Remaining',$size);
 			} else {
-				logger::log('READPICTURE', '    No binary data is response from MPD');
-				if ($handle && $retries > 0) {
-					$retries--;
-					logger::log('READPICTURE', '    ... retrying');
-				} else {
-					$size = 'NO';
-				}
+				logger::log('READPICTURE', '    No binary data in response from MPD');
+				$retries--;
 			}
 		}
 		if ($handle)
 			fclose($handle);
+
+		if ($retries == 0 && $filename != '') {
+			unlink($filename);
+			$filename = '';
+		}
 
 		return $filename;
 	}

@@ -178,7 +178,7 @@ class gd_Image {
 		}
 	}
 
-	public function outputResizedFile($size) {
+	public function outputResizedFile($size, $filename = null) {
 		if ($this->image_type == IMAGETYPE_PNG) {
 			logger::trace("GD-IMAGE", "  Outputting PNG file of size",$size);
 			header('Content-type: image/png');
@@ -189,21 +189,21 @@ class gd_Image {
 		switch ($size) {
 			case 'small':
 				$this->resizeToWidth(IMAGESIZE_SMALL);
-				$this->save(null, IMAGEQUALITY_SMALL);
+				$this->save($filename, IMAGEQUALITY_SMALL);
 				break;
 
 			case 'smallish':
 				$this->resizeToWidth(IMAGESIZE_SMALLISH);
-				$this->save(null, IMAGEQUALITY_SMALLISH);
+				$this->save($filename, IMAGEQUALITY_SMALLISH);
 				break;
 
 			case 'medium':
 				$this->resizeToWidth(IMAGESIZE_MEDIUM);
-				$this->save(null, IMAGEQUALITY_MEDIUM);
+				$this->save($filename, IMAGEQUALITY_MEDIUM);
 				break;
 
 			default:
-				$this->save(null, IMAGEQUALITY_ASDOWNLOADED);
+				$this->save($filename, IMAGEQUALITY_ASDOWNLOADED);
 				break;
 		}
 		return true;
