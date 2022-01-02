@@ -38,9 +38,14 @@ var backimagemanager = function() {
 		}
 	}
 
-	function updateCounts() {
-		$('#bg-portrait-title').html(portCount.toString()+' Portrait Images');
-		$('#bg-landscape-title').html(landCount.toString()+' Landscape Images');
+	function updateCounts(gonk) {
+		if (gonk) {
+			$('#bg-portrait-title').html(portCount.toString()+' Portrait Images');
+			$('#bg-landscape-title').html(landCount.toString()+' Landscape Images');
+		} else {
+			$('#bg-portrait-title').html('');
+			$('#bg-landscape-title').html('');
+		}
 	}
 
 	function dragEnter(ev) {
@@ -140,74 +145,72 @@ var backimagemanager = function() {
 			if (backi == null) {
 				backi = browser.registerExtraPlugin("backi", language.gettext("manage_bgs"), backimagemanager, null);
 				$("#backifoldup").append('<div class="noselection fullwidth" id="backimunger"></div>');
-				if ($('#custombackground').css('display') == 'none') {
-					$('#backimunger').append('<div class="textcentre"><b>Custom background images are not supported with this theme</b></div>');
-				} else {
-					$('#backimunger').append(
-						'<div id="bg-uploader" class="containerbox">' +
+				$('#backimunger').append('<div id="bgnotsupported" class="textcentre"><b>Custom background images are not supported with this theme</b></div>');
+				$('#backimunger').append(
+					'<div id="bguploader" class="containerbox">' +
 
-						'<div class="expand" style="margin-right: 1em">' +
+					'<div class="expand" style="margin-right: 1em">' +
 
-						'<form id="backimageform" enctype="multipart/form-data">' +
-						'<input type="hidden" name="currbackground" />' +
-						'<input type="hidden" name="browser_id" />' +
+					'<form id="backimageform" enctype="multipart/form-data">' +
+					'<input type="hidden" name="currbackground" />' +
+					'<input type="hidden" name="browser_id" />' +
 
-						'<div class="filebutton textcentre" style="width:auto">'+
-						'<input type="file" name="imagefile[]" id="imagefile" class="inputfile" multiple="multiple" />' +
-						'<label id="wanglerbumface" for="imagefile">'+language.gettext('label_choosefiles')+'</label>' +
-						'</div>' +
-						'<input type="button" class="invisible" id="bgfileuploadbutton" value="'+language.gettext('albumart_uploadbutton')+'"></input>' +
-						'<div class="textcenter invisible"><i class="icon-spin6 medicon" id="bguploadspinner"></i></div>' +
+					'<div class="filebutton textcentre" style="width:auto">'+
+					'<input type="file" name="imagefile[]" id="imagefile" class="inputfile" multiple="multiple" />' +
+					'<label id="wanglerbumface" for="imagefile">'+language.gettext('label_choosefiles')+'</label>' +
+					'</div>' +
+					'<input type="button" class="invisible" id="bgfileuploadbutton" value="'+language.gettext('albumart_uploadbutton')+'"></input>' +
+					'<div class="textcenter invisible"><i class="icon-spin6 medicon" id="bguploadspinner"></i></div>' +
 
-						'</form>'+
+					'</form>'+
 
-						'</div>' +
+					'</div>' +
 
-						'<div class="expand" style="margin-left:1em">' +
+					'<div class="expand" style="margin-left:1em">' +
 
-						'<div id="bg-drop-image" class="drop-images-here">Drop Images Here</div>' +
+					'<div id="bg-drop-image" class="drop-images-here">Drop Images Here</div>' +
 
-						'<div class="styledinputs clearfix">' +
-						'<button class="tright" id="bg-removeall">'+language.gettext('label_remove_all')+'</button>' +
-						'</div>' +
+					'<div class="styledinputs clearfix">' +
+					'<button class="tright" id="bg-removeall">'+language.gettext('label_remove_all')+'</button>' +
+					'</div>' +
 
-						'<div class="containerbox dropdown-container">' +
-						'<div class="selectholder"><select id="thisbrowseronly">' +
-						'<option value="0">'+language.gettext('label_bg_global')+'</option>' +
-						'<option value="1">'+language.gettext('label_bg_only')+'</option>' +
-						'</select>' +
-						'</div>' +
-						'</div>' +
+					'<div class="containerbox dropdown-container">' +
+					'<div class="selectholder"><select id="thisbrowseronly">' +
+					'<option value="0">'+language.gettext('label_bg_global')+'</option>' +
+					'<option value="1">'+language.gettext('label_bg_only')+'</option>' +
+					'</select>' +
+					'</div>' +
+					'</div>' +
 
-						'</div>' +
+					'</div>' +
 
-						'</div>'
-					);
+					'</div>'
+				);
 
-					$('#backimunger').append(
-						'<div class="albumsection">' +
-						'<div class="tleft"><h2 id="bg-portrait-title"></h2></div>' +
-						'</div>'
-					);
-					pholder = $('<div>', {class: 'containerbox wrap'}).appendTo('#backimunger');
+				$('#backimunger').append(
+					'<div class="albumsection">' +
+					'<div class="tleft"><h2 id="bg-portrait-title"></h2></div>' +
+					'</div>'
+				);
+				pholder = $('<div>', {class: 'containerbox wrap'}).appendTo('#backimunger');
 
-					$('#backimunger').append(
-						'<div class="albumsection">' +
-						'<div class="tleft"><h2 id="bg-landscape-title"></h2></div>' +
-						'</div>'
-					);
-					lholder = $('<div>', {class: 'containerbox wrap'}).appendTo('#backimunger');
+				$('#backimunger').append(
+					'<div class="albumsection">' +
+					'<div class="tleft"><h2 id="bg-landscape-title"></h2></div>' +
+					'</div>'
+				);
+				lholder = $('<div>', {class: 'containerbox wrap'}).appendTo('#backimunger');
 
-					backimagemanager.populate();
-					$('#bgfileuploadbutton').off('click').on('click', backimagemanager.uploadImages);
-					$('#bg-removeall').off('click').on('click', backimagemanager.remove_all);
-					$('#thisbrowseronly').off('change').on('change', backimagemanager.switch_browser_mode);
+				backimagemanager.populate();
+				$('#bgfileuploadbutton').off('click').on('click', backimagemanager.uploadImages);
+				$('#bg-removeall').off('click').on('click', backimagemanager.remove_all);
+				$('#thisbrowseronly').off('change').on('change', backimagemanager.switch_browser_mode);
 
-					$('#bg-drop-image').on('dragenter', dragEnter);
-					$('#bg-drop-image').on('dragover', dragOver);
-					$('#bg-drop-image').on('dragleave', dragLeave);
-					$('#bg-drop-image').on('drop', handleDrop);
-				}
+				$('#bg-drop-image').on('dragenter', dragEnter);
+				$('#bg-drop-image').on('dragover', dragOver);
+				$('#bg-drop-image').on('dragleave', dragLeave);
+				$('#bg-drop-image').on('drop', handleDrop);
+
 				backi.show();
 			} else {
 				browser.goToPlugin("backi");
@@ -260,29 +263,38 @@ var backimagemanager = function() {
 			lholder.empty();
 			portCount = 0;
 			landCount = 0;
-			var images = await $.ajax({
-				method: 'GET',
-				url: 'api/userbackgrounds/?get_all_backgrounds='+prefs.theme+'&browser_id='+prefs.browser_id,
-				dataType: 'json',
-				cache: false
-			});
-			set_thisbrowseronly(images.thisbrowseronly);
-			debug.log('BACKIMAGE', images);
-			if (images.images) {
-				images.images.portrait.forEach(function(im) {
-					make_image_holder(im, 'portrait', pholder);
-				});
-				observeImages(pholder);
 
-				images.images.landscape.forEach(function(im) {
-					make_image_holder(im, 'landscape', lholder);
+			if ($('#custombackground').css('display') == 'none') {
+				$('#bgnotsupported').show();
+				$('#bguploader').hide();
+				updateCounts(false);
+			} else {
+				$('#bgnotsupported').hide();
+				$('#bguploader').show();
+				var images = await $.ajax({
+					method: 'GET',
+					url: 'api/userbackgrounds/?get_all_backgrounds='+prefs.theme+'&browser_id='+prefs.browser_id,
+					dataType: 'json',
+					cache: false
 				});
-				observeImages(lholder);
+				set_thisbrowseronly(images.thisbrowseronly);
+				debug.log('BACKIMAGE', images);
+				if (images.images) {
+					images.images.portrait.forEach(function(im) {
+						make_image_holder(im, 'portrait', pholder);
+					});
+					observeImages(pholder);
 
-				portCount = images.images.portrait.length;
-				landCount = images.images.landscape.length;
+					images.images.landscape.forEach(function(im) {
+						make_image_holder(im, 'landscape', lholder);
+					});
+					observeImages(lholder);
+
+					portCount = images.images.portrait.length;
+					landCount = images.images.landscape.length;
+				}
+				updateCounts(true);
 			}
-			updateCounts();
 		},
 
 		remove_all: function() {

@@ -867,9 +867,6 @@ var prefs = function() {
 				debug.error('PREFS','Error loading theme script',err);
 			}
 			loadBackgroundImages();
-			if ($('#backimunger').length > 0) {
-				backimagemanager.populate();
-			}
 		},
 
 		postUIChange: function() {
@@ -884,6 +881,9 @@ var prefs = function() {
 			}
 			if (typeof(layoutProcessor) != 'undefined') {
 				uiHelper.adjustLayout();
+			}
+			if ($('#backimunger').length > 0) {
+				backimagemanager.populate();
 			}
 		},
 
