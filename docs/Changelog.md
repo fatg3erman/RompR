@@ -16,7 +16,7 @@ Currently this is not supported in the Skypotato skin unless you sort search res
 * Add yet more notes about how to get MariaDB to work. NB MariaDB is proving difficult to support due to vaguaries
 in version numbering and incompatibilities between it and MySQL, for which it is supposed to be a drop-in replacement.
 Due to these issues I cannot guarantee that I will continue to support MariaDB. Please us SQLite unless you really really
-need a remote database, in which case please try to use proper MySQL instead of this substandard replacement.
+need a remote database, in which case please try to use proper MySQL.
 * Update installation instructions to provide more help for Arch Linux users.
 * Various small bugfixes
 
