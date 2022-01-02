@@ -10,7 +10,7 @@ RompЯ allows you to customise the interface with different options:
 ## Themes
 
 ![](images/appearance.png)
-Í
+
 This is Numismatist, the default theme, using the 'Modern-Dark' icons
 
 ![](images/numismatist.png)
@@ -48,16 +48,7 @@ or you can change it at any time.
 Multiple images will be displayed as a slide show. Once you have uploaded some images the configuration panel will allow you to set
 how they appear in the browser. These options apply only to the current browser.
 
-![](images/backimage2.png)
-
-#### Using different images for different orientations
-
-If you upload multiple images, then images which are in portrait format (width < height) will only be used when the screen is also in portrait format,
-while images that are in landscape format (width > height) will only be used when the screen is in landscape format.
-In this way, if you use a mobile device, you can can have different images for different screen orientations.
-You can also have multiple portrait images and/or multiple landscape images and you will get a slideshow of the appropriate images for the screen orientation.
-
-If all of your images are the same orientation, they will be used for both landscape and portrait screens.
+![](images/backimage3.png)
 
 ## Setting The Theme At Load Time
 
