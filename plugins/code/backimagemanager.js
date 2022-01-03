@@ -189,6 +189,11 @@ var backimagemanager = function() {
 					'</div>'
 				);
 
+				// Hidden feature. To edit the images for the current theme on another browser, do
+				// $('browser_id').val('browser id to edit')
+				// backimagemanager.populate()
+				// and then select 'this browser only' if it isn't already selected.
+
 				$('#backimunger').append(
 					'<div class="infobanner containerbox infosection menuitem">' +
 					'<h2 class="expand" id="bg-portrait-title"></h2>' +
@@ -209,9 +214,6 @@ var backimagemanager = function() {
 				$('#bgfileuploadbutton').off('click').on('click', backimagemanager.uploadImages);
 				$('#bg-removeall').off('click').on('click', backimagemanager.remove_all);
 				$('#thisbrowseronly').off('change').on('change', backimagemanager.switch_browser_mode);
-				// Hidden feature. To edit the images for this thmese on another browser, do $('browser_id').val('browser id to edit')
-				// and then select 'this browser only' if it isn't already selected.
-				$('#browser_id').off('change').on('change', backimagemanager.populate);
 				$('#bg-drop-image').on('dragenter', dragEnter);
 				$('#bg-drop-image').on('dragover', dragOver);
 				$('#bg-drop-image').on('dragleave', dragLeave);
