@@ -191,7 +191,7 @@ include("player/".prefs::$prefs['player_backend']."/search.php");
 		<div id="historypanel"></div>
 	</div>
 <?php
-	print '<div id="artistinformation" class="infotext"><h2 class="infobanner" align="center">'.
+	print '<div id="artistinformation" class="infotext"><h2 class="infobanner soangly" align="center">'.
 		language::gettext('label_emptyinfo').'</h2></div>';
 ?>
 	<div id="albuminformation" class="infotext"></div>

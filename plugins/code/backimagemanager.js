@@ -83,7 +83,7 @@ var backimagemanager = function() {
 			offset++;
 			if (offset == max_files || offset == evt.dataTransfer.files.length) {
 				formData.append('currbackground', prefs.theme);
-				formData.append('browser_id', prefs.browser_id);
+				formData.append('browser_id', $('#browser_id').val());
 				uploadFiles(formData);
 				formData = new FormData();
 			}
@@ -184,6 +184,8 @@ var backimagemanager = function() {
 
 					'</div>' +
 
+					'<input type="hidden" id="browser_id" value="' + prefs.browser_id + '" />' +
+
 					'</div>'
 				);
 
@@ -205,7 +207,9 @@ var backimagemanager = function() {
 				$('#bgfileuploadbutton').off('click').on('click', backimagemanager.uploadImages);
 				$('#bg-removeall').off('click').on('click', backimagemanager.remove_all);
 				$('#thisbrowseronly').off('change').on('change', backimagemanager.switch_browser_mode);
-
+				// Hidden feature. To edit the images for this thmese on another browser, do $('browser_id').val('browser id to edit')
+				// and then select 'this browser only' if it isn't already selected.
+				$('#browser_id').off('change').on('change', backimagemanager.populate);
 				$('#bg-drop-image').on('dragenter', dragEnter);
 				$('#bg-drop-image').on('dragover', dragOver);
 				$('#bg-drop-image').on('dragleave', dragLeave);
@@ -249,7 +253,7 @@ var backimagemanager = function() {
 
 		uploadImages: function() {
 			$('input[name="currbackground"]').val(prefs.theme);
-			$('input[name="browser_id"]').val(prefs.browser_id);
+			$('input[name="browser_id"]').val($('#browser_id').val());
 			var formElement = document.getElementById('backimageform');
 			var formData = new FormData(formElement);
 			uploadFiles(formData);
@@ -273,7 +277,7 @@ var backimagemanager = function() {
 				$('#bguploader').show();
 				var images = await $.ajax({
 					method: 'GET',
-					url: 'api/userbackgrounds/?get_all_backgrounds='+prefs.theme+'&browser_id='+prefs.browser_id,
+					url: 'api/userbackgrounds/?get_all_backgrounds='+prefs.theme+'&browser_id='+$('#browser_id').val(),
 					dataType: 'json',
 					cache: false
 				});
@@ -298,14 +302,14 @@ var backimagemanager = function() {
 		},
 
 		remove_all: function() {
-			$.getJSON('api/userbackgrounds/?clearallbackgrounds='+prefs.theme+'&browser_id='+prefs.browser_id, function(data) {
+			$.getJSON('api/userbackgrounds/?clearallbackgrounds='+prefs.theme+'&browser_id='+$('#browser_id').val(), function(data) {
 				prefs.setTheme();
 			});
 		},
 
 		switch_browser_mode: function() {
 			if (portCount > 0 || landCount > 0) {
-				$.getJSON('api/userbackgrounds/?switchbrowseronly='+prefs.theme+'&browser_id='+prefs.browser_id+'&thisbrowseronly='+$('#thisbrowseronly').val(), function(data) {
+				$.getJSON('api/userbackgrounds/?switchbrowseronly='+prefs.theme+'&browser_id='+$('#browser_id').val()+'&thisbrowseronly='+$('#thisbrowseronly').val(), function(data) {
 					prefs.setTheme();
 				});
 			}

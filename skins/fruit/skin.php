@@ -320,7 +320,7 @@ if (prefs::$prefs['player_backend'] == "mopidy") {
 <div id="infopane" class="cmiddle noborder infowiki tleft">
 	<div id="artistchooser" class="infotext noselection invisible"></div>
 <?php
-print '<div id="artistinformation" class="infotext noselection"><h2 class="infobanner" align="center">'.
+print '<div id="artistinformation" class="infotext noselection"><h2 class="infobanner soangly" align="center">'.
 	language::gettext('label_emptyinfo').'</h2></div>';
 ?>
 <div id="albuminformation" class="infotext noselection"></div>
