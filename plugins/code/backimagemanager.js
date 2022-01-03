@@ -190,15 +190,17 @@ var backimagemanager = function() {
 				);
 
 				$('#backimunger').append(
-					'<div class="albumsection">' +
-					'<div class="tleft"><h2 id="bg-portrait-title"></h2></div>' +
+					'<div class="infobanner containerbox infosection menuitem">' +
+					'<h2 class="expand" id="bg-portrait-title"></h2>' +
+					'<div class="fixed alignmid"><i class="icon-menu svg-square infoclick plugclickable bg-hide-panel"></i></div>' +
 					'</div>'
 				);
 				pholder = $('<div>', {class: 'containerbox wrap'}).appendTo('#backimunger');
 
 				$('#backimunger').append(
-					'<div class="albumsection">' +
-					'<div class="tleft"><h2 id="bg-landscape-title"></h2></div>' +
+					'<div class="infobanner containerbox infosection menuitem">' +
+					'<h2 class="expand" id="bg-landscape-title"></h2>' +
+					'<div class="fixed alignmid"><i class="icon-menu svg-square infoclick plugclickable bg-hide-panel"></i></div>' +
 					'</div>'
 				);
 				lholder = $('<div>', {class: 'containerbox wrap'}).appendTo('#backimunger');
@@ -244,6 +246,8 @@ var backimagemanager = function() {
 					landCount--;
 
 				updateCounts();
+			} else if (element.hasClass('bg-hide-panel')) {
+				element.parent().parent().next().slideToggle('fast');
 			}
 		},
 
