@@ -52,7 +52,7 @@ function do_radio_list() {
 			'AlbumUri' => null,
 			'Year' => null,
 			'Artistname' => null,
-			'Albumname' => utf8_encode($playlist['StationName']),
+			'Albumname' => $playlist['StationName'],
 			'why' => 'whynot',
 			'ImgKey' => $albumimage->get_image_key(),
 			'streamuri' => $playlist['PlaylistUrl'],
