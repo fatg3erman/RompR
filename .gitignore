@@ -8,3 +8,5 @@ MyTheme.css
 .tags
 logs
 MusicFolders
+.kdev4
+*.kdev4
