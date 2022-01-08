@@ -370,6 +370,9 @@ div.topdropmenu
 .tagholder_wide
 {
     background-image: linear-gradient(rgba(100,100,100,0.2), rgba(200,200,200,0.1));
+    box-sizing: border-box;
+    border-left: 1px solid rgba(200,200,200,0.1);
+    border-top: 1px solid rgba(200,200,200,0.1);
 }
 
 .tagholder_wide .helpfulalbum.tleft
