@@ -715,6 +715,8 @@ class base_mpd_player {
 
 	private function mopidy_to_mpd($file) {
 		if (strpos($file, 'local:track') !== false) {
+			// local:track could be anywhere in the string, as we might be translating
+			// a command, not just a URI
 			return rawurldecode(preg_replace('#local:track:#', '', $file));
 		} else {
 			return $file;
