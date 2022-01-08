@@ -714,8 +714,8 @@ class base_mpd_player {
 	}
 
 	private function mopidy_to_mpd($file) {
-		if (strpos($file, 'local:track') === 0) {
-			return rawurldecode(preg_replace('#local:track:#', '', $file));
+		if (strpos($file, 'local:track') !== false) {
+			return rawurldecode(substr($file, 12)));
 		} else {
 			return $file;
 		}
