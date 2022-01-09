@@ -10,6 +10,11 @@ set_version_string();
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <title>RompЯ Album Art</title>
+<link rel="shortcut icon" sizes="196x196" href="newimages/favicon-196.png" />
+<link rel="shortcut icon" sizes="128x128" href="newimages/favicon-128.png" />
+<link rel="shortcut icon" sizes="64x64" href="newimages/favicon-64.png" />
+<link rel="shortcut icon" sizes="48x48" href="newimages/favicon-48.png" />
+<link rel="shortcut icon" sizes="16x16" href="newimages/favicon.ico" />
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />

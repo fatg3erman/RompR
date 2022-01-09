@@ -798,7 +798,7 @@ class collection_base extends database {
 				if ($retval['dbimage'] == null) {
 					$retval['dbimage'] = $obj->Image;
 				}
-				logger::log('BACKEND', "Found album",$retval['album'],",in database");
+				logger::log('BACKEND', "Found album",$retval['album'],"in database");
 			}
 		}
 		return $retval;

@@ -186,7 +186,7 @@ class base_mpd_player {
 		do {
 			$b = fputs($this->connection, $command."\n");
 			if ((!$b || $b < $l) && $command != 'close') {
-				logger::warn("MPD", "Socket Write Error for",$command,"- Retrying");
+				logger::warn("MPD", "Socket Write Error for",$command,"- Wrote",$b,"bytes of",$l,"- Retrying");
 				stream_socket_shutdown($this->connection, STREAM_SHUT_RDWR);
 				$this->connection = false;
 				usleep(500000);

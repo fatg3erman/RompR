@@ -26,6 +26,7 @@ class imageFunctions {
 		$result = array();
 		if ((is_dir("prefs/MusicFolders") || is_link('prefs/MusicFolders')) && $albumpath != ".") {
 			$albumpath = self::munge_filepath($albumpath);
+			logger::log('LOCAL IMAGE SCAN','Checking',$albumpath);
 			$result = array_merge($result, self::get_images($albumpath));
 			// Is the album dir part of a multi-disc set?
 			if (preg_match('/^CD\s*\d+$|^disc\s*\d+$/i', basename($albumpath))) {
@@ -83,6 +84,9 @@ class imageFunctions {
 		$globpath = preg_replace('/(\*|\?|\[)/', '[$1]', $dir_path);
 		logger::debug("GET_IMAGES", "      Glob Path is",$globpath);
 		$funkychicken = glob($globpath."/*.{jpg,png,bmp,gif,jpeg,webp,JPEG,JPG,BMP,GIF,PNG,WEBP}", GLOB_BRACE);
+		foreach($funkychicken as $egg) {
+			logger::trace('GET_IMAGES', $egg);
+		}
 		logger::trace("GET_IMAGES", "    Checking for embedded images");
 		$files = glob($globpath."/*.{mp3,MP3,mp4,MP4,flac,FLAC,ogg,OGG}", GLOB_BRACE);
 		$testfile = array_shift($files);
