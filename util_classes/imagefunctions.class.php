@@ -49,30 +49,34 @@ class imageFunctions {
 
 	public static function check_embedded($testfile, $globpath) {
 		$getID3 = new getID3;
-		$tags = $getID3->analyze($testfile);
-		getid3_lib::CopyTagsToComments($tags);
-		if (array_key_exists('comments', $tags) && array_key_exists('picture', $tags['comments'])) {
-			foreach ($tags['comments']['picture'] as $picture) {
-				if (array_key_exists('picturetype', $picture)) {
-					if ($picture['picturetype'] == 'Cover (front)') {
-						logger::log("GET_IMAGES", "    .. found embedded front cover image");
-						$filename = 'prefs/temp/'.md5($globpath);
-						file_put_contents($filename, $picture['data']);
-						return $filename;
+		try {
+			$tags = $getID3->analyze($testfile);
+			getid3_lib::CopyTagsToComments($tags);
+			if (array_key_exists('comments', $tags) && array_key_exists('picture', $tags['comments'])) {
+				foreach ($tags['comments']['picture'] as $picture) {
+					if (array_key_exists('picturetype', $picture)) {
+						if ($picture['picturetype'] == 'Cover (front)') {
+							logger::log("GET_IMAGES", "    .. found embedded front cover image");
+							$filename = 'prefs/temp/'.md5($globpath);
+							file_put_contents($filename, $picture['data']);
+							return $filename;
+						}
 					}
 				}
-			}
 
-			foreach ($tags['comments']['picture'] as $picture) {
-				if (array_key_exists('picturetype', $picture)) {
-					if ($picture['picturetype'] == 'Cover' || $picture['picturetype'] == 'Other') {
-						logger::log("GET_IMAGES", "    .. found embedded something or other image");
-						$filename = 'prefs/temp/'.md5($globpath);
-						file_put_contents($filename, $picture['data']);
-						return $filename;
+				foreach ($tags['comments']['picture'] as $picture) {
+					if (array_key_exists('picturetype', $picture)) {
+						if ($picture['picturetype'] == 'Cover' || $picture['picturetype'] == 'Other') {
+							logger::log("GET_IMAGES", "    .. found embedded something or other image");
+							$filename = 'prefs/temp/'.md5($globpath);
+							file_put_contents($filename, $picture['data']);
+							return $filename;
+						}
 					}
 				}
 			}
+		} catch (Exception $e) {
+			logger::warn('GETID3', 'Exception thrown while analyzing',$testfile);
 		}
 		return false;
 	}
@@ -82,7 +86,7 @@ class imageFunctions {
 		$a = basename($dir_path);
 		logger::trace("GET_IMAGES", "    Scanning :",$dir_path);
 		$globpath = preg_replace('/(\*|\?|\[)/', '[$1]', $dir_path);
-		logger::debug("GET_IMAGES", "      Glob Path is",$globpath);
+		logger::trace("GET_IMAGES", "      Glob Path is",$globpath);
 		$funkychicken = glob($globpath."/*.{jpg,png,bmp,gif,jpeg,webp,JPEG,JPG,BMP,GIF,PNG,WEBP}", GLOB_BRACE);
 		foreach($funkychicken as $egg) {
 			logger::trace('GET_IMAGES', $egg);

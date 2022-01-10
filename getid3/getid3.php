@@ -17,10 +17,6 @@ if (!defined('GETID3_OS_ISWINDOWS')) {
 if (!defined('GETID3_INCLUDEPATH')) {
 	define('GETID3_INCLUDEPATH', dirname(__FILE__).DIRECTORY_SEPARATOR);
 }
-// Workaround Bug #39923 (https://bugs.php.net/bug.php?id=39923)
-if (!defined('IMG_JPG') && defined('IMAGETYPE_JPEG')) {
-	define('IMG_JPG', IMAGETYPE_JPEG);
-}
 if (!defined('ENT_SUBSTITUTE')) { // PHP5.3 adds ENT_IGNORE, PHP5.4 adds ENT_SUBSTITUTE
 	define('ENT_SUBSTITUTE', (defined('ENT_IGNORE') ? ENT_IGNORE : 8));
 }
@@ -57,7 +53,7 @@ if ($open_basedir) {
 		if (substr($basedir, -1, 1) != DIRECTORY_SEPARATOR) {
 			$basedir .= DIRECTORY_SEPARATOR;
 		}
-		if (preg_match('#^'.preg_quote($basedir).'#', $temp_dir)) {
+		if (strpos($temp_dir, $basedir) === 0) {
 			$found_valid_tempdir = true;
 			break;
 		}
@@ -98,6 +94,13 @@ class getID3
 	 * @var string
 	 */
 	public $encoding_id3v1  = 'ISO-8859-1';
+
+	/**
+	 * ID3v1 should always be 'ISO-8859-1', but some tags may be written in other encodings such as 'Windows-1251' or 'KOI8-R'. If true attempt to detect these encodings, but may return incorrect values for some tags actually in ISO-8859-1 encoding
+	 *
+	 * @var bool
+	 */
+	public $encoding_id3v1_autodetect  = false;
 
 	/*
 	 * Optional tag checks - disable for speed.
@@ -207,6 +210,140 @@ class getID3
 	 */
 	public $option_fread_buffer_size = 32768;
 
+
+
+	// module-specific options
+
+	/** archive.rar
+	 * if true use PHP RarArchive extension, if false (non-extension parsing not yet written in getID3)
+	 *
+	 * @var bool
+	 */
+	public $options_archive_rar_use_php_rar_extension = true;
+
+	/** archive.gzip
+	 * Optional file list - disable for speed.
+	 * Decode gzipped files, if possible, and parse recursively (.tar.gz for example).
+	 *
+	 * @var bool
+	 */
+	public $options_archive_gzip_parse_contents = false;
+
+	/** audio.midi
+	 * if false only parse most basic information, much faster for some files but may be inaccurate
+	 *
+	 * @var bool
+	 */
+	public $options_audio_midi_scanwholefile = true;
+
+	/** audio.mp3
+	 * Forces getID3() to scan the file byte-by-byte and log all the valid audio frame headers - extremely slow,
+	 * unrecommended, but may provide data from otherwise-unusable files.
+	 *
+	 * @var bool
+	 */
+	public $options_audio_mp3_allow_bruteforce = false;
+
+	/** audio.mp3
+	 * number of frames to scan to determine if MPEG-audio sequence is valid
+	 * Lower this number to 5-20 for faster scanning
+	 * Increase this number to 50+ for most accurate detection of valid VBR/CBR mpeg-audio streams
+	 *
+	 * @var int
+	 */
+	public $options_audio_mp3_mp3_valid_check_frames = 50;
+
+	/** audio.wavpack
+	 * Avoid scanning all frames (break after finding ID_RIFF_HEADER and ID_CONFIG_BLOCK,
+	 * significantly faster for very large files but other data may be missed
+	 *
+	 * @var bool
+	 */
+	public $options_audio_wavpack_quick_parsing = false;
+
+	/** audio-video.flv
+	 * Break out of the loop if too many frames have been scanned; only scan this
+	 * many if meta frame does not contain useful duration.
+	 *
+	 * @var int
+	 */
+	public $options_audiovideo_flv_max_frames = 100000;
+
+	/** audio-video.matroska
+	 * If true, do not return information about CLUSTER chunks, since there's a lot of them
+	 * and they're not usually useful [default: TRUE].
+	 *
+	 * @var bool
+	 */
+	public $options_audiovideo_matroska_hide_clusters    = true;
+
+	/** audio-video.matroska
+	 * True to parse the whole file, not only header [default: FALSE].
+	 *
+	 * @var bool
+	 */
+	public $options_audiovideo_matroska_parse_whole_file = false;
+
+	/** audio-video.quicktime
+	 * return all parsed data from all atoms if true, otherwise just returned parsed metadata
+	 *
+	 * @var bool
+	 */
+	public $options_audiovideo_quicktime_ReturnAtomData  = false;
+
+	/** audio-video.quicktime
+	 * return all parsed data from all atoms if true, otherwise just returned parsed metadata
+	 *
+	 * @var bool
+	 */
+	public $options_audiovideo_quicktime_ParseAllPossibleAtoms = false;
+
+	/** audio-video.swf
+	 * return all parsed tags if true, otherwise do not return tags not parsed by getID3
+	 *
+	 * @var bool
+	 */
+	public $options_audiovideo_swf_ReturnAllTagData = false;
+
+	/** graphic.bmp
+	 * return BMP palette
+	 *
+	 * @var bool
+	 */
+	public $options_graphic_bmp_ExtractPalette = false;
+
+	/** graphic.bmp
+	 * return image data
+	 *
+	 * @var bool
+	 */
+	public $options_graphic_bmp_ExtractData    = false;
+
+	/** graphic.png
+	 * If data chunk is larger than this do not read it completely (getID3 only needs the first
+	 * few dozen bytes for parsing).
+	 *
+	 * @var int
+	 */
+	public $options_graphic_png_max_data_bytes = 10000000;
+
+	/** misc.pdf
+	 * return full details of PDF Cross-Reference Table (XREF)
+	 *
+	 * @var bool
+	 */
+	public $options_misc_pdf_returnXREF = false;
+
+	/** misc.torrent
+	 * Assume all .torrent files are less than 1MB and just read entire thing into memory for easy processing.
+	 * Override this value if you need to process files larger than 1MB
+	 *
+	 * @var int
+	 */
+	public $options_misc_torrent_max_torrent_filesize = 1048576;
+
+
+
 	// Public variables
 
 	/**
@@ -250,12 +387,15 @@ class getID3
 	 */
 	protected $startup_warning = '';
 
-	const VERSION           = '1.9.18-201911300717';
+	const VERSION           = '1.9.21-202201031158';
 	const FREAD_BUFFER_SIZE = 32768;
 
 	const ATTACHMENTS_NONE   = false;
 	const ATTACHMENTS_INLINE = true;
 
+	/**
+	 * @throws getid3_exception
+	 */
 	public function __construct() {
 
 		// Check for PHP version
@@ -266,14 +406,16 @@ class getID3
 		}
 
 		// Check memory
-		$this->memory_limit = ini_get('memory_limit');
-		if (preg_match('#([0-9]+) ?M#i', $this->memory_limit, $matches)) {
+		$memoryLimit = ini_get('memory_limit');
+		if (preg_match('#([0-9]+) ?M#i', $memoryLimit, $matches)) {
 			// could be stored as "16M" rather than 16777216 for example
-			$this->memory_limit = $matches[1] * 1048576;
-		} elseif (preg_match('#([0-9]+) ?G#i', $this->memory_limit, $matches)) { // The 'G' modifier is available since PHP 5.1.0
+			$memoryLimit = $matches[1] * 1048576;
+		} elseif (preg_match('#([0-9]+) ?G#i', $memoryLimit, $matches)) { // The 'G' modifier is available since PHP 5.1.0
 			// could be stored as "2G" rather than 2147483648 for example
-			$this->memory_limit = $matches[1] * 1073741824;
+			$memoryLimit = $matches[1] * 1073741824;
 		}
+		$this->memory_limit = $memoryLimit;
+
 		if ($this->memory_limit <= 0) {
 			// memory limits probably disabled
 		} elseif ($this->memory_limit <= 4194304) {
@@ -287,7 +429,7 @@ class getID3
 			$this->warning('WARNING: Safe mode is on, shorten support disabled, md5data/sha1data for ogg vorbis disabled, ogg vorbos/flac tag writing disabled.');
 		}
 
-		if (($mbstring_func_overload = ini_get('mbstring.func_overload')) && ($mbstring_func_overload & 0x02)) {
+		if (($mbstring_func_overload = (int) ini_get('mbstring.func_overload')) && ($mbstring_func_overload & 0x02)) {
 			// http://php.net/manual/en/mbstring.overload.php
 			// "mbstring.func_overload in php.ini is a positive value that represents a combination of bitmasks specifying the categories of functions to be overloaded. It should be set to 1 to overload the mail() function. 2 for string functions, 4 for regular expression functions"
 			// getID3 cannot run when string functions are overloaded. It doesn't matter if mail() or ereg* functions are overloaded since getID3 does not use those.
@@ -400,8 +542,9 @@ class getID3
 	}
 
 	/**
-	 * @param string $filename
-	 * @param int    $filesize
+	 * @param string   $filename
+	 * @param int      $filesize
+	 * @param resource $fp
 	 *
 	 * @return bool
 	 *
@@ -511,9 +654,10 @@ class getID3
 	/**
 	 * analyze file
 	 *
-	 * @param string $filename
-	 * @param int    $filesize
-	 * @param string $original_filename
+	 * @param string   $filename
+	 * @param int      $filesize
+	 * @param string   $original_filename
+	 * @param resource $fp
 	 *
 	 * @return array
 	 */
@@ -622,6 +766,18 @@ class getID3
 				return $this->error('Format not supported, module "'.$determined_format['include'].'" is corrupt.');
 			}
 			$class = new $class_name($this);
+
+			// set module-specific options
+			foreach (get_object_vars($this) as $getid3_object_vars_key => $getid3_object_vars_value) {
+				if (preg_match('#^options_([^_]+)_([^_]+)_(.+)$#i', $getid3_object_vars_key, $matches)) {
+					list($dummy, $GOVgroup, $GOVmodule, $GOVsetting) = $matches;
+					$GOVgroup = (($GOVgroup == 'audiovideo') ? 'audio-video' : $GOVgroup); // variable names can only contain 0-9a-z_ so standardize here
+					if (($GOVgroup == $determined_format['group']) && ($GOVmodule == $determined_format['module'])) {
+						$class->$GOVsetting = $getid3_object_vars_value;
+					}
+				}
+			}
+
 			$class->Analyze();
 			unset($class);
 
@@ -842,6 +998,14 @@ class getID3
 							'mime_type' => 'application/octet-stream',
 						),
 
+				// DSDIFF - audio     - Direct Stream Digital Interchange File Format
+				'dsdiff' => array(
+							'pattern'   => '^FRM8',
+							'group'     => 'audio',
+							'module'    => 'dsdiff',
+							'mime_type' => 'audio/dsd',
+						),
+
 				// DTS  - audio       - Dolby Theatre System
 				'dts'  => array(
 							'pattern'   => '^\\x7F\\xFE\\x80\\x01',
@@ -929,7 +1093,7 @@ class getID3
 
 				// MPC  - audio       - Musepack / MPEGplus
 				'mpc'  => array(
-							'pattern'   => '^(MPCK|MP\\+|[\\x00\\x01\\x10\\x11\\x40\\x41\\x50\\x51\\x80\\x81\\x90\\x91\\xC0\\xC1\\xD0\\xD1][\\x20-\\x37][\\x00\\x20\\x40\\x60\\x80\\xA0\\xC0\\xE0])',
+							'pattern'   => '^(MPCK|MP\\+)',
 							'group'     => 'audio',
 							'module'    => 'mpc',
 							'mime_type' => 'audio/x-musepack',
@@ -967,6 +1131,14 @@ class getID3
 							'mime_type' => 'audio/xmms-shn',
 							'fail_id3'  => 'ERROR',
 							'fail_ape'  => 'ERROR',
+						),
+
+				// TAK  - audio       - Tom's lossless Audio Kompressor
+				'tak'  => array(
+							'pattern'   => '^tBaK',
+							'group'     => 'audio',
+							'module'    => 'tak',
+							'mime_type' => 'application/octet-stream',
 						),
 
 				// TTA  - audio       - TTA Lossless Audio Compressor (http://tta.corecodec.org)
@@ -1027,6 +1199,14 @@ class getID3
 							'group'     => 'audio-video',
 							'module'    => 'flv',
 							'mime_type' => 'video/x-flv',
+						),
+
+				// IVF - audio/video - IVF
+				'ivf' => array(
+							'pattern'   => '^DKIF',
+							'group'     => 'audio-video',
+							'module'    => 'ivf',
+							'mime_type' => 'video/x-ivf',
 						),
 
 				// MKAV - audio/video - Mastroka
@@ -1213,12 +1393,22 @@ class getID3
 							'iconv_req' => false,
 						),
 
+				// HPK  - data        - HPK compressed data
+				'hpk'  => array(
+							'pattern'   => '^BPUL',
+							'group'     => 'archive',
+							'module'    => 'hpk',
+							'mime_type' => 'application/octet-stream',
+							'fail_id3'  => 'ERROR',
+							'fail_ape'  => 'ERROR',
+						),
+
 				// RAR  - data        - RAR compressed data
 				'rar'  => array(
 							'pattern'   => '^Rar\\!',
 							'group'     => 'archive',
 							'module'    => 'rar',
-							'mime_type' => 'application/octet-stream',
+							'mime_type' => 'application/vnd.rar',
 							'fail_id3'  => 'ERROR',
 							'fail_ape'  => 'ERROR',
 						),
@@ -1306,6 +1496,16 @@ class getID3
 							'fail_ape'  => 'ERROR',
 						),
 
+				// TORRENT             - .torrent
+				'torrent' => array(
+							'pattern'   => '^(d8\\:announce|d7\\:comment)',
+							'group'     => 'misc',
+							'module'    => 'torrent',
+							'mime_type' => 'application/x-bittorrent',
+							'fail_id3'  => 'ERROR',
+							'fail_ape'  => 'ERROR',
+						),
+
 				 // CUE  - data       - CUEsheet (index to single-file disc images)
 				 'cue' => array(
 							'pattern'   => '', // empty pattern means cannot be automatically detected, will fall through all other formats and match based on filename and very basic file contents
@@ -1348,6 +1548,13 @@ class getID3
 			// use assume format on these if format detection failed
 			$GetFileFormatArray = $this->GetFileFormatArray();
 			$info = $GetFileFormatArray['mp3'];
+			$info['include'] = 'module.'.$info['group'].'.'.$info['module'].'.php';
+			return $info;
+		} elseif (preg_match('#\\.mp[cp\\+]$#i', $filename) && preg_match('#[\x00\x01\x10\x11\x40\x41\x50\x51\x80\x81\x90\x91\xC0\xC1\xD0\xD1][\x20-37][\x00\x20\x40\x60\x80\xA0\xC0\xE0]#s', $filedata)) {
+			// old-format (SV4-SV6) Musepack header that has a very loose pattern match and could falsely match other data (e.g. corrupt mp3)
+			// only enable this pattern check if the filename ends in .mpc/mpp/mp+
+			$GetFileFormatArray = $this->GetFileFormatArray();
+			$info = $GetFileFormatArray['mpc'];
 			$info['include'] = 'module.'.$info['group'].'.'.$info['module'].'.php';
 			return $info;
 		} elseif (preg_match('#\\.cue$#i', $filename) && preg_match('#FILE "[^"]+" (BINARY|MOTOROLA|AIFF|WAVE|MP3)#', $filedata)) {
@@ -1420,6 +1627,7 @@ class getID3
 				'flac'      => array('vorbiscomment' , 'UTF-8'),
 				'divxtag'   => array('divx'          , 'ISO-8859-1'),
 				'iptc'      => array('iptc'          , 'ISO-8859-1'),
+				'dsdiff'    => array('dsdiff'        , 'ISO-8859-1'),
 			);
 		}
 
@@ -1439,7 +1647,7 @@ class getID3
 						if (is_string($value)) {
 							$value = trim($value, " \r\n\t"); // do not trim nulls from $value!! Unicode characters will get mangled if trailing nulls are removed!
 						}
-						if ($value) {
+						if (isset($value) && $value !== "") {
 							if (!is_numeric($key)) {
 								$this->info['tags'][trim($tag_name)][trim($tag_key)][$key] = $value;
 							} else {
@@ -1522,6 +1730,17 @@ class getID3
 	}
 
 	/**
+	 * Calls getid3_lib::CopyTagsToComments() but passes in the option_tags_html setting from this instance of getID3
+	 *
+	 * @param array $ThisFileInfo
+	 *
+	 * @return bool
+	 */
+	public function CopyTagsToComments(&$ThisFileInfo) {
+	    return getid3_lib::CopyTagsToComments($ThisFileInfo, $this->option_tags_html);
+	}
+
+	/**
 	 * @param string $algorithm
 	 *
 	 * @return array|bool
@@ -1534,7 +1753,6 @@ class getID3
 
 			default:
 				return $this->error('bad algorithm "'.$algorithm.'" in getHashdata()');
-				break;
 		}
 
 		if (!empty($this->info['fileformat']) && !empty($this->info['dataformat']) && ($this->info['fileformat'] == 'ogg') && ($this->info['audio']['dataformat'] == 'vorbis')) {
@@ -1985,6 +2203,11 @@ abstract class getid3_handler
 			$this->data_string_position += $bytes;
 			return substr($this->data_string, $this->data_string_position - $bytes, $bytes);
 		}
+		if ($bytes == 0) {
+			return '';
+		} elseif ($bytes < 0) {
+			throw new getid3_exception('cannot fread('.$bytes.' from '.$this->ftell().')', 10);
+		}
 		$pos = $this->ftell() + $bytes;
 		if (!getid3_lib::intValueSupported($pos)) {
 			throw new getid3_exception('cannot fread('.$bytes.' from '.$this->ftell().') because beyond PHP filesystem limit', 10);
@@ -2035,19 +2258,80 @@ abstract class getid3_handler
 					$this->data_string_position = $this->data_string_length + $bytes;
 					break;
 			}
-			return 0;
-		} else {
-			$pos = $bytes;
-			if ($whence == SEEK_CUR) {
-				$pos = $this->ftell() + $bytes;
-			} elseif ($whence == SEEK_END) {
-				$pos = $this->getid3->info['filesize'] + $bytes;
-			}
-			if (!getid3_lib::intValueSupported($pos)) {
-				throw new getid3_exception('cannot fseek('.$pos.') because beyond PHP filesystem limit', 10);
-			}
+			return 0; // fseek returns 0 on success
 		}
-		return fseek($this->getid3->fp, $bytes, $whence);
+
+		$pos = $bytes;
+		if ($whence == SEEK_CUR) {
+			$pos = $this->ftell() + $bytes;
+		} elseif ($whence == SEEK_END) {
+			$pos = $this->getid3->info['filesize'] + $bytes;
+		}
+		if (!getid3_lib::intValueSupported($pos)) {
+			throw new getid3_exception('cannot fseek('.$pos.') because beyond PHP filesystem limit', 10);
+		}
+
+		// https://github.com/JamesHeinrich/getID3/issues/327
+		$result = fseek($this->getid3->fp, $bytes, $whence);
+		if ($result !== 0) { // fseek returns 0 on success
+			throw new getid3_exception('cannot fseek('.$pos.'). resource/stream does not appear to support seeking', 10);
+		}
+		return $result;
+	}
+
+	/**
+	 * @return string|false
+	 *
+	 * @throws getid3_exception
+	 */
+	protected function fgets() {
+		// must be able to handle CR/LF/CRLF but not read more than one lineend
+		$buffer   = ''; // final string we will return
+		$prevchar = ''; // save previously-read character for end-of-line checking
+		if ($this->data_string_flag) {
+			while (true) {
+				$thischar = substr($this->data_string, $this->data_string_position++, 1);
+				if (($prevchar == "\r") && ($thischar != "\n")) {
+					// read one byte too many, back up
+					$this->data_string_position--;
+					break;
+				}
+				$buffer .= $thischar;
+				if ($thischar == "\n") {
+					break;
+				}
+				if ($this->data_string_position >= $this->data_string_length) {
+					// EOF
+					break;
+				}
+				$prevchar = $thischar;
+			}
+
+		} else {
+
+			// Ideally we would just use PHP's fgets() function, however...
+			// it does not behave consistently with regards to mixed line endings, may be system-dependent
+			// and breaks entirely when given a file with mixed \r vs \n vs \r\n line endings (e.g. some PDFs)
+			//return fgets($this->getid3->fp);
+			while (true) {
+				$thischar = fgetc($this->getid3->fp);
+				if (($prevchar == "\r") && ($thischar != "\n")) {
+					// read one byte too many, back up
+					fseek($this->getid3->fp, -1, SEEK_CUR);
+					break;
+				}
+				$buffer .= $thischar;
+				if ($thischar == "\n") {
+					break;
+				}
+				if (feof($this->getid3->fp)) {
+					break;
+				}
+				$prevchar = $thischar;
+			}
+
+		}
+		return $buffer;
 	}
 
 	/**
@@ -2108,6 +2392,8 @@ abstract class getid3_handler
 	 * @throws getid3_exception
 	 */
 	public function saveAttachment($name, $offset, $length, $image_mime=null) {
+		$fp_dest = null;
+		$dest = null;
 		try {
 
 			// do not extract at all

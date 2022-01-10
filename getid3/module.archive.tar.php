@@ -19,6 +19,9 @@
 //                                                             //
 /////////////////////////////////////////////////////////////////
 
+if (!defined('GETID3_INCLUDEPATH')) { // prevent path-exposing attacks that access modules directly on public webservers
+	exit;
+}
 
 class getid3_tar extends getid3_handler
 {
@@ -138,6 +141,9 @@ class getid3_tar extends getid3_handler
 		else                    $type='u'; // UNKNOWN
 
 		// Determine permissions
+		$owner            = array();
+		$group            = array();
+		$world            = array();
 		$owner['read']    = (($mode & 00400) ? 'r' : '-');
 		$owner['write']   = (($mode & 00200) ? 'w' : '-');
 		$owner['execute'] = (($mode & 00100) ? 'x' : '-');

@@ -27,13 +27,14 @@ print '<link rel="stylesheet" type="text/css" href="css/albumart.css?version=?'.
 <link type="text/css" href="css/jquery.mCustomScrollbar.css" rel="stylesheet" />
 <?php
 $scripts = array(
-	"jquery/jquery-3.4.1.min.js",
-	"jquery/jquery-migrate-3.0.1.js",
+	"jquery/jquery-3.6.0.min.js",
+	"jquery/jquery-migrate-3.3.2.js",
+	// "jquery/jquery-migrate-3.3.2.min.js",
 	"jshash-2.2/md5-min.js",
 	"ui/functions.js",
 	"ui/prefs.js",
 	"ui/language.php",
-	"jquery/jquery-ui.min-19.1.18.js",
+	"jquery/jquery-ui.min.js",
 	"jquery/jquery.mCustomScrollbar.concat.min-3.1.5.js",
 	"includes/globals.js",
 	"ui/uifunctions.js",
