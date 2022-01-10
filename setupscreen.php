@@ -16,7 +16,7 @@ print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 <link rel="shortcut icon" href="newimages/favicon.ico" />
 <link rel="stylesheet" type="text/css" href="gettheme.php" />
 <script type="text/javascript" src="jquery/jquery-3.6.0.min.js"></script>
-<script type="text/javascript" src="jquery/jquery-migrate-3.3.2.js"></script>
+<script type="text/javascript" src="jquery/jquery-migrate-3.3.2.min.js"></script>
 <script type="text/javascript" src="ui/setupbits.js"></script>
 <style>
 input[type=text] { width: 50% }
