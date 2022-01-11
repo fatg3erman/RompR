@@ -56,6 +56,15 @@ class albumImage extends baseAlbumImage {
 		}
 	}
 
+	public function check_archive_image_exists() {
+		if (file_exists($this->images['small'])) {
+			logger::log('ALBUMIMAGE', 'Downloaded image already exists');
+			$this->image_downloaded = true;
+			return true;
+		}
+		return false;
+	}
+
 	public function set_default() {
 		if ($this->artist == "STREAM") {
 			// Set a default image for streams when we are doing an album art download

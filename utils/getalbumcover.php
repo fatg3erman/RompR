@@ -42,20 +42,23 @@ if ($player->check_mpd_version('0.22')) {
 	array_unshift($searchfunctions, 'tryMPD');
 }
 
-$result = $albumimage->download_image();
-if (!$albumimage->has_source()) {
-	// Turn on output buffering in case of PHP notices and errors etc - without this
-	// these get sent back to the browser if PHP is in development mode
-	ob_start();
-	while (count($searchfunctions) > 0 && $result === false) {
-		$fn = array_shift($searchfunctions);
-		$src = $fn($albumimage);
-		if ($src != "") {
-			$albumimage->set_source($src);
-			$result = $albumimage->download_image();
-			if (strpos($src, 'prefs/temp') === 0) {
-				logger::log('GETALBUMCOVER', 'Deleting temp file',$src);
-				unlink($src);
+$result = $albumimage->check_archive_image_exists();
+if (!$result) {
+	$result = $albumimage->download_image();
+	if (!$albumimage->has_source()) {
+		// Turn on output buffering in case of PHP notices and errors etc - without this
+		// these get sent back to the browser if PHP is in development mode
+		ob_start();
+		while (count($searchfunctions) > 0 && $result === false) {
+			$fn = array_shift($searchfunctions);
+			$src = $fn($albumimage);
+			if ($src != "") {
+				$albumimage->set_source($src);
+				$result = $albumimage->download_image();
+				if (strpos($src, 'prefs/temp') === 0) {
+					logger::log('GETALBUMCOVER', 'Deleting temp file',$src);
+					unlink($src);
+				}
 			}
 		}
 	}
