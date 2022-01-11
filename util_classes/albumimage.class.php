@@ -57,6 +57,7 @@ class albumImage extends baseAlbumImage {
 	}
 
 	public function check_archive_image_exists() {
+		logger::log('ALBUMIMAGE', 'Checking for', $this->images['small']);
 		if (file_exists($this->images['small'])) {
 			logger::log('ALBUMIMAGE', 'Downloaded image already exists');
 			$this->image_downloaded = true;
