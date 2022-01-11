@@ -41,6 +41,7 @@ var metaBackup = function() {
 				debug.mark("BACKUPS","Success");
 				if (thing == 'restore') {
 					collectionHelper.forceCollectionReload();
+					podcasts.reloadList();
 				}
 				thing = null;
 				doing_something = false;
@@ -52,6 +53,7 @@ var metaBackup = function() {
 				infobar.error(language.gettext('error_backupfail', [thing]));
 				if (thing == 'restore') {
 					collectionHelper.forceCollectionReload();
+					podcasts.reloadList();
 				}
 				progressDiv.empty();
 				getBackupData();

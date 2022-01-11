@@ -220,6 +220,7 @@ var backimagemanager = function() {
 				$('#bg-drop-image').on('drop', handleDrop);
 
 				backi.show();
+				browser.goToPlugin("backi");
 			} else {
 				browser.goToPlugin("backi");
 			}

@@ -74,6 +74,11 @@ var pluginManager = function() {
 		}
 	}
 
+	function plugin_open() {
+		var index = parseInt($(this).attr('name'));
+		openPlugin(index);
+	}
+
 	return {
 		addPlugin: function(label, action, setup, script, onmenu) {
 			debug.log("PLUGINS","Adding Plugin",label,onmenu);
@@ -97,17 +102,14 @@ var pluginManager = function() {
 					debug.log("PLUGINS","Setting up Plugin",plugins[i].label);
 					if (only_plugins_on_menu) {
 						if (plugins[i].onmenu) {
-							$("#specialplugins .sptext").append('<div class="backhi clickable clickicon noselection menuitem" name="'+i+'">'+plugins[i].label+'</div>');
+							$("#specialplugins .sptext").append('<div class="open-plugin backhi clickable clickicon noselection menuitem" name="'+i+'">'+plugins[i].label+'</div>');
 						}
 					} else {
-						$("#specialplugins").append('<div class="backhi clickable clickicon noselection menuitem" name="'+i+'">'+plugins[i].label+'</div>');
+						$("#specialplugins").append('<div class="open-plugin backhi clickable clickicon noselection menuitem" name="'+i+'">'+plugins[i].label+'</div>');
 					}
 				}
 			}
-			$("#specialplugins").find(".clickicon").on('click', function() {
-				var index = parseInt($(this).attr('name'));
-				openPlugin(index);
-			});
+			$('.open-plugin').on('click', plugin_open);
 		},
 
 		setAction: function(label, action) {

@@ -39,6 +39,30 @@ class metabackup extends metaDatabase {
 		$tracks = $this->get_audiobooks();
 		file_put_contents($dirname.'/audiobooks.json',json_encode($tracks));
 
+		logger::log("BACKEND", "Backing up Podcasts");
+		$tracks = $this->get_podcasts();
+		file_put_contents($dirname.'/podcasts.json',json_encode($tracks));
+		$tracks = $this->get_podcast_tracks();
+		file_put_contents($dirname.'/podcast_tracks.json',json_encode($tracks));
+
+		logger::log("BACKEND", "Backing up Radio Stations");
+		$tracks = $this->get_radio_stations();
+		file_put_contents($dirname.'/radio_stations.json',json_encode($tracks));
+		$tracks = $this->get_radio_tracks();
+		file_put_contents($dirname.'/radio_tracks.json',json_encode($tracks));
+
+		logger::log("BACKEND", "Backing up Background Images");
+		$tracks = $this->get_bg_images();
+		file_put_contents($dirname.'/bg_images.json',json_encode($tracks));
+
+		logger::log("BACKEND", "Backing up Wishlist Sources");
+		$tracks = $this->get_wishlist_sources();
+		file_put_contents($dirname.'/wl_sources.json',json_encode($tracks));
+
+		logger::log("BACKEND", "Backing up Albums To Listen To");
+		$tracks = $this->get_albumstolistento();
+		file_put_contents($dirname.'/albums_to_listen_to.json',json_encode($tracks));
+
 		file_put_contents($dirname.'/newversion', ROMPR_SCHEMA_VERSION);
 
 	}
@@ -64,6 +88,10 @@ class metabackup extends metaDatabase {
 					'Tracks With Ratings' => file_exists($backup.'/ratings.json') ? 'OK' : 'Missing!',
 					'Tracks With Tags' => file_exists($backup.'/tags.json') ? 'OK' : 'Missing!',
 					'Spoken Word' => file_exists($backup.'/audiobooks.json') ? 'OK' : 'Missing!',
+					'Podcasts' => file_exists($backup.'/podcasts.json') ? 'OK' : 'Missing!',
+					'Background Images' => file_exists($backup.'/bg_images.json') ? 'OK' : 'Missing!',
+					'Radio Stations' => file_exists($backup.'/radio_stations.json') ? 'OK' : 'Missing!',
+					'Albums To Listen To' => file_exists($backup.'/albums_to_listen_to.json') ? 'OK' : 'Missing!'
 				)
 			);
 		}
@@ -150,6 +178,85 @@ class metabackup extends metaDatabase {
 				fwrite($monitor, "\n<b>Restoring Spoken Word Tracks : </b>".$progress."%\n");
 			}
 		}
+
+		if (file_exists('prefs/databackups/'.$backup.'/podcasts.json')) {
+			logger::mark("BACKUPS", "Restoring Podcasts");
+			$this->generic_sql_query("DELETE FROM PodcastTracktable WHERE PODTrackindex IS NOT NULL");
+			$this->generic_sql_query("DELETE FROM Podcasttable WHERE PODindex IS NOT NULL");
+			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/podcasts.json'), true);
+			foreach ($tracks as $i => $trackdata) {
+				$this->generic_restore($trackdata, 'Podcasttable');
+				$progress = round(($i/count($tracks))*100);
+				fwrite($monitor, "\n<b>Restoring Podcasts : </b>".$progress."%\n");
+			}
+			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/podcast_tracks.json'), true);
+			foreach ($tracks as $i => $trackdata) {
+				if ($trackdata['Downloaded'] == 1 && !file_exists('.'.$trackdata['Localfilename'])) {
+					logger::log('BACKUPS', 'Podcast track',$trackdata['Title'],'has been removed');
+					$trackdata['Downloaded'] = 0;
+					$trackdata['Localfilename'] = null;
+				}
+				$this->generic_restore($trackdata, 'PodcastTracktable');
+				$progress = round(($i/count($tracks))*100);
+				fwrite($monitor, "\n<b>Restoring Podcast Tracks : </b>".$progress."%\n");
+			}
+		}
+
+		if (file_exists('prefs/databackups/'.$backup.'/radio_stations.json')) {
+			logger::mark("BACKUPS", "Restoring Radio Stations");
+			$this->generic_sql_query("DELETE FROM RadioStationtable WHERE Stationindex IS NOT NULL");
+			$this->generic_sql_query("DELETE FROM RadioTracktable WHERE Trackindex IS NOT NULL");
+			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/radio_stations.json'), true);
+			foreach ($tracks as $i => $trackdata) {
+				$this->generic_restore($trackdata, 'RadioStationtable');
+				$progress = round(($i/count($tracks))*100);
+				fwrite($monitor, "\n<b>Restoring Radio Stations : </b>".$progress."%\n");
+			}
+			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/radio_tracks.json'), true);
+			foreach ($tracks as $i => $trackdata) {
+				$this->generic_restore($trackdata, 'RadioTracktable');
+				$progress = round(($i/count($tracks))*100);
+				fwrite($monitor, "\n<b>Restoring Radio Tracks : </b>".$progress."%\n");
+			}
+		}
+
+		if (file_exists('prefs/databackups/'.$backup.'/bg_images.json')) {
+			logger::mark("BACKUPS", "Restoring Background Images");
+			$this->generic_sql_query("DELETE FROM BackgroundImageTable WHERE BgImageIndex IS NOT NULL");
+			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/bg_images.json'), true);
+			foreach ($tracks as $i => $trackdata) {
+				if (file_exists($trackdata['Filename'])) {
+					$this->generic_restore($trackdata, 'BackgroundImageTable');
+				} else {
+					logger::log('BACKUPS', 'Background Image',$trackdata['Filename'],'has been removed');
+				}
+				$progress = round(($i/count($tracks))*100);
+				fwrite($monitor, "\n<b>Restoring Background Images : </b>".$progress."%\n");
+			}
+		}
+
+		if (file_exists('prefs/databackups/'.$backup.'/wl_sources.json')) {
+			logger::mark("BACKUPS", "Restoring Wishlist Sources");
+			$this->generic_sql_query("DELETE FROM WishlistSourcetable WHERE Sourceindex IS NOT NULL");
+			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/wl_sources.json'), true);
+			foreach ($tracks as $i => $trackdata) {
+				$this->generic_restore($trackdata, 'WishlistSourcetable');
+				$progress = round(($i/count($tracks))*100);
+				fwrite($monitor, "\n<b>Restoring Wishlist Sources : </b>".$progress."%\n");
+			}
+		}
+
+		if (file_exists('prefs/databackups/'.$backup.'/albums_to_listen_to.json')) {
+			logger::mark("BACKUPS", "Restoring Albums To Listen To");
+			$this->generic_sql_query("DELETE FROM AlbumsToListenTotable WHERE Listenindex IS NOT NULL");
+			$tracks = json_decode(file_get_contents('prefs/databackups/'.$backup.'/albums_to_listen_to.json'), true);
+			foreach ($tracks as $i => $trackdata) {
+				$this->generic_restore($trackdata, 'AlbumsToListenTotable');
+				$progress = round(($i/count($tracks))*100);
+				fwrite($monitor, "\n<b>Restoring Albums To Listen To : </b>".$progress."%\n");
+			}
+		}
+
 		fwrite($monitor, "\n<b>Cleaning Up...</b>\n");
 		// Now... we may have restored data on tracks that were previously local and now aren't there any more.
 		// If they're local tracks that have been removed, then we don't want them or care about their data
@@ -165,6 +272,20 @@ class metabackup extends metaDatabase {
 		$this->close_transaction();
 		fwrite($monitor, "\n \n");
 		fclose($monitor);
+	}
+
+	private function generic_restore(&$trackdata, $table) {
+		$fart = array_keys($trackdata);
+		$qstring = "INSERT INTO ".$table." (".
+			implode(', ', $fart).
+			") VALUES (".
+			implode(', ', array_fill(0, count($fart), '?')).
+			")";
+		$this->sql_prepare_query(true, null, null, null,
+			$qstring,
+			array_values($trackdata)
+		);
+		$this->check_transaction();
 	}
 
 	private function translate_data($trackdata) {
@@ -333,6 +454,34 @@ class metabackup extends metaDatabase {
 				JOIN Artisttable AS aat ON al.AlbumArtistindex = aat.Artistindex
 			WHERE tr.Hidden = 0 AND tr.isSearchResult < 2
 			GROUP BY tr.TTindex");
+	}
+
+	private function get_podcasts() {
+		return $this->generic_sql_query("SELECT * FROM Podcasttable");
+	}
+
+	private function get_podcast_tracks() {
+		return $this->generic_sql_query("SELECT * FROM PodcastTracktable");
+	}
+
+	private function get_radio_stations() {
+		return $this->generic_sql_query("SELECT * FROM RadioStationtable");
+	}
+
+	private function get_radio_tracks() {
+		return $this->generic_sql_query("SELECT * FROM RadioTracktable");
+	}
+
+	private function get_bg_images() {
+		return $this->generic_sql_query("SELECT * FROM BackgroundImageTable");
+	}
+
+	private function get_wishlist_sources() {
+		return $this->generic_sql_query("SELECT * FROM WishlistSourcetable");
+	}
+
+	private function get_albumstolistento() {
+		return $this->generic_sql_query("SELECT * FROM AlbumsToListenTotable");
 	}
 
 }

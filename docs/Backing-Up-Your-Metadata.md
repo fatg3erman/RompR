@@ -2,6 +2,9 @@
 
 You may wish to keep a backup of all your Collection metadata - Tags, Ratings, Playcounts, and Manually Added Tracks. The 'Metadata Backup' panel allows you to this.
 
+It will also back up all other unrecoverable database data - subscribed Podcasts, Radio Stations, Background Images, and Albums To Listen To. Note though that this only backs up the
+database - other files such as album art, downloaded podcasts, and background image files are not restored by this process.
+
 ![](images/metabackup.png)
 
 Click 'Create Backup' to create a new backup.
@@ -26,7 +29,8 @@ You'll need to copy the backup data from the old installation to the new one. It
 
     rompr/prefs/databackups/
 
-In there will be a separate, dated directory for each backup. Simply copy the folder you want, open RompЯ, and click 'Restore'.
+In there will be a separate, dated directory for each backup. Simply copy the folder you want into your new installation. If you have local music files you must now build your Music Collection in the normal way,
+then you can restore the backup. All metadata will be importted, and Podcasts, Radio stations, etc will be restored to the state they were in when the backup was taken.
 
 # Backing Up Your Entire Database
 

@@ -32,6 +32,7 @@ var cantataImporter = function() {
 				$("#canimunger").append('<div style="padding:4px;max-width:80%;margin:auto;text-align:center;font-size:80%;margin-bottom:1em" id="caniinfo"></div>');
 				$('#canimunger').append('<div class="textcentre"><button id="fuckboris" onclick="cantataImporter.go()">Start</button></div>');
 				cani.show();
+				browser.goToPlugin("cani");
 			} else {
 				browser.goToPlugin("cani");
 			}
