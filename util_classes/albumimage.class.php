@@ -61,7 +61,7 @@ class albumImage extends baseAlbumImage {
 		if (file_exists($this->images['small'])) {
 			logger::log('ALBUMIMAGE', 'Downloaded image already exists');
 			$this->image_downloaded = true;
-			return true;
+			return $this->images;
 		}
 		return false;
 	}

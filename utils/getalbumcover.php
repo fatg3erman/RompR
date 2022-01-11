@@ -43,7 +43,7 @@ if ($player->check_mpd_version('0.22')) {
 }
 
 $result = $albumimage->check_archive_image_exists();
-if (!$result) {
+if ($result === false) {
 	$result = $albumimage->download_image();
 	if (!$albumimage->has_source()) {
 		// Turn on output buffering in case of PHP notices and errors etc - without this
