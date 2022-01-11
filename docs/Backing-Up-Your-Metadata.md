@@ -29,8 +29,16 @@ You'll need to copy the backup data from the old installation to the new one. It
 
     rompr/prefs/databackups/
 
-In there will be a separate, dated directory for each backup. Simply copy the folder you want into your new installation. If you have local music files you must now build your Music Collection in the normal way,
-then you can restore the backup. All metadata will be importted, and Podcasts, Radio stations, etc will be restored to the state they were in when the backup was taken.
+In there will be a separate, dated directory for each backup. Simply copy the folder you want into your new installation.
+
+# Restoring Metadata
+
+Once you have the Metadata backup in place, you can restore it. If you're restoring to a new database - perhaps you're changing from MySQL to SQLite - and you have already downloaded all your
+album art, then you should first go to rompr/?setup and DISABLE the option to Delete Unused Album Art on Startup. Then click OK.
+If you have local music files you must now build your Music Collection in the normal way, then you can restore the backup.
+All metadata will be importted, and Podcasts, Radio stations, etc will be restored to the state they were in when the backup was taken.
+To restore your Album Art, open the Album Art Manager and click on Get Missing Covers - this will restore the database so it refers to the album art already downloaded.
+Finall return to rompr/?setup and re-enable the option you disabled earlier.
 
 # Backing Up Your Entire Database
 
