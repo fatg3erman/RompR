@@ -2,7 +2,6 @@
 <div id="pset" class="invisible"></div>
 <div id="pmaxset" class="invisible"></div>
 <div id="pbgset" class="invisible"></div>
-<div id="notifications"></div>
 
 <div class="fullwidth containerbox" id="thetopbit">
 	<div id="groonburger" class="fixed containerbox vertical controlbutton-left">
@@ -151,6 +150,8 @@ include ("includes/prefspanel.php");
 </div>
 
 </div>
+
+<div id="notifications"></div>
 
 <div id="bottompage" class="clearfix">
 
