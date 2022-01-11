@@ -198,9 +198,16 @@ div.collectionpanel>div.playable.clickalbum.brick_wide {
 }
 
 #notifications {
-	width:100%;
+	position:absolute;
+	width:60%;
+	max-width:800px;
 	padding:8px;
+	top:0px;
 	display:none;
+	z-index:2000;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
 }
 
 #keybindtable {
