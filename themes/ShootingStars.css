@@ -1,4 +1,4 @@
-html, body.phone .dropmenu {
+html {
     background-image:url("themes/shootingstars.jpg");
     background-size:cover;
     background-repeat:no-repeat;
@@ -9,10 +9,10 @@ html, body.phone .dropmenu {
     background-color: rgba(0,0,0,0.7) !important;
 }
 
-body.phone .dropmenu>div {
+/*body.phone .dropmenu>div {
     background-clip:border-box;
 }
-
+*/
 .helpfulalbum
 {
     background-color:rgba(0,0,0,0.4);

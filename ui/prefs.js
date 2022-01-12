@@ -433,9 +433,9 @@ var prefs = function() {
 		landscapeImage.onload = doNothing;
 		portraitImage.onerror = doNothing;
 		landscapeImage.onerror = doNothing;
-		$('style[id="phonebackl"]').remove();
+		// $('style[id="phonebackl"]').remove();
 		$('style[id="backgroundl"]').remove();
-		$('style[id="phonebackp"]').remove();
+		// $('style[id="phonebackp"]').remove();
 		$('style[id="backgroundp"]').remove();
 		portraitImage.src = '';
 		landscapeImage.src = '';
@@ -443,7 +443,8 @@ var prefs = function() {
 
 	function setBackgroundCss() {
 		// Trying to reduce flickering using all kinds of stuff - pre-load images, update (not remove/recreate) the css
-		['backgroundl', 'phonebackl', 'backgroundp', 'phonebackp'].forEach(function(i) {
+		// ['backgroundl', 'phonebackl', 'backgroundp', 'phonebackp'].forEach(function(i) {
+		['backgroundl', 'backgroundp'].forEach(function(i) {
 			if ($('style[id="'+i+'"]').length == 0) {
 				debug.debug('PREFS', 'Creating background style', i);
 				$('<style>', {id: i}).appendTo('head');
