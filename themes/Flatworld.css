@@ -1,7 +1,5 @@
-html, body.phone .dropmenu {
+html {
     background-color:#cccccc;
-    /*Required to work around apparent Firefox/Safari dropdown menu redraw bug*/
-    background-image: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0));
     background-size:cover;
     background-repeat:no-repeat;
     background-attachment:fixed;

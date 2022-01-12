@@ -4,7 +4,7 @@
 =====================================================================
 */
 @media screen and (orientation: landscape) {
-    html, body.phone .dropmenu {
+    html {
         background-image:url("themes/plasma.jpg");
         background-size:cover;
         background-repeat:no-repeat;
@@ -17,7 +17,7 @@
 }
 
 @media screen and (orientation: portrait) {
-    html, body.phone .dropmenu {
+    html {
         background-image:url("themes/plasma_portrait.jpg");
         background-size:cover;
         background-repeat:no-repeat;

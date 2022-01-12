@@ -5,7 +5,7 @@
 */
 
 @media screen and (orientation: landscape) {
-    html, body.phone .dropmenu {
+    html {
         background-image:url("themes/fire.jpg");
         background-size:cover;
         background-repeat:no-repeat;
@@ -14,7 +14,7 @@
 }
 
 @media screen and (orientation: portrait) {
-    html, body.phone .dropmenu {
+    html {
         background-image:url("themes/fire-portrait.jpg");
         background-size:cover;
         background-repeat:no-repeat;

@@ -4,7 +4,7 @@
 =====================================================================
 */
 
-html, body.phone .dropmenu {
+html {
     background-image:url("themes/Crystals.jpg");
     background-size:cover;
     background-repeat:no-repeat;

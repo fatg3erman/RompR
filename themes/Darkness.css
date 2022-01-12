@@ -4,13 +4,8 @@
 =====================================================================
 */
 
-html, body.phone .dropmenu {
+html {
     background-color:#181818;
-    /*Required to work around apparent Firefox/Safari dropdown menu redraw bug*/
-    background-image: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0));
-    background-size:cover;
-    background-repeat:no-repeat;
-    background-attachment:fixed;
 }
 
 body.phone .dropmenu div.playable, body.phone .dropmenu div.menu {

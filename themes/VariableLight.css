@@ -1,4 +1,4 @@
-html, body.phone .dropmenu {
+html {
     background-image: var(--vl_bg_colour);
     background-size:cover;
     background-repeat:no-repeat;

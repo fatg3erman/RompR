@@ -1,4 +1,4 @@
-html, body.phone .dropmenu {
+html {
     background-image:url("themes/sunset_loch.jpg");
     background-size:cover;
     background-repeat:no-repeat;
@@ -342,10 +342,10 @@ table.histable tr
 }
 
 /*Prevent submenus from having all entries highlighted
-due to :hover events propagating from the parent menu 
+due to :hover events propagating from the parent menu
 */
 .backhi:hover>div.topdropmenu>div.backhi {
-    color:#eeeeee;    
+    color:#eeeeee;
 }
 
 /*Make sure the submenu entry being hovered over still gets highlighted*/
