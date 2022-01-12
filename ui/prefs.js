@@ -450,9 +450,9 @@ var prefs = function() {
 			}
 		});
 		$('style[id="backgroundl"]').html('@media screen and (orientation: landscape) { html { background-image: url("'+landscapeImage.src+'"); background-position: '+prefs.bgimgparms[prefs.theme].position+' } }');
-		$('style[id="phonebackl"]').html('@media screen and (orientation: landscape) { body.phone .dropmenu { background-image: url("'+landscapeImage.src+'"); background-position: '+prefs.bgimgparms[prefs.theme].position+' } }');
+		// $('style[id="phonebackl"]').html('@media screen and (orientation: landscape) { body.phone .dropmenu { background-image: url("'+landscapeImage.src+'"); background-position: '+prefs.bgimgparms[prefs.theme].position+' } }');
 		$('style[id="backgroundp"]').html('@media screen and (orientation: portrait) { html { background-image: url("'+portraitImage.src+'"); background-position: '+prefs.bgimgparms[prefs.theme].position+' } }');
-		$('style[id="phonebackp"]').html('@media screen and (orientation: portrait) { body.phone .dropmenu { background-image: url("'+portraitImage.src+'"); background-position: '+prefs.bgimgparms[prefs.theme].position+' } }');
+		// $('style[id="phonebackp"]').html('@media screen and (orientation: portrait) { body.phone .dropmenu { background-image: url("'+portraitImage.src+'"); background-position: '+prefs.bgimgparms[prefs.theme].position+' } }');
 		prefs.updateImageManager();
 		setBackgroundTimer();
 	}
