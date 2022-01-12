@@ -104,7 +104,6 @@ $now = time();
 prefs::$database->tidy_wishlist();
 logger::info("CACHE CLEANER", "== Check For Orphaned Wishlist Sources took ".format_time(time() - $now));
 
-
 logger::info("CACHE CLEANER", "Checking for orphaned youtube downloads");
 $now = time();
 $yts = glob('prefs/youtubedl/*');
@@ -122,6 +121,12 @@ foreach ($yts as $dir) {
 	}
 }
 logger::info("CACHE CLEANER", "== Check For Orphaned youtube downloads took ".format_time(time() - $now));
+
+logger::info("CACHE CLEANER", "Tidying Ratings and Playcounts");
+$now = time();
+prefs::$database->tidy_ratings_and_playcounts();
+logger::info("CACHE CLEANER", "== Tidying Ratings and Playcounts took ".format_time(time() - $now));
+
 
 // Compact the database
 logger::mark("CACHE CLEANER", "Optimising Database");

@@ -78,5 +78,12 @@ class cache_cleaner extends database {
 		return count($bacon);
 	}
 
+	public function tidy_ratings_and_playcounts() {
+		// This just keeps the tables small. Sometimes we add a Rating of 0 to force metadatabase
+		// to create a new track
+		$this->generic_sql_query("DELETE FROM Ratingtable WHERE Rating = 0", true);
+		$this->generic_sql_query("DELETE FROM Playcounttable WHERE Playcount = 0", true);
+	}
+
 }
 ?>

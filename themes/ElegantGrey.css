@@ -124,7 +124,7 @@ body.desktop #headerbar
 
 body.desktop #notifications
 {
-    background-image: linear-gradient(#0b0b0b, #444444);
+    background-image: linear-gradient(#0b0b0b, #222222);
     border-left:1px solid #262626;
     border-bottom:1px solid #000000;
     border-right:1px solid #000000;
@@ -134,7 +134,7 @@ body.desktop #notifications
 
 body.phone #notifications
 {
-    background-image: linear-gradient(#0b0b0b, #444444);
+    background-image: linear-gradient(#0b0b0b, #222222);
     border-left:1px solid #262626;
     border-top:1px solid #262626;
     border-right:1px solid #000000;

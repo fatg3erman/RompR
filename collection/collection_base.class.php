@@ -407,22 +407,6 @@ class collection_base extends database {
 		$this->delete_orphaned_artists();
 		$at = microtime(true) - $t;
 		logger::info('BACKEND', " -- Removing orphaned artists took ".$at." seconds");
-
-		logger::log('BACKEND', "Tidying Metadata");
-		$t = microtime(true);
-		$this->generic_sql_query("DELETE FROM Ratingtable WHERE Rating = 0", true);
-		$this->generic_sql_query("DELETE FROM Ratingtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable WHERE Hidden = 0)", true);
-		$this->generic_sql_query("DELETE FROM TagListtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable WHERE Hidden = 0)", true);
-		$this->generic_sql_query("DELETE FROM Genretable WHERE Genreindex NOT IN (SELECT DISTINCT Genreindex FROM Tracktable)", true);
-		// Temporary table needed otherwise we get a conflict with one of our triggers
-		// $this->generic_sql_query("CREATE TEMPORARY TABLE used_tags AS SELECT DISTINCT Tagindex FROM TagListtable", true);
-		// $this->generic_sql_query("DELETE FROM Tagtable WHERE Tagindex NOT IN (SELECT Tagindex FROM used_tags)", true);
-		// $this->generic_sql_query("DROP TABLE used_tags", true);
-		// $this->generic_sql_query("DELETE FROM Playcounttable WHERE Playcount = 0", true);
-		// $this->generic_sql_query("DELETE FROM Playcounttable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
-
- 		$at = microtime(true) - $t;
-		logger::info('BACKEND', " -- Tidying metadata took ".$at." seconds");
 	}
 
 	protected function update_track_stats() {

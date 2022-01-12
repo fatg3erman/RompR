@@ -94,7 +94,7 @@ class init_database extends init_generic {
 		}
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Ratingtable(".
-			"TTindex INT UNSIGNED, ".
+			"TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex) ON DELETE CASCADE, ".
 			"PRIMARY KEY(TTindex), ".
 			"Rating TINYINT(1) UNSIGNED) ENGINE=InnoDB", true))
 		{
@@ -128,7 +128,7 @@ class init_database extends init_generic {
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS TagListtable(".
 			"Tagindex INT UNSIGNED NOT NULL REFERENCES Tagtable(Tagindex), ".
-			"TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex), ".
+			"TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex) ON DELETE CASCADE, ".
 			"PRIMARY KEY (Tagindex, TTindex)) ENGINE=InnoDB", true))
 		{
 			logger::log("MYSQL", "  TagListtable OK");
@@ -138,7 +138,7 @@ class init_database extends init_generic {
 		}
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Playcounttable(".
-			"TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex), ".
+			"TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex) ON DELETE CASCADE, ".
 			"Playcount INT UNSIGNED NOT NULL, ".
 			"SyncCount INT UNSIGNED DEFAULT 0, ".
 			"LastPlayed TIMESTAMP, ".
@@ -1031,6 +1031,65 @@ class init_database extends init_generic {
 					logger::log("SQL", "Updating FROM Schema version 76 TO Schema version 77");
 					$this->generic_sql_query("ALTER TABLE BackgroundImageTable ADD Used TINYINT(1) DEFAULT 0", true);
 					$this->generic_sql_query("UPDATE Statstable SET Value = 77 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 77:
+					logger::log("SQL", "Updating FROM Schema version 77 TO Schema version 78");
+					logger::log("SQL", "This may take a long time");
+					$this->generic_sql_query("DELETE FROM Playcounttable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
+					$this->generic_sql_query("RENAME TABLE Playcounttable TO _playcounts_old");
+					$this->generic_sql_query(
+						"CREATE TABLE Playcounttable(
+							TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex) ON DELETE CASCADE,
+							Playcount INT UNSIGNED NOT NULL,
+							SyncCount INT UNSIGNED DEFAULT 0,
+							LastPlayed TIMESTAMP,
+						PRIMARY KEY (TTindex)) ENGINE=InnoDB"
+					);
+					$this->generic_sql_query(
+						"INSERT INTO Playcounttable (TTindex, Playcount, SyncCount, LastPlayed)
+						SELECT TTindex, Playcount, SyncCount, LastPlayed FROM _playcounts_old"
+					);
+					$this->generic_sql_query("DROP TABLE _playcounts_old");
+					$this->generic_sql_query("UPDATE Statstable SET Value = 78 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 78:
+					logger::log("SQL", "Updating FROM Schema version 78 TO Schema version 79");
+					logger::log("SQL", "This may take a long time");
+					$this->generic_sql_query("DELETE FROM Ratingtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable WHERE Hidden = 0)", true);
+					$this->generic_sql_query("RENAME TABLE Ratingttable TO _ratings_old");
+					$this->generic_sql_query(
+						"CREATE TABLE Ratingtable(
+						TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex) ON DELETE CASCADE,
+						PRIMARY KEY(TTindex),
+						Rating TINYINT(1) UNSIGNED) ENGINE=InnoDB"
+					);
+					$this->generic_sql_query(
+						"INSERT INTO Ratingtable(TTindex, Rating)
+						SELECT TTindex, Rating FROM _ratings_old"
+					);
+					$this->generic_sql_query("DROP TABLE _ratings_old");
+					$this->generic_sql_query("UPDATE Statstable SET Value = 79 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 78:
+					logger::log("SQL", "Updating FROM Schema version 79 TO Schema version 80");
+					logger::log("SQL", "This may take a long time");
+					$this->generic_sql_query("DELETE FROM TagListtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable WHERE Hidden = 0)", true);
+					$this->generic_sql_query("RENAME TABLE TagListtable TO _taglist_old");
+					$this->generic_sql_query(
+						"CREATE TABLE TagListtable(
+						Tagindex INT UNSIGNED NOT NULL REFERENCES Tagtable(Tagindex),
+						TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex) ON DELETE CASCADE,
+						PRIMARY KEY (Tagindex, TTindex)) ENGINE=InnoDB"
+					);
+					$this->generic_sql_query(
+						"INSERT INTO TagListtable(Tagindex, TTindex)
+						SELECT Tagindex, TTindex FROM _taglist_old"
+					);
+					$this->generic_sql_query("DROP TABLE _taglist_old");
+					$this->generic_sql_query("UPDATE Statstable SET Value = 80 WHERE Item = 'SchemaVer'", true);
 					break;
 
 			}

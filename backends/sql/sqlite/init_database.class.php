@@ -136,7 +136,7 @@ class init_database extends init_generic {
 		}
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Ratingtable(".
-			"TTindex INTEGER PRIMARY KEY NOT NULL UNIQUE, ".
+			"TTindex INTEGER PRIMARY KEY NOT NULL UNIQUE REFERENCES Tracktable(TTindex) ON DELETE CASCADE, ".
 			"Rating TINYINT(1))", true))
 		{
 			logger::log("SQLITE", "  Ratingtable OK");
@@ -167,7 +167,7 @@ class init_database extends init_generic {
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS TagListtable(".
 			"Tagindex INTEGER NOT NULL REFERENCES Tagtable(Tagindex), ".
-			"TTindex INTEGER NOT NULL REFERENCES Tracktable(TTindex), ".
+			"TTindex INTEGER NOT NULL REFERENCES Tracktable(TTindex) ON DELETE CASCADE, ".
 			"PRIMARY KEY (Tagindex, TTindex))", true))
 		{
 			logger::log("SQLITE", "  TagListtable OK");
@@ -177,7 +177,7 @@ class init_database extends init_generic {
 		}
 
 		if ($this->generic_sql_query("CREATE TABLE IF NOT EXISTS Playcounttable(".
-			"TTindex INTEGER PRIMARY KEY NOT NULL UNIQUE REFERENCES Tracktable(TTindex), ".
+			"TTindex INTEGER PRIMARY KEY NOT NULL UNIQUE REFERENCES Tracktable(TTindex) ON DELETE CASCADE, ".
 			"Playcount INT UNSIGNED NOT NULL, ".
 			"SyncCount INT UNSIGNED DEFAULT 0, ".
 			"LastPlayed TIMESTAMP DEFAULT NULL)", true))
@@ -955,6 +955,69 @@ class init_database extends init_generic {
 					$this->generic_sql_query("UPDATE Statstable SET Value = 77 WHERE Item = 'SchemaVer'", true);
 					break;
 
+				case 77:
+					logger::log("SQL", "Updating FROM Schema version 77 TO Schema version 78");
+					logger::log("SQL", "This may take a long time");
+					$this->generic_sql_query("DELETE FROM Playcounttable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable)", true);
+					$this->generic_sql_query("PRAGMA foreign_keys=off");
+					$this->generic_sql_query("ALTER TABLE Playcounttable RENAME TO _playcounts_old");
+					$this->generic_sql_query(
+						"CREATE TABLE Playcounttable(
+						TTindex INTEGER PRIMARY KEY NOT NULL UNIQUE REFERENCES Tracktable(TTindex) ON DELETE CASCADE,
+						Playcount INT UNSIGNED NOT NULL,
+						SyncCount INT UNSIGNED DEFAULT 0,
+						LastPlayed TIMESTAMP DEFAULT NULL)"
+					);
+					$this->generic_sql_query(
+						"INSERT INTO Playcounttable(TTindex, Playcount, SyncCount, LastPlayed)
+						SELECT TTindex, Playcount, SyncCount, LastPlayed FROM _playcounts_old"
+					);
+					$this->generic_sql_query("DROP TABLE _playcounts_old");
+					$this->generic_sql_query("PRAGMA foreign_keys=on");
+
+					$this->generic_sql_query("UPDATE Statstable SET Value = 78 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 78:
+					logger::log("SQL", "Updating FROM Schema version 78 TO Schema version 79");
+					logger::log("SQL", "This may take a long time");
+					$this->generic_sql_query("PRAGMA foreign_keys=off");
+					$this->generic_sql_query("DELETE FROM Ratingtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable WHERE Hidden = 0)", true);
+					$this->generic_sql_query("ALTER TABLE Ratingtable RENAME TO _ratings_old");
+					$this->generic_sql_query(
+						"CREATE TABLE Ratingtable(
+							TTindex INTEGER PRIMARY KEY NOT NULL UNIQUE REFERENCES Tracktable(TTindex) ON DELETE CASCADE,
+							Rating TINYINT(1))"
+					);
+					$this->generic_sql_query(
+						"INSERT INTO Ratingtable(TTindex, Rating)
+						SELECT TTindex, Rating FROM _ratings_old"
+					);
+					$this->generic_sql_query("DROP TABLE _ratings_old");
+					$this->generic_sql_query("PRAGMA foreign_keys=on");
+					$this->generic_sql_query("UPDATE Statstable SET Value = 79 WHERE Item = 'SchemaVer'", true);
+					break;
+
+				case 79:
+					logger::log("SQL", "Updating FROM Schema version 79 TO Schema version 80");
+					logger::log("SQL", "This may take a long time");
+					$this->generic_sql_query("PRAGMA foreign_keys=off");
+					$this->generic_sql_query("DELETE FROM TagListtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable WHERE Hidden = 0)", true);
+					$this->generic_sql_query("ALTER TABLE TagListtable RENAME TO _taglist_old");
+					$this->generic_sql_query(
+						"CREATE TABLE TagListtable(
+							Tagindex INTEGER NOT NULL REFERENCES Tagtable(Tagindex),
+							TTindex INTEGER NOT NULL REFERENCES Tracktable(TTindex) ON DELETE CASCADE,
+							PRIMARY KEY (Tagindex, TTindex))"
+					);
+					$this->generic_sql_query(
+						"INSERT INTO TagListtable(Tagindex, TTindex)
+						SELECT Tagindex, TTindex FROM _taglist_old"
+					);
+					$this->generic_sql_query("DROP TABLE _taglist_old");
+					$this->generic_sql_query("PRAGMA foreign_keys=on");
+					$this->generic_sql_query("UPDATE Statstable SET Value = 80 WHERE Item = 'SchemaVer'", true);
+					break;
 
 			}
 			$sv++;

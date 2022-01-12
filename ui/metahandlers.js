@@ -21,7 +21,7 @@ var metaHandlers = function() {
 			streamname: playlistinfo.Album,
 			streamimage: playlistinfo['X-AlbumImage'],
 		}
-		if (prefs.player_backend == 'mpd' && playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//)) {
+		if (prefs.player_backend == 'mpd' && playlistinfo.file && playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//)) {
 			data.file = 'soundcloud://track/'+playlistinfo.file.match(/api\.soundcloud\.com\/tracks\/(\d+)\//)[1];
 		}
 		if (playlistinfo.type == 'stream') {

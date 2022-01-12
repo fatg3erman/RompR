@@ -474,7 +474,7 @@ class metaDatabase extends collection_base {
 
 		if ($urionly && $data['file']) {
 			logger::log("FIND ITEM", "  Trying by URI ".$data['file']);
-			$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 'TTindex', null, "SELECT TTindex FROM Tracktable WHERE Uri = ?", $data['file']);
+			$t = $this->sql_prepare_query(false, PDO::FETCH_COLUMN, 0, null, "SELECT TTindex FROM Tracktable WHERE Uri = ?", $data['file']);
 			$ttids = array_merge($ttids, $t);
 		}
 
@@ -904,7 +904,7 @@ class metaDatabase extends collection_base {
 		$result = false;
 		if ($this->generic_sql_query("DELETE FROM Tracktable WHERE isSearchResult != 1 AND TTindex = '".$ttid."'",true)) {
 			if ($this->generic_sql_query("UPDATE Tracktable SET isSearchResult = 2, isAudiobook = 0 WHERE isSearchResult = 1 AND TTindex = '".$ttid."'", true)) {
-				$result = true;;
+				$result = true;
 			}
 		}
 		return $result;
@@ -1006,17 +1006,9 @@ class metaDatabase extends collection_base {
 		// lastUpdateId() does not return the TTindex of the updated track but rather the current AUTO_INCREMENT value of the table
 		// which is about as useful as giving me a forwarding address that only contains the correct continent.
 
-		// We also have to cope with fucking youtube and soundcloud, where the same combination of unique keys can actually refer to
+		// We also have to cope with youtube and soundcloud, where the same combination of unique keys can actually refer to
 		// different tracks. In those circumstances we will have looked up using uri only. As urionly did NOT find a track this
 		// means the track we're trying to add must be different. In this case we increment the disc number until we have a unique track.
-
-		// I mean basically, we're fucked whatever we do. Fucking millennials and their entitlement to free shit means we have to cope
-		// with a world where artists no longer have control over their output and if some 8 year old wants to release your magnum opus
-		// as "my dog's favourite song ever by this artist oh it's called the song name" we just have to fucking cope with that.
-		// I wouldn't even support YouTube except that some labels are using it as an official source because they feel they have no choice.
-
-		// Get it together people. Pay artists for their work and allow them to control what it's called. It's just fucking respectful.
-		// You cunts.
 
 		while (($bollocks = $this->check_track_exists($data)) !== false) {
 			if ($this->forced_uri_only(false, $data['domain'])) {
@@ -1127,7 +1119,9 @@ class metaDatabase extends collection_base {
 			$progress_file = 'prefs/youtubedl/dlprogress_'.md5($data['file']);
 			file_put_contents($progress_file, '    Downloading '.$uri_to_get."\n");
 
-			// At this point, terminate the request
+			// At this point, terminate the request so the download can run in the background.
+			// If we don't do this the browser will retry after 3 minutes and there's nothing we
+			// can do about that.
 			prefs::$database->close_browser_connection();
 			logger::log('YOUTUBEDL', 'OK now we start the fun');
 			if (!is_dir('prefs/youtubedl/'.$ttindex)) {
