@@ -1058,7 +1058,7 @@ class init_database extends init_generic {
 					logger::log("SQL", "Updating FROM Schema version 78 TO Schema version 79");
 					logger::log("SQL", "This may take a long time");
 					$this->generic_sql_query("DELETE FROM Ratingtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable WHERE Hidden = 0)", true);
-					$this->generic_sql_query("RENAME TABLE Ratingttable TO _ratings_old");
+					$this->generic_sql_query("RENAME TABLE Ratingtable TO _ratings_old");
 					$this->generic_sql_query(
 						"CREATE TABLE Ratingtable(
 						TTindex INT UNSIGNED NOT NULL REFERENCES Tracktable(TTindex) ON DELETE CASCADE,
@@ -1073,7 +1073,7 @@ class init_database extends init_generic {
 					$this->generic_sql_query("UPDATE Statstable SET Value = 79 WHERE Item = 'SchemaVer'", true);
 					break;
 
-				case 78:
+				case 79:
 					logger::log("SQL", "Updating FROM Schema version 79 TO Schema version 80");
 					logger::log("SQL", "This may take a long time");
 					$this->generic_sql_query("DELETE FROM TagListtable WHERE TTindex NOT IN (SELECT TTindex FROM Tracktable WHERE Hidden = 0)", true);

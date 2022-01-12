@@ -106,19 +106,19 @@ class database extends data_base {
 
 	public function find_podcast_track_from_url($url) {
 		return $this->sql_prepare_query(false, PDO::FETCH_OBJ, null, null,
-									"SELECT
-										PodcastTracktable.Title AS title,
-										PodcastTracktable.Artist AS artist,
-										PodcastTracktable.Duration AS duration,
-										PodcastTracktable.Description AS comment,
-										Podcasttable.Title AS album,
-										Podcasttable.Artist AS albumartist,
-										Podcasttable.Image AS image
-										FROM PodcastTracktable JOIN Podcasttable USING (PODindex)
-										WHERE PodcastTracktable.Link=?
-										OR ? LIKE CONCAT('%', PodcastTracktable.Localfilename)",
-										$url,
-										$url);
+			"SELECT
+				PodcastTracktable.Title AS title,
+				PodcastTracktable.Artist AS artist,
+				PodcastTracktable.Duration AS duration,
+				PodcastTracktable.Description AS comment,
+				Podcasttable.Title AS album,
+				Podcasttable.Artist AS albumartist,
+				Podcasttable.Image AS image
+				FROM PodcastTracktable JOIN Podcasttable USING (PODindex)
+				WHERE PodcastTracktable.Link=?
+				OR ? LIKE CONCAT('%', PodcastTracktable.Localfilename)",
+				$url,
+				$url);
 	}
 
 	public function optimise_database() {
