@@ -4,6 +4,22 @@
 =====================================================================
 */
 
+:root {
+    --main-bg-colour: rgba(255,255,255,0.3);
+    --darker-bg-colour: rgba(255,255,255,0.4);
+    --button-bg-colour: rgba(255,255,255,0.5);
+    --button-hover-colour: rgba(255,255,255,0.6);
+    --dropmenu-bg-colour: rgba(135,180,222,0.9);
+    --min-progress-colour: rgba(155, 187, 222, 0.99);
+    --max-progress-colour: rgba(252, 189, 104, 0.99);
+    --selected-bg-colour: var(--max-progress-colour);
+    --text-colour: black;
+    --link-colour: #ff4800;
+    --highlight-colour: #ff4800;
+    --border-colour: #bbbbbb;
+    --border-colour-dark: #555555;
+}
+
 html {
     background-image:url("themes/skytrailscrop.jpg");
     background-size:cover;
@@ -11,95 +27,104 @@ html {
     background-attachment:fixed;
 }
 
+.dropshadow
+{
+    box-shadow: 7px 7px 5px rgba(50, 50, 50, 0.5);
+}
+
 .backmenu {
-    background-color: rgba(255,255,255,0.7) !important;
+    background-color: var(--darker-bg-colour) !important;
 }
 
 body.phone .dropmenu>div.playable,
 body.phone .dropmenu>div.menuitem,
 body.phone #pluginplaylistholder .menuitem.clickicon,
 body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
-    background-color:rgba(255,255,255,0.3);
+    background-color: var(--main-bg-colour);
     background-clip:border-box;
     margin-top: 4px;
 }
 
 body.phone .dropmenu>div {
-    background-color:rgba(255,255,255,0.3);
+    background-color: var(--main-bg-colour);
 }
 
 body.phone .mainpane .faveradio,
 body.phone .mainpane .radio,
 body.phone .mainpane .podcast:not(.podicon):not(.podglobal),
 body.phone .mainpane .directory {
-    background-color:rgba(255,255,255,0.3);
+    background-color: var(--main-bg-colour);
     background-clip:border-box;
     margin-top: 4px;
 }
 
 body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input
 {
-    color:#000000;
+    color: var(--text-colour);
 }
 
 a:link
 {
-    color:#ff4800;
+    color: var(--link-colour);
 }
 
 a:visited
 {
-    color:#ff4800;
+    color: var(--link-colour);
 }
 
 a:hover,a:active
 {
-    text-shadow: 0 0 15px #000000;
+    font-weight: bold;
     cursor:pointer;
 }
 
 button, input[type="button"], div.filebutton
 {
-    color:#000000;
-    background-color:rgba(255,255,255,0.5);
-    border:1px solid #222222;
+    color: var(--text-colour);
+    background-color: var(--button-bg-colour);
+    border: 1px solid var(--border-colour);
 }
 
 button:hover, input[type="button"]:hover, div.filebutton:hover
 {
-    border:1px solid #bbbbbb;
-    background-color:rgba(255,255,255,0.7);
+    border: 1px solid var(--highlight-colour);
+    background-color: var(--button-hover-colour);
 }
 
 select {
-    color:#000000;
+    color: var(--text-colour);
 }
 
 div.selectholder {
-    background-color:rgba(255,255,255,0.3);
+    background-color: var(--main-bg-colour);
 }
 
 div.selectholder:hover {
-    background-color:rgba(255,255,255,0.4);
+    background-color: var(--darker-bg-colour);
 }
 
 input[type="text"],input[type="number"] {
-    background-color: rgba(255,255,255,0.3);
-    border-bottom: 1px solid #bbbbbb;
+    transition: border-bottom 0.5s ease;
+    background-color:  var(--main-bg-colour);
+    border-bottom: 1px solid  var(--border-colour);
 }
 
 input[type="text"]:hover,input[type="number"]:hover {
-    background-color: rgba(255,255,255,0.4);
-    border-bottom: 1px solid #bbbbbb;
+    transition: border-bottom 0.5s ease;
+    background-color: var(--darker-bg-colour);
+    border-bottom: 1px solid var(--highlight-colour);
 }
 
-input[type="text"]:focus,input[type="number"]:focus {
+input[type="text"]:focus,input[type="number"]:focus,input[type="text"]:focus-visible,input[type="number"]:focus-visible {
+    border: none;
     transition: border-bottom 0.5s ease;
-    border-bottom: 1px solid #555555;
+    border-bottom:1px solid var(--border-colour-dark);
+    outline: none;
 }
 
 .drop-box {
-    background-color: rgba(255,255,255,0.4);
+    background-color: var(--darker-bg-colour);
 }
 
 /*
@@ -110,46 +135,44 @@ input[type="text"]:focus,input[type="number"]:focus {
 
 #sources
 {
-    background-color:rgba(255,255,255,0.3);
+    background-color: var(--main-bg-colour);
 }
 
 #playlist
 {
-    background-color:rgba(255,255,255,0.3);
+    background-color: var(--main-bg-colour);
 }
 
 #notifications
 {
-    background-color:rgba(65,65,85,0.9);
-    color:#ffffff;
+    background-color: var(--dropmenu-bg-colour);
 }
 
 #wikipopup
 {
-    background-color:#000000;
+    background-color: var(--dropmenu-bg-colour);
 }
 
 #imagecontainer
 {
-    background-color:#ffffff;
+    background-color: var(--dropmenu-bg-colour);
 }
 
 #tagadder
 {
-    background-color:rgba(65,65,85,0.9);
-    color:white;
+    background-color: var(--dropmenu-bg-colour);
 }
 
 #dragger
 {
-    background-color:rgba(0,0,0,0.3);
+    background-color: var(--selected-bg-colour);
 }
 
 #pset {
-    background-color: rgba(155, 187, 222, 0.99);
+    background-color: var(--min-progress-colour);
 }
 #pmaxset {
-    background-color: rgba(252, 189, 104, 0.99);
+    background-color: var(--max-progress-colour);
 }
 
 /*
@@ -160,12 +183,12 @@ input[type="text"]:focus,input[type="number"]:focus {
 
 .mainpane
 {
-    background-color:rgba(255,255,255,0.3);
+    background-color: var(--main-bg-colour);
 }
 
 .album2
 {
-    background-color:rgba(255,255,255,0.2);
+    background-color: var(--main-bg-colour);
 }
 
 .item
@@ -174,18 +197,17 @@ input[type="text"]:focus,input[type="number"]:focus {
 }
 
 .playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
-    text-shadow: 0 0 15px #ffffff;
-    color:red;
+    color: var(--highlight-colour);
     cursor:pointer;
 }
 
-.playable.selected:hover, tr.playable.selected:hover>td {
+/*.playable.selected:hover, tr.playable.selected:hover>td {
     color:#ffffff;
 }
-
+*/
 .selected
 {
-    background-color:rgba(255,72,0,0.7);
+    background-color: var(--selected-bg-colour);
 }
 
 /*-- divs and classes used in the playlist --*/
@@ -194,47 +216,39 @@ input[type="text"]:focus,input[type="number"]:focus {
 {
     font-weight:bold;
     font-size:120%;
-    color:#ff4800;
-    transition:font-size 0.2s ease, text-shadow 0.2s ease;
+    color: var(--highlight-colour);
+    transition:font-size 0.2s ease;
 }
 
 .playlistitem
 {
-    transition:font-size 0.3s ease, text-shadow 0.3s ease;
+    transition:font-size 0.3s ease;
 }
 
 .playlistcurrenttitle
 {
-    text-shadow: 0px 0px 20px #cccccc;
     font-weight:bold;
-    color:#ff4800;
-    background-color:rgba(255,255,255,0.2);
+    color: var(--highlight-colour);
+    background-color: var(--main-bg-colour);
 }
 
 .playlisttitle{
-    background-color:rgba(255,255,255,0.2);
+    background-color: var(--main-bg-colour);
 }
 
 .stleft
 {
-    border-right:1px solid #888888;
+    border-right:1px solid var(--highlight-colour);
 }
 
 .popupwindow
 {
-    background-color:rgba(65,65,85,0.9);
-    color:white;
-}
-
-.popupwindow td, .popupwindow h2, .popupwindow p
-{
-    color:white;
+    background-color: var(--dropmenu-bg-colour);
 }
 
 table.histable tr:hover {
     font-size:105%;
-    text-shadow: 0 0 15px #ffffff;
-    color:#000000;
+    color: var(--text-colour);
     transition:all 0.1s;
 }
 
@@ -244,8 +258,7 @@ table.histable tr
 }
 
 .backhi:hover {
-    text-shadow: 0 0 15px #ffffff;
-    color:#ff4800;
+    color: var(--highlight-colour);
     cursor:pointer;
     transition:all 0.1s;
 }
@@ -254,14 +267,13 @@ table.histable tr
 due to :hover events propagating from the parent menu
 */
 .backhi:hover>div.topdropmenu>div.backhi {
-    color:#000000;
+    color: var(--text-colour);
 }
 
 /*Make sure the submenu entry being hovered over still gets highlighted*/
 
 .backhi:hover>div.topdropmenu>div.backhi:hover {
-    text-shadow: 0 0 15px #ffffff;
-    color:#ff4800;
+    color: var(--highlight-colour);
 }
 
 .backhi
@@ -271,44 +283,38 @@ due to :hover events propagating from the parent menu
 
 tr.clickaddtrack:hover
 {
-    background-color:#e1e4ea;
+    background-color: var(--highlight-colour);;
 }
 
 .bsel
 {
-    color:#000000;
-    text-shadow:0 0 15px #666666;
+    color: var(--text-colour);
 }
 
 .bmid
 {
-    border-left:2px solid #ff4800;
+    border-left:2px solid var(--highlight-colour);
 }
 
 .tagholder table tr th {
-    background-color:rgba(255,255,255,0.5);
-    border-bottom:1px solid #333333;
+    background-color: var(--darker-bg-colour);
+    border-bottom:1px solid var(--border-colour-dark);
 }
 
 .currentbun
 {
-    border-bottom:1px solid #fe6500;
+    border-bottom:1px solid var(--highlight-colour);
     padding-bottom:2px;
-}
-
-.dropshadow
-{
-    box-shadow: 7px 7px 5px rgba(50, 50, 50, 0.5);
 }
 
 .progressbar
 {
-    border:1px solid #414141;
+    border: 1px solid var(--border-colour-dark);
 }
 
 .progressbar_v
 {
-    border:1px solid #414141;
+    border: 1px solid var(--border-colour-dark);
 }
 
 /*
@@ -319,12 +325,12 @@ tr.clickaddtrack:hover
 
 div.topdropmenu
 {
-    background-color:rgba(135,180,222,0.9);
+    background-color: var(--dropmenu-bg-colour);
 }
 
 .configtitle
 {
-    background-color:rgba(255,255,255,0.5);
+    background-color: var(--darker-bg-colour);
 }
 
 body.mobile .configtitle
@@ -342,7 +348,7 @@ body.mobile .configtitle
 
 #infopane
 {
-    background-color:rgba(255,255,255,0.4);
+    background-color: var(--main-bg-colour);
 }
 
 #artistbio
@@ -357,7 +363,7 @@ body.mobile .configtitle
 
 .infosection
 {
-    background-color:rgba(255,255,255,0.4);
+    background-color: var(--main-bg-colour);
     background-size:cover;
     background-repeat:no-repeat;
 }
@@ -369,12 +375,12 @@ body.mobile .configtitle
 */
 .helpfulalbum
 {
-    background-color:rgba(255,255,255,0.4);
+    background-color: var(--darker-bg-colour);
 }
 
 .tagholder_wide
 {
-    background-color:rgba(255,255,255,0.5);
+    background-color: var(--darker-bg-colour);
 }
 
 /*
@@ -385,7 +391,7 @@ body.mobile .configtitle
 
 .podcastitem
 {
-    border-top:1px solid #000000;
+    border-top:1px solid var(--border-colour-dark);
 }
 
 /*
@@ -396,17 +402,16 @@ body.mobile .configtitle
 
 #artistcoverslist
 {
-    background-color:rgba(255,255,255,0.3);
+    background-color: var(--main-bg-colour);
 }
 
 .highlighted {
-    background-color:rgba(200,217,240,0.9);
+    background-color: var(--selected-bg-colour);;
 }
 
 #artistchooser
 {
-    background-color:rgba(255,255,255,0.2);
-    color:#777777;
+    background-color: var(--main-bg-colour);
 }
 
 /*
@@ -417,7 +422,7 @@ body.mobile .configtitle
 
 table.navbox th
 {
-    background-color: rgba(255,255,255,0.2);
+    background-color: var(--main-bg-colour);
 }
 
 .navbox-abovebelow
@@ -462,10 +467,10 @@ table.tracklist {
 
 .underline
 {
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid var(--border-colour-dark);
 }
 
 .infosection h2
 {
-    border-bottom:2px solid black;
+    border-bottom:2px solid var(--border-colour-dark);
 }
