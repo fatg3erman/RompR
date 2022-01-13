@@ -62,6 +62,11 @@ foreach($themes as $theme) {
 }
 print '</select></div></div>';
 
+print '<div class="pref styledinputs"><b>Browser ID</b>'.
+	'<input class="saveotron" id="browser_id" type="text" />
+	</div>';
+
+
 // Album Cover Size
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
 	language::gettext('config_coversize').
