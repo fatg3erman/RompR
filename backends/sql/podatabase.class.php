@@ -855,7 +855,7 @@ class poDatabase extends database {
 		print '</div>';
 	}
 
-	private function doPodcastHeader($y) {
+	private function doPodcastHeader($y, $subscribed) {
 
 		$i = getDomain($y->Image);
 		if ($i == "http" || $i == "https") {
@@ -869,6 +869,8 @@ class poDatabase extends database {
 			$aname .= '<br /><span class="playlistrow2">'.htmlspecialchars($y->Category).'</span>';
 		}
 
+		$cls = ($subscribed == 1) ? 'podcast subscribed-podcast' : 'podcast unsubscribed-podcast';
+
 		$html = uibits::albumHeader(array(
 			'id' => 'podcast_'.$y->PODindex,
 			'Image' => $img,
@@ -879,7 +881,7 @@ class poDatabase extends database {
 			'Albumname' => htmlspecialchars(html_entity_decode($y->Title)),
 			'why' => null,
 			'ImgKey' => 'none',
-			'class' => 'podcast'
+			'class' => $cls
 		));
 
 		$extra = '<div class="fixed">';
@@ -1377,8 +1379,11 @@ class poDatabase extends database {
 		}
 		$qstring .= implode(', ', $sortarray);
 		$result = $this->generic_sql_query($qstring, false, PDO::FETCH_OBJ);
+		// Hack to make phone skin and skypotato skin work without too much extra effort
+		if ($subscribed == 1)
+			print '<div class="dropdown-container configtitle skypotatohack"><div class="textcentre expand"><b>'.language::gettext('label_subbed_podcasts').'</b></div></div>';
 		foreach ($result as $obj) {
-			$this->doPodcastHeader($obj);
+			$this->doPodcastHeader($obj, $subscribed);
 		}
 
 	}

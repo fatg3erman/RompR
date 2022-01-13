@@ -4,6 +4,11 @@ jQuery.fn.menuReveal = async function() {
 		await self.slideToggle('fast').promise();
 	} else {
 		self.findParentScroller().saveScrollPos();
+		self.siblings().addClass('menu-covered');
+		if (self.prev().hasClass('subscribed-podcast'))
+			$('#podcast_search').addClass('menu-covered');
+		if (self.prev().hasClass('unsubscribed-podcast'))
+			$('#podholder').addClass('menu-covered');
 		var tt = self.find('input.albumtime').val();
 		if (tt) {
 			var d = $('<div>', {class: 'tgtl podcastitem', style: 'padding-top: 4px'}).html(tt).appendTo(self);
@@ -19,6 +24,11 @@ jQuery.fn.menuHide = async function() {
 	if (self.hasClass('toggledown')) {
 		await self.slideToggle('fast').promise();
 	} else {
+		self.siblings().removeClass('menu-covered');
+		if (self.prev().hasClass('subscribed-podcast'))
+			$('#podcast_search').removeClass('menu-covered');
+		if (self.prev().hasClass('unsubscribed-podcast'))
+			$('#podholder').removeClass('menu-covered');
 		await self.hide(0).promise();
 		self.findParentScroller().restoreScrollPos();
 	}
@@ -110,6 +120,7 @@ jQuery.fn.saveScrollPos = function() {
 	// meaning we can't go back in appropriate steps. Note '.children' is essential - '.find' will reset the css
 	// for all the submenus too
 	this.children('.backmenu').css({position: 'static'});
+	this.children('.is-coverable').addClass('menu-covered');
 }
 
 jQuery.fn.restoreScrollPos = function() {
@@ -118,6 +129,7 @@ jQuery.fn.restoreScrollPos = function() {
 		this.css('overflow-y', 'scroll');
 		this.scrollTop(a.val());
 		this.children('.backmenu').css({position: ''});
+		this.children('.menu-covered').removeClass('menu-covered');
 		a.remove();
 	}
 	// $('#popupmenu').remove();
@@ -196,6 +208,7 @@ jQuery.fn.removeCollectionDropdown = function() {
 		if (!self.hasClass('configtitle')) {
 			self.findParentScroller().restoreScrollPos();
 		}
+		self.siblings().show();
 		self.clearOut().remove();
 	});
 }

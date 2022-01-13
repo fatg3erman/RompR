@@ -508,7 +508,7 @@ function rrmdir($path) {
 }
 
 function collectionButtons() {
-	print '<div id="collectionbuttons" class="invisible toggledown">';
+	print '<div id="collectionbuttons" class="invisible toggledown is-coverable">';
 
 	print '<div class="containerbox dropdown-container">';
 	print '<div class="selectholder">';

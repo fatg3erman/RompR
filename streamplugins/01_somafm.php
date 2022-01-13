@@ -7,7 +7,7 @@ class somafmplugin {
 	}
 
 	public function doHeader() {
-		print '<div id="somafmplugin">';
+		// print '<div id="somafmplugin">';
 		print uibits::albumHeader(array(
 			'id' => 'somafmlist',
 			'Image' => 'newimages/somafmlogo.svg',
@@ -23,7 +23,7 @@ class somafmplugin {
 		));
 		print '<div id="somafmlist" class="dropmenu notfilled is-albumlist">';
 		print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
-		print '</div>';
+		// print '</div>';
 	}
 
 	public function doStationList() {

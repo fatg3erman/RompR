@@ -8,7 +8,7 @@ class tuneinplugin {
 	}
 
 	public function doHeader() {
-		print '<div id="tuneinradio">';
+		// print '<div id="tuneinradio">';
 		print uibits::albumHeader(array(
 			'id' => 'tuneinlist',
 			'Image' => 'newimages/tunein-logo.svg',
@@ -23,7 +23,7 @@ class tuneinplugin {
 			'expand' => true
 		));
 		print '<div id="tuneinlist" class="dropmenu notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
-		print '</div>';
+		// print '</div>';
 	}
 
 	public function parseParams() {

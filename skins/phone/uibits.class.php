@@ -239,7 +239,7 @@ class uibits {
 		$name = md5($att['URL']);
 		print '<input type="hidden" value="'.rawurlencode($att['URL']).'" />';
 		print '<input type="hidden" value="'.rawurlencode($att['text']).'" />';
-		print '<div class="menu openmenu '.$prefix.' directory containerbox menuitem" name="'.$prefix.'_'.$name.'">';
+		print '<div class="menu openmenu '.$prefix.' directory containerbox menuitem is-coverable" name="'.$prefix.'_'.$name.'">';
 		print '<i class="icon-folder-open-empty fixed collectionitem"></i>';
 		print '<div class="expand">'.$att['text'].'</div>';
 		print '</div>';

@@ -135,7 +135,7 @@
 
 <div id="albumlist" class="scroller mainpane invisible pright">
 <?php
-	print '<div class="dropdown-container configtitle">';
+	print '<div class="dropdown-container configtitle is-coverable">';
 	print '<i title="'.language::gettext('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="collectionbuttons"></i>';
 	print '<div class="textcentre expand"><b>'.language::gettext('button_local_music').'</b></div>';
 	print '</div>';
@@ -146,7 +146,7 @@
 </div>
 
 <div id='searchpane' class="scroller mainpane invisible pright">
-<div id="search" class="noborder">
+<div id="search" class="noborder is-coverable">
 <div class="dropdown-container configtitle">
 <?php
 	print '<i title="'.language::gettext('setup_advanced').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="advsearchoptions"></i>';
@@ -161,7 +161,7 @@ include("player/".prefs::$prefs['player_backend']."/search.php");
 </div>
 
 <div id="filelist" class="scroller mainpane invisible pright">
-	<div class="dropdown-container configtitle">
+	<div class="dropdown-container configtitle is-coverable">
 <?php
 	print '<div class="textcentre expand"><b>'.language::gettext('button_file_browser').'</b></div>';
 ?>
@@ -214,7 +214,7 @@ include($p);
 
 <div id="podcastslist" class="scroller mainpane invisible pright">
 <?php
-print '<div class="dropdown-container configtitle">';
+print '<div class="dropdown-container configtitle is-coverable">';
 print '<i class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.language::gettext('label_podcastcontrols').'"></i>';
 print '<div class="textcentre expand"><b>'.language::gettext('label_podcasts').'</b></div>';
 print '</div>';

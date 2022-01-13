@@ -58,7 +58,7 @@ class commradioplugin {
 	}
 
 	private function doHeader() {
-		print '<div id="communityradioplugin">';
+		// print '<div id="communityradioplugin">';
 		print uibits::albumHeader(array(
 			'id' => 'communityradiolist',
 			'Image' => 'newimages/broadcast.svg',
@@ -74,12 +74,13 @@ class commradioplugin {
 		));
 		print '<div id="communityradiolist" class="dropmenu notfilled">';
 		print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
-		print '</div>';
+		// print '</div>';
 	}
 
 	private function doDropdownHeader() {
-		uibits::directoryControlHeader('communityradiolist', language::gettext('label_communityradio'));
+		print '<div class="is-coverable skypotatohack">';
 
+		uibits::directoryControlHeader('communityradiolist', language::gettext('label_communityradio'));
 		print '<div class="fullwidth containerbox dropdown-container">';
 		// print '<div class="fixed comm-search-label"><span class="cslt"><b>Order By</b></span></div>';
 		print '<div class="selectholder expand">';
@@ -110,10 +111,11 @@ class commradioplugin {
 		print '</div>';
 		print '</div>';
 
-		print '<div id="communitystations" class="fullwidth padright holderthing is-albumlist">';
+		print '</div>';
 
 		$this->doBrowseRoot();
 
+		print '<div id="communitystations" class="fullwidth padright holderthing is-albumlist">';
 		print '</div>';
 
 	}

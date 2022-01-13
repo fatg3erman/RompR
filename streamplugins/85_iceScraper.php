@@ -96,7 +96,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 	print '</div>';
 
 } else {
-	print '<div id="icecastplugin">';
+	// print '<div id="icecastplugin">';
 	print uibits::albumHeader(array(
 		'id' => 'icecastlist',
 		'Image' => 'newimages/icecast.svg',
@@ -111,7 +111,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 		'expand' => true
 	));
 	print '<div id="icecastlist" class="dropmenu notfilled is-albumlist"><div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('label_loading').'</b></div></div></div>';
-	print '</div>';
+	// print '</div>';
 }
 
 function munge_ice_text($text) {

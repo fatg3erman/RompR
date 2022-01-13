@@ -1,5 +1,5 @@
 <?php
-print '<div id="faveradioplugin">';
+// print '<div id="faveradioplugin">';
 print uibits::albumHeader(array(
 	'id' => 'yourradiolist',
 	'Image' => 'newimages/broadcast.svg',
@@ -15,5 +15,5 @@ print uibits::albumHeader(array(
 ));
 print '<div id="yourradiolist" class="dropmenu notfilled is-albumlist holderthing">';
 print '</div>';
-print '</div>';
+// print '</div>';
 ?>

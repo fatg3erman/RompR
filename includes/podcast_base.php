@@ -2,16 +2,14 @@
 
 doPodcastBase();
 
-print '<div id="podholder" class="collectionpanel">';
-
-print '<div class="containerbox dropdown-container"><div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" placeholder="'.language::gettext('label_searchfor').' (iTunes)" /></div>';
+print '<div class="containerbox dropdown-container is-coverable"><div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" placeholder="'.language::gettext('label_searchfor').' (iTunes)" /></div>';
 print '<button class="fixed searchbutton iconbutton spinable" onclick="podcasts.search()"></button>';
 print '</div>';
 
-print '<div class="fullwidth noselection clearfix"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon padright spinable" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
+print '<div class="fullwidth noselection clearfix is-coverable"><img id="podsclear" class="tright icon-cancel-circled podicon clickicon padright spinable" onclick="podcasts.clearsearch()" style="display:none;margin-bottom:4px" /></div>';
 print '<div id="podcast_search" class="fullwidth noselection padright is-albumlist"></div>';
 
-print '<div class="dropdown-container configtitle"><div class="textcentre expand"><b>'.language::gettext('label_subbed_podcasts').'</b></div></div>';
+print '<div id="podholder" class="collectionpanel">';
 
 print '<div id="fruitbat" class="noselection fullwidth is-albumlist">';
 print '</div>';
@@ -19,7 +17,7 @@ print '</div>';
 print '</div>';
 
 function doPodcastBase() {
-	print '<div id="podcastbuttons" class="invisible toggledown">';
+	print '<div id="podcastbuttons" class="invisible toggledown is-coverable">';
 
 	print '<div id="cocksausage">';
 	print '<div class="containerbox dropdown-container"><div class="expand"><input class="enter clearbox" id="podcastsinput" type="text" placeholder="'.language::gettext("podcast_entrybox").'" /></div>';

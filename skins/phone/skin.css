@@ -326,6 +326,10 @@ div.albumbitsmenu {
 	cursor:pointer;
 }
 
+.menu-covered {
+	display: none !important;
+}
+
 .dropmenu {
 	position: absolute;
 	top: 0;
