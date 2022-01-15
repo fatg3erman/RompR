@@ -41,6 +41,18 @@
     --album1-colour: transparent;
     --album2-colour: rgba(255,255,255,0.1);
     --drop-shadow: 7px 7px 5px rgba(0, 0, 0, 0.5);
+
+    --playlist-current-track-font-size: 120%;
+    --playlist-current-track-font-weight: bold;
+    --playlist-current-track-left-border: unset;
+    --playlist-current-title-font-size: unset;
+    --playlist-current-title-font-weight: bold;
+    --playlist-current-shadow: 0px 0px 20px var(--text-colour);
+    --playlist-current-transition: font-size 0.3s ease, text-shadow 0.3s ease, background-color 0.2s ease;
+
+    --button-font-weight: normal;
+    --button-hover-shadow: 0 0 15px var(--highlight-colour);
+
 }
 
 @media screen and (orientation: landscape) {
@@ -60,45 +72,3 @@
         background-attachment:fixed;
     }
 }
-
-.playlistcurrentitem
-{
-    font-weight:bold;
-    font-size:120%;
-    transition:font-size 0.2s ease, text-shadow 0.2s ease, background-color 0.2s ease;
-}
-
-.playlistitem, .playlistalbum
-{
-    transition:font-size 0.3s ease, text-shadow 0.3s ease, background-color 0.2s ease;
-}
-
-.playlistcurrenttitle
-{
-    text-shadow: 0px 0px 20px var(--text-colour);
-    font-weight:bold;
-    transition:font-size 0.2s ease, text-shadow 0.2s ease, background-color 0.2s ease;
-}
-
-button:hover, input[type="button"]:hover, div.filebutton:hover
-{
-    text-shadow: 0 0 15px var(--highlight-colour);
-}
-
-table.histable tr:hover {
-    font-size:105%;
-    text-shadow: 0 0 15px var(--highlight-colour);
-    transition:all 0.1s;
-}
-
-table.histable tr
-{
-    transition:all 0.2s;
-}
-
-.backhi:hover {
-    text-shadow: 0 0 15px var(--highlight-colour);
-    cursor:pointer;
-    transition:all 0.1s;
-}
-

@@ -42,6 +42,17 @@
     --album1-colour: transparent;
     --album2-colour: rgba(255,255,255,0.1);
     --drop-shadow: 7px 7px 5px rgba(0, 0, 0, 0.6);
+
+    --playlist-current-track-font-size: 120%;
+    --playlist-current-track-font-weight: bold;
+    --playlist-current-track-left-border: 4px solid var(--border-colour);
+    --playlist-current-title-font-size: unset;
+    --playlist-current-title-font-weight: bold;
+    --playlist-current-shadow: 0px 0px 20px var(--text-colour);
+    --playlist-current-transition: font-size 0.3s ease, text-shadow 0.3s ease;
+
+    --button-font-weight: normal;
+    --button-hover-shadow: 0 0 15px var(--highlight-colour);
 }
 
 @media screen and (orientation: landscape) {
@@ -62,57 +73,6 @@
     }
 }
 
-.playlistcurrentitem
-{
-    font-weight:bold;
-    font-size:120%;
-    border-left:4px solid var(--border-colour);
-    transition:font-size 0.3s ease, text-shadow 0.3s ease;
-}
-
-.clicktrack.playlistcurrentitem
-{
-    padding-left:8px;
-}
-
-.playlistitem, .playlistalbum
-{
-    transition:font-size 0.3s ease;
-}
-
-.playlistcurrenttitle
-{
-    text-shadow: 0px 0px 20px var(--text-colour);
-    font-weight:bold;
-    transition:font-size 0.3s ease, text-shadow 0.3s ease;
-}
-
-.playlisttitle {
-    transition:font-size 0.3s ease, text-shadow 0.3s ease;
-}
-
-table.histable tr:hover {
-    font-size:105%;
-    text-shadow: 0 0 15px var(--text-colour);
-    transition:all 0.1s;
-}
-
-table.histable tr
-{
-    transition:all 0.2s;
-}
-
-.backhi:hover {
-    text-shadow: 0 0 15px var(--text-colour);
-    cursor:pointer;
-    transition:all 0.1s;
-}
-
-button:hover, input[type="button"]:hover, div.filebutton:hover
-{
-    text-shadow: 0 0 15px var(--highlight-colour);
-}
-
 a:hover,a:active
 {
     text-shadow: 0 0 15px var(--link-colour);
@@ -129,4 +89,10 @@ a:hover,a:active
 
 body.phone #horse, body.phone #playlistbuttons {
     background-color: var(--main-bg-colour);
+}
+
+/* This is required when you have a left border on playlist-current-track */
+.clicktrack.playlistcurrentitem
+{
+    padding-left:8px;
 }

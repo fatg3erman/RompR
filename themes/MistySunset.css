@@ -1,0 +1,85 @@
+@import url("themes/theme_base/image_theme.css");
+
+:root {
+    --main-bg-colour: rgba(0,0,0,0.25);
+    --darker-bg-colour: rgba(0,0,0,0.3);
+    --dropmenu-bg-colour: rgba(97,122,154,0.95);
+    --configtitle-bg-colour: rgba(24,41,56,0.9);
+    --headerbar-bg-colour:  var(--main-bg-colour);
+    --infobar-bg-colour: var(--main-bg-colour);
+
+    --text-colour: #eeeeee;
+    --highlight-colour: #ffffff;
+    --link-colour: yellow;
+    --border-colour: #d4b699;
+    --border-colour-dark: #152938;
+
+    --button-colour:  var(--text-colour);
+    --button-hover-colour:  var(--highlight-colour);
+    --button-border: 1px solid transparent;
+    --button-hover-border: 1px solid var(--border-colour-dark);;
+    --button-bg-colour: rgba(24,41,56,0.7);
+    --button-bg-hover-colour: rgba(212,182,153,0.7);
+
+    --text-entry-text-colour: var(--text-colour);
+    --text-entry-border-colour: var(--border-colour-dark);
+    --text-entry-hover-border-colour: var(---border-colour-dark);
+    --text-entry-active-border-colour: var(--border-colour);
+    --text-entry-bg-colour: var(--darker-bg-colour);
+    --text-entry-hover-bg-colour: var(--darker-bg-colour);
+    --text-entry-active-bg-colour: var(--main-bg-colour);
+
+    --select-text-colour: var(--text-colour);
+    --select-bg-colour: var(--text-entry-bg-colour);
+    --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
+
+    --min-progress-colour: rgba(24,41,56,0.7);
+    --max-progress-colour: rgba(212,182,153,0.7);
+    --progress-bg-colour: rgba(0,0,0,0);
+    --selected-bg-colour: rgba(1,2,10,0.5);
+    --album1-colour: transparent;
+    --album2-colour: var(--main-bg-colour);
+    --drop-shadow: 7px 7px 5px rgba(0, 0, 0, 0.4);
+
+    --playlist-current-track-font-size: 120%;
+    --playlist-current-track-font-weight: bold;
+    --playlist-current-track-left-border: 4px solid var(--border-colour);
+    --playlist-current-title-font-size: 120%;
+    --playlist-current-title-font-weight: bold;
+    --playlist-current-shadow: 0px 0px 20px var(--text-colour);
+    --playlist-current-transition: font-size 0.3s ease;
+
+    --button-font-weight: normal;
+    --button-hover-shadow: 0 0 12px var(--text-colour);
+}
+
+@media screen and (orientation: landscape) {
+    html {
+        background-image:url("themes/cloudy_ls.jpg");
+        background-size:cover;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+        background-position: center;
+    }
+}
+
+@media screen and (orientation: portrait) {
+    html {
+        background-image:url("themes/cloudy_pt.jpg");
+        background-size:cover;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+        background-position: center;
+    }
+}
+
+/* This is required when you have a left border on playlist-current-track */
+.clicktrack.playlistcurrentitem
+{
+    padding-left:8px;
+}
+
+/* For when the playlist cntrols are open in the phone skin */
+#playlistm #horse, #playlistm #playlistbuttons {
+    background-color: var(--main-bg-colour);
+}

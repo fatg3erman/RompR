@@ -418,14 +418,13 @@ class base_mpd_player {
 		}
 
 		// Disc Number
-		if ($filedata['Disc'] != null) {
+		if ($filedata['Disc'] != null)
 			$filedata['Disc'] = format_tracknum(ltrim($filedata['Disc'], '0'));
-		}
 
-		if (prefs::$prefs['use_original_releasedate'] && $filedata['OriginalDate']) {
-			logger::trace('COLLECTION', 'Using Rriginal Release Date for album',$filedata['Album']);
+
+		if (prefs::$prefs['use_original_releasedate'] && $filedata['OriginalDate'])
 			$filedata['Date'] = $filedata['OriginalDate'];
-		}
+
 
 		$filedata['year'] = getYear($filedata['Date']);
 

@@ -183,6 +183,7 @@ a:hover,a:active
 button, input[type="button"], div.filebutton
 {
     color: var(--button-colour);
+    font-weight: var(--button-font-weight);
     background-color: var(--button-bg-colour);
     background-image: var(--button-bg-image);
     border: var(--button-border);
@@ -194,6 +195,7 @@ button:hover, input[type="button"]:hover, div.filebutton:hover
     background-color: var(--button-bg-hover-colour);
     background-image: var(--button-bg-hover-image);
     border: var(--button-hover-border);
+    text-shadow: var(--button-hover-shadow);
 }
 
 select {
@@ -288,11 +290,16 @@ input[type="text"]:focus,input[type="number"]:focus,input[type="text"]:focus-vis
 {
     color: var(--highlight-colour);
     background-color: var(--playlist-current-bg-colour);
+    font-size: var(--playlist-current-track-font-size);
+    font-weight: var(--playlist-current-track-font-weight);
+    text-shadow: var(--playlist-current-shadow);
+    transition: var(--playlist-current-transition);
+    border-left: var(--playlist-current-track-left-border);
 }
 
-.playlistitem
+.playlistitem,
 {
-    transition:font-size 0.3s ease;
+    transition: var(--playlist-current-transition);
 }
 
 .playlistcurrenttitle
@@ -300,11 +307,16 @@ input[type="text"]:focus,input[type="number"]:focus,input[type="text"]:focus-vis
     color: var(--highlight-colour);
     background-color: var(--playlist-current-bg-colour);
     border-bottom: var(--playlist-title-border);
+    font-size: var(--playlist-current-title-font-size);
+    font-weight: var(--playlist-current-title-font-weight);
+    transition: var(--playlist-current-transition);
+    text-shadow: var(--playlist-current-shadow);
 }
 
-.playlisttitle{
+.playlisttitle {
     background-color: var(--playlist-title-bg-colour);
     border-bottom: var(--playlist-title-border);
+    transition: var(--playlist-current-transition);
 }
 
 .stleft
@@ -327,8 +339,9 @@ input[type="text"]:focus,input[type="number"]:focus,input[type="text"]:focus-vis
     border-top: var(--bordered-top);
 }
 
-table.histable tr:hover {
+table.histable tr:hover td {
     color: var(--highlight-colour);
+    cursor: pointer;
 }
 
 .backhi:hover {
@@ -434,7 +447,8 @@ tr.clickaddtrack:hover
 
 #artistcoverslist
 {
-    background-color: var(--main-bg-colour);
+    background-color: var(--albumart-artists-bg-colour);
+    background-image: var(--albumart-artists-bg-image);
 }
 
 .highlighted {

@@ -35,6 +35,13 @@
     --playlist-title-border: none;
     --playlist-item-top-border: 1px solid var(--border-colour);
     --playlist-current-bg-colour: unset;
+    --playlist-current-shadow: 0 0 15px var(--highlight-colour);
+    --playlist-current-transition: font-size 0.5s ease, text-shadow 0.5s ease;
+    --playlist-current-track-font-size: 110%;
+    --playlist-current-track-font-weight: normal;
+    --playlist-current-track-left-border: unset;
+    --playlist-current-title-font-size: 125%;
+    --playlist-current-title-font-weight: normal;
 
     --dropmenu-bg-colour: #191919;
     --dropmenu-bg-image: none;
@@ -51,7 +58,7 @@
     --infopane-header-bg-colour: unset;
     --infopane-header-bg-image: none;
 
-    --selected-bg-colour: #CC5500;
+    --selected-bg-colour: rgba(255,255,255,0.5);
 
     --button-colour:  var(--text-colour);
     --button-hover-colour: var(--highlight-colour);
@@ -61,6 +68,8 @@
     --button-bg-image:  none;
     --button-bg-hover-colour: #202020;
     --button-bg-hover-image:  none;
+    --button-font-weight: bold;
+    --button-hover-shadow: 0 0 15px var(--highlight-colour);
 
     --text-entry-text-colour: var(--text-colour);
     --text-entry-border-colour: var(--border-colour-dark);
@@ -90,16 +99,9 @@
     --album-browse-open-bg-colour:#404040;
     --album-browse-open-bg-image: none;
     --album-browse-open-highlight: none;
-}
 
-button, input[type="button"], div.filebutton
-{
-    font-weight:bold;
-}
-
-button:hover, input[type="button"]:hover, div.filebutton:hover
-{
-    text-shadow: 0 0 15px var(--highlight-colour);
+    --albumart-artists-bg-colour: var(--main-bg-colour);
+    --albumart-artists-bg-image:var(--main-bg-image);
 }
 
 #infopane
@@ -108,25 +110,6 @@ button:hover, input[type="button"]:hover, div.filebutton:hover
     border-left: 2px solid var(--border-colour);
     border-right: 2px solid var(--border-colour);
     border-top: 2px solid var(--border-colour);
-}
-
-.playlistcurrentitem
-{
-    font-size:110%;
-    text-shadow: 0 0 15px var(--highlight-colour);
-    transition:font-size 0.5s ease, text-shadow 0.5s ease;
-}
-
-.playlistitem, .playlistalbum
-{
-    transition:font-size 0.5s ease, text-shadow 0.5s ease;
-}
-
-.playlistcurrenttitle
-{
-    font-size: 125%;
-    text-shadow: 0 0 20px var(--highlight-colour);
-    transition:font-size 0.5s ease, text-shadow 0.5s ease;
 }
 
 .highlighted {

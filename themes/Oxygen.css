@@ -35,6 +35,13 @@
     --playlist-title-border: none;
     --playlist-item-top-border: 1px solid #999999;
     --playlist-current-bg-colour: unset;
+    --playlist-current-shadow: unset;
+    --playlist-current-transition: unset;
+    --playlist-current-track-font-size: 100%;
+    --playlist-current-track-font-weight: normal;
+    --playlist-current-track-left-border: unset;
+    --playlist-current-title-font-size: 100%;
+    --playlist-current-title-font-weight: normal;
 
     --dropmenu-bg-colour: unset;
     --dropmenu-bg-image: linear-gradient(#b9b9b9, #b4b4b4);
@@ -61,6 +68,8 @@
     --button-bg-image:  none;
     --button-bg-hover-colour: #bbbbbb;
     --button-bg-hover-image:  none;
+    --button-font-weight: unset;
+    --button-hover-shadow: unset;
 
     --text-entry-text-colour: var(--text-colour);
     --text-entry-border-colour: unset;
@@ -90,6 +99,9 @@
     --album-browse-open-bg-colour: #cccccc;
     --album-browse-open-bg-image: none;
     --album-browse-open-highlight: 1px solid #ffffff;
+
+    --albumart-artists-bg-colour: var(--main-bg-colour);
+    --albumart-artists-bg-image:var(--main-bg-image);
 }
 
 .highlighted {

@@ -40,6 +40,17 @@
     --album1-colour: transparent;
     --album2-colour: var(--main-bg-colour);
     --drop-shadow: 7px 7px 5px rgba(0, 0, 0, 0.5);
+
+    --playlist-current-track-font-size: 120%;
+    --playlist-current-track-font-weight: bold;
+    --playlist-current-track-left-border: 4px solid var(--border-colour);
+    --playlist-current-title-font-size: unset;
+    --playlist-current-title-font-weight: bold;
+    --playlist-current-shadow: 0px 0px 10px var(--text-colour);
+    --playlist-current-transition: font-size 0.3s ease, text-shadow 0.3s ease;
+
+    --button-font-weight: normal;
+    --button-hover-shadow: 0 0 10px var(--highlight-colour);
 }
 
 html
@@ -50,52 +61,12 @@ html
     background-attachment:fixed;
 }
 
-button, input[type="button"], div.filebutton
-{
-    transition: all 0.2s ease;
+#playlistm #horse, #playlistm #playlistbuttons {
+    background-color: var(--main-bg-colour);
 }
 
-button:hover, input[type="button"]:hover, div.filebutton:hover
-{
-    text-shadow: 0 0 10px var(--text-colour);
-    transition: all 0.2s ease;
-}
-
-.playlistcurrentitem
-{
-    font-weight:bold;
-    font-size:120%;
-    border-left:4px solid white;
-    transition:font-size 0.3s ease;
-}
-
+/* This is required when you have a left border on playlist-current-track */
 .clicktrack.playlistcurrentitem
 {
     padding-left:8px;
-}
-
-.playlistitem
-{
-    transition:font-size 0.3s ease, text-shadow 0.3s ease;
-}
-
-.playlistcurrenttitle
-{
-    text-shadow: 0px 0px 10px var(--text-colour);
-    font-weight:bold;
-}
-
-table.histable tr
-{
-    transition:all 0.2s;
-}
-
-table.histable tr:hover {
-    font-size:105%;
-    text-shadow: 0 0 15px var(--highligh-colour);
-    transition:all 0.1s;
-}
-
-#playlistm #horse, #playlistm #playlistbuttons {
-    background-color: var(--main-bg-colour);
 }

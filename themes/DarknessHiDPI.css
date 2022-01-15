@@ -35,6 +35,13 @@
     --playlist-title-border: none;
     --playlist-item-top-border: 1px solid var(--border-colour);
     --playlist-current-bg-colour: unset;
+    --playlist-current-shadow: unset;
+    --playlist-current-transition: unset;
+    --playlist-current-track-left-border: unset;
+    --playlist-current-track-font-size: 110%;
+    --playlist-current-track-font-weight: normal;
+    --playlist-current-title-font-size: 125%;
+    --playlist-current-title-font-weight: normal;
 
     --dropmenu-bg-colour: #191919;
     --dropmenu-bg-image: none;
@@ -61,6 +68,8 @@
     --button-bg-image:  none;
     --button-bg-hover-colour: #202020;
     --button-bg-hover-image:  none;
+    --button-font-weight: bold;
+    --button-hover-shadow: unset;
 
     --text-entry-text-colour: var(--text-colour);
     --text-entry-border-colour: var(--border-colour-dark);
@@ -90,6 +99,9 @@
     --album-browse-open-bg-colour:#404040;
     --album-browse-open-bg-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");;
     --album-browse-open-highlight: none;
+
+    --albumart-artists-bg-colour: var(--main-bg-colour);
+    --albumart-artists-bg-image: unset;
 }
 
 html {
@@ -102,21 +114,6 @@ html {
     background-repeat: no-repeat, repeat !important;
     background-attachment: fixed !important;
     min-height: 100% !important;
-}
-
-button, input[type="button"], div.filebutton
-{
-    font-weight:bold;
-}
-
-.playlistcurrentitem
-{
-    font-size:110%;
-}
-
-.playlistcurrenttitle
-{
-    font-size: 125%;
 }
 
 .highlighted {

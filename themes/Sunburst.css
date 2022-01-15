@@ -35,6 +35,13 @@
     --playlist-title-border: none;
     --playlist-item-top-border: none;
     --playlist-current-bg-colour:unset;
+    --playlist-current-shadow: 0px 0px 20px var(--highlight-colour);
+    --playlist-current-transition: font-size 0.3s ease;
+    --playlist-current-track-font-size: 120%;
+    --playlist-current-track-font-weight: bold;
+    --playlist-current-track-left-border: 4px solid var(--border-colour);
+    --playlist-current-title-font-size: 100%;
+    --playlist-current-title-font-weight: bold;
 
     --dropmenu-bg-colour: unset;
     --dropmenu-bg-image: radial-gradient(circle farthest-side at top left, yellow, orange, red);
@@ -61,6 +68,8 @@
     --button-bg-image: radial-gradient(circle farthest-side at center, yellow, orange, red);
     --button-bg-hover-colour: unset;
     --button-bg-hover-image: radial-gradient(circle farthest-side at center, yellow, orange, red);
+    --button-font-weight: unset;
+    --button-hover-shadow: 0 0 15px var(--highlight-colour);
 
     --text-entry-text-colour: var(--text-colour);
     --text-entry-border-colour: var(--border-colour);
@@ -90,6 +99,9 @@
     --album-browse-open-bg-colour: rgba(0,0,0,0.2);
     --album-browse-open-bg-image: none;
     --album-browse-open-highlight: none;
+
+    --albumart-artists-bg-colour: rgba(0,0,0,0.2);
+    --albumart-artists-bg-image: unset;
 }
 
 html {
@@ -103,11 +115,6 @@ a:hover,a:active
     text-shadow: 0 0 15px var(--text-colour);
 }
 
-button:hover, input[type="button"]:hover, div.filebutton:hover
-{
-    text-shadow: 0 0 15px var(--highlight-colour);
-}
-
 a.album:hover,a.album:active
 {
     text-shadow: 0 0 15px var(--highlight-colour);
@@ -117,33 +124,9 @@ a.album:hover,a.album:active
     text-shadow: 0 0 15px var(--highlight-colour);
 }
 
-.playlistcurrentitem
-{
-    font-weight:bold;
-    font-size:120%;
-    border-left:4px solid yellow;
-    transition:font-size 0.3s ease;
-}
-
 .clicktrack.playlistcurrentitem
 {
     padding-left:8px;
-}
-
-.playlistitem
-{
-    transition:font-size 0.3s ease;
-}
-
-.playlistcurrenttitle
-{
-    text-shadow: 0px 0px 20px var(--highlight-colour);
-    font-weight:bold;
-}
-
-#artistcoverslist
-{
-    background-color:rgba(0,0,0,0.2);
 }
 
 .covercontainer.highlighted

@@ -35,6 +35,13 @@
     --playlist-title-border: none;
     --playlist-item-top-border: 1px solid var(--border-colour);
     --playlist-current-bg-colour: unset;
+    --playlist-current-shadow: unset;
+    --playlist-current-transition: unset;
+    --playlist-current-track-font-size: 100%;
+    --playlist-current-track-font-weight: normal;
+    --playlist-current-track-left-border: unset;
+    --playlist-current-title-font-size: 100%;
+    --playlist-current-title-font-weight: normal;
 
     --dropmenu-bg-colour: unset;
     --dropmenu-bg-image: linear-gradient(#E5E5E5, #b3b3b3);
@@ -61,6 +68,8 @@
     --button-bg-image:  linear-gradient(#ccdcf2, #c0d0e7);
     --button-bg-hover-colour: unset;
     --button-bg-hover-image:  linear-gradient(#ccdcf2, #c0d0e7);
+    --button-font-weight: unset;
+    --button-hover-shadow: unset;
 
     --text-entry-text-colour: var(--text-colour);
     --text-entry-border-colour: transparent;
@@ -90,6 +99,9 @@
     --album-browse-open-bg-colour: var(--darker-bg-colour);
     --album-browse-open-bg-image: none;
     --album-browse-open-highlight: none;
+
+    --albumart-artists-bg-colour: var(--main-bg-colour);
+    --albumart-artists-bg-image: none;
 }
 
 input.inbrowser, div.inbrowser {
@@ -107,10 +119,6 @@ input.inbrowser, div.inbrowser {
 .covercontainer.highlighted
 {
     margin-bottom: 0px !important;
-}
-
-#artistcoverslist {
-    background-color: var(--main-bg-colour);
 }
 
 body.mobile #horse {

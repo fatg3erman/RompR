@@ -35,6 +35,13 @@
     --playlist-title-border: none;
     --playlist-item-top-border: none;
     --playlist-current-bg-colour: unset;
+    --playlist-current-shadow: unset;
+    --playlist-current-transition: unset;
+    --playlist-current-track-font-size: 100%;
+    --playlist-current-track-font-weight: normal;
+    --playlist-current-track-left-border: unset;
+    --playlist-current-title-font-size: 100%;
+    --playlist-current-title-font-weight: normal;
 
     --dropmenu-bg-colour: unset;
     --dropmenu-bg-image: url('../../themes/oldpaper.jpg');
@@ -61,6 +68,8 @@
     --button-bg-image:  none;
     --button-bg-hover-colour: rgba(255, 72, 0, 0.1);
     --button-bg-hover-image:  none;
+    --button-font-weight: bold;
+    --button-hover-shadow: unset;
 
     --text-entry-text-colour: var(--text-colour);
     --text-entry-border-colour: var(--border-colour);
@@ -90,6 +99,9 @@
     --album-browse-open-bg-colour: unset;
     --album-browse-open-bg-image: url('../../themes/tanpaper.jpg');
     --album-browse-open-highlight: none;
+
+    --albumart-artists-bg-colour: var(--main-bg-colour);
+    --albumart-artists-bg-image: url('../../themes/oldpaper.jpg');
 }
 
 html {
@@ -98,13 +110,12 @@ html {
     background-attachment:fixed;
 }
 
-body.phone #headerbar, div.albumcovers .infosection, #artistcoverslist {
+body.phone #headerbar, div.albumcovers .infosection {
 	background-image:url('themes/oldpaper.jpg') !important;
 }
 
 button, div.filebutton {
     box-shadow: 2px 2px 2px rgba(50, 50, 50, 0.8);
-    font-weight:bold;
 }
 
 button:active, div.filebutton:active {

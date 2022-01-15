@@ -35,6 +35,13 @@
     --playlist-title-border: none;
     --playlist-item-top-border: 1px solid var(--border-colour-dark);
     --playlist-current-bg-colour: unset;
+    --playlist-current-shadow: unset;
+    --playlist-current-transition: unset;
+    --playlist-current-track-font-size: 100%;
+    --playlist-current-track-font-weight: normal;
+    --playlist-current-track-left-border: unset;
+    --playlist-current-title-font-size: 100%;
+    --playlist-current-title-font-weight: normal;
 
     --dropmenu-bg-colour: unset;
     --dropmenu-bg-image: url('../../newimages/silver2.jpg');
@@ -61,6 +68,8 @@
     --button-bg-image:  none;
     --button-bg-hover-colour: unset;
     --button-bg-hover-image:  none;
+    --button-font-weight: unset;
+    --button-hover-shadow: 0 0 15px var(--highlight-colour);
 
     --text-entry-text-colour: var(--text-colour);
     --text-entry-border-colour: transparent;
@@ -90,6 +99,10 @@
     --album-browse-open-bg-colour: #dddddd;
     --album-browse-open-bg-image: none;
     --album-browse-open-highlight: none;
+
+    --albumart-artists-bg-colour: var(--main-bg-colour);
+    --albumart-artists-bg-image:var(--main-bg-image);
+
 }
 
 html {
@@ -103,8 +116,4 @@ html {
 
 .mCSB_dragger_bar {
     background:rgba(0,0,0,0.75) !important;
-}
-
-button:hover, div.filebutton:hover {
-    text-shadow: 0 0 15px var(--highlight-colour);
 }

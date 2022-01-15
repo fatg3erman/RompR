@@ -40,6 +40,17 @@
     --album1-colour: transparent;
     --album2-colour: var(--main-bg-colour);
     --drop-shadow: 7px 7px 5px rgba(50, 50, 50, 0.5);
+
+    --playlist-current-track-font-size: 120%;
+    --playlist-current-track-font-weight: bold;
+    --playlist-current-track-left-border: unset;
+    --playlist-current-title-font-size: unset;
+    --playlist-current-title-font-weight: bold;
+    --playlist-current-shadow: unset;
+    --playlist-current-transition: font-size 0.3s ease, text-shadow 0.3s ease;
+
+    --button-font-weight: normal;
+    --button-hover-shadow: unset;
 }
 
 html {
@@ -47,36 +58,4 @@ html {
     background-size:cover;
     background-repeat:no-repeat;
     background-attachment:fixed;
-}
-
-.playlistcurrentitem
-{
-    font-weight:bold;
-    font-size:120%;
-    transition:font-size 0.2s ease;
-}
-
-.playlistitem
-{
-    transition:font-size 0.3s ease;
-}
-
-.playlistcurrenttitle
-{
-    font-weight:bold;
-}
-
-.backhi
-{
-    transition:all 0.2s;
-}
-
-table.histable tr
-{
-    transition:all 0.2s;
-}
-
-table.histable tr:hover {
-    font-size:105%;
-    transition:all 0.2s;
 }

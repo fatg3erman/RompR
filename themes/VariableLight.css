@@ -35,6 +35,13 @@
     --playlist-title-border: none;
     --playlist-item-top-border: none;
     --playlist-current-bg-colour:rgba(0,0,0,0.3);
+    --playlist-current-shadow: unset;
+    --playlist-current-transition: unset;
+    --playlist-current-track-font-size: 100%;
+    --playlist-current-track-font-weight: bold;
+    --playlist-current-track-left-border: 4px solid var(--vl_text_colour);
+    --playlist-current-title-font-size: 100%;
+    --playlist-current-title-font-weight: bold;
 
     --dropmenu-bg-colour: rgba(0,0,0,0.9);
     --dropmenu-bg-image: none;
@@ -61,6 +68,8 @@
     --button-bg-image:  none;
     --button-bg-hover-colour: rgba(200,200,200,0.4);
     --button-bg-hover-image:  none;
+    --button-font-weight: unset;
+    --button-hover-shadow: unset;
 
     --text-entry-text-colour: var(--text-colour);
     --text-entry-border-colour: var(--border-colour-dark);
@@ -90,6 +99,9 @@
     --album-browse-open-bg-colour: rgba(200,200,200,0.07);
     --album-browse-open-bg-image: none;
     --album-browse-open-highlight: none;
+
+    --albumart-artists-bg-colour: unset;
+    --albumart-artists-bg-image: unset;
 }
 
 html {
@@ -120,9 +132,7 @@ select {
 
 .playlistcurrentitem
 {
-    font-weight:bold;
-    border-left:4px solid var(--vl_text_colour);
-    color:var(--vl_text_colour);
+    color:var(--vl_text_colour) !important;
 }
 
 .clicktrack.playlistcurrentitem
@@ -132,27 +142,19 @@ select {
 
 .playlistcurrenttitle
 {
-    text-shadow: 0px 0px 20px var(--vl_text_colour);
-    font-weight:bold;
-    color:var(--vl_text_colour);
-    text-shadow: 0px 0px 20px var(--vl_text_colour);
+    color:var(--vl_text_colour) !important;
+    text-shadow: 0px 0px 20px var(--vl_text_colour) !important;
 }
 
 a:hover,a:active
 {
-    text-shadow: 0 0 15px var(--vl_text_colour);
+    text-shadow: 0 0 15px var(--vl_text_colour) !important;
     cursor:pointer;
 }
 
 .item
 {
     margin-bottom: 2px;
-}
-
-a.album:hover,a.album:active
-{
-    text-shadow: 0 0 15px var(--vl_text_colour);
-    cursor:pointer;
 }
 
 .covercontainer.highlighted
@@ -162,13 +164,13 @@ a.album:hover,a.album:active
 
 .bsel
 {
-    color:var(--vl_text_colour);
-    text-shadow:0 0 15px var(--vl_text_colour);
+    color:var(--vl_text_colour) !important;
+    text-shadow:0 0 15px var(--vl_text_colour) !important;
 }
 
 #artistchooser
 {
     background-color:rgba(200,200,200,0.1);
-    color:var(--vl_text_colour);
+    color:var(--vl_text_colour) !important;
 }
 

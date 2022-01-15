@@ -35,6 +35,13 @@
     --playlist-title-border: none;
     --playlist-item-top-border: 1px solid var(--border-colour-dark);
     --playlist-current-bg-colour: rgba(255,255,255,0.1);
+    --playlist-current-shadow: 0 0 12px var(--text-colour);
+    --playlist-current-transition: font-size 0.5s ease, text-shadow 0.5s ease;
+    --playlist-current-track-font-size: 110%;
+    --playlist-current-track-font-weight: normal;
+    --playlist-current-track-left-border: unset;
+    --playlist-current-title-font-size: 125%;
+    --playlist-current-title-font-weight: normal;
 
     --dropmenu-bg-colour: unset;
     --dropmenu-bg-image: linear-gradient(#0b0b0b, #444444);
@@ -61,6 +68,8 @@
     --button-bg-image:  none;
     --button-bg-hover-colour: #222222;
     --button-bg-hover-image:  none;
+    --button-font-weight: unset;
+    --button-hover-shadow: unset;
 
     --text-entry-text-colour: var(--text-colour);
     --text-entry-border-colour: var(--border-colour-dark);
@@ -90,36 +99,19 @@
     --album-browse-open-bg-colour: unset;
     --album-browse-open-bg-image: linear-gradient(rgba(100,100,100,0.2), rgba(200,200,200,0.1));
     --album-browse-open-highlight: 1px solid rgba(200,200,200,0.1);
+
+    --albumart-artists-bg-colour: var(--main-bg-colour);
+    --albumart-artists-bg-image:var(--main-bg-image);
 }
 
-.playlistcurrentitem
-{
-    font-size:110%;
-    text-shadow: 0 0 12px var(--text-colour);
-    transition:font-size 0.5s ease, text-shadow 0.5s ease;
-}
-
-.playlistitem
-{
-    transition:font-size 0.5s ease, text-shadow 0.5s ease;
-}
-
-.playlistcurrenttitle
-{
-    font-size:125%;
-    text-shadow: 0 0 12px var(--text-colour);
-    transition:font-size 0.5s ease, text-shadow 0.5s ease;
-}
-
-.playlisttitle {
-    transition:font-size 0.5s ease, text-shadow 0.5s ease;
-}
-
+/* This is needed for themes that use a translucent colour for the image editor (album-browse-open-bg-colour)
+    otherwise the selected album and the editor overlap and that's visible. The overlap is required when you
+    have a border on .highlighted */
 .covercontainer.highlighted
 {
     margin-bottom: 0px !important;
 }
 
-body.phone #headerbar, div.albumcovers .infosection, #artistcoverslist {
+body.phone #headerbar, div.albumcovers .infosection {
     background-image: linear-gradient(#000000, #444444) !important;
 }
