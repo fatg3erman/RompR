@@ -12,7 +12,6 @@
     --highlight-colour: #ffffff;
     --link-colour: #ff4800;
     --border-colour: #aaaaaa;
-    --border-colour-dark: #666666;
 
     --button-colour:  #dddddd;
     --button-hover-colour:  var(--highlight-colour);
@@ -51,6 +50,10 @@
 
     --button-font-weight: normal;
     --button-hover-shadow: 0 0 15px var(--highlight-colour);
+
+    --waiting-swinger-width: 50px;
+    --waiting-swinger-height: 2px;
+    --waiting-swinger-bg-image: linear-gradient(to left,  rgba(155, 172, 227, 0) 0%,  rgba(155, 172, 227, 1) 50%, rgba(155, 172, 227, 0) 100%);
 }
 
 html {

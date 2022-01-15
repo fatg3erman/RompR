@@ -390,12 +390,12 @@ tr.clickaddtrack:hover
 
 .progressbar
 {
-    border: 1px solid var(--border-colour-dark);
+    border: 1px solid var(--border-colour);
 }
 
 .progressbar_v
 {
-    border: 1px solid var(--border-colour-dark);
+    border: 1px solid var(--border-colour);
 }
 
 /*
@@ -534,7 +534,7 @@ table.tracklist {
 }
 
 .navbox-group {
-    border-color: var(--border-colour-dark );
+    border-color: var(--border-colour);
 }
 
 .navbox-list {
@@ -543,12 +543,12 @@ table.tracklist {
 
 .underline
 {
-    border-bottom: 1px solid var(--border-colour-dark);
+    border-bottom: 1px solid var(--border-colour);
 }
 
 .infosection h2
 {
-    border-bottom:2px solid var(--border-colour-dark);
+    border-bottom:2px solid var(--border-colour);
 }
 
 div.drop-images-here {
@@ -569,10 +569,10 @@ div.drop-images-here {
 }
 
 .topbarplaycontrols {
-    border-left: 1px solid var(--border-colour-dark);
-    border-right: 1px solid var(--border-colour-dark);
+    border-left: 1px solid var(--border-colour);
+    border-right: 1px solid var(--border-colour);
 }
 
 .mostrecent {
-    border-top: 1px solid var(--border-colour-dark);
+    border-top: 1px solid var(--border-colour);
 }

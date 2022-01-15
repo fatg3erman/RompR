@@ -121,7 +121,6 @@ input[type=checkbox], input[type=radio] {
 input[type=text],input[type="number"] {
 	border: 0px none;
 	border-radius: 0 0;
-	/*background-color: white;*/
 	box-sizing: border-box;
 }
 
@@ -180,7 +179,6 @@ div.selectholder {
 	pointer-events:none;
 	z-index:98;
 	width: 100%;
-	/*background-color:white;*/
 }
 
 div.pref div.selectholder:not(.boycie) {
@@ -220,8 +218,6 @@ option {
 	display:none;
 	max-height:15em;
 	overflow:auto;
-	/*background-color:#ffffff;*/
-	/*color:#000000;*/
 	line-height:1.3em;
 	padding-left:4px;
 	cursor:pointer;
@@ -466,7 +462,7 @@ option {
 .tagholder table tr.datetag
 {
 	font-size: 120%;
-	border-top:4px solid rgba(0,0,0,0);
+	border-top:4px solid var(--border-colour);
 	padding:4px;
 }
 
@@ -478,7 +474,7 @@ option {
 	padding-top:0.4em;
 	padding-bottom:0.4em;
 	box-sizing: border-box;
-	border: 4px solid rgba(0,0,0,0);
+	border: 4px solid var(--border-colour);
 }
 
 .vertcentre {
@@ -828,16 +824,13 @@ div.item div.containerbox.vertical.expand {
 	margin-left:4px;
 	padding-top:8px;
 	padding-bottom:8px;
-	font-size:110%;
 }
 
 .playlistcurrenttitle {
-	font-size:120%;
 	box-sizing:border-box;
 }
 
 .playlistcurrentitem {
-	font-size:100%;
 	box-sizing:border-box;
 }
 
@@ -1065,7 +1058,7 @@ i.icon-menu {
 .infowiki h2 {
 	margin-top: 10px;
 	margin-bottom:8px;
-	border-bottom:1px solid #454545;
+	border-bottom:1px solid var(--border-colour);
 	padding-bottom:0.5em;
 	overflow:hidden;
 }
@@ -1132,7 +1125,7 @@ table.padded {
 }
 
 table.padded tr {
-	border-bottom:1px solid #454545;
+	border-bottom:1px solid var(--border-colour);
 }
 
 table.padded tr td {
@@ -1475,7 +1468,7 @@ table.servers-list {
 }
 
 table.servers-list tr {
-	border-bottom:1px solid #ffffff;
+	border-bottom:1px solid var(--border-colour);
 	margin-bottom:0.3em;
 }
 
@@ -1673,7 +1666,7 @@ tr.chart td {
 	margin-bottom:12px;
 	margin-left:12px;
 	margin-top:12px;
-	border: 1px solid #454545;
+	border: 1px solid var(--border-colour);
 	font-size: 92%;
 	line-height: 1.5em;
 	clear: right;
@@ -1685,7 +1678,7 @@ tr.chart td {
 	margin-bottom:12px;
 	margin-left:12px;
 	margin-top:12px;
-	border: 1px solid #454545;
+	border: 1px solid var(--border-colour);
 	font-size: 92%;
 	line-height: 1.5em;
 	clear: right;
@@ -1763,7 +1756,7 @@ th.mbox-text
 #toc, .toc {
 	display: inline-block;
 	padding: 7px;
-	border: 1px solid #454545;
+	border: 1px solid var(--border-colour);
 	font-size:90%;
 }
 
@@ -1781,17 +1774,17 @@ span.item {
 
 table.wikitable {
 	margin: 1em 0;
-	border: 1px solid #454545;
+	border: 1px solid var(--border-colour);
 	border-collapse: collapse;
 }
 
 table.wikitable tr td {
-	border: 1px solid #454545;
+	border: 1px solid var(--border-colour);
 	padding:0.2em;
 }
 
 table.wikitable tr th {
-	border: 1px solid #454545;
+	border: 1px solid var(--border-colour);
 	padding:0.2em;
 }
 
@@ -1815,7 +1808,7 @@ th.navbox-group {
 }
 
 table.ambox-content {
-	border-left: 10px solid #f28500;
+	border-left: 10px solid var(--border-colour);
 }
 
 table.ambox {
@@ -2142,6 +2135,10 @@ div.unplayable {
 	padding-left: 1em;
 }
 
+.snapcastclient .rangechooser {
+	margin-right: 1em;
+}
+
 .alarmdescription {
 	line-height: 1.2em;
 }
@@ -2157,16 +2154,16 @@ td.dan, th.dan{
 .wafflything {
 	position: relative;
 	overflow:hidden;
-	height:2px !important;
+	height: var(--waiting-swinger-height) !important;
 	border: none !important;
 	margin-bottom: 4px;
 }
 
 .wafflebanger {
 	height: 100%;
-	width: 50px;
+	width: var(--waiting-swinger-width);
 	position: relative;
-	background-image: linear-gradient(to left, rgba(255,255,255,0) 0%, rgba(255,255,255,50) 50% ,rgba(255,255,255,0) 100%);
+	background-image: var(--waiting-swinger-bg-image);
 }
 
 @keyframes switchback {
@@ -2245,4 +2242,11 @@ div.drop-images-here {
 
 .border-red {
     border: 1px solid red;
+}
+
+.snapcastgroup input[type="text"].expand {
+	font-size: 120%;
+	font-weight: bold;
+	background-color: transparent !important;
+	color: var(--text-colour) !important;
 }

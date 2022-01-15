@@ -7,7 +7,6 @@
 
     --text-colour: black;
     --border-colour: #ccdcf2;
-    --border-colour-dark: #ccdcf2;
     --link-colour: #0b0080;
     --highlight-colour: #3875d7;
 
@@ -102,6 +101,10 @@
 
     --albumart-artists-bg-colour: var(--main-bg-colour);
     --albumart-artists-bg-image: none;
+
+    --waiting-swinger-width: 50px;
+    --waiting-swinger-height: 2px;
+    --waiting-swinger-bg-image: linear-gradient(to left,  rgba(192, 208, 231, 0) 0%,  rgba(192, 208, 231, 1) 50%, rgba(192, 208, 231, 0) 100%);
 }
 
 input.inbrowser, div.inbrowser {
