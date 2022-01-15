@@ -39,9 +39,9 @@
     --playlist-current-transition: unset;
     --playlist-current-track-left-border: unset;
     --playlist-current-track-font-size: 110%;
-    --playlist-current-track-font-weight: normal;
+    --playlist-current-track-font-weight: unset;
     --playlist-current-title-font-size: 125%;
-    --playlist-current-title-font-weight: normal;
+    --playlist-current-title-font-weight: unset;
 
     --dropmenu-bg-colour: #191919;
     --dropmenu-bg-image: none;

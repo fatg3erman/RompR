@@ -4,6 +4,9 @@ Note that some versions listed here may be unreleased, I use version number incr
 
 ## Version 1.60.2
 * Improve Metadata backup so it now restores all data including Podcasts and Radio Stations.
+* Improve Themes to make them easier to edit. Add two new ones. in the process I decided to delete
+some of the old ones as they were ugly and I couldn't be bothered to update them.
+
 
 ## Version 1.60
 * I noticed an error in the installation instructions.

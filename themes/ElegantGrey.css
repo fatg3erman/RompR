@@ -38,10 +38,10 @@
     --playlist-current-shadow: 0 0 12px var(--text-colour);
     --playlist-current-transition: font-size 0.5s ease, text-shadow 0.5s ease;
     --playlist-current-track-font-size: 110%;
-    --playlist-current-track-font-weight: normal;
+    --playlist-current-track-font-weight: unset;
     --playlist-current-track-left-border: unset;
     --playlist-current-title-font-size: 125%;
-    --playlist-current-title-font-weight: normal;
+    --playlist-current-title-font-weight: unset;
 
     --dropmenu-bg-colour: unset;
     --dropmenu-bg-image: linear-gradient(#0b0b0b, #444444);
