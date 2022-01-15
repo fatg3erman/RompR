@@ -170,7 +170,3 @@ input.inbrowser, div.inbrowser {
     border-bottom: 4px solid var(--highlight-colour) !important;
     border-radius:2px !important;
 }
-
-#artistcoverslist {
-    box-shadow: 6px 6px 6px rgba(50, 50, 50, 0.6);
-}
