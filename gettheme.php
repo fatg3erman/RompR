@@ -13,10 +13,31 @@ logger::log('THEME','Font        :',$fontfamily);
 logger::log('THEME','Font Size   :',$fontsize);
 logger::log('THEME','Cover Size  :',$coversize);
 logger::log('THEME','Icons       :',$icontheme);
-// Font MUST be first, otherwise the @import on the Google fonts doesn't work
-readfile('fonts/'.$fontfamily);
-readfile('themes/'.$theme);
+
+//We need to put any @imports first
+$files = [
+	'fonts/'.$fontfamily,
+	'themes/'.$theme
+];
+
+$lines = [];
+foreach ($files as $file) {
+	$lines[$file] = file($file);
+	print implode('', array_filter($lines[$file], 'check_for_import'));
+}
+// This will put the @imports in again, but that doesn't matter
+// because @imports must come before everything else in the file
+foreach ($lines as $file) {
+	print implode('', $file);
+}
+
+// These files don't have @imports in them at the time of writing
 readfile('sizes/'.$fontsize);
 readfile('coversizes/'.$coversize);
 readfile('iconsets/'.$icontheme.'/theme.css');
+
+function check_for_import($v) {
+	return (strpos($v, "@import") !== false);
+}
+
 ?>

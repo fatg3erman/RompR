@@ -824,9 +824,6 @@ img.jalopy200 {
 }
 
 @media screen and (min-width: 641px) {
-	.cleft.narrowright {
-		margin-left:1em;
-	}
 	.info-box-list img {
 		max-width: 220px;
 	}
@@ -847,18 +844,6 @@ img.jalopy200 {
 @media screen and (max-width: 799px) {
 	.onlyverywide {
 		display: none;
-	}
-}
-
-@media screen and (max-width: 540px) {
-	.stleft
-	{
-		float:none;
-		width:auto;
-		max-width:95%;
-		clear:both;
-		border-right:none !important;
-		border-bottom: 1px solid #dddddd !important;
 	}
 }
 

@@ -1,210 +1,102 @@
-/*
-=====================================================================
-= Standard HTML Elements
-=====================================================================
-*/
+@import url("themes/theme_base/colour_theme.css");
 
-html {
-    background-image: linear-gradient(#000000, #444444);
-    background-size:cover;
-    background-repeat:no-repeat;
-    background-attachment:fixed;
-}
+:root {
+    --min-progress-colour: rgba(150, 150, 150, 0.99);
+    --max-progress-colour: rgba(255, 255, 255, 0.99);
+    --progress-bg-colour: rgba(0,0,0,0);
 
-body
-{
+    --text-colour: #dddddd;
+    --border-colour: #bbbbbb;
+    --border-colour-dark: #555555;
+    --link-colour: orange;
+    --highlight-colour: #ffffff;
 
-}
+    --main-bg-colour: unset;
+    --main-bg-image: linear-gradient(#000000, #444444);
 
-body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,input
-{
-    color:#dddddd;
-}
+    --darker-bg-colour: rgba(255, 255, 255, 0.1);
 
-button, input[type="button"], div.filebutton
-{
-    background-color:#000000;
-    border:none;
-    color:#dddddd;
-    font-weight:bold;
-}
+    --headerbar-bg-colour: unset;
+    --headerbar-bg-image: linear-gradient(#050505, #0b0b0b);
 
-button:hover, input[type="button"]:hover, div.filebutton:hover
-{
-    background-color:#222222;
-    color:#ffffff;
-}
+    --topbit-bg-colour: unset;
+    --topbit-bg-image: none;
 
-select {
-    color:#dddddd;
-}
+    --sources-bg-colour: unset;
+    --sources-bg-image:  none;
+    --sources-border-top: none;
 
-select:hover {
-    color:#ffffff;
-}
+    --horse-bg-colour: unset;
+    --horse-bg-image: none;
 
-div.selectholder {
-    background-color:rgba(200,200,200,0.05);
-}
+    --playlist-bg-colour: unset;
+    --playlist-bg-image: none;
+    --playlist-title-bg-colour: unset;
+    --playlist-title-border: none;
+    --playlist-item-top-border: 1px solid var(--border-colour-dark);
+    --playlist-current-bg-colour: rgba(255,255,255,0.1);
 
-div.selectholder:hover {
-    background-color:rgba(200,200,200,0.1);
-}
+    --dropmenu-bg-colour: unset;
+    --dropmenu-bg-image: linear-gradient(#0b0b0b, #444444);
 
-input[type="text"],input[type="number"] {
-    background-color: rgba(200,200,200,0.05);
-    border-bottom: 1px solid #555555;
-}
+    --configtitle-bg-colour: rgba(255,255,255,0.2);
+    --configtitle-bg-image: none;
+    --configtitle-border-bottom: none;
 
-input[type="text"]:hover,input[type="number"]:hover {
-    background-color: rgba(200,200,200,0.1);
-    border-bottom: 1px solid #555555;
-}
+    --infopane-border-top: none;
+    --infopane-bg-colour: unset;
+    --infopane-bg-image: none;
+    --infopane-text-colour: unset;
 
-input[type="text"]:focus,input[type="number"]:focus {
-    transition: border-bottom 0.5s ease;
-    border-bottom: 1px solid #bbbbbb;
-}
+    --infopane-header-bg-colour: unset;
+    --infopane-header-bg-image: none;
 
-a:link {
-    color:orange;
-}
+    --selected-bg-colour: rgba(255,255,255,0.2);
 
-a:visited {
-    color:orange;
-}
+    --button-colour:  var(--text-colour);
+    --button-hover-colour: var(--highlight-colour);
+    --button-border: none;
+    --button-hover-border: none;
+    --button-bg-colour: black;
+    --button-bg-image:  none;
+    --button-bg-hover-colour: #222222;
+    --button-bg-hover-image:  none;
 
-a:hover,a:active
-{
-    color:yellow;
-}
+    --text-entry-text-colour: var(--text-colour);
+    --text-entry-border-colour: var(--border-colour-dark);
+    --text-entry-hover-border-colour: var(--border-colour-dark);
+    --text-entry-active-border-colour: var(--border-colour);
+    --text-entry-bg-colour: rgba(200,200,200,0.05);
+    --text-entry-hover-bg-colour: rgba(200,200,200,0.1);
+    --text-entry-active-bg-colour: rgba(200,200,200,0.15);
 
-/*
-=====================================================================
-= Specific Elements By ID
-=====================================================================
-*/
-/*
-body.mobile, body.phone .dropmenu {
-    background-image: linear-gradient(#000000, #444444);
-}
+    --select-text-colour: var(--text-colour);
+    --select-bg-colour: var(--text-entry-bg-colour);
+    --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
 
-body.desktop #infobar
-{
-    background-image: linear-gradient(#000000, #050505);
-}
+    --album1-colour: transparent;
+    --album2-colour: transparent;
+    --drop-shadow: 7px 7px 5px rgba(0, 0, 0, 0.9);
 
-body.desktop #thetopbit
-{
-    background-image: linear-gradient(#000000, #050505);
-}
+    --bordered-top: 1px solid #222222;
+    --bordered-right: 1px solid #292929;
+    --bordered-bottom: 1px solid #292929;
+    --bordered-left: 1px solid #222222;
 
-#bottompage
-{
-    background-image: linear-gradient(#0b0b0b, #444444);
-}
-*/
-
-body.desktop #headerbar
-{
-    background-image: linear-gradient(#050505, #0b0b0b);
-}
-
-#pset {
-    background-color: rgba(150, 150, 150, 0.99);
-}
-#pmaxset {
-    background-color: rgba(255, 255, 255, 0.99);
-}
-
-#custombackground
-{
-    display:none;
-}
-
-body.desktop #notifications
-{
-    background-image: linear-gradient(#0b0b0b, #222222);
-    border-left:1px solid #262626;
-    border-bottom:1px solid #000000;
-    border-right:1px solid #000000;
-    border-top:none;
-    box-shadow: 4px 4px 2px rgba(255, 255, 255, 0.1);
-}
-
-body.phone #notifications
-{
-    background-image: linear-gradient(#0b0b0b, #222222);
-    border-left:1px solid #262626;
-    border-top:1px solid #262626;
-    border-right:1px solid #000000;
-    border-bottom:none;
-}
-
-#wikipopup
-{
-    background-image: linear-gradient(#050505, #0b0b0b);
-}
-
-#imagecontainer
-{
-    background-image: linear-gradient(#0b0b0b, #444444);
-}
-
-#tagadder
-{
-    background-image: linear-gradient(#000000, #050505);
-    border-left:1px solid #666666;
-    border-bottom:1px solid #000000;
-    border-right:1px solid #000000;
-}
-
-#dragger
-{
-    background-color:rgba(255,255,255,0.3);
-}
-
-/*
-=====================================================================
-= General Classes
-=====================================================================
-*/
-
-.bordered
-{
-    border-left:1px solid #222222;
-    border-bottom:1px solid #292929;
-    border-right:1px solid #292929;
-    border-top:1px solid #222222;
-}
-
-a.album:visited
-{
-    color:#eeeeee;
-}
-
-a.album:hover,a.album:active
-{
-    color:#ffffff;
-}
-
-.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
-    color:#ffffff;
-    text-shadow: 0 0 8px #aaaaaa;
-}
-
-.selected
-{
-    background-color:rgba(255,255,255,0.2);
+    --album-browse-bg-colour: unset;
+    --album-browse-bg-image: linear-gradient(rgba(100,100,100,0.3), rgba(200,200,200,0.2));
+    --skypotato-openalbum-bg-colour: unset;
+    --skypotato-openalbum-bg-image: linear-gradient(rgba(200,200,200,0.2), rgba(220,220,220,0.2));
+    --album-browse-open-bg-colour: unset;
+    --album-browse-open-bg-image: linear-gradient(rgba(100,100,100,0.2), rgba(200,200,200,0.1));
+    --album-browse-open-highlight: 1px solid rgba(200,200,200,0.1);
 }
 
 .playlistcurrentitem
 {
     font-size:110%;
-    text-shadow: 0 0 12px #cccccc;
+    text-shadow: 0 0 12px var(--text-colour);
     transition:font-size 0.5s ease, text-shadow 0.5s ease;
-    color:#dddddd;
-    background-color:rgba(255,255,255,0.1);
 }
 
 .playlistitem
@@ -212,320 +104,22 @@ a.album:hover,a.album:active
     transition:font-size 0.5s ease, text-shadow 0.5s ease;
 }
 
-.playlistalbum
-{
-    transition:font-size 0.5s ease, text-shadow 0.5s ease;
-}
-
 .playlistcurrenttitle
 {
     font-size:125%;
-    text-shadow: 0 0 12px #cccccc;
-    background-color:rgba(255,255,255,0.1);
+    text-shadow: 0 0 12px var(--text-colour);
     transition:font-size 0.5s ease, text-shadow 0.5s ease;
 }
 
-.item
+.playlisttitle {
+    transition:font-size 0.5s ease, text-shadow 0.5s ease;
+}
+
+.covercontainer.highlighted
 {
-    border-top:1px solid #444444;
+    margin-bottom: 0px !important;
 }
 
-.stleft
-{
-    border-right:1px solid #aaaaaa;
-}
-
-.popupwindow
-{
-    background-image: linear-gradient(#101010, #303030);
-    border-left:1px solid #555555;
-    border-bottom:1px solid #555555;
-    border-right:1px solid #555555;
-    border-top:1px solid #555555;
-}
-
-.backhi:hover {
-    color:#ffffff;
-    cursor:pointer;
-    background-color:rgba(255,255,255,0.1);
-}
-
-/*Prevent submenus from having all entries highlighted
-due to :hover events propagating from the parent menu
-*/
-.backhi:hover>div.topdropmenu>div.backhi {
-    color:#dddddd;
-}
-
-/*Make sure the submenu entry being hovered over still gets highlighted*/
-
-.backhi:hover>div.topdropmenu>div.backhi:hover {
-    color:#ffffff;
-    background-color:rgba(255,255,255,0.1);
-}
-
-
-table.histable tr:hover {
-    background-color:rgba(255,255,255,0.1);
-    cursor:pointer;
-}
-
-.tagholder table tr th
-{
-    border-bottom:1px solid #cccccc;
-}
-
-tr.clickaddtrack:hover
-{
-    color:#ffffff;
-    text-shadow: 0 0 8px #cccccc;
-}
-
-.drop-box
-{
-    background-image: linear-gradient(#0b0b0b, #444444);
-    color:#dddddd;
-}
-
-.bsel
-{
-    color:#ffffff;
-    text-shadow: 0 0 8px #cccccc;
-}
-
-.bmid
-{
-    border-left:2px solid #ffffff;
-}
-
-.currentbun
-{
-    border-bottom:1px solid #ffffff;
-    padding-bottom:2px;
-}
-
-.dropshadow
-{
-    box-shadow:         7px 7px 5px rgba(0, 0, 0, 0.9);
-}
-
-.progressbar
-{
-    border:1px solid #414141;
-}
-
-.progressbar_v
-{
-    border-left:1px solid #000000;
-    border-bottom:1px solid #343434;
-    border-right:1px solid #343434;
-    border-top:1px solid #000000;
-}
-
-.mixbox {
-    background-color:rgba(200,200,200,0.2);
-}
-
-.backmenu {
-    background-color: #000000;
-}
-
-/*
-=====================================================================
-= Dropdown Menus
-=====================================================================
-*/
-
-.albumbitsmenu
-{
-    background-image: linear-gradient(#0b0b0b, #444444) !important;
-}
-
-div.topdropmenu
-{
-    background-image: linear-gradient(#0b0b0b, #444444);
-    border-left:1px solid #262626;
-    border-bottom:1px solid #000000;
-    border-right:1px solid #000000;
-    border-top:none;
-}
-
-.configtitle
-{
-    background-color:rgba(255,255,255,0.2);
-}
-
-/*
-=====================================================================
-= Info Panel - General
-=====================================================================
-*/
-
-/*.infowiki
-{
-    background-color:rgba(255,255,255,0.1);
-}
-*/
-/*
-=====================================================================
-= Info Panel - Spotify
-=====================================================================
-*/
-
-.helpfulalbum
-{
-    background-image: linear-gradient(rgba(100,100,100,0.3), rgba(200,200,200,0.2));
-}
-
-.collectionitem .helpfulalbum.fixed {
-    background-image: linear-gradient(rgba(200,200,200,0.2), rgba(220,220,220,0.2));
-}
-
-.tagholder_wide
-{
-    background-image: linear-gradient(rgba(100,100,100,0.2), rgba(200,200,200,0.1));
-    box-sizing: border-box;
-    border-left: 1px solid rgba(200,200,200,0.1);
-    border-top: 1px solid rgba(200,200,200,0.1);
-}
-
-.tagholder_wide .helpfulalbum.tleft
-{
-    background-image: none;
-}
-
-/*
-=====================================================================
-= Podcasts
-=====================================================================
-*/
-
-.podcastitem
-{
-    border-top:1px solid #222222;
-}
-
-/*
-=====================================================================
-= For Album Art Manager
-=====================================================================
-*/
-
-.albumsection
-{
-    background-image: linear-gradient(#000000, #111111);
-}
-
-.albumcovers
-{
-    background-image: linear-gradient(#0b0b0b, #444444);
-}
-
-#wobblebottom
-{
-    background-image: linear-gradient(#0b0b0b, #444444);
-}
-
-#coverslist
-{
-    box-sizing:border-box;
-    border-left:1px solid #bbbbbb;
-}
-
-.highlighted {
-    background-color:rgba(0,0,0,0.6);
-}
-
-#imageeditor
-{
-    background-color:rgba(0,0,0,0.6);
-}
-
-#artistchooser
-{
-    border-bottom:1px solid #777777;
-}
-
-/*
-=====================================================================
-= Things that look like they might be for styling wikipedia data
-=====================================================================
-*/
-
-table.navbox th
-{
-    background-color: rgba(255,255,255,0.1);
-}
-
-.navbox-abovebelow
-{
-    padding-bottom:4px;
-}
-
-.navbox-title a:link,
-.navbox-abovebelow a:link,
-.navbox-group a:link
-{
-    text-decoration:none;
-}
-
-.navbox-title a:visited,
-.navbox-abovebelow a:visited,
-.navbox-group a:visited
-{
-    text-decoration:none;
-}
-
-.navbox-title a:hover,a:active,
-.navbox-abovebelow a:hover,a:active,
-.navbox-group a:hover,a:active
-{
-    text-decoration:none;
-}
-
-table.tracklist {
-    line-height:1.5em;
-}
-
-.tracklist tbody tr th
-{
-    font-weight:bold;
-}
-
-tr.tagh
-{
-    font-size:150%;
-}
-
-th.tlheader
-{
-    /*background-color:#232323;*/
-}
-
-.description
-{
-    margin-top:4px;
-}
-
-.underline
-{
-    border-bottom: 1px solid #999999;
-}
-
-.infosection h2
-{
-    border-bottom:2px solid #eeeeee;
-}
-
-.ratsoptions {
-    border-top: 1px solid #444444;
-}
-
-.topbarplaycontrols {
-    border-left: 1px solid white;
-    border-right: 1px solid white;
-}
-
-.mostrecent {
-    border-top: 1px solid rgba(255,255,255,0.25);
+body.phone #headerbar, div.albumcovers .infosection, #artistcoverslist {
+    background-image: linear-gradient(#000000, #444444) !important;
 }

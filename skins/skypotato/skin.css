@@ -530,7 +530,6 @@ button.spinable.icon-spin6 {
 }
 
 .info-border-right {
-	border-right: 1px solid #454545;
 	padding-right:1em;
 	max-width:240px;
 }
@@ -545,12 +544,6 @@ button.spinable.icon-spin6 {
 
 .info-detail-layout {
 	margin-top:8px;
-}
-
-.cleft {
-	border-left: 1px solid #454545;
-	padding-left:1em;
-	margin-left:1em;
 }
 
 .brick_wide {

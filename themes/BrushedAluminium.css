@@ -1,215 +1,101 @@
-/*
-=====================================================================
-= Standard HTML Elements
-=====================================================================
-*/
+@import url("themes/theme_base/colour_theme.css");
+
+:root {
+    --min-progress-colour: rgba(201, 201, 201, 0.99);
+    --max-progress-colour: rgba(255, 255, 255, 0.99);
+    --progress-bg-colour: rgba(0,0,0,0);
+
+    --text-colour: black;
+    --border-colour: #aaaaaa;
+    --border-colour-dark: #555555;
+    --link-colour: #12569a;
+    --highlight-colour: #ff4800;
+
+    --main-bg-colour: unset;
+    --main-bg-image: url('../../newimages/silver1.jpg');
+
+    --darker-bg-colour: rgba(0, 0, 0, 0.1);
+
+    --headerbar-bg-colour: unset;
+    --headerbar-bg-image: none;
+
+    --topbit-bg-colour: unset;
+    --topbit-bg-image: none;
+
+    --sources-bg-colour: unset;
+    --sources-bg-image:  none;
+    --sources-border-top: none;
+
+    --horse-bg-colour: unset;
+    --horse-bg-image: none;
+
+    --playlist-bg-colour: unset;
+    --playlist-bg-image: none;
+    --playlist-title-bg-colour: unset;
+    --playlist-title-border: none;
+    --playlist-item-top-border: 1px solid var(--border-colour-dark);
+    --playlist-current-bg-colour: unset;
+
+    --dropmenu-bg-colour: unset;
+    --dropmenu-bg-image: url('../../newimages/silver2.jpg');
+
+    --configtitle-bg-colour: rgba(0,0,0,0.5);
+    --configtitle-bg-image: none;
+    --configtitle-border-bottom: none;
+
+    --infopane-border-top: none;
+    --infopane-bg-colour: white;
+    --infopane-bg-image: none;
+    --infopane-text-colour: unset;
+
+    --infopane-header-bg-colour: unset;
+    --infopane-header-bg-image: none;
+
+    --selected-bg-colour: #CC5500;
+
+    --button-colour:  var(--text-colour);
+    --button-hover-colour: var(--highlight-colour);
+    --button-border: 1px solid #000000;
+    --button-hover-border: 1px solid #000000;
+    --button-bg-colour: unset;
+    --button-bg-image:  none;
+    --button-bg-hover-colour: unset;
+    --button-bg-hover-image:  none;
+
+    --text-entry-text-colour: var(--text-colour);
+    --text-entry-border-colour: transparent;
+    --text-entry-hover-border-colour: transparent;
+    --text-entry-active-border-colour: var(--border-colour);
+    --text-entry-bg-colour: rgba(0,0,0,0.1);
+    --text-entry-hover-bg-colour: rgba(0,0,0,0.2);
+    --text-entry-active-bg-colour: rgba(0,0,0,0.2);
+
+    --select-text-colour: var(--text-colour);
+    --select-bg-colour: var(--text-entry-bg-colour);
+    --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
+
+    --album1-colour: transparent;
+    --album2-colour: rgba(0,0,0,0.2);
+    --drop-shadow: 7px 7px 5px rgba(50, 50, 50, 0.6);
+
+    --bordered-top: 1px solid #aaaaaa;
+    --bordered-right: 1px solid #dddddd;
+    --bordered-bottom: 1px solid #dddddd;
+    --bordered-left: 1px solid #aaaaaa;
+
+    --album-browse-bg-colour: #dddddd;
+    --album-browse-bg-image: none;
+    --skypotato-openalbum-bg-colour: #cdcdcd;
+    --skypotato-openalbum-bg-image: none;
+    --album-browse-open-bg-colour: #dddddd;
+    --album-browse-open-bg-image: none;
+    --album-browse-open-highlight: none;
+}
 
 html {
-    color:#000000;
-    background-image:url('newimages/silver1.jpg');
     background-size:auto;
     background-repeat:repeat;
-    background-attachment:fixed;
 }
-
-h1,h2,h3,h4,h5,h6 {
-    color:#000000;
-}
-
-a:link {
-    color:#12569a;
-}
-
-a:visited {
-    color:#12569a;
-}
-
-a:hover,a:active {
-    color:#ff4800;
-}
-
-button, div.filebutton {
-    color:#000000;
-    border: 1px solid #000000;
-}
-
-button:hover, div.filebutton:hover {
-    color:#ff4800;
-    text-shadow: 0 0 15px #ff4800;
-}
-
-input.inbrowser, div.inbrowser {
-    border: 1px solid #888888;
-}
-
-div.selectholder {
-    background-color:rgba(0,0,0,0.1);
-}
-
-div.selectholder:hover {
-    background-color:rgba(0,0,0,0.2);
-}
-
-input[type="text"],input[type="number"] {
-    background-color: rgba(0,0,0,0.1);
-}
-
-input[type="text"]:hover,input[type="number"]:hover {
-    background-color: rgba(0,0,0,0.2);
-}
-
-input[type="text"]:focus,input[type="number"]:focus {
-    transition: border-bottom 0.5s ease;
-    border-bottom: 1px solid #eeeeee;
-}
-
-.drop-box {
-    background-color: rgba(0,0,0,0.2);
-    color:white;
-}
-
-#pset {
-    background-color: rgba(201, 201, 201, 0.99);
-}
-#pmaxset {
-    background-color: rgba(255, 255, 255, 0.99);
-}
-
-/*
-=====================================================================
-= Specific Elements By ID
-=====================================================================
-*/
-
-#custombackground {
-    display:none;
-}
-
-#notifications {
-    background-image:url('newimages/silver2.jpg');;
-}
-
-#wikipopup {
-    background-color:#000000;
-}
-
-#imagecontainer {
-    background-color:#ffffff;
-}
-
-#tagadder {
-    background-color:#ededed;
-}
-
-#dragger {
-    background-color:rgba(0,0,0,0.5);
-}
-
-/*
-=====================================================================
-= General Classes
-=====================================================================
-*/
-
-.bordered {
-    border-left:1px solid #aaaaaa;
-    border-bottom:1px solid #dddddd;
-    border-right:1px solid #dddddd;
-    border-top:1px solid #aaaaaa;
-}
-
-.album2 {
-    background-image:url('newimages/silver2.jpg');
-}
-
-.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
-    color:#ff4800;
-}
-
-.playable.selected:hover, tr.playable.selected:hover>td {
-    color:#dddddd;
-}
-
-.selected {
-    background-color:#CC5500;
-}
-
-.playlistcurrentitem {
-    color:#cc0000;
-}
-
-.playlistcurrenttitle {
-    color:#cc0000;
-}
-
-.item {
-    border-top:1px solid #000000;
-}
-
-.stleft {
-    border-right:1px solid #aaaaaa;
-}
-
-.popupwindow {
-    background-color:#dddddd;
-    border-left:2px solid #ffffff;
-    border-bottom:2px solid #555555;
-    border-right:2px solid #555555;
-    border-top:2px solid #ffffff;
-}
-
-table.histable tr:hover {
-    background-color:#CC5500;
-}
-
-.backhi:hover {
-    background-color:#CC5500;
-    cursor:pointer;
-}
-
-/*Prevent submenus from having all entries highlighted
-due to :hover events propagating from the parent menu
-*/
-.backhi:hover>div.topdropmenu>div.backhi {
-    color:#000000;
-}
-
-/*Make sure the submenu entry being hovered over still gets highlighted*/
-
-.backhi:hover>div.topdropmenu>div.backhi:hover {
-    background-color:#CC5500;
-}
-
-tr.clickaddtrack:hover {
-    background-image:url('newimages/silver1.jpg');
-}
-
-.tagholder table tr th {
-    background-image:url('newimages/silver1.jpg');
-    border-bottom:1px solid #000000;
-}
-
-.bsel {
-    color:#ff4800;
-}
-
-.bmid {
-    border-left:2px solid #ff4800;
-}
-
-.currentbun {
-    border-bottom:1px solid #fe6500;
-    padding-bottom:2px;
-}
-
-.dropshadow {
-    box-shadow:         7px 7px 5px rgba(50, 50, 50, 0.6);
-}
-
-.progressbar {
-    border:1px solid #414141;
-}
-
 
 .mCSB_draggerRail {
     background:rgba(0,0,0,0.1) !important;
@@ -219,159 +105,6 @@ tr.clickaddtrack:hover {
     background:rgba(0,0,0,0.75) !important;
 }
 
-.textunderline {
-    border-bottom: 1px solid #222222;
-}
-
-/*
-=====================================================================
-= Dropdown Menus
-=====================================================================
-*/
-
-div.topdropmenu, div.albumbitsmenu {
-    background-image:url('newimages/silver2.jpg');;
-    border-left:1px solid #ffffff;
-    border-bottom:1px solid #555555;
-    border-right:1px solid #555555;
-    border-top:none;
-}
-
-.configtitle {
-    background-color:rgba(0,0,0,0.5);
-    color:white;
-}
-
-/*
-=====================================================================
-= Info Panel - General
-=====================================================================
-*/
-
-.infosection {
-    background-color:#efefef;
-}
-
-.infowiki {
-    background-color:#ffffff;
-}
-
-/*
-=====================================================================
-= Info Panel - Spotify
-=====================================================================
-*/
-
-.helpfulalbum {
-    background-color:#dddddd;
-}
-
-.tagholder_wide {
-    background-color:#dddddd;
-}
-
-.tagholder_wide .helpfulalbum
-{
-    background-color:#cdcdcd;
-}
-
-/*
-=====================================================================
-= Podcasts
-=====================================================================
-*/
-
-.podcastitem {
-    border-top:1px solid #000000;
-}
-
-/*
-=====================================================================
-= For Album Art Manager
-=====================================================================
-*/
-
-#artistchooser {
-    border-bottom:1px solid #555555;
-    border-top:1px solid #555555;
-    color:#555555;
-}
-
-#albumcovers {
-    background-color:#eeeeee;
-}
-
-.albumsection {
-    background-color:#e7e7e7;
-}
-
-.highlighted {
-    border-top: 4px solid #fe6800 !important;
-    border-left: 4px solid #fe6800 !important;
-    border-right: 4px solid #fe6800 !important;
-    border-bottom: 4px solid #fe6800 !important;
-    border-radius:2px !important;
-}
-
-.covercontainer.highlighted
-{
-    border-bottom: none !important;
-    margin-bottom:-4px;
-    background-image:url('newimages/silver2.jpg');
-}
-
-#imageeditor {
-    background-image:url('newimages/silver2.jpg');
-}
-
-/*
-=====================================================================
-= Things that look like they might be for styling wikipedia data
-=====================================================================
-*/
-
-table.navbox th {
-    background-color: #e5e5e5;
-}
-
-.navbox-title {
-    color:#000000;
-}
-
-.navbox-group {
-    color:#000000;
-}
-
-.navbox-abovebelow {
-    color:#000000;
-    padding-bottom:4px;
-}
-
-.navbox-title a:link,
-.navbox-abovebelow a:link,
-.navbox-group a:link
-{
-    color:#990000;
-    text-decoration:none;
-}
-
-.navbox-title a:visited,
-.navbox-abovebelow a:visited,
-.navbox-group a:visited
-{
-    color:#990000;
-    text-decoration:none;
-}
-
-.navbox-title a:hover,a:active,
-.navbox-abovebelow a:hover,a:active,
-.navbox-group a:hover,a:active
-{
-    color:#ff4800;
-    text-decoration:none;
-}
-
-.topbarplaycontrols {
-    border-left: 1px solid black;
-    border-right: 1px solid black;
+button:hover, div.filebutton:hover {
+    text-shadow: 0 0 15px var(--highlight-colour);
 }

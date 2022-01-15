@@ -105,14 +105,14 @@ var info_spotify = function() {
 
 		tryForAllMusicBio(layout, artistmeta);
 
-		artistobj.spotichooser = layout.add_non_flow_box();
-		let holderbox = $('<div>', {class: 'containerbox textunderline'}).appendTo(artistobj.spotichooser);
+		artistmeta.spotify.spotichooser = layout.add_non_flow_box();
+		let holderbox = $('<div>', {class: 'containerbox textunderline'}).appendTo(artistmeta.spotify.spotichooser);
 		holderbox.append($('<div>', {class: 'fixed infoclick clickshowalbums bleft'}).html(language.gettext('label_albumsby')));
 		holderbox.append($('<div>', {class: 'fixed infoclick clickshowartists bleft bmid'}).html(language.gettext('lastfm_simar')));
-		artistobj.spinnerthing = $('<i>', {class: 'fixed svg-square title-menu invisible'}).appendTo(holderbox);
+		artistmeta.spotify.spinnerthing = $('<i>', {class: 'fixed svg-square title-menu invisible'}).appendTo(holderbox);
 
-		artistobj.spotiwidget = layout.add_non_flow_box();
-		artistobj.spotiwidget.addClass('fullwidth masonified2');
+		artistmeta.spotify.spotiwidget = layout.add_non_flow_box();
+		artistmeta.spotify.spotiwidget.addClass('fullwidth masonified2');
 
 		layout.finish(data.external_urls.spotify, data.name);
 
@@ -139,25 +139,6 @@ var info_spotify = function() {
 		}
 	}
 
-	function findDisplayPanel(element, artistobj) {
-		var c = element;
-		while (!c.hasClass('nobwobbler')) {
-			c = c.parent();
-		}
-		if (c.hasClass('nobalbum')) {
-			debug.trace(medebug,"Opening Album Panel Via Widget");
-			artistobj.spotiwidget.spotifyAlbumThing('handleClick', element);
-			return true;
-		} else if (c.hasClass('nobartist')) {
-			debug.trace(medebug,"Opening Artist Panel Via Widget");
-			artistobj.spotiwidget.spotifyArtistThing('handleClick', element);
-			return true;
-		} else {
-			debug.warn(medebug,"Click On Unknown Element!",element);
-			return false;
-		}
-	}
-
 	return {
 
 		getRequirements: function(parent) {
@@ -169,6 +150,25 @@ var info_spotify = function() {
 			debug.debug(medebug, "Creating data collection");
 
 			var self = this;
+
+			this.findDisplayPanel = function(element, artistobj) {
+				var c = element;
+				while (!c.hasClass('nobwobbler')) {
+					c = c.parent();
+				}
+				if (c.hasClass('nobalbum')) {
+					debug.trace(medebug,"Opening Album Panel Via Widget");
+					artistmeta.spotify.spotiwidget.spotifyAlbumThing('handleClick', element);
+					return true;
+				} else if (c.hasClass('nobartist')) {
+					debug.trace(medebug,"Opening Artist Panel Via Widget");
+					artistmeta.spotify.spotiwidget.spotifyArtistThing('handleClick', element);
+					return true;
+				} else {
+					debug.warn(medebug,"Click On Unknown Element!",element);
+					return false;
+				}
+			}
 
 			this.populate = function() {
 
@@ -239,7 +239,7 @@ var info_spotify = function() {
 				if (element.hasClass('clickzoomimage')) {
 					imagePopup.create(element, event, element.attr("src"));
 				} else if (element.hasClass('clickspotifywidget')) {
-					findDisplayPanel(element, self.artist);
+					self.findDisplayPanel(element, self.artist);
 				} else if (element.hasClass('clickchooseposs')) {
 					var poss = element.attr("name");
 					if (poss != artistmeta.spotify.currentposs) {
@@ -253,11 +253,11 @@ var info_spotify = function() {
 						self.artist.populate();
 					}
 				} else if (element.hasClass('clickshowalbums') && artistmeta.spotify.showing != "albums") {
-					self.artist.spotiwidget.spotifyArtistThing('destroy');
+					artistmeta.spotify.spotiwidget.spotifyArtistThing('destroy');
 					artistmeta.spotify.showing = "albums";
 					getAlbums();
 				} else if (element.hasClass('clickshowartists') && artistmeta.spotify.showing != "artists") {
-					self.artist.spotiwidget.spotifyAlbumThing('destroy');
+					artistmeta.spotify.spotiwidget.spotifyAlbumThing('destroy');
 					artistmeta.spotify.showing = "artists";
 					element.addClass("bsel");
 					getArtists();
@@ -279,9 +279,9 @@ var info_spotify = function() {
 			}
 
 			function getAlbums() {
-				self.artist.spotichooser.find('.bsel').removeClass("bsel");
-				self.artist.spotichooser.find('.clickshowalbums').addClass("bsel");
-				self.artist.spinnerthing.makeSpinner();
+				artistmeta.spotify.spotichooser.find('.bsel').removeClass("bsel");
+				artistmeta.spotify.spotichooser.find('.clickshowalbums').addClass("bsel");
+				artistmeta.spotify.spinnerthing.makeSpinner();
 				if (!artistmeta.spotify.albums) {
 					spotify.artist.getAlbums(artistmeta.spotify.id, 'album,single', storeAlbums, self.artist.spotifyError, true)
 				} else {
@@ -290,9 +290,9 @@ var info_spotify = function() {
 			}
 
 			function getArtists() {
-				self.artist.spotichooser.find('.bsel').removeClass("bsel");
-				self.artist.spotichooser.find('.clickshowartists').addClass("bsel");
-				self.artist.spinnerthing.makeSpinner();
+				artistmeta.spotify.spotichooser.find('.bsel').removeClass("bsel");
+				artistmeta.spotify.spotichooser.find('.clickshowartists').addClass("bsel");
+				artistmeta.spotify.spinnerthing.makeSpinner();
 				if (!artistmeta.spotify.related) {
 					spotify.artist.getRelatedArtists(artistmeta.spotify.id, storeArtists, self.artist.spotifyError, true)
 				} else {
@@ -313,12 +313,12 @@ var info_spotify = function() {
 			function doAlbums(data) {
 				if (artistmeta.spotify.showing == "albums" && data) {
 					debug.debug(medebug,"Doing Albums For Artist",data);
-					self.artist.spotiwidget.spotifyAlbumThing({
+					artistmeta.spotify.spotiwidget.spotifyAlbumThing({
 						classes: 'nobwobbler nobalbum tagholder2 selecotron',
 						itemselector: 'nobwobbler',
 						sub: null,
 						showbiogs: false,
-						layoutcallback: function() { self.artist.spinnerthing.stopSpinner(); browser.rePoint() },
+						layoutcallback: function() { artistmeta.spotify.spinnerthing.stopSpinner(); browser.rePoint() },
 						maxwidth: maxwidth,
 						is_plugin: false,
 						imageclass: 'masochist',
@@ -330,11 +330,11 @@ var info_spotify = function() {
 			function doArtists(data) {
 				if (artistmeta.spotify.showing == "artists" && data) {
 					debug.debug(medebug,"Doing Related Artists",data);
-					self.artist.spotiwidget.spotifyArtistThing({
+					artistmeta.spotify.spotiwidget.spotifyArtistThing({
 						classes: 'nobwobbler nobartist tagholder2',
 						itemselector: 'nobwobbler',
 						sub: null,
-						layoutcallback: function() { self.artist.spinnerthing.stopSpinner(); browser.rePoint() },
+						layoutcallback: function() { artistmeta.spotify.spinnerthing.stopSpinner(); browser.rePoint() },
 						is_plugin: false,
 						imageclass: 'jalopy',
 						maxalbumwidth: maxwidth,
@@ -460,6 +460,8 @@ var info_spotify = function() {
 				var retries = 10;
 				var searchingfor = artistmeta.name;
 
+				this.spinnterthing = null;
+
 				function spotifyResponse(data) {
 					debug.debug(medebug, "Got Spotify Artist Data", data);
 					artistmeta.spotify.artist = data;
@@ -555,10 +557,6 @@ var info_spotify = function() {
 
 				return {
 
-					spinnterthing: null,
-					spotiwidget: null,
-					spotichooser: null,
-
 					populate: function() {
 						if (artistmeta.spotify.id === undefined) {
 							search(artistmeta.name);
@@ -577,7 +575,7 @@ var info_spotify = function() {
 
 					doBrowserUpdate: function() {
 						getArtistHTML(artistmeta.spotify.artist, artistmeta.spotify.layout, artistmeta, self.artist);
-						if (self.artist.spotichooser)
+						if (artistmeta.spotify.spotichooser)
 							getAlbums();
 
 					}

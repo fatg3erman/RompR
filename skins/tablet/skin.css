@@ -690,9 +690,6 @@ i.combo-button {
 }
 
 @media screen and (min-width: 641px) {
-	.cleft.narrowright {
-		margin-left:1em;
-	}
 	.info-box-list img {
 		max-width: 220px;
 	}
@@ -713,18 +710,6 @@ i.combo-button {
 @media screen and (max-width: 1024px) {
 	.onlyverywide {
 		display: none;
-	}
-}
-
-@media screen and (max-width: 540px) {
-	.stleft
-	{
-		float:none;
-		width:auto;
-		max-width:95%;
-		clear:both;
-		border-right:none !important;
-		border-bottom: 1px solid #dddddd !important;
 	}
 }
 

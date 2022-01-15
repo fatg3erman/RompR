@@ -1,8 +1,47 @@
-/*
-=====================================================================
-= Standard HTML Elements
-=====================================================================
-*/
+@import url("themes/theme_base/image_theme.css");
+
+:root {
+
+    --main-bg-colour: rgba(0,0,0,0.3);
+    --darker-bg-colour: rgba(0,0,0,0.3);
+    --dropmenu-bg-colour: rgba(0,0,0,0.9);
+    --configtitle-bg-colour: rgba(255,128,20,0.2);
+    --headerbar-bg-colour:  var(--main-bg-colour);
+    --infobar-bg-colour:  var(--main-bg-colour);
+
+    --text-colour: #eeeeee;
+    --highlight-colour: yellow;
+    --link-colour: yellow;
+    --border-colour: #aaaaaa;
+    --border-colour-dark: #666666;
+
+    --button-colour:  #dddddd;
+    --button-hover-colour:  var(--highlight-colour);
+    --button-border: 1px solid var(--border-colour);
+    --button-hover-border: 1px solid var(--highlight-colour);;
+    --button-bg-colour: transparent;
+    --button-bg-hover-colour: transparent;
+
+    --text-entry-text-colour: var(--text-colour);
+    --text-entry-border-colour: rgba(200,200,200,0.1);;
+    --text-entry-hover-border-colour: rgba(200,200,200,0.2);
+    --text-entry-active-border-colour: rgba(200,200,200,0.3);
+    --text-entry-bg-colour: var(--text-entry-border-colour);
+    --text-entry-hover-bg-colour: var(--text-entry-hover-border-colour);
+    --text-entry-active-bg-colour: var(--text-entry-active-border-colour);
+
+    --select-text-colour: var(--text-entry-text-colour);
+    --select-bg-colour: var(--text-entry-bg-colour);
+    --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
+
+    --min-progress-colour: rgba(147, 61, 24, 0.99);
+    --max-progress-colour: rgba(255, 238, 95, 0.99);
+    --progress-bg-colour: rgba(0,0,0,0);
+    --selected-bg-colour: var(--min-progress-colour);
+    --album1-colour: transparent;
+    --album2-colour: rgba(255,255,255,0.1);
+    --drop-shadow: 7px 7px 5px rgba(0, 0, 0, 0.5);
+}
 
 @media screen and (orientation: landscape) {
     html {
@@ -22,170 +61,10 @@
     }
 }
 
-body.phone .dropmenu>div {
-    background-color:rgba(0,0,0,0.3);
-    background-clip:border-box;
-}
-
-body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input
-{
-    color:#eeeeee;
-    background-color:rgba(0,0,0,0.3);
-}
-
-a:link
-{
-    color:yellow;
-}
-
-a:visited
-{
-    color:yellow;
-}
-
-a:hover,a:active
-{
-    text-shadow: 0 0 15px #000000;
-    cursor:pointer;
-}
-
-button, input[type="button"], div.filebutton
-{
-    color:#dddddd;
-    background-color:transparent;
-    border:1px solid #aaaaaa;
-}
-
-button:hover, input[type="button"]:hover, div.filebutton:hover
-{
-    color:#ffffff;
-    border:1px solid #ffffff;
-    text-shadow: 0 0 15px #ffffff;
-}
-
-input
-{
-    color:#181818;
-}
-
-input[type="text"],input[type="number"] {
-    color: white;
-    background-color: rgba(20,20,20,0.5);
-    border: 1px solid #444;
-}
-
-/*
-=====================================================================
-= Specific Elements By ID
-=====================================================================
-*/
-
-#infobar.coloured, #headerbar, #thetopbit
-{
-    background-color:rgba(0,0,0,0.3);
-}
-
-body.mobile #headerbar {
-    background-color:rgba(0,0,0,0.6);
-}
-
-#sources, .mainpane, #playlist
-{
-    background-color:rgba(0,0,0,0.1);
-}
-
-#infopane
-{
-    background-color:rgba(0,0,0,0.4);
-}
-
-#artistbio
-{
-    padding:4px;
-}
-
-#notifications
-{
-    background-color:rgba(0,0,0,0.9);
-}
-
-#wikipopup
-{
-    background-color:#000000;
-}
-
-#imagecontainer
-{
-    background-color:#ffffff;
-}
-
-#tagadder
-{
-    background-color:rgba(0,0,0,0.8);
-}
-
-#dragger
-{
-    background-color:rgba(0,0,0,0.3);
-}
-
-#pset {
-    background-color: rgba(147, 61, 24, 0.99);
-}
-
-#pmaxset {
-    background-color: rgba(255, 238, 95, 0.99);
-}
-
-/*
-=====================================================================
-= General Classes
-=====================================================================
-*/
-
-div.selectholder {
-    background-color: rgba(20,20,20,0.5);
-}
-
-div.selectholder:hover {
-    background-color: rgba(20,20,20,0.5);
-}
-
-select {
-    color: white;
-}
-
-.drop-box {
-    background-color: #222;
-    color:white;
-}
-
-.album2
-{
-    background-color:rgba(255,255,255,0.1);
-}
-
-.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
-    text-shadow: 0 0 15px #ffffff;
-    color:#ffffff;
-    cursor:pointer;
-}
-
-.playable.selected:hover, tr.playable.selected:hover>td {
-    color:#ffffff;
-}
-
-.selected
-{
-    background-color:rgba(255,72,0,0.5);
-}
-
 .playlistcurrentitem
 {
     font-weight:bold;
     font-size:120%;
-    color:#eeeeee;
-    background-color:rgba(200,200,200,0.2);
     transition:font-size 0.2s ease, text-shadow 0.2s ease, background-color 0.2s ease;
 }
 
@@ -196,32 +75,19 @@ select {
 
 .playlistcurrenttitle
 {
-    background-color:rgba(200,200,200,0.2);
-    text-shadow: 0px 0px 20px #cccccc;
+    text-shadow: 0px 0px 20px var(--text-colour);
     font-weight:bold;
-    color:#eeeeee;
     transition:font-size 0.2s ease, text-shadow 0.2s ease, background-color 0.2s ease;
 }
 
-.inbrowser
+button:hover, input[type="button"]:hover, div.filebutton:hover
 {
-    color:#000000;
-}
-
-.stleft
-{
-    border-right:1px solid #888888;
-}
-
-.popupwindow
-{
-    background-color:rgba(0,0,0,0.8);
+    text-shadow: 0 0 15px var(--highlight-colour);
 }
 
 table.histable tr:hover {
     font-size:105%;
-    text-shadow: 0 0 15px #ffffff;
-    color:#ffffff;
+    text-shadow: 0 0 15px var(--highlight-colour);
     transition:all 0.1s;
 }
 
@@ -231,232 +97,8 @@ table.histable tr
 }
 
 .backhi:hover {
-    text-shadow: 0 0 15px #ffffff;
-    color:#ff4800;
+    text-shadow: 0 0 15px var(--highlight-colour);
     cursor:pointer;
     transition:all 0.1s;
 }
 
-/*Prevent submenus from having all entries highlighted
-due to :hover events propagating from the parent menu
-*/
-.backhi:hover>div.topdropmenu>div.backhi {
-    color:#eeeeee;
-}
-
-/*Make sure the submenu entry being hovered over still gets highlighted*/
-
-.backhi:hover>div.topdropmenu>div.backhi:hover {
-    text-shadow: 0 0 15px #ffffff;
-    color:#ff4800;
-}
-
-.backhi
-{
-    transition:all 0.2s;
-}
-
-tr.clickaddtrack:hover
-{
-    background-color:#e1e4ea;
-}
-
-.bsel
-{
-    color:#ffffff;
-    text-shadow:0 0 15px #ffffff;
-}
-
-.bmid
-{
-    border-left:2px solid #ff4800;
-}
-
-.tagholder table tr th {
-    background-color:rgba(0,0,0,0.5);
-    border-bottom:1px solid #000000;
-}
-
-
-.currentbun
-{
-    border-bottom:1px solid #ffffff;
-    padding-bottom:2px;
-}
-
-.dropshadow
-{
-    box-shadow:         7px 7px 5px rgba(0, 0, 0, 0.5);
-}
-
-.progressbar
-{
-    border:1px solid #414141;
-}
-
-.progressbar_v
-{
-    border:1px solid #414141;
-}
-
-.backmenu {
-    background-color: rgba(0,0,0,0.6) !important;
-}
-
-/*
-=====================================================================
-= Dropdown Menus
-=====================================================================
-*/
-
-div.topdropmenu
-{
-    background-color:rgba(0,0,0,0.9);
-}
-
-.configtitle
-{
-    background-color:rgba(255,128,20,0.2);
-}
-
-body.mobile .configtitle
-{
-    width:100%;
-    margin-left:auto;
-    margin-right:auto;
-}
-
-/*
-=====================================================================
-= Info Panel - General
-=====================================================================
-*/
-
-.infowiki
-{
-    color:white;
-}
-
-.infosection
-{
-    background-color:rgba(0,0,0,0.5);
-    background-size:cover;
-    background-repeat:no-repeat;
-}
-
-/*
-=====================================================================
-= Info Panel - Spotify
-=====================================================================
-*/
-
-.helpfulalbum
-{
-    background-color:rgba(0,0,0,0.4);
-}
-
-.tagholder_wide
-{
-    background-color:rgba(0,0,0,0.6);
-}
-
-/*
-=====================================================================
-= Podcasts
-=====================================================================
-*/
-
-.podcastitem
-{
-    border-top:1px solid #cccccc;
-}
-
-/*
-=====================================================================
-= For Album Art Manager
-=====================================================================
-*/
-
-.albumsection
-{
-    background-color:rgba(0,0,0,0.5);
-    background-size:cover;
-    background-repeat:no-repeat;
-}
-
-.highlighted {
-    background-color:rgba(90,0,60,0.7) !important;
-}
-
-#coverslist
-{
-    box-sizing:border-box;
-    border-left:1px solid #bbbbbb;
-}
-
-#artistchooser
-{
-    background-color:rgba(0,0,0,0.3);
-    color:#aaaaaa;
-}
-
-/*
-=====================================================================
-= Things that look like they might be for styling wikipedia data
-=====================================================================
-*/
-
-table.navbox th
-{
-    background-color: rgba(0,0,0,0.2);
-}
-
-.navbox-abovebelow
-{
-    padding-bottom:4px;
-}
-
-.navbox-title a:link,
-.navbox-abovebelow a:link,
-.navbox-group a:link
-{
-    text-decoration:none;
-}
-
-.navbox-title a:visited,
-.navbox-abovebelow a:visited,
-.navbox-group a:visited
-{
-    text-decoration:none;
-}
-
-.navbox-title a:hover,a:active,
-.navbox-abovebelow a:hover,a:active,
-.navbox-group a:hover,a:active
-{
-    text-decoration:none;
-}
-
-table.tracklist {
-    line-height:1.5em;
-}
-
-.tracklist tbody tr th
-{
-    font-weight:bold;
-}
-
-.description
-{
-    margin-top:4px;
-}
-
-.underline
-{
-    border-bottom: 1px solid yellow;
-}
-
-.infosection h2
-{
-    border-bottom:2px solid white;
-}

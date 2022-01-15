@@ -62,11 +62,6 @@ foreach($themes as $theme) {
 }
 print '</select></div></div>';
 
-print '<div class="pref styledinputs"><b>Browser ID</b>'.
-	'<input class="saveotron" id="browser_id" type="text" />
-	</div>';
-
-
 // Album Cover Size
 print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
 	language::gettext('config_coversize').
@@ -81,7 +76,7 @@ print '</select></div></div>';
 // Custom Background
 print '<div id="custombackground">';
 
-print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('config_background').'</b></div></div>';
+print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand open_magic_div"><b>'.language::gettext('config_background').'</b></div></div>';
 
 print '<div id="cusbgoptions">';
 
@@ -111,6 +106,10 @@ print '</div>';
 print '<div class="clearfix">';
 print '<div class="pref tright"><button onclick="prefs.manage_bg_images()">'.language::gettext('manage_bgs').'</button></div>';
 print '</div>';
+
+print '<div class="pref styledinputs invisible magic_div"><b>Browser ID</b>'.
+	'<input class="saveotron" id="browser_id" type="text" />
+	</div>';
 
 print '</div>';
 

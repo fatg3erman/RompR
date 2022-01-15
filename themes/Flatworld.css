@@ -1,380 +1,109 @@
-html {
-    background-color:#cccccc;
-    background-size:cover;
-    background-repeat:no-repeat;
-    background-attachment:fixed;
-}
+@import url("themes/theme_base/colour_theme.css");
 
-body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input
-{
-    color:#000000;
-}
+:root {
+    --min-progress-colour: rgba(255, 255, 255, 0.99);
+    --max-progress-colour: rgba(255, 255, 255, 0.99);
+    --progress-bg-colour: rgba(0,0,0,0);
 
-h1,h2,h3,h4,h5,h6
-{
-    color:#000000;
-}
+    --text-colour: black;
+    --border-colour: #888888;
+    --border-colour-dark: black;
+    --link-colour: #0b0080;
+    --highlight-colour: #ff4800;
 
-a:link
-{
-    color:#0b0080;
-}
+    --main-bg-colour: #cccccc;
+    --main-bg-image: none;
 
-a:visited
-{
-    color:#0b0080;
-}
+    --darker-bg-colour: rgba(0, 0, 0, 0.1);
 
-a:hover,a:active
-{
-    color:#ff4800;
-}
+    --headerbar-bg-colour: unset;
+    --headerbar-bg-image: none;
 
-input
-{
-    color:#181818;
-}
+    --topbit-bg-colour: unset;
+    --topbit-bg-image: none;
 
-button, div.filebutton
-{
-    color:#000000;
-    border: 1px solid #000000;
-}
+    --sources-bg-colour: unset;
+    --sources-bg-image:  none;
+    --sources-border-top: none;
 
-button:hover, div.filebutton:hover
-{
-    color:#000000;
-    border: 1px solid white;
-}
+    --horse-bg-colour: unset;
+    --horse-bg-image: none;
 
-select
-{
-    color:#181818;
-}
+    --playlist-bg-colour: unset;
+    --playlist-bg-image: none;
+    --playlist-title-bg-colour: unset;
+    --playlist-title-border: none;
+    --playlist-item-top-border: none;
+    --playlist-current-bg-colour: unset;
 
-#custombackground
-{
-    display:none;
-}
+    --dropmenu-bg-colour: var(--main-bg-colour);
+    --dropmenu-bg-image: none;
 
-div.selectholder {
-    background-color:rgba(0,0,0,0);
-}
+    --configtitle-bg-colour: unset;
+    --configtitle-bg-image: none;
+    --configtitle-border-bottom: 1px solid var(--border-colour-dark);
 
-div.selectholder:hover {
-    background-color:rgba(0,0,0,0);
-}
+    --infopane-border-top: none;
+    --infopane-bg-colour: unset;
+    --infopane-bg-image: none;
+    --infopane-text-colour: unset;
 
-input[type="text"],input[type="number"] {
-    background-color: rgba(0,0,0,0);
-    border-bottom: 1px solid #555555;
-}
+    --infopane-header-bg-colour: unset;
+    --infopane-header-bg-image: none;
 
-input[type="text"]:focus,input[type="number"]:focus {
-    border-bottom: 1px solid #eeeeee;
-}
+    --selected-bg-colour: rgba(0,0,0,0.05);
 
-.configtitle {
-    border-bottom: 1px solid #888888;
-}
+    --button-colour:  var(--text-colour);
+    --button-hover-colour: var(--highlight-colour);
+    --button-border: 1px solid var(--border-colour);
+    --button-hover-border: 1px solid var(--highlight-colour);
+    --button-bg-colour: var(--main-bg-colour);
+    --button-bg-image:  none;
+    --button-bg-hover-colour: var(--main-bg-colour);
+    --button-bg-hover-image:  none;
 
-.drop-box {
-    background-color: rgba(0,0,0,0.01);
-}
+    --text-entry-text-colour: var(--text-colour);
+    --text-entry-border-colour: var(--border-colour);
+    --text-entry-hover-border-colour: var(--border-colour);
+    --text-entry-active-border-colour: var(--border-colour-dark);
+    --text-entry-bg-colour: rgba(0,0,0,0.05);
+    --text-entry-hover-bg-colour: rgba(0,0,0,0.05);
+    --text-entry-active-bg-colour: rgba(0,0,0,0.05);
 
-#pset {
-    background-color: rgba(255, 255, 255, 0.99);
-}
-#pmaxset {
-    background-color: rgba(255, 255, 255, 0.99);
+    --select-text-colour: var(--text-colour);
+    --select-bg-colour: var(--text-entry-bg-colour);
+    --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
+
+    --album1-colour: transparent;
+    --album2-colour: transparent;
+    --drop-shadow: unset;
+
+    --bordered-top: 1px solid #eeeeee;
+    --bordered-right: 1px solid #9a9a9a;
+    --bordered-bottom: 1px solid #9a9a9a;
+    --bordered-left: 1px solid #eeeeee;
+
+    --album-browse-bg-colour: #bbbbbb;
+    --album-browse-bg-image: none;
+    --skypotato-openalbum-bg-colour: #bbbbbb;
+    --skypotato-openalbum-bg-image: none;
+    --album-browse-open-bg-colour: #bbbbbb;
+    --album-browse-open-bg-image: none;
+    --album-browse-open-highlight: none;
 }
 
 #infopane
 {
     box-sizing:border-box;
-    border-left: 2px solid black;
-    border-right: 2px solid black;
-    border-top: 2px solid black;
-}
-
-/*-- divs used to create infobar layout --*/
-
-#notifications
-{
-    background-color:#a9a9a9;
-}
-/*-- divs and classes used in the albums list --*/
-
-a.album:visited
-{
-    color:#220000;
-}
-
-a.album:hover,a.album:active
-{
-    color:#ff4800;
-}
-
-.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
-    color:#ff4800;
-}
-
-.playable.selected:hover, tr.playable.selected:hover>td {
-    color:#dddddd;
-}
-
-.selected
-{
-    background-color:#CC5500;
-}
-
-/*-- divs and classes used in the playlist --*/
-
-.playlistcurrentitem
-{
-    color:#cc0000;
-}
-
-.playlistcurrenttitle
-{
-    color:#cc0000;
-}
-
-.inbrowser
-{
-    color:#000000;
-}
-
-/*-- For Wikipedia and Last.FM pages --*/
-
-#wikipopup
-{
-    background-color:#aaaaaa;
-}
-
-#imagecontainer
-{
-    background-color:#ffffff;
-}
-
-.translucent
-{
-    opacity:0.7;
-}
-
-/*-- For Album Cover Art --*/
-
-.popupwindow
-{
-    background-color:#bababa;
-    border-left:1px solid #eeeeee;
-    border-bottom:1px solid #9a9a9a;
-    border-right:1px solid #9a9a9a;
-    border-top:1px solid #eeeeee;
-}
-
-.underline
-{
-    border-bottom: 0px none !important;
-}
-
-.info-border-right
-{
-    border-right: 0px none !important;
-}
-
-.helpfulalbum
-{
-    border: 1px solid black;
-}
-
-.containerbox .podcast .helpfulalbum.expand
-{
-    border-bottom: none;
-}
-
-.containerbox .podcast .helpfulalbum.fixed
-{
-    border-top: none;
-}
-
-.tagholder_wide
-{
-    border-bottom: 1px solid black;
-}
-
-.tagholder_wide .helpfulalbum.tleft
-{
-    border: none;
-}
-
-/*-- Styles for drop-down menus --*/
-
-div.topdropmenu
-{
-    background-color:#cccccc;
-    border-left:1px solid #eeeeee;
-    border-bottom:1px solid #9a9a9a;
-    border-right:1px solid #9a9a9a;
-}
-
-/*-- Styles to make the Wikipedia nav boxes look prettier --*/
-
-table.navbox th
-{
-    background-color: #dddddd;
-}
-
-.navbox-abovebelow
-{
-    padding-bottom:4px;
-}
-
-.navbox-title a:link,
-.navbox-abovebelow a:link,
-.navbox-group a:link
-{
-    text-decoration:none;
-}
-
-.navbox-title a:visited,
-.navbox-abovebelow a:visited,
-.navbox-group a:visited
-{
-    text-decoration:none;
-}
-
-.navbox-title a:hover,a:active,
-.navbox-abovebelow a:hover,a:active,
-.navbox-group a:hover,a:active
-{
-    text-decoration:none;
-}
-
-table.tracklist {
-    line-height:1.5em;
-}
-
-.tracklist tbody tr th
-{
-    font-weight:bold;
-}
-
-.description
-{
-    margin-top:4px;
-}
-
-.crackbaby
-{
-    border-bottom: 1px solid #444444;
-}
-
-#tagadder
-{
-    background-color:#bababa;
-}
-
-table.histable tr:hover {
-    background-color:#CC5500;
-}
-
-.backhi:hover {
-    background-color:#CC5500;
-    cursor:pointer;
-}
-
-/*Prevent submenus from having all entries highlighted
-due to :hover events propagating from the parent menu
-*/
-.backhi:hover>div.topdropmenu>div.backhi {
-    color:#000000;
-}
-
-/*Make sure the submenu entry being hovered over still gets highlighted*/
-
-.backhi:hover>div.topdropmenu>div.backhi:hover {
-    background-color:#CC5500;
-}
-
-tr.clickaddtrack:hover
-{
-    background-color:#cccccc;
-}
-
-#fiddler {
-    border-left: 4px solid #fe6500;
-    border-right: 4px solid #fe6500;
+    border-left: 2px solid var(--border-colour);
+    border-right: 2px solid var(--border-colour);
+    border-top: 2px solid var(--border-colour);
 }
 
 .highlighted {
-    border-top: 4px solid #fe6800 !important;
-    border-left: 4px solid #fe6800 !important;
-    border-right: 4px solid #fe6800 !important;
-    border-bottom: 4px solid #fe6800 !important;
+    border-top: 4px solid var(--highlight-colour) !important;
+    border-left: 4px solid var(--highlight-colour) !important;
+    border-right: 4px solid var(--highlight-colour) !important;
+    border-bottom: 4px solid var(--highlight-colour) !important;
     border-radius:2px !important;
 }
-
-.covercontainer.highlighted
-{
-    border-bottom: none !important;
-    margin-bottom:-4px;
-    background-color:#cccccc;
-}
-
-#imageeditor
-{
-    background-color:#cccccc;
-}
-
-.tagholder table tr th {
-    border-bottom:1px solid #000000;
-}
-
-.bsel
-{
-    color:#ff4800;
-}
-
-.bmid
-{
-    border-left:2px solid #ff4800;
-}
-
-#artistchooser
-{
-    border-bottom:1px solid #777777;
-    border-top:1px solid #777777;
-    color:#555555;
-}
-
-.currentbun
-{
-    border-bottom:1px solid #fe6500;
-    padding-bottom:2px;
-}
-
-.progressbar
-{
-    border:1px solid #414141;
-}
-
-.progressbar_v
-{
-    border:1px solid #414141;
-}
-
-.podcastitem
-{
-    border-top:1px solid #000000;
-}
-
-#dragger
-{
-    background-color:rgba(0,0,0,0.3);
-}
-
-.backmenu {
-    background-color: #cccccc;
-}
-

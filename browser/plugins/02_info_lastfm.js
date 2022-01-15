@@ -34,7 +34,7 @@ var info_lastfm = function() {
 		var list = layout.add_sidebar_list(language.gettext("lastfm_addtags"));
 		list.addClass('holdingcell');
 		list.append($('<li>')
-			.append($('<input>', {class: 'enter tiny inbrower', type: 'text', placeholder: unescapeHtml(language.gettext("lastfm_addtagslabel"))}))
+			.append($('<input>', {class: 'enter tiny inbrowser', type: 'text', placeholder: unescapeHtml(language.gettext("lastfm_addtagslabel"))}))
 			.append($('<button>', {class: 'infoclick clickaddtags tiny'}).html(language.gettext("button_add")))
 			.append($('<i>', {class: 'smallicon tright', id: 'tagadd'+type})));
 	}

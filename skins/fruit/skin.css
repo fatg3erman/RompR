@@ -494,7 +494,6 @@ i.topdrop
 }
 
 .info-border-right {
-	border-right: 1px solid #454545;
 	padding-right:1em;
 	max-width:240px;
 }
@@ -509,12 +508,6 @@ i.topdrop
 
 .info-detail-layout {
 	margin-top:8px;
-}
-
-.cleft {
-	border-left: 1px solid #454545;
-	padding-left:1em;
-	margin-left:1em;
 }
 
 .info-box-list img {

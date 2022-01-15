@@ -214,6 +214,8 @@ var prefs = function() {
 		'playlistbuttons'
 	];
 
+	const removed_themes = ['PlasmaPortrait.css', 'Storm.css', 'TheBlues.css', 'Kernsary.css', 'Leaves.css', 'NightClouds.css', 'Light.css'];
+
 	var backgroundImages = false;
 	var backgroundTimer;
 	var portraitImage = new Image();
@@ -833,16 +835,10 @@ var prefs = function() {
 			themeManager.init = emptyfunction;
 			themeManager.teardown = emptyfunction;
 			var theme = prefs.theme;
-			// These 2 themes were removed
-			if (theme == 'PlasmaPortrait.css') {
-				theme = 'Plasma.css';
+			if (removed_themes.indexOf(theme) > -1) {
+				theme = 'Numismatist.css';
 				$("#themeselector").val(theme);
-				prefs.save({theme: 'Plasma.css'});
-			}
-			if (theme == 'Storm.css') {
-				theme = 'Mountains.css';
-				$("#themeselector").val(theme);
-				prefs.save({theme: 'Mountains.css'});
+				prefs.save({theme: 'Numismatist.css'});
 			}
 			clearCustomBackground();
 			// Use a different version every time to ensure the browser doesn't cache.

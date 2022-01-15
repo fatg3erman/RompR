@@ -1,470 +1,128 @@
-/*
-=====================================================================
-= Standard HTML Elements
-=====================================================================
-*/
+@import url("themes/theme_base/colour_theme.css");
+
+:root {
+    --min-progress-colour: rgba(100, 50, 1, 1);
+    --max-progress-colour: rgba(255, 75, 1, 1);
+    --progress-bg-colour: rgba(0,0,0,0);
+
+    --text-colour: #dddddd;
+    --border-colour: #dedede;
+    --border-colour-dark: #999999;
+    --link-colour: #dcdcff;
+    --highlight-colour: #ff4800;
+
+    --main-bg-colour: unset;
+    --main-bg-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
+
+    --darker-bg-colour: rgba(255, 255, 255, 0.1);
+
+    --headerbar-bg-colour: unset;
+    --headerbar-bg-image: none;
+
+    --topbit-bg-colour: unset;
+    --topbit-bg-image: none;
+
+    --sources-bg-colour: unset;
+    --sources-bg-image:  none;
+    --sources-border-top: none;
+
+    --horse-bg-colour: unset;
+    --horse-bg-image: none;
+
+    --playlist-bg-colour: unset;
+    --playlist-bg-image: none;
+    --playlist-title-bg-colour: unset;
+    --playlist-title-border: none;
+    --playlist-item-top-border: 1px solid var(--border-colour);
+    --playlist-current-bg-colour: unset;
+
+    --dropmenu-bg-colour: #191919;
+    --dropmenu-bg-image: none;
+
+    --configtitle-bg-colour: #252525;
+    --configtitle-bg-image: none;
+    --configtitle-border-bottom: 1px solid var(--border-colour-dark);
+
+    --infopane-border-top: none;
+    --infopane-bg-colour: unset;
+    --infopane-bg-image: none;
+    --infopane-text-colour: unset;
+
+    --infopane-header-bg-colour: unset;
+    --infopane-header-bg-image: none;
+
+    --selected-bg-colour: #CC5500;
+
+    --button-colour:  var(--text-colour);
+    --button-hover-colour: var(--highlight-colour);
+    --button-border: 1px solid var(--border-colour);
+    --button-hover-border: 1px solid var(--highlight-colour);
+    --button-bg-colour: #202020;
+    --button-bg-image:  none;
+    --button-bg-hover-colour: #202020;
+    --button-bg-hover-image:  none;
+
+    --text-entry-text-colour: var(--text-colour);
+    --text-entry-border-colour: var(--border-colour-dark);
+    --text-entry-hover-border-colour: var(--border-colour-dark);
+    --text-entry-active-border-colour: var(--border-colour);
+    --text-entry-bg-colour: rgba(0,0,0,0.3);
+    --text-entry-hover-bg-colour: rgba(0,0,0,0.2);
+    --text-entry-active-bg-colour: rgba(0,0,0,0.2);
+
+    --select-text-colour: var(--text-colour);
+    --select-bg-colour: var(--text-entry-bg-colour);
+    --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
+
+    --album1-colour: transparent;
+    --album2-colour: #252525;
+    --drop-shadow: 7px 7px 5px rgba(0, 0, 0, 0.9);
+
+    --bordered-top: 1px solid #000000;
+    --bordered-right: 1px solid #232323;
+    --bordered-bottom: 1px solid #232323;
+    --bordered-left: 1px solid #000000;
+
+    --album-browse-bg-colour: #303030;
+    --album-browse-bg-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");;
+    --skypotato-openalbum-bg-colour: #404040;
+    --skypotato-openalbum-bg-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");;
+    --album-browse-open-bg-colour:#404040;
+    --album-browse-open-bg-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");;
+    --album-browse-open-highlight: none;
+}
 
 html {
-  background: #101010 url("themes/bg.jpg");
-  background-image: -webkit-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: -moz-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: -ms-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: -o-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-repeat: no-repeat, repeat;
-  background-attachment: fixed;
-  min-height: 100%;
+    background: #101010 url("themes/bg.jpg") !important;
+    background-image: -webkit-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg") !important;
+    background-image: -moz-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg") !important;
+    background-image: -ms-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg") !important;
+    background-image: -o-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg") !important;
+    background-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg") !important;
+    background-repeat: no-repeat, repeat !important;
+    background-attachment: fixed !important;
+    min-height: 100% !important;
 }
 
-.backmenu {
-    background-color: rgba(0,0,0,0.6);
-}
-
-body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,textarea,input
+button, input[type="button"], div.filebutton
 {
-    color:#dddddd;
-}
-
-button, div.filebutton
-{
-    background-color:#202020;
-    border:1px solid #dedede;
-    color:#dddddd;
     font-weight:bold;
-}
-
-button:hover, div.filebutton:hover
-{
-    color:#ff4800;
-    text-shadow: 0 0 15px #ff4800;
-}
-
-input
-{
-    color:#181818;
-}
-
-input.snapclientname[type=text] {
-    color: #ffffff;
-}
-
-a:link
-{
-    color:#dcdcff;
-}
-
-a:visited
-{
-    color:#dcdcff;
-}
-
-a:hover,a:active
-{
-    color:#ff4800;
-}
-
-/*
-=====================================================================
-= Specific Elements By ID
-=====================================================================
-*/
-
-#custombackground
-{
-    display:none;
-}
-
-#volumecontrol
-{
-    height:98%;
-    width:18px;
-}
-
-#notifications
-{
-    background-color:#000000;
-}
-
-#wikipopup
-{
-    background-color:#000000;
-}
-
-#imagecontainer
-{
-    background-color:#ffffff;
-}
-
-#tagadder
-{
-    background-color:#000000;
-    border-left:1px solid #666666;
-    border-bottom:1px solid #000000;
-    border-right:1px solid #000000;
-}
-
-#dragger
-{
-    background-color:rgba(255,255,255,0.3);
-}
-
-/*
-=====================================================================
-= General Classes
-=====================================================================
-*/
-
-.bordered
-{
-    border-bottom:1px solid #343434;
-}
-
-.infobarlayout
-{
-    margin: 0px;
-    padding-right: 12px;
-}
-
-.progressbar_v
-{
-    /* width:auto; */
-    border-radius:5px;
-}
-
-.progressbar_v:hover
-{
-    border-color:#666;
-    box-shadow: 0 0 15px #666;
-}
-
-.progressbar:hover
-{
-    border-color:#666;
-    box-shadow: 0 0 15px #666;
-}
-
-.album2
-{
-    background-color:#181818;
-}
-
-.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
-    color:#ff4800;
-}
-
-.playable.selected:hover, tr.playable.selected:hover>td {
-    color:#dddddd;
-}
-
-.selected
-{
-    background-color:#CC5500;
 }
 
 .playlistcurrentitem
 {
-    color:#cc0000;
+    font-size:110%;
 }
 
 .playlistcurrenttitle
 {
-    color:#cc0000;
-}
-
-.item
-{
-    border-top:1px solid #cccccc;
-}
-
-.inbrowser
-{
-    color:#000000;
-}
-
-.stleft
-{
-    border-right:1px solid #aaaaaa;
-}
-
-.popupwindow
-{
-    background-color:#111111;
-    border-left:1px solid #666666;
-    border-bottom:1px solid #000000;
-    border-right:1px solid #000000;
-    border-top:1px solid #666666;
-}
-
-.backhi:hover {
-    background-color:#454545;
-    cursor:pointer;
-}
-
-/*Prevent submenus from having all entries highlighted
-due to :hover events propagating from the parent menu
-*/
-.backhi:hover>div.topdropmenu>div.backhi {
-    color:#dddddd;
-}
-
-/*Make sure the submenu entry being hovered over still gets highlighted*/
-
-.backhi:hover>div.topdropmenu>div.backhi:hover {
-    background-color:#454545;
-}
-
-.tagholder table tr th
-{
-    border-bottom:1px solid #cccccc;
-    background-color:#000000;
-}
-
-tr.clickaddtrack:hover
-{
-    background-color:#353535;
-}
-
-.drop-box
-{
-    background-color:#fefefe;
-    color:#090909;
-}
-
-.bsel
-{
-    color:#ff4800;
-}
-
-.bmid
-{
-    border-left:2px solid #ff4800;
-}
-
-.currentbun
-{
-    border-bottom:1px solid #fe6500;
-    padding-bottom:2px;
-}
-
-.dropshadow
-{
-    box-shadow:         7px 7px 5px rgba(0, 0, 0, 0.8);
-}
-
-.progressbar
-{
-    border:1px solid #414141;
-}
-
-.progressbar_v
-{
-    border-left:1px solid #000000;
-    border-bottom:1px solid #343434;
-    border-right:1px solid #343434;
-    border-top:1px solid #000000;
-}
-
-/*
-=====================================================================
-= Dropdown Menus
-=====================================================================
-*/
-
-div.topdropmenu
-{
-    background-color:#191919;
-    border-left:1px solid #262626;
-    border-bottom:1px solid #000000;
-    border-right:1px solid #000000;
-    border-top:none;
-}
-
-.configtitle
-{
-    background-color:#252525;
-}
-
-/*
-=====================================================================
-= Info Panel - General
-=====================================================================
-*/
-
-.infosection
-{
-    border-top:1px solid #000000;
-}
-
-.infowiki
-{
-    background-color:#181818;
-    background-color:rgba(24, 24, 24, 0.4);
-}
-
-/*
-=====================================================================
-= Info Panel - Spotify
-=====================================================================
-*/
-
-.helpfulalbum
-{
-    background-color:#303030;
-}
-
-.tagholder_wide
-{
-    background-color:#404040;
-}
-
-/*
-=====================================================================
-= Podcasts
-=====================================================================
-*/
-
-.podcastitem
-{
-    border-top:1px solid #cccccc;
-}
-
-/*
-=====================================================================
-= For Album Art Manager
-=====================================================================
-*/
-
-.albumsection
-{
-    background-color:#000000;
-}
-
-#albumcovers
-{
-    background-color:#444444;
-}
-
-#coverslist
-{
-    box-sizing:border-box;
-    border-left:1px solid #bbbbbb;
+    font-size: 125%;
 }
 
 .highlighted {
-    border-top: 4px solid #fe6800 !important;
-    border-left: 4px solid #fe6800 !important;
-    border-right: 4px solid #fe6800 !important;
-    border-bottom: 4px solid #fe6800 !important;
-    border-radius:2px !important;
+    border-top: 4px solid var(--highlight-colour);
+    border-left: 4px solid var(--highlight-colour);
+    border-right: 4px solid var(--highlight-colour);
+    border-bottom: 4px solid var(--highlight-colour);
+    border-radius:2px;
 }
-
-.covercontainer.highlighted
-{
-    border-bottom: none !important;
-    margin-bottom:-4px;
-    background-color:#181818;
-  background: #101010 url("themes/bg.jpg");
-  background-image: -webkit-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: -moz-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: -ms-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: -o-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-repeat: no-repeat, repeat;
-  background-attachment: fixed;
-}
-
-#imageeditor
-{
-    background-color:#181818;
-  background: #101010 url("themes/bg.jpg");
-  background-image: -webkit-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: -moz-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: -ms-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: -o-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
-  background-repeat: no-repeat, repeat;
-  background-attachment: fixed;
-}
-
-#artistchooser
-{
-    border-bottom:1px solid #777777;
-    border-top:1px solid #777777;
-    color:#555555;
-}
-
-/*
-=====================================================================
-= Things that look like they might be for styling wikipedia data
-=====================================================================
-*/
-
-table.navbox th
-{
-    background-color: rgba(255,255,255,0.1);
-}
-
-.navbox-abovebelow
-{
-    padding-bottom:4px;
-}
-
-.navbox-title a:link,
-.navbox-abovebelow a:link,
-.navbox-group a:link
-{
-    text-decoration:none;
-}
-
-.navbox-title a:visited,
-.navbox-abovebelow a:visited,
-.navbox-group a:visited
-{
-    text-decoration:none;
-}
-
-.navbox-title a:hover,a:active,
-.navbox-abovebelow a:hover,a:active,
-.navbox-group a:hover,a:active
-{
-    text-decoration:none;
-}
-
-table.tracklist {
-    line-height:1.5em;
-}
-
-.tracklist tbody tr th
-{
-    font-weight:bold;
-}
-
-th.tlheader
-{
-    background-color:#232323;
-}
-
-.description
-{
-    margin-top:4px;
-}
-
-.underline
-{
-    border-bottom: 1px solid #999999;
-}
-
-.infosection h2
-{
-    border-bottom:2px solid #eeeeee;
-}
-
-.topbarplaycontrols {
-    border-left: 1px solid white;
-    border-right: 1px solid white;
-}
-
-.mostrecent {
-    border-top: 1px solid rgba(255,255,255,0.5);
-}
-

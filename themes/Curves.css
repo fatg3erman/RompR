@@ -1,59 +1,111 @@
-/*
-=====================================================================
-= Standard HTML Elements
-=====================================================================
-*/
+@import url("themes/theme_base/colour_theme.css");
+
+:root {
+    --min-progress-colour: rgba(100, 50, 1, 1);
+    --max-progress-colour: rgba(255, 75, 1, 1);
+    --progress-bg-colour: rgba(0,0,0,0);
+
+    --text-colour: black;
+    --border-colour: #555555;
+    --border-colour-dark: #444444;
+    --link-colour: #0b0080;
+    --highlight-colour: #ee3700;
+
+    --main-bg-colour: unset;
+    --main-bg-image: linear-gradient(#999999, #eeeeee, #aaaaaa);
+
+    --darker-bg-colour: rgba(0, 0, 0, 0.1);
+
+    --headerbar-bg-colour: unset;
+    --headerbar-bg-image: none;
+
+    --topbit-bg-colour: unset;
+    --topbit-bg-image: none;
+
+    --sources-bg-colour: unset;
+    --sources-bg-image:  none;
+    --sources-border-top: none;
+
+    --horse-bg-colour: unset;
+    --horse-bg-image: none;
+
+    --playlist-bg-colour: unset;
+    --playlist-bg-image: none;
+    --playlist-title-bg-colour: unset;
+    --playlist-title-border: none;
+    --playlist-item-top-border: none;
+    --playlist-current-bg-colour: unset;
+
+    --dropmenu-bg-colour: unset;
+    --dropmenu-bg-image: linear-gradient(#999999, #cccccc, #999999);
+
+    --configtitle-bg-colour: unset;
+    --configtitle-bg-image: linear-gradient(#999999, #cccccc, #999999);
+    --configtitle-border-bottom: none;
+
+    --infopane-border-top: none;
+    --infopane-bg-colour: unset;
+    --infopane-bg-image: linear-gradient(#ffffff, #aaaaaa);
+    --infopane-text-colour: unset;
+
+    --infopane-header-bg-colour: unset;
+    --infopane-header-bg-image: linear-gradient(#999999, #eeeeee, #999999);
+
+    --selected-bg-colour: #ff4800;
+
+    --button-colour: #ee3700;
+    --button-hover-colour: unset;
+    --button-border: 0px none;
+    --button-hover-border: 0px none;
+    --button-bg-colour: unset;
+    --button-bg-image:  linear-gradient(#999999, #cccccc, #999999);
+    --button-bg-hover-colour: unset;
+    --button-bg-hover-image:  linear-gradient(#999999, #cccccc, #999999);
+
+    --text-entry-text-colour: var(--text-colour);
+    --text-entry-border-colour: transparent;
+    --text-entry-hover-border-colour: transparent;
+    --text-entry-active-border-colour: var(--border-colour);
+    --text-entry-bg-colour: white;
+    --text-entry-hover-bg-colour: white;
+    --text-entry-active-bg-colour: white;
+
+    --select-text-colour: var(--text-colour);
+    --select-bg-colour: var(--text-entry-bg-colour);
+    --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
+
+    --album1-colour: transparent;
+    --album2-colour: transparent;
+    --drop-shadow: 7px 7px 5px rgba(50, 50, 50, 0.6);
+
+    --bordered-top: 1px solid #9a9a9a;
+    --bordered-right: 1px solid #e0e0e0;
+    --bordered-bottom: 1px solid #e0e0e0;
+    --bordered-left: 1px solid #9a9a9a;
+
+    --album-browse-bg-colour: #d0d0d0;
+    --album-browse-bg-image: none;
+    --skypotato-openalbum-bg-colour: #d0d0d0;
+    --skypotato-openalbum-bg-image: none;
+    --album-browse-open-bg-colour: #d0d0d0;
+    --album-browse-open-bg-image: none;
+    --album-browse-open-highlight: none;
+}
 
 html {
     background-image: linear-gradient(#999999, #eeeeee, #aaaaaa);
-    /*background-color:#aaaaaa;*/
     background-size:cover;
     background-repeat:no-repeat;
     background-attachment:fixed;
 }
 
-body,p,h1,h2,h3,h4,h5,h6,table,td,th,ul,ol,textarea,input
-{
-    color:#000000;
-}
-a:link
-{
-    color:#0b0080;
-}
-
-a:visited
-{
-    color:#0b0080;
-}
-
-a:hover,a:active
-{
-    text-shadow: 0 0 15px #ff4800;
-    cursor:pointer;
-}
-
-button, input[type="button"], div.filebutton
-{
-    background-image: linear-gradient(#999999, #cccccc, #999999);
-    color:#ee3700;
-    border:0px none;
-    border-radius:0.5em;
-}
-
 input
 {
-    color:#181818;
     border-radius: 0.5em !important;
-}
-
-input.inbrowser, div.inbrowser
-{
-    border: 1px solid #888888;
 }
 
 select
 {
-    color:#000000;
     border-radius:0.5em !important;
 }
 
@@ -63,56 +115,24 @@ select
 =====================================================================
 */
 
-#custombackground
-{
-    display:none;
-}
-
 #notifications
 {
-    background-image: linear-gradient(#999999, #cccccc, #999999);
     border-bottom-left-radius:1em;
     border-bottom-right-radius:1em;
 }
 
 #wikipopup
 {
-    background-color:#000000;
     border-radius: 1em;
-}
-
-#imagecontainer
-{
-    background-color:#ffffff;
-}
-
-#wobblebottom {
-    background-color:#aaaaaa;
 }
 
 #tagadder
 {
-    background-color:#cccccc;
     border-radius:1em;
 }
 
-#dragger
-{
-    background-color:rgba(0,0,0,0.5);
-}
-
-/*
-=====================================================================
-= General Classes
-=====================================================================
-*/
-
 .bordered
 {
-    border-left:1px solid #9a9a9a;
-    border-bottom:1px solid #e0e0e0;
-    border-right:1px solid #e0e0e0;
-    border-top:1px solid #9a9a9a;
     border-radius:1em;
 }
 
@@ -127,23 +147,14 @@ div.selectholder
 }
 
 .playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
-    text-shadow: 0 0 15px #ff4800;
-}
-
-.playable.selected:hover, tr.playable.selected:hover>td {
-    color:#000000;
-}
-
-.selected
-{
-    background-color:#ff4800;
+    text-shadow: 0 0 15px var(--highlight-colour);
 }
 
 .playlistcurrentitem
 {
     font-weight:bold;
     font-size:105%;
-    text-shadow: 0 0 15px #ff4800;
+    text-shadow: 0 0 15px var(--highlight-colour);
     transition:font-size 0.3s ease, text-shadow 0.3s ease;
 }
 
@@ -154,27 +165,12 @@ div.selectholder
 
 .playlistcurrenttitle
 {
-    text-shadow: 0 0 15px #ff4800;
+    text-shadow: 0 0 15px var(--highlight-colour);
     font-weight:bold;
-}
-
-.inbrowser
-{
-    color:#000000;
-}
-
-.stleft
-{
-    border-right:1px solid #888888;
 }
 
 .popupwindow
 {
-    background-image: linear-gradient(#999999, #cccccc, #999999);
-    border-left:1px solid #eeeeee;
-    border-bottom:1px solid #9a9a9a;
-    border-right:1px solid #9a9a9a;
-    border-top:1px solid #eeeeee;
     border-radius:1em;
 }
 
@@ -185,7 +181,7 @@ div.selectholder
 
 table.histable tr:hover {
     font-size:105%;
-    text-shadow: 0 0 15px #ff4800;
+    text-shadow: 0 0 15px var(--highlight-colour);
     transition:all 0.1s;
 }
 
@@ -195,71 +191,8 @@ table.histable tr
 }
 
 .backhi:hover {
-    text-shadow: 0 0 15px #ff4800;
-    cursor:pointer;
+    text-shadow: 0 0 15px var(--highlight-colour);
     transition:all 0.1s;
-}
-
-/*Prevent submenus from having all entries highlighted
-due to :hover events propagating from the parent menu
-*/
-.backhi:hover>div.topdropmenu>div.backhi {
-    color:#000000;
-}
-
-/*Make sure the submenu entry being hovered over still gets highlighted*/
-
-.backhi:hover>div.topdropmenu>div.backhi:hover {
-    text-shadow: 0 0 15px #ff4800;
-}
-
-.backhi
-{
-    transition:all 0.2s;
-}
-
-tr.clickaddtrack:hover
-{
-    background-color:#e1e4ea;
-}
-
-.tagholder table tr th {
-    background-color:rgba(255,255,255,0.5);
-    border-bottom:1px solid #cccccc;
-}
-
-.bsel
-{
-    color:#ff4800;
-}
-
-.bmid
-{
-    border-left:2px solid #ff4800;
-}
-
-.currentbun
-{
-    border-bottom:1px solid #fe6500;
-    padding-bottom:2px;
-}
-
-.dropshadow
-{
-    box-shadow:         7px 7px 5px rgba(50, 50, 50, 0.6);
-}
-
-.progressbar
-{
-    border:1px solid #414141;
-}
-
-.progressbar_v
-{
-    border-left:1px solid #9a9a9a;
-    border-bottom:1px solid #e0e0e0;
-    border-right:1px solid #e0e0e0;
-    border-top:1px solid #9a9a9a;
 }
 
 .mCSB_draggerRail
@@ -272,68 +205,13 @@ tr.clickaddtrack:hover
     background:rgba(0,0,0,0.75) !important;
 }
 
-/*
-=====================================================================
-= Dropdown Menus
-=====================================================================
-*/
-
-div.topdropmenu
-{
-    background-image: linear-gradient(#999999, #cccccc, #999999);
-    border-left:1px solid #eeeeee;
-    border-bottom:1px solid #9a9a9a;
-    border-right:1px solid #9a9a9a;
-}
-
-div.rightmenu
-{
-    border-top-left-radius: 1em;
-    border-top-right-radius: 0;
-    border-bottom-left-radius: 1em;
-    border-bottom-right-radius: 1em;
-}
-
-div.leftmenu
-{
-    border-top-left-radius: 0;
-border-top-right-radius: 1em;
-    border-bottom-left-radius: 1em;
-    border-bottom-right-radius: 1em;
-}
-
 .configtitle
 {
-    background-image: linear-gradient(#999999, #cccccc, #999999);
     border-radius:0.5em;
-    color:#000000;
-}
-
-body.mobile .configtitle
-{
-    width:95%;
-    margin-left:auto;
-    margin-right:auto;
-}
-
-.backmenu {
-    background-color: #999999;
-}
-
-/*
-=====================================================================
-= Info Panel - General
-=====================================================================
-*/
-
-.infowiki
-{
-    background-image: linear-gradient(#ffffff, #aaaaaa);
 }
 
 .infosection
 {
-    background-image: linear-gradient(#999999, #eeeeee, #999999);
     border-radius:1em;
     padding-left:1em;
 }
@@ -346,7 +224,6 @@ body.mobile .configtitle
 
 .helpfulalbum
 {
-    background-color: #d0d0d0;
     border-radius:1em;
 }
 
@@ -364,29 +241,7 @@ body.mobile .configtitle
 
 .tagholder_wide
 {
-    background-color: #d0d0d0;
     border-radius:1em;
-}
-
-.tagholder_wide .helpfulalbum
-{
-    background-color: #c0c0c0;
-}
-
-.tagholder_wide .helpfulalbum.tleft
-{
-    padding-top:1.5% !important;
-}
-
-/*
-=====================================================================
-= Podcasts
-=====================================================================
-*/
-
-.podcastitem
-{
-    border-top:1px solid #000000;
 }
 
 /*
@@ -395,63 +250,29 @@ body.mobile .configtitle
 =====================================================================
 */
 
-button:hover, input[type="button"]:hover, div.filebutton:hover
-{
-    color:#ff4800;
-    text-shadow: 0 0 15px #ff4800;
-}
-
 .albumsection
 {
-    background-image: linear-gradient(#999999, #eeeeee, #999999);
     border-radius:1em;
     padding-left:1em;
     box-sizing:border-box;
 }
 
-#albumcovers
-{
-    background-image: linear-gradient(#ffffff, #aaaaaa);
-}
-
 .highlighted {
-    border-top: 4px solid #fe6800 !important;
-    border-left: 4px solid #fe6800 !important;
-    border-right: 4px solid #fe6800 !important;
-    border-bottom: 4px solid #fe6800 !important;
     border-radius:12px !important;
+    border-top: 4px solid var(--highlight-colour);
+    border-left: 4px solid var(--highlight-colour);
+    border-right: 4px solid var(--highlight-colour);
+    border-bottom: 4px solid var(--highlight-colour);
 }
 
 .covercontainer.highlighted
 {
-    border-bottom: none !important;
-    margin-bottom:-4px;
-    background-color:#aaaaaa;
     border-radius:12px 12px 0px 0px !important;
 }
 
 #imageeditor
 {
     border-radius:12px !important;
-    background-color:#aaaaaa;
-}
-
-#artistchooser
-{
-    border-bottom:1px solid #555555;
-    border-top:1px solid #555555;
-    color:#555555;
-}
-
-/*
-=====================================================================
-= Things that look like they might be for styling wikipedia data
-=====================================================================
-*/
-
-table.navbox th
-{
-    background-color: rgba(0,0,0,0.1);
 }
 
 div.toc
@@ -477,54 +298,4 @@ table.infobox th
 .infotext table
 {
     border-radius:1em !important;
-}
-
-.navbox-abovebelow
-{
-    padding-bottom:4px;
-}
-
-.navbox-title a:link,
-.navbox-abovebelow a:link,
-.navbox-group a:link
-{
-    text-decoration:none;
-}
-
-.navbox-title a:visited,
-.navbox-abovebelow a:visited,
-.navbox-group a:visited
-{
-    text-decoration:none;
-}
-
-.navbox-title a:hover,a:active,
-.navbox-abovebelow a:hover,a:active,
-.navbox-group a:hover,a:active
-{
-    text-decoration:none;
-}
-
-table.tracklist {
-    line-height:1.5em;
-}
-
-.tracklist tbody tr th
-{
-    font-weight:bold;
-}
-
-.description
-{
-    margin-top:4px;
-}
-
-.underline
-{
-    border-bottom: 1px solid #444444;
-}
-
-.infosection h2
-{
-    border-bottom:2px solid #444444;
 }

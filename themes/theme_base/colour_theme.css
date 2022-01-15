@@ -1,0 +1,564 @@
+/*
+=====================================================================
+= Standard HTML Elements
+=====================================================================
+*/
+html {
+    background-color: var(--main-bg-colour);
+    background-image: var(--main-bg-image);
+    background-size:cover;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+}
+
+#custombackground {
+    display:none;
+}
+
+#headerbar {
+    background-color: var(--headerbar-bg-colour);
+    background-image: var(--headerbar-bg-image);
+}
+
+#infobar.coloured, #thetopbit {
+    background-color: var(--topbit-bg-colour);
+    background-image: var(--topbit-bg-image);
+}
+
+#sources
+{
+    border-top: var(--sources-border-top);
+    background-color: var(--sources-bg-colour);
+    background-image: var(--sources-bg-image);
+}
+
+#horse {
+    background-color: var(--horse-bg-colour);
+    background-image: var(--horse-bg-image);
+}
+
+#playlist {
+    background-color: var(--playlist-bg-colour);
+    background-image: var(--playlist-bg-image);
+}
+
+#infopane
+{
+    border-top: var(--infopane-border-top);
+    background-color: var(--infopane-bg-colour);
+    background-image: var(--infopane-bg-image);
+}
+
+.infowiki
+{
+    background-color: var(--infopane-bg-colour);
+    background-image: var(--infopane-bg-image);
+}
+
+.inbrowser {
+    color: var(--infopane-text-colour);
+}
+
+.infosection, .albumsection
+{
+    background-color: var(--infopane-header-bg-colour);
+    background-image: var(--infopane-header-bg-image);
+    background-size:cover;
+    background-repeat:no-repeat;
+}
+
+#notifications
+{
+    background-color: var(--dropmenu-bg-colour);
+    background-image: var(--dropmenu-bg-image);
+}
+
+#wikipopup
+{
+    background-color: var(--dropmenu-bg-colour);
+    background-image: var(--dropmenu-bg-image);
+}
+
+#imagecontainer
+{
+    background-color: var(--dropmenu-bg-colour);
+    background-image: var(--dropmenu-bg-image);
+}
+
+#tagadder
+{
+    background-color: var(--dropmenu-bg-colour);
+    background-image: var(--dropmenu-bg-image);
+}
+
+#dragger
+{
+    background-color: var(--selected-bg-colour);
+}
+
+/*
+=====================================================================
+= Dropdown Menus
+=====================================================================
+*/
+
+div.topdropmenu, div.albumbitsmenu
+{
+    background-color: var(--dropmenu-bg-colour);
+    background-image: var(--dropmenu-bg-image);
+    border-left: var(--bordered-left);
+    border-bottom: var(--bordered-bottom);
+    border-right: var(--bordered-right);
+}
+
+.configtitle
+{
+    background-color: var(--configtitle-bg-colour);
+    background-image: var(--configtitle-bg-image);
+    border-bottom: var(--configtitle-border-bottom);
+}
+
+body.mobile .configtitle
+{
+    width:100%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.dropshadow
+{
+    box-shadow: var(--drop-shadow);
+}
+
+.backmenu {
+    background-color: var(--main-bg-colour) !important;
+}
+
+.bordered {
+    border-left: var(--bordered-left);
+    border-bottom: var(--bordered-bottom);
+    border-right: var(--bordered-right);
+    border-top: var(--bordered-top);
+}
+
+body.desktop .info-border-right {
+    border-right: 1px solid var(--border-colour);
+}
+
+body.phone .dropmenu>div.playable,
+body.phone .dropmenu>div.menuitem,
+body.phone .mainpane .radio,
+body.phone .mainpane .faveradio,
+body.phone .mainpane .podcast:not(.podicon):not(.podglobal),
+body.phone .mainpane .directory {
+    border-top: 1px solid var(--border-colour);
+}
+
+body.phone #pluginplaylistholder .menuitem.clickicon,
+body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
+    border-bottom: 1px solid var(--border-colour);
+}
+
+body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input
+{
+    color: var(--text-colour);
+}
+
+a:link
+{
+    color: var(--link-colour);
+}
+
+a:visited
+{
+    color: var(--link-colour);
+}
+
+a:hover,a:active
+{
+    font-weight: bold;
+    cursor:pointer;
+}
+
+button, input[type="button"], div.filebutton
+{
+    color: var(--button-colour);
+    background-color: var(--button-bg-colour);
+    background-image: var(--button-bg-image);
+    border: var(--button-border);
+}
+
+button:hover, input[type="button"]:hover, div.filebutton:hover
+{
+    color: var(--button-hover-colour);
+    background-color: var(--button-bg-hover-colour);
+    background-image: var(--button-bg-hover-image);
+    border: var(--button-hover-border);
+}
+
+select {
+    color: var(--select-text-colour);
+}
+
+div.selectholder {
+    background-color: var(--select-bg-colour);
+}
+
+div.selectholder:hover {
+    background-color: var(--select-hover-bg-colour);
+}
+
+input[type="text"],input[type="number"] {
+    color: var(--text-entry-text-colour);
+    transition: all 0.5s ease;
+    background-color:  var(--text-entry-bg-colour);
+    border-bottom: 1px solid  var(--text-entry-border-colour);
+}
+
+input[type="text"]:hover,input[type="number"]:hover {
+    transition: all 0.5s ease;
+    background-color: var(--text-entry-hover-bg-colour);
+    border-bottom: 1px solid var(--text-entry-hover-border-colour);
+}
+
+input[type="text"]:focus,input[type="number"]:focus,input[type="text"]:focus-visible,input[type="number"]:focus-visible {
+    transition: all 0.5s ease;
+    background-color: var(--text-entry-active-bg-colour);
+    border-bottom:1px solid var(--text-entry-active-border-colour);
+    outline: none;
+}
+
+.drop-box {
+    background-color: var(--main-bg-colour);
+    color: var(--text-colour);
+}
+
+/*
+=====================================================================
+= Specific Elements By ID
+=====================================================================
+*/
+
+#pset {
+    background-color: var(--min-progress-colour);
+}
+
+#pmaxset {
+    background-color: var(--max-progress-colour);
+}
+
+#pbgset {
+    background-color: var(--progress-bg-colour);
+}
+
+/*
+=====================================================================
+= General Classes
+=====================================================================
+*/
+
+.album1
+{
+    background-color: var(--album1-colour);
+}
+
+.album2
+{
+    background-color: var(--album2-colour);
+}
+
+.item
+{
+    margin-bottom: 2px;
+}
+
+.playable:hover, .infoclick:hover, div.clickplaylist:hover, tr.playable:hover>td {
+    color: var(--highlight-colour);
+    cursor:pointer;
+}
+
+.selected
+{
+    background-color: var(--selected-bg-colour);
+}
+
+/*-- divs and classes used in the playlist --*/
+
+.playlistcurrentitem
+{
+    color: var(--highlight-colour);
+    background-color: var(--playlist-current-bg-colour);
+}
+
+.playlistitem
+{
+    transition:font-size 0.3s ease;
+}
+
+.playlistcurrenttitle
+{
+    color: var(--highlight-colour);
+    background-color: var(--playlist-current-bg-colour);
+    border-bottom: var(--playlist-title-border);
+}
+
+.playlisttitle{
+    background-color: var(--playlist-title-bg-colour);
+    border-bottom: var(--playlist-title-border);
+}
+
+.stleft
+{
+    border-right:1px solid var(--highlight-colour);
+}
+
+.item
+{
+    border-top: var(--playlist-item-top-border);
+}
+
+.popupwindow
+{
+    background-color: var(--dropmenu-bg-colour);
+    background-image: var(--dropmenu-bg-image);
+    border-left: var(--bordered-left);
+    border-bottom: var(--bordered-bottom);
+    border-right: var(--bordered-right);
+    border-top: var(--bordered-top);
+}
+
+table.histable tr:hover {
+    color: var(--highlight-colour);
+}
+
+.backhi:hover {
+    color: var(--highlight-colour);
+    cursor:pointer;
+}
+
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu
+*/
+.backhi:hover>div.topdropmenu>div.backhi {
+    color: var(--text-colour);
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.topdropmenu>div.backhi:hover {
+    color: var(--highlight-colour);
+}
+
+tr.clickaddtrack:hover
+{
+    background-color: var(--highlight-colour);;
+}
+
+.bsel
+{
+    color: var(--highlight-colour);
+}
+
+.bmid
+{
+    border-left:2px solid var(--highlight-colour);
+}
+
+.tagholder table tr th {
+    background-color: var(--main-bg-colour);
+    border-bottom:1px solid var(--border-colour);
+}
+
+.currentbun
+{
+    border-bottom:1px solid var(--highlight-colour);
+    padding-bottom:2px;
+}
+
+.progressbar
+{
+    border: 1px solid var(--border-colour-dark);
+}
+
+.progressbar_v
+{
+    border: 1px solid var(--border-colour-dark);
+}
+
+/*
+=====================================================================
+= Info Panel - Spotify + Skypotato Skin
+=====================================================================
+*/
+.helpfulalbum
+{
+    background-color: var(--album-browse-bg-colour);
+    background-image: var(--album-browse-bg-image);
+}
+
+.collectionitem .helpfulalbum.fixed {
+    background-color: var(--skypotato-openalbum-bg-colour);
+    background-image: var(--skypotato-openalbum-bg-image);
+}
+
+.tagholder_wide
+{
+    background-color: var(--album-browse-open-bg-colour);
+    background-image: var(--album-browse-open-bg-image);
+    box-sizing: border-box;
+    border-left: var(--album-browse-open-highlight);
+    border-top:  var(--album-browse-open-highlight);
+}
+
+.tagholder_wide .helpfulalbum.tleft
+{
+    background-image: none;
+}
+
+/*
+=====================================================================
+= Podcasts
+=====================================================================
+*/
+
+.podcastitem
+{
+    border-top:1px solid var(--border-colour);
+}
+
+/*
+=====================================================================
+= For Album Art Manager
+=====================================================================
+*/
+
+#artistcoverslist
+{
+    background-color: var(--main-bg-colour);
+}
+
+.highlighted {
+    background-color: var(--album-browse-open-bg-colour);
+    background-image: var(--album-browse-open-bg-image);
+}
+
+.covercontainer.highlighted
+{
+    border-bottom: none !important;
+    margin-bottom: -4px;
+}
+
+#coverslist
+{
+    box-sizing:border-box;
+    border-left:1px solid var(--border-colour);
+}
+
+#artistchooser
+{
+    background-color: var(--main-bg-colour);
+}
+
+.bigholder {
+    background-color: var(--main-bg-colour);
+    background-image: var(--main-bg-image);
+}
+
+#origimage {
+    border-left: 1px solid var(--border-colour);
+}
+
+/*
+=====================================================================
+= Things that look like they might be for styling wikipedia data
+=====================================================================
+*/
+
+table.navbox th
+{
+    background-color: var(--main-bg-colour);
+}
+
+.navbox-abovebelow
+{
+    padding-bottom:4px;
+}
+
+.navbox-title a:link,
+.navbox-abovebelow a:link,
+.navbox-group a:link
+{
+    text-decoration:none;
+}
+
+.navbox-title a:visited,
+.navbox-abovebelow a:visited,
+.navbox-group a:visited
+{
+    text-decoration:none;
+}
+
+.navbox-title a:hover,a:active,
+.navbox-abovebelow a:hover,a:active,
+.navbox-group a:hover,a:active
+{
+    text-decoration:none;
+}
+
+table.tracklist {
+    line-height:1.5em;
+}
+
+.tracklist tbody tr th
+{
+    font-weight:bold;
+}
+
+.description
+{
+    margin-top:4px;
+}
+
+.navbox-group {
+    border-color: var(--border-colour-dark );
+}
+
+.navbox-list {
+    border-color: var(--border-colour);
+}
+
+.underline
+{
+    border-bottom: 1px solid var(--border-colour-dark);
+}
+
+.infosection h2
+{
+    border-bottom:2px solid var(--border-colour-dark);
+}
+
+div.drop-images-here {
+    background-color: var(--darker-bg-colour);
+}
+
+.dropper-highlighted {
+    border: 2px solid var(--highlight-colour);
+}
+
+.backuptable th {
+    background-color: var(--main-bg-colour);
+    border-left: 1px solid var(--border-colour);
+}
+
+.backuptable tr {
+    border-bottom: 1px solid var(--border-colour-dark);
+}
+
+.topbarplaycontrols {
+    border-left: 1px solid var(--border-colour-dark);
+    border-right: 1px solid var(--border-colour-dark);
+}
+
+.mostrecent {
+    border-top: 1px solid var(--border-colour-dark);
+}

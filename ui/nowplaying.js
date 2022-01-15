@@ -107,7 +107,7 @@ function trackDataCollection(currenttrack, nowplayingindex, artistindex, playlis
 			'<input type="hidden" value="'+playlistinfo.metadata.artists[i].nowplayingindex+'" />';
 			htmlarr.push(html);
 		}
-		$("#artistchooser").html(htmlarr.join('&nbsp;<font color="#ff4800">|</font>&nbsp;'));
+		$("#artistchooser").html(htmlarr.join('&nbsp<span class="bsel">|</span>&nbsp;'));
 		if (playlistinfo.metadata.artists.length > 1) {
 			$("#artistchooser").slideDown('fast');
 		} else {

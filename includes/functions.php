@@ -160,7 +160,7 @@ function big_bad_fail($message) {
 function error_message($message) {
 	return '<h3 align="center">You may find it helpful to <a href="https://fatg3erman.github.io/RompR/" target="_blank">Read The Docs</a></h3>
 	<h3 align="center">The error message was:</h3><br>
-	<div class="border-red bordered" style="width:75%;margin:auto"><p align="center"><b>'.
+	<div class="border-red" style="width:75%;margin:auto"><p align="center"><b>'.
 	$message.'</b></p></div><br>';
 }
 

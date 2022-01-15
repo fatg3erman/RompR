@@ -259,6 +259,10 @@ function bindClickHandlers() {
 	$(document).on('click', '.openmenu', clickRegistry.doMenu);
 	$(document).on('click', '.clickable', clickRegistry.farmClick);
 
+	$(document).on('dblclick', '.open_magic_div', function() {
+		$('.magic_div').fadeIn('fast');
+	});
+
 	clickRegistry.addClickHandlers('clickalbummenu', makeAlbumMenu);
 	clickRegistry.addClickHandlers('clicktrackmenu', makeTrackMenu);
 	clickRegistry.addClickHandlers('addtollviabrowse', browseAndAddToListenLater);

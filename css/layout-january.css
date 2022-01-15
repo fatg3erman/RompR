@@ -121,12 +121,8 @@ input[type=checkbox], input[type=radio] {
 input[type=text],input[type="number"] {
 	border: 0px none;
 	border-radius: 0 0;
-	background-color: white;
+	/*background-color: white;*/
 	box-sizing: border-box;
-}
-
-input.snapclientname[type=text] {
-	background-color: transparent !important;
 }
 
 select {
@@ -184,20 +180,12 @@ div.selectholder {
 	pointer-events:none;
 	z-index:98;
 	width: 100%;
-	background-color:white;
+	/*background-color:white;*/
 }
 
 div.pref div.selectholder:not(.boycie) {
 	margin-left: 1em;
 	width:58%;
-}
-
-#custombgdropper>div>div:last-child {
-	/*width:58%;*/
-	margin-top:4px;
-	margin-bottom:4px;
-	padding-left:2px;
-	/*margin-left:1em;*/
 }
 
 i.combo-button {
@@ -232,8 +220,8 @@ option {
 	display:none;
 	max-height:15em;
 	overflow:auto;
-	background-color:#ffffff;
-	color:#000000;
+	/*background-color:#ffffff;*/
+	/*color:#000000;*/
 	line-height:1.3em;
 	padding-left:4px;
 	cursor:pointer;
@@ -332,7 +320,6 @@ option {
 }
 
 .fixed {
-	/*-webkit-box-flex:0;*/
 	flex-grow: 0;
 	flex-shrink:0;
 }
@@ -509,7 +496,6 @@ option {
 }
 
 .mixbox>.smallcover {
-	/*height: 100%;*/
 	width: auto;
 	max-width: 64px !important;
 }
@@ -606,7 +592,6 @@ option {
 }
 
 #scrobwrangler {
-	/*cursor: pointer;*/
 	font-size:6pt;
 }
 
@@ -716,8 +701,6 @@ option {
 .alarmnumbers {
 	font-size:250%;
 	font-weight:bold;
-	/* line-height:0.7em;
-	padding-bottom:0.2em; */
 }
 
 .pref {
@@ -804,14 +787,6 @@ div.item div.containerbox.vertical.expand {
 	height:1.3em;
 	width:2em;
 	font-weight:bold;
-}
-
-.smallspacer {
-	width:2px;
-}
-
-.tracknumbr {
-	width:2em;
 }
 
 .discnumber {
@@ -901,7 +876,6 @@ div.item {
 
 .togglecontainer {
 	display:table;
-	/*width:100%;*/
 	transition: opacity 1s ease;
 }
 
@@ -909,10 +883,6 @@ div.item {
 	padding-right:4px;
 	/*because firefox is dumb and ignores the align settings of the parent container.*/
 	text-align:right;
-}
-
-.tgtr {
-	padding-left:4px;
 }
 
 .holdingcell {
@@ -1014,11 +984,6 @@ td.fil {
 	white-space: nowrap;
 }
 
-/*.clickalbummenu, .clicktrackmenu
-{
-	position:relative;
-}
-*/
 .imgfill {
 	width: 100%;
 	height: 100%;
@@ -1132,13 +1097,6 @@ i.icon-menu {
 	line-height:1.5em;
 }
 
-.stleft {
-	float:left;
-	width:auto;
-	max-width:30%;
-	margin-right:12px;
-}
-
 .stright {
 	float:right;
 	margin-left:12px;
@@ -1171,7 +1129,6 @@ i.icon-menu {
 
 table.padded {
 	border-collapse: collapse;
-	/*margin:auto;*/
 }
 
 table.padded tr {
@@ -1197,7 +1154,7 @@ table.histable {
 }
 
 table.histable tr.top {
-	border-top:1px solid #454545;
+	border-bottom:1px solid var(--border-colour);
 }
 
 table.histable tr td {
@@ -1215,7 +1172,7 @@ table.histable tr.current {
 }
 
 .underline {
-	border-bottom: 1px solid #454545;
+	border-bottom:1px solid var(--border-colour);
 	margin-top:2em;
 	margin-bottom:0.75em;
 }
@@ -1228,7 +1185,7 @@ div.info-box-expand .underline:nth-child(1) {
 	margin-top:8px;
 	padding-bottom:2px;
 	margin-bottom:4px;
-	border-bottom: 1px solid #cccccc;
+	border-bottom:1px solid var(--border-colour);
 	width:99%;
 	margin-right:auto;
 	margin-left:auto;
@@ -1246,31 +1203,6 @@ div.info-box-expand .underline:nth-child(1) {
 
 .foldup {
 	transition: opacity 0.5s ease;
-}
-
-/*
-=====================================================================
-= Info Panel - File
-=====================================================================
-*/
-
-table.motherfucker tr td {
-	vertical-align:middle;
-	padding:4px;
-}
-
-/*
-=====================================================================
-= Info Panel - LastFM
-=====================================================================
-*/
-
-.simar {
-	padding-left:4px;
-	padding-right:4px;
-	padding-top:4px;
-	padding-bottom:4px;
-	display:inline-block;
 }
 
 .notloved {
@@ -1342,11 +1274,11 @@ a.infoclick.clickreleasepage
 
 .spotthing {
 	vertical-align:middle;
-	border-right: 1px solid #999999;
+	border-right: 1px solid var(--border-colour);
 }
 
 .spotchoices {
-	border-bottom:1px solid #999999;
+	border-bottom:1px solid var(--border-colour);
 	padding-bottom: 8px;
 	padding-top: 8px;
 }
@@ -1416,29 +1348,6 @@ div.lyrics p {
 
 /*
 =====================================================================
-= Plugins - Playlist Manager
-=====================================================================
-*/
-
-.plmantable {
-	border-collapse:collapse;
-	width:96%;
-	position:relative;
-	word-wrap:anywhere;
-	/*word-break:break-all;*/
-}
-
-.plmantableback {
-	position: absolute;
-	top: 0;
-	left: 0;
-	bottom: 0;
-	right: 0;
-	opacity: 0.2;
-}
-
-/*
-=====================================================================
 = Plugins - Backup Manager
 =====================================================================
 */
@@ -1449,14 +1358,8 @@ div.lyrics p {
 	padding:4px;
 }
 
-.backuptable tr {
-	border-bottom:1px solid black;
-}
-
 .backuptable th {
-	background-color:rgba(10,10,10,0.2);
 	text-align:center;
-	border-left:1px solid #aaaaaa;
 }
 
 .backuptable td {
@@ -1528,10 +1431,6 @@ div.lyrics p {
 	padding-bottom:4px;
 	font-size:96%;
 	font-weight:normal;
-}
-
-.whatdoicallthis strong {
-	/*font-weight: normal;*/
 }
 
 .whatdoicallthis p {
@@ -1828,7 +1727,6 @@ table.navbox {
 
 .navbox-list {
 	padding-bottom:4px;
-	border-color:#454545;
 }
 
 .navbox-list div ul {
@@ -1864,7 +1762,6 @@ th.mbox-text
 
 #toc, .toc {
 	display: inline-block;
-	/*zoom: 1;*/
 	padding: 7px;
 	border: 1px solid #454545;
 	font-size:90%;
@@ -1901,7 +1798,6 @@ table.wikitable tr th {
 .navbox-group {
 	padding-right:1em;
 	padding-left:1em;
-	border-color:#454545;
 }
 
 th.navbox-group {
@@ -1929,16 +1825,6 @@ table.ambox {
 .infobox caption {
 	font-size:120%;
 	font-weight:bold;
-}
-
-#choptions
-{
-	margin-top:4px;
-}
-
-#choptions label
-{
-	margin-right: 2em;
 }
 
 .helpfulalbum
@@ -2043,12 +1929,6 @@ table.ambox {
 	font-size:150%;
 }
 
-.pluginsection .filterinfo
-{
-	font-weight:normal;
-	font-size:100%;
-}
-
 .pluginitem
 {
 	margin-bottom:1em;
@@ -2062,29 +1942,6 @@ table.ambox {
 
 .carol span i.tagremover {
 	margin-right: 1em;
-}
-
-.ratinstr {
-	margin-top:8px;
-	margin-bottom:8px;
-}
-
-.ratsoptions {
-	padding-top:8px;
-	margin-top:8px;
-	margin-bottom:12px;
-}
-
-.rattitle {
-	margin-left:1em;
-}
-
-.filterinfo {
-	margin-left: 1em;
-}
-
-.ratsoptions {
-	border-top: 1px solid #444444;
 }
 
 .letterholder {
@@ -2106,14 +1963,12 @@ table.ambox {
 .radioplugin_normal {
 	display:flex;
 	width:33%;
-	/*min-width:120px;*/
 	margin:2px;
 }
 
 .radioplugin_wide {
 	display:flex;
 	width:100%;
-	/*min-width:120px;*/
 }
 
 .podresult {
@@ -2279,7 +2134,6 @@ div.unplayable {
 
 .snapgrouptitle {
 	margin-bottom: 0.25em;
-	background-color: rgba(0,0,0,0.1);
 	padding: 2px;
 }
 
@@ -2288,14 +2142,8 @@ div.unplayable {
 	padding-left: 1em;
 }
 
-.snapclientname {
-	font-weight: bold;
-	font-size: 120%;
-}
-
 .alarmdescription {
 	line-height: 1.2em;
-	/*height:2.2em;*/
 }
 
 .alarmdropper {
@@ -2339,12 +2187,10 @@ td.dan, th.dan{
 
 .closet {
 	position:relative;
-	/*width:160px;*/
 	text-align:center;
 	overflow:visible;
 	flex-shrink: 1;
 	flex-grow: 0;
-	/*min-width:180px;*/
 	max-width:220px;
 	flex-basis: 20%;
 }
@@ -2387,7 +2233,6 @@ td.dan, th.dan{
 }
 
 div.drop-images-here {
-	background-color: rgba(0,0,0,0.2);
 	text-align: center;
 	line-height: 3em;
 	margin-bottom:4px;
@@ -2395,6 +2240,9 @@ div.drop-images-here {
 }
 
 .dropper-highlighted {
-	border:  2px solid orange;
 	box-sizing:  border-box;
+}
+
+.border-red {
+    border: 1px solid red;
 }

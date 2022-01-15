@@ -10,10 +10,7 @@
 	flex-shrink: 0;
 	flex-basis: auto;
 	max-width:40%;
-	border-left: 1px solid #fe6500;
-	/*margin-right:8px;*/
 	margin-bottom:8px;
-	/*padding-right: 8px;*/
 	padding-bottom: 8px;
 	margin-top:8px;
 	transition: width 0.5s ease;

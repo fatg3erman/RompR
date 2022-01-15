@@ -296,6 +296,12 @@ var info_discogs = function() {
 				} else if (url.match(/facebook/i)) {
 					icon.addClass('icon-facebook-logo');
 					link.html('Facebook');
+				} else if (url.match(/soundcloud/i)) {
+					icon.addClass('icon-soundcloud-circled');
+					link.html('Soundcloud');
+				} else if (url.match(/twitter.com/i)) {
+					icon.addClass('icon-twitter-logo');
+					link.html('Twitter');
 				} else {
 					icon.addClass('icon-noicon');
 					link.html(d[1]);
