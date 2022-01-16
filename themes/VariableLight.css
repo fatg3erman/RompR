@@ -83,7 +83,7 @@
     --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
 
     --album1-colour: transparent;
-    --album2-colour: rgba(150,150,150,0.2);
+    --album2-colour: rgba(150,150,150,0.075);
     --drop-shadow: 6px 6px 6px rgba(50, 50, 50, 0.6);
 
     --bordered-top: none;

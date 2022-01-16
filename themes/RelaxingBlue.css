@@ -87,7 +87,7 @@
     --select-bg-colour: var(--text-entry-bg-colour);
     --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
 
-    --album2-colour: rgba(150,150,150,0.2);
+    --album2-colour: rgba(150,150,150,0.1);
     --drop-shadow: 6px 6px 6px rgba(50, 50, 50, 0.6);
 
     --bordered-top: none;
