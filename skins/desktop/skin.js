@@ -81,7 +81,7 @@ var layoutProcessor = function() {
 		$("#infopanecontrols").animatePanel(widths);
 	}
 
-	var my_scrollers = [ "#sources", "#infopane", "#pscroller", ".topdropmenu", ".drop-box" ];
+	var my_scrollers = [ "#sources", "#infopane", "#pscroller", ".top_drop_menu", ".drop-box" ];
 
 	return {
 
@@ -163,7 +163,7 @@ var layoutProcessor = function() {
 		},
 
 		setPlaylistHeight: function() {
-			var newheight = $("#bottompage").height() - $("#horse").outerHeight();
+			var newheight = $("#bottompage").height() - $("#playlist_top").outerHeight();
 			if ($("#playlistbuttons").is(":visible")) {
 				newheight -= $("#playlistbuttons").outerHeight();
 			}
@@ -256,7 +256,7 @@ var layoutProcessor = function() {
 			layoutProcessor.setPlaylistHeight();
 			infobar.rejigTheText();
 			browser.rePoint();
-			$('.topdropmenu').fanoogleMenus();
+			$('.top_drop_menu').fanoogleMenus();
 		},
 
 		displayCollectionInsert: async function(details) {
@@ -311,12 +311,13 @@ var layoutProcessor = function() {
             });
 			animatePanels();
 			for (let value of my_scrollers) {
+				debug.log('INIT', 'Adding custom scroll bar to',value);
 				$(value).addCustomScrollBar();
 			};
-			$(".topdropmenu").floatingMenu({
+			$(".top_drop_menu").floatingMenu({
 				handleClass: 'dragmenu',
 				addClassTo: 'configtitle',
-				siblings: '.topdropmenu'
+				siblings: '.top_drop_menu'
 			});
 			$("#tagadder").floatingMenu({
 				handleClass: 'configtitle',

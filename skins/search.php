@@ -3,7 +3,7 @@
 function doSearchBoxes($sterms) {
 	print '<div class="cleargroupparent fullwidth">';
 	foreach ($sterms as $label => $term) {
-		print '<div class="searchitem dropdown-container containerbox" name="'.$term.'">';
+		print '<div class="searchitem vertical-centre containerbox" name="'.$term.'">';
 		print '<input class="expand searchterm enter clearbox cleargroup" name="'.$term.'" type="text" placeholder="'.ucwords(strtolower(language::gettext($label))).'"/>';
 		print '</div>';
 	}
@@ -19,7 +19,7 @@ function doSearchBoxes($sterms) {
 	</select>';
 	print '</div>';
 
-	print '<div class="containerbox dropdown-container combobox">';
+	print '<div class="containerbox vertical-centre combobox">';
 	print '</div>';
 
 	print '<div class="containerbox">';
@@ -37,7 +37,7 @@ function startAdvSearchOptions() {
 
 	print '<div>'.language::gettext('label_displayresultsas').'</div>';
 
-	print '<div class="containerbox dropdown-container">';
+	print '<div class="containerbox vertical-centre">';
 	print '<div class="selectholder">';
 	print '<select id="sortresultsbyselector" class="saveomatic">';
 	print '<option value="sameas">'.language::gettext('label_sameascollection').'</option>';

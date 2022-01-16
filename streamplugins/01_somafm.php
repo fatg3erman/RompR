@@ -55,7 +55,7 @@ class somafmplugin {
 
 	private function format_listenlink($c, $p, $label) {
 		$img = $this->getimage($c);
-		print '<div class="clickstream playable draggable indent containerbox padright dropdown-container" name="'.rawurlencode((string) $p).'" streamimg="'.$img.'" streamname="'.$c->title.'">';
+		print '<div class="clickstream playable draggable indent containerbox padright vertical-centre" name="'.rawurlencode((string) $p).'" streamimg="'.$img.'" streamname="'.$c->title.'">';
 		print '<i class="icon-no-response-playbutton collectionicon fixed"></i>';
 		print '<i class="'.audioClass($p[0]['format']).' collectionicon fixed"></i>';
 		print '<div class="expand">'.$label.'&nbsp';
@@ -128,14 +128,14 @@ class somafmplugin {
 		}
 		print '<div class="containerbox rowspacer"></div>';
 		if ($channel->lastPlaying) {
-			print '<div class="containerbox indent padright dropdown-container">';
+			print '<div class="containerbox indent padright vertical-centre">';
 			print '<b>'.language::gettext('label_last_played').'</b>&nbsp;';
 			print $channel->lastPlaying;
 			print '</div>';
 		}
 		if ($channel->twitter && $channel->dj) {
 			print '<a href="http://twitter.com/@'.$channel->twitter.'" target="_blank">';
-			print '<div class="containerbox indent padright dropdown-container">';
+			print '<div class="containerbox indent padright vertical-centre">';
 			print '<i class="icon-twitter-logo collectionicon fixed"></i>';
 			print '<div class="expand"><b>DJ: </b>'.$channel->dj.'</div>';
 			print '</div></a>';

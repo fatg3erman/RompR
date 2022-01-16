@@ -47,7 +47,7 @@ var faveArtistRadio = function() {
 		},
 
 		modeHtml: function(p) {
-			return '<i class="icon-artist modeimg"/></i><span class="modespan">'+language.gettext("label_radio_fartist")+'</span>';
+			return '<i class="icon-artist modeimg"/></i><span class="alignmid bold">'+language.gettext("label_radio_fartist")+'</span>';
 		}
 	}
 }();

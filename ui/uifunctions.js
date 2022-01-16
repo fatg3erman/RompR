@@ -133,8 +133,8 @@ var pluginManager = function() {
 }();
 
 var imagePopup = function() {
-	var wikipopup = null;
-	var imagecontainer = null;
+	var popup_image_holder = null;
+	var popup_image_container = null;
 	var mousepos = null;
 	var clickedelement = null;
 	var image = new Image();
@@ -151,14 +151,14 @@ var imagePopup = function() {
 		create:function(element, event, source){
 			debug.log("IMAGEPOPUP", "Creating new popup",source);
 			debug.log("IMAGEPOPUP", "Current popup source is",image.src);
-			if(wikipopup == null){
-				wikipopup = $('<div>', { id: 'wikipopup', onclick: 'imagePopup.close()',
+			if(popup_image_holder == null){
+				popup_image_holder = $('<div>', { id: 'popup_image_holder', onclick: 'imagePopup.close()',
 					class: 'dropshadow'}).appendTo($('body'));
-				imagecontainer = $('<img>', { id: 'imagecontainer', onclick: 'imagePopup.close()',
+				popup_image_container = $('<img>', { id: 'popup_image_container', onclick: 'imagePopup.close()',
 					src: ''}).appendTo($('body'));
 			} else {
-				wikipopup.empty();
-				imagecontainer.fadeOut('fast');
+				popup_image_holder.empty();
+				popup_image_container.fadeOut('fast');
 			}
 			mousepos = getPosition(event);
 			clickedelement = element;
@@ -167,13 +167,13 @@ var imagePopup = function() {
 			if (left < 0) {
 				left = 0;
 			}
-			wikipopup.css({       width: '48px',
+			popup_image_holder.css({       width: '48px',
 								  height: '48px',
 								  top: top+'px',
 								  left: left+'px'});
-			wikipopup.append($('<i>', {class: 'icon-spin6 svg-square spinner',
+			popup_image_holder.append($('<i>', {class: 'icon-spin6 svg-square spinner',
 				style: 'position:relative;top:8px;left:8px'}));
-			wikipopup.fadeIn('fast');
+			popup_image_holder.fadeIn('fast');
 			if (source !== undefined) {
 				if (source == image.src) {
 					imagePopup.show();
@@ -224,8 +224,8 @@ var imagePopup = function() {
 			if (left < 0) {
 				left = 0;
 			}
-			wikipopup.empty();
-			wikipopup.animate(
+			popup_image_holder.empty();
+			popup_image_holder.animate(
 				{
 					width: popupwidth+'px',
 					height: popupheight+'px',
@@ -235,23 +235,23 @@ var imagePopup = function() {
 				'fast',
 				'swing',
 				function() {
-					imagecontainer.css({  top: (top+18)+'px',
+					popup_image_container.css({  top: (top+18)+'px',
 										  left: (left+18)+'px'});
 
-					imagecontainer.attr({ width: imgwidth+'px',
+					popup_image_container.attr({ width: imgwidth+'px',
 										  height: imgheight+'px',
 										  src: image.src });
 
-					imagecontainer.fadeIn('slow');
-					wikipopup.append($('<i>', {class: 'icon-cancel-circled playlisticon tright clickicon',
+					popup_image_container.fadeIn('slow');
+					popup_image_holder.append($('<i>', {class: 'icon-cancel-circled playlisticon tright clickicon',
 						style: 'margin-top:4px;margin-right:4px'}));
 				}
 			);
 		},
 
 		close:function() {
-			wikipopup.fadeOut('slow');
-			imagecontainer.fadeOut('slow');
+			popup_image_holder.fadeOut('slow');
+			popup_image_container.fadeOut('slow');
 		}
 	}
 }();
@@ -363,7 +363,7 @@ function setChooserButtons() {
 function parsePsetCss(item, dflt) {
 	// Save looking these up every time, it's quite slow
 	// Note that if aplha is set to 1, it doesn't come back. So use 0.99
-	var c = $(item).css('background-color');
+	var c = getComputedStyle(document.documentElement).getPropertyValue(item);
 	var regexp = /rgba\((\d+),\s*(\d+),\s*(\d+),\s*(.*)\s*\)/;
 	var match = regexp.exec(c);
 	// If no style is set it comes back as 0,0,0 so we must catch that
@@ -384,11 +384,11 @@ function getrgbs(percent,min) {
 	var maxcolours = {r: 255, g: 75, b: 1, a: 1};
 	var bgdcolours = {r: 0,   g: 0,  b: 0, a: 0};
 	if (prefs.rgbs == null) {
-		mincolours = parsePsetCss('#pset', mincolours);
+		mincolours = parsePsetCss('--min-progress-colour', mincolours);
 		prefs.rgbs = mincolours;
-		maxcolours = parsePsetCss('#pmaxset', maxcolours);
+		maxcolours = parsePsetCss('--max-progress-colour', maxcolours);
 		prefs.maxrgbs = maxcolours;
-		bgdcolours = parsePsetCss('#pbgset', bgdcolours);
+		bgdcolours = parsePsetCss('--progress-bg-colour', bgdcolours);
 		prefs.bgdrgbs = bgdcolours;
 	} else {
 		mincolours = prefs.rgbs;
@@ -595,7 +595,7 @@ function onlyAlbums(index) {
 function calcPercentWidth(element, childSelector, targetWidth, parentWidth) {
 	if (parentWidth < targetWidth) { return 100; }
 	var t = element.find(childSelector);
-	var r = element.find('.tagholder_wide');
+	var r = element.find('.masonry_opened');
 	var numElements = t.length + r.length;
 	if (numElements == 0) { return 100; }
 	var first_row = Math.round(parentWidth/targetWidth);

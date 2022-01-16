@@ -308,8 +308,8 @@ var browser = function() {
 
 			$('#infopane .masonified:visible').each(function() {
 				var h = $(this);
-				var width = calcPercentWidth(h, '.tagholder', 500, h.width());
-				h.find(".tagholder").css('width', width.toString()+'%');
+				var width = calcPercentWidth(h, '.masonry_general', 500, h.width());
+				h.find(".masonry_general").css('width', width.toString()+'%');
 				// Check if it is being handled by Masonry, prevents early init with no paramerts
 				if (typeof(params) == 'undefined' && h.css('position') == 'relative') {
 					h.masonry();
@@ -318,8 +318,8 @@ var browser = function() {
 
 			$('#infopane .masonified5.filled:visible').each(function() {
 				var h = $(this);
-				var width = calcPercentWidth(h, '.tagholder5', 260, h.width());
-				h.find(".tagholder5").css('width', width.toString()+'%');
+				var width = calcPercentWidth(h, '.spotify_artist_album_masonry', 260, h.width());
+				h.find(".spotify_artist_album_masonry").css('width', width.toString()+'%');
 				h.find(".sizer").css('width', width.toString()+'%');
 				if (typeof(params) == 'undefined' && h.css('position') == 'relative') {
 					h.masonry();
@@ -328,10 +328,10 @@ var browser = function() {
 
 			$('#infopane .masonified2:visible').each(function() {
 				var h = $(this);
-				var width = calcPercentWidth(h, '.tagholder2', 260, h.width());
-				h.find(".tagholder2").css('width', width.toString()+'%');
+				var width = calcPercentWidth(h, '.spotify_album_masonry', 260, h.width());
+				h.find(".spotify_album_masonry").css('width', width.toString()+'%');
 				h.find(".sizer").css('width', width.toString()+'%');
-				h.find(".tagholder_wide").css("width", "98%");
+				h.find(".masonry_opened").css("width", "98%");
 				h.find(".brick_wide").css("width", "98%");
 				if (typeof(params) == 'undefined' && h.css('position') == 'relative') {
 					h.masonry();
@@ -340,18 +340,17 @@ var browser = function() {
 
 			$('#infopane .masonified4:visible').each(function() {
 				var h = $(this);
-				var width = calcPercentWidth(h, '.tagholder4', 140, h.width());
-				h.find(".tagholder4").css('width', width.toString()+'%');
+				var width = calcPercentWidth(h, '.spotify_playable_masonry', 140, h.width());
+				h.find(".spotify_playable_masonry").css('width', width.toString()+'%');
 				if (typeof(params) == 'undefined' && h.css('position') == 'relative') {
 					h.masonry();
 				}
 			});
 
-			// Surely can do this with a flexbox-wrap layout?
 			$('#infopane .mixcontainer:visible').each(function() {
 				var h = $(this);
 				var w = h.width();
-				var m = h.children('.mixbox');
+				var m = h.children('.plugin_hpl_radio');
 				if (m.length == 1 || w < 700) {
 					m.css('width', '100%');
 				} else {

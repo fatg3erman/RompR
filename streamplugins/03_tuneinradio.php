@@ -31,7 +31,7 @@ class tuneinplugin {
 			$this->url = $_REQUEST['url'];
 		} else {
 			uibits::directoryControlHeader('tuneinlist', language::gettext('label_tuneinradio'));
-			print '<div class="containerbox fullwidth dropdown-container"><div class="expand">
+			print '<div class="containerbox fullwidth vertical-centre"><div class="expand">
 				<input class="enter clearbox tuneinsearchbox" name="tuneinsearcher" type="text" ';
 			if (array_key_exists('search', $_REQUEST)) {
 				print 'value="'.$_REQUEST['search'].'" ';

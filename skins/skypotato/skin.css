@@ -118,7 +118,7 @@ div.collectionpanel>div.playable.clickalbum.brick_wide {
 	font-size:8pt;
 }
 
-#amontobin {
+#nowplaying_icons {
 	padding-top:4px;
 }
 
@@ -426,10 +426,11 @@ button.spinable.icon-spin6 {
 	vertical-align:middle;
 }
 
-.headercontainer {
+/*.headercontainer {
 	max-height:36px;
+	padding-top:4px;
 }
-
+*/
 .dragmenu {
 	cursor:move;
 }
@@ -594,7 +595,7 @@ div.rightmenu
 	right:0px;
 }
 
-.title-menu.containerbox.dropdown-container {
+.title-menu.containerbox.vertical-centre {
 	margin-right: 0px;
 	margin-left: 0px;
 }
@@ -766,7 +767,7 @@ div.rightmenu
 	border: 4px solid transparent;
 }
 
-.collectionitem:not(.tagholder_wide) {
+.collectionitem:not(.masonry_opened) {
 	flex-grow: 1;
 	flex-shrink: 1;
 	flex-basis: 20%;
@@ -774,20 +775,20 @@ div.rightmenu
 	max-width: 320px;
 }
 
-.collectionitem.selecotron.tagholder_wide.dropshadow {
+.collectionitem.selecotron.masonry_opened.dropshadow {
 	padding-left: 0px;
 	width: 98%;
 }
 
-.collectionitem.fixed.selecotron:not(.tagholder_wide)>.containerbox.wrap {
+.collectionitem.fixed.selecotron:not(.masonry_opened)>.containerbox.wrap {
 	height: 100%;
 }
 
-.collectionitem.fixed.selecotron:not(.tagholder_wide)>.containerbox.openmenu {
+.collectionitem.fixed.selecotron:not(.masonry_opened)>.containerbox.openmenu {
 	height: 100%;
 }
 
-#podcastslist .tagholder_wide>.minwidthed2:before
+#podcastslist .masonry_opened>.minwidthed2:before
 {
 	content:"";
 	width: 20em;
@@ -795,12 +796,12 @@ div.rightmenu
 	overflow:hidden;
 }
 
-.minwidthed2.expand>.tagh.albumthing, .dropmenu.minwidthed2>.tagh.albumthing, .collectionitem.tagholder_wide>.openmenu .tagh.albumthing {
+.minwidthed2.expand>.tagh.albumthing, .dropmenu.minwidthed2>.tagh.albumthing, .collectionitem.masonry_opened>.openmenu .tagh.albumthing {
 	margin-bottom: 0.75em;
 	font-size: 140%;
 }
 
-.collectionitem.fixed.selecotron.tagholder_wide>.radiochannel+.minwidthed2:before
+.collectionitem.fixed.selecotron.masonry_opened>.radiochannel+.minwidthed2:before
 {
 	content:"";
 	width: 20em;
@@ -821,11 +822,7 @@ div.helpfulalbum>div.tagh.albumthing {
 	max-width: 360px;
 }
 
-div.helpfulalbum>div.tagh.albumthing.jalopy200 {
-	max-width: 200px;
-}
-
-.collectionitem.tagholder_wide.dropshadow .helpfulalbum {
+.collectionitem.masonry_opened.dropshadow .helpfulalbum {
 	-webkit-box-flex:0;
 	flex-grow: 0;
 	flex-shrink:0;
@@ -833,14 +830,14 @@ div.helpfulalbum>div.tagh.albumthing.jalopy200 {
 	background-image: unset !important;
 }
 
-.collectionitem.tagholder_wide.dropshadow .containerbox.vertical:not(.podoptions),
-.collectionitem.tagholder_wide.dropshadow .containerbox.radiochannel  {
+.collectionitem.masonry_opened.dropshadow .containerbox.vertical:not(.podoptions),
+.collectionitem.masonry_opened.dropshadow .containerbox.radiochannel  {
 	padding-bottom: 4px;
 	float: left;
 }
 
 @media screen and (max-width:800px) {
-	div.collectionitem.tagholder_wide>div.containerbox>div.helpfulalbum>img.jalopy {
+	div.collectionitem.masonry_opened>div.containerbox>div.helpfulalbum>img.jalopy {
 		max-width: 260px;
 	}
 }

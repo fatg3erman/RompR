@@ -81,7 +81,7 @@ var layoutProcessor = function() {
 		$("#infopanecontrols").animatePanel(widths);
 	}
 
-	var my_scrollers = [ "#sources", "#infopane", ".topdropmenu", ".drop-box" ];
+	var my_scrollers = [ "#sources", "#infopane", ".top_drop_menu", ".drop-box" ];
 	var rtime = '';
 	var ptime = '';
 	var headers = Array();
@@ -251,7 +251,7 @@ var layoutProcessor = function() {
 			$('#infobar').css('width', newwidth+'px');
 			infobar.rejigTheText();
 			browser.rePoint();
-			$('.topdropmenu').fanoogleMenus();
+			$('.top_drop_menu').fanoogleMenus();
 			setBottomPanelWidths();
 		},
 
@@ -395,12 +395,13 @@ var layoutProcessor = function() {
             });
 			animatePanels();
 			for (let value of my_scrollers) {
+				debug.log('INIT', 'Adding custom scroll bar to',value);
 				$(value).addCustomScrollBar();
 			};
-			$(".topdropmenu").floatingMenu({
+			$(".top_drop_menu").floatingMenu({
 				handleClass: 'dragmenu',
 				addClassTo: 'configtitle',
-				siblings: '.topdropmenu'
+				siblings: '.top_drop_menu'
 			});
 			$("#tagadder").floatingMenu({
 				handleClass: 'configtitle',
@@ -412,7 +413,7 @@ var layoutProcessor = function() {
 				side: 'left',
 				donefunc: setBottomPanelWidths
 			});
-			$('#plmode').detach().appendTo('#amontobin').addClass('tright');
+			$('#plmode').detach().appendTo('#nowplaying_icons').addClass('tright');
 			$('#volume').volumeControl({
 				orientation: 'vertical',
 				command: player.controller.volume

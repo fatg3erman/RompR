@@ -107,19 +107,19 @@ var spotiMixRadio = function() {
 		modeHtml: function(p) {
 			switch (p) {
 				case 'surprise':
-					return '<i class="icon-spotify-circled modeimg"/></i><span class="modespan">'+language.gettext('label_spottery_lottery')+'</span>';
+					return '<i class="icon-spotify-circled modeimg"/></i><span class="alignmid bold">'+language.gettext('label_spottery_lottery')+'</span>';
 					break;
 
 				case '7day':
-					return '<i class="icon-spotify-circled modeimg"/></i><span class="modespan">'+language.gettext('label_spotify_mix')+'</span>';
+					return '<i class="icon-spotify-circled modeimg"/></i><span class="alignmid bold">'+language.gettext('label_spotify_mix')+'</span>';
 					break;
 
 				case '1year':
-					return '<i class="icon-spotify-circled modeimg"/></i><span class="modespan">'+language.gettext('label_spotify_dj')+'</span>';
+					return '<i class="icon-spotify-circled modeimg"/></i><span class="alignmid bold">'+language.gettext('label_spotify_dj')+'</span>';
 					break;
 
 				default:
-					return '<i class="icon-spotify-circled modeimg"/></i><span class="modespan">Spotify Mix</span>';
+					return '<i class="icon-spotify-circled modeimg"/></i><span class="alignmid bold">Spotify Mix</span>';
 					break;
 
 			}

@@ -259,7 +259,7 @@ var playlist = function() {
 			textEntry: function(icon, label, id) {
 				var html = '<div class="menuitem containerbox fullwidth">';
 				html += '<div class="svg-square fixed '+icon+'"></div>';
-				html += '<div class="expand dropdown-holder"><input class="enter clearbox" id="'+id+'" type="text" placeholder="'+label+'" /></div>';
+				html += '<div class="expand drop-box-holder"><input class="enter clearbox" id="'+id+'" type="text" placeholder="'+label+'" /></div>';
 				html += '<button class="fixed alignmid" name="'+id+'">'+language.gettext('button_playradio')+'</button>';
 				html += '</div>';
 				return html;
@@ -967,7 +967,7 @@ function Album(artist, album, index, rolledup) {
 		}
 
 		var inner = $('<div>', {class: 'containerbox'}).appendTo(holder);
-		var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].Id, class: 'expand clickplaylist playid containerbox vertcentre'}).appendTo(inner);
+		var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].Id, class: 'expand clickplaylist playid containerbox vertical-centre'}).appendTo(inner);
 
 		if (prefs.use_albumart_in_playlist) {
 			self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].ImgKey, src: 'newimages/transparent.png' });
@@ -1007,8 +1007,8 @@ function Album(artist, album, index, rolledup) {
 				trackdiv.removeClass('playlistitem').addClass('playlistcurrentitem');
 			}
 
-			var trackOuter = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(trackdiv);
-			var trackDetails = $('<div>', {class: 'expand playid clickplaylist containerbox dropdown-container', romprid: tracks[trackpointer].Id}).appendTo(trackOuter);
+			var trackOuter = $('<div>', {class: 'containerbox vertical-centre'}).appendTo(trackdiv);
+			var trackDetails = $('<div>', {class: 'expand playid clickplaylist containerbox vertical-centre', romprid: tracks[trackpointer].Id}).appendTo(trackOuter);
 
 			if (tracks[trackpointer].Track) {
 				var trackNodiv = $('<div>', {class: 'tracknumber fixed'}).appendTo(trackDetails);
@@ -1206,7 +1206,7 @@ function Stream(index, album, rolledup) {
 		}
 
 		var inner = $('<div>', {class: 'containerbox'}).appendTo(header);
-		var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].Id, class: 'expand playid clickplaylist containerbox vertcentre'}).appendTo(inner);
+		var albumDetails = $('<div>', {name: self.index, romprid: tracks[0].Id, class: 'expand playid clickplaylist containerbox vertical-centre'}).appendTo(inner);
 
 		if (prefs.use_albumart_in_playlist) {
 			self.image = $('<img>', {class: 'smallcover fixed', name: tracks[0].ImgKey, src: 'newimages/transparent.png' });

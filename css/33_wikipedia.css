@@ -1,0 +1,233 @@
+/*
+=====================================================================
+= Things that look like they might be for styling wikipedia data
+=====================================================================
+*/
+
+table.navbox th
+{
+    background-color: var(--main-bg-colour);
+}
+
+table.navbox-inner th, table.navbox-inner td {
+	background-color: transparent !important;
+}
+
+.navbox {
+	background-color: transparent !important;
+}
+
+td.infobox-image {
+	text-align: center;
+}
+
+.navbox-abovebelow
+{
+    padding-bottom:4px;
+}
+
+.navbox-title a:link,
+.navbox-abovebelow a:link,
+.navbox-group a:link
+{
+    text-decoration:none;
+}
+
+.navbox-title a:visited,
+.navbox-abovebelow a:visited,
+.navbox-group a:visited
+{
+    text-decoration:none;
+}
+
+.navbox-title a:hover,a:active,
+.navbox-abovebelow a:hover,a:active,
+.navbox-group a:hover,a:active
+{
+    text-decoration:none;
+}
+
+table.tracklist {
+    line-height:1.5em;
+}
+
+.tracklist tbody tr th
+{
+    font-weight:bold;
+}
+
+.description
+{
+    margin-top:4px;
+}
+
+.navbox-group {
+    border-color: var(--border-colour);
+}
+
+.navbox-list {
+    border-color: var(--border-colour);
+}
+
+.underline
+{
+    border-bottom: 1px solid var(--border-colour);
+}
+
+.mw-headline {
+    padding-top:8px;
+    padding-bottom:8px;
+    padding-left:12px;
+    padding-right:12px;
+    margin-bottom:8px;
+}
+
+.infobox {
+    float:right;
+    margin-right:0px;
+    margin-bottom:12px;
+    margin-left:12px;
+    margin-top:12px;
+    border: 1px solid var(--border-colour);
+    font-size: 92%;
+    line-height: 1.5em;
+    clear: right;
+}
+
+.infobox_v3 {
+    float:right;
+    margin-right:0px;
+    margin-bottom:12px;
+    margin-left:12px;
+    margin-top:12px;
+    border: 1px solid var(--border-colour);
+    font-size: 92%;
+    line-height: 1.5em;
+    clear: right;
+    max-width: 325px;
+    word-wrap: break-word;
+}
+
+.thumb {
+    margin-right:12px;
+    margin-bottom:12px;
+    margin-left:12px;
+    margin-top:12px;
+    text-align:center;
+}
+
+div .thumb {
+    clear: right;
+}
+
+table.navbox {
+    width: 100%;
+    margin: auto;
+    clear: both;
+}
+
+.navbox-title {
+    padding-bottom:4px;
+}
+
+.navbox-abovebelow div ul {
+    padding-left:0.5em;
+}
+
+.navbox-abovebelow ul li {
+    list-style:none;
+    float:left;
+    padding-left:1em;
+}
+
+.navbox-list {
+    padding-bottom:4px;
+}
+
+.navbox-list div ul {
+    display:inline-block;
+    margin: 0.125em;
+    padding-left:0.5em;
+}
+
+.navbox-list div ul li {
+    list-style:none;
+    float:left;
+    padding-right:1.5em;
+}
+
+
+.mw-editsection {
+    display:none;
+}
+
+th.mbox-text
+{
+    padding-top: 0.25em;
+    padding-right: 0.9em;
+}
+
+#toc ul, .toc ul {
+    list-style-type: none;
+    list-style-image: none;
+    text-align: left;
+    line-height: 1.5em;
+    margin-left: -20px;
+}
+
+#toc, .toc {
+    display: inline-block;
+    padding: 7px;
+    border: 1px solid var(--border-colour);
+    font-size:90%;
+}
+
+#toc #toctitle, .toc #toctitle, #toc .toctitle, .toc .toctitle {
+    text-align: center;
+}
+
+.infobox td, .infobox th {
+    vertical-align: top;
+}
+
+span.item {
+    border:none;
+}
+
+table.wikitable {
+    margin: 1em 0;
+    border: 1px solid var(--border-colour);
+    border-collapse: collapse;
+}
+
+table.wikitable tr td {
+    border: 1px solid var(--border-colour);
+    padding:0.2em;
+}
+
+table.wikitable tr th {
+    border: 1px solid var(--border-colour);
+    padding:0.2em;
+}
+
+.navbox-group {
+    padding-right:1em;
+    padding-left:1em;
+}
+
+th.navbox-group {
+    white-space: nowrap;
+    text-align: right;
+}
+
+.navbox-inner, .navbox-subgroup {
+    width: 100%;
+}
+table.ambox-content {
+    border-left: 10px solid var(--border-colour);
+}
+
+table.ambox {
+    margin: 1em 10%;
+}
+

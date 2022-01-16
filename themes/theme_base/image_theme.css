@@ -4,13 +4,28 @@
 =====================================================================
 */
 
-.dropshadow
+@media screen and (orientation: landscape)
 {
-    box-shadow: var(--drop-shadow);
+    html
+    {
+        background-image: var(--landscape-bg-image);
+        background-position: var(--background-position);
+        background-size: cover;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+    }
 }
 
-.backmenu {
-    background-color: var(--darker-bg-colour) !important;
+@media screen and (orientation: portrait)
+{
+    html
+    {
+        background-image: var(--portrait-bg-image);
+        background-position: var(--background-position);
+        background-size:cover;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+    }
 }
 
 body.phone .dropmenu>div.playable,
@@ -22,10 +37,6 @@ body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
     margin-top: 4px;
 }
 
-body.phone .dropmenu>div {
-    background-color: var(--main-bg-colour);
-}
-
 body.phone .mainpane .faveradio,
 body.phone .mainpane .radio,
 body.phone .mainpane .podcast:not(.podicon):not(.podglobal),
@@ -35,29 +46,18 @@ body.phone .mainpane .directory {
     margin-top: 4px;
 }
 
-#headerbar {
-    background-color: var(--headerbar-bg-colour);
+body.phone .dropmenu>div {
+    background-color: var(--main-bg-colour);
 }
 
-.drop-box {
-    background-color: var(--darker-bg-colour);
-    color: var(--text-colour);
-}
-
-/*
-=====================================================================
-= Specific Elements By ID
-=====================================================================
-*/
-
-#sources
+.mainpane
 {
     background-color: var(--main-bg-colour);
 }
 
-#playlist
+#artistbio
 {
-    background-color: var(--main-bg-colour);
+    padding:4px;
 }
 
 #infobar
@@ -65,20 +65,85 @@ body.phone .mainpane .directory {
     background-color: var(--infobar-bg-colour);
 }
 
+
+
+
+
+
+
+#sources
+{
+    background-color: var(--main-bg-colour);
+}
+
+
+
+body.phone .dropmenu.album1
+{
+    background-color: var(--main-bg-colour) !important;
+}
+
+
+body.phone .dropmenu.album2
+{
+    background-color: var(--main-bg-colour) !important;
+}
+
+
+
+
+
+
+
+
+#playlist
+{
+    background-color: var(--main-bg-colour);
+}
+
+
 #infopane
 {
     background-color: var(--main-bg-colour);
 }
 
-/*
-=====================================================================
-= General Classes
-=====================================================================
-*/
 
-.mainpane
+
+
+
+
+
+
+
+
+
+
+
+
+.infosection, .albumsection
 {
     background-color: var(--main-bg-colour);
+}
+
+
+
+
+.backmenu
+{
+    background-color: var(--main-bg-colour) !important;
+}
+
+
+
+
+
+
+
+
+
+.drop-box {
+    background-color: var(--main-bg-colour);
+    color: var(--text-colour);
 }
 
 /*-- divs and classes used in the playlist --*/
@@ -93,10 +158,6 @@ body.phone .mainpane .directory {
     border-left: var(--playlist-current-track-left-border);
 }
 
-.playlistitem
-{
-    transition: var(--playlist-current-transition);
-}
 
 .playlistcurrenttitle
 {
@@ -108,67 +169,59 @@ body.phone .mainpane .directory {
     text-shadow: var(--playlist-current-shadow);
 }
 
-.playlisttitle {
+.playlisttitle
+{
     background-color: var(--main-bg-colour);
     transition: var(--playlist-current-transition);
 }
 
+
+
+
+
+
+
+
 .popupwindow
 {
-    background-color: var(--dropmenu-bg-colour);
+    background-color: var(--top_drop_menu-bg-colour);
 }
 
-body.desktop .info-border-right {
-    border-right: 1px solid var(--border-colour);
-}
 
-/*
-=====================================================================
-= Dropdown Menus
-=====================================================================
-*/
 
-div.topdropmenu, div.albumbitsmenu
-{
-    background-color: var(--dropmenu-bg-colour);
-}
 
-.configtitle
-{
-    background-color: var(--configtitle-bg-colour);
-}
 
 
 /*
 =====================================================================
-= Info Panel - General
+= Info Panel - Spotify + Skypotato Skin
 =====================================================================
 */
 
-#artistbio
-{
-    padding:4px;
-}
-
-.infosection, .albumsection
+.helpfulalbum
 {
     background-color: var(--main-bg-colour);
 }
 
-/*
-=====================================================================
-= Info Panel - Spotify
-=====================================================================
-*/
-.helpfulalbum
+
+
+
+
+
+
+.masonry_opened
 {
-    background-color: var(--darker-bg-colour);
+    background-color: var(--main-bg-colour);
 }
 
-.tagholder_wide
-{
-    background-color: var(--darker-bg-colour);
-}
+
+
+
+
+
+
+
+
 
 /*
 =====================================================================
@@ -181,7 +234,16 @@ div.topdropmenu, div.albumbitsmenu
     background-color: var(--main-bg-colour);
 }
 
+
 .highlighted {
-    background-color: var(--darker-bg-colour);
+    background-color: var(--main-bg-colour);
 }
+
+
+
+
+
+
+
+
 

@@ -1,18 +1,68 @@
 @import url("themes/theme_base/image_theme.css");
 
 :root {
-
-    --main-bg-colour: rgba(0,0,0,0.3);
-    --darker-bg-colour: rgba(0,0,0,0.3);
-    --dropmenu-bg-colour: rgba(0,0,0,0.9);
-    --configtitle-bg-colour: rgba(255,128,20,0.2);
-    --headerbar-bg-colour:  var(--main-bg-colour);
-    --infobar-bg-colour:  var(--main-bg-colour);
+    --min-progress-colour: rgba(147, 61, 24, 0.99);
+    --max-progress-colour: rgba(255, 238, 95, 0.99);
+    --progress-bg-colour: rgba(0,0,0,0);
 
     --text-colour: #eeeeee;
-    --highlight-colour: yellow;
-    --link-colour: yellow;
     --border-colour: #aaaaaa;
+
+    --link-colour: yellow;
+    --highlight-colour: yellow;
+
+    --infobar-bg-colour:  var(--main-bg-colour);
+
+    --landscape-bg-image: url("../../themes/fire.jpg");
+    --portrait-bg-image: url("../../themes/fire-portrait.jpg");
+    --background-position: top left;
+
+    --main-bg-colour: rgba(0,0,0,0.3);
+
+
+    --headerbar-bg-colour:  var(--main-bg-colour);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --playlist-current-shadow: 0px 0px 20px var(--text-colour);
+    --playlist-current-transition: font-size 0.3s ease, text-shadow 0.3s ease, background-color 0.2s ease;
+    --playlist-current-track-font-size: 120%;
+    --playlist-current-track-font-weight: bold;
+    --playlist-current-track-left-border: unset;
+    --playlist-current-title-font-size: unset;
+    --playlist-current-title-font-weight: bold;
+
+    --top_drop_menu-bg-colour: rgba(0,0,0,0.9);
+
+
+    --configtitle-bg-colour: rgba(255,128,20,0.2);
+
+
+
+
+
+
+
+
+
+
+
+    --selected-bg-colour: var(--min-progress-colour);
 
     --button-colour:  #dddddd;
     --button-hover-colour:  var(--highlight-colour);
@@ -20,6 +70,10 @@
     --button-hover-border: 1px solid var(--highlight-colour);;
     --button-bg-colour: transparent;
     --button-bg-hover-colour: transparent;
+    --button-font-weight: normal;
+    --button-hover-shadow: 0 0 15px var(--highlight-colour);
+
+
 
     --text-entry-text-colour: var(--text-colour);
     --text-entry-border-colour: rgba(200,200,200,0.1);;
@@ -33,44 +87,27 @@
     --select-bg-colour: var(--text-entry-bg-colour);
     --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
 
-    --min-progress-colour: rgba(147, 61, 24, 0.99);
-    --max-progress-colour: rgba(255, 238, 95, 0.99);
-    --progress-bg-colour: rgba(0,0,0,0);
-    --selected-bg-colour: var(--min-progress-colour);
-    --album1-colour: transparent;
     --album2-colour: rgba(255,255,255,0.1);
     --drop-shadow: 7px 7px 5px rgba(0, 0, 0, 0.5);
 
-    --playlist-current-track-font-size: 120%;
-    --playlist-current-track-font-weight: bold;
-    --playlist-current-track-left-border: unset;
-    --playlist-current-title-font-size: unset;
-    --playlist-current-title-font-weight: bold;
-    --playlist-current-shadow: 0px 0px 20px var(--text-colour);
-    --playlist-current-transition: font-size 0.3s ease, text-shadow 0.3s ease, background-color 0.2s ease;
 
-    --button-font-weight: normal;
-    --button-hover-shadow: 0 0 15px var(--highlight-colour);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;
     --waiting-swinger-bg-image: linear-gradient(to left,  rgba(255, 238, 95, 0) 0%,  rgba(255, 238, 95, 1) 50%, rgba(255, 238, 95, 0) 100%);
 }
 
-@media screen and (orientation: landscape) {
-    html {
-        background-image:url("themes/fire.jpg");
-        background-size:cover;
-        background-repeat:no-repeat;
-        background-attachment:fixed;
-    }
-}
-
-@media screen and (orientation: portrait) {
-    html {
-        background-image:url("themes/fire-portrait.jpg");
-        background-size:cover;
-        background-repeat:no-repeat;
-        background-attachment:fixed;
-    }
-}

@@ -114,13 +114,13 @@ function onWobblebottomClicked(event) {
 		$(".clickselectartist").filter('.selected').removeClass('selected');
 		clickedElement.addClass('selected');
 		if (a == "allartists") {
-			$(".cheesegrater").show();
+			$(".albumart_artist_holder").show();
 			if (!allshown) {
 				boogerbenson();
 				boogerbenson();
 			}
 		} else {
-			$(".cheesegrater").filter('[name!="'+a+'"]').hide();
+			$(".albumart_artist_holder").filter('[name!="'+a+'"]').hide();
 			$('[name="'+a+'"]').show();
 		}
 	}
@@ -268,7 +268,7 @@ $(window).on('load', function () {
 	debug.log("ALBUMART","Document has loaded");
 	coverscraper = new coverScraper(1, true, true, true);
 	var count = 0;
-	$('.cheesegrater').filter(sections_with_missing_images).each(function() {
+	$('.albumart_artist_holder').filter(sections_with_missing_images).each(function() {
 		$(this).children('.albumsection').find('button').show();
 	});
 	$('#poobag').prop('checked', false);

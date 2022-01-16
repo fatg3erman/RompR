@@ -142,7 +142,7 @@ var spotiCrazyRadio = function() {
 				$("#pluginplaylists_crazy").append('<div class="textcentre tiny">Enter some Genres, set the parameters, and click Play.<br>You can drag both ends of the sliders to set a range.</div>');
 
 				var a = $('<div>', {class: "menuitem spacer", style: "margin-right:8px"}).appendTo("#pluginplaylists_crazy");
-				var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
+				var c = $('<div>', {class: "containerbox expand spacer vertical-centre"}).
 					appendTo(a).makeTagMenu({
 					textboxname: 'spotigenres',
 					placeholder: 'Enter Genres',
@@ -154,7 +154,7 @@ var spotiCrazyRadio = function() {
 					addParameter(i, table)
 				});
 
-				html = '<div class="containerbox dropdown-container bacon">';
+				html = '<div class="containerbox vertical-centre bacon">';
 				html += '<div class="expand"></div>';
 				html += '<button class="fixed iconbutton savebutton" '+
 					'onclick="crazyRadioManager.saveCrazyRadioSettings(event)"></button>';

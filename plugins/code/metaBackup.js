@@ -107,7 +107,7 @@ var metaBackup = function() {
 
 			$("#mbbmunger").empty().append('<h2>Existing Backups</h2>');
 			if (data.length > 0) {
-				var html = '<table class="backuptable" align="center" cellpadding="2">';
+				var html = '<table class="plugin_mbb_table" align="center" cellpadding="2">';
 				html += '<tr><th>Backup Date</th>';
 				for (var i in data[0].stats) {
 					html += '<th>'+i+'</th>';

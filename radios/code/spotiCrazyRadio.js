@@ -58,7 +58,7 @@ var spotiCrazyRadio = function() {
 		},
 
 		modeHtml: function() {
-			return '<i class="icon-spotify-circled modeimg"/></i><span class="modespan">'+name+'</span>';
+			return '<i class="icon-spotify-circled modeimg"/></i><span class="alignmid bold">'+name+'</span>';
 		},
 
 		stop: function() {

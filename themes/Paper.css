@@ -14,7 +14,6 @@
     --main-bg-colour: unset;
     --main-bg-image: url('../../themes/vellum-seamless-repeating-white.jpg');
 
-    --darker-bg-colour: rgba(0, 0, 0, 0.1);
 
     --headerbar-bg-colour: unset;
     --headerbar-bg-image: none;
@@ -26,8 +25,8 @@
     --sources-bg-image:  none;
     --sources-border-top: none;
 
-    --horse-bg-colour: unset;
-    --horse-bg-image: none;
+    --playlist_top-bg-colour: unset;
+    --playlist_top-bg-image: none;
 
     --playlist-bg-colour: unset;
     --playlist-bg-image: none;
@@ -43,8 +42,8 @@
     --playlist-current-title-font-size: 100%;
     --playlist-current-title-font-weight: unset;
 
-    --dropmenu-bg-colour: unset;
-    --dropmenu-bg-image: url('../../themes/oldpaper.jpg');
+    --top_drop_menu-bg-colour: unset;
+    --top_drop_menu-bg-image: url('../../themes/oldpaper.jpg');
 
     --configtitle-bg-colour: unset;
     --configtitle-bg-image: url('../../themes/tanpaper.jpg');
@@ -159,7 +158,7 @@ input.inbrowser, div.inbrowser {
     margin-bottom:8px;
 }
 
-.tagholder_wide .helpfulalbum {
+.masonry_opened .helpfulalbum {
     box-shadow:  2px 2px 2px rgba(50, 50, 50, 0.5);
 }
 

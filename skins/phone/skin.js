@@ -5,6 +5,10 @@ jQuery.fn.menuReveal = async function() {
 	} else {
 		self.findParentScroller().saveScrollPos();
 		self.siblings().addClass('menu-covered');
+		// GOD, CSS is so dumb. This would work IF there was an 'all siblings' selector, but no.
+		// CSS, in it sinfinite "wisdom" decided that you only ever need to select
+		// siblings that come AFTER the current element. Fucking toss.
+		// self.addClass('menu-current');
 		if (self.prev().hasClass('subscribed-podcast'))
 			$('#podcast_search').addClass('menu-covered');
 		if (self.prev().hasClass('unsubscribed-podcast'))
@@ -25,6 +29,7 @@ jQuery.fn.menuHide = async function() {
 		await self.slideToggle('fast').promise();
 	} else {
 		self.siblings().removeClass('menu-covered');
+		// self.removeClass('menu-current');
 		if (self.prev().hasClass('subscribed-podcast'))
 			$('#podcast_search').removeClass('menu-covered');
 		if (self.prev().hasClass('unsubscribed-podcast'))
@@ -120,7 +125,8 @@ jQuery.fn.saveScrollPos = function() {
 	// meaning we can't go back in appropriate steps. Note '.children' is essential - '.find' will reset the css
 	// for all the submenus too
 	this.children('.backmenu').css({position: 'static'});
-	this.children('.is-coverable').addClass('menu-covered');
+	// this.children('.is-coverable').addClass('menu-covered');
+	this.addClass('menu-opened');
 }
 
 jQuery.fn.restoreScrollPos = function() {
@@ -129,7 +135,8 @@ jQuery.fn.restoreScrollPos = function() {
 		this.css('overflow-y', 'scroll');
 		this.scrollTop(a.val());
 		this.children('.backmenu').css({position: ''});
-		this.children('.menu-covered').removeClass('menu-covered');
+		// this.children('.menu-covered').removeClass('menu-covered');
+		this.removeClass('menu-opened');
 		a.remove();
 	}
 	// $('#popupmenu').remove();
@@ -156,7 +163,7 @@ jQuery.fn.makeTagMenu = function(options) {
 			$(this).append(settings.labelhtml);
 		}
 		var holder = $('<div>', { class: "expand"}).appendTo($(this));
-		var dropbutton = $('<i>', { class: 'fixed combo-button'}).appendTo($(this));
+		var dropbutton = $('<i>', { class: 'fixed phone-dropdown-button'}).appendTo($(this));
 		var textbox = $('<input>', { type: "text", class: tbc, name: settings.textboxname, placeholder: unescapeHtml(settings.placeholder) }).appendTo(holder);
 		var dropbox = $('<div>', {class: "drop-box tagmenu dropshadow fullwidth"}).insertAfter($(this));
 		var menucontents = $('<div>', {class: "tagmenu-contents"}).appendTo(dropbox);
@@ -236,7 +243,7 @@ jQuery.fn.insertAlbumAtStart = function(albumindex, html, tracklist) {
 		var me = $(this);
 		$('.openmenu[name="'+albumindex+'"]').removeCollectionItem();
 		$('#'+albumindex).html(tracklist).updateTracklist().scootTheAlbums();
-		$(html).insertAfter(me.children('.dropdown-container.configtitle').next()).scootTheAlbums();
+		$(html).insertAfter(me.children('.vertical-centre.configtitle').next()).scootTheAlbums();
 	});
 }
 
@@ -486,7 +493,7 @@ var layoutProcessor = function() {
 		},
 
 		setPlaylistHeight: function() {
-			var newheight = $("#playlistm").height() - $("#horse").outerHeight(true);
+			var newheight = $("#playlistm").height() - $("#playlist_top").outerHeight(true);
 			if ($("#playlistbuttons").is(":visible")) {
 				newheight = newheight - $("#playlistbuttons").outerHeight(true) - 2;
 			}

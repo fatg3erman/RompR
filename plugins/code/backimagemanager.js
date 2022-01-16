@@ -52,7 +52,7 @@ var backimagemanager = function() {
 		evt = ev.originalEvent;
 		evt.stopPropagation();
 		evt.preventDefault();
-		$(ev.target).addClass("dropper-highlighted");
+		$(ev.target).addClass("highlighted");
 		return false;
 	}
 
@@ -67,13 +67,13 @@ var backimagemanager = function() {
 		evt = ev.originalEvent;
 		evt.stopPropagation();
 		evt.preventDefault();
-		$(ev.target).removeClass("dropper-highlighted");
+		$(ev.target).removeClass("highlighted");
 		return false;
 	}
 
 	function handleDrop(ev) {
 		evt = ev.originalEvent;
-		$(evt.target).removeClass("dropper-highlighted");
+		$(evt.target).removeClass("highlighted");
 		// If we have > max_file_uploads files, upload them in batches
 		var max_files = $('input[name="max_file_uploads"]').val();
 		var offset = 0;
@@ -168,13 +168,13 @@ var backimagemanager = function() {
 
 					'<div class="expand" style="margin-left:1em">' +
 
-					'<div id="bg-drop-image" class="drop-images-here">Drop Images Here</div>' +
+					'<div id="bg-drop-image" class="plugin_backi_drop-images">Drop Images Here</div>' +
 
 					'<div class="styledinputs clearfix">' +
 					'<button class="tright" id="bg-removeall">'+language.gettext('label_remove_all')+'</button>' +
 					'</div>' +
 
-					'<div class="containerbox dropdown-container">' +
+					'<div class="containerbox vertical-centre">' +
 					'<div class="selectholder"><select id="thisbrowseronly">' +
 					'<option value="0">'+language.gettext('label_bg_global')+'</option>' +
 					'<option value="1">'+language.gettext('label_bg_only')+'</option>' +

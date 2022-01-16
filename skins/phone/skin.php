@@ -1,11 +1,8 @@
 <body class="mobile phone">
-<div id="pset" class="invisible"></div>
-<div id="pmaxset" class="invisible"></div>
-<div id="pbgset" class="invisible"></div>
 <div id="notifications"></div>
 <div id="headerbar" class="noborder fullwidth containerbox">
 	<div id="sourcescontrols" class="expand center containerbox noborder">
-		<div id="volumedropper" class="topdropmenu rightmenu widemenu">
+		<div id="volumedropper" class="top_drop_menu rightmenu widemenu">
 <?php
 	include('player/utils/outputs.php');
 	if (prefs::$prefs['hide_master_volume']) {
@@ -43,10 +40,10 @@
 ?>
 
 		</div>
-		<div id="specialplugins" class="topdropmenu rightmenu autohide">
+		<div id="specialplugins" class="top_drop_menu rightmenu autohide">
 			<div class="sptext"></div>
 		</div>
-		<div id="narrowscreenicons" class="topdropmenu rightmenu autohide clearfix">
+		<div id="narrowscreenicons" class="top_drop_menu rightmenu autohide clearfix">
 			<i class="noshrink icon-folder-open-empty topimg choosepanel tright" name="filelist"></i>
 			<i class="noshrink choosepanel icon-audiobook topimg tright" name="audiobooklist"></i>
 			<i class="noshrink choosepanel icon-doc-text topimg tright" name="playlistman"></i>
@@ -85,7 +82,7 @@
 		<div id="albumcover">
 			<img id="albumpicture" />
 		</div>
-		<div id="amontobin" class="clearfix">
+		<div id="nowplaying_icons" class="clearfix">
 			<div id="stars" class="invisible">
 				<i id="ratingimage" class="icon-0-stars rating-icon-big"></i>
 				<input type="hidden" value="-1" />
@@ -135,7 +132,7 @@
 
 <div id="albumlist" class="scroller mainpane invisible pright">
 <?php
-	print '<div class="dropdown-container configtitle is-coverable">';
+	print '<div class="configtitle is-coverable">';
 	print '<i title="'.language::gettext('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="collectionbuttons"></i>';
 	print '<div class="textcentre expand"><b>'.language::gettext('button_local_music').'</b></div>';
 	print '</div>';
@@ -147,7 +144,7 @@
 
 <div id='searchpane' class="scroller mainpane invisible pright">
 <div id="search" class="noborder is-coverable">
-<div class="dropdown-container configtitle">
+<div class="configtitle">
 <?php
 	print '<i title="'.language::gettext('setup_advanced').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="advsearchoptions"></i>';
 	print '<div class="textcentre expand"><b>'.language::gettext('label_searchfor').'</b></div>';
@@ -161,7 +158,7 @@ include("player/".prefs::$prefs['player_backend']."/search.php");
 </div>
 
 <div id="filelist" class="scroller mainpane invisible pright">
-	<div class="dropdown-container configtitle is-coverable">
+	<div class="configtitle is-coverable">
 <?php
 	print '<div class="textcentre expand"><b>'.language::gettext('button_file_browser').'</b></div>';
 ?>
@@ -179,7 +176,7 @@ include("player/".prefs::$prefs['player_backend']."/search.php");
 	</div>
 	<div id="artistchooser" class="infotext invisible"></div>
 	<div id="historyholder" class="fullwidth invisible">
-		<div class="dropdown-container configtitle">
+		<div class="configtitle">
 			<div class="textcentre expand">
 				<b>
 	<?php
@@ -199,7 +196,7 @@ include("player/".prefs::$prefs['player_backend']."/search.php");
 </div>
 
 <div id="radiolist" class="scroller mainpane invisible pright">
-	<div class="dropdown-container configtitle">
+	<div class="configtitle">
 <?php
 print '<div class="expand textcentre"><b>'.language::gettext('button_internet_radio').'</b></div>';
 ?>
@@ -214,7 +211,7 @@ include($p);
 
 <div id="podcastslist" class="scroller mainpane invisible pright">
 <?php
-print '<div class="dropdown-container configtitle is-coverable">';
+print '<div class="configtitle is-coverable">';
 print '<i class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.language::gettext('label_podcastcontrols').'"></i>';
 print '<div class="textcentre expand"><b>'.language::gettext('label_podcasts').'</b></div>';
 print '</div>';
@@ -223,7 +220,7 @@ include("includes/podcast_base.php");
 </div>
 
 <div id="audiobooklist" class="scroller mainpane invisible pright">
-	<div class="dropdown-container configtitle">
+	<div class="configtitle is-coverable">
 <?php
 	print '<div class="textcentre expand"><b>'.language::gettext('label_audiobooks').'</b></div>';
 ?>
@@ -236,7 +233,7 @@ if ($use_smartradio) {
 ?>
 <div id="pluginplaylistholder" class="scroller mainpane invisible pright">
 <?php
-print '<div class="dropdown-container configtitle">';
+print '<div class="configtitle">';
 print '<div class="expand textcentre"><b>'.language::gettext('label_pluginplaylists').'</b></div>';
 print '</div>';
 ?>
@@ -269,15 +266,15 @@ if (prefs::$prefs['player_backend'] == "mopidy") {
 
 <div id="playlistman" class="scroller mainpane invisible pright">
 <?php
-	print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('button_saveplaylist').'</b></div></div>';
+	print '<div class="configtitle is-coverable"><div class="textcentre expand"><b>'.language::gettext('button_saveplaylist').'</b></div></div>';
 ?>
-	<div class="containerbox dropdown-container" ><div class="fixed padright">
+	<div class="containerbox vertical-centre is-coverable" ><div class="fixed padright">
 	</div><div class="expand"><input class="enter clearbox" id="playlistname" type="text" size="200"/></div>
 <?php
 		print '<button class="fixed iconbutton savebutton"></button>';
 ?>
 	</div>
-	<div class="dropdown-container configtitle">
+	<div class="configtitle is-coverable">
 <?php
 	print '<div class="expand textcentre"><b>'.language::gettext('button_loadplaylist').'</b></div>';
 ?>
@@ -302,15 +299,15 @@ include('skins/playlist.php');
 
 </div>
 
-<div id="tagadder" class="topdropmenu dropmenu">
-	<div class="dropdown-container configtitle moveable" style="padding-top:4px"><div class="textcentre expand"><b>
+<div id="tagadder" class="top_drop_menu dropmenu">
+	<div class="configtitle moveable" style="padding-top:4px"><div class="textcentre expand"><b>
 <?php
 print language::gettext("lastfm_addtags").'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div></div>';
 ?>
-	<div class="containerbox padright dropdown-container tagaddbox"></div>
+	<div class="containerbox padright vertical-centre tagaddbox"></div>
 </div>
 
-<div id="pladddropdown" class="topdropmenu dropmenu">
+<div id="pladddropdown" class="top_drop_menu dropmenu">
 	<?php
 	print '<div class="configtitle moveable" style="padding-top:4px"><div class="textcentre expand"><b>'.language::gettext('button_addtoplaylist').'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="addToPlaylist.close()"></i></div></div>';
 		?>

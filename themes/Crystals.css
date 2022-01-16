@@ -1,18 +1,68 @@
 @import url("themes/theme_base/image_theme.css");
 
 :root {
-    --main-bg-colour: rgba(255,255,255,0.25);
-    --darker-bg-colour: rgba(255,255,255,0.4);
-    --dropmenu-bg-colour: rgba(1,133,215,0.9);
-    --configtitle-bg-colour: rgba(162, 72, 84, 0.7);
-    --headerbar-bg-colour:  var(--main-bg-colour);
-    --infobar-bg-colour:  unset;
+    --min-progress-colour: rgba(156, 70, 81, 0.99);
+    --max-progress-colour: rgba(187, 240, 254, 0.99);
+
 
     --text-colour: black;
-    --highlight-colour: #ff4800;
-    --link-colour: #ff4800;
     --border-colour: #ffffff;
     --border-colour-dark: #222222;
+    --link-colour: #ff4800;
+    --highlight-colour: #ff4800;
+
+    --infobar-bg-colour:  unset;
+
+    --landscape-bg-image: url("../../themes/Crystals.jpg");
+    --portrait-bg-image: url("../../themes/Crystals.jpg");
+    --background-position: center center;
+
+    --main-bg-colour: rgba(255,255,255,0.25);
+
+
+    --headerbar-bg-colour:  var(--main-bg-colour);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --playlist-current-shadow: 0px 0px 20px var(--highlight-colour);
+    --playlist-current-transition: font-size 0.3s ease, text-shadow 0.3s ease;
+    --playlist-current-track-font-size: 120%;
+    --playlist-current-track-font-weight: bold;
+    --playlist-current-track-left-border: unset;
+    --playlist-current-title-font-size: unset;
+    --playlist-current-title-font-weight: bold;
+
+    --top_drop_menu-bg-colour: rgba(1,133,215,0.9);
+
+
+    --configtitle-bg-colour: rgba(162, 72, 84, 0.7);
+
+
+
+
+
+
+
+
+
+
+
+    --selected-bg-colour: var(--max-progress-colour);
 
     --button-colour:  var(--text-colour);
     --button-hover-colour:  var(--highlight-colour);
@@ -20,6 +70,10 @@
     --button-hover-border: 1px solid var(--border-colour);;
     --button-bg-colour: rgba(255,255,255,0.5);
     --button-bg-hover-colour: var(--button-border-colour);
+    --button-font-weight: normal;
+    --button-hover-shadow: 0 0 15px var(--highlight-colour);
+
+
 
     --text-entry-text-colour: var(--text-colour);
     --text-entry-border-colour: var(--border-colour-dark);
@@ -33,33 +87,26 @@
     --select-bg-colour: var(--text-entry-bg-colour);
     --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
 
-    --min-progress-colour: rgba(156, 70, 81, 0.99);
-    --max-progress-colour: rgba(187, 240, 254, 0.99);
-    --selected-bg-colour: var(--max-progress-colour);
-    --album1-colour: transparent;
     --album2-colour: rgba(255,255,255,0.2);
     --drop-shadow: 7px 7px 5px rgba(50, 50, 50, 0.5);
 
-    --playlist-current-track-font-size: 120%;
-    --playlist-current-track-font-weight: bold;
-    --playlist-current-track-left-border: unset;
-    --playlist-current-title-font-size: unset;
-    --playlist-current-title-font-weight: bold;
-    --playlist-current-shadow: 0px 0px 20px var(--highlight-colour);
-    --playlist-current-transition: font-size 0.3s ease, text-shadow 0.3s ease;
 
-    --button-font-weight: normal;
-    --button-hover-shadow: 0 0 15px var(--highlight-colour);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;
     --waiting-swinger-bg-image: linear-gradient(to left,  rgba(156, 70, 81, 0) 0%,  rgba(156, 70, 81, 1) 50%, rgba(156, 70, 81, 0) 100%);
-
-}
-
-html {
-    background-image:url("themes/Crystals.jpg");
-    background-size:cover;
-    background-repeat:no-repeat;
-    background-attachment:fixed;
 }

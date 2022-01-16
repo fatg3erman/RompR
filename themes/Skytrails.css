@@ -1,18 +1,68 @@
 @import url("themes/theme_base/image_theme.css");
 
 :root {
-    --main-bg-colour: rgba(255,255,255,0.3);
-    --darker-bg-colour: rgba(255,255,255,0.4);
-    --dropmenu-bg-colour: rgba(135,180,222,0.9);
-    --configtitle-bg-colour: var(--darker-bg-colour);
-    --headerbar-bg-colour:  transparent;
-    --infobar-bg-colour:  transparent;
+    --min-progress-colour: rgba(155, 187, 222, 0.99);
+    --max-progress-colour: rgba(252, 189, 104, 0.99);
+    --progress-bg-colour: rgba(0,0,0,0);
 
     --text-colour: black;
-    --highlight-colour: #ff4800;
-    --link-colour: #ff4800;
     --border-colour: #bbbbbb;
     --border-colour-dark: #555555;
+    --link-colour: #ff4800;
+    --highlight-colour: #ff4800;
+
+    --infobar-bg-colour:  transparent;
+
+    --landscape-bg-image: url("../../themes/skytrailscrop.jpg");
+    --portrait-bg-image: url("../../themes/skytrailscrop.jpg");
+    --background-position: center center;
+
+    --main-bg-colour: rgba(255,255,255,0.3);
+
+
+    --headerbar-bg-colour:  transparent;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --playlist-current-shadow: unset;
+    --playlist-current-transition: font-size 0.3s ease, text-shadow 0.3s ease;
+    --playlist-current-track-font-size: 120%;
+    --playlist-current-track-font-weight: bold;
+    --playlist-current-track-left-border: unset;
+    --playlist-current-title-font-size: unset;
+    --playlist-current-title-font-weight: bold;
+
+    --top_drop_menu-bg-colour: rgba(135,180,222,0.9);
+
+
+    --configtitle-bg-colour: var(--main-bg-colour);
+
+
+
+
+
+
+
+
+
+
+
+    --selected-bg-colour: var(--max-progress-colour);
 
     --button-colour:  var(--text-colour);
     --button-hover-colour:  var(--text-colour);
@@ -20,46 +70,43 @@
     --button-hover-border: 1px solid var(--highlight-colour);;
     --button-bg-colour: rgba(255,255,255,0.5);
     --button-bg-hover-colour: rgba(255,255,255,0.6);
+    --button-font-weight: normal;
+    --button-hover-shadow: unset;
+
+
 
     --text-entry-text-colour: var(--text-colour);
     --text-entry-border-colour: var(--border-colour);
     --text-entry-hover-border-colour: var(--highlight-colour);
     --text-entry-active-border-colour: var(--border-colour-dark);
     --text-entry-bg-colour: var(--main-bg-colour);
-    --text-entry-hover-bg-colour: var(--darker-bg-colour);
+    --text-entry-hover-bg-colour: var(--main-bg-colour);
     --text-entry-active-bg-colour: var(--main-bg-colour);
 
     --select-text-colour: var(--text-colour);
     --select-bg-colour: var(--text-entry-bg-colour);
     --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
 
-    --min-progress-colour: rgba(155, 187, 222, 0.99);
-    --max-progress-colour: rgba(252, 189, 104, 0.99);
-    --progress-bg-colour: rgba(0,0,0,0);
-    --selected-bg-colour: var(--max-progress-colour);
-    --album1-colour: transparent;
     --album2-colour: var(--main-bg-colour);
     --drop-shadow: 7px 7px 5px rgba(50, 50, 50, 0.5);
 
-    --playlist-current-track-font-size: 120%;
-    --playlist-current-track-font-weight: bold;
-    --playlist-current-track-left-border: unset;
-    --playlist-current-title-font-size: unset;
-    --playlist-current-title-font-weight: bold;
-    --playlist-current-shadow: unset;
-    --playlist-current-transition: font-size 0.3s ease, text-shadow 0.3s ease;
 
-    --button-font-weight: normal;
-    --button-hover-shadow: unset;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;
     --waiting-swinger-bg-image: linear-gradient(to left,  rgba(200, 200, 200, 0) 0%,  rgba(200, 200, 200, 1) 50%, rgba(200, 200, 200, 0) 100%);
-}
-
-html {
-    background-image:url("themes/skytrailscrop.jpg");
-    background-size:cover;
-    background-repeat:no-repeat;
-    background-attachment:fixed;
 }

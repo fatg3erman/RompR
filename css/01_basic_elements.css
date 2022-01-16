@@ -1,0 +1,257 @@
+/*
+=====================================================================
+= Standard HTML Elements
+=====================================================================
+*/
+
+html
+{
+	height:100%;
+	transition: background-image 0.5s ease-in-out;
+}
+
+body
+{
+	font-size:8pt;
+	margin:0px;
+	overflow:hidden;
+	-webkit-font-smoothing: subpixel-antialiased;
+	-moz-osx-font-smoothing: auto;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input
+{
+	font-family:verdana,helvetica,arial,sans-serif;
+	-webkit-text-size-adjust: 100%;
+	color: var(--text-colour);
+}
+
+h1
+{
+	font-size:250%;
+	margin-top:20%;
+	margin-left:20%;
+	margin-right:20%;
+	font-weight:normal;
+}
+
+h2
+{
+	font-size:170%;
+	font-weight:bold;
+	margin-top:0px;
+	margin-bottom:0px;
+}
+
+h3
+{
+	padding-bottom:0px;
+	margin-bottom:8px;
+}
+
+h1,h2,h3,h4,h5,h6
+{
+	background-color:transparent;
+	white-space:normal;
+}
+
+a
+{
+	text-decoration:none;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	word-break: break-all;
+	word-break: break-word;
+	hyphens: auto;
+}
+
+a:link
+{
+    color: var(--link-colour);
+}
+
+a:visited
+{
+    color: var(--link-colour);
+}
+
+a:hover,a:active
+{
+    font-weight: bold;
+    cursor:pointer;
+}
+
+hr
+{
+	-webkit-margin-before:0px;
+	-webkit-margin-after:0px;
+}
+
+div
+{
+	box-sizing: border-box;
+}
+
+input, div.filebutton
+{
+	font-size:100%;
+	width:100%;
+	margin-bottom:4px;
+	margin-top:4px;
+	padding-top:2px;
+	padding-bottom:2px;
+	padding-left:0px;
+	padding-right:0px;
+}
+
+input.inputfile
+{
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+div.filebutton
+{
+	word-break: break-all;
+	line-height: 3em;
+	padding: 0px !important;
+}
+
+button
+{
+	font-size:100%;
+	margin-bottom:4px;
+	margin-top:4px;
+	margin-left:8px;
+	margin-right:8px;
+	padding-top:2px;
+	padding-bottom:2px;
+	padding-left:6px;
+	padding-right:6px;
+	min-height:2em;
+	cursor:pointer;
+}
+
+button.iconbutton
+{
+	padding:0px;
+	margin-right:0px;
+	margin-left:4px;
+	margin-top:0px;
+	margin-bottom:0px;
+	background-size: contain;
+	background-position:center;
+	background-repeat:no-repeat;
+	border: none !important;
+	opacity: 0.8;
+	background-color:transparent !important;
+}
+
+button.iconbutton:hover
+{
+	opacity: 1;
+}
+
+button, input[type="button"], div.filebutton
+{
+    color: var(--button-colour);
+    font-weight: var(--button-font-weight);
+    background-color: var(--button-bg-colour);
+    background-image: var(--button-bg-image);
+    border: var(--button-border);
+}
+
+button:hover, input[type="button"]:hover, div.filebutton:hover
+{
+    color: var(--button-hover-colour);
+    background-color: var(--button-bg-hover-colour);
+    background-image: var(--button-bg-hover-image);
+    border: var(--button-hover-border);
+    text-shadow: var(--button-hover-shadow);
+}
+
+input[type=checkbox], input[type=radio]
+{
+	width:auto;
+}
+
+input[type=text],input[type="number"]
+{
+	border: 0px none;
+	border-radius: 0 0;
+	box-sizing: border-box;
+}
+
+select
+{
+	width:100%;
+	background-color:transparent;
+	border:0px none;
+	margin:0px;
+	height:2em;
+	font-size:100%;
+	-webkit-appearance:none;
+	-moz-appearance:none;
+	appearance:none;
+	pointer-events:auto;
+	z-index:99;
+	color: var(--select-text-colour);
+}
+
+div.selectholder
+{
+    background-color: var(--select-bg-colour);
+	overflow:hidden;
+	margin-top:4px;
+	margin-bottom:4px;
+	pointer-events:none;
+	z-index:98;
+	width: 100%;
+}
+
+div.selectholder:hover
+{
+    background-color: var(--select-hover-bg-colour);
+}
+
+select:hover
+{
+	cursor:pointer;
+}
+
+option
+{
+    color: black;
+}
+
+input[type="text"],input[type="number"]
+{
+    color: var(--text-entry-text-colour);
+    transition: all 0.5s ease;
+    background-color:  var(--text-entry-bg-colour);
+    border-bottom: 1px solid  var(--text-entry-border-colour);
+}
+
+input[type="text"]:hover,input[type="number"]:hover
+{
+    transition: all 0.5s ease;
+    background-color: var(--text-entry-hover-bg-colour);
+    border-bottom: 1px solid var(--text-entry-hover-border-colour);
+}
+
+input[type="text"]:focus,input[type="number"]:focus,input[type="text"]:focus-visible,input[type="number"]:focus-visible
+{
+    transition: all 0.5s ease;
+    background-color: var(--text-entry-active-bg-colour);
+    border-bottom:1px solid var(--text-entry-active-border-colour);
+    outline: none;
+}

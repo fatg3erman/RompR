@@ -153,7 +153,7 @@ var lastFMTrackRadio = function() {
 		},
 
 		modeHtml: function() {
-			return '<i class="icon-lastfm-1 modeimg"/></i><span class="modespan">'+language.gettext('label_lastfm_mix_'+param)+'</span>';
+			return '<i class="icon-lastfm-1 modeimg"/></i><span class="alignmid bold">'+language.gettext('label_lastfm_mix_'+param)+'</span>';
 		},
 
 	}

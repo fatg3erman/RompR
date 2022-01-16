@@ -20,18 +20,18 @@ jQuery.fn.menuReveal = async function() {
 		case holder.hasClass('playlist'):
 		case holder.hasClass('userplaylist'):
 			// Albums and Playlists
-			parent.addClass('tagholder_wide dropshadow').insertDummySpacers();
+			parent.addClass('masonry_opened dropshadow').insertDummySpacers();
 
 			self.wrap('<div class="expand"></div>');
 
 			// All this bit is just re-formating the domain icon/album name/artist name
 			var titlediv = holder.find('div.albumthing').detach().insertBefore(self).find('.title-menu');
-			titlediv.addClass('containerbox dropdown-container');
+			titlediv.addClass('containerbox vertical-centre');
 			titlediv.find('.collectionicon').removeClass('collectionicon').addClass('svg-square');
 			var newwrapper = $('<div>', {class: 'containerbox vertical expand'}).appendTo(titlediv);
 			titlediv.find('div').not('.vertical').addClass('expand').detach().appendTo(newwrapper);
 
-			holder.find('div.dropdown-container.configtitle').remove();
+			holder.find('div.vertical-centre.configtitle').remove();
 			var tt = self.find('input.albumtime').val();
 			if (tt) {
 				var d = $('<div>', {class: 'tgtl podcastitem', style: 'padding-top: 4px'}).html(tt).appendTo(self);
@@ -42,7 +42,7 @@ jQuery.fn.menuReveal = async function() {
 
 		case holder.hasClass('podcast'):
 			// Podcasts
-			parent.addClass('tagholder_wide dropshadow').insertDummySpacers();
+			parent.addClass('masonry_opened dropshadow').insertDummySpacers();
 			parent.find('div.albumthing').detach().appendTo(parent);
 			self.detach().addClass('minwidthed2').appendTo(parent);
 			adjustboxes = false;
@@ -50,7 +50,7 @@ jQuery.fn.menuReveal = async function() {
 
 		case holder.hasClass('radiochannel'):
 			// Radio Stations
-			parent.addClass('tagholder_wide dropshadow').insertDummySpacers();
+			parent.addClass('masonry_opened dropshadow').insertDummySpacers();
 			self.detach().appendTo(parent);
 			holder.find('div.albumthing').detach().prependTo(self);
 			adjustboxes = false;
@@ -149,11 +149,11 @@ jQuery.fn.menuHide = async function() {
 		case holder.hasClass('playlist'):
 		case holder.hasClass('userplaylist'):
 			// Albums and Playlists
-			parent.removeClass('tagholder_wide dropshadow');
+			parent.removeClass('masonry_opened dropshadow');
 			parent.removeDummySpacers();
 			var monkey = parent.find('.helpfulalbum.expand');
 			var titlediv = self.parent().find('div.albumthing').detach().appendTo(monkey).find('.title-menu');
-			titlediv.removeClass('containerbox dropdown-container');
+			titlediv.removeClass('containerbox vertical-centre');
 			titlediv.find('.svg-square').removeClass('svg-square').addClass('collectionicon');
 			titlediv.find('div').not('.vertical').removeClass('expand').detach().appendTo(titlediv);
 			titlediv.find('.vertical').remove();
@@ -164,14 +164,14 @@ jQuery.fn.menuHide = async function() {
 		case holder.hasClass('podcast'):
 			// Podcasts
 			self.prev('div.albumthing').detach().appendTo(self.prev().children('.helpfulalbum').first());
-			parent.removeClass('tagholder_wide dropshadow').removeDummySpacers();
+			parent.removeClass('masonry_opened dropshadow').removeDummySpacers();
 			self.removeClass('minwidthed2').css({display: 'none'});
 			break;
 
 		case holder.hasClass('radiochannel'):
 			// Radio Stations
 			var monkey = parent.find('.helpfulalbum.expand');
-			parent.removeClass('tagholder_wide dropshadow').removeDummySpacers();
+			parent.removeClass('masonry_opened dropshadow').removeDummySpacers();
 			parent.find('div.albumthing').detach().appendTo(monkey)
 			self.css({display: 'none'});
 			break;
@@ -352,7 +352,7 @@ function showHistory() {
 
 var layoutProcessor = function() {
 
-	var my_scrollers = [ "#sources", "#infopane", ".topdropmenu", ".drop-box" ];
+	var my_scrollers = [ "#sources", "#infopane", ".top_drop_menu", ".drop-box" ];
 	var rtime = '';
 	var ptime = '';
 	var headers = Array();
@@ -747,7 +747,7 @@ var layoutProcessor = function() {
 			$('#infobar').css('width', newwidth+'px');
 			infobar.rejigTheText();
 			browser.rePoint();
-			$('.topdropmenu').fanoogleMenus();
+			$('.top_drop_menu').fanoogleMenus();
 			setBottomPanelWidths();
 		},
 
@@ -901,10 +901,10 @@ var layoutProcessor = function() {
 			for (let value of my_scrollers) {
 				$(value).addCustomScrollBar();
 			};
-			$(".topdropmenu").floatingMenu({
+			$(".top_drop_menu").floatingMenu({
 				handleClass: 'dragmenu',
 				addClassTo: 'configtitle',
-				siblings: '.topdropmenu'
+				siblings: '.top_drop_menu'
 			});
 			$("#tagadder").floatingMenu({
 				handleClass: 'configtitle',
@@ -916,7 +916,7 @@ var layoutProcessor = function() {
 				donefunc: setBottomPanelWidths,
 				offset: $('#headerbar').outerWidth(true)
 			});
-			$('#plmode').detach().appendTo('#amontobin').addClass('tright');
+			$('#plmode').detach().appendTo('#nowplaying_icons').addClass('tright');
 			$('#volume').volumeControl({
 				orientation: 'vertical',
 				command: player.controller.volume
@@ -965,7 +965,7 @@ var layoutProcessor = function() {
 					debug.log('POSTALBUMMENU', 'Artist name',htmlspecialchars_decode(name));
 					var divname = 'potato_'+found[1]+'artist_'+found[2];
 					var destdiv = $('<div>',
-						{   class: 'collectionitem fixed tagholder_wide dropshadow invisible',
+						{   class: 'collectionitem fixed masonry_opened dropshadow invisible',
 							style: 'width: 98%',
 							id: divname
 						}).appendTo($('#'+element.attr('name')));

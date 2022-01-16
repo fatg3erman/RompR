@@ -1,7 +1,4 @@
 <body class="desktop">
-<div id="pset" class="invisible"></div>
-<div id="pmaxset" class="invisible"></div>
-<div id="pbgset" class="invisible"></div>
 <div id="notifications"></div>
 
 <div class="fullwidth containerbox" id="thetopbit">
@@ -26,7 +23,7 @@
 			<div id="nowplaying">
 				<div id="nptext"></div>
 			</div>
-			<div id="amontobin" class="clearfix">
+			<div id="nowplaying_icons" class="clearfix">
 				<div id="subscribe" class="invisible topstats">
 					<?php
 					print '<i title="'.language::gettext('button_subscribe').
@@ -39,7 +36,7 @@
 					print '<i title="'.language::gettext('button_addtoplaylist').
 						'" class="icon-doc-text npicon clickicon tooltip topdrop">';
 					?>
-					<div class="topdropmenu dropshadow leftmenu normalmenu useasfixed">
+					<div class="top_drop_menu dropshadow leftmenu normalmenu useasfixed">
 						<?php
 						print '<div class="configtitle"><div class="textcentre expand"><b>'.language::gettext('button_addtoplaylist').'</b></div></div>';
 						?>
@@ -68,10 +65,10 @@
 <?php
 			print '<div class="fixed topdrop"><i class="icon-floppy smallpluginicon clickicon"></i>';
 ?>
-				<div class="topdropmenu dropshadow rightmenu widemenu stayopen" id="plsaver">
+				<div class="top_drop_menu dropshadow rightmenu widemenu stayopen" id="plsaver">
 <?php
-					print '<div class="dropdown-container configtitle"><div class="textcentre expand"><b>'.language::gettext('button_saveplaylist').'</b></div></div>';
-					print '<div class="containerbox dropdown-container">
+					print '<div class="vertical-centre configtitle"><div class="textcentre expand"><b>'.language::gettext('button_saveplaylist').'</b></div></div>';
+					print '<div class="containerbox vertical-centre">
 						<div class="expand">
 							<input class="enter clearbox" id="playlistname" type="text" size="200"/>
 						</div>';
@@ -84,7 +81,7 @@
 			print '<div class="fixed topdrop"><i title="'.language::gettext('button_albumart').'" class="icon-cd tooltip smallpluginicon clickicon open_albumart"></i></div>';
 			print '<div class="fixed topdrop"><i class="icon-cog-alt smallpluginicon clickicon tooltip choose_prefs" title="'.language::gettext('button_prefs').'"></i>';
 ?>
-				<div class="topdropmenu dropshadow rightmenu widemenu stayopen" id="configpanel">
+				<div class="top_drop_menu dropshadow rightmenu widemenu stayopen" id="configpanel">
 <?php
 include ("includes/prefspanel.php");
 ?>
@@ -92,7 +89,7 @@ include ("includes/prefspanel.php");
 			</div>
 
 			<div class="fixed topdrop"><i class="icon-menu smallpluginicon clickicon"></i>
-				<div class="topdropmenu dropshadow rightmenu widemenu stayopen" id="phacker">
+				<div class="top_drop_menu dropshadow rightmenu widemenu stayopen" id="phacker">
 				<div class="configtitle"><div class="textcentre expand"><b>Play Queue</b></div></div>
 					<?php
 					include("skins/playlist.php");
@@ -143,7 +140,7 @@ include ("includes/prefspanel.php");
 	}
 ?>
 	</div>
-	<div id="theotherthing" class="fixed infobarnoheight containerbox dropdown-container">
+	<div id="theotherthing" class="fixed infobarnoheight containerbox vertical-centre">
 			<div id="playposss" class="fixed timebox tboxl"></div>
 			<div class="expand"><div id="progress"></div></div>
 			<div id="tracktimess" class="fixed timebox tboxr clickicon"></div>
@@ -176,7 +173,7 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 
 	<div id="albumlist" class="invisible noborder">
 <?php
-	print '<div class="dropdown-container configtitle">';
+	print '<div class="vertical-centre configtitle">';
 	print '<i title="'.language::gettext('button_collectioncontrols').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="collectionbuttons"></i>';
 	print '<div class="textcentre expand"><b>'.language::gettext('button_local_music').'</b></div>';
 	print '</div>';
@@ -186,7 +183,7 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 	</div>
 
 	<div id="audiobooklist" class="invisible noborder">
-		<div class="dropdown-container configtitle">
+		<div class="vertical-centre configtitle">
 <?php
 		print '<div class="textcentre expand"><b>'.language::gettext('label_audiobooks').'</b></div>';
 ?>
@@ -197,7 +194,7 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 	<div id="specialplugins" class="invisible noborder"></div>
 
 	<div id="historyholder" class="invisible noborder">
-		<div class="dropdown-container configtitle">
+		<div class="vertical-centre configtitle">
 			<div class="textcentre expand">
 				<b>
 	<?php
@@ -210,7 +207,7 @@ print '<i title="'.language::gettext('button_plugins').'" class="icon-menu topim
 	</div>
 
 	<div id="searcher" class="invisible noborder">
-	<div class="dropdown-container configtitle">
+	<div class="vertical-centre configtitle">
 	<?php
 		print '<i title="'.language::gettext('setup_advanced').'" class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="advsearchoptions"></i>';
 		print '<div class="textcentre expand"><b>'.language::gettext('label_searchfor').'</b></div>';
@@ -223,7 +220,7 @@ include("player/".prefs::$prefs['player_backend']."/search.php");
 	</div>
 
 	<div id="filelist" class="invisible">
-		<div class="dropdown-container configtitle">
+		<div class="vertical-centre configtitle">
 <?php
 		print '<div class="textcentre expand"><b>'.language::gettext('button_file_browser').'</b></div>';
 ?>
@@ -232,7 +229,7 @@ include("player/".prefs::$prefs['player_backend']."/search.php");
 	</div>
 
 	<div id="radiolist" class="invisible">
-		<div class="dropdown-container configtitle">
+		<div class="vertical-centre configtitle">
 <?php
 	print '<div class="expand textcentre"><b>'.language::gettext('button_internet_radio').'</b></div>';
 ?>
@@ -247,7 +244,7 @@ foreach($sp as $p) {
 
 	<div id="podcastslist" class="helpfulholder noselection dropmenu invisible">
 <?php
-print '<div class="dropdown-container configtitle">';
+print '<div class="vertical-centre configtitle">';
 print '<i class="icon-menu playlisticon clickicon tooltip fixed openmenu" name="podcastbuttons" title="'.language::gettext('label_podcastcontrols').'"></i>';
 print '<div class="textcentre expand"><b>'.language::gettext('label_podcasts').'</b></div>';
 print '</div>';
@@ -259,7 +256,7 @@ include("includes/podcast_base.php");
 
 <div id="infopane" class="cmiddle noborder infowiki tleft">
 	<div id="playlistslist" class="invisible">
-		<div class="dropdown-container configtitle">
+		<div class="vertical-centre configtitle">
 <?php
 		print '<div class="expand textcentre"><b>'.language::gettext('button_loadplaylist').'</b></div>';
 ?>
@@ -321,9 +318,9 @@ print '<div id="artistinformation" class="infotext noselection"><h2 class="infob
 </div>
 
 <div id="tagadder" class="dropmenu dropshadow mobmenu">
-	<div class="dropdown-container configtitle moveable" style="padding-top:4px"><div class="textcentre expand"><b>
+	<div class="vertical-centre configtitle moveable" style="padding-top:4px"><div class="textcentre expand"><b>
 <?php
 print language::gettext("lastfm_addtags").'</b><i class="icon-cancel-circled clickicon playlisticonr tright" onclick="tagAdder.close()"></i></div></div>';
 ?>
-	<div class="containerbox padright dropdown-container tagaddbox"></div>
+	<div class="containerbox padright vertical-centre tagaddbox"></div>
 </div>

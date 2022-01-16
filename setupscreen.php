@@ -28,7 +28,7 @@ print '</script>';
 print '</head>
 <body class="setup" style="overflow-y:scroll">';
 
-print '<div class="bordered dingleberry setupdiv">
+print '<div class="bordered setup_screen_options">
 	<br /><h2>';
 print $title;
 print '</h2>';
@@ -37,7 +37,7 @@ if ($setup_error !== null)
 print '<p>'.language::gettext("setup_labeladdresses").'</p>';
 print '<p class="tiny">'.language::gettext("setup_addressnote").'</p>';
 print '<form name="mpdetails" action="index.php" method="post">';
-print '<hr class="dingleberry" />';
+print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext("setup_mpd").'</h3>';
 print '<p>Choose or edit a player</p>';
 $c = 0;
@@ -60,12 +60,12 @@ print '<input type="text" name="mpd_password" value="'.prefs::$prefs['multihosts
 print '<p>'.language::gettext("setup_unixsocket").'<br>';
 print '<input type="text" name="unix_socket" value="'.prefs::$prefs['multihosts'][prefs::$prefs['currenthost']]['socket'].'" /></p>';
 
-print '<hr class="dingleberry" />';
+print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext("label_mopidy_http").'</h3>';
 print '<p class="tiny">'.language::gettext("info_mopidy_http").'</p>';
 print '<input type="text" name="http_port_for_mopidy" value="'.prefs::$prefs['http_port_for_mopidy'].'" /></p>';
 
-print '<hr class="dingleberry" />';
+print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext("setup_mopidy_scan_title").'</h3>';
 print '<div class="styledinputs"><input id="mopscan" type="checkbox" name="use_mopidy_scan" ';
 if (prefs::$prefs['use_mopidy_scan']) {
@@ -74,7 +74,7 @@ if (prefs::$prefs['use_mopidy_scan']) {
 print '><label for="mopscan">'.language::gettext('setup_mopidy_scan').'</label></div>';
 print '<p><a href="https://fatg3erman.github.io/RompR/Rompr-And-Mopidy#scanning-local-files" target="_blank">'.language::gettext('config_read_the_docs').'</a></p>';
 
-print '<hr class="dingleberry" />';
+print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext("label_generalsettings").'</h3>';
 print '<div class="styledinputs"><input id="cli" type="checkbox" name="cleanalbumimages" ';
 if (prefs::$prefs['cleanalbumimages']) {
@@ -90,14 +90,14 @@ if (prefs::$prefs['do_not_show_prefs']) {
 print '><label for="dsp">Do not show preferences panel on the interface</label></div>';
 print '<p class="tiny">This will stop people messing with your configuration, but also with theirs</p>';
 
-print '<hr class="dingleberry" />';
+print '<hr class="setup_screen_options" />';
 print '<h3>'.language::gettext('config_google_credentials').'</h3>';
 print '<p class="tiny">To use Bing Image Search you need to create an API key</p>';
 print '<p><a href="https://fatg3erman.github.io/RompR/Album-Art-Manager" target="_blank">'.language::gettext('config_read_the_docs').'</a></p>';
 print '<p>Bing API Key<br/>';
 print '<input type="text" name="bing_api_key" value="'.prefs::$prefs['bing_api_key'].'" /></p>'."\n";
 
-print '<hr class="dingleberry" />';
+print '<hr class="setup_screen_options" />';
 print '<h3>Collection Settings</h3>';
 print '<div class="styledinputs"><input id="dblite" type="radio" name="collection_type" value="sqlite"';
 if (array_key_exists('collection_type', prefs::$prefs) && prefs::$prefs['collection_type'] == "sqlite") {
@@ -120,7 +120,7 @@ print '<p>Username<br><input type="text" name="mysql_user" value="'.
 	prefs::$prefs['mysql_user'].'" /></p>'."\n";
 print '<p>Password<br><input type="text" name="mysql_password" value="'.
 	prefs::$prefs['mysql_password'].'" /></p>'."\n";
-print '<hr class="dingleberry" />';
+print '<hr class="setup_screen_options" />';
 print '<h3>Proxy Settings</h3>';
 print '<p>Proxy Server (eg 192.168.3.4:8800)<br><input type="text" name="proxy_host" value="'.
 	prefs::$prefs['proxy_host'].'" /></p>'."\n";
@@ -128,7 +128,7 @@ print '<p>Proxy Username<br><input type="text" name="proxy_user" value="'.
 	prefs::$prefs['proxy_user'].'" /></p>'."\n";
 print '<p>Proxy Password<br><input type="text" name="proxy_password" value="'.
 	prefs::$prefs['proxy_password'].'" /></p>'."\n";
-print '<hr class="dingleberry" />';
+print '<hr class="setup_screen_options" />';
 print '<h3>Debug Logging</h3>';
 
 print '<div class="pref containerbox drodown-container">';

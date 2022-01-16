@@ -72,7 +72,7 @@ function info_sidebar_layout(options) {
 			let tbl = $('<table>').appendTo($('<div>', {class: 'spotchoices clearfix'}).prependTo(self.html));
 			let tr = $('<tr>').appendTo(tbl);
 			$('<td>').append(
-				$('<div>', {class: 'bleft tleft spotthing'}).append(
+				$('<div>', {class: 'bleft tleft bright alignmid'}).append(
 					$('<span>', {class: 'spotpossname'}).html('All possibilities for '+name)
 				)
 			).appendTo(tr);
@@ -346,7 +346,7 @@ $.widget('rompr.imageMasonry', {
 
 	options: {
 		images: [],
-		class: 'tagholder2',
+		class: 'spotify_album_masonry',
 		id: 'buggery_'+Date.now()
 	},
 
@@ -374,7 +374,7 @@ $.widget('rompr.imageMasonry', {
 
 		this.options.images.forEach(function(image) {
 			$('<input>', {type: 'hidden'}).val('getRemoteImage.php?url='+rawurlencode(image)).insertAfter(
-				$('<img>', {class: 'infoclick clickzoomimage float-img', src: 'getRemoteImage.php?url='+rawurlencode(image)})
+				$('<img>', {class: 'infoclick clickzoomimage fullwidth', src: 'getRemoteImage.php?url='+rawurlencode(image)})
 				.appendTo($('<div>', {class: self.options.class})
 				.appendTo(self.element))
 			);
@@ -401,7 +401,7 @@ $.widget('rompr.playableMasonry', {
 
 	options: {
 		spotidata: [],
-		class: 'tagholder4',
+		class: 'spotify_playable_masonry',
 		id: 'baggery_'+Date.now()
 	},
 
@@ -430,8 +430,8 @@ $.widget('rompr.playableMasonry', {
 		this.options.spotidata.tracks.forEach(function(track) {
 			var img = (track.album.images && track.album.images.length > 0) ?
 				'getRemoteImage.php?url='+rawurlencode(track.album.images[0].url)+'&rompr_resize_size=smallish' : 'newimages/spotify-icon.png';
-			var x = $('<div>', {class: 'arsecandle tagholder4 clickable draggable clicktrack playable notthere', name: rawurlencode(track.uri)}).appendTo(self.element);
-			x.append($('<img>', {class: 'cheeseandfish', src: img}));
+			var x = $('<div>', {class: 'arsecandle spotify_playable_masonry clickable draggable clicktrack playable notthere', name: rawurlencode(track.uri)}).appendTo(self.element);
+			x.append($('<img>', {class: 'playable_masonry_image', src: img}));
 			var an = track.artists.map(a => a.name);
 			x.append($('<div>').html(track.name+'<br /><b>'+concatenate_artist_names(an)+'</b>'));
 		});

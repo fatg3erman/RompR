@@ -75,41 +75,41 @@ var helpfulThings = function() {
 				}
 
 				if ((player.canPlay('spotify') || player.canPlay('gmusic')) && lastfm.isLoggedIn()) {
-					var html = '<div class="fixed infosection containerbox mixbox playable smartradio" name="lastFMTrackRadio+1month">';
+					var html = '<div class="fixed infosection containerbox plugin_hpl_radio playable smartradio" name="lastFMTrackRadio+1month">';
 					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
-					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_dailymix")+'</b><br/>';
+					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_dailymix")+'</b><br/>';
 					html += language.gettext('label_dailymixdesc', cloneObject(powers));
 					html += '</div></div>';
 
-					html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="lastFMArtistRadio+6month">';
+					html += '<div class="fixed infosection containerbox plugin_hpl_radio playable smartradio" name="lastFMArtistRadio+6month">';
 					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
-					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_luckydip")+'</b><br/>';
+					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_luckydip")+'</b><br/>';
 					html += language.gettext('label_luckydipdesc', powers);
 					html += '</div></div>';
 				} else if ((player.canPlay('spotify') || player.canPlay('gmusic')) && !lastfm.isLoggedIn()) {
-					var html = '<div class="fixed infosection containerbox mixbox">';
+					var html = '<div class="fixed infosection containerbox plugin_hpl_radio">';
 					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
-					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_startshere")+'</b><br/>';
+					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_startshere")+'</b><br/>';
 					html += language.gettext('label_goonlogin')+"</div>";
 					html += '</div>';
 				} else if (!player.canPlay('spotify') && !player.canPlay('gmusic')) {
-					var html = '<div class="fixed infosection containerbox mixbox">';
+					var html = '<div class="fixed infosection containerbox plugin_hpl_radio">';
 					html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
-					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext("label_getspotify")+'</b><br/>';
+					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_getspotify")+'</b><br/>';
 					html += language.gettext('label_nospotify')+"</div>";
 					html += '</div>';
 				}
 
 				if (player.canPlay('spotify')) {
-					html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="spotiMixRadio+7day">';
+					html += '<div class="fixed infosection containerbox plugin_hpl_radio playable smartradio" name="spotiMixRadio+7day">';
 					html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
-					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext('label_spotify_mix')+'</b><br/>';
+					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext('label_spotify_mix')+'</b><br/>';
 					html += language.gettext('label_spotimixdesc')+"</div>";
 					html += '</div>';
 
-					html += '<div class="fixed infosection containerbox mixbox playable smartradio" name="spotiMixRadio+1year">';
+					html += '<div class="fixed infosection containerbox plugin_hpl_radio playable smartradio" name="spotiMixRadio+1year">';
 					html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
-					html +=	'<div class="expand alignmid mixinfo"><b>'+language.gettext('label_spotify_dj')+'</b><br/>';
+					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext('label_spotify_dj')+'</b><br/>';
 					html += language.gettext('label_spotiswimdesc')+"</div>";
 					html += '</div>';
 				}
@@ -219,7 +219,7 @@ var helpfulThings = function() {
 			// Need to make sure all the album IDs are unique, since we do get duplicates
 
 			holder.spotifyAlbumThing({
-				classes: 'brick tagholder2 selecotron',
+				classes: 'brick spotify_album_masonry selecotron',
 				itemselector: 'brick',
 				sub: 'album',
 				showbiogs: true,

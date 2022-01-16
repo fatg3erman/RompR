@@ -819,7 +819,7 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 
 	_findSourceElement: function(event) {
 		var el = $(event.target);
-		while (!el.hasClass(this.options.handleClass) && !el.hasClass('topdropmenu') && el != this.element)
+		while (!el.hasClass(this.options.handleClass) && !el.hasClass('top_drop_menu') && el != this.element)
 		{
 			el = el.parent();
 		}
@@ -903,15 +903,15 @@ $.widget("rompr.floatingMenu", $.ui.mouse, {
 $.widget('rompr.spotifyAlbumThing', {
 
 	options: {
-		classes: 'tagholder2 selecotron',
-		itemselector: 'tagholder2',
-		swapclass: 'tagholder2',
+		classes: 'spotify_album_masonry selecotron',
+		itemselector: 'spotify_album_masonry',
+		swapclass: 'spotify_album_masonry',
 		sub: '',
 		showbiogs: false,
 		layoutcallback: null,
 		maxwidth: 640,
 		is_plugin: false,
-		imageclass: 'masochist',
+		imageclass: 'spotify_album_image',
 		masonified: false,
 		showlistenlater: true,
 		showremovebutton: false,
@@ -1053,7 +1053,7 @@ $.widget('rompr.spotifyAlbumThing', {
 				self.element.find('#'+self.options.id+'bio_'+id).hide();
 				element.toggleClosed();
 				if (self.options.showbiogs) {
-					dropper.parent().parent().removeClass('tagholder_wide dropshadow').addClass(self.options.swapclass);
+					dropper.parent().parent().removeClass('masonry_opened dropshadow').addClass(self.options.swapclass);
 					dropper.parent().parent().children('.helpfulalbum').addClass('fullwidth');
 				}
 				dropper.hide();
@@ -1105,7 +1105,7 @@ $.widget('rompr.spotifyAlbumThing', {
 	_openAlbum: function(e) {
 		var self = this;
 		if (self.options.showbiogs) {
-			e.parent().parent().removeClass(self.options.swapclass).addClass('tagholder_wide dropshadow');
+			e.parent().parent().removeClass(self.options.swapclass).addClass('masonry_opened dropshadow');
 			e.parent().parent().children('.helpfulalbum').removeClass('fullwidth');
 			self.element.find('#'+self.options.id+'bio_'+e.attr('id').replace(self.options.id+'dropper_')).show();
 			browser.rePoint();
@@ -1195,15 +1195,15 @@ $.widget('rompr.spotifyAlbumThing', {
 $.widget('rompr.spotifyArtistThing', {
 
 	options: {
-		classes: 'tagholder2',
-		itemselector: 'tagholder2',
-		swapclass: 'tagholder2',
+		classes: 'spotify_album_masonry',
+		itemselector: 'spotify_album_masonry',
+		swapclass: 'spotify_album_masonry',
 		sub: '',
 		layoutcallback: null,
 		maxwidth: 640,
 		maxalbumwidth: 640,
 		is_plugin: false,
-		imageclass: 'masochist',
+		imageclass: 'spotify_album_image',
 		masonified: false,
 		data: []
 	},
@@ -1292,7 +1292,7 @@ $.widget('rompr.spotifyArtistThing', {
 			if (element.isOpen()) {
 				self.element.find('#'+self.options.id+'bio_'+id).hide();
 				element.toggleClosed();
-				dropper.parent().removeClass('tagholder_wide dropshadow').addClass(self.options.swapclass);
+				dropper.parent().removeClass('masonry_opened dropshadow').addClass(self.options.swapclass);
 				dropper.parent().children('.helpfulalbum').addClass('fullwidth');
 				dropper.hide();
 				browser.rePoint();
@@ -1329,11 +1329,11 @@ $.widget('rompr.spotifyArtistThing', {
 		self._openArtist(e)
 		e.addClass('filled');
 		e.spotifyAlbumThing({
-			classes: 'tagholder5',
-			itemselector: 'tagholder5',
+			classes: 'spotify_artist_album_masonry',
+			itemselector: 'spotify_artist_album_masonry',
 			sub: false,
 			layoutcallback: browser.rePoint,
-			imageclass: 'masochist',
+			imageclass: 'spotify_album_image',
 			maxwidth: self.options.maxalbumwidth,
 			data: data.items
 		});
@@ -1346,7 +1346,7 @@ $.widget('rompr.spotifyArtistThing', {
 
 	_openArtist: function(e) {
 		var self = this;
-		e.parent().removeClass(self.options.swapclass).addClass('tagholder_wide dropshadow');
+		e.parent().removeClass(self.options.swapclass).addClass('masonry_opened dropshadow');
 		e.parent().children('.helpfulalbum').removeClass('fullwidth');
 		self.element.find('#'+self.options.id+'bio_'+e.attr('id')).show();
 		browser.rePoint();
@@ -1507,7 +1507,7 @@ function popup(opts) {
 		}
 		win = $('<div>', { id: winid, class: "popupwindow dropshadow noselection" }).appendTo($('body'));
 		var container = $('<div>', {class: 'containerbox vertical popupcontentcontainer'}).appendTo(win);
-		titlebar = $('<div>', { class: "cheese dragmenu fixed" }).appendTo(container);
+		titlebar = $('<div>', { class: "popup_handle dragmenu fixed" }).appendTo(container);
 		var ct = $('<div>', {class: "configtitle"}).appendTo(titlebar);
 		var tit = $('<div>', { class: "expand textcentre"}).appendTo(ct)
 		tit.html('<b>'+options.title+'</b>');
@@ -1520,7 +1520,7 @@ function popup(opts) {
 		contentholder = $('<div>', {class: 'popupcontentholder expand'}).appendTo(container);
 		contents = $('<div>',{class: 'popupcontents clearfix'}).appendTo(contentholder);
 		titlebar.find('.icon-cancel-circled').on('click',  function() {self.close(false)});
-		win.floatingMenu({handleshow: false, handleclass: 'cheese', movecallback: self.moved });
+		win.floatingMenu({handleshow: false, handleclass: 'popup_handle', movecallback: self.moved });
 		return contents;
 	}
 

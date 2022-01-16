@@ -14,7 +14,6 @@
     --main-bg-colour: #cccccc;
     --main-bg-image: none;
 
-    --darker-bg-colour: rgba(0, 0, 0, 0.1);
 
     --headerbar-bg-colour: unset;
     --headerbar-bg-image: none;
@@ -26,8 +25,8 @@
     --sources-bg-image:  none;
     --sources-border-top: none;
 
-    --horse-bg-colour: unset;
-    --horse-bg-image: none;
+    --playlist_top-bg-colour: unset;
+    --playlist_top-bg-image: none;
 
     --playlist-bg-colour: unset;
     --playlist-bg-image: none;
@@ -43,8 +42,8 @@
     --playlist-current-title-font-size: 100%;
     --playlist-current-title-font-weight: unset;
 
-    --dropmenu-bg-colour: var(--main-bg-colour);
-    --dropmenu-bg-image: none;
+    --top_drop_menu-bg-colour: var(--main-bg-colour);
+    --top_drop_menu-bg-image: none;
 
     --configtitle-bg-colour: unset;
     --configtitle-bg-image: none;

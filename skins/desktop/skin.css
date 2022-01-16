@@ -72,7 +72,7 @@ input[type=text],input[type="number"] {
 	overflow:hidden;
 }
 
-#amontobin {
+#nowplaying_icons {
 	padding-top:4px;
 }
 
@@ -311,6 +311,7 @@ button.spinable.icon-spin6 {
 .headercontainer {
 	height:90%;
 	box-sizing:border-box;
+	padding-top:4px;
 }
 
 .background-left {

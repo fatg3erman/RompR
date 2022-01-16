@@ -50,7 +50,7 @@ var mixRadio = function() {
 		},
 
 		modeHtml: function(p) {
-			return '<i class="icon-artist modeimg"/></i><span class="modespan">'+language.gettext("label_radio_mix")+'</span>';
+			return '<i class="icon-artist modeimg"/></i><span class="alignmid bold">'+language.gettext("label_radio_mix")+'</span>';
 		},
 
 		lookupFail: function() {

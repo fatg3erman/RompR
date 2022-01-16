@@ -32,7 +32,7 @@ var singleArtistRadio = function() {
 		},
 
 		modeHtml: function() {
-			return '<i class="icon-artist modeimg"/></i><span class="modespan ucfirst">'+artist+" "+language.gettext("label_radio")+'</span>';
+			return '<i class="icon-artist modeimg"/></i><span class="alignmid bold ucfirst">'+artist+" "+language.gettext("label_radio")+'</span>';
 		}
 	}
 }();

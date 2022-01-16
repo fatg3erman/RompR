@@ -3,7 +3,9 @@
 = Standard HTML Elements
 =====================================================================
 */
-html {
+
+html
+{
     background-color: var(--main-bg-colour);
     background-image: var(--main-bg-image);
     background-size:cover;
@@ -11,16 +13,60 @@ html {
     background-attachment:fixed;
 }
 
-#custombackground {
+#custombackground
+{
     display:none;
 }
 
-#headerbar {
-    background-color: var(--headerbar-bg-colour);
-    background-image: var(--headerbar-bg-image);
+
+
+
+
+
+
+
+
+
+
+body.phone .dropmenu>div.playable,
+body.phone .dropmenu>div.menuitem,
+body.phone .mainpane .radio,
+body.phone .mainpane .faveradio,
+body.phone .mainpane .podcast:not(.podicon):not(.podglobal),
+body.phone .mainpane .directory {
+    border-top: 1px solid var(--border-colour);
 }
 
-#infobar.coloured, #thetopbit {
+body.phone #pluginplaylistholder .menuitem.clickicon,
+body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
+    border-bottom: 1px solid var(--border-colour);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#infobar.coloured, #thetopbit
+{
     background-color: var(--topbit-bg-colour);
     background-image: var(--topbit-bg-image);
 }
@@ -32,12 +78,26 @@ html {
     background-image: var(--sources-bg-image);
 }
 
-#horse {
-    background-color: var(--horse-bg-colour);
-    background-image: var(--horse-bg-image);
+body.phone .dropmenu.album1
+{
+    background-color: var(--sources-bg-colour);
+    background-image: var(--sources-bg-image);
 }
 
-#playlist {
+body.phone .dropmenu.album2
+{
+    background-color: var(--sources-bg-colour);
+    background-image: var(--sources-bg-image);
+}
+
+#playlist_top
+{
+    background-color: var(--playlist_top-bg-colour);
+    background-image: var(--playlist_top-bg-image);
+}
+
+#playlist
+{
     background-color: var(--playlist-bg-colour);
     background-image: var(--playlist-bg-image);
 }
@@ -55,7 +115,8 @@ html {
     background-image: var(--infopane-bg-image);
 }
 
-.inbrowser {
+.inbrowser
+{
     color: var(--infopane-text-colour);
 }
 
@@ -67,74 +128,23 @@ html {
     background-repeat:no-repeat;
 }
 
-/*
-=====================================================================
-= Dropdown Menus
-=====================================================================
-*/
-
-div.topdropmenu, div.albumbitsmenu
+.backmenu
 {
-    background-color: var(--dropmenu-bg-colour);
-    background-image: var(--dropmenu-bg-image);
-    border-left: var(--bordered-left);
-    border-bottom: var(--bordered-bottom);
-    border-right: var(--bordered-right);
-}
-
-.configtitle
-{
-    background-color: var(--configtitle-bg-colour);
-    background-image: var(--configtitle-bg-image);
-    border-bottom: var(--configtitle-border-bottom);
-}
-
-.dropshadow
-{
-    box-shadow: var(--drop-shadow);
-}
-
-.backmenu {
     background-color: var(--main-bg-colour) !important;
-    background-image: var(--main-bg-image) !important;
 }
 
-.bordered {
+.bordered
+{
     border-left: var(--bordered-left);
     border-bottom: var(--bordered-bottom);
     border-right: var(--bordered-right);
     border-top: var(--bordered-top);
 }
 
-body.desktop .info-border-right {
-    border-right: 1px solid var(--border-colour);
-}
-
-body.phone .dropmenu>div.playable,
-body.phone .dropmenu>div.menuitem,
-body.phone .mainpane .radio,
-body.phone .mainpane .faveradio,
-body.phone .mainpane .podcast:not(.podicon):not(.podglobal),
-body.phone .mainpane .directory {
-    border-top: 1px solid var(--border-colour);
-}
-
-body.phone #pluginplaylistholder .menuitem.clickicon,
-body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
-    border-bottom: 1px solid var(--border-colour);
-}
-
 .drop-box {
     background-color: var(--main-bg-colour);
     color: var(--text-colour);
 }
-
-/*
-=====================================================================
-= General Classes
-=====================================================================
-*/
-
 
 /*-- divs and classes used in the playlist --*/
 
@@ -149,11 +159,6 @@ body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
     border-left: var(--playlist-current-track-left-border);
 }
 
-.playlistitem,
-{
-    transition: var(--playlist-current-transition);
-}
-
 .playlistcurrenttitle
 {
     color: var(--highlight-colour);
@@ -165,7 +170,8 @@ body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
     text-shadow: var(--playlist-current-shadow);
 }
 
-.playlisttitle {
+.playlisttitle
+{
     background-color: var(--playlist-title-bg-colour);
     border-bottom: var(--playlist-title-border);
     transition: var(--playlist-current-transition);
@@ -178,8 +184,8 @@ body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
 
 .popupwindow
 {
-    background-color: var(--dropmenu-bg-colour);
-    background-image: var(--dropmenu-bg-image);
+    background-color: var(--top_drop_menu-bg-colour);
+    background-image: var(--top_drop_menu-bg-image);
     border-left: var(--bordered-left);
     border-bottom: var(--bordered-bottom);
     border-right: var(--bordered-right);
@@ -191,6 +197,7 @@ body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
 = Info Panel - Spotify + Skypotato Skin
 =====================================================================
 */
+
 .helpfulalbum
 {
     background-color: var(--album-browse-bg-colour);
@@ -202,7 +209,7 @@ body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
     background-image: var(--skypotato-openalbum-bg-image);
 }
 
-.tagholder_wide
+.masonry_opened
 {
     background-color: var(--album-browse-open-bg-colour);
     background-image: var(--album-browse-open-bg-image);
@@ -211,7 +218,7 @@ body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
     border-top:  var(--album-browse-open-highlight);
 }
 
-.tagholder_wide .helpfulalbum.tleft
+.masonry_opened .helpfulalbum.tleft
 {
     background-image: none;
 }

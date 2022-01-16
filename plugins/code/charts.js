@@ -97,12 +97,12 @@ var charts = function() {
 		doMainLayout: function(data) {
 			debug.debug("CHARTS","Got data",data);
 			for (var i in data) {
-				holders[i] = $('<div>', {class: 'tagholder selecotron noselection', id: 'chaman_'+i}).appendTo($("#chamunger"));
+				holders[i] = $('<div>', {class: 'masonry_general selecotron noselection', id: 'chaman_'+i}).appendTo($("#chamunger"));
 				putItems(holders[i], data[i], i);
 			}
 			cha.slideToggle('fast', function() {
 				browser.goToPlugin("cha");
-				browser.rePoint($("#chamunger"), {itemSelector: '.tagholder', percentPosition: true});
+				browser.rePoint($("#chamunger"), {itemSelector: '.masonry_general', percentPosition: true});
 			});
 		},
 
@@ -126,7 +126,7 @@ var charts = function() {
 				holders[i].empty();
 				putItems(holders[i],data[i],i);
 			}
-			browser.rePoint($("#chamunger"), {itemSelector: '.tagholder', percentPosition: true});
+			browser.rePoint($("#chamunger"), {itemSelector: '.masonry_general', percentPosition: true});
 		}
 
 	}

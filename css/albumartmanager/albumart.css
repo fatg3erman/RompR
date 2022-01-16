@@ -1,3 +1,7 @@
+#wobblebottom {
+	height:80%;
+}
+
 #imageeditor {
 	min-height:400px;
 	box-sizing:border-box;
@@ -14,6 +18,12 @@
 	padding-bottom: 8px;
 	margin-top:8px;
 	transition: width 0.5s ease;
+    border-left: 1px solid var(--border-colour);
+}
+
+#status {
+	font-weight:bold;
+	overflow:hidden;
 }
 
 #browns {

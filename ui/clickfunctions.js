@@ -693,7 +693,7 @@ function selectRange(first, last) {
 			it.prop("id") != "sortable" &&
 			it.prop("id") != "bottompage" &&
 			!it.hasClass("mainpane") &&
-			!it.hasClass("topdropmenu") )
+			!it.hasClass("top_drop_menu") )
 	{
 		it = it.parent();
 	}
@@ -767,7 +767,7 @@ function popupMenu(event, element) {
 		closePopupMenu();
 		$(button).addClass('menu_opened');
 		justclosed = false;
-		maindiv = $('<div>', {id: 'popupmenu', class:'topdropmenu dropshadow normalmenu albumbitsmenu', style: 'opacity:0;display:block'}).appendTo($('body'));
+		maindiv = $('<div>', {id: 'popupmenu', class:'top_drop_menu dropshadow normalmenu albumbitsmenu', style: 'opacity:0;display:block'}).appendTo($('body'));
 		holderdiv = $('<div>', {class: 'fullwidth'}).appendTo(maindiv);
 		// Copy the attributes from the button to a holder div so that .parent() still works
 		// and we don't have faffing with do we/don't we have custom scrollbars
@@ -1109,12 +1109,12 @@ function amendAlbumDetails(e, element) {
 	}
 	var width = (language.gettext('label_albumartist').length-4).toString() + 'em';
 
-	var d = $('<div>',{class: 'containerbox dropdown-container'}).appendTo(mywin);
+	var d = $('<div>',{class: 'containerbox vertical-centre'}).appendTo(mywin);
 	d.append('<div class="fixed padright" style="width:'+width+'">'+language.gettext('label_albumartist')+'</div>');
 	var e = $('<div>',{class: 'expand'}).appendTo(d);
 	var i = $('<input>',{class: 'enter', id: 'amendname'+albumindex, type: 'text', size: '200'}).appendTo(e);
 
-	d = $('<div>',{class: 'containerbox dropdown-container'}).appendTo(mywin);
+	d = $('<div>',{class: 'containerbox vertical-centre'}).appendTo(mywin);
 	d.append('<div class="fixed padright" style="width:'+width+'">'+language.gettext('info_year')+'</div>');
 	e = $('<div>',{class: 'expand'}).appendTo(d);
 	i = $('<input>',{class: 'enter', id: 'amenddate'+albumindex, type: 'text', size: '200'}).appendTo(e);

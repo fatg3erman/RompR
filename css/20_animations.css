@@ -1,0 +1,118 @@
+/*
+=====================================================================
+= CSS Animations
+=====================================================================
+*/
+
+@-webkit-keyframes pulseit{
+	 0%{
+		  opacity:1;
+	 }
+	 50%{
+		  opacity:0;
+	 }
+	 100%{
+		  opacity:1;
+	 }
+}
+@-moz-keyframes pulseit{
+	 0%{
+		  opacity:1;
+	 }
+	 50%{
+		  opacity:0;
+	 }
+	 100%{
+		  opacity:1;
+	 }
+}
+@keyframes pulseit{
+	 0%{
+		  opacity:1;
+	 }
+	 50%{
+		  opacity:0;
+	 }
+	 100%{
+		  opacity:1;
+	 }
+}
+
+.spinner {
+	 animation: spin 4s linear infinite;
+}
+
+.nospin {
+	  transform: rotate(0deg);
+}
+
+.oneeighty {
+	transform: rotate(180deg);
+}
+
+.ninety {
+	transform: rotate(90deg);
+}
+
+@-webkit-keyframes spin{
+	 0%{
+		  -webkit-transform: rotate(0deg);
+	 }
+	 100%{
+		  -webkit-transform: rotate(359deg);
+	 }
+}
+@-moz-keyframes spin{
+	 0% {
+		  -moz-transform: rotate(0deg);
+	 }
+	 50% {
+		  -moz-transform: rotate(180deg);
+	 }
+	 100% {
+		  -moz-transform: rotate(359deg);
+	 }
+}
+@keyframes spin{
+	 0% {
+		  transform: rotate(0deg);
+	 }
+	 50% {
+		  transform: rotate(180deg);
+	 }
+	 100% {
+		  transform: rotate(359deg);
+	 }
+}
+
+.wafflything {
+	position: relative;
+	overflow:hidden;
+	height: var(--waiting-swinger-height) !important;
+	border: none !important;
+	margin-bottom: 4px;
+}
+
+.wafflebanger {
+	height: 100%;
+	width: var(--waiting-swinger-width);
+	position: relative;
+	background-image: var(--waiting-swinger-bg-image);
+}
+
+@keyframes switchback {
+	0% {
+		left: -50px;
+	}
+	50% {
+		left: 100%;
+	}
+	100% {
+		left: -50px;
+	}
+}
+
+.wafflebanger-moving {
+	animation: switchback 2s linear infinite;
+}
+

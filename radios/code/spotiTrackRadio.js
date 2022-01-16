@@ -37,7 +37,7 @@ var spotiTrackRadio = function() {
 		},
 
 		modeHtml: function() {
-			return '<i class="icon-spotify-circled modeimg"/></i><span class="modespan">'+param.name+'</span>';
+			return '<i class="icon-spotify-circled modeimg"/></i><span class="alignmid bold">'+param.name+'</span>';
 		},
 
 		stop: function() {

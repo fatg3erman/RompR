@@ -19,12 +19,16 @@ set_version_string();
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 <?php
-print '<link rel="stylesheet" type="text/css" href="css/layout-january.css?version=?'.ROMPR_VERSION.'" />'."\n";
-print '<link rel="stylesheet" type="text/css" href="skins/desktop/skin.css?version=='.ROMPR_VERSION.'" />'."\n";
-print '<link rel="stylesheet" type="text/css" href="css/albumart.css?version=?'.ROMPR_VERSION.'" />'."\n";
+$css = glob('css/*.css');
+foreach ($css as $file) {
+	logger::log("INIT", "Including Stylesheet",$file);
+	print '<link rel="stylesheet" type="text/css" href="'.$file.'?version='.$version_string.'" />'."\n";
+}
+print '<link rel="stylesheet" type="text/css" href="skins/desktop/skin.css?version=='.$version_string.'" />'."\n";
+print '<link rel="stylesheet" type="text/css" href="css/albumartmanager/albumart.css?version=?'.$version_string.'" />'."\n";
 ?>
 <link rel="stylesheet" id="theme" type="text/css" />
-<link type="text/css" href="css/jquery.mCustomScrollbar.css" rel="stylesheet" />
+<link type="text/css" href="css/scrollbars/jquery.mCustomScrollbar.css" rel="stylesheet" />
 <?php
 $scripts = array(
 	"jquery/jquery-3.6.0.min.js",
@@ -47,15 +51,12 @@ $scripts = array(
 );
 foreach ($scripts as $i) {
 	logger::mark("INIT", "Loading ".$i);
-	print '<script type="text/javascript" src="'.$i.'?version='.ROMPR_VERSION.'"></script>'."\n";
+	print '<script type="text/javascript" src="'.$i.'?version='.$version_string.'"></script>'."\n";
 }
 include ("includes/globals.php");
 ?>
 </head>
 <body class="desktop">
-<div id="pset" class="invisible"></div>
-<div id="pmaxset" class="invisible"></div>
-<div id="pbgset" class="invisible"></div>
 <div class="albumcovers">
 <div class="infosection">
 <table width="100%">
@@ -136,7 +137,7 @@ function do_covers_db_style() {
 	global $albums_without_cover;
 	$lister = new sortby_artist('cartistroot');
 	foreach ($lister->root_sort_query() as $artist) {
-		print '<div class="cheesegrater" name="artistname'.$artist['Artistindex'].'">';
+		print '<div class="albumart_artist_holder" name="artistname'.$artist['Artistindex'].'">';
 			print '<div class="albumsection">';
 				print '<div class="tleft"><h2>'.$artist['Artistname'].'</h2></div><div class="tright rightpad"><button class="invisible" onclick="getNewAlbumArt(\'#album'.$count.'\')">'.language::gettext("albumart_getthese").'</button></div>';
 			print "</div>\n";
@@ -170,7 +171,7 @@ function do_radio_stations() {
 
 	$playlists = prefs::$database->get_user_radio_streams();
 	if (count($playlists) > 0) {
-		print '<div class="cheesegrater" name="radio">';
+		print '<div class="albumart_artist_holder" name="radio">';
 			print '<div class="albumsection">';
 				print '<div class="tleft"><h2>Radio Stations</h2></div><div class="tright rightpad"><button class="invisible" onclick="getNewAlbumArt(\'#album'.$count.'\')">'.language::gettext("albumart_getthese").'</button></div>';
 				print "</div>\n";
@@ -210,7 +211,7 @@ function do_playlists() {
 	foreach ($plfiles as $f) {
 		$playlists[] = basename($f);
 	}
-	print '<div class="cheesegrater" name="savedplaylists">';
+	print '<div class="albumart_artist_holder" name="savedplaylists">';
 		print '<div class="albumsection">';
 			print '<div class="tleft"><h2>Saved Playlists</h2></div>';
 		print "</div>\n";

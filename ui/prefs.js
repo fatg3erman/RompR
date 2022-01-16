@@ -400,7 +400,7 @@ var prefs = function() {
 		var bgp = prefs.bgimgparms[prefs.theme];
 		bgp.position = $('input[name="backgroundposition"]:checked').val();
 		prefs.save({bgimgparms: prefs.bgimgparms});
-		setBackgroundCss();
+		document.documentElement.style.setProperty('--background-position', prefs.bgimgparms[prefs.theme].position);
 	}
 
 	function make_background_selector(theme) {
@@ -435,27 +435,16 @@ var prefs = function() {
 		landscapeImage.onload = doNothing;
 		portraitImage.onerror = doNothing;
 		landscapeImage.onerror = doNothing;
-		// $('style[id="phonebackl"]').remove();
-		$('style[id="backgroundl"]').remove();
-		// $('style[id="phonebackp"]').remove();
-		$('style[id="backgroundp"]').remove();
+		document.documentElement.style.removeProperty('--landscape-bg-image');
+		document.documentElement.style.removeProperty('--portrait-bg-image');
 		portraitImage.src = '';
 		landscapeImage.src = '';
 	}
 
 	function setBackgroundCss() {
-		// Trying to reduce flickering using all kinds of stuff - pre-load images, update (not remove/recreate) the css
-		// ['backgroundl', 'phonebackl', 'backgroundp', 'phonebackp'].forEach(function(i) {
-		['backgroundl', 'backgroundp'].forEach(function(i) {
-			if ($('style[id="'+i+'"]').length == 0) {
-				debug.debug('PREFS', 'Creating background style', i);
-				$('<style>', {id: i}).appendTo('head');
-			}
-		});
-		$('style[id="backgroundl"]').html('@media screen and (orientation: landscape) { html { background-image: url("'+landscapeImage.src+'"); background-position: '+prefs.bgimgparms[prefs.theme].position+' } }');
-		// $('style[id="phonebackl"]').html('@media screen and (orientation: landscape) { body.phone .dropmenu { background-image: url("'+landscapeImage.src+'"); background-position: '+prefs.bgimgparms[prefs.theme].position+' } }');
-		$('style[id="backgroundp"]').html('@media screen and (orientation: portrait) { html { background-image: url("'+portraitImage.src+'"); background-position: '+prefs.bgimgparms[prefs.theme].position+' } }');
-		// $('style[id="phonebackp"]').html('@media screen and (orientation: portrait) { body.phone .dropmenu { background-image: url("'+portraitImage.src+'"); background-position: '+prefs.bgimgparms[prefs.theme].position+' } }');
+		document.documentElement.style.setProperty('--landscape-bg-image', 'url("'+landscapeImage.src+'")');
+		document.documentElement.style.setProperty('--portrait-bg-image', 'url("'+portraitImage.src+'")');
+		document.documentElement.style.setProperty('--background-position', prefs.bgimgparms[prefs.theme].position);
 		prefs.updateImageManager();
 		setBackgroundTimer();
 	}

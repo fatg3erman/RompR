@@ -393,11 +393,11 @@ function snapcastGroup() {
 
 	this.initialise = function() {
 		holder = $('<div>', {class: 'snapcastgroup fullwidth'}).appendTo('#snapcastgroups');
-		var title = $('<div>', {class: 'containerbox snapgrouptitle dropdown-container'}).appendTo(holder);
+		var title = $('<div>', {class: 'containerbox snapgrouptitle vertical-centre'}).appendTo(holder);
 		var n = $('<input>', {type: "text", class: "expand tag snapclientname", name: "groupname"}).appendTo(title);
 		n.on('keyup', self.keyUp)
 
-		var sel = $('<div>', {class: 'selectholder boycie expand', style: 'margin-right: 1em'}).appendTo(title);
+		var sel = $('<div>', {class: 'selectholder snapcast_select expand'}).appendTo(title);
 		streammenu = $('<select>', {class: 'snapgroupstream'}).appendTo(sel);
 
 		mutebutton = $('<i>', {class: "podicon fixed clickicon", name: "groupmuted"}).appendTo(title).on('click', self.setMute);
@@ -538,7 +538,7 @@ function snapcastClient() {
 
 	this.initialise = function(parentdiv) {
 		holder = $('<div>', {class: 'snapcastclient'}).appendTo(parentdiv);
-		var title = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(holder);
+		var title = $('<div>', {class: 'containerbox vertical-centre'}).appendTo(holder);
 		var n = $('<input>', {type: "text", class: "expand tag snapclientname", name: "clientname"}).appendTo(title);
 		n.on('keyup', self.keyUp);
 
@@ -546,7 +546,7 @@ function snapcastClient() {
 		var client = $('<div>', {class: 'containerbox'}).appendTo(holder);
 		var m = $('<i>', {class: "podicon fixed icon-menu clickicon"}).appendTo(title).on('click', self.setGroup);
 		var rb = $('<i>', {class: "fixed podicon icon-cancel-circled clickicon"}).appendTo(title).on('click', self.deleteClient);
-		vc = $('<div>', {class: 'containerbox dropdown-container invisible'}).appendTo(holder);
+		vc = $('<div>', {class: 'containerbox vertical-centre invisible'}).appendTo(holder);
 		volume = $('<div>', {class: 'expand playlistrow2'}).appendTo(vc);
 		var m = $('<i>', {class: "podicon fixed clickicon", name :"clientmuted"}).appendTo(vc).on('click', self.setMute);
 		volume.volumeControl({
@@ -555,13 +555,13 @@ function snapcastClient() {
 		});
 
 		groupmenu = $('<div>', {class: 'toggledown invisible'}).insertAfter(title);
-		var j = $('<div>', {class: "containerbox wrap dropdown-container"}).appendTo(groupmenu);
+		var j = $('<div>', {class: "containerbox wrap vertical-centre"}).appendTo(groupmenu);
 
-		var wrapper = $('<div>', {class: 'expand', style: 'margin-right: 1em'}).appendTo(j);
-		var sel = $('<div>', {class: 'selectholder boycie'}).appendTo(wrapper);
+		var wrapper = $('<div>', {class: 'expand'}).appendTo(j);
+		var sel = $('<div>', {class: 'selectholder snapcast_select'}).appendTo(wrapper);
 		grouplist = $('<select>', {class: 'snapclientgroup'}).appendTo(sel);
 
-		var lholder = $('<div>', {class: 'containerbox fixed dropdown-container'}).appendTo(j);
+		var lholder = $('<div>', {class: 'containerbox fixed vertical-centre'}).appendTo(j);
 		$('<div>', {class: 'fixed padright'}).appendTo(lholder).html(language.gettext('snapcast_latency'));
 		lb = $('<input>', {type: 'text', class: 'fixed', name: "latency", style: "width:4em"}).appendTo(lholder);
 		lb.on('keyup', self.setLatency);

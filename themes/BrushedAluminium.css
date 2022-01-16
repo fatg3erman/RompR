@@ -14,7 +14,6 @@
     --main-bg-colour: unset;
     --main-bg-image: url('../../newimages/silver1.jpg');
 
-    --darker-bg-colour: rgba(0, 0, 0, 0.1);
 
     --headerbar-bg-colour: unset;
     --headerbar-bg-image: none;
@@ -26,8 +25,8 @@
     --sources-bg-image:  none;
     --sources-border-top: none;
 
-    --horse-bg-colour: unset;
-    --horse-bg-image: none;
+    --playlist_top-bg-colour: unset;
+    --playlist_top-bg-image: none;
 
     --playlist-bg-colour: unset;
     --playlist-bg-image: none;
@@ -43,8 +42,8 @@
     --playlist-current-title-font-size: 100%;
     --playlist-current-title-font-weight: unset;
 
-    --dropmenu-bg-colour: unset;
-    --dropmenu-bg-image: url('../../newimages/silver2.jpg');
+    --top_drop_menu-bg-colour: unset;
+    --top_drop_menu-bg-image: url('../../newimages/silver2.jpg');
 
     --configtitle-bg-colour: rgba(0,0,0,0.5);
     --configtitle-bg-image: none;

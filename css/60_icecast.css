@@ -1,0 +1,100 @@
+/*
+=====================================================================
+= Styling of data scraped from Icecast
+=====================================================================
+*/
+
+#content {
+	padding-left:8px;
+}
+
+td.tune-in {
+	vertical-align:middle;
+	padding:8px;
+}
+
+span.name {
+	font-size:130%;
+	font-weight:bold;
+}
+
+span.listeners {
+	font-size:90%;
+}
+
+table.servers-list {
+	width:100%;
+	list-style-type:none;
+	border-collapse:collapse;
+}
+
+table.servers-list tr {
+	border-bottom:1px solid var(--border-colour);
+	margin-bottom:0.3em;
+}
+
+table.servers-list tr td {
+	padding-bottom:0.8em;
+}
+
+table.servers-list div.stream-tags ul {
+	display: inline;
+}
+
+table.servers-list div.stream-tags ul li {
+	display: inline;
+}
+
+.inline-tags {
+	list-style-type: none;
+	padding-left: 4px;
+	margin: 0;
+}
+
+.stream-onair {
+	font-size:90%;
+}
+
+.stream-tags {
+	font-size:90%;
+}
+
+ul.pager {
+	list-style-type:none;
+	padding-bottom:1em;
+}
+
+ul.pager li {
+	display: inline;
+}
+
+ul.pager li a.active {
+	font-weight:bold;
+}
+
+.stream-description {
+	font-style:italic;
+}
+
+a.previewbutton {
+	display:none;
+}
+
+table.mbox-small {
+	clear: right;
+	float: right;
+	margin: 4px 0 4px 1em;
+	width: 238px;
+	font-size: 88%;
+	line-height: 1.25em;
+}
+
+div.fn {
+	display:table;
+	width:100%;
+}
+
+.mediaContainer {
+	margin-top:6px;
+}
+

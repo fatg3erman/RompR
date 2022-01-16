@@ -11,7 +11,7 @@ foreach ($result as $obj) {
 	$thisdate = date('l, jS F Y', $obj->unixtime);
 	if ($thisdate != $date) {
 		$date = $thisdate;
-		print '<tr class="tagh datetag"><th colspan="3">'.$date.'</th></tr>';
+		print '<tr class="tagh plugin_rpl_datetag"><th colspan="3">'.$date.'</th></tr>';
 	}
 	print '<tr class="draggable clicktrack playable spacerboogie" name="'.rawurlencode($obj->Uri).'">';
 	print '<td width="40px"><img class="smallcover';

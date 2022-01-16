@@ -81,7 +81,7 @@ class commradioplugin {
 		print '<div class="is-coverable skypotatohack">';
 
 		uibits::directoryControlHeader('communityradiolist', language::gettext('label_communityradio'));
-		print '<div class="fullwidth containerbox dropdown-container">';
+		print '<div class="fullwidth containerbox vertical-centre">';
 		// print '<div class="fixed comm-search-label"><span class="cslt"><b>Order By</b></span></div>';
 		print '<div class="selectholder expand">';
 		print '<select id="communityradioorderbyselector" class="saveomatic">';
@@ -98,7 +98,7 @@ class commradioplugin {
 
 		print '<div class="fullwidth cleargroupparent">';
 		foreach ($this->searchterms as $term) {
-			print '<div class="containerbox dropdown-container fullwidth" name="'.$term.'">';
+			print '<div class="containerbox vertical-centre fullwidth" name="'.$term.'">';
 			// print '<div class="fixed comm-search-label"><span class="cslt"><b>'.ucfirst($term).'</b></span></div>';
 			print '<div class="expand">';
 			print '<input class="comm_radio_searchterm clearbox enter cleargroup" name="'.$term.'" type="text" placeholder="'.ucfirst($term).'"/>';
@@ -316,14 +316,14 @@ class commradioplugin {
 		print '<div class="containerbox ninesix indent padright">'.$station['votes'].' Upvotes, '.$station['negativevotes'].' Downvotes</div>';
 		if ($station['homepage']) {
 			print '<a href="'.$station['homepage'].'" target="_blank">';
-			print '<div class="containerbox padright dropdown-container">';
+			print '<div class="containerbox padright vertical-centre">';
 			print '<i class="icon-www collectionicon fixed"></i>';
 			print '<div class="expand">'.language::gettext('label_station_website').'</div>';
 			print '</div>';
 			print '</a>';
 		}
 		print '<div class="containerbox rowspacer"></div>';
-		print '<div class="clickstream playable draggable containerbox padright dropdown-container" name="'.rawurlencode($station['playurl']).'" streamimg="'.$this->comm_radio_get_stream_image($station).'" streamname="'.$station['name'].'">';
+		print '<div class="clickstream playable draggable containerbox padright vertical-centre" name="'.rawurlencode($station['playurl']).'" streamimg="'.$this->comm_radio_get_stream_image($station).'" streamname="'.$station['name'].'">';
 		print '<i class="icon-no-response-playbutton collectionicon"></i>';
 		print '<i class="'.audioClass($station['codec']).' collectionicon fixed"></i>';
 		print '<div class="expand">'.$station['bitrate'].'kbps &nbsp'.$station['codec'].'</div>';

@@ -145,7 +145,7 @@ class uibits {
 		}
 		$html = '<div class="menu backmenu openmenu" name="'.$why.$what.$who.'">';
 		$html .='</div>';
-		$html .= '<div class="dropdown-container configtitle fullwidth"><div class="textcentre expand"><b>'.$artist.'</b></div></div>';
+		$html .= '<div class="vertical-centre configtitle fullwidth"><div class="textcentre expand"><b>'.$artist.'</b></div></div>';
 		if ($playall) {
 			$html .= '<div class="textcentre clickalbum playable ninesix noselect" name="'.$why.$what.$who.'">'.language::gettext('label_play_all').'</div>';
 		}
@@ -231,7 +231,7 @@ class uibits {
 	public static function directoryControlHeader($prefix, $name = null) {
 		print '<div class="menu backmenu openmenu" name="'.trim($prefix, '_').'"></div>';
 		if ($name !== null) {
-			print '<div class="dropdown-container configtitle fullwidth"><div class="textcentre expand"><b>'.$name.'</b></div></div>';
+			print '<div class="vertical-centre configtitle fullwidth"><div class="textcentre expand"><b>'.$name.'</b></div></div>';
 		}
 	}
 

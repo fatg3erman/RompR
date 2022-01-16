@@ -1,17 +1,68 @@
 @import url("themes/theme_base/image_theme.css");
 
 :root {
-    --main-bg-colour: rgba(0,0,0,0.1);
-    --darker-bg-colour: rgba(0,0,0,0.4);
-    --dropmenu-bg-colour: rgba(0,0,0,0.9);
-    --configtitle-bg-colour: rgba(60,0,200,0.3);
-    --headerbar-bg-colour:  transparent;
-    --infobar-bg-colour:  transparent;
+    --min-progress-colour: rgba(23, 38, 77, 0.99);
+    --max-progress-colour: rgba(155, 172, 227, 0.99);
+    --progress-bg-colour: rgba(0,0,0,0);
 
     --text-colour: #dddddd;
-    --highlight-colour: #ffffff;
-    --link-colour: #ff4800;
     --border-colour: #aaaaaa;
+
+    --link-colour: #ff4800;
+    --highlight-colour: #ffffff;
+
+    --infobar-bg-colour:  transparent;
+
+    --landscape-bg-image: url("../../themes/sunset_loch.jpg");
+    --portrait-bg-image: url("../../themes/sunset_loch.jpg");
+    --background-position: center center;
+
+    --main-bg-colour: rgba(0,0,0,0.1);
+
+
+    --headerbar-bg-colour:  transparent;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --playlist-current-shadow: 0px 0px 20px var(--text-colour);
+    --playlist-current-transition: font-size 0.3s ease, text-shadow 0.3s ease;
+    --playlist-current-track-font-size: 120%;
+    --playlist-current-track-font-weight: bold;
+    --playlist-current-track-left-border: 4px solid var(--border-colour);
+    --playlist-current-title-font-size: unset;
+    --playlist-current-title-font-weight: bold;
+
+    --top_drop_menu-bg-colour: rgba(0,0,0,0.9);
+
+
+    --configtitle-bg-colour: rgba(60,0,200,0.3);
+
+
+
+
+
+
+
+
+
+
+
+    --selected-bg-colour: rgba(255,72,0,0.5);
 
     --button-colour:  #dddddd;
     --button-hover-colour:  var(--highlight-colour);
@@ -19,6 +70,10 @@
     --button-hover-border: 1px solid var(--highlight-colour);;
     --button-bg-colour: transparent;
     --button-bg-hover-colour: transparent;
+    --button-font-weight: normal;
+    --button-hover-shadow: 0 0 15px var(--highlight-colour);
+
+
 
     --text-entry-text-colour: #111111;
     --text-entry-border-colour: transparent;
@@ -32,35 +87,28 @@
     --select-bg-colour: rgba(255,255,255,0.85);
     --select-hover-bg-colour: rgba(255,255,255,0.9);
 
-    --min-progress-colour: rgba(23, 38, 77, 0.99);
-    --max-progress-colour: rgba(155, 172, 227, 0.99);
-    --progress-bg-colour: rgba(0,0,0,0);
-    --selected-bg-colour: rgba(255,72,0,0.5);
-    --album1-colour: transparent;
     --album2-colour: var(--main-bg-colour);
     --drop-shadow: 7px 7px 5px rgba(0, 0, 0, 0.4);
 
-    --playlist-current-track-font-size: 120%;
-    --playlist-current-track-font-weight: bold;
-    --playlist-current-track-left-border: 4px solid var(--border-colour);
-    --playlist-current-title-font-size: unset;
-    --playlist-current-title-font-weight: bold;
-    --playlist-current-shadow: 0px 0px 20px var(--text-colour);
-    --playlist-current-transition: font-size 0.3s ease, text-shadow 0.3s ease;
 
-    --button-font-weight: normal;
-    --button-hover-shadow: 0 0 15px var(--highlight-colour);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;
     --waiting-swinger-bg-image: linear-gradient(to left,  rgba(155, 172, 227, 0) 0%,  rgba(155, 172, 227, 1) 50%, rgba(155, 172, 227, 0) 100%);
-}
-
-html {
-    background-image:url("themes/sunset_loch.jpg");
-    background-size:cover;
-    background-repeat:no-repeat;
-    background-attachment:fixed;
 }
 
 /* This is required when you have a left border on playlist-current-track */

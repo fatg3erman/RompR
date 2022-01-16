@@ -37,16 +37,16 @@ var starRadios = function() {
 				var cn = param.replace(/(\d)/, 'icon-$1-');
 				return '<i class="'+cn+' rating-icon-small"></i>';
 			} else if (param == "neverplayed" || param == "allrandom" || param == "recentlyplayed") {
-				return '<i class="icon-'+param+' modeimg"/></i><span class="modespan">'+
+				return '<i class="icon-'+param+' modeimg"/></i><span class="alignmid bold">'+
 					language.gettext('label_'+param)+'</span>';
 			} else if (/^tag\+/.test(param)) {
-				return '<i class="icon-tags modeimg"/><span class="modespan">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
+				return '<i class="icon-tags modeimg"/><span class="alignmid bold">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
 			} else if (/^genre\+/.test(param)) {
-				return '<i class="icon-music modeimg"/><span class="modespan">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
+				return '<i class="icon-music modeimg"/><span class="alignmid bold">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
 			} else if (/^artist\+/.test(param)) {
-				return '<i class="icon-artist modeimg"/><span class="modespan">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
+				return '<i class="icon-artist modeimg"/><span class="alignmid bold">'+param.replace(/^tag\+|^genre\+|^artist\+/, '')+'</span>';
 			} else if (/^custom\+/.test(param)) {
-				return '<i class="icon-wifi modeimg"/><span class="modespan">'+param.replace(/^custom\+/, '')+'</span>';
+				return '<i class="icon-wifi modeimg"/><span class="alignmid bold">'+param.replace(/^custom\+/, '')+'</span>';
 			} else {
 				return '<i class="icon-wifi modeimg"/>';
 			}

@@ -1,6 +1,8 @@
 /*
 =====================================================================
-= Standard HTML Elements
+=
+= HTML Elements
+=
 =====================================================================
 */
 
@@ -36,20 +38,13 @@ button.spinable.icon-spin6 {
 	background-color: transparent !important;
 }
 
-div {
-	box-sizing: border-box;
-}
-
 /*
 =====================================================================
-= Specific Elements By ID
+=
+= General Elements
+=
 =====================================================================
 */
-
-#pscroller {
-	overflow-y:scroll;
-	-webkit-overflow-scrolling: touch;
-}
 
 #headerbar {
 	height:40px;
@@ -58,21 +53,8 @@ div {
 	border:none;
 }
 
-.topdropmenu {
+.top_drop_menu {
 	max-height: calc(100vh - 40px);
-}
-
-#loadsawrappers {
-	/* Tried to use this, but safari on my iPhone S sets 100vh as 320px when the browser reports
-	it as 300px, even in full-screen mode. This is definitely a bug, but what can ya do? */
-	/* Note this includes 40px for headerbar. Keep them synced */
-	/* height: calc(100vh - 40px); */
-	width: 100%;
-	overflow:hidden;
-}
-
-#albumpicture {
-	object-fit:scale-down;
 }
 
 #historypanel, #tagadder {
@@ -85,6 +67,28 @@ div {
 
 #volumecontrol {
 	height:2em;
+}
+
+
+/*
+=====================================================================
+=
+= Now Playing Area
+=
+=====================================================================
+*/
+
+#loadsawrappers {
+	/* Tried to use this, but safari on my iPhone S sets 100vh as 320px when the browser reports
+	it as 300px, even in full-screen mode. This is definitely a bug, but what can ya do? */
+	/* Note this includes 40px for headerbar. Keep them synced */
+	/* height: calc(100vh - 40px); */
+	width: 100%;
+	overflow:hidden;
+}
+
+#albumpicture {
+	object-fit:scale-down;
 }
 
 #infobar {
@@ -110,7 +114,7 @@ div {
 	text-align:center;
 }
 
-#amontobin {
+#nowplaying_icons {
 	overflow:hidden;
 }
 
@@ -132,10 +136,6 @@ div {
 	height:34px;
 }
 
-.playspan {
-	margin-right: 1em;
-}
-
 #dbtags {
 	clear: both;
 	margin-top:4px;
@@ -144,11 +144,6 @@ div {
 	opacity:0.9;
 	font-size:8pt;
 	line-height:12pt;
-}
-
-#scrobwrangler {
-	font-size:8pt;
-	width:90%;
 }
 
 #stars {
@@ -160,6 +155,44 @@ div {
 
 #controls {
 	padding-top:1px;
+}
+
+/*
+=====================================================================
+=
+= Trackliat (current playlist)
+=
+=====================================================================
+*/
+
+#pscroller {
+	overflow-y:scroll;
+	-webkit-overflow-scrolling: touch;
+}
+
+/*
+=====================================================================
+=
+= Info Panel - Last.FM
+=
+=====================================================================
+*/
+
+.playspan {
+	margin-right: 1em;
+}
+
+/*
+=====================================================================
+=
+= Prefs Panel
+=
+=====================================================================
+*/
+
+#scrobwrangler {
+	font-size:8pt;
+	width:90%;
 }
 
 #notifications {
@@ -225,7 +258,7 @@ div {
 =====================================================================
 */
 
-div.topdropmenu {
+div.top_drop_menu {
 	z-index:10009;
 	box-sizing:border-box;
 	width:100%;
@@ -242,6 +275,12 @@ div.albumbitsmenu {
 	overflow-x:hidden;
 	/*This is needed or iOS Safari won't register the clicks!*/
 	cursor:pointer;
+}
+
+
+.dropmenu>.configtitle
+{
+	height: 2em;
 }
 
 .mainpane {
@@ -278,7 +317,7 @@ div.albumbitsmenu {
 	cursor: pointer;
 }
 
-.topdropmenu .topimg {
+.top_drop_menu .topimg {
 	width:36px;
 	height:36px;
 }
@@ -327,6 +366,14 @@ div.albumbitsmenu {
 }
 
 .menu-covered {
+	display: none !important;
+}
+
+.menu-opened>.is-coverable {
+	display: none !important;
+}
+
+.menu-current ~ div {
 	display: none !important;
 }
 
@@ -457,7 +504,7 @@ div.rightmenu {
 	border:8px solid transparent;
 }
 
-i.combo-button {
+i.phone-dropdown-button {
 	box-sizing: border-box;
 	border: 4px solid transparent;
 }
@@ -684,17 +731,9 @@ div.playable.clicktrack {
 	overflow-y:scroll !important;
 }
 
-.setupdiv
-{
-	width:100%;
-	box-sizing:border-box;
-}
-
 .backmenu
 {
-	box-sizing: border-box;
 	height: 2.5em;
-	border-left: 4px solid transparent;
 	padding-left: 38px;
 	padding-right: 8px;
 	width: 100%;
@@ -764,13 +803,10 @@ div.playable.clicktrack {
 	box-szing:border-box;
 }
 
-img.jalopy200 {
-	max-width:140px;
-}
-
 .headercontainer {
 	height:90%;
 	box-sizing: border-box;
+	padding-top:4px;
 }
 
 .buttonbar {
@@ -994,7 +1030,7 @@ img.jalopy200 {
 		text-align:right;
 	}
 */
-	#amontobin {
+	#nowplaying_icons {
 		text-align: right;
 	}
 
@@ -1039,7 +1075,7 @@ img.jalopy200 {
 		padding-right: 8px;
 	}
 
-	#amontobin {
+	#nowplaying_icons {
 		text-align: right;
 	}
 
@@ -1152,7 +1188,7 @@ img.jalopy200 {
 		text-align:right;
 	}
 */
-	#amontobin {
+	#nowplaying_icons {
 		text-align: right;
 	}
 

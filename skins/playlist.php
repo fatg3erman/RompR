@@ -1,4 +1,4 @@
-<div id="horse" class="fullwidth">
+<div id="playlist_top" class="fullwidth">
 <table width="100%"><tr><td align="left" class="smallicon">
 <?php
 print '<i style="margin-left:4px" title="'.language::gettext('button_playlistcontrols').

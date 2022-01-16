@@ -201,7 +201,7 @@ function add_playlist($link, $name, $icon, $class, $delete, $count, $is_user, $p
 }
 
 function do_playlist_header() {
-	print '<div class="containerbox dropdown-container fullwidth">';
+	print '<div class="containerbox vertical-centre fullwidth">';
 
 	print '<div class="expand">
 		<input class="enter clearbox" id="godfreybiggins" type="text" placeholder="URL" /></div>';

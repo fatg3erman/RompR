@@ -19,7 +19,7 @@ var albumstolistento = function() {
 			holder.append('<h3 align="center">'+language.gettext('no_albumtolistento')+'</h3>');
 		} else {
 			holder.spotifyAlbumThing({
-				classes: 'brick tagholder2 selecotron',
+				classes: 'brick spotify_album_masonry selecotron',
 				itemselector: 'brick',
 				sub: 'album',
 				showbiogs: true,

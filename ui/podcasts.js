@@ -445,7 +445,7 @@ var podcasts = function() {
 				uri: 'api/podcasts/',
 				data: {search: encodeURIComponent($('#podcastsearch').val()), populate: 1}
 			});
-			$('#podcast_search').prepend('<div class="configtitle dropdown-container brick_wide" style="width:100%"><div class="textcentre expand"><b>Search Results for &quot;'+$('#podcastsearch').val()+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch podcast fixed"></i></div>');
+			$('#podcast_search').prepend('<div class="configtitle vertical-centre brick_wide" style="width:100%"><div class="textcentre expand"><b>Search Results for &quot;'+$('#podcastsearch').val()+'&quot;</b></div><i class="clickable clickicon podicon icon-cancel-circled removepodsearch podcast fixed"></i></div>');
 		},
 
 		clearsearch: function() {

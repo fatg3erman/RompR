@@ -19,7 +19,7 @@ jQuery.fn.makeTagMenu = function(options) {
 			$(this).append(settings.labelhtml);
 		}
 		var holder = $('<div>', { class: "expand"}).appendTo($(this));
-		var dropbutton = $('<i>', { class: 'fixed combo-button'}).appendTo($(this));
+		var dropbutton = $('<i>', { class: 'fixed phone-dropdown-button'}).appendTo($(this));
 		var textbox = $('<input>', { type: "text", class: tbc, name: settings.textboxname, placeholder: unescapeHtml(settings.placeholder) }).appendTo(holder);
 		var dropbox = $('<div>', {class: "drop-box tagmenu dropshadow fullwidth"}).insertAfter($(this));
 		var menucontents = $('<div>', {class: "tagmenu-contents"}).appendTo(dropbox);
@@ -147,7 +147,7 @@ var layoutProcessor = function() {
 		},
 
 		setPlaylistHeight: function() {
-			var newheight = $("#playlistm").height() - $("#horse").outerHeight(true);
+			var newheight = $("#playlistm").height() - $("#playlist_top").outerHeight(true);
 			if ($("#playlistbuttons").is(":visible")) {
 				newheight = newheight - $("#playlistbuttons").outerHeight(true) - 2;
 			}

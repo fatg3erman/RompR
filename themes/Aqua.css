@@ -13,8 +13,6 @@
     --main-bg-colour: #e8ebf0;;
     --main-bg-image: none;
 
-    --darker-bg-colour: rgba(56, 117, 215, 0.4);
-
     --headerbar-bg-colour: unset;
     --headerbar-bg-image: linear-gradient(#b3b3b3, #afafaf);
 
@@ -25,8 +23,8 @@
     --sources-bg-image:  none;
     --sources-border-top: border-top:1px solid #000000;
 
-    --horse-bg-colour: unset;
-    --horse-bg-image: linear-gradient(#afafaf, #b4b4b4);
+    --playlist_top-bg-colour: unset;
+    --playlist_top-bg-image: linear-gradient(#afafaf, #b4b4b4);
 
     --playlist-bg-colour: unset;
     --playlist-bg-image: linear-gradient(#b4b4b4, #e5e5e5);
@@ -42,8 +40,8 @@
     --playlist-current-title-font-size: 100%;
     --playlist-current-title-font-weight: unset;
 
-    --dropmenu-bg-colour: unset;
-    --dropmenu-bg-image: linear-gradient(#E5E5E5, #b3b3b3);
+    --top_drop_menu-bg-colour: unset;
+    --top_drop_menu-bg-image: linear-gradient(#E5E5E5, #b3b3b3);
 
     --configtitle-bg-colour: unset;
     --configtitle-bg-image: none;
@@ -91,11 +89,11 @@
     --bordered-bottom: 1px solid #e0e0e0;
     --bordered-left: 1px solid #9a9a9a;
 
-    --album-browse-bg-colour: var(--darker-bg-colour);
+    --album-browse-bg-colour: var(--main-bg-colour);
     --album-browse-bg-image: none;
-    --skypotato-openalbum-bg-colour: var(--darker-bg-colour);
+    --skypotato-openalbum-bg-colour: var(--main-bg-colour);
     --skypotato-openalbum-bg-image: none;
-    --album-browse-open-bg-colour: var(--darker-bg-colour);
+    --album-browse-open-bg-colour: var(--main-bg-colour);
     --album-browse-open-bg-image: none;
     --album-browse-open-highlight: none;
 
@@ -124,6 +122,6 @@ input.inbrowser, div.inbrowser {
     margin-bottom: 0px !important;
 }
 
-body.mobile #horse {
+body.mobile #playlist_top {
     background-image: none !important;
 }

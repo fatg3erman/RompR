@@ -53,7 +53,7 @@ var artistRadio = function() {
 			} else {
 				a = '';
 			}
-			return '<i class="icon-wifi modeimg"/></i><span class="modespan">'+a+' '+language.gettext("label_radio")+'</span>';
+			return '<i class="icon-wifi modeimg"/></i><span class="alignmid bold">'+a+' '+language.gettext("label_radio")+'</span>';
 		},
 
 		stop: function() {

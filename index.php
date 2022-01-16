@@ -143,10 +143,14 @@ logger::mark("CREATING PAGE", "******++++++======------******------======++++++*
 <?php
 print '<script type="application/json" name="custom_radio_items">'."\n".json_encode(CUSTOM_RADIO_ITEMS)."\n</script>\n";
 print '<script type="application/json" name="radio_combine_options">'."\n".json_encode(RADIO_COMBINE_OPTIONS)."\n</script>\n";
-print '<link rel="stylesheet" type="text/css" href="css/layout-january.css?version='.time().'" />'."\n";
-print '<link rel="stylesheet" type="text/css" href="skins/'.$skin.'/skin.css?version='.time().'" />'."\n";
+$css = glob('css/*.css');
+foreach ($css as $file) {
+	logger::log("INIT", "Including Stylesheet",$file);
+	print '<link rel="stylesheet" type="text/css" href="'.$file.'?version='.$version_string.'" />'."\n";
+}
+print '<link rel="stylesheet" type="text/css" href="skins/'.$skin.'/skin.css?version='.$version_string.'" />'."\n";
 if (file_exists('skins/'.$skin.'/controlbuttons.css')) {
-	print '<link rel="stylesheet" type="text/css" href="skins/'.$skin.'/controlbuttons.css?version='.time().'" />'."\n";
+	print '<link rel="stylesheet" type="text/css" href="skins/'.$skin.'/controlbuttons.css?version='.$version_string.'" />'."\n";
 }
 
 $skinrequires = array();
@@ -165,7 +169,7 @@ foreach ($skinrequires as $s) {
 	$ext = strtolower(pathinfo($s, PATHINFO_EXTENSION));
 	if ($ext == "css") {
 		logger::mark("INIT", "Including Skin Requirement ".$s);
-		print '<link rel="stylesheet" type="text/css" href="'.$s.'?version='.time().'" />'."\n";
+		print '<link rel="stylesheet" type="text/css" href="'.$s.'?version='.$version_string.'" />'."\n";
 	}
 }
 ?>

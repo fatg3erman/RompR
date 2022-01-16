@@ -46,7 +46,7 @@ var customRadioManager = function() {
 		function make_value_box(new_key) {
 			switch (new_key) {
 				case 'ta.Artistname':
-					var dropper = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
+					var dropper = $('<div>', {class: "containerbox expand spacer vertical-centre"}).
 						appendTo(value_box).makeTagMenu({
 							textboxname: 'rule_entry_'+my_id,
 							placeholder: language.gettext('label_artists').capitalize(),
@@ -58,7 +58,7 @@ var customRadioManager = function() {
 						break;
 
 				case 'aa.Artistname':
-					var dropper = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
+					var dropper = $('<div>', {class: "containerbox expand spacer vertical-centre"}).
 						appendTo(value_box).makeTagMenu({
 							textboxname: 'rule_entry_'+my_id,
 							placeholder: language.gettext('label_artists').capitalize(),
@@ -70,7 +70,7 @@ var customRadioManager = function() {
 						break;
 
 				case 'Genre':
-					var dropper = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
+					var dropper = $('<div>', {class: "containerbox expand spacer vertical-centre"}).
 						appendTo(value_box).makeTagMenu({
 							textboxname: 'rule_entry_'+my_id,
 							placeholder: language.gettext('label_genres'),
@@ -82,7 +82,7 @@ var customRadioManager = function() {
 						break;
 
 				case 'Tagtable.Name':
-					var dropper = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
+					var dropper = $('<div>', {class: "containerbox expand spacer vertical-centre"}).
 						appendTo(value_box).makeTagMenu({
 							textboxname: 'rule_entry_'+my_id,
 							placeholder: language.gettext('label_tags'),
@@ -184,15 +184,15 @@ var customRadioManager = function() {
 		rule_counter++;
 
 		var holder = $('<div>', {class: 'menuitem fullwidth'}).appendTo('#pluginplaylists');
-		var title = $('<div>', {class: "containerbox dropdown-container"}).appendTo(holder);
+		var title = $('<div>', {class: "containerbox vertical-centre"}).appendTo(holder);
 		title.append('<div class="svg-square fixed icon-wifi"></div>');
-		title.append('<div class="expand dropdown-holder">'+params.name+'</div>');
+		title.append('<div class="expand drop-box-holder">'+params.name+'</div>');
 		var editbutton = $('<button>', {class: 'fixed alignmid'}).html(language.gettext('label_edit')).appendTo(title);
 		var playbutton = $('<button>', {class: 'fixed alignmid'}).html(language.gettext('button_playradio')).appendTo(title);
 
 		var dropdown = $('<div>', {class: 'invisible'}).appendTo(holder);
 
-		var combine_div = $('<div>', {class: 'containerbox dropdown-container', style: 'margin-right: 8px'}).appendTo(dropdown);
+		var combine_div = $('<div>', {class: 'containerbox vertical-centre', style: 'margin-right: 8px'}).appendTo(dropdown);
 		combine_div.append($('<div>', {class: 'fixed', style: 'margin-right: 1em'}).html(language.gettext('label_ruleoptions')));
 		var combine_holder = $('<div>', {class: 'selectholder expand'}).appendTo(combine_div);
 		var combine_selector = $('<select>').appendTo(combine_holder);
@@ -201,12 +201,12 @@ var customRadioManager = function() {
 		});
 		combine_selector.val(params.combine_option);
 
-		var bum_div = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(dropdown);
+		var bum_div = $('<div>', {class: 'containerbox vertical-centre'}).appendTo(dropdown);
 		bum_div.append($('<div>', {class: 'expand'}).html('Rules :'));
 
 		var table = $('<table>').appendTo(dropdown);
 
-		var arse_div = $('<div>', {class: 'containerbox dropdown-container', style: 'margin-right: 8px'}).appendTo(dropdown);
+		var arse_div = $('<div>', {class: 'containerbox vertical-centre', style: 'margin-right: 8px'}).appendTo(dropdown);
 		var add_button = $('<i>', {class: 'smallicon clickicon fixed icon-plus'}).appendTo(arse_div);
 		arse_div.append($('<div>', {class: 'expand'}));
 		if (params.name != language.gettext('label_createcustom')) {

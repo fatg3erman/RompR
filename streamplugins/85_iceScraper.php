@@ -33,7 +33,7 @@ if (array_key_exists('populate', $_REQUEST)) {
 	$list = $doc->find('div.card.shadow-sm');
 	$count = 0;
 	uibits::directoryControlHeader('icecastlist', language::gettext('label_icecast'));
-	print '<div class="containerbox dropdown-container fullwidth"><div class="expand"><input class="enter clearbox" name="searchfor" type="text"';
+	print '<div class="containerbox vertical-centre fullwidth"><div class="expand"><input class="enter clearbox" name="searchfor" type="text"';
 	if (array_key_exists("searchfor", $_REQUEST)) {
 		print ' value="'.$_REQUEST['searchfor'].'"';
 	}

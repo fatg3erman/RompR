@@ -15,7 +15,7 @@ var starRadios = function() {
 			// Tag
 			//
 			var a = $('<div>', {class: "menuitem fullwidth"}).appendTo('#pluginplaylists');
-			var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
+			var c = $('<div>', {class: "containerbox expand spacer vertical-centre"}).
 				appendTo(a).makeTagMenu({
 				textboxname: 'cynthia',
 				placeholder: 'Tag',
@@ -29,7 +29,7 @@ var starRadios = function() {
 			// Genre
 			//
 			var a = $('<div>', {class: "menuitem fullwidth"}).appendTo('#pluginplaylists');
-			var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
+			var c = $('<div>', {class: "containerbox expand spacer vertical-centre"}).
 				appendTo(a).makeTagMenu({
 				textboxname: 'farrago',
 				placeholder: 'Genre',
@@ -43,7 +43,7 @@ var starRadios = function() {
 			// Artist
 			//
 			var a = $('<div>', {class: "menuitem fullwidth"}).appendTo('#pluginplaylists');
-			var c = $('<div>', {class: "containerbox expand spacer dropdown-container"}).
+			var c = $('<div>', {class: "containerbox expand spacer vertical-centre"}).
 				appendTo(a).makeTagMenu({
 				textboxname: 'bobblehat',
 				placeholder: 'Tracks By Artist',

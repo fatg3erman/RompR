@@ -1,0 +1,1914 @@
+
+/*
+=====================================================================
+=
+= General Elements
+=
+=====================================================================
+*/
+
+/* Top bar on phone and Tablet skins */
+
+#headerbar
+{
+    background-color: var(--headerbar-bg-colour);
+    background-image: var(--headerbar-bg-image);
+}
+
+/* Notifications dropdown/pullup */
+
+#notifications
+{
+    background-color: var(--top_drop_menu-bg-colour);
+    background-image: var(--top_drop_menu-bg-image);
+}
+
+div.notification {
+	opacity: 1;
+	transition: opacity 0.5s ease;
+}
+
+div.notification.new {
+	opacity: 0 !important;
+	transition: opacity 0.5s ease;
+}
+
+/* Image popup - when clicking an image to zoom */
+
+#popup_image_holder
+{
+    background-color: var(--top_drop_menu-bg-colour);
+    background-image: var(--top_drop_menu-bg-image);
+	position:absolute;
+	display:none;
+	z-index:10001;
+	opacity:1;
+}
+
+#popup_image_container
+{
+    background-color: var(--top_drop_menu-bg-colour);
+    background-image: var(--top_drop_menu-bg-image);
+	position:absolute;
+	opacity:1;
+	z-index:10002;
+	display:none;
+}
+
+/* div created by trackDragger when dragging items from a sources panel */
+
+#dragger
+{
+    background-color: var(--selected-bg-colour);
+	position:absolute;
+	width:300px;
+	z-index:1200;
+	padding: 4px;
+}
+
+/* Used for styling all progress bars, volume controls, etc */
+
+.progressbar
+{
+	width:95%;
+	height:1em;
+	margin-right:auto;
+	margin-left:auto;
+	background-repeat:no-repeat;
+    border: 1px solid var(--border-colour);
+}
+
+.progressbar.animated
+{
+	transition: background-position 1s linear;
+}
+
+.progressbar_v
+{
+	height:100%;
+	width:12px;
+	margin-right:auto;
+	margin-left:auto;
+	background-repeat:no-repeat;
+    border: 1px solid var(--border-colour);
+}
+
+/* General Div for use as a Title Banner - eg in the config panel. Vertically aligns its children */
+
+.configtitle
+{
+    background-color: var(--configtitle-bg-colour);
+    background-image: var(--configtitle-bg-image);
+    border-bottom: var(--configtitle-border-bottom);
+	padding-top:2px;
+	padding-bottom:2px;
+	padding-left:4px;
+	padding-right:4px;
+	margin-bottom:4px;
+	font-size:110%;
+	display:flex;
+	align-items:center;
+}
+
+body.mobile .configtitle
+{
+    width:100%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+/* Play Controls in top bar on mobile skins */
+
+.topbarplaycontrols
+{
+    border-left: 1px solid var(--border-colour);
+    border-right: 1px solid var(--border-colour);
+}
+
+/* Mark the Up Next track in audiobooks */
+
+.mostrecent {
+    border-top: 1px solid var(--border-colour);
+}
+
+/*
+= Things that I don't know what they're for but can't be arsed to search all the code
+*/
+
+.bar h3.label {
+	padding-left:12px;
+	padding-bottom:4px;
+	animation: pulseit 4s ease infinite;
+}
+
+tr.chart td {
+	padding-right:1em;
+}
+
+.tracktime .standout ul li {
+	display: inline-block;
+	margin-left: 2em;
+}
+
+/*
+	Combo boxes (generally for tags)
+*/
+
+i.phone-dropdown-button {
+	background-size:contain;
+	background-position: center;
+	background-repeat:no-repeat;
+	display:block;
+	height:2em;
+	width:2em;
+	margin-left:4px;
+}
+
+.drop-box-holder
+{
+	position: relative;
+}
+
+.drop-box
+{
+	position:relative;
+	z-index:3000;
+	display:none;
+	max-height:15em;
+	overflow:auto;
+	line-height:1.3em;
+	padding-left:4px;
+	cursor:pointer;
+}
+
+/* General purpose label to be used inside a containerbox next to eg a select box*/
+
+.divlabel
+{
+	width:41%;
+	padding-right:6px;
+	font-weight:bold;
+}
+
+
+/* General holder for items that need to be vertically center-aligned within in */
+
+.vertical-centre
+{
+	-webkit-box-align:center;
+	align-items: center;
+}
+
+/* Ensure a div fills its container width-wise */
+
+.fullwidth
+{
+	width:100%;
+	padding:0px;
+	margin:0px;
+}
+
+/* General hovers and highlights */
+
+.backhi:hover,
+.playable:hover,
+.infoclick:hover,
+div.clickplaylist:hover,
+tr.playable:hover>td
+{
+    color: var(--highlight-colour);
+    cursor:pointer;
+}
+
+/*Prevent submenus from having all entries highlighted
+due to :hover events propagating from the parent menu
+*/
+.backhi:hover>div.top_drop_menu>div.backhi
+{
+    color: var(--text-colour);
+}
+
+/*Make sure the submenu entry being hovered over still gets highlighted*/
+
+.backhi:hover>div.top_drop_menu>div.backhi:hover
+{
+    color: var(--highlight-colour);
+}
+
+.clickicon {
+	cursor:pointer;
+}
+
+.infoclick {
+	cursor:pointer;
+}
+
+i.icon-menu {
+	cursor: context-menu;
+}
+
+.selected
+{
+    background-color: var(--selected-bg-colour);
+}
+
+/* These are for where we have a row of clickable entries, eg in the artist chooser
+	where each entry is text */
+
+.bleft {
+	font-weight:bold;
+	padding-top:2px;
+	padding-bottom:2px;
+	padding-left:8px;
+	padding-right:8px;
+}
+
+.bsel
+{
+	font-size:110%;
+    color: var(--highlight-colour);
+}
+
+.bmid
+{
+    border-left: 1px solid var(--border-colour);
+}
+
+.bright
+{
+    border-right: 1px solid var(--border-colour);
+}
+
+/* General element control */
+
+.tright {
+	float:right;
+}
+
+.tleft {
+	float:left;
+}
+
+.textcentre {
+	text-align:center;
+}
+
+.noselection {
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	cursor:default;
+}
+
+.bold {
+	font-weight:bold;
+}
+
+.alignmid {
+	vertical-align:middle;
+}
+
+.invisible {
+	display:none;
+}
+
+.moveable {
+	cursor: move;
+}
+
+.notbold {
+	font-weight:normal !important;
+}
+
+.clearfix:after {
+   content: " ";
+   display: block;
+   height: 0;
+   clear: both;
+}
+
+.nopointer {
+	cursor: default !important;
+}
+
+.noborder {
+	margin:0px;
+	padding:0px;
+}
+
+.ucfirst {
+	text-transform:capitalize;
+}
+
+.bumpad {
+  padding-bottom:4px;
+}
+
+.bum {
+	font-style:italic;
+}
+
+.invisibleicon {
+	display:none !important;
+}
+
+.line {
+	padding-bottom:2px;
+}
+
+.spacer {
+	padding-bottom:4px;
+	padding-top:4px;
+}
+
+.imgfill {
+	width: 100%;
+	height: 100%;
+}
+
+.thin
+{
+	opacity: 0.3 !important;
+}
+
+.brianblessed
+{
+	margin-right:1em;
+}
+
+.relpos
+{
+	position: relative;
+}
+
+.dropshadow
+{
+    box-shadow: var(--drop-shadow);
+}
+
+/* These are used in the collection for holding albums, podcasts, you name it */
+
+.dropmenu {
+	display:none;
+	margin:0px;
+	padding-right:0px;
+	padding-top:0px;
+	padding-bottom:4px;
+}
+
+.dropmenu.visible {
+	display:block;
+}
+
+.smallcover {
+	width:32px;
+	height:auto;
+	vertical-align:middle;
+	margin-right:8px;
+}
+
+.smallicon {
+	padding:0px;
+	margin:4px;
+	height:20px;
+	width:20px;
+	vertical-align:middle;
+}
+
+.medicon {
+	padding:0px;
+	margin:2px;
+	height:30px;
+	width:30px;
+	vertical-align:middle;
+}
+
+.svg-square {
+	width:32px;
+	height:32px;
+	vertical-align:middle;
+	margin-right:8px;
+}
+
+.tracknumber {
+	height:1.3em;
+	width:2em;
+	font-weight:bold;
+}
+
+.discnumber {
+	font-weight:bold;
+	font-size:110%;
+	padding-top:2px;
+	padding-bottom:2px;
+	display:block;
+}
+
+.clicktrack {
+	margin-bottom: 2px;
+}
+
+/* Flexbox layouts */
+
+.containerbox {
+	display:-webkit-box;
+	display: flex;
+}
+
+.vertical {
+	-webkit-box-orient:vertical;
+	flex-direction: column;
+}
+
+.center {
+	-webkit-box-pack:center;
+	justify-content: center;
+}
+
+.expand {
+	-webkit-box-flex:1;
+	flex-grow: 1;
+	flex-shrink: 1;
+	flex-basis: auto;
+}
+
+.expandslightly {
+	flex-grow: 1;
+	flex-shrink: 2;
+	flex-basis: auto;
+}
+
+.expandalot {
+	flex-grow: 5;
+	flex-shrink: 1;
+	flex-basis: auto;
+}
+
+.expandabit {
+	flex-grow: 2;
+	flex-shrink: 2;
+	flex-basis: auto;
+}
+
+.fixed {
+	flex-grow: 0;
+	flex-shrink:0;
+}
+
+.wrap
+{
+	flex-wrap:wrap;
+}
+
+/*
+=====================================================================
+=
+= Now Playing Area
+=
+=====================================================================
+*/
+
+/* Add Tags popup - when clicking + in nowplaying */
+
+#tagadder
+{
+    background-color: var(--top_drop_menu-bg-colour);
+    background-image: var(--top_drop_menu-bg-image);
+	z-index:1500;
+	position:absolute;
+}
+
+/* Icons, tags, ratings etc in now playing */
+
+#nowplaying_icons
+{
+	font-size:8pt;
+}
+
+/* Tags */
+
+.tag {
+	white-space:nowrap;
+	margin-right:1em;
+}
+
+/* Text area showing current track name, album & artist */
+
+#nptext
+{
+	opacity: 0;
+}
+
+#nptext.ready
+{
+	opacity: 1;
+}
+
+#nptext>p
+{
+	font-weight:bold;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+#nptext>p>i
+{
+	font-weight:normal;
+}
+
+#nptext>p.line0
+{
+	font-size:100%;
+	line-height:125%;
+}
+
+#nptext>p.line1
+{
+	font-size:75%;
+	line-height:125%;
+}
+
+#nptext>p.line2
+{
+	font-size:75%;
+	line-height:125%;
+}
+
+#nptext.calculating
+{
+	opacity: 0;
+}
+
+/*
+=====================================================================
+=
+= Music Collection
+=
+=====================================================================
+*/
+
+/* Holds the Collection search options and values */
+
+#collectionsearcher
+{
+	padding-left:4px;
+}
+
+/* Alternating colours for root items */
+
+.album1
+{
+    background-color: var(--album1-colour);
+}
+
+.album2
+{
+    background-color: var(--album2-colour);
+}
+
+/* Artist name banner used in Albums By Artist */
+
+.artistbanner
+{
+	margin-left:4px;
+	padding-left:8px;
+	margin-top:8px;
+}
+
+div.unplayable {
+	opacity: 0.4;
+}
+
+/*
+=====================================================================
+=
+= Podcasts
+=
+=====================================================================
+*/
+
+/* New and Unlisteted Counters */
+
+.newpod
+{
+	font-weight:bold;
+	font-size:90%;
+	margin-left:1em;
+	padding-left:6px;
+	padding-right:6px;
+	background-color: rgba(255, 0, 0, 0.9);
+	border-radius: 1em;
+	color: black;
+}
+
+.unlistenedpod
+{
+	font-weight:bold;
+	font-size:90%;
+	margin-left:1em;
+	padding-left:6px;
+	padding-right:6px;
+	background-color: rgba(255, 160, 0, 0.9);
+	border-radius: 1em;
+	color: black;
+}
+
+.podtitle
+{
+	font-weight:bold;
+	padding:2px;
+	margin:2px;
+}
+
+.newpodicon
+{
+	height:24px;
+	width:24px;
+	margin-top:2px;
+}
+
+.oldpodicon
+{
+	height:20px;
+	width:20px;
+	margin-top:2px;
+}
+
+.podoptions
+{
+  margin-top:4px;
+}
+
+.podoptions td
+{
+	vertical-align:middle;
+}
+
+.podcastitem
+{
+	margin-bottom:0.5em !important;
+  border-top:1px solid var(--border-colour);
+}
+
+/* also SomaFM */
+.whatdoicallthis
+{
+	padding-left:0px;
+	padding-top:2px;
+	padding-bottom:4px;
+	font-size:96%;
+	font-weight:normal;
+}
+
+.whatdoicallthis p
+{
+	-webkit-margin-before: 0.2em;
+	-webkit-margin-after: 0.2em;
+	-margin-before: 0.2em;
+	-margin-after: 0.2em;
+}
+
+.whatdoicallthis img
+{
+	max-width:100%;
+}
+
+.podcastresume
+{
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+/*
+=====================================================================
+=
+= Smart Radio
+=
+=====================================================================
+*/
+
+#pluginplaylistslist .menuitem
+{
+	margin-bottom: 4px;
+}
+
+[id^="pluginplaylists"] .textunderline
+{
+	font-size:120%;
+}
+
+/*
+=====================================================================
+=
+= Trackliat (current playlist)
+=
+=====================================================================
+*/
+
+/* Main div that contains the playlist */
+
+#playlist
+{
+	height:100%;
+}
+
+/* Bar at top of playlist showing number of tracks and total time etc */
+
+#playlist_top
+{
+	padding-top:4px;
+	padding-bottom:0px;
+	font-weight:bold;
+	font-size:90%;
+	cursor:default;
+}
+
+#playlist_top > table
+{
+	border-spacing:0px;
+}
+
+/* Holder for the playlist controls - repeat, crossfade, etc */
+
+#playlistbuttons
+{
+	margin-bottom:4px;
+}
+
+#playlistbuttons > table
+{
+	border-collapse:collapse;
+	border-spacing:2px;
+	margin-top:2px;
+	margin-bottom:2px;
+}
+
+/* Scrollable sub-container of the playlist that contains the tracks */
+
+#pscroller
+{
+	overflow:auto;
+}
+
+/* Collection of album title + tracks. Conflicts with a Wikipedia span markup
+	but it's too general a word to do a search and replace */
+
+div.item
+{
+    margin-bottom: 2px;
+	margin-right:2px;
+	box-sizing: border-box;
+}
+
+div.item div.containerbox.vertical.expand
+{
+	align-self: center;
+}
+
+.playlistitem
+{
+	padding-top:0px;
+	font-size:90%;
+    transition: var(--playlist-current-transition);
+}
+
+.trackgroup
+{
+	margin-right:2px;
+}
+
+.playlisttitle
+{
+	padding-left:4px;
+	margin-right:2px;
+	margin-left:4px;
+	padding-top:8px;
+	padding-bottom:8px;
+}
+
+.playlistrow2
+{
+	font-size:88%;
+	font-style:italic;
+	font-weight:normal;
+}
+
+.tracktime
+{
+	margin-left:4px !important;
+}
+
+.track
+{
+	box-sizing: border-box;
+}
+
+/* Current Smart radio Mode */
+
+.modeimg
+{
+	height:20px;
+	width:20px;
+	margin-right:8px;
+	vertical-align:middle;
+}
+
+/* These are only used for the Replay Gain controls */
+
+.togglecontainer {
+	display:table;
+	transition: opacity 1s ease;
+}
+
+.togglediv {
+	display:table-cell;
+	vertical-align:middle;
+	font-size:8pt;
+}
+
+.togglebutton {
+	padding:0px;
+	height:20px;
+	width:48px;
+	font-size:18px;
+	display:table-cell !important;
+}
+
+.tgtl {
+	padding-right:4px;
+	/*because firefox is dumb and ignores the align settings of the parent container.*/
+	text-align:right;
+}
+
+/* Playlist Touch Controls for moving tracks up/down */
+
+.playlistup {
+	position: relative;
+	left: 0;
+	bottom: 100%;
+	z-index: 5000;
+}
+
+.playlistdown {
+	position: relative;
+	left: 0;
+	top: 100%;
+	z-index: 5000;
+}
+
+/*
+=====================================================================
+=
+= Info Panel
+=
+=====================================================================
+*/
+
+/* Panel at top of info panel used when there are multiple artists */
+
+#artistchooser
+{
+    background-color: var(--main-bg-colour);
+	font-weight:bold;
+	text-align:center;
+	width:98%;
+	margin-right:auto;
+	margin-left:auto;
+	margin-top:4px;
+	margin-bottom:2px;
+	padding-bottom:4px;
+	padding-top:4px;
+}
+
+/* Currently selected info source */
+
+.currentbun
+{
+    border-bottom:1px solid var(--highlight-colour);
+    padding-bottom:2px;
+}
+
+/* Panels */
+
+#artistinformation:empty
+{
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+#albuminformation:empty
+{
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+.infosection h2
+{
+    border-bottom:2px solid var(--border-colour);
+}
+
+/* To prevent paragraphs flowing upwards into very narrow gaps
+	around floated images */
+
+.minwidthed:before
+{
+	content:"";
+	width: 10em;
+	max-width: 100%;
+	display:block;
+	overflow:hidden;
+}
+
+.minwidthed3:before
+{
+	content:"";
+	width: 12em;
+	max-width: 100%;
+	display:block;
+	overflow:hidden;
+}
+
+/* Expand box used by Musicbrainz and Discogs */
+
+.clickexpandbox {
+	margin-right: 1em !important;
+	margin-bottom: 0.5em !important;
+}
+
+/* Layout Stuff */
+
+.holdingcell {
+	display:inline-block;
+	width:100%
+}
+
+.holdingcell li input {
+	width:90%;
+}
+
+.holdingcell li button {
+	margin-right:6px;
+}
+
+.tiny {
+	font-size:80%;
+	margin-right:4px;
+	margin-left:2px;
+}
+
+td.fil {
+	font-weight:bold;
+}
+
+#artistbio ul {
+	list-style-type:none;
+}
+
+.infotext {
+	margin-left:4px;
+	margin-right:4px;
+	margin-bottom:4px;
+	padding:4px;
+}
+
+.infotext a {
+	cursor: pointer;
+}
+
+.infosection {
+	padding-left:12px;
+	padding-right:12px;
+	margin-bottom:4px;
+}
+
+.infowiki h2 {
+	margin-top: 10px;
+	margin-bottom:8px;
+	border-bottom:1px solid var(--border-colour);
+	padding-bottom:0.5em;
+	overflow:hidden;
+}
+
+.infowiki h3 {
+	margin-top: 6px;
+	margin-bottom:4px;
+	padding-top:0.5em;
+}
+
+.title-menu {
+	vertical-align:middle;
+	margin-left:8px;
+	margin-right:8px;
+	font-weight:bold;
+}
+
+.info-box-list ul {
+	list-style-type: none;
+	line-height:1.5em;
+	padding-left:2px;
+	list-style:none;
+	margin:2px;
+	padding:0px;
+	margin-bottom: 0.5em;
+}
+
+.info-box-list ul li {
+	line-height:1.5em;
+}
+
+body.desktop .info-border-right
+{
+    border-right: 1px solid var(--border-colour);
+}
+
+.stright {
+	float:right;
+	margin-left:12px;
+	padding-right:0px;
+}
+
+.standout {
+	margin-bottom:12px;
+	margin-top:12px;
+}
+
+.info-box-expand .standout {
+	margin-top: 0;
+}
+
+.standout ul {
+	list-style:none;
+	margin:2px;
+	padding:0px;
+}
+
+.standout ul li {
+	line-height:1.5em;
+}
+
+.statsbox {
+	margin-left:0px;
+	padding:4px;
+}
+
+table.padded {
+	border-collapse: collapse;
+}
+
+table.padded tr {
+	border-bottom:1px solid var(--border-colour);
+}
+
+table.padded tr td {
+	line-height:1.6em;
+	padding-left:8px;
+	padding-right:8px;
+}
+
+table.padded tr th {
+	line-height:1.8em;
+	padding-left:8px;
+	padding-right:8px;
+	font-weight:bold;
+}
+
+.stumpy {
+	padding-left: 1em;
+}
+
+.underline {
+	border-bottom:1px solid var(--border-colour);
+	margin-top:2em;
+	margin-bottom:0.75em;
+}
+
+div.info-box-expand .underline:nth-child(1) {
+	margin-top:0;
+}
+
+.textunderline {
+	margin-top:8px;
+	padding-bottom:2px;
+	margin-bottom:4px;
+	border-bottom:1px solid var(--border-colour);
+	width:99%;
+	margin-right:auto;
+	margin-left:auto;
+}
+
+.mbbox {
+	margin-left:0px;
+	margin-right:6px;
+	padding:4px;
+}
+
+.foldup .indent table tbody tr td img {
+	max-width: 100%;
+}
+
+.foldup {
+	transition: opacity 0.5s ease;
+}
+
+.notloved {
+	opacity: 0.3;
+}
+
+.infowiki div.tright {
+	clear:right;
+	float:right;
+}
+
+
+.infobox caption {
+	font-size:120%;
+	font-weight:bold;
+}
+
+/*
+=====================================================================
+=
+= History Table
+=
+=====================================================================
+*/
+
+table.histable {
+	border-collapse: collapse;
+	cursor: pointer;
+}
+
+table.histable tr.top {
+	border-bottom:1px solid var(--border-colour);
+}
+
+table.histable tr td {
+	line-height:1.6em;
+	padding-left:8px;
+	padding-right:8px;
+}
+
+table.histable tr.current {
+	font-weight:bold;
+}
+
+table.histable tr:hover td {
+    color: var(--highlight-colour);
+    cursor: pointer;
+}
+
+/*
+=====================================================================
+=
+= Info Panel - Musicbrainz
+=
+=====================================================================
+*/
+
+.mbtag {
+	margin-left:4px;
+	margin-right:4px;
+	white-space:nowrap;
+}
+
+/*
+=====================================================================
+=
+= Info Panel - Discogs
+=
+=====================================================================
+*/
+
+a.infoclick.clickreleasepage
+{
+	margin:2px;
+	line-height:2em;
+	padding-left:2px;
+	padding-right:2px;
+}
+
+/*
+=====================================================================
+=
+= Info Panel - Soundcloud
+=
+=====================================================================
+*/
+
+.scprog {
+	position:absolute;
+	width:2px;
+	top:0px;
+	opacity:0.6;
+	background-color:black;
+	z-index:100;
+	left:0px;
+	transition-property: left;
+	transition-duration: 1s;
+	transition-timing-function: linear;
+}
+
+.gosblin {
+	width:100%;
+	height:auto;
+}
+
+/*
+=====================================================================
+=
+= Info Panel - Spotify, and general uses in Masonry layouts
+=
+=====================================================================
+*/
+
+.spotchoices {
+	border-bottom:1px solid var(--border-colour);
+	padding-bottom: 8px;
+	padding-top: 8px;
+}
+
+.spotpossimg {
+	height:48px;
+	font-size:48px;
+	vertical-align:middle;
+	margin-right:8px;
+}
+
+/* masonry_general is used in multiple plugins usually
+	to masonify tables, eg charts */
+
+.masonry_general
+{
+	margin-top: 12px;
+}
+
+.masonry_general table tr th {
+    background-color: var(--main-bg-colour);
+    border-bottom:1px solid var(--border-colour);
+}
+
+.helpfulalbum
+{
+	text-align:center;
+	opacity: 1;
+	transition: opacity 0.5s ease;
+	padding-left:4px;
+	padding-right:4px;
+	padding-bottom:4px;
+	padding-top:4px;
+	box-sizing:border-box;
+	max-width:100%;
+}
+
+.helpfulalbum .tag
+{
+	white-space: normal;
+}
+
+.albumthing {
+	padding:4px;
+}
+
+.tagh.albumthing {
+	vertical-align: middle;
+	line-height:1.5em;
+}
+
+.jalopy
+{
+	width:95%;
+	height:auto;
+	max-width:360px;
+	transition: opacity 0.5s ease;
+	opacity: 1;
+	object-fit: scale-down;
+}
+
+.playdiv
+{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	opacity: 0.2;
+}
+
+.playdiv:hover {
+	opacity: 0.75;
+}
+
+.notthere
+{
+	opacity:0;
+}
+
+.albumthing .clicktrack
+{
+	text-align:left;
+}
+
+.artistnamething {
+	font-size:140%;
+	line-height:1.1em;
+	word-wrap:break-word;
+}
+
+.rowspacer
+{
+	height: 0.8em;
+}
+
+/* Note this is also used in skypotato for opened albums, where it isn't masonry
+	but having the same rukes is useful */
+
+.masonry_opened
+{
+	margin-top:4px;
+	padding: 8px;
+	box-sizing:border-box;
+	margin-bottom:1.5em;
+}
+
+.masonry_opened .helpfulalbum
+{
+	margin-right:1em;
+}
+
+.masonry_opened .helpfulalbum.tleft
+{
+	padding-top:4px;
+}
+
+.spotify_album_image
+{
+	margin-right:auto;
+	margin-left:auto;
+	display:block;
+	max-width:95%;
+	transition: opacity 0.5s ease;
+	opacity: 1;
+}
+
+.spotify_album_masonry
+{
+	margin-top: 12px;
+	width:20%;
+}
+
+.spotify_playable_masonry {
+	margin-top: 12px;
+	width:20%;
+	text-align:center;
+	transition: opacity 0.5s ease;
+	opacity: 1;
+}
+
+.playable_masonry_image
+{
+	width:95%;
+	height:auto;
+}
+
+.spotify_artist_album_masonry {
+	margin-top: 12px;
+}
+
+/*
+=====================================================================
+=
+= Info Panel - Lyrics
+=
+=====================================================================
+*/
+
+div.lyrics {
+	width:95%;
+	margin:auto;
+}
+
+div.lyrics p {
+	text-align:center;
+	font-size:110%;
+}
+
+/*
+=====================================================================
+=
+= Info Panel - Videos
+=
+=====================================================================
+*/
+
+.video {
+	margin-left:auto;
+	margin-right:auto;
+	margin-top:2em;
+	position: relative;
+	padding-bottom: 56.25%; /* 16:9 */
+	padding-top: 25px;
+	height: 0;
+}
+
+.youtubevid {
+	border:none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+/*
+=====================================================================
+=
+= Prefs Panel
+=
+=====================================================================
+*/
+
+#scrobwrangler
+{
+	font-size:6pt;
+}
+
+.pref
+{
+	margin-left:8px;
+	margin-bottom:8px;
+}
+
+.prefinput
+{
+	width: 100%;
+}
+
+/* Snapcast */
+
+div.pref div.selectholder:not(.snapcast_select)
+{
+	margin-left: 1em;
+	width:58%;
+}
+
+div.pref div.selectholder.snapcast_select
+{
+	margin-right: 1em;
+}
+
+.snapcastgroup input[type="text"].expand {
+	font-size: 120%;
+	font-weight: bold;
+	background-color: transparent !important;
+	color: var(--text-colour) !important;
+}
+
+.snapcastgroup {
+	margin-bottom: 0.5em;
+}
+
+.snapgrouptitle {
+	margin-bottom: 0.25em;
+	padding: 2px;
+}
+
+.snapcastclient {
+	padding-bottom:1em;
+	padding-left: 1em;
+}
+
+.snapcastclient .rangechooser {
+	margin-right: 1em;
+}
+
+/*
+=====================================================================
+=
+= Plugins : Alarm Clock & Sleep Timer
+=
+=====================================================================
+*/
+
+.alarmnumbers
+{
+	font-size:250%;
+	font-weight:bold;
+}
+
+.altablebit {
+	text-align: right;
+	padding-right: 1em;
+}
+
+.alarmbutton {
+	width: 120px;
+	height: 120px;
+}
+
+.alarmdropempty {
+	height: 100px;
+}
+
+.toomanyclasses {
+	margin-top: 4px;
+}
+
+.newalarmholder {
+	height: 3em;
+}
+
+.alarmdescription {
+	line-height: 1.2em;
+}
+
+.alarmdropper {
+	padding-left:24px;
+}
+
+td.dan, th.dan{
+	width: 100%;
+}
+
+/*
+=====================================================================
+=
+= Plugins : Discoverator
+=
+=====================================================================
+*/
+
+#helpful_spinner{
+	margin-top:1em;
+	margin-bottom:1em;
+	text-align:center;
+}
+
+.plugin_hpl_radio
+{
+	width:100%;
+	margin-top:4px;
+	align-items:center;
+	padding-top:0.4em;
+	padding-bottom:0.4em;
+	box-sizing: border-box;
+	background-color: var(--main-bg-colour);
+}
+
+.plugin_hpl_radio .fixed .topimg
+{
+	margin-top:4px;
+}
+
+.plugin_hpl_radio div b
+{
+	font-size:110%;
+}
+
+.plugin_hpl_radio>.smallcover
+{
+	width: auto;
+	max-width: 64px !important;
+}
+
+.plugin_hpl_radio_info
+{
+	padding-left:12px;
+}
+
+/*
+=====================================================================
+=
+= Plugins : Last.FM Importer
+=
+=====================================================================
+*/
+
+#lfmitable
+{
+	max-width:95%;
+	margin:auto;
+	border-collapse: collapse;
+}
+
+#lfmitable tr td, #lfmitable tr th
+{
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+}
+
+#lfmitable tr td:nth-child(7)
+{
+	text-align:center;
+}
+
+#lfmitable tr td:nth-child(8)
+{
+	text-align:center;
+}
+
+/*
+=====================================================================
+=
+= Plugins : Recently Played
+=
+=====================================================================
+*/
+
+.plugin_rpl_datetag
+{
+	font-size: 120%;
+	border-top:4px solid var(--border-colour);
+	padding:4px;
+}
+
+tr.spacerboogie {
+	border-bottom: 8px solid transparent;
+}
+
+/*
+=====================================================================
+=
+= Plugins - Backup Manager
+=
+=====================================================================
+*/
+
+.plugin_mbb_table {
+	border-collapse:collapse;
+	width:95%;
+	padding:4px;
+}
+
+.plugin_mbb_table th {
+	text-align:center;
+    background-color: var(--main-bg-colour);
+    border-left: 1px solid var(--border-colour);
+}
+
+.plugin_mbb_table tr {
+    border-bottom: 1px solid var(--border-colour);
+}
+
+.plugin_mbb_table td {
+	text-align:center;
+}
+
+/*
+=====================================================================
+=
+= Plugins - Background Image Manager
+=
+=====================================================================
+*/
+
+div.plugin_backi_drop-images {
+	background-color: var(--main-bg-colour);
+	text-align: center;
+	line-height: 3em;
+	margin-bottom:4px;
+	margin-top:4px;
+}
+
+/*
+=====================================================================
+=
+= Plugins - Wishlist and Upnplayable Tracks
+=
+=====================================================================
+*/
+
+.robotlove {
+	margin-top:8px;
+	margin-bottom: 8px;
+}
+
+/*
+=====================================================================
+=
+= Popup Window (Modal Dialog) - note NOT used for image popups. Don't know why
+=
+=====================================================================
+*/
+
+.popupwindow {
+	position:absolute;
+	display:none;
+	z-index:20001;
+	overflow-y: hidden;
+	overflow-x: hidden;
+	transition: opacity 0.3s ease;
+	opacity: 0;
+	max-width:100%;
+}
+
+.popupcontentcontainer {
+	height: 100%;
+}
+
+.popupcontentholder {
+	overflow-y: auto;
+	overflow-x: auto;
+}
+
+.popupcontents {
+	padding:8px;
+}
+
+.popup_handle {
+	width:98%;
+	padding-top:4px;
+	margin-right:auto;
+	margin-left:auto;
+}
+
+/*
+=====================================================================
+=
+= Setup Screen
+=
+=====================================================================
+*/
+
+.setup_screen_options {
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;
+	width:90%;
+	max-width: 60em;
+	display:block;
+}
+
+.border-red {
+    border: 1px solid red;
+}
+
+/*
+=====================================================================
+=
+= Dropdown Menus
+=
+=====================================================================
+*/
+
+div.top_drop_menu, div.albumbitsmenu
+{
+    background-color: var(--top_drop_menu-bg-colour);
+    background-image: var(--top_drop_menu-bg-image);
+    border-left: var(--bordered-left);
+    border-bottom: var(--bordered-bottom);
+    border-right: var(--bordered-right);
+}
+
+div.topdrop
+{
+	margin:0;
+	padding:0;
+	float:left;
+	position:relative;
+}
+
+div.top_drop_menu
+{
+	z-index:1000;
+	overflow-y:auto;
+	overflow-x:hidden;
+	display:none;
+	position: absolute;
+	opacity:1 !important;
+	padding:4px;
+}
+
+div.top_drop_menu div:not(.canbefaded) {
+	opacity: 1 !important;
+}
+
+div.top_drop_menu div.notenabled, div.togglecontainer.notenabled, div#flowcontrols i.notenabled {
+	opacity: 0.2 !important;
+}
+
+.top_drop_menu .top_drop_menu {
+	position: relative;
+}
+
+/*
+=====================================================================
+=
+= Album Art and Background Images using flex-wrap layout
+=
+=====================================================================
+*/
+
+.closet {
+	position:relative;
+	text-align:center;
+	overflow:visible;
+	flex-shrink: 1;
+	flex-grow: 0;
+	max-width:220px;
+	flex-basis: 20%;
+}
+
+.covercontainer
+{
+	position: relative;
+	padding-left:4px;
+	padding-right:4px;
+	z-index:1;
+}
+
+.covercontainer div {
+	z-index:1;
+}
+
+.albumimg {
+	padding-top:8px;
+}
+
+.albumimg img {
+	padding:8px;
+}
+
+.albumimg .covercontainer img {
+	width: 180px;
+	height:auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

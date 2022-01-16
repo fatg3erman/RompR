@@ -314,14 +314,14 @@ var info_spotify = function() {
 				if (artistmeta.spotify.showing == "albums" && data) {
 					debug.debug(medebug,"Doing Albums For Artist",data);
 					artistmeta.spotify.spotiwidget.spotifyAlbumThing({
-						classes: 'nobwobbler nobalbum tagholder2 selecotron',
+						classes: 'nobwobbler nobalbum spotify_album_masonry selecotron',
 						itemselector: 'nobwobbler',
 						sub: null,
 						showbiogs: false,
 						layoutcallback: function() { artistmeta.spotify.spinnerthing.stopSpinner(); browser.rePoint() },
 						maxwidth: maxwidth,
 						is_plugin: false,
-						imageclass: 'masochist',
+						imageclass: 'spotify_album_image',
 						data: data.items
 					});
 				}
@@ -331,7 +331,7 @@ var info_spotify = function() {
 				if (artistmeta.spotify.showing == "artists" && data) {
 					debug.debug(medebug,"Doing Related Artists",data);
 					artistmeta.spotify.spotiwidget.spotifyArtistThing({
-						classes: 'nobwobbler nobartist tagholder2',
+						classes: 'nobwobbler nobartist spotify_album_masonry',
 						itemselector: 'nobwobbler',
 						sub: null,
 						layoutcallback: function() { artistmeta.spotify.spinnerthing.stopSpinner(); browser.rePoint() },

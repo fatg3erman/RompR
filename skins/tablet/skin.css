@@ -58,7 +58,7 @@ div {
 	margin:0px;
 }
 
-.topdropmenu {
+.top_drop_menu {
 	max-height: calc(100vh - 40px);
 }
 
@@ -107,7 +107,7 @@ div {
 	text-align:center;
 }
 
-#amontobin {
+#nowplaying_icons {
 	overflow:hidden;
 }
 
@@ -228,7 +228,7 @@ div {
 =====================================================================
 */
 
-div.topdropmenu {
+div.top_drop_menu {
 	z-index:10009;
 	box-sizing:border-box;
 	width:100%;
@@ -236,7 +236,7 @@ div.topdropmenu {
 	right: 0;
 }
 
-div.topdropmenu.albumbitsmenu {
+div.top_drop_menu.albumbitsmenu {
 	width: 75vw;
 	max-width:300px;
 	cursor:pointer;
@@ -271,7 +271,7 @@ div.topdropmenu.albumbitsmenu {
 	cursor: pointer;
 }
 
-.topdropmenu .topimg {
+.top_drop_menu .topimg {
 	width:36px;
 	height:36px;
 }
@@ -457,7 +457,7 @@ div.rightmenu {
 	border:8px solid transparent;
 }
 
-i.combo-button {
+i.phone-dropdown-button {
 	box-sizing: border-box;
 	border: 4px solid transparent;
 }
@@ -622,15 +622,10 @@ i.combo-button {
 	overflow-y:scroll !important;
 }
 
-.setupdiv
-{
-	width:100%;
-	box-sizing:border-box;
-}
-
 .headercontainer {
 	height:90%;
 	box-sizing: border-box;
+	padding-top:4px;
 }
 
 .buttonbar {
@@ -857,7 +852,7 @@ i.combo-button {
 		text-align:right;
 	}
 
-	#amontobin {
+	#nowplaying_icons {
 		text-align: right;
 	}
 
@@ -901,7 +896,7 @@ i.combo-button {
 		padding-right: 8px;
 	}
 
-	#amontobin {
+	#nowplaying_icons {
 		text-align: right;
 	}
 
@@ -1000,7 +995,7 @@ i.combo-button {
 		text-align:right;
 	}
 
-	#amontobin {
+	#nowplaying_icons {
 		text-align: right;
 	}
 

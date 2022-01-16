@@ -421,7 +421,7 @@ var uiHelper = function() {
 			try {
 				return layoutProcessor.makeDropHolder(name);
 			} catch (err) {
-				var c = 'topdropmenu dropshadow rightmenu normalmenu stayopen';
+				var c = 'top_drop_menu dropshadow rightmenu normalmenu stayopen';
 				if (dontsteal) {
 					c += ' dontstealmyclicks';
 				}
@@ -457,7 +457,7 @@ var uiHelper = function() {
 					var thething = $(
 						'<div>',
 						{
-							class: 'containerbox fullwidth playlistrow2 dropdown-container podcastresume playable ',
+							class: 'containerbox fullwidth playlistrow2 vertical-centre podcastresume playable ',
 							name: $(this).prev().attr('name')
 						}
 					).insertBefore($(this));

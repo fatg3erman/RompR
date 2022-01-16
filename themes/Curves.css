@@ -13,7 +13,6 @@
     --main-bg-colour: unset;
     --main-bg-image: linear-gradient(#999999, #eeeeee, #aaaaaa);
 
-    --darker-bg-colour: rgba(0, 0, 0, 0.1);
 
     --headerbar-bg-colour: unset;
     --headerbar-bg-image: none;
@@ -25,8 +24,8 @@
     --sources-bg-image:  none;
     --sources-border-top: none;
 
-    --horse-bg-colour: unset;
-    --horse-bg-image: none;
+    --playlist_top-bg-colour: unset;
+    --playlist_top-bg-image: none;
 
     --playlist-bg-colour: unset;
     --playlist-bg-image: none;
@@ -42,8 +41,8 @@
     --playlist-current-title-font-size: 100%;
     --playlist-current-title-font-weight: bold;
 
-    --dropmenu-bg-colour: unset;
-    --dropmenu-bg-image: linear-gradient(#999999, #cccccc, #999999);
+    --top_drop_menu-bg-colour: unset;
+    --top_drop_menu-bg-image: linear-gradient(#999999, #cccccc, #999999);
 
     --configtitle-bg-colour: unset;
     --configtitle-bg-image: linear-gradient(#999999, #cccccc, #999999);
@@ -137,7 +136,7 @@ select
     border-bottom-right-radius:1em;
 }
 
-#wikipopup
+#popup_image_holder
 {
     border-radius: 1em;
 }
@@ -225,7 +224,7 @@ div.selectholder
     border-top-right-radius: 0px;
 }
 
-.tagholder_wide
+.masonry_opened
 {
     border-radius:1em;
 }

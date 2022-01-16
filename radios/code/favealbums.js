@@ -33,7 +33,7 @@ var faveAlbums = function() {
 		},
 
 		modeHtml: function(p) {
-			return '<i class="icon-music modeimg"></i><span class="modespan">'+
+			return '<i class="icon-music modeimg"></i><span class="alignmid bold">'+
 				language.gettext("label_favealbums")+'</span>&nbsp;';
 		},
 

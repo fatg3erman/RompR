@@ -2,7 +2,7 @@
 
 doPodcastBase();
 
-print '<div class="containerbox dropdown-container is-coverable"><div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" placeholder="'.language::gettext('label_searchfor').' (iTunes)" /></div>';
+print '<div class="containerbox vertical-centre is-coverable"><div class="expand"><input class="enter clearbox" id="podcastsearch" type="text" placeholder="'.language::gettext('label_searchfor').' (iTunes)" /></div>';
 print '<button class="fixed searchbutton iconbutton spinable" onclick="podcasts.search()"></button>';
 print '</div>';
 
@@ -20,13 +20,13 @@ function doPodcastBase() {
 	print '<div id="podcastbuttons" class="invisible toggledown is-coverable">';
 
 	print '<div id="cocksausage">';
-	print '<div class="containerbox dropdown-container"><div class="expand"><input class="enter clearbox" id="podcastsinput" type="text" placeholder="'.language::gettext("podcast_entrybox").'" /></div>';
+	print '<div class="containerbox vertical-centre"><div class="expand"><input class="enter clearbox" id="podcastsinput" type="text" placeholder="'.language::gettext("podcast_entrybox").'" /></div>';
 	print '<button class="fixed iconbutton rssbutton spinable" onclick="podcasts.doPodcast(\'podcastsinput\')"></button></div>';
 	print '</div>';
 
 	print '<div class="spacer"></div>';
 
-	print '<div class="containerbox dropdown-container noselection">';
+	print '<div class="containerbox vertical-centre noselection">';
 	print '<div class="expand"><b>'.language::gettext('label_global_controls').'</b></div>';
 	print '</div>';
 
@@ -53,7 +53,7 @@ function doPodcastBase() {
 	print '<div class="containerbox"><b>'.language::gettext('label_sortby').'</b></div>';
 
 	for ($count = 0; $count < prefs::$prefs['podcast_sort_levels']; $count++) {
-		print '<div class="containerbox dropdown-container">';
+		print '<div class="containerbox vertical-centre">';
 		print '<div class="selectholder expand">';
 		print '<select id="podcast_sort_'.$count.'selector" class="saveomatic">';
 		$options = '';

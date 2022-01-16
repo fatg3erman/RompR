@@ -46,7 +46,7 @@ var genreRadio = function() {
 		},
 
 		modeHtml: function() {
-			return '<i class="icon-wifi modeimg"/></i><span class="modespan ucfirst">'+genre+' '+language.gettext('label_radio')+'</span>';
+			return '<i class="icon-wifi modeimg"/></i><span class="alignmid bold ucfirst">'+genre+' '+language.gettext('label_radio')+'</span>';
 		}
 
 	}

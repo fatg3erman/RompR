@@ -3,11 +3,11 @@
 // There may appear to be a lot of unnecessary divs wrapping around things here
 // but it makes it work in Safari. DO NOT CHANGE IT!
 
-print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_appearance').'</b></div></div>';
+print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_appearance').'</b></div></div>';
 
 // Skin
 
-print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+print '<div class="pref containerbox vertical-centre"><div class="divlabel">'.
 	language::gettext('config_skin').
 	'</div><div class="selectholder"><select id="skinselector" class="saveomatic">';
 $skins = glob("skins/*");
@@ -19,7 +19,7 @@ foreach($skins as $sk) {
 print '</select></div></div>';
 
 // Theme
-print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+print '<div class="pref containerbox vertical-centre"><div class="divlabel">'.
 	language::gettext('config_theme').
 	'</div><div class="selectholder"><select id="themeselector" class="saveomatic">';
 $themes = glob("themes/*.css");
@@ -29,7 +29,7 @@ foreach($themes as $theme) {
 print '</select></div></div>';
 
 // Icon Theme
-print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+print '<div class="pref containerbox vertical-centre"><div class="divlabel">'.
 	language::gettext('config_icontheme').
 	'</div><div class="selectholder"><select id="iconthemeselector" class="saveomatic">';
 $themes = glob("iconsets/*");
@@ -41,7 +41,7 @@ foreach($themes as $theme) {
 print '</select></div></div>';
 
 // Font
-print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+print '<div class="pref containerbox vertical-centre"><div class="divlabel">'.
 	language::gettext('config_fontname').
 	'</div><div class="selectholder"><select id="fontfamilyselector" class="saveomatic">';
 $themes = glob("fonts/*.css");
@@ -52,7 +52,7 @@ foreach($themes as $theme) {
 print '</select></div></div>';
 
 //Font Size
-print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+print '<div class="pref containerbox vertical-centre"><div class="divlabel">'.
 	language::gettext('config_fontsize').
 	'</div><div class="selectholder"><select id="fontsizeselector" class="saveomatic">';
 $themes = glob("sizes/*.css");
@@ -63,7 +63,7 @@ foreach($themes as $theme) {
 print '</select></div></div>';
 
 // Album Cover Size
-print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+print '<div class="pref containerbox vertical-centre"><div class="divlabel">'.
 	language::gettext('config_coversize').
 	'</div><div class="selectholder"><select id="coversizeselector" class="saveomatic">';
 $themes = glob("coversizes/*.css");
@@ -76,7 +76,7 @@ print '</select></div></div>';
 // Custom Background
 print '<div id="custombackground">';
 
-print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand open_magic_div"><b>'.language::gettext('config_background').'</b></div></div>';
+print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand open_magic_div"><b>'.language::gettext('config_background').'</b></div></div>';
 
 print '<div id="cusbgoptions">';
 
@@ -88,7 +88,7 @@ print '<div class="pref styledinputs">
 <div><input type="radio" id="attach_bottomright" name="backgroundposition" value="bottom right" /><label for="attach_bottomright">'.language::gettext('label_bottomright').'</label></div>
 </div>';
 
-print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+print '<div class="pref containerbox vertical-centre"><div class="divlabel">'.
 	language::gettext('label_changevery').
 	'</div><div class="selectholder"><select id="changeeveryselector">';
 foreach (BG_IMAGE_TIMEOUTS as $label => $value) {
@@ -114,7 +114,7 @@ print '<div class="pref styledinputs invisible magic_div"><b>Browser ID</b>'.
 print '</div>';
 
 // Players
-print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('config_players').'</b></div></div>';
+print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('config_players').'</b></div></div>';
 print '<div class="fullwidth">';
 print '<div class="clearfix">';
 print '<div class="pref styledinputs tleft" name="playerdefs">';
@@ -132,7 +132,7 @@ print '<input class="autoset toggle" type="checkbox" id="consume_workaround" />
 print '</div>';
 
 // Snapcast
-print '<div class="dropdown-container configtitle"><i class="icon-snapcast medicon"></i><div class="textcentre expand"><b>'.language::gettext('config_snapcast').'</b></div></div>';
+print '<div class="configtitle"><i class="icon-snapcast medicon"></i><div class="textcentre expand"><b>'.language::gettext('config_snapcast').'</b></div></div>';
 print '<div class="fullwidth">';
 if (!$snapcast_in_volume) {
 	print '<div class="pref" id="snapcastgroups">';
@@ -143,7 +143,7 @@ print '<div class="pref styledinputs">
 <label for="hide_master_volume">'.language::gettext('config_hidemastervolume').'</label>
 </div>';
 
-print '<div class="pref styledinputs containerbox dropdown-container">';
+print '<div class="pref styledinputs containerbox vertical-centre">';
 print '<input class="saveotron expand" id="snapcast_server" type="text" placeholder="'.language::gettext('config_snapcast_server').'" />';
 // print '<input class="saveotron fixed" id="snapcast_port" style="width:4em;margin-left:1em" type="text" size="4" placeholder="'.language::gettext('config_snapcast_port').'" />';
 print '<input class="saveotron fixed" id="snapcast_http" style="width:4em;margin-left:1em" type="text" size="4" placeholder="'.language::gettext('config_snapcast_http').'" />';
@@ -151,7 +151,7 @@ print '</div>';
 print '</div>';
 
 // Sources Panel Hiding
-print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_panels').'</b></div></div>';
+print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_panels').'</b></div></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="hide_albumlist" />
 <label for="hide_albumlist">'.language::gettext('config_hidealbumlist').'</label>
@@ -192,7 +192,7 @@ print '<div class="pref styledinputs">
 }
 
 // Interface
-print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_interface').'</b></div></div>';
+print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_interface').'</b></div></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="scrolltocurrent" />
 <label for="scrolltocurrent">'.language::gettext('config_autoscroll').'</label>
@@ -236,7 +236,7 @@ print '<div class="pref textcentre"><button onclick="shortcuts.edit()">'.
 	</div>';
 }
 if (prefs::$prefs['player_backend'] == "mpd") {
-print '<div class="pref containerbox dropdown-container">
+print '<div class="pref containerbox vertical-centre">
 	<div class="fixed" style="margin-right:2em">'.
 	language::gettext('config_crossfade').
 	'</div>
@@ -245,9 +245,9 @@ print '<div class="pref containerbox dropdown-container">
 }
 
 // Biography and Language
-print '<div class="dropdown-container configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_language').'</b></div></div>';
+print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_language').'</b></div></div>';
 
-print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+print '<div class="pref containerbox vertical-centre"><div class="divlabel">'.
 language::gettext('settings_interface').
 '</div><div class="selectholder"><select id="langselector" onchange="prefs.changelanguage()">';
 foreach(language::get_language_list() as $key => $value) {
@@ -255,7 +255,7 @@ foreach(language::get_language_list() as $key => $value) {
 }
 print '</select></div></div>';
 
-print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+print '<div class="pref containerbox vertical-centre"><div class="divlabel">'.
 language::gettext('config_lastfmlang').
 '</div><div class="selectholder"><select class="saveomatic" id="lastfmlangselector"">';
 print '<option value="default">'.language::gettext('config_lastfmdefault').'</option>';
@@ -267,7 +267,7 @@ foreach ($l as $language) {
 }
 print '</select></div></div>';
 
-print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+print '<div class="pref containerbox vertical-centre"><div class="divlabel">'.
 language::gettext('config_country').
 '</div><div class="selectholder"><select class="saveomatic" id="lastfm_country_codeselector">';
 $x = simplexml_load_file('resources/iso3166.xml');
@@ -278,7 +278,7 @@ foreach($x->CountryEntry as $i => $c) {
 print '</select></div></div>';
 
 // Album Art
-print '<div class="dropdown-container configtitle"><i class="icon-cd medicon"></i><div class="textcentre expand"><b>'.language::gettext('albumart_title').'</b></div></div>';
+print '<div class="configtitle"><i class="icon-cd medicon"></i><div class="textcentre expand"><b>'.language::gettext('albumart_title').'</b></div></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="downloadart" />
 <label for="downloadart">'.language::gettext('config_autocovers').'</label>
@@ -291,13 +291,13 @@ print '<div class="pref styledinputs">
 
 
 // Smart Radio
-print '<div class="dropdown-container configtitle"><i class="icon-wifi medicon"></i><div class="textcentre expand"><b>'.language::gettext('label_pluginplaylists').'</b></div></div>';
+print '<div class="configtitle"><i class="icon-wifi medicon"></i><div class="textcentre expand"><b>'.language::gettext('label_pluginplaylists').'</b></div></div>';
 print '<div class="pref styledinputs">'.language::gettext('config_smart_chunksize').
 	'<input class="saveotron" id="smartradio_chunksize" style="width:4em;margin-left:1em" type="text" size="4" />
 	</div>';
 
 // Audiobooks
-print '<div class="dropdown-container configtitle"><i class="icon-audiobook medicon"></i><div class="textcentre expand"><b>'.language::gettext('label_audiobooks').'</b></div></div>';
+print '<div class="configtitle"><i class="icon-audiobook medicon"></i><div class="textcentre expand"><b>'.language::gettext('label_audiobooks').'</b></div></div>';
 print '<div class="pref">'.language::gettext('config_audiobook_directory').'
 <input class="prefinput saveotron" id="audiobook_directory" type="text" size="40" />
 </div>';
@@ -306,12 +306,12 @@ print '<div class="pref">'.language::gettext('config_audiobook_tags').'
 </div>';
 
 // Podcasts
-print '<div class="dropdown-container configtitle">
+print '<div class="configtitle">
 <i class="icon-podcast-circled medicon"></i><div class="textcentre expand"><b>'.language::gettext('label_podcasts').'</b></div></div>';
 
 print '<div class="pref"><b>'.language::gettext('config_podcast_defaults').'</b></div>';
 
-print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+print '<div class="pref containerbox vertical-centre"><div class="divlabel">'.
 	language::gettext("podcast_display").'</div>';
 print '<div class="selectholder">';
 print '<select id="default_podcast_display_modeselector" class="saveomatic">';
@@ -325,7 +325,7 @@ print $options;
 print '</select>';
 print '</div></div>';
 
-print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+print '<div class="pref containerbox vertical-centre"><div class="divlabel">'.
 	language::gettext("podcast_refresh").'</div>';
 print '<div class="selectholder">';
 print '<select id="default_podcast_refresh_modeselector" class="saveomatic">';
@@ -338,7 +338,7 @@ print $options;
 print '</select>';
 print '</div></div>';
 
-print '<div class="pref containerbox dropdown-container"><div class="divlabel">'.
+print '<div class="pref containerbox vertical-centre"><div class="divlabel">'.
 	language::gettext("podcast_sortmode").'</div>';
 print '<div class="selectholder">';
 print '<select id="default_podcast_sort_modeselector" class="saveomatic">';
@@ -354,7 +354,7 @@ print '<div class="pref styledinputs">
 </div>';
 
 // Last.FM
-print '<div class="dropdown-container configtitle">
+print '<div class="configtitle">
 <i class="icon-lastfm-1 medicon"></i><div class="textcentre expand"><b>'.language::gettext('label_lastfm').'</b>
 </div></div>';
 
@@ -396,7 +396,7 @@ print '<div class="pref styledinputs lastfmlogin-required">
 <label for="synctags">'.language::gettext('config_synctags').'</label>';
 ?>
 </div>
-<div class="pref containerbox dropdown-container lastfmlogin-required">
+<div class="pref containerbox vertical-centre lastfmlogin-required">
 <?php
 print '<div class="divlabel styledinputs"><input class="autoset toggle" type="checkbox" id="synclove" />
 <label for="synclove">'.language::gettext('config_loveis').'</label></div>';
@@ -412,7 +412,7 @@ print '</select>
 </div></div>';
 
 // Collection Options
-print '<div class="dropdown-container configtitle"><i class="icon-music medicon"></i><div class="textcentre expand">
+print '<div class="configtitle"><i class="icon-music medicon"></i><div class="textcentre expand">
 	<b>'.language::gettext('button_local_music').'</b></div></div>';
 
 // Album Sorting

@@ -10,7 +10,7 @@ var recentlyPlayed = function() {
 			if (rpl == null) {
 				rpl = browser.registerExtraPlugin("rpl", language.gettext("label_recentlyplayed"), recentlyPlayed);
 
-				$("#rplfoldup").append('<div class="noselection fullwidth tagholder" id="rplmunger"></div>');
+				$("#rplfoldup").append('<div class="noselection fullwidth masonry_general" id="rplmunger"></div>');
 				$.ajax({
 					url: 'plugins/code/recentlyplayed.php',
 					type: "POST"

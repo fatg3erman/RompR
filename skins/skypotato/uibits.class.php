@@ -164,7 +164,7 @@ class uibits {
 		if ($fragment || $who == 'root') {
 			return '';
 		}
-		$html = '<div class="dropdown-container configtitle fullwidth"><div class="textcentre expand"><b>'.$artist.'</b></div></div>';
+		$html = '<div class="vertical-centre configtitle fullwidth"><div class="textcentre expand"><b>'.$artist.'</b></div></div>';
 		if ($playall) {
 			$html .= '<div class="textcentre clickalbum playable brick_wide noselect" name="'.$why.'artist'.$who.'">'.language::gettext('label_play_all').'</div>';
 		}
@@ -246,7 +246,7 @@ class uibits {
 	public static function directoryControlHeader($prefix, $name = null) {
 		logger::log('SKIN', 'DCH prefix is',$prefix,'name is',$name);
 		if ($name !== null && !preg_match('/^pholder_/', $prefix)) {
-			print '<div class="dropdown-container configtitle fullwidth"><div class="textcentre expand"><b>'.$name.'</b></div></div>';
+			print '<div class="vertical-centre configtitle fullwidth"><div class="textcentre expand"><b>'.$name.'</b></div></div>';
 		}
 	}
 

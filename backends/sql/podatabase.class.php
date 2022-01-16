@@ -632,7 +632,7 @@ class poDatabase extends database {
 				print '<div class="marged whatdoicallthis toggledown invisible podconfigpanel" id="podconf_'.$pm.'">';
 			}
 			print '<div class="containerbox vertical podoptions">';
-			print '<div class="containerbox fixed dropdown-container"><div class="divlabel">'.
+			print '<div class="containerbox fixed vertical-centre"><div class="divlabel">'.
 				language::gettext("podcast_display").'</div>';
 			print '<div class="selectholder">';
 			print '<select name="DisplayMode" onchange="podcasts.changeOption(event)">';
@@ -646,7 +646,7 @@ class poDatabase extends database {
 			print '</select>';
 			print '</div></div>';
 
-			print '<div class="containerbox fixed dropdown-container"><div class="divlabel">'.
+			print '<div class="containerbox fixed vertical-centre"><div class="divlabel">'.
 				language::gettext("podcast_refresh").'</div>';
 			print '<div class="selectholder">';
 			print '<select name="RefreshOption" onchange="podcasts.changeOption(event)">';
@@ -659,7 +659,7 @@ class poDatabase extends database {
 			print '</select>';
 			print '</div></div>';
 
-			print '<div class="containerbox fixed dropdown-container"><div class="divlabel">'.
+			print '<div class="containerbox fixed vertical-centre"><div class="divlabel">'.
 				language::gettext("podcast_expire").'</div>';
 			print '<div class="selectholder">';
 			print '<select title="'.language::gettext("podcast_expire_tooltip").
@@ -675,7 +675,7 @@ class poDatabase extends database {
 			print '</select>';
 			print '</div></div>';
 
-			print '<div class="containerbox fixed dropdown-container"><div class="divlabel">'.
+			print '<div class="containerbox fixed vertical-centre"><div class="divlabel">'.
 				language::gettext("podcast_keep").'</div>';
 			print '<div class="selectholder">';
 			print '<select title="'.language::gettext("podcast_keep_tooltip").
@@ -692,7 +692,7 @@ class poDatabase extends database {
 			print '</select>';
 			print '</div></div>';
 
-			print '<div class="containerbox fixed dropdown-container"><div class="divlabel">'.
+			print '<div class="containerbox fixed vertical-centre"><div class="divlabel">'.
 				language::gettext("podcast_sortmode").'</div>';
 			print '<div class="selectholder">';
 			print '<select name="SortMode" onchange="podcasts.changeOption(event)">';
@@ -732,7 +732,7 @@ class poDatabase extends database {
 			print '</div>';
 		}
 		if ($do_searchbox) {
-			print '<div class="containerbox noselection dropdown-container"><div class="expand">
+			print '<div class="containerbox noselection vertical-centre"><div class="expand">
 				<input class="enter clearbox" name="podsearcher_'.$y->PODindex.'" type="text" ';
 			if (array_key_exists('searchterm', $_REQUEST)) {
 				print 'value="'.urldecode($_REQUEST['searchterm']).'" ';
@@ -779,9 +779,9 @@ class poDatabase extends database {
 
 		print '<div class="item podcastitem">';
 		if ($item->Downloaded == 1 && $y->Version > 1) {
-			print '<div class="containerbox podcasttrack clicktrack playable draggable dropdown-container" name="'.rawurlencode(dirname(dirname(get_base_url())).$item->Localfilename).'">';
+			print '<div class="containerbox podcasttrack clicktrack playable draggable vertical-centre" name="'.rawurlencode(dirname(dirname(get_base_url())).$item->Localfilename).'">';
 		} else {
-			print '<div class="containerbox podcasttrack clicktrack playable draggable dropdown-container" name="'.rawurlencode($item->Link).'">';
+			print '<div class="containerbox podcasttrack clicktrack playable draggable vertical-centre" name="'.rawurlencode($item->Link).'">';
 		}
 		if ($y->Subscribed == 1) {
 			if ($item->New == 1) {
@@ -803,7 +803,7 @@ class poDatabase extends database {
 
 		$pee = date(DATE_RFC2822, $item->PubDate);
 		$pee = preg_replace('/ \+\d\d\d\d$/','',$pee);
-		print '<div class="whatdoicallthis padright containerbox dropdown-container podtitle notbold">';
+		print '<div class="whatdoicallthis padright containerbox vertical-centre podtitle notbold">';
 		if ($y->HideDescriptions == 0) {
 			$class = 'icon-toggle-open';
 		} else {
@@ -822,10 +822,6 @@ class poDatabase extends database {
 			$class = 'invisible whatdoicallthis toggledown';
 		}
 		print '<div id="poddesc_'.$item->PODTrackindex.'" class="'.$class.'">'.format_podcast_text($item->Description).'</div>';
-		// Usually very inaccurate
-		// if ($item->FileSize > 0) {
-		//     print '<div class="fsize">'.format_bytes($item->FileSize).'Bytes</div>';
-		// }
 		if ($y->Subscribed == 1) {
 			print '<div class="clearfix" name="podcontrols_'.$pm.'">';
 			if ($item->Downloaded == 1) {
@@ -1381,7 +1377,7 @@ class poDatabase extends database {
 		$result = $this->generic_sql_query($qstring, false, PDO::FETCH_OBJ);
 		// Hack to make phone skin and skypotato skin work without too much extra effort
 		if ($subscribed == 1)
-			print '<div class="dropdown-container configtitle skypotatohack"><div class="textcentre expand"><b>'.language::gettext('label_subbed_podcasts').'</b></div></div>';
+			print '<div class="configtitle skypotatohack"><div class="textcentre expand"><b>'.language::gettext('label_subbed_podcasts').'</b></div></div>';
 		foreach ($result as $obj) {
 			$this->doPodcastHeader($obj, $subscribed);
 		}

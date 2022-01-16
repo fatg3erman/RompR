@@ -33,7 +33,7 @@ var recentlyaddedtracks = function() {
 		},
 
 		modeHtml: function() {
-			return '<i class="icon-recentlyplayed modeimg"></i><span class="modespan">'+language.gettext("label_"+param)+'</span>&nbsp;';
+			return '<i class="icon-recentlyplayed modeimg"></i><span class="alignmid bold">'+language.gettext("label_"+param)+'</span>&nbsp;';
 		},
 
 		stop: function() {

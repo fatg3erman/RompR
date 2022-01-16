@@ -31,7 +31,7 @@ var alarmclock = function() {
 	}
 
 	function createAlarmHeader(holder, alarm, index) {
-		var container = $('<div>', {class: 'menuitem cheesemaster'}).insertAfter(holder);
+		var container = $('<div>', {class: 'menuitem alarmclock_holder'}).insertAfter(holder);
 		var lego = $('<table width="100%">').appendTo(container);
 		var row1 = $('<tr>').appendTo(lego);
 		var opener = $('<td rowspan="2">').appendTo(row1);
@@ -96,16 +96,16 @@ var alarmclock = function() {
 	}
 
 	function createAlarmDropdown(holder, alarm, index) {
-		var container = $('<div>', {id: 'alarmpanel_'+index, class: 'toggledown invisible cheesemaster alarmdropper'}).insertAfter(holder);
+		var container = $('<div>', {id: 'alarmpanel_'+index, class: 'toggledown invisible alarmclock_holder alarmdropper'}).insertAfter(holder);
 
-		var twatt = $('<div>', {class: 'containerbox dropdown-container'}).appendTo(container);
+		var twatt = $('<div>', {class: 'containerbox vertical-centre'}).appendTo(container);
 		$('<i>', {class: "mh menu fixed icon-cancel-circled deletealarm", id: 'deletealarm_'+index}).appendTo(twatt);
 		$('<div>', {class: 'expand'}).html(language.gettext('label_delete_alarm')).appendTo(twatt);
 		twatt.css({'margin-left': '4px', 'margin-bottom': '4px'});
 
 		makeACheckbox('alarmramp_'+index, language.gettext('config_alarm_ramp'), container, alarm.alarmramp, false);
 
-		var twott = $("<div>", {class: 'containerbox dropdown-container'}).appendTo(container);
+		var twott = $("<div>", {class: 'containerbox vertical-centre'}).appendTo(container);
 		var twitt = $('<div>', {class: 'fixed'}).appendTo(twott);
 		makeACheckbox('alarmstopafter_'+index, language.gettext('config_alarm_stopafter'), twitt, alarm.alarmstopafter, false);
 		$('<input>', {type: 'text', class: 'expand alarmclock', id: 'alarmstopmins_'+index, style: 'margin-left:1em'}).val(alarm.alarmstopmins).appendTo(twott);
@@ -473,7 +473,7 @@ var alarmclock = function() {
 			debug.log('ALARM','Deleting Alarm',index);
 			prefs.alarms.splice(index, 1);
 			prefs.save({alarms: prefs.alarms});
-			$('.cheesemaster').remove();
+			$('.alarmclock_holder').remove();
 			fillWindow();
 			// $('#alarmpanel').fanoogleMenus();
 			alarmclock.setAlarm();
@@ -485,7 +485,7 @@ var alarmclock = function() {
 				return false;
 			}
 			var holder = uiHelper.makeDropHolder('alarmpanel', d, true);
-			holder.append('<div class="dropdown-container configtitle"><div class="textcentre expand"><b>'+language.gettext('button_alarm')+'</b></div></div>');
+			holder.append('<div class="configtitle"><div class="textcentre expand"><b>'+language.gettext('button_alarm')+'</b></div></div>');
 			topofwindow = $('<input>', {type: "hidden", class: "helplink", value: "https://fatg3erman.github.io/RompR/Alarm-And-Sleep"}).appendTo(holder);
 			fillWindow();
 			createNewAlarmBox(holder);

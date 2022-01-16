@@ -441,6 +441,7 @@ function set_version_string() {
 		// hash of the most recent git commit, or a timestamp. It's for use in testing,
 		// to make sure the browser pulls in the latest version of all the files.
 		if (prefs::$prefs['live_mode']) {
+			logger::log('INIT', 'Using Live Mode for Version String');
 			$version_string = ROMPR_VERSION.".".time();
 		} else {
 			// DO NOT USE OUTSIDE A git REPO!
@@ -510,7 +511,7 @@ function rrmdir($path) {
 function collectionButtons() {
 	print '<div id="collectionbuttons" class="invisible toggledown is-coverable">';
 
-	print '<div class="containerbox dropdown-container">';
+	print '<div class="containerbox vertical-centre">';
 	print '<div class="selectholder">';
 	print '<select id="sortcollectionbyselector" class="saveomatic">';
 	foreach (COLLECTION_SORT_MODES as $mode => $key) {
@@ -520,7 +521,7 @@ function collectionButtons() {
 	print '</div>';
 	print '</div>';
 
-	print '<div class="containerbox dropdown-container">';
+	print '<div class="containerbox vertical-centre">';
 	print '<div class="selectholder">';
 	print '<select id="collectionrangeselector" class="saveomatic">';
 	print '<option value="'.ADDED_ALL_TIME.'">'.language::gettext('label_all_time').'</option>';

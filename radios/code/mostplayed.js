@@ -33,7 +33,7 @@ var mostPlayed = function() {
 		},
 
 		modeHtml: function(p) {
-			return '<i class="icon-music modeimg"></i><span class="modespan">'+language.gettext("label_mostplayed")+'</span>&nbsp;';
+			return '<i class="icon-music modeimg"></i><span class="alignmid bold">'+language.gettext("label_mostplayed")+'</span>&nbsp;';
 		},
 
 		stop: function() {
