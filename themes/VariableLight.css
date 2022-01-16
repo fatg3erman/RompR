@@ -6,7 +6,7 @@
     --progress-bg-colour: rgba(0,0,0,0);
 
     --text-colour: unset;
-    --border-colour: #eeeeee;
+    --border-colour: rgba(4, 46, 80, 1);
     --border-colour-dark: #555555;
     --link-colour: yellow;
     --highlight-colour: yellow;
@@ -122,11 +122,6 @@ body,p,h1,h2,h3,h4,table,td,th,ul,ol,textarea,input
 button, input[type="button"], div.filebutton
 {
     color:var(--vl_text_colour) !important;
-}
-
-button:hover, input[type="button"]:hover, div.filebutton:hover
-{
-    color:var(--highlight-colour) !important;
 }
 
 select {
