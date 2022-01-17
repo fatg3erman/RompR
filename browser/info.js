@@ -301,65 +301,48 @@ var browser = function() {
 		},
 
 		rePoint: function(panel, params) {
-			if (prefs.hidebrowser || $('#infopane').width() == 0) { return }
+			const main_pane = $('#infopane');
+			var iw = main_pane.width();
+			if (prefs.hidebrowser || iw == 0) { return }
 
-			debug.debug("BROWSER","Repointing");
 			layoutProcessor.updateInfopaneScrollbars();
 
-			$('#infopane .masonified:visible').each(function() {
-				var h = $(this);
-				var width = calcPercentWidth(h, '.masonry_general', 500, h.width());
-				h.find(".masonry_general").css('width', width.toString()+'%');
-				// Check if it is being handled by Masonry, prevents early init with no paramerts
-				if (typeof(params) == 'undefined' && h.css('position') == 'relative') {
-					h.masonry();
-				}
-			});
+			if (iw > 1280) {
+				main_pane.addClass('width_5').removeClass('width_1 width_2 width_3 width_4');
+			} else if (iw > 960) {
+				main_pane.addClass('width_4').removeClass('width_1 width_2 width_3 width_5');
+			} else if (iw > 720) {
+				main_pane.addClass('width_3').removeClass('width_1 width_2 width_4 width_5');
+			} else if (iw < 480) {
+				main_pane.addClass('width_1').removeClass('width_2 width_3 width_4 width_5');
+			} else {
+				main_pane.addClass('width_2').removeClass('width_1 width_3 width_4 width_5');
+			}
 
-			$('#infopane .masonified5.filled:visible').each(function() {
-				var h = $(this);
-				var width = calcPercentWidth(h, '.spotify_artist_album_masonry', 260, h.width());
-				h.find(".spotify_artist_album_masonry").css('width', width.toString()+'%');
-				h.find(".sizer").css('width', width.toString()+'%');
-				if (typeof(params) == 'undefined' && h.css('position') == 'relative') {
-					h.masonry();
-				}
-			});
+			// make sure we masonify panels that are open spotify artist widgets first,
+			// because if the height changes the other closed ones around them need to
+			// know about that.
 
-			$('#infopane .masonified2:visible').each(function() {
-				var h = $(this);
-				var width = calcPercentWidth(h, '.spotify_album_masonry', 260, h.width());
-				h.find(".spotify_album_masonry").css('width', width.toString()+'%');
-				h.find(".sizer").css('width', width.toString()+'%');
-				if (typeof(params) == 'undefined' && h.css('position') == 'relative') {
-					h.masonry();
-				}
-			});
-
-			$('#infopane .masonified4:visible').each(function() {
-				var h = $(this);
-				var width = calcPercentWidth(h, '.spotify_playable_masonry', 140, h.width());
-				h.find(".spotify_playable_masonry").css('width', width.toString()+'%');
-				if (typeof(params) == 'undefined' && h.css('position') == 'relative') {
-					h.masonry();
-				}
-			});
-
-			$('#infopane .mixcontainer:visible').each(function() {
-				var h = $(this);
-				var w = h.width();
-				var m = h.children('.plugin_hpl_radio');
-				if (m.length == 1 || w < 700) {
-					m.css('width', '100%');
-				} else {
-					m.css('width', '50%');
-				}
-			});
-
-			if (typeof(params) != 'undefined') {
+			if (typeof(params) == 'undefined') {
+				$('#infopane .spotify_artist_albums.masonry-initialised:visible').masonry();
+				$('#infopane .masonry-initialised:not(.spotify_artist_albums):visible').masonry();
+			} else {
 				params.gutter = masonry_gutter;
 				panel.masonry(params);
+				panel.addClass('masonry-initialised');
 			}
+
+			// $('#infopane .mixcontainer:visible').each(function() {
+			// 	var h = $(this);
+			// 	var w = h.width();
+			// 	var m = h.children('.plugin_hpl_radio');
+			// 	if (m.length == 1 || w < 700) {
+			// 		m.css('width', '100%');
+			// 	} else {
+			// 		m.css('width', '50%');
+			// 	}
+			// });
+
 		}
 	}
 }();

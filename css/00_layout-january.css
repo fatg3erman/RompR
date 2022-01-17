@@ -1385,12 +1385,105 @@ a.infoclick.clickreleasepage
 	padding-top:4px;
 }
 
-.masonified2 .masonry_opened
+/* NOTE 8px is the value of masonry_gutter. It is essntial
+	that these remain the same. Masonry does not work without a gutter
+	ans looks bad with gutter = 0px. Secondly sizer and the masonry
+	items must be the same size. Masonry uses sizer as the column width
+	- we need it because artist masonry itoems can be enlarged so we
+	can't use those as the sizer */
+
+#infopane.width_5 .medium_masonry_holder>.sizer
+{
+	width: calc(20% - 8px);
+	max-width: 320px;
+}
+
+#infopane.width_5 .medium_masonry_holder>.spotify_album_masonry
+{
+	width: calc(20% - 8px);
+	max-width: 320px;
+}
+
+#infopane.width_4 .medium_masonry_holder>.sizer
+{
+	width: calc(25% - 8px);
+}
+
+#infopane.width_4 .medium_masonry_holder>.spotify_album_masonry
+{
+	width: calc(25% - 8px);
+}
+
+#infopane.width_3 .medium_masonry_holder>.sizer
+{
+	width: calc(33% - 8px);
+}
+
+#infopane.width_3 .medium_masonry_holder>.spotify_album_masonry
+{
+	width: calc(33% - 8px);
+}
+
+#infopane.width_2 .medium_masonry_holder>.sizer
+{
+	width: calc(50% - 8px);
+}
+
+#infopane.width_2 .medium_masonry_holder>.spotify_album_masonry
+{
+	width: calc(50% - 8px);
+}
+
+#infopane.width_1 .medium_masonry_holder>.sizer
+{
+	width: calc(100% - 8px);
+	min-width: 140px;
+}
+
+#infopane.width_1 .medium_masonry_holder>.spotify_album_masonry
+{
+	width: calc(100% - 8px);
+	min-width: 140px;
+}
+
+#infopane.width_5 .masonified>.masonry_general
+{
+	width: calc(33% - 8px);
+}
+
+#infopane.width_4 .masonified>.masonry_general
+{
+	width: calc(50% - 8px);
+}
+
+#infopane.width_3 .masonified>.masonry_general
+{
+	width: calc(50% - 8px);
+}
+
+#infopane.width_2 .masonified>.masonry_general
+{
+	width: calc(100% - 8px);
+}
+
+#infopane.width_1 .masonified>.masonry_general
+{
+	width: calc(100% - 8px);
+}
+
+.small_masonry_holder>.spotify_playable_masonry
+{
+	width: calc(20% - 8px);
+	max-width: 180px;
+	min-width: 120px;
+}
+
+.medium_masonry_holder .masonry_opened
 {
 	width: 98% !important;
 }
 
-.masonified2 .brick_wide
+.medium_masonry_holder .brick_wide
 {
 	width: 98% !important;
 }
@@ -1600,13 +1693,37 @@ td.dan, th.dan{
 
 .plugin_hpl_radio
 {
-	width:100%;
 	margin-top:4px;
 	align-items:center;
-	padding-top:0.4em;
-	padding-bottom:0.4em;
+	padding:0.4em;
 	box-sizing: border-box;
 	background-color: var(--main-bg-colour);
+	border: 4px solid transparent;
+}
+
+#infopane.width_5 .mixcontainer>.plugin_hpl_radio
+{
+	width: 25%;
+}
+
+#infopane.width_4 .mixcontainer>.plugin_hpl_radio
+{
+	width: 50%;
+}
+
+#infopane.width_3 .mixcontainer>.plugin_hpl_radio
+{
+	width: 100%;
+}
+
+#infopane.width_2 .mixcontainer>.plugin_hpl_radio
+{
+	width: 100%;
+}
+
+#infopane.width_1 .mixcontainer>.plugin_hpl_radio
+{
+	width: 100%;
 }
 
 .plugin_hpl_radio .fixed .topimg

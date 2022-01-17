@@ -1261,7 +1261,7 @@ $.widget('rompr.spotifyArtistThing', {
 			x.append('<span class="minwidthed" id="'+self.options.id+'bio_'+a.id+'"></span>');
 			// The inline styles make Masonry lay it out without a big vertical gap between elements
 			// Don't know why
-			var twat = $('<div>', { class: "selecotron holdingcell masonified5", id : a.id, style: "height: 0px; display: none"}).appendTo(x);
+			var twat = $('<div>', { class: "selecotron holdingcell spotify_artist_albums medium_masonry_holder", id : a.id, style: "height: 0px; display: none"}).appendTo(x);
 
 		}
 		this.element.imagesLoaded(function() {
@@ -1329,8 +1329,8 @@ $.widget('rompr.spotifyArtistThing', {
 		self._openArtist(e)
 		e.addClass('filled');
 		e.spotifyAlbumThing({
-			classes: 'spotify_artist_album_masonry',
-			itemselector: 'spotify_artist_album_masonry',
+			classes: 'spotify_album_masonry',
+			itemselector: 'spotify_album_masonry',
 			sub: false,
 			layoutcallback: browser.rePoint,
 			imageclass: 'spotify_album_image',

@@ -112,7 +112,7 @@ var info_spotify = function() {
 		artistmeta.spotify.spinnerthing = $('<i>', {class: 'fixed svg-square title-menu invisible'}).appendTo(holderbox);
 
 		artistmeta.spotify.spotiwidget = layout.add_non_flow_box();
-		artistmeta.spotify.spotiwidget.addClass('fullwidth masonified2');
+		artistmeta.spotify.spotiwidget.addClass('fullwidth medium_masonry_holder');
 
 		layout.finish(data.external_urls.spotify, data.name);
 
@@ -253,10 +253,12 @@ var info_spotify = function() {
 						self.artist.populate();
 					}
 				} else if (element.hasClass('clickshowalbums') && artistmeta.spotify.showing != "albums") {
+					artistmeta.spotify.spotiwidget.removeClass('masonry-initialised');
 					artistmeta.spotify.spotiwidget.spotifyArtistThing('destroy');
 					artistmeta.spotify.showing = "albums";
 					getAlbums();
 				} else if (element.hasClass('clickshowartists') && artistmeta.spotify.showing != "artists") {
+					artistmeta.spotify.spotiwidget.removeClass('masonry-initialised');
 					artistmeta.spotify.spotiwidget.spotifyAlbumThing('destroy');
 					artistmeta.spotify.showing = "artists";
 					element.addClass("bsel");
@@ -313,6 +315,7 @@ var info_spotify = function() {
 			function doAlbums(data) {
 				if (artistmeta.spotify.showing == "albums" && data) {
 					debug.debug(medebug,"Doing Albums For Artist",data);
+					artistmeta.spotify.spotiwidget.removeClass('masonry-initialised');
 					artistmeta.spotify.spotiwidget.spotifyAlbumThing({
 						classes: 'nobwobbler nobalbum spotify_album_masonry selecotron',
 						itemselector: 'nobwobbler',
@@ -330,6 +333,7 @@ var info_spotify = function() {
 			function doArtists(data) {
 				if (artistmeta.spotify.showing == "artists" && data) {
 					debug.debug(medebug,"Doing Related Artists",data);
+					artistmeta.spotify.spotiwidget.removeClass('masonry-initialised');
 					artistmeta.spotify.spotiwidget.spotifyArtistThing({
 						classes: 'nobwobbler nobartist spotify_album_masonry',
 						itemselector: 'nobwobbler',

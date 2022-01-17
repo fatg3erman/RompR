@@ -36,7 +36,7 @@ var albumstolistento = function() {
 	}
 
 	function makeHolder() {
-		holder = $('<div>', {id: 'albumstolistento', class: 'holdingcell masonified2 helpfulholder noselection'}).appendTo('#atlfoldup');
+		holder = $('<div>', {id: 'albumstolistento', class: 'holdingcell medium_masonry_holder helpfulholder noselection'}).appendTo('#atlfoldup');
 	}
 
 	return {

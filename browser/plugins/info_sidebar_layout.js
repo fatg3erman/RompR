@@ -100,12 +100,12 @@ function info_sidebar_layout(options) {
 	}
 
 	this.add_masonry_images = function(images) {
-		var holder = $('<div>', {class: 'fullwidth masonified2'}).appendTo(self.widebit);
+		var holder = $('<div>', {class: 'fullwidth medium_masonry_holder'}).appendTo(self.widebit);
 		holder.imageMasonry({images: images});
 	}
 
 	this.add_playable_images = function(spotidata) {
-		var holder = $('<div>', {class: 'holdingcell selecotron masonified4'}).appendTo(self.html);
+		var holder = $('<div>', {class: 'holdingcell selecotron small_masonry_holder'}).appendTo(self.html);
 		holder.playableMasonry({spotidata: spotidata});
 	}
 

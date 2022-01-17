@@ -21,7 +21,7 @@ var unplayabletracks = function() {
 	}
 
 	function makeHolder() {
-		holder = $('<div>', {id: 'unplayabletracks', class: 'holdingcell masonified2 helpfulholder noselection'}).appendTo('#uplfoldup');
+		holder = $('<div>', {id: 'unplayabletracks', class: 'holdingcell medium_masonry_holder helpfulholder noselection'}).appendTo('#uplfoldup');
 	}
 
 	function getUnplayableTracks() {

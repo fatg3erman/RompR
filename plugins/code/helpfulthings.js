@@ -75,25 +75,25 @@ var helpfulThings = function() {
 				}
 
 				if ((player.canPlay('spotify') || player.canPlay('gmusic')) && lastfm.isLoggedIn()) {
-					var html = '<div class="fixed infosection containerbox plugin_hpl_radio playable smartradio" name="lastFMTrackRadio+1month">';
+					var html = '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="lastFMTrackRadio+1month">';
 					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
 					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_dailymix")+'</b><br/>';
 					html += language.gettext('label_dailymixdesc', cloneObject(powers));
 					html += '</div></div>';
 
-					html += '<div class="fixed infosection containerbox plugin_hpl_radio playable smartradio" name="lastFMArtistRadio+6month">';
+					html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="lastFMArtistRadio+6month">';
 					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
 					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_luckydip")+'</b><br/>';
 					html += language.gettext('label_luckydipdesc', powers);
 					html += '</div></div>';
 				} else if ((player.canPlay('spotify') || player.canPlay('gmusic')) && !lastfm.isLoggedIn()) {
-					var html = '<div class="fixed infosection containerbox plugin_hpl_radio">';
+					var html = '<div class="fixed containerbox plugin_hpl_radio">';
 					html += '<img class="smallcover fixed" src="newimages/lastfm-icon.png" />';
 					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_startshere")+'</b><br/>';
 					html += language.gettext('label_goonlogin')+"</div>";
 					html += '</div>';
 				} else if (!player.canPlay('spotify') && !player.canPlay('gmusic')) {
-					var html = '<div class="fixed infosection containerbox plugin_hpl_radio">';
+					var html = '<div class="fixed containerbox plugin_hpl_radio">';
 					html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
 					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext("label_getspotify")+'</b><br/>';
 					html += language.gettext('label_nospotify')+"</div>";
@@ -101,13 +101,13 @@ var helpfulThings = function() {
 				}
 
 				if (player.canPlay('spotify')) {
-					html += '<div class="fixed infosection containerbox plugin_hpl_radio playable smartradio" name="spotiMixRadio+7day">';
+					html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="spotiMixRadio+7day">';
 					html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
 					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext('label_spotify_mix')+'</b><br/>';
 					html += language.gettext('label_spotimixdesc')+"</div>";
 					html += '</div>';
 
-					html += '<div class="fixed infosection containerbox plugin_hpl_radio playable smartradio" name="spotiMixRadio+1year">';
+					html += '<div class="fixed containerbox plugin_hpl_radio playable smartradio" name="spotiMixRadio+1year">';
 					html += '<img class="smallcover fixed" src="newimages/spotify-icon.png" />';
 					html +=	'<div class="expand alignmid plugin_hpl_radio_info"><b>'+language.gettext('label_spotify_dj')+'</b><br/>';
 					html += language.gettext('label_spotiswimdesc')+"</div>";
@@ -214,7 +214,7 @@ var helpfulThings = function() {
 				$('#helpful_spinner').before('<div class="textunderline containerbox menuitem" style="padding-left:12px;margin-top:1em"><h3 class="fixed">'
 				+language.gettext('because_liked',[current_seed.Artistname])+'</h3></div>');
 			}
-			var holder = $('<div>', {id: 'rec_'+current_seed.id, class: 'holdingcell masonified2 helpfulholder noselection'}).insertBefore($('#helpful_spinner'));
+			var holder = $('<div>', {id: 'rec_'+current_seed.id, class: 'holdingcell medium_masonry_holder helpfulholder noselection'}).insertBefore($('#helpful_spinner'));
 
 			// Need to make sure all the album IDs are unique, since we do get duplicates
 
