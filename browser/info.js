@@ -331,8 +331,6 @@ var browser = function() {
 				var width = calcPercentWidth(h, '.spotify_album_masonry', 260, h.width());
 				h.find(".spotify_album_masonry").css('width', width.toString()+'%');
 				h.find(".sizer").css('width', width.toString()+'%');
-				h.find(".masonry_opened").css("width", "98%");
-				h.find(".brick_wide").css("width", "98%");
 				if (typeof(params) == 'undefined' && h.css('position') == 'relative') {
 					h.masonry();
 				}

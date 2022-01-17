@@ -435,16 +435,17 @@ var prefs = function() {
 		landscapeImage.onload = doNothing;
 		portraitImage.onerror = doNothing;
 		landscapeImage.onerror = doNothing;
-		document.documentElement.style.removeProperty('--landscape-bg-image');
-		document.documentElement.style.removeProperty('--portrait-bg-image');
+		unset_css_variable('--landscape-bg-image');
+		unset_css_variable('--portrait-bg-image');
+		unset_css_variable('--background-position');
 		portraitImage.src = '';
 		landscapeImage.src = '';
 	}
 
 	function setBackgroundCss() {
-		document.documentElement.style.setProperty('--landscape-bg-image', 'url("'+landscapeImage.src+'")');
-		document.documentElement.style.setProperty('--portrait-bg-image', 'url("'+portraitImage.src+'")');
-		document.documentElement.style.setProperty('--background-position', prefs.bgimgparms[prefs.theme].position);
+		set_css_variable('--landscape-bg-image', 'url("'+landscapeImage.src+'")');
+		set_css_variable('--portrait-bg-image', 'url("'+portraitImage.src+'")');
+		set_css_variable('--background-position', prefs.bgimgparms[prefs.theme].position);
 		prefs.updateImageManager();
 		setBackgroundTimer();
 	}

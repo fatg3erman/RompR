@@ -1385,6 +1385,16 @@ a.infoclick.clickreleasepage
 	padding-top:4px;
 }
 
+.masonified2 .masonry_opened
+{
+	width: 98% !important;
+}
+
+.masonified2 .brick_wide
+{
+	width: 98% !important;
+}
+
 .spotify_album_image
 {
 	margin-right:auto;

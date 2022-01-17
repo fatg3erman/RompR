@@ -304,3 +304,11 @@ function get_file_extension(filename) {
 
 	return filename.substring(filename.lastIndexOf('.')+1, filename.length) || 'Unknown';
 }
+
+function set_css_variable(name, value) {
+	document.documentElement.style.setProperty(name, value);
+}
+
+function unset_css_variable(name) {
+	document.documentElement.style.removeProperty(name);
+}

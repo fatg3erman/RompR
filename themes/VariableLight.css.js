@@ -66,44 +66,38 @@ themeManager.setBgCss = function(hour) {
 		23: '#777777'
 	};
 	const iconColours = {
-		0:  'opacity: 0.4',
-		1:  'opacity: 0.5',
-		2:  'opacity: 0.5',
-		3:  'opacity: 0.5',
-		4:  'opacity: 0.6',
-		5:  'opacity: 0.6',
-		6:  'opacity: 0.7',
-		7:  'opacity: 0.8',
-		8:  'opacity: 0.9',
-		9:  'opacity: 1',
-		10: 'opacity: 1',
-		11: 'opacity: 1',
-		12: 'opacity: 1',
-		13: 'opacity: 1',
-		14: 'opacity: 1',
-		15: 'opacity: 1',
-		16: 'opacity: 1',
-		17: 'opacity: 1',
-		18: 'opacity: 0.9',
-		19: 'opacity: 0.8',
-		20: 'opacity: 0.7',
-		21: 'opacity: 0.6',
-		22: 'opacity: 0.6',
-		23: 'opacity: 0.5'
+		0:  0.4,
+		1:  0.5,
+		2:  0.5,
+		3:  0.5,
+		4:  0.6,
+		5:  0.6,
+		6:  0.7,
+		7:  0.8,
+		8:  0.9,
+		9:  1,
+		10: 1,
+		11: 1,
+		12: 1,
+		13: 1,
+		14: 1,
+		15: 1,
+		16: 1,
+		17: 1,
+		18: 0.9,
+		19: 0.8,
+		20: 0.7,
+		21: 0.6,
+		22: 0.6,
+		23: 0.5
 	};
 	debug.log('THEMEMANAGER', 'Updating background colour for hour', hour);
-	$('style[id="vl_background"]').html(
-		':root { --vl_bg_colour: '+hourColours[hour]+'; '
-		+'--vl_text_colour: '+textColours[hour]+'; } '
-		+'[class^="icon-"]:not(.invisibleicon):not(.topdrop), [class*=" icon-"]:not(.invisibleicon):not(.topdrop) { '+iconColours[hour]+'; } '
-		+'img { '+iconColours[hour]+' !important; } '
-		);
+	set_css_variable('--text-colour', textColours[hour]);
+	set_css_variable('--main-bg-image', hourColours[hour]);
+	set_css_variable('--vl-opacity', iconColours[hour]);
 }
 
 themeManager.init = function() {
-	if ($('style[id="vl_background"]').length == 0) {
-		$('<style>', {id: 'vl_background'}).appendTo('head');
-	}
 	themeManager.vl_update();
 	sleepHelper.addWakeHelper(themeManager.vl_update);
 }
@@ -111,5 +105,7 @@ themeManager.init = function() {
 themeManager.teardown = function() {
 	clearTimeout(themeManager.vl_timer);
 	sleepHelper.removeWakeHelper(themeManager.vl_update);
-	$('#vl_background').remove();
+	unset_css_variable('--text-colour');
+	unset_css_variable('--main-bg-image');
+	unset_css_variable('--vl-opacity');
 }

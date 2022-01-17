@@ -309,7 +309,7 @@ jQuery.fn.doThingsAfterDisplayingListOfAlbums = function() {
 jQuery.fn.doSomethingUseful = function(text) {
 	return this.each(function() {
 		var self = $(this);
-		var useful = $('<div>', {class: 'bar brick_wide fullwidth'});
+		var useful = $('<div>', {class: 'bar fullwidth'});
 		if (self.prop('id')) {
 			useful.prop('id', 'spinner_'+self.prop('id'));
 		}
