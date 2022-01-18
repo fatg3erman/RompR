@@ -1,0 +1,76 @@
+/*
+=====================================================================
+= Standard HTML Elements
+=====================================================================
+*/
+
+@media screen and (orientation: landscape)
+{
+    html
+    {
+        background-image: var(--landscape-bg-image);
+        background-position: var(--background-position);
+        background-size: cover;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+        transition: background-image 0.5s ease-in-out;
+    }
+}
+
+@media screen and (orientation: portrait)
+{
+    html
+    {
+        background-image: var(--portrait-bg-image);
+        background-position: var(--background-position);
+        background-size:cover;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+        transition: background-image 0.5s ease-in-out;
+    }
+}
+
+body.phone .dropmenu>div.playable,
+body.phone .dropmenu>div.menuitem,
+body.phone .mainpane .faveradio,
+body.phone .mainpane .radio,
+body.phone .mainpane .podcast:not(.podicon):not(.podglobal),
+body.phone .mainpane .directory,
+body.phone #pluginplaylistholder .menuitem.clickicon,
+body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth
+{
+    background-color: var(--sources-bg-colour);
+    background-clip:border-box;
+    margin-top: 4px;
+}
+
+body.phone .dropmenu>div.openmenu {
+    background-color: var(--sources-bg-colour);
+}
+
+.album-play-controls
+{
+    background-color: var(--sources-bg-colour);
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.mainpane
+{
+    background-color: var(--sources-bg-colour);
+}
+
+#artistbio
+{
+    padding:4px;
+}
+
+#playlist_top, #playlist_buttons
+{
+    background-colour: var(--playlist-bg-colour);
+}
+
+body.phone .dropmenu.album2
+{
+    background-color: transparent;
+}

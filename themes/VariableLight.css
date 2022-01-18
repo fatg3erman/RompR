@@ -1,9 +1,22 @@
-@import url("themes/theme_base/colour_theme.css");
+@import url("theme_base/colour_theme.css");
 
 :root {
+
+
+
+
     --min-progress-colour: rgba(2, 23, 40, 0.99);
     --max-progress-colour: rgba(200, 200, 200, 0.99);
     --progress-bg-colour: rgba(0,0,0,0);
+
+    --document-bg-colour: unset;
+    --document-bg-image: linear-gradient(#142034, #101F32);
+
+
+
+
+    --highlight-bg-colour: unset;
+    --highlight-bg-image: linear-gradient(rgba(255,255,255,0.1), rgba(200,200,200,0.08));
 
     --text-colour: #EEEEEE;
     --border-colour: rgba(94, 123, 147, 1);
@@ -11,22 +24,17 @@
     --link-colour: yellow;
     --highlight-colour: yellow;
 
-    --main-bg-colour: unset;
-    --main-bg-image: linear-gradient(#142034, #101F32);
+    --headerbar-bg-colour-mob: unset;
+    --headerbar-bg-image-mob: unset;
+    --headerbar-bg-colour-desk: unset;
+    --headerbar-bg-image-desk: unset;
 
-
-    --headerbar-bg-colour: unset;
-    --headerbar-bg-image: none;
-
-    --topbit-bg-colour: unset;
-    --topbit-bg-image: none;
+    --infobar-bg-colour: unset;
+    --infobar-bg-image: none;
 
     --sources-bg-colour: unset;
     --sources-bg-image:  none;
     --sources-border-top: none;
-
-    --playlist_top-bg-colour: unset;
-    --playlist_top-bg-image: none;
 
     --playlist-bg-colour: unset;
     --playlist-bg-image: none;
@@ -91,16 +99,10 @@
     --bordered-bottom: none;
     --bordered-left: none;
 
-    --album-browse-bg-colour: rgba(200,200,200,0.07);
-    --album-browse-bg-image: none;
-    --skypotato-openalbum-bg-colour: rgba(200,200,200,0.07);
-    --skypotato-openalbum-bg-image: none;
-    --album-browse-open-bg-colour: rgba(200,200,200,0.07);
-    --album-browse-open-bg-image: none;
-    --album-browse-open-highlight: none;
-
     --albumart-artists-bg-colour: unset;
     --albumart-artists-bg-image: unset;
+
+    --open-album-border-highlight: none;
 
     --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;
@@ -124,9 +126,15 @@ a:hover,a:active
     margin-bottom: 0px !important;
 }
 
+/* We have to exlude top-drop menu icons from accepting opacity
+because it proprgates through to the dropdown menu itself and it seems
+that can't be overridded by setting opacity 1 on that element */
 [class^="icon-"]:not(.invisibleicon):not(.topdrop),
 [class*=" icon-"]:not(.invisibleicon):not(.topdrop),
-img
+img,
+img.spotify_album_image,
+#buttonbox,
+#volumebox
 {
     opacity: var(--vl-opacity);
 }

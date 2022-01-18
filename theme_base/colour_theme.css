@@ -1,0 +1,86 @@
+/*
+=====================================================================
+= Standard HTML Elements
+=====================================================================
+*/
+
+html
+{
+    background-color: var(--document-bg-colour);
+    background-image: var(--document-bg-image);
+    background-size:cover;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+}
+
+#custombackground
+{
+    display:none;
+}
+
+body.phone .dropmenu>div.playable,
+body.phone .dropmenu>div.menuitem,
+body.phone .mainpane .radio,
+body.phone .mainpane .faveradio,
+body.phone .mainpane .podcast:not(.podicon):not(.podglobal),
+body.phone .mainpane .directory {
+    border-top: 1px solid var(--border-colour);
+}
+
+body.phone #pluginplaylistholder .menuitem.clickicon,
+body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
+    border-bottom: 1px solid var(--border-colour);
+}
+
+.infowiki
+{
+    background-color: var(--infopane-bg-colour);
+    background-image: var(--infopane-bg-image);
+}
+
+.inbrowser
+{
+    color: var(--infopane-text-colour);
+}
+
+.collectionitem .helpfulalbum.fixed {
+    background-color: var(--highlight-bg-colour);
+    background-image: var(--highlight-bg-image);
+}
+
+.masonry_opened .helpfulalbum.tleft
+{
+    background-image: none;
+}
+
+.covercontainer.highlighted
+{
+    border-bottom: none !important;
+    margin-bottom: -4px;
+}
+
+#coverslist
+{
+    box-sizing:border-box;
+    border-left:1px solid var(--border-colour);
+}
+
+.bigholder {
+    background-color: var(--document-bg-colour);
+    background-image: var(--document-bg-image);
+}
+
+/* Ensure the album2 colour doesn't follow the div, looks weird on phone */
+
+body.phone .dropmenu.album1
+{
+    background-color: var(--sources-bg-colour);
+    background-image: var(--sources-bg-image);
+}
+
+body.phone .dropmenu.album2
+{
+    background-color: var(--sources-bg-colour);
+    background-image: var(--sources-bg-image);
+}
+

@@ -1,9 +1,21 @@
-@import url("themes/theme_base/image_theme.css");
+@import url("theme_base/image_theme.css");
 
 :root {
+    --landscape-bg-image: url("../themes/leafinity.jpg");
+    --portrait-bg-image: url("../themes/leafinity.jpg");
+    --background-position: bottom center;
+
     --min-progress-colour: rgba(159,74,10,0.8);
     --max-progress-colour: rgba(245,199,103,0.8);
     --progress-bg-colour: rgba(0,0,0,0);
+
+    --document-bg-colour: rgba(0,0,0,0.25);
+
+
+
+
+
+    --highlight-bg-colour: rgba(0,0,0,0.3);
 
     --text-colour: #eeeeee;
     --border-colour: #f5c767;
@@ -11,34 +23,25 @@
     --link-colour: yellow;
     --highlight-colour: #ffffff;
 
-    --infobar-bg-colour: var(--main-bg-colour);
+    --headerbar-bg-colour-mob:  var(--document-bg-colour);
 
-    --landscape-bg-image: url("../../themes/leafinity.jpg");
-    --portrait-bg-image: url("../../themes/leafinity.jpg");
-    --background-position: center center;
-
-    --main-bg-colour: rgba(0,0,0,0.25);
-
-
-    --headerbar-bg-colour:  var(--main-bg-colour);
+    --headerbar-bg-colour-desk: var(--document-bg-colour);
 
 
 
+    --infobar-bg-colour: var(--document-bg-colour);
 
 
+    --sources-bg-colour: var(--document-bg-colour);
 
+    --sources-border-top: none;
 
+    --playlist-bg-colour: var(--document-bg-colour);
 
-
-
-
-
-
-
-
-
-
-
+    --playlist-title-bg-colour: unset;
+    --playlist-title-border: none;
+    --playlist-item-top-border: none;
+    --playlist-current-bg-colour: unset;
     --playlist-current-shadow: 0px 0px 20px var(--text-colour);
     --playlist-current-transition: font-size 0.3s ease;
     --playlist-current-track-font-size: 120%;
@@ -50,17 +53,17 @@
     --top_drop_menu-bg-colour: rgba(159,74,10,0.9);
 
 
-    --configtitle-bg-colour: rgba(245,199,103,0.7);
+    --configtitle-bg-colour: rgba(159,74,10,0.8);
+
+    --configtitle-border-bottom: 1px solid var(--border-colour);
+
+    --infopane-border-top: none;
+    --infopane-bg-colour: var(--document-bg-colour);
+    --infopane-bg-image: none;
 
 
-
-
-
-
-
-
-
-
+    --infopane-header-bg-colour: var(--highlight-bg-colour);
+    --infopane-header-bg-image: none;
 
     --selected-bg-colour: rgba(159,74,10,0.5);
 
@@ -79,32 +82,26 @@
     --text-entry-border-colour: var(--border-colour-dark);
     --text-entry-hover-border-colour: var(---border-colour-dark);
     --text-entry-active-border-colour: var(--border-colour);
-    --text-entry-bg-colour: var(--main-bg-colour);
-    --text-entry-hover-bg-colour: var(--main-bg-colour);
-    --text-entry-active-bg-colour: var(--main-bg-colour);
+    --text-entry-bg-colour: var(--document-bg-colour);
+    --text-entry-hover-bg-colour: var(--document-bg-colour);
+    --text-entry-active-bg-colour: var(--document-bg-colour);
 
     --select-text-colour: var(--text-colour);
     --select-bg-colour: var(--text-entry-bg-colour);
     --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
 
-    --album2-colour: var(--main-bg-colour);
+    --album2-colour: var(--document-bg-colour);
     --drop-shadow: 7px 7px 5px rgba(0, 0, 0, 0.4);
 
+    --bordered-top: none;
+    --bordered-right: none;
+    --bordered-bottom: none;
+    --bordered-left: none;
 
+    --albumart-artists-bg-colour: var(--sources-bg-colour);
+    --albumart-artists-bg-image: none;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    --open-album-border-highlight: none;
 
     --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;
@@ -119,5 +116,5 @@
 
 /* For when the playlist cntrols are open in the phone skin */
 #playlistm #playlist_top, #playlistm #playlistbuttons {
-    background-color: var(--main-bg-colour);
+    background-color: var(--document-bg-colour);
 }

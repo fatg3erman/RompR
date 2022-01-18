@@ -1,9 +1,22 @@
-@import url("themes/theme_base/colour_theme.css");
+@import url("theme_base/colour_theme.css");
 
 :root {
+
+
+
+
     --min-progress-colour: rgba(100, 50, 1, 1);
     --max-progress-colour: rgba(255, 75, 1, 1);
     --progress-bg-colour: rgba(0,0,0,0);
+
+    --document-bg-colour: #181818;
+    --document-bg-image: none;
+
+
+
+
+    --highlight-bg-colour: #292929;
+    --highlight-bg-image: none;
 
     --text-colour: #dddddd;
     --border-colour: #dedede;
@@ -11,22 +24,17 @@
     --link-colour: #dcdcff;
     --highlight-colour: #ff4800;
 
-    --main-bg-colour: #181818;
-    --main-bg-image: none;
+    --headerbar-bg-colour-mob: unset;
+    --headerbar-bg-image-mob: unset;
+    --headerbar-bg-colour-desk: unset;
+    --headerbar-bg-image-desk: unset;
 
-
-    --headerbar-bg-colour: unset;
-    --headerbar-bg-image: none;
-
-    --topbit-bg-colour: unset;
-    --topbit-bg-image: none;
+    --infobar-bg-colour: unset;
+    --infobar-bg-image: none;
 
     --sources-bg-colour: unset;
     --sources-bg-image:  none;
     --sources-border-top: none;
-
-    --playlist_top-bg-colour: unset;
-    --playlist_top-bg-image: none;
 
     --playlist-bg-colour: unset;
     --playlist-bg-image: none;
@@ -91,16 +99,10 @@
     --bordered-bottom: 1px solid #232323;
     --bordered-left: 1px solid #000000;
 
-    --album-browse-bg-colour: #303030;
-    --album-browse-bg-image: none;
-    --skypotato-openalbum-bg-colour: #404040;
-    --skypotato-openalbum-bg-image: none;
-    --album-browse-open-bg-colour:#404040;
-    --album-browse-open-bg-image: none;
-    --album-browse-open-highlight: none;
+    --albumart-artists-bg-colour: var(--document-bg-colour);
+    --albumart-artists-bg-image: unset;
 
-    --albumart-artists-bg-colour: var(--main-bg-colour);
-    --albumart-artists-bg-image:var(--main-bg-image);
+    --open-album-border-highlight: none;
 
     --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;
@@ -123,3 +125,7 @@
     border-radius:2px;
 }
 
+.nobartist .helpfulalbum
+{
+    border: 1px solid var(--border-colour);
+}

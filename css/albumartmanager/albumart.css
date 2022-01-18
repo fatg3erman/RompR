@@ -122,6 +122,8 @@ img#browns {
 	overflow-y:auto;
 	height:100%;
 	width:20%;
+    background-color: var(--albumart-artists-bg-colour);
+    background-image: var(--albumart-artists-bg-image);
 }
 
 #coverslist {

@@ -1,9 +1,22 @@
-@import url("themes/theme_base/colour_theme.css");
+@import url("theme_base/colour_theme.css");
 
 :root {
+
+
+
+
     --min-progress-colour: rgba(255, 22, 0, 0.99);
     --max-progress-colour: rgba(255, 75, 1, 1);
     --progress-bg-colour: rgba(0,0,0,0);
+
+    --document-bg-colour: unset;
+    --document-bg-image: radial-gradient(circle farthest-side at top left, yellow, orange, red);
+
+
+
+
+    --highlight-bg-colour: unset;
+    --highlight-bg-image: radial-gradient(circle farthest-side at top left, yellow, orange, red);
 
     --text-colour: black;
     --border-colour: yellow;
@@ -11,22 +24,17 @@
     --link-colour: #0b0080;
     --highlight-colour: #ffffff;
 
-    --main-bg-colour: unset;
-    --main-bg-image: radial-gradient(circle farthest-side at top left, yellow, orange, red);
+    --headerbar-bg-colour-mob: unset;
+    --headerbar-bg-image-mob: unset;
+    --headerbar-bg-colour-desk: unset;
+    --headerbar-bg-image-desk: unset;
 
-
-    --headerbar-bg-colour: unset;
-    --headerbar-bg-image: none;
-
-    --topbit-bg-colour: unset;
-    --topbit-bg-image: none;
+    --infobar-bg-colour: unset;
+    --infobar-bg-image: none;
 
     --sources-bg-colour: unset;
     --sources-bg-image:  none;
     --sources-border-top: none;
-
-    --playlist_top-bg-colour: unset;
-    --playlist_top-bg-image: none;
 
     --playlist-bg-colour: unset;
     --playlist-bg-image: none;
@@ -91,20 +99,14 @@
     --bordered-bottom: 1px solid yellow;
     --bordered-left: 1px solid orange;
 
-    --album-browse-bg-colour: rgba(0,0,0,0.2);
-    --album-browse-bg-image: none;
-    --skypotato-openalbum-bg-colour: rgba(0,0,0,0.2);
-    --skypotato-openalbum-bg-image: none;
-    --album-browse-open-bg-colour: rgba(0,0,0,0.2);
-    --album-browse-open-bg-image: none;
-    --album-browse-open-highlight: none;
-
     --albumart-artists-bg-colour: rgba(0,0,0,0.2);
     --albumart-artists-bg-image: unset;
 
+    --open-album-border-highlight: none;
+
     --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;
-    --waiting-swinger-bg-image: linear-gradient(to left,  rgba(255, 75, 1, 0) 0%,  rgba(255, 75, 1, 1) 50%, rgba(255, 75, 1, 0) 100%);
+    --waiting-swinger-bg-image: linear-gradient(to left,  rgba(255, 75, 1, 0) 0%,  rgba(255, 255, 1, 1) 50%, rgba(255, 75, 1, 0) 100%);
 }
 
 html {

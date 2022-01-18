@@ -331,18 +331,6 @@ var browser = function() {
 				panel.masonry(params);
 				panel.addClass('masonry-initialised');
 			}
-
-			// $('#infopane .mixcontainer:visible').each(function() {
-			// 	var h = $(this);
-			// 	var w = h.width();
-			// 	var m = h.children('.plugin_hpl_radio');
-			// 	if (m.length == 1 || w < 700) {
-			// 		m.css('width', '100%');
-			// 	} else {
-			// 		m.css('width', '50%');
-			// 	}
-			// });
-
 		}
 	}
 }();

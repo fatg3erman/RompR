@@ -1,9 +1,22 @@
-@import url("themes/theme_base/image_theme.css");
+@import url("theme_base/image_theme.css");
 
 :root {
+    --landscape-bg-image: url("../themes/mountains.jpg");
+    --portrait-bg-image: url("../themes/mountains.jpg");
+    --background-position: top center;
+
     --min-progress-colour: rgba(61, 47, 49, 0.99);
     --max-progress-colour: rgba(89, 80, 72, 0.99);
     --progress-bg-colour: rgba(0,0,0,0);
+
+    --document-bg-colour: rgba(0,0,0,0.3);
+
+
+
+
+
+    --highlight-bg-colour: rgba(0,0,0,0.2);
+
 
     --text-colour: #eeeeee;
     --border-colour: rgba(89, 80, 72, 0.99);
@@ -11,34 +24,24 @@
     --link-colour: yellow;
     --highlight-colour: #ffffff;
 
-    --infobar-bg-colour:  var(--main-bg-colour);
+    --headerbar-bg-colour-mob:  var(--document-bg-colour);
 
-    --landscape-bg-image: url("../../themes/mountains.jpg");
-    --portrait-bg-image: url("../../themes/mountains.jpg");
-    --background-position: center center;
-
-    --main-bg-colour: rgba(0,0,0,0.3);
+    --headerbar-bg-colour-desk: var(--document-bg-colour);
 
 
-    --headerbar-bg-colour:  var(--main-bg-colour);
+    --infobar-bg-colour: var(--document-bg-colour);
 
 
+    --sources-bg-colour: var(--document-bg-colour);
 
+    --sources-border-top: none;
 
+    --playlist-bg-colour: var(--document-bg-colour);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    --playlist-title-bg-colour: unset;
+    --playlist-title-border: none;
+    --playlist-item-top-border: none;
+    --playlist-current-bg-colour: unset;
     --playlist-current-shadow: 0px 0px 20px var(--text-colour);
     --playlist-current-transition: font-size 0.3s ease, text-shadow 0.3s ease;
     --playlist-current-track-font-size: 120%;
@@ -47,20 +50,20 @@
     --playlist-current-title-font-size: unset;
     --playlist-current-title-font-weight: bold;
 
-    --top_drop_menu-bg-colour: rgba(74,58,52,0.9);
+    --top_drop_menu-bg-colour: #8c8372;
 
 
     --configtitle-bg-colour: rgba(50,50,50,0.8);
 
+    --configtitle-border-bottom: none;
+
+    --infopane-border-top: none;
+    --infopane-bg-colour: var(--document-bg-colour);
+    --infopane-bg-image: none;
 
 
-
-
-
-
-
-
-
+    --infopane-header-bg-colour: var(--highlight-bg-colour);
+    --infopane-header-bg-image: none;
 
     --selected-bg-colour: var(--max-progress-colour);
 
@@ -90,21 +93,15 @@
     --album2-colour: rgba(0,0,0,0.1);
     --drop-shadow: 7px 7px 5px rgba(0, 0, 0, 0.6);
 
+    --bordered-top: none;
+    --bordered-right: none;
+    --bordered-bottom: none;
+    --bordered-left: none;
 
+    --albumart-artists-bg-colour: var(--sources-bg-colour);
+    --albumart-artists-bg-image: none;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    --open-album-border-highlight: none;
 
     --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;
@@ -131,7 +128,7 @@ a:hover,a:active
 }
 
 body.phone #playlist_top, body.phone #playlistbuttons {
-    background-color: var(--main-bg-colour);
+    background-color: var(--document-bg-colour);
 }
 
 /* This is required when you have a left border on playlist-current-track */

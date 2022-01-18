@@ -1,31 +1,40 @@
-@import url("themes/theme_base/colour_theme.css");
+@import url("theme_base/colour_theme.css");
 
 :root {
+
+
+
+
     --min-progress-colour: rgba(100, 50, 1, 1);
     --max-progress-colour: rgba(255, 75, 1, 1);
     --progress-bg-colour: rgba(0,0,0,0);
 
+    --document-bg-colour: unset;
+    --document-bg-image: linear-gradient(#999999, #eeeeee, #aaaaaa);
+
+
+
+
+    --highlight-bg-colour: rgba(0,0,0,0.2);
+    --highlight-bg-image: unset;
+
     --text-colour: black;
     --border-colour: #555555;
+
     --link-colour: #0b0080;
     --highlight-colour: #ee3700;
 
-    --main-bg-colour: unset;
-    --main-bg-image: linear-gradient(#999999, #eeeeee, #aaaaaa);
+    --headerbar-bg-colour-mob: unset;
+    --headerbar-bg-image-mob: unset;
+    --headerbar-bg-colour-desk: unset;
+    --headerbar-bg-image-desk: unset;
 
-
-    --headerbar-bg-colour: unset;
-    --headerbar-bg-image: none;
-
-    --topbit-bg-colour: unset;
-    --topbit-bg-image: none;
+    --infobar-bg-colour: unset;
+    --infobar-bg-image: none;
 
     --sources-bg-colour: unset;
     --sources-bg-image:  none;
     --sources-border-top: none;
-
-    --playlist_top-bg-colour: unset;
-    --playlist_top-bg-image: none;
 
     --playlist-bg-colour: unset;
     --playlist-bg-image: none;
@@ -81,7 +90,6 @@
     --select-bg-colour: var(--text-entry-bg-colour);
     --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
 
-    --album1-colour: transparent;
     --album2-colour: transparent;
     --drop-shadow: 7px 7px 5px rgba(50, 50, 50, 0.6);
 
@@ -90,16 +98,10 @@
     --bordered-bottom: 1px solid #e0e0e0;
     --bordered-left: 1px solid #9a9a9a;
 
-    --album-browse-bg-colour: #d0d0d0;
-    --album-browse-bg-image: none;
-    --skypotato-openalbum-bg-colour: #d0d0d0;
-    --skypotato-openalbum-bg-image: none;
-    --album-browse-open-bg-colour: #d0d0d0;
-    --album-browse-open-bg-image: none;
-    --album-browse-open-highlight: none;
+    --albumart-artists-bg-colour: var(--document-bg-colour);
+    --albumart-artists-bg-image:var(--document-bg-image);
 
-    --albumart-artists-bg-colour: var(--main-bg-colour);
-    --albumart-artists-bg-image:var(--main-bg-image);
+    --open-album-border-highlight: none;
 
     --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;

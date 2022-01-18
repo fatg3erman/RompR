@@ -1,9 +1,22 @@
-@import url("themes/theme_base/colour_theme.css");
+@import url("theme_base/colour_theme.css");
 
 :root {
+
+
+
+
     --min-progress-colour: rgba(1, 1, 1, 0.75);
     --max-progress-colour: rgba(150, 150, 150, 0.75);
     --progress-bg-colour: rgba(1, 1, 1, 0);
+
+    --document-bg-colour: #cccccc;
+    --document-bg-image: none;
+
+
+
+
+    --highlight-bg-colour: #aaaaaa;
+    --highlight-bg-image: none;
 
     --text-colour: black;
     --border-colour: black;
@@ -11,22 +24,17 @@
     --link-colour: #0b0080;
     --highlight-colour: #ff4800;
 
-    --main-bg-colour: #cccccc;
-    --main-bg-image: none;
+    --headerbar-bg-colour-mob: unset;
+    --headerbar-bg-image-mob: linear-gradient(#e3e3e3, #dfdfdf);
+    --headerbar-bg-colour-desk: unset;
+    --headerbar-bg-image-desk: linear-gradient(#b9b9b9, #b3b3b3);
 
-
-    --headerbar-bg-colour: unset;
-    --headerbar-bg-image: linear-gradient(#b9b9b9, #b4b4b4);
-
-    --topbit-bg-colour: unset;
-    --topbit-bg-image: linear-gradient(#dfdfdf, #b9b9b9);
+    --infobar-bg-colour: unset;
+    --infobar-bg-image: linear-gradient(#dfdfdf, #b9b9b9);
 
     --sources-bg-colour: unset;
     --sources-bg-image:  none;
     --sources-border-top: 1px solid #000000;
-
-    --playlist_top-bg-colour: unset;
-    --playlist_top-bg-image: none;
 
     --playlist-bg-colour: unset;
     --playlist-bg-image: none;
@@ -82,7 +90,6 @@
     --select-bg-colour: var(--text-entry-bg-colour);
     --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
 
-    --album1-colour: transparent;
     --album2-colour: #c4c4c4;
     --drop-shadow: 7px 7px 5px rgba(50, 50, 50, 0.6);
 
@@ -91,16 +98,10 @@
     --bordered-bottom: 1px solid #efefef;
     --bordered-left: 1px solid #9a9a9a;
 
-    --album-browse-bg-colour: #dddddd;
-    --album-browse-bg-image: none;
-    --skypotato-openalbum-bg-colour: #cccccc;
-    --skypotato-openalbum-bg-image: none;
-    --album-browse-open-bg-colour: #cccccc;
-    --album-browse-open-bg-image: none;
-    --album-browse-open-highlight: 1px solid #ffffff;
+    --albumart-artists-bg-colour: var(--document-bg-colour);
+    --albumart-artists-bg-image:var(--document-bg-image);
 
-    --albumart-artists-bg-colour: var(--main-bg-colour);
-    --albumart-artists-bg-image:var(--main-bg-image);
+    --open-album-border-highlight: none;
 
     --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;
@@ -123,4 +124,9 @@
 .mCSB_dragger_bar
 {
     background:rgba(0,0,0,0.75) !important;
+}
+
+.nobartist .helpfulalbum
+{
+    border: 1px solid var(--border-colour);
 }

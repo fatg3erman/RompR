@@ -32,11 +32,11 @@ themeManager.setBgCss = function(hour) {
 		15: 'linear-gradient(#142640, #142950)',
 		16: 'linear-gradient(#142540, #142949)',
 		17: 'linear-gradient(#14253F, #142642)',
-		18: 'linear-gradient(#142238, #201F32)',
-		19: 'linear-gradient(#182136, #281F30)',
-		20: 'linear-gradient(#192134, #301A29)',
-		21: 'linear-gradient(#142034, #201827)',
-		22: 'linear-gradient(#021225, #151420)',
+		18: 'linear-gradient(#142238, #221F32)',
+		19: 'linear-gradient(#182136, #301F30)',
+		20: 'linear-gradient(#192134, #341A29)',
+		21: 'linear-gradient(#142034, #281827)',
+		22: 'linear-gradient(#021225, #121420)',
 		23: 'linear-gradient(#001220, #100000)'
 	};
 	const textColours = {
@@ -93,7 +93,7 @@ themeManager.setBgCss = function(hour) {
 	};
 	debug.log('THEMEMANAGER', 'Updating background colour for hour', hour);
 	set_css_variable('--text-colour', textColours[hour]);
-	set_css_variable('--main-bg-image', hourColours[hour]);
+	set_css_variable('--document-bg-image', hourColours[hour]);
 	set_css_variable('--vl-opacity', iconColours[hour]);
 }
 
@@ -106,6 +106,6 @@ themeManager.teardown = function() {
 	clearTimeout(themeManager.vl_timer);
 	sleepHelper.removeWakeHelper(themeManager.vl_update);
 	unset_css_variable('--text-colour');
-	unset_css_variable('--main-bg-image');
+	unset_css_variable('--document-bg-image');
 	unset_css_variable('--vl-opacity');
 }

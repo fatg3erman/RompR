@@ -1,9 +1,22 @@
-@import url("themes/theme_base/colour_theme.css");
+@import url("theme_base/colour_theme.css");
 
 :root {
+
+
+
+
     --min-progress-colour: rgba(100, 50, 1, 1);
     --max-progress-colour: rgba(255, 75, 1, 1);
     --progress-bg-colour: rgba(0,0,0,0);
+
+    --document-bg-colour: unset;
+    --document-bg-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.15) 12%, rgba(0, 0, 0, 0.1) 51%), url("../themes/bg.jpg");
+
+
+
+
+    --highlight-bg-colour: unset;
+    --highlight-bg-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.15) 12%, rgba(0, 0, 0, 0.1) 51%);
 
     --text-colour: #dddddd;
     --border-colour: #dedede;
@@ -11,22 +24,17 @@
     --link-colour: #dcdcff;
     --highlight-colour: #ff4800;
 
-    --main-bg-colour: unset;
-    --main-bg-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");
+    --headerbar-bg-colour-mob: unset;
+    --headerbar-bg-image-mob: unset;
+    --headerbar-bg-colour-desk: unset;
+    --headerbar-bg-image-desk: unset;
 
-
-    --headerbar-bg-colour: unset;
-    --headerbar-bg-image: none;
-
-    --topbit-bg-colour: unset;
-    --topbit-bg-image: none;
+    --infobar-bg-colour: unset;
+    --infobar-bg-image: none;
 
     --sources-bg-colour: unset;
     --sources-bg-image:  none;
     --sources-border-top: none;
-
-    --playlist_top-bg-colour: unset;
-    --playlist_top-bg-image: none;
 
     --playlist-bg-colour: unset;
     --playlist-bg-image: none;
@@ -91,16 +99,10 @@
     --bordered-bottom: 1px solid #232323;
     --bordered-left: 1px solid #000000;
 
-    --album-browse-bg-colour: #303030;
-    --album-browse-bg-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");;
-    --skypotato-openalbum-bg-colour: #404040;
-    --skypotato-openalbum-bg-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");;
-    --album-browse-open-bg-colour:#404040;
-    --album-browse-open-bg-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg");;
-    --album-browse-open-highlight: none;
-
-    --albumart-artists-bg-colour: var(--main-bg-colour);
+    --albumart-artists-bg-colour: var(--document-bg-colour);
     --albumart-artists-bg-image: unset;
+
+    --open-album-border-highlight: none;
 
     --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;
@@ -108,15 +110,10 @@
 }
 
 html {
-    background: #101010 url("themes/bg.jpg") !important;
-    background-image: -webkit-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg") !important;
-    background-image: -moz-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg") !important;
-    background-image: -ms-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg") !important;
-    background-image: -o-radial-gradient(50% 150px, circle cover, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg") !important;
-    background-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.0980392) 12%, rgba(0, 0, 0, 0.2) 51%), url("themes/bg.jpg") !important;
     background-repeat: no-repeat, repeat !important;
     background-attachment: fixed !important;
     min-height: 100% !important;
+    background-size: auto !important;
 }
 
 .highlighted {

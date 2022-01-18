@@ -1,9 +1,22 @@
-@import url("themes/theme_base/colour_theme.css");
+@import url("theme_base/colour_theme.css");
 
 :root {
+
+
+
+
     --min-progress-colour: rgba(150, 150, 150, 0.99);
     --max-progress-colour: rgba(255, 255, 255, 0.99);
     --progress-bg-colour: rgba(0,0,0,0);
+
+    --document-bg-colour: unset;
+    --document-bg-image: linear-gradient(#000000, #444444);
+
+
+
+
+    --highlight-bg-colour: rgba(255,255,255,0.1);
+    --highlight-bg-image: none;
 
     --text-colour: #dddddd;
     --border-colour: #bbbbbb;
@@ -11,22 +24,17 @@
     --link-colour: orange;
     --highlight-colour: #ffffff;
 
-    --main-bg-colour: unset;
-    --main-bg-image: linear-gradient(#000000, #444444);
+    --headerbar-bg-colour-mob: unset;
+    --headerbar-bg-image-mob: unset;
+    --headerbar-bg-colour-desk: unset;
+    --headerbar-bg-image-desk: unset;
 
-
-    --headerbar-bg-colour: unset;
-    --headerbar-bg-image: linear-gradient(#050505, #0b0b0b);
-
-    --topbit-bg-colour: unset;
-    --topbit-bg-image: none;
+    --infobar-bg-colour: unset;
+    --infobar-bg-image: none;
 
     --sources-bg-colour: unset;
     --sources-bg-image:  none;
     --sources-border-top: none;
-
-    --playlist_top-bg-colour: unset;
-    --playlist_top-bg-image: none;
 
     --playlist-bg-colour: unset;
     --playlist-bg-image: none;
@@ -91,16 +99,10 @@
     --bordered-bottom: 1px solid #292929;
     --bordered-left: 1px solid #222222;
 
-    --album-browse-bg-colour: unset;
-    --album-browse-bg-image: linear-gradient(rgba(100,100,100,0.3), rgba(200,200,200,0.2));
-    --skypotato-openalbum-bg-colour: unset;
-    --skypotato-openalbum-bg-image: linear-gradient(rgba(200,200,200,0.2), rgba(220,220,220,0.2));
-    --album-browse-open-bg-colour: unset;
-    --album-browse-open-bg-image: linear-gradient(rgba(100,100,100,0.2), rgba(200,200,200,0.1));
-    --album-browse-open-highlight: 1px solid rgba(200,200,200,0.1);
+    --albumart-artists-bg-colour: var(--document-bg-colour);
+    --albumart-artists-bg-image:var(--document-bg-image);
 
-    --albumart-artists-bg-colour: var(--main-bg-colour);
-    --albumart-artists-bg-image:var(--main-bg-image);
+    --open-album-border-highlight: 1px solid var(--border-colour-dark);
 
     --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;

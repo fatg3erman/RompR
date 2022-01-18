@@ -1,9 +1,22 @@
-@import url("themes/theme_base/colour_theme.css");
+@import url("theme_base/colour_theme.css");
 
 :root {
+
+
+
+
     --min-progress-colour: rgba(201, 201, 201, 0.99);
     --max-progress-colour: rgba(255, 255, 255, 0.99);
     --progress-bg-colour: rgba(0,0,0,0);
+
+    --document-bg-colour: unset;
+    --document-bg-image: url('../newimages/silver1.jpg');
+
+
+
+
+    --highlight-bg-colour: rgba(0,0,0,0.1);
+    --highlight-bg-image: unset;
 
     --text-colour: black;
     --border-colour: #aaaaaa;
@@ -11,22 +24,17 @@
     --link-colour: #12569a;
     --highlight-colour: #ff4800;
 
-    --main-bg-colour: unset;
-    --main-bg-image: url('../../newimages/silver1.jpg');
+    --headerbar-bg-colour-mob: unset;
+    --headerbar-bg-image-mob: none;
+    --headerbar-bg-colour-desk: unset;
+    --headerbar-bg-image-desk: none;
 
-
-    --headerbar-bg-colour: unset;
-    --headerbar-bg-image: none;
-
-    --topbit-bg-colour: unset;
-    --topbit-bg-image: none;
+    --infobar-bg-colour: unset;
+    --infobar-bg-image: none;
 
     --sources-bg-colour: unset;
     --sources-bg-image:  none;
     --sources-border-top: none;
-
-    --playlist_top-bg-colour: unset;
-    --playlist_top-bg-image: none;
 
     --playlist-bg-colour: unset;
     --playlist-bg-image: none;
@@ -43,9 +51,9 @@
     --playlist-current-title-font-weight: unset;
 
     --top_drop_menu-bg-colour: unset;
-    --top_drop_menu-bg-image: url('../../newimages/silver2.jpg');
+    --top_drop_menu-bg-image: url('../newimages/silver2.jpg');
 
-    --configtitle-bg-colour: rgba(0,0,0,0.5);
+    --configtitle-bg-colour: rgba(0,0,0,0.3);
     --configtitle-bg-image: none;
     --configtitle-border-bottom: none;
 
@@ -82,7 +90,6 @@
     --select-bg-colour: var(--text-entry-bg-colour);
     --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
 
-    --album1-colour: transparent;
     --album2-colour: rgba(0,0,0,0.2);
     --drop-shadow: 7px 7px 5px rgba(50, 50, 50, 0.6);
 
@@ -91,16 +98,10 @@
     --bordered-bottom: 1px solid #dddddd;
     --bordered-left: 1px solid #aaaaaa;
 
-    --album-browse-bg-colour: #dddddd;
-    --album-browse-bg-image: none;
-    --skypotato-openalbum-bg-colour: #cdcdcd;
-    --skypotato-openalbum-bg-image: none;
-    --album-browse-open-bg-colour: #dddddd;
-    --album-browse-open-bg-image: none;
-    --album-browse-open-highlight: none;
+    --albumart-artists-bg-colour: var(--document-bg-colour);
+    --albumart-artists-bg-image:var(--document-bg-image);
 
-    --albumart-artists-bg-colour: var(--main-bg-colour);
-    --albumart-artists-bg-image:var(--main-bg-image);
+    --open-album-border-highlight: none;
 
     --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;

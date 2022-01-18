@@ -1,9 +1,22 @@
-@import url("themes/theme_base/colour_theme.css");
+@import url("theme_base/colour_theme.css");
 
 :root {
+
+
+
+
     --min-progress-colour: rgba(2, 23, 40, 0.99);
     --max-progress-colour: rgba(200, 200, 200, 0.99);
     --progress-bg-colour: rgba(0,0,0,0);
+
+    --document-bg-colour: unset;
+    --document-bg-image: linear-gradient(#021728, #14253C);
+
+
+
+
+    --highlight-bg-colour: rgba(255,255,255,0.1);
+    --highlight-bg-image: none;
 
     --text-colour: #dddddd;
     --border-colour: rgba(94, 123, 147, 1);
@@ -11,27 +24,17 @@
     --link-colour: yellow;
     --highlight-colour: #ffffff;
 
+    --headerbar-bg-colour-mob: unset;
+    --headerbar-bg-image-mob: unset;
+    --headerbar-bg-colour-desk: unset;
+    --headerbar-bg-image-desk: unset;
 
-
-
-
-
-
-    --main-bg-colour: unset;
-    --main-bg-image: linear-gradient(#021728, #14253C);
-
-    --headerbar-bg-colour: unset;
-    --headerbar-bg-image: none;
-
-    --topbit-bg-colour: unset;
-    --topbit-bg-image: none;
+    --infobar-bg-colour: unset;
+    --infobar-bg-image: none;
 
     --sources-bg-colour: unset;
     --sources-bg-image:  none;
     --sources-border-top: none;
-
-    --playlist_top-bg-colour: unset;
-    --playlist_top-bg-image: none;
 
     --playlist-bg-colour: unset;
     --playlist-bg-image: none;
@@ -95,16 +98,10 @@
     --bordered-bottom: none;
     --bordered-left: none;
 
-    --album-browse-bg-colour: rgba(200,200,200,0.07);
-    --album-browse-bg-image: none;
-    --skypotato-openalbum-bg-colour: rgba(200,200,200,0.07);
-    --skypotato-openalbum-bg-image: none;
-    --album-browse-open-bg-colour: rgba(200,200,200,0.07);
-    --album-browse-open-bg-image: none;
-    --album-browse-open-highlight: none;
+    --albumart-artists-bg-colour: var(--document-bg-colour);
+    --albumart-artists-bg-image:var(--document-bg-image);
 
-    --albumart-artists-bg-colour: var(--main-bg-colour);
-    --albumart-artists-bg-image:var(--main-bg-image);
+    --open-album-border-highlight: none;
 
     --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;

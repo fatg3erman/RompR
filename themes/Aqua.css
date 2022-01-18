@@ -1,30 +1,40 @@
-@import url("themes/theme_base/colour_theme.css");
+@import url("theme_base/colour_theme.css");
 
 :root {
+
+
+
+
     --min-progress-colour: rgba(192, 208, 231, 0.99);
     --max-progress-colour: rgba(232, 235, 240, 0.99);
     --progress-bg-colour: rgba(0,0,0,0);
 
+    --document-bg-colour: #e8ebf0;;
+    --document-bg-image: none;
+    /* Used for artistchooser, general th rows in masonified tables, various
+    boxes that need to be separated from the background, backmenu, drop-box,
+    masonry spotify albums, skypotato albums, anything with a class of
+    highlighted,*/
+    --highlight-bg-colour: var(--document-bg-colour);
+    --highlight-bg-image: unset;
+
     --text-colour: black;
     --border-colour: #ccdcf2;
+
     --link-colour: #0b0080;
     --highlight-colour: #3875d7;
 
-    --main-bg-colour: #e8ebf0;;
-    --main-bg-image: none;
+    --headerbar-bg-colour-mob: unset;
+    --headerbar-bg-image-mob: linear-gradient(#efefef, #e5e5e5);
+    --headerbar-bg-colour-desk: unset;
+    --headerbar-bg-image-desk: linear-gradient(#b3b3b3, #b4b4b4);
 
-    --headerbar-bg-colour: unset;
-    --headerbar-bg-image: linear-gradient(#b3b3b3, #afafaf);
-
-    --topbit-bg-colour: unset;
-    --topbit-bg-image: linear-gradient(#E5E5E5, #b3b3b3);
+    --infobar-bg-colour: unset;
+    --infobar-bg-image: linear-gradient(#E5E5E5, #b3b3b3);
 
     --sources-bg-colour: #e8ebf0;
     --sources-bg-image:  none;
     --sources-border-top: border-top:1px solid #000000;
-
-    --playlist_top-bg-colour: unset;
-    --playlist_top-bg-image: linear-gradient(#afafaf, #b4b4b4);
 
     --playlist-bg-colour: unset;
     --playlist-bg-image: linear-gradient(#b4b4b4, #e5e5e5);
@@ -80,7 +90,6 @@
     --select-bg-colour: var(--text-entry-bg-colour);
     --select-hover-bg-colour: var(--text-entry-hover-bg-colour);
 
-    --album1-colour: transparent;
     --album2-colour: rgba(225,228,234,0.85);
     --drop-shadow: 7px 7px 5px rgba(50, 50, 50, 0.6);
 
@@ -89,16 +98,10 @@
     --bordered-bottom: 1px solid #e0e0e0;
     --bordered-left: 1px solid #9a9a9a;
 
-    --album-browse-bg-colour: var(--main-bg-colour);
-    --album-browse-bg-image: none;
-    --skypotato-openalbum-bg-colour: var(--main-bg-colour);
-    --skypotato-openalbum-bg-image: none;
-    --album-browse-open-bg-colour: var(--main-bg-colour);
-    --album-browse-open-bg-image: none;
-    --album-browse-open-highlight: none;
-
-    --albumart-artists-bg-colour: var(--main-bg-colour);
+    --albumart-artists-bg-colour: var(--document-bg-colour);
     --albumart-artists-bg-image: none;
+
+    --open-album-border-highlight: none;
 
     --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;
@@ -122,6 +125,7 @@ input.inbrowser, div.inbrowser {
     margin-bottom: 0px !important;
 }
 
-body.mobile #playlist_top {
-    background-image: none !important;
+.nobartist .helpfulalbum
+{
+    border: 1px solid var(--border-colour);
 }

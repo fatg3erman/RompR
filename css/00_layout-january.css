@@ -7,12 +7,18 @@
 =====================================================================
 */
 
-/* Top bar on phone and Tablet skins */
+/* Top bar on phone and Tablet skins, control bar below infopane on desktop and fruit */
 
-#headerbar
+body.mobile #headerbar
 {
-    background-color: var(--headerbar-bg-colour);
-    background-image: var(--headerbar-bg-image);
+    background-color: var(--headerbar-bg-colour-mob);
+    background-image: var(--headerbar-bg-image-mob);
+}
+
+body.desktop #headerbar
+{
+    background-color: var(--headerbar-bg-colour-desk);
+    background-image: var(--headerbar-bg-image-desk);
 }
 
 /* Notifications dropdown/pullup */
@@ -179,6 +185,9 @@ i.phone-dropdown-button {
 	line-height:1.3em;
 	padding-left:4px;
 	cursor:pointer;
+    background-color: var(--highlight-bg-colour);
+    background-image: var(--highlight-bg-image);
+    color: var(--text-colour);
 }
 
 /* General purpose label to be used inside a containerbox next to eg a select box*/
@@ -388,9 +397,24 @@ i.icon-menu {
     box-shadow: var(--drop-shadow);
 }
 
+.highlighted
+{
+    background-color: var(--highlight-bg-colour);
+    background-image: var(--highlight-bg-image);
+}
+
+.bordered
+{
+    border-left: var(--bordered-left);
+    border-bottom: var(--bordered-bottom);
+    border-right: var(--bordered-right);
+    border-top: var(--bordered-top);
+}
+
 /* These are used in the collection for holding albums, podcasts, you name it */
 
-.dropmenu {
+.dropmenu
+{
 	display:none;
 	margin:0px;
 	padding-right:0px;
@@ -398,18 +422,21 @@ i.icon-menu {
 	padding-bottom:4px;
 }
 
-.dropmenu.visible {
+.dropmenu.visible
+{
 	display:block;
 }
 
-.smallcover {
+.smallcover
+{
 	width:32px;
 	height:auto;
 	vertical-align:middle;
 	margin-right:8px;
 }
 
-.smallicon {
+.smallicon
+{
 	padding:0px;
 	margin:4px;
 	height:20px;
@@ -417,7 +444,8 @@ i.icon-menu {
 	vertical-align:middle;
 }
 
-.medicon {
+.medicon
+{
 	padding:0px;
 	margin:2px;
 	height:30px;
@@ -432,13 +460,15 @@ i.icon-menu {
 	margin-right:8px;
 }
 
-.tracknumber {
+.tracknumber
+{
 	height:1.3em;
 	width:2em;
 	font-weight:bold;
 }
 
-.discnumber {
+.discnumber
+{
 	font-weight:bold;
 	font-size:110%;
 	padding-top:2px;
@@ -446,53 +476,62 @@ i.icon-menu {
 	display:block;
 }
 
-.clicktrack {
+.clicktrack
+{
 	margin-bottom: 2px;
 }
 
 /* Flexbox layouts */
 
-.containerbox {
+.containerbox
+{
 	display:-webkit-box;
 	display: flex;
 }
 
-.vertical {
+.vertical
+{
 	-webkit-box-orient:vertical;
 	flex-direction: column;
 }
 
-.center {
+.center
+{
 	-webkit-box-pack:center;
 	justify-content: center;
 }
 
-.expand {
+.expand
+{
 	-webkit-box-flex:1;
 	flex-grow: 1;
 	flex-shrink: 1;
 	flex-basis: auto;
 }
 
-.expandslightly {
+.expandslightly
+{
 	flex-grow: 1;
 	flex-shrink: 2;
 	flex-basis: auto;
 }
 
-.expandalot {
+.expandalot
+{
 	flex-grow: 5;
 	flex-shrink: 1;
 	flex-basis: auto;
 }
 
-.expandabit {
+.expandabit
+{
 	flex-grow: 2;
 	flex-shrink: 2;
 	flex-basis: auto;
 }
 
-.fixed {
+.fixed
+{
 	flex-grow: 0;
 	flex-shrink:0;
 }
@@ -509,6 +548,12 @@ i.icon-menu {
 =
 =====================================================================
 */
+
+#infobar.coloured, body.mobile #infobar, #thetopbit
+{
+    background-color: var(--infobar-bg-colour);
+    background-image: var(--infobar-bg-image);
+}
 
 /* Add Tags popup - when clicking + in nowplaying */
 
@@ -588,6 +633,13 @@ i.icon-menu {
 =
 =====================================================================
 */
+
+#sources
+{
+    border-top: var(--sources-border-top);
+    background-color: var(--sources-bg-colour);
+    background-image: var(--sources-bg-image);
+}
 
 /* Holds the Collection search options and values */
 
@@ -749,6 +801,12 @@ div.unplayable {
 
 /* Main div that contains the playlist */
 
+#playlist, #playlistm
+{
+    background-color: var(--playlist-bg-colour);
+    background-image: var(--playlist-bg-image);
+}
+
 #playlist
 {
 	height:100%;
@@ -800,6 +858,7 @@ div.item
     margin-bottom: 2px;
 	margin-right:2px;
 	box-sizing: border-box;
+    border-top: var(--playlist-item-top-border);
 }
 
 div.item div.containerbox.vertical.expand
@@ -826,6 +885,31 @@ div.item div.containerbox.vertical.expand
 	margin-left:4px;
 	padding-top:8px;
 	padding-bottom:8px;
+    background-color: var(--playlist-title-bg-colour);
+    border-bottom: var(--playlist-title-border);
+    transition: var(--playlist-current-transition);
+}
+
+.playlistcurrentitem
+{
+    color: var(--highlight-colour);
+    background-color: var(--playlist-current-bg-colour);
+    font-size: var(--playlist-current-track-font-size);
+    font-weight: var(--playlist-current-track-font-weight);
+    text-shadow: var(--playlist-current-shadow);
+    transition: var(--playlist-current-transition);
+    border-left: var(--playlist-current-track-left-border);
+}
+
+.playlistcurrenttitle
+{
+    color: var(--highlight-colour);
+    background-color: var(--playlist-current-bg-colour);
+    border-bottom: var(--playlist-title-border);
+    font-size: var(--playlist-current-title-font-size);
+    font-weight: var(--playlist-current-title-font-weight);
+    transition: var(--playlist-current-transition);
+    text-shadow: var(--playlist-current-shadow);
 }
 
 .playlistrow2
@@ -910,7 +994,8 @@ div.item div.containerbox.vertical.expand
 
 #artistchooser
 {
-    background-color: var(--main-bg-colour);
+    background-color: var(--highlight-bg-colour);
+    background-image: var(--highlight-bg-image);
 	font-weight:bold;
 	text-align:center;
 	width:98%;
@@ -921,6 +1006,14 @@ div.item div.containerbox.vertical.expand
 	padding-bottom:4px;
 	padding-top:4px;
 }
+
+#infopane
+{
+    border-top: var(--infopane-border-top);
+    background-color: var(--infopane-bg-colour);
+    background-image: var(--infopane-bg-image);
+}
+
 
 /* Currently selected info source */
 
@@ -1017,10 +1110,14 @@ td.fil {
 	cursor: pointer;
 }
 
-.infosection {
+.infosection, .albumsection {
 	padding-left:12px;
 	padding-right:12px;
 	margin-bottom:4px;
+    background-color: var(--infopane-header-bg-colour);
+    background-image: var(--infopane-header-bg-image);
+    background-size:cover;
+    background-repeat:no-repeat;
 }
 
 .infowiki h2 {
@@ -1285,7 +1382,7 @@ a.infoclick.clickreleasepage
 }
 
 .masonry_general table tr th {
-    background-color: var(--main-bg-colour);
+    background-color: var(--highlight-bg-colour);
     border-bottom:1px solid var(--border-colour);
 }
 
@@ -1300,6 +1397,8 @@ a.infoclick.clickreleasepage
 	padding-top:4px;
 	box-sizing:border-box;
 	max-width:100%;
+    background-color: var(--highlight-bg-colour);
+    background-image: var(--highlight-bg-image);
 }
 
 .helpfulalbum .tag
@@ -1373,6 +1472,10 @@ a.infoclick.clickreleasepage
 	padding: 8px;
 	box-sizing:border-box;
 	margin-bottom:1.5em;
+    background-color: var(--highlight-bg-colour);
+    background-image: var(--highlight-bg-image);
+    border-left: var(--open-album-border-highlight);
+    border-top: var(--open-album-border-highlight);
 }
 
 .masonry_opened .helpfulalbum
@@ -1697,7 +1800,7 @@ td.dan, th.dan{
 	align-items:center;
 	padding:0.4em;
 	box-sizing: border-box;
-	background-color: var(--main-bg-colour);
+	background-color: var(--highlight-bg-colour);
 	border: 4px solid transparent;
 }
 
@@ -1813,7 +1916,7 @@ tr.spacerboogie {
 
 .plugin_mbb_table th {
 	text-align:center;
-    background-color: var(--main-bg-colour);
+    background-color: var(--highlight-bg-colour);
     border-left: 1px solid var(--border-colour);
 }
 
@@ -1834,7 +1937,7 @@ tr.spacerboogie {
 */
 
 div.plugin_backi_drop-images {
-	background-color: var(--main-bg-colour);
+	background-color: var(--highlight-bg-colour);
 	text-align: center;
 	line-height: 3em;
 	margin-bottom:4px;
@@ -1871,6 +1974,12 @@ div.plugin_backi_drop-images {
 	transition: opacity 0.3s ease;
 	opacity: 0;
 	max-width:100%;
+    background-color: var(--top_drop_menu-bg-colour);
+    background-image: var(--top_drop_menu-bg-image);
+    border-left: var(--bordered-left);
+    border-bottom: var(--bordered-bottom);
+    border-right: var(--bordered-right);
+    border-top: var(--bordered-top);
 }
 
 .popupcontentcontainer {

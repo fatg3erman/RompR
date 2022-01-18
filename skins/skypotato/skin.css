@@ -299,8 +299,8 @@ button.spinable.icon-spin6 {
 
 .controlbutton-left
 {
-	margin-right:2px;
-	margin-left:6px;
+	padding-right:2px;
+	padding-left:6px;
 }
 
 .topstats {

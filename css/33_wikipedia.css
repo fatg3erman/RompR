@@ -6,7 +6,7 @@
 
 table.navbox th
 {
-    background-color: var(--main-bg-colour);
+    background-color: var(--highlight-bg-colour);
 }
 
 table.navbox-inner th, table.navbox-inner td {

@@ -299,6 +299,12 @@ div.albumbitsmenu {
 	cursor:pointer;
 }
 
+.backmenu
+{
+    background-color: var(--highlight-bg-colour) !important;
+    background-image: var(--highlight-bg-image);
+}
+
 .topdrop
 {
 	float: none !important;

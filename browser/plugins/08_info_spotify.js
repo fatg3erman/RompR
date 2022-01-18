@@ -109,7 +109,7 @@ var info_spotify = function() {
 		let holderbox = $('<div>', {class: 'containerbox textunderline'}).appendTo(artistmeta.spotify.spotichooser);
 		holderbox.append($('<div>', {class: 'fixed infoclick clickshowalbums bleft'}).html(language.gettext('label_albumsby')));
 		holderbox.append($('<div>', {class: 'fixed infoclick clickshowartists bleft bmid'}).html(language.gettext('lastfm_simar')));
-		artistmeta.spotify.spinnerthing = $('<i>', {class: 'fixed svg-square title-menu invisible'}).appendTo(holderbox);
+		artistmeta.spotify.spinnerthing = $('<div>', {class: 'wafflything wafflebanger invisible'}).appendTo(artistmeta.spotify.spotichooser);
 
 		artistmeta.spotify.spotiwidget = layout.add_non_flow_box();
 		artistmeta.spotify.spotiwidget.addClass('fullwidth medium_masonry_holder');
@@ -283,7 +283,7 @@ var info_spotify = function() {
 			function getAlbums() {
 				artistmeta.spotify.spotichooser.find('.bsel').removeClass("bsel");
 				artistmeta.spotify.spotichooser.find('.clickshowalbums').addClass("bsel");
-				artistmeta.spotify.spinnerthing.makeSpinner();
+				artistmeta.spotify.spinnerthing.fadeIn(100).addClass('wafflebanger-moving');
 				if (!artistmeta.spotify.albums) {
 					spotify.artist.getAlbums(artistmeta.spotify.id, 'album,single', storeAlbums, self.artist.spotifyError, true)
 				} else {
@@ -294,7 +294,7 @@ var info_spotify = function() {
 			function getArtists() {
 				artistmeta.spotify.spotichooser.find('.bsel').removeClass("bsel");
 				artistmeta.spotify.spotichooser.find('.clickshowartists').addClass("bsel");
-				artistmeta.spotify.spinnerthing.makeSpinner();
+				artistmeta.spotify.spinnerthing.fadeIn(100).addClass('wafflebanger-moving');
 				if (!artistmeta.spotify.related) {
 					spotify.artist.getRelatedArtists(artistmeta.spotify.id, storeArtists, self.artist.spotifyError, true)
 				} else {
@@ -321,7 +321,7 @@ var info_spotify = function() {
 						itemselector: 'nobwobbler',
 						sub: null,
 						showbiogs: false,
-						layoutcallback: function() { artistmeta.spotify.spinnerthing.stopSpinner(); browser.rePoint() },
+						layoutcallback: function() { artistmeta.spotify.spinnerthing.removeClass('wafflebanger-moving').hide(); browser.rePoint() },
 						maxwidth: maxwidth,
 						is_plugin: false,
 						imageclass: 'spotify_album_image',
@@ -338,7 +338,7 @@ var info_spotify = function() {
 						classes: 'nobwobbler nobartist spotify_album_masonry',
 						itemselector: 'nobwobbler',
 						sub: null,
-						layoutcallback: function() { artistmeta.spotify.spinnerthing.stopSpinner(); browser.rePoint() },
+						layoutcallback: function() { artistmeta.spotify.spinnerthing.removeClass('wafflebanger-moving').hide(); browser.rePoint() },
 						is_plugin: false,
 						imageclass: 'jalopy',
 						maxalbumwidth: maxwidth,
