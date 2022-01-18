@@ -102,9 +102,8 @@
 
     --open-album-border-highlight: none;
 
-    --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;
-    --waiting-swinger-bg-image: linear-gradient(to left,  rgba(155, 172, 227, 0) 0%,  rgba(155, 172, 227, 1) 50%, rgba(155, 172, 227, 0) 100%);
+    --waiting-swinger-bg-image: radial-gradient(circle at center, rgba(155, 172, 227, 1), rgba(155, 172, 227, 0));
 }
 
 /* This is required when you have a left border on playlist-current-track */

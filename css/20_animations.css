@@ -3,29 +3,6 @@
 = CSS Animations
 =====================================================================
 */
-
-@-webkit-keyframes pulseit{
-	 0%{
-		  opacity:1;
-	 }
-	 50%{
-		  opacity:0;
-	 }
-	 100%{
-		  opacity:1;
-	 }
-}
-@-moz-keyframes pulseit{
-	 0%{
-		  opacity:1;
-	 }
-	 50%{
-		  opacity:0;
-	 }
-	 100%{
-		  opacity:1;
-	 }
-}
 @keyframes pulseit{
 	 0%{
 		  opacity:1;
@@ -35,6 +12,18 @@
 	 }
 	 100%{
 		  opacity:1;
+	 }
+}
+
+@keyframes spin{
+	 0% {
+		  transform: rotate(0deg);
+	 }
+	 50% {
+		  transform: rotate(180deg);
+	 }
+	 100% {
+		  transform: rotate(359deg);
 	 }
 }
 
@@ -54,35 +43,29 @@
 	transform: rotate(90deg);
 }
 
-@-webkit-keyframes spin{
-	 0%{
-		  -webkit-transform: rotate(0deg);
-	 }
-	 100%{
-		  -webkit-transform: rotate(359deg);
-	 }
+@keyframes switchback {
+	0% {
+		left: -20%;
+		width: 10%;
+	}
+	25% {
+		width: 20%;
+	}
+	50% {
+		width: 10%;
+		left: 110%;
+	}
+	75% {
+		width: 20%;
+	}
+	100% {
+		width: 10%;
+		left: -20%;
+	}
 }
-@-moz-keyframes spin{
-	 0% {
-		  -moz-transform: rotate(0deg);
-	 }
-	 50% {
-		  -moz-transform: rotate(180deg);
-	 }
-	 100% {
-		  -moz-transform: rotate(359deg);
-	 }
-}
-@keyframes spin{
-	 0% {
-		  transform: rotate(0deg);
-	 }
-	 50% {
-		  transform: rotate(180deg);
-	 }
-	 100% {
-		  transform: rotate(359deg);
-	 }
+
+.wafflebanger-moving {
+	animation: switchback 4s linear infinite;
 }
 
 .wafflything {
@@ -95,24 +78,24 @@
 
 .wafflebanger {
 	height: 100%;
-	width: var(--waiting-swinger-width);
+	width: 10%;
 	position: relative;
 	background-image: var(--waiting-swinger-bg-image);
 }
 
-@keyframes switchback {
-	0% {
-		left: -50px;
-	}
-	50% {
-		left: 100%;
-	}
-	100% {
-		left: -50px;
-	}
+@keyframes clickflash {
+	 0%{
+		  background-color: rgba(255,255,255,0.7);
+	 }
+	 50%{
+		 background-color: rgba(255,255,255,0.3);
+	 }
+	 100%{
+		 background-color: rgba(255,255,255,0);
+	 }
 }
 
-.wafflebanger-moving {
-	animation: switchback 2s linear infinite;
+.clickflash {
+	animation: clickflash 0.75s linear 1;
 }
 

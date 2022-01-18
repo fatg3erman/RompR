@@ -18,8 +18,8 @@
 	</div>
 	<!-- <div class="expand"> -->
 <div id="infobar" class="fixed containerbox vertical">
-	<div id="patrickmoore" class="infobarlayout noselection fixed containerbox">
-		<div id="firefoxisshitwrapper" class="expand">
+	<div id="nowplaying-info-wrapper" class="infobarlayout noselection fixed containerbox">
+		<div id="nowplaying-text-wrapper" class="expand">
 			<div id="nowplaying">
 				<div id="nptext"></div>
 			</div>

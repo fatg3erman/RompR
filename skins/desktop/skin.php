@@ -64,11 +64,11 @@
 	}
 
 ?>
-	<div id="patrickmoore" class="infobarlayout bordered noselection expand containerbox">
+	<div id="nowplaying-info-wrapper" class="infobarlayout bordered noselection expand containerbox">
 		<div id="albumcover" class="fixed">
 			<img id="albumpicture" />
 		</div>
-		<div id="firefoxisshitwrapper" class="expand">
+		<div id="nowplaying-text-wrapper" class="expand">
 			<div id="nowplaying">
 				<div id="nptext"></div>
 			</div>

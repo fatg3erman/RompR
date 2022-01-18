@@ -1732,6 +1732,25 @@ div.pref div.selectholder.snapcast_select
 	margin-right: 1em;
 }
 
+/* For vertical snapcast volume controls */
+
+.snap_vert_holder {
+	position: relative;
+	margin-left: 20px;
+	margin-right:-4px;
+}
+
+.snap_vert_text {
+	position: absolute;
+	top: 0;
+	left: 0;
+	transform: rotate(90deg);
+	transform-origin: 0 0;
+	white-space: nowrap;
+	font-size: 14px;
+	margin-top: 8px;
+}
+
 /*
 =====================================================================
 =

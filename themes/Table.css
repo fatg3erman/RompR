@@ -102,9 +102,8 @@
 
     --open-album-border-highlight: none;
 
-    --waiting-swinger-width: 50px;
     --waiting-swinger-height: 2px;
-    --waiting-swinger-bg-image: linear-gradient(to left,  rgba(121, 105, 89, 0) 0%,  rgba(200, 165, 100, 1) 50%, rgba(121, 105, 89, 0) 100%);
+    --waiting-swinger-bg-image: radial-gradient(circle at center, rgba(200, 165, 100, 1), rgba(121, 105, 89, 0));
 }
 
 #playlistm #playlist_top, #playlistm #playlistbuttons {

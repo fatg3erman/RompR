@@ -750,44 +750,6 @@ div.playable.clicktrack {
 	z-index: 20000;
 }
 
-@-webkit-keyframes clickflash {
-	 0%{
-		  background-color: rgba(255,255,255,0.7);
-	 }
-	 50%{
-		 background-color: rgba(255,255,255,0.3);
-	 }
-	 100%{
-		 background-color: rgba(255,255,255,0);
-	 }
-}
-@-moz-keyframes clickflash {
-	 0%{
-		  background-color: rgba(255,255,255,0.7);
-	 }
-	 50%{
-		 background-color: rgba(255,255,255,0.3);
-	 }
-	 100%{
-		 background-color: rgba(255,255,255,0);
-	 }
-}
-@keyframes clickflash {
-	 0%{
-		  background-color: rgba(255,255,255,0.7);
-	 }
-	 50%{
-		 background-color: rgba(255,255,255,0.3);
-	 }
-	 100%{
-		 background-color: rgba(255,255,255,0);
-	 }
-}
-
-.clickflash {
-	animation: clickflash 0.75s linear 1;
-}
-
 .album-menu-header {
 	width:100%;
 	text-align:center;

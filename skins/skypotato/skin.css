@@ -100,11 +100,11 @@ div.collectionpanel>div.playable.clickalbum.brick_wide {
 	border-left:4px solid transparent;
 }
 
-#patrickmoore {
+#nowplaying-info-wrapper {
 	box-shadow: none !important;
 }
 
-#firefoxisshitwrapper {
+#nowplaying-text-wrapper {
 	overflow:hidden;
 }
 
@@ -705,50 +705,6 @@ div.rightmenu
 	}
 }
 
-/*
-=====================================================================
-= Plugins - Alarm Clock
-=====================================================================
-*/
-
-@-webkit-keyframes clickflash {
-	 0%{
-		  background-color: rgba(255,255,255,0.7);
-	 }
-	 50%{
-		 background-color: rgba(255,255,255,0.3);
-	 }
-	 100%{
-		 background-color: rgba(255,255,255,0);
-	 }
-}
-@-moz-keyframes clickflash {
-	 0%{
-		  background-color: rgba(255,255,255,0.7);
-	 }
-	 50%{
-		 background-color: rgba(255,255,255,0.3);
-	 }
-	 100%{
-		 background-color: rgba(255,255,255,0);
-	 }
-}
-@keyframes clickflash {
-	 0%{
-		  background-color: rgba(255,255,255,0.7);
-	 }
-	 50%{
-		 background-color: rgba(255,255,255,0.3);
-	 }
-	 100%{
-		 background-color: rgba(255,255,255,0);
-	 }
-}
-
-.clickflash {
-	animation: clickflash 0.75s linear 1;
-}
-
 [class^="icon-"].menu, [class*=" icon-"].menu {
 	width: 24px;
 	height: 24px;
@@ -849,22 +805,5 @@ div.helpfulalbum>div.tagh.albumthing {
 
 #pluginplaylistslist .collectionitem .menuitem.vertical .svg-square {
 	margin-right:0px;
-}
-
-.snap_vert_holder {
-	position: relative;
-	margin-left: 20px;
-	margin-right:-4px;
-}
-
-.snap_vert_text {
-	position: absolute;
-	top: 0;
-	left: 0;
-	transform: rotate(90deg);
-	transform-origin: 0 0;
-	white-space: nowrap;
-	font-size: 14px;
-	margin-top: 8px;
 }
 
