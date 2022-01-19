@@ -8,9 +8,10 @@ var infobar = function() {
 	var nowplaying_updated = false;
 	var markedaslistened = false;
 	var fontsize = 8;
-	var ftimer = null;
+	// var ftimer = null;
 	var singling = false;
 	var notifycounter = 0;
+	var biggerizing = false;
 
 	function scrobble() {
 		if (!scrobbled) {
@@ -201,14 +202,13 @@ var infobar = function() {
 	}
 
 	async function biggerize() {
-		clearTimeout(ftimer);
+		// clearTimeout(ftimer);
 
 		if (Object.keys(npinfo).length == 0 || $("#nptext").is(':hidden') || $("#infobar").is(':hidden')) {
-			debug.log("INFOBAR","Not biggerizing because", Object.keys(npinfo).length, $("#nptext").is(':hidden'), $("#infobar").is(':hidden'));
+			// debug.log("INFOBAR","Not biggerizing because", Object.keys(npinfo).length, $("#nptext").is(':hidden'), $("#infobar").is(':hidden'));
 			$("#nptext").html("");
 			return;
 		}
-		debug.mark("INFOBAR","Biggerizing",npinfo);
 
 		var nptext = $('#nptext');
 		var parent = nptext.parent();
@@ -218,7 +218,7 @@ var infobar = function() {
 		var fontsize = Math.floor((maxheight/1.75)/1.25);
 		var two_lines = getLines(2);
 
-		nptext.empty().css('font-size', fontsize+'px').css('padding-top', '0px').removeClass('ready').removeClass('calculating').addClass('calculating');
+		nptext.empty().css('font-size', fontsize+'px').css('padding-top', '0px').removeClass('ready calculating').addClass('calculating');
 
 		if (two_lines[0] != ' ') {
 			put_text_in_area(two_lines, nptext);
@@ -226,10 +226,21 @@ var infobar = function() {
 			// We can't simply calculate the font size based on the difference in height,
 			// because we've got text wrapping onto multiple lines and we don't know how that will
 			// change when we adjust the font size.
-			while (fontsize > 4 && (nptext.outerHeight(true) > maxheight)) {
-				fontsize -= 1;
+			var final_fontsize = fontsize;
+			while (fontsize > 8 && (nptext.outerHeight(true) > maxheight)) {
+				fontsize = fontsize / 2;
+				final_fontsize = fontsize;
 				nptext.css('font-size', fontsize+'px');
 			}
+			var increment = final_fontsize / 2;
+			while (increment > 1 && nptext.outerHeight(true) < maxheight) {
+				final_fontsize = fontsize;
+				fontsize += increment;
+				increment = increment / 2;
+				nptext.css('font-size', fontsize+'px');
+			}
+
+			nptext.css('font-size', final_fontsize+'px');
 
 			if (npinfo.Title && npinfo.Album && npinfo.Artist) {
 				/* Does it still fit if we use 3 lines -  this is because
@@ -258,9 +269,13 @@ var infobar = function() {
 	return {
 
 		rejigTheText: function() {
-			debug.debug('INFOBAR', 'Rejig was called');
-			clearTimeout(ftimer);
-			ftimer = setTimeout(biggerize, 100);
+			if (!biggerizing) {
+				biggerizing = true;
+				// clearTimeout(ftimer);
+				// ftimer = setTimeout(biggerize, 100);
+				biggerize();
+				biggerizing = false;
+			}
 		},
 
 		albumImage: function() {
