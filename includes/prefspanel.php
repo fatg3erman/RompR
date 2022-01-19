@@ -83,8 +83,10 @@ print '<div id="cusbgoptions">';
 print '<div class="pref styledinputs">
 <div><input type="radio" id="attach_centre" name="backgroundposition" value="center center" /><label for="attach_centre">'.language::gettext('label_centre').'</label></div>
 <div><input type="radio" id="attach_topleft" name="backgroundposition" value="top left" /><label for="attach_topleft">'.language::gettext('label_topleft').'</label></div>
+<div><input type="radio" id="attach_topcentre" name="backgroundposition" value="top center" /><label for="attach_topcentre">'.language::gettext('label_topcentre').'</label></div>
 <div><input type="radio" id="attach_topright" name="backgroundposition" value="top right" /><label for="attach_topright">'.language::gettext('label_topright').'</label></div>
 <div><input type="radio" id="attach_bottomleft" name="backgroundposition" value="bottom left" /><label for="attach_bottomleft">'.language::gettext('label_bottomleft').'</label></div>
+<div><input type="radio" id="attach_bottomcentre" name="backgroundposition" value="bottom center" /><label for="attach_bottomcentre">'.language::gettext('label_bottomcentre').'</label></div>
 <div><input type="radio" id="attach_bottomright" name="backgroundposition" value="bottom right" /><label for="attach_bottomright">'.language::gettext('label_bottomright').'</label></div>
 </div>';
 

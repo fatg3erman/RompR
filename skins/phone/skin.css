@@ -97,13 +97,9 @@ button.spinable.icon-spin6 {
 }
 
 #playbackTime {
-	font-weight:bold;
 	font-size:8px;
-	padding-top:1px;
 	height:11px;
 	line-height:11px;
-	text-align:center;
-	width:100%;
 }
 
 #buttons {

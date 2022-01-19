@@ -577,6 +577,8 @@ language::add_translations([
 	"label_bottomleft" =>					"Bottom Left",
 	"label_bottomright" =>					"Bottom Right",
 	"label_centre" =>						"Centered",
+	"label_bottomcentre" =>					"Centered at Bottom",
+	"label_topcentre" =>					"Centered at Top",
 	"config_preferlocal" =>					"Prefer Local Music to Internet Sources",
 	"config_lastfm_playcounts" =>			"Use Last.FM Playcounts",
 	"config_sync_lastfm_playcounts" =>		"Synchronise Last.FM Playcounts At Start",
