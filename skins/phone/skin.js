@@ -7,7 +7,8 @@ jQuery.fn.menuReveal = async function() {
 		self.siblings().addClass('menu-covered');
 		// GOD, CSS is so dumb. This would work IF there was an 'all siblings' selector, but no.
 		// CSS, in it sinfinite "wisdom" decided that you only ever need to select
-		// siblings that come AFTER the current element. Fucking toss.
+		// siblings that come AFTER the current element. We can't put the holder at the start of the div
+		// because that breaks the logic for updating and inserting albums
 		// self.addClass('menu-current');
 		if (self.prev().hasClass('subscribed-podcast'))
 			$('#podcast_search').addClass('menu-covered');

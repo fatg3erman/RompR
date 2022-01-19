@@ -546,7 +546,7 @@ function snapcastClient() {
 		var client = $('<div>', {class: 'containerbox'}).appendTo(holder);
 		var m = $('<i>', {class: "podicon fixed icon-menu clickicon"}).appendTo(title).on('click', self.setGroup);
 		var rb = $('<i>', {class: "fixed podicon icon-cancel-circled clickicon"}).appendTo(title).on('click', self.deleteClient);
-		vc = $('<div>', {class: 'containerbox vertical-centre invisible'}).appendTo(holder);
+		vc = $('<div>', {class: 'canbefaded invisible containerbox vertical-centre'}).appendTo(holder);
 		volume = $('<div>', {class: 'expand playlistrow2'}).appendTo(vc);
 		var m = $('<i>', {class: "podicon fixed clickicon", name :"clientmuted"}).appendTo(vc).on('click', self.setMute);
 		volume.volumeControl({
@@ -567,8 +567,9 @@ function snapcastClient() {
 		lb.on('keyup', self.setLatency);
 
 		if ($('#snapcast-secondary').length > 0) {
-			holder2 = $('<div>', {class: 'fixed'}).insertAfter('#snapcast-secondary');
-			let holder3 = $('<div>', {class: 'infobarlayout bordered containerbox vertical'}).appendTo(holder2);
+			// holder2 = $('<div>', {class: 'fixed'}).insertAfter('#snapcast-secondary');
+			holder2 = $('<div>', {class: 'fixed'}).appendTo('#snapcast-secondary');
+			let holder3 = $('<div>', {class: 'containerbox vertical', style: 'height:100%'}).appendTo(holder2);
 			let holder4 = $('<div>', {class: 'expand containerbox vertical'}).appendTo(holder3);
 			second_volume = $('<div>', {class: 'expand'}).appendTo(holder4);
 			second_mute = $('<i>', {class: 'fixed outhack clickicon'}).appendTo(holder4);

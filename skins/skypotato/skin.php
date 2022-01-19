@@ -117,7 +117,7 @@ include ("includes/prefspanel.php");
 	}
 
 	if (prefs::$prefs['hide_master_volume']) {
-		print '<div id="snapcast-secondary" class="fixed"></div>';
+		print '<div id="snapcast-secondary" class="fixed containerbox infobarlayout"></div>';
 	} else {
 		print '<div id="volumebox" class="fixed">';
 		print '<div class="infobarlayout bordered containerbox vertical">';

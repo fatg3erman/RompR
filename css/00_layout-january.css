@@ -137,15 +137,17 @@ body.mobile .configtitle
     border-top: 1px solid var(--border-colour);
 }
 
-/*
-= Things that I don't know what they're for but can't be arsed to search all the code
-*/
+/* bar holds the message such as 'Updating Music Collection' */
 
 .bar h3.label {
 	padding-left:12px;
 	padding-bottom:4px;
 	animation: pulseit 4s ease infinite;
 }
+
+/*
+= Things that I don't know what they're for but can't be arsed to search all the code
+*/
 
 tr.chart td {
 	padding-right:1em;
@@ -317,10 +319,6 @@ i.icon-menu {
 
 .alignmid {
 	vertical-align:middle;
-}
-
-.invisible {
-	display:none;
 }
 
 .moveable {
@@ -1737,7 +1735,6 @@ div.pref div.selectholder.snapcast_select
 .snap_vert_holder {
 	position: relative;
 	margin-left: 20px;
-	margin-right:-4px;
 }
 
 .snap_vert_text {
@@ -1749,6 +1746,11 @@ div.pref div.selectholder.snapcast_select
 	white-space: nowrap;
 	font-size: 14px;
 	margin-top: 8px;
+}
+
+#snapcast-secondary {
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 /*
@@ -2133,9 +2135,17 @@ div.top_drop_menu div.notenabled, div.togglecontainer.notenabled, div#flowcontro
 	height:auto;
 }
 
+/*
+=====================================================================
+=
+= Thinsg that need to be here so they override other things
+=
+=====================================================================
+*/
 
-
-
+.invisible {
+	display:none;
+}
 
 
 

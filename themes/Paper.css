@@ -126,11 +126,7 @@ input.inbrowser, div.inbrowser {
     border: 1px solid var(--border-colour);
 }
 
-#buttonholder {
-    box-shadow:  6px 6px 6px rgba(50, 50, 50, 0.6);
-}
-
-#nowplaying-info-wrapper {
+#buttonholder, #snapcast-secondary, #nowplaying-info-wrapper {
     box-shadow:  6px 6px 6px rgba(50, 50, 50, 0.6);
 }
 
