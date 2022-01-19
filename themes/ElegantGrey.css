@@ -105,7 +105,7 @@
     --open-album-border-highlight: 1px solid var(--border-colour-dark);
 
     --waiting-swinger-height: 2px;
-    --waiting-swinger-bg-image: linear-gradient(to left,  rgba(225, 225, 225, 0) 0%,  rgba(225, 225, 225, 1) 50%, rgba(225, 225, 225, 0) 100%);
+    --waiting-swinger-bg-image: radial-gradient(circle at center, white, black);
 }
 
 /* This is needed for themes that use a translucent colour for the image editor (album-browse-open-bg-colour)

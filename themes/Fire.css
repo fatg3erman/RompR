@@ -104,6 +104,6 @@
     --open-album-border-highlight: none;
 
     --waiting-swinger-height: 2px;
-    --waiting-swinger-bg-image: linear-gradient(to left,  rgba(255, 238, 95, 0) 0%,  rgba(255, 238, 95, 1) 50%, rgba(255, 238, 95, 0) 100%);
+    --waiting-swinger-bg-image: radial-gradient(circle at center, rgba(255, 238, 95, 1), rgba(255, 238, 95, 0));
 }
 

@@ -104,7 +104,7 @@
     --open-album-border-highlight: none;
 
     --waiting-swinger-height: 2px;
-    --waiting-swinger-bg-image: linear-gradient(to left,  rgba(192, 208, 231, 0) 0%,  rgba(192, 208, 231, 1) 50%, rgba(192, 208, 231, 0) 100%);
+    --waiting-swinger-bg-image: radial-gradient(circle at center, rgba(192, 208, 231, 1), rgba(192, 208, 231, 0));
 }
 
 input.inbrowser, div.inbrowser {

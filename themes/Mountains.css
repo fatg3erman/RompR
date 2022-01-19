@@ -104,7 +104,7 @@
     --open-album-border-highlight: none;
 
     --waiting-swinger-height: 2px;
-    --waiting-swinger-bg-image: linear-gradient(to left,  rgba(89, 80, 72, 0) 0%,  rgba(89, 80, 72, 1) 50%, rgba(89, 80, 72, 0) 100%);
+    --waiting-swinger-bg-image: radial-gradient(circle at center, rgba(89, 80, 72, 1), rgba(89, 80, 72, 0));
 }
 
 button:hover, input[type="button"]:hover, div.filebutton:hover

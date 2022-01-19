@@ -35,8 +35,12 @@ jQuery.fn.toggleClosed = function() {
 jQuery.fn.makeSpinner = function() {
 	return this.each(function() {
 		var self = $(this);
-		if (self.find('.wafflything').length > 0) {
-			var waffler = self.find('.wafflything');
+		// This is a general-purpose function. It'll make an element spin, but we use it to signify
+		// there's something happening. In some skins or circumstances there isn't a spinnable element.
+		// in those cases we can add a left-to-right wafflebanger to the element in question and that
+		// will be used instead of a spinner.
+		var waffler = self.find('.wafflything');
+		if (waffler.length > 0) {
 			if (!waffler.children('.wafflebanger').first().hasClass("wafflebanger-moving")) {
 				waffler.fadeIn(100).children('.wafflebanger').addClass('wafflebanger-moving');
 			}
@@ -65,8 +69,8 @@ jQuery.fn.makeSpinner = function() {
 jQuery.fn.stopSpinner = function() {
 	return this.each(function() {
 		var self = $(this);
-		if (self.find('.wafflything').length > 0) {
-			var waffler = self.find('.wafflything');
+		var waffler = self.find('.wafflything');
+		if (waffler.length > 0) {
 			waffler.hide().children('.wafflebanger').removeClass('wafflebanger-moving');
 		} else {
 			self.removeClass('icon-spin6 spinner');
