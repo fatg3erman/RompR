@@ -1,255 +1,120 @@
+:root {
+    --dropdown-button: url('iconsets/Fiery/blobdown3.svg');
+    --dropdown-button-hover: url('iconsets/Fiery/blobdown3-hi.svg');
+    --compact-disc: url('iconsets/Fiery/compact-disc.svg');
 
- [class^="icon-"], [class*=" icon-"] {
- 	background-size:contain;
-	background-position: center;
-	background-repeat:no-repeat;
-	display:inline-block;
-}
+    --icon-play-circled: url('iconsets/Fiery/media-playback-start.svg');
+    --icon-play-circled-hover: url('iconsets/Fiery/media-playback-start-highlight.svg');
+    --icon-pause-circled: url('iconsets/Fiery/media-playback-pause.svg');
+    --icon-pause-circled-hover: url('iconsets/Fiery/media-playback-pause-highlight.svg');
+    --icon-fast-backward: url('iconsets/Fiery/media-skip-backward.svg');
+    --icon-fast-backward-hover: url('iconsets/Fiery/media-skip-backward-highlight.svg');
+    --icon-fast-forward: url('iconsets/Fiery/media-skip-forward.svg');
+    --icon-fast-forward-hover: url('iconsets/Fiery/media-skip-forward-highlight.svg');
+    --icon-stop-1: url('iconsets/Fiery/media-playback-stop.svg');
+    --icon-stop-1-hover: url('iconsets/Fiery/media-playback-stop-highlight.svg');
+    --icon-to-end-1: url('iconsets/Fiery/stopafter.svg');
+    --icon-to-end-1-hover: url('iconsets/Fiery/stopafter-highlight.svg');
 
-[class^="icon-"]:not(.button-disabled):hover, [class*=" icon-"]:not(.button-disabled):hover {
-    opacity: 1;
-    background-color: rgba(255,173,0,0.07);
-}
+    --icon-music: url('iconsets/Fiery/collection.svg');
+    --icon-search: url('iconsets/Fiery/system-search.svg');
+    --icon-folder-open-empty: url('iconsets/Fiery/folder.svg');
+    --icon-radio-tower: url('iconsets/Fiery/broadcast-new.svg');
+    --icon-cd: url('iconsets/Fiery/cd_case.svg');
+    --icon-resize-horizontal: url('iconsets/Fiery/resize.svg');
+    --icon-angle-double-left: url('iconsets/Fiery/arrow-left-double.svg');
+    --icon-angle-double-right: url('iconsets/Fiery/arrow-right-double.svg');
+    --icon-menu: url('iconsets/Fiery/pushbutton.svg');
+    --icon-versions: url('iconsets/Fiery/history.svg');
+    --icon-left-circled: url('iconsets/Fiery/backbutton.svg');
+    --icon-right-circled: url('iconsets/Fiery/forwardbutton.svg');
+    --icon-cog-alt: url('iconsets/Fiery/preferences.svg');
+    --icon-trash: url('iconsets/Fiery/edit-clear-list.svg');
+    --icon-wifi: url('iconsets/Fiery/smartradio.svg');
+    --icon-doc-text: url('iconsets/Fiery/playlist.svg');
+    --icon-floppy: url('iconsets/Fiery/document-save.svg');
+    --icon-cancel-circled: url('iconsets/Fiery/edit-delete.svg');
+    --icon-plus: url('iconsets/Fiery/add.svg');;
+    --icon-alarm: url('iconsets/Fiery/alarmclock_false.svg');
+    --icon-alarm-on: url('iconsets/Fiery/alarmclock_true.svg');
+    --icon-sleep: url('iconsets/Fiery/sleep.svg');
+    --icon-library: url('iconsets/Fiery/file.svg');
+    --icon-lastfm-1: url('iconsets/Fiery/lastfm.svg');
+    --icon-wikipedia: url('iconsets/Fiery/wikipedia-logo.svg');
+    --icon-musicbrainz: url('iconsets/Fiery/musicbrainz_logo.svg');
+    --icon-discogs: url('iconsets/Fiery/discogs-logo.svg');
+    --icon-doc-text-1: url('iconsets/Fiery/lyrics.svg');
+    --icon-soundcloud-circled: url('iconsets/Fiery/soundcloud-logo.svg');
+    --icon-youtube-circled: url('iconsets/Fiery/youtube-logo.svg');
+    --icon-gmusic-circled: url('iconsets/Fiery/gmusic-logo.svg');
+    --icon-spotify-circled: url('iconsets/Fiery/spotify-logo.svg');
+    --icon-vkontakte-circled: url('iconsets/Fiery/vkontakte-logo.svg');
+    --icon-podcast-circled: url('iconsets/Fiery/podcast-logo.svg');
+    --icon-audiobook: url('iconsets/Fiery/audiobook.svg');
+    --icon-internetarchive-circled: url('iconsets/Fiery/internetarchive-logo.svg');
+    --icon-increase: url('iconsets/Fiery/arrow-increase.svg');
+    --icon-decrease: url('iconsets/Fiery/arrow-decrease.svg');
+    --icon-attention-1: url('iconsets/Fiery/dialog-error.svg');
+    --icon-info-circled: url('iconsets/Fiery/dialog-information.svg');
+    --icon-download: url('iconsets/Fiery/download-icon.svg');
+    --icon-sun: url('iconsets/Fiery/icon-new.svg');
+    --icon-headphones: url('iconsets/Fiery/headphones.svg');
+    --icon-unlistened: url('iconsets/Fiery/headphones.svg');
+    --icon-block: url('iconsets/Fiery/lastfm-ban.svg');
+    --icon-heart: url('iconsets/Fiery/lastfm-love.svg');
+    --icon-heart-broken: url('iconsets/Fiery/lastfm-unlove.svg');
+    --icon-refresh: url('iconsets/Fiery/refresh.svg');
+    --icon-tunein: url('newimages/tunein-logo.svg');
+    --icon-no-response-playbutton: url('iconsets/Fiery/media-playback-start.svg');
+    --icon-tags: url('iconsets/Fiery/tag.svg');
+    --icon-volume-up: url('iconsets/Fiery/volume.svg');
+    --icon-toggle-open: url('iconsets/Fiery/toggle-open.svg');
+    --icon-toggle-closed: url('iconsets/Fiery/toggle-closed.svg');
+    --icon-spin6: url('iconsets/Fiery/spinner.svg');
+    --icon-output: url('iconsets/Fiery/output.svg');
+    --icon-output-mute: url('iconsets/Fiery/output_mute.svg');
+    --icon-sliders: url('iconsets/Fiery/sliders.svg');
+    --icon-0-stars: url('iconsets/Fiery/0stars.svg');
+    --icon-1-stars: url('iconsets/Fiery/1stars.svg');
+    --icon-2-stars: url('iconsets/Fiery/2stars.svg');
+    --icon-3-stars: url('iconsets/Fiery/3stars.svg');
+    --icon-4-stars: url('iconsets/Fiery/4stars.svg');
+    --icon-5-stars: url('iconsets/Fiery/5stars.svg');
+    --icon-single-star: url('iconsets/Fiery/singlestar.svg');
+    --icon-ratandtag: url('iconsets/Fiery/ratandtag.svg');
+    --icon-ratortag: url('iconsets/Fiery/ratortag.svg');
+    --icon-toggle-on: url('iconsets/Fiery/togglebutton-new2-on.svg');
+    --icon-toggle-off: url('iconsets/Fiery/togglebutton-new2-off.svg');
 
-.clearbox {
-    background-image: url('iconsets/Fiery/edit-delete.svg');
-    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
-    background-size: auto 50%;
-    background-position: right 2px center;
-    background-repeat: no-repeat;
-}
+    --icon-random-flow-on: url('iconsets/Fiery/shuffle.svg');
+    --icon-random-flow-off: url('iconsets/Fiery/shuffle_off.svg');
+    --icon-crossfade-flow-on: url('iconsets/Fiery/crossfade.svg');
+    --icon-crossfade-flow-off: url('iconsets/Fiery/crossfade_off.svg');
+    --icon-repeat-flow-on: url('iconsets/Fiery/refresh.svg');
+    --icon-repeat-flow-off: url('iconsets/Fiery/refresh_off.svg');
+    --icon-consume-flow-on: url('iconsets/Fiery/consume.svg');
+    --icon-consume-flow-off: url('iconsets/Fiery/consume_off.svg');
 
-.combobox-entry, div.selectholder {
-    background-image: url('iconsets/Fiery/blobdown3.svg');
-    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
-    background-size: auto 50%;
-    background-position: right 2px center;
-    background-repeat: no-repeat;
-}
-
-.combobox-entry:hover, div.selectholder:hover {
-    background-image: url('iconsets/Fiery/blobdown3-hi.svg');
-    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
-    background-size: auto 50%;
-    background-position: right 2px center;
-    background-repeat: no-repeat;
-}
-
-#ratingsearch {
-    position: relative;
-}
-
-#ratingsearch:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0.7;
-    z-index: -1;
-    background-image: url('iconsets/Fiery/0stars.svg');
-    background-size: auto 50%;
-    background-position: left 2px center;
-    background-repeat: no-repeat;
-}
-
-i.phone-dropdown-button {
-    background-image: url('iconsets/Fiery/blobdown3.svg');
-}
-
-.button-disabled { opacity: 0.1 }
-
-.icon-play-circled { background-image :url('iconsets/Fiery/media-playback-start.svg') }
-.playdiv { background-image :url('iconsets/Fiery/media-playback-start.svg') }
-.icon-play-circled:hover { background-image :url('iconsets/Fiery/media-playback-start-highlight.svg') }
-.icon-pause-circled { background-image :url('iconsets/Fiery/media-playback-pause.svg') }
-.icon-pause-circled:hover { background-image :url('iconsets/Fiery/media-playback-pause-highlight.svg') }
-.icon-fast-backward { background-image :url('iconsets/Fiery/media-skip-backward.svg') }
-.icon-fast-backward:hover { background-image :url('iconsets/Fiery/media-skip-backward-highlight.svg') }
-.icon-fast-forward { background-image :url('iconsets/Fiery/media-skip-forward.svg') }
-.icon-fast-forward:hover { background-image :url('iconsets/Fiery/media-skip-forward-highlight.svg') }
-.icon-stop-1 { background-image :url('iconsets/Fiery/media-playback-stop.svg') }
-.icon-stop-1:hover { background-image :url('iconsets/Fiery/media-playback-stop-highlight.svg') }
-.icon-to-end-1 { background-image :url('iconsets/Fiery/stopafter.svg') }
-.icon-to-end-1:hover { background-image :url('iconsets/Fiery/stopafter-highlight.svg') }
-
-.icon-music { background-image: url('iconsets/Fiery/collection.svg') }
-.icon-search { background-image: url('iconsets/Fiery/system-search.svg') }
-.icon-folder-open-empty { background-image: url('iconsets/Fiery/folder.svg') }
-.icon-radio-tower { background-image: url('iconsets/Fiery/broadcast-new.svg') }
-.icon-cd { background-image: url('iconsets/Fiery/cd_case.svg') }
-.icon-resize-horizontal { background-image: url('iconsets/Fiery/resize.svg') }
-.icon-angle-double-left { background-image:url('iconsets/Fiery/arrow-left-double.svg') }
-.icon-angle-double-right { background-image:url('iconsets/Fiery/arrow-right-double.svg') }
-.icon-menu { background-image: url('iconsets/Fiery/pushbutton.svg') }
-.icon-versions { background-image: url('iconsets/Fiery/history.svg') }
-.icon-left-circled { background-image: url('iconsets/Fiery/backbutton.svg') }
-.icon-right-circled { background-image: url('iconsets/Fiery/forwardbutton.svg') }
-.icon-cog-alt { background-image: url('iconsets/Fiery/preferences.svg') }
-.icon-trash { background-image: url('iconsets/Fiery/edit-clear-list.svg') }
-.icon-wifi { background-image: url('iconsets/Fiery/smartradio.svg') }
-.icon-doc-text { background-image: url('iconsets/Fiery/playlist.svg') }
-.icon-floppy { background-image: url('iconsets/Fiery/document-save.svg') }
-.icon-cancel-circled { background-image: url('iconsets/Fiery/edit-delete.svg') }
-.icon-plus {
-	background-image: url('iconsets/Fiery/add.svg');
-}
-.icon-alarm { background-image: url('iconsets/Fiery/alarmclock_false.svg') }
-.icon-alarm-on { background-image: url('iconsets/Fiery/alarmclock_true.svg') }
-.icon-sleep { background-image: url('iconsets/Fiery/sleep.svg') }
-.icon-library { background-image: url('iconsets/Fiery/file.svg') }
-.icon-lastfm-1 { background-image: url('iconsets/Fiery/lastfm.svg') }
-.icon-wikipedia { background-image: url('iconsets/Fiery/wikipedia-logo.svg') }
-.icon-musicbrainz {	background-image: url('iconsets/Fiery/musicbrainz_logo.svg') }
-.icon-discogs {	background-image: url('iconsets/Fiery/discogs-logo.svg') }
-.icon-doc-text-1 { background-image: url('iconsets/Fiery/lyrics.svg') }
-.icon-soundcloud-circled { background-image: url('iconsets/Fiery/soundcloud-logo.svg') }
-.icon-youtube-circled { background-image: url('iconsets/Fiery/youtube-logo.svg') }
-.icon-gmusic-circled { background-image: url('iconsets/Fiery/gmusic-logo.svg') }
-.icon-spotify-circled { background-image: url('iconsets/Fiery/spotify-logo.svg') }
-.icon-vkontakte-circled { background-image: url('iconsets/Fiery/vkontakte-logo.svg') }
-.icon-podcast-circled { background-image: url('iconsets/Fiery/podcast-logo.svg') }
-.icon-audiobook { background-image: url('iconsets/Fiery/audiobook.svg') }
-.icon-internetarchive-circled { background-image: url('iconsets/Fiery/internetarchive-logo.svg') }
-.icon-increase { background-image: url('iconsets/Fiery/arrow-increase.svg') }
-.icon-decrease { background-image: url('iconsets/Fiery/arrow-decrease.svg') }
-.icon-attention-1 { background-image: url('iconsets/Fiery/dialog-error.svg') }
-.icon-info-circled { background-image: url('iconsets/Fiery/dialog-information.svg') }
-.icon-download { background-image: url('iconsets/Fiery/download-icon.svg') }
-.icon-sun { background-image: url('iconsets/Fiery/icon-new.svg') }
-.icon-headphones { background-image: url('iconsets/Fiery/headphones.svg') }
-.icon-unlistened { background-image: url('iconsets/Fiery/headphones.svg') }
-.icon-block { background-image: url('iconsets/Fiery/lastfm-ban.svg') }
-.icon-heart { background-image: url('iconsets/Fiery/lastfm-love.svg') }
-.icon-heart-broken { background-image: url('iconsets/Fiery/lastfm-unlove.svg') }
-.icon-refresh { background-image: url('iconsets/Fiery/refresh.svg') }
-.icon-tunein { background-image: url('iconsets/Fiery/../../newimages/tunein-logo.svg') }
-.icon-no-response-playbutton { background-image :url('iconsets/Fiery/media-playback-start.svg') }
-.icon-tags { background-image: url('iconsets/Fiery/tag.svg') }
-.icon-volume-up { background-image: url('iconsets/Fiery/volume.svg') }
-.icon-toggle-open { background-image: url('iconsets/Fiery/toggle-open.svg') }
-.icon-toggle-closed { background-image: url('iconsets/Fiery/toggle-closed.svg') }
-.icon-spin6 { background-image: url('iconsets/Fiery/spinner.svg') !important }
-.icon-output { background-image: url('iconsets/Fiery/output.svg') }
-.icon-output-mute { background-image: url('iconsets/Fiery/output_mute.svg') }
-.icon-sliders { background-image: url('iconsets/Fiery/sliders.svg') }
-.icon-0-stars { background-image: url('iconsets/Fiery/0stars.svg') }
-.icon-1-stars { background-image: url('iconsets/Fiery/1stars.svg') }
-.icon-2-stars { background-image: url('iconsets/Fiery/2stars.svg') }
-.icon-3-stars { background-image: url('iconsets/Fiery/3stars.svg') }
-.icon-4-stars { background-image: url('iconsets/Fiery/4stars.svg') }
-.icon-5-stars { background-image: url('iconsets/Fiery/5stars.svg') }
-.icon-single-star { background-image: url('iconsets/Fiery/singlestar.svg') }
-.icon-ratandtag { background-image: url('iconsets/Fiery/ratandtag.svg') }
-.icon-ratortag { background-image: url('iconsets/Fiery/ratortag.svg') }
-.icon-toggle-on { background-image: url('iconsets/Fiery/togglebutton-new2-on.svg') }
-.icon-toggle-off { background-image: url('iconsets/Fiery/togglebutton-new2-off.svg') }
-
-.icon-random.flow-on { background-image: url('iconsets/Fiery/shuffle.svg') }
-.icon-random.flow-off { background-image: url('iconsets/Fiery/shuffle_off.svg') }
-.icon-crossfade.flow-on { background-image: url('iconsets/Fiery/crossfade.svg') }
-.icon-crossfade.flow-off { background-image: url('iconsets/Fiery/crossfade_off.svg') }
-.icon-repeat.flow-on { background-image: url('iconsets/Fiery/refresh.svg') }
-.icon-repeat.flow-off { background-image: url('iconsets/Fiery/refresh_off.svg') }
-.icon-consume.flow-on { background-image: url('iconsets/Fiery/consume.svg') }
-.icon-consume.flow-off { background-image: url('iconsets/Fiery/consume_off.svg') }
-
-.icon-allrandom { background-image: url('iconsets/Fiery/shuffle.svg') }
-.icon-neverplayed { background-image: url('iconsets/Fiery/neverheard.svg') }
-.icon-recentlyplayed { background-image: url('iconsets/Fiery/calendar.svg') }
-.icon-artist { background-image: url('iconsets/Fiery/artist-icon.svg') }
-.icon-mp3-audio { background-image: url('iconsets/Fiery/mp3-audio.svg') }
-.icon-aac-audio { background-image: url('iconsets/Fiery/aac-audio.svg') }
-.icon-flac-audio { background-image: url('iconsets/Fiery/flac-audio.svg') }
-.icon-wma-audio { background-image: url('iconsets/Fiery/wma-audio.svg') }
-.icon-ogg-audio { background-image: url('iconsets/Fiery/ogg-audio.svg') }
-.icon-explicit { background-image: url('iconsets/Fiery/parental-advisory.svg') }
-.icon-expand-up { background-image: url('iconsets/Fiery/expand-up.svg') }
-.icon-rss { background-image: url('iconsets/Fiery/rss.svg') }
-.icon-tick { background-image: url('iconsets/Fiery/tick.svg') }
-.icon-video { background-image: url('iconsets/Fiery/movie-1.svg') }
-.icon-bbc-logo { background-image: url('iconsets/Fiery/bbc-logo.svg') }
-.icon-imdb-logo { background-image: url('iconsets/Fiery/imdb-logo.svg') }
-.icon-facebook-logo { background-image: url('iconsets/Fiery/facebook-logo.svg') }
-.icon-twitter-logo { background-image: url('iconsets/Fiery/twitter-logo.svg') }
-.icon-www { background-image: url('iconsets/Fiery/world-wide-web.svg') }
-.icon-allmusic { background-image: url('iconsets/Fiery/allmusic-logo.svg') }
-.icon-updown { background-image: url('iconsets/Fiery/arrow-updown.svg') }
-.icon-snapcast { background-image: url('iconsets/Fiery/../../newimages/snapcast.png') }
-
-.styledinputs label
-{
-    display:inline-block;
-    cursor:pointer;
-    position:relative;
-    padding-left:2em;
-    line-height:1.5em;
-}
-
-.styledinputs input[type=radio]
-{
-    display:none;
-}
-
-.styledinputs input[type=checkbox]
-{
-    display:none;
-}
-
-.styledinputs label:before
-{
-    content:"";
-    display:inline-block;
-    width:1.5em;
-    height:1.5em;
-    position:absolute;
-    left:0;
-    background-image: url('iconsets/Fiery/togglebutton-new2-off.svg');
-    background-size: auto 80%;
-	background-position: center;
-	background-repeat:no-repeat;
-}
-
-.styledinputs input:checked + label:before
-{
-    background-image: url('iconsets/Fiery/togglebutton-new2-on.svg') !important;
-}
-
-img.notexist,img.notfound
-{
-    background-image: url('iconsets/Fiery/compact-disc.svg');
-    background-size:contain;
-    display:inline-block;
-    background-position: center;
-	background-repeat:no-repeat;
-}
-
-img.stream.notfound, img.stream.notexist
-{
-    background-image: url('iconsets/Fiery/broadcast-new.svg');
-}
-
-img.plimage.notfound
-{
-    background-image: url('iconsets/Fiery/playlist.svg');
-}
-
-.backmenu
-{
-    background-image: url('iconsets/Fiery/arrow-left-double.svg');
-    background-repeat: no-repeat;
-    background-size: contain;
-}
-
-button.searchbutton {
-    background-image: url('iconsets/Fiery/system-search.svg');
-}
-
-button.rssbutton {
-    background-image: url('iconsets/Fiery/rss.svg');
-}
-
-button.savebutton {
-    background-image: url('iconsets/Fiery/document-save.svg');
+    --icon-allrandom: url('iconsets/Fiery/shuffle.svg');
+    --icon-neverplayed: url('iconsets/Fiery/neverheard.svg');
+    --icon-recentlyplayed: url('iconsets/Fiery/calendar.svg');
+    --icon-artist: url('iconsets/Fiery/artist-icon.svg');
+    --icon-mp3-audio: url('iconsets/Fiery/mp3-audio.svg');
+    --icon-aac-audio: url('iconsets/Fiery/aac-audio.svg');
+    --icon-flac-audio: url('iconsets/Fiery/flac-audio.svg');
+    --icon-wma-audio: url('iconsets/Fiery/wma-audio.svg');
+    --icon-ogg-audio: url('iconsets/Fiery/ogg-audio.svg');
+    --icon-explicit: url('iconsets/Fiery/parental-advisory.svg');
+    --icon-expand-up: url('iconsets/Fiery/expand-up.svg');
+    --icon-rss: url('iconsets/Fiery/rss.svg');
+    --icon-tick: url('iconsets/Fiery/tick.svg');
+    --icon-video: url('iconsets/Fiery/movie-1.svg');
+    --icon-bbc-logo: url('iconsets/Fiery/bbc-logo.svg');
+    --icon-imdb-logo: url('iconsets/Fiery/imdb-logo.svg');
+    --icon-facebook-logo: url('iconsets/Fiery/facebook-logo.svg');
+    --icon-twitter-logo: url('iconsets/Fiery/twitter-logo.svg');
+    --icon-www: url('iconsets/Fiery/world-wide-web.svg');
+    --icon-allmusic: url('iconsets/Fiery/allmusic-logo.svg');
+    --icon-updown: url('iconsets/Fiery/arrow-updown.svg');
+    --icon-snapcast: url('newimages/snapcast.png');
 }

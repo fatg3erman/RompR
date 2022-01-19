@@ -1,4 +1,4 @@
-@import url("theme_base/colour_theme.css");
+/* theme_base/colour_theme.css */
 
 :root {
 
@@ -10,13 +10,13 @@
     --progress-bg-colour: rgba(0,0,0,0);
 
     --document-bg-colour: unset;
-    --document-bg-image: url('../themes/vellum-seamless-repeating-white.jpg');
+    --document-bg-image: url('themes/vellum-seamless-repeating-white.jpg');
 
 
 
 
     --highlight-bg-colour: unset;
-    --highlight-bg-image: url('../themes/tanpaper.jpg');
+    --highlight-bg-image: url('themes/tanpaper.jpg');
 
     --text-colour: black;
     --border-colour: #dddddd;
@@ -52,19 +52,19 @@
     --playlist-current-title-font-weight: unset;
 
     --top_drop_menu-bg-colour: unset;
-    --top_drop_menu-bg-image: url('../themes/oldpaper.jpg');
+    --top_drop_menu-bg-image: url('themes/oldpaper.jpg');
 
     --configtitle-bg-colour: unset;
-    --configtitle-bg-image: url('../themes/tanpaper.jpg');
+    --configtitle-bg-image: url('themes/tanpaper.jpg');
     --configtitle-border-bottom: none;
 
     --infopane-border-top: none;
     --infopane-bg-colour: unset;
-    --infopane-bg-image: url('../themes/vellum-seamless-repeating-white.jpg');
+    --infopane-bg-image: url('themes/vellum-seamless-repeating-white.jpg');
     --infopane-text-colour: unset;
 
     --infopane-header-bg-colour: unset;
-    --infopane-header-bg-image: url('../themes/tanpaper.jpg');
+    --infopane-header-bg-image: url('themes/tanpaper.jpg');
 
     --selected-bg-colour: #CC5500;
 
@@ -100,7 +100,7 @@
     --bordered-left: 1px solid transparent;
 
     --albumart-artists-bg-colour: var(--document-bg-colour);
-    --albumart-artists-bg-image: url('../themes/oldpaper.jpg');
+    --albumart-artists-bg-image: url('themes/oldpaper.jpg');
 
     --open-album-border-highlight: none;
 

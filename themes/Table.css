@@ -1,8 +1,8 @@
-@import url("theme_base/image_theme.css");
+/* theme_base/image_theme.css */
 
 :root {
-    --landscape-bg-image: url("../themes/table.jpg");
-    --portrait-bg-image: url("../themes/table_portrait.jpg");
+    --landscape-bg-image: url("themes/table.jpg");
+    --portrait-bg-image: url("themes/table_portrait.jpg");
     --background-position: center center;
 
     --min-progress-colour: rgba(54, 61, 64, 0.99);

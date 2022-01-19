@@ -1,4 +1,4 @@
-@import url("theme_base/colour_theme.css");
+/* theme_base/colour_theme.css */
 
 :root {
 
@@ -10,7 +10,7 @@
     --progress-bg-colour: rgba(0,0,0,0);
 
     --document-bg-colour: unset;
-    --document-bg-image: url('../newimages/silver1.jpg');
+    --document-bg-image: url('newimages/silver1.jpg');
 
 
 
@@ -51,7 +51,7 @@
     --playlist-current-title-font-weight: unset;
 
     --top_drop_menu-bg-colour: unset;
-    --top_drop_menu-bg-image: url('../newimages/silver2.jpg');
+    --top_drop_menu-bg-image: url('newimages/silver2.jpg');
 
     --configtitle-bg-colour: rgba(0,0,0,0.3);
     --configtitle-bg-image: none;

@@ -1,251 +1,120 @@
+:root {
+    --dropdown-button: url('iconsets/Slush-Purple/blobdown2.svg');
+    --dropdown-button-hover: url('iconsets/Slush-Purple/blobdown2-hi.svg');
+    --compact-disc: url('iconsets/Slush-Purple/compact-disc.svg');
 
- [class^="icon-"], [class*=" icon-"] {
- 	background-size:contain;
-	background-position: center;
-	background-repeat:no-repeat;
-	display:inline-block;
-}
+    --icon-play-circled: url('iconsets/Slush-Purple/media-playback-start.svg');
+    --icon-play-circled-hover: url('iconsets/Slush-Purple/media-playback-start-highlight.svg');
+    --icon-pause-circled: url('iconsets/Slush-Purple/media-playback-pause.svg');
+    --icon-pause-circled-hover: url('iconsets/Slush-Purple/media-playback-pause-highlight.svg');
+    --icon-fast-backward: url('iconsets/Slush-Purple/media-skip-backward.svg');
+    --icon-fast-backward-hover: url('iconsets/Slush-Purple/media-skip-backward-highlight.svg');
+    --icon-fast-forward: url('iconsets/Slush-Purple/media-skip-forward.svg');
+    --icon-fast-forward-hover: url('iconsets/Slush-Purple/media-skip-forward-highlight.svg');
+    --icon-stop-1: url('iconsets/Slush-Purple/media-playback-stop.svg');
+    --icon-stop-1-hover: url('iconsets/Slush-Purple/media-playback-stop-highlight.svg');
+    --icon-to-end-1: url('iconsets/Slush-Purple/stopafter.svg');
+    --icon-to-end-1-hover: url('iconsets/Slush-Purple/stopafter-highlight.svg');
 
-.button-disabled { opacity: 0.1 }
+    --icon-music:  url('iconsets/Slush-Purple/collection.svg');
+    --icon-search:  url('iconsets/Slush-Purple/system-search.svg');
+    --icon-folder-open-empty:  url('iconsets/Slush-Purple/folder.svg');
+    --icon-radio-tower:  url('iconsets/Slush-Purple/broadcast-new.svg');
+    --icon-cd:  url('iconsets/Slush-Purple/cd_case.svg');
+    --icon-resize-horizontal:  url('iconsets/Slush-Purple/resize.svg');
+    --icon-angle-double-left: url('iconsets/Slush-Purple/arrow-left-double.svg');
+    --icon-angle-double-right: url('iconsets/Slush-Purple/arrow-right-double.svg');
+    --icon-menu:  url('iconsets/Slush-Purple/pushbutton.svg');
+    --icon-versions:  url('iconsets/Slush-Purple/history.svg');
+    --icon-left-circled:  url('iconsets/Slush-Purple/backbutton.svg');
+    --icon-right-circled:  url('iconsets/Slush-Purple/forwardbutton.svg');
+    --icon-cog-alt:  url('iconsets/Slush-Purple/preferences.svg');
+    --icon-trash:  url('iconsets/Slush-Purple/edit-clear-list.svg');
+    --icon-wifi:  url('iconsets/Slush-Purple/smartradio.svg');
+    --icon-doc-text:  url('iconsets/Slush-Purple/playlist.svg');
+    --icon-floppy:  url('iconsets/Slush-Purple/document-save.svg');
+    --icon-cancel-circled:  url('iconsets/Slush-Purple/edit-delete.svg');
+    --icon-plus:  url('iconsets/Slush-Purple/add.svg');;
+    --icon-alarm:  url('iconsets/Slush-Purple/alarmclock_false.svg');
+    --icon-alarm-on:  url('iconsets/Slush-Purple/alarmclock_true.svg');
+    --icon-sleep:  url('iconsets/Slush-Purple/sleep.svg');
+    --icon-library:  url('iconsets/Slush-Purple/file.svg');
+    --icon-lastfm-1:  url('iconsets/Slush-Purple/lastfm.svg');
+    --icon-wikipedia:  url('iconsets/Slush-Purple/wikipedia-logo.svg');
+    --icon-musicbrainz:  url('iconsets/Slush-Purple/musicbrainz_logo.svg');
+    --icon-discogs:  url('iconsets/Slush-Purple/discogs-logo.svg');
+    --icon-doc-text-1:  url('iconsets/Slush-Purple/lyrics.svg');
+    --icon-soundcloud-circled:  url('iconsets/Slush-Purple/soundcloud-logo.svg');
+    --icon-youtube-circled:  url('iconsets/Slush-Purple/youtube-logo.svg');
+    --icon-gmusic-circled:  url('iconsets/Slush-Purple/gmusic-logo.svg');
+    --icon-spotify-circled:  url('iconsets/Slush-Purple/spotify-logo.svg');
+    --icon-vkontakte-circled:  url('iconsets/Slush-Purple/vkontakte-logo.svg');
+    --icon-podcast-circled:  url('iconsets/Slush-Purple/podcast-logo.svg');
+    --icon-audiobook:  url('iconsets/Slush-Purple/audiobook.svg');
+    --icon-internetarchive-circled:  url('iconsets/Slush-Purple/internetarchive-logo.svg');
+    --icon-increase:  url('iconsets/Slush-Purple/arrow-increase.svg');
+    --icon-decrease:  url('iconsets/Slush-Purple/arrow-decrease.svg');
+    --icon-attention-1:  url('iconsets/Slush-Purple/dialog-error.svg');
+    --icon-info-circled:  url('iconsets/Slush-Purple/dialog-information.svg');
+    --icon-download:  url('iconsets/Slush-Purple/download-icon.svg');
+    --icon-sun:  url('iconsets/Slush-Purple/icon-new.svg');
+    --icon-headphones:  url('iconsets/Slush-Purple/headphones.svg');
+    --icon-unlistened:  url('iconsets/Slush-Purple/headphones.svg');
+    --icon-block:  url('iconsets/Slush-Purple/lastfm-ban.svg');
+    --icon-heart:  url('iconsets/Slush-Purple/lastfm-love.svg');
+    --icon-heart-broken:  url('iconsets/Slush-Purple/lastfm-unlove.svg');
+    --icon-refresh:  url('iconsets/Slush-Purple/refresh.svg');
+    --icon-tunein:  url('newimages/tunein-logo.svg');
+    --icon-no-response-playbutton: url('iconsets/Slush-Purple/media-playback-start.svg');
+    --icon-tags:  url('iconsets/Slush-Purple/tag.svg');
+    --icon-volume-up:  url('iconsets/Slush-Purple/volume.svg');
+    --icon-toggle-open:  url('iconsets/Slush-Purple/toggle-open.svg');
+    --icon-toggle-closed:  url('iconsets/Slush-Purple/toggle-closed.svg');
+    --icon-spin6:  url('iconsets/Slush-Purple/spinner.svg');
+    --icon-output:  url('iconsets/Slush-Purple/output.svg');
+    --icon-output-mute:  url('iconsets/Slush-Purple/output_mute.svg');
+    --icon-sliders:  url('iconsets/Slush-Purple/sliders.svg');
+    --icon-0-stars:  url('iconsets/Slush-Purple/0stars.svg');
+    --icon-1-stars:  url('iconsets/Slush-Purple/1stars.svg');
+    --icon-2-stars:  url('iconsets/Slush-Purple/2stars.svg');
+    --icon-3-stars:  url('iconsets/Slush-Purple/3stars.svg');
+    --icon-4-stars:  url('iconsets/Slush-Purple/4stars.svg');
+    --icon-5-stars:  url('iconsets/Slush-Purple/5stars.svg');
+    --icon-single-star:  url('iconsets/Slush-Purple/singlestar.svg');
+    --icon-ratandtag:  url('iconsets/Slush-Purple/ratandtag.svg');
+    --icon-ratortag:  url('iconsets/Slush-Purple/ratortag.svg');
+    --icon-toggle-on:  url('iconsets/Slush-Purple/togglebutton-new2-on.svg');
+    --icon-toggle-off:  url('iconsets/Slush-Purple/togglebutton-new2-off.svg');
 
-.clearbox {
-    background-image: url('iconsets/Slush-Purple/edit-delete.svg');
-    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
-    background-size: auto 50%;
-    background-position: right 2px center;
-    background-repeat: no-repeat;
-}
+    --icon-random-flow-on:  url('iconsets/Slush-Purple/random.svg');
+    --icon-random-flow-off:  url('iconsets/Slush-Purple/random_off.svg');
+    --icon-crossfade-flow-on:  url('iconsets/Slush-Purple/crossfade.svg');
+    --icon-crossfade-flow-off:  url('iconsets/Slush-Purple/crossfade_off.svg');
+    --icon-repeat-flow-on:  url('iconsets/Slush-Purple/refresh.svg');
+    --icon-repeat-flow-off:  url('iconsets/Slush-Purple/refresh_off.svg');
+    --icon-consume-flow-on:  url('iconsets/Slush-Purple/consume.svg');
+    --icon-consume-flow-off:  url('iconsets/Slush-Purple/consume_off.svg');
 
-.combobox-entry, div.selectholder {
-    background-image: url('iconsets/Slush-Purple/blobdown2.svg');
-    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
-    background-size: auto 50%;
-    background-position: right 2px center;
-    background-repeat: no-repeat;
-}
-
-.combobox-entry:hover, div.selectholder:hover {
-    background-image: url('iconsets/Slush-Purple/blobdown2-hi.svg');
-    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
-    background-size: auto 50%;
-    background-position: right 2px center;
-    background-repeat: no-repeat;
-}
-
-#ratingsearch {
-    position: relative;
-}
-
-#ratingsearch:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0.8;
-    z-index: -1;
-    background-image: url('iconsets/Slush-Purple/0stars.svg');
-    background-size: auto 50%;
-    background-position: left 2px center;
-    background-repeat: no-repeat;
-}
-
-i.phone-dropdown-button {
-    background-image: url('iconsets/Slush-Purple/blobdown2.svg');
-}
-
-.icon-play-circled { background-image :url('iconsets/Slush-Purple/media-playback-start.svg') }
-.playdiv { background-image :url('iconsets/Slush-Purple/media-playback-start.svg') }
-.icon-play-circled:hover { background-image :url('iconsets/Slush-Purple/media-playback-start-highlight.svg') }
-.icon-pause-circled { background-image :url('iconsets/Slush-Purple/media-playback-pause.svg') }
-.icon-pause-circled:hover { background-image :url('iconsets/Slush-Purple/media-playback-pause-highlight.svg') }
-.icon-fast-backward { background-image :url('iconsets/Slush-Purple/media-skip-backward.svg') }
-.icon-fast-backward:hover { background-image :url('iconsets/Slush-Purple/media-skip-backward-highlight.svg') }
-.icon-fast-forward { background-image :url('iconsets/Slush-Purple/media-skip-forward.svg') }
-.icon-fast-forward:hover { background-image :url('iconsets/Slush-Purple/media-skip-forward-highlight.svg') }
-.icon-stop-1 { background-image :url('iconsets/Slush-Purple/media-playback-stop.svg') }
-.icon-stop-1:hover { background-image :url('iconsets/Slush-Purple/media-playback-stop-highlight.svg') }
-.icon-to-end-1 { background-image :url('iconsets/Slush-Purple/stopafter.svg') }
-.icon-to-end-1:hover { background-image :url('iconsets/Slush-Purple/stopafter-highlight.svg') }
-
-.icon-music { background-image: url('iconsets/Slush-Purple/collection.svg') }
-.icon-search { background-image: url('iconsets/Slush-Purple/system-search.svg') }
-.icon-folder-open-empty { background-image: url('iconsets/Slush-Purple/folder.svg') }
-.icon-radio-tower { background-image: url('iconsets/Slush-Purple/broadcast-new.svg') }
-.icon-cd { background-image: url('iconsets/Slush-Purple/cd_case.svg') }
-.icon-resize-horizontal { background-image: url('iconsets/Slush-Purple/resize.svg') }
-.icon-angle-double-left { background-image:url('iconsets/Slush-Purple/arrow-left-double.svg') }
-.icon-angle-double-right { background-image:url('iconsets/Slush-Purple/arrow-right-double.svg') }
-.icon-menu { background-image: url('iconsets/Slush-Purple/pushbutton.svg') }
-.icon-versions { background-image: url('iconsets/Slush-Purple/history.svg') }
-.icon-left-circled { background-image: url('iconsets/Slush-Purple/backbutton.svg') }
-.icon-right-circled { background-image: url('iconsets/Slush-Purple/forwardbutton.svg') }
-.icon-cog-alt { background-image: url('iconsets/Slush-Purple/preferences.svg') }
-.icon-trash { background-image: url('iconsets/Slush-Purple/edit-clear-list.svg') }
-.icon-wifi { background-image: url('iconsets/Slush-Purple/smartradio.svg') }
-.icon-doc-text { background-image: url('iconsets/Slush-Purple/playlist.svg') }
-.icon-floppy { background-image: url('iconsets/Slush-Purple/document-save.svg') }
-.icon-cancel-circled { background-image: url('iconsets/Slush-Purple/edit-delete.svg') }
-.icon-plus {
-	background-image: url('iconsets/Slush-Purple/add.svg');
-}
-.icon-alarm { background-image: url('iconsets/Slush-Purple/alarmclock_false.svg') }
-.icon-alarm-on { background-image: url('iconsets/Slush-Purple/alarmclock_true.svg') }
-.icon-sleep { background-image: url('iconsets/Slush-Purple/sleep.svg') }
-.icon-library { background-image: url('iconsets/Slush-Purple/file.svg') }
-.icon-lastfm-1 { background-image: url('iconsets/Slush-Purple/lastfm.svg') }
-.icon-wikipedia { background-image: url('iconsets/Slush-Purple/wikipedia-logo.svg') }
-.icon-musicbrainz {	background-image: url('iconsets/Slush-Purple/musicbrainz_logo.svg') }
-.icon-discogs {	background-image: url('iconsets/Slush-Purple/discogs-logo.svg') }
-.icon-doc-text-1 { background-image: url('iconsets/Slush-Purple/lyrics.svg') }
-.icon-soundcloud-circled { background-image: url('iconsets/Slush-Purple/soundcloud-logo.svg') }
-.icon-youtube-circled { background-image: url('iconsets/Slush-Purple/youtube-logo.svg') }
-.icon-gmusic-circled { background-image: url('iconsets/Slush-Purple/gmusic-logo.svg') }
-.icon-spotify-circled { background-image: url('iconsets/Slush-Purple/spotify-logo.svg') }
-.icon-vkontakte-circled { background-image: url('iconsets/Slush-Purple/vkontakte-logo.svg') }
-.icon-podcast-circled { background-image: url('iconsets/Slush-Purple/podcast-logo.svg') }
-.icon-audiobook { background-image: url('iconsets/Slush-Purple/audiobook.svg') }
-.icon-internetarchive-circled { background-image: url('iconsets/Slush-Purple/internetarchive-logo.svg') }
-.icon-increase { background-image: url('iconsets/Slush-Purple/arrow-increase.svg') }
-.icon-decrease { background-image: url('iconsets/Slush-Purple/arrow-decrease.svg') }
-.icon-attention-1 { background-image: url('iconsets/Slush-Purple/dialog-error.svg') }
-.icon-info-circled { background-image: url('iconsets/Slush-Purple/dialog-information.svg') }
-.icon-download { background-image: url('iconsets/Slush-Purple/download-icon.svg') }
-.icon-sun { background-image: url('iconsets/Slush-Purple/icon-new.svg') }
-.icon-headphones { background-image: url('iconsets/Slush-Purple/headphones.svg') }
-.icon-unlistened { background-image: url('iconsets/Slush-Purple/headphones.svg') }
-.icon-block { background-image: url('iconsets/Slush-Purple/lastfm-ban.svg') }
-.icon-heart { background-image: url('iconsets/Slush-Purple/lastfm-love.svg') }
-.icon-heart-broken { background-image: url('iconsets/Slush-Purple/lastfm-unlove.svg') }
-.icon-refresh { background-image: url('iconsets/Slush-Purple/refresh.svg') }
-.icon-tunein { background-image: url('iconsets/Slush-Purple/../../newimages/tunein-logo.svg') }
-.icon-no-response-playbutton { background-image :url('iconsets/Slush-Purple/media-playback-start.svg') }
-.icon-tags { background-image: url('iconsets/Slush-Purple/tag.svg') }
-.icon-volume-up { background-image: url('iconsets/Slush-Purple/volume.svg') }
-.icon-toggle-open { background-image: url('iconsets/Slush-Purple/toggle-open.svg') }
-.icon-toggle-closed { background-image: url('iconsets/Slush-Purple/toggle-closed.svg') }
-.icon-spin6 { background-image: url('iconsets/Slush-Purple/spinner.svg') !important }
-.icon-output { background-image: url('iconsets/Slush-Purple/output.svg') }
-.icon-output-mute { background-image: url('iconsets/Slush-Purple/output_mute.svg') }
-.icon-sliders { background-image: url('iconsets/Slush-Purple/sliders.svg') }
-.icon-0-stars { background-image: url('iconsets/Slush-Purple/0stars.svg') }
-.icon-1-stars { background-image: url('iconsets/Slush-Purple/1stars.svg') }
-.icon-2-stars { background-image: url('iconsets/Slush-Purple/2stars.svg') }
-.icon-3-stars { background-image: url('iconsets/Slush-Purple/3stars.svg') }
-.icon-4-stars { background-image: url('iconsets/Slush-Purple/4stars.svg') }
-.icon-5-stars { background-image: url('iconsets/Slush-Purple/5stars.svg') }
-.icon-single-star { background-image: url('iconsets/Slush-Purple/singlestar.svg') }
-.icon-ratandtag { background-image: url('iconsets/Slush-Purple/ratandtag.svg') }
-.icon-ratortag { background-image: url('iconsets/Slush-Purple/ratortag.svg') }
-.icon-toggle-on { background-image: url('iconsets/Slush-Purple/togglebutton-new2-on.svg') }
-.icon-toggle-off { background-image: url('iconsets/Slush-Purple/togglebutton-new2-off.svg') }
-
-.icon-random.flow-on { background-image: url('iconsets/Slush-Purple/random.svg') }
-.icon-random.flow-off { background-image: url('iconsets/Slush-Purple/random_off.svg') }
-.icon-crossfade.flow-on { background-image: url('iconsets/Slush-Purple/crossfade.svg') }
-.icon-crossfade.flow-off { background-image: url('iconsets/Slush-Purple/crossfade_off.svg') }
-.icon-repeat.flow-on { background-image: url('iconsets/Slush-Purple/refresh.svg') }
-.icon-repeat.flow-off { background-image: url('iconsets/Slush-Purple/refresh_off.svg') }
-.icon-consume.flow-on { background-image: url('iconsets/Slush-Purple/consume.svg') }
-.icon-consume.flow-off { background-image: url('iconsets/Slush-Purple/consume_off.svg') }
-
-.icon-allrandom { background-image: url('iconsets/Slush-Purple/shuffle.svg') }
-.icon-neverplayed { background-image: url('iconsets/Slush-Purple/neverheard.svg') }
-.icon-recentlyplayed { background-image: url('iconsets/Slush-Purple/calendar.svg') }
-.icon-artist { background-image: url('iconsets/Slush-Purple/artist-icon.svg') }
-.icon-mp3-audio { background-image: url('iconsets/Slush-Purple/mp3-audio.svg') }
-.icon-aac-audio { background-image: url('iconsets/Slush-Purple/aac-audio.svg') }
-.icon-flac-audio { background-image: url('iconsets/Slush-Purple/flac-audio.svg') }
-.icon-wma-audio { background-image: url('iconsets/Slush-Purple/wma-audio.svg') }
-.icon-ogg-audio { background-image: url('iconsets/Slush-Purple/ogg-audio.svg') }
-.icon-explicit { background-image: url('iconsets/Slush-Purple/parental-advisory.svg') }
-.icon-expand-up { background-image: url('iconsets/Slush-Purple/expand-up.svg') }
-.icon-rss { background-image: url('iconsets/Slush-Purple/rss.svg') }
-.icon-tick { background-image: url('iconsets/Slush-Purple/tick.svg') }
-.icon-video { background-image: url('iconsets/Slush-Purple/movie-1.svg') }
-.icon-bbc-logo { background-image: url('iconsets/Slush-Purple/bbc-logo.svg') }
-.icon-imdb-logo { background-image: url('iconsets/Slush-Purple/imdb-logo.svg') }
-.icon-facebook-logo { background-image: url('iconsets/Slush-Purple/facebook-logo.svg') }
-.icon-twitter-logo { background-image: url('iconsets/Slush-Purple/twitter-logo.svg') }
-.icon-www { background-image: url('iconsets/Slush-Purple/world-wide-web.svg') }
-.icon-allmusic { background-image: url('iconsets/Slush-Purple/allmusic-logo.svg') }
-.icon-updown { background-image: url('iconsets/Slush-Purple/arrow-updown.svg') }
-.icon-snapcast { background-image: url('iconsets/Slush-Purple/../../newimages/snapcast.png') }
-
-.styledinputs label
-{
-    display:inline-block;
-    cursor:pointer;
-    position:relative;
-    padding-left:2.5em;
-    line-height:1.5em;
-}
-
-.styledinputs input[type=radio]
-{
-    display:none;
-}
-
-.styledinputs input[type=checkbox]
-{
-    display:none;
-}
-
-.styledinputs label:before
-{
-    content:"";
-    display:inline-block;
-    width:2em;
-    height:1.5em;
-    position:absolute;
-    left:0;
-    /* bottom:0.2em; */
-    background-image: url('iconsets/Slush-Purple/togglebutton-new2-off.svg');
- 	background-size:auto 80%;
-	background-position: center;
-	background-repeat:no-repeat;
-}
-
-.styledinputs input:checked + label:before
-{
-    background-image: url('iconsets/Slush-Purple/togglebutton-new2-on.svg') !important;
-}
-
-img.notexist,img.notfound
-{
-    background-image: url('iconsets/Slush-Purple/compact-disc.svg');
-    background-size:contain;
-    display:inline-block;
-    background-position:center;
-    background-repeat: no-repeat;
-}
-
-img.stream.notfound, img.stream.notexist
-{
-    background-image: url('iconsets/Slush-Purple/broadcast-new.svg');
-}
-
-img.plimage.notfound
-{
-    background-image: url('iconsets/Slush-Purple/playlist.svg');
-}
-
-.backmenu
-{
-    background-image: url('iconsets/Slush-Purple/arrow-left-double.svg');
-    background-repeat: no-repeat;
-    background-size: contain;
-}
-
-button.searchbutton {
-    background-image: url('iconsets/Slush-Purple/system-search.svg');
-}
-
-button.rssbutton {
-    background-image: url('iconsets/Slush-Purple/rss.svg');
-}
-
-button.savebutton {
-    background-image: url('iconsets/Slush-Purple/document-save.svg');
+    --icon-allrandom:  url('iconsets/Slush-Purple/shuffle.svg');
+    --icon-neverplayed:  url('iconsets/Slush-Purple/neverheard.svg');
+    --icon-recentlyplayed:  url('iconsets/Slush-Purple/calendar.svg');
+    --icon-artist:  url('iconsets/Slush-Purple/artist-icon.svg');
+    --icon-mp3-audio:  url('iconsets/Slush-Purple/mp3-audio.svg');
+    --icon-aac-audio:  url('iconsets/Slush-Purple/aac-audio.svg');
+    --icon-flac-audio:  url('iconsets/Slush-Purple/flac-audio.svg');
+    --icon-wma-audio:  url('iconsets/Slush-Purple/wma-audio.svg');
+    --icon-ogg-audio:  url('iconsets/Slush-Purple/ogg-audio.svg');
+    --icon-explicit:  url('iconsets/Slush-Purple/parental-advisory.svg');
+    --icon-expand-up:  url('iconsets/Slush-Purple/expand-up.svg');
+    --icon-rss:  url('iconsets/Slush-Purple/rss.svg');
+    --icon-tick:  url('iconsets/Slush-Purple/tick.svg');
+    --icon-video:  url('iconsets/Slush-Purple/movie-1.svg');
+    --icon-bbc-logo:  url('iconsets/Slush-Purple/bbc-logo.svg');
+    --icon-imdb-logo:  url('iconsets/Slush-Purple/imdb-logo.svg');
+    --icon-facebook-logo:  url('iconsets/Slush-Purple/facebook-logo.svg');
+    --icon-twitter-logo:  url('iconsets/Slush-Purple/twitter-logo.svg');
+    --icon-www:  url('iconsets/Slush-Purple/world-wide-web.svg');
+    --icon-allmusic:  url('iconsets/Slush-Purple/allmusic-logo.svg');
+    --icon-updown:  url('iconsets/Slush-Purple/arrow-updown.svg');
+    --icon-snapcast:  url('newimages/snapcast.png');
 }

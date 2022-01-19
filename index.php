@@ -143,35 +143,8 @@ logger::mark("CREATING PAGE", "******++++++======------******------======++++++*
 <?php
 print '<script type="application/json" name="custom_radio_items">'."\n".json_encode(CUSTOM_RADIO_ITEMS)."\n</script>\n";
 print '<script type="application/json" name="radio_combine_options">'."\n".json_encode(RADIO_COMBINE_OPTIONS)."\n</script>\n";
-$css = glob('css/*.css');
-foreach ($css as $file) {
-	logger::log("INIT", "Including Stylesheet",$file);
-	print '<link rel="stylesheet" type="text/css" href="'.$file.'?version='.$version_string.'" />'."\n";
-}
-print '<link rel="stylesheet" type="text/css" href="skins/'.$skin.'/skin.css?version='.$version_string.'" />'."\n";
-if (file_exists('skins/'.$skin.'/controlbuttons.css')) {
-	print '<link rel="stylesheet" type="text/css" href="skins/'.$skin.'/controlbuttons.css?version='.$version_string.'" />'."\n";
-}
+print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.$version_string."&skin=".$skin.'" />'."\n";
 
-$skinrequires = array();
-if (file_exists('skins/'.$skin.'/skin.requires')) {
-	logger::log("INIT", "Loading Skin Requirements File");
-	$requires = file('skins/'.$skin.'/skin.requires');
-	foreach ($requires as $s) {
-		if (substr($s,0,1) != '#') {
-			$skinrequires[] = $s;
-		}
-	}
-}
-// Load any CSS from the skin requirements file
-foreach ($skinrequires as $s) {
-	$s = trim($s);
-	$ext = strtolower(pathinfo($s, PATHINFO_EXTENSION));
-	if ($ext == "css") {
-		logger::mark("INIT", "Including Skin Requirement ".$s);
-		print '<link rel="stylesheet" type="text/css" href="'.$s.'?version='.$version_string.'" />'."\n";
-	}
-}
 ?>
 <link rel="stylesheet" id="theme" type="text/css" />
 <?php
@@ -262,7 +235,10 @@ if ($use_plugins) {
 }
 
 // Load any Javascript from the skin requirements file
-
+$skinrequires = [];
+if (file_exists('skins/'.$skin.'/skin.requires')) {
+	$skinrequires = file('skins/'.$skin.'/skin.requires');
+}
 foreach ($skinrequires as $s) {
 	$s = trim($s);
 	$ext = strtolower(pathinfo($s, PATHINFO_EXTENSION));

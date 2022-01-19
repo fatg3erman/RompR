@@ -295,12 +295,6 @@ div.albumbitsmenu {
 	cursor:pointer;
 }
 
-.backmenu
-{
-    background-color: var(--highlight-bg-colour) !important;
-    background-image: var(--highlight-bg-image);
-}
-
 .topdrop
 {
 	float: none !important;
@@ -735,6 +729,7 @@ div.playable.clicktrack {
 
 .backmenu
 {
+    background-color: var(--highlight-bg-colour);
 	height: 2.5em;
 	padding-left: 38px;
 	padding-right: 8px;

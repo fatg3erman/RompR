@@ -1,0 +1,254 @@
+
+.icon-play-circled { background-image: var(--icon-play-circled); }
+.icon-play-circled:hover { background-image: var(--icon-play-circled-hover); }
+.icon-pause-circled { background-image: var(--icon-pause-circled); }
+.icon-pause-circled:hover { background-image: var(--icon-pause-circled-hover); }
+.icon-fast-backward { background-image: var(--icon-fast-backward); }
+.icon-fast-backward:hover { background-image: var(--icon-fast-backward-hover); }
+.icon-fast-forward { background-image: var(--icon-fast-forward); }
+.icon-fast-forward:hover { background-image: var(--icon-fast-forward-hover); }
+.icon-stop-1 { background-image: var(--icon-stop-1); }
+.icon-stop-1:hover { background-image: var(--icon-stop-1-hover); }
+.icon-to-end-1 { background-image: var(--icon-to-end-1); }
+.icon-to-end-1:hover { background-image: var(--icon-to-end-1-hover); }
+
+.icon-music { background-image: var(--icon-music); }
+.icon-search { background-image: var(--icon-search); }
+.icon-folder-open-empty { background-image: var(--icon-folder-open-empty); }
+.icon-radio-tower { background-image: var(--icon-radio-tower); }
+.icon-cd { background-image: var(--icon-cd); }
+.icon-resize-horizontal { background-image: var(--icon-resize-horizontal); }
+.icon-angle-double-left { background-image: var(--icon-angle-double-left); }
+.icon-angle-double-right { background-image: var(--icon-angle-double-right); }
+.icon-menu { background-image: var(--icon-menu); }
+.icon-versions { background-image: var(--icon-versions); }
+.icon-left-circled { background-image: var(--icon-left-circled); }
+.icon-right-circled { background-image: var(--icon-right-circled); }
+.icon-cog-alt { background-image: var(--icon-cog-alt); }
+.icon-trash { background-image: var(--icon-trash); }
+.icon-wifi { background-image: var(--icon-wifi); }
+.icon-doc-text { background-image: var(--icon-doc-text); }
+.icon-floppy { background-image: var(--icon-floppy); }
+.icon-cancel-circled { background-image: var(--icon-cancel-circled); }
+.icon-plus { background-image: var(--icon-plus); }
+.icon-alarm { background-image: var(--icon-alarm); }
+.icon-alarm-on { background-image: var(--icon-alarm-on); }
+.icon-sleep { background-image: var(--icon-sleep); }
+.icon-library { background-image: var(--icon-library); }
+.icon-lastfm-1 { background-image: var(--icon-lastfm-1); }
+.icon-wikipedia { background-image: var(--icon-wikipedia); }
+.icon-musicbrainz { background-image: var(--icon-musicbrainz); }
+.icon-discogs { background-image: var(--icon-discogs); }
+.icon-doc-text-1 { background-image: var(--icon-doc-text-1); }
+.icon-soundcloud-circled { background-image: var(--icon-soundcloud-circled); }
+.icon-youtube-circled { background-image: var(--icon-youtube-circled); }
+.icon-gmusic-circled { background-image: var(--icon-gmusic-circled); }
+.icon-spotify-circled { background-image: var(--icon-spotify-circled); }
+.icon-vkontakte-circled { background-image: var(--icon-vkontakte-circled); }
+.icon-podcast-circled { background-image: var(--icon-podcast-circled); }
+.icon-audiobook { background-image: var(--icon-audiobook); }
+.icon-internetarchive-circled { background-image: var(--icon-internetarchive-circled); }
+.icon-increase { background-image: var(--icon-increase); }
+.icon-decrease { background-image: var(--icon-decrease); }
+.icon-attention-1 { background-image: var(--icon-attention-1); }
+.icon-info-circled { background-image: var(--icon-info-circled); }
+.icon-download { background-image: var(--icon-download); }
+.icon-sun { background-image: var(--icon-sun); }
+.icon-headphones { background-image: var(--icon-headphones); }
+.icon-unlistened { background-image: var(--icon-unlistened); }
+.icon-block { background-image: var(--icon-block); }
+.icon-heart { background-image: var(--icon-heart); }
+.icon-heart-broken { background-image: var(--icon-heart-broken); }
+.icon-refresh { background-image: var(--icon-refresh); }
+.icon-tunein { background-image: var(--icon-tunein); }
+.icon-no-response-playbutton { background-image: var(--icon-no-response-playbutton); }
+.icon-tags { background-image: var(--icon-tags); }
+.icon-volume-up { background-image: var(--icon-volume-up); }
+.icon-toggle-open { background-image: var(--icon-toggle-open); }
+.icon-toggle-closed { background-image: var(--icon-toggle-closed); }
+.icon-spin6 { background-image: var(--icon-spin6) !important; }
+.icon-output { background-image: var(--icon-output); }
+.icon-output-mute { background-image: var(--icon-output-mute); }
+.icon-sliders { background-image: var(--icon-sliders); }
+.icon-0-stars { background-image: var(--icon-0-stars); }
+.icon-1-stars { background-image: var(--icon-1-stars); }
+.icon-2-stars { background-image: var(--icon-2-stars); }
+.icon-3-stars { background-image: var(--icon-3-stars); }
+.icon-4-stars { background-image: var(--icon-4-stars); }
+.icon-5-stars { background-image: var(--icon-5-stars); }
+.icon-single-star { background-image: var(--icon-single-star); }
+.icon-ratandtag { background-image: var(--icon-ratandtag); }
+.icon-ratortag { background-image: var(--icon-ratortag); }
+.icon-toggle-on { background-image: var(--icon-toggle-on); }
+.icon-toggle-off { background-image: var(--icon-toggle-off); }
+
+.icon-random.flow-on { background-image: var(--icon-random-flow-on); }
+.icon-random.flow-off { background-image: var(--icon-random-flow-off); }
+.icon-crossfade.flow-on { background-image: var(--icon-crossfade-flow-on); }
+.icon-crossfade.flow-off { background-image: var(--icon-crossfade-flow-off); }
+.icon-repeat.flow-on { background-image: var(--icon-repeat-flow-on); }
+.icon-repeat.flow-off { background-image: var(--icon-repeat-flow-off); }
+.icon-consume.flow-on { background-image: var(--icon-consume-flow-on); }
+.icon-consume.flow-off { background-image: var(--icon-consume-flow-off); }
+
+.icon-allrandom { background-image: var(--icon-allrandom); }
+.icon-neverplayed { background-image: var(--icon-neverplayed); }
+.icon-recentlyplayed { background-image: var(--icon-recentlyplayed); }
+.icon-artist { background-image: var(--icon-artist); }
+.icon-mp3-audio { background-image: var(--icon-mp3-audio); }
+.icon-aac-audio { background-image: var(--icon-aac-audio); }
+.icon-flac-audio { background-image: var(--icon-flac-audio); }
+.icon-wma-audio { background-image: var(--icon-wma-audio); }
+.icon-ogg-audio { background-image: var(--icon-ogg-audio); }
+.icon-explicit { background-image: var(--icon-explicit); }
+.icon-expand-up { background-image: var(--icon-expand-up); }
+.icon-rss { background-image: var(--icon-rss); }
+.icon-tick { background-image: var(--icon-tick); }
+.icon-video { background-image: var(--icon-video); }
+.icon-bbc-logo { background-image: var(--icon-bbc-logo); }
+.icon-imdb-logo { background-image: var(--icon-imdb-logo); }
+.icon-facebook-logo { background-image: var(--icon-facebook-logo); }
+.icon-twitter-logo { background-image: var(--icon-twitter-logo); }
+.icon-www { background-image: var(--icon-www); }
+.icon-allmusic { background-image: var(--icon-allmusic); }
+.icon-updown { background-image: var(--icon-updown); }
+.icon-snapcast { background-image: var(--icon-snapcast); }
+
+[class^="icon-"], [class*=" icon-"] {
+    background-size:contain;
+    background-position: center;
+    background-repeat:no-repeat;
+    display:inline-block;
+}
+
+.button-disabled { opacity: 0.1 }
+
+.clearbox {
+    background-image: var(--icon-cancel-circled);
+    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
+    background-size: auto 50%;
+    background-position: right 2px center;
+    background-repeat: no-repeat;
+}
+
+.combobox-entry, div.selectholder {
+    background-image: var(--dropdown-button);
+    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
+    background-size: auto 50%;
+    background-position: right 2px center;
+    background-repeat: no-repeat;
+}
+
+.combobox-entry:hover, div.selectholder:hover {
+    background-image: var(--dropdown-button-hover);
+    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
+    background-size: auto 50%;
+    background-position: right 2px center;
+    background-repeat: no-repeat;
+}
+
+#ratingsearch {
+    position: relative;
+}
+
+#ratingsearch:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+    z-index: -1;
+    background-image: var(--icon-0-stars);
+    background-size: auto 50%;
+    background-position: left 2px center;
+    background-repeat: no-repeat;
+}
+
+i.phone-dropdown-button {
+    background-image: var(--dropdown-button);
+}
+
+.styledinputs label
+{
+    display:inline-block;
+    cursor:pointer;
+    position:relative;
+    padding-left:2.5em;
+    line-height:1.5em;
+}
+
+.styledinputs input[type=radio]
+{
+    display:none;
+}
+
+.styledinputs input[type=checkbox]
+{
+    display:none;
+}
+
+.styledinputs label:before
+{
+    content:"";
+    display:inline-block;
+    width:2em;
+    height:1.5em;
+    position:absolute;
+    left:0;
+    /* bottom:0.2em; */
+    background-image: var(--icon-toggle-off);
+    background-size:auto 80%;
+    background-position: center;
+    background-repeat:no-repeat;
+}
+
+.styledinputs input:checked + label:before
+{
+    background-image: var(--icon-toggle-on) !important;
+}
+
+img.notexist,img.notfound
+{
+    background-image: var(--compact-disc);
+    background-size:contain;
+    display:inline-block;
+    background-position:center;
+    background-repeat: no-repeat;
+}
+
+img.stream.notfound, img.stream.notexist
+{
+    background-image: var(--icon-radio-tower);
+}
+
+img.plimage.notfound
+{
+    background-image: var(--icon-doc-text);
+}
+
+.backmenu
+{
+    background-image: var(--icon-angle-double-left), var(--highlight-bg-image);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+button.searchbutton {
+    background-image: var(--icon-search);
+}
+
+button.rssbutton {
+    background-image:var(--icon-rss);
+}
+
+button.savebutton {
+    background-image: var(--icon-floppy);
+}
+
+.playdiv {
+    background-image: var(--icon-play-circled);
+}
+
+

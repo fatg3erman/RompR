@@ -1,245 +1,114 @@
+:root {
+    --dropdown-button: url('iconsets/Modern-Light/blobdown3.svg');
+    --dropdown-button-hover: url('iconsets/Modern-Light/blobdown3-hi.svg');
+    --compact-disc: url('iconsets/Modern-Light/compact-disc.svg');
 
- [class^="icon-"], [class*=" icon-"] {
- 	background-size:contain;
-	background-position: center;
-	background-repeat:no-repeat;
-	display:inline-block;
-}
+    --icon-play-circled: url('iconsets/Modern-Light/media-playback-start.svg');
+    --icon-pause-circled: url('iconsets/Modern-Light/media-playback-pause.svg');
+    --icon-fast-backward: url('iconsets/Modern-Light/media-skip-backward.svg');
+    --icon-fast-forward: url('iconsets/Modern-Light/media-skip-forward.svg');
+    --icon-stop-1: url('iconsets/Modern-Light/media-playback-stop.svg');
+    --icon-to-end-1: url('iconsets/Modern-Light/stopafter.svg');
 
-.button-disabled { opacity: 0.1 }
+    --icon-music: url('iconsets/Modern-Light/collection.svg');
+    --icon-search: url('iconsets/Modern-Light/system-search.svg');
+    --icon-folder-open-empty: url('iconsets/Modern-Light/folder.svg');
+    --icon-radio-tower: url('iconsets/Modern-Light/broadcast-new.svg');
+    --icon-cd: url('iconsets/Modern-Light/cd_case.svg');
+    --icon-resize-horizontal: url('iconsets/Modern-Light/resize.svg');
+    --icon-angle-double-left: url('iconsets/Modern-Light/arrow-left-double.svg');
+    --icon-angle-double-right: url('iconsets/Modern-Light/arrow-right-double.svg');
+    --icon-menu: url('iconsets/Modern-Light/pushbutton.svg');
+    --icon-versions: url('iconsets/Modern-Light/history.svg');
+    --icon-left-circled: url('iconsets/Modern-Light/backbutton.svg');
+    --icon-right-circled: url('iconsets/Modern-Light/forwardbutton.svg');
+    --icon-cog-alt: url('iconsets/Modern-Light/preferences.svg');
+    --icon-trash: url('iconsets/Modern-Light/edit-clear-list.svg');
+    --icon-wifi: url('iconsets/Modern-Light/smartradio.svg');
+    --icon-doc-text: url('iconsets/Modern-Light/playlist.svg');
+    --icon-floppy: url('iconsets/Modern-Light/document-save.svg');
+    --icon-cancel-circled: url('iconsets/Modern-Light/edit-delete.svg');
+    --icon-plus: url('iconsets/Modern-Light/add.svg');
+    --icon-alarm: url('iconsets/Modern-Light/alarmclock_false.svg');
+    --icon-alarm-on: url('iconsets/Modern-Light/alarmclock_true.svg');
+    --icon-sleep: url('iconsets/Modern-Light/sleep.png');
+    --icon-library: url('iconsets/Modern-Light/file.svg');
+    --icon-lastfm-1: url('iconsets/Modern-Light/lastfm.svg');
+    --icon-wikipedia: url('iconsets/Modern-Light/wikipedia-logo.svg');
+    --icon-musicbrainz: url('iconsets/Modern-Light/musicbrainz_logo.svg');
+    --icon-discogs: url('iconsets/Modern-Light/discogs-logo.svg');
+    --icon-doc-text-1: url('iconsets/Modern-Light/lyrics.svg');
+    --icon-soundcloud-circled: url('iconsets/Modern-Light/soundcloud-logo.svg');
+    --icon-youtube-circled: url('iconsets/Modern-Light/youtube-logo.svg');
+    --icon-gmusic-circled: url('iconsets/Modern-Light/gmusic-logo.svg');
+    --icon-spotify-circled: url('iconsets/Modern-Light/spotify-logo.svg');
+    --icon-vkontakte-circled: url('iconsets/Modern-Light/vkontakte-logo.svg');
+    --icon-podcast-circled: url('iconsets/Modern-Light/podcast-logo.svg');
+    --icon-audiobook: url('iconsets/Modern-Light/audiobook.svg');
+    --icon-internetarchive-circled: url('iconsets/Modern-Light/internetarchive-logo.svg');
+    --icon-increase: url('iconsets/Modern-Light/arrow-increase.svg');
+    --icon-decrease: url('iconsets/Modern-Light/arrow-decrease.svg');
+    --icon-attention-1: url('iconsets/Modern-Light/dialog-error.svg');
+    --icon-info-circled: url('iconsets/Modern-Light/dialog-information.svg');
+    --icon-download: url('iconsets/Modern-Light/download-icon.svg');
+    --icon-sun: url('iconsets/Modern-Light/icon-new.svg');
+    --icon-headphones: url('iconsets/Modern-Light/headphones.svg');
+    --icon-unlistened: url('iconsets/Modern-Light/headphones.svg');
+    --icon-block: url('iconsets/Modern-Light/lastfm-ban.svg');
+    --icon-heart: url('iconsets/Modern-Light/lastfm-love.svg');
+    --icon-heart-broken: url('iconsets/Modern-Light/lastfm-unlove.svg');
+    --icon-refresh: url('iconsets/Modern-Light/refresh.svg');
+    --icon-tunein: url('newimages/tunein-logo.svg');
+    --icon-no-response-playbutton: url('iconsets/Modern-Light/media-playback-start.svg');
+    --icon-tags: url('iconsets/Modern-Light/tag.svg');
+    --icon-volume-up: url('iconsets/Modern-Light/volume.svg');
+    --icon-toggle-open: url('iconsets/Modern-Light/toggle-open.svg');
+    --icon-toggle-closed: url('iconsets/Modern-Light/toggle-closed.svg');
+    --icon-spin6: url('iconsets/Modern-Light/spinner.svg');
+    --icon-output: url('iconsets/Modern-Light/output.svg');
+    --icon-output-mute: url('iconsets/Modern-Light/output_mute.svg');
+    --icon-sliders: url('iconsets/Modern-Light/sliders.svg');
+    --icon-0-stars: url('iconsets/Modern-Light/0stars.svg');
+    --icon-1-stars: url('iconsets/Modern-Light/1stars.svg');
+    --icon-2-stars: url('iconsets/Modern-Light/2stars.svg');
+    --icon-3-stars: url('iconsets/Modern-Light/3stars.svg');
+    --icon-4-stars: url('iconsets/Modern-Light/4stars.svg');
+    --icon-5-stars: url('iconsets/Modern-Light/5stars.svg');
+    --icon-single-star: url('iconsets/Modern-Light/singlestar.svg');
+    --icon-ratandtag: url('iconsets/Modern-Light/ratandtag.svg');
+    --icon-ratortag: url('iconsets/Modern-Light/ratortag.svg');
+    --icon-toggle-on: url('iconsets/Modern-Light/togglebutton-new2-on.svg');
+    --icon-toggle-off: url('iconsets/Modern-Light/togglebutton-new2-off.svg');
 
-.clearbox {
-    background-image: url('iconsets/Modern-Light/edit-delete.svg');
-    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
-    background-size: auto 50%;
-    background-position: right 2px center;
-    background-repeat: no-repeat;
-}
+    --icon-random-flow-on: url('iconsets/Modern-Light/random.svg');
+    --icon-random-flow-off: url('iconsets/Modern-Light/random_off.svg');
+    --icon-crossfade-flow-on: url('iconsets/Modern-Light/crossfade.svg');
+    --icon-crossfade-flow-off: url('iconsets/Modern-Light/crossfade_off.svg');
+    --icon-repeat-flow-on: url('iconsets/Modern-Light/refresh.svg');
+    --icon-repeat-flow-off: url('iconsets/Modern-Light/refresh_off.svg');
+    --icon-consume-flow-on: url('iconsets/Modern-Light/consume.svg');
+    --icon-consume-flow-off: url('iconsets/Modern-Light/consume_off.svg');
 
-.combobox-entry, div.selectholder {
-    background-image: url('iconsets/Modern-Light/blobdown3.svg');
-    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
-    background-size: auto 50%;
-    background-position: right 2px center;
-    background-repeat: no-repeat;
-}
-
-.combobox-entry:hover, div.selectholder:hover {
-    background-image: url('iconsets/Modern-Light/blobdown3-hi.svg');
-    /* dont change the 50%, it ties in with makeHoverWork, makeClearWork, and makeTagMenu */
-    background-size: auto 50%;
-    background-position: right 2px center;
-    background-repeat: no-repeat;
-}
-
-#ratingsearch {
-    position: relative;
-}
-
-#ratingsearch:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0.85;
-    z-index: -1;
-    background-image: url('iconsets/Modern-Light/0stars.svg');
-    background-size: auto 50%;
-    background-position: left 2px center;
-    background-repeat: no-repeat;
-}
-
-.phone-dropdown-button {
-    background-image: url('iconsets/Modern-Light/blobdown3.svg');
-}
-
-.icon-play-circled { background-image :url('iconsets/Modern-Light/media-playback-start.svg') }
-.playdiv { background-image :url('iconsets/Modern-Light/media-playback-start.svg') }
-.icon-pause-circled { background-image :url('iconsets/Modern-Light/media-playback-pause.svg') }
-.icon-fast-backward { background-image :url('iconsets/Modern-Light/media-skip-backward.svg') }
-.icon-fast-forward { background-image :url('iconsets/Modern-Light/media-skip-forward.svg') }
-.icon-stop-1 { background-image :url('iconsets/Modern-Light/media-playback-stop.svg') }
-.icon-to-end-1 { background-image :url('iconsets/Modern-Light/stopafter.svg') }
-
-.icon-music { background-image: url('iconsets/Modern-Light/collection.svg') }
-.icon-search { background-image: url('iconsets/Modern-Light/system-search.svg') }
-.icon-folder-open-empty { background-image: url('iconsets/Modern-Light/folder.svg') }
-.icon-radio-tower { background-image: url('iconsets/Modern-Light/broadcast-new.svg') }
-.icon-cd { background-image: url('iconsets/Modern-Light/cd_case.svg') }
-.icon-resize-horizontal { background-image: url('iconsets/Modern-Light/resize.svg') }
-.icon-angle-double-left { background-image:url('iconsets/Modern-Light/arrow-left-double.svg') }
-.icon-angle-double-right { background-image:url('iconsets/Modern-Light/arrow-right-double.svg') }
-.icon-menu { background-image: url('iconsets/Modern-Light/pushbutton.svg') }
-.icon-versions { background-image: url('iconsets/Modern-Light/history.svg') }
-.icon-left-circled { background-image: url('iconsets/Modern-Light/backbutton.svg') }
-.icon-right-circled { background-image: url('iconsets/Modern-Light/forwardbutton.svg') }
-.icon-cog-alt { background-image: url('iconsets/Modern-Light/preferences.svg') }
-.icon-trash { background-image: url('iconsets/Modern-Light/edit-clear-list.svg') }
-.icon-wifi { background-image: url('iconsets/Modern-Light/smartradio.svg') }
-.icon-doc-text { background-image: url('iconsets/Modern-Light/playlist.svg') }
-.icon-floppy { background-image: url('iconsets/Modern-Light/document-save.svg') }
-.icon-cancel-circled { background-image: url('iconsets/Modern-Light/edit-delete.svg') }
-.icon-plus {
-	background-image: url('iconsets/Modern-Light/add.svg');
-}
-.icon-alarm { background-image: url('iconsets/Modern-Light/alarmclock_false.svg') }
-.icon-alarm-on { background-image: url('iconsets/Modern-Light/alarmclock_true.svg') }
-.icon-sleep { background-image: url('iconsets/Modern-Light/sleep.png') }
-.icon-library { background-image: url('iconsets/Modern-Light/file.svg') }
-.icon-lastfm-1 { background-image: url('iconsets/Modern-Light/lastfm.svg') }
-.icon-wikipedia { background-image: url('iconsets/Modern-Light/wikipedia-logo.svg') }
-.icon-musicbrainz {	background-image: url('iconsets/Modern-Light/musicbrainz_logo.svg') }
-.icon-discogs {	background-image: url('iconsets/Modern-Light/discogs-logo.svg') }
-.icon-doc-text-1 { background-image: url('iconsets/Modern-Light/lyrics.svg') }
-.icon-soundcloud-circled { background-image: url('iconsets/Modern-Light/soundcloud-logo.svg') }
-.icon-youtube-circled { background-image: url('iconsets/Modern-Light/youtube-logo.svg') }
-.icon-gmusic-circled { background-image: url('iconsets/Modern-Light/gmusic-logo.svg') }
-.icon-spotify-circled { background-image: url('iconsets/Modern-Light/spotify-logo.svg') }
-.icon-vkontakte-circled { background-image: url('iconsets/Modern-Light/vkontakte-logo.svg') }
-.icon-podcast-circled { background-image: url('iconsets/Modern-Light/podcast-logo.svg') }
-.icon-audiobook { background-image: url('iconsets/Modern-Light/audiobook.svg') }
-.icon-internetarchive-circled { background-image: url('iconsets/Modern-Light/internetarchive-logo.svg') }
-.icon-increase { background-image: url('iconsets/Modern-Light/arrow-increase.svg') }
-.icon-decrease { background-image: url('iconsets/Modern-Light/arrow-decrease.svg') }
-.icon-attention-1 { background-image: url('iconsets/Modern-Light/dialog-error.svg') }
-.icon-info-circled { background-image: url('iconsets/Modern-Light/dialog-information.svg') }
-.icon-download { background-image: url('iconsets/Modern-Light/download-icon.svg') }
-.icon-sun { background-image: url('iconsets/Modern-Light/icon-new.svg') }
-.icon-headphones { background-image: url('iconsets/Modern-Light/headphones.svg') }
-.icon-unlistened { background-image: url('iconsets/Modern-Light/headphones.svg') }
-.icon-block { background-image: url('iconsets/Modern-Light/lastfm-ban.svg') }
-.icon-heart { background-image: url('iconsets/Modern-Light/lastfm-love.svg') }
-.icon-heart-broken { background-image: url('iconsets/Modern-Light/lastfm-unlove.svg') }
-.icon-refresh { background-image: url('iconsets/Modern-Light/refresh.svg') }
-.icon-tunein { background-image: url('iconsets/Modern-Light/../../newimages/tunein-logo.svg') }
-.icon-no-response-playbutton { background-image :url('iconsets/Modern-Light/media-playback-start.svg') }
-.icon-tags { background-image: url('iconsets/Modern-Light/tag.svg') }
-.icon-volume-up { background-image: url('iconsets/Modern-Light/volume.svg') }
-.icon-toggle-open { background-image: url('iconsets/Modern-Light/toggle-open.svg') }
-.icon-toggle-closed { background-image: url('iconsets/Modern-Light/toggle-closed.svg') }
-.icon-spin6 { background-image: url('iconsets/Modern-Light/spinner.svg') !important }
-.icon-output { background-image: url('iconsets/Modern-Light/output.svg') }
-.icon-output-mute { background-image: url('iconsets/Modern-Light/output_mute.svg') }
-.icon-sliders { background-image: url('iconsets/Modern-Light/sliders.svg') }
-.icon-0-stars { background-image: url('iconsets/Modern-Light/0stars.svg') }
-.icon-1-stars { background-image: url('iconsets/Modern-Light/1stars.svg') }
-.icon-2-stars { background-image: url('iconsets/Modern-Light/2stars.svg') }
-.icon-3-stars { background-image: url('iconsets/Modern-Light/3stars.svg') }
-.icon-4-stars { background-image: url('iconsets/Modern-Light/4stars.svg') }
-.icon-5-stars { background-image: url('iconsets/Modern-Light/5stars.svg') }
-.icon-single-star { background-image: url('iconsets/Modern-Light/singlestar.svg') }
-.icon-ratandtag { background-image: url('iconsets/Modern-Light/ratandtag.svg') }
-.icon-ratortag { background-image: url('iconsets/Modern-Light/ratortag.svg') }
-.icon-toggle-on { background-image: url('iconsets/Modern-Light/togglebutton-new2-on.svg') }
-.icon-toggle-off { background-image: url('iconsets/Modern-Light/togglebutton-new2-off.svg') }
-
-.icon-random.flow-on { background-image: url('iconsets/Modern-Light/random.svg') }
-.icon-random.flow-off { background-image: url('iconsets/Modern-Light/random_off.svg') }
-.icon-crossfade.flow-on { background-image: url('iconsets/Modern-Light/crossfade.svg') }
-.icon-crossfade.flow-off { background-image: url('iconsets/Modern-Light/crossfade_off.svg') }
-.icon-repeat.flow-on { background-image: url('iconsets/Modern-Light/refresh.svg') }
-.icon-repeat.flow-off { background-image: url('iconsets/Modern-Light/refresh_off.svg') }
-.icon-consume.flow-on { background-image: url('iconsets/Modern-Light/consume.svg') }
-.icon-consume.flow-off { background-image: url('iconsets/Modern-Light/consume_off.svg') }
-
-.icon-allrandom { background-image: url('iconsets/Modern-Light/shuffle.png') }
-.icon-neverplayed { background-image: url('iconsets/Modern-Light/neverheard.png') }
-.icon-recentlyplayed { background-image: url('iconsets/Modern-Light/calendar.svg') }
-.icon-artist { background-image: url('iconsets/Modern-Light/artist-icon.png') }
-.icon-mp3-audio { background-image: url('iconsets/Modern-Light/mp3-audio.svg') }
-.icon-aac-audio { background-image: url('iconsets/Modern-Light/aac-audio.svg') }
-.icon-flac-audio { background-image: url('iconsets/Modern-Light/flac-audio.svg') }
-.icon-wma-audio { background-image: url('iconsets/Modern-Light/wma-audio.svg') }
-.icon-ogg-audio { background-image: url('iconsets/Modern-Light/ogg-audio.svg') }
-.icon-explicit { background-image: url('iconsets/Modern-Light/parental-advisory.svg') }
-.icon-expand-up { background-image: url('iconsets/Modern-Light/expand-up.svg') }
-.icon-rss { background-image: url('iconsets/Modern-Light/rss.svg') }
-.icon-tick { background-image: url('iconsets/Modern-Light/tick.svg') }
-.icon-video { background-image: url('iconsets/Modern-Light/movie-1.svg') }
-.icon-bbc-logo { background-image: url('iconsets/Modern-Light/bbc-logo.svg') }
-.icon-imdb-logo { background-image: url('iconsets/Modern-Light/imdb-logo.svg') }
-.icon-facebook-logo { background-image: url('iconsets/Modern-Light/facebook-logo.svg') }
-.icon-twitter-logo { background-image: url('iconsets/Modern-Light/twitter-logo.svg') }
-.icon-www { background-image: url('iconsets/Modern-Light/world-wide-web.svg') }
-.icon-allmusic { background-image: url('iconsets/Modern-Light/allmusic-logo.svg') }
-.icon-updown { background-image: url('iconsets/Modern-Light/arrow-updown.svg') }
-.icon-snapcast { background-image: url('iconsets/Modern-Light/../../newimages/snapcast.png') }
-
-.styledinputs label
-{
-    display:inline-block;
-    cursor:pointer;
-    position:relative;
-    padding-left:2.5em;
-    line-height:1.5em;
-}
-
-.styledinputs input[type=radio]
-{
-    display:none;
-}
-
-.styledinputs input[type=checkbox]
-{
-    display:none;
-}
-
-.styledinputs label:before
-{
-    content:"";
-    display:inline-block;
-    width:2em;
-    height:1.5em;
-    position:absolute;
-    left:0;
-    /* bottom:0.2em; */
-    background-image: url('iconsets/Modern-Light/togglebutton-new2-off.svg');
- 	background-size:contain;
-	background-position: center;
-	background-repeat:no-repeat;
-}
-
-.styledinputs input:checked + label:before
-{
-    background-image: url('iconsets/Modern-Light/togglebutton-new2-on.svg') !important;
-}
-
-img.notexist,img.notfound
-{
-    background-image: url('iconsets/Modern-Light/compact-disc.svg');
-    background-size:contain;
-    display:inline-block;
-    background-position:center;
-    background-repeat: no-repeat;
-}
-
-img.stream.notfound, img.stream.notexist
-{
-    background-image: url('iconsets/Modern-Light/broadcast-new.svg');
-}
-
-img.plimage.notfound
-{
-    background-image: url('iconsets/Modern-Light/playlist.svg');
-}
-
-.backmenu
-{
-    background-image: url('iconsets/Modern-Light/arrow-left-double.svg');
-    background-repeat: no-repeat;
-    background-size: contain;
-}
-
-button.searchbutton {
-    background-image: url('iconsets/Modern-Light/system-search.svg');
-}
-
-button.rssbutton {
-    background-image: url('iconsets/Modern-Light/rss.svg');
-}
-
-button.savebutton {
-    background-image: url('iconsets/Modern-Light/document-save.svg');
+    --icon-allrandom: url('iconsets/Modern-Light/shuffle.png');
+    --icon-neverplayed: url('iconsets/Modern-Light/neverheard.png');
+    --icon-recentlyplayed: url('iconsets/Modern-Light/calendar.svg');
+    --icon-artist: url('iconsets/Modern-Light/artist-icon.png');
+    --icon-mp3-audio: url('iconsets/Modern-Light/mp3-audio.svg');
+    --icon-aac-audio: url('iconsets/Modern-Light/aac-audio.svg');
+    --icon-flac-audio: url('iconsets/Modern-Light/flac-audio.svg');
+    --icon-wma-audio: url('iconsets/Modern-Light/wma-audio.svg');
+    --icon-ogg-audio: url('iconsets/Modern-Light/ogg-audio.svg');
+    --icon-explicit: url('iconsets/Modern-Light/parental-advisory.svg');
+    --icon-expand-up: url('iconsets/Modern-Light/expand-up.svg');
+    --icon-rss: url('iconsets/Modern-Light/rss.svg');
+    --icon-tick: url('iconsets/Modern-Light/tick.svg');
+    --icon-video: url('iconsets/Modern-Light/movie-1.svg');
+    --icon-bbc-logo: url('iconsets/Modern-Light/bbc-logo.svg');
+    --icon-imdb-logo: url('iconsets/Modern-Light/imdb-logo.svg');
+    --icon-facebook-logo: url('iconsets/Modern-Light/facebook-logo.svg');
+    --icon-twitter-logo: url('iconsets/Modern-Light/twitter-logo.svg');
+    --icon-www: url('iconsets/Modern-Light/world-wide-web.svg');
+    --icon-allmusic: url('iconsets/Modern-Light/allmusic-logo.svg');
+    --icon-updown: url('iconsets/Modern-Light/arrow-updown.svg');
+    --icon-snapcast: url('newimages/snapcast.png');
 }

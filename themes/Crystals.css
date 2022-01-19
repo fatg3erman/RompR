@@ -1,8 +1,8 @@
-@import url("theme_base/image_theme.css");
+/* theme_base/image_theme.css */
 
 :root {
-    --landscape-bg-image: url("../themes/Crystals.jpg");
-    --portrait-bg-image: url("../themes/Crystals.jpg");
+    --landscape-bg-image: url("themes/Crystals.jpg");
+    --portrait-bg-image: url("themes/Crystals.jpg");
     --background-position: bottom left;
 
     --min-progress-colour: rgba(156, 70, 81, 0.99);

@@ -1,4 +1,4 @@
-@import url("theme_base/colour_theme.css");
+/* theme_base/colour_theme.css */
 
 :root {
 
@@ -10,7 +10,7 @@
     --progress-bg-colour: rgba(0,0,0,0);
 
     --document-bg-colour: unset;
-    --document-bg-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.15) 12%, rgba(0, 0, 0, 0.1) 51%), url("../themes/bg.jpg");
+    --document-bg-image: radial-gradient(circle at 50% 150px, rgba(200, 125, 0, 0.15) 12%, rgba(0, 0, 0, 0.1) 51%), url("themes/bg.jpg");
 
 
 
