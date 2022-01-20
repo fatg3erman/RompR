@@ -106,5 +106,7 @@
 
     --waiting-swinger-height: 2px;
     --waiting-swinger-bg-image: radial-gradient(circle at center, rgba(255, 238, 95, 1), rgba(255, 238, 95, 0));
+
+    --icon-snapcast: url('newimages/snapcast_800_white.png');
 }
 

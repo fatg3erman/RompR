@@ -112,7 +112,18 @@
 .icon-www { background-image: var(--icon-www); }
 .icon-allmusic { background-image: var(--icon-allmusic); }
 .icon-updown { background-image: var(--icon-updown); }
-.icon-snapcast { background-image: var(--icon-snapcast); }
+
+.icon-snapcast {
+    background-image: var(--icon-snapcast);
+    height: 1.5em;
+    margin: 4px;
+}
+
+.icon-lastfm-logo {
+    background-image: url('newimages/lastfm-logo.png');
+    height: 1.5em;
+    margin: 4px;
+}
 
 [class^="icon-"], [class*=" icon-"] {
     background-size:contain;

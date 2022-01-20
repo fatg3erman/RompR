@@ -105,6 +105,8 @@
 
     --waiting-swinger-height: 2px;
     --waiting-swinger-bg-image: radial-gradient(circle at center, rgba(255, 183, 0, 1), rgba(255, 183, 0, 0));
+
+    --icon-snapcast: url('newimages/snapcast_800_white.png');
 }
 
 #playlistm #playlist_top, #playlistm #playlistbuttons {

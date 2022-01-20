@@ -72,7 +72,7 @@ print '</select></div></div>';
 // Custom Background
 print '<div id="custombackground">';
 
-print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand open_magic_div"><b>'.language::gettext('config_background').'</b></div></div>';
+print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand open_magic_div"><b>'.language::gettext('config_background').'</b></div><i class="medicon"></i></div>';
 
 print '<div id="cusbgoptions">';
 
@@ -112,7 +112,7 @@ print '<div class="pref styledinputs invisible magic_div"><b>Browser ID</b>'.
 print '</div>';
 
 // Players
-print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('config_players').'</b></div></div>';
+print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('config_players').'</b></div><i class="medicon"></i></div>';
 print '<div class="fullwidth">';
 print '<div class="clearfix">';
 print '<div class="pref styledinputs tleft" name="playerdefs">';
@@ -130,7 +130,7 @@ print '<input class="autoset toggle" type="checkbox" id="consume_workaround" />
 print '</div>';
 
 // Snapcast
-print '<div class="configtitle"><i class="icon-snapcast medicon"></i><div class="textcentre expand"><b>'.language::gettext('config_snapcast').'</b></div></div>';
+print '<div class="configtitle"><i class="medicon"></i><i class="expand alignmid icon-snapcast"></i><i class="medicon"></i></div>';
 print '<div class="fullwidth">';
 if (!$snapcast_in_volume) {
 	print '<div class="pref" id="snapcastgroups">';
@@ -149,7 +149,7 @@ print '</div>';
 print '</div>';
 
 // Sources Panel Hiding
-print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_panels').'</b></div></div>';
+print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_panels').'</b></div><i class="medicon"></i></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="hide_albumlist" />
 <label for="hide_albumlist">'.language::gettext('config_hidealbumlist').'</label>
@@ -190,7 +190,7 @@ print '<div class="pref styledinputs">
 }
 
 // Interface
-print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_interface').'</b></div></div>';
+print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_interface').'</b></div><i class="medicon"></i></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="scrolltocurrent" />
 <label for="scrolltocurrent">'.language::gettext('config_autoscroll').'</label>
@@ -243,7 +243,7 @@ print '<div class="pref containerbox vertical-centre">
 }
 
 // Biography and Language
-print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_language').'</b></div></div>';
+print '<div class="configtitle"><i class="medicon"></i><div class="textcentre expand"><b>'.language::gettext('settings_language').'</b></div><i class="medicon"></i></div>';
 
 print '<div class="pref containerbox vertical-centre"><div class="divlabel">'.
 language::gettext('settings_interface').
@@ -276,7 +276,7 @@ foreach($x->CountryEntry as $i => $c) {
 print '</select></div></div>';
 
 // Album Art
-print '<div class="configtitle"><i class="icon-cd medicon"></i><div class="textcentre expand"><b>'.language::gettext('albumart_title').'</b></div></div>';
+print '<div class="configtitle"><i class="icon-cd medicon"></i><div class="textcentre expand"><b>'.language::gettext('albumart_title').'</b></div><i class="medicon"></i></div>';
 print '<div class="pref styledinputs">
 <input class="autoset toggle" type="checkbox" id="downloadart" />
 <label for="downloadart">'.language::gettext('config_autocovers').'</label>
@@ -289,13 +289,13 @@ print '<div class="pref styledinputs">
 
 
 // Smart Radio
-print '<div class="configtitle"><i class="icon-wifi medicon"></i><div class="textcentre expand"><b>'.language::gettext('label_pluginplaylists').'</b></div></div>';
+print '<div class="configtitle"><i class="icon-wifi medicon"></i><div class="textcentre expand"><b>'.language::gettext('label_pluginplaylists').'</b></div><i class="medicon"></i></div>';
 print '<div class="pref styledinputs">'.language::gettext('config_smart_chunksize').
 	'<input class="saveotron" id="smartradio_chunksize" style="width:4em;margin-left:1em" type="text" size="4" />
 	</div>';
 
 // Audiobooks
-print '<div class="configtitle"><i class="icon-audiobook medicon"></i><div class="textcentre expand"><b>'.language::gettext('label_audiobooks').'</b></div></div>';
+print '<div class="configtitle"><i class="icon-audiobook medicon"></i><div class="textcentre expand"><b>'.language::gettext('label_audiobooks').'</b></div><i class="medicon"></i></div>';
 print '<div class="pref">'.language::gettext('config_audiobook_directory').'
 <input class="prefinput saveotron" id="audiobook_directory" type="text" size="40" />
 </div>';
@@ -305,7 +305,7 @@ print '<div class="pref">'.language::gettext('config_audiobook_tags').'
 
 // Podcasts
 print '<div class="configtitle">
-<i class="icon-podcast-circled medicon"></i><div class="textcentre expand"><b>'.language::gettext('label_podcasts').'</b></div></div>';
+<i class="icon-podcast-circled medicon"></i><div class="textcentre expand"><b>'.language::gettext('label_podcasts').'</b></div><i class="medicon"></i></div>';
 
 print '<div class="pref"><b>'.language::gettext('config_podcast_defaults').'</b></div>';
 
@@ -352,10 +352,7 @@ print '<div class="pref styledinputs">
 </div>';
 
 // Last.FM
-print '<div class="configtitle">
-<i class="icon-lastfm-1 medicon"></i><div class="textcentre expand"><b>'.language::gettext('label_lastfm').'</b>
-</div></div>';
-
+print '<div class="configtitle"><i class="medicon"></i><i class="expand alignmid icon-lastfm-logo"></i><i class="medicon"></i></div>';
 print '<div class="pref">'.language::gettext('config_lastfmusername').'<br/><div class="containerbox"><div class="expand">'.
 	'<input class="enter" name="lfmuser" type="text" size="30" value="'.prefs::$prefs['lastfm_user'].'"/>'.
 	'</div><button id="lastfmloginbutton" class="fixed">'.language::gettext('config_loginbutton').
@@ -411,7 +408,7 @@ print '</select>
 
 // Collection Options
 print '<div class="configtitle"><i class="icon-music medicon"></i><div class="textcentre expand">
-	<b>'.language::gettext('button_local_music').'</b></div></div>';
+	<b>'.language::gettext('button_local_music').'</b></div><i class="medicon"></i></div>';
 
 // Album Sorting
 print '<div class="pref"><b>'.language::gettext('config_artistfirst').'

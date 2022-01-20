@@ -320,7 +320,7 @@ button.spinable.icon-spin6 {
 	max-height: 24px;
 }
 
-#sourcescontrols i, #chooserbuttons i, #playlistcontrols i {
+#sourcescontrols>i, #chooserbuttons>i, #playlistcontrols>i {
 	max-width: 24px;
 }
 

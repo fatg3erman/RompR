@@ -106,6 +106,8 @@
 
     --waiting-swinger-height: 2px;
     --waiting-swinger-bg-image: radial-gradient(circle at center, rgba(17, 17, 17, 1), rgba(17, 17, 17, 0));
+
+    --icon-snapcast: url('newimages/snapcast_800.png');
 }
 
 .covercontainer.highlighted

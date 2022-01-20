@@ -34,7 +34,7 @@
 			print '<div class="configtitle nohelp player-title"><div class="textcentre expand"><b>'.language::gettext('config_players').'</b></div></div>';
 			print '<div class="pref styledinputs" name="playerdefs"></div>';
 	if (!prefs::$prefs['hide_master_volume']) {
-			print '<div class="configtitle nohelp invisible" id="snapheader"><div class="textcentre expand"><b>Snapcast</b></div></div>';
+			print '<div class="configtitle nohelp invisible" id="snapheader"><i class="fullwidth alignmid icon-snapcast"></i></div>';
 			print '<div class="pref" id="snapcastgroups"></div>';
 	}
 ?>

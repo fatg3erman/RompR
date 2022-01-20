@@ -10,10 +10,9 @@ print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '.
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="viewport" content="width=100%, initial-scale=1.0, maximum-scale=1.0, '.
 'minimum-scale=1.0, user-scalable=0" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<link rel="stylesheet" type="text/css" href="css/layout-january.css" />
-<link rel="stylesheet" type="text/css" href="skins/'.$skin.'/skin.css?version='.ROMPR_VERSION.'" />
-<link rel="shortcut icon" href="newimages/favicon.ico" />
+<meta name="apple-mobile-web-app-capable" content="yes" />';
+print '<link rel="stylesheet" type="text/css" href="get_css.php?version='.$version_string."&skin=".$skin.'" />'."\n";
+print '<link rel="shortcut icon" href="newimages/favicon.ico" />
 <link rel="stylesheet" type="text/css" href="gettheme.php" />
 <script type="text/javascript" src="jquery/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" src="jquery/jquery-migrate-3.3.2.min.js"></script>

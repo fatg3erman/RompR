@@ -108,6 +108,8 @@
     --waiting-swinger-bg-image: radial-gradient(circle at center, var(--max-progress-colour), var(--min-progress-colour));
 
     --vl-opacity: 1;
+
+    --icon-snapcast: url('newimages/snapcast_800_white.png');
 }
 
 a:hover,a:active

@@ -105,6 +105,8 @@
 
     --waiting-swinger-height: 2px;
     --waiting-swinger-bg-image: radial-gradient(circle at center, rgba(212, 182, 153, 1), rgba(212, 182, 153, 0));
+
+    --icon-snapcast: url('newimages/snapcast_800_white.png');
 }
 
 /* This is required when you have a left border on playlist-current-track */
