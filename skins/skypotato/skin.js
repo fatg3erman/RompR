@@ -34,7 +34,7 @@ jQuery.fn.menuReveal = async function() {
 			holder.find('div.vertical-centre.configtitle').remove();
 			var tt = self.find('input.albumtime').val();
 			if (tt) {
-				var d = $('<div>', {class: 'tgtl podcastitem', style: 'padding-top: 4px'}).html(tt).appendTo(self);
+				var d = $('<div>', {class: 'album-time'}).html(tt).appendTo(self);
 				$('<i>', {class: 'icon-blank timerspacer'}).appendTo(d);
 			}
 			adjustboxes = false;

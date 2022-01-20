@@ -38,6 +38,22 @@ button.spinable.icon-spin6 {
 	background-color: transparent !important;
 }
 
+.dropmenu>div.playable:nth-of-type(even),
+.dropmenu>div.menuitem:nth-of-type(even),
+.dropmenu>div.album:nth-of-type(even),
+.mainpane .faveradio:nth-of-type(even),
+.mainpane .radio:nth-of-type(4n),
+.dropmenu .radiochannel:nth-of-type(4n),
+#communitystations .radiochannel:nth-of-type(4n-1),
+#icecastlist .radiochannel:nth-of-type(4n-1),
+.mainpane .podcastitem,
+.mainpane .podcast.openmenu:nth-of-type(4n),
+.mainpane .directory:nth-of-type(even)
+{
+    background-color: var(--album2-colour);
+    background-clip:border-box;
+}
+
 /*
 =====================================================================
 =
@@ -486,6 +502,11 @@ div.rightmenu {
 
 .info-box-fixed {
 	padding-left: 1em;
+}
+
+.clickstream {
+	padding-top: 4px;
+	padding-bottom: 4px;
 }
 
 .podicon {

@@ -52,6 +52,15 @@ input[type=text],input[type="number"] {
 	line-height:110%;
 }
 
+/* This creates boxes that flex-wrap correctly but with a gap between them and some apparent padding.
+   You can't use margin-left or right in wrap because the calculations don't take them into account */
+div.playable.smartradio.collectionitem {
+	background-color: var(--album2-colour);
+	background-clip: padding-box;
+	border-top: 4px solid var(--album2-colour);
+	border-top: 4px solid var(--album2-colour);
+}
+
 div.collectionpanel>div.configtitle>div.textcentre {
 	font-size:140%;
 }

@@ -260,7 +260,7 @@ i.icon-menu {
 
 .selected
 {
-    background-color: var(--selected-bg-colour);
+    background-color: var(--selected-bg-colour) !important;
 }
 
 /* These are for where we have a row of clickable entries, eg in the artist chooser
@@ -679,6 +679,13 @@ div.unplayable {
 	opacity: 0.4;
 }
 
+.album-time {
+	text-align: right;
+	padding-top: 4px;
+	border-top: 1px solid var(--border-colour);
+	background-color: transparent !important;
+}
+
 /*
 =====================================================================
 =
@@ -747,7 +754,7 @@ div.unplayable {
 .podcastitem
 {
 	margin-bottom:0.5em !important;
-	border-top: var(--playlist-item-top-border);
+	/*border-top: var(--playlist-item-top-border);*/
 }
 
 /* also SomaFM */

@@ -16,7 +16,7 @@ jQuery.fn.menuReveal = async function() {
 			$('#podholder').addClass('menu-covered');
 		var tt = self.find('input.albumtime').val();
 		if (tt) {
-			var d = $('<div>', {class: 'tgtl podcastitem', style: 'padding-top: 4px'}).html(tt).appendTo(self);
+			var d = $('<div>', {class: 'album-time'}).html(tt).appendTo(self);
 			$('<i>', {class: 'icon-blank timerspacer'}).appendTo(d);
 		}
 		await self.show(0).promise();
@@ -423,7 +423,7 @@ var layoutProcessor = function() {
 
 	function doSwipeCss() {
 		if (prefs.playlistswipe) {
-			$('<style id="playlist_swipe">#sortable .playlisticonr.icon-cancel-circled { display: none }</style>').appendTo('head');
+			$('<style id="playlist_swipe">#sortable .playlisticonr.icon-cancel-circled { display: none } .timerspacer { display: none }</style>').appendTo('head');
 		} else {
 			$('style[id="playlist_swipe"]').remove();
 		}

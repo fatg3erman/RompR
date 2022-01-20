@@ -18,21 +18,6 @@ html
     display:none;
 }
 
-body.phone .dropmenu>div.playable,
-body.phone .dropmenu>div.menuitem,
-body.phone .dropmenu>div.album,
-body.phone .mainpane .radio,
-body.phone .mainpane .faveradio,
-body.phone .mainpane .podcast.openmenu,
-body.phone .mainpane .directory {
-    border-top: var(--playlist-item-top-border);
-}
-
-body.phone #pluginplaylistholder .menuitem.clickicon,
-body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
-    border-bottom: var(--playlist-item-top-border);
-}
-
 .infowiki
 {
     background-color: var(--infopane-bg-colour);
@@ -85,3 +70,7 @@ body.phone .dropmenu.album2
     background-image: var(--sources-bg-image);
 }
 
+body.dekstop .podcastitem
+{
+    border-top: var(--playlist-item-top-border);
+}

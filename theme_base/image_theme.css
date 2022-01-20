@@ -30,21 +30,6 @@
     }
 }
 
-body.phone .dropmenu>div.playable,
-body.phone .dropmenu>div.menuitem,
-body.phone .dropmenu>div.album,
-body.phone .mainpane .faveradio,
-body.phone .mainpane .radio,
-body.phone .mainpane .podcast.openmenu
-body.phone .mainpane .directory,
-body.phone #pluginplaylistholder .menuitem.clickicon,
-body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth
-{
-    background-color: var(--sources-bg-colour);
-    background-clip:border-box;
-    margin-top: 4px;
-}
-
 .album-play-controls
 {
     background-color: var(--sources-bg-colour);
