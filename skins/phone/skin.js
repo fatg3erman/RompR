@@ -422,10 +422,9 @@ var layoutProcessor = function() {
 	}
 
 	function doSwipeCss() {
+		$('style[id="playlist_swipe"]').remove();
 		if (prefs.playlistswipe) {
-			$('<style id="playlist_swipe">#sortable .playlisticonr.icon-cancel-circled { display: none } .timerspacer { display: none }</style>').appendTo('head');
-		} else {
-			$('style[id="playlist_swipe"]').remove();
+			$('<style id="playlist_swipe">#sortable .playlisticonr.icon-cancel-circled { display: none }</style>').appendTo('head');
 		}
 	}
 

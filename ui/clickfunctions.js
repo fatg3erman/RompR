@@ -206,6 +206,14 @@ function setPlayClickHandlers() {
 	// Slightly misleading function name in this case - we're just using it
 	// to bind the click handlers to the Update Collection Now buttons
 	collectionHelper.enableCollectionUpdates();
+	doClickCss();
+}
+
+function doClickCss() {
+	$('style[id="click_double"]').remove();
+	if (prefs.clickmode == 'double') {
+		$('<style id="click_double">body.phone .timerspacer { display: none }</style>').appendTo('head');
+	}
 }
 
 /*

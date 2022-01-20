@@ -537,6 +537,8 @@ var prefs = function() {
 
 			prefs.fontfamily = prefs.fontfamily.replace('_', ' ');
 
+			doClickCss();
+
 			if (callback)
 				callback();
 
