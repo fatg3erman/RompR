@@ -16,7 +16,7 @@
     masonry spotify albums, skypotato albums, anything with a class of
     highlighted,*/
     --highlight-bg-colour: var(--document-bg-colour);
-    --highlight-bg-image: unset;
+    --highlight-bg-image: none;
 
     --text-colour: black;
     --border-colour: #ccdcf2;

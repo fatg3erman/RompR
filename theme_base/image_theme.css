@@ -32,9 +32,10 @@
 
 body.phone .dropmenu>div.playable,
 body.phone .dropmenu>div.menuitem,
+body.phone .dropmenu>div.album,
 body.phone .mainpane .faveradio,
 body.phone .mainpane .radio,
-body.phone .mainpane .podcast:not(.podicon):not(.podglobal),
+body.phone .mainpane .podcast.openmenu
 body.phone .mainpane .directory,
 body.phone #pluginplaylistholder .menuitem.clickicon,
 body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth
@@ -42,10 +43,6 @@ body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth
     background-color: var(--sources-bg-colour);
     background-clip:border-box;
     margin-top: 4px;
-}
-
-body.phone .dropmenu>div.openmenu {
-    background-color: var(--sources-bg-colour);
 }
 
 .album-play-controls

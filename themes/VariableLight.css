@@ -40,7 +40,7 @@
     --playlist-bg-image: none;
     --playlist-title-bg-colour:rgba(0,0,0,0.2);
     --playlist-title-border: none;
-    --playlist-item-top-border: none;
+    --playlist-item-top-border: 1px solid rgba(94, 123, 147, 0.5);
     --playlist-current-bg-colour:rgba(0,0,0,0.3);
     --playlist-current-shadow: unset;
     --playlist-current-transition: unset;

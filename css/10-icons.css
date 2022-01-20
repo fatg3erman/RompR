@@ -228,6 +228,8 @@ img.plimage.notfound
     background-image: var(--icon-doc-text);
 }
 
+/* NOTE for this to work --highlight-bg-image must be set to something,
+    even if it's 'none'. 'unset' will make the whole thing not work */
 .backmenu
 {
     background-image: var(--icon-angle-double-left), var(--highlight-bg-image);

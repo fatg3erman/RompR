@@ -16,7 +16,7 @@
 
 
     --highlight-bg-colour: rgba(200,200,200,0.03);
-
+    --highlight-bg-image: none;
 
     --text-colour: #eeeeee;
     --border-colour: var(--max-progress-colour);

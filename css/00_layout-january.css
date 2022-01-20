@@ -747,7 +747,7 @@ div.unplayable {
 .podcastitem
 {
 	margin-bottom:0.5em !important;
-  border-top:1px solid var(--border-colour);
+	border-top: var(--playlist-item-top-border);
 }
 
 /* also SomaFM */

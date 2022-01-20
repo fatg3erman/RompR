@@ -20,16 +20,17 @@ html
 
 body.phone .dropmenu>div.playable,
 body.phone .dropmenu>div.menuitem,
+body.phone .dropmenu>div.album,
 body.phone .mainpane .radio,
 body.phone .mainpane .faveradio,
-body.phone .mainpane .podcast:not(.podicon):not(.podglobal),
+body.phone .mainpane .podcast.openmenu,
 body.phone .mainpane .directory {
-    border-top: 1px solid var(--border-colour);
+    border-top: var(--playlist-item-top-border);
 }
 
 body.phone #pluginplaylistholder .menuitem.clickicon,
 body.phone #pluginplaylistholder .menuitem.containerbox.fullwidth {
-    border-bottom: 1px solid var(--border-colour);
+    border-bottom: var(--playlist-item-top-border);
 }
 
 .infowiki
